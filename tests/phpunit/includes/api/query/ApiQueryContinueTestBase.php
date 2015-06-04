@@ -21,9 +21,6 @@
  *
  * @file
  */
-
-require_once 'ApiQueryTestBase.php';
-
 abstract class ApiQueryContinueTestBase extends ApiQueryTestBase {
 
 	/**
@@ -62,6 +59,8 @@ abstract class ApiQueryContinueTestBase extends ApiQueryTestBase {
 		}
 		if ( $useContinue && !isset( $params['continue'] ) ) {
 			$params['continue'] = '';
+		} else {
+			$params['rawcontinue'] = '1';
 		}
 		$count = 0;
 		$result = array();

@@ -229,7 +229,6 @@ class LinkHolderArray {
 	 * @return string
 	 */
 	public function makeHolder( $nt, $text = '', $query = array(), $trail = '', $prefix = '' ) {
-		wfProfileIn( __METHOD__ );
 		if ( !is_object( $nt ) ) {
 			# Fail gracefully
 			$retVal = "<!-- ERROR -->{$prefix}{$text}{$trail}";
@@ -259,7 +258,6 @@ class LinkHolderArray {
 			}
 			$this->size++;
 		}
-		wfProfileOut( __METHOD__ );
 		return $retVal;
 	}
 
@@ -267,17 +265,12 @@ class LinkHolderArray {
 	 * Replace <!--LINK--> link placeholders with actual links, in the buffer
 	 *
 	 * @param string $text
-	 * @return array Array of link CSS classes, indexed by PDBK.
 	 */
 	public function replace( &$text ) {
-		wfProfileIn( __METHOD__ );
 
-		/** @todo FIXME: replaceInternal doesn't return a value */
-		$colours = $this->replaceInternal( $text );
+		$this->replaceInternal( $text );
 		$this->replaceInterwiki( $text );
 
-		wfProfileOut( __METHOD__ );
-		return $colours;
 	}
 
 	/**
@@ -289,14 +282,12 @@ class LinkHolderArray {
 			return;
 		}
 
-		wfProfileIn( __METHOD__ );
 		global $wgContLang, $wgContentHandlerUseDB;
 
 		$colours = array();
 		$linkCache = LinkCache::singleton();
 		$output = $this->parent->getOutput();
 
-		wfProfileIn( __METHOD__ . '-check' );
 		$dbr = wfGetDB( DB_SLAVE );
 		$threshold = $this->parent->getOptions()->getStubThreshold();
 
@@ -380,9 +371,8 @@ class LinkHolderArray {
 		}
 		if ( count( $linkcolour_ids ) ) {
 			//pass an array of page_ids to an extension
-			wfRunHooks( 'GetLinkColours', array( $linkcolour_ids, &$colours ) );
+			Hooks::run( 'GetLinkColours', array( $linkcolour_ids, &$colours ) );
 		}
-		wfProfileOut( __METHOD__ . '-check' );
 
 		# Do a second query for different language variants of links and categories
 		if ( $wgContLang->hasVariants() ) {
@@ -390,7 +380,6 @@ class LinkHolderArray {
 		}
 
 		# Construct search and replace arrays
-		wfProfileIn( __METHOD__ . '-construct' );
 		$replacePairs = array();
 		foreach ( $this->internals as $ns => $entries ) {
 			foreach ( $entries as $index => $entry ) {
@@ -426,18 +415,14 @@ class LinkHolderArray {
 			}
 		}
 		$replacer = new HashtableReplacer( $replacePairs, 1 );
-		wfProfileOut( __METHOD__ . '-construct' );
 
 		# Do the thing
-		wfProfileIn( __METHOD__ . '-replace' );
 		$text = preg_replace_callback(
 			'/(<!--LINK .*?-->)/',
 			$replacer->cb(),
 			$text
 		);
 
-		wfProfileOut( __METHOD__ . '-replace' );
-		wfProfileOut( __METHOD__ );
 	}
 
 	/**
@@ -449,7 +434,6 @@ class LinkHolderArray {
 			return;
 		}
 
-		wfProfileIn( __METHOD__ );
 		# Make interwiki link HTML
 		$output = $this->parent->getOutput();
 		$replacePairs = array();
@@ -463,7 +447,6 @@ class LinkHolderArray {
 			'/<!--IWLINK (.*?)-->/',
 			$replacer->cb(),
 			$text );
-		wfProfileOut( __METHOD__ );
 	}
 
 	/**
@@ -617,7 +600,7 @@ class LinkHolderArray {
 					}
 				}
 			}
-			wfRunHooks( 'GetLinkColours', array( $linkcolour_ids, &$colours ) );
+			Hooks::run( 'GetLinkColours', array( $linkcolour_ids, &$colours ) );
 
 			// rebuild the categories in original order (if there are replacements)
 			if ( count( $varCategories ) > 0 ) {
@@ -644,14 +627,12 @@ class LinkHolderArray {
 	 * @return string
 	 */
 	public function replaceText( $text ) {
-		wfProfileIn( __METHOD__ );
 
 		$text = preg_replace_callback(
 			'/<!--(LINK|IWLINK) (.*?)-->/',
 			array( &$this, 'replaceTextCallback' ),
 			$text );
 
-		wfProfileOut( __METHOD__ );
 		return $text;
 	}
 

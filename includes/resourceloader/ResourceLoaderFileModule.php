@@ -34,6 +34,9 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	/** @var string Remote base path, see __construct() */
 	protected $remoteBasePath = '';
 
+	/** @var array Saves a list of the templates named by the modules. */
+	protected $templates = array();
+
 	/**
 	 * @var array List of paths to JavaScript files to always include
 	 * @par Usage:
@@ -171,7 +174,7 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	 *     to $wgResourceBasePath
 	 *
 	 * Below is a description for the $options array:
-	 * @throws MWException
+	 * @throws InvalidArgumentException
 	 * @par Construction options:
 	 * @code
 	 *     array(
@@ -199,6 +202,9 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	 *         'loaderScripts' => [file path string or array of file path strings],
 	 *         // Modules which must be loaded before this module
 	 *         'dependencies' => [module name string or array of module name strings],
+	 *         'templates' => array(
+	 *             [template alias with file.ext] => [file path to a template file],
+	 *         ),
 	 *         // Styles to always load
 	 *         'styles' => [file path string or array of file path strings],
 	 *         // Styles to include in specific skin contexts
@@ -223,6 +229,8 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 		$localBasePath = null,
 		$remoteBasePath = null
 	) {
+		// Flag to decide whether to automagically add the mediawiki.template module
+		$hasTemplates = false;
 		// localBasePath and remoteBasePath both have unbelievably long fallback chains
 		// and need to be handled separately.
 		list( $this->localBasePath, $this->remoteBasePath ) =
@@ -238,19 +246,23 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 				case 'styles':
 					$this->{$member} = (array)$option;
 					break;
+				case 'templates':
+					$hasTemplates = true;
+					$this->{$member} = (array)$option;
+					break;
 				// Collated lists of file paths
 				case 'languageScripts':
 				case 'skinScripts':
 				case 'skinStyles':
 					if ( !is_array( $option ) ) {
-						throw new MWException(
+						throw new InvalidArgumentException(
 							"Invalid collated file path list error. " .
 							"'$option' given, array expected."
 						);
 					}
 					foreach ( $option as $key => $value ) {
 						if ( !is_string( $key ) ) {
-							throw new MWException(
+							throw new InvalidArgumentException(
 								"Invalid collated file path list key error. " .
 								"'$key' given, string expected."
 							);
@@ -281,6 +293,21 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 					break;
 			}
 		}
+		if ( $hasTemplates ) {
+			$this->dependencies[] = 'mediawiki.template';
+			// Ensure relevant template compiler module gets loaded
+			foreach ( $this->templates as $alias => $templatePath ) {
+				if ( is_int( $alias ) ) {
+					$alias = $templatePath;
+				}
+				$suffix = explode( '.', $alias );
+				$suffix = end( $suffix );
+				$compilerModule = 'mediawiki.template.' . $suffix;
+				if ( $suffix !== 'html' && !in_array( $compilerModule, $this->dependencies ) ) {
+					$this->dependencies[] = $compilerModule;
+				}
+			}
+		}
 	}
 
 	/**
@@ -304,7 +331,9 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 		// The different ways these checks are done, and their ordering, look very silly,
 		// but were preserved for backwards-compatibility just in case. Tread lightly.
 
-		$localBasePath = $localBasePath === null ? $IP : $localBasePath;
+		if ( $localBasePath === null ) {
+			$localBasePath = $IP;
+		}
 		if ( $remoteBasePath === null ) {
 			$remoteBasePath = $wgResourceBasePath;
 		}
@@ -466,8 +495,8 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 
 	/**
 	 * Get the skip function.
-	 *
-	 * @return string|null
+	 * @return null|string
+	 * @throws MWException
 	 */
 	public function getSkipFunction() {
 		if ( !$this->skipFunction ) {
@@ -510,7 +539,6 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 		if ( isset( $this->modifiedTime[$context->getHash()] ) ) {
 			return $this->modifiedTime[$context->getHash()];
 		}
-		wfProfileIn( __METHOD__ );
 
 		$files = array();
 
@@ -533,8 +561,9 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 		$files = array_merge(
 			$files,
 			$this->scripts,
+			$this->templates,
 			$context->getDebug() ? $this->debugScripts : array(),
-			self::tryForKey( $this->languageScripts, $context->getLanguage() ),
+			$this->getLanguageScripts( $context->getLanguage() ),
 			self::tryForKey( $this->skinScripts, $context->getSkin(), 'default' ),
 			$this->loaderScripts
 		);
@@ -544,18 +573,19 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 		$files = array_map( array( $this, 'getLocalPath' ), $files );
 		// File deps need to be treated separately because they're already prefixed
 		$files = array_merge( $files, $this->getFileDependencies( $context->getSkin() ) );
+		// Filter out any duplicates from getFileDependencies() and others.
+		// Most commonly introduced by compileLessFile(), which always includes the
+		// entry point Less file we already know about.
+		$files = array_values( array_unique( $files ) );
 
 		// If a module is nothing but a list of dependencies, we need to avoid
 		// giving max() an empty array
 		if ( count( $files ) === 0 ) {
 			$this->modifiedTime[$context->getHash()] = 1;
-			wfProfileOut( __METHOD__ );
 			return $this->modifiedTime[$context->getHash()];
 		}
 
-		wfProfileIn( __METHOD__ . '-filemtime' );
 		$filesMtime = max( array_map( array( __CLASS__, 'safeFilemtime' ), $files ) );
-		wfProfileOut( __METHOD__ . '-filemtime' );
 
 		$this->modifiedTime[$context->getHash()] = max(
 			$filesMtime,
@@ -563,7 +593,6 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 			$this->getDefinitionMtime( $context )
 		);
 
-		wfProfileOut( __METHOD__ );
 		return $this->modifiedTime[$context->getHash()];
 	}
 
@@ -574,9 +603,7 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	 * @return array
 	 */
 	public function getDefinitionSummary( ResourceLoaderContext $context ) {
-		$summary = array(
-			'class' => get_class( $this ),
-		);
+		$summary = parent::getDefinitionSummary( $context );
 		foreach ( array(
 			'scripts',
 			'debugScripts',
@@ -588,6 +615,7 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 			'dependencies',
 			'messages',
 			'targets',
+			'templates',
 			'group',
 			'position',
 			'skipFunction',
@@ -698,7 +726,7 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	protected function getScriptFiles( ResourceLoaderContext $context ) {
 		$files = array_merge(
 			$this->scripts,
-			self::tryForKey( $this->languageScripts, $context->getLanguage() ),
+			$this->getLanguageScripts( $context->getLanguage() ),
 			self::tryForKey( $this->skinScripts, $context->getSkin(), 'default' )
 		);
 		if ( $context->getDebug() ) {
@@ -706,6 +734,29 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 		}
 
 		return array_unique( $files, SORT_REGULAR );
+	}
+
+	/**
+	 * Get the set of language scripts for the given language,
+	 * possibly using a fallback language.
+	 *
+	 * @param string $lang
+	 * @return array
+	 */
+	private function getLanguageScripts( $lang ) {
+		$scripts = self::tryForKey( $this->languageScripts, $lang );
+		if ( $scripts ) {
+			return $scripts;
+		}
+		$fallbacks = Language::getFallbacksFor( $lang );
+		foreach ( $fallbacks as $lang ) {
+			$scripts = self::tryForKey( $this->languageScripts, $lang );
+			if ( $scripts ) {
+				return $scripts;
+			}
+		}
+
+		return array();
 	}
 
 	/**
@@ -933,5 +984,31 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	 */
 	protected function getLessCompiler( ResourceLoaderContext $context = null ) {
 		return ResourceLoader::getLessCompiler( $this->getConfig() );
+	}
+
+	/**
+	 * Takes named templates by the module and returns an array mapping.
+	 * @return array of templates mapping template alias to content
+	 * @throws MWException
+	 */
+	public function getTemplates() {
+		$templates = array();
+
+		foreach ( $this->templates as $alias => $templatePath ) {
+			// Alias is optional
+			if ( is_int( $alias ) ) {
+				$alias = $templatePath;
+			}
+			$localPath = $this->getLocalPath( $templatePath );
+			if ( file_exists( $localPath ) ) {
+				$content = file_get_contents( $localPath );
+				$templates[$alias] = $content;
+			} else {
+				$msg = __METHOD__ . ": template file not found: \"$localPath\"";
+				wfDebugLog( 'resourceloader', $msg );
+				throw new MWException( $msg );
+			}
+		}
+		return $templates;
 	}
 }

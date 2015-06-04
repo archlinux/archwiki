@@ -91,6 +91,18 @@ abbr[title],
 	color: #aaa; /* gray */
 }
 
+/*
+ * Bidi-isolate these numbers.
+ * See https://phabricator.wikimedia.org/T93484
+ */
+.mw-plusminus-pos,
+.mw-plusminus-neg,
+.mw-plusminus-null {
+	unicode-bidi: -moz-isolate;
+	unicode-bidi: -webkit-isolate;
+	unicode-bidi: isolate;
+}
+
 /**
  * Links to redirects appear italicized on [[Special:AllPages]], [[Special:PrefixIndex]],
  * [[Special:Watchlist/edit]] and in category listings.
@@ -414,7 +426,7 @@ p.mw-upload-editlicenses {
 	border: 1px dashed #aaa;
 }
 
-.mw-history-revisiondelete-button, #mw-fileduplicatesearch-icon {
+.mw-history-revisionactions, #mw-fileduplicatesearch-icon {
 	float: right;
 }
 
@@ -506,7 +518,7 @@ a.feedlink {
 table.wikitable {
 	margin: 1em 0;
 	background-color: #f9f9f9;
-	border: 1px #aaa solid;
+	border: 1px solid #aaa;
 	border-collapse: collapse;
 	color: black;
 }
@@ -515,8 +527,8 @@ table.wikitable > tr > th,
 table.wikitable > tr > td,
 table.wikitable > * > tr > th,
 table.wikitable > * > tr > td {
-	border: 1px #aaa solid;
-	padding: 0.2em;
+	border: 1px solid #aaa;
+	padding: 0.2em 0.4em;
 }
 
 table.wikitable > tr > th,
@@ -584,7 +596,7 @@ table.wikitable > caption {
 }
 
 .successbox {
-	color: #009000;
+	color: #008000;
 	border-color: #b7fdb5;
 	background-color: #e1fddf;
 }
@@ -934,11 +946,14 @@ h2:lang(te), h3:lang(te), h4:lang(te), h5:lang(te), h6:lang(te) {
 
 /* Localised ordered list numbering for some languages */
 ol:lang(bcc) li,
+ol:lang(bgn) li,
 ol:lang(bqi) li,
 ol:lang(fa) li,
 ol:lang(glk) li,
 ol:lang(kk-arab) li,
-ol:lang(mzn) li {
+ol:lang(lrc) li,
+ol:lang(mzn) li,
+ol:lang(sdh) li {
 	list-style-type: -moz-persian;
 	list-style-type: persian;
 }
@@ -1124,6 +1139,7 @@ table.floatleft {
 
 .mw-editsection,
 .toctoggle,
+.tochidden,
 #jump-to-nav {
 	-moz-user-select: none;
 	-webkit-user-select: none;

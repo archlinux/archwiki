@@ -8,6 +8,11 @@ abstract class ApiTestCase extends MediaWikiLangTestCase {
 	 */
 	protected $apiContext;
 
+	/**
+	 * @var array
+	 */
+	protected $tablesUsed = array( 'user', 'user_groups', 'user_properties' );
+
 	protected function setUp() {
 		global $wgServer;
 
@@ -39,6 +44,17 @@ abstract class ApiTestCase extends MediaWikiLangTestCase {
 		) );
 
 		$this->apiContext = new ApiTestContext();
+	}
+
+	protected function tearDown() {
+		// Avoid leaking session over tests
+		if ( session_id() != '' ) {
+			global $wgUser;
+			$wgUser->logout();
+			session_destroy();
+		}
+
+		parent::tearDown();
 	}
 
 	/**
@@ -100,7 +116,7 @@ abstract class ApiTestCase extends MediaWikiLangTestCase {
 
 		// construct result
 		$results = array(
-			$module->getResultData(),
+			$module->getResult()->getResultData( null, array( 'Strip' => 'all' ) ),
 			$context->getRequest(),
 			$context->getRequest()->getSessionArray()
 		);
@@ -134,10 +150,14 @@ abstract class ApiTestCase extends MediaWikiLangTestCase {
 		}
 
 		if ( isset( $session['wsToken'] ) && $session['wsToken'] ) {
+			// @todo Why does this directly mess with the session? Fix that.
 			// add edit token to fake session
 			$session['wsEditToken'] = $session['wsToken'];
 			// add token to request parameters
-			$params['token'] = md5( $session['wsToken'] ) . User::EDIT_TOKEN_SUFFIX;
+			$timestamp = wfTimestamp();
+			$params['token'] = hash_hmac( 'md5', $timestamp, $session['wsToken'] ) .
+				dechex( $timestamp ) .
+				User::EDIT_TOKEN_SUFFIX;
 
 			return $this->doApiRequest( $params, $session, false, $user );
 		} else {

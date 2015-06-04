@@ -35,6 +35,7 @@ class RecentChangeTest extends MediaWikiTestCase {
 	 * Should cover the following log actions (which are most commonly used by bots):
 	 * - block/block
 	 * - block/unblock
+	 * - block/reblock
 	 * - delete/delete
 	 * - delete/restore
 	 * - newusers/create
@@ -46,6 +47,9 @@ class RecentChangeTest extends MediaWikiTestCase {
 	 * - protect/modifyprotect
 	 * - protect/unprotect
 	 * - upload/upload
+	 * - merge/merge
+	 * - import/upload
+	 * - import/interwiki
 	 *
 	 * As well as the following Auto Edit Summaries:
 	 * - blank
@@ -62,9 +66,13 @@ class RecentChangeTest extends MediaWikiTestCase {
 
 		# block/block
 		$this->assertIRCComment(
-			$this->context->msg( 'blocklogentry', 'SomeTitle' )->plain() . $sep . $this->user_comment,
+			$this->context->msg( 'blocklogentry', 'SomeTitle', 'duration', '(flags)' )->plain()
+				. $sep . $this->user_comment,
 			'block', 'block',
-			array(),
+			array(
+				'5::duration' => 'duration',
+				'6::flags' => 'flags',
+			),
 			$this->user_comment
 		);
 		# block/unblock
@@ -72,6 +80,17 @@ class RecentChangeTest extends MediaWikiTestCase {
 			$this->context->msg( 'unblocklogentry', 'SomeTitle' )->plain() . $sep . $this->user_comment,
 			'block', 'unblock',
 			array(),
+			$this->user_comment
+		);
+		# block/reblock
+		$this->assertIRCComment(
+			$this->context->msg( 'reblock-logentry', 'SomeTitle', 'duration', '(flags)' )->plain()
+				. $sep . $this->user_comment,
+			'block', 'reblock',
+			array(
+				'5::duration' => 'duration',
+				'6::flags' => 'flags',
+			),
 			$this->user_comment
 		);
 	}
@@ -224,6 +243,48 @@ class RecentChangeTest extends MediaWikiTestCase {
 		$this->assertIRCComment(
 			$this->context->msg( 'overwroteimage', 'SomeTitle' )->plain() . $sep . $this->user_comment,
 			'upload', 'overwrite',
+			array(),
+			$this->user_comment
+		);
+	}
+
+	/**
+	 * @covers LogFormatter::getIRCActionText
+	 */
+	public function testIrcMsgForLogTypeMerge() {
+		$sep = $this->context->msg( 'colon-separator' )->text();
+
+		# merge/merge
+		$this->assertIRCComment(
+			$this->context->msg( 'pagemerge-logentry', 'SomeTitle', 'Dest', 'timestamp' )->plain()
+				. $sep . $this->user_comment,
+			'merge', 'merge',
+			array(
+				'4::dest' => 'Dest',
+				'5::mergepoint' => 'timestamp',
+			),
+			$this->user_comment
+		);
+	}
+
+	/**
+	 * @covers LogFormatter::getIRCActionText
+	 */
+	public function testIrcMsgForLogTypeImport() {
+		$sep = $this->context->msg( 'colon-separator' )->text();
+
+		# import/upload
+		$this->assertIRCComment(
+			$this->context->msg( 'import-logentry-upload', 'SomeTitle' )->plain() . $sep . $this->user_comment,
+			'import', 'upload',
+			array(),
+			$this->user_comment
+		);
+
+		# import/interwiki
+		$this->assertIRCComment(
+			$this->context->msg( 'import-logentry-interwiki', 'SomeTitle' )->plain() . $sep . $this->user_comment,
+			'import', 'interwiki',
 			array(),
 			$this->user_comment
 		);

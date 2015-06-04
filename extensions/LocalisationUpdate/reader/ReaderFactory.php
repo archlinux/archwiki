@@ -13,7 +13,7 @@ class LU_ReaderFactory {
 	 * Constructs a suitable reader for a given path.
 	 * @param string $filename Usually a relative path to the file name.
 	 * @return LU_Reader
-	 * @throw MWException
+	 * @throw Exception
 	 */
 	public function getReader( $filename ) {
 		if ( preg_match( '/i18n\.php$/', $filename ) ) {
@@ -31,6 +31,6 @@ class LU_ReaderFactory {
 			return new LU_JSONReader( $code );
 		}
 
-		throw new MWException( "Unknown file format: " . $filename );
+		throw new Exception( "Unknown file format: " . $filename );
 	}
 }

@@ -58,6 +58,7 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 		$opts->add( 'hidetrans', false );
 		$opts->add( 'hidelinks', false );
 		$opts->add( 'hideimages', false );
+		$opts->add( 'invert', false );
 
 		$opts->fetchValuesFromRequest( $this->getRequest() );
 		$opts->validateIntBounds( 'limit', 0, 5000 );
@@ -72,7 +73,9 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 
 		$this->target = Title::newFromURL( $opts->getValue( 'target' ) );
 		if ( !$this->target ) {
-			$out->addHTML( $this->whatlinkshereForm() );
+			if ( !$this->including() ) {
+				$out->addHTML( $this->whatlinkshereForm() );
+			}
 
 			return;
 		}
@@ -125,15 +128,17 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 
 		$useLinkNamespaceDBFields = $this->getConfig()->get( 'UseLinkNamespaceDBFields' );
 		$namespace = $this->opts->getValue( 'namespace' );
+		$invert = $this->opts->getValue( 'invert' );
+		$nsComparison = ( $invert ? '!= ' : '= ' ) . $dbr->addQuotes( $namespace );
 		if ( is_int( $namespace ) ) {
 			if ( $useLinkNamespaceDBFields ) {
-				$conds['pagelinks']['pl_from_namespace'] = $namespace;
-				$conds['templatelinks']['tl_from_namespace'] = $namespace;
-				$conds['imagelinks']['il_from_namespace'] = $namespace;
+				$conds['pagelinks'][] = "pl_from_namespace $nsComparison";
+				$conds['templatelinks'][] = "tl_from_namespace $nsComparison";
+				$conds['imagelinks'][] = "il_from_namespace $nsComparison";
 			} else {
-				$conds['pagelinks']['page_namespace'] = $namespace;
-				$conds['templatelinks']['page_namespace'] = $namespace;
-				$conds['imagelinks']['page_namespace'] = $namespace;
+				$conds['pagelinks'][] = "page_namespace $nsComparison";
+				$conds['templatelinks'][] = "page_namespace $nsComparison";
+				$conds['imagelinks'][] = "page_namespace $nsComparison";
 			}
 		}
 
@@ -149,7 +154,9 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 			$conds['pagelinks'][] = 'rd_from is NOT NULL';
 		}
 
-		$queryFunc = function ( $dbr, $table, $fromCol ) use ( $conds, $target, $limit, $useLinkNamespaceDBFields ) {
+		$queryFunc = function ( $dbr, $table, $fromCol ) use (
+			$conds, $target, $limit, $useLinkNamespaceDBFields
+		) {
 			// Read an extra row as an at-end check
 			$queryLimit = $limit + 1;
 			$on = array(
@@ -174,7 +181,7 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 			);
 			return $dbr->select(
 				array( 'page', 'temp_backlink_range' => "($subQuery)" ),
-				array( 'page_id', 'page_namespace', 'page_title', 'rd_from' ),
+				array( 'page_id', 'page_namespace', 'page_title', 'rd_from', 'page_is_redirect' ),
 				array(),
 				__CLASS__ . '::showIndirectLinks',
 				array( 'ORDER BY' => 'page_id', 'LIMIT' => $queryLimit ),
@@ -275,7 +282,11 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 
 			if ( $row->rd_from && $level < 2 ) {
 				$out->addHTML( $this->listItem( $row, $nt, $target, true ) );
-				$this->showIndirectLinks( $level + 1, $nt, $this->getConfig()->get( 'MaxRedirectLinksRetrieved' ) );
+				$this->showIndirectLinks(
+					$level + 1,
+					$nt,
+					$this->getConfig()->get( 'MaxRedirectLinksRetrieved' )
+				);
 				$out->addHTML( Xml::closeElement( 'li' ) );
 			} else {
 				$out->addHTML( $this->listItem( $row, $nt, $target ) );
@@ -318,7 +329,7 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 		$link = Linker::linkKnown(
 			$nt,
 			null,
-			array(),
+			$row->page_is_redirect ? array( 'class' => 'mw-redirect' ) : array(),
 			$query
 		);
 
@@ -335,7 +346,7 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 			$props[] = $msgcache['isimage'];
 		}
 
-		wfRunHooks( 'WhatLinksHereProps', array( $row, $nt, $target, &$props ) );
+		Hooks::run( 'WhatLinksHereProps', array( $row, $nt, $target, &$props ) );
 
 		if ( count( $props ) ) {
 			$propsText = $this->msg( 'parentheses' )
@@ -419,6 +430,7 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 
 		$target = $this->target ? $this->target->getPrefixedText() : '';
 		$namespace = $this->opts->consumeValue( 'namespace' );
+		$nsinvert = $this->opts->consumeValue( 'invert' );
 
 		# Build up the form
 		$f = Xml::openElement( 'form', array( 'action' => wfScript() ) );
@@ -431,9 +443,9 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 
 		$f .= Xml::fieldset( $this->msg( 'whatlinkshere' )->text() );
 
-		# Target input
+		# Target input (.mw-searchInput enables suggestions)
 		$f .= Xml::inputLabel( $this->msg( 'whatlinkshere-page' )->text(), 'target',
-			'mw-whatlinkshere-target', 40, $target );
+			'mw-whatlinkshere-target', 40, $target, array( 'class' => 'mw-searchInput' ) );
 
 		$f .= ' ';
 
@@ -449,6 +461,15 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 				'class' => 'namespaceselector',
 			)
 		);
+
+		$f .= '&#160;' .
+			Xml::checkLabel(
+				$this->msg( 'invert' )->text(),
+				'invert',
+				'nsinvert',
+				$nsinvert,
+				array( 'title' => $this->msg( 'tooltip-whatlinkshere-invert' )->text() )
+			);
 
 		$f .= ' ';
 
@@ -494,6 +515,24 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 			$this->msg( 'whatlinkshere-filters' )->text(),
 			$this->getLanguage()->pipeList( $links )
 		);
+	}
+
+	/**
+	 * Return an array of subpages beginning with $search that this special page will accept.
+	 *
+	 * @param string $search Prefix to search for
+	 * @param int $limit Maximum number of results to return (usually 10)
+	 * @param int $offset Number of results to skip (usually 0)
+	 * @return string[] Matching subpages
+	 */
+	public function prefixSearchSubpages( $search, $limit, $offset ) {
+		if ( $search === '' ) {
+			return array();
+		}
+		// Autocomplete subpage the same as a normal search
+		$prefixSearcher = new StringPrefixSearch;
+		$result = $prefixSearcher->search( $search, $limit, array(), $offset );
+		return $result;
 	}
 
 	protected function getGroupName() {

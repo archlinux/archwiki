@@ -5,7 +5,8 @@
 			"Huji",
 			"Reza1615",
 			"Wayiran",
-			"Alirezaaa"
+			"Alirezaaa",
+			"Calak"
 		]
 	},
 	"renameuser": "تغییر نام کاربر",
@@ -35,7 +36,7 @@
 	"log-description-renameuser": "این سیاههٔ تغییر نام کاربران است.",
 	"logentry-renameuser-renameuser": "$1 نام $4 ({{PLURAL:$6|$6 ویرایش|}}) را به $5 {{GENDER:$2|تغییر داد}}",
 	"logentry-renameuser-renameuser-legacier": "$1 نام کاربری $4 را به $5 تغییر داد",
-	"renameuser-move-log": "صفحه در ضمن تغییر نام «[[User:$1|$1]]» به «[[User:$2|$2]]» به طور خودکار انتقال داده شد.",
+	"renameuser-move-log": "صفحه در ضمن تغییر نام کاربر «[[User:$1|$1]]» به «[[User:$2|$2]]» به طور خودکار منتقل شد",
 	"action-renameuser": "تغییر نام کاربران",
 	"right-renameuser": "تغییر نام کاربران",
 	"renameuser-renamed-notice": "این کاربر تغییر نام داده‌است.\nسیاهه تغییر نام در ادامه آمده است."

@@ -127,14 +127,17 @@ class Hooks {
 	 * @param string|null $deprecatedVersion Optionally, mark hook as deprecated with version number
 	 * @return bool True if no handler aborted the hook
 	 *
+	 * @throws Exception
+	 * @throws FatalError
+	 * @throws MWException
 	 * @since 1.22 A hook function is not required to return a value for
 	 *   processing to continue. Not returning a value (or explicitly
 	 *   returning null) is equivalent to returning true.
-	 * @throws MWException
-	 * @throws FatalError
 	 */
 	public static function run( $event, array $args = array(), $deprecatedVersion = null ) {
-		wfProfileIn( 'hook: ' . $event );
+		$profiler = Profiler::instance();
+		$eventPS = $profiler->scopedProfileIn( 'hook: ' . $event );
+
 		foreach ( self::getHandlers( $event ) as $hook ) {
 			// Turn non-array values into an array. (Can't use casting because of objects.)
 			if ( !is_array( $hook ) ) {
@@ -179,7 +182,7 @@ class Hooks {
 			// Run autoloader (workaround for call_user_func_array bug)
 			// and throw error if not callable.
 			if ( !is_callable( $callback ) ) {
-				throw new MWException( 'Invalid callback in hooks for ' . $event . "\n" );
+				throw new MWException( 'Invalid callback ' . $func . ' in hooks for ' . $event . "\n" );
 			}
 
 			/*
@@ -193,8 +196,8 @@ class Hooks {
 			$badhookmsg = null;
 			$hook_args = array_merge( $hook, $args );
 
-			// Profile first in case the Profiler causes errors.
-			wfProfileIn( $func );
+			// Profile first in case the Profiler causes errors
+			$funcPS = $profiler->scopedProfileIn( $func );
 			set_error_handler( 'Hooks::hookErrorHandler' );
 
 			// mark hook as deprecated, if deprecation version is specified
@@ -210,8 +213,9 @@ class Hooks {
 				restore_error_handler();
 				throw $e;
 			}
+
 			restore_error_handler();
-			wfProfileOut( $func );
+			$profiler->scopedProfileOut( $funcPS );
 
 			// Process the return value.
 			if ( is_string( $retval ) ) {
@@ -224,13 +228,11 @@ class Hooks {
 					"Hook $func has invalid call signature; " . $badhookmsg
 				);
 			} elseif ( $retval === false ) {
-				wfProfileOut( 'hook: ' . $event );
 				// False was returned. Stop processing, but no error.
 				return false;
 			}
 		}
 
-		wfProfileOut( 'hook: ' . $event );
 		return true;
 	}
 

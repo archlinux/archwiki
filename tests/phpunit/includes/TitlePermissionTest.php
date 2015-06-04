@@ -326,6 +326,10 @@ class TitlePermissionTest extends MediaWikiLangTestCase {
 			$this->setUserPerm( null );
 			$this->assertEquals( $check[$action][0],
 				$this->title->getUserPermissionsErrors( $action, $this->user, true ) );
+			$this->assertEquals( $check[$action][0],
+				$this->title->getUserPermissionsErrors( $action, $this->user, 'full' ) );
+			$this->assertEquals( $check[$action][0],
+				$this->title->getUserPermissionsErrors( $action, $this->user, 'secure' ) );
 
 			global $wgGroupPermissions;
 			$old = $wgGroupPermissions;
@@ -333,11 +337,19 @@ class TitlePermissionTest extends MediaWikiLangTestCase {
 
 			$this->assertEquals( $check[$action][1],
 				$this->title->getUserPermissionsErrors( $action, $this->user, true ) );
+			$this->assertEquals( $check[$action][1],
+				$this->title->getUserPermissionsErrors( $action, $this->user, 'full' ) );
+			$this->assertEquals( $check[$action][1],
+				$this->title->getUserPermissionsErrors( $action, $this->user, 'secure' ) );
 			$wgGroupPermissions = $old;
 
 			$this->setUserPerm( $action );
 			$this->assertEquals( $check[$action][2],
 				$this->title->getUserPermissionsErrors( $action, $this->user, true ) );
+			$this->assertEquals( $check[$action][2],
+				$this->title->getUserPermissionsErrors( $action, $this->user, 'full' ) );
+			$this->assertEquals( $check[$action][2],
+				$this->title->getUserPermissionsErrors( $action, $this->user, 'secure' ) );
 
 			$this->setUserPerm( $action );
 			$this->assertEquals( $check[$action][3],
@@ -403,7 +415,8 @@ class TitlePermissionTest extends MediaWikiLangTestCase {
 
 		$this->setTitle( NS_USER );
 		$this->setUserPerm( '' );
-		$this->assertEquals( array( array( 'badaccess-group0' ), array( 'namespaceprotected', 'User', 'bogus' ) ),
+		$this->assertEquals( array( array( 'badaccess-group0' ),
+				array( 'namespaceprotected', 'User', 'bogus' ) ),
 			$this->title->getUserPermissionsErrors( 'bogus', $this->user ) );
 
 		$this->setTitle( NS_MEDIAWIKI );
@@ -630,7 +643,8 @@ class TitlePermissionTest extends MediaWikiLangTestCase {
 
 		$this->assertEquals( false,
 			$this->title->userCan( 'bogus', $this->user ) );
-		$this->assertEquals( array( array( "cascadeprotected", 2, "* [[:Bogus]]\n* [[:UnBogus]]\n", 'bogus' ),
+		$this->assertEquals( array(
+				array( "cascadeprotected", 2, "* [[:Bogus]]\n* [[:UnBogus]]\n", 'bogus' ),
 				array( "cascadeprotected", 2, "* [[:Bogus]]\n* [[:UnBogus]]\n", 'bogus' ),
 				array( "cascadeprotected", 2, "* [[:Bogus]]\n* [[:UnBogus]]\n", 'bogus' ) ),
 			$this->title->getUserPermissionsErrors( 'bogus', $this->user ) );
@@ -648,10 +662,10 @@ class TitlePermissionTest extends MediaWikiLangTestCase {
 	public function testActionPermissions() {
 		$this->setUserPerm( array( "createpage" ) );
 		$this->setTitle( NS_MAIN, "test page" );
-		$this->title->mTitleProtection['pt_create_perm'] = '';
-		$this->title->mTitleProtection['pt_user'] = $this->user->getID();
-		$this->title->mTitleProtection['pt_expiry'] = wfGetDB( DB_SLAVE )->getInfinity();
-		$this->title->mTitleProtection['pt_reason'] = 'test';
+		$this->title->mTitleProtection['permission'] = '';
+		$this->title->mTitleProtection['user'] = $this->user->getID();
+		$this->title->mTitleProtection['expiry'] = wfGetDB( DB_SLAVE )->getInfinity();
+		$this->title->mTitleProtection['reason'] = 'test';
 		$this->title->mCascadeRestriction = false;
 
 		$this->assertEquals( array( array( 'titleprotected', 'Useruser', 'test' ) ),
@@ -659,7 +673,7 @@ class TitlePermissionTest extends MediaWikiLangTestCase {
 		$this->assertEquals( false,
 			$this->title->userCan( 'create', $this->user ) );
 
-		$this->title->mTitleProtection['pt_create_perm'] = 'sysop';
+		$this->title->mTitleProtection['permission'] = 'editprotected';
 		$this->setUserPerm( array( 'createpage', 'protect' ) );
 		$this->assertEquals( array( array( 'titleprotected', 'Useruser', 'test' ) ),
 			$this->title->getUserPermissionsErrors( 'create', $this->user ) );

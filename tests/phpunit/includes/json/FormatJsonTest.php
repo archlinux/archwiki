@@ -169,12 +169,30 @@ class FormatJsonTest extends MediaWikiTestCase {
 		$this->assertEquals( $value, $st->getValue() );
 	}
 
+	/**
+	 * Test data for testParseTryFixing.
+	 *
+	 * Some PHP interpreters use json-c rather than the JSON.org cannonical
+	 * parser to avoid being encumbered by the "shall be used for Good, not
+	 * Evil" clause of the JSON.org parser's license. By default, json-c
+	 * parses in a non-strict mode which allows trailing commas for array and
+	 * object delarations among other things, so our JSON_ERROR_SYNTAX rescue
+	 * block is not always triggered. It however isn't lenient in exactly the
+	 * same ways as our TRY_FIXING mode, so the assertions in this test are
+	 * a bit more complicated than they ideally would be:
+	 *
+	 * Optional third argument: true if json-c parses the value without
+	 * intervention, false otherwise. Defaults to true.
+	 *
+	 * Optional fourth argument: expected cannonical JSON serialization of
+	 * json-c parsed result. Defaults to the second argument's value.
+	 */
 	public static function provideParseTryFixing() {
 		return array(
-			array( "[,]", '[]' ),
-			array( "[ , ]", '[]' ),
+			array( "[,]", '[]', false ),
+			array( "[ , ]", '[]', false ),
 			array( "[ , }", false ),
-			array( '[1],', false ),
+			array( '[1],', false, true, '[1]' ),
 			array( "[1,]", '[1]' ),
 			array( "[1\n,]", '[1]' ),
 			array( "[1,\n]", '[1]' ),
@@ -182,24 +200,44 @@ class FormatJsonTest extends MediaWikiTestCase {
 			array( "[1\n,\n]\n", '[1]' ),
 			array( '["a,",]', '["a,"]' ),
 			array( "[[1,]\n,[2,\n],[3\n,]]", '[[1],[2],[3]]' ),
-			array( '[[1,],[2,],[3,]]', false ), // I wish we could parse this, but would need quote parsing
-			array( '[1,,]', false ),
+			// I wish we could parse this, but would need quote parsing
+			array( '[[1,],[2,],[3,]]', false, true, '[[1],[2],[3]]' ),
+			array( '[1,,]', false, false, '[1]' ),
 		);
 	}
 
 	/**
 	 * @dataProvider provideParseTryFixing
 	 * @param string $value
-	 * @param string|bool $expected
+	 * @param string|bool $expected Expected result with strict parser
+	 * @param bool $jsoncParses Will json-c parse this value without TRY_FIXING?
+	 * @param string|bool $expectedJsonc Expected result with lenient parser
+	 * if different from the strict expectation
 	 */
-	public function testParseTryFixing( $value, $expected ) {
+	public function testParseTryFixing(
+		$value, $expected,
+		$jsoncParses = true, $expectedJsonc = null
+	) {
+		// PHP5 results are always expected to have isGood() === false
+		$expectedGoodStatus = false;
+
+		// Check to see if json parser allows trailing commas
+		if ( json_decode( '[1,]' ) !== null ) {
+			// Use json-c specific expected result if provided
+			$expected = ( $expectedJsonc === null ) ? $expected : $expectedJsonc;
+			// If json-c parses the value natively, expect isGood() === true
+			$expectedGoodStatus = $jsoncParses;
+		}
+
 		$st = FormatJson::parse( $value, FormatJson::TRY_FIXING );
 		$this->assertType( 'Status', $st );
 		if ( $expected === false ) {
-			$this->assertFalse( $st->isOK() );
+			$this->assertFalse( $st->isOK(), 'Expected isOK() == false' );
 		} else {
-			$this->assertFalse( $st->isGood() );
-			$this->assertTrue( $st->isOK() );
+			$this->assertSame( $expectedGoodStatus, $st->isGood(),
+				'Expected isGood() == ' . ( $expectedGoodStatus ? 'true' : 'false' )
+			);
+			$this->assertTrue( $st->isOK(), 'Expected isOK == true' );
 			$val = FormatJson::encode( $st->getValue(), false, FormatJson::ALL_OK );
 			$this->assertEquals( $expected, $val );
 		}
@@ -220,6 +258,64 @@ class FormatJsonTest extends MediaWikiTestCase {
 		$st = FormatJson::parse( $value );
 		$this->assertType( 'Status', $st );
 		$this->assertFalse( $st->isOK() );
+	}
+
+	public function provideStripComments() {
+		return array(
+			array( '{"a":"b"}', '{"a":"b"}' ),
+			array( "{\"a\":\"b\"}\n", "{\"a\":\"b\"}\n" ),
+			array( '/*c*/{"c":"b"}', '{"c":"b"}' ),
+			array( '{"a":"c"}/*c*/', '{"a":"c"}' ),
+			array( '/*c//d*/{"c":"b"}', '{"c":"b"}' ),
+			array( '{/*c*/"c":"b"}', '{"c":"b"}' ),
+			array( "/*\nc\r\n*/{\"c\":\"b\"}", '{"c":"b"}' ),
+			array( "//c\n{\"c\":\"b\"}", '{"c":"b"}' ),
+			array( "//c\r\n{\"c\":\"b\"}", '{"c":"b"}' ),
+			array( '{"a":"c"}//c', '{"a":"c"}' ),
+			array( "{\"a-c\"://c\n\"b\"}", '{"a-c":"b"}' ),
+			array( '{"/*a":"b"}', '{"/*a":"b"}' ),
+			array( '{"a":"//b"}', '{"a":"//b"}' ),
+			array( '{"a":"b/*c*/"}', '{"a":"b/*c*/"}' ),
+			array( "{\"\\\"/*a\":\"b\"}", "{\"\\\"/*a\":\"b\"}" ),
+			array( '', '' ),
+			array( '/*c', '' ),
+			array( '//c', '' ),
+			array( '"http://example.com"', '"http://example.com"' ),
+			array( "\0", "\0" ),
+			array( '"Blåbærsyltetøy"', '"Blåbærsyltetøy"' ),
+		);
+	}
+
+	/**
+	 * @covers FormatJson::stripComments
+	 * @dataProvider provideStripComments
+	 * @param string $json
+	 * @param string $expect
+	 */
+	public function testStripComments( $json, $expect ) {
+		$this->assertSame( $expect, FormatJson::stripComments( $json ) );
+	}
+
+	public function provideParseStripComments() {
+		return array(
+			array( '/* blah */true', true ),
+			array( "// blah \ntrue", true ),
+			array( '[ "a" , /* blah */ "b" ]', array( 'a', 'b' ) ),
+		);
+	}
+
+	/**
+	 * @covers FormatJson::parse
+	 * @covers FormatJson::stripComments
+	 * @dataProvider provideParseStripComments
+	 * @param string $json
+	 * @param mixed $expect
+	 */
+	public function testParseStripComments( $json, $expect ) {
+		$st = FormatJson::parse( $json, FormatJson::STRIP_COMMENTS );
+		$this->assertType( 'Status', $st );
+		$this->assertTrue( $st->isGood() );
+		$this->assertEquals( $expect, $st->getValue() );
 	}
 
 	/**

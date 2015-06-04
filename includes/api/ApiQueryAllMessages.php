@@ -146,7 +146,7 @@ class ApiQueryAllMessages extends ApiQueryBase {
 					$messageIsCustomised = isset( $customisedMessages['pages'][$langObj->ucfirst( $message )] );
 					if ( $customised === $messageIsCustomised ) {
 						if ( $customised ) {
-							$a['customised'] = '';
+							$a['customised'] = true;
 						}
 					} else {
 						continue;
@@ -156,7 +156,7 @@ class ApiQueryAllMessages extends ApiQueryBase {
 				$msg = wfMessage( $message, $args )->inLanguage( $langObj );
 
 				if ( !$msg->exists() ) {
-					$a['missing'] = '';
+					$a['missing'] = true;
 				} else {
 					// Check if the parser is enabled:
 					if ( $params['enableparser'] ) {
@@ -165,12 +165,12 @@ class ApiQueryAllMessages extends ApiQueryBase {
 						$msgString = $msg->plain();
 					}
 					if ( !$params['nocontent'] ) {
-						ApiResult::setContent( $a, $msgString );
+						ApiResult::setContentValue( $a, 'content', $msgString );
 					}
 					if ( isset( $prop['default'] ) ) {
 						$default = wfMessage( $message )->inLanguage( $langObj )->useDatabase( false );
 						if ( !$default->exists() ) {
-							$a['defaultmissing'] = '';
+							$a['defaultmissing'] = true;
 						} elseif ( $default->plain() != $msgString ) {
 							$a['default'] = $default->plain();
 						}
@@ -183,7 +183,7 @@ class ApiQueryAllMessages extends ApiQueryBase {
 				}
 			}
 		}
-		$result->setIndexedTagName_internal( array( 'query', $this->getModuleName() ), 'message' );
+		$result->addIndexedTagName( array( 'query', $this->getModuleName() ), 'message' );
 	}
 
 	public function getCacheMode( $params ) {
@@ -235,35 +235,12 @@ class ApiQueryAllMessages extends ApiQueryBase {
 		);
 	}
 
-	public function getParamDescription() {
+	protected function getExamplesMessages() {
 		return array(
-			'messages' => 'Which messages to output. "*" (default) means all messages',
-			'prop' => 'Which properties to get',
-			'enableparser' => array( 'Set to enable parser, will preprocess the wikitext of message',
-				'Will substitute magic words, handle templates etc.' ),
-			'nocontent' => 'If set, do not include the content of the messages in the output.',
-			'includelocal' => array( "Also include local messages, i.e. messages that don't exist in the software but do exist as a MediaWiki: page.",
-				"This lists all MediaWiki: pages, so it will also list those that aren't 'really' messages such as Common.js",
-			),
-			'title' => 'Page name to use as context when parsing message (for enableparser option)',
-			'args' => 'Arguments to be substituted into message',
-			'prefix' => 'Return messages with this prefix',
-			'filter' => 'Return only messages with names that contain this string',
-			'customised' => 'Return only messages in this customisation state',
-			'lang' => 'Return messages in this language',
-			'from' => 'Return messages starting at this message',
-			'to' => 'Return messages ending at this message',
-		);
-	}
-
-	public function getDescription() {
-		return 'Return messages from this site.';
-	}
-
-	public function getExamples() {
-		return array(
-			'api.php?action=query&meta=allmessages&amprefix=ipb-',
-			'api.php?action=query&meta=allmessages&ammessages=august|mainpage&amlang=de',
+			'action=query&meta=allmessages&amprefix=ipb-'
+				=> 'apihelp-query+allmessages-example-ipb',
+			'action=query&meta=allmessages&ammessages=august|mainpage&amlang=de'
+				=> 'apihelp-query+allmessages-example-de',
 		);
 	}
 

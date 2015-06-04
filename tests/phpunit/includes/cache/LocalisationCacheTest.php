@@ -7,18 +7,32 @@
  */
 class LocalisationCacheTest extends MediaWikiTestCase {
 	protected function setUp() {
-		global $IP;
-
 		parent::setUp();
 		$this->setMwGlobals( array(
-			'wgMessagesDirs' => array( "$IP/tests/phpunit/data/localisationcache" ),
 			'wgExtensionMessagesFiles' => array(),
 			'wgHooks' => array(),
 		) );
 	}
 
+	/**
+	 * @return PHPUnit_Framework_MockObject_MockObject|LocalisationCache
+	 */
+	protected function getMockLocalisationCache() {
+		global $IP;
+		$lc = $this->getMockBuilder( 'LocalisationCache' )
+			->setConstructorArgs( array( array( 'store' => 'detect' ) ) )
+			->setMethods( array( 'getMessagesDirs' ) )
+			->getMock();
+		$lc->expects( $this->any() )->method( 'getMessagesDirs' )
+			->will( $this->returnValue(
+				array( "$IP/tests/phpunit/data/localisationcache" )
+			) );
+
+		return $lc;
+	}
+
 	public function testPuralRulesFallback() {
-		$cache = new LocalisationCache( array( 'store' => 'detect' ) );
+		$cache = $this->getMockLocalisationCache();
 
 		$this->assertEquals(
 			$cache->getItem( 'ar', 'pluralRules' ),
@@ -46,7 +60,7 @@ class LocalisationCacheTest extends MediaWikiTestCase {
 	}
 
 	public function testRecacheFallbacks() {
-		$lc = new LocalisationCache( array( 'store' => 'detect' ) );
+		$lc = $this->getMockLocalisationCache();
 		$lc->recache( 'uk' );
 		$this->assertEquals(
 			array(
@@ -60,23 +74,25 @@ class LocalisationCacheTest extends MediaWikiTestCase {
 	}
 
 	public function testRecacheFallbacksWithHooks() {
-		global $wgHooks;
-
 		// Use hook to provide updates for messages. This is what the
 		// LocalisationUpdate extension does. See bug 68781.
-		$wgHooks['LocalisationCacheRecacheFallback'][] = function (
-			LocalisationCache $lc,
-			$code,
-			array &$cache
-		) {
-			if ( $code === 'ru' ) {
-				$cache['messages']['present-uk'] = 'ru-override';
-				$cache['messages']['present-ru'] = 'ru-override';
-				$cache['messages']['present-en'] = 'ru-override';
-			}
-		};
+		$this->mergeMwGlobalArrayValue( 'wgHooks', array(
+			'LocalisationCacheRecacheFallback' => array(
+				function (
+					LocalisationCache $lc,
+					$code,
+					array &$cache
+				) {
+					if ( $code === 'ru' ) {
+						$cache['messages']['present-uk'] = 'ru-override';
+						$cache['messages']['present-ru'] = 'ru-override';
+						$cache['messages']['present-en'] = 'ru-override';
+					}
+				}
+			)
+		) );
 
-		$lc = new LocalisationCache( array( 'store' => 'detect' ) );
+		$lc = $this->getMockLocalisationCache();
 		$lc->recache( 'uk' );
 		$this->assertEquals(
 			array(

@@ -1,3 +1,9 @@
 {
-	"skinname-cologneblue": "Кёльнскі смутак"
+	"@metadata": {
+		"authors": [
+			"Red Winged Duck"
+		]
+	},
+	"skinname-cologneblue": "Кёльнскі смутак",
+	"cologneblue-desc": "Лёгкая тэма афармленьня зь мінімальным фарматаваньнем"
 }

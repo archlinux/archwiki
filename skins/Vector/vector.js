@@ -34,11 +34,6 @@ jQuery( function ( $ ) {
 	} );
 
 	/**
-	 * Sidebar
-	 */
-	$( '#mw-panel > .portal:first' ).addClass( 'first' );
-
-	/**
 	 * Collapsible tabs
 	 */
 	var $cactions = $( '#p-cactions' ),
@@ -54,16 +49,16 @@ jQuery( function ( $ ) {
 				$cactions
 					.removeClass( 'emptyPortlet' )
 					.find( 'h3' )
-						.css( 'width', '1px' ).animate( { 'width': originalDropdownWidth }, 'normal' );
+						.css( 'width', '1px' ).animate( { width: originalDropdownWidth }, 'normal' );
 			}
 		} )
 		.bind( 'beforeTabExpand', function () {
 			// If we're removing the last child node right now, hide the dropdown
 			if ( $cactions.find( 'li' ).length === 1 ) {
-				$cactions.find( 'h3' ).animate( { 'width': '1px' }, 'normal', function () {
+				$cactions.find( 'h3' ).animate( { width: '1px' }, 'normal', function () {
 					$( this ).attr( 'style', '' )
 						.parent().addClass( 'emptyPortlet' );
-				});
+				} );
 			}
 		} )
 		.collapsibleTabs( {

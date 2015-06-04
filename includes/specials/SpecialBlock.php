@@ -98,13 +98,16 @@ class SpecialBlock extends FormSpecialPage {
 		$form->setWrapperLegendMsg( 'blockip-legend' );
 		$form->setHeaderText( '' );
 		$form->setSubmitCallback( array( __CLASS__, 'processUIForm' ) );
+		$form->setSubmitDestructive();
 
 		$msg = $this->alreadyBlocked ? 'ipb-change-block' : 'ipbsubmit';
 		$form->setSubmitTextMsg( $msg );
 
+		$this->addHelpLink( 'Help:Blocking users' );
+
 		# Don't need to do anything if the form has been posted
 		if ( !$this->getRequest()->wasPosted() && $this->preErrors ) {
-			$s = HTMLForm::formatErrors( $this->preErrors );
+			$s = $form->formatErrors( $this->preErrors );
 			if ( $s ) {
 				$form->addHeaderText( Html::rawElement(
 					'div',
@@ -135,6 +138,7 @@ class SpecialBlock extends FormSpecialPage {
 				'autofocus' => true,
 				'required' => true,
 				'validation-callback' => array( __CLASS__, 'validateTargetField' ),
+				'cssclass' => 'mw-autocomplete-user', // used by mediawiki.userSuggest
 			),
 			'Expiry' => array(
 				'type' => !count( $suggestedDurations ) ? 'text' : 'selectorother',
@@ -146,6 +150,7 @@ class SpecialBlock extends FormSpecialPage {
 			),
 			'Reason' => array(
 				'type' => 'selectandother',
+				'maxlength' => 255,
 				'label-message' => 'ipbreason',
 				'options-message' => 'ipbreason-dropdown',
 			),
@@ -217,7 +222,7 @@ class SpecialBlock extends FormSpecialPage {
 		$this->maybeAlterFormDefaults( $a );
 
 		// Allow extensions to add more fields
-		wfRunHooks( 'SpecialBlockModifyFormFields', array( $this, &$a ) );
+		Hooks::run( 'SpecialBlockModifyFormFields', array( $this, &$a ) );
 
 		return $a;
 	}
@@ -232,6 +237,14 @@ class SpecialBlock extends FormSpecialPage {
 	protected function maybeAlterFormDefaults( &$fields ) {
 		# This will be overwritten by request data
 		$fields['Target']['default'] = (string)$this->target;
+
+		if ( $this->target ) {
+			$status = self::validateTarget( $this->target, $this->getUser() );
+			if ( !$status->isOK() ) {
+				$errors = $status->getErrorsArray();
+				$this->preErrors = array_merge( $this->preErrors, $errors );
+			}
+		}
 
 		# This won't be
 		$fields['PreviousTarget']['default'] = (string)$this->target;
@@ -307,14 +320,14 @@ class SpecialBlock extends FormSpecialPage {
 	 * @return string
 	 */
 	protected function preText() {
-		$this->getOutput()->addModules( 'mediawiki.special.block' );
+		$this->getOutput()->addModules( array( 'mediawiki.special.block', 'mediawiki.userSuggest' ) );
 
 		$text = $this->msg( 'blockiptext' )->parse();
 
 		$otherBlockMessages = array();
 		if ( $this->target !== null ) {
 			# Get other blocks, i.e. from GlobalBlocking or TorBlock extension
-			wfRunHooks( 'OtherBlockLogLink', array( &$otherBlockMessages, $this->target ) );
+			Hooks::run( 'OtherBlockLogLink', array( &$otherBlockMessages, $this->target ) );
 
 			if ( count( $otherBlockMessages ) ) {
 				$s = Html::rawElement(
@@ -623,7 +636,7 @@ class SpecialBlock extends FormSpecialPage {
 			# permission anyway, although the code does allow for it.
 			# Note: Important to use $target instead of $data['Target']
 			# since both $data['PreviousTarget'] and $target are normalized
-			# but $data['target'] gets overriden by (non-normalized) request variable
+			# but $data['target'] gets overridden by (non-normalized) request variable
 			# from previous request.
 			if ( $target === $performer->getName() &&
 				( $data['PreviousTarget'] !== $target || !$data['Confirm'] )
@@ -668,7 +681,7 @@ class SpecialBlock extends FormSpecialPage {
 			# Recheck params here...
 			if ( $type != Block::TYPE_USER ) {
 				$data['HideUser'] = false; # IP users should not be hidden
-			} elseif ( !in_array( $data['Expiry'], array( 'infinite', 'infinity', 'indefinite' ) ) ) {
+			} elseif ( !wfIsInfinity( $data['Expiry'] ) ) {
 				# Bad expiry.
 				return array( 'ipb_expiry_temp' );
 			} elseif ( $wgHideUserContribLimit !== false
@@ -698,7 +711,7 @@ class SpecialBlock extends FormSpecialPage {
 		$block->mHideName = $data['HideUser'];
 
 		$reason = array( 'hookaborted' );
-		if ( !wfRunHooks( 'BlockIp', array( &$block, &$performer, &$reason ) ) ) {
+		if ( !Hooks::run( 'BlockIp', array( &$block, &$performer, &$reason ) ) ) {
 			return $reason;
 		}
 
@@ -759,7 +772,7 @@ class SpecialBlock extends FormSpecialPage {
 			$logaction = 'block';
 		}
 
-		wfRunHooks( 'BlockIpComplete', array( $block, $performer ) );
+		Hooks::run( 'BlockIpComplete', array( $block, $performer ) );
 
 		# Set *_deleted fields if requested
 		if ( $data['HideUser'] ) {
@@ -781,22 +794,21 @@ class SpecialBlock extends FormSpecialPage {
 
 		# Prepare log parameters
 		$logParams = array();
-		$logParams[] = $data['Expiry'];
-		$logParams[] = self::blockLogFlags( $data, $type );
+		$logParams['5::duration'] = $data['Expiry'];
+		$logParams['6::flags'] = self::blockLogFlags( $data, $type );
 
 		# Make log entry, if the name is hidden, put it in the oversight log
 		$log_type = $data['HideUser'] ? 'suppress' : 'block';
-		$log = new LogPage( $log_type );
-		$log_id = $log->addEntry(
-			$logaction,
-			Title::makeTitle( NS_USER, $target ),
-			$data['Reason'][0],
-			$logParams,
-			$performer
-		);
+		$logEntry = new ManualLogEntry( $log_type, $logaction );
+		$logEntry->setTarget( Title::makeTitle( NS_USER, $target ) );
+		$logEntry->setComment( $data['Reason'][0] );
+		$logEntry->setPerformer( $performer );
+		$logEntry->setParameters( $logParams );
 		# Relate log ID to block IDs (bug 25763)
 		$blockIds = array_merge( array( $status['id'] ), $status['autoIds'] );
-		$log->addRelations( 'ipb_id', $blockIds, $log_id );
+		$logEntry->setRelations( array( 'ipb_id' => $blockIds ) );
+		$logId = $logEntry->insert();
+		$logEntry->publish( $logId );
 
 		# Report to the user
 		return true;
@@ -826,7 +838,7 @@ class SpecialBlock extends FormSpecialPage {
 			}
 
 			list( $show, $value ) = explode( ':', $option );
-			$a[htmlspecialchars( $show )] = htmlspecialchars( $value );
+			$a[$show] = $value;
 		}
 
 		return $a;
@@ -844,7 +856,7 @@ class SpecialBlock extends FormSpecialPage {
 			$infinity = wfGetDB( DB_SLAVE )->getInfinity();
 		}
 
-		if ( $expiry == 'infinite' || $expiry == 'indefinite' ) {
+		if ( wfIsInfinity( $expiry ) ) {
 			$expiry = $infinity;
 		} else {
 			$expiry = strtotime( $expiry );

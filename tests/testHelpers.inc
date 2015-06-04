@@ -471,7 +471,7 @@ class TestFileIterator implements Iterator {
 		$hooksResult = $this->delayedParserTest->unleash( $this->parserTest );
 		if ( !$hooksResult ) {
 			# Some hook reported an issue. Abort.
-			throw new MWException( "Problem running hook" );
+			throw new MWException( "Problem running requested parser hook from the test file" );
 		}
 
 		$this->test = array(
@@ -558,7 +558,7 @@ class TestFileIterator implements Iterator {
 						$line = trim( $line );
 
 						if ( $line ) {
-							$delayedParserTest->requireTransparentHook( $line );
+							$this->delayedParserTest->requireTransparentHook( $line );
 						}
 					}
 
@@ -618,6 +618,7 @@ class TestFileIterator implements Iterator {
 	 * @param bool $fatal True iff an exception should be thrown if
 	 * the section is not found.
 	 * @return bool|string
+	 * @throws MWException
 	 */
 	private function checkSection( $tokens, $fatal = true ) {
 		if ( is_null( $this->section ) ) {
@@ -691,6 +692,7 @@ class DelayedParserTest {
 	 * Should be the case if we found the parserTest is not disabled
 	 * @param ParserTest|NewParserTest $parserTest
 	 * @return bool
+	 * @throws MWException
 	 */
 	public function unleash( &$parserTest ) {
 		if ( !( $parserTest instanceof ParserTest || $parserTest instanceof NewParserTest )	) {
@@ -805,7 +807,7 @@ class TidySupport {
 		global $wgTidyBin;
 
 		$this->internalTidy = extension_loaded( 'tidy' ) &&
-			class_exists( 'tidy' );
+			class_exists( 'tidy' ) && !wfIsHHVM();
 
 		$this->externalTidy = is_executable( $wgTidyBin ) ||
 			Installer::locateExecutableInDefaultPaths( array( $wgTidyBin ) )

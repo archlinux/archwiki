@@ -156,9 +156,29 @@
 		];
 
 	QUnit.module( 'jquery.tablesorter', QUnit.newMwEnvironment( {
+		setup: function () {
+			this.liveMonths = mw.language.months;
+			mw.language.months = {
+				'keys': {
+					'names': ['january', 'february', 'march', 'april', 'may_long', 'june',
+						'july', 'august', 'september', 'october', 'november', 'december'],
+					'genitive': ['january-gen', 'february-gen', 'march-gen', 'april-gen', 'may-gen', 'june-gen',
+						'july-gen', 'august-gen', 'september-gen', 'october-gen', 'november-gen', 'december-gen'],
+					'abbrev': ['jan', 'feb', 'mar', 'apr', 'may', 'jun',
+						'jul', 'aug', 'sep', 'oct', 'nov', 'dec']
+				},
+				'names': ['January', 'February', 'March', 'April', 'May', 'June',
+						'July', 'August', 'September', 'October', 'November', 'December'],
+				'genitive': ['January', 'February', 'March', 'April', 'May', 'June',
+						'July', 'August', 'September', 'October', 'November', 'December'],
+				'abbrev': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+						'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+			};
+		},
+		teardown: function () {
+			mw.language.months = this.liveMonths;
+		},
 		config: {
-			wgMonthNames: ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-			wgMonthNamesShort: ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
 			wgDefaultDateFormat: 'dmy',
 			wgSeparatorTransformTable: ['', ''],
 			wgDigitTransformTable: ['', ''],
@@ -1160,11 +1180,11 @@
 				'</table>'
 		);
 		$table.tablesorter();
-		assert.equal( $table.find( '#A2' ).prop( 'headerIndex' ),
+		assert.equal( $table.find( '#A2' ).data( 'headerIndex' ),
 			undefined,
 			'A2 should not be a sort header'
 		);
-		assert.equal( $table.find( '#C1' ).prop( 'headerIndex' ),
+		assert.equal( $table.find( '#C1' ).data( 'headerIndex' ),
 			2,
 			'C1 should be a sort header'
 		);
@@ -1181,11 +1201,11 @@
 				'</table>'
 		);
 		$table.tablesorter();
-		assert.equal( $table.find( '#C2' ).prop( 'headerIndex' ),
+		assert.equal( $table.find( '#C2' ).data( 'headerIndex' ),
 			2,
 			'C2 should be a sort header'
 		);
-		assert.equal( $table.find( '#C1' ).prop( 'headerIndex' ),
+		assert.equal( $table.find( '#C1' ).data( 'headerIndex' ),
 			undefined,
 			'C1 should not be a sort header'
 		);
@@ -1209,18 +1229,19 @@
 	// bug 53211 - exploding rowspans in more complex cases
 	QUnit.test(
 		'Rowspan exploding with row headers and colspans', 1, function ( assert ) {
-		var $table = $( '<table class="sortable">' +
-			'<thead><tr><th rowspan="2">n</th><th colspan="2">foo</th><th rowspan="2">baz</th></tr>' +
-			'<tr><th>foo</th><th>bar</th></tr></thead>' +
-			'<tbody>' +
-			'<tr><td>1</td><td>foo</td><td>bar</td><td>baz</td></tr>' +
-			'<tr><td>2</td><td>foo</td><td>bar</td><td>baz</td></tr>' +
-			'</tbody></table>' );
+			var $table = $( '<table class="sortable">' +
+				'<thead><tr><th rowspan="2">n</th><th colspan="2">foo</th><th rowspan="2">baz</th></tr>' +
+				'<tr><th>foo</th><th>bar</th></tr></thead>' +
+				'<tbody>' +
+				'<tr><td>1</td><td>foo</td><td>bar</td><td>baz</td></tr>' +
+				'<tr><td>2</td><td>foo</td><td>bar</td><td>baz</td></tr>' +
+				'</tbody></table>' );
 
 			$table.tablesorter();
-			assert.equal( $table.find( 'tr:eq(1) th:eq(1)').prop('headerIndex'),
+			assert.equal( $table.find( 'tr:eq(1) th:eq(1)').data('headerIndex'),
 				2,
-				'Incorrect index of sort header' );
+				'Incorrect index of sort header'
+			);
 		}
 	);
 

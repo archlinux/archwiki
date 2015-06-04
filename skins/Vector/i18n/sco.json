@@ -6,6 +6,7 @@
 			"Omnipaedista"
 		]
 	},
+	"vector-skin-desc": "Modern version o MonoBook wi ae fresh luik n monie uisabeelitie impruivments",
 	"vector-action-addsection": "Eik topic",
 	"vector-action-delete": "Delyte",
 	"vector-action-move": "Muiv",
@@ -16,5 +17,6 @@
 	"vector-view-edit": "Eedit",
 	"vector-view-history": "See histerie",
 	"vector-view-view": "Read",
-	"vector-view-viewsource": "See Soorce"
+	"vector-view-viewsource": "See Soorce",
+	"vector-more-actions": "Mair"
 }

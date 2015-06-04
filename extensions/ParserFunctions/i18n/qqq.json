@@ -6,10 +6,11 @@
 			"Meno25",
 			"Shirayuki",
 			"Siebrand",
-			"The Evil IP address"
+			"The Evil IP address",
+			"Umherirrender"
 		]
 	},
-	"pfunc_desc": "{{desc|name=Parser Functions|url=http://www.mediawiki.org/wiki/Extension:ParserFunctions}}",
+	"pfunc_desc": "{{desc|name=Parser Functions|url=https://www.mediawiki.org/wiki/Extension:ParserFunctions}}",
 	"pfunc_time_error": "Used as error message about DateTime object, so this \"time\" means \"date and time\".\n\nSee also:\n* {{msg-mw|Pfunc time too long}}\n* {{msg-mw|Pfunc time too big}}\n* {{msg-mw|Pfunc time too small}}",
 	"pfunc_time_too_long": "Used as error message.\n\nSee also:\n* {{msg-mw|Pfunc time error}}\n* {{msg-mw|Pfunc time too big}}\n* {{msg-mw|Pfunc time too small}}",
 	"pfunc_time_too_big": "Used as error message.\n\nSee also:\n* {{msg-mw|Pfunc time error}}\n* {{msg-mw|Pfunc time too long}}\n* {{msg-mw|Pfunc time too small}}",

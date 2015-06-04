@@ -18,8 +18,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-require_once 'ApiQueryContinueTestBase.php';
-
 /**
  * @group API
  * @group Database
@@ -62,7 +60,8 @@ class ApiQueryContinue2Test extends ApiQueryContinueTestBase {
 			);
 		};
 		// generator + 1 prop + 1 list
-		$data = $this->query( $mk( 99, 99, true ), 1, 'g1p', false );
+		$data = $this->query( $mk( 99, 99, true ), 1, 'g1p', false ) +
+			array( 'batchcomplete' => true );
 		$this->checkC( $data, $mk( 1, 1, true ), 6, 'g1p-11t' );
 		$this->checkC( $data, $mk( 2, 2, true ), 3, 'g1p-22t' );
 		$this->checkC( $data, $mk( 1, 1, false ), 6, 'g1p-11f' );

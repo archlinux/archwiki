@@ -3,10 +3,13 @@
 		"authors": [
 			"Holek",
 			"Matma Rex",
-			"Sp5uhe"
+			"Sp5uhe",
+			"VerMa"
 		]
 	},
 	"pdf-desc": "Konwerter graficznego podglądu plików PDF",
+	"pdf-file-page-warning-footer": "Ten problem nie dotyczy tylko tego pliku, lecz formatu PDF w ogóle.",
+	"pdf-file-page-warning-info": "Dowiedz się więcej o tym problemie.",
 	"pdf_no_metadata": "nie można pobrać metadanych z pliku PDF",
 	"pdf_page_error": "Numer strony poza zakresem",
 	"exif-pdf-producer": "Program użyty do konwersji",

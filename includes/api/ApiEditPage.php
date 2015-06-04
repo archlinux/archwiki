@@ -28,7 +28,9 @@
  * A module that allows for editing and creating pages.
  *
  * Currently, this wraps around the EditPage class in an ugly way,
- * EditPage.php should be rewritten to provide a cleaner interface
+ * EditPage.php should be rewritten to provide a cleaner interface,
+ * see T20654 if you're inspired to fix this.
+ *
  * @ingroup API
  */
 class ApiEditPage extends ApiBase {
@@ -48,8 +50,12 @@ class ApiEditPage extends ApiBase {
 		$apiResult = $this->getResult();
 
 		if ( $params['redirect'] ) {
-			if ( $params['prependtext'] === null && $params['appendtext'] === null && $params['section'] !== 'new' ) {
-				$this->dieUsage( 'You have attempted to edit using the "redirect"-following mode, which must be used in conjuction with section=new, prependtext, or appendtext.', 'redirect-appendonly' );
+			if ( $params['prependtext'] === null && $params['appendtext'] === null
+				&& $params['section'] !== 'new'
+			) {
+				$this->dieUsage( 'You have attempted to edit using the "redirect"-following'
+					. ' mode, which must be used in conjuction with section=new, prependtext'
+					. ', or appendtext.', 'redirect-appendonly' );
 			}
 			if ( $titleObj->isRedirect() ) {
 				$oldTitle = $titleObj;
@@ -76,7 +82,7 @@ class ApiEditPage extends ApiBase {
 					$titleObj = $newTitle;
 				}
 
-				$apiResult->setIndexedTagName( $redirValues, 'r' );
+				ApiResult::setIndexedTagName( $redirValues, 'r' );
 				$apiResult->addValue( null, 'redirects', $redirValues );
 
 				// Since the page changed, update $pageObj
@@ -195,9 +201,9 @@ class ApiEditPage extends ApiBase {
 					list( $params['undo'], $params['undoafter'] ) =
 						array( $params['undoafter'], $params['undo'] );
 				}
-				$undoafterRev = Revision::newFromID( $params['undoafter'] );
+				$undoafterRev = Revision::newFromId( $params['undoafter'] );
 			}
-			$undoRev = Revision::newFromID( $params['undo'] );
+			$undoRev = Revision::newFromId( $params['undo'] );
 			if ( is_null( $undoRev ) || $undoRev->isDeleted( Revision::DELETED_TEXT ) ) {
 				$this->dieUsageMsg( array( 'nosuchrevid', $params['undo'] ) );
 			}
@@ -252,8 +258,10 @@ class ApiEditPage extends ApiBase {
 			'format' => $contentFormat,
 			'model' => $contentHandler->getModelID(),
 			'wpEditToken' => $params['token'],
-			'wpIgnoreBlankSummary' => '',
-			'wpIgnoreBlankArticle' => true
+			'wpIgnoreBlankSummary' => true,
+			'wpIgnoreBlankArticle' => true,
+			'wpIgnoreSelfRedirect' => true,
+			'bot' => $params['bot'],
 		);
 
 		if ( !is_null( $params['summary'] ) ) {
@@ -294,10 +302,13 @@ class ApiEditPage extends ApiBase {
 		if ( !is_null( $params['section'] ) ) {
 			$section = $params['section'];
 			if ( !preg_match( '/^((T-)?\d+|new)$/', $section ) ) {
-				$this->dieUsage( "The section parameter must be a valid section id or 'new'", "invalidsection" );
+				$this->dieUsage( "The section parameter must be a valid section id or 'new'",
+					"invalidsection" );
 			}
 			$content = $pageObj->getContent();
-			if ( $section !== '0' && $section != 'new' && ( !$content || !$content->getSection( $section ) ) ) {
+			if ( $section !== '0' && $section != 'new'
+				&& ( !$content || !$content->getSection( $section ) )
+			) {
 				$this->dieUsage( "There is no section {$section}.", 'nosuchsection' );
 			}
 			$requestArray['wpSection'] = $params['section'];
@@ -318,6 +329,15 @@ class ApiEditPage extends ApiBase {
 
 		if ( $watch ) {
 			$requestArray['wpWatchthis'] = '';
+		}
+
+		// Apply change tags
+		if ( count( $params['tags'] ) ) {
+			if ( $user->isAllowed( 'applychangetags' ) ) {
+				$requestArray['wpChangeTags'] = implode( ',', $params['tags'] );
+			} else {
+				$this->dieUsage( 'You don\'t have permission to set change tags.', 'taggingnotallowed' );
+			}
 		}
 
 		// Pass through anything else we might have been given, to support extensions
@@ -381,7 +401,7 @@ class ApiEditPage extends ApiBase {
 		// Run hooks
 		// Handle APIEditBeforeSave parameters
 		$r = array();
-		if ( !wfRunHooks( 'APIEditBeforeSave', array( $ep, $content, &$r ) ) ) {
+		if ( !Hooks::run( 'APIEditBeforeSave', array( $ep, $content, &$r ) ) ) {
 			if ( count( $r ) ) {
 				$r['result'] = 'Failure';
 				$apiResult->addValue( null, $this->getModuleName(), $r );
@@ -400,13 +420,20 @@ class ApiEditPage extends ApiBase {
 		$oldRequest = $wgRequest;
 		$wgRequest = $req;
 
-		$status = $ep->internalAttemptSave( $result, $user->isAllowed( 'bot' ) && $params['bot'] );
+		$status = $ep->attemptSave( $result );
 		$wgRequest = $oldRequest;
 
 		switch ( $status->value ) {
 			case EditPage::AS_HOOK_ERROR:
 			case EditPage::AS_HOOK_ERROR_EXPECTED:
-				$this->dieUsageMsg( 'hookaborted' );
+				if ( isset( $status->apiHookResult ) ) {
+					$r = $status->apiHookResult;
+					$r['result'] = 'Failure';
+					$apiResult->addValue( null, $this->getModuleName(), $r );
+					return;
+				} else {
+					$this->dieUsageMsg( 'hookaborted' );
+				}
 
 			case EditPage::AS_PARSE_ERROR:
 				$this->dieUsage( $status->getMessage(), 'parseerror' );
@@ -454,12 +481,14 @@ class ApiEditPage extends ApiBase {
 			case EditPage::AS_CONFLICT_DETECTED:
 				$this->dieUsageMsg( 'editconflict' );
 
-			// case EditPage::AS_SUMMARY_NEEDED: Can't happen since we set wpIgnoreBlankSummary
 			case EditPage::AS_TEXTBOX_EMPTY:
 				$this->dieUsageMsg( 'emptynewsection' );
 
+			case EditPage::AS_CHANGE_TAG_ERROR:
+				$this->dieStatus( $status );
+
 			case EditPage::AS_SUCCESS_NEW_ARTICLE:
-				$r['new'] = '';
+				$r['new'] = true;
 				// fall-through
 
 			case EditPage::AS_SUCCESS_UPDATE:
@@ -469,7 +498,7 @@ class ApiEditPage extends ApiBase {
 				$r['contentmodel'] = $titleObj->getContentModel();
 				$newRevId = $articleObject->getLatest();
 				if ( $newRevId == $oldRevId ) {
-					$r['nochange'] = '';
+					$r['nochange'] = true;
 				} else {
 					$r['oldrevid'] = intval( $oldRevId );
 					$r['newrevid'] = intval( $newRevId );
@@ -479,6 +508,7 @@ class ApiEditPage extends ApiBase {
 				break;
 
 			case EditPage::AS_SUMMARY_NEEDED:
+				// Shouldn't happen since we set wpIgnoreBlankSummary, but just in case
 				$this->dieUsageMsg( 'summaryrequired' );
 
 			case EditPage::AS_END:
@@ -499,10 +529,6 @@ class ApiEditPage extends ApiBase {
 		return true;
 	}
 
-	public function getDescription() {
-		return 'Create and edit pages.';
-	}
-
 	public function getAllowedParams() {
 		return array(
 			'title' => array(
@@ -517,6 +543,10 @@ class ApiEditPage extends ApiBase {
 			),
 			'text' => null,
 			'summary' => null,
+			'tags' => array(
+				ApiBase::PARAM_TYPE => ChangeTags::listExplicitlyDefinedTags(),
+				ApiBase::PARAM_ISMULTI => true,
+			),
 			'minor' => false,
 			'notminor' => false,
 			'bot' => false,
@@ -560,58 +590,11 @@ class ApiEditPage extends ApiBase {
 			),
 			'contentmodel' => array(
 				ApiBase::PARAM_TYPE => ContentHandler::getContentModels(),
-			)
-		);
-	}
-
-	public function getParamDescription() {
-		$p = $this->getModulePrefix();
-
-		return array(
-			'title' => "Title of the page you want to edit. Cannot be used together with {$p}pageid",
-			'pageid' => "Page ID of the page you want to edit. Cannot be used together with {$p}title",
-			'section' => 'Section number. 0 for the top section, \'new\' for a new section',
-			'sectiontitle' => 'The title for a new section',
-			'text' => 'Page content',
+			),
 			'token' => array(
-				/* Standard description is automatically prepended */
-				'The token should always be sent as the last parameter, or at ' .
-					"least, after the {$p}text parameter"
+				// Standard definition automatically inserted
+				ApiBase::PARAM_HELP_MSG_APPEND => array( 'apihelp-edit-param-token' ),
 			),
-			'summary'
-				=> "Edit summary. Also section title when {$p}section=new and {$p}sectiontitle is not set",
-			'minor' => 'Minor edit',
-			'notminor' => 'Non-minor edit',
-			'bot' => 'Mark this edit as bot',
-			'basetimestamp' => array(
-				'Timestamp of the base revision (obtained through prop=revisions&rvprop=timestamp).',
-				'Used to detect edit conflicts; leave unset to ignore conflicts'
-			),
-			'starttimestamp' => array(
-				'Timestamp when you began the editing process, e.g. when the current page content ' .
-					'was loaded for editing.',
-				'Used to detect edit conflicts; leave unset to ignore conflicts'
-			),
-			'recreate' => 'Override any errors about the article having been deleted in the meantime',
-			'createonly' => 'Don\'t edit the page if it exists already',
-			'nocreate' => 'Throw an error if the page doesn\'t exist',
-			'watch' => 'Add the page to your watchlist',
-			'unwatch' => 'Remove the page from your watchlist',
-			'watchlist' => 'Unconditionally add or remove the page from your ' .
-				'watchlist, use preferences or do not change watch',
-			'md5' => array(
-				"The MD5 hash of the {$p}text parameter, or the {$p}prependtext " .
-					"and {$p}appendtext parameters concatenated.",
-				'If set, the edit won\'t be done unless the hash is correct'
-			),
-			'prependtext' => "Add this text to the beginning of the page. Overrides {$p}text",
-			'appendtext' => array( "Add this text to the end of the page. Overrides {$p}text.",
-				"Use {$p}section=new to append a new section" ),
-			'undo' => "Undo this revision. Overrides {$p}text, {$p}prependtext and {$p}appendtext",
-			'undoafter' => 'Undo all revisions from undo to this one. If not set, just undo one revision',
-			'redirect' => 'Automatically resolve redirects',
-			'contentformat' => 'Content serialization format used for the input text',
-			'contentmodel' => 'Content model of the new content',
 		);
 	}
 
@@ -619,17 +602,17 @@ class ApiEditPage extends ApiBase {
 		return 'csrf';
 	}
 
-	public function getExamples() {
+	protected function getExamplesMessages() {
 		return array(
-			'api.php?action=edit&title=Test&summary=test%20summary&' .
-			'text=article%20content&basetimestamp=20070824123454&token=%2B\\'
-				=> 'Edit a page (anonymous user)',
-			'api.php?action=edit&title=Test&summary=NOTOC&minor=&' .
-				'prependtext=__NOTOC__%0A&basetimestamp=20070824123454&token=%2B\\'
-				=> 'Prepend __NOTOC__ to a page (anonymous user)',
-			'api.php?action=edit&title=Test&undo=13585&undoafter=13579&' .
-				'basetimestamp=20070824123454&token=%2B\\'
-				=> 'Undo r13579 through r13585 with autosummary (anonymous user)',
+			'action=edit&title=Test&summary=test%20summary&' .
+				'text=article%20content&basetimestamp=2007-08-24T12:34:54Z&token=123ABC'
+				=> 'apihelp-edit-example-edit',
+			'action=edit&title=Test&summary=NOTOC&minor=&' .
+				'prependtext=__NOTOC__%0A&basetimestamp=2007-08-24T12:34:54Z&token=123ABC'
+				=> 'apihelp-edit-example-prepend',
+			'action=edit&title=Test&undo=13585&undoafter=13579&' .
+				'basetimestamp=2007-08-24T12:34:54Z&token=123ABC'
+				=> 'apihelp-edit-example-undo',
 		);
 	}
 

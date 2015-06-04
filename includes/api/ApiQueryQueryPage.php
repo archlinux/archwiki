@@ -68,9 +68,9 @@ class ApiQueryQueryPage extends ApiQueryGeneratorBase {
 		$r = array( 'name' => $params['page'] );
 		if ( $qp->isCached() ) {
 			if ( !$qp->isCacheable() ) {
-				$r['disabled'] = '';
+				$r['disabled'] = true;
 			} else {
-				$r['cached'] = '';
+				$r['cached'] = true;
 				$ts = $qp->getCachedTimestamp();
 				if ( $ts ) {
 					$r['cachedtimestamp'] = wfTimestamp( TS_ISO_8601, $ts );
@@ -119,7 +119,7 @@ class ApiQueryQueryPage extends ApiQueryGeneratorBase {
 			}
 		}
 		if ( is_null( $resultPageSet ) ) {
-			$result->setIndexedTagName_internal(
+			$result->addIndexedTagName(
 				array( 'query', $this->getModuleName(), 'results' ),
 				'page'
 			);
@@ -144,7 +144,10 @@ class ApiQueryQueryPage extends ApiQueryGeneratorBase {
 				ApiBase::PARAM_TYPE => array_keys( $this->qpMap ),
 				ApiBase::PARAM_REQUIRED => true
 			),
-			'offset' => 0,
+			'offset' => array(
+				ApiBase::PARAM_DFLT => 0,
+				ApiBase::PARAM_HELP_MSG => 'api-help-param-continue',
+			),
 			'limit' => array(
 				ApiBase::PARAM_DFLT => 10,
 				ApiBase::PARAM_TYPE => 'limit',
@@ -155,21 +158,10 @@ class ApiQueryQueryPage extends ApiQueryGeneratorBase {
 		);
 	}
 
-	public function getParamDescription() {
+	protected function getExamplesMessages() {
 		return array(
-			'page' => 'The name of the special page. Note, this is case sensitive',
-			'offset' => 'When more results are available, use this to continue',
-			'limit' => 'Number of results to return',
-		);
-	}
-
-	public function getDescription() {
-		return 'Get a list provided by a QueryPage-based special page.';
-	}
-
-	public function getExamples() {
-		return array(
-			'api.php?action=query&list=querypage&qppage=Ancientpages'
+			'action=query&list=querypage&qppage=Ancientpages'
+				=> 'apihelp-query+querypage-example-ancientpages',
 		);
 	}
 

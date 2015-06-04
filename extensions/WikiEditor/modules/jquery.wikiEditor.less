@@ -1,0 +1,134 @@
+@import "mediawiki.mixins";
+
+/*
+ * CSS for WikiEditor jQuery plugin
+ */
+
+.wikiEditor-ui {
+	position: relative;
+	clear: both;
+	width: 100%;
+	background-color: #E0EEf7;
+
+	textarea {
+		width: 100%;
+		border: 0;
+
+		&:focus {
+			outline: none;
+		}
+	}
+
+	.wikiEditor-ui-clear {
+		clear: both;
+	}
+
+	.wikiEditor-ui-view {
+		border: 1px solid silver;
+	}
+
+	.wikiEditor-ui-top {
+		position: relative;
+		border-bottom: 1px solid silver;
+	}
+
+	.wikiEditor-ui-left {
+		float: left;
+		width: 100%;
+	}
+
+	.wikiEditor-ui-right {
+		float: right;
+		background: #F3F3F3;
+		overflow: hidden;
+	}
+}
+
+.wikiEditor-wikitext {
+	float: left;
+	width: 100%;
+}
+
+.wikiEditor-ui-controls {
+	float: left;
+	width: 100%;
+	background-color: white;
+}
+
+.wikiEditor-ui-tabs {
+	float: left;
+	height: 2.5em;
+	margin-right: -1px;
+	background-color: white;
+	border-left: 1px solid silver;
+	border-top: 1px solid silver;
+
+	div {
+		float: left;
+		height: 2.5em;
+		background-color: #f3f3f3;
+		border-right: 1px solid silver;
+		border-bottom: 1px solid silver;
+
+		a {
+			display: inline-block;
+			padding: 0 0.75em;
+			line-height: 2.5em;
+			color: #0645AD;
+		}
+
+		&.current {
+			border-bottom: 1px solid white;
+			background-color: white;
+
+			a {
+				color: #333333;
+
+				&:hover {
+					text-decoration: none;
+				}
+			}
+		}
+	}
+}
+
+.wikiEditor-ui-buttons {
+	float: right;
+	height: 2.5em;
+	margin-right: -1px;
+	background-color: white;
+	padding-left: 1em;
+	border-top: 1px solid white;
+
+	button {
+		margin-left: 0.5em;
+	}
+}
+
+.wikiEditor-view-wikitext {
+	line-height: 1em;
+}
+
+.wikiEditor-ui-loading {
+	background: #f3f3f3;
+	border: 1px solid silver;
+	left: 0;
+	height: 100%;
+	margin: -1px;
+	position: absolute;
+	text-align: center;
+	top: 0;
+	width: 100%;
+	z-index: 10;
+
+	span {
+		display: block;
+		height: 24px;
+		width: 24px;
+		.background-image('images/toolbar/loading.gif');
+		background-position: 0 0;
+		background-repeat: no-repeat;
+		text-indent: -9999px;
+		margin: 0 auto;
+	}
+}

@@ -10,12 +10,13 @@
 			"Siebrand",
 			"The Evil IP address",
 			"Umherirrender",
-			"Yekrats"
+			"Yekrats",
+			"Liuxinyu970226"
 		]
 	},
 	"nuke": "{{doc-special|Nuke}}\nThe Nuke extension allows for sysops to delete a large number of pages (\"Mass delete\").\nFor more information, see http://www.mediawiki.org/wiki/Extension:Nuke\n{{Identical|Mass delete}}",
 	"action-nuke": "{{doc-action|nuke}}",
-	"nuke-desc": "{{desc|name=Nuke|url=http://www.mediawiki.org/wiki/Extension:Nuke}}\nThe Nuke extension allows for sysops to delete a large number of pages (\"Mass delete\").",
+	"nuke-desc": "{{desc|name=Nuke|url=https://www.mediawiki.org/wiki/Extension:Nuke}}\nThe Nuke extension allows for sysops to delete a large number of pages (\"Mass delete\").",
 	"nuke-nopages": "Used if there are no pages to delete and the username is not empty.\n\nParameters:\n* $1 - a username\n\nSee also:\n* {{msg-mw|Nuke-nopages-global}}",
 	"nuke-list": "This message refers to:\n* the comment (reason) field which has the label {{msg-mw|deletecomment}}\n* the button labeled {{msg-mw|nuke-submit-delete}}.\nParameters:\n* $1 - username\nSee also:\n* {{msg-mw|Nuke-list-multiple}}",
 	"nuke-list-multiple": "This message refers to:\n* the comment (reason) field which has the label {{msg-mw|deletecomment}}\n* the button labeled {{msg-mw|nuke-submit-delete}}.\nSee also:\n* {{msg-mw|Nuke-list}}",
@@ -23,6 +24,7 @@
 	"nuke-multiplepeople": "Reason for deletion in logs, when pages created by multiple users were deleted.\n\n{{msg-mw|nuke-defaultreason}} is used when pages created by only 1 user are deleted.",
 	"nuke-tools": "Used as intro text for the Nuke (mass deletion) form.",
 	"nuke-submit-user": "{{Identical|Go}}",
+	"nuke-toggleinvert": "Used to invert checkbox selection.\n{{Identical|Invert}}",
 	"nuke-submit-delete": "Submit button to delete the selected pages.",
 	"right-nuke": "{{doc-right|nuke}}",
 	"nuke-select": "Parameters:\n* $1 - two links: {{msg-mw|Powersearch-toggleall}} and {{msg-mw|Powersearch-togglenone}} which respectively selects all pages and de-selects all\npages\n{{Identical|Select}}",

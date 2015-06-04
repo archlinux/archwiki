@@ -25,5 +25,6 @@
 	"titleblacklist-override": "Ohita mustan listan merkinnät",
 	"right-tboverride": "Ohittaa sivunimien tai käyttäjänimien musta lista",
 	"right-tboverride-account": "Ohittaa käyttäjänimien musta lista",
-	"right-titleblacklistlog": "Tarkastella nimien mustan listan lokia"
+	"right-titleblacklistlog": "Tarkastella nimien mustan listan lokia",
+	"apihelp-titleblacklist-example-2": "Tarkista, onko [[Bar]] on mustalla listalla muokkausta varten"
 }

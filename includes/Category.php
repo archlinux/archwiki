@@ -60,8 +60,6 @@ class Category {
 			return true;
 		}
 
-		wfProfileIn( __METHOD__ );
-
 		$dbr = wfGetDB( DB_SLAVE );
 		$row = $dbr->selectRow(
 			'category',
@@ -69,8 +67,6 @@ class Category {
 			$where,
 			__METHOD__
 		);
-
-		wfProfileOut( __METHOD__ );
 
 		if ( !$row ) {
 			# Okay, there were no contents.  Nothing to initialize.
@@ -258,7 +254,6 @@ class Category {
 	 * @return TitleArray TitleArray object for category members.
 	 */
 	public function getMembers( $limit = false, $offset = '' ) {
-		wfProfileIn( __METHOD__ );
 
 		$dbr = wfGetDB( DB_SLAVE );
 
@@ -283,8 +278,6 @@ class Category {
 				$options
 			)
 		);
-
-		wfProfileOut( __METHOD__ );
 
 		return $result;
 	}
@@ -317,8 +310,6 @@ class Category {
 				return false;
 			}
 		}
-
-		wfProfileIn( __METHOD__ );
 
 		$dbw = wfGetDB( DB_MASTER );
 		$dbw->startAtomic( __METHOD__ );
@@ -362,8 +353,6 @@ class Category {
 			__METHOD__
 		);
 		$dbw->endAtomic( __METHOD__ );
-
-		wfProfileOut( __METHOD__ );
 
 		# Now we should update our local counts.
 		$this->mPages = $result->pages;

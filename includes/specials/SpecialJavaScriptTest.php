@@ -150,12 +150,11 @@ class SpecialJavaScriptTest extends SpecialPage {
 	 */
 	private function viewQUnit() {
 		$out = $this->getOutput();
-		$testConfig = $this->getConfig()->get( 'JavaScriptTestConfig' );
 
 		$modules = $out->getResourceLoader()->getTestModuleNames( 'qunit' );
 
 		$summary = $this->msg( 'javascripttest-qunit-intro' )
-			->params( $testConfig['qunit']['documentation'] )
+			->params( 'https://www.mediawiki.org/wiki/Manual:JavaScript_unit_testing' )
 			->parseAsBlock();
 
 		$baseHtml = <<<HTML
@@ -163,13 +162,6 @@ class SpecialJavaScriptTest extends SpecialPage {
 <div id="qunit"></div>
 </div>
 HTML;
-
-		// Used in ./tests/qunit/data/testrunner.js, see also documentation of
-		// $wgJavaScriptTestConfig in DefaultSettings.php
-		$out->addJsConfigVars(
-			'QUnitTestSwarmInjectJSPath',
-			$testConfig['qunit']['testswarm-injectjs']
-		);
 
 		$out->addHtml( $this->wrapSummaryHtml( $summary ) . $baseHtml );
 
@@ -200,7 +192,6 @@ HTML;
 	 */
 	private function exportQUnit() {
 		$out = $this->getOutput();
-
 		$out->disable();
 
 		$rl = $out->getResourceLoader();
@@ -251,9 +242,13 @@ HTML;
 			'debug' => ResourceLoader::inDebugMode() ? 'true' : 'false',
 		) );
 
-		$styles = $out->makeResourceLoaderLink( 'jquery.qunit', ResourceLoaderModule::TYPE_STYLES, false );
+		$styles = $out->makeResourceLoaderLink(
+			'jquery.qunit', ResourceLoaderModule::TYPE_STYLES, false
+		);
 		// Use 'raw' since this is a plain HTML page without ResourceLoader
-		$scripts = $out->makeResourceLoaderLink( 'jquery.qunit', ResourceLoaderModule::TYPE_SCRIPTS, false, array( 'raw' => 'true' ) );
+		$scripts = $out->makeResourceLoaderLink(
+			'jquery.qunit', ResourceLoaderModule::TYPE_SCRIPTS, false, array( 'raw' => 'true' )
+		);
 
 		$head = trim( $styles['html'] . $scripts['html'] );
 		$html = <<<HTML
@@ -269,18 +264,12 @@ HTML;
 	}
 
 	/**
-	 * Return an array of subpages beginning with $search that this special page will accept.
+	 * Return an array of subpages that this special page will accept.
 	 *
-	 * @param string $search Prefix to search for
-	 * @param int $limit Maximum number of results to return
-	 * @return string[] Matching subpages
+	 * @return string[] subpages
 	 */
-	public function prefixSearchSubpages( $search, $limit = 10 ) {
-		return self::prefixSearchArray(
-			$search,
-			$limit,
-			self::$frameworks
-		);
+	public function getSubpagesForPrefixSearch() {
+		return self::$frameworks;
 	}
 
 	protected function getGroupName() {

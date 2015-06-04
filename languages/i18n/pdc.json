@@ -5,7 +5,8 @@
 			"Krinkle",
 			"Shirayuki",
 			"Xqt",
-			"לערי ריינהארט"
+			"לערי ריינהארט",
+			"아라"
 		]
 	},
 	"tog-underline": "Gleecher unnerleine:",
@@ -478,7 +479,6 @@
 	"movethispage": "Blatt ziehe",
 	"pager-newer-n": "{{PLURAL:$1|neegscht|neegscht $1}}",
 	"pager-older-n": "{{PLURAL:$1|letscht|letscht $1}}",
-	"booksources-go": "Uffgucke",
 	"specialloguserlabel": "Yuuser:",
 	"speciallogtitlelabel": "Titel:",
 	"log": "Logbicher",
@@ -520,7 +520,7 @@
 	"unwatchthispage": "Nimmi watsche",
 	"notanarticle": "Ken Blatt",
 	"watchlist-details": "{{PLURAL:$1|$1 Blatt|$1 Bledder}} uff dei Watch-Lischt, ohne Gschwetz-Bledder",
-	"wlshowlast": "Zeig die Enneringe vun de letscht $1 Schtund, $2 Daag odder $3.",
+	"wlshowlast": "Zeig die Enneringe vun de letscht $1 Schtund, $2 Daag odder .",
 	"watching": "Watsche…",
 	"unwatching": "Nimmi watsche...",
 	"enotif_impersonal_salutation": "{{SITENAME}}-Yuuser",
@@ -681,7 +681,6 @@
 	"exif-meteringmode-255": "Naett bekannt",
 	"exif-gaincontrol-0": "Ken",
 	"exif-iimcategory-sci": "Wisseschaft unn Waerkzeichheet‎",
-	"watchlistall2": "all",
 	"namespacesall": "all",
 	"monthsall": "all",
 	"scarytranscludetoolong": "[URL iss zu lang]",
@@ -708,7 +707,7 @@
 	"version-specialpages": "Besunnere Bledder",
 	"version-other": "Anneres",
 	"version-mediahandlers": "Media-Haendlers",
-	"version-version": "(Version $1)",
+	"version-version": "($1)",
 	"version-poweredby-others": "annere",
 	"version-software-version": "Version",
 	"fileduplicatesearch-filename": "Feilnaame:",

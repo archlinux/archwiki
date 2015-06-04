@@ -24,6 +24,11 @@ $specialPageAliases['arz'] = array(
 	'Nuke' => array( 'مسح_كامل' ),
 );
 
+/** Avaric (авар) */
+$specialPageAliases['av'] = array(
+	'Nuke' => array( 'Множественное_удаление' ),
+);
+
 /** Bashkir (башҡортса) */
 $specialPageAliases['ba'] = array(
 	'Nuke' => array( 'Nuke' ),
@@ -76,7 +81,7 @@ $specialPageAliases['fa'] = array(
 
 /** Finnish (suomi) */
 $specialPageAliases['fi'] = array(
-	'Nuke' => array( 'Massapoisto' ),
+	'Nuke' => array( 'Massapoista' ),
 );
 
 /** Galician (galego) */
@@ -162,6 +167,11 @@ $specialPageAliases['lad'] = array(
 /** Luxembourgish (Lëtzebuergesch) */
 $specialPageAliases['lb'] = array(
 	'Nuke' => array( 'Masseläschung' ),
+);
+
+/** لوری (لوری) */
+$specialPageAliases['lrc'] = array(
+	'Nuke' => array( 'اتمی' ),
 );
 
 /** Literary Chinese (文言) */
@@ -262,6 +272,11 @@ $specialPageAliases['uk'] = array(
 /** Vietnamese (Tiếng Việt) */
 $specialPageAliases['vi'] = array(
 	'Nuke' => array( 'Xóa_hàng_loạt', 'Xoá_hàng_loạt' ),
+);
+
+/** Chinese (中文) */
+$specialPageAliases['zh'] = array(
+	'Nuke' => array( '大量删除', '大量刪除' ),
 );
 
 /** Simplified Chinese (中文（简体）‎) */

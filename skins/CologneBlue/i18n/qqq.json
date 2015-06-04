@@ -9,5 +9,5 @@
 	"cologneblue.css": "{{optional}}",
 	"cologneblue.js": "{{optional}}",
 	"skinname-cologneblue": "{{optional}}",
-	"cologneblue-desc": "Used in [[Special:Version]], description of Cologne Blue skin."
+	"cologneblue-desc": "{{desc|what=skin|name=Cologne Blue|url=https://www.mediawiki.org/wiki/Skin:Cologne_Blue}}"
 }

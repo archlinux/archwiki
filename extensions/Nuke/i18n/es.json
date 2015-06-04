@@ -13,7 +13,8 @@
 			"Platonides",
 			"Ralgis",
 			"Remember the dot",
-			"Sanbec"
+			"Sanbec",
+			"Macofe"
 		]
 	},
 	"nuke": "Borrado en masa",
@@ -26,6 +27,7 @@
 	"nuke-multiplepeople": "Eliminación masiva de páginas nuevas de múltiples usuarios",
 	"nuke-tools": "Esta herramienta permite borrados masivos de páginas creadas recientemente por un usuario o una dirección IP.\nIntroduzca el nombre de usuario o la dirección IP para obtener la lista de páginas a borrar, o déjelo en blanco para todos los usuarios.",
 	"nuke-submit-user": "Ir",
+	"nuke-toggleinvert": "Invertir",
 	"nuke-submit-delete": "Borrar lo seleccionado",
 	"right-nuke": "Borrar páginas masivamente",
 	"nuke-select": "Seleccionar: $1",

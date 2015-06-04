@@ -3,10 +3,12 @@
 		"authors": [
 			"Nedergard",
 			"Nike",
-			"Str4nd"
+			"Str4nd",
+			"McSalama"
 		]
 	},
 	"modern.css": "/* Tämä sivu sisältää Moderni-ulkoasua muuttavia tyylejä. */",
 	"modern.js": "/* Tämän sivun JavaScript-koodi liitetään Moderni-tyyliin */",
-	"skinname-modern": "Moderni"
+	"skinname-modern": "Moderni",
+	"modern-desc": "Siniharmaa teema sivu- ja yläpalkilla. Muunnettu MonoBookista"
 }

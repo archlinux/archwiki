@@ -36,11 +36,16 @@
 .button-colors(@bgColor) {
 	background: @bgColor;
 
-	&:hover,
-	&:focus {
+	&:hover {
 		// The inner bottom bevel should match the active background color.
 		box-shadow: 0 1px rgba(0, 0, 0, 10%), inset 0 -3px rgba(0, 0, 0, 20%);
 		border-bottom-color: mix(#000, @bgColor, 20%);
+	}
+
+	&:focus {
+		border-color: rgba(0,0,0,0.2);
+		box-shadow: inset 0 0 0 1px rgba(0,0,0,0.2);
+
 		outline: none;
 		// remove outline in Firefox
 		&::-moz-focus-inner {
@@ -62,6 +67,13 @@
 	color: @colorButtonText;
 	border: 1px solid @colorGray12;
 
+	&:hover,
+	&:active,
+	&:visited {
+		// make sure that is isn't inheriting from a general rule
+		color: @colorButtonText;
+	}
+
 	&:disabled {
 		color: @colorDisabledText;
 
@@ -77,16 +89,13 @@
 .button-colors(@bgColor) when (lightness(@bgColor) < 70%) {
 	color: #fff;
 	// border of the same color as background so that light background and
-	// dark background buttons are the same height (only top and bottom to
-	// make box shadow on hover cover the corners too)
+	// dark background buttons are the same height and width
 	border: 1px solid @bgColor;
-	border-left: none;
-	border-right: none;
 	text-shadow: 0 1px rgba(0, 0, 0, .1);
 
 	&:disabled {
-		background: @colorGray12;
-		border-color: @colorGray12;
+		background: @colorGray13;
+		border-color: @colorGray13;
 
 		// make sure disabled buttons don't have hover and active states
 		&:hover,
@@ -104,9 +113,7 @@
 
 	&:hover,
 	&:focus {
-		// lessphp doesn't implement tint, see above
-		// color: tint(@textColor, 20%);
-		color: mix(#fff, @textColor, 20%);
+		color: @textColor;
 	}
 
 	&:active,

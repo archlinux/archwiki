@@ -69,7 +69,7 @@ class WikiExporter {
 	 * @return string
 	 */
 	public static function schemaVersion() {
-		return "0.9";
+		return "0.10";
 	}
 
 	/**
@@ -213,7 +213,6 @@ class WikiExporter {
 	 * @param array $cond
 	 */
 	protected function do_list_authors( $cond ) {
-		wfProfileIn( __METHOD__ );
 		$this->author_list = "<contributors>";
 		// rev_deleted
 
@@ -239,7 +238,6 @@ class WikiExporter {
 				"</contributor>";
 		}
 		$this->author_list .= "</contributors>";
-		wfProfileOut( __METHOD__ );
 	}
 
 	/**
@@ -248,7 +246,6 @@ class WikiExporter {
 	 * @throws Exception
 	 */
 	protected function dumpFrom( $cond = '' ) {
-		wfProfileIn( __METHOD__ );
 		# For logging dumps...
 		if ( $this->history & self::LOGS ) {
 			$where = array( 'user_id = log_user' );
@@ -304,7 +301,6 @@ class WikiExporter {
 				}
 
 				// Inform caller about problem
-				wfProfileOut( __METHOD__ );
 				throw $e;
 			}
 		# For page dumps...
@@ -348,8 +344,7 @@ class WikiExporter {
 				# Default JOIN, to be overridden...
 				$join['revision'] = array( 'INNER JOIN', 'page_id=rev_page AND page_latest=rev_id' );
 				# One, and only one hook should set this, and return false
-				if ( wfRunHooks( 'WikiExporter::dumpStableQuery', array( &$tables, &$opts, &$join ) ) ) {
-					wfProfileOut( __METHOD__ );
+				if ( Hooks::run( 'WikiExporter::dumpStableQuery', array( &$tables, &$opts, &$join ) ) ) {
 					throw new MWException( __METHOD__ . " given invalid history dump type." );
 				}
 			} elseif ( $this->history & WikiExporter::RANGE ) {
@@ -358,7 +353,6 @@ class WikiExporter {
 				$opts['ORDER BY'] = array( 'rev_page ASC', 'rev_id ASC' );
 			} else {
 				# Unknown history specification parameter?
-				wfProfileOut( __METHOD__ );
 				throw new MWException( __METHOD__ . " given invalid history dump type." );
 			}
 			# Query optimization hacks
@@ -378,7 +372,7 @@ class WikiExporter {
 
 			$result = null; // Assuring $result is not undefined, if exception occurs early
 			try {
-				wfRunHooks( 'ModifyExportQuery',
+				Hooks::run( 'ModifyExportQuery',
 						array( $this->db, &$tables, &$cond, &$opts, &$join ) );
 
 				# Do the query!
@@ -417,7 +411,6 @@ class WikiExporter {
 				throw $e;
 			}
 		}
-		wfProfileOut( __METHOD__ );
 	}
 
 	/**
@@ -479,16 +472,6 @@ class WikiExporter {
  * @ingroup Dump
  */
 class XmlDumpWriter {
-	/**
-	 * Returns the export schema version.
-	 * @deprecated since 1.20; use WikiExporter::schemaVersion() instead
-	 * @return string
-	 */
-	function schemaVersion() {
-		wfDeprecated( __METHOD__, '1.20' );
-		return WikiExporter::schemaVersion();
-	}
-
 	/**
 	 * Opens the XML output stream's root "<mediawiki>" element.
 	 * This does not include an xml directive, so is safe to include
@@ -637,7 +620,7 @@ class XmlDumpWriter {
 				strval( $row->page_restrictions ) ) . "\n";
 		}
 
-		wfRunHooks( 'XmlDumpWriterOpenPage', array( $this, &$out, $row, $title ) );
+		Hooks::run( 'XmlDumpWriterOpenPage', array( $this, &$out, $row, $title ) );
 
 		return $out;
 	}
@@ -661,7 +644,6 @@ class XmlDumpWriter {
 	 * @access private
 	 */
 	function writeRevision( $row ) {
-		wfProfileIn( __METHOD__ );
 
 		$out = "    <revision>\n";
 		$out .= "      " . Xml::element( 'id', null, strval( $row->rev_id ) ) . "\n";
@@ -703,6 +685,9 @@ class XmlDumpWriter {
 			$content_format = $content_handler->getDefaultFormat();
 		}
 
+		$out .= "      " . Xml::element( 'model', null, strval( $content_model ) ) . "\n";
+		$out .= "      " . Xml::element( 'format', null, strval( $content_format ) ) . "\n";
+
 		$text = '';
 		if ( isset( $row->rev_deleted ) && ( $row->rev_deleted & Revision::DELETED_TEXT ) ) {
 			$out .= "      " . Xml::element( 'text', array( 'deleted' => 'deleted' ) ) . "\n";
@@ -729,14 +714,10 @@ class XmlDumpWriter {
 			$out .= "      <sha1/>\n";
 		}
 
-		$out .= "      " . Xml::element( 'model', null, strval( $content_model ) ) . "\n";
-		$out .= "      " . Xml::element( 'format', null, strval( $content_format ) ) . "\n";
-
-		wfRunHooks( 'XmlDumpWriterWriteRevision', array( &$this, &$out, $row, $text ) );
+		Hooks::run( 'XmlDumpWriterWriteRevision', array( &$this, &$out, $row, $text ) );
 
 		$out .= "    </revision>\n";
 
-		wfProfileOut( __METHOD__ );
 		return $out;
 	}
 
@@ -749,7 +730,6 @@ class XmlDumpWriter {
 	 * @access private
 	 */
 	function writeLogItem( $row ) {
-		wfProfileIn( __METHOD__ );
 
 		$out = "  <logitem>\n";
 		$out .= "    " . Xml::element( 'id', null, strval( $row->log_id ) ) . "\n";
@@ -783,7 +763,6 @@ class XmlDumpWriter {
 
 		$out .= "  </logitem>\n";
 
-		wfProfileOut( __METHOD__ );
 		return $out;
 	}
 

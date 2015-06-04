@@ -75,21 +75,28 @@ abstract class FormSpecialPage extends SpecialPage {
 	}
 
 	/**
+	 * Get display format for the form. See HTMLForm documentation for available values.
+	 *
+	 * @since 1.25
+	 * @return string
+	 */
+	protected function getDisplayFormat() {
+		return 'table';
+	}
+
+	/**
 	 * Get the HTMLForm to control behavior
 	 * @return HTMLForm|null
 	 */
 	protected function getForm() {
-		$this->fields = $this->getFormFields();
-
-		$form = new HTMLForm( $this->fields, $this->getContext(), $this->getMessagePrefix() );
+		$form = HTMLForm::factory(
+			$this->getDisplayFormat(),
+			$this->getFormFields(),
+			$this->getContext(),
+			$this->getMessagePrefix()
+		);
 		$form->setSubmitCallback( array( $this, 'onSubmit' ) );
-		// If the form is a compact vertical form, then don't output this ugly
-		// fieldset surrounding it.
-		// XXX Special pages can setDisplayFormat to 'vform' in alterForm(), but that
-		// is called after this.
-		if ( !$form->isVForm() ) {
-			$form->setWrapperLegendMsg( $this->getMessagePrefix() . '-legend' );
-		}
+		$form->setWrapperLegendMsg( $this->getMessagePrefix() . '-legend' );
 
 		$headerMsg = $this->msg( $this->getMessagePrefix() . '-text' );
 		if ( !$headerMsg->isDisabled() ) {
@@ -106,7 +113,7 @@ abstract class FormSpecialPage extends SpecialPage {
 		$this->alterForm( $form );
 
 		// Give hooks a chance to alter the form, adding extra fields or text etc
-		wfRunHooks( 'SpecialPageBeforeFormDisplay', array( $this->getName(), &$form ) );
+		Hooks::run( 'SpecialPageBeforeFormDisplay', array( $this->getName(), &$form ) );
 
 		return $form;
 	}

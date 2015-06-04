@@ -23,7 +23,6 @@ div#column-one,
 #toc.tochidden,
 div#f-poweredbyico,
 div#f-copyrightico,
-li#viewcount,
 li#about,
 li#disclaimer,
 li#mobileview,
@@ -35,6 +34,7 @@ span.mw-filepage-other-resolutions,
 #filetoc,
 .usermessage,
 .patrollink,
+.ns-0 .mw-redirectedfrom,
 #mw-navigation,
 #siteNotice {
 	display: none;
@@ -203,6 +203,7 @@ a.stub {
 /**
  * Floating divs
  */
+/* @noflip */
 div.floatright {
 	float: right;
 	clear: right;
@@ -214,6 +215,7 @@ div.floatright p {
 	font-style: italic;
 }
 
+/* @noflip */
 div.floatleft {
 	float: left;
 	clear: left;
@@ -320,44 +322,6 @@ div.gallerytext {
 	font-size: 94%;
 	padding: 2px 4px;
 	word-wrap: break-word;
-}
-
-/**
- * Diff rendering
- */
-table.diff {
-	background: white;
-}
-
-td.diff-otitle {
-	background: #ffffff;
-}
-
-td.diff-ntitle {
-	background: #ffffff;
-}
-
-td.diff-addedline {
-	background: #ccffcc;
-	font-size: smaller;
-	border: solid 2px black;
-}
-
-td.diff-deletedline {
-	background: #ffffaa;
-	font-size: smaller;
-	border: dotted 2px black;
-}
-
-td.diff-context {
-	background: #eeeeee;
-	font-size: smaller;
-}
-
-.diffchange {
-	color: silver;
-	font-weight: bold;
-	text-decoration: underline;
 }
 
 /**

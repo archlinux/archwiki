@@ -3,7 +3,6 @@
 /**
  * @covers Action
  *
- * @licence GNU GPL v2+
  * @author Thiemo Mättig
  *
  * @group Action
@@ -20,7 +19,7 @@ class ActionTest extends MediaWikiTestCase {
 			'disabled' => false,
 			'view' => true,
 			'edit' => true,
-			'revisiondelete' => true,
+			'revisiondelete' => 'SpecialPageAction',
 			'dummy' => true,
 			'string' => 'NamedDummyAction',
 			'declared' => 'NonExistingClassName',
@@ -115,6 +114,15 @@ class ActionTest extends MediaWikiTestCase {
 		$actionName = Action::getActionName( $context );
 
 		$this->assertEquals( 'revisiondelete', $actionName );
+	}
+
+	public function testGetActionName_whenCanNotUseWikiPage_defaultsToView() {
+		$request = new FauxRequest( array( 'action' => 'edit' ) );
+		$context = new DerivativeContext( RequestContext::getMain() );
+		$context->setRequest( $request );
+		$actionName = Action::getActionName( $context );
+
+		$this->assertEquals( 'view', $actionName );
 	}
 
 	/**

@@ -56,7 +56,7 @@ class SpecialNewpages extends IncludableSpecialPage {
 		$opts->add( 'invert', false );
 
 		$this->customFilters = array();
-		wfRunHooks( 'SpecialNewPagesFilters', array( $this, &$this->customFilters ) );
+		Hooks::run( 'SpecialNewPagesFilters', array( $this, &$this->customFilters ) );
 		foreach ( $this->customFilters as $key => $params ) {
 			$opts->add( $key, $params['default'] );
 		}
@@ -126,6 +126,8 @@ class SpecialNewpages extends IncludableSpecialPage {
 
 		$this->showNavigation = !$this->including(); // Maybe changed in setup
 		$this->setup( $par );
+
+		$this->addHelpLink( 'Help:New pages' );
 
 		if ( !$this->including() ) {
 			// Settings
@@ -198,6 +200,9 @@ class SpecialNewpages extends IncludableSpecialPage {
 	}
 
 	protected function form() {
+		$out = $this->getOutput();
+		$out->addModules( 'mediawiki.userSuggest' );
+
 		// Consume values
 		$this->opts->consumeValue( 'offset' ); // don't carry offset, DWIW
 		$namespace = $this->opts->consumeValue( 'namespace' );
@@ -216,72 +221,62 @@ class SpecialNewpages extends IncludableSpecialPage {
 		}
 		$hidden = implode( "\n", $hidden );
 
-		$tagFilter = ChangeTags::buildTagFilterSelector( $tagFilterVal );
-		if ( $tagFilter ) {
-			list( $tagFilterLabel, $tagFilterSelector ) = $tagFilter;
-		}
+		$form = array(
+			'namespace' => array(
+				'type' => 'namespaceselect',
+				'name' => 'namespace',
+				'label-message' => 'namespace',
+				'default' => $namespace,
+			),
+			'nsinvert' => array(
+				'type' => 'check',
+				'name' => 'invert',
+				'label-message' => 'invert',
+				'default' => $nsinvert,
+				'tooltip' => $this->msg( 'tooltip-invert' )->text(),
+			),
+			'tagFilter' => array(
+				'type' => 'tagfilter',
+				'name' => 'tagfilter',
+				'label-raw' => $this->msg( 'tag-filter' )->parse(),
+				'default' => $tagFilterVal,
+			),
+			'username' => array(
+				'type' => 'text',
+				'name' => 'username',
+				'label-message' => 'newpages-username',
+				'default' => $userText,
+				'id' => 'mw-np-username',
+				'size' => 30,
+				'cssclass' => 'mw-autocomplete-user', // used by mediawiki.userSuggest
+			),
+		);
 
-		$form = Xml::openElement( 'form', array( 'action' => wfScript() ) ) .
-			Html::hidden( 'title', $this->getPageTitle()->getPrefixedDBkey() ) .
-			Xml::fieldset( $this->msg( 'newpages' )->text() ) .
-			Xml::openElement( 'table', array( 'id' => 'mw-newpages-table' ) ) .
-			'<tr>
-				<td class="mw-label">' .
-			Xml::label( $this->msg( 'namespace' )->text(), 'namespace' ) .
-			'</td>
-			<td class="mw-input">' .
-			Html::namespaceSelector(
-				array(
-					'selected' => $namespace,
-					'all' => 'all',
-				), array(
-					'name' => 'namespace',
-					'id' => 'namespace',
-					'class' => 'namespaceselector',
-				)
-			) . '&#160;' .
-			Xml::checkLabel(
-				$this->msg( 'invert' )->text(),
-				'invert',
-				'nsinvert',
-				$nsinvert,
-				array( 'title' => $this->msg( 'tooltip-invert' )->text() )
+		$htmlForm = new HTMLForm( $form, $this->getContext() );
+
+		$htmlForm->setSubmitText( $this->msg( 'allpagessubmit' )->text() );
+		$htmlForm->setSubmitProgressive();
+		// The form should be visible on each request (inclusive requests with submitted forms), so
+		// return always false here.
+		$htmlForm->setSubmitCallback(
+			function () {
+				return false;
+			}
+		);
+		$htmlForm->setMethod( 'get' );
+
+		$out->addHtml( Xml::fieldset( $this->msg( 'newpages' )->text() ) );
+
+		$htmlForm->show();
+
+		$out->addHtml(
+			Html::rawElement(
+				'div',
+				null,
+				$this->filterLinks()
 			) .
-			'</td>
-			</tr>' . ( $tagFilter ? (
-			'<tr>
-				<td class="mw-label">' .
-				$tagFilterLabel .
-				'</td>
-				<td class="mw-input">' .
-				$tagFilterSelector .
-				'</td>
-			</tr>' ) : '' ) .
-			'<tr>
-				<td class="mw-label">' .
-					Xml::label( $this->msg( 'newpages-username' )->text(), 'mw-np-username' ) .
-					'</td>
-				<td class="mw-input">' .
-					Xml::input( 'username', 30, $userText, array( 'id' => 'mw-np-username' ) ) .
-					'</td>
-			</tr>' .
-			'<tr> <td></td>
-				<td class="mw-submit">' .
-			Xml::submitButton( $this->msg( 'allpagessubmit' )->text() ) .
-			'</td>
-		</tr>' .
-			'<tr>
-				<td></td>
-				<td class="mw-input">' .
-			$this->filterLinks() .
-			'</td>
-			</tr>' .
-			Xml::closeElement( 'table' ) .
-			Xml::closeElement( 'fieldset' ) .
-			$hidden .
-			Xml::closeElement( 'form' );
-
-		$this->getOutput()->addHTML( $form );
+			Xml::closeElement( 'fieldset' )
+		);
 	}
 
 	/**
@@ -340,12 +335,12 @@ class SpecialNewpages extends IncludableSpecialPage {
 		$hist = Html::rawElement( 'span', array( 'class' => 'mw-newpages-history' ),
 			$this->msg( 'parentheses' )->rawParams( $histLink )->escaped() );
 
-		$length = Html::element(
+		$length = Html::rawElement(
 			'span',
 			array( 'class' => 'mw-newpages-length' ),
-			$this->msg( 'brackets' )->params( $this->msg( 'nbytes' )
-				->numParams( $result->length )->text()
-			)
+			$this->msg( 'brackets' )->rawParams(
+				$this->msg( 'nbytes' )->numParams( $result->length )->escaped()
+			)->escaped()
 		);
 
 		$ulink = Linker::revUserTools( $rev );
@@ -555,7 +550,7 @@ class NewPagesPager extends ReverseChronologicalPager {
 		);
 		$join_conds = array( 'page' => array( 'INNER JOIN', 'page_id=rc_cur_id' ) );
 
-		wfRunHooks( 'SpecialNewpagesConditions',
+		Hooks::run( 'SpecialNewpagesConditions',
 			array( &$this, $this->opts, &$conds, &$tables, &$fields, &$join_conds ) );
 
 		$options = array();

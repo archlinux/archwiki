@@ -796,6 +796,9 @@ class WebInstallerName extends WebInstallerPage {
 			) ) .
 			$this->parent->getTextBox( array(
 				'var' => '_AdminEmail',
+				'attribs' => array(
+					'dir' => 'ltr',
+				),
 				'label' => 'config-admin-email',
 				'help' => $this->parent->getHelpBox( 'config-admin-email-help' )
 			) ) .
@@ -1030,14 +1033,15 @@ class WebInstallerOptions extends WebInstallerPage {
 		$skins = $this->parent->findExtensions( 'skins' );
 		$skinHtml = $this->getFieldSetStart( 'config-skins' );
 
-		if ( $skins ) {
-			$skinNames = array_map( 'strtolower', $skins );
+		$skinNames = array_map( 'strtolower', $skins );
+		$chosenSkinName = $this->getVar( 'wgDefaultSkin', $this->parent->getDefaultSkin( $skinNames ) );
 
+		if ( $skins ) {
 			$radioButtons = $this->parent->getRadioElements( array(
 				'var' => 'wgDefaultSkin',
 				'itemLabels' => array_fill_keys( $skinNames, 'config-skins-use-as-default' ),
 				'values' => $skinNames,
-				'value' => $this->getVar( 'wgDefaultSkin', $this->parent->getDefaultSkin( $skinNames ) ),
+				'value' => $chosenSkinName,
 			) );
 
 			foreach ( $skins as $skin ) {
@@ -1052,7 +1056,9 @@ class WebInstallerOptions extends WebInstallerPage {
 					'</div>';
 			}
 		} else {
-			$skinHtml .= $this->parent->getWarningBox( wfMessage( 'config-skins-missing' )->plain() );
+			$skinHtml .=
+				$this->parent->getWarningBox( wfMessage( 'config-skins-missing' )->plain() ) .
+				Html::hidden( 'config_wgDefaultSkin', $chosenSkinName );
 		}
 
 		$skinHtml .= $this->parent->getHelpBox( 'config-skins-help' ) .
@@ -1177,7 +1183,7 @@ class WebInstallerOptions extends WebInstallerPage {
 		) );
 		$styleUrl = $server . dirname( dirname( $this->parent->getUrl() ) ) .
 			'/mw-config/config-cc.css';
-		$iframeUrl = 'http://creativecommons.org/license/?' .
+		$iframeUrl = '//creativecommons.org/license/?' .
 			wfArrayToCgi( array(
 				'partner' => 'MediaWiki',
 				'exit_url' => $exitUrl,
@@ -1284,8 +1290,7 @@ class WebInstallerOptions extends WebInstallerPage {
 
 		$retVal = true;
 
-		if ( !array_key_exists( $this->getVar( '_RightsProfile' ), $this->parent->rightsProfiles )
-		) {
+		if ( !array_key_exists( $this->getVar( '_RightsProfile' ), $this->parent->rightsProfiles ) ) {
 			reset( $this->parent->rightsProfiles );
 			$this->setVar( '_RightsProfile', key( $this->parent->rightsProfiles ) );
 		}
@@ -1461,7 +1466,7 @@ class WebInstallerComplete extends WebInstallerPage {
 			strpos( $_SERVER['HTTP_USER_AGENT'], 'MSIE' ) !== false
 		) {
 			// JS appears to be the only method that works consistently with IE7+
-			$this->addHtml( "\n<script>jQuery( function () { document.location = " .
+			$this->addHtml( "\n<script>jQuery( function () { location.href = " .
 				Xml::encodeJsVar( $lsUrl ) . "; } );</script>\n" );
 		} else {
 			$this->parent->request->response()->header( "Refresh: 0;url=$lsUrl" );

@@ -59,7 +59,7 @@ class ApiQueryUserInfo extends ApiQueryBase {
 		$vals['name'] = $user->getName();
 
 		if ( $user->isAnon() ) {
-			$vals['anon'] = '';
+			$vals['anon'] = true;
 		}
 
 		if ( isset( $this->prop['blockinfo'] ) ) {
@@ -76,36 +76,40 @@ class ApiQueryUserInfo extends ApiQueryBase {
 			}
 		}
 
-		if ( isset( $this->prop['hasmsg'] ) && $user->getNewtalk() ) {
-			$vals['messages'] = '';
+		if ( isset( $this->prop['hasmsg'] ) ) {
+			$vals['messages'] = $user->getNewtalk();
 		}
 
 		if ( isset( $this->prop['groups'] ) ) {
 			$vals['groups'] = $user->getEffectiveGroups();
-			$result->setIndexedTagName( $vals['groups'], 'g' ); // even if empty
+			ApiResult::setArrayType( $vals['groups'], 'array' ); // even if empty
+			ApiResult::setIndexedTagName( $vals['groups'], 'g' ); // even if empty
 		}
 
 		if ( isset( $this->prop['implicitgroups'] ) ) {
 			$vals['implicitgroups'] = $user->getAutomaticGroups();
-			$result->setIndexedTagName( $vals['implicitgroups'], 'g' ); // even if empty
+			ApiResult::setArrayType( $vals['implicitgroups'], 'array' ); // even if empty
+			ApiResult::setIndexedTagName( $vals['implicitgroups'], 'g' ); // even if empty
 		}
 
 		if ( isset( $this->prop['rights'] ) ) {
 			// User::getRights() may return duplicate values, strip them
 			$vals['rights'] = array_values( array_unique( $user->getRights() ) );
-			$result->setIndexedTagName( $vals['rights'], 'r' ); // even if empty
+			ApiResult::setArrayType( $vals['rights'], 'array' ); // even if empty
+			ApiResult::setIndexedTagName( $vals['rights'], 'r' ); // even if empty
 		}
 
 		if ( isset( $this->prop['changeablegroups'] ) ) {
 			$vals['changeablegroups'] = $user->changeableGroups();
-			$result->setIndexedTagName( $vals['changeablegroups']['add'], 'g' );
-			$result->setIndexedTagName( $vals['changeablegroups']['remove'], 'g' );
-			$result->setIndexedTagName( $vals['changeablegroups']['add-self'], 'g' );
-			$result->setIndexedTagName( $vals['changeablegroups']['remove-self'], 'g' );
+			ApiResult::setIndexedTagName( $vals['changeablegroups']['add'], 'g' );
+			ApiResult::setIndexedTagName( $vals['changeablegroups']['remove'], 'g' );
+			ApiResult::setIndexedTagName( $vals['changeablegroups']['add-self'], 'g' );
+			ApiResult::setIndexedTagName( $vals['changeablegroups']['remove-self'], 'g' );
 		}
 
 		if ( isset( $this->prop['options'] ) ) {
 			$vals['options'] = $user->getOptions();
+			$vals['options'][ApiResult::META_BC_BOOLS] = array_keys( $vals['options'] );
 		}
 
 		if ( isset( $this->prop['preferencestoken'] ) ) {
@@ -115,7 +119,7 @@ class ApiQueryUserInfo extends ApiQueryBase {
 			);
 		}
 		if ( isset( $this->prop['preferencestoken'] ) &&
-			is_null( $this->getMain()->getRequest()->getVal( 'callback' ) ) &&
+			!$this->lacksSameOriginSecurity() &&
 			$user->isAllowed( 'editmyoptions' )
 		) {
 			$vals['preferencestoken'] = $user->getEditToken( '', $this->getMain()->getRequest() );
@@ -157,19 +161,19 @@ class ApiQueryUserInfo extends ApiQueryBase {
 			$acceptLang = array();
 			foreach ( $langs as $lang => $val ) {
 				$r = array( 'q' => $val );
-				ApiResult::setContent( $r, $lang );
+				ApiResult::setContentValue( $r, 'code', $lang );
 				$acceptLang[] = $r;
 			}
-			$result->setIndexedTagName( $acceptLang, 'lang' );
+			ApiResult::setIndexedTagName( $acceptLang, 'lang' );
 			$vals['acceptlang'] = $acceptLang;
 		}
 
 		if ( isset( $this->prop['unreadcount'] ) ) {
 			$dbr = $this->getQuery()->getNamedDB( 'watchlist', DB_SLAVE, 'watchlist' );
 
-			$sql = $dbr->selectSQLText(
+			$count = $dbr->selectRowCount(
 				'watchlist',
-				array( 'dummy' => 1 ),
+				'1',
 				array(
 					'wl_user' => $user->getId(),
 					'wl_notificationtimestamp IS NOT NULL',
@@ -177,12 +181,11 @@ class ApiQueryUserInfo extends ApiQueryBase {
 				__METHOD__,
 				array( 'LIMIT' => self::WL_UNREAD_LIMIT )
 			);
-			$count = $dbr->selectField( array( 'c' => "($sql)" ), 'COUNT(*)' );
 
 			if ( $count >= self::WL_UNREAD_LIMIT ) {
 				$vals['unreadcount'] = self::WL_UNREAD_LIMIT . '+';
 			} else {
-				$vals['unreadcount'] = (int)$count;
+				$vals['unreadcount'] = $count;
 			}
 		}
 
@@ -190,9 +193,13 @@ class ApiQueryUserInfo extends ApiQueryBase {
 	}
 
 	protected function getRateLimits() {
+		$retval = array(
+			ApiResult::META_TYPE => 'assoc',
+		);
+
 		$user = $this->getUser();
 		if ( !$user->isPingLimitable() ) {
-			return array(); // No limits
+			return $retval; // No limits
 		}
 
 		// Find out which categories we belong to
@@ -212,7 +219,6 @@ class ApiQueryUserInfo extends ApiQueryBase {
 		$categories = array_merge( $categories, $user->getGroups() );
 
 		// Now get the actual limits
-		$retval = array();
 		foreach ( $this->getConfig()->get( 'RateLimits' ) as $action => $limits ) {
 			foreach ( $categories as $cat ) {
 				if ( isset( $limits[$cat] ) && !is_null( $limits[$cat] ) ) {
@@ -246,45 +252,22 @@ class ApiQueryUserInfo extends ApiQueryBase {
 					'acceptlang',
 					'registrationdate',
 					'unreadcount',
-				)
+				),
+				ApiBase::PARAM_HELP_MSG => array(
+					'apihelp-query+userinfo-param-prop',
+					self::WL_UNREAD_LIMIT - 1,
+					self::WL_UNREAD_LIMIT . '+',
+				),
 			)
 		);
 	}
 
-	public function getParamDescription() {
+	protected function getExamplesMessages() {
 		return array(
-			'prop' => array(
-				'What pieces of information to include',
-				'  blockinfo        - Tags if the current user is blocked, by whom, and for what reason',
-				'  hasmsg           - Adds a tag "message" if the current user has pending messages',
-				'  groups           - Lists all the groups the current user belongs to',
-				'  implicitgroups   - Lists all the groups the current user is automatically a member of',
-				'  rights           - Lists all the rights the current user has',
-				'  changeablegroups - Lists the groups the current user can add to and remove from',
-				'  options          - Lists all preferences the current user has set',
-				'  preferencestoken - DEPRECATED! Get a token to change current user\'s preferences',
-				'  editcount        - Adds the current user\'s edit count',
-				'  ratelimits       - Lists all rate limits applying to the current user',
-				'  realname         - Adds the user\'s real name',
-				'  email            - Adds the user\'s email address and email authentication date',
-				'  acceptlang       - Echoes the Accept-Language header sent by ' .
-					'the client in a structured format',
-				'  registrationdate - Adds the user\'s registration date',
-				'  unreadcount      - Adds the count of unread pages on the user\'s watchlist ' .
-					'(maximum ' . ( self::WL_UNREAD_LIMIT - 1 ) . '; returns "' .
-					self::WL_UNREAD_LIMIT . '+" if more)',
-			)
-		);
-	}
-
-	public function getDescription() {
-		return 'Get information about the current user.';
-	}
-
-	public function getExamples() {
-		return array(
-			'api.php?action=query&meta=userinfo',
-			'api.php?action=query&meta=userinfo&uiprop=blockinfo|groups|rights|hasmsg',
+			'action=query&meta=userinfo'
+				=> 'apihelp-query+userinfo-example-simple',
+			'action=query&meta=userinfo&uiprop=blockinfo|groups|rights|hasmsg'
+				=> 'apihelp-query+userinfo-example-data',
 		);
 	}
 

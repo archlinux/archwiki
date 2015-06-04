@@ -16,6 +16,9 @@ class ApiFancyCaptchaReload extends ApiBase {
 		return true;
 	}
 
+	/**
+	 * @deprecated since MediaWiki core 1.25
+	 */
 	public function getDescription() {
 		return 'Get a new FancyCaptcha.';
 	}
@@ -24,11 +27,20 @@ class ApiFancyCaptchaReload extends ApiBase {
 		return array();
 	}
 
-	public function getParamDescription() {
-		return array();
-	}
-
+	/**
+	 * @deprecated since MediaWiki core 1.25
+	 */
 	public function getExamples() {
 		return array( 'api.php?action=fancycaptchareload&format=xml' );
+	}
+
+	/**
+	 * @see ApiBase::getExamplesMessages()
+	 */
+	protected function getExamplesMessages() {
+		return array(
+			'action=fancycaptchareload'
+				=> 'apihelp-fancycaptchareload-example-1',
+		);
 	}
 }

@@ -3,10 +3,11 @@
 		"authors": [
 			"Purodha",
 			"Shirayuki",
-			"The Evil IP address"
+			"The Evil IP address",
+			"Umherirrender"
 		]
 	},
-	"pdf-desc": "{{desc|name=Pdf Handler|url=http://www.mediawiki.org/wiki/Extension:PdfHandler}}",
+	"pdf-desc": "{{desc|name=Pdf Handler|url=https://www.mediawiki.org/wiki/Extension:PdfHandler}}",
 	"pdf_no_metadata": "Error message given when metadata cannot be retrieved from a PDF file",
 	"pdf_page_error": "Error message given when a PDF does not have the requested page number",
 	"exif-pdf-producer": "The label used in the metadata table at the bottom of the file description page for the program used to convert this PDF file into a PDF.\n\nThis is separate from the program used to create the original file (Which is labeled by {{msg-mw|Exif-software}}).",

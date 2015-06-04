@@ -60,10 +60,10 @@ class RunningStat implements Countable {
 	/** @var float The second central moment (or variance). **/
 	public $m2 = 0.0;
 
-	/** @var float The least value in the the set. **/
+	/** @var float The least value in the set. **/
 	public $min = INF;
 
-	/** @var float The most value in the set. **/
+	/** @var float The greatest value in the set. **/
 	public $max = NEGATIVE_INF;
 
 	/**
@@ -126,10 +126,10 @@ class RunningStat implements Countable {
 	}
 
 	/**
-	 * Get the estimated stanard deviation.
+	 * Get the estimated standard deviation.
 	 *
 	 * The standard deviation of a statistical population is the square root of
-	 * its variance. It shows shows how much variation from the mean exists. In
+	 * its variance. It shows how much variation from the mean exists. In
 	 * addition to expressing the variability of a population, the standard
 	 * deviation is commonly used to measure confidence in statistical conclusions.
 	 *

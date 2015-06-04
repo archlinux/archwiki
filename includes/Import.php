@@ -32,18 +32,31 @@
  */
 class WikiImporter {
 	private $reader = null;
+	private $foreignNamespaces = null;
 	private $mLogItemCallback, $mUploadCallback, $mRevisionCallback, $mPageCallback;
-	private $mSiteInfoCallback, $mTargetNamespace, $mTargetRootPage, $mPageOutCallback;
+	private $mSiteInfoCallback, $mTargetNamespace, $mPageOutCallback;
 	private $mNoticeCallback, $mDebug;
 	private $mImportUploads, $mImageBasePath;
 	private $mNoUpdates = false;
+	/** @var Config */
+	private $config;
+	/** @var ImportTitleFactory */
+	private $importTitleFactory;
+	/** @var array */
+	private $countableCache = array();
 
 	/**
 	 * Creates an ImportXMLReader drawing from the source provided
-	 * @param ImportStreamSource $source
+	 * @param ImportSource $source
+	 * @param Config $config
 	 */
-	function __construct( ImportStreamSource $source ) {
+	function __construct( ImportSource $source, Config $config = null ) {
 		$this->reader = new XMLReader();
+		if ( !$config ) {
+			wfDeprecated( __METHOD__ . ' without a Config instance', '1.25' );
+			$config = ConfigFactory::getDefaultInstance()->makeConfig( 'main' );
+		}
+		$this->config = $config;
 
 		if ( !in_array( 'uploadsource', stream_get_wrappers() ) ) {
 			stream_wrapper_register( 'uploadsource', 'UploadSourceAdapter' );
@@ -56,10 +69,13 @@ class WikiImporter {
 		}
 
 		// Default callbacks
+		$this->setPageCallback( array( $this, 'beforeImportPage' ) );
 		$this->setRevisionCallback( array( $this, "importRevision" ) );
 		$this->setUploadCallback( array( $this, 'importUpload' ) );
 		$this->setLogItemCallback( array( $this, 'importLogItem' ) );
 		$this->setPageOutCallback( array( $this, 'finishImportPage' ) );
+
+		$this->importTitleFactory = new NaiveImportTitleFactory();
 	}
 
 	/**
@@ -192,6 +208,15 @@ class WikiImporter {
 	}
 
 	/**
+	 * Sets the factory object to use to convert ForeignTitle objects into local
+	 * Title objects
+	 * @param ImportTitleFactory $factory
+	 */
+	public function setImportTitleFactory( $factory ) {
+		$this->importTitleFactory = $factory;
+	}
+
+	/**
 	 * Set a target namespace to override the defaults
 	 * @param null|int $namespace
 	 * @return bool
@@ -200,9 +225,16 @@ class WikiImporter {
 		if ( is_null( $namespace ) ) {
 			// Don't override namespaces
 			$this->mTargetNamespace = null;
-		} elseif ( $namespace >= 0 ) {
-			// @todo FIXME: Check for validity
-			$this->mTargetNamespace = intval( $namespace );
+			$this->setImportTitleFactory( new NaiveImportTitleFactory() );
+			return true;
+		} elseif (
+			$namespace >= 0 &&
+			MWNamespace::exists( intval( $namespace ) )
+		) {
+			$namespace = intval( $namespace );
+			$this->mTargetNamespace = $namespace;
+			$this->setImportTitleFactory( new NamespaceImportTitleFactory( $namespace ) );
+			return true;
 		} else {
 			return false;
 		}
@@ -217,7 +249,7 @@ class WikiImporter {
 		$status = Status::newGood();
 		if ( is_null( $rootpage ) ) {
 			// No rootpage
-			$this->mTargetRootPage = null;
+			$this->setImportTitleFactory( new NaiveImportTitleFactory() );
 		} elseif ( $rootpage !== '' ) {
 			$rootpage = rtrim( $rootpage, '/' ); //avoid double slashes
 			$title = Title::newFromText( $rootpage, !is_null( $this->mTargetNamespace )
@@ -236,9 +268,9 @@ class WikiImporter {
 						: $wgContLang->getNsText( $title->getNamespace() );
 					$status->fatal( 'import-rootpage-nosubpage', $displayNSText );
 				} else {
-					// set namespace to 'all', so the namespace check in processTitle() can passed
+					// set namespace to 'all', so the namespace check in processTitle() can pass
 					$this->setTargetNamespace( null );
-					$this->mTargetRootPage = $title->getPrefixedDBkey();
+					$this->setImportTitleFactory( new SubpageImportTitleFactory( $title ) );
 				}
 			}
 		}
@@ -257,6 +289,19 @@ class WikiImporter {
 	 */
 	public function setImportUploads( $import ) {
 		$this->mImportUploads = $import;
+	}
+
+	/**
+	 * Default per-page callback. Sets up some things related to site statistics
+	 * @param array $titleAndForeignTitle Two-element array, with Title object at
+	 * index 0 and ForeignTitle object at index 1
+	 * @return bool
+	 */
+	public function beforeImportPage( $titleAndForeignTitle ) {
+		$title = $titleAndForeignTitle[0];
+		$page = WikiPage::factory( $title );
+		$this->countableCache['title_' . $title->getPrefixedText()] = $page->isCountable();
+		return true;
 	}
 
 	/**
@@ -312,15 +357,41 @@ class WikiImporter {
 	/**
 	 * Mostly for hook use
 	 * @param Title $title
-	 * @param string $origTitle
+	 * @param ForeignTitle $foreignTitle
 	 * @param int $revCount
 	 * @param int $sRevCount
 	 * @param array $pageInfo
 	 * @return bool
 	 */
-	public function finishImportPage( $title, $origTitle, $revCount, $sRevCount, $pageInfo ) {
+	public function finishImportPage( $title, $foreignTitle, $revCount,
+			$sRevCount, $pageInfo ) {
+
+		// Update article count statistics (T42009)
+		// The normal counting logic in WikiPage->doEditUpdates() is designed for
+		// one-revision-at-a-time editing, not bulk imports. In this situation it
+		// suffers from issues of slave lag. We let WikiPage handle the total page
+		// and revision count, and we implement our own custom logic for the
+		// article (content page) count.
+		$page = WikiPage::factory( $title );
+		$page->loadPageData( 'fromdbmaster' );
+		$content = $page->getContent();
+		if ( $content === null ) {
+			wfDebug( __METHOD__ . ': Skipping article count adjustment for ' . $title .
+				' because WikiPage::getContent() returned null' );
+		} else {
+			$editInfo = $page->prepareContentForEdit( $content );
+			$countKey = 'title_' . $title->getPrefixedText();
+			$countable = $page->isCountable( $editInfo );
+			if ( array_key_exists( $countKey, $this->countableCache ) &&
+				$countable != $this->countableCache[ $countKey ] ) {
+				DeferredUpdates::addUpdate( SiteStatsUpdate::factory( array(
+					'articles' => ( (int)$countable - (int)$this->countableCache[ $countKey ] )
+				) ) );
+			}
+		}
+
 		$args = func_get_args();
-		return wfRunHooks( 'AfterImportPage', $args );
+		return Hooks::run( 'AfterImportPage', $args );
 	}
 
 	/**
@@ -341,6 +412,20 @@ class WikiImporter {
 	}
 
 	/**
+	 * Notify the callback function of site info
+	 * @param array $siteInfo
+	 * @return bool|mixed
+	 */
+	private function siteInfoCallback( $siteInfo ) {
+		if ( isset( $this->mSiteInfoCallback ) ) {
+			return call_user_func_array( $this->mSiteInfoCallback,
+					array( $siteInfo, $this ) );
+		} else {
+			return false;
+		}
+	}
+
+	/**
 	 * Notify the callback function when a new "<page>" is reached.
 	 * @param Title $title
 	 */
@@ -353,12 +438,13 @@ class WikiImporter {
 	/**
 	 * Notify the callback function when a "</page>" is closed.
 	 * @param Title $title
-	 * @param Title $origTitle
+	 * @param ForeignTitle $foreignTitle
 	 * @param int $revCount
 	 * @param int $sucCount Number of revisions for which callback returned true
 	 * @param array $pageInfo Associative array of page information
 	 */
-	private function pageOutCallback( $title, $origTitle, $revCount, $sucCount, $pageInfo ) {
+	private function pageOutCallback( $title, $foreignTitle, $revCount,
+			$sucCount, $pageInfo ) {
 		if ( isset( $this->mPageOutCallback ) ) {
 			$args = func_get_args();
 			call_user_func_array( $this->mPageOutCallback, $args );
@@ -396,7 +482,8 @@ class WikiImporter {
 	/**
 	 * Retrieves the contents of the named attribute of the current element.
 	 * @param string $attr The name of the attribute
-	 * @return string The value of the attribute or an empty string if it is not set in the current element.
+	 * @return string The value of the attribute or an empty string if it is not set in the current
+	 * element.
 	 */
 	public function nodeAttribute( $attr ) {
 		return $this->reader->getAttribute( $attr );
@@ -416,11 +503,11 @@ class WikiImporter {
 		$buffer = "";
 		while ( $this->reader->read() ) {
 			switch ( $this->reader->nodeType ) {
-			case XmlReader::TEXT:
-			case XmlReader::SIGNIFICANT_WHITESPACE:
+			case XMLReader::TEXT:
+			case XMLReader::SIGNIFICANT_WHITESPACE:
 				$buffer .= $this->reader->value;
 				break;
-			case XmlReader::END_ELEMENT:
+			case XMLReader::END_ELEMENT:
 				return $buffer;
 			}
 		}
@@ -452,51 +539,76 @@ class WikiImporter {
 
 		$keepReading = $this->reader->read();
 		$skip = false;
-		while ( $keepReading ) {
-			$tag = $this->reader->name;
-			$type = $this->reader->nodeType;
+		$rethrow = null;
+		try {
+			while ( $keepReading ) {
+				$tag = $this->reader->name;
+				$type = $this->reader->nodeType;
 
-			if ( !wfRunHooks( 'ImportHandleToplevelXMLTag', array( $this ) ) ) {
-				// Do nothing
-			} elseif ( $tag == 'mediawiki' && $type == XmlReader::END_ELEMENT ) {
-				break;
-			} elseif ( $tag == 'siteinfo' ) {
-				$this->handleSiteInfo();
-			} elseif ( $tag == 'page' ) {
-				$this->handlePage();
-			} elseif ( $tag == 'logitem' ) {
-				$this->handleLogItem();
-			} elseif ( $tag != '#text' ) {
-				$this->warn( "Unhandled top-level XML tag $tag" );
+				if ( !Hooks::run( 'ImportHandleToplevelXMLTag', array( $this ) ) ) {
+					// Do nothing
+				} elseif ( $tag == 'mediawiki' && $type == XMLReader::END_ELEMENT ) {
+					break;
+				} elseif ( $tag == 'siteinfo' ) {
+					$this->handleSiteInfo();
+				} elseif ( $tag == 'page' ) {
+					$this->handlePage();
+				} elseif ( $tag == 'logitem' ) {
+					$this->handleLogItem();
+				} elseif ( $tag != '#text' ) {
+					$this->warn( "Unhandled top-level XML tag $tag" );
 
-				$skip = true;
+					$skip = true;
+				}
+
+				if ( $skip ) {
+					$keepReading = $this->reader->next();
+					$skip = false;
+					$this->debug( "Skip" );
+				} else {
+					$keepReading = $this->reader->read();
+				}
 			}
-
-			if ( $skip ) {
-				$keepReading = $this->reader->next();
-				$skip = false;
-				$this->debug( "Skip" );
-			} else {
-				$keepReading = $this->reader->read();
-			}
+		} catch ( Exception $ex ) {
+			$rethrow = $ex;
 		}
 
+		// finally
 		libxml_disable_entity_loader( $oldDisable );
+		$this->reader->close();
+
+		if ( $rethrow ) {
+			throw $rethrow;
+		}
+
 		return true;
 	}
 
-	/**
-	 * @return bool
-	 * @throws MWException
-	 */
 	private function handleSiteInfo() {
-		// Site info is useful, but not actually used for dump imports.
-		// Includes a quick short-circuit to save performance.
-		if ( !$this->mSiteInfoCallback ) {
-			$this->reader->next();
-			return true;
+		$this->debug( "Enter site info handler." );
+		$siteInfo = array();
+
+		// Fields that can just be stuffed in the siteInfo object
+		$normalFields = array( 'sitename', 'base', 'generator', 'case' );
+
+		while ( $this->reader->read() ) {
+			if ( $this->reader->nodeType == XmlReader::END_ELEMENT &&
+					$this->reader->name == 'siteinfo' ) {
+				break;
+			}
+
+			$tag = $this->reader->name;
+
+			if ( $tag == 'namespace' ) {
+				$this->foreignNamespaces[ $this->nodeAttribute( 'key' ) ] =
+					$this->nodeContents();
+			} elseif ( in_array( $tag, $normalFields ) ) {
+				$siteInfo[$tag] = $this->nodeContents();
+			}
 		}
-		throw new MWException( "SiteInfo tag is not yet handled, do not set mSiteInfoCallback" );
+
+		$siteInfo['_namespaces'] = $this->foreignNamespaces;
+		$this->siteInfoCallback( $siteInfo );
 	}
 
 	private function handleLogItem() {
@@ -508,14 +620,14 @@ class WikiImporter {
 					'logtitle', 'params' );
 
 		while ( $this->reader->read() ) {
-			if ( $this->reader->nodeType == XmlReader::END_ELEMENT &&
+			if ( $this->reader->nodeType == XMLReader::END_ELEMENT &&
 					$this->reader->name == 'logitem' ) {
 				break;
 			}
 
 			$tag = $this->reader->name;
 
-			if ( !wfRunHooks( 'ImportHandleLogItemXMLTag', array(
+			if ( !Hooks::run( 'ImportHandleLogItemXMLTag', array(
 				$this, $logInfo
 			) ) ) {
 				// Do nothing
@@ -536,7 +648,7 @@ class WikiImporter {
 	 * @return bool|mixed
 	 */
 	private function processLogItem( $logInfo ) {
-		$revision = new WikiRevision;
+		$revision = new WikiRevision( $this->config );
 
 		$revision->setID( $logInfo['id'] );
 		$revision->setType( $logInfo['type'] );
@@ -566,23 +678,25 @@ class WikiImporter {
 		$pageInfo = array( 'revisionCount' => 0, 'successfulRevisionCount' => 0 );
 
 		// Fields that can just be stuffed in the pageInfo object
-		$normalFields = array( 'title', 'id', 'redirect', 'restrictions' );
+		$normalFields = array( 'title', 'ns', 'id', 'redirect', 'restrictions' );
 
 		$skip = false;
 		$badTitle = false;
 
 		while ( $skip ? $this->reader->next() : $this->reader->read() ) {
-			if ( $this->reader->nodeType == XmlReader::END_ELEMENT &&
+			if ( $this->reader->nodeType == XMLReader::END_ELEMENT &&
 					$this->reader->name == 'page' ) {
 				break;
 			}
+
+			$skip = false;
 
 			$tag = $this->reader->name;
 
 			if ( $badTitle ) {
 				// The title is invalid, bail out of this page
 				$skip = true;
-			} elseif ( !wfRunHooks( 'ImportHandlePageXMLTag', array( $this,
+			} elseif ( !Hooks::run( 'ImportHandlePageXMLTag', array( $this,
 						&$pageInfo ) ) ) {
 				// Do nothing
 			} elseif ( in_array( $tag, $normalFields ) ) {
@@ -597,29 +711,35 @@ class WikiImporter {
 					$pageInfo[$tag] = $this->nodeAttribute( 'title' );
 				} else {
 					$pageInfo[$tag] = $this->nodeContents();
-					if ( $tag == 'title' ) {
-						$title = $this->processTitle( $pageInfo['title'] );
+				}
+			} elseif ( $tag == 'revision' || $tag == 'upload' ) {
+				if ( !isset( $title ) ) {
+					$title = $this->processTitle( $pageInfo['title'],
+						isset( $pageInfo['ns'] ) ? $pageInfo['ns'] : null );
 
-						if ( !$title ) {
-							$badTitle = true;
-							$skip = true;
-						}
+					if ( !$title ) {
+						$badTitle = true;
+						$skip = true;
+					}
 
-						$this->pageCallback( $title );
-						list( $pageInfo['_title'], $origTitle ) = $title;
+					$this->pageCallback( $title );
+					list( $pageInfo['_title'], $foreignTitle ) = $title;
+				}
+
+				if ( $title ) {
+					if ( $tag == 'revision' ) {
+						$this->handleRevision( $pageInfo );
+					} else {
+						$this->handleUpload( $pageInfo );
 					}
 				}
-			} elseif ( $tag == 'revision' ) {
-				$this->handleRevision( $pageInfo );
-			} elseif ( $tag == 'upload' ) {
-				$this->handleUpload( $pageInfo );
 			} elseif ( $tag != '#text' ) {
 				$this->warn( "Unhandled page XML tag $tag" );
 				$skip = true;
 			}
 		}
 
-		$this->pageOutCallback( $pageInfo['_title'], $origTitle,
+		$this->pageOutCallback( $pageInfo['_title'], $foreignTitle,
 					$pageInfo['revisionCount'],
 					$pageInfo['successfulRevisionCount'],
 					$pageInfo );
@@ -637,14 +757,14 @@ class WikiImporter {
 		$skip = false;
 
 		while ( $skip ? $this->reader->next() : $this->reader->read() ) {
-			if ( $this->reader->nodeType == XmlReader::END_ELEMENT &&
+			if ( $this->reader->nodeType == XMLReader::END_ELEMENT &&
 					$this->reader->name == 'revision' ) {
 				break;
 			}
 
 			$tag = $this->reader->name;
 
-			if ( !wfRunHooks( 'ImportHandleRevisionXMLTag', array(
+			if ( !Hooks::run( 'ImportHandleRevisionXMLTag', array(
 				$this, $pageInfo, $revisionInfo
 			) ) ) {
 				// Do nothing
@@ -670,7 +790,7 @@ class WikiImporter {
 	 * @return bool|mixed
 	 */
 	private function processRevision( $pageInfo, $revisionInfo ) {
-		$revision = new WikiRevision;
+		$revision = new WikiRevision( $this->config );
 
 		if ( isset( $revisionInfo['id'] ) ) {
 			$revision->setID( $revisionInfo['id'] );
@@ -729,14 +849,14 @@ class WikiImporter {
 		$skip = false;
 
 		while ( $skip ? $this->reader->next() : $this->reader->read() ) {
-			if ( $this->reader->nodeType == XmlReader::END_ELEMENT &&
+			if ( $this->reader->nodeType == XMLReader::END_ELEMENT &&
 					$this->reader->name == 'upload' ) {
 				break;
 			}
 
 			$tag = $this->reader->name;
 
-			if ( !wfRunHooks( 'ImportHandleUploadXMLTag', array(
+			if ( !Hooks::run( 'ImportHandleUploadXMLTag', array(
 				$this, $pageInfo
 			) ) ) {
 				// Do nothing
@@ -786,7 +906,7 @@ class WikiImporter {
 	 * @return mixed
 	 */
 	private function processUpload( $pageInfo, $uploadInfo ) {
-		$revision = new WikiRevision;
+		$revision = new WikiRevision( $this->config );
 		$text = isset( $uploadInfo['text'] ) ? $uploadInfo['text'] : '';
 
 		$revision->setTitle( $pageInfo['_title'] );
@@ -827,7 +947,7 @@ class WikiImporter {
 		$info = array();
 
 		while ( $this->reader->read() ) {
-			if ( $this->reader->nodeType == XmlReader::END_ELEMENT &&
+			if ( $this->reader->nodeType == XMLReader::END_ELEMENT &&
 					$this->reader->name == 'contributor' ) {
 				break;
 			}
@@ -844,29 +964,27 @@ class WikiImporter {
 
 	/**
 	 * @param string $text
+	 * @param string|null $ns
 	 * @return array|bool
 	 */
-	private function processTitle( $text ) {
-		global $wgCommandLineMode;
-
-		$workTitle = $text;
-		$origTitle = Title::newFromText( $workTitle );
-
-		if ( !is_null( $this->mTargetNamespace ) && !is_null( $origTitle ) ) {
-			# makeTitleSafe, because $origTitle can have a interwiki (different setting of interwiki map)
-			# and than dbKey can begin with a lowercase char
-			$title = Title::makeTitleSafe( $this->mTargetNamespace,
-				$origTitle->getDBkey() );
+	private function processTitle( $text, $ns = null ) {
+		if ( is_null( $this->foreignNamespaces ) ) {
+			$foreignTitleFactory = new NaiveForeignTitleFactory();
 		} else {
-			if ( !is_null( $this->mTargetRootPage ) ) {
-				$workTitle = $this->mTargetRootPage . '/' . $workTitle;
-			}
-			$title = Title::newFromText( $workTitle );
+			$foreignTitleFactory = new NamespaceAwareForeignTitleFactory(
+				$this->foreignNamespaces );
 		}
 
+		$foreignTitle = $foreignTitleFactory->createForeignTitle( $text,
+			intval( $ns ) );
+
+		$title = $this->importTitleFactory->createTitleFromForeignTitle(
+			$foreignTitle );
+
+		$commandLineMode = $this->config->get( 'CommandLineMode' );
 		if ( is_null( $title ) ) {
 			# Invalid page title? Ignore the page
-			$this->notice( 'import-error-invalid', $workTitle );
+			$this->notice( 'import-error-invalid', $foreignTitle->getFullText() );
 			return false;
 		} elseif ( $title->isExternal() ) {
 			$this->notice( 'import-error-interwiki', $title->getPrefixedText() );
@@ -874,17 +992,17 @@ class WikiImporter {
 		} elseif ( !$title->canExist() ) {
 			$this->notice( 'import-error-special', $title->getPrefixedText() );
 			return false;
-		} elseif ( !$title->userCan( 'edit' ) && !$wgCommandLineMode ) {
+		} elseif ( !$title->userCan( 'edit' ) && !$commandLineMode ) {
 			# Do not import if the importing wiki user cannot edit this page
 			$this->notice( 'import-error-edit', $title->getPrefixedText() );
 			return false;
-		} elseif ( !$title->exists() && !$title->userCan( 'create' ) && !$wgCommandLineMode ) {
+		} elseif ( !$title->exists() && !$title->userCan( 'create' ) && !$commandLineMode ) {
 			# Do not import if the importing wiki user cannot create this page
 			$this->notice( 'import-error-create', $title->getPrefixedText() );
 			return false;
 		}
 
-		return array( $title, $origTitle );
+		return array( $title, $foreignTitle );
 	}
 }
 
@@ -903,10 +1021,10 @@ class UploadSourceAdapter {
 	private $mPosition;
 
 	/**
-	 * @param ImportStreamSource $source
+	 * @param ImportSource $source
 	 * @return string
 	 */
-	static function registerSource( ImportStreamSource $source ) {
+	static function registerSource( ImportSource $source ) {
 		$id = wfRandomString();
 
 		self::$sourceRegistrations[$id] = $source;
@@ -1092,6 +1210,13 @@ class WikiRevision {
 
 	/** @var bool */
 	private $mNoUpdates = false;
+
+	/** @var Config $config */
+	private $config;
+
+	public function __construct( Config $config ) {
+		$this->config = $config;
+	}
 
 	/**
 	 * @param Title $title
@@ -1434,8 +1559,7 @@ class WikiRevision {
 		}
 
 		// avoid memory leak...?
-		$linkCache = LinkCache::singleton();
-		$linkCache->clear();
+		Title::clearCaches();
 
 		$page = WikiPage::factory( $this->title );
 		$page->loadPageData( 'fromdbmaster' );
@@ -1461,7 +1585,6 @@ class WikiRevision {
 					$this->title->getPrefixedText() . "]], timestamp " . $this->timestamp . "\n" );
 				return false;
 			}
-			$oldcountable = $page->isCountable();
 		}
 
 		# @todo FIXME: Use original rev_id optionally (better for backups)
@@ -1484,10 +1607,11 @@ class WikiRevision {
 
 		if ( $changed !== false && !$this->mNoUpdates ) {
 			wfDebug( __METHOD__ . ": running updates\n" );
+			// countable/oldcountable stuff is handled in WikiImporter::finishImportPage
 			$page->doEditUpdates(
 				$revision,
 				$userObj,
-				array( 'created' => $created, 'oldcountable' => $oldcountable )
+				array( 'created' => $created, 'oldcountable' => 'no-change' )
 			);
 		}
 
@@ -1550,6 +1674,7 @@ class WikiRevision {
 				RepoGroup::singleton()->getLocalRepo(), $archiveName );
 		} else {
 			$file = wfLocalFile( $this->getTitle() );
+			$file->load( File::READ_LATEST );
 			wfDebug( __METHOD__ . 'Importing new file as ' . $file->getName() . "\n" );
 			if ( $file->exists() && $file->getTimestamp() > $this->getTimestamp() ) {
 				$archiveName = $file->getTimestamp() . '!' . $file->getName();
@@ -1599,7 +1724,7 @@ class WikiRevision {
 			wfDebug( __METHOD__ . ": Successful\n" );
 			return true;
 		} else {
-			wfDebug( __METHOD__ . ': failed: ' . $status->getXml() . "\n" );
+			wfDebug( __METHOD__ . ': failed: ' . $status->getHTML() . "\n" );
 			return false;
 		}
 	}
@@ -1608,8 +1733,7 @@ class WikiRevision {
 	 * @return bool|string
 	 */
 	function downloadSource() {
-		global $wgEnableUploads;
-		if ( !$wgEnableUploads ) {
+		if ( !$this->config->get( 'EnableUploads' ) ) {
 			return false;
 		}
 
@@ -1622,7 +1746,7 @@ class WikiRevision {
 
 		// @todo FIXME!
 		$src = $this->getSrc();
-		$data = Http::get( $src );
+		$data = Http::get( $src, array(), __METHOD__ );
 		if ( !$data ) {
 			wfDebug( "IMPORT: couldn't fetch source $src\n" );
 			fclose( $f );
@@ -1639,10 +1763,37 @@ class WikiRevision {
 }
 
 /**
- * @todo document (e.g. one-sentence class description).
+ * Source interface for XML import.
+ */
+interface ImportSource {
+
+	/**
+	 * Indicates whether the end of the input has been reached.
+	 * Will return true after a finite number of calls to readChunk.
+	 *
+	 * @return bool true if there is no more input, false otherwise.
+	 */
+	function atEnd();
+
+	/**
+	 * Return a chunk of the input, as a (possibly empty) string.
+	 * When the end of input is reached, readChunk() returns false.
+	 * If atEnd() returns false, readChunk() will return a string.
+	 * If atEnd() returns true, readChunk() will return false.
+	 *
+	 * @return bool|string
+	 */
+	function readChunk();
+}
+
+/**
+ * Used for importing XML dumps where the content of the dump is in a string.
+ * This class is ineffecient, and should only be used for small dumps.
+ * For larger dumps, ImportStreamSource should be used instead.
+ *
  * @ingroup SpecialPage
  */
-class ImportStringSource {
+class ImportStringSource implements ImportSource {
 	function __construct( $string ) {
 		$this->mString = $string;
 		$this->mRead = false;
@@ -1668,10 +1819,10 @@ class ImportStringSource {
 }
 
 /**
- * @todo document (e.g. one-sentence class description).
+ * Imports a XML dump from a file (either from file upload, files on disk, or HTTP)
  * @ingroup SpecialPage
  */
-class ImportStreamSource {
+class ImportStreamSource implements ImportSource {
 	function __construct( $handle ) {
 		$this->mHandle = $handle;
 	}
@@ -1752,7 +1903,7 @@ class ImportStreamSource {
 		# quicker and sorts out user-agent problems which might
 		# otherwise prevent importing from large sites, such
 		# as the Wikimedia cluster, etc.
-		$data = Http::request( $method, $url, array( 'followRedirects' => true ) );
+		$data = Http::request( $method, $url, array( 'followRedirects' => true ), __METHOD__ );
 		if ( $data !== false ) {
 			$file = tmpfile();
 			fwrite( $file, $data );

@@ -3,9 +3,11 @@
 		"authors": [
 			"Unai Fdz. de Betoño",
 			"Xabier Armendaritz",
-			"Fitoschido"
+			"Fitoschido",
+			"Subi"
 		]
 	},
+	"vector-skin-desc": "MonoBook-en bertsio modernoa, itxura berriarekin eta erabilgarritasun hobekuntza askorekin",
 	"vector-action-addsection": "Gehitu atala",
 	"vector-action-delete": "Ezabatu",
 	"vector-action-move": "Mugitu",

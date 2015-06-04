@@ -42,6 +42,7 @@ class MemcachedPhpBagOStuff extends MemcachedBagOStuff {
 	 * @param array $params
 	 */
 	function __construct( $params ) {
+		parent::__construct( $params );
 		$params = $this->applyDefaultParams( $params );
 
 		$this->client = new MemCachedClientforWiki( $params );
@@ -63,23 +64,6 @@ class MemcachedPhpBagOStuff extends MemcachedBagOStuff {
 	public function getMulti( array $keys ) {
 		$callback = array( $this, 'encodeKey' );
 		return $this->client->get_multi( array_map( $callback, $keys ) );
-	}
-
-	/**
-	 * @param string $key
-	 * @param int $timeout
-	 * @return bool
-	 */
-	public function lock( $key, $timeout = 0 ) {
-		return $this->client->lock( $this->encodeKey( $key ), $timeout );
-	}
-
-	/**
-	 * @param string $key
-	 * @return mixed
-	 */
-	public function unlock( $key ) {
-		return $this->client->unlock( $this->encodeKey( $key ) );
 	}
 
 	/**

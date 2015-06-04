@@ -272,10 +272,8 @@ class SvgHandler extends ImageHandler {
 					$env['LANG'] = $lang;
 				}
 
-				wfProfileIn( 'rsvg' );
 				wfDebug( __METHOD__ . ": $cmd\n" );
 				$err = wfShellExecWithStderr( $cmd, $retval, $env );
-				wfProfileOut( 'rsvg' );
 			}
 		}
 		$removed = $this->removeBadFile( $dstPath, $retval );
@@ -364,7 +362,7 @@ class SvgHandler extends ImageHandler {
 		$metadata = array( 'version' => self::SVG_METADATA_VERSION );
 		try {
 			$metadata += SVGMetadataExtractor::getMetadata( $filename );
-		} catch ( MWException $e ) { // @todo SVG specific exceptions
+		} catch ( Exception $e ) { // @todo SVG specific exceptions
 			// File not found, broken, etc.
 			$metadata['error'] = array(
 				'message' => $e->getMessage(),
@@ -412,9 +410,10 @@ class SvgHandler extends ImageHandler {
 
 	/**
 	 * @param File $file
+	 * @param bool|IContextSource $context Context to use (optional)
 	 * @return array|bool
 	 */
-	function formatMetadata( $file ) {
+	function formatMetadata( $file, $context = false ) {
 		$result = array(
 			'visible' => array(),
 			'collapsed' => array()
@@ -488,7 +487,7 @@ class SvgHandler extends ImageHandler {
 	function makeParamString( $params ) {
 		$lang = '';
 		if ( isset( $params['lang'] ) && $params['lang'] !== 'en' ) {
-			$params['lang'] = mb_strtolower( $params['lang'] );
+			$params['lang'] = strtolower( $params['lang'] );
 			$lang = "lang{$params['lang']}-";
 		}
 		if ( !isset( $params['width'] ) ) {

@@ -5,7 +5,6 @@
  *
  * @group Database
  *
- * @licence GNU GPL v2+
  * @author Katie Filbert < aude.wiki@gmail.com >
  */
 class EnhancedChangesListTest extends MediaWikiLangTestCase {
@@ -31,7 +30,7 @@ class EnhancedChangesListTest extends MediaWikiLangTestCase {
 			'mediawiki.special.changeslist',
 			$styleModules,
 			'has mediawiki.special.changeslist'
-		 );
+		);
 
 		$this->assertContains(
 			'mediawiki.special.changeslist.enhanced',
@@ -75,10 +74,10 @@ class EnhancedChangesListTest extends MediaWikiLangTestCase {
 		$this->assertEquals( '', $html );
 	}
 
-	  /**
-	   * @todo more tests for actual formatting, this is more of a smoke test
-	   */
-	  public function testEndRecentChangesList() {
+	/**
+	 * @todo more tests for actual formatting, this is more of a smoke test
+	 */
+	public function testEndRecentChangesList() {
 		$enhancedChangesList = $this->newEnhancedChangesList();
 		$enhancedChangesList->beginRecentChangesList();
 
@@ -92,7 +91,7 @@ class EnhancedChangesListTest extends MediaWikiLangTestCase {
 
 		preg_match_all( '/td class="mw-enhanced-rc-nested"/', $html, $matches );
 		$this->assertCount( 2, $matches[0] );
-	  }
+	}
 
 	/**
 	 * @return EnhancedChangesList

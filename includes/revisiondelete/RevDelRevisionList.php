@@ -54,7 +54,7 @@ class RevDelRevisionList extends RevDelList {
 	}
 
 	/**
-	 * @param DatabaseBase $db
+	 * @param IDatabase $db
 	 * @return mixed
 	 */
 	public function doQuery( $db ) {
@@ -137,7 +137,7 @@ class RevDelRevisionList extends RevDelList {
 	public function doPostCommitUpdates() {
 		$this->title->purgeSquid();
 		// Extensions that require referencing previous revisions may need this
-		wfRunHooks( 'ArticleRevisionVisibilitySet', array( &$this->title ) );
+		Hooks::run( 'ArticleRevisionVisibilitySet', array( $this->title, $this->ids ) );
 		return Status::newGood();
 	}
 }

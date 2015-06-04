@@ -13,13 +13,15 @@
 			"Tititou36",
 			"Urhixidur",
 			"Verdy p",
-			"Ltrlg"
+			"Ltrlg",
+			"Macofe"
 		]
 	},
 	"interwiki": "Voir et manipuler les données interwiki",
 	"interwiki-title-norights": "Voir les données interwiki",
 	"interwiki-desc": "Ajoute une [[Special:Interwiki|page spéciale]] pour voir et modifier la table interwiki",
-	"interwiki_intro": "Ceci est un aperçu de la table interwiki.",
+	"interwiki_intro": "Ceci est un aperçu de la table interwiki, qui définit les préfixes raccourcis utilisés pour faire des liens rapides vers différents wikis et d’autres sites externes. Pour l’utilisation recommandée, voyez [//www.mediawiki.org/wiki/Extension:Interwiki le manuel sur MediaWiki.org].",
+	"interwiki-legend-label": "Légende",
 	"interwiki_prefix": "Préfixe",
 	"interwiki-prefix-label": "Préfixe :",
 	"interwiki_prefix_intro": "Préfixe interwiki à utiliser dans <code>[<nowiki />[préfixe:<em>nom de la page</em>]]</code> de la syntaxe wiki.",
@@ -43,6 +45,7 @@
 	"interwiki_deleting": "Vous effacez présentement le préfixe « $1 ».",
 	"interwiki_deleted": "« $1 » a été enlevé avec succès de la table interwiki.",
 	"interwiki_delfailed": "« $1 » n'a pas pu être enlevé de la table interwiki.",
+	"interwiki-logtext": "Afficher le journal",
 	"interwiki_addtext": "Ajouter un préfixe interwiki ou interlangue",
 	"interwiki-addtext-local": "Ajouter un préfixe interwiki ou interlangue local",
 	"interwiki_addintro": "Vous êtes en train d'ajouter un préfixe interwiki. Rappelez-vous qu'il ne peut pas contenir d'espaces ( ), de deux-points (:), d'esperluettes (&) ou de signes égal (=).",
@@ -69,5 +72,5 @@
 	"interwiki-local-description": "Ces préfixes sont définis localement. Les préfixes locaux remplacent les préfixes globaux en cas de doublon.",
 	"interwiki-links": "Préfixes interwiki",
 	"interwiki-language-links": "Préfixes interlangues",
-	"interwiki-language-description": "Ces préfixes correspondent à des codes de langue défini et sont utilisés pour créer la liste « dans d’autres langues » lorsqu’ils sont ajoutés à une page."
+	"interwiki-language-description": "Ces préfixes correspondent à des codes de langue défini et sont utilisés pour créer la liste \"{{int:otherlanguages}}\" lorsqu’ils sont ajoutés à une page."
 }

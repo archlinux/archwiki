@@ -114,7 +114,8 @@ class UserRightsProxy {
 	 */
 	private static function newFromLookup( $database, $field, $value, $ignoreInvalidDB = false ) {
 		global $wgSharedDB, $wgSharedTables;
-		// If the user table is shared, perform the user query on it, but don't pass it to the UserRightsProxy,
+		// If the user table is shared, perform the user query on it,
+		// but don't pass it to the UserRightsProxy,
 		// as user rights are normally not shared.
 		if ( $wgSharedDB && in_array( 'user', $wgSharedTables ) ) {
 			$userdb = self::getDB( $wgSharedDB, $ignoreInvalidDB );
@@ -211,6 +212,8 @@ class UserRightsProxy {
 	/**
 	 * Replaces User::addUserGroup()
 	 * @param string $group
+	 *
+	 * @return bool
 	 */
 	function addGroup( $group ) {
 		$this->db->insert( 'user_groups',
@@ -220,11 +223,15 @@ class UserRightsProxy {
 			),
 			__METHOD__,
 			array( 'IGNORE' ) );
+
+		return true;
 	}
 
 	/**
 	 * Replaces User::removeUserGroup()
 	 * @param string $group
+	 *
+	 * @return bool
 	 */
 	function removeGroup( $group ) {
 		$this->db->delete( 'user_groups',
@@ -233,6 +240,8 @@ class UserRightsProxy {
 				'ug_group' => $group,
 			),
 			__METHOD__ );
+
+		return true;
 	}
 
 	/**

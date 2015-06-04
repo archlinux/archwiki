@@ -119,6 +119,8 @@ $.wikiEditor.modules.dialogs.config = {
 					</fieldset>',
 
 				init: function () {
+					var api = new mw.Api();
+
 					function isExternalLink( s ) {
 						// The following things are considered to be external links:
 						// * Starts a URL protocol
@@ -198,7 +200,7 @@ $.wikiEditor.modules.dialogs.config = {
 						// If the Disambiguator extension is not installed then such a property won't be set.
 						$( '#wikieditor-toolbar-link-int-target-status' ).data(
 							'request',
-							( new mw.Api() ).get( {
+							api.get( {
 								action: 'query',
 								prop: 'pageprops',
 								titles: target,
@@ -328,28 +330,23 @@ $.wikiEditor.modules.dialogs.config = {
 					} );
 					// Add images to the page existence widget, which will be shown mutually exclusively to communicate if
 					// the page exists, does not exist or the title is invalid (like if it contains a | character)
-					var existsMsg = mw.msg( 'wikieditor-toolbar-tool-link-int-target-status-exists' );
-					var notexistsMsg = mw.msg( 'wikieditor-toolbar-tool-link-int-target-status-notexists' );
-					var invalidMsg = mw.msg( 'wikieditor-toolbar-tool-link-int-target-status-invalid' );
-					var externalMsg = mw.msg( 'wikieditor-toolbar-tool-link-int-target-status-external' );
 					var loadingMsg = mw.msg( 'wikieditor-toolbar-tool-link-int-target-status-loading' );
-					var disambigMsg = mw.msg( 'wikieditor-toolbar-tool-link-int-target-status-disambig' );
 					$( '#wikieditor-toolbar-link-int-target-status' )
 						.append( $( '<div>' )
 							.attr( 'id', 'wikieditor-toolbar-link-int-target-status-exists' )
-							.append( existsMsg )
+							.text( mw.msg( 'wikieditor-toolbar-tool-link-int-target-status-exists' ) )
 						)
 						.append( $( '<div>' )
 							.attr( 'id', 'wikieditor-toolbar-link-int-target-status-notexists' )
-							.append( notexistsMsg )
+							.text( mw.msg( 'wikieditor-toolbar-tool-link-int-target-status-notexists' ) )
 						)
 						.append( $( '<div>' )
 							.attr( 'id', 'wikieditor-toolbar-link-int-target-status-invalid' )
-							.append( invalidMsg )
+							.text( mw.msg( 'wikieditor-toolbar-tool-link-int-target-status-invalid' ) )
 						)
 						.append( $( '<div>' )
 							.attr( 'id', 'wikieditor-toolbar-link-int-target-status-external' )
-							.append( externalMsg )
+							.text( mw.msg( 'wikieditor-toolbar-tool-link-int-target-status-external' ) )
 						)
 						.append( $( '<div>' )
 							.attr( 'id', 'wikieditor-toolbar-link-int-target-status-loading' )
@@ -361,7 +358,7 @@ $.wikiEditor.modules.dialogs.config = {
 						)
 						.append( $( '<div>' )
 							.attr( 'id', 'wikieditor-toolbar-link-int-target-status-disambig' )
-							.append( disambigMsg )
+							.text( mw.msg( 'wikieditor-toolbar-tool-link-int-target-status-disambig' ) )
 						)
 						.data( 'existencecache', {} )
 						.children().hide();
@@ -403,20 +400,15 @@ $.wikiEditor.modules.dialogs.config = {
 								return;
 							}
 
-							var request = $.ajax( {
-								url: mw.util.wikiScript( 'api' ),
-								data: {
-									action: 'opensearch',
-									search: title,
-									namespace: 0,
-									suggest: '',
-									format: 'json'
-								},
-								dataType: 'json',
-								success: function ( data ) {
-									cache[title] = data[1];
-									$( that ).suggestions( 'suggestions', data[1] );
-								}
+							var request = api.get( {
+								action: 'opensearch',
+								search: title,
+								namespace: 0,
+								suggest: ''
+							} )
+							.done( function ( data ) {
+								cache[title] = data[1];
+								$( that ).suggestions( 'suggestions', data[1] );
 							} );
 							$( this ).data( 'request', request );
 						},
@@ -474,6 +466,7 @@ $.wikiEditor.modules.dialogs.config = {
 								else
 									insertText = '[[' + target + '|' + escapeInternalText( text ) + ']]';
 							} else {
+								target = $.trim( target );
 								// Prepend http:// if there is no protocol
 								if ( !target.match( /^[a-z]+:\/\/./ ) )
 									target = 'http://' + target;
@@ -602,7 +595,7 @@ $.wikiEditor.modules.dialogs.config = {
 						$( '#wikieditor-toolbar-link-int-target' ).suggestions();
 
 						// don't overwrite user's text
-						if ( selection !== '' ){
+						if ( selection !== '' ) {
 							$( '#wikieditor-toolbar-link-int-text' ).data( 'untouched', false );
 						}
 
@@ -813,7 +806,7 @@ $.wikiEditor.modules.dialogs.config = {
 							if ( fileName !== '' ) {
 								fileTitle = new mw.Title( fileName );
 								// Append file namespace prefix to filename if not already contains it
-								if ( fileTitle.getNamespaceId() !== 6 ){
+								if ( fileTitle.getNamespaceId() !== 6 ) {
 									fileTitle = new mw.Title( fileName, 6 );
 								}
 								fileName = fileTitle.toText();
@@ -1101,7 +1094,7 @@ $.wikiEditor.modules.dialogs.config = {
 				'browsers': {
 					// Left-to-right languages
 					'ltr': {
-						'msie': false,
+						'msie': [['>=', 11]], // Known to work on 11.
 						'firefox': [['>=', 2]],
 						'opera': false,
 						'safari': [['>=', 3]],
@@ -1109,7 +1102,7 @@ $.wikiEditor.modules.dialogs.config = {
 					},
 					// Right-to-left languages
 					'rtl': {
-						'msie': false,
+						'msie': [['>=', 11]], // Works on 11 but dialog positioning is cruddy.
 						'firefox': [['>=', 2]],
 						'opera': false,
 						'safari': [['>=', 3]],
@@ -1128,11 +1121,11 @@ $.wikiEditor.modules.dialogs.config = {
 					<fieldset>\
 						<div class="wikieditor-toolbar-field-wrapper">\
 							<label for="wikieditor-toolbar-replace-search" rel="wikieditor-toolbar-tool-replace-search"></label>\
-							<input type="text" id="wikieditor-toolbar-replace-search" style="width: 100%;"/>\
+							<input type="text" id="wikieditor-toolbar-replace-search"/>\
 						</div>\
 						<div class="wikieditor-toolbar-field-wrapper">\
 							<label for="wikieditor-toolbar-replace-replace" rel="wikieditor-toolbar-tool-replace-replace"></label>\
-							<input type="text" id="wikieditor-toolbar-replace-replace" style="width: 100%;"/>\
+							<input type="text" id="wikieditor-toolbar-replace-replace"/>\
 						</div>\
 						<div class="wikieditor-toolbar-field-wrapper">\
 							<input type="checkbox" id="wikieditor-toolbar-replace-case"/>\

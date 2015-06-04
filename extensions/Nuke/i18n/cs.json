@@ -19,6 +19,7 @@
 	"nuke-multiplepeople": "Hromadné smazání nedávno založených stránek",
 	"nuke-tools": "Tento nástroj umožňuje hromadné smazání stránek nedávno vytvořených zadaným uživatelem nebo IP adresou.\nZadejte uživatelské jméno nebo IP adresu, zobrazí se seznam stránek ke smazání; případně ponechte prázdné pro všechny uživatele.",
 	"nuke-submit-user": "Provést",
+	"nuke-toggleinvert": "Obrátit",
 	"nuke-submit-delete": "Smazat vybrané",
 	"right-nuke": "Hromadné mazání stránek",
 	"nuke-select": "Vybrat: $1",

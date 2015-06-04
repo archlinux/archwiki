@@ -6,5 +6,6 @@
 	},
 	"cologneblue.css": "/* CSS die hier wordt geplaatst heeft alleen invloed op de skin Keuls blauw */",
 	"cologneblue.js": "/* JavaScript die hier wordt geplaatst heeft alleen invloed op gebruikers die de skin Keuls blauw gebruiken */",
-	"skinname-cologneblue": "Keuls blauw"
+	"skinname-cologneblue": "Keuls blauw",
+	"cologneblue-desc": "Een lichtgewicht uiterlijk met minimale opmaak"
 }

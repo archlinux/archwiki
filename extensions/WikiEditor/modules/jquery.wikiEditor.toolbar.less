@@ -1,0 +1,387 @@
+@import "mediawiki.mixins";
+
+/**
+ * CSS for WikiEditor Toolbar jQuery plugin
+ */
+
+.wikiEditor-ui-toolbar {
+	position: relative;
+	display: block;
+	.background-image('images/toolbar/base.png');
+	background-position: left top;
+	background-repeat: repeat-x;
+
+	.empty {
+		display: none;
+	}
+
+	/* Expandable Sections */
+	.sections {
+		float: left;
+		width: 100%;
+		clear: both;
+		height: 0;
+
+		.section {
+			float: left;
+			width: 100%;
+			border-top: 1px solid #DDDDDD;
+			background-color: #E0EEF7;
+		}
+
+		.section-hidden {
+			display: none;
+		}
+
+		/* Gets overridden when the section div is in class loading - see below */
+		div {
+			.spinner {
+				display: none;
+			}
+		}
+
+		.loading {
+			.spinner {
+				.background-image('images/toolbar/loading.gif');
+				background-position: left center;
+				background-repeat: no-repeat;
+				color: #666666;
+				display: block;
+				float: left;
+				height: 32px;
+				margin-left: 0.5em;
+				padding-left: 32px;
+			}
+		}
+	}
+
+	/* Top Level Containers */
+	/* Tabs */
+	.tabs {
+		float: left;
+		height: 100%;
+		list-style: none;
+		margin: 3px;
+		min-height: 26px;
+		position: relative;
+
+		span.tab {
+			display: block;
+			float: left;
+			line-height: 26px;
+
+			a, a:visited  {
+				.background-image('images/toolbar/arrow-ltr.png');
+				background-position: left center;
+				background-repeat: no-repeat;
+				color: #0645ad;
+				cursor: pointer;
+				display: inline-block;
+				float: left;
+				height: 26px;
+				padding-left: 18px;
+				padding-right: 12px;
+			}
+
+			a.current, a.current:visited {
+				.background-image('images/toolbar/arrow-down.png');
+				color: #333333;
+
+				&:hover {
+					text-decoration: none;
+				}
+			}
+
+			a.loading {
+				.background-image('images/toolbar/loading-small.gif');
+			}
+		}
+	}
+
+	/* Top Level Containers */
+	.tabs,
+	.section-main {
+		position: relative;
+		float: left;
+		min-height: 26px;
+		height: 100%;
+	}
+
+	/* Groups */
+	.group {
+		float: left;
+		height: 26px;
+		padding-right: 6px;
+		border-right: 1px solid #DDDDDD;
+		margin: 3px;
+
+		/* Toolbar */
+		.label {
+			float: left;
+			border: 0;
+			height: 22px;
+			line-height: 22px;
+			margin: 2px;
+			margin-left: 5px;
+			margin-right: 8px;
+			color: #777777;
+			cursor: default;
+		}
+
+		img.tool {
+			float: left;
+			border: 0;
+			height: 22px;
+			width: 22px;
+			padding: 2px;
+			cursor: pointer;
+		}
+
+		.tool-select {
+			float: left;
+			margin: 2px;
+			height: 22px;
+			cursor: pointer;
+			border: 1px solid silver;
+			padding: 0;
+			margin-right: 0;
+			background-color: #ffffff;
+
+			.label {
+				.background-image('images/toolbar/arrow-down.png');
+				background-position: center right;
+				background-repeat: no-repeat;
+				padding: 0;
+				margin: 0;
+				padding-left: 4px;
+				padding-right: 22px;
+				margin-right: 4px;
+				cursor: pointer;
+				text-decoration: none;
+				color: #333333;
+			}
+
+			.menu {
+				.options {
+					position: absolute;
+					display: none;
+					margin-left: -1px;
+					margin-top: 22px;
+					border: 1px solid silver;
+					background-color: #ffffff;
+				}
+			}
+
+			.options {
+				.option {
+					display: block;
+					padding: 0.5em;
+					text-decoration: none;
+					color: black;
+					white-space: nowrap;
+
+					&:hover {
+						background-color: #E0EEF7;
+					}
+
+					&[rel=heading-2] {
+						font-size: 150%;
+						font-weight: normal;
+					}
+
+					&[rel=heading-3] {
+						font-size: 132%;
+						font-weight: normal;
+					}
+
+					&[rel=heading-4] {
+						font-size: 116%;
+						font-weight: normal;
+					}
+
+					&[rel=heading-5] {
+						font-size: 100%;
+						font-weight: bold;
+					}
+				}
+			}
+		}
+	}
+
+	.group-search {
+		float: right;
+		padding: 0 0 0 6px;
+		border-right: none;
+		border-left: 1px solid #DDDDDD;
+	}
+
+	.group-insert {
+		border-right: none;
+	}
+
+	/* Booklet */
+	.booklet {
+		.index {
+			float: left;
+			width: 20%;
+			height: 125px;
+			overflow: auto;
+			resize: horizontal;
+
+			div {
+				padding: 4px;
+				padding-left: 6px;
+				cursor: pointer;
+				color: #0645ad;
+			}
+
+			.current {
+				background-color: #FAFAFA;
+				color: #333333;
+				cursor: default;
+			}
+		}
+
+		.pages {
+			background-color: #FAFAFA;
+			height: 125px;
+			overflow: auto;
+		}
+	}
+
+	/* Help Pages */
+	.page-table {
+		padding-left: 5px;
+		padding-right: 5px;
+
+		table {
+			background: none;
+			border-collapse: collapse;
+			width: 100%;
+		}
+
+		th {
+			color: #999999;
+		}
+
+		td {
+			color: black;
+			border-top: 1px solid #EEEEEE;
+		}
+
+		th,
+		td {
+			margin: 0;
+			padding: 5px;
+			text-align: left;
+		}
+	}
+
+	.section-help {
+		.page-table {
+			.cell {
+				vertical-align: top;
+			}
+
+			td.cell-syntax {
+				font-family: monospace, Courier;
+			}
+
+			td.cell-syntax,
+			td.cell-result {
+				width: 40%;
+			}
+
+			td.cell-description {
+				width: 20%;
+			}
+
+			/* T33649 */
+			.table-link {
+				td.cell-syntax {
+					white-space: pre;
+				}
+			}
+		}
+	}
+
+	/* Characters Pages */
+	.page-characters {
+		div {
+			span {
+				border: 1px solid #DDDDDD;
+				padding: 5px;
+				padding-left: 8px;
+				padding-right: 8px;
+				margin-left: 5px;
+				margin-top: 5px;
+				height: 1em;
+				float: left;
+				display: block;
+				color: black;
+				text-decoration: none;
+				cursor: pointer;
+				font-family: monospace, Courier;
+				font-size: 1.25em;
+				line-height: 1;
+
+				&:hover {
+					background-color: white;
+					text-decoration: none;
+					border-color: #a8d7f9;
+				}
+			}
+		}
+
+		div[dir=rtl] span {
+			/* @noflip */
+			direction: rtl;
+		}
+	}
+}
+
+/* Sprited Buttons */
+.wikiEditor-toolbar-spritedButton {
+	.background-image('images/toolbar/button-sprite.png');
+	background-position: 0 0;
+	background-repeat: no-repeat;
+	display: block;
+	float: left;
+	height: 22px;
+	text-indent: -9999px;
+	width: 22px;
+	padding: 2px;
+	cursor: pointer;
+	overflow: hidden;
+}
+
+.ui-widget {
+	table {
+		td.wikieditor-toolbar-table-preview-wrapper {
+			background: #e5e5e5;
+			padding: 10px;
+			span {
+				padding: 4px 6px 0;
+				display: block;
+			}
+		}
+
+		.wikieditor-toolbar-table-preview-frame {
+			width: 340px;
+			background: #fff;
+			padding: 10px;
+			overflow: hidden;
+			display: block;
+			position: relative;
+		}
+
+		.wikieditor-toolbar-table-preview-content {
+			width: 375px;
+			display: block;
+		}
+
+		.wikieditor-toolbar-table-preview {
+			width: 340px;
+		}
+	}
+}

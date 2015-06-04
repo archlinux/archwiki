@@ -103,15 +103,12 @@ class SpecialPasswordReset extends FormSpecialPage {
 		return $a;
 	}
 
+	protected function getDisplayFormat() {
+		return 'vform';
+	}
+
 	public function alterForm( HTMLForm $form ) {
 		$resetRoutes = $this->getConfig()->get( 'PasswordResetRoutes' );
-
-		$form->setDisplayFormat( 'vform' );
-		// Turn the old-school line around the form off.
-		// XXX This wouldn't be necessary here if we could set the format of
-		// the HTMLForm to 'vform' at its creation, but there's no way to do so
-		// from a FormSpecialPage class.
-		$form->setWrapperLegend( false );
 
 		$form->addHiddenFields( $this->getRequest()->getValues( 'returnto', 'returntoquery' ) );
 
@@ -195,7 +192,7 @@ class SpecialPasswordReset extends FormSpecialPage {
 
 		// Check for hooks (captcha etc), and allow them to modify the users list
 		$error = array();
-		if ( !wfRunHooks( 'SpecialPasswordResetOnSubmit', array( &$users, $data, &$error ) ) ) {
+		if ( !Hooks::run( 'SpecialPasswordResetOnSubmit', array( &$users, $data, &$error ) ) ) {
 			return array( $error );
 		}
 
@@ -246,7 +243,7 @@ class SpecialPasswordReset extends FormSpecialPage {
 			return array( 'badipaddress' );
 		}
 		$caller = $this->getUser();
-		wfRunHooks( 'User::mailPasswordInternal', array( &$caller, &$ip, &$firstUser ) );
+		Hooks::run( 'User::mailPasswordInternal', array( &$caller, &$ip, &$firstUser ) );
 		$username = $caller->getName();
 		$msg = IP::isValid( $username )
 			? 'passwordreset-emailtext-ip'

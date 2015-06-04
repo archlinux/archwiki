@@ -66,5 +66,5 @@
 	"interwiki-local-description": "Diese Präfixe sind lokal vorhanden. Alle Duplikate mit der globalen Konfiguration überschreiben die globale Definition.",
 	"interwiki-links": "Interwiki-Präfixe",
 	"interwiki-language-links": "Interlanguage-Präfixe",
-	"interwiki-language-description": "Diese Präfixe stimmen mit definierten Sprachcodes überein und werden zur Erstellung der Liste „In anderen Sprachen“ beim Hinzufügen zu einer Seite verwendet."
+	"interwiki-language-description": "Diese Präfixe stimmen mit definierten Sprachcodes überein und werden zur Erstellung der Liste „{{int:otherlanguages}}“ beim Hinzufügen zu einer Seite verwendet."
 }

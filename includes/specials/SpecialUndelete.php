@@ -94,7 +94,7 @@ class PageArchive {
 	}
 
 	/**
-	 * @param DatabaseBase $dbr
+	 * @param IDatabase $dbr
 	 * @param string|array $condition
 	 * @return bool|ResultWrapper
 	 */
@@ -370,6 +370,7 @@ class PageArchive {
 
 		if ( $restoreFiles && $this->title->getNamespace() == NS_FILE ) {
 			$img = wfLocalFile( $this->title );
+			$img->load( File::READ_LATEST );
 			$this->fileStatus = $img->restore( $fileVersions, $unsuppress );
 			if ( !$this->fileStatus->isOK() ) {
 				return false;
@@ -421,7 +422,7 @@ class PageArchive {
 		$logEntry->setTarget( $this->title );
 		$logEntry->setComment( $reason );
 
-		wfRunHooks( 'ArticleUndeleteLogEntry', array( $this, &$logEntry, $user ) );
+		Hooks::run( 'ArticleUndeleteLogEntry', array( $this, &$logEntry, $user ) );
 
 		$logid = $logEntry->insert();
 		$logEntry->publish( $logid );
@@ -550,7 +551,7 @@ class PageArchive {
 				'title' => $article->getTitle(), // used to derive default content model
 			)
 		);
-		$user = User::newFromName( $revision->getRawUserText(), false );
+		$user = User::newFromName( $revision->getUserText( Revision::RAW ), false );
 		$content = $revision->getContent( Revision::RAW );
 
 		//NOTE: article ID may not be known yet. prepareSave() should not modify the database.
@@ -605,7 +606,7 @@ class PageArchive {
 			$revision->insertOn( $dbw );
 			$restored++;
 
-			wfRunHooks( 'ArticleRevisionUndeleted', array( &$this->title, $revision, $row->ar_page_id ) );
+			Hooks::run( 'ArticleRevisionUndeleted', array( &$this->title, $revision, $row->ar_page_id ) );
 		}
 		# Now that it's safely stored, take it out of the archive
 		$dbw->delete( 'archive',
@@ -623,7 +624,7 @@ class PageArchive {
 		$wasnew = $article->updateIfNewerOn( $dbw, $revision, $previousRevId );
 		if ( $created || $wasnew ) {
 			// Update site stats, link tables, etc
-			$user = User::newFromName( $revision->getRawUserText(), false );
+			$user = User::newFromName( $revision->getUserText( Revision::RAW ), false );
 			$article->doEditUpdates(
 				$revision,
 				$user,
@@ -631,7 +632,7 @@ class PageArchive {
 			);
 		}
 
-		wfRunHooks( 'ArticleUndelete', array( &$this->title, $created, $comment, $oldPageId ) );
+		Hooks::run( 'ArticleUndelete', array( &$this->title, $created, $comment, $oldPageId ) );
 
 		if ( $this->title->getNamespace() == NS_FILE ) {
 			$update = new HTMLCacheUpdate( $this->title, 'imagelinks' );
@@ -790,6 +791,7 @@ class SpecialUndelete extends SpecialPage {
 			return;
 		}
 
+		$this->addHelpLink( 'Help:Undelete' );
 		if ( $this->mAllowed ) {
 			$out->setPageTitle( $this->msg( 'undeletepage' ) );
 		} else {
@@ -839,7 +841,7 @@ class SpecialUndelete extends SpecialPage {
 					'prefix',
 					20,
 					$this->mSearchPrefix,
-					array( 'id' => 'prefix', 'autofocus' => true )
+					array( 'id' => 'prefix', 'autofocus' => '' )
 				) . ' ' .
 				Xml::submitButton( $this->msg( 'undelete-search-submit' )->text() ) .
 				Xml::closeElement( 'fieldset' ) .
@@ -908,7 +910,7 @@ class SpecialUndelete extends SpecialPage {
 		}
 
 		$archive = new PageArchive( $this->mTargetObj, $this->getConfig() );
-		if ( !wfRunHooks( 'UndeleteForm::showRevision', array( &$archive, $this->mTargetObj ) ) ) {
+		if ( !Hooks::run( 'UndeleteForm::showRevision', array( &$archive, $this->mTargetObj ) ) ) {
 			return;
 		}
 		$rev = $archive->getRevision( $timestamp );
@@ -992,7 +994,7 @@ class SpecialUndelete extends SpecialPage {
 		$out->addHTML( $this->msg( 'undelete-revision' )->rawParams( $link )->params(
 			$time )->rawParams( $userLink )->params( $d, $t )->parse() . '</div>' );
 
-		if ( !wfRunHooks( 'UndeleteShowRevision', array( $this->mTargetObj, $rev ) ) ) {
+		if ( !Hooks::run( 'UndeleteShowRevision', array( $this->mTargetObj, $rev ) ) ) {
 			return;
 		}
 
@@ -1215,7 +1217,7 @@ class SpecialUndelete extends SpecialPage {
 		);
 
 		$archive = new PageArchive( $this->mTargetObj, $this->getConfig() );
-		wfRunHooks( 'UndeleteForm::showHistory', array( &$archive, $this->mTargetObj ) );
+		Hooks::run( 'UndeleteForm::showHistory', array( &$archive, $this->mTargetObj ) );
 		/*
 		$text = $archive->getLastRevisionText();
 		if( is_null( $text ) ) {
@@ -1312,7 +1314,7 @@ class SpecialUndelete extends SpecialPage {
 					'wpComment',
 					50,
 					$this->mComment,
-					array( 'id' => 'wpComment', 'autofocus' => true )
+					array( 'id' => 'wpComment', 'autofocus' => '' )
 				) .
 				"</td>
 			</tr>
@@ -1628,7 +1630,9 @@ class SpecialUndelete extends SpecialPage {
 	}
 
 	function undelete() {
-		if ( $this->getConfig()->get( 'UploadMaintenance' ) && $this->mTargetObj->getNamespace() == NS_FILE ) {
+		if ( $this->getConfig()->get( 'UploadMaintenance' )
+			&& $this->mTargetObj->getNamespace() == NS_FILE
+		) {
 			throw new ErrorPageError( 'undelete-error', 'filedelete-maintenance' );
 		}
 
@@ -1638,7 +1642,7 @@ class SpecialUndelete extends SpecialPage {
 
 		$out = $this->getOutput();
 		$archive = new PageArchive( $this->mTargetObj, $this->getConfig() );
-		wfRunHooks( 'UndeleteForm::undelete', array( &$archive, $this->mTargetObj ) );
+		Hooks::run( 'UndeleteForm::undelete', array( &$archive, $this->mTargetObj ) );
 		$ok = $archive->undelete(
 			$this->mTargetTimestamp,
 			$this->mComment,
@@ -1649,7 +1653,7 @@ class SpecialUndelete extends SpecialPage {
 
 		if ( is_array( $ok ) ) {
 			if ( $ok[1] ) { // Undeleted file count
-				wfRunHooks( 'FileUndeleteComplete', array(
+				Hooks::run( 'FileUndeleteComplete', array(
 					$this->mTargetObj, $this->mFileVersions,
 					$this->getUser(), $this->mComment ) );
 			}

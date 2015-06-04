@@ -1,0 +1,29 @@
+{
+	"@metadata": {
+		"authors": [
+			"Eduardo.mps",
+			"Giro720",
+			"Helder.wiki",
+			"Jesielt",
+			"555",
+			"Dianakc",
+			"He7d3r"
+		]
+	},
+	"captcha-edit": "Para editar esta página será necessário que você resolva a simples soma abaixo e entre com a resposta no respectivo campo ([[Special:Captcha/help|o que é isto?]])",
+	"captcha-desc": "Fornece técnicas captcha para proteção contra spam e tentativas de obtenção de senhas",
+	"captcha-label": "CAPTCHA",
+	"captcha-addurl": "Sua edição inclui novos links externos.\nComo prevenção contra sistemas automatizados que inserem spam, será necessário resolver a simples soma abaixo e inserir sua resposta no respectivo campo ([[Special:Captcha/help|detalhes]])",
+	"captcha-badlogin": "Como prevenção contra sistemas automatizados de pesquisa e descoberta de senhas, será necessário resolver a simples soma abaixo e inserir sua resposta no respectivo campo ([[Special:Captcha/help|detalhes]])",
+	"captcha-createaccount": "Para proteger a wiki contra sistemas automatizados de criação de contas, solicitamos que resolva a soma simples apresentada abaixo e introduza a resposta no respectivo campo  ([[Special:Captcha/help|mais informações]]):",
+	"captcha-createaccount-fail": "Código CAPTCHA incorreto ou não preenchido.",
+	"captcha-create": "Para criar a página, por favor resolva a simples soma abaixo e entre com a resposta no respectivo campo ([[Special:Captcha/help|o que é isto?]])",
+	"captcha-sendemail": "Como proteção ao wiki contra spam automatizado, será necessário resolver a simples soma abaixo e inserir sua resposta no respectivo campo ([[Special:Captcha/help|detalhes]]):",
+	"captcha-sendemail-fail": "Código CAPTCHA incorreto ou não preenchido.",
+	"captcha-disabledinapi": "Esta operação necessita de captcha, por isso não pode ser realizada através da API.",
+	"captchahelp-title": "Ajuda com o Captcha",
+	"captchahelp-cookies-needed": "Você precisa ter cookies habilitados em seu navegador para que isso possa funcionar",
+	"captchahelp-text": "Sites abertos a inserções públicas, como é o caso desta wiki, são vulneráveis a spammers que utilizam ferramentas automatizadas para inserir seus links em diversos locais.\nRemover tais ligações posteriormente pode ser um incômodo significativo.\n\nAlgumas vezes, especialmente ao adicionar novas ligações externas a uma página, o wiki exibirá uma imagem com um texto colorido ou distorcido e pedirá que você introduza as palavras exibidas.\nUma vez que essa é uma tarefa um tanto difícil de ser automatizada, ela possibilita que a maioria dos humanos faça as suas inserções ao mesmo tempo que inibe as que forem feitas por spammers e mecanismos automatizados.\n\nInfelizmente, isso pode ser um inconveniente para usuários com limitações visuais ou que naveguem através de mecanismos baseados em texto ou baseados em voz.\nNo momento, não está disponível uma alternativa em áudio.\nPor favor, contate os [[Special:ListAdmins|administradores do sítio]] em casos que seja necessária a assistência de alguém para que você possa fazer as suas inserções legítimas.\n\nPressione o botão 'voltar' de seu navegador para retornar à página de edição.",
+	"captcha-addurl-whitelist": " #<!-- deixe este linha exatamente como está --> <pre>\n# A sintaxe é a que se segue:\n#  * Tudo desde o caractere \"#\" até ao fim da linha é um comentário\n#  * Qualquer linha não vazia é um fragmento de regex que irá apenas verificar o servidor dentro das URLs\n  #</pre> <!-- deixe este linha exatamente como está -->",
+	"right-skipcaptcha": "Executar ações disparadoras de captcha sem ter que passar pelo captcha"
+}

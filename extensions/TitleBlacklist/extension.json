@@ -1,0 +1,104 @@
+{
+	"name": "Title Blacklist",
+	"version": "1.5.0",
+	"author": [
+		"Victor Vasiliev",
+		"Fran Rogers"
+	],
+	"url": "https://www.mediawiki.org/wiki/Extension:Title_Blacklist",
+	"descriptionmsg": "titleblacklist-desc",
+	"license-name": "GPL-2.0+",
+	"type": "antispam",
+	"GroupPermissions": {
+		"sysop": {
+			"tboverride": true,
+			"titleblacklistlog": true
+		}
+	},
+	"AvailableRights": [
+		"tboverride",
+		"tboverride-account",
+		"titleblacklistlog"
+	],
+	"LogTypes": [
+		"titleblacklist"
+	],
+	"LogRestrictions": {
+		"titleblacklist": "titleblacklistlog"
+	},
+	"LogActionsHandlers": {
+		"titleblacklist/*": "LogFormatter"
+	},
+	"APIModules": {
+		"titleblacklist": "ApiQueryTitleBlacklist"
+	},
+	"MessagesDirs": {
+		"TitleBlacklist": [
+			"i18n"
+		]
+	},
+	"AutoloadClasses": {
+		"TitleBlacklist": "TitleBlacklist.list.php",
+		"TitleBlacklistEntry": "TitleBlacklist.list.php",
+		"TitleBlacklistHooks": "TitleBlacklist.hooks.php",
+		"Scribunto_LuaTitleBlacklistLibrary": "TitleBlacklist.library.php",
+		"ApiQueryTitleBlacklist": "api/ApiQueryTitleBlacklist.php"
+	},
+	"ResourceModules": {
+		"mediawiki.api.titleblacklist": {
+			"scripts": "mediawiki.api.titleblacklist.js",
+			"dependencies": [
+				"mediawiki.api"
+			]
+		}
+	},
+	"ResourceFileModulePaths": {
+		"localBasePath": "modules",
+		"remoteExtPath": "TitleBlacklist/modules"
+	},
+	"Hooks": {
+		"getUserPermissionsErrorsExpensive": [
+			"TitleBlacklistHooks::userCan"
+		],
+		"TitleGetEditNotices": [
+			"TitleBlacklistHooks::displayBlacklistOverrideNotice"
+		],
+		"AbortMove": [
+			"TitleBlacklistHooks::abortMove"
+		],
+		"MovePageCheckPermissions": [
+			"TitleBlacklistHooks::onMovePageCheckPermissions"
+		],
+		"AbortNewAccount": [
+			"TitleBlacklistHooks::abortNewAccount"
+		],
+		"AbortAutoAccount": [
+			"TitleBlacklistHooks::abortNewAccount"
+		],
+		"EditFilter": [
+			"TitleBlacklistHooks::validateBlacklist"
+		],
+		"ArticleSaveComplete": [
+			"TitleBlacklistHooks::clearBlacklist"
+		],
+		"UserCreateForm": [
+			"TitleBlacklistHooks::addOverrideCheckbox"
+		],
+		"UnitTestsList": [
+			"TitleBlacklistHooks::unitTestsList"
+		],
+		"ScribuntoExternalLibraries": [
+			"TitleBlacklistHooks::scribuntoExternalLibraries"
+		]
+	},
+	"config": {
+		"TitleBlacklistSources": [],
+		"TitleBlacklistUsernameSources": "*",
+		"TitleBlacklistLogHits": false,
+		"TitleBlacklistCaching": {
+			"warningchance": 100,
+			"expiry": 900,
+			"warningexpiry": 600
+		}
+	}
+}

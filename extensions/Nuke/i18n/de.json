@@ -19,6 +19,7 @@
 	"nuke-multiplepeople": "Massenlöschung kürzlich erstellter Seiten",
 	"nuke-tools": "Diese Arbeitshilfe ermöglicht die Massenlöschung von Seiten, die von einer IP-Adresse oder einem Benutzer angelegt wurden.\nGib die IP-Adresse oder den Benutzernamen ein, um eine Liste der zu löschenden Seiten zu erhalten. Sofern du keine Angabe machst, werden alle Benutzer ausgewählt.",
 	"nuke-submit-user": "Abrufen",
+	"nuke-toggleinvert": "Umkehren",
 	"nuke-submit-delete": "Ausgewählte Seiten löschen",
 	"right-nuke": "Massenlöschungen von Seiten",
 	"nuke-select": "Auswählen: $1",

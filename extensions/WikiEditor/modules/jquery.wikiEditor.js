@@ -11,6 +11,8 @@
 /*jshint onevar:false, boss:true */
 ( function ( $, mw ) {
 
+var hasOwn = Object.prototype.hasOwnProperty;
+
 /**
  * Global static object for wikiEditor that provides generally useful functionality to all modules and contexts.
  */
@@ -80,7 +82,7 @@ $.wikiEditor = {
 	 * Path to images - this is a bit messy, and it would need to change if this code (and images) gets moved into the
 	 * core - or anywhere for that matter...
 	 */
-	imgPath : mw.config.get( 'wgExtensionAssetsPath' ) + '/WikiEditor/modules/images/',
+	imgPath: mw.config.get( 'wgExtensionAssetsPath' ) + '/WikiEditor/modules/images/',
 
 	/**
 	 * Checks the current browser against the browsers object to determine if the browser has been black-listed or not.
@@ -123,8 +125,7 @@ $.wikiEditor = {
 	},
 
 	/**
-	 * Provides a way to extract messages from objects. Wraps the mediaWiki.msg() function, which
-	 * may eventually become a wrapper for some kind of core MW functionality.
+	 * Provides a way to extract messages from objects. Wraps a mediaWiki.message( ... ).plain() call.
 	 *
 	 * @param object Object to extract messages from
 	 * @param property String of name of property which contains the message. This should be the base name of the
@@ -168,7 +169,8 @@ $.wikiEditor = {
 	 */
 	autoLang: function ( object, lang ) {
 		var defaultKey = $( 'body' ).hasClass( 'rtl' ) ? 'default-rtl' : 'default';
-		return object[lang || mw.config.get( 'wgUserLanguage' )] || object[defaultKey] || object['default'] || object;
+		lang = lang || mw.config.get( 'wgUserLanguage' );
+		return hasOwn.call( object, lang ) ? object[lang] : ( object[defaultKey] || object['default'] || object );
 	},
 
 	/**
@@ -199,9 +201,9 @@ $.wikiEditor = {
 	 */
 	autoIconOrOffset: function ( icon, offset, path, lang ) {
 		lang = lang || mw.config.get( 'wgUserLanguage' );
-		if ( typeof offset === 'object' && lang in offset ) {
+		if ( typeof offset === 'object' && hasOwn.call( offset, lang ) ) {
 			return offset[lang];
-		} else if ( typeof icon === 'object' && lang in icon ) {
+		} else if ( typeof icon === 'object' && hasOwn.call( icon, lang ) ) {
 			return $.wikiEditor.autoIcon( icon, undefined, lang );
 		} else {
 			return $.wikiEditor.autoLang( offset, lang );
@@ -218,6 +220,9 @@ $.fn.wikiEditor = function () {
 if ( !$.wikiEditor.isSupported() ) {
 	return $( this );
 }
+
+// Save browser profile for detailed tests.
+var profile = $.client.profile();
 
 /* Initialization */
 
@@ -311,6 +316,11 @@ if ( !context || typeof context === 'undefined' ) {
 		 * Executes core event filters as well as event handlers provided by modules.
 		 */
 		trigger: function ( name, event ) {
+			// Workaround for a scrolling bug in IE8 (bug 61908)
+			if ( profile.name === 'msie' && profile.versionNumber === 8 ) {
+				context.$textarea.css( 'width', context.$textarea.parent().width() );
+			}
+
 			// Event is an optional argument, but from here on out, at least the type field should be dependable
 			if ( typeof event === 'undefined' ) {
 				event = { 'type': 'custom' };
@@ -326,7 +336,7 @@ if ( !context || typeof context === 'undefined' ) {
 					return false;
 				}
 			}
-			var returnFromModules = null; //they return null by default
+			var returnFromModules = null; // they return null by default
 			// Pass the event around to all modules activated on this context
 
 			for ( var module in context.modules ) {
@@ -337,7 +347,7 @@ if ( !context || typeof context === 'undefined' ) {
 				) {
 					var ret = $.wikiEditor.modules[module].evt[name]( context, event );
 					if ( ret !== null ) {
-						//if 1 returns false, the end result is false
+						// if 1 returns false, the end result is false
 						if ( returnFromModules === null ) {
 							returnFromModules = ret;
 						} else {
@@ -416,28 +426,30 @@ if ( !context || typeof context === 'undefined' ) {
 		},
 
 		/**
-		 * Save scrollTop and cursor position for IE
+		 * Save scrollTop and cursor position for old IE (<=10)
+		 * Related to old IE 8 issues that are no longer reproducible
 		 */
 		saveCursorAndScrollTop: function () {
-			if ( $.client.profile().name === 'msie' ) {
-				var IHateIE = {
-					'scrollTop' : context.$textarea.scrollTop(),
+			if ( profile.name === 'msie' && document.selection && document.selection.createRange ) {
+				var IHateIE8 = {
+					'scrollTop': context.$textarea.scrollTop(),
 					'pos': context.$textarea.textSelection( 'getCaretPosition', { startAndEnd: true } )
 				};
-				context.$textarea.data( 'IHateIE', IHateIE );
+				context.$textarea.data( 'IHateIE8', IHateIE8 );
 			}
 		},
 
 		/**
-		 * Restore scrollTo and cursor position for IE
+		 * Restore scrollTo and cursor position for IE (<=10)
+		 * Related to old IE 8 issues that are no longer reproducible
 		 */
 		restoreCursorAndScrollTop: function () {
-			if ( $.client.profile().name === 'msie' ) {
-				var IHateIE = context.$textarea.data( 'IHateIE' );
-				if ( IHateIE ) {
-					context.$textarea.scrollTop( IHateIE.scrollTop );
-					context.$textarea.textSelection( 'setSelection', { start: IHateIE.pos[0], end: IHateIE.pos[1] } );
-					context.$textarea.data( 'IHateIE', null );
+			if ( profile.name === 'msie' && document.selection && document.selection.createRange ) {
+				var IHateIE8 = context.$textarea.data( 'IHateIE' );
+				if ( IHateIE8 ) {
+					context.$textarea.scrollTop( IHateIE8.scrollTop );
+					context.$textarea.textSelection( 'setSelection', { start: IHateIE8.pos[0], end: IHateIE8.pos[1] } );
+					context.$textarea.data( 'IHateIE8', null );
 				}
 			}
 		},
@@ -446,7 +458,7 @@ if ( !context || typeof context === 'undefined' ) {
 		 * Save text selection for old IE (<=10)
 		 */
 		saveSelection: function () {
-			if ( $.client.profile().name === 'msie' && document.selection && document.selection.createRange ) {
+			if ( profile.name === 'msie' && document.selection && document.selection.createRange ) {
 				context.$textarea.focus();
 				context.savedSelection = document.selection.createRange();
 			}
@@ -456,7 +468,7 @@ if ( !context || typeof context === 'undefined' ) {
 		 * Restore text selection for old IE (<=10)
 		 */
 		restoreSelection: function () {
-			if ( $.client.profile().name === 'msie' && context.savedSelection !== null ) {
+			if ( profile.name === 'msie' && context.savedSelection !== null ) {
 				context.$textarea.focus();
 				context.savedSelection.select();
 				context.savedSelection = null;
@@ -467,8 +479,9 @@ if ( !context || typeof context === 'undefined' ) {
 	/**
 	 * Workaround for a scrolling bug in IE8 (bug 61908)
 	 */
-	if ( $.client.profile().name === 'msie' ) {
+	if ( profile.name === 'msie' && profile.versionNumber === 8 ) {
 		context.$textarea.css( 'height', context.$textarea.height() );
+		context.$textarea.css( 'width', context.$textarea.parent().width() );
 	}
 
 	/**

@@ -195,7 +195,7 @@ class XMPReader {
 
 		$data = $this->results;
 
-		wfRunHooks( 'XMPGetResults', array( &$data ) );
+		Hooks::run( 'XMPGetResults', array( &$data ) );
 
 		if ( isset( $data['xmp-special']['AuthorsPosition'] )
 			&& is_string( $data['xmp-special']['AuthorsPosition'] )
@@ -331,7 +331,7 @@ class XMPReader {
 			// could declare entities unsafe to parse with xml_parse (T85848/T71210).
 			if ( $this->parsable !== self::PARSABLE_OK ) {
 				if ( $this->parsable === self::PARSABLE_NO ) {
-					throw new MWException( 'Unsafe doctype declaration in XML.' );
+					throw new Exception( 'Unsafe doctype declaration in XML.' );
 				}
 
 				$content = $this->xmlParsableBuffer . $content;
@@ -344,7 +344,7 @@ class XMPReader {
 					$msg = ( $this->parsable === self::PARSABLE_NO ) ?
 						'Unsafe doctype declaration in XML.' :
 						'No root element found in XML.';
-					throw new MWException( $msg );
+					throw new Exception( $msg );
 				}
 			}
 
@@ -359,7 +359,7 @@ class XMPReader {
 				$this->results = array(); // blank if error.
 				return false;
 			}
-		} catch ( MWException $e ) {
+		} catch ( Exception $e ) {
 			wfDebugLog( 'XMP', 'XMP parse error: ' . $e );
 			$this->results = array();
 
@@ -501,6 +501,10 @@ class XMPReader {
 		);
 
 		$oldDisable = libxml_disable_entity_loader( true );
+		$reset = new ScopedCallback(
+			'libxml_disable_entity_loader',
+			array( $oldDisable )
+		);
 		$reader->setParserProperty( XMLReader::SUBST_ENTITIES, false );
 
 		// Even with LIBXML_NOWARNING set, XMLReader::read gives a warning
@@ -520,7 +524,6 @@ class XMPReader {
 			}
 		}
 		wfRestoreWarnings();
-		libxml_disable_entity_loader( $oldDisable );
 
 		if ( !is_null( $result ) ) {
 			return $result;

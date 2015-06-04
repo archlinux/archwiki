@@ -38,8 +38,6 @@
  * of memory.
  *
  * Introduced by r47317
- *
- * @internal documentation reviewed on 18 Mar 2011 by hashar
  */
 class BacklinkCache {
 	/** @var ProcessCacheLRU */
@@ -176,7 +174,6 @@ class BacklinkCache {
 	 * @return ResultWrapper
 	 */
 	protected function queryLinks( $table, $startId, $endId, $max, $select = 'all' ) {
-		wfProfileIn( __METHOD__ );
 
 		$fromField = $this->getPrefix( $table ) . '_from';
 
@@ -231,8 +228,6 @@ class BacklinkCache {
 			}
 		}
 
-		wfProfileOut( __METHOD__ );
-
 		return $res;
 	}
 
@@ -255,7 +250,7 @@ class BacklinkCache {
 			return $prefixes[$table];
 		} else {
 			$prefix = null;
-			wfRunHooks( 'BacklinkCacheGetPrefix', array( $table, &$prefix ) );
+			Hooks::run( 'BacklinkCacheGetPrefix', array( $table, &$prefix ) );
 			if ( $prefix ) {
 				return $prefix;
 			} else {
@@ -303,7 +298,7 @@ class BacklinkCache {
 				break;
 			default:
 				$conds = null;
-				wfRunHooks( 'BacklinkCacheGetConditions', array( $table, $this->title, &$conds ) );
+				Hooks::run( 'BacklinkCacheGetConditions', array( $table, $this->title, &$conds ) );
 				if ( !$conds ) {
 					throw new MWException( "Invalid table \"$table\" in " . __CLASS__ );
 				}
@@ -489,5 +484,56 @@ class BacklinkCache {
 		}
 
 		return array( 'numRows' => $numRows, 'batches' => $batches );
+	}
+
+	/**
+	 * Get a Title iterator for cascade-protected template/file use backlinks
+	 *
+	 * @return TitleArray
+	 * @since 1.25
+	 */
+	public function getCascadeProtectedLinks() {
+		$dbr = $this->getDB();
+
+		// @todo: use UNION without breaking tests that use temp tables
+		$resSets = array();
+		$resSets[] = $dbr->select(
+			array( 'templatelinks', 'page_restrictions', 'page' ),
+			array( 'page_namespace', 'page_title', 'page_id' ),
+			array(
+				'tl_namespace' => $this->title->getNamespace(),
+				'tl_title' => $this->title->getDBkey(),
+				'tl_from = pr_page',
+				'pr_cascade' => 1,
+				'page_id = tl_from'
+			),
+			__METHOD__,
+			array( 'DISTINCT' )
+		);
+		if ( $this->title->getNamespace() == NS_FILE ) {
+			$resSets[] = $dbr->select(
+				array( 'imagelinks', 'page_restrictions', 'page' ),
+				array( 'page_namespace', 'page_title', 'page_id' ),
+				array(
+					'il_to' => $this->title->getDBkey(),
+					'il_from = pr_page',
+					'pr_cascade' => 1,
+					'page_id = il_from'
+				),
+				__METHOD__,
+				array( 'DISTINCT' )
+			);
+		}
+
+		// Combine and de-duplicate the results
+		$mergedRes = array();
+		foreach ( $resSets as $res ) {
+			foreach ( $res as $row ) {
+				$mergedRes[$row->page_id] = $row;
+			}
+		}
+
+		return TitleArray::newFromResult(
+			new FakeResultWrapper( array_values( $mergedRes ) ) );
 	}
 }

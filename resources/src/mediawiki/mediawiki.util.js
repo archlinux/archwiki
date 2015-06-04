@@ -88,7 +88,7 @@
 		/**
 		 * Get the link to a page name (relative to `wgServer`),
 		 *
-		 * @param {string} str Page name
+		 * @param {string|null} [str=wgPageName] Page name
 		 * @param {Object} [params] A mapping of query parameter names to values,
 		 *  e.g. `{ action: 'edit' }`
 		 * @return {string} Url of the page with name of `str`
@@ -151,12 +151,12 @@
 		 * Returns null if not found.
 		 *
 		 * @param {string} param The parameter name.
-		 * @param {string} [url=document.location.href] URL to search through, defaulting to the current document's URL.
+		 * @param {string} [url=location.href] URL to search through, defaulting to the current browsing location.
 		 * @return {Mixed} Parameter value or null.
 		 */
 		getParamValue: function ( param, url ) {
 			if ( url === undefined ) {
-				url = document.location.href;
+				url = location.href;
 			}
 			// Get last match, stop at hash
 			var	re = new RegExp( '^[^#]*[&?]' + $.escapeRE( param ) + '=([^&#]*)' ),
@@ -196,7 +196,7 @@
 		 * p-cactions (Content actions), p-personal (Personal tools),
 		 * p-navigation (Navigation), p-tb (Toolbox)
 		 *
-		 * The first three paramters are required, the others are optional and
+		 * The first three parameters are required, the others are optional and
 		 * may be null. Though providing an id and tooltip is recommended.
 		 *
 		 * By default the new link will be added to the end of the list. To
@@ -228,7 +228,7 @@
 		addPortletLink: function ( portlet, href, text, id, tooltip, accesskey, nextnode ) {
 			var $item, $link, $portlet, $ul;
 
-			// Check if there's atleast 3 arguments to prevent a TypeError
+			// Check if there's at least 3 arguments to prevent a TypeError
 			if ( arguments.length < 3 ) {
 				return null;
 			}
@@ -286,30 +286,38 @@
 			}
 
 			if ( tooltip ) {
-				$link.attr( 'title', tooltip ).updateTooltipAccessKeys();
+				$link.attr( 'title', tooltip );
 			}
 
 			if ( nextnode ) {
+				// Case: nextnode is a DOM element (was the only option before MW 1.17, in wikibits.js)
+				// Case: nextnode is a CSS selector for jQuery
 				if ( nextnode.nodeType || typeof nextnode === 'string' ) {
-					// nextnode is a DOM element (was the only option before MW 1.17, in wikibits.js)
-					// or nextnode is a CSS selector for jQuery
 					nextnode = $ul.find( nextnode );
-				} else if ( !nextnode.jquery || ( nextnode.length && nextnode[0].parentNode !== $ul[0] ) ) {
-					// Fallback
-					$ul.append( $item );
-					return $item[0];
+				} else if ( !nextnode.jquery ) {
+					// Error: Invalid nextnode
+					nextnode = undefined;
 				}
-				if ( nextnode.length === 1 ) {
-					// nextnode is a jQuery object that represents exactly one element
-					nextnode.before( $item );
-					return $item[0];
+				if ( nextnode && ( nextnode.length !== 1 || nextnode[0].parentNode !== $ul[0] ) ) {
+					// Error: nextnode must resolve to a single node
+					// Error: nextnode must have the associated <ul> as its parent
+					nextnode = undefined;
 				}
 			}
 
-			// Fallback (this is the default behavior)
-			$ul.append( $item );
-			return $item[0];
+			// Case: nextnode is a jQuery-wrapped DOM element
+			if ( nextnode ) {
+				nextnode.before( $item );
+			} else {
+				// Fallback (this is the default behavior)
+				$ul.append( $item );
+			}
 
+			// Update tooltip for the access key after inserting into DOM
+			// to get a localized access key label (bug 67946).
+			$link.updateTooltipAccessKeys();
+
+			return $item[0];
 		},
 
 		/**
@@ -332,7 +340,7 @@
 
 			// HTML5 defines a string as valid e-mail address if it matches
 			// the ABNF:
-			//	1 * ( atext / "." ) "@" ldh-str 1*( "." ldh-str )
+			//     1 * ( atext / "." ) "@" ldh-str 1*( "." ldh-str )
 			// With:
 			// - atext   : defined in RFC 5322 section 3.2.3
 			// - ldh-str : defined in RFC 1034 section 3.5
@@ -353,12 +361,12 @@
 			rfc5322Atext = 'a-z0-9!#$%&\'*+\\-/=?^_`{|}~';
 
 			// Next define the RFC 1034 'ldh-str'
-			//	<domain> ::= <subdomain> | " "
-			//	<subdomain> ::= <label> | <subdomain> "." <label>
-			//	<label> ::= <letter> [ [ <ldh-str> ] <let-dig> ]
-			//	<ldh-str> ::= <let-dig-hyp> | <let-dig-hyp> <ldh-str>
-			//	<let-dig-hyp> ::= <let-dig> | "-"
-			//	<let-dig> ::= <letter> | <digit>
+			//     <domain> ::= <subdomain> | " "
+			//     <subdomain> ::= <label> | <subdomain> "." <label>
+			//     <label> ::= <letter> [ [ <ldh-str> ] <let-dig> ]
+			//     <ldh-str> ::= <let-dig-hyp> | <let-dig-hyp> <ldh-str>
+			//     <let-dig-hyp> ::= <let-dig> | "-"
+			//     <let-dig> ::= <letter> | <digit>
 			rfc1034LdhStr = 'a-z0-9\\-';
 
 			html5EmailRegexp = new RegExp(
@@ -435,6 +443,19 @@
 
 			return address.search( new RegExp( '^' + RE_IPV6_ADD + block + '$' ) ) !== -1
 				&& address.search( /::/ ) !== -1 && address.search( /::.*::/ ) === -1;
+		},
+
+		/**
+		 * Check whether a string is an IP address
+		 *
+		 * @since 1.25
+		 * @param {string} address String to check
+		 * @param {boolean} allowBlock True if a block of IPs should be allowed
+		 * @return {boolean}
+		 */
+		isIPAddress: function ( address, allowBlock ) {
+			return util.isIPv4Address( address, allowBlock ) ||
+				util.isIPv6Address( address, allowBlock );
 		}
 	};
 

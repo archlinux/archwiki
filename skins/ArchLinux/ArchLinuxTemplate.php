@@ -81,11 +81,12 @@ class ArchLinuxTemplate extends BaseTemplate {
 				}
 				?>
 
+				<?php echo $this->getIndicators(); ?>
 				<h1 id="firstHeading" class="firstHeading" lang="<?php
 				$this->data['pageLanguage'] =
 					$this->getSkin()->getTitle()->getPageViewLanguage()->getHtmlCode();
 				$this->text( 'pageLanguage' );
-				?>"><span dir="auto"><?php $this->html( 'title' ) ?></span></h1>
+				?>"><?php $this->html( 'title' ) ?></h1>
 
 				<div id="bodyContent" class="mw-body-content">
 					<div id="siteSub"><?php $this->msg( 'tagline' ) ?></div>
@@ -152,8 +153,10 @@ class ArchLinuxTemplate extends BaseTemplate {
 				<?php
 				echo Html::element( 'a', array(
 						'href' => $this->data['nav_urls']['mainpage']['href'],
-						'style' => "background-image: url({$this->data['logopath']});" )
-					+ Linker::tooltipAndAccesskeyAttribs( 'p-logo' ) ); ?>
+						'class' => 'mw-wiki-logo',
+						)
+						+ Linker::tooltipAndAccesskeyAttribs( 'p-logo' )
+				); ?>
 
 			</div>
 			<?php
@@ -209,6 +212,7 @@ class ArchLinuxTemplate extends BaseTemplate {
 		$this->printTrail();
 		echo Html::closeElement( 'body' );
 		echo Html::closeElement( 'html' );
+		echo "\n";
 		wfRestoreWarnings();
 	} // end of execute() method
 
@@ -232,6 +236,9 @@ class ArchLinuxTemplate extends BaseTemplate {
 			if ( $content === false ) {
 				continue;
 			}
+
+			// Numeric strings gets an integer when set as key, cast back - T73639
+			$boxName = (string)$boxName;
 
 			if ( $boxName == 'SEARCH' ) {
 				$this->searchBox();

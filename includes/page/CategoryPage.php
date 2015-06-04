@@ -61,7 +61,7 @@ class CategoryPage extends Article {
 			return;
 		}
 
-		if ( !wfRunHooks( 'CategoryPageView', array( &$this ) ) ) {
+		if ( !Hooks::run( 'CategoryPageView', array( &$this ) ) ) {
 			return;
 		}
 
@@ -113,6 +113,8 @@ class CategoryPage extends Article {
 			$until,
 			$reqArray
 		);
-		$this->getContext()->getOutput()->addHTML( $viewer->getHTML() );
+		$out = $this->getContext()->getOutput();
+		$out->addHTML( $viewer->getHTML() );
+		$this->addHelpLink( 'Help:Categories' );
 	}
 }

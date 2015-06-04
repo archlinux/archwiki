@@ -19,12 +19,14 @@
  *
  * @file
  * @ingroup Upload
+ * @ingroup JobQueue
  */
 
 /**
  * Upload a file from the upload stash into the local file repo.
  *
  * @ingroup Upload
+ * @ingroup JobQueue
  */
 class PublishStashedFileJob extends Job {
 	public function __construct( $title, $params ) {
@@ -35,26 +37,16 @@ class PublishStashedFileJob extends Job {
 	public function run() {
 		$scope = RequestContext::importScopedSession( $this->params['session'] );
 		$context = RequestContext::getMain();
+		$user = $context->getUser();
 		try {
-			$user = $context->getUser();
 			if ( !$user->isLoggedIn() ) {
 				$this->setLastError( "Could not load the author user from session." );
 
 				return false;
 			}
 
-			if ( count( $_SESSION ) === 0 ) {
-				// Empty session probably indicates that we didn't associate
-				// with the session correctly. Note that being able to load
-				// the user does not necessarily mean the session was loaded.
-				// Most likely cause by suhosin.session.encrypt = On.
-				$this->setLastError( "Error associating with user session. " .
-					"Try setting suhosin.session.encrypt = Off" );
-
-				return false;
-			}
-
 			UploadBase::setSessionStatus(
+				$user,
 				$this->params['filekey'],
 				array( 'result' => 'Poll', 'stage' => 'publish', 'status' => Status::newGood() )
 			);
@@ -72,6 +64,7 @@ class PublishStashedFileJob extends Job {
 				$status = Status::newFatal( 'verification-error' );
 				$status->value = array( 'verification' => $verification );
 				UploadBase::setSessionStatus(
+					$user,
 					$this->params['filekey'],
 					array( 'result' => 'Failure', 'stage' => 'publish', 'status' => $status )
 				);
@@ -89,6 +82,7 @@ class PublishStashedFileJob extends Job {
 			);
 			if ( !$status->isGood() ) {
 				UploadBase::setSessionStatus(
+					$user,
 					$this->params['filekey'],
 					array( 'result' => 'Failure', 'stage' => 'publish', 'status' => $status )
 				);
@@ -106,6 +100,7 @@ class PublishStashedFileJob extends Job {
 
 			// Cache the info so the user doesn't have to wait forever to get the final info
 			UploadBase::setSessionStatus(
+				$user,
 				$this->params['filekey'],
 				array(
 					'result' => 'Success',
@@ -115,8 +110,9 @@ class PublishStashedFileJob extends Job {
 					'status' => Status::newGood()
 				)
 			);
-		} catch ( MWException $e ) {
+		} catch ( Exception $e ) {
 			UploadBase::setSessionStatus(
+				$user,
 				$this->params['filekey'],
 				array(
 					'result' => 'Failure',

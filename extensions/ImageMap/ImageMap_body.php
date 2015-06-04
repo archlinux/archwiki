@@ -29,6 +29,15 @@ class ImageMap {
 	const NONE = 4;
 
 	/**
+	 * @param Parser $parser
+	 * @return bool
+	 */
+	public static function onParserFirstCallInit( Parser &$parser ) {
+		$parser->setHook( 'imagemap', array( 'ImageMap', 'render' ) );
+		return true;
+	}
+
+	/**
 	 * @param $input
 	 * @param $params
 	 * @param $parser Parser

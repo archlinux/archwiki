@@ -9,9 +9,10 @@
 	"vector-action-move": "Vaschiewe",
 	"vector-action-protect": "Schidze",
 	"vector-action-undelete": "Zriggbringe",
-	"vector-view-create": "Õleesche",
-	"vector-view-edit": "Drõ schaffe",
+	"vector-view-create": "Oaleesche",
+	"vector-view-edit": "Droa schaffe",
 	"vector-view-history": "Dadaigschischd",
 	"vector-view-view": "Lese",
-	"vector-view-viewsource": "Gwelltegschd zaische"
+	"vector-view-viewsource": "Gwelltegschd zaische",
+	"vector-more-actions": "Mea"
 }

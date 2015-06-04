@@ -17,7 +17,7 @@
 	"pfunc_expr_missing_operand": "Avaldistõrge: Puudub $1-tehte operand",
 	"pfunc_expr_unexpected_closing_bracket": "Avaldistõrge: Ootamatu lõpusulg",
 	"pfunc_expr_unrecognised_punctuation": "Avaldistõrge: Tundmatu kirjavahemärk \"$1\"",
-	"pfunc_expr_unclosed_bracket": "Avaldistõrge: sulgemata sulg",
+	"pfunc_expr_unclosed_bracket": "Avaldistõrge: sulgemata sulud",
 	"pfunc_expr_division_by_zero": "Nulliga jagamine",
 	"pfunc_expr_invalid_argument": "Vigane $1-tehte argument: < -1 või > 1",
 	"pfunc_expr_invalid_argument_ln": "Vigane ln-tehte argument: <= 0",

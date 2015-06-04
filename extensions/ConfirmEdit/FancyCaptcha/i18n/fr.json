@@ -1,0 +1,23 @@
+{
+	"@metadata": {
+		"authors": [
+			"Crochet.david",
+			"Gomoko",
+			"IAlex",
+			"Metroitendo",
+			"Sherbrooke",
+			"Urhixidur",
+			"Verdy p"
+		]
+	},
+	"fancycaptcha-desc": "Générateur d’images ''captcha'' anti-robots demandant une confirmation humaine des modifications.",
+	"fancycaptcha-addurl": "Votre modification inclut de nouveaux liens externes.\nPour protéger le wiki contre les pourriels automatisés, nous vous demandons de bien vouloir entrer les mots qui apparaissent dans la boîte ([[Special:Captcha/help|plus d’informations]]) :",
+	"fancycaptcha-badlogin": "Pour protéger le wiki contre le cassage des mots de passe par des automates, nous vous demandons de bien vouloir entrer les mots qui apparaissent dans la boîte ci-dessous ([[Special:Captcha/help|plus d’informations]]) :",
+	"fancycaptcha-createaccount": "Pour protéger le wiki contre les créations automatiques de comptes, nous vous demandons de bien vouloir entrer les mots qui apparaissent dans la boîte ci-dessous ([[Special:Captcha/help|plus d’informations]]) :",
+	"fancycaptcha-create": "Pour créer la page, veuillez entrer les mots qui apparaissent dans la boîte ci-dessous ([[Special:Captcha|plus d’informations]]) :",
+	"fancycaptcha-edit": "Pour modifier cette page, veuillez saisir les mots qui apparaissent dans la boîte ci-dessous ([[Special:Captcha/help|plus d’information]]) :",
+	"fancycaptcha-sendemail": "Pour protéger le wiki contre l’envoi automatisé de pourriels, nous vous demandons de bien vouloir entrer les mots qui apparaissent dans la boîte ci-dessous ([[Special:Captcha/help|plus d’informations]]) :",
+	"fancycaptcha-reload-text": "Actualiser",
+	"apihelp-fancycaptchareload-description": "Obtenir un nouveau FancyCaptcha.",
+	"apihelp-fancycaptchareload-example-1": "Obtenir un nouveau FancyCaptcha"
+}

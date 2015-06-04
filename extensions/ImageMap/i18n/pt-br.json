@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Carla404",
-			"Eduardo.mps"
+			"Eduardo.mps",
+			"Dianakc"
 		]
 	},
 	"imagemap_desc": "Permite mapas de imagem clicáveis no lado do cliente usando a marca <code>&lt;imagemap&gt;</code>",
@@ -10,7 +11,7 @@
 	"imagemap_invalid_image": "Erro: imagem inválida ou inexistente",
 	"imagemap_bad_image": "Erro: a imagem está na lista negra para esta página",
 	"imagemap_no_link": "Erro: não foi encontrada uma ligação válida ao final da linha $1",
-	"imagemap_invalid_title": "Erro: título inválido na ligação da linha $1",
+	"imagemap_invalid_title": "Erro: título inválido no link da linha $1",
 	"imagemap_missing_coord": "Erro: coordenadas insuficientes para formar uma figura na linha $1",
 	"imagemap_unrecognised_shape": "Erro: figura não reconhecida na linha $1. Cada linha precisa iniciar com: <code>default</code>, <code>rect</code>, <code>circle</code> ou <code>poly</code>",
 	"imagemap_invalid_coord": "Erro: coordenada inválida na linha $1, é necessário que seja um número",

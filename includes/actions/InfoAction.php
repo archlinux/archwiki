@@ -65,8 +65,8 @@ class InfoAction extends FormlessAction {
 	 */
 	public static function invalidateCache( Title $title ) {
 		global $wgMemc;
-		// Clear page info.
-		$revision = WikiPage::factory( $title )->getRevision();
+
+		$revision = Revision::newFromTitle( $title, 0, Revision::READ_LATEST );
 		if ( $revision !== null ) {
 			$key = wfMemcKey( 'infoaction', sha1( $title->getPrefixedText() ), $revision->getId() );
 			$wgMemc->delete( $key );
@@ -114,7 +114,7 @@ class InfoAction extends FormlessAction {
 		$pageInfo = $this->pageInfo();
 
 		// Allow extensions to add additional information
-		wfRunHooks( 'InfoAction', array( $this->getContext(), &$pageInfo ) );
+		Hooks::run( 'InfoAction', array( $this->getContext(), &$pageInfo ) );
 
 		// Render page information
 		foreach ( $pageInfo as $header => $infoTable ) {
@@ -246,13 +246,13 @@ class InfoAction extends FormlessAction {
 			$pageInfo['header-basic'][] = array(
 				$this->msg( 'pageinfo-redirectsto' ),
 				Linker::link( $this->page->getRedirectTarget() ) .
-				$this->msg( 'word-separator' )->text() .
-				$this->msg( 'parentheses', Linker::link(
+				$this->msg( 'word-separator' )->escaped() .
+				$this->msg( 'parentheses' )->rawParams( Linker::link(
 					$this->page->getRedirectTarget(),
 					$this->msg( 'pageinfo-redirectsto-info' )->escaped(),
 					array(),
 					array( 'action' => 'info' )
-				) )->text()
+				) )->escaped()
 			);
 		}
 
@@ -276,7 +276,9 @@ class InfoAction extends FormlessAction {
 		// Language in which the page content is (supposed to be) written
 		$pageLang = $title->getPageLanguage()->getCode();
 
-		if ( $config->get( 'PageLanguageUseDB' ) && $this->getTitle()->userCan( 'pagelang' ) ) {
+		if ( $config->get( 'PageLanguageUseDB' )
+			&& $this->getTitle()->userCan( 'pagelang', $this->getUser() )
+		) {
 			// Link to Special:PageLanguage with pre-filled page title if user has permissions
 			$titleObj = SpecialPage::getTitleFor( 'PageLanguage', $title->getPrefixedText() );
 			$langDisp = Linker::link(
@@ -290,12 +292,12 @@ class InfoAction extends FormlessAction {
 
 		$pageInfo['header-basic'][] = array( $langDisp,
 			Language::fetchLanguageName( $pageLang, $lang->getCode() )
-			. ' ' . $this->msg( 'parentheses', $pageLang ) );
+			. ' ' . $this->msg( 'parentheses', $pageLang )->escaped() );
 
 		// Content model of the page
 		$pageInfo['header-basic'][] = array(
 			$this->msg( 'pageinfo-content-model' ),
-			ContentHandler::getLocalizedName( $title->getContentModel() )
+			htmlspecialchars( ContentHandler::getLocalizedName( $title->getContentModel() ) )
 		);
 
 		// Search engine status
@@ -313,13 +315,6 @@ class InfoAction extends FormlessAction {
 			// Messages: pageinfo-robot-index, pageinfo-robot-noindex
 			$this->msg( 'pageinfo-robot-policy' ), $this->msg( "pageinfo-robot-${policy['index']}" )
 		);
-
-		if ( isset( $pageCounts['views'] ) ) {
-			// Number of views
-			$pageInfo['header-basic'][] = array(
-				$this->msg( 'pageinfo-views' ), $lang->formatNum( $pageCounts['views'] )
-			);
-		}
 
 		$unwatchedPageThreshold = $config->get( 'UnwatchedPageThreshold' );
 		if (
@@ -345,7 +340,11 @@ class InfoAction extends FormlessAction {
 				$whatLinksHere,
 				$this->msg( 'pageinfo-redirects-name' )->escaped(),
 				array(),
-				array( 'hidelinks' => 1, 'hidetrans' => 1 )
+				array(
+					'hidelinks' => 1,
+					'hidetrans' => 1,
+					'hideimages' => $title->getNamespace() == NS_FILE
+				)
 			),
 			$this->msg( 'pageinfo-redirects-value' )
 				->numParams( count( $title->getRedirectsHere() ) )
@@ -393,7 +392,7 @@ class InfoAction extends FormlessAction {
 		// Page protection
 		$pageInfo['header-restrictions'] = array();
 
-		// Is this page effected by the cascading protection of something which includes it?
+		// Is this page affected by the cascading protection of something which includes it?
 		if ( $title->isCascadeProtected() ) {
 			$cascadingFrom = '';
 			$sources = $title->getCascadeProtectionSources(); // Array deferencing is in PHP 5.4 :(
@@ -484,7 +483,7 @@ class InfoAction extends FormlessAction {
 				$this->msg( 'pageinfo-firsttime' ),
 				Linker::linkKnown(
 					$title,
-					$lang->userTimeAndDate( $firstRev->getTimestamp(), $user ),
+					htmlspecialchars( $lang->userTimeAndDate( $firstRev->getTimestamp(), $user ) ),
 					array(),
 					array( 'oldid' => $firstRev->getId() )
 				)
@@ -503,7 +502,7 @@ class InfoAction extends FormlessAction {
 				$this->msg( 'pageinfo-lasttime' ),
 				Linker::linkKnown(
 					$title,
-					$lang->userTimeAndDate( $this->page->getTimestamp(), $user ),
+					htmlspecialchars( $lang->userTimeAndDate( $this->page->getTimestamp(), $user ) ),
 					array(),
 					array( 'oldid' => $this->page->getLatest() )
 				)
@@ -637,23 +636,11 @@ class InfoAction extends FormlessAction {
 	 * @return array
 	 */
 	protected function pageCounts( Title $title ) {
-		wfProfileIn( __METHOD__ );
 		$id = $title->getArticleID();
 		$config = $this->context->getConfig();
 
 		$dbr = wfGetDB( DB_SLAVE );
 		$result = array();
-
-		if ( !$config->get( 'DisableCounters' ) ) {
-			// Number of views
-			$views = (int)$dbr->selectField(
-				'page',
-				'page_counter',
-				array( 'page_id' => $id ),
-				__METHOD__
-			);
-			$result['views'] = $views;
-		}
 
 		// Number of page watchers
 		$watchers = (int)$dbr->selectField(
@@ -760,8 +747,6 @@ class InfoAction extends FormlessAction {
 			array( 'tl_from' => $title->getArticleID() ),
 			__METHOD__
 		);
-
-		wfProfileOut( __METHOD__ );
 
 		return $result;
 	}

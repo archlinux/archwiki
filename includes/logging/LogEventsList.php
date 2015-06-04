@@ -26,7 +26,7 @@
 class LogEventsList extends ContextSource {
 	const NO_ACTION_LINK = 1;
 	const NO_EXTRA_USER_LINKS = 2;
-	const USE_REVDEL_CHECKBOXES = 4;
+	const USE_CHECKBOXES = 4;
 
 	public $flags;
 
@@ -44,7 +44,7 @@ class LogEventsList extends ContextSource {
 	 *   a Skin object. Use of Skin is deprecated.
 	 * @param null $unused Unused; used to be an OutputPage object.
 	 * @param int $flags Can be a combination of self::NO_ACTION_LINK,
-	 *   self::NO_EXTRA_USER_LINKS or self::USE_REVDEL_CHECKBOXES.
+	 *   self::NO_EXTRA_USER_LINKS or self::USE_CHECKBOXES.
 	 */
 	public function __construct( $context, $unused = null, $flags = 0 ) {
 		if ( $context instanceof IContextSource ) {
@@ -55,17 +55,6 @@ class LogEventsList extends ContextSource {
 		}
 
 		$this->flags = $flags;
-	}
-
-	/**
-	 * Deprecated alias for getTitle(); do not use.
-	 *
-	 * @deprecated since 1.20; use getTitle() instead.
-	 * @return Title
-	 */
-	public function getDisplayTitle() {
-		wfDeprecated( __METHOD__, '1.20' );
-		return $this->getTitle();
 	}
 
 	/**
@@ -234,7 +223,8 @@ class LogEventsList extends ContextSource {
 			'user',
 			'mw-log-user',
 			15,
-			$user
+			$user,
+			array( 'class' => 'mw-autocomplete-user' )
 		);
 
 		return '<span style="white-space: nowrap">' . $label . '</span>';
@@ -271,14 +261,21 @@ class LogEventsList extends ContextSource {
 	 * @return string
 	 */
 	private function getExtraInputs( $types ) {
-		$offender = $this->getRequest()->getVal( 'offender' );
-		$user = User::newFromName( $offender, false );
-		if ( !$user || ( $user->getId() == 0 && !IP::isIPAddress( $offender ) ) ) {
-			$offender = ''; // Blank field if invalid
-		}
-		if ( count( $types ) == 1 && $types[0] == 'suppress' ) {
-			return Xml::inputLabel( $this->msg( 'revdelete-offender' )->text(), 'offender',
-				'mw-log-offender', 20, $offender );
+		if ( count( $types ) == 1 ) {
+			if ( $types[0] == 'suppress' ) {
+				$offender = $this->getRequest()->getVal( 'offender' );
+				$user = User::newFromName( $offender, false );
+				if ( !$user || ( $user->getId() == 0 && !IP::isIPAddress( $offender ) ) ) {
+					$offender = ''; // Blank field if invalid
+				}
+				return Xml::inputLabel( $this->msg( 'revdelete-offender' )->text(), 'offender',
+					'mw-log-offender', 20, $offender );
+			} else {
+				// Allow extensions to add their own extra inputs
+				$input = '';
+				Hooks::run( 'LogEventsListGetExtraInputs', array( $types[0], $this, &$input ) );
+				return $input;
+			}
 		}
 
 		return '';
@@ -344,14 +341,27 @@ class LogEventsList extends ContextSource {
 	 */
 	private function getShowHideLinks( $row ) {
 		// We don't want to see the links and
-		// no one can hide items from the suppress log.
-		if ( ( $this->flags == self::NO_ACTION_LINK )
-			|| $row->log_type == 'suppress'
-		) {
+		if ( $this->flags == self::NO_ACTION_LINK ) {
 			return '';
 		}
-		$del = '';
+
 		$user = $this->getUser();
+
+		// If change tag editing is available to this user, return the checkbox
+		if ( $this->flags & self::USE_CHECKBOXES && ChangeTags::showTagEditingUI( $user ) ) {
+			return Xml::check(
+				'showhiderevisions',
+				false,
+				array( 'name' => 'ids[' . $row->log_id . ']' )
+			);
+		}
+
+		// no one can hide items from the suppress log.
+		if ( $row->log_type == 'suppress' ) {
+			return '';
+		}
+
+		$del = '';
 		// Don't show useless checkbox to people who cannot hide log entries
 		if ( $user->isAllowed( 'deletedhistory' ) ) {
 			$canHide = $user->isAllowed( 'deletelogentry' );
@@ -361,7 +371,7 @@ class LogEventsList extends ContextSource {
 			$canViewThisSuppressedEntry = $canViewSuppressedOnly && $entryIsSuppressed;
 			if ( $row->log_deleted || $canHide ) {
 				// Show checkboxes instead of links.
-				if ( $canHide && $this->flags & self::USE_REVDEL_CHECKBOXES && !$canViewThisSuppressedEntry ) {
+				if ( $canHide && $this->flags & self::USE_CHECKBOXES && !$canViewThisSuppressedEntry ) {
 					// If event was hidden from sysops
 					if ( !self::userCan( $row, LogPage::DELETED_RESTRICTED, $user ) ) {
 						$del = Xml::check( 'deleterevisions', false, array( 'disabled' => 'disabled' ) );
@@ -544,14 +554,16 @@ class LogEventsList extends ContextSource {
 		if ( $lim > 0 ) {
 			$pager->mLimit = $lim;
 		}
-
+		// Fetch the log rows and build the HTML if needed
 		$logBody = $pager->getBody();
+		$numRows = $pager->getNumRows();
+
 		$s = '';
 
 		if ( $logBody ) {
 			if ( $msgKey[0] ) {
 				$dir = $context->getLanguage()->getDir();
-				$lang = $context->getLanguage()->getCode();
+				$lang = $context->getLanguage()->getHtmlCode();
 
 				$s = Xml::openElement( 'div', array(
 					'class' => "mw-warning-with-logexcerpt mw-content-$dir",
@@ -575,7 +587,7 @@ class LogEventsList extends ContextSource {
 				$context->msg( 'logempty' )->parse() );
 		}
 
-		if ( $pager->getNumRows() > $pager->mLimit ) { # Show "Full log" link
+		if ( $numRows > $pager->mLimit ) { # Show "Full log" link
 			$urlParam = array();
 			if ( $page instanceof Title ) {
 				$urlParam['page'] = $page->getPrefixedDBkey();
@@ -613,7 +625,7 @@ class LogEventsList extends ContextSource {
 		}
 
 		/* hook can return false, if we don't want the message to be emitted (Wikia BugId:7093) */
-		if ( wfRunHooks( 'LogEventsListShowLogExtract', array( &$s, $types, $page, $user, $param ) ) ) {
+		if ( Hooks::run( 'LogEventsListShowLogExtract', array( &$s, $types, $page, $user, $param ) ) ) {
 			// $out can be either an OutputPage object or a String-by-reference
 			if ( $out instanceof OutputPage ) {
 				$out->addHTML( $s );
@@ -622,7 +634,7 @@ class LogEventsList extends ContextSource {
 			}
 		}
 
-		return $pager->getNumRows();
+		return $numRows;
 	}
 
 	/**

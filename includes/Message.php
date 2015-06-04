@@ -156,7 +156,7 @@
  *
  * @since 1.17
  */
-class Message {
+class Message implements MessageSpecifier {
 
 	/**
 	 * In which language to get this message. True, which is the default,
@@ -249,7 +249,7 @@ class Message {
 		$this->key = reset( $this->keysToTry );
 
 		$this->parameters = array_values( $params );
-		$this->language = $language ? $language : $wgLang;
+		$this->language = $language ?: $wgLang;
 	}
 
 	/**
@@ -276,7 +276,7 @@ class Message {
 	 * Returns the message key.
 	 *
 	 * If a list of multiple possible keys was supplied to the constructor, this method may
-	 * return any of these keys. After the message ahs been fetched, this method will return
+	 * return any of these keys. After the message has been fetched, this method will return
 	 * the key that was actually used to fetch the message.
 	 *
 	 * @since 1.21
@@ -541,6 +541,30 @@ class Message {
 	}
 
 	/**
+	 * Add parameters that are plaintext and will be passed through without
+	 * the content being evaluated.  Plaintext parameters are not valid as
+	 * arguments to parser functions. This differs from self::rawParams in
+	 * that the Message class handles escaping to match the output format.
+	 *
+	 * @since 1.25
+	 *
+	 * @param string|string[] $param,... plaintext parameters, or a single argument that is
+	 * an array of plaintext parameters.
+	 *
+	 * @return Message $this
+	 */
+	public function plaintextParams( /*...*/ ) {
+		$params = func_get_args();
+		if ( isset( $params[0] ) && is_array( $params[0] ) ) {
+			$params = $params[0];
+		}
+		foreach ( $params as $param ) {
+			$this->parameters[] = self::plaintextParam( $param );
+		}
+		return $this;
+	}
+
+	/**
 	 * Set the language and the title from a context object
 	 *
 	 * @since 1.19
@@ -674,11 +698,10 @@ class Message {
 		$string = $this->fetchMessage();
 
 		if ( $string === false ) {
-			$key = htmlspecialchars( $this->key );
-			if ( $this->format === 'plain' ) {
-				return '<' . $key . '>';
+			if ( $this->format === 'plain' || $this->format === 'text' ) {
+				return '<' . $this->key . '>';
 			}
-			return '&lt;' . $key . '&gt;';
+			return '&lt;' . htmlspecialchars( $this->key ) . '&gt;';
 		}
 
 		# Replace $* with a list of parameters for &uselang=qqx.
@@ -735,10 +758,10 @@ class Message {
 				// Doh! Cause a fatal error after all?
 			}
 
-			if ( $this->format === 'plain' ) {
+			if ( $this->format === 'plain' || $this->format === 'text' ) {
 				return '<' . $this->key . '>';
 			}
-			return '&lt;' . $this->key . '&gt;';
+			return '&lt;' . htmlspecialchars( $this->key ) . '&gt;';
 		}
 	}
 
@@ -917,6 +940,17 @@ class Message {
 	}
 
 	/**
+	 * @since 1.25
+	 *
+	 * @param string $plaintext
+	 *
+	 * @return string[] Array with a single "plaintext" key.
+	 */
+	public static function plaintextParam( $plaintext ) {
+		return array( 'plaintext' => $plaintext );
+	}
+
+	/**
 	 * Substitutes any parameters into the message text.
 	 *
 	 * @since 1.17
@@ -965,6 +999,8 @@ class Message {
 				return array( 'before', $this->language->formatSize( $param['size'] ) );
 			} elseif ( isset( $param['bitrate'] ) ) {
 				return array( 'before', $this->language->formatBitrate( $param['bitrate'] ) );
+			} elseif ( isset( $param['plaintext'] ) ) {
+				return array( 'after', $this->formatPlaintext( $param['plaintext'] ) );
 			} else {
 				$warning = 'Invalid parameter for message "' . $this->getKey() . '": ' .
 					htmlspecialchars( serialize( $param ) );
@@ -1050,6 +1086,31 @@ class Message {
 		return $this->message;
 	}
 
+	/**
+	 * Formats a message parameter wrapped with 'plaintext'. Ensures that
+	 * the entire string is displayed unchanged when displayed in the output
+	 * format.
+	 *
+	 * @since 1.25
+	 *
+	 * @param string $plaintext String to ensure plaintext output of
+	 *
+	 * @return string Input plaintext encoded for output to $this->format
+	 */
+	protected function formatPlaintext( $plaintext ) {
+		switch ( $this->format ) {
+		case 'text':
+		case 'plain':
+			return $plaintext;
+
+		case 'parse':
+		case 'block-parse':
+		case 'escaped':
+		default:
+			return htmlspecialchars( $plaintext, ENT_QUOTES );
+
+		}
+	}
 }
 
 /**

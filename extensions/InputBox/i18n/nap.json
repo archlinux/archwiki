@@ -2,9 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Chelin",
-			"SabineCretella"
+			"SabineCretella",
+			"C.R."
 		]
 	},
+	"inputbox-tryexact": "Pròva cu nu cunfronto eguale-eguale",
 	"inputbox-searchfulltext": "Ascià dint''o testo",
 	"inputbox-createarticle": "Cria paggena"
 }

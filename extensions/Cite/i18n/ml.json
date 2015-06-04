@@ -1,0 +1,30 @@
+{
+	"@metadata": {
+		"authors": [
+			"Praveenp",
+			"Shijualex"
+		]
+	},
+	"cite-desc": "അവലംബം ചേർക്കുവാൻ ഉപയോഗിക്കാനുള്ള <nowiki><ref[ name=id]></nowiki>, <nowiki><references/></nowiki> എന്നീ ടാഗുകൾ ചേർക്കുന്നു",
+	"cite_error": "ഉദ്ധരിച്ചതിൽ പിഴവ്: $1",
+	"cite_error_ref_numeric_key": "അസാധുവായ <code>&lt;ref&gt;</code> ടാഗ്;\nനാമത്തിൽ സംഖ്യ മാത്രമായി അനുവദനീയമല്ല. എന്തെങ്കിലും ലഘുവിവരണം ഉപയോഗിക്കുക.",
+	"cite_error_ref_no_key": "അസാധുവായ <code>&lt;ref&gt;</code> ടാഗ്;\nഉള്ളടക്കമൊന്നുമില്ലാത്ത അവലംബത്തിനും ഒരു പേരു വേണം.",
+	"cite_error_ref_too_many_keys": "അസാധുവായ <code>&lt;ref&gt;</code> ടാഗ്;\nഅസാധുവായ പേരുകൾ, ഉദാ: too many",
+	"cite_error_ref_no_input": "അസാധുവായ <code>&lt;ref&gt;</code> ടാഗ്;\nപേരില്ലാത്ത അവലംബത്തിനു ഉള്ളടക്കമുണ്ടായിരിക്കണം.",
+	"cite_error_references_invalid_parameters": "അസാധുവായ <code>&lt;references&gt;</code> ടാഗ്;\nറെഫറൻസ് ടാഗിനകത്ത് ചരങ്ങൾ അനുവദനീയമല്ല. പകരം ഇങ്ങനെ <code>&lt;references /&gt;</code> ചെയ്യാവുന്നതാണ്.",
+	"cite_error_references_invalid_parameters_group": "അസാധുവായ <code>&lt;references&gt;</code> ടാഗ്;\nറെഫറൻസ് ടാഗിനകത്ത് \"group\" ചരം മാത്രമേ അനുവദനീയമായുള്ളൂ. പകരം  <code>&lt;references /&gt;</code> എന്ന്, അല്ലെങ്കിൽ <code>&lt;references group=\"...\" /&gt;</code> എന്ന് ചെയ്യാവുന്നതാണ്.",
+	"cite_error_references_no_backlink_label": "പിൻകണ്ണികൾക്കായി നൽകുന്ന ഇച്ഛാനുസരണ കുറികൾ തീർന്നുപോയിരിക്കുന്നു.\nകൂടുതൽ [[MediaWiki:Cite references link many format backlink labels]] സന്ദേശത്തിൽ നിർവചിക്കുക.",
+	"cite_error_no_link_label_group": "\"$1\" സംഘത്തിലെ കണ്ണികൾക്കായി നൽകുന്ന ഇച്ഛാനുസരണ കുറികൾ തീർന്നുപോയിരിക്കുന്നു.\nകൂടുതൽ <nowiki>[[MediaWiki:$2]]</nowiki> സന്ദേശത്തിൽ നിർവചിക്കുക.",
+	"cite_error_references_no_text": "അസാധുവായ <code>&lt;ref&gt;</code> ടാഗ്;\n<code>$1</code> എന്ന അവലംബങ്ങൾക്ക് ടെക്സ്റ്റ് ഒന്നും കൊടുത്തിട്ടില്ല.",
+	"cite_error_included_ref": "<code>&lt;ref&gt;</code> റ്റാഗിനു <code>&lt;/ref&gt;</code> എന്ന അന്ത്യറ്റാഗ് നൽകിയിട്ടില്ല",
+	"cite_error_group_refs_without_references": "<code>&lt;ref&gt;</code> റ്റാഗുകൾ \"$1\" സംഘത്തിൽ ഉണ്ട്, പക്ഷേ ബന്ധപ്പെട്ട <code>&lt;references group=\"$1\"/&gt;</code> റ്റാഗ് കണ്ടെത്താനായില്ല അല്ലെങ്കിൽ അടയ്ക്കാനുള്ള <code>&lt;/ref&gt;</code> നൽകിയിട്ടില്ല",
+	"cite_error_references_group_mismatch": "<code>&lt;ref&gt;</code> റ്റാഗിലേയും <code>&lt;references&gt;</code> എന്നതിലേയും സംഘ ഘടകമായ \"$1\" ഒത്തുപോകുന്നില്ല.",
+	"cite_error_references_missing_group": "<code>&lt;ref&gt;</code> റ്റാഗ് നിർവചിച്ചിട്ടുണ്ടെങ്കിലും <code>&lt;references&gt;</code> എന്നതിലുള്ള സംഘ ഘടകം \"$1\" ആദ്യ എഴുത്തിൽ കാണുന്നില്ല.",
+	"cite_error_references_missing_key": "<code>&lt;ref&gt;</code> റ്റാഗ് \"$1\" എന്ന പേരോടെ <code>&lt;references&gt;</code> എന്നതിൽ നിർവചിച്ചിട്ടുണ്ടെങ്കിലും ആദ്യ എഴുത്തിൽ ഉപയോഗിക്കുന്നില്ല.",
+	"cite_error_references_no_key": "<code>&lt;ref&gt;</code> റ്റാഗ്  <code>&lt;references&gt;</code> എന്നതിൽ നിർവചിച്ചിട്ടുണ്ടെങ്കിലും നാമ ഘടകം നൽകിയിട്ടില്ല.",
+	"cite_error_empty_references_define": " <code>&lt;references&gt;</code> ആവശ്യത്തിനായി \"$1\" എന്ന പേരിൽ നിർ‌വചിക്കപ്പെട്ട <code>&lt;ref&gt;</code> റ്റാഗിന് ഉള്ളടക്കമൊന്നുമില്ല.",
+	"cite_reference_link_prefix": "ഉദ്ധരിണി_അവലംബം-",
+	"cite_references_link_prefix": "ഉദ്ധരിണി_കുറിപ്പ്-",
+	"cite_references_link_accessibility_label": "മുകളിലേയ്ക്ക്",
+	"cite_references_link_many_accessibility_label": "മുകളിൽ ഇവിടേയ്ക്ക്:"
+}

@@ -1595,11 +1595,8 @@ class FormatMetadata extends ContextSource {
 	public function fetchExtendedMetadata( File $file ) {
 		global $wgMemc;
 
-		wfProfileIn( __METHOD__ );
-
 		// If revision deleted, exit immediately
 		if ( $file->isDeleted( File::DELETED_FILE ) ) {
-			wfProfileOut( __METHOD__ );
 
 			return array();
 		}
@@ -1614,7 +1611,7 @@ class FormatMetadata extends ContextSource {
 		$cachedValue = $wgMemc->get( $cacheKey );
 		if (
 			$cachedValue
-			&& wfRunHooks( 'ValidateExtendedMetadataCache', array( $cachedValue['timestamp'], $file ) )
+			&& Hooks::run( 'ValidateExtendedMetadataCache', array( $cachedValue['timestamp'], $file ) )
 		) {
 			$extendedMetadata = $cachedValue['data'];
 		} else {
@@ -1624,16 +1621,15 @@ class FormatMetadata extends ContextSource {
 			if ( $this->singleLang ) {
 				$this->resolveMultilangMetadata( $extendedMetadata );
 			}
+			$this->discardMultipleValues( $extendedMetadata );
 			// Make sure the metadata won't break the API when an XML format is used.
 			// This is an API-specific function so it would be cleaner to call it from
 			// outside fetchExtendedMetadata, but this way we don't need to redo the
 			// computation on a cache hit.
-			$this->sanitizeArrayForXml( $extendedMetadata );
+			$this->sanitizeArrayForAPI( $extendedMetadata );
 			$valueToCache = array( 'data' => $extendedMetadata, 'timestamp' => wfTimestampNow() );
 			$wgMemc->set( $cacheKey, $valueToCache, $maxCacheTime );
 		}
-
-		wfProfileOut( __METHOD__ );
 
 		return $extendedMetadata;
 	}
@@ -1655,8 +1651,6 @@ class FormatMetadata extends ContextSource {
 			// Might or might not be a good idea.
 			return $file->getExtendedMetadata() ?: array();
 		}
-
-		wfProfileIn( __METHOD__ );
 
 		$uploadDate = wfTimestamp( TS_ISO_8601, $file->getTimestamp() );
 
@@ -1685,19 +1679,6 @@ class FormatMetadata extends ContextSource {
 			);
 		}
 
-		$common = $file->getCommonMetaArray();
-
-		if ( $common !== false ) {
-			foreach ( $common as $key => $value ) {
-				$fileMetadata[$key] = array(
-					'value' => $value,
-					'source' => 'file-metadata',
-				);
-			}
-		}
-
-		wfProfileOut( __METHOD__ );
-
 		return $fileMetadata;
 	}
 
@@ -1714,9 +1695,8 @@ class FormatMetadata extends ContextSource {
 	protected function getExtendedMetadataFromHook( File $file, array $extendedMetadata,
 		&$maxCacheTime
 	) {
-		wfProfileIn( __METHOD__ );
 
-		wfRunHooks( 'GetExtendedMetadata', array(
+		Hooks::run( 'GetExtendedMetadata', array(
 			&$extendedMetadata,
 			$file,
 			$this->getContext(),
@@ -1730,8 +1710,6 @@ class FormatMetadata extends ContextSource {
 				$extendedMetadata[$key]['hidden'] = '';
 			}
 		}
-
-		wfProfileOut( __METHOD__ );
 
 		return $extendedMetadata;
 	}
@@ -1777,6 +1755,32 @@ class FormatMetadata extends ContextSource {
 	}
 
 	/**
+	 * Turns an XMP-style multivalue array into a single value by dropping all but the first value.
+	 * If the value is not a multivalue array (or a multivalue array inside a multilang array), it is returned unchanged.
+	 * See mediawiki.org/wiki/Manual:File_metadata_handling#Multi-language_array_format
+	 * @param mixed $value
+	 * @return mixed The value, or the first value if there were multiple ones
+	 * @since 1.25
+	 */
+	protected function resolveMultivalueValue( $value ) {
+		if ( !is_array( $value ) ) {
+			return $value;
+		} elseif ( isset( $value['_type'] ) && $value['_type'] === 'lang' ) { // if this is a multilang array, process fields separately
+			$newValue = array();
+			foreach ( $value as $k => $v ) {
+				$newValue[$k] = $this->resolveMultivalueValue( $v );
+			}
+			return $newValue;
+		} else { // _type is 'ul' or 'ol' or missing in which case it defaults to 'ul'
+			list( $k, $v ) = each( $value );
+			if ( $k === '_type' ) {
+				$v = current( $value );
+			}
+			return $v;
+		}
+	}
+
+	/**
 	 * Takes an array returned by the getExtendedMetadata* functions,
 	 * and resolves multi-language values in it.
 	 * @param array $metadata
@@ -1794,18 +1798,40 @@ class FormatMetadata extends ContextSource {
 	}
 
 	/**
+	 * Takes an array returned by the getExtendedMetadata* functions,
+	 * and turns all fields into single-valued ones by dropping extra values.
+	 * @param array $metadata
+	 * @since 1.25
+	 */
+	protected function discardMultipleValues( &$metadata ) {
+		if ( !is_array( $metadata ) ) {
+			return;
+		}
+		foreach ( $metadata as $key => &$field ) {
+			if ( $key === 'Software' || $key === 'Contact' ) {
+				// we skip some fields which have composite values. They are not particularly interesting
+				// and you can get them via the metadata / commonmetadata APIs anyway.
+				continue;
+			}
+			if ( isset( $field['value'] ) ) {
+				$field['value'] = $this->resolveMultivalueValue( $field['value'] );
+			}
+		}
+
+	}
+
+	/**
 	 * Makes sure the given array is a valid API response fragment
-	 * (can be transformed into XML)
 	 * @param array $arr
 	 */
-	protected function sanitizeArrayForXml( &$arr ) {
+	protected function sanitizeArrayForAPI( &$arr ) {
 		if ( !is_array( $arr ) ) {
 			return;
 		}
 
 		$counter = 1;
 		foreach ( $arr as $key => &$value ) {
-			$sanitizedKey = $this->sanitizeKeyForXml( $key );
+			$sanitizedKey = $this->sanitizeKeyForAPI( $key );
 			if ( $sanitizedKey !== $key ) {
 				if ( isset( $arr[$sanitizedKey] ) ) {
 					// Make the sanitized keys hopefully unique.
@@ -1819,20 +1845,24 @@ class FormatMetadata extends ContextSource {
 				unset( $arr[$key] );
 			}
 			if ( is_array( $value ) ) {
-				$this->sanitizeArrayForXml( $value );
+				$this->sanitizeArrayForAPI( $value );
 			}
+		}
+
+		// Handle API metadata keys (particularly "_type")
+		$keys = array_filter( array_keys( $arr ), 'ApiResult::isMetadataKey' );
+		if ( $keys ) {
+			ApiResult::setPreserveKeysList( $arr, $keys );
 		}
 	}
 
 	/**
-	 * Turns a string into a valid XML identifier.
-	 * Used to ensure that keys of an associative array in the
-	 * API response do not break the XML formatter.
+	 * Turns a string into a valid API identifier.
 	 * @param string $key
 	 * @return string
 	 * @since 1.23
 	 */
-	protected function sanitizeKeyForXml( $key ) {
+	protected function sanitizeKeyForAPI( $key ) {
 		// drop all characters which are not valid in an XML tag name
 		// a bunch of non-ASCII letters would be valid but probably won't
 		// be used so we take the easy way

@@ -5,9 +5,12 @@
 			"Crazymadlover",
 			"Locos epraix",
 			"Remember the dot",
-			"Sanbec"
+			"Sanbec",
+			"MarcoAurelio"
 		]
 	},
+	"action-titleblacklistlog": "ver el registro de la lista negra de títulos",
+	"log-name-titleblacklist": "Registro de la lista negra de títulos",
 	"titleblacklist-desc": "Permite que los administradores prohíban la creación de páginas y cuentas de usuario mediante una [[MediaWiki:Titleblacklist|lista negra]] y una [[MediaWiki:Titlewhitelist|lista blanca]]",
 	"titleblacklist": "# Esta es una lista negra de títulos. No se pueden crear títulos o usuarios que coincidan con una de estas expresiones regulares.\n# Use «#» para comentarios.\n# Esta es insensible a las mayúsculas por defecto",
 	"titlewhitelist": "# Esta es una lista blanca de títulos. Use «#» para comentarios.\n# Esta es insensible a las mayúsculas por defecto",
@@ -18,5 +21,6 @@
 	"titleblacklist-invalid": "{{PLURAL:$1|La siguiente línea|Las siguientes líneas}} de la lista negra no {{PLURAL:$1|es válida|son válidas}};\npor favor corríge{{PLURAL:$1|la|las}} antes de grabar:",
 	"titleblacklist-override": "Ignorar la lista negra",
 	"right-tboverride": "Ignorar la lista negra de títulos o de nombres de usuario",
-	"right-tboverride-account": "Ignorar la lista negra de los nombres de usuario"
+	"right-tboverride-account": "Ignorar la lista negra de los nombres de usuario",
+	"right-titleblacklistlog": "Ver el registro de la lista negra de títulos"
 }

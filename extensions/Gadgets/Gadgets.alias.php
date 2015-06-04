@@ -34,9 +34,19 @@ $specialPageAliases['as'] = array(
 	'Gadgets' => array( 'গেজেটসমূহ' ),
 );
 
+/** Avaric (авар) */
+$specialPageAliases['av'] = array(
+	'Gadgets' => array( 'Гаджеты' ),
+);
+
 /** Bulgarian (български) */
 $specialPageAliases['bg'] = array(
 	'Gadgets' => array( 'Джаджи' ),
+);
+
+/** Western Balochi (بلوچی رخشانی) */
+$specialPageAliases['bgn'] = array(
+	'Gadgets' => array( 'وسایل_ئان' ),
 );
 
 /** Banjar (Bahasa Banjar) */
@@ -204,6 +214,11 @@ $specialPageAliases['lb'] = array(
 	'Gadgets' => array( 'Gadgeten' ),
 );
 
+/** لوری (لوری) */
+$specialPageAliases['lrc'] = array(
+	'Gadgets' => array( 'گجتیا' ),
+);
+
 /** Minangkabau (Baso Minangkabau) */
 $specialPageAliases['min'] = array(
 	'Gadgets' => array( 'Pakakeh' ),
@@ -339,7 +354,7 @@ $specialPageAliases['uk'] = array(
 	'Gadgets' => array( 'Додатки' ),
 );
 
-/** vèneto (vèneto) */
+/** Venetian (vèneto) */
 $specialPageAliases['vec'] = array(
 	'Gadgets' => array( 'Strumenti' ),
 );
@@ -347,6 +362,11 @@ $specialPageAliases['vec'] = array(
 /** Vietnamese (Tiếng Việt) */
 $specialPageAliases['vi'] = array(
 	'Gadgets' => array( 'Tiện_ích', 'Công_cụ_đa_năng' ),
+);
+
+/** Chinese (中文) */
+$specialPageAliases['zh'] = array(
+	'Gadgets' => array( '小工具' ),
 );
 
 /** Simplified Chinese (中文（简体）‎) */

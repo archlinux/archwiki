@@ -38,7 +38,7 @@ class SpecialInterwiki extends SpecialPage {
 		$action = $par ? $par : $request->getVal( 'action', $par );
 		$return = $this->getPageTitle();
 
-		switch( $action ) {
+		switch ( $action ) {
 		case 'delete':
 		case 'edit':
 		case 'add':
@@ -231,7 +231,7 @@ class SpecialInterwiki extends SpecialPage {
 		$reason = $request->getText( 'wpInterwikiReason' );
 		$selfTitle = $this->getPageTitle();
 		$dbw = wfGetDB( DB_MASTER );
-		switch( $do ) {
+		switch ( $do ) {
 		case 'delete':
 			$dbw->delete( 'interwiki', array( 'iw_prefix' => $prefix ), __METHOD__ );
 
@@ -334,7 +334,7 @@ class SpecialInterwiki extends SpecialPage {
 		// Page intro content
 		$this->getOutput()->addWikiMsg( 'interwiki_intro' );
 		$logLink = Linker::link(
-			SpecialPage::getTitleFor( 'log', 'interwiki' ),
+			SpecialPage::getTitleFor( 'Log', 'interwiki' ),
 			$this->msg( 'interwiki-logtext' )->escaped()
 		);
 		$this->getOutput()->addHTML( '<p class="mw-interwiki-log">' . $logLink . '</p>' );
@@ -442,7 +442,7 @@ class SpecialInterwiki extends SpecialPage {
 			);
 			$attribs = array( 'class' => 'mw-interwikitable-local' );
 			// Green background for cells with "yes".
-			if( $iwPrefix['iw_local'] ) {
+			if ( isset( $iwPrefix['iw_local'] ) && $iwPrefix['iw_local'] ) {
 				$attribs['class'] .= ' mw-interwikitable-local-yes';
 			}
 			// The messages interwiki_0 and interwiki_1 are used here.
@@ -452,7 +452,7 @@ class SpecialInterwiki extends SpecialPage {
 			$out .= Html::element( 'td', $attribs, $contents );
 			$attribs = array( 'class' => 'mw-interwikitable-trans' );
 			// Green background for cells with "yes".
-			if( $iwPrefix['iw_trans'] ) {
+			if ( isset( $iwPrefix['iw_trans'] ) && $iwPrefix['iw_trans'] ) {
 				$attribs['class'] .= ' mw-interwikitable-trans-yes';
 			}
 			// The messages interwiki_0 and interwiki_1 are used here.
@@ -481,6 +481,10 @@ class SpecialInterwiki extends SpecialPage {
 	function error() {
 		$args = func_get_args();
 		$this->getOutput()->wrapWikiMsg( "<p class='error'>$1</p>", $args );
+	}
+
+	protected function getGroupName() {
+		return 'wiki';
 	}
 }
 

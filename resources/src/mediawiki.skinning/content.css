@@ -8,7 +8,8 @@
 /* Table of Contents */
 #toc,
 .toc,
-.mw-warning {
+.mw-warning,
+.toccolours {
 	border: 1px solid #aaa;
 	background-color: #f9f9f9;
 	padding: 5px;
@@ -87,13 +88,6 @@ table.toc td {
 	font-size: 94%;
 }
 
-.toccolours {
-	border: 1px solid #aaa;
-	background-color: #f9f9f9;
-	padding: 5px;
-	font-size: 95%;
-}
-
 /* Warning */
 .mw-warning {
 	margin-left: 50px;
@@ -165,8 +159,13 @@ div.magnify a {
 	width: 15px;
 	height: 11px;
 	/* Default styles when there's no .mw-content-ltr or .mw-content-rtl, overridden below */
+
+	/* Use same SVG support hack as mediawiki.legacy's shared.css */
+	background-image: url(images/magnify-clip-ltr.png);
 	/* @embed */
-	background: url(images/magnify-clip-ltr.png) center center no-repeat;
+	background-image: -webkit-linear-gradient(transparent, transparent), url(images/magnify-clip-ltr.svg);
+	/* @embed */
+	background-image: linear-gradient(transparent, transparent), url(images/magnify-clip-ltr.svg);
 	/* Don't annoy people who copy-paste everything too much */
 	-moz-user-select: none;
 	-webkit-user-select: none;
@@ -194,8 +193,12 @@ img.thumbborder {
 
 /* @noflip */
 .mw-content-ltr div.magnify a {
-	/* @embed */
+	/* Use same SVG support hack as mediawiki.legacy's shared.css */
 	background-image: url(images/magnify-clip-ltr.png);
+	/* @embed */
+	background-image: -webkit-linear-gradient(transparent, transparent), url(images/magnify-clip-ltr.svg);
+	/* @embed */
+	background-image: linear-gradient(transparent, transparent), url(images/magnify-clip-ltr.svg);
 }
 
 /* @noflip */
@@ -212,8 +215,12 @@ img.thumbborder {
 
 /* @noflip */
 .mw-content-rtl div.magnify a {
-	/* @embed */
+	/* Use same SVG support hack as mediawiki.legacy's shared.css */
 	background-image: url(images/magnify-clip-rtl.png);
+	/* @embed */
+	background-image: -webkit-linear-gradient(transparent, transparent), url(images/magnify-clip-rtl.svg);
+	/* @embed */
+	background-image: linear-gradient(transparent, transparent), url(images/magnify-clip-rtl.svg);
 }
 
 /* @noflip */

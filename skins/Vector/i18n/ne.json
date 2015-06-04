@@ -3,7 +3,8 @@
 		"authors": [
 			"Bhawani Gautam",
 			"RajeshPandey",
-			"सरोज कुमार ढकाल"
+			"सरोज कुमार ढकाल",
+			"बिप्लब आनन्द"
 		]
 	},
 	"skinname-vector": "भेक्टर",
@@ -18,5 +19,6 @@
 	"vector-view-edit": "सम्पादन",
 	"vector-view-history": "इतिहास हेर्ने",
 	"vector-view-view": "पढ्ने",
-	"vector-view-viewsource": "स्रोत हेर्ने"
+	"vector-view-viewsource": "स्रोत हेर्ने",
+	"vector-more-actions": "थप"
 }

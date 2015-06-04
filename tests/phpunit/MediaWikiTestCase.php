@@ -104,7 +104,6 @@ abstract class MediaWikiTestCase extends PHPUnit_Framework_TestCase {
 		ObjectCache::$instances[CACHE_DB] = new HashBagOStuff;
 
 		$needsResetDB = false;
-		$logName = get_class( $this ) . '::' . $this->getName( false );
 
 		if ( $this->needsDB() ) {
 			// set up a DB connection for this test to use
@@ -117,34 +116,22 @@ abstract class MediaWikiTestCase extends PHPUnit_Framework_TestCase {
 			$this->checkDbIsSupported();
 
 			if ( !self::$dbSetup ) {
-				wfProfileIn( $logName . ' (clone-db)' );
-
 				// switch to a temporary clone of the database
 				self::setupTestDB( $this->db, $this->dbPrefix() );
 
 				if ( ( $this->db->getType() == 'oracle' || !self::$useTemporaryTables ) && self::$reuseDB ) {
 					$this->resetDB();
 				}
-
-				wfProfileOut( $logName . ' (clone-db)' );
 			}
-
-			wfProfileIn( $logName . ' (prepare-db)' );
 			$this->addCoreDBData();
 			$this->addDBData();
-			wfProfileOut( $logName . ' (prepare-db)' );
-
 			$needsResetDB = true;
 		}
 
-		wfProfileIn( $logName );
 		parent::run( $result );
-		wfProfileOut( $logName );
 
 		if ( $needsResetDB ) {
-			wfProfileIn( $logName . ' (reset-db)' );
 			$this->resetDB();
-			wfProfileOut( $logName . ' (reset-db)' );
 		}
 	}
 
@@ -198,7 +185,6 @@ abstract class MediaWikiTestCase extends PHPUnit_Framework_TestCase {
 	}
 
 	protected function setUp() {
-		wfProfileIn( __METHOD__ );
 		parent::setUp();
 		$this->called['setUp'] = true;
 
@@ -223,12 +209,15 @@ abstract class MediaWikiTestCase extends PHPUnit_Framework_TestCase {
 			$this->db->ignoreErrors( false );
 		}
 
-		wfProfileOut( __METHOD__ );
+		DeferredUpdates::clearPendingUpdates();
+
+	}
+
+	protected function addTmpFiles( $files ) {
+		$this->tmpFiles = array_merge( $this->tmpFiles, (array)$files );
 	}
 
 	protected function tearDown() {
-		wfProfileIn( __METHOD__ );
-
 		$this->called['tearDown'] = true;
 		// Cleaning up temporary files
 		foreach ( $this->tmpFiles as $fileName ) {
@@ -271,7 +260,6 @@ abstract class MediaWikiTestCase extends PHPUnit_Framework_TestCase {
 		}
 
 		parent::tearDown();
-		wfProfileOut( __METHOD__ );
 	}
 
 	/**
@@ -429,6 +417,35 @@ abstract class MediaWikiTestCase extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
+	 * Insert a new page.
+	 *
+	 * Should be called from addDBData().
+	 *
+	 * @since 1.25
+	 * @param string $pageName Page name
+	 * @param string $text Page's content
+	 * @return array Title object and page id
+	 */
+	protected function insertPage( $pageName, $text = 'Sample page for unit test.' ) {
+		$title = Title::newFromText( $pageName, 0 );
+
+		$user = User::newFromName( 'UTSysop' );
+		$comment = __METHOD__ . ': Sample page for unit test.';
+
+		// Avoid memory leak...?
+		// LinkCache::singleton()->clear();
+		// Maybe.  But doing this absolutely breaks $title->isRedirect() when called during unit tests....
+
+		$page = WikiPage::factory( $title );
+		$page->doEditContent( ContentHandler::makeContent( $text, $title ), $comment, 0, false, $user );
+
+		return array(
+			'title' => $title,
+			'id' => $page->getId(),
+		);
+	}
+
+	/**
 	 * Stub. If a test needs to add additional data to the database, it should
 	 * implement this method and do so
 	 *
@@ -453,7 +470,6 @@ abstract class MediaWikiTestCase extends PHPUnit_Framework_TestCase {
 				'page_namespace' => 0,
 				'page_title' => ' ',
 				'page_restrictions' => null,
-				'page_counter' => 0,
 				'page_is_redirect' => 0,
 				'page_is_new' => 0,
 				'page_random' => 0,
@@ -464,7 +480,7 @@ abstract class MediaWikiTestCase extends PHPUnit_Framework_TestCase {
 
 		User::resetIdByNameCache();
 
-		//Make sysop user
+		// Make sysop user
 		$user = User::newFromName( 'UTSysop' );
 
 		if ( $user->idForName() == 0 ) {
@@ -476,7 +492,7 @@ abstract class MediaWikiTestCase extends PHPUnit_Framework_TestCase {
 			$user->saveSettings();
 		}
 
-		//Make 1 page with 1 revision
+		// Make 1 page with 1 revision
 		$page = WikiPage::factory( Title::newFromText( 'UTPage' ) );
 		if ( $page->getId() == 0 ) {
 			$page->doEditContent(
@@ -484,7 +500,8 @@ abstract class MediaWikiTestCase extends PHPUnit_Framework_TestCase {
 				'UTPageSummary',
 				EDIT_NEW,
 				false,
-				User::newFromName( 'UTSysop' ) );
+				$user
+			);
 		}
 	}
 
@@ -603,7 +620,7 @@ abstract class MediaWikiTestCase extends PHPUnit_Framework_TestCase {
 		if ( isset( $compatibility[$func] ) ) {
 			return call_user_func_array( array( $this, $compatibility[$func] ), $args );
 		} else {
-			throw new MWException( "Called non-existant $func method on "
+			throw new MWException( "Called non-existent $func method on "
 				. get_class( $this ) );
 		}
 	}
@@ -614,7 +631,7 @@ abstract class MediaWikiTestCase extends PHPUnit_Framework_TestCase {
 	 * @param string $msg
 	 */
 	private function assertEmpty2( $value, $msg ) {
-		return $this->assertTrue( $value == '', $msg );
+		$this->assertTrue( $value == '', $msg );
 	}
 
 	private static function unprefixTable( $tableName ) {
@@ -630,7 +647,7 @@ abstract class MediaWikiTestCase extends PHPUnit_Framework_TestCase {
 	/**
 	 * @since 1.18
 	 *
-	 * @param DataBaseBase $db
+	 * @param DatabaseBase $db
 	 *
 	 * @return array
 	 */
@@ -753,7 +770,7 @@ abstract class MediaWikiTestCase extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * Utility method taking an array of elements and wrapping
-	 * each element in it's own array. Useful for data providers
+	 * each element in its own array. Useful for data providers
 	 * that only return a single argument.
 	 *
 	 * @since 1.20
@@ -1120,9 +1137,23 @@ abstract class MediaWikiTestCase extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
+	 * @param array $matcher
+	 * @param string $actual
+	 * @param bool $isHtml
+	 *
+	 * @return bool
+	 */
+	private static function tagMatch( $matcher, $actual, $isHtml = true ) {
+		$dom = PHPUnit_Util_XML::load( $actual, $isHtml );
+		$tags = PHPUnit_Util_XML::findNodes( $dom, $matcher, $isHtml );
+		return count( $tags ) > 0 && $tags[0] instanceof DOMNode;
+	}
+
+	/**
 	 * Note: we are overriding this method to remove the deprecated error
 	 * @see https://bugzilla.wikimedia.org/show_bug.cgi?id=69505
 	 * @see https://github.com/sebastianbergmann/phpunit/issues/1292
+	 * @deprecated
 	 *
 	 * @param array $matcher
 	 * @param string $actual
@@ -1132,10 +1163,21 @@ abstract class MediaWikiTestCase extends PHPUnit_Framework_TestCase {
 	public static function assertTag( $matcher, $actual, $message = '', $isHtml = true ) {
 		//trigger_error(__METHOD__ . ' is deprecated', E_USER_DEPRECATED);
 
-		$dom = PHPUnit_Util_XML::load( $actual, $isHtml );
-		$tags = PHPUnit_Util_XML::findNodes( $dom, $matcher, $isHtml );
-		$matched = count( $tags ) > 0 && $tags[0] instanceof DOMNode;
+		self::assertTrue( self::tagMatch( $matcher, $actual, $isHtml ), $message );
+	}
 
-		self::assertTrue( $matched, $message );
+	/**
+	 * @see MediaWikiTestCase::assertTag
+	 * @deprecated
+	 *
+	 * @param array $matcher
+	 * @param string $actual
+	 * @param string $message
+	 * @param bool $isHtml
+	 */
+	public static function assertNotTag( $matcher, $actual, $message = '', $isHtml = true ) {
+		//trigger_error(__METHOD__ . ' is deprecated', E_USER_DEPRECATED);
+
+		self::assertFalse( self::tagMatch( $matcher, $actual, $isHtml ), $message );
 	}
 }

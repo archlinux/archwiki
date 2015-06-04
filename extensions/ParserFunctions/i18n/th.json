@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ans"
+			"Ans",
+			"Horus"
 		]
 	},
 	"pfunc_time_error": "เกิดข้อผิดพลาด: ค่าเวลาไม่ถูกต้อง",
@@ -12,7 +13,7 @@
 	"pfunc_expr_preg_match_failure": "สูตรเกิดข้อผิดพลาด: เกิดความล้มเหลวในการสั่ง preg_match โดยไม่ทราบสาเหตุ",
 	"pfunc_expr_unrecognised_word": "สูตรไม่ถูกต้อง: \"$1\" เป็นคำที่ไม่รู้จัก",
 	"pfunc_expr_unexpected_operator": "สูตรไม่ถูกต้อง: $1 อยู่ผิดที่",
-	"pfunc_expr_missing_operand": "สูตรไม่ถูกต้อง: ได้รับค่าไม่ครบในการคำนวณ $1",
+	"pfunc_expr_missing_operand": "สูตรไม่ถูกต้อง: ขาดตัวถูกดำเนินการสำหรับ $1",
 	"pfunc_expr_unexpected_closing_bracket": "สูตรไม่ถูกต้อง: ปิดวงเล็บเกิน หรือ ปิดวงเล็บผิดที่",
 	"pfunc_expr_unrecognised_punctuation": "สูตรไม่ถูกต้อง: \"$1\" เป็นเครื่องหมายหรือตัวอักษรที่ไม่รู้จัก",
 	"pfunc_expr_unclosed_bracket": "สูตรไม่ถูกต้อง: ไม่ได้ปิดวงเล็บ",

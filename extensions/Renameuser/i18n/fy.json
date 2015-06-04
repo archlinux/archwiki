@@ -2,14 +2,15 @@
 	"@metadata": {
 		"authors": [
 			"SK-luuut",
-			"Snakesteuben"
+			"Snakesteuben",
+			"Robin0van0der0vliet"
 		]
 	},
 	"renameuser": "Feroarje in meidochnamme",
 	"renameuser-desc": "Foeget in [[Special:RenameUser|spesiale side]] ta om in meidoggersnamme te feroarjen (jo hawwe hjirfoar it ''renameuser'' rjocht nedich)",
 	"renameuserold": "Alde namme:",
 	"renameusernew": "Nije namme:",
-	"renameuserreason": "Reden foar nammewiziging:",
+	"renameuserreason": "Reden:",
 	"renameusermove": "Werneam meidogger en oerlis siden (mei ûnderlizzende siden) nei de nije namme",
 	"renameuserreserve": "Takomst brûken fan de âlde meidoggersnamme foarkomme",
 	"renameuserwarnings": "Warskôgings:",

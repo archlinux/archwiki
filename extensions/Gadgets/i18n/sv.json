@@ -7,7 +7,8 @@
 			"Diupwijk",
 			"Lejonel",
 			"M.M.S.",
-			"Skalman"
+			"Skalman",
+			"Lokal Profil"
 		]
 	},
 	"gadgets-desc": "Låter användare aktivera personliga [[Special:Gadgets|CSS- och JavaScript-finesser]] genom sina [[Special:Preferences#mw-prefsection-gadgets|inställningar]]",
@@ -24,5 +25,20 @@
 	"gadgets-export-title": "Exportera finess",
 	"gadgets-not-found": "Tillägg \"$1\" hittades inte.",
 	"gadgets-export-text": "För att exportera tillägg $1, klicka på \"{{int:gadgets-export-download}}\"-knappen, spara den nedladdade filen, gå till Special:Importera på destinationswikin och ladda upp den. Lägg sedan till följande till MediaWiki:Gadgets-definition sidan:\n<pre>$2</pre>\nDu måste ha tillräckliga behörigheter på destinationswikin (inklusive möjlighet att ändra systemmeddelanden) och att importera från filuppladningar måste vara aktiverad.",
-	"gadgets-export-download": "Ladda ner"
+	"gadgets-export-download": "Ladda ner",
+	"apihelp-query+gadgetcategories-description": "Returnerar en lista för finesskategorier.",
+	"apihelp-query+gadgetcategories-param-prop": "Vilken information om finesskategorier som ska tas med:\n;name:Internt kategorinamn.\n;title:Kategorititel.\n;members:Antal finesser i kategorin.",
+	"apihelp-query+gadgetcategories-param-names": "Namn på kategorier som ska hämtas.",
+	"apihelp-query+gadgetcategories-example-1": "Få en lista över befintliga finesskategorier",
+	"apihelp-query+gadgetcategories-example-2": "Få alla information om kategorier med namnen \"foo\" och \"bar\"",
+	"apihelp-query+gadgets-description": "Returnerar en lista med finesser som används på denna wiki.",
+	"apihelp-query+gadgets-param-prop": "Vilken finessinformation som ska tas med:\n;id:Internt finess-ID.\n;metadata:Finessmetadata.\n;desc:Finessbeskrivning omvandlad till HTML (kan vara långsam, använd bara om det verkligen behövs).",
+	"apihelp-query+gadgets-param-ids": "ID för finesser som ska hämtas.",
+	"apihelp-query+gadgets-param-allowedonly": "Listan bara finesser som är tillåts för den aktuella användaren.",
+	"apihelp-query+gadgets-param-enabledonly": "Listan bara finesser aktiverade av den aktuella användaren.",
+	"apihelp-query+gadgets-example-1": "Få en lista över finesser tillsammans med deras beskrivningar",
+	"apihelp-query+gadgets-example-2": "Få en lista över finesser med alla möjliga egenskaper",
+	"apihelp-query+gadgets-example-3": "Få en lista över finesser som tillhör kategorin \"foo\"",
+	"apihelp-query+gadgets-example-4": "Få information om finesserna \"foo\" och \"bar\"",
+	"apihelp-query+gadgets-example-5": "Få en lista över finesser aktiverade av den aktuella användaren"
 }

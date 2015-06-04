@@ -45,8 +45,6 @@ class SearchHighlighter {
 	public function highlightText( $text, $terms, $contextlines, $contextchars ) {
 		global $wgContLang, $wgSearchHighlightBoundaries;
 
-		$fname = __METHOD__;
-
 		if ( $text == '' ) {
 			return '';
 		}
@@ -60,14 +58,14 @@ class SearchHighlighter {
 			3 => "/(\n\\{\\|)|(\n\\|\\})/" ); // table
 
 		// @todo FIXME: This should prolly be a hook or something
-		if ( function_exists( 'wfCite' ) ) {
+		// instead of hardcoding a class name from the Cite extension
+		if ( class_exists( 'Cite' ) ) {
 			$spat .= '|(<ref>)'; // references via cite extension
 			$endPatterns[4] = '/(<ref>)|(<\/ref>)/';
 		}
 		$spat .= '/';
 		$textExt = array(); // text extracts
 		$otherExt = array(); // other extracts
-		wfProfileIn( "$fname-split" );
 		$start = 0;
 		$textLen = strlen( $text );
 		$count = 0; // sequence number to maintain ordering
@@ -132,8 +130,6 @@ class SearchHighlighter {
 
 		$all = $textExt + $otherExt; // these have disjunct key sets
 
-		wfProfileOut( "$fname-split" );
-
 		// prepare regexps
 		foreach ( $terms as $index => $term ) {
 			// manually do upper/lowercase stuff for utf-8 since PHP won't do it
@@ -162,8 +158,6 @@ class SearchHighlighter {
 
 		$pat1 = "/(" . $phrase . ")/ui";
 		$pat2 = "/$patPre(" . $anyterm . ")$patPost/ui";
-
-		wfProfileIn( "$fname-extract" );
 
 		$left = $contextlines;
 
@@ -286,8 +280,6 @@ class SearchHighlighter {
 				$processed[$term] = true;
 			}
 		}
-
-		wfProfileOut( "$fname-extract" );
 
 		return $extract;
 	}
@@ -451,15 +443,6 @@ class SearchHighlighter {
 	 * @return mixed
 	 */
 	function removeWiki( $text ) {
-		$fname = __METHOD__;
-		wfProfileIn( $fname );
-
-		// $text = preg_replace( "/'{2,5}/", "", $text );
-		// $text = preg_replace( "/\[[a-z]+:\/\/[^ ]+ ([^]]+)\]/", "\\2", $text );
-		// $text = preg_replace( "/\[\[([^]|]+)\]\]/", "\\1", $text );
-		// $text = preg_replace( "/\[\[([^]]+\|)?([^|]]+)\]\]/", "\\2", $text );
-		// $text = preg_replace( "/\\{\\|(.*?)\\|\\}/", "", $text );
-		// $text = preg_replace( "/\\[\\[[A-Za-z_-]+:([^|]+?)\\]\\]/", "", $text );
 		$text = preg_replace( "/\\{\\{([^|]+?)\\}\\}/", "", $text );
 		$text = preg_replace( "/\\{\\{([^|]+\\|)(.*?)\\}\\}/", "\\2", $text );
 		$text = preg_replace( "/\\[\\[([^|]+?)\\]\\]/", "\\1", $text );
@@ -468,13 +451,11 @@ class SearchHighlighter {
 			array( $this, 'linkReplace' ),
 			$text
 		);
-		// $text = preg_replace("/\\[\\[([^|]+\\|)(.*?)\\]\\]/", "\\2", $text);
 		$text = preg_replace( "/<\/?[^>]+>/", "", $text );
 		$text = preg_replace( "/'''''/", "", $text );
 		$text = preg_replace( "/('''|<\/?[iIuUbB]>)/", "", $text );
 		$text = preg_replace( "/''/", "", $text );
 
-		wfProfileOut( $fname );
 		return $text;
 	}
 
@@ -512,7 +493,6 @@ class SearchHighlighter {
 	 */
 	public function highlightSimple( $text, $terms, $contextlines, $contextchars ) {
 		global $wgContLang;
-		$fname = __METHOD__;
 
 		$lines = explode( "\n", $text );
 
@@ -523,7 +503,6 @@ class SearchHighlighter {
 		$lineno = 0;
 
 		$extract = "";
-		wfProfileIn( "$fname-extract" );
 		foreach ( $lines as $line ) {
 			if ( 0 == $contextlines ) {
 				break;
@@ -551,7 +530,6 @@ class SearchHighlighter {
 
 			$extract .= "${line}\n";
 		}
-		wfProfileOut( "$fname-extract" );
 
 		return $extract;
 	}

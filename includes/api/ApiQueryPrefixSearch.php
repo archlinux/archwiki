@@ -43,15 +43,25 @@ class ApiQueryPrefixSearch extends ApiQueryGeneratorBase {
 		$search = $params['search'];
 		$limit = $params['limit'];
 		$namespaces = $params['namespace'];
+		$offset = $params['offset'];
 
 		$searcher = new TitlePrefixSearch;
-		$titles = $searcher->searchWithVariants( $search, $limit, $namespaces );
+		$titles = $searcher->searchWithVariants( $search, $limit + 1, $namespaces, $offset );
 		if ( $resultPageSet ) {
+			if ( count( $titles ) > $limit ) {
+				$this->setContinueEnumParameter( 'offset', $offset + $params['limit'] );
+				array_pop( $titles );
+			}
 			$resultPageSet->populateFromTitles( $titles );
+			foreach ( $titles as $index => $title ) {
+				$resultPageSet->setGeneratorData( $title, array( 'index' => $index + $offset + 1 ) );
+			}
 		} else {
 			$result = $this->getResult();
+			$count = 0;
 			foreach ( $titles as $title ) {
-				if ( !$limit-- ) {
+				if ( ++$count > $limit ) {
+					$this->setContinueEnumParameter( 'offset', $offset + $params['limit'] );
 					break;
 				}
 				$vals = array(
@@ -59,16 +69,17 @@ class ApiQueryPrefixSearch extends ApiQueryGeneratorBase {
 					'title' => $title->getPrefixedText(),
 				);
 				if ( $title->isSpecialPage() ) {
-					$vals['special'] = '';
+					$vals['special'] = true;
 				} else {
 					$vals['pageid'] = intval( $title->getArticleId() );
 				}
 				$fit = $result->addValue( array( 'query', $this->getModuleName() ), null, $vals );
 				if ( !$fit ) {
+					$this->setContinueEnumParameter( 'offset', $offset + $count - 1 );
 					break;
 				}
 			}
-			$result->setIndexedTagName_internal(
+			$result->addIndexedTagName(
 				array( 'query', $this->getModuleName() ), $this->getModulePrefix()
 			);
 		}
@@ -97,24 +108,17 @@ class ApiQueryPrefixSearch extends ApiQueryGeneratorBase {
 					ApiBase::PARAM_MAX => 100,
 					ApiBase::PARAM_MAX2 => 200,
 				),
+				'offset' => array(
+					ApiBase::PARAM_DFLT => 0,
+					ApiBase::PARAM_TYPE => 'integer',
+				),
 			);
 	}
 
-	public function getParamDescription() {
+	protected function getExamplesMessages() {
 		return array(
-			'search' => 'Search string',
-			'limit' => 'Maximum amount of results to return',
-			'namespace' => 'Namespaces to search',
-		);
-	}
-
-	public function getDescription() {
-		return 'Perform a prefix search for page titles';
-	}
-
-	public function getExamples() {
-		return array(
-			'api.php?action=query&list=prefixsearch&pssearch=meaning',
+			'action=query&list=prefixsearch&pssearch=meaning'
+				=> 'apihelp-query+prefixsearch-example-simple',
 		);
 	}
 

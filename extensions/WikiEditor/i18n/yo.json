@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Demmy"
+			"Demmy",
+			"Macofe"
 		]
 	},
 	"wikieditor-wikitext-tab": "Ìkọ wiki",
@@ -10,9 +11,6 @@
 	"wikieditor-preview-tab": "Àyẹ̀wò",
 	"wikieditor-preview-changes-tab": "Àwọn àtúnṣe",
 	"wikieditor-preview-loading": "Óúnbọ̀wá...",
-	"wikieditor-previewDialog-preference": "Ìgbàláyè pátákó àkíyèsí fún àyẹ̀wò",
-	"wikieditor-previewDialog-tab": "Àyẹ̀wò",
-	"wikieditor-previewDialog-loading": "Óúnbọ̀wá...",
 	"wikieditor-publish-preference": "Ìgbàláyè ìtẹ̀jáde lẹ́sẹ-sẹ",
 	"wikieditor-publish-button-publish": "Ìtẹ̀jáde",
 	"wikieditor-publish-button-cancel": "Fagilé",
@@ -126,22 +124,6 @@
 	"wikieditor-toolbar-tool-replace-emptysearch": "Ẹ kò kọ ohun kankan láti wárí.",
 	"wikieditor-toolbar-tool-replace-invalidregex": "Ìgbékalẹ̀ọ̀rọ̀ dédé tí ẹ kọ kò yẹ: $1",
 	"wikieditor-toolbar-section-characters": "Àwọn lẹ́tà pàtàkì",
-	"wikieditor-toolbar-characters-page-latin": "Látìnì",
-	"wikieditor-toolbar-characters-page-latinextended": "Látìnì títóbi",
-	"wikieditor-toolbar-characters-page-ipa": "IPA",
-	"wikieditor-toolbar-characters-page-symbols": "Àwọn àmì ìdámọ̀",
-	"wikieditor-toolbar-characters-page-greek": "Gíríkì",
-	"wikieditor-toolbar-characters-page-cyrillic": "Kíúrílíkì",
-	"wikieditor-toolbar-characters-page-arabic": "Lárúbáwá",
-	"wikieditor-toolbar-characters-page-persian": "Èdè Pẹrsíà",
-	"wikieditor-toolbar-characters-page-hebrew": "Hébérù",
-	"wikieditor-toolbar-characters-page-bangla": "Bánglà",
-	"wikieditor-toolbar-characters-page-telugu": "Tèlúgù",
-	"wikieditor-toolbar-characters-page-sinhala": "Sinhala",
-	"wikieditor-toolbar-characters-page-gujarati": "Gujarati",
-	"wikieditor-toolbar-characters-page-thai": "Thai",
-	"wikieditor-toolbar-characters-page-lao": "Lao",
-	"wikieditor-toolbar-characters-page-khmer": "Khmer",
 	"wikieditor-toolbar-section-help": "Ìrànwọ́",
 	"wikieditor-toolbar-help-heading-description": "Ìjúwe",
 	"wikieditor-toolbar-help-heading-syntax": "Ohun tí ẹ tẹ̀",
@@ -187,8 +169,7 @@
 	"wikieditor-toolbar-help-content-olist-syntax": "# Ohun àkójọ<br /># Ohun àkójọ",
 	"wikieditor-toolbar-help-content-olist-result": "<ol><li>Ohun àkójọ</li><li>Ohun àkójọ</li></ol>",
 	"wikieditor-toolbar-help-content-file-description": "Fáìlì alákòósínú",
-	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Example.png|thumb|Àkọlé]]",
-	"wikieditor-toolbar-help-content-file-result": "<div style='width:104px;' class='thumbinner'><a title='Ìkọ àkọlé' class='image' href='#'><img height='50' width='100' border='0' class='thumbimage' src='$2/WikiEditor/modules/images/toolbar/example-image.png' alt=''/></a><div class='thumbcaption'><div class='magnify'><a title='Enlarge' class='internal' href='#'><img height='11' width='15' alt='' src='$1/common/images/magnify-clip.png'/></a></div>Ìkọ àkọlé</div></div>",
+	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Example.png|$2|$3]]",
 	"wikieditor-toolbar-help-content-reference-description": "Ìtọ́kasí",
 	"wikieditor-toolbar-help-content-reference-syntax": "Íkọ ojúewé.&lt;ref name=\"test\"&gt;[http://www.example.org Ìkọ ìjápọ̀], ìkọ mìràn.&lt;/ref&gt;",
 	"wikieditor-toolbar-help-content-reference-result": "Ìkọ ojúewé.<sup><a href='#'>[1]</a></sup>",

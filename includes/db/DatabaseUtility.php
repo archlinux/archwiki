@@ -22,29 +22,6 @@
  */
 
 /**
- * Utility class.
- * @ingroup Database
- */
-class DBObject {
-	public $mData;
-
-	function __construct( $data ) {
-		$this->mData = $data;
-	}
-
-	/**
-	 * @return bool
-	 */
-	function isLOB() {
-		return false;
-	}
-
-	function data() {
-		return $this->mData;
-	}
-}
-
-/**
  * Utility class
  * @ingroup Database
  *
@@ -339,4 +316,8 @@ class LikeMatch {
  * The implementation details of this opaque type are up to the database subclass.
  */
 interface DBMasterPos {
+	/**
+	 * @return float UNIX timestamp
+	 */
+	public function asOfTime();
 }

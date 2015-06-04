@@ -99,10 +99,10 @@ class WantedFilesPage extends WantedQueryPage {
 	 * Use wfFindFile so we still think file namespace pages without
 	 * files are missing, but valid file redirects and foreign files are ok.
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
 	protected function existenceCheck( Title $title ) {
-		return (bool) wfFindFile( $title );
+		return (bool)wfFindFile( $title );
 	}
 
 	function getQueryInfo() {

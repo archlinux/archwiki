@@ -72,7 +72,10 @@ class WantedPagesPage extends WantedQueryPage {
 				"pg2.page_namespace != '" . NS_MEDIAWIKI . "'"
 			),
 			'options' => array(
-				'HAVING' => "COUNT(*) > $count",
+				'HAVING' => array(
+					"COUNT(*) > $count",
+					"COUNT(*) > SUM(pg2.page_is_redirect)"
+				),
 				'GROUP BY' => array( 'pl_namespace', 'pl_title' )
 			),
 			'join_conds' => array(
@@ -86,7 +89,7 @@ class WantedPagesPage extends WantedQueryPage {
 			)
 		);
 		// Replacement for the WantedPages::getSQL hook
-		wfRunHooks( 'WantedPages::getQueryInfo', array( &$this, &$query ) );
+		Hooks::run( 'WantedPages::getQueryInfo', array( &$this, &$query ) );
 
 		return $query;
 	}

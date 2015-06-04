@@ -77,7 +77,7 @@ class SpecialExpandTemplates extends SpecialPage {
 			$options->setMaxIncludeSize( self::MAX_INCLUDE_SIZE );
 
 			if ( $this->generateXML ) {
-				$wgParser->startExternalParse( $title, $options, OT_PREPROCESS );
+				$wgParser->startExternalParse( $title, $options, Parser::OT_PREPROCESS );
 				$dom = $wgParser->preprocessToDom( $input );
 
 				if ( method_exists( $dom, 'saveXML' ) ) {
@@ -154,7 +154,7 @@ class SpecialExpandTemplates extends SpecialPage {
 			'contexttitle',
 			60,
 			$title,
-			array( 'autofocus' => true )
+			array( 'autofocus' => '', 'class' => 'mw-ui-input-inline' )
 		) . '</p>';
 		$form .= '<p>' . Xml::label(
 			$this->msg( 'expand_templates_input' )->text(),
@@ -278,6 +278,7 @@ class SpecialExpandTemplates extends SpecialPage {
 		) ) );
 		$out->addParserOutputContent( $pout );
 		$out->addHTML( Html::closeElement( 'div' ) );
+		$out->setCategoryLinks( $pout->getCategories() );
 	}
 
 	protected function getGroupName() {

@@ -27,7 +27,7 @@
 
 ini_set( 'zlib.output_compression', 'off' );
 
-$wgEnableProfileInfo = $wgProfileToDatabase = false;
+$wgEnableProfileInfo = false;
 require __DIR__ . '/includes/WebStart.php';
 
 header( 'Content-Type: text/html; charset=utf-8' );
@@ -36,7 +36,7 @@ header( 'Content-Type: text/html; charset=utf-8' );
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="UTF-8">
+	<meta charset="UTF-8" />
 	<title>Profiling data</title>
 	<style>
 		/* noc.wikimedia.org/base.css */
@@ -149,8 +149,8 @@ $dbr = wfGetDB( DB_SLAVE );
 
 if ( !$dbr->tableExists( 'profiling' ) ) {
 	echo '<p>No <code>profiling</code> table exists, so we can\'t show you anything.</p>'
-		. '<p>If you want to log profiling data, enable <code>$wgProfileToDatabase</code>'
-		. ' in your LocalSettings.php and run <code>maintenance/update.php</code> to'
+		. '<p>If you want to log profiling data, enable <code>$wgProfiler[\'output\'] = \'db\'</code>'
+		. ' in your StartProfiler.php and run <code>maintenance/update.php</code> to'
 		. ' create the profiling table.'
 		. '</body></html>';
 	exit( 1 );
@@ -384,7 +384,7 @@ if ( isset( $_REQUEST['filter'] ) ) {
 	$last = false;
 	foreach ( $res as $o ) {
 		$next = new profile_point( $o->pf_name, $o->pf_count, $o->pf_time, $o->pf_memory );
-		if ( $next->name() == '-total' ) {
+		if ( $next->name() == '-total' || $next->name() == 'main()' ) {
 			profile_point::$totaltime = $next->time();
 			profile_point::$totalcount = $next->count();
 			profile_point::$totalmemory = $next->memory();
@@ -422,7 +422,7 @@ if ( isset( $_REQUEST['filter'] ) ) {
 	?>
 	</tbody>
 </table>
-<hr>
+<hr />
 <p>Total time: <code><?php printf( '%5.02f', profile_point::$totaltime ); ?></code></p>
 
 <p>Total memory: <code><?php printf( '%5.02f', profile_point::$totalmemory / 1024 ); ?></code></p>

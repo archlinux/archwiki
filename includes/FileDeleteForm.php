@@ -201,7 +201,7 @@ class FileDeleteForm {
 						$dbw->rollback( __METHOD__ );
 					}
 				}
-			} catch ( MWException $e ) {
+			} catch ( Exception $e ) {
 				// Rollback before returning to prevent UI from displaying
 				// incorrect "View or restore N deleted edits?"
 				$dbw->rollback( __METHOD__ );
@@ -210,7 +210,7 @@ class FileDeleteForm {
 		}
 
 		if ( $status->isOK() ) {
-			wfRunHooks( 'FileDeleteComplete', array( &$file, &$oldimage, &$page, &$user, &$reason ) );
+			Hooks::run( 'FileDeleteComplete', array( &$file, &$oldimage, &$page, &$user, &$reason ) );
 		}
 
 		return $status;

@@ -110,7 +110,11 @@ class StubObject {
 	 * @return object
 	 */
 	public function _newObject() {
-		return MWFunction::newObj( $this->class, $this->params );
+		return ObjectFactory::getObjectFromSpec( array(
+			'class' => $this->class,
+			'args' => $this->params,
+			'closure_expansion' => false,
+		) );
 	}
 
 	/**
@@ -146,10 +150,8 @@ class StubObject {
 
 		if ( get_class( $GLOBALS[$this->global] ) != $this->class ) {
 			$fname = __METHOD__ . '-' . $this->global;
-			wfProfileIn( $fname );
 			$caller = wfGetCaller( $level );
 			if ( ++$recursionLevel > 2 ) {
-				wfProfileOut( $fname );
 				throw new MWException( "Unstub loop detected on call of "
 					. "\${$this->global}->$name from $caller\n" );
 			}
@@ -157,7 +159,6 @@ class StubObject {
 				. "\${$this->global}::$name from $caller\n" );
 			$GLOBALS[$this->global] = $this->_newObject();
 			--$recursionLevel;
-			wfProfileOut( $fname );
 			return $GLOBALS[$this->global];
 		}
 	}
@@ -176,6 +177,24 @@ class StubUserLang extends StubObject {
 
 	public function __call( $name, $args ) {
 		return $this->_call( $name, $args );
+	}
+
+	/**
+	 * Call Language::findVariantLink after unstubbing $wgLang.
+	 *
+	 * This method is implemented with a full signature rather than relying on
+	 * __call so that the pass-by-reference signature of the proxied method is
+	 * honored.
+	 *
+	 * @param string &$link The name of the link
+	 * @param Title &$nt The title object of the link
+	 * @param bool $ignoreOtherCond To disable other conditions when
+	 *   we need to transclude a template or update a category's link
+	 */
+	public function findVariantLink( &$link, &$nt, $ignoreOtherCond = false ) {
+		global $wgLang;
+		$this->_unstub( 'findVariantLink', 3 );
+		return $wgLang->findVariantLink( $link, $nt, $ignoreOtherCond );
 	}
 
 	/**

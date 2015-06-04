@@ -47,7 +47,7 @@ class MysqlInstaller extends DatabaseInstaller {
 
 	public $supportedEngines = array( 'InnoDB', 'MyISAM' );
 
-	public $minimumVersion = '5.0.2';
+	public $minimumVersion = '5.0.3';
 
 	public $webUserPrivs = array(
 		'DELETE',
@@ -69,13 +69,6 @@ class MysqlInstaller extends DatabaseInstaller {
 	 */
 	public function isCompiled() {
 		return self::checkExtension( 'mysql' ) || self::checkExtension( 'mysqli' );
-	}
-
-	/**
-	 * @return array
-	 */
-	public function getGlobalDefaults() {
-		return array();
 	}
 
 	/**

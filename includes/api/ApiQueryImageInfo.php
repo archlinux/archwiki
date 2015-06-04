@@ -58,7 +58,7 @@ class ApiQueryImageInfo extends ApiQueryBase {
 			'revdelUser' => $this->getUser(),
 		);
 
-		$pageIds = $this->getPageSet()->getAllTitlesByNamespace();
+		$pageIds = $this->getPageSet()->getGoodAndMissingTitlesByNamespace();
 		if ( !empty( $pageIds[NS_FILE] ) ) {
 			$titles = array_keys( $pageIds[NS_FILE] );
 			asort( $titles ); // Ensure the order is always the same
@@ -373,7 +373,9 @@ class ApiQueryImageInfo extends ApiQueryBase {
 			);
 		}
 		$version = $opts['version'];
-		$vals = array();
+		$vals = array(
+			ApiResult::META_TYPE => 'assoc',
+		);
 		// Timestamp is shown even if the file is revdelete'd in interface
 		// so do same here.
 		if ( isset( $prop['timestamp'] ) ) {
@@ -397,7 +399,7 @@ class ApiQueryImageInfo extends ApiQueryBase {
 
 		if ( $user || $userid ) {
 			if ( $file->isDeleted( File::DELETED_USER ) ) {
-				$vals['userhidden'] = '';
+				$vals['userhidden'] = true;
 				$anyHidden = true;
 			}
 			if ( $canShowField( File::DELETED_USER ) ) {
@@ -408,7 +410,7 @@ class ApiQueryImageInfo extends ApiQueryBase {
 					$vals['userid'] = $file->getUser( 'id' );
 				}
 				if ( !$file->getUser( 'id' ) ) {
-					$vals['anon'] = '';
+					$vals['anon'] = true;
 				}
 			}
 		}
@@ -438,7 +440,7 @@ class ApiQueryImageInfo extends ApiQueryBase {
 
 		if ( $pcomment || $comment ) {
 			if ( $file->isDeleted( File::DELETED_COMMENT ) ) {
-				$vals['commenthidden'] = '';
+				$vals['commenthidden'] = true;
 				$anyHidden = true;
 			}
 			if ( $canShowField( File::DELETED_COMMENT ) ) {
@@ -469,7 +471,7 @@ class ApiQueryImageInfo extends ApiQueryBase {
 		}
 
 		if ( $file->isDeleted( File::DELETED_FILE ) ) {
-			$vals['filehidden'] = '';
+			$vals['filehidden'] = true;
 			$anyHidden = true;
 		}
 
@@ -599,7 +601,7 @@ class ApiQueryImageInfo extends ApiQueryBase {
 				$retval[] = $r;
 			}
 		}
-		$result->setIndexedTagName( $retval, 'metadata' );
+		ApiResult::setIndexedTagName( $retval, 'metadata' );
 
 		return $retval;
 	}
@@ -632,7 +634,8 @@ class ApiQueryImageInfo extends ApiQueryBase {
 			'prop' => array(
 				ApiBase::PARAM_ISMULTI => true,
 				ApiBase::PARAM_DFLT => 'timestamp|user',
-				ApiBase::PARAM_TYPE => self::getPropertyNames()
+				ApiBase::PARAM_TYPE => self::getPropertyNames(),
+				ApiBase::PARAM_HELP_MSG_PER_VALUE => self::getPropertyMessages(),
 			),
 			'limit' => array(
 				ApiBase::PARAM_TYPE => 'limit',
@@ -649,7 +652,11 @@ class ApiQueryImageInfo extends ApiQueryBase {
 			),
 			'urlwidth' => array(
 				ApiBase::PARAM_TYPE => 'integer',
-				ApiBase::PARAM_DFLT => -1
+				ApiBase::PARAM_DFLT => -1,
+				ApiBase::PARAM_HELP_MSG => array(
+					'apihelp-query+imageinfo-param-urlwidth',
+					ApiQueryImageInfo::TRANSFORM_LIMIT,
+				),
 			),
 			'urlheight' => array(
 				ApiBase::PARAM_TYPE => 'integer',
@@ -675,7 +682,9 @@ class ApiQueryImageInfo extends ApiQueryBase {
 				ApiBase::PARAM_DFLT => '',
 				ApiBase::PARAM_TYPE => 'string',
 			),
-			'continue' => null,
+			'continue' => array(
+				ApiBase::PARAM_HELP_MSG => 'api-help-param-continue',
+			),
 			'localonly' => false,
 		);
 	}
@@ -684,16 +693,49 @@ class ApiQueryImageInfo extends ApiQueryBase {
 	 * Returns all possible parameters to iiprop
 	 *
 	 * @param array $filter List of properties to filter out
-	 *
 	 * @return array
 	 */
 	public static function getPropertyNames( $filter = array() ) {
-		return array_diff( array_keys( self::getProperties() ), $filter );
+		return array_keys( self::getPropertyMessages( $filter ) );
+	}
+
+	/**
+	 * Returns messages for all possible parameters to iiprop
+	 *
+	 * @param array $filter List of properties to filter out
+	 * @return array
+	 */
+	public static function getPropertyMessages( $filter = array() ) {
+		return array_diff_key(
+			array(
+				'timestamp' => 'apihelp-query+imageinfo-paramvalue-prop-timestamp',
+				'user' => 'apihelp-query+imageinfo-paramvalue-prop-user',
+				'userid' => 'apihelp-query+imageinfo-paramvalue-prop-userid',
+				'comment' => 'apihelp-query+imageinfo-paramvalue-prop-comment',
+				'parsedcomment' => 'apihelp-query+imageinfo-paramvalue-prop-parsedcomment',
+				'canonicaltitle' => 'apihelp-query+imageinfo-paramvalue-prop-canonicaltitle',
+				'url' => 'apihelp-query+imageinfo-paramvalue-prop-url',
+				'size' => 'apihelp-query+imageinfo-paramvalue-prop-size',
+				'dimensions' => 'apihelp-query+imageinfo-paramvalue-prop-dimensions',
+				'sha1' => 'apihelp-query+imageinfo-paramvalue-prop-sha1',
+				'mime' => 'apihelp-query+imageinfo-paramvalue-prop-mime',
+				'thumbmime' => 'apihelp-query+imageinfo-paramvalue-prop-thumbmime',
+				'mediatype' => 'apihelp-query+imageinfo-paramvalue-prop-mediatype',
+				'metadata' => 'apihelp-query+imageinfo-paramvalue-prop-metadata',
+				'commonmetadata' => 'apihelp-query+imageinfo-paramvalue-prop-commonmetadata',
+				'extmetadata' => 'apihelp-query+imageinfo-paramvalue-prop-extmetadata',
+				'archivename' => 'apihelp-query+imageinfo-paramvalue-prop-archivename',
+				'bitdepth' => 'apihelp-query+imageinfo-paramvalue-prop-bitdepth',
+				'uploadwarning' => 'apihelp-query+imageinfo-paramvalue-prop-uploadwarning',
+			),
+			array_flip( $filter )
+		);
 	}
 
 	/**
 	 * Returns array key value pairs of properties and their descriptions
 	 *
+	 * @deprecated since 1.25
 	 * @param string $modulePrefix
 	 * @return array
 	 */
@@ -730,6 +772,7 @@ class ApiQueryImageInfo extends ApiQueryBase {
 	/**
 	 * Returns the descriptions for the properties provided by getPropertyNames()
 	 *
+	 * @deprecated since 1.25
 	 * @param array $filter List of properties to filter out
 	 * @param string $modulePrefix
 	 * @return array
@@ -741,55 +784,13 @@ class ApiQueryImageInfo extends ApiQueryBase {
 		);
 	}
 
-	/**
-	 * Return the API documentation for the parameters.
-	 * @return array Parameter documentation.
-	 */
-	public function getParamDescription() {
-		$p = $this->getModulePrefix();
-
+	protected function getExamplesMessages() {
 		return array(
-			'prop' => self::getPropertyDescriptions( array(), $p ),
-			'urlwidth' => array(
-				"If {$p}prop=url is set, a URL to an image scaled to this width will be returned.",
-				'For performance reasons if this option is used, ' .
-					'no more than ' . self::TRANSFORM_LIMIT . ' scaled images will be returned.'
-			),
-			'urlheight' => "Similar to {$p}urlwidth.",
-			'urlparam' => array(
-				"A handler specific parameter string. For example, pdf's ",
-				"might use 'page15-100px'."
-			),
-			'limit' => 'How many image revisions to return per image',
-			'start' => 'Timestamp to start listing from',
-			'end' => 'Timestamp to stop listing at',
-			'metadataversion'
-				=> array( "Version of metadata to use. if 'latest' is specified, use latest version.",
-				"Defaults to '1' for backwards compatibility" ),
-			'extmetadatalanguage' => array(
-				'What language to fetch extmetadata in. This affects both which',
-				'translation to fetch, if multiple are available, as well as how things',
-				'like numbers and various values are formatted.'
-			),
-			'extmetadatamultilang'
-				=>'If translations for extmetadata property are available, fetch all of them.',
-			'extmetadatafilter'
-				=> "If specified and non-empty, only these keys will be returned for {$p}prop=extmetadata",
-			'continue' => 'If the query response includes a continue value, ' .
-				'use it here to get another page of results',
-			'localonly' => 'Look only for files in the local repository',
-		);
-	}
-
-	public function getDescription() {
-		return 'Returns image information and upload history.';
-	}
-
-	public function getExamples() {
-		return array(
-			'api.php?action=query&titles=File:Albert%20Einstein%20Head.jpg&prop=imageinfo',
-			'api.php?action=query&titles=File:Test.jpg&prop=imageinfo&iilimit=50&' .
-				'iiend=20071231235959&iiprop=timestamp|user|url',
+			'action=query&titles=File:Albert%20Einstein%20Head.jpg&prop=imageinfo'
+				=> 'apihelp-query+imageinfo-example-simple',
+			'action=query&titles=File:Test.jpg&prop=imageinfo&iilimit=50&' .
+				'iiend=2007-12-31T23:59:59Z&iiprop=timestamp|user|url'
+				=> 'apihelp-query+imageinfo-example-dated',
 		);
 	}
 

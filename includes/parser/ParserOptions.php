@@ -25,7 +25,7 @@
  * @brief Set options of the Parser
  *
  * All member variables are supposed to be private in theory, although in
- * practise this is not the case.
+ * practice this is not the case.
  *
  * @ingroup Parser
  */
@@ -117,6 +117,12 @@ class ParserOptions {
 	public $mRemoveComments = true;
 
 	/**
+	 * Callback for current revision fetching. Used as first argument to call_user_func().
+	 */
+	public $mCurrentRevisionCallback =
+		array( 'Parser', 'statelessFetchRevision' );
+
+	/**
 	 * Callback for template fetching. Used as first argument to call_user_func().
 	 */
 	public $mTemplateCallback =
@@ -139,9 +145,7 @@ class ParserOptions {
 
 	/**
 	 * Clean up signature texts?
-	 *
-	 * 1) Strip ~~~, ~~~~ and ~~~~~ out of signatures
-	 * 2) Substitute all transclusions
+	 * @see Parser::cleanSig
 	 */
 	public $mCleanSignatures;
 
@@ -287,6 +291,11 @@ class ParserOptions {
 
 	public function getRemoveComments() {
 		return $this->mRemoveComments;
+	}
+
+	/* @since 1.24 */
+	public function getCurrentRevisionCallback() {
+		return $this->mCurrentRevisionCallback;
 	}
 
 	public function getTemplateCallback() {
@@ -462,6 +471,11 @@ class ParserOptions {
 		return wfSetVar( $this->mRemoveComments, $x );
 	}
 
+	/* @since 1.24 */
+	public function setCurrentRevisionCallback( $x ) {
+		return wfSetVar( $this->mCurrentRevisionCallback, $x );
+	}
+
 	public function setTemplateCallback( $x ) {
 		return wfSetVar( $this->mTemplateCallback, $x );
 	}
@@ -623,8 +637,7 @@ class ParserOptions {
 			$wgCleanSignatures, $wgExternalLinkTarget, $wgExpensiveParserFunctionLimit,
 			$wgMaxGeneratedPPNodeCount, $wgDisableLangConversion, $wgDisableTitleConversion;
 
-		wfProfileIn( __METHOD__ );
-
+		// *UPDATE* ParserOptions::matches() if any of this changes as needed
 		$this->mInterwikiMagic = $wgInterwikiMagic;
 		$this->mAllowExternalImages = $wgAllowExternalImages;
 		$this->mAllowExternalImagesFrom = $wgAllowExternalImagesFrom;
@@ -647,7 +660,33 @@ class ParserOptions {
 		$this->mStubThreshold = $user->getStubThreshold();
 		$this->mUserLang = $lang;
 
-		wfProfileOut( __METHOD__ );
+	}
+
+	/**
+	 * Check if these options match that of another options set
+	 *
+	 * This ignores report limit settings that only affect HTML comments
+	 *
+	 * @param ParserOptions $other
+	 * @return bool
+	 * @since 1.25
+	 */
+	public function matches( ParserOptions $other ) {
+		$fields = array_keys( get_class_vars( __CLASS__ ) );
+		$fields = array_diff( $fields, array(
+			'mEnableLimitReport', // only effects HTML comments
+			'onAccessCallback', // only used for ParserOutput option tracking
+		) );
+		foreach ( $fields as $field ) {
+			if ( !is_object( $this->$field ) && $this->$field !== $other->$field ) {
+				return false;
+			}
+		}
+		// Check the object and lazy-loaded options
+		return (
+			$this->mUserLang->getCode() === $other->mUserLang->getCode() &&
+			$this->getDateFormat() === $other->getDateFormat()
+		);
 	}
 
 	/**
@@ -768,11 +807,53 @@ class ParserOptions {
 
 		// Give a chance for extensions to modify the hash, if they have
 		// extra options or other effects on the parser cache.
-		wfRunHooks( 'PageRenderingHash', array( &$confstr, $this->getUser(), &$forOptions ) );
+		Hooks::run( 'PageRenderingHash', array( &$confstr, $this->getUser(), &$forOptions ) );
 
 		// Make it a valid memcached key fragment
 		$confstr = str_replace( ' ', '_', $confstr );
 
 		return $confstr;
+	}
+
+	/**
+	 * Sets a hook to force that a page exists, and sets a current revision callback to return a
+	 * revision with custom content when the current revision of the page is requested.
+	 *
+	 * @since 1.25
+	 * @param Title $title
+	 * @param Content $content
+	 * @param User $user The user that the fake revision is attributed to
+	 * @return ScopedCallback to unset the hook
+	 */
+	public function setupFakeRevision( $title, $content, $user ) {
+		$oldCallback = $this->setCurrentRevisionCallback( function ( $titleToCheck, $parser = false ) use ( $title, $content, $user, &$oldCallback ) {
+			if ( $titleToCheck->equals( $title ) ) {
+				return new Revision( array(
+					'page' => $title->getArticleID(),
+					'user_text' => $user->getName(),
+					'user' => $user->getId(),
+					'parent_id' => $title->getLatestRevId(),
+					'title' => $title,
+					'content' => $content
+				) );
+			} else {
+				return call_user_func( $oldCallback, $titleToCheck, $parser );
+			}
+		} );
+		global $wgHooks;
+		$wgHooks['TitleExists'][] =
+			function ( $titleToCheck, &$exists ) use ( $title ) {
+				if ( $titleToCheck->equals( $title ) ) {
+					$exists = true;
+				}
+			};
+		end( $wgHooks['TitleExists'] );
+		$key = key( $wgHooks['TitleExists'] );
+		LinkCache::singleton()->clearBadLink( $title->getPrefixedDBkey() );
+		return new ScopedCallback( function () use ( $title, $key ) {
+			global $wgHooks;
+			unset( $wgHooks['TitleExists'][$key] );
+			LinkCache::singleton()->clearLink( $title );
+		} );
 	}
 }

@@ -1,5 +1,11 @@
 {
+	"@metadata": {
+		"authors": [
+			"Amire80"
+		]
+	},
 	"modern.css": "/* הסגנונות הנכתבים כאן ישפיעו על העיצוב Modern בלבד */",
 	"modern.js": "/* כל סקריפט JavaScript שנכתב כאן ירוץ רק עבור המשתמשים בעיצוב Modern */",
-	"skinname-modern": "מודרני"
+	"skinname-modern": "מודרני",
+	"modern-desc": "עיצוב כחול־אפור עם סרגל צד וסרגל עליון. נגזר ממונובוק"
 }

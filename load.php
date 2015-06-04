@@ -22,32 +22,28 @@
  * @author Trevor Parscal
  */
 
-// Bail if PHP is too low
-if ( !function_exists( 'version_compare' ) || version_compare( PHP_VERSION, '5.3.2' ) < 0 ) {
-	// We need to use dirname( __FILE__ ) here cause __DIR__ is PHP5.3+
-	require dirname( __FILE__ ) . '/includes/PHPVersionError.php';
-	wfPHPVersionError( 'load.php' );
-}
+// Bail on old versions of PHP, or if composer has not been run yet to install
+// dependencies. Using dirname( __FILE__ ) here because __DIR__ is PHP5.3+.
+require_once dirname( __FILE__ ) . '/includes/PHPVersionCheck.php';
+wfEntryPointCheck( 'load.php' );
 
 require __DIR__ . '/includes/WebStart.php';
 
-wfProfileIn( 'load.php' );
 
 // URL safety checks
 if ( !$wgRequest->checkUrlExtension() ) {
 	return;
 }
 
-// Respond to resource loading request
-$resourceLoader = new ResourceLoader(
-	ConfigFactory::getDefaultInstance()->makeConfig( 'main' )
-);
+// Respond to resource loading request.
+// foo()->bar() syntax is not supported in PHP4, and this file needs to *parse* in PHP4.
+$configFactory = ConfigFactory::getDefaultInstance();
+$resourceLoader = new ResourceLoader( $configFactory->makeConfig( 'main' ) );
 $resourceLoader->respond( new ResourceLoaderContext( $resourceLoader, $wgRequest ) );
 
-wfProfileOut( 'load.php' );
+Profiler::instance()->setTemplated( true );
 wfLogProfilingData();
 
-// Shut down the database.  foo()->bar() syntax is not supported in PHP4, and this file
-// needs to *parse* in PHP4, although we'll never get down here to worry about = vs =&
+// Shut down the database.
 $lb = wfGetLBFactory();
 $lb->shutdown();

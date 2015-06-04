@@ -3,7 +3,8 @@
 		"authors": [
 			"EugeneZelenko",
 			"Jim-by",
-			"Wizardist"
+			"Wizardist",
+			"Red Winged Duck"
 		]
 	},
 	"nuke": "Масавае выдаленьне",
@@ -28,5 +29,6 @@
 	"nuke-pattern": "Узор для назвы старонкі:",
 	"nuke-nopages-global": "У [[Special:RecentChanges|апошніх зьменах]] больш няма новых старонак.",
 	"nuke-viewchanges": "праглядзець зьмены",
-	"nuke-namespace": "Абмежаваць прасторай назваў:"
+	"nuke-namespace": "Абмежаваць прасторай назваў:",
+	"nuke-linkoncontribs": "масавае выдаленьне"
 }

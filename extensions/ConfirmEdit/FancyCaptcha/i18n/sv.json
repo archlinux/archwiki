@@ -1,0 +1,19 @@
+{
+	"@metadata": {
+		"authors": [
+			"Ainali",
+			"Thurs",
+			"WikiPhoenix",
+			"Lokal Profil"
+		]
+	},
+	"fancycaptcha-addurl": "Din ändring innehåller nya externa länkar.\nFör att skydda wikin mot automatisk spam ber vi dig att skriva orden som visas nedan i rutan ([[Special:Captcha/help|mer information]]):",
+	"fancycaptcha-badlogin": "För att skydda wikin mot automatiserad lösenordsknäckning ber vi dig att skriva\norden som visas nedan i rutan ([[Special:Captcha/help|mer information]]):",
+	"fancycaptcha-createaccount": "För att skydda wikin mot automatiskt skapade av användarkonton ber vi dig att\nskriva orden som visas nedan i rutan ([[Special:Captcha/help|mer information]]):",
+	"fancycaptcha-create": "För att skapa den här sidan måste du först skriva orden som visas nedan i rutan\n([[Special:Captcha/help|mer information]]):",
+	"fancycaptcha-edit": "För att redigera den här sidan måste du först skriva orden som visas nedan i rutan\n([[Special:Captcha/help|mer information]]):",
+	"fancycaptcha-sendemail": "För att skydda wikin mot automatiserad spam ber vi dig att skriva orden som visas nedan i rutan ([[Special:Captcha/help|mer information]]):",
+	"fancycaptcha-reload-text": "Uppdatera",
+	"apihelp-fancycaptchareload-description": "Hämta en ny FancyCaptcha.",
+	"apihelp-fancycaptchareload-example-1": "Hämta en ny FancyCaptcha."
+}

@@ -48,7 +48,7 @@ define( 'EXPR_PI', 36 );
 define( 'EXPR_FMOD', 37 );
 define( 'EXPR_SQRT' , 38 );
 
-class ExprError extends MWException {
+class ExprError extends Exception {
 	/**
 	 * @param $msg string
 	 * @param $parameter string

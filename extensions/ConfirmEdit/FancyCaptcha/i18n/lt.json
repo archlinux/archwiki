@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"Eitvys200",
+			"Hugo.arg"
+		]
+	},
+	"fancycaptcha-createaccount": "Siekiant apsaugoti wiki nuo automatinių paskyrų kūrimo, prašome jus įvesti žodžius, matomus rėmelyje apačioje ([[Special:Captcha/help|plačiau...]]):",
+	"fancycaptcha-reload-text": "Atnaujinti"
+}

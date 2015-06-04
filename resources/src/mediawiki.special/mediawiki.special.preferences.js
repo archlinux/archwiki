@@ -5,15 +5,18 @@ jQuery( function ( $ ) {
 	var $preftoc, $preferences, $fieldsets, $legends,
 		hash, labelFunc,
 		$tzSelect, $tzTextbox, $localtimeHolder, servertime,
-		$checkBoxes, savedWindowOnBeforeUnload;
+		$checkBoxes, allowCloseWindowFn;
 
 	labelFunc = function () {
 		return this.id.replace( /^mw-prefsection/g, 'preftab' );
 	};
 
 	$( '#prefsubmit' ).attr( 'id', 'prefcontrol' );
-	$preftoc = $( '<ul id="preftoc"></ul>' )
-		.attr( 'role', 'tablist' );
+	$preftoc = $( '<ul>' )
+		.attr( {
+			id: 'preftoc',
+			role: 'tablist'
+		} );
 	$preferences = $( '#preferences' )
 		.addClass( 'jsprefs' )
 		.before( $preftoc );
@@ -41,7 +44,7 @@ jQuery( function ( $ ) {
 			} else {
 				$( this ).css( 'height', 'auto' );
 			}
-	} ).insertBefore( $preftoc );
+		} ).insertBefore( $preftoc );
 
 	/**
 	 * It uses document.getElementById for security reasons (HTML injections in $()).
@@ -57,7 +60,7 @@ jQuery( function ( $ ) {
 		// therefore save and restore scrollTop to prevent jumping.
 		scrollTop = $( window ).scrollTop();
 		if ( mode !== 'noHash' ) {
-			window.location.hash = '#mw-prefsection-' + name;
+			location.hash = '#mw-prefsection-' + name;
 		}
 		$( window ).scrollTop( scrollTop );
 
@@ -127,7 +130,7 @@ jQuery( function ( $ ) {
 
 	// If we've reloaded the page or followed an open-in-new-window,
 	// make the selected tab visible.
-	hash = window.location.hash;
+	hash = location.hash;
 	if ( hash.match( /^#mw-prefsection-[\w\-]+/ ) ) {
 		switchPrefTab( hash.replace( '#mw-prefsection-', '' ) );
 	}
@@ -142,7 +145,7 @@ jQuery( function ( $ ) {
 		( document.documentMode === undefined || document.documentMode >= 8 )
 	) {
 		$( window ).on( 'hashchange', function () {
-			var hash = window.location.hash;
+			var hash = location.hash;
 			if ( hash.match( /^#mw-prefsection-[\w\-]+/ ) ) {
 				switchPrefTab( hash.replace( '#mw-prefsection-', '' ) );
 			} else if ( hash === '' ) {
@@ -223,12 +226,8 @@ jQuery( function ( $ ) {
 		localTime = servertime + minuteDiff;
 
 		// Bring time within the [0,1440) range.
-		while ( localTime < 0 ) {
-			localTime += 1440;
-		}
-		while ( localTime >= 1440 ) {
-			localTime -= 1440;
-		}
+		localTime = ( ( localTime % 1440 ) + 1440 ) % 1440;
+
 		$localtimeHolder.text( mediaWiki.language.convertNumber( minutesToHours( localTime ) ) );
 	}
 
@@ -267,39 +266,14 @@ jQuery( function ( $ ) {
 	// Set up a message to notify users if they try to leave the page without
 	// saving.
 	$( '#mw-prefs-form' ).data( 'origdata', $( '#mw-prefs-form' ).serialize() );
-	$( window )
-		.on( 'beforeunload.prefswarning', function () {
-			var retval;
+	allowCloseWindowFn = mediaWiki.confirmCloseWindow( {
+		test: function () {
+			return $( '#mw-prefs-form' ).serialize() !== $( '#mw-prefs-form' ).data( 'origdata' );
+		},
 
-			// Check if anything changed
-			if ( $( '#mw-prefs-form' ).serialize() !== $( '#mw-prefs-form' ).data( 'origdata' ) ) {
-				// Return our message
-				retval = mediaWiki.msg( 'prefswarning-warning', mediaWiki.msg( 'saveprefs' ) );
-			}
-
-			// Unset the onbeforeunload handler so we don't break page caching in Firefox
-			savedWindowOnBeforeUnload = window.onbeforeunload;
-			window.onbeforeunload = null;
-			if ( retval !== undefined ) {
-				// ...but if the user chooses not to leave the page, we need to rebind it
-				setTimeout( function () {
-					window.onbeforeunload = savedWindowOnBeforeUnload;
-				}, 1 );
-				return retval;
-			}
-		} )
-		.on( 'pageshow.prefswarning', function () {
-			// Re-add onbeforeunload handler
-			if ( !window.onbeforeunload ) {
-				window.onbeforeunload = savedWindowOnBeforeUnload;
-			}
-		} );
-	$( '#mw-prefs-form' ).submit( function () {
-		// Unbind our beforeunload handler
-		$( window ).off( '.prefswarning' );
+		message: mediaWiki.msg( 'prefswarning-warning', mediaWiki.msg( 'saveprefs' ) ),
+		namespace: 'prefswarning'
 	} );
-	$( '#mw-prefs-restoreprefs' ).click( function () {
-		// Unbind our beforeunload handler
-		$( window ).off( '.prefswarning' );
-	} );
+	$( '#mw-prefs-form' ).submit( allowCloseWindowFn );
+	$( '#mw-prefs-restoreprefs' ).click( allowCloseWindowFn );
 } );

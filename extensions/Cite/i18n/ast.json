@@ -1,0 +1,28 @@
+{
+	"@metadata": {
+		"authors": [
+			"Esbardu",
+			"Xuacu"
+		]
+	},
+	"cite-desc": "Añade les etiquetes <nowiki><ref[ name=id]></nowiki> y <nowiki><references/></nowiki> pa les cites",
+	"cite_error": "Error de cita: $1",
+	"cite_error_ref_numeric_key": "Etiqueta <code>&lt;ref&gt;</code> non válida; el nome nun pue ser un enteru simple, usa un títulu descriptivu",
+	"cite_error_ref_no_key": "Etiqueta <code>&lt;ref&gt;</code> non válida; les referencies ensin conteníu han tener un nome",
+	"cite_error_ref_too_many_keys": "Etiqueta <code>&lt;ref&gt;</code> non válida; nomes non válidos (p.ex. demasiaos)",
+	"cite_error_ref_no_input": "Etiqueta <code>&lt;ref&gt;</code> non válida; les referencies ensin nome han tener conteníu",
+	"cite_error_references_invalid_parameters": "Etiqueta <code>&lt;references&gt;</code> non válida; nun se permiten parámetros, usa <code>&lt;references /&gt;</code>",
+	"cite_error_references_invalid_parameters_group": "Etiqueta <code>&lt;references&gt;</code> non válida;\nnamái se permite'l parámetru \"group\".\nUsa <code>&lt;references /&gt;</code>, o bien <code>&lt;references group=\"...\" /&gt;</code>",
+	"cite_error_references_no_backlink_label": "Etiquetes personalizaes agotaes.\nDefini más nel mensaxe <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>",
+	"cite_error_no_link_label_group": "Nun queden más etiquetes d'enllaz personalizáu pal grupu \"$1\".\nDefine más nel mensaxe <nowiki>[[MediaWiki:$2]]</nowiki>.",
+	"cite_error_references_no_text": "Etiqueta <code>&lt;ref&gt;</code> non válida; nun se conseñó testu pa les referencies nomaes <code>$1</code>",
+	"cite_error_included_ref": "Falta <code>&lt;/ref&gt;</code> pa la etiqueta <code>&lt;ref&gt;</code>",
+	"cite_error_group_refs_without_references": "Les etiquetes <code>&lt;ref&gt;</code> esisten pa un grupu llamáu \"$1\", pero nun s'alcontró la etiqueta <code>&lt;references group=\"$1\"/&gt;</code> correspondiente, o falta un cierre <code>&lt;/ref&gt;</code>",
+	"cite_error_references_group_mismatch": "La etiqueta <code>&lt;ref&gt;</code> en <code>&lt;references&gt;</code> tien un conflictu col atributu de grupu \"$1\".",
+	"cite_error_references_missing_group": "La etiqueta <code>&lt;ref&gt;</code> definida en <code>&lt;references&gt;</code> tien l'atributu de grupu \"$1\" que nun apaez nel testu anterior.",
+	"cite_error_references_missing_key": "La etiqueta <code>&lt;ref&gt;</code> col nome \"$1\" definida en <code>&lt;references&gt;</code> nun s'utiliza nel testu anterior.",
+	"cite_error_references_no_key": "La etiqueta <code>&lt;ref&gt;</code> definida en <code>&lt;references&gt;</code> nun tien dengún atributu de nome.",
+	"cite_error_empty_references_define": "La etiqueta <code>&lt;ref&gt;</code> definida en <code>&lt;references&gt;</code> col nome \"$1\" nun tien conteníu.",
+	"cite_references_link_accessibility_label": "Saltar arriba",
+	"cite_references_link_many_accessibility_label": "Saltar a:"
+}

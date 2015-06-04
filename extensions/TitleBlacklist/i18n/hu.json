@@ -12,7 +12,7 @@
 	"action-titleblacklistlog": "címek feketelista-naplójának megtekintése",
 	"log-name-titleblacklist": "Címek feketelista-naplója",
 	"titleblacklist-desc": "Lehetővé teszi az adminisztrátorok számára, hogy letiltsák adott című lapok vagy nevű felhasználói fiókok készítését a [[MediaWiki:Titleblacklist]] és [[MediaWiki:Titlewhitelist]] alapján",
-	"titleblacklist": "# Ez a címek feketelistája. Azon címek, amelyek illeszkednek az itt található reguláris kifejezések valamelyikére, nem hozhatóak létre.\n# Használd a „#” karaktert megjegyzések írásához.\n# A sorok kis- és nagybetűérzékenyek alapértelmezettként",
+	"titleblacklist": "# Ez a címek feketelistája. Azon címek, amelyek illeszkednek az itt található reguláris kifejezések valamelyikére, nem hozhatóak létre.\n# Használd a „#” karaktert megjegyzések írásához.\n# A sorok nem kis- és nagybetűérzékenyek alapértelmezettként",
 	"titlewhitelist": "# Ez egy engedélyező lista. A „#” karakterrel írhatsz megjegyzéseket.\n# A sorok kis- és nagybetűérzékenyek alapértelmezettként",
 	"titleblacklist-forbidden-edit": "„$2” címmel tilos lapot készíteni, mert illeszkedik a feketelista <code>$1</code> bejegyzésére.",
 	"titleblacklist-forbidden-move": "„$2” nem nevezhető át „$3” névre, mert „$3” névvel tilos lapot készíteni. Illeszkedik a következő feketelistás bejegyzéssel: <code>$1</code>",

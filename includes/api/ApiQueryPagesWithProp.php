@@ -99,7 +99,9 @@ class ApiQueryPagesWithProp extends ApiQueryGeneratorBase {
 			}
 
 			if ( $resultPageSet === null ) {
-				$vals = array();
+				$vals = array(
+					ApiResult::META_TYPE => 'assoc',
+				);
 				if ( $fld_ids ) {
 					$vals['pageid'] = (int)$row->page_id;
 				}
@@ -121,7 +123,7 @@ class ApiQueryPagesWithProp extends ApiQueryGeneratorBase {
 		}
 
 		if ( $resultPageSet === null ) {
-			$result->setIndexedTagName_internal( array( 'query', $this->getModuleName() ), 'page' );
+			$result->addIndexedTagName( array( 'query', $this->getModuleName() ), 'page' );
 		}
 	}
 
@@ -140,7 +142,9 @@ class ApiQueryPagesWithProp extends ApiQueryGeneratorBase {
 					'value',
 				)
 			),
-			'continue' => null,
+			'continue' => array(
+				ApiBase::PARAM_HELP_MSG => 'api-help-param-continue',
+			),
 			'limit' => array(
 				ApiBase::PARAM_TYPE => 'limit',
 				ApiBase::PARAM_DFLT => 10,
@@ -158,31 +162,12 @@ class ApiQueryPagesWithProp extends ApiQueryGeneratorBase {
 		);
 	}
 
-	public function getParamDescription() {
+	protected function getExamplesMessages() {
 		return array(
-			'propname' => 'Page prop for which to enumerate pages',
-			'prop' => array(
-				'What pieces of information to include',
-				' ids   - Adds the page ID',
-				' title - Adds the title and namespace ID of the page',
-				' value - Adds the value of the page prop',
-			),
-			'dir' => 'In which direction to sort',
-			'continue' => 'When more results are available, use this to continue',
-			'limit' => 'The maximum number of pages to return',
-		);
-	}
-
-	public function getDescription() {
-		return 'List all pages using a given page prop.';
-	}
-
-	public function getExamples() {
-		return array(
-			'api.php?action=query&list=pageswithprop&pwppropname=displaytitle&pwpprop=ids|title|value'
-				=> 'Get first 10 pages using {{DISPLAYTITLE:}}',
-			'api.php?action=query&generator=pageswithprop&gpwppropname=notoc&prop=info'
-				=> 'Get page info about first 10 pages using __NOTOC__',
+			'action=query&list=pageswithprop&pwppropname=displaytitle&pwpprop=ids|title|value'
+				=> 'apihelp-query+pageswithprop-example-simple',
+			'action=query&generator=pageswithprop&gpwppropname=notoc&prop=info'
+				=> 'apihelp-query+pageswithprop-example-generator',
 		);
 	}
 

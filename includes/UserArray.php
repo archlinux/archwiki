@@ -27,7 +27,7 @@ abstract class UserArray implements Iterator {
 	 */
 	static function newFromResult( $res ) {
 		$userArray = null;
-		if ( !wfRunHooks( 'UserArrayFromResult', array( &$userArray, $res ) ) ) {
+		if ( !Hooks::run( 'UserArrayFromResult', array( &$userArray, $res ) ) ) {
 			return null;
 		}
 		if ( $userArray === null ) {
@@ -51,6 +51,27 @@ abstract class UserArray implements Iterator {
 			'user',
 			User::selectFields(),
 			array( 'user_id' => array_unique( $ids ) ),
+			__METHOD__
+		);
+		return self::newFromResult( $res );
+	}
+
+	/**
+	 * @since 1.25
+	 * @param array $names
+	 * @return UserArrayFromResult
+	 */
+	static function newFromNames( $names ) {
+		$names = array_map( 'strval', (array)$names ); // paranoia
+		if ( !$names ) {
+			// Database::select() doesn't like empty arrays
+			return new ArrayIterator( array() );
+		}
+		$dbr = wfGetDB( DB_SLAVE );
+		$res = $dbr->select(
+			'user',
+			User::selectFields(),
+			array( 'user_name' => array_unique( $names ) ),
 			__METHOD__
 		);
 		return self::newFromResult( $res );

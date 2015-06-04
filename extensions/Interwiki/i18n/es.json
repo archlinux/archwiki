@@ -12,13 +12,15 @@
 			"Sanbec",
 			"Translationista",
 			"Vivaelcelta",
-			"Macofe"
+			"Macofe",
+			"Fitoschido",
+			"Gustronico"
 		]
 	},
 	"interwiki": "Ver y editar la tabla de interwikis",
 	"interwiki-title-norights": "Ver datos de interwikis",
 	"interwiki-desc": "Añade una [[Special:Interwiki|página especial]] para ver y editar la tabla de interwikis",
-	"interwiki_intro": "Esta es una visión general de la tabla intewiki.",
+	"interwiki_intro": "Este es un resumen de la tabla de interwikis, que define los atajos mediante prefijos usados para enlazar rápidamente diferentes wikis y otros sitios externos. Para recomendaciones de uso véase [//www.mediawiki.org/wiki/Extension:Interwiki el manual en MediaWiki.org].",
 	"interwiki_prefix": "Prefijo",
 	"interwiki-prefix-label": "Prefijo:",
 	"interwiki_prefix_intro": "Prefijo interwiki que se utilizará en sintaxis wikitexto <code>[<nowiki />[prefijo:<em>nombre de página</em>]]</code>.",
@@ -30,7 +32,7 @@
 	"interwiki_trans": "transcluir",
 	"interwiki-trans-label": "Transcluir:",
 	"interwiki_trans_1_intro": "Si se usa la sintaxis wikitexto <code>{<nowiki />{prefijo:<em>nombre de página</em>}}</code>, permitir la transclusión de la plantilla/página desde la wiki foránea, si las transclusiones interwikis están activadas en la ([//www.mediawiki.org/wiki/Manual:$wgEnableScaryTranscluding transclusión escalofriante]) general.",
-	"interwiki_trans_0_intro": "no se permitirá, y en su lugar, buscará una página en el espacio de nombres de plantilla.",
+	"interwiki_trans_0_intro": "No permitir <code>{<nowiki />{prefijo:<em>nombredepágina</em>}}</code> transcluir plantillas/páginas foráneas. En su lugar, buscar una página local en el espacio de nombres de la plantilla.",
 	"interwiki_1": "sí",
 	"interwiki_0": "no",
 	"interwiki_error": "Error: La tabla de interwikis está vacía, u otra cosa salió mal.",
@@ -41,7 +43,8 @@
 	"interwiki_deleting": "Estás borrando el prefijo «$1».",
 	"interwiki_deleted": "El prefijo «$1» ha sido borrado correctamente de la tabla de interwikis.",
 	"interwiki_delfailed": "El prefijo «$1» no puede ser borrado de la tabla de interwikis.",
-	"interwiki_addtext": "Añadir un prefijo interwiki",
+	"interwiki-logtext": "Ver registro",
+	"interwiki_addtext": "Añadir un prefijo interwiki o de idioma",
 	"interwiki_addintro": "Estás añadiendo un nuevo prefijo interwiki.\nRecuerda que no puede contener espacios ( ), dos puntos (:), ni los signos ''et'' (&), o ''igual'' (=).",
 	"interwiki_addbutton": "Agregar",
 	"interwiki_added": "El prefijo «$1» ha sido añadido correctamente a la tabla de interwikis.",
@@ -59,5 +62,8 @@
 	"logentry-interwiki-iw_delete": "$1 {{GENDER:$2|eliminó}} el prefijo \"$4\" de la tabla interwiki",
 	"log-description-interwiki": "Este es un registro de los cambios hechos a la [[Special:Interwiki|tabla interwiki]].",
 	"right-interwiki": "Editar datos de interwiki",
-	"action-interwiki": "cambiar esta entrada interwiki"
+	"action-interwiki": "cambiar esta entrada interwiki",
+	"interwiki-global-links": "Prefijos de interwikis globales",
+	"interwiki-links": "Prefijos de interwikis",
+	"interwiki-language-links": "Prefijos interlingüísticos"
 }

@@ -6,11 +6,11 @@
 		]
 	},
 	"inputbox-desc": "Omogući uključivanje prethodno definisanih HTML formi.",
-	"inputbox-error-no-type": "Nisi odredio tip unosne kutije da bi je napravio.",
-	"inputbox-error-bad-type": "Tip \"$1\" kutijice za unos podataka je nepoznat.\nMolimo vas da ga promenite na \"create\", \"comment\", \"search\", \"search2\" ili \"fulltext\".",
+	"inputbox-error-no-type": "Niste odredili tip kutije za unos koju pravite.",
+	"inputbox-error-bad-type": "Tip „$1“ kutijice za unos podataka je nepoznat.\nMolimo vas da ga promenite na „create“, „comment“, „search“, „search2“ ili „fulltext“.",
 	"inputbox-tryexact": "Pokušaj tačno",
 	"inputbox-searchfulltext": "Pretraži ceo tekst",
-	"inputbox-createarticle": "Napravi članak",
+	"inputbox-createarticle": "Napravi stranicu",
 	"inputbox-postcomment": "Novi odeljak",
 	"inputbox-postcommenttitle": "Novi odeljak",
 	"inputbox-ns-main": "Glavni"

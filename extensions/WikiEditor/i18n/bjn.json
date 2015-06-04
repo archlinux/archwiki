@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Ezagren",
-			"J Subhi"
+			"J Subhi",
+			"Macofe"
 		]
 	},
 	"wikieditor-wikitext-tab": "NaskahWiki",
@@ -10,7 +11,6 @@
 	"wikieditor-preview-tab": "Tilik",
 	"wikieditor-preview-changes-tab": "Parubahan",
 	"wikieditor-preview-loading": "Ma'unggah...",
-	"wikieditor-previewDialog-tab": "Tilik",
 	"wikieditor-publish-button-cancel": "Walangi",
 	"wikieditor-publish-dialog-minor": "Babakan sapalih",
 	"wikieditor-publish-dialog-watch": "Itihi tungkaran ini",
@@ -109,21 +109,6 @@
 	"wikieditor-toolbar-tool-replace-nomatch": "Panggagaian Pian kadada ruhuinya.",
 	"wikieditor-toolbar-tool-replace-emptysearch": "Pian kada mambuatakan apa pun gasan di panggagaian",
 	"wikieditor-toolbar-section-characters": "Karakter istimiwa",
-	"wikieditor-toolbar-characters-page-latin": "Latin",
-	"wikieditor-toolbar-characters-page-ipa": "IPA",
-	"wikieditor-toolbar-characters-page-symbols": "Simbul",
-	"wikieditor-toolbar-characters-page-greek": "Yunani",
-	"wikieditor-toolbar-characters-page-cyrillic": "Sirilik",
-	"wikieditor-toolbar-characters-page-arabic": "Arab",
-	"wikieditor-toolbar-characters-page-persian": "Parsia",
-	"wikieditor-toolbar-characters-page-hebrew": "Ibrani",
-	"wikieditor-toolbar-characters-page-bangla": "Bangla",
-	"wikieditor-toolbar-characters-page-telugu": "Telugu",
-	"wikieditor-toolbar-characters-page-sinhala": "Sinhala",
-	"wikieditor-toolbar-characters-page-gujarati": "Gujarati",
-	"wikieditor-toolbar-characters-page-thai": "Thai",
-	"wikieditor-toolbar-characters-page-lao": "Lao",
-	"wikieditor-toolbar-characters-page-khmer": "Khmer",
 	"wikieditor-toolbar-section-help": "Patulung",
 	"wikieditor-toolbar-help-heading-description": "Katarangan",
 	"wikieditor-toolbar-help-heading-syntax": "Apa nang Pian katik",
@@ -169,7 +154,7 @@
 	"wikieditor-toolbar-help-content-olist-syntax": "# Isi daptar<br /># Isi daptar",
 	"wikieditor-toolbar-help-content-olist-result": "<ol><li>Isi daptar</li><li>Isi daptar</li></ol>",
 	"wikieditor-toolbar-help-content-file-description": "Maktub-akan barakas",
-	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Cuntuh.png|thumb|Naskah judul gambar]]",
+	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Cuntuh.png|$2|$3]]",
 	"wikieditor-toolbar-help-content-reference-description": "Rujukan",
 	"wikieditor-toolbar-help-content-reference-result": "Naskah tungkaran.<sup><a href='#'>[1]</a></sup>",
 	"wikieditor-toolbar-help-content-rereference-result": "Naskah tungkaran.<sup><a href='#'>[1]</a></sup>",

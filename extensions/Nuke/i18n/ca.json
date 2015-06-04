@@ -6,7 +6,8 @@
 			"Paucabot",
 			"SMP",
 			"Toniher",
-			"Vriullop"
+			"Vriullop",
+			"Fitoschido"
 		]
 	},
 	"nuke": "Eliminació massiva",
@@ -31,7 +32,7 @@
 	"nuke-pattern": "Patró pel nom de pàgina:",
 	"nuke-nopages-global": "No hi ha cap pàgina nova als [[Special:RecentChanges|canvis recents]].",
 	"nuke-viewchanges": "mostra els canvis",
-	"nuke-namespace": "Limitat a l'espai de noms:",
+	"nuke-namespace": "Limitat a l’espai de noms:",
 	"nuke-linkoncontribs": "eliminació massiva",
 	"nuke-linkoncontribs-text": "Eliminació massiva de pàgines on aquest usuari és l'únic autor"
 }

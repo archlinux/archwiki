@@ -39,6 +39,7 @@ phpunit.php enables colors for other OSs at runtime
 			<file>suites/UploadFromUrlTestSuite.php</file>
 		</testsuite>
 		<testsuite name="extensions">
+			<directory>structure</directory>
 			<file>suites/ExtensionsTestSuite.php</file>
 			<file>suites/ExtensionsParserTestSuite.php</file>
 			<file>suites/LessTestSuite.php</file>
@@ -57,7 +58,6 @@ phpunit.php enables colors for other OSs at runtime
 			<directory suffix=".php">../../includes</directory>
 			<directory suffix=".php">../../languages</directory>
 			<directory suffix=".php">../../maintenance</directory>
-			<directory suffix=".php">../../resources</directory>
 			<directory suffix=".php">../../skins</directory>
 		</whitelist>
 	</filter>

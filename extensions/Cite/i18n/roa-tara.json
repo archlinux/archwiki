@@ -1,0 +1,27 @@
+{
+	"@metadata": {
+		"authors": [
+			"Joetaras"
+		]
+	},
+	"cite-desc": "Aggiunge le tag <nowiki><ref[ name=id]></nowiki> and <nowiki><references/></nowiki> pe le citaziune",
+	"cite_error": "Cite errore: $1",
+	"cite_error_ref_numeric_key": "Tag <code>&lt;ref&gt;</code> invalide;\n'u nome non ge pò essere sole 'n'indere. Ause 'nu titele descrittive",
+	"cite_error_ref_no_key": "Tag <code>&lt;ref&gt;</code> invalide;\nle referimende senza condenute onne tenè 'nu nome",
+	"cite_error_ref_too_many_keys": "Tag <code>&lt;ref&gt;</code> invalide;\nnome invalide, pe esembie troppe luènghe",
+	"cite_error_ref_no_input": "Tag <code>&lt;ref&gt;</code> invalide;\nreferimende senza nome onne tenè 'nu condenute",
+	"cite_error_references_invalid_parameters": "Tag <code>&lt;references&gt;</code> invalide;\nnon ge se pò mettere nisciune parametre.\nAuse <code>&lt;references /&gt;</code>",
+	"cite_error_references_invalid_parameters_group": "Tag <code>&lt;references&gt;</code> invalide;\nsulamende 'u parametre \"group\" pò essere ausate.\nAuse <code>&lt;references /&gt;</code> o <code>&lt;references group=\"...\" /&gt;</code>",
+	"cite_error_references_no_backlink_label": "Le etichette personalizzate pe le collegaminde de rrete onne spicciate.\nDefiniscene otre jndr'à 'u messàgge <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>.",
+	"cite_error_no_link_label_group": "Le etichette personalizzate de le collegaminde pu gruppe \"$1\" onne spicciate.\nDefiniscene otre jndr'à 'u messàgge <nowiki>[[MediaWiki:$2]]</nowiki>.",
+	"cite_error_references_no_text": "Tag <code>&lt;ref&gt;</code> invalide;\nnisciune teste ere previste pe le referimende nnomenate <code>$1</code>",
+	"cite_error_included_ref": "Stè 'u tag <code>&lt;/ref&gt;</code> ma manghe <code>&lt;ref&gt;</code>",
+	"cite_error_group_refs_without_references": "'U tag <code>&lt;ref&gt;</code> esiste pu gruppe nomenate \"$1\", ma non ge corresponne a 'u tag acchiate <code>&lt;references group=\"$1\"/&gt;</code>, o 'nu tag de chiusure <code>&lt;/ref&gt;</code> manghe",
+	"cite_error_references_group_mismatch": "'U tag <code>&lt;ref&gt;</code> tag jndr'à <code>&lt;references&gt;</code> tène conflitte cu l'attribbute d'u gruppe \"$1\".",
+	"cite_error_references_missing_group": "'U tag <code>&lt;ref&gt;</code> definite jndr'à <code>&lt;references&gt;</code> ave attribbute de gruppe \"$1\" 'u quale non ge jesse jndr'à 'u teste prengepàle.",
+	"cite_error_references_missing_key": "'U tag <code>&lt;ref&gt;</code> cu 'u nome \"$1\" definite jndr'à <code>&lt;references&gt;</code> non g'avene ausate jndr'à 'u teste prengepàle.",
+	"cite_error_references_no_key": "'U tag <code>&lt;ref&gt;</code> definite jndr'à <code>&lt;references&gt;</code> non ge tène 'nu nome d'attrebbute.",
+	"cite_error_empty_references_define": "'U tag <code>&lt;ref&gt;</code> definite jndr'à <code>&lt;references&gt;</code> cu 'u nome \"$1\" non ge tène condenute.",
+	"cite_references_link_accessibility_label": "Zumbe sus",
+	"cite_references_link_many_accessibility_label": "Zumbe sus a:"
+}

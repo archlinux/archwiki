@@ -1,5 +1,19 @@
 <?php
 
+if ( function_exists( 'wfLoadExtension' ) ) {
+	wfLoadExtension( 'LocalisationUpdate' );
+	// Keep i18n globals so mergeMessageFileList.php doesn't break
+	$wgMessagesDirs['LocalisationUpdate'] = __DIR__ . '/i18n';
+	/* wfWarn(
+		'Deprecated PHP entry point used for LocalisationUpdate extension. Please use wfLoadExtension instead, ' .
+		'see https://www.mediawiki.org/wiki/Extension_registration for more details.'
+	); */
+	return true;
+}
+/**
+ * Setup for pre-1.25 wikis. Make sure this is kept in sync with extension.json
+ */
+
 /**
  * Directory to store serialized cache files in. Defaults to $wgCacheDirectory.
  * It's OK to share this directory among wikis as long as the wiki you run
@@ -23,9 +37,11 @@ $wgLocalisationUpdateRepository = 'github';
 $wgLocalisationUpdateRepositories = array();
 $wgLocalisationUpdateRepositories['github'] = array(
 	'mediawiki' =>
-		'https://raw.github.com/wikimedia/mediawiki-core/master/%PATH%',
+		'https://raw.github.com/wikimedia/mediawiki/master/%PATH%',
 	'extension' =>
 		'https://raw.github.com/wikimedia/mediawiki-extensions-%NAME%/master/%PATH%',
+	'skin' =>
+		'https://raw.github.com/wikimedia/mediawiki-skins-%NAME%/master/%PATH%',
 );
 
 // Example for local filesystem configuration
@@ -34,6 +50,8 @@ $wgLocalisationUpdateRepositories['github'] = array(
 #		'file:///resources/projects/mediawiki/master/%PATH%',
 #	'extension' =>
 #		'file:///resources/projects/mediawiki-extensions/extensions/%NAME%/%PATH%',
+#	'skin' =>
+#		'file:///resources/projects/mediawiki-skins/skins/%NAME%/%PATH%',
 #);
 
 $wgExtensionCredits['other'][] = array(
@@ -47,6 +65,7 @@ $wgExtensionCredits['other'][] = array(
 
 $wgHooks['LocalisationCacheRecache'][] = 'LocalisationUpdate::onRecache';
 $wgHooks['LocalisationCacheRecacheFallback'][] = 'LocalisationUpdate::onRecacheFallback';
+$GLOBALS['wgHooks']['UnitTestsList'][] = 'LocalisationUpdate::setupUnitTests';
 
 $dir = __DIR__;
 $wgMessagesDirs['LocalisationUpdate'] = __DIR__ . '/i18n';

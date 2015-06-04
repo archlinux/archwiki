@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Ggajendra",
-			"Umeshberma"
+			"Umeshberma",
+			"Tulsi Bhagat"
 		]
 	},
 	"skinname-vector": "सदिश",
@@ -16,5 +17,6 @@
 	"vector-view-edit": "सम्पादन करू",
 	"vector-view-history": "इतिहास देखू",
 	"vector-view-view": "पढ़ू",
-	"vector-view-viewsource": "जड़ि देखू"
+	"vector-view-viewsource": "जड़ि देखू",
+	"vector-more-actions": "आर"
 }

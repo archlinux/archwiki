@@ -13,7 +13,9 @@
 					"mw.html",
 					"mw.html.Cdata",
 					"mw.html.Raw",
-					"mw.hook"
+					"mw.hook",
+					"mw.template",
+					"mw.errorLogger"
 				]
 			},
 			{
@@ -21,6 +23,7 @@
 				"classes": [
 					"mw.Title",
 					"mw.Uri",
+					"mw.messagePoster.*",
 					"mw.notification",
 					"mw.Notification_",
 					"mw.user",
@@ -54,7 +57,8 @@
 			{
 				"name": "Interfaces",
 				"classes": [
-					"mw.Feedback"
+					"mw.Feedback",
+					"mw.Feedback.Dialog"
 				]
 			},
 			{
@@ -69,8 +73,7 @@
 					"mw.log",
 					"mw.inspect",
 					"mw.inspect.reports",
-					"mw.Debug",
-					"mw.Debug.profile"
+					"mw.Debug"
 				]
 			}
 		]

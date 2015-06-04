@@ -1,0 +1,50 @@
+{
+	"name": "Nuke",
+	"version": "1.2.0",
+	"author": [
+		"Brion Vibber",
+		"Jeroen De Dauw"
+	],
+	"url": "https://www.mediawiki.org/wiki/Extension:Nuke",
+	"descriptionmsg": "nuke-desc",
+	"type": "specialpage",
+	"ExtensionMessagesFiles": {
+		"NukeAlias": "Nuke.alias.php"
+	},
+	"MessagesDirs": {
+		"Nuke": [
+			"i18n"
+		]
+	},
+	"Hooks": {
+		"ContributionsToolLinks": [
+			"NukeHooks::nukeContributionsLinks"
+		]
+	},
+	"ResourceModules": {
+		"ext.nuke": {
+			"scripts": [
+				"ext.nuke.js"
+			]
+		}
+	},
+	"ResourceFileModulePaths": {
+		"localBasePath": "",
+		"remoteExtPath": "Nuke"
+	},
+	"GroupPermissions": {
+		"sysop": {
+			"nuke": true
+		}
+	},
+	"AvailableRights": [
+		"nuke"
+	],
+	"SpecialPages": {
+		"Nuke": "SpecialNuke"
+	},
+	"AutoloadClasses": {
+		"SpecialNuke": "Nuke_body.php",
+		"NukeHooks": "Nuke.hooks.php"
+	}
+}

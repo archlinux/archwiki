@@ -129,6 +129,7 @@ class ORMTable extends DBAccessBase implements IORMTable {
 	 * Gets the db field prefix.
 	 *
 	 * @since 1.20
+	 * @deprecated since 1.25, use the $this->fieldPrefix property instead
 	 *
 	 * @return string
 	 */
@@ -189,7 +190,7 @@ class ORMTable extends DBAccessBase implements IORMTable {
 	}
 
 	/**
-	 * Selects the the specified fields of the records matching the provided
+	 * Selects the specified fields of the records matching the provided
 	 * conditions and returns them as DBDataObject. Field names get prefixed.
 	 *
 	 * @since 1.20
@@ -210,7 +211,7 @@ class ORMTable extends DBAccessBase implements IORMTable {
 	}
 
 	/**
-	 * Selects the the specified fields of the records matching the provided
+	 * Selects the specified fields of the records matching the provided
 	 * conditions and returns them as DBDataObject. Field names get prefixed.
 	 *
 	 * @since 1.20
@@ -247,8 +248,8 @@ class ORMTable extends DBAccessBase implements IORMTable {
 	 * @param array $options
 	 * @param null|string $functionName
 	 * @return ResultWrapper
-	 * @throws DBQueryError If the query failed (even if the database was in
-	 *   ignoreErrors mode).
+	 * @throws Exception
+	 * @throws MWException
 	 */
 	public function rawSelect( $fields = null, array $conditions = array(),
 		array $options = array(), $functionName = null
@@ -295,7 +296,7 @@ class ORMTable extends DBAccessBase implements IORMTable {
 	}
 
 	/**
-	 * Selects the the specified fields of the records matching the provided
+	 * Selects the specified fields of the records matching the provided
 	 * conditions and returns them as associative arrays.
 	 * Provided field names get prefixed.
 	 * Returned field names will not have a prefix.
@@ -345,7 +346,7 @@ class ORMTable extends DBAccessBase implements IORMTable {
 	}
 
 	/**
-	 * Selects the the specified fields of the first matching record.
+	 * Selects the specified fields of the first matching record.
 	 * Field names get prefixed.
 	 *
 	 * @since 1.20
@@ -368,7 +369,7 @@ class ORMTable extends DBAccessBase implements IORMTable {
 	}
 
 	/**
-	 * Selects the the specified fields of the records matching the provided
+	 * Selects the specified fields of the records matching the provided
 	 * conditions. Field names do NOT get prefixed.
 	 *
 	 * @since 1.20
@@ -399,7 +400,7 @@ class ORMTable extends DBAccessBase implements IORMTable {
 	}
 
 	/**
-	 * Selects the the specified fields of the first record matching the provided
+	 * Selects the specified fields of the first record matching the provided
 	 * conditions and returns it as an associative array, or false when nothing matches.
 	 * This method makes use of selectFields and expects the same parameters and
 	 * returns the same results (if there are any, if there are none, this method returns false).
@@ -770,33 +771,54 @@ class ORMTable extends DBAccessBase implements IORMTable {
 	 * @return string
 	 */
 	public function getPrefixedField( $field ) {
-		return $this->getFieldPrefix() . $field;
+		return $this->fieldPrefix . $field;
 	}
 
 	/**
 	 * Takes an array of field names with prefix and returns the unprefixed equivalent.
 	 *
 	 * @since 1.20
+	 * @deprecated since 1.25, will be removed
 	 *
-	 * @param array $fieldNames
+	 * @param string[] $fieldNames
 	 *
-	 * @return array
+	 * @return string[]
 	 */
 	public function unprefixFieldNames( array $fieldNames ) {
-		return array_map( array( $this, 'unprefixFieldName' ), $fieldNames );
+		wfDeprecated( __METHOD__, '1.25' );
+
+		return $this->stripFieldPrefix( $fieldNames );
+	}
+
+	/**
+	 * Takes an array of field names with prefix and returns the unprefixed equivalent.
+	 *
+	 * @param string[] $fieldNames
+	 *
+	 * @return string[]
+	 */
+	private function stripFieldPrefix( array $fieldNames ) {
+		$start = strlen( $this->fieldPrefix );
+
+		return array_map( function ( $fieldName ) use ( $start ) {
+			return substr( $fieldName, $start );
+		}, $fieldNames );
 	}
 
 	/**
 	 * Takes a field name with prefix and returns the unprefixed equivalent.
 	 *
 	 * @since 1.20
+	 * @deprecated since 1.25, will be removed
 	 *
 	 * @param string $fieldName
 	 *
 	 * @return string
 	 */
 	public function unprefixFieldName( $fieldName ) {
-		return substr( $fieldName, strlen( $this->getFieldPrefix() ) );
+		wfDeprecated( __METHOD__, '1.25' );
+
+		return substr( $fieldName, strlen( $this->fieldPrefix ) );
 	}
 
 	/**
@@ -832,7 +854,7 @@ class ORMTable extends DBAccessBase implements IORMTable {
 		$result = (array)$result;
 
 		$rawFields = array_combine(
-			$this->unprefixFieldNames( array_keys( $result ) ),
+			$this->stripFieldPrefix( array_keys( $result ) ),
 			array_values( $result )
 		);
 

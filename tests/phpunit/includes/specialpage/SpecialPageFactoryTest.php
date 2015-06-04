@@ -28,21 +28,52 @@ class SpecialPageFactoryTest extends MediaWikiTestCase {
 		SpecialPageFactory::resetList();
 	}
 
+	public function testResetList() {
+		SpecialPageFactory::resetList();
+		$this->assertContains( 'Specialpages', SpecialPageFactory::getNames() );
+	}
+
+	public function testHookNotCalledTwice() {
+		$count = 0;
+		$this->mergeMwGlobalArrayValue( 'wgHooks', array(
+			'SpecialPage_initList' => array(
+				function () use ( &$count ) {
+					$count++;
+				}
+		) ) );
+		SpecialPageFactory::resetList();
+		SpecialPageFactory::getNames();
+		SpecialPageFactory::getNames();
+		$this->assertEquals( 1, $count );
+	}
+
 	public function newSpecialAllPages() {
 		return new SpecialAllPages();
 	}
 
 	public function specialPageProvider() {
+		$specialPageTestHelper = new SpecialPageTestHelper();
+
 		return array(
 			'class name' => array( 'SpecialAllPages', false ),
-			'closure' => array( function() {
+			'closure' => array( function () {
 				return new SpecialAllPages();
 			}, false ),
-			'function' => array( array( $this, 'newSpecialAllPages' ), false  ),
+			'function' => array( array( $this, 'newSpecialAllPages' ), false ),
+			'callback string' => array( 'SpecialPageTestHelper::newSpecialAllPages', false ),
+			'callback with object' => array(
+				array( $specialPageTestHelper, 'newSpecialAllPages' ),
+				false
+			),
+			'callback array' => array(
+				array( 'SpecialPageTestHelper', 'newSpecialAllPages' ),
+				false
+			)
 		);
 	}
 
 	/**
+	 * @covers SpecialPageFactory::getPage
 	 * @dataProvider specialPageProvider
 	 */
 	public function testGetPage( $spec, $shouldReuseInstance ) {
@@ -56,6 +87,9 @@ class SpecialPageFactoryTest extends MediaWikiTestCase {
 		$this->assertEquals( $shouldReuseInstance, $page2 === $page, "Should re-use instance:" );
 	}
 
+	/**
+	 * @covers SpecialPageFactory::getNames
+	 */
 	public function testGetNames() {
 		$this->mergeMwGlobalArrayValue( 'wgSpecialPages', array( 'testdummy' => 'SpecialAllPages' ) );
 		SpecialPageFactory::resetList();
@@ -65,6 +99,9 @@ class SpecialPageFactoryTest extends MediaWikiTestCase {
 		$this->assertContains( 'testdummy', $names );
 	}
 
+	/**
+	 * @covers SpecialPageFactory::resolveAlias
+	 */
 	public function testResolveAlias() {
 		$this->setMwGlobals( 'wgContLang', Language::factory( 'de' ) );
 		SpecialPageFactory::resetList();
@@ -74,6 +111,9 @@ class SpecialPageFactoryTest extends MediaWikiTestCase {
 		$this->assertEquals( 'Foo', $param );
 	}
 
+	/**
+	 * @covers SpecialPageFactory::getLocalNameFor
+	 */
 	public function testGetLocalNameFor() {
 		$this->setMwGlobals( 'wgContLang', Language::factory( 'de' ) );
 		SpecialPageFactory::resetList();
@@ -82,6 +122,9 @@ class SpecialPageFactoryTest extends MediaWikiTestCase {
 		$this->assertEquals( 'Spezialseiten/Foo', $name );
 	}
 
+	/**
+	 * @covers SpecialPageFactory::getTitleForAlias
+	 */
 	public function testGetTitleForAlias() {
 		$this->setMwGlobals( 'wgContLang', Language::factory( 'de' ) );
 		SpecialPageFactory::resetList();
@@ -220,6 +263,21 @@ class SpecialPageFactoryTest extends MediaWikiTestCase {
 			),
 
 		);
+	}
+
+	public function testGetAliasListRecursion() {
+		$called = false;
+		$this->mergeMwGlobalArrayValue( 'wgHooks', array(
+			'SpecialPage_initList' => array(
+				function () use ( &$called ) {
+					SpecialPageFactory::getLocalNameFor( 'Specialpages' );
+					$called = true;
+				}
+			),
+		) );
+		SpecialPageFactory::resetList();
+		SpecialPageFactory::getLocalNameFor( 'Specialpages' );
+		$this->assertTrue( $called, 'Recursive call succeeded' );
 	}
 
 }

@@ -1,12 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"Michaello"
+			"Michaello",
+			"Milicevic01"
 		]
 	},
 	"pfunc_desc": "obogati parser logičkim funkcijama",
 	"pfunc_time_error": "Greška: loše vreme",
 	"pfunc_time_too_long": "Greška: previše #time poziva",
+	"pfunc_rel2abs_invalid_depth": "Greška: nepravilna dubina u putanji: „$1“ (pokušaj pristupa čvoru iznad korenskog (root)).",
 	"pfunc_expr_stack_exhausted": "Greška u izrazu: stek napunjen",
 	"pfunc_expr_unexpected_number": "Greška u izrazu: neočekivani broj",
 	"pfunc_expr_preg_match_failure": "Greška u izrazu: Neočekivana preg_match greška",

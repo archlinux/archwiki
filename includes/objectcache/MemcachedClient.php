@@ -64,6 +64,9 @@
  * @version 0.1.2
  */
 
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
+
 // {{{ requirements
 // }}}
 
@@ -233,6 +236,11 @@ class MWMemcached {
 	 */
 	public $_connect_attempts;
 
+	/**
+	 * @var LoggerInterface
+	 */
+	private $_logger;
+
 	// }}}
 	// }}}
 	// {{{ methods
@@ -263,6 +271,8 @@ class MWMemcached {
 
 		$this->_connect_timeout = isset( $args['connect_timeout'] ) ? $args['connect_timeout'] : 0.1;
 		$this->_connect_attempts = 2;
+
+		$this->_logger = isset( $args['logger'] ) ? $args['logger'] : new NullLogger();
 	}
 
 	// }}}
@@ -413,7 +423,6 @@ class MWMemcached {
 	 * @return mixed
 	 */
 	public function get( $key, &$casToken = null ) {
-		wfProfileIn( __METHOD__ );
 
 		if ( $this->_debug ) {
 			$this->_debugprint( "get($key)\n" );
@@ -421,19 +430,16 @@ class MWMemcached {
 
 		if ( !is_array( $key ) && strval( $key ) === '' ) {
 			$this->_debugprint( "Skipping key which equals to an empty string" );
-			wfProfileOut( __METHOD__ );
 			return false;
 		}
 
 		if ( !$this->_active ) {
-			wfProfileOut( __METHOD__ );
 			return false;
 		}
 
 		$sock = $this->get_sock( $key );
 
 		if ( !is_resource( $sock ) ) {
-			wfProfileOut( __METHOD__ );
 			return false;
 		}
 
@@ -446,7 +452,6 @@ class MWMemcached {
 
 		$cmd = "gets $key\r\n";
 		if ( !$this->_fwrite( $sock, $cmd ) ) {
-			wfProfileOut( __METHOD__ );
 			return false;
 		}
 
@@ -463,7 +468,6 @@ class MWMemcached {
 		if ( isset( $val[$key] ) ) {
 			$value = $val[$key];
 		}
-		wfProfileOut( __METHOD__ );
 		return $value;
 	}
 
@@ -1110,14 +1114,14 @@ class MWMemcached {
 	 * @param string $text
 	 */
 	function _debugprint( $text ) {
-		wfDebugLog( 'memcached', $text );
+		$this->_logger->debug( $text );
 	}
 
 	/**
 	 * @param string $text
 	 */
 	function _error_log( $text ) {
-		wfDebugLog( 'memcached-serious', "Memcached error: $text" );
+		$this->_logger->error( "Memcached error: $text" );
 	}
 
 	/**

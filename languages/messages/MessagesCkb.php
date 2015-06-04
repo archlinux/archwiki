@@ -8,15 +8,12 @@
  *
  */
 
-$linkPrefixExtension = true;
-$fallback8bitEncoding = 'windows-1256';
-
 $rtl = true;
+$fallback8bitEncoding = 'windows-1256';
 
 $namespaceNames = array(
 	NS_MEDIA            => 'میدیا',
 	NS_SPECIAL          => 'تایبەت',
-	NS_MAIN             => '',
 	NS_TALK             => 'وتووێژ',
 	NS_USER             => 'بەکارھێنەر',
 	NS_USER_TALK        => 'لێدوانی_بەکارھێنەر',
@@ -54,7 +51,7 @@ $specialPageAliases = array(
 	'Booksources'               => array( 'سەرچاوەکانی_کتێب' ),
 	'BrokenRedirects'           => array( 'ڕەوانکەرە_شکاوەکان' ),
 	'Categories'                => array( 'پۆلەکان' ),
-	'ChangePassword'            => array( 'تێپەڕوشەگۆڕان،_تێپەڕەوشە_ڕێکخستنەوە' ),
+	'ChangePassword'            => array( 'تێپەڕوشەگۆڕان،ڕێکخستنەوەی_تێپەڕوشە' ),
 	'Confirmemail'              => array( 'بڕواکردن_ئیمەیل' ),
 	'Contributions'             => array( 'بەشدارییەکان' ),
 	'CreateAccount'             => array( 'دروستکردنی_ھەژمار' ),
@@ -62,7 +59,7 @@ $specialPageAliases = array(
 	'DoubleRedirects'           => array( 'ڕەوانکەرە_دووپاتکراوەکان' ),
 	'Emailuser'                 => array( 'ئیمەیل_بەکارھێنەر' ),
 	'Export'                    => array( 'ھەناردن' ),
-	'Fewestrevisions'           => array( 'کەمترین__پێداچوونەوەکان' ),
+	'Fewestrevisions'           => array( 'کەمترین_پێداچوونەوەکان' ),
 	'Import'                    => array( 'ھاوردن' ),
 	'Listadmins'                => array( 'لیستی_بەڕێوبەران' ),
 	'Listbots'                  => array( 'لیستی_بۆتەکان' ),
@@ -71,6 +68,7 @@ $specialPageAliases = array(
 	'Log'                       => array( 'لۆگ' ),
 	'Lonelypages'               => array( 'پەڕە_تاکەکان،_پەڕە_ھەتیوکراوەکان' ),
 	'Longpages'                 => array( 'پەڕە_درێژەکان' ),
+	'MergeHistory'              => array( 'کردنەیەکی_مێژوو' ),
 	'Mostcategories'            => array( 'زیاترین_پۆلەکان' ),
 	'Mostimages'                => array( 'پەڕگەکانی_زیاترین_بەستەردراون،_زیاترین_پەڕگەکان،_زیاترین_وێنەکان' ),
 	'Mostlinked'                => array( 'پەڕەکانی_زیاترین_بەستەردراون،_زیاترین_بەستەردراون' ),
@@ -80,7 +78,7 @@ $specialPageAliases = array(
 	'Movepage'                  => array( 'گواستنەوەی_پەڕە' ),
 	'Mycontributions'           => array( 'بەشدارییەکانم' ),
 	'Mypage'                    => array( 'پەڕەکەم' ),
-	'Mytalk'                    => array( 'لێدوانەکانم' ),
+	'Mytalk'                    => array( 'لێدوانەکەم' ),
 	'Newimages'                 => array( 'پەڕگە_نوێکان' ),
 	'Newpages'                  => array( 'پەڕە_نوێکان' ),
 	'Popularpages'              => array( 'پەڕە_ناودارەکان' ),

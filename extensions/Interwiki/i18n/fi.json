@@ -15,8 +15,6 @@
 	"interwiki-title-norights": "Katso interwiki-tietoja",
 	"interwiki-desc": "Lisää [[Special:Interwiki|toimintosivun]], jonka avulla voi katsoa ja muokata interwiki-taulua.",
 	"interwiki_intro": "Tämä on yleiskatsaus interwikien taulukosta.",
-	"interwiki-legend-show": "Näytä selitykset",
-	"interwiki-legend-hide": "Piilota selitykset",
 	"interwiki_prefix": "Etuliite",
 	"interwiki-prefix-label": "Etuliite:",
 	"interwiki_local": "Välitä",

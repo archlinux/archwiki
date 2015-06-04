@@ -47,6 +47,7 @@ class SpecialBlockList extends SpecialPage {
 		$lang = $this->getLanguage();
 		$out->setPageTitle( $this->msg( 'ipblocklist' ) );
 		$out->addModuleStyles( 'mediawiki.special' );
+		$out->addModules( 'mediawiki.userSuggest' );
 
 		$request = $this->getRequest();
 		$par = $request->getVal( 'ip', $par );
@@ -72,6 +73,7 @@ class SpecialBlockList extends SpecialPage {
 				'tabindex' => '1',
 				'size' => '45',
 				'default' => $this->target,
+				'cssclass' => 'mw-autocomplete-user', // used by mediawiki.userSuggest
 			),
 			'Options' => array(
 				'type' => 'multiselect',
@@ -103,6 +105,7 @@ class SpecialBlockList extends SpecialPage {
 		$form->setMethod( 'get' );
 		$form->setWrapperLegendMsg( 'ipblocklist-legend' );
 		$form->setSubmitTextMsg( 'ipblocklist-submit' );
+		$form->setSubmitProgressive();
 		$form->prepareForm();
 
 		$form->displayForm( '' );
@@ -110,11 +113,6 @@ class SpecialBlockList extends SpecialPage {
 	}
 
 	function showList() {
-		# Purge expired entries on one in every 10 queries
-		if ( !mt_rand( 0, 10 ) ) {
-			Block::purgeExpired();
-		}
-
 		$conds = array();
 		# Is the user allowed to see hidden blocks?
 		if ( !$this->getUser()->isAllowed( 'hideuser' ) ) {
@@ -167,7 +165,7 @@ class SpecialBlockList extends SpecialPage {
 
 		# Check for other blocks, i.e. global/tor blocks
 		$otherBlockLink = array();
-		wfRunHooks( 'OtherBlockLogLink', array( &$otherBlockLink, $this->target ) );
+		Hooks::run( 'OtherBlockLogLink', array( &$otherBlockLink, $this->target ) );
 
 		$out = $this->getOutput();
 
@@ -259,7 +257,6 @@ class BlockListPager extends TablePager {
 				'blocklist-nousertalk',
 				'unblocklink',
 				'change-blocklink',
-				'infiniteblock',
 			);
 			$msg = array_combine( $msg, array_map( array( $this, 'msg' ), $msg ) );
 		}
@@ -396,6 +393,10 @@ class BlockListPager extends TablePager {
 			'join_conds' => array( 'user' => array( 'LEFT JOIN', 'user_id = ipb_by' ) )
 		);
 
+		# Filter out any expired blocks
+		$db = $this->getDatabase();
+		$info['conds'][] = 'ipb_expiry > ' . $db->addQuotes( $db->timestamp() );
+
 		# Is the user allowed to see hidden blocks?
 		if ( !$this->getUser()->isAllowed( 'hideuser' ) ) {
 			$info['conds']['ipb_deleted'] = 0;
@@ -425,7 +426,6 @@ class BlockListPager extends TablePager {
 	 * @param ResultWrapper $result
 	 */
 	function preprocessResults( $result ) {
-		wfProfileIn( __METHOD__ );
 		# Do a link batch query
 		$lb = new LinkBatch;
 		$lb->setCaller( __METHOD__ );
@@ -450,6 +450,5 @@ class BlockListPager extends TablePager {
 		}
 
 		$lb->execute();
-		wfProfileOut( __METHOD__ );
 	}
 }

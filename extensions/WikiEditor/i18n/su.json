@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Kandar"
+			"Kandar",
+			"Macofe"
 		]
 	},
 	"wikieditor-wikitext-tab": "Wikitext",
@@ -111,21 +112,6 @@
 	"wikieditor-toolbar-tool-replace-emptysearch": "Anjeun teu ngasupkeun naon anu kudu disungsi.",
 	"wikieditor-toolbar-tool-replace-invalidregex": "Éksprési régulér anu diasupkeun teu bener: $1",
 	"wikieditor-toolbar-section-characters": "Karakter husus",
-	"wikieditor-toolbar-characters-page-latin": "Latin",
-	"wikieditor-toolbar-characters-page-ipa": "IPA",
-	"wikieditor-toolbar-characters-page-symbols": "Lambang",
-	"wikieditor-toolbar-characters-page-greek": "Yunani",
-	"wikieditor-toolbar-characters-page-cyrillic": "Sirilik",
-	"wikieditor-toolbar-characters-page-arabic": "Arab",
-	"wikieditor-toolbar-characters-page-persian": "Parsi",
-	"wikieditor-toolbar-characters-page-hebrew": "Ibrani",
-	"wikieditor-toolbar-characters-page-bangla": "Bangla",
-	"wikieditor-toolbar-characters-page-telugu": "Telugu",
-	"wikieditor-toolbar-characters-page-sinhala": "Sinhala",
-	"wikieditor-toolbar-characters-page-gujarati": "Gujarati",
-	"wikieditor-toolbar-characters-page-thai": "Thai",
-	"wikieditor-toolbar-characters-page-lao": "Lao",
-	"wikieditor-toolbar-characters-page-khmer": "Khmer",
 	"wikieditor-toolbar-section-help": "Pitulung",
 	"wikieditor-toolbar-help-heading-description": "Pedaran",
 	"wikieditor-toolbar-help-heading-syntax": "NU diketikkeun",
@@ -165,8 +151,7 @@
 	"wikieditor-toolbar-help-content-heading5-result": "<h5>Téks subjudul</h5>",
 	"wikieditor-toolbar-help-content-ulist-description": "Béréndélan pélor",
 	"wikieditor-toolbar-help-content-olist-description": "Béréndélan nomer",
-	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Conto.png|thumb|Téks gambar]]",
-	"wikieditor-toolbar-help-content-file-result": "<div style='width:104px;' class='thumbinner'><a title='Téks pedaran' class='image' href='#'><img height='50' width='100' border='0' class='thumbimage' src='$2/WikiEditor/modules/images/toolbar/example-image.png' alt=''/></a><div class='thumbcaption'><div class='magnify'><a title='Gedéan' class='internal' href='#'><img height='11' width='15' alt='' src='$1/common/images/magnify-clip.png'/></a></div>Téks pedaran</div></div>",
+	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Conto.png|$2|$3]]",
 	"wikieditor-toolbar-help-content-reference-description": "Rujukan",
 	"wikieditor-toolbar-help-content-reference-syntax": "Téks kaca.&lt;ref name=\"test\"&gt;[http://www.conto.org Téks tutumbu], téks panambih.&lt;/ref&gt;",
 	"wikieditor-toolbar-help-content-reference-result": "Téks kaca.<sup><a href='#'>[1]</a></sup>",

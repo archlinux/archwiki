@@ -4,7 +4,7 @@
  * -------
  * Author: Roberto Rossi (rsoftware@altervista.org)
  * Copyright: (c) 2004 Roberto Rossi (http://rsoftware.altervista.org), Nigel McNie (http://qbnz.com/highlighter)
- * Release Version: 1.0.8.11
+ * Release Version: 1.0.8.12
  * Date Started: 2004/07/10
  *
  * LUA language file for GeSHi.
@@ -45,8 +45,14 @@
 $language_data = array (
     'LANG_NAME' => 'Lua',
     'COMMENT_SINGLE' => array(1 => "--"),
-    'COMMENT_MULTI' => array('--[[' => ']]'),
-    'COMMENT_REGEXP' => array(2 => '/\[(=*)\[.*?\]\1\]/s'),
+    'COMMENT_MULTI' => array(),
+    'COMMENT_REGEXP' => array(
+        // Multiline comments
+        2 => '/--\[(=*)\[.*?\]\1\]/s',
+        // Multi line literal strings (should not interpret escape sequences)
+        // Here because no STRING_REGEXP
+        3 => '/(?<!--)\[(=*)\[.*?\]\1\]/s',
+    ),
     'CASE_KEYWORDS' => GESHI_CAPS_NO_CHANGE,
     'QUOTEMARKS' => array("'", '"'),
     'ESCAPE_CHAR' => '',
@@ -127,8 +133,9 @@ $language_data = array (
             ),
         'COMMENTS' => array(
             1 => 'color: #808080; font-style: italic;',
-            2 => 'color: #ff0000;',
-            'MULTI' => 'color: #808080; font-style: italic;'
+            2 => 'color: #808080; font-style: italic;',
+            // Actually a string
+            3 => 'color: #ff0000;',
             ),
         'ESCAPE_CHAR' => array(
             0 => 'color: #000099; font-weight: bold;',
@@ -173,5 +180,3 @@ $language_data = array (
     'HIGHLIGHT_STRICT_BLOCK' => array(
         )
 );
-
-?>

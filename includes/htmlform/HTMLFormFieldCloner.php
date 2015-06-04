@@ -96,8 +96,7 @@ class HTMLFormFieldCloner extends HTMLFormField {
 			} else {
 				$info['id'] = Sanitizer::escapeId( "{$this->mID}--$key--$fieldname" );
 			}
-			$field = HTMLForm::loadInputFromParameters( $name, $info );
-			$field->mParent = $this->mParent;
+			$field = HTMLForm::loadInputFromParameters( $name, $info, $this->mParent );
 			$fields[$fieldname] = $field;
 		}
 		return $fields;
@@ -263,19 +262,11 @@ class HTMLFormFieldCloner extends HTMLFormField {
 			? $this->mParams['format']
 			: $this->mParent->getDisplayFormat();
 
-		switch ( $displayFormat ) {
-			case 'table':
-				$getFieldHtmlMethod = 'getTableRow';
-				break;
-			case 'vform':
-				// Close enough to a div.
-				$getFieldHtmlMethod = 'getDiv';
-				break;
-			default:
-				$getFieldHtmlMethod = 'get' . ucfirst( $displayFormat );
-		}
+		// Conveniently, PHP method names are case-insensitive.
+		$getFieldHtmlMethod = $displayFormat == 'table' ? 'getTableRow' : ( 'get' . $displayFormat );
 
 		$html = '';
+		$hidden = '';
 		$hasLabel = false;
 
 		$fields = $this->createFieldsForKey( $key );
@@ -283,11 +274,18 @@ class HTMLFormFieldCloner extends HTMLFormField {
 			$v = ( empty( $field->mParams['nodata'] ) && $values !== null )
 				? $values[$fieldname]
 				: $field->getDefault();
-			$html .= $field->$getFieldHtmlMethod( $v );
 
-			$labelValue = trim( $field->getLabel() );
-			if ( $labelValue != '&#160;' && $labelValue !== '' ) {
-				$hasLabel = true;
+			if ( $field instanceof HTMLHiddenField ) {
+				// HTMLHiddenField doesn't generate its own HTML
+				list( $name, $value, $params ) = $field->getHiddenFieldData( $v );
+				$hidden .= Html::hidden( $name, $value, $params ) . "\n";
+			} else {
+				$html .= $field->$getFieldHtmlMethod( $v );
+
+				$labelValue = trim( $field->getLabel() );
+				if ( $labelValue != '&#160;' && $labelValue !== '' ) {
+					$hasLabel = true;
+				}
 			}
 		}
 
@@ -302,8 +300,7 @@ class HTMLFormFieldCloner extends HTMLFormField {
 				'id' => Sanitizer::escapeId( "{$this->mID}--$key--delete" ),
 				'cssclass' => 'mw-htmlform-cloner-delete-button',
 				'default' => $this->msg( $label )->text(),
-			) );
-			$field->mParent = $this->mParent;
+			), $this->mParent );
 			$v = $field->getDefault();
 
 			if ( $displayFormat === 'table' ) {
@@ -330,10 +327,12 @@ class HTMLFormFieldCloner extends HTMLFormField {
 				$html = Html::rawElement( 'table',
 					$attribs,
 					Html::rawElement( 'tbody', array(), "\n$html\n" ) ) . "\n";
-			} elseif ( $displayFormat === 'div' || $displayFormat === 'vform' ) {
+			} else {
 				$html = Html::rawElement( 'div', $attribs, "\n$html\n" );
 			}
 		}
+
+		$html .= $hidden;
 
 		if ( !empty( $this->mParams['row-legend'] ) ) {
 			$legend = $this->msg( $this->mParams['row-legend'] )->text();
@@ -373,8 +372,7 @@ class HTMLFormFieldCloner extends HTMLFormField {
 			'id' => Sanitizer::escapeId( "{$this->mID}--create" ),
 			'cssclass' => 'mw-htmlform-cloner-create-button',
 			'default' => $this->msg( $label )->text(),
-		) );
-		$field->mParent = $this->mParent;
+		), $this->mParent );
 		$html .= $field->getInputHTML( $field->getDefault() );
 
 		return $html;

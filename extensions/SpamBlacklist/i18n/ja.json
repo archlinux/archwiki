@@ -22,5 +22,8 @@
 	"log-description-spamblacklist": "これらのイベントはスパムブラックリストとの一致を追跡します。",
 	"logentry-spamblacklist-hit": "{{GENDER:$2|$1}} が $3 に $4 を追加しようとした際にスパムブラックリストが発動しました。",
 	"right-spamblacklistlog": "スパムブラックリストを閲覧",
-	"action-spamblacklistlog": "スパムブラックリスト記録の閲覧"
+	"action-spamblacklistlog": "スパムブラックリスト記録の閲覧",
+	"apihelp-spamblacklist-description": "1 件以上の URL についてスパムブラックリストに登録されているか検証します。",
+	"apihelp-spamblacklist-param-url": "ブラックリストに登録されているか検証する URL です。",
+	"apihelp-spamblacklist-example-1": "2 件の URL についてブラックリストに登録されているか検証"
 }

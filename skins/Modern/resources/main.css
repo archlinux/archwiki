@@ -27,9 +27,19 @@ body {
 	border: none;
 	height: 2em;
 	width: 100%;
-
 	background-color: #003366;
 	color: white;
+}
+
+.mw-indicators {
+	float: right;
+}
+
+.mw-indicator {
+	display: -moz-inline-block;
+	display: inline-block;
+	zoom: 1;
+	*display: inline;
 }
 
 #mw_header h1 {
@@ -47,7 +57,6 @@ body {
 	margin: 0 0 0 0;
 	padding: 0 0 0 0;
 	width: 100%;
-
 }
 
 #p-personal div.pBody {
@@ -649,7 +658,6 @@ table.toc td {
 	margin: 0 0 0 0;
 }
 
-#mw_header h1,
 #p-personal,
 #p-cactions {
 	overflow: hidden;

@@ -1,0 +1,48 @@
+{
+	"name": "ParserFunctions",
+	"version": "1.6.0",
+	"author": [
+		"Tim Starling",
+		"Robert Rohde",
+		"Ross McClure",
+		"Juraj Simlovic"
+	],
+	"url": "https://www.mediawiki.org/wiki/Extension:ParserFunctions",
+	"descriptionmsg": "pfunc_desc",
+	"type": "parserhook",
+	"config": {
+		"PFEnableStringFunctions": false,
+		"PFStringLengthLimit": 1000
+	},
+	"callback": "ParserFunctionsHooks::onRegistration",
+	"ExtensionMessagesFiles": {
+		"ParserFunctionsMagic": "ParserFunctions.i18n.magic.php"
+	},
+	"MessagesDirs": {
+		"ParserFunctions": [
+			"i18n"
+		]
+	},
+	"Hooks": {
+		"ParserFirstCallInit": [
+			"ParserFunctionsHooks::onParserFirstCallInit"
+		],
+		"UnitTestsList": [
+			"ParserFunctionsHooks::onUnitTestsList"
+		],
+		"ScribuntoExternalLibraries": [
+			"ParserFunctionsHooks::onScribuntoExternalLibraries"
+		]
+	},
+	"AutoloadClasses": {
+		"ExtParserFunctions": "ParserFunctions_body.php",
+		"ExprParser": "Expr.php",
+		"ExprError": "Expr.php",
+		"Scribunto_LuaParserFunctionsLibrary": "ParserFunctions.library.php",
+		"ParserFunctionsHooks": "ParserFunctions.hooks.php"
+	},
+	"ParserTestFiles": [
+		"funcsParserTests.txt",
+		"stringFunctionTests.txt"
+	]
+}

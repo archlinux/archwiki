@@ -382,8 +382,6 @@ class SearchMySQL extends SearchDatabase {
 	function normalizeText( $string ) {
 		global $wgContLang;
 
-		wfProfileIn( __METHOD__ );
-
 		$out = parent::normalizeText( $string );
 
 		// MySQL fulltext index doesn't grok utf-8, so we
@@ -415,8 +413,6 @@ class SearchMySQL extends SearchDatabase {
 			"/(\w)\.(\w|\*)/u",
 			"$1u82e$2",
 			$out );
-
-		wfProfileOut( __METHOD__ );
 
 		return $out;
 	}

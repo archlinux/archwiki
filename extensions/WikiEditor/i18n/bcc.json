@@ -1,0 +1,42 @@
+{
+	"@metadata": {
+		"authors": [
+			"Baloch Afghanistan"
+		]
+	},
+	"wikieditor-toolbar-tool-link": "لینک",
+	"wikieditor-toolbar-tool-file-cancel": "کنسیل",
+	"wikieditor-toolbar-tool-reference-cancel": "کنسیل",
+	"wikieditor-toolbar-tool-heading-1": "مرئله ۱",
+	"wikieditor-toolbar-tool-heading-2": "مرئله ۲",
+	"wikieditor-toolbar-tool-heading-3": "مرئله ۳",
+	"wikieditor-toolbar-tool-heading-4": "مرئله ۴",
+	"wikieditor-toolbar-tool-heading-5": "مرئله ۵",
+	"wikieditor-toolbar-tool-newline": "نوکین لین",
+	"wikieditor-toolbar-tool-table": "جدول",
+	"wikieditor-toolbar-tool-table-example-old": "-\n! ئنوان ۱\n! ئنوان ۲\n! ئنوان ۳\n|-\n| ردیپ ۱، گیس ۱\n| ردیپ ۱، گیس ۲\n| ردیپ ۱، گیس ۳\n|-\n| ردیپ ۲، گیس ۱\n| ردیپ ۲، گیس ۲\n| ردیپ ۲، گیس ۳",
+	"wikieditor-toolbar-tool-table-example-cell-text": "گیسی متن",
+	"wikieditor-toolbar-tool-table-example-header": "ئنوانی متن",
+	"wikieditor-toolbar-tool-table-title": "جدول ئزاپه کورتین",
+	"wikieditor-toolbar-tool-table-dimensions-rows": "ردیپان",
+	"wikieditor-toolbar-tool-table-dimensions-columns": "ستونان",
+	"wikieditor-toolbar-tool-table-cancel": "کنسیل",
+	"wikieditor-toolbar-tool-replace-close": "بستین",
+	"wikieditor-toolbar-characters-page-latin": "لاتین",
+	"wikieditor-toolbar-characters-page-greek": "یونانی",
+	"wikieditor-toolbar-characters-page-cyrillic": "سیریلیک",
+	"wikieditor-toolbar-characters-page-arabic": "ئربی",
+	"wikieditor-toolbar-characters-page-arabicextended": "پیشرپته ئربی",
+	"wikieditor-toolbar-characters-page-persian": "پارسی",
+	"wikieditor-toolbar-characters-page-hebrew": "ئبری",
+	"wikieditor-toolbar-characters-page-bangla": "بنگالی",
+	"wikieditor-toolbar-characters-page-tamil": "تامیلی",
+	"wikieditor-toolbar-characters-page-telugu": "تالوگو",
+	"wikieditor-toolbar-characters-page-sinhala": "سینهالی",
+	"wikieditor-toolbar-characters-page-gujarati": "گجراتی",
+	"wikieditor-toolbar-characters-page-devanagari": "دیواناگرى",
+	"wikieditor-toolbar-characters-page-thai": "تایلندی",
+	"wikieditor-toolbar-characters-page-lao": "لائو",
+	"wikieditor-toolbar-characters-page-khmer": "خمر",
+	"wikieditor-toolbar-section-help": "کومک"
+}

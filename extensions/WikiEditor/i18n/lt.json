@@ -6,7 +6,8 @@
 			"Hugo.arg",
 			"Matasg",
 			"Vogone",
-			"Vpovilaitis"
+			"Vpovilaitis",
+			"Pofka"
 		]
 	},
 	"wikieditor": "Išplėstinė wikiteksto redagavimo sąsaja",
@@ -17,8 +18,6 @@
 	"wikieditor-preview-tab": "Peržiūra",
 	"wikieditor-preview-changes-tab": "Pokyčiai",
 	"wikieditor-preview-loading": "Kraunama...",
-	"wikieditor-previewDialog-tab": "Peržiūra",
-	"wikieditor-previewDialog-loading": "Įkeliama…",
 	"wikieditor-publish-preference": "Įjungti žingsnis po žingsnio publikavimą",
 	"wikieditor-publish-button-publish": "Publikuoti",
 	"wikieditor-publish-button-cancel": "Atšaukti",
@@ -206,8 +205,8 @@
 	"wikieditor-toolbar-help-content-olist-syntax": "# Sąrašo elementas<br /># Sąrašo elementas",
 	"wikieditor-toolbar-help-content-olist-result": "<ol><li>Sąrašo elementas</li><li>Sąrašo elementas</li></ol>",
 	"wikieditor-toolbar-help-content-file-description": "Įterpti failą",
-	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Example.png|thumb|Aprašymas]]",
-	"wikieditor-toolbar-help-content-file-result": "<div style='width:104px;' class='thumbinner'><a title='Caption text' class='image' href='#'><img height='50' width='100' border='0' class='thumbimage' src='$2/WikiEditor/modules/images/toolbar/example-image.png' alt=''/></a><div class='thumbcaption'><div class='magnify'><a title='Enlarge' class='internal' href='#'><img height='11' width='15' alt='' src='$1/common/images/magnify-clip.png'/></a></div>Aprašymas</div></div>",
+	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Pavyzdys.png|$2|$3]]",
+	"wikieditor-toolbar-help-content-file-caption": "Antraštės tekstas",
 	"wikieditor-toolbar-help-content-reference-description": "Išnaša",
 	"wikieditor-toolbar-help-content-reference-syntax": "Puslapio tekstas.&lt;ref name=\"test\"&gt;[http://www.example.org Nuorodos tekstas], papildomas tekstas.&lt;/ref&gt;",
 	"wikieditor-toolbar-help-content-reference-result": "Puslapio tekstas.<sup><a href='#'>[1]</a></sup>",

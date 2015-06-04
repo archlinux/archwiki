@@ -67,5 +67,5 @@
     "interwiki-links": "Interwiki prefixes",
     "interwiki-description": "",
     "interwiki-language-links": "Interlanguage prefixes",
-    "interwiki-language-description": "These prefixes match defined language codes, and will be used to create the 'in other languages' listing when added to a page."
+    "interwiki-language-description": "These prefixes match defined language codes, and will be used to create the \"{{int:otherlanguages}}\" listing when added to a page."
 }

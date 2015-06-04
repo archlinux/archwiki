@@ -336,20 +336,17 @@ class LanguageConverter {
 	 * @return string The converted text
 	 */
 	public function autoConvert( $text, $toVariant = false ) {
-		wfProfileIn( __METHOD__ );
 
 		$this->loadTables();
 
 		if ( !$toVariant ) {
 			$toVariant = $this->getPreferredVariant();
 			if ( !$toVariant ) {
-				wfProfileOut( __METHOD__ );
 				return $text;
 			}
 		}
 
 		if ( $this->guessVariant( $text, $toVariant ) ) {
-			wfProfileOut( __METHOD__ );
 			return $text;
 		}
 
@@ -446,7 +443,6 @@ class LanguageConverter {
 			$literalIter->next();
 		}
 
-		wfProfileOut( __METHOD__ );
 		return $output;
 	}
 
@@ -460,14 +456,12 @@ class LanguageConverter {
 	 * @return string Translated text
 	 */
 	public function translate( $text, $variant ) {
-		wfProfileIn( __METHOD__ );
 		// If $text is empty or only includes spaces, do nothing
 		// Otherwise translate it
 		if ( trim( $text ) ) {
 			$this->loadTables();
 			$text = $this->mTables[$variant]->replace( $text );
 		}
-		wfProfileOut( __METHOD__ );
 		return $text;
 	}
 
@@ -478,7 +472,6 @@ class LanguageConverter {
 	 * @return array Variant => converted text
 	 */
 	public function autoConvertToAllVariants( $text ) {
-		wfProfileIn( __METHOD__ );
 		$this->loadTables();
 
 		$ret = array();
@@ -486,7 +479,6 @@ class LanguageConverter {
 			$ret[$variant] = $this->translate( $text, $variant );
 		}
 
-		wfProfileOut( __METHOD__ );
 		return $ret;
 	}
 
@@ -850,18 +842,18 @@ class LanguageConverter {
 	 * @param bool $fromCache Load from memcached? Defaults to true.
 	 */
 	function loadTables( $fromCache = true ) {
-		global $wgLangConvMemc;
+		global $wgLanguageConverterCacheType;
 
 		if ( $this->mTablesLoaded ) {
 			return;
 		}
 
-		wfProfileIn( __METHOD__ );
 		$this->mTablesLoaded = true;
 		$this->mTables = false;
+		$cache = ObjectCache::getInstance( $wgLanguageConverterCacheType );
 		if ( $fromCache ) {
 			wfProfileIn( __METHOD__ . '-cache' );
-			$this->mTables = $wgLangConvMemc->get( $this->mCacheKey );
+			$this->mTables = $cache->get( $this->mCacheKey );
 			wfProfileOut( __METHOD__ . '-cache' );
 		}
 		if ( !$this->mTables || !array_key_exists( self::CACHE_VERSION_KEY, $this->mTables ) ) {
@@ -878,10 +870,9 @@ class LanguageConverter {
 			$this->postLoadTables();
 			$this->mTables[self::CACHE_VERSION_KEY] = true;
 
-			$wgLangConvMemc->set( $this->mCacheKey, $this->mTables, 43200 );
+			$cache->set( $this->mCacheKey, $this->mTables, 43200 );
 			wfProfileOut( __METHOD__ . '-recache' );
 		}
-		wfProfileOut( __METHOD__ );
 	}
 
 	/**

@@ -39,6 +39,7 @@ try:
 	import ImageDraw
 	import ImageEnhance
 	import ImageOps
+	import ImageMath
 except:
 	sys.exit("This script requires the Python Imaging Library - http://www.pythonware.com/products/pil/")
 
@@ -49,7 +50,7 @@ def wobbly_copy(src, wob, col, scale, ang):
 	x, y = src.size
 	f = random.uniform(4*scale, 5*scale)
 	p = random.uniform(0, math.pi*2)
-	rr = ang+random.uniform(-30, 30) # vary, but not too much
+	rr = ang+random.uniform(-10, 10) # vary, but not too much
 	int_d = Image.new('RGB', src.size, 0) # a black rectangle
 	rot = src.rotate(rr, Image.BILINEAR)
 	# Do a cheap bounding-box op here to try to limit work below
@@ -86,8 +87,8 @@ def gen_captcha(text, fontname, fontsize, file_name):
 	x, y = im.size
 	# add the text to the image
 	d.text((x/2-dim[0]/2, y/2-dim[1]/2), text, font=font, fill=fgcolor)
-	k = 3
-	wob = 0.20*dim[1]/k
+	k = 2
+	wob = 0.09*dim[1]
 	rot = 45
 	# Apply lots of small stirring operations, rather than a few large ones
 	# in order to get some uniformity of treatment, whilst
@@ -102,9 +103,25 @@ def gen_captcha(text, fontname, fontsize, file_name):
 	bbox = im.getbbox()
 	bord = min(dim[0], dim[1])/4 # a bit of a border
 	im = im.crop((bbox[0]-bord, bbox[1]-bord, bbox[2]+bord, bbox[3]+bord))
+
+	# Create noise
+	nblock = 4
+	nsize = (im.size[0] / nblock, im.size[1] / nblock)
+	noise = Image.new('L', nsize, bgcolor)
+	data = noise.load()
+	for x in range(nsize[0]):
+		for y in range(nsize[1]):
+			r = random.randint(0, 65)
+			gradient = 70 * x / nsize[0]
+			data[x, y] = r + gradient
+	# Turn speckles into blobs
+	noise = noise.resize(im.size, Image.BILINEAR)
+	# Add to the image
+	im = ImageMath.eval('convert(convert(a, "L") / 3 + b, "RGB")', a=im, b=noise)
+
 	# and turn into black on white
 	im = ImageOps.invert(im)
-		
+
 	# save the image, in format determined from filename
 	im.save(file_name)
 

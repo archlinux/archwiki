@@ -26,7 +26,7 @@ class FindMissingFiles extends Maintenance {
 		parent::__construct();
 
 		$this->mDescription = 'Find registered files with no corresponding file.';
-		$this->addOption( 'start', 'Starting file name', false, true );
+		$this->addOption( 'start', 'Start after this file name', false, true );
 		$this->addOption( 'mtimeafter', 'Only include files changed since this time', false, true );
 		$this->addOption( 'mtimebefore', 'Only includes files changed before this time', false, true );
 		$this->setBatchSize( 300 );
@@ -42,9 +42,12 @@ class FindMissingFiles extends Maintenance {
 		$mtime1 = $dbr->timestampOrNull( $this->getOption( 'mtimeafter', null ) );
 		$mtime2 = $dbr->timestampOrNull( $this->getOption( 'mtimebefore', null ) );
 
-		$joinTables = array( 'image' );
-		$joinConds = array( 'image' => array( 'INNER JOIN', 'img_name = page_title' ) );
+		$joinTables = array();
+		$joinConds = array();
 		if ( $mtime1 || $mtime2 ) {
+			$joinTables[] = 'page';
+			$joinConds['page'] = array( 'INNER JOIN',
+				array( 'page_title = img_name', 'page_namespace' => NS_FILE ) );
 			$joinTables[] = 'logging';
 			$on = array( 'log_page = page_id', 'log_type' => array( 'upload', 'move', 'delete' ) );
 			if ( $mtime1 ) {
@@ -58,21 +61,22 @@ class FindMissingFiles extends Maintenance {
 
 		do {
 			$res = $dbr->select(
-				array_merge( array( 'page' ), $joinTables ),
-				array( 'img_name' => 'DISTINCT(page_title)' ),
-				array( 'page_namespace' => NS_FILE,
-					"page_title >= " . $dbr->addQuotes( $lastName ) ),
+				array_merge( array( 'image' ), $joinTables ),
+				array( 'name' => 'img_name' ),
+				array( "img_name > " . $dbr->addQuotes( $lastName ) ),
 				__METHOD__,
-				array( 'ORDER BY' => 'page_title', 'LIMIT' => $this->mBatchSize ),
+				// DISTINCT causes a pointless filesort
+				array( 'ORDER BY' => 'name', 'GROUP BY' => 'name',
+					'LIMIT' => $this->mBatchSize ),
 				$joinConds
 			);
 
 			// Check if any of these files are missing...
 			$pathsByName = array();
 			foreach ( $res as $row ) {
-				$file = $repo->newFile( $row->img_name );
-				$pathsByName[$row->img_name] = $file->getPath();
-				$lastName = $row->img_name;
+				$file = $repo->newFile( $row->name );
+				$pathsByName[$row->name] = $file->getPath();
+				$lastName = $row->name;
 			}
 			$be->preloadFileStat( array( 'srcs' => $pathsByName ) );
 			foreach ( $pathsByName as $path ) {

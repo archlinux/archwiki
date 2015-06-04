@@ -55,7 +55,7 @@ class RevDelLogList extends RevDelList {
 	}
 
 	/**
-	 * @param DatabaseBase $db
+	 * @param IDatabase $db
 	 * @return mixed
 	 */
 	public function doQuery( $db ) {
@@ -95,9 +95,9 @@ class RevDelLogList extends RevDelList {
 
 	public function getLogParams( $params ) {
 		return array(
-			implode( ',', $params['ids'] ),
-			"ofield={$params['oldBits']}",
-			"nfield={$params['newBits']}"
+			'4::ids' => $params['ids'],
+			'5::ofield' => $params['oldBits'],
+			'6::nfield' => $params['newBits'],
 		);
 	}
 }

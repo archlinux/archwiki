@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ooswesthoesbes"
+			"Ooswesthoesbes",
+			"Robin0van0der0vliet"
 		]
 	},
 	"vector-action-addsection": "Voog köpke toe",
@@ -14,5 +15,6 @@
 	"vector-view-edit": "Bewirk",
 	"vector-view-history": "Bekiek de gesjiedenis",
 	"vector-view-view": "Laes",
-	"vector-view-viewsource": "Bekiek bróntèks"
+	"vector-view-viewsource": "Bekiek bróntèks",
+	"vector-more-actions": "Mieë"
 }

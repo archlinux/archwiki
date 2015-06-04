@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"RMizo"
+			"RMizo",
+			"Macofe"
 		]
 	},
 	"wikieditor-wikitext-tab": "Wikithu",
@@ -106,25 +107,6 @@
 	"wikieditor-toolbar-tool-replace-emptysearch": "Zawn tùr i ziak miah lo.",
 	"wikieditor-toolbar-tool-replace-invalidregex": "I thu ziah a dik lo: $1",
 	"wikieditor-toolbar-section-characters": "Hawrawp bîkte",
-	"wikieditor-toolbar-characters-page-latin": "Latin",
-	"wikieditor-toolbar-characters-page-latinextended": "Latin säwizàu",
-	"wikieditor-toolbar-characters-page-ipa": "IPA",
-	"wikieditor-toolbar-characters-page-symbols": "Chhinchhiahnate",
-	"wikieditor-toolbar-characters-page-greek": "Grik",
-	"wikieditor-toolbar-characters-page-cyrillic": "Sirilik (russia hawrawp ang chi)",
-	"wikieditor-toolbar-characters-page-arabic": "arabik",
-	"wikieditor-toolbar-characters-page-arabicextended": "Arabik sâwizàu",
-	"wikieditor-toolbar-characters-page-persian": "Persia",
-	"wikieditor-toolbar-characters-page-hebrew": "Hebrai",
-	"wikieditor-toolbar-characters-page-bangla": "benggawli",
-	"wikieditor-toolbar-characters-page-tamil": "Tamil ṭawng",
-	"wikieditor-toolbar-characters-page-telugu": "Telegu",
-	"wikieditor-toolbar-characters-page-sinhala": "Sinhala",
-	"wikieditor-toolbar-characters-page-gujarati": "Gujarati",
-	"wikieditor-toolbar-characters-page-devanagari": "Hindihawrawp",
-	"wikieditor-toolbar-characters-page-thai": "Thaiţawng",
-	"wikieditor-toolbar-characters-page-lao": "Lao",
-	"wikieditor-toolbar-characters-page-khmer": "Khmer",
 	"wikieditor-toolbar-section-help": "Ţanpuina",
 	"wikieditor-toolbar-help-heading-description": "Sawifiahna",
 	"wikieditor-toolbar-help-heading-syntax": "I thu ziah",
@@ -164,7 +146,7 @@
 	"wikieditor-toolbar-help-content-olist-syntax": "# Tlar tùra<br /># Tlar tùra",
 	"wikieditor-toolbar-help-content-olist-result": "<ol><li>Tlar tùra</li><li>Tlar tùra</li></ol>",
 	"wikieditor-toolbar-help-content-file-description": "Taksa telh",
-	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Entirna.png|thumb|Sawifiahna thü]]",
+	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Entirna.png|$2|$3]]",
 	"wikieditor-toolbar-help-content-reference-description": "Ràwnte",
 	"wikieditor-toolbar-help-content-reference-syntax": "Thu inziak.&lt;ref name=\"test\"&gt;[http://www.example.org zawmna thü], thu dang.&lt;/ref&gt;",
 	"wikieditor-toolbar-help-content-reference-result": "Thu inziak.<sup><a href='#'>[1]</a></sup>",

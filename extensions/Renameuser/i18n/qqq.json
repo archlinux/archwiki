@@ -16,7 +16,7 @@
 	"renameuser": "{{doc-special|RenameUser}}\n{{Identical|Rename user}}",
 	"renameuser-linkoncontribs": "Link description used on [[Special:Contributions]] and [[Special:DeletedContributions]]. Only added if a user has rights to rename users.\n{{Identical|Rename user}}",
 	"renameuser-linkoncontribs-text": "Tooltip for {{msg-mw|renameuser-linkoncontribs}}.",
-	"renameuser-desc": "{{desc|name=Rename user|url=http://www.mediawiki.org/wiki/Extension:Renameuser}}",
+	"renameuser-desc": "{{desc|name=Rename user|url=https://www.mediawiki.org/wiki/Extension:Renameuser}}",
 	"renameuser-summary": "{{notranslate}}",
 	"renameuserold": "Used as label for the \"Old username\" input box in [[Special:RenameUser]].\n\nSee also:\n* {{msg-mw|Renameusernew}}",
 	"renameusernew": "Used as label for the \"New username\" input box in [[Special:RenameUser]].\n\nSee also:\n* {{msg-mw|Renameuserold}}",

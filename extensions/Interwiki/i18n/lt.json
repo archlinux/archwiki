@@ -2,14 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Eitvys200",
-			"Homo"
+			"Homo",
+			"Hugo.arg"
 		]
 	},
 	"interwiki": "Žiūrėti ir redaguoti interwiki duomenis",
 	"interwiki-title-norights": "Žiūrėti interwiki duomenis",
 	"interwiki-desc": "Prideda [[Special:Interwiki|specialųjį puslapį]] interwiki lentelei peržiūrėti ir redaguoti",
-	"interwiki-legend-show": "Rodyti legendą",
-	"interwiki-legend-hide": "Slėpti legendą",
 	"interwiki_local": "Persiųsti",
 	"interwiki-local-label": "Persiųsti:",
 	"interwiki_1": "taip",
@@ -19,5 +18,5 @@
 	"interwiki_delquestion": "Trinama \"$1\"",
 	"interwiki_addbutton": "Pridėti",
 	"log-description-interwiki": "Tai pakeitimų [[Special:Interwiki|interwiki lentelėje]] sąrašas",
-	"right-interwiki": "Redaguoti interwiki duomenis"
+	"right-interwiki": "Keisti interwiki duomenis"
 }

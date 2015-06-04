@@ -59,6 +59,14 @@ class HTMLMultiSelectField extends HTMLFormField implements HTMLNestedFilterable
 					$label
 				);
 
+				if ( $this->mParent->getConfig()->get( 'UseMediaWikiUIEverywhere' ) ) {
+					$checkbox = Html::rawElement(
+						'div',
+						array( 'class' => 'mw-ui-checkbox' ),
+						$checkbox
+					);
+				}
+
 				$html .= ' ' . Html::rawElement(
 					'div',
 					array( 'class' => 'mw-htmlform-flatlist-item' ),

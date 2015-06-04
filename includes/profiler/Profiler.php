@@ -1,6 +1,6 @@
 <?php
 /**
- * Base class and functions for profiling.
+ * Base class for profiling.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,113 +23,33 @@
  */
 
 /**
- * Get system resource usage of current request context.
- * Invokes the getrusage(2) system call, requesting RUSAGE_SELF if on PHP5
- * or RUSAGE_THREAD if on HHVM. Returns false if getrusage is not available.
- *
- * @since 1.24
- * @return array|bool Resource usage data or false if no data available.
- */
-function wfGetRusage() {
-	if ( !function_exists( 'getrusage' ) ) {
-		return false;
-	} elseif ( defined ( 'HHVM_VERSION' ) ) {
-		return getrusage( 2 /* RUSAGE_THREAD */ );
-	} else {
-		return getrusage( 0 /* RUSAGE_SELF */ );
-	}
-}
-
-/**
- * Begin profiling of a function
- * @param string $functionname Name of the function we will profile
- */
-function wfProfileIn( $functionname ) {
-	if ( Profiler::$__instance === null ) { // use this directly to reduce overhead
-		Profiler::instance();
-	}
-	if ( !( Profiler::$__instance instanceof ProfilerStub ) ) {
-		Profiler::$__instance->profileIn( $functionname );
-	}
-}
-
-/**
- * Stop profiling of a function
- * @param string $functionname Name of the function we have profiled
- */
-function wfProfileOut( $functionname = 'missing' ) {
-	if ( Profiler::$__instance === null ) { // use this directly to reduce overhead
-		Profiler::instance();
-	}
-	if ( !( Profiler::$__instance instanceof ProfilerStub ) ) {
-		Profiler::$__instance->profileOut( $functionname );
-	}
-}
-
-/**
- * Class for handling function-scope profiling
- *
- * @since 1.22
- */
-class ProfileSection {
-	protected $name; // string; method name
-	protected $enabled = false; // boolean; whether profiling is enabled
-
-	/**
-	 * Begin profiling of a function and return an object that ends profiling of
-	 * the function when that object leaves scope. As long as the object is not
-	 * specifically linked to other objects, it will fall out of scope at the same
-	 * moment that the function to be profiled terminates.
-	 *
-	 * This is typically called like:
-	 * <code>$section = new ProfileSection( __METHOD__ );</code>
-	 *
-	 * @param string $name Name of the function to profile
-	 */
-	public function __construct( $name ) {
-		$this->name = $name;
-		if ( Profiler::$__instance === null ) { // use this directly to reduce overhead
-			Profiler::instance();
-		}
-		if ( !( Profiler::$__instance instanceof ProfilerStub ) ) {
-			$this->enabled = true;
-			Profiler::$__instance->profileIn( $this->name );
-		}
-	}
-
-	function __destruct() {
-		if ( $this->enabled ) {
-			Profiler::$__instance->profileOut( $this->name );
-		}
-	}
-}
-
-/**
- * Profiler base class that defines the interface and some trivial functionality
+ * Profiler base class that defines the interface and some trivial
+ * functionality
  *
  * @ingroup Profiler
  */
 abstract class Profiler {
 	/** @var string|bool Profiler ID for bucketing data */
-	protected $mProfileID = false;
+	protected $profileID = false;
 	/** @var bool Whether MediaWiki is in a SkinTemplate output context */
-	protected $mTemplated = false;
-
+	protected $templated = false;
+	/** @var array All of the params passed from $wgProfiler */
+	protected $params = array();
+	/** @var IContextSource Current request context */
+	protected $context = null;
 	/** @var TransactionProfiler */
 	protected $trxProfiler;
-
-	// @codingStandardsIgnoreStart PSR2.Classes.PropertyDeclaration.Underscore
-	/** @var Profiler Do not call this outside Profiler and ProfileSection */
-	public static $__instance = null;
-	// @codingStandardsIgnoreEnd
+	/** @var Profiler */
+	private static $instance = null;
 
 	/**
 	 * @param array $params
 	 */
 	public function __construct( array $params ) {
 		if ( isset( $params['profileID'] ) ) {
-			$this->mProfileID = $params['profileID'];
+			$this->profileID = $params['profileID'];
 		}
+		$this->params = $params;
 		$this->trxProfiler = new TransactionProfiler();
 	}
 
@@ -138,111 +58,119 @@ abstract class Profiler {
 	 * @return Profiler
 	 */
 	final public static function instance() {
-		if ( self::$__instance === null ) {
-			global $wgProfiler;
+		if ( self::$instance === null ) {
+			global $wgProfiler, $wgProfileLimit;
+
+			$params = array(
+				'class'     => 'ProfilerStub',
+				'sampling'  => 1,
+				'threshold' => $wgProfileLimit,
+				'output'    => array(),
+			);
 			if ( is_array( $wgProfiler ) ) {
-				if ( !isset( $wgProfiler['class'] ) ) {
-					$class = 'ProfilerStub';
-				} elseif ( $wgProfiler['class'] === 'Profiler' ) {
-					$class = 'ProfilerStub'; // b/c; don't explode
-				} else {
-					$class = $wgProfiler['class'];
-				}
-				self::$__instance = new $class( $wgProfiler );
-			} elseif ( $wgProfiler instanceof Profiler ) {
-				self::$__instance = $wgProfiler; // back-compat
-			} else {
-				self::$__instance = new ProfilerStub( array() );
+				$params = array_merge( $params, $wgProfiler );
 			}
+
+			$inSample = mt_rand( 0, $params['sampling'] - 1 ) === 0;
+			if ( PHP_SAPI === 'cli' || !$inSample ) {
+				$params['class'] = 'ProfilerStub';
+			}
+
+			if ( !is_array( $params['output'] ) ) {
+				$params['output'] = array( $params['output'] );
+			}
+
+			self::$instance = new $params['class']( $params );
 		}
-		return self::$__instance;
+		return self::$instance;
 	}
 
 	/**
-	 * Set the profiler to a specific profiler instance. Mostly for dumpHTML
-	 * @param Profiler $p
+	 * Replace the current profiler with $profiler if no non-stub profiler is set
+	 *
+	 * @param Profiler $profiler
+	 * @throws MWException
+	 * @since 1.25
 	 */
-	final public static function setInstance( Profiler $p ) {
-		self::$__instance = $p;
+	final public static function replaceStubInstance( Profiler $profiler ) {
+		if ( self::$instance && !( self::$instance instanceof ProfilerStub ) ) {
+			throw new MWException( 'Could not replace non-stub profiler instance.' );
+		} else {
+			self::$instance = $profiler;
+		}
 	}
-
-	/**
-	 * Return whether this a stub profiler
-	 *
-	 * @return bool
-	 */
-	abstract public function isStub();
-
-	/**
-	 * Return whether this profiler stores data
-	 *
-	 * Called by Parser::braceSubstitution. If true, the parser will not
-	 * generate per-title profiling sections, to avoid overloading the
-	 * profiling data collector.
-	 *
-	 * @see Profiler::logData()
-	 * @return bool
-	 */
-	abstract public function isPersistent();
 
 	/**
 	 * @param string $id
 	 */
 	public function setProfileID( $id ) {
-		$this->mProfileID = $id;
+		$this->profileID = $id;
 	}
 
 	/**
 	 * @return string
 	 */
 	public function getProfileID() {
-		if ( $this->mProfileID === false ) {
+		if ( $this->profileID === false ) {
 			return wfWikiID();
 		} else {
-			return $this->mProfileID;
+			return $this->profileID;
 		}
 	}
 
 	/**
-	 * Called by wfProfieIn()
+	 * Sets the context for this Profiler
 	 *
-	 * @param string $functionname
+	 * @param IContextSource $context
+	 * @since 1.25
 	 */
-	abstract public function profileIn( $functionname );
-
-	/**
-	 * Called by wfProfieOut()
-	 *
-	 * @param string $functionname
-	 */
-	abstract public function profileOut( $functionname );
-
-	/**
-	 * Mark a DB as in a transaction with one or more writes pending
-	 *
-	 * Note that there can be multiple connections to a single DB.
-	 *
-	 * @param string $server DB server
-	 * @param string $db DB name
-	 * @param string $id Resource ID string of connection
-	 */
-	public function transactionWritingIn( $server, $db, $id = '' ) {
-		$this->trxProfiler->transactionWritingIn( $server, $db, $id );
+	public function setContext( $context ) {
+		$this->context = $context;
 	}
 
 	/**
-	 * Mark a DB as no longer in a transaction
+	 * Gets the context for this Profiler
 	 *
-	 * This will check if locks are possibly held for longer than
-	 * needed and log any affected transactions to a special DB log.
-	 * Note that there can be multiple connections to a single DB.
-	 *
-	 * @param string $server DB server
-	 * @param string $db DB name
-	 * @param string $id Resource ID string of connection
+	 * @return IContextSource
+	 * @since 1.25
 	 */
-	public function transactionWritingOut( $server, $db, $id = '' ) {
-		$this->trxProfiler->transactionWritingOut( $server, $db, $id );
+	public function getContext() {
+		if ( $this->context ) {
+			return $this->context;
+		} else {
+			wfDebug( __METHOD__ . " called and \$context is null. " .
+				"Return RequestContext::getMain(); for sanity\n" );
+			return RequestContext::getMain();
+		}
+	}
+
+	// Kept BC for now, remove when possible
+	public function profileIn( $functionname ) {}
+	public function profileOut( $functionname ) {}
+
+	/**
+	 * Mark the start of a custom profiling frame (e.g. DB queries).
+	 * The frame ends when the result of this method falls out of scope.
+	 *
+	 * @param string $section
+	 * @return ScopedCallback|null
+	 * @since 1.25
+	 */
+	abstract public function scopedProfileIn( $section );
+
+	/**
+	 * @param ScopedCallback $section
+	 */
+	public function scopedProfileOut( ScopedCallback &$section = null ) {
+		$section = null;
+	}
+
+	/**
+	 * @return TransactionProfiler
+	 * @since 1.25
+	 */
+	public function getTransactionProfiler() {
+		return $this->trxProfiler;
 	}
 
 	/**
@@ -251,9 +179,71 @@ abstract class Profiler {
 	abstract public function close();
 
 	/**
-	 * Log the data to some store or even the page output
+	 * Get all usable outputs.
+	 *
+	 * @throws MWException
+	 * @return array Array of ProfilerOutput instances.
+	 * @since 1.25
 	 */
-	abstract public function logData();
+	private function getOutputs() {
+		$outputs = array();
+		foreach ( $this->params['output'] as $outputType ) {
+			// The class may be specified as either the full class name (for
+			// example, 'ProfilerOutputUdp') or (for backward compatibility)
+			// the trailing portion of the class name (for example, 'udp').
+			$outputClass = strpos( $outputType, 'ProfilerOutput' ) === false
+				? 'ProfilerOutput' . ucfirst( $outputType )
+				: $outputType;
+			if ( !class_exists( $outputClass ) ) {
+				throw new MWException( "'$outputType' is an invalid output type" );
+			}
+			$outputInstance = new $outputClass( $this, $this->params );
+			if ( $outputInstance->canUse() ) {
+				$outputs[] = $outputInstance;
+			}
+		}
+		return $outputs;
+	}
+
+	/**
+	 * Log the data to some store or even the page output
+	 *
+	 * @since 1.25
+	 */
+	public function logData() {
+		$request = $this->getContext()->getRequest();
+
+		$timeElapsed = $request->getElapsedTime();
+		$timeElapsedThreshold = $this->params['threshold'];
+		if ( $timeElapsed <= $timeElapsedThreshold ) {
+			return;
+		}
+
+		$outputs = $this->getOutputs();
+		if ( !$outputs ) {
+			return;
+		}
+
+		$stats = $this->getFunctionStats();
+		foreach ( $outputs as $output ) {
+			$output->log( $stats );
+		}
+	}
+
+	/**
+	 * Get the content type sent out to the client.
+	 * Used for profilers that output instead of store data.
+	 * @return string
+	 * @since 1.25
+	 */
+	public function getContentType() {
+		foreach ( headers_list() as $header ) {
+			if ( preg_match( '#^content-type: (\w+/\w+);?#i', $header, $m ) ) {
+				return $m[1];
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * Mark this call as templated or not
@@ -261,8 +251,45 @@ abstract class Profiler {
 	 * @param bool $t
 	 */
 	public function setTemplated( $t ) {
-		$this->mTemplated = $t;
+		$this->templated = $t;
 	}
+
+	/**
+	 * Was this call as templated or not
+	 *
+	 * @return bool
+	 */
+	public function getTemplated() {
+		return $this->templated;
+	}
+
+	/**
+	 * Get the aggregated inclusive profiling data for each method
+	 *
+	 * The percent time for each time is based on the current "total" time
+	 * used is based on all methods so far. This method can therefore be
+	 * called several times in between several profiling calls without the
+	 * delays in usage of the profiler skewing the results. A "-total" entry
+	 * is always included in the results.
+	 *
+	 * When a call chain involves a method invoked within itself, any
+	 * entries for the cyclic invocation should be be demarked with "@".
+	 * This makes filtering them out easier and follows the xhprof style.
+	 *
+	 * @return array List of method entries arrays, each having:
+	 *   - name     : method name
+	 *   - calls    : the number of invoking calls
+	 *   - real     : real time ellapsed (ms)
+	 *   - %real    : percent real time
+	 *   - cpu      : CPU time ellapsed (ms)
+	 *   - %cpu     : percent CPU time
+	 *   - memory   : memory used (bytes)
+	 *   - %memory  : percent memory used
+	 *   - min_real : min real time in a call (ms)
+	 *   - max_real : max real time in a call (ms)
+	 * @since 1.25
+	 */
+	abstract public function getFunctionStats();
 
 	/**
 	 * Returns a profiling output to be stored in debug file
@@ -270,200 +297,4 @@ abstract class Profiler {
 	 * @return string
 	 */
 	abstract public function getOutput();
-
-	/**
-	 * @return array
-	 */
-	abstract public function getRawData();
-
-	/**
-	 * Get the initial time of the request, based either on $wgRequestTime or
-	 * $wgRUstart. Will return null if not able to find data.
-	 *
-	 * @param string|bool $metric Metric to use, with the following possibilities:
-	 *   - user: User CPU time (without system calls)
-	 *   - cpu: Total CPU time (user and system calls)
-	 *   - wall (or any other string): elapsed time
-	 *   - false (default): will fall back to default metric
-	 * @return float|null
-	 */
-	protected function getTime( $metric = 'wall' ) {
-		if ( $metric === 'cpu' || $metric === 'user' ) {
-			$ru = wfGetRusage();
-			if ( !$ru ) {
-				return 0;
-			}
-			$time = $ru['ru_utime.tv_sec'] + $ru['ru_utime.tv_usec'] / 1e6;
-			if ( $metric === 'cpu' ) {
-				# This is the time of system calls, added to the user time
-				# it gives the total CPU time
-				$time += $ru['ru_stime.tv_sec'] + $ru['ru_stime.tv_usec'] / 1e6;
-			}
-			return $time;
-		} else {
-			return microtime( true );
-		}
-	}
-
-	/**
-	 * Get the initial time of the request, based either on $wgRequestTime or
-	 * $wgRUstart. Will return null if not able to find data.
-	 *
-	 * @param string|bool $metric Metric to use, with the following possibilities:
-	 *   - user: User CPU time (without system calls)
-	 *   - cpu: Total CPU time (user and system calls)
-	 *   - wall (or any other string): elapsed time
-	 *   - false (default): will fall back to default metric
-	 * @return float|null
-	 */
-	protected function getInitialTime( $metric = 'wall' ) {
-		global $wgRequestTime, $wgRUstart;
-
-		if ( $metric === 'cpu' || $metric === 'user' ) {
-			if ( !count( $wgRUstart ) ) {
-				return null;
-			}
-
-			$time = $wgRUstart['ru_utime.tv_sec'] + $wgRUstart['ru_utime.tv_usec'] / 1e6;
-			if ( $metric === 'cpu' ) {
-				# This is the time of system calls, added to the user time
-				# it gives the total CPU time
-				$time += $wgRUstart['ru_stime.tv_sec'] + $wgRUstart['ru_stime.tv_usec'] / 1e6;
-			}
-			return $time;
-		} else {
-			if ( empty( $wgRequestTime ) ) {
-				return null;
-			} else {
-				return $wgRequestTime;
-			}
-		}
-	}
-
-	/**
-	 * Add an entry in the debug log file
-	 *
-	 * @param string $s String to output
-	 */
-	protected function debug( $s ) {
-		if ( function_exists( 'wfDebug' ) ) {
-			wfDebug( $s );
-		}
-	}
-
-	/**
-	 * Add an entry in the debug log group
-	 *
-	 * @param string $group Group to send the message to
-	 * @param string $s String to output
-	 */
-	protected function debugGroup( $group, $s ) {
-		if ( function_exists( 'wfDebugLog' ) ) {
-			wfDebugLog( $group, $s );
-		}
-	}
-}
-
-/**
- * Helper class that detects high-contention DB queries via profiling calls
- *
- * This class is meant to work with a Profiler, as the later already knows
- * when methods start and finish (which may take place during transactions).
- *
- * @since 1.24
- */
-class TransactionProfiler {
-	/** @var float Seconds */
-	protected $mDBLockThreshold = 3.0;
-	/** @var array DB/server name => (active trx count, time, DBs involved) */
-	protected $mDBTrxHoldingLocks = array();
-	/** @var array DB/server name => list of (function name, elapsed time) */
-	protected $mDBTrxMethodTimes = array();
-
-	/**
-	 * Mark a DB as in a transaction with one or more writes pending
-	 *
-	 * Note that there can be multiple connections to a single DB.
-	 *
-	 * @param string $server DB server
-	 * @param string $db DB name
-	 * @param string $id ID string of transaction
-	 */
-	public function transactionWritingIn( $server, $db, $id ) {
-		$name = "{$server} ({$db}) (TRX#$id)";
-		if ( isset( $this->mDBTrxHoldingLocks[$name] ) ) {
-			wfDebugLog( 'DBPerformance', "Nested transaction for '$name' - out of sync." );
-		}
-		$this->mDBTrxHoldingLocks[$name] =
-			array( 'start' => microtime( true ), 'conns' => array() );
-		$this->mDBTrxMethodTimes[$name] = array();
-
-		foreach ( $this->mDBTrxHoldingLocks as $name => &$info ) {
-			$info['conns'][$name] = 1; // track all DBs in transactions for this transaction
-		}
-	}
-
-	/**
-	 * Register the name and time of a method for slow DB trx detection
-	 *
-	 * This method is only to be called by the Profiler class as methods finish
-	 *
-	 * @param string $method Function name
-	 * @param float $realtime Wal time ellapsed
-	 */
-	public function recordFunctionCompletion( $method, $realtime ) {
-		if ( !$this->mDBTrxHoldingLocks ) {
-			return; // short-circuit
-		// @todo hardcoded check is a tad janky (what about FOR UPDATE?)
-		} elseif ( !preg_match( '/^query-m: (?!SELECT)/', $method )
-			&& $realtime < $this->mDBLockThreshold
-		) {
-			return; // not a DB master query nor slow enough
-		}
-		$now = microtime( true );
-		foreach ( $this->mDBTrxHoldingLocks as $name => $info ) {
-			// Hacky check to exclude entries from before the first TRX write
-			if ( ( $now - $realtime ) >= $info['start'] ) {
-				$this->mDBTrxMethodTimes[$name][] = array( $method, $realtime );
-			}
-		}
-	}
-
-	/**
-	 * Mark a DB as no longer in a transaction
-	 *
-	 * This will check if locks are possibly held for longer than
-	 * needed and log any affected transactions to a special DB log.
-	 * Note that there can be multiple connections to a single DB.
-	 *
-	 * @param string $server DB server
-	 * @param string $db DB name
-	 * @param string $id ID string of transaction
-	 */
-	public function transactionWritingOut( $server, $db, $id ) {
-		$name = "{$server} ({$db}) (TRX#$id)";
-		if ( !isset( $this->mDBTrxMethodTimes[$name] ) ) {
-			wfDebugLog( 'DBPerformance', "Detected no transaction for '$name' - out of sync." );
-			return;
-		}
-		$slow = false;
-		foreach ( $this->mDBTrxMethodTimes[$name] as $info ) {
-			$realtime = $info[1];
-			if ( $realtime >= $this->mDBLockThreshold ) {
-				$slow = true;
-				break;
-			}
-		}
-		if ( $slow ) {
-			$dbs = implode( ', ', array_keys( $this->mDBTrxHoldingLocks[$name]['conns'] ) );
-			$msg = "Sub-optimal transaction on DB(s) [{$dbs}]:\n";
-			foreach ( $this->mDBTrxMethodTimes[$name] as $i => $info ) {
-				list( $method, $realtime ) = $info;
-				$msg .= sprintf( "%d\t%.6f\t%s\n", $i, $realtime, $method );
-			}
-			wfDebugLog( 'DBPerformance', $msg );
-		}
-		unset( $this->mDBTrxHoldingLocks[$name] );
-		unset( $this->mDBTrxMethodTimes[$name] );
-	}
 }

@@ -116,7 +116,7 @@ class MediaWikiSite extends Site {
 			// Make sure the string is normalized into NFC (due to the bug 40017)
 			// but do nothing to the whitespaces, that should work appropriately.
 			// @see https://bugzilla.wikimedia.org/show_bug.cgi?id=40017
-			$pageName = UtfNormal::cleanUp( $pageName );
+			$pageName = UtfNormal\Validator::cleanUp( $pageName );
 
 			// Build the args for the specific call
 			$args = array(
@@ -137,7 +137,7 @@ class MediaWikiSite extends Site {
 
 			// Go on call the external site
 			// @todo we need a good way to specify a timeout here.
-			$ret = Http::get( $url );
+			$ret = Http::get( $url, array(), __METHOD__ );
 		}
 
 		if ( $ret === false ) {

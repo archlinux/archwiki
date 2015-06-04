@@ -1,0 +1,33 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kghbln",
+			"Metalhead64",
+			"Purodha",
+			"Raimond Spekking",
+			"The Evil IP address",
+			"Umherirrender",
+			"TMg"
+		]
+	},
+	"cite-desc": "Ergänzt die Tags <code><nowiki><ref[&nbsp;name=id]></nowiki></code> und <code><nowiki><references&nbsp;/></nowiki></code> für Referenzierungen",
+	"cite_error": "Referenzfehler: $1",
+	"cite_error_ref_numeric_key": "Ungültige Verwendung von <code>&lt;ref&gt;</code>: Der Parameter „name“ darf kein reiner Zahlenwert sein. Benutze einen beschreibenden Namen.",
+	"cite_error_ref_no_key": "Ungültige Verwendung von <code>&lt;ref&gt;</code>: Der Parameter „ref“ ohne Inhalt muss einen Namen haben.",
+	"cite_error_ref_too_many_keys": "Ungültige Verwendung von <code>&lt;ref&gt;</code>: Der Parameter „name“ ist ungültig oder zu lang.",
+	"cite_error_ref_no_input": "Ungültige Verwendung von <code>&lt;ref&gt;</code>: Der Parameter „ref“ ohne Namen muss einen Inhalt haben.",
+	"cite_error_references_invalid_parameters": "Ungültige Verwendung von <code>&lt;references&gt;</code>: Es sind keine Parameter möglich. Verwende ausschließlich <code><nowiki><references /></nowiki></code>.",
+	"cite_error_references_invalid_parameters_group": "Ungültige Verwendung von <code>&lt;references&gt;</code>: Nur der Parameter „group“ ist möglich. Verwende entweder <code>&lt;references /&gt;</code> oder <code>&lt;references group=\"…\" /&gt;</code>.",
+	"cite_error_references_no_backlink_label": "Eine Referenz der Form <code>&lt;ref name=\"…\" /&gt;</code> wird öfter benutzt als Buchstaben vorhanden sind. Ein Administrator muss die Systemnachricht <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki> um weitere Buchstaben/Zeichen ergänzen.",
+	"cite_error_no_link_label_group": "Für die Gruppe „$1“ sind keine benutzerdefinierten Linkbezeichnungen mehr verfügbar.\nEin Administrator muss weitere mit der Systemnachricht <nowiki>[[MediaWiki:$2]]</nowiki> festlegen.",
+	"cite_error_references_no_text": "Es ist ein ungültiger <code>&lt;ref&gt;</code>-Tag vorhanden: Für die Referenz namens <code>$1</code> wurde kein Text angegeben.",
+	"cite_error_included_ref": "Für ein <code>&lt;ref&gt;</code>-Tag fehlt ein schließendes <code>&lt;/ref&gt;</code>-Tag.",
+	"cite_error_group_refs_without_references": "Es sind <code>&lt;ref&gt;</code>-Tags für die Gruppe „$1“ vorhanden, jedoch wurde kein dazugehöriges <code>&lt;references group=\"$1\" /&gt;</code>-Tag gefunden oder ein schließendes <code>&lt;/ref&gt;</code> fehlt.",
+	"cite_error_references_group_mismatch": "Das <code>&lt;ref&gt;</code>-Tag in <code>&lt;references&gt;</code> enthält das kollidierende Attribut „$1“.",
+	"cite_error_references_missing_group": "Das in <code>&lt;references&gt;</code> definierte <code>&lt;ref&gt;</code>-Tag hat das Gruppenattribut „$1“, das nicht im vorausgehenden Text verwendet wird.",
+	"cite_error_references_missing_key": "Das in <code>&lt;references&gt;</code> definierte <code>&lt;ref&gt;</code>-Tag mit dem Namen „$1“ wird im vorausgehenden Text nicht verwendet.",
+	"cite_error_references_no_key": "Das in <code>&lt;references&gt;</code> definierte <code>&lt;ref&gt;</code>-Tag hat kein Namensattribut.",
+	"cite_error_empty_references_define": "Das in <code>&lt;references&gt;</code> definierte <code>&lt;ref&gt;</code>-Tag mit dem Namen „$1“ weist keinen Inhalt auf.",
+	"cite_references_link_accessibility_label": "Hochspringen",
+	"cite_references_link_many_accessibility_label": "Hochspringen nach:"
+}

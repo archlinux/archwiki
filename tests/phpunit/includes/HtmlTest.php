@@ -637,7 +637,7 @@ class HtmlTest extends MediaWikiTestCase {
 				. 'Depending on compatibility mode IE might use "button", instead.',
 		);
 
-		# <select> specifc handling
+		# <select> specific handling
 		$cases[] = array( '<select multiple></select>',
 			'select', array( 'size' => '4', 'multiple' => true ),
 		);
@@ -715,7 +715,7 @@ class HtmlTest extends MediaWikiTestCase {
 			'Input wrapper with type and value.'
 		);
 		$this->assertEquals(
-			'<input name=testname class=mw-ui-input>',
+			'<input name=testname>',
 			Html::input( 'testname' ),
 			'Input wrapper with all default values.'
 		);
@@ -763,6 +763,30 @@ class HtmlTest extends MediaWikiTestCase {
 			Html::label( 'testlabel', 'testid' ),
 			'Label wrapper'
 		);
+	}
+
+	public static function provideSrcSetImages() {
+		return array(
+			array( array(), '', 'when there are no images, return empty string' ),
+			array(
+				array( '1x' => '1x.png', '1.5x' => '1_5x.png', '2x' => '2x.png' ),
+				'1x.png 1x, 1_5x.png 1.5x, 2x.png 2x',
+				'pixel depth keys may include a trailing "x"'
+			),
+			array(
+				array( '1'  => '1x.png', '1.5' => '1_5x.png', '2'  => '2x.png' ),
+				'1x.png 1x, 1_5x.png 1.5x, 2x.png 2x',
+				'pixel depth keys may omit a trailing "x"'
+			),
+		);
+	}
+
+	/**
+	 * @dataProvider provideSrcSetImages
+	 * @covers Html::srcSet
+	 */
+	public function testSrcSet( $images, $expected, $message ) {
+		$this->assertEquals( Html::srcSet( $images ), $expected, $message );
 	}
 }
 

@@ -46,22 +46,59 @@ class RenameuserSQL {
 	public $checkIfUserExists;
 
 	/**
+	 * User object of the user performing the rename, for logging purposes
+	 *
+	 * @var User
+	 */
+	private $renamer;
+
+	/**
+	 * Reason to be used in the log entry
+	 *
+	 * @var string
+	 */
+	private $reason = '';
+
+	/**
+	 * A prefix to use in all debug log messages
+	 *
+	 * @var string
+	 */
+	private $debugPrefix = '';
+
+	/**
+	 * Users with more than this number of edits will have their rename operation
+	 * deferred via the job queue.
+	 */
+	const CONTRIB_JOB = 500;
+
+	/**
 	 * Constructor
 	 *
 	 * @param $old string The old username
 	 * @param $new string The new username
 	 * @param $uid
+	 * @param User $renamer
 	 * @param $options Array of options
 	 *	'checkIfUserExists' - bool, whether to update the user table
 	 */
-	function __construct( $old, $new, $uid, $options = array() ) {
+	function __construct( $old, $new, $uid, User $renamer, $options = array() ) {
 		$this->old = $old;
 		$this->new = $new;
 		$this->uid = $uid;
+		$this->renamer = $renamer;
 		$this->checkIfUserExists = true;
 
 		if ( isset ( $options['checkIfUserExists'] ) ) {
 			$this->checkIfUserExists = $options['checkIfUserExists'];
+		}
+
+		if ( isset( $options['debugPrefix'] ) ) {
+			$this->debugPrefix = $options['debugPrefix'];
+		}
+
+		if ( isset( $options['reason'] ) ) {
+			$this->reason = $options['reason'];
 		}
 
 		$this->tables = array(); // Immediate updates
@@ -70,7 +107,7 @@ class RenameuserSQL {
 		$this->tables['filearchive'] = array('fa_user_text','fa_user');
 		$this->tablesJob = array(); // Slow updates
 		// If this user has a large number of edits, use the jobqueue
-		if ( User::newFromId( $uid )->getEditCount() > RENAMEUSER_CONTRIBJOB ) {
+		if ( User::newFromId( $uid )->getEditCount() > self::CONTRIB_JOB ) {
 			$this->tablesJob['revision'] = array( 'rev_user_text', 'rev_user', 'rev_timestamp' );
 			$this->tablesJob['archive'] = array( 'ar_user_text', 'ar_user', 'ar_timestamp' );
 			$this->tablesJob['logging'] = array( 'log_user_text', 'log_user', 'log_timestamp' );
@@ -86,7 +123,14 @@ class RenameuserSQL {
 			$this->tables['recentchanges'] = array( 'rc_user_text', 'rc_user' );
 		}
 
-		wfRunHooks( 'RenameUserSQL', array( $this ) );
+		Hooks::run( 'RenameUserSQL', array( $this ) );
+	}
+
+	protected function debug( $msg ) {
+		if ( $this->debugPrefix ) {
+			$msg = "{$this->debugPrefix}: $msg";
+		}
+		wfDebugLog( 'Renameuser', $msg );
 	}
 
 	/**
@@ -95,15 +139,17 @@ class RenameuserSQL {
 	function rename() {
 		global $wgMemc, $wgAuth, $wgUpdateRowsPerJob;
 
-		wfProfileIn( __METHOD__ );
+		// Grab the user's edit count first, used in log entry
+		$contribs = User::newfromId( $this->uid )->getEditCount();
 
 		$dbw = wfGetDB( DB_MASTER );
 		$dbw->begin();
-		wfRunHooks( 'RenameUserPreRename', array( $this->uid, $this->old, $this->new ) );
+		Hooks::run( 'RenameUserPreRename', array( $this->uid, $this->old, $this->new ) );
 
 		// Rename and touch the user before re-attributing edits,
 		// this avoids users still being logged in and making new edits while
 		// being renamed, which leaves edits at the old name.
+		$this->debug( "Starting rename of {$this->old} to {$this->new}" );
 		$dbw->update( 'user',
 			array( 'user_name' => $this->new, 'user_touched' => $dbw->timestamp() ),
 			array( 'user_name' => $this->old, 'user_id' => $this->uid ),
@@ -112,7 +158,7 @@ class RenameuserSQL {
 
 		if ( !$dbw->affectedRows() && $this->checkIfUserExists ) {
 			$dbw->rollback();
-			wfProfileOut( __METHOD__ );
+			$this->debug( "User {$this->old} does not exist, bailing out" );
 			return false;
 		}
 
@@ -135,9 +181,16 @@ class RenameuserSQL {
 		// being renamed, which makes admin tasks more of a pain...
 		$oldTitle = Title::makeTitle( NS_USER, $this->old );
 		$newTitle = Title::makeTitle( NS_USER, $this->new );
+		$this->debug( "Updating logging table for {$this->old} to {$this->new}" );
+		if ( is_callable( 'SpecialLog::getLogTypesOnUser' ) ) { // 1.25+
+			$logTypesOnUser = SpecialLog::getLogTypesOnUser();
+		} else {
+			// Fallback to hardcoded list
+			$logTypesOnUser = array( 'block', 'rights' );
+		}
 		$dbw->update( 'logging',
 			array( 'log_title' => $newTitle->getDBkey() ),
-			array( 'log_type' => array( 'block', 'rights' ),
+			array( 'log_type' => $logTypesOnUser,
 				'log_namespace' => NS_USER,
 				'log_title' => $oldTitle->getDBkey() ),
 			__METHOD__ );
@@ -221,8 +274,10 @@ class RenameuserSQL {
 			$dbw->freeResult( $res );
 		}
 
-		if ( count( $jobs ) > 0 ) {
+		$count = count( $jobs );
+		if ( $count > 0 ) {
 			JobQueueGroup::singleton()->push( $jobs, JobQueue::QOS_ATOMIC ); // don't commit yet
+			$this->debug( "Queued $count jobs for {$this->old} to {$this->new}" );
 		}
 
 		// Commit the transaction
@@ -234,9 +289,24 @@ class RenameuserSQL {
 		// Clear caches and inform authentication plugins
 		$user = User::newFromId( $this->uid );
 		$wgAuth->updateExternalDB( $user );
-		wfRunHooks( 'RenameUserComplete', array( $this->uid, $this->old, $this->new ) );
+		Hooks::run( 'RenameUserComplete', array( $this->uid, $this->old, $this->new ) );
 
-		wfProfileOut( __METHOD__ );
+		// Log it!
+		$logEntry = new ManualLogEntry( 'renameuser', 'renameuser' );
+		$logEntry->setPerformer( $this->renamer );
+		$logEntry->setTarget( $oldTitle );
+		$logEntry->setComment( $this->reason );
+		$logEntry->setParameters( array(
+			'4::olduser' => $this->old,
+			'5::newuser' => $this->new,
+			'6::edits' => $contribs
+		) );
+		$logid = $logEntry->insert();
+		$logEntry->publish( $logid );
+
+
+		$this->debug( "Finished rename for {$this->old} to {$this->new}" );
+
 		return true;
 	}
 }

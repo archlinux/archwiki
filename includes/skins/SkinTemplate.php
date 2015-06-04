@@ -1,7 +1,5 @@
 <?php
 /**
- * Base class for template-based skins.
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -21,41 +19,8 @@
  */
 
 /**
- * Wrapper object for MediaWiki's localization functions,
- * to be passed to the template engine.
+ * Base class for template-based skins.
  *
- * @private
- * @ingroup Skins
- */
-class MediaWikiI18N {
-	private $context = array();
-
-	function set( $varName, $value ) {
-		$this->context[$varName] = $value;
-	}
-
-	function translate( $value ) {
-		wfProfileIn( __METHOD__ );
-
-		// Hack for i18n:attributes in PHPTAL 1.0.0 dev version as of 2004-10-23
-		$value = preg_replace( '/^string:/', '', $value );
-
-		$value = wfMessage( $value )->text();
-		// interpolate variables
-		$m = array();
-		while ( preg_match( '/\$([0-9]*?)/sm', $value, $m ) ) {
-			list( $src, $var ) = $m;
-			wfSuppressWarnings();
-			$varValue = $this->context[$var];
-			wfRestoreWarnings();
-			$value = str_replace( $src, $varValue, $value );
-		}
-		wfProfileOut( __METHOD__ );
-		return $value;
-	}
-}
-
-/**
  * Template-filler skin base class
  * Formerly generic PHPTal (http://phptal.sourceforge.net/) skin
  * Based on Brion's smarty skin
@@ -89,7 +54,8 @@ class SkinTemplate extends Skin {
 		$out->addModuleStyles( array(
 			'mediawiki.legacy.shared',
 			'mediawiki.legacy.commonPrint',
-			'mediawiki.ui.button'
+			'mediawiki.ui.button',
+			'mediawiki.sectionAnchor'
 		) );
 	}
 
@@ -198,7 +164,7 @@ class SkinTemplate extends Skin {
 					'lang' => $ilInterwikiCodeBCP47,
 					'hreflang' => $ilInterwikiCodeBCP47,
 				);
-				wfRunHooks(
+				Hooks::run(
 					'SkinTemplateGetLanguageLink',
 					array( &$languageLink, $languageLinkTitle, $this->getTitle(), $this->getOutput() )
 				);
@@ -210,17 +176,13 @@ class SkinTemplate extends Skin {
 	}
 
 	protected function setupTemplateForOutput() {
-		wfProfileIn( __METHOD__ );
 
 		$request = $this->getRequest();
 		$user = $this->getUser();
 		$title = $this->getTitle();
 
-		wfProfileIn( __METHOD__ . '-init' );
 		$tpl = $this->setupTemplate( $this->template, 'skins' );
-		wfProfileOut( __METHOD__ . '-init' );
 
-		wfProfileIn( __METHOD__ . '-stuff' );
 		$this->thispage = $title->getPrefixedDBkey();
 		$this->titletxt = $title->getPrefixedText();
 		$this->userpage = $user->getUserPage()->getPrefixedText();
@@ -243,10 +205,6 @@ class SkinTemplate extends Skin {
 			$this->userpageUrlDetails = self::makeKnownUrlDetails( $this->userpage );
 		}
 
-		wfProfileOut( __METHOD__ . '-stuff' );
-
-		wfProfileOut( __METHOD__ );
-
 		return $tpl;
 	}
 
@@ -256,26 +214,22 @@ class SkinTemplate extends Skin {
 	 * @param OutputPage $out
 	 */
 	function outputPage( OutputPage $out = null ) {
-		wfProfileIn( __METHOD__ );
 		Profiler::instance()->setTemplated( true );
 
 		$oldContext = null;
 		if ( $out !== null ) {
-			// @todo Add wfDeprecated in 1.20
+			// Deprecated since 1.20, note added in 1.25
+			wfDeprecated( __METHOD__, '1.25' );
 			$oldContext = $this->getContext();
 			$this->setContext( $out->getContext() );
 		}
 
 		$out = $this->getOutput();
 
-		wfProfileIn( __METHOD__ . '-init' );
 		$this->initPage( $out );
-		wfProfileOut( __METHOD__ . '-init' );
 		$tpl = $this->prepareQuickTemplate( $out );
 		// execute template
-		wfProfileIn( __METHOD__ . '-execute' );
 		$res = $tpl->execute();
-		wfProfileOut( __METHOD__ . '-execute' );
 
 		// result may be an error
 		$this->printOrError( $res );
@@ -284,7 +238,6 @@ class SkinTemplate extends Skin {
 			$this->setContext( $oldContext );
 		}
 
-		wfProfileOut( __METHOD__ );
 	}
 
 	/**
@@ -295,18 +248,15 @@ class SkinTemplate extends Skin {
 	 */
 	protected function prepareQuickTemplate() {
 		global $wgContLang, $wgScript, $wgStylePath, $wgMimeType, $wgJsMimeType,
-			$wgDisableCounters, $wgSitename, $wgLogo, $wgMaxCredits,
-			$wgShowCreditsIfMax, $wgPageShowWatchingUsers, $wgArticlePath,
+			$wgSitename, $wgLogo, $wgMaxCredits,
+			$wgShowCreditsIfMax, $wgArticlePath,
 			$wgScriptPath, $wgServer;
-
-		wfProfileIn( __METHOD__ );
 
 		$title = $this->getTitle();
 		$request = $this->getRequest();
 		$out = $this->getOutput();
 		$tpl = $this->setupTemplateForOutput();
 
-		wfProfileIn( __METHOD__ . '-stuff2' );
 		$tpl->set( 'title', $out->getPageTitle() );
 		$tpl->set( 'pagetitle', $out->getHTMLTitle() );
 		$tpl->set( 'displaytitle', $out->mPageLinkTitle );
@@ -401,39 +351,17 @@ class SkinTemplate extends Skin {
 			$tpl->set( 'userlangattributes', $attrs );
 		}
 
-		wfProfileOut( __METHOD__ . '-stuff2' );
-
-		wfProfileIn( __METHOD__ . '-stuff3' );
 		$tpl->set( 'newtalk', $this->getNewtalks() );
 		$tpl->set( 'logo', $this->logoText() );
 
 		$tpl->set( 'copyright', false );
+		// No longer used
 		$tpl->set( 'viewcount', false );
 		$tpl->set( 'lastmod', false );
 		$tpl->set( 'credits', false );
 		$tpl->set( 'numberofwatchingusers', false );
 		if ( $out->isArticle() && $title->exists() ) {
 			if ( $this->isRevisionCurrent() ) {
-				if ( !$wgDisableCounters ) {
-					$viewcount = $this->getWikiPage()->getCount();
-					if ( $viewcount ) {
-						$tpl->set( 'viewcount', $this->msg( 'viewcount' )->numParams( $viewcount )->parse() );
-					}
-				}
-
-				if ( $wgPageShowWatchingUsers ) {
-					$dbr = wfGetDB( DB_SLAVE );
-					$num = $dbr->selectField( 'watchlist', 'COUNT(*)',
-						array( 'wl_title' => $title->getDBkey(), 'wl_namespace' => $title->getNamespace() ),
-						__METHOD__
-					);
-					if ( $num > 0 ) {
-						$tpl->set( 'numberofwatchingusers',
-							$this->msg( 'number_of_watching_users_pageview' )->numParams( $num )->parse()
-						);
-					}
-				}
-
 				if ( $wgMaxCredits != 0 ) {
 					$tpl->set( 'credits', Action::factory( 'credits', $this->getWikiPage(),
 						$this->getContext() )->getCredits( $wgMaxCredits, $wgShowCreditsIfMax ) );
@@ -443,9 +371,7 @@ class SkinTemplate extends Skin {
 			}
 			$tpl->set( 'copyright', $this->getCopyright() );
 		}
-		wfProfileOut( __METHOD__ . '-stuff3' );
 
-		wfProfileIn( __METHOD__ . '-stuff4' );
 		$tpl->set( 'copyrightico', $this->getCopyrightIcon() );
 		$tpl->set( 'poweredbyico', $this->getPoweredBy() );
 		$tpl->set( 'disclaimer', $this->disclaimerLink() );
@@ -455,7 +381,6 @@ class SkinTemplate extends Skin {
 		$tpl->set( 'footerlinks', array(
 			'info' => array(
 				'lastmod',
-				'viewcount',
 				'numberofwatchingusers',
 				'credits',
 				'copyright',
@@ -486,6 +411,8 @@ class SkinTemplate extends Skin {
 			}
 		}
 
+		$tpl->set( 'indicators', $out->getIndicators() );
+
 		$tpl->set( 'sitenotice', $this->getSiteNotice() );
 		$tpl->set( 'bottomscripts', $this->bottomScripts() );
 		$tpl->set( 'printfooter', $this->printSource() );
@@ -515,9 +442,7 @@ class SkinTemplate extends Skin {
 		} else {
 			$tpl->set( 'language_urls', false );
 		}
-		wfProfileOut( __METHOD__ . '-stuff4' );
 
-		wfProfileIn( __METHOD__ . '-stuff5' );
 		# Personal toolbar
 		$tpl->set( 'personal_urls', $this->buildPersonalUrls() );
 		$content_navigation = $this->buildContentNavigationUrls();
@@ -536,11 +461,11 @@ class SkinTemplate extends Skin {
 		$tpl->set( 'reporttime', wfReportTime() );
 
 		// original version by hansm
-		if ( !wfRunHooks( 'SkinTemplateOutputPageBeforeExec', array( &$this, &$tpl ) ) ) {
+		if ( !Hooks::run( 'SkinTemplateOutputPageBeforeExec', array( &$this, &$tpl ) ) ) {
 			wfDebug( __METHOD__ . ": Hook SkinTemplateOutputPageBeforeExec broke outputPage execution!\n" );
 		}
 
-		// Set the bodytext to another key so that skins can just output it on it's own
+		// Set the bodytext to another key so that skins can just output it on its own
 		// and output printfooter and debughtml separately
 		$tpl->set( 'bodycontent', $tpl->data['bodytext'] );
 
@@ -557,9 +482,7 @@ class SkinTemplate extends Skin {
 		// allow extensions adding stuff after the page content.
 		// See Skin::afterContentHook() for further documentation.
 		$tpl->set( 'dataAfterContent', $this->afterContentHook() );
-		wfProfileOut( __METHOD__ . '-stuff5' );
 
-		wfProfileOut( __METHOD__ );
 		return $tpl;
 	}
 
@@ -623,7 +546,6 @@ class SkinTemplate extends Skin {
 		$title = $this->getTitle();
 		$request = $this->getRequest();
 		$pageurl = $title->getLocalURL();
-		wfProfileIn( __METHOD__ );
 
 		/* set up the default links for the personal toolbar */
 		$personal_urls = array();
@@ -755,8 +677,7 @@ class SkinTemplate extends Skin {
 			$personal_urls['login'] = $login_url;
 		}
 
-		wfRunHooks( 'PersonalUrls', array( &$personal_urls, &$title, $this ) );
-		wfProfileOut( __METHOD__ );
+		Hooks::run( 'PersonalUrls', array( &$personal_urls, &$title, $this ) );
 		return $personal_urls;
 	}
 
@@ -796,12 +717,12 @@ class SkinTemplate extends Skin {
 			$text = $msg->text();
 		} else {
 			global $wgContLang;
-			$text = $wgContLang->getFormattedNsText(
+			$text = $wgContLang->getConverter()->convertNamespace(
 				MWNamespace::getSubject( $title->getNamespace() ) );
 		}
 
 		$result = array();
-		if ( !wfRunHooks( 'SkinTemplateTabAction', array( &$this,
+		if ( !Hooks::run( 'SkinTemplateTabAction', array( &$this,
 				$title, $message, $selected, $checkEdit,
 				&$classes, &$query, &$text, &$result ) ) ) {
 			return $result;
@@ -823,17 +744,20 @@ class SkinTemplate extends Skin {
 		self::checkTitle( $title, $name );
 		return array(
 			'href' => $title->getLocalURL( $urlaction ),
-			'exists' => $title->getArticleID() != 0,
+			'exists' => $title->isKnown(),
 		);
 	}
 
+	/**
+	 * @todo is this even used?
+	 */
 	function makeArticleUrlDetails( $name, $urlaction = '' ) {
 		$title = Title::newFromText( $name );
 		$title = $title->getSubjectPage();
 		self::checkTitle( $title, $name );
 		return array(
 			'href' => $title->getLocalURL( $urlaction ),
-			'exists' => $title->getArticleID() != 0,
+			'exists' => $title->exists(),
 		);
 	}
 
@@ -874,8 +798,6 @@ class SkinTemplate extends Skin {
 	protected function buildContentNavigationUrls() {
 		global $wgDisableLangConversion;
 
-		wfProfileIn( __METHOD__ );
-
 		// Display tabs for the relevant title rather than always the title itself
 		$title = $this->getRelevantTitle();
 		$onPage = $title->equals( $this->getTitle() );
@@ -897,7 +819,7 @@ class SkinTemplate extends Skin {
 		$userCanRead = $title->quickUserCan( 'read', $user );
 
 		$preventActiveTabs = false;
-		wfRunHooks( 'SkinTemplatePreventOtherActiveTabs', array( &$this, &$preventActiveTabs ) );
+		Hooks::run( 'SkinTemplatePreventOtherActiveTabs', array( &$this, &$preventActiveTabs ) );
 
 		// Checks if page is some kind of content
 		if ( $title->canExist() ) {
@@ -961,8 +883,6 @@ class SkinTemplate extends Skin {
 					);
 				}
 
-				wfProfileIn( __METHOD__ . '-edit' );
-
 				// Checks if user can edit the current page if it exists or create it otherwise
 				if ( $title->quickUserCan( 'edit', $user )
 					&& ( $title->exists() || $title->quickUserCan( 'create', $user ) )
@@ -1019,9 +939,7 @@ class SkinTemplate extends Skin {
 						'primary' => true, // don't collapse this in vector
 					);
 				}
-				wfProfileOut( __METHOD__ . '-edit' );
 
-				wfProfileIn( __METHOD__ . '-live' );
 				// Checks if the page exists
 				if ( $title->exists() ) {
 					// Adds history view link
@@ -1030,7 +948,6 @@ class SkinTemplate extends Skin {
 						'text' => wfMessageFallback( "$skname-view-history", 'history_short' )
 							->setContext( $this->getContext() )->text(),
 						'href' => $title->getLocalURL( 'action=history' ),
-						'rel' => 'archives',
 					);
 
 					if ( $title->quickUserCan( 'delete', $user ) ) {
@@ -1056,7 +973,7 @@ class SkinTemplate extends Skin {
 					if ( $user->isAllowed( 'deletedhistory' ) ) {
 						$n = $title->isDeleted();
 						if ( $n ) {
-							$undelTitle = SpecialPage::getTitleFor( 'Undelete' );
+							$undelTitle = SpecialPage::getTitleFor( 'Undelete', $title->getPrefixedDBkey() );
 							// If the user can't undelete but can view deleted
 							// history show them a "View .. deleted" tab instead.
 							$msgKey = $user->isAllowed( 'undelete' ) ? 'undelete' : 'viewdeleted';
@@ -1064,7 +981,7 @@ class SkinTemplate extends Skin {
 								'class' => $this->getTitle()->isSpecial( 'Undelete' ) ? 'selected' : false,
 								'text' => wfMessageFallback( "$skname-action-$msgKey", "{$msgKey}_short" )
 									->setContext( $this->getContext() )->numParams( $n )->text(),
-								'href' => $undelTitle->getLocalURL( array( 'target' => $title->getPrefixedDBkey() ) )
+								'href' => $undelTitle->getLocalURL()
 							);
 						}
 					}
@@ -1081,8 +998,6 @@ class SkinTemplate extends Skin {
 						'href' => $title->getLocalURL( "action=$mode" )
 					);
 				}
-
-				wfProfileOut( __METHOD__ . '-live' );
 
 				// Checks if the user is logged in
 				if ( $this->loggedin && $user->isAllowedAll( 'viewmywatchlist', 'editmywatchlist' ) ) {
@@ -1106,7 +1021,7 @@ class SkinTemplate extends Skin {
 				}
 			}
 
-			wfRunHooks( 'SkinTemplateNavigation', array( &$this, &$content_navigation ) );
+			Hooks::run( 'SkinTemplateNavigation', array( &$this, &$content_navigation ) );
 
 			if ( $userCanRead && !$wgDisableLangConversion ) {
 				$pageLang = $title->getPageLanguage();
@@ -1148,12 +1063,12 @@ class SkinTemplate extends Skin {
 				'context' => 'subject'
 			);
 
-			wfRunHooks( 'SkinTemplateNavigation::SpecialPage',
+			Hooks::run( 'SkinTemplateNavigation::SpecialPage',
 				array( &$this, &$content_navigation ) );
 		}
 
 		// Equiv to SkinTemplateContentActions
-		wfRunHooks( 'SkinTemplateNavigation::Universal', array( &$this, &$content_navigation ) );
+		Hooks::run( 'SkinTemplateNavigation::Universal', array( &$this, &$content_navigation ) );
 
 		// Setup xml ids and tooltip info
 		foreach ( $content_navigation as $section => &$links ) {
@@ -1190,8 +1105,6 @@ class SkinTemplate extends Skin {
 			}
 		}
 
-		wfProfileOut( __METHOD__ );
-
 		return $content_navigation;
 	}
 
@@ -1201,8 +1114,6 @@ class SkinTemplate extends Skin {
 	 * @return array
 	 */
 	private function buildContentActionUrls( $content_navigation ) {
-
-		wfProfileIn( __METHOD__ );
 
 		// content_actions has been replaced with content_navigation for backwards
 		// compatibility and also for skins that just want simple tabs content_actions
@@ -1235,8 +1146,6 @@ class SkinTemplate extends Skin {
 			}
 		}
 
-		wfProfileOut( __METHOD__ );
-
 		return $content_actions;
 	}
 
@@ -1246,8 +1155,6 @@ class SkinTemplate extends Skin {
 	 */
 	protected function buildNavUrls() {
 		global $wgUploadNavigationUrl;
-
-		wfProfileIn( __METHOD__ );
 
 		$out = $this->getOutput();
 		$request = $this->getRequest();
@@ -1295,7 +1202,7 @@ class SkinTemplate extends Skin {
 			}
 
 			// Use the copy of revision ID in case this undocumented, shady hook tries to mess with internals
-			wfRunHooks( 'SkinTemplateBuildNavUrlsNav_urlsAfterPermalink',
+			Hooks::run( 'SkinTemplateBuildNavUrlsNav_urlsAfterPermalink',
 				array( &$this, &$nav_urls, &$revid, &$revid ) );
 		}
 
@@ -1309,7 +1216,7 @@ class SkinTemplate extends Skin {
 				'href' => $this->getTitle()->getLocalURL( "action=info" )
 			);
 
-			if ( $this->getTitle()->getArticleID() ) {
+			if ( $this->getTitle()->exists() ) {
 				$nav_urls['recentchangeslinked'] = array(
 					'href' => SpecialPage::getTitleFor( 'Recentchangeslinked', $this->thispage )->getLocalURL()
 				);
@@ -1353,7 +1260,6 @@ class SkinTemplate extends Skin {
 			}
 		}
 
-		wfProfileOut( __METHOD__ );
 		return $nav_urls;
 	}
 
@@ -1363,761 +1269,5 @@ class SkinTemplate extends Skin {
 	 */
 	protected function getNameSpaceKey() {
 		return $this->getTitle()->getNamespaceKey();
-	}
-}
-
-/**
- * Generic wrapper for template functions, with interface
- * compatible with what we use of PHPTAL 0.7.
- * @ingroup Skins
- */
-abstract class QuickTemplate {
-
-	/** @var Config $config */
-	protected $config;
-
-	/**
-	 * @param Config $config
-	 */
-	function __construct( Config $config = null ) {
-		$this->data = array();
-		$this->translator = new MediaWikiI18N();
-		if ( $config === null ) {
-			wfDebug( __METHOD__ . ' was called with no Config instance passed to it' );
-			$config = ConfigFactory::getDefaultInstance()->makeConfig( 'main' );
-		}
-		$this->config = $config;
-	}
-
-	/**
-	 * Sets the value $value to $name
-	 * @param string $name
-	 * @param mixed $value
-	 */
-	public function set( $name, $value ) {
-		$this->data[$name] = $value;
-	}
-
-	/**
-	 * Gets the template data requested
-	 * @since 1.22
-	 * @param string $name Key for the data
-	 * @param mixed $default Optional default (or null)
-	 * @return mixed The value of the data requested or the deafult
-	 */
-	public function get( $name, $default = null ) {
-		if ( isset( $this->data[$name] ) ) {
-			return $this->data[$name];
-		} else {
-			return $default;
-		}
-	}
-
-	/**
-	 * @param string $name
-	 * @param mixed $value
-	 */
-	public function setRef( $name, &$value ) {
-		$this->data[$name] =& $value;
-	}
-
-	/**
-	 * @param MediaWikiI18N $t
-	 */
-	public function setTranslator( &$t ) {
-		$this->translator = &$t;
-	}
-
-	/**
-	 * Main function, used by classes that subclass QuickTemplate
-	 * to show the actual HTML output
-	 */
-	abstract public function execute();
-
-	/**
-	 * @private
-	 * @param string $str
-	 * @return string
-	 */
-	function text( $str ) {
-		echo htmlspecialchars( $this->data[$str] );
-	}
-
-	/**
-	 * @private
-	 * @param string $str
-	 * @return string
-	 */
-	function html( $str ) {
-		echo $this->data[$str];
-	}
-
-	/**
-	 * @private
-	 * @param string $str
-	 * @return string
-	 */
-	function msg( $str ) {
-		echo htmlspecialchars( $this->translator->translate( $str ) );
-	}
-
-	/**
-	 * @private
-	 * @param string $str
-	 * @return string
-	 */
-	function msgHtml( $str ) {
-		echo $this->translator->translate( $str );
-	}
-
-	/**
-	 * An ugly, ugly hack.
-	 * @private
-	 * @param string $str
-	 * @return string
-	 */
-	function msgWiki( $str ) {
-		global $wgOut;
-
-		$text = $this->translator->translate( $str );
-		echo $wgOut->parse( $text );
-	}
-
-	/**
-	 * @private
-	 * @param string $str
-	 * @return bool
-	 */
-	function haveData( $str ) {
-		return isset( $this->data[$str] );
-	}
-
-	/**
-	 * @private
-	 *
-	 * @param string $str
-	 * @return bool
-	 */
-	function haveMsg( $str ) {
-		$msg = $this->translator->translate( $str );
-		return ( $msg != '-' ) && ( $msg != '' ); # ????
-	}
-
-	/**
-	 * Get the Skin object related to this object
-	 *
-	 * @return Skin
-	 */
-	public function getSkin() {
-		return $this->data['skin'];
-	}
-
-	/**
-	 * Fetch the output of a QuickTemplate and return it
-	 *
-	 * @since 1.23
-	 * @return string
-	 */
-	public function getHTML() {
-		ob_start();
-		$this->execute();
-		$html = ob_get_contents();
-		ob_end_clean();
-		return $html;
-	}
-}
-
-/**
- * New base template for a skin's template extended from QuickTemplate
- * this class features helper methods that provide common ways of interacting
- * with the data stored in the QuickTemplate
- */
-abstract class BaseTemplate extends QuickTemplate {
-
-	/**
-	 * Get a Message object with its context set
-	 *
-	 * @param string $name Message name
-	 * @return Message
-	 */
-	public function getMsg( $name ) {
-		return $this->getSkin()->msg( $name );
-	}
-
-	function msg( $str ) {
-		echo $this->getMsg( $str )->escaped();
-	}
-
-	function msgHtml( $str ) {
-		echo $this->getMsg( $str )->text();
-	}
-
-	function msgWiki( $str ) {
-		echo $this->getMsg( $str )->parseAsBlock();
-	}
-
-	/**
-	 * Create an array of common toolbox items from the data in the quicktemplate
-	 * stored by SkinTemplate.
-	 * The resulting array is built according to a format intended to be passed
-	 * through makeListItem to generate the html.
-	 * @return array
-	 */
-	function getToolbox() {
-		wfProfileIn( __METHOD__ );
-
-		$toolbox = array();
-		if ( isset( $this->data['nav_urls']['whatlinkshere'] )
-			&& $this->data['nav_urls']['whatlinkshere']
-		) {
-			$toolbox['whatlinkshere'] = $this->data['nav_urls']['whatlinkshere'];
-			$toolbox['whatlinkshere']['id'] = 't-whatlinkshere';
-		}
-		if ( isset( $this->data['nav_urls']['recentchangeslinked'] )
-			&& $this->data['nav_urls']['recentchangeslinked']
-		) {
-			$toolbox['recentchangeslinked'] = $this->data['nav_urls']['recentchangeslinked'];
-			$toolbox['recentchangeslinked']['msg'] = 'recentchangeslinked-toolbox';
-			$toolbox['recentchangeslinked']['id'] = 't-recentchangeslinked';
-		}
-		if ( isset( $this->data['feeds'] ) && $this->data['feeds'] ) {
-			$toolbox['feeds']['id'] = 'feedlinks';
-			$toolbox['feeds']['links'] = array();
-			foreach ( $this->data['feeds'] as $key => $feed ) {
-				$toolbox['feeds']['links'][$key] = $feed;
-				$toolbox['feeds']['links'][$key]['id'] = "feed-$key";
-				$toolbox['feeds']['links'][$key]['rel'] = 'alternate';
-				$toolbox['feeds']['links'][$key]['type'] = "application/{$key}+xml";
-				$toolbox['feeds']['links'][$key]['class'] = 'feedlink';
-			}
-		}
-		foreach ( array( 'contributions', 'log', 'blockip', 'emailuser',
-			'userrights', 'upload', 'specialpages' ) as $special
-		) {
-			if ( isset( $this->data['nav_urls'][$special] ) && $this->data['nav_urls'][$special] ) {
-				$toolbox[$special] = $this->data['nav_urls'][$special];
-				$toolbox[$special]['id'] = "t-$special";
-			}
-		}
-		if ( isset( $this->data['nav_urls']['print'] ) && $this->data['nav_urls']['print'] ) {
-			$toolbox['print'] = $this->data['nav_urls']['print'];
-			$toolbox['print']['id'] = 't-print';
-			$toolbox['print']['rel'] = 'alternate';
-			$toolbox['print']['msg'] = 'printableversion';
-		}
-		if ( isset( $this->data['nav_urls']['permalink'] ) && $this->data['nav_urls']['permalink'] ) {
-			$toolbox['permalink'] = $this->data['nav_urls']['permalink'];
-			if ( $toolbox['permalink']['href'] === '' ) {
-				unset( $toolbox['permalink']['href'] );
-				$toolbox['ispermalink']['tooltiponly'] = true;
-				$toolbox['ispermalink']['id'] = 't-ispermalink';
-				$toolbox['ispermalink']['msg'] = 'permalink';
-			} else {
-				$toolbox['permalink']['id'] = 't-permalink';
-			}
-		}
-		if ( isset( $this->data['nav_urls']['info'] ) && $this->data['nav_urls']['info'] ) {
-			$toolbox['info'] = $this->data['nav_urls']['info'];
-			$toolbox['info']['id'] = 't-info';
-		}
-
-		wfRunHooks( 'BaseTemplateToolbox', array( &$this, &$toolbox ) );
-		wfProfileOut( __METHOD__ );
-		return $toolbox;
-	}
-
-	/**
-	 * Create an array of personal tools items from the data in the quicktemplate
-	 * stored by SkinTemplate.
-	 * The resulting array is built according to a format intended to be passed
-	 * through makeListItem to generate the html.
-	 * This is in reality the same list as already stored in personal_urls
-	 * however it is reformatted so that you can just pass the individual items
-	 * to makeListItem instead of hardcoding the element creation boilerplate.
-	 * @return array
-	 */
-	function getPersonalTools() {
-		$personal_tools = array();
-		foreach ( $this->get( 'personal_urls' ) as $key => $plink ) {
-			# The class on a personal_urls item is meant to go on the <a> instead
-			# of the <li> so we have to use a single item "links" array instead
-			# of using most of the personal_url's keys directly.
-			$ptool = array(
-				'links' => array(
-					array( 'single-id' => "pt-$key" ),
-				),
-				'id' => "pt-$key",
-			);
-			if ( isset( $plink['active'] ) ) {
-				$ptool['active'] = $plink['active'];
-			}
-			foreach ( array( 'href', 'class', 'text', 'dir' ) as $k ) {
-				if ( isset( $plink[$k] ) ) {
-					$ptool['links'][0][$k] = $plink[$k];
-				}
-			}
-			$personal_tools[$key] = $ptool;
-		}
-		return $personal_tools;
-	}
-
-	function getSidebar( $options = array() ) {
-		// Force the rendering of the following portals
-		$sidebar = $this->data['sidebar'];
-		if ( !isset( $sidebar['SEARCH'] ) ) {
-			$sidebar['SEARCH'] = true;
-		}
-		if ( !isset( $sidebar['TOOLBOX'] ) ) {
-			$sidebar['TOOLBOX'] = true;
-		}
-		if ( !isset( $sidebar['LANGUAGES'] ) ) {
-			$sidebar['LANGUAGES'] = true;
-		}
-
-		if ( !isset( $options['search'] ) || $options['search'] !== true ) {
-			unset( $sidebar['SEARCH'] );
-		}
-		if ( isset( $options['toolbox'] ) && $options['toolbox'] === false ) {
-			unset( $sidebar['TOOLBOX'] );
-		}
-		if ( isset( $options['languages'] ) && $options['languages'] === false ) {
-			unset( $sidebar['LANGUAGES'] );
-		}
-
-		$boxes = array();
-		foreach ( $sidebar as $boxName => $content ) {
-			if ( $content === false ) {
-				continue;
-			}
-			switch ( $boxName ) {
-			case 'SEARCH':
-				// Search is a special case, skins should custom implement this
-				$boxes[$boxName] = array(
-					'id' => 'p-search',
-					'header' => $this->getMsg( 'search' )->text(),
-					'generated' => false,
-					'content' => true,
-				);
-				break;
-			case 'TOOLBOX':
-				$msgObj = $this->getMsg( 'toolbox' );
-				$boxes[$boxName] = array(
-					'id' => 'p-tb',
-					'header' => $msgObj->exists() ? $msgObj->text() : 'toolbox',
-					'generated' => false,
-					'content' => $this->getToolbox(),
-				);
-				break;
-			case 'LANGUAGES':
-				if ( $this->data['language_urls'] ) {
-					$msgObj = $this->getMsg( 'otherlanguages' );
-					$boxes[$boxName] = array(
-						'id' => 'p-lang',
-						'header' => $msgObj->exists() ? $msgObj->text() : 'otherlanguages',
-						'generated' => false,
-						'content' => $this->data['language_urls'],
-					);
-				}
-				break;
-			default:
-				$msgObj = $this->getMsg( $boxName );
-				$boxes[$boxName] = array(
-					'id' => "p-$boxName",
-					'header' => $msgObj->exists() ? $msgObj->text() : $boxName,
-					'generated' => true,
-					'content' => $content,
-				);
-				break;
-			}
-		}
-
-		// HACK: Compatibility with extensions still using SkinTemplateToolboxEnd
-		$hookContents = null;
-		if ( isset( $boxes['TOOLBOX'] ) ) {
-			ob_start();
-			// We pass an extra 'true' at the end so extensions using BaseTemplateToolbox
-			// can abort and avoid outputting double toolbox links
-			wfRunHooks( 'SkinTemplateToolboxEnd', array( &$this, true ) );
-			$hookContents = ob_get_contents();
-			ob_end_clean();
-			if ( !trim( $hookContents ) ) {
-				$hookContents = null;
-			}
-		}
-		// END hack
-
-		if ( isset( $options['htmlOnly'] ) && $options['htmlOnly'] === true ) {
-			foreach ( $boxes as $boxName => $box ) {
-				if ( is_array( $box['content'] ) ) {
-					$content = '<ul>';
-					foreach ( $box['content'] as $key => $val ) {
-						$content .= "\n	" . $this->makeListItem( $key, $val );
-					}
-					// HACK, shove the toolbox end onto the toolbox if we're rendering itself
-					if ( $hookContents ) {
-						$content .= "\n	$hookContents";
-					}
-					// END hack
-					$content .= "\n</ul>\n";
-					$boxes[$boxName]['content'] = $content;
-				}
-			}
-		} else {
-			if ( $hookContents ) {
-				$boxes['TOOLBOXEND'] = array(
-					'id' => 'p-toolboxend',
-					'header' => $boxes['TOOLBOX']['header'],
-					'generated' => false,
-					'content' => "<ul>{$hookContents}</ul>",
-				);
-				// HACK: Make sure that TOOLBOXEND is sorted next to TOOLBOX
-				$boxes2 = array();
-				foreach ( $boxes as $key => $box ) {
-					if ( $key === 'TOOLBOXEND' ) {
-						continue;
-					}
-					$boxes2[$key] = $box;
-					if ( $key === 'TOOLBOX' ) {
-						$boxes2['TOOLBOXEND'] = $boxes['TOOLBOXEND'];
-					}
-				}
-				$boxes = $boxes2;
-				// END hack
-			}
-		}
-
-		return $boxes;
-	}
-
-	/**
-	 * @param string $name
-	 */
-	protected function renderAfterPortlet( $name ) {
-		$content = '';
-		wfRunHooks( 'BaseTemplateAfterPortlet', array( $this, $name, &$content ) );
-
-		if ( $content !== '' ) {
-			echo "<div class='after-portlet after-portlet-$name'>$content</div>";
-		}
-
-	}
-
-	/**
-	 * Makes a link, usually used by makeListItem to generate a link for an item
-	 * in a list used in navigation lists, portlets, portals, sidebars, etc...
-	 *
-	 * @param string $key Usually a key from the list you are generating this
-	 * link from.
-	 * @param array $item Contains some of a specific set of keys.
-	 *
-	 * The text of the link will be generated either from the contents of the
-	 * "text" key in the $item array, if a "msg" key is present a message by
-	 * that name will be used, and if neither of those are set the $key will be
-	 * used as a message name.
-	 *
-	 * If a "href" key is not present makeLink will just output htmlescaped text.
-	 * The "href", "id", "class", "rel", and "type" keys are used as attributes
-	 * for the link if present.
-	 *
-	 * If an "id" or "single-id" (if you don't want the actual id to be output
-	 * on the link) is present it will be used to generate a tooltip and
-	 * accesskey for the link.
-	 *
-	 * The keys "context" and "primary" are ignored; these keys are used
-	 * internally by skins and are not supposed to be included in the HTML
-	 * output.
-	 *
-	 * If you don't want an accesskey, set $item['tooltiponly'] = true;
-	 *
-	 * @param array $options Can be used to affect the output of a link.
-	 * Possible options are:
-	 *   - 'text-wrapper' key to specify a list of elements to wrap the text of
-	 *   a link in. This should be an array of arrays containing a 'tag' and
-	 *   optionally an 'attributes' key. If you only have one element you don't
-	 *   need to wrap it in another array. eg: To use <a><span>...</span></a>
-	 *   in all links use array( 'text-wrapper' => array( 'tag' => 'span' ) )
-	 *   for your options.
-	 *   - 'link-class' key can be used to specify additional classes to apply
-	 *   to all links.
-	 *   - 'link-fallback' can be used to specify a tag to use instead of "<a>"
-	 *   if there is no link. eg: If you specify 'link-fallback' => 'span' than
-	 *   any non-link will output a "<span>" instead of just text.
-	 *
-	 * @return string
-	 */
-	function makeLink( $key, $item, $options = array() ) {
-		if ( isset( $item['text'] ) ) {
-			$text = $item['text'];
-		} else {
-			$text = $this->translator->translate( isset( $item['msg'] ) ? $item['msg'] : $key );
-		}
-
-		$html = htmlspecialchars( $text );
-
-		if ( isset( $options['text-wrapper'] ) ) {
-			$wrapper = $options['text-wrapper'];
-			if ( isset( $wrapper['tag'] ) ) {
-				$wrapper = array( $wrapper );
-			}
-			while ( count( $wrapper ) > 0 ) {
-				$element = array_pop( $wrapper );
-				$html = Html::rawElement( $element['tag'], isset( $element['attributes'] )
-					? $element['attributes']
-					: null, $html );
-			}
-		}
-
-		if ( isset( $item['href'] ) || isset( $options['link-fallback'] ) ) {
-			$attrs = $item;
-			foreach ( array( 'single-id', 'text', 'msg', 'tooltiponly', 'context', 'primary' ) as $k ) {
-				unset( $attrs[$k] );
-			}
-
-			if ( isset( $item['id'] ) && !isset( $item['single-id'] ) ) {
-				$item['single-id'] = $item['id'];
-			}
-			if ( isset( $item['single-id'] ) ) {
-				if ( isset( $item['tooltiponly'] ) && $item['tooltiponly'] ) {
-					$title = Linker::titleAttrib( $item['single-id'] );
-					if ( $title !== false ) {
-						$attrs['title'] = $title;
-					}
-				} else {
-					$tip = Linker::tooltipAndAccesskeyAttribs( $item['single-id'] );
-					if ( isset( $tip['title'] ) && $tip['title'] !== false ) {
-						$attrs['title'] = $tip['title'];
-					}
-					if ( isset( $tip['accesskey'] ) && $tip['accesskey'] !== false ) {
-						$attrs['accesskey'] = $tip['accesskey'];
-					}
-				}
-			}
-			if ( isset( $options['link-class'] ) ) {
-				if ( isset( $attrs['class'] ) ) {
-					$attrs['class'] .= " {$options['link-class']}";
-				} else {
-					$attrs['class'] = $options['link-class'];
-				}
-			}
-			$html = Html::rawElement( isset( $attrs['href'] )
-				? 'a'
-				: $options['link-fallback'], $attrs, $html );
-		}
-
-		return $html;
-	}
-
-	/**
-	 * Generates a list item for a navigation, portlet, portal, sidebar... list
-	 *
-	 * @param string $key Usually a key from the list you are generating this link from.
-	 * @param array $item Array of list item data containing some of a specific set of keys.
-	 * The "id", "class" and "itemtitle" keys will be used as attributes for the list item,
-	 * if "active" contains a value of true a "active" class will also be appended to class.
-	 *
-	 * @param array $options
-	 *
-	 * If you want something other than a "<li>" you can pass a tag name such as
-	 * "tag" => "span" in the $options array to change the tag used.
-	 * link/content data for the list item may come in one of two forms
-	 * A "links" key may be used, in which case it should contain an array with
-	 * a list of links to include inside the list item, see makeLink for the
-	 * format of individual links array items.
-	 *
-	 * Otherwise the relevant keys from the list item $item array will be passed
-	 * to makeLink instead. Note however that "id" and "class" are used by the
-	 * list item directly so they will not be passed to makeLink
-	 * (however the link will still support a tooltip and accesskey from it)
-	 * If you need an id or class on a single link you should include a "links"
-	 * array with just one link item inside of it. If you want to add a title
-	 * to the list item itself, you can set "itemtitle" to the value.
-	 * $options is also passed on to makeLink calls
-	 *
-	 * @return string
-	 */
-	function makeListItem( $key, $item, $options = array() ) {
-		if ( isset( $item['links'] ) ) {
-			$links = array();
-			foreach ( $item['links'] as $linkKey => $link ) {
-				$links[] = $this->makeLink( $linkKey, $link, $options );
-			}
-			$html = implode( ' ', $links );
-		} else {
-			$link = $item;
-			// These keys are used by makeListItem and shouldn't be passed on to the link
-			foreach ( array( 'id', 'class', 'active', 'tag', 'itemtitle' ) as $k ) {
-				unset( $link[$k] );
-			}
-			if ( isset( $item['id'] ) && !isset( $item['single-id'] ) ) {
-				// The id goes on the <li> not on the <a> for single links
-				// but makeSidebarLink still needs to know what id to use when
-				// generating tooltips and accesskeys.
-				$link['single-id'] = $item['id'];
-			}
-			$html = $this->makeLink( $key, $link, $options );
-		}
-
-		$attrs = array();
-		foreach ( array( 'id', 'class' ) as $attr ) {
-			if ( isset( $item[$attr] ) ) {
-				$attrs[$attr] = $item[$attr];
-			}
-		}
-		if ( isset( $item['active'] ) && $item['active'] ) {
-			if ( !isset( $attrs['class'] ) ) {
-				$attrs['class'] = '';
-			}
-			$attrs['class'] .= ' active';
-			$attrs['class'] = trim( $attrs['class'] );
-		}
-		if ( isset( $item['itemtitle'] ) ) {
-			$attrs['title'] = $item['itemtitle'];
-		}
-		return Html::rawElement( isset( $options['tag'] ) ? $options['tag'] : 'li', $attrs, $html );
-	}
-
-	function makeSearchInput( $attrs = array() ) {
-		$realAttrs = array(
-			'type' => 'search',
-			'name' => 'search',
-			'placeholder' => wfMessage( 'searchsuggest-search' )->text(),
-			'value' => $this->get( 'search', '' ),
-		);
-		$realAttrs = array_merge( $realAttrs, Linker::tooltipAndAccesskeyAttribs( 'search' ), $attrs );
-		return Html::element( 'input', $realAttrs );
-	}
-
-	function makeSearchButton( $mode, $attrs = array() ) {
-		switch ( $mode ) {
-			case 'go':
-			case 'fulltext':
-				$realAttrs = array(
-					'type' => 'submit',
-					'name' => $mode,
-					'value' => $this->translator->translate(
-						$mode == 'go' ? 'searcharticle' : 'searchbutton' ),
-				);
-				$realAttrs = array_merge(
-					$realAttrs,
-					Linker::tooltipAndAccesskeyAttribs( "search-$mode" ),
-					$attrs
-				);
-				return Html::element( 'input', $realAttrs );
-			case 'image':
-				$buttonAttrs = array(
-					'type' => 'submit',
-					'name' => 'button',
-				);
-				$buttonAttrs = array_merge(
-					$buttonAttrs,
-					Linker::tooltipAndAccesskeyAttribs( 'search-fulltext' ),
-					$attrs
-				);
-				unset( $buttonAttrs['src'] );
-				unset( $buttonAttrs['alt'] );
-				unset( $buttonAttrs['width'] );
-				unset( $buttonAttrs['height'] );
-				$imgAttrs = array(
-					'src' => $attrs['src'],
-					'alt' => isset( $attrs['alt'] )
-						? $attrs['alt']
-						: $this->translator->translate( 'searchbutton' ),
-					'width' => isset( $attrs['width'] ) ? $attrs['width'] : null,
-					'height' => isset( $attrs['height'] ) ? $attrs['height'] : null,
-				);
-				return Html::rawElement( 'button', $buttonAttrs, Html::element( 'img', $imgAttrs ) );
-			default:
-				throw new MWException( 'Unknown mode passed to BaseTemplate::makeSearchButton' );
-		}
-	}
-
-	/**
-	 * Returns an array of footerlinks trimmed down to only those footer links that
-	 * are valid.
-	 * If you pass "flat" as an option then the returned array will be a flat array
-	 * of footer icons instead of a key/value array of footerlinks arrays broken
-	 * up into categories.
-	 * @param string $option
-	 * @return array|mixed
-	 */
-	function getFooterLinks( $option = null ) {
-		$footerlinks = $this->get( 'footerlinks' );
-
-		// Reduce footer links down to only those which are being used
-		$validFooterLinks = array();
-		foreach ( $footerlinks as $category => $links ) {
-			$validFooterLinks[$category] = array();
-			foreach ( $links as $link ) {
-				if ( isset( $this->data[$link] ) && $this->data[$link] ) {
-					$validFooterLinks[$category][] = $link;
-				}
-			}
-			if ( count( $validFooterLinks[$category] ) <= 0 ) {
-				unset( $validFooterLinks[$category] );
-			}
-		}
-
-		if ( $option == 'flat' ) {
-			// fold footerlinks into a single array using a bit of trickery
-			$validFooterLinks = call_user_func_array(
-				'array_merge',
-				array_values( $validFooterLinks )
-			);
-		}
-
-		return $validFooterLinks;
-	}
-
-	/**
-	 * Returns an array of footer icons filtered down by options relevant to how
-	 * the skin wishes to display them.
-	 * If you pass "icononly" as the option all footer icons which do not have an
-	 * image icon set will be filtered out.
-	 * If you pass "nocopyright" then MediaWiki's copyright icon will not be included
-	 * in the list of footer icons. This is mostly useful for skins which only
-	 * display the text from footericons instead of the images and don't want a
-	 * duplicate copyright statement because footerlinks already rendered one.
-	 * @param string $option
-	 * @return string
-	 */
-	function getFooterIcons( $option = null ) {
-		// Generate additional footer icons
-		$footericons = $this->get( 'footericons' );
-
-		if ( $option == 'icononly' ) {
-			// Unset any icons which don't have an image
-			foreach ( $footericons as &$footerIconsBlock ) {
-				foreach ( $footerIconsBlock as $footerIconKey => $footerIcon ) {
-					if ( !is_string( $footerIcon ) && !isset( $footerIcon['src'] ) ) {
-						unset( $footerIconsBlock[$footerIconKey] );
-					}
-				}
-			}
-			// Redo removal of any empty blocks
-			foreach ( $footericons as $footerIconsKey => &$footerIconsBlock ) {
-				if ( count( $footerIconsBlock ) <= 0 ) {
-					unset( $footericons[$footerIconsKey] );
-				}
-			}
-		} elseif ( $option == 'nocopyright' ) {
-			unset( $footericons['copyright']['copyright'] );
-			if ( count( $footericons['copyright'] ) <= 0 ) {
-				unset( $footericons['copyright'] );
-			}
-		}
-
-		return $footericons;
-	}
-
-	/**
-	 * Output the basic end-page trail including bottomscripts, reporttime, and
-	 * debug stuff. This should be called right before outputting the closing
-	 * body and html tags.
-	 */
-	function printTrail() { ?>
-<?php echo MWDebug::getDebugHTML( $this->getSkin()->getContext() ); ?>
-<?php $this->html( 'bottomscripts' ); /* JS call to runBodyOnloadHook */ ?>
-<?php $this->html( 'reporttime' ) ?>
-<?php
 	}
 }

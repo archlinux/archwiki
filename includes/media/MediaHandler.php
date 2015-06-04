@@ -162,7 +162,7 @@ abstract class MediaHandler {
 	 */
 	static function getMetadataVersion() {
 		$version = array( '2' ); // core metadata version
-		wfRunHooks( 'GetMetadataVersion', array( &$version ) );
+		Hooks::run( 'GetMetadataVersion', array( &$version ) );
 
 		return implode( ';', $version );
 	}
@@ -507,9 +507,10 @@ abstract class MediaHandler {
 	 * to some standard. That makes it possible to do things like visual
 	 * indication of grouped and chained streams in ogg container files.
 	 * @param File $image
+	 * @param bool|IContextSource $context Context to use (optional)
 	 * @return array|bool
 	 */
-	function formatMetadata( $image ) {
+	function formatMetadata( $image, $context = false ) {
 		return false;
 	}
 
@@ -520,15 +521,16 @@ abstract class MediaHandler {
 	 * This is used by the media handlers that use the FormatMetadata class
 	 *
 	 * @param array $metadataArray Metadata array
+	 * @param bool|IContextSource $context Context to use (optional)
 	 * @return array Array for use displaying metadata.
 	 */
-	function formatMetadataHelper( $metadataArray ) {
+	function formatMetadataHelper( $metadataArray, $context = false ) {
 		$result = array(
 			'visible' => array(),
 			'collapsed' => array()
 		);
 
-		$formatted = FormatMetadata::getFormattedData( $metadataArray );
+		$formatted = FormatMetadata::getFormattedData( $metadataArray, $context );
 		// Sort fields into visible and collapsed
 		$visibleFields = $this->visibleMetadataFields();
 		foreach ( $formatted as $name => $value ) {
@@ -637,7 +639,7 @@ abstract class MediaHandler {
 	 */
 	static function getGeneralLongDesc( $file ) {
 		return wfMessage( 'file-info' )->sizeParams( $file->getSize() )
-			->params( $file->getMimeType() )->parse();
+			->params( '<span class="mime-type">' . $file->getMimeType() . '</span>' )->parse();
 	}
 
 	/**
@@ -858,5 +860,27 @@ abstract class MediaHandler {
 	 */
 	public function sanitizeParamsForBucketing( $params ) {
 		return $params;
+	}
+
+	/**
+	 * Gets configuration for the file warning message. Return value of
+	 * the following structure:
+	 *   array(
+	 *     'module' => 'example.filewarning.messages', // Required, module with messages loaded for the client
+	 *     'messages' => array( // Required, array of names of messages
+	 *       'main' => 'example-filewarning-main', // Required, main warning message
+	 *       'header' => 'example-filewarning-header', // Optional, header for warning dialog
+	 *       'footer' => 'example-filewarning-footer', // Optional, footer for warning dialog
+	 *       'info' => 'example-filewarning-info', // Optional, text for more-information link (see below)
+	 *     ),
+	 *     'link' => 'http://example.com', // Optional, link for more information
+	 *   )
+	 *
+	 * Returns null if no warning is necessary.
+	 * @param File $file
+	 * @return array|null
+	 */
+	public function getWarningConfig( $file ) {
+		return null;
 	}
 }

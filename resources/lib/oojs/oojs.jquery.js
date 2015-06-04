@@ -1,12 +1,12 @@
 /*!
- * OOjs v1.1.1 optimised for jQuery
+ * OOjs v1.1.6 optimised for jQuery
  * https://www.mediawiki.org/wiki/OOjs
  *
- * Copyright 2011-2014 OOjs Team and other contributors.
+ * Copyright 2011-2015 OOjs Team and other contributors.
  * Released under the MIT license
  * http://oojs.mit-license.org
  *
- * Date: 2014-09-11T00:40:09Z
+ * Date: 2015-03-19T00:42:55Z
  */
 ( function ( global ) {
 
@@ -20,6 +20,7 @@ var
 	 * @singleton
 	 */
 	oo = {},
+	// Optimisation: Local reference to Object.prototype.hasOwnProperty
 	hasOwn = oo.hasOwnProperty,
 	toString = oo.toString;
 
@@ -159,6 +160,64 @@ oo.mixinClass = function ( targetFn, originFn ) {
 /* Object Methods */
 
 /**
+ * Get a deeply nested property of an object using variadic arguments, protecting against
+ * undefined property errors.
+ *
+ * `quux = oo.getProp( obj, 'foo', 'bar', 'baz' );` is equivalent to `quux = obj.foo.bar.baz;`
+ * except that the former protects against JS errors if one of the intermediate properties
+ * is undefined. Instead of throwing an error, this function will return undefined in
+ * that case.
+ *
+ * @param {Object} obj
+ * @param {Mixed...} [keys]
+ * @return obj[arguments[1]][arguments[2]].... or undefined
+ */
+oo.getProp = function ( obj ) {
+	var i,
+		retval = obj;
+	for ( i = 1; i < arguments.length; i++ ) {
+		if ( retval === undefined || retval === null ) {
+			// Trying to access a property of undefined or null causes an error
+			return undefined;
+		}
+		retval = retval[arguments[i]];
+	}
+	return retval;
+};
+
+/**
+ * Set a deeply nested property of an object using variadic arguments, protecting against
+ * undefined property errors.
+ *
+ * `oo.setProp( obj, 'foo', 'bar', 'baz' );` is equivalent to `obj.foo.bar = baz;` except that
+ * the former protects against JS errors if one of the intermediate properties is
+ * undefined. Instead of throwing an error, undefined intermediate properties will be
+ * initialized to an empty object. If an intermediate property is not an object, or if obj itself
+ * is not an object, this function will silently abort.
+ *
+ * @param {Object} obj
+ * @param {Mixed...} [keys]
+ * @param {Mixed} [value]
+ */
+oo.setProp = function ( obj ) {
+	var i,
+		prop = obj;
+	if ( Object( obj ) !== obj ) {
+		return;
+	}
+	for ( i = 1; i < arguments.length - 2; i++ ) {
+		if ( prop[arguments[i]] === undefined ) {
+			prop[arguments[i]] = {};
+		}
+		if ( Object( prop[arguments[i]] ) !== prop[arguments[i]] ) {
+			return;
+		}
+		prop = prop[arguments[i]];
+	}
+	prop[arguments[arguments.length - 2]] = arguments[arguments.length - 1];
+};
+
+/**
  * Create a new object that is an instance of the same
  * constructor as the input, inherits from the same object
  * and contains the same own properties.
@@ -228,7 +287,8 @@ oo.getObjectValues = function ( obj ) {
  *
  * @param {Object|undefined|null} a First object to compare
  * @param {Object|undefined|null} b Second object to compare
- * @param {boolean} [asymmetrical] Whether to check only that b contains values from a
+ * @param {boolean} [asymmetrical] Whether to check only that a's values are equal to b's
+ *  (i.e. a is a subset of b)
  * @return {boolean} If the objects contain the same values as each other
  */
 oo.compare = function ( a, b, asymmetrical ) {
@@ -241,10 +301,16 @@ oo.compare = function ( a, b, asymmetrical ) {
 	a = a || {};
 	b = b || {};
 
+	if ( typeof a.nodeType === 'number' && typeof a.isEqualNode === 'function' ) {
+		return a.isEqualNode( b );
+	}
+
 	for ( k in a ) {
-		if ( !hasOwn.call( a, k ) ) {
-			// Support es3-shim: Without this filter, comparing [] to {} will be false in ES3
+		if ( !hasOwn.call( a, k ) || a[k] === undefined || a[k] === b[k] ) {
+			// Support es3-shim: Without the hasOwn filter, comparing [] to {} will be false in ES3
 			// because the shimmed "forEach" is enumerable and shows up in Array but not Object.
+			// Also ignore undefined values, because there is no conceptual difference between
+			// a key that is absent and a key that is present but whose value is undefined.
 			continue;
 		}
 
@@ -257,7 +323,7 @@ oo.compare = function ( a, b, asymmetrical ) {
 				( aType === 'string' || aType === 'number' || aType === 'boolean' ) &&
 				aValue !== bValue
 			) ||
-			( aValue === Object( aValue ) && !oo.compare( aValue, bValue, asymmetrical ) ) ) {
+			( aValue === Object( aValue ) && !oo.compare( aValue, bValue, true ) ) ) {
 			return false;
 		}
 	}
@@ -367,6 +433,21 @@ oo.getHash.keySortReplacer = function ( key, val ) {
 	} else {
 		return val;
 	}
+};
+
+/**
+ * Get the unique values of an array, removing duplicates
+ *
+ * @param {Array} arr Array
+ * @return {Array} Unique values in array
+ */
+oo.unique = function ( arr ) {
+	return arr.reduce( function ( result, current ) {
+		if ( result.indexOf( current ) === -1 ) {
+			result.push( current );
+		}
+		return result;
+	}, [] );
 };
 
 /**
@@ -506,11 +587,6 @@ oo.isPlainObject = $.isPlainObject;
 			if ( context === undefined || context === null ) {
 				throw new Error( 'Method name "' + method + '" has no context.' );
 			}
-			if ( !( method in context ) ) {
-				// Technically the method does not need to exist yet: it could be
-				// added before call time. But this probably signals a typo.
-				throw new Error( 'Method not found: "' + method + '"' );
-			}
 			if ( typeof context[method] !== 'function' ) {
 				// Technically the property could be replaced by a function before
 				// call time. But this probably signals a typo.
@@ -565,11 +641,11 @@ oo.isPlainObject = $.isPlainObject;
 	 */
 	oo.EventEmitter.prototype.once = function ( event, listener ) {
 		var eventEmitter = this,
-			listenerWrapper = function () {
-				eventEmitter.off( event, listenerWrapper );
-				listener.apply( eventEmitter, Array.prototype.slice.call( arguments, 0 ) );
+			wrapper = function () {
+				eventEmitter.off( event, wrapper );
+				return listener.apply( this, arguments );
 			};
-		return this.on( event, listenerWrapper );
+		return this.on( event, wrapper );
 	};
 
 	/**
@@ -593,7 +669,7 @@ oo.isPlainObject = $.isPlainObject;
 
 		validateMethod( method, context );
 
-		if ( !( event in this.bindings ) || !this.bindings[event].length ) {
+		if ( !hasOwn.call( this.bindings, event ) || !this.bindings[event].length ) {
 			// No matching bindings
 			return this;
 		}
@@ -630,12 +706,15 @@ oo.isPlainObject = $.isPlainObject;
 	 * @return {boolean} If event was handled by at least one listener
 	 */
 	oo.EventEmitter.prototype.emit = function ( event ) {
-		var i, len, binding, bindings, args, method;
+		var args = [],
+			i, len, binding, bindings, method;
 
-		if ( event in this.bindings ) {
+		if ( hasOwn.call( this.bindings, event ) ) {
 			// Slicing ensures that we don't get tripped up by event handlers that add/remove bindings
 			bindings = this.bindings[event].slice();
-			args = Array.prototype.slice.call( arguments, 1 );
+			for ( i = 1, len = arguments.length; i < len; i++ ) {
+				args.push( arguments[i] );
+			}
 			for ( i = 0, len = bindings.length; i < len; i++ ) {
 				binding = bindings[i];
 				if ( typeof binding.method === 'string' ) {
@@ -849,7 +928,8 @@ oo.Factory.prototype.register = function ( constructor ) {
  * @throws {Error} Unknown object name
  */
 oo.Factory.prototype.create = function ( name ) {
-	var args, obj,
+	var obj, i,
+		args = [],
 		constructor = this.lookup( name );
 
 	if ( !constructor ) {
@@ -857,7 +937,9 @@ oo.Factory.prototype.create = function ( name ) {
 	}
 
 	// Convert arguments to array and shift the first argument (name) off
-	args = Array.prototype.slice.call( arguments, 1 );
+	for ( i = 1; i < arguments.length; i++ ) {
+		args.push( arguments[i] );
+	}
 
 	// We can't use the "new" operator with .apply directly because apply needs a
 	// context. So instead just do what "new" does: create an object that inherits from

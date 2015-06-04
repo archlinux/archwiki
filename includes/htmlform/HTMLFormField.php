@@ -13,6 +13,7 @@ abstract class HTMLFormField {
 	protected $mLabel; # String label.  Set on construction
 	protected $mID;
 	protected $mClass = '';
+	protected $mVFormClass = '';
 	protected $mHelpClass = false;
 	protected $mDefault;
 	protected $mOptions = false;
@@ -126,6 +127,7 @@ abstract class HTMLFormField {
 	 * @param array $alldata
 	 * @param array $params
 	 * @return bool
+	 * @throws MWException
 	 */
 	protected function isHiddenRecurse( array $alldata, array $params ) {
 		$origParams = $params;
@@ -217,7 +219,7 @@ abstract class HTMLFormField {
 				default:
 					throw new MWException( "Unknown operation" );
 			}
-		} catch ( MWException $ex ) {
+		} catch ( Exception $ex ) {
 			throw new MWException(
 				"Invalid hide-if specification for $this->mName: " .
 				$ex->getMessage() . " in " . var_export( $origParams, true ),
@@ -343,6 +345,10 @@ abstract class HTMLFormField {
 	function __construct( $params ) {
 		$this->mParams = $params;
 
+		if ( isset( $params['parent'] ) && $params['parent'] instanceof HTMLForm ) {
+			$this->mParent = $params['parent'];
+		}
+
 		# Generate the label from a message, if possible
 		if ( isset( $params['label-message'] ) ) {
 			$msgInfo = $params['label-message'];
@@ -354,7 +360,7 @@ abstract class HTMLFormField {
 				$msgInfo = array();
 			}
 
-			$this->mLabel = wfMessage( $msg, $msgInfo )->parse();
+			$this->mLabel = $this->msg( $msg, $msgInfo )->parse();
 		} elseif ( isset( $params['label'] ) ) {
 			if ( $params['label'] === '&#160;' ) {
 				// Apparently some things set &nbsp directly and in an odd format
@@ -507,10 +513,7 @@ abstract class HTMLFormField {
 			array( 'class' => $outerDivClass ) + $cellAttributes,
 			$inputHtml . "\n$errors"
 		);
-		$divCssClasses = array( "mw-htmlform-field-$fieldType", $this->mClass, $errorClass );
-		if ( $this->mParent->isVForm() ) {
-			$divCssClasses[] = 'mw-ui-vform-field';
-		}
+		$divCssClasses = array( "mw-htmlform-field-$fieldType", $this->mClass, $this->mVFormClass, $errorClass );
 
 		$wrapperAttributes = array(
 			'class' => $divCssClasses,
@@ -545,6 +548,41 @@ abstract class HTMLFormField {
 		$html .= $label;
 		$html .= $inputHtml;
 		$html .= $helptext;
+
+		return $html;
+	}
+
+	/**
+	 * Get the complete field for the input, including help text,
+	 * labels, and whatever. Fall back from 'vform' to 'div' when not overridden.
+	 *
+	 * @since 1.25
+	 * @param string $value The value to set the input to.
+	 * @return string Complete HTML field.
+	 */
+	public function getVForm( $value ) {
+		// Ewwww
+		$this->mVFormClass = ' mw-ui-vform-field';
+		return $this->getDiv( $value );
+	}
+
+	/**
+	 * Get the complete field as an inline element.
+	 * @since 1.25
+	 * @param string $value The value to set the input to.
+	 * @return string Complete HTML inline element
+	 */
+	public function getInline( $value ) {
+		list( $errors, $errorClass ) = $this->getErrorsAndErrorClass( $value );
+		$inputHtml = $this->getInputHTML( $value );
+		$helptext = $this->getHelpTextHtmlDiv( $this->getHelpText() );
+		$cellAttributes = array();
+		$label = $this->getLabelHtml( $cellAttributes );
+
+		$html = "\n" . $errors .
+			$label . '&#160;' .
+			$inputHtml .
+			$helptext;
 
 		return $html;
 	}

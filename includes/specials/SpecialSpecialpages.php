@@ -45,6 +45,7 @@ class SpecialSpecialpages extends UnlistedSpecialPage {
 			return;
 		}
 
+		$this->addHelpLink( 'Help:Special pages' );
 		$this->outputPageList( $groups );
 	}
 

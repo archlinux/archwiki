@@ -88,10 +88,16 @@ class ApiQueryGadgetCategories extends ApiQueryBase {
 		);
 	}
 
+	/**
+	 * @deprecated since MediaWiki core 1.25
+	 */
 	public function getDescription() {
 		return 'Returns a list of gadget categories';
 	}
 
+	/**
+	 * @deprecated since MediaWiki core 1.25
+	 */
 	public function getParamDescription() {
 		return array(
 			'prop' => array(
@@ -104,6 +110,9 @@ class ApiQueryGadgetCategories extends ApiQueryBase {
 		);
 	}
 
+	/**
+	 * @deprecated since MediaWiki core 1.25
+	 */
 	public function getExamples() {
 		$params = $this->getAllowedParams();
 		$allProps = implode( '|', $params['prop'][ApiBase::PARAM_TYPE] );
@@ -116,7 +125,15 @@ class ApiQueryGadgetCategories extends ApiQueryBase {
 		);
 	}
 
-	public function getVersion() {
-		return __CLASS__ . ': $Id$';
+	/**
+	 * @see ApiBase::getExamplesMessages()
+	 */
+	protected function getExamplesMessages() {
+		return array(
+			'action=query&list=gadgetcategories'
+				=> 'apihelp-query+gadgetcategories-example-1',
+			'action=query&list=gadgetcategories&gcnames=foo|bar&gcprop=name|title|members'
+				=> 'apihelp-query+gadgetcategories-example-2',
+		);
 	}
 }

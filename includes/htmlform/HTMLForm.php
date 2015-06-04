@@ -115,6 +115,8 @@ class HTMLForm extends ContextSource {
 		'info' => 'HTMLInfoField',
 		'selectorother' => 'HTMLSelectOrOtherField',
 		'selectandother' => 'HTMLSelectAndOtherField',
+		'namespaceselect' => 'HTMLSelectNamespace',
+		'tagfilter' => 'HTMLTagFilter',
 		'submit' => 'HTMLSubmitField',
 		'hidden' => 'HTMLHiddenField',
 		'edittools' => 'HTMLEditTools',
@@ -205,8 +207,40 @@ class HTMLForm extends ContextSource {
 		'table',
 		'div',
 		'raw',
+		'inline',
+	);
+
+	/**
+	 * Available formats in which to display the form
+	 * @var array
+	 */
+	protected $availableSubclassDisplayFormats = array(
 		'vform',
 	);
+
+	/**
+	 * Construct a HTMLForm object for given display type. May return a HTMLForm subclass.
+	 *
+	 * @throws MWException When the display format requested is not known
+	 * @param string $displayFormat
+	 * @param mixed $arguments... Additional arguments to pass to the constructor.
+	 * @return HTMLForm
+	 */
+	public static function factory( $displayFormat/*, $arguments...*/ ) {
+		$arguments = func_get_args();
+		array_shift( $arguments );
+
+		switch ( $displayFormat ) {
+			case 'vform':
+				$reflector = new ReflectionClass( 'VFormHTMLForm' );
+				return $reflector->newInstanceArgs( $arguments );
+			default:
+				$reflector = new ReflectionClass( 'HTMLForm' );
+				$form = $reflector->newInstanceArgs( $arguments );
+				$form->setDisplayFormat( $displayFormat );
+				return $form;
+		}
+	}
 
 	/**
 	 * Build a new HTMLForm from an array of field attributes
@@ -231,6 +265,11 @@ class HTMLForm extends ContextSource {
 			$this->mMessagePrefix = $context;
 		}
 
+		// Evil hack for mobile :(
+		if ( !$this->getConfig()->get( 'HTMLFormAllowTableFormat' ) && $this->displayFormat === 'table' ) {
+			$this->displayFormat = 'div';
+		}
+
 		// Expand out into a tree.
 		$loadedDescriptor = array();
 		$this->mFlatFields = array();
@@ -244,15 +283,7 @@ class HTMLForm extends ContextSource {
 				$this->mUseMultipart = true;
 			}
 
-			$field = self::loadInputFromParameters( $fieldname, $info );
-			// FIXME During field's construct, the parent form isn't available!
-			// could add a 'parent' name-value to $info, could add a third parameter.
-			$field->mParent = $this;
-
-			// vform gets too much space if empty labels generate HTML.
-			if ( $this->isVForm() ) {
-				$field->setShowEmptyLabel( false );
-			}
+			$field = static::loadInputFromParameters( $fieldname, $info, $this );
 
 			$setSection =& $loadedDescriptor;
 			if ( $section ) {
@@ -287,10 +318,24 @@ class HTMLForm extends ContextSource {
 	 * @return HTMLForm $this for chaining calls (since 1.20)
 	 */
 	public function setDisplayFormat( $format ) {
+		if (
+			in_array( $format, $this->availableSubclassDisplayFormats ) ||
+			in_array( $this->displayFormat, $this->availableSubclassDisplayFormats )
+		) {
+			throw new MWException( 'Cannot change display format after creation, ' .
+				'use HTMLForm::factory() instead' );
+		}
+
 		if ( !in_array( $format, $this->availableDisplayFormats ) ) {
 			throw new MWException( 'Display format must be one of ' .
 				print_r( $this->availableDisplayFormats, true ) );
 		}
+
+		// Evil hack for mobile :(
+		if ( !$this->getConfig()->get( 'HTMLFormAllowTableFormat' ) && $format === 'table' ) {
+			$format = 'div';
+		}
+
 		$this->displayFormat = $format;
 
 		return $this;
@@ -302,20 +347,18 @@ class HTMLForm extends ContextSource {
 	 * @return string
 	 */
 	public function getDisplayFormat() {
-		$format = $this->displayFormat;
-		if ( !$this->getConfig()->get( 'HTMLFormAllowTableFormat' ) && $format === 'table' ) {
-			$format = 'div';
-		}
-		return $format;
+		return $this->displayFormat;
 	}
 
 	/**
 	 * Test if displayFormat is 'vform'
 	 * @since 1.22
+	 * @deprecated since 1.25
 	 * @return bool
 	 */
 	public function isVForm() {
-		return $this->displayFormat === 'vform';
+		wfDeprecated( __METHOD__, '1.25' );
+		return false;
 	}
 
 	/**
@@ -338,7 +381,7 @@ class HTMLForm extends ContextSource {
 		if ( isset( $descriptor['class'] ) ) {
 			$class = $descriptor['class'];
 		} elseif ( isset( $descriptor['type'] ) ) {
-			$class = self::$typeMappings[$descriptor['type']];
+			$class = static::$typeMappings[$descriptor['type']];
 			$descriptor['class'] = $class;
 		} else {
 			$class = null;
@@ -357,14 +400,18 @@ class HTMLForm extends ContextSource {
 	 *
 	 * @param string $fieldname Name of the field
 	 * @param array $descriptor Input Descriptor, as described above
+	 * @param HTMLForm|null $parent Parent instance of HTMLForm
 	 *
 	 * @throws MWException
 	 * @return HTMLFormField Instance of a subclass of HTMLFormField
 	 */
-	public static function loadInputFromParameters( $fieldname, $descriptor ) {
-		$class = self::getClassFromDescriptor( $fieldname, $descriptor );
+	public static function loadInputFromParameters( $fieldname, $descriptor, HTMLForm $parent = null ) {
+		$class = static::getClassFromDescriptor( $fieldname, $descriptor );
 
 		$descriptor['fieldname'] = $fieldname;
+		if ( $parent ) {
+			$descriptor['parent'] = $parent;
+		}
 
 		# @todo This will throw a fatal error whenever someone try to use
 		# 'class' to feed a CSS class instead of 'cssclass'. Would be
@@ -787,14 +834,6 @@ class HTMLForm extends ContextSource {
 		# For good measure (it is the default)
 		$this->getOutput()->preventClickjacking();
 		$this->getOutput()->addModules( 'mediawiki.htmlform' );
-		if ( $this->isVForm() ) {
-			$this->getOutput()->addModuleStyles( array(
-				'mediawiki.ui',
-				'mediawiki.ui.button',
-			) );
-			// @todo Should vertical form set setWrapperLegend( false )
-			// to hide ugly fieldsets?
-		}
 
 		$html = ''
 			. $this->getErrors( $submitResult )
@@ -810,18 +849,10 @@ class HTMLForm extends ContextSource {
 	}
 
 	/**
-	 * Wrap the form innards in an actual "<form>" element
-	 *
-	 * @param string $html HTML contents to wrap.
-	 *
-	 * @return string Wrapped HTML.
+	 * Get HTML attributes for the `<form>` tag.
+	 * @return array
 	 */
-	function wrapForm( $html ) {
-
-		# Include a <fieldset> wrapper for style, if requested.
-		if ( $this->mWrapperLegend !== false ) {
-			$html = Xml::fieldset( $this->mWrapperLegend, $html );
-		}
+	protected function getFormAttributes() {
 		# Use multipart/form-data
 		$encType = $this->mUseMultipart
 			? 'multipart/form-data'
@@ -836,12 +867,23 @@ class HTMLForm extends ContextSource {
 		if ( !empty( $this->mId ) ) {
 			$attribs['id'] = $this->mId;
 		}
+		return $attribs;
+	}
 
-		if ( $this->isVForm() ) {
-			array_push( $attribs['class'], 'mw-ui-vform', 'mw-ui-container' );
+	/**
+	 * Wrap the form innards in an actual "<form>" element
+	 *
+	 * @param string $html HTML contents to wrap.
+	 *
+	 * @return string Wrapped HTML.
+	 */
+	function wrapForm( $html ) {
+		# Include a <fieldset> wrapper for style, if requested.
+		if ( $this->mWrapperLegend !== false ) {
+			$html = Xml::fieldset( $this->mWrapperLegend, $html );
 		}
 
-		return Html::rawElement( 'form', $attribs, $html );
+		return Html::rawElement( 'form', $this->getFormAttributes(), $html );
 	}
 
 	/**
@@ -897,19 +939,8 @@ class HTMLForm extends ContextSource {
 
 			$attribs['class'] = array( 'mw-htmlform-submit' );
 
-			if ( $this->isVForm() || $useMediaWikiUIEverywhere ) {
+			if ( $useMediaWikiUIEverywhere ) {
 				array_push( $attribs['class'], 'mw-ui-button', $this->mSubmitModifierClass );
-			}
-
-			if ( $this->isVForm() ) {
-				// mw-ui-block is necessary because the buttons aren't necessarily in an
-				// immediate child div of the vform.
-				// @todo Let client specify if the primary submit button is progressive or destructive
-				array_push(
-					$attribs['class'],
-					'mw-ui-big',
-					'mw-ui-block'
-				);
 			}
 
 			$buttons .= Xml::submitButton( $this->getSubmitText(), $attribs ) . "\n";
@@ -920,7 +951,8 @@ class HTMLForm extends ContextSource {
 				'input',
 				array(
 					'type' => 'reset',
-					'value' => $this->msg( 'htmlform-reset' )->text()
+					'value' => $this->msg( 'htmlform-reset' )->text(),
+					'class' => ( $useMediaWikiUIEverywhere ? 'mw-ui-button' : null ),
 				)
 			) . "\n";
 		}
@@ -940,15 +972,9 @@ class HTMLForm extends ContextSource {
 				$attrs['id'] = $button['id'];
 			}
 
-			if ( $this->isVForm() || $useMediaWikiUIEverywhere ) {
-				if ( isset( $attrs['class'] ) ) {
-					$attrs['class'] .= ' mw-ui-button';
-				} else {
-					$attrs['class'] = 'mw-ui-button';
-				}
-				if ( $this->isVForm() ) {
-					$attrs['class'] .= ' mw-ui-big mw-ui-block';
-				}
+			if ( $useMediaWikiUIEverywhere ) {
+				$attrs['class'] = isset( $attrs['class'] ) ? (array)$attrs['class'] : array();
+				$attrs['class'][] = 'mw-ui-button';
 			}
 
 			$buttons .= Html::element( 'input', $attrs ) . "\n";
@@ -956,13 +982,6 @@ class HTMLForm extends ContextSource {
 
 		$html = Html::rawElement( 'span',
 			array( 'class' => 'mw-htmlform-submit-buttons' ), "\n$buttons" ) . "\n";
-
-		// Buttons are top-level form elements in table and div layouts,
-		// but vform wants all elements inside divs to get spaced-out block
-		// styling.
-		if ( $this->mShowSubmit && $this->isVForm() ) {
-			$html = Html::rawElement( 'div', null, "\n$html" ) . "\n";
-		}
 
 		return $html;
 	}
@@ -1007,7 +1026,7 @@ class HTMLForm extends ContextSource {
 	 *
 	 * @return string HTML, a "<ul>" list of errors
 	 */
-	public static function formatErrors( $errors ) {
+	public function formatErrors( $errors ) {
 		$errorstr = '';
 
 		foreach ( $errors as $error ) {
@@ -1021,7 +1040,7 @@ class HTMLForm extends ContextSource {
 			$errorstr .= Html::rawElement(
 				'li',
 				array(),
-				wfMessage( $msg, $error )->parse()
+				$this->msg( $msg, $error )->parse()
 			);
 		}
 
@@ -1045,10 +1064,18 @@ class HTMLForm extends ContextSource {
 
 	/**
 	 * Identify that the submit button in the form has a destructive action
-	 *
+	 * @since 1.24
 	 */
 	public function setSubmitDestructive() {
 		$this->mSubmitModifierClass = 'mw-ui-destructive';
+	}
+
+	/**
+	 * Identify that the submit button in the form has a progressive action
+	 * @since 1.25
+	 */
+	public function setSubmitProgressive() {
+		$this->mSubmitModifierClass = 'mw-ui-progressive';
 	}
 
 	/**
@@ -1268,20 +1295,8 @@ class HTMLForm extends ContextSource {
 		$subsectionHtml = '';
 		$hasLabel = false;
 
-		switch ( $displayFormat ) {
-			case 'table':
-				$getFieldHtmlMethod = 'getTableRow';
-				break;
-			case 'vform':
-				// Close enough to a div.
-				$getFieldHtmlMethod = 'getDiv';
-				break;
-			case 'div':
-				$getFieldHtmlMethod = 'getDiv';
-				break;
-			default:
-				$getFieldHtmlMethod = 'get' . ucfirst( $displayFormat );
-		}
+		// Conveniently, PHP method names are case-insensitive.
+		$getFieldHtmlMethod = $displayFormat == 'table' ? 'getTableRow' : ( 'get' . $displayFormat );
 
 		foreach ( $fields as $key => $value ) {
 			if ( $value instanceof HTMLFormField ) {
@@ -1353,7 +1368,9 @@ class HTMLForm extends ContextSource {
 				$html = Html::rawElement( 'table',
 						$attribs,
 						Html::rawElement( 'tbody', array(), "\n$html\n" ) ) . "\n";
-			} elseif ( $displayFormat === 'div' || $displayFormat === 'vform' ) {
+			} elseif ( $displayFormat === 'inline' ) {
+				$html = Html::rawElement( 'span', $attribs, "\n$html\n" );
+			} else {
 				$html = Html::rawElement( 'div', $attribs, "\n$html\n" );
 			}
 		}

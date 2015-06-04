@@ -129,16 +129,17 @@ div#mw-panel {
 				}
 			}
 		}
+	}
 
-		&.first {
-			background-image: none;
-			margin-top: 0;
-			h3 {
-				display: none;
-			}
-			div.body {
-				margin-left: 0.5em;
-			}
+	/* First sidebar portlet. Not using :first-of-type for IE<=8 support. */
+	#p-logo + div.portal {
+		background-image: none;
+		margin-top: 0;
+		h3 {
+			display: none;
+		}
+		div.body {
+			margin-left: 0.5em;
 		}
 	}
 }

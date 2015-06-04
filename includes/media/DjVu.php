@@ -221,11 +221,9 @@ class DjVuHandler extends ImageHandler {
 			$cmd .= " | {$wgDjvuPostProcessor}";
 		}
 		$cmd .= ' > ' . wfEscapeShellArg( $dstPath ) . ') 2>&1';
-		wfProfileIn( 'ddjvu' );
 		wfDebug( __METHOD__ . ": $cmd\n" );
 		$retval = '';
 		$err = wfShellExec( $cmd, $retval );
-		wfProfileOut( 'ddjvu' );
 
 		$removed = $this->removeBadFile( $dstPath, $retval );
 		if ( $retval != 0 || $removed ) {
@@ -266,6 +264,7 @@ class DjVuHandler extends ImageHandler {
 	 *
 	 * @param File $file The DjVu file in question
 	 * @return string XML metadata as a string.
+	 * @throws MWException
 	 */
 	private function getUnserializedMetadata( File $file ) {
 		$metadata = $file->getMetadata();
@@ -312,7 +311,6 @@ class DjVuHandler extends ImageHandler {
 
 			return false;
 		}
-		wfProfileIn( __METHOD__ );
 
 		wfSuppressWarnings();
 		try {
@@ -338,7 +336,6 @@ class DjVuHandler extends ImageHandler {
 			wfDebug( "Bogus multipage XML metadata on '{$image->getName()}'\n" );
 		}
 		wfRestoreWarnings();
-		wfProfileOut( __METHOD__ );
 		if ( $gettext ) {
 			return $image->djvuTextTree;
 		} else {

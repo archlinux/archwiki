@@ -77,7 +77,7 @@ class UploadFromChunks extends UploadFromFile {
 
 		$this->verifyChunk();
 		// Create a local stash target
-		$this->mLocalFile = parent::stashFile();
+		$this->mLocalFile = parent::stashFile( $user );
 		// Update the initial file offset (based on file size)
 		$this->mOffset = $this->mLocalFile->getSize();
 		$this->mFileKey = $this->mLocalFile->getFileKey();
@@ -168,20 +168,6 @@ class UploadFromChunks extends UploadFromFile {
 		wfDebugLog( 'fileconcatenate', "Stashed combined file ($i chunks) in $tAmount seconds." );
 
 		return $status;
-	}
-
-	/**
-	 * Perform the upload, then remove the temp copy afterward
-	 * @param string $comment
-	 * @param string $pageText
-	 * @param bool $watch
-	 * @param User $user
-	 * @return Status
-	 */
-	public function performUpload( $comment, $pageText, $watch, $user ) {
-		$rv = parent::performUpload( $comment, $pageText, $watch, $user );
-
-		return $rv;
 	}
 
 	/**
@@ -303,10 +289,10 @@ class UploadFromChunks extends UploadFromFile {
 	}
 
 	/**
-	 * Gets the current offset in fromt the stashedupload table
+	 * Get the offset at which the next uploaded chunk will be appended to
 	 * @return int Current byte offset of the chunk file set
 	 */
-	private function getOffset() {
+	public function getOffset() {
 		if ( $this->mOffset !== null ) {
 			return $this->mOffset;
 		}

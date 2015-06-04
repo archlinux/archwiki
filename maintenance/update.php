@@ -26,11 +26,6 @@
  * @ingroup Maintenance
  */
 
-if ( !function_exists( 'version_compare' ) || ( version_compare( PHP_VERSION, '5.3.2' ) < 0 ) ) {
-	require dirname( __FILE__ ) . '/../includes/PHPVersionError.php';
-	wfPHPVersionError( 'cli' );
-}
-
 $wgUseMasterForMaintenance = true;
 require_once __DIR__ . '/Maintenance.php';
 
@@ -56,6 +51,10 @@ class UpdateMediaWiki extends Maintenance {
 			true
 		);
 		$this->addOption( 'force', 'Override when $wgAllowSchemaUpdates disables this script' );
+		$this->addOption(
+			'skip-external-dependencies',
+			'Skips checking whether external dependencies are up to date, mostly for developers'
+		);
 	}
 
 	function getDbType() {
@@ -131,13 +130,23 @@ class UpdateMediaWiki extends Maintenance {
 			wfCountdown( 5 );
 		}
 
+		// Check external dependencies are up to date
+		if ( !$this->hasOption( 'skip-external-dependencies' ) ) {
+			$composerLockUpToDate = $this->runChild( 'CheckComposerLockUpToDate' );
+			$composerLockUpToDate->execute();
+		} else {
+			$this->output(
+				"Skipping checking whether external dependencies are up to date, proceed at your own risk\n"
+			);
+		}
+
 		# Attempt to connect to the database as a privileged user
 		# This will vomit up an error if there are permissions problems
 		$db = wfGetDB( DB_MASTER );
 
 		$this->output( "Going to run database updates for " . wfWikiID() . "\n" );
 		if ( $db->getType() === 'sqlite' ) {
-			$this->output( "Using SQLite file: '{$db->mDatabaseFile}'\n" );
+			$this->output( "Using SQLite file: '{$db->getDbFilePath()}'\n" );
 		}
 		$this->output( "Depending on the size of your database this may take a while!\n" );
 
@@ -178,11 +187,12 @@ class UpdateMediaWiki extends Maintenance {
 			}
 		}
 
+		$updater->setFileAccess();
 		if ( !$this->hasOption( 'nopurge' ) ) {
 			$updater->purgeCache();
 		}
-		$time2 = new MWTimestamp();
 
+		$time2 = new MWTimestamp();
 		$timeDiff = $time2->diff( $time1 );
 		$this->output( "\nDone in " . $timeDiff->format( "%i:%S" ) . ".\n" );
 	}

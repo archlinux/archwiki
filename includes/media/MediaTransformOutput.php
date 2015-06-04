@@ -348,9 +348,14 @@ class ThumbnailImage extends MediaTransformOutput {
 			throw new MWException( __METHOD__ . ' called in the old style' );
 		}
 
-		$alt = empty( $options['alt'] ) ? '' : $options['alt'];
+		$alt = isset( $options['alt'] ) ? $options['alt'] : '';
 
-		$query = empty( $options['desc-query'] ) ? '' : $options['desc-query'];
+		$query = isset( $options['desc-query'] ) ? $options['desc-query'] : '';
+
+		$attribs = array(
+			'alt' => $alt,
+			'src' => $this->url,
+		);
 
 		if ( !empty( $options['custom-url-link'] ) ) {
 			$linkAttribs = array( 'href' => $options['custom-url-link'] );
@@ -381,12 +386,10 @@ class ThumbnailImage extends MediaTransformOutput {
 			$linkAttribs = array( 'href' => $this->file->getURL() );
 		} else {
 			$linkAttribs = false;
+			if ( !empty( $options['title'] ) ) {
+				$attribs['title'] = $options['title'];
+			}
 		}
-
-		$attribs = array(
-			'alt' => $alt,
-			'src' => $this->url,
-		);
 
 		if ( empty( $options['no-dimensions'] ) ) {
 			$attribs['width'] = $this->width;
@@ -410,7 +413,7 @@ class ThumbnailImage extends MediaTransformOutput {
 			$attribs['srcset'] = Html::srcSet( $this->responsiveUrls );
 		}
 
-		wfRunHooks( 'ThumbnailBeforeProduceHTML', array( $this, &$attribs, &$linkAttribs ) );
+		Hooks::run( 'ThumbnailBeforeProduceHTML', array( $this, &$attribs, &$linkAttribs ) );
 
 		return $this->linkWrap( $linkAttribs, Xml::element( 'img', $attribs ) );
 	}
@@ -472,5 +475,26 @@ class TransformParameterError extends MediaTransformError {
 			max( isset( $params['width'] ) ? $params['width'] : 0, 120 ),
 			max( isset( $params['height'] ) ? $params['height'] : 0, 120 ),
 			wfMessage( 'thumbnail_invalid_params' )->text() );
+	}
+}
+
+/**
+ * Shortcut class for parameter file size errors
+ *
+ * @ingroup Media
+ * @since 1.25
+ */
+class TransformTooBigImageAreaError extends MediaTransformError {
+	function __construct( $params, $maxImageArea ) {
+		$msg = wfMessage( 'thumbnail_toobigimagearea' );
+
+		parent::__construct( 'thumbnail_error',
+			max( isset( $params['width'] ) ? $params['width'] : 0, 120 ),
+			max( isset( $params['height'] ) ? $params['height'] : 0, 120 ),
+			$msg->rawParams(
+				$msg->getLanguage()->formatComputingNumbers(
+					$maxImageArea, 1000, "size-$1pixel" )
+				)->text()
+			);
 	}
 }

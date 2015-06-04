@@ -47,6 +47,7 @@ class SearchEngine {
 
 	/** @var bool */
 	protected $showSuggestion = true;
+	private $sort = 'relevance';
 
 	/** @var array Feature values */
 	protected $features = array();
@@ -137,7 +138,7 @@ class SearchEngine {
 	public static function getNearMatch( $searchterm ) {
 		$title = self::getNearMatchInternal( $searchterm );
 
-		wfRunHooks( 'SearchGetNearMatchComplete', array( $searchterm, &$title ) );
+		Hooks::run( 'SearchGetNearMatchComplete', array( $searchterm, &$title ) );
 		return $title;
 	}
 
@@ -170,7 +171,7 @@ class SearchEngine {
 		}
 
 		$titleResult = null;
-		if ( !wfRunHooks( 'SearchGetNearMatchBefore', array( $allSearchTerms, &$titleResult ) ) ) {
+		if ( !Hooks::run( 'SearchGetNearMatchBefore', array( $allSearchTerms, &$titleResult ) ) ) {
 			return $titleResult;
 		}
 
@@ -197,7 +198,7 @@ class SearchEngine {
 				return $title;
 			}
 
-			if ( !wfRunHooks( 'SearchAfterNoDirectMatch', array( $term, &$title ) ) ) {
+			if ( !Hooks::run( 'SearchAfterNoDirectMatch', array( $term, &$title ) ) ) {
 				return $title;
 			}
 
@@ -227,7 +228,7 @@ class SearchEngine {
 
 			// Give hooks a chance at better match variants
 			$title = null;
-			if ( !wfRunHooks( 'SearchGetNearMatch', array( $term, &$title ) ) ) {
+			if ( !Hooks::run( 'SearchGetNearMatch', array( $term, &$title ) ) ) {
 				return $title;
 			}
 		}
@@ -310,6 +311,43 @@ class SearchEngine {
 	}
 
 	/**
+	 * Get the valid sort directions.  All search engines support 'relevance' but others
+	 * might support more. The default in all implementations should be 'relevance.'
+	 *
+	 * @since 1.25
+	 * @return array(string) the valid sort directions for setSort
+	 */
+	public function getValidSorts() {
+		return array( 'relevance' );
+	}
+
+	/**
+	 * Set the sort direction of the search results. Must be one returned by
+	 * SearchEngine::getValidSorts()
+	 *
+	 * @since 1.25
+	 * @throws InvalidArgumentException
+	 * @param string $sort sort direction for query result
+	 */
+	public function setSort( $sort ) {
+		if ( !in_array( $sort, $this->getValidSorts() ) ) {
+			throw new InvalidArgumentException( "Invalid sort: $sort. " .
+				"Must be one of: " . implode( ', ', $this->getValidSorts() ) );
+		}
+		$this->sort = $sort;
+	}
+
+	/**
+	 * Get the sort direction of the search results
+	 *
+	 * @since 1.25
+	 * @return string
+	 */
+	public function getSort() {
+		return $this->sort;
+	}
+
+	/**
 	 * Parse some common prefixes: all (search everything)
 	 * or namespace names
 	 *
@@ -356,7 +394,7 @@ class SearchEngine {
 			}
 		}
 
-		wfRunHooks( 'SearchableNamespaces', array( &$arr ) );
+		Hooks::run( 'SearchableNamespaces', array( &$arr ) );
 		return $arr;
 	}
 
@@ -500,22 +538,12 @@ class SearchEngine {
 	/**
 	 * Get OpenSearch suggestion template
 	 *
+	 * @deprecated since 1.25
 	 * @return string
 	 */
 	public static function getOpenSearchTemplate() {
-		global $wgOpenSearchTemplate, $wgCanonicalServer;
-
-		if ( $wgOpenSearchTemplate ) {
-			return $wgOpenSearchTemplate;
-		} else {
-			$ns = implode( '|', SearchEngine::defaultNamespaces() );
-			if ( !$ns ) {
-				$ns = "0";
-			}
-
-			return $wgCanonicalServer . wfScript( 'api' )
-				. '?action=opensearch&search={searchTerms}&namespace=' . $ns;
-		}
+		wfDeprecated( __METHOD__, '1.25' );
+		return ApiOpenSearch::getOpenSearchTemplate( 'application/x-suggestions+json' );
 	}
 
 	/**

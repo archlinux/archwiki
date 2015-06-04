@@ -48,7 +48,7 @@ interface LoadMonitor {
 	 * @param array $serverIndexes
 	 * @param string $wiki
 	 *
-	 * @return array
+	 * @return array Map of (server index => seconds)
 	 */
 	public function getLagTimes( $serverIndexes, $wiki );
 }
@@ -92,8 +92,6 @@ class LoadMonitorMySQL implements LoadMonitor {
 			// Single server only, just return zero without caching
 			return array( 0 => 0 );
 		}
-
-		$section = new ProfileSection( __METHOD__ );
 
 		$expiry = 5;
 		$requestRate = 10;

@@ -148,6 +148,17 @@ h1#firstHeading {
 	margin-bottom: 0;
 }
 
+.mw-indicators {
+	float: right;
+}
+
+.mw-indicator {
+	display: -moz-inline-block;
+	display: inline-block;
+	zoom: 1;
+	*display: inline;
+}
+
 #article p.subtitle, #article p.subpages, #article p.tagline {
 	color: #666666;
 	font-size: 11pt;

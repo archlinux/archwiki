@@ -3,7 +3,8 @@
 		"authors": [
 			"Ktkaushik",
 			"Nayvik",
-			"VASANTH S.N."
+			"VASANTH S.N.",
+			"Omshivaprakash"
 		]
 	},
 	"vector-action-addsection": "ವಿಷಯ ಸೇರಿಸಿ",
@@ -16,5 +17,6 @@
 	"vector-view-edit": "ಸಂಪಾದಿಸಿ",
 	"vector-view-history": "ಇತಿಹಾಸವನ್ನು ನೋಡಿ",
 	"vector-view-view": "ಓದು",
-	"vector-view-viewsource": "ಆಕರ ವೀಕ್ಷಿಸು"
+	"vector-view-viewsource": "ಆಕರ ವೀಕ್ಷಿಸು",
+	"vector-more-actions": "ಇನ್ನಷ್ಟು"
 }

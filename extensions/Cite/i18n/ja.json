@@ -1,0 +1,31 @@
+{
+	"@metadata": {
+		"authors": [
+			"Aotake",
+			"Ficell",
+			"Fryed-peach",
+			"JtFuruhata",
+			"Shirayuki"
+		]
+	},
+	"cite-desc": "引用のためのタグ <nowiki><ref[ name=id]></nowiki> および <nowiki><references/></nowiki> を追加する",
+	"cite_error": "引用エラー: $1",
+	"cite_error_ref_numeric_key": "無効な <code>&lt;ref&gt;</code> タグです。\n名前 (name 属性) に単なる整数は使用できません。説明的なものにしてください",
+	"cite_error_ref_no_key": "無効な <code>&lt;ref&gt;</code> タグです。\n引用句の内容がない場合は名前 (name 属性) が必要です",
+	"cite_error_ref_too_many_keys": "無効な <code>&lt;ref&gt;</code> タグです。\n名前 (name 属性) が無効です (数が多すぎる、など)",
+	"cite_error_ref_no_input": "無効な <code>&lt;ref&gt;</code> タグです。\n名前 (name 属性) がない場合は引用句の内容が必要です",
+	"cite_error_references_invalid_parameters": "無効な <code>&lt;references&gt;</code> タグです。\n引数は指定できません。\n<code>&lt;references /&gt;</code> を使用してください",
+	"cite_error_references_invalid_parameters_group": "無効な <code>&lt;references&gt;</code> タグです。\n使用できる引数は「group」のみです。\n<code>&lt;references /&gt;</code> または <code>&lt;references group=\"...\" /&gt;</code> を使用してください",
+	"cite_error_references_no_backlink_label": "カスタム バックリンク ラベルを使い果たしました。\n<nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki> メッセージでの定義を増やしてください。",
+	"cite_error_no_link_label_group": "グループ「$1」用のカスタム リンク ラベルを使い果たしました。\n<nowiki>[[MediaWiki:$2]]</nowiki> メッセージを編集してラベルの定義を増やしてください。",
+	"cite_error_references_no_text": "無効な <code>&lt;ref&gt;</code> タグです。\n「<code>$1</code>」という名前の引用句に対するテキストが指定されていません",
+	"cite_error_included_ref": "<code>&lt;ref&gt;</code> タグに対応する <code>&lt;/ref&gt;</code> タグが不足しています",
+	"cite_error_group_refs_without_references": "「$1」という名前のグループの <code>&lt;ref&gt;</code> タグがありますが、対応する <code>&lt;references group=\"$1\"/&gt;</code> タグが見つからない、または閉じる <code>&lt;/ref&gt;</code> タグがありません",
+	"cite_error_references_group_mismatch": "<code>&lt;references&gt;</code> の <code>&lt;ref&gt;</code> タグで、group 属性「$1」が重複しています。",
+	"cite_error_references_missing_group": "<code>&lt;references&gt;</code> で定義されている <code>&lt;ref&gt;</code> タグに、先行するテキスト内で使用されていない group 属性「$1」があります。",
+	"cite_error_references_missing_key": "<code>&lt;references&gt;</code> で定義されている <code>&lt;ref&gt;</code> タグ (name=\"$1\") は、先行するテキスト内で使用されていません。",
+	"cite_error_references_no_key": "<code>&lt;references&gt;</code> で定義されている <code>&lt;ref&gt;</code> タグに name 属性がありません。",
+	"cite_error_empty_references_define": "<code>&lt;references&gt;</code> で定義されている <code>&lt;ref&gt;</code> タグ (name=\"$1\") に内容がありません。",
+	"cite_references_link_accessibility_label": "元の位置に戻る",
+	"cite_references_link_many_accessibility_label": "以下の位置に戻る:"
+}

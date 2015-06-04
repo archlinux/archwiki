@@ -32,12 +32,9 @@ class CSSMin {
 	/* Constants */
 
 	/**
-	 * Maximum file size to still qualify for in-line embedding as a data-URI
-	 *
-	 * 24,576 is used because Internet Explorer has a 32,768 byte limit for data URIs,
-	 * which when base64 encoded will result in a 1/3 increase in size.
+	 * Internet Explorer data URI length limit. See encodeImageAsDataURI().
 	 */
-	const EMBED_SIZE_LIMIT = 24576;
+	const DATA_URI_SIZE_LIMIT = 32768;
 	const URL_REGEX = 'url\(\s*[\'"]?(?P<file>[^\?\)\'"]*?)(?P<query>\?[^\)\'"]*?|)[\'"]?\s*\)';
 	const EMBED_REGEX = '\/\*\s*\@embed\s*\*\/';
 	const COMMENT_REGEX = '\/\*.*?\*\/';
@@ -100,33 +97,68 @@ class CSSMin {
 	}
 
 	/**
-	 * Encode an image file as a base64 data URI.
-	 * If the image file has a suitable MIME type and size, encode it as a
-	 * base64 data URI. Return false if the image type is unfamiliar or exceeds
-	 * the size limit.
+	 * Encode an image file as a data URI.
+	 *
+	 * If the image file has a suitable MIME type and size, encode it as a data URI, base64-encoded
+	 * for binary files or just percent-encoded otherwise. Return false if the image type is
+	 * unfamiliar or file exceeds the size limit.
 	 *
 	 * @param string $file Image file to encode.
 	 * @param string|null $type File's MIME type or null. If null, CSSMin will
 	 *     try to autodetect the type.
-	 * @param int|bool $sizeLimit If the size of the target file is greater than
-	 *     this value, decline to encode the image file and return false
-	 *     instead. If $sizeLimit is false, no limit is enforced.
-	 * @return string|bool: Image contents encoded as a data URI or false.
+	 * @param bool $ie8Compat By default, a data URI will only be produced if it can be made short
+	 *     enough to fit in Internet Explorer 8 (and earlier) URI length limit (32,768 bytes). Pass
+	 *     `false` to remove this limitation.
+	 * @return string|bool Image contents encoded as a data URI or false.
 	 */
-	public static function encodeImageAsDataURI( $file, $type = null,
-		$sizeLimit = self::EMBED_SIZE_LIMIT
-	) {
-		if ( $sizeLimit !== false && filesize( $file ) >= $sizeLimit ) {
+	public static function encodeImageAsDataURI( $file, $type = null, $ie8Compat = true ) {
+		// Fast-fail for files that definitely exceed the maximum data URI length
+		if ( $ie8Compat && filesize( $file ) >= self::DATA_URI_SIZE_LIMIT ) {
 			return false;
 		}
+
 		if ( $type === null ) {
 			$type = self::getMimeType( $file );
 		}
 		if ( !$type ) {
 			return false;
 		}
-		$data = base64_encode( file_get_contents( $file ) );
-		return 'data:' . $type . ';base64,' . $data;
+
+		return self::encodeStringAsDataURI( file_get_contents( $file ), $type, $ie8Compat );
+	}
+
+	/**
+	 * Encode file contents as a data URI with chosen MIME type.
+	 *
+	 * The URI will be base64-encoded for binary files or just percent-encoded otherwise.
+	 *
+	 * @since 1.25
+	 *
+	 * @param string $contents File contents to encode.
+	 * @param string $type File's MIME type.
+	 * @param bool $ie8Compat See encodeImageAsDataURI().
+	 * @return string|bool Image contents encoded as a data URI or false.
+	 */
+	public static function encodeStringAsDataURI( $contents, $type, $ie8Compat = true ) {
+		// Try #1: Non-encoded data URI
+		// The regular expression matches ASCII whitespace and printable characters.
+		if ( preg_match( '/^[\r\n\t\x20-\x7e]+$/', $contents ) ) {
+			// Do not base64-encode non-binary files (sane SVGs).
+			// (This often produces longer URLs, but they compress better, yielding a net smaller size.)
+			$uri = 'data:' . $type . ',' . rawurlencode( $contents );
+			if ( !$ie8Compat || strlen( $uri ) < self::DATA_URI_SIZE_LIMIT ) {
+				return $uri;
+			}
+		}
+
+		// Try #2: Encoded data URI
+		$uri = 'data:' . $type . ';base64,' . base64_encode( $contents );
+		if ( !$ie8Compat || strlen( $uri ) < self::DATA_URI_SIZE_LIMIT ) {
+			return $uri;
+		}
+
+		// A data URI couldn't be produced
+		return false;
 	}
 
 	/**
@@ -248,9 +280,12 @@ class CSSMin {
 				);
 
 				if ( $embedData ) {
+					// Remember the occurring MIME types to avoid fallbacks when embedding some files.
+					$mimeTypes = array();
+
 					$ruleWithEmbedded = preg_replace_callback(
 						$pattern,
-						function ( $match ) use ( $embedAll, $local, $remote ) {
+						function ( $match ) use ( $embedAll, $local, $remote, &$mimeTypes ) {
 							$embed = $embedAll || $match['embed'];
 							$embedded = CSSMin::remapOne(
 								$match['file'],
@@ -260,21 +295,35 @@ class CSSMin {
 								$embed
 							);
 
+							$url = $match['file'] . $match['query'];
+							$file = $local . $match['file'];
+							if (
+								!CSSMin::isRemoteUrl( $url ) && !CSSMin::isLocalUrl( $url )
+								&& file_exists( $file )
+							) {
+								$mimeTypes[ CSSMin::getMimeType( $file ) ] = true;
+							}
+
 							return CSSMin::buildUrlValue( $embedded );
 						},
 						$rule
 					);
+
+					// Are all referenced images SVGs?
+					$needsEmbedFallback = $mimeTypes !== array( 'image/svg+xml' => true );
 				}
 
-				if ( $embedData && $ruleWithEmbedded !== $ruleWithRemapped ) {
-					// Build 2 CSS properties; one which uses a base64 encoded data URI in place
-					// of the @embed comment to try and retain line-number integrity, and the
-					// other with a remapped an versioned URL and an Internet Explorer hack
+				if ( !$embedData || $ruleWithEmbedded === $ruleWithRemapped ) {
+					// We're not embedding anything, or we tried to but the file is not embeddable
+					return $ruleWithRemapped;
+				} elseif ( $embedData && $needsEmbedFallback ) {
+					// Build 2 CSS properties; one which uses a data URI in place of the @embed comment, and
+					// the other with a remapped and versioned URL with an Internet Explorer 6 and 7 hack
 					// making it ignored in all browsers that support data URIs
 					return "$ruleWithEmbedded;$ruleWithRemapped!ie";
 				} else {
-					// No reason to repeat twice
-					return $ruleWithRemapped;
+					// Look ma, no fallbacks! This is for files which IE 6 and 7 don't support anyway: SVG.
+					return $ruleWithEmbedded;
 				}
 			}, $source );
 
@@ -286,6 +335,34 @@ class CSSMin {
 
 		return $source;
 
+	}
+
+	/**
+	 * Is this CSS rule referencing a remote URL?
+	 *
+	 * @private Until we require PHP 5.5 and we can access self:: from closures.
+	 * @param string $maybeUrl
+	 * @return bool
+	 */
+	public static function isRemoteUrl( $maybeUrl ) {
+		if ( substr( $maybeUrl, 0, 2 ) === '//' || parse_url( $maybeUrl, PHP_URL_SCHEME ) ) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Is this CSS rule referencing a local URL?
+	 *
+	 * @private Until we require PHP 5.5 and we can access self:: from closures.
+	 * @param string $maybeUrl
+	 * @return bool
+	 */
+	public static function isLocalUrl( $maybeUrl ) {
+		if ( $maybeUrl !== '' && $maybeUrl[0] === '/' && !self::isRemoteUrl( $maybeUrl ) ) {
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -302,22 +379,16 @@ class CSSMin {
 		// The full URL possibly with query, as passed to the 'url()' value in CSS
 		$url = $file . $query;
 
-		// Skip fully-qualified and protocol-relative URLs and data URIs
-		if ( substr( $url, 0, 2 ) === '//' || parse_url( $url, PHP_URL_SCHEME ) ) {
-			return $url;
+		// Expand local URLs with absolute paths like /w/index.php to possibly protocol-relative URL, if
+		// wfExpandUrl() is available. (This will not be the case if we're running outside of MW.)
+		if ( self::isLocalUrl( $url ) && function_exists( 'wfExpandUrl' ) ) {
+			return wfExpandUrl( $url, PROTO_RELATIVE );
 		}
 
-		// URLs with absolute paths like /w/index.php need to be expanded
-		// to absolute URLs but otherwise left alone
-		if ( $url !== '' && $url[0] === '/' ) {
-			// Replace the file path with an expanded (possibly protocol-relative) URL
-			// ...but only if wfExpandUrl() is even available.
-			// This will not be the case if we're running outside of MW
-			if ( function_exists( 'wfExpandUrl' ) ) {
-				return wfExpandUrl( $url, PROTO_RELATIVE );
-			} else {
-				return $url;
-			}
+		// Pass thru fully-qualified and protocol-relative URLs and data URIs, as well as local URLs if
+		// we can't expand them.
+		if ( self::isRemoteUrl( $url ) || self::isLocalUrl( $url ) ) {
+			return $url;
 		}
 
 		if ( $local === false ) {

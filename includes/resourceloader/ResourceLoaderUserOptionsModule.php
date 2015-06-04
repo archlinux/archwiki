@@ -38,14 +38,20 @@ class ResourceLoaderUserOptionsModule extends ResourceLoaderModule {
 	/* Methods */
 
 	/**
+	 * @return array List of module names as strings
+	 */
+	public function getDependencies() {
+		return array( 'user.defaults' );
+	}
+
+	/**
 	 * @param ResourceLoaderContext $context
-	 * @return array|int|mixed
+	 * @return int
 	 */
 	public function getModifiedTime( ResourceLoaderContext $context ) {
 		$hash = $context->getHash();
 		if ( !isset( $this->modifiedTime[$hash] ) ) {
-			global $wgUser;
-			$this->modifiedTime[$hash] = wfTimestamp( TS_UNIX, $wgUser->getTouched() );
+			$this->modifiedTime[$hash] = wfTimestamp( TS_UNIX, $context->getUserObj()->getTouched() );
 		}
 
 		return $this->modifiedTime[$hash];
@@ -56,9 +62,8 @@ class ResourceLoaderUserOptionsModule extends ResourceLoaderModule {
 	 * @return string
 	 */
 	public function getScript( ResourceLoaderContext $context ) {
-		global $wgUser;
 		return Xml::encodeJsCall( 'mw.user.options.set',
-			array( $wgUser->getOptions() ),
+			array( $context->getUserObj()->getOptions( User::GETOPTIONS_EXCLUDE_DEFAULTS ) ),
 			ResourceLoader::inDebugMode()
 		);
 	}

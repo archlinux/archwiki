@@ -1,11 +1,12 @@
 {
-	"name": "mediawiki/wiki-editor",
-		"type": "mediawiki-extension",
-		"description": "WikiEditor is an extendable framework with a set of feature-based modules that improve the user experience of editing.",
-		"homepage": "http://www.mediawiki.org/wiki/Extension:WikiEditor",
-		"license" : "GPL-2.0",
-
-		"require": {
-			"composer/installers" : "*"
-		}
+	"require-dev": {
+		"jakub-onderka/php-parallel-lint": "0.8.0",
+		"mediawiki/mediawiki-codesniffer": "0.1.0"
+	},
+	"scripts": {
+		"test": [
+			"parallel-lint . --exclude vendor",
+			"phpcs --standard=vendor/mediawiki/mediawiki-codesniffer/MediaWiki --extensions=php,php5,inc --ignore=vendor -p ."
+		]
+	}
 }

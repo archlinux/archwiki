@@ -124,7 +124,7 @@ class NewParserTest extends MediaWikiTestCase {
 		$tmpGlobals['wgFileExtensions'][] = 'svg';
 		$tmpGlobals['wgSVGConverter'] = 'rsvg';
 		$tmpGlobals['wgSVGConverters']['rsvg'] =
-			'$path/rsvg-convert -w $width -h $height $input -o $output';
+			'$path/rsvg-convert -w $width -h $height -o $output $input';
 
 		if ( $GLOBALS['wgStyleDirectory'] === false ) {
 			$tmpGlobals['wgStyleDirectory'] = "$IP/skins";
@@ -160,9 +160,6 @@ class NewParserTest extends MediaWikiTestCase {
 		$this->djVuSupport = new DjVuSupport();
 		// Tidy support
 		$this->tidySupport = new TidySupport();
-		// We always set 'wgUseTidy' to false when parsing, but certain
-		// test-running modes still use tidy if available, so ensure
-		// that the tidy-related options are all set to their defaults.
 		$tmpGlobals['wgUseTidy'] = false;
 		$tmpGlobals['wgAlwaysUseTidy'] = false;
 		$tmpGlobals['wgDebugTidy'] = false;
@@ -419,6 +416,7 @@ class NewParserTest extends MediaWikiTestCase {
 			'wgMathDirectory' => $uploadDir . '/math',
 			'wgDefaultLanguageVariant' => $variant,
 			'wgLinkHolderBatchSize' => $linkHolderBatchSize,
+			'wgUseTidy' => isset( $opts['tidy'] ),
 		);
 
 		if ( $config ) {
@@ -434,7 +432,7 @@ class NewParserTest extends MediaWikiTestCase {
 		$this->savedGlobals = array();
 
 		/** @since 1.20 */
-		wfRunHooks( 'ParserTestGlobals', array( &$settings ) );
+		Hooks::run( 'ParserTestGlobals', array( &$settings ) );
 
 		$langObj = Language::factory( $lang );
 		$settings['wgContLang'] = $langObj;
@@ -480,16 +478,16 @@ class NewParserTest extends MediaWikiTestCase {
 	 */
 	protected function getUploadDir() {
 		if ( $this->keepUploads ) {
+			// Don't use getNewTempDirectory() as this is meant to persist
 			$dir = wfTempDir() . '/mwParser-images';
 
 			if ( is_dir( $dir ) ) {
 				return $dir;
 			}
 		} else {
-			$dir = wfTempDir() . "/mwParser-" . mt_rand() . "-images";
+			$dir = $this->getNewTempDirectory();
 		}
 
-		// wfDebug( "Creating upload directory $dir\n" );
 		if ( file_exists( $dir ) ) {
 			wfDebug( "Already exists!\n" );
 
@@ -727,9 +725,18 @@ class NewParserTest extends MediaWikiTestCase {
 					. "Current configuration is:\n\$wgTexvc = '$wgTexvc'" );
 			}
 		}
+
 		if ( isset( $opts['djvu'] ) ) {
 			if ( !$this->djVuSupport->isEnabled() ) {
 				$this->markTestSkipped( "SKIPPED: djvu binaries do not exist or are not executable.\n" );
+			}
+		}
+
+		if ( isset( $opts['tidy'] ) ) {
+			if ( !$this->tidySupport->isEnabled() ) {
+				$this->markTestSkipped( "SKIPPED: tidy extension is not installed.\n" );
+			} else {
+				$options->setTidy( true );
 			}
 		}
 
@@ -753,12 +760,7 @@ class NewParserTest extends MediaWikiTestCase {
 			$output->setTOCEnabled( !isset( $opts['notoc'] ) );
 			$out = $output->getText();
 			if ( isset( $opts['tidy'] ) ) {
-				if ( !$this->tidySupport->isEnabled() ) {
-					$this->markTestSkipped( "SKIPPED: tidy extension is not installed.\n" );
-				} else {
-					$out = MWTidy::tidy( $out );
-					$out = preg_replace( '/\s+$/', '', $out );
-				}
+				$out = preg_replace( '/\s+$/', '', $out );
 			}
 
 			if ( isset( $opts['showtitle'] ) ) {
@@ -767,6 +769,14 @@ class NewParserTest extends MediaWikiTestCase {
 				}
 
 				$out = "$title\n$out";
+			}
+
+			if ( isset( $opts['showindicators'] ) ) {
+				$indicators = '';
+				foreach ( $output->getIndicators() as $id => $content ) {
+					$indicators .= "$id=$content\n";
+				}
+				$out = $indicators . $out;
 			}
 
 			if ( isset( $opts['ill'] ) ) {
@@ -939,7 +949,7 @@ class NewParserTest extends MediaWikiTestCase {
 		$class = $wgParserConf['class'];
 		$parser = new $class( array( 'preprocessorClass' => $preprocessor ) + $wgParserConf );
 
-		wfRunHooks( 'ParserTestParser', array( &$parser ) );
+		Hooks::run( 'ParserTestParser', array( &$parser ) );
 
 		return $parser;
 	}

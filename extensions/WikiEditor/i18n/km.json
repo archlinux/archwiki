@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"គីមស៊្រុន"
+			"គីមស៊្រុន",
+			"Macofe"
 		]
 	},
 	"wikieditor": "អន្តរមុខសំរាប់កែប្រែអត្ថបទវិគីថ្នាក់ខ្ពស់",
@@ -11,8 +12,6 @@
 	"wikieditor-preview-tab": "ការមើលមុន",
 	"wikieditor-preview-changes-tab": "បំលាស់ប្ដូរ",
 	"wikieditor-preview-loading": "កំពុងផ្ទុក…",
-	"wikieditor-previewDialog-tab": "ការមើលមុន",
-	"wikieditor-previewDialog-loading": "កំពុងផ្ទុក…",
 	"wikieditor-publish-preference": "ប្រើការផ្សព្វផ្យាយជាដំណាក់ៗ",
 	"wikieditor-publish-button-publish": "បោះផ្សាយ",
 	"wikieditor-publish-button-cancel": "បោះបង់",
@@ -122,23 +121,6 @@
 	"wikieditor-toolbar-tool-replace-success": "បានធ្វើការជំនួសចំនួន $1។",
 	"wikieditor-toolbar-tool-replace-emptysearch": "អ្នកមិនបានវាយបញ្ចូលពាក្យសំរាប់ស្វែងរកទេ។",
 	"wikieditor-toolbar-section-characters": "តួអក្សរពិសេសៗ",
-	"wikieditor-toolbar-characters-page-latin": "អក្សរឡាតាំង",
-	"wikieditor-toolbar-characters-page-latinextended": "អក្សរឡាតាំងផ្សេងទៀត",
-	"wikieditor-toolbar-characters-page-ipa": "អក្ខរក្រមសំលេងអន្តរជាតិ",
-	"wikieditor-toolbar-characters-page-symbols": "សញ្ញា",
-	"wikieditor-toolbar-characters-page-greek": "អក្សរក្រិច",
-	"wikieditor-toolbar-characters-page-cyrillic": "អក្សរស៊ីរីល",
-	"wikieditor-toolbar-characters-page-arabic": "អក្សរអារ៉ាប់",
-	"wikieditor-toolbar-characters-page-arabicextended": "អក្សរអារ៉ាប់បន្ថែម",
-	"wikieditor-toolbar-characters-page-persian": "អក្សរពែក្ស",
-	"wikieditor-toolbar-characters-page-hebrew": "អក្សរហេប៊្រូ",
-	"wikieditor-toolbar-characters-page-bangla": "អក្សរបេងក្លា",
-	"wikieditor-toolbar-characters-page-telugu": "អក្សរតិលគ្គ",
-	"wikieditor-toolbar-characters-page-sinhala": "អក្សរស៊ិនហាឡា",
-	"wikieditor-toolbar-characters-page-gujarati": "អក្សរគុចរទី",
-	"wikieditor-toolbar-characters-page-thai": "អក្សរថៃ",
-	"wikieditor-toolbar-characters-page-lao": "អក្សរឡាវ",
-	"wikieditor-toolbar-characters-page-khmer": "អក្សរខ្មែរ",
 	"wikieditor-toolbar-section-help": "ជំនួយ",
 	"wikieditor-toolbar-help-heading-description": "ការពិពណ៌នា",
 	"wikieditor-toolbar-help-heading-syntax": "អ្វីដែលអ្នកវាយបញ្ចូល",
@@ -184,8 +166,7 @@
 	"wikieditor-toolbar-help-content-olist-syntax": "# ធាតុរបស់បញ្ជី<br /># ធាតុរបស់បញ្ចី",
 	"wikieditor-toolbar-help-content-olist-result": "<ol><li>ធាតុរបស់បញ្ជី</li><li>ធាតុរបស់បញ្ជី</li></ol>",
 	"wikieditor-toolbar-help-content-file-description": "រូបភាពបង្កប់",
-	"wikieditor-toolbar-help-content-file-syntax": "[[$1:ឧទាហរណ៍.png|thumb|ចំនងជើងក្រោមរូបភាព]]",
-	"wikieditor-toolbar-help-content-file-result": "<div style='width:104px;' class='thumbinner'><a title='ចំណងជើងក្រោមរូបភាព' class='image' href='#'><img height='50' width='100' border='0' class='thumbimage' src='$2/WikiEditor/modules/images/toolbar/example-image.png' alt=''/></a><div class='thumbcaption'><div class='magnify'><a title='ពង្រីក' class='internal' href='#'><img height='11' width='15' alt='' src='$1/common/images/magnify-clip.png'/></a></div>ចំណងជើងក្រោមរូបភាព</div></div>",
+	"wikieditor-toolbar-help-content-file-syntax": "[[$1:ឧទាហរណ៍.png|$2|$3]]",
 	"wikieditor-toolbar-help-content-reference-description": "ឯកសារ​យោង​",
 	"wikieditor-toolbar-help-content-reference-syntax": "អត្ថបទ​ទំព័រ​.&lt;ref name=\"test\"&gt;[http://www.example.org តំណ​ភ្ជាប់], អក្សរ​បន្ថែម​.&lt;/ref&gt;",
 	"wikieditor-toolbar-help-content-reference-result": "អត្ថបទ​ទំព័រ​.<sup><a href='#'>[1]</a></sup>",

@@ -262,11 +262,13 @@ class PostgresInstaller extends DatabaseInstaller {
 		$status = Status::newGood();
 		foreach ( $dbs as $db ) {
 			try {
-				$conn = new DatabasePostgres(
-					$this->getVar( 'wgDBserver' ),
-					$user,
-					$password,
-					$db );
+				$p = array(
+					'host' => $this->getVar( 'wgDBserver' ),
+					'user' => $user,
+					'password' => $password,
+					'dbname' => $db
+				);
+				$conn = DatabaseBase::factory( 'postgres', $p );
 			} catch ( DBConnectionError $error ) {
 				$conn = false;
 				$status->fatal( 'config-pg-test-error', $db,
@@ -627,9 +629,9 @@ class PostgresInstaller extends DatabaseInstaller {
 	public function getGlobalDefaults() {
 		// The default $wgDBmwschema is null, which breaks Postgres and other DBMSes that require
 		// the use of a schema, so we need to set it here
-		return array(
+		return array_merge( parent::getGlobalDefaults(), array(
 			'wgDBmwschema' => 'mediawiki',
-		);
+		) );
 	}
 
 	public function setupPLpgSQL() {

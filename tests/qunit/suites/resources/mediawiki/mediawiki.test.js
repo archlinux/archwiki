@@ -1,6 +1,8 @@
 /*jshint -W024 */
 ( function ( mw, $ ) {
-	var specialCharactersPageName;
+	var specialCharactersPageName,
+		// Can't mock SITENAME since jqueryMsg caches it at load
+		siteName = mw.config.get( 'wgSiteName' );
 
 	// Since QUnitTestResources.php loads both mediawiki and mediawiki.jqueryMsg as
 	// dependencies, this only tests the monkey-patched behavior with the two of them combined.
@@ -55,7 +57,7 @@
 		this.restoreWarnings();
 	} );
 
-	QUnit.test( 'mw.Map', 28, function ( assert ) {
+	QUnit.test( 'mw.Map', 35, function ( assert ) {
 		var arry, conf, funky, globalConf, nummy, someValues;
 
 		conf = new mw.Map();
@@ -86,8 +88,10 @@
 		assert.strictEqual( conf.set( 'constructor', 42 ), true, 'Map.set for key "constructor"' );
 		assert.strictEqual( conf.get( 'constructor' ), 42, 'Map.get for key "constructor"' );
 
-		assert.strictEqual( conf.set( 'ImUndefined', undefined ), true, 'Map.set allows setting value to `undefined`' );
-		assert.equal( conf.get( 'ImUndefined', 'fallback' ), undefined, 'Map.get supports retreiving value of `undefined`' );
+		assert.strictEqual( conf.set( 'undef' ), false, 'Map.set requires explicit value (no undefined default)' );
+
+		assert.strictEqual( conf.set( 'undef', undefined ), true, 'Map.set allows setting value to `undefined`' );
+		assert.equal( conf.get( 'undef', 'fallback' ), undefined, 'Map.get supports retreiving value of `undefined`' );
 
 		assert.strictEqual( conf.set( funky, 'Funky' ), false, 'Map.set returns boolean false if key was invalid (Function)' );
 		assert.strictEqual( conf.set( arry, 'Arry' ), false, 'Map.set returns boolean false if key was invalid (Array)' );
@@ -99,7 +103,7 @@
 		conf.set( String( nummy ), 'I used to be a number' );
 
 		assert.strictEqual( conf.exists( 'doesNotExist' ), false, 'Map.exists where property does not exist' );
-		assert.strictEqual( conf.exists( 'ImUndefined' ), true, 'Map.exists where value is `undefined`' );
+		assert.strictEqual( conf.exists( 'undef' ), true, 'Map.exists where value is `undefined`' );
 		assert.strictEqual( conf.exists( nummy ), false, 'Map.exists where key is invalid but looks like an existing key' );
 
 		// Multiple values at once
@@ -126,12 +130,31 @@
 
 		conf.set( 'globalMapChecker', 'Hi' );
 
-		assert.ok( 'globalMapChecker' in window === false, 'new mw.Map did not store its values in the global window object by default' );
+		assert.ok( ( 'globalMapChecker' in window ) === false, 'Map does not its store values in the window object by default' );
 
 		globalConf = new mw.Map( true );
 		globalConf.set( 'anotherGlobalMapChecker', 'Hello' );
 
-		assert.ok( 'anotherGlobalMapChecker' in window, 'new mw.Map( true ) did store its values in the global window object' );
+		assert.ok( 'anotherGlobalMapChecker' in window, 'global Map stores its values in the window object' );
+
+		assert.equal( globalConf.get( 'anotherGlobalMapChecker' ), 'Hello', 'get value from global Map via get()' );
+		this.suppressWarnings();
+		assert.equal( window.anotherGlobalMapChecker, 'Hello', 'get value from global Map via window object' );
+		this.restoreWarnings();
+
+		// Change value via global Map
+		globalConf.set('anotherGlobalMapChecker', 'Again');
+		assert.equal( globalConf.get( 'anotherGlobalMapChecker' ), 'Again', 'Change in global Map reflected via get()' );
+		this.suppressWarnings();
+		assert.equal( window.anotherGlobalMapChecker, 'Again', 'Change in global Map reflected window object' );
+		this.restoreWarnings();
+
+		// Change value via window object
+		this.suppressWarnings();
+		window.anotherGlobalMapChecker = 'World';
+		assert.equal( window.anotherGlobalMapChecker, 'World', 'Change in window object works' );
+		this.restoreWarnings();
+		assert.equal( globalConf.get( 'anotherGlobalMapChecker' ), 'Again', 'Change in window object not reflected in global Map' );
 
 		// Whitelist this global variable for QUnit's 'noglobal' mode
 		if ( QUnit.config.noglobals ) {
@@ -148,7 +171,9 @@
 
 		// Convenience method for asserting the same result for multiple formats
 		function assertMultipleFormats( messageArguments, formats, expectedResult, assertMessage ) {
-			var len = formats.length, format, i;
+			var format, i,
+				len = formats.length;
+
 			for ( i = 0; i < len; i++ ) {
 				format = formats[i];
 				assert.equal( mw.message.apply( null, messageArguments )[format](), expectedResult, assertMessage + ' when format is ' + format );
@@ -178,9 +203,9 @@
 		assert.equal( hello.format, 'escaped', 'Message.escaped correctly updated the "format" property' );
 
 		assert.ok( mw.messages.set( 'multiple-curly-brace', '"{{SITENAME}}" is the home of {{int:other-message}}' ), 'mw.messages.set: Register' );
-		assertMultipleFormats( ['multiple-curly-brace'], ['text', 'parse'], '"' + mw.config.get( 'wgSiteName') + '" is the home of Other Message', 'Curly brace format works correctly' );
+		assertMultipleFormats( ['multiple-curly-brace'], ['text', 'parse'], '"' + siteName + '" is the home of Other Message', 'Curly brace format works correctly' );
 		assert.equal( mw.message( 'multiple-curly-brace' ).plain(), mw.messages.get( 'multiple-curly-brace' ), 'Plain format works correctly for curly brace message' );
-		assert.equal( mw.message( 'multiple-curly-brace' ).escaped(), mw.html.escape( '"' + mw.config.get( 'wgSiteName') + '" is the home of Other Message' ), 'Escaped format works correctly for curly brace message' );
+		assert.equal( mw.message( 'multiple-curly-brace' ).escaped(), mw.html.escape( '"' + siteName + '" is the home of Other Message' ), 'Escaped format works correctly for curly brace message' );
 
 		assert.ok( mw.messages.set( 'multiple-square-brackets-and-ampersand', 'Visit the [[Project:Community portal|community portal]] & [[Project:Help desk|help desk]]' ), 'mw.messages.set: Register' );
 		assertMultipleFormats( ['multiple-square-brackets-and-ampersand'], ['plain', 'text'], mw.messages.get( 'multiple-square-brackets-and-ampersand' ), 'Square bracket message is not processed' );
@@ -243,8 +268,8 @@
 		assert.equal( mw.message( 'gender-plural-msg', 'male', 1 ).plain(), '{{GENDER:male|he|she|they}} {{PLURAL:1|is|are}} awesome', 'Parameters are substituted, but gender and plural are not resolved in plain mode' );
 
 		assert.equal( mw.message( 'grammar-msg' ).plain(), mw.messages.get( 'grammar-msg' ), 'Grammar is not resolved in plain mode' );
-		assertMultipleFormats( ['grammar-msg'], ['text', 'parse'], 'Przeszukaj ' + mw.config.get( 'wgSiteName' ), 'Grammar is resolved' );
-		assert.equal( mw.message( 'grammar-msg' ).escaped(), 'Przeszukaj ' + mw.html.escape( mw.config.get( 'wgSiteName' ) ), 'Grammar is resolved in escaped mode' );
+		assertMultipleFormats( ['grammar-msg'], ['text', 'parse'], 'Przeszukaj ' + siteName, 'Grammar is resolved' );
+		assert.equal( mw.message( 'grammar-msg' ).escaped(), 'Przeszukaj ' + siteName, 'Grammar is resolved in escaped mode' );
 
 		assertMultipleFormats( ['formatnum-msg', '987654321.654321'], ['text', 'parse', 'escaped'], '987,654,321.654', 'formatnum is resolved' );
 		assert.equal( mw.message( 'formatnum-msg' ).plain(), mw.messages.get( 'formatnum-msg' ), 'formatnum is not resolved in plain mode' );
@@ -304,7 +329,7 @@
 		assert.equal( mw.msg( 'gender-plural-msg', 'female', '1' ), 'she is awesome', 'Gender test for female, plural count 1' );
 		assert.equal( mw.msg( 'gender-plural-msg', 'unknown', 10 ), 'they are awesome', 'Gender test for neutral, plural count 10' );
 
-		assert.equal( mw.msg( 'grammar-msg' ), 'Przeszukaj ' + mw.config.get( 'wgSiteName' ), 'Grammar is resolved' );
+		assert.equal( mw.msg( 'grammar-msg' ), 'Przeszukaj ' + siteName, 'Grammar is resolved' );
 
 		assert.equal( mw.msg( 'formatnum-msg', '987654321.654321' ), '987,654,321.654', 'formatnum is resolved' );
 
@@ -352,7 +377,7 @@
 				return;
 			}
 			// Otherwise, keep polling
-			setTimeout( styleTestLoop, 150 );
+			setTimeout( styleTestLoop );
 		}
 
 		// Start the loop
@@ -393,6 +418,30 @@
 		}, function () {
 			QUnit.start();
 			assert.ok( false, 'Error callback fired while loader.using "test.callback" module' );
+		} );
+	} );
+
+	QUnit.asyncTest( 'mw.loader with Object method as module name', 2, function ( assert ) {
+		var isAwesomeDone;
+
+		mw.loader.testCallback = function () {
+			QUnit.start();
+			assert.strictEqual( isAwesomeDone, undefined, 'Implementing module hasOwnProperty: isAwesomeDone should still be undefined' );
+			isAwesomeDone = true;
+		};
+
+		mw.loader.implement( 'hasOwnProperty', [QUnit.fixurl( mw.config.get( 'wgScriptPath' ) + '/tests/qunit/data/callMwLoaderTestCallback.js' )], {}, {} );
+
+		mw.loader.using( 'hasOwnProperty', function () {
+
+			// /sample/awesome.js declares the "mw.loader.testCallback" function
+			// which contains a call to start() and ok()
+			assert.strictEqual( isAwesomeDone, true, 'hasOwnProperty module should\'ve caused isAwesomeDone to be true' );
+			delete mw.loader.testCallback;
+
+		}, function () {
+			QUnit.start();
+			assert.ok( false, 'Error callback fired while loader.using "hasOwnProperty" module' );
 		} );
 	} );
 
@@ -625,6 +674,11 @@
 
 	} );
 
+	QUnit.test( 'mw.loader.implement( only scripts )', 1, function ( assert ) {
+		mw.loader.implement( 'test.onlyscripts', function () {} );
+		assert.strictEqual( mw.loader.getState( 'test.onlyscripts' ), 'ready' );
+	} );
+
 	QUnit.asyncTest( 'mw.loader.implement( only messages )', 2, function ( assert ) {
 		assert.assertFalse( mw.messages.exists( 'bug_29107' ), 'Verify that the test message doesn\'t exist yet' );
 
@@ -638,7 +692,10 @@
 		} );
 	} );
 
-	QUnit.test( 'mw.loader erroneous indirect dependency', 3, function ( assert ) {
+	QUnit.test( 'mw.loader erroneous indirect dependency', 4, function ( assert ) {
+		// don't emit an error event
+		this.sandbox.stub( mw, 'track' );
+
 		mw.loader.register( [
 			['test.module1', '0'],
 			['test.module2', '0', ['test.module1']],
@@ -650,6 +707,8 @@
 		assert.strictEqual( mw.loader.getState( 'test.module1' ), 'error', 'Expected "error" state for test.module1' );
 		assert.strictEqual( mw.loader.getState( 'test.module2' ), 'error', 'Expected "error" state for test.module2' );
 		assert.strictEqual( mw.loader.getState( 'test.module3' ), 'error', 'Expected "error" state for test.module3' );
+
+		assert.strictEqual( mw.track.callCount, 1 );
 	} );
 
 	QUnit.test( 'mw.loader out-of-order implementation', 9, function ( assert ) {

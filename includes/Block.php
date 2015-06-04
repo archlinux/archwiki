@@ -113,7 +113,7 @@ class Block {
 			$this->forcedTargetID = $user; // needed for foreign users
 		}
 		if ( $by ) { // local user
-			$this->setBlocker( User::newFromID( $by ) );
+			$this->setBlocker( User::newFromId( $by ) );
 		} else { // foreign user
 			$this->setBlocker( $byText );
 		}
@@ -366,7 +366,7 @@ class Block {
 	protected function initFromRow( $row ) {
 		$this->setTarget( $row->ipb_address );
 		if ( $row->ipb_by ) { // local user
-			$this->setBlocker( User::newFromID( $row->ipb_by ) );
+			$this->setBlocker( User::newFromId( $row->ipb_by ) );
 		} else { // foreign user
 			$this->setBlocker( $row->ipb_by_text );
 		}
@@ -442,19 +442,33 @@ class Block {
 			$dbw = wfGetDB( DB_MASTER );
 		}
 
-		# Don't collide with expired blocks
-		Block::purgeExpired();
+		# Periodic purge via commit hooks
+		if ( mt_rand( 0, 9 ) == 0 ) {
+			Block::purgeExpired();
+		}
 
 		$row = $this->getDatabaseArray();
 		$row['ipb_id'] = $dbw->nextSequenceValue( "ipblocks_ipb_id_seq" );
 
-		$dbw->insert(
-			'ipblocks',
-			$row,
-			__METHOD__,
-			array( 'IGNORE' )
-		);
+		$dbw->insert( 'ipblocks', $row, __METHOD__, array( 'IGNORE' ) );
 		$affected = $dbw->affectedRows();
+
+		# Don't collide with expired blocks.
+		# Do this after trying to insert to avoid pointless gap locks.
+		if ( !$affected ) {
+			$dbw->delete( 'ipblocks',
+				array(
+					'ipb_address' => $row['ipb_address'],
+					'ipb_user' => $row['ipb_user'],
+					'ipb_expiry < ' . $dbw->addQuotes( $dbw->timestamp() )
+				),
+				__METHOD__
+			);
+
+			$dbw->insert( 'ipblocks', $row, __METHOD__, array( 'IGNORE' ) );
+			$affected = $dbw->affectedRows();
+		}
+
 		$this->mId = $dbw->insertId();
 
 		if ( $affected ) {
@@ -580,7 +594,7 @@ class Block {
 		if ( $this->isAutoblocking() && $this->getType() == self::TYPE_USER ) {
 			wfDebug( "Doing retroactive autoblocks for " . $this->getTarget() . "\n" );
 
-			$continue = wfRunHooks(
+			$continue = Hooks::run(
 				'PerformRetroactiveAutoblock', array( $this, &$blockIds ) );
 
 			if ( $continue ) {
@@ -693,7 +707,7 @@ class Block {
 		}
 
 		# Allow hooks to cancel the autoblock.
-		if ( !wfRunHooks( 'AbortAutoblock', array( $autoblockIP, &$this ) ) ) {
+		if ( !Hooks::run( 'AbortAutoblock', array( $autoblockIP, &$this ) ) ) {
 			wfDebug( "Autoblock aborted by hook.\n" );
 			return false;
 		}
@@ -752,7 +766,6 @@ class Block {
 	 * @return bool
 	 */
 	public function deleteIfExpired() {
-		wfProfileIn( __METHOD__ );
 
 		if ( $this->isExpired() ) {
 			wfDebug( "Block::deleteIfExpired() -- deleting\n" );
@@ -763,7 +776,6 @@ class Block {
 			$retVal = false;
 		}
 
-		wfProfileOut( __METHOD__ );
 		return $retVal;
 	}
 
@@ -885,7 +897,7 @@ class Block {
 	/**
 	 * Get/set a flag determining whether the master is used for reads
 	 *
-	 * @param bool $x
+	 * @param bool|null $x
 	 * @return bool
 	 */
 	public function fromMaster( $x = null ) {
@@ -893,8 +905,8 @@ class Block {
 	}
 
 	/**
-	 * Get/set whether the Block is a hardblock (affects logged-in users on a given IP/range
-	 * @param bool $x
+	 * Get/set whether the Block is a hardblock (affects logged-in users on a given IP/range)
+	 * @param bool|null $x
 	 * @return bool
 	 */
 	public function isHardblock( $x = null ) {
@@ -906,6 +918,10 @@ class Block {
 			: $this->isHardblock;
 	}
 
+	/**
+	 * @param null|bool $x
+	 * @return bool
+	 */
 	public function isAutoblocking( $x = null ) {
 		wfSetVar( $this->isAutoblocking, $x );
 
@@ -919,7 +935,7 @@ class Block {
 	/**
 	 * Get/set whether the Block prevents a given action
 	 * @param string $action
-	 * @param bool $x
+	 * @param bool|null $x
 	 * @return bool
 	 */
 	public function prevents( $action, $x = null ) {
@@ -1051,7 +1067,6 @@ class Block {
 			return array();
 		}
 
-		wfProfileIn( __METHOD__ );
 		$conds = array();
 		foreach ( array_unique( $ipChain ) as $ipaddr ) {
 			# Discard invalid IP addresses. Since XFF can be spoofed and we do not
@@ -1073,7 +1088,6 @@ class Block {
 		}
 
 		if ( !count( $conds ) ) {
-			wfProfileOut( __METHOD__ );
 			return array();
 		}
 
@@ -1104,12 +1118,12 @@ class Block {
 			}
 		}
 
-		wfProfileOut( __METHOD__ );
 		return $blocks;
 	}
 
 	/**
 	 * From a list of multiple blocks, find the most exact and strongest Block.
+	 *
 	 * The logic for finding the "best" block is:
 	 *  - Blocks that match the block's target IP are preferred over ones in a range
 	 *  - Hardblocks are chosen over softblocks that prevent account creation
@@ -1117,12 +1131,15 @@ class Block {
 	 *  - Other softblocks are chosen over autoblocks
 	 *  - If there are multiple exact or range blocks at the same level, the one chosen
 	 *    is random
+	 * This should be used when $blocks where retrieved from the user's IP address
+	 * and $ipChain is populated from the same IP address information.
 	 *
-	 * @param array $blocks Array of blocks
+	 * @param array $blocks Array of Block objects
 	 * @param array $ipChain List of IPs (strings). This is used to determine how "close"
 	 * 	  a block is to the server, and if a block matches exactly, or is in a range.
 	 *	  The order is furthest from the server to nearest e.g., (Browser, proxy1, proxy2,
 	 *	  local-squid, ...)
+	 * @throws MWException
 	 * @return Block|null The "best" block from the list
 	 */
 	public static function chooseBlock( array $blocks, array $ipChain ) {
@@ -1131,8 +1148,6 @@ class Block {
 		} elseif ( count( $blocks ) == 1 ) {
 			return $blocks[0];
 		}
-
-		wfProfileIn( __METHOD__ );
 
 		// Sort hard blocks before soft ones and secondarily sort blocks
 		// that disable account creation before those that don't.
@@ -1156,6 +1171,7 @@ class Block {
 		);
 		$ipChain = array_reverse( $ipChain );
 
+		/** @var Block $block */
 		foreach ( $blocks as $block ) {
 			// Stop searching if we have already have a "better" block. This
 			// is why the order of the blocks matters
@@ -1213,11 +1229,9 @@ class Block {
 		} elseif ( $blocksList['auto'] ) {
 			$chosenBlock = $blocksList['auto'];
 		} else {
-			wfProfileOut( __METHOD__ );
 			throw new MWException( "Proxy block found, but couldn't be classified." );
 		}
 
-		wfProfileOut( __METHOD__ );
 		return $chosenBlock;
 	}
 

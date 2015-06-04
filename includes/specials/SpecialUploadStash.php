@@ -48,10 +48,6 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 
 	public function __construct() {
 		parent::__construct( 'UploadStash', 'upload' );
-		try {
-			$this->stash = RepoGroup::singleton()->getLocalRepo()->getUploadStash();
-		} catch ( UploadStashNotAvailableException $e ) {
-		}
 	}
 
 	/**
@@ -62,6 +58,7 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 	 * @return bool Success
 	 */
 	public function execute( $subPage ) {
+		$this->stash = RepoGroup::singleton()->getLocalRepo()->getUploadStash( $this->getUser() );
 		$this->checkPermissions();
 
 		if ( $subPage === null || $subPage === '' ) {
@@ -250,9 +247,9 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 		// make a curl call to the scaler to create a thumbnail
 		$httpOptions = array(
 			'method' => 'GET',
-			'timeout' => 'default'
+			'timeout' => 5 // T90599 attempt to time out cleanly
 		);
-		$req = MWHttpRequest::factory( $scalerThumbUrl, $httpOptions );
+		$req = MWHttpRequest::factory( $scalerThumbUrl, $httpOptions, __METHOD__ );
 		$status = $req->execute();
 		if ( !$status->isOK() ) {
 			$errors = $status->getErrorsArray();
@@ -331,11 +328,12 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 	 * This works, because there really is only one stash per logged-in user, despite appearances.
 	 *
 	 * @param array $formData
+	 * @param HTMLForm $form
 	 * @return Status
 	 */
-	public static function tryClearStashedUploads( $formData ) {
+	public static function tryClearStashedUploads( $formData, $form ) {
 		if ( isset( $formData['Clear'] ) ) {
-			$stash = RepoGroup::singleton()->getLocalRepo()->getUploadStash();
+			$stash = RepoGroup::singleton()->getLocalRepo()->getUploadStash( $form->getUser() );
 			wfDebug( 'stash has: ' . print_r( $stash->listFiles(), true ) . "\n" );
 
 			if ( !$stash->clear() ) {

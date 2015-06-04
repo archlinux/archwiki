@@ -530,10 +530,12 @@ class DatabasePostgres extends DatabaseBase {
 				return;
 			}
 		}
-		/* Transaction stays in the ERROR state until rolledback */
+		/* Transaction stays in the ERROR state until rolled back */
 		if ( $this->mTrxLevel ) {
+			$ignore = $this->ignoreErrors( true );
 			$this->rollback( __METHOD__ );
-		};
+			$this->ignoreErrors( $ignore );
+		}
 		parent::reportQueryError( $error, $errno, $sql, $fname, false );
 	}
 
@@ -712,7 +714,7 @@ class DatabasePostgres extends DatabaseBase {
 			$row = $this->fetchRow( $res );
 			$count = array();
 			if ( preg_match( '/rows=(\d+)/', $row[0], $count ) ) {
-				$rows = $count[1];
+				$rows = (int)$count[1];
 			}
 		}
 
@@ -1495,12 +1497,14 @@ SQL;
 	 * @return Blob
 	 */
 	function encodeBlob( $b ) {
-		return new Blob( pg_escape_bytea( $this->mConn, $b ) );
+		return new PostgresBlob( pg_escape_bytea( $b ) );
 	}
 
 	function decodeBlob( $b ) {
-		if ( $b instanceof Blob ) {
+		if ( $b instanceof PostgresBlob ) {
 			$b = $b->fetch();
+		} elseif ( $b instanceof Blob ) {
+			return $b->fetch();
 		}
 
 		return pg_unescape_bytea( $b );
@@ -1520,7 +1524,12 @@ SQL;
 		} elseif ( is_bool( $s ) ) {
 			return intval( $s );
 		} elseif ( $s instanceof Blob ) {
-			return "'" . $s->fetch( $s ) . "'";
+			if ( $s instanceof PostgresBlob ) {
+				$s = $s->fetch();
+			} else {
+				$s = pg_escape_bytea( $this->mConn, $s->fetch() );
+			}
+			return "'$s'";
 		}
 
 		return "'" . pg_escape_string( $this->mConn, $s ) . "'";
@@ -1692,3 +1701,5 @@ SQL;
 		return wfBaseConvert( substr( sha1( $lockName ), 0, 15 ), 16, 10 );
 	}
 } // end DatabasePostgres class
+
+class PostgresBlob extends Blob {}

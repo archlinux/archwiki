@@ -39,10 +39,8 @@ class StreamFile {
 	 * @return bool Success
 	 */
 	public static function stream( $fname, $headers = array(), $sendErrors = true ) {
-		wfProfileIn( __METHOD__ );
 
 		if ( FileBackend::isStoragePath( $fname ) ) { // sanity
-			wfProfileOut( __METHOD__ );
 			throw new MWException( __FUNCTION__ . " given storage path '$fname'." );
 		}
 
@@ -54,14 +52,11 @@ class StreamFile {
 		if ( $res == self::NOT_MODIFIED ) {
 			$ok = true; // use client cache
 		} elseif ( $res == self::READY_STREAM ) {
-			wfProfileIn( __METHOD__ . '-send' );
 			$ok = readfile( $fname );
-			wfProfileOut( __METHOD__ . '-send' );
 		} else {
 			$ok = false; // failed
 		}
 
-		wfProfileOut( __METHOD__ );
 		return $ok;
 	}
 

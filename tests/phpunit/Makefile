@@ -1,4 +1,4 @@
-.PHONY: help test phpunit install coverage warning destructive parser noparser safe databaseless list-groups
+.PHONY: help test phpunit coverage warning destructive parser noparser safe databaseless list-groups
 .DEFAULT: warning
 
 SHELL = /bin/sh
@@ -34,9 +34,6 @@ destructive: phpunit
 
 phpunit:
 	${PU}
-
-install:
-	./install-phpunit.sh
 
 tap:
 	${PU} --tap
@@ -83,7 +80,7 @@ help:
 	#                       You will need the Xdebug PHP extension for the later.
 	#   [no]parser          Skip or only run Parser tests
 	#
-	#   list-groups         List availabe Tests groups.
+	#   list-groups         List available Tests groups.
 	#
 	#  Options:
 	#   CONFIG_FILE         Path to a PHPUnit configuration file (default: suite.xml)

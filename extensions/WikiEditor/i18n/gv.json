@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"MacTire02",
-			"Shimmin Beg"
+			"Shimmin Beg",
+			"Macofe"
 		]
 	},
 	"wikieditor-wikitext-tab": "Teks wiki",
@@ -124,22 +125,6 @@
 	"wikieditor-toolbar-tool-replace-emptysearch": "Cha dug oo stiagh red erbee dy hirrey.",
 	"wikieditor-toolbar-tool-replace-invalidregex": "Hug oo stiagh slonn reiltagh gyn vree: $1",
 	"wikieditor-toolbar-section-characters": "Cowraghyn er lheh",
-	"wikieditor-toolbar-characters-page-latin": "Romanagh",
-	"wikieditor-toolbar-characters-page-latinextended": "Romanagh sheeynt",
-	"wikieditor-toolbar-characters-page-ipa": "ASE",
-	"wikieditor-toolbar-characters-page-symbols": "Cowraghyn",
-	"wikieditor-toolbar-characters-page-greek": "Greagagh",
-	"wikieditor-toolbar-characters-page-cyrillic": "Kyrillagh",
-	"wikieditor-toolbar-characters-page-arabic": "Arabagh",
-	"wikieditor-toolbar-characters-page-persian": "Pershish",
-	"wikieditor-toolbar-characters-page-hebrew": "Ewagh",
-	"wikieditor-toolbar-characters-page-bangla": "Bengaalish",
-	"wikieditor-toolbar-characters-page-telugu": "Telugish",
-	"wikieditor-toolbar-characters-page-sinhala": "Sinhalish",
-	"wikieditor-toolbar-characters-page-gujarati": "Gujaratish",
-	"wikieditor-toolbar-characters-page-thai": "Thaish",
-	"wikieditor-toolbar-characters-page-lao": "Laosish",
-	"wikieditor-toolbar-characters-page-khmer": "Khmerish",
 	"wikieditor-toolbar-section-help": "Cooney",
 	"wikieditor-toolbar-help-heading-description": "Coontey",
 	"wikieditor-toolbar-help-heading-syntax": "Ny t'ou uss screeu",
@@ -185,8 +170,7 @@
 	"wikieditor-toolbar-help-content-olist-syntax": "# Meer rolley<br /># Meer rolley",
 	"wikieditor-toolbar-help-content-olist-result": "<ol><li>Meer rolley</li><li>Meer rolley</li></ol>",
 	"wikieditor-toolbar-help-content-file-description": "Coadan jingit",
-	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Example.png|thumb|Teks fo-heidyl]]",
-	"wikieditor-toolbar-help-content-file-result": "<div style='width:104px;' class='thumbinner'><a title='Teks fo-heidyl' class='image' href='#'><img height='50' width='100' border='0' class='thumbimage' src='$2/WikiEditor/modules/images/toolbar/example-image.png' alt=''/></a><div class='thumbcaption'><div class='magnify'><a title='Mooadaghey' class='internal' href='#'><img height='11' width='15' alt='' src='$1/common/images/magnify-clip.png'/></a></div>Teks fo-heidyl</div></div>",
+	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Example.png|$2|$3]]",
 	"wikieditor-toolbar-help-content-reference-description": "Imraa",
 	"wikieditor-toolbar-help-content-reference-syntax": "Teks duillag.&lt;ref name=\"test\"&gt;[http://www.example.org Teks kiangley], tooilley teks.&lt;/ref&gt;",
 	"wikieditor-toolbar-help-content-reference-result": "Teks duillag.<sup><a href='#'>[1]</a></sup>",

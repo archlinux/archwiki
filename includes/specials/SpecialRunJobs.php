@@ -22,6 +22,8 @@
  * @author Aaron Schulz
  */
 
+use MediaWiki\Logger\LoggerFactory;
+
 /**
  * Special page designed for running background tasks (internal use only)
  *
@@ -61,10 +63,11 @@ class SpecialRunJobs extends UnlistedSpecialPage {
 
 		$squery = $params;
 		unset( $squery['signature'] );
-		$cSig = self::getQuerySignature( $squery, $this->getConfig()->get( 'SecretKey' ) ); // correct signature
-		$rSig = $params['signature']; // provided signature
+		$correctSignature = self::getQuerySignature( $squery, $this->getConfig()->get( 'SecretKey' ) );
+		$providedSignature = $params['signature'];
 
-		$verified = is_string( $rSig ) && hash_equals( $cSig, $rSig );
+		$verified = is_string( $providedSignature )
+			&& hash_equals( $correctSignature, $providedSignature );
 		if ( !$verified || $params['sigexpiry'] < time() ) {
 			header( "HTTP/1.0 400 Bad Request" );
 			print 'Invalid or stale signature provided';
@@ -88,7 +91,7 @@ class SpecialRunJobs extends UnlistedSpecialPage {
 
 		// Do all of the specified tasks...
 		if ( in_array( 'jobs', explode( '|', $params['tasks'] ) ) ) {
-			$runner = new JobRunner();
+			$runner = new JobRunner( LoggerFactory::getInstance( 'runJobs' ) );
 			$response = $runner->run( array(
 				'type'     => $params['type'],
 				'maxJobs'  => $params['maxjobs'] ? $params['maxjobs'] : 1,

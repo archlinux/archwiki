@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Mdupont"
+			"Mdupont",
+			"Macofe"
 		]
 	},
 	"wikieditor": "redaktimi i avancuar wikitext interface",
@@ -12,8 +13,6 @@
 	"wikieditor-preview-tab": "Preview",
 	"wikieditor-preview-changes-tab": "Ndryshimet",
 	"wikieditor-preview-loading": "Loading ...",
-	"wikieditor-previewDialog-tab": "Preview",
-	"wikieditor-previewDialog-loading": "Loading ...",
 	"wikieditor-publish-preference": "Aktivizo-hap pas hapi botuese",
 	"wikieditor-publish-button-publish": "Publikoj",
 	"wikieditor-publish-button-cancel": "Anuloj",
@@ -127,18 +126,6 @@
 	"wikieditor-toolbar-tool-replace-emptysearch": "Ju nuk shkruani ndonjë gjë për të kërkuar për.",
 	"wikieditor-toolbar-tool-replace-invalidregex": "Shprehje e rregullt keni hyrë është i pavlefshëm: $1",
 	"wikieditor-toolbar-section-characters": "karaktere të veçanta",
-	"wikieditor-toolbar-characters-page-latin": "Latinisht",
-	"wikieditor-toolbar-characters-page-latinextended": "Latine zgjeruar",
-	"wikieditor-toolbar-characters-page-ipa": "IPA",
-	"wikieditor-toolbar-characters-page-symbols": "Simbolet",
-	"wikieditor-toolbar-characters-page-greek": "Grek",
-	"wikieditor-toolbar-characters-page-cyrillic": "I sllavishtes së vjetër",
-	"wikieditor-toolbar-characters-page-arabic": "Arabisht",
-	"wikieditor-toolbar-characters-page-hebrew": "Hebraisht",
-	"wikieditor-toolbar-characters-page-bangla": "Shqip",
-	"wikieditor-toolbar-characters-page-telugu": "Telugu",
-	"wikieditor-toolbar-characters-page-sinhala": "Sinhala",
-	"wikieditor-toolbar-characters-page-gujarati": "Guxharati",
 	"wikieditor-toolbar-section-help": "Ndihmë",
 	"wikieditor-toolbar-help-heading-description": "Përshkrim",
 	"wikieditor-toolbar-help-heading-syntax": "Çfarë ju lloji",
@@ -184,8 +171,7 @@
 	"wikieditor-toolbar-help-content-olist-syntax": "pika # Lista <br /> pika # Lista",
 	"wikieditor-toolbar-help-content-olist-result": "<ol><li> pika Lista </li><li> pika Lista </li></ol>",
 	"wikieditor-toolbar-help-content-file-description": "Embedded file",
-	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Example.png|thumb|Caption teksti]]",
-	"wikieditor-toolbar-help-content-file-result": "<div style='width:104px;' class='thumbinner'> <a title=\"tekstit Legjenda\" class='image' href='#'><img height='50' width='100' border='0' class='thumbimage' src='$2/WikiEditor/modules/images/toolbar/example-image.png' alt=''/></a> <div class='thumbcaption'><div class='magnify'> <a title=\"Zmadho\" class='internal' href='#'><img height='11' width='15' alt='' src='$1/common/images/magnify-clip.png'/></a> </div> tekstit Legjenda </div></div>",
+	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Example.png|$2|$3]]",
 	"wikieditor-toolbar-help-content-reference-description": "Referim",
 	"wikieditor-toolbar-help-content-reference-syntax": "Tekst faqesh. name=\"test\"> <ref [http://www.example.org] teksti Link, teksti shtesë. </> ref",
 	"wikieditor-toolbar-help-content-reference-result": "Tekst faqesh. <a href='#'><sup>[1]</sup></a>",

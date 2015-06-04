@@ -1,0 +1,30 @@
+{
+	"@metadata": {
+		"authors": [
+			"EugeneZelenko",
+			"Jim-by",
+			"Red Winged Duck",
+			"Wizardist"
+		]
+	},
+	"cite-desc": "Дадае тэгі <nowiki><ref[ name=id]></nowiki> і <nowiki><references/></nowiki> для зносак",
+	"cite_error": "Памылка цытаваньня: $1",
+	"cite_error_ref_numeric_key": "Няслушны тэг <code>&lt;ref&gt;</code>;\nназва ня можа быць проста лікам, ужывайце апісальную назву",
+	"cite_error_ref_no_key": "Няслушны тэг <code>&lt;ref&gt;</code>;\nпустыя тэгі <code>ref</code> мусяць мець назву",
+	"cite_error_ref_too_many_keys": "Няслушны тэг <code>&lt;ref&gt;</code>;\nняслушныя назвы, ці іх было зашмат",
+	"cite_error_ref_no_input": "Няслушны тэг <code>&lt;ref&gt;</code>;\nкрыніцы бяз назваў мусяць мець зьмест",
+	"cite_error_references_invalid_parameters": "Няслушны тэг <code>&lt;references&gt;</code>;\nнедазволеныя парамэтры.\nКарыстайцеся <code>&lt;references /&gt;</code>",
+	"cite_error_references_invalid_parameters_group": "Няслушны тэг <code>&lt;references&gt;</code>;\nдазволена карыстацца толькі парамэтрам «group».\nКарыстайцеся <code>&lt;references /&gt;</code>, ці <code>&lt;references group=\"...\" /&gt;</code>",
+	"cite_error_references_no_backlink_label": "Не хапае сымбаляў для адваротных спасылак.\nНеабходна пашырыць сыстэмнае паведамленьне <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>",
+	"cite_error_no_link_label_group": "Скончыліся нестандартныя меткі спасылак для групы «$1».\nВызначыце болей у паведамленьні <nowiki>[[MediaWiki:$2]]</nowiki>.",
+	"cite_error_references_no_text": "Няслушны тэг <code>&lt;ref&gt;</code>;\nняма тэксту ў назьве зносак <code>$1</code>",
+	"cite_error_included_ref": "Няма закрываючага тэга  <code>&lt;/ref&gt;</code> пасьля адкрытага тэга <code>&lt;ref&gt;</code>",
+	"cite_error_group_refs_without_references": "Тэг <code>&lt;ref&gt;</code> існуе для групы «$1», але адпаведнага тэга <code>&lt;references group=\"$1\"/&gt;</code> ня знойдзена. Магчыма, адсутнічае фінальны тэг <code>&lt;/ref&gt;</code>",
+	"cite_error_references_group_mismatch": "Тэг <code>&lt;ref&gt;</code> у <code>&lt;references&gt;</code> утрымлівае канфліктуючы атрыбут групы «$1».",
+	"cite_error_references_missing_group": "Тэг <code>&lt;ref&gt;</code> вызначаны ў <code>&lt;references&gt;</code> утрымлівае атрыбут групы «$1», які раней не выкарыстоўваўся ў тэксьце.",
+	"cite_error_references_missing_key": "Тэг <code>&lt;ref&gt;</code> з назвай «$1» вызначаны ў <code>&lt;references&gt;</code> не выкарыстоўваўся ў папярэднім тэксьце.",
+	"cite_error_references_no_key": "Тэг <code>&lt;ref&gt;</code> вызначаны ў <code>&lt;references&gt;</code> ня мае атрыбуту назвы.",
+	"cite_error_empty_references_define": "Тэг <code>&lt;ref&gt;</code> вызначаны ў <code>&lt;references&gt;</code> з назвай «$1» ня мае зьместу.",
+	"cite_references_link_accessibility_label": "Угару",
+	"cite_references_link_many_accessibility_label": "Угару да:"
+}

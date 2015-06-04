@@ -112,7 +112,6 @@ class Preprocessor_Hash implements Preprocessor {
 	 * @return PPNode_Hash_Tree
 	 */
 	public function preprocessToObj( $text, $flags = 0 ) {
-		wfProfileIn( __METHOD__ );
 
 		// Check cache.
 		global $wgMemc, $wgPreprocessorCacheThreshold;
@@ -121,7 +120,6 @@ class Preprocessor_Hash implements Preprocessor {
 			&& strlen( $text ) > $wgPreprocessorCacheThreshold;
 
 		if ( $cacheable ) {
-			wfProfileIn( __METHOD__ . '-cacheable' );
 
 			$cacheKey = wfMemcKey( 'preprocess-hash', md5( $text ), $flags );
 			$cacheValue = $wgMemc->get( $cacheKey );
@@ -132,12 +130,9 @@ class Preprocessor_Hash implements Preprocessor {
 					// From the cache
 					wfDebugLog( "Preprocessor",
 						"Loaded preprocessor hash from memcached (key $cacheKey)" );
-					wfProfileOut( __METHOD__ . '-cacheable' );
-					wfProfileOut( __METHOD__ );
 					return $hash;
 				}
 			}
-			wfProfileIn( __METHOD__ . '-cache-miss' );
 		}
 
 		$rules = array(
@@ -637,18 +632,12 @@ class Preprocessor_Hash implements Preprocessor {
 							}
 							if ( !$node ) {
 								if ( $cacheable ) {
-									wfProfileOut( __METHOD__ . '-cache-miss' );
-									wfProfileOut( __METHOD__ . '-cacheable' );
 								}
-								wfProfileOut( __METHOD__ );
 								throw new MWException( __METHOD__ . ': eqpos not found' );
 							}
 							if ( $node->name !== 'equals' ) {
 								if ( $cacheable ) {
-									wfProfileOut( __METHOD__ . '-cache-miss' );
-									wfProfileOut( __METHOD__ . '-cacheable' );
 								}
-								wfProfileOut( __METHOD__ );
 								throw new MWException( __METHOD__ . ': eqpos is not equals' );
 							}
 							$equalsNode = $node;
@@ -748,12 +737,9 @@ class Preprocessor_Hash implements Preprocessor {
 		if ( $cacheable ) {
 			$cacheValue = sprintf( "%08d", self::CACHE_VERSION ) . serialize( $rootNode );
 			$wgMemc->set( $cacheKey, $cacheValue, 86400 );
-			wfProfileOut( __METHOD__ . '-cache-miss' );
-			wfProfileOut( __METHOD__ . '-cacheable' );
 			wfDebugLog( "Preprocessor", "Saved preprocessor Hash to memcached (key $cacheKey)" );
 		}
 
-		wfProfileOut( __METHOD__ );
 		return $rootNode;
 	}
 }
@@ -985,11 +971,17 @@ class PPFrame_Hash implements PPFrame {
 				if ( $bits['index'] !== '' ) {
 					// Numbered parameter
 					$index = $bits['index'] - $indexOffset;
+					if ( isset( $namedArgs[$index] ) || isset( $numberedArgs[$index] ) ) {
+						$this->parser->addTrackingCategory( 'duplicate-args-category' );
+					}
 					$numberedArgs[$index] = $bits['value'];
 					unset( $namedArgs[$index] );
 				} else {
 					// Named parameter
 					$name = trim( $this->expand( $bits['name'], PPFrame::STRIP_COMMENTS ) );
+					if ( isset( $namedArgs[$name] ) || isset( $numberedArgs[$name] ) ) {
+						$this->parser->addTrackingCategory( 'duplicate-args-category' );
+					}
 					$namedArgs[$name] = $bits['value'];
 					unset( $numberedArgs[$name] );
 				}

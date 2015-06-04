@@ -5,7 +5,8 @@
 			"Dj",
 			"Glanthor Reviol",
 			"KossuthRad",
-			"Tgr"
+			"Tgr",
+			"Tacsipacsi"
 		]
 	},
 	"inputbox-desc": "Lehetővé teszi előre megadott HTML-űrlapok beillesztését",
@@ -14,5 +15,8 @@
 	"inputbox-tryexact": "Ugrás a szócikkre",
 	"inputbox-searchfulltext": "Keresés a teljes szövegben",
 	"inputbox-createarticle": "Szócikk létrehozása",
+	"inputbox-movearticle": "Lap átnevezése",
+	"inputbox-postcomment": "Új szakasz",
+	"inputbox-postcommenttitle": "Új szakasz",
 	"inputbox-ns-main": "Fő"
 }

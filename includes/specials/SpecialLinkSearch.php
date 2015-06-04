@@ -27,6 +27,8 @@
  * @ingroup SpecialPage
  */
 class LinkSearchPage extends QueryPage {
+	/** @var array|bool */
+	private $mungedQuery = false;
 
 	/**
 	 * @var PageLinkRenderer
@@ -66,8 +68,9 @@ class LinkSearchPage extends QueryPage {
 	 * This allows for dependency injection even though we don't control object creation.
 	 */
 	private function initServices() {
+		global $wgLanguageCode;
 		if ( !$this->linkRenderer ) {
-			$lang = $this->getContext()->getLanguage();
+			$lang = Language::factory( $wgLanguageCode );
 			$titleFormatter = new MediaWikiTitleCodec( $lang, GenderCache::singleton() );
 			$this->linkRenderer = new MediaWikiPageLinkRenderer( $titleFormatter );
 		}
@@ -88,7 +91,7 @@ class LinkSearchPage extends QueryPage {
 
 		$request = $this->getRequest();
 		$target = $request->getVal( 'target', $par );
-		$namespace = $request->getIntorNull( 'namespace', null );
+		$namespace = $request->getIntOrNull( 'namespace', null );
 
 		$protocols_list = array();
 		foreach ( $this->getConfig()->get( 'UrlProtocols' ) as $prot ) {
@@ -162,7 +165,7 @@ class LinkSearchPage extends QueryPage {
 				'namespace' => $namespace,
 				'protocol' => $protocol ) );
 			parent::execute( $par );
-			if ( $this->mMungedQuery === false ) {
+			if ( $this->mungedQuery === false ) {
 				$out->addWikiMsg( 'linksearch-error' );
 			}
 		}
@@ -221,13 +224,13 @@ class LinkSearchPage extends QueryPage {
 		$dbr = wfGetDB( DB_SLAVE );
 		// strip everything past first wildcard, so that
 		// index-based-only lookup would be done
-		list( $this->mMungedQuery, $clause ) = self::mungeQuery( $this->mQuery, $this->mProt );
-		if ( $this->mMungedQuery === false ) {
+		list( $this->mungedQuery, $clause ) = self::mungeQuery( $this->mQuery, $this->mProt );
+		if ( $this->mungedQuery === false ) {
 			// Invalid query; return no results
 			return array( 'tables' => 'page', 'fields' => 'page_id', 'conds' => '0=1' );
 		}
 
-		$stripped = LinkFilter::keepOneWildcard( $this->mMungedQuery );
+		$stripped = LinkFilter::keepOneWildcard( $this->mungedQuery );
 		$like = $dbr->buildLike( $stripped );
 		$retval = array(
 			'tables' => array( 'page', 'externallinks' ),
@@ -252,6 +255,25 @@ class LinkSearchPage extends QueryPage {
 	}
 
 	/**
+	 * Pre-fill the link cache
+	 *
+	 * @param IDatabase $db
+	 * @param ResultWrapper $res
+	 */
+	function preprocessResults( $db, $res ) {
+		if ( $res->numRows() > 0 ) {
+			$linkBatch = new LinkBatch();
+
+			foreach ( $res as $row ) {
+				$linkBatch->add( $row->namespace, $row->title );
+			}
+
+			$res->seek( 0 );
+			$linkBatch->execute();
+		}
+	}
+
+	/**
 	 * @param Skin $skin
 	 * @param object $result Result row
 	 * @return string
@@ -264,24 +286,6 @@ class LinkSearchPage extends QueryPage {
 		$urlLink = Linker::makeExternalLink( $url, $url );
 
 		return $this->msg( 'linksearch-line' )->rawParams( $urlLink, $pageLink )->escaped();
-	}
-
-	/**
-	 * Override to check query validity.
-	 *
-	 * @param mixed $offset Numerical offset or false for no offset
-	 * @param mixed $limit Numerical limit or false for no limit
-	 */
-	function doQuery( $offset = false, $limit = false ) {
-		list( $this->mMungedQuery, ) = LinkSearchPage::mungeQuery( $this->mQuery, $this->mProt );
-		if ( $this->mMungedQuery === false ) {
-			$this->getOutput()->addWikiMsg( 'linksearch-error' );
-		} else {
-			// For debugging
-			// Generates invalid xhtml with patterns that contain --
-			//$this->getOutput()->addHTML( "\n<!-- " . htmlspecialchars( $this->mMungedQuery ) . " -->\n" );
-			parent::doQuery( $offset, $limit );
-		}
 	}
 
 	/**

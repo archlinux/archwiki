@@ -2,7 +2,6 @@
 /**
  * Implements Special:Redirect
  *
- * @section LICENSE
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -261,6 +260,20 @@ class SpecialRedirect extends FormSpecialPage {
 		$form->setSubmitTextMsg( $this->getMessagePrefix() . '-submit' );
 		/* submit form every time */
 		$form->setMethod( 'get' );
+	}
+
+	/**
+	 * Return an array of subpages that this special page will accept.
+	 *
+	 * @return string[] subpages
+	 */
+	protected function getSubpagesForPrefixSearch() {
+		return array(
+			"file",
+			"page",
+			"revision",
+			"user",
+		);
 	}
 
 	protected function getGroupName() {

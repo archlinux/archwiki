@@ -23,41 +23,18 @@
 class MWFunction {
 
 	/**
-	 * @deprecated since 1.22; use call_user_func()
-	 * @param callable $callback
-	 * @return mixed
-	 */
-	public static function call( $callback ) {
-		wfDeprecated( __METHOD__, '1.22' );
-		$args = func_get_args();
-
-		return call_user_func_array( 'call_user_func', $args );
-	}
-
-	/**
-	 * @deprecated since 1.22; use call_user_func_array()
-	 * @param callable $callback
-	 * @param array $argsarams
-	 * @return mixed
-	 */
-	public static function callArray( $callback, $argsarams ) {
-		wfDeprecated( __METHOD__, '1.22' );
-
-		return call_user_func_array( $callback, $argsarams );
-	}
-
-	/**
 	 * @param string $class
 	 * @param array $args
 	 * @return object
+	 * @deprecated 1.25 Use ObjectFactory::getObjectFromSpec() instead
 	 */
 	public static function newObj( $class, $args = array() ) {
-		if ( !count( $args ) ) {
-			return new $class;
-		}
+		wfDeprecated( __METHOD__, '1.25' );
 
-		$ref = new ReflectionClass( $class );
-
-		return $ref->newInstanceArgs( $args );
+		return ObjectFactory::getObjectFromSpec( array(
+			'class' => $class,
+			'args' => $args,
+			'closure_expansion' => false,
+		) );
 	}
 }

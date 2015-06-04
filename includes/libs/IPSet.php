@@ -1,6 +1,5 @@
 <?php
 /**
- * @section LICENSE
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -163,7 +162,7 @@ class IPSet {
 	 * Match an IP address against the set
 	 *
 	 * @param string $ip string IPv[46] address
-	 * @return boolean true is match success, false is match failure
+	 * @return bool true is match success, false is match failure
 	 *
 	 * If $ip is unparseable, inet_pton may issue an E_WARNING to that effect
 	 */

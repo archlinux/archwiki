@@ -27,13 +27,14 @@
 		 * @param {string|null} value Value of cookie. If `value` is `null` then this method will
 		 *   instead remove a cookie by name of `key`.
 		 * @param {Object|Date} [options] Options object, or expiry date
-		 * @param {Date|null} [options.expires=wgCookieExpiration] The expiry date of the cookie.
+		 * @param {Date|number|null} [options.expires] The expiry date of the cookie, or lifetime in seconds.
 		 *
-		 *   Default cookie expiration is based on `wgCookieExpiration`.  If `wgCookieExpiration` is
-		 *   0, a session cookie is set (expires when the browser is closed). For non-zero values of
-		 *   `wgCookieExpiration`, the cookie expires `wgCookieExpiration` seconds from now.
+		 *   If `options.expires` is null, then a session cookie is set.
 		 *
-		 *   If options.expires is null, then a session cookie is set.
+		 *   By default cookie expiration is based on `wgCookieExpiration`. Similar to `WebResponse`
+		 *   in PHP, we set a session cookie if `wgCookieExpiration` is 0. And for non-zero values
+		 *   it is interpreted as lifetime in seconds.
+		 *
 		 * @param {string} [options.prefix=wgCookiePrefix] The prefix of the key
 		 * @param {string} [options.domain=wgCookieDomain] The domain attribute of the cookie
 		 * @param {string} [options.path=wgCookiePath] The path attribute of the cookie
@@ -69,16 +70,20 @@
 				options = $.extend( defaultOptions, options );
 			}
 
-			// $.cookie makes session cookies when expiry is omitted,
-			// however our default is to expire wgCookieExpiration seconds from now.
-			// Note: If wgCookieExpiration is 0, that is considered a special value indicating
+			// Default to using wgCookieExpiration (lifetime in seconds).
+			// If wgCookieExpiration is 0, that is considered a special value indicating
 			// all cookies should be session cookies by default.
 			if ( options.expires === undefined && config.wgCookieExpiration !== 0 ) {
 				date = new Date();
 				date.setTime( Number( date ) + ( config.wgCookieExpiration * 1000 ) );
 				options.expires = date;
+			} else if ( typeof options.expires === 'number' ) {
+				// Lifetime in seconds
+				date = new Date();
+				date.setTime( Number( date ) + ( options.expires * 1000 ) );
+				options.expires = date;
 			} else if ( options.expires === null ) {
-				// $.cookie makes a session cookie when expires is omitted
+				// $.cookie makes a session cookie when options.expires is omitted
 				delete options.expires;
 			}
 
@@ -123,4 +128,4 @@
 		}
 	};
 
-} ( mediaWiki, jQuery ) );
+}( mediaWiki, jQuery ) );

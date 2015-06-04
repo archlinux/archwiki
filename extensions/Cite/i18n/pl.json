@@ -1,0 +1,31 @@
+{
+	"@metadata": {
+		"authors": [
+			"Derbeth",
+			"Holek",
+			"Leinad",
+			"Sp5uhe",
+			"Woytecr"
+		]
+	},
+	"cite-desc": "Dodaje znaczniki <nowiki><ref[ name=id]></nowiki> i <nowiki><references/></nowiki> ułatwiające podawanie źródeł cytatów",
+	"cite_error": "Błąd rozszerzenia ''cite'': $1",
+	"cite_error_ref_numeric_key": "Nieprawidłowy znacznik <code>&lt;ref&gt;</code>. Nazwa nie może być liczbą, użyj nazwy opisowej.",
+	"cite_error_ref_no_key": "Nieprawidłowy znacznik <code>&lt;ref&gt;</code>. Odnośnik ref z zawartością musi mieć nazwę.",
+	"cite_error_ref_too_many_keys": "Nieprawidłowe nazwy parametrów elementu <code>&lt;ref&gt;</code>.",
+	"cite_error_ref_no_input": "Błąd w składni elementu <code>&lt;ref&gt;</code>. Przypisy bez podanej nazwy muszą posiadać treść",
+	"cite_error_references_invalid_parameters": "Błąd w składni elementu <code>&lt;references&gt;</code>. Nie można wprowadzać parametrów do tego elementu, użyj <code>&lt;references /&gt;</code>",
+	"cite_error_references_invalid_parameters_group": "Nieprawidłowy znacznik <code>&lt;references&gt;</code>;\ndostępny jest wyłącznie parametr „group”.\nUżyj znacznika <code>&lt;references /&gt;</code>, lub <code>&lt;references group=\"...\" /&gt;</code>",
+	"cite_error_references_no_backlink_label": "Zabrakło etykiet do przypisów.\nZadeklaruj więcej w komunikacie <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>",
+	"cite_error_no_link_label_group": "Zabrakło niestandardowych etykiet linków dla grupy „$1“.\nZdefiniuj ich większą liczbę w komunikacie <nowiki>[[MediaWiki:$2]]</nowiki>.",
+	"cite_error_references_no_text": "Błąd w składni elementu <code>&lt;ref&gt;</code>. Brak tekstu w przypisie o nazwie <code>$1</code>",
+	"cite_error_included_ref": "Brak znacznika zamykającego <code>&lt;/ref&gt;</code> po otwartym znaczniku <code>&lt;ref&gt;</code>",
+	"cite_error_group_refs_without_references": "Istnieje znacznik <code>&lt;ref&gt;</code> dla grupy o nazwie „$1”, ale nie odnaleziono odpowiedniego znacznika <code>&lt;references group=\"$1\"/&gt;</code>, lub brakuje znacznika zamykającego <code>&lt;/ref&gt;</code>",
+	"cite_error_references_group_mismatch": "Znacznik <code>&lt;ref&gt;</code> w <code>&lt;references&gt;</code> nie może mieć atrybutu grupy „$1”.",
+	"cite_error_references_missing_group": "Znacznik <code>&lt;ref&gt;</code> zdefiniowany w <code>&lt;references&gt;</code> ma atrybut grupowania „$1”, który nie występuje wcześniej w treści.",
+	"cite_error_references_missing_key": "Znacznik <code>&lt;ref&gt;</code> o nazwie „$1”, zdefiniowany w <code>&lt;references&gt;</code>, nie był użyty wcześniej w treści.",
+	"cite_error_references_no_key": "Znacznik <code>&lt;ref&gt;</code> zdefiniowany w <code>&lt;references&gt;</code> nie ma atrybutu <code>name</code>.",
+	"cite_error_empty_references_define": "Znacznik <code>&lt;ref&gt;</code> zdefiniowany w <code>&lt;references&gt;</code> o nazwie „$1” nie ma treści.",
+	"cite_references_link_accessibility_label": "Skocz do góry",
+	"cite_references_link_many_accessibility_label": "Skocz do:"
+}

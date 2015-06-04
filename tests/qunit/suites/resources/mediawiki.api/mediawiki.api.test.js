@@ -51,52 +51,26 @@
 
 		this.server.respond( function ( request ) {
 			if ( window.FormData ) {
-				assert.ok( !request.url.match( /action=/), 'Request has no query string' );
+				assert.ok( !request.url.match( /action=/ ), 'Request has no query string' );
 				assert.ok( request.requestBody instanceof FormData, 'Request uses FormData body' );
 			} else {
-				assert.ok( !request.url.match( /action=test/), 'Request has no query string' );
+				assert.ok( !request.url.match( /action=test/ ), 'Request has no query string' );
 				assert.equal( request.requestBody, 'action=test&format=json', 'Request uses query string body' );
 			}
 			request.respond( 200, { 'Content-Type': 'application/json' }, '[]' );
 		} );
 	} );
 
-	QUnit.test( 'Deprecated callback methods', function ( assert ) {
-		QUnit.expect( 3 );
+	QUnit.test( 'Converting arrays to pipe-separated', function ( assert ) {
+		QUnit.expect( 1 );
 
 		var api = new mw.Api();
+		api.get( { test: [ 'foo', 'bar', 'baz' ] } );
 
-		this.suppressWarnings();
-
-		api.get( {}, function () {
-			assert.ok( true, 'Function argument treated as success callback.' );
-		} );
-
-		api.get( {}, {
-			ok: function () {
-				assert.ok( true, '"ok" property treated as success callback.' );
-			}
-		} );
-
-		api.get( { action: 'doesntexist' }, {
-			err: function () {
-				assert.ok( true, '"err" property treated as error callback.' );
-			}
-		} );
-
-		this.restoreWarnings();
-
-		this.server.respondWith( /action=query/, function ( request ) {
+		this.server.respond( function ( request ) {
+			assert.ok( request.url.match( /test=foo%7Cbar%7Cbaz/ ), 'Pipe-separated value was submitted' );
 			request.respond( 200, { 'Content-Type': 'application/json' }, '[]' );
 		} );
-
-		this.server.respondWith( /action=doesntexist/, function ( request ) {
-			request.respond( 200, { 'Content-Type': 'application/json' },
-				'{ "error": { "code": "unknown_action" } }'
-			);
-		} );
-
-		this.server.respond();
 	} );
 
 	QUnit.test( 'getToken( pre-populated )', function ( assert ) {
@@ -194,6 +168,28 @@
 		this.server.requests[1].respond( 200, { 'Content-Type': 'application/json' },
 			'{ "example": { "foo": "quux" } }'
 		);
+	} );
+
+	QUnit.test( 'postWithToken( tokenType, params with assert )', function ( assert ) {
+		QUnit.expect( 2 );
+
+		var api = new mw.Api( { ajax: { url: '/postWithToken/api.php' } } );
+
+		api.postWithToken( 'testasserttoken', { action: 'example', key: 'foo', assert: 'user' } )
+			.fail( function ( errorCode ) {
+				assert.equal( errorCode, 'assertuserfailed', 'getToken fails assert' );
+			} );
+
+		assert.equal( this.server.requests.length, 1, 'Request for token made' );
+		this.server.respondWith( /assert=user/, function ( request ) {
+			request.respond(
+				200,
+				{ 'Content-Type': 'application/json' },
+				'{ "error": { "code": "assertuserfailed", "info": "Assertion failed" } }'
+			);
+		} );
+
+		this.server.respond();
 	} );
 
 	QUnit.test( 'postWithToken( tokenType, params, ajaxOptions )', function ( assert ) {

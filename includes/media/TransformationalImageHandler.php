@@ -61,29 +61,6 @@ abstract class TransformationalImageHandler extends ImageHandler {
 			}
 		}
 
-		# Check if the file is smaller than the maximum image area for thumbnailing
-		# For historical reasons, hook starts with BitmapHandler
-		$checkImageAreaHookResult = null;
-		wfRunHooks(
-			'BitmapHandlerCheckImageArea',
-			array( $image, &$params, &$checkImageAreaHookResult )
-		);
-
-		if ( is_null( $checkImageAreaHookResult ) ) {
-			global $wgMaxImageArea;
-
-			if ( $srcWidth * $srcHeight > $wgMaxImageArea
-				&& !( $image->getMimeType() == 'image/jpeg'
-					&& $this->getScalerType( false, false ) == 'im' )
-			) {
-				# Only ImageMagick can efficiently downsize jpg images without loading
-				# the entire file in memory
-				return false;
-			}
-		} else {
-			return $checkImageAreaHookResult;
-		}
-
 		return true;
 	}
 
@@ -190,6 +167,11 @@ abstract class TransformationalImageHandler extends ImageHandler {
 			return $this->getClientScalingThumbnailImage( $image, $scalerParams );
 		}
 
+		if ( !$this->isImageAreaOkForThumbnaling( $image, $params ) ) {
+			global $wgMaxImageArea;
+			return new TransformTooBigImageAreaError( $params, $wgMaxImageArea );
+		}
+
 		if ( $flags & self::TRANSFORM_LATER ) {
 			wfDebug( __METHOD__ . ": Transforming later per flags.\n" );
 			$newParams = array(
@@ -216,6 +198,12 @@ abstract class TransformationalImageHandler extends ImageHandler {
 		# Transform functions and binaries need a FS source file
 		$thumbnailSource = $this->getThumbnailSource( $image, $params );
 
+		// If the source isn't the original, disable EXIF rotation because it's already been applied
+		if ( $scalerParams['srcWidth'] != $thumbnailSource['width']
+			|| $scalerParams['srcHeight'] != $thumbnailSource['height'] ) {
+			$scalerParams['disableRotation'] = true;
+		}
+
 		$scalerParams['srcPath'] = $thumbnailSource['path'];
 		$scalerParams['srcWidth'] = $thumbnailSource['width'];
 		$scalerParams['srcHeight'] = $thumbnailSource['height'];
@@ -234,7 +222,7 @@ abstract class TransformationalImageHandler extends ImageHandler {
 		# Try a hook. Called "Bitmap" for historical reasons.
 		/** @var $mto MediaTransformOutput */
 		$mto = null;
-		wfRunHooks( 'BitmapHandlerTransform', array( $this, $image, &$scalerParams, &$mto ) );
+		Hooks::run( 'BitmapHandlerTransform', array( $this, $image, &$scalerParams, &$mto ) );
 		if ( !is_null( $mto ) ) {
 			wfDebug( __METHOD__ . ": Hook to BitmapHandlerTransform created an mto\n" );
 			$scaler = 'hookaborted';
@@ -589,5 +577,44 @@ abstract class TransformationalImageHandler extends ImageHandler {
 	 */
 	public function mustRender( $file ) {
 		return $this->canRotate() && $this->getRotation( $file ) != 0;
+	}
+
+	/**
+	 * Check if the file is smaller than the maximum image area for thumbnailing.
+	 *
+	 * Runs the 'BitmapHandlerCheckImageArea' hook.
+	 *
+	 * @param File $file
+	 * @param array $params
+	 * @return bool
+	 * @since 1.25
+	 */
+	public function isImageAreaOkForThumbnaling( $file, &$params ) {
+		global $wgMaxImageArea;
+
+		# For historical reasons, hook starts with BitmapHandler
+		$checkImageAreaHookResult = null;
+		Hooks::run(
+			'BitmapHandlerCheckImageArea',
+			array( $file, &$params, &$checkImageAreaHookResult )
+		);
+
+		if ( !is_null( $checkImageAreaHookResult ) ) {
+			// was set by hook, so return that value
+			return (bool)$checkImageAreaHookResult;
+		}
+
+		$srcWidth = $file->getWidth( $params['page'] );
+		$srcHeight = $file->getHeight( $params['page'] );
+
+		if ( $srcWidth * $srcHeight > $wgMaxImageArea
+			&& !( $file->getMimeType() == 'image/jpeg'
+				&& $this->getScalerType( false, false ) == 'im' )
+		) {
+			# Only ImageMagick can efficiently downsize jpg images without loading
+			# the entire file in memory
+			return false;
+		}
+		return true;
 	}
 }

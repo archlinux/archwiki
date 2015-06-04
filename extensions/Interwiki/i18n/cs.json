@@ -34,6 +34,7 @@
 	"interwiki_delfailed": "Prefix „$1“ nebylo možné odstranit z tabulky interwiki.",
 	"interwiki-logtext": "Zobrazit protokolovací záznamy",
 	"interwiki_addtext": "Přidat prefix interwiki nebo jazyka",
+	"interwiki-addtext-local": "Přidat místní interwiki nebo jazykový prefix",
 	"interwiki_addintro": "Přidáváte nový interwiki prefix.\nMějte na vědomí, že nemůže obsahovat mezery ( ), dvojtečky (:), ampersandy (&), ani rovnítka (=).",
 	"interwiki_addbutton": "Přidat",
 	"interwiki_added": "Prefix „$1“ byl úspěšně přidán do tabulky interwiki.",
@@ -51,5 +52,12 @@
 	"logentry-interwiki-iw_delete": "$1 {{GENDER:$2|odebral|odebrala}} prefix „$4“ z tabulky interwiki",
 	"log-description-interwiki": "Toto je seznam změn [[Special:Interwiki|tabulky interwiki]].",
 	"right-interwiki": "Editování interwiki záznamů",
-	"action-interwiki": "změnit tento záznam interwiki"
+	"action-interwiki": "změnit tento záznam interwiki",
+	"interwiki-global-links": "Globální interwiki prefixy",
+	"interwiki-global-description": "Tyto prefixy jsou převzaty z globální konfigurace a lze je editovat jen na zdrojové wiki.",
+	"interwiki-local-links": "Lokální interwiki prefixy",
+	"interwiki-local-description": "Tyto prefixy jsou definovány lokálně. Jakékoli duplicity vůči globální konfiguraci příslušnou globální definici překryjí.",
+	"interwiki-links": "Interwiki prefixy",
+	"interwiki-language-links": "Mezijazykové prefixy",
+	"interwiki-language-description": "Tyto prefixy odpovídají definovaným jazykovým kódům a použijí se k vytvoření seznamu „{{int:otherlanguages}}“, když se přidají do stránky."
 }

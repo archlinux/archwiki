@@ -1,7 +1,17 @@
-( function ( mw ) {
+( function ( mw, $ ) {
 	QUnit.module( 'mediawiki.user', QUnit.newMwEnvironment( {
 		setup: function () {
 			this.server = this.sandbox.useFakeServer();
+			this.crypto = window.crypto;
+			this.msCrypto = window.msCrypto;
+		},
+		teardown: function () {
+			if ( this.crypto ) {
+				window.crypto = this.crypto;
+			}
+			if ( this.msCrypto ) {
+				window.msCrypto = this.msCrypto;
+			}
 		}
 	} ) );
 
@@ -51,4 +61,38 @@
 
 		this.server.respond();
 	} );
-}( mediaWiki ) );
+
+	QUnit.test( 'generateRandomSessionId', 4, function ( assert ) {
+		var result, result2;
+
+		result = mw.user.generateRandomSessionId();
+		assert.equal( typeof result, 'string', 'type' );
+		assert.equal( $.trim( result ), result, 'no whitespace at beginning or end' );
+		assert.equal( result.length, 16, 'size' );
+
+		result2 = mw.user.generateRandomSessionId();
+		assert.notEqual( result, result2, 'different when called multiple times' );
+
+	} );
+
+	QUnit.test( 'generateRandomSessionId (fallback)', 4, function ( assert ) {
+		var result, result2;
+
+		// Pretend crypto API is not there to test the Math.random fallback
+		if ( window.crypto ) {
+			window.crypto = undefined;
+		}
+		if ( window.msCrypto ) {
+			window.msCrypto = undefined;
+		}
+
+		result = mw.user.generateRandomSessionId();
+		assert.equal( typeof result, 'string', 'type' );
+		assert.equal( $.trim( result ), result, 'no whitespace at beginning or end' );
+		assert.equal( result.length, 16, 'size' );
+
+		result2 = mw.user.generateRandomSessionId();
+		assert.notEqual( result, result2, 'different when called multiple times' );
+
+	} );
+}( mediaWiki, jQuery ) );

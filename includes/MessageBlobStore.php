@@ -36,15 +36,12 @@ class MessageBlobStore {
 	 * Get the singleton instance
 	 *
 	 * @since 1.24
+	 * @deprecated since 1.25
 	 * @return MessageBlobStore
 	 */
 	public static function getInstance() {
-		static $instance = null;
-		if ( $instance === null ) {
-			$instance = new self;
-		}
-
-		return $instance;
+		wfDeprecated( __METHOD__, '1.25' );
+		return new self;
 	}
 
 	/**
@@ -56,9 +53,7 @@ class MessageBlobStore {
 	 * @return array An array mapping module names to message blobs
 	 */
 	public function get( ResourceLoader $resourceLoader, $modules, $lang ) {
-		wfProfileIn( __METHOD__ );
 		if ( !count( $modules ) ) {
-			wfProfileOut( __METHOD__ );
 			return array();
 		}
 		// Try getting from the DB first
@@ -73,7 +68,6 @@ class MessageBlobStore {
 			}
 		}
 
-		wfProfileOut( __METHOD__ );
 		return $blobs;
 	}
 
@@ -130,7 +124,7 @@ class MessageBlobStore {
 					);
 				}
 			}
-		} catch ( Exception $e ) {
+		} catch ( DBError $e ) {
 			wfDebug( __METHOD__ . " failed to update DB: $e\n" );
 		}
 		return $blob;

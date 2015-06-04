@@ -1,0 +1,57 @@
+{
+	"name": "Renameuser",
+	"author": [
+		"Ævar Arnfjörð Bjarmason",
+		"Aaron Schulz"
+	],
+	"url": "https://www.mediawiki.org/wiki/Extension:Renameuser",
+	"descriptionmsg": "renameuser-desc",
+	"license-name": "GPL-2.0+",
+	"type": "specialpage",
+	"ExtensionMessagesFiles": {
+		"RenameuserAliases": "Renameuser.alias.php"
+	},
+	"LogTypes": [
+		"renameuser"
+	],
+	"MessagesDirs": {
+		"Renameuser": [
+			"i18n"
+		]
+	},
+	"Hooks": {
+		"ShowMissingArticle": [
+			"RenameuserHooks::onShowMissingArticle"
+		],
+		"ContributionsToolLinks": [
+			"RenameuserHooks::onContributionsToolLinks"
+		],
+		"GetLogTypesOnUser": [
+			"RenameuserHooks::onGetLogTypesOnUser"
+		]
+	},
+	"JobClasses": {
+		"renameUser": "RenameUserJob"
+	},
+	"GroupPermissions": {
+		"bureaucrat": {
+			"renameuser": true
+		}
+	},
+	"LogActionsHandlers": {
+		"renameuser/renameuser": "RenameuserLogFormatter"
+	},
+	"AvailableRights": [
+		"renameuser"
+	],
+	"SpecialPages": {
+		"Renameuser": "SpecialRenameuser"
+	},
+	"AutoloadClasses": {
+		"RenameuserHooks": "Renameuser.hooks.php",
+		"RenameUserJob": "RenameUserJob.php",
+		"RenameuserLogFormatter": "RenameuserLogFormatter.php",
+		"RenameuserSQL": "RenameuserSQL.php",
+		"SpecialRenameuser": "specials/SpecialRenameuser.php"
+	}
+}

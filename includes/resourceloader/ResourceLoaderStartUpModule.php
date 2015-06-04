@@ -82,6 +82,7 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 			'wgServerName' => $conf->get( 'ServerName' ),
 			'wgUserLanguage' => $context->getLanguage(),
 			'wgContentLanguage' => $wgContLang->getCode(),
+			'wgTranslateNumerals' => $conf->get( 'TranslateNumerals' ),
 			'wgVersion' => $conf->get( 'Version' ),
 			'wgEnableAPI' => $conf->get( 'EnableAPI' ),
 			'wgEnableWriteAPI' => $conf->get( 'EnableWriteAPI' ),
@@ -90,11 +91,7 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 			'wgNamespaceIds' => $namespaceIds,
 			'wgContentNamespaces' => MWNamespace::getContentNamespaces(),
 			'wgSiteName' => $conf->get( 'Sitename' ),
-			'wgFileExtensions' => array_values( array_unique( $conf->get( 'FileExtensions' ) ) ),
 			'wgDBname' => $conf->get( 'DBname' ),
-			// This sucks, it is only needed on Special:Upload, but I could
-			// not find a way to add vars only for a certain module
-			'wgFileCanRotate' => SpecialUpload::rotationEnabled(),
 			'wgAvailableSkins' => Skin::getSkinNames(),
 			'wgExtensionAssetsPath' => $conf->get( 'ExtensionAssetsPath' ),
 			// MediaWiki sets cookies to have this prefix by default
@@ -109,7 +106,7 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 			'wgResourceLoaderStorageEnabled' => $conf->get( 'ResourceLoaderStorageEnabled' ),
 		);
 
-		wfRunHooks( 'ResourceLoaderGetConfigVars', array( &$vars ) );
+		Hooks::run( 'ResourceLoaderGetConfigVars', array( &$vars ) );
 
 		$this->configVars[$hash] = $vars;
 		return $this->configVars[$hash];
@@ -150,7 +147,7 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 	}
 
 	/**
-	 * Optimize the dependency tree in $this->modules and return it.
+	 * Optimize the dependency tree in $this->modules.
 	 *
 	 * The optimization basically works like this:
 	 *	Given we have module A with the dependencies B and C
@@ -158,11 +155,11 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 	 *	Now we don't have to tell the client to explicitly fetch module
 	 *		C as that's already included in module B.
 	 *
-	 * This way we can reasonably reduce the amout of module registration
+	 * This way we can reasonably reduce the amount of module registration
 	 * data send to the client.
 	 *
 	 * @param array &$registryData Modules keyed by name with properties:
-	 *  - string 'version'
+	 *  - number 'version'
 	 *  - array 'dependencies'
 	 *  - string|null 'group'
 	 *  - string 'source'
@@ -191,7 +188,6 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 	 * @return string JavaScript code for registering all modules with the client loader
 	 */
 	public function getModuleRegistrations( ResourceLoaderContext $context ) {
-		wfProfileIn( __METHOD__ );
 
 		$resourceLoader = $context->getResourceLoader();
 		$target = $context->getRequest()->getVal( 'target', 'desktop' );
@@ -214,12 +210,10 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 				continue;
 			}
 
-			// getModifiedTime() is supposed to return a UNIX timestamp, but it doesn't always
-			// seem to do that, and custom implementations might forget. Coerce it to TS_UNIX
+			// Coerce module timestamp to UNIX timestamp.
+			// getModifiedTime() is supposed to return a UNIX timestamp, but custom implementations
+			// might forget. TODO: Maybe emit warning?
 			$moduleMtime = wfTimestamp( TS_UNIX, $module->getModifiedTime( $context ) );
-			$mtime = max( $moduleMtime, wfTimestamp( TS_UNIX, $this->getConfig()->get( 'CacheEpoch' ) ) );
-
-			// FIXME: Convert to numbers, wfTimestamp always gives us stings, even for TS_UNIX
 
 			$skipFunction = $module->getSkipFunction();
 			if ( $skipFunction !== null && !ResourceLoader::inDebugMode() ) {
@@ -232,8 +226,14 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 				);
 			}
 
+			$mtime = max(
+				$moduleMtime,
+				wfTimestamp( TS_UNIX, $this->getConfig()->get( 'CacheEpoch' ) )
+			);
+
 			$registryData[$name] = array(
-				'version' => $mtime,
+				// Convert to numbers as wfTimestamp always returns a string, even for TS_UNIX
+				'version' => (int) $mtime,
 				'dependencies' => $module->getDependencies(),
 				'group' => $module->getGroup(),
 				'source' => $module->getSource(),
@@ -254,7 +254,7 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 			if ( $data['loader'] !== false ) {
 				$out .= ResourceLoader::makeCustomLoaderScript(
 					$name,
-					wfTimestamp( TS_ISO_8601_BASIC, $data['version'] ),
+					$data['version'],
 					$data['dependencies'],
 					$data['group'],
 					$data['source'],
@@ -263,63 +263,21 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 				continue;
 			}
 
-			if (
-				!count( $data['dependencies'] ) &&
-				$data['group'] === null &&
-				$data['source'] === 'local' &&
-				$data['skip'] === null
-			) {
-				// Modules with no dependencies, group, foreign source or skip function;
-				// call mw.loader.register(name, timestamp)
-				$registrations[] = array( $name, $data['version'] );
-			} elseif (
-				$data['group'] === null &&
-				$data['source'] === 'local' &&
-				$data['skip'] === null
-			) {
-				// Modules with dependencies but no group, foreign source or skip function;
-				// call mw.loader.register(name, timestamp, dependencies)
-				$registrations[] = array( $name, $data['version'], $data['dependencies'] );
-			} elseif (
-				$data['source'] === 'local' &&
-				$data['skip'] === null
-			) {
-				// Modules with a group but no foreign source or skip function;
-				// call mw.loader.register(name, timestamp, dependencies, group)
-				$registrations[] = array(
-					$name,
-					$data['version'],
-					$data['dependencies'],
-					$data['group']
-				);
-			} elseif ( $data['skip'] === null ) {
-				// Modules with a foreign source but no skip function;
-				// call mw.loader.register(name, timestamp, dependencies, group, source)
-				$registrations[] = array(
-					$name,
-					$data['version'],
-					$data['dependencies'],
-					$data['group'],
-					$data['source']
-				);
-			} else {
-				// Modules with a skip function;
-				// call mw.loader.register(name, timestamp, dependencies, group, source, skip)
-				$registrations[] = array(
-					$name,
-					$data['version'],
-					$data['dependencies'],
-					$data['group'],
-					$data['source'],
-					$data['skip']
-				);
-			}
+			// Call mw.loader.register(name, timestamp, dependencies, group, source, skip)
+			$registrations[] = array(
+				$name,
+				$data['version'],
+				$data['dependencies'],
+				$data['group'],
+				// Swap default (local) for null
+				$data['source'] === 'local' ? null : $data['source'],
+				$data['skip']
+			);
 		}
 
 		// Register modules
 		$out .= ResourceLoader::makeLoaderRegisterScript( $registrations );
 
-		wfProfileOut( __METHOD__ );
 		return $out;
 	}
 
@@ -333,7 +291,7 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 	}
 
 	/**
-	 * Base modules required for the the base environment of ResourceLoader
+	 * Base modules required for the base environment of ResourceLoader
 	 *
 	 * @return array
 	 */
@@ -355,7 +313,7 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 
 		// Get the latest version
 		$loader = $context->getResourceLoader();
-		$version = 0;
+		$version = 1;
 		foreach ( $moduleNames as $moduleName ) {
 			$version = max( $version,
 				$loader->getModule( $moduleName )->getModifiedTime( $context )
@@ -390,18 +348,28 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 			$registrations = $this->getModuleRegistrations( $context );
 			// Fix indentation
 			$registrations = str_replace( "\n", "\n\t", trim( $registrations ) );
+			$mwMapJsCall = Xml::encodeJsCall(
+				'mw.Map',
+				array( $this->getConfig()->get( 'LegacyJavaScriptGlobals' ) )
+			);
+			$mwConfigSetJsCall = Xml::encodeJsCall(
+				'mw.config.set',
+				array( $configuration ),
+				ResourceLoader::inDebugMode()
+			);
+
 			$out .= "var startUp = function () {\n" .
 				"\tmw.config = new " .
-				Xml::encodeJsCall( 'mw.Map', array( $this->getConfig()->get( 'LegacyJavaScriptGlobals' ) ) ) . "\n" .
+				$mwMapJsCall . "\n" .
 				"\t$registrations\n" .
-				"\t" . Xml::encodeJsCall( 'mw.config.set', array( $configuration ) ) .
+				"\t" . $mwConfigSetJsCall .
 				"};\n";
 
 			// Conditional script injection
 			$scriptTag = Html::linkedScript( self::getStartupModulesUrl( $context ) );
 			$out .= "if ( isCompatible() ) {\n" .
 				"\t" . Xml::encodeJsCall( 'document.write', array( $scriptTag ) ) .
-				"}";
+				"\n}";
 		}
 
 		return $out;
@@ -440,8 +408,8 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 		// ATTENTION!: Because of the line below, this is not going to cause
 		// infinite recursion - think carefully before making changes to this
 		// code!
-		// Pre-populate modifiedTime with something because the the loop over
-		// all modules below includes the the startup module (this module).
+		// Pre-populate modifiedTime with something because the loop over
+		// all modules below includes the startup module (this module).
 		$this->modifiedTime[$hash] = 1;
 
 		foreach ( $loader->getModuleNames() as $name ) {

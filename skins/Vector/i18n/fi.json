@@ -4,9 +4,11 @@
 			"Crt",
 			"Nedergard",
 			"Nike",
-			"Pxos"
+			"Pxos",
+			"SuperPete"
 		]
 	},
+	"vector-skin-desc": "Uudistettu versio MonoBookista raikkaalla ulkoasulla ja useilla käytettävyysparannuksilla",
 	"vector.css": "/* Tämä sivu sisältää Vector-ulkoasua muuttavia tyylejä. */",
 	"vector.js": "/* Tämän sivun JavaScript-koodi liitetään Vector-tyyliin */",
 	"vector-action-addsection": "Lisää aihe",

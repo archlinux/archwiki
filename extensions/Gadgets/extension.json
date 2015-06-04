@@ -1,0 +1,57 @@
+{
+	"name": "Gadgets",
+	"author": [
+		"Daniel Kinzler",
+		"Max Semenik"
+	],
+	"url": "https://www.mediawiki.org/wiki/Extension:Gadgets",
+	"descriptionmsg": "gadgets-desc",
+	"license-name": "GPL-2.0+",
+	"type": "other",
+	"SpecialPages": {
+		"Gadgets": "SpecialGadgets"
+	},
+	"APIListModules": {
+		"gadgetcategories": "ApiQueryGadgetCategories",
+		"gadgets": "ApiQueryGadgets"
+	},
+	"MessagesDirs": {
+		"Gadgets": [
+			"i18n"
+		]
+	},
+	"ExtensionMessagesFiles": {
+		"GadgetsAlias": "Gadgets.alias.php"
+	},
+	"AutoloadClasses": {
+		"ApiQueryGadgetCategories": "api/ApiQueryGadgetCategories.php",
+		"ApiQueryGadgets": "api/ApiQueryGadgets.php",
+		"Gadget": "Gadgets_body.php",
+		"GadgetHooks": "GadgetHooks.php",
+		"GadgetResourceLoaderModule": "Gadgets_body.php",
+		"SpecialGadgets": "SpecialGadgets.php"
+	},
+	"Hooks": {
+		"ArticleSaveComplete": [
+			"GadgetHooks::articleSaveComplete"
+		],
+		"BeforePageDisplay": [
+			"GadgetHooks::beforePageDisplay"
+		],
+		"UserGetDefaultOptions": [
+			"GadgetHooks::userGetDefaultOptions"
+		],
+		"GetPreferences": [
+			"GadgetHooks::getPreferences"
+		],
+		"ResourceLoaderRegisterModules": [
+			"GadgetHooks::registerModules"
+		],
+		"UnitTestsList": [
+			"GadgetHooks::onUnitTestsList"
+		]
+	},
+	"config": {
+		"GadgetsCaching": true
+	}
+}

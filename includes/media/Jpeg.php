@@ -106,7 +106,7 @@ class JpegHandler extends ExifBitmapHandler {
 			$meta['MEDIAWIKI_EXIF_VERSION'] = Exif::version();
 
 			return serialize( $meta );
-		} catch ( MWException $e ) {
+		} catch ( Exception $e ) {
 			// BitmapMetadataHandler throws an exception in certain exceptional
 			// cases like if file does not exist.
 			wfDebug( __METHOD__ . ': ' . $e->getMessage() . "\n" );
@@ -143,10 +143,8 @@ class JpegHandler extends ExifBitmapHandler {
 				" -outfile " . wfEscapeShellArg( $params['dstPath'] ) .
 				" " . wfEscapeShellArg( $params['srcPath'] );
 			wfDebug( __METHOD__ . ": running jpgtran: $cmd\n" );
-			wfProfileIn( 'jpegtran' );
 			$retval = 0;
 			$err = wfShellExecWithStderr( $cmd, $retval );
-			wfProfileOut( 'jpegtran' );
 			if ( $retval !== 0 ) {
 				$this->logErrorForExternalProcess( $retval, $err, $cmd );
 

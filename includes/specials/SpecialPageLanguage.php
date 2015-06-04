@@ -90,10 +90,12 @@ class SpecialPageLanguage extends FormSpecialPage {
 		return $this->showLogFragment( $this->par );
 	}
 
+	protected function getDisplayFormat() {
+		return 'vform';
+	}
+
 	public function alterForm( HTMLForm $form ) {
-		$form->setDisplayFormat( 'vform' );
-		$form->setWrapperLegend( false );
-		wfRunHooks( 'LanguageSelector', array( $this->getOutput(), 'mw-languageselector' ) );
+		Hooks::run( 'LanguageSelector', array( $this->getOutput(), 'mw-languageselector' ) );
 	}
 
 	/**

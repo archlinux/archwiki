@@ -38,11 +38,6 @@ class SpecialProtectedtitles extends SpecialPage {
 		$this->setHeaders();
 		$this->outputHeader();
 
-		// Purge expired entries on one in every 10 queries
-		if ( !mt_rand( 0, 10 ) ) {
-			Title::purgeExpiredRestrictions();
-		}
-
 		$request = $this->getRequest();
 		$type = $request->getVal( $this->IdType );
 		$level = $request->getVal( $this->IdLevel );
@@ -72,7 +67,6 @@ class SpecialProtectedtitles extends SpecialPage {
 	 * @return string
 	 */
 	function formatRow( $row ) {
-		wfProfileIn( __METHOD__ );
 
 		static $infinity = null;
 
@@ -82,7 +76,6 @@ class SpecialProtectedtitles extends SpecialPage {
 
 		$title = Title::makeTitleSafe( $row->pt_namespace, $row->pt_title );
 		if ( !$title ) {
-			wfProfileOut( __METHOD__ );
 
 			return Html::rawElement(
 				'li',
@@ -118,8 +111,6 @@ class SpecialProtectedtitles extends SpecialPage {
 				$lang->userTime( $expiry, $user )
 			)->escaped();
 		}
-
-		wfProfileOut( __METHOD__ );
 
 		// @todo i18n: This should use a comma separator instead of a hard coded comma, right?
 		return '<li>' . $lang->specialList( $link, implode( $description_items, ', ' ) ) . "</li>\n";
@@ -227,7 +218,6 @@ class ProtectedTitlesPager extends AlphabeticPager {
 	}
 
 	function getStartBody() {
-		wfProfileIn( __METHOD__ );
 		# Do a link batch query
 		$this->mResult->seek( 0 );
 		$lb = new LinkBatch;
@@ -237,7 +227,6 @@ class ProtectedTitlesPager extends AlphabeticPager {
 		}
 
 		$lb->execute();
-		wfProfileOut( __METHOD__ );
 
 		return '';
 	}
@@ -258,7 +247,8 @@ class ProtectedTitlesPager extends AlphabeticPager {
 	 */
 	function getQueryInfo() {
 		$conds = $this->mConds;
-		$conds[] = 'pt_expiry>' . $this->mDb->addQuotes( $this->mDb->timestamp() );
+		$conds[] = 'pt_expiry > ' . $this->mDb->addQuotes( $this->mDb->timestamp() ) .
+			' OR pt_expiry IS NULL';
 		if ( $this->level ) {
 			$conds['pt_create_perm'] = $this->level;
 		}

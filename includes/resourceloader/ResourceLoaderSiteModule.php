@@ -27,13 +27,10 @@
  */
 class ResourceLoaderSiteModule extends ResourceLoaderWikiModule {
 
-	/* Protected Methods */
-
 	/**
-	 * Gets list of pages used by this module
+	 * Get list of pages used by this module
 	 *
 	 * @param ResourceLoaderContext $context
-	 *
 	 * @return array List of pages
 	 */
 	protected function getPages( ResourceLoaderContext $context ) {
@@ -45,18 +42,16 @@ class ResourceLoaderSiteModule extends ResourceLoaderWikiModule {
 		if ( $this->getConfig()->get( 'UseSiteCss' ) ) {
 			$pages['MediaWiki:Common.css'] = array( 'type' => 'style' );
 			$pages['MediaWiki:' . ucfirst( $context->getSkin() ) . '.css'] = array( 'type' => 'style' );
+			$pages['MediaWiki:Print.css'] = array( 'type' => 'style', 'media' => 'print' );
 
 		}
-		$pages['MediaWiki:Print.css'] = array( 'type' => 'style', 'media' => 'print' );
 		return $pages;
 	}
 
-	/* Methods */
-
 	/**
-	 * Gets group name
+	 * Get group name
 	 *
-	 * @return string Name of group
+	 * @return string
 	 */
 	public function getGroup() {
 		return 'site';

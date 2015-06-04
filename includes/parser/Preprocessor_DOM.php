@@ -68,6 +68,7 @@ class Preprocessor_DOM implements Preprocessor {
 	/**
 	 * @param array $values
 	 * @return PPNode_DOM
+	 * @throws MWException
 	 */
 	public function newPartNodeArray( $values ) {
 		//NOTE: DOM manipulation is slower than building & parsing XML! (or so Tim sais)
@@ -85,19 +86,17 @@ class Preprocessor_DOM implements Preprocessor {
 
 		$xml .= "</list>";
 
-		wfProfileIn( __METHOD__ . '-loadXML' );
 		$dom = new DOMDocument();
 		wfSuppressWarnings();
 		$result = $dom->loadXML( $xml );
 		wfRestoreWarnings();
 		if ( !$result ) {
 			// Try running the XML through UtfNormal to get rid of invalid characters
-			$xml = UtfNormal::cleanUp( $xml );
+			$xml = UtfNormal\Validator::cleanUp( $xml );
 			// 1 << 19 == XML_PARSE_HUGE, needed so newer versions of libxml2
 			// don't barf when the XML is >256 levels deep
 			$result = $dom->loadXML( $xml, 1 << 19 );
 		}
-		wfProfileOut( __METHOD__ . '-loadXML' );
 
 		if ( !$result ) {
 			throw new MWException( 'Parameters passed to ' . __METHOD__ . ' result in invalid XML' );
@@ -149,14 +148,12 @@ class Preprocessor_DOM implements Preprocessor {
 	 * @return PPNode_DOM
 	 */
 	public function preprocessToObj( $text, $flags = 0 ) {
-		wfProfileIn( __METHOD__ );
 		global $wgMemc, $wgPreprocessorCacheThreshold;
 
 		$xml = false;
 		$cacheable = ( $wgPreprocessorCacheThreshold !== false
 			&& strlen( $text ) > $wgPreprocessorCacheThreshold );
 		if ( $cacheable ) {
-			wfProfileIn( __METHOD__ . '-cacheable' );
 
 			$cacheKey = wfMemcKey( 'preprocess-xml', md5( $text ), $flags );
 			$cacheValue = $wgMemc->get( $cacheKey );
@@ -169,11 +166,9 @@ class Preprocessor_DOM implements Preprocessor {
 				}
 			}
 			if ( $xml === false ) {
-				wfProfileIn( __METHOD__ . '-cache-miss' );
 				$xml = $this->preprocessToXml( $text, $flags );
 				$cacheValue = sprintf( "%08d", self::CACHE_VERSION ) . $xml;
 				$wgMemc->set( $cacheKey, $cacheValue, 86400 );
-				wfProfileOut( __METHOD__ . '-cache-miss' );
 				wfDebugLog( "Preprocessor", "Saved preprocessor XML to memcached (key $cacheKey)" );
 			}
 		} else {
@@ -186,20 +181,17 @@ class Preprocessor_DOM implements Preprocessor {
 		$max = $this->parser->mOptions->getMaxGeneratedPPNodeCount();
 		if ( $this->parser->mGeneratedPPNodeCount > $max ) {
 			if ( $cacheable ) {
-				wfProfileOut( __METHOD__ . '-cacheable' );
 			}
-			wfProfileOut( __METHOD__ );
 			throw new MWException( __METHOD__ . ': generated node count limit exceeded' );
 		}
 
-		wfProfileIn( __METHOD__ . '-loadXML' );
 		$dom = new DOMDocument;
 		wfSuppressWarnings();
 		$result = $dom->loadXML( $xml );
 		wfRestoreWarnings();
 		if ( !$result ) {
 			// Try running the XML through UtfNormal to get rid of invalid characters
-			$xml = UtfNormal::cleanUp( $xml );
+			$xml = UtfNormal\Validator::cleanUp( $xml );
 			// 1 << 19 == XML_PARSE_HUGE, needed so newer versions of libxml2
 			// don't barf when the XML is >256 levels deep.
 			$result = $dom->loadXML( $xml, 1 << 19 );
@@ -207,13 +199,9 @@ class Preprocessor_DOM implements Preprocessor {
 		if ( $result ) {
 			$obj = new PPNode_DOM( $dom->documentElement );
 		}
-		wfProfileOut( __METHOD__ . '-loadXML' );
 
 		if ( $cacheable ) {
-			wfProfileOut( __METHOD__ . '-cacheable' );
 		}
-
-		wfProfileOut( __METHOD__ );
 
 		if ( !$result ) {
 			throw new MWException( __METHOD__ . ' generated invalid XML' );
@@ -227,7 +215,6 @@ class Preprocessor_DOM implements Preprocessor {
 	 * @return string
 	 */
 	public function preprocessToXml( $text, $flags = 0 ) {
-		wfProfileIn( __METHOD__ );
 		$rules = array(
 			'{' => array(
 				'end' => '}',
@@ -764,8 +751,6 @@ class Preprocessor_DOM implements Preprocessor {
 		$stack->rootAccum .= '</root>';
 		$xml = $stack->rootAccum;
 
-		wfProfileOut( __METHOD__ );
-
 		return $xml;
 	}
 }
@@ -1043,11 +1028,17 @@ class PPFrame_DOM implements PPFrame {
 					// Numbered parameter
 					$index = $nameNodes->item( 0 )->attributes->getNamedItem( 'index' )->textContent;
 					$index = $index - $indexOffset;
+					if ( isset( $namedArgs[$index] ) || isset( $numberedArgs[$index] ) ) {
+						$this->parser->addTrackingCategory( 'duplicate-args-category' );
+					}
 					$numberedArgs[$index] = $value->item( 0 );
 					unset( $namedArgs[$index] );
 				} else {
 					// Named parameter
 					$name = trim( $this->expand( $nameNodes->item( 0 ), PPFrame::STRIP_COMMENTS ) );
+					if ( isset( $namedArgs[$name] ) || isset( $numberedArgs[$name] ) ) {
+						$this->parser->addTrackingCategory( 'duplicate-args-category' );
+					}
 					$namedArgs[$name] = $value->item( 0 );
 					unset( $numberedArgs[$name] );
 				}
@@ -1095,7 +1086,6 @@ class PPFrame_DOM implements PPFrame {
 			);
 			return '<span class="error">Expansion depth limit exceeded</span>';
 		}
-		wfProfileIn( __METHOD__ );
 		++$expansionDepth;
 		if ( $expansionDepth > $this->parser->mHighestExpansionDepth ) {
 			$this->parser->mHighestExpansionDepth = $expansionDepth;
@@ -1284,7 +1274,6 @@ class PPFrame_DOM implements PPFrame {
 					$newIterator = $contextNode->childNodes;
 				}
 			} else {
-				wfProfileOut( __METHOD__ );
 				throw new MWException( __METHOD__ . ': Invalid parameter type' );
 			}
 
@@ -1308,7 +1297,6 @@ class PPFrame_DOM implements PPFrame {
 			}
 		}
 		--$expansionDepth;
-		wfProfileOut( __METHOD__ );
 		return $outStack[0];
 	}
 

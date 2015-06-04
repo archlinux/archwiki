@@ -299,7 +299,7 @@ class FileBackendMultiWrite extends FileBackend {
 
 	/**
 	 * Check that a set of files are consistent across all internal backends
-	 * and re-synchronize those files againt the "multi master" if needed.
+	 * and re-synchronize those files against the "multi master" if needed.
 	 *
 	 * @param array $paths List of storage paths
 	 * @return Status
@@ -314,6 +314,8 @@ class FileBackendMultiWrite extends FileBackend {
 			$mStat = $mBackend->getFileStat( array( 'src' => $mPath, 'latest' => true ) );
 			if ( $mStat === null || ( $mSha1 !== false && !$mStat ) ) { // sanity
 				$status->fatal( 'backend-fail-internal', $this->name );
+				wfDebugLog( 'FileOperation', __METHOD__
+					. ': File is not available on the master backend' );
 				continue; // file is not available on the master backend...
 			}
 			// Check of all clone backends agree with the master...
@@ -326,6 +328,8 @@ class FileBackendMultiWrite extends FileBackend {
 				$cStat = $cBackend->getFileStat( array( 'src' => $cPath, 'latest' => true ) );
 				if ( $cStat === null || ( $cSha1 !== false && !$cStat ) ) { // sanity
 					$status->fatal( 'backend-fail-internal', $cBackend->getName() );
+					wfDebugLog( 'FileOperation', __METHOD__
+					. ': File is not available on the clone backend' );
 					continue; // file is not available on the clone backend...
 				}
 				if ( $mSha1 === $cSha1 ) {

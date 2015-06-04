@@ -30,6 +30,9 @@ class SpecialNewFiles extends IncludableSpecialPage {
 		$this->setHeaders();
 		$this->outputHeader();
 
+		$out = $this->getOutput();
+		$this->addHelpLink( 'Help:New images' );
+
 		$pager = new NewFilesPager( $this->getContext(), $par );
 
 		if ( !$this->including() ) {
@@ -39,9 +42,9 @@ class SpecialNewFiles extends IncludableSpecialPage {
 			$form->displayForm( '' );
 		}
 
-		$this->getOutput()->addHTML( $pager->getBody() );
+		$out->addHTML( $pager->getBody() );
 		if ( !$this->including() ) {
-			$this->getOutput()->addHTML( $pager->getNavigationBar() );
+			$out->addHTML( $pager->getNavigationBar() );
 		}
 	}
 
@@ -59,7 +62,7 @@ class SpecialNewFiles extends IncludableSpecialPage {
 		if ( !$message->isDisabled() ) {
 			$this->getOutput()->addWikiText(
 				Html::rawElement( 'p',
-					array( 'lang' => $wgContLang->getCode(), 'dir' => $wgContLang->getDir() ),
+					array( 'lang' => $wgContLang->getHtmlCode(), 'dir' => $wgContLang->getDir() ),
 					"\n" . $message->plain() . "\n"
 				),
 				/* $lineStart */ false,
@@ -141,7 +144,7 @@ class NewFilesPager extends ReverseChronologicalPager {
 			$mode = $this->getRequest()->getVal( 'gallerymode', null );
 			try {
 				$this->gallery = ImageGalleryBase::factory( $mode, $this->getContext() );
-			} catch ( MWException $e ) {
+			} catch ( Exception $e ) {
 				// User specified something invalid, fallback to default.
 				$this->gallery = ImageGalleryBase::factory( false, $this->getContext() );
 			}
@@ -201,7 +204,10 @@ class NewFilesPager extends ReverseChronologicalPager {
 		$context = new DerivativeContext( $this->getContext() );
 		$context->setTitle( $this->getTitle() ); // Remove subpage
 		$form = new HTMLForm( $fields, $context );
+
 		$form->setSubmitTextMsg( 'ilsubmit' );
+		$form->setSubmitProgressive();
+
 		$form->setMethod( 'get' );
 		$form->setWrapperLegendMsg( 'newimages-legend' );
 

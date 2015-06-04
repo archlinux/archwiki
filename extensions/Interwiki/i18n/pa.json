@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Babanwalia"
+		]
+	},
+	"interwiki-legend-label": "ਟੀਕਾ",
+	"interwiki-logtext": "ਰੋਜ਼ਨਾਮਚਾ ਵੇਖੋ",
+	"interwiki_addtext": "ਕੋਈ ਅੰਤਰਵਿਕੀ ਜਾਂ ਭਾਸ਼ਾਈ ਅਗੇਤਰ ਜੋੜੋ",
+	"interwiki-addtext-local": "ਕੋਈ ਸਥਾਨੀ ਅੰਤਰਵਿਕੀ ਜਾਂ ਭਾਸ਼ਾਈ ਅਗੇਤਰ ਜੋੜੋ",
+	"interwiki-global-links": "ਸਰਬ-ਵਿਆਪੀ ਅੰਤਰਵਿਕੀ ਅਗੇਤਰ",
+	"interwiki-local-links": "ਸਥਾਨੀ ਅੰਤਰਵਿਕੀ ਅਗੇਤਰ",
+	"interwiki-links": "ਅੰਤਰਵਿਕੀ ਅਗੇਤਰ",
+	"interwiki-language-links": "ਅੰਤਰਭਾਸ਼ਾਈ ਅਗੇਤਰ"
+}

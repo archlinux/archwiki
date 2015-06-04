@@ -305,7 +305,7 @@ abstract class DatabaseInstaller {
 		$up = DatabaseUpdater::newForDB( $this->db );
 		try {
 			$up->doUpdates();
-		} catch ( MWException $e ) {
+		} catch ( Exception $e ) {
 			echo "\nAn error occurred:\n";
 			echo $e->getText();
 			$ret = false;
@@ -369,12 +369,17 @@ abstract class DatabaseInstaller {
 	}
 
 	/**
-	 * Get a name=>value map of MW configuration globals that overrides.
-	 * DefaultSettings.php
+	 * Get a name=>value map of MW configuration globals for the default values.
 	 * @return array
 	 */
 	public function getGlobalDefaults() {
-		return array();
+		$defaults = array();
+		foreach ( $this->getGlobalNames() as $var ) {
+			if ( isset( $GLOBALS[$var] ) ) {
+				$defaults[$var] = $GLOBALS[$var];
+			}
+		}
+		return $defaults;
 	}
 
 	/**
@@ -657,7 +662,7 @@ abstract class DatabaseInstaller {
 			if ( $row == "" ) {
 				continue;
 			}
-			$row .= "||";
+			$row .= "|";
 			$interwikis[] = array_combine(
 				array( 'iw_prefix', 'iw_url', 'iw_local', 'iw_api', 'iw_wikiid' ),
 				explode( '|', $row )

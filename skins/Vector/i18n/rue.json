@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Gazeb"
+			"Gazeb",
+			"Tkalyn"
 		]
 	},
 	"vector-action-addsection": "Придати тему",
@@ -14,5 +15,6 @@
 	"vector-view-edit": "Едітовати",
 	"vector-view-history": "Видїти історію",
 	"vector-view-view": "Чітати",
-	"vector-view-viewsource": "Видїти код"
+	"vector-view-viewsource": "Видїти код",
+	"vector-more-actions": "Веце"
 }

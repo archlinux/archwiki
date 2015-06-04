@@ -6,14 +6,15 @@
 			"Lloffiwr",
 			"Shirayuki",
 			"Umherirrender",
-			"Matma Rex"
+			"Matma Rex",
+			"Liuxinyu970226"
 		]
 	},
 	"skinname-vector": "{{optional}}",
 	"vector-skin-desc": "{{desc|what=skin|name=Vector|url=https://www.mediawiki.org/wiki/Skin:Vector}}",
 	"vector.css": "{{optional}}",
 	"vector.js": "{{optional}}",
-	"vector-action-addsection": "Used in the Vector skin. See for example {{canonicalurl:Talk:Main_Page|useskin=vector}}",
+	"vector-action-addsection": "Used in the Vector skin. See for example {{canonicalurl:Talk:Main_Page|useskin=vector}}\n{{Identical|Add topic}}",
 	"vector-action-delete": "Used in the Vector skin, as the name of a tab at the top of the page. See for example {{canonicalurl:Main_Page|useskin=vector}}\n\n{{Identical|Delete}}",
 	"vector-action-move": "Used in the Vector skin, on the tabs at the top of the page. See for example {{canonicalurl:Talk:Main_Page|useskin=vector}}\n\n{{Identical|Move}}",
 	"vector-action-protect": "Tab at top of page, in vector skin\n\n{{Identical|Protect}}",

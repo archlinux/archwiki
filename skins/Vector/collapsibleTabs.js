@@ -95,7 +95,7 @@
 				if ( $( data.collapsedContainer + ' ' + data.collapsible ).length > 0 &&
 						data.expandCondition( $.collapsibleTabs.getSettings( $( data.collapsedContainer ).children(
 								data.collapsible + ':first' ) ).expandedWidth ) ) {
-					//move the element from the dropdown to the tab
+					// move the element from the dropdown to the tab
 					$el.trigger( 'beforeTabExpand' );
 					$.collapsibleTabs
 						.moveToExpanded( data.collapsedContainer + ' ' + data.collapsible + ':first' );

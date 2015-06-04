@@ -5,5 +5,7 @@
 			"Sociologist"
 		]
 	},
-	"log-name-renameuser": "Foydalanuvchilarni qayta nomlash qaydlari"
+	"log-name-renameuser": "Foydalanuvchilarni qayta nomlash qaydlari",
+	"action-renameuser": "foydalanuvchilar nomini oʻzgartirish",
+	"right-renameuser": "Foydalanuvchilar nomini oʻzgartirish"
 }

@@ -20,6 +20,10 @@
  * @file
  */
 
+use Cdb\Exception as CdbException;
+use Cdb\Reader as CdbReader;
+use Cdb\Writer as CdbWriter;
+
 /**
  * Class for caching the contents of localisation files, Messages*.php
  * and *.i18n.php.
@@ -33,7 +37,7 @@
  * as grammatical transformation, is done by the caller.
  */
 class LocalisationCache {
-	const VERSION = 2;
+	const VERSION = 3;
 
 	/** Configuration associative array */
 	private $conf;
@@ -253,9 +257,7 @@ class LocalisationCache {
 	 */
 	public function getItem( $code, $key ) {
 		if ( !isset( $this->loadedItems[$code][$key] ) ) {
-			wfProfileIn( __METHOD__ . '-load' );
 			$this->loadItem( $code, $key );
-			wfProfileOut( __METHOD__ . '-load' );
 		}
 
 		if ( $key === 'fallback' && isset( $this->shallowFallbacks[$code] ) ) {
@@ -276,9 +278,7 @@ class LocalisationCache {
 		if ( !isset( $this->loadedSubitems[$code][$key][$subkey] ) &&
 			!isset( $this->loadedItems[$code][$key] )
 		) {
-			wfProfileIn( __METHOD__ . '-load' );
 			$this->loadSubitem( $code, $key, $subkey );
-			wfProfileOut( __METHOD__ . '-load' );
 		}
 
 		if ( isset( $this->data[$code][$key][$subkey] ) ) {
@@ -505,7 +505,6 @@ class LocalisationCache {
 	 * @return array
 	 */
 	protected function readPHPFile( $_fileName, $_fileType ) {
-		wfProfileIn( __METHOD__ );
 		// Disable APC caching
 		wfSuppressWarnings();
 		$_apcEnabled = ini_set( 'apc.cache_by_default', '0' );
@@ -522,10 +521,8 @@ class LocalisationCache {
 		} elseif ( $_fileType == 'aliases' ) {
 			$data = compact( 'aliases' );
 		} else {
-			wfProfileOut( __METHOD__ );
 			throw new MWException( __METHOD__ . ": Invalid file type: $_fileType" );
 		}
-		wfProfileOut( __METHOD__ );
 
 		return $data;
 	}
@@ -537,24 +534,20 @@ class LocalisationCache {
 	 * @return array Array with a 'messages' key, or empty array if the file doesn't exist
 	 */
 	public function readJSONFile( $fileName ) {
-		wfProfileIn( __METHOD__ );
 
 		if ( !is_readable( $fileName ) ) {
-			wfProfileOut( __METHOD__ );
 
 			return array();
 		}
 
 		$json = file_get_contents( $fileName );
 		if ( $json === false ) {
-			wfProfileOut( __METHOD__ );
 
 			return array();
 		}
 
 		$data = FormatJson::decode( $json, true );
 		if ( $data === null ) {
-			wfProfileOut( __METHOD__ );
 
 			throw new MWException( __METHOD__ . ": Invalid JSON file: $fileName" );
 		}
@@ -565,8 +558,6 @@ class LocalisationCache {
 				unset( $data[$key] );
 			}
 		}
-
-		wfProfileOut( __METHOD__ );
 
 		// The JSON format only supports messages, none of the other variables, so wrap the data
 		return array( 'messages' => $data );
@@ -650,10 +641,16 @@ class LocalisationCache {
 	 * rules, and save the compiled rules in a process-local cache.
 	 *
 	 * @param string $fileName
+	 * @throws MWException
 	 */
 	protected function loadPluralFile( $fileName ) {
+		// Use file_get_contents instead of DOMDocument::load (T58439)
+		$xml = file_get_contents( $fileName );
+		if ( !$xml ) {
+			throw new MWException( "Unable to read plurals file $fileName" );
+		}
 		$doc = new DOMDocument;
-		$doc->load( $fileName );
+		$doc->loadXML( $xml );
 		$rulesets = $doc->getElementsByTagName( "pluralRules" );
 		foreach ( $rulesets as $ruleset ) {
 			$codes = $ruleset->getAttribute( 'locales' );
@@ -687,7 +684,6 @@ class LocalisationCache {
 	 */
 	protected function readSourceFilesAndRegisterDeps( $code, &$deps ) {
 		global $IP;
-		wfProfileIn( __METHOD__ );
 
 		// This reads in the PHP i18n file with non-messages l10n data
 		$fileName = Language::getMessagesFileName( $code );
@@ -707,8 +703,6 @@ class LocalisationCache {
 
 		$deps['plurals'] = new FileDependency( "$IP/languages/data/plurals.xml" );
 		$deps['plurals-mw'] = new FileDependency( "$IP/languages/data/plurals-mediawiki.xml" );
-
-		wfProfileOut( __METHOD__ );
 
 		return $data;
 	}
@@ -790,17 +784,31 @@ class LocalisationCache {
 	}
 
 	/**
+	 * Gets the combined list of messages dirs from
+	 * core and extensions
+	 *
+	 * @since 1.25
+	 * @return array
+	 */
+	public function getMessagesDirs() {
+		global $wgMessagesDirs, $IP;
+		return array(
+			'core' => "$IP/languages/i18n",
+			'api' => "$IP/includes/api/i18n",
+			'oojs-ui' => "$IP/resources/lib/oojs-ui/i18n",
+		) + $wgMessagesDirs;
+	}
+
+	/**
 	 * Load localisation data for a given language for both core and extensions
 	 * and save it to the persistent cache store and the process cache
 	 * @param string $code
 	 * @throws MWException
 	 */
 	public function recache( $code ) {
-		global $wgExtensionMessagesFiles, $wgMessagesDirs;
-		wfProfileIn( __METHOD__ );
+		global $wgExtensionMessagesFiles;
 
 		if ( !$code ) {
-			wfProfileOut( __METHOD__ );
 			throw new MWException( "Invalid language code requested" );
 		}
 		$this->recachedLangs[$code] = true;
@@ -843,15 +851,14 @@ class LocalisationCache {
 		}
 
 		$codeSequence = array_merge( array( $code ), $coreData['fallbackSequence'] );
-
-		wfProfileIn( __METHOD__ . '-fallbacks' );
+		$messageDirs = $this->getMessagesDirs();
 
 		# Load non-JSON localisation data for extensions
 		$extensionData = array_combine(
 			$codeSequence,
 			array_fill( 0, count( $codeSequence ), $initialData ) );
 		foreach ( $wgExtensionMessagesFiles as $extension => $fileName ) {
-			if ( isset( $wgMessagesDirs[$extension] ) ) {
+			if ( isset( $messageDirs[$extension] ) ) {
 				# This extension has JSON message data; skip the PHP shim
 				continue;
 			}
@@ -879,7 +886,7 @@ class LocalisationCache {
 			$csData = $initialData;
 
 			# Load core messages and the extension localisations.
-			foreach ( $wgMessagesDirs as $dirs ) {
+			foreach ( $messageDirs as $dirs ) {
 				foreach ( (array)$dirs as $dir ) {
 					$fileName = "$dir/$csCode.json";
 					$data = $this->readJSONFile( $fileName );
@@ -924,7 +931,7 @@ class LocalisationCache {
 
 			# Allow extensions an opportunity to adjust the data for this
 			# fallback
-			wfRunHooks( 'LocalisationCacheRecacheFallback', array( $this, $csCode, &$csData ) );
+			Hooks::run( 'LocalisationCacheRecacheFallback', array( $this, $csCode, &$csData ) );
 
 			# Merge the data for this fallback into the final array
 			if ( $csCode === $code ) {
@@ -942,10 +949,9 @@ class LocalisationCache {
 			}
 		}
 
-		wfProfileOut( __METHOD__ . '-fallbacks' );
-
 		# Add cache dependencies for any referenced globals
 		$deps['wgExtensionMessagesFiles'] = new GlobalDependency( 'wgExtensionMessagesFiles' );
+		// $wgMessagesDirs is used in LocalisationCache::getMessagesDirs()
 		$deps['wgMessagesDirs'] = new GlobalDependency( 'wgMessagesDirs' );
 		$deps['version'] = new ConstantDependency( 'LocalisationCache::VERSION' );
 
@@ -981,10 +987,9 @@ class LocalisationCache {
 		}
 		# Run hooks
 		$purgeBlobs = true;
-		wfRunHooks( 'LocalisationCacheRecache', array( $this, $code, &$allData, &$purgeBlobs ) );
+		Hooks::run( 'LocalisationCacheRecache', array( $this, $code, &$allData, &$purgeBlobs ) );
 
 		if ( is_null( $allData['namespaceNames'] ) ) {
-			wfProfileOut( __METHOD__ );
 			throw new MWException( __METHOD__ . ': Localisation data failed sanity check! ' .
 				'Check that your languages/messages/MessagesEn.php file is intact.' );
 		}
@@ -999,7 +1004,6 @@ class LocalisationCache {
 		}
 
 		# Save to the persistent cache
-		wfProfileIn( __METHOD__ . '-write' );
 		$this->store->startWrite( $code );
 		foreach ( $allData as $key => $value ) {
 			if ( in_array( $key, self::$splitKeys ) ) {
@@ -1011,16 +1015,15 @@ class LocalisationCache {
 			}
 		}
 		$this->store->finishWrite();
-		wfProfileOut( __METHOD__ . '-write' );
 
 		# Clear out the MessageBlobStore
 		# HACK: If using a null (i.e. disabled) storage backend, we
 		# can't write to the MessageBlobStore either
 		if ( $purgeBlobs && !$this->store instanceof LCStoreNull ) {
-			MessageBlobStore::getInstance()->clear();
+			$blobStore = new MessageBlobStore();
+			$blobStore->clear();
 		}
 
-		wfProfileOut( __METHOD__ );
 	}
 
 	/**

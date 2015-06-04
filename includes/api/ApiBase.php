@@ -32,9 +32,6 @@
  * Module parameters: Derived classes can define getAllowedParams() to specify
  *    which parameters to expect, how to parse and validate them.
  *
- * Profiling: various methods to allow keeping tabs on various tasks and their
- *    time costs
- *
  * Self-documentation: code to allow the API to document its own state
  *
  * @ingroup API
@@ -64,6 +61,30 @@ abstract class ApiBase extends ContextSource {
 	// Boolean, if MIN/MAX are set, enforce (die) these?
 	// Only applies if TYPE='integer' Use with extreme caution
 	const PARAM_RANGE_ENFORCE = 9;
+	/// @since 1.25
+	// Specify an alternative i18n message for this help parameter.
+	// Value is $msg for ApiBase::makeMessage()
+	const PARAM_HELP_MSG = 10;
+	/// @since 1.25
+	// Specify additional i18n messages to append to the normal message. Value
+	// is an array of $msg for ApiBase::makeMessage()
+	const PARAM_HELP_MSG_APPEND = 11;
+	/// @since 1.25
+	// Specify additional information tags for the parameter. Value is an array
+	// of arrays, with the first member being the 'tag' for the info and the
+	// remaining members being the values. In the help, this is formatted using
+	// apihelp-{$path}-paraminfo-{$tag}, which is passed $1 = count, $2 =
+	// comma-joined list of values, $3 = module prefix.
+	const PARAM_HELP_MSG_INFO = 12;
+	/// @since 1.25
+	// When PARAM_TYPE is an array, this may be an array mapping those values
+	// to page titles which will be linked in the help.
+	const PARAM_VALUE_LINKS = 13;
+	/// @since 1.25
+	// When PARAM_TYPE is an array, this is an array mapping those values to
+	// $msg for ApiBase::makeMessage(). Any value not having a mapping will use
+	// apihelp-{$path}-paramvalue-{$param}-{$value} is used.
+	const PARAM_HELP_MSG_PER_VALUE = 14;
 
 	const LIMIT_BIG1 = 500; // Fast query, std user limit
 	const LIMIT_BIG2 = 5000; // Fast query, bot/sysop limit
@@ -136,6 +157,9 @@ abstract class ApiBase extends ContextSource {
 	 * If the module may only be used with a certain format module,
 	 * it should override this method to return an instance of that formatter.
 	 * A value of null means the default format will be used.
+	 * @note Do not use this just because you don't want to support non-json
+	 * formats. This should be used only when there is a fundamental
+	 * requirement for a specific format.
 	 * @return mixed Instance of a derived class of ApiFormatBase, or null
 	 */
 	public function getCustomPrinter() {
@@ -143,27 +167,64 @@ abstract class ApiBase extends ContextSource {
 	}
 
 	/**
-	 * Returns the description string for this module
+	 * Returns usage examples for this module.
+	 *
+	 * Return value has query strings as keys, with values being either strings
+	 * (message key), arrays (message key + parameter), or Message objects.
+	 *
+	 * Do not call this base class implementation when overriding this method.
+	 *
+	 * @since 1.25
+	 * @return array
+	 */
+	protected function getExamplesMessages() {
+		// Fall back to old non-localised method
+		$ret = array();
+
+		$examples = $this->getExamples();
+		if ( $examples ) {
+			if ( !is_array( $examples ) ) {
+				$examples = array( $examples );
+			} elseif ( $examples && ( count( $examples ) & 1 ) == 0 &&
+				array_keys( $examples ) === range( 0, count( $examples ) - 1 ) &&
+				!preg_match( '/^\s*api\.php\?/', $examples[0] )
+			) {
+				// Fix up the ugly "even numbered elements are description, odd
+				// numbered elemts are the link" format (see doc for self::getExamples)
+				$tmp = array();
+				for ( $i = 0; $i < count( $examples ); $i += 2 ) {
+					$tmp[$examples[$i + 1]] = $examples[$i];
+				}
+				$examples = $tmp;
+			}
+
+			foreach ( $examples as $k => $v ) {
+				if ( is_numeric( $k ) ) {
+					$qs = $v;
+					$msg = '';
+				} else {
+					$qs = $k;
+					$msg = self::escapeWikiText( $v );
+					if ( is_array( $msg ) ) {
+						$msg = join( " ", $msg );
+					}
+				}
+
+				$qs = preg_replace( '/^\s*api\.php\?/', '', $qs );
+				$ret[$qs] = $this->msg( 'api-help-fallback-example', array( $msg ) );
+			}
+		}
+
+		return $ret;
+	}
+
+	/**
+	 * Return links to more detailed help pages about the module.
+	 * @since 1.25, returning boolean false is deprecated
 	 * @return string|array
 	 */
-	protected function getDescription() {
-		return false;
-	}
-
-	/**
-	 * Returns usage examples for this module. Return false if no examples are available.
-	 * @return bool|string|array
-	 */
-	protected function getExamples() {
-		return false;
-	}
-
-	/**
-	 * @return bool|string|array Returns a false if the module has no help URL,
-	 *   else returns a (array of) string
-	 */
 	public function getHelpUrls() {
-		return false;
+		return array();
 	}
 
 	/**
@@ -176,22 +237,12 @@ abstract class ApiBase extends ContextSource {
 	 * in the overriding methods. Callers of this method can pass zero or
 	 * more OR-ed flags like GET_VALUES_FOR_HELP.
 	 *
-	 * @return array|bool
+	 * @return array
 	 */
 	protected function getAllowedParams( /* $flags = 0 */ ) {
 		// int $flags is not declared because it causes "Strict standards"
 		// warning. Most derived classes do not implement it.
-		return false;
-	}
-
-	/**
-	 * Returns an array of parameter descriptions.
-	 * Don't call this function directly: use getFinalParamDescription() to
-	 * allow hooks to modify descriptions as needed.
-	 * @return array|bool False on no parameter descriptions
-	 */
-	protected function getParamDescription() {
-		return false;
+		return array();
 	}
 
 	/**
@@ -227,6 +278,25 @@ abstract class ApiBase extends ContextSource {
 	}
 
 	/**
+	 * Indicates whether this module is deprecated
+	 * @since 1.25
+	 * @return bool
+	 */
+	public function isDeprecated() {
+		return false;
+	}
+
+	/**
+	 * Indicates whether this module is "internal"
+	 * Internal API modules are not (yet) intended for 3rd party use and may be unstable.
+	 * @since 1.25
+	 * @return bool
+	 */
+	public function isInternal() {
+		return false;
+	}
+
+	/**
 	 * Returns the token type this module requires in order to execute.
 	 *
 	 * Modules are strongly encouraged to use the core 'csrf' type unless they
@@ -234,11 +304,9 @@ abstract class ApiBase extends ContextSource {
 	 * core types, you must use the ApiQueryTokensRegisterTypes hook to
 	 * register it.
 	 *
-	 * Returning a non-falsey value here will cause self::getFinalParams() to
-	 * return a required string 'token' parameter and
-	 * self::getFinalParamDescription() to ensure there is standardized
-	 * documentation for it. Also, self::mustBePosted() must return true when
-	 * tokens are used.
+	 * Returning a non-falsey value here will force the addition of an
+	 * appropriate 'token' parameter in self::getFinalParams(). Also,
+	 * self::mustBePosted() must return true when tokens are used.
 	 *
 	 * In previous versions of MediaWiki, true was a valid return value.
 	 * Returning true will generate errors indicating that the API module needs
@@ -304,6 +372,87 @@ abstract class ApiBase extends ContextSource {
 	}
 
 	/**
+	 * Get the parent of this module
+	 * @since 1.25
+	 * @return ApiBase|null
+	 */
+	public function getParent() {
+		return $this->isMain() ? null : $this->getMain();
+	}
+
+	/**
+	 * Returns true if the current request breaks the same-origin policy.
+	 *
+	 * For example, json with callbacks.
+	 *
+	 * https://en.wikipedia.org/wiki/Same-origin_policy
+	 *
+	 * @since 1.25
+	 * @return bool
+	 */
+	public function lacksSameOriginSecurity() {
+		return $this->getMain()->getRequest()->getVal( 'callback' ) !== null;
+	}
+
+	/**
+	 * Get the path to this module
+	 *
+	 * @since 1.25
+	 * @return string
+	 */
+	public function getModulePath() {
+		if ( $this->isMain() ) {
+			return 'main';
+		} elseif ( $this->getParent()->isMain() ) {
+			return $this->getModuleName();
+		} else {
+			return $this->getParent()->getModulePath() . '+' . $this->getModuleName();
+		}
+	}
+
+	/**
+	 * Get a module from its module path
+	 *
+	 * @since 1.25
+	 * @param string $path
+	 * @return ApiBase|null
+	 * @throws UsageException
+	 */
+	public function getModuleFromPath( $path ) {
+		$module = $this->getMain();
+		if ( $path === 'main' ) {
+			return $module;
+		}
+
+		$parts = explode( '+', $path );
+		if ( count( $parts ) === 1 ) {
+			// In case the '+' was typed into URL, it resolves as a space
+			$parts = explode( ' ', $path );
+		}
+
+		$count = count( $parts );
+		for ( $i = 0; $i < $count; $i++ ) {
+			$parent = $module;
+			$manager = $parent->getModuleManager();
+			if ( $manager === null ) {
+				$errorPath = join( '+', array_slice( $parts, 0, $i ) );
+				$this->dieUsage( "The module \"$errorPath\" has no submodules", 'badmodule' );
+			}
+			$module = $manager->getModule( $parts[$i] );
+
+			if ( $module === null ) {
+				$errorPath = $i ? join( '+', array_slice( $parts, 0, $i ) ) : $parent->getModuleName();
+				$this->dieUsage(
+					"The module \"$errorPath\" does not have a submodule \"{$parts[$i]}\"",
+					'badmodule'
+				);
+			}
+		}
+
+		return $module;
+	}
+
+	/**
 	 * Get the result object
 	 * @return ApiResult
 	 */
@@ -318,11 +467,17 @@ abstract class ApiBase extends ContextSource {
 	}
 
 	/**
-	 * Get the result data array (read-only)
-	 * @return array
+	 * Get the error formatter
+	 * @return ApiErrorFormatter
 	 */
-	public function getResultData() {
-		return $this->getResult()->getData();
+	public function getErrorFormatter() {
+		// Main module has getErrorFormatter() method overridden
+		// Safety - avoid infinite loop:
+		if ( $this->isMain() ) {
+			ApiBase::dieDebug( __METHOD__, 'base method was called on main module. ' );
+		}
+
+		return $this->getMain()->getErrorFormatter();
 	}
 
 	/**
@@ -331,76 +486,38 @@ abstract class ApiBase extends ContextSource {
 	 */
 	protected function getDB() {
 		if ( !isset( $this->mSlaveDB ) ) {
-			$this->profileDBIn();
 			$this->mSlaveDB = wfGetDB( DB_SLAVE, 'api' );
-			$this->profileDBOut();
 		}
 
 		return $this->mSlaveDB;
 	}
 
 	/**
-	 * Get final module description, after hooks have had a chance to tweak it as
-	 * needed.
-	 *
-	 * @return array|bool False on no parameters
+	 * Get the continuation manager
+	 * @return ApiContinuationManager|null
 	 */
-	public function getFinalDescription() {
-		$desc = $this->getDescription();
-		wfRunHooks( 'APIGetDescription', array( &$this, &$desc ) );
+	public function getContinuationManager() {
+		// Main module has getContinuationManager() method overridden
+		// Safety - avoid infinite loop:
+		if ( $this->isMain() ) {
+			ApiBase::dieDebug( __METHOD__, 'base method was called on main module. ' );
+		}
 
-		return $desc;
+		return $this->getMain()->getContinuationManager();
 	}
 
 	/**
-	 * Get final list of parameters, after hooks have had a chance to
-	 * tweak it as needed.
-	 *
-	 * @param int $flags Zero or more flags like GET_VALUES_FOR_HELP
-	 * @return array|bool False on no parameters
-	 * @since 1.21 $flags param added
+	 * Set the continuation manager
+	 * @param ApiContinuationManager|null
 	 */
-	public function getFinalParams( $flags = 0 ) {
-		$params = $this->getAllowedParams( $flags );
-
-		if ( $this->needsToken() ) {
-			$params['token'] = array(
-				ApiBase::PARAM_TYPE => 'string',
-				ApiBase::PARAM_REQUIRED => true,
-			);
+	public function setContinuationManager( $manager ) {
+		// Main module has setContinuationManager() method overridden
+		// Safety - avoid infinite loop:
+		if ( $this->isMain() ) {
+			ApiBase::dieDebug( __METHOD__, 'base method was called on main module. ' );
 		}
 
-		wfRunHooks( 'APIGetAllowedParams', array( &$this, &$params, $flags ) );
-
-		return $params;
-	}
-
-	/**
-	 * Get final parameter descriptions, after hooks have had a chance to tweak it as
-	 * needed.
-	 *
-	 * @return array|bool False on no parameter descriptions
-	 */
-	public function getFinalParamDescription() {
-		$desc = $this->getParamDescription();
-
-		$tokenType = $this->needsToken();
-		if ( $tokenType ) {
-			if ( !isset( $desc['token'] ) ) {
-				$desc['token'] = array();
-			} elseif ( !is_array( $desc['token'] ) ) {
-				// We ignore a plain-string token, because it's probably an
-				// extension that is supplying the string for BC.
-				$desc['token'] = array();
-			}
-			array_unshift( $desc['token'],
-				"A '$tokenType' token retrieved from action=query&meta=tokens"
-			);
-		}
-
-		wfRunHooks( 'APIGetParamDescription', array( &$this, &$desc ) );
-
-		return $desc;
+		$this->getMain()->setContinuationManager( $manager );
 	}
 
 	/**@}*/
@@ -782,7 +899,7 @@ abstract class ApiBase extends ContextSource {
 							$value = $this->getMain()->canApiHighLimits()
 								? $paramSettings[self::PARAM_MAX2]
 								: $paramSettings[self::PARAM_MAX];
-							$this->getResult()->setParsedLimit( $this->getModuleName(), $value );
+							$this->getResult()->addParsedLimit( $this->getModuleName(), $value );
 						} else {
 							$value = intval( $value );
 							$this->validateLimit(
@@ -974,8 +1091,9 @@ abstract class ApiBase extends ContextSource {
 	 * @param string $token Supplied token
 	 * @param array $params All supplied parameters for the module
 	 * @return bool
+	 * @throws MWException
 	 */
-	public final function validateToken( $token, array $params ) {
+	final public function validateToken( $token, array $params ) {
 		$tokenType = $this->needsToken();
 		$salts = ApiQueryTokens::getTokenTypeSalts();
 		if ( !isset( $salts[$tokenType] ) ) {
@@ -1093,6 +1211,55 @@ abstract class ApiBase extends ContextSource {
 		return $user;
 	}
 
+	/**
+	 * A subset of wfEscapeWikiText for BC texts
+	 *
+	 * @since 1.25
+	 * @param string|array $v
+	 * @return string|array
+	 */
+	private static function escapeWikiText( $v ) {
+		if ( is_array( $v ) ) {
+			return array_map( 'self::escapeWikiText', $v );
+		} else {
+			return strtr( $v, array(
+				'__' => '_&#95;', '{' => '&#123;', '}' => '&#125;',
+				'[[Category:' => '[[:Category:',
+				'[[File:' => '[[:File:', '[[Image:' => '[[:Image:',
+			) );
+		}
+	}
+
+	/**
+	 * Create a Message from a string or array
+	 *
+	 * A string is used as a message key. An array has the message key as the
+	 * first value and message parameters as subsequent values.
+	 *
+	 * @since 1.25
+	 * @param string|array|Message $msg
+	 * @param IContextSource $context
+	 * @param array $params
+	 * @return Message|null
+	 */
+	public static function makeMessage( $msg, IContextSource $context, array $params = null ) {
+		if ( is_string( $msg ) ) {
+			$msg = wfMessage( $msg );
+		} elseif ( is_array( $msg ) ) {
+			$msg = call_user_func_array( 'wfMessage', $msg );
+		}
+		if ( !$msg instanceof Message ) {
+			return null;
+		}
+
+		$msg->setContext( $context );
+		if ( $params ) {
+			$msg->params( $params );
+		}
+
+		return $msg;
+	}
+
 	/**@}*/
 
 	/************************************************************************//**
@@ -1108,28 +1275,8 @@ abstract class ApiBase extends ContextSource {
 	 * @param string $warning Warning message
 	 */
 	public function setWarning( $warning ) {
-		$result = $this->getResult();
-		$data = $result->getData();
-		$moduleName = $this->getModuleName();
-		if ( isset( $data['warnings'][$moduleName] ) ) {
-			// Don't add duplicate warnings
-			$oldWarning = $data['warnings'][$moduleName]['*'];
-			$warnPos = strpos( $oldWarning, $warning );
-			// If $warning was found in $oldWarning, check if it starts at 0 or after "\n"
-			if ( $warnPos !== false && ( $warnPos === 0 || $oldWarning[$warnPos - 1] === "\n" ) ) {
-				// Check if $warning is followed by "\n" or the end of the $oldWarning
-				$warnPos += strlen( $warning );
-				if ( strlen( $oldWarning ) <= $warnPos || $oldWarning[$warnPos] === "\n" ) {
-					return;
-				}
-			}
-			// If there is a warning already, append it to the existing one
-			$warning = "$oldWarning\n$warning";
-		}
-		$msg = array();
-		ApiResult::setContent( $msg, $warning );
-		$result->addValue( 'warnings', $moduleName,
-			$msg, ApiResult::OVERRIDE | ApiResult::ADD_ON_TOP | ApiResult::NO_SIZE_CHECK );
+		$msg = new ApiRawMessage( $warning, 'warning' );
+		$this->getErrorFormatter()->addWarning( $this->getModuleName(), $msg );
 	}
 
 	/**
@@ -1159,7 +1306,6 @@ abstract class ApiBase extends ContextSource {
 	 * @throws UsageException
 	 */
 	public function dieUsage( $description, $errorCode, $httpRespCode = 0, $extradata = null ) {
-		Profiler::instance()->close();
 		throw new UsageException(
 			$description,
 			$this->encodeParamName( $errorCode ),
@@ -1174,6 +1320,7 @@ abstract class ApiBase extends ContextSource {
 	 * @since 1.23
 	 * @param Status $status
 	 * @return array Array of code and error string
+	 * @throws MWException
 	 */
 	public function getErrorFromStatus( $status ) {
 		if ( $status->isGood() ) {
@@ -1530,6 +1677,10 @@ abstract class ApiBase extends ContextSource {
 			'code' => 'nosuchrcid',
 			'info' => "There is no change with rcid \"\$1\""
 		),
+		'nosuchlogid' => array(
+			'code' => 'nosuchlogid',
+			'info' => "There is no log entry with ID \"\$1\""
+		),
 		'protect-invalidaction' => array(
 			'code' => 'protect-invalidaction',
 			'info' => "Invalid protection type \"\$1\""
@@ -1815,6 +1966,21 @@ abstract class ApiBase extends ContextSource {
 		throw new MWException( "Internal error in $method: $message" );
 	}
 
+	/**
+	 * Write logging information for API features to a debug log, for usage
+	 * analysis.
+	 * @param string $feature Feature being used.
+	 */
+	protected function logFeatureUsage( $feature ) {
+		$request = $this->getRequest();
+		$s = '"' . addslashes( $feature ) . '"' .
+			' "' . wfUrlencode( str_replace( ' ', '_', $this->getUser()->getName() ) ) . '"' .
+			' "' . $request->getIP() . '"' .
+			' "' . addslashes( $request->getHeader( 'Referer' ) ) . '"' .
+			' "' . addslashes( $this->getMain()->getUserAgent() ) . '"';
+		wfDebugLog( 'api-feature-usage', $s, 'private' );
+	}
+
 	/**@}*/
 
 	/************************************************************************//**
@@ -1823,10 +1989,424 @@ abstract class ApiBase extends ContextSource {
 	 */
 
 	/**
+	 * Return the description message.
+	 *
+	 * @return string|array|Message
+	 */
+	protected function getDescriptionMessage() {
+		return "apihelp-{$this->getModulePath()}-description";
+	}
+
+	/**
+	 * Get final module description, after hooks have had a chance to tweak it as
+	 * needed.
+	 *
+	 * @since 1.25, returns Message[] rather than string[]
+	 * @return Message[]
+	 */
+	public function getFinalDescription() {
+		$desc = $this->getDescription();
+		Hooks::run( 'APIGetDescription', array( &$this, &$desc ) );
+		$desc = self::escapeWikiText( $desc );
+		if ( is_array( $desc ) ) {
+			$desc = join( "\n", $desc );
+		} else {
+			$desc = (string)$desc;
+		}
+
+		$msg = ApiBase::makeMessage( $this->getDescriptionMessage(), $this->getContext(), array(
+			$this->getModulePrefix(),
+			$this->getModuleName(),
+			$this->getModulePath(),
+		) );
+		if ( !$msg->exists() ) {
+			$msg = $this->msg( 'api-help-fallback-description', $desc );
+		}
+		$msgs = array( $msg );
+
+		Hooks::run( 'APIGetDescriptionMessages', array( $this, &$msgs ) );
+
+		return $msgs;
+	}
+
+	/**
+	 * Get final list of parameters, after hooks have had a chance to
+	 * tweak it as needed.
+	 *
+	 * @param int $flags Zero or more flags like GET_VALUES_FOR_HELP
+	 * @return array|bool False on no parameters
+	 * @since 1.21 $flags param added
+	 */
+	public function getFinalParams( $flags = 0 ) {
+		$params = $this->getAllowedParams( $flags );
+		if ( !$params ) {
+			$params = array();
+		}
+
+		if ( $this->needsToken() ) {
+			$params['token'] = array(
+				ApiBase::PARAM_TYPE => 'string',
+				ApiBase::PARAM_REQUIRED => true,
+				ApiBase::PARAM_HELP_MSG => array(
+					'api-help-param-token',
+					$this->needsToken(),
+				),
+			) + ( isset( $params['token'] ) ? $params['token'] : array() );
+		}
+
+		Hooks::run( 'APIGetAllowedParams', array( &$this, &$params, $flags ) );
+
+		return $params;
+	}
+
+	/**
+	 * Get final parameter descriptions, after hooks have had a chance to tweak it as
+	 * needed.
+	 *
+	 * @since 1.25, returns array of Message[] rather than array of string[]
+	 * @return array Keys are parameter names, values are arrays of Message objects
+	 */
+	public function getFinalParamDescription() {
+		$prefix = $this->getModulePrefix();
+		$name = $this->getModuleName();
+		$path = $this->getModulePath();
+
+		$desc = $this->getParamDescription();
+		Hooks::run( 'APIGetParamDescription', array( &$this, &$desc ) );
+
+		if ( !$desc ) {
+			$desc = array();
+		}
+		$desc = self::escapeWikiText( $desc );
+
+		$params = $this->getFinalParams( ApiBase::GET_VALUES_FOR_HELP );
+		$msgs = array();
+		foreach ( $params as $param => $settings ) {
+			if ( !is_array( $settings ) ) {
+				$settings = array();
+			}
+
+			$d = isset( $desc[$param] ) ? $desc[$param] : '';
+			if ( is_array( $d ) ) {
+				// Special handling for prop parameters
+				$d = array_map( function ( $line ) {
+					if ( preg_match( '/^\s+(\S+)\s+-\s+(.+)$/', $line, $m ) ) {
+						$line = "\n;{$m[1]}:{$m[2]}";
+					}
+					return $line;
+				}, $d );
+				$d = join( ' ', $d );
+			}
+
+			if ( isset( $settings[ApiBase::PARAM_HELP_MSG] ) ) {
+				$msg = $settings[ApiBase::PARAM_HELP_MSG];
+			} else {
+				$msg = $this->msg( "apihelp-{$path}-param-{$param}" );
+				if ( !$msg->exists() ) {
+					$msg = $this->msg( 'api-help-fallback-parameter', $d );
+				}
+			}
+			$msg = ApiBase::makeMessage( $msg, $this->getContext(),
+				array( $prefix, $param, $name, $path ) );
+			if ( !$msg ) {
+				$this->dieDebug( __METHOD__,
+					'Value in ApiBase::PARAM_HELP_MSG is not valid' );
+			}
+			$msgs[$param] = array( $msg );
+
+			if ( isset( $settings[ApiBase::PARAM_HELP_MSG_PER_VALUE] ) ) {
+				if ( !is_array( $settings[ApiBase::PARAM_HELP_MSG_PER_VALUE] ) ) {
+					$this->dieDebug( __METHOD__,
+						'ApiBase::PARAM_HELP_MSG_PER_VALUE is not valid' );
+				}
+				if ( !is_array( $settings[ApiBase::PARAM_TYPE] ) ) {
+					$this->dieDebug( __METHOD__,
+						'ApiBase::PARAM_HELP_MSG_PER_VALUE may only be used when ' .
+						'ApiBase::PARAM_TYPE is an array' );
+				}
+
+				$valueMsgs = $settings[ApiBase::PARAM_HELP_MSG_PER_VALUE];
+				foreach ( $settings[ApiBase::PARAM_TYPE] as $value ) {
+					if ( isset( $valueMsgs[$value] ) ) {
+						$msg = $valueMsgs[$value];
+					} else {
+						$msg = "apihelp-{$path}-paramvalue-{$param}-{$value}";
+					}
+					$m = ApiBase::makeMessage( $msg, $this->getContext(),
+						array( $prefix, $param, $name, $path, $value ) );
+					if ( $m ) {
+						$m = new ApiHelpParamValueMessage(
+							$value,
+							array( $m->getKey(), 'api-help-param-no-description' ),
+							$m->getParams()
+						);
+						$msgs[$param][] = $m->setContext( $this->getContext() );
+					} else {
+						$this->dieDebug( __METHOD__,
+							"Value in ApiBase::PARAM_HELP_MSG_PER_VALUE for $value is not valid" );
+					}
+				}
+			}
+
+			if ( isset( $settings[ApiBase::PARAM_HELP_MSG_APPEND] ) ) {
+				if ( !is_array( $settings[ApiBase::PARAM_HELP_MSG_APPEND] ) ) {
+					$this->dieDebug( __METHOD__,
+						'Value for ApiBase::PARAM_HELP_MSG_APPEND is not an array' );
+				}
+				foreach ( $settings[ApiBase::PARAM_HELP_MSG_APPEND] as $m ) {
+					$m = ApiBase::makeMessage( $m, $this->getContext(),
+						array( $prefix, $param, $name, $path ) );
+					if ( $m ) {
+						$msgs[$param][] = $m;
+					} else {
+						$this->dieDebug( __METHOD__,
+							'Value in ApiBase::PARAM_HELP_MSG_APPEND is not valid' );
+					}
+				}
+			}
+		}
+
+		Hooks::run( 'APIGetParamDescriptionMessages', array( $this, &$msgs ) );
+
+		return $msgs;
+	}
+
+	/**
+	 * Generates the list of flags for the help screen and for action=paraminfo
+	 *
+	 * Corresponding messages: api-help-flag-deprecated,
+	 * api-help-flag-internal, api-help-flag-readrights,
+	 * api-help-flag-writerights, api-help-flag-mustbeposted
+	 *
+	 * @return string[]
+	 */
+	protected function getHelpFlags() {
+		$flags = array();
+
+		if ( $this->isDeprecated() ) {
+			$flags[] = 'deprecated';
+		}
+		if ( $this->isInternal() ) {
+			$flags[] = 'internal';
+		}
+		if ( $this->isReadMode() ) {
+			$flags[] = 'readrights';
+		}
+		if ( $this->isWriteMode() ) {
+			$flags[] = 'writerights';
+		}
+		if ( $this->mustBePosted() ) {
+			$flags[] = 'mustbeposted';
+		}
+
+		return $flags;
+	}
+
+	/**
+	 * Called from ApiHelp before the pieces are joined together and returned.
+	 *
+	 * This exists mainly for ApiMain to add the Permissions and Credits
+	 * sections. Other modules probably don't need it.
+	 *
+	 * @param string[] &$help Array of help data
+	 * @param array $options Options passed to ApiHelp::getHelp
+	 */
+	public function modifyHelp( array &$help, array $options ) {
+	}
+
+	/**@}*/
+
+	/************************************************************************//**
+	 * @name   Deprecated
+	 * @{
+	 */
+
+	/// @deprecated since 1.24
+	const PROP_ROOT = 'ROOT';
+	/// @deprecated since 1.24
+	const PROP_LIST = 'LIST';
+	/// @deprecated since 1.24
+	const PROP_TYPE = 0;
+	/// @deprecated since 1.24
+	const PROP_NULLABLE = 1;
+
+	/**
+	 * Formerly returned a string that identifies the version of the extending
+	 * class. Typically included the class name, the svn revision, timestamp,
+	 * and last author. Usually done with SVN's Id keyword
+	 *
+	 * @deprecated since 1.21, version string is no longer supported
+	 * @return string
+	 */
+	public function getVersion() {
+		wfDeprecated( __METHOD__, '1.21' );
+		return '';
+	}
+
+	/**
+	 * Formerly used to fetch a list of possible properites in the result,
+	 * somehow organized with respect to the prop parameter that causes them to
+	 * be returned. The specific semantics of the return value was never
+	 * specified. Since this was never possible to be accurately updated, it
+	 * has been removed.
+	 *
+	 * @deprecated since 1.24
+	 * @return array|bool
+	 */
+	protected function getResultProperties() {
+		wfDeprecated( __METHOD__, '1.24' );
+		return false;
+	}
+
+	/**
+	 * @see self::getResultProperties()
+	 * @deprecated since 1.24
+	 * @return array|bool
+	 */
+	public function getFinalResultProperties() {
+		wfDeprecated( __METHOD__, '1.24' );
+		return array();
+	}
+
+	/**
+	 * @see self::getResultProperties()
+	 * @deprecated since 1.24
+	 */
+	protected static function addTokenProperties( &$props, $tokenFunctions ) {
+		wfDeprecated( __METHOD__, '1.24' );
+	}
+
+	/**
+	 * @see self::getPossibleErrors()
+	 * @deprecated since 1.24
+	 * @return array
+	 */
+	public function getRequireOnlyOneParameterErrorMessages( $params ) {
+		wfDeprecated( __METHOD__, '1.24' );
+		return array();
+	}
+
+	/**
+	 * @see self::getPossibleErrors()
+	 * @deprecated since 1.24
+	 * @return array
+	 */
+	public function getRequireMaxOneParameterErrorMessages( $params ) {
+		wfDeprecated( __METHOD__, '1.24' );
+		return array();
+	}
+
+	/**
+	 * @see self::getPossibleErrors()
+	 * @deprecated since 1.24
+	 * @return array
+	 */
+	public function getRequireAtLeastOneParameterErrorMessages( $params ) {
+		wfDeprecated( __METHOD__, '1.24' );
+		return array();
+	}
+
+	/**
+	 * @see self::getPossibleErrors()
+	 * @deprecated since 1.24
+	 * @return array
+	 */
+	public function getTitleOrPageIdErrorMessage() {
+		wfDeprecated( __METHOD__, '1.24' );
+		return array();
+	}
+
+	/**
+	 * This formerly attempted to return a list of all possible errors returned
+	 * by the module. However, this was impossible to maintain in many cases
+	 * since errors could come from other areas of MediaWiki and in some cases
+	 * from arbitrary extension hooks. Since a partial list claiming to be
+	 * comprehensive is unlikely to be useful, it was removed.
+	 *
+	 * @deprecated since 1.24
+	 * @return array
+	 */
+	public function getPossibleErrors() {
+		wfDeprecated( __METHOD__, '1.24' );
+		return array();
+	}
+
+	/**
+	 * @see self::getPossibleErrors()
+	 * @deprecated since 1.24
+	 * @return array
+	 */
+	public function getFinalPossibleErrors() {
+		wfDeprecated( __METHOD__, '1.24' );
+		return array();
+	}
+
+	/**
+	 * @see self::getPossibleErrors()
+	 * @deprecated since 1.24
+	 * @return array
+	 */
+	public function parseErrors( $errors ) {
+		wfDeprecated( __METHOD__, '1.24' );
+		return array();
+	}
+
+	/**
+	 * Returns the description string for this module
+	 *
+	 * Ignored if an i18n message exists for
+	 * "apihelp-{$this->getModulePathString()}-description".
+	 *
+	 * @deprecated since 1.25
+	 * @return Message|string|array
+	 */
+	protected function getDescription() {
+		return false;
+	}
+
+	/**
+	 * Returns an array of parameter descriptions.
+	 *
+	 * For each parameter, ignored if an i18n message exists for the parameter.
+	 * By default that message is
+	 * "apihelp-{$this->getModulePathString()}-param-{$param}", but it may be
+	 * overridden using ApiBase::PARAM_HELP_MSG in the data returned by
+	 * self::getFinalParams().
+	 *
+	 * @deprecated since 1.25
+	 * @return array|bool False on no parameter descriptions
+	 */
+	protected function getParamDescription() {
+		return array();
+	}
+
+	/**
+	 * Returns usage examples for this module.
+	 *
+	 * Return value as an array is either:
+	 *  - numeric keys with partial URLs ("api.php?" plus a query string) as
+	 *    values
+	 *  - sequential numeric keys with even-numbered keys being display-text
+	 *    and odd-numbered keys being partial urls
+	 *  - partial URLs as keys with display-text (string or array-to-be-joined)
+	 *    as values
+	 * Return value as a string is the same as an array with a numeric key and
+	 * that value, and boolean false means "no examples".
+	 *
+	 * @deprecated since 1.25, use getExamplesMessages() instead
+	 * @return bool|string|array
+	 */
+	protected function getExamples() {
+		return false;
+	}
+
+	/**
 	 * Generates help message for this module, or false if there is no description
+	 * @deprecated since 1.25
 	 * @return string|bool
 	 */
 	public function makeHelpMsg() {
+		wfDeprecated( __METHOD__, '1.25' );
 		static $lnPrfx = "\n  ";
 
 		$msg = $this->getFinalDescription();
@@ -1891,6 +2471,7 @@ abstract class ApiBase extends ContextSource {
 	}
 
 	/**
+	 * @deprecated since 1.25
 	 * @param string $item
 	 * @return string
 	 */
@@ -1899,12 +2480,14 @@ abstract class ApiBase extends ContextSource {
 	}
 
 	/**
+	 * @deprecated since 1.25
 	 * @param string $prefix Text to split output items
 	 * @param string $title What is being output
 	 * @param string|array $input
 	 * @return string
 	 */
 	protected function makeHelpArrayToString( $prefix, $title, $input ) {
+		wfDeprecated( __METHOD__, '1.25' );
 		if ( $input === false ) {
 			return '';
 		}
@@ -1929,9 +2512,11 @@ abstract class ApiBase extends ContextSource {
 	/**
 	 * Generates the parameter descriptions for this module, to be displayed in the
 	 * module's help.
+	 * @deprecated since 1.25
 	 * @return string|bool
 	 */
 	public function makeHelpMsgParameters() {
+		wfDeprecated( __METHOD__, '1.25' );
 		$params = $this->getFinalParams( ApiBase::GET_VALUES_FOR_HELP );
 		if ( $params ) {
 
@@ -2081,292 +2666,79 @@ abstract class ApiBase extends ContextSource {
 		return false;
 	}
 
-	/**@}*/
-
-	/************************************************************************//**
-	 * @name   Profiling
-	 * @{
-	 */
-
 	/**
-	 * Profiling: total module execution time
-	 */
-	private $mTimeIn = 0, $mModuleTime = 0;
-
-	/**
-	 * Get the name of the module as shown in the profiler log
-	 *
+	 * @deprecated since 1.25, always returns empty string
 	 * @param DatabaseBase|bool $db
-	 *
 	 * @return string
 	 */
 	public function getModuleProfileName( $db = false ) {
-		if ( $db ) {
-			return 'API:' . $this->mModuleName . '-DB';
-		}
-
-		return 'API:' . $this->mModuleName;
-	}
-
-	/**
-	 * Start module profiling
-	 */
-	public function profileIn() {
-		if ( $this->mTimeIn !== 0 ) {
-			ApiBase::dieDebug( __METHOD__, 'Called twice without calling profileOut()' );
-		}
-		$this->mTimeIn = microtime( true );
-		wfProfileIn( $this->getModuleProfileName() );
-	}
-
-	/**
-	 * End module profiling
-	 */
-	public function profileOut() {
-		if ( $this->mTimeIn === 0 ) {
-			ApiBase::dieDebug( __METHOD__, 'Called without calling profileIn() first' );
-		}
-		if ( $this->mDBTimeIn !== 0 ) {
-			ApiBase::dieDebug(
-				__METHOD__,
-				'Must be called after database profiling is done with profileDBOut()'
-			);
-		}
-
-		$this->mModuleTime += microtime( true ) - $this->mTimeIn;
-		$this->mTimeIn = 0;
-		wfProfileOut( $this->getModuleProfileName() );
-	}
-
-	/**
-	 * When modules crash, sometimes it is needed to do a profileOut() regardless
-	 * of the profiling state the module was in. This method does such cleanup.
-	 */
-	public function safeProfileOut() {
-		if ( $this->mTimeIn !== 0 ) {
-			if ( $this->mDBTimeIn !== 0 ) {
-				$this->profileDBOut();
-			}
-			$this->profileOut();
-		}
-	}
-
-	/**
-	 * Total time the module was executed
-	 * @return float
-	 */
-	public function getProfileTime() {
-		if ( $this->mTimeIn !== 0 ) {
-			ApiBase::dieDebug( __METHOD__, 'Called without calling profileOut() first' );
-		}
-
-		return $this->mModuleTime;
-	}
-
-	/**
-	 * Profiling: database execution time
-	 */
-	private $mDBTimeIn = 0, $mDBTime = 0;
-
-	/**
-	 * Start module profiling
-	 */
-	public function profileDBIn() {
-		if ( $this->mTimeIn === 0 ) {
-			ApiBase::dieDebug(
-				__METHOD__,
-				'Must be called while profiling the entire module with profileIn()'
-			);
-		}
-		if ( $this->mDBTimeIn !== 0 ) {
-			ApiBase::dieDebug( __METHOD__, 'Called twice without calling profileDBOut()' );
-		}
-		$this->mDBTimeIn = microtime( true );
-		wfProfileIn( $this->getModuleProfileName( true ) );
-	}
-
-	/**
-	 * End database profiling
-	 */
-	public function profileDBOut() {
-		if ( $this->mTimeIn === 0 ) {
-			ApiBase::dieDebug( __METHOD__, 'Must be called while profiling ' .
-				'the entire module with profileIn()' );
-		}
-		if ( $this->mDBTimeIn === 0 ) {
-			ApiBase::dieDebug( __METHOD__, 'Called without calling profileDBIn() first' );
-		}
-
-		$time = microtime( true ) - $this->mDBTimeIn;
-		$this->mDBTimeIn = 0;
-
-		$this->mDBTime += $time;
-		$this->getMain()->mDBTime += $time;
-		wfProfileOut( $this->getModuleProfileName( true ) );
-	}
-
-	/**
-	 * Total time the module used the database
-	 * @return float
-	 */
-	public function getProfileDBTime() {
-		if ( $this->mDBTimeIn !== 0 ) {
-			ApiBase::dieDebug( __METHOD__, 'Called without calling profileDBOut() first' );
-		}
-
-		return $this->mDBTime;
-	}
-
-	/**
-	 * Write logging information for API features to a debug log, for usage
-	 * analysis.
-	 * @param string $feature Feature being used.
-	 */
-	protected function logFeatureUsage( $feature ) {
-		$request = $this->getRequest();
-		$s = '"' . addslashes( $feature ) . '"' .
-			' "' . wfUrlencode( str_replace( ' ', '_', $this->getUser()->getName() ) ) . '"' .
-			' "' . $request->getIP() . '"' .
-			' "' . addslashes( $request->getHeader( 'Referer' ) ) . '"' .
-			' "' . addslashes( $request->getHeader( 'User-agent' ) ) . '"';
-		wfDebugLog( 'api-feature-usage', $s, 'private' );
-	}
-
-	/**@}*/
-
-	/************************************************************************//**
-	 * @name   Deprecated
-	 * @{
-	 */
-
-	/// @deprecated since 1.24
-	const PROP_ROOT = 'ROOT';
-	/// @deprecated since 1.24
-	const PROP_LIST = 'LIST';
-	/// @deprecated since 1.24
-	const PROP_TYPE = 0;
-	/// @deprecated since 1.24
-	const PROP_NULLABLE = 1;
-
-	/**
-	 * Formerly returned a string that identifies the version of the extending
-	 * class. Typically included the class name, the svn revision, timestamp,
-	 * and last author. Usually done with SVN's Id keyword
-	 *
-	 * @deprecated since 1.21, version string is no longer supported
-	 * @return string
-	 */
-	public function getVersion() {
-		wfDeprecated( __METHOD__, '1.21' );
+		wfDeprecated( __METHOD__, '1.25' );
 		return '';
 	}
 
 	/**
-	 * Formerly used to fetch a list of possible properites in the result,
-	 * somehow organized with respect to the prop parameter that causes them to
-	 * be returned. The specific semantics of the return value was never
-	 * specified. Since this was never possible to be accurately updated, it
-	 * has been removed.
-	 *
-	 * @deprecated since 1.24
-	 * @return array|bool
+	 * @deprecated since 1.25
 	 */
-	protected function getResultProperties() {
-		wfDeprecated( __METHOD__, '1.24' );
-		return false;
+	public function profileIn() {
+		// No wfDeprecated() yet because extensions call this and might need to
+		// keep doing so for BC.
 	}
 
 	/**
-	 * @see self::getResultProperties()
-	 * @deprecated since 1.24
-	 * @return array|bool
+	 * @deprecated since 1.25
 	 */
-	public function getFinalResultProperties() {
-		wfDeprecated( __METHOD__, '1.24' );
-		return array();
+	public function profileOut() {
+		// No wfDeprecated() yet because extensions call this and might need to
+		// keep doing so for BC.
 	}
 
 	/**
-	 * @see self::getResultProperties()
-	 * @deprecated since 1.24
+	 * @deprecated since 1.25
 	 */
-	protected static function addTokenProperties( &$props, $tokenFunctions ) {
-		wfDeprecated( __METHOD__, '1.24' );
+	public function safeProfileOut() {
+		wfDeprecated( __METHOD__, '1.25' );
 	}
 
 	/**
-	 * @see self::getPossibleErrors()
-	 * @deprecated since 1.24
+	 * @deprecated since 1.25, always returns 0
+	 * @return float
+	 */
+	public function getProfileTime() {
+		wfDeprecated( __METHOD__, '1.25' );
+		return 0;
+	}
+
+	/**
+	 * @deprecated since 1.25
+	 */
+	public function profileDBIn() {
+		wfDeprecated( __METHOD__, '1.25' );
+	}
+
+	/**
+	 * @deprecated since 1.25
+	 */
+	public function profileDBOut() {
+		wfDeprecated( __METHOD__, '1.25' );
+	}
+
+	/**
+	 * @deprecated since 1.25, always returns 0
+	 * @return float
+	 */
+	public function getProfileDBTime() {
+		wfDeprecated( __METHOD__, '1.25' );
+		return 0;
+	}
+
+	/**
+	 * Get the result data array (read-only)
+	 * @deprecated since 1.25, use $this->getResult() methods instead
 	 * @return array
 	 */
-	public function getRequireOnlyOneParameterErrorMessages( $params ) {
-		wfDeprecated( __METHOD__, '1.24' );
-		return array();
-	}
-
-	/**
-	 * @see self::getPossibleErrors()
-	 * @deprecated since 1.24
-	 * @return array
-	 */
-	public function getRequireMaxOneParameterErrorMessages( $params ) {
-		wfDeprecated( __METHOD__, '1.24' );
-		return array();
-	}
-
-	/**
-	 * @see self::getPossibleErrors()
-	 * @deprecated since 1.24
-	 * @return array
-	 */
-	public function getRequireAtLeastOneParameterErrorMessages( $params ) {
-		wfDeprecated( __METHOD__, '1.24' );
-		return array();
-	}
-
-	/**
-	 * @see self::getPossibleErrors()
-	 * @deprecated since 1.24
-	 * @return array
-	 */
-	public function getTitleOrPageIdErrorMessage() {
-		wfDeprecated( __METHOD__, '1.24' );
-		return array();
-	}
-
-	/**
-	 * This formerly attempted to return a list of all possible errors returned
-	 * by the module. However, this was impossible to maintain in many cases
-	 * since errors could come from other areas of MediaWiki and in some cases
-	 * from arbitrary extension hooks. Since a partial list claiming to be
-	 * comprehensive is unlikely to be useful, it was removed.
-	 *
-	 * @deprecated since 1.24
-	 * @return array
-	 */
-	public function getPossibleErrors() {
-		wfDeprecated( __METHOD__, '1.24' );
-		return array();
-	}
-
-	/**
-	 * @see self::getPossibleErrors()
-	 * @deprecated since 1.24
-	 * @return array
-	 */
-	public function getFinalPossibleErrors() {
-		wfDeprecated( __METHOD__, '1.24' );
-		return array();
-	}
-
-	/**
-	 * @see self::getPossibleErrors()
-	 * @deprecated since 1.24
-	 * @return array
-	 */
-	public function parseErrors( $errors ) {
-		wfDeprecated( __METHOD__, '1.24' );
-		return array();
+	public function getResultData() {
+		wfDeprecated( __METHOD__, '1.25' );
+		return $this->getResult()->getData();
 	}
 
 	/**@}*/

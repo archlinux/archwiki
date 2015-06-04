@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Juanpabl"
+			"Juanpabl",
+			"Macofe"
 		]
 	},
 	"wikieditor": "Interficie abanzada d'edición de wikitexto",
@@ -12,9 +13,6 @@
 	"wikieditor-preview-tab": "Previsualizar",
 	"wikieditor-preview-changes-tab": "Cambios",
 	"wikieditor-preview-loading": "Cargando...",
-	"wikieditor-previewDialog-preference": "Activar o dialogo de visualización previa",
-	"wikieditor-previewDialog-tab": "Previsualización",
-	"wikieditor-previewDialog-loading": "Cargando…",
 	"wikieditor-publish-preference": "Activar a publicación trango a trango",
 	"wikieditor-publish-button-publish": "Publicar",
 	"wikieditor-publish-button-cancel": "Cancelar",
@@ -130,23 +128,6 @@
 	"wikieditor-toolbar-tool-replace-emptysearch": "No ha escrito garra cosa ta mirar.",
 	"wikieditor-toolbar-tool-replace-invalidregex": "A expresión regular que ha escrito ye invalida: $1",
 	"wikieditor-toolbar-section-characters": "Carácters especials",
-	"wikieditor-toolbar-characters-page-latin": "Latín",
-	"wikieditor-toolbar-characters-page-latinextended": "Latín enamplau",
-	"wikieditor-toolbar-characters-page-ipa": "AFI(IPA)",
-	"wikieditor-toolbar-characters-page-symbols": "Símbols",
-	"wikieditor-toolbar-characters-page-greek": "Griego",
-	"wikieditor-toolbar-characters-page-cyrillic": "Cirilico",
-	"wikieditor-toolbar-characters-page-arabic": "Arabico",
-	"wikieditor-toolbar-characters-page-arabicextended": "Arabigo extendiu",
-	"wikieditor-toolbar-characters-page-persian": "Persa",
-	"wikieditor-toolbar-characters-page-hebrew": "Hebreu",
-	"wikieditor-toolbar-characters-page-bangla": "Bengalí",
-	"wikieditor-toolbar-characters-page-telugu": "Telugu",
-	"wikieditor-toolbar-characters-page-sinhala": "Cingalés",
-	"wikieditor-toolbar-characters-page-gujarati": "Gujaratí",
-	"wikieditor-toolbar-characters-page-thai": "Thai",
-	"wikieditor-toolbar-characters-page-lao": "Laosiano",
-	"wikieditor-toolbar-characters-page-khmer": "Khmer",
 	"wikieditor-toolbar-section-help": "Aduya",
 	"wikieditor-toolbar-help-heading-description": "Descripción",
 	"wikieditor-toolbar-help-heading-syntax": "O que vusté escribe",
@@ -192,8 +173,7 @@
 	"wikieditor-toolbar-help-content-olist-syntax": "# Elemento d'a lista<br /># Elemento d'a lista",
 	"wikieditor-toolbar-help-content-olist-result": "<ol><li>Elemento d'a lista</li><li>Elemento d'a lista</li></ol>",
 	"wikieditor-toolbar-help-content-file-description": "Fichero incorporato",
-	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Eixemplo.png|thumb|Texto descriptivo d'a imachen]]",
-	"wikieditor-toolbar-help-content-file-result": "<div style='width:104px;' class='thumbinner'><a title='Texto de piet de foto' class='image' href='#'><img height='50' width='100' border='0' class='thumbimage' src='$2/WikiEditor/modules/images/toolbar/example-image.png' alt=''/></a><div class='thumbcaption'><div class='magnify'><a title='Fer más gran' class='internal' href='#'><img height='11' width='15' alt='' src='$1/common/images/magnify-clip.png'/></a></div>Texto de piet de foto</div></div>",
+	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Eixemplo.png|$2|$3]]",
 	"wikieditor-toolbar-help-content-reference-description": "Referencia",
 	"wikieditor-toolbar-help-content-reference-syntax": "Texto d'a pachina.&lt;ref name=\"test\"&gt;[http://www.example.org Texto d'o vinclo], texto adicional.&lt;/ref&gt;",
 	"wikieditor-toolbar-help-content-reference-result": "Texto d'a pachina.<sup><a href='#'>[1]</a></sup>",

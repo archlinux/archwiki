@@ -84,18 +84,17 @@ class MemcachedBagOStuff extends BagOStuff {
 	 * @param int $exptime
 	 * @return bool
 	 */
-	public function cas( $casToken, $key, $value, $exptime = 0 ) {
+	protected function cas( $casToken, $key, $value, $exptime = 0 ) {
 		return $this->client->cas( $casToken, $this->encodeKey( $key ),
 			$value, $this->fixExpiry( $exptime ) );
 	}
 
 	/**
 	 * @param string $key
-	 * @param int $time
 	 * @return bool
 	 */
-	public function delete( $key, $time = 0 ) {
-		return $this->client->delete( $this->encodeKey( $key ), $time );
+	public function delete( $key ) {
+		return $this->client->delete( $this->encodeKey( $key ) );
 	}
 
 	/**
@@ -107,6 +106,14 @@ class MemcachedBagOStuff extends BagOStuff {
 	public function add( $key, $value, $exptime = 0 ) {
 		return $this->client->add( $this->encodeKey( $key ), $value,
 			$this->fixExpiry( $exptime ) );
+	}
+
+	public function merge( $key, $callback, $exptime = 0, $attempts = 10 ) {
+		if ( !is_callable( $callback ) ) {
+			throw new Exception( "Got invalid callback." );
+		}
+
+		return $this->mergeViaCas( $key, $callback, $exptime, $attempts );
 	}
 
 	/**
@@ -145,7 +152,7 @@ class MemcachedBagOStuff extends BagOStuff {
 	 * TTLs higher than 30 days will be detected as absolute TTLs
 	 * (UNIX timestamps), and will result in the cache entry being
 	 * discarded immediately because the expiry is in the past.
-	 * Clamp expiries >30d at 30d, unless they're >=1e9 in which
+	 * Clamp expires >30d at 30d, unless they're >=1e9 in which
 	 * case they are likely to really be absolute (1e9 = 2011-09-09)
 	 * @param int $expiry
 	 * @return int
@@ -174,6 +181,6 @@ class MemcachedBagOStuff extends BagOStuff {
 	 * @param string $text
 	 */
 	protected function debugLog( $text ) {
-		wfDebugLog( 'memcached', $text );
+		$this->logger->debug( $text );
 	}
 }

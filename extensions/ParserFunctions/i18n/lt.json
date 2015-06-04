@@ -4,5 +4,9 @@
 			"Hugo.arg"
 		]
 	},
-	"pfunc_time_error": "Klaida: neteisingas laikas"
+	"pfunc_time_error": "Klaida: neteisingas laikas",
+	"pfunc_expr_unrecognised_word": "Išraiškos klaida: nežinomas žodis „$1“.",
+	"pfunc_expr_unexpected_operator": "Išraiškos klaida: netikėtas operatorius „$1“.",
+	"pfunc_expr_missing_operand": "Išraiškos klaida: trūksta operando „$1“.",
+	"pfunc_expr_unrecognised_punctuation": "Išraiškos klaida: neatpažintas punktuacijos ženklas „$1“."
 }

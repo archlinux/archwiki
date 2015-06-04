@@ -79,22 +79,16 @@ class SpecialWatchlist extends ChangesListSpecialPage {
 	}
 
 	/**
-	 * Return an array of subpages beginning with $search that this special page will accept.
+	 * Return an array of subpages that this special page will accept.
 	 *
-	 * @param string $search Prefix to search for
-	 * @param int $limit Maximum number of results to return
-	 * @return string[] Matching subpages
+	 * @see also SpecialEditWatchlist::getSubpagesForPrefixSearch
+	 * @return string[] subpages
 	 */
-	public function prefixSearchSubpages( $search, $limit = 10 ) {
-		// See also SpecialEditWatchlist::prefixSearchSubpages
-		return self::prefixSearchArray(
-			$search,
-			$limit,
-			array(
-				'clear',
-				'edit',
-				'raw',
-			)
+	public function getSubpagesForPrefixSearch() {
+		return array(
+			'clear',
+			'edit',
+			'raw',
 		);
 	}
 
@@ -129,7 +123,7 @@ class SpecialWatchlist extends ChangesListSpecialPage {
 	protected function getCustomFilters() {
 		if ( $this->customFilters === null ) {
 			$this->customFilters = parent::getCustomFilters();
-			wfRunHooks( 'SpecialWatchlistFilters', array( $this, &$this->customFilters ), '1.23' );
+			Hooks::run( 'SpecialWatchlistFilters', array( $this, &$this->customFilters ), '1.23' );
 		}
 
 		return $this->customFilters;
@@ -207,7 +201,7 @@ class SpecialWatchlist extends ChangesListSpecialPage {
 		} else {
 			# Top log Ids for a page are not stored
 			$nonRevisionTypes = array( RC_LOG );
-			wfRunHooks( 'SpecialWatchlistGetNonRevisionTypes', array( &$nonRevisionTypes ) );
+			Hooks::run( 'SpecialWatchlistGetNonRevisionTypes', array( &$nonRevisionTypes ) );
 			if ( $nonRevisionTypes ) {
 				$conds[] = $dbr->makeList(
 					array(
@@ -288,9 +282,11 @@ class SpecialWatchlist extends ChangesListSpecialPage {
 		);
 	}
 
-	protected function runMainQueryHook( &$tables, &$fields, &$conds, &$query_options, &$join_conds, $opts ) {
+	protected function runMainQueryHook( &$tables, &$fields, &$conds, &$query_options,
+		&$join_conds, $opts
+	) {
 		return parent::runMainQueryHook( $tables, $fields, $conds, $query_options, $join_conds, $opts )
-			&& wfRunHooks(
+			&& Hooks::run(
 				'SpecialWatchlistQuery',
 				array( &$conds, &$tables, &$join_conds, &$fields, $opts ),
 				'1.23'
@@ -298,9 +294,9 @@ class SpecialWatchlist extends ChangesListSpecialPage {
 	}
 
 	/**
-	 * Return a DatabaseBase object for reading
+	 * Return a IDatabase object for reading
 	 *
-	 * @return DatabaseBase
+	 * @return IDatabase
 	 */
 	protected function getDB() {
 		return wfGetDB( DB_SLAVE, 'watchlist' );
@@ -367,7 +363,9 @@ class SpecialWatchlist extends ChangesListSpecialPage {
 				$updated = false;
 			}
 
-			if ( $this->getConfig()->get( 'RCShowWatchingUsers' ) && $user->getOption( 'shownumberswatching' ) ) {
+			if ( $this->getConfig()->get( 'RCShowWatchingUsers' )
+				&& $user->getOption( 'shownumberswatching' )
+			) {
 				$rc->numberofWatchingusers = $dbr->selectField( 'watchlist',
 					'COUNT(*)',
 					array(
@@ -430,7 +428,7 @@ class SpecialWatchlist extends ChangesListSpecialPage {
 			$filters[$key] = $params['msg'];
 		}
 		// Disable some if needed
-		if ( !$user->useNPPatrol() ) {
+		if ( !$user->useRCPatrol() ) {
 			unset( $filters['hidepatrolled'] );
 		}
 
@@ -503,7 +501,9 @@ class SpecialWatchlist extends ChangesListSpecialPage {
 			$form .= $this->msg( 'nowatchlist' )->parse() . "\n";
 		} else {
 			$form .= $this->msg( 'watchlist-details' )->numParams( $numItems )->parse() . "\n";
-			if ( $this->getConfig()->get( 'EnotifWatchlist' ) && $user->getOption( 'enotifwatchlistpages' ) ) {
+			if ( $this->getConfig()->get( 'EnotifWatchlist' )
+				&& $user->getOption( 'enotifwatchlistpages' )
+			) {
 				$form .= $this->msg( 'wlheader-enotif' )->parse() . "\n";
 			}
 			if ( $showUpdatedMarker ) {
@@ -562,12 +562,10 @@ class SpecialWatchlist extends ChangesListSpecialPage {
 
 	protected function daysLink( $d, $options = array() ) {
 		$options['days'] = $d;
-		$message = $d ? $this->getLanguage()->formatNum( $d )
-			: $this->msg( 'watchlistall2' )->escaped();
 
 		return Linker::linkKnown(
 			$this->getPageTitle(),
-			$message,
+			$this->getLanguage()->formatNum( $d ),
 			array(),
 			$options
 		);
@@ -581,8 +579,11 @@ class SpecialWatchlist extends ChangesListSpecialPage {
 	 * @return string
 	 */
 	protected function cutoffLinks( $days, $options = array() ) {
+		global $wgRCMaxAge;
+		$watchlistMaxDays = ceil( $wgRCMaxAge / ( 3600 * 24 ) );
+
 		$hours = array( 1, 2, 6, 12 );
-		$days = array( 1, 3, 7 );
+		$days = array( 1, 3, 7, $watchlistMaxDays );
 		$i = 0;
 		foreach ( $hours as $h ) {
 			$hours[$i++] = $this->hoursLink( $h, $options );
@@ -594,14 +595,13 @@ class SpecialWatchlist extends ChangesListSpecialPage {
 
 		return $this->msg( 'wlshowlast' )->rawParams(
 			$this->getLanguage()->pipeList( $hours ),
-			$this->getLanguage()->pipeList( $days ),
-			$this->daysLink( 0, $options ) )->parse();
+			$this->getLanguage()->pipeList( $days ) )->parse();
 	}
 
 	/**
 	 * Count the number of items on a user's watchlist
 	 *
-	 * @param DatabaseBase $dbr A database connection
+	 * @param IDatabase $dbr A database connection
 	 * @return int
 	 */
 	protected function countItems( $dbr ) {

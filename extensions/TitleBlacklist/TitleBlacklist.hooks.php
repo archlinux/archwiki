@@ -32,7 +32,12 @@ class TitleBlacklistHooks {
 		if ( $action == 'create' || $action == 'edit' || $action == 'upload' ) {
 			$blacklisted = TitleBlacklist::singleton()->userCannot( $title, $user, $action );
 			if ( $blacklisted instanceof TitleBlacklistEntry ) {
-				$result = array( $blacklisted->getErrorMessage( 'edit' ),
+				$errmsg = $blacklisted->getErrorMessage( 'edit' );
+				ApiBase::$messageMap[$errmsg] = array(
+					'code' => $errmsg,
+					'info' => 'TitleBlacklist prevents this title from being created'
+				);
+				$result = array( $errmsg,
 					htmlspecialchars( $blacklisted->getRaw() ),
 					$title->getFullText() );
 				return false;
@@ -68,7 +73,41 @@ class TitleBlacklistHooks {
 	}
 
 	/**
-	 * AbortMove hook
+	 * MovePageCheckPermissions hook (1.25+)
+	 *
+	 * @param Title $oldTitle
+	 * @param Title $newTitle
+	 * @param User $user
+	 * @param $reason
+	 * @param Status $status
+	 * @return bool
+	 */
+	public static function onMovePageCheckPermissions( Title $oldTitle, Title $newTitle, User $user, $reason, Status $status ) {
+		$titleBlacklist = TitleBlacklist::singleton();
+		$blacklisted = $titleBlacklist->userCannot( $newTitle, $user, 'move' );
+		if ( !$blacklisted ) {
+			$blacklisted = $titleBlacklist->userCannot( $oldTitle, $user, 'edit' );
+		}
+		if ( $blacklisted instanceof TitleBlacklistEntry ) {
+			$errmsg = $blacklisted->getErrorMessage( 'move' );
+			ApiBase::$messageMap[$errmsg] = array(
+				'code' => $errmsg,
+				'info' => 'TitleBlacklist prevents this new title from being created or old title from being edited'
+			);
+			$status->fatal( $errmsg,
+				$blacklisted->getRaw(),
+				$oldTitle->getFullText(),
+				$newTitle->getFullText() );
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * AbortMove hook (<1.24)
+	 *
+	 * @todo: Remove once 1.24 support is dropped
 	 *
 	 * @param $old Title
 	 * @param $nt Title
@@ -76,20 +115,19 @@ class TitleBlacklistHooks {
 	 * @param $err
 	 * @return bool
 	 */
-	public static function abortMove( $old, $nt, $user, &$err ) {
-		$titleBlacklist = TitleBlacklist::singleton();
-		$blacklisted = $titleBlacklist->userCannot( $nt, $user, 'move' );
-		if ( !$blacklisted ) {
-			$blacklisted = $titleBlacklist->userCannot( $old, $user, 'edit' );
+	public static function abortMove( $old, $nt, $user, &$err, $reason ) {
+		if ( method_exists( 'MovePage', 'checkPermissions' ) ) {
+			// Don't use this hook, use MovePageCheckPermissions instead
+			return true;
 		}
-		if ( $blacklisted instanceof TitleBlacklistEntry ) {
-			$err = wfMessage( $blacklisted->getErrorMessage( 'move' ),
-				$blacklisted->getRaw(),
-				$old->getFullText(),
-				$nt->getFullText() )->parse();
-			return false;
+
+		$status = new Status();
+		self::onMovePageCheckPermissions( $old, $nt, $user, $reason, $status );
+		if ( !$status->isOK() ) {
+			$err = $status->getHTML();
 		}
-		return true;
+
+		return $status->isOK();
 	}
 
 	/**
@@ -107,6 +145,10 @@ class TitleBlacklistHooks {
 			'new-account', $override );
 		if ( $blacklisted instanceof TitleBlacklistEntry ) {
 			$message = $blacklisted->getErrorMessage( 'new-account' );
+			ApiBase::$messageMap[$message] = array(
+				'code' => $message,
+				'info' => 'TitleBlacklist prevents this username from being created'
+			);
 			$err = wfMessage( $message, $blacklisted->getRaw(), $userName )->parse();
 			if ( $log ) {
 				self::logFilterHitUsername( $wgUser, $title, $blacklisted->getRaw() );
@@ -155,23 +197,6 @@ class TitleBlacklistHooks {
 				Html::element( 'br', array( 'clear' => 'all' ) ) . "\n";
 
 			// $error will be displayed by the edit class
-			return true;
-		} elseif ( !$section ) {
-			# Block redirects to nonexistent blacklisted titles
-			$retitle = Title::newFromRedirect( $text );
-			if ( $retitle !== null && !$retitle->exists() )  {
-				$blacklisted = TitleBlacklist::singleton()->userCannot( $retitle, $wgUser, 'create' );
-				if ( $blacklisted instanceof TitleBlacklistEntry ) {
-					$error = Html::openElement( 'div', array( 'class' => 'errorbox' ) ) .
-						wfMessage( 'titleblacklist-forbidden-edit',
-							$blacklisted->getRaw(),
-							$retitle->getFullText() )->escaped() .
-						Html::closeElement( 'div' ) . "\n" .
-						Html::element( 'br', array( 'clear' => 'all' ) ) . "\n";
-				}
-			}
-
-			return true;
 		}
 		return true;
 	}
@@ -223,5 +248,30 @@ class TitleBlacklistHooks {
 			$logid = $logEntry->insert();
 			$logEntry->publish( $logid );
 		}
+	}
+
+	/**
+	 * Add phpunit tests
+	 *
+	 * @param array &$files List of test cases and directories to search
+	 * @return bool
+	 */
+	public static function unitTestsList( &$files ) {
+		$files = array_merge( $files, glob( __DIR__ . '/tests/*Test.php' ) );
+		return true;
+	}
+
+	/**
+	 * External Lua library for Scribunto
+	 *
+	 * @param string $engine
+	 * @param array $extraLibraries
+	 * @return bool
+	 */
+	public static function scribuntoExternalLibraries( $engine, array &$extraLibraries ) {
+		if( $engine == 'lua' ) {
+			$extraLibraries['mw.ext.TitleBlacklist'] = 'Scribunto_LuaTitleBlacklistLibrary';
+		}
+		return true;
 	}
 }

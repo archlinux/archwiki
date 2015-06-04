@@ -26,8 +26,6 @@
  * By default, most methods do nothing ( self::$enabled = false ). You have
  * to explicitly call MWDebug::init() to enabled them.
  *
- * @todo Profiler support
- *
  * @since 1.19
  */
 class MWDebug {
@@ -46,7 +44,7 @@ class MWDebug {
 	protected static $debug = array();
 
 	/**
-	 * SQL statements of the databses queries.
+	 * SQL statements of the database queries.
 	 *
 	 * @var array $query
 	 */
@@ -311,12 +309,25 @@ class MWDebug {
 	 *
 	 * @since 1.19
 	 * @param string $str
+	 * @param array $context
 	 */
-	public static function debugMsg( $str ) {
+	public static function debugMsg( $str, $context = array() ) {
 		global $wgDebugComments, $wgShowDebug;
 
 		if ( self::$enabled || $wgDebugComments || $wgShowDebug ) {
-			self::$debug[] = rtrim( UtfNormal::cleanUp( $str ) );
+			if ( $context ) {
+				$prefix = '';
+				if ( isset( $context['prefix'] ) ) {
+					$prefix = $context['prefix'];
+				} elseif ( isset( $context['channel'] ) && $context['channel'] !== 'wfDebug' ) {
+					$prefix = "[{$context['channel']}] ";
+				}
+				if ( isset( $context['seconds_elapsed'] ) && isset( $context['memory_used'] ) ) {
+					$prefix .= "{$context['seconds_elapsed']} {$context['memory_used']}  ";
+				}
+				$str = $prefix . $str;
+			}
+			self::$debug[] = rtrim( UtfNormal\Validator::cleanUp( $str ) );
 		}
 	}
 
@@ -529,12 +540,11 @@ class MWDebug {
 		MWDebug::log( 'MWDebug output complete' );
 		$debugInfo = self::getDebugInfo( $context );
 
-		$result->setIndexedTagName( $debugInfo, 'debuginfo' );
-		$result->setIndexedTagName( $debugInfo['log'], 'line' );
-		$result->setIndexedTagName( $debugInfo['debugLog'], 'msg' );
-		$result->setIndexedTagName( $debugInfo['queries'], 'query' );
-		$result->setIndexedTagName( $debugInfo['includes'], 'queries' );
-		$result->setIndexedTagName( $debugInfo['profile'], 'function' );
+		ApiResult::setIndexedTagName( $debugInfo, 'debuginfo' );
+		ApiResult::setIndexedTagName( $debugInfo['log'], 'line' );
+		ApiResult::setIndexedTagName( $debugInfo['debugLog'], 'msg' );
+		ApiResult::setIndexedTagName( $debugInfo['queries'], 'query' );
+		ApiResult::setIndexedTagName( $debugInfo['includes'], 'queries' );
 		$result->addValue( null, 'debuginfo', $debugInfo );
 	}
 
@@ -578,7 +588,6 @@ class MWDebug {
 			'memory' => $context->getLanguage()->formatSize( memory_get_usage( $realMemoryUsage ) ),
 			'memoryPeak' => $context->getLanguage()->formatSize( memory_get_peak_usage( $realMemoryUsage ) ),
 			'includes' => self::getFilesIncluded( $context ),
-			'profile' => Profiler::instance()->getRawData(),
 		);
 	}
 }

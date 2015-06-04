@@ -1,0 +1,21 @@
+{
+	"name": "ReCaptcha",
+	"ExtensionFunctions": [
+		"efReCaptcha"
+	],
+	"MessagesDirs": {
+		"ReCaptcha": [
+			"i18n"
+		]
+	},
+	"AutoloadClasses": {
+		"ReCaptcha": "ReCaptcha.class.php"
+	},
+	"config": {
+		"CaptchaClass": "ReCaptcha",
+		"ReCaptchaPublicKey": "",
+		"ReCaptchaPrivateKey": "",
+		"ReCaptchaTheme": "red"
+	},
+	"callback": "ConfirmEditHooks::onReCaptchaSetup"
+}

@@ -3,12 +3,14 @@
 		"authors": [
 			"Millosh",
 			"Rancher",
-			"Verlor"
+			"Verlor",
+			"Milicevic01"
 		]
 	},
 	"pfunc_desc": "Проширује рашчлањивач с логичким функцијама",
 	"pfunc_time_error": "Грешка: лоше време",
 	"pfunc_time_too_long": "Грешка: превише #time позива",
+	"pfunc_rel2abs_invalid_depth": "Грешка: неправилна дубина у путањи: „$1“ (покушај приступа чвору изнад коренског (root)).",
 	"pfunc_expr_stack_exhausted": "Грешка у изразу: стек напуњен",
 	"pfunc_expr_unexpected_number": "Грешка у изразу: неочекивани број",
 	"pfunc_expr_preg_match_failure": "Грешка у изразу: Неочекивана preg_match грешка",

@@ -38,14 +38,13 @@ class ApiQueryCategoryInfo extends ApiQueryBase {
 
 	public function execute() {
 		$params = $this->extractRequestParams();
-		$alltitles = $this->getPageSet()->getAllTitlesByNamespace();
+		$alltitles = $this->getPageSet()->getGoodAndMissingTitlesByNamespace();
 		if ( empty( $alltitles[NS_CATEGORY] ) ) {
 			return;
 		}
 		$categories = $alltitles[NS_CATEGORY];
 
-		$titles = $this->getPageSet()->getGoodTitles() +
-			$this->getPageSet()->getMissingTitles();
+		$titles = $this->getPageSet()->getGoodAndMissingTitles();
 		$cattitles = array();
 		foreach ( $categories as $c ) {
 			/** @var $t Title */
@@ -87,9 +86,7 @@ class ApiQueryCategoryInfo extends ApiQueryBase {
 			$vals['pages'] = $row->cat_pages - $row->cat_subcats - $row->cat_files;
 			$vals['files'] = intval( $row->cat_files );
 			$vals['subcats'] = intval( $row->cat_subcats );
-			if ( $row->cat_hidden ) {
-				$vals['hidden'] = '';
-			}
+			$vals['hidden'] = (bool)$row->cat_hidden;
 			$fit = $this->addPageSubItems( $catids[$row->cat_title], $vals );
 			if ( !$fit ) {
 				$this->setContinueEnumParameter( 'continue', $row->cat_title );
@@ -104,22 +101,17 @@ class ApiQueryCategoryInfo extends ApiQueryBase {
 
 	public function getAllowedParams() {
 		return array(
-			'continue' => null,
+			'continue' => array(
+				ApiBase::PARAM_HELP_MSG => 'api-help-param-continue',
+			),
 		);
 	}
 
-	public function getParamDescription() {
+	protected function getExamplesMessages() {
 		return array(
-			'continue' => 'When more results are available, use this to continue',
+			'action=query&prop=categoryinfo&titles=Category:Foo|Category:Bar'
+				=> 'apihelp-query+categoryinfo-example-simple',
 		);
-	}
-
-	public function getDescription() {
-		return 'Returns information about the given categories.';
-	}
-
-	public function getExamples() {
-		return 'api.php?action=query&prop=categoryinfo&titles=Category:Foo|Category:Bar';
 	}
 
 	public function getHelpUrls() {

@@ -46,11 +46,12 @@ class ApiLogin extends ApiBase {
 	 * is reached. The expiry is $this->mLoginThrottle.
 	 */
 	public function execute() {
-		// If we're in JSON callback mode, no tokens can be obtained
-		if ( !is_null( $this->getMain()->getRequest()->getVal( 'callback' ) ) ) {
+		// If we're in a mode that breaks the same-origin policy, no tokens can
+		// be obtained
+		if ( $this->lacksSameOriginSecurity() ) {
 			$this->getResult()->addValue( null, 'login', array(
 				'result' => 'Aborted',
-				'reason' => 'Cannot log in when using a callback',
+				'reason' => 'Cannot log in when the same-origin policy is not applied',
 			) );
 
 			return;
@@ -92,7 +93,7 @@ class ApiLogin extends ApiBase {
 				// @todo FIXME: Split back and frontend from this hook.
 				// @todo FIXME: This hook should be placed in the backend
 				$injected_html = '';
-				wfRunHooks( 'UserLoginComplete', array( &$user, &$injected_html ) );
+				Hooks::run( 'UserLoginComplete', array( &$user, &$injected_html ) );
 
 				$result['result'] = 'Success';
 				$result['lguserid'] = intval( $user->getId() );
@@ -184,28 +185,12 @@ class ApiLogin extends ApiBase {
 		);
 	}
 
-	public function getParamDescription() {
+	protected function getExamplesMessages() {
 		return array(
-			'name' => 'User Name',
-			'password' => 'Password',
-			'domain' => 'Domain (optional)',
-			'token' => 'Login token obtained in first request',
-		);
-	}
-
-	public function getDescription() {
-		return array(
-			'Log in and get the authentication tokens.',
-			'In the event of a successful log-in, a cookie will be attached to your session.',
-			'In the event of a failed log-in, you will not be able to attempt another log-in',
-			'through this method for 5 seconds. This is to prevent password guessing by',
-			'automated password crackers.'
-		);
-	}
-
-	public function getExamples() {
-		return array(
-			'api.php?action=login&lgname=user&lgpassword=password'
+			'action=login&lgname=user&lgpassword=password'
+				=> 'apihelp-login-example-gettoken',
+			'action=login&lgname=user&lgpassword=password&lgtoken=123ABC'
+				=> 'apihelp-login-example-login',
 		);
 	}
 

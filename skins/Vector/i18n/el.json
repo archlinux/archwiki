@@ -6,9 +6,11 @@
 			"Evropi",
 			"Omnipaedista",
 			"Protnet",
-			"ZaDiak"
+			"ZaDiak",
+			"Geraki"
 		]
 	},
+	"vector-skin-desc": "Σύγχρονη έκδοση του MonoBook με φρέσκια ματιά και πολλές βελτιώσεις χρηστικότητας",
 	"vector.css": "/* Το τοποθετημένο εδώ CSS θα επηρεάσει χρήστες του Vector skin */",
 	"vector.js": "/* Οποιοσδήποτε κώδικας JavaScript εδώ θα φορτωθεί για χρήστες που χρησιμοποιούν το Vector skin */",
 	"vector-action-addsection": "Προσθήκη θέματος",

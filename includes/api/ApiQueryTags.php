@@ -31,15 +31,6 @@
  */
 class ApiQueryTags extends ApiQueryBase {
 
-	/**
-	 * @var ApiResult
-	 */
-	private $result;
-
-	private $limit;
-	private $fld_displayname = false, $fld_description = false,
-		$fld_hitcount = false;
-
 	public function __construct( ApiQuery $query, $moduleName ) {
 		parent::__construct( $query, $moduleName, 'tg' );
 	}
@@ -49,84 +40,100 @@ class ApiQueryTags extends ApiQueryBase {
 
 		$prop = array_flip( $params['prop'] );
 
-		$this->fld_displayname = isset( $prop['displayname'] );
-		$this->fld_description = isset( $prop['description'] );
-		$this->fld_hitcount = isset( $prop['hitcount'] );
+		$fld_displayname = isset( $prop['displayname'] );
+		$fld_description = isset( $prop['description'] );
+		$fld_hitcount = isset( $prop['hitcount'] );
+		$fld_defined = isset( $prop['defined'] );
+		$fld_source = isset( $prop['source'] );
+		$fld_active = isset( $prop['active'] );
 
-		$this->limit = $params['limit'];
-		$this->result = $this->getResult();
+		$limit = $params['limit'];
+		$result = $this->getResult();
 
+		$extensionDefinedTags = array_fill_keys( ChangeTags::listExtensionDefinedTags(), 0 );
+		$explicitlyDefinedTags = array_fill_keys( ChangeTags::listExplicitlyDefinedTags(), 0 );
+		$extensionActivatedTags = array_fill_keys( ChangeTags::listExtensionActivatedTags(), 0 );
+
+		$definedTags = array_merge( $extensionDefinedTags, $explicitlyDefinedTags );
+
+		# Fetch defined tags that aren't past the continuation
+		if ( $params['continue'] !== null ) {
+			$cont = $params['continue'];
+			$tags = array_filter( array_keys( $definedTags ), function ( $v ) use ( $cont ) {
+				return $v >= $cont;
+			} );
+			$tags = array_fill_keys( $tags, 0 );
+		} else {
+			$tags = $definedTags;
+		}
+
+		# Merge in all used tags
 		$this->addTables( 'change_tag' );
 		$this->addFields( 'ct_tag' );
-
-		$this->addFieldsIf( array( 'hitcount' => 'COUNT(*)' ), $this->fld_hitcount );
-
-		$this->addOption( 'LIMIT', $this->limit + 1 );
+		$this->addFields( array( 'hitcount' => $fld_hitcount ? 'COUNT(*)' : '0' ) );
+		$this->addOption( 'LIMIT', $limit + 1 );
 		$this->addOption( 'GROUP BY', 'ct_tag' );
 		$this->addWhereRange( 'ct_tag', 'newer', $params['continue'], null );
-
 		$res = $this->select( __METHOD__ );
-
-		$ok = true;
-
 		foreach ( $res as $row ) {
-			if ( !$ok ) {
+			$tags[$row->ct_tag] = (int)$row->hitcount;
+		}
+
+		# Now make sure the array is sorted for proper continuation
+		ksort( $tags );
+
+		$count = 0;
+		foreach ( $tags as $tagName => $hitcount ) {
+			if ( ++$count > $limit ) {
+				$this->setContinueEnumParameter( 'continue', $tagName );
 				break;
 			}
-			$ok = $this->doTag( $row->ct_tag, $this->fld_hitcount ? $row->hitcount : 0 );
-		}
 
-		// include tags with no hits yet
-		foreach ( ChangeTags::listDefinedTags() as $tag ) {
-			if ( !$ok ) {
+			$tag = array();
+			$tag['name'] = $tagName;
+
+			if ( $fld_displayname ) {
+				$tag['displayname'] = ChangeTags::tagDescription( $tagName );
+			}
+
+			if ( $fld_description ) {
+				$msg = $this->msg( "tag-$tagName-description" );
+				$tag['description'] = $msg->exists() ? $msg->text() : '';
+			}
+
+			if ( $fld_hitcount ) {
+				$tag['hitcount'] = $hitcount;
+			}
+
+			$isExtension = isset( $extensionDefinedTags[$tagName] );
+			$isExplicit = isset( $explicitlyDefinedTags[$tagName] );
+
+			if ( $fld_defined ) {
+				$tag['defined'] = $isExtension || $isExplicit;
+			}
+
+			if ( $fld_source ) {
+				$tag['source'] = array();
+				if ( $isExtension ) {
+					$tag['source'][] = 'extension';
+				}
+				if ( $isExplicit ) {
+					$tag['source'][] = 'manual';
+				}
+			}
+
+			if ( $fld_active ) {
+				$tag['active'] = $isExplicit || isset( $extensionActivatedTags[$tagName] );
+			}
+
+			$fit = $result->addValue( array( 'query', $this->getModuleName() ), null, $tag );
+			if ( !$fit ) {
+				$this->setContinueEnumParameter( 'continue', $tagName );
 				break;
 			}
-			$ok = $this->doTag( $tag, 0 );
 		}
 
-		$this->result->setIndexedTagName_internal( array( 'query', $this->getModuleName() ), 'tag' );
-	}
-
-	private function doTag( $tagName, $hitcount ) {
-		static $count = 0;
-		static $doneTags = array();
-
-		if ( in_array( $tagName, $doneTags ) ) {
-			return true;
-		}
-
-		if ( ++$count > $this->limit ) {
-			$this->setContinueEnumParameter( 'continue', $tagName );
-
-			return false;
-		}
-
-		$tag = array();
-		$tag['name'] = $tagName;
-
-		if ( $this->fld_displayname ) {
-			$tag['displayname'] = ChangeTags::tagDescription( $tagName );
-		}
-
-		if ( $this->fld_description ) {
-			$msg = wfMessage( "tag-$tagName-description" );
-			$tag['description'] = $msg->exists() ? $msg->text() : '';
-		}
-
-		if ( $this->fld_hitcount ) {
-			$tag['hitcount'] = $hitcount;
-		}
-
-		$doneTags[] = $tagName;
-
-		$fit = $this->result->addValue( array( 'query', $this->getModuleName() ), null, $tag );
-		if ( !$fit ) {
-			$this->setContinueEnumParameter( 'continue', $tagName );
-
-			return false;
-		}
-
-		return true;
+		$result->addIndexedTagName( array( 'query', $this->getModuleName() ), 'tag' );
 	}
 
 	public function getCacheMode( $params ) {
@@ -135,7 +142,9 @@ class ApiQueryTags extends ApiQueryBase {
 
 	public function getAllowedParams() {
 		return array(
-			'continue' => null,
+			'continue' => array(
+				ApiBase::PARAM_HELP_MSG => 'api-help-param-continue',
+			),
 			'limit' => array(
 				ApiBase::PARAM_DFLT => 10,
 				ApiBase::PARAM_TYPE => 'limit',
@@ -149,34 +158,20 @@ class ApiQueryTags extends ApiQueryBase {
 					'name',
 					'displayname',
 					'description',
-					'hitcount'
+					'hitcount',
+					'defined',
+					'source',
+					'active',
 				),
 				ApiBase::PARAM_ISMULTI => true
 			)
 		);
 	}
 
-	public function getParamDescription() {
+	protected function getExamplesMessages() {
 		return array(
-			'continue' => 'When more results are available, use this to continue',
-			'limit' => 'The maximum number of tags to list',
-			'prop' => array(
-				'Which properties to get',
-				' name         - Adds name of tag',
-				' displayname  - Adds system message for the tag',
-				' description  - Adds description of the tag',
-				' hitcount     - Adds the amount of revisions that have this tag',
-			),
-		);
-	}
-
-	public function getDescription() {
-		return 'List change tags.';
-	}
-
-	public function getExamples() {
-		return array(
-			'api.php?action=query&list=tags&tgprop=displayname|description|hitcount'
+			'action=query&list=tags&tgprop=displayname|description|hitcount|defined'
+				=> 'apihelp-query+tags-example-simple',
 		);
 	}
 

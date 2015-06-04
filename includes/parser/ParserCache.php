@@ -184,12 +184,10 @@ class ParserCache {
 	 */
 	public function get( $article, $popts, $useOutdated = false ) {
 		global $wgCacheEpoch;
-		wfProfileIn( __METHOD__ );
 
 		$canCache = $article->checkTouched();
 		if ( !$canCache ) {
 			// It's a redirect now
-			wfProfileOut( __METHOD__ );
 			return false;
 		}
 
@@ -198,7 +196,6 @@ class ParserCache {
 		$parserOutputKey = $this->getKey( $article, $popts, $useOutdated );
 		if ( $parserOutputKey === false ) {
 			wfIncrStats( 'pcache_miss_absent' );
-			wfProfileOut( __METHOD__ );
 			return false;
 		}
 
@@ -206,7 +203,6 @@ class ParserCache {
 		if ( !$value ) {
 			wfDebug( "ParserOutput cache miss.\n" );
 			wfIncrStats( "pcache_miss_absent" );
-			wfProfileOut( __METHOD__ );
 			return false;
 		}
 
@@ -233,7 +229,6 @@ class ParserCache {
 			wfIncrStats( "pcache_hit" );
 		}
 
-		wfProfileOut( __METHOD__ );
 		return $value;
 	}
 
@@ -261,8 +256,6 @@ class ParserCache {
 			$parserOutput->setCacheTime( $cacheTime );
 			$optionsKey->setCacheRevisionId( $revId );
 			$parserOutput->setCacheRevisionId( $revId );
-
-			$optionsKey->setContainsOldMagic( $parserOutput->containsOldMagic() );
 
 			$parserOutputKey = $this->getParserOutputKey( $page,
 				$popts->optionsHash( $optionsKey->mUsedOptions, $page->getTitle() ) );

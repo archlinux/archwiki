@@ -6,7 +6,8 @@ var ProtectionForm = window.ProtectionForm = {
 	 * on the protection form
 	 */
 	init: function () {
-		var $cell = $( '<td>' ), $row = $( '<tr>' ).append( $cell );
+		var $cell = $( '<td>' ),
+			$row = $( '<tr>' ).append( $cell );
 
 		if ( !$( '#mwProtectSet' ).length ) {
 			return false;
@@ -63,7 +64,7 @@ var ProtectionForm = window.ProtectionForm = {
 	},
 
 	/**
-	 * Checks if a cerain protection level is cascadeable.
+	 * Checks if a certain protection level is cascadeable.
 	 *
 	 * @param {string} level
 	 * @return {boolean}

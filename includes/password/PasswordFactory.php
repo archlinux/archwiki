@@ -69,6 +69,15 @@ final class PasswordFactory {
 	}
 
 	/**
+	 * Get the default password type
+	 *
+	 * @return string
+	 */
+	public function getDefaultType() {
+		return $this->default;
+	}
+
+	/**
 	 * Initialize the internal static variables using the global variables
 	 *
 	 * @param Config $config Configuration object to load data from
@@ -141,11 +150,15 @@ final class PasswordFactory {
 	 * If no existing object is given, make a new default object. If one is given, clone that
 	 * object. Then pass the plaintext to Password::crypt().
 	 *
-	 * @param string $password Plaintext password
+	 * @param string|null $password Plaintext password, or null for an invalid password
 	 * @param Password|null $existing Optional existing hash to get options from
 	 * @return Password
 	 */
 	public function newFromPlaintext( $password, Password $existing = null ) {
+		if ( $password === null ) {
+			return new InvalidPassword( $this, array( 'type' => '' ), null );
+		}
+
 		if ( $existing === null ) {
 			$config = $this->types[$this->default];
 			$obj = new $config['class']( $this, $config );

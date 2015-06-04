@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Consta",
+			"Glavkos",
+			"Omnipaedista",
+			"Protnet"
+		]
+	},
+	"citethispage": "Αναφορά",
+	"citethispage-desc": "Προσθέτει μία ειδική σελίδα [[Special:Cite|παραθέσεων]] και έναν σύνδεσμο προς την εργαλειοθήκη",
+	"citethispage-link": "Παραθέστε αυτή τη σελίδα",
+	"tooltip-citethispage": "Πληροφορίες για το πως να παραπέμψετε σε αυτήν την σελίδα",
+	"citethispage-change-submit": "Προσθήκη παραθέσεων",
+	"citethispage-change-target": "Σελίδα:"
+}

@@ -40,11 +40,12 @@ class MultiWriteBagOStuff extends BagOStuff {
 	 *               the documentation of $wgObjectCaches for more detail.
 	 *
 	 * @param array $params
-	 * @throws MWException
+	 * @throws InvalidArgumentException
 	 */
 	public function __construct( $params ) {
+		parent::__construct( $params );
 		if ( !isset( $params['caches'] ) ) {
-			throw new MWException( __METHOD__ . ': the caches parameter is required' );
+			throw new InvalidArgumentException( __METHOD__ . ': the caches parameter is required' );
 		}
 
 		$this->caches = array();
@@ -76,17 +77,6 @@ class MultiWriteBagOStuff extends BagOStuff {
 	}
 
 	/**
-	 * @param mixed $casToken
-	 * @param string $key
-	 * @param mixed $value
-	 * @param mixed $exptime
-	 * @return bool
-	 */
-	public function cas( $casToken, $key, $value, $exptime = 0 ) {
-		throw new MWException( "CAS is not implemented in " . __CLASS__ );
-	}
-
-	/**
 	 * @param string $key
 	 * @param mixed $value
 	 * @param int $exptime
@@ -98,11 +88,10 @@ class MultiWriteBagOStuff extends BagOStuff {
 
 	/**
 	 * @param string $key
-	 * @param int $time
 	 * @return bool
 	 */
-	public function delete( $key, $time = 0 ) {
-		return $this->doWrite( 'delete', $key, $time );
+	public function delete( $key ) {
+		return $this->doWrite( 'delete', $key );
 	}
 
 	/**
@@ -136,12 +125,13 @@ class MultiWriteBagOStuff extends BagOStuff {
 	/**
 	 * @param string $key
 	 * @param int $timeout
+	 * @param int $expiry
 	 * @return bool
 	 */
-	public function lock( $key, $timeout = 0 ) {
+	public function lock( $key, $timeout = 6, $expiry = 6 ) {
 		// Lock only the first cache, to avoid deadlocks
 		if ( isset( $this->caches[0] ) ) {
-			return $this->caches[0]->lock( $key, $timeout );
+			return $this->caches[0]->lock( $key, $timeout, $expiry );
 		} else {
 			return true;
 		}
@@ -161,12 +151,12 @@ class MultiWriteBagOStuff extends BagOStuff {
 
 	/**
 	 * @param string $key
-	 * @param Closure $callback Callback method to be executed
+	 * @param callable $callback Callback method to be executed
 	 * @param int $exptime Either an interval in seconds or a unix timestamp for expiry
 	 * @param int $attempts The amount of times to attempt a merge in case of failure
 	 * @return bool Success
 	 */
-	public function merge( $key, Closure $callback, $exptime = 0, $attempts = 10 ) {
+	public function merge( $key, $callback, $exptime = 0, $attempts = 10 ) {
 		return $this->doWrite( 'merge', $key, $callback, $exptime );
 	}
 

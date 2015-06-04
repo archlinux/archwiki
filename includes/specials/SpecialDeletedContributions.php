@@ -78,6 +78,53 @@ class DeletedContribsPager extends IndexPager {
 		);
 	}
 
+	/**
+	 * This method basically executes the exact same code as the parent class, though with
+	 * a hook added, to allow extensions to add additional queries.
+	 *
+	 * @param string $offset Index offset, inclusive
+	 * @param int $limit Exact query limit
+	 * @param bool $descending Query direction, false for ascending, true for descending
+	 * @return ResultWrapper
+	 */
+	function reallyDoQuery( $offset, $limit, $descending ) {
+		$pager = $this;
+
+		$data = array( parent::reallyDoQuery( $offset, $limit, $descending ) );
+
+		// This hook will allow extensions to add in additional queries, nearly
+		// identical to ContribsPager::reallyDoQuery.
+		Hooks::run(
+			'DeletedContribsPager::reallyDoQuery',
+			array( &$data, $pager, $offset, $limit, $descending )
+		);
+
+		$result = array();
+
+		// loop all results and collect them in an array
+		foreach ( $data as $query ) {
+			foreach ( $query as $i => $row ) {
+				// use index column as key, allowing us to easily sort in PHP
+				$result[$row->{$this->getIndexField()} . "-$i"] = $row;
+			}
+		}
+
+		// sort results
+		if ( $descending ) {
+			ksort( $result );
+		} else {
+			krsort( $result );
+		}
+
+		// enforce limit
+		$result = array_slice( $result, 0, $limit );
+
+		// get rid of array keys
+		$result = array_values( $result );
+
+		return new FakeResultWrapper( $result );
+	}
+
 	function getUserCond() {
 		$condition = array();
 
@@ -141,6 +188,50 @@ class DeletedContribsPager extends IndexPager {
 	/**
 	 * Generates each row in the contributions list.
 	 *
+	 * @todo This would probably look a lot nicer in a table.
+	 * @param stdClass $row
+	 * @return string
+	 */
+	function formatRow( $row ) {
+		$ret = '';
+		$classes = array();
+
+		/*
+		 * There may be more than just revision rows. To make sure that we'll only be processing
+		 * revisions here, let's _try_ to build a revision out of our row (without displaying
+		 * notices though) and then trying to grab data from the built object. If we succeed,
+		 * we're definitely dealing with revision data and we may proceed, if not, we'll leave it
+		 * to extensions to subscribe to the hook to parse the row.
+		 */
+		wfSuppressWarnings();
+		try {
+			$rev = Revision::newFromArchiveRow( $row );
+			$validRevision = (bool)$rev->getId();
+		} catch ( Exception $e ) {
+			$validRevision = false;
+		}
+		wfRestoreWarnings();
+
+		if ( $validRevision ) {
+			$ret = $this->formatRevisionRow( $row );
+		}
+
+		// Let extensions add data
+		Hooks::run( 'DeletedContributionsLineEnding', array( $this, &$ret, $row, &$classes ) );
+
+		if ( $classes === array() && $ret === '' ) {
+			wfDebug( "Dropping Special:DeletedContribution row that could not be formatted\n" );
+			$ret = "<!-- Could not format Special:DeletedContribution row. -->\n";
+		} else {
+			$ret = Html::rawElement( 'li', array( 'class' => $classes ), $ret ) . "\n";
+		}
+
+		return $ret;
+	}
+
+	/**
+	 * Generates each row in the contributions list for archive entries.
+	 *
 	 * Contributions which are marked "top" are currently on top of the history.
 	 * For these contributions, a [rollback] link is shown for users with sysop
 	 * privileges. The rollback link restores the most recent version that was not
@@ -150,9 +241,7 @@ class DeletedContribsPager extends IndexPager {
 	 * @param stdClass $row
 	 * @return string
 	 */
-	function formatRow( $row ) {
-		wfProfileIn( __METHOD__ );
-
+	function formatRevisionRow( $row ) {
 		$page = Title::makeTitle( $row->ar_namespace, $row->ar_title );
 
 		$rev = new Revision( array(
@@ -256,17 +345,13 @@ class DeletedContribsPager extends IndexPager {
 			$ret .= " <strong>" . $this->msg( 'rev-deleted-user-contribs' )->escaped() . "</strong>";
 		}
 
-		$ret = Html::rawElement( 'li', array(), $ret ) . "\n";
-
-		wfProfileOut( __METHOD__ );
-
 		return $ret;
 	}
 
 	/**
 	 * Get the Database object in use
 	 *
-	 * @return DatabaseBase
+	 * @return IDatabase
 	 */
 	public function getDatabase() {
 		return $this->mDb;
@@ -315,7 +400,8 @@ class DeletedContributionsPage extends SpecialPage {
 			return;
 		}
 
-		$options['limit'] = $request->getInt( 'limit', $this->getConfig()->get( 'QueryPageDefaultLimit' ) );
+		$options['limit'] = $request->getInt( 'limit',
+			$this->getConfig()->get( 'QueryPageDefaultLimit' ) );
 		$options['target'] = $target;
 
 		$userObj = User::newFromName( $target, false );
@@ -465,7 +551,7 @@ class DeletedContributionsPage extends SpecialPage {
 				);
 			}
 
-			wfRunHooks( 'ContributionsToolLinks', array( $id, $nt, &$tools ) );
+			Hooks::run( 'ContributionsToolLinks', array( $id, $nt, &$tools ) );
 
 			$links = $this->getLanguage()->pipeList( $tools );
 
@@ -533,6 +619,8 @@ class DeletedContributionsPage extends SpecialPage {
 			$f .= "\t" . Html::hidden( $name, $value ) . "\n";
 		}
 
+		$this->getOutput()->addModules( 'mediawiki.userSuggest' );
+
 		$f .= Xml::openElement( 'fieldset' );
 		$f .= Xml::element( 'legend', array(), $this->msg( 'sp-contributions-search' )->text() );
 		$f .= Xml::tags(
@@ -546,7 +634,10 @@ class DeletedContributionsPage extends SpecialPage {
 			'text',
 			array(
 				'size' => '20',
-				'required' => ''
+				'required' => '',
+				'class' => array(
+					'mw-autocomplete-user', // used by mediawiki.userSuggest
+				),
 			) + ( $options['target'] ? array() : array( 'autofocus' ) )
 		) . ' ';
 		$f .= Html::namespaceSelector(

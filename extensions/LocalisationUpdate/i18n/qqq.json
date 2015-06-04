@@ -3,8 +3,9 @@
 		"authors": [
 			"Fryed-peach",
 			"Purodha",
-			"Shirayuki"
+			"Shirayuki",
+			"Umherirrender"
 		]
 	},
-	"localisationupdate-desc": "{{desc|name=Localisation Update|url=http://www.mediawiki.org/wiki/Extension:LocalisationUpdate}}"
+	"localisationupdate-desc": "{{desc|name=Localisation Update|url=https://www.mediawiki.org/wiki/Extension:LocalisationUpdate}}"
 }

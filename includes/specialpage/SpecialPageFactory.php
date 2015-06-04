@@ -47,7 +47,7 @@ class SpecialPageFactory {
 	/**
 	 * List of special page names to the subclass of SpecialPage which handles them.
 	 */
-	private static $list = array(
+	private static $coreList = array(
 		// Maintenance Reports
 		'BrokenRedirects' => 'BrokenRedirectsPage',
 		'Deadendpages' => 'DeadendPagesPage',
@@ -59,7 +59,7 @@ class SpecialPageFactory {
 		'Withoutinterwiki' => 'WithoutInterwikiPage',
 		'Protectedpages' => 'SpecialProtectedpages',
 		'Protectedtitles' => 'SpecialProtectedtitles',
-		'Shortpages' => 'ShortpagesPage',
+		'Shortpages' => 'ShortPagesPage',
 		'Uncategorizedcategories' => 'UncategorizedCategoriesPage',
 		'Uncategorizedimages' => 'UncategorizedImagesPage',
 		'Uncategorizedpages' => 'UncategorizedPagesPage',
@@ -156,8 +156,10 @@ class SpecialPageFactory {
 		'Booksources' => 'SpecialBookSources',
 
 		// Unlisted / redirects
+		'ApiHelp' => 'SpecialApiHelp',
 		'Blankpage' => 'SpecialBlankpage',
 		'Diff' => 'SpecialDiff',
+		'EditTags' => 'SpecialEditTags',
 		'Emailuser' => 'SpecialEmailUser',
 		'Movepage' => 'MovePageForm',
 		'Mycontributions' => 'SpecialMycontributions',
@@ -174,6 +176,7 @@ class SpecialPageFactory {
 		'Userlogout' => 'SpecialUserlogout',
 	);
 
+	private static $list;
 	private static $aliases;
 
 	/**
@@ -213,16 +216,13 @@ class SpecialPageFactory {
 	 */
 	private static function getPageList() {
 		global $wgSpecialPages;
-		global $wgDisableCounters, $wgDisableInternalSearch, $wgEmailAuthentication;
+		global $wgDisableInternalSearch, $wgEmailAuthentication;
 		global $wgEnableEmail, $wgEnableJavaScriptTest;
 		global $wgPageLanguageUseDB;
 
-		if ( !is_object( self::$list ) ) {
-			wfProfileIn( __METHOD__ );
+		if ( !is_array( self::$list ) ) {
 
-			if ( !$wgDisableCounters ) {
-				self::$list['Popularpages'] = 'PopularPagesPage';
-			}
+			self::$list = self::$coreList;
 
 			if ( !$wgDisableInternalSearch ) {
 				self::$list['Search'] = 'SpecialSearch';
@@ -250,11 +250,10 @@ class SpecialPageFactory {
 			// Add extension special pages
 			self::$list = array_merge( self::$list, $wgSpecialPages );
 
-			// Run hooks
-			// This hook can be used to remove undesired built-in special pages
-			wfRunHooks( 'SpecialPage_initList', array( &self::$list ) );
+			// This hook can be used to disable unwanted core special pages
+			// or conditionally register special pages.
+			Hooks::run( 'SpecialPage_initList', array( &self::$list ) );
 
-			wfProfileOut( __METHOD__ );
 		}
 
 		return self::$list;
@@ -271,12 +270,13 @@ class SpecialPageFactory {
 		if ( !is_object( self::$aliases ) ) {
 			global $wgContLang;
 			$aliases = $wgContLang->getSpecialPageAliases();
+			$pageList = self::getPageList();
 
 			self::$aliases = array();
 			$keepAlias = array();
 
 			// Force every canonical name to be an alias for itself.
-			foreach ( self::getPageList() as $name => $stuff ) {
+			foreach ( $pageList as $name => $stuff ) {
 				$caseFoldedAlias = $wgContLang->caseFold( $name );
 				self::$aliases[$caseFoldedAlias] = $name;
 				$keepAlias[$caseFoldedAlias] = 'canonical';
@@ -413,7 +413,11 @@ class SpecialPageFactory {
 				// @deprecated, officially since 1.18, unofficially since forever
 				wfDeprecated( "Array syntax for \$wgSpecialPages is deprecated ($className), " .
 					"define a subclass of SpecialPage instead.", '1.18' );
-				$page = MWFunction::newObj( $className, $rec );
+				$page = ObjectFactory::getObjectFromSpec( array(
+					'class' => $className,
+					'args' => $rec,
+					'closure_expansion' => false,
+				) );
 			} elseif ( $rec instanceof SpecialPage ) {
 				$page = $rec; //XXX: we should deep clone here
 			} else {
@@ -522,7 +526,6 @@ class SpecialPageFactory {
 	 * @return bool
 	 */
 	public static function executePath( Title &$title, IContextSource &$context, $including = false ) {
-		wfProfileIn( __METHOD__ );
 
 		// @todo FIXME: Redirects broken due to this call
 		$bits = explode( '/', $title->getDBkey(), 2 );
@@ -544,7 +547,6 @@ class SpecialPageFactory {
 			}
 
 			$context->getOutput()->showErrorPage( 'nosuchspecialpage', 'nospecialpagetext' );
-			wfProfileOut( __METHOD__ );
 
 			return false;
 		}
@@ -564,14 +566,12 @@ class SpecialPageFactory {
 				$title = $page->getPageTitle( $par );
 				$url = $title->getFullURL( $query );
 				$context->getOutput()->redirect( $url );
-				wfProfileOut( __METHOD__ );
 
 				return $title;
 			} else {
 				$context->setTitle( $page->getPageTitle( $par ) );
 			}
 		} elseif ( !$page->isIncludable() ) {
-			wfProfileOut( __METHOD__ );
 
 			return false;
 		}
@@ -579,11 +579,7 @@ class SpecialPageFactory {
 		$page->including( $including );
 
 		// Execute special page
-		$profName = 'Special:' . $page->getName();
-		wfProfileIn( $profName );
 		$page->run( $par );
-		wfProfileOut( $profName );
-		wfProfileOut( __METHOD__ );
 
 		return true;
 	}

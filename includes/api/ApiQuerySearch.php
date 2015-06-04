@@ -116,18 +116,20 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 			$this->dieUsage( $matches->getWikiText(), 'search-error' );
 		}
 
-		$apiResult = $this->getResult();
-		// Add search meta data to result
-		if ( isset( $searchInfo['totalhits'] ) ) {
-			$totalhits = $matches->getTotalHits();
-			if ( $totalhits !== null ) {
-				$apiResult->addValue( array( 'query', 'searchinfo' ),
-					'totalhits', $totalhits );
+		if ( $resultPageSet === null ) {
+			$apiResult = $this->getResult();
+			// Add search meta data to result
+			if ( isset( $searchInfo['totalhits'] ) ) {
+				$totalhits = $matches->getTotalHits();
+				if ( $totalhits !== null ) {
+					$apiResult->addValue( array( 'query', 'searchinfo' ),
+						'totalhits', $totalhits );
+				}
 			}
-		}
-		if ( isset( $searchInfo['suggestion'] ) && $matches->hasSuggestion() ) {
-			$apiResult->addValue( array( 'query', 'searchinfo' ),
-				'suggestion', $matches->getSuggestionQuery() );
+			if ( isset( $searchInfo['suggestion'] ) && $matches->hasSuggestion() ) {
+				$apiResult->addValue( array( 'query', 'searchinfo' ),
+					'suggestion', $matches->getSuggestionQuery() );
+			}
 		}
 
 		// Add the search results to the result
@@ -151,7 +153,7 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 			}
 
 			$title = $result->getTitle();
-			if ( is_null( $resultPageSet ) ) {
+			if ( $resultPageSet === null ) {
 				$vals = array();
 				ApiQueryBase::addTitleInfo( $vals, $title );
 
@@ -168,14 +170,14 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 					$vals['timestamp'] = wfTimestamp( TS_ISO_8601, $result->getTimestamp() );
 				}
 				if ( isset( $prop['titlesnippet'] ) ) {
-					$vals['titlesnippet'] = $result->getTitleSnippet( $terms );
+					$vals['titlesnippet'] = $result->getTitleSnippet();
 				}
 				if ( !is_null( $result->getRedirectTitle() ) ) {
 					if ( isset( $prop['redirecttitle'] ) ) {
-						$vals['redirecttitle'] = $result->getRedirectTitle();
+						$vals['redirecttitle'] = $result->getRedirectTitle()->getPrefixedText();
 					}
 					if ( isset( $prop['redirectsnippet'] ) ) {
-						$vals['redirectsnippet'] = $result->getRedirectSnippet( $terms );
+						$vals['redirectsnippet'] = $result->getRedirectSnippet();
 					}
 				}
 				if ( !is_null( $result->getSectionTitle() ) ) {
@@ -202,56 +204,68 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 		}
 
 		$hasInterwikiResults = false;
+		$totalhits = null;
 		if ( $interwiki && $resultPageSet === null && $matches->hasInterwikiResults() ) {
-			$matches = $matches->getInterwikiResults();
-			$hasInterwikiResults = true;
+			foreach ( $matches->getInterwikiResults() as $matches ) {
+				$matches = $matches->getInterwikiResults();
+				$hasInterwikiResults = true;
 
-			// Include number of results if requested
-			if ( isset( $searchInfo['totalhits'] ) ) {
-				$totalhits = $matches->getTotalHits();
-				if ( $totalhits !== null ) {
-					$apiResult->addValue( array( 'query', 'interwikisearchinfo' ),
-						'totalhits', $totalhits );
-				}
-			}
-
-			$result = $matches->next();
-			while ( $result ) {
-				$title = $result->getTitle();
-				$vals = array(
-					'namespace' => $result->getInterwikiNamespaceText(),
-					'title' => $title->getText(),
-					'url' => $title->getFullUrl(),
-				);
-
-				// Add item to results and see whether it fits
-				$fit = $apiResult->addValue(
-					array( 'query', 'interwiki' . $this->getModuleName(), $result->getInterwikiPrefix()  ),
-					null,
-					$vals
-				);
-
-				if ( !$fit ) {
-					// We hit the limit. We can't really provide any meaningful
-					// pagination info so just bail out
-					break;
+				// Include number of results if requested
+				if ( $resultPageSet === null && isset( $searchInfo['totalhits'] ) ) {
+					$totalhits += $matches->getTotalHits();
 				}
 
 				$result = $matches->next();
+				while ( $result ) {
+					$title = $result->getTitle();
+
+					if ( $resultPageSet === null ) {
+						$vals = array(
+							'namespace' => $result->getInterwikiNamespaceText(),
+							'title' => $title->getText(),
+							'url' => $title->getFullUrl(),
+						);
+
+						// Add item to results and see whether it fits
+						$fit = $apiResult->addValue(
+							array( 'query', 'interwiki' . $this->getModuleName(), $result->getInterwikiPrefix()  ),
+							null,
+							$vals
+						);
+
+						if ( !$fit ) {
+							// We hit the limit. We can't really provide any meaningful
+							// pagination info so just bail out
+							break;
+						}
+					} else {
+						$titles[] = $title;
+					}
+
+					$result = $matches->next();
+				}
+			}
+			if ( $totalhits !== null ) {
+				$apiResult->addValue( array( 'query', 'interwikisearchinfo' ),
+					'totalhits', $totalhits );
 			}
 		}
 
-		if ( is_null( $resultPageSet ) ) {
-			$apiResult->setIndexedTagName_internal( array(
+		if ( $resultPageSet === null ) {
+			$apiResult->addIndexedTagName( array(
 				'query', $this->getModuleName()
 			), 'p' );
 			if ( $hasInterwikiResults ) {
-				$apiResult->setIndexedTagName_internal( array(
+				$apiResult->addIndexedTagName( array(
 					'query', 'interwiki' . $this->getModuleName()
 				), 'p' );
 			}
 		} else {
 			$resultPageSet->populateFromTitles( $titles );
+			$offset = $params['offset'] + 1;
+			foreach ( $titles as $index => $title ) {
+				$resultPageSet->setGeneratorData( $title, array( 'index' => $index + $offset ) );
+			}
 		}
 	}
 
@@ -303,7 +317,10 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 				),
 				ApiBase::PARAM_ISMULTI => true,
 			),
-			'offset' => 0,
+			'offset' => array(
+				ApiBase::PARAM_DFLT => 0,
+				ApiBase::PARAM_HELP_MSG => 'api-help-param-continue',
+			),
 			'limit' => array(
 				ApiBase::PARAM_DFLT => 10,
 				ApiBase::PARAM_TYPE => 'limit',
@@ -328,47 +345,14 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 		return $params;
 	}
 
-	public function getParamDescription() {
-		$descriptions = array(
-			'search' => 'Search for all page titles (or content) that has this value',
-			'namespace' => 'The namespace(s) to enumerate',
-			'what' => 'Search inside the text or titles',
-			'info' => 'What metadata to return',
-			'prop' => array(
-				'What properties to return',
-				' size             - Adds the size of the page in bytes',
-				' wordcount        - Adds the word count of the page',
-				' timestamp        - Adds the timestamp of when the page was last edited',
-				' score            - DEPRECATED and IGNORED',
-				' snippet          - Adds a parsed snippet of the page',
-				' titlesnippet     - Adds a parsed snippet of the page title',
-				' redirectsnippet  - Adds a parsed snippet of the redirect title',
-				' redirecttitle    - Adds the title of the matching redirect',
-				' sectionsnippet   - Adds a parsed snippet of the matching section title',
-				' sectiontitle     - Adds the title of the matching section',
-				' hasrelated       - DEPRECATED and IGNORED',
-			),
-			'offset' => 'Use this value to continue paging (return by query)',
-			'limit' => 'How many total pages to return',
-			'interwiki' => 'Include interwiki results in the search, if available'
-		);
-
-		if ( count( SearchEngine::getSearchTypes() ) > 1 ) {
-			$descriptions['backend'] = 'Which search backend to use, if not the default';
-		}
-
-		return $descriptions;
-	}
-
-	public function getDescription() {
-		return 'Perform a full text search.';
-	}
-
-	public function getExamples() {
+	protected function getExamplesMessages() {
 		return array(
-			'api.php?action=query&list=search&srsearch=meaning',
-			'api.php?action=query&list=search&srwhat=text&srsearch=meaning',
-			'api.php?action=query&generator=search&gsrsearch=meaning&prop=info',
+			'action=query&list=search&srsearch=meaning'
+				=> 'apihelp-query+search-example-simple',
+			'action=query&list=search&srwhat=text&srsearch=meaning'
+				=> 'apihelp-query+search-example-text',
+			'action=query&generator=search&gsrsearch=meaning&prop=info'
+				=> 'apihelp-query+search-example-generator',
 		);
 	}
 

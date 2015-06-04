@@ -1,0 +1,23 @@
+{
+	"name": "ImageMap",
+	"author": "Tim Starling",
+	"url": "https://www.mediawiki.org/wiki/Extension:ImageMap",
+	"descriptionmsg": "imagemap_desc",
+	"type": "parserhook",
+	"MessagesDirs": {
+		"ImageMap": [
+			"i18n"
+		]
+	},
+	"Hooks": {
+		"ParserFirstCallInit": [
+			"ImageMap::onParserFirstCallInit"
+		]
+	},
+	"AutoloadClasses": {
+		"ImageMap": "ImageMap_body.php"
+	},
+	"ParserTestFiles": [
+		"imageMapParserTests.txt"
+	]
+}

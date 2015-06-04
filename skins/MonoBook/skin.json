@@ -1,0 +1,37 @@
+{
+	"name": "MonoBook",
+	"author": [
+		"Gabriel Wicke",
+		"..."
+	],
+	"url": "https://www.mediawiki.org/wiki/Skin:MonoBook",
+	"descriptionmsg": "monobook-desc",
+	"namemsg": "skinname-monobook",
+	"license-name": "GPL-2.0+",
+	"type": "skin",
+	"ValidSkinNames": {
+		"monobook": "MonoBook"
+	},
+	"MessagesDirs": {
+		"MonoBook": [
+			"i18n"
+		]
+	},
+	"ResourceModules": {
+		"skins.monobook.styles": {
+			"styles": {
+				"main.css": {
+					"media": "screen"
+				}
+			}
+		}
+	},
+	"ResourceFileModulePaths": {
+		"localBasePath": "",
+		"remoteSkinPath": "MonoBook"
+	},
+	"AutoloadClasses": {
+		"SkinMonoBook": "SkinMonoBook.php",
+		"MonoBookTemplate": "MonoBookTemplate.php"
+	}
+}

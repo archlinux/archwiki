@@ -3,6 +3,8 @@
  * Created on Oct 13, 2006
  *
  * Copyright © 2006 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
+ * Copyright © 2008 Brion Vibber <brion@wikimedia.org>
+ * Copyright © 2014 Brad Jorsch <bjorsch@wikimedia.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,21 +29,50 @@
  */
 class ApiOpenSearch extends ApiBase {
 
-	/**
-	 * Override built-in handling of format parameter.
-	 * Only JSON is supported.
-	 *
-	 * @return ApiFormatBase
-	 */
-	public function getCustomPrinter() {
-		$params = $this->extractRequestParams();
-		$format = $params['format'];
-		$allowed = array( 'json', 'jsonfm' );
-		if ( in_array( $format, $allowed ) ) {
-			return $this->getMain()->createPrinterByName( $format );
-		}
+	private $format = null;
+	private $fm = null;
 
-		return $this->getMain()->createPrinterByName( $allowed[0] );
+	/**
+	 * Get the output format
+	 *
+	 * @return string
+	 */
+	protected function getFormat() {
+		if ( $this->format === null ) {
+			$params = $this->extractRequestParams();
+			$format = $params['format'];
+
+			$allowedParams = $this->getAllowedParams();
+			if ( !in_array( $format, $allowedParams['format'][ApiBase::PARAM_TYPE] ) ) {
+				$format = $allowedParams['format'][ApiBase::PARAM_DFLT];
+			}
+
+			if ( substr( $format, -2 ) === 'fm' ) {
+				$this->format = substr( $format, 0, -2 );
+				$this->fm = 'fm';
+			} else {
+				$this->format = $format;
+				$this->fm = '';
+			}
+		}
+		return $this->format;
+	}
+
+	public function getCustomPrinter() {
+		switch ( $this->getFormat() ) {
+			case 'json':
+				return new ApiOpenSearchFormatJson(
+					$this->getMain(), $this->fm, $this->getParameter( 'warningsaserror' )
+				);
+
+			case 'xml':
+				$printer = $this->getMain()->createPrinterByName( 'xml' . $this->fm );
+				$printer->setRootElement( 'SearchSuggestion' );
+				return $printer;
+
+			default:
+				ApiBase::dieDebug( __METHOD__, "Unsupported format '{$this->getFormat()}'" );
+		}
 	}
 
 	public function execute() {
@@ -51,21 +82,188 @@ class ApiOpenSearch extends ApiBase {
 		$namespaces = $params['namespace'];
 		$suggest = $params['suggest'];
 
-		// Some script that was loaded regardless of wgEnableOpenSearchSuggest, likely cached.
-		if ( $suggest && !$this->getConfig()->get( 'EnableOpenSearchSuggest' ) ) {
-			$searches = array();
+		if ( $params['redirects'] === null ) {
+			// Backwards compatibility, don't resolve for JSON.
+			$resolveRedir = $this->getFormat() !== 'json';
 		} else {
+			$resolveRedir = $params['redirects'] === 'resolve';
+		}
+
+		$results = array();
+
+		if ( !$suggest || $this->getConfig()->get( 'EnableOpenSearchSuggest' ) ) {
 			// Open search results may be stored for a very long time
 			$this->getMain()->setCacheMaxAge( $this->getConfig()->get( 'SearchSuggestCacheExpiry' ) );
 			$this->getMain()->setCacheMode( 'public' );
+			$this->search( $search, $limit, $namespaces, $resolveRedir, $results );
 
-			$searcher = new StringPrefixSearch;
-			$searches = $searcher->searchWithVariants( $search, $limit, $namespaces );
+			// Allow hooks to populate extracts and images
+			Hooks::run( 'ApiOpenSearchSuggest', array( &$results ) );
+
+			// Trim extracts, if necessary
+			$length = $this->getConfig()->get( 'OpenSearchDescriptionLength' );
+			foreach ( $results as &$r ) {
+				if ( is_string( $r['extract'] ) && !$r['extract trimmed'] ) {
+					$r['extract'] = self::trimExtract( $r['extract'], $length );
+				}
+			}
 		}
-		// Set top level elements
+
+		// Populate result object
+		$this->populateResult( $search, $results );
+	}
+
+	/**
+	 * Perform the search
+	 *
+	 * @param string $search Text to search
+	 * @param int $limit Maximum items to return
+	 * @param array $namespaces Namespaces to search
+	 * @param bool $resolveRedir Whether to resolve redirects
+	 * @param array &$results Put results here. Keys have to be integers.
+	 */
+	protected function search( $search, $limit, $namespaces, $resolveRedir, &$results ) {
+		// Find matching titles as Title objects
+		$searcher = new TitlePrefixSearch;
+		$titles = $searcher->searchWithVariants( $search, $limit, $namespaces );
+		if ( !$titles ) {
+			return;
+		}
+
+		// Special pages need unique integer ids in the return list, so we just
+		// assign them negative numbers because those won't clash with the
+		// always positive articleIds that non-special pages get.
+		$nextSpecialPageId = -1;
+
+		if ( $resolveRedir ) {
+			// Query for redirects
+			$redirects = array();
+			$lb = new LinkBatch( $titles );
+			if ( !$lb->isEmpty() ) {
+				$db = $this->getDb();
+				$res = $db->select(
+					array( 'page', 'redirect' ),
+					array( 'page_namespace', 'page_title', 'rd_namespace', 'rd_title' ),
+					array(
+						'rd_from = page_id',
+						'rd_interwiki IS NULL OR rd_interwiki = ' . $db->addQuotes( '' ),
+						$lb->constructSet( 'page', $db ),
+					),
+					__METHOD__
+				);
+				foreach ( $res as $row ) {
+					$redirects[$row->page_namespace][$row->page_title] =
+						array( $row->rd_namespace, $row->rd_title );
+				}
+			}
+
+			// Bypass any redirects
+			$seen = array();
+			foreach ( $titles as $title ) {
+				$ns = $title->getNamespace();
+				$dbkey = $title->getDBkey();
+				$from = null;
+				if ( isset( $redirects[$ns][$dbkey] ) ) {
+					list( $ns, $dbkey ) = $redirects[$ns][$dbkey];
+					$from = $title;
+					$title = Title::makeTitle( $ns, $dbkey );
+				}
+				if ( !isset( $seen[$ns][$dbkey] ) ) {
+					$seen[$ns][$dbkey] = true;
+					$resultId = $title->getArticleId();
+					if ( $resultId === 0 ) {
+						$resultId = $nextSpecialPageId;
+						$nextSpecialPageId -= 1;
+					}
+					$results[$resultId] = array(
+						'title' => $title,
+						'redirect from' => $from,
+						'extract' => false,
+						'extract trimmed' => false,
+						'image' => false,
+						'url' => wfExpandUrl( $title->getFullUrl(), PROTO_CURRENT ),
+					);
+				}
+			}
+		} else {
+			foreach ( $titles as $title ) {
+				$resultId = $title->getArticleId();
+				if ( $resultId === 0 ) {
+					$resultId = $nextSpecialPageId;
+					$nextSpecialPageId -= 1;
+				}
+				$results[$resultId] = array(
+					'title' => $title,
+					'redirect from' => null,
+					'extract' => false,
+					'extract trimmed' => false,
+					'image' => false,
+					'url' => wfExpandUrl( $title->getFullUrl(), PROTO_CURRENT ),
+				);
+			}
+		}
+	}
+
+	/**
+	 * @param string $search
+	 * @param array &$results
+	 */
+	protected function populateResult( $search, &$results ) {
 		$result = $this->getResult();
-		$result->addValue( null, 0, $search );
-		$result->addValue( null, 1, $searches );
+
+		switch ( $this->getFormat() ) {
+			case 'json':
+				// http://www.opensearch.org/Specifications/OpenSearch/Extensions/Suggestions/1.1
+				$result->addArrayType( null, 'array' );
+				$result->addValue( null, 0, strval( $search ) );
+				$terms = array();
+				$descriptions = array();
+				$urls = array();
+				foreach ( $results as $r ) {
+					$terms[] = $r['title']->getPrefixedText();
+					$descriptions[] = strval( $r['extract'] );
+					$urls[] = $r['url'];
+				}
+				$result->addValue( null, 1, $terms );
+				$result->addValue( null, 2, $descriptions );
+				$result->addValue( null, 3, $urls );
+				break;
+
+			case 'xml':
+				// http://msdn.microsoft.com/en-us/library/cc891508%28v=vs.85%29.aspx
+				$imageKeys = array(
+					'source' => true,
+					'alt' => true,
+					'width' => true,
+					'height' => true,
+					'align' => true,
+				);
+				$items = array();
+				foreach ( $results as $r ) {
+					$item = array(
+						'Text' => $r['title']->getPrefixedText(),
+						'Url' => $r['url'],
+					);
+					if ( is_string( $r['extract'] ) && $r['extract'] !== '' ) {
+						$item['Description'] = $r['extract'];
+					}
+					if ( is_array( $r['image'] ) && isset( $r['image']['source'] ) ) {
+						$item['Image'] = array_intersect_key( $r['image'], $imageKeys );
+					}
+					ApiResult::setSubelementsList( $item, array_keys( $item ) );
+					$items[] = $item;
+				}
+				ApiResult::setIndexedTagName( $items, 'Item' );
+				$result->addValue( null, 'version', '2.0' );
+				$result->addValue( null, 'xmlns', 'http://opensearch.org/searchsuggest2' );
+				$result->addValue( null, 'Query', strval( $search ) );
+				$result->addSubelementsList( null, 'Query' );
+				$result->addValue( null, 'Section', $items );
+				break;
+
+			default:
+				ApiBase::dieDebug( __METHOD__, "Unsupported format '{$this->getFormat()}'" );
+		}
 	}
 
 	public function getAllowedParams() {
@@ -84,34 +282,117 @@ class ApiOpenSearch extends ApiBase {
 				ApiBase::PARAM_ISMULTI => true
 			),
 			'suggest' => false,
+			'redirects' => array(
+				ApiBase::PARAM_TYPE => array( 'return', 'resolve' ),
+			),
 			'format' => array(
 				ApiBase::PARAM_DFLT => 'json',
-				ApiBase::PARAM_TYPE => array( 'json', 'jsonfm' ),
-			)
+				ApiBase::PARAM_TYPE => array( 'json', 'jsonfm', 'xml', 'xmlfm' ),
+			),
+			'warningsaserror' => false,
 		);
 	}
 
-	public function getParamDescription() {
+	protected function getExamplesMessages() {
 		return array(
-			'search' => 'Search string',
-			'limit' => 'Maximum amount of results to return',
-			'namespace' => 'Namespaces to search',
-			'suggest' => 'Do nothing if $wgEnableOpenSearchSuggest is false',
-			'format' => 'The format of the output',
-		);
-	}
-
-	public function getDescription() {
-		return 'Search the wiki using the OpenSearch protocol.';
-	}
-
-	public function getExamples() {
-		return array(
-			'api.php?action=opensearch&search=Te'
+			'action=opensearch&search=Te'
+				=> 'apihelp-opensearch-example-te',
 		);
 	}
 
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/API:Opensearch';
+	}
+
+	/**
+	 * Trim an extract to a sensible length.
+	 *
+	 * Adapted from Extension:OpenSearchXml, which adapted it from
+	 * Extension:ActiveAbstract.
+	 *
+	 * @param string $text
+	 * @param int $len Target length; actual result will continue to the end of a sentence.
+	 * @return string
+	 */
+	public static function trimExtract( $text, $length ) {
+		static $regex = null;
+
+		if ( $regex === null ) {
+			$endchars = array(
+				'([^\d])\.\s', '\!\s', '\?\s', // regular ASCII
+				'。', // full-width ideographic full-stop
+				'．', '！', '？', // double-width roman forms
+				'｡', // half-width ideographic full stop
+			);
+			$endgroup = implode( '|', $endchars );
+			$end = "(?:$endgroup)";
+			$sentence = ".{{$length},}?$end+";
+			$regex = "/^($sentence)/u";
+		}
+
+		$matches = array();
+		if ( preg_match( $regex, $text, $matches ) ) {
+			return trim( $matches[1] );
+		} else {
+			// Just return the first line
+			$lines = explode( "\n", $text );
+			return trim( $lines[0] );
+		}
+	}
+
+	/**
+	 * Fetch the template for a type.
+	 *
+	 * @param string $type MIME type
+	 * @return string
+	 * @throws MWException
+	 */
+	public static function getOpenSearchTemplate( $type ) {
+		global $wgOpenSearchTemplate, $wgCanonicalServer;
+
+		if ( $wgOpenSearchTemplate && $type === 'application/x-suggestions+json' ) {
+			return $wgOpenSearchTemplate;
+		}
+
+		$ns = implode( '|', SearchEngine::defaultNamespaces() );
+		if ( !$ns ) {
+			$ns = "0";
+		}
+
+		switch ( $type ) {
+			case 'application/x-suggestions+json':
+				return $wgCanonicalServer . wfScript( 'api' )
+					. '?action=opensearch&search={searchTerms}&namespace=' . $ns;
+
+			case 'application/x-suggestions+xml':
+				return $wgCanonicalServer . wfScript( 'api' )
+					. '?action=opensearch&format=xml&search={searchTerms}&namespace=' . $ns;
+
+			default:
+				throw new MWException( __METHOD__ . ": Unknown type '$type'" );
+		}
+	}
+}
+
+class ApiOpenSearchFormatJson extends ApiFormatJson {
+	private $warningsAsError = false;
+
+	public function __construct( ApiMain $main, $fm, $warningsAsError ) {
+		parent::__construct( $main, "json$fm" );
+		$this->warningsAsError = $warningsAsError;
+	}
+
+	public function execute() {
+		if ( !$this->getResult()->getResultData( 'error' ) ) {
+			$warnings = $this->getResult()->removeValue( 'warnings', null );
+			if ( $this->warningsAsError && $warnings ) {
+				$this->dieUsage(
+					'Warnings cannot be represented in OpenSearch JSON format', 'warnings', 0,
+					array( 'warnings' => $warnings )
+				);
+			}
+		}
+
+		parent::execute();
 	}
 }

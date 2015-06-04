@@ -1,0 +1,37 @@
+{
+	"name": "ArchLinux",
+	"author": [ "Pierre Schmitz" ],
+	"url": "https://www.archlinux.org",
+	"description": "MediaWiki skin based on MonoBook",
+	"license-name": "GPL-2.0+",
+	"type": "skin",
+	"ValidSkinNames": {
+		"archlinux": "ArchLinux"
+	},
+	"ResourceModules": {
+		"skins.archlinux.styles": {
+			"styles": {
+				"main.css": {
+					"media": "screen"
+				},
+				"archnavbar.css": {
+					"media": "screen"
+				},
+				"arch.css": {
+					"media": "screen"
+				},
+				"print.css": {
+					"media": "print"
+				}
+			}
+		}
+	},
+	"ResourceFileModulePaths": {
+		"localBasePath": "",
+		"remoteSkinPath": "ArchLinux"
+	},
+	"AutoloadClasses": {
+		"SkinArchLinux": "SkinArchLinux.php",
+		"ArchLinuxTemplate": "ArchLinuxTemplate.php"
+	}
+}

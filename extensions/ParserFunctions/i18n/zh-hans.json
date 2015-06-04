@@ -7,11 +7,12 @@
 			"PhiLiP",
 			"Philip",
 			"Shinjiman",
-			"阿pp"
+			"阿pp",
+			"Liuxinyu970226"
 		]
 	},
 	"pfunc_desc": "用逻辑函数加强解析器",
-	"pfunc_time_error": "错误：无效时间",
+	"pfunc_time_error": "错误：无效时间。",
 	"pfunc_time_too_long": "错误：#time调用次数过多",
 	"pfunc_time_too_big": "错误：#time只支持到9999年",
 	"pfunc_time_too_small": "错误：#time只支持最低0年。",

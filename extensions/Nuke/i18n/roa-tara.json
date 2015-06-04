@@ -14,6 +14,7 @@
 	"nuke-multiplepeople": "Scangellazione massive de le pàggene aggiunde de recende",
 	"nuke-tools": "Stu strumende permette le scangellazziune de masse de le pàggene aggiunde de recende da 'nu certe utende o IP.<br />\nMitte 'u nome de l'utende o l'indirizze IP pe avè 'n'elenghe de le pàggene de scangellà, o lasse vianghe pe tutte l'utinde.",
 	"nuke-submit-user": "Veje",
+	"nuke-toggleinvert": "'Nverte",
 	"nuke-submit-delete": "Scangelle 'a selezione",
 	"right-nuke": "Scangellazione de masse de le pàggene",
 	"nuke-select": "Scacchie: $1",
@@ -27,5 +28,6 @@
 	"nuke-nopages-global": "Non ge stonne pàggene nove jndr'à le [[Special:RecentChanges|cangiaminde recende]].",
 	"nuke-viewchanges": "vide le cangiaminde",
 	"nuke-namespace": "Limite a namespace:",
-	"nuke-linkoncontribs": "scangellazione de masse"
+	"nuke-linkoncontribs": "scangellazione de masse",
+	"nuke-linkoncontribs-text": "Pàggene da scangellà massive addò stu utende jè 'u sole autore"
 }

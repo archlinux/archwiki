@@ -6,7 +6,7 @@
  * MW_NO_SETUP is defined.
  *
  * Setup.php (if loaded) then sets up GlobalFunctions, the AutoLoader,
- * and the configuration globals (though not $wgTitle).
+ * and the configuration globals.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,12 +34,30 @@ if ( ini_get( 'register_globals' ) ) {
 		. 'for help on how to disable it.' );
 }
 
+if ( function_exists( 'get_magic_quotes_gpc' ) && get_magic_quotes_gpc() ) {
+	die( 'MediaWiki does not function when magic quotes are enabled. '
+		. 'Please see the <a href="https://php.net/manual/security.magicquotes.disabling.php">PHP Manual</a> '
+		. 'for help on how to disable magic quotes.' );
+}
+
+
 # bug 15461: Make IE8 turn off content sniffing. Everybody else should ignore this
 # We're adding it here so that it's *always* set, even for alternate entry
 # points and when $wgOut gets disabled or overridden.
 header( 'X-Content-Type-Options: nosniff' );
 
-$wgRequestTime = microtime( true );
+# Approximate $_SERVER['REQUEST_TIME_FLOAT'] for PHP<5.4
+if ( !isset( $_SERVER['REQUEST_TIME_FLOAT'] ) ) {
+	$_SERVER['REQUEST_TIME_FLOAT'] = microtime( true );
+}
+
+/**
+ * @var float Request start time as fractional seconds since epoch
+ * @deprecated since 1.25; use $_SERVER['REQUEST_TIME_FLOAT'] or
+ *   WebRequest::getElapsedTime() instead.
+ */
+$wgRequestTime = $_SERVER['REQUEST_TIME_FLOAT'];
+
 unset( $IP );
 
 # Valid web server entry point, enable includes.
@@ -58,8 +76,8 @@ if ( $IP === false ) {
 	$IP = realpath( '.' ) ?: dirname( __DIR__ );
 }
 
-# Load the profiler
-require_once "$IP/includes/profiler/Profiler.php";
+# Grab profiling functions
+require_once "$IP/includes/profiler/ProfilerFunctions.php";
 $wgRUstart = wfGetRusage() ?: array();
 
 # Start the autoloader, so that extensions can derive classes from core files
@@ -74,10 +92,12 @@ if ( file_exists( "$IP/StartProfiler.php" ) ) {
 	require "$IP/StartProfiler.php";
 }
 
-wfProfileIn( 'WebStart.php-conf' );
 
 # Load default settings
 require_once "$IP/includes/DefaultSettings.php";
+
+# Load global functions
+require_once "$IP/includes/GlobalFunctions.php";
 
 # Load composer's autoloader if present
 if ( is_readable( "$IP/vendor/autoload.php" ) ) {
@@ -96,7 +116,7 @@ if ( defined( 'MW_CONFIG_CALLBACK' ) ) {
 	# the wiki installer needs to be launched or the generated file uploaded to
 	# the root wiki directory. Give a hint, if it is not readable by the server.
 	if ( !is_readable( MW_CONFIG_FILE ) ) {
-		require_once "$IP/includes/templates/NoLocalSettings.php";
+		require_once "$IP/includes/NoLocalSettings.php";
 		die();
 	}
 
@@ -104,18 +124,15 @@ if ( defined( 'MW_CONFIG_CALLBACK' ) ) {
 	require_once MW_CONFIG_FILE;
 }
 
-wfProfileOut( 'WebStart.php-conf' );
 
-wfProfileIn( 'WebStart.php-ob_start' );
 # Initialise output buffering
 # Check that there is no previous output or previously set up buffers, because
 # that would cause us to potentially mix gzip and non-gzip output, creating a
 # big mess.
-if ( !defined( 'MW_NO_OUTPUT_BUFFER' ) && ob_get_level() == 0 ) {
+if ( ob_get_level() == 0 ) {
 	require_once "$IP/includes/OutputHandler.php";
 	ob_start( 'wfOutputHandler' );
 }
-wfProfileOut( 'WebStart.php-ob_start' );
 
 if ( !defined( 'MW_NO_SETUP' ) ) {
 	require_once "$IP/includes/Setup.php";

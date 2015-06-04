@@ -20,10 +20,10 @@
  * @file
  */
 
+use MediaWiki\Logger\LoggerFactory;
+
 /**
  * The MediaWiki class is the helper class for the index.php entry point.
- *
- * @internal documentation reviewed 15 Mar 2010
  */
 class MediaWiki {
 	/**
@@ -59,7 +59,7 @@ class MediaWiki {
 		$request = $this->context->getRequest();
 		$curid = $request->getInt( 'curid' );
 		$title = $request->getVal( 'title' );
-		$action = $request->getVal( 'action', 'view' );
+		$action = $request->getVal( 'action' );
 
 		if ( $request->getCheck( 'search' ) ) {
 			// Compatibility with old search URLs which didn't use Special:Search
@@ -121,7 +121,7 @@ class MediaWiki {
 	 * @return Title
 	 */
 	public function getTitle() {
-		if ( $this->context->getTitle() === null ) {
+		if ( !$this->context->hasTitle() ) {
 			$this->context->setTitle( $this->parseTitle() );
 		}
 		return $this->context->getTitle();
@@ -157,8 +157,6 @@ class MediaWiki {
 	private function performRequest() {
 		global $wgTitle;
 
-		wfProfileIn( __METHOD__ );
-
 		$request = $this->context->getRequest();
 		$requestTitle = $title = $this->context->getTitle();
 		$output = $this->context->getOutput();
@@ -169,14 +167,13 @@ class MediaWiki {
 		}
 
 		$unused = null; // To pass it by reference
-		wfRunHooks( 'BeforeInitialize', array( &$title, &$unused, &$output, &$user, $request, $this ) );
+		Hooks::run( 'BeforeInitialize', array( &$title, &$unused, &$output, &$user, $request, $this ) );
 
 		// Invalid titles. Bug 21776: The interwikis must redirect even if the page name is empty.
 		if ( is_null( $title ) || ( $title->getDBkey() == '' && !$title->isExternal() )
 			|| $title->isSpecial( 'Badtitle' )
 		) {
 			$this->context->setTitle( SpecialPage::getTitleFor( 'Badtitle' ) );
-			wfProfileOut( __METHOD__ );
 			throw new BadTitleError();
 		}
 
@@ -201,11 +198,8 @@ class MediaWiki {
 			$this->context->setTitle( $badTitle );
 			$wgTitle = $badTitle;
 
-			wfProfileOut( __METHOD__ );
 			throw new PermissionsError( 'read', $permErrors );
 		}
-
-		$pageView = false; // was an article or special page viewed?
 
 		// Interwiki redirects
 		if ( $title->isExternal() ) {
@@ -225,7 +219,6 @@ class MediaWiki {
 				$output->redirect( $url, 301 );
 			} else {
 				$this->context->setTitle( SpecialPage::getTitleFor( 'Badtitle' ) );
-				wfProfileOut( __METHOD__ );
 				throw new BadTitleError();
 			}
 		// Redirect loops, no title in URL, $wgUsePathInfo URLs, and URLs with a variant
@@ -233,7 +226,7 @@ class MediaWiki {
 			&& ( $request->getVal( 'title' ) === null
 				|| $title->getPrefixedDBkey() != $request->getVal( 'title' ) )
 			&& !count( $request->getValueNames( array( 'action', 'title' ) ) )
-			&& wfRunHooks( 'TestCanonicalRedirect', array( $request, $title, $output ) )
+			&& Hooks::run( 'TestCanonicalRedirect', array( $request, $title, $output ) )
 		) {
 			if ( $title->isSpecialPage() ) {
 				list( $name, $subpage ) = SpecialPageFactory::resolveAlias( $title->getDBkey() );
@@ -270,7 +263,6 @@ class MediaWiki {
 			}
 		// Special pages
 		} elseif ( NS_SPECIAL == $title->getNamespace() ) {
-			$pageView = true;
 			// Actions that need to be made when we have a special pages
 			SpecialPageFactory::executePath( $title, $this->context );
 		} else {
@@ -278,23 +270,14 @@ class MediaWiki {
 			// may be a redirect to another article or URL.
 			$article = $this->initializeArticle();
 			if ( is_object( $article ) ) {
-				$pageView = true;
 				$this->performAction( $article, $requestTitle );
 			} elseif ( is_string( $article ) ) {
 				$output->redirect( $article );
 			} else {
-				wfProfileOut( __METHOD__ );
 				throw new MWException( "Shouldn't happen: MediaWiki::initializeArticle()"
 					. " returned neither an object nor a URL" );
 			}
 		}
-
-		if ( $pageView ) {
-			// Promote user to any groups they meet the criteria for
-			$user->addAutopromoteOnceGroups( 'onView' );
-		}
-
-		wfProfileOut( __METHOD__ );
 	}
 
 	/**
@@ -304,7 +287,6 @@ class MediaWiki {
 	 * @return mixed An Article, or a string to redirect to another URL
 	 */
 	private function initializeArticle() {
-		wfProfileIn( __METHOD__ );
 
 		$title = $this->context->getTitle();
 		if ( $this->context->canUseWikiPage() ) {
@@ -322,7 +304,6 @@ class MediaWiki {
 		// NS_MEDIAWIKI has no redirects.
 		// It is also used for CSS/JS, so performance matters here...
 		if ( $title->getNamespace() == NS_MEDIAWIKI ) {
-			wfProfileOut( __METHOD__ );
 			return $article;
 		}
 
@@ -342,7 +323,7 @@ class MediaWiki {
 			// Give extensions a change to ignore/handle redirects as needed
 			$ignoreRedirect = $target = false;
 
-			wfRunHooks( 'InitializeArticleMaybeRedirect',
+			Hooks::run( 'InitializeArticleMaybeRedirect',
 				array( &$title, &$request, &$ignoreRedirect, &$target, &$article ) );
 
 			// Follow redirects only for... redirects.
@@ -353,7 +334,6 @@ class MediaWiki {
 				if ( is_string( $target ) ) {
 					if ( !$this->config->get( 'DisableHardRedirects' ) ) {
 						// we'll need to redirect
-						wfProfileOut( __METHOD__ );
 						return $target;
 					}
 				}
@@ -374,7 +354,6 @@ class MediaWiki {
 			}
 		}
 
-		wfProfileOut( __METHOD__ );
 		return $article;
 	}
 
@@ -385,17 +364,15 @@ class MediaWiki {
 	 * @param Title $requestTitle The original title, before any redirects were applied
 	 */
 	private function performAction( Page $page, Title $requestTitle ) {
-		wfProfileIn( __METHOD__ );
 
 		$request = $this->context->getRequest();
 		$output = $this->context->getOutput();
 		$title = $this->context->getTitle();
 		$user = $this->context->getUser();
 
-		if ( !wfRunHooks( 'MediaWikiPerformAction',
+		if ( !Hooks::run( 'MediaWikiPerformAction',
 				array( $output, $page, $title, $user, $request, $this ) )
 		) {
-			wfProfileOut( __METHOD__ );
 			return;
 		}
 
@@ -406,22 +383,24 @@ class MediaWiki {
 		if ( $action instanceof Action ) {
 			# Let Squid cache things if we can purge them.
 			if ( $this->config->get( 'UseSquid' ) &&
-				in_array( $request->getFullRequestURL(), $requestTitle->getSquidURLs() )
+				in_array(
+					// Use PROTO_INTERNAL because that's what getSquidURLs() uses
+					wfExpandUrl( $request->getRequestURL(), PROTO_INTERNAL ),
+					$requestTitle->getSquidURLs()
+				)
 			) {
 				$output->setSquidMaxage( $this->config->get( 'SquidMaxage' ) );
 			}
 
 			$action->show();
-			wfProfileOut( __METHOD__ );
 			return;
 		}
 
-		if ( wfRunHooks( 'UnknownAction', array( $request->getVal( 'action', 'view' ), $page ) ) ) {
+		if ( Hooks::run( 'UnknownAction', array( $request->getVal( 'action', 'view' ), $page ) ) ) {
 			$output->setStatusCode( 404 );
 			$output->showErrorPage( 'nosuchaction', 'nosuchactiontext' );
 		}
 
-		wfProfileOut( __METHOD__ );
 	}
 
 	/**
@@ -446,7 +425,7 @@ class MediaWiki {
 			$this->triggerJobs();
 			$this->restInPeace();
 		} catch ( Exception $e ) {
-			MWExceptionHandler::handle( $e );
+			MWExceptionHandler::handleException( $e );
 		}
 	}
 
@@ -456,7 +435,6 @@ class MediaWiki {
 	 * @return bool
 	 */
 	private function checkMaxLag() {
-		wfProfileIn( __METHOD__ );
 		$maxLag = $this->context->getRequest()->getVal( 'maxlag' );
 		if ( !is_null( $maxLag ) ) {
 			list( $host, $lag ) = wfGetLB()->getMaxLag();
@@ -472,33 +450,28 @@ class MediaWiki {
 					echo "Waiting for a database server: $lag seconds lagged\n";
 				}
 
-				wfProfileOut( __METHOD__ );
-
 				exit;
 			}
 		}
-		wfProfileOut( __METHOD__ );
 		return true;
 	}
 
 	private function main() {
 		global $wgTitle;
 
-		wfProfileIn( __METHOD__ );
-
 		$request = $this->context->getRequest();
 
 		// Send Ajax requests to the Ajax dispatcher.
-		if ( $this->config->get( 'UseAjax' ) && $request->getVal( 'action', 'view' ) == 'ajax' ) {
-
+		if ( $this->config->get( 'UseAjax' ) && $request->getVal( 'action' ) === 'ajax' ) {
 			// Set a dummy title, because $wgTitle == null might break things
-			$title = Title::makeTitle( NS_MAIN, 'AJAX' );
+			$title = Title::makeTitle( NS_SPECIAL, 'Badtitle/performing an AJAX call in '
+				. __METHOD__
+			);
 			$this->context->setTitle( $title );
 			$wgTitle = $title;
 
 			$dispatcher = new AjaxDispatcher( $this->config );
 			$dispatcher->performAction( $this->context->getUser() );
-			wfProfileOut( __METHOD__ );
 			return;
 		}
 
@@ -507,6 +480,20 @@ class MediaWiki {
 		$title = $this->getTitle();
 		$action = $this->getAction();
 		$wgTitle = $title;
+
+		$trxProfiler = Profiler::instance()->getTransactionProfiler();
+		$trxProfiler->setLogger( LoggerFactory::getInstance( 'DBPerformance' ) );
+
+		// Aside from rollback, master queries should not happen on GET requests.
+		// Periodic or "in passing" updates on GET should use the job queue.
+		if ( !$request->wasPosted()
+			&& in_array( $action, array( 'view', 'edit', 'history' ) )
+		) {
+			$trxProfiler->setExpectation( 'masterConns', 0, __METHOD__ );
+			$trxProfiler->setExpectation( 'writes', 0, __METHOD__ );
+		} else {
+			$trxProfiler->setExpectation( 'maxAffected', 500, __METHOD__ );
+		}
 
 		// If the user has forceHTTPS set to true, or if the user
 		// is in a group requiring HTTPS, or if they have the HTTPS
@@ -530,7 +517,7 @@ class MediaWiki {
 			$redirUrl = preg_replace( '#^http://#', 'https://', $oldUrl );
 
 			// ATTENTION: This hook is likely to be removed soon due to overall design of the system.
-			if ( wfRunHooks( 'BeforeHttpsRedirect', array( $this->context, &$redirUrl ) ) ) {
+			if ( Hooks::run( 'BeforeHttpsRedirect', array( $this->context, &$redirUrl ) ) ) {
 
 				if ( $request->wasPosted() ) {
 					// This is weird and we'd hope it almost never happens. This
@@ -544,20 +531,18 @@ class MediaWiki {
 					wfDebugLog( 'RedirectedPosts', "Redirected from HTTP to HTTPS: $oldUrl" );
 				}
 				// Setup dummy Title, otherwise OutputPage::redirect will fail
-				$title = Title::newFromText( NS_MAIN, 'REDIR' );
+				$title = Title::newFromText( 'REDIR', NS_MAIN );
 				$this->context->setTitle( $title );
 				$output = $this->context->getOutput();
 				// Since we only do this redir to change proto, always send a vary header
 				$output->addVaryHeader( 'X-Forwarded-Proto' );
 				$output->redirect( $redirUrl );
 				$output->output();
-				wfProfileOut( __METHOD__ );
 				return;
 			}
 		}
 
 		if ( $this->config->get( 'UseFileCache' ) && $title->getNamespace() >= 0 ) {
-			wfProfileIn( 'main-try-filecache' );
 			if ( HTMLFileCache::useFileCache( $this->context ) ) {
 				// Try low-level file cache hit
 				$cache = new HTMLFileCache( $title, $action );
@@ -572,12 +557,9 @@ class MediaWiki {
 					$this->context->getWikiPage()->doViewUpdates( $this->context->getUser() );
 					// Tell OutputPage that output is taken care of
 					$this->context->getOutput()->disable();
-					wfProfileOut( 'main-try-filecache' );
-					wfProfileOut( __METHOD__ );
 					return;
 				}
 			}
-			wfProfileOut( 'main-try-filecache' );
 		}
 
 		// Actually do the work of the request and build up any output
@@ -593,13 +575,16 @@ class MediaWiki {
 		// Output everything!
 		$this->context->getOutput()->output();
 
-		wfProfileOut( __METHOD__ );
 	}
 
 	/**
 	 * Ends this task peacefully
 	 */
 	public function restInPeace() {
+		// Ignore things like master queries/connections on GET requests
+		// as long as they are in deferred updates (which catch errors).
+		Profiler::instance()->getTransactionProfiler()->resetExpectations();
+
 		// Do any deferred jobs
 		DeferredUpdates::doUpdates( 'commit' );
 
@@ -627,8 +612,6 @@ class MediaWiki {
 			return; // recursion guard
 		}
 
-		$section = new ProfileSection( __METHOD__ );
-
 		if ( $jobRunRate < 1 ) {
 			$max = mt_getrandmax();
 			if ( mt_rand( 0, $max ) > $max * $jobRunRate ) {
@@ -639,9 +622,11 @@ class MediaWiki {
 			$n = intval( $jobRunRate );
 		}
 
+		$runJobsLogger = LoggerFactory::getInstance( 'runJobs' );
+
 		if ( !$this->config->get( 'RunJobsAsync' ) ) {
 			// Fall back to running the job here while the user waits
-			$runner = new JobRunner();
+			$runner = new JobRunner( $runJobsLogger );
 			$runner->run( array( 'maxJobs'  => $n ) );
 			return;
 		}
@@ -674,29 +659,34 @@ class MediaWiki {
 		);
 		wfRestoreWarnings();
 		if ( !$sock ) {
-			wfDebugLog( 'runJobs', "Failed to start cron API (socket error $errno): $errstr\n" );
+			$runJobsLogger->error( "Failed to start cron API (socket error $errno): $errstr" );
 			// Fall back to running the job here while the user waits
-			$runner = new JobRunner();
+			$runner = new JobRunner( $runJobsLogger );
 			$runner->run( array( 'maxJobs'  => $n ) );
 			return;
 		}
 
 		$url = wfAppendQuery( wfScript( 'index' ), $query );
-		$req = "POST $url HTTP/1.1\r\nHost: {$info['host']}\r\nConnection: Close\r\nContent-Length: 0\r\n\r\n";
+		$req = (
+			"POST $url HTTP/1.1\r\n" .
+			"Host: {$info['host']}\r\n" .
+			"Connection: Close\r\n" .
+			"Content-Length: 0\r\n\r\n"
+		);
 
-		wfDebugLog( 'runJobs', "Running $n job(s) via '$url'\n" );
+		$runJobsLogger->info( "Running $n job(s) via '$url'" );
 		// Send a cron API request to be performed in the background.
 		// Give up if this takes too long to send (which should be rare).
 		stream_set_timeout( $sock, 1 );
 		$bytes = fwrite( $sock, $req );
 		if ( $bytes !== strlen( $req ) ) {
-			wfDebugLog( 'runJobs', "Failed to start cron API (socket write error)\n" );
+			$runJobsLogger->error( "Failed to start cron API (socket write error)" );
 		} else {
 			// Do not wait for the response (the script should handle client aborts).
 			// Make sure that we don't close before that script reaches ignore_user_abort().
 			$status = fgets( $sock );
 			if ( !preg_match( '#^HTTP/\d\.\d 202 #', $status ) ) {
-				wfDebugLog( 'runJobs', "Failed to start cron API: received '$status'\n" );
+				$runJobsLogger->error( "Failed to start cron API: received '$status'" );
 			}
 		}
 		fclose( $sock );

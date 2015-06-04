@@ -187,8 +187,12 @@
 					tmp[ transformTable[ i ] ] = i;
 				}
 				transformTable = tmp;
-				numberString = num + '';
+				numberString = String( num );
 			} else {
+				// Ignore transform table if wgTranslateNumerals is false
+				if ( !mw.config.get( 'wgTranslateNumerals' ) ) {
+					transformTable = [];
+				}
 				numberString = mw.language.commafy( num, pattern );
 			}
 

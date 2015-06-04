@@ -6,7 +6,8 @@
 			"Paucabot",
 			"SMP",
 			"Toniher",
-			"Vriullop"
+			"Vriullop",
+			"Alvaro Vidal-Abarca"
 		]
 	},
 	"gadgets-desc": "Permet als usuaris personalitzar [[Special:Gadgets|ginys CSS i JavaScript]] a les seves [[Special:Preferences#mw-prefsection-gadgets|preferències]]",
@@ -23,5 +24,6 @@
 	"gadgets-export-title": "Exportació de ginys",
 	"gadgets-not-found": "No s'ha trobat el giny «$1».",
 	"gadgets-export-text": "Per a exportar el giny $1, feu clic al botó «{{int:gadgets-export-download}}», deseu el fitxer baixat,\naneu a Special:Import al wiki de destinació i pugeu-lo. Llavors afegiu el següent a la pàgina MediaWiki:Gadgets-definition:\n<pre>$2</pre>\nHeu de tenir els permisos adequats en el wiki de destinació (incloent-hi els permisos per editar missatges del sistema) i s'ha d'habilitar la importació de la pujada de fitxers.",
-	"gadgets-export-download": "Baixa"
+	"gadgets-export-download": "Baixa",
+	"apihelp-query+gadgets-example-2": "Obtenir una llista dels ginys amb totes les propietats possibles"
 }

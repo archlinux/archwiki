@@ -1,0 +1,27 @@
+{
+	"@metadata": {
+		"authors": [
+			"Pikne"
+		]
+	},
+	"cite-desc": "Lisab viitamiseks sildid <nowiki><ref[ name=id]></nowiki> ja <nowiki><references/></nowiki>.",
+	"cite_error": "Viitamistõrge: $1",
+	"cite_error_ref_numeric_key": "Vigane <code>&lt;ref&gt;</code>-silt.\nNimeparameeter ei tohi olla numbriline. Kasuta kirjeldavat nime.",
+	"cite_error_ref_no_key": "Vigane <code>&lt;ref&gt;</code>-silt.\nSisuta viitamissiltidel peab olema nimi.",
+	"cite_error_ref_too_many_keys": "Vigane <code>&lt;ref&gt;</code>-silt;\n\"name\" on vigane või liiga pikk.",
+	"cite_error_ref_no_input": "Vigane <code>&lt;ref&gt;</code>-silt.\nNimeta viitamissiltidel peab olema sisu.",
+	"cite_error_references_invalid_parameters": "Vigane <code>&lt;references&gt;</code>-silt.\nParameetrid pole lubatud.\nKasuta silti <code>&lt;references /&gt;</code>.",
+	"cite_error_references_invalid_parameters_group": "Vigane <code>&lt;references&gt;</code>-silt.\nLubatud on ainult parameeter \"group\".\nKasuta silti <code>&lt;references /&gt;</code> või <code>&lt;references group=\"...\" /&gt;</code>.",
+	"cite_error_references_no_backlink_label": "Kohandatud tagasilinkide sildid said otsa.\nLisa neid sõnumisse <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>.",
+	"cite_error_no_link_label_group": "Rühma \"$1\" kohandatud linkide sildid said otsa.\nLisa neid sõnumisse <nowiki>[[MediaWiki:$2]]</nowiki>.",
+	"cite_error_references_no_text": "Vigane <code>&lt;ref&gt;</code>-silt.\nViite nimega <code>$1</code> tekst puudub.",
+	"cite_error_included_ref": "Sulgemissilt <code>&lt;/ref&gt;</code> puudub.",
+	"cite_error_group_refs_without_references": "Olemas on <code>&lt;ref&gt;</code>-silt rühma \"$1\" jaoks, aga puudub vastav silt <code>&lt;references group=\"$1\"/&gt;</code> või lõpusilt <code>&lt;/ref&gt;</code>.",
+	"cite_error_references_group_mismatch": "<code>&lt;references&gt;</code>-siltide vahel oleval <code>&lt;ref&gt;</code>-sildil on vastukäiv parameetri \"group\" väärtus \"$1\".",
+	"cite_error_references_missing_group": "<code>&lt;references&gt;</code>-sildis kirjeldatud <code>&lt;ref&gt;</code>-sildil on rühmatunnus \"$1\", mis puudub eelnevas tekstis.",
+	"cite_error_references_missing_key": "<code>&lt;references&gt;</code>-siltide vahel olevat <code>&lt;ref&gt;</code>-silti nimega \"$1\" ei kasutata eelnevas tekstis.",
+	"cite_error_references_no_key": "<code>&lt;references&gt;</code>-siltide vahel määratletud <code>&lt;ref&gt;</code>-sildil puudub ''name''-atribuut.",
+	"cite_error_empty_references_define": "<code>&lt;references&gt;</code>-siltide vahel oleval <code>&lt;ref&gt;</code>-sildil nimega \"$1\" puudub sisu.",
+	"cite_references_link_accessibility_label": "Siirdu üles",
+	"cite_references_link_many_accessibility_label": "Siirdu üles asukohta:"
+}

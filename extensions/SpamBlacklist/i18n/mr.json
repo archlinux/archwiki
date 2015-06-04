@@ -3,7 +3,8 @@
 		"authors": [
 			"Hiteshgotarane",
 			"Kaustubh",
-			"Rahuldeshmukh101"
+			"Rahuldeshmukh101",
+			"संतोष दहिवळ"
 		]
 	},
 	"spam-blacklist": " # या यादीशी जुळणारे बाह्य दुवे एखाद्या पानावर दिल्यास ब्लॉक केले जातील.\n # ही यादी फक्त या विकिसाठी आहे, सर्व विकिंसाठीची यादी सुद्धा तपासा.\n # अधिक माहिती साठी पहा https://www.mediawiki.org/wiki/Extension:SpamBlacklist\n #<!-- leave this line exactly as it is --> <pre>\n#\n# रुपरेषा खालीलप्रमाणे:\n#  * \"#\" ने सुरु होणारी ओळ शेरा आहे\n#  * प्रत्येक रिकामी नसलेली ओळ अंतर्गत URL जुळविणारी regex फ्रॅगमेंट आहे\n\n #</pre> <!-- leave this line exactly as it is -->",

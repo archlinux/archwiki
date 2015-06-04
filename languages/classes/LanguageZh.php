@@ -67,23 +67,35 @@ class ZhConverter extends LanguageConverter {
 		$this->mTables = array(
 			'zh-hans' => new ReplacementArray( $zh2Hans ),
 			'zh-hant' => new ReplacementArray( $zh2Hant ),
-			'zh-cn' => new ReplacementArray( array_merge( $zh2Hans, $zh2CN ) ),
-			'zh-hk' => new ReplacementArray( array_merge( $zh2Hant, $zh2HK ) ),
-			'zh-mo' => new ReplacementArray( array_merge( $zh2Hant, $zh2HK ) ),
-			'zh-my' => new ReplacementArray( array_merge( $zh2Hans, $zh2SG ) ),
-			'zh-sg' => new ReplacementArray( array_merge( $zh2Hans, $zh2SG ) ),
-			'zh-tw' => new ReplacementArray( array_merge( $zh2Hant, $zh2TW ) ),
+			'zh-cn' => new ReplacementArray( $zh2CN ),
+			'zh-hk' => new ReplacementArray( $zh2HK ),
+			'zh-mo' => new ReplacementArray( $zh2HK ),
+			'zh-my' => new ReplacementArray( $zh2CN ),
+			'zh-sg' => new ReplacementArray( $zh2CN ),
+			'zh-tw' => new ReplacementArray( $zh2TW ),
 			'zh' => new ReplacementArray
 		);
 	}
 
 	function postLoadTables() {
-		$this->mTables['zh-cn']->merge( $this->mTables['zh-hans'] );
-		$this->mTables['zh-hk']->merge( $this->mTables['zh-hant'] );
-		$this->mTables['zh-mo']->merge( $this->mTables['zh-hant'] );
-		$this->mTables['zh-my']->merge( $this->mTables['zh-hans'] );
-		$this->mTables['zh-sg']->merge( $this->mTables['zh-hans'] );
-		$this->mTables['zh-tw']->merge( $this->mTables['zh-hant'] );
+		$this->mTables['zh-cn']->setArray(
+			$this->mTables['zh-cn']->getArray() + $this->mTables['zh-hans']->getArray()
+		);
+		$this->mTables['zh-hk']->setArray(
+			$this->mTables['zh-hk']->getArray() + $this->mTables['zh-hant']->getArray()
+		);
+		$this->mTables['zh-mo']->setArray(
+			$this->mTables['zh-mo']->getArray() + $this->mTables['zh-hant']->getArray()
+		);
+		$this->mTables['zh-my']->setArray(
+			$this->mTables['zh-my']->getArray() + $this->mTables['zh-hans']->getArray()
+		);
+		$this->mTables['zh-sg']->setArray(
+			$this->mTables['zh-sg']->getArray() + $this->mTables['zh-hans']->getArray()
+		);
+		$this->mTables['zh-tw']->setArray(
+			$this->mTables['zh-tw']->getArray() + $this->mTables['zh-hant']->getArray()
+		);
 	}
 
 	/**
@@ -170,7 +182,6 @@ class LanguageZh extends LanguageZh_hans {
 	 * @return string
 	 */
 	function normalizeForSearch( $string, $autoVariant = 'zh-hans' ) {
-		wfProfileIn( __METHOD__ );
 
 		// always convert to zh-hans before indexing. it should be
 		// better to use zh-hans for search, since conversion from
@@ -179,7 +190,6 @@ class LanguageZh extends LanguageZh_hans {
 		$s = $this->mConverter->autoConvert( $string, $autoVariant );
 		// LanguageZh_hans::normalizeForSearch
 		$s = parent::normalizeForSearch( $s );
-		wfProfileOut( __METHOD__ );
 		return $s;
 
 	}

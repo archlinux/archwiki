@@ -1,0 +1,28 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kurdbuddha"
+		]
+	},
+	"wikieditor-toolbar-tool-big": "گەورا",
+	"wikieditor-toolbar-tool-small": "بۊچگ",
+	"wikieditor-toolbar-characters-page-latin": "لاتین",
+	"wikieditor-toolbar-characters-page-greek": "یوونانی",
+	"wikieditor-toolbar-characters-page-cyrillic": "سیریلیک",
+	"wikieditor-toolbar-characters-page-arabic": "عەرەبی",
+	"wikieditor-toolbar-characters-page-persian": "پارسی",
+	"wikieditor-toolbar-characters-page-hebrew": "عبری",
+	"wikieditor-toolbar-characters-page-bangla": "بەنگالی",
+	"wikieditor-toolbar-characters-page-tamil": "تامیل",
+	"wikieditor-toolbar-characters-page-telugu": "تێلوگو",
+	"wikieditor-toolbar-characters-page-sinhala": "سینھالا",
+	"wikieditor-toolbar-characters-page-gujarati": "گوجەراتی",
+	"wikieditor-toolbar-characters-page-devanagari": "دێڤاناگاری",
+	"wikieditor-toolbar-characters-page-thai": "تایلەندی",
+	"wikieditor-toolbar-characters-page-lao": "لائۆ",
+	"wikieditor-toolbar-characters-page-khmer": "کمێر",
+	"wikieditor-toolbar-section-help": "کۆمەک",
+	"wikieditor-toolbar-help-page-list": "پێرستەیل",
+	"wikieditor-toolbar-help-page-file": "پەڕگەیل",
+	"wikieditor-toolbar-help-page-discussion": "وەتوویش"
+}

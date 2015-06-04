@@ -6,8 +6,6 @@
 			"Leli Forte"
 		]
 	},
-	"interwiki-legend-show": "Uri l-leġġenda",
-	"interwiki-legend-hide": "Aħbi l-leġġenda",
 	"interwiki_prefix": "Prefiss",
 	"interwiki-prefix-label": "Prefiss:",
 	"interwiki_local_0_intro": "It-talbiet tal-HTTP esterni lill-wiki lokali permezz ta' dan il-prefiss tal-interwiki fil-URL jirriżultaw f'paġna ta' żball \"{{int:badtitle}}\".",

@@ -49,10 +49,13 @@ abstract class PasswordTestCase extends MediaWikiTestCase {
 	 * An array of tests in the form of (bool, string, string), where the first
 	 * element is whether the second parameter (a password hash) and the third
 	 * parameter (a password) should match.
-	 *
 	 * @return array
+	 * @throws MWException
+	 * @abstract
 	 */
-	abstract public static function providePasswordTests();
+	public static function providePasswordTests() {
+		throw new MWException( "Not implemented" );
+	}
 
 	/**
 	 * @dataProvider providePasswordTests

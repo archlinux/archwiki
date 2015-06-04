@@ -21,6 +21,8 @@
  * @ingroup Cache
  */
 
+use MediaWiki\Logger\LoggerFactory;
+
 /**
  * Functions to get cache objects
  *
@@ -81,6 +83,13 @@ class ObjectCache {
 	 * @return BagOStuff
 	 */
 	static function newFromParams( $params ) {
+		if ( isset( $params['loggroup'] ) ) {
+			$params['logger'] = LoggerFactory::getInstance( $params['loggroup'] );
+		} else {
+			// For backwards-compatability with custom parameters, lets not
+			// have all logging suddenly disappear
+			$params['logger'] = LoggerFactory::getInstance( 'objectcache' );
+		}
 		if ( isset( $params['factory'] ) ) {
 			return call_user_func( $params['factory'], $params );
 		} elseif ( isset( $params['class'] ) ) {
@@ -135,7 +144,7 @@ class ObjectCache {
 		} elseif ( function_exists( 'wincache_ucache_get' ) ) {
 			$id = 'wincache';
 		} else {
-			if ( $fallback ) {
+			if ( $fallback !== null ) {
 				return self::newFromId( $fallback );
 			}
 			throw new MWException( "CACHE_ACCEL requested but no suitable object " .

@@ -16,7 +16,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @license GPL 2+
  * @author Daniel Kinzler
  */
 
@@ -39,6 +38,7 @@ class MediaWikiTitleCodecTest extends MediaWikiTestCase {
 			'wgLang' => Language::factory( 'en' ),
 			'wgAllowUserJs' => false,
 			'wgDefaultLanguageVariant' => false,
+			'wgMetaNamespace' => 'Project',
 			'wgLocalInterwikis' => array( 'localtestiw' ),
 			'wgCapitalLinks' => true,
 
@@ -82,6 +82,8 @@ class MediaWikiTitleCodecTest extends MediaWikiTestCase {
 	protected function makeCodec( $lang ) {
 		$gender = $this->getGenderCache();
 		$lang = Language::factory( $lang );
+		// language object can came from cache, which does not respect test settings
+		$lang->resetNamespaces();
 		return new MediaWikiTitleCodec( $lang, $gender );
 	}
 
@@ -367,13 +369,6 @@ class MediaWikiTitleCodecTest extends MediaWikiTestCase {
 
 	/**
 	 * @dataProvider provideGetNamespaceName
-	 *
-	 * @param int $namespace
-	 * @param string $text
-	 * @param string $lang
-	 * @param string $expected
-	 *
-	 * @internal param \TitleValue $title
 	 */
 	public function testGetNamespaceName( $namespace, $text, $lang, $expected ) {
 		$codec = $this->makeCodec( $lang );

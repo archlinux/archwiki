@@ -3,11 +3,12 @@
 		"authors": [
 			"Kaganer",
 			"Okras",
-			"Rave"
+			"Rave",
+			"NBS"
 		]
 	},
 	"cologneblue.css": "/* Размещённый здесь CSS будет применяться к теме оформления Cologne Blue */",
 	"cologneblue.js": "/* Размещённый здесь код JavaScript будет загружаться пользователям, использующим тему оформления Cologne Blue */",
 	"skinname-cologneblue": "Кёльнская тоска",
-	"cologneblue-desc": "Легкая тема оформления с минимальным форматированием"
+	"cologneblue-desc": "Лёгкая тема оформления с минимальным форматированием."
 }

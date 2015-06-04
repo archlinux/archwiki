@@ -159,9 +159,10 @@ class SpecialMergeHistory extends SpecialPage {
 	}
 
 	function showMergeForm() {
-		$this->getOutput()->addWikiMsg( 'mergehistory-header' );
+		$out = $this->getOutput();
+		$out->addWikiMsg( 'mergehistory-header' );
 
-		$this->getOutput()->addHTML(
+		$out->addHTML(
 			Xml::openElement( 'form', array(
 				'method' => 'get',
 				'action' => wfScript() ) ) .
@@ -185,6 +186,8 @@ class SpecialMergeHistory extends SpecialPage {
 				'</fieldset>' .
 				'</form>'
 		);
+
+		$this->addHelpLink( 'Help:Merge history' );
 	}
 
 	private function showHistory() {
@@ -469,18 +472,23 @@ class SpecialMergeHistory extends SpecialPage {
 			return false;
 		}
 		# Update our logs
-		$log = new LogPage( 'merge' );
-		$log->addEntry(
-			'merge', $targetTitle, $this->mComment,
-			array( $destTitle->getPrefixedText(), $timestampLimit ), $this->getUser()
-		);
+		$logEntry = new ManualLogEntry( 'merge', 'merge' );
+		$logEntry->setPerformer( $this->getUser() );
+		$logEntry->setComment( $this->mComment );
+		$logEntry->setTarget( $targetTitle );
+		$logEntry->setParameters( array(
+			'4::dest' => $destTitle->getPrefixedText(),
+			'5::mergepoint' => $timestampLimit
+		) );
+		$logId = $logEntry->insert();
+		$logEntry->publish( $logId );
 
 		# @todo message should use redirect=no
 		$this->getOutput()->addWikiText( $this->msg( 'mergehistory-success',
 			$targetTitle->getPrefixedText(), $destTitle->getPrefixedText() )->numParams(
 			$count )->text() );
 
-		wfRunHooks( 'ArticleMergeComplete', array( $targetTitle, $destTitle ) );
+		Hooks::run( 'ArticleMergeComplete', array( $targetTitle, $destTitle ) );
 
 		return true;
 	}
@@ -516,7 +524,6 @@ class MergeHistoryPager extends ReverseChronologicalPager {
 	}
 
 	function getStartBody() {
-		wfProfileIn( __METHOD__ );
 		# Do a link batch query
 		$this->mResult->seek( 0 );
 		$batch = new LinkBatch();
@@ -538,8 +545,6 @@ class MergeHistoryPager extends ReverseChronologicalPager {
 
 		$batch->execute();
 		$this->mResult->seek( 0 );
-
-		wfProfileOut( __METHOD__ );
 
 		return '';
 	}

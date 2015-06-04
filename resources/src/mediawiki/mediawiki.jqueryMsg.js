@@ -136,7 +136,7 @@
 	 * Returns a function suitable for use as a global, to construct strings from the message key (and optional replacements).
 	 * e.g.
 	 *
-	 *       window.gM = mediaWiki.parser.getMessageFunction( options );
+	 *       window.gM = mediaWiki.jqueryMsg.getMessageFunction( options );
 	 *       $( 'p#headline' ).html( gM( 'hello-user', username ) );
 	 *
 	 * Like the old gM() function this returns only strings, so it destroys any bindings. If you want to preserve bindings use the
@@ -178,7 +178,7 @@
 	 * the current selector. Bindings to passed-in jquery elements are preserved. Functions become click handlers for [$1 linktext] links.
 	 * e.g.
 	 *
-	 *        $.fn.msg = mediaWiki.parser.getJqueryPlugin( options );
+	 *        $.fn.msg = mediaWiki.jqueryMsg.getPlugin( options );
 	 *        var userlink = $( '<a>' ).click( function () { alert( "hello!!" ) } );
 	 *        $( 'p#headline' ).msg( 'hello-user', userlink );
 	 *
@@ -267,7 +267,8 @@
 		 * @return {string|Array} string of '[key]' if message missing, simple string if possible, array of arrays if needs parsing
 		 */
 		getAst: function ( key ) {
-			var cacheKey = [key, this.settings.onlyCurlyBraceTransform].join( ':' ), wikiText;
+			var wikiText,
+				cacheKey = [key, this.settings.onlyCurlyBraceTransform].join( ':' );
 
 			if ( this.astCache[ cacheKey ] === undefined ) {
 				wikiText = this.settings.messages.get( key );
@@ -290,7 +291,7 @@
 		 * @return {Mixed} abstract syntax tree
 		 */
 		wikiTextToAst: function ( input ) {
-			var pos, settings = this.settings, concat = Array.prototype.concat,
+			var pos,
 				regularLiteral, regularLiteralWithoutBar, regularLiteralWithoutSpace, regularLiteralWithSquareBrackets,
 				doubleQuote, singleQuote, backslash, anyCharacter, asciiAlphabetLiteral,
 				escapedOrLiteralWithoutSpace, escapedOrLiteralWithoutBar, escapedOrRegularLiteral,
@@ -298,7 +299,9 @@
 				htmlAttributeEquals, openHtmlStartTag, optionalForwardSlash, openHtmlEndTag, closeHtmlTag,
 				openExtlink, closeExtlink, wikilinkPage, wikilinkContents, openWikilink, closeWikilink, templateName, pipe, colon,
 				templateContents, openTemplate, closeTemplate,
-				nonWhitespaceExpression, paramExpression, expression, curlyBraceTransformExpression, result;
+				nonWhitespaceExpression, paramExpression, expression, curlyBraceTransformExpression, result,
+				settings = this.settings,
+				concat = Array.prototype.concat;
 
 			// Indicates current position in input as we parse through it.
 			// Shared among all parsing functions below.
@@ -686,10 +689,10 @@
 			// Subset of allowed HTML markup.
 			// Most elements and many attributes allowed on the server are not supported yet.
 			function html() {
-				var result = null, parsedOpenTagResult, parsedHtmlContents,
-					parsedCloseTagResult, wrappedAttributes, attributes,
-					startTagName, endTagName, startOpenTagPos, startCloseTagPos,
-					endOpenTagPos, endCloseTagPos;
+				var parsedOpenTagResult, parsedHtmlContents, parsedCloseTagResult,
+					wrappedAttributes, attributes, startTagName, endTagName, startOpenTagPos,
+					startCloseTagPos, endOpenTagPos, endCloseTagPos,
+					result = null;
 
 				// Break into three sequence calls.  That should allow accurate reconstruction of the original HTML, and requiring an exact tag name match.
 				// 1. open through closeHtmlTag
@@ -1015,16 +1018,11 @@
 			page = nodes[0];
 			url = mw.util.getUrl( page );
 
-			// [[Some Page]] or [[Namespace:Some Page]]
 			if ( nodes.length === 1 ) {
+				// [[Some Page]] or [[Namespace:Some Page]]
 				anchor = page;
-			}
-
-			/*
-			 * [[Some Page|anchor text]] or
-			 * [[Namespace:Some Page|anchor]
-			 */
-			else {
+			} else {
+				// [[Some Page|anchor text]] or [[Namespace:Some Page|anchor]]
 				anchor = nodes[1];
 			}
 
@@ -1129,17 +1127,42 @@
 		 * @return {string} selected pluralized form according to current language
 		 */
 		plural: function ( nodes ) {
-			var forms, formIndex, node, count;
+			var forms, firstChild, firstChildText, explicitPluralFormNumber, formIndex, form, count,
+				explicitPluralForms = {};
+
 			count = parseFloat( this.language.convertNumber( nodes[0], true ) );
 			forms = nodes.slice( 1 );
 			for ( formIndex = 0; formIndex < forms.length; formIndex++ ) {
-				node = forms[formIndex];
-				if ( node.jquery && node.hasClass( 'mediaWiki_htmlEmitter' )  ) {
-					// This is a nested node, already expanded.
-					forms[formIndex] = forms[formIndex].html();
+				form = forms[formIndex];
+
+				if ( form.jquery && form.hasClass( 'mediaWiki_htmlEmitter' ) ) {
+					// This is a nested node, may be an explicit plural form like 5=[$2 linktext]
+					firstChild = form.contents().get( 0 );
+					if ( firstChild && firstChild.nodeType === Node.TEXT_NODE ) {
+						firstChildText = firstChild.textContent;
+						if ( /^\d+=/.test( firstChildText ) ) {
+							explicitPluralFormNumber = parseInt( firstChildText.split( /=/ )[0], 10 );
+							// Use the digit part as key and rest of first text node and
+							// rest of child nodes as value.
+							firstChild.textContent = firstChildText.slice( firstChildText.indexOf( '=' ) + 1 );
+							explicitPluralForms[explicitPluralFormNumber] = form;
+							forms[formIndex] = undefined;
+						}
+					}
+				} else if ( /^\d+=/.test( form ) ) {
+					// Simple explicit plural forms like 12=a dozen
+					explicitPluralFormNumber = parseInt( form.split( /=/ )[0], 10 );
+					explicitPluralForms[explicitPluralFormNumber] = form.slice( form.indexOf( '=' ) + 1 );
+					forms[formIndex] = undefined;
 				}
 			}
-			return forms.length ? this.language.convertPlural( count, forms ) : '';
+
+			// Remove explicit plural forms from the forms. They were set undefined in the above loop.
+			forms = $.map( forms, function ( form ) {
+				return form;
+			} );
+
+			return this.language.convertPlural( count, forms, explicitPluralForms );
 		},
 
 		/**

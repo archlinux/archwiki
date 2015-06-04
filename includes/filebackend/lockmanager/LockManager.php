@@ -64,7 +64,7 @@ abstract class LockManager {
 	/**
 	 * Construct a new instance from configuration
 	 *
-	 * @param array $config Paramaters include:
+	 * @param array $config Parameters include:
 	 *   - domain  : Domain (usually wiki ID) that all resources are relative to [optional]
 	 *   - lockTTL : Age (in seconds) at which resource locks should expire.
 	 *               This only applies if locks are not tied to a connection/process.
@@ -72,9 +72,9 @@ abstract class LockManager {
 	public function __construct( array $config ) {
 		$this->domain = isset( $config['domain'] ) ? $config['domain'] : wfWikiID();
 		if ( isset( $config['lockTTL'] ) ) {
-			$this->lockTTL = max( 1, $config['lockTTL'] );
+			$this->lockTTL = max( 5, $config['lockTTL'] );
 		} elseif ( PHP_SAPI === 'cli' ) {
-			$this->lockTTL = 2 * 3600;
+			$this->lockTTL = 3600;
 		} else {
 			$met = ini_get( 'max_execution_time' ); // this is 0 in CLI mode
 			$this->lockTTL = max( 5 * 60, 2 * (int)$met );
@@ -102,7 +102,6 @@ abstract class LockManager {
 	 * @since 1.22
 	 */
 	final public function lockByType( array $pathsByType, $timeout = 0 ) {
-		wfProfileIn( __METHOD__ );
 		$status = Status::newGood();
 		$pathsByType = $this->normalizePathsByType( $pathsByType );
 		$msleep = array( 0, 50, 100, 300, 500 ); // retry backoff times
@@ -116,7 +115,6 @@ abstract class LockManager {
 			usleep( 1e3 * ( next( $msleep ) ?: 1000 ) ); // use 1 sec after enough times
 			$elapsed = microtime( true ) - $start;
 		} while ( $elapsed < $timeout && $elapsed >= 0 );
-		wfProfileOut( __METHOD__ );
 
 		return $status;
 	}
@@ -140,10 +138,8 @@ abstract class LockManager {
 	 * @since 1.22
 	 */
 	final public function unlockByType( array $pathsByType ) {
-		wfProfileIn( __METHOD__ );
 		$pathsByType = $this->normalizePathsByType( $pathsByType );
 		$status = $this->doUnlockByType( $pathsByType );
-		wfProfileOut( __METHOD__ );
 
 		return $status;
 	}

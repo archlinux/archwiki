@@ -2,7 +2,6 @@
 
 /**
  * @group API
- * @group Database
  * @group medium
  *
  * @covers ApiMain
@@ -10,41 +9,25 @@
 class ApiMainTest extends ApiTestCase {
 
 	/**
-	 * Test that the API will accept a FauxRequest and execute. The help action
-	 * (default) throws a UsageException. Just validate we're getting proper XML
-	 *
-	 * @expectedException UsageException
+	 * Test that the API will accept a FauxRequest and execute.
 	 */
 	public function testApi() {
 		$api = new ApiMain(
-			new FauxRequest( array( 'action' => 'help', 'format' => 'xml' ) )
+			new FauxRequest( array( 'action' => 'query', 'meta' => 'siteinfo' ) )
 		);
 		$api->execute();
-		$api->getPrinter()->setBufferResult( true );
-		$api->printResult( false );
-		$resp = $api->getPrinter()->getBuffer();
-
-		libxml_use_internal_errors( true );
-		$sxe = simplexml_load_string( $resp );
-		$this->assertNotInternalType( "bool", $sxe );
-		$this->assertThat( $sxe, $this->isInstanceOf( "SimpleXMLElement" ) );
+		$data = $api->getResult()->getResultData();
+		$this->assertInternalType( 'array', $data );
+		$this->assertArrayHasKey( 'query', $data );
 	}
 
 	public static function provideAssert() {
-		$anon = new User();
-		$bot = new User();
-		$bot->setName( 'Bot' );
-		$bot->addToDatabase();
-		$bot->addGroup( 'bot' );
-		$user = new User();
-		$user->setName( 'User' );
-		$user->addToDatabase();
 		return array(
-			array( $anon, 'user', 'assertuserfailed' ),
-			array( $user, 'user', false ),
-			array( $user, 'bot', 'assertbotfailed' ),
-			array( $bot, 'user', false ),
-			array( $bot, 'bot', false ),
+			array( false, array(), 'user', 'assertuserfailed' ),
+			array( true, array(), 'user', false ),
+			array( true, array(), 'bot', 'assertbotfailed' ),
+			array( true, array( 'bot' ), 'user', false ),
+			array( true, array( 'bot' ), 'bot', false ),
 		);
 	}
 
@@ -53,11 +36,17 @@ class ApiMainTest extends ApiTestCase {
 	 *
 	 * @covers ApiMain::checkAsserts
 	 * @dataProvider provideAssert
-	 * @param User $user
+	 * @param bool $registered
+	 * @param array $rights
 	 * @param string $assert
 	 * @param string|bool $error False if no error expected
 	 */
-	public function testAssert( $user, $assert, $error ) {
+	public function testAssert( $registered, $rights, $assert, $error ) {
+		$user = new User();
+		if ( $registered ) {
+			$user->setId( 1 );
+		}
+		$user->mRights = $rights;
 		try {
 			$this->doApiRequest( array(
 				'action' => 'query',
@@ -69,4 +58,25 @@ class ApiMainTest extends ApiTestCase {
 		}
 	}
 
+	/**
+	 * Test if all classes in the main module manager exists
+	 */
+	public function testClassNamesInModuleManager() {
+		global $wgAutoloadLocalClasses, $wgAutoloadClasses;
+
+		// wgAutoloadLocalClasses has precedence, just like in includes/AutoLoader.php
+		$classes = $wgAutoloadLocalClasses + $wgAutoloadClasses;
+
+		$api = new ApiMain(
+			new FauxRequest( array( 'action' => 'query', 'meta' => 'siteinfo' ) )
+		);
+		$modules = $api->getModuleManager()->getNamesWithClasses();
+		foreach( $modules as $name => $class ) {
+			$this->assertArrayHasKey(
+				$class,
+				$classes,
+				'Class ' . $class . ' for api module ' . $name . ' not in autoloader (with exact case)'
+			);
+		}
+	}
 }

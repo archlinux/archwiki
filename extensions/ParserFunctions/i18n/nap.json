@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"C.R."
+		]
+	},
+	"pfunc_expr_unrecognised_word": "Espressione 'n errore: Parola scanusciuta \"$1\"",
+	"pfunc_expr_unexpected_operator": "Espressione 'n errore: Operatore $1 inaspettato",
+	"pfunc_expr_missing_operand": "Espressione 'n errore: Operatore zumpato pe' $1.",
+	"pfunc_expr_unrecognised_punctuation": "Espressione 'n errore: Carattere 'e punteggiatura \"$1\" scanusciuto"
+}

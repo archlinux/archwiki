@@ -4,11 +4,12 @@
 			"Dalibor Bosits",
 			"Ex13",
 			"Roberta F.",
-			"SpeedyGonsales"
+			"SpeedyGonsales",
+			"MaGa"
 		]
 	},
 	"interwiki": "Vidi i uredi međuwiki podatke",
-	"interwiki-title-norights": "Gledanje interwiki tablice",
+	"interwiki-title-norights": "Gledanje međuwiki tablice",
 	"interwiki-desc": "Dodaje [[Special:Interwiki|posebnu stranicu]] za gledanje i uređivanje interwiki tablice",
 	"interwiki_intro": "Ovo je pregled međuwiki tablice.",
 	"interwiki_prefix": "Prefiks",
@@ -28,6 +29,7 @@
 	"interwiki_deleting": "Brišete prefiks \"$1\".",
 	"interwiki_deleted": "Prefiks \"$1\" je uspješno uklonjen iz interwiki tablice.",
 	"interwiki_delfailed": "Prefiks \"$1\" nije mogao biti uklonjen iz interwiki tablice.",
+	"interwiki-logtext": "Vidi evidenciju",
 	"interwiki_addtext": "Dodaj međuwiki prefiks",
 	"interwiki_addintro": "Uređujete novi interwiki prefiks. Upamtite, prefiks ne može sadržavati prazno mjesto ( ), dvotočku (:), znak za i (&), ili znakove jednakosti (=).",
 	"interwiki_addbutton": "Dodaj",
@@ -41,5 +43,6 @@
 	"log-name-interwiki": "Evidencije interwiki tablice",
 	"log-description-interwiki": "Ovo su evidencije promjena na [[Special:Interwiki|interwiki tablici]].",
 	"right-interwiki": "Uređivanje interwiki podataka",
-	"action-interwiki": "uredi ovaj međuwiki zapis"
+	"action-interwiki": "uredi ovaj međuwiki zapis",
+	"interwiki-links": "Međuwiki prefiksi"
 }

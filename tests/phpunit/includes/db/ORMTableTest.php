@@ -25,14 +25,12 @@
  * @group ORM
  * @group Database
  *
- * @licence GNU GPL v2+
+ * @covers PageORMTableForTesting
+ *
  * @author Jeroen De Dauw < jeroendedauw@gmail.com >
  * @author Daniel Kinzler
  */
 
-/**
- * @covers PageORMTableForTesting
- */
 class ORMTableTest extends MediaWikiTestCase {
 
 	/**
@@ -99,6 +97,10 @@ class ORMTableTest extends MediaWikiTestCase {
 
 class PageORMTableForTesting extends ORMTable {
 
+	public function __construct() {
+		$this->fieldPrefix = 'page_';
+	}
+
 	/**
 	 * @see ORMTable::getName
 	 *
@@ -137,14 +139,5 @@ class PageORMTableForTesting extends ORMTable {
 			'namespace' => 'int',
 			'title' => 'str',
 		);
-	}
-
-	/**
-	 * @see ORMTable::getFieldPrefix
-	 *
-	 * @return string
-	 */
-	protected function getFieldPrefix() {
-		return 'page_';
 	}
 }

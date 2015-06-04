@@ -1,0 +1,52 @@
+{
+	"name": "FancyCaptcha",
+	"APIModules": {
+		"fancycaptchareload": "ApiFancyCaptchaReload"
+	},
+	"MessagesDirs": {
+		"FancyCaptcha": [
+			"i18n"
+		]
+	},
+	"AutoloadClasses": {
+		"FancyCaptcha": "FancyCaptcha.class.php",
+		"ApiFancyCaptchaReload": "ApiFancyCaptchaReload.php"
+	},
+	"ResourceModules": {
+		"ext.confirmEdit.fancyCaptcha.styles": {
+			"position": "top",
+			"targets": [
+				"mobile",
+				"desktop"
+			],
+			"styles": "ext.confirmEdit.fancyCaptcha.css"
+		},
+		"ext.confirmEdit.fancyCaptcha": {
+			"scripts": "ext.confirmEdit.fancyCaptcha.js",
+			"dependencies": "mediawiki.api"
+		},
+		"ext.confirmEdit.fancyCaptchaMobile": {
+			"scripts": "ext.confirmEdit.fancyCaptcha.js",
+			"targets": [
+				"mobile",
+				"desktop"
+			],
+			"dependencies": "mobile.startup"
+		}
+	},
+	"ResourceFileModulePaths": {
+		"localBasePath": "resources",
+		"remoteExtPath": "ConfirmEdit/FancyCaptcha/resources"
+	},
+	"callback": [
+		"ConfirmEditHooks::onFancyCaptchaSetup"
+	],
+	"config": {
+		"CaptchaClass": "FancyCaptcha",
+		"CaptchaFileBackend": "",
+		"CaptchaDirectory": false,
+		"CaptchaDirectoryLevels": 0,
+		"CaptchaSecret": "CHANGE_THIS_SECRET!",
+		"CaptchaDeleteOnSolve": false
+	}
+}

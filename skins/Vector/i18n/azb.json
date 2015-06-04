@@ -3,7 +3,8 @@
 		"authors": [
 			"E THP",
 			"Ebrahimi-amir",
-			"Mousa"
+			"Mousa",
+			"Amir a57"
 		]
 	},
 	"vector-action-addsection": "قوْنو آرتیر",
@@ -16,5 +17,6 @@
 	"vector-view-edit": "دَییشدیر",
 	"vector-view-history": "گئچمیشه باخ",
 	"vector-view-view": "اوْخو",
-	"vector-view-viewsource": "قایناغا باخ"
+	"vector-view-viewsource": "قایناغا باخ",
+	"vector-more-actions": "داها"
 }

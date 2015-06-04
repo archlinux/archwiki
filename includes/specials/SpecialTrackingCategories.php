@@ -36,6 +36,24 @@ class SpecialTrackingCategories extends SpecialPage {
 		parent::__construct( 'TrackingCategories' );
 	}
 
+	/**
+	 * Tracking categories that exist in core
+	 *
+	 * @var array
+	 */
+	private static $coreTrackingCategories = array(
+		'index-category',
+		'noindex-category',
+		'duplicate-args-category',
+		'expensive-parserfunction-category',
+		'post-expand-template-argument-category',
+		'post-expand-template-inclusion-category',
+		'hidden-category-category',
+		'broken-file-category',
+		'node-count-exceeded-category',
+		'expansion-depth-exceeded-category',
+	);
+
 	function execute( $par ) {
 		$this->setHeaders();
 		$this->outputHeader();
@@ -56,59 +74,32 @@ class SpecialTrackingCategories extends SpecialPage {
 			</tr></thead>"
 		);
 
-		foreach ( $this->getConfig()->get( 'TrackingCategories' ) as $catMsg ) {
-			/*
-			 * Check if the tracking category varies by namespace
-			 * Otherwise only pages in the current namespace will be displayed
-			 * If it does vary, show pages considering all namespaces
-			 */
-			$msgObj = $this->msg( $catMsg )->inContentLanguage();
+		$trackingCategories = $this->prepareTrackingCategoriesData();
+
+		$batch = new LinkBatch();
+		foreach ( $trackingCategories as $catMsg => $data ) {
+			$batch->addObj( $data['msg'] );
+			foreach ( $data['cats'] as $catTitle ) {
+				$batch->addObj( $catTitle );
+			}
+		}
+		$batch->execute();
+
+		foreach ( $trackingCategories as $catMsg => $data ) {
 			$allMsgs = array();
 			$catDesc = $catMsg . '-desc';
-			$catMsgTitle = Title::makeTitleSafe( NS_MEDIAWIKI, $catMsg );
-			if ( !$catMsgTitle ) {
-				continue;
-			}
+
 			$catMsgTitleText = Linker::link(
-				$catMsgTitle,
+				$data['msg'],
 				htmlspecialchars( $catMsg )
 			);
 
-			// Match things like {{NAMESPACE}} and {{NAMESPACENUMBER}}.
-			// False positives are ok, this is just an efficiency shortcut
-			if ( strpos( $msgObj->plain(), '{{' ) !== false ) {
-				$ns = MWNamespace::getValidNamespaces();
-				foreach ( $ns as $namesp ) {
-					$tempTitle = Title::makeTitleSafe( $namesp, $catMsg );
-					if ( !$tempTitle ) {
-						continue;
-					}
-					$catName = $msgObj->title( $tempTitle )->text();
-					# Allow tracking categories to be disabled by setting them to "-"
-					if ( $catName !== '-' ) {
-						$catTitle = Title::makeTitleSafe( NS_CATEGORY, $catName );
-						if ( $catTitle ) {
-							$catTitleText = Linker::link(
-								$catTitle,
-								htmlspecialchars( $catName )
-							);
-							$allMsgs[] = $catTitleText;
-						}
-					}
-				}
-			} else {
-				$catName = $msgObj->text();
-				# Allow tracking categories to be disabled by setting them to "-"
-				if ( $catName !== '-' ) {
-					$catTitle = Title::makeTitleSafe( NS_CATEGORY, $catName );
-					if ( $catTitle ) {
-						$catTitleText = Linker::link(
-							$catTitle,
-							htmlspecialchars( $catName )
-						);
-						$allMsgs[] = $catTitleText;
-					}
-				}
+			foreach ( $data['cats'] as $catTitle ) {
+				$catTitleText = Linker::link(
+					$catTitle,
+					htmlspecialchars( $catTitle->getText() )
+				);
+				$allMsgs[] = $catTitleText;
 			}
 
 			# Extra message, when no category was found
@@ -140,6 +131,67 @@ class SpecialTrackingCategories extends SpecialPage {
 			);
 		}
 		$this->getOutput()->addHTML( Html::closeElement( 'table' ) );
+	}
+
+	/**
+	 * Read the global and extract title objects from the corresponding messages
+	 * @return array Array( 'msg' => Title, 'cats' => Title[] )
+	 */
+	private function prepareTrackingCategoriesData() {
+		$categories = array_merge(
+			self::$coreTrackingCategories,
+			ExtensionRegistry::getInstance()->getAttribute( 'TrackingCategories' ),
+			$this->getConfig()->get( 'TrackingCategories' ) // deprecated
+		);
+		$trackingCategories = array();
+		foreach ( $categories as $catMsg ) {
+			/*
+			 * Check if the tracking category varies by namespace
+			 * Otherwise only pages in the current namespace will be displayed
+			 * If it does vary, show pages considering all namespaces
+			 */
+			$msgObj = $this->msg( $catMsg )->inContentLanguage();
+			$allCats = array();
+			$catMsgTitle = Title::makeTitleSafe( NS_MEDIAWIKI, $catMsg );
+			if ( !$catMsgTitle ) {
+				continue;
+			}
+
+			// Match things like {{NAMESPACE}} and {{NAMESPACENUMBER}}.
+			// False positives are ok, this is just an efficiency shortcut
+			if ( strpos( $msgObj->plain(), '{{' ) !== false ) {
+				$ns = MWNamespace::getValidNamespaces();
+				foreach ( $ns as $namesp ) {
+					$tempTitle = Title::makeTitleSafe( $namesp, $catMsg );
+					if ( !$tempTitle ) {
+						continue;
+					}
+					$catName = $msgObj->title( $tempTitle )->text();
+					# Allow tracking categories to be disabled by setting them to "-"
+					if ( $catName !== '-' ) {
+						$catTitle = Title::makeTitleSafe( NS_CATEGORY, $catName );
+						if ( $catTitle ) {
+							$allCats[] = $catTitle;
+						}
+					}
+				}
+			} else {
+				$catName = $msgObj->text();
+				# Allow tracking categories to be disabled by setting them to "-"
+				if ( $catName !== '-' ) {
+					$catTitle = Title::makeTitleSafe( NS_CATEGORY, $catName );
+					if ( $catTitle ) {
+						$allCats[] = $catTitle;
+					}
+				}
+			}
+			$trackingCategories[$catMsg] = array(
+				'cats' => $allCats,
+				'msg' => $catMsgTitle,
+			);
+		}
+
+		return $trackingCategories;
 	}
 
 	protected function getGroupName() {

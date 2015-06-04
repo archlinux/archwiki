@@ -7,7 +7,7 @@
  * @note We don't make assumptions about the main namespace.
  *       But we do expect the Help namespace to contain Wikitext.
  */
-class TitleMethodsTest extends MediaWikiTestCase {
+class TitleMethodsTest extends MediaWikiLangTestCase {
 
 	protected function setUp() {
 		global $wgContLang;
@@ -296,5 +296,44 @@ class TitleMethodsTest extends MediaWikiTestCase {
 	public function testIsWikitextPage( $title, $expectedBool ) {
 		$title = Title::newFromText( $title );
 		$this->assertEquals( $expectedBool, $title->isWikitextPage() );
+	}
+
+	public static function provideGetOtherPage() {
+		return array(
+			array( 'Main Page', 'Talk:Main Page' ),
+			array( 'Talk:Main Page', 'Main Page' ),
+			array( 'Help:Main Page', 'Help talk:Main Page' ),
+			array( 'Help talk:Main Page', 'Help:Main Page' ),
+			array( 'Special:FooBar', null ),
+		);
+	}
+
+	/**
+	 * @dataProvider provideGetOtherpage
+	 * @covers Title::getOtherPage
+	 *
+	 * @param string $text
+	 * @param string|null $expected
+	 */
+	public function testGetOtherPage( $text, $expected ) {
+		if ( $expected === null ) {
+			$this->setExpectedException( 'MWException' );
+		}
+
+		$title = Title::newFromText( $text );
+		$this->assertEquals( $expected, $title->getOtherPage()->getPrefixedText() );
+	}
+
+	public function testClearCaches() {
+		$linkCache = LinkCache::singleton();
+
+		$title1 = Title::newFromText( 'Foo' );
+		$linkCache->addGoodLinkObj( 23, $title1 );
+
+		Title::clearCaches();
+
+		$title2 = Title::newFromText( 'Foo' );
+		$this->assertNotSame( $title1, $title2, 'title cache should be empty' );
+		$this->assertEquals( 0, $linkCache->getGoodLinkID( 'Foo' ), 'link cache should be empty' );
 	}
 }

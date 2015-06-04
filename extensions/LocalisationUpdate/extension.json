@@ -1,0 +1,55 @@
+{
+	"@note": "This file must be kept in sync with LocalisationUpdate.php",
+	"name": "LocalisationUpdate",
+	"version": "1.3.0",
+	"author": [
+		"Tom Maaswinkel",
+		"Niklas Laxström",
+		"Roan Kattouw"
+	],
+	"url": "https://www.mediawiki.org/wiki/Extension:LocalisationUpdate",
+	"descriptionmsg": "localisationupdate-desc",
+	"type": "other",
+	"MessagesDirs": {
+		"LocalisationUpdate": [
+			"i18n"
+		]
+	},
+	"AutoloadClasses": {
+		"LocalisationUpdate": "LocalisationUpdate.class.php",
+		"LU_Updater": "Updater.php",
+		"QuickArrayReader": "QuickArrayReader.php",
+		"LU_Fetcher": "fetcher/Fetcher.php",
+		"LU_FetcherFactory": "fetcher/FetcherFactory.php",
+		"LU_FileSystemFetcher": "fetcher/FileSystemFetcher.php",
+		"LU_GitHubFetcher": "fetcher/GitHubFetcher.php",
+		"LU_HttpFetcher": "fetcher/HttpFetcher.php",
+		"LU_Finder": "finder/Finder.php",
+		"LU_JSONReader": "reader/JSONReader.php",
+		"LU_PHPReader": "reader/PHPReader.php",
+		"LU_Reader": "reader/Reader.php",
+		"LU_ReaderFactory": "reader/ReaderFactory.php"
+	},
+	"Hooks": {
+		"LocalisationCacheRecache": [
+			"LocalisationUpdate::onRecache"
+		],
+		"LocalisationCacheRecacheFallback": [
+			"LocalisationUpdate::onRecacheFallback"
+		],
+		"UnitTestsList": [
+			"LocalisationUpdate::setupUnitTests"
+		]
+	},
+	"config": {
+		"LocalisationUpdateDirectory": false,
+		"LocalisationUpdateRepository": "github",
+		"LocalisationUpdateRepositories": {
+			"github": {
+				"mediawiki": "https://raw.github.com/wikimedia/mediawiki/master/%PATH%",
+				"extension": "https://raw.github.com/wikimedia/mediawiki-extensions-%NAME%/master/%PATH%",
+				"skin": "https://raw.github.com/wikimedia/mediawiki-skins-%NAME%/master/%PATH%"
+			}
+		}
+	}
+}

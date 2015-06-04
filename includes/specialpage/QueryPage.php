@@ -60,7 +60,6 @@ abstract class QueryPage extends SpecialPage {
 	 * @return array
 	 */
 	public static function getPages() {
-		global $wgDisableCounters;
 		static $qp = null;
 
 		if ( $qp === null ) {
@@ -82,7 +81,7 @@ abstract class QueryPage extends SpecialPage {
 				array( 'MostimagesPage', 'Mostimages' ),
 				array( 'MostinterwikisPage', 'Mostinterwikis' ),
 				array( 'MostlinkedCategoriesPage', 'Mostlinkedcategories' ),
-				array( 'MostlinkedtemplatesPage', 'Mostlinkedtemplates' ),
+				array( 'MostlinkedTemplatesPage', 'Mostlinkedtemplates' ),
 				array( 'MostlinkedPage', 'Mostlinked' ),
 				array( 'MostrevisionsPage', 'Mostrevisions' ),
 				array( 'FewestrevisionsPage', 'Fewestrevisions' ),
@@ -97,15 +96,11 @@ abstract class QueryPage extends SpecialPage {
 				array( 'WantedFilesPage', 'Wantedfiles' ),
 				array( 'WantedPagesPage', 'Wantedpages' ),
 				array( 'WantedTemplatesPage', 'Wantedtemplates' ),
-				array( 'UnwatchedPagesPage', 'Unwatchedpages' ),
+				array( 'UnwatchedpagesPage', 'Unwatchedpages' ),
 				array( 'UnusedtemplatesPage', 'Unusedtemplates' ),
 				array( 'WithoutInterwikiPage', 'Withoutinterwiki' ),
 			);
-			wfRunHooks( 'wgQueryPages', array( &$qp ) );
-
-			if ( !$wgDisableCounters ) {
-				$qp[] = array( 'PopularPagesPage', 'Popularpages' );
-			}
+			Hooks::run( 'wgQueryPages', array( &$qp ) );
 		}
 
 		return $qp;
@@ -351,7 +346,7 @@ abstract class QueryPage extends SpecialPage {
 
 	/**
 	 * Get a DB connection to be used for slow recache queries
-	 * @return DatabaseBase
+	 * @return IDatabase
 	 */
 	function getRecacheDB() {
 		return wfGetDB( DB_SLAVE, array( $this->getName(), 'QueryPage::recache', 'vslow' ) );
@@ -581,7 +576,7 @@ abstract class QueryPage extends SpecialPage {
 	 *
 	 * @param OutputPage $out OutputPage to print to
 	 * @param Skin $skin User skin to use
-	 * @param DatabaseBase $dbr Database (read) connection to use
+	 * @param IDatabase $dbr Database (read) connection to use
 	 * @param ResultWrapper $res Result pointer
 	 * @param int $num Number of available result rows
 	 * @param int $offset Paging offset
@@ -654,7 +649,7 @@ abstract class QueryPage extends SpecialPage {
 
 	/**
 	 * Do any necessary preprocessing of the result object.
-	 * @param DatabaseBase $db
+	 * @param IDatabase $db
 	 * @param ResultWrapper $res
 	 */
 	function preprocessResults( $db, $res ) {

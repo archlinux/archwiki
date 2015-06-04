@@ -1,0 +1,21 @@
+{
+	"@metadata": {
+		"authors": [
+			"Borislav",
+			"DCLXVI",
+			"Spiritia"
+		]
+	},
+	"cite-desc": "Добавя етикетите <nowiki><ref[ name=id]></nowiki> и <nowiki><references/></nowiki>, подходящи за цитиране",
+	"cite_error": "Грешка при цитиране: $1",
+	"cite_error_ref_numeric_key": "'''Грешка в етикет <code>&lt;ref&gt;</code>:''' името не може да бъде число, използва се описателно име",
+	"cite_error_ref_no_key": "'''Грешка в етикет <code>&lt;ref&gt;</code>:''' етикетите без съдържание трябва да имат име",
+	"cite_error_ref_too_many_keys": "'''Грешка в етикет <code>&lt;ref&gt;</code>:''' грешка в името, например повече от едно име на етикета",
+	"cite_error_ref_no_input": "'''Грешка в етикет <code>&lt;ref&gt;</code>:''' етикетите без име трябва да имат съдържание",
+	"cite_error_references_invalid_parameters": "'''Грешка в етикет <code>&lt;references&gt;</code>:''' използва се без параметри, така: <code>&lt;references /&gt;</code>",
+	"cite_error_references_invalid_parameters_group": "Невалиден етикет <code>&lt;references&gt;</code>;\nпозволен е само параметър \"group\".\nИзползвайте <code>&lt;references /&gt;</code> или <code>&lt;references group=\"...\" /&gt;</code>",
+	"cite_error_references_no_backlink_label": "Изчерпани са специалните етикети за обратна референция.\nОще етикети могат да се дефинират в системното съобщение <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>.",
+	"cite_error_references_no_text": "'''Грешка в етикет <code>&lt;ref&gt;</code>:''' не е подаден текст за бележките на име <code>$1</code>",
+	"cite_error_included_ref": "Липсва затварящ етикет <code>&lt;/ref&gt;</code> след отварящия етикет <code>&lt;ref&gt;</code>",
+	"cite_error_group_refs_without_references": "Присъстват етикети <code>&lt;ref&gt;</code> за групата \"$1\"; но липсва съответният етикет <code>&lt;references group=\"$1\"/&gt;</code>"
+}

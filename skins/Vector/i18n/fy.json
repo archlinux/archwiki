@@ -2,17 +2,20 @@
 	"@metadata": {
 		"authors": [
 			"Kening Aldgilles",
-			"SK-luuut"
+			"SK-luuut",
+			"Robin0van0der0vliet"
 		]
 	},
+	"vector-action-addsection": "Kopke tafoegje",
 	"vector-action-delete": "Fuortsmite",
 	"vector-action-move": "Werneam",
 	"vector-action-protect": "Beskermje",
 	"vector-action-undelete": "Tebeksette",
 	"vector-action-unprotect": "Beskerming fuorthelje",
 	"vector-view-create": "Oanmeitsje",
-	"vector-view-edit": "Wizigje",
+	"vector-view-edit": "Bewurkje",
 	"vector-view-history": "Skiednis sjen litte",
 	"vector-view-view": "Lês",
-	"vector-view-viewsource": "Besjoch de boarne"
+	"vector-view-viewsource": "Besjoch de boarne",
+	"vector-more-actions": "Mear"
 }

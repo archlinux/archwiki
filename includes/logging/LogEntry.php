@@ -370,6 +370,9 @@ class ManualLogEntry extends LogEntryBase {
 	/** @var int ID of the log entry */
 	protected $id;
 
+	/** @var bool Whether this is a legacy log entry */
+	protected $legacy = false;
+
 	/**
 	 * Constructor.
 	 *
@@ -385,13 +388,14 @@ class ManualLogEntry extends LogEntryBase {
 
 	/**
 	 * Set extra log parameters.
-	 * You can pass params to the log action message
-	 * by prefixing the keys with a number and colon.
-	 * The numbering should start with number 4, the
-	 * first three parameters are hardcoded for every
-	 * message. Example:
+	 *
+	 * You can pass params to the log action message by prefixing the keys with
+	 * a number and optional type, using colons to separate the fields. The
+	 * numbering should start with number 4, the first three parameters are
+	 * hardcoded for every message. Example:
 	 * $entry->setParameters(
-	 *   '4:color' => 'blue',
+	 *   '4::color' => 'blue',
+	 *   '5:number:count' => 3000,
 	 *   'animal' => 'dog'
 	 * );
 	 *
@@ -456,6 +460,16 @@ class ManualLogEntry extends LogEntryBase {
 	 */
 	public function setComment( $comment ) {
 		$this->comment = $comment;
+	}
+
+	/**
+	 * Set the 'legacy' flag
+	 *
+	 * @since 1.25
+	 * @param bool $legacy
+	 */
+	public function setLegacy( $legacy ) {
+		$this->legacy = $legacy;
 	}
 
 	/**
@@ -532,10 +546,6 @@ class ManualLogEntry extends LogEntryBase {
 		if ( count( $rows ) ) {
 			$dbw->insert( 'log_search', $rows, __METHOD__, 'IGNORE' );
 		}
-
-		// Update any bloom filter cache
-		$member = $this->getTarget()->getNamespace() . ':' . $this->getTarget()->getDBkey();
-		BloomCache::get( 'main' )->insert( wfWikiId(), 'TitleHasLogs', $member );
 
 		return $this->id;
 	}
@@ -638,6 +648,14 @@ class ManualLogEntry extends LogEntryBase {
 
 	public function getComment() {
 		return $this->comment;
+	}
+
+	/**
+	 * @since 1.25
+	 * @return bool
+	 */
+	public function isLegacy() {
+		return $this->legacy;
 	}
 
 	public function getDeleted() {

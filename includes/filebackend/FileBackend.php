@@ -1204,7 +1204,9 @@ abstract class FileBackend {
 
 	/**
 	 * Preload file stat information (concurrently if possible) into in-process cache.
+	 *
 	 * This should be used when stat calls will be made on a known list of a many files.
+	 * This does not make use of the persistent file stat cache.
 	 *
 	 * @see FileBackend::getFileStat()
 	 *
@@ -1491,7 +1493,7 @@ abstract class FileBackend {
  * @ingroup FileBackend
  * @since 1.23
  */
-class FileBackendException extends MWException {
+class FileBackendException extends Exception {
 }
 
 /**

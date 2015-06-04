@@ -17,6 +17,8 @@
 
 // Neutral button styling
 //
+// These are the main actions on the page/workflow. The page should have only one of progressive, constructive and desctructive buttons, the rest being quiet.
+//
 // Markup:
 // <div>
 //   <button class="mw-ui-button">.mw-ui-button</button>
@@ -47,7 +49,7 @@
 	// Container styling
 	.button-colors(#FFF);
 	border-radius: @borderRadius;
-	min-width: 80px;
+	min-width: 4em;
 
 	// Ensure that buttons and inputs are nicely aligned when they have differing heights
 	vertical-align: middle;
@@ -165,8 +167,7 @@
 
 	// Destructive buttons
 	//
-	// Use destructive buttons for actions which result in the destruction of data.
-	// e.g. deleting a page.
+	// Use destructive buttons for actions that remove or limit, such as deleting a page or blocking a user.
 	// This should not be used for cancel buttons.
 	//
 	// Markup:
@@ -188,7 +189,8 @@
 
 	// Quiet buttons
 	//
-	// Use quiet buttons when they are less important and alongisde other progressive/destructive/progressive buttons.
+	// Use quiet buttons when they are less important and alongside other constructive, progressive or destructive buttons. It should be used for an action that exits the user from the current view/workflow.
+	// Its use is  not recommended on mobile/tablet due to lack of hover state.
 	//
 	// Markup:
 	// <div>
@@ -257,6 +259,7 @@ a.mw-ui-button {
 //
 // Styleguide 2.2.
 .mw-ui-button-group > * {
+	min-width: 48px;
 	border-radius: 0;
 	float: left;
 

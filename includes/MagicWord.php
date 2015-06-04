@@ -172,7 +172,6 @@ class MagicWord {
 		'directionmark',
 		'contentlanguage',
 		'numberofadmins',
-		'numberofviews',
 		'cascadingsources',
 	);
 
@@ -215,7 +214,6 @@ class MagicWord {
 		'localtimestamp' => 3600,
 		'pagesinnamespace' => 3600,
 		'numberofadmins' => 3600,
-		'numberofviews' => 3600,
 		'numberingroup' => 3600,
 	);
 
@@ -275,7 +273,7 @@ class MagicWord {
 	static function getVariableIDs() {
 		if ( !self::$mVariableIDsInitialised ) {
 			# Get variable IDs
-			wfRunHooks( 'MagicWordwgVariableIDs', array( &self::$mVariableIDs ) );
+			Hooks::run( 'MagicWordwgVariableIDs', array( &self::$mVariableIDs ) );
 			self::$mVariableIDsInitialised = true;
 		}
 		return self::$mVariableIDs;
@@ -310,7 +308,7 @@ class MagicWord {
 	 */
 	static function getDoubleUnderscoreArray() {
 		if ( is_null( self::$mDoubleUnderscoreArray ) ) {
-			wfRunHooks( 'GetDoubleUnderscoreIDs', array( &self::$mDoubleUnderscoreIDs ) );
+			Hooks::run( 'GetDoubleUnderscoreIDs', array( &self::$mDoubleUnderscoreIDs ) );
 			self::$mDoubleUnderscoreArray = new MagicWordArray( self::$mDoubleUnderscoreIDs );
 		}
 		return self::$mDoubleUnderscoreArray;
@@ -332,15 +330,12 @@ class MagicWord {
 	 */
 	function load( $id ) {
 		global $wgContLang;
-		wfProfileIn( __METHOD__ );
 		$this->mId = $id;
 		$wgContLang->getMagic( $this );
 		if ( !$this->mSynonyms ) {
 			$this->mSynonyms = array( 'brionmademeputthishere' );
-			wfProfileOut( __METHOD__ );
 			throw new MWException( "Error: invalid magic word '$id'" );
 		}
-		wfProfileOut( __METHOD__ );
 	}
 
 	/**
@@ -657,7 +652,7 @@ class MagicWord {
 	 * This method uses the php feature to do several replacements at the same time,
 	 * thereby gaining some efficiency. The result is placed in the out variable
 	 * $result. The return value is true if something was replaced.
-	 * @todo Should this be static? It doesn't seem to be used at all
+	 * @deprecated since 1.25, unused
 	 *
 	 * @param array $magicarr
 	 * @param string $subject
@@ -666,6 +661,7 @@ class MagicWord {
 	 * @return bool
 	 */
 	function replaceMultiple( $magicarr, $subject, &$result ) {
+		wfDeprecated( __METHOD__, '1.25' );
 		$search = array();
 		$replace = array();
 		foreach ( $magicarr as $id => $replacement ) {

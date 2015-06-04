@@ -38,7 +38,7 @@ class ApiPatrol extends ApiBase {
 		$this->requireOnlyOneParameter( $params, 'rcid', 'revid' );
 
 		if ( isset( $params['rcid'] ) ) {
-			$rc = RecentChange::newFromID( $params['rcid'] );
+			$rc = RecentChange::newFromId( $params['rcid'] );
 			if ( !$rc ) {
 				$this->dieUsageMsg( array( 'nosuchrcid', $params['rcid'] ) );
 			}
@@ -86,25 +86,16 @@ class ApiPatrol extends ApiBase {
 		);
 	}
 
-	public function getParamDescription() {
-		return array(
-			'rcid' => 'Recentchanges ID to patrol',
-			'revid' => 'Revision ID to patrol',
-		);
-	}
-
-	public function getDescription() {
-		return 'Patrol a page or revision.';
-	}
-
 	public function needsToken() {
 		return 'patrol';
 	}
 
-	public function getExamples() {
+	protected function getExamplesMessages() {
 		return array(
-			'api.php?action=patrol&token=123ABC&rcid=230672766',
-			'api.php?action=patrol&token=123ABC&revid=230672766'
+			'action=patrol&token=123ABC&rcid=230672766'
+				=> 'apihelp-patrol-example-rcid',
+			'action=patrol&token=123ABC&revid=230672766'
+				=> 'apihelp-patrol-example-revid',
 		);
 	}
 

@@ -14,7 +14,7 @@
 	"log-name-titleblacklist": "Name of log that appears on [[Special:Log]].",
 	"log-description-titleblacklist": "Description of title blacklist log",
 	"logentry-titleblacklist-hit-username": "Log entry that is created when someone tries to create an account with a name that is  blacklisted on the title blacklist.\n\n{{logentry}}\nAdditional parameters:\n* $4 - the blacklist entry",
-	"titleblacklist-desc": "{{desc|name=Title Blacklist|url=http://www.mediawiki.org/wiki/Extension:TitleBlacklist}}",
+	"titleblacklist-desc": "{{desc|name=Title Blacklist|url=https://www.mediawiki.org/wiki/Extension:TitleBlacklist}}",
 	"titleblacklist": "The [[mw:Extension:TitleBlacklist|extension Title Blacklist]] gives the ability to block certain unallowed words appearing in the title through regular expressions.\nThis will be the first explanatory paragraph of the blacklist. (Characters after the #-signs are ignored.)  \nTo see an example list in context, see: http://www.mediawiki.org/wiki/MediaWiki:Titleblacklist",
 	"titlewhitelist": "The whitelist is a feature of the  [[mw:Extension:TitleBlacklist|extension Title Blacklist]], which gives the ability to block certain words (or explicitly allow them) appearing in the title through regular expressions.\nThis will be the explanatory paragraph of the blacklist. (Characters after the #-signs are ignored.)  \nTo see an example list in context, see: http://www.mediawiki.org/wiki/MediaWiki:Titlewhitelist",
 	"titleblacklist-forbidden-edit": "\"title\" stands for \"page title\". Parameters:\n* $1 - blacklist entry\n* $2 - page title\n{{Related|Titleblacklist-forbidden}}",
@@ -27,5 +27,11 @@
 	"titleblacklist-warning": "Displayed when a user is editing a page that only administrators (or custom user groups with the tboverride right) can edit due to the title blacklist. Parameters:\n* $1 - blacklist entry",
 	"right-tboverride": "{{doc-right|tboverride}}",
 	"right-tboverride-account": "{{doc-right|tboverride-account}}",
-	"right-titleblacklistlog": "{{doc-right|titleblacklistlog}}"
+	"right-titleblacklistlog": "{{doc-right|titleblacklistlog}}",
+	"apihelp-titleblacklist-description": "{{doc-apihelp-description|titleblacklist}}",
+	"apihelp-titleblacklist-param-title": "{{doc-apihelp-param|titleblacklist|title}}",
+	"apihelp-titleblacklist-param-action": "{{doc-apihelp-param|titleblacklist|action}}",
+	"apihelp-titleblacklist-param-nooverride": "{{doc-apihelp-param|titleblacklist|nooverride}}",
+	"apihelp-titleblacklist-example-1": "{{doc-apihelp-example|titleblacklist}}",
+	"apihelp-titleblacklist-example-2": "{{doc-apihelp-example|titleblacklist}}"
 }

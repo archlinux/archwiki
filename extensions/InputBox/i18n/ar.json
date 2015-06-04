@@ -2,7 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Meno25",
-			"زكريا"
+			"زكريا",
+			"Omda4wady",
+			"Abanima"
 		]
 	},
 	"inputbox-desc": "يسمح بتضمين أشكال HTML معرفة مسبقا.",
@@ -11,5 +13,8 @@
 	"inputbox-tryexact": "ابحث عن عنوان مطابق",
 	"inputbox-searchfulltext": "ابحث في النص الكامل",
 	"inputbox-createarticle": "إنشاء صفحة",
+	"inputbox-movearticle": "انقل الصفحة",
+	"inputbox-postcomment": "قسم جديد",
+	"inputbox-postcommenttitle": "مقطع جديد",
 	"inputbox-ns-main": "رئيسي"
 }

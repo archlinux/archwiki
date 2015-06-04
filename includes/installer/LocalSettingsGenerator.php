@@ -34,6 +34,7 @@ class LocalSettingsGenerator {
 	protected $groupPermissions = array();
 	protected $dbSettings = '';
 	protected $safeMode = false;
+	protected $IP;
 
 	/**
 	 * @var Installer
@@ -50,6 +51,7 @@ class LocalSettingsGenerator {
 
 		$this->extensions = $installer->getVar( '_Extensions' );
 		$this->skins = $installer->getVar( '_Skins' );
+		$this->IP = $installer->getVar( 'IP' );
 
 		$db = $installer->getDBInstaller( $installer->getVar( 'wgDBtype' ) );
 
@@ -63,7 +65,7 @@ class LocalSettingsGenerator {
 				'wgRightsText', 'wgMainCacheType', 'wgEnableUploads',
 				'wgMainCacheType', '_MemCachedServers', 'wgDBserver', 'wgDBuser',
 				'wgDBpassword', 'wgUseInstantCommons', 'wgUpgradeKey', 'wgDefaultSkin',
-				'wgMetaNamespace', 'wgResourceLoaderMaxQueryLength', 'wgLogo',
+				'wgMetaNamespace', 'wgLogo',
 			),
 			$db->getGlobalNames()
 		);
@@ -143,8 +145,7 @@ class LocalSettingsGenerator {
 # The following skins were automatically enabled:\n";
 
 			foreach ( $this->skins as $skinName ) {
-				$encSkinName = self::escapePhpString( $skinName );
-				$localSettings .= "require_once \"\$IP/skins/$encSkinName/$encSkinName.php\";\n";
+				$localSettings .= $this->generateExtEnableLine( 'skins', $skinName );
 			}
 
 			$localSettings .= "\n";
@@ -157,8 +158,7 @@ class LocalSettingsGenerator {
 # The following extensions were automatically enabled:\n";
 
 			foreach ( $this->extensions as $extName ) {
-				$encExtName = self::escapePhpString( $extName );
-				$localSettings .= "require_once \"\$IP/extensions/$encExtName/$encExtName.php\";\n";
+				$localSettings .= $this->generateExtEnableLine( 'extensions', $extName );
 			}
 
 			$localSettings .= "\n";
@@ -169,6 +169,34 @@ class LocalSettingsGenerator {
 # Add more configuration options below.\n\n";
 
 		return $localSettings;
+	}
+
+	/**
+	 * Generate the appropriate line to enable the given extension or skin
+	 *
+	 * @param string $dir Either "extensions" or "skins"
+	 * @param string $name Name of extension/skin
+	 * @throws InvalidArgumentException
+	 * @return string
+	 */
+	private function generateExtEnableLine( $dir, $name ) {
+		if ( $dir === 'extensions' ) {
+			$jsonFile = 'extension.json';
+			$function = 'wfLoadExtension';
+		} elseif ( $dir === 'skins' ) {
+			$jsonFile = 'skin.json';
+			$function = 'wfLoadSkin';
+		} else {
+			throw new InvalidArgumentException( '$dir was not "extensions" or "skins' );
+		}
+
+		$encName = self::escapePhpString( $name );
+
+		if ( file_exists( "{$this->IP}/$dir/$encName/$jsonFile" ) ) {
+			return "$function( '$encName' );\n";
+		} else {
+			return "require_once \"\$IP/$dir/$encName/$encName.php\";\n";
+		}
 	}
 
 	/**
@@ -307,6 +335,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 ${serverSetting}
 ## The relative URL path to the skins directory
 \$wgStylePath = \"\$wgScriptPath/skins\";
+\$wgResourceBasePath = \$wgScriptPath;
 
 ## The relative URL path to the logo.  Make sure you change this from the default,
 ## or else you'll overwrite your logo when you upgrade!

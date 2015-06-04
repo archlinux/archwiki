@@ -134,22 +134,17 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 	}
 
 	/**
-	 * Return an array of subpages beginning with $search that this special page will accept.
+	 * Return an array of subpages that this special page will accept.
 	 *
-	 * @param string $search Prefix to search for
-	 * @param int $limit Maximum number of results to return
-	 * @return string[] Matching subpages
+	 * @see also SpecialWatchlist::getSubpagesForPrefixSearch
+	 * @return string[] subpages
 	 */
-	public function prefixSearchSubpages( $search, $limit = 10 ) {
-		return self::prefixSearchArray(
-			$search,
-			$limit,
-			// SpecialWatchlist uses SpecialEditWatchlist::getMode, so new types should be added
-			// here and there - no 'edit' here, because that the default for this page
-			array(
-				'clear',
-				'raw',
-			)
+	public function getSubpagesForPrefixSearch() {
+		// SpecialWatchlist uses SpecialEditWatchlist::getMode, so new types should be added
+		// here and there - no 'edit' here, because that the default for this page
+		return array(
+			'clear',
+			'raw',
 		);
 	}
 
@@ -261,7 +256,7 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 		// Do a batch existence check
 		$batch = new LinkBatch();
 		if ( count( $titles ) >= 100 ) {
-			$output = wfMessage( 'watchlistedit-too-many' )->parse();
+			$output = $this->msg( 'watchlistedit-too-many' )->parse();
 			return;
 		}
 		foreach ( $titles as $title ) {
@@ -349,7 +344,7 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 	 */
 	protected function getWatchlistInfo() {
 		$titles = array();
-		$dbr = wfGetDB( DB_MASTER );
+		$dbr = wfGetDB( DB_SLAVE );
 
 		$res = $dbr->select(
 			array( 'watchlist' ),
@@ -518,7 +513,7 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 				);
 
 				$page = WikiPage::factory( $title );
-				wfRunHooks( 'UnwatchArticleComplete', array( $this->getUser(), &$page ) );
+				Hooks::run( 'UnwatchArticleComplete', array( $this->getUser(), &$page ) );
 			}
 		}
 	}
@@ -556,7 +551,7 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 		// Allow subscribers to manipulate the list of watched pages (or use it
 		// to preload lots of details at once)
 		$watchlistInfo = $this->getWatchlistInfo();
-		wfRunHooks(
+		Hooks::run(
 			'WatchlistEditorBeforeFormRender',
 			array( &$watchlistInfo )
 		);
@@ -609,6 +604,7 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 		$context->setTitle( $this->getPageTitle() ); // Remove subpage
 		$form = new EditWatchlistNormalHTMLForm( $fields, $context );
 		$form->setSubmitTextMsg( 'watchlistedit-normal-submit' );
+		$form->setSubmitDestructive();
 		# Used message keys:
 		# 'accesskey-watchlistedit-normal-submit', 'tooltip-watchlistedit-normal-submit'
 		$form->setSubmitTooltip( 'watchlistedit-normal-submit' );
@@ -628,7 +624,10 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 	private function buildRemoveLine( $title ) {
 		$link = Linker::link( $title );
 
-		$tools['talk'] = Linker::link( $title->getTalkPage(), $this->msg( 'talkpagelinktext' )->escaped() );
+		$tools['talk'] = Linker::link(
+			$title->getTalkPage(),
+			$this->msg( 'talkpagelinktext' )->escaped()
+		);
 
 		if ( $title->exists() ) {
 			$tools['history'] = Linker::linkKnown(
@@ -646,7 +645,7 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 			);
 		}
 
-		wfRunHooks(
+		Hooks::run(
 			'WatchlistEditorBuildRemoveLine',
 			array( &$tools, $title, $title->isRedirect(), $this->getSkin(), &$link )
 		);
@@ -701,6 +700,7 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 		$form->setWrapperLegendMsg( 'watchlistedit-clear-legend' );
 		$form->addHeaderText( $this->msg( 'watchlistedit-clear-explain' )->parse() );
 		$form->setSubmitCallback( array( $this, 'submitClear' ) );
+		$form->setSubmitDestructive();
 
 		return $form;
 	}
@@ -760,7 +760,7 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 		return Html::rawElement(
 			'span',
 			array( 'class' => 'mw-watchlist-toollinks' ),
-			wfMessage( 'parentheses', $wgLang->pipeList( $tools ) )->text()
+			wfMessage( 'parentheses' )->rawParams( $wgLang->pipeList( $tools ) )->escaped()
 		);
 	}
 }

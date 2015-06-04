@@ -59,6 +59,7 @@ class SpecialAllMessages extends SpecialPage {
 
 		$this->outputHeader( 'allmessagestext' );
 		$out->addModuleStyles( 'mediawiki.special' );
+		$this->addHelpLink( 'Help:System message' );
 
 		$this->table = new AllmessagesTablePager(
 			$this,
@@ -223,18 +224,16 @@ class AllMessagesTablePager extends TablePager {
 	}
 
 	function getAllMessages( $descending ) {
-		wfProfileIn( __METHOD__ );
 		$messageNames = Language::getLocalisationCache()->getSubitemList( 'en', 'messages' );
+
+		// Normalise message names so they look like page titles and sort correctly - T86139
+		$messageNames = array_map( array( $this->lang, 'ucfirst' ), $messageNames );
+
 		if ( $descending ) {
 			rsort( $messageNames );
 		} else {
 			asort( $messageNames );
 		}
-
-		// Normalise message names so they look like page titles
-		$messageNames = array_map( array( $this->lang, 'ucfirst' ), $messageNames );
-
-		wfProfileOut( __METHOD__ );
 
 		return $messageNames;
 	}
@@ -252,7 +251,6 @@ class AllMessagesTablePager extends TablePager {
 	 */
 	public static function getCustomisedStatuses( $messageNames, $langcode = 'en', $foreign = false ) {
 		// FIXME: This function should be moved to Language:: or something.
-		wfProfileIn( __METHOD__ . '-db' );
 
 		$dbr = wfGetDB( DB_SLAVE );
 		$res = $dbr->select( 'page',
@@ -287,8 +285,6 @@ class AllMessagesTablePager extends TablePager {
 				$talkFlags[$exists] = true;
 			}
 		}
-
-		wfProfileOut( __METHOD__ . '-db' );
 
 		return array( 'pages' => $pageFlags, 'talks' => $talkFlags );
 	}

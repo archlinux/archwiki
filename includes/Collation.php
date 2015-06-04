@@ -59,7 +59,7 @@ abstract class Collation {
 
 				# Provide a mechanism for extensions to hook in.
 				$collationObject = null;
-				wfRunHooks( 'Collation::factory', array( $collationName, &$collationObject ) );
+				Hooks::run( 'Collation::factory', array( $collationName, &$collationObject ) );
 
 				if ( $collationObject instanceof Collation ) {
 					return $collationObject;
@@ -341,7 +341,7 @@ class IcuCollation extends Collation {
 
 		// Check for CJK
 		$firstChar = mb_substr( $string, 0, 1, 'UTF-8' );
-		if ( ord( $firstChar ) > 0x7f && self::isCjk( utf8ToCodepoint( $firstChar ) ) ) {
+		if ( ord( $firstChar ) > 0x7f && self::isCjk( UtfNormal\Utils::utf8ToCodepoint( $firstChar ) ) ) {
 			return $firstChar;
 		}
 

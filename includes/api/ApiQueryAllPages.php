@@ -168,9 +168,23 @@ class ApiQueryAllPages extends ApiQueryGeneratorBase {
 			$this->addTables( 'langlinks' );
 			$this->addWhere( 'page_id=ll_from' );
 			$this->addOption( 'STRAIGHT_JOIN' );
-			// We have to GROUP BY all selected fields to stop
-			// PostgreSQL from whining
-			$this->addOption( 'GROUP BY', $selectFields );
+
+			// MySQL filesorts if we use a GROUP BY that works with the rules
+			// in the 1992 SQL standard (it doesn't like having the
+			// constant-in-WHERE page_namespace column in there). Using the
+			// 1999 rules works fine, but that breaks other DBs. Sigh.
+			/// @todo Once we drop support for 1992-rule DBs, we can simplify this.
+			$dbType = $db->getType();
+			if ( $dbType === 'mysql' || $dbType === 'sqlite' ||
+				$dbType === 'postgres' && $db->getServerVersion() >= 9.1
+			) {
+				// 1999 rules, or screw-the-rules
+				$this->addOption( 'GROUP BY', array( 'page_title', 'page_id' ) );
+			} else {
+				// 1992 rules
+				$this->addOption( 'GROUP BY', $selectFields );
+			}
+
 			$forceNameTitleIndex = false;
 		}
 
@@ -220,14 +234,16 @@ class ApiQueryAllPages extends ApiQueryGeneratorBase {
 		}
 
 		if ( is_null( $resultPageSet ) ) {
-			$result->setIndexedTagName_internal( array( 'query', $this->getModuleName() ), 'p' );
+			$result->addIndexedTagName( array( 'query', $this->getModuleName() ), 'p' );
 		}
 	}
 
 	public function getAllowedParams() {
 		return array(
 			'from' => null,
-			'continue' => null,
+			'continue' => array(
+				ApiBase::PARAM_HELP_MSG => 'api-help-param-continue',
+			),
 			'to' => null,
 			'prefix' => null,
 			'namespace' => array(
@@ -297,54 +313,15 @@ class ApiQueryAllPages extends ApiQueryGeneratorBase {
 		);
 	}
 
-	public function getParamDescription() {
-		$p = $this->getModulePrefix();
-
+	protected function getExamplesMessages() {
 		return array(
-			'from' => 'The page title to start enumerating from',
-			'continue' => 'When more results are available, use this to continue',
-			'to' => 'The page title to stop enumerating at',
-			'prefix' => 'Search for all page titles that begin with this value',
-			'namespace' => 'The namespace to enumerate',
-			'filterredir' => 'Which pages to list',
-			'dir' => 'The direction in which to list',
-			'minsize' => 'Limit to pages with at least this many bytes',
-			'maxsize' => 'Limit to pages with at most this many bytes',
-			'prtype' => 'Limit to protected pages only',
-			'prlevel' => "The protection level (must be used with {$p}prtype= parameter)",
-			'prfiltercascade'
-				=> "Filter protections based on cascadingness (ignored when {$p}prtype isn't set)",
-			'filterlanglinks' => array(
-				'Filter based on whether a page has langlinks',
-				'Note that this may not consider langlinks added by extensions.',
-			),
-			'limit' => 'How many total pages to return.',
-			'prexpiry' => array(
-				'Which protection expiry to filter the page on',
-				' indefinite - Get only pages with indefinite protection expiry',
-				' definite - Get only pages with a definite (specific) protection expiry',
-				' all - Get pages with any protections expiry'
-			),
-		);
-	}
-
-	public function getDescription() {
-		return 'Enumerate all pages sequentially in a given namespace.';
-	}
-
-	public function getExamples() {
-		return array(
-			'api.php?action=query&list=allpages&apfrom=B' => array(
-				'Simple Use',
-				'Show a list of pages starting at the letter "B"',
-			),
-			'api.php?action=query&generator=allpages&gaplimit=4&gapfrom=T&prop=info' => array(
-				'Using as Generator',
-				'Show info about 4 pages starting at the letter "T"',
-			),
-			'api.php?action=query&generator=allpages&gaplimit=2&' .
+			'action=query&list=allpages&apfrom=B'
+				=> 'apihelp-query+allpages-example-B',
+			'action=query&generator=allpages&gaplimit=4&gapfrom=T&prop=info'
+				=> 'apihelp-query+allpages-example-generator',
+			'action=query&generator=allpages&gaplimit=2&' .
 				'gapfilterredir=nonredirects&gapfrom=Re&prop=revisions&rvprop=content'
-				=> array( 'Show content of first 2 non-redirect pages beginning at "Re"' )
+				=> 'apihelp-query+allpages-example-generator-revisions',
 		);
 	}
 

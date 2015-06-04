@@ -3,9 +3,13 @@
 		"authors": [
 			"Aiman titi",
 			"Meno25",
-			"OsamaK"
+			"OsamaK",
+			"Abanima"
 		]
 	},
+	"action-titleblacklistlog": "استعراض سجل القائمة السوداء للعناوين",
+	"log-name-titleblacklist": "القائمة السوداء للعناوين",
+	"logentry-titleblacklist-hit-username": "{{GENDER:$2|سبّب|سبّبت}} $1 تفعيل القائمة السوداء للعناوين عندما {{GENDER:$2|حاول|حاولت}} إنشاء الحساب $3 المطابق لـ$4.",
 	"titleblacklist-desc": "يسمح للإداريين بمنع إنشاء الصفحات وحسابات المستخدمين حسب [[MediaWiki:Titleblacklist|قائمة سوداء]] و [[MediaWiki:Titlewhitelist|قائمة بيضاء]]",
 	"titleblacklist": "# هذه قائمة سوداء للعناوين. العناوين والمستخدمون الذين يطابقون تعبيرا منتظما هنا لا يمكن إنشاؤهم.\n# استخدم \"#\" للتعليقات.\n# هذه لا تتأثر بحالة الحروف افتراضيا",
 	"titlewhitelist": "# هذه قائمة بيضاء للعناوين. استخدم \"#\" للتعليقات\n# هذه لا تتأثر بحالة الحروف افتراضيا",
@@ -15,6 +19,9 @@
 	"titleblacklist-forbidden-new-account": "إنشاء اسم المستخدم \"$2\" ممنوع.\nهو يطابق مدخلة القائمة السوداء التالية: <code>$1</code>",
 	"titleblacklist-invalid": "{{PLURAL:$1||السطر التالي|السطران التاليان|السطور التالية}} في قائمة العناوين السوداء {{PLURAL:$1||غير صحيح|غير صحيحان|غير صحيحة}}؛ من فضلك {{PLURAL:$1||صححه|صححهما|صححهم}} قبل الحفظ:",
 	"titleblacklist-override": "تجاهل القائمة السوداء",
+	"titleblacklist-autoconfirmed-warning": "<strong>ملاحظة:</strong> لا يمكن تحرير هذه الصفحة إلا للمستخدمين <code>المؤكدين تلقائياً</code> لأنها تطابق مدخلة القائمة السوداء التالية:<br /><code>$1</code>",
+	"titleblacklist-warning": "<strong>ملاحظة:</strong> لا يمكن تحرير هذه الصفحة إلا للإداريين والمستخدمين الآخرين الذين لديهم صلاحية <code>tboverride</code> لأنها تطابق مدخلة القائمة السوداء التالية:<br /><code>$1</code>",
 	"right-tboverride": "تجاوز قائمتي العناوين أو أسماء المستخدمين السوداوين",
-	"right-tboverride-account": "تجاوز قائمة اسم المستخدم السوداء."
+	"right-tboverride-account": "تجاوز قائمة اسم المستخدم السوداء.",
+	"right-titleblacklistlog": "استعراض سجل القائمة السوداء للعناوين"
 }

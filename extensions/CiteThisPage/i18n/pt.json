@@ -1,0 +1,17 @@
+{
+	"@metadata": {
+		"authors": [
+			"Hamilton Abreu",
+			"Lijealso",
+			"Malafaya",
+			"555",
+			"Vitorvicentevalente"
+		]
+	},
+	"citethispage": "Citar esta página",
+	"citethispage-desc": "Página especial que produz uma [[Special:CiteThisPage|citação]] e adiciona uma ligação na barra de ferramentas",
+	"citethispage-link": "Citar esta página",
+	"tooltip-citethispage": "Informação sobre como citar esta página",
+	"citethispage-change-submit": "Citar",
+	"citethispage-change-target": "Página:"
+}

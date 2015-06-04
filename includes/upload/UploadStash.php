@@ -151,6 +151,7 @@ class UploadStash {
 
 		if ( !$this->files[$key]->exists() ) {
 			wfDebug( __METHOD__ . " tried to get file at $key, but it doesn't exist\n" );
+			// @todo Is this not an UploadStashFileNotFoundException case?
 			throw new UploadStashBadPathException( "path doesn't exist" );
 		}
 
@@ -724,9 +725,6 @@ class UploadStashFile extends UnregisteredLocalFile {
 }
 
 class UploadStashException extends MWException {
-}
-
-class UploadStashNotAvailableException extends UploadStashException {
 }
 
 class UploadStashFileNotFoundException extends UploadStashException {

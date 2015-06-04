@@ -58,12 +58,6 @@ class LinksUpdate extends SqlDataUpdate {
 	/** @var array Map of arbitrary name to value */
 	public $mProperties;
 
-	/** @var DatabaseBase Database connection reference */
-	public $mDb;
-
-	/** @var array SELECT options to be used */
-	public $mOptions;
-
 	/** @var bool Whether to queue jobs for recursive updates */
 	public $mRecursive;
 
@@ -140,20 +134,19 @@ class LinksUpdate extends SqlDataUpdate {
 
 		$this->mRecursive = $recursive;
 
-		wfRunHooks( 'LinksUpdateConstructed', array( &$this ) );
+		Hooks::run( 'LinksUpdateConstructed', array( &$this ) );
 	}
 
 	/**
 	 * Update link tables with outgoing links from an updated article
 	 */
 	public function doUpdate() {
-		wfRunHooks( 'LinksUpdate', array( &$this ) );
+		Hooks::run( 'LinksUpdate', array( &$this ) );
 		$this->doIncrementalUpdate();
-		wfRunHooks( 'LinksUpdateComplete', array( &$this ) );
+		Hooks::run( 'LinksUpdateComplete', array( &$this ) );
 	}
 
 	protected function doIncrementalUpdate() {
-		wfProfileIn( __METHOD__ );
 
 		# Page links
 		$existing = $this->getExistingLinks();
@@ -227,7 +220,6 @@ class LinksUpdate extends SqlDataUpdate {
 			$this->queueRecursiveJobs();
 		}
 
-		wfProfileOut( __METHOD__ );
 	}
 
 	/**
@@ -236,12 +228,24 @@ class LinksUpdate extends SqlDataUpdate {
 	 * Which means do LinksUpdate on all pages that include the current page,
 	 * using the job queue.
 	 */
-	function queueRecursiveJobs() {
+	protected function queueRecursiveJobs() {
 		self::queueRecursiveJobsForTable( $this->mTitle, 'templatelinks' );
 		if ( $this->mTitle->getNamespace() == NS_FILE ) {
 			// Process imagelinks in case the title is or was a redirect
 			self::queueRecursiveJobsForTable( $this->mTitle, 'imagelinks' );
 		}
+
+		$bc = $this->mTitle->getBacklinkCache();
+		// Get jobs for cascade-protected backlinks for a high priority queue.
+		// If meta-templates change to using a new template, the new template
+		// should be implicitly protected as soon as possible, if applicable.
+		// These jobs duplicate a subset of the above ones, but can run sooner.
+		// Which ever runs first generally no-ops the other one.
+		$jobs = array();
+		foreach ( $bc->getCascadeProtectedLinks() as $title ) {
+			$jobs[] = new RefreshLinksJob( $title, array( 'prioritize' => true ) );
+		}
+		JobQueueGroup::singleton()->push( $jobs );
 	}
 
 	/**
@@ -251,7 +255,6 @@ class LinksUpdate extends SqlDataUpdate {
 	 * @param string $table Table to use (e.g. 'templatelinks')
 	 */
 	public static function queueRecursiveJobsForTable( Title $title, $table ) {
-		wfProfileIn( __METHOD__ );
 		if ( $title->getBacklinkCache()->hasLinks( $table ) ) {
 			$job = new RefreshLinksJob(
 				$title,
@@ -262,10 +265,10 @@ class LinksUpdate extends SqlDataUpdate {
 					"refreshlinks:{$table}:{$title->getPrefixedText()}"
 				)
 			);
+
 			JobQueueGroup::singleton()->push( $job );
 			JobQueueGroup::singleton()->deduplicateRootJob( $job );
 		}
-		wfProfileOut( __METHOD__ );
 	}
 
 	/**
@@ -339,7 +342,7 @@ class LinksUpdate extends SqlDataUpdate {
 		}
 		if ( count( $insertions ) ) {
 			$this->mDb->insert( $table, $insertions, __METHOD__, 'IGNORE' );
-			wfRunHooks( 'LinksUpdateAfterInsert', array( $this, $table, $insertions ) );
+			Hooks::run( 'LinksUpdateAfterInsert', array( $this, $table, $insertions ) );
 		}
 	}
 

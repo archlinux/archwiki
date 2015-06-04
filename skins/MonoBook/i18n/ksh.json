@@ -4,7 +4,8 @@
 			"Purodha"
 		]
 	},
-	"skinname-monobook": "MonoBoch",
-	"monobook.css": "/* CSS heh aan dä Stell wirrek nur op de Ovverflääsch „Monobooch“ */",
-	"monobook.js": "/* De JavaSkrippte fun hee krijje alle Sigge met de Ovverflääsch \"Monnobooch\" jescheck */"
+	"skinname-monobook": "Monobohch",
+	"monobook-desc": "De klaßesche Bedehnbovverfläsch vum MehdijaWikki zigg 2004. Se es noh däm eijnfarbesch jroue Bohch benannt, wat doh als Hengerjrondbeld bei es.",
+	"monobook.css": "/* Dat CSS heh aan dä Stell wirrek blohß op de Bedehnbovverflääsch „Monobohch“ */",
+	"monobook.js": "/* De JavaSkrippte fun heh krejje alle Sigge met dä Bedehnbovverflääsch „Monobohch“ jescheck */"
 }

@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Saimawnkham"
+		]
+	},
+	"pfunc_expr_unrecognised_word": "လွင်ႈၽိတ်းပိူင်ႈ : ဢမ်ႇၼႄႉၼွၼ်းလႆႈ တူဝ်လိၵ်ႈ \"$1\"",
+	"pfunc_expr_unrecognised_punctuation": "လွင်ႈၽိတ်းပိူင်ႈ: တူဝ်လိၵ်ႈ လၢၵ်ႇလၢႆး \"$1\" ဢၼ်ၼႆႉ ဢမ်ႇလႆႈမၵ်းမၼ်ႈဝႆႉ"
+}

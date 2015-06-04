@@ -11,7 +11,8 @@
 			"Sp5uhe",
 			"ToSter",
 			"WTM",
-			"Wpedzich"
+			"Wpedzich",
+			"Mareklug"
 		]
 	},
 	"wikieditor": "Zaawansowany interfejs edycji wikitekstu",
@@ -22,9 +23,6 @@
 	"wikieditor-preview-tab": "Podgląd",
 	"wikieditor-preview-changes-tab": "Zmiany",
 	"wikieditor-preview-loading": "Wczytywanie...",
-	"wikieditor-previewDialog-preference": "Włącz okno podglądu",
-	"wikieditor-previewDialog-tab": "Podgląd",
-	"wikieditor-previewDialog-loading": "Wczytywanie...",
 	"wikieditor-publish-preference": "Wspomaga publikację materiału krok po kroku",
 	"wikieditor-publish-button-publish": "Opublikuj",
 	"wikieditor-publish-button-cancel": "Anuluj",
@@ -218,8 +216,7 @@
 	"wikieditor-toolbar-help-content-olist-syntax": "# Pozycja listy<br /># Pozycja listy",
 	"wikieditor-toolbar-help-content-olist-result": "<ol><li>Pozycja listy</li><li>Pozycja listy</li></ol>",
 	"wikieditor-toolbar-help-content-file-description": "Plik osadzony",
-	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Przykład.png|thumb|Tekst podpisu]]",
-	"wikieditor-toolbar-help-content-file-result": "<div style='width:104px;' class='thumbinner'><a title='Caption text' class='image' href='#'><img height='50' width='100' border='0' class='thumbimage' src='$2/WikiEditor/modules/images/toolbar/example-image.png' alt=''/></a><div class='thumbcaption'><div class='magnify'><a title='Enlarge' class='internal' href='#'><img height='11' width='15' alt='' src='$1/common/images/magnify-clip.png'/></a></div>Tekst podpisu</div></div>",
+	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Przykład.png|$2|$3]]",
 	"wikieditor-toolbar-help-content-reference-description": "Przypis",
 	"wikieditor-toolbar-help-content-reference-syntax": "Treść strony&lt;ref name=\"test\"&gt; [http://www.przyklad.org Opis linku], dodatkowy tekst. &lt;/ref&gt;.",
 	"wikieditor-toolbar-help-content-reference-result": "Treść strony<sup><a href='#'>[1]</a></sup>.",

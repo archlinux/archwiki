@@ -39,11 +39,6 @@ class SpecialProtectedpages extends SpecialPage {
 		$this->outputHeader();
 		$this->getOutput()->addModuleStyles( 'mediawiki.special' );
 
-		// Purge expired entries on one in every 10 queries
-		if ( !mt_rand( 0, 10 ) ) {
-			Title::purgeExpiredRestrictions();
-		}
-
 		$request = $this->getRequest();
 		$type = $request->getVal( $this->IdType );
 		$level = $request->getVal( $this->IdLevel );
@@ -353,7 +348,7 @@ class ProtectedPagesPager extends TablePager {
 	/**
 	 * @param string $field
 	 * @param string $value
-	 * @return string
+	 * @return string HTML
 	 * @throws MWException
 	 */
 	function formatValue( $field, $value ) {
@@ -372,7 +367,8 @@ class ProtectedPagesPager extends TablePager {
 						$this->msg( 'protectedpages-unknown-timestamp' )->escaped()
 					);
 				} else {
-					$formatted = $this->getLanguage()->userTimeAndDate( $value, $this->getUser() );
+					$formatted = htmlspecialchars( $this->getLanguage()->userTimeAndDate(
+						$value, $this->getUser() ) );
 				}
 				break;
 
@@ -402,7 +398,8 @@ class ProtectedPagesPager extends TablePager {
 				break;
 
 			case 'pr_expiry':
-				$formatted = $this->getLanguage()->formatExpiry( $value, /* User preference timezone */true );
+				$formatted = htmlspecialchars( $this->getLanguage()->formatExpiry(
+					$value, /* User preference timezone */true ) );
 				$title = Title::makeTitleSafe( $row->page_namespace, $row->page_title );
 				if ( $this->getUser()->isAllowed( 'protect' ) && $title ) {
 					$changeProtection = Linker::linkKnown(
@@ -454,7 +451,7 @@ class ProtectedPagesPager extends TablePager {
 				// Messages: restriction-level-sysop, restriction-level-autoconfirmed
 				$params[] = $this->msg( 'restriction-level-' . $row->pr_level )->escaped();
 				if ( $row->pr_cascade ) {
-					$params[] = $this->msg( 'protect-summary-cascade' )->text();
+					$params[] = $this->msg( 'protect-summary-cascade' )->escaped();
 				}
 				$formatted = $this->getLanguage()->commaList( $params );
 				break;
@@ -493,7 +490,7 @@ class ProtectedPagesPager extends TablePager {
 	function getQueryInfo() {
 		$conds = $this->mConds;
 		$conds[] = 'pr_expiry > ' . $this->mDb->addQuotes( $this->mDb->timestamp() ) .
-			'OR pr_expiry IS NULL';
+			' OR pr_expiry IS NULL';
 		$conds[] = 'page_id=pr_page';
 		$conds[] = 'pr_type=' . $this->mDb->addQuotes( $this->type );
 

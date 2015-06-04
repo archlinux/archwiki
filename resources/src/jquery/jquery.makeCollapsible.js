@@ -208,7 +208,7 @@
 	 * Enable collapsible-functionality on all elements in the collection.
 	 *
 	 * - Will prevent binding twice to the same element.
-	 * - Initial state is expanded by default, this can be overriden by adding class
+	 * - Initial state is expanded by default, this can be overridden by adding class
 	 *   "mw-collapsed" to the "mw-collapsible" element.
 	 * - Elements made collapsible have jQuery data "mw-made-collapsible" set to true.
 	 * - The inner content is wrapped in a "div.mw-collapsible-content" (except for tables and lists).
@@ -330,7 +330,7 @@
 								.prop( 'tabIndex', 0 );
 						}
 					} else {
-						// The toggle-link will be in one the the cells (td or th) of the first row
+						// The toggle-link will be in one of the cells (td or th) of the first row
 						$firstItem = $collapsible.find( 'tr:first th, tr:first td' );
 						$toggle = $firstItem.find( '> .mw-collapsible-toggle' );
 

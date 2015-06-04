@@ -257,7 +257,7 @@ class RecentChange {
 	public function getPerformer() {
 		if ( $this->mPerformer === false ) {
 			if ( $this->mAttribs['rc_user'] ) {
-				$this->mPerformer = User::newFromID( $this->mAttribs['rc_user'] );
+				$this->mPerformer = User::newFromId( $this->mAttribs['rc_user'] );
 			} else {
 				$this->mPerformer = User::newFromName( $this->mAttribs['rc_user_text'], false );
 			}
@@ -283,7 +283,7 @@ class RecentChange {
 		}
 
 		# If our database is strict about IP addresses, use NULL instead of an empty string
-		if ( $dbw->strictIPs() and $this->mAttribs['rc_ip'] == '' ) {
+		if ( $dbw->strictIPs() && $this->mAttribs['rc_ip'] == '' ) {
 			unset( $this->mAttribs['rc_ip'] );
 		}
 
@@ -298,7 +298,7 @@ class RecentChange {
 		$this->mAttribs['rc_id'] = $dbw->nextSequenceValue( 'recentchanges_rc_id_seq' );
 
 		## If we are using foreign keys, an entry of 0 for the page_id will fail, so use NULL
-		if ( $dbw->cascadingDeletes() and $this->mAttribs['rc_cur_id'] == 0 ) {
+		if ( $dbw->cascadingDeletes() && $this->mAttribs['rc_cur_id'] == 0 ) {
 			unset( $this->mAttribs['rc_cur_id'] );
 		}
 
@@ -309,7 +309,7 @@ class RecentChange {
 		$this->mAttribs['rc_id'] = $dbw->insertId();
 
 		# Notify extensions
-		wfRunHooks( 'RecentChange_save', array( &$this ) );
+		Hooks::run( 'RecentChange_save', array( &$this ) );
 
 		# Notify external application via UDP
 		if ( !$noudp ) {
@@ -321,7 +321,7 @@ class RecentChange {
 			$editor = $this->getPerformer();
 			$title = $this->getTitle();
 
-			if ( wfRunHooks( 'AbortEmailNotification', array( $editor, $title, $this ) ) ) {
+			if ( Hooks::run( 'AbortEmailNotification', array( $editor, $title, $this ) ) ) {
 				# @todo FIXME: This would be better as an extension hook
 				$enotif = new EmailNotification();
 				$enotif->notifyOnPageChange( $editor, $title,
@@ -445,12 +445,12 @@ class RecentChange {
 		// Automatic patrol needs "autopatrol", ordinary patrol needs "patrol"
 		$right = $auto ? 'autopatrol' : 'patrol';
 		$errors = array_merge( $errors, $this->getTitle()->getUserPermissionsErrors( $right, $user ) );
-		if ( !wfRunHooks( 'MarkPatrolled', array( $this->getAttribute( 'rc_id' ), &$user, false ) ) ) {
+		if ( !Hooks::run( 'MarkPatrolled', array( $this->getAttribute( 'rc_id' ), &$user, false ) ) ) {
 			$errors[] = array( 'hookaborted' );
 		}
 		// Users without the 'autopatrol' right can't patrol their
 		// own revisions
-		if ( $user->getName() == $this->getAttribute( 'rc_user_text' )
+		if ( $user->getName() === $this->getAttribute( 'rc_user_text' )
 			&& !$user->isAllowed( 'autopatrol' )
 		) {
 			$errors[] = array( 'markedaspatrollederror-noautopatrol' );
@@ -466,7 +466,7 @@ class RecentChange {
 		$this->reallyMarkPatrolled();
 		// Log this patrol event
 		PatrolLog::record( $this, $auto, $user );
-		wfRunHooks( 'MarkPatrolledComplete', array( $this->getAttribute( 'rc_id' ), &$user, false ) );
+		Hooks::run( 'MarkPatrolledComplete', array( $this->getAttribute( 'rc_id' ), &$user, false ) );
 
 		return array();
 	}
@@ -794,29 +794,6 @@ class RecentChange {
 		}
 
 		return ChangesList::showCharacterDifference( $old, $new );
-	}
-
-	/**
-	 * Purge expired changes from the recentchanges table
-	 * @since 1.22
-	 */
-	public static function purgeExpiredChanges() {
-		if ( wfReadOnly() ) {
-			return;
-		}
-
-		$method = __METHOD__;
-		$dbw = wfGetDB( DB_MASTER );
-		$dbw->onTransactionIdle( function () use ( $dbw, $method ) {
-			global $wgRCMaxAge;
-
-			$cutoff = $dbw->timestamp( time() - $wgRCMaxAge );
-			$dbw->delete(
-				'recentchanges',
-				array( 'rc_timestamp < ' . $dbw->addQuotes( $cutoff ) ),
-				$method
-			);
-		} );
 	}
 
 	private static function checkIPAddress( $ip ) {

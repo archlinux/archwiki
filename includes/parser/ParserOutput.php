@@ -25,6 +25,7 @@ class ParserOutput extends CacheTime {
 	public $mText,                       # The output text
 		$mLanguageLinks,              # List of the full text of language links, in the order they appear
 		$mCategories,                 # Map of category names to sort keys
+		$mIndicators = array(),       # Page status indicators, usually displayed in top-right corner
 		$mTitleText,                  # title text of the chosen language variant
 		$mLinks = array(),            # 2-D map of NS/DBK to ID for the links in the document. ID=zero for broken.
 		$mTemplates = array(),        # 2-D map of NS/DBK to ID for the template references. ID=zero for broken.
@@ -52,27 +53,25 @@ class ParserOutput extends CacheTime {
 		$mTOCEnabled = true;          # Whether TOC should be shown, can't override __NOTOC__
 	private $mIndexPolicy = '';       # 'index' or 'noindex'?  Any other value will result in no change.
 	private $mAccessedOptions = array(); # List of ParserOptions (stored in the keys)
-	private $mSecondaryDataUpdates = array(); # List of DataUpdate, used to save info from the page somewhere else.
 	private $mExtensionData = array(); # extra data used by extensions
 	private $mLimitReportData = array(); # Parser limit report data
 	private $mParseStartTime = array(); # Timestamps for getTimeSinceStart()
 	private $mPreventClickjacking = false; # Whether to emit X-Frame-Options: DENY
+	private $mFlags = array();        # Generic flags
 
 	const EDITSECTION_REGEX =
 		'#<(?:mw:)?editsection page="(.*?)" section="(.*?)"(?:/>|>(.*?)(</(?:mw:)?editsection>))#';
 
 	public function __construct( $text = '', $languageLinks = array(), $categoryLinks = array(),
-		$containsOldMagic = false, $titletext = ''
+		$unused = false, $titletext = ''
 	) {
 		$this->mText = $text;
 		$this->mLanguageLinks = $languageLinks;
 		$this->mCategories = $categoryLinks;
-		$this->mContainsOldMagic = $containsOldMagic;
 		$this->mTitleText = $titletext;
 	}
 
 	public function getText() {
-		wfProfileIn( __METHOD__ );
 		$text = $this->mText;
 		if ( $this->mEditSectionTokens ) {
 			$text = preg_replace_callback(
@@ -110,7 +109,6 @@ class ParserOutput extends CacheTime {
 				$text
 			);
 		}
-		wfProfileOut( __METHOD__ );
 		return $text;
 	}
 
@@ -128,6 +126,13 @@ class ParserOutput extends CacheTime {
 
 	public function &getCategories() {
 		return $this->mCategories;
+	}
+
+	/**
+	 * @since 1.25
+	 */
+	public function getIndicators() {
+		return $this->mIndicators;
 	}
 
 	public function getTitleText() {
@@ -265,6 +270,13 @@ class ParserOutput extends CacheTime {
 
 	public function addCategory( $c, $sort ) {
 		$this->mCategories[$c] = $sort;
+	}
+
+	/**
+	 * @since 1.25
+	 */
+	public function setIndicator( $id, $content ) {
+		$this->mIndicators[$id] = $content;
 	}
 
 	public function addLanguageLink( $t ) {
@@ -472,6 +484,47 @@ class ParserOutput extends CacheTime {
 	}
 
 	/**
+	 * Add a tracking category, getting the title from a system message,
+	 * or print a debug message if the title is invalid.
+	 *
+	 * Any message used with this function should be registered so it will
+	 * show up on Special:TrackingCategories. Core messages should be added
+	 * to SpecialTrackingCategories::$coreTrackingCategories, and extensions
+	 * should add to "TrackingCategories" in their extension.json.
+	 *
+	 * @param string $msg Message key
+	 * @param Title $title title of the page which is being tracked
+	 * @return bool Whether the addition was successful
+	 * @since 1.25
+	 */
+	public function addTrackingCategory( $msg, $title ) {
+		if ( $title->getNamespace() === NS_SPECIAL ) {
+			wfDebug( __METHOD__ . ": Not adding tracking category $msg to special page!\n" );
+			return false;
+		}
+
+		// Important to parse with correct title (bug 31469)
+		$cat = wfMessage( $msg )
+			->title( $title )
+			->inContentLanguage()
+			->text();
+
+		# Allow tracking categories to be disabled by setting them to "-"
+		if ( $cat === '-' ) {
+			return false;
+		}
+
+		$containerCategory = Title::makeTitleSafe( NS_CATEGORY, $cat );
+		if ( $containerCategory ) {
+			$this->addCategory( $containerCategory->getDBkey(), $this->getProperty( 'defaultsort' ) ?: '' );
+			return true;
+		} else {
+			wfDebug( __METHOD__ . ": [[MediaWiki:$msg]] is not a valid title!\n" );
+			return false;
+		}
+	}
+
+	/**
 	 * Override the title to be used for display
 	 * -- this is assumed to have been validated
 	 * (check equal normalisation, etc.)
@@ -622,43 +675,57 @@ class ParserOutput extends CacheTime {
 	}
 
 	/**
-	 * Adds an update job to the output. Any update jobs added to the output will
-	 * eventually be executed in order to store any secondary information extracted
-	 * from the page's content. This is triggered by calling getSecondaryDataUpdates()
-	 * and is used for forward links updates on edit and backlink updates by jobs.
+	 * @deprecated since 1.25. Instead, store any relevant data using setExtensionData,
+	 *    and implement Content::getSecondaryDataUpdates() if possible, or use the
+	 *    'SecondaryDataUpdates' hook to construct the necessary update objects.
 	 *
-	 * @since 1.20
+	 * @note Hard deprecation and removal without long deprecation period, since there are no
+	 *       known users, but known conceptual issues.
+	 *
+	 * @todo remove in 1.26
 	 *
 	 * @param DataUpdate $update
+	 *
+	 * @throws MWException
 	 */
 	public function addSecondaryDataUpdate( DataUpdate $update ) {
-		$this->mSecondaryDataUpdates[] = $update;
+		wfDeprecated( __METHOD__, '1.25' );
+		throw new MWException( 'ParserOutput::addSecondaryDataUpdate() is no longer supported. Override Content::getSecondaryDataUpdates() or use the SecondaryDataUpdates hook instead.' );
 	}
 
 	/**
-	 * Returns any DataUpdate jobs to be executed in order to store secondary information
-	 * extracted from the page's content, including a LinksUpdate object for all links stored in
-	 * this ParserOutput object.
+	 * @deprecated since 1.25.
 	 *
-	 * @note Avoid using this method directly, use ContentHandler::getSecondaryDataUpdates()
-	 *   instead! The content handler may provide additional update objects.
+	 * @note Hard deprecation and removal without long deprecation period, since there are no
+	 *       known users, but known conceptual issues.
 	 *
-	 * @since 1.20
+	 * @todo remove in 1.26
 	 *
-	 * @param Title $title The title of the page we're updating. If not given, a title object will
-	 *    be created based on $this->getTitleText()
-	 * @param bool $recursive Queue jobs for recursive updates?
+	 * @return bool false (since 1.25)
+	 */
+	public function hasCustomDataUpdates() {
+		wfDeprecated( __METHOD__, '1.25' );
+		return false;
+	}
+
+	/**
+	 * @deprecated since 1.25. Instead, store any relevant data using setExtensionData,
+	 *    and implement Content::getSecondaryDataUpdates() if possible, or use the
+	 *    'SecondaryDataUpdates' hook to construct the necessary update objects.
+	 *
+	 * @note Hard deprecation and removal without long deprecation period, since there are no
+	 *       known users, but known conceptual issues.
+	 *
+	 * @todo remove in 1.26
+	 *
+	 * @param Title $title
+	 * @param bool $recursive
 	 *
 	 * @return array An array of instances of DataUpdate
 	 */
 	public function getSecondaryDataUpdates( Title $title = null, $recursive = true ) {
-		if ( is_null( $title ) ) {
-			$title = Title::newFromText( $this->getTitleText() );
-		}
-
-		$linksUpdate = new LinksUpdate( $title, $this, $recursive );
-
-		return array_merge( $this->mSecondaryDataUpdates, array( $linksUpdate ) );
+		wfDeprecated( __METHOD__, '1.25' );
+		return array();
 	}
 
 	/**
@@ -795,6 +862,22 @@ class ParserOutput extends CacheTime {
 	}
 
 	/**
+	 * Check whether the cache TTL was lowered due to dynamic content
+	 *
+	 * When content is determined by more than hard state (e.g. page edits),
+	 * such as template/file transclusions based on the current timestamp or
+	 * extension tags that generate lists based on queries, this return true.
+	 *
+	 * @return bool
+	 * @since 1.25
+	 */
+	public function hasDynamicContent() {
+		global $wgParserCacheExpireTime;
+
+		return $this->getCacheExpiry() < $wgParserCacheExpireTime;
+	}
+
+	/**
 	 * Get or set the prevent-clickjacking flag
 	 *
 	 * @since 1.24
@@ -806,13 +889,13 @@ class ParserOutput extends CacheTime {
 	}
 
 	/**
-	 * Save space for for serialization by removing useless values
+	 * Save space for serialization by removing useless values
 	 * @return array
 	 */
 	public function __sleep() {
 		return array_diff(
 			array_keys( get_object_vars( $this ) ),
-			array( 'mSecondaryDataUpdates', 'mParseStartTime' )
+			array( 'mParseStartTime' )
 		);
 	}
 }

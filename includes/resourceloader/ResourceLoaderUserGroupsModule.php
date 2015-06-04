@@ -25,39 +25,23 @@
  */
 class ResourceLoaderUserGroupsModule extends ResourceLoaderWikiModule {
 
-	/* Protected Members */
-
 	protected $origin = self::ORIGIN_USER_SITEWIDE;
 	protected $targets = array( 'desktop', 'mobile' );
-
-	/* Protected Methods */
 
 	/**
 	 * @param ResourceLoaderContext $context
 	 * @return array
 	 */
 	protected function getPages( ResourceLoaderContext $context ) {
-		global $wgUser;
-
-		$userName = $context->getUser();
-		if ( $userName === null ) {
-			return array();
-		}
-
 		$useSiteJs = $this->getConfig()->get( 'UseSiteJs' );
 		$useSiteCss = $this->getConfig()->get( 'UseSiteCss' );
 		if ( !$useSiteJs && !$useSiteCss ) {
 			return array();
 		}
 
-		// Use $wgUser is possible; allows to skip a lot of code
-		if ( is_object( $wgUser ) && $wgUser->getName() == $userName ) {
-			$user = $wgUser;
-		} else {
-			$user = User::newFromName( $userName );
-			if ( !$user instanceof User ) {
-				return array();
-			}
+		$user = $context->getUserObj();
+		if ( !$user || $user->isAnon() ) {
+			return array();
 		}
 
 		$pages = array();
@@ -75,9 +59,9 @@ class ResourceLoaderUserGroupsModule extends ResourceLoaderWikiModule {
 		return $pages;
 	}
 
-	/* Methods */
-
 	/**
+	 * Get group name
+	 *
 	 * @return string
 	 */
 	public function getGroup() {

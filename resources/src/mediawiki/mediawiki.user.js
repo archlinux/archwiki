@@ -3,12 +3,9 @@
  * @singleton
  */
 ( function ( mw, $ ) {
-	var user,
+	var i,
 		deferreds = {},
-		// Extend the skeleton mw.user from mediawiki.js
-		// This is kind of ugly but we're stuck with this for b/c reasons
-		options = mw.user.options || new mw.Map(),
-		tokens = mw.user.tokens || new mw.Map();
+		byteToHex = [];
 
 	/**
 	 * Get the current user's groups or rights
@@ -44,27 +41,65 @@
 		return deferreds[info].promise();
 	}
 
-	mw.user = user = {
-		options: options,
-		tokens: tokens,
+	// Map from numbers 0-255 to a hex string (with padding)
+	for ( i = 0; i < 256; i++ ) {
+		// Padding: Add a full byte (0x100, 256) and strip the extra character
+		byteToHex[i] = ( i + 256 ).toString( 16 ).slice( 1 );
+	}
+
+	// mw.user with the properties options and tokens gets defined in mediawiki.js.
+	$.extend( mw.user, {
 
 		/**
-		 * Generate a random user session ID (32 alpha-numeric characters)
+		 * Generate a random user session ID.
 		 *
 		 * This information would potentially be stored in a cookie to identify a user during a
-		 * session or series of sessions. Its uniqueness should not be depended on.
+		 * session or series of sessions. Its uniqueness should not be depended on unless the
+		 * browser supports the crypto API.
 		 *
-		 * @return {string} Random set of 32 alpha-numeric characters
+		 * Known problems with Math.random():
+		 * Using the Math.random function we have seen sets
+		 * with 1% of non uniques among 200,000 values with Safari providing most of these.
+		 * Given the prevalence of Safari in mobile the percentage of duplicates in
+		 * mobile usages of this code is probably higher.
+		 *
+		 * Rationale:
+		 * We need about 64 bits to make sure that probability of collision
+		 * on 500 million (5*10^8) is <= 1%
+		 * See https://en.wikipedia.org/wiki/Birthday_problem#Probability_table
+		 *
+		 * @return {string} 64 bit integer in hex format, padded
 		 */
 		generateRandomSessionId: function () {
-			var i, r,
-				id = '',
-				seed = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-			for ( i = 0; i < 32; i++ ) {
-				r = Math.floor( Math.random() * seed.length );
-				id += seed.charAt( r );
+			/*jshint bitwise:false */
+			var rnds, i, r,
+				hexRnds = new Array( 8 ),
+				// Support: IE 11
+				crypto = window.crypto || window.msCrypto;
+
+			// Based on https://github.com/broofa/node-uuid/blob/bfd9f96127/uuid.js
+			if ( crypto && crypto.getRandomValues ) {
+				// Fill an array with 8 random values, each of which is 8 bits.
+				// Note that Uint8Array is array-like but does not implement Array.
+				rnds = new Uint8Array( 8 );
+				crypto.getRandomValues( rnds );
+			} else {
+				rnds = new Array( 8 );
+				for ( i = 0; i < 8; i++ ) {
+					if ( ( i & 3 ) === 0 ) {
+						r = Math.random() * 0x100000000;
+					}
+					rnds[i] = r >>> ( ( i & 3 ) << 3 ) & 255;
+				}
 			}
-			return id;
+			// Convert from number to hex
+			for ( i = 0; i < 8; i++ ) {
+				hexRnds[i] = byteToHex[rnds[i]];
+			}
+
+			// Concatenation of two random integers with entrophy n and m
+			// returns a string with entrophy n+m if those strings are independent
+			return hexRnds.join( '' );
 		},
 
 		/**
@@ -95,15 +130,15 @@
 		 */
 		getRegistration: function () {
 			var registration = mw.config.get( 'wgUserRegistration' );
-			if ( user.isAnon() ) {
+			if ( mw.user.isAnon() ) {
 				return false;
-			} else if ( registration === null ) {
+			}
+			if ( registration === null ) {
 				// Information may not be available if they signed up before
 				// MW began storing this.
 				return null;
-			} else {
-				return new Date( registration );
 			}
+			return new Date( registration );
 		},
 
 		/**
@@ -112,7 +147,7 @@
 		 * @return {boolean}
 		 */
 		isAnon: function () {
-			return user.getName() === null;
+			return mw.user.getName() === null;
 		},
 
 		/**
@@ -126,7 +161,7 @@
 		sessionId: function () {
 			var sessionId = $.cookie( 'mediaWiki.user.sessionId' );
 			if ( sessionId === undefined || sessionId === null ) {
-				sessionId = user.generateRandomSessionId();
+				sessionId = mw.user.generateRandomSessionId();
 				$.cookie( 'mediaWiki.user.sessionId', sessionId, { expires: null, path: '/' } );
 			}
 			return sessionId;
@@ -140,7 +175,7 @@
 		 * @return {string} User name or random session ID
 		 */
 		id: function () {
-			return user.getName() || user.sessionId();
+			return mw.user.getName() || mw.user.sessionId();
 		},
 
 		/**
@@ -239,20 +274,6 @@
 		getRights: function ( callback ) {
 			return getUserInfo( 'rights' ).done( callback );
 		}
-	};
-
-	/**
-	 * @method name
-	 * @inheritdoc #getName
-	 * @deprecated since 1.20 Use #getName instead
-	 */
-	mw.log.deprecate( user, 'name', user.getName, 'Use mw.user.getName instead.' );
-
-	/**
-	 * @method anonymous
-	 * @inheritdoc #isAnon
-	 * @deprecated since 1.20 Use #isAnon instead
-	 */
-	mw.log.deprecate( user, 'anonymous', user.isAnon, 'Use mw.user.isAnon instead.' );
+	} );
 
 }( mediaWiki, jQuery ) );

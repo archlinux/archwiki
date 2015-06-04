@@ -143,6 +143,13 @@ class SpecialUpload extends SpecialPage {
 	/**
 	 * Special page entry point
 	 * @param string $par
+	 * @throws ErrorPageError
+	 * @throws Exception
+	 * @throws FatalError
+	 * @throws MWException
+	 * @throws PermissionsError
+	 * @throws ReadOnlyError
+	 * @throws UserBlockedError
 	 */
 	public function execute( $par ) {
 		$this->setHeaders();
@@ -152,6 +159,8 @@ class SpecialUpload extends SpecialPage {
 		if ( !UploadBase::isEnabled() ) {
 			throw new ErrorPageError( 'uploaddisabled', 'uploaddisabledtext' );
 		}
+
+		$this->addHelpLink( 'Help:Managing files' );
 
 		# Check permissions
 		$user = $this->getUser();
@@ -186,7 +195,7 @@ class SpecialUpload extends SpecialPage {
 			$this->processUpload();
 		} else {
 			# Backwards compatibility hook
-			if ( !wfRunHooks( 'UploadForm:initial', array( &$this ) ) ) {
+			if ( !Hooks::run( 'UploadForm:initial', array( &$this ) ) ) {
 				wfDebug( "Hook 'UploadForm:initial' broke output of the upload form\n" );
 
 				return;
@@ -414,7 +423,7 @@ class SpecialUpload extends SpecialPage {
 			return;
 		}
 
-		if ( !wfRunHooks( 'UploadForm:BeforeProcessing', array( &$this ) ) ) {
+		if ( !Hooks::run( 'UploadForm:BeforeProcessing', array( &$this ) ) ) {
 			wfDebug( "Hook 'UploadForm:BeforeProcessing' broke processing the file.\n" );
 			// This code path is deprecated. If you want to break upload processing
 			// do so by hooking into the appropriate hooks in UploadBase::verifyUpload
@@ -454,7 +463,7 @@ class SpecialUpload extends SpecialPage {
 		// Get the page text if this is not a reupload
 		if ( !$this->mForReUpload ) {
 			$pageText = self::getInitialPageText( $this->mComment, $this->mLicense,
-				$this->mCopyrightStatus, $this->mCopyrightSource );
+				$this->mCopyrightStatus, $this->mCopyrightSource, $this->getConfig() );
 		} else {
 			$pageText = false;
 		}
@@ -474,7 +483,7 @@ class SpecialUpload extends SpecialPage {
 
 		// Success, redirect to description page
 		$this->mUploadSuccessful = true;
-		wfRunHooks( 'SpecialUploadComplete', array( &$this ) );
+		Hooks::run( 'SpecialUploadComplete', array( &$this ) );
 		$this->getOutput()->redirect( $this->mLocalFile->getTitle()->getFullURL() );
 	}
 
@@ -484,28 +493,32 @@ class SpecialUpload extends SpecialPage {
 	 * @param string $license
 	 * @param string $copyStatus
 	 * @param string $source
+	 * @param Config $config Configuration object to load data from
 	 * @return string
-	 * @todo Use Config obj instead of globals
 	 */
 	public static function getInitialPageText( $comment = '', $license = '',
-		$copyStatus = '', $source = ''
+		$copyStatus = '', $source = '', Config $config = null
 	) {
-		global $wgUseCopyrightUpload, $wgForceUIMsgAsContentMsg;
+		if ( $config === null ) {
+			wfDebug( __METHOD__ . ' called without a Config instance passed to it' );
+			$config = ConfigFactory::getDefaultInstance()->makeConfig( 'main' );
+		}
 
 		$msg = array();
+		$forceUIMsgAsContentMsg = (array)$config->get( 'ForceUIMsgAsContentMsg' );
 		/* These messages are transcluded into the actual text of the description page.
 		 * Thus, forcing them as content messages makes the upload to produce an int: template
 		 * instead of hardcoding it there in the uploader language.
 		 */
 		foreach ( array( 'license-header', 'filedesc', 'filestatus', 'filesource' ) as $msgName ) {
-			if ( in_array( $msgName, (array)$wgForceUIMsgAsContentMsg ) ) {
+			if ( in_array( $msgName, $forceUIMsgAsContentMsg ) ) {
 				$msg[$msgName] = "{{int:$msgName}}";
 			} else {
 				$msg[$msgName] = wfMessage( $msgName )->inContentLanguage()->text();
 			}
 		}
 
-		if ( $wgUseCopyrightUpload ) {
+		if ( $config->get( 'UseCopyrightUpload' ) ) {
 			$licensetxt = '';
 			if ( $license != '' ) {
 				$licensetxt = '== ' . $msg['license-header'] . " ==\n" . '{{' . $license . '}}' . "\n";
@@ -731,8 +744,8 @@ class SpecialUpload extends SpecialPage {
 		}
 
 		return '<li>' .
-			wfMessage( 'file-exists-duplicate' )->numParams( count( $dupes ) )->parse() .
-			$gallery->toHtml() . "</li>\n";
+			$this->msg( 'file-exists-duplicate' )->numParams( count( $dupes ) )->parse() .
+			$gallery->toHTML() . "</li>\n";
 	}
 
 	protected function getGroupName() {
@@ -746,7 +759,7 @@ class SpecialUpload extends SpecialPage {
 	 *
 	 * @todo What about non-BitmapHandler handled files?
 	 */
-	static public function rotationEnabled() {
+	public static function rotationEnabled() {
 		$bitmapHandler = new BitmapHandler();
 		return $bitmapHandler->autoRotateEnabled();
 	}
@@ -795,7 +808,7 @@ class UploadForm extends HTMLForm {
 			+ $this->getDescriptionSection()
 			+ $this->getOptionsSection();
 
-		wfRunHooks( 'UploadFormInitDescriptor', array( &$descriptor ) );
+		Hooks::run( 'UploadFormInitDescriptor', array( &$descriptor ) );
 		parent::__construct( $descriptor, $context, 'upload' );
 
 		# Add a link to edit MediaWik:Licenses
@@ -872,6 +885,17 @@ class UploadForm extends HTMLForm {
 			);
 		}
 
+		$help = $this->msg( 'upload-maxfilesize',
+				$this->getContext()->getLanguage()->formatSize( $this->mMaxUploadSize['file'] )
+			)->parse();
+
+		// If the user can also upload by URL, there are 2 different file size limits.
+		// This extra message helps stress which limit corresponds to what.
+		if ( $canUploadByUrl ) {
+			$help .= $this->msg( 'word-separator' )->escaped();
+			$help .= $this->msg( 'upload_source_file' )->parse();
+		}
+
 		$descriptor['UploadFile'] = array(
 			'class' => 'UploadSourceField',
 			'section' => 'source',
@@ -881,11 +905,7 @@ class UploadForm extends HTMLForm {
 			'label-message' => 'sourcefilename',
 			'upload-type' => 'File',
 			'radio' => &$radio,
-			'help' => $this->msg( 'upload-maxfilesize',
-				$this->getContext()->getLanguage()->formatSize( $this->mMaxUploadSize['file'] )
-			)->parse() .
-				$this->msg( 'word-separator' )->escaped() .
-				$this->msg( 'upload_source_file' )->escaped(),
+			'help' => $help,
 			'checked' => $selectedSourceType == 'file',
 		);
 
@@ -903,11 +923,11 @@ class UploadForm extends HTMLForm {
 					$this->getContext()->getLanguage()->formatSize( $this->mMaxUploadSize['url'] )
 				)->parse() .
 					$this->msg( 'word-separator' )->escaped() .
-					$this->msg( 'upload_source_url' )->escaped(),
+					$this->msg( 'upload_source_url' )->parse(),
 				'checked' => $selectedSourceType == 'url',
 			);
 		}
-		wfRunHooks( 'UploadFormSourceDescriptors', array( &$descriptor, &$radio, $selectedSourceType ) );
+		Hooks::run( 'UploadFormSourceDescriptors', array( &$descriptor, &$radio, $selectedSourceType ) );
 
 		$descriptor['Extensions'] = array(
 			'type' => 'info',
@@ -930,35 +950,31 @@ class UploadForm extends HTMLForm {
 		$config = $this->getConfig();
 
 		if ( $config->get( 'CheckFileExtensions' ) ) {
+			$fileExtensions = array_unique( $config->get( 'FileExtensions' ) );
 			if ( $config->get( 'StrictFileExtensions' ) ) {
 				# Everything not permitted is banned
 				$extensionsList =
 					'<div id="mw-upload-permitted">' .
-					$this->msg(
-						'upload-permitted',
-						$this->getContext()->getLanguage()->commaList(
-							array_unique( $config->get( 'FileExtensions' ) )
-						)
-					)->parseAsBlock() .
+					$this->msg( 'upload-permitted' )
+						->params( $this->getLanguage()->commaList( $fileExtensions ) )
+						->numParams( count( $fileExtensions ) )
+						->parseAsBlock() .
 					"</div>\n";
 			} else {
 				# We have to list both preferred and prohibited
+				$fileBlacklist = array_unique( $config->get( 'FileBlacklist' ) );
 				$extensionsList =
 					'<div id="mw-upload-preferred">' .
-						$this->msg(
-							'upload-preferred',
-							$this->getContext()->getLanguage()->commaList(
-								array_unique( $config->get( 'FileExtensions' ) )
-							)
-						)->parseAsBlock() .
+						$this->msg( 'upload-preferred' )
+							->params( $this->getLanguage()->commaList( $fileExtensions ) )
+							->numParams( count( $fileExtensions ) )
+							->parseAsBlock() .
 					"</div>\n" .
 					'<div id="mw-upload-prohibited">' .
-						$this->msg(
-							'upload-prohibited',
-							$this->getContext()->getLanguage()->commaList(
-								array_unique( $config->get( 'FileBlacklist' ) )
-							)
-						)->parseAsBlock() .
+						$this->msg( 'upload-prohibited' )
+							->params( $this->getLanguage()->commaList( $fileBlacklist ) )
+							->numParams( count( $fileBlacklist ) )
+							->parseAsBlock() .
 					"</div>\n";
 			}
 		} else {
@@ -978,10 +994,10 @@ class UploadForm extends HTMLForm {
 	protected function getDescriptionSection() {
 		$config = $this->getConfig();
 		if ( $this->mSessionKey ) {
-			$stash = RepoGroup::singleton()->getLocalRepo()->getUploadStash();
+			$stash = RepoGroup::singleton()->getLocalRepo()->getUploadStash( $this->getUser() );
 			try {
 				$file = $stash->getFile( $this->mSessionKey );
-			} catch ( MWException $e ) {
+			} catch ( Exception $e ) {
 				$file = null;
 			}
 			if ( $file ) {
@@ -1139,9 +1155,12 @@ class UploadForm extends HTMLForm {
 				// the wpDestFile textbox
 				$this->mDestFile === '',
 			'wgUploadSourceIds' => $this->mSourceIds,
+			'wgCheckFileExtensions' => $config->get( 'CheckFileExtensions' ),
 			'wgStrictFileExtensions' => $config->get( 'StrictFileExtensions' ),
+			'wgFileExtensions' => array_values( array_unique( $config->get( 'FileExtensions' ) ) ),
 			'wgCapitalizeUploads' => MWNamespace::isCapitalized( NS_FILE ),
 			'wgMaxUploadSize' => $this->mMaxUploadSize,
+			'wgFileCanRotate' => SpecialUpload::rotationEnabled(),
 		);
 
 		$out = $this->getOutput();

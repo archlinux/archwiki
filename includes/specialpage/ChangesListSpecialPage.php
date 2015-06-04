@@ -65,6 +65,12 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 			$batch->add( NS_USER, $row->rc_user_text );
 			$batch->add( NS_USER_TALK, $row->rc_user_text );
 			$batch->add( $row->rc_namespace, $row->rc_title );
+			if ( $row->rc_source === RecentChange::SRC_LOG ) {
+				$formatter = LogFormatter::newFromRow( $row );
+				foreach ( $formatter->getPreloadTitles() as $title ) {
+					$batch->addObj( $title );
+				}
+			}
 		}
 		$batch->execute();
 
@@ -154,7 +160,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 	protected function getCustomFilters() {
 		if ( $this->customFilters === null ) {
 			$this->customFilters = array();
-			wfRunHooks( 'ChangesListSpecialPageFilters', array( $this, &$this->customFilters ) );
+			Hooks::run( 'ChangesListSpecialPageFilters', array( $this, &$this->customFilters ) );
 		}
 
 		return $this->customFilters;
@@ -309,17 +315,19 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 		);
 	}
 
-	protected function runMainQueryHook( &$tables, &$fields, &$conds, &$query_options, &$join_conds, $opts ) {
-		return wfRunHooks(
+	protected function runMainQueryHook( &$tables, &$fields, &$conds,
+		&$query_options, &$join_conds, $opts
+	) {
+		return Hooks::run(
 			'ChangesListSpecialPageQuery',
 			array( $this->getName(), &$tables, &$fields, &$conds, &$query_options, &$join_conds, $opts )
 		);
 	}
 
 	/**
-	 * Return a DatabaseBase object for reading
+	 * Return a IDatabase object for reading
 	 *
-	 * @return DatabaseBase
+	 * @return IDatabase
 	 */
 	protected function getDB() {
 		return wfGetDB( DB_SLAVE );

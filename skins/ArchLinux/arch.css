@@ -111,12 +111,12 @@ a.new,
 
 /* bump down the personal toolbar (top menu) */
 #p-personal {
-    top: 70px;
+    top: 5px;
 }
 
 /* bump down the action tabs (page, discuss, edit, etc.) */
 #p-cactions {
-    top: 92px;
+    top: 27px;
 }
 
 /* bump down the main content to make room for navbar */

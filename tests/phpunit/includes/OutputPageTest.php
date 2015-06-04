@@ -172,18 +172,18 @@ mw.test.baz({token:123});mw.loader.state({"test.quux":"ready"});
 			array(
 				array( 'test.quux', ResourceLoaderModule::TYPE_COMBINED ),
 				'<script>if(window.mw){
-mw.loader.implement("test.quux",function($,jQuery){mw.test.baz({token:123});},{"css":[".mw-icon{transition:none}\n"]},{});
+mw.loader.implement("test.quux",function($,jQuery){mw.test.baz({token:123});},{"css":[".mw-icon{transition:none}\n"]});
 
 }</script>
 '
 			),
-			// Load module script with with ESI
+			// Load module script with ESI
 			array(
 				array( 'test.foo', ResourceLoaderModule::TYPE_SCRIPTS, true ),
 				'<script><esi:include src="http://127.0.0.1:8080/w/load.php?debug=false&amp;lang=en&amp;modules=test.foo&amp;only=scripts&amp;skin=fallback&amp;*" /></script>
 '
 			),
-			// Load module styles with with ESI
+			// Load module styles with ESI
 			array(
 				array( 'test.foo', ResourceLoaderModule::TYPE_STYLES, true ),
 				'<style><esi:include src="http://127.0.0.1:8080/w/load.php?debug=false&amp;lang=en&amp;modules=test.foo&amp;only=styles&amp;skin=fallback&amp;*" /></style>
@@ -203,9 +203,13 @@ mw.loader.implement("test.quux",function($,jQuery){mw.test.baz({token:123});},{"
 			// Load two modules in separate groups
 			array(
 				array( array( 'test.group.foo', 'test.group.bar' ), ResourceLoaderModule::TYPE_COMBINED ),
-				'<script src="http://127.0.0.1:8080/w/load.php?debug=false&amp;lang=en&amp;modules=test.group.bar&amp;skin=fallback&amp;*"></script>
-<script src="http://127.0.0.1:8080/w/load.php?debug=false&amp;lang=en&amp;modules=test.group.foo&amp;skin=fallback&amp;*"></script>
-',
+				'<script>if(window.mw){
+document.write("\u003Cscript src=\"http://127.0.0.1:8080/w/load.php?debug=false\u0026amp;lang=en\u0026amp;modules=test.group.bar\u0026amp;skin=fallback\u0026amp;*\"\u003E\u003C/script\u003E");
+}</script>
+<script>if(window.mw){
+document.write("\u003Cscript src=\"http://127.0.0.1:8080/w/load.php?debug=false\u0026amp;lang=en\u0026amp;modules=test.group.foo\u0026amp;skin=fallback\u0026amp;*\"\u003E\u003C/script\u003E");
+}</script>
+'
 			),
 		);
 	}
@@ -213,6 +217,11 @@ mw.loader.implement("test.quux",function($,jQuery){mw.test.baz({token:123});},{"
 	/**
 	 * @dataProvider provideMakeResourceLoaderLink
 	 * @covers OutputPage::makeResourceLoaderLink
+	 * @covers ResourceLoader::makeLoaderImplementScript
+	 * @covers ResourceLoader::makeModuleResponse
+	 * @covers ResourceLoader::makeInlineScript
+	 * @covers ResourceLoader::makeLoaderStateScript
+	 * @covers ResourceLoader::createLoaderURL
 	 */
 	public function testMakeResourceLoaderLink( $args, $expectedHtml ) {
 		$this->setMwGlobals( array(
@@ -230,6 +239,7 @@ mw.loader.implement("test.quux",function($,jQuery){mw.test.baz({token:123});},{"
 		$ctx->setLanguage( 'en' );
 		$out = new OutputPage( $ctx );
 		$rl = $out->getResourceLoader();
+		$rl->setMessageBlobStore( new NullMessageBlobStore() );
 		$rl->register( array(
 			'test.foo' => new ResourceLoaderTestModule( array(
 				'script' => 'mw.test.foo( { a: true } );',
@@ -271,3 +281,26 @@ mw.loader.implement("test.quux",function($,jQuery){mw.test.baz({token:123});},{"
 		$this->assertEquals( $expectedHtml, $actualHtml );
 	}
 }
+
+/**
+ * MessageBlobStore that doesn't do anything
+ */
+class NullMessageBlobStore extends MessageBlobStore {
+	public function get ( ResourceLoader $resourceLoader, $modules, $lang ) {
+		return array();
+	}
+
+	public function insertMessageBlob ( $name, ResourceLoaderModule $module, $lang ) {
+		return false;
+	}
+
+	public function updateModule ( $name, ResourceLoaderModule $module, $lang ) {
+		return;
+	}
+
+	public function updateMessage ( $key ) {
+	}
+	public function clear() {
+	}
+}
+

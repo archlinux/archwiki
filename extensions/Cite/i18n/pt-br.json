@@ -1,0 +1,30 @@
+{
+	"@metadata": {
+		"authors": [
+			"Cainamarques",
+			"Eduardo.mps",
+			"Giro720",
+			"555"
+		]
+	},
+	"cite-desc": "Adiciona marcas <nowiki><ref[ name=id]></nowiki> e <nowiki><references/></nowiki> para citações",
+	"cite_error": "Erro de citação: $1",
+	"cite_error_ref_numeric_key": "Marca <code>&lt;ref&gt;</code> inválida; \no nome não pode ser um número. Utilize um título descritivo",
+	"cite_error_ref_no_key": "Marca <code>&lt;ref&gt;</code> inválida; \nrefs sem conteúdo devem ter um nome",
+	"cite_error_ref_too_many_keys": "Marca <code>&lt;ref&gt;</code> inválida; \nnomes inválidos (por exemplo, muito extenso)",
+	"cite_error_ref_no_input": "Marca <code>&lt;ref&gt;</code> inválida; \nrefs sem nome devem possuir conteúdo",
+	"cite_error_references_invalid_parameters": "Marca <code>&lt;references&gt;</code> inválida; \nnão são permitidos parâmetros.\nUtilize <code>&lt;references /&gt;</code>",
+	"cite_error_references_invalid_parameters_group": "Marca <code>&lt;references&gt;</code> inválida;\nsó o parâmetro \"group\" é permitido.\nUtilize <code>&lt;references /&gt;</code>, ou <code>&lt;references group=\"...\" /&gt;</code>",
+	"cite_error_references_no_backlink_label": "Etiquetas de backlink esgotadas. \nDefina mais na mensagem <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>",
+	"cite_error_no_link_label_group": "Etiquetas personalizadas para links, no grupo \"$1\", esgotadas.\nDefina mais na mensagem <nowiki>[[MediaWiki:$2]]</nowiki>.",
+	"cite_error_references_no_text": "Marca <code>&lt;ref&gt;</code> inválida; \nnão foi fornecido texto para as refs chamadas <code>$1</code>",
+	"cite_error_included_ref": "<code>&lt;/ref&gt;</code> de fechamento ausente para para a marca <code>&lt;ref&gt;</code>",
+	"cite_error_group_refs_without_references": "existem marcas <code>&lt;ref&gt;</code> para um grupo chamado \"$1\", mas nenhuma marca <code>&lt;references group=\"$1\"/&gt;</code> correspondente foi encontrada (ou uma marca de fechamento <code>&lt;/ref&gt;</code> está faltando)",
+	"cite_error_references_group_mismatch": "marca <code>&lt;ref&gt;</code> em <code>&lt;references&gt;</code> está com o atributo de grupo \"$1\" conflitante.",
+	"cite_error_references_missing_group": "marca <code>&lt;ref&gt;</code> definida em <code>&lt;references&gt;</code> está com atributo de grupo \"$1\" que não aparece no texto anterior.",
+	"cite_error_references_missing_key": "marca <code>&lt;ref&gt;</code> com nome \"$1\", definida em <code>&lt;references&gt;</code>, não foi utilizada no texto anterior.",
+	"cite_error_references_no_key": "marca <code>&lt;ref&gt;</code>, definida em <code>&lt;references&gt;</code>, não tem atributo de nome.",
+	"cite_error_empty_references_define": "marca <code>&lt;ref&gt;</code>, definida em <code>&lt;references&gt;</code>, com nome \"$1\", não tem nenhum conteúdo.",
+	"cite_references_link_accessibility_label": "Ir para cima",
+	"cite_references_link_many_accessibility_label": "Ir para:"
+}

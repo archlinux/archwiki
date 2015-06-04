@@ -303,26 +303,46 @@ class SpecialPage {
 	 *   - `prefixSearchSubpages( "" )` should return `array( foo", "bar", "baz" )`
 	 *
 	 * @param string $search Prefix to search for
-	 * @param int $limit Maximum number of results to return
+	 * @param int $limit Maximum number of results to return (usually 10)
+	 * @param int $offset Number of results to skip (usually 0)
 	 * @return string[] Matching subpages
 	 */
-	public function prefixSearchSubpages( $search, $limit = 10 ) {
+	public function prefixSearchSubpages( $search, $limit, $offset ) {
+		$subpages = $this->getSubpagesForPrefixSearch();
+		if ( !$subpages ) {
+			return array();
+		}
+
+		return self::prefixSearchArray( $search, $limit, $subpages, $offset );
+	}
+
+	/**
+	 * Return an array of subpages that this special page will accept for prefix
+	 * searches. If this method requires a query you might instead want to implement
+	 * prefixSearchSubpages() directly so you can support $limit and $offset. This
+	 * method is better for static-ish lists of things.
+	 *
+	 * @return string[] subpages to search from
+	 */
+	protected function getSubpagesForPrefixSearch() {
 		return array();
 	}
 
 	/**
 	 * Helper function for implementations of prefixSearchSubpages() that
-	 * filter the values in memory (as oppposed to making a query).
+	 * filter the values in memory (as opposed to making a query).
 	 *
 	 * @since 1.24
 	 * @param string $search
 	 * @param int $limit
 	 * @param array $subpages
+	 * @param int $offset
 	 * @return string[]
 	 */
-	protected static function prefixSearchArray( $search, $limit, array $subpages ) {
+	protected static function prefixSearchArray( $search, $limit, array $subpages, $offset ) {
 		$escaped = preg_quote( $search, '/' );
-		return array_slice( preg_grep( "/^$escaped/i", $subpages ), 0, $limit );
+		return array_slice( preg_grep( "/^$escaped/i",
+			array_slice( $subpages, $offset ) ), 0, $limit );
 	}
 
 	/**
@@ -336,6 +356,7 @@ class SpecialPage {
 		if ( $this->getConfig()->get( 'UseMediaWikiUIEverywhere' ) ) {
 			$out->addModuleStyles( array(
 				'mediawiki.ui.input',
+				'mediawiki.ui.radio',
 				'mediawiki.ui.checkbox',
 			) );
 		}
@@ -357,7 +378,7 @@ class SpecialPage {
 		 * @param SpecialPage $this
 		 * @param string|null $subPage
 		 */
-		wfRunHooks( 'SpecialPageBeforeExecute', array( $this, $subPage ) );
+		Hooks::run( 'SpecialPageBeforeExecute', array( $this, $subPage ) );
 
 		$this->beforeExecute( $subPage );
 		$this->execute( $subPage );
@@ -371,7 +392,7 @@ class SpecialPage {
 		 * @param SpecialPage $this
 		 * @param string|null $subPage
 		 */
-		wfRunHooks( 'SpecialPageAfterExecute', array( $this, $subPage ) );
+		Hooks::run( 'SpecialPageAfterExecute', array( $this, $subPage ) );
 	}
 
 	/**
@@ -608,6 +629,26 @@ class SpecialPage {
 			$theseParams = $params + array( 'feedformat' => $format );
 			$url = wfAppendQuery( $feedTemplate, $theseParams );
 			$this->getOutput()->addFeedLink( $format, $url );
+		}
+	}
+
+	/**
+	 * Adds help link with an icon via page indicators.
+	 * Link target can be overridden by a local message containing a wikilink:
+	 * the message key is: lowercase special page name + '-helppage'.
+	 * @param string $to Target MediaWiki.org page title or encoded URL.
+	 * @param bool $overrideBaseUrl Whether $url is a full URL, to avoid MW.o.
+	 * @since 1.25
+	 */
+	public function addHelpLink( $to, $overrideBaseUrl = false ) {
+		global $wgContLang;
+		$msg = $this->msg( $wgContLang->lc( $this->getName() ) . '-helppage' );
+
+		if ( !$msg->isDisabled() ) {
+			$helpUrl = Skin::makeUrl( $msg->plain() );
+			$this->getOutput()->addHelpLink( $helpUrl, true );
+		} else {
+			$this->getOutput()->addHelpLink( $to, $overrideBaseUrl );
 		}
 	}
 

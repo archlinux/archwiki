@@ -54,7 +54,7 @@ class SpecialRenameuser extends SpecialPage {
 
 		$warnings = array();
 		if ( $oun && $nun && !$request->getCheck( 'confirmaction' )  ) {
-			wfRunHooks( 'RenameUserWarning', array( $oun, $nun, &$warnings ) );
+			Hooks::run( 'RenameUserWarning', array( $oun, $nun, &$warnings ) );
 		}
 
 		$out->addHTML(
@@ -259,16 +259,19 @@ class SpecialRenameuser extends SpecialPage {
 			return;
 		}
 
-		// Always get the edits count, it will be used for the log message
-		$contribs = $olduser->getEditCount();
-
 		// Give other affected extensions a chance to validate or abort
-		if ( !wfRunHooks( 'RenameUserAbort', array( $uid, $oldusername->getText(), $newusername->getText() ) ) ) {
+		if ( !Hooks::run( 'RenameUserAbort', array( $uid, $oldusername->getText(), $newusername->getText() ) ) ) {
 			return;
 		}
 
 		// Do the heavy lifting...
-		$rename = new RenameuserSQL( $oldusername->getText(), $newusername->getText(), $uid );
+		$rename = new RenameuserSQL(
+			$oldusername->getText(),
+			$newusername->getText(),
+			$uid,
+			$this->getUser(),
+			array( 'reason' => $reason )
+		);
 		if ( !$rename->rename() ) {
 			return;
 		}
@@ -278,20 +281,6 @@ class SpecialRenameuser extends SpecialPage {
 		if ( $user->getId() == $uid ) {
 			$user->setName( $newusername->getText() );
 		}
-
-		// Log this rename, updated to 1.19+ Log form.
-		//	https://www.mediawiki.org/wiki/Logging_to_Special:Log
-		$logEntry = new ManualLogEntry( 'renameuser', 'renameuser' );
-		$logEntry->setPerformer( $this->getUser() );
-		$logEntry->setTarget( $oldusername );
-		$logEntry->setComment( $reason );
-		$logEntry->setParameters( array(
-			'4::olduser' => $oldusername->getText(),
-			'5::newuser' => $newusername->getText(),
-			'6::edits' => $contribs
-		) );
-		$logid = $logEntry->insert();
-		$logEntry->publish( $logid );
 
 		// Move any user pages
 		if ( $request->getCheck( 'movepages' ) && $user->isAllowed( 'move' ) ) {
@@ -379,5 +368,9 @@ class SpecialRenameuser extends SpecialPage {
 		$logPage = new LogPage( $type );
 		$out->addHTML( Xml::element( 'h2', null, $logPage->getName()->text() ) . "\n" );
 		LogEventsList::showLogExtract( $out, $type, $username->getPrefixedText() );
+	}
+
+	protected function getGroupName() {
+		return 'users';
 	}
 }

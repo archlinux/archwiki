@@ -41,24 +41,34 @@ class LU_Finder {
 			unset( $this->php[$key] );
 
 			foreach ( (array)$value as $subkey => $subvalue ) {
-				// This ignores magic, alias etc. non message files
+				// Mediawiki core files
 				$matches = array();
-				$ok = preg_match( '~/extensions/(?P<name>[^/]+)/(?P<path>.*)$~', $subvalue, $matches );
-				if ( !$ok ) {
+				if ( preg_match( '~/(?P<path>(?:includes|languages|resources)/.*)$~', $subvalue, $matches ) ) {
+					$components["$key-$subkey"] = array(
+						'repo' => 'mediawiki',
+						'orig' => "file://$value/*.json",
+						'path' => "{$matches['path']}/*.json",
+					);
 					continue;
 				}
 
-				$components["$key-$subkey"] = array(
-					'repo' => 'extension',
-					'name' => $matches['name'],
-					'orig' => "file://$subvalue/*.json",
-					'path' => "{$matches['path']}/*.json",
-				);
+				$item = $this->getItem( 'extensions', $subvalue );
+				if ( $item !== null ) {
+					$item['repo'] = 'extension';
+					$components["$key-$subkey"] = $item;
+					continue;
+				}
+
+				$item = $this->getItem( 'skins', $subvalue );
+				if ( $item !== null ) {
+					$item['repo'] = 'skin';
+					$components["$key-$subkey"] = $item;
+					continue;
+				}
 			}
 		}
 
 		foreach ( $this->php as $key => $value ) {
-			// This currently skips core i18n files like resources/oojs-ui/i18n
 			$matches = array();
 			$ok = preg_match( '~/extensions/(?P<name>[^/]+)/(?P<path>.*\.i18n\.php)$~', $value, $matches );
 			if ( !$ok ) {
@@ -74,5 +84,24 @@ class LU_Finder {
 		}
 
 		return $components;
+	}
+
+	/**
+	 * @param string $dir extensions or skins
+	 * @param string $subvalue
+	 * @return array|null
+	 */
+	private function getItem( $dir, $subvalue ) {
+		// This ignores magic, alias etc. non message files
+		$matches = array();
+		if ( !preg_match( "~/$dir/(?P<name>[^/]+)/(?P<path>.*)$~", $subvalue, $matches ) ) {
+			return null;
+		}
+
+		return array(
+			'name' => $matches['name'],
+			'orig' => "file://$subvalue/*.json",
+			'path' => "{$matches['path']}/*.json",
+		);
 	}
 }

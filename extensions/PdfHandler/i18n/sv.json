@@ -6,6 +6,7 @@
 		]
 	},
 	"pdf-desc": "Hantering av PDF-visning i bildläge",
+	"pdf-file-page-warning-info": "Läs mer om det här problemet.",
 	"pdf_no_metadata": "Kan inte hämta metadata från PDF",
 	"pdf_page_error": "Sidnummer överstiger antal sidor i dokumentet",
 	"exif-pdf-producer": "Konverteringsprogram",

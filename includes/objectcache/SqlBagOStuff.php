@@ -88,6 +88,7 @@ class SqlBagOStuff extends BagOStuff {
 	 * @param array $params
 	 */
 	public function __construct( $params ) {
+		parent::__construct( $params );
 		if ( isset( $params['servers'] ) ) {
 			$this->serverInfos = $params['servers'];
 			$this->numServers = count( $this->serverInfos );
@@ -118,6 +119,7 @@ class SqlBagOStuff extends BagOStuff {
 	 *
 	 * @param int $serverIndex
 	 * @return DatabaseBase
+	 * @throws MWException
 	 */
 	protected function getDB( $serverIndex ) {
 		global $wgDebugDBTransactions;
@@ -137,12 +139,14 @@ class SqlBagOStuff extends BagOStuff {
 			# If server connection info was given, use that
 			if ( $this->serverInfos ) {
 				if ( $wgDebugDBTransactions ) {
-					wfDebug( "Using provided serverInfo for SqlBagOStuff\n" );
+					$this->logger->debug( "Using provided serverInfo for SqlBagOStuff" );
 				}
 				$info = $this->serverInfos[$serverIndex];
 				$type = isset( $info['type'] ) ? $info['type'] : 'mysql';
 				$host = isset( $info['host'] ) ? $info['host'] : '[unknown]';
-				wfDebug( __CLASS__ . ": connecting to $host\n" );
+				$this->logger->debug( __CLASS__ . ": connecting to $host" );
+				// Use a blank trx profiler to ignore expections as this is a cache
+				$info['trxProfiler'] = new TransactionProfiler();
 				$db = DatabaseBase::factory( $type, $info );
 				$db->clearFlag( DBO_TRX );
 			} else {
@@ -160,7 +164,7 @@ class SqlBagOStuff extends BagOStuff {
 				}
 			}
 			if ( $wgDebugDBTransactions ) {
-				wfDebug( sprintf( "Connection %s will be used for SqlBagOStuff\n", $db ) );
+				$this->logger->debug( sprintf( "Connection %s will be used for SqlBagOStuff", $db ) );
 			}
 			$this->conns[$serverIndex] = $db;
 		}
@@ -322,9 +326,7 @@ class SqlBagOStuff extends BagOStuff {
 			if ( $exptime == 0 ) {
 				$encExpiry = $this->getMaxDateTime( $db );
 			} else {
-				if ( $exptime < 3.16e8 ) { # ~10 years
-					$exptime += time();
-				}
+				$exptime = $this->convertExpiry( $exptime );
 				$encExpiry = $db->timestamp( $exptime );
 			}
 			foreach ( $serverKeys as $tableName => $tableKeys ) {
@@ -377,10 +379,7 @@ class SqlBagOStuff extends BagOStuff {
 			if ( $exptime == 0 ) {
 				$encExpiry = $this->getMaxDateTime( $db );
 			} else {
-				if ( $exptime < 3.16e8 ) { # ~10 years
-					$exptime += time();
-				}
-
+				$exptime = $this->convertExpiry( $exptime );
 				$encExpiry = $db->timestamp( $exptime );
 			}
 			// (bug 24425) use a replace if the db supports it instead of
@@ -408,7 +407,7 @@ class SqlBagOStuff extends BagOStuff {
 	 * @param int $exptime
 	 * @return bool
 	 */
-	public function cas( $casToken, $key, $value, $exptime = 0 ) {
+	protected function cas( $casToken, $key, $value, $exptime = 0 ) {
 		list( $serverIndex, $tableName ) = $this->getTableByKey( $key );
 		try {
 			$db = $this->getDB( $serverIndex );
@@ -421,9 +420,7 @@ class SqlBagOStuff extends BagOStuff {
 			if ( $exptime == 0 ) {
 				$encExpiry = $this->getMaxDateTime( $db );
 			} else {
-				if ( $exptime < 3.16e8 ) { # ~10 years
-					$exptime += time();
-				}
+				$exptime = $this->convertExpiry( $exptime );
 				$encExpiry = $db->timestamp( $exptime );
 			}
 			// (bug 24425) use a replace if the db supports it instead of
@@ -452,10 +449,9 @@ class SqlBagOStuff extends BagOStuff {
 
 	/**
 	 * @param string $key
-	 * @param int $time
 	 * @return bool
 	 */
-	public function delete( $key, $time = 0 ) {
+	public function delete( $key ) {
 		list( $serverIndex, $tableName ) = $this->getTableByKey( $key );
 		try {
 			$db = $this->getDB( $serverIndex );
@@ -518,6 +514,14 @@ class SqlBagOStuff extends BagOStuff {
 		}
 
 		return $newValue;
+	}
+
+	public function merge( $key, $callback, $exptime = 0, $attempts = 10 ) {
+		if ( !is_callable( $callback ) ) {
+			throw new Exception( "Got invalid callback." );
+		}
+
+		return $this->mergeViaCas( $key, $callback, $exptime, $attempts );
 	}
 
 	/**
@@ -621,7 +625,8 @@ class SqlBagOStuff extends BagOStuff {
 								if ( $remainingSeconds > $totalSeconds ) {
 									$totalSeconds = $remainingSeconds;
 								}
-								$percent = ( $i + $remainingSeconds / $totalSeconds )
+								$processedSeconds = $totalSeconds - $remainingSeconds;
+								$percent = ( $i + $processedSeconds / $totalSeconds )
 									/ $this->shards * 100;
 							}
 							$percent = ( $percent / $this->numServers )
@@ -638,6 +643,11 @@ class SqlBagOStuff extends BagOStuff {
 		return true;
 	}
 
+	/**
+	 * Delete content of shard tables in every server.
+	 * Return true if the operation is successful, false otherwise.
+	 * @return bool
+	 */
 	public function deleteAll() {
 		for ( $serverIndex = 0; $serverIndex < $this->numServers; $serverIndex++ ) {
 			try {
@@ -702,13 +712,13 @@ class SqlBagOStuff extends BagOStuff {
 		if ( $exception instanceof DBConnectionError ) {
 			$this->markServerDown( $exception, $serverIndex );
 		}
-		wfDebugLog( 'SQLBagOStuff', "DBError: {$exception->getMessage()}" );
+		$this->logger->error( "DBError: {$exception->getMessage()}" );
 		if ( $exception instanceof DBConnectionError ) {
 			$this->setLastError( BagOStuff::ERR_UNREACHABLE );
-			wfDebug( __METHOD__ . ": ignoring connection error\n" );
+			$this->logger->debug( __METHOD__ . ": ignoring connection error" );
 		} else {
 			$this->setLastError( BagOStuff::ERR_UNEXPECTED );
-			wfDebug( __METHOD__ . ": ignoring query error\n" );
+			$this->logger->debug( __METHOD__ . ": ignoring query error" );
 		}
 	}
 
@@ -723,18 +733,21 @@ class SqlBagOStuff extends BagOStuff {
 			$this->markServerDown( $exception, $serverIndex );
 		}
 		if ( $exception->db && $exception->db->wasReadOnlyError() ) {
-			try {
-				$exception->db->rollback( __METHOD__ );
-			} catch ( DBError $e ) {
+			if ( $exception->db->trxLevel() ) {
+				try {
+					$exception->db->rollback( __METHOD__ );
+				} catch ( DBError $e ) {
+				}
 			}
 		}
-		wfDebugLog( 'SQLBagOStuff', "DBError: {$exception->getMessage()}" );
+
+		$this->logger->error( "DBError: {$exception->getMessage()}" );
 		if ( $exception instanceof DBConnectionError ) {
 			$this->setLastError( BagOStuff::ERR_UNREACHABLE );
-			wfDebug( __METHOD__ . ": ignoring connection error\n" );
+			$this->logger->debug( __METHOD__ . ": ignoring connection error" );
 		} else {
 			$this->setLastError( BagOStuff::ERR_UNEXPECTED );
-			wfDebug( __METHOD__ . ": ignoring query error\n" );
+			$this->logger->debug( __METHOD__ . ": ignoring query error" );
 		}
 	}
 
@@ -750,12 +763,12 @@ class SqlBagOStuff extends BagOStuff {
 				unset( $this->connFailureTimes[$serverIndex] );
 				unset( $this->connFailureErrors[$serverIndex] );
 			} else {
-				wfDebug( __METHOD__ . ": Server #$serverIndex already down\n" );
+				$this->logger->debug( __METHOD__ . ": Server #$serverIndex already down" );
 				return;
 			}
 		}
 		$now = time();
-		wfDebug( __METHOD__ . ": Server #$serverIndex down until " . ( $now + 60 ) . "\n" );
+		$this->logger->info( __METHOD__ . ": Server #$serverIndex down until " . ( $now + 60 ) );
 		$this->connFailureTimes[$serverIndex] = $now;
 		$this->connFailureErrors[$serverIndex] = $exception;
 	}
@@ -778,10 +791,4 @@ class SqlBagOStuff extends BagOStuff {
 			}
 		}
 	}
-}
-
-/**
- * Backwards compatibility alias
- */
-class MediaWikiBagOStuff extends SqlBagOStuff {
 }

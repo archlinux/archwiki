@@ -186,10 +186,16 @@ class ApiQueryGadgets extends ApiQueryBase {
 		);
 	}
 
+	/**
+	 * @deprecated since MediaWiki core 1.25
+	 */
 	public function getDescription() {
 		return 'Returns a list of gadgets used on this wiki';
 	}
 
+	/**
+	 * @deprecated since MediaWiki core 1.25
+	 */
 	public function getParamDescription() {
 		return array(
 			'prop' => array(
@@ -205,6 +211,9 @@ class ApiQueryGadgets extends ApiQueryBase {
 		);
 	}
 
+	/**
+	 * @deprecated since MediaWiki core 1.25
+	 */
 	public function getExamples() {
 		$params = $this->getAllowedParams();
 		$allProps = implode( '|', $params['prop'][ApiBase::PARAM_TYPE] );
@@ -222,7 +231,23 @@ class ApiQueryGadgets extends ApiQueryBase {
 		);
 	}
 
-	public function getVersion() {
-		return __CLASS__ . ': $Id$';
+	/**
+	 * @see ApiBase::getExamplesMessages()
+	 */
+	protected function getExamplesMessages() {
+		$params = $this->getAllowedParams();
+		$allProps = implode( '|', $params['prop'][ApiBase::PARAM_TYPE] );
+		return array(
+			'action=query&list=gadgets&gaprop=id|desc'
+				=> 'apihelp-query+gadgets-example-1',
+			"action=query&list=gadgets&gaprop=$allProps"
+				=> 'apihelp-query+gadgets-example-2',
+			'action=query&list=gadgets&gacategories=foo'
+				=> 'apihelp-query+gadgets-example-3',
+			'action=query&list=gadgets&gaids=foo|bar&gaprop=id|desc|metadata'
+				=> 'apihelp-query+gadgets-example-4',
+			'action=query&list=gadgets&gaenabledonly'
+				=> 'apihelp-query+gadgets-example-5',
+		);
 	}
 }

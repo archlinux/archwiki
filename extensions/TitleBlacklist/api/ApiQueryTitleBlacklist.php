@@ -90,6 +90,9 @@ class ApiQueryTitleBlacklist extends ApiBase {
 		);
 	}
 
+	/**
+	 * @deprecated since MediaWiki core 1.25
+	 */
 	public function getParamDescription() {
 		return array(
 			'title' => 'The string to validate against the blacklist',
@@ -98,10 +101,16 @@ class ApiQueryTitleBlacklist extends ApiBase {
 		);
 	}
 
+	/**
+	 * @deprecated since MediaWiki core 1.25
+	 */
 	public function getDescription() {
 		return 'Validate an article title, filename, or username against the TitleBlacklist.';
 	}
 
+	/**
+	 * @deprecated since MediaWiki core 1.25
+	 */
 	public function getExamples() {
 		return array(
 			'api.php?action=titleblacklist&tbtitle=Foo',
@@ -109,7 +118,15 @@ class ApiQueryTitleBlacklist extends ApiBase {
 		);
 	}
 
-	public function getVersion() {
-		return __CLASS__ . ': $Id$';
+	/**
+	 * @see ApiBase::getExamplesMessages()
+	 */
+	protected function getExamplesMessages() {
+		return array(
+			'action=titleblacklist&tbtitle=Foo'
+				=> 'apihelp-titleblacklist-example-1',
+			'action=titleblacklist&tbtitle=Bar&tbaction=edit'
+				=> 'apihelp-titleblacklist-example-2',
+		);
 	}
 }

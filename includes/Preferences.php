@@ -96,7 +96,7 @@ class Preferences {
 		self::searchPreferences( $user, $context, $defaultPreferences );
 		self::miscPreferences( $user, $context, $defaultPreferences );
 
-		wfRunHooks( 'GetPreferences', array( $user, &$defaultPreferences ) );
+		Hooks::run( 'GetPreferences', array( $user, &$defaultPreferences ) );
 
 		self::loadPreferenceValues( $user, $context, $defaultPreferences );
 		self::$defaultPreferences = $defaultPreferences;
@@ -130,8 +130,7 @@ class Preferences {
 			if ( $disable && !in_array( $name, self::$saveBlacklist ) ) {
 				$info['disabled'] = 'disabled';
 			}
-			$field = HTMLForm::loadInputFromParameters( $name, $info ); // For validation
-			$field->mParent = $dummyForm;
+			$field = HTMLForm::loadInputFromParameters( $name, $info, $dummyForm ); // For validation
 			$defaultOptions = User::getDefaultOptions();
 			$globalDefault = isset( $defaultOptions[$name] )
 				? $defaultOptions[$name]
@@ -244,10 +243,9 @@ class Preferences {
 			'type' => 'info',
 			'label' => $context->msg( 'prefs-memberingroups' )->numParams(
 				count( $userGroups ) )->params( $userName )->parse(),
-			'default' => $context->msg( 'prefs-memberingroups-type',
-				$lang->commaList( $userGroups ),
-				$lang->commaList( $userMembers )
-			)->plain(),
+			'default' => $context->msg( 'prefs-memberingroups-type' )
+				->rawParams( $lang->commaList( $userGroups ), $lang->commaList( $userMembers ) )
+				->escaped(),
 			'raw' => true,
 			'section' => 'personal/info',
 		);
@@ -339,11 +337,11 @@ class Preferences {
 			'type' => 'radio',
 			'section' => 'personal/i18n',
 			'options' => array(
-				$context->msg( 'parentheses',
-					$context->msg( 'gender-unknown' )->text()
-				)->text() => 'unknown',
-				$context->msg( 'gender-female' )->text() => 'female',
-				$context->msg( 'gender-male' )->text() => 'male',
+				$context->msg( 'parentheses' )
+					->params( $context->msg( 'gender-unknown' )->plain() )
+					->escaped() => 'unknown',
+				$context->msg( 'gender-female' )->escaped() => 'female',
+				$context->msg( 'gender-male' )->escaped() => 'male',
 			),
 			'label-message' => 'yourgender',
 			'help-message' => 'prefs-help-gender',
@@ -451,8 +449,8 @@ class Preferences {
 						array( 'returnto' => SpecialPage::getTitleFor( 'Preferences' )->getPrefixedText() ) );
 
 					$emailAddress .= $emailAddress == '' ? $link : (
-						$context->msg( 'word-separator' )->plain()
-						. $context->msg( 'parentheses' )->rawParams( $link )->plain()
+						$context->msg( 'word-separator' )->escaped()
+						. $context->msg( 'parentheses' )->rawParams( $link )->escaped()
 					);
 				}
 
@@ -870,7 +868,7 @@ class Preferences {
 			'min' => 1,
 			'max' => ceil( $rcMaxAge / ( 3600 * 24 ) ),
 			'help' => $context->msg( 'recentchangesdays-max' )->numParams(
-				ceil( $rcMaxAge / ( 3600 * 24 ) ) )->text()
+				ceil( $rcMaxAge / ( 3600 * 24 ) ) )->escaped()
 		);
 		$defaultPreferences['rclimit'] = array(
 			'type' => 'int',
@@ -895,6 +893,9 @@ class Preferences {
 				'section' => 'rc/advancedrc',
 				'label-message' => 'tog-hidepatrolled',
 			);
+		}
+
+		if ( $user->useNPPatrol() ) {
 			$defaultPreferences['newpageshidepatrolled'] = array(
 				'type' => 'toggle',
 				'section' => 'rc/advancedrc',
@@ -921,13 +922,37 @@ class Preferences {
 		$watchlistdaysMax = ceil( $config->get( 'RCMaxAge' ) / ( 3600 * 24 ) );
 
 		## Watchlist #####################################
+		if ( $user->isAllowed( 'editmywatchlist' ) ) {
+			$editWatchlistLinks = array();
+			$editWatchlistModes = array(
+				'edit' => array( 'EditWatchlist', false ),
+				'raw' => array( 'EditWatchlist', 'raw' ),
+				'clear' => array( 'EditWatchlist', 'clear' ),
+			);
+			foreach ( $editWatchlistModes as $editWatchlistMode => $mode ) {
+				// Messages: prefs-editwatchlist-edit, prefs-editwatchlist-raw, prefs-editwatchlist-clear
+				$editWatchlistLinks[] = Linker::linkKnown(
+					SpecialPage::getTitleFor( $mode[0], $mode[1] ),
+					$context->msg( "prefs-editwatchlist-{$editWatchlistMode}" )->parse()
+				);
+			}
+
+			$defaultPreferences['editwatchlist'] = array(
+				'type' => 'info',
+				'raw' => true,
+				'default' => $context->getLanguage()->pipeList( $editWatchlistLinks ),
+				'label-message' => 'prefs-editwatchlist-label',
+				'section' => 'watchlist/editwatchlist',
+			);
+		}
+
 		$defaultPreferences['watchlistdays'] = array(
 			'type' => 'float',
 			'min' => 0,
 			'max' => $watchlistdaysMax,
 			'section' => 'watchlist/displaywatchlist',
 			'help' => $context->msg( 'prefs-watchlist-days-max' )->numParams(
-				$watchlistdaysMax )->text(),
+				$watchlistdaysMax )->escaped(),
 			'label-message' => 'prefs-watchlist-days',
 		);
 		$defaultPreferences['wllimit'] = array(
@@ -969,7 +994,7 @@ class Preferences {
 			'label-message' => 'tog-watchlisthideliu',
 		);
 
-		if ( $context->getConfig()->get( 'UseRCPatrol' ) ) {
+		if ( $user->useRCPatrol() ) {
 			$defaultPreferences['watchlisthidepatrolled'] = array(
 				'type' => 'toggle',
 				'section' => 'watchlist/advancedwatchlist',
@@ -1047,7 +1072,7 @@ class Preferences {
 		$ret = array();
 
 		$mptitle = Title::newMainPage();
-		$previewtext = $context->msg( 'skin-preview' )->text();
+		$previewtext = $context->msg( 'skin-preview' )->escaped();
 
 		# Only show skins that aren't disabled in $wgSkipSkins
 		$validSkinNames = Skin::getAllowedSkins();
@@ -1072,7 +1097,7 @@ class Preferences {
 			$linkTools = array();
 
 			# Mark the default skin
-			if ( $skinkey == $defaultSkin ) {
+			if ( strcasecmp( $skinkey, $defaultSkin ) === 0 ) {
 				$linkTools[] = $context->msg( 'default' )->escaped();
 				$foundDefault = true;
 			}
@@ -1092,10 +1117,9 @@ class Preferences {
 				$linkTools[] = Linker::link( $jsPage, $context->msg( 'prefs-custom-js' )->escaped() );
 			}
 
-			$display = $sn . ' ' . $context->msg(
-				'parentheses',
-				$context->getLanguage()->pipeList( $linkTools )
-			)->text();
+			$display = $sn . ' ' . $context->msg( 'parentheses' )
+				->rawParams( $context->getLanguage()->pipeList( $linkTools ) )
+				->escaped();
 			$ret[$display] = $skinkey;
 		}
 
@@ -1433,7 +1457,7 @@ class Preferences {
 				$user->setOption( $key, $value );
 			}
 
-			wfRunHooks( 'PreferencesFormPreSave', array( $formData, $form, $user, &$result ) );
+			Hooks::run( 'PreferencesFormPreSave', array( $formData, $form, $user, &$result ) );
 			$user->saveSettings();
 		}
 
@@ -1465,28 +1489,6 @@ class Preferences {
 		}
 
 		return Status::newGood();
-	}
-
-	/**
-	 * Try to set a user's email address.
-	 * This does *not* try to validate the address.
-	 * Caller is responsible for checking $wgAuth and 'editmyprivateinfo'
-	 * right.
-	 *
-	 * @deprecated since 1.20; use User::setEmailWithConfirmation() instead.
-	 * @param User $user
-	 * @param string $newaddr New email address
-	 * @return array (true on success or Status on failure, info string)
-	 */
-	public static function trySetUserEmail( User $user, $newaddr ) {
-		wfDeprecated( __METHOD__, '1.20' );
-
-		$result = $user->setEmailWithConfirmation( $newaddr );
-		if ( $result->isGood() ) {
-			return array( true, $result->value );
-		} else {
-			return array( $result, 'mailerror' );
-		}
 	}
 }
 
@@ -1539,12 +1541,8 @@ class PreferencesForm extends HTMLForm {
 	 * @return string
 	 */
 	function getButtons() {
-		global $wgUseMediaWikiUIEverywhere;
 
 		$attrs = array( 'id' => 'mw-prefs-restoreprefs' );
-		if ( $wgUseMediaWikiUIEverywhere ) {
-			$attrs['class'] = 'mw-ui-button mw-ui-quiet';
-		}
 
 		if ( !$this->getModifiedUser()->isAllowedAny( 'editmyprivateinfo', 'editmyoptions' ) ) {
 			return '';
@@ -1556,7 +1554,7 @@ class PreferencesForm extends HTMLForm {
 			$t = SpecialPage::getTitleFor( 'Preferences', 'reset' );
 
 			$html .= "\n" . Linker::link( $t, $this->msg( 'restoreprefs' )->escaped(),
-				$attrs );
+				Html::buttonAttributes( $attrs, array( 'mw-ui-quiet' ) ) );
 
 			$html = Xml::tags( 'div', array( 'class' => 'mw-prefs-buttons' ), $html );
 		}
@@ -1601,7 +1599,7 @@ class PreferencesForm extends HTMLForm {
 	 */
 	function getLegend( $key ) {
 		$legend = parent::getLegend( $key );
-		wfRunHooks( 'PreferencesGetLegend', array( $this, $key, &$legend ) );
+		Hooks::run( 'PreferencesGetLegend', array( $this, $key, &$legend ) );
 		return $legend;
 	}
 }

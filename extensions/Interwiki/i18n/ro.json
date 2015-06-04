@@ -11,8 +11,6 @@
 	"interwiki-title-norights": "Vizualizare date interwiki",
 	"interwiki-desc": "Adaugă o [[Special:Interwiki|pagină specială]] pentru vizualizarea și modificarea tabelului interwiki",
 	"interwiki_intro": "Aceasta este o imagine de ansamblu a tabelului interwiki.",
-	"interwiki-legend-show": "Arată legenda",
-	"interwiki-legend-hide": "Ascunde legenda",
 	"interwiki_prefix": "Prefix",
 	"interwiki-prefix-label": "Prefix:",
 	"interwiki_local": "Înainte",

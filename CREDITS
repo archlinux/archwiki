@@ -1,6 +1,6 @@
 {{int:version-credits-summary}}
 <!--
-MediaWiki 1.24 is a collaborative project released under the
+MediaWiki 1.25 is a collaborative project released under the
 GNU General Public License v2. We would like to recognize the
 following names for their contribution to the product.
 -->
@@ -12,13 +12,15 @@ following names for their contribution to the product.
 * Alexander Monk
 * Alexandre Emsenhuber
 * Andrew Garrett
+* Antoine Musso
 * Arthur Richards
 * Aryeh Gregor
-* Antoine Musso
-* Brian Wolff
+* Bartosz Dziewoński
 * Bertrand Grondin
 * Brad Jorsch
+* Brian Wolff
 * Brion Vibber
+* Bryan Davis
 * Bryan Tong Minh
 * Chad Horohoe
 * Charles Melbye
@@ -40,13 +42,13 @@ following names for their contribution to the product.
 * Ilmari Karonen
 * Jack D. Pond
 * Jack Phoenix
+* Jackmcbarn
 * Jan Paul Posma
 * Jason Richey
 * Jeroen De Dauw
 * John Du Hart
 * Jon Harald Søby
 * Juliano F. Ravasi
-* Ryan Kaldari
 * Leo Koppelkamm
 * Leon Weber
 * Leslie Hoare
@@ -54,6 +56,7 @@ following names for their contribution to the product.
 * Marius Hoch
 * Matěj Grabovský
 * Matt Johnston
+* Matthew Flaschen
 * Max Semenik
 * Meno25
 * MinuteElectron
@@ -73,26 +76,28 @@ following names for their contribution to the product.
 * Robert Stojnić
 * Robin Pepermans
 * Rotem Liss
+* Ryan Kaldari
 * Ryan Lane
 * Ryan Schmidt
 * Sam Reed
 * Shinjiman
 * Siebrand Mazeland
-* SQL
 * Soxred93
+* SQL
 * Szymon Świerkosz
+* This, that and the other
 * Thomas Bleher
+* Thomas Gries
 * Tim Starling
 * Timo Tijhof
-* Thomas Gries
 * Trevor Parscal
 * Victor Vasiliev
 * Yesid Carrillo
 * Yuri Astrakhan
 
 == Patch Contributors ==
-* Aaron Pramana
 * Aaron Ball
+* Aaron Pramana
 * Agbad
 * Ahmad Sherif
 * Alejandro Mery
@@ -103,19 +108,17 @@ following names for their contribution to the product.
 * Asier Lostalé
 * Azliq7
 * Bagariavivek
-* Bartosz Dziewoński
 * Beau
 * Benny Situ
 * Bergi
 * Borislav Manolov
-* Brad Jorsch
 * Brent G
 * Brianna Laugher
 * Carlin
 * Carsten Nielsen
 * Chris Steipp
-* Christian Neubauer
 * Christian Aistleitner
+* Christian Neubauer
 * Conrad Irwin
 * cryptocoryne
 * Dan Barrett
@@ -133,8 +136,8 @@ following names for their contribution to the product.
 * Erwin Dokter
 * Étienne Beaulé
 * Federico Leva
-* FunPika
 * fomafix
+* FunPika
 * Gabriel Wicke
 * Gero Scholz
 * Gilles van den Hoven
@@ -148,8 +151,8 @@ following names for their contribution to the product.
 * Jeremy Baron
 * Jidanni
 * Jimmy Xu
-* Jonathan Wiltshire
 * John N
+* Jonathan Wiltshire
 * JuneHyeon Bae
 * Jure Kajzer
 * Karun Dambiec
@@ -166,16 +169,16 @@ following names for their contribution to the product.
 * Lupo
 * Madman
 * Manuel Menal
+* Marc-André Pelletier
 * Marcin Cieślak
 * Marcus Buck
-* Marc-André Pelletier
 * Mark Hershberger
 * Mark Holmquist
 * Marooned
 * Mathias Ertl
-* Matthias Mullie
-* Matthew Britton
 * mati
+* Matthew Britton
+* Matthias Mullie
 * Max
 * Max Sikström
 * merl
@@ -185,20 +188,20 @@ following names for their contribution to the product.
 * Michael Newton
 * Michael Walsh
 * Mike Horvath
-* Mormegil
 * moejoe0000
+* Mormegil
 * MrBlueSky
 * MrPete
-* MZMcBride
 * mybugs.mail
+* MZMcBride
 * Nakon
 * Nathan Larson
 * nephele
 * Nik
-* Nx.devnull
 * Nikola Kovacs
 * Nikolaos S. Karastathis
 * Nischay Nahata
+* Nx.devnull
 * Olaf Lenz
 * Olivier Finlay Beaton
 * Patricio Molina
@@ -240,7 +243,7 @@ following names for their contribution to the product.
 * Waldir Pimenta
 * William Demchick
 * Yusuke Matsubara
-* Yuvaraj Pandian T
+* Yuvi Panda
 * Zachary Hauri
 
 == Translators ==

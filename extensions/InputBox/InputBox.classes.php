@@ -15,6 +15,7 @@ class InputBox {
 	private $mType = '';
 	private $mWidth = 50;
 	private $mPreload = '';
+	private $mPreloadparams = array();
 	private $mEditIntro = '';
 	private $mSummary = '';
 	private $mNosummary = '';
@@ -44,7 +45,11 @@ class InputBox {
 		// Split caches by language, to make sure visitors do not see a cached
 		// version in a random language (since labels are in the user language)
 		$this->mParser->getOptions()->getUserLangObj();
-		$this->mParser->getOutput()->addModuleStyles( 'ext.inputBox.styles' );
+		$this->mParser->getOutput()->addModuleStyles( array(
+			'ext.inputBox.styles',
+			'mediawiki.ui.input',
+			'mediawiki.ui.checkbox',
+		) );
 	}
 
 	public function render() {
@@ -52,6 +57,7 @@ class InputBox {
 		switch ( $this->mType ) {
 			case 'create':
 			case 'comment':
+				$this->mParser->getOutput()->addModules( 'ext.inputBox' );
 				return $this->getCreateForm();
 			case 'move':
 				return $this->getMoveForm();
@@ -117,7 +123,7 @@ class InputBox {
 		);
 		$htmlOut .= Xml::element( 'input',
 			array(
-				'class' => 'searchboxInput',
+				'class' => 'searchboxInput mw-ui-input mw-ui-input-inline',
 				'name' => 'search',
 				'type' => $this->mHidden ? 'hidden' : 'text',
 				'value' => $this->mDefaultText,
@@ -192,7 +198,7 @@ class InputBox {
 					);
 				} else {
 					// Checkbox
-					$htmlOut .= ' <div class="inputbox-element">';
+					$htmlOut .= ' <div class="mw-inputbox-element mw-ui-checkbox">';
 					$htmlOut .= Xml::element( 'input',
 						array(
 							'type' => 'checkbox',
@@ -202,7 +208,7 @@ class InputBox {
 						) + $checked
 					);
 					// Label
-					$htmlOut .= '&#160;' . Xml::label( $name, 'mw-inputbox-ns' . $i . $idRandStr );
+					$htmlOut .= Xml::label( $name, 'mw-inputbox-ns' . $i . $idRandStr );
 					$htmlOut .= '</div> ';
 				}
 			}
@@ -215,7 +221,7 @@ class InputBox {
 				array(
 					'type' => 'submit',
 					'name' => 'go',
-					'class' => 'searchboxGoButton',
+					'class' => 'mw-ui-button',
 					'value' => $this->mButtonLabel
 				)
 			);
@@ -227,7 +233,7 @@ class InputBox {
 			array(
 				'type' => 'submit',
 				'name' => 'fulltext',
-				'class' => 'searchboxSearchButton',
+				'class' => 'mw-ui-button',
 				'value' => $this->mSearchButtonLabel
 			)
 		);
@@ -288,17 +294,18 @@ class InputBox {
 			array(
 				'type' => $this->mHidden ? 'hidden' : 'text',
 				'name' => 'search',
+				'class' => 'mw-ui-input mw-ui-input-inline',
 				'size' => $this->mWidth,
 				'id' => 'bodySearchInput' . $id,
 				'dir' => $this->mDir,
 			)
 		);
-		$htmlOut .= Xml::element( 'input',
+		$htmlOut .= '&#160;' . Xml::element( 'input',
 			array(
 				'type' => 'submit',
 				'name' => 'go',
 				'value' => $this->mButtonLabel,
-				'class' => 'bodySearchBtnGo',
+				'class' => 'mw-ui-button',
 			)
 		);
 
@@ -308,7 +315,7 @@ class InputBox {
 				array(
 					'type' => 'submit',
 					'name' => 'fulltext',
-					'class' => 'bodySearchBtnSearch',
+					'class' => 'mw-ui-button',
 					'value' => $this->mSearchButtonLabel
 				)
 			);
@@ -367,6 +374,15 @@ class InputBox {
 				'value' => $this->mPreload,
 			)
 		);
+		foreach ( $this->mPreloadparams as $preloadparams ) {
+			$htmlOut .= Xml::openElement( 'input',
+				array(
+					'type' => 'hidden',
+					'name' => 'preloadparams[]',
+					'value' => $preloadparams,
+				)
+			);
+		}
 		$htmlOut .= Xml::openElement( 'input',
 			array(
 				'type' => 'hidden',
@@ -415,7 +431,7 @@ class InputBox {
 			array(
 				'type' => $this->mHidden ? 'hidden' : 'text',
 				'name' => 'title',
-				'class' => 'createboxInput',
+				'class' => 'mw-ui-input mw-ui-input-inline createboxInput',
 				'value' => $this->mDefaultText,
 				'placeholder' => $this->mPlaceholderText,
 				'size' => $this->mWidth,
@@ -427,7 +443,7 @@ class InputBox {
 			array(
 				'type' => 'submit',
 				'name' => 'create',
-				'class' => 'createboxButton',
+				'class' => 'mw-ui-button mw-ui-progressive createboxButton',
 				'value' => $this->mButtonLabel
 			)
 		);
@@ -489,7 +505,7 @@ class InputBox {
 			array(
 				'type' => $this->mHidden ? 'hidden' : 'text',
 				'name' => 'wpNewTitle',
-				'class' => 'mw-moveboxInput',
+				'class' => 'mw-moveboxInput mw-ui-input mw-ui-input-inline',
 				'value' => $this->mDefaultText,
 				'placeholder' => $this->mPlaceholderText,
 				'size' => $this->mWidth,
@@ -500,7 +516,7 @@ class InputBox {
 		$htmlOut .= Xml::openElement( 'input',
 			array(
 				'type' => 'submit',
-				'class' => 'mw-moveboxButton',
+				'class' => 'mw-ui-button mw-ui-progressive',
 				'value' => $this->mButtonLabel
 			)
 		);
@@ -551,6 +567,15 @@ class InputBox {
 				'value' => $this->mPreload,
 			)
 		);
+		foreach ( $this->mPreloadparams as $preloadparams ) {
+			$htmlOut .= Xml::openElement( 'input',
+				array(
+					'type' => 'hidden',
+					'name' => 'preloadparams[]',
+					'value' => $preloadparams,
+				)
+			);
+		}
 		$htmlOut .= Xml::openElement( 'input',
 			array(
 				'type' => 'hidden',
@@ -562,7 +587,7 @@ class InputBox {
 			array(
 				'type' => $this->mHidden ? 'hidden' : 'text',
 				'name' => 'preloadtitle',
-				'class' => 'commentboxInput',
+				'class' => 'commentboxInput mw-ui-input mw-ui-input-inline',
 				'value' => $this->mDefaultText,
 				'placeholder' => $this->mPlaceholderText,
 				'size' => $this->mWidth,
@@ -588,7 +613,7 @@ class InputBox {
 			array(
 				'type' => 'submit',
 				'name' => 'create',
-				'class' => 'commentboxButton',
+				'class' => 'mw-ui-button mw-ui-progressive',
 				'value' => $this->mButtonLabel
 			)
 		);
@@ -605,15 +630,20 @@ class InputBox {
 	 * @param string $text Tag contents
 	 */
 	public function extractOptions( $text ) {
-		wfProfileIn( __METHOD__ );
-
 		// Parse all possible options
 		$values = array();
 		foreach ( explode( "\n", $text ) as $line ) {
 			if ( strpos( $line, '=' ) === false )
 				continue;
 			list( $name, $value ) = explode( '=', $line, 2 );
-			$values[ strtolower( trim( $name ) ) ] = Sanitizer::decodeCharReferences( trim( $value ) );
+			$name = strtolower( trim( $name ) );
+			$value = Sanitizer::decodeCharReferences( trim( $value ) );
+			if ( $name == 'preloadparams[]' ) {
+				// We have to special-case this one because it's valid for it to appear more than once.
+				$this->mPreloadparams[] = $value;
+			} else {
+				$values[ $name ] = $value;
+			}
 		}
 
 		// Validate the dir value.
@@ -662,7 +692,6 @@ class InputBox {
 		if ( !$this->isValidColor( $this->mBGColor ) ) {
 			$this->mBGColor = 'transparent';
 		}
-		wfProfileOut( __METHOD__ );
 	}
 
 	/**

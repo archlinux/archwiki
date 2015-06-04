@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Helder.wiki"
+			"Helder.wiki",
+			"He7d3r"
 		]
 	},
 	"syntaxhighlight-desc": "Providencia realce de sintaxe <code>&lt;syntaxhighlight&gt;</code> através do [http://qbnz.com/highlighter/ GeSHi Highlighter]",

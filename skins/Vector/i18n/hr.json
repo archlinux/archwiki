@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Ex13",
-			"Tivek"
+			"Tivek",
+			"Bugoslav"
 		]
 	},
 	"vector-action-addsection": "Dodaj temu",
@@ -15,5 +16,6 @@
 	"vector-view-edit": "Uredi",
 	"vector-view-history": "Vidi stare izmjene",
 	"vector-view-view": "Čitaj",
-	"vector-view-viewsource": "Vidi izvor"
+	"vector-view-viewsource": "Vidi izvor",
+	"vector-more-actions": "Više"
 }

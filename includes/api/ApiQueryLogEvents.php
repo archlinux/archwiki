@@ -230,19 +230,17 @@ class ApiQueryLogEvents extends ApiQueryBase {
 			}
 
 			$vals = $this->extractRowInfo( $row );
-			if ( !$vals ) {
-				continue;
-			}
 			$fit = $result->addValue( array( 'query', $this->getModuleName() ), null, $vals );
 			if ( !$fit ) {
 				$this->setContinueEnumParameter( 'continue', "$row->log_timestamp|$row->log_id" );
 				break;
 			}
 		}
-		$result->setIndexedTagName_internal( array( 'query', $this->getModuleName() ), 'item' );
+		$result->addIndexedTagName( array( 'query', $this->getModuleName() ), 'item' );
 	}
 
 	/**
+	 * @deprecated since 1.25 Use LogFormatter::formatParametersForApi instead
 	 * @param ApiResult $result
 	 * @param array $vals
 	 * @param string $params
@@ -255,100 +253,23 @@ class ApiQueryLogEvents extends ApiQueryBase {
 	public static function addLogParams( $result, &$vals, $params, $type,
 		$action, $ts, $legacy = false
 	) {
-		switch ( $type ) {
-			case 'move':
-				if ( $legacy ) {
-					$targetKey = 0;
-					$noredirKey = 1;
-				} else {
-					$targetKey = '4::target';
-					$noredirKey = '5::noredir';
-				}
+		wfDeprecated( __METHOD__, '1.25' );
 
-				if ( isset( $params[$targetKey] ) ) {
-					$title = Title::newFromText( $params[$targetKey] );
-					if ( $title ) {
-						$vals2 = array();
-						ApiQueryBase::addTitleInfo( $vals2, $title, 'new_' );
-						$vals[$type] = $vals2;
-					}
-				}
-				if ( isset( $params[$noredirKey] ) && $params[$noredirKey] ) {
-					$vals[$type]['suppressedredirect'] = '';
-				}
-				$params = null;
-				break;
-			case 'patrol':
-				if ( $legacy ) {
-					$cur = 0;
-					$prev = 1;
-					$auto = 2;
-				} else {
-					$cur = '4::curid';
-					$prev = '5::previd';
-					$auto = '6::auto';
-				}
-				$vals2 = array();
-				$vals2['cur'] = $params[$cur];
-				$vals2['prev'] = $params[$prev];
-				$vals2['auto'] = $params[$auto];
-				$vals[$type] = $vals2;
-				$params = null;
-				break;
-			case 'rights':
-				$vals2 = array();
-				if ( $legacy ) {
-					list( $vals2['old'], $vals2['new'] ) = $params;
-				} else {
-					$vals2['new'] = implode( ', ', $params['5::newgroups'] );
-					$vals2['old'] = implode( ', ', $params['4::oldgroups'] );
-				}
-				$vals[$type] = $vals2;
-				$params = null;
-				break;
-			case 'block':
-				if ( $action == 'unblock' ) {
-					break;
-				}
-				$vals2 = array();
-				list( $vals2['duration'], $vals2['flags'] ) = $params;
-
-				// Indefinite blocks have no expiry time
-				if ( SpecialBlock::parseExpiryInput( $params[0] ) !== wfGetDB( DB_SLAVE )->getInfinity() ) {
-					$vals2['expiry'] = wfTimestamp( TS_ISO_8601,
-						strtotime( $params[0], wfTimestamp( TS_UNIX, $ts ) ) );
-				}
-				$vals[$type] = $vals2;
-				$params = null;
-				break;
-			case 'upload':
-				if ( isset( $params['img_timestamp'] ) ) {
-					$params['img_timestamp'] = wfTimestamp( TS_ISO_8601, $params['img_timestamp'] );
-				}
-				break;
-		}
-		if ( !is_null( $params ) ) {
-			$logParams = array();
-			// Keys like "4::paramname" can't be used for output so we change them to "paramname"
-			foreach ( $params as $key => $value ) {
-				if ( strpos( $key, ':' ) === false ) {
-					$logParams[$key] = $value;
-					continue;
-				}
-				$logParam = explode( ':', $key, 3 );
-				$logParams[$logParam[2]] = $value;
-			}
-			$result->setIndexedTagName( $logParams, 'param' );
-			$result->setIndexedTagName_recursive( $logParams, 'param' );
-			$vals = array_merge( $vals, $logParams );
-		}
+		$entry = new ManualLogEntry( $type, $action );
+		$entry->setParameters( $params );
+		$entry->setTimestamp( $ts );
+		$entry->setLegacy( $legacy );
+		$formatter = LogFormatter::newFromEntry( $entry );
+		$vals['params'] = $formatter->formatParametersForApi();
 
 		return $vals;
 	}
 
 	private function extractRowInfo( $row ) {
 		$logEntry = DatabaseLogEntry::newFromRow( $row );
-		$vals = array();
+		$vals = array(
+			ApiResult::META_TYPE => 'assoc',
+		);
 		$anyHidden = false;
 		$user = $this->getUser();
 
@@ -362,7 +283,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 
 		if ( $this->fld_title || $this->fld_ids || $this->fld_details && $row->log_params !== '' ) {
 			if ( LogEventsList::isDeleted( $row, LogPage::DELETED_ACTION ) ) {
-				$vals['actionhidden'] = '';
+				$vals['actionhidden'] = true;
 				$anyHidden = true;
 			}
 			if ( LogEventsList::userCan( $row, LogPage::DELETED_ACTION, $user ) ) {
@@ -373,16 +294,8 @@ class ApiQueryLogEvents extends ApiQueryBase {
 					$vals['pageid'] = intval( $row->page_id );
 					$vals['logpage'] = intval( $row->log_page );
 				}
-				if ( $this->fld_details && $row->log_params !== '' ) {
-					self::addLogParams(
-						$this->getResult(),
-						$vals,
-						$logEntry->getParameters(),
-						$logEntry->getType(),
-						$logEntry->getSubtype(),
-						$logEntry->getTimestamp(),
-						$logEntry->isLegacy()
-					);
+				if ( $this->fld_details ) {
+					$vals['params'] = LogFormatter::newFromEntry( $logEntry )->formatParametersForApi();
 				}
 			}
 		}
@@ -394,7 +307,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 
 		if ( $this->fld_user || $this->fld_userid ) {
 			if ( LogEventsList::isDeleted( $row, LogPage::DELETED_USER ) ) {
-				$vals['userhidden'] = '';
+				$vals['userhidden'] = true;
 				$anyHidden = true;
 			}
 			if ( LogEventsList::userCan( $row, LogPage::DELETED_USER, $user ) ) {
@@ -406,7 +319,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 				}
 
 				if ( !$row->log_user ) {
-					$vals['anon'] = '';
+					$vals['anon'] = true;
 				}
 			}
 		}
@@ -416,7 +329,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 
 		if ( ( $this->fld_comment || $this->fld_parsedcomment ) && isset( $row->log_comment ) ) {
 			if ( LogEventsList::isDeleted( $row, LogPage::DELETED_COMMENT ) ) {
-				$vals['commenthidden'] = '';
+				$vals['commenthidden'] = true;
 				$anyHidden = true;
 			}
 			if ( LogEventsList::userCan( $row, LogPage::DELETED_COMMENT, $user ) ) {
@@ -433,7 +346,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 		if ( $this->fld_tags ) {
 			if ( $row->ts_tags ) {
 				$tags = explode( ',', $row->ts_tags );
-				$this->getResult()->setIndexedTagName( $tags, 'tag' );
+				ApiResult::setIndexedTagName( $tags, 'tag' );
 				$vals['tags'] = $tags;
 			} else {
 				$vals['tags'] = array();
@@ -441,7 +354,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 		}
 
 		if ( $anyHidden && LogEventsList::isDeleted( $row, LogPage::DELETED_RESTRICTED ) ) {
-			$vals['suppressed'] = '';
+			$vals['suppressed'] = true;
 		}
 
 		return $vals;
@@ -473,7 +386,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 
 	public function getAllowedParams( $flags = 0 ) {
 		$config = $this->getConfig();
-		return array(
+		$ret = array(
 			'prop' => array(
 				ApiBase::PARAM_ISMULTI => true,
 				ApiBase::PARAM_DFLT => 'ids|title|type|user|timestamp|comment|details',
@@ -510,14 +423,15 @@ class ApiQueryLogEvents extends ApiQueryBase {
 				ApiBase::PARAM_TYPE => array(
 					'newer',
 					'older'
-				)
+				),
+				ApiBase::PARAM_HELP_MSG => 'api-help-param-direction',
 			),
 			'user' => null,
 			'title' => null,
 			'namespace' => array(
 				ApiBase::PARAM_TYPE => 'namespace'
 			),
-			'prefix' => null,
+			'prefix' => array(),
 			'tag' => null,
 			'limit' => array(
 				ApiBase::PARAM_DFLT => 10,
@@ -526,52 +440,22 @@ class ApiQueryLogEvents extends ApiQueryBase {
 				ApiBase::PARAM_MAX => ApiBase::LIMIT_BIG1,
 				ApiBase::PARAM_MAX2 => ApiBase::LIMIT_BIG2
 			),
-			'continue' => null,
-		);
-	}
-
-	public function getParamDescription() {
-		$p = $this->getModulePrefix();
-
-		return array(
-			'prop' => array(
-				'Which properties to get',
-				' ids            - Adds the ID of the log event',
-				' title          - Adds the title of the page for the log event',
-				' type           - Adds the type of log event',
-				' user           - Adds the user responsible for the log event',
-				' userid         - Adds the user ID who was responsible for the log event',
-				' timestamp      - Adds the timestamp for the event',
-				' comment        - Adds the comment of the event',
-				' parsedcomment  - Adds the parsed comment of the event',
-				' details        - Lists additional details about the event',
-				' tags           - Lists tags for the event',
+			'continue' => array(
+				ApiBase::PARAM_HELP_MSG => 'api-help-param-continue',
 			),
-			'type' => 'Filter log entries to only this type',
-			'action' => array(
-				"Filter log actions to only this action. Overrides {$p}type",
-				"Wildcard actions like 'action/*' allows to specify any string for the asterisk"
-			),
-			'start' => 'The timestamp to start enumerating from',
-			'end' => 'The timestamp to end enumerating',
-			'dir' => $this->getDirectionDescription( $p ),
-			'user' => 'Filter entries to those made by the given user',
-			'title' => 'Filter entries to those related to a page',
-			'namespace' => 'Filter entries to those in the given namespace',
-			'prefix' => 'Filter entries that start with this prefix. Disabled in Miser Mode',
-			'limit' => 'How many total event entries to return',
-			'tag' => 'Only list event entries tagged with this tag',
-			'continue' => 'When more results are available, use this to continue',
 		);
+
+		if ( $config->get( 'MiserMode' ) ) {
+			$ret['prefix'][ApiBase::PARAM_HELP_MSG] = 'api-help-param-disabled-in-miser-mode';
+		}
+
+		return $ret;
 	}
 
-	public function getDescription() {
-		return 'Get events from logs.';
-	}
-
-	public function getExamples() {
+	protected function getExamplesMessages() {
 		return array(
-			'api.php?action=query&list=logevents'
+			'action=query&list=logevents'
+				=> 'apihelp-query+logevents-example-simple',
 		);
 	}
 

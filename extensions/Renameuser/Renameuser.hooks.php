@@ -46,7 +46,7 @@ class RenameuserHooks {
 		if ( $wgUser->isAllowed( 'renameuser' ) && $id ) {
 			$tools[] = Linker::link(
 				SpecialPage::getTitleFor( 'Renameuser' ),
-				wfMessage( 'renameuser-linkoncontribs' )->text(),
+				wfMessage( 'renameuser-linkoncontribs' )->escaped(),
 				array( 'title' => wfMessage( 'renameuser-linkoncontribs-text' )->parse() ),
 				array( 'oldusername' => $nt->getText() )
 			);

@@ -6,8 +6,9 @@
  * @singleton
  */
 ( function ( mw, $ ) {
-	var ajaxUploadDestCheck = mw.config.get( 'wgAjaxUploadDestCheck' ),
-		$license = $( '#wpLicense' ), uploadWarning, uploadLicense;
+	var uploadWarning, uploadLicense,
+		ajaxUploadDestCheck = mw.config.get( 'wgAjaxUploadDestCheck' ),
+		$license = $( '#wpLicense' );
 
 	window.wgUploadWarningObj = uploadWarning = {
 		responseCache: { '': '&nbsp;' },
@@ -136,11 +137,6 @@
 	};
 
 	$( function () {
-		// Disable URL box if the URL copy upload source type is not selected
-		if ( !$( '#wpSourceTypeurl' ).prop( 'checked' ) ) {
-			$( '#wpUploadFileURL' ).prop( 'disabled', true );
-		}
-
 		// AJAX wpDestFile warnings
 		if ( ajaxUploadDestCheck ) {
 			// Insert an event handler that fetches upload warnings when wpDestFile
@@ -202,6 +198,7 @@
 				// URLs are less likely to have a useful extension, so don't include them in the
 				// extension check.
 				if (
+					mw.config.get( 'wgCheckFileExtensions' ) &&
 					mw.config.get( 'wgStrictFileExtensions' ) &&
 					mw.config.get( 'wgFileExtensions' ) &&
 					$( this ).attr( 'id' ) !== 'wpUploadFileURL'
@@ -294,12 +291,7 @@
 				ctx,
 				meta,
 				previewSize = 180,
-				thumb = $( '<div id="mw-upload-thumbnail" class="thumb tright">' +
-							'<div class="thumbinner">' +
-								'<div class="mw-small-spinner" style="width: 180px; height: 180px"></div>' +
-								'<div class="thumbcaption"><div class="filename"></div><div class="fileinfo"></div></div>' +
-							'</div>' +
-						'</div>' );
+				thumb = mw.template.get( 'mediawiki.special.upload', 'thumbnail.html' ).render();
 
 			thumb.find( '.filename' ).text( file.name ).end()
 				.find( '.fileinfo' ).text( prettySize( file.size ) ).end();
@@ -387,10 +379,11 @@
 				};
 				img.src = dataURL;
 			}, mw.config.get( 'wgFileCanRotate' ) ? function ( data ) {
-				/*jshint camelcase:false, nomen:false */
 				try {
 					meta = mw.libs.jpegmeta( data, file.fileName );
+					// jscs:disable requireCamelCaseOrUpperCaseIdentifiers, disallowDanglingUnderscores
 					meta._binary_data = null;
+					// jscs:enable
 				} catch ( e ) {
 					meta = null;
 				}
@@ -534,32 +527,58 @@
 
 	// Disable all upload source fields except the selected one
 	$( function () {
-		var i, $row,
-			$rows = $( '.mw-htmlform-field-UploadSourceField' );
+		var $rows = $( '.mw-htmlform-field-UploadSourceField' );
 
-		/**
-		 * @param {jQuery} $currentRow
-		 * @return {Function} Handler
-		 * @return {jQuery.Event} return.e
-		 */
-		function createHandler( $currentRow ) {
-			return function () {
-				$( '.mw-upload-source-error' ).remove();
-				if ( this.checked ) {
-					// Disable all inputs
-					$rows.find( 'input[name!="wpSourceType"]' ).prop( 'disabled', true );
-					// Re-enable the current one
-					$currentRow.find( 'input' ).prop( 'disabled', false );
-				}
-			};
-		}
+		$rows.on( 'change', 'input[type="radio"]', function ( e ) {
+			var currentRow = e.delegateTarget;
 
-		for ( i = $rows.length; i; i-- ) {
-			$row = $rows.eq( i - 1 );
-			$row
-				.find( 'input[name="wpSourceType"]' )
-				.change( createHandler( $row ) );
+			if ( !this.checked ) {
+				return;
+			}
+
+			$( '.mw-upload-source-error' ).remove();
+
+			// Enable selected upload method
+			$( currentRow ).find( 'input' ).prop( 'disabled', false );
+
+			// Disable inputs of other upload methods
+			// (except for the radio button to re-enable it)
+			$rows
+				.not( currentRow )
+				.find( 'input[type!="radio"]' )
+				.prop( 'disabled', true );
+		} );
+
+		// Set initial state
+		if ( !$( '#wpSourceTypeurl' ).prop( 'checked' ) ) {
+			$( '#wpUploadFileURL' ).prop( 'disabled', true );
 		}
 	} );
 
+	$( function () {
+		// Prevent losing work
+		var allowCloseWindow,
+			$uploadForm = $( '#mw-upload-form' );
+
+		if ( !mw.user.options.get( 'useeditwarning' ) ) {
+			// If the user doesn't want edit warnings, don't set things up.
+			return;
+		}
+
+		$uploadForm.data( 'origtext', $uploadForm.serialize() );
+
+		allowCloseWindow = mw.confirmCloseWindow( {
+			test: function () {
+				return $( '#wpUploadFile' ).get( 0 ).files.length !== 0 ||
+					$uploadForm.data( 'origtext' ) !== $uploadForm.serialize();
+			},
+
+			message: mw.msg( 'editwarning-warning' ),
+			namespace: 'uploadwarning'
+		} );
+
+		$uploadForm.submit( function () {
+			allowCloseWindow();
+		} );
+	} );
 }( mediaWiki, jQuery ) );

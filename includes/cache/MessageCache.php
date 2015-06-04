@@ -72,7 +72,7 @@ class MessageCache {
 	protected $mExpiry;
 
 	/**
-	 * Message cache has it's own parser which it uses to transform
+	 * Message cache has its own parser which it uses to transform
 	 * messages.
 	 */
 	protected $mParserOptions, $mParser;
@@ -266,7 +266,6 @@ class MessageCache {
 		}
 
 		# Loading code starts
-		wfProfileIn( __METHOD__ );
 		$success = false; # Keep track of success
 		$staleCache = false; # a cache array with expired data, or false if none has been loaded
 		$where = array(); # Debug info, delayed to avoid spamming debug log too much
@@ -276,7 +275,6 @@ class MessageCache {
 		# Hash of the contents is stored in memcache, to detect if local cache goes
 		# out of date (e.g. due to replace() on some other server)
 		if ( $wgUseLocalMessageCache ) {
-			wfProfileIn( __METHOD__ . '-fromlocal' );
 
 			$hash = $this->mMemc->get( wfMemcKey( 'messages', $code, 'hash' ) );
 			if ( $hash ) {
@@ -292,7 +290,6 @@ class MessageCache {
 					$this->mCache[$code] = $cache;
 				}
 			}
-			wfProfileOut( __METHOD__ . '-fromlocal' );
 		}
 
 		if ( !$success ) {
@@ -300,7 +297,6 @@ class MessageCache {
 			# the lock can't be acquired, wait for the other thread to finish
 			# and then try the global cache a second time.
 			for ( $failedAttempts = 0; $failedAttempts < 2; $failedAttempts++ ) {
-				wfProfileIn( __METHOD__ . '-fromcache' );
 				$cache = $this->mMemc->get( $cacheKey );
 				if ( !$cache ) {
 					$where[] = 'global cache is empty';
@@ -313,8 +309,6 @@ class MessageCache {
 					$this->saveToCaches( $cache, 'local-only', $code );
 					$success = true;
 				}
-
-				wfProfileOut( __METHOD__ . '-fromcache' );
 
 				if ( $success ) {
 					# Done, no need to retry
@@ -422,8 +416,7 @@ class MessageCache {
 			$this->mLoadedLanguages[$code] = true;
 		}
 		$info = implode( ', ', $where );
-		wfDebug( __METHOD__ . ": Loading $code... $info\n" );
-		wfProfileOut( __METHOD__ );
+		wfDebugLog( 'MessageCache', __METHOD__ . ": Loading $code... $info\n" );
 
 		return $success;
 	}
@@ -437,7 +430,6 @@ class MessageCache {
 	 * @return array Loaded messages for storing in caches.
 	 */
 	function loadFromDB( $code ) {
-		wfProfileIn( __METHOD__ );
 		global $wgMaxMsgCacheEntrySize, $wgLanguageCode, $wgAdaptiveMessageCache;
 		$dbr = wfGetDB( DB_SLAVE );
 		$cache = array();
@@ -511,7 +503,6 @@ class MessageCache {
 
 		$cache['VERSION'] = MSG_CACHE_VERSION;
 		$cache['EXPIRY'] = wfTimestamp( TS_MW, time() + $this->mExpiry );
-		wfProfileOut( __METHOD__ );
 
 		return $cache;
 	}
@@ -524,10 +515,8 @@ class MessageCache {
 	 */
 	public function replace( $title, $text ) {
 		global $wgMaxMsgCacheEntrySize;
-		wfProfileIn( __METHOD__ );
 
 		if ( $this->mDisable ) {
-			wfProfileOut( __METHOD__ );
 
 			return;
 		}
@@ -573,11 +562,11 @@ class MessageCache {
 
 		// Update the message in the message blob store
 		global $wgContLang;
-		MessageBlobStore::getInstance()->updateMessage( $wgContLang->lcfirst( $msg ) );
+		$blobStore = new MessageBlobStore();
+		$blobStore->updateMessage( $wgContLang->lcfirst( $msg ) );
 
-		wfRunHooks( 'MessageCacheReplace', array( $title, $text ) );
+		Hooks::run( 'MessageCacheReplace', array( $title, $text ) );
 
-		wfProfileOut( __METHOD__ );
 	}
 
 	/**
@@ -610,7 +599,6 @@ class MessageCache {
 	 * @return bool
 	 */
 	protected function saveToCaches( $cache, $dest, $code = false ) {
-		wfProfileIn( __METHOD__ );
 		global $wgUseLocalMessageCache;
 
 		$cacheKey = wfMemcKey( 'messages', $code );
@@ -628,8 +616,6 @@ class MessageCache {
 			$this->mMemc->set( wfMemcKey( 'messages', $code, 'hash' ), $hash );
 			$this->saveToLocal( $serialized, $hash, $code );
 		}
-
-		wfProfileOut( __METHOD__ );
 
 		return $success;
 	}
@@ -708,8 +694,6 @@ class MessageCache {
 	function get( $key, $useDB = true, $langcode = true, $isFullKey = false ) {
 		global $wgContLang;
 
-		$section = new ProfileSection( __METHOD__ );
-
 		if ( is_int( $key ) ) {
 			// Fix numerical strings that somehow become ints
 			// on their way here
@@ -736,7 +720,7 @@ class MessageCache {
 			$lckey = $wgContLang->lcfirst( $lckey );
 		}
 
-		wfRunHooks( 'MessageCache::get', array( &$lckey ) );
+		Hooks::run( 'MessageCache::get', array( &$lckey ) );
 
 		if ( ord( $lckey ) < 128 ) {
 			$uckey = ucfirst( $lckey );
@@ -909,7 +893,7 @@ class MessageCache {
 		} else {
 			// XXX: This is not cached in process cache, should it?
 			$message = false;
-			wfRunHooks( 'MessagesPreLoad', array( $title, &$message ) );
+			Hooks::run( 'MessagesPreLoad', array( $title, &$message ) );
 			if ( $message !== false ) {
 				return $message;
 			}
@@ -1056,23 +1040,21 @@ class MessageCache {
 		$popts->setInterfaceMessage( $interface );
 		$popts->setTargetLanguage( $language );
 
-		wfProfileIn( __METHOD__ );
 		if ( !$title || !$title instanceof Title ) {
 			global $wgTitle;
+			wfDebugLog( 'GlobalTitleFail', __METHOD__ . ' called by ' . wfGetAllCallers( 5 ) . ' with no title set.' );
 			$title = $wgTitle;
 		}
 		// Sometimes $wgTitle isn't set either...
 		if ( !$title ) {
 			# It's not uncommon having a null $wgTitle in scripts. See r80898
 			# Create a ghost title in such case
-			$title = Title::newFromText( 'Dwimmerlaik' );
+			$title = Title::makeTitle( NS_SPECIAL, 'Badtitle/title not set in ' . __METHOD__ );
 		}
 
 		$this->mInParser = true;
 		$res = $parser->parse( $text, $title, $popts, $linestart );
 		$this->mInParser = false;
-
-		wfProfileOut( __METHOD__ );
 
 		return $res;
 	}

@@ -30,6 +30,7 @@
  * @ingroup SpecialPage
  */
 class SpecialImport extends SpecialPage {
+	private $sourceName = false;
 	private $interwiki = false;
 	private $subproject;
 	private $fullInterwikiPrefix;
@@ -46,16 +47,19 @@ class SpecialImport extends SpecialPage {
 	 */
 	public function __construct() {
 		parent::__construct( 'Import', 'import' );
-		$this->namespace = $this->getConfig()->get( 'ImportTargetNamespace' );
 	}
 
 	/**
 	 * Execute
 	 * @param string|null $par
+	 * @throws PermissionsError
+	 * @throws ReadOnlyError
 	 */
 	function execute( $par ) {
 		$this->setHeaders();
 		$this->outputHeader();
+
+		$this->namespace = $this->getConfig()->get( 'ImportTargetNamespace' );
 
 		$this->getOutput()->addModules( 'mediawiki.special.import' );
 
@@ -98,7 +102,7 @@ class SpecialImport extends SpecialPage {
 		$isUpload = false;
 		$request = $this->getRequest();
 		$this->namespace = $request->getIntOrNull( 'namespace' );
-		$sourceName = $request->getVal( "source" );
+		$this->sourceName = $request->getVal( "source" );
 
 		$this->logcomment = $request->getText( 'log-comment' );
 		$this->pageLinkDepth = $this->getConfig()->get( 'ExportMaxLinkDepth' ) == 0
@@ -109,14 +113,14 @@ class SpecialImport extends SpecialPage {
 		$user = $this->getUser();
 		if ( !$user->matchEditToken( $request->getVal( 'editToken' ) ) ) {
 			$source = Status::newFatal( 'import-token-mismatch' );
-		} elseif ( $sourceName == 'upload' ) {
+		} elseif ( $this->sourceName == 'upload' ) {
 			$isUpload = true;
 			if ( $user->isAllowed( 'importupload' ) ) {
 				$source = ImportStreamSource::newFromUpload( "xmlimport" );
 			} else {
 				throw new PermissionsError( 'importupload' );
 			}
-		} elseif ( $sourceName == "interwiki" ) {
+		} elseif ( $this->sourceName == "interwiki" ) {
 			if ( !$user->isAllowed( 'import' ) ) {
 				throw new PermissionsError( 'import' );
 			}
@@ -156,7 +160,7 @@ class SpecialImport extends SpecialPage {
 				array( 'importfailed', $source->getWikiText() )
 			);
 		} else {
-			$importer = new WikiImporter( $source->value );
+			$importer = new WikiImporter( $source->value, $this->getConfig() );
 			if ( !is_null( $this->namespace ) ) {
 				$importer->setTargetNamespace( $this->namespace );
 			}
@@ -190,7 +194,7 @@ class SpecialImport extends SpecialPage {
 			$reporter->open();
 			try {
 				$importer->doImport();
-			} catch ( MWException $e ) {
+			} catch ( Exception $e ) {
 				$exception = $e;
 			}
 			$result = $reporter->close();
@@ -250,7 +254,8 @@ class SpecialImport extends SpecialPage {
 					Xml::label( $this->msg( 'import-comment' )->text(), 'mw-import-comment' ) .
 					"</td>
 					<td class='mw-input'>" .
-					Xml::input( 'log-comment', 50, '',
+					Xml::input( 'log-comment', 50,
+						( $this->sourceName == 'upload' ? $this->logcomment : '' ),
 						array( 'id' => 'mw-import-comment', 'type' => 'text' ) ) . ' ' .
 					"</td>
 				</tr>
@@ -430,7 +435,8 @@ class SpecialImport extends SpecialPage {
 					Xml::label( $this->msg( 'import-comment' )->text(), 'mw-interwiki-comment' ) .
 					"</td>
 					<td class='mw-input'>" .
-					Xml::input( 'log-comment', 50, '',
+					Xml::input( 'log-comment', 50,
+						( $this->sourceName == 'interwiki' ? $this->logcomment : '' ),
 						array( 'id' => 'mw-interwiki-comment', 'type' => 'text' ) ) . ' ' .
 					"</td>
 				</tr>
@@ -515,13 +521,14 @@ class ImportReporter extends ContextSource {
 
 	/**
 	 * @param Title $title
-	 * @param Title $origTitle
+	 * @param ForeignTitle $foreignTitle
 	 * @param int $revisionCount
 	 * @param int $successCount
 	 * @param array $pageInfo
 	 * @return void
 	 */
-	function reportPage( $title, $origTitle, $revisionCount, $successCount, $pageInfo ) {
+	function reportPage( $title, $foreignTitle, $revisionCount,
+			$successCount, $pageInfo ) {
 		$args = func_get_args();
 		call_user_func_array( $this->mOriginalPageOutCallback, $args );
 
@@ -539,7 +546,6 @@ class ImportReporter extends ContextSource {
 					"</li>\n"
 			);
 
-			$log = new LogPage( 'import' );
 			if ( $this->mIsUpload ) {
 				$detail = $this->msg( 'import-logentry-upload-detail' )->numParams(
 					$successCount )->inContentLanguage()->text();
@@ -547,18 +553,25 @@ class ImportReporter extends ContextSource {
 					$detail .= $this->msg( 'colon-separator' )->inContentLanguage()->text()
 						. $this->reason;
 				}
-				$log->addEntry( 'upload', $title, $detail, array(), $this->getUser() );
+				$action = 'upload';
 			} else {
 				$interwiki = '[[:' . $this->mInterwiki . ':' .
-					$origTitle->getPrefixedText() . ']]';
+					$foreignTitle->getFullText() . ']]';
 				$detail = $this->msg( 'import-logentry-interwiki-detail' )->numParams(
 					$successCount )->params( $interwiki )->inContentLanguage()->text();
 				if ( $this->reason ) {
 					$detail .= $this->msg( 'colon-separator' )->inContentLanguage()->text()
 						. $this->reason;
 				}
-				$log->addEntry( 'interwiki', $title, $detail, array(), $this->getUser() );
+				$action = 'interwiki';
 			}
+
+			$logEntry = new ManualLogEntry( 'import', $action );
+			$logEntry->setTarget( $title );
+			$logEntry->setComment( $detail );
+			$logEntry->setPerformer( $this->getUser() );
+			$logid = $logEntry->insert();
+			$logEntry->publish( $logid );
 
 			$comment = $detail; // quick
 			$dbw = wfGetDB( DB_MASTER );
@@ -576,7 +589,7 @@ class ImportReporter extends ContextSource {
 				$page = WikiPage::factory( $title );
 				# Update page record
 				$page->updateRevisionOn( $dbw, $nullRevision );
-				wfRunHooks(
+				Hooks::run(
 					'NewRevisionFromEditComplete',
 					array( $page, $nullRevision, $latest, $this->getUser() )
 				);

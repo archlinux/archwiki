@@ -559,7 +559,7 @@ class ParserTest {
 			$parser->setTransparentTagHook( $tag, $callback );
 		}
 
-		wfRunHooks( 'ParserTestParser', array( &$parser ) );
+		Hooks::run( 'ParserTestParser', array( &$parser ) );
 
 		return $parser;
 	}
@@ -590,6 +590,14 @@ class ParserTest {
 		if ( isset( $opts['djvu'] ) ) {
 			if ( !$this->djVuSupport->isEnabled() ) {
 				return $this->showSkipped();
+			}
+		}
+
+		if ( isset( $opts['tidy'] ) ) {
+			if ( !$this->tidySupport->isEnabled() ) {
+				return $this->showSkipped();
+			} else {
+				$options->setTidy( true );
 			}
 		}
 
@@ -624,10 +632,6 @@ class ParserTest {
 			$output->setTOCEnabled( !isset( $opts['notoc'] ) );
 			$out = $output->getText();
 			if ( isset( $opts['tidy'] ) ) {
-				if ( !$this->tidySupport->isEnabled() ) {
-					return $this->showSkipped();
-				}
-				$out = MWTidy::tidy( $out );
 				$out = preg_replace( '/\s+$/', '', $out );
 			}
 
@@ -637,6 +641,14 @@ class ParserTest {
 				}
 
 				$out = "$title\n$out";
+			}
+
+			if ( isset( $opts['showindicators'] ) ) {
+				$indicators = '';
+				foreach ( $output->getIndicators() as $id => $content ) {
+					$indicators .= "$id=$content\n";
+				}
+				$out = $indicators . $out;
 			}
 
 			if ( isset( $opts['ill'] ) ) {
@@ -877,10 +889,7 @@ class ParserTest {
 			'wgDisableLangConversion' => false,
 			'wgDisableTitleConversion' => false,
 			// Tidy options.
-			// We always set 'wgUseTidy' to false when parsing, but certain
-			// test-running modes still use tidy if available, so ensure
-			// that the tidy-related options are all set to their defaults.
-			'wgUseTidy' => false,
+			'wgUseTidy' => isset( $opts['tidy'] ),
 			'wgAlwaysUseTidy' => false,
 			'wgDebugTidy' => false,
 			'wgTidyConf' => $IP . '/includes/tidy.conf',
@@ -901,7 +910,7 @@ class ParserTest {
 		$this->savedGlobals = array();
 
 		/** @since 1.20 */
-		wfRunHooks( 'ParserTestGlobals', array( &$settings ) );
+		Hooks::run( 'ParserTestGlobals', array( &$settings ) );
 
 		foreach ( $settings as $var => $val ) {
 			if ( array_key_exists( $var, $GLOBALS ) ) {
@@ -941,7 +950,7 @@ class ParserTest {
 		$tables = array( 'user', 'user_properties', 'user_former_groups', 'page', 'page_restrictions',
 			'protected_titles', 'revision', 'text', 'pagelinks', 'imagelinks',
 			'categorylinks', 'templatelinks', 'externallinks', 'langlinks', 'iwlinks',
-			'site_stats', 'hitcounter', 'ipblocks', 'image', 'oldimage',
+			'site_stats', 'ipblocks', 'image', 'oldimage',
 			'recentchanges', 'watchlist', 'interwiki', 'logging',
 			'querycache', 'objectcache', 'job', 'l10n_cache', 'redirect', 'querycachetwo',
 			'archive', 'user_groups', 'page_props', 'category', 'msg_resource', 'msg_resource_links'
@@ -954,7 +963,7 @@ class ParserTest {
 		// Allow extensions to add to the list of tables to duplicate;
 		// may be necessary if they hook into page save or other code
 		// which will require them while running tests.
-		wfRunHooks( 'ParserTestTables', array( &$tables ) );
+		Hooks::run( 'ParserTestTables', array( &$tables ) );
 
 		return $tables;
 	}
@@ -1493,8 +1502,10 @@ class ParserTest {
 	 * Insert a temporary test article
 	 * @param string $name The title, including any prefix
 	 * @param string $text The article text
-	 * @param int $line The input line number, for reporting errors
-	 * @param bool $ignoreDuplicate Whether to silently ignore duplicate pages
+	 * @param int|string $line The input line number, for reporting errors
+	 * @param bool|string $ignoreDuplicate Whether to silently ignore duplicate pages
+	 * @throws Exception
+	 * @throws MWException
 	 */
 	public static function addArticle( $name, $text, $line = 'unknown', $ignoreDuplicate = '' ) {
 		global $wgCapitalLinks;

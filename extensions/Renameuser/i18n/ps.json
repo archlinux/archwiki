@@ -21,6 +21,7 @@
 	"renameusererrorinvalid": "د \"<nowiki>$1</nowiki>\" کارن نوم سم نه دی.",
 	"renameuser-error-request": "د غوښتنې په ترلاسه کولو کې يوه ستونزه راپېښه شوه.\nمهرباني وکړی بېرته پرشا ولاړ شی او يو ځل بيا پرې کوښښ وکړی.",
 	"renameuser-page-moved": "د $1 مخ $2 ته ولېږدل شو.",
+	"renameuser-page-unmoved": "د $1 مخ $2 ته و نه لېږدل شو.",
 	"log-name-renameuser": "د کارن-نوم يادښت",
 	"action-renameuser": "کارن-نومونه بدلول",
 	"right-renameuser": "کارن-نومونه بدلول"

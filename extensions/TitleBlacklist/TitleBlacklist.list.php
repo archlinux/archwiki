@@ -38,23 +38,22 @@ class TitleBlacklist {
 	 */
 	public function load() {
 		global $wgTitleBlacklistSources, $wgMemc, $wgTitleBlacklistCaching;
-		wfProfileIn( __METHOD__ );
 		// Try to find something in the cache
 		$cachedBlacklist = $wgMemc->get( wfMemcKey( "title_blacklist_entries" ) );
 		if ( is_array( $cachedBlacklist ) && count( $cachedBlacklist ) > 0 && ( $cachedBlacklist[0]->getFormatVersion() == self::VERSION ) ) {
 			$this->mBlacklist = $cachedBlacklist;
-			wfProfileOut( __METHOD__ );
 			return;
 		}
 
 		$sources = $wgTitleBlacklistSources;
-		$sources['local'] = array( 'type' => TBLSRC_MSG );
+		$sources['local'] = array( 'type' => 'message' );
 		$this->mBlacklist = array();
 		foreach( $sources as $sourceName => $source ) {
 			$this->mBlacklist = array_merge( $this->mBlacklist, $this->parseBlacklist( $this->getBlacklistText( $source ), $sourceName ) );
 		}
 		$wgMemc->set( wfMemcKey( "title_blacklist_entries" ), $this->mBlacklist, $wgTitleBlacklistCaching['expiry'] );
-		wfProfileOut( __METHOD__ );
+		wfDebugLog( 'TitleBlacklist-cache', 'Updated ' . wfMemcKey( "title_blacklist_entries" )
+			. ' with ' . count( $this->mBlacklist ) . ' entries.' );
 	}
 
 	/**
@@ -62,17 +61,14 @@ class TitleBlacklist {
 	 */
 	public function loadWhitelist() {
 		global $wgMemc, $wgTitleBlacklistCaching;
-		wfProfileIn( __METHOD__ );
 		$cachedWhitelist = $wgMemc->get( wfMemcKey( "title_whitelist_entries" ) );
 		if ( is_array( $cachedWhitelist ) && count( $cachedWhitelist ) > 0 && ( $cachedWhitelist[0]->getFormatVersion() != self::VERSION ) ) {
 			$this->mWhitelist = $cachedWhitelist;
-			wfProfileOut( __METHOD__ );
 			return;
 		}
 		$this->mWhitelist = $this->parseBlacklist( wfMessage( 'titlewhitelist' )
 				->inContentLanguage()->text(), 'whitelist' );
 		$wgMemc->set( wfMemcKey( "title_whitelist_entries" ), $this->mWhitelist, $wgTitleBlacklistCaching['expiry'] );
-		wfProfileOut( __METHOD__ );
 	}
 
 	/**
@@ -86,9 +82,9 @@ class TitleBlacklist {
 			return '';	// Return empty string in error case
 		}
 
-		if ( $source['type'] == TBLSRC_MSG ) {
+		if ( $source['type'] == 'message' ) {
 			return wfMessage( 'titleblacklist' )->inContentLanguage()->text();
-		} elseif ( $source['type'] == TBLSRC_LOCALPAGE && count( $source ) >= 2 ) {
+		} elseif ( $source['type'] == 'localpage' && count( $source ) >= 2 ) {
 			$title = Title::newFromText( $source['src'] );
 			if ( is_null( $title ) ) {
 				return '';
@@ -107,9 +103,9 @@ class TitleBlacklist {
 					return $article->getContent();
 				}
 			}
-		} elseif ( $source['type'] == TBLSRC_URL && count( $source ) >= 2 ) {
+		} elseif ( $source['type'] == 'url' && count( $source ) >= 2 ) {
 			return self::getHttp( $source['src'] );
-		} elseif ( $source['type'] == TBLSRC_FILE && count( $source ) >= 2 ) {
+		} elseif ( $source['type'] == 'file' && count( $source ) >= 2 ) {
 			if ( file_exists( $source['src'] ) ) {
 				return file_get_contents( $source['src'] );
 			} else {
@@ -127,7 +123,6 @@ class TitleBlacklist {
 	 * @return array of TitleBlacklistEntry entries
 	 */
 	public static function parseBlacklist( $list, $sourceName ) {
-		wfProfileIn( __METHOD__ );
 		$lines = preg_split( "/\r?\n/", $list );
 		$result = array();
 		foreach ( $lines as $line ) {
@@ -137,7 +132,6 @@ class TitleBlacklist {
 			}
 		}
 
-		wfProfileOut( __METHOD__ );
 		return $result;
 	}
 
@@ -349,7 +343,7 @@ class TitleBlacklistEntry {
 		}
 
 		if( !is_array( $wgTitleBlacklistUsernameSources ) ) {
-			throw new MWException(
+			throw new Exception(
 				'$wgTitleBlacklistUsernameSources must be "*", false or an array' );
 		}
 
@@ -528,6 +522,9 @@ class TitleBlacklistEntry {
 	 */
 	public function getErrorMessage( $operation ) {
 		$message = $this->getCustomMessage();
+		// For grep:
+		// titleblacklist-forbidden-edit, titleblacklist-forbidden-move,
+		// titleblacklist-forbidden-upload, titleblacklist-forbidden-new-account
 		return $message ? $message : "titleblacklist-forbidden-{$operation}";
 	}
 }

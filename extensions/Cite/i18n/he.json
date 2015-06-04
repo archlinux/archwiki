@@ -1,0 +1,30 @@
+{
+	"@metadata": {
+		"authors": [
+			"Amire80",
+			"Rotem Liss",
+			"Rotemliss",
+			"YaronSh"
+		]
+	},
+	"cite-desc": "הוספת תגי <span dir=\"ltr\"><nowiki><ref[ name=id]></nowiki></span> ו־<span dir=\"ltr\"><nowiki><references/></nowiki></span> עבור הערות שוליים",
+	"cite_error": "שגיאת ציטוט: $1",
+	"cite_error_ref_numeric_key": "תג <code>&lt;ref&gt;</code> לא תקין;\nשם (name) לא יכול להיות מספר שלם פשוט. יש להשתמש בכותרת תיאורית",
+	"cite_error_ref_no_key": "תג <code>&lt;ref&gt;</code> לא תקין;\nלהערות שוליים ללא תוכן חייב להיות שם (name)",
+	"cite_error_ref_too_many_keys": "תג <code>&lt;ref&gt;</code> לא תקין;\nשמות שגויים, למשל, רבים מדי",
+	"cite_error_ref_no_input": "תג <code>&lt;ref&gt;</code> לא תקין;\nלהערות שוליים ללא שם חייב להיות תוכן",
+	"cite_error_references_invalid_parameters": "תג <code>&lt;references&gt;</code> לא תקין;\nלא ניתן להשתמש בפרמטרים.\nיש להשתמש בקוד <code dir=\"ltr\">&lt;references /&gt;</code>",
+	"cite_error_references_invalid_parameters_group": "תג <code>&lt;references&gt;</code> לא תקין;\nרק הפרמטר \"group\" מותר לשימוש.\nאנא השתמשו בקוד <code dir=\"ltr\">&lt;references /&gt;</code>, או בקוד <code dir=\"ltr\">&lt;references group=\"...\" /&gt;</code>",
+	"cite_error_references_no_backlink_label": "אזלו תוויות הקישורים המותאמות אישית.\nאנא הגדירו עוד תוויות בהודעת המערכת <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>.",
+	"cite_error_no_link_label_group": "אזלו תוויות קישורים מותאמות אישית לקבוצה \"$1\".\nהגדירו עוד תוויות בהודעת המערכת <nowiki>[[MediaWiki:$2]]</nowiki>.",
+	"cite_error_references_no_text": "תג <code>&lt;ref&gt;</code> לא תקין;\nלא נכתב טקסט עבור הערות השוליים בשם <code>$1</code>",
+	"cite_error_included_ref": "חסר תג <code>&lt;/ref&gt;</code> סוגר שמתאים לתג <code>&lt;ref&gt;</code>",
+	"cite_error_group_refs_without_references": "קיימים תגי <code>&lt;ref&gt;</code> עבור קבוצה בשם \"$1\", אך לא נמצא תג <code dir=\"ltr\">&lt;references group=\"$1\"/&gt;</code> מתאים, או שחסר <code dir=\"ltr\">&lt;/ref&gt;</code> סוגר",
+	"cite_error_references_group_mismatch": "לתג <code>&lt;ref&gt;</code> המוגדר בתוך <code>&lt;references&gt;</code> יש מאפיין קבוצה (group) סותר, \"$1\".",
+	"cite_error_references_missing_group": "לתג <code>&lt;ref&gt;</code> המוגדר בתוך <code>&lt;references&gt;</code> יש מאפיין קבוצה (group) בעל הערך \"$1\", שאינו מופיע בטקסט שלפניו.",
+	"cite_error_references_missing_key": "התג <code>&lt;ref&gt;</code> בשם \"$1\" המוגדר בתוך <code>&lt;references&gt;</code> אינו נמצא בשימוש בטקסט שלפניו.",
+	"cite_error_references_no_key": "לתג <code>&lt;ref&gt;</code> המוגדר בתוך <code>&lt;references&gt;</code> אין מאפיין שם (name).",
+	"cite_error_empty_references_define": "התג <code>&lt;ref&gt;</code> בעל השם \"$1\" המוגדר בתוך <code>&lt;references&gt;</code> אינו מכיל תוכן.",
+	"cite_references_link_accessibility_label": "לקפוץ מעלה",
+	"cite_references_link_many_accessibility_label": "לקפוץ מעלה אל:"
+}

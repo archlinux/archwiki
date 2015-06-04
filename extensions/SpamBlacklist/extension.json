@@ -1,0 +1,69 @@
+{
+	"name": "SpamBlacklist",
+	"author": [
+		"Tim Starling",
+		"John Du Hart",
+		"Daniel Kinzler"
+	],
+	"url": "https://www.mediawiki.org/wiki/Extension:SpamBlacklist",
+	"descriptionmsg": "spam-blacklist-desc",
+	"type": "antispam",
+	"callback": "SpamBlacklistHooks::registerExtension",
+	"GroupPermissions": {
+		"sysop": {
+			"spamblacklistlog": true
+		}
+	},
+	"AvailableRights": [
+		"spamblacklistlog"
+	],
+	"LogTypes": [
+		"spamblacklist"
+	],
+	"LogRestrictions": {
+		"spamblacklist": "spamblacklistlog"
+	},
+	"LogActionsHandlers": {
+		"spamblacklist/*": "LogFormatter"
+	},
+	"APIModules": {
+		"spamblacklist": "ApiSpamBlacklist"
+	},
+	"MessagesDirs": {
+		"SpamBlackList": [
+			"i18n"
+		]
+	},
+	"AutoloadClasses": {
+		"ApiSpamBlacklist": "api/ApiSpamBlacklist.php",
+		"BaseBlacklist": "BaseBlacklist.php",
+		"EmailBlacklist": "EmailBlacklist.php",
+		"SpamBlacklistHooks": "SpamBlacklistHooks.php",
+		"SpamBlacklist": "SpamBlacklist_body.php",
+		"SpamRegexBatch": "SpamRegexBatch.php"
+	},
+	"Hooks": {
+		"EditFilterMergedContent": [
+			"SpamBlacklistHooks::filterMergedContent"
+		],
+		"APIEditBeforeSave": [
+			"SpamBlacklistHooks::filterAPIEditBeforeSave"
+		],
+		"EditFilter": [
+			"SpamBlacklistHooks::validate"
+		],
+		"PageContentSaveComplete": [
+			"SpamBlacklistHooks::pageSaveContent"
+		],
+		"UserCanSendEmail": [
+			"SpamBlacklistHooks::userCanSendEmail"
+		],
+		"AbortNewAccount": [
+			"SpamBlacklistHooks::abortNewAccount"
+		]
+	},
+	"config": {
+		"@doc": "BlacklistSettings are set in SpamBlacklistHooks.php",
+		"LogSpamBlacklistHits": false
+	}
+}

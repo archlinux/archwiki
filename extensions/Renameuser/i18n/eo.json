@@ -3,7 +3,8 @@
 		"authors": [
 			"ArnoLagrange",
 			"Tlustulimu",
-			"Yekrats"
+			"Yekrats",
+			"KuboF"
 		]
 	},
 	"renameuser": "Alinomigi uzanton",
@@ -32,7 +33,7 @@
 	"log-name-renameuser": "Protokolo pri alinomigoj de uzantoj",
 	"log-description-renameuser": "Jen protokolo pri ŝanĝoj de salutnomoj.",
 	"logentry-renameuser-renameuser": "$1 {{GENDER:$2|alinomiĝis}} uzanton $4 ({{PLURAL:$6|$6 redakto|$6 redaktoj}}) al $5",
-	"logentry-renameuser-renameuser-legacier": "$1 alinomigis uzanton $4 al $5",
+	"logentry-renameuser-renameuser-legacier": "$1 alinomis uzanton $4 al $5",
 	"renameuser-move-log": "Aŭtomate movis paĝon dum alinomigo de la uzanto \"[[User:$1|$1]]\" al \"[[User:$2|$2]]\"",
 	"action-renameuser": "Alinomigi uzantojn",
 	"right-renameuser": "Alinomigi uzantojn",

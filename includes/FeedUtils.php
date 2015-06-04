@@ -106,7 +106,6 @@ class FeedUtils {
 		$comment, $actiontext = ''
 	) {
 		global $wgFeedDiffCutoff, $wgLang;
-		wfProfileIn( __METHOD__ );
 
 		// log entries
 		$completeText = '<p>' . implode( ' ',
@@ -124,12 +123,10 @@ class FeedUtils {
 		// Can't diff special pages, unreadable pages or pages with no new revision
 		// to compare against: just return the text.
 		if ( $title->getNamespace() < 0 || $accErrors || !$newid ) {
-			wfProfileOut( __METHOD__ );
 			return $completeText;
 		}
 
 		if ( $oldid ) {
-			wfProfileIn( __METHOD__ . "-dodiff" );
 
 			#$diffText = $de->getDiff( wfMessage( 'revisionasof',
 			#	$wgLang->timeanddate( $timestamp ),
@@ -167,10 +164,9 @@ class FeedUtils {
 				$diffText = "<p>Can't load revision $newid</p>";
 			} else {
 				// Diff output fine, clean up any illegal UTF-8
-				$diffText = UtfNormal::cleanUp( $diffText );
+				$diffText = UtfNormal\Validator::cleanUp( $diffText );
 				$diffText = self::applyDiffStyle( $diffText );
 			}
-			wfProfileOut( __METHOD__ . "-dodiff" );
 		} else {
 			$rev = Revision::newFromId( $newid );
 			if ( $wgFeedDiffCutoff <= 0 || is_null( $rev ) ) {
@@ -208,7 +204,6 @@ class FeedUtils {
 		}
 		$completeText .= $diffText;
 
-		wfProfileOut( __METHOD__ );
 		return $completeText;
 	}
 

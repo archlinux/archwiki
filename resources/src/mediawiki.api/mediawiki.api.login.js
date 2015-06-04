@@ -14,8 +14,7 @@
 		 * @return {jQuery.Promise} See mw.Api#post
 		 */
 		login: function ( username, password ) {
-			var params, request,
-				deferred = $.Deferred(),
+			var params, apiPromise, innerPromise,
 				api = this;
 
 			params = {
@@ -24,25 +23,31 @@
 				lgpassword: password
 			};
 
-			request = api.post( params );
-			request.fail( deferred.reject );
-			request.done( function ( data ) {
-				params.lgtoken = data.login.token;
-				api.post( params )
-					.fail( deferred.reject )
-					.done( function ( data ) {
-						var code;
-						if ( data.login && data.login.result === 'Success' ) {
-							deferred.resolve( data );
-						} else {
-							// Set proper error code whenever possible
-							code = data.error && data.error.code || 'unknown';
-							deferred.reject( code, data );
-						}
-					} );
-			} );
+			apiPromise = api.post( params );
 
-			return deferred.promise( { abort: request.abort } );
+			return apiPromise
+				.then( function ( data ) {
+					params.lgtoken = data.login.token;
+					innerPromise = api.post( params )
+						.then( function ( data ) {
+							var code;
+							if ( data.login.result !== 'Success' ) {
+								// Set proper error code whenever possible
+								code = data.error && data.error.code || 'unknown';
+								return $.Deferred().reject( code, data );
+							}
+							return data;
+						} );
+					return innerPromise;
+				} )
+				.promise( {
+					abort: function () {
+						apiPromise.abort();
+						if ( innerPromise ) {
+							innerPromise.abort();
+						}
+					}
+				} );
 		}
 	} );
 

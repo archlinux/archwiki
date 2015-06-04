@@ -32,7 +32,6 @@ class OldChangesList extends ChangesList {
 	 * @return string|bool
 	 */
 	public function recentChangesLine( &$rc, $watched = false, $linenumber = null ) {
-		wfProfileIn( __METHOD__ );
 
 		$classes = array();
 		// use mw-line-even/mw-line-odd class only if linenumber is given (feature from bug 14468)
@@ -56,13 +55,9 @@ class OldChangesList extends ChangesList {
 				$rc->mAttribs['rc_namespace'] . '-' . $rc->mAttribs['rc_title'] );
 		}
 
-		if ( !wfRunHooks( 'OldChangesListRecentChangesLine', array( &$this, &$html, $rc, &$classes ) ) ) {
-			wfProfileOut( __METHOD__ );
-
+		if ( !Hooks::run( 'OldChangesListRecentChangesLine', array( &$this, &$html, $rc, &$classes ) ) ) {
 			return false;
 		}
-
-		wfProfileOut( __METHOD__ );
 
 		$dateheader = ''; // $html now contains only <li>...</li>, for hooks' convenience.
 		$this->insertDateHeader( $dateheader, $rc->mAttribs['rc_timestamp'] );
@@ -73,7 +68,7 @@ class OldChangesList extends ChangesList {
 	/**
 	 * @param RecentChange $rc
 	 * @param string[] &$classes
-	 * @param boolean $watched
+	 * @param bool $watched
 	 *
 	 * @return string
 	 */

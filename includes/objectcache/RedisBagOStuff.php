@@ -56,6 +56,7 @@ class RedisBagOStuff extends BagOStuff {
 	 * @param array $params
 	 */
 	function __construct( $params ) {
+		parent::__construct( $params );
 		$redisConf = array( 'serializer' => 'none' ); // manage that in this class
 		foreach ( array( 'connectTimeout', 'persistent', 'password' ) as $opt ) {
 			if ( isset( $params[$opt] ) ) {
@@ -73,7 +74,6 @@ class RedisBagOStuff extends BagOStuff {
 	}
 
 	public function get( $key, &$casToken = null ) {
-		$section = new ProfileSection( __METHOD__ );
 
 		list( $server, $conn ) = $this->getConnection( $key );
 		if ( !$conn ) {
@@ -93,7 +93,6 @@ class RedisBagOStuff extends BagOStuff {
 	}
 
 	public function set( $key, $value, $expiry = 0 ) {
-		$section = new ProfileSection( __METHOD__ );
 
 		list( $server, $conn ) = $this->getConnection( $key );
 		if ( !$conn ) {
@@ -116,8 +115,7 @@ class RedisBagOStuff extends BagOStuff {
 		return $result;
 	}
 
-	public function cas( $casToken, $key, $value, $expiry = 0 ) {
-		$section = new ProfileSection( __METHOD__ );
+	protected function cas( $casToken, $key, $value, $expiry = 0 ) {
 
 		list( $server, $conn ) = $this->getConnection( $key );
 		if ( !$conn ) {
@@ -150,8 +148,7 @@ class RedisBagOStuff extends BagOStuff {
 		return $result;
 	}
 
-	public function delete( $key, $time = 0 ) {
-		$section = new ProfileSection( __METHOD__ );
+	public function delete( $key ) {
 
 		list( $server, $conn ) = $this->getConnection( $key );
 		if ( !$conn ) {
@@ -171,7 +168,6 @@ class RedisBagOStuff extends BagOStuff {
 	}
 
 	public function getMulti( array $keys ) {
-		$section = new ProfileSection( __METHOD__ );
 
 		$batches = array();
 		$conns = array();
@@ -217,7 +213,6 @@ class RedisBagOStuff extends BagOStuff {
 	 * @return bool
 	 */
 	public function setMulti( array $data, $expiry = 0 ) {
-		$section = new ProfileSection( __METHOD__ );
 
 		$batches = array();
 		$conns = array();
@@ -265,7 +260,6 @@ class RedisBagOStuff extends BagOStuff {
 
 
 	public function add( $key, $value, $expiry = 0 ) {
-		$section = new ProfileSection( __METHOD__ );
 
 		list( $server, $conn ) = $this->getConnection( $key );
 		if ( !$conn ) {
@@ -303,7 +297,6 @@ class RedisBagOStuff extends BagOStuff {
 	 * @return int|bool New value or false on failure
 	 */
 	public function incr( $key, $value = 1 ) {
-		$section = new ProfileSection( __METHOD__ );
 
 		list( $server, $conn ) = $this->getConnection( $key );
 		if ( !$conn ) {
@@ -322,6 +315,15 @@ class RedisBagOStuff extends BagOStuff {
 		$this->logRequest( 'incr', $key, $server, $result );
 		return $result;
 	}
+
+	public function merge( $key, $callback, $exptime = 0, $attempts = 10 ) {
+		if ( !is_callable( $callback ) ) {
+			throw new Exception( "Got invalid callback." );
+		}
+
+		return $this->mergeViaCas( $key, $callback, $exptime, $attempts );
+	}
+
 	/**
 	 * @param mixed $data
 	 * @return string
@@ -371,7 +373,7 @@ class RedisBagOStuff extends BagOStuff {
 	 * @param string $msg
 	 */
 	protected function logError( $msg ) {
-		wfDebugLog( 'redis', "Redis error: $msg" );
+		$this->logger->error( "Redis error: $msg" );
 	}
 
 	/**

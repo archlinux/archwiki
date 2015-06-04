@@ -2,11 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"Geitost",
-			"Metalhead64"
+			"Metalhead64",
+			"Kghbln"
 		]
 	},
 	"skinname-monobook": "MonoBook",
-	"monobook-desc": "Ergänzt die klassische MediaWiki-Benutzeroberfläche seit 2004, benannt nach dem Schwarzweißfoto eines Buches im Seitenhintergrund",
-	"monobook.css": "/* Das folgende CSS wird für Benutzer der MonoBook-Benutzeroberfläche geladen */",
-	"monobook.js": "/* Das folgende JavaScript wird für Benutzer der Monobook-Benutzeroberfläche geladen. */"
+	"monobook-desc": "Stellt eine klassische Benutzeroberfläche bereit",
+	"monobook.css": "/* Das folgende CSS wird für Benutzer der Benutzeroberfläche MonoBook geladen */",
+	"monobook.js": "/* Das folgende JavaScript wird für Benutzer der Benutzeroberfläche MonoBook geladen. */"
 }

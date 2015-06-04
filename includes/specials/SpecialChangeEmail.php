@@ -39,7 +39,7 @@ class SpecialChangeEmail extends FormSpecialPage {
 	/**
 	 * @return bool
 	 */
-	function isListed() {
+	public function isListed() {
 		global $wgAuth;
 
 		return $wgAuth->allowPropChange( 'emailaddress' );
@@ -54,7 +54,7 @@ class SpecialChangeEmail extends FormSpecialPage {
 		$out->disallowUserJs();
 		$out->addModules( 'mediawiki.special.changeemail' );
 
-		return parent::execute( $par );
+		parent::execute( $par );
 	}
 
 	protected function checkExecutePermissions( User $user ) {
@@ -106,22 +106,20 @@ class SpecialChangeEmail extends FormSpecialPage {
 		return $fields;
 	}
 
+	protected function getDisplayFormat() {
+		return 'vform';
+	}
+
 	protected function alterForm( HTMLForm $form ) {
-		$form->setDisplayFormat( 'vform' );
 		$form->setId( 'mw-changeemail-form' );
 		$form->setTableId( 'mw-changeemail-table' );
-		$form->setWrapperLegend( false );
 		$form->setSubmitTextMsg( 'changeemail-submit' );
-		$form->addHiddenField( 'returnto', $this->getRequest()->getVal( 'returnto' ) );
+		$form->addHiddenFields( $this->getRequest()->getValues( 'returnto', 'returntoquery' ) );
 	}
 
 	public function onSubmit( array $data ) {
-		if ( $this->getRequest()->getBool( 'wpCancel' ) ) {
-			$status = Status::newGood( true );
-		} else {
-			$password = isset( $data['Password'] ) ? $data['Password'] : null;
-			$status = $this->attemptChange( $this->getUser(), $password, $data['NewEmail'] );
-		}
+		$password = isset( $data['Password'] ) ? $data['Password'] : null;
+		$status = $this->attemptChange( $this->getUser(), $password, $data['NewEmail'] );
 
 		$this->status = $status;
 
@@ -129,18 +127,22 @@ class SpecialChangeEmail extends FormSpecialPage {
 	}
 
 	public function onSuccess() {
-		$titleObj = Title::newFromText( $this->getRequest()->getVal( 'returnto' ) );
+		$request = $this->getRequest();
+
+		$titleObj = Title::newFromText( $request->getVal( 'returnto' ) );
 		if ( !$titleObj instanceof Title ) {
 			$titleObj = Title::newMainPage();
 		}
+		$query = $request->getVal( 'returntoquery' );
 
 		if ( $this->status->value === true ) {
-			$this->getOutput()->redirect( $titleObj->getFullURL() );
+			$this->getOutput()->redirect( $titleObj->getFullURL( $query ) );
 		} elseif ( $this->status->value === 'eauth' ) {
 			# Notify user that a confirmation email has been sent...
 			$this->getOutput()->wrapWikiMsg( "<div class='error' style='clear: both;'>\n$1\n</div>",
 				'eauthentsent', $this->getUser()->getName() );
-			$this->getOutput()->addReturnTo( $titleObj ); // just show the link to go back
+			// just show the link to go back
+			$this->getOutput()->addReturnTo( $titleObj, wfCgiToArray( $query ) );
 		}
 	}
 
@@ -150,7 +152,7 @@ class SpecialChangeEmail extends FormSpecialPage {
 	 * @param string $newaddr
 	 * @return Status
 	 */
-	protected function attemptChange( User $user, $pass, $newaddr ) {
+	private function attemptChange( User $user, $pass, $newaddr ) {
 		global $wgAuth;
 
 		if ( $newaddr != '' && !Sanitizer::validateEmail( $newaddr ) ) {
@@ -184,7 +186,7 @@ class SpecialChangeEmail extends FormSpecialPage {
 			return $status;
 		}
 
-		wfRunHooks( 'PrefsEmailAudit', array( $user, $oldaddr, $newaddr ) );
+		Hooks::run( 'PrefsEmailAudit', array( $user, $oldaddr, $newaddr ) );
 
 		$user->saveSettings();
 

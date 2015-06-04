@@ -19,7 +19,7 @@ abstract class DumpTestCase extends MediaWikiLangTestCase {
 	protected $exceptionFromAddDBData = null;
 
 	/**
-	 * Holds the xmlreader used for analyzing an xml dump
+	 * Holds the XMLReader used for analyzing an XML dump
 	 *
 	 * @var XMLReader|null
 	 */
@@ -30,13 +30,15 @@ abstract class DumpTestCase extends MediaWikiLangTestCase {
 	 *
 	 * @param Page $page Page to add the revision to
 	 * @param string $text Revisions text
-	 * @param string $summary Revisions summare
-	 * @return array
+	 * @param string $summary Revisions summary
+	 * @param string $model The model ID (defaults to wikitext)
+	 *
 	 * @throws MWException
+	 * @return array
 	 */
-	protected function addRevision( Page $page, $text, $summary ) {
+	protected function addRevision( Page $page, $text, $summary, $model = CONTENT_MODEL_WIKITEXT ) {
 		$status = $page->doEditContent(
-			ContentHandler::makeContent( $text, $page->getTitle() ),
+			ContentHandler::makeContent( $text, $page->getTitle(), $model ),
 			$summary
 		);
 
@@ -330,6 +332,12 @@ abstract class DumpTestCase extends MediaWikiLangTestCase {
 		$this->assertTextNode( "comment", $summary );
 		$this->skipWhitespace();
 
+		$this->assertTextNode( "model", $model );
+		$this->skipWhitespace();
+
+		$this->assertTextNode( "format", $format );
+		$this->skipWhitespace();
+
 		if ( $this->xml->name == "text" ) {
 			// note: <text> tag may occur here or at the very end.
 			$text_found = true;
@@ -339,12 +347,6 @@ abstract class DumpTestCase extends MediaWikiLangTestCase {
 		}
 
 		$this->assertTextNode( "sha1", $text_sha1 );
-
-		$this->assertTextNode( "model", $model );
-		$this->skipWhitespace();
-
-		$this->assertTextNode( "format", $format );
-		$this->skipWhitespace();
 
 		if ( !$text_found ) {
 			$this->assertText( $id, $text_id, $text_bytes, $text );

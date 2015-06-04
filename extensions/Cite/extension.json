@@ -1,0 +1,52 @@
+{
+	"name": "Cite",
+	"author": [
+		"Ævar Arnfjörð Bjarmason",
+		"Andrew Garrett",
+		"Brion Vibber",
+		"Marius Hoch",
+		"Steve Sanbeg"
+	],
+	"url": "https://www.mediawiki.org/wiki/Extension:Cite",
+	"descriptionmsg": "cite-desc",
+	"license-name": "GPL-2.0+",
+	"type": "parserhook",
+	"MessagesDirs": {
+		"Cite": [
+			"i18n"
+		]
+	},
+	"Hooks": {
+		"ParserFirstCallInit": [
+			"Cite::setHooks"
+		]
+	},
+	"ResourceModules": {
+		"ext.cite": {
+			"scripts": "ext.cite.js",
+			"styles": "ext.cite.css",
+			"messages": [
+				"cite_references_link_accessibility_label",
+				"cite_references_link_many_accessibility_label"
+			]
+		},
+		"ext.rtlcite": {
+			"styles": "ext.rtlcite.css",
+			"position": "top"
+		}
+	},
+	"ResourceFileModulePaths": {
+		"localBasePath": "modules",
+		"remoteExtPath": "Cite/modules"
+	},
+	"config": {
+		"AllowCiteGroups": true,
+		"CiteCacheReferences": false
+	},
+	"AutoloadClasses": {
+		"Cite": "Cite_body.php"
+	},
+	"ParserTestFiles": [
+		"citeParserTests.txt"
+	]
+}

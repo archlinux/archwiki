@@ -8,7 +8,7 @@
 	/**
 	 * @class mw.Title
 	 *
-	 * Parse titles into an object struture. Note that when using the constructor
+	 * Parse titles into an object structure. Note that when using the constructor
 	 * directly, passing invalid titles will result in an exception. Use #newFromText to use the
 	 * logic directly and get null for invalid titles which is easier to work with.
 	 *
@@ -119,7 +119,7 @@
 
 	rSplit = /^(.+?)_*:_*(.*)$/,
 
-	// See Title.php#getTitleInvalidRegex
+	// See MediaWikiTitleCodec.php#getTitleInvalidRegex
 	rInvalid = new RegExp(
 		'[^' + mw.config.get( 'wgLegalTitleChars' ) + ']' +
 		// URL percent encoding sequences interfere with the ability
@@ -508,7 +508,7 @@
 
 		normalizeExtension = function ( extension ) {
 			// Remove only trailing space (that is removed by MW anyway)
-			extension = extension.toLowerCase().replace(/\s*$/, '');
+			extension = extension.toLowerCase().replace( /\s*$/, '' );
 			return extension;
 		};
 
@@ -731,7 +731,10 @@
 		set: function ( titles, state ) {
 			titles = $.isArray( titles ) ? titles : [titles];
 			state = state === undefined ? true : !!state;
-			var pages = this.pages, i, len = titles.length;
+			var i,
+				pages = this.pages,
+				len = titles.length;
+
 			for ( i = 0; i < len; i++ ) {
 				pages[ titles[i] ] = state;
 			}

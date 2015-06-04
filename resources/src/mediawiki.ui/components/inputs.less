@@ -9,7 +9,7 @@
 	font-style: italic;
 	font-weight: normal;
 }
-// Inputs
+// Text inputs
 //
 // Apply the mw-ui-input class to input and textarea fields.
 //
@@ -32,16 +32,14 @@
 	border: 1px solid @colorFieldBorder;
 	.box-sizing(border-box);
 	width: 100%;
-	padding: .4em .3em .2em .6em;
+	padding: .3em .3em .3em .6em;
 	display: block;
 	vertical-align: middle;
 	border-radius: @borderRadius;
-	// Override user agent stylesheet properties. Instead use parent element.
-	color: inherit;
 	font-family: inherit;
 	font-size: inherit;
 	line-height: inherit;
-	.transition(~"border linear .2s, box-shadow linear .2s");
+	.transition(~"border 0.2s cubic-bezier(0.39, 0.575, 0.565, 1), box-shadow 0.2s cubic-bezier(0.39, 0.575, 0.565, 1)");
 
 	// Placeholder text styling must be set individually for each browser @winter
 	&::-webkit-input-placeholder { // webkit
@@ -66,10 +64,16 @@
 	}
 
 	&:focus {
-		box-shadow: inset .45em 0 0 @colorProgressive;
-		border-color: @colorGrayDark;
+		box-shadow: inset 0 0 0 2px @colorProgressive;
+		// Color being used to match inset shadow, not semantic reasons
+		border-color: @colorProgressive;
 		// Remove focus glow on input[type="search"]
 		outline: 0;
+	}
+
+	&:disabled {
+		border-color: @colorGray14;
+		color: @colorGray12;
 	}
 }
 
@@ -83,7 +87,7 @@ textarea.mw-ui-input {
 //
 // Markup:
 // <input class="mw-ui-input mw-ui-input-inline">
-// <button class="mw-ui-button mw-ui-constructive">go</button>
+// <button class="mw-ui-button mw-ui-constructive">Submit</button>
 //
 // Styleguide 1.2.
 input[type="number"],

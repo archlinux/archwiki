@@ -1,11 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Gazeb"
+			"Gazeb",
+			"Tkalyn"
 		]
 	},
 	"pfunc_desc": "Росшырїня парсера о лоґічны функції",
-	"pfunc_time_error": "Хына: неплатный час",
+	"pfunc_time_error": "Хыба: неплатный час",
 	"pfunc_time_too_long": "Хыба: дуже много кликаня #time",
 	"pfunc_rel2abs_invalid_depth": "Хыба: Неплатна глубка в стежцї: \"$1\" (проба  о приступ до узла высшого як корїнь)",
 	"pfunc_expr_stack_exhausted": "Хыба выразу: Засобник переповненый",

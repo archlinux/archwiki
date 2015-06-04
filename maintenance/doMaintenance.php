@@ -56,8 +56,8 @@ $self = $maintenance->getName();
 
 # Start the autoloader, so that extensions can derive classes from core files
 require_once "$IP/includes/AutoLoader.php";
-# Stub the profiler
-require_once "$IP/includes/profiler/Profiler.php";
+# Grab profiling functions
+require_once "$IP/includes/profiler/ProfilerFunctions.php";
 
 # Start the profiler
 $wgProfiler = array();
@@ -68,6 +68,7 @@ if ( file_exists( "$IP/StartProfiler.php" ) ) {
 // Some other requires
 require_once "$IP/includes/Defines.php";
 require_once "$IP/includes/DefaultSettings.php";
+require_once "$IP/includes/GlobalFunctions.php";
 
 # Load composer's autoloader if present
 if ( is_readable( "$IP/vendor/autoload.php" ) ) {
@@ -91,29 +92,26 @@ if ( $maintenance->getDbType() === Maintenance::DB_NONE ) {
 	}
 }
 
-$maintenance->setConfig( ConfigFactory::getDefaultInstance()->makeConfig( 'main' ) );
 $maintenance->finalSetup();
 // Some last includes
 require_once "$IP/includes/Setup.php";
 
+// Initialize main config instance
+$maintenance->setConfig( ConfigFactory::getDefaultInstance()->makeConfig( 'main' ) );
+
 // Do the work
-try {
-	$maintenance->execute();
+$maintenance->execute();
 
-	// Potentially debug globals
-	$maintenance->globals();
+// Potentially debug globals
+$maintenance->globals();
 
-	// Perform deferred updates.
-	DeferredUpdates::doUpdates( 'commit' );
+// Perform deferred updates.
+DeferredUpdates::doUpdates( 'commit' );
 
-	// log profiling info
-	wfLogProfilingData();
+// log profiling info
+wfLogProfilingData();
 
-	// Commit and close up!
-	$factory = wfGetLBFactory();
-	$factory->commitMasterChanges();
-	$factory->shutdown();
-} catch ( MWException $mwe ) {
-	echo $mwe->getText();
-	exit( 1 );
-}
+// Commit and close up!
+$factory = wfGetLBFactory();
+$factory->commitMasterChanges();
+$factory->shutdown();

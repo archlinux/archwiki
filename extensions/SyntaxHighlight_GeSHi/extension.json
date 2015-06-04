@@ -1,0 +1,53 @@
+{
+	"name": "SyntaxHighlight",
+	"version": "1.0.8.12",
+	"author": [
+		"Brion Vibber",
+		"Tim Starling",
+		"Rob Church",
+		"Niklas Laxström"
+	],
+	"url": "https://www.mediawiki.org/wiki/Extension:SyntaxHighlight_GeSHi",
+	"descriptionmsg": "syntaxhighlight-desc",
+	"license-name": "GPL-2.0+",
+	"type": "parserhook",
+	"callback": "SyntaxHighlight_GeSHi::registerExtension",
+	"MessagesDirs": {
+		"SyntaxHighlight_GeSHi": [
+			"i18n"
+		]
+	},
+	"AutoloadClasses": {
+		"SyntaxHighlight_GeSHi": "SyntaxHighlight_GeSHi.class.php",
+		"ResourceLoaderGeSHiModule": "ResourceLoaderGeSHiModule.php",
+		"ResourceLoaderGeSHiLocalModule": "ResourceLoaderGeSHiLocalModule.php"
+	},
+	"ResourceModules": {
+		"ext.geshi.local": {
+			"class": "ResourceLoaderGeSHiLocalModule"
+		}
+	},
+	"Hooks": {
+		"ParserFirstCallInit": [
+			"SyntaxHighlight_GeSHi::configureParser"
+		],
+		"ResourceLoaderRegisterModules": [
+			"SyntaxHighlight_GeSHi::resourceLoaderRegisterModules"
+		],
+		"ContentGetParserOutput": [
+			"SyntaxHighlight_GeSHi::renderHook"
+		],
+		"ApiFormatHighlight": [
+			"SyntaxHighlight_GeSHi::apiFormatHighlight"
+		]
+	},
+	"SyntaxHighlightModels": {
+		"css": "css",
+		"javascript": "javascript"
+	},
+	"config": {
+		"SyntaxHighlightDefaultLang": null,
+		"SyntaxHighlightKeywordLinks": false,
+		"GeSHiSupportedLanguages" : null
+	}
+}

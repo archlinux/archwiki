@@ -12,7 +12,7 @@
 	"nuke-nopages": "Vuriyayişê ke hetê ıney ra [[Special:Contributions/$1|{{GENDER:$1|$1}}]] biye tede çı pelê neweyi çini .",
 	"nuke-list": "Pelê ke cêr de yê hetê ıney ra [[Special:Contributions/$1|{{GENDER:$1|$1}}]]  yew tarixo nızdi de  vıraziyayi; mışore bıkerê u qey hewnakerdışi yew tuş bıtıknê.",
 	"nuke-defaultreason": "Peleyê ke [[Special:Contributions/$1|{{GENDER:$1|$1}}]] dekerdê de ena pêron hewadayış",
-	"nuke-tools": "Na hacet, peleyê ke nezdı ra yew karber yana ip ra akerdê êna pêrun rê esternayış de cı rê mısade dano.\nListanê peleyê ke besternaya vinayışi rê namey karberi yana ip adresi dekere de.",
+	"nuke-tools": "No hacet mısade dano be esteriyayışê pelanê ke nêzdi de terefê yew karberi ya zi yew adresa IPyi ra ilawe biyê.\nSeba gırewtışê lista pelan ra êyê ke esteriyenê nameyê karberi ya zi adresa IPyi cı kewe, ya zi seba pêro karberan ra veng caverde.",
 	"nuke-submit-user": "Şo",
 	"nuke-submit-delete": "Weçinayi esterne",
 	"right-nuke": "pelan yew hew de hewnaker",

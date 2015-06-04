@@ -8,7 +8,8 @@
 			"Kaganer",
 			"MaxSem",
 			"VasilievVV",
-			"Александр Сигачёв"
+			"Александр Сигачёв",
+			"Okras"
 		]
 	},
 	"gadgets-desc": "Позволяет участникам выбирать в своих [[Special:Preferences#mw-prefsection-gadgets|настройках]] те или иные [[Special:Gadgets|CSS- и JavaScript-гаджеты]]",
@@ -25,5 +26,10 @@
 	"gadgets-export-title": "Экспорт гаджета",
 	"gadgets-not-found": "Гаджет «$1» не найден.",
 	"gadgets-export-text": "Для экспорта гаджета $1, нажмите кнопку «{{int:gadgets-export-download}}», сохраните загруженный файл,\nперейдите на страницу Special:Import целевой вики и загрузите файл. Затем добавьте следующие строки на страницу MediaWiki:Gadgets-definition:\n<pre>$2</pre>\nВы должны иметь соответствующие разрешения в целевой вики (в том числе право на редактирование системных сообщений), также на сервере должна быть включена настройка импорта из файлов.",
-	"gadgets-export-download": "Скачать"
+	"gadgets-export-download": "Скачать",
+	"apihelp-query+gadgetcategories-description": "Возвращает список категорий гаджетов.",
+	"apihelp-query+gadgetcategories-example-1": "Получить список существующих категорий гаджетов",
+	"apihelp-query+gadgets-description": "Возвращает список гаджетов, используемых в этой вики.",
+	"apihelp-query+gadgets-param-ids": "Идентификаторы гаджетов для получения.",
+	"apihelp-query+gadgets-example-5": "Получить список гаджетов, включённых у данного участника"
 }

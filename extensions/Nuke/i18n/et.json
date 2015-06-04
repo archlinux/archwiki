@@ -14,6 +14,7 @@
 	"nuke-multiplepeople": "Hiljuti lisatud lehekülgede lauskustutamine",
 	"nuke-tools": "See tööriist võimaldab kasutaja või IP-aadressi hiljuti lisatud leheküljed lauskustutada.\nKustutatavate lehekülgede nimekirja näitamiseks sisesta kasutajanimi või IP-aadress. Kõigi kasutajate lisatud lehekülgede jaoks jäta väli tühjaks.",
 	"nuke-submit-user": "Mine",
+	"nuke-toggleinvert": "Pööra ümber",
 	"nuke-submit-delete": "Kustuta väljavalitud",
 	"right-nuke": "Lehekülgi lauskustutada",
 	"nuke-select": "Valik: $1",

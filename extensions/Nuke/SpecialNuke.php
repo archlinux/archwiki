@@ -1,2 +1,2 @@
 <?php
-require_once( dirname( __FILE__ ) . '/Nuke.php' );
+require_once( __DIR__ . '/Nuke.php' );

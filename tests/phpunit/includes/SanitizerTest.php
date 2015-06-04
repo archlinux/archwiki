@@ -6,12 +6,6 @@
  */
 class SanitizerTest extends MediaWikiTestCase {
 
-	protected function setUp() {
-		parent::setUp();
-
-		AutoLoader::loadClass( 'Sanitizer' );
-	}
-
 	/**
 	 * @covers Sanitizer::decodeCharReferences
 	 */
@@ -85,7 +79,7 @@ class SanitizerTest extends MediaWikiTestCase {
 	 */
 	public function testInvalidNumberedEntities() {
 		$this->assertEquals(
-			UTF8_REPLACEMENT,
+			UtfNormal\Constants::UTF8_REPLACEMENT,
 			Sanitizer::decodeCharReferences( "&#88888888888888;" ),
 			'Invalid numbered entity'
 		);
@@ -346,4 +340,25 @@ class SanitizerTest extends MediaWikiTestCase {
 			$message
 		);
 	}
+
+	/**
+	 * @dataProvider provideEscapeHtmlAllowEntities
+	 * @covers Sanitizer::escapeHtmlAllowEntities
+	 */
+	public function testEscapeHtmlAllowEntities( $expected, $html ) {
+		$this->assertEquals(
+			$expected,
+			Sanitizer::escapeHtmlAllowEntities( $html )
+		);
+	}
+
+	public static function provideEscapeHtmlAllowEntities() {
+		return array(
+			array( 'foo', 'foo' ),
+			array( 'a¡b', 'a&#161;b' ),
+			array( 'foo&#039;bar', "foo'bar" ),
+			array( '&lt;script&gt;foo&lt;/script&gt;', '<script>foo</script>' ),
+		);
+	}
+
 }

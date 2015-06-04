@@ -144,6 +144,12 @@ class Language {
 	static private $fallbackLanguageCache = array();
 
 	/**
+	 * Cache for language names
+	 * @var MapCacheLRU|null
+	 */
+	static private $languageNameCache;
+
+	/**
 	 * Get a cached or new language object for a given language code
 	 * @param string $code
 	 * @return Language
@@ -312,7 +318,7 @@ class Language {
 		// see bugs 37564, 37587, 36938
 		$cache[$code] =
 			strcspn( $code, ":/\\\000&<>'\"" ) === strlen( $code )
-			&& !preg_match( Title::getTitleInvalidRegex(), $code );
+			&& !preg_match( MediaWikiTitleCodec::getTitleInvalidRegex(), $code );
 
 		return $cache[$code];
 	}
@@ -494,7 +500,7 @@ class Language {
 			# Re-order by namespace ID number...
 			ksort( $this->namespaceNames );
 
-			wfRunHooks( 'LanguageGetNamespaces', array( &$this->namespaceNames ) );
+			Hooks::run( 'LanguageGetNamespaces', array( &$this->namespaceNames ) );
 		}
 
 		return $this->namespaceNames;
@@ -581,7 +587,7 @@ class Language {
 		global $wgExtraGenderNamespaces;
 
 		$ns = $wgExtraGenderNamespaces +
-			self::$dataCache->getItem( $this->mCode, 'namespaceGenderAliases' );
+			(array)self::$dataCache->getItem( $this->mCode, 'namespaceGenderAliases' );
 
 		return isset( $ns[$index][$gender] ) ? $ns[$index][$gender] : $this->getNsText( $index );
 	}
@@ -848,6 +854,31 @@ class Language {
 	 * @since 1.20
 	 */
 	public static function fetchLanguageNames( $inLanguage = null, $include = 'mw' ) {
+		$cacheKey = $inLanguage === null ? 'null' : $inLanguage;
+		$cacheKey .= ":$include";
+		if ( self::$languageNameCache === null ) {
+			self::$languageNameCache = new MapCacheLRU( 20 );
+		}
+		if ( self::$languageNameCache->has( $cacheKey ) ) {
+			$ret = self::$languageNameCache->get( $cacheKey );
+		} else {
+			$ret = self::fetchLanguageNamesUncached( $inLanguage, $include );
+			self::$languageNameCache->set( $cacheKey, $ret );
+		}
+		return $ret;
+	}
+
+	/**
+	 * Uncached helper for fetchLanguageNames
+	 * @param null|string $inLanguage Code of language in which to return the names
+	 *		Use null for autonyms (native names)
+	 * @param string $include One of:
+	 *		'all' all available languages
+	 *		'mw' only if the language is defined in MediaWiki or wgExtraLanguageNames (default)
+	 *		'mwfile' only if the language is in 'mw' *and* has a message file
+	 * @return array Language code => language name
+	 */
+	private static function fetchLanguageNamesUncached( $inLanguage = null, $include = 'mw' ) {
 		global $wgExtraLanguageNames;
 		static $coreLanguageNames;
 
@@ -865,7 +896,7 @@ class Language {
 
 		if ( $inLanguage ) {
 			# TODO: also include when $inLanguage is null, when this code is more efficient
-			wfRunHooks( 'LanguageGetTranslatedLanguageNames', array( &$names, $inLanguage ) );
+			Hooks::run( 'LanguageGetTranslatedLanguageNames', array( &$names, $inLanguage ) );
 		}
 
 		$mwNames = $wgExtraLanguageNames + $coreLanguageNames;
@@ -878,6 +909,7 @@ class Language {
 		}
 
 		if ( $include === 'all' ) {
+			ksort( $names );
 			return $names;
 		}
 
@@ -899,9 +931,11 @@ class Language {
 				}
 			}
 
+			ksort( $namesMwFile );
 			return $namesMwFile;
 		}
 
+		ksort( $returnMw );
 		# 'mw' option; default if it's not one of the other two options (all/mwfile)
 		return $returnMw;
 	}
@@ -926,7 +960,17 @@ class Language {
 	 * @return string
 	 */
 	function getMessageFromDB( $msg ) {
-		return wfMessage( $msg )->inLanguage( $this )->text();
+		return $this->msg( $msg )->text();
+	}
+
+	/**
+	 * Get message object in this language. Only for use inside this class.
+	 *
+	 * @param string $msg Message name
+	 * @return Message
+	 */
+	protected function msg( $msg ) {
+		return wfMessage( $msg )->inLanguage( $this );
 	}
 
 	/**
@@ -1210,7 +1254,9 @@ class Language {
 					break;
 				case 'D':
 					$usedDay = true;
-					$s .= $this->getWeekdayAbbreviation( Language::dateTimeObjFormat( $dateTimeObj, $ts, $zone, 'w' ) + 1 );
+					$s .= $this->getWeekdayAbbreviation(
+						Language::dateTimeObjFormat( $dateTimeObj, $ts, $zone, 'w' ) + 1
+					);
 					break;
 				case 'j':
 					$usedDay = true;
@@ -1239,7 +1285,9 @@ class Language {
 					break;
 				case 'l':
 					$usedDay = true;
-					$s .= $this->getWeekdayName( Language::dateTimeObjFormat( $dateTimeObj, $ts, $zone, 'w' ) + 1 );
+					$s .= $this->getWeekdayName(
+						Language::dateTimeObjFormat( $dateTimeObj, $ts, $zone, 'w' ) + 1
+					);
 					break;
 				case 'F':
 					$usedMonth = true;
@@ -1486,43 +1534,72 @@ class Language {
 		} elseif ( $usedHour ) {
 			$ttl = 3600 - substr( $ts, 10, 2 ) * 60 - substr( $ts, 12, 2 );
 		} elseif ( $usedAMPM ) {
-			$ttl = 43200 - ( substr( $ts, 8, 2 ) % 12 ) * 3600 - substr( $ts, 10, 2 ) * 60 - substr( $ts, 12, 2 );
-		} elseif ( $usedDay || $usedHebrewMonth || $usedIranianMonth || $usedHijriMonth || $usedHebrewYear || $usedIranianYear || $usedHijriYear || $usedTennoYear ) {
-			// @todo Someone who understands the non-Gregorian calendars should write proper logic for them
-			// so that they don't need purged every day.
-			$ttl = 86400 - substr( $ts, 8, 2 ) * 3600 - substr( $ts, 10, 2 ) * 60 - substr( $ts, 12, 2 );
+			$ttl = 43200 - ( substr( $ts, 8, 2 ) % 12 ) * 3600 -
+				substr( $ts, 10, 2 ) * 60 - substr( $ts, 12, 2 );
+		} elseif (
+			$usedDay ||
+			$usedHebrewMonth ||
+			$usedIranianMonth ||
+			$usedHijriMonth ||
+			$usedHebrewYear ||
+			$usedIranianYear ||
+			$usedHijriYear ||
+			$usedTennoYear
+		) {
+			// @todo Someone who understands the non-Gregorian calendars
+			// should write proper logic for them so that they don't need purged every day.
+			$ttl = 86400 - substr( $ts, 8, 2 ) * 3600 -
+				substr( $ts, 10, 2 ) * 60 - substr( $ts, 12, 2 );
 		} else {
 			$possibleTtls = array();
-			$timeRemainingInDay = 86400 - substr( $ts, 8, 2 ) * 3600 - substr( $ts, 10, 2 ) * 60 - substr( $ts, 12, 2 );
+			$timeRemainingInDay = 86400 - substr( $ts, 8, 2 ) * 3600 -
+				substr( $ts, 10, 2 ) * 60 - substr( $ts, 12, 2 );
 			if ( $usedWeek ) {
-				$possibleTtls[] = ( 7 - Language::dateTimeObjFormat( $dateTimeObj, $ts, $zone, 'N' ) ) * 86400 + $timeRemainingInDay;
+				$possibleTtls[] =
+					( 7 - Language::dateTimeObjFormat( $dateTimeObj, $ts, $zone, 'N' ) ) * 86400 +
+					$timeRemainingInDay;
 			} elseif ( $usedISOYear ) {
 				// December 28th falls on the last ISO week of the year, every year.
 				// The last ISO week of a year can be 52 or 53.
-				$lastWeekOfISOYear = DateTime::createFromFormat( 'Ymd', substr( $ts, 0, 4 ) . '1228', $zone ?: new DateTimeZone( 'UTC' ) )->format( 'W' );
+				$lastWeekOfISOYear = DateTime::createFromFormat(
+					'Ymd',
+					substr( $ts, 0, 4 ) . '1228',
+					$zone ?: new DateTimeZone( 'UTC' )
+				)->format( 'W' );
 				$currentISOWeek = Language::dateTimeObjFormat( $dateTimeObj, $ts, $zone, 'W' );
 				$weeksRemaining = $lastWeekOfISOYear - $currentISOWeek;
-				$timeRemainingInWeek = ( 7 - Language::dateTimeObjFormat( $dateTimeObj, $ts, $zone, 'N' ) ) * 86400 + $timeRemainingInDay;
+				$timeRemainingInWeek =
+					( 7 - Language::dateTimeObjFormat( $dateTimeObj, $ts, $zone, 'N' ) ) * 86400
+					+ $timeRemainingInDay;
 				$possibleTtls[] = $weeksRemaining * 604800 + $timeRemainingInWeek;
 			}
 
 			if ( $usedMonth ) {
-				$possibleTtls[] = ( Language::dateTimeObjFormat( $dateTimeObj, $ts, $zone, 't' ) - substr( $ts, 6, 2 ) ) * 86400 + $timeRemainingInDay;
+				$possibleTtls[] =
+					( Language::dateTimeObjFormat( $dateTimeObj, $ts, $zone, 't' ) -
+						substr( $ts, 6, 2 ) ) * 86400
+					+ $timeRemainingInDay;
 			} elseif ( $usedYear ) {
-				$possibleTtls[] = ( Language::dateTimeObjFormat( $dateTimeObj, $ts, $zone, 'L' ) + 364 - Language::dateTimeObjFormat( $dateTimeObj, $ts, $zone, 'z' ) ) * 86400
+				$possibleTtls[] =
+					( Language::dateTimeObjFormat( $dateTimeObj, $ts, $zone, 'L' ) + 364 -
+						Language::dateTimeObjFormat( $dateTimeObj, $ts, $zone, 'z' ) ) * 86400
 					+ $timeRemainingInDay;
 			} elseif ( $usedIsLeapYear ) {
 				$year = substr( $ts, 0, 4 );
-				$timeRemainingInYear = ( Language::dateTimeObjFormat( $dateTimeObj, $ts, $zone, 'L' ) + 364 - Language::dateTimeObjFormat( $dateTimeObj, $ts, $zone, 'z' ) ) * 86400
+				$timeRemainingInYear =
+					( Language::dateTimeObjFormat( $dateTimeObj, $ts, $zone, 'L' ) + 364 -
+						Language::dateTimeObjFormat( $dateTimeObj, $ts, $zone, 'z' ) ) * 86400
 					+ $timeRemainingInDay;
 				$mod = $year % 4;
 				if ( $mod || ( !( $year % 100 ) && $year % 400 ) ) {
 					// this isn't a leap year. see when the next one starts
 					$nextCandidate = $year - $mod + 4;
 					if ( $nextCandidate % 100 || !( $nextCandidate % 400 ) ) {
-						$possibleTtls[] = ( $nextCandidate - $year - 1 ) * 365 * 86400 + $timeRemainingInYear;
+						$possibleTtls[] = ( $nextCandidate - $year - 1 ) * 365 * 86400 +
+							$timeRemainingInYear;
 					} else {
-						$possibleTtls[] = ( $nextCandidate - $year + 3 ) * 365 * 86400 + $timeRemainingInYear;
+						$possibleTtls[] = ( $nextCandidate - $year + 3 ) * 365 * 86400 +
+							$timeRemainingInYear;
 					}
 				} else {
 					// this is a leap year, so the next year isn't
@@ -2868,7 +2945,7 @@ class Language {
 			}
 
 			// Break down Hangul syllables to grab the first jamo
-			$code = utf8ToCodepoint( $matches[1] );
+			$code = UtfNormal\Utils::utf8ToCodepoint( $matches[1] );
 			if ( $code < 0xac00 || 0xd7a4 <= $code ) {
 				return $matches[1];
 			} elseif ( $code < 0xb098 ) {
@@ -2960,7 +3037,7 @@ class Language {
 	 */
 	function normalize( $s ) {
 		global $wgAllUnicodeFixes;
-		$s = UtfNormal::cleanUp( $s );
+		$s = UtfNormal\Validator::cleanUp( $s );
 		if ( $wgAllUnicodeFixes ) {
 			$s = $this->transformUsingPairFile( 'normalize-ar.ser', $s );
 			$s = $this->transformUsingPairFile( 'normalize-ml.ser', $s );
@@ -3128,9 +3205,7 @@ class Language {
 			return;
 		}
 		$this->mMagicHookDone = true;
-		wfProfileIn( 'LanguageGetMagic' );
-		wfRunHooks( 'LanguageGetMagic', array( &$this->mMagicExtensions, $this->getCode() ) );
-		wfProfileOut( 'LanguageGetMagic' );
+		Hooks::run( 'LanguageGetMagic', array( &$this->mMagicExtensions, $this->getCode() ) );
 	}
 
 	/**
@@ -3176,7 +3251,7 @@ class Language {
 
 	/**
 	 * Get special page names, as an associative array
-	 *   case folded alias => real name
+	 *   canonical name => array of valid names, including aliases
 	 * @return array
 	 */
 	function getSpecialPageAliases() {
@@ -3185,7 +3260,7 @@ class Language {
 			// Initialise array
 			$this->mExtendedSpecialPageAliases =
 				self::$dataCache->getItem( $this->mCode, 'specialPageAliases' );
-			wfRunHooks( 'LanguageGetSpecialPageAliases',
+			Hooks::run( 'LanguageGetSpecialPageAliases',
 				array( &$this->mExtendedSpecialPageAliases, $this->getCode() ) );
 		}
 
@@ -3312,7 +3387,7 @@ class Language {
 				// the string does not have any number part. Eg: .12345
 				return $sign . $groupedNumber;
 			}
-			$start = $end = strlen( $integerPart[0] );
+			$start = $end = ($integerPart) ? strlen( $integerPart[0] ) : 0;
 			while ( $start > 0 ) {
 				$match = $matches[0][$numMatches - 1];
 				$matchLen = strlen( $match );
@@ -3370,10 +3445,10 @@ class Language {
 			return '';
 		}
 		if ( $m > 0 ) {
-			$and = $this->getMessageFromDB( 'and' );
-			$space = $this->getMessageFromDB( 'word-separator' );
+			$and = $this->msg( 'and' )->escaped();
+			$space = $this->msg( 'word-separator' )->escaped();
 			if ( $m > 1 ) {
-				$comma = $this->getMessageFromDB( 'comma-separator' );
+				$comma = $this->msg( 'comma-separator' )->escaped();
 			}
 		}
 		$s = $l[$m];
@@ -3853,13 +3928,9 @@ class Language {
 			}
 		}
 
-		// Since usually only infinite or indefinite is only on list, so try
-		// equivalents if still here.
-		$indefs = array( 'infinite', 'infinity', 'indefinite' );
-		if ( in_array( $str, $indefs ) ) {
-			foreach ( $indefs as $val ) {
-				$show = array_search( $val, $duration, true );
-				if ( $show !== false ) {
+		if ( wfIsInfinity( $str ) ) {
+			foreach ( $duration as $show => $value ) {
+				if ( wfIsInfinity( $value ) ) {
 					return htmlspecialchars( trim( $show ) );
 				}
 			}
@@ -4228,7 +4299,7 @@ class Language {
 	public static function getMessagesFileName( $code ) {
 		global $IP;
 		$file = self::getFileName( "$IP/languages/messages/Messages", $code, '.php' );
-		wfRunHooks( 'Language::getMessagesFileName', array( $code, &$file ) );
+		Hooks::run( 'Language::getMessagesFileName', array( $code, &$file ) );
 		return $file;
 	}
 
@@ -4399,7 +4470,6 @@ class Language {
 			return array( $wikiUpperChars, $wikiLowerChars );
 		}
 
-		wfProfileIn( __METHOD__ );
 		$arr = wfGetPrecompiledData( 'Utf8Case.ser' );
 		if ( $arr === false ) {
 			throw new MWException(
@@ -4407,7 +4477,6 @@ class Language {
 		}
 		$wikiUpperChars = $arr['wikiUpperChars'];
 		$wikiLowerChars = $arr['wikiLowerChars'];
-		wfProfileOut( __METHOD__ );
 		return array( $wikiUpperChars, $wikiLowerChars );
 	}
 
@@ -4607,17 +4676,22 @@ class Language {
 	 * Make a list item, used by various special pages
 	 *
 	 * @param string $page Page link
-	 * @param string $details Text between brackets
+	 * @param string $details HTML safe text between brackets
 	 * @param bool $oppositedm Add the direction mark opposite to your
 	 *   language, to display text properly
-	 * @return string
+	 * @return HTML escaped string
 	 */
 	function specialList( $page, $details, $oppositedm = true ) {
-		$dirmark = ( $oppositedm ? $this->getDirMark( true ) : '' ) .
-			$this->getDirMark();
-		$details = $details ? $dirmark . $this->getMessageFromDB( 'word-separator' ) .
-			wfMessage( 'parentheses' )->rawParams( $details )->inLanguage( $this )->escaped() : '';
-		return $page . $details;
+		if ( !$details ) {
+			return $page;
+		}
+
+		$dirmark = ( $oppositedm ? $this->getDirMark( true ) : '' ) . $this->getDirMark();
+		return
+			$page .
+			$dirmark .
+			$this->msg( 'word-separator' )->escaped() .
+			$this->msg( 'parentheses' )->rawParams( $details )->escaped();
 	}
 
 	/**

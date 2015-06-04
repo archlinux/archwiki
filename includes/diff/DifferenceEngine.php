@@ -94,6 +94,10 @@ class DifferenceEngine extends ContextSource {
 
 	/** @var bool Show rev_deleted content if allowed */
 	protected $unhide = false;
+
+	/** @var bool Refresh the diff cache */
+	protected $mRefreshCache = false;
+
 	/**#@-*/
 
 	/**
@@ -224,12 +228,14 @@ class DifferenceEngine extends ContextSource {
 		}
 
 		$out->setPageTitle( $this->msg( 'errorpagetitle' ) );
-		$out->addWikiMsg( 'difference-missing-revision',
-			$this->getLanguage()->listToText( $missing ), count( $missing ) );
+		$msg = $this->msg( 'difference-missing-revision' )
+			->params( $this->getLanguage()->listToText( $missing ) )
+			->numParams( count( $missing ) )
+			->parseAsBlock();
+		$out->addHtml( $msg );
 	}
 
 	public function showDiffPage( $diffOnly = false ) {
-		wfProfileIn( __METHOD__ );
 
 		# Allow frames except in certain special cases
 		$out = $this->getOutput();
@@ -238,7 +244,6 @@ class DifferenceEngine extends ContextSource {
 
 		if ( !$this->loadRevisionData() ) {
 			$this->showMissingRevision();
-			wfProfileOut( __METHOD__ );
 
 			return;
 		}
@@ -250,7 +255,6 @@ class DifferenceEngine extends ContextSource {
 				$this->mOldPage->getUserPermissionsErrors( 'read', $user ) );
 		}
 		if ( count( $permErrors ) ) {
-			wfProfileOut( __METHOD__ );
 			throw new PermissionsError( 'read', $permErrors );
 		}
 
@@ -280,7 +284,7 @@ class DifferenceEngine extends ContextSource {
 			$samePage = true;
 			$oldHeader = '';
 		} else {
-			wfRunHooks( 'DiffViewHeader', array( $this, $this->mOldRev, $this->mNewRev ) );
+			Hooks::run( 'DiffViewHeader', array( $this, $this->mOldRev, $this->mNewRev ) );
 
 			if ( $this->mNewPage->equals( $this->mOldPage ) ) {
 				$out->setPageTitle( $this->msg( 'difference-title', $this->mNewPage->getPrefixedText() ) );
@@ -384,7 +388,7 @@ class DifferenceEngine extends ContextSource {
 		$rdel = $this->revisionDeleteLink( $this->mNewRev );
 
 		# Allow extensions to define their own revision tools
-		wfRunHooks( 'DiffRevisionTools', array( $this->mNewRev, &$revisionTools, $this->mOldRev ) );
+		Hooks::run( 'DiffRevisionTools', array( $this->mNewRev, &$revisionTools, $this->mOldRev ) );
 		$formattedRevisionTools = array();
 		// Put each one in parentheses (poor man's button)
 		foreach ( $revisionTools as $key => $tool ) {
@@ -451,7 +455,6 @@ class DifferenceEngine extends ContextSource {
 				$this->renderNewRevision();
 			}
 		}
-		wfProfileOut( __METHOD__ );
 	}
 
 	/**
@@ -488,7 +491,7 @@ class DifferenceEngine extends ContextSource {
 					array( 'USE INDEX' => 'rc_timestamp' )
 				);
 
-				if ( $change && $change->getPerformer()->getName() !== $user->getName() ) {
+				if ( $change && !$change->getPerformer()->equals( $user ) ) {
 					$rcid = $change->getAttribute( 'rc_id' );
 				} else {
 					// None found or the page has been created by the current user.
@@ -544,15 +547,14 @@ class DifferenceEngine extends ContextSource {
 	 * Show the new revision of the page.
 	 */
 	public function renderNewRevision() {
-		wfProfileIn( __METHOD__ );
 		$out = $this->getOutput();
 		$revHeader = $this->getRevisionHeader( $this->mNewRev );
 		# Add "current version as of X" title
-		$out->addHTML( "<hr class='diff-hr' />
+		$out->addHTML( "<hr class='diff-hr' id='mw-oldid' />
 		<h2 class='diff-currentversion-title'>{$revHeader}</h2>\n" );
 		# Page content may be handled by a hooked call instead...
 		# @codingStandardsIgnoreStart Ignoring long lines.
-		if ( wfRunHooks( 'ArticleContentOnDiff', array( $this, $out ) ) ) {
+		if ( Hooks::run( 'ArticleContentOnDiff', array( $this, $out ) ) ) {
 			$this->loadNewText();
 			$out->setRevisionId( $this->mNewid );
 			$out->setRevisionTimestamp( $this->mNewRev->getTimestamp() );
@@ -572,7 +574,7 @@ class DifferenceEngine extends ContextSource {
 						$out->addParserOutputContent( $po );
 					}
 				}
-			} elseif ( !wfRunHooks( 'ArticleContentViewCustom', array( $this->mNewContent, $this->mNewPage, $out ) ) ) {
+			} elseif ( !Hooks::run( 'ArticleContentViewCustom', array( $this->mNewContent, $this->mNewPage, $out ) ) ) {
 				// Handled by extension
 			} elseif ( !ContentHandler::runLegacyHooks( 'ArticleViewCustom', array( $this->mNewContent, $this->mNewPage, $out ) ) ) {
 				// NOTE: deprecated hook, B/C only
@@ -602,13 +604,12 @@ class DifferenceEngine extends ContextSource {
 		# Add redundant patrol link on bottom...
 		$out->addHTML( $this->markPatrolledLink() );
 
-		wfProfileOut( __METHOD__ );
 	}
 
 	protected function getParserOutput( WikiPage $page, Revision $rev ) {
 		$parserOptions = $page->makeParserOptions( $this->getContext() );
 
-		if ( !$rev->isCurrent() || !$rev->getTitle()->quickUserCan( "edit" ) ) {
+		if ( !$rev->isCurrent() || !$rev->getTitle()->quickUserCan( 'edit', $this->getUser() ) ) {
 			$parserOptions->setEditSection( false );
 		}
 
@@ -681,23 +682,19 @@ class DifferenceEngine extends ContextSource {
 	 */
 	public function getDiffBody() {
 		global $wgMemc;
-		wfProfileIn( __METHOD__ );
 		$this->mCacheHit = true;
 		// Check if the diff should be hidden from this user
 		if ( !$this->loadRevisionData() ) {
-			wfProfileOut( __METHOD__ );
 
 			return false;
 		} elseif ( $this->mOldRev &&
 			!$this->mOldRev->userCan( Revision::DELETED_TEXT, $this->getUser() )
 		) {
-			wfProfileOut( __METHOD__ );
 
 			return false;
 		} elseif ( $this->mNewRev &&
 			!$this->mNewRev->userCan( Revision::DELETED_TEXT, $this->getUser() )
 		) {
-			wfProfileOut( __METHOD__ );
 
 			return false;
 		}
@@ -705,7 +702,6 @@ class DifferenceEngine extends ContextSource {
 		if ( $this->mOldRev === false || ( $this->mOldRev && $this->mNewRev
 			&& $this->mOldRev->getID() == $this->mNewRev->getID() )
 		) {
-			wfProfileOut( __METHOD__ );
 
 			return '';
 		}
@@ -721,7 +717,6 @@ class DifferenceEngine extends ContextSource {
 					wfIncrStats( 'diff_cache_hit' );
 					$difftext = $this->localiseLineNumbers( $difftext );
 					$difftext .= "\n<!-- diff cache key $key -->\n";
-					wfProfileOut( __METHOD__ );
 
 					return $difftext;
 				}
@@ -731,7 +726,6 @@ class DifferenceEngine extends ContextSource {
 
 		// Loadtext is permission safe, this just clears out the diff
 		if ( !$this->loadText() ) {
-			wfProfileOut( __METHOD__ );
 
 			return false;
 		}
@@ -739,7 +733,7 @@ class DifferenceEngine extends ContextSource {
 		$difftext = $this->generateContentDiffBody( $this->mOldContent, $this->mNewContent );
 
 		// Save to cache for 7 days
-		if ( !wfRunHooks( 'AbortDiffCache', array( &$this ) ) ) {
+		if ( !Hooks::run( 'AbortDiffCache', array( &$this ) ) ) {
 			wfIncrStats( 'diff_uncacheable' );
 		} elseif ( $key !== false && $difftext !== false ) {
 			wfIncrStats( 'diff_cache_miss' );
@@ -751,7 +745,6 @@ class DifferenceEngine extends ContextSource {
 		if ( $difftext !== false ) {
 			$difftext = $this->localiseLineNumbers( $difftext );
 		}
-		wfProfileOut( __METHOD__ );
 
 		return $difftext;
 	}
@@ -837,8 +830,6 @@ class DifferenceEngine extends ContextSource {
 	public function generateTextDiffBody( $otext, $ntext ) {
 		global $wgExternalDiffEngine, $wgContLang;
 
-		wfProfileIn( __METHOD__ );
-
 		$otext = str_replace( "\r\n", "\n", $otext );
 		$ntext = str_replace( "\r\n", "\n", $ntext );
 
@@ -847,7 +838,6 @@ class DifferenceEngine extends ContextSource {
 			# input text to be HTML-escaped already
 			$otext = htmlspecialchars( $wgContLang->segmentForDiff( $otext ) );
 			$ntext = htmlspecialchars( $wgContLang->segmentForDiff( $ntext ) );
-			wfProfileOut( __METHOD__ );
 
 			return $wgContLang->unsegmentForDiff( wikidiff_do_diff( $otext, $ntext, 2 ) ) .
 			$this->debug( 'wikidiff1' );
@@ -856,11 +846,8 @@ class DifferenceEngine extends ContextSource {
 		if ( $wgExternalDiffEngine == 'wikidiff2' && function_exists( 'wikidiff2_do_diff' ) ) {
 			# Better external diff engine, the 2 may some day be dropped
 			# This one does the escaping and segmenting itself
-			wfProfileIn( 'wikidiff2_do_diff' );
 			$text = wikidiff2_do_diff( $otext, $ntext, 2 );
 			$text .= $this->debug( 'wikidiff2' );
-			wfProfileOut( 'wikidiff2_do_diff' );
-			wfProfileOut( __METHOD__ );
 
 			return $text;
 		}
@@ -872,13 +859,11 @@ class DifferenceEngine extends ContextSource {
 
 			$tempFile1 = fopen( $tempName1, "w" );
 			if ( !$tempFile1 ) {
-				wfProfileOut( __METHOD__ );
 
 				return false;
 			}
 			$tempFile2 = fopen( $tempName2, "w" );
 			if ( !$tempFile2 ) {
-				wfProfileOut( __METHOD__ );
 
 				return false;
 			}
@@ -887,13 +872,10 @@ class DifferenceEngine extends ContextSource {
 			fclose( $tempFile1 );
 			fclose( $tempFile2 );
 			$cmd = wfEscapeShellArg( $wgExternalDiffEngine, $tempName1, $tempName2 );
-			wfProfileIn( __METHOD__ . "-shellexec" );
 			$difftext = wfShellExec( $cmd );
 			$difftext .= $this->debug( "external $wgExternalDiffEngine" );
-			wfProfileOut( __METHOD__ . "-shellexec" );
 			unlink( $tempName1 );
 			unlink( $tempName2 );
-			wfProfileOut( __METHOD__ );
 
 			return $difftext;
 		}
@@ -903,8 +885,7 @@ class DifferenceEngine extends ContextSource {
 		$nta = explode( "\n", $wgContLang->segmentForDiff( $ntext ) );
 		$diffs = new Diff( $ota, $nta );
 		$formatter = new TableDiffFormatter();
-		$difftext = $wgContLang->unsegmentForDiff( $formatter->format( $diffs ) ) .
-			wfProfileOut( __METHOD__ );
+		$difftext = $wgContLang->unsegmentForDiff( $formatter->format( $diffs ) );
 
 		return $difftext;
 	}
@@ -985,7 +966,7 @@ class DifferenceEngine extends ContextSource {
 			$users = $this->mNewPage->getAuthorsBetween( $oldRev, $newRev, $limit );
 			$numUsers = count( $users );
 
-			if ( $numUsers == 1 && $users[0] == $newRev->getRawUserText() ) {
+			if ( $numUsers == 1 && $users[0] == $newRev->getUserText( Revision::RAW ) ) {
 				$numUsers = 0; // special case to say "by the same user" instead of "by one other user"
 			}
 
@@ -1059,7 +1040,7 @@ class DifferenceEngine extends ContextSource {
 			$key = $title->quickUserCan( 'edit', $user ) ? 'editold' : 'viewsourceold';
 			$msg = $this->msg( $key )->escaped();
 			$editLink = $this->msg( 'parentheses' )->rawParams(
-				Linker::linkKnown( $title, $msg, array( ), $editQuery ) )->plain();
+				Linker::linkKnown( $title, $msg, array( ), $editQuery ) )->escaped();
 			$header .= ' ' . Html::rawElement(
 				'span',
 				array( 'class' => 'mw-diff-edit' ),
@@ -1221,7 +1202,7 @@ class DifferenceEngine extends ContextSource {
 			$this->mNewid = 0;
 		}
 
-		wfRunHooks(
+		Hooks::run(
 			'NewDifferenceEngine',
 			array( $this->getTitle(), &$this->mOldid, &$this->mNewid, $old, $new )
 		);

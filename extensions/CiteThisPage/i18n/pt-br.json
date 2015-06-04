@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Carla404",
+			"Giro720",
+			"Paladox",
+			"Nemo bis"
+		]
+	},
+	"citethispage": "Citar",
+	"citethispage-desc": "Adiciona uma página especial de [[Special:Cite|citação]] e link para a caixa de ferramentas",
+	"citethispage-link": "Citar esta página",
+	"tooltip-citethispage": "Informação sobre como citar esta página",
+	"citethispage-change-submit": "Citar",
+	"citethispage-change-target": "Página:"
+}

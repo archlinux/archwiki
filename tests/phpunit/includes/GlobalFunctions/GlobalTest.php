@@ -7,7 +7,7 @@ class GlobalTest extends MediaWikiTestCase {
 	protected function setUp() {
 		parent::setUp();
 
-		$readOnlyFile = tempnam( wfTempDir(), "mwtest_readonly" );
+		$readOnlyFile = $this->getNewTempFile();
 		unlink( $readOnlyFile );
 
 		$this->setMwGlobals( array(
@@ -20,16 +20,6 @@ class GlobalTest extends MediaWikiTestCase {
 				'file://', # Non-default
 			),
 		) );
-	}
-
-	protected function tearDown() {
-		global $wgReadOnlyFile;
-
-		if ( file_exists( $wgReadOnlyFile ) ) {
-			unlink( $wgReadOnlyFile );
-		}
-
-		parent::tearDown();
 	}
 
 	/**
@@ -312,46 +302,42 @@ class GlobalTest extends MediaWikiTestCase {
 	 * @covers ::wfDebugMem
 	 */
 	public function testDebugFunctionTest() {
+		$debugLogFile = $this->getNewTempFile();
 
-		global $wgDebugLogFile, $wgDebugTimestamps;
-
-		$old_log_file = $wgDebugLogFile;
-		$wgDebugLogFile = tempnam( wfTempDir(), 'mw-' );
-		# @todo FIXME: $wgDebugTimestamps should be tested
-		$old_wgDebugTimestamps = $wgDebugTimestamps;
-		$wgDebugTimestamps = false;
+		$this->setMwGlobals( array(
+			'wgDebugLogFile' => $debugLogFile,
+			# @todo FIXME: $wgDebugTimestamps should be tested
+			'wgDebugTimestamps' => false
+		) );
 
 		wfDebug( "This is a normal string" );
-		$this->assertEquals( "This is a normal string", file_get_contents( $wgDebugLogFile ) );
-		unlink( $wgDebugLogFile );
+		$this->assertEquals( "This is a normal string\n", file_get_contents( $debugLogFile ) );
+		unlink( $debugLogFile );
 
 		wfDebug( "This is nöt an ASCII string" );
-		$this->assertEquals( "This is nöt an ASCII string", file_get_contents( $wgDebugLogFile ) );
-		unlink( $wgDebugLogFile );
+		$this->assertEquals( "This is nöt an ASCII string\n", file_get_contents( $debugLogFile ) );
+		unlink( $debugLogFile );
 
 		wfDebug( "\00305This has böth UTF and control chars\003" );
 		$this->assertEquals(
-			" 05This has böth UTF and control chars ",
-			file_get_contents( $wgDebugLogFile )
+			" 05This has böth UTF and control chars \n",
+			file_get_contents( $debugLogFile )
 		);
-		unlink( $wgDebugLogFile );
+		unlink( $debugLogFile );
 
 		wfDebugMem();
 		$this->assertGreaterThan(
 			1000,
-			preg_replace( '/\D/', '', file_get_contents( $wgDebugLogFile ) )
+			preg_replace( '/\D/', '', file_get_contents( $debugLogFile ) )
 		);
-		unlink( $wgDebugLogFile );
+		unlink( $debugLogFile );
 
 		wfDebugMem( true );
 		$this->assertGreaterThan(
 			1000000,
-			preg_replace( '/\D/', '', file_get_contents( $wgDebugLogFile ) )
+			preg_replace( '/\D/', '', file_get_contents( $debugLogFile ) )
 		);
-		unlink( $wgDebugLogFile );
-
-		$wgDebugLogFile = $old_log_file;
-		$wgDebugTimestamps = $old_wgDebugTimestamps;
+		unlink( $debugLogFile );
 	}
 
 	/**
@@ -386,24 +372,6 @@ class GlobalTest extends MediaWikiTestCase {
 		if ( isset( $old_server_setting ) ) {
 			$_SERVER['HTTP_ACCEPT_ENCODING'] = $old_server_setting;
 		}
-	}
-
-	/**
-	 * @covers ::swap
-	 */
-	public function testSwapVarsTest() {
-		$this->hideDeprecated( 'swap' );
-
-		$var1 = 1;
-		$var2 = 2;
-
-		$this->assertEquals( $var1, 1, 'var1 is set originally' );
-		$this->assertEquals( $var2, 2, 'var1 is set originally' );
-
-		swap( $var1, $var2 );
-
-		$this->assertEquals( $var1, 2, 'var1 is swapped' );
-		$this->assertEquals( $var2, 1, 'var2 is swapped' );
 	}
 
 	/**
@@ -705,21 +673,21 @@ class GlobalTest extends MediaWikiTestCase {
 	}
 
 	/**
-	 * @dataProvider provideWfShellMaintenanceCmdList
-	 * @covers ::wfShellMaintenanceCmd
+	 * @dataProvider provideWfShellWikiCmdList
+	 * @covers ::wfShellWikiCmd
 	 */
-	public function testWfShellMaintenanceCmd( $script, $parameters, $options,
+	public function testWfShellWikiCmd( $script, $parameters, $options,
 		$expected, $description
 	) {
 		if ( wfIsWindows() ) {
 			// Approximation that's good enough for our purposes just now
 			$expected = str_replace( "'", '"', $expected );
 		}
-		$actual = wfShellMaintenanceCmd( $script, $parameters, $options );
+		$actual = wfShellWikiCmd( $script, $parameters, $options );
 		$this->assertEquals( $expected, $actual, $description );
 	}
 
-	public static function provideWfShellMaintenanceCmdList() {
+	public static function provideWfShellWikiCmdList() {
 		global $wgPhpCli;
 
 		return array(

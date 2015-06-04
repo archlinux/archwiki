@@ -21,5 +21,10 @@
 		$( '#togglenone' ).click( function () {
 			selectPages( false );
 		} );
+		$( '#toggleinvert' ).click( function () {
+			$( 'input[type="checkbox"]' ).each( function () {
+				$( this ).prop( 'checked', !$( this ).is( ':checked' ) );
+			} );
+		} );
 	} );
 }( jQuery ) );

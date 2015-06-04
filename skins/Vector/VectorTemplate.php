@@ -102,11 +102,16 @@ class VectorTemplate extends BaseTemplate {
 			<?php
 			}
 			?>
+			<?php
+			if ( is_callable( array( $this, 'getIndicators' ) ) ) {
+				echo $this->getIndicators();
+			}
+			?>
 			<h1 id="firstHeading" class="firstHeading" lang="<?php
 			$this->data['pageLanguage'] =
 				$this->getSkin()->getTitle()->getPageViewLanguage()->getHtmlCode();
 			$this->text( 'pageLanguage' );
-			?>"><span dir="auto"><?php $this->html( 'title' ) ?></span></h1>
+			?>"><?php $this->html( 'title' ) ?></h1>
 			<?php $this->html( 'prebodyhtml' ) ?>
 			<div id="bodyContent" class="mw-body-content">
 				<?php
@@ -135,7 +140,7 @@ class VectorTemplate extends BaseTemplate {
 				?>
 				<div id="jump-to-nav" class="mw-jump">
 					<?php $this->msg( 'jumpto' ) ?>
-					<a href="#mw-navigation"><?php
+					<a href="#mw-head"><?php
 						$this->msg( 'jumptonavigation' )
 						?></a><?php
 					$this->msg( 'comma-separator' )
@@ -187,9 +192,7 @@ class VectorTemplate extends BaseTemplate {
 				</div>
 			</div>
 			<div id="mw-panel">
-				<div id="p-logo" role="banner"><a style="background-image: url(<?php
-					$this->text( 'logopath' )
-					?>);" href="<?php
+				<div id="p-logo" role="banner"><a class="mw-wiki-logo" href="<?php
 					echo htmlspecialchars( $this->data['nav_urls']['mainpage']['href'] )
 					?>" <?php
 					echo Xml::expandAttributes( Linker::tooltipAndAccesskeyAttribs( 'p-logo' ) )
@@ -254,7 +257,7 @@ class VectorTemplate extends BaseTemplate {
 
 	</body>
 </html>
-	<?php
+<?php
 	}
 
 	/**
@@ -466,7 +469,10 @@ class VectorTemplate extends BaseTemplate {
 								?>><span><a href="<?php
 										echo htmlspecialchars( $link['href'] )
 										?>" <?php
-										echo $link['key']
+										echo $link['key'];
+										if ( isset ( $link['rel'] ) ) {
+											echo ' rel="' . htmlspecialchars( $link['rel'] ) . '"';
+										}
 										?>><?php
 											// $link['text'] can be undefined - bug 27764
 											if ( array_key_exists( 'text', $link ) ) {

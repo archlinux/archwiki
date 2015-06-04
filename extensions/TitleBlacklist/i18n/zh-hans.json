@@ -29,5 +29,11 @@
 	"titleblacklist-warning": "<strong>警告：此页面只能由管理员和其他拥有<code>tboverride</code>权限的用户编辑，因为它匹配以下标题黑名单：</strong><br /><code>$1</code>",
 	"right-tboverride": "覆盖标题或用户名黑名单",
 	"right-tboverride-account": "覆盖用户名黑名单",
-	"right-titleblacklistlog": "查看标题黑名单日志"
+	"right-titleblacklistlog": "查看标题黑名单日志",
+	"apihelp-titleblacklist-description": "验证一篇条目的标题、文件名或用户名是否触发标题黑名单。",
+	"apihelp-titleblacklist-param-title": "验证是否触发黑名单的字符串。",
+	"apihelp-titleblacklist-param-action": "要检查的操作。",
+	"apihelp-titleblacklist-param-nooverride": "不要尝试绕开标题黑名单。",
+	"apihelp-titleblacklist-example-1": "检查[[Foo]]是否被列入黑名单",
+	"apihelp-titleblacklist-example-2": "检查[[Bar]]是否被列入禁止编辑的黑名单"
 }

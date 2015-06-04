@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Michawiki",
-			"Yekrats"
+			"Yekrats",
+			"KuboF"
 		]
 	},
 	"interwiki": "Rigardi kaj redakti intervikiajn datenojn",
@@ -24,7 +25,7 @@
 	"interwiki_deleting": "Vi forigas prefikson \"$1\".",
 	"interwiki_deleted": "Prefikso \"$1\" estis sukcese forigita de la intervikia tabelo.",
 	"interwiki_delfailed": "Prefikso \"$1\" ne eblis esti forigita el la intervikia tabelo.",
-	"interwiki_addtext": "Aldonu intervikian prefikson",
+	"interwiki_addtext": "Aldoni intervikian aŭ lingvan prefikson",
 	"interwiki_addintro": "Vi aldonas novan intervikian prefikson.\nMemoru ke ĝi ne povas enhavi spacetojn ( ), kolojn (:), kajsignojn (&), aŭ egalsignojn (=).",
 	"interwiki_addbutton": "Aldoni",
 	"interwiki_added": "Prefikso \"$1\" estis sukcese aldonita al la intervikia tabelo.",

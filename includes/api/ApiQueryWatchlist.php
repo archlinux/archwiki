@@ -199,7 +199,7 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 		if ( !is_null( $params['type'] ) ) {
 			try {
 				$this->addWhereFld( 'rc_type', RecentChange::parseToRCType( $params['type'] ) );
-			} catch ( MWException $e ) {
+			} catch ( Exception $e ) {
 				ApiBase::dieDebug( __METHOD__, $e->getMessage() );
 			}
 		}
@@ -281,7 +281,7 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 		}
 
 		if ( is_null( $resultPageSet ) ) {
-			$this->getResult()->setIndexedTagName_internal(
+			$this->getResult()->addIndexedTagName(
 				array( 'query', $this->getModuleName() ),
 				'item'
 			);
@@ -307,7 +307,7 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 		if ( $this->fld_title || $this->fld_ids ) {
 			// These should already have been filtered out of the query, but just in case.
 			if ( $type === RC_LOG && ( $row->rc_deleted & LogPage::DELETED_ACTION ) ) {
-				$vals['actionhidden'] = '';
+				$vals['actionhidden'] = true;
 				$anyHidden = true;
 			}
 			if ( $type !== RC_LOG ||
@@ -327,7 +327,7 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 		/* Add user data and 'anon' flag, if user is anonymous. */
 		if ( $this->fld_user || $this->fld_userid ) {
 			if ( $row->rc_deleted & Revision::DELETED_USER ) {
-				$vals['userhidden'] = '';
+				$vals['userhidden'] = true;
 				$anyHidden = true;
 			}
 			if ( Revision::userCanBitfield( $row->rc_deleted, Revision::DELETED_USER, $user ) ) {
@@ -342,22 +342,16 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 				}
 
 				if ( !$row->rc_user ) {
-					$vals['anon'] = '';
+					$vals['anon'] = true;
 				}
 			}
 		}
 
 		/* Add flags, such as new, minor, bot. */
 		if ( $this->fld_flags ) {
-			if ( $row->rc_bot ) {
-				$vals['bot'] = '';
-			}
-			if ( $row->rc_type == RC_NEW ) {
-				$vals['new'] = '';
-			}
-			if ( $row->rc_minor ) {
-				$vals['minor'] = '';
-			}
+			$vals['bot'] = (bool)$row->rc_bot;
+			$vals['new'] = $row->rc_type == RC_NEW;
+			$vals['minor'] = (bool)$row->rc_minor;
 		}
 
 		/* Add sizes of each revision. (Only available on 1.10+) */
@@ -380,7 +374,7 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 		/* Add edit summary / log summary. */
 		if ( $this->fld_comment || $this->fld_parsedcomment ) {
 			if ( $row->rc_deleted & Revision::DELETED_COMMENT ) {
-				$vals['commenthidden'] = '';
+				$vals['commenthidden'] = true;
 				$anyHidden = true;
 			}
 			if ( Revision::userCanBitfield( $row->rc_deleted, Revision::DELETED_COMMENT, $user ) ) {
@@ -395,37 +389,26 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 		}
 
 		/* Add the patrolled flag */
-		if ( $this->fld_patrol && $row->rc_patrolled == 1 ) {
-			$vals['patrolled'] = '';
-		}
-
-		if ( $this->fld_patrol && ChangesList::isUnpatrolled( $row, $user ) ) {
-			$vals['unpatrolled'] = '';
+		if ( $this->fld_patrol ) {
+			$vals['patrolled'] = $row->rc_patrolled == 1;
+			$vals['unpatrolled'] = ChangesList::isUnpatrolled( $row, $user );
 		}
 
 		if ( $this->fld_loginfo && $row->rc_type == RC_LOG ) {
 			if ( $row->rc_deleted & LogPage::DELETED_ACTION ) {
-				$vals['actionhidden'] = '';
+				$vals['actionhidden'] = true;
 				$anyHidden = true;
 			}
 			if ( LogEventsList::userCanBitfield( $row->rc_deleted, LogPage::DELETED_ACTION, $user ) ) {
 				$vals['logid'] = intval( $row->rc_logid );
 				$vals['logtype'] = $row->rc_log_type;
 				$vals['logaction'] = $row->rc_log_action;
-				$logEntry = DatabaseLogEntry::newFromRow( (array)$row );
-				ApiQueryLogEvents::addLogParams(
-					$this->getResult(),
-					$vals,
-					$logEntry->getParameters(),
-					$logEntry->getType(),
-					$logEntry->getSubtype(),
-					$logEntry->getTimestamp()
-				);
+				$vals['logparams'] = LogFormatter::newFromRow( $row )->formatParametersForApi();
 			}
 		}
 
 		if ( $anyHidden && ( $row->rc_deleted & Revision::DELETED_RESTRICTED ) ) {
-			$vals['suppressed'] = '';
+			$vals['suppressed'] = true;
 		}
 
 		return $vals;
@@ -455,7 +438,8 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 				ApiBase::PARAM_TYPE => array(
 					'newer',
 					'older'
-				)
+				),
+				ApiHelp::PARAM_HELP_MSG => 'api-help-param-direction',
 			),
 			'limit' => array(
 				ApiBase::PARAM_DFLT => 10,
@@ -498,6 +482,7 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 				)
 			),
 			'type' => array(
+				ApiBase::PARAM_DFLT => 'edit|new|log',
 				ApiBase::PARAM_ISMULTI => true,
 				ApiBase::PARAM_TYPE => array(
 					'edit',
@@ -512,67 +497,26 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 			'token' => array(
 				ApiBase::PARAM_TYPE => 'string'
 			),
-			'continue' => null,
+			'continue' => array(
+				ApiBase::PARAM_HELP_MSG => 'api-help-param-continue',
+			),
 		);
 	}
 
-	public function getParamDescription() {
-		$p = $this->getModulePrefix();
-
+	protected function getExamplesMessages() {
 		return array(
-			'allrev' => 'Include multiple revisions of the same page within given timeframe',
-			'start' => 'The timestamp to start enumerating from',
-			'end' => 'The timestamp to end enumerating',
-			'namespace' => 'Filter changes to only the given namespace(s)',
-			'user' => 'Only list changes by this user',
-			'excludeuser' => 'Don\'t list changes by this user',
-			'dir' => $this->getDirectionDescription( $p ),
-			'limit' => 'How many total results to return per request',
-			'prop' => array(
-				'Which additional items to get (non-generator mode only).',
-				' ids                    - Adds revision ids and page ids',
-				' title                  - Adds title of the page',
-				' flags                  - Adds flags for the edit',
-				' user                   - Adds the user who made the edit',
-				' userid                 - Adds user id of whom made the edit',
-				' comment                - Adds comment of the edit',
-				' parsedcomment          - Adds parsed comment of the edit',
-				' timestamp              - Adds timestamp of the edit',
-				' patrol                 - Tags edits that are patrolled',
-				' sizes                  - Adds the old and new lengths of the page',
-				' notificationtimestamp  - Adds timestamp of when the user was last notified about the edit',
-				' loginfo                - Adds log information where appropriate',
-			),
-			'show' => array(
-				'Show only items that meet this criteria.',
-				"For example, to see only minor edits done by logged-in users, set {$p}show=minor|!anon"
-			),
-			'type' => array(
-				'Which types of changes to show',
-				' edit           - Regular page edits',
-				' external       - External changes',
-				' new            - Page creations',
-				' log            - Log entries',
-			),
-			'owner' => 'The name of the user whose watchlist you\'d like to access',
-			'token' => 'Give a security token (settable in preferences) to ' .
-				'allow access to another user\'s watchlist',
-			'continue' => 'When more results are available, use this to continue',
-		);
-	}
-
-	public function getDescription() {
-		return "Get all recent changes to pages in the logged in user's watchlist.";
-	}
-
-	public function getExamples() {
-		return array(
-			'api.php?action=query&list=watchlist',
-			'api.php?action=query&list=watchlist&wlprop=ids|title|timestamp|user|comment',
-			'api.php?action=query&list=watchlist&wlallrev=&wlprop=ids|title|timestamp|user|comment',
-			'api.php?action=query&generator=watchlist&prop=info',
-			'api.php?action=query&generator=watchlist&gwlallrev=&prop=revisions&rvprop=timestamp|user',
-			'api.php?action=query&list=watchlist&wlowner=Bob_Smith&wltoken=123ABC'
+			'action=query&list=watchlist'
+				=> 'apihelp-query+watchlist-example-simple',
+			'action=query&list=watchlist&wlprop=ids|title|timestamp|user|comment'
+				=> 'apihelp-query+watchlist-example-props',
+			'action=query&list=watchlist&wlallrev=&wlprop=ids|title|timestamp|user|comment'
+				=> 'apihelp-query+watchlist-example-allrev',
+			'action=query&generator=watchlist&prop=info'
+				=> 'apihelp-query+watchlist-example-generator',
+			'action=query&generator=watchlist&gwlallrev=&prop=revisions&rvprop=timestamp|user'
+				=> 'apihelp-query+watchlist-example-generator-rev',
+			'action=query&list=watchlist&wlowner=Example&wltoken=123ABC'
+				=> 'apihelp-query+watchlist-example-wlowner',
 		);
 	}
 

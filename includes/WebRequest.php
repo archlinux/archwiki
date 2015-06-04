@@ -51,15 +51,20 @@ class WebRequest {
 	private $ip;
 
 	/**
+	 * The timestamp of the start of the request, with microsecond precision.
+	 * @var float
+	 */
+	protected $requestTime;
+
+	/**
 	 * Cached URL protocol
 	 * @var string
 	 */
 	protected $protocol;
 
 	public function __construct() {
-		if ( function_exists( 'get_magic_quotes_gpc' ) && get_magic_quotes_gpc() ) {
-			throw new MWException( "MediaWiki does not function when magic quotes are enabled." );
-		}
+		$this->requestTime = isset( $_SERVER['REQUEST_TIME_FLOAT'] )
+			? $_SERVER['REQUEST_TIME_FLOAT'] : microtime( true );
 
 		// POST overrides GET data
 		// We don't use $_REQUEST here to avoid interference from cookies...
@@ -138,7 +143,7 @@ class WebRequest {
 					);
 				}
 
-				wfRunHooks( 'WebRequestPathInfoRouter', array( $router ) );
+				Hooks::run( 'WebRequestPathInfoRouter', array( $router ) );
 
 				$matches = $router->parse( $path );
 			}
@@ -207,13 +212,24 @@ class WebRequest {
 	 * @return array
 	 */
 	public static function detectProtocol() {
-		if ( ( isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] == 'on' ) ||
+		if ( ( !empty( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] !== 'off' ) ||
 			( isset( $_SERVER['HTTP_X_FORWARDED_PROTO'] ) &&
-			$_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https' ) ) {
+			$_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https' ) ) {
 			return 'https';
 		} else {
 			return 'http';
 		}
+	}
+
+	/**
+	 * Get the number of seconds to have elapsed since request start,
+	 * in fractional seconds, with microsecond resolution.
+	 *
+	 * @return float
+	 * @since 1.25
+	 */
+	public function getElapsedTime() {
+		return microtime( true ) - $this->requestTime;
 	}
 
 	/**
@@ -289,7 +305,7 @@ class WebRequest {
 			}
 		} else {
 			global $wgContLang;
-			$data = isset( $wgContLang ) ? $wgContLang->normalize( $data ) : UtfNormal::cleanUp( $data );
+			$data = isset( $wgContLang ) ? $wgContLang->normalize( $data ) : UtfNormal\Validator::cleanUp( $data );
 		}
 		return $data;
 	}
@@ -705,21 +721,22 @@ class WebRequest {
 
 	/**
 	 * Take an arbitrary query and rewrite the present URL to include it
+	 * @deprecated Use appendQueryValue/appendQueryArray instead
 	 * @param string $query Query string fragment; do not include initial '?'
-	 *
 	 * @return string
 	 */
 	public function appendQuery( $query ) {
+		wfDeprecated( __METHOD__, '1.25' );
 		return $this->appendQueryArray( wfCgiToArray( $query ) );
 	}
 
 	/**
 	 * @param string $key
 	 * @param string $value
-	 * @param bool $onlyquery
+	 * @param bool $onlyquery [deprecated]
 	 * @return string
 	 */
-	public function appendQueryValue( $key, $value, $onlyquery = false ) {
+	public function appendQueryValue( $key, $value, $onlyquery = true ) {
 		return $this->appendQueryArray( array( $key => $value ), $onlyquery );
 	}
 
@@ -727,16 +744,21 @@ class WebRequest {
 	 * Appends or replaces value of query variables.
 	 *
 	 * @param array $array Array of values to replace/add to query
-	 * @param bool $onlyquery Whether to only return the query string and not the complete URL
+	 * @param bool $onlyquery Whether to only return the query string and not the complete URL [deprecated]
 	 * @return string
 	 */
-	public function appendQueryArray( $array, $onlyquery = false ) {
+	public function appendQueryArray( $array, $onlyquery = true ) {
 		global $wgTitle;
 		$newquery = $this->getQueryValues();
 		unset( $newquery['title'] );
 		$newquery = array_merge( $newquery, $array );
 		$query = wfArrayToCgi( $newquery );
-		return $onlyquery ? $query : $wgTitle->getLocalURL( $query );
+		if ( !$onlyquery ) {
+			wfDeprecated( __METHOD__, '1.25' );
+			return $wgTitle->getLocalURL( $query );
+		}
+
+		return $query;
 	}
 
 	/**
@@ -1112,7 +1134,7 @@ HTML;
 		}
 
 		# Allow extensions to improve our guess
-		wfRunHooks( 'GetIP', array( &$ip ) );
+		Hooks::run( 'GetIP', array( &$ip ) );
 
 		if ( !$ip ) {
 			throw new MWException( "Unable to determine IP." );
@@ -1255,6 +1277,7 @@ class WebRequestUpload {
 class FauxRequest extends WebRequest {
 	private $wasPosted = false;
 	private $session = array();
+	private $requestUrl;
 
 	/**
 	 * @param array $data Array of *non*-urlencoded key => value pairs, the
@@ -1267,6 +1290,8 @@ class FauxRequest extends WebRequest {
 	public function __construct( $data = array(), $wasPosted = false,
 		$session = null, $protocol = 'http'
 	) {
+		$this->requestTime = microtime( true );
+
 		if ( is_array( $data ) ) {
 			$this->data = $data;
 		} else {
@@ -1334,8 +1359,15 @@ class FauxRequest extends WebRequest {
 		return false;
 	}
 
+	public function setRequestURL( $url ) {
+		$this->requestUrl = $url;
+	}
+
 	public function getRequestURL() {
-		$this->notImplemented( __METHOD__ );
+		if ( $this->requestUrl === null ) {
+			throw new MWException( 'Request URL not set' );
+		}
+		return $this->requestUrl;
 	}
 
 	public function getProtocol() {
@@ -1482,5 +1514,9 @@ class DerivativeRequest extends FauxRequest {
 
 	public function getProtocol() {
 		return $this->base->getProtocol();
+	}
+
+	public function getElapsedTime() {
+		return $this->base->getElapsedTime();
 	}
 }

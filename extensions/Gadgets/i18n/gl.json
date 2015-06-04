@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Alma",
-			"Toliño"
+			"Toliño",
+			"Banjo"
 		]
 	},
 	"gadgets-desc": "Deixa que os usuarios seleccionen [[Special:Gadgets|trebellos CSS e JavaScript]] nas súas [[Special:Preferences#mw-prefsection-gadgets|preferencias]]",
@@ -19,5 +20,13 @@
 	"gadgets-export-title": "Exportación de trebellos",
 	"gadgets-not-found": "Non se atopou o trebello \"$1\".",
 	"gadgets-export-text": "Para exportar o trebello $1, prema sobre o botón \"{{int:gadgets-export-download}}\", garde o ficheiro descargado,\nvaia á páxina especial Special:Import do wiki de destino e cárgueo. A continuación, engada o seguinte texto na páxina MediaWiki:Gadgets-definition:\n<pre>$2</pre>\nDebe ter os permisos axeitados no wiki de destino (incluído o dereito de modificar as mensaxes do sistema) e a importación desde a carga de ficheiros debe estar activada.",
-	"gadgets-export-download": "Descargar"
+	"gadgets-export-download": "Descargar",
+	"apihelp-query+gadgets-description": "Retornar unha lista dos trebellos usados nesta wiki.",
+	"apihelp-query+gadgets-param-allowedonly": "Listar só os trebellos permitidos para o usuario actual.",
+	"apihelp-query+gadgets-param-enabledonly": "Listar só os trebellos habilitados polo usuario actual.",
+	"apihelp-query+gadgets-example-1": "Amosar unha lista de trebellos xunto coas súas descricións",
+	"apihelp-query+gadgets-example-2": "Amosar unha lista de trebellos con tódalas propiedades posibles",
+	"apihelp-query+gadgets-example-3": "Amosar unha lista de trebellos que pertenzan á categoría \"foo\"",
+	"apihelp-query+gadgets-example-4": "Amosar información sobre os trebellos \"foo\" e \"bar\"",
+	"apihelp-query+gadgets-example-5": "Amosar unha lista dos trebellos habilitados para o usuario actual"
 }

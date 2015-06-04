@@ -15,7 +15,7 @@
 
 // Forms
 //
-// Styleguide 3.
+// Styleguide 5.
 
 // VForm
 //
@@ -34,7 +34,7 @@
 //   </div>
 // </form>
 //
-// Styleguide 3.1.
+// Styleguide 5.1.
 .mw-ui-vform {
 	.box-sizing(border-box);
 
@@ -102,7 +102,7 @@
 	//   </div>
 	// </form>
 	//
-	// Styleguide 3.2.
+	// Styleguide 5.2.
 	.error,
 	.errorbox,
 	.warningbox,
@@ -153,14 +153,15 @@
 // You generally don't need to use this class if <label> is within an Agora
 // form container such as mw-ui-vform
 .mw-ui-label {
-	.agora-label-styling(); // mixins/forms.less
+	.agora-label-styling();
 }
 
 // Nesting an input  inside a label with this class
 // improves alignment, e.g.
-//	<label class="mw-ui-radio-label">
-//		<input type="radio">The label text
-//	</label>
+//
+// <label class="mw-ui-radio-label">
+//   <input type="radio">The label text
+// </label>
 .mw-ui-radio-label {
 	.agora-inline-label-styling();
 }

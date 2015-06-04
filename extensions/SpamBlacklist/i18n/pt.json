@@ -5,7 +5,8 @@
 			"Hamilton Abreu",
 			"Helder.wiki",
 			"Malafaya",
-			"555"
+			"555",
+			"He7d3r"
 		]
 	},
 	"spam-blacklist": "  # URLs externas que coincidam com esta lista serão bloqueadas quando forem\n  # adicionadas a uma página.\n  # Esta lista aplica-se apenas a esta wiki. Consulte também a lista-negra global.\n  # Veja a documentação em https://www.mediawiki.org/wiki/Extension:SpamBlacklist\n  #<!-- mantenha esta linha exatamente assim --> <pre>\n#\n# A sintaxe é a seguinte:\n#  * Tudo o que estiver após um \"#\" até o final de uma linha é um comentário\n#  * Todas as linhas que não estiverem em branco são um fragmento de expressão regular\n#    (regex) de busca, que só poderão coincidir com hosts na URL\n\n  #</pre> <!-- mantenha esta linha exatamente assim -->",

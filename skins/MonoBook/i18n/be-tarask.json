@@ -1,4 +1,9 @@
 {
-	"@metadata": [],
-	"skinname-monobook": "Монакніга"
+	"@metadata": {
+		"authors": [
+			"Red Winged Duck"
+		]
+	},
+	"skinname-monobook": "Монакніга",
+	"monobook-desc": "Клясычная тэма афармленьня MediaWiki з 2004 году, названая паводле чорна-белага фотаздымка кнігі на фоне старонкі"
 }

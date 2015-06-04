@@ -72,22 +72,24 @@ fn: {
 						} );
 
 						/* REALLY DIRTY HACK! */
-						// Reformat the copyright warning stuff
-						var copyWarnHTML = $( '#editpage-copywarn p' ).html();
-						// TODO: internationalize by splitting on other characters that end statements
-						var copyWarnStatements = copyWarnHTML.split( '. ' );
-						var newCopyWarnHTML = '<ul>';
-						for ( i = 0; i < copyWarnStatements.length; i++ ) {
-							if ( copyWarnStatements[i] !== '' ) {
-								var copyWarnStatement = $.trim( copyWarnStatements[i] ).replace( /\.*$/, '' );
-								newCopyWarnHTML += '<li>' + copyWarnStatement + '.</li>';
+						// Reformat the copyright warning stuff, if available
+						if ( $( '#editpage-copywarn p' ).length ) {
+							var copyWarnHTML = $( '#editpage-copywarn p' ).html();
+							// TODO: internationalize by splitting on other characters that end statements
+							var copyWarnStatements = copyWarnHTML.split( '. ' );
+							var newCopyWarnHTML = '<ul>';
+							for ( i = 0; i < copyWarnStatements.length; i++ ) {
+								if ( copyWarnStatements[i] !== '' ) {
+									var copyWarnStatement = $.trim( copyWarnStatements[i] ).replace( /\.*$/, '' );
+									newCopyWarnHTML += '<li>' + copyWarnStatement + '.</li>';
+								}
 							}
+							newCopyWarnHTML += '</ul>';
+							// No list if there's only one element
+							$( this ).find( '.wikiEditor-publish-dialog-copywarn' ).html(
+									copyWarnStatements.length > 1 ? newCopyWarnHTML : copyWarnHTML
+							);
 						}
-						newCopyWarnHTML += '</ul>';
-						// No list if there's only one element
-						$( this ).find( '.wikiEditor-publish-dialog-copywarn' ).html(
-								copyWarnStatements.length > 1 ? newCopyWarnHTML : copyWarnHTML
-						);
 						/* END OF REALLY DIRTY HACK */
 
 						if ( $( '#wpMinoredit' ).length === 0 ) {

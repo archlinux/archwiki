@@ -50,3 +50,9 @@ GeSHi is generous about creating HTML elements: highlighting large blocks of
 code can easily generate enough of them to crash a browser. As a guard, symbol
 highlighting is turned off for code fragments larger than 100 kB. For fragments
 larger than 200 kB, string highlighting is turned off as well.
+
+== Note to maintainers ==
+
+Whenever updating the version of GeSHi embedded in the extension, run
+maintenance/updateLanguageList.php to re-generate the list of supported
+languages.

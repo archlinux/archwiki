@@ -1,59 +1,15 @@
 <?php
-/**
- * Gadgets extension - lets users select custom javascript gadgets
- *
- * For more info see http://mediawiki.org/wiki/Extension:Gadgets
- *
- * @file
- * @ingroup Extensions
- * @author Daniel Kinzler, brightbyte.de
- * @copyright © 2007 Daniel Kinzler
- * @license GNU General Public Licence 2.0 or later
- */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	echo( "This file is an extension to the MediaWiki software and cannot be used standalone.\n" );
-	die( 1 );
+if ( function_exists( 'wfLoadExtension' ) ) {
+	wfLoadExtension( 'Gadgets' );
+	// Keep i18n globals so mergeMessageFileList.php doesn't break
+	$wgMessagesDirs['Gadgets'] = __DIR__ . '/i18n';
+	$wgExtensionMessagesFiles['GadgetsAlias'] = __DIR__ . '/Gadgets.alias.php';
+	/* wfWarn(
+		'Deprecated PHP entry point used for Gadgets extension. Please use wfLoadExtension instead, ' .
+		'see https://www.mediawiki.org/wiki/Extension_registration for more details.'
+	); */
+	return true;
+} else {
+	die( 'This version of the Gadgets extension requires MediaWiki 1.25+' );
 }
-
-if ( version_compare( $wgVersion, '1.19', '<' ) ) {
-	die( "This version of Extension:Gadgets requires MediaWiki 1.19+\n" );
-}
-
-$wgExtensionCredits['other'][] = array(
-	'path' => __FILE__,
-	'name' => 'Gadgets',
-	'author' => array( 'Daniel Kinzler', 'Max Semenik' ),
-	'url' => 'https://www.mediawiki.org/wiki/Extension:Gadgets',
-	'descriptionmsg' => 'gadgets-desc',
-);
-
-$wgHooks['ArticleSaveComplete'][]           = 'GadgetHooks::articleSaveComplete';
-$wgHooks['BeforePageDisplay'][]             = 'GadgetHooks::beforePageDisplay';
-$wgHooks['UserGetDefaultOptions'][]         = 'GadgetHooks::userGetDefaultOptions';
-$wgHooks['GetPreferences'][]                = 'GadgetHooks::getPreferences';
-$wgHooks['ResourceLoaderRegisterModules'][] = 'GadgetHooks::registerModules';
-$wgHooks['UnitTestsList'][]                 = 'GadgetHooks::onUnitTestsList';
-
-$dir = dirname( __FILE__ ) . '/';
-$wgMessagesDirs['Gadgets'] = __DIR__ . '/i18n';
-$wgExtensionMessagesFiles['Gadgets'] = $dir . 'Gadgets.i18n.php';
-$wgExtensionMessagesFiles['GadgetsAlias'] = $dir . 'Gadgets.alias.php';
-
-$wgAutoloadClasses['ApiQueryGadgetCategories'] = $dir . 'api/ApiQueryGadgetCategories.php';
-$wgAutoloadClasses['ApiQueryGadgets'] = $dir . 'api/ApiQueryGadgets.php';
-$wgAutoloadClasses['Gadget'] = $dir . 'Gadgets_body.php';
-$wgAutoloadClasses['GadgetHooks'] = $dir . 'GadgetHooks.php';
-$wgAutoloadClasses['GadgetResourceLoaderModule'] = $dir . 'Gadgets_body.php';
-$wgAutoloadClasses['SpecialGadgets'] = $dir . 'SpecialGadgets.php';
-
-$wgSpecialPages['Gadgets'] = 'SpecialGadgets';
-$wgSpecialPageGroups['Gadgets'] = 'wiki';
-
-$wgAPIListModules['gadgetcategories'] = 'ApiQueryGadgetCategories';
-$wgAPIListModules['gadgets'] = 'ApiQueryGadgets';
-
-/**
- * Whether the gadget list should be cached or recomputed every time
- */
-$wgGadgetsCaching = true;

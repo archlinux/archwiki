@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Gazeb"
+			"Gazeb",
+			"Macofe"
 		]
 	},
 	"wikieditor": "Росшыреный інтерфейс едітованя вікітексту",
@@ -12,9 +13,6 @@
 	"wikieditor-preview-tab": "Нагляд",
 	"wikieditor-preview-changes-tab": "Зміны",
 	"wikieditor-preview-loading": "Награваня...",
-	"wikieditor-previewDialog-preference": "Хосновати діалоґ про нагляд",
-	"wikieditor-previewDialog-tab": "Нагляд",
-	"wikieditor-previewDialog-loading": "Награваня...",
 	"wikieditor-publish-preference": "Запнути кроковане публікованя",
 	"wikieditor-publish-button-publish": "Публіковати",
 	"wikieditor-publish-button-cancel": "Сторно",
@@ -134,23 +132,6 @@
 	"wikieditor-toolbar-tool-replace-emptysearch": "Мусите увести што ся має глядати.",
 	"wikieditor-toolbar-tool-replace-invalidregex": "Заданый реґуларный выраз не є платный: $1",
 	"wikieditor-toolbar-section-characters": "Шпеціалны сімболы",
-	"wikieditor-toolbar-characters-page-latin": "Латиньскы",
-	"wikieditor-toolbar-characters-page-latinextended": "Росшырена латинка",
-	"wikieditor-toolbar-characters-page-ipa": "МФА (IPA)",
-	"wikieditor-toolbar-characters-page-symbols": "Сімболы",
-	"wikieditor-toolbar-characters-page-greek": "Ґрецькы",
-	"wikieditor-toolbar-characters-page-cyrillic": "Кірíліця",
-	"wikieditor-toolbar-characters-page-arabic": "Арабськы",
-	"wikieditor-toolbar-characters-page-arabicextended": "Росшырїня Аравчіны",
-	"wikieditor-toolbar-characters-page-persian": "Перськы",
-	"wikieditor-toolbar-characters-page-hebrew": "Гебрейскы",
-	"wikieditor-toolbar-characters-page-bangla": "Бенгалскы",
-	"wikieditor-toolbar-characters-page-telugu": "Телуґу",
-	"wikieditor-toolbar-characters-page-sinhala": "Сінгалскы",
-	"wikieditor-toolbar-characters-page-gujarati": "Ґуджараті",
-	"wikieditor-toolbar-characters-page-thai": "Тайськы",
-	"wikieditor-toolbar-characters-page-lao": "Лаоськы",
-	"wikieditor-toolbar-characters-page-khmer": "Кгмерськы",
 	"wikieditor-toolbar-section-help": "Поміч",
 	"wikieditor-toolbar-help-heading-description": "Попис",
 	"wikieditor-toolbar-help-heading-syntax": "Што пишете",
@@ -196,8 +177,7 @@
 	"wikieditor-toolbar-help-content-olist-syntax": "# Положка списку<br /># Положка списку",
 	"wikieditor-toolbar-help-content-olist-result": "<ol><li>Положка списку</li><li>Положка списку</li></ol>",
 	"wikieditor-toolbar-help-content-file-description": "Вложіня файлу",
-	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Example.png|thumb|Пояснюючій текст]]",
-	"wikieditor-toolbar-help-content-file-result": "<div style='width:104px;' class='thumbinner'><a title='Пояснюючій текст' class='image' href='#'><img height='50' width='100' border='0' class='thumbimage' src='$2/WikiEditor/modules/images/toolbar/example-image.png' alt=''/></a><div class='thumbcaption'><div class='magnify'><a title='Звекшыти' class='internal' href='#'><img height='11' width='15' alt='' src='$1/common/images/magnify-clip.png'/></a></div>Пояснюючій текст</div></div>",
+	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Example.png|$2|$3]]",
 	"wikieditor-toolbar-help-content-reference-description": "Позначка",
 	"wikieditor-toolbar-help-content-reference-syntax": "Текст сторінкы&lt;ref name=\"test\"&gt;[http://www.example.org Текст одказу], додатковый текст.&lt;/ref&gt;.",
 	"wikieditor-toolbar-help-content-reference-result": "Текст сторінкы.<sup><a href='#'>[1]</a></sup>",

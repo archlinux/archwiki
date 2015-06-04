@@ -19,7 +19,7 @@
 	},
 	"interwiki": "{{doc-special|Interwiki}}",
 	"interwiki-title-norights": "{{doc-special|Interwiki}}\nUsed when the user has no right to edit the interwiki data and can only view them.",
-	"interwiki-desc": "{{desc|name=Interwiki|url=http://www.mediawiki.org/wiki/Extension:Interwiki}}",
+	"interwiki-desc": "{{desc|name=Interwiki|url=https://www.mediawiki.org/wiki/Extension:Interwiki}}",
 	"interwiki_intro": "Part of the interwiki extension. Shown as introductory text on [[Special:Interwiki]].",
 	"interwiki-legend-label": "Used on [[Special:Interwiki]] as header text for interwiki legend\n{{Identical|Legend}}",
 	"interwiki-legend": "{{notranslate}}\nLegend on [[Special:Interwiki]].",
@@ -30,7 +30,7 @@
 	"interwiki-url-label": "{{optional}}\nUsed on [[Special:Interwiki]] as a field label in a form.\n\nSee also:\n* {{msg-mw|interwiki url}}\n{{Identical|URL}}",
 	"interwiki_url_intro": "Used on [[Special:Interwiki]] so as to explain the data in the {{msg-mw|Interwiki url}} column of the table.\n\nParameters:\n* $1 is being rendered verbatim. It refers to the syntax of the values listed in the \"prefix\" column, and does not mark a substitutable variable of this message.",
 	"interwiki_local": "Used on [[Special:Interwiki]] as a column header.\n\n{{Identical|Forward}}",
-	"interwiki-local-label": "Field label for the interwiki property \"local\", to set if an HTTP request to the local wiki with this interwiki prefix in the URL is redirected to the target URL given in the interwiki link definitions.",
+	"interwiki-local-label": "Field label for the interwiki property \"local\", to set if an HTTP request to the local wiki with this interwiki prefix in the URL is redirected to the target URL given in the interwiki link definitions.\n{{Identical|Forward}}",
 	"interwiki_local_0_intro": "Used on [[Special:Interwiki]] so as to describe the meaning of the value 0 in the {{msg-mw|Interwiki local}} column of the table.\n\nRefers to {{msg-mw|Badtitle}}.\n\nSee also:\n* {{msg-mw|Interwiki local 1 intro}}",
 	"interwiki_local_1_intro": "Used on [[Special:Interwiki]] so as to descripe the meaning of the value 1 in the {{msg-mw|Interwiki local}} column of the table.\n\nSee also:\n* {{msg-mw|Interwiki local 0 intro}}",
 	"interwiki_trans": "Used on [[Special:Interwiki]] as table column header.",
@@ -47,9 +47,9 @@
 	"interwiki_deleting": "Used as intro message for the table. Parameters:\n* $1 - the specified prefix",
 	"interwiki_deleted": "Used as success message. Parameters:\n* $1 - interwiki prefix",
 	"interwiki_delfailed": "Error message when removing an interwiki table entry fails. Parameters:\n* $1 is an interwiki prefix.",
-	"interwiki-logtext": "Link description to open log of changes to the interwiki table.",
-	"interwiki_addtext": "Link description to open form to add an interwiki prefix.",
-	"interwiki-addtext-local": "Link description for wikis with global interwikis to open form to add a local interwiki prefix.",
+	"interwiki-logtext": "Link description to open log of changes to the interwiki table.\n\nThe link points to [[Special:Log/interwiki]].\n{{Identical|View log}}",
+	"interwiki_addtext": "Used as text for the link to open form to add an interwiki prefix.\n\nAlso used as fieldset label.\n\nSee also:\n* {{msg-mw|Interwiki-addtext-local}}",
+	"interwiki-addtext-local": "Used as link text for wikis with global interwikis to open form to add a local interwiki prefix.\n\nSee also:\n* {{msg-mw|Interwiki addtext}}",
 	"interwiki_addintro": "Form information when adding an interwiki prefix.",
 	"interwiki_addbutton": "This message is the text of the button to submit the interwiki prefix you are adding.\n\n{{Identical|Add}}",
 	"interwiki_added": "Success message after adding an interwiki prefix. Parameters:\n* $1 is the added interwiki prefix.",
@@ -77,5 +77,5 @@
 	"interwiki-links": "Used on [[Special:Interwiki]] as header text for interwiki prefix table if no global table is present",
 	"interwiki-description": "{{notranslate}}\nAppears under the interwiki-links header on [[Special:Interwiki]]",
 	"interwiki-language-links": "Used on [[Special:Interwiki]] as header text for interwiki language prefix table",
-	"interwiki-language-description": "Appears under the interwiki-language-links header on [[Special:Interwiki]]; explains what interlanguage links do"
+	"interwiki-language-description": "Appears under the interwiki-language-links header on [[Special:Interwiki]]; explains what interlanguage links do.\n\nRefers to {{msg-mw|Otherlanguages}}."
 }

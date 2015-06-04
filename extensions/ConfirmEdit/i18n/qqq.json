@@ -1,0 +1,33 @@
+{
+	"@metadata": {
+		"authors": [
+			"Aotake",
+			"Hamilton Abreu",
+			"MF-Warburg",
+			"Meithal",
+			"Meno25",
+			"Purodha",
+			"Shirayuki",
+			"Siebrand",
+			"The Evil IP address",
+			"Toliño",
+			"Umherirrender"
+		]
+	},
+	"captcha-edit": "This message will be shown when editing if the wiki requires solving a captcha for editing.\n{{Related|ConfirmEdit-edit}}",
+	"captcha-desc": "{{desc|name=Confirm Edit|url=https://www.mediawiki.org/wiki/Extension:ConfirmEdit}}",
+	"captcha-label": "Label field for input field shown in forms",
+	"captcha-addurl": "The explanation of CAPTCHA shown to users trying to add new external links.\n{{Related|ConfirmEdit-addurl}}",
+	"captcha-badlogin": "The explanation of CAPTCHA shown to users failed three times to type in correct password.\n{{Related|ConfirmEdit-badlogin}}",
+	"captcha-createaccount": "The explanation of CAPTCHA shown to users trying to create a new account.\n{{Related|ConfirmEdit-createaccount}}",
+	"captcha-createaccount-fail": "Used as failure message.\n{{Related|ConfirmEdit-createaccount-fail}}",
+	"captcha-create": "This message will be shown when creating a page if the wiki requires solving a captcha for that.\n{{Related|ConfirmEdit-create}}",
+	"captcha-sendemail": "Used as footer text.\n{{Related|ConfirmEdit-sendemail}}",
+	"captcha-sendemail-fail": "Used as failure message.\n\nSee also:\n* {{msg-mw|Captcha-createaccount-fail}}",
+	"captcha-disabledinapi": "Used as error message when in the API mode.",
+	"captchahelp-title": "The page title of [[Special:Captcha/help]]",
+	"captchahelp-cookies-needed": "The page title for this message is {{msg-mw|Captchahelp-title}}.\n\nThis message follows the following help message:\n* {{msg-mw|Captchahelp-text}}.",
+	"captchahelp-text": "This is the help text shown on [[Special:Captcha/help]].",
+	"captcha-addurl-whitelist": "See also: [[MediaWiki:Spam-blacklist]] and [[MediaWiki:Spam-whitelist]].\n\nLeave all the wiki markup, including the spaces, as is.\nYou can translate the text, including 'Leave this line exactly as it is'.\nThe first line of this messages has one (1) leading space.\n\n\"regex\" stands for \"regular expression\".",
+	"right-skipcaptcha": "{{doc-right|skipcaptcha}}"
+}

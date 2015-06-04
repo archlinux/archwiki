@@ -17,8 +17,6 @@ class ApiOptionsTest extends MediaWikiLangTestCase {
 	/** @var DerivativeContext */
 	private $mContext;
 
-	private $mOldGetPreferencesHooks;
-
 	private static $Success = array( 'options' => 'success' );
 
 	protected function setUp() {
@@ -50,21 +48,11 @@ class ApiOptionsTest extends MediaWikiLangTestCase {
 
 		$this->mTested = new ApiOptions( $main, 'options' );
 
-		global $wgHooks;
-		if ( !isset( $wgHooks['GetPreferences'] ) ) {
-			$wgHooks['GetPreferences'] = array();
-		}
-		$this->mOldGetPreferencesHooks = $wgHooks['GetPreferences'];
-		$wgHooks['GetPreferences'][] = array( $this, 'hookGetPreferences' );
-	}
-
-	protected function tearDown() {
-		global $wgHooks;
-
-		$wgHooks['GetPreferences'] = $this->mOldGetPreferencesHooks;
-		$this->mOldGetPreferencesHooks = false;
-
-		parent::tearDown();
+		$this->mergeMwGlobalArrayValue( 'wgHooks', array(
+			'GetPreferences' => array(
+				array( $this, 'hookGetPreferences' )
+			)
+		) );
 	}
 
 	public function hookGetPreferences( $user, &$preferences ) {
@@ -150,7 +138,7 @@ class ApiOptionsTest extends MediaWikiLangTestCase {
 		$this->mContext->setRequest( new FauxRequest( $request, true, $this->mSession ) );
 		$this->mTested->execute();
 
-		return $this->mTested->getResult()->getData();
+		return $this->mTested->getResult()->getResultData( null, array( 'Strip' => 'all' ) );
 	}
 
 	/**
@@ -408,7 +396,7 @@ class ApiOptionsTest extends MediaWikiLangTestCase {
 			'options' => 'success',
 			'warnings' => array(
 				'options' => array(
-					'*' => "Validation error for 'special': cannot be set by this module"
+					'warnings' => "Validation error for 'special': cannot be set by this module"
 				)
 			)
 		), $response );
@@ -431,7 +419,7 @@ class ApiOptionsTest extends MediaWikiLangTestCase {
 			'options' => 'success',
 			'warnings' => array(
 				'options' => array(
-					'*' => "Validation error for 'unknownOption': not a valid preference"
+					'warnings' => "Validation error for 'unknownOption': not a valid preference"
 				)
 			)
 		), $response );

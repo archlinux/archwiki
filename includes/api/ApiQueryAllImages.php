@@ -232,10 +232,25 @@ class ApiQueryAllImages extends ApiQueryGeneratorBase {
 				$this->dieUsage( 'MIME search disabled in Miser Mode', 'mimesearchdisabled' );
 			}
 
-			list( $major, $minor ) = File::splitMime( $params['mime'] );
-
-			$this->addWhereFld( 'img_major_mime', $major );
-			$this->addWhereFld( 'img_minor_mime', $minor );
+			$mimeConds = array();
+			foreach ( $params['mime'] as $mime ) {
+				list( $major, $minor ) = File::splitMime( $mime );
+				$mimeConds[] = $db->makeList(
+					array(
+						'img_major_mime' => $major,
+						'img_minor_mime' => $minor,
+					),
+					LIST_AND
+				);
+			}
+			// safeguard against internal_api_error_DBQueryError
+			if ( count( $mimeConds ) > 0 ) {
+				$this->addWhere( $db->makeList( $mimeConds, LIST_OR ) );
+			} else {
+				// no MIME types, no files
+				$this->getResult()->addValue( 'query', $this->getModuleName(), array() );
+				return;
+			}
 		}
 
 		$limit = $params['limit'];
@@ -293,14 +308,14 @@ class ApiQueryAllImages extends ApiQueryGeneratorBase {
 		}
 
 		if ( is_null( $resultPageSet ) ) {
-			$result->setIndexedTagName_internal( array( 'query', $this->getModuleName() ), 'img' );
+			$result->addIndexedTagName( array( 'query', $this->getModuleName() ), 'img' );
 		} else {
 			$resultPageSet->populateFromTitles( $titles );
 		}
 	}
 
 	public function getAllowedParams() {
-		return array(
+		$ret = array(
 			'sort' => array(
 				ApiBase::PARAM_DFLT => 'name',
 				ApiBase::PARAM_TYPE => array(
@@ -321,7 +336,9 @@ class ApiQueryAllImages extends ApiQueryGeneratorBase {
 			),
 			'from' => null,
 			'to' => null,
-			'continue' => null,
+			'continue' => array(
+				ApiBase::PARAM_HELP_MSG => 'api-help-param-continue',
+			),
 			'start' => array(
 				ApiBase::PARAM_TYPE => 'timestamp'
 			),
@@ -331,7 +348,9 @@ class ApiQueryAllImages extends ApiQueryGeneratorBase {
 			'prop' => array(
 				ApiBase::PARAM_TYPE => ApiQueryImageInfo::getPropertyNames( $this->propertyFilter ),
 				ApiBase::PARAM_DFLT => 'timestamp|url',
-				ApiBase::PARAM_ISMULTI => true
+				ApiBase::PARAM_ISMULTI => true,
+				ApiBase::PARAM_HELP_MSG => 'apihelp-query+imageinfo-param-prop',
+				ApiBase::PARAM_HELP_MSG_PER_VALUE => ApiQueryImageInfo::getPropertyMessages( $this->propertyFilter ),
 			),
 			'prefix' => null,
 			'minsize' => array(
@@ -353,7 +372,10 @@ class ApiQueryAllImages extends ApiQueryGeneratorBase {
 					'nobots'
 				)
 			),
-			'mime' => null,
+			'mime' => array(
+				ApiBase::PARAM_DFLT => null,
+				ApiBase::PARAM_ISMULTI => true,
+			),
 			'limit' => array(
 				ApiBase::PARAM_DFLT => 10,
 				ApiBase::PARAM_TYPE => 'limit',
@@ -362,57 +384,28 @@ class ApiQueryAllImages extends ApiQueryGeneratorBase {
 				ApiBase::PARAM_MAX2 => ApiBase::LIMIT_BIG2
 			),
 		);
-	}
 
-	public function getParamDescription() {
-		$p = $this->getModulePrefix();
+		if ( $this->getConfig()->get( 'MiserMode' ) ) {
+			$ret['mime'][ApiBase::PARAM_HELP_MSG] = 'api-help-param-disabled-in-miser-mode';
+		}
 
-		return array(
-			'sort' => 'Property to sort by',
-			'dir' => 'The direction in which to list',
-			'from' => "The image title to start enumerating from. Can only be used with {$p}sort=name",
-			'to' => "The image title to stop enumerating at. Can only be used with {$p}sort=name",
-			'continue' => 'When more results are available, use this to continue',
-			'start' => "The timestamp to start enumerating from. Can only be used with {$p}sort=timestamp",
-			'end' => "The timestamp to end enumerating. Can only be used with {$p}sort=timestamp",
-			'prop' => ApiQueryImageInfo::getPropertyDescriptions( $this->propertyFilter ),
-			'prefix' => "Search for all image titles that begin with this " .
-				"value. Can only be used with {$p}sort=name",
-			'minsize' => 'Limit to images with at least this many bytes',
-			'maxsize' => 'Limit to images with at most this many bytes',
-			'sha1' => "SHA1 hash of image. Overrides {$p}sha1base36",
-			'sha1base36' => 'SHA1 hash of image in base 36 (used in MediaWiki)',
-			'user' => "Only return files uploaded by this user. Can only be used " .
-				"with {$p}sort=timestamp. Cannot be used together with {$p}filterbots",
-			'filterbots' => "How to filter files uploaded by bots. Can only be " .
-				"used with {$p}sort=timestamp. Cannot be used together with {$p}user",
-			'mime' => 'What MIME type to search for. e.g. image/jpeg. Disabled in Miser Mode',
-			'limit' => 'How many images in total to return',
-		);
+		return $ret;
 	}
 
 	private $propertyFilter = array( 'archivename', 'thumbmime', 'uploadwarning' );
 
-	public function getDescription() {
-		return 'Enumerate all images sequentially.';
-	}
-
-	public function getExamples() {
+	protected function getExamplesMessages() {
 		return array(
-			'api.php?action=query&list=allimages&aifrom=B' => array(
-				'Simple Use',
-				'Show a list of files starting at the letter "B"',
-			),
-			'api.php?action=query&list=allimages&aiprop=user|timestamp|url&' .
-				'aisort=timestamp&aidir=older' => array(
-				'Simple Use',
-				'Show a list of recently uploaded files similar to Special:NewFiles',
-			),
-			'api.php?action=query&generator=allimages&gailimit=4&' .
-				'gaifrom=T&prop=imageinfo' => array(
-				'Using as Generator',
-				'Show info about 4 files starting at the letter "T"',
-			),
+			'action=query&list=allimages&aifrom=B'
+				=> 'apihelp-query+allimages-example-B',
+			'action=query&list=allimages&aiprop=user|timestamp|url&' .
+				'aisort=timestamp&aidir=older'
+				=> 'apihelp-query+allimages-example-recent',
+			'action=query&list=allimages&aimime=image/png|image/gif'
+				=> 'apihelp-query+allimages-example-mimetypes',
+			'action=query&generator=allimages&gailimit=4&' .
+				'gaifrom=T&prop=imageinfo'
+				=> 'apihelp-query+allimages-example-generator',
 		);
 	}
 

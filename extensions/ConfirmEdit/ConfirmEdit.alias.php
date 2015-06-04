@@ -24,6 +24,11 @@ $specialPageAliases['arz'] = array(
 	'Captcha' => array( 'كابتشا' ),
 );
 
+/** Western Balochi (بلوچی رخشانی) */
+$specialPageAliases['bgn'] = array(
+	'Captcha' => array( 'گپچا' ),
+);
+
 /** Min Dong Chinese (Mìng-dĕ̤ng-ngṳ̄) */
 $specialPageAliases['cdo'] = array(
 	'Captcha' => array( '驗證碼' ),
@@ -31,7 +36,7 @@ $specialPageAliases['cdo'] = array(
 
 /** Zazaki (Zazaki) */
 $specialPageAliases['diq'] = array(
-	'Captcha' => array( 'Kodaİtimadi' ),
+	'Captcha' => array( 'Kodêİtımadi' ),
 );
 
 /** Esperanto (Esperanto) */
@@ -89,6 +94,11 @@ $specialPageAliases['kw'] = array(
 	'Captcha' => array( 'Captcha' ),
 );
 
+/** لوری (لوری) */
+$specialPageAliases['lrc'] = array(
+	'Captcha' => array( 'رازینه_کپچا' ),
+);
+
 /** Macedonian (македонски) */
 $specialPageAliases['mk'] = array(
 	'Captcha' => array( 'Captcha' ),
@@ -101,7 +111,7 @@ $specialPageAliases['ml'] = array(
 
 /** Serbian (Cyrillic script) (српски (ћирилица)‎) */
 $specialPageAliases['sr-ec'] = array(
-	'Captcha' => array( 'Потврдни_код' ),
+	'Captcha' => array( 'ПотврдниКод', 'Потврдни_код' ),
 );
 
 /** Turkish (Türkçe) */
@@ -121,5 +131,5 @@ $specialPageAliases['zh-hans'] = array(
 
 /** Traditional Chinese (中文（繁體）‎) */
 $specialPageAliases['zh-hant'] = array(
-	'Captcha' => array( '驗證碼' ),
+	'Captcha' => array( '驗證碼', '認證碼' ),
 );

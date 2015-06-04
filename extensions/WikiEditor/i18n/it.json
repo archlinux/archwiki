@@ -12,7 +12,8 @@
 			"Nemo bis",
 			"PaoloRomano",
 			"Una giornata uggiosa '94",
-			"Vituzzu"
+			"Vituzzu",
+			"Toadino2"
 		]
 	},
 	"wikieditor": "Interfaccia avanzata di modifica del wikitesto",
@@ -23,9 +24,6 @@
 	"wikieditor-preview-tab": "Anteprima",
 	"wikieditor-preview-changes-tab": "Modifiche",
 	"wikieditor-preview-loading": "Caricamento in corso...",
-	"wikieditor-previewDialog-preference": "Abilita la finestra di dialogo di anteprima",
-	"wikieditor-previewDialog-tab": "Anteprima",
-	"wikieditor-previewDialog-loading": "Caricamento in corso...",
 	"wikieditor-publish-preference": "Abilita pubblicazione passo dopo passo",
 	"wikieditor-publish-button-publish": "Pubblica",
 	"wikieditor-publish-button-cancel": "Annulla",
@@ -219,8 +217,8 @@
 	"wikieditor-toolbar-help-content-olist-syntax": "# Elemento dell'elenco<br /># Elemento dell'elenco",
 	"wikieditor-toolbar-help-content-olist-result": "<ol><li>Elemento dell'elenco</li><li>Elemento dell'elenco</li></ol>",
 	"wikieditor-toolbar-help-content-file-description": "File incorporato",
-	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Esempio.png|thumb|Testo della didascalia]]",
-	"wikieditor-toolbar-help-content-file-result": "<div style='width:104px;' class='thumbinner'><a title='Caption text' class='image' href='#'><img height='50' width='100' border='0' class='thumbimage' src='$2/WikiEditor/modules/images/toolbar/example-image.png' alt=''/></a><div class='thumbcaption'><div class='magnify'><a title='Enlarge' class='internal' href='#'><img height='11' width='15' alt='' src='$1/common/images/magnify-clip.png'/></a></div>Testo della didascalia</div></div>",
+	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Esempio.png|$2|$3]]",
+	"wikieditor-toolbar-help-content-file-caption": "Testo della didascalia",
 	"wikieditor-toolbar-help-content-reference-description": "Nota",
 	"wikieditor-toolbar-help-content-reference-syntax": "Testo della pagina.&lt;ref name=\"test\"&gt;[http://www.example.org Testo del collegamento], testo aggiuntivo.&lt;/ref&gt;",
 	"wikieditor-toolbar-help-content-reference-result": "Testo della pagina.<sup><a href='#'>[1]</a></sup>",

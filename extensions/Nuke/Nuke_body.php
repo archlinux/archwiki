@@ -74,6 +74,7 @@ class SpecialNuke extends SpecialPage {
 	 */
 	protected function promptForm( $userName = '' ) {
 		$out = $this->getOutput();
+		$out->addModules( 'mediawiki.userSuggest' );
 
 		$out->addWikiMsg( 'nuke-tools' );
 
@@ -87,7 +88,7 @@ class SpecialNuke extends SpecialPage {
 			)
 			. '<table><tr>'
 				. '<td>' . Xml::label( $this->msg( 'nuke-userorip' )->text(), 'nuke-target' ) . '</td>'
-				. '<td>' . Xml::input( 'target', 40, $userName, array( 'id' => 'nuke-target', 'autofocus' => true ) ) . '</td>'
+				. '<td>' . Xml::input( 'target', 40, $userName, array( 'id' => 'nuke-target', 'class' => 'mw-autocomplete-user', 'autofocus' => true ) ) . '</td>'
 			. '</tr><tr>'
 				. '<td>' . Xml::label( $this->msg( 'nuke-pattern' )->text(), 'nuke-pattern' ) . '</td>'
 				. '<td>' . Xml::input( 'pattern', 40, '', array( 'id' => 'nuke-pattern' ) ) . '</td>'
@@ -155,16 +156,19 @@ class SpecialNuke extends SpecialPage {
 			)
 		);
 
-		// Select: All, None
+		// Select: All, None, Invert
 		$links = array();
 		$links[] = '<a href="#" id="toggleall">' .
-			$this->msg( 'powersearch-toggleall' )->text() . '</a>';
+			$this->msg( 'powersearch-toggleall' )->escaped() . '</a>';
 		$links[] = '<a href="#" id="togglenone">' .
-			$this->msg( 'powersearch-togglenone' )->text() . '</a>';
+			$this->msg( 'powersearch-togglenone' )->escaped() . '</a>';
+		$links[] = '<a href="#" id="toggleinvert">' .
+			$this->msg( 'nuke-toggleinvert' )->escaped() . '</a>';
 		$out->addHTML(
 			Xml::tags( 'p',
 				null,
-				$this->msg( 'nuke-select', $this->getLanguage()->commaList( $links ) )->text()
+				$this->msg( 'nuke-select' )
+					->rawParams( $this->getLanguage()->commaList( $links ) )->escaped()
 			)
 		);
 
@@ -175,8 +179,8 @@ class SpecialNuke extends SpecialPage {
 
 		$out->addHTML( '<ul>' );
 
-		$wordSeparator = $this->msg( 'word-separator' )->text();
-		$commaSeparator = $this->msg( 'comma-separator' )->text();
+		$wordSeparator = $this->msg( 'word-separator' )->escaped();
+		$commaSeparator = $this->msg( 'comma-separator' )->escaped();
 
 		foreach ( $pages as $info ) {
 			/**
@@ -190,7 +194,7 @@ class SpecialNuke extends SpecialPage {
 			$userNameText = $userName ? $this->msg( 'nuke-editby', $userName )->parse() . $commaSeparator : '';
 			$changesLink = Linker::linkKnown(
 				$title,
-				$this->msg( 'nuke-viewchanges' )->text(),
+				$this->msg( 'nuke-viewchanges' )->escaped(),
 				array(),
 				array( 'action' => 'history' )
 			);
@@ -309,5 +313,9 @@ class SpecialNuke extends SpecialPage {
 
 		$this->getOutput()->addHTML( "<ul>\n<li>" . implode( "</li>\n<li>", $res ) . "</li>\n</ul>\n" );
 		$this->getOutput()->addWikiMsg( 'nuke-delete-more' );
+	}
+
+	protected function getGroupName() {
+		return 'pagetools';
 	}
 }

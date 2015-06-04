@@ -35,10 +35,12 @@ class ApiQueryTokens extends ApiQueryBase {
 
 	public function execute() {
 		$params = $this->extractRequestParams();
-		$res = array();
+		$res = array(
+			ApiResult::META_TYPE => 'assoc',
+		);
 
-		if ( $this->getMain()->getRequest()->getVal( 'callback' ) !== null ) {
-			$this->setWarning( 'Tokens may not be obtained when using a callback' );
+		if ( $this->lacksSameOriginSecurity() ) {
+			$this->setWarning( 'Tokens may not be obtained when the same-origin policy is not applied' );
 			return;
 		}
 
@@ -55,7 +57,6 @@ class ApiQueryTokens extends ApiQueryBase {
 	public static function getTokenTypeSalts() {
 		static $salts = null;
 		if ( !$salts ) {
-			wfProfileIn( __METHOD__ );
 			$salts = array(
 				'csrf' => '',
 				'watch' => 'watch',
@@ -63,9 +64,8 @@ class ApiQueryTokens extends ApiQueryBase {
 				'rollback' => 'rollback',
 				'userrights' => 'userrights',
 			);
-			wfRunHooks( 'ApiQueryTokensRegisterTypes', array( &$salts ) );
+			Hooks::run( 'ApiQueryTokensRegisterTypes', array( &$salts ) );
 			ksort( $salts );
-			wfProfileOut( __METHOD__ );
 		}
 
 		return $salts;
@@ -81,20 +81,12 @@ class ApiQueryTokens extends ApiQueryBase {
 		);
 	}
 
-	public function getParamDescription() {
+	protected function getExamplesMessages() {
 		return array(
-			'type' => 'Type of token(s) to request'
-		);
-	}
-
-	public function getDescription() {
-		return 'Gets tokens for data-modifying actions.';
-	}
-
-	protected function getExamples() {
-		return array(
-			'api.php?action=query&meta=tokens' => 'Retrieve a csrf token (the default)',
-			'api.php?action=query&meta=tokens&type=watch|patrol' => 'Retrieve a watch token and a patrol token'
+			'action=query&meta=tokens'
+				=> 'apihelp-query+tokens-example-simple',
+			'action=query&meta=tokens&type=watch|patrol'
+				=> 'apihelp-query+tokens-example-types',
 		);
 	}
 

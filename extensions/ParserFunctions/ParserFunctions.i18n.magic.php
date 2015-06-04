@@ -216,6 +216,20 @@ $magicWords['fr'] = array(
 	'urldecode' => array( 0, 'décoderurl', 'decodeurl' ),
 );
 
+/** Western Frisian (Frysk) */
+$magicWords['fy'] = array(
+	'expr' => array( 0, 'ekspresje' ),
+	'if' => array( 0, 'as' ),
+	'ifeq' => array( 0, 'asgelyk' ),
+	'ifexpr' => array( 0, 'asekspresje' ),
+	'iferror' => array( 0, 'asflater' ),
+	'switch' => array( 0, 'skeakelje' ),
+	'default' => array( 0, '#standert' ),
+	'ifexist' => array( 0, 'asbestiet' ),
+	'time' => array( 0, 'tiid' ),
+	'timel' => array( 0, 'tiidl' ),
+);
+
 /** Hebrew (עברית) */
 $magicWords['he'] = array(
 	'expr' => array( 0, 'חשב' ),
@@ -607,7 +621,7 @@ $magicWords['ur'] = array(
 	'if' => array( 0, 'اگر' ),
 );
 
-/** Uzbek (oʻzbekcha) */
+/** Uzbek (oʻzbekcha/ўзбекча) */
 $magicWords['uz'] = array(
 	'expr' => array( 0, 'ifoda' ),
 	'if' => array( 0, 'agar' ),
@@ -701,7 +715,15 @@ $magicWords['zh-hans'] = array(
 
 /** Traditional Chinese (中文（繁體）‎) */
 $magicWords['zh-hant'] = array(
+	'expr' => array( 0, '表達式' ),
 	'if' => array( 0, '若' ),
+	'ifexpr' => array( 0, '若表達式' ),
+	'iferror' => array( 0, '如果錯誤' ),
+	'switch' => array( 0, '轉換' ),
+	'default' => array( 0, '#默認' ),
 	'time' => array( 0, '時間' ),
 	'timel' => array( 0, '時間L' ),
+	'len' => array( 0, '長度' ),
+	'count' => array( 0, '計算' ),
+	'urldecode' => array( 0, 'URI解碼' ),
 );

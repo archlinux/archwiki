@@ -205,8 +205,6 @@ class EmailNotification {
 		global $wgEnotifWatchlist;
 		global $wgEnotifMinorEdits, $wgEnotifUserTalk;
 
-		wfProfileIn( __METHOD__ );
-
 		# The following code is only run, if several conditions are met:
 		# 1. EmailNotification for pages (other than user_talk pages) must be enabled
 		# 2. minor edits (changes) are only regarded if the global flag indicates so
@@ -224,9 +222,8 @@ class EmailNotification {
 
 		$formattedPageStatus = array( 'deleted', 'created', 'moved', 'restored', 'changed' );
 
-		wfRunHooks( 'UpdateUserMailerFormattedPageStatus', array( &$formattedPageStatus ) );
+		Hooks::run( 'UpdateUserMailerFormattedPageStatus', array( &$formattedPageStatus ) );
 		if ( !in_array( $this->pageStatus, $formattedPageStatus ) ) {
-			wfProfileOut( __METHOD__ );
 			throw new MWException( 'Not a valid page status!' );
 		}
 
@@ -251,7 +248,7 @@ class EmailNotification {
 						&& $watchingUser->isEmailConfirmed()
 						&& $watchingUser->getID() != $userTalkId
 					) {
-						if ( wfRunHooks( 'SendWatchlistEmailNotification', array( $watchingUser, $title, $this ) ) ) {
+						if ( Hooks::run( 'SendWatchlistEmailNotification', array( $watchingUser, $title, $this ) ) ) {
 							$this->compose( $watchingUser );
 						}
 					}
@@ -270,7 +267,6 @@ class EmailNotification {
 		}
 
 		$this->sendMails();
-		wfProfileOut( __METHOD__ );
 	}
 
 	/**
@@ -295,7 +291,7 @@ class EmailNotification {
 			) {
 				if ( !$targetUser->isEmailConfirmed() ) {
 					wfDebug( __METHOD__ . ": talk page owner doesn't have validated email\n" );
-				} elseif ( !wfRunHooks( 'AbortTalkPageEmailNotification', array( $targetUser, $title ) ) ) {
+				} elseif ( !Hooks::run( 'AbortTalkPageEmailNotification', array( $targetUser, $title ) ) ) {
 					wfDebug( __METHOD__ . ": talk page update notification is aborted for this user\n" );
 				} else {
 					wfDebug( __METHOD__ . ": sending talk page update notification\n" );

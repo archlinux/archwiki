@@ -4,7 +4,9 @@
 			"Garas",
 			"Homo",
 			"Matasg",
-			"Perkunas"
+			"Perkunas",
+			"Hugo.arg",
+			"Tomasdd"
 		]
 	},
 	"skinname-vector": "Vektorinė",
@@ -16,7 +18,8 @@
 	"vector-action-unprotect": "Keisti apsaugą",
 	"vector-view-create": "Kurti",
 	"vector-view-edit": "Redaguoti",
-	"vector-view-history": "Istorija",
+	"vector-view-history": "Peržiūrėti istoriją",
 	"vector-view-view": "Skaityti",
-	"vector-view-viewsource": "Žiūrėti kodą"
+	"vector-view-viewsource": "Žiūrėti kodą",
+	"vector-more-actions": "Daugiau"
 }

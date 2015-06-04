@@ -96,16 +96,15 @@ class MWDebugTest extends MediaWikiTestCase {
 		$apiMain = new ApiMain( $context );
 
 		$result = new ApiResult( $apiMain );
-		$result->setRawMode( true );
 
 		MWDebug::appendDebugInfoToApiResult( $context, $result );
 
 		$this->assertInstanceOf( 'ApiResult', $result );
-		$data = $result->getData();
+		$data = $result->getResultData();
 
 		$expectedKeys = array( 'mwVersion', 'phpEngine', 'phpVersion', 'gitRevision', 'gitBranch',
 			'gitViewUrl', 'time', 'log', 'debugLog', 'queries', 'request', 'memory',
-			'memoryPeak', 'includes', 'profile', '_element' );
+			'memoryPeak', 'includes', '_element' );
 
 		foreach ( $expectedKeys as $expectedKey ) {
 			$this->assertArrayHasKey( $expectedKey, $data['debuginfo'], "debuginfo has $expectedKey" );

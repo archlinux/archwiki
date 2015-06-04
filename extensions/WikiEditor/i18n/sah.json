@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"HalanTul"
+			"HalanTul",
+			"Macofe"
 		]
 	},
 	"wikieditor": "Биики тиэкиһи эрэдээксийэлиир кэҥэтиллибит интерфейс",
@@ -12,9 +13,6 @@
 	"wikieditor-preview-tab": "Холоон көрүү",
 	"wikieditor-preview-changes-tab": "Уларыйыылар",
 	"wikieditor-preview-loading": "Хачайдана турар...",
-	"wikieditor-previewDialog-preference": "Эрдэ көрүү диалогын холбуурга",
-	"wikieditor-previewDialog-tab": "Холоон көрүү",
-	"wikieditor-previewDialog-loading": "Хачайдана турар...",
 	"wikieditor-publish-preference": "Биирдии хаамыынан бэчээккэ таһаарыыны холбоо",
 	"wikieditor-publish-button-publish": "Бэчээккэ таһаарарга",
 	"wikieditor-publish-button-cancel": "Төнүн",
@@ -128,22 +126,6 @@
 	"wikieditor-toolbar-tool-replace-emptysearch": "Тугу көрдүүргүн эппэтэххин.",
 	"wikieditor-toolbar-tool-replace-invalidregex": "Суруйбут этииҥ сыыһалаах: $1",
 	"wikieditor-toolbar-section-characters": "Анал бэлиэлэр",
-	"wikieditor-toolbar-characters-page-latin": "Латыынныы",
-	"wikieditor-toolbar-characters-page-latinextended": "Латыынныы кэтирэтиллибиттэр",
-	"wikieditor-toolbar-characters-page-ipa": "МФА (IPA)",
-	"wikieditor-toolbar-characters-page-symbols": "Бэлиэлэр",
-	"wikieditor-toolbar-characters-page-greek": "Гириэктии",
-	"wikieditor-toolbar-characters-page-cyrillic": "Кириллица",
-	"wikieditor-toolbar-characters-page-arabic": "Араабтыы",
-	"wikieditor-toolbar-characters-page-persian": "Персия",
-	"wikieditor-toolbar-characters-page-hebrew": "Иврит",
-	"wikieditor-toolbar-characters-page-bangla": "Бенгаал",
-	"wikieditor-toolbar-characters-page-telugu": "Телугу",
-	"wikieditor-toolbar-characters-page-sinhala": "Сингаал",
-	"wikieditor-toolbar-characters-page-gujarati": "Гудьараат",
-	"wikieditor-toolbar-characters-page-thai": "Таай",
-	"wikieditor-toolbar-characters-page-lao": "Лаос",
-	"wikieditor-toolbar-characters-page-khmer": "Кхмер",
 	"wikieditor-toolbar-section-help": "Көмө",
 	"wikieditor-toolbar-help-heading-description": "Быһаарыыта",
 	"wikieditor-toolbar-help-heading-syntax": "Тугу киллэрэҕин",
@@ -189,8 +171,7 @@
 	"wikieditor-toolbar-help-content-olist-syntax": "# Тиһик бэлиэтэ<br /># Тиһик бэлиэтэ",
 	"wikieditor-toolbar-help-content-olist-result": "<ol><li>Тиһик бэлиэтэ</li><li>Тиһик бэлиэтэ</li></ol>",
 	"wikieditor-toolbar-help-content-file-description": "Иһинээҕи билэ",
-	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Example.png|thumb|Быһаарыыта]]",
-	"wikieditor-toolbar-help-content-file-result": "<div style='width:104px;' class='thumbinner'><a title='\nБыһаарыы сурук' class='image' href='#'><img height='50' width='100' border='0' class='thumbimage' src='$2/WikiEditor/modules/images/toolbar/example-image.png' alt=''/></a><div class='thumbcaption'><div class='magnify'><a title='Enlarge' class='internal' href='#'><img height='11' width='15' alt='' src='$1/common/images/magnify-clip.png'/></a></div>\nБыһаарыы сурук</div></div>",
+	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Example.png|$2|$3]]",
 	"wikieditor-toolbar-help-content-reference-description": "Быһаарыы",
 	"wikieditor-toolbar-help-content-reference-syntax": "Сирэй тиэкиһэ.&lt;ref name=\"test\"&gt;[http://www.example.org Сигэ быһаарыыта], эбии быһаарыы.&lt;/ref&gt;",
 	"wikieditor-toolbar-help-content-reference-result": "Сирэй тиэкиһэ.<sup><a href='#'>[1]</a></sup>",

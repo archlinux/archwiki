@@ -32,7 +32,7 @@ if ( defined( 'THUMB_HANDLER' ) ) {
 	wfThumbHandle404();
 } else {
 	// Called directly, use $_GET params
-	wfThumbHandleRequest();
+	wfStreamThumb( $_GET );
 }
 
 wfLogProfilingData();
@@ -42,19 +42,6 @@ $factory->commitMasterChanges();
 $factory->shutdown();
 
 //--------------------------------------------------------------------------
-
-/**
- * Handle a thumbnail request via query parameters
- *
- * @return void
- */
-function wfThumbHandleRequest() {
-	$params = get_magic_quotes_gpc()
-		? array_map( 'stripslashes', $_GET )
-		: $_GET;
-
-	wfStreamThumb( $params ); // stream the thumbnail
-}
 
 /**
  * Handle a thumbnail request via thumbnail file URL
@@ -105,7 +92,6 @@ function wfThumbHandle404() {
 function wfStreamThumb( array $params ) {
 	global $wgVaryOnXFP;
 
-	$section = new ProfileSection( __METHOD__ );
 
 	$headers = array(); // HTTP headers to send
 
@@ -266,16 +252,18 @@ function wfStreamThumb( array $params ) {
 	try {
 		$thumbName = $img->thumbName( $params );
 		if ( !strlen( $thumbName ) ) { // invalid params?
-			wfThumbError( 400, 'The specified thumbnail parameters are not valid.' );
-			return;
+			throw new MediaTransformInvalidParametersException( 'Empty return from File::thumbName' );
 		}
 		$thumbName2 = $img->thumbName( $params, File::THUMB_FULL_NAME ); // b/c; "long" style
+	} catch ( MediaTransformInvalidParametersException $e ) {
+		wfThumbError( 400, 'The specified thumbnail parameters are not valid: ' . $e->getMessage() );
+		return;
 	} catch ( MWException $e ) {
 		wfThumbError( 500, $e->getHTML() );
 		return;
 	}
 
-	// For 404 handled thumbnails, we only use the the base name of the URI
+	// For 404 handled thumbnails, we only use the base name of the URI
 	// for the thumb params and the parent directory for the source file name.
 	// Check that the zone relative path matches up so squid caches won't pick
 	// up thumbs that would not be purged on source file deletion (bug 34231).
@@ -317,7 +305,10 @@ function wfStreamThumb( array $params ) {
 	// Stream the file if it exists already...
 	$thumbPath = $img->getThumbPath( $thumbName );
 	if ( $img->getRepo()->fileExists( $thumbPath ) ) {
-		$img->getRepo()->streamFile( $thumbPath, $headers );
+		$success = $img->getRepo()->streamFile( $thumbPath, $headers );
+		if ( !$success ) {
+			wfThumbError( 500, 'Could not stream the file' );
+		}
 		return;
 	}
 
@@ -332,9 +323,11 @@ function wfStreamThumb( array $params ) {
 
 	// Actually generate a new thumbnail
 	list( $thumb, $errorMsg ) = wfGenerateThumbnail( $img, $params, $thumbName, $thumbPath );
+	/** @var MediaTransformOutput|bool $thumb */
 
 	// Check for thumbnail generation errors...
 	$msg = wfMessage( 'thumbnail_error' );
+	$errorCode = 500;
 	if ( !$thumb ) {
 		$errorMsg = $errorMsg ?: $msg->rawParams( 'File::transform() returned false' )->escaped();
 	} elseif ( $thumb->isError() ) {
@@ -344,13 +337,17 @@ function wfStreamThumb( array $params ) {
 	} elseif ( $thumb->fileIsSource() ) {
 		$errorMsg = $msg->
 			rawParams( 'Image was not scaled, is the requested width bigger than the source?' )->escaped();
+		$errorCode = 400;
 	}
 
 	if ( $errorMsg !== false ) {
-		wfThumbError( 500, $errorMsg );
+		wfThumbError( $errorCode, $errorMsg );
 	} else {
 		// Stream the file if there were no errors
-		$thumb->streamFile( $headers );
+		$success = $thumb->streamFile( $headers );
+		if ( !$success ) {
+			wfThumbError( 500, 'Could not stream the file' );
+		}
 	}
 }
 
@@ -436,66 +433,6 @@ function wfGenerateThumbnail( File $file, array $params, $thumbName, $thumbPath 
 	}
 
 	return array( $thumb, $errorHtml );
-}
-
-/**
- * Returns true if this thumbnail is one that MediaWiki generates
- * links to on file description pages and possibly parser output.
- *
- * $params is considered non-standard if they involve a non-standard
- * width or any non-default parameters aside from width and page number.
- * The number of possible files with standard parameters is far less than
- * that of all combinations; rate-limiting for them can thus be more generious.
- *
- * @param File $file
- * @param array $params
- * @return bool
- */
-function wfThumbIsStandard( File $file, array $params ) {
-	global $wgThumbLimits, $wgImageLimits;
-
-	$handler = $file->getHandler();
-	if ( !$handler || !isset( $params['width'] ) ) {
-		return false;
-	}
-
-	$basicParams = array();
-	if ( isset( $params['page'] ) ) {
-		$basicParams['page'] = $params['page'];
-	}
-
-	// Check if the width matches one of $wgThumbLimits
-	if ( in_array( $params['width'], $wgThumbLimits ) ) {
-		$normalParams = $basicParams + array( 'width' => $params['width'] );
-		// Append any default values to the map (e.g. "lossy", "lossless", ...)
-		$handler->normaliseParams( $file, $normalParams );
-	} else {
-		// If not, then check if the width matchs one of $wgImageLimits
-		$match = false;
-		foreach ( $wgImageLimits as $pair ) {
-			$normalParams = $basicParams + array( 'width' => $pair[0], 'height' => $pair[1] );
-			// Decide whether the thumbnail should be scaled on width or height.
-			// Also append any default values to the map (e.g. "lossy", "lossless", ...)
-			$handler->normaliseParams( $file, $normalParams );
-			// Check if this standard thumbnail size maps to the given width
-			if ( $normalParams['width'] == $params['width'] ) {
-				$match = true;
-				break;
-			}
-		}
-		if ( !$match ) {
-			return false; // not standard for description pages
-		}
-	}
-
-	// Check that the given values for non-page, non-width, params are just defaults
-	foreach ( $params as $key => $value ) {
-		if ( !isset( $normalParams[$key] ) || $normalParams[$key] != $value ) {
-			return false;
-		}
-	}
-
-	return true;
 }
 
 /**
@@ -619,7 +556,9 @@ function wfThumbError( $status, $msg ) {
 
 	header( 'Cache-Control: no-cache' );
 	header( 'Content-Type: text/html; charset=utf-8' );
-	if ( $status == 404 ) {
+	if ( $status == 400 ) {
+		header( 'HTTP/1.1 400 Bad request' );
+	} elseif ( $status == 404 ) {
 		header( 'HTTP/1.1 404 Not found' );
 	} elseif ( $status == 403 ) {
 		header( 'HTTP/1.1 403 Forbidden' );
@@ -636,7 +575,11 @@ function wfThumbError( $status, $msg ) {
 		$debug = '';
 	}
 	echo <<<EOT
-<html><head><title>Error generating thumbnail</title></head>
+<!DOCTYPE html>
+<html><head>
+<meta charset="UTF-8" />
+<title>Error generating thumbnail</title>
+</head>
 <body>
 <h1>Error generating thumbnail</h1>
 <p>

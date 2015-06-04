@@ -40,6 +40,12 @@ class Sanitizer {
 		 |(&)/x';
 
 	/**
+	 * Acceptable tag name charset from HTML5 parsing spec
+	 * http://www.w3.org/TR/html5/syntax.html#tag-open-state
+	 */
+	const ELEMENT_BITS_REGEX = '!^(/?)([A-Za-z][^\t\n\v />\0]*+)([^>]*?)(/?>)([^<]*)$!';
+
+	/**
 	 * Blacklist for evil uris like javascript:
 	 * WARNING: DO NOT use this in any place that actually requires blacklisting
 	 * for security reasons. There are NUMEROUS[1] ways to bypass blacklisting, the
@@ -355,7 +361,6 @@ class Sanitizer {
 	/**
 	 * Cleans up HTML, removes dangerous tags and attributes, and
 	 * removes HTML comments
-	 * @private
 	 * @param string $text
 	 * @param callable $processCallback Callback to do any variable or parameter
 	 *   replacements in HTML attribute values
@@ -364,15 +369,13 @@ class Sanitizer {
 	 * @param array $removetags For any tags (default or extra) to exclude
 	 * @return string
 	 */
-	static function removeHTMLtags( $text, $processCallback = null,
+	public static function removeHTMLtags( $text, $processCallback = null,
 		$args = array(), $extratags = array(), $removetags = array()
 	) {
 		global $wgUseTidy, $wgAllowMicrodataAttributes, $wgAllowImageTag;
 
 		static $htmlpairsStatic, $htmlsingle, $htmlsingleonly, $htmlnest, $tabletags,
 			$htmllist, $listtags, $htmlsingleallowed, $htmlelementsStatic, $staticInitialised;
-
-		wfProfileIn( __METHOD__ );
 
 		// Base our staticInitialised variable off of the global config state so that if the globals
 		// are changed (like in the screwed up test system) we will re-initialise the settings.
@@ -447,7 +450,7 @@ class Sanitizer {
 				# $params: String between element name and >
 				# $brace: Ending '>' or '/>'
 				# $rest: Everything until the next element of $bits
-				if ( preg_match( '!^(/?)([^\\s/>]+)([^>]*?)(/{0,1}>)([^<]*)$!', $x, $regs ) ) {
+				if ( preg_match( self::ELEMENT_BITS_REGEX, $x, $regs ) ) {
 					list( /* $qbar */, $slash, $t, $params, $brace, $rest ) = $regs;
 				} else {
 					$slash = $t = $params = $brace = $rest = null;
@@ -510,15 +513,12 @@ class Sanitizer {
 						$newparams = '';
 					} else {
 						# Keep track for later
-						if ( isset( $tabletags[$t] ) &&
-						!in_array( 'table', $tagstack ) ) {
+						if ( isset( $tabletags[$t] ) && !in_array( 'table', $tagstack ) ) {
 							$badtag = true;
-						} elseif ( in_array( $t, $tagstack ) &&
-						!isset( $htmlnest[$t] ) ) {
+						} elseif ( in_array( $t, $tagstack ) && !isset( $htmlnest[$t] ) ) {
 							$badtag = true;
 						# Is it a self closed htmlpair ? (bug 5487)
-						} elseif ( $brace == '/>' &&
-						isset( $htmlpairs[$t] ) ) {
+						} elseif ( $brace == '/>' && isset( $htmlpairs[$t] ) ) {
 							$badtag = true;
 						} elseif ( isset( $htmlsingleonly[$t] ) ) {
 							# Hack to force empty tag for unclosable elements
@@ -530,8 +530,7 @@ class Sanitizer {
 							# the tag stack so that we can match end tags
 							# instead of marking them as bad.
 							array_push( $tagstack, $t );
-						} elseif ( isset( $tabletags[$t] )
-						&& in_array( $t, $tagstack ) ) {
+						} elseif ( isset( $tabletags[$t] ) && in_array( $t, $tagstack ) ) {
 							// New table tag but forgot to close the previous one
 							$text .= "</$t>";
 						} else {
@@ -574,37 +573,30 @@ class Sanitizer {
 		} else {
 			# this might be possible using tidy itself
 			foreach ( $bits as $x ) {
-				preg_match(
-					'/^(\\/?)(\\w+)([^>]*?)(\\/{0,1}>)([^<]*)$/',
-					$x,
-					$regs
-				);
+				if ( preg_match( self::ELEMENT_BITS_REGEX, $x, $regs ) ) {
+					list( /* $qbar */, $slash, $t, $params, $brace, $rest ) = $regs;
 
-				wfSuppressWarnings();
-				list( /* $qbar */, $slash, $t, $params, $brace, $rest ) = $regs;
-				wfRestoreWarnings();
+					$badtag = false;
+					if ( isset( $htmlelements[$t = strtolower( $t )] ) ) {
+						if ( is_callable( $processCallback ) ) {
+							call_user_func_array( $processCallback, array( &$params, $args ) );
+						}
 
-				$badtag = false;
-				if ( isset( $htmlelements[$t = strtolower( $t )] ) ) {
-					if ( is_callable( $processCallback ) ) {
-						call_user_func_array( $processCallback, array( &$params, $args ) );
-					}
+						if ( !Sanitizer::validateTag( $params, $t ) ) {
+							$badtag = true;
+						}
 
-					if ( !Sanitizer::validateTag( $params, $t ) ) {
-						$badtag = true;
-					}
-
-					$newparams = Sanitizer::fixTagAttributes( $params, $t );
-					if ( !$badtag ) {
-						$rest = str_replace( '>', '&gt;', $rest );
-						$text .= "<$slash$t$newparams$brace$rest";
-						continue;
+						$newparams = Sanitizer::fixTagAttributes( $params, $t );
+						if ( !$badtag ) {
+							$rest = str_replace( '>', '&gt;', $rest );
+							$text .= "<$slash$t$newparams$brace$rest";
+							continue;
+						}
 					}
 				}
 				$text .= '&lt;' . str_replace( '>', '&gt;', $x );
 			}
 		}
-		wfProfileOut( __METHOD__ );
 		return $text;
 	}
 
@@ -614,12 +606,10 @@ class Sanitizer {
 	 * and followed by a newline (ignoring spaces), trim leading and
 	 * trailing spaces and one of the newlines.
 	 *
-	 * @private
 	 * @param string $text
 	 * @return string
 	 */
-	static function removeHTMLcomments( $text ) {
-		wfProfileIn( __METHOD__ );
+	public static function removeHTMLcomments( $text ) {
 		while ( ( $start = strpos( $text, '<!--' ) ) !== false ) {
 			$end = strpos( $text, '-->', $start + 4 );
 			if ( $end === false ) {
@@ -650,7 +640,6 @@ class Sanitizer {
 				$text = substr_replace( $text, '', $start, $end - $start );
 			}
 		}
-		wfProfileOut( __METHOD__ );
 		return $text;
 	}
 
@@ -874,7 +863,7 @@ class Sanitizer {
 		$value = preg_replace_callback(
 			'/[！-［］-ｚ]/u', // U+FF01 to U+FF5A, excluding U+FF3C (bug 58088)
 			function ( $matches ) {
-				$cp = utf8ToCodepoint( $matches[0] );
+				$cp = UtfNormal\Utils::utf8ToCodepoint( $matches[0] );
 				if ( $cp === false ) {
 					return '';
 				}
@@ -980,7 +969,7 @@ class Sanitizer {
 			// Line continuation
 			return '';
 		} elseif ( $matches[2] !== '' ) {
-			$char = codepointToUtf8( hexdec( $matches[2] ) );
+			$char = UtfNormal\Utils::codepointToUtf8( hexdec( $matches[2] ) );
 		} elseif ( $matches[3] !== '' ) {
 			$char = $matches[3];
 		} else {
@@ -1120,14 +1109,14 @@ class Sanitizer {
 			$id = preg_replace( '/[ \t\n\r\f_\'"&#%]+/', '_', $id );
 			$id = trim( $id, '_' );
 			if ( $id === '' ) {
-				# Must have been all whitespace to start with.
+				// Must have been all whitespace to start with.
 				return '_';
 			} else {
 				return $id;
 			}
 		}
 
-		# HTML4-style escaping
+		// HTML4-style escaping
 		static $replace = array(
 			'%3A' => ':',
 			'%' => '.'
@@ -1136,8 +1125,7 @@ class Sanitizer {
 		$id = urlencode( strtr( $id, ' ', '_' ) );
 		$id = str_replace( array_keys( $replace ), array_values( $replace ), $id );
 
-		if ( !preg_match( '/^[a-zA-Z]/', $id )
-		&& !in_array( 'noninitial', $options ) ) {
+		if ( !preg_match( '/^[a-zA-Z]/', $id ) && !in_array( 'noninitial', $options ) ) {
 			// Initial character must be a letter!
 			$id = "x$id";
 		}
@@ -1273,24 +1261,6 @@ class Sanitizer {
 	}
 
 	/**
-	 * Normalize whitespace and character references in an XML source-
-	 * encoded text for an attribute value.
-	 *
-	 * See http://www.w3.org/TR/REC-xml/#AVNormalize for background,
-	 * but note that we're not returning the value, but are returning
-	 * XML source fragments that will be slapped into output.
-	 *
-	 * @param string $text
-	 * @return string
-	 * @todo Remove, unused?
-	 */
-	private static function normalizeAttributeValue( $text ) {
-		return str_replace( '"', '&quot;',
-			self::normalizeWhitespace(
-				Sanitizer::normalizeCharReferences( $text ) ) );
-	}
-
-	/**
 	 * @param string $text
 	 * @return string
 	 */
@@ -1368,8 +1338,7 @@ class Sanitizer {
 	static function normalizeEntity( $name ) {
 		if ( isset( self::$htmlEntityAliases[$name] ) ) {
 			return '&' . self::$htmlEntityAliases[$name] . ';';
-		} elseif ( in_array( $name,
-		array( 'lt', 'gt', 'amp', 'quot' ) ) ) {
+		} elseif ( in_array( $name, array( 'lt', 'gt', 'amp', 'quot' ) ) ) {
 			return "&$name;";
 		} elseif ( isset( self::$htmlEntities[$name] ) ) {
 			return '&#' . self::$htmlEntities[$name] . ';';
@@ -1481,9 +1450,9 @@ class Sanitizer {
 	 */
 	static function decodeChar( $codepoint ) {
 		if ( Sanitizer::validateCodepoint( $codepoint ) ) {
-			return codepointToUtf8( $codepoint );
+			return UtfNormal\Utils::codepointToUtf8( $codepoint );
 		} else {
-			return UTF8_REPLACEMENT;
+			return UtfNormal\Constants::UTF8_REPLACEMENT;
 		}
 	}
 
@@ -1500,7 +1469,7 @@ class Sanitizer {
 			$name = self::$htmlEntityAliases[$name];
 		}
 		if ( isset( self::$htmlEntities[$name] ) ) {
-			return codepointToUtf8( self::$htmlEntities[$name] );
+			return UtfNormal\Utils::codepointToUtf8( self::$htmlEntities[$name] );
 		} else {
 			return "&$name;";
 		}
@@ -1861,7 +1830,7 @@ class Sanitizer {
 	 */
 	public static function validateEmail( $addr ) {
 		$result = null;
-		if ( !wfRunHooks( 'isValidEmailAddr', array( $addr, &$result ) ) ) {
+		if ( !Hooks::run( 'isValidEmailAddr', array( $addr, &$result ) ) ) {
 			return $result;
 		}
 

@@ -291,12 +291,10 @@ class Gadget {
 			return $gadgets;
 		}
 
-		wfProfileIn( __METHOD__ );
 		$struct = self::loadStructuredList();
 
 		if ( !$struct ) {
 			$gadgets = $struct;
-			wfProfileOut( __METHOD__ );
 			return $gadgets;
 		}
 
@@ -304,7 +302,6 @@ class Gadget {
 		foreach ( $struct as $entries ) {
 			$gadgets = array_merge( $gadgets, $entries );
 		}
-		wfProfileOut( __METHOD__ );
 
 		return $gadgets;
 	}
@@ -348,7 +345,6 @@ class Gadget {
 			return $gadgets;
 		}
 
-		wfProfileIn( __METHOD__ );
 		$key = wfMemcKey( 'gadgets-definition', self::GADGET_CLASS_VERSION );
 
 		if ( $forceNewText === null ) {
@@ -356,7 +352,6 @@ class Gadget {
 				// cached?
 				$gadgets = $wgMemc->get( $key );
 				if ( self::isValidList( $gadgets ) ) {
-					wfProfileOut( __METHOD__ );
 					return $gadgets;
 				}
 			}
@@ -364,7 +359,6 @@ class Gadget {
 			$g = wfMessage( "gadgets-definition" )->inContentLanguage();
 			if ( !$g->exists() ) {
 				$gadgets = false;
-				wfProfileOut( __METHOD__ );
 				return $gadgets;
 			}
 			$g = $g->plain();
@@ -374,10 +368,13 @@ class Gadget {
 
 		$gadgets = self::listFromDefinition( $g );
 
-		if ( !count( $gadgets ) || !$wgGadgetsCaching ) {
+		if ( !count( $gadgets ) ) {
 			// Don't cache in case we couldn't find any gadgets. Bug 37228
 			$gadgets = false;
-			wfProfileOut( __METHOD__ );
+			return $gadgets;
+		}
+
+		if ( !$wgGadgetsCaching ) {
 			return $gadgets;
 		}
 
@@ -385,7 +382,6 @@ class Gadget {
 		$wgMemc->set( $key, $gadgets, 60 * 60 * 24 );
 		$source = $forceNewText !== null ? 'input text' : 'MediaWiki:Gadgets-definition';
 		wfDebug( __METHOD__ . ": $source parsed, cache entry $key updated\n" );
-		wfProfileOut( __METHOD__ );
 
 		return $gadgets;
 	}

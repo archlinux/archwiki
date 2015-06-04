@@ -1,4 +1,79 @@
 ( function ( mw, $ ) {
+	var
+		// Based on IPTest.php > testisIPv4
+		IPV4_CASES = [
+			[false, false, 'Boolean false is not an IP'],
+			[false, true, 'Boolean true is not an IP'],
+			[false, '', 'Empty string is not an IP'],
+			[false, 'abc', '"abc" is not an IP'],
+			[false, ':', 'Colon is not an IP'],
+			[false, '124.24.52', 'IPv4 not enough quads'],
+			[false, '24.324.52.13', 'IPv4 out of range'],
+			[false, '.24.52.13', 'IPv4 starts with period'],
+
+			[true, '124.24.52.13', '124.24.52.134 is a valid IP'],
+			[true, '1.24.52.13', '1.24.52.13 is a valid IP'],
+			[false, '74.24.52.13/20', 'IPv4 ranges are not recognized as valid IPs']
+		],
+
+		// Based on IPTest.php > testisIPv6
+		IPV6_CASES = [
+			[false, ':fc:100::', 'IPv6 starting with lone ":"'],
+			[false, 'fc:100:::', 'IPv6 ending with a ":::"'],
+			[false, 'fc:300', 'IPv6 with only 2 words'],
+			[false, 'fc:100:300', 'IPv6 with only 3 words'],
+
+			[false, 'fc:100:a:d:1:e:ac:0::', 'IPv6 with 8 words ending with "::"'],
+			[false, 'fc:100:a:d:1:e:ac:0:1::', 'IPv6 with 9 words ending with "::"'],
+
+			[false, ':::'],
+			[false, '::0:', 'IPv6 ending in a lone ":"'],
+
+			[true,  '::', 'IPv6 zero address'],
+
+			[false, '::fc:100:a:d:1:e:ac:0', 'IPv6 with "::" and 8 words'],
+			[false, '::fc:100:a:d:1:e:ac:0:1', 'IPv6 with 9 words'],
+
+			[false, ':fc::100', 'IPv6 starting with lone ":"'],
+			[false, 'fc::100:', 'IPv6 ending with lone ":"'],
+			[false, 'fc:::100', 'IPv6 with ":::" in the middle'],
+
+			[true,  'fc::100', 'IPv6 with "::" and 2 words'],
+			[true,  'fc::100:a', 'IPv6 with "::" and 3 words'],
+			[true,  'fc::100:a:d', 'IPv6 with "::" and 4 words'],
+			[true,  'fc::100:a:d:1', 'IPv6 with "::" and 5 words'],
+			[true,  'fc::100:a:d:1:e', 'IPv6 with "::" and 6 words'],
+			[true,  'fc::100:a:d:1:e:ac', 'IPv6 with "::" and 7 words'],
+			[true,  '2001::df', 'IPv6 with "::" and 2 words'],
+			[true,  '2001:5c0:1400:a::df', 'IPv6 with "::" and 5 words'],
+			[true,  '2001:5c0:1400:a::df:2', 'IPv6 with "::" and 6 words'],
+
+			[false, 'fc::100:a:d:1:e:ac:0', 'IPv6 with "::" and 8 words'],
+			[false, 'fc::100:a:d:1:e:ac:0:1', 'IPv6 with 9 words']
+		];
+
+	Array.prototype.push.apply( IPV6_CASES,
+		$.map( [
+			'fc:100::',
+			'fc:100:a::',
+			'fc:100:a:d::',
+			'fc:100:a:d:1::',
+			'fc:100:a:d:1:e::',
+			'fc:100:a:d:1:e:ac::',
+			'::0',
+			'::fc',
+			'::fc:100',
+			'::fc:100:a',
+			'::fc:100:a:d',
+			'::fc:100:a:d:1',
+			'::fc:100:a:d:1:e',
+			'::fc:100:a:d:1:e:ac',
+			'fc:100:a:d:1:e:ac:0'
+		], function ( el ) {
+			return [[ true, el, el + ' is a valid IP' ]];
+		} )
+	);
+
 	QUnit.module( 'mediawiki.util', QUnit.newMwEnvironment( {
 		setup: function () {
 			$.fn.updateTooltipAccessKeys.setTestMode( true );
@@ -35,24 +110,25 @@
 		} );
 	} );
 
-	QUnit.test( 'getUrl', 4, function ( assert ) {
+	QUnit.test( 'getUrl', 5, function ( assert ) {
 		// Not part of startUp module
 		mw.config.set( 'wgArticlePath', '/wiki/$1' );
 		mw.config.set( 'wgPageName', 'Foobar' );
 
 		var href = mw.util.getUrl( 'Sandbox' );
-		assert.equal( href, '/wiki/Sandbox', 'Simple title; Get link for "Sandbox"' );
+		assert.equal( href, '/wiki/Sandbox', 'simple title' );
 
-		href = mw.util.getUrl( 'Foo:Sandbox ? 5+5=10 ! (test)/subpage' );
-		assert.equal( href, '/wiki/Foo:Sandbox_%3F_5%2B5%3D10_!_(test)/subpage',
-			'Advanced title; Get link for "Foo:Sandbox ? 5+5=10 ! (test)/subpage"' );
+		href = mw.util.getUrl( 'Foo:Sandbox? 5+5=10! (test)/sub ' );
+		assert.equal( href, '/wiki/Foo:Sandbox%3F_5%2B5%3D10!_(test)/sub_', 'advanced title' );
 
 		href = mw.util.getUrl();
-		assert.equal( href, '/wiki/Foobar', 'Default title; Get link for current page ("Foobar")' );
+		assert.equal( href, '/wiki/Foobar', 'default title' );
+
+		href = mw.util.getUrl( null, { action: 'edit' } );
+		assert.equal( href, '/wiki/Foobar?action=edit', 'default title with query string' );
 
 		href = mw.util.getUrl( 'Sandbox', { action: 'edit' } );
-		assert.equal( href, '/wiki/Sandbox?action=edit',
-			'Simple title with query string; Get link for "Sandbox" with action=edit' );
+		assert.equal( href, '/wiki/Sandbox?action=edit', 'simple title with query string' );
 	} );
 
 	QUnit.test( 'wikiScript', 4, function ( assert ) {
@@ -189,7 +265,7 @@
 		);
 
 		assert.equal( $tbMW.closest( '.portlet' ).attr( 'id' ), 'p-test-tb', 'Link was inserted within correct portlet' );
-		assert.strictEqual( $tbMW.next()[0], tbRL, 'Link is in the correct position (by passing nextnode)' );
+		assert.strictEqual( $tbMW.next()[0], tbRL, 'Link is in the correct position (nextnode as Node object)' );
 
 		cuQuux = mw.util.addPortletLink( 'p-test-custom', '#', 'Quux', null, 'Example [shift-x]', 'q' );
 		$cuQuux = $( cuQuux );
@@ -205,7 +281,7 @@
 		tbRLDM = mw.util.addPortletLink( 'p-test-tb', '//mediawiki.org/wiki/RL/DM',
 			'Default modules', 't-rldm', 'List of all default modules ', 'd', '#t-rl' );
 
-		assert.equal( $( tbRLDM ).next().attr( 'id' ), 't-rl', 'Link is in the correct position (by passing CSS selector)' );
+		assert.strictEqual( $( tbRLDM ).next()[0], tbRL, 'Link is in the correct position (CSS selector as nextnode)' );
 
 		caFoo = mw.util.addPortletLink( 'p-test-views', '#', 'Foo' );
 
@@ -213,26 +289,19 @@
 		assert.strictEqual( $( caFoo ).find( 'span' ).length, 1, 'A <span> element should be added for porlets with vectorTabs class.' );
 
 		addedAfter = mw.util.addPortletLink( 'p-test-tb', '#', 'After foo', 'post-foo', 'After foo', null, $( tbRL ) );
-		assert.strictEqual( $( addedAfter ).next()[0], tbRL, 'Link is in the correct position (by passing a jQuery object as nextnode)' );
+		assert.strictEqual( $( addedAfter ).next()[0], tbRL, 'Link is in the correct position (jQuery object as nextnode)' );
 
 		// test case - nonexistent id as next node
 		tbRLDMnonexistentid = mw.util.addPortletLink( 'p-test-tb', '//mediawiki.org/wiki/RL/DM',
 			'Default modules', 't-rldm-nonexistent', 'List of all default modules ', 'd', '#t-rl-nonexistent' );
 
-		assert.equal( tbRLDMnonexistentid, $( '#p-test-tb li:last' )[0], 'Nonexistent id as nextnode adds the portlet at end' );
+		assert.equal( tbRLDMnonexistentid, $( '#p-test-tb li:last' )[0], 'Fallback to adding at the end (nextnode non-matching CSS selector)' );
 
 		// test case - empty jquery object as next node
 		tbRLDMemptyjquery = mw.util.addPortletLink( 'p-test-tb', '//mediawiki.org/wiki/RL/DM',
 			'Default modules', 't-rldm-empty-jquery', 'List of all default modules ', 'd', $( '#t-rl-nonexistent' ) );
 
-		assert.equal( tbRLDMemptyjquery, $( '#p-test-tb li:last' )[0], 'Empty jquery as nextnode adds the portlet at end' );
-	} );
-
-	QUnit.test( 'jsMessage', 1, function ( assert ) {
-		this.suppressWarnings();
-		var a = mw.util.jsMessage( 'MediaWiki is <b>Awesome</b>.' );
-		this.restoreWarnings();
-		assert.ok( a, 'Basic checking of return value' );
+		assert.equal( tbRLDMemptyjquery, $( '#p-test-tb li:last' )[0], 'Fallback to adding at the end (nextnode as empty jQuery object)' );
 	} );
 
 	QUnit.test( 'validateEmail', 6, function ( assert ) {
@@ -249,95 +318,24 @@
 	} );
 
 	QUnit.test( 'isIPv6Address', 40, function ( assert ) {
-		// Shortcuts
-		function assertFalseIPv6( addy, summary ) {
-			return assert.strictEqual( mw.util.isIPv6Address( addy ), false, summary );
-		}
-
-		function assertTrueIPv6( addy, summary ) {
-			return assert.strictEqual( mw.util.isIPv6Address( addy ), true, summary );
-		}
-
-		// Based on IPTest.php > testisIPv6
-		assertFalseIPv6( ':fc:100::', 'IPv6 starting with lone ":"' );
-		assertFalseIPv6( 'fc:100:::', 'IPv6 ending with a ":::"' );
-		assertFalseIPv6( 'fc:300', 'IPv6 with only 2 words' );
-		assertFalseIPv6( 'fc:100:300', 'IPv6 with only 3 words' );
-
-		$.each(
-			['fc:100::',
-				'fc:100:a::',
-				'fc:100:a:d::',
-				'fc:100:a:d:1::',
-				'fc:100:a:d:1:e::',
-				'fc:100:a:d:1:e:ac::'], function ( i, addy ) {
-				assertTrueIPv6( addy, addy + ' is a valid IP' );
-			} );
-
-		assertFalseIPv6( 'fc:100:a:d:1:e:ac:0::', 'IPv6 with 8 words ending with "::"' );
-		assertFalseIPv6( 'fc:100:a:d:1:e:ac:0:1::', 'IPv6 with 9 words ending with "::"' );
-
-		assertFalseIPv6( ':::' );
-		assertFalseIPv6( '::0:', 'IPv6 ending in a lone ":"' );
-
-		assertTrueIPv6( '::', 'IPv6 zero address' );
-		$.each(
-			['::0',
-				'::fc',
-				'::fc:100',
-				'::fc:100:a',
-				'::fc:100:a:d',
-				'::fc:100:a:d:1',
-				'::fc:100:a:d:1:e',
-				'::fc:100:a:d:1:e:ac',
-
-				'fc:100:a:d:1:e:ac:0'], function ( i, addy ) {
-				assertTrueIPv6( addy, addy + ' is a valid IP' );
-			} );
-
-		assertFalseIPv6( '::fc:100:a:d:1:e:ac:0', 'IPv6 with "::" and 8 words' );
-		assertFalseIPv6( '::fc:100:a:d:1:e:ac:0:1', 'IPv6 with 9 words' );
-
-		assertFalseIPv6( ':fc::100', 'IPv6 starting with lone ":"' );
-		assertFalseIPv6( 'fc::100:', 'IPv6 ending with lone ":"' );
-		assertFalseIPv6( 'fc:::100', 'IPv6 with ":::" in the middle' );
-
-		assertTrueIPv6( 'fc::100', 'IPv6 with "::" and 2 words' );
-		assertTrueIPv6( 'fc::100:a', 'IPv6 with "::" and 3 words' );
-		assertTrueIPv6( 'fc::100:a:d', 'IPv6 with "::" and 4 words' );
-		assertTrueIPv6( 'fc::100:a:d:1', 'IPv6 with "::" and 5 words' );
-		assertTrueIPv6( 'fc::100:a:d:1:e', 'IPv6 with "::" and 6 words' );
-		assertTrueIPv6( 'fc::100:a:d:1:e:ac', 'IPv6 with "::" and 7 words' );
-		assertTrueIPv6( '2001::df', 'IPv6 with "::" and 2 words' );
-		assertTrueIPv6( '2001:5c0:1400:a::df', 'IPv6 with "::" and 5 words' );
-		assertTrueIPv6( '2001:5c0:1400:a::df:2', 'IPv6 with "::" and 6 words' );
-
-		assertFalseIPv6( 'fc::100:a:d:1:e:ac:0', 'IPv6 with "::" and 8 words' );
-		assertFalseIPv6( 'fc::100:a:d:1:e:ac:0:1', 'IPv6 with 9 words' );
+		$.each( IPV6_CASES, function ( i, ipCase ) {
+			assert.strictEqual( mw.util.isIPv6Address( ipCase[1] ), ipCase[0], ipCase[2] );
+		} );
 	} );
 
 	QUnit.test( 'isIPv4Address', 11, function ( assert ) {
-		// Shortcuts
-		function assertFalseIPv4( addy, summary ) {
-			assert.strictEqual( mw.util.isIPv4Address( addy ), false, summary );
-		}
+		$.each( IPV4_CASES, function ( i, ipCase ) {
+			assert.strictEqual( mw.util.isIPv4Address( ipCase[1] ), ipCase[0], ipCase[2] );
+		} );
+	} );
 
-		function assertTrueIPv4( addy, summary ) {
-			assert.strictEqual( mw.util.isIPv4Address( addy ), true, summary );
-		}
+	QUnit.test( 'isIPAddress', 51, function ( assert ) {
+		$.each( IPV4_CASES, function ( i, ipCase ) {
+			assert.strictEqual( mw.util.isIPv4Address( ipCase[1] ), ipCase[0], ipCase[2] );
+		} );
 
-		// Based on IPTest.php > testisIPv4
-		assertFalseIPv4( false, 'Boolean false is not an IP' );
-		assertFalseIPv4( true, 'Boolean true is not an IP' );
-		assertFalseIPv4( '', 'Empty string is not an IP' );
-		assertFalseIPv4( 'abc', '"abc" is not an IP' );
-		assertFalseIPv4( ':', 'Colon is not an IP' );
-		assertFalseIPv4( '124.24.52', 'IPv4 not enough quads' );
-		assertFalseIPv4( '24.324.52.13', 'IPv4 out of range' );
-		assertFalseIPv4( '.24.52.13', 'IPv4 starts with period' );
-
-		assertTrueIPv4( '124.24.52.13', '124.24.52.134 is a valid IP' );
-		assertTrueIPv4( '1.24.52.13', '1.24.52.13 is a valid IP' );
-		assertFalseIPv4( '74.24.52.13/20', 'IPv4 ranges are not recogzized as valid IPs' );
+		$.each( IPV6_CASES, function ( i, ipCase ) {
+			assert.strictEqual( mw.util.isIPv6Address( ipCase[1] ), ipCase[0], ipCase[2] );
+		} );
 	} );
 }( mediaWiki, jQuery ) );

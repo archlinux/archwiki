@@ -8,7 +8,7 @@
 			"Umherirrender"
 		]
 	},
-	"imagemap_desc": "{{desc|name=Image Map|url=http://www.mediawiki.org/wiki/Extension:ImageMap}}",
+	"imagemap_desc": "{{desc|name=Image Map|url=https://www.mediawiki.org/wiki/Extension:ImageMap}}",
 	"imagemap_no_image": "Used as error message.\n\nThis message indicates that an image must be specified in the first line.",
 	"imagemap_invalid_image": "Used as error message.",
 	"imagemap_bad_image": "Used as error message.",

@@ -6,7 +6,7 @@ class Scribunto_LuaParserFunctionsLibrary extends Scribunto_LuaLibraryBase {
 			'expr' => array( $this, 'expr' ),
 		);
 
-		$this->getEngine()->registerInterface( __DIR__ . '/mw.ext.ParserFunctions.lua', $lib, array() );
+		return $this->getEngine()->registerInterface( __DIR__ . '/mw.ext.ParserFunctions.lua', $lib, array() );
 	}
 
 	public function expr( $expression = null ) {

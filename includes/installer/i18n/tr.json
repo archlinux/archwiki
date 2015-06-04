@@ -6,7 +6,9 @@
 			"Rhinestorm",
 			"SiLveRLeaD",
 			"Trncmvsr",
-			"Sayginer"
+			"Sayginer",
+			"Trockya",
+			"Aşilleus"
 		]
 	},
 	"config-desc": "MediaWiki yükleyicisi",
@@ -64,8 +66,10 @@
 	"config-git": "Sürüm kontrol yazılımı Git bulundu: <code>$1</code>.",
 	"config-git-bad": "Sürüm kontrol yazılımı Git bulunamadı.",
 	"config-imagemagick": "ImageMagick bulundu: <code>$1</code>.\nEğer yüklemeleri etkinleştirirseniz, küçük resimler etkinleştirilecektir.",
+	"config-db-type": "Veritabanı tipi:",
 	"config-db-host": "Veritabanı sunucusu:",
 	"config-db-host-help": "Veritabanı sunucunuz farklı bir sunucu üzerinde ise, ana bilgisayar adını veya IP adresini buraya girin.\n\nPaylaşılan ağ barındırma hizmeti kullanıyorsanız, barındırma sağlayıcınız size doğru bir ana bilgisayar adını kendi belgelerinde vermiştir.\n\nEğer MySQL kullanan bir Windows sunucusuna yükleme yapıyorsanız, sunucu adı olarak \"localhost\" kullanırsanız çalışmayabilir. Çalışmazsa, yerel IP adresi için \"127.0.0.1\" deneyin.\n\nPostgreSQL kullanıyorsanız, bu alanı bir Unix soketi ile bağlanmak için boş bırakın.",
+	"config-db-host-oracle": "Veritabanı TNS:",
 	"config-db-wiki-settings": "Bu wikiyi tanımla",
 	"config-db-name": "Veritabanı adı:",
 	"config-db-name-oracle": "Veritabanı şeması:",
@@ -175,6 +179,7 @@
 	"config-install-schema": "Şema oluştur",
 	"config-install-pg-schema-not-exist": "PostgreSQL şema yok.",
 	"config-install-pg-commit": "Değişiklikleri yapılıyor",
+	"config-pg-no-create-privs": "Kurulum için belirttiğiniz hesap yeni bir hesap oluşturmak için gereken izinlere sahip değil.",
 	"config-install-user": "Veritabanı kullanıcısı oluşturma",
 	"config-install-user-alreadyexists": "Kullanıcı \" $1 \" zaten var",
 	"config-install-user-create-failed": "Kullanıcı oluşturma \" $1 \" başarısız oldu:$2",

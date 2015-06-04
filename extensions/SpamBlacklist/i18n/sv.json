@@ -23,5 +23,8 @@
 	"log-description-spamblacklist": "Här visas händelser som utlöst spamfiltret",
 	"logentry-spamblacklist-hit": "{{GENDER:$2|$1}} utlöste spamfiltret vid redigering av $3 genom att försöka lägga till $4.",
 	"right-spamblacklistlog": "Visa svartlistningslogg för spam",
-	"action-spamblacklistlog": "visa svartlistningsloggen för spam"
+	"action-spamblacklistlog": "visa svartlistningsloggen för spam",
+	"apihelp-spamblacklist-description": "Validera en eller flera URL:er mot SpamBlacklist.",
+	"apihelp-spamblacklist-param-url": "URL:er att validera mot svartlistan.",
+	"apihelp-spamblacklist-example-1": "Kontrollera två URL:er mot svartlistan"
 }

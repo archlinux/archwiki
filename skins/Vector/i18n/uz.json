@@ -5,7 +5,8 @@
 			"Arystanbek",
 			"Casual",
 			"CoderSI",
-			"Sociologist"
+			"Sociologist",
+			"Nataev"
 		]
 	},
 	"skinname-vector": "Vektor",
@@ -14,7 +15,7 @@
 	"vector-action-move": "Ko‘chirish",
 	"vector-action-protect": "Himoyalash",
 	"vector-action-undelete": "Tiklash",
-	"vector-action-unprotect": "Himoyalashni oʻzgartirish",
+	"vector-action-unprotect": "Himoyani oʻzgartirish",
 	"vector-view-create": "Yaratish",
 	"vector-view-edit": "Tahrirlash",
 	"vector-view-history": "Tarix",

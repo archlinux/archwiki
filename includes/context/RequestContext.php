@@ -1,7 +1,5 @@
 <?php
 /**
- * Request-dependant objects containers.
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -64,6 +62,11 @@ class RequestContext implements IContextSource {
 	private $skin;
 
 	/**
+	 * @var StatsdDataFactory
+	 */
+	private $stats;
+
+	/**
 	 * @var Config
 	 */
 	private $config;
@@ -121,6 +124,22 @@ class RequestContext implements IContextSource {
 	}
 
 	/**
+	 * Get the Stats object
+	 *
+	 * @return BufferingStatsdDataFactory
+	 */
+	public function getStats() {
+		if ( $this->stats === null ) {
+			$config = $this->getConfig();
+			$prefix = $config->has( 'StatsdMetricPrefix' )
+				? rtrim( $config->get( 'StatsdMetricPrefix' ), '.' )
+				: 'MediaWiki';
+			$this->stats = new BufferingStatsdDataFactory( $prefix );
+		}
+		return $this->stats;
+	}
+
+	/**
 	 * Set the Title object
 	 *
 	 * @param Title $title
@@ -140,9 +159,20 @@ class RequestContext implements IContextSource {
 		if ( $this->title === null ) {
 			global $wgTitle; # fallback to $wg till we can improve this
 			$this->title = $wgTitle;
+			wfDebugLog( 'GlobalTitleFail', __METHOD__ . ' called by ' . wfGetAllCallers( 5 ) . ' with no title set.' );
 		}
 
 		return $this->title;
+	}
+
+	/**
+	 * Check, if a Title object is set
+	 *
+	 * @since 1.25
+	 * @return bool
+	 */
+	public function hasTitle() {
+		return $this->title !== null;
 	}
 
 	/**
@@ -171,9 +201,8 @@ class RequestContext implements IContextSource {
 	 * @param WikiPage $p
 	 */
 	public function setWikiPage( WikiPage $p ) {
-		$contextTitle = $this->getTitle();
 		$pageTitle = $p->getTitle();
-		if ( !$contextTitle || !$pageTitle->equals( $contextTitle ) ) {
+		if ( !$this->hasTitle() || !$pageTitle->equals( $this->getTitle() ) ) {
 			$this->setTitle( $pageTitle );
 		}
 		// Defer this to the end since setTitle sets it to null.
@@ -287,8 +316,8 @@ class RequestContext implements IContextSource {
 	/**
 	 * Get the Language object.
 	 * Initialization of user or request objects can depend on this.
-	 *
 	 * @return Language
+	 * @throws Exception
 	 * @since 1.19
 	 */
 	public function getLanguage() {
@@ -308,10 +337,13 @@ class RequestContext implements IContextSource {
 				$request = $this->getRequest();
 				$user = $this->getUser();
 
-				$code = $request->getVal( 'uselang', $user->getOption( 'language' ) );
+				$code = $request->getVal( 'uselang', 'user' );
+				if ( $code === 'user' ) {
+					$code = $user->getOption( 'language' );
+				}
 				$code = self::sanitizeLangCode( $code );
 
-				wfRunHooks( 'UserGetLanguageObject', array( $user, &$code, $this ) );
+				Hooks::run( 'UserGetLanguageObject', array( $user, &$code, $this ) );
 
 				if ( $code === $this->getConfig()->get( 'LanguageCode' ) ) {
 					$this->lang = $wgContLang;
@@ -348,10 +380,9 @@ class RequestContext implements IContextSource {
 	 */
 	public function getSkin() {
 		if ( $this->skin === null ) {
-			wfProfileIn( __METHOD__ . '-createskin' );
 
 			$skin = null;
-			wfRunHooks( 'RequestContextCreateSkin', array( $this, &$skin ) );
+			Hooks::run( 'RequestContextCreateSkin', array( $this, &$skin ) );
 			$factory = SkinFactory::getDefaultInstance();
 
 			// If the hook worked try to set a skin from it
@@ -386,7 +417,6 @@ class RequestContext implements IContextSource {
 
 			// After all that set a context on whatever skin got created
 			$this->skin->setContext( $this );
-			wfProfileOut( __METHOD__ . '-createskin' );
 		}
 
 		return $this->skin;
@@ -463,10 +493,14 @@ class RequestContext implements IContextSource {
 	}
 
 	/**
-	 * Import the resolved user IP, HTTP headers, user ID, and session ID.
+	 * Import an client IP address, HTTP headers, user ID, and session ID
+	 *
 	 * This sets the current session and sets $wgUser and $wgRequest.
 	 * Once the return value falls out of scope, the old context is restored.
-	 * This function can only be called within CLI mode scripts.
+	 * This method should only be called in contexts (CLI or HTTP job runners)
+	 * where there is no session ID or end user receiving the response. This
+	 * is partly enforced, and is done so to avoid leaking cookies if certain
+	 * error conditions arise.
 	 *
 	 * This will setup the session from the given ID. This is useful when
 	 * background scripts inherit context when acting on behalf of a user.
@@ -479,11 +513,12 @@ class RequestContext implements IContextSource {
 	 * @since 1.21
 	 */
 	public static function importScopedSession( array $params ) {
-		if ( PHP_SAPI !== 'cli' ) {
-			// Don't send random private cookies or turn $wgRequest into FauxRequest
-			throw new MWException( "Sessions can only be imported in cli mode." );
-		} elseif ( !strlen( $params['sessionId'] ) ) {
-			throw new MWException( "No session ID was specified." );
+		if ( session_id() != '' && strlen( $params['sessionId'] ) ) {
+			// Sanity check to avoid sending random cookies for the wrong users.
+			// This method should only called by CLI scripts or by HTTP job runners.
+			throw new MWException( "Sessions can only be imported when none is active." );
+		} elseif ( !IP::isValid( $params['ip'] ) ) {
+			throw new MWException( "Invalid client IP address '{$params['ip']}'." );
 		}
 
 		if ( $params['userId'] ) { // logged-in user
@@ -492,13 +527,11 @@ class RequestContext implements IContextSource {
 			if ( !$user->getId() ) {
 				throw new MWException( "No user with ID '{$params['userId']}'." );
 			}
-		} elseif ( !IP::isValid( $params['ip'] ) ) {
-			throw new MWException( "Could not load user '{$params['ip']}'." );
 		} else { // anon user
 			$user = User::newFromName( $params['ip'], false );
 		}
 
-		$importSessionFunction = function ( User $user, array $params ) {
+		$importSessionFunc = function ( User $user, array $params ) {
 			global $wgRequest, $wgUser;
 
 			$context = RequestContext::getMain();
@@ -531,12 +564,19 @@ class RequestContext implements IContextSource {
 		// Stash the old session and load in the new one
 		$oUser = self::getMain()->getUser();
 		$oParams = self::getMain()->exportSession();
-		$importSessionFunction( $user, $params );
+		$oRequest = self::getMain()->getRequest();
+		$importSessionFunc( $user, $params );
 
 		// Set callback to save and close the new session and reload the old one
-		return new ScopedCallback( function () use ( $importSessionFunction, $oUser, $oParams ) {
-			$importSessionFunction( $oUser, $oParams );
-		} );
+		return new ScopedCallback(
+			function () use ( $importSessionFunc, $oUser, $oParams, $oRequest ) {
+				global $wgRequest;
+				$importSessionFunc( $oUser, $oParams );
+				// Restore the exact previous Request object (instead of leaving FauxRequest)
+				RequestContext::getMain()->setRequest( $oRequest );
+				$wgRequest = RequestContext::getMain()->getRequest(); // b/c
+			}
+		);
 	}
 
 	/**

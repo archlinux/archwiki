@@ -14,52 +14,52 @@ Given(/^I am at Log in page$/) do
 end
 
 When(/^I log in with incorrect password$/) do
-  on(LoginPage).login_with(ENV["MEDIAWIKI_USER"], "incorrect password", false)
+  on(LoginPage).login_with(user, 'incorrect password', false)
 end
 
 When(/^I log in with incorrect username$/) do
-  on(LoginPage).login_with("incorrect username", ENV["MEDIAWIKI_PASSWORD"], false)
+  on(LoginPage).login_with('incorrect username', password, false)
 end
 
 When(/^I log in without entering credentials$/) do
-  on(LoginPage).login_with("", "", false)
+  on(LoginPage).login_with('', '', false)
 end
 
 When(/^I log in without entering password$/) do
-  on(LoginPage).login_with(ENV["MEDIAWIKI_USER"], "", false)
+  on(LoginPage).login_with(user, '', false)
 end
 
 Then(/^error box should be visible$/) do
-  on(LoginErrorPage).error_box_element.should be_visible
+  expect(on(LoginErrorPage).error_box_element).to be_visible
 end
 
 Then(/^error box should not be visible$/) do
-  on(LoginErrorPage).error_box_element.should_not be_visible
+  expect(on(LoginErrorPage).error_box_element).not_to be_visible
 end
 
 Then(/^feedback should be (.+)$/) do |feedback|
   on(LoginPage) do |page|
     page.feedback_element.when_present.click
-    page.feedback.should match Regexp.escape(feedback)
+    expect(page.feedback).to match Regexp.escape(feedback)
   end
 end
 
 Then(/^Log in element should be there$/) do
-  on(LoginPage).login_element.should exist
+  expect(on(LoginPage).login_element).to exist
 end
 
 Then(/^main page should open$/) do
-  @browser.url.should == on(MainPage).class.url
+  expect(@browser.url).to eq on(MainPage).class.url
 end
 
 Then(/^Password element should be there$/) do
-  on(LoginPage).password_element.should exist
+  expect(on(LoginPage).password_element).to exist
 end
 
 Then(/^there should be a link to (.+)$/) do |text|
-  on(LoginPage).username_displayed_element.when_present.text.should == text
+  expect(on(LoginPage).username_displayed_element.when_present.text).to eq text
 end
 
 Then(/^Username element should be there$/) do
-  on(LoginPage).username_element.should exist
+  expect(on(LoginPage).username_element).to exist
 end

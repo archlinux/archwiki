@@ -17,7 +17,8 @@
 	"interwiki": "Visa och redigera interwiki-data",
 	"interwiki-title-norights": "Visa interwiki-data",
 	"interwiki-desc": "Lägger till en [[Special:Interwiki|specialsida]] för att visa och ändra interwikitabellen",
-	"interwiki_intro": "Det här är en överblick över interwiki-tabellen.",
+	"interwiki_intro": "Det här är en överblick över interwiki-tabellen, vilken definierar de prefix som används för att snabbt länka till olika wikis och andra externa webbplatser. För rekommenderad användning, se [//www.mediawiki.org/wiki/Extension:Interwiki manualen på MediaWiki.org].",
+	"interwiki-legend-label": "Förklaring",
 	"interwiki_prefix": "Prefix",
 	"interwiki-prefix-label": "Prefix:",
 	"interwiki_prefix_intro": "Interwiki-prefix avsedda att användas i <code>[<nowiki />[prefix:<em>pagename</em>]]</code>-wikisyntax.",
@@ -67,5 +68,5 @@
 	"interwiki-local-description": "Dessa prefix existerar lokalt. Eventuella dubbletter med den globala konfigurationen åsidosätter den globala definitionen.",
 	"interwiki-links": "Interwiki-prefix",
 	"interwiki-language-links": "Interspråk-prefix",
-	"interwiki-language-description": "Dessa prefix matchar definierade språkkoder, och används för att skapa \"på andra språk\"-listan när den läggs till på en sida."
+	"interwiki-language-description": "Dessa prefix matchar definierade språkkoder, och används för att skapa \"{{int:otherlanguages}}\"-listan när den läggs till på en sida."
 }

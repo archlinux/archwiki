@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Chavash",
-			"FLAGELLVM DEI"
+			"FLAGELLVM DEI",
+			"Chuvash2014"
 		]
 	},
 	"vector-action-addsection": "Тема хуш",
@@ -11,7 +12,8 @@
 	"vector-action-protect": "Хӳтĕле",
 	"vector-view-create": "Çĕннине ту",
 	"vector-view-edit": "Тӳрлет",
-	"vector-view-history": "Кун-çул",
+	"vector-view-history": "Истори",
 	"vector-view-view": "Вула",
-	"vector-view-viewsource": "пуçламăш текста пăх"
+	"vector-view-viewsource": "Кодне пăх",
+	"vector-more-actions": "Тата"
 }

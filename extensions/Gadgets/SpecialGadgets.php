@@ -106,7 +106,8 @@ class SpecialGadgets extends SpecialPage {
 					$output->addHTML( Xml::openElement( 'ul' ) );
 				}
 
-				$lnk = '&#160;&#160;' . $this->msg( 'parentheses', $lang->pipeList( $links ) )->text();
+				$lnk = '&#160;&#160;' .
+					$this->msg( 'parentheses' )->rawParams( $lang->pipeList( $links ) )->escaped();
 				$output->addHTML( Xml::openElement( 'li' ) .
 						$ttext . $lnk . "<br />" .
 						$this->msg( 'gadgets-uses' )->escaped() .
@@ -200,5 +201,9 @@ class SpecialGadgets extends SpecialPage {
 			. Xml::submitButton( $this->msg( 'gadgets-export-download' )->text() )
 			. Html::closeElement( 'form' )
 		);
+	}
+
+	protected function getGroupName() {
+		return 'wiki';
 	}
 }

@@ -25,7 +25,7 @@ require_once __DIR__ . '/../Maintenance.php';
 
 /**
  * Generates the normalizer data file for Malayalam.
- * For NFC see includes/normal.
+ * For NFC see includes/libs/normal.
  *
  * @ingroup MaintenanceLanguage
  */
@@ -54,8 +54,8 @@ class GenerateNormalizerDataMl extends Maintenance {
 
 		$pairs = array();
 		foreach ( $hexPairs as $hexSource => $hexDest ) {
-			$source = hexSequenceToUtf8( $hexSource );
-			$dest = hexSequenceToUtf8( $hexDest );
+			$source = UtfNormal\Utils::hexSequenceToUtf8( $hexSource );
+			$dest = UtfNormal\Utils::hexSequenceToUtf8( $hexDest );
 			$pairs[$source] = $dest;
 		}
 

@@ -24,8 +24,9 @@
 
 	$.fn.textSelection = function ( command, options ) {
 		var fn,
+			alternateFn,
 			context,
-			hasWikiEditorSurface, // The alt edit surface needs to implement the WikiEditor API
+			hasWikiEditor,
 			needSave,
 			retval;
 
@@ -210,9 +211,10 @@
 							endPos = this.selectionEnd;
 							scrollTop = this.scrollTop;
 							checkSelectedText();
-							if ( options.selectionStart !== undefined
-									&& endPos - startPos !== options.selectionEnd - options.selectionStart )
-							{
+							if (
+								options.selectionStart !== undefined &&
+								endPos - startPos !== options.selectionEnd - options.selectionStart
+							) {
 								// This means there is a difference in the selection range returned by browser and what we passed.
 								// This happens for Chrome in the case of composite characters. Ref bug #30130
 								// Set the startPos to the correct position.
@@ -242,7 +244,7 @@
 								selText = selText.replace( /\r?\n/g, '\r\n' );
 								post = post.replace( /\r?\n/g, '\r\n' );
 							}
-							if ( isSample && options.selectPeri && !options.splitlines ) {
+							if ( isSample && options.selectPeri && ( !options.splitlines || ( options.splitlines && selText.indexOf( '\n' ) === -1 ) ) ) {
 								this.selectionStart = startPos + pre.length;
 								this.selectionEnd = startPos + pre.length + selText.length;
 							} else {
@@ -507,11 +509,13 @@
 			}
 		};
 
+		alternateFn = $( this ).data( 'jquery.textSelection' );
+
 		// Apply defaults
 		switch ( command ) {
-			//case 'getContents': // no params
-			//case 'setContents': // no params with defaults
-			//case 'getSelection': // no params
+			// case 'getContents': // no params
+			// case 'setContents': // no params with defaults
+			// case 'getSelection': // no params
 			case 'encapsulateSelection':
 				options = $.extend( {
 					pre: '', // Text to insert before the cursor/selection
@@ -550,19 +554,30 @@
 					force: false // Force a scroll even if the caret position is already visible
 				}, options );
 				break;
+			case 'register':
+				if ( alternateFn ) {
+					throw new Error( 'Another textSelection API was already registered' );
+				}
+				$( this ).data( 'jquery.textSelection', options );
+				// No need to update alternateFn as this command only stores the options.
+				// A command that uses it will set it again.
+				return;
+			case 'unregister':
+				$( this ).removeData( 'jquery.textSelection' );
+				return;
 		}
 
 		context = $( this ).data( 'wikiEditor-context' );
-		hasWikiEditorSurface = ( context !== undefined && context.$iframe !== undefined );
+		hasWikiEditor = ( context !== undefined && context.$iframe !== undefined );
 
 		// IE selection restore voodoo
 		needSave = false;
-		if ( hasWikiEditorSurface && context.savedSelection !== null ) {
+		if ( hasWikiEditor && context.savedSelection !== null ) {
 			context.fn.restoreSelection();
 			needSave = true;
 		}
-		retval = ( hasWikiEditorSurface && context.fn[command] !== undefined ? context.fn : fn )[command].call( this, options );
-		if ( hasWikiEditorSurface && needSave ) {
+		retval = ( alternateFn && alternateFn[command] || fn[command] ).call( this, options );
+		if ( hasWikiEditor && needSave ) {
 			context.fn.saveSelection();
 		}
 

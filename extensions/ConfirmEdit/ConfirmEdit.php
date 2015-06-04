@@ -33,8 +33,10 @@
 if ( !defined( 'MEDIAWIKI' ) ) {
 	exit;
 }
+if ( !defined( 'MW_SUPPORTS_CONTENTHANDLER' ) ) {
+	throw Exception( 'This version of ConfirmEdit requires MediaWiki 1.21 or later' );
+}
 
-$wgExtensionFunctions[] = 'confirmEditSetup';
 $wgExtensionCredits['antispam'][] = array(
 	'path' => __FILE__,
 	'name' => 'ConfirmEdit',
@@ -42,6 +44,7 @@ $wgExtensionCredits['antispam'][] = array(
 	'url' => 'https://www.mediawiki.org/wiki/Extension:ConfirmEdit',
 	'version' => '1.3',
 	'descriptionmsg' => 'captcha-desc',
+	'license-name' => 'GPL-2.0+',
 );
 
 /**
@@ -173,12 +176,10 @@ $wgCaptchaRegexes = array();
 /** Register special page */
 $wgSpecialPages['Captcha'] = 'CaptchaSpecialPage';
 
-$wgConfirmEditIP = __DIR__;
-$wgMessagesDirs['ConfirmEdit'] = __DIR__ . '/i18n/core';
-$wgExtensionMessagesFiles['ConfirmEdit'] = "$wgConfirmEditIP/ConfirmEdit.i18n.php";
-$wgExtensionMessagesFiles['ConfirmEditAlias'] = "$wgConfirmEditIP/ConfirmEdit.alias.php";
+$wgMessagesDirs['ConfirmEdit'] = __DIR__ . '/i18n';
+$wgExtensionMessagesFiles['ConfirmEditAlias'] = __DIR__ . "/ConfirmEdit.alias.php";
 
-$wgHooks['EditFilterMerged'][] = 'ConfirmEditHooks::confirmEditMerged';
+$wgHooks['EditPageBeforeEditButtons'][] = 'ConfirmEditHooks::confirmEditPage';
 $wgHooks['UserCreateForm'][] = 'ConfirmEditHooks::injectUserCreate';
 $wgHooks['AbortNewAccount'][] = 'ConfirmEditHooks::confirmUserCreate';
 $wgHooks['LoginAuthenticateAudit'][] = 'ConfirmEditHooks::triggerUserLogin';
@@ -186,33 +187,24 @@ $wgHooks['UserLoginForm'][] = 'ConfirmEditHooks::injectUserLogin';
 $wgHooks['AbortLogin'][] = 'ConfirmEditHooks::confirmUserLogin';
 $wgHooks['EmailUserForm'][] = 'ConfirmEditHooks::injectEmailUser';
 $wgHooks['EmailUser'][] = 'ConfirmEditHooks::confirmEmailUser';
-# Register API hook
-$wgHooks['APIEditBeforeSave'][] = 'ConfirmEditHooks::confirmEditAPI';
+$wgHooks['EditPage::showEditForm:fields'][] = 'ConfirmEditHooks::showEditFormFields';
+$wgHooks['EditFilterMergedContent'][] = 'ConfirmEditHooks::confirmEditMerged';
+
+if ( !defined( 'MW_EDITFILTERMERGED_SUPPORTS_API' ) ) {
+	$wgHooks['APIEditBeforeSave'][] = 'ConfirmEditHooks::confirmEditAPI';
+}
+
 $wgHooks['APIGetAllowedParams'][] = 'ConfirmEditHooks::APIGetAllowedParams';
 $wgHooks['APIGetParamDescription'][] = 'ConfirmEditHooks::APIGetParamDescription';
 $wgHooks['AddNewAccountApiForm'][] = 'ConfirmEditHooks::addNewAccountApiForm';
 $wgHooks['AddNewAccountApiResult'][] = 'ConfirmEditHooks::addNewAccountApiResult';
+$wgHooks['UnitTestsList'][] = 'ConfirmEditHooks::onUnitTestsList';
 
-$wgAutoloadClasses['ConfirmEditHooks'] = "$wgConfirmEditIP/ConfirmEditHooks.php";
-$wgAutoloadClasses['SimpleCaptcha'] = "$wgConfirmEditIP/Captcha.php";
-$wgAutoloadClasses['CaptchaStore'] = "$wgConfirmEditIP/CaptchaStore.php";
-$wgAutoloadClasses['CaptchaSessionStore'] = "$wgConfirmEditIP/CaptchaStore.php";
-$wgAutoloadClasses['CaptchaCacheStore'] = "$wgConfirmEditIP/CaptchaStore.php";
-$wgAutoloadClasses['CaptchaSpecialPage'] = "$wgConfirmEditIP/ConfirmEditHooks.php";
+$wgExtensionFunctions[] = 'ConfirmEditHooks::confirmEditSetup';
 
-/**
- * Set up $wgWhitelistRead
- */
-function confirmEditSetup() {
-	global $wgGroupPermissions, $wgCaptchaTriggers;
-	if ( !$wgGroupPermissions['*']['read'] && $wgCaptchaTriggers['badlogin'] ) {
-		// We need to ensure that the captcha interface is accessible
-		// so that unauthenticated users can actually get in after a
-		// mistaken password typing.
-		global $wgWhitelistRead;
-		$image = SpecialPage::getTitleFor( 'Captcha', 'image' );
-		$help = SpecialPage::getTitleFor( 'Captcha', 'help' );
-		$wgWhitelistRead[] = $image->getPrefixedText();
-		$wgWhitelistRead[] = $help->getPrefixedText();
-	}
-}
+$wgAutoloadClasses['ConfirmEditHooks'] = __DIR__ . '/includes/ConfirmEditHooks.php';
+$wgAutoloadClasses['SimpleCaptcha'] = __DIR__ . '/SimpleCaptcha/Captcha.php';
+$wgAutoloadClasses['CaptchaStore'] = __DIR__ . '/includes/CaptchaStore.php';
+$wgAutoloadClasses['CaptchaSessionStore'] = __DIR__ . '/includes/CaptchaStore.php';
+$wgAutoloadClasses['CaptchaCacheStore'] = __DIR__ . '/includes/CaptchaStore.php';
+$wgAutoloadClasses['CaptchaSpecialPage'] = __DIR__ . '/includes/specials/SpecialCaptcha.php';

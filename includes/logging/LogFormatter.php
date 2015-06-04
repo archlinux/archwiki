@@ -25,9 +25,12 @@
 
 /**
  * Implements the default log formatting.
- * Can be overridden by subclassing and setting
- * $wgLogActionsHandlers['type/subtype'] = 'class'; or
- * $wgLogActionsHandlers['type/*'] = 'class';
+ *
+ * Can be overridden by subclassing and setting:
+ *
+ *     $wgLogActionsHandlers['type/subtype'] = 'class'; or
+ *     $wgLogActionsHandlers['type/*'] = 'class';
+ *
  * @since 1.19
  */
 class LogFormatter {
@@ -79,6 +82,9 @@ class LogFormatter {
 
 	/** @var int Constant for handling log_deleted */
 	protected $audience = self::FOR_PUBLIC;
+
+	/** @var IContextSource Context for logging */
+	public $context;
 
 	/** @var bool Whether to output user tool links */
 	protected $linkFlood = false;
@@ -322,6 +328,57 @@ class LogFormatter {
 						break;
 				}
 				break;
+
+			case 'merge':
+				$text = wfMessage( 'pagemerge-logentry' )
+					->rawParams( $target, $parameters['4::dest'], $parameters['5::mergepoint'] )
+					->inContentLanguage()->escaped();
+				break;
+
+			case 'block':
+				switch ( $entry->getSubtype() ) {
+					case 'block':
+						global $wgContLang;
+						// Keep compatibility with extensions by checking for
+						// new key (5::duration/6::flags) or old key (0/optional 1)
+						if ( $entry->isLegacy() ) {
+							$rawDuration = $parameters[0];
+							$rawFlags = isset( $parameters[1] ) ? $parameters[1] : '';
+						} else {
+							$rawDuration = $parameters['5::duration'];
+							$rawFlags = $parameters['6::flags'];
+						}
+						$duration = $wgContLang->translateBlockExpiry( $rawDuration );
+						$flags = BlockLogFormatter::formatBlockFlags( $rawFlags, $wgContLang );
+						$text = wfMessage( 'blocklogentry' )
+							->rawParams( $target, $duration, $flags )->inContentLanguage()->escaped();
+						break;
+					case 'unblock':
+						$text = wfMessage( 'unblocklogentry' )
+							->rawParams( $target )->inContentLanguage()->escaped();
+						break;
+					case 'reblock':
+						global $wgContLang;
+						$duration = $wgContLang->translateBlockExpiry( $parameters['5::duration'] );
+						$flags = BlockLogFormatter::formatBlockFlags( $parameters['6::flags'], $wgContLang );
+						$text = wfMessage( 'reblock-logentry' )
+							->rawParams( $target, $duration, $flags )->inContentLanguage()->escaped();
+						break;
+				}
+				break;
+
+			case 'import':
+				switch ( $entry->getSubtype() ) {
+					case 'upload':
+						$text = wfMessage( 'import-logentry-upload' )
+							->rawParams( $target )->inContentLanguage()->escaped();
+						break;
+					case 'interwiki':
+						$text = wfMessage( 'import-logentry-interwiki' )
+							->rawParams( $target )->inContentLanguage()->escaped();
+						break;
+				}
+				break;
 			// case 'suppress' --private log -- aaron  (so we know who to blame in a few years :-D)
 			// default:
 		}
@@ -349,8 +406,10 @@ class LogFormatter {
 				$element = $this->styleRestricedElement( $element );
 			}
 		} else {
-			$performer = $this->getPerformerElement() . $this->msg( 'word-separator' )->text();
-			$element = $performer . $this->getRestrictedElement( 'rev-deleted-event' );
+			$sep = $this->msg( 'word-separator' );
+			$sep = $this->plaintext ? $sep->text() : $sep->escaped();
+			$performer = $this->getPerformerElement();
+			$element = $performer . $sep . $this->getRestrictedElement( 'rev-deleted-event' );
 		}
 
 		return $element;
@@ -413,7 +472,9 @@ class LogFormatter {
 				continue;
 			}
 			list( $index, $type, ) = explode( ':', $key, 3 );
-			$params[$index - 1] = $this->formatParameterValue( $type, $value );
+			if ( ctype_digit( $index ) ) {
+				$params[$index - 1] = $this->formatParameterValue( $type, $value );
+			}
 		}
 
 		/* Message class doesn't like non consecutive numbering.
@@ -422,7 +483,8 @@ class LogFormatter {
 		 */
 		if ( count( $params ) ) {
 			$max = max( array_keys( $params ) );
-			for ( $i = 4; $i < $max; $i++ ) {
+			// index 0 to 2 are added in getMessageParameters
+			for ( $i = 3; $i < $max; $i++ ) {
 				if ( !isset( $params[$i] ) ) {
 					$params[$i] = '';
 				}
@@ -480,8 +542,8 @@ class LogFormatter {
 	 *     * title-link: The value is a page title,
 	 *                   returns link to this page
 	 *     * number: Format value as number
-	 * @param string $value The parameter value that should
-	 *                      be formated
+	 *     * list: Format value as a comma-separated list
+	 * @param mixed $value The parameter value that should be formatted
 	 * @return string|array Formated value
 	 * @since 1.21
 	 */
@@ -491,6 +553,9 @@ class LogFormatter {
 		switch ( strtolower( trim( $type ) ) ) {
 			case 'raw':
 				$value = Message::rawParam( $value );
+				break;
+			case 'list':
+				$value = $this->context->getLanguage()->commaList( $value );
 				break;
 			case 'msg':
 				$value = $this->msg( $value )->text();
@@ -629,7 +694,7 @@ class LogFormatter {
 		return $this->context->msg( $key );
 	}
 
-	protected function makeUserLink( User $user ) {
+	protected function makeUserLink( User $user, $toolFlags = 0 ) {
 		if ( $this->plaintext ) {
 			$element = $user->getName();
 		} else {
@@ -639,9 +704,11 @@ class LogFormatter {
 			);
 
 			if ( $this->linkFlood ) {
-				$element .= Linker::userToolLinksRedContribs(
+				$element .= Linker::userToolLinks(
 					$user->getId(),
 					$user->getName(),
+					true, // redContribsWhenNoEdits
+					$toolFlags,
 					$user->getEditCount()
 				);
 			}
@@ -665,6 +732,120 @@ class LogFormatter {
 		// protected and a change from protected to public caused
 		// problems with extensions
 		return $this->getMessageParameters();
+	}
+
+	/**
+	 * Get the array of parameters, converted from legacy format if necessary.
+	 * @since 1.25
+	 * @return array
+	 */
+	protected function getParametersForApi() {
+		return $this->entry->getParameters();
+	}
+
+	/**
+	 * Format parameters for API output
+	 *
+	 * The result array should generally map named keys to values. Index and
+	 * type should be omitted, e.g. "4::foo" should be returned as "foo" in the
+	 * output. Values should generally be unformatted.
+	 *
+	 * Renames or removals of keys besides from the legacy numeric format to
+	 * modern named style should be avoided. Any renames should be announced to
+	 * the mediawiki-api-announce mailing list.
+	 *
+	 * @since 1.25
+	 * @return array
+	 */
+	public function formatParametersForApi() {
+		$logParams = array();
+		foreach ( $this->getParametersForApi() as $key => $value ) {
+			$vals = explode( ':', $key, 3 );
+			if ( count( $vals ) !== 3 ) {
+				$logParams[$key] = $value;
+				continue;
+			}
+			$logParams += $this->formatParameterValueForApi( $vals[2], $vals[1], $value );
+		}
+		ApiResult::setIndexedTagName( $logParams, 'param' );
+		ApiResult::setArrayType( $logParams, 'assoc' );
+
+		return $logParams;
+	}
+
+	/**
+	 * Format a single parameter value for API output
+	 *
+	 * @since 1.25
+	 * @param string $name
+	 * @param string $type
+	 * @param string $value
+	 * @return array
+	 */
+	protected function formatParameterValueForApi( $name, $type, $value ) {
+		$type = strtolower( trim( $type ) );
+		switch ( $type ) {
+			case 'bool':
+				$value = (bool)$value;
+				break;
+
+			case 'number':
+				if ( ctype_digit( $value ) ) {
+					$value = (int)$value;
+				} else {
+					$value = (float)$value;
+				}
+				break;
+
+			case 'array':
+			case 'assoc':
+			case 'kvp':
+				if ( is_array( $value ) ) {
+					ApiResult::setArrayType( $value, $type );
+				}
+				break;
+
+			case 'timestamp':
+				$value = wfTimestamp( TS_ISO_8601, $value );
+				break;
+
+			case 'msg':
+			case 'msg-content':
+				$msg = $this->msg( $value );
+				if ( $type === 'msg-content' ) {
+					$msg->inContentLanguage();
+				}
+				$value = array();
+				$value["{$name}_key"] = $msg->getKey();
+				if ( $msg->getParams() ) {
+					$value["{$name}_params"] = $msg->getParams();
+				}
+				$value["{$name}_text"] = $msg->text();
+				return $value;
+
+			case 'title':
+			case 'title-link':
+				$title = Title::newFromText( $value );
+				if ( $title ) {
+					$value = array();
+					ApiQueryBase::addTitleInfo( $value, $title, "{$name}_" );
+				}
+				return $value;
+
+			case 'user':
+			case 'user-link':
+				$user = User::newFromName( $value );
+				if ( $user ) {
+					$value = $user->getName();
+				}
+				break;
+
+			default:
+				// do nothing
+				break;
+		}
+
+		return array( $name => $value );
 	}
 }
 
@@ -725,7 +906,9 @@ class LegacyLogFormatter extends LogFormatter {
 
 		$performer = $this->getPerformerElement();
 		if ( !$this->irctext ) {
-			$action = $performer . $this->msg( 'word-separator' )->text() . $action;
+			$sep = $this->msg( 'word-separator' );
+			$sep = $this->plaintext ? $sep->text() : $sep->escaped();
+			$action = $performer . $sep . $action;
 		}
 
 		return $action;
@@ -745,29 +928,7 @@ class LegacyLogFormatter extends LogFormatter {
 		$type = $this->entry->getType();
 		$subtype = $this->entry->getSubtype();
 
-		// Show unblock/change block link
-		if ( ( $type == 'block' || $type == 'suppress' )
-			&& ( $subtype == 'block' || $subtype == 'reblock' )
-		) {
-			if ( !$this->context->getUser()->isAllowed( 'block' ) ) {
-				return '';
-			}
-
-			$links = array(
-				Linker::linkKnown(
-					SpecialPage::getTitleFor( 'Unblock', $title->getDBkey() ),
-					$this->msg( 'unblocklink' )->escaped()
-				),
-				Linker::linkKnown(
-					SpecialPage::getTitleFor( 'Block', $title->getDBkey() ),
-					$this->msg( 'change-blocklink' )->escaped()
-				)
-			);
-
-			return $this->msg( 'parentheses' )->rawParams(
-				$this->context->getLanguage()->pipeList( $links ) )->escaped();
-		// Show change protection link
-		} elseif ( $type == 'protect'
+		if ( $type == 'protect'
 			&& ( $subtype == 'protect' || $subtype == 'modify' || $subtype == 'unprotect' )
 		) {
 			$links = array(
@@ -791,26 +952,6 @@ class LegacyLogFormatter extends LogFormatter {
 
 			return $this->msg( 'parentheses' )->rawParams(
 				$this->context->getLanguage()->pipeList( $links ) )->escaped();
-		// Show unmerge link
-		} elseif ( $type == 'merge' && $subtype == 'merge' ) {
-			if ( !$this->context->getUser()->isAllowed( 'mergehistory' ) ) {
-				return '';
-			}
-
-			$params = $this->extractParameters();
-			$revert = Linker::linkKnown(
-				SpecialPage::getTitleFor( 'MergeHistory' ),
-				$this->msg( 'revertmerge' )->escaped(),
-				array(),
-				array(
-					'target' => $params[3],
-					'dest' => $title->getPrefixedDBkey(),
-					'mergepoint' => $params[4],
-					'submitted' => 1 // show the revisions immediately
-				)
-			);
-
-			return $this->msg( 'parentheses' )->rawParams( $revert )->escaped();
 		}
 
 		// Do nothing. The implementation is handled by the hook modifiying the
@@ -826,7 +967,7 @@ class LegacyLogFormatter extends LogFormatter {
 
 		$params = $this->entry->getParameters();
 
-		wfRunHooks( 'LogLine', array( $type, $subtype, $title, $params,
+		Hooks::run( 'LogLine', array( $type, $subtype, $title, $params,
 			&$this->comment, &$this->revert, $this->entry->getTimestamp() ) );
 
 		return $this->revert;

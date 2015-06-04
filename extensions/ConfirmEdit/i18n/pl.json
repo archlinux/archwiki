@@ -1,0 +1,29 @@
+{
+	"@metadata": {
+		"authors": [
+			"BeginaFelicysym",
+			"Derbeth",
+			"Leinad",
+			"Matma Rex",
+			"Sp5uhe",
+			"WTM",
+			"Alan ffm"
+		]
+	},
+	"captcha-edit": "Możesz edytować tę stronę, jednak najpierw musisz rozwiązać poniższe proste działanie matematyczne i wpisać wynik do pola tekstowego ([[Special:Captcha/help|pomoc]]):",
+	"captcha-desc": "Dodaje CAPTCHA – zabezpieczenie przed spamującymi automatami oraz odgadywaniem haseł",
+	"captcha-label": "CAPTCHA",
+	"captcha-addurl": "Twoje zmiany zawierają nowe linki zewnętrzne.\nZe względu na ochronę przed zautomatyzowanym spamem prosimy o wykonanie prostego działania matematycznego i wpisanie wyniku w pole obok, zanim twoja edycja zostanie zapisana ([[Special:Captcha/help|więcej informacji]]):",
+	"captcha-badlogin": "Zabezpieczenie przed automatycznym łamaniem hasełm, wpisz w pole poniżej wynik prostego działania matematycznego ([[Special:Captcha/help|pomoc]]):",
+	"captcha-createaccount": "Zabezpieczenie przed automatycznym tworzeniem konta - wpisz w pole poniżej wynik prostego działania matematycznego ([[Special:Captcha/help|pomoc]]):",
+	"captcha-createaccount-fail": "Nieprawidłowy kod lub brak kodu potwierdzającego.",
+	"captcha-create": "Aby utworzyć stronę wykonaj proste działanie i wpisz wynik w pole tekstowe ([[Special:Captcha/help|pomoc]]):",
+	"captcha-sendemail": "Zabezpieczenie przed automatycznym spamem, wpisz w pole poniżej wynik prostego dodawania ([[Special:Captcha/help|więcej informacji]]):",
+	"captcha-sendemail-fail": "Nieprawidłowy kod lub brak kodu potwierdzającego.",
+	"captcha-disabledinapi": "Ta czynność wymaga potwierdzenia capcha i z tego względu nie może być przeprowadzona z użyciem API.",
+	"captchahelp-title": "Pomoc dla ochrony antyspamowej",
+	"captchahelp-cookies-needed": "Musisz mieć włączone w przeglądarce cookies (ciasteczka), aby ta opcja działała.",
+	"captchahelp-text": "Strony internetowe akceptujące edycje dokonywane przez każdego, tak jak ta wiki, są często atakowane przez spamerów, którzy używają automatycznych narzędzi, aby dodawać linki prowadzące do ich stron.\nChociaż te linki mogą zostać usunięte, jest to uciążliwe.\n\nCzasami, zwłaszcza przy dodawaniu nowych linków do strony albo przy rejestracji, wiki może pokazać obrazek z kolorowym lub zniekształconym tekstem i poprosić Cię o przepisanie zamieszczonego na nim wyrazu.\nPonieważ są to zadania trudne do zautomatyzowania, takie zabezpieczenia umożliwia ludziom dokonywania edycji, jednocześnie skutecznie powstrzymując większość spamerów i inne automatyczne ataki.\n\nNiestety, może być to niewygodne dla użytkowników z wadą wzroku lub używających przeglądarek tekstowych lub głosowych.\nObecnie nie mamy alternatywnego rozwiązania audio.\nSkontaktuj się z [[Special:ListAdmins|administratorami strony]] by uzyskać pomoc, jeśli nie możesz z tego powodu dokonywać uprawnionych edycji.\n\nWciśnij przycisk „wstecz” w przeglądarce by powrócić do edycji strony.",
+	"captcha-addurl-whitelist": " #<!-- nie modyfikuj tej linii --> <pre>\n# Składnia jest następująca:\n#   * Linie zaczynające się od znaku „#” są komentarzami\n#   * Każda linia, która nie jest pusta, jest wyrażeniem regularnym, które ma pasować do adresu serwera (fragmentu URL)\n  #</pre> <!-- nie modyfikuj tej linii -->",
+	"right-skipcaptcha": "Dostęp do czynności zabezpieczonych pytaniem o treść obrazka lub rozwiązanie zadania, z pominięciem zabezpieczenia"
+}

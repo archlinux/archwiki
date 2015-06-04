@@ -22,6 +22,12 @@
  */
 
 class PdfHandler extends ImageHandler {
+	static $messages = array(
+		'main' => 'pdf-file-page-warning',
+		'header' => 'pdf-file-page-warning-header',
+		'info' => 'pdf-file-page-warning-info',
+		'footer' => 'pdf-file-page-warning-footer',
+	);
 
 	/**
 	 * @return bool
@@ -325,9 +331,10 @@ class PdfHandler extends ImageHandler {
 
 	/**
 	 * @param $image File
+	 * @param bool|IContextSource $context Context to use (optional)
 	 * @return bool|int
 	 */
-	function formatMetadata( $image ) {
+	function formatMetadata( $image, $context = false ) {
 		$meta = $image->getMetadata();
 
 		if ( !$meta ) {
@@ -345,7 +352,7 @@ class PdfHandler extends ImageHandler {
 		}
 
 		// Inherited from MediaHandler.
-		return $this->formatMetadataHelper( $meta['mergedMetadata'] );
+		return $this->formatMetadataHelper( $meta['mergedMetadata'], $context );
 	}
 
 	/**
@@ -383,4 +390,27 @@ class PdfHandler extends ImageHandler {
 		return $data['text'][$page - 1];
 	}
 
+	/**
+	 * Adds a warning about PDFs being potentially dangerous to the file
+	 * page. Multiple messages with this base will be used.
+	 * @param File $file
+	 * @return array
+	 */
+	function getWarningConfig( $file ) {
+		return array(
+			'messages' => self::$messages,
+			'link' => '//www.mediawiki.org/wiki/Special:MyLanguage/Help:Security/PDF_files',
+			'module' => 'pdfhandler.messages',
+		);
+	}
+
+	/**
+	 * Register a module with the warning messages in it.
+	 * @param &$resourceLoader ResourceLoader
+	 */
+	static function registerWarningModule( &$resourceLoader ) {
+		$resourceLoader->register( 'pdfhandler.messages', array(
+			'messages' => array_values( self::$messages ),
+		) );
+	}
 }

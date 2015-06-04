@@ -23,11 +23,25 @@
  * @ingroup Exception
  */
 class MWExceptionHandler {
+
+	protected static $reservedMemory;
+	protected static $fatalErrorTypes = array(
+		E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR,
+		/* HHVM's FATAL_ERROR level */ 16777217,
+	);
+
 	/**
-	 * Install an exception handler for MediaWiki exception types.
+	 * Install handlers with PHP.
 	 */
 	public static function installHandler() {
-		set_exception_handler( array( 'MWExceptionHandler', 'handle' ) );
+		set_exception_handler( array( 'MWExceptionHandler', 'handleException' ) );
+		set_error_handler( array( 'MWExceptionHandler', 'handleError' ) );
+
+		// Reserve 16k of memory so we can report OOM fatals
+		self::$reservedMemory = str_repeat( ' ', 16384 );
+		register_shutdown_function(
+			array( 'MWExceptionHandler', 'handleFatalError' )
+		);
 	}
 
 	/**
@@ -45,7 +59,7 @@ class MWExceptionHandler {
 				$e->report();
 			} catch ( Exception $e2 ) {
 				// Exception occurred from within exception handler
-				// Show a simpler error message for the original exception,
+				// Show a simpler message for the original exception,
 				// don't try to invoke report()
 				$message = "MediaWiki internal error.\n\n";
 
@@ -69,8 +83,7 @@ class MWExceptionHandler {
 				}
 			}
 		} else {
-			$message = "Unexpected non-MediaWiki exception encountered, of type \"" .
-				get_class( $e ) . "\"";
+			$message = "Exception encountered, of type \"" . get_class( $e ) . "\"";
 
 			if ( $wgShowExceptionDetails ) {
 				$message .= "\n" . MWExceptionHandler::getLogMessage( $e ) . "\nBacktrace:\n" .
@@ -82,6 +95,7 @@ class MWExceptionHandler {
 			} else {
 				echo nl2br( htmlspecialchars( $message ) ) . "\n";
 			}
+
 		}
 	}
 
@@ -106,6 +120,7 @@ class MWExceptionHandler {
 	 * If there are any open database transactions, roll them back and log
 	 * the stack trace of the exception that should have been caught so the
 	 * transaction could be aborted properly.
+	 *
 	 * @since 1.23
 	 * @param Exception $e
 	 */
@@ -126,31 +141,129 @@ class MWExceptionHandler {
 	 *
 	 *   try {
 	 *       ...
-	 *   } catch ( MWException $e ) {
+	 *   } catch ( Exception $e ) {
 	 *       $e->report();
 	 *   } catch ( Exception $e ) {
 	 *       echo $e->__toString();
 	 *   }
+	 *
+	 * @since 1.25
 	 * @param Exception $e
 	 */
-	public static function handle( $e ) {
-		global $wgFullyInitialised;
-
-		self::rollbackMasterChangesAndLog( $e );
-
-		self::report( $e );
-
-		// Final cleanup
-		if ( $wgFullyInitialised ) {
-			try {
-				// uses $wgRequest, hence the $wgFullyInitialised condition
-				wfLogProfilingData();
-			} catch ( Exception $e ) {
-			}
+	public static function handleException( Exception $e ) {
+		try {
+			// Rollback DBs to avoid transaction notices. This may fail
+			// to rollback some DB due to connection issues or exceptions.
+			// However, any sane DB driver will rollback implicitly anyway.
+			self::rollbackMasterChangesAndLog( $e );
+		} catch ( DBError $e2 ) {
+			// If the DB is unreacheable, rollback() will throw an error
+			// and the error report() method might need messages from the DB,
+			// which would result in an exception loop. PHP may escalate such
+			// errors to "Exception thrown without a stack frame" fatals, but
+			// it's better to be explicit here.
+			self::logException( $e2 );
 		}
+
+		self::logException( $e );
+		self::report( $e );
 
 		// Exit value should be nonzero for the benefit of shell jobs
 		exit( 1 );
+	}
+
+	/**
+	 * @since 1.25
+	 * @param int $level Error level raised
+	 * @param string $message
+	 * @param string $file
+	 * @param int $line
+	 */
+	public static function handleError( $level, $message, $file = null, $line = null ) {
+		// Map error constant to error name (reverse-engineer PHP error reporting)
+		$channel = 'error';
+		switch ( $level ) {
+			case E_ERROR:
+			case E_CORE_ERROR:
+			case E_COMPILE_ERROR:
+			case E_USER_ERROR:
+			case E_RECOVERABLE_ERROR:
+			case E_PARSE:
+				$levelName = 'Error';
+				$channel = 'fatal';
+				break;
+			case E_WARNING:
+			case E_CORE_WARNING:
+			case E_COMPILE_WARNING:
+			case E_USER_WARNING:
+				$levelName = 'Warning';
+				break;
+			case E_NOTICE:
+			case E_USER_NOTICE:
+				$levelName = 'Notice';
+				break;
+			case E_STRICT:
+				$levelName = 'Strict Standards';
+				break;
+			case E_DEPRECATED:
+			case E_USER_DEPRECATED:
+				$levelName = 'Deprecated';
+				break;
+			case /* HHVM's FATAL_ERROR */ 16777217:
+				$levelName = 'Fatal';
+				$channel = 'fatal';
+				break;
+			default:
+				$levelName = 'Unknown error';
+				break;
+		}
+
+		$e = new ErrorException( "PHP $levelName: $message", 0, $level, $file, $line );
+		self::logError( $e, $channel );
+
+		// This handler is for logging only. Return false will instruct PHP
+		// to continue regular handling.
+		return false;
+	}
+
+
+	/**
+	 * Look for a fatal error as the cause of the request termination and log
+	 * as an exception.
+	 *
+	 * Special handling is included for missing class errors as they may
+	 * indicate that the user needs to install 3rd-party libraries via
+	 * Composer or other means.
+	 *
+	 * @since 1.25
+	 */
+	public static function handleFatalError() {
+		self::$reservedMemory = null;
+		$lastError = error_get_last();
+
+		if ( $lastError &&
+			isset( $lastError['type'] ) &&
+			in_array( $lastError['type'], self::$fatalErrorTypes )
+		) {
+			$msg = "Fatal Error: {$lastError['message']}";
+			// HHVM: Class undefined: foo
+			// PHP5: Class 'foo' not found
+			if ( preg_match( "/Class (undefined: \w+|'\w+' not found)/",
+				$lastError['message']
+			) ) {
+				// @codingStandardsIgnoreStart Generic.Files.LineLength.TooLong
+				$msg = <<<TXT
+{$msg}
+
+MediaWiki or an installed extension requires this class but it is not embedded directly in MediaWiki's git repository and must be installed separately by the end user.
+
+Please see <a href="https://www.mediawiki.org/wiki/Download_from_Git#Fetch_external_libraries">mediawiki.org</a> for help on installing the required components.
+TXT;
+				// @codingStandardsIgnoreEnd
+			}
+			$e = new ErrorException( $msg, 0, $lastError['type'] );
+			self::logError( $e, 'fatal' );
+		}
 	}
 
 	/**
@@ -217,7 +330,7 @@ class MWExceptionHandler {
 	}
 
 	/**
-	 * Get the ID for this error.
+	 * Get the ID for this exception.
 	 *
 	 * The ID is saved so that one can match the one output to the user (when
 	 * $wgShowExceptionDetails is set to false), to the entry in the debug log.
@@ -238,7 +351,7 @@ class MWExceptionHandler {
 	 * returns the requested URL. Otherwise, returns false.
 	 *
 	 * @since 1.23
-	 * @return string|bool
+	 * @return string|false
 	 */
 	public static function getURL() {
 		global $wgRequest;
@@ -249,8 +362,7 @@ class MWExceptionHandler {
 	}
 
 	/**
-	 * Return the requested URL and point to file and line number from which the
-	 * exception occurred.
+	 * Get a message formatting the exception message and its origin.
 	 *
 	 * @since 1.22
 	 * @param Exception $e
@@ -258,12 +370,13 @@ class MWExceptionHandler {
 	 */
 	public static function getLogMessage( Exception $e ) {
 		$id = self::getLogId( $e );
+		$type = get_class( $e );
 		$file = $e->getFile();
 		$line = $e->getLine();
 		$message = $e->getMessage();
 		$url = self::getURL() ?: '[no req]';
 
-		return "[$id] $url   Exception from line $line of $file: $message";
+		return "[$id] $url   $type from line $line of $file: $message";
 	}
 
 	/**
@@ -285,6 +398,7 @@ class MWExceptionHandler {
 	 * @code
 	 *  {
 	 *    "id": "c41fb419",
+	 *    "type": "MWException",
 	 *    "file": "/var/www/mediawiki/includes/cache/MessageCache.php",
 	 *    "line": 704,
 	 *    "message": "Non-string key given",
@@ -296,6 +410,7 @@ class MWExceptionHandler {
 	 * @code
 	 *  {
 	 *    "id": "dc457938",
+	 *    "type": "MWException",
 	 *    "file": "/vagrant/mediawiki/includes/cache/MessageCache.php",
 	 *    "line": 704,
 	 *    "message": "Non-string key given",
@@ -315,17 +430,23 @@ class MWExceptionHandler {
 	 * @param Exception $e
 	 * @param bool $pretty Add non-significant whitespace to improve readability (default: false).
 	 * @param int $escaping Bitfield consisting of FormatJson::.*_OK class constants.
-	 * @return string|bool JSON string if successful; false upon failure
+	 * @return string|false JSON string if successful; false upon failure
 	 */
 	public static function jsonSerializeException( Exception $e, $pretty = false, $escaping = 0 ) {
 		global $wgLogExceptionBacktrace;
 
 		$exceptionData = array(
 			'id' => self::getLogId( $e ),
+			'type' => get_class( $e ),
 			'file' => $e->getFile(),
 			'line' => $e->getLine(),
 			'message' => $e->getMessage(),
 		);
+
+		if ( $e instanceof ErrorException && ( error_reporting() & $e->getSeverity() ) === 0 ) {
+			// Flag surpressed errors
+			$exceptionData['suppressed'] = true;
+		}
 
 		// Because MediaWiki is first and foremost a web application, we set a
 		// 'url' key unconditionally, but set it to null if the exception does
@@ -345,7 +466,7 @@ class MWExceptionHandler {
 	 * Log an exception to the exception log (if enabled).
 	 *
 	 * This method must not assume the exception is an MWException,
-	 * it is also used to handle PHP errors or errors from other libraries.
+	 * it is also used to handle PHP exceptions or exceptions from other libraries.
 	 *
 	 * @since 1.22
 	 * @param Exception $e
@@ -366,7 +487,33 @@ class MWExceptionHandler {
 				wfDebugLog( 'exception-json', $json, 'private' );
 			}
 		}
-
 	}
 
+	/**
+	 * Log an exception that wasn't thrown but made to wrap an error.
+	 *
+	 * @since 1.25
+	 * @param ErrorException $e
+	 * @param string $channel
+	*/
+	protected static function logError( ErrorException $e, $channel ) {
+		global $wgLogExceptionBacktrace;
+
+		// The set_error_handler callback is independent from error_reporting.
+		// Filter out unwanted errors manually (e.g. when wfSuppressWarnings is active).
+		if ( ( error_reporting() & $e->getSeverity() ) !== 0 ) {
+			$log = self::getLogMessage( $e );
+			if ( $wgLogExceptionBacktrace ) {
+				wfDebugLog( $channel, $log . "\n" . $e->getTraceAsString() );
+			} else {
+				wfDebugLog( $channel, $log );
+			}
+		}
+
+		// Include all errors in the json log (surpressed errors will be flagged)
+		$json = self::jsonSerializeException( $e, false, FormatJson::ALL_OK );
+		if ( $json !== false ) {
+			wfDebugLog( "$channel-json", $json, 'private' );
+		}
+	}
 }

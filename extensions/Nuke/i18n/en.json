@@ -15,6 +15,7 @@
     "nuke-multiplepeople": "Mass deletion of recently added pages",
     "nuke-tools": "This tool allows for mass deletions of pages recently added by a given user or an IP address.\nInput the username or IP address to get a list of pages to delete, or leave blank for all users.",
     "nuke-submit-user": "Go",
+    "nuke-toggleinvert": "Invert",
     "nuke-submit-delete": "Delete selected",
     "right-nuke": "Mass delete pages",
     "nuke-select": "Select: $1",

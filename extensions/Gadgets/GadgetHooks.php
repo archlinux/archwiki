@@ -32,12 +32,10 @@ class GadgetHooks {
 	 */
 	public static function articleSaveComplete( $article, $user, $text ) {
 		// update cache if MediaWiki:Gadgets-definition was edited
-		wfProfileIn( __METHOD__ );
 		$title = $article->getTitle();
 		if ( $title->getNamespace() == NS_MEDIAWIKI && $title->getText() == 'Gadgets-definition' ) {
 			Gadget::loadStructuredList( $text );
 		}
-		wfProfileOut( __METHOD__ );
 		return true;
 	}
 
@@ -73,10 +71,8 @@ class GadgetHooks {
 	 * @return bool
 	 */
 	public static function getPreferences( $user, &$preferences ) {
-		wfProfileIn( __METHOD__ );
 		$gadgets = Gadget::loadStructuredList();
 		if ( !$gadgets ) {
-			wfProfileOut( __METHOD__ );
 			return true;
 		}
 
@@ -132,7 +128,6 @@ class GadgetHooks {
 				'prefix' => 'gadget-',
 				'default' => $default,
 			);
-		wfProfileOut( __METHOD__ );
 
 		return true;
 	}
@@ -167,11 +162,8 @@ class GadgetHooks {
 	 * @return bool
 	 */
 	public static function beforePageDisplay( $out ) {
-		wfProfileIn( __METHOD__ );
-
 		$gadgets = Gadget::loadList();
 		if ( !$gadgets ) {
-			wfProfileOut( __METHOD__ );
 			return true;
 		}
 
@@ -213,7 +205,6 @@ class GadgetHooks {
 				self::applyScript( $page, $out );
 			}
 		}
-		wfProfileOut( __METHOD__ );
 
 		return true;
 	}

@@ -14,6 +14,7 @@
 	"interwiki-title-norights": "Wikiközi hivatkozások adatainak megtekintése",
 	"interwiki-desc": "[[Special:Interwiki|Speciális lap]], ahol megtekinthető és szerkeszthető a wikiközi hivatkozások táblája",
 	"interwiki_intro": "Ez egy áttekintés a wikiközi hivatkozások táblájáról.",
+	"interwiki-legend-label": "Jelmagyarázat",
 	"interwiki_prefix": "Előtag",
 	"interwiki-prefix-label": "Előtag:",
 	"interwiki_prefix_intro": "Wikiközi előtag az <code>[<nowiki />[előtag:<em>lapnév</em>]]</code> wikiszöveg szintaxisban való használatra.",

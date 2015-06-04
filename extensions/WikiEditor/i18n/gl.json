@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Toliño"
+			"Toliño",
+			"Banjo"
 		]
 	},
 	"wikieditor": "Interface avanzada de edición de texto wiki",
@@ -12,9 +13,6 @@
 	"wikieditor-preview-tab": "Vista previa",
 	"wikieditor-preview-changes-tab": "Cambios",
 	"wikieditor-preview-loading": "Cargando...",
-	"wikieditor-previewDialog-preference": "Activar o diálogo de vista previa",
-	"wikieditor-previewDialog-tab": "Vista previa",
-	"wikieditor-previewDialog-loading": "Cargando...",
 	"wikieditor-publish-preference": "Activar a publicación paso a paso",
 	"wikieditor-publish-button-publish": "Publicar",
 	"wikieditor-publish-button-cancel": "Cancelar",
@@ -208,8 +206,7 @@
 	"wikieditor-toolbar-help-content-olist-syntax": "# Elemento da lista<br /># Elemento da lista",
 	"wikieditor-toolbar-help-content-olist-result": "<ol><li>Elemento da lista</li><li>Elemento da lista</li></ol>",
 	"wikieditor-toolbar-help-content-file-description": "Ficheiro embelecido",
-	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Example.png|thumb|Pé de foto.]]",
-	"wikieditor-toolbar-help-content-file-result": "<div style='width:104px;' class='thumbinner'><a title='Pé de foto' class='image' href='#'><img height='50' width='100' border='0' class='thumbimage' src='$2/WikiEditor/modules/images/toolbar/example-image.png' alt=''/></a><div class='thumbcaption'><div class='magnify'><a title='Ampliar' class='internal' href='#'><img height='11' width='15' alt='' src='$1/common/images/magnify-clip.png'/></a></div>Pé de foto.</div></div>",
+	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Exemplo.png|$2|$3]]",
 	"wikieditor-toolbar-help-content-reference-description": "Referencia",
 	"wikieditor-toolbar-help-content-reference-syntax": "Texto da páxina&lt;ref name=\"test\"&gt;[http://www.example.org Texto da ligazón], texto adicional.&lt;/ref&gt;.",
 	"wikieditor-toolbar-help-content-reference-result": "Texto da páxina<sup><a href='#'>[1]</a></sup>.",

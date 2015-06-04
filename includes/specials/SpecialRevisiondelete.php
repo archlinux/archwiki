@@ -132,18 +132,8 @@ class SpecialRevisionDelete extends UnlistedSpecialPage {
 		// $this->ids = array_map( 'intval', $this->ids );
 		$this->ids = array_unique( array_filter( $this->ids ) );
 
-		if ( $request->getVal( 'action' ) == 'historysubmit'
-			|| $request->getVal( 'action' ) == 'revisiondelete'
-		) {
-			// For show/hide form submission from history page
-			// Since we are access through index.php?title=XXX&action=historysubmit
-			// getFullTitle() will contain the target title and not our title
-			$this->targetObj = $this->getFullTitle();
-			$this->typeName = 'revision';
-		} else {
-			$this->typeName = $request->getVal( 'type' );
-			$this->targetObj = Title::newFromText( $request->getText( 'target' ) );
-		}
+		$this->typeName = $request->getVal( 'type' );
+		$this->targetObj = Title::newFromText( $request->getText( 'target' ) );
 
 		# For reviewing deleted files...
 		$this->archiveName = $request->getVal( 'file' );
@@ -293,6 +283,8 @@ class SpecialRevisionDelete extends UnlistedSpecialPage {
 	 * Show a deleted file version requested by the visitor.
 	 * @todo Mostly copied from Special:Undelete. Refactor.
 	 * @param string $archiveName
+	 * @throws MWException
+	 * @throws PermissionsError
 	 */
 	protected function tryShowFile( $archiveName ) {
 		$repo = RepoGroup::singleton()->getLocalRepo();
@@ -372,10 +364,12 @@ class SpecialRevisionDelete extends UnlistedSpecialPage {
 		$userAllowed = true;
 
 		// Messages: revdelete-selected-text, revdelete-selected-file, logdelete-selected
-		$this->getOutput()->wrapWikiMsg( "<strong>$1</strong>", array( $this->typeLabels['selected'],
+		$out = $this->getOutput();
+		$out->wrapWikiMsg( "<strong>$1</strong>", array( $this->typeLabels['selected'],
 			$this->getLanguage()->formatNum( count( $this->ids ) ), $this->targetObj->getPrefixedText() ) );
 
-		$this->getOutput()->addHTML( "<ul>" );
+		$this->addHelpLink( 'Help:RevisionDelete' );
+		$out->addHTML( "<ul>" );
 
 		$numRevisions = 0;
 		// Live revisions...
@@ -393,14 +387,14 @@ class SpecialRevisionDelete extends UnlistedSpecialPage {
 			}
 
 			$numRevisions++;
-			$this->getOutput()->addHTML( $item->getHTML() );
+			$out->addHTML( $item->getHTML() );
 		}
 
 		if ( !$numRevisions ) {
 			throw new ErrorPageError( 'revdelete-nooldid-title', 'revdelete-nooldid-text' );
 		}
 
-		$this->getOutput()->addHTML( "</ul>" );
+		$out->addHTML( "</ul>" );
 		// Explanation text
 		$this->addUsageText();
 
@@ -411,7 +405,7 @@ class SpecialRevisionDelete extends UnlistedSpecialPage {
 
 		// Show form if the user can submit
 		if ( $this->mIsAllowed ) {
-			$out = Xml::openElement( 'form', array( 'method' => 'post',
+			$form = Xml::openElement( 'form', array( 'method' => 'post',
 					'action' => $this->getPageTitle()->getLocalURL( array( 'action' => 'submit' ) ),
 					'id' => 'mw-revdel-form-revisions' ) ) .
 				Xml::fieldset( $this->msg( 'revdelete-legend' )->text() ) .
@@ -463,12 +457,12 @@ class SpecialRevisionDelete extends UnlistedSpecialPage {
 					array(),
 					array( 'action' => 'edit' )
 				);
-				$out .= Xml::tags( 'p', array( 'class' => 'mw-revdel-editreasons' ), $link ) . "\n";
+				$form .= Xml::tags( 'p', array( 'class' => 'mw-revdel-editreasons' ), $link ) . "\n";
 			}
 		} else {
-			$out = '';
+			$form = '';
 		}
-		$this->getOutput()->addHTML( $out );
+		$out->addHTML( $form );
 	}
 
 	/**

@@ -149,8 +149,12 @@ class LinkerTest extends MediaWikiLangTestCase {
 				"pre /* autocomment */ post",
 			),
 			array(
-				'/* autocomment */ multiple? <a href="/wiki/Special:BlankPage#autocomment2" title="Special:BlankPage">→</a>‎<span dir="auto"><span class="autocomment">autocomment2: </span> </span>',
+				'<a href="/wiki/Special:BlankPage#autocomment" title="Special:BlankPage">→</a>‎<span dir="auto"><span class="autocomment">autocomment: </span> multiple? <a href="/wiki/Special:BlankPage#autocomment2" title="Special:BlankPage">→</a>‎<span dir="auto"><span class="autocomment">autocomment2: </span> </span></span>',
 				"/* autocomment */ multiple? /* autocomment2 */ ",
+			),
+			array(
+				'<a href="/wiki/Special:BlankPage#autocomment_containing_.2F.2A" title="Special:BlankPage">→</a>‎<span dir="auto"><span class="autocomment">autocomment containing /*: </span> T70361</span>',
+				"/* autocomment containing /* */ T70361"
 			),
 			array(
 				'<a href="#autocomment">→</a>‎<span dir="auto"><span class="autocomment">autocomment</span></span>',
@@ -186,6 +190,56 @@ class LinkerTest extends MediaWikiLangTestCase {
 			array(
 				'abc <a href="/wiki/index.php?title=/subpage&amp;action=edit&amp;redlink=1" class="new" title="/subpage (page does not exist)">/subpage</a> def',
 				"abc [[/subpage]] def",
+			),
+		);
+	}
+
+	/**
+	 * @covers Linker::formatLinksInComment
+	 * @dataProvider provideCasesForFormatLinksInComment
+	 */
+	public function testFormatLinksInComment( $expected, $input, $wiki ) {
+
+		$conf = new SiteConfiguration();
+		$conf->settings = array(
+			'wgServer' => array(
+				'enwiki' => '//en.example.org'
+			),
+			'wgArticlePath' => array(
+				'enwiki' => '/w/$1',
+			),
+		);
+		$conf->suffixes = array( 'wiki' );
+		$this->setMwGlobals( array(
+			'wgScript' => '/wiki/index.php',
+			'wgArticlePath' => '/wiki/$1',
+			'wgWellFormedXml' => true,
+			'wgCapitalLinks' => true,
+			'wgConf' => $conf,
+		) );
+
+		$this->assertEquals(
+			$expected,
+			Linker::formatLinksInComment( $input, Title::newFromText( 'Special:BlankPage' ), false, $wiki )
+		);
+	}
+
+	public static function provideCasesForFormatLinksInComment() {
+		return array(
+			array(
+				'foo bar <a href="/wiki/Special:BlankPage" title="Special:BlankPage">Special:BlankPage</a>',
+				'foo bar [[Special:BlankPage]]',
+				null,
+			),
+			array(
+				'<a class="external" rel="nofollow" href="//en.example.org/w/Foo%27bar">Foo\'bar</a>',
+				"[[Foo'bar]]",
+				'enwiki',
+			),
+			array(
+				'foo bar <a class="external" rel="nofollow" href="//en.example.org/w/Special:BlankPage">Special:BlankPage</a>',
+				'foo bar [[Special:BlankPage]]',
+				'enwiki',
 			),
 		);
 	}

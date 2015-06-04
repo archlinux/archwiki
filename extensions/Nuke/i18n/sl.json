@@ -14,6 +14,7 @@
 	"nuke-multiplepeople": "Množični izbris nedavno dodanih strani",
 	"nuke-tools": "To orodje omogoča množični izbris strani, ki jih je nedavno ustvaril določen uporabnik ali IP.\nVnesite uporabniško ime ali IP, da pridobite seznam strani za izbris, ali pustite prazno za vse uporabnike.",
 	"nuke-submit-user": "Pojdi",
+	"nuke-toggleinvert": "Obrni",
 	"nuke-submit-delete": "Izbriši izbrano",
 	"right-nuke": "Množično brisanje strani",
 	"nuke-select": "Izberite: $1",

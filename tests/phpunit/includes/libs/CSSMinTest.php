@@ -141,15 +141,57 @@ class CSSMinTest extends MediaWikiTestCase {
 		);
 	}
 
+	public static function provideIsRemoteUrl() {
+		return array(
+			array( true, 'http://localhost/w/red.gif?123' ),
+			array( true, 'https://example.org/x.png' ),
+			array( true, '//example.org/x.y.z/image.png' ),
+			array( true, '//localhost/styles.css?query=yes' ),
+			array( true, 'data:image/gif;base64,R0lGODlhAQABAIAAAP8AADAAACwAAAAAAQABAAACAkQBADs=' ),
+			array( false, 'x.gif' ),
+			array( false, '/x.gif' ),
+			array( false, './x.gif' ),
+			array( false, '../x.gif' ),
+		);
+	}
+
+	/**
+	 * @dataProvider provideIsRemoteUrl
+	 * @cover CSSMin::isRemoteUrl
+	 */
+	public function testIsRemoteUrl( $expect, $url ) {
+		$this->assertEquals( CSSMin::isRemoteUrl( $url ), $expect );
+	}
+
+	public static function provideIsLocalUrls() {
+		return array(
+			array( false, 'x.gif' ),
+			array( true, '/x.gif' ),
+			array( false, './x.gif' ),
+			array( false, '../x.gif' ),
+		);
+	}
+
+	/**
+	 * @dataProvider provideIsLocalUrls
+	 * @cover CSSMin::isLocalUrl
+	 */
+	public function testIsLocalUrl( $expect, $url ) {
+		$this->assertEquals( CSSMin::isLocalUrl( $url ), $expect );
+	}
+
 	public static function provideRemapRemappingCases() {
 		// red.gif and green.gif are one-pixel 35-byte GIFs.
 		// large.png is a 35K PNG that should be non-embeddable.
 		// Full paths start with http://localhost/w/.
 		// Timestamps in output are replaced with 'timestamp'.
 
-		// data: URIs for red.gif and green.gif
+		// data: URIs for red.gif, green.gif, circle.svg
 		$red   = 'data:image/gif;base64,R0lGODlhAQABAIAAAP8AADAAACwAAAAAAQABAAACAkQBADs=';
 		$green = 'data:image/gif;base64,R0lGODlhAQABAIAAAACAADAAACwAAAAAAQABAAACAkQBADs=';
+		$svg = 'data:image/svg+xml,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%0A'
+			. '%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%228%22%20height%3D'
+			. '%228%22%3E%0A%3Ccircle%20cx%3D%224%22%20cy%3D%224%22%20r%3D%222%22%2F%3E%0A%3C%2Fsvg%3E%0A';
 
 		return array(
 			array(
@@ -232,6 +274,11 @@ class CSSMinTest extends MediaWikiTestCase {
 				'Can not embed large files',
 				'foo { /* @embed */ background: url(large.png); }',
 				"foo { background: url(http://localhost/w/large.png?timestamp); }",
+			),
+			array(
+				'SVG files are embedded without base64 encoding and unnecessary IE 6 and 7 fallback',
+				'foo { /* @embed */ background: url(circle.svg); }',
+				"foo { background: url($svg); }",
 			),
 			array(
 				'Two regular files in one rule',

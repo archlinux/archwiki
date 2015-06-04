@@ -130,6 +130,8 @@ class ActiveUsersPager extends UsersPager {
 	}
 
 	function doBatchLookups() {
+		parent::doBatchLookups();
+
 		$uids = array();
 		foreach ( $this->mResult as $row ) {
 			$uids[] = $row->user_id;
@@ -178,7 +180,8 @@ class ActiveUsersPager extends UsersPager {
 		// Note: This is a different loop than for user rights,
 		// because we're reusing it to build the group links
 		// at the same time
-		foreach ( $user->getGroups() as $group ) {
+		$groups_list = self::getGroups( intval( $row->user_id ), $this->userGroupCache );
+		foreach ( $groups_list as $group ) {
 			if ( in_array( $group, $this->hideGroups ) ) {
 				return '';
 			}
@@ -211,7 +214,8 @@ class ActiveUsersPager extends UsersPager {
 
 		# Username field
 		$out .= Xml::inputLabel( $this->msg( 'activeusers-from' )->text(),
-			'username', 'offset', 20, $this->requestedUser, array( 'tabindex' => 1 ) ) . '<br />';
+			'username', 'offset', 20, $this->requestedUser,
+			array( 'class' => 'mw-ui-input-inline', 'tabindex' => 1 ) ) . '<br />';
 
 		$out .= Xml::checkLabel( $this->msg( 'activeusers-hidebots' )->text(),
 			'hidebots', 'hidebots', $this->opts->getValue( 'hidebots' ), array( 'tabindex' => 2 ) );
@@ -263,11 +267,22 @@ class SpecialActiveUsers extends SpecialPage {
 		$out->wrapWikiMsg( "<div class='mw-activeusers-intro'>\n$1\n</div>",
 			array( 'activeusers-intro', $this->getLanguage()->formatNum( $days ) ) );
 
-		// Occasionally merge in new updates
-		$seconds = min( self::mergeActiveUsers( 600, $days ), $days * 86400 );
-		// Mention the level of staleness
-		$out->addWikiMsg( 'cachedspecial-viewing-cached-ttl',
-			$this->getLanguage()->formatDuration( $seconds ) );
+		// Get the timestamp of the last cache update
+		$dbr = wfGetDB( DB_SLAVE, 'recentchanges' );
+		$cTime = $dbr->selectField( 'querycache_info',
+			'qci_timestamp',
+			array( 'qci_type' => 'activeusers' )
+		);
+
+		$secondsOld = $cTime
+			? time() - wfTimestamp( TS_UNIX, $cTime )
+			: $days * 86400; // fully stale :)
+
+		if ( $secondsOld > 0 ) {
+			// Mention the level of staleness
+			$out->addWikiMsg( 'cachedspecial-viewing-cached-ttl',
+				$this->getLanguage()->formatDuration( $secondsOld ) );
+		}
 
 		$up = new ActiveUsersPager( $this->getContext(), null, $par );
 
@@ -288,150 +303,5 @@ class SpecialActiveUsers extends SpecialPage {
 
 	protected function getGroupName() {
 		return 'users';
-	}
-
-	/**
-	 * @param int $period Seconds (do updates no more often than this)
-	 * @param int $days How many days user must be idle before he is considered inactive
-	 * @return int How many seconds old the cache is
-	 */
-	public static function mergeActiveUsers( $period, $days ) {
-		$dbr = wfGetDB( DB_SLAVE );
-		$cTime = $dbr->selectField( 'querycache_info',
-			'qci_timestamp',
-			array( 'qci_type' => 'activeusers' )
-		);
-
-		if ( !wfReadOnly() ) {
-			if ( !$cTime || ( time() - wfTimestamp( TS_UNIX, $cTime ) ) > $period ) {
-				$dbw = wfGetDB( DB_MASTER );
-				if ( $dbw->estimateRowCount( 'recentchanges' ) <= 10000 ) {
-					$window = $days * 86400; // small wiki
-				} else {
-					$window = $period * 2;
-				}
-				$cTime = self::doQueryCacheUpdate( $dbw, $days, $window ) ?: $cTime;
-			}
-		}
-
-		return ( time() -
-			( $cTime ? wfTimestamp( TS_UNIX, $cTime ) : $days * 86400 ) );
-	}
-
-	/**
-	 * @param DatabaseBase $dbw Passed in from updateSpecialPages.php
-	 * @return void
-	 */
-	public static function cacheUpdate( DatabaseBase $dbw ) {
-		global $wgActiveUserDays;
-
-		self::doQueryCacheUpdate( $dbw, $wgActiveUserDays, $wgActiveUserDays * 86400 );
-	}
-
-	/**
-	 * Update the query cache as needed
-	 *
-	 * @param DatabaseBase $dbw
-	 * @param int $days How many days user must be idle before he is considered inactive
-	 * @param int $window Maximum time range of new data to scan (in seconds)
-	 * @return int|bool UNIX timestamp the cache is now up-to-date as of (false on error)
-	 */
-	protected static function doQueryCacheUpdate( DatabaseBase $dbw, $days, $window ) {
-		$lockKey = wfWikiID() . '-activeusers';
-		if ( !$dbw->lock( $lockKey, __METHOD__, 1 ) ) {
-			return false; // exclusive update (avoids duplicate entries)
-		}
-
-		$now = time();
-		$cTime = $dbw->selectField( 'querycache_info',
-			'qci_timestamp',
-			array( 'qci_type' => 'activeusers' )
-		);
-		$cTimeUnix = $cTime ? wfTimestamp( TS_UNIX, $cTime ) : 1;
-
-		// Pick the date range to fetch from. This is normally from the last
-		// update to till the present time, but has a limited window for sanity.
-		// If the window is limited, multiple runs are need to fully populate it.
-		$sTimestamp = max( $cTimeUnix, $now - $days * 86400 );
-		$eTimestamp = min( $sTimestamp + $window, $now );
-
-		// Get all the users active since the last update
-		$res = $dbw->select(
-			array( 'recentchanges' ),
-			array( 'rc_user_text', 'lastedittime' => 'MAX(rc_timestamp)' ),
-			array(
-				'rc_user > 0', // actual accounts
-				'rc_type != ' . $dbw->addQuotes( RC_EXTERNAL ), // no wikidata
-				'rc_log_type IS NULL OR rc_log_type != ' . $dbw->addQuotes( 'newusers' ),
-				'rc_timestamp >= ' . $dbw->addQuotes( $dbw->timestamp( $sTimestamp ) ),
-				'rc_timestamp <= ' . $dbw->addQuotes( $dbw->timestamp( $eTimestamp ) )
-			),
-			__METHOD__,
-			array(
-				'GROUP BY' => array( 'rc_user_text' ),
-				'ORDER BY' => 'NULL' // avoid filesort
-			)
-		);
-		$names = array();
-		foreach ( $res as $row ) {
-			$names[$row->rc_user_text] = $row->lastedittime;
-		}
-
-		// Rotate out users that have not edited in too long (according to old data set)
-		$dbw->delete( 'querycachetwo',
-			array(
-				'qcc_type' => 'activeusers',
-				'qcc_value < ' . $dbw->addQuotes( $now - $days * 86400 ) // TS_UNIX
-			),
-			__METHOD__
-		);
-
-		// Find which of the recently active users are already accounted for
-		if ( count( $names ) ) {
-			$res = $dbw->select( 'querycachetwo',
-				array( 'user_name' => 'qcc_title' ),
-				array(
-					'qcc_type' => 'activeusers',
-					'qcc_namespace' => NS_USER,
-					'qcc_title' => array_keys( $names ) ),
-				__METHOD__
-			);
-			foreach ( $res as $row ) {
-				unset( $names[$row->user_name] );
-			}
-		}
-
-		// Insert the users that need to be added to the list (which their last edit time
-		if ( count( $names ) ) {
-			$newRows = array();
-			foreach ( $names as $name => $lastEditTime ) {
-				$newRows[] = array(
-					'qcc_type' => 'activeusers',
-					'qcc_namespace' => NS_USER,
-					'qcc_title' => $name,
-					'qcc_value' => wfTimestamp( TS_UNIX, $lastEditTime ),
-					'qcc_namespacetwo' => 0, // unused
-					'qcc_titletwo' => '' // unused
-				);
-			}
-			foreach ( array_chunk( $newRows, 500 ) as $rowBatch ) {
-				$dbw->insert( 'querycachetwo', $rowBatch, __METHOD__ );
-				if ( !$dbw->trxLevel() ) {
-					wfWaitForSlaves();
-				}
-			}
-		}
-
-		// Touch the data freshness timestamp
-		$dbw->replace( 'querycache_info',
-			array( 'qci_type' ),
-			array( 'qci_type' => 'activeusers',
-				'qci_timestamp' => $dbw->timestamp( $eTimestamp ) ), // not always $now
-			__METHOD__
-		);
-
-		$dbw->unlock( $lockKey, __METHOD__ );
-
-		return $eTimestamp;
 	}
 }

@@ -24,10 +24,10 @@ class ApiQueryTitleBlacklistTest extends ApiTestCase {
 		$this->doLogin();
 
 		$wgTitleBlacklistSources = array(
-		    array(
-		         'type' => TBLSRC_FILE,
-		         'src'  => __DIR__ . '/testSource',
-		    ),
+			array(
+				'type' => 'file',
+				'src'  => __DIR__ . '/testSource',
+			),
 		);
 	}
 

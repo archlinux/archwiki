@@ -3,7 +3,8 @@
 		"authors": [
 			"Crt",
 			"Nike",
-			"Olli"
+			"Olli",
+			"Stryn"
 		]
 	},
 	"inputbox-desc": "Mahdollistaa ennalta määriteltyjen lomakkeiden sisällyttämisen sivuille.",
@@ -12,5 +13,7 @@
 	"inputbox-tryexact": "Yritä tarkkaa osumaa",
 	"inputbox-searchfulltext": "Etsi koko tekstiä",
 	"inputbox-createarticle": "Luo sivu",
+	"inputbox-postcomment": "Uusi osio",
+	"inputbox-postcommenttitle": "Uusi osio",
 	"inputbox-ns-main": "(sivut)"
 }

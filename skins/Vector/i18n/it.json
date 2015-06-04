@@ -6,7 +6,8 @@
 			"Gianfranco",
 			"Melos",
 			"Pietrodn",
-			"FRacco"
+			"FRacco",
+			"Elitre"
 		]
 	},
 	"vector-skin-desc": "Versione moderna del MonoBook con un aspetto rinnovato e molti miglioramenti dell'usabilità",
@@ -22,6 +23,6 @@
 	"vector-view-edit": "Modifica",
 	"vector-view-history": "Cronologia",
 	"vector-view-view": "Leggi",
-	"vector-view-viewsource": "Visualizza sorgente",
+	"vector-view-viewsource": "Visualizza wikitesto",
 	"vector-more-actions": "Altro"
 }

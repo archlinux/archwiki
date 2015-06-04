@@ -26,7 +26,6 @@
  *
  * @group Site
  *
- * @licence GNU GPL v2+
  * @author Jeroen De Dauw < jeroendedauw@gmail.com >
  */
 class TestSites {
@@ -108,7 +107,7 @@ class TestSites {
 	 * @since 0.1
 	 */
 	public static function insertIntoDb() {
-		$sitesTable = SiteSQLStore::newInstance();
+		$sitesTable = new DBSiteStore();
 		$sitesTable->clear();
 		$sitesTable->saveSites( TestSites::getSites() );
 	}

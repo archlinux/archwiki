@@ -38,9 +38,25 @@ class WebResponse {
 	}
 
 	/**
+	 * Get a response header
+	 * @param string $key The name of the header to get (case insensitive).
+	 * @return string|null The header value (if set); null otherwise.
+	 * @since 1.25
+	 */
+	public function getHeader( $key ) {
+		foreach ( headers_list() as $header ) {
+			list( $name, $val ) = explode( ':', $header, 2 );
+			if ( !strcasecmp( $name, $key ) ) {
+				return trim( $val );
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Set the browser cookie
-	 * @param string $name Name of cookie
-	 * @param string $value Value to give cookie
+	 * @param string $name The name of the cookie.
+	 * @param string $value The value to be stored in the cookie.
 	 * @param int|null $expire Unix timestamp (in seconds) when the cookie should expire.
 	 *        0 (the default) causes it to expire $wgCookieExpiration seconds from now.
 	 *        null causes it to be a session cookie.
@@ -56,7 +72,7 @@ class WebResponse {
 	 *   'prefix', 'domain', and 'secure'
 	 * @since 1.22 Replaced $prefix, $domain, and $forceSecure with $options
 	 */
-	public function setcookie( $name, $value, $expire = 0, $options = null ) {
+	public function setcookie( $name, $value, $expire = 0, $options = array() ) {
 		global $wgCookiePath, $wgCookiePrefix, $wgCookieDomain;
 		global $wgCookieSecure, $wgCookieExpiration, $wgCookieHttpOnly;
 
@@ -89,7 +105,7 @@ class WebResponse {
 
 		$func = $options['raw'] ? 'setrawcookie' : 'setcookie';
 
-		if ( wfRunHooks( 'WebResponseSetCookie', array( &$name, &$value, &$expire, $options ) ) ) {
+		if ( Hooks::run( 'WebResponseSetCookie', array( &$name, &$value, &$expire, $options ) ) ) {
 			wfDebugLog( 'cookie',
 				$func . ': "' . implode( '", "',
 					array(
@@ -148,9 +164,9 @@ class FauxResponse extends WebResponse {
 
 	/**
 	 * @param string $key The name of the header to get (case insensitive).
-	 * @return string
+	 * @return string|null The header value (if set); null otherwise.
 	 */
-	public function getheader( $key ) {
+	public function getHeader( $key ) {
 		$key = strtoupper( $key );
 
 		if ( isset( $this->headers[$key] ) ) {
@@ -169,20 +185,18 @@ class FauxResponse extends WebResponse {
 	}
 
 	/**
-	 * @todo document. It just ignore optional parameters.
-	 *
-	 * @param string $name Name of cookie
-	 * @param string $value Value to give cookie
-	 * @param int $expire Number of seconds til cookie expires (Default: 0)
-	 * @param array $options Ignored
+	 * @param string $name The name of the cookie.
+	 * @param string $value The value to be stored in the cookie.
+	 * @param int|null $expire Ignored in this faux subclass.
+	 * @param array $options Ignored in this faux subclass.
 	 */
-	public function setcookie( $name, $value, $expire = 0, $options = null ) {
+	public function setcookie( $name, $value, $expire = 0, $options = array() ) {
 		$this->cookies[$name] = $value;
 	}
 
 	/**
 	 * @param string $name
-	 * @return string
+	 * @return string|null
 	 */
 	public function getcookie( $name ) {
 		if ( isset( $this->cookies[$name] ) ) {

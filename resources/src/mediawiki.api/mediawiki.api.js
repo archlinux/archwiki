@@ -49,6 +49,16 @@
 	 *         console.log( data );
 	 *     } );
 	 *
+	 * Multiple values for a parameter can be specified using an array (since MW 1.25):
+	 *
+	 *     var api = new mw.Api();
+	 *     api.get( {
+	 *         action: 'query',
+	 *         meta: [ 'userinfo', 'siteinfo' ] // same effect as 'userinfo|siteinfo'
+	 *     } ).done ( function ( data ) {
+	 *         console.log( data );
+	 *     } );
+	 *
 	 * @class
 	 *
 	 * @constructor
@@ -75,31 +85,14 @@
 	mw.Api.prototype = {
 
 		/**
-		 * Normalize the ajax options for compatibility and/or convenience methods.
-		 *
-		 * @param {Object} [arg] An object contaning one or more of options.ajax.
-		 * @return {Object} Normalized ajax options.
-		 */
-		normalizeAjaxOptions: function ( arg ) {
-			// Arg argument is usually empty
-			// (before MW 1.20 it was used to pass ok callbacks)
-			var opts = arg || {};
-			// Options can also be a success callback handler
-			if ( typeof arg === 'function' ) {
-				opts = { ok: arg };
-			}
-			return opts;
-		},
-
-		/**
 		 * Perform API get request
 		 *
 		 * @param {Object} parameters
-		 * @param {Object|Function} [ajaxOptions]
+		 * @param {Object} [ajaxOptions]
 		 * @return {jQuery.Promise}
 		 */
 		get: function ( parameters, ajaxOptions ) {
-			ajaxOptions = this.normalizeAjaxOptions( ajaxOptions );
+			ajaxOptions = ajaxOptions || {};
 			ajaxOptions.type = 'GET';
 			return this.ajax( parameters, ajaxOptions );
 		},
@@ -110,11 +103,11 @@
 		 * TODO: Post actions for non-local hostnames will need proxy.
 		 *
 		 * @param {Object} parameters
-		 * @param {Object|Function} [ajaxOptions]
+		 * @param {Object} [ajaxOptions]
 		 * @return {jQuery.Promise}
 		 */
 		post: function ( parameters, ajaxOptions ) {
-			ajaxOptions = this.normalizeAjaxOptions( ajaxOptions );
+			ajaxOptions = ajaxOptions || {};
 			ajaxOptions.type = 'POST';
 			return this.ajax( parameters, ajaxOptions );
 		},
@@ -130,7 +123,6 @@
 		ajax: function ( parameters, ajaxOptions ) {
 			var token,
 				apiDeferred = $.Deferred(),
-				msg = 'Use of mediawiki.api callback params is deprecated. Use the Promise instead.',
 				xhr, key, formData;
 
 			parameters = $.extend( {}, this.defaults.parameters, parameters );
@@ -140,6 +132,12 @@
 			if ( parameters.token ) {
 				token = parameters.token;
 				delete parameters.token;
+			}
+
+			for ( key in parameters ) {
+				if ( $.isArray( parameters[key] ) ) {
+					parameters[key] = parameters[key].join( '|' );
+				}
 			}
 
 			// If multipart/form-data has been requested and emulation is possible, emulate it
@@ -181,21 +179,6 @@
 					// it'll be wrong and the server will fail to decode the POST body
 					delete ajaxOptions.contentType;
 				}
-			}
-
-			// Backwards compatibility: Before MediaWiki 1.20,
-			// callbacks were done with the 'ok' and 'err' property in ajaxOptions.
-			if ( ajaxOptions.ok ) {
-				mw.track( 'mw.deprecate', 'api.cbParam' );
-				mw.log.warn( msg );
-				apiDeferred.done( ajaxOptions.ok );
-				delete ajaxOptions.ok;
-			}
-			if ( ajaxOptions.err ) {
-				mw.track( 'mw.deprecate', 'api.cbParam' );
-				mw.log.warn( msg );
-				apiDeferred.fail( ajaxOptions.err );
-				delete ajaxOptions.err;
 			}
 
 			// Make the AJAX request
@@ -251,13 +234,7 @@
 		postWithToken: function ( tokenType, params, ajaxOptions ) {
 			var api = this;
 
-			// Do not allow deprecated ok-callback
-			// FIXME: Remove this check when the deprecated ok-callback is removed in #post
-			if ( $.isFunction( ajaxOptions ) ) {
-				ajaxOptions = undefined;
-			}
-
-			return api.getToken( tokenType ).then( function ( token ) {
+			return api.getToken( tokenType, params.assert ).then( function ( token ) {
 				params.token = token;
 				return api.post( params, ajaxOptions ).then(
 					// If no error, return to caller as-is
@@ -270,7 +247,7 @@
 								params.token = undefined;
 
 							// Try again, once
-							return api.getToken( tokenType ).then( function ( token ) {
+							return api.getToken( tokenType, params.assert ).then( function ( token ) {
 								params.token = token;
 								return api.post( params, ajaxOptions );
 							} );
@@ -286,19 +263,21 @@
 		/**
 		 * Get a token for a certain action from the API.
 		 *
+		 * The assert parameter is only for internal use by postWithToken.
+		 *
 		 * @param {string} type Token type
 		 * @return {jQuery.Promise}
 		 * @return {Function} return.done
 		 * @return {string} return.done.token Received token.
 		 * @since 1.22
 		 */
-		getToken: function ( type ) {
+		getToken: function ( type, assert ) {
 			var apiPromise,
 				promiseGroup = promises[ this.defaults.ajax.url ],
 				d = promiseGroup && promiseGroup[ type + 'Token' ];
 
 			if ( !d ) {
-				apiPromise = this.get( { action: 'tokens', type: type } );
+				apiPromise = this.get( { action: 'tokens', type: type, assert: assert } );
 
 				d = apiPromise
 					.then( function ( data ) {
@@ -357,7 +336,6 @@
 		'nomodule',
 		'mustbeposted',
 		'badaccess-groups',
-		'stashfailed',
 		'missingresult',
 		'missingparam',
 		'invalid-file-key',
@@ -379,7 +357,18 @@
 		'fetchfileerror',
 		'fileexists-shared-forbidden',
 		'invalidtitle',
-		'notloggedin'
+		'notloggedin',
+
+		// Stash-specific errors - expanded
+		'stashfailed',
+		'stasherror',
+		'stashedfilenotfound',
+		'stashpathinvalid',
+		'stashfilestorage',
+		'stashzerolength',
+		'stashnotloggedin',
+		'stashwrongowner',
+		'stashnosuchfilekey'
 	];
 
 	/**

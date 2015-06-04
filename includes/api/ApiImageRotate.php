@@ -42,7 +42,7 @@ class ApiImageRotate extends ApiBase {
 				$v = $val;
 			}
 			if ( $flag !== null ) {
-				$v[$flag] = '';
+				$v[$flag] = true;
 			}
 			$result[] = $v;
 		}
@@ -52,7 +52,8 @@ class ApiImageRotate extends ApiBase {
 		$params = $this->extractRequestParams();
 		$rotation = $params['rotation'];
 
-		$this->getResult()->beginContinuation( $params['continue'], array(), array() );
+		$continuationManager = new ApiContinuationManager( $this, array(), array() );
+		$this->setContinuationManager( $continuationManager );
 
 		$pageSet = $this->getPageSet();
 		$pageSet->execute();
@@ -70,10 +71,10 @@ class ApiImageRotate extends ApiBase {
 			$r['id'] = $title->getArticleID();
 			ApiQueryBase::addTitleInfo( $r, $title );
 			if ( !$title->exists() ) {
-				$r['missing'] = '';
+				$r['missing'] = true;
 			}
 
-			$file = wfFindFile( $title );
+			$file = wfFindFile( $title, array( 'latest' => true ) );
 			if ( !$file ) {
 				$r['result'] = 'Failure';
 				$r['errormessage'] = 'File does not exist';
@@ -122,7 +123,7 @@ class ApiImageRotate extends ApiBase {
 					$r['result'] = 'Success';
 				} else {
 					$r['result'] = 'Failure';
-					$r['errormessage'] = $this->getResult()->convertStatusToArray( $status );
+					$r['errormessage'] = $this->getErrorFormatter()->arrayFromStatus( $status );
 				}
 			} else {
 				$r['result'] = 'Failure';
@@ -131,9 +132,11 @@ class ApiImageRotate extends ApiBase {
 			$result[] = $r;
 		}
 		$apiResult = $this->getResult();
-		$apiResult->setIndexedTagName( $result, 'page' );
+		ApiResult::setIndexedTagName( $result, 'page' );
 		$apiResult->addValue( null, $this->getModuleName(), $result );
-		$apiResult->endContinuation();
+
+		$this->setContinuationManager( null );
+		$continuationManager->setContinuationIntoResult( $apiResult );
 	}
 
 	/**
@@ -184,7 +187,9 @@ class ApiImageRotate extends ApiBase {
 				ApiBase::PARAM_TYPE => array( '90', '180', '270' ),
 				ApiBase::PARAM_REQUIRED => true
 			),
-			'continue' => '',
+			'continue' => array(
+				ApiBase::PARAM_HELP_MSG => 'api-help-param-continue',
+			),
 		);
 		if ( $flags ) {
 			$result += $this->getPageSet()->getFinalParams( $flags );
@@ -193,26 +198,17 @@ class ApiImageRotate extends ApiBase {
 		return $result;
 	}
 
-	public function getParamDescription() {
-		$pageSet = $this->getPageSet();
-
-		return $pageSet->getFinalParamDescription() + array(
-			'rotation' => 'Degrees to rotate image clockwise',
-			'continue' => 'When more results are available, use this to continue',
-		);
-	}
-
-	public function getDescription() {
-		return 'Rotate one or more images.';
-	}
-
 	public function needsToken() {
 		return 'csrf';
 	}
 
-	public function getExamples() {
+	protected function getExamplesMessages() {
 		return array(
-			'api.php?action=imagerotate&titles=Example.jpg&rotation=90&token=123ABC',
+			'action=imagerotate&titles=File:Example.jpg&rotation=90&token=123ABC'
+				=> 'apihelp-imagerotate-example-simple',
+			'action=imagerotate&generator=categorymembers&gcmtitle=Category:Flip&gcmtype=file&' .
+				'rotation=180&token=123ABC'
+				=> 'apihelp-imagerotate-example-generator',
 		);
 	}
 }

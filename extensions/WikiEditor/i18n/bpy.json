@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Usingha"
+			"Usingha",
+			"Macofe"
 		]
 	},
 	"wikieditor": "উচ উইকিটেক্সট পাতানির ইন্টারফেসহান",
@@ -125,22 +126,6 @@
 	"wikieditor-toolbar-tool-replace-emptysearch": "মিলাপ কারানির কা কিত্তাউ না ইকরলে।",
 	"wikieditor-toolbar-tool-replace-invalidregex": "তি দিয়াসত রেগুলার এক্সপ্রেশনহান চুম নাইসে: $1",
 	"wikieditor-toolbar-section-characters": "বিশেষ আখরগি",
-	"wikieditor-toolbar-characters-page-latin": "লাতিন",
-	"wikieditor-toolbar-characters-page-latinextended": "সালকরিসি লাতিন",
-	"wikieditor-toolbar-characters-page-ipa": "আইপিএ (IPA)",
-	"wikieditor-toolbar-characters-page-symbols": "চিন্নতহানি",
-	"wikieditor-toolbar-characters-page-greek": "গ্রিক",
-	"wikieditor-toolbar-characters-page-cyrillic": "সিরিলিক",
-	"wikieditor-toolbar-characters-page-arabic": "আরবীয়",
-	"wikieditor-toolbar-characters-page-persian": "ফারসি",
-	"wikieditor-toolbar-characters-page-hebrew": "হিব্রু",
-	"wikieditor-toolbar-characters-page-bangla": "বাংলা",
-	"wikieditor-toolbar-characters-page-telugu": "তেলেগু",
-	"wikieditor-toolbar-characters-page-sinhala": "শিংহলী",
-	"wikieditor-toolbar-characters-page-gujarati": "গুজরাতি",
-	"wikieditor-toolbar-characters-page-thai": "থাই",
-	"wikieditor-toolbar-characters-page-lao": "লাও",
-	"wikieditor-toolbar-characters-page-khmer": "খেমার",
 	"wikieditor-toolbar-section-help": "পাংলাক",
 	"wikieditor-toolbar-help-heading-description": "বর্ণনা",
 	"wikieditor-toolbar-help-heading-syntax": "তি যেহান টাইপ করিসত",
@@ -186,8 +171,7 @@
 	"wikieditor-toolbar-help-content-olist-syntax": "# পারেঙর মেথেল<br /># পারেঙর মেথেল",
 	"wikieditor-toolbar-help-content-olist-result": "<ol><li>পারেঙর মেথেল</li><li>পারেঙর মেথেল</li></ol>",
 	"wikieditor-toolbar-help-content-file-description": "এম্বেডেড ফাইলগ",
-	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Example.png|thumb|ক্যাপশনর মেয়ক]]",
-	"wikieditor-toolbar-help-content-file-result": "<div style='width:104px;' class='thumbinner'><a title='ক্যাপশর মেয়েক' class='image' href='#'><img height='50' width='100' border='0' class='thumbimage' src='$2/WikiEditor/modules/images/toolbar/example-image.png' alt=''/></a><div class='thumbcaption'><div class='magnify'><a title='ডাঙরকর' class='internal' href='#'><img height='11' width='15' alt='' src='$1/common/images/magnify-clip.png'/></a></div>ক্যাপশর মেয়েক</div></div>",
+	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Example.png|$2|$3]]",
 	"wikieditor-toolbar-help-content-reference-description": "রেফারেন্সহানি",
 	"wikieditor-toolbar-help-content-reference-syntax": "পাতার ইকাহানি।&lt;ref name=\"test\"&gt;[http://www.example.org মিলাপর মেয়েকগি], আরতাউ মেয়েক।&lt;/ref&gt;",
 	"wikieditor-toolbar-help-content-reference-result": "পাতার ইকা।<sup><a href='#'>[1]</a></sup>",

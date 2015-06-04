@@ -82,13 +82,10 @@ class DeferredUpdates {
 	public static function doUpdates( $commit = '' ) {
 		global $wgDeferredUpdateList;
 
-		wfProfileIn( __METHOD__ );
-
 		$updates = array_merge( $wgDeferredUpdateList, self::$updates );
 
 		// No need to get master connections in case of empty updates array
 		if ( !count( $updates ) ) {
-			wfProfileOut( __METHOD__ );
 
 			return;
 		}
@@ -110,7 +107,7 @@ class DeferredUpdates {
 					if ( $doCommit && $dbw->trxLevel() ) {
 						$dbw->commit( __METHOD__, 'flush' );
 					}
-				} catch ( MWException $e ) {
+				} catch ( Exception $e ) {
 					// We don't want exceptions thrown during deferred updates to
 					// be reported to the user since the output is already sent.
 					// Instead we just log them.
@@ -122,7 +119,6 @@ class DeferredUpdates {
 			$updates = array_merge( $wgDeferredUpdateList, self::$updates );
 		}
 
-		wfProfileOut( __METHOD__ );
 	}
 
 	/**

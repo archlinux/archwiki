@@ -1,0 +1,25 @@
+{
+	"@metadata": {
+		"authors": [
+			"Assele"
+		]
+	},
+	"cite-desc": "Төшөрмәләр өсөн <nowiki><ref[ name=id]></nowiki> һәм <nowiki><references/></nowiki> билдәләрен өҫтәй",
+	"cite_error": "Өҙөмтә хатаһы: $1",
+	"cite_error_ref_numeric_key": "<code>&lt;ref&gt;</code> билдәһе дөрөҫ түгел;\nисем бөтөн һан була алмай. Тасуирларлыҡ исем ҡулланығыҙ.",
+	"cite_error_ref_no_key": "<code>&lt;ref&gt;</code> билдәһе дөрөҫ түгел;\nэстәлекһеҙ төшөрмәнең исеме булырға тейеш.",
+	"cite_error_ref_too_many_keys": "<code>&lt;ref&gt;</code> билдәһе дөрөҫ түгел;\nисемдәр дөрөҫ түгел, бәлки, бигерәк күп",
+	"cite_error_ref_no_input": "<code>&lt;ref&gt;</code> билдәһе дөрөҫ түгел;\nисемһеҙ төшөрмәнең эстәлеге булырға тейеш.",
+	"cite_error_references_invalid_parameters": "<code>&lt;references&gt;</code> билдәһе дөрөҫ түгел;\nпараметрҙар рөхсәт ителмәй.\n<code>&lt;references /&gt;</code> ҡулланығыҙ.",
+	"cite_error_references_invalid_parameters_group": "<code>&lt;references&gt;</code> билдәһе дөрөҫ түгел;\n\"group\" параметры ғына рөхсәт ителә.\n<code>&lt;references /&gt;</code> йәки <code>&lt;references group=\"...\" /&gt;</code> ҡулланығыҙ.",
+	"cite_error_references_no_backlink_label": "Кире ҡайтарыу һылтанмалары өсөн хәрефтәр етмәй.\n<nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki> система хәбәрен киңәйтергә кәрәк.",
+	"cite_error_no_link_label_group": "\"$1\" төркөмө өсөн ҡулланыусы һылтанмалары етмәй.\n[[MediaWiki:$2]] система хәбәрендә күберәк билдәләгеҙ.",
+	"cite_error_references_no_text": "<code>&lt;ref&gt;</code> билдәһе дөрөҫ түгел;\n<code>$1</code> төшөрмәләре өсөн текст юҡ",
+	"cite_error_included_ref": "<code>&lt;ref&gt;</code> билдәһе өсөн <code>&lt;/ref&gt;</code> ябыу билдәһе юҡ",
+	"cite_error_group_refs_without_references": "\"$1\" төркөмө өсөн <code>&lt;ref&gt;</code> билдәһе бар, әммә <code>&lt;references group=\"$1\"/&gt;</code> билдәһе юҡ",
+	"cite_error_references_group_mismatch": "<code>&lt;references&gt;</code> билдәһенең <code>&lt;ref&gt;</code> билдәһендә \"$1\" төркөмө атрибуты ҡаршылыҡтар тыуҙыра.",
+	"cite_error_references_missing_group": "<code>&lt;references&gt;</code> билдәһенең <code>&lt;ref&gt;</code> билдәһендә \"$1\" төркөмө атрибуты үрҙәге текста осрамай.",
+	"cite_error_references_missing_key": "<code>&lt;references&gt;</code> билдәһенең \"$1\" исемле <code>&lt;ref&gt;</code> билдәһе үрҙәге текста ҡулланылмай.",
+	"cite_error_references_no_key": "<code>&lt;references&gt;</code> билдәһенең <code>&lt;ref&gt;</code> билдәһендә исем атрибуты юҡ.",
+	"cite_error_empty_references_define": "<code>&lt;references&gt;</code> билдәһенең \"$1\" исемле <code>&lt;ref&gt;</code> билдәһенең эстәлеге юҡ."
+}

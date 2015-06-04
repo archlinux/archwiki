@@ -14,6 +14,9 @@ class MailAddressTest extends MediaWikiTestCase {
 	 * @covers MailAddress::newFromUser
 	 */
 	public function testNewFromUser() {
+		if ( wfIsWindows() ) {
+			$this->markTestSkipped( 'This test only works on non-Windows platforms' );
+		}
 		$user = $this->getMock( 'User' );
 		$user->expects( $this->any() )->method( 'getName' )->will( $this->returnValue( 'UserName' ) );
 		$user->expects( $this->any() )->method( 'getEmail' )->will( $this->returnValue( 'foo@bar.baz' ) );
@@ -49,6 +52,7 @@ class MailAddressTest extends MediaWikiTestCase {
 			array( false, 'foo@bar.baz', 'AUserName', 'Some real name', 'AUserName <foo@bar.baz>' ),
 			array( false, 'foo@bar.baz', '', '', 'foo@bar.baz' ),
 			array( true, 'foo@bar.baz', '', '', 'foo@bar.baz' ),
+			array( true, '', '', '', '' ),
 		);
 	}
 
@@ -59,5 +63,4 @@ class MailAddressTest extends MediaWikiTestCase {
 		$ma = new MailAddress( 'some@email.com', 'UserName', 'A real name' );
 		$this->assertEquals( $ma->toString(), (string)$ma );
 	}
-
 }

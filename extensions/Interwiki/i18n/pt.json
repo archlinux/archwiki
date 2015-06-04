@@ -64,5 +64,5 @@
 	"interwiki-local-description": "Estes prefixos existem localmente. Qualquer duplicação da configuração global irá substituir a definição global.",
 	"interwiki-links": "Prefixos interwiki",
 	"interwiki-language-links": "Prefixos interlíngua",
-	"interwiki-language-description": "Estes prefixos correspondem a códigos de idioma definidos e serão usados para criar a lista \"Noutros idiomas\" quando adicionados a uma página."
+	"interwiki-language-description": "Estes prefixos correspondem a códigos de idioma definidos e serão usados para criar a lista \"{{int:otherlanguages}}\" quando adicionados a uma página."
 }

@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Csisc",
-			"Malekbr"
+			"Malekbr",
+			"GeekEmad"
 		]
 	},
 	"vector-action-addsection": "أضف موضوعا",
@@ -13,7 +14,7 @@
 	"vector-action-unprotect": "غير الحماية",
 	"vector-view-create": "أنشئ",
 	"vector-view-edit": "Baddel",
-	"vector-view-history": "Warri l'historique",
+	"vector-view-history": "Warri listorik",
 	"vector-view-view": "Aqra",
 	"vector-view-viewsource": "اعرض المصدر"
 }

@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Hanberke"
+			"Hanberke",
+			"Macofe"
 		]
 	},
 	"wikieditor": "Giňeldilen wikitekst redaktirleme interfeýsi",
@@ -12,9 +13,6 @@
 	"wikieditor-preview-tab": "Deslapky syn",
 	"wikieditor-preview-changes-tab": "Üýtgeşmeler",
 	"wikieditor-preview-loading": "Ýüklenilýär...",
-	"wikieditor-previewDialog-preference": "Deslapky syn dialogyny aç",
-	"wikieditor-previewDialog-tab": "Deslapky syn",
-	"wikieditor-previewDialog-loading": "Ýüklenilýär...",
 	"wikieditor-publish-preference": "Ädimme-ädim neşir etmekligi aç",
 	"wikieditor-publish-button-publish": "Neşir et",
 	"wikieditor-publish-button-cancel": "Goýbolsun et",
@@ -128,22 +126,6 @@
 	"wikieditor-toolbar-tool-replace-emptysearch": "Gözlär ýaly hiçbir zat ýazmadyňyz.",
 	"wikieditor-toolbar-tool-replace-invalidregex": "Ýazan adaty aňlatmaňyz nädogry: $1",
 	"wikieditor-toolbar-section-characters": "Ýörite simwollar",
-	"wikieditor-toolbar-characters-page-latin": "Latyn",
-	"wikieditor-toolbar-characters-page-latinextended": "Giňeldilen latyn",
-	"wikieditor-toolbar-characters-page-ipa": "HFE (IPA)",
-	"wikieditor-toolbar-characters-page-symbols": "Simwollar",
-	"wikieditor-toolbar-characters-page-greek": "Grek",
-	"wikieditor-toolbar-characters-page-cyrillic": "Kirillisa",
-	"wikieditor-toolbar-characters-page-arabic": "Arap",
-	"wikieditor-toolbar-characters-page-persian": "Parsça",
-	"wikieditor-toolbar-characters-page-hebrew": "Iwrit",
-	"wikieditor-toolbar-characters-page-bangla": "Bengalça",
-	"wikieditor-toolbar-characters-page-telugu": "Telugu",
-	"wikieditor-toolbar-characters-page-sinhala": "Singal",
-	"wikieditor-toolbar-characters-page-gujarati": "Güjerat",
-	"wikieditor-toolbar-characters-page-thai": "Taýlandça",
-	"wikieditor-toolbar-characters-page-lao": "Laosça",
-	"wikieditor-toolbar-characters-page-khmer": "Khmerçe",
 	"wikieditor-toolbar-section-help": "Ýardam",
 	"wikieditor-toolbar-help-heading-description": "Düşündiriş",
 	"wikieditor-toolbar-help-heading-syntax": "Ýazylyşy",
@@ -189,8 +171,7 @@
 	"wikieditor-toolbar-help-content-olist-syntax": "# Sanaw elementi<br /># Sanaw elementi",
 	"wikieditor-toolbar-help-content-olist-result": "<ol><li>Sanaw elementi</li><li>Sanaw elementi</li></ol>",
 	"wikieditor-toolbar-help-content-file-description": "Salnan faýl",
-	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Example.png|thumb|Titriň teksti]]",
-	"wikieditor-toolbar-help-content-file-result": "<div style='width:104px;' class='thumbinner'><a title='Titriň teksti' class='image' href='#'><img height='50' width='100' border='0' class='thumbimage' src='$2/WikiEditor/modules/images/toolbar/example-image.png' alt=''/></a><div class='thumbcaption'><div class='magnify'><a title='Ulalt' class='internal' href='#'><img height='11' width='15' alt='' src='$1/common/images/magnify-clip.png'/></a></div>Titriň teksti</div></div>",
+	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Example.png|$2|$3]]",
 	"wikieditor-toolbar-help-content-reference-description": "Salgylanma",
 	"wikieditor-toolbar-help-content-reference-syntax": "Sahypanyň teksti.&lt;ref name=\"test\"&gt;[http://www.example.org Çykgydyň teksti], goşmaça tekst.&lt;/ref&gt;",
 	"wikieditor-toolbar-help-content-reference-result": "Sahypa teksti.<sup><a href='#'>[1]</a></sup>",

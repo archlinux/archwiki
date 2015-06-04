@@ -109,7 +109,7 @@ $specialPageAliases = array(
 	'Movepage'                  => array( 'PindahLaman', 'Pindahkan_laman' ),
 	'Mycontributions'           => array( 'JariahDenai', 'Jariah_Ambo' ),
 	'Mypage'                    => array( 'LamanDenai', 'Laman_Ambo' ),
-	'Mytalk'                    => array( 'RundiangDenai', 'Laman_rundiang__Ambo' ),
+	'Mytalk'                    => array( 'RundiangDenai', 'Laman_rundiang_Ambo' ),
 	'Myuploads'                 => array( 'DenaiMuek', 'Nan_Ambo_muek' ),
 	'Newimages'                 => array( 'BerkasBaru', 'Berkas_baru' ),
 	'Newpages'                  => array( 'LamanBaru', 'Laman_baru' ),
@@ -156,8 +156,8 @@ $specialPageAliases = array(
 
 $magicWords = array(
 	'redirect'                  => array( '0', '#ALIAH', '#ALIH', '#REDIRECT' ),
-	'pagesincategory_all'       => array( '0', 'sado', 'all' ),
-	'pagesincategory_pages'     => array( '0', 'laman', 'pages' ),
+	'pagesincategory_all'       => array( '0', 'sado', 'semua', 'all' ),
+	'pagesincategory_pages'     => array( '0', 'laman', 'halaman', 'pages' ),
 	'pagesincategory_files'     => array( '0', 'berkas', 'files' ),
 );
 

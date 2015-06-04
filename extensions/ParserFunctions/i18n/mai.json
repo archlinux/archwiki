@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"Tulsi Bhagat"
+		]
+	},
+	"pfunc_expr_unrecognised_word": "एक्स्प्रेशन गल्ती: अनपेक्षित शब्द \"$1\"।",
+	"pfunc_expr_unexpected_operator": "एक्स्प्रेशन गल्ती: अनपेक्षित $1 ऑपरेटर।",
+	"pfunc_expr_unrecognised_punctuation": "एक्स्प्रेशन गल्ती: अनपेक्षित उद्गार चिन्ह \"$1\"।"
+}

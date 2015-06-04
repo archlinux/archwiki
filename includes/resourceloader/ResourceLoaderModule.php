@@ -135,6 +135,16 @@ abstract class ResourceLoaderModule {
 	}
 
 	/**
+	 * Takes named templates by the module and returns an array mapping.
+	 *
+	 * @return array of templates mapping template alias to content
+	 */
+	public function getTemplates() {
+		// Stub, override expected.
+		return array();
+	}
+
+	/**
 	 * @return Config
 	 * @since 1.24
 	 */
@@ -378,12 +388,12 @@ abstract class ResourceLoaderModule {
 	 * Get the last modification timestamp of the message blob for this
 	 * module in a given language.
 	 * @param string $lang Language code
-	 * @return int UNIX timestamp, or 0 if the module doesn't have messages
+	 * @return int UNIX timestamp
 	 */
 	public function getMsgBlobMtime( $lang ) {
 		if ( !isset( $this->msgBlobMtime[$lang] ) ) {
 			if ( !count( $this->getMessages() ) ) {
-				return 0;
+				return 1;
 			}
 
 			$dbr = wfGetDB( DB_SLAVE );
@@ -406,7 +416,7 @@ abstract class ResourceLoaderModule {
 	 * Set a preloaded message blob last modification timestamp. Used so we
 	 * can load this information for all modules at once.
 	 * @param string $lang Language code
-	 * @param int $mtime UNIX timestamp or 0 if there is no such blob
+	 * @param int $mtime UNIX timestamp
 	 */
 	public function setMsgBlobMtime( $lang, $mtime ) {
 		$this->msgBlobMtime[$lang] = $mtime;
@@ -433,7 +443,6 @@ abstract class ResourceLoaderModule {
 	 * @return int UNIX timestamp
 	 */
 	public function getModifiedTime( ResourceLoaderContext $context ) {
-		// 0 would mean now
 		return 1;
 	}
 
@@ -441,30 +450,34 @@ abstract class ResourceLoaderModule {
 	 * Helper method for calculating when the module's hash (if it has one) changed.
 	 *
 	 * @param ResourceLoaderContext $context
-	 * @return int UNIX timestamp or 0 if no hash was provided
-	 *  by getModifiedHash()
+	 * @return int UNIX timestamp
 	 */
 	public function getHashMtime( ResourceLoaderContext $context ) {
 		$hash = $this->getModifiedHash( $context );
 		if ( !is_string( $hash ) ) {
-			return 0;
+			return 1;
 		}
 
+		// Embed the hash itself in the cache key. This allows for a few nifty things:
+		// - During deployment, servers with old and new versions of the code communicating
+		//   with the same memcached will not override the same key repeatedly increasing
+		//   the timestamp.
+		// - In case of the definition changing and then changing back in a short period of time
+		//   (e.g. in case of a revert or a corrupt server) the old timestamp and client-side cache
+		//   url will be re-used.
+		// - If different context-combinations (e.g. same skin, same language or some combination
+		//   thereof) result in the same definition, they will use the same hash and timestamp.
 		$cache = wfGetCache( CACHE_ANYTHING );
-		$key = wfMemcKey( 'resourceloader', 'modulemodifiedhash', $this->getName(), $hash );
+		$key = wfMemcKey( 'resourceloader', 'hashmtime', $this->getName(), $hash );
 
 		$data = $cache->get( $key );
-		if ( is_array( $data ) && $data['hash'] === $hash ) {
-			// Hash is still the same, re-use the timestamp of when we first saw this hash.
-			return $data['timestamp'];
+		if ( is_int( $data ) && $data > 0 ) {
+			// We've seen this hash before, re-use the timestamp of when we first saw it.
+			return $data;
 		}
 
-		$timestamp = wfTimestamp();
-		$cache->set( $key, array(
-			'hash' => $hash,
-			'timestamp' => $timestamp,
-		) );
-
+		$timestamp = time();
+		$cache->set( $key, $timestamp );
 		return $timestamp;
 	}
 
@@ -487,46 +500,29 @@ abstract class ResourceLoaderModule {
 	 * @since 1.23
 	 *
 	 * @param ResourceLoaderContext $context
-	 * @return int UNIX timestamp or 0 if no definition summary was provided
-	 *  by getDefinitionSummary()
+	 * @return int UNIX timestamp
 	 */
 	public function getDefinitionMtime( ResourceLoaderContext $context ) {
-		wfProfileIn( __METHOD__ );
 		$summary = $this->getDefinitionSummary( $context );
 		if ( $summary === null ) {
-			wfProfileOut( __METHOD__ );
-			return 0;
+			return 1;
 		}
 
 		$hash = md5( json_encode( $summary ) );
-
 		$cache = wfGetCache( CACHE_ANYTHING );
-
-		// Embed the hash itself in the cache key. This allows for a few nifty things:
-		// - During deployment, servers with old and new versions of the code communicating
-		//   with the same memcached will not override the same key repeatedly increasing
-		//   the timestamp.
-		// - In case of the definition changing and then changing back in a short period of time
-		//   (e.g. in case of a revert or a corrupt server) the old timestamp and client-side cache
-		//   url will be re-used.
-		// - If different context-combinations (e.g. same skin, same language or some combination
-		//   thereof) result in the same definition, they will use the same hash and timestamp.
 		$key = wfMemcKey( 'resourceloader', 'moduledefinition', $this->getName(), $hash );
 
 		$data = $cache->get( $key );
 		if ( is_int( $data ) && $data > 0 ) {
 			// We've seen this hash before, re-use the timestamp of when we first saw it.
-			wfProfileOut( __METHOD__ );
 			return $data;
 		}
 
-		wfDebugLog( 'resourceloader', __METHOD__ . ": New definition hash for module "
-			. "{$this->getName()} in context {$context->getHash()}: $hash." );
+		wfDebugLog( 'resourceloader', __METHOD__ . ": New definition for module "
+			. "{$this->getName()} in context \"{$context->getHash()}\"" );
 
 		$timestamp = time();
 		$cache->set( $key, $timestamp );
-
-		wfProfileOut( __METHOD__ );
 		return $timestamp;
 	}
 
@@ -630,16 +626,13 @@ abstract class ResourceLoaderModule {
 	 * Safe version of filemtime(), which doesn't throw a PHP warning if the file doesn't exist
 	 * but returns 1 instead.
 	 * @param string $filename File name
-	 * @return int UNIX timestamp, or 1 if the file doesn't exist
+	 * @return int UNIX timestamp
 	 */
 	protected static function safeFilemtime( $filename ) {
-		if ( file_exists( $filename ) ) {
-			return filemtime( $filename );
-		} else {
-			// We only ever map this function on an array if we're gonna call max() after,
-			// so return our standard minimum timestamps here. This is 1, not 0, because
-			// wfTimestamp(0) == NOW
-			return 1;
-		}
+		wfSuppressWarnings();
+		$mtime = filemtime( $filename ) ?: 1;
+		wfRestoreWarnings();
+
+		return $mtime;
 	}
 }

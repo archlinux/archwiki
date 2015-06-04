@@ -21,7 +21,7 @@ class LU_GitHubFetcher extends LU_HttpFetcher {
 
 		$json = Http::get( "https://api.github.com/repos/{$m['org']}/{$m['repo']}/contents/{$m['path']}" );
 		if ( !$json ) {
-			throw new MWException( "Unable to get directory listing for {$m['org']}/{$m['repo']}" );
+			throw new Exception( "Unable to get directory listing for {$m['org']}/{$m['repo']}" );
 		}
 
 		$files = array();

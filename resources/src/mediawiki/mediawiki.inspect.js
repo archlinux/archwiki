@@ -7,6 +7,9 @@
 /*jshint devel:true */
 ( function ( mw, $ ) {
 
+	var inspect,
+		hasOwn = Object.prototype.hasOwnProperty;
+
 	function sortByProperty( array, prop, descending ) {
 		var order = descending ? -1 : 1;
 		return array.sort( function ( a, b ) {
@@ -16,16 +19,20 @@
 
 	function humanSize( bytes ) {
 		if ( !$.isNumeric( bytes ) || bytes === 0 ) { return bytes; }
-		var i = 0, units = [ '', ' kB', ' MB', ' GB', ' TB', ' PB' ];
+		var i = 0,
+			units = [ '', ' kB', ' MB', ' GB', ' TB', ' PB' ];
+
 		for ( ; bytes >= 1024; bytes /= 1024 ) { i++; }
-		return bytes.toFixed( 1 ) + units[i];
+		// Maintain one decimal for kB and above, but don't
+		// add ".0" for bytes.
+		return bytes.toFixed( i > 0 ? 1 : 0 ) + units[i];
 	}
 
 	/**
 	 * @class mw.inspect
 	 * @singleton
 	 */
-	var inspect = {
+	inspect = {
 
 		/**
 		 * Return a map of all dependency relationships between loaded modules.
@@ -34,16 +41,21 @@
 		 *  two properties, 'requires' and 'requiredBy'.
 		 */
 		getDependencyGraph: function () {
-			var modules = inspect.getLoadedModules(), graph = {};
+			var modules = inspect.getLoadedModules(),
+				graph = {};
 
 			$.each( modules, function ( moduleIndex, moduleName ) {
 				var dependencies = mw.loader.moduleRegistry[moduleName].dependencies || [];
 
-				graph[moduleName] = graph[moduleName] || { requiredBy: [] };
+				if ( !hasOwn.call( graph, moduleName ) ) {
+					graph[moduleName] = { requiredBy: [] };
+				}
 				graph[moduleName].requires = dependencies;
 
 				$.each( dependencies, function ( depIndex, depName ) {
-					graph[depName] = graph[depName] || { requiredBy: [] };
+					if ( !hasOwn.call( graph, depName ) ) {
+						graph[depName] = { requiredBy: [] };
+					}
 					graph[depName].requiredBy.push( moduleName );
 				} );
 			} );

@@ -20,12 +20,10 @@
  * @defgroup Maintenance Maintenance
  */
 
-// Make sure we're on PHP5.3.2 or better
-if ( !function_exists( 'version_compare' ) || version_compare( PHP_VERSION, '5.3.2' ) < 0 ) {
-	// We need to use dirname( __FILE__ ) here cause __DIR__ is PHP5.3+
-	require_once dirname( __FILE__ ) . '/../includes/PHPVersionError.php';
-	wfPHPVersionError( 'cli' );
-}
+// Bail on old versions of PHP, or if composer has not been run yet to install
+// dependencies. Using dirname( __FILE__ ) here because __DIR__ is PHP5.3+.
+require_once dirname( __FILE__ ) . '/../includes/PHPVersionCheck.php';
+wfEntryPointCheck( 'cli' );
 
 /**
  * @defgroup MaintenanceArchive Maintenance archives
@@ -102,7 +100,7 @@ abstract class Maintenance {
 	private $mDependantParameters = array();
 
 	/**
-	 * Used by getDD() / setDB()
+	 * Used by getDB() / setDB()
 	 * @var DatabaseBase
 	 */
 	private $mDb = null;
@@ -446,7 +444,7 @@ abstract class Maintenance {
 		$this->addOption( 'server', "The protocol and server name to use in URLs, e.g. " .
 			"http://en.wikipedia.org. This is sometimes necessary because " .
 			"server name detection may fail in command line scripts.", false, true );
-		$this->addOption( 'profiler', 'Set to "text" or "trace" to show profiling output', false, true );
+		$this->addOption( 'profiler', 'Profiler output format (usually "text")', false, true );
 
 		# Save generic options to display them separately in help
 		$this->mGenericParameters = $this->mParams;
@@ -598,6 +596,23 @@ abstract class Maintenance {
 	}
 
 	/**
+	 * Activate the profiler (assuming $wgProfiler is set)
+	 */
+	protected function activateProfiler() {
+		global $wgProfiler;
+
+		$output = $this->getOption( 'profiler' );
+		if ( $output && is_array( $wgProfiler ) && isset( $wgProfiler['class'] ) ) {
+			$class = $wgProfiler['class'];
+			$profiler = new $class(
+				array( 'sampling' => 1, 'output' => $output ) + $wgProfiler
+			);
+			$profiler->setTemplated( true );
+			Profiler::replaceStubInstance( $profiler );
+		}
+	}
+
+	/**
 	 * Clear all params and arguments.
 	 */
 	public function clearParamsAndArgs() {
@@ -679,6 +694,9 @@ abstract class Maintenance {
 					}
 					$options[$option] = $param;
 				}
+			} elseif ( $arg == '-' ) {
+				# Lonely "-", often used to indicate stdin or stdout.
+				$args[] = $arg;
 			} elseif ( substr( $arg, 0, 1 ) == '-' ) {
 				# Short options
 				$argLength = strlen( $arg );
@@ -920,26 +938,19 @@ abstract class Maintenance {
 			LBFactory::destroyInstance();
 		}
 
+		// Per-script profiling; useful for debugging
+		$this->activateProfiler();
+
 		$this->afterFinalSetup();
 
 		$wgShowSQLErrors = true;
 
-		// @codingStandardsIgnoreStart Allow error supppression. wfSuppressWarnings()
-		// is not avaiable.
+		// @codingStandardsIgnoreStart Allow error suppression. wfSuppressWarnings()
+		// is not available.
 		@set_time_limit( 0 );
 		// @codingStandardsIgnoreStart
 
 		$this->adjustMemoryLimit();
-
-		// Per-script profiling; useful for debugging
-		$forcedProfiler = $this->getOption( 'profiler' );
-		if ( $forcedProfiler === 'text' ) {
-			Profiler::setInstance( new ProfilerSimpleText( array() ) );
-			Profiler::instance()->setTemplated( true );
-		} elseif ( $forcedProfiler === 'trace' ) {
-			Profiler::setInstance( new ProfilerSimpleTrace( array() ) );
-			Profiler::instance()->setTemplated( true );
-		}
 	}
 
 	/**
@@ -1063,7 +1074,7 @@ abstract class Maintenance {
 	 *
 	 * @return DatabaseBase
 	 */
-	protected function &getDB( $db, $groups = array(), $wiki = false ) {
+	protected function getDB( $db, $groups = array(), $wiki = false ) {
 		if ( is_null( $this->mDb ) ) {
 			return wfGetDB( $db, $groups, $wiki );
 		} else {
@@ -1076,7 +1087,7 @@ abstract class Maintenance {
 	 *
 	 * @param DatabaseBase $db Database object to be used
 	 */
-	public function setDB( &$db ) {
+	public function setDB( $db ) {
 		$this->mDb = $db;
 	}
 
@@ -1084,7 +1095,7 @@ abstract class Maintenance {
 	 * Lock the search index
 	 * @param DatabaseBase &$db
 	 */
-	private function lockSearchindex( &$db ) {
+	private function lockSearchindex( $db ) {
 		$write = array( 'searchindex' );
 		$read = array( 'page', 'revision', 'text', 'interwiki', 'l10n_cache', 'user' );
 		$db->lockTables( $read, $write, __CLASS__ . '::' . __METHOD__ );
@@ -1094,7 +1105,7 @@ abstract class Maintenance {
 	 * Unlock the tables
 	 * @param DatabaseBase &$db
 	 */
-	private function unlockSearchindex( &$db ) {
+	private function unlockSearchindex( $db ) {
 		$db->unlockTables( __CLASS__ . '::' . __METHOD__ );
 	}
 
@@ -1103,7 +1114,7 @@ abstract class Maintenance {
 	 * Since the lock is low-priority, queued reads will be able to complete
 	 * @param DatabaseBase &$db
 	 */
-	private function relockSearchindex( &$db ) {
+	private function relockSearchindex( $db ) {
 		$this->unlockSearchindex( $db );
 		$this->lockSearchindex( $db );
 	}
@@ -1174,7 +1185,7 @@ abstract class Maintenance {
 	 * We default as considering stdin a tty (for nice readline methods)
 	 * but treating stout as not a tty to avoid color codes
 	 *
-	 * @param int $fd File descriptor
+	 * @param mixed $fd File descriptor
 	 * @return bool
 	 */
 	public static function posix_isatty( $fd ) {
@@ -1197,7 +1208,13 @@ abstract class Maintenance {
 		}
 
 		if ( $isatty && function_exists( 'readline' ) ) {
-			return readline( $prompt );
+			$resp = readline( $prompt );
+			if ( $resp === null ) {
+				// Workaround for https://github.com/facebook/hhvm/issues/4776
+				return false;
+			} else {
+				return $resp;
+			}
 		} else {
 			if ( $isatty ) {
 				$st = self::readlineEmulation( $prompt );
@@ -1311,7 +1328,7 @@ abstract class LoggedUpdateMaintenance extends Maintenance {
 	}
 
 	/**
-	 * Message to show the the update log was unable to log the completion of this update
+	 * Message to show that the update log was unable to log the completion of this update
 	 * @return string
 	 */
 	protected function updatelogFailedMessage() {

@@ -21,5 +21,11 @@
 	"titleblacklist-warning": "<strong>Предупредување: Страницава можат да ја уредуваат само администратори и други корисници со правото <code>tboverride</code> бидејќи се совпаѓа со следниов наслов на црниот список:</strong><br /><code>$1</code>",
 	"right-tboverride": "Занемарување на црниот список на наслови или корисници",
 	"right-tboverride-account": "Потиснување на црниот список на кориснички имиња",
-	"right-titleblacklistlog": "Преглед на дневникот на наслови на црниот список"
+	"right-titleblacklistlog": "Преглед на дневникот на наслови на црниот список",
+	"apihelp-titleblacklist-description": "Провери наслов на статија, име на податотека или корисничко име во Црниот список.",
+	"apihelp-titleblacklist-param-title": "Низата што треба да се провери во црниот список.",
+	"apihelp-titleblacklist-param-action": "Дејството што треба да се провери.",
+	"apihelp-titleblacklist-param-nooverride": "Не се обидувај да наметнеш врз titleblacklist.",
+	"apihelp-titleblacklist-example-1": "Провери дали [[Foo]] е на црниот список",
+	"apihelp-titleblacklist-example-2": "Провери дали [[Bar]] е на црниот список за уредување"
 }

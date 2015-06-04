@@ -19,5 +19,8 @@
 	"log-description-spamblacklist": "האירועים האלה עוקבים אחרי הפעלות של רשימה שחורה של ספאם.",
 	"logentry-spamblacklist-hit": "$1 {{GENDER:$1|גרם|גרמה}} לפעולת רשימה שחורה בדף $3 תוך כדי ניסיון להוסיף את הכתובת $4.",
 	"right-spamblacklistlog": "תצוגת יומן רשימה שחורה של ספאם",
-	"action-spamblacklistlog": "תצוגת יומן רשימה שחורה של ספאם"
+	"action-spamblacklistlog": "תצוגת יומן רשימה שחורה של ספאם",
+	"apihelp-spamblacklist-description": "לבדוק URL אחד או יותר אל מול SpamBlacklist.",
+	"apihelp-spamblacklist-param-url": "URL־ים לבדוק אל מול SpamBlacklist.",
+	"apihelp-spamblacklist-example-1": "לבדוק שני URL־ים אל מול הרשימה השחורה."
 }

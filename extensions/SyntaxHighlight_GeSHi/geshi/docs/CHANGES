@@ -1,7 +1,7 @@
 
               CHANGES - Changelog for GeSHi (geshi.php only)
 
-Changes to the code are listed under the version they occured in, with who suggested
+Changes to the code are listed under the version they occurred in, with who suggested
 it by each one (if there's nobody listed as suggesting it I dreamed it up :)). Users
 who suggested an idea often also provided the code that was used as a basis for the
 changes - thanks to all who suggested these ideas and gave me the code to show me how!
@@ -12,6 +12,59 @@ modified by me for consistency/bug fixing.
 Please send any bug reports to BenBE@omorphia.de, or use the bug report tracker
 at sourceforge (http://sourceforge.net/tracker/?group_id=114997&atid=670231)
 
+Version 1.0.8.12
+  -  Added language files
+     * AIMMS (Guido Diepen)
+     * C with WinAPI (BenBE)
+     * C++ with WinAPI (BenBE)
+     * Chapel (Richard Molitor)
+     * Dart (Edward Hart)
+     * EZT (Ramesh Vishveshwar)
+     * ISPF Panel (Ramesh Vishveshwar)
+     * Job Control Language (Ramesh Vishveshwar)
+     * nginx (Cliff Wells, Deoren Moor, Thomas Joiner)
+     * Nimrod (Dennis Felsing)
+     * PostScript (BenBE)
+     * QML (J-P Nurmi)
+     * Racket (Tim Brown)
+     * RBScript (Deng Wen Gang)
+     * Rust (Dave Hodder)
+     * SCL (Leonhard Hösch)
+     * StandardML (eldesh)
+     * VBScript (Rory Prendergast)
+  -  Allow for global setup of all keyword and comments style at once using '*' (BenBE)
+  -  Non-persistent XSS in example contrib script (BenBE, present in intermediate dev versions)
+  -  Fix short tag usage to allow for configurations where short tags are disabled (BenBE)
+  -  Updated COPYING to use updated version of GPL 2.0 (BenBE)
+  -  Improvements to language files (BenBE)
+     * Updated Documentation Link for LaTeX (Johannes Ähling)
+     * Fix some highlighting problems with Octave (Carnë Draug, Juan Pablo Carbajal)
+     * Fix a minor issue with comments in Visual Basic (Plançon, BenBE)
+     * Some LangCheck issues with Visual Basic (BenBE)
+     * Fix a minor issue with keywords in SQL (Gerrit, BenBE)
+     * Force comments in INI files to be their own line (BenBE)
+     * Fix problem with T-SQL keyword highlighting (James Horsley, BenBE)
+     * Some more keywords for Bash (BenBE)
+     * Updated LSL2 language file (BenBE, Sei Lisa)
+     * Fixed langcheck errors in Lua langfile (BenBE)
+     * Fixed double quotes in Tcl (BenBE, stecue)
+     * Updated PARI/GP language file (Charles R Greathouse IV, BenBE)
+     * Updated Cobol language file (Edward Hart, BenBE)
+     * Updated Verilog language file (Tony Carrillo, BenBE)
+     * Updated Lisp language file (Edward Hart, BenBE)
+     * Updated list of Debian and Ubuntu releases (BenBE)
+     * Implemented C++11 string literal support (BenBE)
+     * Updated list of commands on Bash language file (BenBE)
+     * Updated PHP language file (Levi Morrisson)
+     * Updated Haskell language file (duplode)
+     * Updated NSIS language file (Jan T. Scott, BenBE)
+     * Add raw string support for Rust (mbrown1413)
+     * Fix LangCheck issues with LOLcode language file (mudhailess, BenBE)
+     * Updated LSL2 language file (Sei Lisa, BenBE)
+     * Updated Oxygene language file (Carlo Kok, BenBE)
+     * Fixed TCL comment processing (Sei Lisa)
+     * Fixed C++ (Qt) documentation links (Sei Lisa)
+     * Updated CSS language file to include CSS3 keywords (Zéfling, BenBE))
 Version 1.0.8.11
   -  Added language files
      * ARM (Marat Dukhan)
@@ -731,7 +784,7 @@ Version 1.0.7.6
   -  Used hardquote support for ' strings in perl (Cliff Stanford)
   -  Fixed setting of language path (Cliff Stanford)
   -  Display source correctly formatted with line numbers (if requested) if an error
-     has occured (several people)
+     has occurred (several people)
   -  Having no source to highlight is not an error condition anymore
   -  Delphi language updated to include more keywords and types (BenBE)
   -  Updated NSIS to version 2.11 (deguix)

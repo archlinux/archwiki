@@ -127,15 +127,29 @@
 	 */
 
 	/**
-	 * A factory method to create a variation of mw.Uri with a different default location (for
-	 * relative URLs, including protocol-relative URLs). Used so the library is still testable &
-	 * purely functional.
+	 * A factory method to create a Uri class with a default location to resolve relative URLs
+	 * against (including protocol-relative URLs).
 	 *
 	 * @method
+	 * @param {string|Function} documentLocation A full url, or function returning one.
+	 *  If passed a function, the return value may change over time and this will be honoured. (T74334)
 	 * @member mw
 	 */
 	mw.UriRelative = function ( documentLocation ) {
-		var defaultUri;
+		var getDefaultUri = ( function () {
+			// Cache
+			var href, uri;
+
+			return function () {
+				var hrefCur = typeof documentLocation === 'string' ? documentLocation : documentLocation();
+				if ( href === hrefCur ) {
+					return uri;
+				}
+				href = hrefCur;
+				uri = new Uri( href );
+				return uri;
+			};
+		}() );
 
 		/**
 		 * @class mw.Uri
@@ -147,8 +161,8 @@
 		 * @param {Object|string} [uri] URI string, or an Object with appropriate properties (especially
 		 *  another URI object to clone). Object must have non-blank `protocol`, `host`, and `path`
 		 *  properties. If omitted (or set to `undefined`, `null` or empty string), then an object
-		 *  will be created for the default `uri` of this constructor (`document.location` for
-		 *  mw.Uri, other values for other instances -- see mw.UriRelative for details).
+		 *  will be created for the default `uri` of this constructor (`location.href` for mw.Uri,
+		 *  other values for other instances -- see mw.UriRelative for details).
 		 * @param {Object|boolean} [options] Object with options, or (backwards compatibility) a boolean
 		 *  for strictMode
 		 * @param {boolean} [options.strictMode=false] Trigger strict mode parsing of the url.
@@ -156,6 +170,9 @@
 		 *  override each other (`true`) or automagically convert them to an array (`false`).
 		 */
 		function Uri( uri, options ) {
+			var prop,
+				defaultUri = getDefaultUri();
+
 			options = typeof options === 'object' ? options : { strictMode: !!options };
 			options = $.extend( {
 				strictMode: false,
@@ -167,7 +184,7 @@
 					this.parse( uri, options );
 				} else if ( typeof uri === 'object' ) {
 					// Copy data over from existing URI object
-					for ( var prop in uri ) {
+					for ( prop in uri ) {
 						// Only copy direct properties, not inherited ones
 						if ( uri.hasOwnProperty( prop ) ) {
 							// Deep copy object properties
@@ -390,14 +407,12 @@
 			}
 		};
 
-		defaultUri = new Uri( documentLocation );
-
 		return Uri;
 	};
 
-	// If we are running in a browser, inject the current document location (for relative URLs).
-	if ( document && document.location && document.location.href ) {
-		mw.Uri = mw.UriRelative( document.location.href );
-	}
+	// Default to the current browsing location (for relative URLs).
+	mw.Uri = mw.UriRelative( function () {
+		return location.href;
+	} );
 
 }( mediaWiki, jQuery ) );

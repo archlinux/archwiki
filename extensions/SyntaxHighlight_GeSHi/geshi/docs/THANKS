@@ -50,6 +50,7 @@ PEOPE WHO MADE LANGUAGE FILES
 - Actionscript           Steffen Krause (french translation by NikO)
 - ActionScript 3         Jordi Boggiano (version for ActionScript3 and MXML)
 - Ada                    Tux
+- AIMMS                  Guido Diepen
 - Algol68                Neville Dempsey
 - Apache                 Tux
 - Applescript            Stephan Klimek
@@ -73,21 +74,26 @@ PEOPE WHO MADE LANGUAGE FILES
 - Brainfuck \ Brainfork  Benny Baumann
 - C for Loadrunner       Stuart Moncrieff
 - C for Macs             M. Uli Kusterer
+- C for Windows          Benny Baumann
 - C#                     Alan Juden
 - C++                    Dennis Bayer, M. Uli Kusterer
-- C++/Qt                 Iulian M
+- C++ (Qt)               Iulian M
+- C++ for Windows        Benny Baumann
 - CADDCL                 Roberto Rossi
 - CadLisp                Roberto Rossi
 - CDFG                   John Horigan
 - ChaiScript             Jason Turner, Jonathan Turner
+- Chapel                 Richard Molitor
 - CIL                    Marcus Griep
 - Clojure                Jess Johnson
 - CMake                  Daniel Nelson
-- COBOL                  Benny Baumann
+- COBOL                  Benny Baumann, Edward Hart
 - CoffeeScript           Trevor Burnham
 - ColdFusion             Diego
+- CSS                    Nigel McNie, Zéfling
 - Cuesheet               Benny Baumann
 - D                      Thomas Kuehne
+- Dart                   Edward Hart
 - DCL                    Petr Hendl
 - DCPU-16                Benny Baumann
 - DCS                    Stelio Passaris
@@ -101,6 +107,7 @@ PEOPE WHO MADE LANGUAGE FILES
 - EPC                    Thorsten Muehlfelder
 - Erlang                 Benny Baumann, Dan Forest-Barbier, Uwe Dauernheim
 - Euphoria               Nicholas Koceja
+- EZT                    Ramesh Vishveshwar
 - F#                     Julien Ortin
 - Falcon                 billykater
 - FO (abas-ERP)          Tan-Vinh Nguyen
@@ -113,7 +120,7 @@ PEOPE WHO MADE LANGUAGE FILES
 - Genie                  Nicolas Joseph
 - Gettext                Milian Wolff
 - glSlang                Benny Baumann
-- GML                    José Jorge Enríquez Rodríguez
+- GML                    José Jorge Enríquez Rodríguez, Timon Knigge
 - GNU make               Neil Bird
 - Gnuplot                Milian Wolff
 - Go                     Markus Jarderot
@@ -128,9 +135,11 @@ PEOPE WHO MADE LANGUAGE FILES
 - Ini                    Deguix
 - Inno                   Thomas Klinger
 - INTERCAL               Benny Baumann
+- ISPF Panel             Ramesh Vishveshwar
 - J                      Ric Sherlock
 - Java 5                 Clemens Bruckmann
 - Javascript             Ben Keen
+- Job Control Language   Ramesh Vishveshwar
 - jQuery                 Rob Loach
 - KiXtart                Riley McArdle
 - KLone C                Mickael Auger
@@ -159,6 +168,8 @@ PEOPE WHO MADE LANGUAGE FILES
 - MySQL                  Carl Fürstenberg, Marjolein Katsma
 - Nagios                 Albéric de Pertat
 - NewLisp                cormullion
+- nginx                  Cliff Wells, Deoren Moor, Thomas Joiner
+- Nimrod                 Dennis Felsing
 - NSIS                   Tux, Deguix
 - Oberon-2               Mike Mol
 - Objeck Progr. Lang.    Randy Hollines
@@ -184,6 +195,7 @@ PEOPE WHO MADE LANGUAGE FILES
 - PL/I                   Robert Prins
 - PL/SQL                 Victor Engmark
 - PostgreSQL             Christophe Chauvet
+- PostScript             Benny Baumann
 - POV-Ray                Carl Fürstenberg
 - PowerBuilder           Doug Porter
 - PowerShell             Frode Aarebrot
@@ -197,22 +209,28 @@ PEOPE WHO MADE LANGUAGE FILES
 - Python for S60         Sohan Basak
 - PyCon                  Benny Baumann
 - q/kdb+                 Ian Roddis
+- QML                    J-P Nurmi
 - R / S+                 Ron Fredericks, Fernando H.F.P. da Rosa
+- Racket                 Tim Brown
 - Rails                  Moises Deniz
+- RBScript               Deng Wen Gang
 - Rebol                  Lecanu Guillaume
 - Reg                    SmokingRope
 - Rexx                   Jon Wolfers
 - Robots                 Christian Lescuyer
 - RPM Specification File Paul Grinberg
 - Ruby                   Amit Gupta, Moises Deniz
+- Rust                   Dave Hodder
 - SAS                    Galen Johnson
 - Scheme                 Jon Raphaelson
 - SciLab                 Christophe David
+- SCL                    Leonhard Hösch
 - SDLBasic               Roberto Rossi
 - Smalltalk              Bananeweizen
 - Smarty                 Alan Juden
 - SPARK                  Phil Thornley
 - SPARQL                 Karima Rafes
+- StandardML             eldesh
 - StoneScript            Archimmersion
 - SystemVerilog          Sean O'Boyle
 - TCL                    Reid van Melle
@@ -229,8 +247,9 @@ PEOPE WHO MADE LANGUAGE FILES
 - Vala                   Nicolas Joseph
 - VB                     Roberto Rossi
 - VB.NET                 Alan Juden
+- VBScript               Rory Prendergast
 - Vedit                  Pauli Lindgren
-- Verilog                Günter Dannoritzer
+- Verilog                Günter Dannoritzer, Tony Carrillo
 - VHDL                   Alexander 'E-Razor' Krause, Kevin Thibedeau
 - VIM Script             Swaroop C H
 - Visual FoxPro          Roberto Armellin

@@ -20,27 +20,23 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @since 1.20
- *
  * @ingroup Test
- *
- * @group ORM
- *
+ * @author Jeroen De Dauw < jeroendedauw@gmail.com >
+ */
+
+/**
  * The database group has as a side effect that temporal database tables are created. This makes
  * it possible to test without poisoning a production database.
- * @group Database
  *
  * Some of the tests takes more time, and needs therefor longer time before they can be aborted
  * as non-functional. The reason why tests are aborted is assumed to be set up of temporal databases
  * that hold the first tests in a pending state awaiting access to the database.
- * @group medium
  *
- * @licence GNU GPL v2+
- * @author Jeroen De Dauw < jeroendedauw@gmail.com >
- */
-require_once __DIR__ . "/ORMRowTest.php";
-
-/**
+ * @since 1.20
+ *
+ * @group ORM
+ * @group Database
+ * @group medium
  * @covers TestORMRow
  */
 class TestORMRowTest extends ORMRowTest {
@@ -150,6 +146,10 @@ class TestORMRow extends ORMRow {
 
 class TestORMTable extends ORMTable {
 
+	public function __construct() {
+		$this->fieldPrefix = 'test_';
+	}
+
 	/**
 	 * Returns the name of the database table objects of this type are stored in.
 	 *
@@ -203,16 +203,5 @@ class TestORMTable extends ORMTable {
 			'moarstuff' => 'blob',
 			'time' => 'str', // TS_MW
 		);
-	}
-
-	/**
-	 * Gets the db field prefix.
-	 *
-	 * @since 1.20
-	 *
-	 * @return string
-	 */
-	protected function getFieldPrefix() {
-		return 'test_';
 	}
 }

@@ -109,6 +109,9 @@ class LocalFile extends File {
 	/** @var string Description of current revision of the file */
 	private $description;
 
+	/** @var string TS_MW timestamp of the last change of the file description */
+	private $descriptionTouched;
+
 	/** @var bool Whether the row was upgraded on load */
 	private $upgraded;
 
@@ -121,13 +124,8 @@ class LocalFile extends File {
 	/** @var bool True if file is not present in file system. Not to be cached in memcached */
 	private $missing;
 
-	/** @var int UNIX timestamp of last markVolatile() call */
-	private $lastMarkedVolatile = 0;
-
-	const LOAD_ALL = 1; // integer; load all the lazy fields too (like metadata)
-	const LOAD_VIA_SLAVE = 2; // integer; use a slave to load the data
-
-	const VOLATILE_TTL = 300; // integer; seconds
+	// @note: higher than IDBAccessObject constants
+	const LOAD_ALL = 16; // integer; load all the lazy fields too (like metadata)
 
 	/**
 	 * Create a LocalFile from a title
@@ -247,13 +245,11 @@ class LocalFile extends File {
 	function loadFromCache() {
 		global $wgMemc;
 
-		wfProfileIn( __METHOD__ );
 		$this->dataLoaded = false;
 		$this->extraDataLoaded = false;
 		$key = $this->getCacheKey();
 
 		if ( !$key ) {
-			wfProfileOut( __METHOD__ );
 
 			return false;
 		}
@@ -279,8 +275,6 @@ class LocalFile extends File {
 		} else {
 			wfIncrStats( 'image_cache_miss' );
 		}
-
-		wfProfileOut( __METHOD__ );
 
 		return $this->dataLoaded;
 	}
@@ -382,17 +376,15 @@ class LocalFile extends File {
 	 * @param int $flags
 	 */
 	function loadFromDB( $flags = 0 ) {
-		# Polymorphic function name to distinguish foreign and local fetches
 		$fname = get_class( $this ) . '::' . __FUNCTION__;
-		wfProfileIn( $fname );
 
 		# Unconditionally set loaded=true, we don't want the accessors constantly rechecking
 		$this->dataLoaded = true;
 		$this->extraDataLoaded = true;
 
-		$dbr = ( $flags & self::LOAD_VIA_SLAVE )
-			? $this->repo->getSlaveDB()
-			: $this->repo->getMasterDB();
+		$dbr = ( $flags & self::READ_LATEST )
+			? $this->repo->getMasterDB()
+			: $this->repo->getSlaveDB();
 
 		$row = $dbr->selectRow( 'image', $this->getCacheFields( 'img_' ),
 			array( 'img_name' => $this->getName() ), $fname );
@@ -402,8 +394,6 @@ class LocalFile extends File {
 		} else {
 			$this->fileExists = false;
 		}
-
-		wfProfileOut( $fname );
 	}
 
 	/**
@@ -411,9 +401,7 @@ class LocalFile extends File {
 	 * This covers fields that are sometimes not cached.
 	 */
 	protected function loadExtraFromDB() {
-		# Polymorphic function name to distinguish foreign and local fetches
 		$fname = get_class( $this ) . '::' . __FUNCTION__;
-		wfProfileIn( $fname );
 
 		# Unconditionally set loaded=true, we don't want the accessors constantly rechecking
 		$this->extraDataLoaded = true;
@@ -428,11 +416,8 @@ class LocalFile extends File {
 				$this->$name = $value;
 			}
 		} else {
-			wfProfileOut( $fname );
 			throw new MWException( "Could not find data for image '{$this->getName()}'." );
 		}
-
-		wfProfileOut( $fname );
 	}
 
 	/**
@@ -540,13 +525,14 @@ class LocalFile extends File {
 	 */
 	function load( $flags = 0 ) {
 		if ( !$this->dataLoaded ) {
-			if ( !$this->loadFromCache() ) {
-				$this->loadFromDB( $this->isVolatile() ? 0 : self::LOAD_VIA_SLAVE );
+			if ( ( $flags & self::READ_LATEST ) || !$this->loadFromCache() ) {
+				$this->loadFromDB( $flags );
 				$this->saveToCache();
 			}
 			$this->dataLoaded = true;
 		}
 		if ( ( $flags & self::LOAD_ALL ) && !$this->extraDataLoaded ) {
+			// @note: loads on name/timestamp to reduce race condition problems
 			$this->loadExtraFromDB();
 		}
 	}
@@ -587,7 +573,6 @@ class LocalFile extends File {
 	 * Fix assorted version-related problems with the image row by reloading it from the file
 	 */
 	function upgradeRow() {
-		wfProfileIn( __METHOD__ );
 
 		$this->lock(); // begin
 
@@ -597,7 +582,6 @@ class LocalFile extends File {
 		if ( !$this->fileExists ) {
 			$this->unlock();
 			wfDebug( __METHOD__ . ": file does not exist, aborting\n" );
-			wfProfileOut( __METHOD__ );
 
 			return;
 		}
@@ -607,7 +591,6 @@ class LocalFile extends File {
 
 		if ( wfReadOnly() ) {
 			$this->unlock();
-			wfProfileOut( __METHOD__ );
 
 			return;
 		}
@@ -633,7 +616,6 @@ class LocalFile extends File {
 
 		$this->unlock(); // done
 
-		wfProfileOut( __METHOD__ );
 	}
 
 	/**
@@ -672,7 +654,7 @@ class LocalFile extends File {
 	/** getURL inherited */
 	/** getViewURL inherited */
 	/** getPath inherited */
-	/** isVisible inhereted */
+	/** isVisible inherited */
 
 	/**
 	 * @return bool
@@ -860,7 +842,7 @@ class LocalFile extends File {
 	 * Refresh metadata in memcached, but don't touch thumbnails or squid
 	 */
 	function purgeMetadataCache() {
-		$this->loadFromDB();
+		$this->loadFromDB( File::READ_LATEST );
 		$this->saveToCache();
 		$this->purgeHistory();
 	}
@@ -889,7 +871,6 @@ class LocalFile extends File {
 	 * @note This used to purge old thumbnails by default as well, but doesn't anymore.
 	 */
 	function purgeCache( $options = array() ) {
-		wfProfileIn( __METHOD__ );
 		// Refresh metadata cache
 		$this->purgeMetadataCache();
 
@@ -898,7 +879,6 @@ class LocalFile extends File {
 
 		// Purge squid cache for this file
 		SquidUpdate::purge( array( $this->getURL() ) );
-		wfProfileOut( __METHOD__ );
 	}
 
 	/**
@@ -907,13 +887,12 @@ class LocalFile extends File {
 	 */
 	function purgeOldThumbnails( $archiveName ) {
 		global $wgUseSquid;
-		wfProfileIn( __METHOD__ );
 
 		// Get a list of old thumbnails and URLs
 		$files = $this->getThumbnails( $archiveName );
 
 		// Purge any custom thumbnail caches
-		wfRunHooks( 'LocalFilePurgeThumbnails', array( $this, $archiveName ) );
+		Hooks::run( 'LocalFilePurgeThumbnails', array( $this, $archiveName ) );
 
 		$dir = array_shift( $files );
 		$this->purgeThumbList( $dir, $files );
@@ -927,7 +906,6 @@ class LocalFile extends File {
 			SquidUpdate::purge( $urls );
 		}
 
-		wfProfileOut( __METHOD__ );
 	}
 
 	/**
@@ -936,7 +914,6 @@ class LocalFile extends File {
 	 */
 	function purgeThumbnails( $options = array() ) {
 		global $wgUseSquid;
-		wfProfileIn( __METHOD__ );
 
 		// Delete thumbnails
 		$files = $this->getThumbnails();
@@ -958,7 +935,7 @@ class LocalFile extends File {
 		}
 
 		// Purge any custom thumbnail caches
-		wfRunHooks( 'LocalFilePurgeThumbnails', array( $this, false ) );
+		Hooks::run( 'LocalFilePurgeThumbnails', array( $this, false ) );
 
 		$dir = array_shift( $files );
 		$this->purgeThumbList( $dir, $files );
@@ -968,7 +945,6 @@ class LocalFile extends File {
 			SquidUpdate::purge( $urls );
 		}
 
-		wfProfileOut( __METHOD__ );
 	}
 
 	/**
@@ -1035,7 +1011,7 @@ class LocalFile extends File {
 		$opts['ORDER BY'] = "oi_timestamp $order";
 		$opts['USE INDEX'] = array( 'oldimage' => 'oi_name_timestamp' );
 
-		wfRunHooks( 'LocalFile::getHistory', array( &$this, &$tables, &$fields,
+		Hooks::run( 'LocalFile::getHistory', array( &$this, &$tables, &$fields,
 			&$conds, &$opts, &$join_conds ) );
 
 		$res = $dbr->select( $tables, $fields, $conds, __METHOD__, $opts, $join_conds );
@@ -1146,7 +1122,6 @@ class LocalFile extends File {
 		}
 
 		if ( !$props ) {
-			wfProfileIn( __METHOD__ . '-getProps' );
 			if ( $this->repo->isVirtualUrl( $srcPath )
 				|| FileBackend::isStoragePath( $srcPath )
 			) {
@@ -1154,7 +1129,6 @@ class LocalFile extends File {
 			} else {
 				$props = FSFile::getPropsFromPath( $srcPath );
 			}
-			wfProfileOut( __METHOD__ . '-getProps' );
 		}
 
 		$options = array();
@@ -1236,7 +1210,6 @@ class LocalFile extends File {
 	function recordUpload2( $oldver, $comment, $pageText, $props = false, $timestamp = false,
 		$user = null
 	) {
-		wfProfileIn( __METHOD__ );
 
 		if ( is_null( $user ) ) {
 			global $wgUser;
@@ -1247,9 +1220,7 @@ class LocalFile extends File {
 		$dbw->begin( __METHOD__ );
 
 		if ( !$props ) {
-			wfProfileIn( __METHOD__ . '-getProps' );
 			$props = $this->repo->getFileProps( $this->getVirtualUrl() );
-			wfProfileOut( __METHOD__ . '-getProps' );
 		}
 
 		# Imports or such might force a certain timestamp; otherwise we generate
@@ -1271,7 +1242,6 @@ class LocalFile extends File {
 		if ( !$this->fileExists ) {
 			wfDebug( __METHOD__ . ": File " . $this->getRel() . " went missing!\n" );
 			$dbw->rollback( __METHOD__ );
-			wfProfileOut( __METHOD__ );
 
 			return false;
 		}
@@ -1303,9 +1273,11 @@ class LocalFile extends File {
 		);
 		if ( $dbw->affectedRows() == 0 ) {
 			if ( $allowTimeKludge ) {
-				# Use FOR UPDATE to ignore any transaction snapshotting
+				# Use LOCK IN SHARE MODE to ignore any transaction snapshotting
 				$ltimestamp = $dbw->selectField( 'image', 'img_timestamp',
-					array( 'img_name' => $this->getName() ), __METHOD__, array( 'FOR UPDATE' ) );
+					array( 'img_name' => $this->getName() ),
+					__METHOD__,
+					array( 'LOCK IN SHARE MODE' ) );
 				$lUnixtime = $ltimestamp ? wfTimestamp( TS_UNIX, $ltimestamp ) : false;
 				# Avoid a timestamp that is not newer than the last version
 				# TODO: the image/oldimage tables should be like page/revision with an ID field
@@ -1404,12 +1376,14 @@ class LocalFile extends File {
 			// Page exists, do RC entry now (otherwise we wait for later).
 			$logEntry->publish( $logId );
 		}
-		wfProfileIn( __METHOD__ . '-edit' );
 
 		if ( $exists ) {
 			# Create a null revision
 			$latest = $descTitle->getLatestRevID();
-			$editSummary = LogFormatter::newFromEntry( $logEntry )->getPlainActionText();
+			// Use own context to get the action text in content language
+			$formatter = LogFormatter::newFromEntry( $logEntry );
+			$formatter->setContext( RequestContext::newExtraneousContext( $descTitle ) );
+			$editSummary = $formatter->getPlainActionText();
 
 			$nullRevision = Revision::newNullRevision(
 				$dbw,
@@ -1421,7 +1395,7 @@ class LocalFile extends File {
 			if ( !is_null( $nullRevision ) ) {
 				$nullRevision->insertOn( $dbw );
 
-				wfRunHooks( 'NewRevisionFromEditComplete', array( $wikiPage, $nullRevision, $latest, $user ) );
+				Hooks::run( 'NewRevisionFromEditComplete', array( $wikiPage, $nullRevision, $latest, $user ) );
 				$wikiPage->updateRevisionOn( $dbw, $nullRevision );
 			}
 		}
@@ -1468,22 +1442,16 @@ class LocalFile extends File {
 			$dbw->commit( __METHOD__ ); // commit before anything bad can happen
 		}
 
-		wfProfileOut( __METHOD__ . '-edit' );
-
 		if ( $reupload ) {
 			# Delete old thumbnails
-			wfProfileIn( __METHOD__ . '-purge' );
 			$this->purgeThumbnails();
-			wfProfileOut( __METHOD__ . '-purge' );
 
 			# Remove the old file from the squid cache
 			SquidUpdate::purge( array( $this->getURL() ) );
 		}
 
 		# Hooks, hooks, the magic of hooks...
-		wfProfileIn( __METHOD__ . '-hooks' );
-		wfRunHooks( 'FileUpload', array( $this, $reupload, $descTitle->exists() ) );
-		wfProfileOut( __METHOD__ . '-hooks' );
+		Hooks::run( 'FileUpload', array( $this, $reupload, $descTitle->exists() ) );
 
 		# Invalidate cache for all pages using this file
 		$update = new HTMLCacheUpdate( $this->getTitle(), 'imagelinks' );
@@ -1491,8 +1459,6 @@ class LocalFile extends File {
 		if ( !$reupload ) {
 			LinksUpdate::queueRecursiveJobsForTable( $this->getTitle(), 'imagelinks' );
 		}
-
-		wfProfileOut( __METHOD__ );
 
 		return true;
 	}
@@ -1811,6 +1777,25 @@ class LocalFile extends File {
 	}
 
 	/**
+	 * @return bool|string
+	 */
+	public function getDescriptionTouched() {
+		// The DB lookup might return false, e.g. if the file was just deleted, or the shared DB repo
+		// itself gets it from elsewhere. To avoid repeating the DB lookups in such a case, we
+		// need to differentiate between null (uninitialized) and false (failed to load).
+		if ( $this->descriptionTouched === null ) {
+			$cond = array(
+				'page_namespace' => $this->title->getNamespace(),
+				'page_title' => $this->title->getDBkey()
+			);
+			$touched = $this->repo->getSlaveDB()->selectField( 'page', 'page_touched', $cond, __METHOD__ );
+			$this->descriptionTouched = $touched ? wfTimestamp( TS_MW, $touched ) : false;
+		}
+
+		return $this->descriptionTouched;
+	}
+
+	/**
 	 * @return string
 	 */
 	function getSha1() {
@@ -1850,7 +1835,7 @@ class LocalFile extends File {
 	 * Start a transaction and lock the image for update
 	 * Increments a reference counter if the lock is already held
 	 * @throws MWException Throws an error if the lock was not acquired
-	 * @return bool Success
+	 * @return bool Whether the file lock owns/spawned the DB transaction
 	 */
 	function lock() {
 		$dbw = $this->repo->getMasterDB();
@@ -1875,9 +1860,7 @@ class LocalFile extends File {
 			} );
 		}
 
-		$this->markVolatile(); // file may change soon
-
-		return true;
+		return $this->lockedOwnTrx;
 	}
 
 	/**
@@ -1893,48 +1876,6 @@ class LocalFile extends File {
 				$this->lockedOwnTrx = false;
 			}
 		}
-	}
-
-	/**
-	 * Mark a file as about to be changed
-	 *
-	 * This sets a cache key that alters master/slave DB loading behavior
-	 *
-	 * @return bool Success
-	 */
-	protected function markVolatile() {
-		global $wgMemc;
-
-		$key = $this->repo->getSharedCacheKey( 'file-volatile', md5( $this->getName() ) );
-		if ( $key ) {
-			$this->lastMarkedVolatile = time();
-			return $wgMemc->set( $key, $this->lastMarkedVolatile, self::VOLATILE_TTL );
-		}
-
-		return true;
-	}
-
-	/**
-	 * Check if a file is about to be changed or has been changed recently
-	 *
-	 * @see LocalFile::isVolatile()
-	 * @return bool Whether the file is volatile
-	 */
-	protected function isVolatile() {
-		global $wgMemc;
-
-		$key = $this->repo->getSharedCacheKey( 'file-volatile', md5( $this->getName() ) );
-		if ( !$key ) {
-			// repo unavailable; bail.
-			return false;
-		}
-
-		if ( $this->lastMarkedVolatile === 0 ) {
-			$this->lastMarkedVolatile = $wgMemc->get( $key ) ?: 0;
-		}
-
-		$volatileDuration = time() - $this->lastMarkedVolatile;
-		return $volatileDuration <= self::VOLATILE_TTL;
 	}
 
 	/**
@@ -1985,7 +1926,7 @@ class LocalFileDeleteBatch {
 	/** @var array Items to be processed in the deletion batch */
 	private $deletionBatch;
 
-	/** @var bool Wether to suppress all suppressable fields when deleting */
+	/** @var bool Whether to suppress all suppressable fields when deleting */
 	private $suppress;
 
 	/** @var FileRepoStatus */
@@ -2238,26 +2179,9 @@ class LocalFileDeleteBatch {
 	 * @return FileRepoStatus
 	 */
 	function execute() {
-		wfProfileIn( __METHOD__ );
 
 		$this->file->lock();
-		// Leave private files alone
-		$privateFiles = array();
-		list( $oldRels, ) = $this->getOldRels();
-		$dbw = $this->file->repo->getMasterDB();
 
-		if ( !empty( $oldRels ) ) {
-			$res = $dbw->select( 'oldimage',
-				array( 'oi_archive_name' ),
-				array( 'oi_name' => $this->file->getName(),
-					'oi_archive_name' => array_keys( $oldRels ),
-					$dbw->bitAnd( 'oi_deleted', File::DELETED_FILE ) => File::DELETED_FILE ),
-				__METHOD__ );
-
-			foreach ( $res as $row ) {
-				$privateFiles[$row->oi_archive_name] = 1;
-			}
-		}
 		// Prepare deletion batch
 		$hashes = $this->getHashes();
 		$this->deletionBatch = array();
@@ -2265,9 +2189,8 @@ class LocalFileDeleteBatch {
 		$dotExt = $ext === '' ? '' : ".$ext";
 
 		foreach ( $this->srcRels as $name => $srcRel ) {
-			// Skip files that have no hash (missing source).
-			// Keep private files where they are.
-			if ( isset( $hashes[$name] ) && !array_key_exists( $name, $privateFiles ) ) {
+			// Skip files that have no hash (e.g. missing DB record, or sha1 field and file source)
+			if ( isset( $hashes[$name] ) ) {
 				$hash = $hashes[$name];
 				$key = $hash . $dotExt;
 				$dstRel = $this->file->repo->getDeletedHashPath( $key ) . $key;
@@ -2284,6 +2207,7 @@ class LocalFileDeleteBatch {
 		$this->doDBInserts();
 
 		// Removes non-existent file from the batch, so we don't get errors.
+		// This also handles files in the 'deleted' zone deleted via revision deletion.
 		$checkStatus = $this->removeNonexistentFiles( $this->deletionBatch );
 		if ( !$checkStatus->isGood() ) {
 			$this->status->merge( $checkStatus );
@@ -2303,7 +2227,6 @@ class LocalFileDeleteBatch {
 			// Roll back inserts, release lock and abort
 			// TODO: delete the defunct filearchive rows if we are using a non-transactional DB
 			$this->file->unlockAndRollback();
-			wfProfileOut( __METHOD__ );
 
 			return $this->status;
 		}
@@ -2313,7 +2236,6 @@ class LocalFileDeleteBatch {
 
 		// Commit and return
 		$this->file->unlock();
-		wfProfileOut( __METHOD__ );
 
 		return $this->status;
 	}
@@ -2366,7 +2288,7 @@ class LocalFileRestoreBatch {
 	/** @var bool Add all revisions of the file */
 	private $all;
 
-	/** @var bool Wether to remove all settings for suppressed fields */
+	/** @var bool Whether to remove all settings for suppressed fields */
 	private $unsuppress = false;
 
 	/**
@@ -2419,13 +2341,19 @@ class LocalFileRestoreBatch {
 			return $this->file->repo->newGood();
 		}
 
-		$this->file->lock();
+		$lockOwnsTrx = $this->file->lock();
 
 		$dbw = $this->file->repo->getMasterDB();
 		$status = $this->file->repo->newGood();
 
 		$exists = (bool)$dbw->selectField( 'image', '1',
-			array( 'img_name' => $this->file->getName() ), __METHOD__, array( 'FOR UPDATE' ) );
+			array( 'img_name' => $this->file->getName() ),
+			__METHOD__,
+			// The lock() should already prevents changes, but this still may need
+			// to bypass any transaction snapshot. However, if lock() started the
+			// trx (which it probably did) then snapshot is post-lock and up-to-date.
+			$lockOwnsTrx ? array() : array( 'LOCK IN SHARE MODE' )
+		);
 
 		// Fetch all or selected archived revisions for the file,
 		// sorted from the most recent to the oldest.
@@ -2797,7 +2725,7 @@ class LocalFileMoveBatch {
 			array( 'oi_archive_name', 'oi_deleted' ),
 			array( 'oi_name' => $this->oldName ),
 			__METHOD__,
-			array( 'FOR UPDATE' ) // ignore snapshot
+			array( 'LOCK IN SHARE MODE' ) // ignore snapshot
 		);
 
 		foreach ( $result as $row ) {

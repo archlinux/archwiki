@@ -1,9 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"පසිඳු කාවින්ද"
+			"පසිඳු කාවින්ද",
+			"عثمان خان شاہ"
 		]
 	},
+	"inputbox-tryexact": "خو بخو ٹیکسٹ کو ملانے کی کوشش کریں",
 	"inputbox-searchfulltext": "تلاش ِکل متن",
 	"inputbox-createarticle": "نیا مضمون",
 	"inputbox-ns-main": "مین"

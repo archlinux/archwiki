@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Ganesh",
-			"Nepaboy"
+			"Nepaboy",
+			"SatyamMishra"
 		]
 	},
 	"vector-action-addsection": "विषय जोड़ीं",
@@ -15,5 +16,6 @@
 	"vector-view-edit": "सम्पादन",
 	"vector-view-history": "इतिहास देखीं",
 	"vector-view-view": "पढ़ीं",
-	"vector-view-viewsource": "स्त्रोत देखीं"
+	"vector-view-viewsource": "स्रोत देखीं",
+	"vector-more-actions": "अधिक"
 }

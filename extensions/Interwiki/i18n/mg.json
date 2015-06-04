@@ -8,8 +8,6 @@
 	"interwiki-title-norights": "Hijery ny data interwiki",
 	"interwiki-desc": "Manampy [[Special:Interwiki|pejy manokana iray]] ho an'ny fijerena sy ho an'ny fanovana ny tabilao interwiki",
 	"interwiki_intro": "Ity dia topi-mason'ny tabilao interwiki.",
-	"interwiki-legend-show": "Haneho ny maribolana",
-	"interwiki-legend-hide": "Hanitrika ny maribolana",
 	"interwiki_prefix": "Tovona",
 	"interwiki-prefix-label": "Tovona",
 	"interwiki_prefix_intro": "Tovona ampiasaina anatin'i <code>[<nowiki />[tovona:<em>anaram-pejy</em>]]</code> ny rariteny wiki.",

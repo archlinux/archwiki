@@ -200,7 +200,7 @@ class MimeMagic {
 		global $IP;
 
 		# Allow media handling extensions adding MIME-types and MIME-info
-		wfRunHooks( 'MimeMagicInit', array( $this ) );
+		Hooks::run( 'MimeMagicInit', array( $this ) );
 
 		$types = MM_WELL_KNOWN_MIME_TYPES;
 
@@ -210,7 +210,7 @@ class MimeMagic {
 		}
 
 		if ( $mimeTypeFile ) {
-			if ( is_file( $mimeTypeFile ) and is_readable( $mimeTypeFile ) ) {
+			if ( is_file( $mimeTypeFile ) && is_readable( $mimeTypeFile ) ) {
 				wfDebug( __METHOD__ . ": loading mime types from $mimeTypeFile\n" );
 				$types .= "\n";
 				$types .= file_get_contents( $mimeTypeFile );
@@ -218,7 +218,7 @@ class MimeMagic {
 				wfDebug( __METHOD__ . ": can't load mime types from $mimeTypeFile\n" );
 			}
 		} else {
-			wfDebug( __METHOD__ . ": no mime types file defined, using build-ins only.\n" );
+			wfDebug( __METHOD__ . ": no mime types file defined, using built-ins only.\n" );
 		}
 
 		$types .= "\n" . $this->mExtraTypes;
@@ -287,7 +287,7 @@ class MimeMagic {
 		$info = MM_WELL_KNOWN_MIME_INFO;
 
 		if ( $mimeInfoFile ) {
-			if ( is_file( $mimeInfoFile ) and is_readable( $mimeInfoFile ) ) {
+			if ( is_file( $mimeInfoFile ) && is_readable( $mimeInfoFile ) ) {
 				wfDebug( __METHOD__ . ": loading mime info from $mimeInfoFile\n" );
 				$info .= "\n";
 				$info .= file_get_contents( $mimeInfoFile );
@@ -295,7 +295,7 @@ class MimeMagic {
 				wfDebug( __METHOD__ . ": can't load mime info from $mimeInfoFile\n" );
 			}
 		} else {
-			wfDebug( __METHOD__ . ": no mime info file defined, using build-ins only.\n" );
+			wfDebug( __METHOD__ . ": no mime info file defined, using built-ins only.\n" );
 		}
 
 		$info .= "\n" . $this->mExtraInfo;
@@ -569,7 +569,7 @@ class MimeMagic {
 		}
 
 		# Media handling extensions can improve the MIME detected
-		wfRunHooks( 'MimeMagicImproveFromExtension', array( $this, $ext, &$mime ) );
+		Hooks::run( 'MimeMagicImproveFromExtension', array( $this, $ext, &$mime ) );
 
 		if ( isset( $this->mMimeTypeAliases[$mime] ) ) {
 			$mime = $this->mMimeTypeAliases[$mime];
@@ -802,7 +802,7 @@ class MimeMagic {
 		# people will hopefully nag and submit patches :)
 		$mime = false;
 		# Some strings by reference for performance - assuming well-behaved hooks
-		wfRunHooks(
+		Hooks::run(
 			'MimeMagicGuessFromContent',
 			array( $this, &$head, &$tail, $file, &$mime )
 		);

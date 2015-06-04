@@ -47,7 +47,7 @@
  *
  * @ingroup FileAbstraction
  */
-abstract class File {
+abstract class File implements IDBAccessObject {
 	// Bitfield values akin to the Revision deletion constants
 	const DELETED_FILE = 1;
 	const DELETED_COMMENT = 2;
@@ -138,10 +138,10 @@ abstract class File {
 	/** @var Title */
 	protected $redirectTitle;
 
-	/** @var bool Wether the output of transform() for this file is likely to be valid. */
+	/** @var bool Whether the output of transform() for this file is likely to be valid. */
 	protected $canRender;
 
-	/** @var bool Wether this media file is in a format that is unlikely to
+	/** @var bool Whether this media file is in a format that is unlikely to
 	 *    contain viruses or malicious content
 	 */
 	protected $isSafeFile;
@@ -490,7 +490,7 @@ abstract class File {
 		sort( $sortedBuckets );
 
 		foreach ( $sortedBuckets as $bucket ) {
-			if ( $bucket > $imageWidth ) {
+			if ( $bucket >= $imageWidth ) {
 				return false;
 			}
 
@@ -837,6 +837,18 @@ abstract class File {
 	}
 
 	/**
+	 * Load any lazy-loaded file object fields from source
+	 *
+	 * This is only useful when setting $flags
+	 *
+	 * Overridden by LocalFile to actually query the DB
+	 *
+	 * @param integer $flags Bitfield of File::READ_* constants
+	 */
+	public function load( $flags = 0 ) {
+	}
+
+	/**
 	 * Returns true if file exists in the repository.
 	 *
 	 * Overridden by LocalFile to avoid unnecessary stat calls.
@@ -996,7 +1008,6 @@ abstract class File {
 	function transform( $params, $flags = 0 ) {
 		global $wgThumbnailEpoch;
 
-		wfProfileIn( __METHOD__ );
 		do {
 			if ( !$this->canRender() ) {
 				$thumb = $this->iconThumb();
@@ -1069,8 +1080,6 @@ abstract class File {
 			}
 		} while ( false );
 
-		wfProfileOut( __METHOD__ );
-
 		return is_object( $thumb ) ? $thumb : false;
 	}
 
@@ -1100,9 +1109,7 @@ abstract class File {
 		}
 
 		// Actually render the thumbnail...
-		wfProfileIn( __METHOD__ . '-doTransform' );
 		$thumb = $handler->doTransform( $this, $tmpThumbPath, $thumbUrl, $transformParams );
-		wfProfileOut( __METHOD__ . '-doTransform' );
 		$tmpFile->bind( $thumb ); // keep alive with $thumb
 
 		if ( !$thumb ) { // bad params?
@@ -1123,7 +1130,7 @@ abstract class File {
 				$thumb = $this->transformErrorOutput( $thumbPath, $thumbUrl, $transformParams, $flags );
 			}
 			// Give extensions a chance to do something with this thumbnail...
-			wfRunHooks( 'FileTransformed', array( $this, $thumb, $tmpThumbPath, $thumbPath ) );
+			Hooks::run( 'FileTransformed', array( $this, $thumb, $tmpThumbPath, $thumbPath ) );
 		}
 
 		// Purge. Useful in the event of Core -> Squid connection failure or squid
@@ -1237,7 +1244,7 @@ abstract class File {
 			$that = $this;
 			$work = new PoolCounterWorkViaCallback( 'GetLocalFileCopy', sha1( $this->getName() ),
 				array(
-					'doWork' => function() use ( $that ) {
+					'doWork' => function () use ( $that ) {
 						return $that->getLocalRefPath();
 					}
 				)
@@ -1458,7 +1465,7 @@ abstract class File {
 
 	/**
 	 * Get the path of the file relative to the public zone root.
-	 * This function is overriden in OldLocalFile to be like getArchiveRel().
+	 * This function is overridden in OldLocalFile to be like getArchiveRel().
 	 *
 	 * @return string
 	 */
@@ -1502,7 +1509,7 @@ abstract class File {
 
 	/**
 	 * Get urlencoded path of the file relative to the public zone root.
-	 * This function is overriden in OldLocalFile to be like getArchiveUrl().
+	 * This function is overridden in OldLocalFile to be like getArchiveUrl().
 	 *
 	 * @return string
 	 */
@@ -1770,14 +1777,15 @@ abstract class File {
 	}
 
 	/**
+	 * @param bool|IContextSource $context Context to use (optional)
 	 * @return bool
 	 */
-	function formatMetadata() {
+	function formatMetadata( $context = false ) {
 		if ( !$this->getHandler() ) {
 			return false;
 		}
 
-		return $this->getHandler()->formatMetadata( $this, $this->getMetadata() );
+		return $this->getHandler()->formatMetadata( $this, $context );
 	}
 
 	/**
@@ -2013,7 +2021,7 @@ abstract class File {
 				wfDebug( "miss\n" );
 			}
 			wfDebug( "Fetching shared description from $renderUrl\n" );
-			$res = Http::get( $renderUrl );
+			$res = Http::get( $renderUrl, array(), __METHOD__ );
 			if ( $res && $this->repo->descriptionCacheExpiry > 0 ) {
 				$wgMemc->set( $key, $res, $this->repo->descriptionCacheExpiry );
 			}
@@ -2049,6 +2057,17 @@ abstract class File {
 		$this->assertRepoDefined();
 
 		return $this->repo->getFileTimestamp( $this->getPath() );
+	}
+
+	/**
+	 * Returns the timestamp (in TS_MW format) of the last change of the description page.
+	 * Returns false if the file does not have a description page, or retrieving the timestamp
+	 * would be expensive.
+	 * @since 1.25
+	 * @return string|bool
+	 */
+	public function getDescriptionTouched() {
+		return false;
 	}
 
 	/**

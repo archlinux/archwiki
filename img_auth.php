@@ -39,7 +39,6 @@
 
 define( 'MW_NO_OUTPUT_COMPRESSION', 1 );
 require __DIR__ . '/includes/WebStart.php';
-wfProfileIn( 'img_auth.php' );
 
 # Set action base paths so that WebRequest::getPathInfo()
 # recognizes the "X" as the 'title' in ../img_auth.php/X urls.
@@ -47,7 +46,6 @@ $wgArticlePath = false; # Don't let a "/*" article path clober our action path
 $wgActionPaths = array( "$wgUploadPath/" );
 
 wfImageAuthMain();
-wfProfileOut( 'img_auth.php' );
 wfLogProfilingData();
 // Commit and close up!
 $factory = wfGetLBFactory();
@@ -203,7 +201,12 @@ function wfForbidden( $msg1, $msg2 ) {
 	header( 'Cache-Control: no-cache' );
 	header( 'Content-Type: text/html; charset=utf-8' );
 	echo <<<ENDS
+<!DOCTYPE html>
 <html>
+<head>
+<meta charset="UTF-8" />
+<title>$msgHdr</title>
+</head>
 <body>
 <h1>$msgHdr</h1>
 <p>$detailMsg</p>

@@ -25,5 +25,18 @@
 	"gadgets-export-title": "Export der Helferlein",
 	"gadgets-not-found": "Helferlein „$1“ wurde nicht gefunden.",
 	"gadgets-export-text": "Um das Helferlein $1 zu exportieren, klicke auf die Schaltfläche „{{int:gadgets-export-download}}“ und speichere die heruntergeladene Datei. Gehe sodann zur Spezialseite Spezial:Import auf dem für den Import vorgesehenen Wiki und lade die Datei hoch. Füge danach den folgenden Text zur Seite MediaWiki:Gadgets-definition hinzu:\n<pre>$2</pre>\nDu musst über die notwendigen Berechtigungen auf dem für den Import vorgesehenen Wiki verfügen (einschließlich der Berechtigung, MediaWiki-Systemnachrichten zu bearbeiten). Zudem muss der Import von Datei-Uploads aktiviert sein.",
-	"gadgets-export-download": "Herunterladen"
+	"gadgets-export-download": "Herunterladen",
+	"apihelp-query+gadgetcategories-description": "Gibt eine Liste mit Gadget-Kategorien zurück.",
+	"apihelp-query+gadgetcategories-param-names": "Namen der abzurufenden Kategorien.",
+	"apihelp-query+gadgetcategories-example-1": "Ruft eine Liste vorhandener Helferleinkategorien ab",
+	"apihelp-query+gadgets-description": "Gibt eine Liste der Helferlein zurück, die auf diesem Wiki verwendet werden.",
+	"apihelp-query+gadgets-param-categories": "Von welchen Kategorien die Helferlein abgerufen werden sollen.",
+	"apihelp-query+gadgets-param-ids": "Kennungen der abzurufenden Helferlein.",
+	"apihelp-query+gadgets-param-allowedonly": "Nur Helferlein auflisten, die für den aktuellen Benutzer erlaubt sind.",
+	"apihelp-query+gadgets-param-enabledonly": "Nur Helferlein auflisten, die vom aktuellen Benutzer aktiviert wurden.",
+	"apihelp-query+gadgets-example-1": "Ruft eine Liste der Helferlein zusammen mit ihren Beschreibungen ab",
+	"apihelp-query+gadgets-example-2": "Ruft eine Liste der Helferlein mit allen möglichen Eigenschaften ab",
+	"apihelp-query+gadgets-example-3": "Ruft eine Liste der Helferlein ab, die zur Kategorie „foo“ gehören",
+	"apihelp-query+gadgets-example-4": "Informationen über die Helferlein „foo“ und „bar“ abrufen",
+	"apihelp-query+gadgets-example-5": "Ruft eine Liste der Helferlein ab, die vom aktuellen Benutzer aktiviert wurden"
 }
