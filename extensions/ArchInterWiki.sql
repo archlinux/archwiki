@@ -35,7 +35,7 @@ VALUES
 	('hu', 'https://wiki.archlinux.org/index.php/$1_(Magyar)', 1, 0),
 	('id', 'https://wiki.archlinux.org/index.php/$1_(Indonesia)', 1, 0),
 	('it', 'https://wiki.archlinux.org/index.php/$1_(Italiano)', 1, 0),
-	('ja', 'https://archlinuxjp.kusakata.com/wiki/$1', 1, 0),
+	('ja', 'https://wiki.archlinuxjp.org/index.php/$1', 1, 0),
 	('ko', 'https://wiki.archlinux.org/index.php/$1_(%ED%95%9C%EA%B5%AD%EC%96%B4)', 1, 0),
 	('lt', 'https://wiki.archlinux.org/index.php/$1_(Lietuvi%C5%A1kai)', 1, 0),
 	('nl', 'https://wiki.archlinux.org/index.php/$1_(Nederlands)', 1, 0),
