@@ -5,7 +5,6 @@
 DELETE FROM /*$wgDBprefix*/interwiki;
 
 INSERT INTO /*$wgDBprefix*/interwiki (iw_prefix,iw_url,iw_local,iw_api) VALUES
-('acronym','http://www.acronymfinder.com/~/search/af.aspx?string=exact&Acronym=$1',0,''),
 ('arxiv','http://www.arxiv.org/abs/$1',0,''),
 ('commons','https://commons.wikimedia.org/wiki/$1',0,'https://commons.wikimedia.org/w/api.php'),
 ('doi','http://dx.doi.org/$1',0,''),
