@@ -6,11 +6,14 @@ DELETE FROM /*$wgDBprefix*/interwiki;
 
 INSERT INTO /*$wgDBprefix*/interwiki (iw_prefix,iw_url,iw_local,iw_api) VALUES
 ('arxiv','http://www.arxiv.org/abs/$1',0,''),
+('debian','https://wiki.debian.org/$1',0,''),
 ('doi','http://dx.doi.org/$1',0,''),
 ('emacswiki','http://www.emacswiki.org/cgi-bin/wiki.pl?$1',0,''),
 ('foldoc','http://foldoc.org/?$1',0,''),
 ('freebsdman','http://www.FreeBSD.org/cgi/man.cgi?apropos=1&query=$1',0,''),
+('funtoo','http://www.funtoo.org/$1',0,'http://www.funtoo.org/api.php'),
 ('gentoo','https://wiki.gentoo.org/wiki/$1',0,'https://wiki.gentoo.org/api.php'),
+('gregswiki','http://mywiki.wooledge.org/$1',0,''),
 ('linuxwiki','http://linuxwiki.de/$1',0,''),
 ('lqwiki','http://wiki.linuxquestions.org/wiki/$1',0,''),
 ('mozillawiki','http://wiki.mozilla.org/$1',0,'https://wiki.mozilla.org/api.php'),
