@@ -21,7 +21,7 @@ INSERT INTO /*$wgDBprefix*/interwiki (iw_prefix,iw_url,iw_local,iw_api) VALUES
 ('foxwiki','http://fox.wikis.com/wc.dll?Wiki~$1',0,''),
 ('freebsdman','http://www.FreeBSD.org/cgi/man.cgi?apropos=1&query=$1',0,''),
 ('gej','http://www.esperanto.de/dej.malnova/aktivikio.pl?$1',0,''),
-('gentoo-wiki','http://gentoo-wiki.com/$1',0,''),
+('gentoo','https://wiki.gentoo.org/wiki/$1',0,'https://wiki.gentoo.org/api.php'),
 ('hammondwiki','http://www.dairiki.org/HammondWiki/$1',0,''),
 ('hrwiki','http://www.hrwiki.org/wiki/$1',0,'http://www.hrwiki.org/w/api.php'),
 ('imdb','http://www.imdb.com/find?q=$1&tt=on',0,''),
