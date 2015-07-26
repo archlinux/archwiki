@@ -1,19 +1,25 @@
 /*
- * Before deleting interlanguage links, remove them from the articles
+ * Before deleting interwiki links, remove them from the articles.
  *
- * In order to find all the interlanguage links of a particular language you
- *   need to do an API search, e.g.
- *   https://wiki.archlinux.org/api.php?action=query&list=langbacklinks&lbllimit=500&lblprop=lltitle&lbllang=de
- * That example uses German ('de'), but for the other languages it's enough to
- *   change the value of 'lbllang' to the needed language tag.
- * Note that API queries are always limited, so if a language has more than 500
- *   backlinks it will be necessary to continue the search adding the
- *   'lblcontinue' attribute that appears at the bottom of the list to the
- *   query string.
- * Also note that such a query does not find (all) interwiki redirects, if
- *   present: a search like
- *   https://wiki.archlinux.org/index.php?title=Special%3ASearch&profile=advanced&limit=500&offset=0&search=%22redirect%20%5B%5Bde%3A%22&fulltext=Search&ns0=1&ns1=1&ns2=1&ns3=1&ns4=1&ns5=1&ns6=1&ns7=1&ns8=1&ns9=1&ns10=1&ns11=1&ns12=1&ns13=1&ns14=1&ns15=1&redirs=1&profile=advanced
- *   should do the job instead.
+ * In order to find all the interlanguage links of a particular language, you
+ * need to do an API search, e.g.
+ *     https://wiki.archlinux.org/api.php?action=query&list=langbacklinks&lbllimit=max&lblprop=lltitle&lbllang=de
+ * This example uses German ('de'), but for the other languages it is enough to
+ * change the value of 'lbllang' to the needed language tag.
+ *
+ * Interwiki links using a specific prefix can be found similarly, for example:
+ *     https://wiki.archlinux.org/api.php?action=query&list=iwbacklinks&iwbllimit=max&iwblprop=iwtitle&iwblprefix=wikipedia
+ * This example uses 'wikipedia', but for other interwiki prefixes it is enough
+ * to change the value of 'iwblprefix' accordingly.
+ *
+ * Note that API queries are always limited, so if given interwiki prefix has
+ * more than 500 (or 5000 if you have the 'apihighlimits' right) backlinks, it
+ * will be necessary to continue the search as described in
+ *     https://www.mediawiki.org/wiki/API:Query#Continuing_queries
+ *
+ * Also note that such queries do not find (all) interwiki redirects, if
+ * present. A search like this should do the job instead:
+ *     https://wiki.archlinux.org/index.php?title=Special%3ASearch&profile=advanced&limit=500&offset=0&search=%22redirect%20%5B%5Bde%3A%22&fulltext=Search&ns0=1&ns1=1&ns2=1&ns3=1&ns4=1&ns5=1&ns6=1&ns7=1&ns8=1&ns9=1&ns10=1&ns11=1&ns12=1&ns13=1&ns14=1&ns15=1&redirs=1&profile=advanced
  */
 
 REPLACE INTO
