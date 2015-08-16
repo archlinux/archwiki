@@ -38,9 +38,7 @@
 		"localBasePath": "resources",
 		"remoteExtPath": "ConfirmEdit/FancyCaptcha/resources"
 	},
-	"callback": [
-		"ConfirmEditHooks::onFancyCaptchaSetup"
-	],
+	"callback": "ConfirmEditHooks::onFancyCaptchaSetup",
 	"config": {
 		"CaptchaClass": "FancyCaptcha",
 		"CaptchaFileBackend": "",

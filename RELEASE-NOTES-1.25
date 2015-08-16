@@ -1,15 +1,40 @@
 Security reminder: If you have PHP's register_globals option set, you must
 turn it off. MediaWiki will not work with it enabled.
 
+== MediaWiki 1.25.2 ==
+
+This is a security and maintenance release of the MediaWiki 1.25 branch.
+
+=== Changes since 1.25.1 ===
+
+* (T94116) SECURITY: Compare API watchlist token in constant time
+* (T97391) SECURITY: Escape error message strings in thumb.php
+* (T106893) SECURITY: Don't leak autoblocked IP addresses on
+  Special:DeletedContributions
+* (T102562) Fix InstantCommons parameters to handle the new HTTPS-only
+  policy of Wikimedia Commons.
+* (T100767) Setting a configuration setting for skin or extension to
+  false in LocalSettings.php was not working.
+* (T100635) API action=opensearch json output no longer breaks when
+  $wgDebugToolbar is enabled.
+* (T102522) Using an extension.json or skin.json file which has
+  a "manifest_version" property for 1.26 compatability will no longer
+  trigger warnings.
+* (T86156) Running updateSearchIndex.php will not throw an error as
+  page_restrictions has been added to the locked table list.
+* Special:Version would throw notices if using SVN due to an incorrectly
+  named variable. Add an additional check that an index is defined.
+
 == MediaWiki 1.25.1 ==
 
 This is a bug fix release of the MediaWiki 1.25 branch.
 
-== Changes since 1.25.1 ==
-
+=== Changes since 1.25 ===
 * (T100351) Fix syntax errors in extension.json of ConfirmEdit extension
 
 == MediaWiki 1.25 ==
+
+MediaWiki 1.25.x is the stable branch and is recommended for use in production.
 
 === Configuration changes in 1.25 ===
 * $wgPageShowWatchingUsers was removed.
@@ -512,7 +537,6 @@ changes to languages because of Bugzilla reports.
 * The global importScriptURI and importStylesheetURI functions, as well as the
   loadedScripts object, from wikibits.js (deprecated since 1.17) now emit
   warnings through mw.log.warn when accessed.
-
 
 == Compatibility ==
 

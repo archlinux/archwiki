@@ -139,11 +139,36 @@ class ConfirmEditHooks {
 			$wgCaptchaDirectory = "$wgUploadDirectory/captcha";
 		}
 	}
+
 	/**
 	 * Callback for extension.json of ReCaptcha to require the recaptcha library php file.
 	 * FIXME: This should be done in a better way, e.g. only load the libraray, if really needed.
 	 */
 	public static function onReCaptchaSetup() {
-		require_once( "ReCaptcha/recaptchalib.php" );
+		require_once( __DIR__ . '/../ReCaptcha/recaptchalib.php' );
+	}
+
+	/**
+	 * Extension function, moved from ReCaptcha.php when that was decimated.
+	 * Make sure the keys are defined.
+	 */
+	public static function efReCaptcha() {
+		global $wgReCaptchaPublicKey, $wgReCaptchaPrivateKey;
+		global $recaptcha_public_key, $recaptcha_private_key;
+		global $wgServerName;
+
+		// Backwards compatibility
+		if ( $wgReCaptchaPublicKey == '' ) {
+			$wgReCaptchaPublicKey = $recaptcha_public_key;
+		}
+		if ( $wgReCaptchaPrivateKey == '' ) {
+			$wgReCaptchaPrivateKey = $recaptcha_private_key;
+		}
+
+		if ( $wgReCaptchaPublicKey == '' || $wgReCaptchaPrivateKey == '' ) {
+			die ( 'You need to set $wgReCaptchaPrivateKey and $wgReCaptchaPublicKey in LocalSettings.php to ' .
+				"use the reCAPTCHA plugin. You can sign up for a key <a href='" .
+				htmlentities( recaptcha_get_signup_url ( $wgServerName, "mediawiki" ) ) . "'>here</a>." );
+		}
 	}
 }
