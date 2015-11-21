@@ -40,7 +40,7 @@ VALUES
 	('el', 'https://wiki.archlinux.org/index.php/$1_(%CE%95%CE%BB%CE%BB%CE%B7%CE%BD%CE%B9%CE%BA%CE%AC)', 1, 0),
 	('en', 'https://wiki.archlinux.org/index.php/$1', 1, 0),
 	('es', 'https://wiki.archlinux.org/index.php/$1_(Espa%C3%B1ol)', 1, 0),
-	('fa', 'http://wiki.archlinux.ir/index.php/$1', 1, 0),
+	('fa', 'http://wiki.archusers.ir/index.php/$1', 1, 0),
 	('fi', 'http://www.archlinux.fi/wiki/$1', 1, 0),
 	('fr', 'http://wiki.archlinux.fr/$1', 1, 0),
 	('he', 'https://wiki.archlinux.org/index.php/$1_(%D7%A2%D7%91%D7%A8%D7%99%D7%AA)', 1, 0),
