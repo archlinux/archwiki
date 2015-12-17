@@ -1,0 +1,78 @@
+/*
+	The styles below essentially place the navigation menu below the content,
+	instead of to the side of it. They also hide the logo, as there's no space
+	left for it.
+*/
+
+div#mw-head {
+	position: static !important;
+	margin-top: 0.5em;
+}
+
+/* Move the panel to the bottom and display it as in-line lists */
+div#mw-navigation {
+	div#mw-panel {
+		display: table;
+		position: static;
+		table-layout: fixed;
+		width: 100%;
+		overflow: hidden;
+		font-size: 150%;
+
+		.portal {
+			display: block;
+			width: 100%;
+		}
+
+		ul li {
+			list-style: none;
+		}
+	}
+}
+
+/* Hide the logo and tabs */
+div#p-logo,
+div#left-navigation,
+div#p-cactions,
+div#p-views {
+	display: none;
+}
+
+/* Rearrange various page elements to fill the now-available space */
+body div#footer {
+	margin-left: 0;
+	padding-top: 0;
+
+	/* don't need these in the footer either... */
+	li#footer-info-lastmod,
+	li#footer-info-viewcount {
+		display: none;
+	}
+}
+div#p-personal {
+	display: table;
+	position: relative;
+	width: 100%;
+	top: inherit;
+	left: inherit;
+	right: inherit;
+
+	ul {
+		padding-left: 0;
+	}
+}
+div#right-navigation {
+	max-width: 500px;
+	position: absolute;
+	top: inherit;
+	margin-top: -1px;
+	float: none;
+}
+div#p-search {
+	margin-left: 73px;
+}
+div#content {
+	/* Hide the 1px blue border on the left side */
+	border-left: 0;
+	margin-left: 0;
+}

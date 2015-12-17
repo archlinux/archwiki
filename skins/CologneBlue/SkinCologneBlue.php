@@ -116,7 +116,7 @@ class CologneBlueTemplate extends BaseTemplate {
 	 */
 	protected function renderAfterPortlet( $name ) {
 		$content = '';
-		wfRunHooks( 'BaseTemplateAfterPortlet', array( $this, $name, &$content ) );
+		Hooks::run( 'BaseTemplateAfterPortlet', array( $this, $name, &$content ) );
 
 		$html = $content !== '' ? "<div class='after-portlet after-portlet-$name'>$content</div>" : '';
 

@@ -5,7 +5,7 @@ if ( $IP === false ) {
 	$IP = __DIR__ . '/../..';
 }
 
-require_once( "$IP/maintenance/Maintenance.php" );
+require_once "$IP/maintenance/Maintenance.php";
 
 /**
  * @ingroup Maintenance
@@ -13,7 +13,8 @@ require_once( "$IP/maintenance/Maintenance.php" );
 class CleanupArchiveUserText extends Maintenance {
 	public function __construct() {
 		parent::__construct();
-		$this->mDescription = "Update the archive table where users were previously renamed, but their archive contributions were not";
+		$this->mDescription = 'Update the archive table where users were ' .
+			'previously renamed, but their archive contributions were not';
 	}
 
 	public function execute() {
@@ -30,7 +31,7 @@ class CleanupArchiveUserText extends Maintenance {
 				array( 'LIMIT' => 50 )
 			);
 			$results = 0;
-			foreach( $res as $row ) {
+			foreach ( $res as $row ) {
 				$results++;
 				$this->output( "User:{$row->ar_user_text} => User:{$row->user_name} " );
 				$dbw->update(
@@ -55,5 +56,5 @@ class CleanupArchiveUserText extends Maintenance {
 	}
 }
 
-$maintClass = "CleanupArchiveUserText";
-require_once( RUN_MAINTENANCE_IF_MAIN );
+$maintClass = 'CleanupArchiveUserText';
+require_once RUN_MAINTENANCE_IF_MAIN;

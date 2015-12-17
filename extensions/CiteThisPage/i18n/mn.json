@@ -2,11 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Chinneeb",
-			"MongolWiki"
+			"MongolWiki",
+			"Sembuk"
 		]
 	},
 	"citethispage": "Иш татах",
 	"citethispage-link": "Эндээс иш татах",
+	"tooltip-citethispage": "Энэ хуудсыг хэрхэн эшлэх тухай мэдээлэл",
 	"citethispage-change-submit": "Иш татах",
 	"citethispage-change-target": "Хуудас:"
 }

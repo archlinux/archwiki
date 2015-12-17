@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Naudefj"
+			"Naudefj",
+			"Arnobarnard"
 		]
 	},
 	"pfunc_desc": "Verryk die ontleder met logiese funksies",
@@ -12,7 +13,7 @@
 	"pfunc_expr_unexpected_number": "Fout in uitdrukking: onverwagte getal",
 	"pfunc_expr_preg_match_failure": "Fout in uitdrukking: onverwagte faling van preg_match",
 	"pfunc_expr_unrecognised_word": "Fout in uitdrukking: woord \"$1\" nie herken",
-	"pfunc_expr_unexpected_operator": "Fout in uitdrukking: onverwagte operateur $1",
+	"pfunc_expr_unexpected_operator": "Fout in uitdrukking: onverwagte operator $1.",
 	"pfunc_expr_missing_operand": "Fout in uitdrukking: geen operand vir $1",
 	"pfunc_expr_unexpected_closing_bracket": "Fout in uitdrukking: hakkie onverwags gesluit",
 	"pfunc_expr_unrecognised_punctuation": "Fout in uitdrukking: onbekende leesteken \"$1\"",

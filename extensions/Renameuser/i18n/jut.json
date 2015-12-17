@@ -2,25 +2,26 @@
 	"@metadata": {
 		"authors": [
 			"Huslåke",
-			"Ælsån"
+			"Ælsån",
+			"Jyllanj"
 		]
 	},
-	"renameuser": "Gæf æ bruger en ny navn",
-	"renameuser-desc": "Gæf en bruger en ny navn (''renameuser'' regt er nøteg)",
-	"renameuserold": "Nuværende brugernavn:",
-	"renameusernew": "Ny brugernavn:",
+	"renameuser": "Omdøb bruge",
+	"renameuser-desc": "Lawe en [[Special:RenameUser|specialsiid]] te å omdøb i bruge (kräwe rettiheden ''renameuser'')",
+	"renameuserold": "Nuwærenje brugenaun:",
+	"renameusernew": "Ny brugenaun:",
 	"renameuserreason": "Før hvat dett'er dun:",
-	"renameusermove": "Flyt bruger og diskusje sider (og deres substrøk) til ny navn",
-	"renameusersubmit": "Gå til",
-	"renameusererrordoesnotexist": "Æ bruger \"<nowiki>$1</nowiki>\" bestä ekke.",
-	"renameusererrorexists": "Æ bruger \"<nowiki>$1</nowiki>\" er ål.",
-	"renameusererrorinvalid": "Æ brugernavn \"<nowiki>$1</nowiki>\" er ogyldegt.",
-	"renameuser-error-request": "Her har en pråblæm ve enkriige der anfråge. Gå hen og pråbær nurmål.",
-	"renameuser-error-same-user": "Du kenst ekke hernåm æ bruger til æselbste nåm als dafør.",
-	"renameusersuccess": "Æ bruger \"<nowiki>$1</nowiki>\" er hernåmt til \"<nowiki>$2</nowiki>\".",
-	"renameuser-page-exists": "Æ pæge $1 er ål og ken ekke åtåmatisk åverflyttet være.",
-	"renameuser-page-moved": "Æ pæge $1 er flyttet til $2.",
-	"renameuser-page-unmoved": "Æ pæge $1 kon ekke flyttet være til $2.",
-	"log-name-renameuser": "Bruger hernåm log",
-	"renameuser-move-log": "Åtåmatisk flyttet pæge hviil hernåm der bruger \"[[User:$1|$1]]\" til \"[[User:$2|$2]]\""
+	"renameusermove": "Flytt bruge- å diskusjonsside (å dæes unjeside) te ny naun",
+	"renameusersubmit": "Omdøb",
+	"renameusererrordoesnotexist": "Brugari \"<nowiki>$1</nowiki>\" finjs ett.",
+	"renameusererrorexists": "Brugari \"<nowiki>$1</nowiki>\" finjs ållried.",
+	"renameusererrorinvalid": "Brugenaune \"<nowiki>$1</nowiki>\" ä udjylji.",
+	"renameuser-error-request": "Dä war e problem mä å modta forspöyrgsle.\nGo wenlist tebag å forsyeg idjen.",
+	"renameuser-error-same-user": "Du kan ett omdøb i bruge te sam naune som förr.",
+	"renameusersuccess": "Brugari \"<nowiki>$1</nowiki>\" ä bløwen omdøbtj te \"<nowiki>$2</nowiki>\".",
+	"renameuser-page-exists": "Siden $1 eksistiire ållried å kan ett automatisk öweskriiws.",
+	"renameuser-page-moved": "Siden $1 ä flytten te $2.",
+	"renameuser-page-unmoved": "Siden $1 ku ett flytts te $2.",
+	"log-name-renameuser": "Brugeomdøbnengslogg",
+	"renameuser-move-log": "Siid automatisk flytten we omdøbneng å bruge \"[[User:$1|$1]]\" te \"[[User:$2|$2]]\""
 }

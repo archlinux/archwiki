@@ -212,7 +212,7 @@ class SpecialInterwiki extends SpecialPage {
 	}
 
 	function doSubmit() {
-		global $wgMemc, $wgContLang;
+		global $wgContLang;
 
 		$request = $this->getRequest();
 		$prefix = $request->getVal( 'wpInterwikiPrefix' );
@@ -242,7 +242,7 @@ class SpecialInterwiki extends SpecialPage {
 				$this->getOutput()->addWikiMsg( 'interwiki_deleted', $prefix );
 				$log = new LogPage( 'interwiki' );
 				$log->addEntry( 'iw_delete', $selfTitle, $reason, array( $prefix ) );
-				$wgMemc->delete( wfMemcKey( 'interwiki', $prefix ) );
+				Interwiki::invalidateCache( $prefix );
 			}
 			break;
 		case 'add':
@@ -288,14 +288,14 @@ class SpecialInterwiki extends SpecialPage {
 				$this->getOutput()->addWikiMsg( "interwiki_{$do}ed", $prefix );
 				$log = new LogPage( 'interwiki' );
 				$log->addEntry( 'iw_' . $do, $selfTitle, $reason, array( $prefix, $theurl, $trans, $local ) );
-				$wgMemc->delete( wfMemcKey( 'interwiki', $prefix ) );
+				Interwiki::invalidateCache( $prefix );
 			}
 			break;
 		}
 	}
 
 	function showList() {
-		global $wgInterwikiCentralDB;
+		global $wgInterwikiCentralDB, $wgInterwikiViewOnly;
 		$canModify = $this->canModify();
 
 		// Build lists
@@ -333,11 +333,15 @@ class SpecialInterwiki extends SpecialPage {
 
 		// Page intro content
 		$this->getOutput()->addWikiMsg( 'interwiki_intro' );
-		$logLink = Linker::link(
-			SpecialPage::getTitleFor( 'Log', 'interwiki' ),
-			$this->msg( 'interwiki-logtext' )->escaped()
-		);
-		$this->getOutput()->addHTML( '<p class="mw-interwiki-log">' . $logLink . '</p>' );
+
+		// Add 'view log' link when possible
+		if ( $wgInterwikiViewOnly === false ) {
+			$logLink = Linker::link(
+				SpecialPage::getTitleFor( 'Log', 'interwiki' ),
+				$this->msg( 'interwiki-logtext' )->escaped()
+			);
+			$this->getOutput()->addHTML( '<p class="mw-interwiki-log">' . $logLink . '</p>' );
+		}
 
 		// Add 'add' link
 		if ( $canModify ) {
@@ -353,7 +357,7 @@ class SpecialInterwiki extends SpecialPage {
 		$this->getOutput()->addWikiMsg( 'interwiki-legend' );
 
 		if ( !is_array( $iwPrefixes ) || count( $iwPrefixes ) === 0 ) {
-			if (  !is_array( $iwGlobalPrefixes ) || count( $iwGlobalPrefixes ) === 0 ) {
+			if ( !is_array( $iwGlobalPrefixes ) || count( $iwGlobalPrefixes ) === 0 ) {
 				// If the interwiki table(s) are empty, display an error message
 				$this->error( 'interwiki_error' );
 				return;

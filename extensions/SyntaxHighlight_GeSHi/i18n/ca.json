@@ -2,13 +2,15 @@
 	"@metadata": {
 		"authors": [
 			"SMP",
-			"Solde"
+			"Solde",
+			"Macofe",
+			"Annamerida",
+			"Vriullop"
 		]
 	},
-	"syntaxhighlight-desc": "Proveeix de ressaltat sintàctic amb l'etiqueta <code>&lt;syntaxhighlight&gt;</code> usant el programa [http://qbnz.com/highlighter/ GeSHi]",
-	"syntaxhighlight-specify": "Heu d'especificar un dels llenguatges:",
-	"syntaxhighlight-supported": "Llenguatges admesos per al ressaltament sintàctic:",
-	"syntaxhighlight-err-loading": "(error en carregar la llista de llenguatges)",
-	"syntaxhighlight-err-language": "Llenguatge invàlid.",
-	"geshi.css": "/* El CSS ubicat aquí serà aplicat al ressaltat de sintaxi de GeSHi */"
+	"syntaxhighlight-desc": "Proveeix de ressaltat sintàctic amb l'etiqueta <code>&lt;syntaxhighlight&gt;</code> usant el programa [http://pygments.org/ GeSHi]",
+	"syntaxhighlight-error-category": "Pàgines amb errors de marcatge de sintaxi",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "Codi",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "Mostra els números de línia",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Bloc de codi"
 }

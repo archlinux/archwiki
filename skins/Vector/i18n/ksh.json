@@ -5,7 +5,7 @@
 		]
 	},
 	"skinname-vector": "Väktor",
-	"vector-skin-desc": "En modärne Väsjohn vun dä ällere Bedehnbovverfläsch „Monobooch“ met enem neue Ußsinn un Verbäßeronge bem Bedehne.",
+	"vector-skin-desc": "En modärne Väsjohn vun dä älldere Bedehnbovverfläsch „Monobooch“ met enem neue Ußsinn un Verbäßeronge bem Bedehne.",
 	"vector.css": "/* Dat CSS heh aan dä Schtäll wirrek blohß op de Bedehnbovverfläsch „Väktor“ */",
 	"vector.js": "/* De JavaSkreppte fun heh krejje alle Sigge met dä Bedehnbovverfläsch „Väktor“ jeschek */",
 	"vector-action-addsection": "Ne neue Afschnet onge drahn!",
@@ -16,8 +16,8 @@
 	"vector-action-unprotect": "Schoz ändere!",
 	"vector-view-create": "Neu Schrihve!",
 	"vector-view-edit": "Änndere!",
-	"vector-view-history": "Versione zeije!",
+	"vector-view-history": "Väsjohne zeije!",
 	"vector-view-view": "Lässe!",
-	"vector-view-viewsource": "Der Wikitäx aanlohre!",
-	"vector-more-actions": "Mieh"
+	"vector-view-viewsource": "Der Wikkitäx aanlohre!",
+	"vector-more-actions": "Mih"
 }

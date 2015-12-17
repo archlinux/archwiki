@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Naudefj"
+			"Naudefj",
+			"Arnobarnard"
 		]
 	},
+	"fancycaptcha-createaccount": "Om hierdie wiki teen geoutomatiseerde rekeningskepping te beskerm, vra ons u vriendelik om die woorde wat in die boks hieronder vertoon word in te voer ([[Special:Captcha/help|meer inligting]]):",
 	"fancycaptcha-reload-text": "Verfris"
 }

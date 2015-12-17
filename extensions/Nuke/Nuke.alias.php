@@ -19,7 +19,7 @@ $specialPageAliases['ar'] = array(
 	'Nuke' => array( 'حذف_كمي' ),
 );
 
-/** Egyptian Spoken Arabic (مصرى) */
+/** Egyptian Arabic (مصرى) */
 $specialPageAliases['arz'] = array(
 	'Nuke' => array( 'مسح_كامل' ),
 );
@@ -39,6 +39,11 @@ $specialPageAliases['be-tarask'] = array(
 	'Nuke' => array( 'Масавае_выдаленьне' ),
 );
 
+/** Western Balochi (بلوچی رخشانی) */
+$specialPageAliases['bgn'] = array(
+	'Nuke' => array( 'دسته_جمین_پاک_کورتین' ),
+);
+
 /** Banjar (Bahasa Banjar) */
 $specialPageAliases['bjn'] = array(
 	'Nuke' => array( 'Nuklir' ),
@@ -46,7 +51,7 @@ $specialPageAliases['bjn'] = array(
 
 /** Chechen (нохчийн) */
 $specialPageAliases['ce'] = array(
-	'Nuke' => array( 'Дуккха_дӀаяккхар' ),
+	'Nuke' => array( 'Дуккха_дӀаяхар' ),
 );
 
 /** German (Deutsch) */
@@ -169,9 +174,9 @@ $specialPageAliases['lb'] = array(
 	'Nuke' => array( 'Masseläschung' ),
 );
 
-/** لوری (لوری) */
+/** Northern Luri (لۊری شومالی) */
 $specialPageAliases['lrc'] = array(
-	'Nuke' => array( 'اتمی' ),
+	'Nuke' => array( 'أتومی' ),
 );
 
 /** Literary Chinese (文言) */

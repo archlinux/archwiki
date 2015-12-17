@@ -6,7 +6,8 @@
 			"Incelemeelemani",
 			"Joseph",
 			"Karduelis",
-			"Koc61"
+			"Koc61",
+			"Arystanbek"
 		]
 	},
 	"gadgets-desc": "Kullanıcıların [[Special:Preferences#mw-prefsection-gadgets|tercihlerinde]] özel [[Special:Gadgets|CSS ve JavaScript gadgetlerini]] seçmelerine izin verir",
@@ -23,5 +24,21 @@
 	"gadgets-export-title": "Gadget dışa aktarımı",
 	"gadgets-not-found": "Gadget \"$1\" bulunamadı.",
 	"gadgets-export-text": "$1 gadgetini dışa aktarmak için \"{{int:gadgets-export-download}}\" düğmesine tıklayın, yüklenen dosyayı kaydedin, hedef vikide Special:Import sayfasına gidin ve yükleyin. Sonra aşağıdakini MediaWiki:Gadgets-definition sayfasına ekleyin:\n<pre>$2</pre>\nHedef vikide uygun izinlerinizin olması (sistem mesajlarını değiştirmek yetkisi dahil) ve dosyadan içe aktarmanın etkinleştirilmiş olması gerekir.",
-	"gadgets-export-download": "İndir"
+	"gadgets-export-download": "İndir",
+	"apihelp-query+gadgetcategories-description": "Döner gadget kategori listesi.",
+	"apihelp-query+gadgetcategories-param-prop": "Kategori bilgi almak için ne gadget:\n;adı:İç kategori adı.\n;konu başlığı:Kategori Başlığı.\n;üyeler:kategorideki araçların Sayısı.",
+	"apihelp-query+gadgetcategories-param-names": "Almak için kategorilerin adlarını.",
+	"apihelp-query+gadgetcategories-example-1": "Mevcut gadget kategori listesi",
+	"apihelp-query+gadgetcategories-example-2": "Kategoriler \"foo\" ve \"bar\"adlı hakkında tüm bilgi almak",
+	"apihelp-query+gadgets-description": "Döner araçlar bu wiki üzerinde bulundurmalıdır.",
+	"apihelp-query+gadgets-param-prop": "Bilgi almak için ne gadget:\n;ıd:İç gadget ID.\n;meta:gadget metadata.\n;tanım:Gadget açıklama HTML (Eğer gerçekten gerekirse yavaş, sadece kullanmak olabilir) dönüştü.",
+	"apihelp-query+gadgets-param-categories": "Almak için ne gelen araçlar.",
+	"apihelp-query+gadgets-param-ids": "Araçların kimliği almak için.",
+	"apihelp-query+gadgets-param-allowedonly": "Liste sadece araçlar geçerli kullanıcı için izin verdi.",
+	"apihelp-query+gadgets-param-enabledonly": "Liste sadece araçlar geçerli kullanıcı tarafından etkinleştirilebilir.",
+	"apihelp-query+gadgets-example-1": "Kendi açıklamaları ile birlikte araçların listesi",
+	"apihelp-query+gadgets-example-2": "Mümkün olan tüm özelliklere sahip araçların bir listesini almak",
+	"apihelp-query+gadgets-example-3": "Araçlar kategoriye ait bir liste olsun \"foo\"",
+	"apihelp-query+gadgets-example-4": "Araçlar hakkında bilgi \"\" ve \"bar\"foo al",
+	"apihelp-query+gadgets-example-5": "Araçlar geçerli kullanıcı tarafından etkin bir listesini almak"
 }

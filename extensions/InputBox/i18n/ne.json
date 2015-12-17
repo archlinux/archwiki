@@ -1,4 +1,9 @@
 {
-	"@metadata": [],
-	"inputbox-createarticle": "लेख थाल्नुहोस्"
+	"@metadata": {
+		"authors": [
+			"NehalDaveND"
+		]
+	},
+	"inputbox-createarticle": "लेख थाल्नुहोस्",
+	"inputbox-ns-main": "मुख्य"
 }

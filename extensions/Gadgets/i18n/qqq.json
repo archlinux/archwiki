@@ -26,6 +26,7 @@
 	"gadgets-required-rights": "Parameters:\n* $1 - a list in wikitext.\n* $2 - the number of items in list $1 for PLURAL use.",
 	"gadgets-required-skins": "Parameters:\n* $1 - a comma separated list.\n* $2 - the number of items in list $1 for PLURAL use.",
 	"gadgets-default": "Used in [[Special:Gadgets]], if the extension is enabled for everyone by the Wiki's default settings.",
+	"gadgets-legacy": "Used on [[Special:Gadgets]], if the extension contains legacy scripts and doesn't use ResourceLoader yet.",
 	"gadgets-export": "Used on [[Special:Gadgets]]. This is a verb, not noun.\n{{Identical|Export}}",
 	"gadgets-export-title": "Used as page title. Example: [[Special:Gadgets/export/editbuttons]]",
 	"gadgets-not-found": "Used as error message. Parameters:\n* $1 - gadget name",
@@ -46,5 +47,9 @@
 	"apihelp-query+gadgets-example-2": "{{doc-apihelp-example|query+gadgets}}",
 	"apihelp-query+gadgets-example-3": "{{doc-apihelp-example|query+gadgets}}",
 	"apihelp-query+gadgets-example-4": "{{doc-apihelp-example|query+gadgets}}",
-	"apihelp-query+gadgets-example-5": "{{doc-apihelp-example|query+gadgets}}"
+	"apihelp-query+gadgets-example-5": "{{doc-apihelp-example|query+gadgets}}",
+	"right-gadgets-edit": "{{doc-right|gadgets-edit}}",
+	"action-gadgets-edit": "{{doc-action|gadgets-edit}}",
+	"right-gadgets-definition-edit": "{{doc-right|gadgets-definition-edit}}",
+	"action-gadgets-definition-edit": "{{doc-action|gadgets-definition-edit}}"
 }

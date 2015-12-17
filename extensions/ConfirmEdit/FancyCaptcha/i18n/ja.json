@@ -4,7 +4,8 @@
 			"Aotake",
 			"Fryed-peach",
 			"Marine-Blue",
-			"Shirayuki"
+			"Shirayuki",
+			"Takot"
 		]
 	},
 	"fancycaptcha-desc": "Confirm Edit 用の装飾的な CAPTCHA ジェネレーター",
@@ -14,5 +15,7 @@
 	"fancycaptcha-create": "ページを新規作成するには、下記の確認用の文字列を欄に入力してください ([[Special:Captcha/help|詳細]]):",
 	"fancycaptcha-edit": "このページを編集するには、下記の確認用の文字列を欄に入力してください ([[Special:Captcha/help|詳細]]):",
 	"fancycaptcha-sendemail": "ウィキへの自動スパム攻撃を防ぐため、お手数をおかけしますが下記の確認用の文字列を欄に入力してください ([[Special:Captcha/help|詳細]]):",
-	"fancycaptcha-reload-text": "更新"
+	"fancycaptcha-reload-text": "更新",
+	"apihelp-fancycaptchareload-description": "新しい FancyCaptcha を取得",
+	"apihelp-fancycaptchareload-example-1": "新しい FancyCaptcha を取得"
 }

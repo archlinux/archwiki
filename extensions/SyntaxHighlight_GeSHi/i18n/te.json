@@ -2,11 +2,10 @@
 	"@metadata": {
 		"authors": [
 			"Chaduvari",
-			"Veeven"
+			"Veeven",
+			"Praveen Illa"
 		]
 	},
-	"syntaxhighlight-specify": "భాషని ఈ విధంగా ఇవ్వాలి:",
-	"syntaxhighlight-supported": "ఛందస్సు ఉద్దీపనకి తోడ్పాటు ఉన్న భాషలు:",
-	"syntaxhighlight-err-loading": "(తోడ్పాటున్న భాషల జాబితా లోడింగులో లోపం జరిగింది)",
-	"syntaxhighlight-err-language": "చెల్లని భాష."
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "భాష",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "కోడ్ బ్లాక్"
 }

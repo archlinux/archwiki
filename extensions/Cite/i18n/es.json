@@ -16,10 +16,11 @@
 			"Muro de Aguas",
 			"Remember the dot",
 			"Sanbec",
-			"Translationista"
+			"Translationista",
+			"Macofe"
 		]
 	},
-	"cite-desc": "Añade las etiquietas <nowiki><ref[ name=id]> y <references /></nowiki> para utilizar notas al pie.",
+	"cite-desc": "Añade las etiquetas <nowiki><ref[ name=id]></nowiki> y <nowiki><references/></nowiki> para citas.",
 	"cite_error": "Error en la cita: $1",
 	"cite_error_ref_numeric_key": "Etiqueta <code>&lt;ref&gt;</code> no válida;\nel nombre no puede ser un número entero. Use un título descriptivo",
 	"cite_error_ref_no_key": "Etiqueta <code>&lt;ref&gt;</code> no válida;\nlas referencias sin contenido deben tener un nombre",

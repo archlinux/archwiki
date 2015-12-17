@@ -54,7 +54,7 @@
 	"interwiki_editerror": "Префикс «$1» не может быть изменён в таблице интервики. Возможно, его там не существует.",
 	"interwiki-badprefix": "Указанный префикс интервики «$1» содержит недопустимые символы",
 	"interwiki-submit-empty": "Префикс и URL не могут быть пустыми.",
-	"interwiki-submit-invalidurl": "Протокол URL-адреса является недопустимым.",
+	"interwiki-submit-invalidurl": "Некорректный протокол URL-адреса.",
 	"log-name-interwiki": "Журнал изменений таблицы интервики",
 	"logentry-interwiki-iw_add": "$1 {{GENDER:$2|добавил|добавила}} префикс «$4» ($5) (trans: $6; local: $7) в интервики-таблицу",
 	"logentry-interwiki-iw_edit": "$1 {{GENDER:$2|изменил|изменила}} префикс «$4» ($5) (trans: $6; local: $7) в интервики-таблице",

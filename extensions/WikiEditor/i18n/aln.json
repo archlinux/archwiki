@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Mdupont",
-			"Macofe"
+			"Macofe",
+			"Ammartivari"
 		]
 	},
 	"wikieditor": "redaktimi i avancuar wikitext interface",
@@ -18,7 +19,7 @@
 	"wikieditor-publish-button-cancel": "Anuloj",
 	"wikieditor-publish-dialog-title": "Publikimi në {{SITENAME}}",
 	"wikieditor-publish-dialog-summary": "përmbledhje Edit (përshkruaj shkurtimisht ndryshimet që keni bërë):",
-	"wikieditor-publish-dialog-minor": "Minor redakto",
+	"wikieditor-publish-dialog-minor": "Redaktim i vogël",
 	"wikieditor-publish-dialog-watch": "Watch këtë faqe",
 	"wikieditor-publish-dialog-publish": "Publikoj",
 	"wikieditor-publish-dialog-goback": "Kthehem",
@@ -173,14 +174,14 @@
 	"wikieditor-toolbar-help-content-file-description": "Embedded file",
 	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Example.png|$2|$3]]",
 	"wikieditor-toolbar-help-content-reference-description": "Referim",
-	"wikieditor-toolbar-help-content-reference-syntax": "Tekst faqesh. name=\"test\"> <ref [http://www.example.org] teksti Link, teksti shtesë. </> ref",
+	"wikieditor-toolbar-help-content-reference-syntax": "Tekst faqesh.> <ref [http://www.example.org] teksti Link, teksti shtesë. </> ref",
 	"wikieditor-toolbar-help-content-reference-result": "Tekst faqesh. <a href='#'><sup>[1]</sup></a>",
 	"wikieditor-toolbar-help-content-rereference-description": "përdorimin shtesë të njëjtën referencë",
-	"wikieditor-toolbar-help-content-rereference-result": "Tekst faqesh. <a href='#'><sup>[1]</sup></a>",
+	"wikieditor-toolbar-help-content-rereference-result": "Tekst faqesh. <a href='#'><sup>[2]</sup></a>",
 	"wikieditor-toolbar-help-content-showreferences-description": "referenca Display",
 	"wikieditor-toolbar-help-content-showreferences-result": "<ol class='references'><li id='cite_note-test-0'> <a title='' href='#'><b>^</b></a> <a rel='nofollow' title=\"http://www.example.org\" class='external text' href='#'>Teksti Link</a> , teksti shtesë. </li></ol>",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "Nënshkrimi me gjithë kohë",
-	"wikieditor-toolbar-help-content-signaturetimestamp-result": "<a href='#' title=\"{{#special:mypage}}\">Emri i përdoruesit</a> ( <a href='#' title=\"{{#special:mytalk}}\">të folur</a> ) 15:54, 10 Qershor 2009 (UTC)",
+	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='{{#special:mypage}}'>Emri i përdoruesit</a> ( <a href='#' title=\"{{#special:mytalk}}\">të folur</a> ) 15:54, 10 Qershor 2009 (UTC)",
 	"wikieditor-toolbar-help-content-signature-description": "Nënshkrim",
 	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title=\"{{#special:mypage}}\">Emri i përdoruesit</a> ( <a href='#' title=\"{{#special:mytalk}}\">të folur</a> )",
 	"wikieditor-toolbar-help-content-indent-description": "Porosit",

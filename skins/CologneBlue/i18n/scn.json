@@ -1,8 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Santu"
+			"Santu",
+			"Pippinu",
+			"Sarvaturi"
 		]
 	},
-	"skinname-cologneblue": "Cologne Blu"
+	"skinname-cologneblue": "Cologne Blu",
+	"cologneblue-desc": "Na peddi leggia cu picca furmattazzioni"
 }

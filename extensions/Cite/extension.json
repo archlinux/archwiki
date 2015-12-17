@@ -22,17 +22,32 @@
 		]
 	},
 	"ResourceModules": {
-		"ext.cite": {
-			"scripts": "ext.cite.js",
-			"styles": "ext.cite.css",
+		"ext.cite.styles": {
+			"styles": {
+				"ext.cite.styles.css": {},
+				"ext.cite.print.css": {
+					"media": "print"
+				}
+			},
+			"position": "bottom"
+		},
+		"ext.cite.a11y": {
+			"scripts": "ext.cite.a11y.js",
+			"styles": "ext.cite.a11y.css",
 			"messages": [
 				"cite_references_link_accessibility_label",
 				"cite_references_link_many_accessibility_label"
-			]
+			],
+			"position": "bottom"
 		},
-		"ext.rtlcite": {
-			"styles": "ext.rtlcite.css",
-			"position": "top"
+		"ext.cite.style": {
+			"class": "CiteCSSFileModule",
+			"styles": "ext.cite.style.css",
+			"position": "top",
+			"targets": [
+				"desktop",
+				"mobile"
+			]
 		}
 	},
 	"ResourceFileModulePaths": {
@@ -44,9 +59,11 @@
 		"CiteCacheReferences": false
 	},
 	"AutoloadClasses": {
-		"Cite": "Cite_body.php"
+		"Cite": "Cite_body.php",
+		"CiteCSSFileModule": "CiteCSSFileModule.php"
 	},
 	"ParserTestFiles": [
 		"citeParserTests.txt"
-	]
+	],
+	"manifest_version": 1
 }

@@ -2,14 +2,17 @@
 	"@metadata": {
 		"authors": [
 			"Anakmalaysia",
-			"Aviator"
+			"Aviator",
+			"Pizza1016"
 		]
 	},
 	"fancycaptcha-addurl": "Suntingan anda mengandungi pautan luar baru. Untuk membanteras kegiatan spam automatik, anda diminta mengisi huruf-huruf berikut dalam kotak yang disediakan ([[Special:Captcha/help|maklumat lanjut]]):",
 	"fancycaptcha-badlogin": "Untuk membanteras kegiatan meneka kata laluan secara automatik, anda diminta mengisi huruf-huruf berikut dalam kotak yang disediakan ([[Special:Captcha/help|maklumat lanjut]]):",
-	"fancycaptcha-createaccount": "Untuk membanteras kegiatan pembukaan akaun secara automatik, anda diminta mengisi huruf-huruf berikut dalam kotak yang disediakan ([[Special:Captcha/help|maklumat lanjut]]):",
+	"fancycaptcha-createaccount": "Untuk melindungi wiki ini dari pembukaan akaun secara automatik, kami memohon anda untuk mengisi perkataan-perkataan berikut dalam kotak yang disediakan ([[Special:Captcha/help|maklumat lanjut]]):",
 	"fancycaptcha-create": "Untuk mencipta laman ini, anda diminta mengisi huruf-huruf berikut dalam kotak yang disediakan ([[Special:Captcha/help|maklumat lanjut]]):",
 	"fancycaptcha-edit": "Untuk menyunting laman ini, anda diminta mengisi huruf-huruf berikut dalam kotak yang disediakan ([[Special:Captcha/help|maklumat lanjut]]):",
 	"fancycaptcha-sendemail": "Untuk membanteras kegiatan spam secara automatik, anda diminta mengisi huruf-huruf berikut dalam kotak yang disediakan ([[Special:Captcha/help|maklumat lanjut]]):",
-	"fancycaptcha-reload-text": "Muat semula"
+	"fancycaptcha-reload-text": "Muat semula",
+	"apihelp-fancycaptchareload-description": "Dapatkan FancyCaptcha baru.",
+	"apihelp-fancycaptchareload-example-1": "Dapatkan FancyCaptcha baru"
 }

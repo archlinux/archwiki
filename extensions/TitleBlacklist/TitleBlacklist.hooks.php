@@ -48,27 +48,29 @@ class TitleBlacklistHooks {
 
 	/**
 	 * Display a notice if a user is only able to create or edit a page
-	 * because they have tboverride (or autoconfirmed).
+	 * because they have tboverride.
 	 *
 	 * @param Title $title
 	 * @param integer $oldid
 	 * @param array &$notices
 	 */
 	public static function displayBlacklistOverrideNotice( Title $title, $oldid, array &$notices ) {
+		if ( !RequestContext::getMain()->getUser()->isAllowed( 'tboverride' ) ) {
+			return true;
+		}
+
 		$blacklisted = TitleBlacklist::singleton()->isBlacklisted(
 			$title,
 			$title->exists() ? 'edit' : 'create'
 		);
-		if ( $blacklisted ) {
-			$params = $blacklisted->getParams();
-			$msg = wfMessage(
-				isset( $params['autoconfirmed'] ) ?
-				'titleblacklist-autoconfirmed-warning' :
-				'titleblacklist-warning'
-			);
-			$notices['titleblacklist'] = $msg->rawParams(
-				htmlspecialchars( $blacklisted->getRaw() ) )->parseAsBlock();
+		if ( !$blacklisted ) {
+			return true;
 		}
+
+		$params = $blacklisted->getParams();
+		$msg = wfMessage( 'titleblacklist-warning' );
+		$notices['titleblacklist'] = $msg->rawParams(
+			htmlspecialchars( $blacklisted->getRaw() ) )->parseAsBlock();
 		return true;
 	}
 
@@ -105,40 +107,15 @@ class TitleBlacklistHooks {
 	}
 
 	/**
-	 * AbortMove hook (<1.24)
-	 *
-	 * @todo: Remove once 1.24 support is dropped
-	 *
-	 * @param $old Title
-	 * @param $nt Title
-	 * @param $user User
-	 * @param $err
-	 * @return bool
-	 */
-	public static function abortMove( $old, $nt, $user, &$err, $reason ) {
-		if ( method_exists( 'MovePage', 'checkPermissions' ) ) {
-			// Don't use this hook, use MovePageCheckPermissions instead
-			return true;
-		}
-
-		$status = new Status();
-		self::onMovePageCheckPermissions( $old, $nt, $user, $reason, $status );
-		if ( !$status->isOK() ) {
-			$err = $status->getHTML();
-		}
-
-		return $status->isOK();
-	}
-
-	/**
 	 * Check whether a user name is acceptable,
 	 * and set a message if unacceptable.
 	 *
-	 * Used by abortNewAccount and centralAuthAutoCreate
+	 * Used by abortNewAccount and centralAuthAutoCreate.
+	 * May also be called externally to vet alternate account names.
 	 *
 	 * @return bool Acceptable
 	 */
-	private static function acceptNewUserName( $userName, $permissionsUser, &$err, $override = true, $log = false ) {
+	public static function acceptNewUserName( $userName, $permissionsUser, &$err, $override = true, $log = false ) {
 		global $wgUser;
 		$title = Title::makeTitleSafe( NS_USER, $userName );
 		$blacklisted = TitleBlacklist::singleton()->userCannot( $title, $permissionsUser,
@@ -162,11 +139,28 @@ class TitleBlacklistHooks {
 	 * AbortNewAccount hook
 	 *
 	 * @param User $user
+	 * @param string &$message
+	 * @return bool
 	 */
 	public static function abortNewAccount( $user, &$message ) {
 		global $wgUser, $wgRequest;
 		$override = $wgRequest->getCheck( 'wpIgnoreTitleBlacklist' );
 		return self::acceptNewUserName( $user->getName(), $wgUser, $message, $override, true );
+	}
+
+	/**
+	 * AbortAutoAccount hook
+	 *
+	 * @param User $user
+	 * @param string &$message
+	 * @return bool
+	 */
+	public static function abortAutoAccount( $user, &$message ) {
+		global $wgTitleBlacklistBlockAutoAccountCreation;
+		if ( $wgTitleBlacklistBlockAutoAccountCreation ) {
+			return self::abortNewAccount( $user, $message );
+		}
+		return true;
 	}
 
 	/**

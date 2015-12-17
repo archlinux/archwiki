@@ -65,5 +65,6 @@
 	"config": {
 		"@doc": "BlacklistSettings are set in SpamBlacklistHooks.php",
 		"LogSpamBlacklistHits": false
-	}
+	},
+	"manifest_version": 1
 }

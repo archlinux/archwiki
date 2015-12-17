@@ -12,5 +12,6 @@
 	"nuke-defaultreason": "$1(e)k sortutako orrien ezabaketa masiboa",
 	"nuke-submit-user": "Joan",
 	"nuke-submit-delete": "Aukeratutakoa ezabatu",
-	"right-nuke": "Masiboki ezabatutako orrialdeak"
+	"right-nuke": "Masiboki ezabatutako orrialdeak",
+	"nuke-delete-more": "[[Special:Nuke|Ezabatu orri gehiago]]"
 }

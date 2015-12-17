@@ -95,28 +95,7 @@ $.wikiEditor.modules.dialogs.config = {
 			'insert-link': {
 				titleMsg: 'wikieditor-toolbar-tool-link-title',
 				id: 'wikieditor-toolbar-link-dialog',
-				html: '\
-					<fieldset>\
-						<div class="wikieditor-toolbar-field-wrapper">\
-							<label for="wikieditor-toolbar-link-int-target" rel="wikieditor-toolbar-tool-link-int-target" id="wikieditor-toolbar-tool-link-int-target-label"></label>\
-							<div id="wikieditor-toolbar-link-int-target-status"></div>\
-							<input type="text" id="wikieditor-toolbar-link-int-target"/>\
-						</div>\
-						<div class="wikieditor-toolbar-field-wrapper">\
-							<label for="wikieditor-toolbar-link-int-text" rel="wikieditor-toolbar-tool-link-int-text"></label>\
-							<input type="text" id="wikieditor-toolbar-link-int-text"/>\
-						</div>\
-						<div class="wikieditor-toolbar-field-wrapper">\
-							<div class="wikieditor-toolbar-floated-field-wrapper">\
-								<input type="radio" id="wikieditor-toolbar-link-type-int" name="wikieditor-toolbar-link-type" selected/>\
-								<label for="wikieditor-toolbar-link-type-int" rel="wikieditor-toolbar-tool-link-int"></label>\
-							</div>\
-							<div class="wikieditor-toolbar-floated-field-wrapper">\
-								<input type="radio" id="wikieditor-toolbar-link-type-ext" name="wikieditor-toolbar-link-type"/>\
-								<label for="wikieditor-toolbar-link-type-ext" rel="wikieditor-toolbar-tool-link-ext"></label>\
-							</div>\
-						</div>\
-					</fieldset>',
+				htmlTemplate: 'dialogInsertLink.html',
 
 				init: function () {
 					var api = new mw.Api();
@@ -536,7 +515,7 @@ $.wikiEditor.modules.dialogs.config = {
 						var serverName = mw.config.get( 'wgServer' ).replace( /^(https?:)?\/\//, '' );
 						// Cache the articlepath regex
 						$( this ).data( 'articlePathRegex', new RegExp(
-							'^https?://' + $.escapeRE( serverName + mw.config.get( 'wgArticlePath' ) )
+							'^https?://' + mw.RegExp.escape( serverName + mw.config.get( 'wgArticlePath' ) )
 								.replace( /\\\$1/g, '(.*)' ) + '$'
 						) );
 						// Pre-fill the text fields based on the current selection
@@ -629,16 +608,7 @@ $.wikiEditor.modules.dialogs.config = {
 			'insert-reference': {
 				titleMsg: 'wikieditor-toolbar-tool-reference-title',
 				id: 'wikieditor-toolbar-reference-dialog',
-				html: '\
-				<div class="wikieditor-toolbar-dialog-wrapper">\
-				<fieldset><div class="wikieditor-toolbar-table-form">\
-					<div class="wikieditor-toolbar-field-wrapper">\
-						<label for="wikieditor-toolbar-reference-text"\
-							rel="wikieditor-toolbar-tool-reference-text"></label>\
-						<input type="text" id="wikieditor-toolbar-reference-text"/>\
-					</div>\
-				</div></fieldset>\
-				</div>',
+				htmlTemplate: 'dialogInsertReference.html',
 				init: function () {
 					// Insert translated strings into labels
 					$( this ).find( '[rel]' ).each( function () {
@@ -726,42 +696,7 @@ $.wikiEditor.modules.dialogs.config = {
 			'insert-file': {
 				titleMsg: 'wikieditor-toolbar-tool-file-title',
 				id: 'wikieditor-toolbar-file-dialog',
-				html: '\
-					<fieldset>\
-						<div class="wikieditor-toolbar-field-wrapper">\
-							<label for="wikieditor-toolbar-file-target" rel="wikieditor-toolbar-file-target" id="wikieditor-toolbar-tool-file-target-label"></label>\
-							<input type="text" id="wikieditor-toolbar-file-target"/>\
-						</div>\
-						<div class="wikieditor-toolbar-field-wrapper">\
-							<label for="wikieditor-toolbar-file-caption" rel="wikieditor-toolbar-file-caption"></label>\
-							<input type="text" id="wikieditor-toolbar-file-caption"/>\
-						</div>\
-						<div class="wikieditor-toolbar-file-options">\
-							<div class="wikieditor-toolbar-field-wrapper">\
-								<label for="wikieditor-toolbar-file-size" rel="wikieditor-toolbar-file-size"></label><br/>\
-								<input type="text" id="wikieditor-toolbar-file-size" size="5"/>\
-							</div>\
-							<div class="wikieditor-toolbar-field-wrapper">\
-								<label for="wikieditor-toolbar-file-float" rel="wikieditor-toolbar-file-float"></label><br/>\
-								<select type="text" id="wikieditor-toolbar-file-float">\
-								<option value="default" selected="selected" rel="wikieditor-toolbar-file-default"></option>\
-								<option data-i18n-magic="img_none"></option>\
-								<option data-i18n-magic="img_center"></option>\
-								<option data-i18n-magic="img_left"></option>\
-								<option data-i18n-magic="img_right"></option>\
-								</select>\
-							</div>\
-							<div class="wikieditor-toolbar-field-wrapper">\
-								<label for="wikieditor-toolbar-file-format" rel="wikieditor-toolbar-file-format"></label><br/>\
-								<select type="text" id="wikieditor-toolbar-file-format">\
-								<option selected="selected" data-i18n-magic="img_thumbnail">thumb</option>\
-								<option data-i18n-magic="img_framed"></option>\
-								<option data-i18n-magic="img_frameless"></option>\
-								<option value="default" rel="wikieditor-toolbar-file-format-none"></option>\
-								</select>\
-							</div>\
-						</div>\
-					</fieldset>',
+				htmlTemplate: 'dialogInsertFile.html',
 				init: function () {
 					var magicWordsI18N = mw.config.get( 'wgWikiEditorMagicWords' );
 					var defaultMsg = mw.msg( 'wikieditor-toolbar-file-default' );
@@ -875,68 +810,7 @@ $.wikiEditor.modules.dialogs.config = {
 			'insert-table': {
 				titleMsg: 'wikieditor-toolbar-tool-table-title',
 				id: 'wikieditor-toolbar-table-dialog',
-				// FIXME: Localize 'x'?
-				html: '\
-					<div class="wikieditor-toolbar-dialog-wrapper">\
-					<fieldset><div class="wikieditor-toolbar-table-form">\
-						<div class="wikieditor-toolbar-field-wrapper">\
-							<input type="checkbox" id="wikieditor-toolbar-table-dimensions-header" checked/>\
-							<label for="wikieditor-toolbar-table-dimensions-header"\
-								rel="wikieditor-toolbar-tool-table-dimensions-header"></label>\
-						</div>\
-						<div class="wikieditor-toolbar-field-wrapper">\
-							<input type="checkbox" id="wikieditor-toolbar-table-wikitable" checked/>\
-							<label for="wikieditor-toolbar-table-wikitable" rel="wikieditor-toolbar-tool-table-wikitable"></label>\
-						</div>\
-						<div class="wikieditor-toolbar-field-wrapper">\
-							<input type="checkbox" id="wikieditor-toolbar-table-sortable"/>\
-							<label for="wikieditor-toolbar-table-sortable" rel="wikieditor-toolbar-tool-table-sortable"></label>\
-						</div>\
-						<div class="wikieditor-toolbar-table-dimension-fields">\
-							<div class="wikieditor-toolbar-field-wrapper">\
-								<label for="wikieditor-toolbar-table-dimensions-rows"\
-									rel="wikieditor-toolbar-tool-table-dimensions-rows"></label><br/>\
-								<input type="number" min="1" max="1000" id="wikieditor-toolbar-table-dimensions-rows" size="4"/>\
-							</div>\
-							<div class="wikieditor-toolbar-field-wrapper">\
-								<label for="wikieditor-toolbar-table-dimensions-columns"\
-									rel="wikieditor-toolbar-tool-table-dimensions-columns"></label><br/>\
-								<input type="number" min="1" max="1000" id="wikieditor-toolbar-table-dimensions-columns" size="4"/>\
-							</div>\
-						</div>\
-					</div></fieldset>\
-					<div class="wikieditor-toolbar-table-preview-wrapper" >\
-						<span rel="wikieditor-toolbar-tool-table-example"></span>\
-						<div class="wikieditor-toolbar-table-preview-content">\
-							<table id="wikieditor-toolbar-table-preview" class="wikieditor-toolbar-table-preview wikitable">\
-							<thead>\
-								<tr class="wikieditor-toolbar-table-preview-header">\
-									<th rel="wikieditor-toolbar-tool-table-example-header"></th>\
-									<th rel="wikieditor-toolbar-tool-table-example-header"></th>\
-									<th rel="wikieditor-toolbar-tool-table-example-header"></th>\
-								</tr>\
-							</thead><tbody>\
-								<tr class="wikieditor-toolbar-table-preview-hidden" style="display: none;">\
-									<td rel="wikieditor-toolbar-tool-table-example-cell-text"></td>\
-									<td rel="wikieditor-toolbar-tool-table-example-cell-text"></td>\
-									<td rel="wikieditor-toolbar-tool-table-example-cell-text"></td>\
-								</tr><tr>\
-									<td rel="wikieditor-toolbar-tool-table-example-cell-text"></td>\
-									<td rel="wikieditor-toolbar-tool-table-example-cell-text"></td>\
-									<td rel="wikieditor-toolbar-tool-table-example-cell-text"></td>\
-								</tr><tr>\
-									<td rel="wikieditor-toolbar-tool-table-example-cell-text"></td>\
-									<td rel="wikieditor-toolbar-tool-table-example-cell-text"></td>\
-									<td rel="wikieditor-toolbar-tool-table-example-cell-text"></td>\
-								</tr><tr>\
-									<td rel="wikieditor-toolbar-tool-table-example-cell-text"></td>\
-									<td rel="wikieditor-toolbar-tool-table-example-cell-text"></td>\
-									<td rel="wikieditor-toolbar-tool-table-example-cell-text"></td>\
-								</tr>\
-							</tbody>\
-							</table>\
-						</div>\
-					</div></div>',
+				htmlTemplate: 'dialogInsertTable.html',
 				init: function () {
 					$( this ).find( '[rel]' ).each( function () {
 						$( this ).text( mw.msg( $( this ).attr( 'rel' ) ) );
@@ -1111,31 +985,7 @@ $.wikiEditor.modules.dialogs.config = {
 				},
 				titleMsg: 'wikieditor-toolbar-tool-replace-title',
 				id: 'wikieditor-toolbar-replace-dialog',
-				html: '\
-					<div id="wikieditor-toolbar-replace-message">\
-						<div id="wikieditor-toolbar-replace-nomatch" rel="wikieditor-toolbar-tool-replace-nomatch"></div>\
-						<div id="wikieditor-toolbar-replace-success"></div>\
-						<div id="wikieditor-toolbar-replace-emptysearch" rel="wikieditor-toolbar-tool-replace-emptysearch"></div>\
-						<div id="wikieditor-toolbar-replace-invalidregex"></div>\
-					</div>\
-					<fieldset>\
-						<div class="wikieditor-toolbar-field-wrapper">\
-							<label for="wikieditor-toolbar-replace-search" rel="wikieditor-toolbar-tool-replace-search"></label>\
-							<input type="text" id="wikieditor-toolbar-replace-search"/>\
-						</div>\
-						<div class="wikieditor-toolbar-field-wrapper">\
-							<label for="wikieditor-toolbar-replace-replace" rel="wikieditor-toolbar-tool-replace-replace"></label>\
-							<input type="text" id="wikieditor-toolbar-replace-replace"/>\
-						</div>\
-						<div class="wikieditor-toolbar-field-wrapper">\
-							<input type="checkbox" id="wikieditor-toolbar-replace-case"/>\
-							<label for="wikieditor-toolbar-replace-case" rel="wikieditor-toolbar-tool-replace-case"></label>\
-						</div>\
-						<div class="wikieditor-toolbar-field-wrapper">\
-							<input type="checkbox" id="wikieditor-toolbar-replace-regex"/>\
-							<label for="wikieditor-toolbar-replace-regex" rel="wikieditor-toolbar-tool-replace-regex"></label>\
-						</div>\
-					</fieldset>',
+				htmlTemplate: 'dialogReplace.html',
 				init: function () {
 					$( this ).find( '[rel]' ).each( function () {
 						$( this ).text( mw.msg( $( this ).attr( 'rel' ) ) );
@@ -1168,7 +1018,7 @@ $.wikiEditor.modules.dialogs.config = {
 						}
 						var isRegex = $( '#wikieditor-toolbar-replace-regex' ).is( ':checked' );
 						if ( !isRegex ) {
-							searchStr = $.escapeRE( searchStr );
+							searchStr = mw.RegExp.escape( searchStr );
 						}
 						if ( mode === 'replaceAll' ) {
 							flags += 'g';

@@ -2,10 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"Siebrand",
-			"Wiki13"
+			"Wiki13",
+			"Robin0van0der0vliet"
 		]
 	},
 	"pdf-desc": "Handelt pdfbestanden af en maakt het mogelijk ze als afbeeldingen te bekijken",
+	"pdf-file-page-warning-header": "Privacyoverwegingen",
 	"pdf_no_metadata": "De metadata van het pdfbestand kan niet uitgelezen worden",
 	"pdf_page_error": "Het paginanummer ligt niet binnen het bereik",
 	"exif-pdf-producer": "Conversieprogramma",

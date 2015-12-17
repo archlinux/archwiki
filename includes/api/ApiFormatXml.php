@@ -39,13 +39,6 @@ class ApiFormatXml extends ApiFormatBase {
 		return 'text/xml';
 	}
 
-	/**
-	 * @deprecated since 1.25
-	 */
-	public function getNeedsRawData() {
-		return true;
-	}
-
 	public function setRootElement( $rootElemName ) {
 		$this->mRootElemName = $rootElemName;
 	}
@@ -72,7 +65,7 @@ class ApiFormatXml extends ApiFormatBase {
 			'Custom' => function ( &$data, &$metadata ) {
 				if ( isset( $metadata[ApiResult::META_TYPE] ) ) {
 					// We want to use non-BC for BCassoc to force outputting of _idx.
-					switch( $metadata[ApiResult::META_TYPE] ) {
+					switch ( $metadata[ApiResult::META_TYPE] ) {
 						case 'BCassoc':
 							$metadata[ApiResult::META_TYPE] = 'assoc';
 							break;
@@ -267,7 +260,7 @@ class ApiFormatXml extends ApiFormatBase {
 		return '_' . preg_replace_callback(
 			"/[^$nc]/uS",
 			function ( $m ) {
-				return sprintf( '.%X.', utf8ToCodepoint( $m[0] ) );
+				return sprintf( '.%X.', UtfNormal\Utils::utf8ToCodepoint( $m[0] ) );
 			},
 			str_replace( '.', '.2E.', $name )
 		);

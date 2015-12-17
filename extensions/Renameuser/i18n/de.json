@@ -7,7 +7,8 @@
 			"Raimond Spekking",
 			"Spacebirdy",
 			"The Evil IP address",
-			"Umherirrender"
+			"Umherirrender",
+			"J. 'mach' wust"
 		]
 	},
 	"renameuser": "Benutzer umbenennen",
@@ -40,5 +41,5 @@
 	"renameuser-move-log": "Seite während der Benutzerkontoumbenennung von „[[User:$1|$1]]“ in „[[User:$2|$2]]“ automatisch verschoben",
 	"action-renameuser": "Benutzer umzubenennen",
 	"right-renameuser": "Benutzer umbenennen",
-	"renameuser-renamed-notice": "{{GENDER:$1|Dieser Benutzer|Diese Benutzerin|Dieser Benutzer}} wurde umbenannt.\nZur Information folgt das Benutzernamenänderungs-Logbuch."
+	"renameuser-renamed-notice": "{{GENDER:$1|Dieser Benutzer|Diese Benutzerin}} wurde umbenannt.\nZur Information folgt das Benutzernamenänderungs-Logbuch."
 }

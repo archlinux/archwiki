@@ -1,0 +1,129 @@
+{
+	"@doc": "Please read README.md",
+	"name": "ConfirmEdit",
+	"version": "1.4.0",
+	"author": [
+		"Brion Vibber",
+		"..."
+	],
+	"url": "https://www.mediawiki.org/wiki/Extension:ConfirmEdit",
+	"descriptionmsg": "captcha-desc",
+	"license-name": "GPL-2.0+",
+	"type": "antispam",
+	"GroupPermissions": {
+		"*": {
+			"skipcaptcha": false
+		},
+		"user": {
+			"skipcaptcha": false
+		},
+		"autoconfirmed": {
+			"skipcaptcha": false
+		},
+		"bot": {
+			"skipcaptcha": true
+		},
+		"sysop": {
+			"skipcaptcha": true
+		}
+	},
+	"AvailableRights": [
+		"skipcaptcha"
+	],
+	"ExtensionFunctions": [
+		"ConfirmEditHooks::confirmEditSetup"
+	],
+	"SpecialPages": {
+		"Captcha": "CaptchaSpecialPage"
+	},
+	"MessagesDirs": {
+		"ConfirmEdit": [
+			"i18n"
+		]
+	},
+	"ExtensionMessagesFiles": {
+		"ConfirmEditAlias": "ConfirmEdit.alias.php"
+	},
+	"AutoloadClasses": {
+		"ConfirmEditHooks": "includes/ConfirmEditHooks.php",
+		"SimpleCaptcha": "SimpleCaptcha/Captcha.php",
+		"CaptchaStore": "includes/CaptchaStore.php",
+		"CaptchaSessionStore": "includes/CaptchaStore.php",
+		"CaptchaCacheStore": "includes/CaptchaStore.php",
+		"CaptchaSpecialPage": "includes/specials/SpecialCaptcha.php"
+	},
+	"Hooks": {
+		"EditPageBeforeEditButtons": [
+			"ConfirmEditHooks::confirmEditPage"
+		],
+		"UserCreateForm": [
+			"ConfirmEditHooks::injectUserCreate"
+		],
+		"AbortNewAccount": [
+			"ConfirmEditHooks::confirmUserCreate"
+		],
+		"LoginAuthenticateAudit": [
+			"ConfirmEditHooks::triggerUserLogin"
+		],
+		"UserLoginForm": [
+			"ConfirmEditHooks::injectUserLogin"
+		],
+		"AbortLogin": [
+			"ConfirmEditHooks::confirmUserLogin"
+		],
+		"EmailUserForm": [
+			"ConfirmEditHooks::injectEmailUser"
+		],
+		"EmailUser": [
+			"ConfirmEditHooks::confirmEmailUser"
+		],
+		"EditPage::showEditForm:fields": [
+			"ConfirmEditHooks::showEditFormFields"
+		],
+		"EditFilterMergedContent": [
+			"ConfirmEditHooks::confirmEditMerged"
+		],
+		"APIGetAllowedParams": [
+			"ConfirmEditHooks::APIGetAllowedParams"
+		],
+		"APIGetParamDescription": [
+			"ConfirmEditHooks::APIGetParamDescription"
+		],
+		"AddNewAccountApiForm": [
+			"ConfirmEditHooks::addNewAccountApiForm"
+		],
+		"AddNewAccountApiResult": [
+			"ConfirmEditHooks::addNewAccountApiResult"
+		],
+		"APIEditBeforeSave": [
+			"ConfirmEditHooks::confirmEditAPI"
+		],
+		"UnitTestsList": [
+			"ConfirmEditHooks::onUnitTestsList"
+		]
+	},
+	"config": {
+		"_prefix": "",
+		"wgCaptchaWhitelistIP": false,
+		"wgCaptcha": null,
+		"wgCaptchaClass": "SimpleCaptcha",
+		"wgCaptchaTriggers": {
+			"edit": false,
+			"create": false,
+			"sendemail": false,
+			"addurl": true,
+			"createaccount": true,
+			"badlogin": true,
+			"_merge_strategy": "array_plus"
+		},
+		"wgCaptchaTriggersOnNamespace": [],
+		"wgCaptchaStorageClass": "CaptchaSessionStore",
+		"wgCaptchaSessionExpiration": 1800,
+		"wgCaptchaBadLoginExpiration": 300,
+		"ceAllowConfirmedEmail": false,
+		"wgCaptchaBadLoginAttempts": 3,
+		"wgCaptchaWhitelist": false,
+		"wgCaptchaRegexes": []
+	},
+	"manifest_version": 1
+}

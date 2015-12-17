@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Meno25",
-			"زكريا"
+			"زكريا",
+			"محمد أحمد عبد الفتاح"
 		]
 	},
 	"nuke": "حذف كمي",
@@ -15,6 +16,7 @@
 	"nuke-multiplepeople": "حذف كمي لصفحات مضافة حديثا",
 	"nuke-tools": "هذه الأداة تسمح بالحذف الكمي للصفحات المضافة حديثا بواسطة مستخدم أو أيبي معطى.\nأدخل اسم المستخدم أو الأيبي لعرض قائمة بالصفحات للحذف، أو اترك فارغة لكل المستخدمين.",
 	"nuke-submit-user": "اذهب",
+	"nuke-toggleinvert": "اعكس",
 	"nuke-submit-delete": "حذف المختار",
 	"right-nuke": "حذف الصفحات كميا",
 	"nuke-select": "اختر: $1",
@@ -23,5 +25,7 @@
 	"nuke-editby": "من إنشاء [[Special:Contributions/$1|$1]]",
 	"nuke-deleted": "صفحة '''$1''' حذفت.",
 	"nuke-not-deleted": "صفحة [[:$1]] '''لا''' تحذف.",
-	"nuke-viewchanges": "عرض التغييرات"
+	"nuke-viewchanges": "عرض التغييرات",
+	"nuke-linkoncontribs": "حذف كمي",
+	"nuke-linkoncontribs-text": "حذف كمي للصفحات التي يكون هذا المستخدم مؤلفها الوحيد"
 }

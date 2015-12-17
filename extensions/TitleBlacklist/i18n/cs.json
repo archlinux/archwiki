@@ -20,7 +20,6 @@
 	"titleblacklist-forbidden-new-account": "Není dovoleno zaregistrovat uživatelské jméno „$2“.\nOdpovídá následující položce černé listiny: <code>$1</code>",
 	"titleblacklist-invalid": "Na černé listině názvů {{PLURAL:$1|je následující řádka neplatný regulární výraz|jsou následující řádky neplatné regulární výrazy|jsou následující řádky regulární výrazy}} a je nutné {{PLURAL:$1|ji|je|je}} před uložením stránky opravit :",
 	"titleblacklist-override": "Ignorovat černou listinu",
-	"titleblacklist-autoconfirmed-warning": "<strong>Poznámka:</strong> Tuto stránku mohou editovat jen uživatelé s oprávněním <code>autoconfirmed</code>, protože odpovídá následujícímu záznamu černé listiny názvů:<br /><code>$1</code>",
 	"titleblacklist-warning": "<strong>Upozornění: Tuto stránku mohou editovat jen správci a další uživatelé s oprávněním <code>tboverride</code>, protože odpovídá následujícímu záznamu černé listiny názvů:</strong><br /><code>$1</code>",
 	"right-tboverride": "Překonání zakázaných názvů stránek nebo uživatelských jmen",
 	"right-tboverride-account": "Překonání černé listiny uživatelských jmen",

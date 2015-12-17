@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Darshan kandolkar"
+			"Darshan kandolkar",
+			"Vaishali Parab"
 		]
 	},
+	"fancycaptcha-createaccount": "स्वयंचलीत वांगडी नोंद करपासावन वाचपा खातीर आमी तुमचेकडेन मागणी करता, सकयल दिल्लीं उतरां बॉक्सांत बरयात.  ([[Special:Captcha/help|चड म्हायती]]):",
 	"fancycaptcha-reload-text": "ताजें करात"
 }

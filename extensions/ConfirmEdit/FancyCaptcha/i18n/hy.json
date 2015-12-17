@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Xelgen"
+			"Xelgen",
+			"Դավիթ Սարոյան"
 		]
 	},
+	"fancycaptcha-createaccount": "Վիքին մասնակցային հաշիվների ավտոմատ գրանցումից պաշտպանելու նպատակով, խնդրում ենք Ձեզ գրել ներքևի տուփում գրված բառերը ([[Special:Captcha/help|իմանալ ավելին]])։",
 	"fancycaptcha-reload-text": "Մեկ այլ"
 }

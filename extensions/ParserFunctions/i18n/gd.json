@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"GunChleoc"
+		]
+	},
+	"pfunc_expr_unrecognised_word": "Marachd eas-preisein: Chan aithne dhuinn am facal \"$1\".",
+	"pfunc_expr_missing_operand": "Mearachd eas-preisein: Tha oparand a dhìth airson $1.",
+	"pfunc_expr_unrecognised_punctuation": "Mearachd eas-preisein: Chan aithne dhuinn an caractar puingeachaidh \"$1\"."
+}

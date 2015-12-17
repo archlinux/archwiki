@@ -14,5 +14,7 @@
 	"fancycaptcha-create": "Для создания страницы, пожалуйста, введите буквы, которые видны на изображении ниже ([[Special:Captcha/help|подробнее…]]):",
 	"fancycaptcha-edit": "Для редактирования страницы, пожалуйста, введите буквы, которые видны на изображении ниже ([[Special:Captcha/help|подробнее…]]):",
 	"fancycaptcha-sendemail": "В целях защиты от автоматического спама просим вас ввести слова, показанные ниже в рамке ([[Special:Captcha/help|подробнее…]]):",
-	"fancycaptcha-reload-text": "Обновить"
+	"fancycaptcha-reload-text": "Обновить",
+	"apihelp-fancycaptchareload-description": "Получить новую FancyCaptcha.",
+	"apihelp-fancycaptchareload-example-1": "Получить новую FancyCaptcha"
 }

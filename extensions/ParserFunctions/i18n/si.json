@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Budhajeewa",
-			"නන්දිමිතුරු"
+			"නන්දිමිතුරු",
+			"Singhalawap"
 		]
 	},
 	"pfunc_desc": "තාර්කීක ශ්‍රිතයන් උපයෝගී කරගනිමින් ව්‍යාකරණ විග්‍රහකය වර්ධනය කරන්න",
@@ -16,7 +17,7 @@
 	"pfunc_expr_unexpected_operator": "ප්‍රකාශන දෝෂය: අනපේක්‍ෂිත $1 මෙහෙයුම්කාරකය",
 	"pfunc_expr_missing_operand": "ප්‍රකාශන දෝෂය: $1 සඳහා අස්ථානගත ප්‍රවර්ත්‍යය",
 	"pfunc_expr_unexpected_closing_bracket": "ප්‍රකාශන දෝෂය: අනපේක්‍ෂිත වැසීම් වරහන",
-	"pfunc_expr_unrecognised_punctuation": "ප්‍රකාශන දෝෂය: හඳුනානොගත් විරාම අක්ෂරය \"$1\"",
+	"pfunc_expr_unrecognised_punctuation": "ප්‍රකාශන දෝෂය: හඳුනානොගත් විරාම සංකේතය \"$1\"",
 	"pfunc_expr_unclosed_bracket": "ප්‍රකාශන දෝෂය: නොවැසූ වරහන",
 	"pfunc_expr_division_by_zero": "ශුන්‍යයෙන් බෙදීම",
 	"pfunc_expr_invalid_argument": "$1: < -1 හෝ > 1 සඳහා අනීතික විස්තාරකය",

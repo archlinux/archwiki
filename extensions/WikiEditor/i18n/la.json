@@ -93,14 +93,14 @@
 	"wikieditor-toolbar-help-content-file-description": "Fasciculus in pagina impositus",
 	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Exemplum.png|$2|$3]]",
 	"wikieditor-toolbar-help-content-reference-description": "Referentia bibliographica",
-	"wikieditor-toolbar-help-content-reference-syntax": "Textus paginae.&lt;ref name=\"test\"&gt;[http://www.example.org Textus nexus], textus additus.&lt;/ref&gt;",
+	"wikieditor-toolbar-help-content-reference-syntax": "Textus paginae.&lt;ref&gt;[http://www.example.org Textus nexus], textus additus.&lt;/ref&gt;",
 	"wikieditor-toolbar-help-content-reference-result": "Textus paginae.<sup><a href='#'>[1]</a></sup>",
 	"wikieditor-toolbar-help-content-rereference-description": "Eiusdem referentiae usus additus",
-	"wikieditor-toolbar-help-content-rereference-result": "Textus paginae.<sup><a href='#'>[1]</a></sup>",
+	"wikieditor-toolbar-help-content-rereference-result": "Textus paginae.<sup><a href='#'>[2]</a></sup>",
 	"wikieditor-toolbar-help-content-showreferences-description": "Referentias bibliographicas monstrare",
 	"wikieditor-toolbar-help-content-showreferences-result": "<ol class='references'><li id='cite_note-test-0'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.example.org' class='external text' href='#'>Textus nexus</a>, textus additus.</li></ol>",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "Subscriptio tua cum indicatione temporis",
-	"wikieditor-toolbar-help-content-signaturetimestamp-result": "<a href='#' title='{{#special:mypage}}'>Nomen usoris</a> (<a href='#' title='{{#special:mytalk}}'>disputatio</a>) 15:54, 10 Iunii 2009 (UTC)",
+	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='{{#special:mypage}}'>Nomen usoris</a> (<a href='#' title='{{#special:mytalk}}'>disputatio</a>) 15:54, 10 Iunii 2009 (UTC)",
 	"wikieditor-toolbar-help-content-signature-description": "Subscriptio",
 	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='{{#special:mypage}}'>Nomen usoris</a> (<a href='#' title='{{#special:mytalk}}'>disputatio</a>)"
 }

@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Numulunj pilgae"
+			"Numulunj pilgae",
+			"Metsavend"
 		]
 	},
 	"vector-action-addsection": "Поладомс мезень колга корхтамс",
@@ -14,5 +15,6 @@
 	"vector-view-edit": "Петнемс",
 	"vector-view-history": "История няфтемс",
 	"vector-view-view": "Морафтомс",
-	"vector-view-viewsource": "Лисьма няфтемс"
+	"vector-view-viewsource": "Лисьма няфтемс",
+	"vector-more-actions": "Сяда лама"
 }

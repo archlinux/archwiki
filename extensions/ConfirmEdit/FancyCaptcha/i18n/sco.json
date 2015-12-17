@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"AmaryllisGardener"
+		]
+	},
+	"fancycaptcha-createaccount": "Tae pertect the wiki against automatit accoont creation, we kindly ask ye tae enter the wirds that appear ablo in the box ([[Special:Captcha/help|mair info]]):",
+	"fancycaptcha-reload-text": "Refresh"
+}

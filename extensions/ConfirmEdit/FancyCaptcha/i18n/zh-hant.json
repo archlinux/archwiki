@@ -14,5 +14,7 @@
 	"fancycaptcha-create": "為了防止自動建立頁面程式，我們要麻煩您輸入在下面的方框中顯示的單字　([[Special:Captcha/help|更多資訊]])：",
 	"fancycaptcha-edit": "若要編輯此頁面，請輸入在下面的方框中顯示的單字　([[Special:Captcha/help|更多資訊]])：",
 	"fancycaptcha-sendemail": "為了防止垃圾編輯程式，我們要麻煩您輸入在下面的方框中顯示的單字　([[Special:Captcha/help|更多資訊]])：",
-	"fancycaptcha-reload-text": "重新整理"
+	"fancycaptcha-reload-text": "重新整理",
+	"apihelp-fancycaptchareload-description": "取得新 FancyCaptcha。",
+	"apihelp-fancycaptchareload-example-1": "取得新 FancyCaptcha。"
 }

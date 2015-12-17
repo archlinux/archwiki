@@ -2,13 +2,19 @@
 	"@metadata": {
 		"authors": [
 			"Li-sung",
-			"Matěj Grabovský"
+			"Matěj Grabovský",
+			"Mormegil",
+			"Matěj Suchánek"
 		]
 	},
-	"syntaxhighlight-desc": "Poskytuje zvýrazňování syntaxe <code>&lt;syntaxhighlight&gt;</code> pomocí [http://qnbz.com/higlighter zvýrazňovače GeSHi]",
-	"syntaxhighlight-specify": "Musíte určit jazyk tímto způsobem:",
-	"syntaxhighlight-supported": "Seznam jazyků, u kterých je podporováno zvýrazňování syntaxe:",
-	"syntaxhighlight-err-loading": "(chyba při načítání seznamu podporovaných jazyků)",
-	"syntaxhighlight-err-language": "Neplatný jazyk.",
-	"geshi.css": "/* Zde uvedené CSS bude ovlivňovat zvýrazňování syntaxe GeSHi */"
+	"syntaxhighlight-desc": "Poskytuje zvýrazňování syntaxe <code>&lt;syntaxhighlight&gt;</code> pomocí [http://pygments.org Pygments – zvýrazňovače syntaxe v Pythonu]",
+	"syntaxhighlight-error-category": "Stránky s chybami ve zvýrazňování kódu",
+	"syntaxhighlight-error-category-desc": "Při pokusu o zvýraznění kódu na stránce došlo k chybě.",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "Kód",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Jazyk",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "Zobrazit čísla řádků",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Blok kódu",
+	"syntaxhighlight-error-pygments-invocation-failure": "Nepodařilo se zavolat Pygments",
+	"syntaxhighlight-error-unknown-language": "Neznámý jazyk „$1”",
+	"syntaxhighlight-error-exceeds-size-limit": "Kód o velikosti $1 {{PLURAL:$1|bajt|bajty|bajtů}} přesahuje dovolené maximum $2 {{PLURAL:$2|bajt|bajty|bajtů}}"
 }

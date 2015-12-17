@@ -4,7 +4,8 @@
 			"Byrial",
 			"HenrikKbh",
 			"Morten LJ",
-			"Peter Alberti"
+			"Peter Alberti",
+			"Christian List"
 		]
 	},
 	"pfunc_desc": "Udvider parser med logiske funktioner",
@@ -16,7 +17,7 @@
 	"pfunc_expr_stack_exhausted": "Udtryksfejl: Stak tømt",
 	"pfunc_expr_unexpected_number": "Fejl: Uventet tal",
 	"pfunc_expr_preg_match_failure": "Udtryksfejl: Uventet fejl i preg_match",
-	"pfunc_expr_unrecognised_word": "Udtryksfejl: Uventet ord \"$1\"",
+	"pfunc_expr_unrecognised_word": "Udtryksfejl: Ukendt ord \"$1\".",
 	"pfunc_expr_unexpected_operator": "Udtryksfejl: Uventet \"$1\"-operator",
 	"pfunc_expr_missing_operand": "Udtryksfejl: Manglende operand til $1",
 	"pfunc_expr_unexpected_closing_bracket": "Udtryksfejl: Uventet lukkende parentes",

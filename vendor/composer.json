@@ -1,0 +1,35 @@
+{
+	"config": {
+		"autoloader-suffix": "_mediawiki_vendor",
+		"classmap-authoritative": true,
+		"optimize-autoloader": true,
+		"preferred-install": "dist",
+		"prepend-autoloader": false,
+		"vendor-dir": "."
+	},
+	"prefer-stable": true,
+	"require": {
+		"composer/semver": "1.0.0",
+		"cssjanus/cssjanus": "1.1.1",
+		"firebase/php-jwt": "2.1.0",
+		"kzykhys/pygments": "1.0",
+		"liuggio/statsd-php-client": "1.0.16",
+		"mediawiki/at-ease": "1.1.0",
+		"monolog/monolog": "1.14.0",
+		"oojs/oojs-ui": "0.12.12",
+		"oyejorge/less.php": "1.7.0.9",
+		"nmred/kafka-php": "0.1.4",
+		"php": ">=5.3.3",
+		"psr/log": "1.0.0",
+		"ruflin/elastica": "2.2.0",
+		"symfony/process": "2.7.3",
+		"wikimedia/assert": "0.2.2",
+		"wikimedia/avro": "1.7.7",
+		"wikimedia/cdb": "1.3.0",
+		"wikimedia/composer-merge-plugin": "1.3.0",
+		"wikimedia/ip-set": "1.0.1",
+		"wikimedia/utfnormal": "1.0.3",
+		"wikimedia/wrappedstring": "2.0.0",
+		"zordius/lightncandy": "0.21"
+	}
+}

@@ -4,6 +4,7 @@
 			"Joetaras"
 		]
 	},
+	"action-titleblacklistlog": "'ndruche 'u titole de l'archivije de l'elenghe gnure",
 	"titleblacklist-desc": "Permette a l'amministrature de vietà ccrejaziune de le pàggene e le cunde utinde pe 'na [[MediaWiki:Titleblacklist|lista gnore]] e [[MediaWiki:Titlewhitelist|lista vianghe]]",
 	"titleblacklist": "# Stu titele jè in lista gnore. Le titele e l'utinde ca se ponne comborndà cu le espressiune regolare aqquà non ge ponne essere ccrejate.\n# Ause \"#\" pe le commende.\n# Quiste jè sensibbele a le maiuscole e le minuscole de partenze",
 	"titlewhitelist": "# Stu titele jè in lista vianghe.\n# Ause \"#\" pe le commende.\n# Quiste jè sensibbele a le maiuscole e le minuscole de partenze",

@@ -15,6 +15,7 @@
 	"gadgets-required-rights": "{{PLURAL:$2|Го бара следново право|Ги бара следниве права}}:\n\n$1",
 	"gadgets-required-skins": "Достапно во {{PLURAL:$2|рувото $1|следниве рува: $1}}.",
 	"gadgets-default": "Достапно за сите по основно",
+	"gadgets-legacy": "Алатката не е вчитана. Преселете се на „Вчитувач на ресурси“ (ResourceLoader). ([https://www.mediawiki.org/wiki/ResourceLoader/Migration_guide_(users) Дознајте повеќе])",
 	"gadgets-export": "Извези",
 	"gadgets-export-title": "Извоз на алатка",
 	"gadgets-not-found": "Алатката „$1“ не е пронајдена.",
@@ -35,5 +36,9 @@
 	"apihelp-query+gadgets-example-2": "Дај список на алатки со сите можни својства",
 	"apihelp-query+gadgets-example-3": "Дај список на алатки што è припаѓаат на категоријата „foo“",
 	"apihelp-query+gadgets-example-4": "Дај информации за алатките „foo“ и „bar“",
-	"apihelp-query+gadgets-example-5": "Дај список на алатки што ги има вклучено тековниот корисник."
+	"apihelp-query+gadgets-example-5": "Дај список на алатки што ги има вклучено тековниот корисник.",
+	"right-gadgets-edit": "Менување на JavaScript- и CSS-страниците на алатка",
+	"action-gadgets-edit": "менување на JavaScript- и CSS-страниците на алатка",
+	"right-gadgets-definition-edit": "Менување на определбите на алатка",
+	"action-gadgets-definition-edit": "менување на определбата на оваа алатка"
 }

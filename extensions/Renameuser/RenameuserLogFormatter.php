@@ -1,8 +1,8 @@
 <?php
+
 /**
  * LogFormatter for renameuser/renameuser logs
  */
-
 class RenameuserLogFormatter extends LogFormatter {
 
 	protected function getMessageParameters() {
@@ -52,6 +52,7 @@ class RenameuserLogFormatter extends LogFormatter {
 				$link = '[[' . $title->getPrefixedText() . ']]';
 			}
 		}
+
 		return $link;
 	}
 

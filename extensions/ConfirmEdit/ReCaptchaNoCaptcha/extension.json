@@ -1,0 +1,17 @@
+{
+	"name": "ReCaptchaNoCaptcha",
+	"MessagesDirs": {
+		"ReCaptchaNoCaptcha": [
+			"i18n"
+		]
+	},
+	"AutoloadClasses": {
+		"ReCaptchaNoCaptcha": "ReCaptchaNoCaptcha.class.php"
+	},
+	"config": {
+		"CaptchaClass": "ReCaptchaNoCaptcha",
+		"ReCaptchaSiteKey": "",
+		"ReCaptchaSecretKey": "",
+		"ReCaptchaSendRemoteIP": false
+	}
+}

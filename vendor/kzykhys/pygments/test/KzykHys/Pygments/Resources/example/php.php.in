@@ -1,0 +1,21 @@
+<?php
+
+class Foo
+{
+    const TEST_CONST = 1;
+
+    public static $staticProperty = null;
+
+    public $property = null;
+
+    public static function staticMethod()
+    {
+        return new static();
+    }
+
+    public function method()
+    {
+        return $this;
+    }
+
+}

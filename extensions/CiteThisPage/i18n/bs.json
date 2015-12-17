@@ -1,11 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"CERminator"
+			"CERminator",
+			"Srdjan m"
 		]
 	},
 	"citethispage": "Citiranje",
-	"citethispage-desc": "Dodaje posebnu stranicu za [[Special:Cite|citiranje]] i link u alatnoj kutiji",
+	"citethispage-desc": "Dodaje posebnu stranicu za [[Special:CiteThisPage|citiranje]] i link u alatnoj kutiji",
 	"citethispage-link": "Citiraj ovu stranicu",
 	"tooltip-citethispage": "Informacije kako citirati ovu stranicu",
 	"citethispage-change-submit": "Citiraj",

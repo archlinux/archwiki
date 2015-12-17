@@ -46,6 +46,11 @@ class SkinVector extends SkinTemplate {
 	public function initPage( OutputPage $out ) {
 		parent::initPage( $out );
 
+		if ( $this->vectorConfig->get( 'VectorResponsive' ) ) {
+			$out->addMeta( 'viewport', 'width=device-width, initial-scale=1' );
+			$out->addModuleStyles( 'skins.vector.styles.responsive' );
+		}
+
 		// Append CSS which includes IE only behavior fixes for hover support -
 		// this is better than including this in a CSS file since it doesn't
 		// wait for the CSS file to load before fetching the HTC file.
@@ -67,7 +72,7 @@ class SkinVector extends SkinTemplate {
 		parent::setupSkinUserCss( $out );
 
 		$styles = array( 'mediawiki.skinning.interface', 'skins.vector.styles' );
-		wfRunHooks( 'SkinVectorStyleModules', array( $this, &$styles ) );
+		Hooks::run( 'SkinVectorStyleModules', array( $this, &$styles ) );
 		$out->addModuleStyles( $styles );
 	}
 

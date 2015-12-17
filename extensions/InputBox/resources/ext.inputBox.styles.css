@@ -13,3 +13,7 @@
 	display: inline-table !important;
 	white-space: nowrap;
 }
+
+.mw-inputbox-input {
+	margin-bottom: 0.5em;
+}

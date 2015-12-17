@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"CERminator",
-			"DzWiki"
+			"DzWiki",
+			"Srdjan m"
 		]
 	},
 	"inputbox-desc": "Omogućuje uključivanje prethodno napravljenih HTML obrazaca",
@@ -11,5 +12,6 @@
 	"inputbox-tryexact": "Isprobaj naći tačan upit",
 	"inputbox-searchfulltext": "Pretraži cijeli tekst",
 	"inputbox-createarticle": "Napravi stranicu",
+	"inputbox-movearticle": "Premjesti stranicu",
 	"inputbox-ns-main": "Glavno"
 }

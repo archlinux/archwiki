@@ -21,7 +21,6 @@
 	"titleblacklist-forbidden-new-account": "Användarnamnet \"$2\" kan inte skapas.\nDet matchar följande element i svartlistan: <code>$1</code>",
 	"titleblacklist-invalid": "Följande {{PLURAL:$1|rad|rader}} i listan är {{PLURAL:$1|felaktig|felaktiga}}; {{PLURAL:$1|den|de}} måste rättas innan du kan spara:",
 	"titleblacklist-override": "Ignorera svartlistan",
-	"titleblacklist-autoconfirmed-warning": "<strong>Obs:</strong> Denna sida kan endast redigeras av användarna med  <code>autoconfirmed</code>-rättigheten eftersom den matchar följande post i svartlistan över titlar:<br /><code>$1</code>",
 	"titleblacklist-warning": "<strong>Varning: Denna sida kan endast redigeras av administratörer och andra användare med <code>tboverride</code>-rättigheten eftersom den matchar följande post i svartlistan över titlar:</strong><br /><code>$1</code>",
 	"right-tboverride": "Åsidosätt svartlistan med titlar och användarnamn",
 	"right-tboverride-account": "Kör över svartlistan för användarnamn",

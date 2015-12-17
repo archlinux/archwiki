@@ -9,7 +9,8 @@
 			"MaxSem",
 			"VasilievVV",
 			"Александр Сигачёв",
-			"Okras"
+			"Okras",
+			"NBS"
 		]
 	},
 	"gadgets-desc": "Позволяет участникам выбирать в своих [[Special:Preferences#mw-prefsection-gadgets|настройках]] те или иные [[Special:Gadgets|CSS- и JavaScript-гаджеты]]",
@@ -28,8 +29,14 @@
 	"gadgets-export-text": "Для экспорта гаджета $1, нажмите кнопку «{{int:gadgets-export-download}}», сохраните загруженный файл,\nперейдите на страницу Special:Import целевой вики и загрузите файл. Затем добавьте следующие строки на страницу MediaWiki:Gadgets-definition:\n<pre>$2</pre>\nВы должны иметь соответствующие разрешения в целевой вики (в том числе право на редактирование системных сообщений), также на сервере должна быть включена настройка импорта из файлов.",
 	"gadgets-export-download": "Скачать",
 	"apihelp-query+gadgetcategories-description": "Возвращает список категорий гаджетов.",
+	"apihelp-query+gadgetcategories-param-names": "Названия возвращаемых категорий.",
 	"apihelp-query+gadgetcategories-example-1": "Получить список существующих категорий гаджетов",
+	"apihelp-query+gadgetcategories-example-2": "Получить всю информацию о категориях с названиями «Foo» и «Bar»",
 	"apihelp-query+gadgets-description": "Возвращает список гаджетов, используемых в этой вики.",
 	"apihelp-query+gadgets-param-ids": "Идентификаторы гаджетов для получения.",
-	"apihelp-query+gadgets-example-5": "Получить список гаджетов, включённых у данного участника"
+	"apihelp-query+gadgets-example-3": "Получить список гаджетов в категории «foo»",
+	"apihelp-query+gadgets-example-4": "Получить информацию о гаджетах «foo» и «bar»",
+	"apihelp-query+gadgets-example-5": "Получить список гаджетов, включённых у данного участника",
+	"right-gadgets-edit": "правка JavaScript- и CSS-страниц гаджетов",
+	"right-gadgets-definition-edit": "правка обсуждений гаджетов"
 }

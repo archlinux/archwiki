@@ -1,13 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"Huslåke"
+			"Huslåke",
+			"Jyllanj"
 		]
 	},
-	"inputbox-desc": "Tilstån der inklusje der prædæfiiniærn HTML fårmer",
-	"inputbox-error-no-type": "Du harst ekke spæsifiærn æ type der input boks til skep.",
+	"inputbox-desc": "Mulidjör inkludiireng å forhånjsdefiniirtje HTML-formulare",
+	"inputbox-error-no-type": "Du hår ett åndjøwen typ i inputboksi som skal laws.",
 	"inputbox-error-bad-type": "Input boks type \"$1\" ekke herkonnen. Spæsifiær \"skep\", \"bimærkenge\", \"søĝ\" æller \"søĝ2\".",
-	"inputbox-tryexact": "Førsøĝ eksakt søĝnenge:",
-	"inputbox-searchfulltext": "Gennemsøĝe'n hæle tekster",
-	"inputbox-createarticle": "Åprette side"
+	"inputbox-tryexact": "Forsyeg go te siden",
+	"inputbox-searchfulltext": "Syeg ette hielteksten",
+	"inputbox-createarticle": "Oprett siid"
 }

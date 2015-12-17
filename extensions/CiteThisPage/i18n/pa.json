@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Babanwalia"
+			"Babanwalia",
+			"Satdeep gill"
 		]
 	},
-	"citethispage-link": "ਇਸ ਸਫ਼ੇ ਦਾ ਹਵਾਲਾ ਦਿਉ"
+	"citethispage-link": "ਇਸ ਸਫ਼ੇ ਦਾ ਹਵਾਲਾ ਦਿਉ",
+	"tooltip-citethispage": "ਇਸ ਸਫ਼ੇ ਦਾ ਹਵਾਲੇ ਦੇਣ ਸਬੰਧੀ ਜਾਣਕਾਰੀ"
 }

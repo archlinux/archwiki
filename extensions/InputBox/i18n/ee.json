@@ -1,9 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Natsubee"
+			"Natsubee",
+			"Aguve"
 		]
 	},
+	"inputbox-tryexact": "Ŋlɔ nya pɛpɛpɛ",
 	"inputbox-searchfulltext": "Di nuŋɔŋlɔ bliboa me",
 	"inputbox-createarticle": "Dze nuŋɔŋlɔ yeye gɔme"
 }

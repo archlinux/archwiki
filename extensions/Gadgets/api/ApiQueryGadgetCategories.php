@@ -20,11 +20,18 @@
  */
 
 class ApiQueryGadgetCategories extends ApiQueryBase {
-	private $props,
-		$neededNames;
+	/**
+	 * @var array
+	 */
+	private $props;
 
-	public function __construct( $query, $moduleName ) {
-		parent::__construct( $query, $moduleName, 'gc' );
+	/**
+	 * @var array|bool
+	 */
+	private $neededNames;
+
+	public function __construct( ApiQuery $queryModule, $moduleName ) {
+		parent::__construct( $queryModule, $moduleName, 'gc' );
 	}
 
 	public function execute() {
@@ -42,7 +49,7 @@ class ApiQueryGadgetCategories extends ApiQueryBase {
 	private function getList() {
 		$data = array();
 		$result = $this->getResult();
-		$gadgets = Gadget::loadStructuredList();
+		$gadgets = GadgetRepo::singleton()->getStructuredList();
 
 		if ( $gadgets ) {
 			foreach ( $gadgets as $category => $list ) {
@@ -85,43 +92,6 @@ class ApiQueryGadgetCategories extends ApiQueryBase {
 				ApiBase::PARAM_TYPE => 'string',
 				ApiBase::PARAM_ISMULTI => true,
 			),
-		);
-	}
-
-	/**
-	 * @deprecated since MediaWiki core 1.25
-	 */
-	public function getDescription() {
-		return 'Returns a list of gadget categories';
-	}
-
-	/**
-	 * @deprecated since MediaWiki core 1.25
-	 */
-	public function getParamDescription() {
-		return array(
-			'prop' => array(
-				'What gadget category information to get:',
-				' name     - Internal category name',
-				' title    - Category title',
-				' members  - Number of gadgets in category',
-			),
-			'names' => 'Name(s) of categories to retrieve',
-		);
-	}
-
-	/**
-	 * @deprecated since MediaWiki core 1.25
-	 */
-	public function getExamples() {
-		$params = $this->getAllowedParams();
-		$allProps = implode( '|', $params['prop'][ApiBase::PARAM_TYPE] );
-
-		return array(
-			'Get a list of existing gadget categories:',
-			'    api.php?action=query&list=gadgetcategories',
-			'Get all information about categories named "foo" and "bar":',
-			"    api.php?action=query&list=gadgetcategories&gcnames=foo|bar&gcprop=$allProps",
 		);
 	}
 

@@ -18,7 +18,6 @@
 	"titleblacklist-forbidden-new-account": "Foi bloqueada a criação de utilizadores com o nome \"$2\".\nO nome corresponde à seguinte entrada da lista negra: <code>$1</code>",
 	"titleblacklist-invalid": "{{PLURAL:$1|A seguinte linha|As seguintes linhas}} da lista negra {{PLURAL:$1|é inválida|são inválidas}}. Por favor, {{PLURAL:$1|corrija-a|corrija-as}} antes de gravar:",
 	"titleblacklist-override": "Ignorar a lista negra",
-	"titleblacklist-autoconfirmed-warning": "<strong>Nota:</strong> Esta página só pode ser editada por utilizadores <code>autoconfirmados</code>, pois corresponde com o seguinte título de entrada da lista negra:<br /><code>$1</code>",
 	"titleblacklist-warning": "<strong>Aviso: Esta página só pode ser editada por administradores e outros utilizadores com o privilégio <code>tboverride</code>, pois corresponde com o seguinte título de entrada da lista negra:</strong><br /><code>$1</code>",
 	"right-tboverride": "Sobrepor a lista negra de títulos e nomes de utilizador",
 	"right-tboverride-account": "Ignorar a lista negra de nomes de utilizador"

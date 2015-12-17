@@ -233,15 +233,16 @@ class SpamBlacklistHooks {
 		Status $status,
 		$baseRevId
 	) {
-		if( !BaseBlacklist::isLocalSource( $wikiPage->getTitle() ) ) {
+		if ( !BaseBlacklist::isLocalSource( $wikiPage->getTitle() ) ) {
 			return true;
 		}
-		global $wgMemc, $wgDBname;
 
 		// This sucks because every Blacklist needs to be cleared
 		foreach ( BaseBlacklist::getBlacklistTypes() as $type => $class ) {
-			$wgMemc->delete( "$wgDBname:{$type}_blacklist_regexes" );
+			$blacklist = BaseBlacklist::getInstance( $type );
+			$blacklist->clearCache();
 		}
+
 		return true;
 	}
 }

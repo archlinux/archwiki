@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Natsubee"
+			"Natsubee",
+			"Aguve"
 		]
 	},
 	"vector-action-delete": "Tutui",
@@ -10,5 +11,6 @@
 	"vector-view-edit": "Trɔ asi le eŋu",
 	"vector-view-history": "Kpɔ xoxoawo",
 	"vector-view-view": "Xlẽ",
-	"vector-view-viewsource": "Kpɔ alesi woŋlɔe"
+	"vector-view-viewsource": "Kpɔ alesi woŋlɔe",
+	"vector-more-actions": "Bubuwo"
 }

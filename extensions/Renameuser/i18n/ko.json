@@ -39,5 +39,5 @@
 	"renameuser-move-log": "\"[[User:$1|$1]]\" 사용자를 \"[[User:$2|$2]]\" 사용자로 바꾸면서 문서를 자동으로 옮겼습니다",
 	"action-renameuser": "사용자 이름을 바꿀",
 	"right-renameuser": "사용자 이름 바꾸기",
-	"renameuser-renamed-notice": "이 사용자의 이름을 바꾸었습니다.\n아래의 이름 바꾸기 기록을 참고하십시오."
+	"renameuser-renamed-notice": "이 사용자의 이름을 바꾸었습니다.\n아래의 이름 바꾸기 기록을 참조하십시오."
 }

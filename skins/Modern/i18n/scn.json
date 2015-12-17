@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Santu"
+			"Santu",
+			"Pippinu"
 		]
 	},
-	"skinname-modern": "Mudernu"
+	"skinname-modern": "Mudernu",
+	"modern-desc": "Nu tema blu/griciu cu na sbarra latirali e una di supra. Dirivatu di MonoBook"
 }

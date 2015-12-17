@@ -26,9 +26,11 @@
 	"titleblacklist-forbidden-new-account": "Die Registrierung des Benutzernamens „$2“ ist nicht erwünscht.\nFolgender Eintrag aus der Liste unerwünschter Benutzernamen führte zur Ablehnung: <code>$1</code>",
 	"titleblacklist-invalid": "Die {{PLURAL:$1|folgende Zeile|folgenden Zeilen}} in der Sperrliste {{PLURAL:$1|ist|sind}} ungültig; bitte korrigiere diese vor dem Speichern:",
 	"titleblacklist-override": "Blacklist ignorieren",
-	"titleblacklist-autoconfirmed-warning": "<strong>Hinweis:</strong> Diese Seite kann nur von Benutzern mit dem <code>autoconfirmed</code>-Recht bearbeitet werden, da sie mit dem folgenden Titel-Blacklist-Eintrag übereinstimmt:<br /><code>$1</code>",
 	"titleblacklist-warning": "<strong>Warnung: Diese Seite kann nur von Administratoren und anderen Benutzern mit dem <code>tboverride</code>-Recht bearbeitet werden, da sie mit dem folgenden Titel-Blacklist-Eintrag übereinstimmt:</strong><br /><code>$1</code>",
 	"right-tboverride": "Die schwarze Liste unerwünschter Seiten- oder Benutzernamen außer Kraft setzen",
 	"right-tboverride-account": "Die schwarze Liste unerwünschter Benutzernamen außer Kraft setzen",
-	"right-titleblacklistlog": "Das Titel-Blacklist-Logbuch ansehen"
+	"right-titleblacklistlog": "Das Titel-Blacklist-Logbuch ansehen",
+	"apihelp-titleblacklist-param-action": "Die zu überprüfende Aktion.",
+	"apihelp-titleblacklist-example-1": "Überprüft, ob [[Foo]] blackgelistet ist",
+	"apihelp-titleblacklist-example-2": "Überprüft, ob [[Bar]] für das Bearbeiten blackgelistet ist"
 }

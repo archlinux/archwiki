@@ -3,7 +3,8 @@
 		"authors": [
 			"KlaudiuMihaila",
 			"Minisarm",
-			"Stelistcristi"
+			"Stelistcristi",
+			"ImGelu"
 		]
 	},
 	"pfunc_desc": "Îmbunătățește parserul cu funcții logice",
@@ -14,7 +15,7 @@
 	"pfunc_expr_stack_exhausted": "Eroare de expresie: stivă epuizată",
 	"pfunc_expr_unexpected_number": "Eroare de expresie: număr neașteptat",
 	"pfunc_expr_preg_match_failure": "Eroare de expresie: eșuare preg_match neașteptată",
-	"pfunc_expr_unrecognised_word": "Eroare de expresie: „$1” este un cuvânt nerecunoscut",
+	"pfunc_expr_unrecognised_word": "Eroare de expresie: „$1” este un cuvânt nerecunoscut.",
 	"pfunc_expr_unexpected_operator": "Eroare de expresie: operator $1 neașteptat",
 	"pfunc_expr_missing_operand": "Eroare de expresie: operand lipsă pentru $1",
 	"pfunc_expr_unexpected_closing_bracket": "Eroare de expresie: paranteză închisă neașteptată",

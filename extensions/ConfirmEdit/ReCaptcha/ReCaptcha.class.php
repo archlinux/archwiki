@@ -7,9 +7,9 @@ class ReCaptcha extends SimpleCaptcha {
 	/**
 	 * Displays the reCAPTCHA widget.
 	 * If $this->recaptcha_error is set, it will display an error in the widget.
-	 *
+	 * @param OutputPage $out
 	 */
-	function getForm() {
+	function getForm( OutputPage $out ) {
 		global $wgReCaptchaPublicKey, $wgReCaptchaTheme;
 
 		$useHttps = ( isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] == 'on' );

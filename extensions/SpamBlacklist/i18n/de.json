@@ -23,5 +23,8 @@
 	"log-description-spamblacklist": "Es folgt ein Logbuch von Spam-Blacklist-Treffern.",
 	"logentry-spamblacklist-hit": "{{GENDER:$2|$1}} verursachte einen Spam-Blacklist-Treffer auf „$3“ durch das versuchte Hinzufügen von $4.",
 	"right-spamblacklistlog": "Spam-Blacklist-Logbuch ansehen",
-	"action-spamblacklistlog": "dieses Logbuch einzusehen"
+	"action-spamblacklistlog": "dieses Logbuch einzusehen",
+	"apihelp-spamblacklist-description": "Überprüft eine oder mehrere URLs gegen die Spam-Blacklist.",
+	"apihelp-spamblacklist-param-url": "Gegen die Blacklist zu überprüfende URLs.",
+	"apihelp-spamblacklist-example-1": "Überprüft zwei URLs gegen die Blacklist"
 }

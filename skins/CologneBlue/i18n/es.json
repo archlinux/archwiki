@@ -4,11 +4,12 @@
 			"Fitoschido",
 			"Locos epraix",
 			"Sanbec",
-			"Vivaelcelta"
+			"Vivaelcelta",
+			"Macofe"
 		]
 	},
 	"cologneblue.css": "/* El CSS colocado en esta página afectará a los usuarios que usen la apariencia Cologne Blue */",
-	"cologneblue.js": "/* Cualquier código JavaScript escrito aquí se cargará para todos los usuarios que usen la piel Colonia azul */",
+	"cologneblue.js": "/* Cualquier código JavaScript escrito aquí se cargará para todos los usuarios que usen la apariencia Cologne Blue */",
 	"skinname-cologneblue": "Colonia azul",
-	"cologneblue-desc": "Un tema ligero con formato minimalista"
+	"cologneblue-desc": "Una apariencia ligera con formato minimalista"
 }

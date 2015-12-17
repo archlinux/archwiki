@@ -15,6 +15,7 @@
 	"gadgets-required-rights": "Requires the following {{PLURAL:$2|right|rights}}:\n\n$1",
 	"gadgets-required-skins": "Available on the {{PLURAL:$2|$1 skin|following skins: $1}}.",
 	"gadgets-default": "Enabled for everyone by default.",
+	"gadgets-legacy": "Gadget is not loaded. Please migrate to ResourceLoader. ([https://www.mediawiki.org/wiki/ResourceLoader/Migration_guide_(users) Learn more])",
 	"gadgets-export": "Export",
 	"gadgets-export-title": "Gadget export",
 	"gadgets-not-found": "Gadget \"$1\" not found.",
@@ -35,5 +36,9 @@
 	"apihelp-query+gadgets-example-2": "Get a list of gadgets with all possible properties",
 	"apihelp-query+gadgets-example-3": "Get a list of gadgets belonging to category \"foo\"",
 	"apihelp-query+gadgets-example-4": "Get information about gadgets \"foo\" and \"bar\"",
-	"apihelp-query+gadgets-example-5": "Get a list of gadgets enabled by current user"
+	"apihelp-query+gadgets-example-5": "Get a list of gadgets enabled by current user",
+	"right-gadgets-edit": "Edit gadget JavaScript and CSS pages",
+	"action-gadgets-edit": "edit this gadget JavaScript or CSS page",
+	"right-gadgets-definition-edit": "Edit gadget definitions",
+	"action-gadgets-definition-edit": "edit this gadget definition"
 }

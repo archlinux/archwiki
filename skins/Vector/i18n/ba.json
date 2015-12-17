@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Assele",
-			"Haqmar"
+			"Haqmar",
+			"Рустам Нурыев"
 		]
 	},
 	"skinname-vector": "Векторлы",
@@ -16,5 +17,6 @@
 	"vector-view-edit": "Үҙгәртергә",
 	"vector-view-history": "Тарихты ҡарау",
 	"vector-view-view": "Уҡыу",
-	"vector-view-viewsource": "Сығанаҡты ҡарарға"
+	"vector-view-viewsource": "Сығанаҡты ҡарарға",
+	"vector-more-actions": "Тағы"
 }

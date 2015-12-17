@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ianbu"
+			"Ianbu",
+			"唐吉訶德的侍從"
 		]
 	},
 	"vector-action-addsection": "Ke chi̍t-ê toān-lo̍h",
@@ -15,5 +16,5 @@
 	"vector-view-history": "khoàⁿ le̍k-sú",
 	"vector-view-view": "Tha̍k",
 	"vector-view-viewsource": "Khoàⁿ goân-sú lōe-iông",
-	"vector-more-actions": "閣看"
+	"vector-more-actions": "Koh khoàⁿ"
 }

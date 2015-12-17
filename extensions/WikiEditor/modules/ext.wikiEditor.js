@@ -3,8 +3,17 @@
  */
 
 ( function ( $, mw ) {
+	var editingSessionId;
+
 	function logEditEvent( action, data ) {
 		if ( mw.loader.getState( 'schema.Edit' ) === null ) {
+			return;
+		}
+
+		// Sample 6.25% (via hex digit)
+		// We have to do this on the client too because the unload handler
+		// can cause an editingSessionId to be generated on the client
+		if ( editingSessionId.charAt( 0 ) > '0' ) {
 			return;
 		}
 
@@ -19,7 +28,6 @@
 				'page.title': mw.config.get( 'wgPageName' ),
 				'page.ns': mw.config.get( 'wgNamespaceNumber' ),
 				'page.revid': mw.config.get( 'wgRevisionId' ),
-				'page.length': -1, // FIXME
 				'user.id': mw.user.getId(),
 				'user.editCount': mw.config.get( 'wgUserEditCount', 0 ),
 				'mediawiki.version': mw.config.get( 'wgVersion' )
@@ -44,14 +52,15 @@
 
 	$( function () {
 		var $textarea = $( '#wpTextbox1' ),
-			editingSessionIdInput = $( '#editingStatsId' ),
-			editingSessionId, submitting, onUnloadFallback;
+			$editingSessionIdInput = $( '#editingStatsId' ),
+			origText = $textarea.val(),
+			submitting, onUnloadFallback;
 
 		// Initialize wikiEditor
 		$textarea.wikiEditor();
 
-		if ( editingSessionIdInput.length ) {
-			editingSessionId = editingSessionIdInput.val();
+		if ( $editingSessionIdInput.length ) {
+			editingSessionId = $editingSessionIdInput.val();
 			logEditEvent( 'ready', {
 				editingSessionId: editingSessionId
 			} );
@@ -60,18 +69,43 @@
 			} );
 			onUnloadFallback = window.onunload;
 			window.onunload = function () {
-				var fallbackResult;
+				var fallbackResult, abortType,
+					caVeEdit = $( '#ca-ve-edit' )[0],
+					switchingToVE = caVeEdit && (
+						document.activeElement === caVeEdit ||
+						$.contains( caVeEdit, document.activeElement )
+					),
+					unmodified = mw.config.get( 'wgAction' ) !== 'submit' && origText === $textarea.val();
 
 				if ( onUnloadFallback ) {
 					fallbackResult = onUnloadFallback();
 				}
 
+				if ( switchingToVE && unmodified ) {
+					abortType = 'switchnochange';
+				} else if ( switchingToVE ) {
+					abortType = 'switchwithout';
+				} else if ( unmodified ) {
+					abortType = 'nochange';
+				} else {
+					abortType = 'abandon';
+				}
+
 				if ( !submitting ) {
 					logEditEvent( 'abort', {
 						editingSessionId: editingSessionId,
-						// TODO: abort.type
+						type: abortType
 					} );
 				}
+
+				// If/when the user uses the back button to go back to the edit form
+				// and the browser serves this from bfcache, regenerate the session ID
+				// so we don't use the same ID twice. Ideally we'd do this by listening to the pageshow
+				// event and checking e.originalEvent.persisted, but that doesn't work in Chrome:
+				// https://code.google.com/p/chromium/issues/detail?id=344507
+				// So instead we modify the DOM here, after sending the abort event.
+				editingSessionId = mw.user.generateRandomSessionId();
+				$editingSessionIdInput.val( editingSessionId );
 
 				return fallbackResult;
 			};

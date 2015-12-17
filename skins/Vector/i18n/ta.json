@@ -4,7 +4,8 @@
 			"Mayooranathan",
 			"Shanmugamp7",
 			"Surya Prakash.S.A.",
-			"TRYPPN"
+			"TRYPPN",
+			"Jayarathina"
 		]
 	},
 	"vector-action-addsection": "தலைப்பைச் சேர்",
@@ -17,5 +18,6 @@
 	"vector-view-edit": "தொகு",
 	"vector-view-history": "வரலாற்றைக் காட்டவும்",
 	"vector-view-view": "படிக்கவும்",
-	"vector-view-viewsource": "மூலத்தைக் காட்டவும்"
+	"vector-view-viewsource": "மூலத்தைக் காட்டவும்",
+	"vector-more-actions": "மேலும்"
 }

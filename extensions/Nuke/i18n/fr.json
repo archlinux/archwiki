@@ -24,6 +24,7 @@
 	"nuke-multiplepeople": "Suppression de masse de pages récemment ajoutées",
 	"nuke-tools": "Cet outil permet les suppressions en masse des pages ajoutées récemment par un utilisateur enregistré ou par une adresse IP. Indiquer l’adresse IP afin d’obtenir la liste des pages à supprimer, ou laisser blanc pour tous les utilisateurs.",
 	"nuke-submit-user": "Valider",
+	"nuke-toggleinvert": "Inverser",
 	"nuke-submit-delete": "Supprimer la sélection",
 	"right-nuke": "Supprimer des pages en masse",
 	"nuke-select": "Sélectionnez : $1",

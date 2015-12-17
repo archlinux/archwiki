@@ -25,7 +25,6 @@
 	"titleblacklist-forbidden-new-account": "حساب کاربری «$2» در برابر ایجاد محافظت شده‌است.\nاین نام کاربری با این قسمت از فهرست سیاه مطابقت دارد: <code>$1</code>",
 	"titleblacklist-invalid": "\n{{PLURAL:$1|سطر|سطرهای}} زیر در فهرست سیاه عنوان‌ها نامجاز {{PLURAL:$1|است|هستند}}؛ لطفاً {{PLURAL:$1|آن|آن‌ها}} را قبل از ذخیره‌کردن اصلاح کنید:",
 	"titleblacklist-override": "از فهرست سیاه چشم‌پوشی کن",
-	"titleblacklist-autoconfirmed-warning": "<strong>نکته:</strong> این صفحه فقط می‌تواند توسط کاربرهای با دسترسی <code>autoconfirmed</code> ویرایش شود به این دلیل که با این مدخل فهرست سیاه انطباق دارد:<br /><code>$1</code>",
 	"titleblacklist-warning": "<strong>هشدار: این صفحه فقط توسط مدیران سیستم و کاربرانی که مجوز <code>tboverride</code> دارند قابل ویرایش شدن است؛ چون صفحه منطبق با لیست‌سیاه زیر است: </strong><br /><code>$1</code>",
 	"right-tboverride": "نادیده گرفتن لیست سیاه عنوان یا نام کاربری",
 	"right-tboverride-account": "لغو فهرست سیاه نام کاربری",

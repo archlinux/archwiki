@@ -18,7 +18,7 @@
 	"nuke-multiplepeople": "Massaal verwijderen van recent toegevoegde pagina's",
 	"nuke-tools": "Dit hulpmiddel maakt het mogelijk pagina's die recentelijk zijn aangemaakt door een gebruiker of IP-adres massaal te verwijderen.\nVoer de gebruikersnaam of het IP-adres in voor een lijst van te verwijderen pagina's of laat leeg voor alle gebruikers.",
 	"nuke-submit-user": "OK",
-	"nuke-toggleinvert": "Keer om",
+	"nuke-toggleinvert": "Omkeren",
 	"nuke-submit-delete": "Geselecteerde pagina's verwijderen",
 	"right-nuke": "Massaal pagina's verwijderen",
 	"nuke-select": "Selectie: $1",

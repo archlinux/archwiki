@@ -15,15 +15,15 @@
 	"ResourceModules": {
 		"ext.confirmEdit.fancyCaptcha.styles": {
 			"position": "top",
-			"targets": [
-				"mobile",
-				"desktop"
-			],
 			"styles": "ext.confirmEdit.fancyCaptcha.css"
 		},
 		"ext.confirmEdit.fancyCaptcha": {
 			"scripts": "ext.confirmEdit.fancyCaptcha.js",
-			"dependencies": "mediawiki.api"
+			"dependencies": "mediawiki.api",
+			"targets": [
+				"mobile",
+				"desktop"
+			]
 		},
 		"ext.confirmEdit.fancyCaptchaMobile": {
 			"scripts": "ext.confirmEdit.fancyCaptcha.js",

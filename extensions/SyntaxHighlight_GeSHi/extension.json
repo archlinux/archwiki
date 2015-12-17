@@ -1,17 +1,18 @@
 {
 	"name": "SyntaxHighlight",
-	"version": "1.0.8.12",
+	"version": "2.0",
 	"author": [
 		"Brion Vibber",
 		"Tim Starling",
 		"Rob Church",
-		"Niklas Laxström"
+		"Niklas Laxström",
+		"Ori Livneh",
+		"Ed Sanders"
 	],
 	"url": "https://www.mediawiki.org/wiki/Extension:SyntaxHighlight_GeSHi",
 	"descriptionmsg": "syntaxhighlight-desc",
 	"license-name": "GPL-2.0+",
 	"type": "parserhook",
-	"callback": "SyntaxHighlight_GeSHi::registerExtension",
 	"MessagesDirs": {
 		"SyntaxHighlight_GeSHi": [
 			"i18n"
@@ -19,35 +20,82 @@
 	},
 	"AutoloadClasses": {
 		"SyntaxHighlight_GeSHi": "SyntaxHighlight_GeSHi.class.php",
-		"ResourceLoaderGeSHiModule": "ResourceLoaderGeSHiModule.php",
-		"ResourceLoaderGeSHiLocalModule": "ResourceLoaderGeSHiLocalModule.php"
+		"GeSHi": "SyntaxHighlight_GeSHi.compat.php",
+		"ResourceLoaderGeSHiVisualEditorModule": "ResourceLoaderGeSHiVisualEditorModule.php"
+	},
+	"ExtensionFunctions": [
+		"SyntaxHighlight_GeSHi::onSetup"
+	],
+	"ResourceFileModulePaths": {
+		"localBasePath": "modules",
+		"remoteExtPath": "SyntaxHighlight_GeSHi/modules"
 	},
 	"ResourceModules": {
-		"ext.geshi.local": {
-			"class": "ResourceLoaderGeSHiLocalModule"
+		"ext.pygments": {
+			"position": "top",
+			"targets": [
+				"desktop",
+				"mobile"
+			],
+			"styles": [
+				"pygments.generated.css",
+				"pygments.wrapper.css"
+			]
+		},
+		"ext.geshi.visualEditor": {
+			"class": "ResourceLoaderGeSHiVisualEditorModule",
+			"scripts": [
+				"ve-syntaxhighlight/ve.dm.MWSyntaxHighlightNode.js",
+				"ve-syntaxhighlight/ve.ce.MWSyntaxHighlightNode.js",
+				"ve-syntaxhighlight/ve.ui.MWSyntaxHighlightInspector.js",
+				"ve-syntaxhighlight/ve.ui.MWSyntaxHighlightInspectorTool.js"
+			],
+			"styles": [
+				"ve-syntaxhighlight/ve.ce.MWSyntaxHighlightNode.css",
+				"ve-syntaxhighlight/ve.ui.MWSyntaxHighlightInspector.css"
+			],
+			"dependencies": [
+				"ext.visualEditor.mwcore"
+			],
+			"messages": [
+				"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code",
+				"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language",
+				"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none",
+				"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines",
+				"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title"
+			],
+			"targets": [ "desktop", "mobile" ]
 		}
 	},
 	"Hooks": {
 		"ParserFirstCallInit": [
-			"SyntaxHighlight_GeSHi::configureParser"
-		],
-		"ResourceLoaderRegisterModules": [
-			"SyntaxHighlight_GeSHi::resourceLoaderRegisterModules"
+			"SyntaxHighlight_GeSHi::onParserFirstCallInit"
 		],
 		"ContentGetParserOutput": [
-			"SyntaxHighlight_GeSHi::renderHook"
+			"SyntaxHighlight_GeSHi::onContentGetParserOutput"
 		],
 		"ApiFormatHighlight": [
-			"SyntaxHighlight_GeSHi::apiFormatHighlight"
+			"SyntaxHighlight_GeSHi::onApiFormatHighlight"
+		],
+		"RejectParserCacheValue": [
+			"SyntaxHighlight_GeSHi::onRejectParserCacheValue"
 		]
 	},
 	"SyntaxHighlightModels": {
 		"css": "css",
 		"javascript": "javascript"
 	},
+	"VisualEditorPluginModules": [
+		"ext.geshi.visualEditor"
+	],
 	"config": {
-		"SyntaxHighlightDefaultLang": null,
-		"SyntaxHighlightKeywordLinks": false,
-		"GeSHiSupportedLanguages" : null
-	}
+		"PygmentizePath": false
+	},
+	"TrackingCategories": [
+		"syntaxhighlight-error-category"
+	],
+	"ParserTestFiles": [
+		"tests/parserTests.txt"
+	],
+	"manifest_version": 1
 }

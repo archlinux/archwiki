@@ -19,7 +19,7 @@ $specialPageAliases['ar'] = array(
 	'Captcha' => array( 'كابتشا' ),
 );
 
-/** Egyptian Spoken Arabic (مصرى) */
+/** Egyptian Arabic (مصرى) */
 $specialPageAliases['arz'] = array(
 	'Captcha' => array( 'كابتشا' ),
 );
@@ -94,9 +94,9 @@ $specialPageAliases['kw'] = array(
 	'Captcha' => array( 'Captcha' ),
 );
 
-/** لوری (لوری) */
+/** Northern Luri (لۊری شومالی) */
 $specialPageAliases['lrc'] = array(
-	'Captcha' => array( 'رازینه_کپچا' ),
+	'Captcha' => array( 'رازینە_کأپچا' ),
 );
 
 /** Macedonian (македонски) */

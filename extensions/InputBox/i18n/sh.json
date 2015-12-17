@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Kolega2357"
+			"Kolega2357",
+			"OC Ripper"
 		]
 	},
+	"inputbox-tryexact": "Isprobaj naći tačan upit",
 	"inputbox-searchfulltext": "Pretraži cijeli tekst - Претражи цео текст"
 }

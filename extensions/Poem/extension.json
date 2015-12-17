@@ -5,6 +5,7 @@
 		"Brion Vibber",
 		"Steve Sanbeg"
 	],
+	"license-name": "CC0-1.0",
 	"url": "https://www.mediawiki.org/wiki/Extension:Poem",
 	"descriptionmsg": "poem-desc",
 	"type": "parserhook",
@@ -23,5 +24,6 @@
 	},
 	"ParserTestFiles": [
 		"poemParserTests.txt"
-	]
+	],
+	"manifest_version": 1
 }

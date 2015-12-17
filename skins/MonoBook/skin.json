@@ -12,6 +12,9 @@
 	"ValidSkinNames": {
 		"monobook": "MonoBook"
 	},
+	"SkinOOUIThemes": {
+		"monobook": "Apex"
+	},
 	"MessagesDirs": {
 		"MonoBook": [
 			"i18n"
@@ -19,6 +22,7 @@
 	},
 	"ResourceModules": {
 		"skins.monobook.styles": {
+			"position": "top",
 			"styles": {
 				"main.css": {
 					"media": "screen"
@@ -33,5 +37,6 @@
 	"AutoloadClasses": {
 		"SkinMonoBook": "SkinMonoBook.php",
 		"MonoBookTemplate": "MonoBookTemplate.php"
-	}
+	},
+	"manifest_version": 1
 }

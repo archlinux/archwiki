@@ -19,7 +19,7 @@ $specialPageAliases['ar'] = array(
 	'Interwiki' => array( 'إنترويكي' ),
 );
 
-/** Egyptian Spoken Arabic (مصرى) */
+/** Egyptian Arabic (مصرى) */
 $specialPageAliases['arz'] = array(
 	'Interwiki' => array( 'إنترويكى' ),
 );
@@ -61,10 +61,10 @@ $specialPageAliases['cdo'] = array(
 
 /** Chechen (нохчийн) */
 $specialPageAliases['ce'] = array(
-	'Interwiki' => array( 'Юкъарвики' ),
+	'Interwiki' => array( 'Юкъарвикаш' ),
 );
 
-/** Sorani Kurdish (کوردی) */
+/** Central Kurdish (کوردیی ناوەندی) */
 $specialPageAliases['ckb'] = array(
 	'Interwiki' => array( 'نێوانویکی' ),
 );
@@ -99,7 +99,7 @@ $specialPageAliases['fa'] = array(
 	'Interwiki' => array( 'میان‌ویکی' ),
 );
 
-/** Franco-Provençal (arpetan) */
+/** Arpitan (arpetan) */
 $specialPageAliases['frp'] = array(
 	'Interwiki' => array( 'Entèrvouiqui' ),
 );
@@ -179,9 +179,9 @@ $specialPageAliases['lad'] = array(
 	'Interwiki' => array( 'Interviki' ),
 );
 
-/** لوری (لوری) */
+/** Northern Luri (لۊری شومالی) */
 $specialPageAliases['lrc'] = array(
-	'Interwiki' => array( 'مینجا_ویکی' ),
+	'Interwiki' => array( 'مینجا_ڤیکی' ),
 );
 
 /** Macedonian (македонски) */

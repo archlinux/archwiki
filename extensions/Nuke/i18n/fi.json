@@ -21,6 +21,7 @@
 	"nuke-multiplepeople": "Äskettäin lisättyjen sivujen massapoistaminen",
 	"nuke-tools": "Tämä työkalu mahdollistaa äskettäin lisättyjen sivujen massapoistamisen käyttäjänimen tai IP-osoitteen perusteella.\nKirjoita käyttäjänimi tai IP-osoite, niin saat listan poistettavista sivuista, tai jätä kenttä tyhjäksi niin saat kaikkien käyttäjien tekemät sivut.",
 	"nuke-submit-user": "Siirry",
+	"nuke-toggleinvert": "Käänteisvalinta",
 	"nuke-submit-delete": "Poista valitut sivut",
 	"right-nuke": "Massapoistaa sivuja",
 	"nuke-select": "Valinta: $1",

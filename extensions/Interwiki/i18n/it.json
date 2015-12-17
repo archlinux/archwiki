@@ -53,7 +53,7 @@
 	"interwiki-badprefix": "Il prefisso interwiki \"$1\" specificato contiene caratteri non validi",
 	"interwiki-submit-empty": "Il prefisso e l'URL non possono essere vuoti.",
 	"interwiki-submit-invalidurl": "Il protocollo dell'URL non è valido.",
-	"log-name-interwiki": "Registro tabella interwiki",
+	"log-name-interwiki": "Tabella interwiki",
 	"logentry-interwiki-iw_add": "$1 {{GENDER:$2|ha aggiunto}} il prefisso \"$4\" ($5) (incl: $6; locale: $7) alla tabella degli interwiki",
 	"logentry-interwiki-iw_edit": "$1 {{GENDER:$2|ha modificato}} il prefisso \"$4\" ($5) (incl: $6; locale: $7) nella tabella degli interwiki",
 	"logentry-interwiki-iw_delete": "$1 {{GENDER:$2|ha rimosso}} il prefisso \"$4\" dalla tabella degli interwiki",

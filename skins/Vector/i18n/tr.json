@@ -5,9 +5,11 @@
 			"Emperyan",
 			"Joseph",
 			"Stultiwikia",
-			"Vito Genovese"
+			"Vito Genovese",
+			"Rapsar"
 		]
 	},
+	"vector-skin-desc": "Taze bir görünüm ile MonoBook Modern versiyonu ve kullanılabilirlik iyileştirmeler",
 	"vector-action-addsection": "Konu ekle",
 	"vector-action-delete": "Sil",
 	"vector-action-move": "Taşı",
@@ -15,7 +17,7 @@
 	"vector-action-undelete": "Silinmeyi geri al",
 	"vector-action-unprotect": "Korumayı değiştir",
 	"vector-view-create": "Oluştur",
-	"vector-view-edit": "Düzenle",
+	"vector-view-edit": "Değiştir",
 	"vector-view-history": "Geçmişi gör",
 	"vector-view-view": "Oku",
 	"vector-view-viewsource": "Kaynağı gör",

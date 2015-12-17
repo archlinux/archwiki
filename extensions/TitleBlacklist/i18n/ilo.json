@@ -17,7 +17,6 @@
 	"titleblacklist-forbidden-new-account": "Ti nagan ti agar-aramat ti \"$2\" ket naiparit manipud ti pannakapartuat.\nNaipada iti sumaganad a naikabil a blacklist: <code>$1</code>",
 	"titleblacklist-invalid": "Ti sumaganad a {{PLURAL:$1|linia|linlinia}} iti title blacklist ket imbalido;\npangngaasi ta pasayaaten {{PLURAL:$1|dayta|dagita}} sakbay nga idulin:",
 	"titleblacklist-override": "Saan nga ikaskaso ti blacklist",
-	"titleblacklist-autoconfirmed-warning": "<strong>Nota:</strong> Daytoy a panid ket mabalin laeng a maurnos babaen dagiti agar-aramat nga addaan iti karbengan ti <code>automatiko a napasingkedan</code> gapu ta maipada daytoy iti sumaganad a naikabil a blacklist:<br /><code>$1</code>",
 	"titleblacklist-warning": "<strong>Ballaag: Daytoy a panid ket maurnos laeng babaen dagiti administrador ken dagiti sabali nga agar-aramat nga addaan iti karbengan ti <code>tboverride</code> gapu ta maipada iti sumaganad a naikabil a title blacklist:</strong><br /><code>$1</code>",
 	"right-tboverride": "Patuonan ti titulo wenno ti blacklist ti nagan ti agar-aramat",
 	"right-tboverride-account": "Patuonan ti blacklist ti nagan ti agar-aramat",

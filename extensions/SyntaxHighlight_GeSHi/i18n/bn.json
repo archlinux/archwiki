@@ -1,13 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
-			"Zaheen"
+			"Zaheen",
+			"Aftabuzzaman",
+			"Jim Carter",
+			"Sayma Jahan"
 		]
 	},
-	"syntaxhighlight-desc": "[http://qbnz.com/highlighter/ GeSHi হাইলাইটার] ব্যবহার করে <code>&lt;syntaxhighlight&gt;</code> সিনট্যাক্স হাইলাইটিং-এর ক্ষমতা দেয়",
-	"syntaxhighlight-specify": "আপনাকে এভাবে একটি ভাষা নির্দিষ্ট করতে হবে:",
-	"syntaxhighlight-supported": "যেসব ভাষার জন্য সিনট্যাক্স হাইলাইটিং সমর্থিত:",
-	"syntaxhighlight-err-loading": "(সমর্থিত ভাষার তালিকা আনতে ত্রুটি)",
-	"syntaxhighlight-err-language": "অবৈধ ভাষা।",
-	"geshi.css": "/* এখানে স্থাপিত CSS কোড GeSHi সিনট্যাক্স হাইলাইটিং-এ ব্যবহার করা হবে */"
+	"syntaxhighlight-desc": "[http://pygments.org/ Pygments - পাইথন সিনট্যাক্স হাইলাইটার] ব্যবহার করে <code>&lt;syntaxhighlight&gt;</code> সিনট্যাক্স আলোকপাতের ক্ষমতা দেয়",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "কোড",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "ভাষা",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "সারির নম্বর প্রদর্শন",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "কোড ব্লক"
 }

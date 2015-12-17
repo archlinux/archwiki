@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Shubha"
+			"Shubha",
+			"NehalDaveND"
 		]
 	},
 	"cite-desc": "\nAdds<nowiki><ref[ name=id]></nowiki> तथा<nowiki><references/></nowiki> उद्धरणानां कृते सम्पर्कतन्तवः",
@@ -21,5 +22,5 @@
 	"cite_error_references_missing_group": "<code>&lt;ref&gt;</code> अङ्कनपरिभाषिते <code>&lt;references&gt;</code> एतस्मिन् गणस्य विशेषः \"$1\" यश्च पूर्वलेखे न दृष्टम् ।",
 	"cite_error_references_missing_key": "<code>&lt;ref&gt;</code> अङ्कनं \"$1\" नाम्ना सह परिभाषितम् <code>&lt;references&gt;</code> पूर्वलेखे उपयोगाय न जातम् ।",
 	"cite_error_references_no_key": "<code>&lt;ref&gt;</code>अङ्कने परिभाषितं <code>&lt;references&gt;</code> किमपि नामलक्षणं न विद्यते ।",
-	"cite_error_empty_references_define": "<code>&lt;ref&gt;</code> अङ्कने परिभाषितं <code>&lt;references&gt;</code>  \"$1\" नामिका कापि सामग्री न विद्यते ।"
+	"cite_error_empty_references_define": "<code>&lt;ref&gt;</code> अङ्कने परिभाषितं <code>&lt;references&gt;</code>  \"$1\" नामकः कोऽपि अन्तर्विषयः न विद्यते ।"
 }

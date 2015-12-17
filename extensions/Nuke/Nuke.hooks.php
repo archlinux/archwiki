@@ -22,6 +22,7 @@ class NukeHooks {
 				array( 'target' => $userPageTitle->getText() )
 			);
 		}
+
 		return true;
 	}
 }

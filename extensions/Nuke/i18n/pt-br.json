@@ -6,7 +6,8 @@
 			"Eduardo.mps",
 			"Giro720",
 			"MetalBrasil",
-			"555"
+			"555",
+			"Araceletorres"
 		]
 	},
 	"nuke": "Eliminar de forma massiva",
@@ -19,6 +20,7 @@
 	"nuke-multiplepeople": "Eliminação em massa de páginas criadas recentemente",
 	"nuke-tools": "Esta ferramenta permite que páginas criadas recentemente por um usuário ou IP específico sejam eliminadas de forma massiva.\nInsira um nome de usuário ou IP para listar páginas a eliminar; deixe em branco se deseja listar de todos os usuários.",
 	"nuke-submit-user": "Ir",
+	"nuke-toggleinvert": "Inverter",
 	"nuke-submit-delete": "Eliminar selecionadas",
 	"right-nuke": "Eliminar páginas em massa",
 	"nuke-select": "Selecionar: $1",
@@ -31,5 +33,7 @@
 	"nuke-pattern": "Padrão em nomes de páginas:",
 	"nuke-nopages-global": "Não há novas páginas nas [[Special:RecentChanges|mudanças recentes]].",
 	"nuke-viewchanges": "ver alterações",
-	"nuke-namespace": "Limitar ao espaço nominal:"
+	"nuke-namespace": "Limitar ao espaço nominal:",
+	"nuke-linkoncontribs": "excluir em massa",
+	"nuke-linkoncontribs-text": "Excluir em massa páginas em que este usuário é o único autor"
 }

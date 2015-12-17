@@ -11,7 +11,25 @@
 /*jshint onevar:false, boss:true */
 ( function ( $, mw ) {
 
-var hasOwn = Object.prototype.hasOwnProperty;
+var hasOwn = Object.prototype.hasOwnProperty,
+
+/**
+ * Array of language codes.
+ */
+fallbackChain = ( function () {
+	var isRTL = $( 'body' ).hasClass( 'rtl' ),
+		chain = mw.language.getFallbackLanguageChain();
+
+	// Do not fallback to 'en'
+	if ( chain.length >= 2 && !/^en-/.test( chain[chain.length - 2] ) ) {
+		chain.pop();
+	}
+	if ( isRTL ) {
+		chain.push( 'default-rtl' );
+	}
+	chain.push( 'default' );
+	return chain;
+} )();
 
 /**
  * Global static object for wikiEditor that provides generally useful functionality to all modules and contexts.
@@ -165,12 +183,17 @@ $.wikiEditor = {
 	 * with a default.
 	 *
 	 * @param object Object to extract property from
-	 * @param lang Language code, defaults to wgUserLanguage
 	 */
-	autoLang: function ( object, lang ) {
-		var defaultKey = $( 'body' ).hasClass( 'rtl' ) ? 'default-rtl' : 'default';
-		lang = lang || mw.config.get( 'wgUserLanguage' );
-		return hasOwn.call( object, lang ) ? object[lang] : ( object[defaultKey] || object['default'] || object );
+	autoLang: function ( object ) {
+		var i, key;
+
+		for ( i = 0; i < fallbackChain.length; i++ ) {
+			key = fallbackChain[i];
+			if ( hasOwn.call( object, key ) ) {
+				return object[key];
+			}
+		}
+		return object;
 	},
 
 	/**
@@ -179,10 +202,9 @@ $.wikiEditor = {
 	 *
 	 * @param icon Icon object from e.g. toolbar config
 	 * @param path Default icon path, defaults to $.wikiEditor.imgPath
-	 * @param lang Language code, defaults to wgUserLanguage
 	 */
-	autoIcon: function ( icon, path, lang ) {
-		var src = $.wikiEditor.autoLang( icon, lang );
+	autoIcon: function ( icon, path ) {
+		var src = $.wikiEditor.autoLang( icon );
 		path = path || $.wikiEditor.imgPath;
 		// Prepend path if src is not absolute
 		if ( src.substr( 0, 7 ) !== 'http://' && src.substr( 0, 8 ) !== 'https://' && src[0] !== '/' ) {
@@ -197,17 +219,27 @@ $.wikiEditor = {
 	 * @param icon Icon object, see autoIcon()
 	 * @param offset Offset object
 	 * @param path Icon path, see autoIcon()
-	 * @param lang Language code, defaults to wgUserLanguage
 	 */
-	autoIconOrOffset: function ( icon, offset, path, lang ) {
-		lang = lang || mw.config.get( 'wgUserLanguage' );
-		if ( typeof offset === 'object' && hasOwn.call( offset, lang ) ) {
-			return offset[lang];
-		} else if ( typeof icon === 'object' && hasOwn.call( icon, lang ) ) {
-			return $.wikiEditor.autoIcon( icon, undefined, lang );
-		} else {
-			return $.wikiEditor.autoLang( offset, lang );
+	autoIconOrOffset: function ( icon, offset, path ) {
+		var i, key, src;
+
+		path = path || $.wikiEditor.imgPath;
+
+		for ( i = 0; i < fallbackChain.length; i++ ) {
+			key = fallbackChain[i];
+			if ( offset && hasOwn.call( offset, key ) ) {
+				return offset[key];
+			}
+			if ( icon && hasOwn.call( icon, key ) ) {
+				src = icon[key];
+				// Prepend path if src is not absolute
+				if ( src.substr( 0, 7 ) !== 'http://' && src.substr( 0, 8 ) !== 'https://' && src[0] !== '/' ) {
+					src = path + src;
+				}
+				return src + '?' + mw.loader.getVersion( 'jquery.wikiEditor' );
+			}
 		}
+		return offset || icon;
 	}
 };
 

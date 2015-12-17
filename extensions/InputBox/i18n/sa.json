@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Ansumang",
-			"Shubha"
+			"Shubha",
+			"NehalDaveND"
 		]
 	},
 	"inputbox-desc": "पूर्वनिरूपितस्य HTML प्रपत्रयोजनम् अनुमन्यताम्",
@@ -11,5 +12,8 @@
 	"inputbox-tryexact": "दत्तः शब्दः एव लिख्यताम्",
 	"inputbox-searchfulltext": "सम्पूर्णः पाठ्यांशः अन्विष्यताम्",
 	"inputbox-createarticle": "पृष्ठं सृज्यताम्",
-	"inputbox-ns-main": "मुख्य"
+	"inputbox-movearticle": "शीर्षकं परिवर्त्यताम्",
+	"inputbox-postcomment": "नवीनः विभागः",
+	"inputbox-postcommenttitle": "नवीनः विभागः",
+	"inputbox-ns-main": "मुख्यम्"
 }

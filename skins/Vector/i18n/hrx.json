@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Paul Beppler"
+			"Paul Beppler",
+			"Midnight Gambler"
 		]
 	},
 	"vector-action-addsection": "Abschnitt hinzufüche",
@@ -14,5 +15,6 @@
 	"vector-view-edit": "Beoorbeite",
 	"vector-view-history": "Versionsgeschicht",
 	"vector-view-view": "Lese",
-	"vector-view-viewsource": "Quelltext oonzeiche"
+	"vector-view-viewsource": "Quelltext oonzeiche",
+	"vector-more-actions": "Meahr"
 }

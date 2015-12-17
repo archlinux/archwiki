@@ -4,7 +4,8 @@
 			"Fryed-peach",
 			"JtFuruhata",
 			"Schu",
-			"Shirayuki"
+			"Shirayuki",
+			"Otokoume"
 		]
 	},
 	"inputbox-desc": "あらかじめ定義されたHTMLフォーム埋め込み機能を有効にする",
@@ -14,5 +15,7 @@
 	"inputbox-searchfulltext": "全文検索",
 	"inputbox-createarticle": "項目を作成",
 	"inputbox-movearticle": "ページを移動",
+	"inputbox-postcomment": "新しい節",
+	"inputbox-postcommenttitle": "新しい節",
 	"inputbox-ns-main": "(標準)"
 }

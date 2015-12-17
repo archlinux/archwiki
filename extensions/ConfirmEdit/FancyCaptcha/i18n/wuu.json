@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Poiuyt"
+		]
+	},
+	"fancycaptcha-createaccount": "为仔保护本wiki弗受自动账户创建个破坏，我里请求你输入下底方框中显示个文字（[[Special:Captcha/help|更多信息]]）：",
+	"fancycaptcha-reload-text": "刷新"
+}

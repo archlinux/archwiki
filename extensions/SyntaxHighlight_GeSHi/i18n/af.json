@@ -3,11 +3,10 @@
 		"authors": [
 			"Naudefj",
 			"SPQRobin",
-			"පසිඳු කාවින්ද"
+			"පසිඳු කාවින්ද",
+			"Oesjaar"
 		]
 	},
-	"syntaxhighlight-specify": "U moet 'n taal as volg spesifiseer:",
-	"syntaxhighlight-supported": "Ondersteunde tale vir accentuering:",
-	"syntaxhighlight-err-loading": "(fout met die laai van die lys van ondersteunde tale)",
-	"syntaxhighlight-err-language": "Ongeldige taal."
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "Wys lyn nommers.",
+	"syntaxhighlight-error-unknown-language": "Onbekende taal  \"$1\""
 }

@@ -1,12 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"CERminator"
+			"CERminator",
+			"Srdjan m"
 		]
 	},
 	"gadgets-desc": "Omogućava korisnicima da odaberu vlastite [[Special:Gadgets|CSS i JavaScript dodatke]] (gadgets) u svojim [[Special:Preferences#mw-prefsection-gadgets|postavkama]]",
 	"prefs-gadgets": "Dodaci",
-	"gadgets-prefstext": "Ovo je spisak specijalih gadgets (''dodataka'') koje možete omogućiti za Vaš korisnički račun. Ovi dodaci su najčešće bazirani na JavaScript, tako da se postavke JavaScript moraju omogućiti u Vašem web pregledniku da bi mogli raditi.\nZapamtite da ovi gadgets ne uzrokuju nikakve efekte na ovoj stranici za postavke.\n\nTakođer morate obratiti pažnju da ovi specijalni dodaci nisu dio MediaWiki software-a, a obično ih prave i razvijaju korisnici na lokalnim wikijima.\nAdministratori mogu mijenjati dostupne gadgetse koristeći [[MediaWiki:Gadgets-definition|definicije]] i [[Special:Gadgets|opise]].",
+	"gadgets-prefstext": "Ovo je spisak posebnih dodataka koje možete uključiti za svoj korisnički račun.\nOvi dodaci se najčešće zasnivaju na JavaScriptu, tako da ga morate uključiti u svom web pregledniku da bi mogli raditi.\nZapamtite da ovi dodaci nemaju utjecaj na ovu stranicu s postavkama.\n\nZapamtite da ovi posebni dodaci nisu dio MediaWiki softvera, te ih obično prave i razvijaju korisnici na lokalnim wikijima.\nAdministratori mogu mijenjati dostupne dodatke koristeći [[MediaWiki:Gadgets-definition|definicije]] i [[Special:Gadgets|opise]].",
 	"gadgets": "Dodaci (gadgets)",
 	"gadgets-title": "Dodaci",
 	"gadgets-pagetext": "Ispod je spisak posebnih dodataka koje korisnici mogu omogućiti na svojim [[Special:Preferences#mw-prefsection-gadgets|postavkama]], kako je to definisano u [[MediaWiki:Gadgets-definition|definicijama dodataka]].\nOvaj pregled daje jednostavan pristup sistemu stranica poruka koje definišu svaki dodatak i njihov opis i kod.",

@@ -4,10 +4,15 @@
 			"Minh Nguyen"
 		]
 	},
-	"syntaxhighlight-desc": "Tô màu cú pháp trong thẻ <code>&lt;syntaxhighlight&gt;</code> dùng [http://qbnz.com/highlighter/ GeSHi Highlighter]",
-	"syntaxhighlight-specify": "Bạn cần phải định rõ một ngôn ngữ như vầy:",
-	"syntaxhighlight-supported": "Các ngôn ngữ được tô màu cú pháp:",
-	"syntaxhighlight-err-loading": "(gặp lỗi khi nạp danh sách các ngôn ngữ được hỗ trợ)",
-	"syntaxhighlight-err-language": "Ngôn ngữ không hợp lệ.",
-	"geshi.css": "/* Bộ tô màu cú pháp GeSHi sẽ áp dụng mã CSS ở đây */"
+	"syntaxhighlight-desc": "Tô màu cú pháp trong thẻ <code>&lt;syntaxhighlight&gt;</code> dùng [http://pygments.org/ Pygments – trình tô màu cú pháp Python]",
+	"syntaxhighlight-error-category": "Trang có lỗi tô màu cú pháp",
+	"syntaxhighlight-error-category-desc": "Đã xuất hiện lỗi khi tô màu đoạn mã trong trang.",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "Đoạn mã",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Ngôn ngữ",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "(Không có)",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "Đánh số dòng",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Đoạn mã",
+	"syntaxhighlight-error-pygments-invocation-failure": "Thất bại khi gọi Pygments",
+	"syntaxhighlight-error-unknown-language": "Ngôn ngữ không rõ “$1”",
+	"syntaxhighlight-error-exceeds-size-limit": "Đoạn mã có $1 byte, vượt quá tối đa $2 byte"
 }

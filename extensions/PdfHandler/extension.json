@@ -41,5 +41,6 @@
 		"PdfImage": "PdfHandler.image.php",
 		"PdfHandler": "PdfHandler_body.php",
 		"CreatePdfThumbnailsJob": "CreatePdfThumbnailsJob.class.php"
-	}
+	},
+	"manifest_version": 1
 }

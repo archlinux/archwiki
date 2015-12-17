@@ -3,7 +3,8 @@
 		"authors": [
 			"Dsvyas",
 			"KartikMistry",
-			"Sushant savla"
+			"Sushant savla",
+			"NehalDaveND"
 		]
 	},
 	"inputbox-desc": "પૂર્વવ્યાખ્યાયિત HTML પત્રકોનો સમાવેશ માન્ય",
@@ -12,6 +13,8 @@
 	"inputbox-tryexact": "આબેહૂબ સરખામણી ધારી પ્રયત્ન કરો",
 	"inputbox-searchfulltext": "સંપૂર્ણ લખાણ શોધો",
 	"inputbox-createarticle": "નવો લેખ શરૂ કરો",
+	"inputbox-movearticle": "નામ બદલો",
+	"inputbox-postcomment": "નવો વિભાગ",
 	"inputbox-postcommenttitle": "નવો વિભાગ",
 	"inputbox-ns-main": "મુખ્ય"
 }

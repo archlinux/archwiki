@@ -9,7 +9,7 @@
 		]
 	},
 	"skinname-vector": "Vector",
-	"vector-skin-desc": "提供清新的外观和许多可用性改进的现代版MonoBook",
+	"vector-skin-desc": "提供清新的外观和很多可用性改进的现代版MonoBook",
 	"vector.css": "/* 放置于这里的CSS将影响使用Vector皮肤的用户 */",
 	"vector.js": "/* 这里的任何JavaScript将为使用Vector皮肤的用户加载 */",
 	"vector-action-addsection": "添加话题",

@@ -16,9 +16,14 @@
 	"gadgets-required-rights": "Vyžaduje následující {{PLURAL:$2|oprávnění}}:\n\n$1",
 	"gadgets-required-skins": "Dostupné {{PLURAL:$2|pro vzhled $1|pro následující vzhledy: $1}}.",
 	"gadgets-default": "Implicitně zapnuto všem.",
+	"gadgets-legacy": "Udělátko se nenačítá. Převeďte ho prosím na ResourceLoader. ([https://www.mediawiki.org/wiki/ResourceLoader/Migration_guide_(users) Více informací])",
 	"gadgets-export": "Exportovat",
 	"gadgets-export-title": "Export udělátka",
 	"gadgets-not-found": "Udělátko „$1“ nebylo nalezeno.",
 	"gadgets-export-text": "Chcete-li exportovat udělátko $1, klikněte na tlačítko „{{int:gadgets-export-download}}“, uložte stažený soubor, na cílové wiki přejděte na stránku Special:Import a soubor načtěte. Poté na tamní stránku MediaWiki:Gadgets-definition přidejte následující:\n<pre>$2</pre>\nNa cílové wiki musíte mít příslušná oprávnění (včetně práva editovat systémová hlášení) a musí tam být povolen import načtením souboru.",
-	"gadgets-export-download": "Stáhnout"
+	"gadgets-export-download": "Stáhnout",
+	"right-gadgets-edit": "Editace stránek s JavaScriptem a CSS udělátek",
+	"action-gadgets-edit": "editovat stránku s JavaScriptem nebo CSS tohoto udělátka",
+	"right-gadgets-definition-edit": "Editace definic udělátek",
+	"action-gadgets-definition-edit": "editovat definici tohoto udělátka"
 }

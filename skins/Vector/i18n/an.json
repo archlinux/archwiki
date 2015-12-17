@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Juanpabl"
+			"Juanpabl",
+			"Carlos Cristia"
 		]
 	},
 	"skinname-vector": "Vector",
@@ -17,5 +18,6 @@
 	"vector-view-edit": "Editar",
 	"vector-view-history": "Amostrar l'historial",
 	"vector-view-view": "Leyer",
-	"vector-view-viewsource": "Veyer o codigo fuent"
+	"vector-view-viewsource": "Veyer o codigo fuent",
+	"vector-more-actions": "Mas"
 }

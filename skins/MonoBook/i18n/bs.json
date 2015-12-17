@@ -2,10 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"CERminator",
-			"Kal-El"
+			"Kal-El",
+			"Srdjan m"
 		]
 	},
 	"skinname-monobook": "MonoKnjiga",
+	"monobook-desc": "Klasična MediaWiki tema od 2004. Dobila ime po crnobijeloj slici knjige u pozadini stranice.",
 	"monobook.css": "/* CSS umetnut ovdje uticat će na korisnike koji koriste Monobook skin */",
 	"monobook.js": "/* Bilo koja JavaScript će biti učitana za sve korisnike koji koriste MonoBook skin */"
 }

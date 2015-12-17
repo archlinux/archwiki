@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": []
+	},
+	"renocaptcha-edit": "Message above the CAPTCHA for edit action.",
+	"renocaptcha-addurl": "Message above the CAPTCHA for addurl (user added new external links to the page) action.",
+	"renocaptcha-badlogin": "Message above the CAPTCHA for badlogin action.",
+	"renocaptcha-createaccount": "Message above the CAPTCHA for createaccount (user creates a new account) action.",
+	"renocaptcha-createaccount-fail": "Error message, when the CAPTCHA isn't solved correctly.",
+	"renocaptcha-create": "Message above the CAPTCHA for create (user creates a new page) action.",
+	"renocaptcha-noscript": "This messages is warning you have javascript disabled so you have to manualy input the text into the textbox."
+}

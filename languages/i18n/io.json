@@ -661,7 +661,7 @@
 	"ncategories": "$1 {{PLURAL:$1|kategorio|kategorii}}",
 	"nlinks": "$1 {{PLURAL:$1|ligilo|ligili}}",
 	"nmembers": "$1 {{PLURAL:$1|membro|membri}}",
-
+	"nviews": "$1 {{PLURAL:$1|vizito|viziti}}",
 	"lonelypages": "Pagini sen ligili",
 	"uncategorizedpages": "Nekategorizita pagini",
 	"uncategorizedcategories": "Nekategorizita kategorii",
@@ -1072,5 +1072,12 @@
 	"searchsuggest-containing": "quan kontenas...",
 	"expand_templates_output": "Rezulto",
 	"expand_templates_ok": "O.K.",
-	"expand_templates_preview": "Previdar"
+	"expand_templates_preview": "Previdar",
+	"special-characters-group-latin": "Latina",
+	"special-characters-group-latinextended": "Latina extensita",
+	"special-characters-group-symbols": "Simboli",
+	"special-characters-group-greek": "Grekiana",
+	"special-characters-group-cyrillic": "Kirila",
+	"special-characters-group-arabic": "Arabiana",
+	"special-characters-group-persian": "Persiana"
 }
