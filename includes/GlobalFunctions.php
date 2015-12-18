@@ -3860,7 +3860,7 @@ function wfMemoryLimit() {
  * Converts shorthand byte notation to integer form
  *
  * @param string $string
- * @param int $default Returned if $string is empty
+ * @param int $default Return if $string is empty
  * @return int
  */
 function wfShorthandToInteger( $string = '', $default = -1 ) {

@@ -1,0 +1,25 @@
+{
+	"require": {
+		"cssjanus/cssjanus": "1.1.1",
+		"leafo/lessphp": "0.5.0",
+		"liuggio/statsd-php-client": "1.0.12",
+		"php": ">=5.3.3",
+		"psr/log": "1.0.0",
+		"monolog/monolog": "1.12.0",
+		"ruflin/elastica": "1.3.0.0",
+		"oojs/oojs-ui": "0.11.3",
+		"wikimedia/cdb": "1.0.1",
+		"wikimedia/composer-merge-plugin": "1.0.0",
+		"wikimedia/utfnormal": "1.0.2",
+		"zordius/lightncandy": "0.18"
+	},
+	"prefer-stable": true,
+	"config": {
+		"autoloader-suffix": "_mediawiki_vendor",
+		"classmap-authoritative": true,
+		"preferred-install": "dist",
+		"vendor-dir": ".",
+		"prepend-autoloader": false,
+		"optimize-autoloader": true
+	}
+}
