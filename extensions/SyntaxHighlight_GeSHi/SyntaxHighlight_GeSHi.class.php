@@ -16,7 +16,7 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-use KzykHys\Pygments\Pygments;
+use Symfony\Component\Process\ProcessBuilder;
 
 // @codingStandardsIgnoreStart
 class SyntaxHighlight_GeSHi {
@@ -276,18 +276,29 @@ class SyntaxHighlight_GeSHi {
 		$output = $cache->get( $cacheKey );
 
 		if ( $output === false ) {
-			try {
-				$pygments = new Pygments( $wgPygmentizePath );
-				$output = $pygments->highlight( $code, $lexer, 'html', $options );
-			} catch ( RuntimeException $e ) {
+			$optionPairs = array();
+			foreach ( $options as $k => $v ) {
+				$optionPairs[] = "{$k}={$v}";
+			}
+			$builder = new ProcessBuilder();
+			$builder->setPrefix( $wgPygmentizePath );
+			$process = $builder
+				->add( '-l' )->add( $lexer )
+				->add( '-f' )->add( 'html' )
+				->add( '-O' )->add( implode( ',', $optionPairs ) )
+				->getProcess();
+
+			$process->setInput( $code );
+			$process->run();
+
+			if ( !$process->isSuccessful() ) {
 				$status->warning( 'syntaxhighlight-error-pygments-invocation-failure' );
-				wfWarn(
-					'Failed to invoke Pygments. Please check that Pygments is installed ' .
-					'and that $wgPygmentizePath is accurate.'
-				);
+				wfWarn( 'Failed to invoke Pygments: ' . $process->getErrorOutput() );
 				$status->value = self::highlight( $code, null, $args )->getValue();
 				return $status;
 			}
+
+			$output = $process->getOutput();
 			$cache->set( $cacheKey, $output );
 		}
 
