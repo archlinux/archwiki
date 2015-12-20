@@ -32,3 +32,4 @@ maintenance/.mwsql_history
 images/*.*
 images/cache
 cache/html/*
+cache/*.lesscache
