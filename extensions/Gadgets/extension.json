@@ -8,6 +8,35 @@
 	"descriptionmsg": "gadgets-desc",
 	"license-name": "GPL-2.0+",
 	"type": "other",
+	"namespaces": [
+		{
+			"id": 2300,
+			"constant": "NS_GADGET",
+			"name": "Gadget",
+			"protection": "gadgets-edit"
+		},
+		{
+			"id": 2301,
+			"constant": "NS_GADGET_TALK",
+			"name": "Gadget_talk"
+		},
+		{
+			"id": 2302,
+			"constant": "NS_GADGET_DEFINITION",
+			"name": "Gadget_definition",
+			"protection": "gadgets-definition-edit",
+			"capitallinkoverride": false
+		},
+		{
+			"id": 2303,
+			"constant": "NS_GADGET_DEFINITION_TALK",
+			"name": "Gadget_definition_talk"
+		}
+	],
+	"AvailableRights": [
+		"gadgets-edit",
+		"gadgets-definition-edit"
+	],
 	"SpecialPages": {
 		"Gadgets": "SpecialGadgets"
 	},
@@ -21,15 +50,18 @@
 		]
 	},
 	"ExtensionMessagesFiles": {
-		"GadgetsAlias": "Gadgets.alias.php"
+		"GadgetsAlias": "Gadgets.alias.php",
+		"GadgetsNamespaces": "Gadgets.namespaces.php"
 	},
 	"AutoloadClasses": {
 		"ApiQueryGadgetCategories": "api/ApiQueryGadgetCategories.php",
 		"ApiQueryGadgets": "api/ApiQueryGadgets.php",
 		"Gadget": "Gadgets_body.php",
 		"GadgetHooks": "GadgetHooks.php",
-		"GadgetResourceLoaderModule": "Gadgets_body.php",
-		"SpecialGadgets": "SpecialGadgets.php"
+		"GadgetResourceLoaderModule": "includes/GadgetResourceLoaderModule.php",
+		"SpecialGadgets": "SpecialGadgets.php",
+		"GadgetRepo": "includes/GadgetRepo.php",
+		"MediaWikiGadgetsDefinitionRepo": "includes/MediaWikiGadgetsDefinitionRepo.php"
 	},
 	"Hooks": {
 		"ArticleSaveComplete": [
@@ -51,7 +83,5 @@
 			"GadgetHooks::onUnitTestsList"
 		]
 	},
-	"config": {
-		"GadgetsCaching": true
-	}
+	"manifest_version": 1
 }

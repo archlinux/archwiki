@@ -3,7 +3,8 @@
 		"authors": [
 			"Event",
 			"Nghtwlkr",
-			"Danmichaelo"
+			"Danmichaelo",
+			"Kingu"
 		]
 	},
 	"nuke": "Massesletting",
@@ -16,6 +17,7 @@
 	"nuke-multiplepeople": "Massesletting av nylig opprettede sider",
 	"nuke-tools": "Dette verktøyet muliggjør massesletting av sider som nylig er opprettet av gitt bruker eller IP-adresse.\nSkriv et brukernavn eller en IP-adresse for å få en liste over sider som kan slettes, eller angi tomt for alle brukere.",
 	"nuke-submit-user": "Vis",
+	"nuke-toggleinvert": "Inverter",
 	"nuke-submit-delete": "Slett valgte",
 	"right-nuke": "Slette sider <em>en masse</em>",
 	"nuke-select": "Velg: $1",

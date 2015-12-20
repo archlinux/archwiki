@@ -8,7 +8,7 @@
 		]
 	},
 	"citethispage": "인용",
-	"citethispage-desc": "[[Special:Cite|인용]] 특수 문서와 도구모음 링크를 추가합니다",
+	"citethispage-desc": "[[Special:CiteThisPage|인용]] 특수 문서와 도구모음 링크를 추가합니다",
 	"citethispage-link": "이 문서 인용하기",
 	"tooltip-citethispage": "이 문서를 인용하는 방법에 대한 정보",
 	"citethispage-change-submit": "인용",

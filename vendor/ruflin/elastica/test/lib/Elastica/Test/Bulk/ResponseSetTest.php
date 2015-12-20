@@ -1,17 +1,16 @@
 <?php
-
 namespace Elastica\Test\Bulk;
 
-use Elastica\Bulk\Action;
 use Elastica\Bulk;
+use Elastica\Bulk\Action;
 use Elastica\Exception\Bulk\ResponseException;
-use Elastica\Test\Base as BaseTest;
-use Elastica\Bulk\ResponseSet;
 use Elastica\Response;
+use Elastica\Test\Base as BaseTest;
 
 class ResponseSetTest extends BaseTest
 {
     /**
+     * @group unit
      * @dataProvider isOkDataProvider
      */
     public function testIsOk($responseData, $actions, $expected)
@@ -20,6 +19,9 @@ class ResponseSetTest extends BaseTest
         $this->assertEquals($expected, $responseSet->isOk());
     }
 
+    /**
+     * @group unit
+     */
     public function testGetError()
     {
         list($responseData, $actions) = $this->_getFixture();
@@ -55,6 +57,9 @@ class ResponseSetTest extends BaseTest
         }
     }
 
+    /**
+     * @group unit
+     */
     public function testGetBulkResponses()
     {
         list($responseData, $actions) = $this->_getFixture();
@@ -76,6 +81,9 @@ class ResponseSetTest extends BaseTest
         }
     }
 
+    /**
+     * @group unit
+     */
     public function testIterator()
     {
         list($responseData, $actions) = $this->_getFixture();
@@ -119,12 +127,14 @@ class ResponseSetTest extends BaseTest
         $return[] = array($responseData, $actions, true);
         $responseData['items'][2]['index']['ok'] = false;
         $return[] = array($responseData, $actions, false);
+
         return $return;
     }
 
     /**
      * @param array $responseData
      * @param array $actions
+     *
      * @return \Elastica\Bulk\ResponseSet
      */
     protected function _createResponseSet(array $responseData, array $actions)
@@ -138,6 +148,7 @@ class ResponseSetTest extends BaseTest
 
         $bulk = new Bulk($client);
         $bulk->addActions($actions);
+
         return $bulk->send();
     }
 
@@ -156,7 +167,7 @@ class ResponseSetTest extends BaseTest
                         '_id' => '1',
                         '_version' => 1,
                         'ok' => true,
-                    )
+                    ),
                 ),
                 array(
                     'index' => array(
@@ -165,7 +176,7 @@ class ResponseSetTest extends BaseTest
                         '_id' => '2',
                         '_version' => 1,
                         'ok' => true,
-                    )
+                    ),
                 ),
                 array(
                     'index' => array(
@@ -174,15 +185,16 @@ class ResponseSetTest extends BaseTest
                         '_id' => '3',
                         '_version' => 1,
                         'ok' => true,
-                    )
-                )
-            )
+                    ),
+                ),
+            ),
         );
         $bulkResponses = array(
             new Action(),
             new Action(),
             new Action(),
         );
+
         return array($responseData, $bulkResponses);
     }
 }

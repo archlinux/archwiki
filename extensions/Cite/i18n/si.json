@@ -3,11 +3,12 @@
 		"authors": [
 			"Budhajeewa",
 			"Thameera123",
-			"නන්දිමිතුරු"
+			"නන්දිමිතුරු",
+			"Singhalawap"
 		]
 	},
 	"cite-desc": "උපහරණයන් සඳහා, <nowiki><ref[ name=id]></nowiki> සහ <nowiki><references/></nowiki> ටැගයන්, එකතු කරයි",
-	"cite_error": "උපන්‍යාස දෝෂය: $1",
+	"cite_error": "උපුටාදැක්වීම් දෝෂය: $1",
 	"cite_error_ref_numeric_key": "අනීතික <code>&lt;ref&gt;</code> ටැගය;\nනම සරල  පූර්ණාංකයක් විය නොහැක. විස්තරශීලි ශිර්ෂයක් භාවිතා කරන්න",
 	"cite_error_ref_no_key": "අනීතික <code>&lt;ref&gt;</code> ටැගය;\nපෙළ විරහිත ආශ්‍රේය සඳහා නමක් තිබිය යුතුය",
 	"cite_error_ref_too_many_keys": "අනීතික <code>&lt;ref&gt;</code> ටැගය;\nඅනීතික නාමයන්, නිද. පමණට වැඩි",

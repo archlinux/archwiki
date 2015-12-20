@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Als-Chlämens",
-			"Als-Holder"
+			"Als-Holder",
+			"J. 'mach' wust"
 		]
 	},
 	"nuke": "Masseleschig",
@@ -26,5 +27,5 @@
 	"nuke-delete-more": "[[Special:Nuke|Wyteri Syte lösche]]",
 	"nuke-pattern": "Muster für de Sytename:",
 	"nuke-nopages-global": "Es git kei neui Syte unter de [[Special:RecentChanges|letschte Änderige]].",
-	"nuke-viewchanges": "Zeig Änderige"
+	"nuke-viewchanges": "Änderige zeige"
 }

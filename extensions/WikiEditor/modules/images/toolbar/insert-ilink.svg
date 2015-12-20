@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg id="svg4225" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" height="22" width="22" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 744.09449 1052.3622" xmlns:dc="http://purl.org/dc/elements/1.1/">
+ <defs id="defs4227">
+  <linearGradient id="linearGradient4998" gradientUnits="userSpaceOnUse" gradientTransform="matrix(47.835 0 0 47.835 -154.11 -.023920)" x2="22" x1="18.5">
+   <stop id="stop7-0" stop-color="#ddd" offset="0"/>
+   <stop id="stop9-1" stop-color="#ddd" stop-opacity="0" offset="1"/>
+  </linearGradient>
+  <linearGradient id="linearGradient5000" gradientUnits="userSpaceOnUse" gradientTransform="matrix(47.835 0 0 47.835 -154.11 -.023920)" x2="22" x1="18.5">
+   <stop id="stop12-7" stop-color="#393a3d" offset="0"/>
+   <stop id="stop14-3" stop-color="#393a3d" stop-opacity="0" offset="1"/>
+  </linearGradient>
+ </defs>
+ <metadata id="metadata4230">
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <g id="layer1">
+  <path id="a" d="m645.21 243.45c-137.91 0-248.45 100.5-248.45 222.96v119.87c0 122.41 110.55 222.96 248.45 222.96h224.15c137.91 0 248.45-100.5 248.45-222.96v-119.87c0-122.41-110.55-222.96-248.45-222.96zm177.56 136.33c85.48 0 130.78 31.523 130.78 107.44v76.727c0 75.914-51.326 99.4-136.81 99.4h-137.72c-85.48 0-122.7-26.5-122.7-102.41v-76.727c0-75.914 43.242-104.42 128.72-104.42z" stroke="url(#linearGradient5000)" stroke-width="53.814" fill="url(#linearGradient4998)"/>
+  <use id="use17" xlink:href="#a" transform="matrix(-1 0 0 1 744.14 -.0000042212)" height="100%" width="100%" y="0" x="0"/>
+  <path id="path19" d="m284.15 319.03c16.933 19.23 45.538 62.998 53.049 86.772h69.791c7.6536-24.396 36.115-66.921 53.049-86.772zm-323.17 134.85-0.287 96.148c-1.148 56.11 94.473 183.11 269.26 183.11h284.33c174.79 0 269.07-124.56 269.26-180.72l0.287-98.683c0-22.722-15.977-49.03-45.491-72.422-53.001-5.9793-116.19 0.7654-142.16 34.919 17.316 12.102 27.696 28.414 27.696 42.19v55.44c0 34.824-55.488 60.224-163.83 60.224h-175.89c-108.35 0-163.83-25.448-163.83-60.224v-55.44c0-13.633 8.8973-29.036 27.696-42.142-36.785-36.833-82.706-37.072-134.94-37.263-31.81 24.061-51.614 51.279-52.092 74.718z" stroke="#393a3d" stroke-width="47.835" fill="#f4f4f5"/>
+ </g>
+</svg>

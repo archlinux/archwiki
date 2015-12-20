@@ -2,7 +2,7 @@
  * Disable InputBox submit button when the corresponding text input field is empty.
  *
  * @author Tony Thomas
- * @license http://www.gnu.org/copyleft/gpl.html GNU General Public License 2.0 or later
+ * @license http://opensource.org/licenses/MIT MIT License
  */
 ( function ( $, mw ) {
 	'use strict';

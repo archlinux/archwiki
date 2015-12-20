@@ -1,9 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Diego Queiroz"
+			"Diego Queiroz",
+			"Cainamarques"
 		]
 	},
-	"cologneblue.js": "/* Qualquer JavaScript aqui colocado afetará os usuários do skin Azul colonial */",
-	"skinname-cologneblue": "Azul colonial"
+	"cologneblue.css": "/* o código CSS colocado aqui terá efeito nos usuários do tema Cologne Blue */",
+	"cologneblue.js": "/* Qualquer JavaScript aqui colocado afetará os usuários do tema Cologne Blue */",
+	"skinname-cologneblue": "Azul Colonial",
+	"cologneblue-desc": "Um tema leve com formatação mínima"
 }

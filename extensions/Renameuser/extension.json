@@ -8,6 +8,9 @@
 	"descriptionmsg": "renameuser-desc",
 	"license-name": "GPL-2.0+",
 	"type": "specialpage",
+	"requires": {
+		"MediaWiki": ">= 1.25.0"
+	},
 	"ExtensionMessagesFiles": {
 		"RenameuserAliases": "Renameuser.alias.php"
 	},
@@ -53,5 +56,6 @@
 		"RenameuserLogFormatter": "RenameuserLogFormatter.php",
 		"RenameuserSQL": "RenameuserSQL.php",
 		"SpecialRenameuser": "specials/SpecialRenameuser.php"
-	}
+	},
+	"manifest_version": 1
 }

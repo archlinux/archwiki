@@ -16,8 +16,11 @@ class MathCaptcha extends SimpleCaptcha {
 		$resultArr['captcha']['question'] = $sum;
 	}
 
-	/** Produce a nice little form */
-	function getForm() {
+	/**
+	 * Produce a nice little form
+	 * @param OutputPage $out
+	 */
+	function getForm( OutputPage $out ) {
 		list( $sum, $answer ) = $this->pickSum();
 		$index = $this->storeCaptcha( array( 'answer' => $answer ) );
 

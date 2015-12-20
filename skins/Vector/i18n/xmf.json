@@ -3,7 +3,8 @@
 		"authors": [
 			"Kilavagora",
 			"Lika2672",
-			"Machirkholi"
+			"Machirkholi",
+			"Silovan"
 		]
 	},
 	"vector-action-addsection": "თემაშ მიშაძინა",
@@ -14,5 +15,6 @@
 	"vector-view-edit": "რედაქტირაფა",
 	"vector-view-history": "ისტორიაშ ძირაფა",
 	"vector-view-view": "კითხირი",
-	"vector-view-viewsource": "ქიძირე წყუ"
+	"vector-view-viewsource": "ქიძირე წყუ",
+	"vector-more-actions": "უმოსი"
 }

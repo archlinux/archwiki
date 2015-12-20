@@ -25,8 +25,8 @@
 		.section {
 			float: left;
 			width: 100%;
-			border-top: 1px solid #DDDDDD;
-			background-color: #E0EEF7;
+			border-top: 1px solid #ddd;
+			background-color: #e0eef7;
 		}
 
 		.section-hidden {
@@ -45,7 +45,7 @@
 				.background-image('images/toolbar/loading.gif');
 				background-position: left center;
 				background-repeat: no-repeat;
-				color: #666666;
+				color: #666;
 				display: block;
 				float: left;
 				height: 32px;
@@ -70,8 +70,8 @@
 			float: left;
 			line-height: 26px;
 
-			a, a:visited  {
-				.background-image('images/toolbar/arrow-ltr.png');
+			a, a:visited {
+				.background-image-svg('images/toolbar/arrow-ltr.svg', 'images/toolbar/arrow-ltr.png');
 				background-position: left center;
 				background-repeat: no-repeat;
 				color: #0645ad;
@@ -84,8 +84,8 @@
 			}
 
 			a.current, a.current:visited {
-				.background-image('images/toolbar/arrow-down.png');
-				color: #333333;
+				.background-image-svg('images/toolbar/arrow-down.svg', 'images/toolbar/arrow-down.png');
+				color: #333;
 
 				&:hover {
 					text-decoration: none;
@@ -112,7 +112,7 @@
 		float: left;
 		height: 26px;
 		padding-right: 6px;
-		border-right: 1px solid #DDDDDD;
+		border-right: 1px solid #ddd;
 		margin: 3px;
 
 		/* Toolbar */
@@ -124,7 +124,7 @@
 			margin: 2px;
 			margin-left: 5px;
 			margin-right: 8px;
-			color: #777777;
+			color: #777;
 			cursor: default;
 		}
 
@@ -145,10 +145,10 @@
 			border: 1px solid silver;
 			padding: 0;
 			margin-right: 0;
-			background-color: #ffffff;
+			background-color: #fff;
 
 			.label {
-				.background-image('images/toolbar/arrow-down.png');
+				.background-image-svg('images/toolbar/arrow-down.svg', 'images/toolbar/arrow-down.png');
 				background-position: center right;
 				background-repeat: no-repeat;
 				padding: 0;
@@ -158,7 +158,7 @@
 				margin-right: 4px;
 				cursor: pointer;
 				text-decoration: none;
-				color: #333333;
+				color: #333;
 			}
 
 			.menu {
@@ -168,7 +168,7 @@
 					margin-left: -1px;
 					margin-top: 22px;
 					border: 1px solid silver;
-					background-color: #ffffff;
+					background-color: #fff;
 				}
 			}
 
@@ -181,7 +181,7 @@
 					white-space: nowrap;
 
 					&:hover {
-						background-color: #E0EEF7;
+						background-color: #e0eef7;
 					}
 
 					&[rel=heading-2] {
@@ -212,7 +212,7 @@
 		float: right;
 		padding: 0 0 0 6px;
 		border-right: none;
-		border-left: 1px solid #DDDDDD;
+		border-left: 1px solid #ddd;
 	}
 
 	.group-insert {
@@ -236,14 +236,14 @@
 			}
 
 			.current {
-				background-color: #FAFAFA;
-				color: #333333;
+				background-color: #fafafa;
+				color: #333;
 				cursor: default;
 			}
 		}
 
 		.pages {
-			background-color: #FAFAFA;
+			background-color: #fafafa;
 			height: 125px;
 			overflow: auto;
 		}
@@ -261,12 +261,12 @@
 		}
 
 		th {
-			color: #999999;
+			color: #999;
 		}
 
 		td {
 			color: black;
-			border-top: 1px solid #EEEEEE;
+			border-top: 1px solid #eee;
 		}
 
 		th,
@@ -309,7 +309,7 @@
 	.page-characters {
 		div {
 			span {
-				border: 1px solid #DDDDDD;
+				border: 1px solid #ddd;
 				padding: 5px;
 				padding-left: 8px;
 				padding-right: 8px;
@@ -342,7 +342,7 @@
 
 /* Sprited Buttons */
 .wikiEditor-toolbar-spritedButton {
-	.background-image('images/toolbar/button-sprite.png');
+	.background-image-svg('images/toolbar/button-sprite.svg', 'images/toolbar/button-sprite.png');
 	background-position: 0 0;
 	background-repeat: no-repeat;
 	display: block;

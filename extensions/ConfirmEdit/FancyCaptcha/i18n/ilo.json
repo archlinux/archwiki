@@ -10,5 +10,7 @@
 	"fancycaptcha-create": "Tapno makaaramid ti panid, pangaasim nga ikabil ti balikas nga agparang dita baba a kahon. ([[Special:Captcha/help|adu pay a pakaammo]]):",
 	"fancycaptcha-edit": "Tapno makaurnos daytoy a panid, pangaasim nga ikabil ti balikas nga agparang dita baba a kahon. ([[Special:Captcha/help|adu pay a pakaammo]]):",
 	"fancycaptcha-sendemail": "Tapno makasalakniban ti wiki kadagiti automatiko a panag-spam, naemmakami nga agdawat nga ikabilmo dagiti balikas nga agparang dita baba iti kahon ([[Special:Captcha/help|adu pay a pakaammo]]):",
-	"fancycaptcha-reload-text": "Pasadiwaen"
+	"fancycaptcha-reload-text": "Pasadiwaen",
+	"apihelp-fancycaptchareload-description": "Mangala iti baro a FancyCaptcha.",
+	"apihelp-fancycaptchareload-example-1": "Mangala iti baro a FancyCaptcha"
 }

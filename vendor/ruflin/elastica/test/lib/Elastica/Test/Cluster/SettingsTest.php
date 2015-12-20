@@ -1,14 +1,16 @@
 <?php
-
 namespace Elastica\Test\Cluster;
 
+use Elastica\Cluster\Settings;
 use Elastica\Document;
 use Elastica\Exception\ResponseException;
 use Elastica\Test\Base as BaseTest;
-use Elastica\Cluster\Settings;
 
 class SettingsTest extends BaseTest
 {
+    /**
+     * @group functional
+     */
     public function testSetTransient()
     {
         $index = $this->_createIndex();
@@ -21,13 +23,16 @@ class SettingsTest extends BaseTest
 
         $settings->setTransient('discovery.zen.minimum_master_nodes', 2);
         $data = $settings->get();
-        $this->assertEquals(2, $data['transient']['discovery.zen.minimum_master_nodes']);
+        $this->assertEquals(2, $data['transient']['discovery']['zen']['minimum_master_nodes']);
 
         $settings->setTransient('discovery.zen.minimum_master_nodes', 1);
         $data = $settings->get();
-        $this->assertEquals(1, $data['transient']['discovery.zen.minimum_master_nodes']);
+        $this->assertEquals(1, $data['transient']['discovery']['zen']['minimum_master_nodes']);
     }
 
+    /**
+     * @group functional
+     */
     public function testSetPersistent()
     {
         $index = $this->_createIndex();
@@ -40,21 +45,23 @@ class SettingsTest extends BaseTest
 
         $settings->setPersistent('discovery.zen.minimum_master_nodes', 2);
         $data = $settings->get();
-        $this->assertEquals(2, $data['persistent']['discovery.zen.minimum_master_nodes']);
+        $this->assertEquals(2, $data['persistent']['discovery']['zen']['minimum_master_nodes']);
 
         $settings->setPersistent('discovery.zen.minimum_master_nodes', 1);
         $data = $settings->get();
-        $this->assertEquals(1, $data['persistent']['discovery.zen.minimum_master_nodes']);
+        $this->assertEquals(1, $data['persistent']['discovery']['zen']['minimum_master_nodes']);
     }
 
+    /**
+     * @group functional
+     */
     public function testSetReadOnly()
     {
         // Create two indices to check that the complete cluster is read only
         $settings = new Settings($this->_getClient());
         $settings->setReadOnly(false);
-        $index1 = $this->_createIndex('test1');
-        $index2 = $this->_createIndex('test2');
-
+        $index1 = $this->_createIndex();
+        $index2 = $this->_createIndex();
 
         $doc1 = new Document(null, array('hello' => 'world'));
         $doc2 = new Document(null, array('hello' => 'world'));

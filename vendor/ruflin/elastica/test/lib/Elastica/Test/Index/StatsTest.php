@@ -1,12 +1,13 @@
 <?php
-
 namespace Elastica\Test\Index;
 
 use Elastica\Test\Base as BaseTest;
 
 class StatsTest extends BaseTest
 {
-
+    /**
+     * @group functional
+     */
     public function testGetSettings()
     {
         $indexName = 'test';

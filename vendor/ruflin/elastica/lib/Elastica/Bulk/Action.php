@@ -1,16 +1,15 @@
 <?php
-
 namespace Elastica\Bulk;
 
 use Elastica\Bulk;
-use Elastica\JSON;
 use Elastica\Index;
+use Elastica\JSON;
 use Elastica\Type;
 
 class Action
 {
     const OP_TYPE_CREATE = 'create';
-    const OP_TYPE_INDEX  = 'index';
+    const OP_TYPE_INDEX = 'index';
     const OP_TYPE_DELETE = 'delete';
     const OP_TYPE_UPDATE = 'update';
 
@@ -21,7 +20,7 @@ class Action
         self::OP_TYPE_CREATE,
         self::OP_TYPE_INDEX,
         self::OP_TYPE_DELETE,
-        self::OP_TYPE_UPDATE
+        self::OP_TYPE_UPDATE,
     );
 
     /**
@@ -41,8 +40,8 @@ class Action
 
     /**
      * @param string $opType
-     * @param array $metadata
-     * @param array $source
+     * @param array  $metadata
+     * @param array  $source
      */
     public function __construct($opType = self::OP_TYPE_INDEX, array $metadata = array(), array $source = array())
     {
@@ -53,7 +52,8 @@ class Action
 
     /**
      * @param string $type
-     * @return \Elastica\Bulk\Action
+     *
+     * @return $this
      */
     public function setOpType($type)
     {
@@ -72,7 +72,8 @@ class Action
 
     /**
      * @param array $metadata
-     * @return \Elastica\Bulk\Action
+     *
+     * @return $this
      */
     public function setMetadata(array $metadata)
     {
@@ -99,7 +100,8 @@ class Action
 
     /**
      * @param array $source
-     * @return \Elastica\Bulk\Action
+     *
+     * @return $this
      */
     public function setSource($source)
     {
@@ -126,7 +128,8 @@ class Action
 
     /**
      * @param string|\Elastica\Index $index
-     * @return \Elastica\Bulk\Action
+     *
+     * @return $this
      */
     public function setIndex($index)
     {
@@ -140,7 +143,8 @@ class Action
 
     /**
      * @param string|\Elastica\Type $type
-     * @return \Elastica\Bulk\Action
+     *
+     * @return $this
      */
     public function setType($type)
     {
@@ -155,7 +159,8 @@ class Action
 
     /**
      * @param string $id
-     * @return \Elastica\Bulk\Action
+     *
+     * @return $this
      */
     public function setId($id)
     {
@@ -166,7 +171,8 @@ class Action
 
     /**
      * @param string $routing
-     * @return \Elastica\Bulk\Action
+     *
+     * @return $this
      */
     public function setRouting($routing)
     {
@@ -184,6 +190,7 @@ class Action
         if ($this->hasSource()) {
             $data[] = $this->getSource();
         }
+
         return $data;
     }
 
@@ -192,24 +199,26 @@ class Action
      */
     public function toString()
     {
-        $string = JSON::stringify($this->getActionMetadata(), JSON_FORCE_OBJECT) . Bulk::DELIMITER;
+        $string = JSON::stringify($this->getActionMetadata(), JSON_FORCE_OBJECT).Bulk::DELIMITER;
         if ($this->hasSource()) {
             $source = $this->getSource();
             if (is_string($source)) {
-                $string.= $source;
+                $string .= $source;
             } elseif (is_array($source) && array_key_exists('doc', $source) && is_string($source['doc'])) {
                 $docAsUpsert = (isset($source['doc_as_upsert'])) ? ', "doc_as_upsert": '.$source['doc_as_upsert'] : '';
-                $string.= '{"doc": '.$source['doc'].$docAsUpsert.'}';
+                $string .= '{"doc": '.$source['doc'].$docAsUpsert.'}';
             } else {
-                $string.= JSON::stringify($source, 'JSON_ELASTICSEARCH');
+                $string .= JSON::stringify($source, 'JSON_ELASTICSEARCH');
             }
-            $string.= Bulk::DELIMITER;
+            $string .= Bulk::DELIMITER;
         }
+
         return $string;
     }
 
     /**
      * @param string $opType
+     *
      * @return bool
      */
     public static function isValidOpType($opType)

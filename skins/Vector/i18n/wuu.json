@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Benojan"
+			"Benojan",
+			"Poiuyt"
 		]
 	},
 	"vector-action-addsection": "加話題",
@@ -14,5 +15,6 @@
 	"vector-view-edit": "编",
 	"vector-view-history": "望页史",
 	"vector-view-view": "读",
-	"vector-view-viewsource": "望源码"
+	"vector-view-viewsource": "望源码",
+	"vector-more-actions": "还多"
 }

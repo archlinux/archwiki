@@ -4,7 +4,8 @@
 			"Chorobek",
 			"Growingup",
 			"Ztimur",
-			"Викиней"
+			"Викиней",
+			"Janatkg"
 		]
 	},
 	"vector-action-addsection": "Тема кошуу",
@@ -17,5 +18,6 @@
 	"vector-view-edit": "Оңдоо",
 	"vector-view-history": "Тарыхын кароо",
 	"vector-view-view": "Окуу",
-	"vector-view-viewsource": "Кайнарын кароо"
+	"vector-view-viewsource": "Кайнарын кароо",
+	"vector-more-actions": "Кененирээк"
 }

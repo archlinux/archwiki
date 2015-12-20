@@ -1,25 +1,38 @@
 <?php
-
 namespace Elastica\Aggregation;
-
 
 use Elastica\Filter\AbstractFilter;
 
 /**
- * Class Filter
- * @package Elastica\Aggregation
- * @link http://www.elasticsearch.org/guide/en/elasticsearch/reference/master/search-aggregations-bucket-filter-aggregation.html
+ * Class Filter.
+ *
+ * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-filter-aggregation.html
  */
 class Filter extends AbstractAggregation
 {
     /**
-     * Set the filter for this aggregation
+     * @param string         $name
      * @param AbstractFilter $filter
-     * @return Filter
+     */
+    public function __construct($name, AbstractFilter $filter = null)
+    {
+        parent::__construct($name);
+
+        if ($filter !== null) {
+            $this->setFilter($filter);
+        }
+    }
+
+    /**
+     * Set the filter for this aggregation.
+     *
+     * @param AbstractFilter $filter
+     *
+     * @return $this
      */
     public function setFilter(AbstractFilter $filter)
     {
-        return $this->setParam("filter", $filter->toArray());
+        return $this->setParam('filter', $filter->toArray());
     }
 
     /**
@@ -28,11 +41,10 @@ class Filter extends AbstractAggregation
     public function toArray()
     {
         $array = array(
-            "filter" => $this->getParam("filter")
+            'filter' => $this->getParam('filter'),
         );
 
-        if($this->_aggs)
-        {
+        if ($this->_aggs) {
             $array['aggs'] = $this->_aggs;
         }
 

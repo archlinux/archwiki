@@ -5,7 +5,7 @@
 			"Умар"
 		]
 	},
-	"nuke": "Дуккха дӀаяккхар",
+	"nuke": "Дуккха дӀаяхар",
 	"action-nuke": "дуккха агӀонаш дӀаяхар",
 	"nuke-desc": "Куьйгалхошна таро хуьлуьйту  [[Special:Nuke|дуккха агӀонаш]] дӀаяха",
 	"nuke-list": "{{GENDER:$1|Декъашхочо}} [[Special:Contributions/$1|$1]] кеста лахара агӀонаш кхоьллина. Уьш дӀаяха коммент язйина тӀетаӀае кнопка.",
@@ -21,10 +21,11 @@
 	"nuke-userorip": "Декъашхочун цӀе, IP-адрес (еса йита мега):",
 	"nuke-maxpages": "АгӀонийн максимальни дукхалла:",
 	"nuke-editby": "Кхолийна {{GENDER:$1|декъашхочо}} [[Special:Contributions/$1|$1]]",
+	"nuke-deleted": "'''$1''' агӀо дӀаяьккхина.",
 	"nuke-delete-more": "[[Special:Nuke|Дуккха агӀонаш дӀаяхар]]",
 	"nuke-pattern": "Кеп агӀона цӀеран:",
 	"nuke-viewchanges": "ХӀоттина болу хийцам",
-	"nuke-namespace": "Къастае ана цӀераш:",
-	"nuke-linkoncontribs": "дуккха дӀаяккхар",
+	"nuke-namespace": "Къастае ана цӀерш:",
+	"nuke-linkoncontribs": "Дуккха дӀаяхар",
 	"nuke-linkoncontribs-text": "ХӀокху декъашхочо кхоьллина агӀонаш массо дӀаяха"
 }

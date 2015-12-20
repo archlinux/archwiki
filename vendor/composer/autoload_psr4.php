@@ -6,6 +6,12 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = $vendorDir;
 
 return array(
+    'WrappedString\\' => array($vendorDir . '/wikimedia/wrappedstring/src'),
     'Wikimedia\\Composer\\' => array($vendorDir . '/wikimedia/composer-merge-plugin/src'),
+    'Wikimedia\\Assert\\Test\\' => array($vendorDir . '/wikimedia/assert/tests/phpunit'),
+    'Wikimedia\\Assert\\' => array($vendorDir . '/wikimedia/assert/src'),
+    'Symfony\\Component\\Process\\' => array($vendorDir . '/symfony/process'),
     'Monolog\\' => array($vendorDir . '/monolog/monolog/src/Monolog'),
+    'Elastica\\' => array($vendorDir . '/ruflin/elastica/lib/Elastica'),
+    'Composer\\Semver\\' => array($vendorDir . '/composer/semver/src'),
 );

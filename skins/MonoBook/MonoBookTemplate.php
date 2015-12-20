@@ -55,12 +55,17 @@ class MonoBookTemplate extends BaseTemplate {
 				}
 				?>
 
-				<?php echo $this->getIndicators(); ?>
+				<?php
+				echo $this->getIndicators();
+				// Loose comparison with '!=' is intentional, to catch null and false too, but not '0'
+				if ( $this->data['title'] != '' ) {
+				?>
 				<h1 id="firstHeading" class="firstHeading" lang="<?php
 				$this->data['pageLanguage'] =
 					$this->getSkin()->getTitle()->getPageViewLanguage()->getHtmlCode();
 				$this->text( 'pageLanguage' );
 				?>"><?php $this->html( 'title' ) ?></h1>
+				<?php } ?>
 
 				<div id="bodyContent" class="mw-body-content">
 					<div id="siteSub"><?php $this->msg( 'tagline' ) ?></div>
@@ -302,8 +307,8 @@ class MonoBookTemplate extends BaseTemplate {
 
 					<?php
 					}
-					wfRunHooks( 'MonoBookTemplateToolboxEnd', array( &$this ) );
-					wfRunHooks( 'SkinTemplateToolboxEnd', array( &$this, true ) );
+					Hooks::run( 'MonoBookTemplateToolboxEnd', array( &$this ) );
+					Hooks::run( 'SkinTemplateToolboxEnd', array( &$this, true ) );
 					?>
 				</ul>
 				<?php $this->renderAfterPortlet( 'tb' ); ?>

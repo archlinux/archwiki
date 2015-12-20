@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Test\Filter;
 
 use Elastica\Document;
@@ -10,11 +9,12 @@ use Elastica\Test\Base as BaseTest;
 
 class GeoPolygonTest extends BaseTest
 {
+    /**
+     * @group functional
+     */
     public function testGeoPoint()
     {
-        $client = $this->_getClient();
-        $index = $client->getIndex('test');
-        $index->create(array(), true);
+        $index = $this->_createIndex();
 
         $type = $index->getType('test');
 
@@ -49,7 +49,7 @@ class GeoPolygonTest extends BaseTest
         $geoFilter = new GeoPolygon('location', $points);
 
         $query = new Query(new MatchAll());
-        $query->setFilter($geoFilter);
+        $query->setPostFilter($geoFilter);
         $this->assertEquals(1, $type->search($query)->count());
 
         // Both points should be inside
@@ -58,7 +58,7 @@ class GeoPolygonTest extends BaseTest
         $geoFilter = new GeoPolygon('location', $points);
 
         $query = new Query(new MatchAll());
-        $query->setFilter($geoFilter);
+        $query->setPostFilter($geoFilter);
 
         $this->assertEquals(2, $type->search($query)->count());
     }

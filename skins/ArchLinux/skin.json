@@ -8,8 +8,12 @@
 	"ValidSkinNames": {
 		"archlinux": "ArchLinux"
 	},
+	"SkinOOUIThemes": {
+		"archlinux": "Apex"
+	},
 	"ResourceModules": {
 		"skins.archlinux.styles": {
+			"position": "top",
 			"styles": {
 				"main.css": {
 					"media": "screen"
@@ -33,5 +37,6 @@
 	"AutoloadClasses": {
 		"SkinArchLinux": "SkinArchLinux.php",
 		"ArchLinuxTemplate": "ArchLinuxTemplate.php"
-	}
+	},
+	"manifest_version": 1
 }

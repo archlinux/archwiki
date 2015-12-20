@@ -2,9 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Kernoweger",
-			"Nrowe"
+			"Nrowe",
+			"Kw-Moon"
 		]
 	},
+	"captcha-label": "CAPTCHA",
 	"captcha-createaccount-fail": "Koden afydhya kamm po gwag.",
 	"captcha-sendemail-fail": "Koden afydhya kamm po gwag."
 }

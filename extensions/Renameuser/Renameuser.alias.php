@@ -19,7 +19,7 @@ $specialPageAliases['ar'] = array(
 	'Renameuser' => array( 'إعادة_تسمية_مستخدم' ),
 );
 
-/** Egyptian Spoken Arabic (مصرى) */
+/** Egyptian Arabic (مصرى) */
 $specialPageAliases['arz'] = array(
 	'Renameuser' => array( 'سمّى_تانى_يوزر' ),
 );
@@ -42,6 +42,11 @@ $specialPageAliases['ba'] = array(
 /** Bulgarian (български) */
 $specialPageAliases['bg'] = array(
 	'Renameuser' => array( 'Преименуване' ),
+);
+
+/** Western Balochi (بلوچی رخشانی) */
+$specialPageAliases['bgn'] = array(
+	'Renameuser' => array( 'کارمرزوکی_نامی_ٹگلینتین' ),
 );
 
 /** Banjar (Bahasa Banjar) */
@@ -129,7 +134,7 @@ $specialPageAliases['fr'] = array(
 	'Renameuser' => array( 'Renommer_utilisateur', 'RenommerUtilisateur' ),
 );
 
-/** Franco-Provençal (arpetan) */
+/** Arpitan (arpetan) */
 $specialPageAliases['frp'] = array(
 	'Renameuser' => array( 'Renomar_l\'usanciér', 'RenomarLUsanciér' ),
 );

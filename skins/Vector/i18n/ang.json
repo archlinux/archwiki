@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Gott wisst"
+			"Gott wisst",
+			"JJohnson1701"
 		]
 	},
 	"vector-action-addsection": "Besettan mearcunge",
@@ -11,7 +12,7 @@
 	"vector-action-undelete": "Scieppan tramet eft",
 	"vector-action-unprotect": "Andwendan beorgunge",
 	"vector-view-create": "Scieppan",
-	"vector-view-edit": "Adihtan",
+	"vector-view-edit": "Ādihtan",
 	"vector-view-history": "Stǣr",
 	"vector-view-view": "Rǣdan",
 	"vector-view-viewsource": "Sēon fruman",

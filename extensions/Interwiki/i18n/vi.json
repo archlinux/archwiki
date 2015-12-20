@@ -46,7 +46,7 @@
 	"log-name-interwiki": "Nhật trình bảng liên wiki",
 	"logentry-interwiki-iw_add": "{{GENDER:$2}}$1 đã thêm tiền tố “$4” ($5) (trans: $6; local: $7) vào bảng liên wiki",
 	"logentry-interwiki-iw_edit": "{{GENDER:$2}}$1 đã sửa đổi tiền tố “$4” ($5) (trans: $6; local: $7) trong bảng liên wiki",
-	"logentry-interwiki-iw_delete": "{{GENDER:$2|}}$1 đã xóa tiền tố “$4” khỏi bảng liên wiki",
+	"logentry-interwiki-iw_delete": "$1 {{GENDER:$2}}đã xóa tiền tố “$4” khỏi bảng liên wiki",
 	"log-description-interwiki": "Đây là nhật trình các thay đổi trong [[Special:Interwiki|bảng liên wiki]].",
 	"right-interwiki": "Sửa dữ liệu liên wiki",
 	"action-interwiki": "thay đổi khoản mục liên wiki này"

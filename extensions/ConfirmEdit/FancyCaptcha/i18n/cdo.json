@@ -1,8 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Yejianfei"
+			"Yejianfei",
+			"唐吉訶德的侍從"
 		]
 	},
-	"fancycaptcha-badlogin": "為𡅏保護維基百科免受自動化其密碼破解，儂家誠摯其起動汝輸底下底方框底裡其驗證碼（[[Special:Captcha/help|更価信息]]）："
+	"fancycaptcha-badlogin": "為𡅏避免維基百科乞自動化其密碼破解，儂家起動汝拍出下底方框裡勢其驗證碼（[[Special:Captcha/help|更価信息]]）："
 }

@@ -37,7 +37,7 @@
 	"interwiki_deleting": "Usuwasz prefiks „$1”.",
 	"interwiki_deleted": "Prefiks „$1” został z powodzeniem usunięty z tabeli interwiki.",
 	"interwiki_delfailed": "Prefiks „$1” nie może zostać usunięty z tabeli interwiki.",
-	"interwiki_addtext": "Dodaj przedrostek interwiki",
+	"interwiki_addtext": "Dodaj interwiki lub przedrostek języka",
 	"interwiki_addintro": "Edytujesz przedrostek interwiki.\nPamiętaj, że nie może on zawierać znaku odstępu ( ), dwukropka (:), ampersandu (&) oraz znaku równości (=).",
 	"interwiki_addbutton": "Dodaj",
 	"interwiki_added": "Prefiks „$1” został z powodzeniem dodany do tabeli interwiki.",
@@ -55,5 +55,8 @@
 	"logentry-interwiki-iw_delete": "$1 {{GENDER:$2|usunął|usunęła}} przedrostek \"$4\" z tabeli interwiki",
 	"log-description-interwiki": "Poniżej znajduje się rejestr zmian wykonanych w [[Special:Interwiki|tablicy interwiki]].",
 	"right-interwiki": "Edycja danych interwiki",
-	"action-interwiki": "zmień ten wpis interwiki"
+	"action-interwiki": "zmień ten wpis interwiki",
+	"interwiki-local-links": "Lokalne przedrostki interwiki",
+	"interwiki-links": "Przedrostki interwiki",
+	"interwiki-language-links": "Przedrostki międzyjęzykowe"
 }

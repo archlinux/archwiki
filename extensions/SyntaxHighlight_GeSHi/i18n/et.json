@@ -5,10 +5,14 @@
 			"[[et:Kasutaja:M2s17]]"
 		]
 	},
-	"syntaxhighlight-desc": "Võimaldab [http://qbnz.com/highlighter/ GeSHi] abil <code>&lt;syntaxhighlight&gt;</code>-silti kasutades süntaksit esile tõsta.",
-	"syntaxhighlight-specify": "Sa pead täpsustama keelt nõnda:",
-	"syntaxhighlight-supported": "Süntaksi esiletõstu toetavad keeled:",
-	"syntaxhighlight-err-loading": "(toetatud keelte loetelu laadimisel esines viga)",
-	"syntaxhighlight-err-language": "Vigane keel.",
-	"geshi.css": "/* CSS mis on asetatud siia, määrab GeSHi süntaksi esiletoomise stiili */"
+	"syntaxhighlight-desc": "Võimaldab [http://pygments.org/ Pygmentsi] (Pythoni süntaksi esiletõstja) abil <code>&lt;syntaxhighlight&gt;</code>-silti kasutades süntaksit esile tõsta.",
+	"syntaxhighlight-error-category": "Süntaksi esiletõstu tõrgetega leheküljed",
+	"syntaxhighlight-error-category-desc": "Leheküljel prooviti koodi esile tõsta, kuid esines tõrge.",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "Kood",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Keel",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "Näita reanumbreid",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Koodiplokk",
+	"syntaxhighlight-error-pygments-invocation-failure": "Teeki Pygments ei õnnestunud käivitada.",
+	"syntaxhighlight-error-unknown-language": "Tundmatu keel \"$1\"",
+	"syntaxhighlight-error-exceeds-size-limit": "Koodi suurus $1 {{PLURAL:$1|bait|baiti}} ületab lubatud $2 {{PLURAL:$2|baidist}} ülemmäära."
 }

@@ -1,24 +1,22 @@
 <?php
-
 namespace Elastica\Filter;
 
 use Elastica\Type as ElasticaType;
 
 /**
- * Ids Filter
+ * Ids Filter.
  *
- * @category Xodoa
- * @package Elastica
  * @author Lee Parker, Nicolas Ruflin <spam@ruflin.com>
- * @link http://www.elasticsearch.org/guide/reference/query-dsl/ids-filter.html
+ *
+ * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-ids-filter.html
  */
 class Ids extends AbstractFilter
 {
     /**
-     * Creates filter object
+     * Creates filter object.
      *
      * @param string|\Elastica\Type $type Type to filter on
-     * @param array                $ids  List of ids
+     * @param array                 $ids  List of ids
      */
     public function __construct($type = null, array $ids = array())
     {
@@ -27,10 +25,11 @@ class Ids extends AbstractFilter
     }
 
     /**
-     * Adds one more filter to the and filter
+     * Adds one more filter to the and filter.
      *
-     * @param  string                    $id Adds id to filter
-     * @return \Elastica\Filter\Ids Current object
+     * @param string $id Adds id to filter
+     *
+     * @return $this
      */
     public function addId($id)
     {
@@ -38,10 +37,11 @@ class Ids extends AbstractFilter
     }
 
     /**
-     * Adds one more type to query
+     * Adds one more type to query.
      *
-     * @param  string|\Elastica\Type      $type Type name or object
-     * @return \Elastica\Filter\Ids Current object
+     * @param string|\Elastica\Type $type Type name or object
+     *
+     * @return $this
      */
     public function addType($type)
     {
@@ -57,10 +57,11 @@ class Ids extends AbstractFilter
     }
 
     /**
-     * Set type
+     * Set type.
      *
-     * @param  string|\Elastica\Type      $type Type name or object
-     * @return \Elastica\Filter\Ids Current object
+     * @param string|\Elastica\Type $type Type name or object
+     *
+     * @return $this
      */
     public function setType($type)
     {
@@ -76,10 +77,11 @@ class Ids extends AbstractFilter
     }
 
     /**
-     * Sets the ids to filter
+     * Sets the ids to filter.
      *
-     * @param  array|string              $ids List of ids
-     * @return \Elastica\Filter\Ids Current object
+     * @param array|string $ids List of ids
+     *
+     * @return $this
      */
     public function setIds($ids)
     {

@@ -2,13 +2,16 @@
 	"@metadata": {
 		"authors": [
 			"Hamilton Abreu",
-			"Malafaya"
+			"Malafaya",
+			"Vitorvicentevalente",
+			"He7d3r"
 		]
 	},
-	"syntaxhighlight-desc": "Permite o realce sintáctico de código fonte, através do elemento <code>&lt;syntaxhighlight&gt;</code>, usando o [http://qbnz.com/highlighter/ GeSHi Highlighter]",
-	"syntaxhighlight-specify": "Precisa de especificar uma linguagem assim:",
-	"syntaxhighlight-supported": "Linguagens suportadas no realce de sintaxe:",
-	"syntaxhighlight-err-loading": "(erro ao carregar a lista de linguagens suportadas)",
-	"syntaxhighlight-err-language": "Linguagem inválida.",
-	"geshi.css": "/* O código CSS aqui colocado será aplicado ao realce de sintaxe GeSHi */"
+	"syntaxhighlight-desc": "Permite o realce sintático de código fonte, através do elemento <code>&lt;syntaxhighlight&gt;</code>, usando o [http://pygments.org/ Pygments]",
+	"syntaxhighlight-error-category": "Páginas com erros no destaque de sintaxe",
+	"syntaxhighlight-error-category-desc": "Ocorreu um erro ao tentar realçar o código incluído na página.",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "Código",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Idioma",
+	"syntaxhighlight-error-unknown-language": "Idioma \"$1\" desconhecido",
+	"syntaxhighlight-error-exceeds-size-limit": "O tamanho do código de $1 {{PLURAL:$1|bytes}} excede o máximo permitido de $2 {{PLURAL:$2|bytes}}"
 }

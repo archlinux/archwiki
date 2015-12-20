@@ -2,23 +2,28 @@ This extension allows source code to be syntax highlighted on the wiki pages.
 This README file might be out of date, have a look at the extension page
 for updated informations:
 
-    http://www.mediawiki.org/wiki/Extension:SyntaxHighlight_GeSHi
+    https://www.mediawiki.org/wiki/Extension:SyntaxHighlight_GeSHi
 
 == Requirements ==
 
-This version of the extension has been tested with GeSHi 1.0.8.11 and MediaWiki 1.24
-as of 2014-05-10. It may or may not work with earlier versions of the aforementioned
-software. To get releases of this extension compatible with earlier versions of
-MediaWiki, visit: 
+This version of the extension has been tested with Pygments 1.6, 2.0.2 and
+MediaWiki 1.25 as of 2015-06-19. To get releases of this extension compatible
+with earlier versions of MediaWiki, visit:
 
-    http://www.mediawiki.org/wiki/Special:ExtensionDistributor/SyntaxHighlight_GeSHi
-
+    https://www.mediawiki.org/wiki/Special:ExtensionDistributor/SyntaxHighlight_GeSHi
 
 == Installation ==
 
-Add this line to your LocalSettings.php:
+First, you will need to ensure that this extension's Composer-managed
+dependencies are available. In the extension directory, run 'composer update'.
 
-	require_once("extensions/SyntaxHighlight_GeSHi/SyntaxHighlight_GeSHi.php");
+Next, Add this line to your LocalSettings.php:
+
+    wfLoadExtension( 'SyntaxHighlight_GeSHi' );
+
+By default, this extension will use a bundled copy of Pygments 2.0.2. If you
+would like to use a different copy of the library, you can set
+$wgPygmentizePath to point to the path to the 'pygmentize' binary.
 
 == Usage ==
 
@@ -36,23 +41,18 @@ html text
 
 == Parameters ==
 
-Please see the documentation of GeSHi on http://qbnz.com/highlighter/geshi-doc.html
-for detailed information to use some of the parameters.
+For details information of these parameters, see the documentation of Pygments'
+HtmlFormatter at <http://pygments.org/docs/formatters/#HtmlFormatter>.
 
-* lang;		Defines the language 
-* line;		Corresponds to enable_line_numbers method on GeSHi
-* start;	Corresponds to start_line_numbers_at method on GeSHi
-* strict;	Corresponds to enable_strict_mode method on GeSHi
+* lang;		Defines the language.
+* line;		Corresponds to linenos="inline" option.
+* start;	Corresponds to linenostart opion.
+* enclose;  If set to "none", corresponds to the nowrap=1 option.
+* inline;   Corresponds to the nowrap=1 option.
+* highlight;    Corresponds to hl_lines option (comma separated).
 
 == Note ==
 
-GeSHi is generous about creating HTML elements: highlighting large blocks of
-code can easily generate enough of them to crash a browser. As a guard, symbol
-highlighting is turned off for code fragments larger than 100 kB. For fragments
-larger than 200 kB, string highlighting is turned off as well.
-
-== Note to maintainers ==
-
-Whenever updating the version of GeSHi embedded in the extension, run
-maintenance/updateLanguageList.php to re-generate the list of supported
-languages.
+Pygments is generous about creating HTML elements: highlighting large blocks of
+code can easily generate enough of them to crash a browser. As a guard, syntax
+highlighting is turned off for code fragments larger than 100 kB.

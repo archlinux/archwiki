@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Test;
 
 use Elastica\Document;
@@ -9,102 +8,66 @@ use Elastica\ScanAndScroll;
 use Elastica\Search;
 use Elastica\Test\Base as BaseTest;
 
-class ScanAndScrollTest extends BaseTest {
+class ScanAndScrollTest extends BaseTest
+{
+    /**
+     * Full foreach test.
+     *
+     * @gropu functional
+     */
+    public function testForeach()
+    {
+        $scanAndScroll = new ScanAndScroll($this->_prepareSearch(), '1m', 2);
+        $docCount = 0;
 
-    public function testConstruct() {
-        $scanAndScroll = $this->_prepareScanAndScroll();
-
-        $this->assertInstanceOf('Elastica\ScanAndScroll', $scanAndScroll);
-    }
-
-    public function testDefaultProperties() {
-        $scanAndScroll = $this->_prepareScanAndScroll();
-
-        $this->assertEquals('1m', $scanAndScroll->expiryTime);
-        $this->assertEquals(1000, $scanAndScroll->sizePerShard);
-    }
-
-    public function testQuerySizeOverride() {
-        $query = new Query();
-        $query->setSize(100);
-
-        $index = $this->_createIndex('test_1');
-        $index->refresh();  // Waits for the index to be fully created.
-        $type = $index->getType('scanAndScrollTest');
-
-        $search = new Search($this->_getClient());
-        $search->addIndex($index)->addType($type);
-        $search->setQuery($query);
-
-        $scanAndScroll = new ScanAndScroll($search);
-        $scanAndScroll->sizePerShard = 10;
-        $scanAndScroll->rewind();
-
-        $this->assertEquals(10, $query->getParam('size'));
-    }
-
-    public function testSizePerShard() {
-        $search = $this->_prepareSearch('test_2', 2, 20);
-
-        $scanAndScroll = new ScanAndScroll($search);
-        $scanAndScroll->sizePerShard = 5;
-        $scanAndScroll->rewind();
-
-        $this->assertEquals(10, $scanAndScroll->current()->count());
-    }
-
-    public function testScrollId() {
-        $search = $this->_prepareSearch('test_3', 1, 2);
-
-        $scanAndScroll = new ScanAndScroll($search);
-        $scanAndScroll->sizePerShard = 1;
-
-        $scanAndScroll->rewind();
-        $this->assertEquals(
-            $scanAndScroll->current()->getResponse()->getScrollId(),
-            $scanAndScroll->key()
-        );
-    }
-
-    public function testForeach() {
-        $search = $this->_prepareSearch('test_4', 2, 11);
-
-        $scanAndScroll = new ScanAndScroll($search);
-        $scanAndScroll->sizePerShard = 5;
-
-        // We expect 2 scrolls:
-        // 1. with 10 hits,
-        // 2. with 1 hit
-        // Note: there is a 3. scroll with 0 hits
-
-        $count = 0;
-        foreach($scanAndScroll as $resultSet) {
-            /** @var ResultSet $resultSet */
-            $count++;
-
-            switch(true) {
-                case $count == 1: $this->assertEquals(10, $resultSet->count()); break;
-                case $count == 2: $this->assertEquals(1, $resultSet->count()); break;
-            }
+        /** @var ResultSet $resultSet */
+        foreach ($scanAndScroll as $scrollId => $resultSet) {
+            $docCount += $resultSet->count();
         }
 
-        $this->assertEquals(2, $count);
+        /*
+         * number of loops and documents per iteration may fluctuate
+         * => only test end results
+         */
+        $this->assertEquals(12, $docCount);
     }
 
-    private function _prepareScanAndScroll() {
-        return new ScanAndScroll(new Search($this->_getClient()));
+    /**
+     * query size revert options.
+     *
+     * @group functional
+     */
+    public function testQuerySizeRevert()
+    {
+        $search = $this->_prepareSearch();
+        $search->getQuery()->setSize(9);
+
+        $scanAndScroll = new ScanAndScroll($search);
+
+        $scanAndScroll->rewind();
+        $this->assertEquals(9, $search->getQuery()->getParam('size'));
+
+        $scanAndScroll->next();
+        $this->assertEquals(9, $search->getQuery()->getParam('size'));
     }
 
-    private function _prepareSearch($indexName, $indexShards, $docs) {
-        $index = $this->_createIndex($indexName, true, $indexShards);
-        $type = $index->getType('scanAndScrollTest');
+    /**
+     * index: 12 docs, 2 shards.
+     *
+     * @return Search
+     */
+    private function _prepareSearch()
+    {
+        $index = $this->_createIndex('', true, 2);
+        $index->refresh();
 
-        $insert = array();
-        for ($x = 1; $x <= $docs; $x++) {
-            $insert[] = new Document($x, array('id' => $x, 'key' => 'value'));
+        $docs = array();
+        for ($x = 1; $x <= 12; $x++) {
+            $docs[] = new Document($x, array('id' => $x, 'key' => 'value'));
         }
 
-        $type->addDocuments($insert);
+        $type = $index->getType('scanAndScrollTest');
+        $type->addDocuments($docs);
         $index->refresh();
 
         $search = new Search($this->_getClient());
@@ -112,4 +75,4 @@ class ScanAndScrollTest extends BaseTest {
 
         return $search;
     }
-} 
+}

@@ -271,11 +271,14 @@ class PdfHandler extends ImageHandler {
 			return false;
 		}
 
-		wfProfileIn( __METHOD__ );
-		wfSuppressWarnings();
-		$image->pdfMetaArray = unserialize( $metadata );
-		wfRestoreWarnings();
-		wfProfileOut( __METHOD__ );
+		$work = new PoolCounterWorkViaCallback( 'PdfHandler-unserialize-metadata', $image->getName(), array(
+			'doWork' => function() use ( $image, $metadata ) {
+				wfSuppressWarnings();
+				$image->pdfMetaArray = unserialize( $metadata );
+				wfRestoreWarnings();
+			},
+		) );
+		$work->execute();
 
 		return $image->pdfMetaArray;
 	}

@@ -25,14 +25,24 @@
 		"SkinVector": "SkinVector.php",
 		"VectorTemplate": "VectorTemplate.php"
 	},
+	"@note": "When modifying skins.vector.styles definition, make sure the installer still works",
 	"ResourceModules": {
 		"skins.vector.styles": {
+			"position": "top",
 			"styles": {
 				"screen.less": {
 					"media": "screen"
 				},
 				"screen-hd.less": {
 					"media": "screen and (min-width: 982px)"
+				}
+			}
+		},
+		"skins.vector.styles.responsive": {
+			"position": "top",
+			"styles": {
+				"responsive.less": {
+					"media": "screen and (max-width: 768px)"
 				}
 			}
 		},
@@ -72,14 +82,17 @@
 			"jquery.ui.spinner": "skinStyles/jquery.ui/jquery.ui.spinner.css",
 			"jquery.ui.tabs": "skinStyles/jquery.ui/jquery.ui.tabs.css",
 			"jquery.ui.tooltips": "skinStyles/jquery.ui/jquery.ui.tooltips.css",
-			"mediawiki.notification": "skinStyles/mediawiki.notification.less",
+			"+mediawiki.notification": "skinStyles/mediawiki.notification.less",
 			"+mediawiki.sectionAnchor": "skinStyles/mediawiki.sectionAnchor.less",
+			"ooui": "skinStyles/ooui.less",
 			"mediawiki.special": "skinStyles/mediawiki.special.less",
 			"mediawiki.special.preferences": "skinStyles/mediawiki.special.preferences.less"
 		}
 	},
 	"config": {
 		"VectorUseSimpleSearch": true,
-		"VectorUseIconWatch": true
-	}
+		"VectorUseIconWatch": true,
+		"VectorResponsive": false
+	},
+	"manifest_version": 1
 }

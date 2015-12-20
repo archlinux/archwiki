@@ -10,6 +10,7 @@ abstract class HTMLFormField {
 	protected $mValidationCallback;
 	protected $mFilterCallback;
 	protected $mName;
+	protected $mDir;
 	protected $mLabel; # String label.  Set on construction
 	protected $mID;
 	protected $mClass = '';
@@ -42,6 +43,17 @@ abstract class HTMLFormField {
 	 * @return string Valid HTML.
 	 */
 	abstract function getInputHTML( $value );
+
+	/**
+	 * Same as getInputHTML, but returns an OOUI object.
+	 * Defaults to false, which getOOUI will interpret as "use the HTML version"
+	 *
+	 * @param string $value
+	 * @return OOUI\\Widget|false
+	 */
+	function getInputOOUI( $value ) {
+		return false;
+	}
 
 	/**
 	 * Get a translated interface message
@@ -377,6 +389,10 @@ abstract class HTMLFormField {
 			$this->mName = $params['name'];
 		}
 
+		if ( isset( $params['dir'] ) ) {
+			$this->mDir = $params['dir'];
+		}
+
 		$validName = Sanitizer::escapeId( $this->mName );
 		$validName = str_replace( array( '.5B', '.5D' ), array( '[', ']' ), $validName );
 		if ( $this->mName != $validName && !isset( $params['nodata'] ) ) {
@@ -508,12 +524,20 @@ abstract class HTMLFormField {
 			'mw-htmlform-nolabel' => ( $label === '' )
 		);
 
-		$field = Html::rawElement(
-			'div',
-			array( 'class' => $outerDivClass ) + $cellAttributes,
-			$inputHtml . "\n$errors"
-		);
-		$divCssClasses = array( "mw-htmlform-field-$fieldType", $this->mClass, $this->mVFormClass, $errorClass );
+		$horizontalLabel = isset( $this->mParams['horizontal-label'] )
+			? $this->mParams['horizontal-label'] : false;
+
+		if ( $horizontalLabel ) {
+			$field = '&#160;' . $inputHtml . "\n$errors";
+		} else {
+			$field = Html::rawElement(
+				'div',
+				array( 'class' => $outerDivClass ) + $cellAttributes,
+				$inputHtml . "\n$errors"
+			);
+		}
+		$divCssClasses = array( "mw-htmlform-field-$fieldType",
+			$this->mClass, $this->mVFormClass, $errorClass );
 
 		$wrapperAttributes = array(
 			'class' => $divCssClasses,
@@ -526,6 +550,75 @@ abstract class HTMLFormField {
 		$html .= $helptext;
 
 		return $html;
+	}
+
+	/**
+	 * Get the OOUI version of the div. Falls back to getDiv by default.
+	 * @since 1.26
+	 *
+	 * @param string $value The value to set the input to.
+	 *
+	 * @return OOUI\\FieldLayout|OOUI\\ActionFieldLayout
+	 */
+	public function getOOUI( $value ) {
+		$inputField = $this->getInputOOUI( $value );
+
+		if ( !$inputField ) {
+			// This field doesn't have an OOUI implementation yet at all. Fall back to getDiv() to
+			// generate the whole field, label and errors and all, then wrap it in a Widget.
+			// It might look weird, but it'll work OK.
+			return $this->getFieldLayoutOOUI(
+				new OOUI\Widget( array( 'content' => new OOUI\HtmlSnippet( $this->getDiv( $value ) ) ) ),
+				array( 'infusable' => false )
+			);
+		}
+
+		$infusable = true;
+		if ( is_string( $inputField ) ) {
+			// We have an OOUI implementation, but it's not proper, and we got a load of HTML.
+			// Cheat a little and wrap it in a widget. It won't be infusable, though, since client-side
+			// JavaScript doesn't know how to rebuilt the contents.
+			$inputField = new OOUI\Widget( array( 'content' => new OOUI\HtmlSnippet( $inputField ) ) );
+			$infusable = false;
+		}
+
+		$fieldType = get_class( $this );
+		$helpText = $this->getHelpText();
+		$errors = $this->getErrorsRaw( $value );
+		foreach ( $errors as &$error ) {
+			$error = new OOUI\HtmlSnippet( $error );
+		}
+
+		$config = array(
+			'classes' => array( "mw-htmlform-field-$fieldType", $this->mClass ),
+			'align' => $this->getLabelAlignOOUI(),
+			'label' => $this->getLabel(),
+			'help' => $helpText !== null ? new OOUI\HtmlSnippet( $helpText ) : null,
+			'errors' => $errors,
+			'infusable' => $infusable,
+		);
+
+		return $this->getFieldLayoutOOUI( $inputField, $config );
+	}
+
+	/**
+	 * Get label alignment when generating field for OOUI.
+	 * @return string 'left', 'right', 'top' or 'inline'
+	 */
+	protected function getLabelAlignOOUI() {
+		return 'top';
+	}
+
+	/**
+	 * Get a FieldLayout (or subclass thereof) to wrap this field in when using OOUI output.
+	 * @return OOUI\\FieldLayout|OOUI\\ActionFieldLayout
+	 */
+	protected function getFieldLayoutOOUI( $inputField, $config ) {
+		if ( isset( $this->mClassWithButton ) ) {
+			$buttonWidget = $this->mClassWithButton->getInputOOUI( '' );
+			return new OOUI\ActionFieldLayout( $inputField, $buttonWidget, $config );
+		}
+		return new OOUI\FieldLayout( $inputField, $config );
 	}
 
 	/**
@@ -657,7 +750,7 @@ abstract class HTMLFormField {
 	/**
 	 * Determine the help text to display
 	 * @since 1.20
-	 * @return string
+	 * @return string HTML
 	 */
 	public function getHelpText() {
 		$helptext = null;
@@ -692,7 +785,7 @@ abstract class HTMLFormField {
 	 * @since 1.20
 	 *
 	 * @param string $value The value of the input
-	 * @return array
+	 * @return array array( $errors, $errorClass )
 	 */
 	public function getErrorsAndErrorClass( $value ) {
 		$errors = $this->validate( $value, $this->mParent->mFieldData );
@@ -708,6 +801,35 @@ abstract class HTMLFormField {
 		return array( $errors, $errorClass );
 	}
 
+	/**
+	 * Determine form errors to display, returning them in an array.
+	 *
+	 * @since 1.26
+	 * @param string $value The value of the input
+	 * @return string[] Array of error HTML strings
+	 */
+	public function getErrorsRaw( $value ) {
+		$errors = $this->validate( $value, $this->mParent->mFieldData );
+
+		if ( is_bool( $errors ) || !$this->mParent->wasSubmitted() ) {
+			$errors = array();
+		}
+
+		if ( !is_array( $errors ) ) {
+			$errors = array( $errors );
+		}
+		foreach ( $errors as &$error ) {
+			if ( $error instanceof Message ) {
+				$error = $error->parse();
+			}
+		}
+
+		return $errors;
+	}
+
+	/**
+	 * @return string
+	 */
 	function getLabel() {
 		return is_null( $this->mLabel ) ? '' : $this->mLabel;
 	}
@@ -729,6 +851,8 @@ abstract class HTMLFormField {
 
 		$displayFormat = $this->mParent->getDisplayFormat();
 		$html = '';
+		$horizontalLabel = isset( $this->mParams['horizontal-label'] )
+			? $this->mParams['horizontal-label'] : false;
 
 		if ( $displayFormat === 'table' ) {
 			$html =
@@ -736,7 +860,7 @@ abstract class HTMLFormField {
 					array( 'class' => 'mw-label' ) + $cellAttributes,
 					Html::rawElement( 'label', $for, $labelValue ) );
 		} elseif ( $hasLabel || $this->mShowEmptyLabels ) {
-			if ( $displayFormat === 'div' ) {
+			if ( $displayFormat === 'div' && !$horizontalLabel ) {
 				$html =
 					Html::rawElement( 'div',
 						array( 'class' => 'mw-label' ) + $cellAttributes,
@@ -771,23 +895,43 @@ abstract class HTMLFormField {
 	}
 
 	/**
+	 * Get a translated key if necessary.
+	 * @param array|null $mappings Array of mappings, 'original' => 'translated'
+	 * @param string $key
+	 * @return string
+	 */
+	protected function getMappedKey( $mappings, $key ) {
+		if ( !is_array( $mappings ) ) {
+			return $key;
+		}
+
+		if ( !empty( $mappings[$key] ) ) {
+			return $mappings[$key];
+		}
+
+		return $key;
+	}
+
+	/**
 	 * Returns the given attributes from the parameters
 	 *
 	 * @param array $list List of attributes to get
+	 * @param array $mappings Optional - Key/value map of attribute names to use instead of the ones passed in
 	 * @return array Attributes
 	 */
-	public function getAttributes( array $list ) {
+	public function getAttributes( array $list, array $mappings = null ) {
 		static $boolAttribs = array( 'disabled', 'required', 'autofocus', 'multiple', 'readonly' );
 
 		$ret = array();
-
 		foreach ( $list as $key ) {
+			$mappedKey = $this->getMappedKey( $mappings, $key );
+
 			if ( in_array( $key, $boolAttribs ) ) {
 				if ( !empty( $this->mParams[$key] ) ) {
-					$ret[$key] = '';
+					$ret[$mappedKey] = $mappedKey;
 				}
 			} elseif ( isset( $this->mParams[$key] ) ) {
-				$ret[$key] = $this->mParams[$key];
+				$ret[$mappedKey] = $this->mParams[$key];
 			}
 		}
 
@@ -874,6 +1018,29 @@ abstract class HTMLFormField {
 		}
 
 		return $this->mOptions;
+	}
+
+	/**
+	 * Get options and make them into arrays suitable for OOUI.
+	 * @return array Options for inclusion in a select or whatever.
+	 */
+	public function getOptionsOOUI() {
+		$oldoptions = $this->getOptions();
+
+		if ( $oldoptions === null ) {
+			return null;
+		}
+
+		$options = array();
+
+		foreach ( $oldoptions as $text => $data ) {
+			$options[] = array(
+				'data' => $data,
+				'label' => $text,
+			);
+		}
+
+		return $options;
 	}
 
 	/**

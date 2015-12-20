@@ -26,6 +26,7 @@
 	},
 	"ResourceModules": {
 		"ext.citeThisPage": {
+			"position": "top",
 			"styles": "ext.citeThisPage.css"
 		}
 	},
@@ -40,5 +41,6 @@
 		"SpecialCiteThisPage": "SpecialCiteThisPage.php",
 		"CiteThisPageOutput": "SpecialCiteThisPage.php",
 		"CiteThisPageHooks": "CiteThisPage.hooks.php"
-	}
+	},
+	"manifest_version": 1
 }

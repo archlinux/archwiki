@@ -19,6 +19,7 @@
 	},
 	"ResourceModules": {
 		"skins.modern": {
+			"position": "top",
 			"styles": {
 				"resources/main.css": {
 					"media": "screen"
@@ -36,5 +37,6 @@
 	"AutoloadClasses": {
 		"SkinModern": "SkinModern.php",
 		"ModernTemplate": "SkinModern.php"
-	}
+	},
+	"manifest_version": 1
 }

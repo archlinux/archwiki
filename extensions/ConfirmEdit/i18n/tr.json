@@ -3,12 +3,13 @@
 		"authors": [
 			"Emperyan",
 			"Joseph",
-			"Runningfridgesrule"
+			"Runningfridgesrule",
+			"Stultiwikia"
 		]
 	},
 	"captcha-edit": "Bu sayfayı değiştirebilmek için lütfen aşağıdaki basit soruyu yanıtlayın ve yanıtı kutunun içine yazın ([[Special:Captcha/help|ayrıntılı bilgi]]):",
 	"captcha-desc": "Spam ve parola tahminine karşı korunmak için \"Güvenlik Kodu\" (CAPTCHA) tekniği sağlar.",
-	"captcha-label": "Güvenlik Kodu",
+	"captcha-label": "CAPTCHA",
 	"captcha-addurl": "Değişikliğiniz yeni dış bağlantılar içeriyor.\nVikiyi otomatik spamdan korumak ve değişikliğinizi kaydetmek için, aşağıdaki basit toplamı çözmenizi ve yanıtı kutunun içine yazmanızı rica ediyoruz ([[Special:Captcha/help|ayrıntılı bilgi]]):",
 	"captcha-badlogin": "Vikiyi otomatik parola çözülmesine karşı korumak için, aşağıdaki basit toplamı çözmenizi ve yanıtı kutunun içine yazmanızı rica ediyoruz ([[Special:Captcha/help|ayrıntılı bilgi]]):",
 	"captcha-createaccount": "Vikiyi otomatik hesap oluşturmaya karşı korumak için, aşağıdaki basit toplamı çözmenizi ve yanıtı kutunun içine yazmanızı rica ediyoruz ([[Special:Captcha/help|ayrıntılı bilgi]]):",

@@ -4,7 +4,8 @@
 			"Emperyan",
 			"Erkan Yilmaz",
 			"Joseph",
-			"Srhat"
+			"Srhat",
+			"Arystanbek"
 		]
 	},
 	"inputbox-desc": "Öntanımlı HTML formlarının dahil edilmesine olanak verir",
@@ -13,5 +14,8 @@
 	"inputbox-tryexact": "Tam eşleşme dene",
 	"inputbox-searchfulltext": "Tüm metni ara",
 	"inputbox-createarticle": "Sayfayı oluştur",
+	"inputbox-movearticle": "Sayfayı taşı",
+	"inputbox-postcomment": "Yeni bölüm",
+	"inputbox-postcommenttitle": "Yeni bölüm",
 	"inputbox-ns-main": "Ana"
 }

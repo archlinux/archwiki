@@ -20,6 +20,7 @@
  *
  * @file
  */
+use WrappedString\WrappedString;
 
 class GadgetHooks {
 	/**
@@ -33,8 +34,11 @@ class GadgetHooks {
 	public static function articleSaveComplete( $article, $user, $text ) {
 		// update cache if MediaWiki:Gadgets-definition was edited
 		$title = $article->getTitle();
-		if ( $title->getNamespace() == NS_MEDIAWIKI && $title->getText() == 'Gadgets-definition' ) {
-			Gadget::loadStructuredList( $text );
+		$repo = GadgetRepo::singleton();
+		if ( $title->getNamespace() == NS_MEDIAWIKI && $title->getText() == 'Gadgets-definition'
+			&& $repo instanceof MediaWikiGadgetsDefinitionRepo
+		) {
+			$repo->purgeDefinitionCache();
 		}
 		return true;
 	}
@@ -45,7 +49,7 @@ class GadgetHooks {
 	 * @return bool
 	 */
 	public static function userGetDefaultOptions( &$defaultOptions ) {
-		$gadgets = Gadget::loadStructuredList();
+		$gadgets = GadgetRepo::singleton()->getStructuredList();
 		if ( !$gadgets ) {
 			return true;
 		}
@@ -71,7 +75,7 @@ class GadgetHooks {
 	 * @return bool
 	 */
 	public static function getPreferences( $user, &$preferences ) {
-		$gadgets = Gadget::loadStructuredList();
+		$gadgets = GadgetRepo::singleton()->getStructuredList();
 		if ( !$gadgets ) {
 			return true;
 		}
@@ -85,7 +89,7 @@ class GadgetHooks {
 			 * @var $gadget Gadget
 			 */
 			foreach ( $thisSection as $gadget ) {
-				if ( $gadget->isAllowed( $user ) ) {
+				if ( !$gadget->isHidden() && $gadget->isAllowed( $user ) ) {
 					$gname = $gadget->getName();
 					# bug 30182: dir="auto" because it's often not translated
 					$desc = '<span dir="auto">' . $gadget->getDescription() . '</span>';
@@ -138,22 +142,21 @@ class GadgetHooks {
 	 * @return bool
 	 */
 	public static function registerModules( &$resourceLoader ) {
-		$gadgets = Gadget::loadList();
-		if ( !$gadgets ) {
+		$repo = GadgetRepo::singleton();
+		$ids = $repo->getGadgetIds();
+		if ( !$ids ) {
 			return true;
 		}
 
-		/**
-		 * @var $g Gadget
-		 */
-		foreach ( $gadgets as $g ) {
+		foreach ( $ids as $id ) {
+			$g = $repo->getGadget( $id );
 			$module = $g->getModule();
 			if ( $module ) {
 				$resourceLoader->register( $g->getModuleName(), $module );
 			}
 		}
-		return true;
 
+		return true;
 	}
 
 	/**
@@ -162,77 +165,52 @@ class GadgetHooks {
 	 * @return bool
 	 */
 	public static function beforePageDisplay( $out ) {
-		$gadgets = Gadget::loadList();
-		if ( !$gadgets ) {
+		$repo = GadgetRepo::singleton();
+		$ids = $repo->getGadgetIds();
+		if ( !$ids ) {
 			return true;
 		}
 
 		$lb = new LinkBatch();
 		$lb->setCaller( __METHOD__ );
-		$pages = array();
+		$enabledLegacyGadgets = array();
 
 		/**
 		 * @var $gadget Gadget
 		 */
 		$user = $out->getUser();
-		foreach ( $gadgets as $gadget ) {
+		foreach ( $ids as $id ) {
+			$gadget = $repo->getGadget( $id );
 			if ( $gadget->isEnabled( $user ) && $gadget->isAllowed( $user ) ) {
 				if ( $gadget->hasModule() ) {
 					$out->addModuleStyles( $gadget->getModuleName() );
 					$out->addModules( $gadget->getModuleName() );
 				}
 
-				foreach ( $gadget->getLegacyScripts() as $page ) {
-					$lb->add( NS_MEDIAWIKI, $page );
-					$pages[] = $page;
+				if ( $gadget->getLegacyScripts() ) {
+					$enabledLegacyGadgets[] = $id;
 				}
 			}
 		}
 
-
-		// Allow other extensions, e.g. MobileFrontend, to disallow legacy gadgets
-		if ( wfRunHooks( 'Gadgets::allowLegacy', array( $out->getContext() ) ) ) {
-			$lb->execute( __METHOD__ );
-
-			$done = array();
-
-			foreach ( $pages as $page ) {
-				if ( isset( $done[$page] ) ) {
-					continue;
-				}
-
-				$done[$page] = true;
-				self::applyScript( $page, $out );
-			}
+		$strings = array();
+		foreach ( $enabledLegacyGadgets as $id ) {
+			$strings[] = self::makeLegacyWarning( $id );
 		}
+		$out->addHTML( WrappedString::join( "\n", $strings ) );
 
 		return true;
 	}
 
-	/**
-	 * Adds one legacy script to output.
-	 *
-	 * @param string $page Unprefixed page title
-	 * @param OutputPage $out
-	 */
-	private static function applyScript( $page, $out ) {
-		global $wgJsMimeType;
+	private static function makeLegacyWarning( $id ) {
+		$special = SpecialPage::getTitleFor( 'Gadgets' );
 
-		# bug 22929: disable gadgets on sensitive pages.  Scripts loaded through the
-		# ResourceLoader handle this in OutputPage::getModules()
-		# TODO: make this extension load everything via RL, then we don't need to worry
-		# about any of this.
-		if ( $out->getAllowedModules( ResourceLoaderModule::TYPE_SCRIPTS ) < ResourceLoaderModule::ORIGIN_USER_SITEWIDE ) {
-			return;
-		}
-
-		$t = Title::makeTitleSafe( NS_MEDIAWIKI, $page );
-		if ( !$t ) {
-			return;
-		}
-
-		$u = $t->getLocalURL( 'action=raw&ctype=' . $wgJsMimeType );
-		$out->addScriptFile( $u, $t->getLatestRevID() );
+		return ResourceLoader::makeInlineScript(
+			Xml::encodeJsCall( 'mw.log.warn', array(
+				"Gadget \"$id\" was not loaded. Please migrate it to use ResourceLoader. " .
+				' See <' . $special->getCanonicalURL() . '>.'
+			) )
+		);
 	}
 
 	/**

@@ -4,6 +4,7 @@
 			"Ahmed-Najib-Biabani-Ibrahimkhel"
 		]
 	},
-	"syntaxhighlight-specify": "بايد تاسې يوه ژبه په دې توگه ځانگړې کړۍ:",
-	"syntaxhighlight-err-language": "ناسمه ژبه."
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "کوډ",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "ژبه",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "(هېڅ)"
 }

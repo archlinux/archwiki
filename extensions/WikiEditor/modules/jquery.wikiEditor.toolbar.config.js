@@ -6,7 +6,7 @@
 
 getDefaultConfig: function () {
 	var fileNamespace = mw.config.get( 'wgFormattedNamespaces' )[6];
-	return { 'toolbar': {
+	var result = { 'toolbar': {
 		// Main section
 		'main': {
 			'type': 'toolbar',
@@ -21,6 +21,7 @@ getDefaultConfig: function () {
 								'en': [2, -142],
 								'cs': [2, -142],
 								'de': [2, -214],
+								'fa': [2, -142],
 								'fr': [2, -286],
 								'gl': [2, -358],
 								'es': [2, -358],
@@ -29,7 +30,6 @@ getDefaultConfig: function () {
 								'it': [2, -286],
 								'nl': [2, -502],
 								'pt': [2, -358],
-								'pt-br': [2, -358],
 								'pl': [2, -142],
 								'ml': [2, -142]
 							},
@@ -38,6 +38,7 @@ getDefaultConfig: function () {
 								'en': 'format-bold-B.png',
 								'cs': 'format-bold-B.png',
 								'de': 'format-bold-F.png',
+								'fa': 'format-bold-B.png',
 								'fr': 'format-bold-G.png',
 								'gl': 'format-bold-N.png',
 								'es': 'format-bold-N.png',
@@ -51,7 +52,6 @@ getDefaultConfig: function () {
 								'nl': 'format-bold-V.png',
 								'os': 'format-bold-os.png',
 								'pt': 'format-bold-N.png',
-								'pt-br': 'format-bold-N.png',
 								'pl': 'format-bold-B.png',
 								'ru': 'format-bold-ru.png',
 								'ml': 'format-bold-B.png'
@@ -76,6 +76,7 @@ getDefaultConfig: function () {
 								'en': [2, -862],
 								'cs': [2, -862],
 								'de': [2, -934],
+								'fa': [2, -862],
 								'fr': [2, -862],
 								'gl': [2, -790],
 								'es': [2, -790],
@@ -85,7 +86,6 @@ getDefaultConfig: function () {
 								'nl': [2, -790],
 								'os': [2, -934],
 								'pt': [2, -862],
-								'pt-br': [2, -862],
 								'pl': [2, -862],
 								'ru': [2, -934],
 								'ml': [2, -862]
@@ -95,6 +95,7 @@ getDefaultConfig: function () {
 								'en': 'format-italic-I.png',
 								'cs': 'format-italic-I.png',
 								'de': 'format-italic-K.png',
+								'fa': 'format-italic-I.png',
 								'fr': 'format-italic-I.png',
 								'gl': 'format-italic-C.png',
 								'es': 'format-italic-C.png',
@@ -108,7 +109,6 @@ getDefaultConfig: function () {
 								'nl': 'format-italic-C.png',
 								'os': 'format-italic-K.png',
 								'pt': 'format-italic-I.png',
-								'pt-br': 'format-italic-I.png',
 								'pl': 'format-italic-I.png',
 								'ru': 'format-italic-K.png',
 								'ml': 'format-italic-I.png'
@@ -186,7 +186,7 @@ getDefaultConfig: function () {
 						'signature': {
 							'labelMsg': 'wikieditor-toolbar-tool-signature',
 							'type': 'button',
-							'offset': [2, -1872],
+							'offset': [2, -1870],
 							'icon': 'insert-signature.png',
 							'action': {
 								'type': 'encapsulate',
@@ -729,6 +729,11 @@ getDefaultConfig: function () {
 							'result': { 'htmlMsg': 'wikieditor-toolbar-help-content-reference-result' }
 						},
 						{
+							'description': { 'htmlMsg': 'wikieditor-toolbar-help-content-named-reference-description' },
+							'syntax': { 'htmlMsg': 'wikieditor-toolbar-help-content-named-reference-syntax' },
+							'result': { 'htmlMsg': 'wikieditor-toolbar-help-content-named-reference-result' }
+						},
+						{
 							'description': { 'htmlMsg': 'wikieditor-toolbar-help-content-rereference-description' },
 							'syntax': { 'htmlMsg': 'wikieditor-toolbar-help-content-rereference-syntax' },
 							'result': { 'htmlMsg': 'wikieditor-toolbar-help-content-rereference-result' }
@@ -771,6 +776,16 @@ getDefaultConfig: function () {
 			}
 		}
 	} };
+
+	// If this page is not a talk page and not in a namespaces listed in
+	// wgExtraSignatureNamespaces, remove the signature button
+	if ( mw.config.get( 'wgNamespaceNumber' ) % 2 === 0 &&
+		$.inArray( mw.config.get( 'wgNamespaceNumber' ), mw.config.get( 'wgExtraSignatureNamespaces' ) ) === -1
+	) {
+		delete result.toolbar.main.groups.insert.tools.signature;
+	}
+
+	return result;
 }
 
 }; } ) ( jQuery, mediaWiki );

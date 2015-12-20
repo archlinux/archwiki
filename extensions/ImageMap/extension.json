@@ -19,5 +19,6 @@
 	},
 	"ParserTestFiles": [
 		"imageMapParserTests.txt"
-	]
+	],
+	"manifest_version": 1
 }

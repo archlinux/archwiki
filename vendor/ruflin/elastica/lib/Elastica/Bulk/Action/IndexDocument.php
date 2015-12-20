@@ -1,9 +1,7 @@
 <?php
-
 namespace Elastica\Bulk\Action;
 
 use Elastica\AbstractUpdateAction;
-use Elastica\Bulk\Action;
 use Elastica\Document;
 
 class IndexDocument extends AbstractDocument
@@ -15,7 +13,8 @@ class IndexDocument extends AbstractDocument
 
     /**
      * @param \Elastica\Document $document
-     * @return \Elastica\Bulk\Action\IndexDocument
+     *
+     * @return $this
      */
     public function setDocument(Document $document)
     {
@@ -28,6 +27,7 @@ class IndexDocument extends AbstractDocument
 
     /**
      * @param \Elastica\AbstractUpdateAction $source
+     *
      * @return array
      */
     protected function _getMetadata(AbstractUpdateAction $action)
@@ -45,6 +45,7 @@ class IndexDocument extends AbstractDocument
             'timestamp',
             'retry_on_conflict',
         );
+
         $metadata = $action->getOptions($params, true);
 
         return $metadata;

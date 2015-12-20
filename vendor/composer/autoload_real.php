@@ -41,6 +41,11 @@ class ComposerAutoloaderInit_mediawiki_vendor
         $loader->setClassMapAuthoritative(true);
         $loader->register(false);
 
+        $includeFiles = require __DIR__ . '/autoload_files.php';
+        foreach ($includeFiles as $file) {
+            composerRequire_mediawiki_vendor($file);
+        }
+
         return $loader;
     }
 }

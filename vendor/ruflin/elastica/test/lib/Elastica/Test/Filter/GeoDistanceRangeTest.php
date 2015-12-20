@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Test\Filter;
 
 use Elastica\Document;
@@ -10,12 +9,12 @@ use Elastica\Test\Base as BaseTest;
 
 class GeoDistanceRangeTest extends BaseTest
 {
+    /**
+     * @group functional
+     */
     public function testGeoPoint()
     {
-        $client = $this->_getClient();
-        $index = $client->getIndex('test');
-        $index->create(array(), true);
-
+        $index = $this->_createIndex();
         $type = $index->getType('test');
 
         // Set mapping
@@ -53,7 +52,7 @@ class GeoDistanceRangeTest extends BaseTest
         );
 
         $query = new Query(new MatchAll());
-        $query->setFilter($geoFilter);
+        $query->setPostFilter($geoFilter);
         $this->assertEquals(1, $type->search($query)->count());
 
         // Both points should be inside
@@ -64,13 +63,14 @@ class GeoDistanceRangeTest extends BaseTest
             array('gte' => '0km', 'lte' => '40000km')
         );
         $query = new Query(new MatchAll());
-        $query->setFilter($geoFilter);
+        $query->setPostFilter($geoFilter);
         $index->refresh();
 
         $this->assertEquals(2, $type->search($query)->count());
     }
 
     /**
+     * @group unit
      * @expectedException \Elastica\Exception\InvalidException
      */
     public function testInvalidRange()
@@ -83,6 +83,7 @@ class GeoDistanceRangeTest extends BaseTest
     }
 
     /**
+     * @group unit
      * @dataProvider invalidLocationDataProvider
      * @expectedException \Elastica\Exception\InvalidException
      */
@@ -96,6 +97,7 @@ class GeoDistanceRangeTest extends BaseTest
     }
 
     /**
+     * @group unit
      * @dataProvider constructDataProvider
      */
     public function testConstruct($key, $location, $ranges, $expected)
@@ -130,7 +132,7 @@ class GeoDistanceRangeTest extends BaseTest
             ),
             array(
                 false,
-            )
+            ),
         );
     }
 
@@ -149,8 +151,8 @@ class GeoDistanceRangeTest extends BaseTest
                         'from' => '10km',
                         'to' => '20km',
                         'location' => 'u09tvqx',
-                    )
-                )
+                    ),
+                ),
             ),
             array(
                 'location',
@@ -168,8 +170,8 @@ class GeoDistanceRangeTest extends BaseTest
                         'from' => '10km',
                         'include_lower' => true,
                         'location' => 'u09tvqx',
-                    )
-                )
+                    ),
+                ),
             ),
             array(
                 'location',
@@ -189,8 +191,8 @@ class GeoDistanceRangeTest extends BaseTest
                             'lat' => 48.86,
                             'lon' => 2.35,
                         ),
-                    )
-                )
+                    ),
+                ),
             ),
             array(
                 'location',
@@ -210,9 +212,9 @@ class GeoDistanceRangeTest extends BaseTest
                             'lat' => 48.86,
                             'lon' => 2.35,
                         ),
-                    )
-                )
-            )
+                    ),
+                ),
+            ),
         );
     }
 }

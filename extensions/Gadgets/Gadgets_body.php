@@ -19,11 +19,14 @@ class Gadget {
 	/**
 	 * Increment this when changing class structure
 	 */
-	const GADGET_CLASS_VERSION = 7;
+	const GADGET_CLASS_VERSION = 9;
+
+	const CACHE_TTL = 86400;
 
 	private $scripts = array(),
 			$styles = array(),
 			$dependencies = array(),
+			$messages = array(),
 			$name,
 			$definition,
 			$resourceLoaded = false,
@@ -31,79 +34,48 @@ class Gadget {
 			$requiredSkins = array(),
 			$targets = array( 'desktop' ),
 			$onByDefault = false,
+			$hidden = false,
 			$position = 'bottom',
 			$category;
 
-	/**
-	 * Creates an instance of this class from definition in MediaWiki:Gadgets-definition
-	 * @param $definition String: Gadget definition
-	 * @return Gadget|bool Instance of Gadget class or false if $definition is invalid
-	 */
-	public static function newFromDefinition( $definition ) {
-		$m = array();
-		if ( !preg_match( '/^\*+ *([a-zA-Z](?:[-_:.\w\d ]*[a-zA-Z0-9])?)(\s*\[.*?\])?\s*((\|[^|]*)+)\s*$/', $definition, $m ) ) {
-			return false;
-		}
-		// NOTE: the gadget name is used as part of the name of a form field,
-		//      and must follow the rules defined in http://www.w3.org/TR/html4/types.html#type-cdata
-		//      Also, title-normalization applies.
-		$gadget = new Gadget();
-		$gadget->name = trim( str_replace( ' ', '_', $m[1] ) );
-		// If the name is too long, then RL will throw an MWException when
-		// we try to register the module
-		if ( !ResourceLoader::isValidModuleName( $gadget->getModuleName() ) ) {
-			return false;
-		}
-		$gadget->definition = $definition;
-		$options = trim( $m[2], ' []' );
+	/** @var array|bool Result of loadStructuredList() */
+	private static $definitionCache;
 
-		foreach ( preg_split( '/\s*\|\s*/', $options, -1, PREG_SPLIT_NO_EMPTY ) as $option ) {
-			$arr  = preg_split( '/\s*=\s*/', $option, 2 );
-			$option = $arr[0];
-			if ( isset( $arr[1] ) ) {
-				$params = explode( ',', $arr[1] );
-				$params = array_map( 'trim', $params );
-			} else {
-				$params = array();
-			}
-
-			switch ( $option ) {
-				case 'ResourceLoader':
-					$gadget->resourceLoaded = true;
-					break;
+	public function __construct( array $options ) {
+		foreach ( $options as $member => $option ) {
+			switch ( $member ) {
+				case 'scripts':
+				case 'styles':
 				case 'dependencies':
-					$gadget->dependencies = $params;
-					break;
-				case 'rights':
-					$gadget->requiredRights = $params;
-					break;
-				case 'skins':
-					$gadget->requiredSkins = $params;
-					break;
-				case 'default':
-					$gadget->onByDefault = true;
-					break;
+				case 'messages':
+				case 'name':
+				case 'definition':
+				case 'resourceLoaded':
+				case 'requiredRights':
+				case 'requiredSkins':
 				case 'targets':
-					$gadget->targets = $params;
+				case 'onByDefault':
+				case 'position':
+				case 'hidden':
+				case 'category':
+					$this->{$member} = $option;
 					break;
-				case 'top':
-					$gadget->position = 'top';
-					break;
+				default:
+					throw new InvalidArgumentException( "Unrecognized '$member' parameter" );
 			}
 		}
-
-		foreach ( preg_split( '/\s*\|\s*/', $m[3], -1, PREG_SPLIT_NO_EMPTY ) as $page ) {
-			$page = "Gadget-$page";
-
-			if ( preg_match( '/\.js/', $page ) ) {
-				$gadget->scripts[] = $page;
-			} elseif ( preg_match( '/\.css/', $page ) ) {
-				$gadget->styles[] = $page;
-			}
-		}
-
-		return $gadget;
 	}
+
+	/**
+	 * Whether the provided gadget id is valid
+	 *
+	 * @param string $id
+	 * @return bool
+	 */
+	public static function isValidGadgetID( $id ) {
+		return strlen( $id ) > 0 && ResourceLoader::isValidModuleName( "ext.gadget.$id" );
+	}
+
 
 	/**
 	 * @return String: Gadget name
@@ -166,6 +138,13 @@ class Gadget {
 	 */
 	public function isOnByDefault() {
 		return $this->onByDefault;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isHidden() {
+		return $this->hidden;
 	}
 
 	/**
@@ -234,7 +213,13 @@ class Gadget {
 			return null;
 		}
 
-		return new GadgetResourceLoaderModule( $pages, $this->dependencies, $this->targets, $this->position );
+		return new GadgetResourceLoaderModule(
+			$pages,
+			$this->dependencies,
+			$this->targets,
+			$this->position,
+			$this->messages
+		);
 	}
 
 	/**
@@ -254,6 +239,13 @@ class Gadget {
 	 */
 	public function getDependencies() {
 		return $this->dependencies;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getMessages() {
+		return $this->messages;
 	}
 
 	/**
@@ -279,190 +271,5 @@ class Gadget {
 	public function getPosition() {
 		return $this->position;
 	}
-
-	/**
-	 * Loads and returns a list of all gadgets
-	 * @return Mixed: Array of gadgets or false
-	 */
-	public static function loadList() {
-		static $gadgets = null;
-
-		if ( $gadgets !== null ) {
-			return $gadgets;
-		}
-
-		$struct = self::loadStructuredList();
-
-		if ( !$struct ) {
-			$gadgets = $struct;
-			return $gadgets;
-		}
-
-		$gadgets = array();
-		foreach ( $struct as $entries ) {
-			$gadgets = array_merge( $gadgets, $entries );
-		}
-
-		return $gadgets;
-	}
-
-	/**
-	 * Checks whether gadget list from cache can be used.
-	 * @param $gadgets array
-	 * @return Boolean
-	 */
-	private static function isValidList( $gadgets ) {
-		if ( !is_array( $gadgets ) ) {
-			return false;
-		}
-		// Check if we have an array of gadgets
-		// One check is enough
-		/**
-		 * @var $g Gadget
-		 */
-		foreach ( $gadgets as $list ) {
-			foreach ( $list as $g ) {
-				return $g instanceof Gadget;
-			}
-		}
-
-		return true; // empty array
-	}
-
-	/**
-	 * Loads list of gadgets and returns it as associative array of sections with gadgets
-	 * e.g. array( 'sectionnname1' => array( $gadget1, $gadget2 ),
-	 *             'sectionnname2' => array( $gadget3 ) );
-	 * @param $forceNewText String: New text of MediaWiki:gadgets-definition. If specified, will
-	 * 	      force a purge of cache and recreation of the gadget list.
-	 * @return Mixed: Array or false
-	 */
-	public static function loadStructuredList( $forceNewText = null ) {
-		global $wgMemc, $wgGadgetsCaching;
-
-		static $gadgets = null;
-		if ( $gadgets !== null && $forceNewText === null ) {
-			return $gadgets;
-		}
-
-		$key = wfMemcKey( 'gadgets-definition', self::GADGET_CLASS_VERSION );
-
-		if ( $forceNewText === null ) {
-			if ( $wgGadgetsCaching ) {
-				// cached?
-				$gadgets = $wgMemc->get( $key );
-				if ( self::isValidList( $gadgets ) ) {
-					return $gadgets;
-				}
-			}
-
-			$g = wfMessage( "gadgets-definition" )->inContentLanguage();
-			if ( !$g->exists() ) {
-				$gadgets = false;
-				return $gadgets;
-			}
-			$g = $g->plain();
-		} else {
-			$g = $forceNewText;
-		}
-
-		$gadgets = self::listFromDefinition( $g );
-
-		if ( !count( $gadgets ) ) {
-			// Don't cache in case we couldn't find any gadgets. Bug 37228
-			$gadgets = false;
-			return $gadgets;
-		}
-
-		if ( !$wgGadgetsCaching ) {
-			return $gadgets;
-		}
-
-		// cache for a while. gets purged automatically when MediaWiki:Gadgets-definition is edited
-		$wgMemc->set( $key, $gadgets, 60 * 60 * 24 );
-		$source = $forceNewText !== null ? 'input text' : 'MediaWiki:Gadgets-definition';
-		wfDebug( __METHOD__ . ": $source parsed, cache entry $key updated\n" );
-
-		return $gadgets;
-	}
-
-	/**
-	 * Generates a structured list of Gadget objects from a definition
-	 *
-	 * @param $definition
-	 * @return array Array( category => Array( name => Gadget ) )
-	 */
-	private static function listFromDefinition( $definition ) {
-		$definition = preg_replace( '/<!--.*?-->/s', '', $definition );
-		$lines = preg_split( '/(\r\n|\r|\n)+/', $definition );
-
-		$gadgets = array();
-		$section = '';
-
-		foreach ( $lines as $line ) {
-			$m = array();
-			if ( preg_match( '/^==+ *([^*:\s|]+?)\s*==+\s*$/', $line, $m ) ) {
-				$section = $m[1];
-			} else {
-				$gadget = self::newFromDefinition( $line );
-				if ( $gadget ) {
-					$gadgets[$section][$gadget->getName()] = $gadget;
-					$gadget->category = $section;
-				}
-			}
-		}
-		return $gadgets;
-	}
 }
 
-/**
- * Class representing a list of resources for one gadget
- */
-class GadgetResourceLoaderModule extends ResourceLoaderWikiModule {
-	private $pages, $dependencies;
-
-	/**
-	 * Creates an instance of this class
-	 *
-	 * @param $pages Array: Associative array of pages in ResourceLoaderWikiModule-compatible
-	 * format, for example:
-	 * array(
-	 *        'MediaWiki:Gadget-foo.js'  => array( 'type' => 'script' ),
-	 *        'MediaWiki:Gadget-foo.css' => array( 'type' => 'style' ),
-	 * )
-	 * @param $dependencies Array: Names of resources this module depends on
-	 * @param $targets Array: List of targets this module support
-	 * @param $position String: 'bottom' or 'top'
-	 */
-	public function __construct( $pages, $dependencies, $targets, $position ) {
-		$this->pages = $pages;
-		$this->dependencies = $dependencies;
-		$this->targets = $targets;
-		$this->position = $position;
-	}
-
-	/**
-	 * Overrides the abstract function from ResourceLoaderWikiModule class
-	 * @param $context ResourceLoaderContext
-	 * @return Array: $pages passed to __construct()
-	 */
-	protected function getPages( ResourceLoaderContext $context ) {
-		return $this->pages;
-	}
-
-	/**
-	 * Overrides ResourceLoaderModule::getDependencies()
-	 * @return Array: Names of resources this module depends on
-	 */
-	public function getDependencies() {
-		return $this->dependencies;
-	}
-
-	/**
-	 * Overrides ResourceLoaderModule::getPosition()
-	 * @return String: 'bottom' or 'top'
-	 */
-	public function getPosition() {
-		return $this->position;
-	}
-}

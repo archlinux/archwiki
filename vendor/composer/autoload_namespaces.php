@@ -8,7 +8,7 @@ $baseDir = $vendorDir;
 return array(
     'Psr\\Log\\' => array($vendorDir . '/psr/log'),
     'Liuggio' => array($vendorDir . '/liuggio/statsd-php-client/src'),
-    'Elastica\\Test' => array($vendorDir . '/ruflin/elastica/test/lib'),
-    'Elastica' => array($vendorDir . '/ruflin/elastica/lib'),
-    '' => array($vendorDir . '/cssjanus/cssjanus/src'),
+    'Less' => array($vendorDir . '/oyejorge/less.php/lib'),
+    'Kafka\\' => array($vendorDir . '/nmred/kafka-php/src'),
+    '' => array($vendorDir . '/cssjanus/cssjanus/src', $vendorDir . '/kzykhys/pygments/src'),
 );

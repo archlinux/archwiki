@@ -14,5 +14,7 @@
 	"fancycaptcha-create": "Para criar a página, por favor, introduza na caixa abaixo as palavras apresentadas ([[Special:Captcha/help|mais informações]]):",
 	"fancycaptcha-edit": "Para editar esta página, por favor, introduza na caixa abaixo as palavras apresentadas ([[Special:Captcha/help|mais informações]]):",
 	"fancycaptcha-sendemail": "Para proteger esta wiki contra o spam automatizado, por favor, introduza na caixa as palavras que aparecem abaixo ([[Special:Captcha/help|mais informações]]):",
-	"fancycaptcha-reload-text": "Atualizar"
+	"fancycaptcha-reload-text": "Atualizar",
+	"apihelp-fancycaptchareload-description": "Gerar novo FancyCaptcha.",
+	"apihelp-fancycaptchareload-example-1": "Gerar novo FancyCaptcha"
 }

@@ -30,6 +30,7 @@ abstract class RevisionListBase extends ContextSource {
 	/** @var array */
 	protected $ids;
 
+	/** @var ResultWrapper|bool */
 	protected $res;
 
 	/** @var bool|object */
@@ -340,7 +341,8 @@ class RevisionItem extends RevisionItemBase {
 	 * @return string
 	 */
 	protected function getRevisionLink() {
-		$date = $this->list->getLanguage()->timeanddate( $this->revision->getTimestamp(), true );
+		$date = htmlspecialchars( $this->list->getLanguage()->userTimeAndDate(
+			$this->revision->getTimestamp(), $this->list->getUser() ) );
 
 		if ( $this->isDeleted() && !$this->canViewContent() ) {
 			return $date;

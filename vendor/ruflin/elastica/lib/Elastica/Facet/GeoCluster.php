@@ -1,41 +1,49 @@
 <?php
-
 namespace Elastica\Facet;
 
 /**
  * Implements the Geo Cluster facet.
  *
- * @category Xodoa
- * @package Elastica
  * @author Konstantin Nikiforov <konstantin.nikiforov@gmail.com>
+ *
  * @link https://github.com/zenobase/geocluster-facet
+ * @deprecated Facets are deprecated and will be removed in a future release. You are encouraged to migrate to aggregations instead.
  */
-class GeoCluster extends AbstractFacet {
-
+class GeoCluster extends AbstractFacet
+{
     /**
      * @param string $fieldName
+     *
      * @return $this
      */
-    public function setField($fieldName) {
+    public function setField($fieldName)
+    {
         $this->setParam('field', $fieldName);
+
         return $this;
     }
 
     /**
-     * @param double $factor
+     * @param float $factor
+     *
      * @return $this
      */
-    public function setFactor($factor){
+    public function setFactor($factor)
+    {
         $this->setParam('factor', $factor);
+
         return $this;
     }
 
     /**
-     * @param boolean $showIds
+     * @param bool $showIds
+     *
      * @return $this
      */
-    public function setShowIds($showIds) {
+    public function setShowIds($showIds)
+    {
         $this->setParam('showIds', $showIds);
+
         return $this;
     }
 
@@ -44,11 +52,15 @@ class GeoCluster extends AbstractFacet {
      * facet definition of the parent.
      *
      * @see \Elastica\Facet\AbstractFacet::toArray()
+     *
      * @throws \Elastica\Exception\InvalidException When the right fields haven't been set.
+     *
      * @return array
      */
-    public function toArray(){
-        $this->_setFacetParam ('geo_cluster', $this->_params);
+    public function toArray()
+    {
+        $this->_setFacetParam('geo_cluster', $this->_params);
+
         return parent::toArray();
     }
 }

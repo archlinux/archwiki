@@ -3,7 +3,8 @@
 		"authors": [
 			"Boukman",
 			"Internoob",
-			"Masterches"
+			"Masterches",
+			"Tisave"
 		]
 	},
 	"vector-action-addsection": "Ajoute yon sijè",
@@ -16,5 +17,6 @@
 	"vector-view-edit": "Modifye",
 	"vector-view-history": "Gade istorik",
 	"vector-view-view": "Li",
-	"vector-view-viewsource": "Wè kòd tèks sa a"
+	"vector-view-viewsource": "Wè kòd tèks sa a",
+	"vector-more-actions": "Plis"
 }

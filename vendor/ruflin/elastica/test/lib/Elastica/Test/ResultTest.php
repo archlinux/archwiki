@@ -1,15 +1,16 @@
 <?php
-
 namespace Elastica\Test;
 
-use Elastica\Client;
 use Elastica\Document;
 use Elastica\Result;
-use Elastica\Type\Mapping;
 use Elastica\Test\Base as BaseTest;
+use Elastica\Type\Mapping;
 
 class ResultTest extends BaseTest
 {
+    /**
+     * @group functional
+     */
     public function testGetters()
     {
         // Creates a new index 'xodoa' and a type 'user' inside this index
@@ -42,6 +43,9 @@ class ResultTest extends BaseTest
         $this->assertEquals('hans', $result->username);
     }
 
+    /**
+     * @group functional
+     */
     public function testGetIdNoSource()
     {
         // Creates a new index 'xodoa' and a type 'user' inside this index
@@ -80,6 +84,9 @@ class ResultTest extends BaseTest
         $this->assertInternalType('array', $result->getData());
     }
 
+    /**
+     * @group functional
+     */
     public function testGetTotalTimeReturnsExpectedResults()
     {
         $typeName = 'user';
@@ -103,17 +110,20 @@ class ResultTest extends BaseTest
             'Total Time should be an integer'
          );
     }
-    
+
+    /**
+     * @group unit
+     */
     public function testHasFields()
     {
         $data = array('value set');
 
         $result = new Result(array());
         $this->assertFalse($result->hasFields());
-        
+
         $result = new Result(array('_source' => $data));
         $this->assertFalse($result->hasFields());
-        
+
         $result = new Result(array('fields' => $data));
         $this->assertTrue($result->hasFields());
         $this->assertEquals($data, $result->getFields());

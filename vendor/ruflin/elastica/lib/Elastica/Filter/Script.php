@@ -1,29 +1,26 @@
 <?php
-
 namespace Elastica\Filter;
 
 use Elastica;
-use Elastica\Query\AbstractQuery;
 
 /**
- * Script filter
+ * Script filter.
  *
- * @category Xodoa
- * @package Elastica
  * @author Nicolas Ruflin <spam@ruflin.com>
- * @link http://www.elasticsearch.org/guide/reference/query-dsl/script-filter.html
+ *
+ * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-script-filter.html
  */
 class Script extends AbstractFilter
 {
     /**
-     * Query object
+     * Query object.
      *
      * @var array|\Elastica\Query\AbstractQuery
      */
     protected $_query = null;
 
     /**
-     * Construct script filter
+     * Construct script filter.
      *
      * @param array|string|\Elastica\Script $script OPTIONAL Script
      */
@@ -35,10 +32,11 @@ class Script extends AbstractFilter
     }
 
     /**
-     * Sets script object
+     * Sets script object.
      *
-     * @param  \Elastica\Script|string|array $script
-     * @return \Elastica\Filter\Script
+     * @param \Elastica\Script|string|array $script
+     *
+     * @return $this
      */
     public function setScript($script)
     {

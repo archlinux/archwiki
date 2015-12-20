@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Highlander45temp",
+			"TheRossatron",
+			"Inyzh"
+		]
+	},
+	"pfunc_expr_unrecognised_word": "IуакIэр къуанчэ: ГущаIэу \"$1\"-р зэхэшIыкIыгъэп.",
+	"pfunc_expr_unexpected_operator": "IуакIэр къуанчэ: ОшIэдэмышIэ $1 оператор.",
+	"pfunc_expr_missing_operand": "КъэIокIэ тэрэзэп: $1-м пае операнд икъурэп.",
+	"pfunc_expr_unrecognised_punctuation": "IуакIэр къуанчэ: Пыутхэбзэ символэу \"$1\" зэхэшIыкIыгъэп."
+}

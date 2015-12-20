@@ -1,41 +1,40 @@
 <?php
-
 namespace Elastica\Query;
+
 use Elastica\Exception\InvalidException;
 
 /**
- * Terms query
+ * Terms query.
  *
- * @category Xodoa
- * @package Elastica
  * @author Nicolas Ruflin <spam@ruflin.com>
- * @link http://www.elasticsearch.org/guide/reference/query-dsl/terms-query.html
+ *
+ * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-terms-query.html
  */
 class Terms extends AbstractQuery
 {
     /**
-     * Terms
+     * Terms.
      *
      * @var array Terms
      */
     protected $_terms = array();
 
     /**
-     * Params
+     * Params.
      *
      * @var array Params
      */
     protected $_params = array();
 
     /**
-     * Terms key
+     * Terms key.
      *
      * @var string Terms key
      */
     protected $_key = '';
 
     /**
-     * Construct terms query
+     * Construct terms query.
      *
      * @param string $key   OPTIONAL Terms key
      * @param array  $terms OPTIONAL Terms list
@@ -46,11 +45,12 @@ class Terms extends AbstractQuery
     }
 
     /**
-     * Sets key and terms for the query
+     * Sets key and terms for the query.
      *
-     * @param  string                    $key   Terms key
-     * @param  array                     $terms Terms for the query.
-     * @return \Elastica\Query\Terms
+     * @param string $key   Terms key
+     * @param array  $terms Terms for the query.
+     *
+     * @return $this
      */
     public function setTerms($key, array $terms)
     {
@@ -61,10 +61,11 @@ class Terms extends AbstractQuery
     }
 
     /**
-     * Adds a single term to the list
+     * Adds a single term to the list.
      *
-     * @param  string                    $term Term
-     * @return \Elastica\Query\Terms
+     * @param string $term Term
+     *
+     * @return $this
      */
     public function addTerm($term)
     {
@@ -74,10 +75,11 @@ class Terms extends AbstractQuery
     }
 
     /**
-     * Sets the minimum matching values
+     * Sets the minimum matching values.
      *
-     * @param  int                       $minimum Minimum value
-     * @return \Elastica\Query\Terms
+     * @param int $minimum Minimum value
+     *
+     * @return $this
      */
     public function setMinimumMatch($minimum)
     {
@@ -85,11 +87,13 @@ class Terms extends AbstractQuery
     }
 
     /**
-     * Converts the terms object to an array
+     * Converts the terms object to an array.
      *
      * @see \Elastica\Query\AbstractQuery::toArray()
-     * @throws \Elastica\Exception\InvalidException
-     * @return array                               Query array
+     *
+     * @throws \Elastica\Exception\InvalidException If term key is empty
+     *
+     * @return array Query array
      */
     public function toArray()
     {

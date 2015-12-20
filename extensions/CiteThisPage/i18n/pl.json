@@ -2,13 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"Sp5uhe",
-			"Chrumps"
+			"Chrumps",
+			"Peter Bowman"
 		]
 	},
 	"citethispage": "Bibliografia",
 	"citethispage-desc": "Dodaje stronę specjalną [[Special:CiteThisPage|obsługi cytowań]] i link w pasku narzędziowym",
 	"citethispage-link": "Cytowanie tego artykułu",
 	"tooltip-citethispage": "Informacja o tym jak należy cytować tę stronę",
-	"citethispage-change-submit": "stwórz wpis bibliograficzny",
+	"citethispage-change-submit": "Stwórz wpis bibliograficzny",
 	"citethispage-change-target": "Strona:"
 }

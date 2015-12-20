@@ -1,24 +1,23 @@
 <?php
-
 namespace Elastica\Filter;
 
 use Elastica\Query\AbstractQuery;
 
 /**
- * Nested filter
+ * Nested filter.
  *
- * @category Xodoa
- * @package Elastica
  * @author Nicolas Ruflin <spam@ruflin.com>
- * @link http://www.elasticsearch.org/guide/reference/query-dsl/nested-filter.html
+ *
+ * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-nested-filter.html
  */
 class Nested extends AbstractFilter
 {
     /**
-     * Adds field to mlt filter
+     * Adds field to mlt filter.
      *
-     * @param  string                       $path Nested object path
-     * @return \Elastica\Filter\Nested
+     * @param string $path Nested object path
+     *
+     * @return $this
      */
     public function setPath($path)
     {
@@ -26,10 +25,11 @@ class Nested extends AbstractFilter
     }
 
     /**
-     * Sets nested query
+     * Sets nested query.
      *
-     * @param  \Elastica\Query\AbstractQuery $query
-     * @return \Elastica\Filter\Nested
+     * @param \Elastica\Query\AbstractQuery $query
+     *
+     * @return $this
      */
     public function setQuery(AbstractQuery $query)
     {
@@ -37,10 +37,11 @@ class Nested extends AbstractFilter
     }
 
     /**
-     * Sets nested filter
+     * Sets nested filter.
      *
-     * @param  \Elastica\Filter\AbstractFilter $filter
-     * @return \Elastica\Filter\Nested
+     * @param \Elastica\Filter\AbstractFilter $filter
+     *
+     * @return $this
      */
     public function setFilter(AbstractFilter $filter)
     {
@@ -48,13 +49,14 @@ class Nested extends AbstractFilter
     }
 
     /**
-     * Set score mode
+     * Set join option.
      *
-     * @param  string                       $scoreMode Options: avg, total, max and none.
-     * @return \Elastica\Filter\Nested
+     * @param bool $join
+     *
+     * @return $this
      */
-    public function setScoreMode($scoreMode)
+    public function setJoin($join)
     {
-        return $this->setParam('score_mode', $scoreMode);
+        return $this->setParam('join', (bool) $join);
     }
 }

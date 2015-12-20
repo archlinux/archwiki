@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Test\Query;
 
 use Elastica\Document;
@@ -9,19 +8,20 @@ use Elastica\Test\Base as BaseTest;
 
 class HighlightTest extends BaseTest
 {
+    /**
+     * @group functional
+     */
     public function testHightlightSearch()
     {
-        $client = $this->_getClient();
-        $index = $client->getIndex('test');
-        $index->create(array(), true);
+        $index = $this->_createIndex();
         $type = $index->getType('helloworld');
 
         $phrase = 'My name is ruflin';
 
-        $doc = new Document(1, array('id' => 1, 'phrase' => $phrase, 'username' => 'hanswurst', 'test' => array('2', '3', '5')));
-        $type->addDocument($doc);
-        $doc = new Document(2, array('id' => 2, 'phrase' => $phrase, 'username' => 'peter', 'test' => array('2', '3', '5')));
-        $type->addDocument($doc);
+        $type->addDocuments(array(
+            new Document(1, array('id' => 1, 'phrase' => $phrase, 'username' => 'hanswurst', 'test' => array('2', '3', '5'))),
+            new Document(2, array('id' => 2, 'phrase' => $phrase, 'username' => 'peter', 'test' => array('2', '3', '5'))),
+        ));
 
         $queryString = new QueryString('rufl*');
         $query = new Query($queryString);
@@ -44,6 +44,5 @@ class HighlightTest extends BaseTest
             $this->assertEquals(array('phrase' => array(0 => 'My name is <em class="highlight">ruflin</em>')), $highlight);
         }
         $this->assertEquals(2, $resultSet->count());
-
     }
 }

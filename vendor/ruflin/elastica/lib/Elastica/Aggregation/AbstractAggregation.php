@@ -1,21 +1,18 @@
 <?php
-
 namespace Elastica\Aggregation;
 
-use Elastica\Param;
 use Elastica\Exception\InvalidException;
+use Elastica\Param;
 
 abstract class AbstractAggregation extends Param
 {
     /**
-     * The name of this aggregation
-     * @var string
+     * @var string The name of this aggregation
      */
     protected $_name;
 
     /**
-     * Subaggregations belonging to this aggregation
-     * @var array
+     * @var array Subaggregations belonging to this aggregation
      */
     protected $_aggs = array();
 
@@ -28,16 +25,22 @@ abstract class AbstractAggregation extends Param
     }
 
     /**
-     * Set the name of this aggregation
+     * Set the name of this aggregation.
+     *
      * @param string $name
+     *
+     * @return $this
      */
     public function setName($name)
     {
         $this->_name = $name;
+
+        return $this;
     }
 
     /**
-     * Retrieve the name of this aggregation
+     * Retrieve the name of this aggregation.
+     *
      * @return string
      */
     public function getName()
@@ -46,7 +49,8 @@ abstract class AbstractAggregation extends Param
     }
 
     /**
-     * Retrieve all subaggregations belonging to this aggregation
+     * Retrieve all subaggregations belonging to this aggregation.
+     *
      * @return array
      */
     public function getAggs()
@@ -55,18 +59,22 @@ abstract class AbstractAggregation extends Param
     }
 
     /**
-     * Add a sub-aggregation
+     * Add a sub-aggregation.
+     *
      * @param AbstractAggregation $aggregation
+     *
      * @throws \Elastica\Exception\InvalidException
-     * @return AbstractAggregation
+     *
+     * @return $this
      */
     public function addAggregation(AbstractAggregation $aggregation)
     {
-        if(is_a($aggregation, 'Elastica\Aggregation\GlobalAggregation')) {
+        if ($aggregation instanceof GlobalAggregation) {
             throw new InvalidException('Global aggregators can only be placed as top level aggregators');
         }
 
         $this->_aggs[$aggregation->getName()] = $aggregation->toArray();
+
         return $this;
     }
 
@@ -78,11 +86,12 @@ abstract class AbstractAggregation extends Param
         $array = parent::toArray();
         if (array_key_exists('global_aggregation', $array)) {
             // compensate for class name GlobalAggregation
-            $array = array('global' => new \stdClass);
+            $array = array('global' => new \stdClass());
         }
         if (sizeof($this->_aggs)) {
             $array['aggs'] = $this->_aggs;
         }
+
         return $array;
     }
 }

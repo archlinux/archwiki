@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Babanwalia"
+			"Babanwalia",
+			"Satdeep gill"
 		]
 	},
+	"fancycaptcha-createaccount": "ਵਿਕੀ ਉੱਤੇ ਆਪ ਮੁਹਾਰੇ ਖਾਤੇ ਬਣਾਉਣ ਤੋਂ ਬਚਾਅ ਲਈ ਅਸੀਂ ਤੁਹਾਨੂੰ ਬੇਨਤੀ ਕਰਦੇ ਹਾਂ ਕਿ ਇੱਥੇ ਦਿਸ ਰਹੇ ਸ਼ਬਦਾਂ ਨੂੰ ਹੇਠਾਂ ਦਿੱਤੇ ਬਕਸੇ ਵਿੱਚ ਲਿਖੋ ([[Special:Captcha/help|ਹੋਰ ਜਾਣਕਾਰੀ]]):",
 	"fancycaptcha-reload-text": "ਮੁੜ ਤਾਜ਼ਾ ਕਰੋ"
 }

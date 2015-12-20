@@ -1,7 +1,5 @@
 <?php
-
 namespace Elastica\Test\Aggregation;
-
 
 use Elastica\Aggregation\ExtendedStats;
 use Elastica\Document;
@@ -9,28 +7,33 @@ use Elastica\Query;
 
 class ExtendedStatsTest extends BaseAggregationTest
 {
-    protected function setUp()
+    protected function _getIndexForTest()
     {
-        parent::setUp();
-        $this->_index = $this->_createIndex("extended_stats");
-        $docs = array(
-            new Document("1", array("price" => 5)),
-            new Document("2", array("price" => 8)),
-            new Document("3", array("price" => 1)),
-            new Document("4", array("price" => 3)),
-        );
-        $this->_index->getType("test")->addDocuments($docs);
-        $this->_index->refresh();
+        $index = $this->_createIndex();
+
+        $index->getType('test')->addDocuments(array(
+            new Document(1, array('price' => 5)),
+            new Document(2, array('price' => 8)),
+            new Document(3, array('price' => 1)),
+            new Document(4, array('price' => 3)),
+        ));
+
+        $index->refresh();
+
+        return $index;
     }
 
+    /**
+     * @group functional
+     */
     public function testExtendedStatsAggregation()
     {
-        $agg = new ExtendedStats("stats");
-        $agg->setField("price");
+        $agg = new ExtendedStats('stats');
+        $agg->setField('price');
 
         $query = new Query();
         $query->addAggregation($agg);
-        $results = $this->_index->search($query)->getAggregation("stats");
+        $results = $this->_getIndexForTest()->search($query)->getAggregation('stats');
 
         $this->assertEquals(4, $results['count']);
         $this->assertEquals(1, $results['min']);
@@ -40,4 +43,3 @@ class ExtendedStatsTest extends BaseAggregationTest
         $this->assertTrue(array_key_exists('sum_of_squares', $results));
     }
 }
- 

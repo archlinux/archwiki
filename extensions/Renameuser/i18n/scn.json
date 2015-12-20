@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Gmelfi",
-			"Santu"
+			"Santu",
+			"Pippinu"
 		]
 	},
 	"renameuser": "Rinòmina utenti",
@@ -10,7 +11,7 @@
 	"renameuser-desc": "Funzioni pi rinuminari n'utenti (addumanna li diritti di ''renameuser'')",
 	"renameuserold": "Nomu utenti dô prisenti:",
 	"renameusernew": "Novu nomu utenti:",
-	"renameuserreason": "Mutivu dû caciu di nomu",
+	"renameuserreason": "Mutivu:",
 	"renameusermove": "Rinòmina macari la pàggina utenti, la pàggina di discussioni e li suttapàggini",
 	"renameuserreserve": "Sarva lu vecchiu utenti pi futuri usi",
 	"renameuserwarnings": "Avvisi:",

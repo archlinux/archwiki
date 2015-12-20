@@ -1,72 +1,97 @@
 <?php
-
 namespace Elastica;
+
 use Elastica\Node\Info;
 use Elastica\Node\Stats;
 
 /**
- * Elastica cluster node object
+ * Elastica cluster node object.
  *
- * @category Xodoa
- * @package Elastica
  * @author Nicolas Ruflin <spam@ruflin.com>
- * @link http://www.elasticsearch.org/guide/reference/api/admin-indices-status.html
  */
 class Node
 {
     /**
-     * Client
+     * Client.
      *
      * @var \Elastica\Client
      */
     protected $_client = null;
 
     /**
-     * Node name
+     * @var string Unique node id
+     */
+    protected $_id = '';
+
+    /**
+     * Node name.
      *
      * @var string Node name
      */
     protected $_name = '';
 
     /**
-     * Node stats
+     * Node stats.
      *
      * @var \Elastica\Node\Stats Node Stats
      */
     protected $_stats = null;
 
     /**
-     * Node info
+     * Node info.
      *
      * @var \Elastica\Node\Info Node info
      */
     protected $_info = null;
 
     /**
-     * Create a new node object
+     * Create a new node object.
      *
-     * @param string          $name   Node name
+     * @param string           $id     Node id or name
      * @param \Elastica\Client $client Node object
      */
-    public function __construct($name, Client $client)
+    public function __construct($id, Client $client)
     {
-        $this->_name = $name;
         $this->_client = $client;
-        $this->refresh();
+        $this->setId($id);
     }
 
     /**
-     * Get the name of the node
+     * @return string Unique node id. Can also be name if id not exists.
+     */
+    public function getId()
+    {
+        return $this->_id;
+    }
+
+    /**
+     * @param string $id Node id
+     *
+     * @return $this Refreshed object
+     */
+    public function setId($id)
+    {
+        $this->_id = $id;
+
+        return $this->refresh();
+    }
+
+    /**
+     * Get the name of the node.
      *
      * @return string Node name
      */
     public function getName()
     {
+        if (empty($this->_name)) {
+            $this->_name = $this->getInfo()->getName();
+        }
+
         return $this->_name;
     }
 
     /**
-     * Returns the current client object
+     * Returns the current client object.
      *
      * @return \Elastica\Client Client
      */
@@ -76,7 +101,9 @@ class Node
     }
 
     /**
-     * Return stats object of the current node
+     * Return stats object of the current node.
+     *
+     * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-nodes-stats.html
      *
      * @return \Elastica\Node\Stats Node stats
      */
@@ -90,7 +117,9 @@ class Node
     }
 
     /**
-     * Return info object of the current node
+     * Return info object of the current node.
+     *
+     * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-nodes-info.html
      *
      * @return \Elastica\Node\Info Node info object
      */
@@ -104,7 +133,7 @@ class Node
     }
 
     /**
-     * Refreshes all node information
+     * Refreshes all node information.
      *
      * This should be called after updating a node to refresh all information
      */
@@ -115,15 +144,17 @@ class Node
     }
 
     /**
-     * Shuts this node down
+     * Shuts this node down.
      *
-     * @param  string            $delay OPTIONAL Delay after which node is shut down (default = 1s)
+     * @param string $delay OPTIONAL Delay after which node is shut down (default = 1s)
+     *
      * @return \Elastica\Response
-     * @link http://www.elasticsearch.org/guide/reference/api/admin-cluster-nodes-shutdown.html
+     *
+     * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-nodes-shutdown.html
      */
     public function shutdown($delay = '1s')
     {
-        $path = '_cluster/nodes/' . $this->getName() . '/_shutdown?delay=' . $delay;
+        $path = '_cluster/nodes/'.$this->getId().'/_shutdown?delay='.$delay;
 
         return $this->_client->request($path, Request::POST);
     }

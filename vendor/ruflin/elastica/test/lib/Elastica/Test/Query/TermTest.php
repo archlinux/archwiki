@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Test\Query;
 
 use Elastica\Query\Term;
@@ -7,7 +6,9 @@ use Elastica\Test\Base as BaseTest;
 
 class TermTest extends BaseTest
 {
-
+    /**
+     * @group unit
+     */
     public function testToArray()
     {
         $query = new Term();

@@ -3,7 +3,7 @@
 if ( function_exists( 'wfLoadExtension' ) ) {
 	wfLoadExtension( 'LocalisationUpdate' );
 	// Keep i18n globals so mergeMessageFileList.php doesn't break
-	$wgMessagesDirs['LocalisationUpdate'] = __DIR__ . '/i18n';
+	$GLOBALS['wgMessagesDirs']['LocalisationUpdate'] = __DIR__ . '/i18n';
 	/* wfWarn(
 		'Deprecated PHP entry point used for LocalisationUpdate extension. Please use wfLoadExtension instead, ' .
 		'see https://www.mediawiki.org/wiki/Extension_registration for more details.'
@@ -22,20 +22,20 @@ if ( function_exists( 'wfLoadExtension' ) ) {
  * NOTE: If this variable and $wgCacheDirectory are both false, this extension
  *       WILL NOT WORK.
  */
-$wgLocalisationUpdateDirectory = false;
+$GLOBALS['wgLocalisationUpdateDirectory'] = false;
 
 /**
  * Default repository source to use.
  * @since 2014-03
  */
-$wgLocalisationUpdateRepository = 'github';
+$GLOBALS['wgLocalisationUpdateRepository'] = 'github';
 
 /**
  * Available repository sources.
  * @since 2014-03
  */
-$wgLocalisationUpdateRepositories = array();
-$wgLocalisationUpdateRepositories['github'] = array(
+$GLOBALS['wgLocalisationUpdateRepositories'] = array();
+$GLOBALS['wgLocalisationUpdateRepositories']['github'] = array(
 	'mediawiki' =>
 		'https://raw.github.com/wikimedia/mediawiki/master/%PATH%',
 	'extension' =>
@@ -54,21 +54,22 @@ $wgLocalisationUpdateRepositories['github'] = array(
 #		'file:///resources/projects/mediawiki-skins/skins/%NAME%/%PATH%',
 #);
 
-$wgExtensionCredits['other'][] = array(
+$GLOBALS['wgExtensionCredits']['other'][] = array(
 	'path' => __FILE__,
 	'name' => 'LocalisationUpdate',
 	'author' => array( 'Tom Maaswinkel', 'Niklas Laxström', 'Roan Kattouw' ),
 	'version' => '1.3.0',
 	'url' => 'https://www.mediawiki.org/wiki/Extension:LocalisationUpdate',
 	'descriptionmsg' => 'localisationupdate-desc',
+	'license-name' => 'GPL-2.0+',
 );
 
-$wgHooks['LocalisationCacheRecache'][] = 'LocalisationUpdate::onRecache';
-$wgHooks['LocalisationCacheRecacheFallback'][] = 'LocalisationUpdate::onRecacheFallback';
 $GLOBALS['wgHooks']['UnitTestsList'][] = 'LocalisationUpdate::setupUnitTests';
+$GLOBALS['wgHooks']['LocalisationCacheRecache'][] = 'LocalisationUpdate::onRecache';
+$GLOBALS['wgHooks']['LocalisationCacheRecacheFallback'][] = 'LocalisationUpdate::onRecacheFallback';
 
 $dir = __DIR__;
-$wgMessagesDirs['LocalisationUpdate'] = __DIR__ . '/i18n';
-$wgExtensionMessagesFiles['LocalisationUpdate'] = "$dir/LocalisationUpdate.i18n.php";
+$GLOBALS['wgMessagesDirs']['LocalisationUpdate'] = __DIR__ . '/i18n';
+$GLOBALS['wgExtensionMessagesFiles']['LocalisationUpdate'] = "$dir/LocalisationUpdate.i18n.php";
 
 require "$dir/Autoload.php";

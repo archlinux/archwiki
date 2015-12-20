@@ -4,12 +4,12 @@
 			"Ashok modhvadia",
 			"Dsvyas",
 			"KartikMistry",
-			"Sushant savla"
+			"Sushant savla",
+			"Arbhatt"
 		]
 	},
 	"captcha-edit": "આ લેખમાં ફેરફાર કરવા માટે નીચે આપેલા સરળ દાખલાનો જવાબ તેની બાજુના ખાનામાં લખો ([[Special:Captcha/help|more info]]):",
-	"captcha-desc": "",
-	"captcha-label": "CAPTCHA",
+	"captcha-label": "કેપ્ચા",
 	"captcha-addurl": "તમે કરેલા ફેરફારોમાં નવી બાહ્ય કડીઓ સામેલ છે. સ્વચાલિત સ્પેમ/સ્પામ(spam) થી વિકિના બચાવ માટે, કૃપયા નીચે આપેલા સરળ દાખલાનો જવાબ તેની બાજુના ખાનામાં લખો અને આપનું સંપાદન સાચવો ([[Special:Captcha/help|more info]]):",
 	"captcha-badlogin": "આપોઆપ થતી ગુપ્તસંજ્ઞાની ચોરી (password cracking)થી વિકિના બચાવ માટે, કૃપયા નીચે આપેલા સરળ દાખલાનો જવાબ તેની બાજુના ખાનામાં લખો ([[Special:Captcha/help|more info]]):",
 	"captcha-createaccount": "આપોઆપ નવા ખાતા ખુલવાથી વિકિના બચાવ માટે નીચે આપેલા સરળ દાખલાનો જવાબ તેની બાજુના ખાનામાં લખો ([[Special:Captcha/help|વધુ વિગત]]):",

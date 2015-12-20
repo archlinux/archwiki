@@ -1,22 +1,22 @@
 <?php
-
 namespace Elastica\Test\Query;
 
 use Elastica\Document;
-use Elastica\Index;
-use Elastica\Type;
 use Elastica\Query\QueryString;
 use Elastica\Test\Base as BaseTest;
 
 class QueryStringTest extends BaseTest
 {
+    /**
+     * @group unit
+     */
     public function testSearchMultipleFields()
     {
         $str = md5(rand());
         $query = new QueryString($str);
 
         $expected = array(
-            'query' => $str
+            'query' => $str,
         );
 
         $this->assertEquals(array('query_string' => $expected), $query->toArray());
@@ -39,20 +39,17 @@ class QueryStringTest extends BaseTest
         }
     }
 
+    /**
+     * @group functional
+     */
     public function testSearch()
     {
-        $client = $this->_getClient();
-        $index = new Index($client, 'test');
-        $index->create(array(), true);
+        $index = $this->_createIndex();
         $index->getSettings()->setNumberOfReplicas(0);
-        //$index->getSettings()->setNumberOfShards(1);
-
-        $type = new Type($index, 'helloworld');
+        $type = $index->getType('helloworld');
 
         $doc = new Document(1, array('email' => 'test@test.com', 'username' => 'hanswurst', 'test' => array('2', '3', '5')));
         $type->addDocument($doc);
-
-        // Refresh index
         $index->refresh();
 
         $queryString = new QueryString('test*');
@@ -62,7 +59,9 @@ class QueryStringTest extends BaseTest
     }
 
     /**
-     * Tests if search in multiple fields is possible
+     * Tests if search in multiple fields is possible.
+     *
+     * @group functional
      */
     public function testSearchFields()
     {
@@ -82,6 +81,9 @@ class QueryStringTest extends BaseTest
         $this->assertEquals(1, $resultSet->count());
     }
 
+    /**
+     * @group unit
+     */
     public function testSetDefaultOperator()
     {
         $operator = 'AND';
@@ -93,6 +95,9 @@ class QueryStringTest extends BaseTest
         $this->assertEquals($data['query_string']['default_operator'], $operator);
     }
 
+    /**
+     * @group unit
+     */
     public function testSetDefaultField()
     {
         $default = 'field1';
@@ -104,23 +109,81 @@ class QueryStringTest extends BaseTest
         $this->assertEquals($data['query_string']['default_field'], $default);
     }
 
+    /**
+     * @group unit
+     */
     public function testSetRewrite()
     {
-            $rewrite = 'scoring_boolean';
-            $query = new QueryString('test');
-            $query->setRewrite($rewrite);
+        $rewrite = 'scoring_boolean';
+        $query = new QueryString('test');
+        $query->setRewrite($rewrite);
 
-            $data = $query->toArray();
+        $data = $query->toArray();
 
-            $this->assertEquals($data['query_string']['rewrite'], $rewrite);
+        $this->assertEquals($data['query_string']['rewrite'], $rewrite);
     }
 
     /**
+     * @group unit
      * @expectedException \Elastica\Exception\InvalidException
      */
     public function testSetQueryInvalid()
     {
         $query = new QueryString();
         $query->setQuery(array());
+    }
+
+    /**
+     * @group unit
+     */
+    public function testSetTimezone()
+    {
+        $timezone = 'Europe/Paris';
+        $text = 'date:[2012 TO 2014]';
+
+        $query = new QueryString($text);
+        $query->setTimezone($timezone);
+
+        $expected = array(
+            'query_string' => array(
+                'query' => $text,
+                'time_zone' => $timezone,
+            ),
+        );
+
+        $this->assertEquals($expected, $query->toArray());
+        $this->assertInstanceOf('Elastica\Query\QueryString', $query->setTimezone($timezone));
+    }
+
+    /**
+     * @group unit
+     */
+    public function testSetPhraseSlop()
+    {
+        $phraseSlop = 9;
+
+        $query = new QueryString('test');
+        $query->setPhraseSlop($phraseSlop);
+
+        $data = $query->toArray();
+        $this->assertEquals($phraseSlop, $data['query_string']['phrase_slop']);
+    }
+
+    /**
+     * @group functional
+     */
+    public function testSetBoost()
+    {
+        $index = $this->_createIndex();
+        $query = new QueryString('test');
+        $query->setBoost(9.3);
+
+        $doc = new Document('', array('name' => 'test'));
+        $index->getType('test')->addDocument($doc);
+        $index->refresh();
+
+        $resultSet = $index->search($query);
+
+        $this->assertEquals(1, $resultSet->count());
     }
 }

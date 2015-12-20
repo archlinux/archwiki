@@ -58,7 +58,6 @@ abstract class CaptchaStore {
 }
 
 class CaptchaSessionStore extends CaptchaStore {
-
 	protected function __construct() {
 		// Make sure the session is started
 		if ( session_id() === '' ) {
@@ -88,16 +87,18 @@ class CaptchaSessionStore extends CaptchaStore {
 }
 
 class CaptchaCacheStore extends CaptchaStore {
-
 	function store( $index, $info ) {
-		global $wgMemc, $wgCaptchaSessionExpiration;
-		$wgMemc->set( wfMemcKey( 'captcha', $index ), $info,
-			$wgCaptchaSessionExpiration );
+		global $wgCaptchaSessionExpiration;
+
+		ObjectCache::getMainStashInstance()->set(
+			wfMemcKey( 'captcha', $index ),
+			$info,
+			$wgCaptchaSessionExpiration
+		);
 	}
 
 	function retrieve( $index ) {
-		global $wgMemc;
-		$info = $wgMemc->get( wfMemcKey( 'captcha', $index ) );
+		$info = ObjectCache::getMainStashInstance()->get( wfMemcKey( 'captcha', $index ) );
 		if ( $info ) {
 			return $info;
 		} else {
@@ -106,8 +107,7 @@ class CaptchaCacheStore extends CaptchaStore {
 	}
 
 	function clear( $index ) {
-		global $wgMemc;
-		$wgMemc->delete( wfMemcKey( 'captcha', $index ) );
+		ObjectCache::getMainStashInstance()->delete( wfMemcKey( 'captcha', $index ) );
 	}
 
 	function cookiesNeeded() {

@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Test\Query;
 
 use Elastica\Document;
@@ -8,6 +7,9 @@ use Elastica\Test\Base as BaseTest;
 
 class RangeTest extends BaseTest
 {
+    /**
+     * @group functional
+     */
     public function testQuery()
     {
         $client = $this->_getClient();
@@ -15,14 +17,12 @@ class RangeTest extends BaseTest
         $index->create(array(), true);
         $type = $index->getType('test');
 
-        $doc = new Document(1, array('age' => 16, 'height' => 140));
-        $type->addDocument($doc);
-        $doc = new Document(2, array('age' => 21, 'height' => 155));
-        $type->addDocument($doc);
-        $doc = new Document(3, array('age' => 33, 'height' => 160));
-        $type->addDocument($doc);
-        $doc = new Document(4, array('age' => 68, 'height' => 160));
-        $type->addDocument($doc);
+        $type->addDocuments(array(
+            new Document(1, array('age' => 16, 'height' => 140)),
+            new Document(2, array('age' => 21, 'height' => 155)),
+            new Document(3, array('age' => 33, 'height' => 160)),
+            new Document(4, array('age' => 68, 'height' => 160)),
+        ));
 
         $index->optimize();
         $index->refresh();
@@ -38,6 +38,9 @@ class RangeTest extends BaseTest
         $this->assertEquals(2, $result);
     }
 
+    /**
+     * @group unit
+     */
     public function testToArray()
     {
         $range = new Range();
@@ -48,12 +51,15 @@ class RangeTest extends BaseTest
         $expectedArray = array(
             'range' => array(
                 'age' => $field,
-            )
+            ),
         );
 
         $this->assertEquals($expectedArray, $range->toArray());
     }
 
+    /**
+     * @group unit
+     */
     public function testConstruct()
     {
         $ranges = array('from' => 20, 'to' => 40);
@@ -65,7 +71,7 @@ class RangeTest extends BaseTest
         $expectedArray = array(
             'range' => array(
                 'age' => $ranges,
-            )
+            ),
         );
 
         $this->assertEquals($expectedArray, $range->toArray());

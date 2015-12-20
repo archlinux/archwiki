@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Test;
 
 use Elastica\Script;
@@ -7,6 +6,9 @@ use Elastica\Test\Base as BaseTest;
 
 class ScriptTest extends BaseTest
 {
+    /**
+     * @group unit
+     */
     public function testConstructor()
     {
         $value = "_score * doc['my_numeric_field'].value";
@@ -50,6 +52,9 @@ class ScriptTest extends BaseTest
         $this->assertEquals($expected, $script->toArray());
     }
 
+    /**
+     * @group unit
+     */
     public function testCreateString()
     {
         $string = '_score * 2.0';
@@ -65,6 +70,9 @@ class ScriptTest extends BaseTest
         $this->assertEquals($expected, $script->toArray());
     }
 
+    /**
+     * @group unit
+     */
     public function testCreateScript()
     {
         $data = new Script('_score * 2.0');
@@ -75,6 +83,9 @@ class ScriptTest extends BaseTest
         $this->assertSame($data, $script);
     }
 
+    /**
+     * @group unit
+     */
     public function testCreateArray()
     {
         $string = '_score * 2.0';
@@ -101,6 +112,7 @@ class ScriptTest extends BaseTest
     }
 
     /**
+     * @group unit
      * @dataProvider dataProviderCreateInvalid
      * @expectedException \Elastica\Exception\InvalidException
      */
@@ -116,14 +128,42 @@ class ScriptTest extends BaseTest
     {
         return array(
             array(
-                new \stdClass
+                new \stdClass(),
             ),
             array(
                 array('params' => array('param1' => 'one')),
             ),
             array(
                 array('script' => '_score * 2.0', 'params' => 'param'),
-            )
+            ),
         );
+    }
+
+    /**
+     * @group unit
+     */
+    public function testSetLang()
+    {
+        $script = new Script('foo', array(), Script::LANG_GROOVY);
+        $this->assertEquals(Script::LANG_GROOVY, $script->getLang());
+
+        $script->setLang(Script::LANG_PYTHON);
+        $this->assertEquals(Script::LANG_PYTHON, $script->getLang());
+
+        $this->assertInstanceOf('Elastica\Script', $script->setLang(Script::LANG_PYTHON));
+    }
+
+    /**
+     * @group unit
+     */
+    public function testSetScript()
+    {
+        $script = new Script('foo');
+        $this->assertEquals('foo', $script->getScript());
+
+        $script->setScript('bar');
+        $this->assertEquals('bar', $script->getScript());
+
+        $this->assertInstanceOf('Elastica\Script', $script->setScript('foo'));
     }
 }

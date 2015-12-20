@@ -6,6 +6,8 @@
 			"Southparkfan"
 		]
 	},
+	"action-titleblacklistlog": "logboek zwarte lijst voor paginanamen te bekijken",
+	"log-name-titleblacklist": "Logboek zwarte lijst voor paginanamen",
 	"titleblacklist-desc": "Voorkomt het aanmaken van pagina's en gebruikers via een [[MediaWiki:Titleblacklist|zwarte lijst]] en een [[MediaWiki:Titlewhitelist|witte lijst]]",
 	"titleblacklist": "# Dit is een zwarte lijst voor paginanamen. Paginanamen en gebruikers die voldoen aan een reguliere expressie op deze pagina kunnen niet aangemaakt worden.\n# Gebruik \"#\" voor opmerkingen.\n# Regels in de zwarte lijst zijn niet hoofdlettergevoelig.",
 	"titlewhitelist": "# Dit is een witte lijst voor paginanamen. Gebruik \"#\" voor opmerkingen.\n# Regels in de witte lijst zijn niet hoofdlettergevoelig.",
@@ -16,5 +18,6 @@
 	"titleblacklist-invalid": "De volgende {{PLURAL:$1|regel|regels}} in de zwarte lijst voor paginanamen {{PLURAL:$1|is|zijn}} ongeldig.\nVerbeter die {{PLURAL:$1|regel|regels}} voordat u de lijst opslaat:",
 	"titleblacklist-override": "Zwarte lijst negeren",
 	"right-tboverride": "De zwarte lijst voor pagina- en gebruikersnamen omzeilen",
-	"right-tboverride-account": "Zwarte lijst voor gebruikersnamen negeren"
+	"right-tboverride-account": "Zwarte lijst voor gebruikersnamen negeren",
+	"right-titleblacklistlog": "Logboek zwarte lijst voor paginanamen bekijken"
 }

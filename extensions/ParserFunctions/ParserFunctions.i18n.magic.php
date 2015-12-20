@@ -56,7 +56,7 @@ $magicWords['ar'] = array(
 	'urldecode' => array( 0, 'فك_مسار' ),
 );
 
-/** Egyptian Spoken Arabic (مصرى) */
+/** Egyptian Arabic (مصرى) */
 $magicWords['arz'] = array(
 	'expr' => array( 0, 'تعبير' ),
 	'if' => array( 0, 'لو' ),
@@ -80,7 +80,7 @@ $magicWords['arz'] = array(
 	'urldecode' => array( 0, 'فك_مسار' ),
 );
 
-/** South Azerbaijani (تورکجه) */
+/** South Azerbaijani (تۆرکجه) */
 $magicWords['azb'] = array(
 	'ifeq' => array( 0, 'ایربیر' ),
 	'ifexpr' => array( 0, 'ایرحساب' ),
@@ -110,6 +110,30 @@ $magicWords['cs'] = array(
 	'len' => array( 0, 'délka' ),
 	'count' => array( 0, 'počet' ),
 	'replace' => array( 0, 'nahradit' ),
+);
+
+/** Chuvash (Чӑвашла) */
+$magicWords['cv'] = array(
+	'expr' => array( 0, 'expr' ),
+	'if' => array( 0, 'if' ),
+	'ifeq' => array( 0, 'ifeq' ),
+	'ifexpr' => array( 0, 'ifexpr' ),
+	'iferror' => array( 0, 'iferror' ),
+	'switch' => array( 0, 'switch' ),
+	'default' => array( 0, '#default' ),
+	'ifexist' => array( 0, 'ifexist' ),
+	'time' => array( 0, 'time' ),
+	'timel' => array( 0, 'timel' ),
+	'rel2abs' => array( 0, 'rel2abs' ),
+	'titleparts' => array( 0, 'titleparts' ),
+	'len' => array( 0, 'len' ),
+	'pos' => array( 0, 'pos' ),
+	'rpos' => array( 0, 'rpos' ),
+	'sub' => array( 0, 'sub' ),
+	'count' => array( 0, 'count' ),
+	'replace' => array( 0, 'replace' ),
+	'explode' => array( 0, 'explode' ),
+	'urldecode' => array( 0, 'urldecode' ),
 );
 
 /** German (Deutsch) */
@@ -336,6 +360,11 @@ $magicWords['ja'] = array(
 	'replace' => array( 0, '置き換え' ),
 	'explode' => array( 0, '分割' ),
 	'urldecode' => array( 0, 'URLデコード', 'ＵＲＬデコード' ),
+);
+
+/** Georgian (ქართული) */
+$magicWords['ka'] = array(
+	'time' => array( 0, 'დრო' ),
 );
 
 /** Korean (한국어) */

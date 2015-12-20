@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Test\Multi;
 
 use Elastica\Document;
@@ -41,6 +40,9 @@ class SearchTest extends BaseTest
         return $type;
     }
 
+    /**
+     * @group unit
+     */
     public function testConstruct()
     {
         $client = $this->_getClient();
@@ -50,6 +52,9 @@ class SearchTest extends BaseTest
         $this->assertSame($client, $multiSearch->getClient());
     }
 
+    /**
+     * @group unit
+     */
     public function testSetSearches()
     {
         $client = $this->_getClient();
@@ -79,6 +84,9 @@ class SearchTest extends BaseTest
         $this->assertCount(0, $searches);
     }
 
+    /**
+     * @group unit
+     */
     public function testSetSearchesByKeys()
     {
         $client = $this->_getClient();
@@ -108,6 +116,9 @@ class SearchTest extends BaseTest
         $this->assertCount(0, $searches);
     }
 
+    /**
+     * @group functional
+     */
     public function testSearch()
     {
         $type = $this->_createType();
@@ -200,6 +211,9 @@ class SearchTest extends BaseTest
         $this->assertEquals(6, $resultSets[1]->getTotalHits());
     }
 
+    /**
+     * @group functional
+     */
     public function testSearchWithKeys()
     {
         $type = $this->_createType();
@@ -217,7 +231,7 @@ class SearchTest extends BaseTest
         $query1->setSize(2);
         $search1->setQuery($query1);
 
-        $multiSearch->addSearch($search1, "search1");
+        $multiSearch->addSearch($search1, 'search1');
 
         $this->assertCount(1, $multiSearch->getSearches());
 
@@ -230,13 +244,13 @@ class SearchTest extends BaseTest
         $query2->setSize(3);
         $search2->setQuery($query2);
 
-        $multiSearch->addSearch($search2, "search2");
+        $multiSearch->addSearch($search2, 'search2');
 
         $this->assertCount(2, $multiSearch->getSearches());
 
         $searches = $multiSearch->getSearches();
-        $this->assertSame($search1, $searches["search1"]);
-        $this->assertSame($search2, $searches["search2"]);
+        $this->assertSame($search1, $searches['search1']);
+        $this->assertSame($search2, $searches['search2']);
 
         $multiResultSet = $multiSearch->search();
 
@@ -248,24 +262,24 @@ class SearchTest extends BaseTest
             $this->assertInstanceOf('Elastica\ResultSet', $resultSet);
         }
 
-        $this->assertInstanceOf('Elastica\ResultSet', $multiResultSet["search1"]);
-        $this->assertInstanceOf('Elastica\ResultSet', $multiResultSet["search2"]);
+        $this->assertInstanceOf('Elastica\ResultSet', $multiResultSet['search1']);
+        $this->assertInstanceOf('Elastica\ResultSet', $multiResultSet['search2']);
 
         $resultSets = $multiResultSet->getResultSets();
 
         $this->assertInternalType('array', $resultSets);
 
-        $this->assertArrayHasKey("search1", $resultSets);
-        $this->assertInstanceOf('Elastica\ResultSet', $resultSets["search1"]);
-        $this->assertCount(2, $resultSets["search1"]);
-        $this->assertSame($query1, $resultSets["search1"]->getQuery());
-        $this->assertEquals(3, $resultSets["search1"]->getTotalHits());
+        $this->assertArrayHasKey('search1', $resultSets);
+        $this->assertInstanceOf('Elastica\ResultSet', $resultSets['search1']);
+        $this->assertCount(2, $resultSets['search1']);
+        $this->assertSame($query1, $resultSets['search1']->getQuery());
+        $this->assertEquals(3, $resultSets['search1']->getTotalHits());
 
-        $this->assertArrayHasKey("search2", $resultSets);
-        $this->assertInstanceOf('Elastica\ResultSet', $resultSets["search2"]);
-        $this->assertCount(3, $resultSets["search2"]);
-        $this->assertSame($query2, $resultSets["search2"]->getQuery());
-        $this->assertEquals(6, $resultSets["search2"]->getTotalHits());
+        $this->assertArrayHasKey('search2', $resultSets);
+        $this->assertInstanceOf('Elastica\ResultSet', $resultSets['search2']);
+        $this->assertCount(3, $resultSets['search2']);
+        $this->assertSame($query2, $resultSets['search2']->getQuery());
+        $this->assertEquals(6, $resultSets['search2']->getTotalHits());
 
         $this->assertFalse($multiResultSet->hasError());
 
@@ -282,19 +296,22 @@ class SearchTest extends BaseTest
 
         $this->assertInternalType('array', $resultSets);
 
-        $this->assertArrayHasKey("search1", $resultSets);
-        $this->assertInstanceOf('Elastica\ResultSet', $resultSets["search1"]);
-        $this->assertCount(0, $resultSets["search1"]);
-        $this->assertSame($query1, $resultSets["search1"]->getQuery());
-        $this->assertEquals(3, $resultSets["search1"]->getTotalHits());
+        $this->assertArrayHasKey('search1', $resultSets);
+        $this->assertInstanceOf('Elastica\ResultSet', $resultSets['search1']);
+        $this->assertCount(0, $resultSets['search1']);
+        $this->assertSame($query1, $resultSets['search1']->getQuery());
+        $this->assertEquals(3, $resultSets['search1']->getTotalHits());
 
-        $this->assertArrayHasKey("search2", $resultSets);
-        $this->assertInstanceOf('Elastica\ResultSet', $resultSets["search2"]);
-        $this->assertCount(0, $resultSets["search2"]);
-        $this->assertSame($query2, $resultSets["search2"]->getQuery());
-        $this->assertEquals(6, $resultSets["search2"]->getTotalHits());
+        $this->assertArrayHasKey('search2', $resultSets);
+        $this->assertInstanceOf('Elastica\ResultSet', $resultSets['search2']);
+        $this->assertCount(0, $resultSets['search2']);
+        $this->assertSame($query2, $resultSets['search2']->getQuery());
+        $this->assertEquals(6, $resultSets['search2']->getTotalHits());
     }
 
+    /**
+     * @group functional
+     */
     public function testSearchWithError()
     {
         $type = $this->_createType();
@@ -340,6 +357,9 @@ class SearchTest extends BaseTest
         $this->assertTrue($multiResultSet->hasError());
     }
 
+    /**
+     * @group functional
+     */
     public function testSearchWithErrorWithKeys()
     {
         $type = $this->_createType();
@@ -352,7 +372,7 @@ class SearchTest extends BaseTest
         $searchGood->setQuery('bunny');
         $searchGood->addIndex($index)->addType($type);
 
-        $multiSearch->addSearch($searchGood, "search1");
+        $multiSearch->addSearch($searchGood, 'search1');
 
         $searchBad = new Search($client);
         $searchBadQuery = new Range();
@@ -369,11 +389,11 @@ class SearchTest extends BaseTest
         $resultSets = $multiResultSet->getResultSets();
         $this->assertInternalType('array', $resultSets);
 
-        $this->assertArrayHasKey("search1", $resultSets);
-        $this->assertInstanceOf('Elastica\ResultSet', $resultSets["search1"]);
-        $this->assertSame($searchGood->getQuery(), $resultSets["search1"]->getQuery());
-        $this->assertSame(6, $resultSets["search1"]->getTotalHits());
-        $this->assertCount(6, $resultSets["search1"]);
+        $this->assertArrayHasKey('search1', $resultSets);
+        $this->assertInstanceOf('Elastica\ResultSet', $resultSets['search1']);
+        $this->assertSame($searchGood->getQuery(), $resultSets['search1']->getQuery());
+        $this->assertSame(6, $resultSets['search1']->getTotalHits());
+        $this->assertCount(6, $resultSets['search1']);
 
         $this->assertArrayHasKey(0, $resultSets);
         $this->assertInstanceOf('Elastica\ResultSet', $resultSets[0]);
@@ -385,6 +405,9 @@ class SearchTest extends BaseTest
         $this->assertTrue($multiResultSet->hasError());
     }
 
+    /**
+     * @group functional
+     */
     public function testGlobalSearchTypeSearch()
     {
         $type = $this->_createType();
@@ -466,6 +489,9 @@ class SearchTest extends BaseTest
         $this->assertEquals(6, $resultSets[1]->getTotalHits());
     }
 
+    /**
+     * @group functional
+     */
     public function testGlobalSearchTypeSearchWithKeys()
     {
         $type = $this->_createType();

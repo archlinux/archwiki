@@ -1,13 +1,15 @@
 <?php
-
 namespace Elastica\Test;
 
 use Elastica\Param;
-use Elastica\Util;
 use Elastica\Test\Base as BaseTest;
+use Elastica\Util;
 
 class ParamTest extends BaseTest
 {
+    /**
+     * @group unit
+     */
     public function testToArrayEmpty()
     {
         $param = new Param();
@@ -15,6 +17,9 @@ class ParamTest extends BaseTest
         $this->assertEquals(array($this->_getFilterName($param) => array()), $param->toArray());
     }
 
+    /**
+     * @group unit
+     */
     public function testSetParams()
     {
         $param = new Param();
@@ -25,6 +30,9 @@ class ParamTest extends BaseTest
         $this->assertEquals(array($this->_getFilterName($param) => $params), $param->toArray());
     }
 
+    /**
+     * @group unit
+     */
     public function testSetGetParam()
     {
         $param = new Param();
@@ -39,6 +47,9 @@ class ParamTest extends BaseTest
         $this->assertEquals($value, $param->getParam($key));
     }
 
+    /**
+     * @group unit
+     */
     public function testAddParam()
     {
         $param = new Param();
@@ -52,6 +63,9 @@ class ParamTest extends BaseTest
         $this->assertEquals(array($value), $param->getParam($key));
     }
 
+    /**
+     * @group unit
+     */
     public function testAddParam2()
     {
         $param = new Param();
@@ -68,6 +82,7 @@ class ParamTest extends BaseTest
     }
 
     /**
+     * @group unit
      * @expectedException \Elastica\Exception\InvalidException
      */
     public function testGetParamInvalid()
@@ -77,6 +92,9 @@ class ParamTest extends BaseTest
         $param->getParam('notest');
     }
 
+    /**
+     * @group unit
+     */
     public function testHasParam()
     {
         $param = new Param();

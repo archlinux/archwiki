@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Test\Filter;
 
 use Elastica\Filter\AbstractMulti;
@@ -8,6 +7,9 @@ use Elastica\Test\Base as BaseTest;
 
 class AbstractMultiTest extends BaseTest
 {
+    /**
+     * @group unit
+     */
     public function testConstruct()
     {
         $stub = $this->getStub();
@@ -15,6 +17,9 @@ class AbstractMultiTest extends BaseTest
         $this->assertEmpty($stub->getFilters());
     }
 
+    /**
+     * @group unit
+     */
     public function testAddFilter()
     {
         $stub = $this->getStub();
@@ -23,12 +28,15 @@ class AbstractMultiTest extends BaseTest
         $stub->addFilter($filter);
 
         $expected = array(
-            $filter->toArray()
+            $filter->toArray(),
         );
 
         $this->assertEquals($expected, $stub->getFilters());
     }
 
+    /**
+     * @group unit
+     */
     public function testSetFilters()
     {
         $stub = $this->getStub();
@@ -37,12 +45,15 @@ class AbstractMultiTest extends BaseTest
         $stub->setFilters(array($filter));
 
         $expected = array(
-            $filter->toArray()
+            $filter->toArray(),
         );
 
         $this->assertEquals($expected, $stub->getFilters());
     }
 
+    /**
+     * @group unit
+     */
     public function testToArray()
     {
         $stub = $this->getStub();
@@ -52,13 +63,16 @@ class AbstractMultiTest extends BaseTest
 
         $expected = array(
             $stub->getBaseName() => array(
-                $filter->toArray()
-            )
+                $filter->toArray(),
+            ),
         );
 
         $this->assertEquals($expected, $stub->toArray());
     }
 
+    /**
+     * @group unit
+     */
     public function testToArrayWithParam()
     {
         $stub = $this->getStub();
@@ -72,9 +86,9 @@ class AbstractMultiTest extends BaseTest
             $stub->getBaseName() => array(
                 '_cache' => true,
                 'filters' => array(
-                    $filter->toArray()
-                )
-            )
+                    $filter->toArray(),
+                ),
+            ),
         );
 
         $this->assertEquals($expected, $stub->toArray());

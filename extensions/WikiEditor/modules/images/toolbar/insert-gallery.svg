@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg id="svg9197" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" height="22" width="22" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/">
+ <defs id="defs9199">
+  <radialGradient id="radialGradient9772" gradientUnits="userSpaceOnUse" cy="6.458" cx="8.1703" gradientTransform="matrix(-1.0337 .97885 -.83095 -1.1642 881.62 640.19)" r="5.4585">
+   <stop id="stop9762" stop-color="#fff" offset="0"/>
+   <stop id="stop9764" stop-color="#fff" stop-opacity="0" offset="1"/>
+  </radialGradient>
+  <linearGradient id="linearGradient9784" y2="8.18" gradientUnits="userSpaceOnUse" x2="17.905" gradientTransform="matrix(1.1632 0 0 1.3512 858.27 629.03)" y1="12.735" x1="7.7879">
+   <stop id="stop9780" stop-color="#f0a829" offset="0"/>
+   <stop id="stop9782" stop-color="#f0ad3e" offset="1"/>
+  </linearGradient>
+  <filter id="filter9873">
+   <feGaussianBlur id="feGaussianBlur9875" stdDeviation="0.12340545"/>
+  </filter>
+ </defs>
+ <metadata id="metadata9202">
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <g id="layer1" transform="translate(-860.43 -632.79)">
+  <g id="g9740" transform="matrix(.96584 -.25915 .25915 .96584 -155.71 250.69)">
+   <rect id="rect9216" height="10.079" width="15.655" stroke="#88897f" y="638.24" x="883.86" stroke-width=".92526" fill="#fefefe"/>
+   <rect id="rect9726" height="7.0982" width="12.768" y="639.75" x="885.29" fill="#88acd3"/>
+  </g>
+  <g id="g9732" transform="matrix(.94981 .31284 -.31284 .94981 225.24 -243.05)">
+   <rect id="rect9734" height="10.079" width="15.655" stroke="#88897f" y="638.24" x="883.86" stroke-width=".92526" fill="#fefefe"/>
+   <rect id="rect9736" height="7.0982" width="12.768" y="639.75" x="885.29" fill="#6bbe21"/>
+  </g>
+  <g>
+   <rect id="rect9746" height="10.079" width="15.655" stroke="#88897f" y="638.32" x="865.34" stroke-width=".92526" fill="#fefefe"/>
+   <rect id="rect9774" height="7.0936" width="12.698" y="639.78" x="866.73" fill="url(#linearGradient9784)"/>
+   <path id="path9756" d="m13.872 11.5a1.5298 1.5298 0 0 1 -1.5298 1.5298 1.5298 1.5298 0 0 1 -1.5298 -1.5298 1.5298 1.5298 0 0 1 1.5298 -1.5298 1.5298 1.5298 0 0 1 1.5298 1.5298z" transform="translate(860.6 632.93)" fill="#fff"/>
+   <rect id="rect9758" opacity=".73899" height="7.0336" width="12.698" y="639.81" x="866.76" fill="url(#radialGradient9772)"/>
+  </g>
+  <path id="path9752" d="m866.75 646.07 1.9194-0.11086 0.32595-0.96072 1.1951-1.1455 0.97784 1.1085 1.7022 0.25865 2.6076-0.25865 0.50702-0.99768 1.4124 0.36951 1.0503 1.2933 1.0503 0.44342v0.84987h-12.712z"/>
+  <path id="rect9748" opacity=".45912" d="m6.3438 7.0312v7.125h12.75v-7.125h-12.75zm0.71875 0.6875h11.125v5.7188h-11.125v-5.7188z" transform="matrix(1.0187 0 0 1.0634 860.13 632.15)" filter="url(#filter9873)"/>
+ </g>
+</svg>

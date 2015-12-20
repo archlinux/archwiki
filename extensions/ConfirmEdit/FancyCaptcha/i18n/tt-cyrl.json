@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Derslek"
+			"Derslek",
+			"Ильнар"
 		]
 	},
+	"fancycaptcha-createaccount": "Кулланучы язмалары автоматик рәвештә ясалудан саклар өчен, почмакта курәсәтелгән сузләрне кертүне сорыйбыз ([[Special:Captcha/help|тулырак…]]):",
 	"fancycaptcha-reload-text": "Яңарту"
 }

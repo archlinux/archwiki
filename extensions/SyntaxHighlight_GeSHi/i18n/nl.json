@@ -2,13 +2,10 @@
 	"@metadata": {
 		"authors": [
 			"Siebrand",
-			"Tvdm"
+			"Tvdm",
+			"Romaine"
 		]
 	},
-	"syntaxhighlight-desc": "Voorziet in het markeren van syntaxis voor <code>&lt;syntaxhighlight&gt;</code> met [http://qbnz.com/highlighter/ GeSHi Highlighter]",
-	"syntaxhighlight-specify": "Geef een taal als volgt op:",
-	"syntaxhighlight-supported": "Ondersteunde talen voor syntaxismarkering:",
-	"syntaxhighlight-err-loading": "(fout tijdens het laden van de lijst met ondersteunde talen)",
-	"syntaxhighlight-err-language": "Ongeldige taal.",
-	"geshi.css": "/* Hier geplaatste CSS wordt toegepast op GeSHi Syntax Highlighting */"
+	"syntaxhighlight-desc": "Voorziet in het markeren van syntaxis voor <code>&lt;syntaxhighlight&gt;</code> met [http://pygments.org/ Pygments]",
+	"syntaxhighlight-error-category": "Pagina's met fouten in de syntaxmarkering"
 }

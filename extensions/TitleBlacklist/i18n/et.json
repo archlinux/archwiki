@@ -17,9 +17,14 @@
 	"titleblacklist-forbidden-new-account": "Kasutajat nimega \"$2\" on keelatud luua.\nSee vastab järgmisele musta nimekirja sissekandele: <code>$1</code>",
 	"titleblacklist-invalid": "{{PLURAL:$1|Järgmine|Järgmised}} musta nimekirja {{PLURAL:$1|rida on vigane|read on vigased}}.\nPalun paranda {{PLURAL:$1|see|need}} enne salvestamist:",
 	"titleblacklist-override": "Eira musta nimekirja",
-	"titleblacklist-autoconfirmed-warning": "<strong>Märkus:</strong> Seda lehekülge saavad redigeerida ainult kasutajad õigusega <code>autoconfirmed</code>, sest see vastab pealkirjade musta nimekirja järgmisele sissekandele:<br /><code>$1</code>",
 	"titleblacklist-warning": "<strong>Märkus: Seda lehekülge saavad redigeerida ainult administraatorid ja kasutajad õigusega <code>tboverride</code>, sest see vastab pealkirjade musta nimekirja järgmisele sissekandele:</strong><br /><code>$1</code>",
 	"right-tboverride": "Eirata pealkirjade või kasutajanimede musta nimekirja",
 	"right-tboverride-account": "Eirata kasutajanimede musta nimekirja",
-	"right-titleblacklistlog": "Vaadata pealkirjade musta nimekirja logi"
+	"right-titleblacklistlog": "Vaadata pealkirjade musta nimekirja logi",
+	"apihelp-titleblacklist-description": "Artikli pealkirja, failinime või kasutajanime valideerimine pealkirjade musta nimekirja vastu.",
+	"apihelp-titleblacklist-param-title": "Sõne, mida musta nimekirja vastu valideerida.",
+	"apihelp-titleblacklist-param-action": "Toiming, mida kontrollida.",
+	"apihelp-titleblacklist-param-nooverride": "Ära ürita pealkirjade musta nimekirja ümber kehtestada.",
+	"apihelp-titleblacklist-example-1": "Kontrolli, kas [[Foo]] on mustas nimekirjas",
+	"apihelp-titleblacklist-example-2": "Kontrolli, kas [[Bar]] on mustas nimekirjas redigeerimise keelamisega"
 }

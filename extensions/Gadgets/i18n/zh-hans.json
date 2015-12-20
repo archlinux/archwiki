@@ -27,6 +27,7 @@
 	"gadgets-required-rights": "需要以下{{PLURAL:$2|权限}}：\n\n$1",
 	"gadgets-required-skins": "可用在{{PLURAL:$2|$1外观|以下外观：$1}}。",
 	"gadgets-default": "默认所有人启用。",
+	"gadgets-legacy": "未加载小工具。请迁移至ResourceLoader。\n（[https://www.mediawiki.org/wiki/ResourceLoader/Migration_guide_(users) 了解更多]）",
 	"gadgets-export": "导出",
 	"gadgets-export-title": "导出小工具",
 	"gadgets-not-found": "找不到“$1”小工具。",
@@ -47,5 +48,9 @@
 	"apihelp-query+gadgets-example-2": "获取含全部可能属性的小工具列表",
 	"apihelp-query+gadgets-example-3": "获取属于分类“foo”的小工具列表",
 	"apihelp-query+gadgets-example-4": "获取有关小工具“foo”和“bar”的信息",
-	"apihelp-query+gadgets-example-5": "获取当前用户启用的小工具列表"
+	"apihelp-query+gadgets-example-5": "获取当前用户启用的小工具列表",
+	"right-gadgets-edit": "编辑小工具的JavaScript和CSS页面",
+	"action-gadgets-edit": "编辑此小工具的JavaScript或CSS页面",
+	"right-gadgets-definition-edit": "编辑小工具定义",
+	"action-gadgets-definition-edit": "编辑此小工具的定义"
 }

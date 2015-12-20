@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Multi;
 
 use Elastica\Client;
@@ -8,12 +7,11 @@ use Elastica\Request;
 use Elastica\Search as BaseSearch;
 
 /**
- * Elastica multi search
+ * Elastica multi search.
  *
- * @category Xodoa
- * @package Elastica
  * @author munkie
- * @link http://www.elasticsearch.org/guide/reference/api/multi-search.html
+ *
+ * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/search-multi-search.html
  */
 class Search
 {
@@ -33,7 +31,7 @@ class Search
     protected $_client;
 
     /**
-     * Constructs search object
+     * Constructs search object.
      *
      * @param \Elastica\Client $client Client object
      */
@@ -51,8 +49,9 @@ class Search
     }
 
     /**
-     * @param  \Elastica\Client       $client
-     * @return \Elastica\Multi\Search
+     * @param \Elastica\Client $client
+     *
+     * @return $this
      */
     public function setClient(Client $client)
     {
@@ -62,7 +61,7 @@ class Search
     }
 
     /**
-     * @return \Elastica\Multi\Search
+     * @return $this
      */
     public function clearSearches()
     {
@@ -71,25 +70,27 @@ class Search
         return $this;
     }
 
-  /**
-   * @param  \Elastica\Search $search
-   * @param  string           $key      Optional key
-   * @return \Elastica\Multi\Search
-   */
+    /**
+     * @param \Elastica\Search $search
+     * @param string           $key    Optional key
+     *
+     * @return $this
+     */
     public function addSearch(BaseSearch $search, $key = null)
     {
         if ($key) {
-          $this->_searches[$key] = $search;
+            $this->_searches[$key] = $search;
         } else {
-          $this->_searches[]     = $search;
+            $this->_searches[] = $search;
         }
 
         return $this;
     }
 
     /**
-     * @param  array|\Elastica\Search[] $searches
-     * @return \Elastica\Multi\Search
+     * @param array|\Elastica\Search[] $searches
+     *
+     * @return $this
      */
     public function addSearches(array $searches)
     {
@@ -101,8 +102,9 @@ class Search
     }
 
     /**
-     * @param  array|\Elastica\Search[] $searches
-     * @return \Elastica\Multi\Search
+     * @param array|\Elastica\Search[] $searches
+     *
+     * @return $this
      */
     public function setSearches(array $searches)
     {
@@ -121,8 +123,9 @@ class Search
     }
 
     /**
-     * @param  string                $searchType
-     * @return \Elastica\Multi\Search
+     * @param string $searchType
+     *
+     * @return $this
      */
     public function setSearchType($searchType)
     {
@@ -155,30 +158,32 @@ class Search
     {
         $data = '';
         foreach ($this->getSearches() as $search) {
-            $data.= $this->_getSearchData($search);
+            $data .= $this->_getSearchData($search);
         }
 
         return $data;
     }
 
     /**
-     * @param  \Elastica\Search $search
+     * @param \Elastica\Search $search
+     *
      * @return string
      */
     protected function _getSearchData(BaseSearch $search)
     {
         $header = $this->_getSearchDataHeader($search);
-        $header = (empty($header)) ? new \stdClass : $header;
+        $header = (empty($header)) ? new \stdClass() : $header;
         $query = $search->getQuery();
 
-        $data = JSON::stringify($header) . "\n";
-        $data.= JSON::stringify($query->toArray()) . "\n";
+        $data = JSON::stringify($header)."\n";
+        $data .= JSON::stringify($query->toArray())."\n";
 
         return $data;
     }
 
     /**
-     * @param  \Elastica\Search $search
+     * @param \Elastica\Search $search
+     *
      * @return array
      */
     protected function _getSearchDataHeader(BaseSearch $search)

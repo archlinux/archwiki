@@ -22,7 +22,6 @@
 	"titleblacklist-forbidden-new-account": "שם המשתמש \"$2\" נאסר ליצירה.\nהוא מתאים לערך הבא ברשימה השחורה: <code>$1</code>",
 	"titleblacklist-invalid": "{{PLURAL:$1|השורה הבאה|השורות הבאות}} ברשימת הכותרות האסורות {{PLURAL:$1|אינה תקינה|אינם תקינים}};\nאנא תקנו {{PLURAL:$1|אותה|אותן}} לפני השמירה:",
 	"titleblacklist-override": "להתעלם מהרשימה השחורה",
-	"titleblacklist-autoconfirmed-warning": "<strong>לתשומת לבך:</strong> רק משתמשים בעלי הרשאת <code>autoconfirmed</code> (משתמשים ותיקים) יכולים לערוך את הדף הזה כי הוא מתאים לשורה הבאה ברשימה השחורה:<br /><code>$1</code>",
 	"titleblacklist-warning": "<strong>לתשומת לבך:</strong> רק מפעילים ומשתמשים אחרים בעלי הרשאת <code>tboverride</code> יכולים לערוך את הדף הזה כי הוא מתאים לשורה הבאה ברשימה השחורה:<br /><code>$1</code>",
 	"right-tboverride": "עקיפת כותרת הרשימה השחורה של שמות המשתמשים",
 	"right-tboverride-account": "עקיפת הרשימה השחורה של שמות המשתמשים",

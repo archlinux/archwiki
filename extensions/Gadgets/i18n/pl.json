@@ -6,7 +6,8 @@
 			"Marcin Łukasz Kiejzik",
 			"Matma Rex",
 			"Sovq",
-			"Sp5uhe"
+			"Sp5uhe",
+			"Peter Bowman"
 		]
 	},
 	"gadgets-desc": "Pozwala użytkownikom wybrać [[Special:Gadgets|gadżety CSS i JavaScript]] na [[Special:Preferences#mw-prefsection-gadgets|stronie preferencji]]",
@@ -23,5 +24,9 @@
 	"gadgets-export-title": "Eksportowanie gadżetów",
 	"gadgets-not-found": "Nie odnaleziono gadżetu „$1”.",
 	"gadgets-export-text": "Jeśli chcesz wyeksportować gadżet „$1” kliknij na przycisk „{{int:gadgets-export-download}}”, zapisz pobrany plik, wejdź na stronę „Special:Import” w docelowej wiki i prześlij go. Następnie dodaj poniższy kod do strony MediaWiki:Gadgets-definition:\n<pre>$2</pre>\nMusisz mieć właściwe uprawnienia na wiki docelowej (w tym do edycji komunikatów systemowych) oraz musi być włączony import na serwer poprzez przesłanie pliku.",
-	"gadgets-export-download": "Pobierz"
+	"gadgets-export-download": "Pobierz",
+	"right-gadgets-edit": "Edycja gadżetów JavaScript oraz stron CSS",
+	"action-gadgets-edit": "edytowania tego gadżetu JavaScript lub strony CSS",
+	"right-gadgets-definition-edit": "Edycja definicji gadżetów",
+	"action-gadgets-definition-edit": "edytowania tej definicji gadżetu"
 }

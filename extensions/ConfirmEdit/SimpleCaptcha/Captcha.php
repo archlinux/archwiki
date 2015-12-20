@@ -1,8 +1,8 @@
 <?php
 
-class SimpleCaptcha {
-	private $showEditCaptcha = false;
+use MediaWiki\Logger\LoggerFactory;
 
+class SimpleCaptcha {
 	/** @var boolean|null Was the CAPTCHA already passed and if yes, with which result? */
 	private $captchaSolved = null;
 
@@ -39,7 +39,7 @@ class SimpleCaptcha {
 	 *
 	 * @return string HTML
 	 */
-	function getForm() {
+	function getForm( OutputPage $out ) {
 		$captcha = $this->getCaptcha();
 		$index = $this->storeCaptcha( $captcha );
 
@@ -69,28 +69,12 @@ class SimpleCaptcha {
 		if ( !isset( $page->ConfirmEdit_ActivateCaptcha ) ) {
 			return;
 		}
-		unset( $page->ConfirmEdit_ActivateCaptcha );
-		$out->addHTML(
-			Html::openElement(
-				'div',
-				array(
-					'id' => 'mw-confirmedit-error-area',
-					'class' => 'errorbox'
-				)
-			) .
-			Html::element(
-				'strong',
-				array(),
-				$out->msg( 'errorpagetitle' )->text()
-			) .
-			Html::element(
-				'div',
-				array( 'id' => 'errorbox-body' ),
-				$out->msg( 'captcha-sendemail-fail' )->text()
-			) .
-			Html::closeElement( 'div' )
-		);
-		$this->showEditCaptcha = true;
+
+		if ( $this->action !== 'edit' ) {
+			unset( $page->ConfirmEdit_ActivateCaptcha );
+			$out->addWikiText( $this->getMessage( $this->action ) );
+			$out->addHTML( $this->getForm( $out ) );
+		}
 	}
 
 	/**
@@ -102,11 +86,10 @@ class SimpleCaptcha {
 		$page = $editPage->getArticle()->getPage();
 		$out = $context->getOutput();
 		if ( isset( $page->ConfirmEdit_ActivateCaptcha ) ||
-			$this->showEditCaptcha ||
-			$this->shouldCheck( $page, '', '', false )
+			$this->shouldCheck( $page, '', '', $context )
 		) {
 			$out->addWikiText( $this->getMessage( $this->action ) );
-			$out->addHTML( $this->getForm() );
+			$out->addHTML( $this->getForm( $out ) );
 		}
 		unset( $page->ConfirmEdit_ActivateCaptcha );
 	}
@@ -143,7 +126,7 @@ class SimpleCaptcha {
 			$form->addFooterText(
 				"<div class='captcha'>" .
 				$wgOut->parse( $this->getMessage( 'sendemail' ) ) .
-				$this->getForm() .
+				$this->getForm( $wgOut ) .
 				"</div>\n" );
 		}
 		return true;
@@ -163,9 +146,13 @@ class SimpleCaptcha {
 				wfDebug( "ConfirmEdit: user group allows skipping captcha on account creation\n" );
 				return true;
 			}
+			LoggerFactory::getInstance( 'authmanager' )->info( 'Captcha shown on account creation', array(
+				'event' => 'captcha.display',
+				'type' => 'accountcreation',
+			) );
 			$captcha = "<div class='captcha'>" .
 				$wgOut->parse( $this->getMessage( 'createaccount' ) ) .
-				$this->getForm() .
+				$this->getForm( $wgOut ) .
 				"</div>\n";
 			// for older MediaWiki versions
 			if ( is_callable( array( $template, 'extend' ) ) ) {
@@ -188,10 +175,14 @@ class SimpleCaptcha {
 		if ( $this->isBadLoginTriggered() ) {
 			global $wgOut;
 
+			LoggerFactory::getInstance( 'authmanager' )->info( 'Captcha shown on login', array(
+				'event' => 'captcha.display',
+				'type' => 'login',
+			) );
 			$this->action = 'badlogin';
 			$captcha = "<div class='captcha'>" .
 				$wgOut->parse( $this->getMessage( 'badlogin' ) ) .
-				$this->getForm() .
+				$this->getForm( $wgOut ) .
 				"</div>\n";
 			// for older MediaWiki versions
 			if ( is_callable( array( $template, 'extend' ) ) ) {
@@ -302,23 +293,37 @@ class SimpleCaptcha {
 	 * @param WikiPage $page
 	 * @param $content Content|string
 	 * @param $section string
-	 * @param $isContent bool If true, $content is a Content object
-	 * @param $oldtext string The content of the revision prior to $content.  When 
+	 * @param IContextSource $context
+	 * @param $oldtext string The content of the revision prior to $content.  When
 	 *  null this will be loaded from the database.
 	 * @return bool true if the captcha should run
 	 */
-	function shouldCheck( WikiPage $page, $content, $section, $isContent = false, $oldtext = null ) {
+	function shouldCheck( WikiPage $page, $content, $section, $context, $oldtext = null ) {
+		global $ceAllowConfirmedEmail;
+
+		if ( !$context instanceof IContextSource ) {
+			$context = RequestContext::getMain();
+		}
+
+		$request = $context->getRequest();
+		$user = $context->getUser();
+
+		// captcha check exceptions, which will return always false
+		if ( $user->isAllowed( 'skipcaptcha' ) ) {
+			wfDebug( "ConfirmEdit: user group allows skipping captcha\n" );
+			return false;
+		} elseif ( $this->isIPWhitelisted() ) {
+			wfDebug( "ConfirmEdit: user IP is whitelisted" );
+			return false;
+		} elseif ( $ceAllowConfirmedEmail && $user->isEmailConfirmed() ) {
+			wfDebug( "ConfirmEdit: user has confirmed mail, skipping captcha\n" );
+			return false;
+		}
+
 		$title = $page->getTitle();
 		$this->trigger = '';
 
-		if ( $oldtext === null ) {
-			global $wgRequest;
-			$loadOldtextFlags = $wgRequest->wasPosted()
-				? Revision::READ_LATEST
-				: Revision::READ_NORMAL;
-		}
-
-		if ( $isContent ) {
+		if ( $content instanceof Content ) {
 			if ( $content->getModel() == CONTENT_MODEL_WIKITEXT ) {
 				$newtext = $content->getNativeData();
 			} else {
@@ -330,27 +335,10 @@ class SimpleCaptcha {
 			$isEmpty = $content === '';
 		}
 
-		global $wgUser;
-		if ( $wgUser->isAllowed( 'skipcaptcha' ) ) {
-			wfDebug( "ConfirmEdit: user group allows skipping captcha\n" );
-			return false;
-		}
-		if ( $this->isIPWhitelisted() )
-			return false;
-
-
-		global $wgEmailAuthentication, $ceAllowConfirmedEmail;
-		if ( $wgEmailAuthentication && $ceAllowConfirmedEmail &&
-			$wgUser->isEmailConfirmed() ) {
-			wfDebug( "ConfirmEdit: user has confirmed mail, skipping captcha\n" );
-			return false;
-		}
-
 		if ( $this->captchaTriggers( $title, 'edit' ) ) {
 			// Check on all edits
-			global $wgUser;
 			$this->trigger = sprintf( "edit trigger by '%s' at [[%s]]",
-				$wgUser->getName(),
+				$user->getName(),
 				$title->getPrefixedText() );
 			$this->action = 'edit';
 			wfDebug( "ConfirmEdit: checking all edits...\n" );
@@ -359,18 +347,23 @@ class SimpleCaptcha {
 
 		if ( $this->captchaTriggers( $title, 'create' )  && !$title->exists() ) {
 			// Check if creating a page
-			global $wgUser;
 			$this->trigger = sprintf( "Create trigger by '%s' at [[%s]]",
-				$wgUser->getName(),
+				$user->getName(),
 				$title->getPrefixedText() );
 			$this->action = 'create';
 			wfDebug( "ConfirmEdit: checking on page creation...\n" );
 			return true;
 		}
 
+		// The following checks are expensive and should be done only, if we can assume, that the edit will be saved
+		if ( !$request->wasPosted() ) {
+			wfDebug( "ConfirmEdit: request not posted, assuming that no content will be saved -> no CAPTCHA check" );
+			return false;
+		}
+
 		if ( !$isEmpty && $this->captchaTriggers( $title, 'addurl' ) ) {
 			// Only check edits that add URLs
-			if ( $isContent ) {
+			if ( $content instanceof Content ) {
 				// Get links from the database
 				$oldLinks = $this->getLinksFromTracker( $title );
 				// Share a parse operation with Article::doEdit()
@@ -382,7 +375,7 @@ class SimpleCaptcha {
 				}
 			} else {
 				// Get link changes in the slowest way known to man
-				$oldtext = isset( $oldtext ) ? $oldtext : $this->loadText( $title, $section, $loadOldtextFlags );
+				$oldtext = isset( $oldtext ) ? $oldtext : $this->loadText( $title, $section );
 				$oldLinks = $this->findLinks( $title, $oldtext );
 				$newLinks = $this->findLinks( $title, $newtext );
 			}
@@ -392,10 +385,9 @@ class SimpleCaptcha {
 			$numLinks = count( $addedLinks );
 
 			if ( $numLinks > 0 ) {
-				global $wgUser;
 				$this->trigger = sprintf( "%dx url trigger by '%s' at [[%s]]: %s",
 					$numLinks,
-					$wgUser->getName(),
+					$user->getName(),
 					$title->getPrefixedText(),
 					implode( ", ", $addedLinks ) );
 				$this->action = 'addurl';
@@ -405,8 +397,11 @@ class SimpleCaptcha {
 
 		global $wgCaptchaRegexes;
 		if ( $newtext !== null && $wgCaptchaRegexes ) {
+			if ( !is_array( $wgCaptchaRegexes ) ) {
+				throw new UnexpectedValueException( '$wgCaptchaRegexes is required to be an array, ' . gettype( $wgCaptchaRegexes ) . ' given.' );
+			}
 			// Custom regex checks. Reuse $oldtext if set above.
-			$oldtext = isset( $oldtext ) ? $oldtext : $this->loadText( $title, $section, $loadOldtextFlags );
+			$oldtext = isset( $oldtext ) ? $oldtext : $this->loadText( $title, $section );
 
 			foreach ( $wgCaptchaRegexes as $regex ) {
 				$newMatches = array();
@@ -418,11 +413,10 @@ class SimpleCaptcha {
 
 					$numHits = count( $addedMatches );
 					if ( $numHits > 0 ) {
-						global $wgUser;
 						$this->trigger = sprintf( "%dx %s at [[%s]]: %s",
 							$numHits,
 							$regex,
-							$wgUser->getName(),
+							$user->getName(),
 							$title->getPrefixedText(),
 							implode( ", ", $addedMatches ) );
 						$this->action = 'edit';
@@ -562,18 +556,18 @@ class SimpleCaptcha {
 	 * @param WikiPage $page
 	 * @param $newtext string
 	 * @param $section
-	 * @param $isContent bool
+	 * @param IContextSource $context
 	 * @return bool false if the CAPTCHA is rejected, true otherwise
 	 */
-	private function doConfirmEdit( WikiPage $page, $newtext, $section, $isContent = false ) {
-		global $wgRequest;
-		if ( $wgRequest->getVal( 'captchaid' ) ) {
-			$wgRequest->setVal( 'wpCaptchaId', $wgRequest->getVal( 'captchaid' ) );
+	private function doConfirmEdit( WikiPage $page, $newtext, $section, IContextSource $context ) {
+		$request = $context->getRequest();
+		if ( $request->getVal( 'captchaid' ) ) {
+			$request->setVal( 'wpCaptchaId', $request->getVal( 'captchaid' ) );
 		}
-		if ( $wgRequest->getVal( 'captchaword' ) ) {
-			$wgRequest->setVal( 'wpCaptchaWord', $wgRequest->getVal( 'captchaword' ) );
+		if ( $request->getVal( 'captchaword' ) ) {
+			$request->setVal( 'wpCaptchaWord', $request->getVal( 'captchaword' ) );
 		}
-		if ( $this->shouldCheck( $page, $newtext, $section, $isContent ) ) {
+		if ( $this->shouldCheck( $page, $newtext, $section, $context ) ) {
 			return $this->passCaptchaLimited();
 		} else {
 			wfDebug( "ConfirmEdit: no need to show captcha.\n" );
@@ -598,8 +592,23 @@ class SimpleCaptcha {
 			# The CAPTCHA was already checked and approved
 			return true;
 		}
+		if ( !$context->canUseWikiPage() ) {
+			// we check WikiPage only
+			// try to get an appropriate title for this page
+			$title = $context->getTitle();
+			if ( $title instanceof Title ) {
+				$title = $title->getFullText();
+			} else {
+				// otherwise it's an unknown page where this function is called from
+				$title = 'unknown';
+			}
+			// log this error, it could be a problem in another extension, edits should always have a WikiPage if
+			// they go through EditFilterMergedContent.
+			wfDebug( __METHOD__ . ': Skipped ConfirmEdit check: No WikiPage for title ' . $title );
+			return true;
+		}
 		$page = $context->getWikiPage();
-		if ( !$this->doConfirmEdit( $page, $content, false, true ) ) {
+		if ( !$this->doConfirmEdit( $page, $content, false, $context ) ) {
 			if ( $legacyMode ) {
 				$status->fatal( 'hookaborted' );
 			}
@@ -614,7 +623,7 @@ class SimpleCaptcha {
 
 	function confirmEditAPI( $editPage, $newText, &$resultArr ) {
 		$page = $editPage->getArticle()->getPage();
-		if ( !$this->doConfirmEdit( $page, $newText, false, false ) ) {
+		if ( !$this->doConfirmEdit( $page, $newText, false, $editPage->getArticle()->getContext() ) ) {
 			$this->addCaptchaAPI( $resultArr );
 			return false;
 		}
@@ -632,7 +641,13 @@ class SimpleCaptcha {
 	function confirmUserCreate( $u, &$message, &$status = null ) {
 		if ( $this->needCreateAccountCaptcha() ) {
 			$this->trigger = "new account '" . $u->getName() . "'";
-			if ( !$this->passCaptchaLimited() ) {
+			$success = $this->passCaptchaLimited();
+			LoggerFactory::getInstance( 'authmanager' )->info( 'Captcha submitted on account creation', array(
+				'event' => 'captcha.submit',
+				'type' => 'accountcreation',
+				'successful' => $success,
+			) );
+			if ( !$success ) {
 				// For older MediaWiki
 				$message = wfMessage( 'captcha-createaccount-fail' )->text();
 				// For MediaWiki 1.23+
@@ -682,7 +697,13 @@ class SimpleCaptcha {
 				return true;
 
 			$this->trigger = "post-badlogin login '" . $u->getName() . "'";
-			if ( !$this->passCaptchaLimited() ) {
+			$success = $this->passCaptchaLimited();
+			LoggerFactory::getInstance( 'authmanager' )->info( 'Captcha submitted on login', array(
+				'event' => 'captcha.submit',
+				'type' => 'login',
+				'successful' => $success,
+			) );
+			if ( !$success ) {
 				// Emulate a bad-password return to confuse the shit out of attackers
 				$retval = LoginForm::WRONG_PASS;
 				return false;
@@ -768,13 +789,13 @@ class SimpleCaptcha {
 	 *
 	 * @see self::passCaptcha()
 	 */
-	private function passCaptchaLimited() {
+	public function passCaptchaLimited() {
 		global $wgUser;
 
 		// don't increase pingLimiter here, just check, if CAPTCHA limit exceeded
 		if ( $wgUser->pingLimiter( 'badcaptcha', 0 ) ) {
 			// for debugging add an proper error message, the user just see an false captcha error message
-			wfDebug( 'ConfirmEdit: User reached RateLimit, preventing action.' );
+			$this->log( 'User reached RateLimit, preventing action.' );
 			return false;
 		}
 
@@ -965,6 +986,11 @@ class SimpleCaptcha {
 					if ( $warning['message'] === 'captcha-createaccount-fail' ) {
 						$this->addCaptchaAPI( $result );
 						$result['result'] = 'NeedCaptcha';
+
+						LoggerFactory::getInstance( 'authmanager' )->info( 'Captcha data added in account creation API', array(
+							'event' => 'captcha.display',
+							'type' => 'accountcreation',
+						) );
 					}
 				}
 			}

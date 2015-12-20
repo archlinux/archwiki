@@ -1,0 +1,42 @@
+.mw-highlight {
+	/* All supported programming languages are written left-to-right */
+	/* @noflip */
+	direction: ltr;
+	unicode-bidi: embed;
+}
+
+/* Avoid displaying double borders for nested 'code' elements.
+   Before we started using the 'code' tag for inline code snippets,
+   <code><syntaxhighlight enclose=none ...>...</syntaxhighlight></code>
+   was a common pattern. Continue supporting it in existing content. */
+code code.mw-highlight {
+	background-color: transparent;
+	border: 0;
+	padding: 0;
+}
+
+/*
+ * Don't show a red border around syntax errors. This behavior may be useful
+ * in code editors, but it is not useful in a wiki environment, especially
+ * given the longstanding habit of using an existing, mostly-compatible lexer
+ * to highlight a language for which no lexer exists.
+ */
+.mw-highlight .err {
+	border: 0;
+}
+
+/* Highlight background of whole lines, not just text in them */
+.mw-highlight .hll {
+	display: block;
+}
+
+/* To interact better with the 'display: block' above, doesn't affect other uses */
+/* @noflip */
+.mw-highlight.mw-content-ltr .lineno {
+	float: left;
+}
+
+/* @noflip */
+.mw-highlight.mw-content-rtl .lineno {
+	float: right;
+}

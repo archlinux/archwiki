@@ -10,10 +10,7 @@
  */
 
 class SpecialGadgets extends SpecialPage {
-	/**
-	 * Constructor
-	 */
-	function __construct() {
+	public function __construct() {
 		parent::__construct( 'Gadgets', '', true );
 	}
 
@@ -21,7 +18,7 @@ class SpecialGadgets extends SpecialPage {
 	 * Main execution function
 	 * @param $par array Parameters passed to the page
 	 */
-	function execute( $par ) {
+	public function execute( $par ) {
 		$parts = explode( '/', $par );
 
 		if ( count( $parts ) == 2 && $parts[0] == 'export' ) {
@@ -42,7 +39,7 @@ class SpecialGadgets extends SpecialPage {
 		$output->setPagetitle( $this->msg( 'gadgets-title' ) );
 		$output->addWikiMsg( 'gadgets-pagetext' );
 
-		$gadgets = Gadget::loadStructuredList();
+		$gadgets = GadgetRepo::singleton()->getStructuredList();
 		if ( !$gadgets ) {
 			return;
 		}
@@ -125,6 +122,13 @@ class SpecialGadgets extends SpecialPage {
 					$lnk[] = Linker::link( $t, htmlspecialchars( $t->getText() ) );
 				}
 				$output->addHTML( $lang->commaList( $lnk ) );
+				if ( $gadget->getLegacyScripts() ) {
+					$output->addHTML( '<br />' . Html::rawElement(
+						'span',
+						array( 'class' => 'mw-gadget-legacy errorbox' ),
+						$this->msg( 'gadgets-legacy' )->parse()
+					) );
+				}
 
 				$rights = array();
 				foreach ( $gadget->getRequiredRights() as $right ) {
@@ -174,16 +178,13 @@ class SpecialGadgets extends SpecialPage {
 		global $wgScript;
 
 		$output = $this->getOutput();
-		$gadgets = Gadget::loadList();
-		if ( !isset( $gadgets[$gadget] ) ) {
+		try {
+			$g = GadgetRepo::singleton()->getGadget( $gadget );
+		} catch ( InvalidArgumentException $e ) {
 			$output->showErrorPage( 'error', 'gadgets-not-found', array( $gadget ) );
 			return;
 		}
 
-		/**
-		 * @var $g Gadget
-		 */
-		$g = $gadgets[$gadget];
 		$this->setHeaders();
 		$output->setPagetitle( $this->msg( 'gadgets-export-title' ) );
 		$output->addWikiMsg( 'gadgets-export-text', $gadget, $g->getDefinition() );

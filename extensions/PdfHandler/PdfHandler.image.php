@@ -19,6 +19,8 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
+use MediaWiki\Logger\LoggerFactory;
+
 /**
  * inspired by djvuimage from Brion Vibber
  * modified and written by xarax
@@ -295,7 +297,7 @@ class PdfImage {
 			// is present (Almost always is present)
 			// @todo: This only handles generic xmp properties. Would be improved
 			// by handling pdf xmp properties (pdf and pdfx) via XMPInfo hook.
-			$xmp = new XMPReader();
+			$xmp = new XMPReader( LoggerFactory::getInstance( 'XMP' ) );
 			$xmp->parse( $data['xmp'] );
 			$xmpRes = $xmp->getResults();
 			foreach ( $xmpRes as $type => $xmpSection ) {

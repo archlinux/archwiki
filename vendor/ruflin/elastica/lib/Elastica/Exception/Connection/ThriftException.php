@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Exception\Connection;
 
 use Elastica\Exception\ConnectionException;
@@ -8,10 +7,8 @@ use Elastica\Response;
 use Thrift\Exception\TException;
 
 /**
- * Transport exception
+ * Transport exception.
  *
- * @category Xodoa
- * @package Elastica
  * @author Mikhail Shamin <munk13@gmail.com>
  */
 class ThriftException extends ConnectionException
@@ -23,8 +20,8 @@ class ThriftException extends ConnectionException
 
     /**
      * @param \Thrift\Exception\TException $thriftException
-     * @param \Elastica\Request $request
-     * @param \Elastica\Response $response
+     * @param \Elastica\Request            $request
+     * @param \Elastica\Response           $response
      */
     public function __construct(TException $thriftException, Request $request = null, Response $response = null)
     {
@@ -35,6 +32,7 @@ class ThriftException extends ConnectionException
 
     /**
      * @param \Thrift\Exception\TException $thriftException
+     *
      * @return string
      */
     public function getErrorMessage(TException $thriftException)

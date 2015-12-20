@@ -8,7 +8,8 @@
 			"Malafaya",
 			"Waldir",
 			"555",
-			"Vitorvicentevalente"
+			"Vitorvicentevalente",
+			"Fúlvio"
 		]
 	},
 	"interwiki": "Ver e manipular dados de interwikis",
@@ -19,11 +20,11 @@
 	"interwiki_prefix": "Prefixo",
 	"interwiki-prefix-label": "Prefixo:",
 	"interwiki_prefix_intro": "Sintaxe dos prefixos dos links interwikis, na notação wiki <code>[<nowiki />[prefixo:<em>nome da página</em>]]</code>.",
-	"interwiki_url_intro": "Modelo para URLs. O espaço reservado por $1 será substituído pelo <em>nome da página</em> da notação wiki, quando for usada a sintaxe mencionada acima.",
+	"interwiki_url_intro": "Predefinição para URLs. O espaço reservado por $1 será substituído pelo <em>nome da página</em> in <code>[<nowiki />[prefix:<em>nome da página</em>]]</code>.",
 	"interwiki_local": "Encaminhar",
 	"interwiki-local-label": "Encaminhar:",
 	"interwiki_local_0_intro": "Solicitações HTTP externas à wiki local utilizado este prefixo de interlíngua na URL irão resultar numa página de erro \"{{int:badtitle}}\".",
-	"interwiki_local_1_intro": "redirecionado para a URL de destino especificada nas definições das ligações interwikis (isto é, tratada como referências para páginas locais).",
+	"interwiki_local_1_intro": "As solicitações HTTP externas para a wiki local utilizando este prefixo interwiki serão redirecionadas à URL de destino do interwiki (ou seja, serão tratadas como ligações à páginas locais).",
 	"interwiki_trans": "Transcluir",
 	"interwiki-trans-label": "Transcluir:",
 	"interwiki_trans_1_intro": "permite transclusão da wiki externa, se transclusões interwikis forem permitidas de forma geral nesta wiki,",

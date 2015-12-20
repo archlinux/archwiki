@@ -1,48 +1,48 @@
 <?php
+
 /**
  * Class which performs the actual renaming of users
  */
-
 class RenameuserSQL {
 	/**
-	  * The old username
-	  *
-	  * @var string
-	  * @access private
-	  */
+	 * The old username
+	 *
+	 * @var string
+	 * @access private
+	 */
 	public $old;
 
 	/**
-	  * The new username
-	  *
-	  * @var string
-	  * @access private
-	  */
+	 * The new username
+	 *
+	 * @var string
+	 * @access private
+	 */
 	public $new;
 
 	/**
-	  * The user ID
-	  *
-	  * @var integer
-	  * @access private
-	  */
+	 * The user ID
+	 *
+	 * @var integer
+	 * @access private
+	 */
 	public $uid;
 
 	/**
-	  * The the tables => fields to be updated
-	  *
-	  * @var array
-	  * @access private
-	  */
+	 * The the tables => fields to be updated
+	 *
+	 * @var array
+	 * @access private
+	 */
 	public $tables;
 
 	/**
-	  * Flag that can be set to false, in case another process has already started
-	  * the updates and the old username may have already been renamed in the user table.
-	  *
-	  * @var bool
-	  * @access private
-	  */
+	 * Flag that can be set to false, in case another process has already started
+	 * the updates and the old username may have already been renamed in the user table.
+	 *
+	 * @var bool
+	 * @access private
+	 */
 	public $checkIfUserExists;
 
 	/**
@@ -80,9 +80,9 @@ class RenameuserSQL {
 	 * @param $uid
 	 * @param User $renamer
 	 * @param $options Array of options
-	 *	'checkIfUserExists' - bool, whether to update the user table
+	 *    'checkIfUserExists' - bool, whether to update the user table
 	 */
-	function __construct( $old, $new, $uid, User $renamer, $options = array() ) {
+	public function __construct( $old, $new, $uid, User $renamer, $options = array() ) {
 		$this->old = $old;
 		$this->new = $new;
 		$this->uid = $uid;
@@ -104,7 +104,7 @@ class RenameuserSQL {
 		$this->tables = array(); // Immediate updates
 		$this->tables['image'] = array( 'img_user_text', 'img_user' );
 		$this->tables['oldimage'] = array( 'oi_user_text', 'oi_user' );
-		$this->tables['filearchive'] = array('fa_user_text','fa_user');
+		$this->tables['filearchive'] = array( 'fa_user_text', 'fa_user' );
 		$this->tablesJob = array(); // Slow updates
 		// If this user has a large number of edits, use the jobqueue
 		if ( User::newFromId( $uid )->getEditCount() > self::CONTRIB_JOB ) {
@@ -136,11 +136,11 @@ class RenameuserSQL {
 	/**
 	 * Do the rename operation
 	 */
-	function rename() {
-		global $wgMemc, $wgAuth, $wgUpdateRowsPerJob;
+	public function rename() {
+		global $wgAuth, $wgUpdateRowsPerJob;
 
 		// Grab the user's edit count first, used in log entry
-		$contribs = User::newfromId( $this->uid )->getEditCount();
+		$contribs = User::newFromId( $this->uid )->getEditCount();
 
 		$dbw = wfGetDB( DB_MASTER );
 		$dbw->begin();
@@ -159,6 +159,7 @@ class RenameuserSQL {
 		if ( !$dbw->affectedRows() && $this->checkIfUserExists ) {
 			$dbw->rollback();
 			$this->debug( "User {$this->old} does not exist, bailing out" );
+
 			return false;
 		}
 
@@ -169,7 +170,7 @@ class RenameuserSQL {
 		$authUser->resetAuthToken();
 
 		// Delete from memcached.
-		$wgMemc->delete( wfMemcKey( 'user', 'id', $this->uid ) );
+		$user->invalidateCache();
 
 		// Update ipblock list if this user has a block in there.
 		$dbw->update( 'ipblocks',
@@ -255,7 +256,7 @@ class RenameuserSQL {
 					break;
 				}
 				# Since the ORDER BY is ASC, set the min timestamp with first row
-				if ( $jobParams['count'] == 0 ) {
+				if ( $jobParams['count'] === 0 ) {
 					$jobParams['minTimestamp'] = $row->$timestampC;
 				}
 				# Keep updating the last timestamp, so it should be correct
@@ -284,7 +285,7 @@ class RenameuserSQL {
 		$dbw->commit();
 
 		// Delete from memcached again to make sure
-		$wgMemc->delete( wfMemcKey( 'user', 'id', $this->uid ) );
+		$user->invalidateCache();
 
 		// Clear caches and inform authentication plugins
 		$user = User::newFromId( $this->uid );
@@ -303,7 +304,6 @@ class RenameuserSQL {
 		) );
 		$logid = $logEntry->insert();
 		$logEntry->publish( $logid );
-
 
 		$this->debug( "Finished rename for {$this->old} to {$this->new}" );
 

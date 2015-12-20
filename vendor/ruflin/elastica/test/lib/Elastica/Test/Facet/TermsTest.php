@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Test\Facet;
 
 use Elastica\Document;
@@ -10,6 +9,9 @@ use Elastica\Test\Base as BaseTest;
 
 class TermsTest extends BaseTest
 {
+    /**
+     * @group functional
+     */
     public function testQuery()
     {
         $client = $this->_getClient();
@@ -39,6 +41,9 @@ class TermsTest extends BaseTest
         $this->assertEquals(3, count($facets['test']['terms']));
     }
 
+    /**
+     * @group functional
+     */
     public function testFacetScript()
     {
         $client = $this->_getClient();

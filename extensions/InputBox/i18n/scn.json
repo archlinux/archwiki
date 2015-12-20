@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Aushulz",
-			"Santu"
+			"Santu",
+			"Sarvaturi"
 		]
 	},
 	"inputbox-desc": "Pirmetti nzirimenti di mòduli HTML predifiniti",
@@ -10,6 +11,6 @@
 	"inputbox-error-bad-type": "\"$1\" nun è nu tipu di inputbox canusciutu. S'hà scègghiri lu tipu ntra \"create\", \"comment\", \"search\" e \"search2\".",
 	"inputbox-tryexact": "Cerca currispunnenza giusta",
 	"inputbox-searchfulltext": "Circata ntô testu",
-	"inputbox-createarticle": "Cria vuci",
+	"inputbox-createarticle": "Crea vuci",
 	"inputbox-ns-main": "Principali"
 }

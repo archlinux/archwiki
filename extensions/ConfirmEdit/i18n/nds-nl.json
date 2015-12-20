@@ -6,6 +6,7 @@
 	},
 	"captcha-edit": "Um disse zied te bewarken, mu'j eerst t antwoord op disse eenvoudige somme invullen ([[Special:Captcha/help|meer informasie]]):",
 	"captcha-desc": "Biedt CAPTCHA-technieken um bescharming te biejen tegen spam en t raojen van wachtwoorden",
+	"captcha-label": "CAPTCHA",
 	"captcha-addurl": "In joew bewarking staon nieje uutgaonde verwiezingen.\nVul ter de bescharming van disse wiki tegen automatiese moekbiedragen t antwoord op de somme in, in t invoerveld dat hieronder steet, um joew bewarking op te slaon:<br />\n([[Special:Captcha/help|meer informasie]])",
 	"captcha-badlogin": "Vul ter de bescharming van disse wiki tegen t automaties kraken van wachtwoorden t antwoord op de somme in, in t invoerveld ([[Special:Captcha/help|meer informasie]]):",
 	"captcha-createaccount": "Vul ter bescharming van disse wiki tegen t automaties anmaken van gebrukers t antwoord op de somme in, in t invoerveld ([[Special:Captcha/help|meer informasie]]):",

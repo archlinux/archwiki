@@ -1,7 +1,5 @@
 <?php
-
 namespace Elastica\Test\Aggregation;
-
 
 use Elastica\Aggregation\Min;
 use Elastica\Aggregation\Nested;
@@ -11,52 +9,55 @@ use Elastica\Type\Mapping;
 
 class NestedTest extends BaseAggregationTest
 {
-    protected function setUp()
+    protected function _getIndexForTest()
     {
-        parent::setUp();
-        $this->_index = $this->_createIndex("nested");
-        $mapping = new Mapping();
-        $mapping->setProperties(array(
-            "resellers" => array(
-                "type" => "nested",
-                "properties" => array(
-                    "name" => array("type" => "string"),
-                    "price" => array("type" => "double")
-                )
-            )
-        ));
-        $type = $this->_index->getType("test");
-        $type->setMapping($mapping);
-        $docs = array(
-            new Document("1", array(
-                "resellers" => array(
-                    "name" => "spacely sprockets",
-                    "price" => 5.55
-                )
+        $index = $this->_createIndex();
+        $type = $index->getType('test');
+
+        $type->setMapping(new Mapping(null, array(
+            'resellers' => array(
+                'type' => 'nested',
+                'properties' => array(
+                    'name' => array('type' => 'string'),
+                    'price' => array('type' => 'double'),
+                ),
+            ),
+        )));
+
+        $type->addDocuments(array(
+            new Document(1, array(
+                'resellers' => array(
+                    'name' => 'spacely sprockets',
+                    'price' => 5.55,
+                ),
             )),
-            new Document("1", array(
-                "resellers" => array(
-                    "name" => "cogswell cogs",
-                    "price" => 4.98
-                )
-            ))
-        );
-        $type->addDocuments($docs);
-        $this->_index->refresh();
+            new Document(2, array(
+                'resellers' => array(
+                    'name' => 'cogswell cogs',
+                    'price' => 4.98,
+                ),
+            )),
+        ));
+
+        $index->refresh();
+
+        return $index;
     }
 
+    /**
+     * @group functional
+     */
     public function testNestedAggregation()
     {
-        $agg = new Nested("resellers", "resellers");
-        $min = new Min("min_price");
-        $min->setField("price");
+        $agg = new Nested('resellers', 'resellers');
+        $min = new Min('min_price');
+        $min->setField('price');
         $agg->addAggregation($min);
 
         $query = new Query();
         $query->addAggregation($agg);
-        $results = $this->_index->search($query)->getAggregation("resellers");
+        $results = $this->_getIndexForTest()->search($query)->getAggregation('resellers');
 
         $this->assertEquals(4.98, $results['min_price']['value']);
     }
 }
- 

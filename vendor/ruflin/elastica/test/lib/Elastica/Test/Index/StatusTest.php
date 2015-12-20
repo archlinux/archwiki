@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Test\Index;
 
 use Elastica\Index\Status as IndexStatus;
@@ -7,6 +6,9 @@ use Elastica\Test\Base as BaseTest;
 
 class StatusTest extends BaseTest
 {
+    /**
+     * @group functional
+     */
     public function testGetAliases()
     {
         $indexName = 'test';
@@ -31,6 +33,9 @@ class StatusTest extends BaseTest
         $this->assertTrue(in_array($aliasName, $aliases));
     }
 
+    /**
+     * @group functional
+     */
     public function testHasAlias()
     {
         $indexName = 'test';
@@ -50,6 +55,9 @@ class StatusTest extends BaseTest
         $this->assertTrue($status->hasAlias($aliasName));
     }
 
+    /**
+     * @group functional
+     */
     public function testGetSettings()
     {
         $indexName = 'test';

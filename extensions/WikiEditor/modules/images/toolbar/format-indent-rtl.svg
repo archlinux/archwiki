@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg id="svg2" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" height="22" width="22" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 744.09449 1052.3622" xmlns:dc="http://purl.org/dc/elements/1.1/">
+ <defs id="defs4">
+  <linearGradient id="linearGradient3195" y2="505.56" xlink:href="#linearGradient9497" gradientUnits="userSpaceOnUse" x2="570.48" gradientTransform="matrix(35.683 0 0 45.115 -20327 -22258)" y1="505.56" x1="557.14"/>
+  <linearGradient id="linearGradient9497">
+   <stop id="stop9499" stop-color="#757772" offset="0"/>
+   <stop id="stop9501" stop-color="#6d6f6a" offset="1"/>
+  </linearGradient>
+  <linearGradient id="linearGradient3192" y2="505.56" xlink:href="#linearGradient9497" gradientUnits="userSpaceOnUse" x2="570.48" gradientTransform="matrix(63.154 0 0 40.5 -35986 -20262)" y1="505.56" x1="557.14"/>
+  <linearGradient id="linearGradient3189" y2="505.56" xlink:href="#linearGradient9497" gradientUnits="userSpaceOnUse" x2="570.48" gradientTransform="matrix(62.656 0 0 40.569 -35697 -19624)" y1="505.56" x1="557.14"/>
+  <linearGradient id="linearGradient3986" y2="10.025" gradientUnits="userSpaceOnUse" x2="6.638" gradientTransform="matrix(.90903 0 0 .90903 -37.252 932.89)" y1="13.153" x1="1.105">
+   <stop id="stop3982" stop-color="#fcc273" offset="0"/>
+   <stop id="stop3984" stop-color="#fc916b" offset="1"/>
+  </linearGradient>
+ </defs>
+ <metadata id="metadata7">
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <g id="layer1">
+  <g stroke-linejoin="round" stroke="#2e3436" stroke-width="42.716">
+   <rect id="rect8987" transform="scale(-1,1)" height="99.695" width="440.46" y="500.7" x="-428.59" fill="url(#linearGradient3195)"/>
+   <rect id="rect8987-2" transform="scale(-1,1)" height="89.498" width="779.56" y="168.35" x="-768.24" fill="url(#linearGradient3192)"/>
+   <rect id="rect8987-5" transform="scale(-1,1)" height="89.65" width="773.41" y="840.95" x="-757.73" fill="url(#linearGradient3189)"/>
+  </g>
+  <path id="path3978" stroke="#e0926b" stroke-linecap="square" stroke-width=".81176" fill="url(#linearGradient3986)" d="m-31.671 943.54-2.3886 1.3791-2.3886 1.3791v-2.7581-2.7581l2.3886 1.3791z" transform="matrix(-47.835 0 0 47.834 -981.95 -44584)"/>
+ </g>
+</svg>

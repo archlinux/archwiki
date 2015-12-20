@@ -1,15 +1,13 @@
 <?php
-
 namespace Elastica\Test\Query;
 
-use Elastica\Filter\Term;
+use Elastica\Document;
 use Elastica\Filter\Ids;
+use Elastica\Filter\Term;
+use Elastica\Index;
 use Elastica\Query\ConstantScore;
 use Elastica\Query\MatchAll;
 use Elastica\Test\Base as BaseTest;
-use Elastica\Index;
-use Elastica\Document;
-use Elastica\Type;
 
 class ConstantScoreTest extends BaseTest
 {
@@ -55,6 +53,7 @@ class ConstantScoreTest extends BaseTest
         );
     }
     /**
+     * @group unit
      * @dataProvider dataProviderSampleQueries
      */
     public function testSimple($filter, $expected)
@@ -67,6 +66,9 @@ class ConstantScoreTest extends BaseTest
         $this->assertEquals($expected, $query->toArray());
     }
 
+    /**
+     * @group unit
+     */
     public function testToArray()
     {
         $query = new ConstantScore();
@@ -81,13 +83,16 @@ class ConstantScoreTest extends BaseTest
         $expectedArray = array(
             'constant_score' => array(
                 'filter' => $filter->toArray(),
-                'boost' => $boost
-            )
+                'boost' => $boost,
+            ),
         );
 
         $this->assertEquals($expectedArray, $query->toArray());
     }
 
+    /**
+     * @group unit
+     */
     public function testConstruct()
     {
         $filter = new Ids();
@@ -98,28 +103,25 @@ class ConstantScoreTest extends BaseTest
         $expectedArray = array(
             'constant_score' => array(
                 'filter' => $filter->toArray(),
-            )
+            ),
         );
 
         $this->assertEquals($expectedArray, $query->toArray());
-
     }
 
+    /**
+     * @group functional
+     */
     public function testQuery()
     {
+        $index = $this->_createIndex();
 
-        $client = $this->_getClient();
-        $index = new Index($client, 'test');
-        $index->create(array(), true);
-
-        $type = new Type($index, 'constant_score');
-
-        $doc = new Document(1, array('id' => 1, 'email' => 'hans@test.com', 'username' => 'hans'));
-        $type->addDocument($doc);
-        $doc = new Document(2, array('id' => 2, 'email' => 'emil@test.com', 'username' => 'emil'));
-        $type->addDocument($doc);
-        $doc = new Document(3, array('id' => 3, 'email' => 'ruth@test.com', 'username' => 'ruth'));
-        $type->addDocument($doc);
+        $type = $index->getType('constant_score');
+        $type->addDocuments(array(
+            new Document(1, array('id' => 1, 'email' => 'hans@test.com', 'username' => 'hans')),
+            new Document(2, array('id' => 2, 'email' => 'emil@test.com', 'username' => 'emil')),
+            new Document(3, array('id' => 3, 'email' => 'ruth@test.com', 'username' => 'ruth')),
+        ));
 
         // Refresh index
         $index->refresh();
@@ -134,8 +136,8 @@ class ConstantScoreTest extends BaseTest
         $expectedArray = array(
             'constant_score' => array(
                 'query' => $query_match->toArray(),
-                'boost' => $boost
-            )
+                'boost' => $boost,
+            ),
         );
 
         $this->assertEquals($expectedArray, $query->toArray());
@@ -145,9 +147,11 @@ class ConstantScoreTest extends BaseTest
 
         $this->assertEquals($resultSet->count(), 3);
         $this->assertEquals($results[1]->getScore(), 1);
-
     }
 
+    /**
+     * @group unit
+     */
     public function testConstructEmpty()
     {
         $query = new ConstantScore();

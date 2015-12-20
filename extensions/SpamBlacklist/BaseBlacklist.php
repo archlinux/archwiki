@@ -64,6 +64,14 @@ abstract class BaseBlacklist {
 	}
 
 	/**
+	 * @param array $links
+	 * @param Title $title
+	 * @param bool $preventLog
+	 * @return mixed
+	 */
+	abstract public function filter( array $links, Title $title, $preventLog = false );
+
+	/**
 	 * Adds a blacklist class to the registry
 	 *
 	 * @param $type string
@@ -204,7 +212,16 @@ abstract class BaseBlacklist {
 	 * @return array Regular expressions
 	 */
 	public function getLocalBlacklists() {
-		return SpamRegexBatch::regexesFromMessage( "{$this->getBlacklistType()}-blacklist", $this );
+		$that = $this;
+		$type = $this->getBlacklistType();
+
+		return ObjectCache::getMainWANInstance()->getWithSetCallback(
+			wfMemcKey( 'spamblacklist', $type, 'blacklist-regex' ),
+			function () use ( $that, $type ) {
+				return SpamRegexBatch::regexesFromMessage( "{$type}-blacklist", $that );
+			},
+			$this->expiryTime
+		);
 	}
 
 	/**
@@ -213,7 +230,16 @@ abstract class BaseBlacklist {
 	 * @return array Regular expressions
 	 */
 	public function getWhitelists() {
-		return SpamRegexBatch::regexesFromMessage( "{$this->getBlacklistType()}-whitelist", $this );
+		$that = $this;
+		$type = $this->getBlacklistType();
+
+		return ObjectCache::getMainWANInstance()->getWithSetCallback(
+			wfMemcKey( 'spamblacklist', $type, 'whitelist-regex' ),
+			function () use ( $that, $type ) {
+				return SpamRegexBatch::regexesFromMessage( "{$type}-whitelist", $that );
+			},
+			$this->expiryTime
+		);
 	}
 
 	/**
@@ -221,7 +247,6 @@ abstract class BaseBlacklist {
 	 * @return array
 	 */
 	function getSharedBlacklists() {
-		global $wgMemc, $wgDBname;
 		$listType = $this->getBlacklistType();
 
 		wfDebugLog( 'SpamBlacklist', "Loading $listType regex..." );
@@ -232,25 +257,40 @@ abstract class BaseBlacklist {
 			return array();
 		}
 
-		// This used to be cached per-site, but that could be bad on a shared
-		// server where not all wikis have the same configuration.
-		$cachedRegexes = $wgMemc->get( "$wgDBname:{$listType}_blacklist_regexes" );
-		if( is_array( $cachedRegexes ) ) {
-			wfDebugLog( 'SpamBlacklist', "Got shared spam regexes from cache\n" );
-			return $cachedRegexes;
-		}
+		$miss = false;
 
-		$regexes = $this->buildSharedBlacklists();
-		$wgMemc->set( "$wgDBname:{$listType}_blacklist_regexes", $regexes, $this->expiryTime );
+		$that = $this;
+		$regexes = ObjectCache::getMainWANInstance()->getWithSetCallback(
+			// This used to be cached per-site, but that could be bad on a shared
+			// server where not all wikis have the same configuration.
+			wfMemcKey( 'spamblacklist', $listType, 'shared-blacklist-regex' ),
+			function () use ( $that, &$miss ) {
+				$miss = true;
+				return $that->buildSharedBlacklists();
+			},
+			$this->expiryTime
+		);
+
+		if ( !$miss ) {
+			wfDebugLog( 'SpamBlacklist', "Got shared spam regexes from cache\n" );
+		}
 
 		return $regexes;
 	}
 
+	/**
+	 * Clear all primary blacklist cache keys
+	 *
+	 * @note: this method is unused atm
+	 */
 	function clearCache() {
-		global $wgMemc, $wgDBname;
 		$listType = $this->getBlacklistType();
 
-		$wgMemc->delete( "$wgDBname:{$listType}_blacklist_regexes" );
+		$cache = ObjectCache::getMainWANInstance();
+		$cache->delete( wfMemcKey( 'spamblacklist', $listType, 'shared-blacklist-regex' ) );
+		$cache->delete( wfMemcKey( 'spamblacklist', $listType, 'blacklist-regex' ) );
+		$cache->delete( wfMemcKey( 'spamblacklist', $listType, 'whitelist-regex' ) );
+
 		wfDebugLog( 'SpamBlacklist', "$listType blacklist local cache cleared.\n" );
 	}
 
@@ -263,7 +303,7 @@ abstract class BaseBlacklist {
 			$matches = array();
 			if ( preg_match( '/^DB: ([\w-]*) (.*)$/', $fileName, $matches ) ) {
 				$text = $this->getArticleText( $matches[1], $matches[2] );
-			} elseif ( preg_match( '/^http:\/\//', $fileName ) ) {
+			} elseif ( preg_match( '/^(https?:)?\/\//', $fileName ) ) {
 				$text = $this->getHttpText( $fileName );
 			} else {
 				$text = file_get_contents( $fileName );
@@ -317,33 +357,35 @@ abstract class BaseBlacklist {
 	 * Fetch an article from this or another local MediaWiki database.
 	 * This is probably *very* fragile, and shouldn't be used perhaps.
 	 *
-	 * @param string $db
+	 * @param string $wiki
 	 * @param string $article
 	 * @return string
 	 */
-	function getArticleText( $db, $article ) {
-		wfDebugLog( 'SpamBlacklist', "Fetching {$this->getBlacklistType()} spam blacklist from '$article' on '$db'...\n" );
-		global $wgDBname;
-		$dbr = wfGetDB( DB_READ );
-		$dbr->selectDB( $db );
-		$text = false;
-		if ( $dbr->tableExists( 'page' ) ) {
-			// 1.5 schema
-			$dbw = wfGetDB( DB_READ );
-			$dbw->selectDB( $db );
-			$revision = Revision::newFromTitle( Title::newFromText( $article ) );
-			if ( $revision ) {
-				$text = $revision->getText();
-			}
-			$dbw->selectDB( $wgDBname );
-		} else {
-			// 1.4 schema
-			$title = Title::newFromText( $article );
-			$text = $dbr->selectField( 'cur', 'cur_text', array( 'cur_namespace' => $title->getNamespace(),
-				'cur_title' => $title->getDBkey() ), __METHOD__ );
-		}
-		$dbr->selectDB( $wgDBname );
-		return strval( $text );
+	function getArticleText( $wiki, $article ) {
+		wfDebugLog( 'SpamBlacklist',
+			"Fetching {$this->getBlacklistType()} blacklist from '$article' on '$wiki'...\n" );
+
+		$title = Title::newFromText( $article );
+		// Load all the relevant tables from the correct DB.
+		// This assumes that old_text is the actual text or
+		// that the external store system is at least unified.
+		$row = wfGetDB( DB_SLAVE, array(), $wiki )->selectRow(
+			array( 'page', 'revision', 'text' ),
+			array_merge(
+				Revision::selectFields(),
+				Revision::selectPageFields(),
+				Revision::selectTextFields()
+			),
+			array(
+				'page_namespace' => $title->getNamespace(), // assume NS IDs match
+				'page_title' => $title->getDBkey(), // assume same case rules
+				'rev_id=page_latest',
+				'old_id=rev_text_id'
+			),
+			__METHOD__
+		);
+
+		return $row ? Revision::newFromRow( $row )->getText() : false;
 	}
 
 	/**

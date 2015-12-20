@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Test\Facet;
 
 use Elastica\Document;
@@ -8,8 +7,14 @@ use Elastica\Query;
 use Elastica\Query\MatchAll;
 use Elastica\Test\Base as BaseTest;
 
+/**
+ * @todo Add test for Statistical with setScript
+ */
 class StatisticalTest extends BaseTest
 {
+    /**
+     * @group functional
+     */
     public function testStatisticalWithSetField()
     {
         $client = $this->_getClient();
@@ -41,6 +46,9 @@ class StatisticalTest extends BaseTest
         $this->assertEquals(45, $facets['stats']['max']);
     }
 
+    /**
+     * @group functional
+     */
     public function testStatisticalWithSetFields()
     {
         $client = $this->_getClient();
@@ -56,7 +64,7 @@ class StatisticalTest extends BaseTest
         $type->addDocument($doc);
 
         $facet = new Statistical('stats');
-        $facet->setFields(array('price','price2'));
+        $facet->setFields(array('price', 'price2'));
 
         $query = new Query();
         $query->addFacet($facet);
@@ -70,13 +78,5 @@ class StatisticalTest extends BaseTest
         $this->assertEquals(165, $facets['stats']['total']);
         $this->assertEquals(10, $facets['stats']['min']);
         $this->assertEquals(90, $facets['stats']['max']);
-    }
-
-    /**
-     * @todo
-     */
-    public function testStatisticalWithSetScript()
-    {
-        $this->markTestIncomplete('Test for setting the script value');
     }
 }

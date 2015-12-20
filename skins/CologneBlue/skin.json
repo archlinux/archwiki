@@ -19,6 +19,7 @@
 	},
 	"ResourceModules": {
 		"skins.cologneblue": {
+			"position": "top",
 			"styles": {
 				"resources/screen.css": {
 					"media": "screen"
@@ -41,5 +42,6 @@
 	"AutoloadClasses": {
 		"SkinCologneBlue": "SkinCologneBlue.php",
 		"CologneBlueTemplate": "SkinCologneBlue.php"
-	}
+	},
+	"manifest_version": 1
 }

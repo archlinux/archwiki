@@ -1,19 +1,17 @@
 <?php
-
 namespace Elastica\Query;
 
 /**
- * Wildcard query
+ * Wildcard query.
  *
- * @category Xodoa
- * @package Elastica
  * @author Nicolas Ruflin <spam@ruflin.com>
- * @link http://www.elasticsearch.org/guide/reference/query-dsl/wildcard-query.html
+ *
+ * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-wildcard-query.html
  */
 class Wildcard extends AbstractQuery
 {
     /**
-     * Construct wildcard query
+     * Construct wildcard query.
      *
      * @param string $key   OPTIONAL Wildcard key
      * @param string $value OPTIONAL Wildcard value
@@ -27,12 +25,13 @@ class Wildcard extends AbstractQuery
     }
 
     /**
-     * Sets the query expression for a key with its boost value
+     * Sets the query expression for a key with its boost value.
      *
-     * @param  string                       $key
-     * @param  string                       $value
-     * @param  float                        $boost
-     * @return \Elastica\Query\Wildcard
+     * @param string $key
+     * @param string $value
+     * @param float  $boost
+     *
+     * @return $this
      */
     public function setValue($key, $value, $boost = 1.0)
     {

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg id="svg8934" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" height="22" width="22" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/">
+ <defs id="defs8936">
+  <linearGradient id="linearGradient3189" y2="505.56" gradientUnits="userSpaceOnUse" x2="570.48" gradientTransform="matrix(.93580 0 0 .90646 -514.04 -439.75)" y1="505.56" x1="557.14">
+   <stop id="stop9499-0" stop-color="#757772" offset="0"/>
+   <stop id="stop9501-1" stop-color="#6d6f6a" offset="1"/>
+  </linearGradient>
+  <linearGradient id="linearGradient3192" y2="505.56" gradientUnits="userSpaceOnUse" x2="570.48" gradientTransform="matrix(.93580 0 0 .90646 -514.13 -453.82)" y1="505.56" x1="557.14">
+   <stop id="stop9499-6" stop-color="#757772" offset="0"/>
+   <stop id="stop9501-7" stop-color="#6d6f6a" offset="1"/>
+  </linearGradient>
+  <linearGradient id="linearGradient3195" y2="505.56" gradientUnits="userSpaceOnUse" x2="570.48" gradientTransform="matrix(.93580 0 0 .90646 -514.13 -446.76)" y1="505.56" x1="557.14">
+   <stop id="stop9499" stop-color="#757772" offset="0"/>
+   <stop id="stop9501" stop-color="#6d6f6a" offset="1"/>
+  </linearGradient>
+ </defs>
+ <metadata id="metadata8939">
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <g stroke-linejoin="round" stroke="#2e3436" stroke-width=".89314">
+  <rect id="rect8987" height="2.0031" width="11.551" y="10.508" x="7.7046" fill="url(#linearGradient3195)"/>
+  <rect id="rect8987-2" height="2.0031" width="11.551" y="3.4538" x="7.7065" fill="url(#linearGradient3192)"/>
+  <rect id="rect8987-5" height="2.0031" width="11.551" y="17.516" x="7.7958" fill="url(#linearGradient3189)"/>
+ </g>
+ <g stroke-linejoin="round" stroke="#2e3436" stroke-width=".65534" fill="#fff">
+  <rect id="rect3039" height="2.2928" width="2.218" y="3.2826" x="2.3277"/>
+  <rect id="rect3039-7" height="2.2928" width="2.218" y="10.338" x="2.3277"/>
+  <rect id="rect3039-6" height="2.2928" width="2.218" y="17.346" x="2.3277"/>
+ </g>
+</svg>

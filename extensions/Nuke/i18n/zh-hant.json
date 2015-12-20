@@ -8,7 +8,8 @@
 			"Liuxinyu970226",
 			"Mark85296341",
 			"Shinjiman",
-			"LNDDYL"
+			"LNDDYL",
+			"EagerLin"
 		]
 	},
 	"nuke": "大量刪除",
@@ -31,7 +32,7 @@
 	"nuke-not-deleted": "'''無法'''刪除頁面 [[:$1]]。",
 	"nuke-delete-more": "[[Special:Nuke|刪除更多頁面]]",
 	"nuke-pattern": "頁面名稱模式：",
-	"nuke-nopages-global": "[[Special:RecentChanges|近期變更]] 中沒有新的頁面。",
+	"nuke-nopages-global": "[[Special:RecentChanges|最近更改]] 中沒有新的頁面。",
 	"nuke-viewchanges": "檢視變更",
 	"nuke-namespace": "限制命名空間為：",
 	"nuke-linkoncontribs": "大量刪除",

@@ -19,6 +19,7 @@
 	"gadgets-required-rights": "A következő {{PLURAL:$2|jogosultságra|jogosultságokra}} van szükség:\n\n$1",
 	"gadgets-required-skins": "{{PLURAL:$2|$1 felületen érhető el|Az alábbi felületeken érhető el: $1}}.",
 	"gadgets-default": "Mindenki számára engedélyezett alapértelmezettként.",
+	"gadgets-legacy": "A segédeszköz nincs betöltve. Állítsd át ResourceLoaderre. ([https://www.mediawiki.org/wiki/ResourceLoader/Migration_guide_(users) További információk])",
 	"gadgets-export": "Exportálás",
 	"gadgets-export-title": "Segédeszköz exportálása",
 	"gadgets-not-found": "A(z) „$1“ segédeszköz nem található.",

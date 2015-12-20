@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Test\Facet;
 
 use Elastica\Document;
@@ -10,6 +9,9 @@ use Elastica\Test\Base as BaseTest;
 
 class QueryTest extends BaseTest
 {
+    /**
+     * @group functional
+     */
     public function testFilter()
     {
         $client = $this->_getClient();

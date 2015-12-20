@@ -1,43 +1,44 @@
 <?php
-
 namespace Elastica;
-
 
 use Elastica\Exception\NotImplementedException;
 use Elastica\Suggest\AbstractSuggest;
 
 /**
- * Class Suggest
- * @package Elastica\Suggest
- * @link http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-suggesters.html
+ * Class Suggest.
+ *
+ * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggesters.html
  */
 class Suggest extends Param
 {
     /**
      * @param AbstractSuggest $suggestion
      */
-    function __construct(AbstractSuggest $suggestion = NULL)
+    public function __construct(AbstractSuggest $suggestion = null)
     {
         if (!is_null($suggestion)) {
             $this->addSuggestion($suggestion);
         }
     }
 
-
     /**
-     * Set the global text for this suggester
+     * Set the global text for this suggester.
+     *
      * @param string $text
-     * @return \Elastica\Suggest
+     *
+     * @return $this
      */
     public function setGlobalText($text)
     {
-        return $this->setParam("text", $text);
+        return $this->setParam('text', $text);
     }
 
     /**
-     * Add a suggestion to this suggest clause
+     * Add a suggestion to this suggest clause.
+     *
      * @param AbstractSuggest $suggestion
-     * @return \Elastica\Suggest
+     *
+     * @return $this
      */
     public function addSuggestion(AbstractSuggest $suggestion)
     {
@@ -46,13 +47,15 @@ class Suggest extends Param
 
     /**
      * @param Suggest|AbstractSuggest $suggestion
-     * @return \Elastica\Suggest
+     *
      * @throws Exception\NotImplementedException
+     *
+     * @return self
      */
     public static function create($suggestion)
     {
-        switch(true){
-            case $suggestion instanceof Suggest:
+        switch (true) {
+            case $suggestion instanceof self:
                 return $suggestion;
             case $suggestion instanceof AbstractSuggest:
                 return new self($suggestion);

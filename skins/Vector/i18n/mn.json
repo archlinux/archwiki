@@ -3,7 +3,8 @@
 		"authors": [
 			"Chinneeb",
 			"MongolWiki",
-			"Wisdom"
+			"Wisdom",
+			"Sembuk"
 		]
 	},
 	"vector-action-addsection": "Сэдэв нэмэх",
@@ -16,5 +17,6 @@
 	"vector-view-edit": "Засварлах",
 	"vector-view-history": "Түүх",
 	"vector-view-view": "Унших",
-	"vector-view-viewsource": "Кодыг харах"
+	"vector-view-viewsource": "Кодыг харах",
+	"vector-more-actions": "Дэлгэрэнгүй"
 }

@@ -1,24 +1,25 @@
 <?php
-
 namespace Elastica\Test;
 
-use Elastica\Client;
 use Elastica\Document;
 use Elastica\Exception\NotFoundException;
 use Elastica\Exception\ResponseException;
+use Elastica\Filter\Term;
+use Elastica\Index;
 use Elastica\Query;
 use Elastica\Query\MatchAll;
 use Elastica\Query\SimpleQueryString;
 use Elastica\Script;
 use Elastica\Search;
-use Elastica\Filter\Term;
-use Elastica\Type;
-use Elastica\Index;
-use Elastica\Type\Mapping;
 use Elastica\Test\Base as BaseTest;
+use Elastica\Type;
+use Elastica\Type\Mapping;
 
 class TypeTest extends BaseTest
 {
+    /**
+     * @group functional
+     */
     public function testSearch()
     {
         $index = $this->_createIndex();
@@ -55,6 +56,9 @@ class TypeTest extends BaseTest
         $this->assertEquals('rolf', $data['username']);
     }
 
+    /**
+     * @group functional
+     */
     public function testCreateSearch()
     {
         $client = $this->_getClient();
@@ -72,11 +76,11 @@ class TypeTest extends BaseTest
         $expected = array(
             'query' => array(
                 'query_string' => array(
-                    'query' => 'test'
-                )
+                    'query' => 'test',
+                ),
             ),
             'size' => 5,
-            'explain' => true
+            'explain' => true,
         );
         $this->assertEquals($expected, $search->getQuery()->toArray());
         $this->assertEquals(array('test_index'), $search->getIndices());
@@ -91,6 +95,9 @@ class TypeTest extends BaseTest
         $this->assertFalse($search->hasType('test_type2'));
     }
 
+    /**
+     * @group functional
+     */
     public function testCreateSearchWithArray()
     {
         $client = $this->_getClient();
@@ -100,9 +107,9 @@ class TypeTest extends BaseTest
         $query = array(
             'query' => array(
                 'query_string' => array(
-                    'query' => 'test'
-                )
-            )
+                    'query' => 'test',
+                ),
+            ),
         );
 
         $options = array(
@@ -115,11 +122,11 @@ class TypeTest extends BaseTest
         $expected = array(
             'query' => array(
                 'query_string' => array(
-                    'query' => 'test'
-                )
+                    'query' => 'test',
+                ),
             ),
             'size' => 5,
-            'explain' => true
+            'explain' => true,
         );
         $this->assertEquals($expected, $search->getQuery()->toArray());
         $this->assertEquals(array('test_index'), $search->getIndices());
@@ -134,6 +141,9 @@ class TypeTest extends BaseTest
         $this->assertFalse($search->hasType('test_type2'));
     }
 
+    /**
+     * @group functional
+     */
     public function testNoSource()
     {
         $index = $this->_createIndex();
@@ -183,6 +193,9 @@ class TypeTest extends BaseTest
         $this->assertEmpty($result->getData());
     }
 
+    /**
+     * @group functional
+     */
     public function testDeleteById()
     {
         $index = $this->_createIndex();
@@ -281,6 +294,9 @@ class TypeTest extends BaseTest
         $this->assertEquals(1, $resultSet->count());
     }
 
+    /**
+     * @group functional
+     */
     public function testDeleteDocument()
     {
         $index = $this->_createIndex();
@@ -314,6 +330,7 @@ class TypeTest extends BaseTest
     }
 
     /**
+     * @group functional
      * @expectedException \Elastica\Exception\NotFoundException
      */
     public function testGetDocumentNotExist()
@@ -329,17 +346,21 @@ class TypeTest extends BaseTest
     }
 
     /**
-     * @expectedException \Elastica\Exception\NotFoundException
+     * @group functional
+     * @expectedException \Elastica\Exception\ResponseException
      */
     public function testGetDocumentNotExistingIndex()
     {
-        $client = new Client();
+        $client = $this->_getClient();
         $index = new Index($client, 'index');
         $type = new Type($index, 'type');
 
         $type->getDocument(1);
     }
 
+    /**
+     * @group functional
+     */
     public function testDeleteByQueryWithQueryString()
     {
         $index = $this->_createIndex();
@@ -368,6 +389,9 @@ class TypeTest extends BaseTest
         $this->assertEquals(0, $response->count());
     }
 
+    /**
+     * @group functional
+     */
     public function testDeleteByQueryWithQuery()
     {
         $index = $this->_createIndex();
@@ -396,9 +420,12 @@ class TypeTest extends BaseTest
         $this->assertEquals(0, $response->count());
     }
 
+    /**
+     * @group functional
+     */
     public function testDeleteByQueryWithQueryAndOptions()
     {
-        $index = $this->_createIndex('test', true, 2);
+        $index = $this->_createIndex(null, true, 2);
         $type = new Type($index, 'test');
         $type->addDocument(new Document(1, array('name' => 'ruflin nicolas')));
         $type->addDocument(new Document(2, array('name' => 'ruflin')));
@@ -411,7 +438,7 @@ class TypeTest extends BaseTest
         $this->assertEquals(1, $response->count());
 
         // Route to the wrong document id; should not delete
-        $response = $type->deleteByQuery(new SimpleQueryString('nicolas'), array('routing'=>'2'));
+        $response = $type->deleteByQuery(new SimpleQueryString('nicolas'), array('routing' => '2'));
         $this->assertTrue($response->isOk());
 
         $index->refresh();
@@ -423,7 +450,7 @@ class TypeTest extends BaseTest
         $this->assertEquals(1, $response->count());
 
         // Delete first document
-        $response = $type->deleteByQuery(new SimpleQueryString('nicolas'), array('routing'=>'1'));
+        $response = $type->deleteByQuery(new SimpleQueryString('nicolas'), array('routing' => '1'));
         $this->assertTrue($response->isOk());
 
         $index->refresh();
@@ -438,7 +465,9 @@ class TypeTest extends BaseTest
 
     /**
      * Test to see if Elastica_Type::getDocument() is properly using
-     * the fields array when available instead of _source
+     * the fields array when available instead of _source.
+     *
+     * @group functional
      */
     public function testGetDocumentWithFieldsSelection()
     {
@@ -456,7 +485,9 @@ class TypeTest extends BaseTest
     }
 
     /**
-     * Test to see if search Default Limit works
+     * Test to see if search Default Limit works.
+     *
+     * @group functional
      */
     public function testLimitDefaultType()
     {
@@ -492,34 +523,47 @@ class TypeTest extends BaseTest
 
     /**
      * Test Delete of index type.  After delete will check for type mapping.
+     *
+     * @group functional
      */
     public function testDeleteType()
     {
         $index = $this->_createIndex();
         $type = new Type($index, 'test');
-        $type->addDocument(new Document(1, array('name' => 'ruflin nicolas')));
-        $type->addDocument(new Document(2, array('name' => 'ruflin')));
+        $type->addDocuments(array(
+            new Document(1, array('name' => 'ruflin nicolas')),
+            new Document(2, array('name' => 'ruflin')),
+        ));
         $index->refresh();
 
+        // sleep a moment to be sure that all nodes in cluster has new type
+        sleep(5);
+
         $type->delete();
+        $index->optimize();
+
         $this->assertFalse($type->exists());
     }
 
+    /**
+     * @group functional
+     */
     public function testMoreLikeThisApi()
     {
-        $client = new Client(array('persistent' => false));
+        $client = $this->_getClient(array('persistent' => false));
         $index = $client->getIndex('elastica_test');
         $index->create(array('index' => array('number_of_shards' => 1, 'number_of_replicas' => 0)), true);
 
         $type = new Type($index, 'mlt_test');
-        $type->addDocument(new Document(1, array('visible' => true, 'name' => 'bruce wayne batman')));
-        $type->addDocument(new Document(2, array('visible' => true, 'name' => 'bruce wayne')));
-        $type->addDocument(new Document(3, array('visible' => false, 'name' => 'bruce wayne')));
-        $type->addDocument(new Document(4, array('visible' => true, 'name' => 'batman')));
-        $type->addDocument(new Document(5, array('visible' => false, 'name' => 'batman')));
-        $type->addDocument(new Document(6, array('visible' => true, 'name' => 'superman')));
-        $type->addDocument(new Document(7, array('visible' => true, 'name' => 'spiderman')));
-
+        $type->addDocuments(array(
+            new Document(1, array('visible' => true, 'name' => 'bruce wayne batman')),
+            new Document(2, array('visible' => true, 'name' => 'bruce wayne')),
+            new Document(3, array('visible' => false, 'name' => 'bruce wayne')),
+            new Document(4, array('visible' => true, 'name' => 'batman')),
+            new Document(5, array('visible' => false, 'name' => 'batman')),
+            new Document(6, array('visible' => true, 'name' => 'superman')),
+            new Document(7, array('visible' => true, 'name' => 'spiderman')),
+        ));
         $index->refresh();
 
         $document = $type->getDocument(1);
@@ -529,15 +573,18 @@ class TypeTest extends BaseTest
         $this->assertEquals(4, $resultSet->count());
 
         // Return just the visible similar
-        $query              = new Query();
-        $filterTerm         = new Term();
+        $query = new Query();
+        $filterTerm = new Term();
         $filterTerm->setTerm('visible', true);
-        $query->setFilter($filterTerm);
+        $query->setPostFilter($filterTerm);
 
         $resultSet = $type->moreLikeThis($document, array('min_term_freq' => '1', 'min_doc_freq' => '1'), $query);
         $this->assertEquals(2, $resultSet->count());
     }
 
+    /**
+     * @group functional
+     */
     public function testUpdateDocument()
     {
         $client = $this->_getClient();
@@ -549,7 +596,7 @@ class TypeTest extends BaseTest
 
         $document = new Document();
         $script = new Script(
-            "ctx._source.name = name; ctx._source.counter += count",
+            'ctx._source.name = name; ctx._source.counter += count',
             array(
                 'name' => $newName,
                 'count' => 2,
@@ -561,10 +608,77 @@ class TypeTest extends BaseTest
 
         $type->updateDocument($script, array('refresh' => true));
         $updatedDoc = $type->getDocument($id)->getData();
-        $this->assertEquals($newName, $updatedDoc['name'], "Name was not updated");
-        $this->assertEquals(3, $updatedDoc['counter'], "Counter was not incremented");
+        $this->assertEquals($newName, $updatedDoc['name'], 'Name was not updated');
+        $this->assertEquals(3, $updatedDoc['counter'], 'Counter was not incremented');
     }
 
+    /**
+     * @group functional
+     */
+    public function testUpdateDocumentWithIdForwardSlashes()
+    {
+        $client = $this->_getClient();
+        $index = $client->getIndex('elastica_test');
+        $type = $index->getType('update_type');
+        $id = '/id/with/forward/slashes';
+        $type->addDocument(new Document($id, array('name' => 'bruce wayne batman', 'counter' => 1)));
+        $newName = 'batman';
+
+        $document = new Document();
+        $script = new Script(
+            'ctx._source.name = name; ctx._source.counter += count',
+            array(
+                'name' => $newName,
+                'count' => 2,
+            ),
+            null,
+            $id
+        );
+        $script->setUpsert($document);
+
+        $type->updateDocument($script, array('refresh' => true));
+        $updatedDoc = $type->getDocument($id)->getData();
+        $this->assertEquals($newName, $updatedDoc['name'], 'Name was not updated');
+        $this->assertEquals(3, $updatedDoc['counter'], 'Counter was not incremented');
+    }
+
+    /**
+     * @group functional
+     */
+    public function testUpdateDocumentWithParameter()
+    {
+        $client = $this->_getClient();
+        $index = $client->getIndex('elastica_test');
+        $type = $index->getType('update_type');
+        $id = 1;
+        $type->addDocument(new Document($id, array('name' => 'bruce wayne batman', 'counter' => 1)));
+        $newName = 'batman';
+
+        $document = new Document();
+        $script = new Script(
+            'ctx._source.name = name; ctx._source.counter += count',
+            array(
+                'name' => $newName,
+                'count' => 2,
+            ),
+            null,
+            $id
+        );
+        $script->setUpsert($document);
+
+        try {
+            $type->updateDocument($script, array('version' => 999)); // Wrong version number to make the update fail
+        } catch (ResponseException $e) {
+            $this->assertContains('VersionConflictEngineException', $e->getMessage());
+        }
+        $updatedDoc = $type->getDocument($id)->getData();
+        $this->assertNotEquals($newName, $updatedDoc['name'], 'Name was updated');
+        $this->assertNotEquals(3, $updatedDoc['counter'], 'Counter was incremented');
+    }
+
+    /**
+     * @group functional
+     */
     public function testUpdateDocumentWithFieldsSource()
     {
         $client = $this->_getClient();
@@ -612,11 +726,13 @@ class TypeTest extends BaseTest
     }
 
     /**
+     * @group functional
      * @expectedException \Elastica\Exception\InvalidException
      */
     public function testUpdateDocumentWithoutId()
     {
         $index = $this->_createIndex();
+        $this->_waitForAllocation($index);
         $type = $index->getType('elastica_type');
 
         $document = new Document();
@@ -624,6 +740,9 @@ class TypeTest extends BaseTest
         $type->updateDocument($document);
     }
 
+    /**
+     * @group functional
+     */
     public function testUpdateDocumentWithoutSource()
     {
         $index = $this->_createIndex();
@@ -633,10 +752,10 @@ class TypeTest extends BaseTest
         $mapping->setProperties(array(
             'name' => array(
                 'type' => 'string',
-                'store' => 'yes'),
+                'store' => 'yes', ),
             'counter' => array(
                 'type' => 'integer',
-                'store' => 'no'
+                'store' => 'no',
             ),
         ));
         $mapping->disableSource();
@@ -673,6 +792,9 @@ class TypeTest extends BaseTest
         }
     }
 
+    /**
+     * @group functional
+     */
     public function testAddDocumentHashId()
     {
         $index = $this->_createIndex();
@@ -694,6 +816,9 @@ class TypeTest extends BaseTest
         $this->assertEquals($hashId, $doc->getId());
     }
 
+    /**
+     * @group functional
+     */
     public function testAddDocumentAutoGeneratedId()
     {
         $index = $this->_createIndex();
@@ -719,23 +844,28 @@ class TypeTest extends BaseTest
     }
 
     /**
+     * @group functional
      * @expectedException \Elastica\Exception\RuntimeException
      */
     public function testAddDocumentWithoutSerializer()
     {
         $index = $this->_createIndex();
+        $this->_waitForAllocation($index);
 
         $type = new Type($index, 'user');
 
         $type->addObject(new \stdClass());
     }
 
+    /**
+     * @group functional
+     */
     public function testAddObject()
     {
         $index = $this->_createIndex();
 
         $type = new Type($index, 'user');
-        $type->setSerializer(array(new SerializerMock(), 'serialize'));
+        $type->setSerializer('get_object_vars');
 
         $userObject = new \stdClass();
         $userObject->username = 'hans';
@@ -754,6 +884,20 @@ class TypeTest extends BaseTest
         $this->assertEquals('hans', $data['username']);
     }
 
+    /**
+     * @group unit
+     */
+    public function testSetSerializer()
+    {
+        $index = $this->_getClient()->getIndex('foo');
+        $type = $index->getType('user');
+        $ret = $type->setSerializer('get_object_vars');
+        $this->assertInstanceOf('Elastica\Type', $ret);
+    }
+
+    /**
+     * @group functional
+     */
     public function testExists()
     {
         $index = $this->_createIndex();
@@ -765,6 +909,9 @@ class TypeTest extends BaseTest
         $type->addDocument(new Document(1, array('name' => 'test name')));
         $index->optimize();
 
+        // sleep a moment to be sure that all nodes in cluster has new type
+        sleep(5);
+
         //Test if type exists
         $this->assertTrue($type->exists());
 
@@ -772,15 +919,18 @@ class TypeTest extends BaseTest
         $this->assertFalse($index->exists());
     }
 
-    public function testGetMapping() {
-        $indexName = 'test';
+    /**
+     * @group functional
+     */
+    public function testGetMapping()
+    {
         $typeName = 'test-type';
 
-        $index = $this->_createIndex($indexName);
+        $index = $this->_createIndex();
         $indexName = $index->getName();
         $type = new Type($index, $typeName);
         $mapping = new Mapping($type, $expect = array(
-            'id' => array('type' => 'integer', 'store' => true)
+            'id' => array('type' => 'integer', 'store' => true),
         ));
         $type->setMapping($mapping);
 
@@ -792,16 +942,19 @@ class TypeTest extends BaseTest
         );
     }
 
-    public function testGetMappingAlias() {
-        $indexName = 'test';
+    /**
+     * @group functional
+     */
+    public function testGetMappingAlias()
+    {
         $aliasName = 'test-alias';
         $typeName = 'test-alias-type';
 
-        $index = $this->_createIndex($indexName);
+        $index = $this->_createIndex();
         $index->addAlias($aliasName);
         $type = new Type($index, $typeName);
         $mapping = new Mapping($type, $expect = array(
-            'id' => array('type' => 'integer', 'store' => true)
+            'id' => array('type' => 'integer', 'store' => true),
         ));
         $type->setMapping($mapping);
 
@@ -811,13 +964,5 @@ class TypeTest extends BaseTest
             array('test-alias-type' => array('properties' => $expect)),
             $client->getIndex($aliasName)->getType($typeName)->getMapping()
         );
-    }
-}
-
-class SerializerMock
-{
-    public function serialize($object)
-    {
-        return get_object_vars($object);
     }
 }

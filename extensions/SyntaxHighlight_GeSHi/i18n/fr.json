@@ -3,13 +3,23 @@
 		"authors": [
 			"Grondin",
 			"Sherbrooke",
-			"Verdy p"
+			"Verdy p",
+			"Macofe",
+			"Mattho69",
+			"Dcausse",
+			"Orlodrim",
+			"Wladek92"
 		]
 	},
-	"syntaxhighlight-desc": "Fournit la mise en relief de la syntaxe par la balise <code>&lt;syntaxhighlight&gt;</code> en utilisant [http://qbnz.com/highlighter/ la coloration syntaxique GeSHi]",
-	"syntaxhighlight-specify": "Vous devez spécifier un langage comme ceci :",
-	"syntaxhighlight-supported": "Langages supportés pour la coloration syntaxique :",
-	"syntaxhighlight-err-loading": "(erreur en chargeant la liste des langages supportés)",
-	"syntaxhighlight-err-language": "Langage invalide",
-	"geshi.css": "/* Le code CSS inséré ici sera appliqué à la coloration syntaxique GeSHi. */"
+	"syntaxhighlight-desc": "Fournit la mise en valeur de la syntaxe par la balise <code>&lt;syntaxhighlight&gt;</code> en utilisant [http://pygments.org/ Pygments - coloration syntaxique Python]",
+	"syntaxhighlight-error-category": "Pages avec des erreurs de coloration syntaxique",
+	"syntaxhighlight-error-category-desc": "Il y a eu une erreur lors de la tentative de mise en valeur du code inclus sur la page.",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "Code",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Langage",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "(aucun)",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "Afficher les numéros de ligne",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Bloc de code",
+	"syntaxhighlight-error-pygments-invocation-failure": "Impossible d'appeler Pygments",
+	"syntaxhighlight-error-unknown-language": "Langue inconnue \"$1\"",
+	"syntaxhighlight-error-exceeds-size-limit": "Code de taille $1 {{PLURAL:$1|octets}} qui dépasse le  maximum autorisé $2 {{PLURAL:$2|octets}}"
 }

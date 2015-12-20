@@ -7,6 +7,7 @@
 	],
 	"url": "https://www.mediawiki.org/wiki/Extension:Nuke",
 	"descriptionmsg": "nuke-desc",
+	"license-name": "GPL-2.0+",
 	"type": "specialpage",
 	"ExtensionMessagesFiles": {
 		"NukeAlias": "Nuke.alias.php"
@@ -46,5 +47,6 @@
 	"AutoloadClasses": {
 		"SpecialNuke": "Nuke_body.php",
 		"NukeHooks": "Nuke.hooks.php"
-	}
+	},
+	"manifest_version": 1
 }

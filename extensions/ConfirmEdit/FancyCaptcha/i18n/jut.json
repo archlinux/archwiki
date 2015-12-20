@@ -2,12 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Christian List",
-			"Huslåke"
+			"Huslåke",
+			"Jyllanj"
 		]
 	},
 	"fancycaptcha-addurl": "Din ændring tilføjer nye eksterne henvisninger. For at beskytte mod automatiseret spam, skal du indtaste ordet som vises nedenfor i feltet under det. ([[Special:Captcha/help|mere information]]):",
-	"fancycaptcha-badlogin": "For at beskytte mod automatiske forsøg på at gætte adgangskoden, skal du indtaste ordet som vises i feltet nedenfor. ([[Special:Captcha/help|mere information]]):",
-	"fancycaptcha-createaccount": "For at beskytte mod automatisk oprettelse af brugernavne, der bruges til spam, skal du indtaste ordet som vises nedenfor i feltet under det. ([[Special:Captcha/help|mere information]]):",
-	"fancycaptcha-create": "For at oprette en ny side, skal du indtaste ordet som vises nedenfor i feltet under det. ([[Special:Captcha/help|mere information]]):",
-	"fancycaptcha-edit": "or at redigere denne side\n([[Special:Captcha/help|more info]]):"
+	"fancycaptcha-badlogin": "For å beskøtt mod automatisk forsyeg på å djiet adgångskoden, skal du intast uerden som wises i feltje nierfor. ([[Special:Captcha/help|mier informasjon]]):",
+	"fancycaptcha-createaccount": "For å beskøtt mod automatisk oprettels å brugenaun, som bruges te spam, skal du intast uerde som wises nierfor i feltje unje dä. ([[Special:Captcha/help|mier informasjon]]):",
+	"fancycaptcha-create": "For å oprett en ny siid, skal du intast uerde som wises nierfor i feltje unje dä. ([[Special:Captcha/help|mier informasjon]]):",
+	"fancycaptcha-edit": "For å redigiir siden, skal du intast uerden, som stor i feltje nierfor ([[Special:Captcha/help|mier informasjon]]):"
 }

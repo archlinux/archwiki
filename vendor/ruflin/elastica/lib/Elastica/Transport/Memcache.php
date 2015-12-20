@@ -1,7 +1,7 @@
 <?php
-
 namespace Elastica\Transport;
 
+use Elastica\Exception\Connection\MemcacheException;
 use Elastica\Exception\InvalidException;
 use Elastica\Exception\PartialShardFailureException;
 use Elastica\Exception\ResponseException;
@@ -10,30 +10,31 @@ use Elastica\Request;
 use Elastica\Response;
 
 /**
- * Elastica Memcache Transport object
+ * Elastica Memcache Transport object.
  *
- * @category Xodoa
- * @package Elastica
  * @author Nicolas Ruflin <spam@ruflin.com>
+ *
+ * @deprecated The memcached transport is deprecated as of ES 1.5, and will be removed in ES 2.0
  */
 class Memcache extends AbstractTransport
 {
+    const MAX_KEY_LENGTH = 250;
+
     /**
-     * Makes calls to the elasticsearch server
+     * Makes calls to the elasticsearch server.
      *
      * @param \Elastica\Request $request
-     * @param  array                               $params Host, Port, ...
+     * @param array             $params  Host, Port, ...
+     *
      * @throws \Elastica\Exception\ResponseException
      * @throws \Elastica\Exception\InvalidException
-     * @return \Elastica\Response                   Response object
+     *
+     * @return \Elastica\Response Response object
      */
     public function exec(Request $request, array $params)
     {
         $memcache = new \Memcache();
         $memcache->connect($this->getConnection()->getHost(), $this->getConnection()->getPort());
-
-        // Finds right function name
-        $function = strtolower($request->getMethod());
 
         $data = $request->getData();
 
@@ -52,22 +53,34 @@ class Memcache extends AbstractTransport
 
         $responseString = '';
 
-        switch ($function) {
-            case 'post':
-            case 'put':
-                $memcache->set($request->getPath(), $content);
+        $start = microtime(true);
+
+        switch ($request->getMethod()) {
+            case Request::POST:
+            case Request::PUT:
+                $key = $request->getPath();
+                $this->_checkKeyLength($key);
+                $memcache->set($key, $content);
                 break;
-            case 'get':
-                $responseString = $memcache->get($request->getPath() . '?source=' . $content);
+            case Request::GET:
+                $key = $request->getPath().'?source='.$content;
+                $this->_checkKeyLength($key);
+                $responseString = $memcache->get($key);
                 break;
-            case 'delete':
+            case Request::DELETE:
+                $key = $request->getPath().'?source='.$content;
+                $this->_checkKeyLength($key);
+                $responseString = $memcache->delete($key);
                 break;
             default:
-                throw new InvalidException('Method ' . $function . ' is not supported in memcache transport');
-
+            case Request::HEAD:
+                throw new InvalidException('Method '.$request->getMethod().' is not supported in memcache transport');
         }
 
+        $end = microtime(true);
+
         $response = new Response($responseString);
+        $response->setQueryTime($end - $start);
 
         if ($response->hasError()) {
             throw new ResponseException($request, $response);
@@ -78,5 +91,19 @@ class Memcache extends AbstractTransport
         }
 
         return $response;
+    }
+
+    /**
+     * Check if key that will be used dont exceed 250 symbols.
+     *
+     * @param string $key
+     *
+     * @throws Elastica\Exception\Connection\MemcacheException If key is too long
+     */
+    private function _checkKeyLength($key)
+    {
+        if (strlen($key) >= self::MAX_KEY_LENGTH) {
+            throw new MemcacheException('Memcache key is too long');
+        }
     }
 }

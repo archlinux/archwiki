@@ -1,22 +1,24 @@
 <?php
-
 namespace Elastica\Test;
 
-use Elastica\Client;
 use Elastica\Document;
 use Elastica\Index;
 use Elastica\Percolator;
-use Elastica\Query\Term;
 use Elastica\Query;
+use Elastica\Query\Term;
 use Elastica\Test\Base as BaseTest;
+use Elastica\Type;
 
 class PercolatorTest extends BaseTest
 {
+    /**
+     * @group functional
+     */
     public function testConstruct()
     {
-        $percolatorName = 'percotest';
+        $index = $this->_createIndex();
+        $percolatorName = $index->getName();
 
-        $index = $this->_createIndex($percolatorName);
         $percolator = new Percolator($index);
 
         $query = new Term(array('field1' => 'value1'));
@@ -29,7 +31,7 @@ class PercolatorTest extends BaseTest
             '_index' => $index->getName(),
             '_id' => $percolatorName,
             '_version' => 1,
-            'created' => 1
+            'created' => 1,
         );
 
         $this->assertEquals($expectedArray, $data);
@@ -37,12 +39,16 @@ class PercolatorTest extends BaseTest
         $index->delete();
     }
 
+    /**
+     * @group functional
+     */
     public function testMatchDoc()
     {
         $index = $this->_createIndex();
+
         $percolator = new Percolator($index);
 
-        $percolatorName = 'percotest';
+        $percolatorName = $index->getName();
 
         $query = new Term(array('name' => 'ruflin'));
         $response = $percolator->registerQuery($percolatorName, $query);
@@ -77,6 +83,8 @@ class PercolatorTest extends BaseTest
 
     /**
      * Test case for using filtered percolator queries based on the Elasticsearch documentation examples.
+     *
+     * @group functional
      */
     public function testFilteredMatchDoc()
     {
@@ -111,6 +119,8 @@ class PercolatorTest extends BaseTest
 
     /**
      * Test case for using filtered percolator queries based on the Elasticsearch documentation examples.
+     *
+     * @group functional
      */
     public function testRegisterAndUnregisterPercolator()
     {
@@ -140,7 +150,6 @@ class PercolatorTest extends BaseTest
         $matches = $percolator->matchDoc($doc, new Term(array('color' => 'green')));
         $this->assertCount(0, $matches, 'A registered query matched, although nothing should match at all.');
 
-
         // unregister percolator query
         $response = $percolator->unregisterQuery('kuku');
 
@@ -162,26 +171,31 @@ class PercolatorTest extends BaseTest
         $percolator = new Percolator($index);
 
         $query = new Term(array('name' => 'foobar'));
-        $percolator->registerQuery($percolatorName, $query);
+        $percolator->registerQuery($percolatorName, $query, array('field1' => array('tag1', 'tag2')));
+
         return $percolator;
     }
 
-    protected function _addDefaultDocuments($index, $type='testing')
+    protected function _addDefaultDocuments($index, $type = 'testing')
     {
         $type = $index->getType('testing');
-        $doc1 = new Document(1, array('name' => 'foobar'));
-        $doc2 = new Document(2, array('name' => 'barbaz'));
-        $type->addDocument($doc1);
-        $type->addDocument($doc2);
+        $type->addDocuments(array(
+            new Document(1, array('name' => 'foobar')),
+            new Document(2, array('name' => 'barbaz')),
+        ));
         $index->refresh();
+
         return $type;
     }
 
+    /**
+     * @group functional
+     */
     public function testPercolateExistingDocWithoutAnyParameter()
     {
         $percolator = $this->_getDefaultPercolator();
-        $index      = $percolator->getIndex();
-        $type       = $this->_addDefaultDocuments($index);
+        $index = $percolator->getIndex();
+        $type = $this->_addDefaultDocuments($index);
 
         $matches = $percolator->matchExistingDoc(1, $type->getName());
 
@@ -190,28 +204,34 @@ class PercolatorTest extends BaseTest
         $index->delete();
     }
 
+    /**
+     * @group functional
+     */
     public function testPercolateExistingDocWithPercolateFormatIds()
     {
         $percolator = $this->_getDefaultPercolator();
-        $index      = $percolator->getIndex();
-        $type       = $this->_addDefaultDocuments($index);
+        $index = $percolator->getIndex();
+        $type = $this->_addDefaultDocuments($index);
 
         $parameter = array('percolate_format' => 'ids');
-        $matches   = $percolator->matchExistingDoc(1, $type->getName(), null, $parameter);
+        $matches = $percolator->matchExistingDoc(1, $type->getName(), null, $parameter);
 
         $this->assertCount(1, $matches);
         $this->assertEquals('existingDoc', $matches[0]);
         $index->delete();
     }
 
+    /**
+     * @group functional
+     */
     public function testPercolateExistingDocWithIdThatShouldBeUrlEncoded()
     {
         $percolator = $this->_getDefaultPercolator();
-        $index      = $percolator->getIndex();
-        $type       = $this->_addDefaultDocuments($index);
+        $index = $percolator->getIndex();
+        $type = $this->_addDefaultDocuments($index);
 
         // id with whitespace, should be urlencoded
-        $id = "foo bar 1";
+        $id = 'foo bar 1';
 
         $type->addDocument(new Document($id, array('name' => 'foobar')));
         $index->refresh();
@@ -220,5 +240,89 @@ class PercolatorTest extends BaseTest
 
         $this->assertCount(1, $matches);
         $index->delete();
+    }
+
+    /**
+     * @group functional
+     */
+    public function testPercolateWithAdditionalRequestBodyOptions()
+    {
+        $index = $this->_createIndex();
+        $percolator = new Percolator($index);
+
+        $query = new Term(array('name' => 'foo'));
+        $response = $percolator->registerQuery('percotest', $query, array('field1' => array('tag1', 'tag2')));
+
+        $this->assertTrue($response->isOk());
+        $this->assertFalse($response->hasError());
+
+        $query = new Term(array('name' => 'foo'));
+        $response = $percolator->registerQuery('percotest1', $query, array('field1' => array('tag2')));
+
+        $this->assertTrue($response->isOk());
+        $this->assertFalse($response->hasError());
+
+        $doc1 = new Document();
+        $doc1->set('name', 'foo');
+
+        $index->refresh();
+
+        $options = array(
+            'track_scores' => true,
+            'sort' => array('_score' => 'desc'),
+            'size' => 1,
+        );
+
+        $matches = $percolator->matchDoc($doc1, new Term(array('field1' => 'tag2')), 'type', $options);
+
+        $this->assertCount(1, $matches);
+        $this->assertEquals('percotest1', $matches[0]['_id']);
+        $this->assertArrayHasKey('_score', $matches[0]);
+    }
+
+    /**
+     * @group functional
+     */
+    public function testPercolateExistingDocWithAdditionalRequestBodyOptions()
+    {
+        $percolatorName = 'existingDoc';
+        $percolator = $this->_getDefaultPercolator($percolatorName);
+
+        $query = new Term(array('name' => 'foobar'));
+        $percolator->registerQuery($percolatorName.'1', $query, array('field1' => array('tag2')));
+
+        $index = $percolator->getIndex();
+        $type = $this->_addDefaultDocuments($index);
+
+        $options = array(
+            'track_scores' => true,
+            'sort' => array('_score' => 'desc'),
+            'size' => 1,
+        );
+
+        $matches = $percolator->matchExistingDoc(1, $type->getName(), new Term(array('field1' => 'tag2')), $options);
+
+        $this->assertCount(1, $matches);
+        $this->assertEquals('existingDoc1', $matches[0]['_id']);
+        $this->assertArrayHasKey('_score', $matches[0]);
+        $index->delete();
+    }
+
+    protected function _createIndex($name = null, $delete = true, $shards = 1)
+    {
+        $index = parent::_createIndex($name, $delete, $shards);
+        $type = $index->getType('.percolator');
+
+        $mapping = new Type\Mapping($type,
+            array(
+                'name' => array('type' => 'string'),
+                'field1' => array('type' => 'string'),
+            )
+        );
+        $mapping->disableSource();
+
+        $type->setMapping($mapping);
+
+        return $index;
     }
 }

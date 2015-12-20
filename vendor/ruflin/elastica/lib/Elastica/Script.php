@@ -1,21 +1,19 @@
 <?php
-
 namespace Elastica;
 
 use Elastica\Exception\InvalidException;
 
 /**
- * Script objects, containing script internals
+ * Script objects, containing script internals.
  *
- * @category Xodoa
- * @package Elastica
  * @author avasilenko <aa.vasilenko@gmail.com>
- * @link http://www.elasticsearch.org/guide/reference/modules/scripting.html
+ *
+ * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/modules-scripting.html
  */
 class Script extends AbstractUpdateAction
 {
-    const LANG_MVEL   = 'mvel';
-    const LANG_JS     = 'js';
+    const LANG_MVEL = 'mvel';
+    const LANG_JS = 'js';
     const LANG_GROOVY = 'groovy';
     const LANG_PYTHON = 'python';
     const LANG_NATIVE = 'native';
@@ -38,9 +36,11 @@ class Script extends AbstractUpdateAction
     public function __construct($script, array $params = null, $lang = null, $id = null)
     {
         $this->setScript($script);
+
         if ($params) {
             $this->setParams($params);
         }
+
         if ($lang) {
             $this->setLang($lang);
         }
@@ -52,10 +52,14 @@ class Script extends AbstractUpdateAction
 
     /**
      * @param string $lang
+     *
+     * @return $this
      */
     public function setLang($lang)
     {
         $this->_lang = $lang;
+
+        return $this;
     }
 
     /**
@@ -68,10 +72,14 @@ class Script extends AbstractUpdateAction
 
     /**
      * @param string $script
+     *
+     * @return $this
      */
     public function setScript($script)
     {
         $this->_script = $script;
+
+        return $this;
     }
 
     /**
@@ -83,9 +91,11 @@ class Script extends AbstractUpdateAction
     }
 
     /**
-     * @param  string|array|\Elastica\Script        $data
+     * @param string|array|\Elastica\Script $data
+     *
      * @throws \Elastica\Exception\InvalidException
-     * @return \Elastica\Script
+     *
+     * @return self
      */
     public static function create($data)
     {
@@ -103,9 +113,11 @@ class Script extends AbstractUpdateAction
     }
 
     /**
-     * @param  array                               $data
+     * @param array $data
+     *
      * @throws \Elastica\Exception\InvalidException
-     * @return \Elastica\Script
+     *
+     * @return self
      */
     protected static function _createFromArray(array $data)
     {
@@ -118,6 +130,7 @@ class Script extends AbstractUpdateAction
         if (isset($data['lang'])) {
             $script->setLang($data['lang']);
         }
+
         if (isset($data['params'])) {
             if (!is_array($data['params'])) {
                 throw new InvalidException("\$data['params'] should be array");
@@ -136,9 +149,11 @@ class Script extends AbstractUpdateAction
         $array = array(
             'script' => $this->_script,
         );
+
         if (!empty($this->_params)) {
             $array['params'] = $this->_params;
         }
+
         if ($this->_lang) {
             $array['lang'] = $this->_lang;
         }

@@ -1,10 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Dj"
+			"Dj",
+			"ViDam"
 		]
 	},
 	"cologneblue.css": "/* Az ide elhelyezett CSS hatással lesz a Kölni kék felület használóira */",
 	"cologneblue.js": "/* A Kölni kék felületet használó szerkesztők számára betöltendő JavaScriptek */",
-	"skinname-cologneblue": "Kölni kék"
+	"skinname-cologneblue": "Kölni kék",
+	"cologneblue-desc": "Egy pehelykönnyű felület minimális formázással"
 }

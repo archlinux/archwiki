@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Shubha"
+			"Shubha",
+			"NehalDaveND"
 		]
 	},
 	"gadgets-desc": "योजकाः स्वस्य [[Special:Preferences#mw-prefsection-gadgets|इष्टतमानि]] इत्यत्र [[Special:Gadgets|CSS जावालिपि-उपकरणं च]] चीयताम् ।",
@@ -13,10 +14,10 @@
 	"gadgets-uses": "उपयोगः",
 	"gadgets-required-rights": "अधोनिर्दिष्टम् अपेक्षते {{PLURAL:$2|अधिकारः|अधिकारः}}:\n\n$1",
 	"gadgets-required-skins": "उपलभ्यते {{PLURAL:$2|$1 विन्यासः|अधोनिर्दिष्टः विन्यासः: $1}}.",
-	"gadgets-default": "पूर्वनिर्दिष्टरूपेण सर्वेषां कृते सक्रियं विद्यते।",
+	"gadgets-default": "यदभावे सर्वेषां कृते सक्रियं विद्यते ।",
 	"gadgets-export": "निर्यातः",
 	"gadgets-export-title": "उपकरणनिर्यातः",
 	"gadgets-not-found": "\"$1\" उपकरणं न प्राप्तम् ।",
 	"gadgets-export-text": "$1 उपकरणस्य निर्याताय \"{{int:gadgets-export-download}}\" पिञ्जः नोदनीयः, अवारोपिता सञ्चिका रक्ष्यताम्, लक्ष्यविक्यां Special:Import प्रति गम्यताम् उपारोप्यताञ्च । तत्पश्चात् MediaWiki:Gadgets-definition इत्यस्मिन् अधोनिर्दिष्टं योज्यताम् : <pre>$2</pre>\nलक्ष्यविक्यां भवतः उप्युक्ताधिकारः स्यात् (तन्त्रसन्देशसम्पादनस्य अधिकारः अन्तर्भूतः) सञ्चिकोपरोपणात् आयातः सक्षमः करणीयः",
-	"gadgets-export-download": "अवतार्यताम्"
+	"gadgets-export-download": "अवारोप्यताम्"
 }

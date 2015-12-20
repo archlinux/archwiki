@@ -1,11 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Shinjiman"
+			"Shinjiman",
+			"CRCHF"
 		]
 	},
 	"titleblacklist-desc": "容許禁止開指定標題嘅版: [[MediaWiki:Titleblacklist]] 同 [[MediaWiki:Titlewhitelist]]",
-	"titleblacklist": "# 呢個係一個標題黑名單。同呢度配合正規表達式嘅標題係唔可以新開嘅。\n# 用 \"#\" 去做註解。",
+	"titleblacklist": "# 呢個係標題黑名單。同呢度配合正規表達式嘅標題係唔可以新開嘅。\n# 用 \"#\" 去做註解。",
 	"titlewhitelist": "# 呢個係一個標題白名單。 用 \"#\" 去做註解",
 	"titleblacklist-forbidden-edit": "個標題 \"$2\" 已經禁止咗去開版。佢同下面黑名單嘅項目配合: <code>$1</code>",
 	"titleblacklist-forbidden-move": "\"$2\" 唔可以搬到去 \"$3\"，由於個標題 \"$3\" 已經禁止咗去開。佢同下面黑名單嘅項目配合: <code>$1</code>",

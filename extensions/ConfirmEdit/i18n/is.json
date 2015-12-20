@@ -2,10 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"S.Örvarr.S",
-			"Snævar"
+			"Snævar",
+			"Sveinn í Felli"
 		]
 	},
 	"captcha-edit": "Til að breyta þessari síðu, vinsamlegast finndu summuna að neðan og skrifaðu svarið í\nreitinn ([[Special:Captcha/help|frekari upplýsinngar]]):",
+	"captcha-label": "CAPTCHA",
 	"captcha-addurl": "Breyting þín felur í sér viðbætta ytri tengla. Til að verjast sjálfvirku\nauglýsingarusli, biðjum við þig vinsamlegast að finna summuna að neðan og skrifa svarið í reitinn til að vista breytinguna þína. ([[Special:Captcha/help|frekari upplýsinngar]]):",
 	"captcha-badlogin": "Til að verjast sjálfvirkum leyniorðaárásum, biðjum við þig vinsamlegast að finnda summuna að neðan og skrifa svarið í reitinn ([[Special:Captcha/help|frekari upplýsinngar]]):",
 	"captcha-createaccount": "Til að verjast sjálfvirkri stofnun aðganga, biðjum þig vinsamlegast að finna summuna að neðan og skrifa svarið í reitinn ([[Special:Captcha/help|frekari upplýsinngar]]):",

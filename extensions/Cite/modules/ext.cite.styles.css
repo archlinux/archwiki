@@ -1,0 +1,21 @@
+.mw-cite-backlink,
+.cite-accessibility-label {
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+/* Isolation to fix references in case of RTL words at the end of a reference */
+sup.reference {
+	unicode-bidi: -moz-isolate;
+	unicode-bidi: -webkit-isolate;
+	unicode-bidi: isolate;
+}
+
+/* Highlight clicked reference in blue to help navigation */
+ol.references li:target,
+sup.reference:target {
+	background-color: #def; /* fallback */
+	background-color: rgba(0, 127, 255, 0.133);
+}

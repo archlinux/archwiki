@@ -9,10 +9,10 @@
 	"pdf-file-page-warning-header": "Zom Schoz vun päsöhnlesche Dahte",
 	"pdf-file-page-warning-footer": "Dat hädd och nix met heh dä beschtemmpte Dattei ze donn, ed es esu för jehde Dattei em <i lang=\"en\" xml:lang=\"en\" dir=\"ltr\" title=\"Portable Document Format\">PDF</i>-Fommaht.",
 	"pdf-file-page-warning-info": "Donn mih övver dat Jannze lässe.",
-	"pdf_no_metadata": "Kann de Metta-Date nit fun dä PDF-Datei holle.",
+	"pdf_no_metadata": "Kann de Metta_Dahte nit fun dä <i lang=\"en\" xml:lang=\"en\" dir=\"ltr\" title=\"Portable Document Format\">PDF</i>-Dattei holle.",
 	"pdf_page_error": "En Sigge-Nommer es ußerhallef",
 	"exif-pdf-producer": "Ömwandelongsprojramm",
-	"exif-pdf-version": "PDF-Fommaat-Version",
+	"exif-pdf-version": "PDF-Fommaat-Väsjohn",
 	"exif-pdf-encrypted": "Verschlößelt",
 	"exif-pdf-pagesize": "Dä Sigg(e) ier Jrüüße <--\nhttps://translatewiki.net/wiki/Thread:Support/About_MediaWiki:Exif-pdf-pagesize/ksh\nhttps://translatewiki.net/wiki/Thread:Support/About_MediaWiki:Exif-pdf-pagesize\n-->"
 }

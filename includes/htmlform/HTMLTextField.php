@@ -5,12 +5,23 @@ class HTMLTextField extends HTMLFormField {
 		return isset( $this->mParams['size'] ) ? $this->mParams['size'] : 45;
 	}
 
+	function getSpellCheck() {
+		$val = isset( $this->mParams['spellcheck'] ) ? $this->mParams['spellcheck'] : null;
+		if ( is_bool( $val ) ) {
+			// "spellcheck" attribute literally requires "true" or "false" to work.
+			return $val === true ? 'true' : 'false';
+		}
+		return null;
+	}
+
 	function getInputHTML( $value ) {
 		$attribs = array(
 				'id' => $this->mID,
 				'name' => $this->mName,
 				'size' => $this->getSize(),
 				'value' => $value,
+				'dir' => $this->mDir,
+				'spellcheck' => $this->getSpellCheck(),
 			) + $this->getTooltipAndAccessKey();
 
 		if ( $this->mClass !== '' ) {
@@ -40,6 +51,11 @@ class HTMLTextField extends HTMLFormField {
 		$attribs += $this->getAttributes( $allowedParams );
 
 		# Extract 'type'
+		$type = $this->getType( $attribs );
+		return Html::input( $this->mName, $value, $type, $attribs );
+	}
+
+	protected function getType( &$attribs ) {
 		$type = isset( $attribs['type'] ) ? $attribs['type'] : 'text';
 		unset( $attribs['type'] );
 
@@ -65,6 +81,49 @@ class HTMLTextField extends HTMLFormField {
 			}
 		}
 
-		return Html::input( $this->mName, $value, $type, $attribs );
+		return $type;
+	}
+
+	function getInputOOUI( $value ) {
+		$attribs = $this->getTooltipAndAccessKey();
+
+		if ( $this->mClass !== '' ) {
+			$attribs['classes'] = array( $this->mClass );
+		}
+
+		# @todo Enforce pattern, step, required, readonly on the server side as
+		# well
+		$allowedParams = array(
+			'autofocus',
+			'autosize',
+			'disabled',
+			'flags',
+			'indicator',
+			'maxlength',
+			'placeholder',
+			'readonly',
+			'required',
+			'tabindex',
+			'type',
+		);
+
+		$attribs += $this->getAttributes( $allowedParams, array(
+			'maxlength' => 'maxLength',
+			'readonly' => 'readOnly',
+			'tabindex' => 'tabIndex',
+		) );
+
+		$type = $this->getType( $attribs );
+
+		return $this->getInputWidget( array(
+			'id' => $this->mID,
+			'name' => $this->mName,
+			'value' => $value,
+			'type' => $type,
+		) + $attribs );
+	}
+
+	protected function getInputWidget( $params ) {
+		return new OOUI\TextInputWidget( $params );
 	}
 }

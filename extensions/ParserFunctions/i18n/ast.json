@@ -16,7 +16,7 @@
 	"pfunc_expr_preg_match_failure": "Error d'espresión: Fallu inesperáu de preg_match",
 	"pfunc_expr_unrecognised_word": "Error d'espresión: Pallabra \"$1\" non reconocida.",
 	"pfunc_expr_unexpected_operator": "Error d'espresión: Operador $1 inesperáu",
-	"pfunc_expr_missing_operand": "Error d'espresión: Falta operador en $1",
+	"pfunc_expr_missing_operand": "Error na espresión: Falta l'operando pa $1.",
 	"pfunc_expr_unexpected_closing_bracket": "Error d'espresión: Paréntesis final inesperáu",
 	"pfunc_expr_unrecognised_punctuation": "Error d'espresión: Caráuter de puntuación \"$1\" non reconocíu.",
 	"pfunc_expr_unclosed_bracket": "Error d'espresión: Paréntesis non zarráu",

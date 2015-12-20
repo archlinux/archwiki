@@ -1,0 +1,39 @@
+{
+    "name": "mediawiki/syntax-highlight_geshi",
+    "description": "Syntax highlighting extension for MediaWiki",
+    "require": {
+        "symfony/process": "~2.5"
+    },
+    "require-dev": {
+        "jakub-onderka/php-parallel-lint": "0.9",
+        "mediawiki/mediawiki-codesniffer": "0.4.0"
+    },
+    "license": "GPL-2+",
+    "authors": [
+        {
+            "name": "Brion Vibber",
+            "email": "brion@wikimedia.org"
+        },
+        {
+            "name": "Niklas Laxström",
+            "email": "nlaxstrom@wikimedia.org"
+        },
+        {
+            "name": "Ori Livneh",
+            "email": "ori@wikimedia.org"
+        },
+        {
+            "name": "Rob Church"
+        },
+        {
+            "name": "Tim Starling",
+            "email": "tstarling@wikimedia.org"
+        }
+    ],
+    "scripts": {
+        "test": [
+            "parallel-lint . --exclude vendor",
+            "phpcs -p -s"
+        ]
+    }
+}

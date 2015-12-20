@@ -17,6 +17,7 @@ class InputBox {
 	private $mPreload = '';
 	private $mPreloadparams = array();
 	private $mEditIntro = '';
+	private $mUseVE = '';
 	private $mSummary = '';
 	private $mNosummary = '';
 	private $mMinor = '';
@@ -83,6 +84,39 @@ class InputBox {
 		}
 	}
 
+	/*
+	 * Returns the action name and value to use in inputboxes which redirects to edit pages.
+	 * Decides, if the link should redirect to VE edit page (veaction=edit) or to wikitext editor
+	 * (action=edit).
+	 *
+	 * @return Array Array with name and value data
+	 */
+	private function getEditActionArgs() {
+		// default is wikitext editor
+		$args = array(
+			'name' => 'action',
+			'value' => 'edit',
+		);
+		// check, if VE is installed and VE editor is requested
+		if ( ExtensionRegistry::getInstance()->isLoaded( 'VisualEditor' ) && $this->mUseVE ) {
+			$args = array(
+				'name' => 'veaction',
+				'value' => 'edit',
+			);
+		}
+		return $args;
+	}
+
+	/**
+	 * Get common classes, that could be added and depend on, if
+	 * a line break between a button and an input field is added or not.
+	 *
+	 * @return String
+	 */
+	private function getLinebreakClasses() {
+		return strtolower( $this->mBR ) === '<br />' ? 'mw-inputbox-input ' : '';
+	}
+
 	/**
 	 * Generate search form
 	 * @param $type
@@ -123,7 +157,7 @@ class InputBox {
 		);
 		$htmlOut .= Xml::element( 'input',
 			array(
-				'class' => 'searchboxInput mw-ui-input mw-ui-input-inline',
+				'class' => $this->getLinebreakClasses() . 'searchboxInput mw-ui-input mw-ui-input-inline',
 				'name' => 'search',
 				'type' => $this->mHidden ? 'hidden' : 'text',
 				'value' => $this->mDefaultText,
@@ -134,13 +168,7 @@ class InputBox {
 		);
 
 		if ( $this->mPrefix != '' ) {
-			$htmlOut .= Xml::element( 'input',
-				array(
-					'name' => 'prefix',
-					'type' => 'hidden',
-					'value' => $this->mPrefix,
-				)
-			);
+			$htmlOut .= Html::hidden( 'prefix', $this->mPrefix );
 		}
 
 		$htmlOut .= $this->mBR;
@@ -360,78 +388,26 @@ class InputBox {
 			$createBoxParams['id'] = Sanitizer::escapeId( $this->mID );
 		}
 		$htmlOut .= Xml::openElement( 'form', $createBoxParams );
-		$htmlOut .= Xml::openElement( 'input',
-			array(
-				'type' => 'hidden',
-				'name' => 'action',
-				'value' => 'edit',
-			)
-		);
-		$htmlOut .= Xml::openElement( 'input',
-			array(
-				'type' => 'hidden',
-				'name' => 'preload',
-				'value' => $this->mPreload,
-			)
-		);
+		$editArgs = $this->getEditActionArgs();
+		$htmlOut .= Html::hidden( $editArgs['name'], $editArgs['value'] );
+		$htmlOut .= Html::hidden( 'preload', $this->mPreload );
 		foreach ( $this->mPreloadparams as $preloadparams ) {
-			$htmlOut .= Xml::openElement( 'input',
-				array(
-					'type' => 'hidden',
-					'name' => 'preloadparams[]',
-					'value' => $preloadparams,
-				)
-			);
+			$htmlOut .= Html::hidden( 'preloadparams[]', $preloadparams );
 		}
-		$htmlOut .= Xml::openElement( 'input',
-			array(
-				'type' => 'hidden',
-				'name' => 'editintro',
-				'value' => $this->mEditIntro,
-			)
-		);
-		$htmlOut .= Xml::openElement( 'input',
-			array(
-				'type' => 'hidden',
-				'name' => 'summary',
-				'value' => $this->mSummary,
-			)
-		);
-		$htmlOut .= Xml::openElement( 'input',
-			array(
-				'type' => 'hidden',
-				'name' => 'nosummary',
-				'value' => $this->mNosummary,
-			)
-		);
-		$htmlOut .= Xml::openElement( 'input',
-			array(
-				'type' => 'hidden',
-				'name' => 'prefix',
-				'value' => $this->mPrefix,
-			)
-		);
-		$htmlOut .= Xml::openElement( 'input',
-			array(
-				'type' => 'hidden',
-				'name' => 'minor',
-				'value' => $this->mMinor,
-			)
-		);
+		$htmlOut .= Html::hidden( 'editintro', $this->mEditIntro );
+		$htmlOut .= Html::hidden( 'summary', $this->mSummary );
+		$htmlOut .= Html::hidden( 'nosummary', $this->mNosummary );
+		$htmlOut .= Html::hidden( 'prefix', $this->mPrefix );
+		$htmlOut .= Html::hidden( 'minor', $this->mMinor );
 		if ( $this->mType == 'comment' ) {
-			$htmlOut .= Xml::openElement( 'input',
-				array(
-					'type' => 'hidden',
-					'name' => 'section',
-					'value' => 'new',
-				)
-			);
+			$htmlOut .= Html::hidden( 'section', 'new' );
 		}
 		$htmlOut .= Xml::openElement( 'input',
 			array(
 				'type' => $this->mHidden ? 'hidden' : 'text',
 				'name' => 'title',
-				'class' => 'mw-ui-input mw-ui-input-inline createboxInput',
+				'class' => $this->getLinebreakClasses() .
+					'mw-ui-input mw-ui-input-inline createboxInput',
 				'value' => $this->mDefaultText,
 				'placeholder' => $this->mPlaceholderText,
 				'size' => $this->mWidth,
@@ -480,32 +456,14 @@ class InputBox {
 			$moveBoxParams['id'] = Sanitizer::escapeId( $this->mID );
 		}
 		$htmlOut .= Xml::openElement( 'form', $moveBoxParams );
-		$htmlOut .= Xml::openElement( 'input',
-			array(
-				'type' => 'hidden',
-				'name' => 'title',
-				'value' => SpecialPage::getTitleFor( 'Movepage', $this->mPage )->getPrefixedText(),
-			)
-		);
-		$htmlOut .= Xml::openElement( 'input',
-			array(
-				'type' => 'hidden',
-				'name' => 'wpReason',
-				'value' => $this->mSummary,
-			)
-		);
-		$htmlOut .= Xml::openElement( 'input',
-			array(
-				'type' => 'hidden',
-				'name' => 'prefix',
-				'value' => $this->mPrefix,
-			)
-		);
+		$htmlOut .= Html::hidden( 'title', SpecialPage::getTitleFor( 'Movepage', $this->mPage )->getPrefixedText() );
+		$htmlOut .= Html::hidden( 'wpReason', $this->mSummary );
+		$htmlOut .= Html::hidden( 'prefix', $this->mPrefix );
 		$htmlOut .= Xml::openElement( 'input',
 			array(
 				'type' => $this->mHidden ? 'hidden' : 'text',
 				'name' => 'wpNewTitle',
-				'class' => 'mw-moveboxInput mw-ui-input mw-ui-input-inline',
+				'class' => $this->getLinebreakClasses() . 'mw-moveboxInput mw-ui-input mw-ui-input-inline',
 				'value' => $this->mDefaultText,
 				'placeholder' => $this->mPlaceholderText,
 				'size' => $this->mWidth,
@@ -553,61 +511,26 @@ class InputBox {
 			$commentFormParams['id'] = Sanitizer::escapeId( $this->mID );
 		}
 		$htmlOut .= Xml::openElement( 'form', $commentFormParams );
-		$htmlOut .= Xml::openElement( 'input',
-			array(
-				'type' => 'hidden',
-				'name' => 'action',
-				'value' => 'edit',
-			)
-		);
-		$htmlOut .= Xml::openElement( 'input',
-			array(
-				'type' => 'hidden',
-				'name' => 'preload',
-				'value' => $this->mPreload,
-			)
-		);
+		$editArgs = $this->getEditActionArgs();
+		$htmlOut .= Html::hidden( $editArgs['name'], $editArgs['value'] );
+		$htmlOut .= Html::hidden( 'preload', $this->mPreload );
 		foreach ( $this->mPreloadparams as $preloadparams ) {
-			$htmlOut .= Xml::openElement( 'input',
-				array(
-					'type' => 'hidden',
-					'name' => 'preloadparams[]',
-					'value' => $preloadparams,
-				)
-			);
+			$htmlOut .= Html::hidden( 'preloadparams[]', $preloadparams );
 		}
-		$htmlOut .= Xml::openElement( 'input',
-			array(
-				'type' => 'hidden',
-				'name' => 'editintro',
-				'value' => $this->mEditIntro,
-			)
-		);
+		$htmlOut .= Html::hidden( 'editintro', $this->mEditIntro );
 		$htmlOut .= Xml::openElement( 'input',
 			array(
 				'type' => $this->mHidden ? 'hidden' : 'text',
 				'name' => 'preloadtitle',
-				'class' => 'commentboxInput mw-ui-input mw-ui-input-inline',
+				'class' => $this->getLinebreakClasses() . 'commentboxInput mw-ui-input mw-ui-input-inline',
 				'value' => $this->mDefaultText,
 				'placeholder' => $this->mPlaceholderText,
 				'size' => $this->mWidth,
 				'dir' => $this->mDir,
 			)
 		);
-		$htmlOut .= Xml::openElement( 'input',
-			array(
-				'type' => 'hidden',
-				'name' => 'section',
-				'value' => 'new',
-			)
-		);
-		$htmlOut .= Xml::openElement( 'input',
-			array(
-				'type' => 'hidden',
-				'name' => 'title',
-				'value' => $this->mPage
-			)
-		);
+		$htmlOut .= Html::hidden( 'section', 'new' );
+		$htmlOut .= Html::hidden( 'title', $this->mPage );
 		$htmlOut .= $this->mBR;
 		$htmlOut .= Xml::openElement( 'input',
 			array(
@@ -658,6 +581,7 @@ class InputBox {
 			'preload' => 'mPreload',
 			'page' => 'mPage',
 			'editintro' => 'mEditIntro',
+			'useve' => 'mUseVE',
 			'summary' => 'mSummary',
 			'nosummary' => 'mNosummary',
 			'minor' => 'mMinor',

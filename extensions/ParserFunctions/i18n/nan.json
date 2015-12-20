@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Ianbu"
+		]
+	},
+	"pfunc_expr_unrecognised_word": "表達錯誤：認無\"$1\"這个字。",
+	"pfunc_expr_unrecognised_punctuation": "表達錯誤：認無標點符號 \"$1\"。"
+}

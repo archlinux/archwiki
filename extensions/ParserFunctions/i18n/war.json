@@ -1,0 +1,8 @@
+{
+	"@metadata": {
+		"authors": [
+			"JinJian"
+		]
+	},
+	"pfunc_expr_missing_operand": "Expression error: Nawawara nga operand para han $1."
+}

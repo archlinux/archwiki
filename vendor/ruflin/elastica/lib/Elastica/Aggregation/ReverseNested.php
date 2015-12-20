@@ -1,12 +1,10 @@
 <?php
-
 namespace Elastica\Aggregation;
 
 /**
- * Reversed Nested Aggregation
+ * Reversed Nested Aggregation.
  *
- * @package Elastica\Aggregation
- * @link http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-aggregations-bucket-reverse-nested-aggregation.html
+ * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-reverse-nested-aggregation.html
  */
 class ReverseNested extends AbstractAggregation
 {
@@ -24,14 +22,15 @@ class ReverseNested extends AbstractAggregation
     }
 
     /**
-     * Set the nested path for this aggregation
+     * Set the nested path for this aggregation.
      *
      * @param string $path
-     * @return ReverseNested
+     *
+     * @return $this
      */
     public function setPath($path)
     {
-        return $this->setParam("path", $path);
+        return $this->setParam('path', $path);
     }
 
     /**
@@ -43,7 +42,7 @@ class ReverseNested extends AbstractAggregation
 
         // ensure we have an object for the reverse_nested key.
         // if we don't have a path, then this would otherwise get encoded as an empty array, which is invalid.
-        $array['reverse_nested'] = (object)$array['reverse_nested'];
+        $array['reverse_nested'] = (object) $array['reverse_nested'];
 
         return $array;
     }

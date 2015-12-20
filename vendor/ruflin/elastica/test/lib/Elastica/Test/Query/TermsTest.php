@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Test\Query;
 
 use Elastica\Document;
@@ -8,19 +7,19 @@ use Elastica\Test\Base as BaseTest;
 
 class TermsTest extends BaseTest
 {
+    /**
+     * @group functional
+     */
     public function testFilteredSearch()
     {
-        $client = $this->_getClient();
-        $index = $client->getIndex('test');
-        $index->create(array(), true);
+        $index = $this->_createIndex();
         $type = $index->getType('helloworld');
 
-        $doc = new Document(1, array('name' => 'hello world'));
-        $type->addDocument($doc);
-        $doc = new Document(2, array('name' => 'nicolas ruflin'));
-        $type->addDocument($doc);
-        $doc = new Document(3, array('name' => 'ruflin'));
-        $type->addDocument($doc);
+        $type->addDocuments(array(
+            new Document(1, array('name' => 'hello world')),
+            new Document(2, array('name' => 'nicolas ruflin')),
+            new Document(3, array('name' => 'ruflin')),
+        ));
 
         $query = new Terms();
         $query->setTerms('name', array('nicolas', 'hello'));
@@ -37,6 +36,9 @@ class TermsTest extends BaseTest
         $this->assertEquals(3, $resultSet->count());
     }
 
+    /**
+     * @group unit
+     */
     public function testSetMinimum()
     {
         $key = 'name';
@@ -51,6 +53,7 @@ class TermsTest extends BaseTest
     }
 
     /**
+     * @group unit
      * @expectedException \Elastica\Exception\InvalidException
      */
     public function testInvalidParams()

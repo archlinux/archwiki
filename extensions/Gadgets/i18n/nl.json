@@ -3,7 +3,8 @@
 		"authors": [
 			"Annabel",
 			"SPQRobin",
-			"Siebrand"
+			"Siebrand",
+			"Esketti"
 		]
 	},
 	"gadgets-desc": "Laat gebruikers [[Special:Gadgets|CSS en JavaScripts]] activeren in hun [[Special:Preferences#mw-prefsection-gadgets|voorkeuren]]",
@@ -20,5 +21,21 @@
 	"gadgets-export-title": "Uitbreiding exporteren",
 	"gadgets-not-found": "Uitbreiding \"$1\" niet gevonden.",
 	"gadgets-export-text": "Klik op de knop \"{{int:gadgets-export-download}}\" om de uitbreiding \"$1\" te exporteren.\nSla daarna het gedownloade bestand op.\nGa naar \"Special:Import\" in de doelwiki en upload het geëxporteerde bestand.\nVoeg daarna het volgende toe aan de pagina \"MediaWiki:Gadgets-definition\":\n<pre>$2</pre>\nU moet de juiste rechten hebben op de doelwiki, inclusief het recht om bewerkingen te maken aan de systeemberichten, en importeren uit bestanden moet ingeschakeld zijn.",
-	"gadgets-export-download": "Downloaden"
+	"gadgets-export-download": "Downloaden",
+	"apihelp-query+gadgetcategories-description": "Het resultaat is een lijst van gadget categorieën.",
+	"apihelp-query+gadgetcategories-param-prop": "Wat gadget categorie informatie te krijgen:\n;naam:Interne naam van de categorie.\n;titel:Categorie titel.\n;leden:Aantal gadgets in de categorie.",
+	"apihelp-query+gadgetcategories-param-names": "Namen van categorieën op te halen.",
+	"apihelp-query+gadgetcategories-example-1": "Een lijst van bestaande gadget categorieën",
+	"apihelp-query+gadgetcategories-example-2": "Alle informatie opvragen over categorieën met de naam \"foo\" en \"bar\"",
+	"apihelp-query+gadgets-description": "Het resultaat is een lijst van gadgets gebruikt op deze wiki.",
+	"apihelp-query+gadgets-param-prop": "Wat gadget informatie te krijgen:\n;id:Interne gadget ID.\n;metadata:De gadget metadata.\n;desc:Gadget beschrijving omgezet in HTML (kan traag zijn, alleen gebruiken als het echt nodig is).",
+	"apihelp-query+gadgets-param-categories": "Gadgets uit welke categorieën op te halen.",
+	"apihelp-query+gadgets-param-ids": "Id ' s van de gadgets te halen.",
+	"apihelp-query+gadgets-param-allowedonly": "Lijst alleen gadgets toegestaan om de huidige gebruiker.",
+	"apihelp-query+gadgets-param-enabledonly": "Lijst van gadgets die zijn ingeschakeld door de huidige gebruiker.",
+	"apihelp-query+gadgets-example-1": "Voor een lijst van gadgets, samen met hun beschrijvingen",
+	"apihelp-query+gadgets-example-2": "Voor een lijst van gadgets met alle mogelijke eigenschappen",
+	"apihelp-query+gadgets-example-3": "Voor een lijst van gadgets die behoren tot de categorie \"foo\"",
+	"apihelp-query+gadgets-example-4": "Informatie krijgen over gadgets \"foo\" en \"bar\"",
+	"apihelp-query+gadgets-example-5": "Voor een lijst van gadgets die zijn ingeschakeld door de huidige gebruiker"
 }

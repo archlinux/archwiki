@@ -1,37 +1,30 @@
 <?php
-
 namespace Elastica\Exception;
 
 use Elastica\Request;
 use Elastica\Response;
 
 /**
- * Connection exception
+ * Connection exception.
  *
- * @category Xodoa
- * @package Elastica
  * @author Nicolas Ruflin <spam@ruflin.com>
  */
 class ConnectionException extends \RuntimeException implements ExceptionInterface
 {
     /**
-     * Request
-     *
      * @var \Elastica\Request Request object
      */
     protected $_request;
 
     /**
-     * Response
-     *
      * @var \Elastica\Response Response object
      */
     protected $_response;
 
     /**
-     * Construct Exception
+     * Construct Exception.
      *
-     * @param string            $message    Message
+     * @param string             $message  Message
      * @param \Elastica\Request  $request
      * @param \Elastica\Response $response
      */
@@ -44,7 +37,7 @@ class ConnectionException extends \RuntimeException implements ExceptionInterfac
     }
 
     /**
-     * Returns request object
+     * Returns request object.
      *
      * @return \Elastica\Request Request object
      */
@@ -54,7 +47,7 @@ class ConnectionException extends \RuntimeException implements ExceptionInterfac
     }
 
     /**
-     * Returns response object
+     * Returns response object.
      *
      * @return \Elastica\Response Response object
      */

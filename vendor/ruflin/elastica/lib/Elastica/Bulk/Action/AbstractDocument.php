@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Bulk\Action;
 
 use Elastica\AbstractUpdateAction;
@@ -24,7 +23,8 @@ abstract class AbstractDocument extends Action
 
     /**
      * @param \Elastica\Document $document
-     * @return \Elastica\Bulk\Action\AbstractDocument
+     *
+     * @return $this
      */
     public function setDocument(Document $document)
     {
@@ -39,12 +39,13 @@ abstract class AbstractDocument extends Action
 
     /**
      * @param \Elastica\Script $script
-     * @return \Elastica\Bulk\Action\AbstractDocument
+     *
+     * @return $this
      */
     public function setScript(Script $script)
     {
         if (!($this instanceof UpdateDocument)) {
-            throw new \BadMethodCallException("setScript() can only be used for UpdateDocument");
+            throw new \BadMethodCallException('setScript() can only be used for UpdateDocument');
         }
 
         $this->_data = $script;
@@ -57,21 +58,19 @@ abstract class AbstractDocument extends Action
 
     /**
      * @param \Elastica\Script|\Elastica\Document $data
+     *
      * @throws \InvalidArgumentException
-     * @return \Elastica\Bulk\Action\AbstractDocument
+     *
+     * @return $this
      */
     public function setData($data)
     {
         if ($data instanceof Script) {
-
             $this->setScript($data);
-
-        }else if ($data instanceof Document) {
-
+        } elseif ($data instanceof Document) {
             $this->setDocument($data);
-
-        }else{
-            throw new \InvalidArgumentException("Data should be a Document or a Script.");
+        } else {
+            throw new \InvalidArgumentException('Data should be a Document or a Script.');
         }
 
         return $this;
@@ -79,7 +78,8 @@ abstract class AbstractDocument extends Action
 
     /**
      * Note: This is for backwards compatibility.
-     * @return \Elastica\Document
+     *
+     * @return \Elastica\Document|null
      */
     public function getDocument()
     {
@@ -87,12 +87,13 @@ abstract class AbstractDocument extends Action
             return $this->_data;
         }
 
-        return null;
+        return;
     }
 
     /**
      * Note: This is for backwards compatibility.
-     * @return \Elastica\Script
+     *
+     * @return \Elastica\Script|null
      */
     public function getScript()
     {
@@ -100,7 +101,7 @@ abstract class AbstractDocument extends Action
             return $this->_data;
         }
 
-        return null;
+        return;
     }
 
     /**
@@ -113,22 +114,24 @@ abstract class AbstractDocument extends Action
 
     /**
      * @param \Elastica\AbstractUpdateAction $source
+     *
      * @return array
      */
     abstract protected function _getMetadata(AbstractUpdateAction $source);
 
     /**
      * @param \Elastica\Document|\Elastica\Script $data
-     * @param string $opType
-     * @return \Elastica\Bulk\Action\AbstractDocument
+     * @param string                              $opType
+     *
+     * @return static
      */
     public static function create($data, $opType = null)
     {
-    	//Check type
-    	if (!($data instanceof Document) && !($data instanceof Script)) {
-    		throw new \InvalidArgumentException("The data needs to be a Document or a Script.");
-    	}
-        
+        //Check type
+        if (!($data instanceof Document) && !($data instanceof Script)) {
+            throw new \InvalidArgumentException('The data needs to be a Document or a Script.');
+        }
+
         if (null === $opType && $data->hasOpType()) {
             $opType = $data->getOpType();
         }
@@ -137,8 +140,8 @@ abstract class AbstractDocument extends Action
         if ($data instanceof Script) {
             if ($opType === null) {
                 $opType = self::OP_TYPE_UPDATE;
-            } else if ($opType != self::OP_TYPE_UPDATE) {
-                throw new \InvalidArgumentException("Scripts can only be used with the update operation type.");
+            } elseif ($opType != self::OP_TYPE_UPDATE) {
+                throw new \InvalidArgumentException('Scripts can only be used with the update operation type.');
             }
         }
 
@@ -157,6 +160,7 @@ abstract class AbstractDocument extends Action
                 $action = new IndexDocument($data);
                 break;
         }
+
         return $action;
     }
 }

@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Meursault2004",
-			"NoiX180"
+			"NoiX180",
+			"Bennylin"
 		]
 	},
 	"nuke": "Busak massal",
@@ -23,5 +24,6 @@
 	"nuke-delete-more": "[[Special:Nuke|Busak kaca luwih akèh]]",
 	"nuke-pattern": "Pola kanggo jeneng kaca:",
 	"nuke-nopages-global": "Ora ana kaca anyar nèng [[Special:RecentChanges|owah-owahan paling anyar]].",
-	"nuke-viewchanges": "delok owah-owahan"
+	"nuke-viewchanges": "delok owah-owahan",
+	"nuke-linkoncontribs": "busak massal"
 }

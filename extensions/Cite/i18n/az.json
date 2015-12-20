@@ -1,9 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Vago"
+			"Vago",
+			"Wertuose"
 		]
 	},
+	"cite_error": "Sitat səhvi: $1",
 	"cite_reference_link_key_with_num": "$1_$2",
 	"cite_reference_link_prefix": "sitat_istinad-",
 	"cite_references_link_prefix": "sitat_qeyd-",

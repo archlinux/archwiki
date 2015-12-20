@@ -304,7 +304,7 @@ Wikipedia rocks!<sup id="cite_ref-2" class="reference"><a href="#cite_note-2">[n
 !! end
 
 !! test
-Simple <ref>, with <references/> in group, with groupname in chinese 
+Simple <ref>, with <references/> in group, with groupname in Chinese
 !! input
 AAA<ref group="参">ref a</ref>BBB<ref group="注">note b</ref>CCC<ref group="参">ref c</ref>
 
@@ -397,7 +397,7 @@ wa' cha' wej loS vagh jav Soch chorgh Hut wa'maH
 !! endarticle
 
 !! test
-<ref> with custom group link
+<ref> with custom group link with number names in Klingon
 !! input
 Wikipedia rocks!<ref group="klingon">Proceeds of Rockology, vol. XXI</ref>
 
@@ -447,5 +447,37 @@ foo
 foo</span>
 </li>
 </ol></div>
+
+!! end
+
+!! test
+<ref> with no name and no content.
+!! input
+Bla.<ref></ref>
+!! result
+<p>Bla.<strong class="error mw-ext-cite-error">Cite error: Invalid <code>&lt;ref&gt;</code> tag;
+refs with no name must have content</strong>
+</p>
+!! end
+
+!! test
+<ref> with an empty-string name parameter and no content.
+!! input
+Bla.<ref name=""></ref>
+!! result
+<p>Bla.<strong class="error mw-ext-cite-error">Cite error: Invalid <code>&lt;ref&gt;</code> tag;
+refs with no name must have content</strong>
+</p>
+!! end
+
+!! test
+<ref> with a non-empty name parameter and no content.
+!! input
+Bla.<ref name="void"></ref>
+!! result
+Bla.<sup id="cite_ref-void_1-0" class="reference"><a href="#cite_note-void-1">[1]</a></sup><ol class="references">
+<li id="cite_note-void"><span class="mw-cite-backlink"><a href="#cite_ref-void_0">↑</a></span> <strong class="error mw-ext-cite-error">Cite error: Invalid <code>&lt;ref&gt;</code> tag;
+no text was provided for refs named <code>void</code></strong></li>
+</ol>
 
 !! end

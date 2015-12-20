@@ -6,7 +6,8 @@
 			"Ladsgroup",
 			"Meisam",
 			"Reza1615",
-			"Wayiran"
+			"Wayiran",
+			"فلورانس"
 		]
 	},
 	"fancycaptcha-addurl": "ویرایش شما حاوی پیوند به بیرون جدیدی است.\nبرای جلوگیری از هرزنگاری خودکار ویکی، ما با احترام از شما می‌خواهیم واژه‌ای را که در تصویر می‌بینید در جعبهٔ زیر وارد کنید ([[Special:Captcha/help|اطلاعات بیشتر]]):",
@@ -15,5 +16,7 @@
 	"fancycaptcha-create": "برای ایجاد این صفحه، لطفاً واژه‌ای را که در تصویر می‌بینید وارد کنید ([[Special:Captcha/help|اطلاعات بیشتر]]):",
 	"fancycaptcha-edit": "برای ویرایش این صفحه، لطفاً واژه‌ای را که در تصویر می‌بینید وارد کنید ([[Special:Captcha/help|اطلاعات بیشتر]]):",
 	"fancycaptcha-sendemail": "برای کمک به محافظت در برابر هرزه‌نگاری خودکار، ما با احترام از شما می‌خواهیم واژه‌هایی را که در جعبهٔ زیر نمایش داده می‌شوند وارد کنید ([[Special:Captcha/help|اطلاعات بیشتر]]):",
-	"fancycaptcha-reload-text": "تازه‌کردن"
+	"fancycaptcha-reload-text": "تازه کردن",
+	"apihelp-fancycaptchareload-description": "یک FancyCaptcha جدید بیاور.",
+	"apihelp-fancycaptchareload-example-1": "یک FancyCaptcha جدید بیاور."
 }

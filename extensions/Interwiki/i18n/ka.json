@@ -23,7 +23,7 @@
 	"interwiki_deleting": "თქვენ შლით სინტაქსს „$1“.",
 	"interwiki_deleted": "პრეფიქსი „$1“ წარმატებით წაიშალა ინტერვიკების ცხრილიდან.",
 	"interwiki_delfailed": "პრეფიქსის „$1“ წაშლა ინტერვიკების ცხრილიდან შეუძლებელია.",
-	"interwiki_addtext": "ინტერვიკის პრეფიქსის დამატება",
+	"interwiki_addtext": "ინტერვიკის ან ენის პრეფიქსის დამატება",
 	"interwiki_addbutton": "დამატება",
 	"interwiki_edittext": "ინტერვიკის პრეფიქსის რედაქტირება",
 	"interwiki-submit-empty": "პრეფიქსი და URL არ შეიძლება ცარიელი იყოს.",

@@ -14,7 +14,7 @@ class FancyCaptcha extends SimpleCaptcha {
 			if ( !$backend ) {
 				$backend = new FSFileBackend( array(
 					'name'           => 'captcha-backend',
-					'wikiId'	 => wfWikiId(),
+					'wikiId'         => wfWikiId(),
 					'lockManager'    => new NullLockManager( array() ),
 					'containerPaths' => array( 'captcha-render' => $wgCaptchaDirectory ),
 					'fileMode'       => 777
@@ -88,19 +88,20 @@ class FancyCaptcha extends SimpleCaptcha {
 
 	/**
 	 * Insert the captcha prompt into the edit form.
+	 * @param OutputPage $out
 	 */
-	function getForm() {
+	function getForm( OutputPage $out ) {
 		global $wgOut, $wgEnableAPI;
 
 		// Uses addModuleStyles so it is loaded when JS is disabled.
-		$wgOut->addModuleStyles( 'ext.confirmEdit.fancyCaptcha.styles' );
+		$out->addModuleStyles( 'ext.confirmEdit.fancyCaptcha.styles' );
 
 		$title = SpecialPage::getTitleFor( 'Captcha', 'image' );
 		$index = $this->getCaptchaIndex();
 
 		if ( $wgEnableAPI ) {
 			// Loaded only if JS is enabled
-			$wgOut->addModules( 'ext.confirmEdit.fancyCaptcha' );
+			$out->addModules( 'ext.confirmEdit.fancyCaptcha' );
 
 			$captchaReload = Html::element(
 				'small',
@@ -143,9 +144,10 @@ class FancyCaptcha extends SimpleCaptcha {
 				)
 			); // tab in before the edit textarea
 			if ( $this->action == 'usercreate' ) {
-				$form .= HTML::element( 'small',array(
+				// use raw element, because the message can contain links or some other html
+				$form .= HTML::rawelement( 'small',array(
 						'class' => 'mw-createacct-captcha-assisted'
-					), wfMessage( 'createacct-imgcaptcha-help' )
+					), wfMessage( 'createacct-imgcaptcha-help' )->parse()
 				);
 			}
 			$form .= Html::element( 'input', array(

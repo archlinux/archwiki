@@ -2,13 +2,15 @@
 	"@metadata": {
 		"authors": [
 			"Naudefj",
-			"SPQRobin"
+			"SPQRobin",
+			"Arnobarnard",
+			"Fwolff"
 		]
 	},
 	"citethispage": "Aanhaling",
 	"citethispage-desc": "Maak 'n [[Special:Cite|spesiale bladsy vir sitasie]], en 'n skakel daarna in hulpmiddels beskikbaar",
 	"citethispage-link": "Haal dié blad aan",
-	"tooltip-citethispage": "Inligting oor hoe u hierdie bladsy kan citeer",
+	"tooltip-citethispage": "Inligting oor hoe u hierdie bladsy kan verwys",
 	"citethispage-change-submit": "Aanhaling",
 	"citethispage-change-target": "Bladsy:"
 }

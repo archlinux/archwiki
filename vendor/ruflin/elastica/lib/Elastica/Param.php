@@ -1,28 +1,26 @@
 <?php
-
 namespace Elastica;
+
 use Elastica\Exception\InvalidException;
 
 /**
- * Class to handle params
+ * Class to handle params.
  *
  * This function can be used to handle params for queries, filter, facets
  *
- * @category Xodoa
- * @package Elastica
  * @author Nicolas Ruflin <spam@ruflin.com>
  */
 class Param
 {
     /**
-     * Params
+     * Params.
      *
      * @var array
      */
     protected $_params = array();
 
     /**
-     * Raw Params
+     * Raw Params.
      *
      * @var array
      */
@@ -31,7 +29,7 @@ class Param
     /**
      * Converts the params to an array. A default implementation exist to create
      * the an array out of the class name (last part of the class name)
-     * and the params
+     * and the params.
      *
      * @return array Filter array
      */
@@ -49,7 +47,7 @@ class Param
     /**
      * Param's name
      * Picks the last part of the class name and makes it snake_case
-     * You can override this method if you want to change the name
+     * You can override this method if you want to change the name.
      *
      * @return string name
      */
@@ -59,11 +57,12 @@ class Param
     }
 
     /**
-     * Sets params not inside params array
+     * Sets params not inside params array.
      *
-     * @param  string         $key
-     * @param  mixed          $value
-     * @return \Elastica\Param
+     * @param string $key
+     * @param mixed  $value
+     *
+     * @return $this
      */
     protected function _setRawParam($key, $value)
     {
@@ -73,11 +72,12 @@ class Param
     }
 
     /**
-     * Sets (overwrites) the value at the given key
+     * Sets (overwrites) the value at the given key.
      *
-     * @param  string         $key   Key to set
-     * @param  mixed          $value Key Value
-     * @return \Elastica\Param
+     * @param string $key   Key to set
+     * @param mixed  $value Key Value
+     *
+     * @return $this
      */
     public function setParam($key, $value)
     {
@@ -87,10 +87,11 @@ class Param
     }
 
     /**
-     * Sets (overwrites) all params of this object
+     * Sets (overwrites) all params of this object.
      *
-     * @param  array          $params Parameter list
-     * @return \Elastica\Param
+     * @param array $params Parameter list
+     *
+     * @return $this
      */
     public function setParams(array $params)
     {
@@ -104,46 +105,50 @@ class Param
      *
      * This function can be used to add an array of params
      *
-     * @param  string         $key   Param key
-     * @param  mixed          $value Value to set
-     * @return \Elastica\Param
+     * @param string $key   Param key
+     * @param mixed  $value Value to set
+     *
+     * @return $this
      */
     public function addParam($key, $value)
     {
-        if($key != null) {
+        if ($key != null) {
             if (!isset($this->_params[$key])) {
                 $this->_params[$key] = array();
             }
 
             $this->_params[$key][] = $value;
         } else {
-            $this->_params = $value;            
+            $this->_params = $value;
         }
 
         return $this;
     }
 
     /**
-     * Returns a specific param
+     * Returns a specific param.
      *
-     * @param  string                              $key Key to return
-     * @return mixed                               Key value
+     * @param string $key Key to return
+     *
      * @throws \Elastica\Exception\InvalidException If requested key is not set
+     *
+     * @return mixed Key value
      */
     public function getParam($key)
     {
         if (!$this->hasParam($key)) {
-            throw new InvalidException('Param ' . $key . ' does not exist');
+            throw new InvalidException('Param '.$key.' does not exist');
         }
 
         return $this->_params[$key];
     }
 
     /**
-     * Test if a param is set
+     * Test if a param is set.
      *
-     * @param  string  $key Key to test
-     * @return boolean True if the param is set, false otherwise
+     * @param string $key Key to test
+     *
+     * @return bool True if the param is set, false otherwise
      */
     public function hasParam($key)
     {
@@ -151,7 +156,7 @@ class Param
     }
 
     /**
-     * Returns the params array
+     * Returns the params array.
      *
      * @return array Params
      */

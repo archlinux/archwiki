@@ -1,12 +1,10 @@
 <?php
-
 namespace Elastica\Suggest\CandidateGenerator;
 
-
 /**
- * Class DirectGenerator
- * @package Elastica\Suggest\Phrase
- * @link http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-suggesters-phrase.html#_direct_generators
+ * Class DirectGenerator.
+ *
+ * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggesters-phrase.html#_direct_generators
  */
 class DirectGenerator extends AbstractCandidateGenerator
 {
@@ -23,105 +21,120 @@ class DirectGenerator extends AbstractCandidateGenerator
     }
 
     /**
-     * Set the field name from which to fetch candidate suggestions
+     * Set the field name from which to fetch candidate suggestions.
+     *
      * @param string $field
-     * @return DirectGenerator
+     *
+     * @return $this
      */
     public function setField($field)
     {
-        return $this->setParam("field", $field);
+        return $this->setParam('field', $field);
     }
 
     /**
-     * Set the maximum corrections to be returned per suggest text token
+     * Set the maximum corrections to be returned per suggest text token.
+     *
      * @param int $size
-     * @return DirectGenerator
+     *
+     * @return $this
      */
     public function setSize($size)
     {
-        return $this->setParam("size", $size);
+        return $this->setParam('size', $size);
     }
 
     /**
      * @param string $mode see SUGGEST_MODE_* constants for options
-     * @return DirectGenerator
+     *
+     * @return $this
      */
     public function setSuggestMode($mode)
     {
-        return $this->setParam("suggest_mode", $mode);
+        return $this->setParam('suggest_mode', $mode);
     }
 
     /**
      * @param int $max can only be a value between 1 and 2. Defaults to 2.
-     * @return DirectGenerator
+     *
+     * @return $this
      */
     public function setMaxEdits($max)
     {
-        return $this->setParam("max_edits", $max);
+        return $this->setParam('max_edits', $max);
     }
 
     /**
      * @param int $length defaults to 1
-     * @return DirectGenerator
+     *
+     * @return $this
      */
     public function setPrefixLength($length)
     {
-        return $this->setParam("prefix_len", $length);
+        return $this->setParam('prefix_len', $length);
     }
 
     /**
      * @param int $min defaults to 4
-     * @return DirectGenerator
+     *
+     * @return $this
      */
     public function setMinWordLength($min)
     {
-        return $this->setParam("min_word_len", $min);
+        return $this->setParam('min_word_len', $min);
     }
 
     /**
      * @param int $max
-     * @return DirectGenerator
+     *
+     * @return $this
      */
     public function setMaxInspections($max)
     {
-        return $this->setParam("max_inspections", $max);
+        return $this->setParam('max_inspections', $max);
     }
 
     /**
      * @param float $min
-     * @return DirectGenerator
+     *
+     * @return $this
      */
     public function setMinDocFrequency($min)
     {
-        return $this->setParam("min_doc_freq", $min);
+        return $this->setParam('min_doc_freq', $min);
     }
 
     /**
      * @param float $max
-     * @return DirectGenerator
+     *
+     * @return $this
      */
     public function setMaxTermFrequency($max)
     {
-        return $this->setParam("max_term_freq", $max);
+        return $this->setParam('max_term_freq', $max);
     }
 
     /**
-     * Set an analyzer to be applied to the original token prior to candidate generation
+     * Set an analyzer to be applied to the original token prior to candidate generation.
+     *
      * @param string $pre an analyzer
-     * @return DirectGenerator
+     *
+     * @return $this
      */
     public function setPreFilter($pre)
     {
-        return $this->setParam("pre_filter", $pre);
+        return $this->setParam('pre_filter', $pre);
     }
 
     /**
-     * Set an analyzer to be applied to generated tokens before they are passed to the phrase scorer
+     * Set an analyzer to be applied to generated tokens before they are passed to the phrase scorer.
+     *
      * @param string $post
-     * @return DirectGenerator
+     *
+     * @return $this
      */
     public function setPostFilter($post)
     {
-        return $this->setParam("post_filter", $post);
+        return $this->setParam('post_filter', $post);
     }
 }

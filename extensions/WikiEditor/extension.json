@@ -1,7 +1,8 @@
 {
 	"name": "WikiEditor",
-	"version": "0.4.0",
+	"version": "0.5.0",
 	"author": [
+		"Derk-Jan Hartman",
 		"Trevor Parscal",
 		"Roan Kattouw",
 		"Nimish Gautam",
@@ -9,6 +10,7 @@
 	],
 	"url": "https://www.mediawiki.org/wiki/Extension:WikiEditor",
 	"descriptionmsg": "wikieditor-desc",
+	"license-name": "GPL-2.0+",
 	"type": "other",
 	"callback": "WikiEditorHooks::onRegistration",
 	"MessagesDirs": {
@@ -38,9 +40,6 @@
 		"EditPage::showEditForm:fields": [
 			"WikiEditorHooks::editPageShowEditFormFields"
 		],
-		"BeforePageDisplay": [
-			"WikiEditorHooks::onBeforePageDisplay"
-		],
 		"EditPage::attemptSave": [
 			"WikiEditorHooks::editPageAttemptSave"
 		],
@@ -55,7 +54,8 @@
 			"styles": "jquery.wikiEditor.less",
 			"dependencies": [
 				"jquery.client",
-				"jquery.textSelection"
+				"jquery.textSelection",
+				"mediawiki.language"
 			],
 			"messages": [
 				"wikieditor-wikitext-tab",
@@ -81,12 +81,12 @@
 			"scripts": "jquery.wikiEditor.dialogs.config.js",
 			"styles": "jquery.wikiEditor.dialogs.config.less",
 			"dependencies": [
-				"jquery.mwExtension",
 				"jquery.wikiEditor",
 				"jquery.wikiEditor.dialogs",
 				"jquery.wikiEditor.toolbar.i18n",
 				"jquery.suggestions",
 				"mediawiki.api",
+				"mediawiki.RegExp",
 				"mediawiki.Title",
 				"mediawiki.jqueryMsg"
 			],
@@ -101,7 +101,14 @@
 				"wikieditor-toolbar-file-format",
 				"wikieditor-toolbar-tool-file-insert",
 				"wikieditor-toolbar-tool-file-cancel"
-			]
+			],
+			"templates": {
+				"dialogInsertFile.html": "templates/dialogInsertFile.html",
+				"dialogInsertLink.html": "templates/dialogInsertLink.html",
+				"dialogInsertReference.html": "templates/dialogInsertReference.html",
+				"dialogInsertTable.html": "templates/dialogInsertTable.html",
+				"dialogReplace.html": "templates/dialogReplace.html"
+			}
 		},
 		"jquery.wikiEditor.preview": {
 			"group": "ext.wikiEditor",
@@ -323,6 +330,9 @@
 				"wikieditor-toolbar-help-content-reference-description",
 				"wikieditor-toolbar-help-content-reference-syntax",
 				"wikieditor-toolbar-help-content-reference-result",
+				"wikieditor-toolbar-help-content-named-reference-description",
+				"wikieditor-toolbar-help-content-named-reference-syntax",
+				"wikieditor-toolbar-help-content-named-reference-result",
 				"wikieditor-toolbar-help-content-rereference-description",
 				"wikieditor-toolbar-help-content-rereference-syntax",
 				"wikieditor-toolbar-help-content-rereference-result",
@@ -345,7 +355,8 @@
 			"scripts": "ext.wikiEditor.js",
 			"styles": "ext.wikiEditor.less",
 			"dependencies": [
-				"jquery.wikiEditor"
+				"jquery.wikiEditor",
+				"mediawiki.user"
 			]
 		},
 		"ext.wikiEditor.dialogs": {
@@ -399,12 +410,9 @@
 			]
 		},
 		"ext.wikiEditor.toolbar.styles": {
+			"position": "top",
 			"group": "ext.wikiEditor",
 			"styles": "ext.wikiEditor.toolbar.styles.less"
-		},
-		"ext.wikiEditor.toolbar.hideSig": {
-			"group": "ext.wikiEditor",
-			"scripts": "ext.wikiEditor.toolbar.hideSig.js"
 		}
 	},
 	"ResourceFileModulePaths": {
@@ -416,5 +424,6 @@
 	},
 	"AutoloadClasses": {
 		"WikiEditorHooks": "WikiEditor.hooks.php"
-	}
+	},
+	"manifest_version": 1
 }

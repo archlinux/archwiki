@@ -9,6 +9,7 @@
 	],
 	"url": "https://www.mediawiki.org/wiki/Extension:LocalisationUpdate",
 	"descriptionmsg": "localisationupdate-desc",
+	"license-name": "GPL-2.0+",
 	"type": "other",
 	"MessagesDirs": {
 		"LocalisationUpdate": [
@@ -51,5 +52,6 @@
 				"skin": "https://raw.github.com/wikimedia/mediawiki-skins-%NAME%/master/%PATH%"
 			}
 		}
-	}
+	},
+	"manifest_version": 1
 }

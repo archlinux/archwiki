@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Test\Filter;
 
 use Elastica\Document;
@@ -13,81 +12,114 @@ use Elastica\Test\Base as BaseTest;
 class IndicesTest extends BaseTest
 {
     /**
-     * @var Index
+     * @group unit
      */
-    protected $_index1;
-
-    /**
-     * @var Index
-     */
-    protected $_index2;
-
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->_index1 = $this->_createIndex('indices_filter_1');
-        $this->_index2 = $this->_createIndex('indices_filter_2');
-        $this->_index1->addAlias("indices_filter");
-        $this->_index2->addAlias("indices_filter");
-        $docs = array(
-            new Document("1", array("color" => "blue")),
-            new Document("2", array("color" => "green")),
-            new Document("3", array("color" => "blue")),
-            new Document("4", array("color" => "yellow")),
-        );
-        $this->_index1->getType("test")->addDocuments($docs);
-        $this->_index2->getType("test")->addDocuments($docs);
-        $this->_index1->refresh();
-        $this->_index2->refresh();
-    }
-
-    protected function tearDown()
-    {
-        $this->_index1->delete();
-        $this->_index2->delete();
-        parent::tearDown();
-    }
-
     public function testToArray()
     {
         $expected = array(
-            "indices" => array(
-                "indices" => array("index1", "index2"),
-                "filter" => array(
-                    "term" => array("tag" => "wow")
+            'indices' => array(
+                'indices' => array('index1', 'index2'),
+                'filter' => array(
+                    'term' => array('tag' => 'wow'),
                 ),
-                "no_match_filter" => array(
-                    "term" => array("tag" => "such filter")
-                )
-            )
+                'no_match_filter' => array(
+                    'term' => array('tag' => 'such filter'),
+                ),
+            ),
         );
-        $filter = new Indices(new Term(array("tag" => "wow")), array("index1", "index2"));
-        $filter->setNoMatchFilter(new Term(array("tag" => "such filter")));
+        $filter = new Indices(new Term(array('tag' => 'wow')), array('index1', 'index2'));
+        $filter->setNoMatchFilter(new Term(array('tag' => 'such filter')));
         $this->assertEquals($expected, $filter->toArray());
     }
 
+    /**
+     * @group functional
+     */
     public function testIndicesFilter()
     {
-        $filter = new Indices(new BoolNot(new Term(array("color" => "blue"))), array($this->_index1->getName()));
-        $filter->setNoMatchFilter(new BoolNot(new Term(array("color" => "yellow"))));
+        $docs = array(
+            new Document(1, array('color' => 'blue')),
+            new Document(2, array('color' => 'green')),
+            new Document(3, array('color' => 'blue')),
+            new Document(4, array('color' => 'yellow')),
+        );
+
+        $index1 = $this->_createIndex();
+        $index1->addAlias('indices_filter');
+        $index1->getType('test')->addDocuments($docs);
+        $index1->refresh();
+
+        $index2 = $this->_createIndex();
+        $index2->addAlias('indices_filter');
+        $index2->getType('test')->addDocuments($docs);
+        $index2->refresh();
+
+        $filter = new Indices(new BoolNot(new Term(array('color' => 'blue'))), array($index1->getName()));
+        $filter->setNoMatchFilter(new BoolNot(new Term(array('color' => 'yellow'))));
         $query = new Query();
-        $query->setFilter($filter);
+        $query->setPostFilter($filter);
 
         // search over the alias
-        $index = $this->_getClient()->getIndex("indices_filter");
+        $index = $this->_getClient()->getIndex('indices_filter');
         $results = $index->search($query);
 
         // ensure that the proper docs have been filtered out for each index
         $this->assertEquals(5, $results->count());
         foreach ($results->getResults() as $result) {
             $data = $result->getData();
-            $color = $data["color"];
-            if ($result->getIndex() == $this->_index1->getName()) {
-                $this->assertNotEquals("blue", $color);
+            $color = $data['color'];
+            if ($result->getIndex() === $index1->getName()) {
+                $this->assertNotEquals('blue', $color);
             } else {
-                $this->assertNotEquals("yellow", $color);
+                $this->assertNotEquals('yellow', $color);
             }
         }
     }
+
+    /**
+     * @group unit
+     */
+    public function testSetIndices()
+    {
+        $client = $this->_getClient();
+        $index1 = $client->getIndex('index1');
+        $index2 = $client->getIndex('index2');
+
+        $indices = array('one', 'two');
+        $filter = new Indices(new Term(array('color' => 'blue')), $indices);
+        $this->assertEquals($indices, $filter->getParam('indices'));
+
+        $indices[] = 'three';
+        $filter->setIndices($indices);
+        $this->assertEquals($indices, $filter->getParam('indices'));
+
+        $filter->setIndices(array($index1, $index2));
+        $expected = array($index1->getName(), $index2->getName());
+        $this->assertEquals($expected, $filter->getParam('indices'));
+
+        $returnValue = $filter->setIndices($indices);
+        $this->assertInstanceOf('Elastica\Filter\Indices', $returnValue);
+    }
+
+    /**
+     * @group unit
+     */
+    public function testAddIndex()
+    {
+        $client = $this->_getClient();
+        $index = $client->getIndex('someindex');
+
+        $filter = new Indices(new Term(array('color' => 'blue')), array());
+
+        $filter->addIndex($index);
+        $expected = array($index->getName());
+        $this->assertEquals($expected, $filter->getParam('indices'));
+
+        $filter->addIndex('foo');
+        $expected = array($index->getName(), 'foo');
+        $this->assertEquals($expected, $filter->getParam('indices'));
+
+        $returnValue = $filter->addIndex('bar');
+        $this->assertInstanceOf('Elastica\Filter\Indices', $returnValue);
+    }
 }
- 

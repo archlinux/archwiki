@@ -4,10 +4,15 @@
 			"Bjankuloski06"
 		]
 	},
-	"syntaxhighlight-desc": "Овозможува потцртување на синтакса <code>&lt;syntaxhighlight&gt;</code> со помош на [http://qbnz.com/highlighter/ GeSHi Highlighter]",
-	"syntaxhighlight-specify": "Треба да наведете јазик на следниов начин:",
-	"syntaxhighlight-supported": "Поддржани јазици за синтаксно потцртување:",
-	"syntaxhighlight-err-loading": "(грешка при вчитувањето на списокот на поддржани јазици)",
-	"syntaxhighlight-err-language": "Неважечки јазик.",
-	"geshi.css": "/* Тука поставениот CSS-код ќе биде применет во GeSHi потцртување на синтаксата */"
+	"syntaxhighlight-desc": "Овозможува потцртување на синтакса <code>&lt;syntaxhighlight&gt;</code> со помош на [http://pygments.org/ Pygments — подвлекувач на Python-синтакса]",
+	"syntaxhighlight-error-category": "Страници со грешки при подвлекување на синтаксата",
+	"syntaxhighlight-error-category-desc": "Се појави грешка при обидот да се подвлече кодот вклучен во страницава.",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "Код",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Јазик",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "(ниеден)",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "Прикажувај броеви на редовите",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Коден блок",
+	"syntaxhighlight-error-pygments-invocation-failure": "Не успеав да го повикам Pygments",
+	"syntaxhighlight-error-unknown-language": "Непознат јазик „$1“",
+	"syntaxhighlight-error-exceeds-size-limit": "Големината на кодот од {{PLURAL:$1|еден бајт|$1 бајти}} ја надминува горната граница од  {{PLURAL:$2|еден бајт|$2 бајти}}"
 }

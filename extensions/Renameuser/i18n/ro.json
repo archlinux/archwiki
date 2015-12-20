@@ -36,6 +36,7 @@
 	"log-name-renameuser": "Jurnal redenumiri utilizatori",
 	"log-description-renameuser": "Acesta este un jurnal al modificărilor de nume de utilizator",
 	"logentry-renameuser-renameuser": "$1 {{GENDER:$2|a redenumit}} utilizatorul $4 ({{PLURAL:$6|o contribuție|$6 contribuții|$6 de contribuții}}) în $5",
+	"logentry-renameuser-renameuser-legacier": "$1 a redenumit utilizatorul $4 în $5",
 	"renameuser-move-log": "Pagină mutată automat la redenumirea utilizatorului de la „[[User:$1|$1]]” la „[[User:$2|$2]]”",
 	"action-renameuser": "redenumește utilizatori",
 	"right-renameuser": "Redenumește utilizatori",

@@ -1,16 +1,14 @@
 <?php
-
 namespace Elastica\Test\Transport;
 
+use Elastica\Connection;
 use Elastica\Transport\AbstractTransport;
 use Elastica\Transport\Http;
-use Elastica\Connection;
-use Elastica\Exception\InvalidException;
 
 class AbstractTransportTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * Return transport configuration and the expected HTTP method
+     * Return transport configuration and the expected HTTP method.
      *
      * @return array[]
      */
@@ -27,6 +25,7 @@ class AbstractTransportTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group unit
      * @dataProvider getValidDefinitions
      */
     public function testCanCreateTransportInstances($transport)
@@ -47,6 +46,7 @@ class AbstractTransportTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group unit
      * @dataProvider getInvalidDefinitions
      * @expectedException Elastica\Exception\InvalidException
      * @expectedExceptionMessage Invalid transport
@@ -56,6 +56,9 @@ class AbstractTransportTest extends \PHPUnit_Framework_TestCase
         AbstractTransport::create($transport, new Connection());
     }
 
+    /**
+     * @group unit
+     */
     public function testCanInjectParamsWhenUsingArray()
     {
         $connection = new Connection();

@@ -18,7 +18,6 @@
 	"titleblacklist-forbidden-new-account": "Không được tạo ra tài khoản “$2”.\nNó trùng tên với một khoản mục trong danh sách đen: <code>$1</code>",
 	"titleblacklist-invalid": "{{PLURAL:$1|Dòng|Những dòng}} sau đây trong danh sách đen về tên trang không hợp lệ; xin hãy sửa chữa {{PLURAL:$1|nó|chúng}} để tuân theo cú pháp biểu thức chính quy trước khi lưu trang:",
 	"titleblacklist-override": "Bỏ qua danh sách đen",
-	"titleblacklist-autoconfirmed-warning": "<strong>Lưu ý:</strong> Chỉ có những người có quyền <code>autoconfirmed</code> được phép sửa đổi trang này vì nó khớp với mục sau trong danh sách đen tiêu đề:<br /><code>$1</code>",
 	"titleblacklist-warning": "<strong>Cảnh báo: Chỉ có các bảo quản viên và những người khác có quyền <code>tboverride</code> được phép sửa đổi trang này vì nó khớp với mục sau trong danh sách đen tiêu đề:</strong><br /><code>$1</code>",
 	"right-tboverride": "Bỏ qua các danh sách đen tiêu đề và tên người dùng",
 	"right-tboverride-account": "Ghi đè lên danh sách đen tên người dùng",

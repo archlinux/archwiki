@@ -1,35 +1,31 @@
 <?php
-
 namespace Elastica\Filter;
 
-use Elastica\Filter\AbstractFilter;
-
 /**
- * Geo polygon filter
+ * Geo polygon filter.
  *
- * @category Xodoa
- * @package Elastica
  * @author Michael Maclean <mgdm@php.net>
- * @link http://www.elasticsearch.org/guide/reference/query-dsl/geo-polygon-filter.html
+ *
+ * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-geo-polygon-filter.html
  */
 class GeoPolygon extends AbstractFilter
 {
     /**
-     * Key
+     * Key.
      *
      * @var string Key
      */
     protected $_key = '';
 
     /**
-     * Points making up polygon
+     * Points making up polygon.
      *
      * @var array Points making up polygon
      */
     protected $_points = array();
 
     /**
-     * Construct polygon filter
+     * Construct polygon filter.
      *
      * @param string $key    Key
      * @param array  $points Points making up polygon
@@ -41,9 +37,10 @@ class GeoPolygon extends AbstractFilter
     }
 
     /**
-     * Converts filter to array
+     * Converts filter to array.
      *
      * @see \Elastica\Filter\AbstractFilter::toArray()
+     *
      * @return array
      */
     public function toArray()
@@ -51,9 +48,9 @@ class GeoPolygon extends AbstractFilter
         return array(
             'geo_polygon' => array(
                 $this->_key => array(
-                    'points' => $this->_points
+                    'points' => $this->_points,
                 ),
-            )
+            ),
         );
     }
 }

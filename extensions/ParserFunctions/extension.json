@@ -9,6 +9,7 @@
 	],
 	"url": "https://www.mediawiki.org/wiki/Extension:ParserFunctions",
 	"descriptionmsg": "pfunc_desc",
+	"license-name": "GPL-2.0",
 	"type": "parserhook",
 	"config": {
 		"PFEnableStringFunctions": false,
@@ -44,5 +45,6 @@
 	"ParserTestFiles": [
 		"funcsParserTests.txt",
 		"stringFunctionTests.txt"
-	]
+	],
+	"manifest_version": 1
 }

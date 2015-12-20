@@ -15,6 +15,7 @@
 	"nuke-multiplepeople": "Xóa hàng loạt các trang được tạo gần đây",
 	"nuke-tools": "Công cụ này cho phép xóa hàng loạt các trang do một thành viên hoặc người dùng địa chỉ IP nào đó tạo ra gần đây.\nHãy nhập tên thành viên hoặc địa chỉ IP để lấy danh sách các trang sẽ xóa, hoặc để trống để xem các trang của mọi người dùng.",
 	"nuke-submit-user": "Tìm kiếm",
+	"nuke-toggleinvert": "Đảo ngược",
 	"nuke-submit-delete": "Xóa các trang đã chọn",
 	"right-nuke": "Xóa trang hàng loạt",
 	"nuke-select": "Chọn: $1",

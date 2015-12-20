@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Test\Index;
 
 use Elastica\Document;
@@ -10,6 +9,9 @@ use Elastica\Test\Base as BaseTest;
 
 class SettingsTest extends BaseTest
 {
+    /**
+     * @group functional
+     */
     public function testGet()
     {
         $indexName = 'elasticatest';
@@ -28,6 +30,9 @@ class SettingsTest extends BaseTest
         $index->delete();
     }
 
+    /**
+     * @group functional
+     */
     public function testGetWithAlias()
     {
         $indexName = 'elasticatest';
@@ -50,6 +55,9 @@ class SettingsTest extends BaseTest
         $index->delete();
     }
 
+    /**
+     * @group functional
+     */
     public function testSetNumberOfReplicas()
     {
         $indexName = 'test';
@@ -70,6 +78,9 @@ class SettingsTest extends BaseTest
         $index->delete();
     }
 
+    /**
+     * @group functional
+     */
     public function testSetRefreshInterval()
     {
         $indexName = 'test';
@@ -91,6 +102,9 @@ class SettingsTest extends BaseTest
         $index->delete();
     }
 
+    /**
+     * @group functional
+     */
     public function testGetRefreshInterval()
     {
         $indexName = 'test';
@@ -112,6 +126,9 @@ class SettingsTest extends BaseTest
         $index->delete();
     }
 
+    /**
+     * @group functional
+     */
     public function testSetMergePolicy()
     {
         $indexName = 'test';
@@ -133,6 +150,9 @@ class SettingsTest extends BaseTest
         $index->delete();
     }
 
+    /**
+     * @group functional
+     */
     public function testSetMergeFactor()
     {
         $indexName = 'test';
@@ -157,6 +177,9 @@ class SettingsTest extends BaseTest
         $index->delete();
     }
 
+    /**
+     * @group functional
+     */
     public function testSetMergePolicyType()
     {
         $indexName = 'test';
@@ -181,13 +204,15 @@ class SettingsTest extends BaseTest
         $index->delete();
     }
 
+    /**
+     * @group functional
+     */
     public function testSetReadOnly()
     {
-        $index = $this->_createIndex('test');
+        $index = $this->_createIndex();
         //wait for the shards to be allocated
         $this->_waitForAllocation($index);
         $index->getSettings()->setReadOnly(false);
-
 
         // Add document to normal index
         $doc1 = new Document(null, array('hello' => 'world'));
@@ -196,11 +221,11 @@ class SettingsTest extends BaseTest
 
         $type = $index->getType('test');
         $type->addDocument($doc1);
-        $this->assertEquals('false', $index->getSettings()->get('blocks.read_only')); //ES returns a string for this setting
+        $this->assertFalse($index->getSettings()->getReadOnly());
 
         // Try to add doc to read only index
         $index->getSettings()->setReadOnly(true);
-        $this->assertEquals('true', $index->getSettings()->get('blocks.read_only'));
+        $this->assertTrue($index->getSettings()->getReadOnly());
 
         try {
             $type->addDocument($doc2);
@@ -208,7 +233,7 @@ class SettingsTest extends BaseTest
         } catch (ResponseException $e) {
             $message = $e->getMessage();
             $this->assertContains('ClusterBlockException', $message);
-            $this->assertContains('index read-only', $message);
+            $this->assertContains('index write', $message);
         }
 
         // Remove read only, add document
@@ -223,10 +248,12 @@ class SettingsTest extends BaseTest
         $index->delete();
     }
 
-
+    /**
+     * @group functional
+     */
     public function testGetSetBlocksRead()
     {
-        $index = $this->_createIndex('elastica-test');
+        $index = $this->_createIndex();
         $index->refresh();
         $settings = $index->getSettings();
 
@@ -244,9 +271,12 @@ class SettingsTest extends BaseTest
         $index->delete();
     }
 
+    /**
+     * @group functional
+     */
     public function testGetSetBlocksWrite()
     {
-        $index = $this->_createIndex('elastica-test');
+        $index = $this->_createIndex();
         $index->refresh();
         $settings = $index->getSettings();
 
@@ -264,9 +294,12 @@ class SettingsTest extends BaseTest
         $index->delete();
     }
 
+    /**
+     * @group functional
+     */
     public function testGetSetBlocksMetadata()
     {
-        $index = $this->_createIndex('elastica-test');
+        $index = $this->_createIndex();
         $index->refresh();
         $settings = $index->getSettings();
 
@@ -285,16 +318,21 @@ class SettingsTest extends BaseTest
         $index->delete();
     }
 
-    protected function _waitForAllocation(Index $index)
+    /**
+     * @group functional
+     */
+    public function testNotFoundIndex()
     {
-        do {
-            $settings = $index->getStatus()->get();
-            $allocated = true;
-            foreach ($settings['shards'] as $shard) {
-                if ($shard[0]['routing']['state'] != 'STARTED') {
-                    $allocated = false;
-                }
-            }
-        } while (!$allocated);
+        $client = $this->_getClient();
+        $index = $client->getIndex('not_found_index');
+        //wait for the shards to be allocated
+
+        try {
+            $settings = $index->getSettings()->get();
+            $this->fail('Should throw exception because of index not found');
+        } catch (ResponseException $e) {
+            $message = $e->getMessage();
+            $this->assertContains('IndexMissingException', $message);
+        }
     }
 }

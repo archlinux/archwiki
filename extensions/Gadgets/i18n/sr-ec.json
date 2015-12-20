@@ -18,9 +18,14 @@
 	"gadgets-required-rights": "Захтева {{PLURAL:$2|следеће право|следећа права}}:\n\n$1",
 	"gadgets-required-skins": "Доступно у {{PLURAL:$2|теми $1|следећим темама: $1}}.",
 	"gadgets-default": "Подразумевано укључен за сваког.",
+	"gadgets-legacy": "Геџет није учитан. Молимо вас пребаците га на ResourceLoader. ([https://www.mediawiki.org/wiki/ResourceLoader/Migration_guide_(users) Сазнајте више])",
 	"gadgets-export": "Извези",
 	"gadgets-export-title": "Извоз гаџета",
 	"gadgets-not-found": "Гаџет „$1“ није пронађен.",
 	"gadgets-export-text": "Да бисте извезли $1 гаџет, кликните на дугме „{{int:gadgets-export-download}}“, сачувајте преузету датотеку,\nпређите на ''Special:Import'' на жељеној викији и пошаљите гаџет. Након тога, додајте следеће на ''MediaWiki:Gadgets-definition'' страницу:\n<pre>$2</pre>\nМорате имати одређене дозволе на наведеној викији (укључујући и право за уређивање системских порука), док увоз преко датотека мора бити омогућен.",
-	"gadgets-export-download": "Преузми"
+	"gadgets-export-download": "Преузми",
+	"right-gadgets-edit": "уређивање JavaScript и CSS страница геџета",
+	"action-gadgets-edit": "уређивање JavaScript и CSS страница геџета",
+	"right-gadgets-definition-edit": "уређивање дефиниција геџета",
+	"action-gadgets-definition-edit": "уређивање дефиниција геџета"
 }

@@ -11,7 +11,7 @@
 	},
 	"nuke": "Massenlöschung von Seiten",
 	"action-nuke": "Seiten massenhaft zu löschen",
-	"nuke-desc": "Ergänzt eine [[Special:Nuke|Spezialseite]] zur Massenlöschung von Seiten",
+	"nuke-desc": "Bietet eine [[Special:Nuke|Spezialseite]] zur Massenlöschung von Seiten",
 	"nuke-nopages": "Es gibt in den „Letzten Änderungen“ keine neuen Seiten von [[Special:Contributions/$1|{{GENDER:$1|$1}}]].",
 	"nuke-list": "Die folgenden Seiten wurden von [[Special:Contributions/$1|{{GENDER:$1|$1}}]] angelegt.\nGib einen Kommentar bezüglich der Löschung an und klicke auf die Schaltfläche, um die Seiten nun zu löschen.",
 	"nuke-list-multiple": "Die folgenden Seiten wurden vor kurzem erstellt.\nGib einen Kommentar bezüglich der Löschung an und klicke auf die Schaltfläche, um die Seiten nun zu löschen.",

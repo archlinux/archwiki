@@ -1,8 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Babanwalia"
+			"Babanwalia",
+			"Satdeep gill"
 		]
 	},
-	"cite_error": "ਗ਼ਲਤੀ ਦਾ ਹਵਾਲਾ ਦਿਉ:"
+	"cite_error": "ਹਵਾਲੇ ਵਿੱਚ ਗਲਤੀ:$1"
 }

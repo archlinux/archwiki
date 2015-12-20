@@ -115,7 +115,7 @@ $.wikiEditor.modules.dialogs = {
 		 * @param {String} name Dialog name (key in $.wikiEditor.modules.dialogs.modules)
 		 */
 		reallyCreate: function ( context, module, name ) {
-			var msg, dialogDiv,
+			var msg, dialogDiv, $content,
 				configuration = module.dialog;
 			// Add some stuff to configuration
 			configuration.bgiframe = true;
@@ -133,10 +133,17 @@ $.wikiEditor.modules.dialogs = {
 				configuration.newButtons[mw.msg( msg )] = configuration.buttons[msg];
 			}
 			configuration.buttons = configuration.newButtons;
+			if ( module.htmlTemplate ) {
+				$content = mw.template.get( 'jquery.wikiEditor.dialogs.config', module.htmlTemplate ).render();
+			} else if ( module.html instanceof jQuery ) {
+				$content = module.html;
+			} else {
+				$content = $( $.parseHTML( module.html ) );
+			}
 			// Create the dialog <div>
 			dialogDiv = $( '<div>' )
 				.attr( 'id', module.id )
-				.html( module.html )
+				.append( $content )
 				.data( 'context', context )
 				.appendTo( $( 'body' ) )
 				.each( module.init )

@@ -1,22 +1,20 @@
 <?php
-
 namespace Elastica\Query;
+
 use Elastica\Query as BaseQuery;
 
 /**
- * Returns child documents having parent docs matching the query
+ * Returns child documents having parent docs matching the query.
  *
- * @category Xodoa
- * @package Elastica
- * @link http://www.elasticsearch.org/guide/reference/query-dsl/has-parent-query.html
+ * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-has-parent-query.html
  */
 class HasParent extends AbstractQuery
 {
     /**
-     * Construct HasChild Query
+     * Construct HasChild Query.
      *
-     * @param string|\Elastica\Query|\Elastica\Query\AbstractQuery $query 
-     * @param string                $type  Parent document type
+     * @param string|\Elastica\Query|\Elastica\Query\AbstractQuery $query
+     * @param string                                               $type  Parent document type
      */
     public function __construct($query, $type)
     {
@@ -25,10 +23,11 @@ class HasParent extends AbstractQuery
     }
 
     /**
-     * Sets query object
+     * Sets query object.
      *
-     * @param  string|\Elastica\Query|\Elastica\Query\AbstractQuery $query
-     * @return \Elastica\Filter\HasParent
+     * @param string|\Elastica\Query|\Elastica\Query\AbstractQuery $query
+     *
+     * @return $this
      */
     public function setQuery($query)
     {
@@ -39,10 +38,11 @@ class HasParent extends AbstractQuery
     }
 
     /**
-     * Set type of the parent document
+     * Set type of the parent document.
      *
-     * @param  string                          $type Parent document type
-     * @return \Elastica\Filter\HasParent Current object
+     * @param string $type Parent document type
+     *
+     * @return $this
      */
     public function setType($type)
     {
@@ -50,10 +50,11 @@ class HasParent extends AbstractQuery
     }
 
     /**
-     * Sets the scope
+     * Sets the scope.
      *
-     * @param  string                          $scope Scope
-     * @return \Elastica\Filter\HasParent Current object
+     * @param string $scope Scope
+     *
+     * @return $this
      */
     public function setScope($scope)
     {

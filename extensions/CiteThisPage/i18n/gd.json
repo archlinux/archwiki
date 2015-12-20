@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Akerbeltz"
+			"Akerbeltz",
+			"Caoimhin"
 		]
 	},
-	"citethispage-link": "Thoir iomradh air an duilleag seo"
+	"citethispage-link": "Thoir iomradh air an duilleag seo",
+	"tooltip-citethispage": "Mar a nì thu iomradh dhan duilleig seo"
 }

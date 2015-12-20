@@ -14,13 +14,15 @@
 			"Vivaelcelta",
 			"Macofe",
 			"Fitoschido",
-			"Gustronico"
+			"Gustronico",
+			"Ryo567"
 		]
 	},
 	"interwiki": "Ver y editar la tabla de interwikis",
 	"interwiki-title-norights": "Ver datos de interwikis",
 	"interwiki-desc": "Añade una [[Special:Interwiki|página especial]] para ver y editar la tabla de interwikis",
 	"interwiki_intro": "Este es un resumen de la tabla de interwikis, que define los atajos mediante prefijos usados para enlazar rápidamente diferentes wikis y otros sitios externos. Para recomendaciones de uso véase [//www.mediawiki.org/wiki/Extension:Interwiki el manual en MediaWiki.org].",
+	"interwiki-legend-label": "Leyenda",
 	"interwiki_prefix": "Prefijo",
 	"interwiki-prefix-label": "Prefijo:",
 	"interwiki_prefix_intro": "Prefijo interwiki que se utilizará en sintaxis wikitexto <code>[<nowiki />[prefijo:<em>nombre de página</em>]]</code>.",
@@ -45,6 +47,7 @@
 	"interwiki_delfailed": "El prefijo «$1» no puede ser borrado de la tabla de interwikis.",
 	"interwiki-logtext": "Ver registro",
 	"interwiki_addtext": "Añadir un prefijo interwiki o de idioma",
+	"interwiki-addtext-local": "Añadir un prefijo local interwiki o de idioma",
 	"interwiki_addintro": "Estás añadiendo un nuevo prefijo interwiki.\nRecuerda que no puede contener espacios ( ), dos puntos (:), ni los signos ''et'' (&), o ''igual'' (=).",
 	"interwiki_addbutton": "Agregar",
 	"interwiki_added": "El prefijo «$1» ha sido añadido correctamente a la tabla de interwikis.",
@@ -56,7 +59,7 @@
 	"interwiki-badprefix": "El prefijo interwiki especificado «$1» contiene caracteres no válidos",
 	"interwiki-submit-empty": "El prefijo y la dirección URL no pueden estar vacías.",
 	"interwiki-submit-invalidurl": "El protocolo de la dirección URL no es válido.",
-	"log-name-interwiki": "Tabla de registro de interwiki",
+	"log-name-interwiki": "Registro de la tabla interwiki",
 	"logentry-interwiki-iw_add": "$1 {{GENDER:$2|añadió}} el prefijo \"$4\" ($5) (trans: $6; local: $7) a la tabla interwiki",
 	"logentry-interwiki-iw_edit": "$1 {{GENDER:$2|modificó}} el prefijo \" $4 \" ( $5 ) (trans:  $6 ; local:  $7 ) en la tabla interwiki",
 	"logentry-interwiki-iw_delete": "$1 {{GENDER:$2|eliminó}} el prefijo \"$4\" de la tabla interwiki",
@@ -64,6 +67,7 @@
 	"right-interwiki": "Editar datos de interwiki",
 	"action-interwiki": "cambiar esta entrada interwiki",
 	"interwiki-global-links": "Prefijos de interwikis globales",
+	"interwiki-local-links": "Prefijos de interwikis locales",
 	"interwiki-links": "Prefijos de interwikis",
 	"interwiki-language-links": "Prefijos interlingüísticos"
 }

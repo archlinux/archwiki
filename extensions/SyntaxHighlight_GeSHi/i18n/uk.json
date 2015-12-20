@@ -1,13 +1,21 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ahonc"
+			"Ahonc",
+			"Ата",
+			"AS",
+			"Dars"
 		]
 	},
-	"syntaxhighlight-desc": "Дозволяє використовувати тег <code>&lt;syntaxhighlight&gt;</code> для підсвічування синтаксису за допомогою [http://qbnz.com/highlighter/ GeSHi Highlighter]",
-	"syntaxhighlight-specify": "Ви повинні зазначити мову наступним чином:",
-	"syntaxhighlight-supported": "Підтримувані мови:",
-	"syntaxhighlight-err-loading": "(неможливо завантажити список мов)",
-	"syntaxhighlight-err-language": "Зазначена непідтримувана мова.",
-	"geshi.css": "/* CSS-код, розміщений тут, буде застосований для підсвічування синтаксису GeSHI */"
+	"syntaxhighlight-desc": "Забезпечує підсвічування синтаксису <code>&lt;syntaxhighlight&gt;</code> за допомогою [http://pygments.org/ Pygments] для синтаксису Python",
+	"syntaxhighlight-error-category": "Сторінки, які містять помилки підсвітки синтаксису",
+	"syntaxhighlight-error-category-desc": "Сталася помилка при спробі підсвічення коду на сторінці.",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "Код",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Мова",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "(Немає)",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "Показати номери рядків",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Блок коду",
+	"syntaxhighlight-error-pygments-invocation-failure": "Не вдалося викликати Pygments",
+	"syntaxhighlight-error-unknown-language": "Невідома мова «$1»",
+	"syntaxhighlight-error-exceeds-size-limit": "Код розміром $1 {{PLURAL:$1|байт|байти|байтів}} перевищує дозволений максимум $2 {{PLURAL:$2|байт|байти|байтів}}"
 }

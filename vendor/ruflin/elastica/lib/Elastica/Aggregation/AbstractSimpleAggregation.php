@@ -1,16 +1,16 @@
 <?php
-
 namespace Elastica\Aggregation;
-
 
 use Elastica\Script;
 
 abstract class AbstractSimpleAggregation extends AbstractAggregation
 {
     /**
-     * Set the field for this aggregation
+     * Set the field for this aggregation.
+     *
      * @param string $field the name of the document field on which to perform this aggregation
-     * @return AbstractSimpleAggregation
+     *
+     * @return $this
      */
     public function setField($field)
     {
@@ -18,16 +18,20 @@ abstract class AbstractSimpleAggregation extends AbstractAggregation
     }
 
     /**
-     * Set a script for this aggregation
+     * Set a script for this aggregation.
+     *
      * @param string|Script $script
-     * @return AbstractSimpleAggregation
+     *
+     * @return $this
      */
     public function setScript($script)
     {
         if ($script instanceof Script) {
-            $this->setParam('params', $script->getParams());
-            $script = $script->getScript();
+            $params = array_merge($this->getParams(), $script->toArray());
+
+            return $this->setParams($params);
         }
+
         return $this->setParam('script', $script);
     }
-} 
+}
