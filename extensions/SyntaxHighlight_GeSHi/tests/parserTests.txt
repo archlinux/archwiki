@@ -154,3 +154,12 @@ Text <source lang="javascript" enclose="none">var a;</source>.
 <p>Text <code class="mw-highlight" dir="ltr"><span class="kd">var</span> <span class="nx">a</span><span class="p">;</span></code>.
 </p>
 !! end
+
+!! test
+Enclose with nowiki
+!! input
+{{#tag:syntaxhighlight|<nowiki>foo</nowiki>|lang="text"|inline=none}}
+!! result
+<p><code class="mw-highlight" dir="ltr">foo</code>
+</p>
+!! end

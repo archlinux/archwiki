@@ -111,8 +111,11 @@ class SyntaxHighlight_GeSHi {
 	public static function parserHook( $text, $args = array(), $parser ) {
 		global $wgUseTidy;
 
+		// Replace strip markers (For e.g. {{#tag:syntaxhighlight|<nowiki>...}})
+		$out = $parser->mStripState->unstripNoWiki( $text );
+
 		// Don't trim leading spaces away, just the linefeeds
-		$out = preg_replace( '/^\n+/', '', rtrim( $text ) );
+		$out = preg_replace( '/^\n+/', '', rtrim( $out ) );
 
 		// Convert deprecated attributes
 		if ( isset( $args['enclose'] ) ) {
