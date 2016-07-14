@@ -126,6 +126,10 @@ $wgUseETag = true;
 # $wgDisableOutputCompression = true;
 
 
+##
+## Media settings
+##
+
 ## To enable image uploads, make sure the 'images' directory
 ## is writable, then set this to true:
 $wgEnableUploads  = true;
@@ -146,6 +150,11 @@ $wgShellLocale = "en_US.utf8";
 ## this, if it's not already uncommented:
 #$wgHashedUploadDirectory = false;
 
+
+##
+## Skin settings
+##
+
 ## Default skin: you can change the default skin. Use the internal symbolic
 ## names, ie 'standard', 'nostalgia', 'cologneblue', 'monobook', 'vector':
 //require_once "$IP/skins/ArchLinux/ArchLinux.php";
@@ -165,7 +174,11 @@ $wgArchNavBar = array(
 $wgArchNavBarSelectedDefault = 'Wiki';
 $wgFooterIcons = array();
 
-# The following permissions were set based on your choice in the installer
+
+##
+## Access control settings
+##
+
 $wgEmailConfirmToEdit = true;
 $wgAllowUserCssPrefs = false;
 $wgDisableAnonTalk = true;
@@ -200,19 +213,15 @@ $wgAutoConfirmAge = 86400*3; // three days
 # require at least 20 normal edits before granting the 'writeapi' right
 $wgAutoConfirmCount = 20;
 
-# Enabled Extensions. Most extensions are enabled by including the base extension file here
-# but check specific extension documentation for more details
-# The following extensions were automatically enabled:
 
-# $wgShowSQLErrors = true;
-# $wgReadOnly = 'Database migration in progress. We`ll be back in a few minutes.';
+##
+## Additional extensions
+##
 
 require_once( "$IP/extensions/Nuke/Nuke.php" );
 
-wfLoadExtension( 'CheckUser' );
-require_once "$IP/extensions/AbuseFilter/AbuseFilter.php";
-
 # AbuseFilter extension
+require_once "$IP/extensions/AbuseFilter/AbuseFilter.php";
 $wgGroupPermissions['sysop']['abusefilter-modify'] = true;
 $wgGroupPermissions['*']['abusefilter-log-detail'] = true;
 $wgGroupPermissions['*']['abusefilter-view'] = true;
@@ -222,9 +231,17 @@ $wgGroupPermissions['sysop']['abusefilter-modify-restricted'] = true;
 $wgGroupPermissions['sysop']['abusefilter-revert'] = true;
 
 # CheckUser extension
+wfLoadExtension( 'CheckUser' );
 $wgGroupPermissions['sysop']['checkuser'] = true;
 $wgGroupPermissions['sysop']['checkuser-log'] = true;
 
 
+##
+## Temporary settings for maintenance
+##
+
 # temporary disable registration; reverted 2016-6-26 bluewind
 #$wgGroupPermissions['*']['createaccount'] = false;
+
+# $wgShowSQLErrors = true;
+# $wgReadOnly = 'Database migration in progress. We`ll be back in a few minutes.';
