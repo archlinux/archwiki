@@ -102,12 +102,29 @@ $wgEmailAuthentication = true;
 $wgUserEmailUseReplyTo = true;
 
 
-## Uncomment this to disable output compression
-# $wgDisableOutputCompression = true;
+##
+## Cache settings
+##
 
 ## Shared memory settings
 $wgMainCacheType    = CACHE_ACCEL;
 $wgMemCachedServers = array();
+
+## Set $wgCacheDirectory to a writable directory on the web server
+## to make your wiki go slightly faster. The directory should not
+## be publically accessible from the web.
+$wgCacheDirectory = "$IP/../cache/data";
+$wgShowIPinHeader = false;
+$wgDisableCounters = true;
+$wgEnableSidebarCache = true;
+$wgUseFileCache = true;
+$wgFileCacheDirectory = "$IP/../cache/html";
+$wgUseGzip = true;
+$wgUseETag = true;
+
+## Uncomment this to disable output compression
+# $wgDisableOutputCompression = true;
+
 
 ## To enable image uploads, make sure the 'images' directory
 ## is writable, then set this to true:
@@ -128,18 +145,6 @@ $wgShellLocale = "en_US.utf8";
 ## images/temp, and make them all writable. Then uncomment
 ## this, if it's not already uncommented:
 #$wgHashedUploadDirectory = false;
-
-## Set $wgCacheDirectory to a writable directory on the web server
-## to make your wiki go slightly faster. The directory should not
-## be publically accessible from the web.
-$wgCacheDirectory = "$IP/../cache/data";
-$wgShowIPinHeader = false;
-$wgDisableCounters = true;
-$wgEnableSidebarCache = true;
-$wgUseFileCache = true;
-$wgFileCacheDirectory = "$IP/../cache/html";
-$wgUseGzip = true;
-$wgUseETag = true;
 
 ## Default skin: you can change the default skin. Use the internal symbolic
 ## names, ie 'standard', 'nostalgia', 'cologneblue', 'monobook', 'vector':
