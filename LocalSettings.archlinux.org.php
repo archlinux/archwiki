@@ -82,8 +82,9 @@ $wgDBTableOptions   = "ENGINE=InnoDB, DEFAULT CHARSET=binary";
 $wgDBmysql5 = false;
 
 
-## Uncomment this to disable output compression
-# $wgDisableOutputCompression = true;
+##
+## Email settings
+##
 
 ## UPO means: this is also a user preference option
 
@@ -96,6 +97,13 @@ $wgPasswordSender   = "webmaster@archlinux.org";
 $wgEnotifUserTalk      = true; # UPO
 $wgEnotifWatchlist     = true; # UPO
 $wgEmailAuthentication = true;
+
+# avoid bouncing of user-to-user emails (FS#26737)
+$wgUserEmailUseReplyTo = true;
+
+
+## Uncomment this to disable output compression
+# $wgDisableOutputCompression = true;
 
 ## Shared memory settings
 $wgMainCacheType    = CACHE_ACCEL;
@@ -215,5 +223,3 @@ $wgGroupPermissions['sysop']['checkuser-log'] = true;
 
 # temporary disable registration; reverted 2016-6-26 bluewind
 #$wgGroupPermissions['*']['createaccount'] = false;
-
-$wgUserEmailUseReplyTo = true;
