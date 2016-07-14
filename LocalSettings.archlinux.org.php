@@ -15,10 +15,19 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 	exit;
 }
 
-## Uncomment this to disable output compression
-# $wgDisableOutputCompression = true;
+##
+## General settings
+##
 
 $wgSitename      = "ArchWiki";
+
+## The protocol and server name to use in fully-qualified URLs
+$wgServer           = "https://wiki.archlinux.org";
+
+$wgLocaltimezone = 'UTC';
+
+# Site language code, should be one of the list in ./languages/Names.php
+$wgLanguageCode = "en";
 
 ## The URL base path to the directory containing the wiki;
 ## defaults for all runtime URL paths are based off of this.
@@ -29,15 +38,35 @@ $wgScriptPath	    = "";
 $wgUsePathInfo = true;
 $wgScriptExtension  = ".php";
 
-## The protocol and server name to use in fully-qualified URLs
-$wgServer           = "https://wiki.archlinux.org";
-
 ## The relative URL path to the skins directory
 $wgStylePath        = "$wgScriptPath/skins";
 
 ## The relative URL path to the logo.  Make sure you change this from the default,
 ## or else you'll overwrite your logo when you upgrade!
 $wgLogo             = "$wgStylePath/archlinux/archlogo.png";
+
+## For attaching licensing metadata to pages, and displaying an
+## appropriate copyright notice / icon. GNU Free Documentation
+## License and Creative Commons licenses are supported so far.
+$wgRightsPage = ""; # Set to the title of a wiki page that describes your license/copyright
+$wgRightsUrl  = "http://www.gnu.org/copyleft/fdl.html";
+$wgRightsText = "GNU Free Documentation License 1.3 or later";
+$wgRightsIcon = "{$wgStylePath}/common/images/gnu-fdl.png";
+
+# Query string length limit for ResourceLoader. You should only set this if
+# your web server has a query string length limit (then set it to that limit),
+# or if you have suhosin.get.max_value_length set in php.ini (then set it to
+# that value)
+# TODO: -1 is the default
+$wgResourceLoaderMaxQueryLength = -1;
+
+$wgGitRepositoryViewers['.+projects\.archlinux\.org/vhosts/wiki\.archlinux\.org\.git(.*)'] = 'https://projects.archlinux.org/vhosts/wiki.archlinux.org.git/commit/?id=%H';
+
+$wgJobRunRate = 0;
+
+
+## Uncomment this to disable output compression
+# $wgDisableOutputCompression = true;
 
 ## UPO means: this is also a user preference option
 
@@ -100,9 +129,6 @@ $wgFileCacheDirectory = "$IP/../cache/html";
 $wgUseGzip = true;
 $wgUseETag = true;
 
-# Site language code, should be one of the list in ./languages/Names.php
-$wgLanguageCode = "en";
-
 ## Default skin: you can change the default skin. Use the internal symbolic
 ## names, ie 'standard', 'nostalgia', 'cologneblue', 'monobook', 'vector':
 //require_once "$IP/skins/ArchLinux/ArchLinux.php";
@@ -121,22 +147,6 @@ $wgArchNavBar = array(
 		);
 $wgArchNavBarSelectedDefault = 'Wiki';
 $wgFooterIcons = array();
-
-$wgLocaltimezone = 'UTC';
-
-## For attaching licensing metadata to pages, and displaying an
-## appropriate copyright notice / icon. GNU Free Documentation
-## License and Creative Commons licenses are supported so far.
-$wgRightsPage = ""; # Set to the title of a wiki page that describes your license/copyright
-$wgRightsUrl  = "http://www.gnu.org/copyleft/fdl.html";
-$wgRightsText = "GNU Free Documentation License 1.3 or later";
-$wgRightsIcon = "{$wgStylePath}/common/images/gnu-fdl.png";
-
-# Query string length limit for ResourceLoader. You should only set this if
-# your web server has a query string length limit (then set it to that limit),
-# or if you have suhosin.get.max_value_length set in php.ini (then set it to
-# that value)
-$wgResourceLoaderMaxQueryLength = -1;
 
 # The following permissions were set based on your choice in the installer
 $wgEmailConfirmToEdit = true;
@@ -179,10 +189,6 @@ $wgAutoConfirmCount = 20;
 
 # $wgShowSQLErrors = true;
 # $wgReadOnly = 'Database migration in progress. We`ll be back in a few minutes.';
-
-$wgGitRepositoryViewers['.+projects\.archlinux\.org/vhosts/wiki\.archlinux\.org\.git(.*)'] = 'https://projects.archlinux.org/vhosts/wiki.archlinux.org.git/commit/?id=%H';
-
-$wgJobRunRate = 0;
 
 require_once( "$IP/extensions/Nuke/Nuke.php" );
 
