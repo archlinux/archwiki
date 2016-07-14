@@ -65,6 +65,23 @@ $wgGitRepositoryViewers['.+projects\.archlinux\.org/vhosts/wiki\.archlinux\.org\
 $wgJobRunRate = 0;
 
 
+##
+## Database settings
+##
+
+$wgDBtype           = "mysql";
+$wgDBserver         = "localhost";
+
+# MySQL specific settings
+$wgDBprefix         = "";
+
+# MySQL table options to use during installation or update
+$wgDBTableOptions   = "ENGINE=InnoDB, DEFAULT CHARSET=binary";
+
+# Experimental charset support for MySQL 5.0.
+$wgDBmysql5 = false;
+
+
 ## Uncomment this to disable output compression
 # $wgDisableOutputCompression = true;
 
@@ -79,19 +96,6 @@ $wgPasswordSender   = "webmaster@archlinux.org";
 $wgEnotifUserTalk      = true; # UPO
 $wgEnotifWatchlist     = true; # UPO
 $wgEmailAuthentication = true;
-
-## Database settings
-$wgDBtype           = "mysql";
-$wgDBserver         = "localhost";
-
-# MySQL specific settings
-$wgDBprefix         = "";
-
-# MySQL table options to use during installation or update
-$wgDBTableOptions   = "ENGINE=InnoDB, DEFAULT CHARSET=binary";
-
-# Experimental charset support for MySQL 5.0.
-$wgDBmysql5 = false;
 
 ## Shared memory settings
 $wgMainCacheType    = CACHE_ACCEL;
