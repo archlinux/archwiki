@@ -16,6 +16,20 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 }
 
 ##
+## LocalSettings.php
+##
+
+#$wgDBname     = "XXX";
+#$wgDBuser     = "XXX";
+#$wgDBpassword = "XXX";
+#$wgSecretKey  = "XXX";
+#$wgUpgradeKey = "XXX";
+#require_once( "$IP/extensions/FunnyQuestion/FunnyQuestion.php" );
+#$wgFunnyQuestionHash = "XXX";
+#$wgFunnyQuestions = array();
+
+
+##
 ## General settings
 ##
 
