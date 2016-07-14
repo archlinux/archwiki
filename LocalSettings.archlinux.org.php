@@ -51,7 +51,7 @@ $wgLogo             = "$wgStylePath/archlinux/archlogo.png";
 $wgRightsPage = ""; # Set to the title of a wiki page that describes your license/copyright
 $wgRightsUrl  = "http://www.gnu.org/copyleft/fdl.html";
 $wgRightsText = "GNU Free Documentation License 1.3 or later";
-$wgRightsIcon = "{$wgStylePath}/common/images/gnu-fdl.png";
+$wgRightsIcon = "$wgScriptPath/resources/assets/licenses/gnu-fdl.png";
 
 # Query string length limit for ResourceLoader. You should only set this if
 # your web server has a query string length limit (then set it to that limit),
