@@ -129,7 +129,6 @@ $wgMemCachedServers = array();
 ## be publically accessible from the web.
 $wgCacheDirectory = "$IP/../cache/data";
 $wgShowIPinHeader = false;
-$wgDisableCounters = true;
 $wgEnableSidebarCache = true;
 $wgUseFileCache = true;
 $wgFileCacheDirectory = "$IP/../cache/html";
