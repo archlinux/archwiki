@@ -117,7 +117,7 @@ $wgUserEmailUseReplyTo = true;
 
 
 ##
-## Cache settings
+## Cache and performance settings
 ##
 
 ## Shared memory settings
@@ -134,6 +134,10 @@ $wgUseFileCache = true;
 $wgFileCacheDirectory = "$IP/../cache/html";
 $wgUseGzip = true;
 $wgUseETag = true;
+
+# CSS-based preferences supposedly cause about 20 times slower page loads
+# https://phabricator.wikimedia.org/rSVN63707
+$wgAllowUserCssPrefs = false;
 
 ## Uncomment this to disable output compression
 # $wgDisableOutputCompression = true;
@@ -193,7 +197,6 @@ $wgFooterIcons = array();
 ##
 
 $wgEmailConfirmToEdit = true;
-$wgAllowUserCssPrefs = false;
 $wgDisableAnonTalk = true;
 $wgGroupPermissions['*']['edit'] = false;
 $wgGroupPermissions['sysop']['deleterevision']  = true;
