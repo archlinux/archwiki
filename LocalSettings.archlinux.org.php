@@ -81,6 +81,10 @@ $wgJobRunRate = 0;
 # Enable subpages in the main namespace (FS#39668)
 $wgNamespacesWithSubpages[NS_MAIN] = true;
 
+# Enable support for userscripts and user-stylesheets (FS#46699)
+$wgAllowUserJs = true;
+$wgAllowUserCss = true;
+
 
 ##
 ## Database settings
