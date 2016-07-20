@@ -78,6 +78,9 @@ $wgGitRepositoryViewers['.+projects\.archlinux\.org/vhosts/wiki\.archlinux\.org\
 
 $wgJobRunRate = 0;
 
+# Enable subpages in the main namespace (FS#39668)
+$wgNamespacesWithSubpages[NS_MAIN] = true;
+
 
 ##
 ## Database settings
