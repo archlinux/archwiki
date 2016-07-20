@@ -199,14 +199,21 @@ $wgFooterIcons = array();
 ## Access control settings
 ##
 
+# disable anonymous editing
 $wgEmailConfirmToEdit = true;
 $wgDisableAnonTalk = true;
 $wgGroupPermissions['*']['edit'] = false;
+
+# extra rights for admins
 $wgGroupPermissions['sysop']['deleterevision']  = true;
+
+# disable uploads by normal users
 $wgGroupPermissions['user']['upload']          = false;
 $wgGroupPermissions['user']['reupload']        = false;
 $wgGroupPermissions['user']['reupload-shared'] = false;
 $wgGroupPermissions['autoconfirmed']['upload'] = false;
+
+# maintainers' rights
 $wgGroupPermissions['maintainer']['autopatrol'] = true;
 $wgGroupPermissions['maintainer']['patrol'] = true;
 $wgGroupPermissions['maintainer']['noratelimit'] = true;
@@ -231,6 +238,16 @@ $wgGroupPermissions['sysop']['writeapi'] = true;
 $wgAutoConfirmAge = 86400*3; // three days
 # require at least 20 normal edits before granting the 'writeapi' right
 $wgAutoConfirmCount = 20;
+
+# Enforce basic editing etiquette (FS#46190)
+# We set the defaults for "minordefault" (disabled) and "forceeditsummary"
+# (enabled) options and hide them from the user preferences dialog. Note that
+# hiding the user preferences with $wgHiddenPrefs results in everybody using
+# the defaults, regardless of the users' earlier preference.
+$wgDefaultUserOptions["minordefault"] = 0;
+$wgDefaultUserOptions["forceeditsummary"] = 1;
+$wgHiddenPrefs[] = "minordefault";
+$wgHiddenPrefs[] = "forceeditsummary";
 
 
 ##
