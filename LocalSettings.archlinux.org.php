@@ -270,6 +270,17 @@ $wgGroupPermissions['sysop']['abusefilter-private'] = true;
 $wgGroupPermissions['sysop']['abusefilter-modify-restricted'] = true;
 $wgGroupPermissions['sysop']['abusefilter-revert'] = true;
 
+# filter groups
+$wgAbuseFilterValidGroups = array( 'default', 'proofed' );
+$wgAbuseFilterEmergencyDisableThreshold = array(
+    'default' => 0.5,
+    'proofed' => 1.0,
+);
+$wgAbuseFilterEmergencyDisableCount = array(
+    'default' => 10,
+    'proofed' => 65535,
+);
+
 # CheckUser extension
 wfLoadExtension( 'CheckUser' );
 $wgGroupPermissions['sysop']['checkuser'] = true;
