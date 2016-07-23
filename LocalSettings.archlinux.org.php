@@ -286,6 +286,8 @@ wfLoadExtension( 'CheckUser' );
 $wgGroupPermissions['sysop']['checkuser'] = true;
 $wgGroupPermissions['sysop']['checkuser-log'] = true;
 
+# ParserFunctions extension
+wfLoadExtension( 'ParserFunctions' );
 
 ##
 ## Temporary settings for maintenance
