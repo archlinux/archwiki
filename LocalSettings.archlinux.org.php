@@ -289,6 +289,10 @@ $wgGroupPermissions['sysop']['checkuser-log'] = true;
 # ParserFunctions extension
 wfLoadExtension( 'ParserFunctions' );
 
+# Interwiki extension
+wfLoadExtension( 'Interwiki' );
+$wgGroupPermissions['sysop']['interwiki'] = true;
+
 ##
 ## Temporary settings for maintenance
 ##
