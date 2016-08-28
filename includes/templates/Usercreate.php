@@ -164,7 +164,6 @@ class UsercreateTemplate extends BaseTemplate {
 							);
 						?>
 					</label>
-						<p><b>Note:</b> We are currently experiencing delivery issues to Yahoo. Please do not use a Yahoo email account to sign up.</p>
 					<?php
 						echo Html::input( 'wpEmail', $this->data['email'], 'email', array(
 							'class' => 'mw-ui-input loginText',
