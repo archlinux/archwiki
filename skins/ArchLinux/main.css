@@ -361,10 +361,14 @@ li#pt-login {
 	text-transform: lowercase;
 }
 
-/* Don't lowercase username or IP addresses (IPv6) */
-li#pt-userpage,
-li#pt-anonuserpage {
+/* Don't lowercase username */
+li#pt-userpage {
 	text-transform: none;
+}
+
+/* "Not logged in" text in gray */
+li#pt-anonuserpage {
+	color: #707070;
 }
 
 #p-personal li.active {
@@ -529,111 +533,6 @@ div#footer li {
 #f-copyrightico {
 	float: left;
 	height: 1%;
-}
-
-.mw-htmlform-submit {
-	font-weight: bold;
-	padding-left: .3em;
-	padding-right: .3em;
-	margin-right: 2em;
-}
-
-/* js pref toc */
-#preftoc {
-	margin: 0;
-	padding: 0;
-	width: 100%;
-	clear: both;
-}
-
-#preftoc li {
-	background-color: #f0f0f0;
-	color: #000;
-}
-
-#preftoc li {
-	margin: 1px -2px 1px 2px;
-	float: left;
-	padding: 2px 0 3px 0;
-	border: 1px solid #fff;
-	border-right-color: #716f64;
-	border-bottom: 0;
-	position: relative;
-	white-space: nowrap;
-	list-style-type: none;
-	list-style-image: none;
-	z-index: 3;
-}
-
-#preftoc li.selected {
-	font-weight: bold;
-	background-color: #f9f9f9;
-	border: 1px solid #aaa;
-	border-bottom: none;
-	cursor: default;
-	top: 1px;
-	padding-top: 2px;
-	margin-right: -3px;
-}
-
-#preftoc > li.selected {
-	top: 2px;
-}
-
-#preftoc a,
-#preftoc a:active {
-	display: block;
-	color: #000;
-	padding: 0 .7em;
-	position: relative;
-	text-decoration: none;
-}
-
-#preftoc li.selected a {
-	cursor: default;
-	text-decoration: none;
-}
-
-#preferences {
-	margin: 0;
-	border: 1px solid #aaa;
-	clear: both;
-	padding: 1.5em;
-	background-color: #F9F9F9;
-}
-
-.prefsection {
-	border: none;
-	padding: 0;
-	margin: 0;
-}
-
-.prefsection legend {
-	font-weight: bold;
-}
-
-.prefsection table, .prefsection legend {
-	background-color: #F9F9F9;
-}
-
-.mainLegend {
-	display: none;
-}
-
-td.htmlform-tip {
-	font-size: x-small;
-	padding: .2em 2em;
-	color: #666;
-}
-
-.preferences-login {
-	clear: both;
-	margin-bottom: 1.5em;
-}
-
-.prefcache {
-	font-size: 90%;
-	margin-top: 2em;
 }
 
 #userloginprompt, #languagelinks {

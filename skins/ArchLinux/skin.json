@@ -5,6 +5,9 @@
 	"description": "MediaWiki skin based on MonoBook",
 	"license-name": "GPL-2.0+",
 	"type": "skin",
+	"requires": {
+		"MediaWiki": ">= 1.25.0"
+	},
 	"ValidSkinNames": {
 		"archlinux": "ArchLinux"
 	},
@@ -33,6 +36,11 @@
 	"ResourceFileModulePaths": {
 		"localBasePath": "",
 		"remoteSkinPath": "ArchLinux"
+	},
+	"ResourceModuleSkinStyles": {
+		"archlinux": {
+			"+mediawiki.special.preferences.styles": "skinStyles/mediawiki.special.preferences.styles.less"
+		}
 	},
 	"AutoloadClasses": {
 		"SkinArchLinux": "SkinArchLinux.php",
