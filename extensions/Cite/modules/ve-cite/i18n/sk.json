@@ -1,0 +1,29 @@
+{
+	"@metadata": {
+		"authors": [
+			"Mimarik",
+			"Teslaton",
+			"Sudo77(new)",
+			"TomášPolonec",
+			"Kusavica"
+		]
+	},
+	"visualeditor-cite-tool-name-book": "Kniha",
+	"visualeditor-cite-tool-name-journal": "Časopis",
+	"visualeditor-cite-tool-name-news": "Noviny",
+	"visualeditor-cite-tool-name-web": "Webová stránka",
+	"cite-ve-dialog-reference-options-group-label": "Použiť túto skupinu",
+	"cite-ve-dialog-reference-options-group-placeholder": "Všeobecné referencie",
+	"cite-ve-dialog-reference-options-name-label": "Opakovane používať pod týmto názvom",
+	"cite-ve-dialog-reference-options-section": "Možnosti",
+	"cite-ve-dialog-reference-title": "Referencia",
+	"cite-ve-dialog-reference-useexisting-label": "Použiť existujúcu referenciu",
+	"cite-ve-dialog-reference-useexisting-tool": "Použiť existujúcu",
+	"cite-ve-dialog-referenceslist-title": "Zoznam referencií",
+	"cite-ve-dialogbutton-reference-tooltip": "Referencia",
+	"cite-ve-dialogbutton-referenceslist-tooltip": "Zoznam referencií",
+	"cite-ve-reference-input-placeholder": "Akú referenciu chcete vložit?",
+	"cite-ve-referenceslist-isempty": "Na tejto stránke neexistuje žiadna referencia v skupine „$1“.",
+	"cite-ve-referenceslist-missingref": "Táto referencia je definovaná v šablóne alebo inej automaticky generovanej časti textu. Zatiľ je možné editovať ju len v režime zdrojového kódu.",
+	"cite-ve-toolbar-group-label": "Citácia"
+}

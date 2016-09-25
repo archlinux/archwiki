@@ -1,0 +1,43 @@
+{
+	"@metadata": {
+		"authors": [
+			"AlimanRuna",
+			"Firilacroco",
+			"Minisarm",
+			"Stelistcristi",
+			"Gloria sah",
+			"Danutz",
+			"Amire80",
+			"ImGelu",
+			"Wintereu",
+			"Reception123"
+		]
+	},
+	"visualeditor-cite-tool-name-book": "Carte",
+	"visualeditor-cite-tool-name-journal": "Jurnal",
+	"visualeditor-cite-tool-name-news": "Știre",
+	"visualeditor-cite-tool-name-web": "Site web",
+	"cite-ve-dialog-reference-editing-reused": "Această referință este utilizată {{PLURAL:$1|o singură dată|de $1 ori|de $1 de ori}} în această pagină.",
+	"cite-ve-dialog-reference-options-group-label": "Folosește acest grup",
+	"cite-ve-dialog-reference-options-group-placeholder": "Referințe generale",
+	"cite-ve-dialog-reference-options-name-label": "Reutilizează cu acest nume",
+	"cite-ve-dialog-reference-options-section": "Opțiuni",
+	"cite-ve-dialog-reference-title": "Referință",
+	"cite-ve-dialog-reference-useexisting-full-label": "Reutilizează o referință deja existentă în această pagină",
+	"cite-ve-dialog-reference-useexisting-label": "Utilizează o referință existentă",
+	"cite-ve-dialog-reference-useexisting-tool": "Refolosește",
+	"cite-ve-dialog-referenceslist-contextitem-description-general": "Lista referințelor generale",
+	"cite-ve-dialog-referenceslist-contextitem-description-named": "Lista referințelor pentru grupul „$1”",
+	"cite-ve-dialog-referenceslist-title": "Listă de referințe",
+	"cite-ve-dialogbutton-citation-educationpopup-text": "Îmbunătățiți conținutul adăugând sursele de informare. Puteți cita din cărți, ziare și site-uri web.",
+	"cite-ve-dialogbutton-citation-educationpopup-title": "Citări",
+	"cite-ve-dialogbutton-reference-full-label": "Formular simplu",
+	"cite-ve-dialogbutton-reference-title": "Referință",
+	"cite-ve-dialogbutton-reference-tooltip": "De bază",
+	"cite-ve-dialogbutton-referenceslist-tooltip": "Listă de referințe",
+	"cite-ve-reference-input-placeholder": "Căutați în conținutul referințelor existente",
+	"cite-ve-referenceslist-isempty": "Nu există referințe cu grupul „$1” în această pagină pentru includere în această listă.",
+	"cite-ve-referenceslist-isempty-default": "Nu există referințe în această pagină pentru includere în această listă.",
+	"cite-ve-referenceslist-missingref": "Această referință este definită printr-un format sau alt cadru generat și, pentru moment, poate fi modificată doar editând codul sursă al paginii.",
+	"cite-ve-toolbar-group-label": "Citare"
+}

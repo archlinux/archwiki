@@ -80,6 +80,6 @@
 	"wikieditor-toolbar-help-content-showreferences-description": "Δεικνύειν ἀναφοράς",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "Ὑπογραφὴ μετὰ χρονοσφραγίδος",
 	"wikieditor-toolbar-help-content-signature-description": "Ὑπογραφή",
-	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='{{#special:mypage}}'>Ὄνομα χρωμένου</a> (<a href='#' title='{{#special:mytalk}}'>διάλεξις</a>)",
+	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>Ὄνομα χρωμένου</a> (<a href='#' title='$2:Username'>διάλεξις</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "Παραγραφοποίησις"
 }

@@ -4,7 +4,8 @@
 			"Davidpar",
 			"Jordi Roqué",
 			"SMP",
-			"Vriullop"
+			"Vriullop",
+			"Pere prlpz"
 		]
 	},
 	"cite-desc": "Afegeix les etiquetes <nowiki><ref[ name=id]></nowiki> i <nowiki><references/></nowiki>, per a cites",
@@ -24,5 +25,7 @@
 	"cite_error_references_missing_group": "L'etiqueta <code>&lt;ref&gt;</code> definida a <code>&lt;references&gt;</code> té l'atribut de grup \"$1\" que no apareix en el text anterior.",
 	"cite_error_references_missing_key": "L'etiqueta <code>&lt;ref&gt;</code> amb el nom \"$1\" definida a <code>&lt;references&gt;</code> no s'utilitza en el text anterior.",
 	"cite_error_references_no_key": "L'etiqueta <code>&lt;ref&gt;</code> definida a <code>&lt;references&gt;</code> no té cap atribut de nom.",
-	"cite_error_empty_references_define": "L'etiqueta <code>&lt;ref&gt;</code> definida a <code>&lt;references&gt;</code> amb el nom \"$1\" no té contingut."
+	"cite_error_empty_references_define": "L'etiqueta <code>&lt;ref&gt;</code> definida a <code>&lt;references&gt;</code> amb el nom \"$1\" no té contingut.",
+	"cite-tracking-category-cite-error": "Pàgines amb errors a les referències",
+	"cite_section_preview_references": "Previsualització de les referències"
 }

@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"DCLXVI",
-			"Spiritia"
+			"Spiritia",
+			"Vodnokon4e"
 		]
 	},
 	"inputbox-desc": "Позволява вмъкването на HTML формуляри.",
@@ -10,5 +11,8 @@
 	"inputbox-error-bad-type": "Неразпознат тип „$1“ на кутията за вход.\nНеобходимо е да се посочи „create“, „comment“, „search“, „search2“ или „fulltext“.",
 	"inputbox-tryexact": "Пълно и точно съвпадение",
 	"inputbox-searchfulltext": "Претърсване на целия текст",
-	"inputbox-createarticle": "Създаване"
+	"inputbox-createarticle": "Създаване",
+	"inputbox-movearticle": "Преместване на страница",
+	"inputbox-postcomment": "Нов раздел",
+	"inputbox-postcommenttitle": "Нов раздел"
 }

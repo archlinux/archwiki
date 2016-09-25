@@ -19,5 +19,8 @@
 	"log-description-spamblacklist": "Ti dogodki sledijo zadetke črnega seznama smetja.",
 	"logentry-spamblacklist-hit": "$1 je povzročil zadetek na črnem seznamu smetja na strani $3 ob dodajanju povezave $4",
 	"right-spamblacklistlog": "Prikaz dnevnika črnega seznama smetja",
-	"action-spamblacklistlog": "ogled dnevnika s črnim seznamom smetja"
+	"action-spamblacklistlog": "ogled dnevnika s črnim seznamom smetja",
+	"apihelp-spamblacklist-description": "Ovrednoti enega ali več URL-jev s SpamBlacklist.",
+	"apihelp-spamblacklist-param-url": "URL-ji za primerjavo s črnim seznamom.",
+	"apihelp-spamblacklist-example-1": "Preveri dva URL-ja s črnim seznamom."
 }

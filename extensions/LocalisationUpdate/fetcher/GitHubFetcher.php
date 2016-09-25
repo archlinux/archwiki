@@ -5,6 +5,8 @@
  * @license GPL-2.0+
  */
 
+namespace LocalisationUpdate;
+
 /**
  * This class uses GitHub api to obtain a list of files present in a directory
  * to avoid fetching files that don't exist.
@@ -13,19 +15,20 @@
  * the source. 2) avoid fetching files which haven't changed since last check
  * if we store them.
  */
-class LU_GitHubFetcher extends LU_HttpFetcher {
-
+class GitHubFetcher extends HttpFetcher {
 	public function fetchDirectory( $pattern ) {
-		$p =  '~^https://raw.github\.com/(?P<org>[^/]+)/(?P<repo>[^/]+)/(?P<branch>[^/]+)/(?P<path>.+)/.+$~';
+		$domain = preg_quote( 'https://raw.github.com/', '~' );
+		$p = "~^$domain(?P<org>[^/]+)/(?P<repo>[^/]+)/(?P<branch>[^/]+)/(?P<path>.+)/.+$~";
 		preg_match( $p, $pattern, $m );
 
-		$json = Http::get( "https://api.github.com/repos/{$m['org']}/{$m['repo']}/contents/{$m['path']}" );
+		$apiURL = "https://api.github.com/repos/{$m['org']}/{$m['repo']}/contents/{$m['path']}";
+		$json = \Http::get( $apiURL );
 		if ( !$json ) {
-			throw new Exception( "Unable to get directory listing for {$m['org']}/{$m['repo']}" );
+			throw new \Exception( "Unable to get directory listing for {$m['org']}/{$m['repo']}" );
 		}
 
 		$files = array();
-		$json = FormatJson::decode( $json, true );
+		$json = \FormatJson::decode( $json, true );
 		foreach ( $json as $fileinfo ) {
 			$fileurl = dirname( $pattern ) . '/' . $fileinfo['name'];
 			$file = $this->fetchFile( $fileurl );

@@ -161,7 +161,7 @@ class TopHitsTest extends BaseAggregationTest
 
         $agg = new TopHits('agg_name');
         $returnValue = $agg->setScriptFields($scriptFields);
-        $this->assertEquals($scriptFields->toArray(), $agg->getParam('script_fields'));
+        $this->assertEquals($scriptFields->toArray(), $agg->getParam('script_fields')->toArray());
         $this->assertInstanceOf('Elastica\Aggregation\TopHits', $returnValue);
     }
 
@@ -173,7 +173,7 @@ class TopHitsTest extends BaseAggregationTest
         $script = new Script('2+3');
         $agg = new TopHits('agg_name');
         $returnValue = $agg->addScriptField('five', $script);
-        $this->assertEquals(array('five' => $script->toArray()), $agg->getParam('script_fields'));
+        $this->assertEquals(array('five' => $script->toArray()), $agg->getParam('script_fields')->toArray());
         $this->assertInstanceOf('Elastica\Aggregation\TopHits', $returnValue);
     }
 
@@ -324,6 +324,7 @@ class TopHitsTest extends BaseAggregationTest
      */
     public function testAggregateWithScriptFields()
     {
+        $this->_checkScriptInlineSetting();
         $aggr = new TopHits('top_tag_hits');
         $aggr->setSize(1);
         $aggr->setScriptFields(array('three' => new Script('1 + 2')));

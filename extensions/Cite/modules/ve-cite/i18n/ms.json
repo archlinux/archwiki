@@ -1,0 +1,34 @@
+{
+	"@metadata": {
+		"authors": [
+			"Anakmalaysia",
+			"Aurora",
+			"Pizza1016",
+			"Karmadunya9-",
+			"Macofe"
+		]
+	},
+	"visualeditor-cite-tool-name-book": "Buku",
+	"visualeditor-cite-tool-name-journal": "Jurnal",
+	"visualeditor-cite-tool-name-news": "Berita",
+	"visualeditor-cite-tool-name-web": "Laman web",
+	"cite-ve-dialog-reference-editing-reused": "Rujukan ini digunakan $1 kali di laman ini.",
+	"cite-ve-dialog-reference-options-group-label": "Gunakan kumpulan ini",
+	"cite-ve-dialog-reference-options-group-placeholder": "Rujukan umum",
+	"cite-ve-dialog-reference-options-name-label": "Gunakan semula dengan nama ini",
+	"cite-ve-dialog-reference-options-section": "Pilihan",
+	"cite-ve-dialog-reference-title": "Rujukan",
+	"cite-ve-dialog-reference-useexisting-full-label": "Gunakan semula petikan yang sudah pun wujud di laman ini",
+	"cite-ve-dialog-reference-useexisting-label": "Gunakan rujukan yang sedia ada",
+	"cite-ve-dialog-reference-useexisting-tool": "Guna semula",
+	"cite-ve-dialog-referenceslist-contextitem-description-general": "Senarai rujukan am",
+	"cite-ve-dialog-referenceslist-contextitem-description-named": "Senarai rujukan am untuk kumpulan \"$1\"",
+	"cite-ve-dialog-referenceslist-title": "Senarai rujukan",
+	"cite-ve-dialogbutton-reference-tooltip": "Asas",
+	"cite-ve-dialogbutton-referenceslist-tooltip": "Senarai rujukan",
+	"cite-ve-reference-input-placeholder": "Cari petikan sedia ada",
+	"cite-ve-referenceslist-isempty": "Tidak terdapat rujukan dengan kumpulan \"$1\" pada halaman ini untuk disertakan dalam senarai ini.",
+	"cite-ve-referenceslist-isempty-default": "Tidak terdapat rujukan pada halaman ini untuk disertakan dalam senarai ini.",
+	"cite-ve-referenceslist-missingref": "Rujukan ini ditakrifkan dalam templat atau seumpamanya, maka buat masa sekarang, ia boleh disunting dalam mod sumber sahaja.",
+	"cite-ve-toolbar-group-label": "Petik"
+}

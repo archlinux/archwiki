@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Giromin Cangiaxo"
+		]
+	},
+	"fancycaptcha-captcha": "Controllo de segurtæ",
+	"fancycaptcha-createaccount": "Pe proteze a wiki contra i tentativi de registrassion automattica, te domandemmo pe piaxei de insei inta casella sottostante e parolle che appan chì de sotta ([[Special:Captcha/help|comme l'è ch'o funçion-a?]]):",
+	"fancycaptcha-imgcaptcha-ph": "Scrivi quello che ti veddi chì de d'ato",
+	"fancycaptcha-reload-text": "Aggiorna"
+}

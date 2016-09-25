@@ -7,9 +7,9 @@
 		]
 	},
 	"citethispage": "उधृत करा",
-	"citethispage-desc": "एक  [[Special:Cite|बाह्यदुवे]] देणारे विशेषपान व साधनपेटीचा दुवा जोडते",
+	"citethispage-desc": "एक  [[Special:CiteThisPage|citation]] देणारे विशेषपान व साधनपेटीचा दुवा जोडते",
 	"citethispage-link": "हे पान उधृत करा",
-	"tooltip-citethispage": "हे पृष्ठ बघण्यासाठीची माहिती",
+	"tooltip-citethispage": "हे पृष्ठ उद्धृत कसे करावे याची माहिती",
 	"citethispage-change-submit": "उधृत करा",
 	"citethispage-change-target": "पान"
 }

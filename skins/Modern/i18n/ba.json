@@ -1,8 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Assele"
+			"Assele",
+			"Sagan",
+			"Азат Хәлилов"
 		]
 	},
-	"skinname-modern": "Заманса"
+	"skinname-modern": "Заманса",
+	"modern-desc": "Ситтәге һәм өҫкө панелдәрҙә һоро тема.\nMonoBook сығарылмаһы."
 }

@@ -5,7 +5,8 @@
 			"Anrie",
 			"Naudefj",
 			"පසිඳු කාවින්ද",
-			"Macofe"
+			"Macofe",
+			"Fwolff"
 		]
 	},
 	"wikieditor": "Uitgebreide teksverwerker vir wikiteks",
@@ -162,8 +163,8 @@
 	"wikieditor-toolbar-help-content-bolditalic-syntax": "'''''Vet- en kursief gedrukte teks'''''",
 	"wikieditor-toolbar-help-content-bolditalic-result": "<em><strong>Vet- en kursief gedrukte teks</strong></em>",
 	"wikieditor-toolbar-help-content-ilink-description": "Interne skakel",
-	"wikieditor-toolbar-help-content-ilink-syntax": "[[Bladsynaam|Skakel se teks]]<br />[[Bladsynaam]]",
-	"wikieditor-toolbar-help-content-ilink-result": "<a href='#'>Etiket van skakel</a><br /><a href='#'>Bladsynaam</a>",
+	"wikieditor-toolbar-help-content-ilink-syntax": "[[Bladsynaam]]<br />[[Bladsynaam|Skakel se teks]]",
+	"wikieditor-toolbar-help-content-ilink-result": "<a href='#'>Bladsynaam</a><br /><a href='#'>Skakel se teks</a>",
 	"wikieditor-toolbar-help-content-xlink-description": "Eksterne skakel",
 	"wikieditor-toolbar-help-content-xlink-syntax": "[http://www.voorbeeld.org Skakel se etiket]<br />[http://www.voorbeeld.org]<br />http://www.voorbeeld.org",
 	"wikieditor-toolbar-help-content-xlink-result": "<a href='#' class='external'>Skakel se etiket</a><br /><a href='#' class='external autonumber'>[1]</a><br /><a href='#' class='external'>http://www.voorbeeld.org</a>",
@@ -193,11 +194,11 @@
 	"wikieditor-toolbar-help-content-rereference-description": "Hergebruik van dieselfde verwysing",
 	"wikieditor-toolbar-help-content-rereference-result": "Bladsyteks <sup><a href='#'>[2]</a></sup>",
 	"wikieditor-toolbar-help-content-showreferences-description": "Wys verwysings",
-	"wikieditor-toolbar-help-content-showreferences-result": "<ol class='references'><li id='cite_note-test-0'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.voorbeeld.org' class='external text' href='#'>Skakel se teks</a>, addisionele teks.</li></ol>",
+	"wikieditor-toolbar-help-content-showreferences-result": "<ol class='references'><li id='cite_note-test-0'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.voorbeeld.org' class='external text' href='#'>Skakel se teks</a>, addisionele teks.</li><li id='cite_note-test-1'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.voorbeeld.org' class='external text' href='#'>Skakel se teks</a></li></ol>",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "Handtekening met tydstempel",
-	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='{{#special:mypage}}'>Gebruikersnaam</a> (<a href='#' title='{{#special:mytalk}}'>bespreking</a>) 15:54, 10 Junie 2009 (UTC)",
+	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='$1:Username'>Gebruikersnaam</a> (<a href='#' title='$2:Username'>bespreking</a>) 15:54, 10 Junie 2009 (UTC)",
 	"wikieditor-toolbar-help-content-signature-description": "Handtekening",
-	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='{{#special:mypage}}'>Gebruikersnaam</a> (<a href='#' title='{{#special:mytalk}}'>bespreking</a>)",
+	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>Gebruikersnaam</a> (<a href='#' title='$2:Username'>bespreking</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "Indenteer",
 	"wikieditor-toolbar-help-content-indent-syntax": "Normale teks<br />: Geïndenteerde teks<br />::Geïndenteerde teks",
 	"wikieditor-toolbar-help-content-indent-result": "Normale teks<dl><dd>Geïndenteerde teks<dl><dd>Geïndenteerde teks</dd></dl></dd></dl>"

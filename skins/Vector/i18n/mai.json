@@ -3,7 +3,8 @@
 		"authors": [
 			"Ggajendra",
 			"Umeshberma",
-			"Tulsi Bhagat"
+			"Tulsi Bhagat",
+			"बिप्लब आनन्द"
 		]
 	},
 	"skinname-vector": "सदिश",
@@ -14,9 +15,9 @@
 	"vector-action-undelete": "आपस लाउ",
 	"vector-action-unprotect": "सुरक्षा बदलू",
 	"vector-view-create": "बनाउ",
-	"vector-view-edit": "सम्पादन करू",
-	"vector-view-history": "इतिहास देखू",
-	"vector-view-view": "पढ़ू",
+	"vector-view-edit": "सम्पादन करी",
+	"vector-view-history": "इतिहास देखी",
+	"vector-view-view": "पढी",
 	"vector-view-viewsource": "जड़ि देखू",
 	"vector-more-actions": "आर"
 }

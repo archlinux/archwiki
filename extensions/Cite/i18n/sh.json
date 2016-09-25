@@ -1,8 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Kolega2357"
+			"Kolega2357",
+			"OC Ripper"
 		]
 	},
-	"cite_error": "Greška citiranja $1; $2"
+	"cite_error": "Greška kod citiranja: $1"
 }

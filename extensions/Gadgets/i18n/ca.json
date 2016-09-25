@@ -8,13 +8,18 @@
 			"Toniher",
 			"Vriullop",
 			"Alvaro Vidal-Abarca",
-			"Eduardo Martinez"
+			"Eduardo Martinez",
+			"Macofe"
 		]
 	},
 	"gadgets-desc": "Permet als usuaris personalitzar [[Special:Gadgets|ginys CSS i JavaScript]] a les seves [[Special:Preferences#mw-prefsection-gadgets|preferències]]",
 	"prefs-gadgets": "Ginys",
 	"gadgets-prefstext": "A continuació teniu una llista de ginys especials que podeu activar al vostre compte.<br />\nLa majoria d'aquests ginys fan servir JavaScript, per tant l'haureu de tenir activat al vostre navegador per a que funcionin.\nTingueu en compte que aquests ginys no tenen cap efecte sobre aquesta pàgina de preferències.\n\nTingueu també present que aquests ginys especials no formen part del programari MediaWiki i que acostumen a estar fets i mantinguts per usuaris del vostre wiki local.<br />\nEls administradors locals poden editar els ginys disponibles fent servir [[MediaWiki:Gadgets-definition|definicions]] i [[Special:Gadgets|descripcions]].",
 	"gadgets": "Ginys",
+	"gadgetusage": "Estadístiques d'ús de ginys",
+	"gadgetusage-gadget": "Giny",
+	"gadgetusage-usercount": "Nombre d'usuaris",
+	"gadgetusage-summary": "Aquesta taula indica el nombre d'usuaris que tenen activat cada giny en aquest wiki. Pot incloure ginys que ja no estan disponibles.",
 	"gadgets-title": "Ginys",
 	"gadgets-pagetext": "A continuació teniu una llista de ginys especials que els usuaris poden activar a la seva [[Special:Preferences#mw-prefsection-gadgets|pàgina de preferències]], segons les [[MediaWiki:Gadgets-definition|seves definicions]].\nAquesta llista permet un fàcil accés a les pàgines del sistema que defineixen la descripció i el codi de cada giny.",
 	"gadgets-uses": "Usa",

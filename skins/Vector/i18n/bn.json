@@ -6,10 +6,14 @@
 			"Leemon2010",
 			"Nasir8891",
 			"Tauhid16",
-			"Wikitanvir"
+			"Wikitanvir",
+			"Aftabuzzaman"
 		]
 	},
 	"skinname-vector": "ভেক্টর",
+	"vector-skin-desc": "নতুন চেহারা মনোবুকের আধুনিক সংস্করণ এবং আরো অনেক ব্যবহারযোগ্যতার উন্নতি",
+	"vector.css": "/* এখানে স্থাপিত CSS ভেক্টর আবরণ ব্যবহারকারীদের প্রভাবিত করবে */",
+	"vector.js": "/* এখানের যে কোন জাভাস্ক্রিপ্ট ভেক্টর আবরণ ব্যবহারকারীদের জন্য লোড হবে */",
 	"vector-action-addsection": "বিষয় যোগ",
 	"vector-action-delete": "অপসারণ",
 	"vector-action-move": "স্থানান্তর",

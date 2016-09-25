@@ -1,8 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
-			"عثمان خان شاہ"
+			"عثمان خان شاہ",
+			"Obaid Raza",
+			"Muhammad Shuaib"
 		]
 	},
-	"cite_error": "حوالہ خطا: $1"
+	"cite-desc": "<nowiki><ref[ name=id]></nowiki> اور <nowiki><references/></nowiki> ٹیگز، برائے حوالہ جات کا اضافہ کرتا ہے",
+	"cite_error": "خطا در حوالہ: $1",
+	"cite-tracking-category-cite-error": "صفحات مع حوالہ جاتی اغلاط",
+	"cite-tracking-category-cite-error-desc": "اس زمرہ میں موجود صفحات میں حوالہ جاتی ٹیگز کو غلط استعمال کیا گیا ہے۔",
+	"cite_references_link_accessibility_label": "اوپر جائیں",
+	"cite_references_link_many_accessibility_label": "اس تک اوپر جائیں:"
 }

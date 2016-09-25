@@ -25,12 +25,12 @@ class GadgetsTest extends MediaWikiTestCase {
 	public function testSimpleCases() {
 		$g = $this->create( '* foo bar| foo.css|foo.js|foo.bar' );
 		$this->assertEquals( 'foo_bar', $g->getName() );
-		$this->assertEquals( 'ext.gadget.foo_bar', $g->getModuleName() );
-		$this->assertEquals( array( 'Gadget-foo.js' ), $g->getScripts() );
-		$this->assertEquals( array( 'Gadget-foo.css' ), $g->getStyles() );
-		$this->assertEquals( array( 'Gadget-foo.js', 'Gadget-foo.css' ),
+		$this->assertEquals( 'ext.gadget.foo_bar', Gadget::getModuleName( $g->getName() ) );
+		$this->assertEquals( array( 'MediaWiki:Gadget-foo.js' ), $g->getScripts() );
+		$this->assertEquals( array( 'MediaWiki:Gadget-foo.css' ), $g->getStyles() );
+		$this->assertEquals( array( 'MediaWiki:Gadget-foo.js', 'MediaWiki:Gadget-foo.css' ),
 			$g->getScriptsAndStyles() );
-		$this->assertEquals( array( 'Gadget-foo.js' ), $g->getLegacyScripts() );
+		$this->assertEquals( array( 'MediaWiki:Gadget-foo.js' ), $g->getLegacyScripts() );
 		$this->assertFalse( $g->supportsResourceLoader() );
 		$this->assertTrue( $g->hasModule() );
 	}
@@ -44,7 +44,7 @@ class GadgetsTest extends MediaWikiTestCase {
 
 	public function testDependencies() {
 		$g = $this->create( '* foo[ResourceLoader|dependencies=jquery.ui]|bar.js' );
-		$this->assertEquals( array( 'Gadget-bar.js' ), $g->getScripts() );
+		$this->assertEquals( array( 'MediaWiki:Gadget-bar.js' ), $g->getScripts() );
 		$this->assertTrue( $g->supportsResourceLoader() );
 		$this->assertEquals( array( 'jquery.ui' ), $g->getDependencies() );
 	}

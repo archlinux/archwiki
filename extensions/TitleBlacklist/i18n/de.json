@@ -30,7 +30,10 @@
 	"right-tboverride": "Die schwarze Liste unerwünschter Seiten- oder Benutzernamen außer Kraft setzen",
 	"right-tboverride-account": "Die schwarze Liste unerwünschter Benutzernamen außer Kraft setzen",
 	"right-titleblacklistlog": "Das Titel-Blacklist-Logbuch ansehen",
+	"apihelp-titleblacklist-description": "Überprüft einen Artikel-, Datei- oder Benutzernamen gegen die TitleBlacklist.",
+	"apihelp-titleblacklist-param-title": "Die Zeichenfolge, die gegen die Blacklist geprüft werden soll.",
 	"apihelp-titleblacklist-param-action": "Die zu überprüfende Aktion.",
+	"apihelp-titleblacklist-param-nooverride": "Nicht versuchen, die Titel-Blacklist zu überschreiben.",
 	"apihelp-titleblacklist-example-1": "Überprüft, ob [[Foo]] blackgelistet ist",
 	"apihelp-titleblacklist-example-2": "Überprüft, ob [[Bar]] für das Bearbeiten blackgelistet ist"
 }

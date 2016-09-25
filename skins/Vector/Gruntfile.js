@@ -1,10 +1,10 @@
 /*jshint node:true */
 module.exports = function ( grunt ) {
+	var conf = grunt.file.readJSON( 'skin.json' );
 	grunt.loadNpmTasks( 'grunt-contrib-jshint' );
 	grunt.loadNpmTasks( 'grunt-jsonlint' );
 	grunt.loadNpmTasks( 'grunt-banana-checker' );
 	grunt.loadNpmTasks( 'grunt-jscs' );
-	var conf = grunt.file.readJSON( 'skin.json' );
 
 	grunt.initConfig( {
 		jshint: {
@@ -12,7 +12,9 @@ module.exports = function ( grunt ) {
 				jshintrc: true
 			},
 			all: [
-				'*.js'
+				'*.js',
+				'**/*.js',
+				'!node_modules/**'
 			]
 		},
 		jscs: {

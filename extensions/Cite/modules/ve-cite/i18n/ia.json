@@ -1,0 +1,25 @@
+{
+	"@metadata": {
+		"authors": [
+			"McDutchie"
+		]
+	},
+	"visualeditor-cite-tool-name-book": "Libro",
+	"visualeditor-cite-tool-name-journal": "Periodico",
+	"visualeditor-cite-tool-name-news": "Novas",
+	"visualeditor-cite-tool-name-web": "Sito web",
+	"cite-ve-dialog-reference-options-group-label": "Usar iste gruppo",
+	"cite-ve-dialog-reference-options-group-placeholder": "Referentias general",
+	"cite-ve-dialog-reference-options-name-label": "Re-usar con iste nomine",
+	"cite-ve-dialog-reference-options-section": "Optiones",
+	"cite-ve-dialog-reference-title": "Referentia",
+	"cite-ve-dialog-reference-useexisting-label": "Usar un referentia existente",
+	"cite-ve-dialog-referenceslist-title": "Lista de referentias",
+	"cite-ve-dialogbutton-reference-tooltip": "Basic",
+	"cite-ve-dialogbutton-referenceslist-tooltip": "Lista de referentias",
+	"cite-ve-reference-input-placeholder": "A que vole tu facer referentia?",
+	"cite-ve-referenceslist-isempty": "Il non ha referentias con le gruppo \"$1\" in iste pagina a includer in iste lista.",
+	"cite-ve-referenceslist-isempty-default": "Il non ha referentias in iste pagina a includer in iste lista.",
+	"cite-ve-referenceslist-missingref": "Iste referentia es definite in un patrono o altere bloco generate, e pro le momento pote solmente esser modificate in modo de codice fonte.",
+	"cite-ve-toolbar-group-label": "Citar"
+}

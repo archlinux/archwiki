@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Erdemaslancan",
-			"Mirzali"
+			"Mirzali",
+			"Marmase"
 		]
 	},
 	"interwiki-title-norights": "Melumatê interwikiya bıvin",
@@ -16,5 +17,7 @@
 	"interwiki_edit": "Bıvurne",
 	"interwiki_reasonfield": "Sebeb:",
 	"interwiki_delquestion": "\"$1\" besterneyêna",
-	"interwiki_addbutton": "Cı ke"
+	"interwiki_addbutton": "Cı ke",
+	"log-name-interwiki": "Qeydê tabloyê interwiki",
+	"right-interwiki": "Daneyanê interwiki bıvurne"
 }

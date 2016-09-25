@@ -11,11 +11,11 @@ class Layout extends Element {
 	/**
 	 * @param array $config Configuration options
 	 */
-	public function __construct( array $config = array() ) {
+	public function __construct( array $config = [] ) {
 		// Parent constructor
 		parent::__construct( $config );
 
 		// Initialization
-		$this->addClasses( array( 'oo-ui-layout' ) );
+		$this->addClasses( [ 'oo-ui-layout' ] );
 	}
 }

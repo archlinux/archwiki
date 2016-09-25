@@ -18,8 +18,8 @@ class NukeHooks {
 			$toolLinks[] = Linker::link(
 				SpecialPage::getTitleFor( 'Nuke' ),
 				wfMessage( 'nuke-linkoncontribs' )->escaped(),
-				array( 'title' => wfMessage( 'nuke-linkoncontribs-text' )->text() ),
-				array( 'target' => $userPageTitle->getText() )
+				[ 'title' => wfMessage( 'nuke-linkoncontribs-text' )->text() ],
+				[ 'target' => $userPageTitle->getText() ]
 			);
 		}
 

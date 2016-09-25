@@ -94,9 +94,9 @@ class TitleBlacklist {
 				return '';
 			}
 			if ( $title->getNamespace() == NS_MEDIAWIKI ) {
-				$msg = wfMessage( $title->getText() )->inContentLanguage()->text();
-				if ( !wfMessage( 'titleblacklist', $msg )->isDisabled() ) {
-					return $msg;
+				$msg = wfMessage( $title->getText() )->inContentLanguage();
+				if ( !$msg->isDisabled() ) {
+					return $msg->text();
 				} else {
 					return '';
 				}

@@ -2,10 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Meursault2004",
-			"Pras"
+			"Pras",
+			"NoiX180"
 		]
 	},
-	"interwiki": "Ndeleng lan nyunting data interwiki",
+	"interwiki": "Deleng lan besut data interwiki",
 	"interwiki-title-norights": "Ndeleng data interwiki",
 	"interwiki-desc": "Nambahaké sawijining [[Special:Interwiki|kaca astaméwa]] kanggo ndeleng lan nyunting tabèl interwiki",
 	"interwiki_intro": "Iki sawijining gambaran saka tabel interwiki.",
@@ -22,7 +23,7 @@
 	"interwiki_addbutton": "Nambah",
 	"interwiki_added": "Préfiks utawa sisipan awal \"$1\" bisa kasil ditambahaké ing tabèl interwiki.",
 	"interwiki_addfailed": "Préfiks \"$1\" ora bisa ditambahaké ing tabèl interwiki.\nMbok-menawa iki pancèn wis ana ing tabèl interwiki.",
-	"interwiki_edittext": "Nyunting sawijining préfiks interwiki",
+	"interwiki_edittext": "Mbesut ater-ater antarwiki",
 	"interwiki_editintro": "Panjenengan nyunting préfiks interwiki.\nÉlinga yèn iki ora bisa nugel pranala-pranala sing wis ana.",
 	"interwiki_edited": "Préfiks \"$1\" bisa suksès dimodifikasi ing tabèl interwiki.",
 	"interwiki_editerror": "Préfiks utawa sisipan awal \"$1\" ora bisa dimodifikasi ing tabèl interwiki.\nMbok-menawa iki ora ana.",

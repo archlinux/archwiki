@@ -19,7 +19,7 @@ class ActionFieldLayout extends FieldLayout {
 	 * @param ButtonWidget $buttonWidget Field widget
 	 * @param array $config Configuration options
 	 */
-	public function __construct( $fieldWidget, $buttonWidget = false, array $config = array() ) {
+	public function __construct( $fieldWidget, $buttonWidget = false, array $config = [] ) {
 		// Allow passing positional parameters inside the config array
 		if ( is_array( $fieldWidget ) && isset( $fieldWidget['fieldWidget'] ) ) {
 			$config = $fieldWidget;
@@ -36,12 +36,12 @@ class ActionFieldLayout extends FieldLayout {
 		$this->input = new Tag( 'div' );
 
 		// Initialization
-		$this->addClasses( array( 'oo-ui-actionFieldLayout' ) );
+		$this->addClasses( [ 'oo-ui-actionFieldLayout' ] );
 		$this->button
-			->addClasses( array( 'oo-ui-actionFieldLayout-button' ) )
+			->addClasses( [ 'oo-ui-actionFieldLayout-button' ] )
 			->appendContent( $this->buttonWidget );
 		$this->input
-			->addClasses( array( 'oo-ui-actionFieldLayout-input' ) )
+			->addClasses( [ 'oo-ui-actionFieldLayout-input' ] )
 			->appendContent( $this->fieldWidget );
 		$this->field
 			->clearContent()

@@ -8,22 +8,26 @@ namespace OOUI;
  * Just add FieldLayout items.
  */
 class FieldsetLayout extends Layout {
+	use IconElement;
+	use LabelElement;
+	use GroupElement;
+
 	/**
 	 * @param array $config Configuration options
 	 * @param FieldLayout[] $config['items'] Items to add
 	 */
-	public function __construct( array $config = array() ) {
+	public function __construct( array $config = [] ) {
 		// Parent constructor
 		parent::__construct( $config );
 
-		// Mixins
-		$this->mixin( new IconElement( $this, $config ) );
-		$this->mixin( new LabelElement( $this, $config ) );
-		$this->mixin( new GroupElement( $this, $config ) );
+		// Traits
+		$this->initializeIconElement( $config );
+		$this->initializeLabelElement( $config );
+		$this->initializeGroupElement( $config );
 
 		// Initialization
 		$this
-			->addClasses( array( 'oo-ui-fieldsetLayout' ) )
+			->addClasses( [ 'oo-ui-fieldsetLayout' ] )
 			->prependContent( $this->icon, $this->label, $this->group );
 		if ( isset( $config['items'] ) ) {
 			$this->addItems( $config['items'] );

@@ -3,7 +3,8 @@
 		"authors": [
 			"Borislav",
 			"DCLXVI",
-			"Spiritia"
+			"Spiritia",
+			"Termininja"
 		]
 	},
 	"cite-desc": "Добавя етикетите <nowiki><ref[ name=id]></nowiki> и <nowiki><references/></nowiki>, подходящи за цитиране",
@@ -17,5 +18,6 @@
 	"cite_error_references_no_backlink_label": "Изчерпани са специалните етикети за обратна референция.\nОще етикети могат да се дефинират в системното съобщение <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>.",
 	"cite_error_references_no_text": "'''Грешка в етикет <code>&lt;ref&gt;</code>:''' не е подаден текст за бележките на име <code>$1</code>",
 	"cite_error_included_ref": "Липсва затварящ етикет <code>&lt;/ref&gt;</code> след отварящия етикет <code>&lt;ref&gt;</code>",
-	"cite_error_group_refs_without_references": "Присъстват етикети <code>&lt;ref&gt;</code> за групата \"$1\"; но липсва съответният етикет <code>&lt;references group=\"$1\"/&gt;</code>"
+	"cite_error_group_refs_without_references": "Присъстват етикети <code>&lt;ref&gt;</code> за групата \"$1\"; но липсва съответният етикет <code>&lt;references group=\"$1\"/&gt;</code>",
+	"cite-tracking-category-cite-error": "Страници с грешка в източник"
 }

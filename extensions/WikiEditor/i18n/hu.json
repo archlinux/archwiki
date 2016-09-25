@@ -203,9 +203,9 @@
 	"wikieditor-toolbar-help-content-showreferences-description": "Forráshivatkozások listázása",
 	"wikieditor-toolbar-help-content-showreferences-result": "<ol class='references'><li id='cite_note-test-0'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.peldaoldal.hu' class='external text' href='#'>Hivatkozás szövege</a>, további szöveg.</li><li id='cite_note-test-1'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.example.org' class='external text' href='#'>Hivatkozás szövege</a></li></ol>",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "Aláírás időbélyeggel",
-	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='{{#special:mypage}}'>Szerkesztőnév</a> (<a href='#' title='{{#special:mytalk}}'>vita</a>) 2009. június 10., 15:54 (CEST)",
+	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='$1:Username'>Szerkesztőnév</a> (<a href='#' title='$2:Username'>vita</a>) 2009. június 10., 15:54 (CEST)",
 	"wikieditor-toolbar-help-content-signature-description": "Aláírás",
-	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='{{#special:mypage}}'>Szerkesztőnév</a> (<a href='#' title='{{#special:mytalk}}'>vita</a>)",
+	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>Szerkesztőnév</a> (<a href='#' title='$2:Username'>vita</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "Behúzás",
 	"wikieditor-toolbar-help-content-indent-syntax": "Sima szöveg<br />:Behúzott szöveg<br />::Behúzott szöveg",
 	"wikieditor-toolbar-help-content-indent-result": "Sima szöveg<dl><dd>Behúzott szöveg<dl><dd>Behúzott szöveg</dd></dl></dd></dl>"

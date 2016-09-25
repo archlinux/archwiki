@@ -25,7 +25,6 @@
 	"cite_error_references_missing_key": "<code>&lt;references&gt;</code> માં વ્યાખ્યાયિત  $1\" નામ સાથેનું <code>&lt;ref&gt;</code> ટેગ આગળના લેખનમાં વપરાયો નથી.",
 	"cite_error_references_no_key": "<code>&lt;ref&gt;</code> ટેગની વ્યાખ્યા <code>&lt;references&gt;</code> ને કોઈ નામકરણ નથી.",
 	"cite_error_empty_references_define": "<code>&lt;ref&gt;</code> ટેગની વ્યાખ્યા <code>&lt;references&gt;</code> માં \"$1\" નામે છે તેને કોઈ content નથી.",
-	"cite_references_link_many_format_backlink_labels": "",
 	"cite_references_link_accessibility_label": "ઉપર જાઓ",
 	"cite_references_link_many_accessibility_label": "અહીં સુધી ઉપર જાઓ:"
 }

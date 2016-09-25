@@ -9,7 +9,7 @@ class CaptchaSpecialPage extends UnlistedSpecialPage {
 
 		$instance = ConfirmEditHooks::getInstance();
 
-		switch( $par ) {
+		switch ( $par ) {
 			case "image":
 				if ( method_exists( $instance, 'showImage' ) ) {
 					return $instance->showImage();

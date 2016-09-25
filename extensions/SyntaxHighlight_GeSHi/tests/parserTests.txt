@@ -27,13 +27,12 @@ foo
 !! test
 No language specified (no wellformed xml)
 !! config
-wgWellFormedXml=false
 !! wikitext
 <source>
 bar
 </source>
 !! html
-<div class="mw-highlight mw-content-ltr" dir=ltr><pre>bar</pre></div>
+<div class="mw-highlight mw-content-ltr" dir="ltr"><pre>bar</pre></div>
 
 !! end
 

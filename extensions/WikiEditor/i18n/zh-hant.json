@@ -21,7 +21,8 @@
 			"Cwlin0416",
 			"Liflon",
 			"LNDDYL",
-			"Macofe"
+			"Macofe",
+			"Black9869184"
 		]
 	},
 	"wikieditor": "進階 Wiki 文字編輯介面",
@@ -89,6 +90,7 @@
 	"wikieditor-toolbar-file-format-none": "無",
 	"wikieditor-toolbar-tool-file-insert": "插入",
 	"wikieditor-toolbar-tool-file-cancel": "取消",
+	"wikieditor-toolbar-tool-file-upload": "上傳",
 	"wikieditor-toolbar-tool-reference": "參考文獻",
 	"wikieditor-toolbar-tool-reference-example": "插入腳註文字於此",
 	"wikieditor-toolbar-tool-reference-cancel": "取消",
@@ -146,7 +148,7 @@
 	"wikieditor-toolbar-tool-replace-title": "搜尋與取代",
 	"wikieditor-toolbar-tool-replace-search": "搜尋：",
 	"wikieditor-toolbar-tool-replace-replace": "取代為：",
-	"wikieditor-toolbar-tool-replace-case": "區分大小寫",
+	"wikieditor-toolbar-tool-replace-case": "大小寫須相符",
 	"wikieditor-toolbar-tool-replace-regex": "使用正規表示法搜尋",
 	"wikieditor-toolbar-tool-replace-button-findnext": "尋找下一筆",
 	"wikieditor-toolbar-tool-replace-button-replace": "取代",
@@ -216,9 +218,9 @@
 	"wikieditor-toolbar-help-content-showreferences-description": "顯示參考來源",
 	"wikieditor-toolbar-help-content-showreferences-result": "<ol class='references'><li id='cite_note-test-0'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.example.org' class='external text' href='#'>連結文字</a>，附加文字。</li><li id='cite_note-test-1'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.example.org' class='external text' href='#'>連結文字</a></li></ol>",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "簽名與時間",
-	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='{{#special:mypage}}'>使用者名稱</a>  (<a href='#' title='{{#special:mytalk}}'>對話</a>)  15:54, 10 June 2009 (UTC)",
+	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='$1:Username'>使用者名稱</a>  (<a href='#' title='$2:Username'>對話</a>)  15:54, 10 June 2009 (UTC)",
 	"wikieditor-toolbar-help-content-signature-description": "簽名",
-	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='{{#special:mypage}}'>使用者名稱</a> (<a href='#' title='{{#special:mytalk}}'>對話</a>)",
+	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>使用者名稱</a> (<a href='#' title='$2:Username'>對話</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "縮排",
 	"wikieditor-toolbar-help-content-indent-syntax": "一般文字<br />:縮排文字<br />::縮排文字",
 	"wikieditor-toolbar-help-content-indent-result": "一般文字<dl><dd>縮排文字<dl><dd>縮排文字</dd></dl></dd></dl>"

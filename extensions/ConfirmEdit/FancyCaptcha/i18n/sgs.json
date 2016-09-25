@@ -4,6 +4,8 @@
 			"Hugo.arg"
 		]
 	},
+	"fancycaptcha-captcha": "Sargtėis patikrėnėms",
 	"fancycaptcha-createaccount": "Ka wiki būtom apsergieta nu autuomatėška nauduotuojė padėrbėma ta Tamstas prašuom īrašītė žuodius, katrūs veizat apatiuo([[Special:Captcha/help|pagelba]]):",
+	"fancycaptcha-imgcaptcha-ph": "Ožrašīkėt znuokus, katrus veizat viršō",
 	"fancycaptcha-reload-text": "Parkrautė"
 }

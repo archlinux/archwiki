@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Moha",
-			"Tifinaghes"
+			"Tifinaghes",
+			"ⵕⴰⵊⵉ"
 		]
 	},
 	"skinname-vector": "Vector",
@@ -15,5 +16,6 @@
 	"vector-view-edit": "ⴱⴷⴷⴻⵍ",
 	"vector-view-history": "ⵥⵕ ⴰⵎⵣⵔⵓⵢ",
 	"vector-view-view": "ⵖⵔ",
-	"vector-view-viewsource": "ⵥⵕ ⴰⵖⴱⴰⵍⵓ"
+	"vector-view-viewsource": "ⵥⵕ ⴰⵖⴱⴰⵍⵓ",
+	"vector-more-actions": "ⵓⴳⴳⴰⵔ"
 }

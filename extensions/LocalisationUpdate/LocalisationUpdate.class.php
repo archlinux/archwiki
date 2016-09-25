@@ -4,15 +4,10 @@
  * Class for localization update hooks and static methods.
  */
 class LocalisationUpdate {
-	/** @todo Remove this once pre-1.24 versions of MW are no longer supported. */
-	private static $onRecacheFallbackCalled = false;
-
 	/**
 	 * Hook: LocalisationCacheRecacheFallback
 	 */
 	public static function onRecacheFallback( LocalisationCache $lc, $code, array &$cache ) {
-		self::$onRecacheFallbackCalled = true;
-
 		$dir = LocalisationUpdate::getDirectory();
 		if ( !$dir ) {
 			return true;
@@ -39,14 +34,6 @@ class LocalisationUpdate {
 		$codeSequence = array_merge( array( $code ), $cache['fallbackSequence'] );
 		foreach ( $codeSequence as $csCode ) {
 			$fileName = "$dir/" . self::getFilename( $csCode );
-			if ( !self::$onRecacheFallbackCalled && is_readable( $fileName ) ) {
-				// We're on an old version of MW that doesn't have the hook
-				// needed to do things correctly. L10n will be broken here in
-				// certain reasonably-common situations (see bug 68781), but
-				// there's nothing we can do about it.
-				$data = FormatJson::decode( file_get_contents( $fileName ), true );
-				$cache['messages'] = array_merge( $cache['messages'], $data );
-			}
 			$cache['deps'][] = new FileDependency( $fileName );
 		}
 
@@ -62,10 +49,7 @@ class LocalisationUpdate {
 	public static function getDirectory() {
 		global $wgLocalisationUpdateDirectory, $wgCacheDirectory;
 
-		// ?: can be used once we drop support for MW 1.19
-		return $wgLocalisationUpdateDirectory ?
-			$wgLocalisationUpdateDirectory :
-			$wgCacheDirectory;
+		return $wgLocalisationUpdateDirectory ?: $wgCacheDirectory;
 	}
 
 	/**

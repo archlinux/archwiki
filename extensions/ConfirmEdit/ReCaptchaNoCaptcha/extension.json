@@ -6,12 +6,15 @@
 		]
 	},
 	"AutoloadClasses": {
-		"ReCaptchaNoCaptcha": "ReCaptchaNoCaptcha.class.php"
+		"ReCaptchaNoCaptcha": "ReCaptchaNoCaptcha.class.php",
+		"HTMLReCaptchaNoCaptchaField": "HTMLReCaptchaNoCaptchaField.php",
+		"ReCaptchaNoCaptchaAuthenticationRequest": "ReCaptchaNoCaptchaAuthenticationRequest.php"
 	},
 	"config": {
 		"CaptchaClass": "ReCaptchaNoCaptcha",
 		"ReCaptchaSiteKey": "",
 		"ReCaptchaSecretKey": "",
 		"ReCaptchaSendRemoteIP": false
-	}
+	},
+	"manifest_version": 1
 }

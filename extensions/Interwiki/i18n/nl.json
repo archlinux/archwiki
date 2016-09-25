@@ -17,11 +17,11 @@
 	"interwiki_prefix": "Voorvoegsel",
 	"interwiki-prefix-label": "Voorvoegsel:",
 	"interwiki_prefix_intro": "Interwikivoorvoegsel dat gebruikt moet worden in de wikitekstsyntaxis <code>[<nowiki />[voorvoegsel:<em>paginanaam</em>]]</code>.",
-	"interwiki_url_intro": "Sjabloon voor Url ' s. De tijdelijke aanduiding $1 zal worden vervangen door de <em>paginanaam</em> in <code>[<nowiki />[prefix:<em>paginanaam</em>]]</code>.",
+	"interwiki_url_intro": "Sjabloon voor URL's. De plaatshouder $1 wordt vervangen door de <em>paginanaam</em> in <code>[<nowiki />[prefix:<em>paginanaam</em>]]</code>.",
 	"interwiki_local": "Doorverwijzen",
 	"interwiki-local-label": "Doorverwijzen:",
-	"interwiki_local_0_intro": "Externe HTTP-aanvragen op de lokale wiki met behulp van deze interwiki prefix in de URL zal resulteren in een \"{{int:badtitle}}\" fout pagina.",
-	"interwiki_local_1_intro": "Externe HTTP-aanvragen op de lokale wiki met behulp van deze interwiki prefix zal omgeleid worden naar de URL van de interwiki (d.w.z. behandeld als links naar lokale pagina ' s).",
+	"interwiki_local_0_intro": "Externe HTTP-verzoeken voor de lokale wiki met behulp van dit interwikivoorvoegsel in de URL resulteert in een \"{{int:badtitle}}\"-foutpagina.",
+	"interwiki_local_1_intro": "Externe HTTP-verzoeken op de lokale wiki die dit interwikivoorvoegsel gebruiken worden omgeleid naar de doel-URL van de interwiki, dat wil zeggen, worden behandeld als koppelingen naar lokale pagina's.",
 	"interwiki_trans": "Transcluderen",
 	"interwiki-trans-label": "Transcluderen:",
 	"interwiki_trans_1_intro": "Als wikitekst syntaxis <code>{<nowiki />{prefix:<em>paginanaam</em>}}</code> wordt gebruikt, laat sjabloon/pagina transclusion van de buitenlandse wiki als interwiki transclusions zijn ingeschakeld in het algemeen ([//www.mediawiki.org/wiki/Manual:$wgEnableScaryTranscluding eng transclusion]).",
@@ -47,7 +47,7 @@
 	"interwiki_editintro": "U bent een interwikivoorvoegsel aan het bewerken.\nLet op dat dit bestaande koppelingen kan breken.",
 	"interwiki_edited": "Voorvoegsel \"$1\" is gewijzigd in de interwikitabel.",
 	"interwiki_editerror": "Voorvoegsel \"$1\" kan niet worden gewijzigd in de interwikitabel. Mogelijk bestaat het niet.",
-	"interwiki-badprefix": "Het interwikivoorvoegsel \"$1\" bevat ongeldige karakters",
+	"interwiki-badprefix": "Het interwikivoorvoegsel \"$1\" bevat ongeldige tekens",
 	"interwiki-submit-empty": "Het voorvoegsel en de URL mogen niet leeg zijn.",
 	"interwiki-submit-invalidurl": "Het protocol van de URL is ongeldig.",
 	"log-name-interwiki": "Logboek interwikitabel",
@@ -63,5 +63,5 @@
 	"interwiki-local-description": "Deze voorvoegsels ter plaatse bestaan. Eventuele duplicaten met de globale configuratie overschrijft de globale definitie.",
 	"interwiki-links": "Interwiki voorvoegsels",
 	"interwiki-language-links": "Interlanguage voorvoegsels",
-	"interwiki-language-description": "Deze voorvoegsels wedstrijd gedefinieerd taal codes, en zal worden gebruikt voor het maken van de \"{{int:otherlanguages}}\" lijst wanneer het wordt toegevoegd aan een pagina."
+	"interwiki-language-description": "Deze voorvoegsels komen overeen met gedefinieerde taalcode en worden gebruikt om de lijst \"{{int:otherlanguages}}\" te maken als deze aan een pagina wordt toegevoegd."
 }

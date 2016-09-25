@@ -1,0 +1,30 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kaajawa",
+			"Mahitgar",
+			"Praju23",
+			"V.narsikar",
+			"Ydyashad",
+			"संतोष दहिवळ",
+			"अभय नातू",
+			"NehalDaveND"
+		]
+	},
+	"visualeditor-cite-tool-name-book": "पुस्तक",
+	"visualeditor-cite-tool-name-journal": "पत्रिका",
+	"visualeditor-cite-tool-name-web": "संकेतस्थळ",
+	"cite-ve-dialog-reference-options-group-label": "हा संदर्भगट वापरा",
+	"cite-ve-dialog-reference-options-group-placeholder": "सामान्य संदर्भ",
+	"cite-ve-dialog-reference-options-name-label": "या नावाने पुन्हा-वापरा",
+	"cite-ve-dialog-reference-options-section": "पर्याय",
+	"cite-ve-dialog-reference-title": "संदर्भ",
+	"cite-ve-dialog-reference-useexisting-label": "सध्या उपलब्ध संदर्भातून संदर्भ वापरा",
+	"cite-ve-dialog-reference-useexisting-tool": "पुनरुपयोग",
+	"cite-ve-dialog-referenceslist-title": "संदर्भ यादी",
+	"cite-ve-dialogbutton-reference-tooltip": "प्राथमिक",
+	"cite-ve-dialogbutton-referenceslist-tooltip": "संदर्भ यादी",
+	"cite-ve-reference-input-placeholder": "सध्या संदर्भांतच शोधा",
+	"cite-ve-referenceslist-isempty": "गट \"$1\" पाशी या लेखपानावर संदर्भ उपलब्ध नाहीत.",
+	"cite-ve-referenceslist-missingref": "हा संदर्भ सध्या केवळ स्रोत संपादन पद्धतीने संपादीत करता येतो कारण संबंधित संदर्भ साचातून किंवा इतर जनरेटेड ब्लॉक मधून डिफाईन केला गेला आहे."
+}

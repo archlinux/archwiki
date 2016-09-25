@@ -78,6 +78,7 @@ class CSSJanus {
 		'text_shadow2' => null,
 		'bg_horizontal_percentage' => null,
 		'bg_horizontal_percentage_x' => null,
+		'suffix' => '(\s*(?:!important\s*)?[;}])'
 	);
 
 	/**
@@ -115,9 +116,13 @@ class CSSJanus {
 		$patterns['cursor_east'] = "/{$patterns['lookbehind_not_letter']}([ns]?)e-resize/";
 		$patterns['cursor_west'] = "/{$patterns['lookbehind_not_letter']}([ns]?)w-resize/";
 		$patterns['four_notation_quantity_props'] = "((?:margin|padding|border-width)\s*:\s*)";
-		$patterns['four_notation_quantity'] = "/{$patterns['four_notation_quantity_props']}{$patterns['possibly_negative_quantity']}(\s+){$patterns['possibly_negative_quantity']}(\s+){$patterns['possibly_negative_quantity']}(\s+){$patterns['possibly_negative_quantity']}(\s*(?:!important\s*)?[;}])/i";
-		$patterns['four_notation_color'] = "/((?:-color|border-style)\s*:\s*){$patterns['color']}(\s+){$patterns['color']}(\s+){$patterns['color']}(\s+){$patterns['color']}(\s*(?:!important\s*)?[;}])/i";
-		$patterns['border_radius'] = "/(border-radius\s*:\s*)([^;}]*)/";
+		$patterns['four_notation_quantity'] = "/{$patterns['four_notation_quantity_props']}{$patterns['possibly_negative_quantity']}(\s+){$patterns['possibly_negative_quantity']}(\s+){$patterns['possibly_negative_quantity']}(\s+){$patterns['possibly_negative_quantity']}{$patterns['suffix']}/i";
+		$patterns['four_notation_color'] = "/((?:-color|border-style)\s*:\s*){$patterns['color']}(\s+){$patterns['color']}(\s+){$patterns['color']}(\s+){$patterns['color']}{$patterns['suffix']}/i";
+		// border-radius: <length or percentage>{1,4} [optional: / <length or percentage>{1,4} ]
+		$patterns['border_radius'] = '/(border-radius\s*:\s*)' . $patterns['possibly_negative_quantity']
+			. '(?:(?:\s+' . $patterns['possibly_negative_quantity'] . ')(?:\s+' . $patterns['possibly_negative_quantity'] . ')?(?:\s+' . $patterns['possibly_negative_quantity'] . ')?)?'
+			. '(?:(?:(?:\s*\/\s*)' . $patterns['possibly_negative_quantity'] . ')(?:\s+' . $patterns['possibly_negative_quantity'] . ')?(?:\s+' . $patterns['possibly_negative_quantity'] . ')?(?:\s+' . $patterns['possibly_negative_quantity'] . ')?)?' . $patterns['suffix']
+			. '/i';
 		$patterns['box_shadow'] = "/(box-shadow\s*:\s*(?:inset\s*)?){$patterns['possibly_negative_quantity']}/i";
 		$patterns['text_shadow1'] = "/(text-shadow\s*:\s*){$patterns['color']}(\s*){$patterns['possibly_negative_quantity']}/i";
 		$patterns['text_shadow2'] = "/(text-shadow\s*:\s*){$patterns['possibly_negative_quantity']}/i";
@@ -283,23 +288,59 @@ class CSSJanus {
 	 * @return string
 	 */
 	private static function fixBorderRadius($css) {
-		$css = preg_replace_callback(self::$patterns['border_radius'], function ($matches) {
-			$pre = $matches[1];
-			$values = $matches[2];
-			$numValues = count(preg_split('/\s+/', trim($values)));
-			switch ($numValues) {
-				case 4:
-					$values = preg_replace('/^(\S+)(\s*)(\S+)(\s*)(\S+)(\s*)(\S+)/', '$3$2$1$4$7$6$5', $values);
-					break;
-				case 3:
-				case 2:
-					$values = preg_replace('/^(\S+)(\s*)(\S+)/', '$3$2$1', $values);
-					break;
-			}
-			return $pre . $values;
-		}, $css);
+		return preg_replace_callback(
+			self::$patterns['border_radius'],
+			array('self', 'calculateBorderRadius'),
+			$css
+		);
+	}
 
-		return $css;
+	/**
+	 * Callback for fixBorderRadius()
+	 * @param $matches array
+	 * @return string
+	 */
+	private static function calculateBorderRadius($matches) {
+		$pre = $matches[1];
+		$firstGroup = array_filter(array_slice($matches, 2, 4), function ($match) {
+			return $match !== '';
+		});
+		$secondGroup = array_filter(array_slice($matches, 6, 4), function ($match) {
+			return $match !== '';
+		});
+		$post = $matches[10] ?: '';
+
+		if ($secondGroup) {
+			$values = self::flipBorderRadiusValues($firstGroup)
+				. ' / ' . self::flipBorderRadiusValues($secondGroup);
+		} else {
+			$values = self::flipBorderRadiusValues($firstGroup);
+		}
+
+		return $pre . $values . $post;
+	}
+
+	/**
+	 * Callback for fixBorderRadius()
+	 * @param array $values Matched values
+	 * @return string Flipped values
+	 */
+	private static function flipBorderRadiusValues($values) {
+		switch (count($values)) {
+			case 4:
+				$values = array($values[1], $values[0], $values[3], $values[2]);
+				break;
+			case 3:
+				$values = array($values[1], $values[0], $values[1], $values[2]);
+				break;
+			case 2:
+				$values = array($values[1], $values[0]);
+				break;
+			case 1:
+				$values = array($values[0]);
+				break;
+		}
+		return implode(' ', $values);
 	}
 
 	/**

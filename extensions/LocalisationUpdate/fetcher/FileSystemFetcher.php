@@ -5,10 +5,12 @@
  * @license GPL-2.0+
  */
 
+namespace LocalisationUpdate;
+
 /**
  * Accesses file system directly.
  */
-class LU_FileSystemFetcher implements LU_Fetcher {
+class FileSystemFetcher implements Fetcher {
 	public function fetchFile( $url ) {
 		// Remove the protocol prefix
 		$url = preg_replace( '~^file://~', '', $url );

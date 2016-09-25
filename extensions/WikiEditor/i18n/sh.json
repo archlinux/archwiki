@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"Conquistador"
+		]
+	},
+	"wikieditor-preview-tab": "Pregled",
+	"wikieditor-publish-button-cancel": "Otkaži",
+	"wikieditor-toolbar-tool-link-cancel": "Otkaži",
+	"wikieditor-toolbar-tool-file-cancel": "Otkaži",
+	"wikieditor-toolbar-tool-reference-cancel": "Otkaži",
+	"wikieditor-toolbar-tool-table-preview": "Pregled",
+	"wikieditor-toolbar-tool-table-cancel": "Otkaži"
+}

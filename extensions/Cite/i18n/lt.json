@@ -4,7 +4,8 @@
 			"Garas",
 			"Homo",
 			"Matasg",
-			"Albertas"
+			"Albertas",
+			"Zygimantus"
 		]
 	},
 	"cite-desc": "Prideda <nowiki><ref[ name=id]></nowiki> ir <nowiki><references/></nowiki> žymes citavimui",
@@ -13,6 +14,7 @@
 	"cite_error_ref_no_key": "Neleistina <code>&lt;ref&gt;</code> gairė; nuorodos be turinio turi turėti vardą",
 	"cite_error_ref_too_many_keys": "Neleistina <code>&lt;ref&gt;</code> gairė; neleistini vardai, pvz., per daug",
 	"cite_error_ref_no_input": "Neleistina <code>&lt;ref&gt;</code> gairė; nuorodos be vardo turi turėti turinį",
+	"cite_error_references_duplicate_key": "Netinkama <code>&lt;ref&gt;</code> žymė; vardas \"$1\" apibrėžtas keletą kartų su skirtingu turiniu",
 	"cite_error_references_invalid_parameters": "Neleistina <code>&lt;references&gt;</code> gairė; neleidžiami jokie parametrai, naudokite <code>&lt;references /&gt;</code>",
 	"cite_error_references_invalid_parameters_group": "Netinkama <code>&lt;references&gt;</code> žymė;\nleidžiama tik parametrų \"grupė\".\nNaudokite <code>&lt;references /&gt;</code> arba <code>&lt;references group=\"...\" /&gt;</code>",
 	"cite_error_references_no_backlink_label": "Baigėsi antraštės.\nNurodykite daugiau <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki> sisteminiame tekste",
@@ -25,6 +27,10 @@
 	"cite_error_references_missing_key": "<code>&lt;ref&gt;</code> žymė vardu \"$1\", apibrėžta <code>&lt;references&gt;</code>, nėra naudojama ankstesniame tekste.",
 	"cite_error_references_no_key": "<code>&lt;ref&gt;</code> žymė, apibrėžta <code>&lt;references&gt;</code>, neturi vardo atributo.",
 	"cite_error_empty_references_define": "<code>&lt;ref&gt;</code> žymė, apibrėžta <code>&lt;references&gt;</code>, su vardu \"$1\", neturi turinio.",
+	"cite-tracking-category-cite-error": "Puslapiai su nuorodų klaidomis",
+	"cite-tracking-category-cite-error-desc": "Šios kategorijos puslapiai turi klaidų nuorodų žymių naudojime.",
 	"cite_references_link_accessibility_label": "Šokti aukštyn",
-	"cite_references_link_many_accessibility_label": "Šokti į:"
+	"cite_references_link_many_accessibility_label": "Šokti į:",
+	"cite_warning": "Cituoti įspėjimą: $1",
+	"cite_warning_sectionpreview_no_text": "<code>&lt;ref&gt;</code> žymė su vardu <code>$1</code> negali būti peržiūrėta, nes ji apibrėžta už dabartinės sekcijos ribų arba nėra apibrėžta apskritai."
 }

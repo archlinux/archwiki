@@ -1,13 +1,18 @@
 {
 	"@metadata": {
 		"authors": [
-			"Lloffiwr"
+			"Lloffiwr",
+			"Robin Owain"
 		]
 	},
 	"gadgets-desc": "Yn galluogi defnyddwyr i ddewis [[Special:Gadgets|teclynnau CSS a JavaScript]] yn eu [[Special:Preferences#mw-prefsection-gadgets|dewisiadau]]",
 	"prefs-gadgets": "Teclynnau",
 	"gadgets-prefstext": "Ceir rhestr isod o'r teclynnau y gallwch eu galluogi.\nMae'r rhan fwyaf o'r teclynnau yn defnyddio JavaScript, felly mae'n rhaid galluogi JavaScript ar eich porwr er mwyn iddynt weithio.\nSylwer na gaiff y teclynnau hyn unrhyw effaith ar y dudalen hon o ddewisiadau.\n\nSylwer hefyd nad yw'r teclynnau hyn yn ran o feddalwedd MediaWiki; fel arfer defnyddwyr y wici hwn sydd wedi datblygu'r teclynnau ac sydd yn eu cynnal.\nMae gweinyddwyr y wici hwn yn gallu golygu [[MediaWiki:Gadgets-definition|diffiniadau]] a [[Special:Gadgets|disgrifiadau]]'r teclynnau sydd ar gael.",
 	"gadgets": "Teclynnau",
+	"gadgetusage": "Ystadegau o'r defnydd o declynnau",
+	"gadgetusage-gadget": "Teclynnau",
+	"gadgetusage-usercount": "Nifer y defnyddwyr",
+	"gadgetusage-noresults": "Ni chafwyd hyd i declynnau.",
 	"gadgets-title": "Teclynnau",
 	"gadgets-pagetext": "Isod mae rhestr o declynnau arbennig y gall defnyddwyr eu galluogi ar eu [[Special:Preferences#mw-prefsection-gadgets|tudalennau dewisiadau]], sef rhestr a bennir yn y dudalen [[MediaWiki:Gadgets-definition|diffiniadau]].\nMae'r trosolwg hwn yn cynnig mynediad rhwydd at y tudalennau negeseuon sustem sy'n diffinio disgrifiad a chod pob teclyn.",
 	"gadgets-uses": "Yn defnyddio",

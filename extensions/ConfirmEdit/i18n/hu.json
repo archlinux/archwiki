@@ -8,6 +8,7 @@
 		]
 	},
 	"captcha-edit": "A lap szerkesztéséhez meg kell, hogy kérjünk, írd be a lenti dobozba az alábbi egyszerű összeadás eredményét ([[Special:Captcha/help|segítség]]):",
+	"captcha-edit-fail": "Hibás vagy hiányzó CAPTCHA.",
 	"captcha-desc": "CAPTCHA-technológiák a spamek és a jelszókitalálási technikák ellen",
 	"captcha-label": "CAPTCHA",
 	"captcha-addurl": "Szerkesztésed új külső linket tartalmaz. A reklámokat elhelyező robotok kiszűrése érdekében tisztelettel megkérünk, hogy írd be a lenti dobozba az alábbi egyszerű összeadás eredményét. ([[Special:Captcha/help|segítség]])",

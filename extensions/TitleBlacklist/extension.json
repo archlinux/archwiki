@@ -9,6 +9,9 @@
 	"descriptionmsg": "titleblacklist-desc",
 	"license-name": "GPL-2.0+",
 	"type": "antispam",
+	"requires": {
+		"MediaWiki": ">= 1.27.0"
+	},
 	"GroupPermissions": {
 		"sysop": {
 			"tboverride": true,
@@ -41,6 +44,8 @@
 		"TitleBlacklist": "TitleBlacklist.list.php",
 		"TitleBlacklistEntry": "TitleBlacklist.list.php",
 		"TitleBlacklistHooks": "TitleBlacklist.hooks.php",
+		"TitleBlacklistAuthenticationRequest": "TitleBlacklistAuthenticationRequest.php",
+		"TitleBlacklistPreAuthenticationProvider": "TitleBlacklistPreAuthenticationProvider.php",
 		"Scribunto_LuaTitleBlacklistLibrary": "TitleBlacklist.library.php",
 		"ApiQueryTitleBlacklist": "api/ApiQueryTitleBlacklist.php"
 	},
@@ -56,6 +61,7 @@
 		"localBasePath": "modules",
 		"remoteExtPath": "TitleBlacklist/modules"
 	},
+	"callback": "TitleBlacklistHooks::onRegistration",
 	"Hooks": {
 		"getUserPermissionsErrorsExpensive": [
 			"TitleBlacklistHooks::userCan"
@@ -66,20 +72,11 @@
 		"MovePageCheckPermissions": [
 			"TitleBlacklistHooks::onMovePageCheckPermissions"
 		],
-		"AbortNewAccount": [
-			"TitleBlacklistHooks::abortNewAccount"
-		],
-		"AbortAutoAccount": [
-			"TitleBlacklistHooks::abortAutoAccount"
-		],
 		"EditFilter": [
 			"TitleBlacklistHooks::validateBlacklist"
 		],
 		"ArticleSaveComplete": [
 			"TitleBlacklistHooks::clearBlacklist"
-		],
-		"UserCreateForm": [
-			"TitleBlacklistHooks::addOverrideCheckbox"
 		],
 		"UnitTestsList": [
 			"TitleBlacklistHooks::unitTestsList"

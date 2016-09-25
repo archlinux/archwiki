@@ -4,6 +4,8 @@
 	"version": "1.4.0",
 	"author": [
 		"Brion Vibber",
+		"Florian Schmidt",
+		"Sam Reed",
 		"..."
 	],
 	"url": "https://www.mediawiki.org/wiki/Extension:ConfirmEdit",
@@ -50,32 +52,24 @@
 		"CaptchaStore": "includes/CaptchaStore.php",
 		"CaptchaSessionStore": "includes/CaptchaStore.php",
 		"CaptchaCacheStore": "includes/CaptchaStore.php",
-		"CaptchaSpecialPage": "includes/specials/SpecialCaptcha.php"
+		"CaptchaHashStore": "includes/CaptchaStore.php",
+		"CaptchaSpecialPage": "includes/specials/SpecialCaptcha.php",
+		"CaptchaPreAuthenticationProvider": "includes/auth/CaptchaPreAuthenticationProvider.php",
+		"CaptchaAuthenticationRequest": "includes/auth/CaptchaAuthenticationRequest.php"
 	},
+	"callback": "ConfirmEditHooks::onRegistration",
 	"Hooks": {
 		"EditPageBeforeEditButtons": [
 			"ConfirmEditHooks::confirmEditPage"
-		],
-		"UserCreateForm": [
-			"ConfirmEditHooks::injectUserCreate"
-		],
-		"AbortNewAccount": [
-			"ConfirmEditHooks::confirmUserCreate"
-		],
-		"LoginAuthenticateAudit": [
-			"ConfirmEditHooks::triggerUserLogin"
-		],
-		"UserLoginForm": [
-			"ConfirmEditHooks::injectUserLogin"
-		],
-		"AbortLogin": [
-			"ConfirmEditHooks::confirmUserLogin"
 		],
 		"EmailUserForm": [
 			"ConfirmEditHooks::injectEmailUser"
 		],
 		"EmailUser": [
 			"ConfirmEditHooks::confirmEmailUser"
+		],
+		"PageContentSaveComplete": [
+			"ConfirmEditHooks::onPageContentSaveComplete"
 		],
 		"EditPage::showEditForm:fields": [
 			"ConfirmEditHooks::showEditFormFields"
@@ -88,12 +82,6 @@
 		],
 		"APIGetParamDescription": [
 			"ConfirmEditHooks::APIGetParamDescription"
-		],
-		"AddNewAccountApiForm": [
-			"ConfirmEditHooks::addNewAccountApiForm"
-		],
-		"AddNewAccountApiResult": [
-			"ConfirmEditHooks::addNewAccountApiResult"
 		],
 		"APIEditBeforeSave": [
 			"ConfirmEditHooks::confirmEditAPI"
@@ -114,14 +102,17 @@
 			"addurl": true,
 			"createaccount": true,
 			"badlogin": true,
+			"badloginperuser": true,
 			"_merge_strategy": "array_plus"
 		},
 		"wgCaptchaTriggersOnNamespace": [],
 		"wgCaptchaStorageClass": "CaptchaSessionStore",
 		"wgCaptchaSessionExpiration": 1800,
 		"wgCaptchaBadLoginExpiration": 300,
+		"wgCaptchaBadLoginPerUserExpiration": 600,
 		"ceAllowConfirmedEmail": false,
 		"wgCaptchaBadLoginAttempts": 3,
+		"wgCaptchaBadLoginPerUserAttempts": 20,
 		"wgCaptchaWhitelist": false,
 		"wgCaptchaRegexes": []
 	},

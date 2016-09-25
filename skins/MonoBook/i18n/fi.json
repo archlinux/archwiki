@@ -2,11 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"Crt",
-			"McSalama"
+			"McSalama",
+			"Jack Phoenix"
 		]
 	},
 	"skinname-monobook": "Monobook",
-	"monobook-desc": "Klassinen MediaWiki teema vuodesta 2004, saanut nimensä mustavalkoisesta kirjan kuvasta sivun taustalla",
+	"monobook-desc": "Klassinen MediaWiki-ulkoasu vuodesta 2004, saanut nimensä mustavalkoisesta kirjan kuvasta sivun taustalla",
 	"monobook.css": "/* Tämä sivu sisältää Monobook-ulkoasua muuttavia tyylejä. */",
 	"monobook.js": "/* Tämän sivun JavaScript-koodi liitetään Monobook-tyyliin */"
 }

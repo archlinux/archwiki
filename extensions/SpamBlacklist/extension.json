@@ -8,7 +8,11 @@
 	"url": "https://www.mediawiki.org/wiki/Extension:SpamBlacklist",
 	"descriptionmsg": "spam-blacklist-desc",
 	"type": "antispam",
+	"license-name": "GPL-2.0+",
 	"callback": "SpamBlacklistHooks::registerExtension",
+	"requires": {
+		"MediaWiki": ">= 1.26.0"
+	},
 	"GroupPermissions": {
 		"sysop": {
 			"spamblacklistlog": true
@@ -40,7 +44,8 @@
 		"EmailBlacklist": "EmailBlacklist.php",
 		"SpamBlacklistHooks": "SpamBlacklistHooks.php",
 		"SpamBlacklist": "SpamBlacklist_body.php",
-		"SpamRegexBatch": "SpamRegexBatch.php"
+		"SpamRegexBatch": "SpamRegexBatch.php",
+		"SpamBlacklistPreAuthenticationProvider": "SpamBlacklistPreAuthenticationProvider.php"
 	},
 	"Hooks": {
 		"EditFilterMergedContent": [
@@ -58,13 +63,14 @@
 		"UserCanSendEmail": [
 			"SpamBlacklistHooks::userCanSendEmail"
 		],
-		"AbortNewAccount": [
-			"SpamBlacklistHooks::abortNewAccount"
+		"ParserOutputStashForEdit": [
+			"SpamBlacklistHooks::onParserOutputStashForEdit"
 		]
 	},
 	"config": {
 		"@doc": "BlacklistSettings are set in SpamBlacklistHooks.php",
-		"LogSpamBlacklistHits": false
+		"LogSpamBlacklistHits": false,
+		"SpamBlacklistEventLogging": false
 	},
 	"manifest_version": 1
 }

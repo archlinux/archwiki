@@ -1,9 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amir a57"
+			"Amir a57",
+			"Mousa"
 		]
 	},
+	"fancycaptcha-captcha": "امنیت یوخلاماسی",
 	"fancycaptcha-createaccount": "ایشلدن حسابین اوتمات صورتینده آچیلماماسی اوچون بیز سیزدن احتراملا ایستیریک شکیل ده گورونن سوزو آشاغی دا گورونن قوتودا آرتیراسیز([[Special:Captcha/help|آرتیق بیلگی]]):",
+	"fancycaptcha-imgcaptcha-ph": "اۆستده گؤردویونوز یازینی یازین",
 	"fancycaptcha-reload-text": "یئنیله"
 }

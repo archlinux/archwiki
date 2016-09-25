@@ -6,6 +6,10 @@ class SpecialNuke extends SpecialPage {
 		parent::__construct( 'Nuke', 'nuke' );
 	}
 
+	public function doesWrites() {
+		return true;
+	}
+
 	public function execute( $par ) {
 		if ( !$this->userCanExecute( $this->getUser() ) ) {
 			$this->displayRestrictionError();
@@ -83,10 +87,10 @@ class SpecialNuke extends SpecialPage {
 		$out->addHTML(
 			Xml::openElement(
 				'form',
-				array(
+				[
 					'action' => $this->getPageTitle()->getLocalURL( 'action=submit' ),
 					'method' => 'post'
-				)
+				]
 			)
 			. '<table><tr>'
 			. '<td>' . Xml::label( $this->msg( 'nuke-userorip' )->text(), 'nuke-target' ) . '</td>'
@@ -94,24 +98,24 @@ class SpecialNuke extends SpecialPage {
 				'target',
 				40,
 				$userName,
-				array(
+				[
 					'id' => 'nuke-target',
 					'class' => 'mw-autocomplete-user',
 					'autofocus' => true
-				)
+				]
 			) . '</td>'
 			. '</tr><tr>'
 			. '<td>' . Xml::label( $this->msg( 'nuke-pattern' )->text(), 'nuke-pattern' ) . '</td>'
-			. '<td>' . Xml::input( 'pattern', 40, '', array( 'id' => 'nuke-pattern' ) ) . '</td>'
+			. '<td>' . Xml::input( 'pattern', 40, '', [ 'id' => 'nuke-pattern' ] ) . '</td>'
 			. '</tr><tr>'
 			. '<td>' . Xml::label( $this->msg( 'nuke-namespace' )->text(), 'nuke-namespace' ) . '</td>'
 			. '<td>' . Html::namespaceSelector(
-				array( 'all' => 'all' ),
-				array( 'name' => 'namespace' )
+				[ 'all' => 'all' ],
+				[ 'name' => 'namespace' ]
 			) . '</td>'
 			. '</tr><tr>'
 			. '<td>' . Xml::label( $this->msg( 'nuke-maxpages' )->text(), 'nuke-limit' ) . '</td>'
-			. '<td>' . Xml::input( 'limit', 7, '500', array( 'id' => 'nuke-limit' ) ) . '</td>'
+			. '<td>' . Xml::input( 'limit', 7, '500', [ 'id' => 'nuke-limit' ] ) . '</td>'
 			. '</tr><tr>'
 			. '<td></td>'
 			. '<td>' . Xml::submitButton( $this->msg( 'nuke-submit-user' )->text() ) . '</td>'
@@ -157,10 +161,10 @@ class SpecialNuke extends SpecialPage {
 		$out->addModules( 'ext.nuke' );
 
 		$out->addHTML(
-			Xml::openElement( 'form', array(
+			Xml::openElement( 'form', [
 					'action' => $nuke->getLocalURL( 'action=delete' ),
 					'method' => 'post',
-					'name' => 'nukelist' )
+					'name' => 'nukelist' ]
 			) .
 			Html::hidden( 'wpEditToken', $this->getUser()->getEditToken() ) .
 			Xml::tags( 'p',
@@ -172,7 +176,7 @@ class SpecialNuke extends SpecialPage {
 		);
 
 		// Select: All, None, Invert
-		$links = array();
+		$links = [];
 		$links[] = '<a href="#" id="toggleall">' .
 			$this->msg( 'powersearch-toggleall' )->escaped() . '</a>';
 		$links[] = '<a href="#" id="togglenone">' .
@@ -205,7 +209,7 @@ class SpecialNuke extends SpecialPage {
 
 			$image = $title->getNamespace() === NS_IMAGE ? wfLocalFile( $title ) : false;
 			$thumb = $image && $image->exists() ?
-				$image->transform( array( 'width' => 120, 'height' => 120 ), 0 ) :
+				$image->transform( [ 'width' => 120, 'height' => 120 ], 0 ) :
 				false;
 
 			$userNameText = $userName ?
@@ -214,16 +218,16 @@ class SpecialNuke extends SpecialPage {
 			$changesLink = Linker::linkKnown(
 				$title,
 				$this->msg( 'nuke-viewchanges' )->escaped(),
-				array(),
-				array( 'action' => 'history' )
+				[],
+				[ 'action' => 'history' ]
 			);
 			$out->addHTML( '<li>' .
 				Xml::check(
 					'pages[]',
 					true,
-					array( 'value' => $title->getPrefixedDBKey() )
+					[ 'value' => $title->getPrefixedDBkey() ]
 				) . '&#160;' .
-				( $thumb ? $thumb->toHtml( array( 'desc-link' => true ) ) : '' ) .
+				( $thumb ? $thumb->toHtml( [ 'desc-link' => true ] ) : '' ) .
 				Linker::linkKnown( $title ) . $wordSeparator .
 				$this->msg( 'parentheses' )->rawParams( $userNameText . $changesLink )->escaped() .
 				"</li>\n" );
@@ -248,13 +252,13 @@ class SpecialNuke extends SpecialPage {
 	protected function getNewPages( $username, $limit, $namespace = null ) {
 		$dbr = wfGetDB( DB_SLAVE );
 
-		$what = array(
+		$what = [
 			'rc_namespace',
 			'rc_title',
 			'rc_timestamp',
-		);
+		];
 
-		$where = array( "(rc_new = 1) OR (rc_log_type = 'upload' AND rc_log_action = 'upload')" );
+		$where = [ "(rc_new = 1) OR (rc_log_type = 'upload' AND rc_log_action = 'upload')" ];
 
 		if ( $username === '' ) {
 			$what[] = 'rc_user_text';
@@ -268,7 +272,7 @@ class SpecialNuke extends SpecialPage {
 
 		$pattern = $this->getRequest()->getText( 'pattern' );
 		if ( !is_null( $pattern ) && trim( $pattern ) !== '' ) {
-			$where[] = 'rc_title LIKE ' . $dbr->addQuotes( $pattern );
+			$where[] = 'rc_title ' . $dbr->buildLike( $pattern );
 		}
 		$group = implode( ', ', $what );
 
@@ -276,20 +280,31 @@ class SpecialNuke extends SpecialPage {
 			$what,
 			$where,
 			__METHOD__,
-			array(
+			[
 				'ORDER BY' => 'rc_timestamp DESC',
 				'GROUP BY' => $group,
 				'LIMIT' => $limit
-			)
+			]
 		);
 
-		$pages = array();
+		$pages = [];
 
 		foreach ( $result as $row ) {
-			$pages[] = array(
+			$pages[] = [
 				Title::makeTitle( $row->rc_namespace, $row->rc_title ),
 				$username === '' ? $row->rc_user_text : false
-			);
+			];
+		}
+
+		// Allows other extensions to provide pages to be nuked that don't use
+		// the recentchanges table the way mediawiki-core does
+		Hooks::run( 'NukeGetNewPages', [ $username, $pattern, $namespace, $limit, &$pages ] );
+
+		// Re-enforcing the limit *after* the hook because other extensions
+		// may add and/or remove pages. We need to make sure we don't end up
+		// with more pages than $limit.
+		if ( count( $pages ) > $limit ) {
+			$pages = array_slice( $pages, 0, $limit );
 		}
 
 		return $pages;
@@ -303,15 +318,25 @@ class SpecialNuke extends SpecialPage {
 	 * @throws PermissionsError
 	 */
 	protected function doDelete( array $pages, $reason ) {
-		$res = array();
+		$res = [];
 
 		foreach ( $pages as $page ) {
-			$title = Title::newFromURL( $page );
-			$file = $title->getNamespace() === NS_FILE ? wfLocalFile( $title ) : false;
+			$title = Title::newFromText( $page );
 
+			$deletionResult = false;
+			if ( !Hooks::run( 'NukeDeletePage', [ $title, $reason, &$deletionResult ] ) ) {
+				if ( $deletionResult ) {
+					$res[] = wfMessage( 'nuke-deleted', $title->getPrefixedText() )->parse();
+				} else {
+					$res[] = wfMessage( 'nuke-not-deleted', $title->getPrefixedText() )->parse();
+				}
+				continue;
+			}
+
+			$file = $title->getNamespace() === NS_FILE ? wfLocalFile( $title ) : false;
 			$permission_errors = $title->getUserPermissionsErrors( 'delete', $this->getUser() );
 
-			if ( $permission_errors !== array() ) {
+			if ( $permission_errors !== [] ) {
 				throw new PermissionsError( 'delete', $permission_errors );
 			}
 
@@ -332,6 +357,27 @@ class SpecialNuke extends SpecialPage {
 
 		$this->getOutput()->addHTML( "<ul>\n<li>" . implode( "</li>\n<li>", $res ) . "</li>\n</ul>\n" );
 		$this->getOutput()->addWikiMsg( 'nuke-delete-more' );
+	}
+
+	/**
+	 * Return an array of subpages beginning with $search that this special page will accept.
+	 *
+	 * @param string $search Prefix to search for
+	 * @param int $limit Maximum number of results to return (usually 10)
+	 * @param int $offset Number of results to skip (usually 0)
+	 * @return string[] Matching subpages
+	 */
+	public function prefixSearchSubpages( $search, $limit, $offset ) {
+		if ( !class_exists( 'UserNamePrefixSearch' ) ) { // check for version 1.27
+			return [];
+		}
+		$user = User::newFromName( $search );
+		if ( !$user ) {
+			// No prefix suggestion for invalid user
+			return [];
+		}
+		// Autocomplete subpage as user list - public to allow caching
+		return UserNamePrefixSearch::search( 'public', $search, $limit, $offset );
 	}
 
 	protected function getGroupName() {

@@ -7,7 +7,8 @@
 			"Derbeth",
 			"Peter Bowman",
 			"Sp5uhe",
-			"WTM"
+			"WTM",
+			"Tar Lócesilion"
 		]
 	},
 	"action-titleblacklistlog": "przeglądania czarnej listy tytułów",
@@ -21,6 +22,7 @@
 	"titleblacklist-forbidden-new-account": "Utworzenie konta o nazwie „$2” nie jest możliwe.\nNazwa ta pasuje do wpisu z czarnej listy: <code>$1</code>",
 	"titleblacklist-invalid": "{{PLURAL:$1|Następująca linia|Następujące linie}} na liście zabronionych tytułów stron {{PLURAL:$1|jest nieprawidłowa|są nieprawidłowe}}. Popraw {{PLURAL:$1|ją|je}} przed zapisaniem:",
 	"titleblacklist-override": "Ignoruj czarną listę",
+	"titleblacklist-warning": "<strong>Uwaga: tę stronę mogą edytować tylko administratorzy i użytkownicy z uprawnieniem <code>tboverride</code>, ponieważ znajduje się ona na czarnej liście, w punkcie:</strong><br /><code>$1</code>",
 	"right-tboverride": "Ignorowanie czarnej listy tytułów lub nazw użytkowników",
 	"right-tboverride-account": "Ignorowanie czarnej listy użytkowników",
 	"right-titleblacklistlog": "Podgląd rejestru czarnej listy tytułów"

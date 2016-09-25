@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Mdann52",
-			"Chase me ladies, I'm the Cavalry"
+			"Chase me ladies, I'm the Cavalry",
+			"Andibing"
 		]
 	},
 	"interwiki": "View and edit interwiki data",
@@ -30,18 +31,18 @@
 	"interwiki_reasonfield": "Reason:",
 	"interwiki_delquestion": "Deleting \"$1\"",
 	"interwiki_deleting": "You are deleting prefix \"$1\".",
-	"interwiki_deleted": "Prefix \"$1\" was successfully removed from the interwiki table.",
+	"interwiki_deleted": "Prefix \"$1\" was removed from the interwiki table.",
 	"interwiki_delfailed": "Prefix \"$1\" could not be removed from the interwiki table.",
 	"interwiki-logtext": "View log",
 	"interwiki_addtext": "Add an interwiki or language prefix",
 	"interwiki-addtext-local": "Add a local interwiki or language prefix",
 	"interwiki_addintro": "You are adding a new interwiki prefix.\nRemember that it cannot contain spaces ( ), colons (:), ampersands (&), or equal signs (=).",
 	"interwiki_addbutton": "Add",
-	"interwiki_added": "Prefix \"$1\" was successfully added to the interwiki table.",
+	"interwiki_added": "Prefix \"$1\" was added to the interwiki table.",
 	"interwiki_addfailed": "Prefix \"$1\" could not be added to the interwiki table.\nPossibly it already exists in the interwiki table.",
 	"interwiki_edittext": "Editing an interwiki prefix",
 	"interwiki_editintro": "You are editing an interwiki prefix.\nRemember that this can break existing links.",
-	"interwiki_edited": "Prefix \"$1\" was successfully modified in the interwiki table.",
+	"interwiki_edited": "Prefix \"$1\" was modified in the interwiki table.",
 	"interwiki_editerror": "Prefix \"$1\" could not be modified in the interwiki table.\nIt may not exist.",
 	"interwiki-badprefix": "Specified interwiki prefix \"$1\" contains invalid characters",
 	"interwiki-submit-empty": "The prefix and URL cannot be empty.",

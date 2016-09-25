@@ -1,12 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"Alison"
+			"Alison",
+			"Tem"
 		]
 	},
 	"citethispage": "Luaigh",
 	"citethispage-desc": "Cuir [[Special:Cite|deismireacht]] leathanach speisíalta agus nasc bosca uirlisí",
 	"citethispage-link": "Luaigh an lch seo",
+	"tooltip-citethispage": "Eolas maidir le conas an leathanach seo a lua",
 	"citethispage-change-submit": "Luaigh",
 	"citethispage-change-target": "Leathanach:"
 }

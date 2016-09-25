@@ -154,7 +154,7 @@
 	"wikieditor-toolbar-help-content-rereference-result": "Thu inziak.<sup><a href='#'>[2]</a></sup>",
 	"wikieditor-toolbar-help-content-showreferences-description": "Thulâkna lantirna",
 	"wikieditor-toolbar-help-content-signature-description": "Hmingtàr",
-	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='{{#special:mypage}}'>Hmangtu-hming</a> (<a href='#' title='{{#special:mytalk}}'>sawihona</a>)",
+	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>Hmangtu-hming</a> (<a href='#' title='$2:Username'>sawihona</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "Tihchìam hret",
 	"wikieditor-toolbar-help-content-indent-syntax": "Thu tluang<br />:Tlar tihchìam<br />::Tlar tihchìam lehchhàwn",
 	"wikieditor-toolbar-help-content-indent-result": "Thu tlúang<dl><dd>Tlar tihchìam<dl><dd>Tihtlum lehchhàwn</dd></dl></dd></dl>"

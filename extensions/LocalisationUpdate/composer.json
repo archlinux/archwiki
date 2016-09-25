@@ -37,11 +37,13 @@
 		]
 	},
 	"require-dev": {
-		"jakub-onderka/php-parallel-lint": "0.9"
+		"jakub-onderka/php-parallel-lint": "0.9.2",
+		"mediawiki/mediawiki-codesniffer": "0.5.1"
 	},
 	"scripts": {
 		"test": [
-			"parallel-lint . --exclude node_modules --exclude vendor"
+			"parallel-lint . --exclude vendor --exclude extensions",
+			"phpcs -p -s"
 		]
 	}
 }

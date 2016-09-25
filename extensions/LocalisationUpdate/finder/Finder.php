@@ -5,11 +5,13 @@
  * @license GPL-2.0+
  */
 
+namespace LocalisationUpdate;
+
 /**
  * Interface for classes which provide list of components, which should be
  * included for l10n updates.
  */
-class LU_Finder {
+class Finder {
 	/**
 	 * @param array $php See $wgExtensionMessagesFiles
 	 * @param array $json See $wgMessagesDirs

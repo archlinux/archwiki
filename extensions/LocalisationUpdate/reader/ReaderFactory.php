@@ -5,32 +5,34 @@
  * @license GPL-2.0+
  */
 
+namespace LocalisationUpdate;
+
 /**
  * Constructs readers for files based on the names.
  */
-class LU_ReaderFactory {
+class ReaderFactory {
 	/**
 	 * Constructs a suitable reader for a given path.
 	 * @param string $filename Usually a relative path to the file name.
-	 * @return LU_Reader
+	 * @return Reader
 	 * @throw Exception
 	 */
 	public function getReader( $filename ) {
 		if ( preg_match( '/i18n\.php$/', $filename ) ) {
-			return new LU_PHPReader();
+			return new PHPReader();
 		}
 
 		// Ugly hack for core i18n files
 		if ( preg_match( '/Messages(.*)\.php$/', $filename ) ) {
-			$code = Language::getCodeFromFileName( basename( $filename ), 'Messages' );
-			return new LU_PHPReader( $code );
+			$code = \Language::getCodeFromFileName( basename( $filename ), 'Messages' );
+			return new PHPReader( $code );
 		}
 
 		if ( preg_match( '/\.json/', $filename ) ) {
 			$code = basename( $filename, '.json' );
-			return new LU_JSONReader( $code );
+			return new JSONReader( $code );
 		}
 
-		throw new Exception( "Unknown file format: " . $filename );
+		throw new \Exception( "Unknown file format: " . $filename );
 	}
 }

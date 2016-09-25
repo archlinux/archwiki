@@ -2,13 +2,19 @@
 	"@metadata": {
 		"authors": [
 			"Amire80",
-			"Sapral Mikail"
+			"Sapral Mikail",
+			"Adam-Yourist",
+			"Умар"
 		]
 	},
-	"wikieditor-toolbar-characters-page-latin": "Лаьтмий",
-	"wikieditor-toolbar-characters-page-greek": "Джелтий",
-	"wikieditor-toolbar-characters-page-cyrillic": "Цырилиций",
-	"wikieditor-toolbar-characters-page-arabic": "Ӏарбий",
-	"wikieditor-toolbar-characters-page-persian": "Фаьранзий",
-	"wikieditor-toolbar-characters-page-hebrew": "Жугтий"
+	"wikieditor": "Вики-йоазув хувцара шера интерфейс",
+	"wikieditor-desc": "Iалашду викийоазув хувцара шералуш йола интерфейс а, модулеша Iалашъю дукха функцеш а",
+	"wikieditor-wikitext-tab": "Викийоазув",
+	"wikieditor-loading": "Чудаккхар...",
+	"wikieditor-preview-changes-tab": "Хувцамаш",
+	"wikieditor-preview-loading": "Чудаккхар...",
+	"wikieditor-publish-preference": "Лотаé гIа боаккхаш еш йола публикаци",
+	"wikieditor-toolbar-section-advanced": "Кхы тӀа",
+	"wikieditor-toolbar-tool-replace-search": "Хьалáха:",
+	"wikieditor-toolbar-section-help": "ГӀо"
 }

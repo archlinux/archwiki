@@ -1,9 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Mjbmr"
+			"Mjbmr",
+			"Ahmed-Najib-Biabani-Ibrahimkhel"
 		]
 	},
+	"vector-view-create": "ساختن",
 	"vector-view-edit": "ویرایش",
 	"vector-view-history": "نمایش تاریخچه",
 	"vector-view-view": "خواندن",

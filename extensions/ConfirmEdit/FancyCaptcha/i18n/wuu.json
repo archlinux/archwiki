@@ -1,9 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Poiuyt"
+			"Poiuyt",
+			"飞舞回堂前"
 		]
 	},
-	"fancycaptcha-createaccount": "为仔保护本wiki弗受自动账户创建个破坏，我里请求你输入下底方框中显示个文字（[[Special:Captcha/help|更多信息]]）：",
+	"fancycaptcha-captcha": "安全检查",
+	"fancycaptcha-createaccount": "为著保护本wiki弗受自动账号创建个破坏，阿拉要麻烦侬输入下底方框中显示个文字（[[Special:Captcha/help|更多信息]]）：",
+	"fancycaptcha-imgcaptcha-ph": "拿上头个文字打勒箇𡍲",
 	"fancycaptcha-reload-text": "刷新"
 }

@@ -9,7 +9,7 @@
 		]
 	},
 	"cite-desc": "Nambahaké tag <nowiki><ref[ name=id]></nowiki> lan <nowiki><references/></nowiki> kanggo kutipan (sitat)",
-	"cite_error": "Kaluputan sitat (pangutipan) $1",
+	"cite_error": "Cacad panyuplik: $1",
 	"cite_error_ref_numeric_key": "Tag <code>&lt;ref&gt;</code> ora absah;\njenengé ora bisa namung angka integer waé. Gunakna irah-irahan (judhul) dèskriptif",
 	"cite_error_ref_no_key": "Tag <code>&lt;ref&gt;</code> ora absah;\nrefs tanpa isi kudu duwé jeneng",
 	"cite_error_ref_too_many_keys": "Tag <code>&lt;ref&gt;</code> ora absah;\njeneng-jenengé ora absah, contoné kakèhan",
@@ -29,7 +29,6 @@
 	"cite_reference_link_key_with_num": "$1_$2",
 	"cite_reference_link_prefix": "cite_ref-",
 	"cite_references_link_prefix": "cite_note-",
-	"cite_reference_link": "<sup id=\"$1\" class=\"reference\">[[#$2|<nowiki>[</nowiki>$3<nowiki>]</nowiki>]]</sup>",
 	"cite_references_link_one": "<li id=\"$1\">'''<span class=\"mw-cite-backlink\">[[#$2|^]]</span>''' $3</li>",
 	"cite_references_link_many": "<li id=\"$1\"><span class=\"mw-cite-backlink\">'''^''' $2</span> $3</li>",
 	"cite_references_link_many_format": "<sup>[[#$1|'''''$2''''']]</sup>",

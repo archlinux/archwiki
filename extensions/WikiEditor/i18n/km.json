@@ -175,9 +175,9 @@
 	"wikieditor-toolbar-help-content-showreferences-description": "បង្ហាញ​ឯកសារ​យោង​",
 	"wikieditor-toolbar-help-content-showreferences-result": "<ol class='references'><li id='cite_note-test-0'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.example.org' class='external text' href='#'>អត្ថបទតំណភ្ជាប់/a>, អត្ថបទបន្ថែម។</li></ol>",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "ហត្ថលេខា​ ជាមួយនឹង​ត្រាពេលវេលា​",
-	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='{{#special:mypage}}'>អត្តនាម</a> (<a href='#' title='{{#special:mytalk}}'>ការពិភាក្សា</a>) ១៥:៥៤, ១០ មិថុនា ២០០៩ (UTC)",
+	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='$1:Username'>អត្តនាម</a> (<a href='#' title='$2:Username'>ការពិភាក្សា</a>) ១៥:៥៤, ១០ មិថុនា ២០០៩ (UTC)",
 	"wikieditor-toolbar-help-content-signature-description": "ហត្ថលេខា​",
-	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='{{#special:mypage}}'>អត្តនាម</a> (<a href='#' title='{{#special:mytalk}}'>ការពិភាក្សា</a>)",
+	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>អត្តនាម</a> (<a href='#' title='$2:Username'>ការពិភាក្សា</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "ខិតចូល (Indent)",
 	"wikieditor-toolbar-help-content-indent-syntax": "អក្សរ​ធម្មតា​<br />:អក្សរ​ខិតចូល​<br />::អក្សរ​ខិតចូល​",
 	"wikieditor-toolbar-help-content-indent-result": "អក្សរ​ធម្មតា​​<dl><dd>អក្សរ​ខិតចូល​<dl><dd>អក្សរ​ខិតចូល​</dd></dl></dd></dl>"

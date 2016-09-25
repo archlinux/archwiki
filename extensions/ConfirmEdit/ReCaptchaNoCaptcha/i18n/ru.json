@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Okras"
+		]
+	},
+	"renocaptcha-createaccount-fail": "Похоже, вы не разгадали капчу.",
+	"renocaptcha-apihelp-param-g-recaptcha-response": "Поле от виджета ReCaptcha."
+}

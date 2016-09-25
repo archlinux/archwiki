@@ -2,14 +2,17 @@
  * Collapsible tabs jQuery Plugin
  */
 ( function ( $ ) {
-	var rtl = $( 'html' ).attr( 'dir' ) === 'rtl';
+	var rtl = $( 'html' ).attr( 'dir' ) === 'rtl',
+		rAF = window.requestAnimationFrame || setTimeout;
+
 	$.fn.collapsibleTabs = function ( options ) {
+		// Merge options into the defaults
+		var settings = $.extend( {}, $.collapsibleTabs.defaults, options );
+
 		// return if the function is called on an empty jquery object
 		if ( !this.length ) {
 			return this;
 		}
-		// Merge options into the defaults
-		var settings = $.extend( {}, $.collapsibleTabs.defaults, options );
 
 		this.each( function () {
 			var $el = $( this );
@@ -25,14 +28,14 @@
 
 		// if we haven't already bound our resize handler, bind it now
 		if ( !$.collapsibleTabs.boundEvent ) {
-			$( window ).on( 'resize', $.debounce( 500, function () {
-				$.collapsibleTabs.handleResize();
+			$( window ).on( 'resize', $.debounce( 100, function () {
+				rAF( $.collapsibleTabs.handleResize );
 			} ) );
 			$.collapsibleTabs.boundEvent = true;
 		}
 
 		// call our resize handler to setup the page
-		$.collapsibleTabs.handleResize();
+		rAF( $.collapsibleTabs.handleResize );
 		return this;
 	};
 	$.collapsibleTabs = {
@@ -131,7 +134,7 @@
 						expContainerSettings = $.collapsibleTabs.getSettings( $( data.expandedContainer ) );
 						if ( expContainerSettings ) {
 							expContainerSettings.shifting = false;
-							$.collapsibleTabs.handleResize();
+							rAF( $.collapsibleTabs.handleResize );
 						}
 					}
 				} );
@@ -160,14 +163,14 @@
 				.css( 'width', '1px' )
 				.data( 'collapsibleTabsSettings', data )
 				.animate( { width: expandedWidth + 'px' }, 'normal', function () {
-					$( this ).attr( 'style', 'display: block;' );
 					var data, expContainerSettings;
+					$( this ).attr( 'style', 'display: block;' );
 					data = $.collapsibleTabs.getSettings( $( this ) );
 					if ( data ) {
 						expContainerSettings = $.collapsibleTabs.getSettings( $( data.expandedContainer ) );
 						if ( expContainerSettings ) {
 							expContainerSettings.shifting = false;
-							$.collapsibleTabs.handleResize();
+							rAF( $.collapsibleTabs.handleResize );
 						}
 					}
 				} )

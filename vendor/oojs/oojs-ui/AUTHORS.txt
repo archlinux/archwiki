@@ -4,9 +4,11 @@ Bartosz Dziewoński <matma.rex@gmail.com>
 Ed Sanders <esanders@wikimedia.org>
 James D. Forrester <jforrester@wikimedia.org>
 Kirsten Menger-Anderson <kmenger@wikimedia.org>
+Kunal Mehta <legoktm@gmail.com>
+Prateek Saxena <prtksxna@gmail.com>
 Roan Kattouw <roan@wikimedia.org>
 Rob Moen <rmoen@wikimedia.org>
-Timo Tijhof <timo@wikimedia.org>
+Timo Tijhof <krinklemail@gmail.com>
 Trevor Parscal <trevor@wikimedia.org>
 
 Patch Contributors (minor contributors, alphabetically)
@@ -14,22 +16,30 @@ Patch Contributors (minor contributors, alphabetically)
 Alex Monk <krenair@wikimedia.org>
 Amir E. Aharoni <aaharoni@wikimedia.org>
 Antoine Musso <hashar@free.fr>
+Brad Jorsch <bjorsch@wikimedia.org>
+C. Scott Ananian <cscott@cscott.net>
+David Lynch <dlynch@wikimedia.org>
 Derk-Jan Hartman <hartman.wiki@gmail.com>
 eranroz <eranroz89@gmail.com>
-Erik Moeller <erik@wikimedia.org>
 Erick Guan <fantasticfears@gmail.com>
+Erik Moeller <erik@wikimedia.org>
+Florian <florian.schmidt.stargatewissen@gmail.com>
 Gilles Dubuc <gdubuc@wikimedia.org>
 Inez Korczyński <inez@wikia-inc.com>
 Juliusz Gonera <jgonera@wikimedia.org>
-Kunal Mehta <legoktm@gmail.com>
 Kyle Florence <kflorence@wikia-inc.com>
+Matthew Flaschen <mflaschen@wikimedia.org>
 May Tee-Galloway <mgalloway@wikimedia.org>
-Mr. Stradivarius <misterstrad@gmail.com>
 Moriel Schottlender <moriel@gmail.com>
+Mr. Stradivarius <misterstrad@gmail.com>
 Niklas Laxström <nlaxstrom@wikimedia.org>
+Nirzar Pangarkar <nirzardp@gmail.com>
 Ricordisamoa <ricordisamoa@openmailbox.org>
 rillke <rillke@wikipedia.de>
 Ryan Kaldari <rkaldari@wikimedia.org>
 Sam Reed <reedy@wikimedia.org>
+Stephane Bisson <sbisson@wikimedia.org>
 Sucheta Ghoshal <sghoshal@wikimedia.org>
+Thalia Chan <thalia.e.chan@googlemail.com>
+Volker Eckl <veckl@wikimedia.org>
 Željko Filipin <zeljko.filipin@gmail.com>

@@ -610,7 +610,7 @@ class ClientTest extends BaseTest
             $object->assertInstanceOf('Elastica\Exception\ConnectionException', $exception);
             $object->assertInstanceOf('Elastica\Client', $client);
             $object->assertFalse($connection->isEnabled());
-            $count++;
+            ++$count;
         };
 
         $client = $this->_getClient(array(), $callback);
@@ -680,6 +680,7 @@ class ClientTest extends BaseTest
      */
     public function testUpdateDocumentByScript()
     {
+        $this->_checkScriptInlineSetting();
         $index = $this->_createIndex();
         $type = $index->getType('test');
         $client = $index->getClient();
@@ -708,6 +709,7 @@ class ClientTest extends BaseTest
      */
     public function testUpdateDocumentByScriptWithUpsert()
     {
+        $this->_checkScriptInlineSetting();
         $index = $this->_createIndex();
         $type = $index->getType('test');
         $client = $index->getClient();
@@ -933,6 +935,7 @@ class ClientTest extends BaseTest
      */
     public function testUpdateDocumentPopulateFields()
     {
+        $this->_checkScriptInlineSetting();
         $index = $this->_createIndex();
         $type = $index->getType('test');
         $client = $index->getClient();
@@ -993,7 +996,7 @@ class ClientTest extends BaseTest
     public function testAddDocumentsWithoutIds()
     {
         $docs = array();
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 10; ++$i) {
             $docs[] = new Document(null, array('pos' => $i));
         }
 

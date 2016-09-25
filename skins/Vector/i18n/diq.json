@@ -4,10 +4,12 @@
 			"Asmen",
 			"Calak",
 			"Erdemaslancan",
-			"Mirzali"
+			"Mirzali",
+			"Gorizon"
 		]
 	},
 	"skinname-vector": "Vektor",
+	"vector-skin-desc": "Asayışo de newe be versiyonê MonoBookiyo modern ra û weşkerdışê ke şenê bıgureniyê",
 	"vector-action-addsection": "Mewzu vıraze",
 	"vector-action-delete": "Bestere",
 	"vector-action-move": "Bere",

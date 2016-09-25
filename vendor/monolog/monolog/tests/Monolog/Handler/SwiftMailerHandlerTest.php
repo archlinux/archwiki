@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the Monolog package.
+ *
+ * (c) Jordi Boggiano <j.boggiano@seld.be>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Monolog\Handler;
 
 use Monolog\Logger;
@@ -61,5 +70,20 @@ class SwiftMailerHandlerTest extends TestCase
             $this->getRecord(Logger::EMERGENCY),
         );
         $handler->handleBatch($records);
+    }
+
+    public function testMessageHaveUniqueId()
+    {
+        $messageTemplate = \Swift_Message::newInstance();
+        $handler = new SwiftMailerHandler($this->mailer, $messageTemplate);
+
+        $method = new \ReflectionMethod('Monolog\Handler\SwiftMailerHandler', 'buildMessage');
+        $method->setAccessible(true);
+        $method->invokeArgs($handler, array($messageTemplate, array()));
+
+        $builtMessage1 = $method->invoke($handler, $messageTemplate, array());
+        $builtMessage2 = $method->invoke($handler, $messageTemplate, array());
+
+        $this->assertFalse($builtMessage1->getId() === $builtMessage2->getId(), 'Two different messages have the same id');
     }
 }

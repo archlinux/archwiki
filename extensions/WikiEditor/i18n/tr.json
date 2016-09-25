@@ -11,7 +11,9 @@
 			"Sadrettin",
 			"Srhat",
 			"Vito Genovese",
-			"Macofe"
+			"Macofe",
+			"McAang",
+			"Mizunee"
 		]
 	},
 	"wikieditor": "Gelişmiş viki metni düzenleme arayüzü",
@@ -35,7 +37,6 @@
 	"wikieditor-toolbar-desc": "Gelişmiş kullanılabilirlik ile sayfa araç çubuğunu düzenle",
 	"wikieditor-toolbar-preference": "Gelişmiş düzenleme araç çubuğunu etkinleştir",
 	"wikieditor-toolbar-dialogs-preference": "Bağlantılar, tablolar ve daha fazlasını eklemek için iletileri etkinleştir",
-	"wikieditor-toolbar-hidesig": "Ana ad boşluğundaki sayfalardan imza düğmesini gizle",
 	"wikieditor-toolbar-loading": "Yükleniyor...",
 	"wikieditor-toolbar-tool-bold": "Kalın",
 	"wikieditor-toolbar-tool-bold-example": "Kalın metin",
@@ -72,6 +73,7 @@
 	"wikieditor-toolbar-tool-file-example": "Örnek.jpg",
 	"wikieditor-toolbar-file-float": "Hizalama:",
 	"wikieditor-toolbar-tool-file-insert": "Ekle",
+	"wikieditor-toolbar-tool-file-upload": "Yükle",
 	"wikieditor-toolbar-tool-reference": "Kaynakça",
 	"wikieditor-toolbar-tool-reference-example": "Dipnot metnini buraya ekleyin",
 	"wikieditor-toolbar-tool-reference-cancel": "İptal",
@@ -194,9 +196,9 @@
 	"wikieditor-toolbar-help-content-showreferences-description": "Kaynakçayı görüntüle",
 	"wikieditor-toolbar-help-content-showreferences-result": "<ol class='references'><li id='cite_note-test-0'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.ornek.org' class='external text' href='#'>Bağlantı metni</a>, ek metin.</li></ol>",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "Zaman damgası ile imza",
-	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='{{#special:mypage}}'>Kullanıcı adı</a> (<a href='#' title='{{#special:mytalk}}'>mesaj</a>) 15.54, 17 Şubat 2012 (UTC)",
+	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='$1:Username'>Kullanıcı adı</a> (<a href='#' title='$2:Username'>mesaj</a>) 15.54, 17 Şubat 2012 (UTC)",
 	"wikieditor-toolbar-help-content-signature-description": "İmza",
-	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='{{#special:mypage}}'>Kullanıcı adı</a> (<a href='#' title='{{#special:mytalk}}'>mesaj</a>)",
+	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>Kullanıcı adı</a> (<a href='#' title='$2:Username'>mesaj</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "Girinti",
 	"wikieditor-toolbar-help-content-indent-syntax": "Normal metin<br />:Girintili metin<br />::Girintili metin",
 	"wikieditor-toolbar-help-content-indent-result": "Normal metin<dl><dd>Girintili metin<dl><dd>Girintili metin</dd></dl></dd></dl>"

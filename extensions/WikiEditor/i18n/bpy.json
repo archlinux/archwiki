@@ -180,9 +180,9 @@
 	"wikieditor-toolbar-help-content-showreferences-description": "তথ্যসূত্র দেহাদে",
 	"wikieditor-toolbar-help-content-showreferences-result": "<ol class='references'><li id='cite_note-test-0'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.example.org' class='external text' href='#'>মিলাপর মেয়েকগি</a>, হেলপা মেয়েকগি।</li></ol>",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "স্বাক্ষরহান লগে খেন্তাম বরিয়া",
-	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='{{#special:mypage}}'>আতাকুরা</a> (<a href='#' title='{{#special:mytalk}}'>য়্যারী</a>) ১৫:৫৪, ১০ আগষ্ট ২০১০(UTC)",
+	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='$1:Username'>আতাকুরা</a> (<a href='#' title='$2:Username'>য়্যারী</a>) ১৫:৫৪, ১০ আগষ্ট ২০১০(UTC)",
 	"wikieditor-toolbar-help-content-signature-description": "স্বাক্ষর",
-	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='{{#special:mypage}}'>আতাকুরা</a> (<a href='#' title='{{#special:mytalk}}'>য়্যারী</a>)",
+	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>আতাকুরা</a> (<a href='#' title='$2:Username'>য়্যারী</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "কাসাদেনা",
 	"wikieditor-toolbar-help-content-indent-syntax": "চুমকার ইকা<br />:কাসাদিয়াসি ইকা<br />::কাসাদিয়াসি ইকা",
 	"wikieditor-toolbar-help-content-indent-result": "চুমকার ইকা<dl><dd>কাসাদিয়াসি ইকা<dl><dd>কাসাদিয়াসি ইকা</dd></dl></dd></dl>"

@@ -9,8 +9,8 @@
 	"inputbox-desc": "Ngidinaké nganggo formulir HTML sing wis ditemtokaké",
 	"inputbox-error-no-type": "Panjenengan durung nemtokaké tipe kothak input sing arep digawé.",
 	"inputbox-error-bad-type": "Tipe kothak input \"$1\" ora dikenal.\nSupaya migunakaké \"create\", \"comment\", \"search\", \"search2\", utawa \"fulltext\".",
-	"inputbox-tryexact": "Cobanen pancocogan èksak",
+	"inputbox-tryexact": "Jajal pasangan sing pas",
 	"inputbox-searchfulltext": "Golèk ing tèks jangkep",
 	"inputbox-createarticle": "Damel artikel",
-	"inputbox-ns-main": "Utama"
+	"inputbox-ns-main": "Pokok"
 }

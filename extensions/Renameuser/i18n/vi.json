@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Minh Nguyen",
-			"Vinhtantran"
+			"Vinhtantran",
+			"Dinhxuanduyet"
 		]
 	},
 	"renameuser": "Đổi tên thành viên",
@@ -20,7 +21,7 @@
 	"renameusersubmit": "Thực hiện",
 	"renameuser-submit-blocklog": "Xem nhật trình cấm người dùng",
 	"renameusererrordoesnotexist": "Thành viên “<nowiki>$1</nowiki>” không tồn tại.",
-	"renameusererrorexists": "Thành viên “<nowiki>$1</nowiki>” đã hiện hữu.",
+	"renameusererrorexists": "{{GENDER:$1|thành viên}} \"<nowiki>$1</nowiki>\" đã tồn tại.",
 	"renameusererrorinvalid": "Tên thành viên “<nowiki>$1</nowiki>” không hợp lệ.",
 	"renameuser-error-request": "Có trục trặc trong tiếp nhận yêu cầu. Xin hãy quay lại và thử lần nữa.",
 	"renameuser-error-same-user": "Bạn không thể đổi tên thành viên sang tên y hệt như vậy.",

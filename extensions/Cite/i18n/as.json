@@ -3,7 +3,8 @@
 		"authors": [
 			"Bishnu Saikia",
 			"Gitartha.bordoloi",
-			"Reedy"
+			"Reedy",
+			"Dibya Dutta"
 		]
 	},
 	"cite-desc": "উদ্ধৃতিৰ বাবে <nowiki><ref[ name=id]></nowiki> আৰু <nowiki><references/></nowiki> টেগ্‌সমূহ যোগ কৰে",
@@ -23,5 +24,7 @@
 	"cite_error_references_missing_group": "<code>&lt;references&gt;</code>ত দিয়া <code>&lt;ref&gt;</code> টেগৰ \"$1\" গোট এট্ট্ৰিবিউট আছে, যিটো পূৰ্বৰ পাঠ্যত ওলোৱা নাই।",
 	"cite_error_references_missing_key": "<code>&lt;references&gt;</code>ত দিয়া \"$1\" নামৰ <code>&lt;ref&gt;</code> টেগ্‌টো পূৰ্বৰ পাঠ্যত ব্যৱহাৰ কৰা নাই।",
 	"cite_error_references_no_key": "<code>&lt;references&gt;</code>ত দিয়া <code>&lt;ref&gt;</code> টেগৰ কোনো নাম আবণ্টন নাই।",
-	"cite_error_empty_references_define": "<code>&lt;references&gt;</code>ত দিয়া \"$1\" নামৰ <code>&lt;ref&gt;</code> টেগৰ কোনো সমল নাই।"
+	"cite_error_empty_references_define": "<code>&lt;references&gt;</code>ত দিয়া \"$1\" নামৰ <code>&lt;ref&gt;</code> টেগৰ কোনো সমল নাই।",
+	"cite_references_link_accessibility_label": "যাওক",
+	"cite_references_link_many_accessibility_label": "ইয়ালৈ যাওক:"
 }

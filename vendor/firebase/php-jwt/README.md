@@ -1,4 +1,7 @@
 [![Build Status](https://travis-ci.org/firebase/php-jwt.png?branch=master)](https://travis-ci.org/firebase/php-jwt)
+[![Latest Stable Version](https://poser.pugx.org/firebase/php-jwt/v/stable)](https://packagist.org/packages/firebase/php-jwt)
+[![Total Downloads](https://poser.pugx.org/firebase/php-jwt/downloads)](https://packagist.org/packages/firebase/php-jwt)
+[![License](https://poser.pugx.org/firebase/php-jwt/license)](https://packagist.org/packages/firebase/php-jwt)
 
 PHP-JWT
 =======
@@ -18,6 +21,7 @@ Example
 -------
 ```php
 <?php
+use \Firebase\JWT\JWT;
 
 $key = "example_key";
 $token = array(
@@ -60,6 +64,23 @@ $decoded = JWT::decode($jwt, $key, array('HS256'));
 
 Changelog
 ---------
+
+#### 3.0.0 / 2015-07-22
+- Minimum PHP version updated from `5.2.0` to `5.3.0`.
+- Add `\Firebase\JWT` namespace. See
+[#59](https://github.com/firebase/php-jwt/pull/59) for details. Thanks to
+[@Dashron](https://github.com/Dashron)!
+- Require a non-empty key to decode and verify a JWT. See
+[#60](https://github.com/firebase/php-jwt/pull/60) for details. Thanks to
+[@sjones608](https://github.com/sjones608)!
+- Cleaner documentation blocks in the code. See
+[#62](https://github.com/firebase/php-jwt/pull/62) for details. Thanks to
+[@johanderuijter](https://github.com/johanderuijter)!
+
+#### 2.2.0 / 2015-06-22
+- Add support for adding custom, optional JWT headers to `JWT::encode()`. See
+[#53](https://github.com/firebase/php-jwt/pull/53/files) for details. Thanks to
+[@mcocaro](https://github.com/mcocaro)!
 
 #### 2.1.0 / 2015-05-20
 - Add support for adding a leeway to `JWT:decode()` that accounts for clock skew

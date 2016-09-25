@@ -11,6 +11,9 @@
 	"descriptionmsg": "pfunc_desc",
 	"license-name": "GPL-2.0",
 	"type": "parserhook",
+	"requires": {
+		"MediaWiki": ">= 1.25.0"
+	},
 	"config": {
 		"PFEnableStringFunctions": false,
 		"PFStringLengthLimit": 1000

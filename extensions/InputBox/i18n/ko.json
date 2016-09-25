@@ -6,7 +6,8 @@
 			"Kwj2772",
 			"ToePeu",
 			"아라",
-			"Keysuck"
+			"Keysuck",
+			"Revi"
 		]
 	},
 	"inputbox-desc": "사전 정의된 HTML 양식을 포함할 수 있습니다",
@@ -15,7 +16,7 @@
 	"inputbox-tryexact": "일치하는 항목 찾기",
 	"inputbox-searchfulltext": "전체 글 검색",
 	"inputbox-createarticle": "문서 만들기",
-	"inputbox-movearticle": "문서 옮기기",
+	"inputbox-movearticle": "문서 이동",
 	"inputbox-postcomment": "새 문단",
 	"inputbox-postcommenttitle": "새 문단",
 	"inputbox-ns-main": "문서"

@@ -80,7 +80,6 @@ class GeSHi {
 
 		// Miscellaneous
 		'cadlisp'   => 'lisp',
-		'j'         => 'objj',
 		'java5'     => 'java',
 		'php-brief' => 'php',
 		'povray'    => 'pov',
@@ -88,7 +87,6 @@ class GeSHi {
 		'rails'     => 'ruby',
 		'rpmspec'   => 'spec',
 		'rsplus'    => 'splus',
-		'bnf'       => 'ebnf',
 		'gettext'   => 'pot',
 
 		// ML
@@ -115,6 +113,16 @@ class GeSHi {
 
 		// bibtex is basically LaTeX
 		'bibtex' => 'latex',
+
+		// 'emacs-lisp' was an alias for the Emacs Lisp lexer.
+		// It got dropped in Pygments commit 811926b, probably by accident.
+		// Declare it here until it is restored upstream.
+		// Upstream bug:
+		//   https://bitbucket.org/birkenfeld/pygments-main/issues/1207
+		'emacs-lisp' => 'elisp',
+
+		// apt
+		'apt_sources' => 'debsources',
 	);
 
 	public function __construct( $html ) {

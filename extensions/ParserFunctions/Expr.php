@@ -178,7 +178,7 @@ class ExprParser {
 	 * @throws ExprError
 	 * @return string
 	 */
-	function doExpression( $expr ) {
+	public function doExpression( $expr ) {
 		$operands = array();
 		$operators = array();
 
@@ -210,14 +210,14 @@ class ExprParser {
 				continue;
 			} elseif ( false !== strpos( EXPR_NUMBER_CLASS, $char ) ) {
 				// Number
-				if ( $expecting != 'expression' ) {
+				if ( $expecting !== 'expression' ) {
 					throw new ExprError( 'unexpected_number' );
 				}
 
 				// Find the rest of it
 				$length = strspn( $expr, EXPR_NUMBER_CLASS, $p );
 				// Convert it to float, silently removing double decimal points
-				$operands[] = floatval( substr( $expr, $p, $length ) );
+				$operands[] = (float)substr( $expr, $p, $length );
 				$p += $length;
 				$expecting = 'operator';
 				continue;
@@ -240,14 +240,14 @@ class ExprParser {
 				switch( $op ) {
 				// constant
 				case EXPR_EXPONENT:
-					if ( $expecting != 'expression' ) {
+					if ( $expecting !== 'expression' ) {
 						continue;
 					}
 					$operands[] = exp( 1 );
 					$expecting = 'operator';
 					continue 2;
 				case EXPR_PI:
-					if ( $expecting != 'expression' ) {
+					if ( $expecting !== 'expression' ) {
 						throw new ExprError( 'unexpected_number' );
 					}
 					$operands[] = pi();
@@ -268,7 +268,7 @@ class ExprParser {
 				case EXPR_TRUNC:
 				case EXPR_CEIL:
 				case EXPR_SQRT:
-					if ( $expecting != 'expression' ) {
+					if ( $expecting !== 'expression' ) {
 						throw new ExprError( 'unexpected_operator', $word );
 					}
 					$operators[] = $op;
@@ -280,15 +280,15 @@ class ExprParser {
 
 			// Next the two-character operators
 
-			elseif ( $char2 == '<=' ) {
+			elseif ( $char2 === '<=' ) {
 				$name = $char2;
 				$op = EXPR_LESSEQ;
 				$p += 2;
-			} elseif ( $char2 == '>=' ) {
+			} elseif ( $char2 === '>=' ) {
 				$name = $char2;
 				$op = EXPR_GREATEREQ;
 				$p += 2;
-			} elseif ( $char2 == '<>' || $char2 == '!=' ) {
+			} elseif ( $char2 === '<>' || $char2 === '!=' ) {
 				$name = $char2;
 				$op = EXPR_NOTEQ;
 				$p += 2;
@@ -296,9 +296,9 @@ class ExprParser {
 
 			// Finally the single-character operators
 
-			elseif ( $char == '+' ) {
+			elseif ( $char === '+' ) {
 				++$p;
-				if ( $expecting == 'expression' ) {
+				if ( $expecting === 'expression' ) {
 					// Unary plus
 					$operators[] = EXPR_POSITIVE;
 					continue;
@@ -306,9 +306,9 @@ class ExprParser {
 					// Binary plus
 					$op = EXPR_PLUS;
 				}
-			} elseif ( $char == '-' ) {
+			} elseif ( $char === '-' ) {
 				++$p;
-				if ( $expecting == 'expression' ) {
+				if ( $expecting === 'expression' ) {
 					// Unary minus
 					$operators[] = EXPR_NEGATIVE;
 					continue;
@@ -316,26 +316,26 @@ class ExprParser {
 					// Binary minus
 					$op = EXPR_MINUS;
 				}
-			} elseif ( $char == '*' ) {
+			} elseif ( $char === '*' ) {
 				$name = $char;
 				$op = EXPR_TIMES;
 				++$p;
-			} elseif ( $char == '/' ) {
+			} elseif ( $char === '/' ) {
 				$name = $char;
 				$op = EXPR_DIVIDE;
 				++$p;
-			} elseif ( $char == '^' ) {
+			} elseif ( $char === '^' ) {
 				$name = $char;
 				$op = EXPR_POW;
 				++$p;
-			} elseif ( $char == '(' )  {
-				if ( $expecting == 'operator' ) {
+			} elseif ( $char === '(' )  {
+				if ( $expecting === 'operator' ) {
 					throw new ExprError( 'unexpected_operator', '(' );
 				}
 				$operators[] = EXPR_OPEN;
 				++$p;
 				continue;
-			} elseif ( $char == ')' ) {
+			} elseif ( $char === ')' ) {
 				$lastOp = end( $operators );
 				while ( $lastOp && $lastOp != EXPR_OPEN ) {
 					$this->doOperation( $lastOp, $operands );
@@ -350,15 +350,15 @@ class ExprParser {
 				$expecting = 'operator';
 				++$p;
 				continue;
-			} elseif ( $char == '=' ) {
+			} elseif ( $char === '=' ) {
 				$name = $char;
 				$op = EXPR_EQUALITY;
 				++$p;
-			} elseif ( $char == '<' ) {
+			} elseif ( $char === '<' ) {
 				$name = $char;
 				$op = EXPR_LESS;
 				++$p;
-			} elseif ( $char == '>' ) {
+			} elseif ( $char === '>' ) {
 				$name = $char;
 				$op = EXPR_GREATER;
 				++$p;
@@ -367,7 +367,7 @@ class ExprParser {
 			}
 
 			// Binary operator processing
-			if ( $expecting == 'expression' ) {
+			if ( $expecting === 'expression' ) {
 				throw new ExprError( 'unexpected_operator', $name );
 			}
 
@@ -398,7 +398,7 @@ class ExprParser {
 	 * @param $stack array
 	 * @throws ExprError
 	 */
-	function doOperation( $op, &$stack ) {
+	public function doOperation( $op, &$stack ) {
 		switch ( $op ) {
 			case EXPR_NEGATIVE:
 				if ( count( $stack ) < 1 ) {
@@ -504,7 +504,7 @@ class ExprParser {
 				if ( count( $stack ) < 2 ) {
 					throw new ExprError( 'missing_operand', $this->names[$op] );
 				}
-				$digits = intval( array_pop( $stack ) );
+				$digits = (int)array_pop( $stack );
 				$value = array_pop( $stack );
 				$stack[] = round( $value, $digits );
 				break;

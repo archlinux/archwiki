@@ -3,13 +3,15 @@
 		"authors": [
 			"Laaknor",
 			"Nghtwlkr",
-			"Sjurhamre"
+			"Sjurhamre",
+			"Danmichaelo"
 		]
 	},
 	"gadgets-desc": "Lar brukere velge egendefinerte [[Special:Gadgets|CSS- og JavaScript-verktøy]] i [[Special:Preferences#mw-prefsection-gadgets|innstillingene sine]]",
 	"prefs-gadgets": "Tilleggsfunksjoner",
 	"gadgets-prefstext": "Nedenfor er en liste over tilleggsfunksjoner du kan slå på for kontoen din.\nDisse funksjonene er for det meste basert på JavaScript, så du må ha dette slått på i nettleseren din for at de skal fungere.\nMerk at funksjonene ikke vil ha noen innvirkning på denne innstillingssiden.\n\nMerk også at disse verktøyene ikke er del av MediaWiki-programvaren, og vanligvis utvikles og vedlikeholdes av brukere på den lokale wikien. Lokale administratorer kan redigere tilgjengelig verktøy ved å endre [[MediaWiki:Gadgets-definition|definisjonene]] og [[Special:Gadgets|beskrivelsene]].",
 	"gadgets": "Tilleggsfunksjoner",
+	"gadgetusage-default": "Standard",
 	"gadgets-title": "Tilleggsfunksjoner",
 	"gadgets-pagetext": "Nedenfor er en liste over tilleggsfunksjoner brukere kan slå på i [[Special:Preferences#mw-prefsection-gadgets|innstillingene]], som definert på [[MediaWiki:Gadgets-definition]]. Denne oversikten gir lett tilgang til systembeskjedsidene som definerer hvert verktøys beskrivelse og kode.",
 	"gadgets-uses": "Bruk",

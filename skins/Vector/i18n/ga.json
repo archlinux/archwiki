@@ -3,7 +3,8 @@
 		"authors": [
 			"Kscanne",
 			"Kwekubo",
-			"Moydow"
+			"Moydow",
+			"Tem"
 		]
 	},
 	"skinname-vector": "Veicteoir",
@@ -17,5 +18,6 @@
 	"vector-view-edit": "Athraigh an lch seo",
 	"vector-view-history": "Féach ar stair",
 	"vector-view-view": "Léigh",
-	"vector-view-viewsource": "Féach ar fhoinse"
+	"vector-view-viewsource": "Féach ar fhoinse",
+	"vector-more-actions": "Tuilleadh"
 }

@@ -12,5 +12,7 @@
 	"recaptcha-badlogin": "Zum Schutz des Wikis gegen automatisiertes Knacken von Passwörtern bitten wir dich, die beiden folgenden Wörter in das folgende Feld einzugeben:",
 	"recaptcha-createaccount": "Zum Schutz des Wikis gegen die automatisierte Erstellung von Benutzerkonten bitten wir dich, die folgenden beiden Wörter in das untenstehende Feld einzugeben:",
 	"recaptcha-createaccount-fail": "Fehlerhafte oder fehlende reCAPTCHA Antwort.",
-	"recaptcha-create": "Zum Schutz des Wikis gegen automatisierte Erstellung von Seiten bitten wir dich, die beiden folgenden Wörter in das folgende Feld einzugeben:"
+	"recaptcha-create": "Zum Schutz des Wikis gegen automatisierte Erstellung von Seiten bitten wir dich, die beiden folgenden Wörter in das folgende Feld einzugeben:",
+	"recaptcha-apihelp-param-recaptcha_challenge_field": "Feld von dem ReCaptcha-Widget",
+	"recaptcha-apihelp-param-recaptcha_response_field": "Feld von dem ReCaptcha-Widget"
 }

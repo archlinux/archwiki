@@ -5,7 +5,8 @@
 			"Erdemaslancan",
 			"Gorizon",
 			"Mirzali",
-			"Xoser"
+			"Xoser",
+			"Marmase"
 		]
 	},
 	"renameuser": "Karberi newe ra name ke",
@@ -33,7 +34,7 @@
 	"renameuser-page-unmoved": "$1 pel nêkırışiya no $2 pel.",
 	"log-name-renameuser": "qeydê vuriyayişê nameyê karberi",
 	"log-description-renameuser": "Eno yew qeydê vurnayışê nameyanê karberio.",
-	"logentry-renameuser-renameuser": "$1 {{GENDER:$2|Nameyê}} karberê $4 $5 ra ({{PLURAL:$6|$6 vurnayış|$6 vurnayışi}})",
+	"logentry-renameuser-renameuser": "$1 {{GENDER:$2|nameyê}} karberi $4 ra berd ({{PLURAL:$6|$6 vurnayış|$6 vurnayışi}}) be {{GENDER:$7|$5}}",
 	"logentry-renameuser-renameuser-legacier": "$1i  $4 ra nameyê cı berd $5",
 	"renameuser-move-log": "wexta ke karber \"[[User:$1|$1]]\" no name ra kırışiya \"[[User:$2|$2]]\" no name re ya newe ra name diyêne pel zi otomotikmen kırişiya",
 	"action-renameuser": "karberan newe ra name ke",

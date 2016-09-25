@@ -200,9 +200,9 @@
 	"wikieditor-toolbar-help-content-showreferences-description": "Montri piednotojn",
 	"wikieditor-toolbar-help-content-showreferences-result": "<ol class='references'><li id='cite_note-test-0'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.ekzemplo.org' class='external text' href='#'>Ligila teksto</a>, aldona teksto.</li></ol>",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "Subskribo kun tempindiko",
-	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='{{#special:mypage}}'>Salutnomo</a> (<a href='#' title='{{#special:mytalk}}'>diskuto</a>) 15:54, 10 junio 2009 (UTC)",
+	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='$1:Username'>Salutnomo</a> (<a href='#' title='$2:Username'>diskuto</a>) 15:54, 10 junio 2009 (UTC)",
 	"wikieditor-toolbar-help-content-signature-description": "Subskribo",
-	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='{{#special:mypage}}'>Salutnomo</a> (<a href='#' title='{{#special:mytalk}}'>diskuto</a>)",
+	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>Salutnomo</a> (<a href='#' title='$2:Username'>diskuto</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "Krommarĝeno",
 	"wikieditor-toolbar-help-content-indent-syntax": "Norma teksto<br />:Krommarĝena teksto<br />::Krommarĝena teksto",
 	"wikieditor-toolbar-help-content-indent-result": "Norma teksto<dl><dd>Krommarĝena teksto<dl><dd>Krommarĝena teksto</dd></dl><dd></dl>"

@@ -5,7 +5,8 @@
 			"Millosh",
 			"Rancher",
 			"Михајло Анђелковић",
-			"Srdjan m"
+			"Srdjan m",
+			"Сербијана"
 		]
 	},
 	"cite-desc": "Додаје <nowiki><ref[ name=id]></nowiki> и <nowiki><references/></nowiki> ознаке за цитирање.",
@@ -20,10 +21,11 @@
 	"cite_error_references_no_text": "Лоша ознака <code>&lt;ref&gt;</code>; нема текста за ref-ове под именом <code>$1</code>.",
 	"cite_error_included_ref": "Затвара <code>&lt;/ref&gt;</code> који недостаје <code>&lt;ref&gt;</code> тагу",
 	"cite_error_group_refs_without_references": "Постоје ознаке <code>&lt;ref&gt;</code> за групу с именом „$1“, али нема одговарајуће ознаке <code>&lt;references group=\"$1\"/&gt;</code>, или затварајући <code>&lt;/ref&gt;</code> недостаје",
+	"cite-tracking-category-cite-error": "Странице са грешком у референцама",
+	"cite-tracking-category-cite-error-desc": "Странице које имају грешке у коришћењу ознака референци.",
 	"cite_reference_link_key_with_num": "$1_$2",
 	"cite_reference_link_prefix": "cite_ref-",
 	"cite_references_link_prefix": "cite_note-",
-	"cite_reference_link": "<sup id=\"$1\" class=\"reference\">[[#$2|<nowiki>[</nowiki>$3<nowiki>]</nowiki>]]</sup>",
 	"cite_references_link_one": "<li id=\"$1\"><span class=\"mw-cite-backlink\">[[#$2|↑]]</span> $3</li>",
 	"cite_references_link_many": "<li id=\"$1\"><span class=\"mw-cite-backlink\">↑ $2</span> $3</li>",
 	"cite_references_link_many_format": "<sup>[[#$1|$2]]</sup>",

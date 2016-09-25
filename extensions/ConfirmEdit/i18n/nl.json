@@ -2,10 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"SPQRobin",
-			"Siebrand"
+			"Siebrand",
+			"Sjoerddebruin"
 		]
 	},
 	"captcha-edit": "U wilt deze pagina bewerken.\nVoer het antwoord op de onderstaande eenvoudige som in het invoervenster in ([[Special:Captcha/help|meer informatie]]):",
+	"captcha-edit-fail": "Onjuiste of ontbrekende CAPTCHA.",
 	"captcha-desc": "Biedt CAPTCHA-technieken om bescherming te bieden tegen spam en het raden van wachtwoorden",
 	"captcha-label": "CAPTCHA",
 	"captcha-addurl": "Uw bewerking bevat nieuwe externe koppelingen (URL's).\nVoer ter bescherming tegen geautomatiseerde spam het antwoord op de onderstaande eenvoudige som in in het invoerveld om uw bewerking op te slaan ([[Special:Captcha/help|meer informatie]]):",

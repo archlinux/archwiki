@@ -187,9 +187,9 @@
 	"wikieditor-toolbar-help-content-showreferences-description": "Parādīt atsauces",
 	"wikieditor-toolbar-help-content-showreferences-result": "<ol class='references'><li id='cite_note-test-0'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.example.org' class='external text' href='#'>Saites teksts</a>, papildus teksts.</li></ol>",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "Paraksts un parakstīšanās laiks",
-	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='{{#special:mypage}}'>Lietotāja vārds</a> (<a href='#' title='{{#special:mytalk}}'>diskusija</a>) 15:54, 10 jūnijā, 2009 (UTC)",
+	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='$1:Username'>Lietotāja vārds</a> (<a href='#' title='$2:Username'>diskusija</a>) 15:54, 10 jūnijā, 2009 (UTC)",
 	"wikieditor-toolbar-help-content-signature-description": "Tikai paraksts",
-	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='{{#special:mypage}}'>Lietotāja vārds</a> (<a href='#' title='{{#special:mytalk}}'>diskusija</a>)",
+	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>Lietotāja vārds</a> (<a href='#' title='$2:Username'>diskusija</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "Atkāpe",
 	"wikieditor-toolbar-help-content-indent-syntax": "Teksts bez atkāpes<br />:Teksts ar atkāpi<br />::Teksts ar atkāpi",
 	"wikieditor-toolbar-help-content-indent-result": "Teksts bez atkāpes<dl><dd>Teksts ar atkāpi<dl><dd>Teksts ar atkāpi</dd></dl></dd></dl>"

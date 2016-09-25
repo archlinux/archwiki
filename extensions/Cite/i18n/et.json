@@ -10,6 +10,7 @@
 	"cite_error_ref_no_key": "Vigane <code>&lt;ref&gt;</code>-silt.\nSisuta viitamissiltidel peab olema nimi.",
 	"cite_error_ref_too_many_keys": "Vigane <code>&lt;ref&gt;</code>-silt;\n\"name\" on vigane või liiga pikk.",
 	"cite_error_ref_no_input": "Vigane <code>&lt;ref&gt;</code>-silt.\nNimeta viitamissiltidel peab olema sisu.",
+	"cite_error_references_duplicate_key": "Vigane <code>&lt;ref&gt;</code>-silt; nime \"$1\" on määratud mitu korda erineva sisuga.",
 	"cite_error_references_invalid_parameters": "Vigane <code>&lt;references&gt;</code>-silt.\nParameetrid pole lubatud.\nKasuta silti <code>&lt;references /&gt;</code>.",
 	"cite_error_references_invalid_parameters_group": "Vigane <code>&lt;references&gt;</code>-silt.\nLubatud on ainult parameeter \"group\".\nKasuta silti <code>&lt;references /&gt;</code> või <code>&lt;references group=\"...\" /&gt;</code>.",
 	"cite_error_references_no_backlink_label": "Kohandatud tagasilinkide sildid said otsa.\nLisa neid sõnumisse <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>.",
@@ -22,6 +23,8 @@
 	"cite_error_references_missing_key": "<code>&lt;references&gt;</code>-siltide vahel olevat <code>&lt;ref&gt;</code>-silti nimega \"$1\" ei kasutata eelnevas tekstis.",
 	"cite_error_references_no_key": "<code>&lt;references&gt;</code>-siltide vahel määratletud <code>&lt;ref&gt;</code>-sildil puudub ''name''-atribuut.",
 	"cite_error_empty_references_define": "<code>&lt;references&gt;</code>-siltide vahel oleval <code>&lt;ref&gt;</code>-sildil nimega \"$1\" puudub sisu.",
+	"cite-tracking-category-cite-error": "Viitamistõrgetega leheküljed",
+	"cite-tracking-category-cite-error-desc": "Selles kategoorias on leheküljed, kus viitamissilte on kasutatud valesti.",
 	"cite_references_link_accessibility_label": "Siirdu üles",
 	"cite_references_link_many_accessibility_label": "Siirdu üles asukohta:"
 }

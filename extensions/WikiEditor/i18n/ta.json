@@ -197,9 +197,9 @@
 	"wikieditor-toolbar-help-content-rereference-result": "பக்க உரை.<sup><a href='#'>[2]</a></sup>",
 	"wikieditor-toolbar-help-content-showreferences-description": "# மேற்கோள்களைக் காட்டு\n# முன்மாதிரிகளைக் காட்டு",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "நேர முத்திரையுடன் கையொப்பம்",
-	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='{{#special:mypage}}'>பயனர் பெயர்</a> (<a href='#' title='{{#special:mytalk}}'>பேச்சு</a>) 15:54, 10 June 2009 (UTC)",
+	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='$1:Username'>பயனர் பெயர்</a> (<a href='#' title='$2:Username'>பேச்சு</a>) 15:54, 10 June 2009 (UTC)",
 	"wikieditor-toolbar-help-content-signature-description": "# கையெழுத்து\n# கையொப்பம்",
-	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='{{#special:mypage}}'>பயனர் பெயர்</a> (<a href='#' title='{{#special:mytalk}}'>பேச்சு</a>)",
+	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>பயனர் பெயர்</a> (<a href='#' title='$2:Username'>பேச்சு</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "சிறிது தள்ளிவை",
 	"wikieditor-toolbar-help-content-indent-syntax": "சாதாரண உரைt<br />:வெளிதள்ளிய உரை<br />::வெளிதள்ளிய உரை",
 	"wikieditor-toolbar-help-content-indent-result": "சாதாரண உரை<dl><dd>உள்தள்ளிய உரை<dl><dd>உள்தள்ளிய உரை</dd></dl></dd></dl>"

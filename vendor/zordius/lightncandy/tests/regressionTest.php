@@ -771,6 +771,126 @@ class regressionTest extends PHPUnit_Framework_TestCase
             ),
 
             Array(
+                'id' => 157,
+                'template' => '{{{du_mp text=(du_mp "123")}}}',
+                'data' => null,
+                'options' => Array(
+                    'flags' => LightnCandy::FLAG_HANDLEBARSJS,
+                    'helpers' => Array(
+                        'du_mp' => function ($args, $named) {
+                            return 'arg:' . print_r($args, true) . ', named:' . print_r($named, true);
+                        }
+                    )
+                ),
+                'expected' => <<<VAREND
+arg:Array
+(
+)
+, named:Array
+(
+    [text] => arg:Array
+(
+    [0] => 123
+)
+, named:Array
+(
+)
+
+)
+
+VAREND
+            ),
+
+            Array(
+                'id' => 157,
+                'template' => '{{>test_js_partial}}',
+                'data' => null,
+                'options' => Array(
+                    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_RUNTIMEPARTIAL,
+                    'partials' => Array(
+                        'test_js_partial' => <<<VAREND
+Test GA....
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){console.log('works!')};})();
+</script>
+VAREND
+                    )
+                ),
+                'expected' => <<<VAREND
+Test GA....
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){console.log('works!')};})();
+</script>
+VAREND
+            ),
+
+            Array(
+                'id' => 159,
+                'template' => '{{#.}}true{{else}}false{{/.}}',
+                'data' => new ArrayObject(),
+                'options' => Array(
+                    'flags' => LightnCandy::FLAG_HANDLEBARSJS,
+                ),
+                'expected' => "false",
+            ),
+
+            Array(
+                'id' => 169,
+                'template' => '{{{{a}}}}true{{else}}false{{{{/a}}}}',
+                'data' => Array('a' => true),
+                'options' => Array(
+                    'flags' => LightnCandy::FLAG_HANDLEBARSJS,
+                ),
+                'expected' => "true{{else}}false",
+            ),
+
+            Array(
+                'id' => 171,
+                'template' => '{{#my_private_each .}}{{@index}}:{{.}},{{/my_private_each}}',
+                'data' => Array('a', 'b', 'c'),
+                'options' => Array(
+                    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION,
+                    'hbhelpers' => Array(
+                        'my_private_each'
+                    )
+                ),
+                'expected' => '0:a,1:b,2:c,',
+            ),
+
+            Array(
+                'id' => 175,
+                'template' => 'a{{!-- {{each}} haha {{/each}} --}}b',
+                'data' => null,
+                'options' => Array(
+                    'flags' => LightnCandy::FLAG_HANDLEBARSJS,
+                ),
+                'expected' => 'ab',
+            ),
+
+            Array(
+                'id' => 175,
+                'template' => 'c{{>test}}d',
+                'data' => null,
+                'options' => Array(
+                    'flags' => LightnCandy::FLAG_HANDLEBARSJS,
+                    'partials' => Array(
+                        'test' => 'a{{!-- {{each}} haha {{/each}} --}}b',
+                    ),
+                ),
+                'expected' => 'cabd',
+            ),
+
+            Array(
+                'id' => 177,
+                'template' => '{{{{a}}}} {{{{b}}}} {{{{/b}}}} {{{{/a}}}}',
+                'data' => Array('a' => true),
+                'options' => Array(
+                    'flags' => LightnCandy::FLAG_HANDLEBARSJS,
+                ),
+                'expected' => ' {{{{b}}}} {{{{/b}}}} ',
+            ),
+
+            Array(
                 'template' => '{{testNull null undefined 1}}',
                 'data' => 'test',
                 'options' => Array(

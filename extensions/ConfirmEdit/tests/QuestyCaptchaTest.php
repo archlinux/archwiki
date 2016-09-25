@@ -9,12 +9,12 @@ class QuestyCaptchaTest extends MediaWikiTestCase {
 
 		# setMwGlobals() requires $wgCaptchaQuestion to be set
 		if ( !isset( $GLOBALS['wgCaptchaQuestions'] ) ) {
-			$GLOBALS['wgCaptchaQuestions'] = array();
+			$GLOBALS['wgCaptchaQuestions'] = [];
 		}
 		$this->setMwGlobals( 'wgCaptchaQuestions', $config );
 		$this->mergeMwGlobalArrayValue(
 			'wgAutoloadClasses',
-			array( 'QuestyCaptcha' => __DIR__ . '/../QuestyCaptcha/QuestyCaptcha.class.php' )
+			[ 'QuestyCaptcha' => __DIR__ . '/../QuestyCaptcha/QuestyCaptcha.class.php' ]
 		);
 
 		$qc = new QuestyCaptcha();
@@ -22,28 +22,28 @@ class QuestyCaptchaTest extends MediaWikiTestCase {
 	}
 
 	public static function provideGetCaptcha() {
-		return array(
-			array(
-				array(
-					array(
+		return [
+			[
+				[
+					[
 						'question' => 'FooBar',
 						'answer' => 'Answer!',
-					),
-				),
-				array(
+					],
+				],
+				[
 					'question' => 'FooBar',
 					'answer' => 'Answer!',
-				),
-			),
-			array(
-				array(
+				],
+			],
+			[
+				[
 					'FooBar' => 'Answer!',
-				),
-				array(
+				],
+				[
 					'question' => 'FooBar',
 					'answer' => 'Answer!',
-				),
-			)
-		);
+				],
+			]
+		];
 	}
 }

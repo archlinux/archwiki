@@ -182,9 +182,9 @@
 	"wikieditor-toolbar-help-content-showreferences-description": "Seall na h-iomraidhean",
 	"wikieditor-toolbar-help-content-showreferences-result": "<ol class='iomraidhean'><li id='cite_note-test-0'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.ballsampaill.org' class='external text' href='#'>Teacsa a' cheangail</a>, teacsa eile.</li></ol>",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "Ainm sgrìobhte le stampa-ama",
-	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='{{#special:mypage}}'>Ainm-cleachdaiche</a> (<a href='#' title='{{#special:mytalk}}'>conaltradh</a>) 15:54, 10 dhen Ògmhios 2009 (UTC)",
+	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='$1:Username'>Ainm-cleachdaiche</a> (<a href='#' title='$2:Username'>conaltradh</a>) 15:54, 10 dhen Ògmhios 2009 (UTC)",
 	"wikieditor-toolbar-help-content-signature-description": "Ainm-sgrìobhte",
-	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='{{#special:mypage}}'>Ainm-cleachdaiche</a> (<a href='#' title='{{#special:mytalk}}'>conaltradh</a>)",
+	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>Ainm-cleachdaiche</a> (<a href='#' title='$2:Username'>conaltradh</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "Eagaich a-steach",
 	"wikieditor-toolbar-help-content-indent-syntax": "Teacsa àbhaisteach<br />:Teacsa air eagachadh a-steach<br />::Teacsa air eagachadh a-steach",
 	"wikieditor-toolbar-help-content-indent-result": "Teacsa àbhaisteach<dl><dd>Teacsa air eagachadh a-steach<dl><dd>Teacsa air eagachadh a-steach</dd></dl></dd></dl>"

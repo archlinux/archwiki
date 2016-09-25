@@ -12,7 +12,7 @@
 	"renameuser-desc": "Dodaje [[Special:RenameUser|posebnu stranicu]] u svrhu promjene imena korisnika (zahtjeva pravo ''preimenovanja korisnika'')",
 	"renameuserold": "Trenutno korisničko ime:",
 	"renameusernew": "Novo korisničko ime:",
-	"renameuserreason": "Razlog promjene imena:",
+	"renameuserreason": "Razlog:",
 	"renameusermove": "Premjesti korisnika i njegove stranice za razgovor (zajedno sa podstranicama) na novo ime",
 	"renameusersuppress": "Ne pravi preusmjerenja na novo ime",
 	"renameuserreserve": "Blokiraj staro korisničko ime od kasnijeg korištenja",

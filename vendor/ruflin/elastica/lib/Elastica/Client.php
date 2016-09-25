@@ -31,7 +31,7 @@ class Client
         'transport' => null,
         'persistent' => true,
         'timeout' => null,
-        'connections' => array(), // host, port, path, timeout, transport, persistent, timeout, config -> (curl, headers, url)
+        'connections' => array(), // host, port, path, timeout, transport, compression, persistent, timeout, config -> (curl, headers, url)
         'roundRobin' => false,
         'log' => false,
         'retryOnConflict' => 0,
@@ -532,7 +532,7 @@ class Client
      * @param array                  $ids     Document ids
      * @param string|\Elastica\Index $index   Index name
      * @param string|\Elastica\Type  $type    Type of documents
-     * @param string|false           $routing Optional routing key for all ids
+     * @param string|bool            $routing Optional routing key for all ids
      *
      * @throws \Elastica\Exception\InvalidException
      *

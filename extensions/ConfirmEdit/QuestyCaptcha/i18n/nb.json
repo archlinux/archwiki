@@ -3,10 +3,11 @@
 		"authors": [
 			"Helland",
 			"Nghtwlkr",
-			"Simny"
+			"Simny",
+			"Danmichaelo"
 		]
 	},
-	"questycaptcha-addurl": "Din endring inneholder nye eksterne lenker.\nFor å beskytte mot automatisert spam, vennligst svar på spørsmålet som vises under ([[Special:Captcha/help|mer informasjon]]):",
+	"questycaptcha-addurl": "Redigeringen din inneholder nye eksterne lenker. For å beskytte wikien mot automatisert spam, ber vi om at du svarer på spørsmålet som vises under ([[Special:Captcha/help|mer informasjon]]):",
 	"questycaptcha-badlogin": "For å hindre passordtyveri, vær vennlig og svar på spørsmålet under ([[Special:Captcha/help|mer informasjon]]):",
 	"questycaptcha-createaccount": "For å beskytte mot automatisert spam, vennligst svar på spørsmålet som vises under ([[Special:Captcha/help|mer informasjon]]):",
 	"questycaptcha-create": "For å opprette siden, vennligst svar på spørsmålet som vises under ([[Special:Captcha/help|mer informasjon]]):",

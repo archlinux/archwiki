@@ -1,0 +1,36 @@
+{
+	"@metadata": {
+		"authors": [
+			"Bjankuloski06",
+			"Brest",
+			"Iwan Novirion"
+		]
+	},
+	"visualeditor-cite-tool-name-book": "Книга",
+	"visualeditor-cite-tool-name-journal": "Списание",
+	"visualeditor-cite-tool-name-news": "Новости",
+	"visualeditor-cite-tool-name-web": "Мреж. место",
+	"cite-ve-dialog-reference-editing-reused": "Овој навод се користи {{PLURAL:$1|еднаш|$1 пати}} во страницава.",
+	"cite-ve-dialog-reference-options-group-label": "Употреби ја групава",
+	"cite-ve-dialog-reference-options-group-placeholder": "Општи наводи",
+	"cite-ve-dialog-reference-options-name-label": "Преупотреби под ова име",
+	"cite-ve-dialog-reference-options-section": "Нагодувања",
+	"cite-ve-dialog-reference-title": "Навод",
+	"cite-ve-dialog-reference-useexisting-full-label": "Употреби постоечки навод на страницата",
+	"cite-ve-dialog-reference-useexisting-label": "Искористи постоечки навод",
+	"cite-ve-dialog-reference-useexisting-tool": "Пренамени",
+	"cite-ve-dialog-referenceslist-contextitem-description-general": "Список на општи наводи",
+	"cite-ve-dialog-referenceslist-contextitem-description-named": "Список на наводи за групата „$1“",
+	"cite-ve-dialog-referenceslist-title": "Список на наводи",
+	"cite-ve-dialogbutton-citation-educationpopup-title": "Наводи",
+	"cite-ve-dialogbutton-citation-educationpopup-text": "Ја подобрува вашата содржина додавајќи извори на информациите. Можете да наведувате книги, весници и мрежни места.",
+	"cite-ve-dialogbutton-reference-full-label": "Основен облик",
+	"cite-ve-dialogbutton-reference-tooltip": "Основна",
+	"cite-ve-dialogbutton-reference-title": "Навод",
+	"cite-ve-dialogbutton-referenceslist-tooltip": "Список на наводи",
+	"cite-ve-reference-input-placeholder": "Пребарајте по тековните наводи",
+	"cite-ve-referenceslist-isempty": "На страницава нема наводи со групата „$1“ што би ги ставил во списоков.",
+	"cite-ve-referenceslist-isempty-default": "На страницава нема наводи што би ги ставил во списоков.",
+	"cite-ve-referenceslist-missingref": "Овој навод се задава во шаблон или друг самосоздаден блок. Засега може да се уредува само непосредно во изворот.",
+	"cite-ve-toolbar-group-label": "Наведи"
+}

@@ -9,14 +9,17 @@ class CiteThisPageHooks {
 	 * @param $revid
 	 * @return bool
 	 */
-	public static function onSkinTemplateBuildNavUrlsNav_urlsAfterPermalink( &$skintemplate, &$nav_urls, &$oldid, &$revid ) {
+	public static function onSkinTemplateBuildNavUrlsNav_urlsAfterPermalink(
+		&$skintemplate, &$nav_urls, &$oldid, &$revid
+	) {
 		// check whether we’re in the right namespace, the $revid has the correct type and is not empty
 		// (which would mean that the current page doesn’t exist)
 		$title = $skintemplate->getTitle();
-		if ( $title->isContentPage() && $revid !== 0 && !empty( $revid ) )
+		if ( $title->isContentPage() && $revid !== 0 && !empty( $revid ) ) {
 			$nav_urls['citeThisPage'] = array(
 				'args' => array( 'page' => $title->getPrefixedDBkey(), 'id' => $revid )
 			);
+		}
 
 		return true;
 	}

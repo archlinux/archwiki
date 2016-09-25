@@ -2,9 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Kolega2357",
-			"OC Ripper"
+			"OC Ripper",
+			"Conquistador"
 		]
 	},
 	"inputbox-tryexact": "Isprobaj naći tačan upit",
-	"inputbox-searchfulltext": "Pretraži cijeli tekst - Претражи цео текст"
+	"inputbox-searchfulltext": "Pretraži cijeli tekst - Претражи цео текст",
+	"inputbox-movearticle": "Premjesti stranicu"
 }

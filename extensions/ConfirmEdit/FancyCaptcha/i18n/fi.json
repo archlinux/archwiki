@@ -5,14 +5,19 @@
 			"Nike",
 			"Nedergard",
 			"Stryn",
-			"McSalama"
+			"McSalama",
+			"01miki10"
 		]
 	},
 	"fancycaptcha-addurl": "Muokkauksesi sisältää uusia linkkejä muille sivuille. Kirjoita kuvan sisältämät sanat alla olevaan tekstikenttään ([[Special:Captcha/help|lisätietoja]]):",
 	"fancycaptcha-badlogin": "Automatisoidun salasanan murtamisen estämiseksi kirjoita kuvan sisältämät sanat alla olevaan tekstikenttään ([[Special:Captcha/help|lisätietoja]]):",
+	"fancycaptcha-captcha": "Turvatarkastus",
 	"fancycaptcha-createaccount": "Suojellaksemme wikiä automaattisilta rekisteröitymisiltä pyydämme sinua kirjoittamaan kuvassa näkyvät kirjaimet alla olevaan laatikkoon. ([[Special:Captcha/help|lisätietoja]]):",
 	"fancycaptcha-create": "Muokkauksesi sisältää uusia linkkejä muille sivuille. Kirjoita kuvan sisältämät sanat alla olevaan tekstikenttään ([[Special:Captcha/help|lisätietoja]]):",
 	"fancycaptcha-edit": "Muokkauksesi sisältää uusia linkkejä muille sivuille. Kirjoita kuvan sisältämät sanat alla olevaan tekstikenttään ([[Special:Captcha/help|lisätietoja]]):",
+	"fancycaptcha-imgcaptcha-ph": "Kirjoita teksti, jonka näet yllä",
 	"fancycaptcha-sendemail": "Automatisoidun roskapostin lähettämisen vaikeuttamiseksi kirjoita kuvan sisältämät sanat alla olevaan tekstikenttään ([[Special:Captcha/help|lisätietoja]]):",
-	"fancycaptcha-reload-text": "Vaihda"
+	"fancycaptcha-reload-text": "Vaihda",
+	"apihelp-fancycaptchareload-description": "Hae uusi FancyCaptcha.",
+	"apihelp-fancycaptchareload-example-1": "Hae uusi FancyCaptcha"
 }

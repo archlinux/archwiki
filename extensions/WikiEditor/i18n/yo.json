@@ -178,8 +178,8 @@
 	"wikieditor-toolbar-help-content-showreferences-description": "Ìfihàn àwọn ìtọ́kasí",
 	"wikieditor-toolbar-help-content-showreferences-result": "<ol class='references'><li id='cite_note-test-0'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.example.org' class='external text' href='#'>Ìkọ ìjápọ̀</a>, ìkọ mìràn.</li></ol>",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "Ìtọwọ́bọ̀wé pẹ̀lú èdìdí àkókò",
-	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='{{#special:mypage}}'>Orúkọ oníṣe</a> (<a href='#' title='{{#special:mytalk}}'>ọ̀rọ̀</a>) 15:54, 10 June 2009 (UTC)",
+	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='$1:Username'>Orúkọ oníṣe</a> (<a href='#' title='$2:Username'>ọ̀rọ̀</a>) 15:54, 10 June 2009 (UTC)",
 	"wikieditor-toolbar-help-content-signature-description": "Ìtọwọ́bọ̀wé",
-	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='{{#special:mypage}}'>Orúkọ oníṣe</a> (<a href='#' title='{{#special:mytalk}}'>ọ̀rọ̀</a>)",
+	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>Orúkọ oníṣe</a> (<a href='#' title='$2:Username'>ọ̀rọ̀</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "Awọ́"
 }

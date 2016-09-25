@@ -8,7 +8,7 @@
 		]
 	},
 	"citethispage": "یادکرد این مقاله",
-	"citethispage-desc": "صفحهٔ ویژه‌ای برای [[Special:Cite|یادکرد]] اضافه می‌کند و پیوندی به جعبه ابزار می‌افزاید",
+	"citethispage-desc": "صفحهٔ ویژه‌ای برای [[Special:CiteThisPage|یادکرد]] اضافه می‌کند و پیوندی به جعبه ابزار می‌افزاید",
 	"citethispage-link": "یادکرد پیوند این مقاله",
 	"tooltip-citethispage": "اطلاعات در خصوص چگونگی یادکرد این صفحه",
 	"citethispage-change-submit": "یادکرد",

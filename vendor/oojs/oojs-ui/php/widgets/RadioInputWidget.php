@@ -12,34 +12,33 @@ class RadioInputWidget extends InputWidget {
 	 * @param boolean $config['selected'] Whether the radio button is initially selected
 	 *   (default: false)
 	 */
-	public function __construct( array $config = array() ) {
+	public function __construct( array $config = [] ) {
 		// Parent constructor
 		parent::__construct( $config );
 
 		// Initialization
-		$this->addClasses( array( 'oo-ui-radioInputWidget' ) );
+		$this->addClasses( [ 'oo-ui-radioInputWidget' ] );
 		// Required for pretty styling in MediaWiki theme
 		$this->appendContent( new Tag( 'span' ) );
 		$this->setSelected( isset( $config['selected'] ) ? $config['selected'] : false );
 	}
 
 	protected function getInputElement( $config ) {
-		$input = new Tag( 'input' );
-		$input->setAttributes( array( 'type' => 'radio' ) );
-		return $input;
+		return ( new Tag( 'input' ) )->setAttributes( [ 'type' => 'radio' ] );
 	}
 
 	/**
 	 * Set selection state of this radio button.
 	 *
 	 * @param boolean $state Whether the button is selected
+	 * @return $this
 	 */
 	public function setSelected( $state ) {
 		// RadioInputWidget doesn't track its state.
 		if ( $state ) {
-			$this->input->setAttributes( array( 'checked' => 'checked' ) );
+			$this->input->setAttributes( [ 'checked' => 'checked' ] );
 		} else {
-			$this->input->removeAttributes( array( 'checked' ) );
+			$this->input->removeAttributes( [ 'checked' ] );
 		}
 		return $this;
 	}

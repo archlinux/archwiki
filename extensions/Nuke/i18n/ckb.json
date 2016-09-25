@@ -1,9 +1,20 @@
 {
 	"@metadata": {
 		"authors": [
-			"Calak"
+			"Calak",
+			"Asoxor"
 		]
 	},
+	"nuke": "سڕینەوەی بەکۆمەڵ",
+	"nuke-submit-user": "بڕۆ",
+	"nuke-toggleinvert": "پێچەوانەی بکەرەوە",
+	"nuke-submit-delete": "ھەڵبژێرراوەکان بسڕەوە",
 	"right-nuke": "سڕینەوەی پەڕەکان بەکۆمەڵ",
+	"nuke-select": "ھەڵبژاردنی: $1",
+	"nuke-userorip": "ناوی بەکارھێنەر، ناونیشانی IP یان بۆش:",
+	"nuke-deleted": "پەڕەی '''$1''' سڕرایەوە.",
+	"nuke-not-deleted": "'''ناکرێت''' پەڕەی [[:$1]] بسڕرێتەوە.",
+	"nuke-delete-more": "[[Special:Nuke|سڕینەوەی پەڕەی دیکە]]",
+	"nuke-viewchanges": "گۆڕانکارییەکان ببینە",
 	"nuke-linkoncontribs": "سڕینەوەی بەکۆمەڵ"
 }

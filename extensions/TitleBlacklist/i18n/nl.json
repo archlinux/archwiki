@@ -3,7 +3,8 @@
 		"authors": [
 			"SPQRobin",
 			"Siebrand",
-			"Southparkfan"
+			"Southparkfan",
+			"Sjoerddebruin"
 		]
 	},
 	"action-titleblacklistlog": "logboek zwarte lijst voor paginanamen te bekijken",
@@ -19,5 +20,6 @@
 	"titleblacklist-override": "Zwarte lijst negeren",
 	"right-tboverride": "De zwarte lijst voor pagina- en gebruikersnamen omzeilen",
 	"right-tboverride-account": "Zwarte lijst voor gebruikersnamen negeren",
-	"right-titleblacklistlog": "Logboek zwarte lijst voor paginanamen bekijken"
+	"right-titleblacklistlog": "Logboek zwarte lijst voor paginanamen bekijken",
+	"apihelp-titleblacklist-example-1": "Controleer of [[Foo]] op de zwarte lijst staat."
 }

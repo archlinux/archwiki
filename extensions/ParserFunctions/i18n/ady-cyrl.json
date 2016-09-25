@@ -3,11 +3,12 @@
 		"authors": [
 			"Highlander45temp",
 			"TheRossatron",
-			"Inyzh"
+			"Inyzh",
+			"Amire80"
 		]
 	},
-	"pfunc_expr_unrecognised_word": "IуакIэр къуанчэ: ГущаIэу \"$1\"-р зэхэшIыкIыгъэп.",
-	"pfunc_expr_unexpected_operator": "IуакIэр къуанчэ: ОшIэдэмышIэ $1 оператор.",
-	"pfunc_expr_missing_operand": "КъэIокIэ тэрэзэп: $1-м пае операнд икъурэп.",
-	"pfunc_expr_unrecognised_punctuation": "IуакIэр къуанчэ: Пыутхэбзэ символэу \"$1\" зэхэшIыкIыгъэп."
+	"pfunc_expr_unrecognised_word": "ӀуакӀэр къуанчэ: ГущаӀэу \"$1\"-р зэхэшӀыкӀыгъэп.",
+	"pfunc_expr_unexpected_operator": "ӀуакӀэр къуанчэ: ОшӀэдэмышIэ $1 оператор.",
+	"pfunc_expr_missing_operand": "КъэӀокӀэ тэрэзэп: $1-м пае операнд икъурэп.",
+	"pfunc_expr_unrecognised_punctuation": "ӀуакӀэр къуанчэ: Пыутхэбзэ символэу \"$1\" зэхэшӀыкӀыгъэп."
 }

@@ -9,10 +9,12 @@
 			"Waihorace",
 			"Cwlin0416",
 			"LNDDYL",
-			"Liuxinyu970226"
+			"Liuxinyu970226",
+			"Bowleerin"
 		]
 	},
 	"captcha-edit": "要編輯這篇文章，請答出一個簡單的加法，然後在框內輸入  ([[Special:Captcha/help|更多資料]]) :",
+	"captcha-edit-fail": "錯誤或未輸入 CAPTCHA",
 	"captcha-desc": "提供 CAPTCHA 技術來阻止垃圾訊息和密碼猜解",
 	"captcha-label": "CAPTCHA",
 	"captcha-addurl": "你編輯的內容中含有一個新的外部連結；為了免受自動垃圾程式的侵擾，請答出一個簡單的加法，然後在框內輸入  ([[Special:Captcha/help|更多資料]]) :",

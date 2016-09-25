@@ -1,8 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"VASANTH S.N."
+			"VASANTH S.N.",
+			"Soundarya shetty s",
+			"Vishwanatha Badikana"
 		]
 	},
-	"fancycaptcha-reload-text": "ಪುನಶ್ಚೇತನಗೊಳಿಸಾಲೆ"
+	"fancycaptcha-captcha": "ಬದ್ರತೆದ ಪರೀಕ್ಷೆ",
+	"fancycaptcha-createaccount": "ವಿಕಿನ್ ರಕ್ಷನೆ ಮಲ್ಪೆರಾದ್ ಸ್ವಯಂ ಚಾಲಿತ ಕಾತೆಡ್ ಉಂಡಾತ್ಂಡ್, ಎಂಕ್ಲೊ ಮೋಕೆಡ್ ಚೌಕೊದ ತಿರ್ತ್ ತೋಜಿದ್ ಬರ್ಪುನ ಪದೊಕುಲೆನ್ ಸೇರಾಯರ ಕೇಂಡೊಂದುಲ್ಲೊ([[Special:Captcha/help|ದಿಂಜದ ಮಾಹಿತಿ]]):",
+	"fancycaptcha-imgcaptcha-ph": "ಮಿತ್ತ್ ತೂಯಿನ ಪದೊನು ಸೇರ್ಪಾಲೆ",
+	"fancycaptcha-reload-text": "ರಿಫ್ರೆಶ್ ಮಲ್ಪುಲೆ"
 }

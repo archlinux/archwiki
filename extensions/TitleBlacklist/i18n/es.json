@@ -7,11 +7,13 @@
 			"Remember the dot",
 			"Sanbec",
 			"MarcoAurelio",
-			"Macofe"
+			"Macofe",
+			"Lemondoge"
 		]
 	},
 	"action-titleblacklistlog": "ver el registro de la lista negra de títulos",
 	"log-name-titleblacklist": "Registro de la lista negra de títulos",
+	"logentry-titleblacklist-hit-username": "$1 {{GENDER:$2|causadas}} un título de la lista negra de golpe al intentar crear una cuenta de$3 la coincidencia de $4.",
 	"titleblacklist-desc": "Permite que los administradores prohíban la creación de páginas y cuentas de usuario mediante una [[MediaWiki:Titleblacklist|lista negra]] y una [[MediaWiki:Titlewhitelist|lista blanca]]",
 	"titleblacklist": "# Esta es una lista negra de títulos. No se pueden crear títulos o usuarios que coincidan con una de estas expresiones regulares.\n# Use «#» para comentarios.\n# Esta es insensible a las mayúsculas por defecto",
 	"titlewhitelist": "# Esta es una lista blanca de títulos. Usa «#» para comentarios.\n# Por omisión, no distingue mayúsculas de minúsculas",

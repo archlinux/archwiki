@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Toliño"
+			"Toliño",
+			"Elisardojm"
 		]
 	},
 	"recaptcha-desc": "Módulo de reCAPTCHA para Confirm Edit",
@@ -10,5 +11,7 @@
 	"recaptcha-badlogin": "Para protexer o wiki contra o roubo de contrasinais, introduza as dúas palabras que vexa na caixa:",
 	"recaptcha-createaccount": "Para protexer o wiki contra a creación automática de contas, introduza as dúas palabras que vexa na caixa:",
 	"recaptcha-createaccount-fail": "Falta a resposta ao reCAPTCHA ou esta é incorrecta.",
-	"recaptcha-create": "Para protexer o wiki contra a creación automática de páxinas, introduza as dúas palabras que vexa na caixa:"
+	"recaptcha-create": "Para protexer o wiki contra a creación automática de páxinas, introduza as dúas palabras que vexa na caixa:",
+	"recaptcha-apihelp-param-recaptcha_challenge_field": "Campo do formulario ReCaptcha",
+	"recaptcha-apihelp-param-recaptcha_response_field": "Campo do formulario ReCaptcha"
 }

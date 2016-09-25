@@ -4,10 +4,12 @@
 			"BrokenArrow",
 			"Edgars2007",
 			"Marozols",
-			"Yyy"
+			"Yyy",
+			"Papuass"
 		]
 	},
 	"captcha-edit": "Lai izmainītu šo lapu, atrisini šo vienādojumu un iegūto skaitli ieraksti šajā lodziņā: <br />([[Special:Captcha/help|Kāpēc tā?]])",
+	"captcha-label": "CAPTCHA",
 	"captcha-addurl": "Tavas izmaiņas ietver jaunu URL saiti.\nLai pasargātos no automātiskas mēstuļošanas, Tev ir jāieraksta te redzamā vienādojuma rezultāts: <br />([[Special:Captcha/help|vairāk informācijas]])",
 	"captcha-badlogin": "Lai pasargātos no automātiskiem paroļu lauzējiem, lūdzu aprēķini šīs izteiksmes vērtību un rezultātu ieraksti apakšā esošajā lodziņā ([[Special:Captcha/help|papildus informācija]]):",
 	"captcha-createaccount": "Lai pasargātos no automātiskas mēstuļošanas, Tev reģistrējoties ir jāieraksta šī vienādojuma rezultāts: <br />([[Special:Captcha/help|Kāpēc tā?]])",

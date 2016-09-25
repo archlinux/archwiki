@@ -12,7 +12,8 @@
 			"TMg",
 			"Umherirrender",
 			"Ziko",
-			"✓"
+			"✓",
+			"Purodha"
 		]
 	},
 	"wikieditor": "Fortgeschrittener Wikitext-Editor",
@@ -36,7 +37,6 @@
 	"wikieditor-toolbar-desc": "Bearbeiten-Werkzeugleiste mit verbesserter Benutzerfreundlichkeit",
 	"wikieditor-toolbar-preference": "Erweiterte Bearbeiten-Werkzeugleiste aktivieren",
 	"wikieditor-toolbar-dialogs-preference": "Assistenten zum Einfügen von Links und Tabellen sowie die Funktion „Suchen und Ersetzen“ aktivieren",
-	"wikieditor-toolbar-hidesig": "Die Schaltfläche für die Signatur bei Seiten im Artikelnamensraum ausblenden",
 	"wikieditor-toolbar-loading": "Lade …",
 	"wikieditor-toolbar-tool-bold": "Fett",
 	"wikieditor-toolbar-tool-bold-example": "Fetter Text",
@@ -81,6 +81,7 @@
 	"wikieditor-toolbar-file-format-none": "keine",
 	"wikieditor-toolbar-tool-file-insert": "Einfügen",
 	"wikieditor-toolbar-tool-file-cancel": "Abbrechen",
+	"wikieditor-toolbar-tool-file-upload": "Hochladen",
 	"wikieditor-toolbar-tool-reference": "Quellenangabe",
 	"wikieditor-toolbar-tool-reference-example": "Hier den Fußnotentext eingeben",
 	"wikieditor-toolbar-tool-reference-cancel": "Abbrechen",
@@ -131,7 +132,7 @@
 	"wikieditor-toolbar-tool-table-preview": "Vorschau",
 	"wikieditor-toolbar-tool-table-insert": "Einfügen",
 	"wikieditor-toolbar-tool-table-cancel": "Abbrechen",
-	"wikieditor-toolbar-tool-table-toomany": "Das Einfügen einer Tabelle mit mehr als {{PLURAL:$1|einer Zelle|1000 Zellen}} ist mit diesem Dialog nicht möglich.",
+	"wikieditor-toolbar-tool-table-toomany": "Das Einfügen einer Tabelle mit mehr als {{PLURAL:$1|einer Zelle|$1 Zellen}} ist mit diesem Dialog nicht möglich.",
 	"wikieditor-toolbar-tool-table-invalidnumber": "Du hast keine gültige Anzahl von Zeilen oder Spalten angegeben.",
 	"wikieditor-toolbar-tool-table-zero": "Du kannst keine Tabelle einfügen, die weder Zeilen noch Spalten hat.",
 	"wikieditor-toolbar-tool-replace": "Suchen und Ersetzen",
@@ -207,9 +208,9 @@
 	"wikieditor-toolbar-help-content-showreferences-description": "Einzelnachweise anzeigen",
 	"wikieditor-toolbar-help-content-showreferences-result": "<ol class='references'><li id='cite_note-test-0'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.example.org' class='external text' href='#'>Linktext</a>, zusätzlicher Text.</li><li id='cite_note-test-1'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.example.org' class='external text' href='#'>Linktext</a></li></ol>",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "Signatur mit Zeitstempel",
-	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='{{#special:mypage}}'>Benutzername</a> (<a href='#' title='{{#special:mytalk}}'>Diskussion</a>) 15:54, 10. Jun. 2009 (UTC)",
+	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='$1:Username'>Benutzername</a> (<a href='#' title='$2:Username'>Diskussion</a>) 15:54, 10. Jun. 2009 (UTC)",
 	"wikieditor-toolbar-help-content-signature-description": "Signatur",
-	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='{{#special:mypage}}'>Benutzername</a> (<a href='#' title='{{#special:mytalk}}'>Diskussion</a>)",
+	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>Benutzername</a> (<a href='#' title='$2:Username'>Diskussion</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "Einrücken",
 	"wikieditor-toolbar-help-content-indent-syntax": "Normaler Text<br />:Eingerückter Text<br />::Eingerückter Text",
 	"wikieditor-toolbar-help-content-indent-result": "Normaler Text<dl><dd>Eingerückter Text<dl><dd>Eingerückter Text</dd></dl></dd></dl>"

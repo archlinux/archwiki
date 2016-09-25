@@ -91,43 +91,6 @@ class WikiEditorHooks {
 	/* Static Methods */
 
 	/**
-	 * T99257: Extension registration does not properly support 2d arrays so set it as a global for now
-	 */
-	public static function onRegistration() {
-		// Each module may be configured individually to be globally on/off or user preference based
-		$features = array(
-
-			/* Textarea / i-frame compatible (OK to deploy) */
-
-			'toolbar' => array( 'global' => false, 'user' => true ),
-			// Provides interactive tools
-			'dialogs' => array( 'global' => false, 'user' => true ),
-
-			/* Textarea / i-frame compatible, but still experimental and unstable (do not deploy!) */
-
-			// Adds a tab for previewing in-line
-			'preview' => array( 'global' => false, 'user' => true ),
-			// Adds a button and dialog for step-by-step publishing
-			'publish' => array( 'global' => false, 'user' => true ),
-		);
-
-		// Eww, do a 2d array merge so we don't wipe out settings
-		global $wgWikiEditorFeatures;
-		if ( $wgWikiEditorFeatures ) {
-			foreach ( $features as $name => $settings ) {
-				if ( isset( $wgWikiEditorFeatures[$name] ) ) {
-					$wgWikiEditorFeatures[$name] += $settings;
-				} else {
-					$wgWikiEditorFeatures[$name] = $settings;
-				}
-			}
-		} else {
-			$wgWikiEditorFeatures = $features;
-		}
-
-	}
-
-	/**
 	 * Checks if a certain option is enabled
 	 *
 	 * This method is public to allow other extensions that use WikiEditor to use the

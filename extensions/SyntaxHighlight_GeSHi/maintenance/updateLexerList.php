@@ -62,6 +62,7 @@ class UpdateLanguageList extends Maintenance {
 				$lexers = array_merge( $lexers, $newLexers );
 			}
 		}
+		$lexers = array_unique( $lexers );
 		sort( $lexers );
 
 		$code = "<?php\n" .  $header .  'return ' . var_export( $lexers, true ) . ";\n";

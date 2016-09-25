@@ -5,9 +5,11 @@
  * @license GPL-2.0+
  */
 
-class LU_UpdaterTest extends MediaWikiTestCase {
+namespace LocalisationUpdate;
+
+class UpdaterTest extends \PHPUnit_Framework_TestCase {
 	public function testIsDirectory() {
-		$updater = new LU_Updater();
+		$updater = new Updater();
 
 		$this->assertTrue(
 			$updater->isDirectory( '/IP/extensions/Translate/i18n/*.json' ),
@@ -21,7 +23,7 @@ class LU_UpdaterTest extends MediaWikiTestCase {
 	}
 
 	public function testExpandRemotePath() {
-		$updater = new LU_Updater();
+		$updater = new Updater();
 		$repos = array( 'main' => 'file:///repos/%NAME%/%SOME-VAR%' );
 
 		$info = array(
@@ -37,18 +39,18 @@ class LU_UpdaterTest extends MediaWikiTestCase {
 	}
 
 	public function testReadMessages() {
-		$updater = $updater = new LU_Updater();
+		$updater = $updater = new Updater();
 
 		$input = array( 'file' => 'Hello World!' );
 		$output = array( 'en' => array( 'key' => $input['file'] ) );
 
-		$reader = $this->getMock( 'LU_Reader' );
+		$reader = $this->getMock( 'LocalisationUpdate\Reader' );
 		$reader
 			->expects( $this->once() )
 			->method( 'parse' )
 			->will( $this->returnValue( $output ) );
 
-		$factory = $this->getMock( 'LU_ReaderFactory' );
+		$factory = $this->getMock( 'LocalisationUpdate\ReaderFactory' );
 		$factory
 			->expects( $this->once() )
 			->method( 'getReader' )
@@ -59,7 +61,7 @@ class LU_UpdaterTest extends MediaWikiTestCase {
 	}
 
 	public function testFindChangedTranslations() {
-		$updater = $updater = new LU_Updater();
+		$updater = $updater = new Updater();
 
 		$origin = array(
 			'A' => '1',

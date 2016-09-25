@@ -4,11 +4,12 @@
 			"Linnea",
 			"Nike",
 			"ZeiP",
-			"Pxos"
+			"Pxos",
+			"01miki10"
 		]
 	},
 	"citethispage": "Viitetiedot",
-	"citethispage-desc": "Lisää työkaluihin toimintosivun, joka neuvoo [[Special:Cite|viittaamaan]] oikeaoppisesti.",
+	"citethispage-desc": "Lisää toimintosivun [[Special:CiteThisPage|viittauksille]] ja linkin työkaluihin.",
 	"citethispage-link": "Viitetiedot",
 	"tooltip-citethispage": "Tietoa tämän sivun lainaamisesta",
 	"citethispage-change-submit": "Viittaa",

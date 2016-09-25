@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Meursault2004"
+			"Meursault2004",
+			"NoiX180"
 		]
 	},
 	"pfunc_desc": "Kembangna parser mawa fungsi logis",
@@ -11,11 +12,11 @@
 	"pfunc_expr_stack_exhausted": "Kaluputan èksprèsi: Stack entèk",
 	"pfunc_expr_unexpected_number": "Kaluputan èksprèsi: Angka ora kaduga",
 	"pfunc_expr_preg_match_failure": "Kaluputan èksprèsi: Kaluputan preg_match sing ora kaduga",
-	"pfunc_expr_unrecognised_word": "Kaluputan èksprèsi: Tembung \"$1\" ora ditepungi",
+	"pfunc_expr_unrecognised_word": "Cacad wedharan: Tembung \"$1\" ora kawruhan.",
 	"pfunc_expr_unexpected_operator": "Kaluputan èksprèsi: Operator $1 ora kaduga",
 	"pfunc_expr_missing_operand": "Kaluputan èksprèsi: Operand ora ditemokaké kanggo $1",
 	"pfunc_expr_unexpected_closing_bracket": "Kaluputan èksprèsi: Kurung tutup ora kaduga",
-	"pfunc_expr_unrecognised_punctuation": "Kaluputan èksprèsi: Karakter tandha wacan \"$1\" ora ditepungi",
+	"pfunc_expr_unrecognised_punctuation": "Cacad wedharan: Pralambang pada \"$1\" ora kawruhan.",
 	"pfunc_expr_unclosed_bracket": "Kaluputan èksprèsi: Kurung tanpa tutup",
 	"pfunc_expr_division_by_zero": "Dipara karo das (nol)",
 	"pfunc_expr_invalid_argument": "Argumèn ora absah kanggo $1: < -1 utawa > 1",

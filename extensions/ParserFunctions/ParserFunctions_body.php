@@ -1,10 +1,10 @@
 <?php
 
 class ExtParserFunctions {
-	static $mExprParser;
-	static $mTimeCache = array();
-	static $mTimeChars = 0;
-	static $mMaxTimeChars = 6000; # ~10 seconds
+	public static $mExprParser;
+	public static $mTimeCache = array();
+	public static $mTimeChars = 0;
+	public static $mMaxTimeChars = 6000; # ~10 seconds
 
 	/**
 	 * @param $parser Parser
@@ -63,7 +63,7 @@ class ExtParserFunctions {
 		try {
 			$ret = self::getExprParser()->doExpression( $expr );
 			if ( is_numeric( $ret ) ) {
-				$ret = floatval( $ret );
+				$ret = (float)$ret;
 			}
 			if ( $ret ) {
 				return $then;
@@ -116,6 +116,9 @@ class ExtParserFunctions {
 	public static function ifeqObj( $parser, $frame, $args ) {
 		$left = isset( $args[0] ) ? self::decodeTrimExpand( $args[0], $frame ) : '';
 		$right = isset( $args[1] ) ? self::decodeTrimExpand( $args[1], $frame ) : '';
+
+		// Strict compare is not possible here. 01 should equal 1 for example.
+		/** @noinspection TypeUnsafeComparisonInspection */
 		if ( $left == $right ) {
 			return isset( $args[2] ) ? trim( $frame->expand( $args[2] ) ) : '';
 		} else {
@@ -165,7 +168,7 @@ class ExtParserFunctions {
 	 * @return string
 	 */
 	public static function switchObj( $parser, $frame, $args ) {
-		if ( count( $args ) == 0 ) {
+		if ( count( $args ) === 0 ) {
 			return '';
 		}
 		$primary = self::decodeTrimExpand( array_shift( $args ), $frame );
@@ -188,6 +191,7 @@ class ExtParserFunctions {
 					return trim( $frame->expand( $valueNode ) );
 				} else {
 					$test = self::decodeTrimExpand( $nameNode, $frame );
+					/** @noinspection TypeUnsafeComparisonInspection */
 					if ( $test == $primary ) {
 						# Found a match, return now
 						return trim( $frame->expand( $valueNode ) );
@@ -202,6 +206,7 @@ class ExtParserFunctions {
 				$lastItemHadNoEquals = true;
 				// $lastItem is an "out" variable
 				$decodedTest = self::decodeTrimExpand( $valueNode, $frame, $lastItem );
+				/** @noinspection TypeUnsafeComparisonInspection */
 				if ( $decodedTest == $primary ) {
 					$found = true;
 				} elseif ( $mwDefault->matchStartToEnd( $decodedTest ) ) {
@@ -236,22 +241,22 @@ class ExtParserFunctions {
 	public static function rel2abs( $parser , $to = '' , $from = '' ) {
 
 		$from = trim( $from );
-		if ( $from == '' ) {
+		if ( $from === '' ) {
 			$from = $parser->getTitle()->getPrefixedText();
 		}
 
 		$to = rtrim( $to , ' /' );
 
 		// if we have an empty path, or just one containing a dot
-		if ( $to == '' || $to == '.' ) {
+		if ( $to === '' || $to === '.' ) {
 			return $from;
 		}
 
 		// if the path isn't relative
-		if ( substr( $to , 0 , 1 ) != '/' &&
-		 substr( $to , 0 , 2 ) != './' &&
-		 substr( $to , 0 , 3 ) != '../' &&
-		 $to != '..' )
+		if ( substr( $to , 0 , 1 ) !== '/' &&
+		 substr( $to , 0 , 2 ) !== './' &&
+		 substr( $to , 0 , 3 ) !== '../' &&
+		 $to !== '..' )
 		{
 			$from = '';
 		}
@@ -270,7 +275,7 @@ class ExtParserFunctions {
 		$newExploded = array();
 
 		foreach ( $exploded as $current ) {
-			if ( $current == '..' ) { // removing one level
+			if ( $current === '..' ) { // removing one level
 				if ( !count( $newExploded ) ) {
 					// attempted to access a node above root node
 					$msg = wfMessage( 'pfunc_rel2abs_invalid_depth', $fullPath )->inContentLanguage()->escaped();
@@ -302,7 +307,7 @@ class ExtParserFunctions {
 		$title = Title::newFromText( $titletext );
 		$wgContLang->findVariantLink( $titletext, $title, true );
 		if ( $title ) {
-			if ( $title->getNamespace() == NS_MEDIA ) {
+			if ( $title->getNamespace() === NS_MEDIA ) {
 				/* If namespace is specified as NS_MEDIA, then we want to
 				 * check the physical file, not the "description" page.
 				 */
@@ -316,7 +321,7 @@ class ExtParserFunctions {
 				$parser->mOutput->addImage(
 					$file->getName(), $file->getTimestamp(), $file->getSha1() );
 				return $file->exists() ? $then : $else;
-			} elseif ( $title->getNamespace() == NS_SPECIAL ) {
+			} elseif ( $title->getNamespace() === NS_SPECIAL ) {
 				/* Don't bother with the count for special pages,
 				 * since their existence can be checked without
 				 * accessing the database.
@@ -332,7 +337,7 @@ class ExtParserFunctions {
 				$pdbk = $title->getPrefixedDBkey();
 				$lc = LinkCache::singleton();
 				$id = $lc->getGoodLinkID( $pdbk );
-				if ( $id != 0 ) {
+				if ( $id !== 0 ) {
 					$parser->mOutput->addLink( $title, $id );
 					return $then;
 				} elseif ( $lc->isBadLink( $pdbk ) ) {
@@ -537,8 +542,8 @@ class ExtParserFunctions {
 	 * @return string
 	 */
 	public static function titleparts( $parser, $title = '', $parts = 0, $offset = 0 ) {
-		$parts = intval( $parts );
-		$offset = intval( $offset );
+		$parts = (int)$parts;
+		$offset = (int)$offset;
 		$ntitle = Title::newFromText( $title );
 		if ( $ntitle instanceof Title ) {
 			$bits = explode( '/', $ntitle->getPrefixedText(), 25 );
@@ -548,7 +553,7 @@ class ExtParserFunctions {
 				if ( $offset > 0 ) {
 					--$offset;
 				}
-				if ( $parts == 0 ) {
+				if ( $parts === 0 ) {
 					return implode( '/', array_slice( $bits, $offset ) );
 				} else {
 					return implode( '/', array_slice( $bits, $offset, $parts ) );
@@ -614,10 +619,10 @@ class ExtParserFunctions {
 			return self::tooLongError();
 		}
 
-		if ( $inNeedle == '' ) { $inNeedle = ' '; }
+		if ( $inNeedle === '' ) { $inNeedle = ' '; }
 
-		$pos = mb_strpos( $inStr, $inNeedle, intval( $inOffset ) );
-		if ( $pos === false ) { $pos = ""; }
+		$pos = mb_strpos( $inStr, $inNeedle, (int)$inOffset );
+		if ( $pos === false ) { $pos = ''; }
 
 		return $pos;
 	}
@@ -643,7 +648,7 @@ class ExtParserFunctions {
 			return self::tooLongError();
 		}
 
-		if ( $inNeedle == '' ) { $inNeedle = ' '; }
+		if ( $inNeedle === '' ) { $inNeedle = ' '; }
 
 		$pos = mb_strrpos( $inStr, $inNeedle );
 		if ( $pos === false ) { $pos = -1; }
@@ -676,10 +681,10 @@ class ExtParserFunctions {
 			return self::tooLongError();
 		}
 
-		if ( intval( $inLength ) == 0 ) {
-			$result = mb_substr( $inStr, intval( $inStart ) );
+		if ( (int)$inLength === 0 ) {
+			$result = mb_substr( $inStr, (int)$inStart );
 		} else {
-			$result = mb_substr( $inStr, intval( $inStart ), intval( $inLength ) );
+			$result = mb_substr( $inStr, (int)$inStart, (int)$inLength );
 		}
 
 		return $result;
@@ -691,7 +696,7 @@ class ExtParserFunctions {
 	 * Returns number of occurrences of "substr" in "string".
 	 *
 	 * Note: If "substr" is empty, a single space is used.
-	 * @param $parser
+	 * @param $parser Parser
 	 * @param $inStr string
 	 * @param $inSubStr string
 	 * @return int|string
@@ -705,7 +710,7 @@ class ExtParserFunctions {
 			return self::tooLongError();
 		}
 
-		if ( $inSubStr == '' ) {
+		if ( $inSubStr === '' ) {
 			$inSubStr = ' ';
 		}
 
@@ -743,7 +748,7 @@ class ExtParserFunctions {
 			return self::tooLongError();
 		}
 
-		if ( $inReplaceFrom == '' ) { $inReplaceFrom = ' '; }
+		if ( $inReplaceFrom === '' ) { $inReplaceFrom = ' '; }
 
 		// Precompute limit to avoid generating enormous string:
 		$diff = mb_strlen( $inReplaceTo ) - mb_strlen( $inReplaceFrom );
@@ -753,9 +758,11 @@ class ExtParserFunctions {
 			$limit = -1;
 		}
 
-		$inLimit = intval( $inLimit );
+		$inLimit = (int)$inLimit;
 		if ( $inLimit >= 0 ) {
-			if ( $limit > $inLimit || $limit == -1 ) { $limit = $inLimit; }
+			if ( $limit > $inLimit || $limit == -1 ) {
+				$limit = $inLimit;
+			}
 		}
 
 		// Use regex to allow limit and handle UTF-8 correctly.
@@ -793,7 +800,7 @@ class ExtParserFunctions {
 		$inStr = $parser->killMarkers( (string)$inStr );
 		$inDiv = $parser->killMarkers( (string)$inDiv );
 
-		if ( $inDiv == '' ) {
+		if ( $inDiv === '' ) {
 			$inDiv = ' ';
 		}
 

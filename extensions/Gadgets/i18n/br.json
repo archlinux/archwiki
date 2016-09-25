@@ -10,6 +10,7 @@
 	"prefs-gadgets": "Bitrakoù",
 	"gadgets-prefstext": "A-is ez eus ur roll eus ar bitrakoù a c'hallit gweredekaat evit ho kont.\nEvit ar pep brasañ eo diazezet ar bitrakoù-se war JavaScript, setu ma rank JavaScript bezañ gweredekaet war ho merdeer evit ma'z afent en-dro.\nNotennit mat ne vo efed ebet gant ar bitrakoù-se war ar bajenn penndibaboù-mañ.\n\nNotennit ivez n'eus ket eus ar bitrakoù-se tammoù eus meziant MediaWiki; peurliesañ ez int diorroet ha trezalc'het gant implijerien war ho wiki lec'hel.\nGallout a ra ar verourien lec'hel degas cheñchamantoù er bitrakoù en ur ober gant an [[MediaWiki:Gadgets-definition|termenadurioù]] hag an [[Special:Gadgets|deskrivadurioù]].",
 	"gadgets": "Bitrakoù",
+	"gadgetusage-usercount": "Niver a implijerien",
 	"gadgets-title": "Bitrakoù",
 	"gadgets-pagetext": "A-is ez eus ur roll eus ar bitrakoù a c'hall bezañ gweredekaet gant an implijerien war o fajenn [[Special:Preferences#mw-prefsection-gadgets|penndibaboù]], evel m'eo termenet en [[MediaWiki:Gadgets-definition|termenadurioù]].\nAr sell hollek-mañ a bourchas ur moned aes d'ar pajennoù kemennadennoù reizhiad a dermen deskrivadur ha kod pep bitrak.",
 	"gadgets-uses": "A implij",

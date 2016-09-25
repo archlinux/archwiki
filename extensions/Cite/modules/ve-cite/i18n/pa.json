@@ -1,0 +1,25 @@
+{
+	"@metadata": {
+		"authors": [
+			"Amikeco",
+			"Babanwalia",
+			"Bouron",
+			"Nasir8891",
+			"Aalam",
+			"Satdeep gill"
+		]
+	},
+	"visualeditor-cite-tool-name-book": "ਕਿਤਾਬ",
+	"visualeditor-cite-tool-name-journal": "ਰਸਾਲਾ",
+	"visualeditor-cite-tool-name-news": "ਖ਼ਬਰਾਂ",
+	"visualeditor-cite-tool-name-web": "ਵੈੱਬਸਾਈਟ",
+	"cite-ve-dialog-reference-options-group-placeholder": "ਆਮ ਹਵਾਲੇ",
+	"cite-ve-dialog-reference-title": "ਹਵਾਲਾ",
+	"cite-ve-dialog-reference-useexisting-label": "ਮੌਜੂਦਾ ਹਵਾਲਾ ਵਰਤੋ",
+	"cite-ve-dialog-reference-useexisting-tool": "ਮੁੜ-ਵਰਤੋਂ",
+	"cite-ve-dialog-referenceslist-contextitem-description-general": "ਆਮ ਹਵਾਲਿਆਂ ਦੀ ਸੂਚੀ",
+	"cite-ve-dialogbutton-reference-title": "ਹਵਾਲਾ",
+	"cite-ve-dialogbutton-referenceslist-tooltip": "ਹਵਾਲਾ ਸੂਚੀ",
+	"cite-ve-referenceslist-isempty-default": "ਇਸ ਸੂਚੀ ਵਿੱਚ ਸ਼ਾਮਿਲ ਕਰਨ ਲਈ ਇਸ ਸਫ਼ੇ ਉੱਤੇ ਕੋਈ ਹਵਾਲੇ ਨਹੀਂ ਹਨ।",
+	"cite-ve-toolbar-group-label": "ਹਵਾਲਾ"
+}

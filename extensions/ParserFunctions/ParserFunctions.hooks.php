@@ -60,7 +60,7 @@ class ParserFunctionsHooks {
 	}
 
 	public static function onScribuntoExternalLibraries( $engine, array &$extraLibraries ) {
-		if ( $engine == 'lua' ) {
+		if ( $engine === 'lua' ) {
 			$extraLibraries['mw.ext.ParserFunctions'] = 'Scribunto_LuaParserFunctionsLibrary';
 		}
 		return true;

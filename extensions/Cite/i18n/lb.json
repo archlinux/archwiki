@@ -21,6 +21,8 @@
 	"cite_error_references_missing_key": "Deen am <code>&lt;references&gt;</code> definéierten <code>&lt;ref&gt;</code>-Tag mam Numm \"$1\" gëtt am Text virdrun net benotzt.",
 	"cite_error_references_no_key": "D'Markéierung <code>&lt;ref&gt;</code> déi an <code>&lt;references&gt;</code> definéiert ass huet keng Nummeegeschaft.",
 	"cite_error_empty_references_define": "D'Markéierung <code>&lt;ref&gt;</code> déi am <code>&lt;references&gt;</code> mat dem Numm  « $1 » definéiert ass, ass eidel.",
+	"cite-tracking-category-cite-error": "Säite mat Referenzfeeler",
 	"cite_references_link_accessibility_label": "No uewe sprangen",
-	"cite_references_link_many_accessibility_label": "Eropsprangen op:"
+	"cite_references_link_many_accessibility_label": "Eropsprangen op:",
+	"cite_section_preview_references": "Referenze kucken ouni ze späicheren"
 }

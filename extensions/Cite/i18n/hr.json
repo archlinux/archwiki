@@ -15,6 +15,7 @@
 	"cite_error_ref_no_key": "nevaljana <code>&lt;ref&gt;</code> oznaka; izvori bez sadržaja moraju imati naziv",
 	"cite_error_ref_too_many_keys": "nevaljana <code>&lt;ref&gt;</code> oznaka; loš naziv, npr. previše naziva",
 	"cite_error_ref_no_input": "nevaljana <code>&lt;ref&gt;</code> oznaka; izvori bez imena moraju imati sadržaj",
+	"cite_error_references_duplicate_key": "nevaljala <code>&lt;ref&gt;</code> oznaka; ime \"$1\" definirano više puta s različitim sadržajem",
 	"cite_error_references_invalid_parameters": "nevaljana <code>&lt;references&gt;</code> oznaka; parametri nisu dozvoljeni, koristite <code>&lt;references /&gt;</code>",
 	"cite_error_references_invalid_parameters_group": "neispravna <code>&lt;references&gt;</code> oznaka,\ndopuštena je samo opcija \"group\".\nKoristite <code>&lt;references /&gt;</code>, ili <code>&lt;references group=\"...\" /&gt;</code>",
 	"cite_error_references_no_backlink_label": "potrošene sve posebne oznake za poveznice unatrag, definirajte više u poruci <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>",
@@ -26,5 +27,6 @@
 	"cite_error_references_missing_group": "<code>&lt;ref&gt;</code> oznaka definirana u <code>&lt;references&gt;</code> ima grupni atribut \"$1\" koji se ne pojavljuje u ranijem tekstu.",
 	"cite_error_references_missing_key": "<code>&lt;ref&gt;</code> oznaka s imenom \"$1\" definirana u <code>&lt;references&gt;</code> nije prethodno rabljena u tekstu.",
 	"cite_error_references_no_key": "<code>&lt;ref&gt;</code> oznaka definirana u <code>&lt;references&gt;</code> nema parametar \"name\" (ime).",
-	"cite_error_empty_references_define": "<code>&lt;ref&gt;</code> oznaka definirana u <code>&lt;references&gt;</code> s imenom \"$1\" nema sadržaja."
+	"cite_error_empty_references_define": "<code>&lt;ref&gt;</code> oznaka definirana u <code>&lt;references&gt;</code> s imenom \"$1\" nema sadržaja.",
+	"cite-tracking-category-cite-error-desc": "Stranice u ovoj kategoriji imaju pogrješno rabljene oznake izvora."
 }

@@ -11,5 +11,6 @@
 	"config": {
 		"CaptchaClass": "QuestyCaptcha",
 		"CaptchaQuestions": []
-	}
+	},
+	"manifest_version": 1
 }

@@ -1,66 +1,108 @@
 OO.ui.Demo.static.pages.widgets = function ( demo ) {
-	var styles, states, buttonStyleShowcaseWidget, fieldsets,
+	var i, styles, states, buttonStyleShowcaseWidget, $table, fieldsets,
 		capsuleWithPopup, capsulePopupWidget,
+		horizontalDragItems = [],
+		verticalDragItems = [],
+		verticalHandledDragItems = [],
 		$demo = demo.$element;
 
 	/**
 	 * Draggable group widget containing drag/drop items
+	 *
 	 * @param {Object} [config] Configuration options
 	 */
-	function DragDropGroupWidget( config ) {
+	function DraggableGroupWidget( config ) {
 		// Configuration initialization
 		config = config || {};
 
 		// Parent constructor
-		DragDropGroupWidget.parent.call( this, config );
+		DraggableGroupWidget.parent.call( this, config );
 
 		// Mixin constructors
 		OO.ui.mixin.DraggableGroupElement.call( this, $.extend( {}, config, { $group: this.$element } ) );
-
-		// Respond to reorder event
-		this.connect( this, { reorder: 'onReorder' } );
 	}
-	/* Setup */
-	OO.inheritClass( DragDropGroupWidget, OO.ui.Widget );
-	OO.mixinClass( DragDropGroupWidget, OO.ui.mixin.DraggableGroupElement );
 
-	/**
-	 * Respond to order event
-	 * @param {OO.ui.mixin.DraggableElement} item Reordered item
-	 * @param {number} newIndex New index
-	 */
-	DragDropGroupWidget.prototype.onReorder = function ( item, newIndex ) {
-		this.addItems( [ item ], newIndex );
-	};
+	/* Setup */
+	OO.inheritClass( DraggableGroupWidget, OO.ui.Widget );
+	OO.mixinClass( DraggableGroupWidget, OO.ui.mixin.DraggableGroupElement );
 
 	/**
 	 * Drag/drop items
+	 *
 	 * @param {Object} [config] Configuration options
 	 */
-	function DragDropItemWidget( config ) {
+	function DraggableItemWidget( config ) {
 		// Configuration initialization
 		config = config || {};
 
 		// Parent constructor
-		DragDropItemWidget.parent.call( this, config );
+		DraggableItemWidget.parent.call( this, config );
 
 		// Mixin constructors
 		OO.ui.mixin.DraggableElement.call( this, config );
 	}
+
 	/* Setup */
-	OO.inheritClass( DragDropItemWidget, OO.ui.OptionWidget );
-	OO.mixinClass( DragDropItemWidget, OO.ui.mixin.DraggableElement );
+	OO.inheritClass( DraggableItemWidget, OO.ui.DecoratedOptionWidget );
+	OO.mixinClass( DraggableItemWidget, OO.ui.mixin.DraggableElement );
+
+	/**
+	 * Drag/drop items with custom handle
+	 *
+	 * @param {Object} [config] Configuration options
+	 */
+	function DraggableHandledItemWidget( config ) {
+		// Configuration initialization
+		config = config || {};
+
+		// Parent constructor
+		DraggableHandledItemWidget.parent.call( this, config );
+
+		// Mixin constructors
+		OO.ui.mixin.DraggableElement.call( this, $.extend( { $handle: this.$icon }, config ) );
+	}
+
+	/* Setup */
+	OO.inheritClass( DraggableHandledItemWidget, OO.ui.DecoratedOptionWidget );
+	OO.mixinClass( DraggableHandledItemWidget, OO.ui.mixin.DraggableElement );
+
+	for ( i = 0; i <= 12; i++ ) {
+		horizontalDragItems.push(
+			new DraggableItemWidget( {
+				data: 'item' + i,
+				icon: 'tag',
+				label: 'Inline item ' + i
+			} )
+		);
+		if ( i <= 6 ) {
+			verticalDragItems.push(
+				new DraggableItemWidget( {
+					data: 'item' + i,
+					icon: 'tag',
+					label: 'Item ' + i
+				} )
+			);
+			verticalHandledDragItems.push(
+				new DraggableHandledItemWidget( {
+					data: 'item' + i,
+					icon: 'menu',
+					label: 'Item ' + i
+				} )
+			);
+		}
+	}
 
 	/**
 	 * Demo for LookupElement.
+	 *
 	 * @extends OO.ui.TextInputWidget
 	 * @mixins OO.ui.mixin.LookupElement
 	 */
-	function NumberLookupTextInputWidget() {
+	function NumberLookupTextInputWidget( config ) {
 		// Parent constructor
 		OO.ui.TextInputWidget.call( this, { validate: 'integer' } );
 		// Mixin constructors
-		OO.ui.mixin.LookupElement.call( this );
+		OO.ui.mixin.LookupElement.call( this, config );
 	}
 	OO.inheritClass( NumberLookupTextInputWidget, OO.ui.TextInputWidget );
 	OO.mixinClass( NumberLookupTextInputWidget, OO.ui.mixin.LookupElement );
@@ -74,16 +116,14 @@ OO.ui.Demo.static.pages.widgets = function ( demo ) {
 			deferred = $.Deferred(),
 			delay = 500 + Math.floor( Math.random() * 500 );
 
-		this.isValid().done( function ( valid ) {
-			if ( valid ) {
-				// Resolve with results after a faked delay
-				setTimeout( function () {
-					deferred.resolve( [ value * 1, value * 2, value * 3, value * 4, value * 5 ] );
-				}, delay );
-			} else {
-				// No results when the input contains invalid content
-				deferred.resolve( [] );
-			}
+		this.getValidity().then( function () {
+			// Resolve with results after a faked delay
+			setTimeout( function () {
+				deferred.resolve( [ value * 1, value * 2, value * 3, value * 4, value * 5 ] );
+			}, delay );
+		}, function () {
+			// No results when the input contains invalid content
+			deferred.resolve( [] );
 		} );
 
 		return deferred.promise( { abort: function () {} } );
@@ -201,14 +241,19 @@ OO.ui.Demo.static.pages.widgets = function ( demo ) {
 		}
 	];
 	buttonStyleShowcaseWidget = new OO.ui.Widget();
+	$table = $( '<table>' );
 	$.each( styles, function ( i, style ) {
+		var $tableRow = $( '<tr>' );
 		$.each( states, function ( j, state ) {
-			buttonStyleShowcaseWidget.$element.append(
+			var $tableCell = $( '<td>' );
+			$tableCell.append(
 				new OO.ui.ButtonWidget( $.extend( {}, style, state ) ).$element
 			);
+			$tableRow.append( $tableCell );
 		} );
-		buttonStyleShowcaseWidget.$element.append( $( '<br>' ) );
+		$table.append( $tableRow );
 	} );
+	buttonStyleShowcaseWidget.$element.append( $table );
 
 	fieldsets = [
 		new OO.ui.FieldsetLayout( {
@@ -237,7 +282,7 @@ OO.ui.Demo.static.pages.widgets = function ( demo ) {
 						flags: [ 'constructive' ]
 					} ),
 					{
-						label: 'ButtonWidget (constructive)\u200E',
+						label: 'ButtonWidget (constructive, deprecated in MediaWiki theme)\u200E',
 						align: 'top'
 					}
 				),
@@ -267,7 +312,7 @@ OO.ui.Demo.static.pages.widgets = function ( demo ) {
 						flags: [ 'primary', 'constructive' ]
 					} ),
 					{
-						label: 'ButtonWidget (primary, constructive)\u200E',
+						label: 'ButtonWidget (primary, constructive, deprecated in MediaWiki theme)\u200E',
 						align: 'top'
 					}
 				),
@@ -293,24 +338,24 @@ OO.ui.Demo.static.pages.widgets = function ( demo ) {
 				),
 				new OO.ui.FieldLayout(
 					new OO.ui.ButtonWidget( {
-						label: 'Constructive',
-						flags: [ 'constructive' ],
+						label: 'Progressive',
+						flags: [ 'progressive' ],
 						disabled: true
 					} ),
 					{
-						label: 'ButtonWidget (constructive, disabled)\u200E',
+						label: 'ButtonWidget (progressive, disabled)\u200E',
 						align: 'top'
 					}
 				),
 				new OO.ui.FieldLayout(
 					new OO.ui.ButtonWidget( {
-						label: 'Constructive',
+						label: 'Progressive',
 						icon: 'tag',
-						flags: [ 'constructive' ],
+						flags: [ 'progressive' ],
 						disabled: true
 					} ),
 					{
-						label: 'ButtonWidget (constructive, icon, disabled)\u200E',
+						label: 'ButtonWidget (progressive, icon, disabled)\u200E',
 						align: 'top'
 					}
 				),
@@ -349,10 +394,10 @@ OO.ui.Demo.static.pages.widgets = function ( demo ) {
 					new OO.ui.ButtonWidget( {
 						label: 'Indicator',
 						indicator: 'down',
-						flags: [ 'constructive' ]
+						flags: [ 'progressive' ]
 					} ),
 					{
-						label: 'ButtonWidget (indicator, constructive)\u200E',
+						label: 'ButtonWidget (indicator, progressive)\u200E',
 						align: 'top'
 					}
 				),
@@ -722,6 +767,13 @@ OO.ui.Demo.static.pages.widgets = function ( demo ) {
 					}
 				),
 				new OO.ui.FieldLayout(
+					new OO.ui.NumberInputWidget( { disabled: true } ),
+					{
+						label: 'NumberInputWidget (disabled)',
+						align: 'top'
+					}
+				),
+				new OO.ui.FieldLayout(
 					new OO.ui.NumberInputWidget( { min: 1, max: 5, isInteger: true } ),
 					{
 						label: 'NumberInputWidget (1–5, ints only)',
@@ -732,6 +784,13 @@ OO.ui.Demo.static.pages.widgets = function ( demo ) {
 					new OO.ui.NumberInputWidget( { min: 0, max: 1, step: 0.1, pageStep: 0.25 } ),
 					{
 						label: 'NumberInputWidget (0–1, step by .1, page by .25)',
+						align: 'top'
+					}
+				),
+				new OO.ui.FieldLayout(
+					new OO.ui.NumberInputWidget( { showButtons: false } ),
+					{
+						label: 'NumberInputWidget (no buttons)',
 						align: 'top'
 					}
 				),
@@ -827,6 +886,13 @@ OO.ui.Demo.static.pages.widgets = function ( demo ) {
 					}
 				),
 				new OO.ui.FieldLayout(
+					new OO.ui.TextInputWidget( { type: 'number' } ),
+					{
+						label: 'TextInputWidget (type=number)\u200E',
+						align: 'top'
+					}
+				),
+				new OO.ui.FieldLayout(
 					new OO.ui.TextInputWidget( {
 						value: 'Readonly',
 						readOnly: true
@@ -877,6 +943,20 @@ OO.ui.Demo.static.pages.widgets = function ( demo ) {
 					} ),
 					{
 						label: 'TextInputWidget (autosize, rows=10)\u200E',
+						align: 'top'
+					}
+				),
+				new OO.ui.FieldLayout(
+					new OO.ui.TextInputWidget( {
+						multiline: true,
+						autosize: true,
+						icon: 'tag',
+						indicator: 'required',
+						label: 'Inline label',
+						value: 'Autosize\nAutosize\nAutosize\nAutosize'
+					} ),
+					{
+						label: 'TextInputWidget (autosize, icon, indicator, label)\u200E',
 						align: 'top'
 					}
 				),
@@ -1119,7 +1199,56 @@ OO.ui.Demo.static.pages.widgets = function ( demo ) {
 					}
 				),
 				new OO.ui.FieldLayout(
-					new OO.ui.ComboBoxWidget( {
+					new OO.ui.DropdownInputWidget( {
+						options: [
+							{ data: 'sq', label: 'Albanian' },
+							{ data: 'frp', label: 'Arpitan' },
+							{ data: 'ba', label: 'Bashkir' },
+							{ data: 'pt-br', label: 'Brazilian Portuguese' },
+							{ data: 'tzm', label: 'Central Atlas Tamazight' },
+							{ data: 'zh', label: 'Chinese' },
+							{ data: 'co', label: 'Corsican' },
+							{ data: 'del', label: 'Delaware' },
+							{ data: 'eml', label: 'Emiliano-Romagnolo' },
+							{ data: 'en', label: 'English' },
+							{ data: 'fi', label: 'Finnish' },
+							{ data: 'aln', label: 'Gheg Albanian' },
+							{ data: 'he', label: 'Hebrew' },
+							{ data: 'ilo', label: 'Iloko' },
+							{ data: 'kbd', label: 'Kabardian' },
+							{ data: 'csb', label: 'Kashubian' },
+							{ data: 'avk', label: 'Kotava' },
+							{ data: 'lez', label: 'Lezghian' },
+							{ data: 'nds-nl', label: 'Low Saxon' },
+							{ data: 'ml', label: 'Malayalam' },
+							{ data: 'dum', label: 'Middle Dutch' },
+							{ data: 'ary', label: 'Moroccan Arabic' },
+							{ data: 'pih', label: 'Norfuk / Pitkern' },
+							{ data: 'ny', label: 'Nyanja' },
+							{ data: 'ang', label: 'Old English' },
+							{ data: 'non', label: 'Old Norse' },
+							{ data: 'pau', label: 'Palauan' },
+							{ data: 'pdt', label: 'Plautdietsch' },
+							{ data: 'ru', label: 'Russian' },
+							{ data: 'stq', label: 'Saterland Frisian' },
+							{ data: 'ii', label: 'Sichuan Yi' },
+							{ data: 'bcc', label: 'Southern Balochi' },
+							{ data: 'shi', label: 'Tachelhit' },
+							{ data: 'th', label: 'Thai' },
+							{ data: 'tr', label: 'Turkish' },
+							{ data: 'fiu-vro', label: 'Võro' },
+							{ data: 'vls', label: 'West Flemish' },
+							{ data: 'zea', label: 'Zeelandic' }
+						],
+						value: 'en'
+					} ),
+					{
+						label: 'DropdownInputWidget (long)\u200E',
+						align: 'top'
+					}
+				),
+				new OO.ui.FieldLayout(
+					new OO.ui.ComboBoxInputWidget( {
 						menu: {
 							items: [
 								new OO.ui.MenuOptionWidget( { data: 'asd', label: 'Label for asd' } ),
@@ -1131,12 +1260,12 @@ OO.ui.Demo.static.pages.widgets = function ( demo ) {
 						}
 					} ),
 					{
-						label: 'ComboBoxWidget',
+						label: 'ComboBoxInputWidget',
 						align: 'top'
 					}
 				),
 				new OO.ui.FieldLayout(
-					new OO.ui.ComboBoxWidget( {
+					new OO.ui.ComboBoxInputWidget( {
 						disabled: true,
 						menu: {
 							items: [
@@ -1149,14 +1278,14 @@ OO.ui.Demo.static.pages.widgets = function ( demo ) {
 						}
 					} ),
 					{
-						label: 'ComboBoxWidget (disabled)\u200E',
+						label: 'ComboBoxInputWidget (disabled)\u200E',
 						align: 'top'
 					}
 				),
 				new OO.ui.FieldLayout(
-					new OO.ui.ComboBoxWidget(),
+					new OO.ui.ComboBoxInputWidget(),
 					{
-						label: 'ComboBoxWidget (empty)\u200E',
+						label: 'ComboBoxInputWidget (empty)\u200E',
 						align: 'top'
 					}
 				),
@@ -1204,7 +1333,6 @@ OO.ui.Demo.static.pages.widgets = function ( demo ) {
 						disabled: true,
 						icon: 'tag',
 						indicator: 'required',
-						values: [ 'jkl', 'zxc' ],
 						menu: {
 							items: [
 								new OO.ui.MenuOptionWidget( { data: 'abc', label: 'Label for abc' } ),
@@ -1218,6 +1346,22 @@ OO.ui.Demo.static.pages.widgets = function ( demo ) {
 					} ),
 					{
 						label: 'CapsuleMultiSelectWidget (disabled)\u200E',
+						align: 'top'
+					}
+				),
+				new OO.ui.FieldLayout(
+					new OO.ui.CapsuleMultiSelectWidget( {
+						disabled: true,
+						menu: {
+							items: [
+								new OO.ui.MenuOptionWidget( { data: 'abc', label: 'Label for abc' } ),
+								new OO.ui.MenuOptionWidget( { data: 'asd', label: 'Label for asd' } ),
+								new OO.ui.MenuOptionWidget( { data: 'jkl', label: 'Label for jkl' } )
+							]
+						}
+					} ).addItemsFromData( [ 'abc', 'asd' ] ),
+					{
+						label: 'CapsuleMultiSelectWidget (disabled, initially selected)\u200E',
 						align: 'top'
 					}
 				),
@@ -1327,26 +1471,9 @@ OO.ui.Demo.static.pages.widgets = function ( demo ) {
 			label: 'Draggable',
 			items: [
 				new OO.ui.FieldLayout(
-					new DragDropGroupWidget( {
+					new DraggableGroupWidget( {
 						orientation: 'horizontal',
-						items: [
-							new DragDropItemWidget( {
-								data: 'item1',
-								label: 'Item 1'
-							} ),
-							new DragDropItemWidget( {
-								data: 'item2',
-								label: 'Item 2'
-							} ),
-							new DragDropItemWidget( {
-								data: 'item3',
-								label: 'Item 3'
-							} ),
-							new DragDropItemWidget( {
-								data: 'item4',
-								label: 'Item 4'
-							} )
-						]
+						items: horizontalDragItems
 					} ),
 					{
 						label: 'DraggableGroupWidget (horizontal)\u200E',
@@ -1354,28 +1481,20 @@ OO.ui.Demo.static.pages.widgets = function ( demo ) {
 					}
 				),
 				new OO.ui.FieldLayout(
-					new DragDropGroupWidget( {
-						items: [
-							new DragDropItemWidget( {
-								data: 'item1',
-								label: 'Item 1'
-							} ),
-							new DragDropItemWidget( {
-								data: 'item2',
-								label: 'Item 2'
-							} ),
-							new DragDropItemWidget( {
-								data: 'item3',
-								label: 'Item 3'
-							} ),
-							new DragDropItemWidget( {
-								data: 'item4',
-								label: 'Item 4'
-							} )
-						]
+					new DraggableGroupWidget( {
+						items: verticalDragItems
 					} ),
 					{
 						label: 'DraggableGroupWidget (vertical)\u200E',
+						align: 'top'
+					}
+				),
+				new OO.ui.FieldLayout(
+					new DraggableGroupWidget( {
+						items: verticalHandledDragItems
+					} ),
+					{
+						label: 'DraggableGroupWidget with handles (vertical)\u200E',
 						align: 'top'
 					}
 				)
@@ -1386,8 +1505,8 @@ OO.ui.Demo.static.pages.widgets = function ( demo ) {
 			items: [
 				new OO.ui.FieldLayout(
 					new OO.ui.IconWidget( {
-						icon: 'picture',
-						title: 'Picture icon'
+						icon: 'search',
+						title: 'Search icon'
 					} ),
 					{
 						label: 'IconWidget (normal)\u200E',
@@ -1407,8 +1526,8 @@ OO.ui.Demo.static.pages.widgets = function ( demo ) {
 				),
 				new OO.ui.FieldLayout(
 					new OO.ui.IconWidget( {
-						icon: 'picture',
-						title: 'Picture icon',
+						icon: 'search',
+						title: 'Search icon',
 						disabled: true
 					} ),
 					{
@@ -1461,7 +1580,7 @@ OO.ui.Demo.static.pages.widgets = function ( demo ) {
 						label: new OO.ui.HtmlSnippet( '<b>Fancy</b> <i>text</i> <u>formatting</u>!' )
 					} ),
 					{
-						label: 'LabelWidget (with html)\u200E',
+						label: 'LabelWidget (with HTML)\u200E',
 						align: 'top'
 					}
 				),
@@ -1570,6 +1689,15 @@ OO.ui.Demo.static.pages.widgets = function ( demo ) {
 					new NumberLookupTextInputWidget(),
 					{
 						label: 'LookupElement (try inputting an integer)\u200E',
+						align: 'top'
+					}
+				),
+				new OO.ui.FieldLayout(
+					new NumberLookupTextInputWidget( {
+						highlightFirst: false
+					} ),
+					{
+						label: 'LookupElement without highlighting 1st term (try inputting an integer)\u200E',
 						align: 'top'
 					}
 				),
@@ -1726,10 +1854,10 @@ OO.ui.Demo.static.pages.widgets = function ( demo ) {
 		} ),
 		new OO.ui.FormLayout( {
 			method: 'GET',
-			action: 'widgets.php',
+			action: 'demos.php',
 			items: [
 				new OO.ui.FieldsetLayout( {
-					label: 'Form layout',
+					label: 'Form layout (compounded example)',
 					items: [
 						new OO.ui.FieldLayout(
 							new OO.ui.TextInputWidget( {
@@ -1748,6 +1876,73 @@ OO.ui.Demo.static.pages.widgets = function ( demo ) {
 							{
 								label: 'Password',
 								align: 'top'
+							}
+						),
+						new OO.ui.FieldLayout(
+							new OO.ui.ButtonSelectWidget( {
+								items: [
+									new OO.ui.ButtonOptionWidget( {
+										label: 'One'
+									} ),
+									new OO.ui.ButtonOptionWidget( {
+										label: 'Two'
+									} ),
+									new OO.ui.ButtonOptionWidget( {
+										indicator: 'required',
+										label: 'Three'
+									} )
+								]
+							} ),
+							{
+								label: 'Select one of multiple ButtonSelectWidget Buttons',
+								align: 'top'
+							}
+						),
+						new OO.ui.FieldLayout(
+							new OO.ui.SelectFileWidget( {} ),
+							{
+								label: 'Select a file with SelectFileWidget\u200E',
+								align: 'top'
+							}
+						),
+						new OO.ui.FieldLayout(
+							new OO.ui.CapsuleMultiSelectWidget( {
+								menu: {
+									items: [
+										new OO.ui.MenuOptionWidget( { data: 'abc', label: 'Abc Label' } ),
+										new OO.ui.MenuOptionWidget( { data: 'def', label: 'Def Label' } ),
+										new OO.ui.MenuOptionWidget( { data: 'ghi', label: 'Ghi Label' } )
+									]
+								}
+							} ).addItemsFromData( [ 'abc', 'def' ] ),
+							{
+								label: 'Select from multiple CapsuleMultiSelectWidget items\u200E',
+								align: 'top'
+							}
+						),
+						new OO.ui.FieldLayout(
+							new OO.ui.RadioSelectWidget( {
+								items: [
+									new OO.ui.RadioOptionWidget( {
+										data: 'mouse',
+										label: 'Mouse'
+									} ),
+									new OO.ui.RadioOptionWidget( {
+										data: 'elephant',
+										label: 'Elephant'
+									} )
+								]
+							} ),
+							{
+								align: 'top',
+								label: 'Toggle the RadioSelectWidget'
+							}
+						),
+						new OO.ui.FieldLayout(
+							new OO.ui.ToggleSwitchWidget( { value: true } ),
+							{
+								label: 'Switch the ToggleSwitchWidget (checked)',
+								align: 'right'
 							}
 						),
 						new OO.ui.FieldLayout(
@@ -1772,6 +1967,13 @@ OO.ui.Demo.static.pages.widgets = function ( demo ) {
 								label: null,
 								align: 'top'
 							}
+						),
+						new OO.ui.FieldLayout(
+							new OO.ui.ButtonWidget( {
+								framed: false,
+								flags: [ 'constructive' ],
+								label: 'Constructive feedback'
+							} )
 						)
 					]
 				} )

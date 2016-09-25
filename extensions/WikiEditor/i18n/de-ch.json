@@ -11,6 +11,5 @@
 	"wikieditor-toolbar-tool-big-example": "Grosser Text",
 	"wikieditor-toolbar-tool-newline": "Zeilenumbruch erzwingen (nicht im Fliesstext verwenden)",
 	"wikieditor-toolbar-tool-replace-case": "Gross- und Kleinschreibung beachten",
-	"wikieditor-toolbar-tool-replace-close": "Schliessen",
-	"wikieditor-toolbar-help-content-file-result": "<div style='width:102px;' class='thumbinner'><a title='Beschreibung' class='image' href='#'><img height='50' width='100' border='0' class='thumbimage' src='$1/WikiEditor/modules/images/toolbar/example-image.png' alt=''/></a><div class='thumbcaption'><div class='magnify'><a title='Vergrössern' class='internal' href='#'></a></div>Beschreibung</div></div>"
+	"wikieditor-toolbar-tool-replace-close": "Schliessen"
 }

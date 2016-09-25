@@ -8,16 +8,17 @@
 			"GR44 Luc",
 			"SamGamgee",
 			"SmartNart12",
-			"Inyzh"
+			"Inyzh",
+			"Highlander45temp"
 		]
 	},
-	"vector-action-addsection": "Iофтхьабз",
-	"vector-action-delete": "ЛъэкӀ",
+	"vector-action-addsection": "Ӏофтхьабз",
+	"vector-action-delete": "ТегъэкӀ",
 	"vector-action-move": "Хьы",
 	"vector-action-protect": "Иухъумэ",
-	"vector-action-undelete": "Умылъэк1",
+	"vector-action-undelete": "УмылъэкӀ",
 	"vector-action-unprotect": "Умыухъумэ",
-	"vector-view-create": "КъэшI",
+	"vector-view-create": "КъэшӀ",
 	"vector-view-edit": "ХэӀэзыхь",
 	"vector-view-history": "Тарихъым eплъ",
 	"vector-view-view": "Едж",

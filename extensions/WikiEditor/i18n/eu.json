@@ -7,7 +7,8 @@
 			"Xabier Armendaritz",
 			"පසිඳු කාවින්ද",
 			"Macofe",
-			"Sator"
+			"Sator",
+			"Subi"
 		]
 	},
 	"wikieditor": "Wikitestu edizio-interfaze aurreratua",
@@ -53,7 +54,7 @@
 	"wikieditor-toolbar-tool-link-insert": "Lotura txertatu",
 	"wikieditor-toolbar-tool-link-cancel": "Utzi",
 	"wikieditor-toolbar-tool-link-int-target-status-exists": "Orrialdea existitzen da",
-	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Orrialdea ez da existitzen",
+	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Orri hori ez da existitzen",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Balio gabeko izenburua",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Kanpo lotura",
 	"wikieditor-toolbar-tool-link-int-target-status-loading": "Orriaren existentzia egiaztatzen...",
@@ -72,6 +73,7 @@
 	"wikieditor-toolbar-file-format": "Formatua:",
 	"wikieditor-toolbar-tool-file-insert": "Txertatu",
 	"wikieditor-toolbar-tool-file-cancel": "Utzi",
+	"wikieditor-toolbar-tool-file-upload": "Igo",
 	"wikieditor-toolbar-tool-reference": "Erreferentzia",
 	"wikieditor-toolbar-tool-reference-example": "Txertatu testu oina hemen",
 	"wikieditor-toolbar-tool-reference-cancel": "Utzi",
@@ -194,9 +196,9 @@
 	"wikieditor-toolbar-help-content-showreferences-description": "Erreferentziak erakutsi",
 	"wikieditor-toolbar-help-content-showreferences-result": "<ol class='references'><li id='cite_note-test-0'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.adibidea.org' class='external text' href='#'>Loturaren testua</a>, testu gehigarria.</li></ol>",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "Sindaura, eguna eta ordua",
-	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='{{#special:mypage}}'>Lankide izena</a> (<a href='#' title='{{#special:mytalk}}'>eztabaida</a>) 2009-06-10, 15:54 (UTC)",
+	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='$1:Username'>Lankide izena</a> (<a href='#' title='$2:Username'>eztabaida</a>) 2009-06-10, 15:54 (UTC)",
 	"wikieditor-toolbar-help-content-signature-description": "Sinadura",
-	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='{{#special:mypage}}'>Lankide izena</a> (<a href='#' title='{{#special:mytalk}}'>eztabaida</a>)",
+	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>Lankide izena</a> (<a href='#' title='$2:Username'>eztabaida</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "Koska",
 	"wikieditor-toolbar-help-content-indent-syntax": "Testu normala<br />: Koskatutako testua<br />:: Koskatutako testua",
 	"wikieditor-toolbar-help-content-indent-result": "Testu arrunta<dl><dd>Koskatutako testua<dl><dd>Koskatutako testua</dd></dl></dd></dl>"

@@ -3,7 +3,8 @@
 		"authors": [
 			"Alma",
 			"Toliño",
-			"Xosé"
+			"Xosé",
+			"Elisardojm"
 		]
 	},
 	"interwiki": "Ver e modificar os datos interwiki",
@@ -33,18 +34,18 @@
 	"interwiki_reasonfield": "Motivo:",
 	"interwiki_delquestion": "Borrando \"$1\"",
 	"interwiki_deleting": "Está a piques de borrar o prefixo \"$1\".",
-	"interwiki_deleted": "Eliminouse correctamente o prefixo \"$1\" da táboa de interwikis.",
+	"interwiki_deleted": "Eliminouse o prefixo \"$1\" da táboa de interwikis.",
 	"interwiki_delfailed": "Non se puido eliminar o prefixo \"$1\" da táboa de interwikis.",
 	"interwiki-logtext": "Ver o rexistro",
 	"interwiki_addtext": "Engadir un interwiki ou prefixo de lingua",
 	"interwiki-addtext-local": "Engadir un interwiki local ou prefixo de lingua",
 	"interwiki_addintro": "Está engadindo un novo prefixo interwiki. Recorde que non pode conter espazos ( ), dous puntos (:), símbolos de unión (&) ou signos de igual (=).",
 	"interwiki_addbutton": "Engadir",
-	"interwiki_added": "Engadiuse correctamente o prefixo \"$1\" á táboa de interwikis.",
+	"interwiki_added": "Engadiuse o prefixo \"$1\" á táboa de interwikis.",
 	"interwiki_addfailed": "Non se puido engadir o prefixo \"$1\" á táboa de interwikis.\nPosiblemente xa existe na táboa de interwikis.",
 	"interwiki_edittext": "Editando un prefixo interwiki",
 	"interwiki_editintro": "Está editando un prefixo interwiki. Lembre que isto pode quebrar ligazóns existentes.",
-	"interwiki_edited": "Modificouse correctamente o prefixo \"$1\" na táboa de interwikis.",
+	"interwiki_edited": "Modificouse o prefixo \"$1\" na táboa de interwikis.",
 	"interwiki_editerror": "Non se puido modificar o prefixo \"$1\" na táboa de interwikis.\nPosiblemente non existe.",
 	"interwiki-badprefix": "O prefixo interwiki especificado \"$1\" contén caracteres non válidos",
 	"interwiki-submit-empty": "O prefixo e o enderezo URL non poden quedar baleiros.",

@@ -116,7 +116,7 @@ class Query extends Param
      */
     public function setQuery(AbstractQuery $query)
     {
-        return $this->setParam('query', $query->toArray());
+        return $this->setParam('query', $query);
     }
 
     /**
@@ -286,6 +286,20 @@ class Query extends Param
     }
 
     /**
+     * Sets the fields not stored to be returned by the search.
+     *
+     * @param array $fieldDataFields Fields not stored to be returned
+     *
+     * @return $this
+     *
+     * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-fielddata-fields.html
+     */
+    public function setFieldDataFields(array $fieldDataFields)
+    {
+        return $this->setParam('fielddata_fields', $fieldDataFields);
+    }
+
+    /**
      * Set script fields.
      *
      * @param array|\Elastica\ScriptFields $scriptFields Script fields
@@ -300,20 +314,20 @@ class Query extends Param
             $scriptFields = new ScriptFields($scriptFields);
         }
 
-        return $this->setParam('script_fields', $scriptFields->toArray());
+        return $this->setParam('script_fields', $scriptFields);
     }
 
     /**
      * Adds a Script to the query.
      *
-     * @param string           $name
-     * @param \Elastica\Script $script Script object
+     * @param string                   $name
+     * @param \Elastica\AbstractScript $script Script object
      *
      * @return $this
      */
-    public function addScriptField($name, Script $script)
+    public function addScriptField($name, AbstractScript $script)
     {
-        $this->_params['script_fields'][$name] = $script->toArray();
+        $this->_params['script_fields'][$name] = $script;
 
         return $this;
     }
@@ -349,7 +363,7 @@ class Query extends Param
      */
     public function addFacet(AbstractFacet $facet)
     {
-        $this->_params['facets'][$facet->getName()] = $facet->toArray();
+        $this->_params['facets'][] = $facet;
 
         return $this;
     }
@@ -366,7 +380,8 @@ class Query extends Param
         if (!array_key_exists('aggs', $this->_params)) {
             $this->_params['aggs'] = array();
         }
-        $this->_params['aggs'][$agg->getName()] = $agg->toArray();
+
+        $this->_params['aggs'][] = $agg;
 
         return $this;
     }
@@ -390,13 +405,19 @@ class Query extends Param
             unset($this->_params['post_filter']);
         }
 
-        return $this->_params;
+        $array = $this->_convertArrayable($this->_params);
+
+        if (isset($array['suggest'])) {
+            $array['suggest'] = $array['suggest']['suggest'];
+        }
+
+        return $array;
     }
 
     /**
      * Allows filtering of documents based on a minimum score.
      *
-     * @param int $minScore Minimum score to filter documents by
+     * @param float $minScore Minimum score to filter documents by
      *
      * @throws \Elastica\Exception\InvalidException
      *
@@ -420,10 +441,7 @@ class Query extends Param
      */
     public function setSuggest(Suggest $suggest)
     {
-        $this->setParams(array_merge(
-            $this->getParams(),
-            $suggest->toArray()
-        ));
+        $this->setParam('suggest', $suggest);
 
         $this->_suggest = 1;
 
@@ -443,10 +461,10 @@ class Query extends Param
             $buffer = array();
 
             foreach ($rescore as $rescoreQuery) {
-                $buffer [] = $rescoreQuery->toArray();
+                $buffer [] = $rescoreQuery;
             }
         } else {
-            $buffer = $rescore->toArray();
+            $buffer = $rescore;
         }
 
         return $this->setParam('rescore', $buffer);
@@ -477,9 +495,7 @@ class Query extends Param
      */
     public function setPostFilter($filter)
     {
-        if ($filter instanceof AbstractFilter) {
-            $filter = $filter->toArray();
-        } else {
+        if (!($filter instanceof AbstractFilter)) {
             trigger_error('Deprecated: Elastica\Query::setPostFilter() passing filter as array is deprecated. Pass instance of AbstractFilter instead.', E_USER_DEPRECATED);
         }
 

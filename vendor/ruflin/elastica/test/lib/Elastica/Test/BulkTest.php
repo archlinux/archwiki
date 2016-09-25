@@ -448,7 +448,19 @@ class BulkTest extends BaseTest
         if (!function_exists('socket_create')) {
             $this->markTestSkipped('Function socket_create() does not exist.');
         }
+
         $client = $this->_getClient($clientConfig);
+
+        $data = $client->request('/_nodes')->getData();
+        $rawNode = array_pop($data['nodes']);
+
+        if (!isset($rawNode['settings']['bulk']['udp']['enabled'])
+            || !$rawNode['settings']['bulk']['udp']['enabled']
+            || 'false' === $rawNode['settings']['bulk']['udp']['enabled']
+        ) {
+            $this->markTestSkipped('Bulk udp not enabled?');
+        }
+
         $index = $client->getIndex('elastica_test');
         $index->create(array('index' => array('number_of_shards' => 1, 'number_of_replicas' => 0)), true);
         $type = $index->getType('udp_test');
@@ -472,8 +484,10 @@ class BulkTest extends BaseTest
 
         $i = 0;
         $limit = 20;
+
+        // adds 6 documents and checks if on average every document is added in less then 0.2 seconds
         do {
-            usleep(200000);
+            usleep(200000);    // 0.2 seconds
         } while ($type->count() < 6 && ++$i < $limit);
 
         if ($shouldFail) {
@@ -493,6 +507,7 @@ class BulkTest extends BaseTest
      */
     public function testUpdate()
     {
+        $this->_checkScriptInlineSetting();
         $index = $this->_createIndex();
         $type = $index->getType('bulk_test');
         $client = $index->getClient();
@@ -709,10 +724,10 @@ class BulkTest extends BaseTest
 
         $startMemory = memory_get_usage();
 
-        for ($n = 1; $n < 10; $n++) {
+        for ($n = 1; $n < 10; ++$n) {
             $docs = array();
 
-            for ($i = 1; $i <= 3000; $i++) {
+            for ($i = 1; $i <= 3000; ++$i) {
                 $docs[] = new Document(uniqid(), $data);
             }
 
@@ -732,17 +747,7 @@ class BulkTest extends BaseTest
         return array(
             array(
                 array(),
-                null,
-                null,
-            ),
-            array(
-                array(),
                 $this->_getHost(),
-                null,
-            ),
-            array(
-                array(),
-                null,
                 9700,
             ),
             array(

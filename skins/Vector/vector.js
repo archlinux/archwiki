@@ -2,6 +2,14 @@
  * Vector-specific scripts
  */
 jQuery( function ( $ ) {
+
+	/**
+	 * Collapsible tabs
+	 */
+	var $cactions = $( '#p-cactions' ),
+		$tabContainer = $( '#p-views ul' ),
+		originalDropdownWidth = $cactions.width();
+
 	/**
 	 * Focus search input at the very end
 	 */
@@ -32,13 +40,6 @@ jQuery( function ( $ ) {
 			// As the h3 can already be focused there's no need for the link to be focusable
 			.attr( 'tabindex', '-1' );
 	} );
-
-	/**
-	 * Collapsible tabs
-	 */
-	var $cactions = $( '#p-cactions' ),
-		$tabContainer = $( '#p-views ul' ),
-		originalDropdownWidth = $cactions.width();
 
 	// Bind callback functions to animate our drop down menu in and out
 	// and then call the collapsibleTabs function on the menu

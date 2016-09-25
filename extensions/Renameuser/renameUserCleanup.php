@@ -92,22 +92,22 @@ class RenameUserCleanup extends Maintenance {
 		$oldTitle = Title::makeTitle( NS_USER, $olduser->getName() );
 
 		$result = $dbr->select( 'logging', '*',
-			array( 'log_type' => 'renameuser',
+			[ 'log_type' => 'renameuser',
 				'log_action' => 'renameuser',
 				'log_namespace' => NS_USER,
 				'log_title' => $oldTitle->getDBkey(),
 				'log_params' => $newuser->getName()
-			),
+			],
 			__METHOD__
 		);
 		if ( !$result || !$result->numRows() ) {
 			// try the old format
 			$result = $dbr->select( 'logging', '*',
-				array( 'log_type' => 'renameuser',
+				[ 'log_type' => 'renameuser',
 					'log_action' => 'renameuser',
 					'log_namespace' => NS_USER,
 					'log_title' => $olduser->getName(),
-				),
+				],
 				__METHOD__
 			);
 			if ( !$result || !$result->numRows() ) {
@@ -182,7 +182,7 @@ class RenameUserCleanup extends Maintenance {
 		$dbw = wfGetDB( DB_MASTER );
 
 		$contribs = $dbw->selectField( $table, 'count(*)',
-			array( $usernamefield => $olduser->getName(), $useridfield => $uid ), __METHOD__ );
+			[ $usernamefield => $olduser->getName(), $useridfield => $uid ], __METHOD__ );
 
 		if ( $contribs === 0 ) {
 			print "No edits to be re-attributed from table $table for uid $uid\n";
@@ -206,8 +206,8 @@ class RenameUserCleanup extends Maintenance {
 			return ( 0 );
 		}
 
-		$selectConds = array( $usernamefield => $olduser->getName(), $useridfield => $uid );
-		$updateFields = array( $usernamefield => $newuser->getName(), $useridfield => $newuser->getId() );
+		$selectConds = [ $usernamefield => $olduser->getName(), $useridfield => $uid ];
+		$updateFields = [ $usernamefield => $newuser->getName(), $useridfield => $newuser->getId() ];
 
 		while ( $contribs > 0 ) {
 			print 'Doing batch of up to approximately ' . $this->mBatchSize . "\n";
@@ -220,26 +220,26 @@ class RenameUserCleanup extends Maintenance {
 
 				return ( 0 );
 			}
-			$dbw->begin();
+			$this->beginTransaction( $dbw, __METHOD__ );
 			$result = $dbw->select( $table, $timestampfield, $selectConds, __METHOD__,
-				array( 'ORDER BY' => $timestampfield . ' DESC', 'LIMIT' => $this->mBatchSize ) );
+				[ 'ORDER BY' => $timestampfield . ' DESC', 'LIMIT' => $this->mBatchSize ] );
 			if ( !$result ) {
 				print "There were rows for updating but now they are gone. Skipping.\n";
-				$dbw->rollback();
+				$this->rollbackTransaction( $dbw, __METHOD__ );
 
 				return ( 0 );
 			}
 			$result->seek( $result->numRows() - 1 );
 			$row = $result->fetchObject();
 			$timestamp = $row->$timestampfield;
-			$updateCondsWithTime = array_merge( $selectConds, array( "$timestampfield >= $timestamp" ) );
+			$updateCondsWithTime = array_merge( $selectConds, [ "$timestampfield >= $timestamp" ] );
 			$success = $dbw->update( $table, $updateFields, $updateCondsWithTime, __METHOD__ );
 			if ( $success ) {
 				$rowsDone = $dbw->affectedRows();
-				$dbw->commit();
+				$this->commitTransaction( $dbw, __METHOD__ );
 			} else {
 				print "Problem with the update, rolling back and exiting\n";
-				$dbw->rollback();
+				$this->rollbackTransaction( $dbw, __METHOD__ );
 				exit( 1 );
 			}
 

@@ -3,6 +3,7 @@
 	"author": "Tim Starling",
 	"url": "https://www.mediawiki.org/wiki/Extension:ImageMap",
 	"descriptionmsg": "imagemap_desc",
+	"license-name": "GPL-2.0+",
 	"type": "parserhook",
 	"MessagesDirs": {
 		"ImageMap": [

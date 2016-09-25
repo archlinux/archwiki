@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Helix84"
+			"Helix84",
+			"Teslaton"
 		]
 	},
 	"cite-desc": "Pridáva značky <nowiki><ref[ name=id]></nowiki> a <nowiki><references/></nowiki> pre citácie",
@@ -21,5 +22,7 @@
 	"cite_error_references_missing_group": "Značka <code>&lt;ref&gt;</code> v <code>&lt;references&gt;</code> má atribút skupiny „$1“, ktorý sa v predošlom texte nevyskytuje.",
 	"cite_error_references_missing_key": "Značka <code>&lt;ref&gt;</code> s názvom „$1“ definovaná v <code>&lt;references&gt;</code> sa v predošlom texte nevyskytuje.",
 	"cite_error_references_no_key": "Značka <code>&lt;ref&gt;</code> s definovaná v <code>&lt;references&gt;</code> nemá žiaden atribút názov.",
-	"cite_error_empty_references_define": "Značka <code>&lt;ref&gt;</code> s definovaná v <code>&lt;references&gt;</code> s názvom „$1“ nemá žiaden obsah."
+	"cite_error_empty_references_define": "Značka <code>&lt;ref&gt;</code> s definovaná v <code>&lt;references&gt;</code> s názvom „$1“ nemá žiaden obsah.",
+	"cite-tracking-category-cite-error": "Stránky s chybami v referenciách",
+	"cite-tracking-category-cite-error-desc": "Stránky v tejto kategórii obsahujú chyby v použití značiek pre citačné referencie."
 }

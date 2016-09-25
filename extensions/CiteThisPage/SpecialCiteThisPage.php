@@ -61,6 +61,26 @@ class SpecialCiteThisPage extends SpecialPage {
 		);
 	}
 
+	/**
+	 * Return an array of subpages beginning with $search that this special page will accept.
+	 *
+	 * @param string $search Prefix to search for
+	 * @param int $limit Maximum number of results to return (usually 10)
+	 * @param int $offset Number of results to skip (usually 0)
+	 * @return string[] Matching subpages
+	 */
+	public function prefixSearchSubpages( $search, $limit, $offset ) {
+		$title = Title::newFromText( $search );
+		if ( !$title || !$title->canExist() ) {
+			// No prefix suggestion in special and media namespace
+			return array();
+		}
+		// Autocomplete subpage the same as a normal search
+		$prefixSearcher = new StringPrefixSearch;
+		$result = $prefixSearcher->search( $search, $limit, array(), $offset );
+		return $result;
+	}
+
 	protected function getGroupName() {
 		return 'pagetools';
 	}
@@ -113,11 +133,12 @@ class CiteThisPageOutput {
 
 		$msg = wfMessage( 'citethispage-content' )->inContentLanguage()->plain();
 		if ( $msg == '' ) {
-			# With MediaWiki 1.20 the plain text files were deleted and the text moved into SpecialCite.i18n.php
+			# With MediaWiki 1.20 the plain text files were deleted
+			# and the text moved into SpecialCite.i18n.php
 			# This code is kept for b/c in case an installation has its own file "citethispage-content-xx"
 			# for a previously not supported language.
 			global $wgContLang, $wgContLanguageCode;
-			$dir = dirname( __FILE__ ) . DIRECTORY_SEPARATOR;
+			$dir = __DIR__ . DIRECTORY_SEPARATOR;
 			$code = $wgContLang->lc( $wgContLanguageCode );
 			if ( file_exists( "${dir}citethispage-content-$code" ) ) {
 				$msg = file_get_contents( "${dir}citethispage-content-$code" );
@@ -125,11 +146,13 @@ class CiteThisPageOutput {
 				$msg = file_get_contents( "${dir}citethispage-content" );
 			}
 		}
-		$ret = $wgParser->parse( $msg, $this->mTitle, $this->mParserOptions, false, true, $this->getRevId() );
+		$ret = $wgParser->parse(
+			$msg, $this->mTitle, $this->mParserOptions, false, true, $this->getRevId()
+		);
 		$wgOut->addModuleStyles( 'ext.citeThisPage' );
 
 		# Introduced in 1.24
-		if( method_exists( $wgOut, 'addParserOutputContent' ) ) {
+		if ( method_exists( $wgOut, 'addParserOutputContent' ) ) {
 			$wgOut->addParserOutputContent( $ret );
 		} else {
 			$wgOut->addHTML( $ret->getText() );

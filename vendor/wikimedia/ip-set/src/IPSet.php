@@ -80,11 +80,11 @@ namespace IPSet;
  * a net loss in my test scenarios due to additional match complexity)
  */
 class IPSet {
-	/** @var array $root4 The root of the IPv4 matching tree */
-	private $root4 = array( false, false );
+	/** @var array|bool $root4 The root of the IPv4 matching tree */
+	private $root4 = false;
 
-	/** @var array $root6 The root of the IPv6 matching tree */
-	private $root6 = array( false, false );
+	/** @var array|bool $root6 The root of the IPv6 matching tree */
+	private $root6 = false;
 
 	/**
 	 * Instantiate the object from an array of CIDR specs
@@ -98,11 +98,6 @@ class IPSet {
 		foreach ( $cfg as $cidr ) {
 			$this->addCidr( $cidr );
 		}
-
-		self::recOptimize( $this->root4 );
-		self::recCompress( $this->root4, 0, 24 );
-		self::recOptimize( $this->root6 );
-		self::recCompress( $this->root6, 0, 120 );
 	}
 
 	/**
@@ -140,29 +135,56 @@ class IPSet {
 		}
 		$rawOrd = array_map( 'ord', str_split( $raw ) );
 
-		// special-case: zero mask overwrites the whole tree with a pair of terminal successes
-		if ( $mask == 0 ) {
-			$node = array( true, true );
-			return;
-		}
-
 		// iterate the bits of the address while walking the tree structure for inserts
+		// at the end, $snode will point to the highest node that could only lead to a
+		// successful match (and thus can be set to true)
+		$snode =& $node;
 		$curBit = 0;
 		while ( 1 ) {
-			$maskShift = 7 - ( $curBit & 7 );
-			$node =& $node[( $rawOrd[$curBit >> 3] & ( 1 << $maskShift ) ) >> $maskShift];
-			++$curBit;
 			if ( $node === true ) {
 				// already added a larger supernet, no need to go deeper
 				return;
 			} elseif ( $curBit == $mask ) {
 				// this may wipe out deeper subnets from earlier
-				$node = true;
+				$snode = true;
 				return;
 			} elseif ( $node === false ) {
 				// create new subarray to go deeper
-				$node = array( false, false );
+				if ( !( $curBit & 7 ) && $curBit <= $mask - 8 ) {
+					$node = array( 'comp' => $rawOrd[$curBit >> 3], 'next' => false );
+				} else {
+					$node = array( false, false );
+				}
 			}
+
+			if ( isset( $node['comp'] ) ) {
+				$comp = $node['comp'];
+				if ( $rawOrd[$curBit >> 3] == $comp && $curBit <= $mask - 8 ) {
+					// whole byte matches, skip over the compressed node
+					$node =& $node['next'];
+					$snode =& $node;
+					$curBit += 8;
+					continue;
+				} else {
+					// have to decompress the node and check individual bits
+					$unode = $node['next'];
+					for ( $i = 0; $i < 8; ++$i ) {
+						$unode = ( $comp & ( 1 << $i ) )
+							? array( false, $unode )
+							: array( $unode, false );
+					}
+					$node = $unode;
+				}
+			}
+
+			$maskShift = 7 - ( $curBit & 7 );
+			$index = ( $rawOrd[$curBit >> 3] & ( 1 << $maskShift ) ) >> $maskShift;
+			if ( $node[$index ^ 1] !== true ) {
+				// no adjacent subnet, can't form a supernet at this level
+				$snode =& $node[$index];
+			}
+			$node =& $node[$index];
+			++$curBit;
 		}
 	}
 
@@ -188,7 +210,7 @@ class IPSet {
 		}
 
 		$curBit = 0;
-		while ( 1 ) {
+		while ( $node !== true && $node !== false ) {
 			if ( isset( $node['comp'] ) ) {
 				// compressed node, matches 1 whole byte on a byte boundary
 				if ( $rawOrd[$curBit >> 3] != $node['comp'] ) {
@@ -202,83 +224,8 @@ class IPSet {
 				$node =& $node[( $rawOrd[$curBit >> 3] & ( 1 << $maskShift ) ) >> $maskShift];
 				++$curBit;
 			}
-
-			if ( $node === true || $node === false ) {
-				return $node;
-			}
-		}
-	}
-
-	/**
-	 * Recursively merges adjacent nets into larger supernets
-	 *
-	 * @param array &$node Tree node to optimize, by-reference
-	 *
-	 *  e.g.: 8.0.0.0/8 + 9.0.0.0/8 -> 8.0.0.0/7
-	 */
-	private static function recOptimize( &$node ) {
-		if ( $node[0] !== false && $node[0] !== true && self::recOptimize( $node[0] ) ) {
-			$node[0] = true;
-		}
-		if ( $node[1] !== false && $node[1] !== true && self::recOptimize( $node[1] ) ) {
-			$node[1] = true;
-		}
-		if ( $node[0] === true && $node[1] === true ) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Recursively compresses a tree
-	 *
-	 * @param array &$node Tree node to compress, by-reference
-	 * @param integer $curBit current depth in the tree
-	 * @param integer $maxCompStart maximum depth at which compression can start, family-specific
-	 *
-	 * This is a very simplistic compression scheme: if we go through a whole
-	 * byte of address starting at a byte boundary with no real branching
-	 * other than immediate false-vs-(node|true), compress that subtree down to a single
-	 * byte-matching node.
-	 * The $maxCompStart check elides recursing the final 7 levels of depth (family-dependent)
-	 */
-	private static function recCompress( &$node, $curBit, $maxCompStart ) {
-		if ( !( $curBit & 7 ) ) { // byte boundary, check for depth-8 single path(s)
-			$byte = 0;
-			$cnode =& $node;
-			$i = 8;
-			while ( $i-- ) {
-				if ( $cnode[0] === false ) {
-					$byte |= 1 << $i;
-					$cnode =& $cnode[1];
-				} elseif ( $cnode[1] === false ) {
-					$cnode =& $cnode[0];
-				} else {
-					// partial-byte branching, give up
-					break;
-				}
-			}
-			if ( $i == -1 ) { // means we did not exit the while() via break
-				$node = array(
-					'comp' => $byte,
-					'next' => &$cnode,
-				);
-				$curBit += 8;
-				if ( $cnode !== true ) {
-					self::recCompress( $cnode, $curBit, $maxCompStart );
-				}
-				return;
-			}
 		}
 
-		++$curBit;
-		if ( $curBit <= $maxCompStart ) {
-			if ( $node[0] !== false && $node[0] !== true ) {
-				self::recCompress( $node[0], $curBit, $maxCompStart );
-			}
-			if ( $node[1] !== false && $node[1] !== true ) {
-				self::recCompress( $node[1], $curBit, $maxCompStart );
-			}
-		}
+		return $node;
 	}
 }

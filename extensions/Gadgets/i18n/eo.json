@@ -1,13 +1,16 @@
 {
 	"@metadata": {
 		"authors": [
-			"Yekrats"
+			"Yekrats",
+			"Robin van der Vliet"
 		]
 	},
 	"gadgets-desc": "Permesas al uzantoj elekti proprajn [[Special:Gadgets|CSS kaj JavaScript aldonaĵojn]] en ties [[Special:Preferences#mw-prefsection-gadgets|preferoj]].",
 	"prefs-gadgets": "Aldonaĵoj",
 	"gadgets-prefstext": "Jen listo de specialaj aldonaĵoj kiujn vi povas aktivigi por via uzulkonto.\nPlej multaj el ili baziĝas sur Ĵavaskriptoj, sekve Ĵavaskripto nepre estu aktivigita por ke ili funkciu.\nNotu ke tiuj aldonaĵoj ne efikos sur viaj preferoj.\n\nNotu ankaŭ ke ili ne estas parto de la programaro MediaWiki, kaj estas kutime evoluigitaj kaj prizorgataj de uzuloj sur via loka vikio.\nLokaj administrantoj povas redakti liston de haveblaj aldonaĵoj per [[MediaWiki:Gadgets-definition|difinoj]] kaj [[Special:Gadgets|priskriboj]].",
 	"gadgets": "Aldonaĵoj",
+	"gadgetusage-activeusers": "Aktivaj uzantoj",
+	"gadgetusage-default": "Defaŭlta",
 	"gadgets-title": "Aldonaĵoj",
 	"gadgets-pagetext": "Jen listo da specialaj aldonaĵoj kiujn uzuloj povas aktivigi en [[Special:Preferences#mw-prefsection-gadgets|siaj preferoj]], kiel difinite en [[MediaWiki:Gadgets-definition|difinoj]].\nĈi tiu superrigardo provizas facilan aliron al la sistemaj mesaĝoj kiuj difinas la priskribon kaj la kodon de ĉiuj aldonaĵoj.",
 	"gadgets-uses": "uzas",

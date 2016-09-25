@@ -24,7 +24,7 @@ OO.initClass( ve.ce.MWSyntaxHighlightNode );
 
 ve.ce.MWSyntaxHighlightNode.static.name = 'mwSyntaxHighlight';
 
-ve.ce.MWSyntaxHighlightNode.static.primaryCommandName = 'syntaxhighlight';
+ve.ce.MWSyntaxHighlightNode.static.primaryCommandName = 'syntaxhighlightDialog';
 
 /* Methods */
 
@@ -82,6 +82,8 @@ OO.inheritClass( ve.ce.MWInlineSyntaxHighlightNode, ve.ce.MWInlineExtensionNode 
 OO.mixinClass( ve.ce.MWInlineSyntaxHighlightNode, ve.ce.MWSyntaxHighlightNode );
 
 ve.ce.MWInlineSyntaxHighlightNode.static.name = 'mwInlineSyntaxHighlight';
+
+ve.ce.MWInlineSyntaxHighlightNode.static.primaryCommandName = 'syntaxhighlightInspector';
 
 /* Registration */
 

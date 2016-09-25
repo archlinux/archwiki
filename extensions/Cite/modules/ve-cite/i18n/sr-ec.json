@@ -1,0 +1,32 @@
+{
+	"@metadata": {
+		"authors": [
+			"Milicevic01",
+			"Nikola Smolenski",
+			"Милан Јелисавчић",
+			"Rancher",
+			"Amire80",
+			"Srdjan m",
+			"Сербијана"
+		]
+	},
+	"visualeditor-cite-tool-name-book": "Књига",
+	"visualeditor-cite-tool-name-journal": "Журнал",
+	"visualeditor-cite-tool-name-news": "Вести",
+	"visualeditor-cite-tool-name-web": "Веб-сајт",
+	"cite-ve-dialog-reference-options-group-label": "Користи ову групу",
+	"cite-ve-dialog-reference-options-group-placeholder": "Опште референце",
+	"cite-ve-dialog-reference-options-name-label": "Поново употреби под овим именом",
+	"cite-ve-dialog-reference-options-section": "Опције",
+	"cite-ve-dialog-reference-title": "Референца",
+	"cite-ve-dialog-reference-useexisting-label": "Користи постојећу референцу",
+	"cite-ve-dialog-reference-useexisting-tool": "Поновно коришћење",
+	"cite-ve-dialog-referenceslist-title": "Списак референци",
+	"cite-ve-dialogbutton-citation-educationpopup-title": "Навођење",
+	"cite-ve-dialogbutton-reference-full-label": "Основни облик",
+	"cite-ve-dialogbutton-reference-tooltip": "Основне",
+	"cite-ve-dialogbutton-reference-title": "Референца",
+	"cite-ve-dialogbutton-referenceslist-tooltip": "Списак референци",
+	"cite-ve-reference-input-placeholder": "Претражите постојеће референце",
+	"cite-ve-toolbar-group-label": "Цитирај"
+}

@@ -1,0 +1,26 @@
+{
+	"@metadata": {
+		"authors": [
+			"Erdemaslancan",
+			"Gorizon",
+			"Kghbln",
+			"Marmase",
+			"Mirzali",
+			"Se4598"
+		]
+	},
+	"visualeditor-cite-tool-name-book": "Kıtab",
+	"visualeditor-cite-tool-name-journal": "Pêseroke",
+	"visualeditor-cite-tool-name-news": "Qezeta",
+	"visualeditor-cite-tool-name-web": "Websita",
+	"cite-ve-dialog-reference-options-group-label": "Na gruber bıkarn",
+	"cite-ve-dialog-reference-options-group-placeholder": "Referansê bıngey",
+	"cite-ve-dialog-reference-options-name-label": "Ney nami fına bıkarne",
+	"cite-ve-dialog-reference-options-section": "Weçinegi",
+	"cite-ve-dialog-reference-title": "Referans",
+	"cite-ve-dialog-reference-useexisting-label": "Zu referansa mewcud bıkarne",
+	"cite-ve-dialog-referenceslist-title": "Listeya referansan",
+	"cite-ve-dialogbutton-reference-tooltip": "Referans",
+	"cite-ve-dialogbutton-referenceslist-tooltip": "Listeya referansan",
+	"cite-ve-reference-input-placeholder": "Qanci referansi şıma qalıyé bıkarné?"
+}

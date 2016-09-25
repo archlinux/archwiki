@@ -3,7 +3,8 @@
 		"authors": [
 			"Hydra",
 			"Hzy980512",
-			"Onecountry"
+			"Onecountry",
+			"Liuxinyu970226"
 		]
 	},
 	"recaptcha-edit": "为了避免垃圾用户自动编辑，请键入下面框中的两个单词：",
@@ -11,5 +12,7 @@
 	"recaptcha-badlogin": "为避免自动密码破解，请键入下面框中的两个单词：",
 	"recaptcha-createaccount": "为了避免创建自动垃圾用户，请键入下面框中的两个单词：",
 	"recaptcha-createaccount-fail": "reCAPTCHA 答案不正确或未填写。",
-	"recaptcha-create": "为了避免垃圾用户自动创建页面，请键入下面框中的两个单词："
+	"recaptcha-create": "为了避免垃圾用户自动创建页面，请键入下面框中的两个单词：",
+	"recaptcha-apihelp-param-recaptcha_challenge_field": "来自ReCaptcha小部件的字段",
+	"recaptcha-apihelp-param-recaptcha_response_field": "来自ReCaptcha小部件的字段"
 }

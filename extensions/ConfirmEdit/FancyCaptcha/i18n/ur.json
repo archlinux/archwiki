@@ -1,8 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"عثمان خان شاہ"
+			"عثمان خان شاہ",
+			"محمد افضل"
 		]
 	},
+	"fancycaptcha-captcha": "حفاظتی تدبیر",
+	"fancycaptcha-imgcaptcha-ph": "اوپر دیکھائی دینے ولی متن داخل کریں",
 	"fancycaptcha-reload-text": "تازہ کریں"
 }

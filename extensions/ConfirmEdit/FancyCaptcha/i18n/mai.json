@@ -1,8 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Tulsi Bhagat"
+			"Tulsi Bhagat",
+			"बिप्लब आनन्द"
 		]
 	},
+	"fancycaptcha-captcha": "सुरक्षा जाँच",
+	"fancycaptcha-createaccount": "स्वचालित प्रयोक्ता पञ्जजीकरणसँ बचावक लेल हम अहाँसँ निवेदन करएत छी की नीचे देल गेल शब्द बक्सामे लिखी ([[Special:Captcha/help|अधिक जानकारी]]):",
+	"fancycaptcha-imgcaptcha-ph": "उपरोक्त पाठ लिखी",
 	"fancycaptcha-reload-text": "रिफ्रेश करू"
 }

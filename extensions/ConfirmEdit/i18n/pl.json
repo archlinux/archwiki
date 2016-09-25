@@ -7,10 +7,12 @@
 			"Matma Rex",
 			"Sp5uhe",
 			"WTM",
-			"Alan ffm"
+			"Alan ffm",
+			"Chrumps"
 		]
 	},
 	"captcha-edit": "Możesz edytować tę stronę, jednak najpierw musisz rozwiązać poniższe proste działanie matematyczne i wpisać wynik do pola tekstowego ([[Special:Captcha/help|pomoc]]):",
+	"captcha-edit-fail": "Nieprawidłowy kod lub brak kodu potwierdzającego.",
 	"captcha-desc": "Dodaje CAPTCHA – zabezpieczenie przed spamującymi automatami oraz odgadywaniem haseł",
 	"captcha-label": "CAPTCHA",
 	"captcha-addurl": "Twoje zmiany zawierają nowe linki zewnętrzne.\nZe względu na ochronę przed zautomatyzowanym spamem prosimy o wykonanie prostego działania matematycznego i wpisanie wyniku w pole obok, zanim twoja edycja zostanie zapisana ([[Special:Captcha/help|więcej informacji]]):",

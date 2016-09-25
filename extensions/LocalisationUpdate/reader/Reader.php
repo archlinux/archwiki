@@ -5,10 +5,12 @@
  * @license GPL-2.0+
  */
 
+namespace LocalisationUpdate;
+
 /**
  * Interface for file readers.
  */
-interface LU_Reader {
+interface Reader {
 	/**
 	 * Returns a list of messages indexed by language code. Example
 	 *  array( 'en' => array( 'key' => 'value' ) );

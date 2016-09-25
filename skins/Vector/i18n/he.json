@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Amire80",
-			"Rotemliss"
+			"Rotemliss",
+			"Guycn2"
 		]
 	},
 	"skinname-vector": "וקטור",
@@ -13,7 +14,7 @@
 	"vector-action-delete": "מחיקה",
 	"vector-action-move": "העברה",
 	"vector-action-protect": "הגנה",
-	"vector-action-undelete": "ביטול מחיקה",
+	"vector-action-undelete": "שחזור",
 	"vector-action-unprotect": "שינוי הגנה",
 	"vector-view-create": "יצירה",
 	"vector-view-edit": "עריכה",

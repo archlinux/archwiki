@@ -3,7 +3,8 @@
 		"authors": [
 			"Alsandro",
 			"David1010",
-			"ITshnik"
+			"ITshnik",
+			"Dawid Deutschland"
 		]
 	},
 	"inputbox-desc": "საშუალებას იძლევა ჩართოს წინასწარ განსაზღვრული HTML ფორმები",
@@ -12,5 +13,8 @@
 	"inputbox-tryexact": "სცადე ზუსტი დამთხვევა",
 	"inputbox-searchfulltext": "სრული ტექსტის ძიება",
 	"inputbox-createarticle": "სტატიის შექმნა",
+	"inputbox-movearticle": "გვერდის გადატანა",
+	"inputbox-postcomment": "ახალი ქვეთავი",
+	"inputbox-postcommenttitle": "ახალი ქვეთავი",
 	"inputbox-ns-main": "მთავარი"
 }

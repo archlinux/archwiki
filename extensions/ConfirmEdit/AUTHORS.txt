@@ -1,0 +1,73 @@
+﻿Contributors (alphabetically)
+
+Aaron Schulz <aschulz@wikimedia.org>
+addshore <addshorewiki@gmail.com>
+Ævar Arnfjörð Bjarmason <avar@users.mediawiki.org>
+Alexandre Emsenhuber <ialex@users.mediawiki.org>
+Alex Monk <krenair@gmail.com>
+Alex Z. <mrzman@users.mediawiki.org>
+Amir E. Aharoni <amire80@users.mediawiki.org>
+Anders Wegge Jakobsen <wegge@users.mediawiki.org>
+Andrew Garrett <werdna@users.mediawiki.org>
+Antoine Musso <hashar@free.fr>
+Aryeh Gregor <simetrical@users.mediawiki.org>
+Bertrand Grondin <grondin@users.mediawiki.org>
+Brad Jorsch <bjorsch@wikimedia.org>
+Brion Vibber <brion@pobox.com>
+Bryan Davis <bdavis@wikimedia.org>
+Bryan Tong Minh <btongminh@users.mediawiki.org>
+Chad Horohoe <chadh@wikimedia.org>
+Charles Melbye <charlie@users.mediawiki.org>
+csteipp <csteipp@wikimedia.org>
+Derk-Jan Hartman <hartman@users.mediawiki.org>
+EBernhardson <ebernhardson@wikimedia.org>
+Erik Bernhardson <ebernhardson@wikimedia.org>
+Federico Leva <federicoleva@tiscali.it>
+Florian <florian.schmidt.stargatewissen@gmail.com>
+Gilles Dubuc <gdubuc@wikimedia.org>
+Greg Sabino Mullane <greg@users.mediawiki.org>
+Happy-melon <happy-melon@users.mediawiki.org>
+Huji <huji@users.mediawiki.org>
+Ivan Lanin <ivanlanin@users.mediawiki.org>
+Jackmcbarn <jackmcbarn@gmail.com>
+jdlrobson <jdlrobson@gmail.com>
+Jeroen De Dauw <jeroendedauw@users.mediawiki.org>
+Jimmy Collins <collinj@users.mediawiki.org>
+John Du Hart <johnduhart@users.mediawiki.org>
+Juliusz Gonera <jgonera@wikimedia.org>
+Legoktm <legoktm.wikipedia@gmail.com>
+Leon Weber <leon@users.mediawiki.org>
+Lewis Cawte <lewis@lewiscawte.me>
+Luis Felipe Schenone <schenonef@gmail.com>
+Marius Hoch <hoo@online.de>
+Mark A. Hershberger <mah@everybody.org>
+Matthew Flaschen <mflaschen@wikimedia.org>
+Max Semenik <maxsem.wiki@gmail.com>
+Mukunda Modell <mmodell@wikimedia.org>
+Nick Jenkins <nickj@users.mediawiki.org>
+Nikerabbit <niklas.laxstrom@gmail.com>
+Ori.livneh <ori@wikimedia.org>
+paladox <thomasmulhall410@yahoo.com>
+Peter Gehres <pgehres@wikimedia.org>
+Platonides <platonides@gmail.com>
+Purodha B Blissenbach <purodha@users.mediawiki.org>
+raymond <raimond.spekking@gmail.com>
+Reedy <reedy@wikimedia.org>
+River Tarnell <river@users.mediawiki.org>
+Roan Kattouw <roan.kattouw@gmail.com>
+Rob Church <robchurch@users.mediawiki.org>
+Rotem Liss <rotem@users.mediawiki.org>
+Shinjiman <shinjiman@users.mediawiki.org>
+Siebrand Mazeland <siebrand@kitano.nl>
+Southparkfan <southparkfan223@hotmail.com>
+S Page <spage@wikimedia.org>
+Sven Heinemann <bachsau@users.mediawiki.org>
+Timo Tijhof <krinklemail@gmail.com>
+Tim Starling <tstarling@wikimedia.org>
+Tobias <churchofemacs@users.mediawiki.org>
+tonythomas01 <01tonythomas@gmail.com>
+Tyler Cipriani <tcipriani@wikimedia.org>
+Umherirrender <umherirrender_de.wp@web.de>
+yaron <yaron57@gmail.com>
+Yuki Shira <shirayuking@gmail.com>
+YuviPanda <yuvipanda@gmail.com>

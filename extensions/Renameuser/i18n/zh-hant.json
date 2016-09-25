@@ -11,7 +11,8 @@
 			"Cwlin0416",
 			"Liflon",
 			"LNDDYL",
-			"Liuxinyu970226"
+			"Liuxinyu970226",
+			"EagerLin"
 		]
 	},
 	"renameuser": "重新命名使用者",
@@ -34,7 +35,7 @@
 	"renameuser-error-request": "接收請求時發生錯誤。\n請返回頁面並再試一次。",
 	"renameuser-error-same-user": "您不可使用與先前相同名稱替使用者重新命名。",
 	"renameusersuccess": "使用者 \"<nowiki>$1</nowiki>\" 已重新命名為 \"<nowiki>$2</nowiki>\"。",
-	"renameuser-page-exists": "頁面 $1 己經存在，無法自動覆寫。",
+	"renameuser-page-exists": "頁面 $1 已經存在，無法自動覆寫。",
 	"renameuser-page-moved": "頁面 $1 已移動至 $2。",
 	"renameuser-page-unmoved": "頁面 $1 無法移動至 $2。",
 	"log-name-renameuser": "使用者重新命名日誌",

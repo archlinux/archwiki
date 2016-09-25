@@ -3,7 +3,8 @@
 		"authors": [
 			"Lloffiwr",
 			"Xxglennxx",
-			"Macofe"
+			"Macofe",
+			"Robin Owain"
 		]
 	},
 	"wikieditor": "Rhyngwyneb golygu testun wici uwch",
@@ -27,7 +28,6 @@
 	"wikieditor-toolbar-desc": "Bar offer y dudalen olygu gyda gwelliannau defnyddioldeb",
 	"wikieditor-toolbar-preference": "Defnyddio'r bar offer golygu estynedig",
 	"wikieditor-toolbar-dialogs-preference": "Galluogi'r dewin sy'n mewnosod cysylltau a thablau, ac sy'n gallu chwilio a disodli",
-	"wikieditor-toolbar-hidesig": "Cuddio'r botwm llofnodi rhag y tudalennau yn y prif barth",
 	"wikieditor-toolbar-loading": "Wrthi'n llwytho...",
 	"wikieditor-toolbar-tool-bold": "Praff",
 	"wikieditor-toolbar-tool-bold-example": "Testun praff",
@@ -72,6 +72,7 @@
 	"wikieditor-toolbar-file-format-none": "dim",
 	"wikieditor-toolbar-tool-file-insert": "Mewnosod",
 	"wikieditor-toolbar-tool-file-cancel": "Rhoi heibio",
+	"wikieditor-toolbar-tool-file-upload": "Uwchlwytho",
 	"wikieditor-toolbar-tool-reference": "Troednodyn",
 	"wikieditor-toolbar-tool-reference-example": "Ysgrifennwch droednodyn fan hyn",
 	"wikieditor-toolbar-tool-reference-cancel": "Diddymu",
@@ -194,9 +195,9 @@
 	"wikieditor-toolbar-help-content-showreferences-description": "Dangos y troednodion",
 	"wikieditor-toolbar-help-content-showreferences-result": "<ol class='references'><li id='cite_note-test-0'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.example.org' class='external text' href='#'>Ysgrifen y cyswllt</a>, ysgrifen arall.</li></ol>",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "Llofnod gyda stamp amser",
-	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='{{#special:mypage}}'>Enw defnyddiwr</a> (<a href='#' title='{{#special:mytalk}}'>sgwrs</a>) 15:54, 10 Mehefin 2009 (UTC)",
+	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='$1:Username'>Enw defnyddiwr</a> (<a href='#' title='$2:Username'>sgwrs</a>) 15:54, 10 Mehefin 2009 (UTC)",
 	"wikieditor-toolbar-help-content-signature-description": "Llofnod",
-	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='{{#special:mypage}}'>Enw defnyddiwr</a> (<a href='#' title='{{#special:mytalk}}'>sgwrs</a>)",
+	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>Enw defnyddiwr</a> (<a href='#' title='$2:Username'>sgwrs</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "Mewnoli",
 	"wikieditor-toolbar-help-content-indent-syntax": "Ysgrifen rheolaidd<br />:Ysgrifen wedi'i mewnoli<br />::Ysgrifen wedi'i mewnoli",
 	"wikieditor-toolbar-help-content-indent-result": "Ysgrifen rheolaidd<dl><dd>Ysgrifen wedi'i mewnoli<dl><dd>Ysgrifen wedi'i mewnoli</dd></dl></dd></dl>"

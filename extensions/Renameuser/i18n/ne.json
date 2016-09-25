@@ -1,9 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"NehalDaveND"
+			"NehalDaveND",
+			"बिप्लब आनन्द"
 		]
 	},
+	"renameuser": "प्रयोगकर्ता पुनर्नामाकरण",
+	"renameuser-linkoncontribs": "प्रयोगकर्ता पुनर्नामाकरण",
+	"renameuser-linkoncontribs-text": "यो प्रयोगकर्ता पुनर्नामाकरण गर्ने",
+	"renameuser-desc": "प्रयोगकर्ता पुनर्नामाकरण गर्न एउटा [[Special:RenameUser|विशेष पृष्ठ]] जोड्ने (''पुनर्नामाकरण'' अधिकार हुनु जरुरी)",
 	"renameuserold": "अहिलेको प्रयोगकर्ता नाम:",
 	"renameusernew": "नयाँ प्रयोगकर्ता नाम:",
 	"renameuserreason": "कारण:",

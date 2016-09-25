@@ -6,7 +6,8 @@
 			"Klutzy",
 			"Kwj2772",
 			"ToePeu",
-			"아라"
+			"아라",
+			"Revi"
 		]
 	},
 	"renameuser": "사용자 이름 바꾸기",
@@ -16,7 +17,7 @@
 	"renameuserold": "기존 사용자 이름:",
 	"renameusernew": "새 사용자 이름:",
 	"renameuserreason": "이유:",
-	"renameusermove": "사용자 문서와 토론 문서 (그리고 그들의 하위 문서)를 새 사용자 이름으로 옮기기",
+	"renameusermove": "사용자 문서와 토론 문서 (그리고 그 하위 문서)를 새 사용자 이름으로 이동",
 	"renameusersuppress": "새 이름으로 넘겨주기를 만들지 않기",
 	"renameuserreserve": "나중에 이전의 이름이 사용되지 않도록 차단하기",
 	"renameuserwarnings": "경고:",

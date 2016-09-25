@@ -15,31 +15,31 @@ class PanelLayout extends Layout {
 	 * @param boolean $config['framed'] Wrap in a frame to visually separate from outside content
 	 *   (default: false)
 	 */
-	public function __construct( array $config = array() ) {
+	public function __construct( array $config = [] ) {
 		// Config initialization
-		$config = array_merge( array(
+		$config = array_merge( [
 			'scrollable' => false,
 			'padded' => false,
 			'expanded' => true,
 			'framed' => false,
-		), $config );
+		], $config );
 
 		// Parent constructor
 		parent::__construct( $config );
 
 		// Initialization
-		$this->addClasses( array( 'oo-ui-panelLayout' ) );
+		$this->addClasses( [ 'oo-ui-panelLayout' ] );
 		if ( $config['scrollable'] ) {
-			$this->addClasses( array( 'oo-ui-panelLayout-scrollable' ) );
+			$this->addClasses( [ 'oo-ui-panelLayout-scrollable' ] );
 		}
 		if ( $config['padded'] ) {
-			$this->addClasses( array( 'oo-ui-panelLayout-padded' ) );
+			$this->addClasses( [ 'oo-ui-panelLayout-padded' ] );
 		}
 		if ( $config['expanded'] ) {
-			$this->addClasses( array( 'oo-ui-panelLayout-expanded' ) );
+			$this->addClasses( [ 'oo-ui-panelLayout-expanded' ] );
 		}
 		if ( $config['framed'] ) {
-			$this->addClasses( array( 'oo-ui-panelLayout-framed' ) );
+			$this->addClasses( [ 'oo-ui-panelLayout-framed' ] );
 		}
 	}
 	public function getConfig( &$config ) {

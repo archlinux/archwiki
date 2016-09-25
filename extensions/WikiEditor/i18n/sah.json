@@ -180,9 +180,9 @@
 	"wikieditor-toolbar-help-content-showreferences-description": "Быһаарыылары көрдөрүү",
 	"wikieditor-toolbar-help-content-showreferences-result": "<ol class='references'><li id='cite_note-test-0'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.example.org' class='external text' href='#'>Сигэ быһаарыыта</a>, эбии быһаарыы.</li></ol>",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "Илии батааһын кэмин кытта",
-	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='{{#special:mypage}}'>Кытааччы аата</a> (<a href='#' title='{{#special:mytalk}}'>ырытыы</a>) 15:54, Бэс ыйын 10, 2009 (UTC)",
+	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='$1:Username'>Кытааччы аата</a> (<a href='#' title='$2:Username'>ырытыы</a>) 15:54, Бэс ыйын 10, 2009 (UTC)",
 	"wikieditor-toolbar-help-content-signature-description": "Илии баттааһын",
-	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='{{#special:mypage}}'>Кыттааччы аата</a> (<a href='#' title='{{#special:mytalk}}'>ырытыы</a>)",
+	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>Кыттааччы аата</a> (<a href='#' title='$2:Username'>ырытыы</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "Отступ",
 	"wikieditor-toolbar-help-content-indent-syntax": "Судургу тиэкис<br />:Отступтаах тиэкис<br />::Отступтаах тиэкис",
 	"wikieditor-toolbar-help-content-indent-result": "Судургу тиэкис<dl><dd>Отступтаах тиэкис<dl><dd>Отступтаах тиэкис</dd></dl></dd></dl>"

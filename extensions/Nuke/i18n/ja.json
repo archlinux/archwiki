@@ -24,6 +24,7 @@
 	"nuke-multiplepeople": "最近追加されたページの一括削除",
 	"nuke-tools": "指定した利用者またはIPアドレスが最近作成したページを、このツールで一括削除できます。\n利用者名またはIPアドレスを入力すると、削除対象ページの一覧が生成されます。空にすると全利用者が対象になります。",
 	"nuke-submit-user": "一覧取得",
+	"nuke-toggleinvert": "反転",
 	"nuke-submit-delete": "選択されたページを削除",
 	"right-nuke": "ページを一括削除",
 	"nuke-select": "選択: $1",

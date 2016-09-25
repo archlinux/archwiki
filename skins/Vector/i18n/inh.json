@@ -2,7 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Amire80",
-			"Sapral Mikail"
+			"Sapral Mikail",
+			"Умар",
+			"Adam-Yourist"
 		]
 	},
 	"vector-action-addsection": "БӀагал тӀатоха",
@@ -11,9 +13,10 @@
 	"vector-action-protect": "Лораде",
 	"vector-action-undelete": "Юхаоттаде",
 	"vector-action-unprotect": "Лорам хувца",
-	"vector-view-create": "Кхолларле",
-	"vector-view-edit": "Хувцам",
-	"vector-view-history": "Искар",
-	"vector-view-view": "Дешар",
-	"vector-view-viewsource": "Зембакхама бӀаргтассам"
+	"vector-view-create": "Кхоллар",
+	"vector-view-edit": "Нийсъе",
+	"vector-view-history": "Истори",
+	"vector-view-view": "Де́ша",
+	"vector-view-viewsource": "Зембакхама бӀаргтассам",
+	"vector-more-actions": "Кхы а"
 }

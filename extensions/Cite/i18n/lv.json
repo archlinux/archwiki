@@ -3,9 +3,11 @@
 		"authors": [
 			"GreenZeb",
 			"Marozols",
-			"Xil"
+			"Xil",
+			"Papuass"
 		]
 	},
 	"cite-desc": "Pievieno <nowiki><ref[ name=id]></nowiki> un <nowiki><references/></nowiki> tagus, atsaucēm",
-	"cite_error": "Kļūda atsaucē: $1"
+	"cite_error": "Kļūda atsaucē: $1",
+	"cite_warning": "Atsauces brīdinājums: $1"
 }

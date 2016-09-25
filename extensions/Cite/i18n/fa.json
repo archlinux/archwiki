@@ -5,15 +5,18 @@
 			"Huji",
 			"Wayiran",
 			"ZxxZxxZ",
-			"Reza1615"
+			"Reza1615",
+			"Dalba",
+			"Ladsgroup"
 		]
 	},
 	"cite-desc": "برچسب‌های <nowiki><ref[ name=id]></nowiki> و <nowiki><references/></nowiki> را برای یادکرد اضافه می‌کند",
 	"cite_error": "خطای یادکرد: $1",
 	"cite_error_ref_numeric_key": "برچسب <code><ref></code> نامجاز؛ نام نمی‌تواند یک عدد باشد. عنوان واضح‌تری را برگزینید",
-	"cite_error_ref_no_key": "برچسب <code><ref></code> نامجاز؛ یادکردهای بدون محتوا باید نام داشته باشند",
+	"cite_error_ref_no_key": "برچسب باز کننده <code><ref></code> نامجاز؛ یادکردهای بدون محتوا با نام بد",
 	"cite_error_ref_too_many_keys": "برچسب <code><ref></code> نامجاز؛ نام‌های نامجاز یا بیش از اندازه",
 	"cite_error_ref_no_input": "برچسب <code><ref></code> نامجاز؛ یادکردهای بدون نام باید محتوا داشته باشند",
+	"cite_error_references_duplicate_key": "برچسب <code>&lt;ref&gt;</code> نامعتبر؛ نام \"$1\" چندین بار با محتوی متفاوت تعریف شده‌است",
 	"cite_error_references_invalid_parameters": "برچسب <code><references></code> نامجاز؛ استفاده از پارامتر مجاز است. از <code><references /></code> استفاده کنید",
 	"cite_error_references_invalid_parameters_group": "برچسب <code>&lt;references&gt;</code> نامجاز؛ تنها پارامتر «group» قابل استفاده است.\nاز <code>&lt;references /&gt;</code> یا <code>&lt;references group=\"...\" /&gt;</code> استفاده کنید",
 	"cite_error_references_no_backlink_label": "برچسب‌های پیوند به انتها رسید.\nموارد جدیدی را در پیغام <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki> تعریف کنید",
@@ -26,8 +29,12 @@
 	"cite_error_references_missing_key": "پرچسپ <code>&lt;ref&gt;</code> که با نام «$1» درون <code>&lt;references&gt;</code> تعریف شده، در متن قبل از آن استفاده نشده‌است.",
 	"cite_error_references_no_key": "برچسپ <code>&lt;ref&gt;</code> درون <code>&lt;references&gt;</code> صفت نام را ندارد.",
 	"cite_error_empty_references_define": "برچسپ <code>&lt;ref&gt;</code> تعریف شده درون <code>&lt;references&gt;</code> با نام «$1» محتوایی ندارد.",
+	"cite-tracking-category-cite-error": "صفحات داری خطا در ارجاع",
+	"cite-tracking-category-cite-error-desc": "صفحات موجود در این رده دارای خطا در استفاده از برچسب ارجاع هستند.",
 	"cite_reference_link_key_with_num": "$1_$2",
 	"cite_reference_link_prefix": "cite_ref-",
 	"cite_references_link_accessibility_label": "پرش به بالا",
-	"cite_references_link_many_accessibility_label": "پرش به بالا به:"
+	"cite_references_link_many_accessibility_label": "پرش به بالا به:",
+	"cite_section_preview_references": "پیش‌نمایش ارجاع‌ها",
+	"cite_warning": "هشدار یادکرد: $1"
 }
