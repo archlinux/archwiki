@@ -2,7 +2,7 @@
 
 $wgExtensionCredits['other'][] = array(
 	'name' => 'FunnyQuestion',
-	'version' => '2.3',
+	'version' => '2.4',
 	'description' => 'Challenge-response authentication',
 	'author' => 'Pierre Schmitz',
 	'url' => 'https://pierre-schmitz.com/'
@@ -30,5 +30,3 @@ if ($wgGroupPermissions['*']['createaccount'] && (empty($wgAuth) || $wgAuth->can
 	$wgHooks['UserCreateForm'][] = 'FunnyQuestion::addFunnyQuestionToUserCreateForm';
 	$wgHooks['AbortNewAccount'][] = 'FunnyQuestion::checkFunnyQuestionOnAbortNewAccount';
 }
-
-?>

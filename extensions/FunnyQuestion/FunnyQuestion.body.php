@@ -1,6 +1,5 @@
 <?php
 
-
 class FunnyQuestion {
 
 	private static function normalizeAnswer($answer) {
@@ -28,16 +27,16 @@ class FunnyQuestion {
 		global $wgFunnyQuestionHash, $wgFunnyQuestionRemember, $wgRequest;
 
 		$time = time();
-		$wgRequest->response()->setcookie('FunnyQuestionHash', sha1($time.wfGetIP().$wgFunnyQuestionHash), $time+$wgFunnyQuestionRemember);
+		$wgRequest->response()->setcookie('FunnyQuestionHash', sha1($time.$wgRequest->getIP().$wgFunnyQuestionHash), $time+$wgFunnyQuestionRemember);
 		$wgRequest->response()->setcookie('FunnyQuestionTime', $time, $time+$wgFunnyQuestionRemember);
 	}
 
 	private static function hasFunnyCookie() {
-		global $wgFunnyQuestionHash, $wgFunnyQuestionRemember, $wgCookiePrefix;
+		global $wgFunnyQuestionHash, $wgFunnyQuestionRemember, $wgCookiePrefix, $wgRequest;
 
 		return (!empty($_COOKIE[$wgCookiePrefix.'FunnyQuestionHash']) && !empty($_COOKIE[$wgCookiePrefix.'FunnyQuestionTime'])
 			&& time() - $wgFunnyQuestionRemember <= $_COOKIE[$wgCookiePrefix.'FunnyQuestionTime']
-			&& sha1($_COOKIE[$wgCookiePrefix.'FunnyQuestionTime']. wfGetIP().$wgFunnyQuestionHash) == $_COOKIE[$wgCookiePrefix.'FunnyQuestionHash']);
+			&& sha1($_COOKIE[$wgCookiePrefix.'FunnyQuestionTime']. $wgRequest->getIP().$wgFunnyQuestionHash) == $_COOKIE[$wgCookiePrefix.'FunnyQuestionHash']);
 	}
 
 	private static function checkFunnyQuestion() {
@@ -80,7 +79,7 @@ class FunnyQuestion {
 		return false;
 	}
 
-	public static function addFunnyQuestionToEditPage($editpage, $output) {
+	public static function addFunnyQuestionToEditPage(EditPage $editpage, OutputPage $output): bool {
 		global $wgUser;
 
 		if (!$wgUser->isLoggedIn() && !self::hasFunnyCookie()) {
@@ -88,7 +87,7 @@ class FunnyQuestion {
 			$editpage->editFormTextAfterWarn .=
 				'<div class="editOptions">
 					<label for="FunnyAnswerField"><strong>'
-					.wfMsg('question-'.sha1($funnyQuestion['question'])).'</strong></label>
+					.wfMessage('question-'.sha1($funnyQuestion['question']))->text().'</strong></label>
 					<input id="FunnyAnswerField" type="text" name="FunnyAnswer" value="" />
 					<input type="hidden" name="FunnyQuestionTime" value="'.$funnyQuestion['time'].'" />
 					<input type="hidden" name="FunnyQuestionHash" value="'.$funnyQuestion['hash'].'" />
@@ -97,34 +96,32 @@ class FunnyQuestion {
 		return true;
 	}
 
-	public static function checkFunnyQuestionOnEditPage($editor, $text, $section, &$error, $summary) {
+	public static function checkFunnyQuestionOnEditPage(EditPage $editor, $text, $section, &$error, $summary) {
 		global $wgUser;
 
 		if (!$wgUser->isLoggedIn() && !self::checkFunnyQuestion()) {
-			$error = '<div class="errorbox">'.wfMsg('wrong-answer').'</div><br clear="all" />';
+			$error = '<div class="errorbox">'.wfMessage('wrong-answer')->text().'</div><br clear="all" />';
 		}
 		return true;
 	}
 
-	public static function addFunnyQuestionToUserCreateForm($template) {
+	public static function addFunnyQuestionToUserCreateForm(FakeAuthTemplate $template) {
 		if (!self::hasFunnyCookie()) {
 			$funnyQuestion = self::getFunnyQuestion();
-			$template->addInputItem('FunnyAnswer', '', 'text', 'question-label', 'question-'.sha1($funnyQuestion['question']));
-			$template->addInputItem('FunnyQuestionTime', $funnyQuestion['time'], 'hidden', '');
-			$template->addInputItem('FunnyQuestionHash', $funnyQuestion['hash'], 'hidden', '');
+			$template->addInputItem('FunnyAnswer', '', 'text', 'question-'.sha1($funnyQuestion['question']));
+			$template->extend('formheader', '<style>label[for=FunnyAnswer]{display:block;margin-top:15px;}</style>');
+			$template->extend('formheader', '<input type="hidden" name="FunnyQuestionTime" value="'.$funnyQuestion['time'].'" />');
+            $template->extend('formheader', '<input type="hidden" name="FunnyQuestionHash" value="'.$funnyQuestion['hash'].'" />');
 		}
 		return true;
 	}
 
-	public static function checkFunnyQuestionOnAbortNewAccount($user, &$message) {
+	public static function checkFunnyQuestionOnAbortNewAccount(User $user, &$message) {
 		if (!self::checkFunnyQuestion()) {
-			$message = wfMsg('wrong-answer');
+			$message = wfMessage('wrong-answer')->text();
 			return false;
 		} else {
 			return true;
 		}
 	}
-
 }
-
-?>
