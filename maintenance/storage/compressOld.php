@@ -237,7 +237,7 @@ class CompressOld extends Maintenance {
 	) {
 		$loadStyle = self::LS_CHUNKED;
 
-		$dbr = $this->getDB( DB_SLAVE );
+		$dbr = $this->getDB( DB_REPLICA );
 		$dbw = $this->getDB( DB_MASTER );
 
 		# Set up external storage
@@ -384,7 +384,7 @@ class CompressOld extends Maintenance {
 
 					if ( $text === false ) {
 						$this->error( "\nError, unable to get text in old_id $oldid" );
-						# $dbw->delete( 'old', array( 'old_id' => $oldid ) );
+						# $dbw->delete( 'old', [ 'old_id' => $oldid ] );
 					}
 
 					if ( $extdb == "" && $j == 0 ) {

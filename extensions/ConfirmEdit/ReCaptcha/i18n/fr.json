@@ -4,16 +4,23 @@
 			"Gomoko",
 			"Urhixidur",
 			"Verdy p",
-			"Orlodrim"
+			"Orlodrim",
+			"Wladek92",
+			"Yasten"
 		]
 	},
 	"recaptcha-desc": "Module reCAPTCHA pour Confirm Edit",
-	"recaptcha-edit": "Afin de protéger le wiki des robots spammeurs, nous vous demandons de bien vouloir écrire les deux mots visibles dans le cadre ci-dessous :",
-	"recaptcha-addurl": "Votre contribution contient des liens vers un site externe. Pour protéger le wiki contre le spam automatisé, nous vous demandons de bien vouloir écrire les deux mots visibles dans le cadre qui suit :",
-	"recaptcha-badlogin": "Pour protéger le wiki des essais automatiques de cassage de mot de passe, nous vous demandons de bien vouloir écrire les deux mots visibles dans le cadre qui suit:",
-	"recaptcha-createaccount": "Pour protéger le wiki des créations automatiques de compte, nous vous demandons de bien vouloir écrire les deux mots visibles dans le cadre qui suit :",
+	"recaptcha-edit": "Afin de protéger le wiki des robots d'édition spammeurs, nous vous demandons de bien vouloir recopier dans le cadre ci-dessous les mots que vous voyez :",
+	"recaptcha-addurl": "Votre modification contient de nouveaux liens vers des  sites externes. Pour protéger le wiki contre le spam automatisé, nous vous demandons de bien vouloir recopier dans le cadre ci-dessous les mots que vous voyez :",
+	"recaptcha-badlogin": "Pour protéger le wiki contre les essais automatiques de découverte des mots de passe, nous vous demandons de bien vouloir recopier dans le cadre ci-dessous les mots que vous voyez :",
+	"recaptcha-createaccount": "Pour protéger le wiki des créations automatiques de compte, nous vous demandons de bien vouloir écrire les mots visibles dans le cadre qui suit :",
 	"recaptcha-createaccount-fail": "Réponse de reCAPTCHA fausse ou manquante.",
-	"recaptcha-create": "Pour protéger le wiki des créations automatiques de pages, nous vous demandons de bien vouloir écrire les deux mots visibles dans le cadre qui suit :",
+	"recaptcha-create": "Pour protéger le wiki des créations automatiques de pages, nous vous demandons de bien vouloir écrire les mots visibles dans le cadre qui suit :",
+	"recaptcha-info": "Veuillez résoudre l'énigme ReCaptcha et retourner dans captchaId et captchaWord le test et les valeurs des réponses.",
 	"recaptcha-apihelp-param-recaptcha_challenge_field": "Champ du formulaire ReCaptcha",
-	"recaptcha-apihelp-param-recaptcha_response_field": "Champ du formulaire ReCaptcha"
+	"recaptcha-apihelp-param-recaptcha_response_field": "Champ du formulaire ReCaptcha",
+	"recaptcha-id-label": "Enigme ReCaptcha",
+	"recaptcha-id-help": "Valeur de l'énigme ReCaptcha",
+	"recaptcha-label": "Solution du ReCaptcha",
+	"recaptcha-help": "Valeur de la solution ReCaptcha"
 }

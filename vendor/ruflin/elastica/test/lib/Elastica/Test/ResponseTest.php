@@ -1,8 +1,8 @@
 <?php
+
 namespace Elastica\Test;
 
 use Elastica\Document;
-use Elastica\Facet\DateHistogram;
 use Elastica\Query;
 use Elastica\Query\MatchAll;
 use Elastica\Request;
@@ -12,17 +12,6 @@ use Elastica\Type\Mapping;
 
 class ResponseTest extends BaseTest
 {
-    /**
-     * @group unit
-     */
-    public function testClassHierarchy()
-    {
-        $facet = new DateHistogram('dateHist1');
-        $this->assertInstanceOf('Elastica\Facet\Histogram', $facet);
-        $this->assertInstanceOf('Elastica\Facet\AbstractFacet', $facet);
-        unset($facet);
-    }
-
     /**
      * @group functional
      */
@@ -143,6 +132,30 @@ class ResponseTest extends BaseTest
     /**
      * @group unit
      */
+    public function testStringErrorMessage()
+    {
+        $response = new Response(json_encode(array(
+            'error' => 'a',
+        )));
+
+        $this->assertEquals('a', $response->getErrorMessage());
+    }
+
+    /**
+     * @group unit
+     */
+    public function testArrayErrorMessage()
+    {
+        $response = new Response(json_encode(array(
+            'error' => array('a', 'b'),
+        )));
+
+        $this->assertEquals(array('a', 'b'), $response->getFullError());
+    }
+
+    /**
+     * @group unit
+     */
     public function testIsNotOkBulkItemsWithOkField()
     {
         $response = new Response(json_encode(array(
@@ -186,6 +199,23 @@ class ResponseTest extends BaseTest
         )));
 
         $this->assertFalse($response->isOk());
+    }
+
+    /**
+     * @group unit
+     */
+    public function testDecodeResponseWithBigIntSetToTrue()
+    {
+        $response = new Response(json_encode(array(
+            'took' => 213,
+            'items' => array(
+                array('index' => array('_index' => 'rohlik', '_type' => 'grocery', '_id' => '707891', '_version' => 4, 'status' => 200)),
+                array('index' => array('_index' => 'rohlik', '_type' => 'grocery', '_id' => '707893', '_version' => 4, 'status' => 200)),
+            ),
+        )));
+        $response->setJsonBigintConversion(true);
+
+        $this->assertTrue(is_array($response->getData()));
     }
 
     /**

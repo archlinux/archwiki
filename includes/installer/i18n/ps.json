@@ -44,8 +44,6 @@
 	"config-db-name-oracle": "د اومتوکبنسټ طرحه:",
 	"config-db-username": "د توکبنسټ کارن-نوم:",
 	"config-db-password": "د توکبنسټ پټنوم:",
-	"config-charset-mysql5-binary": "مای اس کيو ال 4.1/5.0 دوييز",
-	"config-charset-mysql5": "مای اس کيو ال 4.1/5.0 يو ټي اف-8",
 	"config-db-port": "د توکبنسټ ور:",
 	"config-db-schema": "د مېډياويکي طرحه:",
 	"config-type-mssql": "مايکروسافټ SQL پالنگر",
@@ -91,5 +89,5 @@
 	"config-download-localsettings": "ښکته کول <code>LocalSettings.php</code>",
 	"config-help": "لارښود",
 	"mainpagetext": "<strong>MediaWiki نصب شو.</strong>",
-	"mainpagedocfooter": "د ويکي ساوترې د کارولو د  مالوماتو په اړه [//meta.wikimedia.org/wiki/Help:Contents د کارن لارښود] سره سلا وکړۍ.\n\n== پيلول ==\n* [//www.mediawiki.org/wiki/Special:MyLanguage/Manual:Configuration_settings د امستنو د سازونې لړليک]\n* [//www.mediawiki.org/wiki/Special:MyLanguage/Manual:FAQ د ميډياويکي ډېرځليزې پوښتنې]\n* [https://lists.wikimedia.org/mailman/listinfo/mediawiki-announce د مېډياويکي د برېښليکونو لړليک]\n* [//www.mediawiki.org/wiki/Special:MyLanguage/Localisation#Translation_resources خپلې ژبې لپاره MediaWiki ځايتابول]"
+	"mainpagedocfooter": "د ويکي ساوترې د کارولو د  مالوماتو په اړه [https://meta.wikimedia.org/wiki/Help:Contents د کارن لارښود] سره سلا وکړۍ.\n\n== پيلول ==\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Configuration_settings د امستنو د سازونې لړليک]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:FAQ د ميډياويکي ډېرځليزې پوښتنې]\n* [https://lists.wikimedia.org/mailman/listinfo/mediawiki-announce د مېډياويکي د برېښليکونو لړليک]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Localisation#Translation_resources خپلې ژبې لپاره MediaWiki ځايتابول]"
 }

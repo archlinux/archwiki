@@ -65,7 +65,7 @@ class CdnCacheUpdate implements DeferrableUpdate, MergeableUpdate {
 	/**
 	 * @param Title $title
 	 * @return CdnCacheUpdate
-	 * @deprecated 1.27
+	 * @deprecated since 1.27
 	 */
 	public static function newSimplePurge( Title $title ) {
 		return new CdnCacheUpdate( $title->getCdnUrls() );
@@ -112,12 +112,18 @@ class CdnCacheUpdate implements DeferrableUpdate, MergeableUpdate {
 		// Reliably broadcast the purge to all edge nodes
 		$relayer = MediaWikiServices::getInstance()->getEventRelayerGroup()
 					->getRelayer( 'cdn-url-purges' );
-		$relayer->notify(
+		$ts = microtime( true );
+		$relayer->notifyMulti(
 			'cdn-url-purges',
-			[
-				'urls' => array_values( $urlArr ), // JSON array
-				'timestamp' => microtime( true )
-			]
+			array_map(
+				function ( $url ) use ( $ts ) {
+					return [
+						'url' => $url,
+						'timestamp' => $ts,
+					];
+				},
+				$urlArr
+			)
 		);
 
 		// Send lossy UDP broadcasting if enabled

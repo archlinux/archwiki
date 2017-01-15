@@ -4,6 +4,8 @@
 			"Manuae"
 		]
 	},
-	"fancycaptcha-createaccount": "Fadde Schudz vum Wiki voa audomadisch oag'leeschde B'nudzakonde, gebb bidde unna s'Woad oi ([[Special:Captcha/help|Fooche odda Broblem?]]):",
+	"fancycaptcha-captcha": "Sischahaidsbriefung",
+	"fancycaptcha-accountcreate": "Fadde Schudz vum Wiki voa audomadisch oag'leeschde B'nudzakonde, gebb bidde unna s'Woad oi ([[Special:Captcha/help|Fooche odda Broblem?]]):",
+	"fancycaptcha-imgcaptcha-ph": "Gebbde Tegschd oi, wu owwe seje duschd",
 	"fancycaptcha-reload-text": "Agdualisiere"
 }

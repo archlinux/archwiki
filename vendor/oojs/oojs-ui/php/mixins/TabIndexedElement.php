@@ -26,6 +26,7 @@ trait TabIndexedElement {
 	 *   prevent tab focusing, use null to suppress the `tabindex` attribute. (default: 0)
 	 */
 	public function initializeTabIndexedElement( array $config = [] ) {
+		// Properties
 		$this->tabIndexed = isset( $config['tabIndexed'] ) ? $config['tabIndexed'] : $this;
 
 		// Initialization

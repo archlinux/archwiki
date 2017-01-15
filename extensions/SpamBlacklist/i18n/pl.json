@@ -6,7 +6,8 @@
 			"Derbeth",
 			"Sp5uhe",
 			"WTM",
-			"Peter Bowman"
+			"Peter Bowman",
+			"Woytecr"
 		]
 	},
 	"spam-blacklist": " #<!-- zostaw tę linię dokładnie tak, jak jest --> <pre>\n# Dodawanie w treści stron linków zewnętrznych pasujących do tej listy będzie blokowane.\n# Lista dotyczy wyłącznie tej wiki; istnieje też globalna czarna lista.\n# Dokumentacja znajduje się na stronie https://www.mediawiki.org/wiki/Extension:SpamBlacklist\n#\n# Składnia jest następująca:\n#   * Wszystko od znaku „#” do końca linii jest komentarzem\n#   * Każda niepusta linia jest fragmentem wyrażenia regularnego, które będzie dopasowywane jedynie do hostów wewnątrz linków\n\n #</pre> <!-- zostaw tę linię dokładnie tak, jak jest -->",
@@ -19,7 +20,11 @@
 	"spam-invalid-lines": "{{PLURAL:$1|Następująca linia jest niepoprawnym wyrażeniem regularnym i musi być poprawiona przed zapisaniem strony:|Następujące linie są niepoprawnymi wyrażeniami regularnymi i muszą być poprawione przed zapisaniem strony:}}",
 	"spam-blacklist-desc": "Narzędzie antyspamowe oparte o wyrażenia regularne pozwalające dodawać na czarną listę adresy URL na stronach i adresy e-mail użytkowników",
 	"log-name-spamblacklist": "Rejestr filtru antyspamowego",
+	"log-description-spamblacklist": "Te zdarzenia służą do śledzenia trafień czarnej listy spamu.",
 	"logentry-spamblacklist-hit": "$1 {{GENDER:$2|uruchomił|uruchomiła}} filtr antyspamowy na stronie $3, próbując dodać $4.",
 	"right-spamblacklistlog": "Podgląd rejestru czarnej listy spamu",
-	"action-spamblacklistlog": "przeglądania rejestru filtru antyspamowego"
+	"action-spamblacklistlog": "przeglądania rejestru filtru antyspamowego",
+	"apihelp-spamblacklist-description": "Sprawdź jeden lub wiele URL pod kątem obecności na czarnej liście spamu.",
+	"apihelp-spamblacklist-param-url": "URLe do sprawdzenia pod kątem obecności na czarnej liście.",
+	"apihelp-spamblacklist-example-1": "Sprawdź dwa URL pod kątem obecności na czarnej liście"
 }

@@ -7,7 +7,6 @@ Elastica: elasticsearch PHP Client
 [![Dependency Status](https://www.versioneye.com/php/ruflin:elastica/dev-master/badge.svg)](https://www.versioneye.com/php/ruflin:elastica/dev-master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/ruflin/Elastica/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/ruflin/Elastica/?branch=master)
 [![Total Downloads](https://poser.pugx.org/ruflin/Elastica/downloads.png)](https://packagist.org/packages/ruflin/elastica)
-[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=ruflin&url=https://github.com/ruflin/Elastica&title=Elastica&language=PHP&tags=github&category=software)
 [![Join the chat at https://gitter.im/ruflin/Elastica](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ruflin/Elastica?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 All documentation for Elastica can be found under [Elastica.io](http://Elastica.io/).
@@ -15,17 +14,20 @@ If you have questions, don't hesitate to ask them on [Stackoverflow](http://stac
 in our [Gitter](https://gitter.im/ruflin/Elastica) channel.
 All library issues should go to the [issue tracker from github](https://github.com/ruflin/Elastica/issues).
 
+
+Compatibility
+-------------
+This release is compatible with all elasticsearch 2.x releases. It was tested with version 2.2.1
+
+
 Contributing
 ------------
 Contributions are always welcome. For details on how to contribute, check the [CONTRIBUTING](https://github.com/ruflin/Elastica/blob/master/CONTRIBUTING.md) file.
+
 
 Dependencies
 ------------
 | Project | Version | Required |
 |---------|---------|----------|
-|[Elasticsearch](https://github.com/elasticsearch/elasticsearch/tree/v1.7.2)|1.7.2|yes|
-|[Elasticsearch mapper attachments plugin](https://github.com/elasticsearch/elasticsearch-mapper-attachments/tree/v2.7.0)|2.7.0|no|
-|[Elasticsearch thrift transport plugin](https://github.com/elasticsearch/elasticsearch-transport-thrift/tree/v2.7.0)|2.7.0|no|
-|[Elasticsearch memcached transport plugin](https://github.com/elastic/elasticsearch-transport-memcached/tree/v2.7.0)|2.7.0|no|
-|[Elasticsearch geocluster facet plugin](https://github.com/zenobase/geocluster-facet/tree/0.0.12)|0.0.12|no|
+|[Elasticsearch](https://github.com/elasticsearch/elasticsearch/tree/v2.2.1)|2.2.1|yes|
 |[Elasticsearch image plugin](https://github.com/Jmoati/elasticsearch-image/releases/tag/1.7.1)|1.7.1|no|

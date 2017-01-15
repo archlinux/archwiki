@@ -164,6 +164,7 @@ class MediaWikiTitleCodecTest extends MediaWikiTestCase {
 			// getGenderCache() provides a mock that considers first
 			// names ending in "a" to be female.
 			[ NS_USER, 'Lisa_Müller', '', 'de', 'Benutzerin:Lisa Müller' ],
+			[ 1000000, 'Invalid_namespace', '', 'en', ':Invalid namespace' ],
 		];
 	}
 
@@ -354,9 +355,9 @@ class MediaWikiTitleCodecTest extends MediaWikiTestCase {
 			// XML/HTML character entity references
 			// Note: Commented out because they are not marked invalid by the PHP test as
 			// Title::newFromText runs Sanitizer::decodeCharReferencesAndNormalize first.
-			// array( 'A &eacute; B' ),
-			// array( 'A &#233; B' ),
-			// array( 'A &#x00E9; B' ),
+			// [ 'A &eacute; B' ],
+			// [ 'A &#233; B' ],
+			// [ 'A &#x00E9; B' ],
 			// Subject of NS_TALK does not roundtrip to NS_MAIN
 			[ 'Talk:File:Example.svg' ],
 			// Directory navigation

@@ -11,7 +11,7 @@ class WfBCP47Test extends MediaWikiTestCase {
 	 * This test is used to verify our formatting against all lower and
 	 * all upper cases language code.
 	 *
-	 * @see http://tools.ietf.org/html/bcp47
+	 * @see https://tools.ietf.org/html/bcp47
 	 * @dataProvider provideLanguageCodes()
 	 */
 	public function testBCP47( $code, $expected ) {
@@ -97,7 +97,7 @@ class WfBCP47Test extends MediaWikiTestCase {
 			 *  az-Arab-x-AZE-derbend
 			 * AZE being private, it should be lower case, hence the test above
 			 * should probably be:
-			 *  array( 'az-arab-x-aze-derbend', 'az-Arab-x-AZE-derbend' ),
+			 * [ 'az-arab-x-aze-derbend', 'az-Arab-x-AZE-derbend' ],
 			 */
 
 			# Private use registry values:

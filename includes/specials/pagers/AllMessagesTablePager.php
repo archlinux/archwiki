@@ -56,7 +56,7 @@ class AllMessagesTablePager extends TablePager {
 
 		$this->lang = ( $langObj ? $langObj : $wgContLang );
 		$this->langcode = $this->lang->getCode();
-		$this->foreign = $this->langcode !== $wgContLang->getCode();
+		$this->foreign = !$this->lang->equals( $wgContLang );
 
 		$request = $this->getRequest();
 
@@ -184,7 +184,7 @@ class AllMessagesTablePager extends TablePager {
 
 	/**
 	 * Determine which of the MediaWiki and MediaWiki_talk namespace pages exist.
-	 * Returns array( 'pages' => ..., 'talks' => ... ), where the subarrays have
+	 * Returns [ 'pages' => ..., 'talks' => ... ], where the subarrays have
 	 * an entry for each existing page, with the key being the message name and
 	 * value arbitrary.
 	 *
@@ -196,7 +196,7 @@ class AllMessagesTablePager extends TablePager {
 	public static function getCustomisedStatuses( $messageNames, $langcode = 'en', $foreign = false ) {
 		// FIXME: This function should be moved to Language:: or something.
 
-		$dbr = wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_REPLICA );
 		$res = $dbr->select( 'page',
 			[ 'page_namespace', 'page_title' ],
 			[ 'page_namespace' => [ NS_MEDIAWIKI, NS_MEDIAWIKI_TALK ] ],
@@ -306,9 +306,8 @@ class AllMessagesTablePager extends TablePager {
 						'title' => 'Special:SearchTranslations',
 						'group' => 'mediawiki',
 						'grouppath' => 'mediawiki',
-						'query' => 'language:' . $this->getLanguage()->getCode() . '^25 ' .
-							'messageid:"MediaWiki:' . $value . '"^10 "' .
-							$this->msg( $value )->inLanguage( 'en' )->plain() . '"'
+						'language' => $this->getLanguage()->getCode(),
+						'query' => $value . ' ' . $this->msg( $value )->plain()
 					] ),
 					$this->msg( 'allmessages-filter-translate' )->text()
 				);

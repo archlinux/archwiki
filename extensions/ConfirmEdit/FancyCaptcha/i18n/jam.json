@@ -5,7 +5,7 @@
 		]
 	},
 	"fancycaptcha-captcha": "Sikioriti chek",
-	"fancycaptcha-createaccount": "Fi protek di wiki gens aatamietid akount krieshan, we kainli beg yu fi enta di woddem we apier biluo ina di bax ([[Special:Captcha/help|more info]]):‎",
+	"fancycaptcha-accountcreate": "Fi protek di wiki gens aatamietid akount krieshan, we kainli beg yu fi enta di woddem we apier biluo ina di bax ([[Special:Captcha/help|more info]]):‎",
 	"fancycaptcha-imgcaptcha-ph": "Enta di tex yu si op a tap",
 	"fancycaptcha-reload-text": "Rifresh"
 }

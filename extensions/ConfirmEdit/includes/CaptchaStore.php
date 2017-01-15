@@ -53,6 +53,13 @@ abstract class CaptchaStore {
 		return self::$instance;
 	}
 
+	final public static function unsetInstanceForTests() {
+		if ( !defined( 'MW_PHPUNIT_TEST' ) ) {
+			throw new MWException( 'Cannot unset ' . __CLASS__ . ' instance in operation.' );
+		}
+		self::$instance = null;
+	}
+
 	/**
 	 * Protected constructor: no creating instances except through the factory method above
 	 */

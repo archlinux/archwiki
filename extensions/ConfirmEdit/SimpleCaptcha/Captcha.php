@@ -3,6 +3,9 @@
 use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Logger\LoggerFactory;
 
+/**
+ * Demo CAPTCHA (not for production usage) and base class for real CAPTCHAs
+ */
 class SimpleCaptcha {
 	protected static $messagePrefix = 'captcha-';
 
@@ -84,26 +87,84 @@ class SimpleCaptcha {
 	 *
 	 * Override this!
 	 *
-	 * @return string HTML
+	 * It is not guaranteed that the CAPTCHA will load synchronously with the main page
+	 * content. So you can not rely on registering handlers before page load. E.g.:
+	 *
+	 * NOT SAFE: $( window ).on( 'load', handler )
+	 * SAFE: $( handler )
+	 *
+	 * However, if the HTML is loaded dynamically via AJAX, the following order will
+	 * be used.
+	 *
+	 * headitems => modulestyles + modules => add main HTML to DOM when modulestyles +
+	 * modules are ready.
+	 *
+	 * @param int $tabIndex Tab index to start from
+	 *
+	 * @return array Associative array with the following keys:
+	 *   string html - Main HTML
+	 *   array modules (optional) - Array of ResourceLoader module names
+	 *   array modulestyles (optional) - Array of ResourceLoader module names to be
+	 *		included as style-only modules.
+	 *   array headitems (optional) - Head items (see OutputPage::addHeadItems), as a numeric array
+	 * 		of raw HTML strings. Do not use unless no other option is feasible.
 	 */
-	function getForm( OutputPage $out, $tabIndex = 1 ) {
+	public function getFormInformation( $tabIndex = 1 ) {
 		$captcha = $this->getCaptcha();
 		$index = $this->storeCaptcha( $captcha );
 
-		return "<p><label for=\"wpCaptchaWord\">{$captcha['question']} = </label>" .
-			Xml::element( 'input', [
-				'name' => 'wpCaptchaWord',
-				'class' => 'mw-ui-input',
-				'id'   => 'wpCaptchaWord',
-				'size'  => 5,
-				'autocomplete' => 'off',
-				'tabindex' => $tabIndex ] ) . // tab in before the edit textarea
-			"</p>\n" .
-			Xml::element( 'input', [
-				'type'  => 'hidden',
-				'name'  => 'wpCaptchaId',
-				'id'    => 'wpCaptchaId',
-				'value' => $index ] );
+		return [
+			'html' => "<p><label for=\"wpCaptchaWord\">{$captcha['question']} = </label>" .
+				Xml::element( 'input', [
+					'name' => 'wpCaptchaWord',
+					'class' => 'mw-ui-input',
+					'id'   => 'wpCaptchaWord',
+					'size'  => 5,
+					'autocomplete' => 'off',
+					'tabindex' => $tabIndex ] ) . // tab in before the edit textarea
+				"</p>\n" .
+				Xml::element( 'input', [
+					'type'  => 'hidden',
+					'name'  => 'wpCaptchaId',
+					'id'    => 'wpCaptchaId',
+					'value' => $index ] )
+		];
+	}
+
+	/**
+	 * Uses getFormInformation() to get the CAPTCHA form and adds it to the given
+	 * OutputPage object.
+	 *
+	 * @param OutputPage $out The OutputPage object to which the form should be added
+	 * @param integer $tabIndex See self::getFormInformation
+	 */
+	public function addFormToOutput( OutputPage $out, $tabIndex = 1 ) {
+		$this->addFormInformationToOutput( $out, $this->getFormInformation( $tabIndex ) );
+	}
+
+	/**
+	 * Processes the given $formInformation array and adds the options (see getFormInformation())
+	 * to the given OutputPage object.
+	 *
+	 * @param OutputPage $out The OutputPage object to which the form should be added
+	 * @param array $formInformation
+	 */
+	public function addFormInformationToOutput( OutputPage $out, array $formInformation ) {
+		if ( !$formInformation ) {
+			return;
+		}
+		if ( isset( $formInformation['html'] ) ) {
+			$out->addHTML( $formInformation['html'] );
+		}
+		if ( isset( $formInformation['modules'] ) ) {
+			$out->addModules( $formInformation['modules'] );
+		}
+		if ( isset( $formInformation['modulestyles'] ) ) {
+			$out->addModuleStyles( $formInformation['modulestyles'] );
+		}
+		if ( isset( $formInformation['headitems'] ) ) {
+			$out->addHeadItems( $formInformation['headitems'] );
+		}
 	}
 
 	/**
@@ -129,7 +190,7 @@ class SimpleCaptcha {
 		if ( $this->action !== 'edit' ) {
 			unset( $page->ConfirmEdit_ActivateCaptcha );
 			$out->addWikiText( $this->getMessage( $this->action )->text() );
-			$out->addHTML( $this->getForm( $out ) );
+			$this->addFormToOutput( $out );
 		}
 	}
 
@@ -145,7 +206,7 @@ class SimpleCaptcha {
 			$this->shouldCheck( $page, '', '', $context )
 		) {
 			$out->addWikiText( $this->getMessage( $this->action )->text() );
-			$out->addHTML( $this->getForm( $out ) );
+			$this->addFormToOutput( $out );
 		}
 		unset( $page->ConfirmEdit_ActivateCaptcha );
 	}
@@ -174,17 +235,23 @@ class SimpleCaptcha {
 	 * @return bool true to keep running callbacks
 	 */
 	function injectEmailUser( &$form ) {
-		global $wgCaptchaTriggers, $wgOut, $wgUser;
+		global $wgCaptchaTriggers;
+		$out = $form->getOutput();
+		$user = $form->getUser();
 		if ( $wgCaptchaTriggers['sendemail'] ) {
 			$this->action = 'sendemail';
-			if ( $wgUser->isAllowed( 'skipcaptcha' ) ) {
+			if ( $user->isAllowed( 'skipcaptcha' ) ) {
 				wfDebug( "ConfirmEdit: user group allows skipping captcha on email sending\n" );
 				return true;
 			}
+			$formInformation = $this->getFormInformation();
+			$formMetainfo = $formInformation;
+			unset( $formMetainfo['html'] );
+			$this->addFormInformationToOutput( $out, $formMetainfo );
 			$form->addFooterText(
 				"<div class='captcha'>" .
-				$wgOut->parse( $this->getMessage( 'sendemail' )->text() ) .
-				$this->getForm( $wgOut ) .
+				$out->parse( $this->getMessage( 'sendemail' )->text() ) .
+				$formInformation['html'] .
 				"</div>\n" );
 		}
 		return true;
@@ -205,10 +272,14 @@ class SimpleCaptcha {
 				wfDebug( "ConfirmEdit: user group allows skipping captcha on account creation\n" );
 				return true;
 			}
-			LoggerFactory::getInstance( 'authmanager' )->info( 'Captcha shown on account creation', [
+			LoggerFactory::getInstance( 'authevents' )->info( 'Captcha shown on account creation', [
 				'event' => 'captcha.display',
 				'type' => 'accountcreation',
 			] );
+			$formInformation = $this->getFormInformation( 8 );
+			$formMetainfo = $formInformation;
+			unset( $formMetainfo['html'] );
+			$this->addFormInformationToOutput( $wgOut, $formMetainfo );
 			$captcha = "<div class='captcha'>" .
 				$wgOut->parse( $this->getMessage( 'createaccount' )->text() ) .
 				// FIXME: Hardcoded tab index
@@ -217,7 +288,7 @@ class SimpleCaptcha {
 				// there may are wikis which allows to mention the "real name",
 				// which would have 7 as tabIndex, so increase
 				// 6 by 2 and use it for the CAPTCHA -> 8 (the submit button has a tabIndex of 10)
-				$this->getForm( $wgOut, 8 ) .
+				$formInformation['html'] .
 				"</div>\n";
 			// for older MediaWiki versions
 			if ( is_callable( [ $template, 'extend' ] ) ) {
@@ -251,16 +322,20 @@ class SimpleCaptcha {
 		if ( $perIPTriggered || $perUserTriggered ) {
 			global $wgOut;
 
-			LoggerFactory::getInstance( 'authmanager' )->info( 'Captcha shown on login', [
+			LoggerFactory::getInstance( 'authevents' )->info( 'Captcha shown on login', [
 				'event' => 'captcha.display',
 				'type' => 'login',
 				'perIp' => $perIPTriggered,
 				'perUser' => $perUserTriggered
 			] );
 			$this->action = 'badlogin';
+			$formInformation = $this->getFormInformation();
+			$formMetainfo = $formInformation;
+			unset( $formMetainfo['html'] );
+			$this->addFormInformationToOutput( $wgOut, $formMetainfo );
 			$captcha = "<div class='captcha'>" .
 				$wgOut->parse( $this->getMessage( 'badlogin' )->text() ) .
-				$this->getForm( $wgOut ) .
+				$formInformation['html'] .
 				"</div>\n";
 			// for older MediaWiki versions
 			if ( is_callable( [ $template, 'extend' ] ) ) {
@@ -773,7 +848,7 @@ class SimpleCaptcha {
 	}
 
 	/**
-	 * Backend function for confirmEdit() and confirmEditAPI()
+	 * Backend function for confirmEditMerged()
 	 * @param WikiPage $page
 	 * @param $newtext string
 	 * @param $section
@@ -813,12 +888,6 @@ class SimpleCaptcha {
 	 * @return bool
 	 */
 	function confirmEditMerged( $context, $content, $status, $summary, $user, $minorEdit ) {
-		$legacyMode = !defined( 'MW_EDITFILTERMERGED_SUPPORTS_API' );
-		if ( defined( 'MW_API' ) && $legacyMode ) {
-			# API mode
-			# The CAPTCHA was already checked and approved
-			return true;
-		}
 		if ( !$context->canUseWikiPage() ) {
 			// we check WikiPage only
 			// try to get an appropriate title for this page
@@ -837,9 +906,6 @@ class SimpleCaptcha {
 		}
 		$page = $context->getWikiPage();
 		if ( !$this->doConfirmEdit( $page, $content, false, $context ) ) {
-			if ( $legacyMode ) {
-				$status->fatal( 'hookaborted' );
-			}
 			$status->value = EditPage::AS_HOOK_ERROR_EXPECTED;
 			$status->apiHookResult = [];
 			// give an error message for the user to know, what goes wrong here.
@@ -858,18 +924,8 @@ class SimpleCaptcha {
 			}
 			$this->addCaptchaAPI( $status->apiHookResult );
 			$page->ConfirmEdit_ActivateCaptcha = true;
-			return $legacyMode;
-		}
-		return true;
-	}
-
-	function confirmEditAPI( $editPage, $newText, &$resultArr ) {
-		$page = $editPage->getArticle()->getPage();
-		if ( !$this->doConfirmEdit( $page, $newText, false, $editPage->getArticle()->getContext() ) ) {
-			$this->addCaptchaAPI( $resultArr );
 			return false;
 		}
-
 		return true;
 	}
 
@@ -887,9 +943,7 @@ class SimpleCaptcha {
 		if ( $this->needCreateAccountCaptcha() ) {
 			$this->trigger = "new account '" . $u->getName() . "'";
 			$success = $this->passCaptchaLimitedFromRequest( $wgRequest, $wgUser );
-			LoggerFactory::getInstance(
-				'authmanager'
-			)->info( 'Captcha submitted on account creation', [
+			LoggerFactory::getInstance( 'authevents' )->info( 'Captcha submitted on account creation', [
 				'event' => 'captcha.submit',
 				'type' => 'accountcreation',
 				'successful' => $success,
@@ -952,7 +1006,7 @@ class SimpleCaptcha {
 
 			$this->trigger = "post-badlogin login '" . $u->getName() . "'";
 			$success = $this->passCaptchaLimitedFromRequest( $wgRequest, $wgUser );
-			LoggerFactory::getInstance( 'authmanager' )->info( 'Captcha submitted on login', [
+			LoggerFactory::getInstance( 'authevents' )->info( 'Captcha submitted on login', [
 				'event' => 'captcha.submit',
 				'type' => 'login',
 				'successful' => $success,
@@ -1018,33 +1072,12 @@ class SimpleCaptcha {
 	 */
 	public function APIGetAllowedParams( &$module, &$params, $flags ) {
 		if ( $this->isAPICaptchaModule( $module ) ) {
-			if ( defined( 'ApiBase::PARAM_HELP_MSG' ) ) {
-				$params['captchaword'] = [
-					ApiBase::PARAM_HELP_MSG => 'captcha-apihelp-param-captchaword',
-				];
-				$params['captchaid'] = [
-					ApiBase::PARAM_HELP_MSG => 'captcha-apihelp-param-captchaid',
-				];
-			} else {
-				// @todo: Remove this branch when support for MediaWiki < 1.25 is dropped
-				$params['captchaword'] = null;
-				$params['captchaid'] = null;
-			}
-		}
-
-		return true;
-	}
-
-	/**
-	 * @deprecated Since MediaWiki 1.25
-	 * @param $module ApiBase
-	 * @param $desc array
-	 * @return bool
-	 */
-	public function APIGetParamDescription( &$module, &$desc ) {
-		if ( $this->isAPICaptchaModule( $module ) ) {
-			$desc['captchaid'] = 'CAPTCHA ID from previous request';
-			$desc['captchaword'] = 'Answer to the CAPTCHA';
+			$params['captchaword'] = [
+				ApiBase::PARAM_HELP_MSG => 'captcha-apihelp-param-captchaword',
+			];
+			$params['captchaid'] = [
+				ApiBase::PARAM_HELP_MSG => 'captcha-apihelp-param-captchaid',
+			];
 		}
 
 		return true;
@@ -1293,12 +1326,11 @@ class SimpleCaptcha {
 						$this->addCaptchaAPI( $result );
 						$result['result'] = 'NeedCaptcha';
 
-						LoggerFactory::getInstance(
-							'authmanager'
-						)->info( 'Captcha data added in account creation API', [
-							'event' => 'captcha.display',
-							'type' => 'accountcreation',
-						] );
+						LoggerFactory::getInstance( 'authevents' )
+							->info( 'Captcha data added in account creation API', [
+								'event' => 'captcha.display',
+								'type' => 'accountcreation',
+							] );
 
 						break;
 					}

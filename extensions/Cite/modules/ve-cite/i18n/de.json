@@ -15,10 +15,12 @@
 			"Umherirrender"
 		]
 	},
+	"visualeditor-cite-tool-definition.json": "null",
 	"visualeditor-cite-tool-name-book": "Buch",
 	"visualeditor-cite-tool-name-journal": "Zeitschrift",
 	"visualeditor-cite-tool-name-news": "Nachrichten",
 	"visualeditor-cite-tool-name-web": "Website",
+	"cite-tool-definition.json": "null",
 	"cite-ve-dialog-reference-editing-reused": "Dieser Einzelnachweis wird auf dieser Seite {{PLURAL:$1|einmal|$1 Mal}} verwendet.",
 	"cite-ve-dialog-reference-options-group-label": "Diese Gruppe verwenden",
 	"cite-ve-dialog-reference-options-group-placeholder": "Allgemeine Einzelnachweise",
@@ -41,5 +43,6 @@
 	"cite-ve-referenceslist-isempty": "Auf dieser Seite gibt es keine Einzelnachweise mit der Gruppe „$1“ zum Anzeigen in dieser Liste.",
 	"cite-ve-referenceslist-isempty-default": "Auf dieser Seite gibt es keine Einzelnachweise zum Anzeigen in dieser Liste.",
 	"cite-ve-referenceslist-missingref": "Dieser Einzelnachweis ist in einer Vorlage oder einem anderen erzeugten Block definiert und kann derzeit nur im Quelltextmodus bearbeitet werden.",
-	"cite-ve-toolbar-group-label": "Zitat"
+	"cite-ve-toolbar-group-label": "Zitat",
+	"cite-ve-othergroup-item": "$1-Einzelnachweis"
 }

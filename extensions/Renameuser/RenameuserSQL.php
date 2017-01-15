@@ -117,7 +117,8 @@ class RenameuserSQL {
 		$this->tables['filearchive'] = [ 'fa_user_text', 'fa_user' ];
 		$this->tablesJob = []; // Slow updates
 		// If this user has a large number of edits, use the jobqueue
-		if ( User::newFromId( $uid )->getEditCount() > self::CONTRIB_JOB ) {
+		// T134136: if this is for user_id=0, then use the queue as the edit count is unknown.
+		if ( !$uid || User::newFromId( $uid )->getEditCount() > self::CONTRIB_JOB ) {
 			$this->tablesJob['revision'] = [
 				self::NAME_COL => 'rev_user_text',
 				self::UID_COL  => 'rev_user',

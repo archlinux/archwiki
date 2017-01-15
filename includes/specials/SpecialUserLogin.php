@@ -23,7 +23,6 @@
 
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Logger\LoggerFactory;
-use Psr\Log\LogLevel;
 
 /**
  * Implements Special:UserLogin
@@ -125,7 +124,7 @@ class SpecialUserLogin extends LoginSignupSpecialPage {
 
 		# Run any hooks; display injected HTML if any, else redirect
 		$injected_html = '';
-		Hooks::run( 'UserLoginComplete', [ &$user, &$injected_html ] );
+		Hooks::run( 'UserLoginComplete', [ &$user, &$injected_html, $direct ] );
 
 		if ( $injected_html !== '' || $extraMessages ) {
 			$this->showSuccessPage( 'success', $this->msg( 'loginsuccesstitle' ),
@@ -154,7 +153,7 @@ class SpecialUserLogin extends LoginSignupSpecialPage {
 	}
 
 	protected function logAuthResult( $success, $status = null ) {
-		LoggerFactory::getInstance( 'authmanager-stats' )->info( 'Login attempt', [
+		LoggerFactory::getInstance( 'authevents' )->info( 'Login attempt', [
 			'event' => 'login',
 			'successful' => $success,
 			'status' => $status,

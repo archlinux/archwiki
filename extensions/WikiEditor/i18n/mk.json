@@ -201,7 +201,7 @@
 	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='$1:Username'>Корисничко име</a> (<a href='#' title='$2:Username'>разговор</a>) 15:54, 10 June 2009 (UTC)",
 	"wikieditor-toolbar-help-content-signature-description": "Потпис",
 	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>Корисничко име</a> (<a href='#' title='$2:Username'>разговор</a>)",
-	"wikieditor-toolbar-help-content-indent-description": "Вовлекување",
+	"wikieditor-toolbar-help-content-indent-description": "Отстап",
 	"wikieditor-toolbar-help-content-indent-syntax": "Нормален текст<br />:Вовлечен текст<br />::Вовлечен текст",
 	"wikieditor-toolbar-help-content-indent-result": "Нормален текст<dl><dd>Вовлечен текст<dl><dd>Вовлечен текст</dd></dl></dd></dl>"
 }

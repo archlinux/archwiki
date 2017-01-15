@@ -2,10 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Sp5uhe",
-			"WTM"
+			"WTM",
+			"Tsca"
 		]
 	},
-	"questycaptcha-addurl": "Wprowadzony przez ciebie tekst zawiera nowe linki zewnętrzne. Ochrona przed zautomatyzowanym spamem wymaga odpowiedzi na poniższe pytanie ([[Special:Captcha/help|więcej informacji]])",
+	"questycaptcha-addurl": "Wprowadzony przez Ciebie tekst zawiera nowe linki zewnętrzne. Ochrona przed zautomatyzowanym spamem wymaga odpowiedzi na poniższe pytanie ([[Special:Captcha/help|więcej informacji]])",
 	"questycaptcha-badlogin": "Ochrona przed zautomatyzowanym łamaniem haseł wymaga odpowiedzi na poniższe pytanie ([[Special:Captcha/help|więcej informacji]])",
 	"questycaptcha-createaccount": "Ochrona przed zautomatyzowanym tworzeniem kont wymaga odpowiedzi na poniższe pytanie ([[Special:Captcha/help|więcej informacji]])",
 	"questycaptcha-create": "Utworzenie strony jest możliwe po udzieleniu odpowiedzi na poniższe pytanie ([[Special:Captcha/help|więcej informacji]])",

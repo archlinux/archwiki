@@ -1,8 +1,7 @@
 # Change Log
 All notable changes to this project will be documented in this file based on the [Keep a Changelog](http://keepachangelog.com/) Standard. This project adheres to [Semantic Versioning](http://semver.org/).
 
-
-## [Unreleased](https://github.com/ruflin/Elastica/compare/2.3.1...HEAD)
+## [Unreleased](https://github.com/ruflin/Elastica/compare/3.1.1...HEAD)
 
 ### Backward Compatibility Breaks
 
@@ -14,6 +13,125 @@ All notable changes to this project will be documented in this file based on the
 
 ### Deprecated
 
+
+## [3.1.1](https://github.com/ruflin/Elastica/compare/3.1.0...3.1.1)
+
+### Added
+- Add an "AwsAuthV4" transport that automatically signs requests using credentials from the environment or from the client config. This allows using Elastica with Amazon ElasticSearch Service domains that are restricted to IAM roles or policies. https://github.com/ruflin/Elastica/pull/1056
+- Update elasticsearch build dependency to elasticsearch 2.2.1
+
+### Improvements
+- `Elastica\Exception\InvalidException` will be thrown if you try using an
+  `Elastica\Aggregation\AbstractSimpleAggregation` without setting either the
+  `field` or `script` param.
+- `Elastica\Index->deleteByQuery($query, $options)` $query param can be a query `array` again
+- `Elastica\Query\MoreLikeThis->toArray()` now supports providing a non-indexed document as an input to perform the comparison.
+- `Elastica\Status` will lazy load the `_stats` at when it is needed. https://github.com/ruflin/Elastica/pull/1058
+
+
+## [3.1.0](https://github.com/ruflin/Elastica/compare/3.0.1...3.1.0)
+
+### Backward Compatibility Breaks
+- Update Guzzle transport to use Guzzle 6
+- Elastica\Query\FunctionScore::setFilter - deprecated and will throw DeprecatedException since not supported by Elasticsearch. Use setQuery instead.
+
+### Added
+- `Elastica\Result->getDocument` and `Elastica\ResultSet->getDocuments` for return `\Elastica\Document`. https://github.com/ruflin/Elastica/issues/960
+
+### Improvements
+- Add username and password params to connection
+
+### Deprecated
+- Elastica\AbstractScript|Script|ScriptFile|ScriptFields deprecated in favor of Elastica\Script|AbstractScript|Script|ScriptFile|ScriptFields [#1028](https://github.com/ruflin/Elastica/pull/1028)
+- Elastica\Filter\* are deprecated. You can use proper queries instead. Backward compatibility layer provided, but will be removed in next Elastica releases. See https://www.elastic.co/blog/better-query-execution-coming-elasticsearch-2-0 and https://github.com/ruflin/Elastica/issues/1001
+
+## [3.0.1](https://github.com/ruflin/Elastica/compare/3.0.0...3.0.1)
+
+### Improvements
+- Update build dependency to elasticsearch 2.1.1 #1022
+- Readd \Elastica\Filter\Nested. See https://github.com/ruflin/Elastica/issues/1001 #1020
+
+
+## [3.0.0](https://github.com/ruflin/Elastica/compare/3.0.0-beta1...3.0.0)
+
+### Backward Compatibility Breaks
+- Revert getError changes in Response object and make it better BC compatible. See comment [here](https://github.com/ruflin/Elastica/commit/41a7a2075837320bc9bd3bca4150e05a1ec9a115#commitcomment-15136374).
+
+### Bugfixes
+- Function score query: corrected the `score_method` `average` to `avg` #975
+- Set `json_decode()` assoc parameter to true in `Elastica\Response` #1005
+- Add `bigintConversion` to keys passed to connection config in `Elastica\Client` #1005
+- Use POST instead of PUT to send bulk requests #1010
+
+### Added
+- Elastica\Query\MultiMatch::setFuzziness now supports being set to `AUTO` with the const `MultiMatch::FUZZINESS_AUTO`
+- Elastica\Type\Mapping::send now accepts query string parameters to send along with the mapping request
+- Elastica\Query\BoolQuery::addFilter
+
+### Improvements
+- More info on Elastica\Exception\PartialShardFailureException. Not just number of failed shards.
+- Allow bool in TopHits::setSource function #1012
+
+### Deprecated
+- Elastica\Query\Filtered triggers E_USER_DEPRECATED error because filtered query is deprecated since ES 2.0.0-beta1. Use BoolQuery instead.
+- Elastica\QueryBuilder\DSL\Query::filtered() triggers E_USER_DEPRECATED error because filtered query is deprecated since ES 2.0.0-beta1. Use bool() instead.
+
+
+
+## [3.0.0-beta1](https://github.com/ruflin/Elastica/compare/2.3.1...3.0.0-beta1)
+
+### Backward Compatibility Breaks
+- Elastica\AbstractUpdateAction::setPercolate now throw DeprecatedException, user Percolator instead
+- Elastica\AbstractUpdateAction::getPercolate now throw DeprecatedException, user Percolator instead
+- Elastica\AbstractUpdateAction::hasPercolate now throw DeprecatedException, user Percolator instead
+- Elastica\Type::delete now throw DeprecatedException, it is no longer possible to delete the mapping for a type. Instead you should delete the index and recreate it with the new mappings
+- MoreLikeThis::setLikeText deprecated from ES 2.0, use setLike instead, but there is a difference - setLike haven't trim magic inside for strings
+- Elastica\Document, methods: setScript, getScript, hasScript now throw DeprecatedException.
+- MoreLikeThis, methods: setLikeText, setIds, setPercentTermsToMatch now throw DeprecatedException.
+- Elastica\Aggregation\DateHistogram, methods: setPreZone, setPostZone, setPreZoneAdjustLargeInterval, setPreOffset, setPostOffset now throw DeprecatedException.
+- Elastica\Query\Builder trigger E_USER_DEPRECATED error when you try use it.
+- Elastica\Filter\Bool and Elastica\Query\Bool trigger E_USER_DEPRECATED error when you try use them.
+- Elastica\Query\Fuzzy:addField method trigger E_USER_DEPRECATED error
+- Elastica\Query\FunctionScore:addBoostFactorFunction method trigger E_USER_DEPRECATED error
+- Elastica\Query:setLimit method trigger E_USER_DEPRECATED error
+- Elastica\Document:add method trigger E_USER_DEPRECATED error
+- Type::moreLikeThis API was removed from ES 2.0, use MoreLikeThis query instead
+- Remove Thrift transport and everything related to it
+- Remove Memcache transport and everything related to it
+- Remove BulkUdp and everything related to it
+- Remove Facets and everything related to it
+- Remove ansible scripts for tests setup and Vagrantfile as not needed anymore.
+  All is based on docker containers now
+- Support for PHP 5.3 removed
+- Elastica\Reponse::getError() now returns and array instead of a string
+- Move function \Elastica\Index\Status::getAliases() and hasAlias(...) to \Elastica\Index::getAliases()
+- Remove \Elastica\Index\Status object and related functions
+- \Elastica\Query\FuzzyLikeThis remove as not supported anymore
+- Remove \Elastica\Status::getServerStatus() as the information was removed
+- DeleteByQuery now requires the delete-by-query plugin isntalled
+- Remove \Elastica\Filter\Nested as it is replaced by \Elastica\Query\Nested
+- Require at least PHP 5.4
+
+### Bugfixes
+- Fixed GeoShapeProvided relation parameter position
+
+### Added
+- Elastica\Reponse::getErrorMessage was added as getError is now an object
+- Elastica\Query\MoreLikeThis::setLike
+- \Elastica\Exception\DeprecatedException
+- Connection option to convert JSON bigint results to strings can now be set [#717](https://github.com/ruflin/Elastica/issues/717)
+
+### Improvements
+- Travis builds were moved to docker-compose setup. Ansible scripts and Vagrant files were removed
+- trigger_error with E_USER_DEPRECATE added to deprecated places
+- DeprecatedException will be thrown, if there is a call of method that not support BC
+
+### Deprecated
+- Elastica\Type::delete is deprecated
+- Elastica\Filter\Bool is deprecated
+- Elastica\Query\Bool is deprecated
+- Elastica\Query\MoreLikeThis::setLikeText is deprecated
+- Elastica\Query\MoreLikeThis::setIds is deprecated
 
 ## [2.3.1](https://github.com/ruflin/Elastica/releases/tag/2.3.1) - 2015-10-17
 
@@ -146,7 +264,7 @@ All notable changes to this project will be documented in this file based on the
 
 ### Improvements
 - Add testing on PHP 7 on Travis [#826](https://github.com/ruflin/Elastica/issues/826/)
-- Allow bool in Query::setSource function [#818](https://github.com/ruflin/Elastica/issues/818/) http://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-source-filtering.html
+- Allow bool in Query::setSource function [#818](https://github.com/ruflin/Elastica/issues/818/) https://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-source-filtering.html
 - deleteByQuery() implemented in Elastica\Index [#816](https://github.com/ruflin/Elastica/issues/816/)
 - Add MLT query against documents [#814](https://github.com/ruflin/Elastica/issues/814/)
 - Added Elastica\Query\SimpleQueryString::setMinimumShouldMatch [#813](https://github.com/ruflin/Elastica/issues/813/)
@@ -314,14 +432,14 @@ The changelog before version 2.0.0 was organised by date. All changes can be fou
  - Fix FunstionScore Query random_score without seed bug. [#647](https://github.com/ruflin/Elastica/issues/647/)
 
 2014-07-02
-- Add setPostFilter method to Elastica\Query (http://www.elastic.co/guide/en/elasticsearch/guide/current/_post_filter.html) [#645](https://github.com/ruflin/Elastica/issues/645/)
+- Add setPostFilter method to Elastica\Query (https://www.elastic.co/guide/en/elasticsearch/guide/current/_post_filter.html) [#645](https://github.com/ruflin/Elastica/issues/645/)
 
 2014-06-30
-- Add Reverse Nested aggregation (http://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-reverse-nested-aggregation.html). [#642](https://github.com/ruflin/Elastica/issues/642/)
+- Add Reverse Nested aggregation (https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-reverse-nested-aggregation.html). [#642](https://github.com/ruflin/Elastica/issues/642/)
 
 2014-06-14
 - Release v1.2.1.0
-- Removed the requirement to set arguments filter and/or query in Filtered, according to the documentation: http://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-filtered-query.html [#616](https://github.com/ruflin/Elastica/issues/616/)
+- Removed the requirement to set arguments filter and/or query in Filtered, according to the documentation: https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-filtered-query.html [#616](https://github.com/ruflin/Elastica/issues/616/)
 
 2014-06-13
 - Stop ClientTest->testDeleteIdsIdxStringTypeString from failing 1/3 of the time [#634](https://github.com/ruflin/Elastica/issues/634/)
@@ -335,7 +453,7 @@ The changelog before version 2.0.0 was organised by date. All changes can be fou
 - Update travis to elasticsearch 1.2.1, disable Thrift plugin as not compatible and fix incompatible tests
 
 2014-06-04
-- Implement Boosting Query (http://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-boosting-query.html) [#625](https://github.com/ruflin/Elastica/issues/625/)
+- Implement Boosting Query (https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-boosting-query.html) [#625](https://github.com/ruflin/Elastica/issues/625/)
 
 2014-06-02
 - add retry_on_conflict support to bulk [#623](https://github.com/ruflin/Elastica/issues/623/)
@@ -348,7 +466,7 @@ The changelog before version 2.0.0 was organised by date. All changes can be fou
 
 2014-05-25
 - Added Guzzle transport as an alternative to the default Http transport [#618](https://github.com/ruflin/Elastica/issues/618/)
-- Added Elastica\ScanAndScroll Iterator (http://www.elastic.co/guide/en/elasticsearch/guide/current/scan-scroll.html) [#617](https://github.com/ruflin/Elastica/issues/617/)
+- Added Elastica\ScanAndScroll Iterator (https://www.elastic.co/guide/en/elasticsearch/guide/current/scan-scroll.html) [#617](https://github.com/ruflin/Elastica/issues/617/)
 
 2014-05-13
 - Add JSON compat library; Elasticsearch JSON flags and nicer error handling [#614](https://github.com/ruflin/Elastica/issues/614/)
@@ -565,7 +683,7 @@ The changelog before version 2.0.0 was organised by date. All changes can be fou
 - \Elastica\Search::addSuggest() has been renamed to \Elastica\Search::setSuggest()
 - \Elastica\Query::addSuggest() has been renamed to \Elastica\Query::setSuggest()
 - Add \Elastica\Suggest\Phrase, \Elastica\Suggest\CandidateGenerator\AbstractCandidateGenerator, and \Elastica\Suggest\CandidateGenerator\DirectGenerator
-  (see http://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggesters-phrase.html)
+  (see https://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggesters-phrase.html)
 
 2013-12-04
 - Remove boost from FunctionScore::addFunction because this is not supported by elasticsearch
@@ -600,10 +718,10 @@ The changelog before version 2.0.0 was organised by date. All changes can be fou
 
 2013-10-29
 - Elastica_Type::exists() added
-  See http://www.elastic.co/guide/en/elasticsearch/reference/current/indices-types-exists.html#indices-types-exists
+  See https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-types-exists.html#indices-types-exists
 
 2013-10-27
-- Adapted possible values (not only in) for minimum_should_match param based on elasticsearch documetnation http://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-minimum-should-match.html
+- Adapted possible values (not only in) for minimum_should_match param based on elasticsearch documetnation https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-minimum-should-match.html
 
 2013-10-27
 - Release v0.90.5.0
@@ -620,7 +738,7 @@ The changelog before version 2.0.0 was organised by date. All changes can be fou
 2013-09-20
 - Update to geocluster-facet 0.0.8
 - Add support for term suggest API
-  See http://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggesters-term.html
+  See https://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggesters-term.html
 
 2013-09-18
 - Fix \Elastica\Filter\HasChild usage of \Elastica\Query as to not collide with \Elastica\Filter\Query namespace
@@ -1042,7 +1160,7 @@ The changelog before version 2.0.0 was organised by date. All changes can be fou
 
 2011-04-29
 - Added getParam to Elastica_Result that more values can be retrieved from the hit array
-- Elastica_Filter_Ids added http://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-ids-filter.html
+- Elastica_Filter_Ids added https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-ids-filter.html
 - getMergePolicyMergeFactor and getRefreshInterval to Elastica_Type_Settings added. If no value is set, default values are returned
 
 2011-04-28
@@ -1080,7 +1198,7 @@ The changelog before version 2.0.0 was organised by date. All changes can be fou
 
 2011-03-24
 - Renaming of Elastica_Status_Index to Elastica_Index_Status => API Change!
-- IndexSettings added for improved bulk updating http://www.elastic.co/guide/en/elasticsearch/reference/current/indices-update-settings.html
+- IndexSettings added for improved bulk updating https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-update-settings.html
 
 2011-03-21
 - Node object added

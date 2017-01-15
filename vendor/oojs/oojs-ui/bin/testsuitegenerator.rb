@@ -14,7 +14,8 @@ else
 	tests = []
 	classes = php.select{|c| class_names.include? c[:name] }
 
-	untestable_classes = %w[DropdownInputWidget ComboBoxInputWidget RadioSelectInputWidget]
+	untestable_classes = %w[DropdownInputWidget ComboBoxInputWidget
+		RadioSelectInputWidget CheckboxMultiselectInputWidget]
 	testable_classes = classes
 		.reject{|c| c[:abstract] } # can't test abstract classes
 		.reject{|c| !c[:parent] || c[:trait] || c[:parent] == 'Theme' } # can't test abstract
@@ -33,40 +34,47 @@ else
 	# values to test for each type
 	expandos = {
 		'null' => [nil],
-		'number' => [0, -1, 300],
-		'boolean' => [true, false],
+		'int' => [0, -1, 300], # PHP code
+		'number' => [0, -1, 300], # JS code
+		'bool' => [true, false], # PHP code
+		'boolean' => [true, false], # JS code
 		'string' => ['Foo bar', '<b>HTML?</b>', '', ' '],
 		'HtmlSnippet' => ['Foo bar', '<b>HTML?</b>', ''].map(&make_htmlsnippet_placeholder),
 	}
 
-	# values to test for names
+	# Values to test for specific config options, when not all values of given type are valid.
+	# Empty array will result in no tests for this config option being generated.
 	sensible_values = {
 		'href' => ['http://example.com/'],
 		['TextInputWidget', 'type'] => %w[text number password foo],
 		['ButtonInputWidget', 'type'] => %w[button submit foo],
-		['FieldLayout', 'help'] => true, # different PHP and JS implementations
-		['ActionFieldLayout', 'help'] => true, # different PHP and JS implementations
-		['FieldsetLayout', 'help'] => true, # different PHP and JS implementations
 		['FieldLayout', 'errors'] => expandos['string'].map{|v| [v] }, # treat as string[]
 		['FieldLayout', 'notices'] => expandos['string'].map{|v| [v] }, # treat as string[]
 		'type' => %w[text button],
 		'method' => %w[GET POST],
-		'action' => [],
-		'enctype' => true,
 		'target' => ['_blank'],
 		'accessKey' => ['k'],
-		'name' => true,
-		'autofocus' => true, # usually makes no sense in JS
 		'tabIndex' => [-1, 0, 100],
 		'maxLength' => [100],
 		'icon' => ['image'],
 		'indicator' => ['down'],
 		'flags' => %w[constructive primary],
+		'progress' => [0, 50, 100, false],
+		# usually makes no sense in JS
+		'autofocus' => [],
+		# too simple to test?
+		'action' => [],
+		'enctype' => [],
+		'name' => [],
+		# different PHP and JS implementations
+		['FieldLayout', 'help'] => [],
+		['ActionFieldLayout', 'help'] => [],
+		['FieldsetLayout', 'help'] => [],
 		# these are defined by Element and would bloat the tests
-		'classes' => true,
-		'id' => true,
-		'content' => true,
-		'text' => true,
+		'classes' => [],
+		'id' => [],
+		'content' => [],
+		'text' => [],
 	}
 
 	find_class = lambda do |klass|
@@ -128,22 +136,14 @@ else
 			config_comb += required_config
 			expanded = config_comb.map{|config_option|
 				types = config_option[:type].split '|'
-				sensible = sensible_values[ [ klass[:name], config_option[:name] ] ] ||
-					sensible_values[ config_option[:name] ]
-				if sensible == true
-					[] # the empty value will result in no tests being generated
-				else
-					values = sensible || expand_types_to_values.call(types)
-					values.map{|v| config_option.dup.merge(value: v) } + [nil]
-				end
+				values =
+					sensible_values[ [ klass[:name], config_option[:name] ] ] ||
+					sensible_values[ config_option[:name] ] ||
+					expand_types_to_values.call(types)
+				values.map{|v| config_option.dup.merge(value: v) }
 			}
-			expanded.empty? ? [] : expanded[0].product(*expanded[1..-1])
-		}.inject(:concat).map(&:compact).uniq
-
-		# really require the required ones
-		config_combinations = config_combinations.select{|config_comb|
-			required_config.all?{|r| config_comb.find{|c| c[:name] == r[:name] } }
-		}
+			expanded.empty? ? [ [] ] : expanded[0].product(*expanded[1..-1])
+		}.inject(:concat).uniq
 
 		config_combinations.each do |config_comb|
 			tests << {

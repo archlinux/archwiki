@@ -30,9 +30,13 @@ use MediaWiki\MediaWikiServices;
  * @ingroup API
  */
 class ApiOpenSearch extends ApiBase {
+	use SearchApi;
 
 	private $format = null;
 	private $fm = null;
+
+	/** @var array list of api allowed params */
+	private $allowedParams = null;
 
 	/**
 	 * Get the output format
@@ -80,24 +84,13 @@ class ApiOpenSearch extends ApiBase {
 	public function execute() {
 		$params = $this->extractRequestParams();
 		$search = $params['search'];
-		$limit = $params['limit'];
-		$namespaces = $params['namespace'];
 		$suggest = $params['suggest'];
-
-		if ( $params['redirects'] === null ) {
-			// Backwards compatibility, don't resolve for JSON.
-			$resolveRedir = $this->getFormat() !== 'json';
-		} else {
-			$resolveRedir = $params['redirects'] === 'resolve';
-		}
-
 		$results = [];
-
 		if ( !$suggest || $this->getConfig()->get( 'EnableOpenSearchSuggest' ) ) {
 			// Open search results may be stored for a very long time
 			$this->getMain()->setCacheMaxAge( $this->getConfig()->get( 'SearchSuggestCacheExpiry' ) );
 			$this->getMain()->setCacheMode( 'public' );
-			$this->search( $search, $limit, $namespaces, $resolveRedir, $results );
+			$results = $this->search( $search, $params );
 
 			// Allow hooks to populate extracts and images
 			Hooks::run( 'ApiOpenSearchSuggest', [ &$results ] );
@@ -117,27 +110,30 @@ class ApiOpenSearch extends ApiBase {
 
 	/**
 	 * Perform the search
-	 *
-	 * @param string $search Text to search
-	 * @param int $limit Maximum items to return
-	 * @param array $namespaces Namespaces to search
-	 * @param bool $resolveRedir Whether to resolve redirects
-	 * @param array &$results Put results here. Keys have to be integers.
+	 * @param string $search the search query
+	 * @param array $params api request params
+	 * @return array search results. Keys are integers.
 	 */
-	protected function search( $search, $limit, $namespaces, $resolveRedir, &$results ) {
-		$searchEngine = MediaWikiServices::getInstance()->newSearchEngine();
-		$searchEngine->setLimitOffset( $limit );
-		$searchEngine->setNamespaces( $namespaces );
+	private function search( $search, array $params ) {
+		$searchEngine = $this->buildSearchEngine( $params );
 		$titles = $searchEngine->extractTitles( $searchEngine->completionSearchWithVariants( $search ) );
+		$results = [];
 
 		if ( !$titles ) {
-			return;
+			return $results;
 		}
 
 		// Special pages need unique integer ids in the return list, so we just
 		// assign them negative numbers because those won't clash with the
 		// always positive articleIds that non-special pages get.
 		$nextSpecialPageId = -1;
+
+		if ( $params['redirects'] === null ) {
+			// Backwards compatibility, don't resolve for JSON.
+			$resolveRedir = $this->getFormat() !== 'json';
+		} else {
+			$resolveRedir = $params['redirects'] === 'resolve';
+		}
 
 		if ( $resolveRedir ) {
 			// Query for redirects
@@ -206,6 +202,8 @@ class ApiOpenSearch extends ApiBase {
 				];
 			}
 		}
+
+		return $results;
 	}
 
 	/**
@@ -271,20 +269,10 @@ class ApiOpenSearch extends ApiBase {
 	}
 
 	public function getAllowedParams() {
-		return [
-			'search' => null,
-			'limit' => [
-				ApiBase::PARAM_DFLT => $this->getConfig()->get( 'OpenSearchDefaultLimit' ),
-				ApiBase::PARAM_TYPE => 'limit',
-				ApiBase::PARAM_MIN => 1,
-				ApiBase::PARAM_MAX => 100,
-				ApiBase::PARAM_MAX2 => 100
-			],
-			'namespace' => [
-				ApiBase::PARAM_DFLT => NS_MAIN,
-				ApiBase::PARAM_TYPE => 'namespace',
-				ApiBase::PARAM_ISMULTI => true
-			],
+		if ( $this->allowedParams !== null ) {
+			return $this->allowedParams;
+		}
+		$this->allowedParams = $this->buildCommonApiParams( false ) + [
 			'suggest' => false,
 			'redirects' => [
 				ApiBase::PARAM_TYPE => [ 'return', 'resolve' ],
@@ -294,6 +282,22 @@ class ApiOpenSearch extends ApiBase {
 				ApiBase::PARAM_TYPE => [ 'json', 'jsonfm', 'xml', 'xmlfm' ],
 			],
 			'warningsaserror' => false,
+		];
+
+		// Use open search specific default limit
+		$this->allowedParams['limit'][ApiBase::PARAM_DFLT] = $this->getConfig()->get(
+			'OpenSearchDefaultLimit'
+		);
+
+		return $this->allowedParams;
+	}
+
+	public function getSearchProfileParams() {
+		return [
+			'profile' => [
+				'profile-type' => SearchEngine::COMPLETION_PROFILE_TYPE,
+				'help-message' => 'apihelp-query+prefixsearch-param-profile'
+			],
 		];
 	}
 

@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\MediaWikiServices;
+
 /**
  * @author Addshore
  *
@@ -22,7 +24,7 @@ class WatchedItemStoreIntegrationTest extends MediaWikiTestCase {
 	public function testWatchAndUnWatchItem() {
 		$user = $this->getUser();
 		$title = Title::newFromText( 'WatchedItemStoreIntegrationTestPage' );
-		$store = WatchedItemStore::getDefaultInstance();
+		$store = MediaWikiServices::getInstance()->getWatchedItemStore();
 		// Cleanup after previous tests
 		$store->removeWatch( $user, $title );
 		$initialWatchers = $store->countWatchers( $title );
@@ -104,11 +106,11 @@ class WatchedItemStoreIntegrationTest extends MediaWikiTestCase {
 		);
 	}
 
-	public function testUpdateAndResetNotificationTimestamp() {
+	public function testUpdateResetAndSetNotificationTimestamp() {
 		$user = $this->getUser();
 		$otherUser = ( new TestUser( 'WatchedItemStoreIntegrationTestUser_otherUser' ) )->getUser();
 		$title = Title::newFromText( 'WatchedItemStoreIntegrationTestPage' );
-		$store = WatchedItemStore::getDefaultInstance();
+		$store = MediaWikiServices::getInstance()->getWatchedItemStore();
 		$store->addWatch( $user, $title );
 		$this->assertNull( $store->loadWatchedItem( $user, $title )->getNotificationTimestamp() );
 		$initialVisitingWatchers = $store->countVisitingWatchers( $title, '20150202020202' );
@@ -170,13 +172,31 @@ class WatchedItemStoreIntegrationTest extends MediaWikiTestCase {
 				[ [ $title, '20150202020202' ] ], $initialVisitingWatchers + 1
 			)
 		);
+
+		// setNotificationTimestampsForUser specifying a title
+		$this->assertTrue(
+			$store->setNotificationTimestampsForUser( $user, '20200202020202', [ $title ] )
+		);
+		$this->assertEquals(
+			'20200202020202',
+			$store->getWatchedItem( $user, $title )->getNotificationTimestamp()
+		);
+
+		// setNotificationTimestampsForUser not specifying a title
+		$this->assertTrue(
+			$store->setNotificationTimestampsForUser( $user, '20210202020202' )
+		);
+		$this->assertEquals(
+			'20210202020202',
+			$store->getWatchedItem( $user, $title )->getNotificationTimestamp()
+		);
 	}
 
 	public function testDuplicateAllAssociatedEntries() {
 		$user = $this->getUser();
 		$titleOld = Title::newFromText( 'WatchedItemStoreIntegrationTestPageOld' );
 		$titleNew = Title::newFromText( 'WatchedItemStoreIntegrationTestPageNew' );
-		$store = WatchedItemStore::getDefaultInstance();
+		$store = MediaWikiServices::getInstance()->getWatchedItemStore();
 		$store->addWatch( $user, $titleOld->getSubjectPage() );
 		$store->addWatch( $user, $titleOld->getTalkPage() );
 		// Cleanup after previous tests

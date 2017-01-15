@@ -103,7 +103,7 @@ abstract class ApiQueryBase extends ApiBase {
 
 	/**
 	 * Get the Query database connection (read-only)
-	 * @return DatabaseBase
+	 * @return Database
 	 */
 	protected function getDB() {
 		if ( is_null( $this->mDb ) ) {
@@ -119,7 +119,7 @@ abstract class ApiQueryBase extends ApiBase {
 	 * @param string $name Name to assign to the database connection
 	 * @param int $db One of the DB_* constants
 	 * @param array $groups Query groups
-	 * @return DatabaseBase
+	 * @return Database
 	 */
 	public function selectNamedDB( $name, $db, $groups ) {
 		$this->mDb = $this->getQuery()->getNamedDB( $name, $db, $groups );
@@ -176,10 +176,9 @@ abstract class ApiQueryBase extends ApiBase {
 	/**
 	 * Add a set of JOIN conditions to the internal array
 	 *
-	 * JOIN conditions are formatted as array( tablename => array(jointype,
-	 * conditions) e.g. array('page' => array('LEFT JOIN',
-	 * 'page_id=rev_page')) . conditions may be a string or an
-	 * addWhere()-style array
+	 * JOIN conditions are formatted as [ tablename => [ jointype, conditions ] ]
+	 * e.g. [ 'page' => [ 'LEFT JOIN', 'page_id=rev_page' ] ].
+	 * Conditions may be a string or an addWhere()-style array.
 	 * @param array $join_conds JOIN conditions
 	 */
 	protected function addJoinConds( $join_conds ) {
@@ -219,12 +218,12 @@ abstract class ApiQueryBase extends ApiBase {
 
 	/**
 	 * Add a set of WHERE clauses to the internal array.
-	 * Clauses can be formatted as 'foo=bar' or array('foo' => 'bar'),
+	 * Clauses can be formatted as 'foo=bar' or [ 'foo' => 'bar' ],
 	 * the latter only works if the value is a constant (i.e. not another field)
 	 *
 	 * If $value is an empty array, this function does nothing.
 	 *
-	 * For example, array('foo=bar', 'baz' => 3, 'bla' => 'foo') translates
+	 * For example, [ 'foo=bar', 'baz' => 3, 'bla' => 'foo' ] translates
 	 * to "foo=bar AND baz='3' AND bla='foo'"
 	 * @param string|array $value
 	 */
@@ -341,16 +340,19 @@ abstract class ApiQueryBase extends ApiBase {
 	 * @param string $method Function the query should be attributed to.
 	 *  You should usually use __METHOD__ here
 	 * @param array $extraQuery Query data to add but not store in the object
-	 *  Format is array(
+	 *  Format is [
 	 *    'tables' => ...,
 	 *    'fields' => ...,
 	 *    'where' => ...,
 	 *    'options' => ...,
 	 *    'join_conds' => ...
-	 *  )
+	 *  ]
+	 * @param array|null &$hookData If set, the ApiQueryBaseBeforeQuery and
+	 *  ApiQueryBaseAfterQuery hooks will be called, and the
+	 *  ApiQueryBaseProcessRow hook will be expected.
 	 * @return ResultWrapper
 	 */
-	protected function select( $method, $extraQuery = [] ) {
+	protected function select( $method, $extraQuery = [], array &$hookData = null ) {
 
 		$tables = array_merge(
 			$this->tables,
@@ -373,9 +375,36 @@ abstract class ApiQueryBase extends ApiBase {
 			isset( $extraQuery['join_conds'] ) ? (array)$extraQuery['join_conds'] : []
 		);
 
+		if ( $hookData !== null ) {
+			Hooks::run( 'ApiQueryBaseBeforeQuery',
+				[ $this, &$tables, &$fields, &$where, &$options, &$join_conds, &$hookData ]
+			);
+		}
+
 		$res = $this->getDB()->select( $tables, $fields, $where, $method, $options, $join_conds );
 
+		if ( $hookData !== null ) {
+			Hooks::run( 'ApiQueryBaseAfterQuery', [ $this, $res, &$hookData ] );
+		}
+
 		return $res;
+	}
+
+	/**
+	 * Call the ApiQueryBaseProcessRow hook
+	 *
+	 * Generally, a module that passed $hookData to self::select() will call
+	 * this just before calling ApiResult::addValue(), and treat a false return
+	 * here in the same way it treats a false return from addValue().
+	 *
+	 * @since 1.28
+	 * @param object $row Database row
+	 * @param array &$data Data to be added to the result
+	 * @param array &$hookData Hook data from ApiQueryBase::select()
+	 * @return bool Return false if row processing should end with continuation
+	 */
+	protected function processRow( $row, array &$data, array &$hookData ) {
+		return Hooks::run( 'ApiQueryBaseProcessRow', [ $this, $row, &$data, &$hookData ] );
 	}
 
 	/**

@@ -3,7 +3,6 @@
 namespace MediaWiki\Auth;
 
 use Config;
-use StatusValue;
 
 /**
  * Handles email notification / email address confirmation for account creation.
@@ -51,15 +50,19 @@ class EmailNotificationSecondaryAuthenticationProvider
 			&& $user->getEmail()
 			&& !$this->manager->getAuthenticationSessionData( 'no-email' )
 		) {
-			$status = $user->sendConfirmationMail();
-			$user->saveSettings();
-			if ( $status->isGood() ) {
-				// TODO show 'confirmemail_oncreate' success message
-			} else {
-				// TODO show 'confirmemail_sendfailed' error message
-				$this->logger->warning( 'Could not send confirmation email: ' .
-					$status->getWikiText( false, false, 'en' ) );
-			}
+			// TODO show 'confirmemail_oncreate'/'confirmemail_sendfailed' message
+			wfGetDB( DB_MASTER )->onTransactionIdle(
+				function () use ( $user ) {
+					$user = $user->getInstanceForUpdate();
+					$status = $user->sendConfirmationMail();
+					$user->saveSettings();
+					if ( !$status->isGood() ) {
+						$this->logger->warning( 'Could not send confirmation email: ' .
+							$status->getWikiText( false, false, 'en' ) );
+					}
+				},
+				__METHOD__
+			);
 		}
 
 		return AuthenticationResponse::newPass();

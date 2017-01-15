@@ -14,7 +14,8 @@
 			"Waldir",
 			"555",
 			"He7d3r",
-			"Opraco"
+			"Opraco",
+			"Fúlvio"
 		]
 	},
 	"wikieditor": "Interface avançada de edição de texto wiki",
@@ -36,7 +37,7 @@
 	"wikieditor-publish-dialog-goback": "Voltar",
 	"wikieditor-toolbar": "Barra de ferramentas de edição",
 	"wikieditor-toolbar-desc": "Barra de ferramentas de edição com usabilidade melhorada",
-	"wikieditor-toolbar-preference": "Activar a barra de ferramentas de edição melhorada",
+	"wikieditor-toolbar-preference": "Ativar a barra de ferramentas de edição melhorada",
 	"wikieditor-toolbar-dialogs-preference": "Possibilitar diálogos de inserção de ligações, tabelas, bem como pesquisa e substituição de funções",
 	"wikieditor-toolbar-loading": "A carregar…",
 	"wikieditor-toolbar-tool-bold": "Negrito",
@@ -66,7 +67,7 @@
 	"wikieditor-toolbar-tool-link-int-target-status-loading": "A verificar se a página existe...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Página de desambiguação",
 	"wikieditor-toolbar-tool-link-int-invalid": "O título que especificou é inválido.",
-	"wikieditor-toolbar-tool-link-lookslikeinternal": "A URL que especificou parece ser um link para outra página da wiki. Deseja torná-la num link interno?",
+	"wikieditor-toolbar-tool-link-lookslikeinternal": "O URL que especificou parece ser uma ligação para outra página da wiki. Deseja torná-lo numa ligação interno?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Link interno",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "Link externo",
 	"wikieditor-toolbar-tool-link-empty": "Não introduziu o destino do link.",
@@ -201,6 +202,7 @@
 	"wikieditor-toolbar-help-content-reference-description": "Referência",
 	"wikieditor-toolbar-help-content-reference-syntax": "Texto da página.&lt;ref&gt;[http://www.exemplo.org Texto do link], texto adicional.&lt;/ref&gt;",
 	"wikieditor-toolbar-help-content-reference-result": "Texto da página.<sup><a href='#'>[1]</a></sup>",
+	"wikieditor-toolbar-help-content-named-reference-description": "Referência nomeada",
 	"wikieditor-toolbar-help-content-named-reference-syntax": "Texto da página.&lt;ref name=\"test\"&gt;[http://www.example.org Link text]&lt;/ref&gt;",
 	"wikieditor-toolbar-help-content-named-reference-result": "Texto da página.<sup><a href='#'>[2]</a></sup>",
 	"wikieditor-toolbar-help-content-rereference-description": "Reutilização da mesma referência",

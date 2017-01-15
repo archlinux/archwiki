@@ -16,5 +16,6 @@
 	"renameuserreserve": "पुरान प्रयोगकर्तानाम भविष्यमे प्रयोगसँ अवरोधित करी",
 	"renameuserwarnings": "चेतावनी:",
 	"renameuserconfirm": "हँ, प्रयोगकर्तानाम परिवर्तन करी",
-	"renameusersubmit": "सौपू"
+	"renameusersubmit": "सौपू",
+	"log-name-renameuser": "प्रयोगकर्तानाम परिवर्तन लौग"
 }

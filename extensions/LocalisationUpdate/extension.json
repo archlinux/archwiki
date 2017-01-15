@@ -38,9 +38,6 @@
 		],
 		"LocalisationCacheRecacheFallback": [
 			"LocalisationUpdate::onRecacheFallback"
-		],
-		"UnitTestsList": [
-			"LocalisationUpdate::setupUnitTests"
 		]
 	},
 	"config": {

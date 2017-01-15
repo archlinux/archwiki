@@ -11,13 +11,14 @@
 			"Siebrand",
 			"The Evil IP address",
 			"Toliño",
-			"Umherirrender"
+			"Umherirrender",
+			"Liuxinyu970226"
 		]
 	},
 	"captcha-edit": "This message will be shown when editing if the wiki requires solving a captcha for editing.\n{{Related|ConfirmEdit-edit}}",
 	"captcha-edit-fail": "Used as failure message.\n\nSee also:\n* {{msg-mw|Captcha-createaccount-fail}}\n* {{msg-mw|Captcha-sendemail-fail}}",
 	"captcha-desc": "{{desc|name=Confirm Edit|url=https://www.mediawiki.org/wiki/Extension:ConfirmEdit}}",
-	"captcha-label": "Label field for input field shown in forms",
+	"captcha-label": "Label field for input field shown in forms\n{{Identical|Captcha}}",
 	"captcha-help": "API help text for the input field.",
 	"captcha-info-help": "API help text for the description.",
 	"captcha-id-label": "Label for the CAPTCHA id (only shown in the API).",
@@ -38,5 +39,11 @@
 	"captcha-addurl-whitelist": "See also: [[MediaWiki:Spam-blacklist]] and [[MediaWiki:Spam-whitelist]].\n\nLeave all the wiki markup, including the spaces, as is.\nYou can translate the text, including 'Leave this line exactly as it is'.\nThe first line of this messages has one (1) leading space.\n\n\"regex\" stands for \"regular expression\".",
 	"right-skipcaptcha": "{{doc-right|skipcaptcha}}",
 	"captcha-apihelp-param-captchaword": "{{doc-apihelp-param|description=the \"captchaword\" parameter added by [[mw:Extension:ConfirmEdit]]|noseealso=1}}\nSee also {{msg-mw|captcha-apihelp-param-captchaid}}",
-	"captcha-apihelp-param-captchaid": "{{doc-apihelp-param|description=the \"captchaid\" parameter added by [[mw:Extension:ConfirmEdit]]|noseealso=1}}\nSee also {{msg-mw|captcha-apihelp-param-captchaword}}"
+	"captcha-apihelp-param-captchaid": "{{doc-apihelp-param|description=the \"captchaid\" parameter added by [[mw:Extension:ConfirmEdit]]|noseealso=1}}\nSee also {{msg-mw|captcha-apihelp-param-captchaword}}",
+	"confirmedit-preview-line": "Used as a table heading for the edit preview of [[MediaWiki:Captcha-ip-whitelist]] to indicate the line number (1, 2, 3, ...).",
+	"confirmedit-preview-content": "Used as a table heading for the edit preview of [[MediaWiki:Captcha-ip-whitelist]] to indicate the content of a line.\n{{Identical|Content}}",
+	"confirmedit-preview-validity": "Used as a table heading for the edit preview of [[MediaWiki:Captcha-ip-whitelist]] to indicate the validity of a content of a line (if it's an IP address or not).",
+	"confirmedit-preview-valid": "Used to indicate a valid IP address in the edit preview of [[MediaWiki:Captcha-ip-whitelist]].\n{{Identical|Valid}}",
+	"confirmedit-preview-invalid": "Used to indicate an invalid IP address in the edit preview of [[MediaWiki:Captcha-ip-whitelist]].\n{{Identical|Invalid}}",
+	"confirmedit-preview-description": "Explains the edit preview of [[MediaWiki:Captcha-ip-whitelist]]."
 }

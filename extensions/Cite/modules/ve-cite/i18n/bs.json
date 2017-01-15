@@ -23,15 +23,15 @@
 	"cite-ve-dialog-referenceslist-contextitem-description-general": "Spisak općih referenci",
 	"cite-ve-dialog-referenceslist-contextitem-description-named": "Spisak referenci grupe \"$1\"",
 	"cite-ve-dialog-referenceslist-title": "Spisak referenci",
-	"cite-ve-dialogbutton-citation-educationpopup-title": "Reference",
 	"cite-ve-dialogbutton-citation-educationpopup-text": "Poboljšava sadržaj članka dodavanjem izvora za informacije koje ste naveli. Možete referencirati knjige, novine i web-stranice.",
+	"cite-ve-dialogbutton-citation-educationpopup-title": "Reference",
 	"cite-ve-dialogbutton-reference-full-label": "Osnovni oblik",
-	"cite-ve-dialogbutton-reference-tooltip": "Osnovna",
 	"cite-ve-dialogbutton-reference-title": "Referenca",
+	"cite-ve-dialogbutton-reference-tooltip": "Osnovna",
 	"cite-ve-dialogbutton-referenceslist-tooltip": "Spisak referenci",
 	"cite-ve-reference-input-placeholder": "Traži postojeće reference",
 	"cite-ve-referenceslist-isempty": "Nema referenci u grupi \"$1\" na ovoj stranici.",
 	"cite-ve-referenceslist-isempty-default": "Nema referenci na ovoj stranici koje bi mogle biti uključene u ovaj spisak.",
-	"cite-ve-referenceslist-missingref": "Ova referenca je definirana u šablonu ili drugom generiranom bloku i sada se može uređivati jedino u izvornom modu.",
+	"cite-ve-referenceslist-missingref": "Ova referenca definirana je u šablonu ili drugom generiranom dijelu i zasad se može uređivati jedino u uređivaču izvornog koda.",
 	"cite-ve-toolbar-group-label": "Referenca"
 }

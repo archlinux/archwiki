@@ -123,6 +123,7 @@ $specialPageAliases['eu'] = array(
 /** Persian (فارسی) */
 $specialPageAliases['fa'] = array(
 	'Gadgets' => array( 'ابزارها' ),
+	'GadgetUsage' => array( 'استفاده_ابزار' ),
 );
 
 /** Finnish (suomi) */

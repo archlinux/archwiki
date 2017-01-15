@@ -1,0 +1,22 @@
+{
+    "extends": "wikimedia",
+
+    "ecmaVersion": 5,
+    "env": {
+        "browser": true,
+        "node": true,
+        "jquery": true,
+        "qunit": true
+    },
+    "globals": {
+        "OO": false
+    },
+
+    "rules": {
+        "dot-notation": 0,
+		"valid-jsdoc": 0,
+		"wrap-iife": 0,
+		"spaced-comment": ["error", "always", { "exceptions": ["*", "!"] }],
+		"no-use-before-define": ["error", { "functions": false, "classes": true }]
+    }
+}

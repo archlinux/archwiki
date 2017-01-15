@@ -21,6 +21,7 @@
  * @ingroup Profiler
  * @author Aaron Schulz
  */
+use Wikimedia\ScopedCallback;
 
 /**
  * Custom PHP profiler for parser/DB type section names that xhprof/xdebug can't handle
@@ -46,8 +47,6 @@ class SectionProfiler {
 	protected $collateOnly = true;
 	/** @var array Cache of a standard broken collation entry */
 	protected $errorEntry;
-	/** @var callable Cache of a profile out callback */
-	protected $profileOutCallback;
 
 	/**
 	 * @param array $params
@@ -55,14 +54,11 @@ class SectionProfiler {
 	public function __construct( array $params = [] ) {
 		$this->errorEntry = $this->getErrorEntry();
 		$this->collateOnly = empty( $params['trace'] );
-		$this->profileOutCallback = function ( $profiler, $section ) {
-			$profiler->profileOutInternal( $section );
-		};
 	}
 
 	/**
 	 * @param string $section
-	 * @return ScopedCallback
+	 * @return SectionProfileCallback
 	 */
 	public function scopedProfileIn( $section ) {
 		$this->profileInInternal( $section );

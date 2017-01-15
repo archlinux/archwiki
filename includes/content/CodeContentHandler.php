@@ -63,4 +63,5 @@ abstract class CodeContentHandler extends TextContentHandler {
 	protected function getContentClass() {
 		throw new MWException( 'Subclass must override' );
 	}
+
 }

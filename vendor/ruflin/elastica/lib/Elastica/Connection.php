@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica;
 
 use Elastica\Exception\InvalidException;
@@ -341,5 +342,21 @@ class Connection extends Param
         }
 
         return $connection;
+    }
+
+    /**
+     * @return string User
+     */
+    public function getUsername()
+    {
+        return $this->hasParam('username') ? $this->getParam('username') : null;
+    }
+
+    /**
+     * @return string Password
+     */
+    public function getPassword()
+    {
+        return $this->hasParam('password') ? $this->getParam('password') : null;
     }
 }

@@ -25,7 +25,6 @@
  * @ingroup Maintenance
  */
 
-$wgUseMasterForMaintenance = true;
 require_once __DIR__ . '/Maintenance.php';
 
 /**
@@ -81,13 +80,6 @@ class UpdateMediaWiki extends Maintenance {
 				"and can cause hidden data corruption in MediaWiki and other web apps.\n" .
 				"Upgrade to libxml2 2.7.3 or later.\n" .
 				"ABORTING (see https://bugs.php.net/bug.php?id=45996).\n",
-				true );
-		}
-
-		if ( !function_exists( 'mb_strlen' ) ) {
-			$this->error(
-				"MediaWiki now requires the mbstring PHP extension, your system doesn't have it.\n"
-				. "ABORTING.\n",
 				true );
 		}
 	}
@@ -153,6 +145,7 @@ class UpdateMediaWiki extends Maintenance {
 
 		$this->output( "Going to run database updates for " . wfWikiID() . "\n" );
 		if ( $db->getType() === 'sqlite' ) {
+			/** @var Database|DatabaseSqlite $db */
 			$this->output( "Using SQLite file: '{$db->getDbFilePath()}'\n" );
 		}
 		$this->output( "Depending on the size of your database this may take a while!\n" );

@@ -1,14 +1,16 @@
 <?php
+
 namespace Elastica\Query;
 
 use Elastica\Exception\InvalidException;
+use Elastica\Filter\AbstractFilter;
 
 /**
  * Bool query.
  *
  * @author Nicolas Ruflin <spam@ruflin.com>
  *
- * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-bool-query.html
+ * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-bool-query.html
  */
 class BoolQuery extends AbstractQuery
 {
@@ -46,6 +48,24 @@ class BoolQuery extends AbstractQuery
     public function addMustNot($args)
     {
         return $this->_addQuery('must_not', $args);
+    }
+
+    /**
+     * Sets the filter.
+     *
+     * @param \Elastica\Query\AbstractQuery $filter Filter object
+     *
+     * @return $this
+     */
+    public function addFilter($filter)
+    {
+        if ($filter instanceof AbstractFilter) {
+            trigger_error('Deprecated: Elastica\Query\BoolQuery::addFilter passing AbstractFilter is deprecated. Pass AbstractQuery instead.', E_USER_DEPRECATED);
+        } elseif (!($filter instanceof AbstractQuery)) {
+            throw new InvalidException('Filter must be instance of AbstractQuery');
+        }
+
+        return $this->addParam('filter', $filter);
     }
 
     /**

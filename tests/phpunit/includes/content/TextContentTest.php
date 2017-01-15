@@ -102,6 +102,11 @@ class TextContentTest extends MediaWikiLangTestCase {
 				" Foo \n ",
 				' Foo',
 			],
+			[
+				# 2: newline normalization
+				"LF\n\nCRLF\r\n\r\nCR\r\rEND",
+				"LF\n\nCRLF\n\nCR\n\nEND",
+			],
 		];
 	}
 
@@ -454,4 +459,30 @@ class TextContentTest extends MediaWikiLangTestCase {
 			$this->assertEquals( $expectedNative, $converted->getNativeData() );
 		}
 	}
+
+	/**
+	 * @covers TextContent::normalizeLineEndings
+	 * @dataProvider provideNormalizeLineEndings
+	 */
+	public function testNormalizeLineEndings( $input, $expected ) {
+		$this->assertEquals( $expected, TextContent::normalizeLineEndings( $input ) );
+	}
+
+	public static function provideNormalizeLineEndings() {
+		return [
+			[
+				"Foo\r\nbar",
+				"Foo\nbar"
+			],
+			[
+				"Foo\rbar",
+				"Foo\nbar"
+			],
+			[
+				"Foobar\n  ",
+				"Foobar"
+			]
+		];
+	}
+
 }

@@ -30,7 +30,7 @@ trait AccessKeyedElement {
 	 * @param string $config['accessKey'] AccessKey. If not provided, no accesskey will be added
 	 */
 	public function initializeAccessKeyedElement( array $config = [] ) {
-		// Parent constructor
+		// Properties
 		$this->accessKeyed = isset( $config['accessKeyed'] ) ? $config['accessKeyed'] : $element;
 
 		// Initialization

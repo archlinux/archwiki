@@ -11,7 +11,9 @@
 			"Macofe",
 			"MedShot",
 			"HanV",
-			"Sjoerddebruin"
+			"Sjoerddebruin",
+			"Servien",
+			"Dinosaur918"
 		]
 	},
 	"wikieditor": "Uitgebreide tekstverwerker voor wikitekst",
@@ -198,8 +200,11 @@
 	"wikieditor-toolbar-help-content-reference-description": "Referentie",
 	"wikieditor-toolbar-help-content-reference-syntax": "Paginatekst.&lt;ref&gt;[http://www.example.org Koppelingstekst], extra tekst.&lt;/ref&gt;",
 	"wikieditor-toolbar-help-content-reference-result": "Paginatekst. <sup><a href='#'>[1]</a></sup>",
+	"wikieditor-toolbar-help-content-named-reference-description": "Benoemde referentie",
+	"wikieditor-toolbar-help-content-named-reference-syntax": "Paginatekst.&lt;ref name=\"test\"&gt;[http://www.example.org Koppelingstekst]&lt;/ref&gt;",
+	"wikieditor-toolbar-help-content-named-reference-result": "Paginatekst.<sup><a href='#'>[2]</a></sup>",
 	"wikieditor-toolbar-help-content-rereference-description": "Extra gebruik van dezelfde referentie",
-	"wikieditor-toolbar-help-content-rereference-result": "Paginatekst. <sup><a href='#'>[2]</a></sup>",
+	"wikieditor-toolbar-help-content-rereference-result": "Paginatekst.<sup><a href='#'>[2]</a></sup>",
 	"wikieditor-toolbar-help-content-showreferences-description": "Referenties weergeven",
 	"wikieditor-toolbar-help-content-showreferences-result": "<ol class='references'><li id='cite_note-test-0'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.example.org' class='external text' href='#'>Koppelingstekst</a>, extra tekst.</li></ol>",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "Ondertekening met tijdstempel",

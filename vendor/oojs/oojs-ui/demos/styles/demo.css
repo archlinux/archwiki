@@ -26,7 +26,7 @@ body {
 	box-sizing: border-box;
 }
 
-@media (max-width: 750px) {
+@media ( max-width: 750px ) {
 	.oo-ui-demo-menu {
 		margin-bottom: 1em;
 	}
@@ -35,7 +35,7 @@ body {
 	}
 }
 
-@media (min-width: 751px) {
+@media ( min-width: 751px ) {
 	.oo-ui-demo-menu {
 		margin-bottom: 2em;
 	}
@@ -82,7 +82,7 @@ body {
 
 .oo-ui-demo-icons .oo-ui-fieldLayout .oo-ui-buttonElement-button .oo-ui-labelElement-label {
 	text-transform: capitalize;
-	display: inline !important;
+	display: inline;
 }
 
 .oo-ui-demo-icons .oo-ui-fieldLayout .oo-ui-buttonElement-button:hover {
@@ -97,7 +97,7 @@ body {
 }
 
 /* Console */
-
+/* stylelint-disable selector-pseudo-element-colon-notation */
 .oo-ui-demo-console {
 	clear: both;
 	position: relative;
@@ -133,10 +133,10 @@ body {
 	width: 1.6em;
 	background: #f9f9f9;
 	border-radius: 50%;
-	line-height: 1.6em;
+	line-height: 1.6;
 	color: #999;
 	text-align: center;
-	content: "→";
+	content: '→';
 }
 
 .oo-ui-demo-console-toggle:hover::after,
@@ -146,7 +146,7 @@ body {
 }
 
 .oo-ui-demo-console-expanded .oo-ui-demo-console-toggle::after {
-	content: "↑";
+	content: '↑';
 }
 
 .oo-ui-demo-console-collapsed .oo-ui-demo-console-log,
@@ -180,11 +180,11 @@ body {
 	width: 20px;
 	text-align: center;
 	bottom: 0;
-	content: "→";
+	content: '→';
 }
 
 .oo-ui-demo-console-log-line-error {
-	color: red;
+	color: #f00;
 }
 
 .oo-ui-demo-console-label {
@@ -209,7 +209,7 @@ body {
 	width: 20px;
 	text-align: center;
 	content: '→';
-	color: blue;
+	color: #00f;
 }
 
 .oo-ui-demo-console-input {
@@ -226,7 +226,7 @@ body {
 .oo-ui-demo-console-submit {
 	display: inline-block;
 	width: 20px;
-	line-height: 1.6em;
+	line-height: 1.6;
 	text-align: center;
 	-webkit-user-select: none;
 	-moz-user-select: none;
@@ -241,3 +241,4 @@ body {
 	background: #eee;
 	color: #333;
 }
+/* stylelint-enable selector-pseudo-element-colon-notation */

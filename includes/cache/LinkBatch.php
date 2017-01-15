@@ -21,6 +21,7 @@
  * @ingroup Cache
  */
 use MediaWiki\Linker\LinkTarget;
+use MediaWiki\MediaWikiServices;
 
 /**
  * Class representing a list of titles
@@ -39,7 +40,11 @@ class LinkBatch {
 	 */
 	protected $caller;
 
-	function __construct( $arr = [] ) {
+	/**
+	 * LinkBatch constructor.
+	 * @param LinkTarget[] $arr Initial items to be added to the batch
+	 */
+	public function __construct( $arr = [] ) {
 		foreach ( $arr as $item ) {
 			$this->addObj( $item );
 		}
@@ -72,8 +77,8 @@ class LinkBatch {
 	 * @param string $dbkey
 	 */
 	public function add( $ns, $dbkey ) {
-		if ( $ns < 0 ) {
-			return;
+		if ( $ns < 0 || $dbkey === '' ) {
+			return; // T137083
 		}
 		if ( !array_key_exists( $ns, $this->data ) ) {
 			$this->data[$ns] = [];
@@ -116,7 +121,7 @@ class LinkBatch {
 	 * @return array Mapping PDBK to ID
 	 */
 	public function execute() {
-		$linkCache = LinkCache::singleton();
+		$linkCache = MediaWikiServices::getInstance()->getLinkCache();
 
 		return $this->executeInto( $linkCache );
 	}
@@ -151,23 +156,26 @@ class LinkBatch {
 			return [];
 		}
 
+		$titleFormatter = MediaWikiServices::getInstance()->getTitleFormatter();
 		// For each returned entry, add it to the list of good links, and remove it from $remaining
 
 		$ids = [];
 		$remaining = $this->data;
 		foreach ( $res as $row ) {
-			$title = Title::makeTitle( $row->page_namespace, $row->page_title );
+			$title = new TitleValue( (int)$row->page_namespace, $row->page_title );
 			$cache->addGoodLinkObjFromRow( $title, $row );
-			$ids[$title->getPrefixedDBkey()] = $row->page_id;
+			$pdbk = $titleFormatter->getPrefixedDBkey( $title );
+			$ids[$pdbk] = $row->page_id;
 			unset( $remaining[$row->page_namespace][$row->page_title] );
 		}
 
 		// The remaining links in $data are bad links, register them as such
 		foreach ( $remaining as $ns => $dbkeys ) {
 			foreach ( $dbkeys as $dbkey => $unused ) {
-				$title = Title::makeTitle( $ns, $dbkey );
+				$title = new TitleValue( (int)$ns, (string)$dbkey );
 				$cache->addBadLinkObj( $title );
-				$ids[$title->getPrefixedDBkey()] = 0;
+				$pdbk = $titleFormatter->getPrefixedDBkey( $title );
+				$ids[$pdbk] = 0;
 			}
 		}
 
@@ -179,24 +187,17 @@ class LinkBatch {
 	 * @return bool|ResultWrapper
 	 */
 	public function doQuery() {
-		global $wgContentHandlerUseDB, $wgPageLanguageUseDB;
-
 		if ( $this->isEmpty() ) {
 			return false;
 		}
 
 		// This is similar to LinkHolderArray::replaceInternal
-		$dbr = wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_REPLICA );
 		$table = 'page';
-		$fields = [ 'page_id', 'page_namespace', 'page_title', 'page_len',
-			'page_is_redirect', 'page_latest' ];
-
-		if ( $wgContentHandlerUseDB ) {
-			$fields[] = 'page_content_model';
-		}
-		if ( $wgPageLanguageUseDB ) {
-			$fields[] = 'page_lang';
-		}
+		$fields = array_merge(
+			LinkCache::getSelectFields(),
+			[ 'page_namespace', 'page_title' ]
+		);
 
 		$conds = $this->constructSet( 'page', $dbr );
 
@@ -225,7 +226,7 @@ class LinkBatch {
 			return false;
 		}
 
-		$genderCache = GenderCache::singleton();
+		$genderCache = MediaWikiServices::getInstance()->getGenderCache();
 		$genderCache->doLinkBatch( $this->data, $this->caller );
 
 		return true;
@@ -235,7 +236,7 @@ class LinkBatch {
 	 * Construct a WHERE clause which will match all the given titles.
 	 *
 	 * @param string $prefix The appropriate table's field name prefix ('page', 'pl', etc)
-	 * @param IDatabase $db DatabaseBase object to use
+	 * @param IDatabase $db DB object to use
 	 * @return string|bool String with SQL where clause fragment, or false if no items.
 	 */
 	public function constructSet( $prefix, $db ) {

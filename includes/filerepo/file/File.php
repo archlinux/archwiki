@@ -1028,7 +1028,7 @@ abstract class File implements IDBAccessObject {
 	 * @param array $params An associative array of handler-specific parameters.
 	 *   Typical keys are width, height and page.
 	 * @param int $flags A bitfield, may contain self::RENDER_NOW to force rendering
-	 * @return MediaTransformOutput|bool False on failure
+	 * @return ThumbnailImage|MediaTransformOutput|bool False on failure
 	 */
 	function transform( $params, $flags = 0 ) {
 		global $wgThumbnailEpoch;
@@ -1065,7 +1065,6 @@ abstract class File implements IDBAccessObject {
 			if ( $this->repo ) {
 				// Defer rendering if a 404 handler is set up...
 				if ( $this->repo->canTransformVia404() && !( $flags & self::RENDER_NOW ) ) {
-					wfDebug( __METHOD__ . " transformation deferred.\n" );
 					// XXX: Pass in the storage path even though we are not rendering anything
 					// and the path is supposed to be an FS path. This is due to getScalerType()
 					// getting called on the path and clobbering $thumb->getUrl() if it's false.
@@ -1325,11 +1324,11 @@ abstract class File implements IDBAccessObject {
 	/**
 	 * Creates a temp FS file with the same extension and the thumbnail
 	 * @param string $thumbPath Thumbnail path
-	 * @return TempFSFile
+	 * @return TempFSFile|null
 	 */
 	protected function makeTransformTmpFile( $thumbPath ) {
 		$thumbExt = FileBackend::extensionFromPath( $thumbPath );
-		return TempFSFile::factory( 'transform_', $thumbExt );
+		return TempFSFile::factory( 'transform_', $thumbExt, wfTempDir() );
 	}
 
 	/**
@@ -1806,7 +1805,7 @@ abstract class File implements IDBAccessObject {
 	 * @param int $flags A bitwise combination of:
 	 *   File::DELETE_SOURCE    Delete the source file, i.e. move rather than copy
 	 * @param array $options Optional additional parameters
-	 * @return FileRepoStatus On success, the value member contains the
+	 * @return Status On success, the value member contains the
 	 *   archive name, or an empty string if it was a new file.
 	 *
 	 * STUB
@@ -1906,7 +1905,7 @@ abstract class File implements IDBAccessObject {
 	 * and logging are caller's responsibility
 	 *
 	 * @param Title $target New file name
-	 * @return FileRepoStatus
+	 * @return Status
 	 */
 	function move( $target ) {
 		$this->readOnlyError();
@@ -1923,7 +1922,7 @@ abstract class File implements IDBAccessObject {
 	 * @param string $reason
 	 * @param bool $suppress Hide content from sysops?
 	 * @param User|null $user
-	 * @return FileRepoStatus
+	 * @return Status
 	 * STUB
 	 * Overridden by LocalFile
 	 */

@@ -1,12 +1,12 @@
 /*!
- * OOjs UI v0.17.1
+ * OOjs UI v0.17.10
  * https://www.mediawiki.org/wiki/OOjs_UI
  *
  * Copyright 2011–2016 OOjs UI Team and other contributors.
  * Released under the MIT license
  * http://oojs.mit-license.org
  *
- * Date: 2016-05-03T22:58:02Z
+ * Date: 2016-10-03T18:59:01Z
  */
 ( function ( OO ) {
 
@@ -183,6 +183,7 @@ OO.ui.ActionWidget.prototype.toggle = function () {
 	return this;
 };
 
+/* eslint-disable no-unused-vars */
 /**
  * ActionSets manage the behavior of the {@link OO.ui.ActionWidget action widgets} that comprise them.
  * Actions can be made available for specific contexts (modes) and circumstances
@@ -283,6 +284,7 @@ OO.ui.ActionSet = function OoUiActionSet( config ) {
 	this.changing = false;
 	this.changed = false;
 };
+/* eslint-enable no-unused-vars */
 
 /* Setup */
 
@@ -1545,7 +1547,7 @@ OO.ui.WindowManager.prototype.toggleGlobalEvents = function ( on ) {
 		$body = $( this.getElementDocument().body ),
 		// We could have multiple window managers open so only modify
 		// the body css at the bottom of the stack
-		stackDepth = $body.data( 'windowManagerGlobalEvents' ) || 0 ;
+		stackDepth = $body.data( 'windowManagerGlobalEvents' ) || 0;
 
 	on = on === undefined ? !!this.globalEvents : !!on;
 
@@ -2135,10 +2137,18 @@ OO.ui.Window.prototype.initialize = function () {
  * @param {jQuery.Event} event Focus event
  */
 OO.ui.Window.prototype.onFocusTrapFocused = function ( event ) {
-	if ( this.$focusTrapBefore.is( event.target ) ) {
-		OO.ui.findFocusable( this.$content, true ).focus();
+	var backwards = this.$focusTrapBefore.is( event.target ),
+		element = OO.ui.findFocusable( this.$content, backwards );
+	if ( element ) {
+		// There's a focusable element inside the content, at the front or
+		// back depending on which focus trap we hit; select it.
+		element.focus();
 	} else {
-		// this.$content is the part of the focus cycle, and is the first focusable element
+		// There's nothing focusable inside the content. As a fallback,
+		// this.$content is focusable, and focusing it will keep our focus
+		// properly trapped. It's not a *meaningful* focus, since it's just
+		// the content-div for the Window, but it's better than letting focus
+		// escape into the page.
 		this.$content.focus();
 	}
 };
@@ -2512,11 +2522,10 @@ OO.ui.Dialog.prototype.getSetupProcess = function ( data ) {
 	return OO.ui.Dialog.parent.prototype.getSetupProcess.call( this, data )
 		.next( function () {
 			var config = this.constructor.static,
-				actions = data.actions !== undefined ? data.actions : config.actions;
+				actions = data.actions !== undefined ? data.actions : config.actions,
+				title = data.title !== undefined ? data.title : config.title;
 
-			this.title.setLabel(
-				data.title !== undefined ? data.title : this.constructor.static.title
-			);
+			this.title.setLabel( title ).setTitle( title );
 			this.actions.add( this.getActionWidgets( actions ) );
 
 			this.$element.on( 'keydown', this.onDialogKeyDownHandler );
@@ -3114,7 +3123,11 @@ OO.ui.ProcessDialog.prototype.initialize = function () {
 		.append( this.$errors );
 	this.$navigation
 		.addClass( 'oo-ui-processDialog-navigation' )
-		.append( this.$safeActions, this.$location, this.$primaryActions );
+		// Note: Order of appends below is important. These are in the order
+		// we want tab to go through them. Display-order is handled entirely
+		// by CSS absolute-positioning. As such, primary actions like "done"
+		// should go first.
+		.append( this.$primaryActions, this.$location, this.$safeActions );
 	this.$head.append( this.$navigation );
 	this.$foot.append( this.$otherActions );
 };

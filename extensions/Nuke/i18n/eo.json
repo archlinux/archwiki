@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Blahma",
-			"Yekrats"
+			"Yekrats",
+			"Gamliel Fishkin"
 		]
 	},
 	"nuke": "Amasforigi",
@@ -24,5 +25,7 @@
 	"nuke-deleted": "Paĝo '''$1''' estis forigita.",
 	"nuke-not-deleted": "Paĝo [[:$1]] '''ne eblis''' esti forigita.",
 	"nuke-delete-more": "[[Special:Nuke|Forigu plurajn paĝojn]]",
-	"nuke-pattern": "Modelo por la paĝonomo:"
+	"nuke-pattern": "Modelo por la paĝonomo:",
+	"nuke-linkoncontribs": "amasa forigo",
+	"nuke-linkoncontribs-text": "Amase forigi paĝojn, kie ĉi tiu uzanto estas la sola aŭtoro"
 }

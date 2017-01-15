@@ -29,5 +29,10 @@
 	"captcha-addurl-whitelist": " #<!-- এই লাইনটি যে রকম আছে ঠিক সেই রকম রেখে দিন --> <pre>\n# সিনট্যাক্স নিম্নরূপ:\n#  * \"#\" ক্যারেক্টার থেকে শুরু হয়ে লাইনের শেষ পর্যন্ত সবকিছু একটি মন্তব্য\n#  * খালি নয় এমন প্রতিটি লাইন একটি রেজেক্স খণ্ডাংশ যেটি URLগুলির ভেতরে হোস্টগুলির সাথে মিলে যাবে।\n  #</pre> <!-- এই লাইনটি যে রকম আছে ঠিক সেই রকম রেখে দিন -->",
 	"right-skipcaptcha": "ক্যাপচাতে না গিয়ে ক্যাপচা ট্রিগারিং এর কাজ করুন",
 	"captcha-apihelp-param-captchaword": "ক্যাপচার উত্তর দেয়া",
-	"captcha-apihelp-param-captchaid": "পূর্ববর্তী অনুরোধ থেকে ক্যাপচা আইডি"
+	"captcha-apihelp-param-captchaid": "পূর্ববর্তী অনুরোধ থেকে ক্যাপচা আইডি",
+	"confirmedit-preview-line": "লাইন নম্বর",
+	"confirmedit-preview-content": "বিষয়বস্তু",
+	"confirmedit-preview-validity": "বৈধতা",
+	"confirmedit-preview-valid": "বৈধ",
+	"confirmedit-preview-invalid": "অবৈধ"
 }

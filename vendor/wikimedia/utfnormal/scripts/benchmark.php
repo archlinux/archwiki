@@ -53,16 +53,16 @@ function benchmarkTest( &$u, $filename, $desc ) {
 	print "Testing $filename ($desc)...\n";
 	$data = file_get_contents( $filename );
 	$forms = array(
-#		'placebo',
+# 		'placebo',
 		'cleanUp',
 		'toNFC',
-#		'toNFKC',
-#		'toNFD', 'toNFKD',
+# 		'toNFKC',
+# 		'toNFD', 'toNFKD',
 		'NFC',
-#		'NFKC',
-#		'NFD', 'NFKD',
+# 		'NFKC',
+# 		'NFD', 'NFKD',
 		array( 'fastDecompose', 'fastCombiningSort', 'fastCompose' ),
-#		'quickIsNFC', 'quickIsNFCVerify',
+# 		'quickIsNFC', 'quickIsNFCVerify',
 	);
 
 	foreach ( $forms as $form ) {
@@ -78,13 +78,13 @@ function benchmarkTest( &$u, $filename, $desc ) {
 }
 
 function benchmarkForm( &$u, &$data, $form ) {
-	#$start = microtime( true );
+	# $start = microtime( true );
 	for ( $i = 0; $i < BENCH_CYCLES; $i++ ) {
 		$start = microtime( true );
 		$out = $u->$form( $data, Validator::$utfCanonicalDecomp );
 		$deltas[] = ( microtime( true ) - $start );
 	}
-	#$delta = (microtime( true ) - $start) / BENCH_CYCLES;
+	# $delta = (microtime( true ) - $start) / BENCH_CYCLES;
 	sort( $deltas );
 	$delta = $deltas[0]; # Take shortest time
 

@@ -38,9 +38,6 @@
 	"config-db-name-oracle": "Мәгълүмат базасы төзелеше:",
 	"config-db-username": "Мәгълүмат базасын кулланучы исеме:",
 	"config-db-password": "Мәгълүмат базасының серсүзе:",
-	"config-charset-mysql5-binary": "MySQL 4.1/5.0 бинарлы",
-	"config-charset-mysql5": "MySQL 4.1/5.0 UTF-8",
-	"config-charset-mysql4": "MySQL 4.0 һәм UTF-8 үзара бәйләнешле",
 	"config-db-port": "Мәгълүмат базасы порты:",
 	"config-db-schema": "MediaWiki өчен төзелеш:",
 	"config-mysql-innodb": "InnoDB",
@@ -70,5 +67,5 @@
 	"config-install-step-failed": "булмады",
 	"config-help": "ярдәм",
 	"mainpagetext": "<strong>«MediaWiki» куелды.</strong>",
-	"mainpagedocfooter": "Бу вики турында мәгълүматны [//meta.wikimedia.org/wiki/Help:Contents биредә] табып була.\n\n== Кайбер файдалы ресурслар ==\n* [//www.mediawiki.org/wiki/Special:MyLanguage/Manual:Configuration_settings Көйләнмәләр исемлеге (инг.)];\n* [//www.mediawiki.org/wiki/Special:MyLanguage/Manual:FAQ MediaWiki турында еш бирелгән сораулар һәм җаваплар (инг.)];\n* [https://lists.wikimedia.org/mailman/listinfo/mediawiki-announce MediaWiki'ның яңа версияләре турында хәбәрләр яздырып алу];\n* [//www.mediawiki.org/wiki/Special:MyLanguage/Localisation#Translation_resources Localise MediaWiki for your language].\n* [//www.mediawiki.org/wiki/Special:MyLanguage/Manual:Combating_spam Learn how to combat spam on your wiki]"
+	"mainpagedocfooter": "Бу вики турында мәгълүматны [https://meta.wikimedia.org/wiki/Help:Contents/ru биредә] табып була.\n\n== Кайбер файдалы ресурслар ==\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Configuration_settings Көйләнмәләр исемлеге (рус.)];\n* [https://www.mediawiki.org/wiki/Manual:FAQ/ru MediaWiki турында еш бирелгән сораулар һәм җаваплар (рус.)];\n* [https://lists.wikimedia.org/mailman/listinfo/mediawiki-announce MediaWiki сәхифәсенең яңа юрамалары турында хәбәрләр яздырып алу].\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Localisation#Translation_resources MediaWiki сәхифәсен туган телегезгә тәрҗемә итү]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Combating_spam Үзегезнең викида ничек спам белән көрәшү турында мәгълүмат]"
 }

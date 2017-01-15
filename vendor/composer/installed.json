@@ -661,12 +661,12 @@
         "version_normalized": "0.2.2.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/wmde/Assert.git",
+            "url": "https://github.com/wikimedia/Assert.git",
             "reference": "2da55927525975f8d52825fc3ee02e5e36f5036c"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/wmde/Assert/zipball/2da55927525975f8d52825fc3ee02e5e36f5036c",
+            "url": "https://api.github.com/repos/wikimedia/Assert/zipball/2da55927525975f8d52825fc3ee02e5e36f5036c",
             "reference": "2da55927525975f8d52825fc3ee02e5e36f5036c",
             "shasum": ""
         },
@@ -820,58 +820,6 @@
         "homepage": "https://www.mediawiki.org/wiki/base_convert"
     },
     {
-        "name": "wikimedia/cdb",
-        "version": "1.3.0",
-        "version_normalized": "1.3.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/wikimedia/cdb.git",
-            "reference": "68f8fd495ca94ca0e965dd511e234893c515bb95"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/wikimedia/cdb/zipball/68f8fd495ca94ca0e965dd511e234893c515bb95",
-            "reference": "68f8fd495ca94ca0e965dd511e234893c515bb95",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.2"
-        },
-        "require-dev": {
-            "jakub-onderka/php-parallel-lint": "0.9",
-            "mediawiki/mediawiki-codesniffer": "0.3.0",
-            "phpunit/phpunit": "4.6.*"
-        },
-        "time": "2015-09-08 19:53:04",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "classmap": [
-                "src/"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "GPL-2.0+"
-        ],
-        "authors": [
-            {
-                "name": "Tim Starling",
-                "email": "tstarling@wikimedia.org"
-            },
-            {
-                "name": "Chad Horohoe",
-                "email": "chad@wikimedia.org"
-            },
-            {
-                "name": "Ori Livneh",
-                "email": "ori@wikimedia.org"
-            }
-        ],
-        "description": "Constant Database (CDB) wrapper library for PHP. Provides pure-PHP fallback when dba_* functions are absent.",
-        "homepage": "https://www.mediawiki.org/wiki/CDB"
-    },
-    {
         "name": "wikimedia/cldr-plural-rule-parser",
         "version": "v1.0.0",
         "version_normalized": "1.0.0.0",
@@ -918,52 +866,6 @@
         ],
         "description": "Evaluates plural rules specified in the CLDR project notation.",
         "homepage": "https://www.mediawiki.org/wiki/CLDRPluralRuleParser"
-    },
-    {
-        "name": "wikimedia/php-session-serializer",
-        "version": "v1.0.3",
-        "version_normalized": "1.0.3.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/wikimedia/php-session-serializer.git",
-            "reference": "61dec9a25bdcea4a0cc34a22fe6f43efca390d55"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/wikimedia/php-session-serializer/zipball/61dec9a25bdcea4a0cc34a22fe6f43efca390d55",
-            "reference": "61dec9a25bdcea4a0cc34a22fe6f43efca390d55",
-            "shasum": ""
-        },
-        "require": {
-            "mediawiki/at-ease": "^1.0",
-            "php": ">=5.3.3",
-            "psr/log": "1.0.0"
-        },
-        "require-dev": {
-            "jakub-onderka/php-parallel-lint": "^0.9.0.0",
-            "mediawiki/mediawiki-codesniffer": "0.5.0",
-            "phpunit/phpunit": "~4.5"
-        },
-        "time": "2015-11-10 22:16:03",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "classmap": [
-                "src/"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "GPL-2.0+"
-        ],
-        "authors": [
-            {
-                "name": "Brad Jorsch",
-                "email": "bjorsch@wikimedia.org"
-            }
-        ],
-        "description": "Provides methods like PHP's session_encode and session_decode that don't mess with $_SESSION",
-        "homepage": "https://www.mediawiki.org/wiki/Php-session-serializer"
     },
     {
         "name": "wikimedia/relpath",
@@ -1052,96 +954,6 @@
         ],
         "description": "PHP implementations of online statistical algorithms",
         "homepage": "https://www.mediawiki.org/wiki/RunningStat"
-    },
-    {
-        "name": "wikimedia/utfnormal",
-        "version": "v1.0.3",
-        "version_normalized": "1.0.3.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/wikimedia/utfnormal.git",
-            "reference": "bcb81d1d87bae400af45cc419a850dcf9883775b"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/wikimedia/utfnormal/zipball/bcb81d1d87bae400af45cc419a850dcf9883775b",
-            "reference": "bcb81d1d87bae400af45cc419a850dcf9883775b",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.3"
-        },
-        "require-dev": {
-            "ext-mbstring": "*",
-            "jakub-onderka/php-parallel-lint": "0.8.*",
-            "mediawiki/mediawiki-codesniffer": "0.1.0",
-            "phpunit/phpunit": "4.6.*",
-            "squizlabs/php_codesniffer": "2.2.*"
-        },
-        "time": "2015-08-29 14:13:27",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "classmap": [
-                "src/"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "GPL-2.0+"
-        ],
-        "authors": [
-            {
-                "name": "Brion Vibber",
-                "email": "bvibber@wikimedia.org"
-            }
-        ],
-        "description": "Contains Unicode normalization routines, including both pure PHP implementations and automatic use of the 'intl' PHP extension when present",
-        "homepage": "https://www.mediawiki.org/wiki/utfnormal"
-    },
-    {
-        "name": "wikimedia/wrappedstring",
-        "version": "v2.0.0",
-        "version_normalized": "2.0.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/wikimedia/WrappedString.git",
-            "reference": "1b27e0ea23bd915644dade17c3fe1e45fdbadf11"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/wikimedia/WrappedString/zipball/1b27e0ea23bd915644dade17c3fe1e45fdbadf11",
-            "reference": "1b27e0ea23bd915644dade17c3fe1e45fdbadf11",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.3"
-        },
-        "require-dev": {
-            "jakub-onderka/php-parallel-lint": "^0.9.0.0",
-            "mediawiki/mediawiki-codesniffer": "^0.3.0.0",
-            "phpunit/phpunit": "^4.7.7.0"
-        },
-        "time": "2015-07-31 00:06:22",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "WrappedString\\": "src/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Timo Tijhof",
-                "email": "krinklemail@gmail.com"
-            }
-        ],
-        "description": "Automatically compact sequentially-outputted strings that share a common prefix / suffix pair.",
-        "homepage": "https://www.mediawiki.org/wiki/WrappedString"
     },
     {
         "name": "zordius/lightncandy",
@@ -1325,129 +1137,6 @@
             }
         ],
         "description": "Composer plugin to merge multiple composer.json files"
-    },
-    {
-        "name": "ruflin/elastica",
-        "version": "2.3.1",
-        "version_normalized": "2.3.1.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/ruflin/Elastica.git",
-            "reference": "0df1d7b513960ba11d3075652dcd71fcab8dd37a"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/ruflin/Elastica/zipball/0df1d7b513960ba11d3075652dcd71fcab8dd37a",
-            "reference": "0df1d7b513960ba11d3075652dcd71fcab8dd37a",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.3",
-            "psr/log": "~1.0"
-        },
-        "require-dev": {
-            "guzzlehttp/guzzle": "5.3.*",
-            "munkie/elasticsearch-thrift-php": "1.4.*"
-        },
-        "suggest": {
-            "egeloen/http-adapter": "Allow using httpadapter transport",
-            "guzzlehttp/guzzle": "Allow using guzzle 5.3.x as the http transport (Requires php 5.4)",
-            "monolog/monolog": "Logging request",
-            "munkie/elasticsearch-thrift-php": "Allow using thrift transport"
-        },
-        "time": "2015-10-19 07:09:10",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.2.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Elastica\\": "lib/Elastica/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Nicolas Ruflin",
-                "homepage": "http://ruflin.com/"
-            }
-        ],
-        "description": "Elasticsearch Client",
-        "homepage": "http://elastica.io/",
-        "keywords": [
-            "client",
-            "search"
-        ]
-    },
-    {
-        "name": "composer/semver",
-        "version": "1.4.0",
-        "version_normalized": "1.4.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/composer/semver.git",
-            "reference": "84c47f3d8901440403217afc120683c7385aecb8"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/composer/semver/zipball/84c47f3d8901440403217afc120683c7385aecb8",
-            "reference": "84c47f3d8901440403217afc120683c7385aecb8",
-            "shasum": ""
-        },
-        "require": {
-            "php": "^5.3.2 || ^7.0"
-        },
-        "require-dev": {
-            "phpunit/phpunit": "^4.5 || ^5.0.5",
-            "phpunit/phpunit-mock-objects": "2.3.0 || ^3.0"
-        },
-        "time": "2016-03-30 13:16:03",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Composer\\Semver\\": "src"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Nils Adermann",
-                "email": "naderman@naderman.de",
-                "homepage": "http://www.naderman.de"
-            },
-            {
-                "name": "Jordi Boggiano",
-                "email": "j.boggiano@seld.be",
-                "homepage": "http://seld.be"
-            },
-            {
-                "name": "Rob Bast",
-                "email": "rob.bast@gmail.com",
-                "homepage": "http://robbast.nl"
-            }
-        ],
-        "description": "Semver library that offers utilities, version constraint parsing and validation.",
-        "keywords": [
-            "semantic",
-            "semver",
-            "validation",
-            "versioning"
-        ]
     },
     {
         "name": "pear/mail",
@@ -1685,36 +1374,390 @@
         "homepage": "https://www.mediawiki.org/wiki/HtmlFormatter"
     },
     {
-        "name": "justinrainbow/json-schema",
-        "version": "1.6.1",
-        "version_normalized": "1.6.1.0",
+        "name": "ruflin/elastica",
+        "version": "3.1.1",
+        "version_normalized": "3.1.1.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/justinrainbow/json-schema.git",
-            "reference": "cc84765fb7317f6b07bd8ac78364747f95b86341"
+            "url": "https://github.com/ruflin/Elastica.git",
+            "reference": "571dd533f56057f2afc5f447759b09bbcc012a0d"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/justinrainbow/json-schema/zipball/cc84765fb7317f6b07bd8ac78364747f95b86341",
-            "reference": "cc84765fb7317f6b07bd8ac78364747f95b86341",
+            "url": "https://api.github.com/repos/ruflin/Elastica/zipball/571dd533f56057f2afc5f447759b09bbcc012a0d",
+            "reference": "571dd533f56057f2afc5f447759b09bbcc012a0d",
             "shasum": ""
         },
         "require": {
-            "php": ">=5.3.29"
+            "php": ">=5.4.0",
+            "psr/log": "~1.0"
         },
         "require-dev": {
-            "json-schema/json-schema-test-suite": "1.1.0",
-            "phpdocumentor/phpdocumentor": "~2",
-            "phpunit/phpunit": "~3.7"
+            "aws/aws-sdk-php": "~3.0",
+            "guzzlehttp/guzzle": "~6.0"
         },
-        "time": "2016-01-25 15:43:01",
+        "suggest": {
+            "aws/aws-sdk-php": "Allow using IAM authentication with Amazon ElasticSearch Service",
+            "egeloen/http-adapter": "Allow using httpadapter transport",
+            "guzzlehttp/guzzle": "Allow using guzzle 6 as the http transport (Requires php 5.5)",
+            "monolog/monolog": "Logging request"
+        },
+        "time": "2016-03-18 07:56:36",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "3.1.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Elastica\\": "lib/Elastica/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Nicolas Ruflin",
+                "homepage": "http://ruflin.com/"
+            }
+        ],
+        "description": "Elasticsearch Client",
+        "homepage": "http://elastica.io/",
+        "keywords": [
+            "client",
+            "search"
+        ]
+    },
+    {
+        "name": "wikimedia/ip-set",
+        "version": "1.1.0",
+        "version_normalized": "1.1.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/wikimedia/IPSet.git",
+            "reference": "b71a3834b42e2bcb2d9fa037abbb654e82117a01"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/wikimedia/IPSet/zipball/b71a3834b42e2bcb2d9fa037abbb654e82117a01",
+            "reference": "b71a3834b42e2bcb2d9fa037abbb654e82117a01",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.3"
+        },
+        "require-dev": {
+            "jakub-onderka/php-parallel-lint": "0.9.2",
+            "mediawiki/mediawiki-codesniffer": "0.5.1",
+            "phpunit/phpunit": "4.7.2"
+        },
+        "time": "2016-02-12 15:19:10",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "classmap": [
+                "src/"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "GPL-2.0+"
+        ],
+        "authors": [
+            {
+                "name": "Brandon Black",
+                "email": "blblack@gmail.com"
+            }
+        ],
+        "description": "Efficiently match IP addresses against a set of CIDR specifications.",
+        "homepage": "https://github.com/wikimedia/IPSet"
+    },
+    {
+        "name": "wikimedia/cdb",
+        "version": "1.4.1",
+        "version_normalized": "1.4.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/wikimedia/cdb.git",
+            "reference": "d49d96232f045311dc1f21bf0d7e40adf82a1f1d"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/wikimedia/cdb/zipball/d49d96232f045311dc1f21bf0d7e40adf82a1f1d",
+            "reference": "d49d96232f045311dc1f21bf0d7e40adf82a1f1d",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.2"
+        },
+        "require-dev": {
+            "jakub-onderka/php-parallel-lint": "0.9",
+            "mediawiki/mediawiki-codesniffer": "0.5.0",
+            "phpunit/phpunit": "4.6.*"
+        },
+        "time": "2016-05-29 07:39:26",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "classmap": [
+                "src/"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "GPL-2.0+"
+        ],
+        "authors": [
+            {
+                "name": "Daniel Kinzler"
+            },
+            {
+                "name": "Tim Starling",
+                "email": "tstarling@wikimedia.org"
+            },
+            {
+                "name": "Chad Horohoe",
+                "email": "chad@wikimedia.org"
+            },
+            {
+                "name": "Ori Livneh",
+                "email": "ori@wikimedia.org"
+            }
+        ],
+        "description": "Constant Database (CDB) wrapper library for PHP. Provides pure-PHP fallback when dba_* functions are absent.",
+        "homepage": "https://www.mediawiki.org/wiki/CDB"
+    },
+    {
+        "name": "wikimedia/wrappedstring",
+        "version": "v2.2.0",
+        "version_normalized": "2.2.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/wikimedia/WrappedString.git",
+            "reference": "738a89411fec30cb381b88905cacbcbe082db6a9"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/wikimedia/WrappedString/zipball/738a89411fec30cb381b88905cacbcbe082db6a9",
+            "reference": "738a89411fec30cb381b88905cacbcbe082db6a9",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.5.9"
+        },
+        "require-dev": {
+            "jakub-onderka/php-parallel-lint": "^0.9.0.0",
+            "mediawiki/mediawiki-codesniffer": "0.4.0",
+            "phpunit/phpunit": "^4.7.7.0"
+        },
+        "time": "2016-07-21 00:41:10",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "WrappedString\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Timo Tijhof",
+                "email": "krinklemail@gmail.com"
+            }
+        ],
+        "description": "Automatically compact sequentially-outputted strings that share a common prefix / suffix pair.",
+        "homepage": "https://www.mediawiki.org/wiki/WrappedString"
+    },
+    {
+        "name": "wikimedia/scoped-callback",
+        "version": "v1.0.0",
+        "version_normalized": "1.0.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/wikimedia/ScopedCallback.git",
+            "reference": "73985f15be3edb7b823db31f367b780769378d2b"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/wikimedia/ScopedCallback/zipball/73985f15be3edb7b823db31f367b780769378d2b",
+            "reference": "73985f15be3edb7b823db31f367b780769378d2b",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.5.9"
+        },
+        "require-dev": {
+            "jakub-onderka/php-parallel-lint": "0.9.2",
+            "mediawiki/mediawiki-codesniffer": "0.7.2",
+            "phpunit/phpunit": "4.8.27"
+        },
+        "time": "2016-09-29 07:03:03",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "classmap": [
+                "src/"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "GPL-2.0+"
+        ],
+        "authors": [
+            {
+                "name": "Aaron Schulz",
+                "email": "aschulz@wikimedia.org"
+            }
+        ],
+        "description": "Class for asserting that a callback happens when a dummy object leaves scope",
+        "homepage": "https://www.mediawiki.org/wiki/ScopedCallback"
+    },
+    {
+        "name": "wikimedia/wait-condition-loop",
+        "version": "v1.0.1",
+        "version_normalized": "1.0.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/wikimedia/WaitConditionLoop.git",
+            "reference": "0321b8ca6a0f701f96e04e5e8e6d3e244ab05338"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/wikimedia/WaitConditionLoop/zipball/0321b8ca6a0f701f96e04e5e8e6d3e244ab05338",
+            "reference": "0321b8ca6a0f701f96e04e5e8e6d3e244ab05338",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.5.9"
+        },
+        "require-dev": {
+            "jakub-onderka/php-parallel-lint": "0.9.2",
+            "mediawiki/mediawiki-codesniffer": "0.7.2",
+            "phpunit/phpunit": "4.8.24"
+        },
+        "time": "2016-10-01 06:58:30",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "classmap": [
+                "src/"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "GPL-2.0+"
+        ],
+        "authors": [
+            {
+                "name": "Aaron Schulz",
+                "email": "aschulz@wikimedia.org"
+            }
+        ],
+        "description": "Wait loop that reaches a condition or times out",
+        "homepage": "https://www.mediawiki.org/wiki/WaitConditionLoop"
+    },
+    {
+        "name": "composer/semver",
+        "version": "1.4.2",
+        "version_normalized": "1.4.2.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/composer/semver.git",
+            "reference": "c7cb9a2095a074d131b65a8a0cd294479d785573"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/composer/semver/zipball/c7cb9a2095a074d131b65a8a0cd294479d785573",
+            "reference": "c7cb9a2095a074d131b65a8a0cd294479d785573",
+            "shasum": ""
+        },
+        "require": {
+            "php": "^5.3.2 || ^7.0"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "^4.5 || ^5.0.5",
+            "phpunit/phpunit-mock-objects": "2.3.0 || ^3.0"
+        },
+        "time": "2016-08-30 16:08:34",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Composer\\Semver\\": "src"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Nils Adermann",
+                "email": "naderman@naderman.de",
+                "homepage": "http://www.naderman.de"
+            },
+            {
+                "name": "Jordi Boggiano",
+                "email": "j.boggiano@seld.be",
+                "homepage": "http://seld.be"
+            },
+            {
+                "name": "Rob Bast",
+                "email": "rob.bast@gmail.com",
+                "homepage": "http://robbast.nl"
+            }
+        ],
+        "description": "Semver library that offers utilities, version constraint parsing and validation.",
+        "keywords": [
+            "semantic",
+            "semver",
+            "validation",
+            "versioning"
+        ]
+    },
+    {
+        "name": "justinrainbow/json-schema",
+        "version": "3.0.1",
+        "version_normalized": "3.0.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/justinrainbow/json-schema.git",
+            "reference": "2128f9de8be4600c3394d94c3918faf67157b76b"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/justinrainbow/json-schema/zipball/2128f9de8be4600c3394d94c3918faf67157b76b",
+            "reference": "2128f9de8be4600c3394d94c3918faf67157b76b",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.3"
+        },
+        "require-dev": {
+            "json-schema/json-schema-test-suite": "1.2.0",
+            "phpdocumentor/phpdocumentor": "~2",
+            "phpunit/phpunit": "^4.8.22"
+        },
+        "time": "2016-08-26 12:45:49",
         "bin": [
             "bin/validate-json"
         ],
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "1.6.x-dev"
+                "dev-master": "3.0.x-dev"
             }
         },
         "installation-source": "dist",
@@ -1725,7 +1768,7 @@
         },
         "notification-url": "https://packagist.org/downloads/",
         "license": [
-            "BSD-3-Clause"
+            "MIT"
         ],
         "authors": [
             {
@@ -1753,18 +1796,64 @@
         ]
     },
     {
-        "name": "oojs/oojs-ui",
-        "version": "v0.17.1",
-        "version_normalized": "0.17.1.0",
+        "name": "wikimedia/php-session-serializer",
+        "version": "v1.0.4",
+        "version_normalized": "1.0.4.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/wikimedia/oojs-ui.git",
-            "reference": "ca52adc5c0191eb278baa2bcb50d30b2bd7b0af3"
+            "url": "https://github.com/wikimedia/php-session-serializer.git",
+            "reference": "4474af7aa8f0b20aa141c33eb4ad068a1c7d5b8c"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/wikimedia/oojs-ui/zipball/ca52adc5c0191eb278baa2bcb50d30b2bd7b0af3",
-            "reference": "ca52adc5c0191eb278baa2bcb50d30b2bd7b0af3",
+            "url": "https://api.github.com/repos/wikimedia/php-session-serializer/zipball/4474af7aa8f0b20aa141c33eb4ad068a1c7d5b8c",
+            "reference": "4474af7aa8f0b20aa141c33eb4ad068a1c7d5b8c",
+            "shasum": ""
+        },
+        "require": {
+            "mediawiki/at-ease": "^1.0",
+            "php": ">=5.3.3",
+            "psr/log": "^1.0"
+        },
+        "require-dev": {
+            "jakub-onderka/php-parallel-lint": "^0.9.0.0",
+            "mediawiki/mediawiki-codesniffer": "0.5.0",
+            "phpunit/phpunit": "~4.5"
+        },
+        "time": "2016-10-01 13:19:49",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "classmap": [
+                "src/"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "GPL-2.0+"
+        ],
+        "authors": [
+            {
+                "name": "Brad Jorsch",
+                "email": "bjorsch@wikimedia.org"
+            }
+        ],
+        "description": "Provides methods like PHP's session_encode and session_decode that don't mess with $_SESSION",
+        "homepage": "https://www.mediawiki.org/wiki/Php-session-serializer"
+    },
+    {
+        "name": "oojs/oojs-ui",
+        "version": "v0.17.10",
+        "version_normalized": "0.17.10.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/wikimedia/oojs-ui.git",
+            "reference": "e4ba87bf92499538128363ffc0213c4055396782"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/wikimedia/oojs-ui/zipball/e4ba87bf92499538128363ffc0213c4055396782",
+            "reference": "e4ba87bf92499538128363ffc0213c4055396782",
             "shasum": ""
         },
         "require": {
@@ -1776,7 +1865,7 @@
             "mediawiki/mediawiki-codesniffer": "0.6.0",
             "phpunit/phpunit": "4.8.21"
         },
-        "time": "2016-05-03 22:34:48",
+        "time": "2016-10-03 18:37:58",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -1834,29 +1923,78 @@
         "homepage": "https://www.mediawiki.org/wiki/OOjs_UI"
     },
     {
-        "name": "wikimedia/ip-set",
-        "version": "1.1.0",
-        "version_normalized": "1.1.0.0",
+        "name": "pimple/pimple",
+        "version": "v2.1.1",
+        "version_normalized": "2.1.1.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/wikimedia/IPSet.git",
-            "reference": "b71a3834b42e2bcb2d9fa037abbb654e82117a01"
+            "url": "https://github.com/silexphp/Pimple.git",
+            "reference": "ea22fb2880faf7b7b0e17c9809c6fe25b071fd76"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/wikimedia/IPSet/zipball/b71a3834b42e2bcb2d9fa037abbb654e82117a01",
-            "reference": "b71a3834b42e2bcb2d9fa037abbb654e82117a01",
+            "url": "https://api.github.com/repos/silexphp/Pimple/zipball/ea22fb2880faf7b7b0e17c9809c6fe25b071fd76",
+            "reference": "ea22fb2880faf7b7b0e17c9809c6fe25b071fd76",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.0"
+        },
+        "time": "2014-07-24 07:10:08",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.1.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Pimple": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Fabien Potencier",
+                "email": "fabien@symfony.com"
+            }
+        ],
+        "description": "Pimple is a simple Dependency Injection Container for PHP 5.3",
+        "homepage": "http://pimple.sensiolabs.org",
+        "keywords": [
+            "container",
+            "dependency injection"
+        ]
+    },
+    {
+        "name": "wikimedia/utfnormal",
+        "version": "v1.1.0",
+        "version_normalized": "1.1.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/wikimedia/utfnormal.git",
+            "reference": "32f838c175ddefd0fdbe09e15b919d166ed5b39f"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/wikimedia/utfnormal/zipball/32f838c175ddefd0fdbe09e15b919d166ed5b39f",
+            "reference": "32f838c175ddefd0fdbe09e15b919d166ed5b39f",
             "shasum": ""
         },
         "require": {
             "php": ">=5.3.3"
         },
         "require-dev": {
-            "jakub-onderka/php-parallel-lint": "0.9.2",
-            "mediawiki/mediawiki-codesniffer": "0.5.1",
-            "phpunit/phpunit": "4.7.2"
+            "ext-mbstring": "*",
+            "jakub-onderka/php-parallel-lint": "0.9.*",
+            "mediawiki/mediawiki-codesniffer": "0.4.0",
+            "phpunit/phpunit": "4.6.*"
         },
-        "time": "2016-02-12 15:19:10",
+        "time": "2016-05-24 13:13:30",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -1870,11 +2008,49 @@
         ],
         "authors": [
             {
-                "name": "Brandon Black",
-                "email": "blblack@gmail.com"
+                "name": "Brion Vibber",
+                "email": "bvibber@wikimedia.org"
             }
         ],
-        "description": "Efficiently match IP addresses against a set of CIDR specifications.",
-        "homepage": "https://github.com/wikimedia/IPSet"
+        "description": "Contains Unicode normalization routines, including both pure PHP implementations and automatic use of the 'intl' PHP extension when present",
+        "homepage": "https://www.mediawiki.org/wiki/utfnormal"
+    },
+    {
+        "name": "james-heinrich/getid3",
+        "version": "v1.9.12",
+        "version_normalized": "1.9.12.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/JamesHeinrich/getID3.git",
+            "reference": "41c05612d532d30f07680cad3a4a6efbec7fc7f5"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/JamesHeinrich/getID3/zipball/41c05612d532d30f07680cad3a4a6efbec7fc7f5",
+            "reference": "41c05612d532d30f07680cad3a4a6efbec7fc7f5",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.0"
+        },
+        "time": "2016-03-02 13:13:30",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "classmap": [
+                "getid3/getid3.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "GPL"
+        ],
+        "description": "PHP script that extracts useful information from popular multimedia file formats",
+        "homepage": "http://www.getid3.org/",
+        "keywords": [
+            "codecs",
+            "php",
+            "tags"
+        ]
     }
 ]

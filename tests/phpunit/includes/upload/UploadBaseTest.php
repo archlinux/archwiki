@@ -52,7 +52,7 @@ class UploadBaseTest extends MediaWikiTestCase {
 			[ 'ValidTitle.jpg', 'ValidTitle.jpg', UploadBase::OK,
 				'upload valid title' ],
 			/* A title with a slash */
-			[ 'A/B.jpg', 'B.jpg', UploadBase::OK,
+			[ 'A/B.jpg', 'A-B.jpg', UploadBase::OK,
 				'upload title with slash' ],
 			/* A title with illegal char */
 			[ 'A:B.jpg', 'A-B.jpg', UploadBase::OK,
@@ -395,6 +395,23 @@ class UploadBaseTest extends MediaWikiTestCase {
 			],
 		];
 		// @codingStandardsIgnoreEnd
+	}
+
+	/**
+	 * @dataProvider provideCheckXMLEncodingMissmatch
+	 */
+	public function testCheckXMLEncodingMissmatch( $fileContents, $evil ) {
+		$filename = $this->getNewTempFile();
+		file_put_contents( $filename, $fileContents );
+		$this->assertSame( UploadBase::checkXMLEncodingMissmatch( $filename ), $evil );
+	}
+
+	public function provideCheckXMLEncodingMissmatch() {
+		return [
+			[ '<?xml version="1.0" encoding="utf-7"?><svg></svg>', true ],
+			[ '<?xml version="1.0" encoding="utf-8"?><svg></svg>', false ],
+			[ '<?xml version="1.0" encoding="WINDOWS-1252"?><svg></svg>', false ],
+		];
 	}
 }
 

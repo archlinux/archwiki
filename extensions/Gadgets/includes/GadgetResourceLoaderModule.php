@@ -79,6 +79,16 @@ class GadgetResourceLoaderModule extends ResourceLoaderWikiModule {
 		return $this->getGadget()->getPosition();
 	}
 
+	/**
+	 * Overrides ResourceLoaderWikiModule::getType()
+	 * @return string ResourceLoaderModule::LOAD_STYLES or ResourceLoaderModule::LOAD_GENERAL
+	 */
+	public function getType() {
+		return $this->getGadget()->getType() === 'styles'
+			? ResourceLoaderModule::LOAD_STYLES
+			: ResourceLoaderModule::LOAD_GENERAL;
+	}
+
 	public function getMessages() {
 		return $this->getGadget()->getMessages();
 	}

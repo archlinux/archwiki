@@ -79,7 +79,7 @@ while ( false !== ( $line = fgets( $in ) ) ) {
 		$matches )
 	) {
 		list( $junk, $first, $last, $prop, $value ) = $matches;
-		#print "$first $last $prop $value\n";
+		# print "$first $last $prop $value\n";
 		if ( !$last ) {
 			$last = $first;
 		}
@@ -153,7 +153,7 @@ while ( false !== ( $line = fgets( $in ) ) ) {
 			$canonicalComp[$dest] = $source;
 		}
 	}
-	#print "$codepoint | $canonicalCombiningClasses | $decompositionMapping\n";
+	# print "$codepoint | $canonicalCombiningClasses | $decompositionMapping\n";
 }
 fclose( $in );
 

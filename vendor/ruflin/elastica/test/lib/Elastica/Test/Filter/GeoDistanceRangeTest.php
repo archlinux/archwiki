@@ -1,14 +1,24 @@
 <?php
+
 namespace Elastica\Test\Filter;
 
 use Elastica\Document;
 use Elastica\Filter\GeoDistanceRange;
 use Elastica\Query;
 use Elastica\Query\MatchAll;
-use Elastica\Test\Base as BaseTest;
+use Elastica\Test\DeprecatedClassBase as BaseTest;
 
 class GeoDistanceRangeTest extends BaseTest
 {
+    /**
+     * @group unit
+     */
+    public function testDeprecated()
+    {
+        $reflection = new \ReflectionClass(new GeoDistanceRange('a', array('lat' => 30, 'lon' => 40)));
+        $this->assertFileDeprecated($reflection->getFileName(), 'Deprecated: Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html');
+    }
+
     /**
      * @group functional
      */
@@ -60,7 +70,7 @@ class GeoDistanceRangeTest extends BaseTest
         $geoFilter = new GeoDistanceRange(
             'point',
             array('lat' => 30, 'lon' => 40),
-            array('gte' => '0km', 'lte' => '40000km')
+            array('gte' => '0km', 'lte' => '4000km')
         );
         $query = new Query(new MatchAll());
         $query->setPostFilter($geoFilter);

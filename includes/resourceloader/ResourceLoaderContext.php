@@ -26,7 +26,7 @@ use MediaWiki\Logger\LoggerFactory;
 
 /**
  * Object passed around to modules which contains information about the state
- * of a specific loader request
+ * of a specific loader request.
  */
 class ResourceLoaderContext {
 	protected $resourceLoader;
@@ -62,26 +62,33 @@ class ResourceLoaderContext {
 		$this->request = $request;
 		$this->logger = $resourceLoader->getLogger();
 
+		// Future developers: Avoid use of getVal() in this class, which performs
+		// expensive UTF normalisation by default. Use getRawVal() instead.
+		// Values here are either one of a finite number of internal IDs,
+		// or previously-stored user input (e.g. titles, user names) that were passed
+		// to this endpoint by ResourceLoader itself from the canonical value.
+		// Values do not come directly from user input and need not match.
+
 		// List of modules
-		$modules = $request->getVal( 'modules' );
+		$modules = $request->getRawVal( 'modules' );
 		$this->modules = $modules ? self::expandModuleNames( $modules ) : [];
 
 		// Various parameters
-		$this->user = $request->getVal( 'user' );
+		$this->user = $request->getRawVal( 'user' );
 		$this->debug = $request->getFuzzyBool(
 			'debug',
 			$resourceLoader->getConfig()->get( 'ResourceLoaderDebug' )
 		);
-		$this->only = $request->getVal( 'only', null );
-		$this->version = $request->getVal( 'version', null );
+		$this->only = $request->getRawVal( 'only', null );
+		$this->version = $request->getRawVal( 'version', null );
 		$this->raw = $request->getFuzzyBool( 'raw' );
 
 		// Image requests
-		$this->image = $request->getVal( 'image' );
-		$this->variant = $request->getVal( 'variant' );
-		$this->format = $request->getVal( 'format' );
+		$this->image = $request->getRawVal( 'image' );
+		$this->variant = $request->getRawVal( 'variant' );
+		$this->format = $request->getRawVal( 'format' );
 
-		$this->skin = $request->getVal( 'skin' );
+		$this->skin = $request->getRawVal( 'skin' );
 		$skinnames = Skin::getSkinNames();
 		// If no skin is specified, or we don't recognize the skin, use the default skin
 		if ( !$this->skin || !isset( $skinnames[$this->skin] ) ) {
@@ -91,8 +98,8 @@ class ResourceLoaderContext {
 
 	/**
 	 * Expand a string of the form jquery.foo,bar|jquery.ui.baz,quux to
-	 * an array of module names like array( 'jquery.foo', 'jquery.bar',
-	 * 'jquery.ui.baz', 'jquery.ui.quux' )
+	 * an array of module names like [ 'jquery.foo', 'jquery.bar',
+	 * 'jquery.ui.baz', 'jquery.ui.quux' ]
 	 * @param string $modules Packed module name list
 	 * @return array Array of module names
 	 */
@@ -113,7 +120,7 @@ class ResourceLoaderContext {
 				} else {
 					// We have a prefix and a bunch of suffixes
 					$prefix = substr( $group, 0, $pos ); // 'foo'
-					$suffixes = explode( ',', substr( $group, $pos + 1 ) ); // array( 'bar', 'baz' )
+					$suffixes = explode( ',', substr( $group, $pos + 1 ) ); // [ 'bar', 'baz' ]
 					foreach ( $suffixes as $suffix ) {
 						$retval[] = "$prefix.$suffix";
 					}
@@ -171,12 +178,11 @@ class ResourceLoaderContext {
 		if ( $this->language === null ) {
 			// Must be a valid language code after this point (T64849)
 			// Only support uselang values that follow built-in conventions (T102058)
-			$lang = $this->getRequest()->getVal( 'lang', '' );
+			$lang = $this->getRequest()->getRawVal( 'lang', '' );
 			// Stricter version of RequestContext::sanitizeLangCode()
 			if ( !Language::isValidBuiltInCode( $lang ) ) {
 				wfDebug( "Invalid user language code\n" );
-				global $wgLanguageCode;
-				$lang = $wgLanguageCode;
+				$lang = $this->getResourceLoader()->getConfig()->get( 'LanguageCode' );
 			}
 			$this->language = $lang;
 		}
@@ -188,7 +194,7 @@ class ResourceLoaderContext {
 	 */
 	public function getDirection() {
 		if ( $this->direction === null ) {
-			$this->direction = $this->getRequest()->getVal( 'dir' );
+			$this->direction = $this->getRequest()->getRawVal( 'dir' );
 			if ( !$this->direction ) {
 				// Determine directionality based on user language (bug 6100)
 				$this->direction = Language::factory( $this->getLanguage() )->getDir();
@@ -220,22 +226,28 @@ class ResourceLoaderContext {
 	 */
 	public function msg() {
 		return call_user_func_array( 'wfMessage', func_get_args() )
-			->inLanguage( $this->getLanguage() );
+			->inLanguage( $this->getLanguage() )
+			// Use a dummy title because there is no real title
+			// for this endpoint, and the cache won't vary on it
+			// anyways.
+			->title( Title::newFromText( 'Dwimmerlaik' ) );
 	}
 
 	/**
 	 * Get the possibly-cached User object for the specified username
 	 *
 	 * @since 1.25
-	 * @return User|bool false if a valid object cannot be created
+	 * @return User
 	 */
 	public function getUserObj() {
 		if ( $this->userObj === null ) {
 			$username = $this->getUser();
 			if ( $username ) {
-				$this->userObj = User::newFromName( $username );
+				// Use provided username if valid, fallback to anonymous user
+				$this->userObj = User::newFromName( $username ) ?: new User;
 			} else {
-				$this->userObj = new User; // Anonymous user
+				// Anonymous user
+				$this->userObj = new User;
 			}
 		}
 
@@ -258,7 +270,7 @@ class ResourceLoaderContext {
 
 	/**
 	 * @see ResourceLoaderModule::getVersionHash
-	 * @see OutputPage::makeResourceLoaderLink
+	 * @see ResourceLoaderClientHtml::makeLoad
 	 * @return string|null
 	 */
 	public function getVersion() {

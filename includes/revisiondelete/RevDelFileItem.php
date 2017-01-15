@@ -23,8 +23,10 @@
  * Item class for an oldimage table row
  */
 class RevDelFileItem extends RevDelItem {
-	/** @var File */
-	public $file;
+	/** @var RevDelFileList */
+	protected $list;
+	/** @var OldLocalFile */
+	protected $file;
 
 	public function __construct( $list, $row ) {
 		parent::__construct( $list, $row );
@@ -215,8 +217,7 @@ class RevDelFileItem extends RevDelItem {
 						'target' => $this->list->title->getPrefixedText(),
 						'file' => $file->getArchiveName(),
 						'token' => $user->getEditToken( $file->getArchiveName() )
-					],
-					false, PROTO_RELATIVE
+					]
 				),
 			];
 		}
@@ -233,5 +234,13 @@ class RevDelFileItem extends RevDelItem {
 		}
 
 		return $ret;
+	}
+
+	public function lock() {
+		return $this->file->acquireFileLock();
+	}
+
+	public function unlock() {
+		return $this->file->releaseFileLock();
 	}
 }

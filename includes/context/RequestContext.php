@@ -25,6 +25,7 @@
 use Liuggio\StatsdClient\Factory\StatsdDataFactory;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
+use Wikimedia\ScopedCallback;
 
 /**
  * Group all the pieces relevant to the context of a request into one instance
@@ -160,7 +161,7 @@ class RequestContext implements IContextSource, MutableContext {
 	/**
 	 * Set the Title object
 	 *
-	 * @param Title $title
+	 * @param Title|null $title
 	 */
 	public function setTitle( Title $title = null ) {
 		$this->title = $title;

@@ -9,10 +9,12 @@
 			"محمد أحمد عبد الفتاح"
 		]
 	},
+	"apihelp-query+references-description": "يرجع تمثيل لبيانات المراجع المرتبطة مع الصفحات المعطاة.",
+	"apihelp-query+references-example-1": "المراجع المرتبطة ب<kbd>Albert Einstein</kbd>.",
 	"cite-desc": "يضيف وسوم <nowiki><ref[ name=id]></nowiki> و <nowiki><references/></nowiki> ، للاستشهادات",
 	"cite_error": "خطأ استشهاد: $1",
 	"cite_error_ref_numeric_key": "وسم <code>&lt;ref&gt;</code> غير صحيح؛\nالاسم لا يمكن أن يكون عددا صحيحا بسيطا. استخدم عنوانا وصفيا",
-	"cite_error_ref_no_key": "وسم <code>&lt;ref&gt;</code> غير صحيح؛\nالمراجع غير ذات المحتوى يجب أن تمتلك اسما",
+	"cite_error_ref_no_key": "وسم الفتح <code>&lt;ref&gt;</code> غير صحيح أو له اسم سييء.",
 	"cite_error_ref_too_many_keys": "وسم <code>&lt;ref&gt;</code> غير صحيح؛\nأسماء غير صحيحة، على سبيل المثال كثيرة جدا",
 	"cite_error_ref_no_input": "وسم <code>&lt;ref&gt;</code> غير صحيح؛\nالمراجع غير ذات الاسم يجب أن تمتلك محتوى",
 	"cite_error_references_duplicate_key": "وسم <code>&lt;ref&gt;</code> غير صالح؛ الاسم \"$1\" معرف أكثر من مرة بمحتويات مختلفة.",

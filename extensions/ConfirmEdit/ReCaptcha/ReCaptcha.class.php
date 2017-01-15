@@ -13,18 +13,20 @@ class ReCaptcha extends SimpleCaptcha {
 	/**
 	 * Displays the reCAPTCHA widget.
 	 * If $this->recaptcha_error is set, it will display an error in the widget.
-	 * @param OutputPage $out
 	 */
-	function getForm( OutputPage $out, $tabIndex = 1 ) {
+	function getFormInformation( $tabIndex = 1 ) {
 		global $wgReCaptchaPublicKey, $wgReCaptchaTheme;
 
+		wfDeprecated( 'ConfirmEdit module ReCaptcha', '1.28' );
 		$useHttps = ( isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] == 'on' );
 		$js = 'var RecaptchaOptions = ' . Xml::encodeJsVar(
 			[ 'theme' => $wgReCaptchaTheme, 'tabindex' => $tabIndex ]
 		);
 
-		return Html::inlineScript( $js ) .
-			   recaptcha_get_html( $wgReCaptchaPublicKey, $this->recaptcha_error, $useHttps );
+		return [
+			'html' => Html::inlineScript( $js ) .
+				recaptcha_get_html( $wgReCaptchaPublicKey, $this->recaptcha_error, $useHttps )
+		];
 	}
 
 	protected function getCaptchaParamsFromRequest( WebRequest $request ) {
@@ -82,30 +84,12 @@ class ReCaptcha extends SimpleCaptcha {
 
 	public function APIGetAllowedParams( &$module, &$params, $flags ) {
 		if ( $flags && $this->isAPICaptchaModule( $module ) ) {
-			if ( defined( 'ApiBase::PARAM_HELP_MSG' ) ) {
-				$params['recaptcha_challenge_field'] = [
-					ApiBase::PARAM_HELP_MSG => 'recaptcha-apihelp-param-recaptcha_challenge_field',
-				];
-				$params['recaptcha_response_field'] = [
-					ApiBase::PARAM_HELP_MSG => 'recaptcha-apihelp-param-recaptcha_response_field',
-				];
-			} else {
-				// @todo: Remove this branch when support for MediaWiki < 1.25 is dropped
-				$params['recaptcha_challenge_field'] = null;
-				$params['recaptcha_response_field'] = null;
-			}
-		}
-
-		return true;
-	}
-
-	/**
-	 * @deprecated since MediaWiki 1.25
-	 */
-	public function APIGetParamDescription( &$module, &$desc ) {
-		if ( $this->isAPICaptchaModule( $module ) ) {
-			$desc['recaptcha_challenge_field'] = 'Field from the ReCaptcha widget';
-			$desc['recaptcha_response_field'] = 'Field from the ReCaptcha widget';
+			$params['recaptcha_challenge_field'] = [
+				ApiBase::PARAM_HELP_MSG => 'recaptcha-apihelp-param-recaptcha_challenge_field',
+			];
+			$params['recaptcha_response_field'] = [
+				ApiBase::PARAM_HELP_MSG => 'recaptcha-apihelp-param-recaptcha_response_field',
+			];
 		}
 
 		return true;

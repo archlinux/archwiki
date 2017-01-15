@@ -1,13 +1,23 @@
 <?php
+
 namespace Elastica\Test\Filter;
 
 use Elastica\Document;
 use Elastica\Filter\Terms;
 use Elastica\Query;
-use Elastica\Test\Base as BaseTest;
+use Elastica\Test\DeprecatedClassBase as BaseTest;
 
 class TermsTest extends BaseTest
 {
+    /**
+     * @group unit
+     */
+    public function testDeprecated()
+    {
+        $reflection = new \ReflectionClass(new Terms());
+        $this->assertFileDeprecated($reflection->getFileName(), 'Deprecated: Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html');
+    }
+
     /**
      * @group functional
      */
@@ -49,7 +59,7 @@ class TermsTest extends BaseTest
         $this->assertEquals($results->count(), 4, 'Terms lookup with index as string');
 
         //Query with array of options
-        $termsFilter->setLookup('lastName', $type2, 'led zeppelin', 'members', array('index' => $index, 'cache' => false));
+        $termsFilter->setLookup('lastName', $type2, 'led zeppelin', 'members', array('index' => $index));
         $query->setPostFilter($termsFilter);
         $results = $index->search($query);
         $this->assertEquals($results->count(), 4, 'Terms lookup with options array');

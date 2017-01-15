@@ -1,12 +1,12 @@
 /*!
- * OOjs UI v0.17.1
+ * OOjs UI v0.17.10
  * https://www.mediawiki.org/wiki/OOjs_UI
  *
  * Copyright 2011–2016 OOjs UI Team and other contributors.
  * Released under the MIT license
  * http://oojs.mit-license.org
  *
- * Date: 2016-05-03T22:58:02Z
+ * Date: 2016-10-03T18:59:01Z
  */
 ( function ( OO ) {
 
@@ -781,8 +781,10 @@ OO.ui.Tool.prototype.setActive = function ( state ) {
 	this.active = !!state;
 	if ( this.active ) {
 		this.$element.addClass( 'oo-ui-tool-active' );
+		this.setFlags( 'progressive' );
 	} else {
 		this.$element.removeClass( 'oo-ui-tool-active' );
+		this.clearFlags();
 	}
 };
 
@@ -1292,24 +1294,26 @@ OO.ui.ToolFactory.prototype.extract = function ( collection, used ) {
 	var i, len, item, name, tool,
 		names = [];
 
-	if ( collection === '*' ) {
-		for ( name in this.registry ) {
-			tool = this.registry[ name ];
-			if (
-				// Only add tools by group name when auto-add is enabled
-				tool.static.autoAddToCatchall &&
-				// Exclude already used tools
-				( !used || !used[ name ] )
-			) {
-				names.push( name );
-				if ( used ) {
-					used[ name ] = true;
+	collection = !Array.isArray( collection ) ? [ collection ] : collection;
+
+	for ( i = 0, len = collection.length; i < len; i++ ) {
+		item = collection[ i ];
+		if ( item === '*' ) {
+			for ( name in this.registry ) {
+				tool = this.registry[ name ];
+				if (
+					// Only add tools by group name when auto-add is enabled
+					tool.static.autoAddToCatchall &&
+					// Exclude already used tools
+					( !used || !used[ name ] )
+				) {
+					names.push( name );
+					if ( used ) {
+						used[ name ] = true;
+					}
 				}
 			}
-		}
-	} else if ( Array.isArray( collection ) ) {
-		for ( i = 0, len = collection.length; i < len; i++ ) {
-			item = collection[ i ];
+		} else {
 			// Allow plain strings as shorthand for named tools
 			if ( typeof item === 'string' ) {
 				item = { name: item };

@@ -48,5 +48,6 @@
 	"cite-ve-referenceslist-isempty": "ما من مراجع من المجموعة \"$1\" في هذه الصفحة لتضمينها في هذه القائمة.",
 	"cite-ve-referenceslist-isempty-default": "ما من مراجع على هذه الصفحة لتضمينها في هذه القائمة.",
 	"cite-ve-referenceslist-missingref": "هذا المرجع موجود في قالب أو نحوه ولا يمكن تعديله حاليا إلا من المصدر.",
-	"cite-ve-toolbar-group-label": "مرجع"
+	"cite-ve-toolbar-group-label": "مرجع",
+	"cite-ve-othergroup-item": "استشهاد $1"
 }

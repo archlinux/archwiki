@@ -41,7 +41,7 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	 * @var array List of paths to JavaScript files to always include
 	 * @par Usage:
 	 * @code
-	 * array( [file-path], [file-path], ... )
+	 * [ [file-path], [file-path], ... ]
 	 * @endcode
 	 */
 	protected $scripts = [];
@@ -50,7 +50,7 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	 * @var array List of JavaScript files to include when using a specific language
 	 * @par Usage:
 	 * @code
-	 * array( [language-code] => array( [file-path], [file-path], ... ), ... )
+	 * [ [language-code] => [ [file-path], [file-path], ... ], ... ]
 	 * @endcode
 	 */
 	protected $languageScripts = [];
@@ -59,7 +59,7 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	 * @var array List of JavaScript files to include when using a specific skin
 	 * @par Usage:
 	 * @code
-	 * array( [skin-name] => array( [file-path], [file-path], ... ), ... )
+	 * [ [skin-name] => [ [file-path], [file-path], ... ], ... ]
 	 * @endcode
 	 */
 	protected $skinScripts = [];
@@ -68,7 +68,7 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	 * @var array List of paths to JavaScript files to include in debug mode
 	 * @par Usage:
 	 * @code
-	 * array( [skin-name] => array( [file-path], [file-path], ... ), ... )
+	 * [ [skin-name] => [ [file-path], [file-path], ... ], ... ]
 	 * @endcode
 	 */
 	protected $debugScripts = [];
@@ -77,7 +77,7 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	 * @var array List of paths to CSS files to always include
 	 * @par Usage:
 	 * @code
-	 * array( [file-path], [file-path], ... )
+	 * [ [file-path], [file-path], ... ]
 	 * @endcode
 	 */
 	protected $styles = [];
@@ -86,7 +86,7 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	 * @var array List of paths to CSS files to include when using specific skins
 	 * @par Usage:
 	 * @code
-	 * array( [file-path], [file-path], ... )
+	 * [ [file-path], [file-path], ... ]
 	 * @endcode
 	 */
 	protected $skinStyles = [];
@@ -95,7 +95,7 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	 * @var array List of modules this module depends on
 	 * @par Usage:
 	 * @code
-	 * array( [file-path], [file-path], ... )
+	 * [ [file-path], [file-path], ... ]
 	 * @endcode
 	 */
 	protected $dependencies = [];
@@ -109,7 +109,7 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	 * @var array List of message keys used by this module
 	 * @par Usage:
 	 * @code
-	 * array( [message-key], [message-key], ... )
+	 * [ [message-key], [message-key], ... ]
 	 * @endcode
 	 */
 	protected $messages = [];
@@ -128,6 +128,9 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 
 	protected $targets = [ 'desktop' ];
 
+	/** @var bool Whether CSSJanus flipping should be skipped for this module */
+	protected $noflip = false;
+
 	/**
 	 * @var bool Whether getStyleURLsForDebug should return raw file paths,
 	 * or return load.php urls
@@ -138,7 +141,7 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	 * @var array Place where readStyleFile() tracks file dependencies
 	 * @par Usage:
 	 * @code
-	 * array( [file-path], [file-path], ... )
+	 * [ [file-path], [file-path], ... ]
 	 * @endcode
 	 */
 	protected $localFileRefs = [];
@@ -165,7 +168,7 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	 * @throws InvalidArgumentException
 	 * @par Construction options:
 	 * @code
-	 *     array(
+	 *     [
 	 *         // Base path to prepend to all local paths in $options. Defaults to $IP
 	 *         'localBasePath' => [base path],
 	 *         // Base path to prepend to all remote paths in $options. Defaults to $wgResourceBasePath
@@ -177,26 +180,26 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	 *         // Scripts to always include
 	 *         'scripts' => [file path string or array of file path strings],
 	 *         // Scripts to include in specific language contexts
-	 *         'languageScripts' => array(
+	 *         'languageScripts' => [
 	 *             [language code] => [file path string or array of file path strings],
-	 *         ),
+	 *         ],
 	 *         // Scripts to include in specific skin contexts
-	 *         'skinScripts' => array(
+	 *         'skinScripts' => [
 	 *             [skin name] => [file path string or array of file path strings],
-	 *         ),
+	 *         ],
 	 *         // Scripts to include in debug contexts
 	 *         'debugScripts' => [file path string or array of file path strings],
 	 *         // Modules which must be loaded before this module
 	 *         'dependencies' => [module name string or array of module name strings],
-	 *         'templates' => array(
+	 *         'templates' => [
 	 *             [template alias with file.ext] => [file path to a template file],
-	 *         ),
+	 *         ],
 	 *         // Styles to always load
 	 *         'styles' => [file path string or array of file path strings],
 	 *         // Styles to include in specific skin contexts
-	 *         'skinStyles' => array(
+	 *         'skinStyles' => [
 	 *             [skin name] => [file path string or array of file path strings],
-	 *         ),
+	 *         ],
 	 *         // Messages to always load
 	 *         'messages' => [array of message key strings],
 	 *         // Group which this module should be loaded together with
@@ -207,7 +210,7 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	 *         // The file must contain valid JavaScript for execution in a private function.
 	 *         // The file must not contain the "function () {" and "}" wrapper though.
 	 *         'skipFunction' => [file path]
-	 *     )
+	 *     ]
 	 * @endcode
 	 */
 	public function __construct(
@@ -255,6 +258,9 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 						$this->{$member}[$key] = (array)$value;
 					}
 					break;
+				case 'deprecated':
+					$this->deprecated = $option;
+					break;
 				// Lists of strings
 				case 'dependencies':
 				case 'messages':
@@ -274,6 +280,7 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 				// Single booleans
 				case 'debugRaw':
 				case 'raw':
+				case 'noflip':
 					$this->{$member} = (bool)$option;
 					break;
 			}
@@ -352,7 +359,7 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	 */
 	public function getScript( ResourceLoaderContext $context ) {
 		$files = $this->getScriptFiles( $context );
-		return $this->readScriptFiles( $files );
+		return $this->getDeprecationInformation() . $this->readScriptFiles( $files );
 	}
 
 	/**
@@ -910,7 +917,7 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	 * @return bool
 	 */
 	public function getFlip( $context ) {
-		return $context->getDirection() === 'rtl';
+		return $context->getDirection() === 'rtl' && !$this->noflip;
 	}
 
 	/**
@@ -920,6 +927,28 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	 */
 	public function getTargets() {
 		return $this->targets;
+	}
+
+	/**
+	 * Get the module's load type.
+	 *
+	 * @since 1.28
+	 * @return string
+	 */
+	public function getType() {
+		$canBeStylesOnly = !(
+			// All options except 'styles', 'skinStyles' and 'debugRaw'
+			$this->scripts
+			|| $this->debugScripts
+			|| $this->templates
+			|| $this->languageScripts
+			|| $this->skinScripts
+			|| $this->dependencies
+			|| $this->messages
+			|| $this->skipFunction
+			|| $this->raw
+		);
+		return $canBeStylesOnly ? self::LOAD_STYLES : self::LOAD_GENERAL;
 	}
 
 	/**

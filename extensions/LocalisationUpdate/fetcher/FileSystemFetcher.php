@@ -26,7 +26,7 @@ class FileSystemFetcher implements Fetcher {
 		// Remove the protocol prefix
 		$pattern = preg_replace( '~^file://~', '', $pattern );
 
-		$data = array();
+		$data = [];
 		foreach ( glob( $pattern ) as $file ) {
 			if ( is_readable( $file ) ) {
 				$data["file://$file"] = file_get_contents( $file );

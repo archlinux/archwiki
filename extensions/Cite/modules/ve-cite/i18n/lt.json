@@ -14,10 +14,12 @@
 			"Zygimantus"
 		]
 	},
+	"visualeditor-cite-tool-definition.json": "nieko",
 	"visualeditor-cite-tool-name-book": "Knyga",
 	"visualeditor-cite-tool-name-journal": "Žurnalas",
 	"visualeditor-cite-tool-name-news": "Naujienos",
 	"visualeditor-cite-tool-name-web": "Tinklapis",
+	"cite-tool-definition.json": "nieko",
 	"cite-ve-dialog-reference-editing-reused": "Ši nuoroda naudojama $1 {{PLURAL:$1|kartų}} šiame puslapyje.",
 	"cite-ve-dialog-reference-options-group-label": "Naudoti šią grupę",
 	"cite-ve-dialog-reference-options-group-placeholder": "Bendrosios nuorodos",
@@ -40,5 +42,6 @@
 	"cite-ve-referenceslist-isempty": "Nėra nuorodų su grupe \"$1\" šiame puslapyje, kurias būtų galima pateikti šiame sąraše",
 	"cite-ve-referenceslist-isempty-default": "Šiame puslapyje nėra nuorodų, kurias būtų galima įtraukti į šį sąrašą.",
 	"cite-ve-referenceslist-missingref": "Ši nuoroda yra apibrėžta šablone arba kitame sugeneruotame bloke ir kol kas gali būti redaguojama tik išeities teksto režimu.",
-	"cite-ve-toolbar-group-label": "Cituoti"
+	"cite-ve-toolbar-group-label": "Cituoti",
+	"cite-ve-othergroup-item": "$1 nuoroda"
 }

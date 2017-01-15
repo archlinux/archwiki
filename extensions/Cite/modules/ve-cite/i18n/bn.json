@@ -14,10 +14,12 @@
 			"NahidSultan"
 		]
 	},
+	"visualeditor-cite-tool-definition.json": "কিছু না",
 	"visualeditor-cite-tool-name-book": "বই",
 	"visualeditor-cite-tool-name-journal": "সাময়িকী",
 	"visualeditor-cite-tool-name-news": "সংবাদ",
 	"visualeditor-cite-tool-name-web": "ওয়েবসাইট",
+	"cite-tool-definition.json": "কিছু না",
 	"cite-ve-dialog-reference-editing-reused": "এই তথ্যসূত্রটি এই পাতায় $1 {{PLURAL:$1|বার}} ব্যবহৃত হয়েছে।",
 	"cite-ve-dialog-reference-options-group-label": "এই দল ব্যবহার করো",
 	"cite-ve-dialog-reference-options-group-placeholder": "সাধারণ তথ্যসূত্র",
@@ -40,5 +42,6 @@
 	"cite-ve-referenceslist-isempty": "এই পাতাতে \"$1\" দলের জন্য কোন তথ্যসূত্র নেই।",
 	"cite-ve-referenceslist-isempty-default": "এই তালিকায় যোগ করার জন্য এই পৃষ্ঠায় কোন তথ্যসূত্র নেই।",
 	"cite-ve-referenceslist-missingref": "এই তথ্যটি একটি টেমপ্লেট বা অন্যান্য উত্পন্ন ব্লক হিসেবে সংজ্ঞায়িত করা হয় এবং এখনকার জন্য এটি শুধুমাত্র উৎস মোডে সম্পাদনা করা যাবে।",
-	"cite-ve-toolbar-group-label": "উদ্ধৃতি"
+	"cite-ve-toolbar-group-label": "উদ্ধৃতি",
+	"cite-ve-othergroup-item": "$1টি তথ্যসূত্র"
 }

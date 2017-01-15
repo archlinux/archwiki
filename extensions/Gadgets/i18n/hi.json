@@ -38,5 +38,7 @@
 	"apihelp-query+gadgets-description": "परिणाम-स्वरूप इस विकि पर प्रयोग किए जाने वाले सभी गैजेटों की सूची प्राप्त करें।",
 	"apihelp-query+gadgets-param-categories": "किन श्रेणियों के गैजेट प्राप्त करें",
 	"apihelp-query+gadgets-param-ids": "प्राप्त करने के गैजेटों के आई०डी०।",
-	"apihelp-query+gadgets-param-allowedonly": "वर्तमान सदस्य को अनुमति-प्राप्त गैजेटों को सूचीबद्ध करें।"
+	"apihelp-query+gadgets-param-allowedonly": "वर्तमान सदस्य को अनुमति-प्राप्त गैजेटों को सूचीबद्ध करें।",
+	"right-gadgets-definition-edit": "गैजेट की परिभाषा लिखें",
+	"action-gadgets-definition-edit": "इस गैजेट की परिभाषा लिखें"
 }

@@ -31,7 +31,7 @@ class LocalisationUpdate {
 			return true;
 		}
 
-		$codeSequence = array_merge( array( $code ), $cache['fallbackSequence'] );
+		$codeSequence = array_merge( [ $code ], $cache['fallbackSequence'] );
 		foreach ( $codeSequence as $csCode ) {
 			$fileName = "$dir/" . self::getFilename( $csCode );
 			$cache['deps'][] = new FileDependency( $fileName );
@@ -61,23 +61,5 @@ class LocalisationUpdate {
 	 */
 	public static function getFilename( $language ) {
 		return "l10nupdate-$language.json";
-	}
-
-	/**
-	 * Hook: UnitTestsList
-	 */
-	public static function setupUnitTests( array &$files ) {
-		$dir = __DIR__ . '/tests/phpunit';
-		$directoryIterator = new RecursiveDirectoryIterator( $dir );
-		$fileIterator = new RecursiveIteratorIterator( $directoryIterator );
-
-		/// @var SplFileInfo $fileInfo
-		foreach ( $fileIterator as $fileInfo ) {
-			if ( substr( $fileInfo->getFilename(), -8 ) === 'Test.php' ) {
-				$files[] = $fileInfo->getPathname();
-			}
-		}
-
-		return true;
 	}
 }

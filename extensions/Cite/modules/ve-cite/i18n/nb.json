@@ -13,12 +13,13 @@
 			"Jdforrester",
 			"Emilbk",
 			"Cocu",
-			"Tarjeimo"
+			"Tarjeimo",
+			"Telaneo"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Bok",
 	"visualeditor-cite-tool-name-journal": "Tidsskrift",
-	"visualeditor-cite-tool-name-news": "Nyhetssak",
+	"visualeditor-cite-tool-name-news": "Nyhet",
 	"visualeditor-cite-tool-name-web": "Nettside",
 	"cite-ve-dialog-reference-editing-reused": "Denne referansen er brukt {{PLURAL:$1|én gang|$1  ganger}} på denne siden.",
 	"cite-ve-dialog-reference-options-group-label": "Bruk denne gruppen",
@@ -33,7 +34,7 @@
 	"cite-ve-dialog-referenceslist-contextitem-description-named": "Liste over referanser i gruppen «$1»",
 	"cite-ve-dialog-referenceslist-title": "Referanseliste",
 	"cite-ve-dialogbutton-citation-educationpopup-text": "Forbedrer kvaliteten på innholdet ved å legge til kildehenvisninger. Du kan sitere fra bøker, aviser og websider med mer.",
-	"cite-ve-dialogbutton-citation-educationpopup-title": "Referanser",
+	"cite-ve-dialogbutton-citation-educationpopup-title": "Siteringer",
 	"cite-ve-dialogbutton-reference-full-label": "Standardform",
 	"cite-ve-dialogbutton-reference-title": "Referanse",
 	"cite-ve-dialogbutton-reference-tooltip": "Enkel",
@@ -42,5 +43,5 @@
 	"cite-ve-referenceslist-isempty": "Det finnes ingen kildehenvisninger i gruppen «$1» på denne siden som kan  inkluderes i denne lista.",
 	"cite-ve-referenceslist-isempty-default": "Det er ingen kildehenvisninger på denne siden som kan inkluderes i denne lista.",
 	"cite-ve-referenceslist-missingref": "Denne kildehenvisningen er definert ved hjelp av en mal eller en annen generert blokk, og kan foreløpig kun redigeres i kildemodus.",
-	"cite-ve-toolbar-group-label": "Siter"
+	"cite-ve-toolbar-group-label": "Sitér"
 }

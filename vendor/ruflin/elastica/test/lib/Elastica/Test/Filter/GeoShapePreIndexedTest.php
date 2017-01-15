@@ -1,14 +1,23 @@
 <?php
+
 namespace Elastica\Test\Filter;
 
 use Elastica\Filter\AbstractGeoShape;
 use Elastica\Filter\GeoShapePreIndexed;
-use Elastica\Query\Filtered;
-use Elastica\Query\MatchAll;
-use Elastica\Test\Base as BaseTest;
+use Elastica\Query\BoolQuery;
+use Elastica\Test\DeprecatedClassBase as BaseTest;
 
 class GeoShapePreIndexedTest extends BaseTest
 {
+    /**
+     * @group unit
+     */
+    public function testDeprecated()
+    {
+        $reflection = new \ReflectionClass(new GeoShapePreIndexed('location', '1', 'type', 'a', 'location'));
+        $this->assertFileDeprecated($reflection->getFileName(), 'Deprecated: Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html');
+    }
+
     /**
      * @group functional
      */
@@ -81,7 +90,8 @@ class GeoShapePreIndexedTest extends BaseTest
 
         $this->assertEquals($expected, $gsp->toArray());
 
-        $query = new Filtered(new MatchAll(), $gsp);
+        $query = new BoolQuery();
+        $query->addFilter($gsp);
         $results = $index->getType('type')->search($query);
 
         $this->assertEquals(1, $results->count());

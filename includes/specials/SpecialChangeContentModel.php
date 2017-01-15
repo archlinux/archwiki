@@ -84,12 +84,20 @@ class SpecialChangeContentModel extends FormSpecialPage {
 			],
 		];
 		if ( $this->title ) {
+			$options = $this->getOptionsForTitle( $this->title );
+			if ( empty( $options ) ) {
+				throw new ErrorPageError(
+					'changecontentmodel-emptymodels-title',
+					'changecontentmodel-emptymodels-text',
+					$this->title->getPrefixedText()
+				);
+			}
 			$fields['pagetitle']['readonly'] = true;
 			$fields += [
 				'model' => [
 					'type' => 'select',
 					'name' => 'model',
-					'options' => $this->getOptionsForTitle( $this->title ),
+					'options' => $options,
 					'label-message' => 'changecontentmodel-model-label'
 				],
 				'reason' => [
@@ -148,10 +156,20 @@ class SpecialChangeContentModel extends FormSpecialPage {
 		}
 
 		$this->title = Title::newFromText( $data['pagetitle'] );
+		$titleWithNewContentModel = clone $this->title;
+		$titleWithNewContentModel->setContentModel( $data['model'] );
 		$user = $this->getUser();
-		// Check permissions and make sure the user has permission to edit the specific page
-		$errors = $this->title->getUserPermissionsErrors( 'editcontentmodel', $user );
-		$errors = wfMergeErrorArrays( $errors, $this->title->getUserPermissionsErrors( 'edit', $user ) );
+		// Check permissions and make sure the user has permission to:
+		$errors = wfMergeErrorArrays(
+			// edit the contentmodel of the page
+			$this->title->getUserPermissionsErrors( 'editcontentmodel', $user ),
+			// edit the page under the old content model
+			$this->title->getUserPermissionsErrors( 'edit', $user ),
+			// edit the contentmodel under the new content model
+			$titleWithNewContentModel->getUserPermissionsErrors( 'editcontentmodel', $user ),
+			// edit the page under the new content model
+			$titleWithNewContentModel->getUserPermissionsErrors( 'edit', $user )
+		);
 		if ( $errors ) {
 			$out = $this->getOutput();
 			$wikitext = $out->formatPermissionsErrorMessage( $errors );
@@ -183,7 +201,14 @@ class SpecialChangeContentModel extends FormSpecialPage {
 			// Page doesn't exist, create an empty content object
 			$newContent = ContentHandler::getForModelID( $data['model'] )->makeEmptyContent();
 		}
+
+		// All other checks have passed, let's check rate limits
+		if ( $user->pingLimiter( 'editcontentmodel' ) ) {
+			throw new ThrottledError();
+		}
+
 		$flags = $this->oldRevision ? EDIT_UPDATE : EDIT_NEW;
+		$flags |= EDIT_INTERNAL;
 		if ( $user->isAllowed( 'bot' ) ) {
 			$flags |= EDIT_FORCE_BOT;
 		}
@@ -205,6 +230,22 @@ class SpecialChangeContentModel extends FormSpecialPage {
 		}
 		# Truncate for whole multibyte characters.
 		$reason = $wgContLang->truncate( $reason, 255 );
+
+		// Run edit filters
+		$derivativeContext = new DerivativeContext( $this->getContext() );
+		$derivativeContext->setTitle( $this->title );
+		$derivativeContext->setWikiPage( $page );
+		$status = new Status();
+		if ( !Hooks::run( 'EditFilterMergedContent',
+				[ $derivativeContext, $newContent, $status, $reason,
+				$user, false ] )
+		) {
+			if ( $status->isGood() ) {
+				// TODO: extensions should really specify an error message
+				$status->fatal( 'hookaborted' );
+			}
+			return $status;
+		}
 
 		$status = $page->doEditContent(
 			$newContent,

@@ -6,16 +6,17 @@
 			"Nedergard",
 			"Stryn",
 			"McSalama",
-			"01miki10"
+			"01miki10",
+			"Alluk."
 		]
 	},
 	"fancycaptcha-addurl": "Muokkauksesi sisältää uusia linkkejä muille sivuille. Kirjoita kuvan sisältämät sanat alla olevaan tekstikenttään ([[Special:Captcha/help|lisätietoja]]):",
 	"fancycaptcha-badlogin": "Automatisoidun salasanan murtamisen estämiseksi kirjoita kuvan sisältämät sanat alla olevaan tekstikenttään ([[Special:Captcha/help|lisätietoja]]):",
-	"fancycaptcha-captcha": "Turvatarkastus",
-	"fancycaptcha-createaccount": "Suojellaksemme wikiä automaattisilta rekisteröitymisiltä pyydämme sinua kirjoittamaan kuvassa näkyvät kirjaimet alla olevaan laatikkoon. ([[Special:Captcha/help|lisätietoja]]):",
+	"fancycaptcha-captcha": "Roskapostisuojaus",
+	"fancycaptcha-accountcreate": "Automaattisen käyttäjätunnusten luonnin estämiseksi ratkaise alla oleva laskutoimitus ja kirjoita se kenttään ([[Special:Captcha/help|lisätietoa]]):",
 	"fancycaptcha-create": "Muokkauksesi sisältää uusia linkkejä muille sivuille. Kirjoita kuvan sisältämät sanat alla olevaan tekstikenttään ([[Special:Captcha/help|lisätietoja]]):",
 	"fancycaptcha-edit": "Muokkauksesi sisältää uusia linkkejä muille sivuille. Kirjoita kuvan sisältämät sanat alla olevaan tekstikenttään ([[Special:Captcha/help|lisätietoja]]):",
-	"fancycaptcha-imgcaptcha-ph": "Kirjoita teksti, jonka näet yllä",
+	"fancycaptcha-imgcaptcha-ph": "Kirjoita kuvassa oleva teksti",
 	"fancycaptcha-sendemail": "Automatisoidun roskapostin lähettämisen vaikeuttamiseksi kirjoita kuvan sisältämät sanat alla olevaan tekstikenttään ([[Special:Captcha/help|lisätietoja]]):",
 	"fancycaptcha-reload-text": "Vaihda",
 	"apihelp-fancycaptchareload-description": "Hae uusi FancyCaptcha.",

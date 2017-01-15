@@ -25,6 +25,7 @@
  * @file
  * @ingroup Media
  */
+use MediaWiki\MediaWikiServices;
 
 /**
  * Handler for images that need to be transformed
@@ -302,7 +303,7 @@ abstract class TransformationalImageHandler extends ImageHandler {
 	 * Values can be one of client, im, custom, gd, imext, or an array
 	 * of object, method-name to call that specific method.
 	 *
-	 * If specifying a custom scaler command with array( Obj, method ),
+	 * If specifying a custom scaler command with [ Obj, method ],
 	 * the method in question should take 2 parameters, a File object,
 	 * and a $scalerParams array with various options (See doTransform
 	 * for what is in $scalerParams). On error it should return a
@@ -509,7 +510,7 @@ abstract class TransformationalImageHandler extends ImageHandler {
 	 * @return string|bool Representing the IM version; false on error
 	 */
 	protected function getMagickVersion() {
-		$cache = ObjectCache::getLocalServerInstance( CACHE_NONE );
+		$cache = MediaWikiServices::getInstance()->getLocalServerObjectCache();
 		return $cache->getWithSetCallback(
 			'imagemagick-version',
 			$cache::TTL_HOUR,

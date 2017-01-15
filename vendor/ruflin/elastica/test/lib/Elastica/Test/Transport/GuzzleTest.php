@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica\Test\Transport;
 
 use Elastica\Document;
@@ -171,6 +172,7 @@ class GuzzleTest extends BaseTest
     public function testInvalidConnection()
     {
         $client = $this->_getClient(array('transport' => 'Guzzle', 'port' => 4500, 'persistent' => false));
+        $response = $client->request('_stats', 'GET');
         $client->request('_status', 'GET');
     }
 

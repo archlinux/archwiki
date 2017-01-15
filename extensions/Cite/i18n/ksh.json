@@ -5,6 +5,7 @@
 			"The Evil IP address"
 		]
 	},
+	"apihelp-query+references-description": "Jidd en Dahschtällong vun dä Qälle un Fohßnuhte als Dahte uß, di met dä aanjejovve Sigge verknop sin.",
 	"apihelp-query+references-example-1": "Bezösche em Zesammehang mem <kbd lang=\"de\" xml:lang=\"de\" dir=\"ltr\">Albert Einstein</kbd>.",
 	"cite-desc": "Erlaub Quelle un Referenze met <nowiki><ref[ name=\"id\"]></nowiki> un <nowiki><references /></nowiki> aanzejevve.",
 	"cite_error": "Fähler in <i lang=\"en\">cite</i> met Referenze: $1",
@@ -32,5 +33,8 @@
 	"cite_references_link_prefix": "fohss_noht_nommer_",
 	"cite_references_link_many_and": "&#32;",
 	"cite_references_link_accessibility_label": "Jangk noh bovve",
-	"cite_references_link_many_accessibility_label": "Jangk noh bovve op:"
+	"cite_references_link_many_accessibility_label": "Jangk noh bovve op:",
+	"cite_section_preview_references": "En Vöraff-Aansesch vun de Quälle un Fohßnuhte",
+	"cite_warning": "Opjepaß: $1",
+	"cite_warning_sectionpreview_no_text": "<code>&lt;ref&gt;</code> dä Befähl mem Nahme <code>$1</code> künne mer nit vöraff belohre. Dä es ußerhallef vun heh däm Afschnedd udder övverhoup nit bestemmt wohde."
 }

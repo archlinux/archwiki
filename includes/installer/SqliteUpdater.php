@@ -152,6 +152,12 @@ class SqliteUpdater extends DatabaseUpdater {
 			[ 'addIndex', 'categorylinks', 'cl_collation_ext',
 				'patch-add-cl_collation_ext_index.sql' ],
 			[ 'doCollationUpdate' ],
+
+			// 1.28
+			[ 'addIndex', 'recentchanges', 'rc_name_type_patrolled_timestamp',
+				'patch-add-rc_name_type_patrolled_timestamp_index.sql' ],
+			[ 'addField', 'change_tag', 'ct_id', 'patch-change_tag-ct_id.sql' ],
+			[ 'addField', 'tag_summary', 'ts_id', 'patch-tag_summary-ts_id.sql' ],
 		];
 	}
 

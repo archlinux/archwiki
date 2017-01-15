@@ -195,7 +195,7 @@ $.wikiEditor.modules.toolbar.config = {
 									action: {
 										type: 'encapsulate',
 										options: {
-											pre: '--~~~~'
+											pre: mw.config.get( 'mw.msg.wikieditor' )
 										}
 									}
 								}

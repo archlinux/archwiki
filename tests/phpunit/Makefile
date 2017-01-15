@@ -43,26 +43,17 @@ coverage:
 
 parser:
 	${PU} --group Parser
-parserfuzz:
-	@echo "******************************************************************"
-	@echo "* This WILL kill your computer by eating all memory AND all swap *"
-	@echo "*                                                                *"
-	@echo "* If you are on a production machine. ABORT NOW!!                *"
-	@echo "*  Press control+C to stop                                       *"
-	@echo "*                                                                *"
-	@echo "******************************************************************"
-	${PU} --group Parser,ParserFuzz
 noparser:
-	${PU} --exclude-group Parser,Broken,ParserFuzz,Stub
+	${PU} --exclude-group Parser,Broken,Stub
 
 safe:
-	${PU} --exclude-group Broken,ParserFuzz,Destructive,Stub
+	${PU} --exclude-group Broken,Destructive,Stub
 
 databaseless:
-	${PU} --exclude-group Broken,ParserFuzz,Destructive,Database,Stub
+	${PU} --exclude-group Broken,Destructive,Database,Stub
 
 database:
-	${PU} --exclude-group Broken,ParserFuzz,Destructive,Stub --group Database
+	${PU} --exclude-group Broken,Destructive,Stub --group Database
 
 list-groups:
 	${PU} --list-groups
@@ -76,7 +67,7 @@ help:
 	#   tap                 Run the tests individually through Test::Harness's prove(1)
 	#   help                You're looking at it!
 	#   coverage            Run the tests and generates an HTML code coverage report
-	#                       You will need the Xdebug PHP extension for the later.
+	#                       You will need the Xdebug PHP extension for the latter.
 	#   [no]parser          Skip or only run Parser tests
 	#
 	#   list-groups         List available Tests groups.

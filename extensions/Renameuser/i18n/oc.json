@@ -8,7 +8,7 @@
 	"renameuser": "Renomenar l'utilizaire",
 	"renameuser-linkoncontribs": "tornar nomenar l'utilizaire",
 	"renameuser-linkoncontribs-text": "Tornar nomenar l'utilizaire",
-	"renameuser-desc": "Torna nomenar un utilizaire (necessita los dreches de ''renameuser'')",
+	"renameuser-desc": "Renomenar una [[Special:RenameUser|pagina especiala]] per renomenar un utilizaire (necessita los dreits de ''renameuser'')",
 	"renameuserold": "Nom actual de l'utilizaire :",
 	"renameusernew": "Nom novèl de l'utilizaire :",
 	"renameuserreason": "Rason(s) del cambiament de nom :",

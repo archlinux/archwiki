@@ -5,7 +5,7 @@ var infuseButton;
 
 // Helper function to get high resolution profiling data, where available.
 function now() {
-	/*global performance */
+	/* global performance */
 	return ( typeof performance !== 'undefined' ) ? performance.now() :
 		Date.now ? Date.now() : new Date().getTime();
 }
@@ -15,9 +15,9 @@ function now() {
 // client-side behaviors to, or where the JS implementation provides additional features over PHP,
 // like DropdownInputWidget. We do it here because it's a good overall test.)
 function infuseAll() {
-	var start, end, all;
+	var start, end;
 	start = now();
-	all = $( '*[data-ooui]' ).map( function ( _, e ) {
+	$( '*[data-ooui]' ).map( function ( _, e ) {
 		return OO.ui.infuse( e.id );
 	} );
 	end = now();

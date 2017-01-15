@@ -61,7 +61,7 @@ abstract class HTMLFormField {
 	 * @return bool
 	 */
 	public function canDisplayErrors() {
-		return true;
+		return $this->hasVisibleOutput();
 	}
 
 	/**
@@ -350,6 +350,20 @@ abstract class HTMLFormField {
 	}
 
 	/**
+	 * Can we assume that the request is an attempt to submit a HTMLForm, as opposed to an attempt to
+	 * just view it? This can't normally be distinguished for e.g. checkboxes.
+	 *
+	 * Returns true if the request has a field for a CSRF token (wpEditToken) or a form identifier
+	 * (wpFormIdentifier).
+	 *
+	 * @param WebRequest $request
+	 * @return boolean
+	 */
+	protected function isSubmitAttempt( WebRequest $request ) {
+		return $request->getCheck( 'wpEditToken' ) || $request->getCheck( 'wpFormIdentifier' );
+	}
+
+	/**
 	 * Get the value that this input has been set to from a posted form,
 	 * or the input's default value if it has not been set.
 	 *
@@ -439,10 +453,6 @@ abstract class HTMLFormField {
 
 		if ( isset( $params['filter-callback'] ) ) {
 			$this->mFilterCallback = $params['filter-callback'];
-		}
-
-		if ( isset( $params['flatlist'] ) ) {
-			$this->mClass .= ' mw-htmlform-flatlist';
 		}
 
 		if ( isset( $params['hidelabel'] ) ) {
@@ -592,24 +602,49 @@ abstract class HTMLFormField {
 		}
 
 		$fieldType = get_class( $this );
-		$helpText = $this->getHelpText();
+		$help = $this->getHelpText();
 		$errors = $this->getErrorsRaw( $value );
 		foreach ( $errors as &$error ) {
 			$error = new OOUI\HtmlSnippet( $error );
 		}
 
+		$notices = $this->getNotices();
+		foreach ( $notices as &$notice ) {
+			$notice = new OOUI\HtmlSnippet( $notice );
+		}
+
 		$config = [
 			'classes' => [ "mw-htmlform-field-$fieldType", $this->mClass ],
 			'align' => $this->getLabelAlignOOUI(),
-			'help' => $helpText !== null ? new OOUI\HtmlSnippet( $helpText ) : null,
+			'help' => ( $help !== null && $help !== '' ) ? new OOUI\HtmlSnippet( $help ) : null,
 			'errors' => $errors,
+			'notices' => $notices,
 			'infusable' => $infusable,
 		];
+
+		$preloadModules = false;
+
+		if ( $infusable && $this->shouldInfuseOOUI() ) {
+			$preloadModules = true;
+			$config['classes'][] = 'mw-htmlform-field-autoinfuse';
+		}
 
 		// the element could specify, that the label doesn't need to be added
 		$label = $this->getLabel();
 		if ( $label ) {
 			$config['label'] = new OOUI\HtmlSnippet( $label );
+		}
+
+		if ( $this->mHideIf ) {
+			$preloadModules = true;
+			$config['hideIf'] = $this->mHideIf;
+		}
+
+		$config['modules'] = $this->getOOUIModules();
+
+		if ( $preloadModules ) {
+			$this->mParent->getOutput()->addModules( 'mediawiki.htmlform.ooui' );
+			$this->mParent->getOutput()->addModules( $this->getOOUIModules() );
 		}
 
 		return $this->getFieldLayoutOOUI( $inputField, $config );
@@ -630,9 +665,31 @@ abstract class HTMLFormField {
 	protected function getFieldLayoutOOUI( $inputField, $config ) {
 		if ( isset( $this->mClassWithButton ) ) {
 			$buttonWidget = $this->mClassWithButton->getInputOOUI( '' );
-			return new OOUI\ActionFieldLayout( $inputField, $buttonWidget, $config );
+			return new HTMLFormActionFieldLayout( $inputField, $buttonWidget, $config );
 		}
-		return new OOUI\FieldLayout( $inputField, $config );
+		return new HTMLFormFieldLayout( $inputField, $config );
+	}
+
+	/**
+	 * Whether the field should be automatically infused. Note that all OOjs UI HTMLForm fields are
+	 * infusable (you can call OO.ui.infuse() on them), but not all are infused by default, since
+	 * there is no benefit in doing it e.g. for buttons and it's a small performance hit on page load.
+	 *
+	 * @return bool
+	 */
+	protected function shouldInfuseOOUI() {
+		// Always infuse fields with help text, since the interface for it is nicer with JS
+		return $this->getHelpText() !== null;
+	}
+
+	/**
+	 * Get the list of extra ResourceLoader modules which must be loaded client-side before it's
+	 * possible to infuse this field's OOjs UI widget.
+	 *
+	 * @return string[]
+	 */
+	protected function getOOUIModules() {
+		return [];
 	}
 
 	/**
@@ -764,7 +821,7 @@ abstract class HTMLFormField {
 	/**
 	 * Determine the help text to display
 	 * @since 1.20
-	 * @return string HTML
+	 * @return string|null HTML
 	 */
 	public function getHelpText() {
 		$helptext = null;
@@ -838,6 +895,30 @@ abstract class HTMLFormField {
 		}
 
 		return $errors;
+	}
+
+	/**
+	 * Determine notices to display for the field.
+	 *
+	 * @since 1.28
+	 * @return string[]
+	 */
+	function getNotices() {
+		$notices = [];
+
+		if ( isset( $this->mParams['notice-message'] ) ) {
+			$notices[] = $this->getMessage( $this->mParams['notice-message'] )->parse();
+		}
+
+		if ( isset( $this->mParams['notice-messages'] ) ) {
+			foreach ( $this->mParams['notice-messages'] as $msg ) {
+				$notices[] = $this->getMessage( $msg )->parse();
+			}
+		} elseif ( isset( $this->mParams['notice'] ) ) {
+			$notices[] = $this->mParams['notice'];
+		}
+
+		return $notices;
 	}
 
 	/**

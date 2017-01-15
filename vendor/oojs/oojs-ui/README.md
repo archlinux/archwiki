@@ -15,7 +15,7 @@ npm install oojs-ui
 
 If you don't want to use npm, you can:
 
-1. Clone the repo and move into it, `$ git clone https://git.wikimedia.org/git/oojs/ui.git oojs-ui && cd oojs-ui`.
+1. Clone the repo and move into it, `$ git clone https://phabricator.wikimedia.org/diffusion/GOJU/oojs-ui.git oojs-ui && cd oojs-ui`.
 
 1. Install Grunt command-line utility:<br/>`$ npm install -g grunt-cli`
 

@@ -2,10 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"عثمان خان شاہ",
-			"محمد افضل"
+			"محمد افضل",
+			"Muhammad Shuaib"
 		]
 	},
 	"fancycaptcha-captcha": "حفاظتی تدبیر",
-	"fancycaptcha-imgcaptcha-ph": "اوپر دیکھائی دینے ولی متن داخل کریں",
+	"fancycaptcha-accountcreate": "خودکار کھاتہ سازی سے اس ویکی کو تحفظ فراہم کرنے کے لیے ہماری آپ سے درخواست ہے کہ براہ کرم ذیل میں موجود خانہ میں نظر آنے والے الفاظ درج کریں ([[Special:Captcha/help|مزید معلومات]]):",
+	"fancycaptcha-imgcaptcha-ph": "تصویر میں نظر آنے والا متن درج کریں",
 	"fancycaptcha-reload-text": "تازہ کریں"
 }

@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Albertas"
+			"Albertas",
+			"Homo"
 		]
 	},
 	"spam-blacklist": " #<!-- palikite šią eilutę tiksliai tokią, kokia ji yra --> <pre>\n# Išorinės URL nuorodos patenkančios į šį sąrašą bus blokuojamos, įterpus jas į puslapį.\n# Šis sąrašas paveiks tik šį vikį; taip pat galite remtis globaliu juoduoju nuorodų sąrašu.\n# Dokumentacijai žiūrėkite https://www.mediawiki.org/wiki/Extension:SpamBlacklist\n#\n# Sintaksė tokia:\n#   * Viskas nuo \"#\" simbolio iki eilutės galo yra komentaras\n#   * Kiekviena ne tuščia eilutė yra reguliariosios išraiškos fragmentas, kuris atitinka tik URL nuorodose esančius serverių pavadinimus\n\n #</pre> <!-- palikite šią eilutę tiksliai tokią, kokia ji yra -->",
@@ -14,8 +15,8 @@
 	"spam-invalid-lines": "{{PLURAL:$1|Ši brukalo juodojo sąrašo eilutė yra|Šios brukalo juodojo sąrašo eilutės yra}} {{PLURAL:$1|netinkama reguliarioji išraiška|netinkamos reguliariosios išraiškos}} ir {{PLURAL:$1|ją reikia|jas reikia}} pataisyti prieš išsaugant puslapį:",
 	"spam-blacklist-desc": "Reguliariomis išraiškomis grįstas anti brukalinis įrankis, leidžiantis puslapiuose esančias URL nuorodas ir prisiregistravusių naudotojų el. pašto adresus įtraukti į juodąjį sąrašą",
 	"log-name-spamblacklist": "Brukalo juodojo sąrašo žurnalas",
-	"log-description-spamblacklist": "Šie įvykiai seka brukalo juodojo sąrašo sužadinimus.",
-	"logentry-spamblacklist-hit": "{{GENDER:$2|$1}} sukėlė brukalo juodojo sąrašo sužadinimą $3 puslapyje, bandydamas pridėti $4.",
+	"log-description-spamblacklist": "Čia pateikiami bandymai pridėti nuorodas, nukreipiančias į juodajame sąraše esančias svetaines.",
+	"logentry-spamblacklist-hit": "{{GENDER:$2|$1}} bandymas $3 puslapyje pridėti $4 buvo aptiktas brukalo filtro.",
 	"right-spamblacklistlog": "Peržiūrėti brukalo juodojo sąrašo žurnalą",
 	"action-spamblacklistlog": "peržiūrėti brukalo juodojo sąrašo žurnalą",
 	"apihelp-spamblacklist-description": "Patikrinti vieną arba daugiau URL nuorodų ar jos nėra SpamBlacklist.",

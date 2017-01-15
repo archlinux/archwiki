@@ -21,6 +21,7 @@
  * @ingroup Profiler
  * @defgroup Profiler Profiler
  */
+use Wikimedia\ScopedCallback;
 
 /**
  * Profiler base class that defines the interface and some trivial
@@ -162,9 +163,9 @@ abstract class Profiler {
 	abstract public function scopedProfileIn( $section );
 
 	/**
-	 * @param ScopedCallback $section
+	 * @param SectionProfileCallback $section
 	 */
-	public function scopedProfileOut( ScopedCallback &$section = null ) {
+	public function scopedProfileOut( SectionProfileCallback &$section = null ) {
 		$section = null;
 	}
 

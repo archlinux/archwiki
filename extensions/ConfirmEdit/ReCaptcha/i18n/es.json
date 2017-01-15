@@ -3,13 +3,15 @@
 		"authors": [
 			"Fitoschido",
 			"Sporeunai",
-			"Macofe"
+			"Macofe",
+			"Rubentl134"
 		]
 	},
 	"recaptcha-edit": "Para proteger el wiki contra el spam automatizado, te pedimos que escribas las dos palabras que ves en el cuadro siguiente:",
-	"recaptcha-addurl": "Tu edición incluye enlaces externos nuevos. Para proteger el wiki contra el spam automatizado, te pedimos que escribas las dos palabras que ves en el cuadro siguiente:",
+	"recaptcha-addurl": "Tu edición incluye enlaces externos nuevos. Para proteger el wiki contra el spam automatizado, te pedimos que escribas las palabras que ves en el cuadro siguiente:",
 	"recaptcha-badlogin": "Para proteger el wiki contra el descifrado automatizado de contraseñas, te pedimos que escribas las dos palabras que ves en el cuadro siguiente:",
-	"recaptcha-createaccount": "Para proteger el wiki contra la creación automatizada de cuentas, te pedimos que escribas las dos palabras que ves en el cuadro siguiente:",
+	"recaptcha-createaccount": "Para proteger el wiki contra la creación automatizada de cuentas, te pedimos que escribas las palabras que ves en el cuadro siguiente:",
 	"recaptcha-createaccount-fail": "ReCAPTCHA incorrecto o sin responder.",
-	"recaptcha-create": "Para proteger el wiki contra la creación automatizada de páginas, te pedimos que escribas las dos palabras que ves en el cuadro siguiente:"
+	"recaptcha-create": "Para proteger el wiki contra la creación automatizada de páginas, te pedimos que escribas las palabras que ves en el cuadro siguiente:",
+	"recaptcha-id-label": "Reto ReCaptcha"
 }

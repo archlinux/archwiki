@@ -80,13 +80,13 @@ function benchmarkTest( &$u, $filename, $desc ) {
 }
 
 function benchmarkForm( &$u, &$data, $form ) {
-	#$start = microtime( true );
+	# $start = microtime( true );
 	for ( $i = 0; $i < BENCH_CYCLES; $i++ ) {
 		$start = microtime( true );
 		$out = $u->$form( $data, Validator::$utfCanonicalDecomp );
 		$deltas[] = ( microtime( true ) - $start );
 	}
-	#$delta = (microtime( true ) - $start) / BENCH_CYCLES;
+	# $delta = (microtime( true ) - $start) / BENCH_CYCLES;
 	sort( $deltas );
 	$delta = $deltas[0]; # Take shortest time
 

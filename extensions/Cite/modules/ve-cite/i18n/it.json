@@ -28,10 +28,12 @@
 			"Supernino"
 		]
 	},
+	"visualeditor-cite-tool-definition.json": "nullo",
 	"visualeditor-cite-tool-name-book": "Libro",
 	"visualeditor-cite-tool-name-journal": "Pubblicazione",
 	"visualeditor-cite-tool-name-news": "Notizie",
 	"visualeditor-cite-tool-name-web": "Sito web",
+	"cite-tool-definition.json": "nullo",
 	"cite-ve-dialog-reference-editing-reused": "Questo riferimento è usato $1 {{PLURAL:$1|volta|volte}} su questa pagina.",
 	"cite-ve-dialog-reference-options-group-label": "Usa questo gruppo",
 	"cite-ve-dialog-reference-options-group-placeholder": "Riferimenti generali",
@@ -43,16 +45,17 @@
 	"cite-ve-dialog-reference-useexisting-tool": "Riusa",
 	"cite-ve-dialog-referenceslist-contextitem-description-general": "Elenco di note generali",
 	"cite-ve-dialog-referenceslist-contextitem-description-named": "Lista di note per il gruppo \"$1\"",
-	"cite-ve-dialog-referenceslist-title": "Elenco riferimenti",
+	"cite-ve-dialog-referenceslist-title": "Elenco note",
 	"cite-ve-dialogbutton-citation-educationpopup-text": "Migliora i contenuti con l'aggiunta delle fonti per le informazione. Puoi citare da libri, giornali e siti web.",
 	"cite-ve-dialogbutton-citation-educationpopup-title": "Citazioni",
 	"cite-ve-dialogbutton-reference-full-label": "Modulo base",
 	"cite-ve-dialogbutton-reference-title": "Riferimento",
 	"cite-ve-dialogbutton-reference-tooltip": "Base",
-	"cite-ve-dialogbutton-referenceslist-tooltip": "Elenco riferimenti",
+	"cite-ve-dialogbutton-referenceslist-tooltip": "Elenco note",
 	"cite-ve-reference-input-placeholder": "Ricerca all'interno delle citazioni correnti",
-	"cite-ve-referenceslist-isempty": "Non ci sono riferimenti con il gruppo \"$1\" su questa pagina da includere in questo elenco.",
-	"cite-ve-referenceslist-isempty-default": "Non ci sono riferimenti su questa pagina da includere in questo elenco.",
+	"cite-ve-referenceslist-isempty": "In questa pagina non ci sono note da elencare con il gruppo \"$1\".",
+	"cite-ve-referenceslist-isempty-default": "In questa pagina non ci sono note da elencare.",
 	"cite-ve-referenceslist-missingref": "Questa nota è definita in un template o in un altro blocco generato e per ora può essere modificata solo in modalità sorgente.",
-	"cite-ve-toolbar-group-label": "Cita"
+	"cite-ve-toolbar-group-label": "Cita",
+	"cite-ve-othergroup-item": "$1 note"
 }

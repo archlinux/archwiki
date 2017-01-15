@@ -1,10 +1,12 @@
 <?php
+
 namespace Elastica;
 
 use Elastica\Bulk\Action;
 use Elastica\Exception\ConnectionException;
 use Elastica\Exception\InvalidException;
 use Elastica\Exception\RuntimeException;
+use Elastica\Script\AbstractScript;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -19,6 +21,7 @@ class Client
      *
      * log: Set to true, to enable logging, set a string to log to a specific file
      * retryOnConflict: Use in \Elastica\Client::updateDocument
+     * bigintConversion: Set to true to enable the JSON bigint to string conversion option (see issue #717)
      *
      * @var array
      */
@@ -35,6 +38,9 @@ class Client
         'roundRobin' => false,
         'log' => false,
         'retryOnConflict' => 0,
+        'bigintConversion' => false,
+        'username' => null,
+        'password' => null,
     );
 
     /**
@@ -121,7 +127,7 @@ class Client
         $params = array();
         $params['config'] = array();
         foreach ($config as $key => $value) {
-            if (in_array($key, array('curl', 'headers', 'url'))) {
+            if (in_array($key, array('bigintConversion', 'curl', 'headers', 'url'))) {
                 $params['config'][$key] = $value;
             } else {
                 $params[$key] = $value;
@@ -265,7 +271,7 @@ class Client
      * set inside the document, because for bulk settings documents,
      * documents can belong to any type and index
      *
-     * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/docs-bulk.html
+     * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-bulk.html
      *
      * @param array|\Elastica\Document[] $docs Array of Elastica\Document
      *
@@ -293,7 +299,7 @@ class Client
      * set inside the document, because for bulk settings documents,
      * documents can belong to any type and index
      *
-     * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/docs-bulk.html
+     * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-bulk.html
      *
      * @param array|\Elastica\Document[] $docs Array of Elastica\Document
      *
@@ -317,21 +323,21 @@ class Client
     /**
      * Update document, using update script. Requires elasticsearch >= 0.19.0.
      *
-     * @param int                                       $id      document id
-     * @param array|\Elastica\Script|\Elastica\Document $data    raw data for request body
-     * @param string                                    $index   index to update
-     * @param string                                    $type    type of index to update
-     * @param array                                     $options array of query params to use for query. For possible options check es api
+     * @param int                                                      $id      document id
+     * @param array|\Elastica\Script\AbstractScript|\Elastica\Document $data    raw data for request body
+     * @param string                                                   $index   index to update
+     * @param string                                                   $type    type of index to update
+     * @param array                                                    $options array of query params to use for query. For possible options check es api
      *
      * @return \Elastica\Response
      *
-     * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/docs-update.html
+     * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-update.html
      */
     public function updateDocument($id, $data, $index, $type, array $options = array())
     {
         $path = $index.'/'.$type.'/'.$id.'/_update';
 
-        if ($data instanceof Script) {
+        if ($data instanceof AbstractScript) {
             $requestData = $data->toArray();
         } elseif ($data instanceof Document) {
             $requestData = array('doc' => $data->getData());
@@ -368,7 +374,7 @@ class Client
         }
 
         //If an upsert document exists
-        if ($data instanceof Script || $data instanceof Document) {
+        if ($data instanceof AbstractScript || $data instanceof Document) {
             if ($data->hasUpsert()) {
                 $requestData['upsert'] = $data->getUpsert()->getData();
             }
@@ -527,7 +533,7 @@ class Client
     /**
      * Deletes documents with the given ids, index, type from the index.
      *
-     * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/docs-bulk.html
+     * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-bulk.html
      *
      * @param array                  $ids     Document ids
      * @param string|\Elastica\Index $index   Index name
@@ -574,7 +580,7 @@ class Client
      *         array('delete' => array('_index' => 'test', '_type' => 'user', '_id' => '2'))
      * );
      *
-     * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/docs-bulk.html
+     * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-bulk.html
      *
      * @param array $params Parameter array
      *
@@ -643,7 +649,7 @@ class Client
      *
      * @return \Elastica\Response Response object
      *
-     * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/indices-optimize.html
+     * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-optimize.html
      */
     public function optimizeAll($args = array())
     {
@@ -655,7 +661,7 @@ class Client
      *
      * @return \Elastica\Response Response object
      *
-     * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/indices-refresh.html
+     * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-refresh.html
      */
     public function refreshAll()
     {

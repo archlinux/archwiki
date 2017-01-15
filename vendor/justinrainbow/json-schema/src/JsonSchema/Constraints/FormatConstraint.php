@@ -9,6 +9,9 @@
 
 namespace JsonSchema\Constraints;
 
+use JsonSchema\Rfc3339;
+use JsonSchema\Entity\JsonPointer;
+
 /**
  * Validates against the "format" property
  *
@@ -20,7 +23,7 @@ class FormatConstraint extends Constraint
     /**
      * {@inheritDoc}
      */
-    public function check($element, $schema = null, $path = null, $i = null)
+    public function check($element, $schema = null, JsonPointer $path = null, $i = null)
     {
         if (!isset($schema->format)) {
             return;
@@ -40,11 +43,7 @@ class FormatConstraint extends Constraint
                 break;
 
             case 'date-time':
-                if (!$this->validateDateTime($element, 'Y-m-d\TH:i:s\Z') &&
-                    !$this->validateDateTime($element, 'Y-m-d\TH:i:s.u\Z') &&
-                    !$this->validateDateTime($element, 'Y-m-d\TH:i:sP') &&
-                    !$this->validateDateTime($element, 'Y-m-d\TH:i:sO')
-                ) {
+                if (null === Rfc3339::createFromString($element)) {
                     $this->addError($path, sprintf('Invalid date-time %s, expected format YYYY-MM-DDThh:mm:ssZ or YYYY-MM-DDThh:mm:ss+hh:mm', json_encode($element)), 'format', array('format' => $schema->format,));
                 }
                 break;
@@ -138,7 +137,7 @@ class FormatConstraint extends Constraint
         // which will fail the above string comparison because the passed
         // $datetime may be '2000-05-01T12:12:12.123Z' but format() will return
         // '2000-05-01T12:12:12.123000Z'
-        if ((strpos('u', $format) !== -1) && (intval($dt->format('u')) > 0)) {
+        if ((strpos('u', $format) !== -1) && (preg_match('/\.\d+Z$/', $datetime))) {
             return true;
         }
 
@@ -176,6 +175,7 @@ class FormatConstraint extends Constraint
 
     protected function validateHostname($host)
     {
-        return preg_match('/^[_a-z]+\.([_a-z]+\.?)+$/i', $host);
+        $hostnameRegex = '/^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/i';
+        return preg_match($hostnameRegex, $host);
     }
 }

@@ -5,8 +5,8 @@
 			"Ilja.mos"
 		]
 	},
-	"fancycaptcha-captcha": "Turvallizusvarmistus",
-	"fancycaptcha-createaccount": "Ku suojata wikii automuattizesti luajittulois tililöis, kyzymmö sinuu kirjuttamah al olijat sanat ramkah ([[Special:Captcha/help|ližätieduo]]):",
+	"fancycaptcha-captcha": "Turvalližusvarmistus",
+	"fancycaptcha-accountcreate": "Ku suojata wikii automuattizesti luajittulois tililöis, kyzymmö sinuu kirjuttamah al olijat sanat ramkah ([[Special:Captcha/help|ližätieduo]]):",
 	"fancycaptcha-imgcaptcha-ph": "Kirjuta ylähän olii tekstu",
 	"fancycaptcha-reload-text": "Päivitä"
 }

@@ -26,12 +26,13 @@
  * @ingroup Media
  */
 class WikiFilePage extends WikiPage {
-	/**
-	 * @var File
-	 */
+	/** @var File */
 	protected $mFile = false;
+	/** @var LocalRepo */
 	protected $mRepo = null;
+	/** @var bool */
 	protected $mFileLoaded = false;
+	/** @var array */
 	protected $mDupes = null;
 
 	public function __construct( $title ) {
@@ -161,16 +162,12 @@ class WikiFilePage extends WikiPage {
 		return $this->mDupes;
 	}
 
-	/**
-	 * Override handling of action=purge
-	 * @return bool
-	 */
-	public function doPurge() {
+	public function doPurge( $flags = self::PURGE_ALL ) {
 		$this->loadFile();
+
 		if ( $this->mFile->exists() ) {
 			wfDebug( 'ImagePage::doPurge purging ' . $this->mFile->getName() . "\n" );
 			DeferredUpdates::addUpdate( new HTMLCacheUpdate( $this->mTitle, 'imagelinks' ) );
-			$this->mFile->upgradeRow();
 			$this->mFile->purgeCache( [ 'forThumbRefresh' => true ] );
 		} else {
 			wfDebug( 'ImagePage::doPurge no image for '
@@ -183,7 +180,8 @@ class WikiFilePage extends WikiPage {
 			// Purge redirect cache
 			$this->mRepo->invalidateImageRedirect( $this->mTitle );
 		}
-		return parent::doPurge();
+
+		return parent::doPurge( $flags );
 	}
 
 	/**

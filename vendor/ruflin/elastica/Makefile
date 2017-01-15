@@ -1,10 +1,11 @@
 #/bin/bash
 
 SOURCE = "./lib"
+TARGET?=56
 
 # By default docker environment is used to run commands. To run without the predefined environment, set RUN_ENV=" " either as parameter or as environment variable
 ifndef RUN_ENV
-	RUN_ENV = docker run -v $(shell pwd):/elastica ruflin/elastica
+	RUN_ENV = docker run --workdir="/elastica" -v $(shell pwd):/elastica ruflin/elastica-dev-base
 endif
 
 .PHONY: clean
@@ -43,24 +44,30 @@ dependencies:
 		--jdepend-chart=./build/pdepend/dependencies.svg \
 		--overview-pyramid=./build/pdepend/overview-pyramid.svg \
 		${SOURCE}
+
 .PHONY: phpunit
 phpunit:
-	phpunit -c test/ --coverage-clover build/coverage/unit-coverage.xml --group unit
-	phpunit -c test/ --coverage-clover build/coverage/functional-coverage.xml --group functional
-	phpunit -c test/ --coverage-clover build/coverage/shutdown-coverage.xml --group shutdown
+	EXIT_STATUS=0 ; \
+	phpunit -c test/ --coverage-clover build/coverage/unit-coverage.xml --group unit || EXIT_STATUS=$$? ; \
+	phpunit -c test/ --coverage-clover build/coverage/functional-coverage.xml --group functional || EXIT_STATUS=$$? ; \
+	phpunit -c test/ --coverage-clover build/coverage/shutdown-coverage.xml --group shutdown || EXIT_STATUS=$$? ; \
+	exit $$EXIT_STATUS
 
 .PHONY: tests
 tests:
 	# Rebuild image to copy changes files to the image
 	make elastica-image
 	make setup
+	mkdir -p build
 	docker-compose run elastica make phpunit
+	docker cp elastica_elastica_run_1:/elastica/build/coverage/ $(shell pwd)/build/coverage
 
 # Makes it easy to run a single test file. Example to run IndexTest.php: make test TEST="IndexTest.php"
 .PHONY: test
 test:
 	make elastica-image
 	make setup
+	mkdir -p build
 	docker-compose run elastica phpunit -c test/ ${TEST}
 
 .PHONY: doc
@@ -139,12 +146,13 @@ gource:
 
 .PHONY: elastica-image
 elastica-image:
+	docker build -t ruflin/elastica-dev-base -f env/elastica/Docker${TARGET} env/elastica/
 	docker build -t ruflin/elastica .
 
 # Builds all image locally. This can be used to use local images if changes are made locally to the Dockerfiles
 .PHONY: build-images
 build-images:
-	docker build -t ruflin/elastica-dev-base env/elastica/
+	docker build -t ruflin/elastica-dev-base -f env/elastica/Docker${TARGET} env/elastica/
 	docker build -t ruflin/elasticsearch-elastica env/elasticsearch/
 	docker build -t ruflin/nginx-elastica env/nginx/
 	docker build -t ruflin/elastica-data env/data/

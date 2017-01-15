@@ -54,7 +54,8 @@
 			"scripts": "mediawiki.api.titleblacklist.js",
 			"dependencies": [
 				"mediawiki.api"
-			]
+			],
+			"targets": [ "desktop", "mobile" ]
 		}
 	},
 	"ResourceFileModulePaths": {
@@ -75,11 +76,8 @@
 		"EditFilter": [
 			"TitleBlacklistHooks::validateBlacklist"
 		],
-		"ArticleSaveComplete": [
+		"PageContentSaveComplete": [
 			"TitleBlacklistHooks::clearBlacklist"
-		],
-		"UnitTestsList": [
-			"TitleBlacklistHooks::unitTestsList"
 		],
 		"ScribuntoExternalLibraries": [
 			"TitleBlacklistHooks::scribuntoExternalLibraries"

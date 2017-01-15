@@ -108,7 +108,7 @@ class ExtensionProcessorTest extends MediaWikiTestCase {
 	}
 
 	/**
-	 * @covers ExtensionProcessor::extractConfig
+	 * @covers ExtensionProcessor::extractConfig1
 	 */
 	public function testExtractConfig() {
 		$processor = new ExtensionProcessor;
@@ -413,6 +413,26 @@ class ExtensionProcessorTest extends MediaWikiTestCase {
 				]
 			]
 		];
+	}
+
+	public function testGlobalSettingsDocumentedInSchema() {
+		global $IP;
+		$globalSettings = TestingAccessWrapper::newFromClass(
+			ExtensionProcessor::class )->globalSettings;
+
+		$schema = FormatJson::decode(
+			file_get_contents( "$IP/docs/extension.schema.json" ),
+			true
+		);
+		$missing = [];
+		foreach ( $globalSettings as $global ) {
+			if ( !isset( $schema['properties'][$global] ) ) {
+				$missing[] = $global;
+			}
+		}
+
+		$this->assertEquals( [], $missing,
+			"The following global settings are not documented in docs/extension.schema.json" );
 	}
 }
 

@@ -9,17 +9,21 @@
 			"SeoJeongHo",
 			"Kurousagi",
 			"Yearning",
-			"Priviet"
+			"Priviet",
+			"Ykhwong"
 		]
 	},
 	"gadgets-desc": "각 사용자가 [[Special:Gadgets|CSS와 자바스크립트 소도구]]를 [[Special:Preferences#mw-prefsection-gadgets|사용자 환경 설정]]을 통해 사용할 수 있습니다",
 	"prefs-gadgets": "소도구",
-	"gadgets-prefstext": "아래 목록은 현재 사용 가능한 소도구의 목록입니다.\n대부분의 소도구는 자바스크립트로 동작하며, 웹 브라우저에서 자바스크립트를 사용할 수 있어야 동작합니다.\n소도구는 이 환경 설정 페이지에는 영향을 주지 않습니다.\n\n이 소도구는 미디어위키의 기능이 아니며, 일반적으로 각 위키의 사용자가 개발 및 관리하고 있습니다.\n각 위키의 관리자는 [[MediaWiki:Gadgets-definition|소도구 정의 문서]]와 [[Special:Gadgets|소도구 설명 문서]]를 통해 소도구를 관리할 수 있습니다.",
+	"gadgets-prefstext": "아래 목록은 현재 사용 가능한 소도구의 목록입니다.\n대부분의 소도구는 자바스크립트로 동작하며, 웹 브라우저에서 자바스크립트를 사용할 수 있어야 동작합니다.\n소도구는 이 환경 설정 페이지에는 영향을 주지 않습니다.\n\n이 소도구는 미디어위키의 기능이 아니며, 일반적으로 각 위키의 사용자가 개발 및 관리하고 있습니다.\n각 위키의 관리자는 [[MediaWiki:Gadgets-definition|소도구 정의 문서]]와 [[Special:Gadgets|소도구 설명 문서]]를 통해 소도구를 관리할 수 있습니다. 이 위키에서 각각의 소도구 사용자의 수가 [[Special:GadgetUsage|소도구 사용 통계]]에 나열되어 있습니다.",
 	"gadgets": "소도구 목록",
 	"gadgetusage": "소도구 사용현황 통계",
 	"gadgetusage-gadget": "소도구",
 	"gadgetusage-usercount": "사용자 수",
 	"gadgetusage-noresults": "소도구를 찾지 못했습니다.",
+	"gadgetusage-intro": "이 표는 이 위키에서 각각의 소도구를 활성화한 사용자의 수를 나타냅니다. 활동하는 사용자는 최근 {{PLURAL:$1|$1일}}간 편집을 한 사용자로 산출합니다. 이 목록은 모든 사용자에게 기본적으로 활성화되는 소도구는 제외되며, 더 이상 작동하지 않는 소도구가 포함되어 있을 수 있습니다.",
+	"gadgetusage-intro-noactive": "이 표는 이 위키에서 각각의 소도구를 활성화한 사용자의 수를 나타냅니다. 이 목록은 모든 사용자에게 기본적으로 활성화되는 소도구는 제외되며, 더 이상 작동하지 않는 소도구가 포함되어 있을 수 있습니다.",
+	"gadgetusage-activeusers": "활동하는 사용자",
 	"gadgetusage-default": "기본값",
 	"gadgets-title": "소도구",
 	"gadgets-pagetext": "[[Special:Preferences#mw-prefsection-gadgets|사용자 환경 설정]]에서 설정할 수 있는 소도구 목록입니다. 해당 목록은 [[MediaWiki:Gadgets-definition|소도구 정의]]에서 편집할 수 있습니다.\n이 문서에서는 각 소도구의 각 설명 문서와 코드의 시스템 메시지 링크를 제공합니다.",

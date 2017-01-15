@@ -27,9 +27,12 @@
  * @ingroup SpecialPage
  */
 class UserrightsPage extends SpecialPage {
-	# The target of the local right-adjuster's interest.  Can be gotten from
-	# either a GET parameter or a subpage-style parameter, so have a member
-	# variable for it.
+	/**
+	 * The target of the local right-adjuster's interest.  Can be gotten from
+	 * either a GET parameter or a subpage-style parameter, so have a member
+	 * variable for it.
+	 * @var null|string $mTarget
+	 */
 	protected $mTarget;
 	/*
 	 * @var null|User $mFetchedUser The user object of the target username or null.
@@ -101,6 +104,10 @@ class UserrightsPage extends SpecialPage {
 			$this->mTarget = $request->getVal( 'user' );
 		}
 
+		if ( is_string( $this->mTarget ) ) {
+			$this->mTarget = trim( $this->mTarget );
+		}
+
 		$available = $this->changeableGroups();
 
 		if ( $this->mTarget === null ) {
@@ -147,9 +154,22 @@ class UserrightsPage extends SpecialPage {
 
 		// show a successbox, if the user rights was saved successfully
 		if ( $request->getCheck( 'success' ) && $this->mFetchedUser !== null ) {
-			$out->wrapWikiMsg(
-				"<div class=\"successbox\">\n$1\n</div>",
-				[ 'savedrights', $this->mFetchedUser->getName() ]
+			$out->addModules( [ 'mediawiki.special.userrights' ] );
+			$out->addModuleStyles( 'mediawiki.notification.convertmessagebox.styles' );
+			$out->addHTML(
+				Html::rawElement(
+					'div',
+					[
+						'class' => 'mw-notify-success successbox',
+						'id' => 'mw-preferences-success',
+						'data-mw-autohide' => 'false',
+					],
+					Html::element(
+						'p',
+						[],
+						$this->msg( 'savedrights', $this->mFetchedUser->getName() )->text()
+					)
+				)
 			);
 		}
 

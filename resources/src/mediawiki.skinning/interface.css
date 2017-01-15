@@ -15,9 +15,14 @@
 	clear: both;
 }
 
+textarea {
+	/* Support Firefox: Border rule required to override system appearance on Linux */
+	border: 1px solid #c0c0c0;
+}
+
 .editOptions {
-	background-color: #F0F0F0;
-	border: 1px solid silver;
+	background-color: #f0f0f0;
+	border: 1px solid #c0c0c0;
 	border-top: none;
 	padding: 1em 1em 1.5em 1em;
 	margin-bottom: 2em;
@@ -26,7 +31,7 @@
 .usermessage {
 	background-color: #ffce7b;
 	border: 1px solid #ffa500;
-	color: black;
+	color: #000;
 	font-weight: bold;
 	margin: 2em 0 1em;
 	padding: .5em 1em;

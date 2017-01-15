@@ -30,9 +30,9 @@
 	 * @cfg {boolean} [relative=true] If a namespace is set, display titles relative to it
 	 * @cfg {boolean} [suggestions=true] Display search suggestions
 	 * @cfg {boolean} [showRedirectTargets=true] Show the targets of redirects
-	 * @cfg {boolean} [showRedlink] Show red link to exact match if it doesn't exist
 	 * @cfg {boolean} [showImages] Show page images
 	 * @cfg {boolean} [showDescriptions] Show page descriptions
+	 * @cfg {boolean} [excludeCurrentPage] Exclude the current page from suggestions
 	 * @cfg {boolean} [validateTitle=true] Whether the input must be a valid title (if set to true,
 	 *  the widget will marks itself red for invalid inputs, including an empty query).
 	 * @cfg {Object} [cache] Result cache which implements a 'set' method, taking keyed values as an argument
@@ -51,9 +51,9 @@
 		this.relative = config.relative !== undefined ? config.relative : true;
 		this.suggestions = config.suggestions !== undefined ? config.suggestions : true;
 		this.showRedirectTargets = config.showRedirectTargets !== false;
-		this.showRedlink = !!config.showRedlink;
 		this.showImages = !!config.showImages;
 		this.showDescriptions = !!config.showDescriptions;
+		this.excludeCurrentPage = !!config.excludeCurrentPage;
 		this.validateTitle = config.validateTitle !== undefined ? config.validateTitle : true;
 		this.cache = config.cache;
 
@@ -96,6 +96,8 @@
 	/**
 	 * Get a promise which resolves with an API repsonse for suggested
 	 * links for the current query.
+	 *
+	 * @return {jQuery.Promise} Suggestions promise
 	 */
 	mw.widgets.TitleWidget.prototype.getSuggestionsPromise = function () {
 		var req,
@@ -142,7 +144,13 @@
 					}
 					req = new mw.Api().get( params );
 					promiseAbortObject.abort = req.abort.bind( req ); // TODO ew
-					return req;
+					return req.then( function ( ret ) {
+						if ( ret.query === undefined ) {
+							ret = new mw.Api().get( { action: 'query', titles: query } );
+							promiseAbortObject.abort = ret.abort.bind( ret );
+						}
+						return ret;
+					} );
 				}
 			} ).promise( promiseAbortObject );
 		} else {
@@ -160,6 +168,7 @@
 	 */
 	mw.widgets.TitleWidget.prototype.getOptionsFromData = function ( data ) {
 		var i, len, index, pageExists, pageExistsExact, suggestionPage, page, redirect, redirects,
+			currentPageName = new mw.Title( mw.config.get( 'wgRelevantPageName' ) ).getPrefixedText(),
 			items = [],
 			titles = [],
 			titleObj = mw.Title.newFromText( this.getQueryValue() ),
@@ -176,7 +185,12 @@
 
 		for ( index in data.pages ) {
 			suggestionPage = data.pages[ index ];
+			// When excludeCurrentPage is set, don't list the current page unless the user has type the full title
+			if ( this.excludeCurrentPage && suggestionPage.title === currentPageName && suggestionPage.title !== titleObj.getPrefixedText() ) {
+				continue;
+			}
 			pageData[ suggestionPage.title ] = {
+				known: suggestionPage.known !== undefined,
 				missing: suggestionPage.missing !== undefined,
 				redirect: suggestionPage.redirect !== undefined,
 				disambiguation: OO.getProp( suggestionPage, 'pageprops', 'disambiguation' ) !== undefined,
@@ -196,6 +210,7 @@
 			for ( i = 0, len = redirects.length; i < len; i++ ) {
 				pageData[ redirects[ i ] ] = {
 					missing: false,
+					known: true,
 					redirect: true,
 					disambiguation: false,
 					description: mw.msg( 'mw-widgets-titleinput-description-redirect', suggestionPage.title ),
@@ -213,17 +228,21 @@
 		// If not found, run value through mw.Title to avoid treating a match as a
 		// mismatch where normalisation would make them matching (bug 48476)
 
-		pageExistsExact = titles.indexOf( this.getQueryValue() ) !== -1;
-		pageExists = pageExistsExact || (
-			titleObj && titles.indexOf( titleObj.getPrefixedText() ) !== -1
+		pageExistsExact = (
+			Object.prototype.hasOwnProperty.call( pageData, this.getQueryValue() ) &&
+			(
+				!pageData[ this.getQueryValue() ].missing ||
+				pageData[ this.getQueryValue() ].known
+			)
 		);
-
-		if ( !pageExists ) {
-			pageData[ this.getQueryValue() ] = {
-				missing: true, redirect: false, disambiguation: false,
-				description: mw.msg( 'mw-widgets-titleinput-description-new-page' )
-			};
-		}
+		pageExists = pageExistsExact || (
+			titleObj &&
+			Object.prototype.hasOwnProperty.call( pageData, titleObj.getPrefixedText() ) &&
+			(
+				!pageData[ titleObj.getPrefixedText() ].missing ||
+				pageData[ titleObj.getPrefixedText() ].known
+			)
+		);
 
 		if ( this.cache ) {
 			this.cache.set( pageData );
@@ -233,10 +252,7 @@
 		if ( pageExists && !pageExistsExact ) {
 			titles.unshift( this.getQueryValue() );
 		}
-		// Offer the exact text as a new page if the title is valid
-		if ( this.showRedlink && !pageExists && titleObj ) {
-			titles.push( this.getQueryValue() );
-		}
+
 		for ( i = 0, len = titles.length; i < len; i++ ) {
 			page = pageData[ titles[ i ] ] || {};
 			items.push( new mw.widgets.TitleOptionWidget( this.getOptionWidgetData( titles[ i ], page ) ) );
@@ -253,14 +269,18 @@
 	 * @return {Object} Data for option widget
 	 */
 	mw.widgets.TitleWidget.prototype.getOptionWidgetData = function ( title, data ) {
-		var mwTitle = new mw.Title( title );
+		var mwTitle = new mw.Title( title ),
+			description = data.description;
+		if ( data.missing && !description ) {
+			description = mw.msg( 'mw-widgets-titleinput-description-new-page' );
+		}
 		return {
 			data: this.namespace !== null && this.relative
 				? mwTitle.getRelativeText( this.namespace )
 				: title,
 			url: mwTitle.getUrl(),
 			imageUrl: this.showImages ? data.imageUrl : null,
-			description: this.showDescriptions ? data.description : null,
+			description: this.showDescriptions ? description : null,
 			missing: data.missing,
 			redirect: data.redirect,
 			disambiguation: data.disambiguation,

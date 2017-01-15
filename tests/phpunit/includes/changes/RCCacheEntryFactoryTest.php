@@ -1,5 +1,8 @@
 <?php
 
+use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\MediaWikiServices;
+
 /**
  * @covers RCCacheEntryFactory
  *
@@ -14,6 +17,11 @@ class RCCacheEntryFactoryTest extends MediaWikiLangTestCase {
 	 */
 	private $testRecentChangesHelper;
 
+	/**
+	 * @var LinkRenderer;
+	 */
+	private $linkRenderer;
+
 	public function __construct( $name = null, array $data = [], $dataName = '' ) {
 		parent::__construct( $name, $data, $dataName );
 
@@ -26,133 +34,111 @@ class RCCacheEntryFactoryTest extends MediaWikiLangTestCase {
 		$this->setMwGlobals( [
 			'wgArticlePath' => '/wiki/$1'
 		] );
+
+		$this->linkRenderer = MediaWikiServices::getInstance()->getLinkRenderer();
 	}
 
-	/**
-	 * @dataProvider editChangeProvider
-	 */
-	public function testNewFromRecentChange( $expected, $context, $messages,
-		$recentChange, $watched
-	) {
-		$cacheEntryFactory = new RCCacheEntryFactory( $context, $messages );
-		$cacheEntry = $cacheEntryFactory->newFromRecentChange( $recentChange, $watched );
+	public function testNewFromRecentChange() {
+		$user = $this->getMutableTestUser()->getUser();
+		$recentChange = $this->testRecentChangesHelper->makeEditRecentChange(
+			$user,
+			'Xyz',
+			5, // curid
+			191, // thisid
+			190, // lastid
+			'20131103212153',
+			0, // counter
+			0 // number of watching users
+		);
+		$cacheEntryFactory = new RCCacheEntryFactory(
+			$this->getContext(),
+			$this->getMessages(),
+			$this->linkRenderer
+		);
+		$cacheEntry = $cacheEntryFactory->newFromRecentChange( $recentChange, false );
 
 		$this->assertInstanceOf( 'RCCacheEntry', $cacheEntry );
 
-		$this->assertEquals( $watched, $cacheEntry->watched, 'watched' );
-		$this->assertEquals( $expected['timestamp'], $cacheEntry->timestamp, 'timestamp' );
-		$this->assertEquals(
-			$expected['numberofWatchingusers'], $cacheEntry->numberofWatchingusers,
-			'watching users'
-		);
-		$this->assertEquals( $expected['unpatrolled'], $cacheEntry->unpatrolled, 'unpatrolled' );
+		$this->assertEquals( false, $cacheEntry->watched, 'watched' );
+		$this->assertEquals( '21:21', $cacheEntry->timestamp, 'timestamp' );
+		$this->assertEquals( 0, $cacheEntry->numberofWatchingusers, 'watching users' );
+		$this->assertEquals( false, $cacheEntry->unpatrolled, 'unpatrolled' );
 
-		$this->assertUserLinks( 'TestRecentChangesUser', $cacheEntry );
+		$this->assertUserLinks( $user->getName(), $cacheEntry );
 		$this->assertTitleLink( 'Xyz', $cacheEntry );
 
-		$this->assertQueryLink( 'cur', $expected['cur'], $cacheEntry->curlink, 'cur link' );
-		$this->assertQueryLink( 'prev', $expected['diff'], $cacheEntry->lastlink, 'prev link' );
-		$this->assertQueryLink( 'diff', $expected['diff'], $cacheEntry->difflink, 'diff link' );
+		$diff = [ 'curid' => 5, 'diff' => 191, 'oldid' => 190 ];
+		$cur = [ 'curid' => 5, 'diff' => 0, 'oldid' => 191 ];
+		$this->assertQueryLink( 'cur', $cur, $cacheEntry->curlink, 'cur link' );
+		$this->assertQueryLink( 'prev', $diff, $cacheEntry->lastlink, 'prev link' );
+		$this->assertQueryLink( 'diff', $diff, $cacheEntry->difflink, 'diff link' );
 	}
 
-	public function editChangeProvider() {
-		return [
-			[
-				[
-					'title' => 'Xyz',
-					'user' => 'TestRecentChangesUser',
-					'diff' => [ 'curid' => 5, 'diff' => 191, 'oldid' => 190 ],
-					'cur' => [ 'curid' => 5, 'diff' => 0, 'oldid' => 191 ],
-					'timestamp' => '21:21',
-					'numberofWatchingusers' => 0,
-					'unpatrolled' => false
-				],
-				$this->getContext(),
-				$this->getMessages(),
-				$this->testRecentChangesHelper->makeEditRecentChange(
-					$this->getTestUser(),
-					'Xyz',
-					5, // curid
-					191, // thisid
-					190, // lastid
-					'20131103212153',
-					0, // counter
-					0 // number of watching users
-				),
-				false
-			]
+	public function testNewForDeleteChange() {
+		$expected = [
+			'title' => 'Abc',
+			'user' => 'TestRecentChangesUser',
+			'timestamp' => '21:21',
+			'numberofWatchingusers' => 0,
+			'unpatrolled' => false
 		];
-	}
-
-	/**
-	 * @dataProvider deleteChangeProvider
-	 */
-	public function testNewForDeleteChange( $expected, $context, $messages, $recentChange, $watched ) {
-		$cacheEntryFactory = new RCCacheEntryFactory( $context, $messages );
-		$cacheEntry = $cacheEntryFactory->newFromRecentChange( $recentChange, $watched );
+		$user = $this->getMutableTestUser()->getUser();
+		$recentChange = $this->testRecentChangesHelper->makeLogRecentChange(
+			'delete',
+			'delete',
+			$user,
+			'Abc',
+			'20131103212153',
+			0, // counter
+			0 // number of watching users
+		);
+		$cacheEntryFactory = new RCCacheEntryFactory(
+			$this->getContext(),
+			$this->getMessages(),
+			$this->linkRenderer
+		);
+		$cacheEntry = $cacheEntryFactory->newFromRecentChange( $recentChange, false );
 
 		$this->assertInstanceOf( 'RCCacheEntry', $cacheEntry );
 
-		$this->assertEquals( $watched, $cacheEntry->watched, 'watched' );
-		$this->assertEquals( $expected['timestamp'], $cacheEntry->timestamp, 'timestamp' );
-		$this->assertEquals(
-			$expected['numberofWatchingusers'],
-			$cacheEntry->numberofWatchingusers, 'watching users'
-		);
-		$this->assertEquals( $expected['unpatrolled'], $cacheEntry->unpatrolled, 'unpatrolled' );
+		$this->assertEquals( false, $cacheEntry->watched, 'watched' );
+		$this->assertEquals( '21:21', $cacheEntry->timestamp, 'timestamp' );
+		$this->assertEquals( 0, $cacheEntry->numberofWatchingusers, 'watching users' );
+		$this->assertEquals( false, $cacheEntry->unpatrolled, 'unpatrolled' );
 
 		$this->assertDeleteLogLink( $cacheEntry );
-		$this->assertUserLinks( 'TestRecentChangesUser', $cacheEntry );
+		$this->assertUserLinks( $user->getName(), $cacheEntry );
 
 		$this->assertEquals( 'cur', $cacheEntry->curlink, 'cur link for delete log or rev' );
 		$this->assertEquals( 'diff', $cacheEntry->difflink, 'diff link for delete log or rev' );
 		$this->assertEquals( 'prev', $cacheEntry->lastlink, 'pref link for delete log or rev' );
 	}
 
-	public function deleteChangeProvider() {
-		return [
-			[
-				[
-					'title' => 'Abc',
-					'user' => 'TestRecentChangesUser',
-					'timestamp' => '21:21',
-					'numberofWatchingusers' => 0,
-					'unpatrolled' => false
-				],
-				$this->getContext(),
-				$this->getMessages(),
-				$this->testRecentChangesHelper->makeLogRecentChange(
-					'delete',
-					'delete',
-					$this->getTestUser(),
-					'Abc',
-					'20131103212153',
-					0, // counter
-					0 // number of watching users
-				),
-				false
-			]
-		];
-	}
-
-	/**
-	 * @dataProvider revUserDeleteProvider
-	 */
-	public function testNewForRevUserDeleteChange( $expected, $context, $messages,
-		$recentChange, $watched
-	) {
-		$cacheEntryFactory = new RCCacheEntryFactory( $context, $messages );
-		$cacheEntry = $cacheEntryFactory->newFromRecentChange( $recentChange, $watched );
+	public function testNewForRevUserDeleteChange() {
+		$user = $this->getMutableTestUser()->getUser();
+		$recentChange = $this->testRecentChangesHelper->makeDeletedEditRecentChange(
+			$user,
+			'Zzz',
+			'20131103212153',
+			191, // thisid
+			190, // lastid
+			'20131103212153',
+			0, // counter
+			0 // number of watching users
+		);
+		$cacheEntryFactory = new RCCacheEntryFactory(
+			$this->getContext(),
+			$this->getMessages(),
+			$this->linkRenderer
+		);
+		$cacheEntry = $cacheEntryFactory->newFromRecentChange( $recentChange, false );
 
 		$this->assertInstanceOf( 'RCCacheEntry', $cacheEntry );
 
-		$this->assertEquals( $watched, $cacheEntry->watched, 'watched' );
-		$this->assertEquals( $expected['timestamp'], $cacheEntry->timestamp, 'timestamp' );
-		$this->assertEquals(
-			$expected['numberofWatchingusers'],
-			$cacheEntry->numberofWatchingusers, 'watching users'
-		);
-		$this->assertEquals( $expected['unpatrolled'], $cacheEntry->unpatrolled, 'unpatrolled' );
+		$this->assertEquals( false, $cacheEntry->watched, 'watched' );
+		$this->assertEquals( '21:21', $cacheEntry->timestamp, 'timestamp' );
+		$this->assertEquals( 0, $cacheEntry->numberofWatchingusers, 'watching users' );
+		$this->assertEquals( false, $cacheEntry->unpatrolled, 'unpatrolled' );
 
 		$this->assertRevDel( $cacheEntry );
 		$this->assertTitleLink( 'Zzz', $cacheEntry );
@@ -160,35 +146,6 @@ class RCCacheEntryFactoryTest extends MediaWikiLangTestCase {
 		$this->assertEquals( 'cur', $cacheEntry->curlink, 'cur link for delete log or rev' );
 		$this->assertEquals( 'diff', $cacheEntry->difflink, 'diff link for delete log or rev' );
 		$this->assertEquals( 'prev', $cacheEntry->lastlink, 'pref link for delete log or rev' );
-	}
-
-	public function revUserDeleteProvider() {
-		return [
-			[
-				[
-					'title' => 'Zzz',
-					'user' => 'TestRecentChangesUser',
-					'diff' => '',
-					'cur' => '',
-					'timestamp' => '21:21',
-					'numberofWatchingusers' => 0,
-					'unpatrolled' => false
-				],
-				$this->getContext(),
-				$this->getMessages(),
-				$this->testRecentChangesHelper->makeDeletedEditRecentChange(
-					$this->getTestUser(),
-					'Zzz',
-					'20131103212153',
-					191, // thisid
-					190, // lastid
-					'20131103212153',
-					0, // counter
-					0 // number of watching users
-				),
-				false
-			]
-		];
 	}
 
 	private function assertUserLinks( $user, $cacheEntry ) {
@@ -308,18 +265,8 @@ class RCCacheEntryFactoryTest extends MediaWikiLangTestCase {
 		];
 	}
 
-	private function getTestUser() {
-		$user = User::newFromName( 'TestRecentChangesUser' );
-
-		if ( !$user->getId() ) {
-			$user->addToDatabase();
-		}
-
-		return $user;
-	}
-
 	private function getContext() {
-		$user = $this->getTestUser();
+		$user = $this->getMutableTestUser()->getUser();
 		$context = $this->testRecentChangesHelper->getTestContext( $user );
 
 		$title = Title::newFromText( 'RecentChanges', NS_SPECIAL );

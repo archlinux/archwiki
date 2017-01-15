@@ -18,22 +18,22 @@ class JSONReaderTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function parseProvider() {
-		return array(
-			array(
+		return [
+			[
 				'{}',
-				array(),
+				[],
 				'empty file',
-			),
-			array(
+			],
+			[
 				'{"key":"value"}',
-				array( 'key' => 'value' ),
+				[ 'key' => 'value' ],
 				'file with one string',
-			),
-			array(
+			],
+			[
 				'{"@metadata":{"authors":["Nike"]},"key":"value2"}',
-				array( 'key' => 'value2' ),
+				[ 'key' => 'value2' ],
 				'@metadata is ignored',
-			)
-		);
+			]
+		];
 	}
 }

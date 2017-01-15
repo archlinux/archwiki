@@ -31,9 +31,6 @@
 	"config-no-fts3": "'''Тергам бе''': SQLite гулйина хуттург йоцуш [//sqlite.org/fts3.html FTS3] — лахар болхбеш хир дац оцу бухца.",
 	"config-no-cli-uri": "'''ДӀахьедар''': <code>--scriptpath</code> параметр язйина яц, иза Ӏад йитарца лелош ю: <code>$1</code> .",
 	"config-db-name": "Хаамийн базан цӀе:",
-	"config-db-charset": "Базан хаамийн символийн гулам",
-	"config-charset-mysql5-binary": "MySQL 4.1/5.0 бинаран",
-	"config-charset-mysql5": "MySQL 4.1/5.0 UTF-8",
 	"config-type-mssql": "Microsoft SQL Server",
 	"config-header-mssql": "Microsoft SQL Server параметраш",
 	"config-invalid-db-type": "Хаамийн базан нийса йоцу тайп",
@@ -92,5 +89,5 @@
 	"config-help": "гӀо",
 	"config-nofile": "Файл \"$1\" каро цаелира. И дӀаяьккхина ярий?",
 	"mainpagetext": "'''Вики-белхан гӀирс «MediaWiki» кхочуш дика дӀахӀоттийна.'''",
-	"mainpagedocfooter": "Викийца болх бан хаамаш карор бу хӀокху чохь [//meta.wikimedia.org/wiki/Help:Contents нисвохааман куьйгаллица].\n\n== Цхьаболу пайде гӀирсаш ==\n* [//www.mediawiki.org/wiki/Special:MyLanguage/Manual:Configuration_settings ГӀирс нисбан тарлушболу могӀам];\n* [//www.mediawiki.org/wiki/Special:MyLanguage/Manual:FAQ Сих сиха лушдолу хаттарш а жоьпаш оцу MediaWiki];\n* [https://lists.wikimedia.org/mailman/listinfo/mediawiki-announce Хаам бохьуьйту араяларца башхонца керла MediaWiki].\n* [//www.mediawiki.org/wiki/Special:MyLanguage/Localisation#Translation_resources Localise MediaWiki for your language]"
+	"mainpagedocfooter": "Викийца болх бан хаамаш карор бу хӀокху чохь [https://meta.wikimedia.org/wiki/Help:Contents нисвохааман куьйгаллица].\n\n== Цхьаболу пайде гӀирсаш ==\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Configuration_settings ГӀирс нисбан тарлушболу могӀам];\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:FAQ Сих сиха лушдолу хаттарш а жоьпаш оцу MediaWiki];\n* [https://lists.wikimedia.org/mailman/listinfo/mediawiki-announce Хаам бохьуьйту араяларца башхонца керла MediaWiki].\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Localisation#Translation_resources Localise MediaWiki for your language]"
 }

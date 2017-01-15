@@ -686,11 +686,6 @@ table.toc td {
 	font-style: italic;
 }
 
-span.updatedmarker {
-	color: black;
-	background-color: #0f0;
-}
-
 .previewnote {
 	text-indent: 3em;
 	color: #c00;

@@ -20,6 +20,7 @@
  * @file
  * @ingroup JobQueue
  */
+use MediaWiki\MediaWikiServices;
 
 /**
  * Job to update link tables for pages
@@ -39,13 +40,13 @@ class RefreshLinksJob extends Job {
 	const PARSE_THRESHOLD_SEC = 1.0;
 	/** @var integer Lag safety margin when comparing root job times to last-refresh times */
 	const CLOCK_FUDGE = 10;
+	/** @var integer How many seconds to wait for replica DBs to catch up */
+	const LAG_WAIT_TIMEOUT = 15;
 
 	function __construct( Title $title, array $params ) {
 		parent::__construct( 'refreshLinks', $title, $params );
 		// Avoid the overhead of de-duplication when it would be pointless
 		$this->removeDuplicates = (
-			// Master positions won't match
-			!isset( $params['masterPos'] ) &&
 			// Ranges rarely will line up
 			!isset( $params['range'] ) &&
 			// Multiple pages per job make matches unlikely
@@ -82,20 +83,23 @@ class RefreshLinksJob extends Job {
 
 		// Job to update all (or a range of) backlink pages for a page
 		if ( !empty( $this->params['recursive'] ) ) {
+			// When the base job branches, wait for the replica DBs to catch up to the master.
+			// From then on, we know that any template changes at the time the base job was
+			// enqueued will be reflected in backlink page parses when the leaf jobs run.
+			if ( !isset( $params['range'] ) ) {
+				try {
+					$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
+					$lbFactory->waitForReplication( [
+						'wiki'    => wfWikiID(),
+						'timeout' => self::LAG_WAIT_TIMEOUT
+					] );
+				} catch ( DBReplicationWaitError $e ) { // only try so hard
+					$stats = MediaWikiServices::getInstance()->getStatsdDataFactory();
+					$stats->increment( 'refreshlinks.lag_wait_failed' );
+				}
+			}
 			// Carry over information for de-duplication
 			$extraParams = $this->getRootJobParams();
-			// Avoid slave lag when fetching templates.
-			// When the outermost job is run, we know that the caller that enqueued it must have
-			// committed the relevant changes to the DB by now. At that point, record the master
-			// position and pass it along as the job recursively breaks into smaller range jobs.
-			// Hopefully, when leaf jobs are popped, the slaves will have reached that position.
-			if ( isset( $this->params['masterPos'] ) ) {
-				$extraParams['masterPos'] = $this->params['masterPos'];
-			} elseif ( wfGetLB()->getServerCount() > 1 ) {
-				$extraParams['masterPos'] = wfGetLB()->getMasterPos();
-			} else {
-				$extraParams['masterPos'] = false;
-			}
 			$extraParams['triggeredRecursive'] = true;
 			// Convert this into no more than $wgUpdateRowsPerJob RefreshLinks per-title
 			// jobs and possibly a recursive RefreshLinks job for the rest of the backlinks
@@ -108,27 +112,16 @@ class RefreshLinksJob extends Job {
 			JobQueueGroup::singleton()->push( $jobs );
 		// Job to update link tables for a set of titles
 		} elseif ( isset( $this->params['pages'] ) ) {
-			$this->waitForMasterPosition();
 			foreach ( $this->params['pages'] as $pageId => $nsAndKey ) {
 				list( $ns, $dbKey ) = $nsAndKey;
 				$this->runForTitle( Title::makeTitleSafe( $ns, $dbKey ) );
 			}
 		// Job to update link tables for a given title
 		} else {
-			$this->waitForMasterPosition();
 			$this->runForTitle( $this->title );
 		}
 
 		return true;
-	}
-
-	protected function waitForMasterPosition() {
-		if ( !empty( $this->params['masterPos'] ) && wfGetLB()->getServerCount() > 1 ) {
-			// Wait for the current/next slave DB handle to catch up to the master.
-			// This way, we get the correct page_latest for templates or files that just
-			// changed milliseconds ago, having triggered this job to begin with.
-			wfGetLB()->waitFor( $this->params['masterPos'] );
-		}
 	}
 
 	/**
@@ -136,7 +129,23 @@ class RefreshLinksJob extends Job {
 	 * @return bool
 	 */
 	protected function runForTitle( Title $title ) {
+		$services = MediaWikiServices::getInstance();
+		$stats = $services->getStatsdDataFactory();
+		$lbFactory = $services->getDBLoadBalancerFactory();
+		$ticket = $lbFactory->getEmptyTransactionTicket( __METHOD__ );
+
 		$page = WikiPage::factory( $title );
+		$page->loadPageData( WikiPage::READ_LATEST );
+
+		// Serialize links updates by page ID so they see each others' changes
+		$dbw = $lbFactory->getMainLB()->getConnection( DB_MASTER );
+		/** @noinspection PhpUnusedLocalVariableInspection */
+		$scopedLock = LinksUpdate::acquirePageLock( $dbw, $page->getId(), 'job' );
+		// Get the latest ID *after* acquirePageLock() flushed the transaction.
+		// This is used to detect edits/moves after loadPageData() but before the scope lock.
+		// The works around the chicken/egg problem of determining the scope lock key.
+		$latest = $title->getLatestRevID( Title::GAID_FOR_UPDATE );
+
 		if ( !empty( $this->params['triggeringRevisionId'] ) ) {
 			// Fetch the specified revision; lockAndGetLatest() below detects if the page
 			// was edited since and aborts in order to avoid corrupting the link tables
@@ -150,13 +159,15 @@ class RefreshLinksJob extends Job {
 		}
 
 		if ( !$revision ) {
+			$stats->increment( 'refreshlinks.rev_not_found' );
 			$this->setLastError( "Revision not found for {$title->getPrefixedDBkey()}" );
 			return false; // just deleted?
-		}
-
-		if ( !$revision->isCurrent() ) {
-			// If the revision isn't current, there's no point in doing a bunch
-			// of work just to fail at the lockAndGetLatest() check later.
+		} elseif ( $revision->getId() != $latest || $revision->getPage() !== $page->getId() ) {
+			// Do not clobber over newer updates with older ones. If all jobs where FIFO and
+			// serialized, it would be OK to update links based on older revisions since it
+			// would eventually get to the latest. Since that is not the case (by design),
+			// only update the link tables to a state matching the current revision's output.
+			$stats->increment( 'refreshlinks.rev_not_current' );
 			$this->setLastError( "Revision {$revision->getId()} is not current" );
 			return false;
 		}
@@ -177,7 +188,7 @@ class RefreshLinksJob extends Job {
 
 			$skewedTimestamp = $this->params['rootJobTimestamp'];
 			if ( $opportunistic ) {
-				// Neither clock skew nor DB snapshot/slave lag matter much for such
+				// Neither clock skew nor DB snapshot/replica DB lag matter much for such
 				// updates; focus on reusing the (often recently updated) cache
 			} else {
 				// For transclusion updates, the template changes must be reflected
@@ -188,12 +199,12 @@ class RefreshLinksJob extends Job {
 
 			if ( $page->getLinksTimestamp() > $skewedTimestamp ) {
 				// Something already updated the backlinks since this job was made
+				$stats->increment( 'refreshlinks.update_skipped' );
 				return true;
 			}
 
-			if ( $page->getTouched() >= $skewedTimestamp || $opportunistic ) {
-				// Something bumped page_touched since this job was made or the cache is
-				// otherwise suspected to be up-to-date. As long as the cache rev ID matches
+			if ( $page->getTouched() >= $this->params['rootJobTimestamp'] || $opportunistic ) {
+				// Cache is suspected to be up-to-date. As long as the cache rev ID matches
 				// and it reflects the job's triggering change, then it is usable.
 				$parserOutput = ParserCache::singleton()->getDirty( $page, $parserOptions );
 				if ( !$parserOutput
@@ -206,7 +217,9 @@ class RefreshLinksJob extends Job {
 		}
 
 		// Fetch the current revision and parse it if necessary...
-		if ( !$parserOutput ) {
+		if ( $parserOutput ) {
+			$stats->increment( 'refreshlinks.parser_cached' );
+		} else {
 			$start = microtime( true );
 			// Revision ID must be passed to the parser output to get revision variables correct
 			$parserOutput = $content->getParserOutput(
@@ -224,6 +237,7 @@ class RefreshLinksJob extends Job {
 					$parserOutput, $page, $parserOptions, $ctime, $revision->getId()
 				);
 			}
+			$stats->increment( 'refreshlinks.parser_uncached' );
 		}
 
 		$updates = $content->getSecondaryDataUpdates(
@@ -238,6 +252,7 @@ class RefreshLinksJob extends Job {
 			// Needed by things like Echo notifications which need
 			// to know which user caused the links update
 			if ( $update instanceof LinksUpdate ) {
+				$update->setRevision( $revision );
 				if ( !empty( $this->params['triggeringUser'] ) ) {
 					$userInfo = $this->params['triggeringUser'];
 					if ( $userInfo['userId'] ) {
@@ -251,17 +266,10 @@ class RefreshLinksJob extends Job {
 			}
 		}
 
-		$latestNow = $page->lockAndGetLatest();
-		if ( !$latestNow || $revision->getId() != $latestNow ) {
-			// Do not clobber over newer updates with older ones. If all jobs where FIFO and
-			// serialized, it would be OK to update links based on older revisions since it
-			// would eventually get to the latest. Since that is not the case (by design),
-			// only update the link tables to a state matching the current revision's output.
-			$this->setLastError( "page_latest changed from {$revision->getId()} to $latestNow" );
-			return false;
+		foreach ( $updates as $update ) {
+			$update->setTransactionTicket( $ticket );
+			$update->doUpdate();
 		}
-
-		DataUpdate::runUpdates( $updates );
 
 		InfoAction::invalidateCache( $title );
 

@@ -2,7 +2,6 @@
 
 namespace MediaWiki\Auth;
 
-use StatusValue;
 use User;
 
 /**
@@ -65,7 +64,8 @@ class ConfirmLinkSecondaryAuthenticationProvider extends AbstractSecondaryAuthen
 		$req = new ConfirmLinkAuthenticationRequest( $maybeLink );
 		return AuthenticationResponse::newUI(
 			[ $req ],
-			wfMessage( 'authprovider-confirmlink-message' )
+			wfMessage( 'authprovider-confirmlink-message' ),
+			'warning'
 		);
 	}
 
@@ -151,7 +151,8 @@ class ConfirmLinkSecondaryAuthenticationProvider extends AbstractSecondaryAuthen
 					'linkOk', wfMessage( 'ok' ), wfMessage( 'authprovider-confirmlink-ok-help' )
 				)
 			],
-			$combinedStatus->getMessage( 'authprovider-confirmlink-failed' )
+			$combinedStatus->getMessage( 'authprovider-confirmlink-failed' ),
+			'error'
 		);
 	}
 }

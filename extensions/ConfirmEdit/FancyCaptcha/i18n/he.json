@@ -10,12 +10,12 @@
 	"fancycaptcha-addurl": "עריכתך כוללת קישורים חיצוניים חדשים.\nכהגנה מפני ספאם אוטומטי, נא להקליד את המילים המופיעות בתיבה שלהלן ([[Special:Captcha/help|מידע נוסף]]):",
 	"fancycaptcha-badlogin": "כהגנה מפני פריצת סיסמאות אוטומטית, נא להקליד את המילים המופיעות בתיבה שלהלן ([[Special:Captcha/help|מידע נוסף]]):",
 	"fancycaptcha-captcha": "בדיקת אבטחה",
-	"fancycaptcha-createaccount": "כהגנה מפני יצירת חשבונות אוטומטית, נא להקליד את המילים המופיעות בתיבה שלהלן ([[Special:Captcha/help|מידע נוסף]]):",
+	"fancycaptcha-accountcreate": "כהגנה מפני יצירת חשבונות אוטומטית, נא להקליד את המילים המופיעות בתיבה שלהלן ([[Special:Captcha/help|מידע נוסף]]):",
 	"fancycaptcha-create": "כדי ליצור את הדף, נא להקליד את המילים המופיעות בתיבה שלהלן ([[Special:Captcha/help|מידע נוסף]]):",
 	"fancycaptcha-edit": "כדי לערוך את הדף, נא להקליד את המילים המופיעות בתיבה שלהלן ([[Special:Captcha/help|מידע נוסף]]):",
-	"fancycaptcha-imgcaptcha-ph": "נא להקליד את הטקסט המופיע למעלה",
+	"fancycaptcha-imgcaptcha-ph": "נא להקליד את הטקסט שמופיע בתמונה",
 	"fancycaptcha-sendemail": "כהגנה מפני ספאם אוטומטי, נא להקליד את המילים המופיעות בתיבה שלהלן ([[Special:Captcha/help|מידע נוסף]]):",
-	"fancycaptcha-reload-text": "רענון",
+	"fancycaptcha-reload-text": "החלפה",
 	"apihelp-fancycaptchareload-description": "קבלת FancyCaptcha חדשה.",
 	"apihelp-fancycaptchareload-example-1": "קבלת FancyCaptcha חדשה"
 }

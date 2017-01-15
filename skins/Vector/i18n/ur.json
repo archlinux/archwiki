@@ -8,20 +8,22 @@
 			"محبوب عالم",
 			"عثمان خان شاہ",
 			"عرفان ارشد",
-			"Obaid Raza"
+			"Obaid Raza",
+			"Muhammad Shuaib"
 		]
 	},
+	"skinname-vector": "ویکٹر",
 	"vector-skin-desc": "مونوبک کا جدید نسخہ (ورژن) مع شائستہ صورت اور کئی افادیت میں بہتریاں",
 	"vector-action-addsection": "نیا موضوع",
 	"vector-action-delete": "حذف کریں",
 	"vector-action-move": "منتقل کریں",
 	"vector-action-protect": "محفوظ کریں",
 	"vector-action-undelete": "بحال کریں",
-	"vector-action-unprotect": "تحفظ میں تبدیلی کریں",
+	"vector-action-unprotect": "حفاظت میں تبدیلی",
 	"vector-view-create": "تخلیق کریں",
 	"vector-view-edit": "ترمیم",
-	"vector-view-history": "تاریخچہ دیکھیے",
-	"vector-view-view": "پڑھیے",
+	"vector-view-history": "تاریخچہ",
+	"vector-view-view": "مطالعہ",
 	"vector-view-viewsource": "مسودہ دیکھیے",
 	"vector-more-actions": "مزید"
 }

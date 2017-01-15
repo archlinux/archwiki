@@ -1,0 +1,25 @@
+/* OOUIHTMLForm styles */
+
+.mw-htmlform-ooui .mw-htmlform-submit-buttons {
+	margin-top: 1em;
+}
+
+.mw-htmlform-ooui .mw-htmlform-field-HTMLCheckMatrix,
+.mw-htmlform-ooui .mw-htmlform-matrix,
+.mw-htmlform-ooui .mw-htmlform-matrix tr {
+	width: 100%;
+}
+
+.mw-htmlform-ooui .mw-htmlform-matrix tr td.first {
+	margin-right: 5%;
+	width: 39%;
+}
+
+/* Flatlist styling for PHP widgets... */
+.mw-htmlform-flatlist .oo-ui-fieldLayout-align-inline,
+/* ...and for JS widgets */
+.mw-htmlform-flatlist .oo-ui-optionWidget,
+.mw-htmlform-flatlist .oo-ui-multioptionWidget {
+	display: inline-block;
+	margin-right: 1em;
+}

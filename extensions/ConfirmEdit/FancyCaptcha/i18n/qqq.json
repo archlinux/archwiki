@@ -4,14 +4,15 @@
 			"Fryed-peach",
 			"Hamilton Abreu",
 			"Purodha",
-			"Shirayuki"
+			"Shirayuki",
+			"Liuxinyu970226"
 		]
 	},
 	"fancycaptcha-desc": "{{Optional}}\n{{desc}}",
 	"fancycaptcha-addurl": "{{Related|ConfirmEdit-addurl}}",
 	"fancycaptcha-badlogin": "{{Related|ConfirmEdit-badlogin}}",
 	"fancycaptcha-captcha": "Brief label for image CAPTCHA input field",
-	"fancycaptcha-createaccount": "{{Related|ConfirmEdit-createaccount}}",
+	"fancycaptcha-accountcreate": "",
 	"fancycaptcha-create": "{{Related|ConfirmEdit-create}}",
 	"fancycaptcha-edit": "{{Related|ConfirmEdit-edit}}",
 	"fancycaptcha-imgcaptcha-ph": "Placeholder text for image CAPTCHA input field.",

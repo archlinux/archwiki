@@ -21,9 +21,10 @@
 	"cite-ve-dialog-referenceslist-title": "د سرچينو لړليک",
 	"cite-ve-dialogbutton-citation-educationpopup-title": "اخځونه",
 	"cite-ve-dialogbutton-reference-full-label": "بنسټيزه بڼه",
-	"cite-ve-dialogbutton-reference-tooltip": "بنسټيز",
 	"cite-ve-dialogbutton-reference-title": "سرچينه",
+	"cite-ve-dialogbutton-reference-tooltip": "بنسټيز",
 	"cite-ve-dialogbutton-referenceslist-tooltip": "د سرچينو لړليک",
 	"cite-ve-reference-input-placeholder": "په اوسنيو اخځونو کې پلټل",
-	"cite-ve-toolbar-group-label": "اخځ"
+	"cite-ve-toolbar-group-label": "اخځ",
+	"cite-ve-othergroup-item": "$1 سرچينه"
 }

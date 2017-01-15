@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Botuzhaleny-sodamo"
+			"Botuzhaleny-sodamo",
+			"Rueter"
 		]
 	},
 	"vector-action-addsection": "Поладомс мезде кортамс",
@@ -14,5 +15,6 @@
 	"vector-view-edit": "Витнемс-петнемс",
 	"vector-view-history": "Ваномс юронзо-путовксонзо",
 	"vector-view-view": "Ловномс",
-	"vector-view-viewsource": "Ваномс косто саезь"
+	"vector-view-viewsource": "Ваномс косто саезь",
+	"vector-more-actions": "Седе ламо"
 }

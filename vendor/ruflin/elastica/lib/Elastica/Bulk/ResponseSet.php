@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica\Bulk;
 
 use Elastica\Response as BaseResponse;
@@ -46,6 +47,25 @@ class ResponseSet extends BaseResponse implements \Iterator, \Countable
         foreach ($this->getBulkResponses() as $bulkResponse) {
             if ($bulkResponse->hasError()) {
                 $error = $bulkResponse->getError();
+                break;
+            }
+        }
+
+        return $error;
+    }
+
+    /**
+     * Returns first found error (full array).
+     *
+     * @return array|string
+     */
+    public function getFullError()
+    {
+        $error = '';
+
+        foreach ($this->getBulkResponses() as $bulkResponse) {
+            if ($bulkResponse->hasError()) {
+                $error = $bulkResponse->getFullError();
                 break;
             }
         }

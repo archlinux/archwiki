@@ -30,6 +30,11 @@ class ChangeTags {
 	const MAX_DELETE_USES = 5000;
 
 	/**
+	 * @var string[]
+	 */
+	private static $coreTags = [ 'mw-contentmodelchange' ];
+
+	/**
 	 * Creates HTML for the given tags
 	 *
 	 * @param string $tags Comma-separated list of tags
@@ -119,14 +124,16 @@ class ChangeTags {
 	 * @param int|null $rev_id The rev_id of the change to add the tags to
 	 * @param int|null $log_id The log_id of the change to add the tags to
 	 * @param string $params Params to put in the ct_params field of table 'change_tag'
+	 * @param RecentChange|null $rc Recent change, in case the tagging accompanies the action
+	 * (this should normally be the case)
 	 *
 	 * @throws MWException
 	 * @return bool False if no changes are made, otherwise true
 	 */
 	public static function addTags( $tags, $rc_id = null, $rev_id = null,
-		$log_id = null, $params = null
+		$log_id = null, $params = null, RecentChange $rc = null
 	) {
-		$result = self::updateTags( $tags, null, $rc_id, $rev_id, $log_id, $params );
+		$result = self::updateTags( $tags, null, $rc_id, $rev_id, $log_id, $params, $rc );
 		return (bool)$result[0];
 	}
 
@@ -149,6 +156,9 @@ class ChangeTags {
 	 * Pass a variable whose value is null if the log_id is not relevant or unknown.
 	 * @param string $params Params to put in the ct_params field of table
 	 * 'change_tag' when adding tags
+	 * @param RecentChange|null $rc Recent change being tagged, in case the tagging accompanies
+	 * the action
+	 * @param User|null $user Tagging user, in case the tagging is subsequent to the tagged action
 	 *
 	 * @throws MWException When $rc_id, $rev_id and $log_id are all null
 	 * @return array Index 0 is an array of tags actually added, index 1 is an
@@ -157,9 +167,9 @@ class ChangeTags {
 	 *
 	 * @since 1.25
 	 */
-	public static function updateTags(
-		$tagsToAdd, $tagsToRemove,
-		&$rc_id = null, &$rev_id = null, &$log_id = null, $params = null
+	public static function updateTags( $tagsToAdd, $tagsToRemove, &$rc_id = null,
+		&$rev_id = null, &$log_id = null, $params = null, RecentChange $rc = null,
+		User $user = null
 	) {
 
 		$tagsToAdd = array_filter( (array)$tagsToAdd ); // Make sure we're submitting all tags...
@@ -174,7 +184,7 @@ class ChangeTags {
 
 		// Might as well look for rcids and so on.
 		if ( !$rc_id ) {
-			// Info might be out of date, somewhat fractionally, on slave.
+			// Info might be out of date, somewhat fractionally, on replica DB.
 			// LogEntry/LogPage and WikiPage match rev/log/rc timestamps,
 			// so use that relation to avoid full table scans.
 			if ( $log_id ) {
@@ -201,7 +211,7 @@ class ChangeTags {
 				);
 			}
 		} elseif ( !$log_id && !$rev_id ) {
-			// Info might be out of date, somewhat fractionally, on slave.
+			// Info might be out of date, somewhat fractionally, on replica DB.
 			$log_id = $dbw->selectField(
 				'recentchanges',
 				'rc_logid',
@@ -279,6 +289,10 @@ class ChangeTags {
 		}
 
 		self::purgeTagUsageCache();
+
+		Hooks::run( 'ChangeTagsAfterUpdateTags', [ $tagsToAdd, $tagsToRemove, $prevTags,
+			$rc_id, $rev_id, $log_id, $params, $rc, $user ] );
+
 		return [ $tagsToAdd, $tagsToRemove, $prevTags ];
 	}
 
@@ -313,7 +327,7 @@ class ChangeTags {
 		$tagsToAdd = array_diff( $tagsToAdd, $tagsToRemove );
 
 		// Update the summary row.
-		// $prevTags can be out of date on slaves, especially when addTags is called consecutively,
+		// $prevTags can be out of date on replica DBs, especially when addTags is called consecutively,
 		// causing loss of tags added recently in tag_summary table.
 		$prevTags = $dbw->selectField( 'tag_summary', 'ts_tags', $tsConds, __METHOD__ );
 		$prevTags = $prevTags ? $prevTags : '';
@@ -472,8 +486,8 @@ class ChangeTags {
 			// to be removed, a tag must not be defined by an extension, or equivalently it
 			// has to be either explicitly defined or not defined at all
 			// (assuming no edge case of a tag both explicitly-defined and extension-defined)
-			$extensionDefinedTags = self::listExtensionDefinedTags();
-			$intersect = array_intersect( $tagsToRemove, $extensionDefinedTags );
+			$softwareDefinedTags = self::listSoftwareDefinedTags();
+			$intersect = array_intersect( $tagsToRemove, $softwareDefinedTags );
 			if ( $intersect ) {
 				return self::restrictedTagError( 'tags-update-remove-not-allowed-one',
 					'tags-update-remove-not-allowed-multi', $intersect );
@@ -541,7 +555,7 @@ class ChangeTags {
 
 		// do it!
 		list( $tagsAdded, $tagsRemoved, $initialTags ) = self::updateTags( $tagsToAdd,
-			$tagsToRemove, $rc_id, $rev_id, $log_id, $params );
+			$tagsToRemove, $rc_id, $rev_id, $log_id, $params, null, $user );
 		if ( !$tagsAdded && !$tagsRemoved ) {
 			// no-op, don't log it
 			return Status::newGood( (object)[
@@ -566,7 +580,7 @@ class ChangeTags {
 			// This function is from revision deletion logic and has nothing to do with
 			// change tags, but it appears to be the only other place in core where we
 			// perform logged actions on log items.
-			$logEntry->setTarget( RevDelLogList::suggestTarget( 0, [ $log_id ] ) );
+			$logEntry->setTarget( RevDelLogList::suggestTarget( null, [ $log_id ] ) );
 		}
 
 		if ( !$logEntry->getTarget() ) {
@@ -603,10 +617,10 @@ class ChangeTags {
 	 * Handles selecting tags, and filtering.
 	 * Needs $tables to be set up properly, so we can figure out which join conditions to use.
 	 *
-	 * @param string|array $tables Table names, see DatabaseBase::select
-	 * @param string|array $fields Fields used in query, see DatabaseBase::select
-	 * @param string|array $conds Conditions used in query, see DatabaseBase::select
-	 * @param array $join_conds Join conditions, see DatabaseBase::select
+	 * @param string|array $tables Table names, see Database::select
+	 * @param string|array $fields Fields used in query, see Database::select
+	 * @param string|array $conds Conditions used in query, see Database::select
+	 * @param array $join_conds Join conditions, see Database::select
 	 * @param array $options Options, see Database::select
 	 * @param bool|string $filter_tag Tag to select on
 	 *
@@ -633,7 +647,7 @@ class ChangeTags {
 			throw new MWException( 'Unable to determine appropriate JOIN condition for tagging.' );
 		}
 
-		$fields['ts_tags'] = wfGetDB( DB_SLAVE )->buildGroupConcatField(
+		$fields['ts_tags'] = wfGetDB( DB_REPLICA )->buildGroupConcatField(
 			',', 'change_tag', 'ct_tag', $join_cond
 		);
 
@@ -651,21 +665,15 @@ class ChangeTags {
 	 * Build a text box to select a change tag
 	 *
 	 * @param string $selected Tag to select by default
-	 * @param bool $fullForm Affects return value, see below
-	 * @param Title $title Title object to send the form to. Used only if $fullForm is true.
 	 * @param bool $ooui Use an OOUI TextInputWidget as selector instead of a non-OOUI input field
 	 *        You need to call OutputPage::enableOOUI() yourself.
-	 * @return string|array
-	 *        - if $fullForm is false: an array of (label, selector).
-	 *        - if $fullForm is true: HTML of entire form built around the selector.
+	 * @return array an array of (label, selector)
 	 */
-	public static function buildTagFilterSelector( $selected = '',
-		$fullForm = false, Title $title = null, $ooui = false
-	) {
+	public static function buildTagFilterSelector( $selected = '', $ooui = false ) {
 		global $wgUseTagFilter;
 
 		if ( !$wgUseTagFilter || !count( self::listDefinedTags() ) ) {
-			return $fullForm ? '' : [];
+			return [];
 		}
 
 		$data = [
@@ -692,24 +700,7 @@ class ChangeTags {
 			);
 		}
 
-		if ( !$fullForm ) {
-			return $data;
-		}
-
-		$html = implode( '&#160;', $data );
-		$html .= "\n" .
-			Xml::element(
-				'input',
-				[ 'type' => 'submit', 'value' => wfMessage( 'tag-filter-submit' )->text() ]
-			);
-		$html .= "\n" . Html::hidden( 'title', $title->getPrefixedText() );
-		$html = Xml::tags(
-			'form',
-			[ 'action' => $title->getLocalURL(), 'class' => 'mw-tagfilter-form', 'method' => 'get' ],
-			$html
-		);
-
-		return $html;
+		return $data;
 	}
 
 	/**
@@ -1033,7 +1024,7 @@ class ChangeTags {
 		// let's not allow error results, as the actual tag deletion succeeded
 		if ( !$status->isOK() ) {
 			wfDebug( 'ChangeTagAfterDelete error condition downgraded to warning' );
-			$status->ok = true;
+			$status->setOK( true );
 		}
 
 		// clear the memcache of defined tags
@@ -1055,8 +1046,8 @@ class ChangeTags {
 		$tagUsage = self::tagUsageStatistics();
 
 		if ( !is_null( $user ) ) {
-			if ( !$user->isAllowed( 'managechangetags' ) ) {
-				return Status::newFatal( 'tags-manage-no-permission' );
+			if ( !$user->isAllowed( 'deletechangetags' ) ) {
+				return Status::newFatal( 'tags-delete-no-permission' );
 			} elseif ( $user->isBlocked() ) {
 				return Status::newFatal( 'tags-manage-blocked' );
 			}
@@ -1070,8 +1061,8 @@ class ChangeTags {
 			return Status::newFatal( 'tags-delete-too-many-uses', $tag, self::MAX_DELETE_USES );
 		}
 
-		$extensionDefined = self::listExtensionDefinedTags();
-		if ( in_array( $tag, $extensionDefined ) ) {
+		$softwareDefined = self::listSoftwareDefinedTags();
+		if ( in_array( $tag, $softwareDefined ) ) {
 			// extension-defined tags can't be deleted unless the extension
 			// specifically allows it
 			$status = Status::newFatal( 'tags-delete-not-allowed' );
@@ -1126,29 +1117,43 @@ class ChangeTags {
 	}
 
 	/**
-	 * Lists those tags which extensions report as being "active".
+	 * Lists those tags which core or extensions report as being "active".
 	 *
 	 * @return array
 	 * @since 1.25
 	 */
-	public static function listExtensionActivatedTags() {
+	public static function listSoftwareActivatedTags() {
+		// core active tags
+		$tags = self::$coreTags;
+		if ( !Hooks::isRegistered( 'ChangeTagsListActive' ) ) {
+			return $tags;
+		}
 		return ObjectCache::getMainWANInstance()->getWithSetCallback(
 			wfMemcKey( 'active-tags' ),
-			300,
-			function ( $oldValue, &$ttl, array &$setOpts ) {
-				$setOpts += Database::getCacheSetOptions( wfGetDB( DB_SLAVE ) );
+			WANObjectCache::TTL_MINUTE * 5,
+			function ( $oldValue, &$ttl, array &$setOpts ) use ( $tags ) {
+				$setOpts += Database::getCacheSetOptions( wfGetDB( DB_REPLICA ) );
 
 				// Ask extensions which tags they consider active
-				$extensionActive = [];
-				Hooks::run( 'ChangeTagsListActive', [ &$extensionActive ] );
-				return $extensionActive;
+				Hooks::run( 'ChangeTagsListActive', [ &$tags ] );
+				return $tags;
 			},
 			[
 				'checkKeys' => [ wfMemcKey( 'active-tags' ) ],
-				'lockTSE' => 300,
-				'pcTTL' => 30
+				'lockTSE' => WANObjectCache::TTL_MINUTE * 5,
+				'pcTTL' => WANObjectCache::TTL_PROC_LONG
 			]
 		);
+	}
+
+	/**
+	 * @see listSoftwareActivatedTags
+	 * @deprecated since 1.28 call listSoftwareActivatedTags directly
+	 * @return array
+	 */
+	public static function listExtensionActivatedTags() {
+		wfDeprecated( __METHOD__, '1.28' );
+		return self::listSoftwareActivatedTags();
 	}
 
 	/**
@@ -1160,7 +1165,7 @@ class ChangeTags {
 	 */
 	public static function listDefinedTags() {
 		$tags1 = self::listExplicitlyDefinedTags();
-		$tags2 = self::listExtensionDefinedTags();
+		$tags2 = self::listSoftwareDefinedTags();
 		return array_values( array_unique( array_merge( $tags1, $tags2 ) ) );
 	}
 
@@ -1179,9 +1184,9 @@ class ChangeTags {
 
 		return ObjectCache::getMainWANInstance()->getWithSetCallback(
 			wfMemcKey( 'valid-tags-db' ),
-			300,
+			WANObjectCache::TTL_MINUTE * 5,
 			function ( $oldValue, &$ttl, array &$setOpts ) use ( $fname ) {
-				$dbr = wfGetDB( DB_SLAVE );
+				$dbr = wfGetDB( DB_REPLICA );
 
 				$setOpts += Database::getCacheSetOptions( $dbr );
 
@@ -1191,14 +1196,14 @@ class ChangeTags {
 			},
 			[
 				'checkKeys' => [ wfMemcKey( 'valid-tags-db' ) ],
-				'lockTSE' => 300,
-				'pcTTL' => 30
+				'lockTSE' => WANObjectCache::TTL_MINUTE * 5,
+				'pcTTL' => WANObjectCache::TTL_PROC_LONG
 			]
 		);
 	}
 
 	/**
-	 * Lists tags defined by extensions using the ListDefinedTags hook.
+	 * Lists tags defined by core or extensions using the ListDefinedTags hook.
 	 * Extensions need only define those tags they deem to be in active use.
 	 *
 	 * Tries memcached first.
@@ -1206,23 +1211,38 @@ class ChangeTags {
 	 * @return string[] Array of strings: tags
 	 * @since 1.25
 	 */
-	public static function listExtensionDefinedTags() {
+	public static function listSoftwareDefinedTags() {
+		// core defined tags
+		$tags = self::$coreTags;
+		if ( !Hooks::isRegistered( 'ListDefinedTags' ) ) {
+			return $tags;
+		}
 		return ObjectCache::getMainWANInstance()->getWithSetCallback(
 			wfMemcKey( 'valid-tags-hook' ),
-			300,
-			function ( $oldValue, &$ttl, array &$setOpts ) {
-				$setOpts += Database::getCacheSetOptions( wfGetDB( DB_SLAVE ) );
+			WANObjectCache::TTL_MINUTE * 5,
+			function ( $oldValue, &$ttl, array &$setOpts ) use ( $tags ) {
+				$setOpts += Database::getCacheSetOptions( wfGetDB( DB_REPLICA ) );
 
-				$tags = [];
 				Hooks::run( 'ListDefinedTags', [ &$tags ] );
 				return array_filter( array_unique( $tags ) );
 			},
 			[
 				'checkKeys' => [ wfMemcKey( 'valid-tags-hook' ) ],
-				'lockTSE' => 300,
-				'pcTTL' => 30
+				'lockTSE' => WANObjectCache::TTL_MINUTE * 5,
+				'pcTTL' => WANObjectCache::TTL_PROC_LONG
 			]
 		);
+	}
+
+	/**
+	 * Call listSoftwareDefinedTags directly
+	 *
+	 * @see listSoftwareDefinedTags
+	 * @deprecated since 1.28
+	 */
+	public static function listExtensionDefinedTags() {
+		wfDeprecated( __METHOD__, '1.28' );
+		return self::listSoftwareDefinedTags();
 	}
 
 	/**
@@ -1264,9 +1284,9 @@ class ChangeTags {
 		$fname = __METHOD__;
 		return ObjectCache::getMainWANInstance()->getWithSetCallback(
 			wfMemcKey( 'change-tag-statistics' ),
-			300,
+			WANObjectCache::TTL_MINUTE * 5,
 			function ( $oldValue, &$ttl, array &$setOpts ) use ( $fname ) {
-				$dbr = wfGetDB( DB_SLAVE, 'vslow' );
+				$dbr = wfGetDB( DB_REPLICA, 'vslow' );
 
 				$setOpts += Database::getCacheSetOptions( $dbr );
 
@@ -1287,8 +1307,8 @@ class ChangeTags {
 			},
 			[
 				'checkKeys' => [ wfMemcKey( 'change-tag-statistics' ) ],
-				'lockTSE' => 300,
-				'pcTTL' => 30
+				'lockTSE' => WANObjectCache::TTL_MINUTE * 5,
+				'pcTTL' => WANObjectCache::TTL_PROC_LONG
 			]
 		);
 	}

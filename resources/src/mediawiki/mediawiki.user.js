@@ -76,8 +76,8 @@
 				hexRnds[ i ] = byteToHex[ rnds[ i ] ];
 			}
 
-			// Concatenation of two random integers with entrophy n and m
-			// returns a string with entrophy n+m if those strings are independent
+			// Concatenation of two random integers with entropy n and m
+			// returns a string with entropy n+m if those strings are independent
 			return hexRnds.join( '' );
 		},
 
@@ -89,7 +89,7 @@
 		 * @return {number} Current user's id, or 0 if user is anonymous
 		 */
 		getId: function () {
-			return mw.config.get( 'wgUserId', 0 );
+			return mw.config.get( 'wgUserId' ) || 0;
 		},
 
 		/**
@@ -104,20 +104,17 @@
 		/**
 		 * Get date user registered, if available
 		 *
-		 * @return {Date|boolean|null} Date user registered, or false for anonymous users, or
-		 *  null when data is not available
+		 * @return {boolean|null|Date} False for anonymous users, null if data is
+		 *  unavailable, or Date for when the user registered.
 		 */
 		getRegistration: function () {
-			var registration = mw.config.get( 'wgUserRegistration' );
 			if ( mw.user.isAnon() ) {
 				return false;
 			}
-			if ( registration === null ) {
-				// Information may not be available if they signed up before
-				// MW began storing this.
-				return null;
-			}
-			return new Date( registration );
+			var registration = mw.config.get( 'wgUserRegistration' );
+			// Registration may be unavailable if the user signed up before MediaWiki
+			// began tracking this.
+			return !registration ? null : new Date( registration );
 		},
 
 		/**

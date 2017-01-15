@@ -22,7 +22,6 @@ class CookieSessionProviderTest extends MediaWikiTestCase {
 			'CookieHttpOnly' => true,
 			'SessionName' => false,
 			'CookieExpiration' => 100,
-			'ExtendedLoginCookies' => [ 'UserID', 'Token' ],
 			'ExtendedLoginCookieExpiration' => 200,
 		] );
 	}
@@ -148,6 +147,14 @@ class CookieSessionProviderTest extends MediaWikiTestCase {
 		$this->assertTrue( $provider->persistsSessionId() );
 		$this->assertTrue( $provider->canChangeUser() );
 
+		$extendedCookies = [ 'UserID', 'UserName', 'Token' ];
+
+		$this->assertEquals(
+			$extendedCookies,
+			\TestingAccessWrapper::newFromObject( $provider )->getExtendedLoginCookies(),
+			'List of extended cookies (subclasses can add values, but we\'re calling the core one here)'
+		);
+
 		$msg = $provider->whyNoSession();
 		$this->assertInstanceOf( 'Message', $msg );
 		$this->assertSame( 'sessionprovider-nocookies', $msg->getKey() );
@@ -165,7 +172,7 @@ class CookieSessionProviderTest extends MediaWikiTestCase {
 		$provider->setConfig( $this->getConfig() );
 		$provider->setManager( new SessionManager() );
 
-		$user = User::newFromName( 'UTSysop' );
+		$user = static::getTestSysop()->getUser();
 		$id = $user->getId();
 		$name = $user->getName();
 		$token = $user->getToken( true );
@@ -390,7 +397,7 @@ class CookieSessionProviderTest extends MediaWikiTestCase {
 
 		$sessionId = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
 		$store = new TestBagOStuff();
-		$user = User::newFromName( 'UTSysop' );
+		$user = static::getTestSysop()->getUser();
 		$anon = new User;
 
 		$backend = new SessionBackend(
@@ -475,7 +482,7 @@ class CookieSessionProviderTest extends MediaWikiTestCase {
 		$provider->setManager( SessionManager::singleton() );
 
 		$sessionId = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
-		$user = User::newFromName( 'UTSysop' );
+		$user = static::getTestSysop()->getUser();
 		$this->assertFalse( $user->requiresHTTPS(), 'sanity check' );
 
 		$backend = new SessionBackend(
@@ -506,10 +513,10 @@ class CookieSessionProviderTest extends MediaWikiTestCase {
 			'httpOnly' => $config->get( 'CookieHttpOnly' ),
 			'raw' => false,
 		];
+
+		$normalExpiry = $config->get( 'CookieExpiration' );
 		$extendedExpiry = $config->get( 'ExtendedLoginCookieExpiration' );
 		$extendedExpiry = (int)( $extendedExpiry === null ? 0 : $extendedExpiry );
-		$this->assertEquals( [ 'UserID', 'Token' ], $config->get( 'ExtendedLoginCookies' ),
-			'sanity check' );
 		$expect = [
 			'MySessionName' => [
 				'value' => (string)$sessionId,
@@ -517,10 +524,11 @@ class CookieSessionProviderTest extends MediaWikiTestCase {
 			] + $defaults,
 			'xUserID' => [
 				'value' => (string)$user->getId(),
-				'expire' => $extendedExpiry,
+				'expire' => $remember ? $extendedExpiry : $normalExpiry,
 			] + $defaults,
 			'xUserName' => [
 				'value' => $user->getName(),
+				'expire' => $remember ? $extendedExpiry : $normalExpiry
 			] + $defaults,
 			'xToken' => [
 				'value' => $remember ? $user->getToken() : '',
@@ -577,7 +585,7 @@ class CookieSessionProviderTest extends MediaWikiTestCase {
 
 		$sessionId = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
 		$store = new TestBagOStuff();
-		$user = User::newFromName( 'UTSysop' );
+		$user = static::getTestSysop()->getUser();
 		$anon = new User;
 
 		$backend = new SessionBackend(
@@ -807,12 +815,20 @@ class CookieSessionProviderTest extends MediaWikiTestCase {
 		$provider->setConfig( $config );
 		$provider->setManager( SessionManager::singleton() );
 
-		$this->assertSame( 200, $provider->getLoginCookieExpiration( 'Token' ) );
-		$this->assertSame( 100, $provider->getLoginCookieExpiration( 'User' ) );
+		// First cookie is an extended cookie, remember me true
+		$this->assertSame( 200, $provider->getLoginCookieExpiration( 'Token', true ) );
+		$this->assertSame( 100, $provider->getLoginCookieExpiration( 'User', true ) );
+
+		// First cookie is an extended cookie, remember me false
+		$this->assertSame( 100, $provider->getLoginCookieExpiration( 'UserID', false ) );
+		$this->assertSame( 100, $provider->getLoginCookieExpiration( 'User', false ) );
 
 		$config->set( 'ExtendedLoginCookieExpiration', null );
 
-		$this->assertSame( 100, $provider->getLoginCookieExpiration( 'Token' ) );
-		$this->assertSame( 100, $provider->getLoginCookieExpiration( 'User' ) );
+		$this->assertSame( 100, $provider->getLoginCookieExpiration( 'Token', true ) );
+		$this->assertSame( 100, $provider->getLoginCookieExpiration( 'User', true ) );
+
+		$this->assertSame( 100, $provider->getLoginCookieExpiration( 'Token', false ) );
+		$this->assertSame( 100, $provider->getLoginCookieExpiration( 'User', false ) );
 	}
 }

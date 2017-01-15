@@ -20,6 +20,7 @@
  * @file
  * @ingroup Deployment
  */
+use MediaWiki\MediaWikiServices;
 
 require_once __DIR__ . '/../../maintenance/Maintenance.php';
 
@@ -56,7 +57,7 @@ abstract class DatabaseUpdater {
 	/**
 	 * Handle to the database subclass
 	 *
-	 * @var DatabaseBase
+	 * @var Database
 	 */
 	protected $db;
 
@@ -75,6 +76,8 @@ abstract class DatabaseUpdater {
 		PopulateFilearchiveSha1::class,
 		PopulateBacklinkNamespace::class,
 		FixDefaultJsonContentPages::class,
+		CleanupEmptyCategories::class,
+		AddRFCAndPMIDInterwiki::class,
 	];
 
 	/**
@@ -99,11 +102,11 @@ abstract class DatabaseUpdater {
 	/**
 	 * Constructor
 	 *
-	 * @param DatabaseBase $db To perform updates on
+	 * @param Database $db To perform updates on
 	 * @param bool $shared Whether to perform updates on shared tables
 	 * @param Maintenance $maintenance Maintenance object which created us
 	 */
-	protected function __construct( DatabaseBase &$db, $shared, Maintenance $maintenance = null ) {
+	protected function __construct( Database &$db, $shared, Maintenance $maintenance = null ) {
 		$this->db = $db;
 		$this->db->setFlag( DBO_DDLMODE ); // For Oracle's handling of schema files
 		$this->shared = $shared;
@@ -169,14 +172,14 @@ abstract class DatabaseUpdater {
 	}
 
 	/**
-	 * @param DatabaseBase $db
+	 * @param Database $db
 	 * @param bool $shared
 	 * @param Maintenance $maintenance
 	 *
 	 * @throws MWException
 	 * @return DatabaseUpdater
 	 */
-	public static function newForDB( &$db, $shared = false, $maintenance = null ) {
+	public static function newForDB( Database $db, $shared = false, $maintenance = null ) {
 		$type = $db->getType();
 		if ( in_array( $type, Installer::getDBTypes() ) ) {
 			$class = ucfirst( $type ) . 'Updater';
@@ -190,7 +193,7 @@ abstract class DatabaseUpdater {
 	/**
 	 * Get a database connection to run updates
 	 *
-	 * @return DatabaseBase
+	 * @return Database
 	 */
 	public function getDB() {
 		return $this->db;
@@ -219,12 +222,11 @@ abstract class DatabaseUpdater {
 	 *
 	 * @since 1.17
 	 *
-	 * @param array $update The update to run. Format is the following:
-	 *                first item is the callback function, it also can be a
-	 *                simple string with the name of a function in this class,
-	 *                following elements are parameters to the function.
-	 *                Note that callback functions will receive this object as
-	 *                first parameter.
+	 * @param array $update The update to run. Format is [ $callback, $params... ]
+	 *   $callback is the method to call; either a DatabaseUpdater method name or a callable.
+	 *   Must be serializable (ie. no anonymous functions allowed). The rest of the parameters
+	 *   (if any) will be passed to the callback. The first parameter passed to the callback
+	 *   is always this object.
 	 */
 	public function addExtensionUpdate( array $update ) {
 		$this->extensionUpdates[] = $update;
@@ -402,6 +404,20 @@ abstract class DatabaseUpdater {
 	}
 
 	/**
+	 * Get appropriate schema variables in the current database connection.
+	 *
+	 * This should be called after any request data has been imported, but before
+	 * any write operations to the database. The result should be passed to the DB
+	 * setSchemaVars() method.
+	 *
+	 * @return array
+	 * @since 1.28
+	 */
+	public function getSchemaVars() {
+		return []; // DB-type specific
+	}
+
+	/**
 	 * Do all the updates
 	 *
 	 * @param array $what What updates to perform
@@ -409,7 +425,8 @@ abstract class DatabaseUpdater {
 	public function doUpdates( $what = [ 'core', 'extensions', 'stats' ] ) {
 		global $wgVersion;
 
-		$this->db->begin( __METHOD__ );
+		$this->db->setSchemaVars( $this->getSchemaVars() );
+
 		$what = array_flip( $what );
 		$this->skipSchema = isset( $what['noschema'] ) || $this->fileHandle !== null;
 		if ( isset( $what['core'] ) ) {
@@ -431,8 +448,6 @@ abstract class DatabaseUpdater {
 			$this->writeSchemaUpdateFile();
 			$this->setAppliedUpdates( "$wgVersion-schema", $this->updatesSkipped );
 		}
-
-		$this->db->commit( __METHOD__ );
 	}
 
 	/**
@@ -442,6 +457,8 @@ abstract class DatabaseUpdater {
 	 * @param bool $passSelf Whether to pass this object we calling external functions
 	 */
 	private function runUpdates( array $updates, $passSelf ) {
+		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
+
 		$updatesDone = [];
 		$updatesSkipped = [];
 		foreach ( $updates as $params ) {
@@ -456,7 +473,7 @@ abstract class DatabaseUpdater {
 			flush();
 			if ( $ret !== false ) {
 				$updatesDone[] = $origParams;
-				wfGetLBFactory()->waitForReplication();
+				$lbFactory->waitForReplication();
 			} else {
 				$updatesSkipped[] = [ $func, $params, $origParams ];
 			}
@@ -616,7 +633,11 @@ abstract class DatabaseUpdater {
 	 * @param string $filename File name to open
 	 */
 	public function copyFile( $filename ) {
-		$this->db->sourceFile( $filename, false, false, false,
+		$this->db->sourceFile(
+			$filename,
+			null,
+			null,
+			__METHOD__,
 			[ $this, 'appendLine' ]
 		);
 	}
@@ -661,7 +682,7 @@ abstract class DatabaseUpdater {
 		$this->output( "$msg ..." );
 
 		if ( !$isFullPath ) {
-			$path = $this->db->patchPath( $path );
+			$path = $this->patchPath( $this->db, $path );
 		}
 		if ( $this->fileHandle !== null ) {
 			$this->copyFile( $path );
@@ -671,6 +692,26 @@ abstract class DatabaseUpdater {
 		$this->output( "done.\n" );
 
 		return true;
+	}
+
+	/**
+	 * Get the full path of a patch file. Originally based on archive()
+	 * from updaters.inc. Keep in mind this always returns a patch, as
+	 * it fails back to MySQL if no DB-specific patch can be found
+	 *
+	 * @param IDatabase $db
+	 * @param string $patch The name of the patch, like patch-something.sql
+	 * @return string Full path to patch file
+	 */
+	public function patchPath( IDatabase $db, $patch ) {
+		global $IP;
+
+		$dbType = $db->getType();
+		if ( file_exists( "$IP/maintenance/$dbType/archives/$patch" ) ) {
+			return "$IP/maintenance/$dbType/archives/$patch";
+		} else {
+			return "$IP/maintenance/archives/$patch";
+		}
 	}
 
 	/**
@@ -1080,7 +1121,7 @@ abstract class DatabaseUpdater {
 		global $wgProfiler;
 
 		if ( !$this->doTable( 'profiling' ) ) {
-			return true;
+			return;
 		}
 
 		$profileToDb = false;

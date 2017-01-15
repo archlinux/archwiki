@@ -1,16 +1,25 @@
 <?php
+
 namespace Elastica\Test\Filter;
 
 use Elastica\Document;
 use Elastica\Filter\AbstractGeoShape;
 use Elastica\Filter\GeoShapeProvided;
-use Elastica\Query\Filtered;
-use Elastica\Query\MatchAll;
-use Elastica\Test\Base as BaseTest;
+use Elastica\Query\BoolQuery;
+use Elastica\Test\DeprecatedClassBase as BaseTest;
 use Elastica\Type\Mapping;
 
 class GeoShapeProvidedTest extends BaseTest
 {
+    /**
+     * @group unit
+     */
+    public function testDeprecated()
+    {
+        $reflection = new \ReflectionClass(new GeoShapeProvided('location', array()));
+        $this->assertFileDeprecated($reflection->getFileName(), 'Deprecated: Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html');
+    }
+
     /**
      * @group functional
      */
@@ -53,15 +62,16 @@ class GeoShapeProvidedTest extends BaseTest
                     'shape' => array(
                         'type' => GeoShapeProvided::TYPE_ENVELOPE,
                         'coordinates' => $envelope,
+                        'relation' => AbstractGeoShape::RELATION_INTERSECT,
                     ),
-                    'relation' => AbstractGeoShape::RELATION_INTERSECT,
                 ),
             ),
         );
 
         $this->assertEquals($expected, $gsp->toArray());
 
-        $query = new Filtered(new MatchAll(), $gsp);
+        $query = new BoolQuery();
+        $query->addFilter($gsp);
         $results = $type->search($query);
 
         $this->assertEquals(1, $results->count());
@@ -81,8 +91,8 @@ class GeoShapeProvidedTest extends BaseTest
                     'shape' => array(
                         'type' => GeoShapeProvided::TYPE_POLYGON,
                         'coordinates' => $polygon,
+                        'relation' => $gsp->getRelation(),
                     ),
-                    'relation' => $gsp->getRelation(),
                 ),
             ),
         );

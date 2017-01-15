@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica\Multi;
 
 use Elastica\Client;
@@ -11,7 +12,7 @@ use Elastica\Search as BaseSearch;
  *
  * @author munkie
  *
- * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/search-multi-search.html
+ * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/search-multi-search.html
  */
 class Search
 {

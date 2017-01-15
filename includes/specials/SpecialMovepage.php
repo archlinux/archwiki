@@ -139,8 +139,6 @@ class MovePageForm extends UnlistedSpecialPage {
 	 *    parameters, like the second argument to OutputPage::wrapWikiMsg().
 	 */
 	function showForm( $err ) {
-		global $wgContLang;
-
 		$this->getSkin()->setRelevantTitle( $this->oldTitle );
 
 		$out = $this->getOutput();
@@ -225,7 +223,7 @@ class MovePageForm extends UnlistedSpecialPage {
 			( $oldTalk->exists()
 				|| ( $oldTitleTalkSubpages && $canMoveSubpage ) );
 
-		$dbr = wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_REPLICA );
 		if ( $this->getConfig()->get( 'FixDoubleRedirects' ) ) {
 			$hasRedirects = $dbr->selectField( 'redirect', '1',
 				[
@@ -316,7 +314,7 @@ class MovePageForm extends UnlistedSpecialPage {
 				'title' => [
 					'id' => 'wpNewTitleMain',
 					'name' => 'wpNewTitleMain',
-					'value' => $wgContLang->recodeForEdit( $newTitle->getText() ),
+					'value' => $newTitle->getText(),
 					// Inappropriate, since we're expecting the user to input a non-existent page's title
 					'suggestions' => false,
 				],
@@ -355,6 +353,7 @@ class MovePageForm extends UnlistedSpecialPage {
 					'help' => new OOUI\HtmlSnippet( $this->msg( 'movepagetalktext' )->parseAsBlock() ),
 					'align' => 'inline',
 					'infusable' => true,
+					'id' => 'wpMovetalk-field',
 				]
 			);
 		}
@@ -463,7 +462,7 @@ class MovePageForm extends UnlistedSpecialPage {
 				'name' => 'wpMove',
 				'value' => $this->msg( 'movepagebtn' )->text(),
 				'label' => $this->msg( 'movepagebtn' )->text(),
-				'flags' => [ 'constructive', 'primary' ],
+				'flags' => [ 'primary', 'progressive' ],
 				'type' => 'submit',
 			] ),
 			[
@@ -601,13 +600,14 @@ class MovePageForm extends UnlistedSpecialPage {
 		$out = $this->getOutput();
 		$out->setPageTitle( $this->msg( 'pagemovedsub' ) );
 
-		$oldLink = Linker::link(
+		$linkRenderer = $this->getLinkRenderer();
+		$oldLink = $linkRenderer->makeLink(
 			$ot,
 			null,
 			[ 'id' => 'movepage-oldlink' ],
 			[ 'redirect' => 'no' ]
 		);
-		$newLink = Linker::linkKnown(
+		$newLink = $linkRenderer->makeKnownLink(
 			$nt,
 			null,
 			[ 'id' => 'movepage-newlink' ]
@@ -723,7 +723,7 @@ class MovePageForm extends UnlistedSpecialPage {
 			# be longer than 255 characters.
 			$newSubpage = Title::makeTitleSafe( $newNs, $newPageName );
 			if ( !$newSubpage ) {
-				$oldLink = Linker::linkKnown( $oldSubpage );
+				$oldLink = $linkRenderer->makeKnownLink( $oldSubpage );
 				$extraOutput[] = $this->msg( 'movepage-page-unmoved' )->rawParams( $oldLink )
 					->params( Title::makeName( $newNs, $newPageName ) )->escaped();
 				continue;
@@ -731,7 +731,7 @@ class MovePageForm extends UnlistedSpecialPage {
 
 			# This was copy-pasted from Renameuser, bleh.
 			if ( $newSubpage->exists() && !$oldSubpage->isValidMoveTarget( $newSubpage ) ) {
-				$link = Linker::linkKnown( $newSubpage );
+				$link = $linkRenderer->makeKnownLink( $newSubpage );
 				$extraOutput[] = $this->msg( 'movepage-page-exists' )->rawParams( $link )->escaped();
 			} else {
 				$success = $oldSubpage->moveTo( $newSubpage, true, $this->reason, $createRedirect );
@@ -740,14 +740,14 @@ class MovePageForm extends UnlistedSpecialPage {
 					if ( $this->fixRedirects ) {
 						DoubleRedirectJob::fixRedirects( 'move', $oldSubpage, $newSubpage );
 					}
-					$oldLink = Linker::link(
+					$oldLink = $linkRenderer->makeLink(
 						$oldSubpage,
 						null,
 						[],
 						[ 'redirect' => 'no' ]
 					);
 
-					$newLink = Linker::linkKnown( $newSubpage );
+					$newLink = $linkRenderer->makeKnownLink( $newSubpage );
 					$extraOutput[] = $this->msg( 'movepage-page-moved' )
 						->rawParams( $oldLink, $newLink )->escaped();
 					++$count;
@@ -759,8 +759,8 @@ class MovePageForm extends UnlistedSpecialPage {
 						break;
 					}
 				} else {
-					$oldLink = Linker::linkKnown( $oldSubpage );
-					$newLink = Linker::link( $newSubpage );
+					$oldLink = $linkRenderer->makeKnownLink( $oldSubpage );
+					$newLink = $linkRenderer->makeLink( $newSubpage );
 					$extraOutput[] = $this->msg( 'movepage-page-unmoved' )
 						->rawParams( $oldLink, $newLink )->escaped();
 				}
@@ -783,29 +783,59 @@ class MovePageForm extends UnlistedSpecialPage {
 		LogEventsList::showLogExtract( $out, 'move', $title );
 	}
 
+	/**
+	 * Show subpages of the page being moved. Section is not shown if both current
+	 * namespace does not support subpages and no talk subpages were found.
+	 *
+	 * @param Title $title Page being moved.
+	 */
 	function showSubpages( $title ) {
-		if ( !MWNamespace::hasSubpages( $title->getNamespace() ) ) {
-			return;
-		}
-
+		$nsHasSubpages = MWNamespace::hasSubpages( $title->getNamespace() );
 		$subpages = $title->getSubpages();
 		$count = $subpages instanceof TitleArray ? $subpages->count() : 0;
 
-		$out = $this->getOutput();
-		$out->wrapWikiMsg( '== $1 ==', [ 'movesubpage', $count ] );
+		$titleIsTalk = $title->isTalkPage();
+		$subpagesTalk = $title->getTalkPage()->getSubpages();
+		$countTalk = $subpagesTalk instanceof TitleArray ? $subpagesTalk->count() : 0;
+		$totalCount = $count + $countTalk;
 
-		# No subpages.
-		if ( $count == 0 ) {
-			$out->addWikiMsg( 'movenosubpage' );
-
+		if ( !$nsHasSubpages && $countTalk == 0 ) {
 			return;
 		}
 
-		$out->addWikiMsg( 'movesubpagetext', $this->getLanguage()->formatNum( $count ) );
+		$this->getOutput()->wrapWikiMsg(
+			'== $1 ==',
+			[ 'movesubpage', ( $titleIsTalk ? $count : $totalCount ) ]
+		);
+
+		if ( $nsHasSubpages ) {
+			$this->showSubpagesList( $subpages, $count, 'movesubpagetext', true );
+		}
+
+		if ( !$titleIsTalk && $countTalk > 0 ) {
+			$this->showSubpagesList( $subpagesTalk, $countTalk, 'movesubpagetalktext' );
+		}
+	}
+
+	function showSubpagesList( $subpages, $pagecount, $wikiMsg, $noSubpageMsg = false ) {
+		$out = $this->getOutput();
+
+		# No subpages.
+		if ( $pagecount == 0 && $noSubpageMsg ) {
+			$out->addWikiMsg( 'movenosubpage' );
+			return;
+		}
+
+		$out->addWikiMsg( $wikiMsg, $this->getLanguage()->formatNum( $pagecount ) );
 		$out->addHTML( "<ul>\n" );
 
+		$linkBatch = new LinkBatch( $subpages );
+		$linkBatch->setCaller( __METHOD__ );
+		$linkBatch->execute();
+		$linkRenderer = $this->getLinkRenderer();
+
 		foreach ( $subpages as $subpage ) {
-			$link = Linker::link( $subpage );
+			$link = $linkRenderer->makeLink( $subpage );
 			$out->addHTML( "<li>$link</li>\n" );
 		}
 		$out->addHTML( "</ul>\n" );

@@ -142,6 +142,13 @@ $namespaceNames['mzn'] = array(
 	NS_GADGET_DEFINITION_TALK => 'گجت_توضیحات_گپ',
 );
 
+$namespaceNames['nl'] = array(
+	NS_GADGET => 'Uitbreiding',
+	NS_GADGET_TALK => 'Overleg_uitbreiding',
+	NS_GADGET_DEFINITION => 'Uitbreidingsdefinitie',
+	NS_GADGET_DEFINITION_TALK => 'Overleg_uitbreidingsdefinitie',
+);
+
 $namespaceNames['or'] = array(
 	NS_GADGET => 'ଗ୍ୟାଜେଟ',
 	NS_GADGET_TALK => 'ଗ୍ୟାଜେଟ_ଆଲୋଚନା',

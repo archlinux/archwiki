@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica;
 
 use Elastica\Exception\InvalidException;
@@ -138,6 +139,21 @@ class ResultSet implements \Iterator, \Countable, \ArrayAccess
     }
 
     /**
+     * Returns all Documents.
+     *
+     * @return array Documents \Elastica\Document
+     */
+    public function getDocuments()
+    {
+        $documents = array();
+        foreach ($this->_results as $doc) {
+            $documents[] = $doc->getDocument();
+        }
+
+        return $documents;
+    }
+
+    /**
      * Returns true if the response contains suggestion results; false otherwise.
      *
      * @return bool
@@ -159,20 +175,6 @@ class ResultSet implements \Iterator, \Countable, \ArrayAccess
         $data = $this->_response->getData();
 
         return isset($data['suggest']) ? $data['suggest'] : array();
-    }
-
-    /**
-     * Returns whether facets exist.
-     *
-     * @return bool Facet existence
-     *
-     * @deprecated Facets are deprecated and will be removed in a future release. You are encouraged to migrate to aggregations instead.
-     */
-    public function hasFacets()
-    {
-        $data = $this->_response->getData();
-
-        return isset($data['facets']);
     }
 
     /**
@@ -216,20 +218,6 @@ class ResultSet implements \Iterator, \Countable, \ArrayAccess
             return $data['aggregations'][$name];
         }
         throw new InvalidException("This result set does not contain an aggregation named {$name}.");
-    }
-
-    /**
-     * Returns all facets results.
-     *
-     * @return array Facet results
-     *
-     * @deprecated Facets are deprecated and will be removed in a future release. You are encouraged to migrate to aggregations instead.
-     */
-    public function getFacets()
-    {
-        $data = $this->_response->getData();
-
-        return isset($data['facets']) ? $data['facets'] : array();
     }
 
     /**

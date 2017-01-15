@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Wladek92",
-			"Orlodrim"
+			"Orlodrim",
+			"Gomoko"
 		]
 	},
 	"renocaptcha-edit": "Pour protéger le wiki contre les spams de modifications automatiques, nous vous demandons de bien vouloir résoudre le CAPTCHA suivant:",
@@ -12,5 +13,6 @@
 	"renocaptcha-createaccount-fail": "Il semble que vous n'ayiez pas résolu le CAPTCHA.",
 	"renocaptcha-create": "Pour protéger le wiki contre la création automatisée de pages, nous vous prions de bien vouloir résoudre le CAPTCHA suivant:",
 	"renocaptcha-noscript": "Malheureusement, vous avez désactivé JavaScript, donc nous ne pouvons pas reconnaître automatiquement, si vous êtes un humain ou pas. Veuillez résoudre le CAPTCHA ci-dessus et copiez le texte qui en résulte dans la zone de texte suivante :",
+	"renocaptcha-help": "Veuillez résoudre un défi ReCaptcha NoCaptcha et renvoyer la valeur de la réponse comme captchaWord.",
 	"renocaptcha-apihelp-param-g-recaptcha-response": "Champ du formulaire ReCaptcha."
 }

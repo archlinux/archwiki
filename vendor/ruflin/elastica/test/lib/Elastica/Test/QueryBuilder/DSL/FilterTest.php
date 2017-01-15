@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica\Test\QueryBuilder\DSL;
 
 use Elastica\Filter\Exists;
@@ -25,6 +26,7 @@ class FilterTest extends AbstractDSLTest
     {
         $filterDSL = new DSL\Filter();
 
+        $this->hideDeprecated();
         $this->_assertImplemented($filterDSL, 'bool', 'Elastica\Filter\BoolFilter', array());
         $this->_assertImplemented($filterDSL, 'bool_and', 'Elastica\Filter\BoolAnd', array(array(new Exists('field'))));
         $this->_assertImplemented($filterDSL, 'bool_not', 'Elastica\Filter\BoolNot', array(new Exists('field')));
@@ -54,5 +56,6 @@ class FilterTest extends AbstractDSLTest
         $this->_assertImplemented($filterDSL, 'term', 'Elastica\Filter\Term', array());
         $this->_assertImplemented($filterDSL, 'terms', 'Elastica\Filter\Terms', array('field', array()));
         $this->_assertImplemented($filterDSL, 'type', 'Elastica\Filter\Type', array('type'));
+        $this->showDeprecated();
     }
 }

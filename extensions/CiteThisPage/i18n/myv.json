@@ -2,8 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Amdf",
-			"Botuzhaleny-sodamo"
+			"Botuzhaleny-sodamo",
+			"Rueter"
 		]
 	},
+	"citethispage-link": "Цитировамс те лопанть",
+	"tooltip-citethispage": "Те лопань цитировамодо информация",
 	"citethispage-change-target": "Лопась:"
 }

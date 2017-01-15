@@ -329,11 +329,14 @@
 		"ext.wikiEditor": {
 			"group": "ext.wikiEditor",
 			"scripts": "ext.wikiEditor.js",
-			"styles": "ext.wikiEditor.less",
 			"dependencies": [
 				"jquery.wikiEditor",
 				"mediawiki.user"
 			]
+		},
+		"ext.wikiEditor.styles": {
+			"group": "ext.wikiEditor",
+			"styles": "ext.wikiEditor.less"
 		},
 		"ext.wikiEditor.dialogs": {
 			"group": "ext.wikiEditor",

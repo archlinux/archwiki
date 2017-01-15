@@ -21,7 +21,12 @@ in a stylized way
 * QuestyCaptcha - users have to answer a question, out of a series of
 questions defined by the administrator(s)
 * ReCaptcha - users have to identify a series of characters, either
-visually or audially, from a widget provided by the reCAPTCHA service
+visually or audially, from a widget provided by the reCAPTCHA service. This
+plugin is depreacted since MediaWiki 1.28! Please switch to the new
+ReCaptchaNoCaptcha version of ReCaptcha (which is supported by Google and
+ConfirmEdit).
+* ReCaptchaNoCaptcha - users have to solve different types of visually or
+audially tasks.
 
 ### License
 

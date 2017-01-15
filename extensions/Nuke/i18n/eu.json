@@ -4,7 +4,8 @@
 			"Theklan",
 			"Unai Fdz. de Betoño",
 			"Xabier Armendaritz",
-			"An13sa"
+			"An13sa",
+			"Sator"
 		]
 	},
 	"nuke": "Ezabaketa masiboa",
@@ -14,5 +15,6 @@
 	"nuke-submit-user": "Joan",
 	"nuke-submit-delete": "Aukeratutakoa ezabatu",
 	"right-nuke": "Masiboki ezabatutako orrialdeak",
-	"nuke-delete-more": "[[Special:Nuke|Ezabatu orri gehiago]]"
+	"nuke-delete-more": "[[Special:Nuke|Ezabatu orri gehiago]]",
+	"nuke-viewchanges": "Aldaketak ikusi"
 }

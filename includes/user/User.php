@@ -26,6 +26,7 @@ use MediaWiki\Session\Token;
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Auth\AuthenticationResponse;
 use MediaWiki\Auth\AuthenticationRequest;
+use Wikimedia\ScopedCallback;
 
 /**
  * String Some punctuation to prevent editing from broken text-mangling proxies.
@@ -130,6 +131,7 @@ class User implements IDBAccessObject {
 		'createpage',
 		'createtalk',
 		'delete',
+		'deletechangetags',
 		'deletedhistory',
 		'deletedtext',
 		'deletelogentry',
@@ -196,12 +198,6 @@ class User implements IDBAccessObject {
 	 * String Cached results of getAllRights()
 	 */
 	protected static $mAllRights = false;
-
-	/**
-	 * An in-process cache for user data lookup
-	 * @var HashBagOStuff
-	 */
-	protected static $inProcessCache;
 
 	/** Cache variables */
 	// @{
@@ -325,7 +321,7 @@ class User implements IDBAccessObject {
 	 * @return string
 	 */
 	public function __toString() {
-		return $this->getName();
+		return (string)$this->getName();
 	}
 
 	/**
@@ -424,6 +420,7 @@ class User implements IDBAccessObject {
 	 */
 	public function loadFromId( $flags = self::READ_NORMAL ) {
 		if ( $this->mId == 0 ) {
+			// Anonymous users are not in the database (don't need cache)
 			$this->loadDefaults();
 			return false;
 		}
@@ -431,17 +428,13 @@ class User implements IDBAccessObject {
 		// Try cache (unless this needs data from the master DB).
 		// NOTE: if this thread called saveSettings(), the cache was cleared.
 		$latest = DBAccessObjectUtils::hasFlags( $flags, self::READ_LATEST );
-		if ( $latest || !$this->loadFromCache() ) {
-			wfDebug( "User: cache miss for user {$this->mId}\n" );
-			// Load from DB (make sure this thread sees its own changes)
-			if ( wfGetLB()->hasOrMadeRecentMasterChanges() ) {
-				$flags |= self::READ_LATEST;
-			}
+		if ( $latest ) {
 			if ( !$this->loadFromDatabase( $flags ) ) {
-				// Can't load from ID, user is anonymous
+				// Can't load from ID
 				return false;
 			}
-			$this->saveToCache();
+		} else {
+			$this->loadFromCache();
 		}
 
 		$this->mLoadedItems = true;
@@ -457,10 +450,8 @@ class User implements IDBAccessObject {
 	 */
 	public static function purge( $wikiId, $userId ) {
 		$cache = ObjectCache::getMainWANInstance();
-		$processCache = self::getInProcessCache();
 		$key = $cache->makeGlobalKey( 'user', 'id', $wikiId, $userId );
 		$cache->delete( $key );
-		$processCache->delete( $key );
 	}
 
 	/**
@@ -473,41 +464,36 @@ class User implements IDBAccessObject {
 	}
 
 	/**
-	 * @since 1.27
-	 * @return HashBagOStuff
-	 */
-	protected static function getInProcessCache() {
-		if ( !self::$inProcessCache ) {
-			self::$inProcessCache = new HashBagOStuff( [ 'maxKeys' => 10 ] );
-		}
-		return self::$inProcessCache;
-	}
-
-	/**
 	 * Load user data from shared cache, given mId has already been set.
 	 *
-	 * @return bool false if the ID does not exist or data is invalid, true otherwise
+	 * @return bool True
 	 * @since 1.25
 	 */
 	protected function loadFromCache() {
-		if ( $this->mId == 0 ) {
-			$this->loadDefaults();
-			return false;
-		}
-
 		$cache = ObjectCache::getMainWANInstance();
-		$processCache = self::getInProcessCache();
-		$key = $this->getCacheKey( $cache );
-		$data = $processCache->get( $key );
-		if ( !is_array( $data ) ) {
-			$data = $cache->get( $key );
-			if ( !is_array( $data ) || $data['mVersion'] < self::VERSION ) {
-				// Object is expired
-				return false;
-			}
-			$processCache->set( $key, $data );
-		}
-		wfDebug( "User: got user {$this->mId} from cache\n" );
+		$data = $cache->getWithSetCallback(
+			$this->getCacheKey( $cache ),
+			$cache::TTL_HOUR,
+			function ( $oldValue, &$ttl, array &$setOpts ) use ( $cache ) {
+				$setOpts += Database::getCacheSetOptions( wfGetDB( DB_REPLICA ) );
+				wfDebug( "User: cache miss for user {$this->mId}\n" );
+
+				$this->loadFromDatabase( self::READ_NORMAL );
+				$this->loadGroups();
+				$this->loadOptions();
+
+				$data = [];
+				foreach ( self::$mCacheVars as $name ) {
+					$data[$name] = $this->$name;
+				}
+
+				$ttl = $cache->adaptiveTTL( wfTimestamp( TS_UNIX, $this->mTouched ), $ttl );
+
+				return $data;
+
+			},
+			[ 'pcTTL' => $cache::TTL_PROC_LONG, 'version' => self::VERSION ]
+		);
 
 		// Restore from cache
 		foreach ( self::$mCacheVars as $name ) {
@@ -515,35 +501,6 @@ class User implements IDBAccessObject {
 		}
 
 		return true;
-	}
-
-	/**
-	 * Save user data to the shared cache
-	 *
-	 * This method should not be called outside the User class
-	 */
-	public function saveToCache() {
-		$this->load();
-		$this->loadGroups();
-		$this->loadOptions();
-
-		if ( $this->isAnon() ) {
-			// Anonymous users are uncached
-			return;
-		}
-
-		$data = [];
-		foreach ( self::$mCacheVars as $name ) {
-			$data[$name] = $this->$name;
-		}
-		$data['mVersion'] = self::VERSION;
-		$opts = Database::getCacheSetOptions( wfGetDB( DB_SLAVE ) );
-
-		$cache = ObjectCache::getMainWANInstance();
-		$processCache = self::getInProcessCache();
-		$key = $this->getCacheKey( $cache );
-		$cache->set( $key, $data, $cache::TTL_HOUR, $opts );
-		$processCache->set( $key, $data );
 	}
 
 	/** @name newFrom*() static factory methods */
@@ -610,7 +567,7 @@ class User implements IDBAccessObject {
 	public static function newFromConfirmationCode( $code, $flags = 0 ) {
 		$db = ( $flags & self::READ_LATEST ) == self::READ_LATEST
 			? wfGetDB( DB_MASTER )
-			: wfGetDB( DB_SLAVE );
+			: wfGetDB( DB_REPLICA );
 
 		$id = $db->selectField(
 			'user',
@@ -691,6 +648,7 @@ class User implements IDBAccessObject {
 	 *  - steal: Whether to "disable" the account for normal use if it already
 	 *    exists, default false
 	 * @return User|null
+	 * @since 1.27
 	 */
 	public static function newSystemUser( $name, $options = [] ) {
 		$options += [
@@ -778,15 +736,15 @@ class User implements IDBAccessObject {
 			return self::$idCacheByName[$name];
 		}
 
-		$db = ( $flags & self::READ_LATEST )
-			? wfGetDB( DB_MASTER )
-			: wfGetDB( DB_SLAVE );
+		list( $index, $options ) = DBAccessObjectUtils::getDBOptions( $flags );
+		$db = wfGetDB( $index );
 
 		$s = $db->selectRow(
 			'user',
 			[ 'user_id' ],
 			[ 'user_name' => $nt->getText() ],
-			__METHOD__
+			__METHOD__,
+			$options
 		);
 
 		if ( $s === false ) {
@@ -812,7 +770,7 @@ class User implements IDBAccessObject {
 	}
 
 	/**
-	 * Does the string match an anonymous IPv4 address?
+	 * Does the string match an anonymous IP address?
 	 *
 	 * This function exists for username validation, in order to reject
 	 * usernames which are similar in form to IP addresses. Strings such
@@ -915,6 +873,44 @@ class User implements IDBAccessObject {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * Return the users who are members of the given group(s). In case of multiple groups,
+	 * users who are members of at least one of them are returned.
+	 *
+	 * @param string|array $groups A single group name or an array of group names
+	 * @param int $limit Max number of users to return. The actual limit will never exceed 5000
+	 *   records; larger values are ignored.
+	 * @param int $after ID the user to start after
+	 * @return UserArrayFromResult
+	 */
+	public static function findUsersByGroup( $groups, $limit = 5000, $after = null ) {
+		if ( $groups === [] ) {
+			return UserArrayFromResult::newFromIDs( [] );
+		}
+
+		$groups = array_unique( (array)$groups );
+		$limit = min( 5000, $limit );
+
+		$conds = [ 'ug_group' => $groups ];
+		if ( $after !== null ) {
+			$conds[] = 'ug_user > ' . (int)$after;
+		}
+
+		$dbr = wfGetDB( DB_REPLICA );
+		$ids = $dbr->selectFieldValues(
+			'user_groups',
+			'ug_user',
+			$conds,
+			__METHOD__,
+			[
+				'DISTINCT' => true,
+				'ORDER BY' => 'ug_user',
+				'LIMIT' => $limit,
+			]
+		) ?: [];
+		return UserArray::newFromIDs( $ids );
 	}
 
 	/**
@@ -1225,8 +1221,8 @@ class User implements IDBAccessObject {
 		// Paranoia
 		$this->mId = intval( $this->mId );
 
-		// Anonymous user
 		if ( !$this->mId ) {
+			// Anonymous users are not in the database
 			$this->loadDefaults();
 			return false;
 		}
@@ -1355,8 +1351,6 @@ class User implements IDBAccessObject {
 	 */
 	protected function loadFromUserObject( $user ) {
 		$user->load();
-		$user->loadGroups();
-		$user->loadOptions();
 		foreach ( self::$mCacheVars as $var ) {
 			$this->$var = $user->$var;
 		}
@@ -1369,7 +1363,7 @@ class User implements IDBAccessObject {
 		if ( is_null( $this->mGroups ) ) {
 			$db = ( $this->queryFlagsUsed & self::READ_LATEST )
 				? wfGetDB( DB_MASTER )
-				: wfGetDB( DB_SLAVE );
+				: wfGetDB( DB_REPLICA );
 			$res = $db->select( 'user_groups',
 				[ 'ug_group' ],
 				[ 'ug_user' => $this->mId ],
@@ -1437,6 +1431,24 @@ class User implements IDBAccessObject {
 	}
 
 	/**
+	 * Builds update conditions. Additional conditions may be added to $conditions to
+	 * protected against race conditions using a compare-and-set (CAS) mechanism
+	 * based on comparing $this->mTouched with the user_touched field.
+	 *
+	 * @param Database $db
+	 * @param array $conditions WHERE conditions for use with Database::update
+	 * @return array WHERE conditions for use with Database::update
+	 */
+	protected function makeUpdateConditions( Database $db, array $conditions ) {
+		if ( $this->mTouched ) {
+			// CAS check: only update if the row wasn't changed sicne it was loaded.
+			$conditions['user_touched'] = $db->timestamp( $this->mTouched );
+		}
+
+		return $conditions;
+	}
+
+	/**
 	 * Bump user_touched if it didn't change since this object was loaded
 	 *
 	 * On success, the mTouched field is updated.
@@ -1453,16 +1465,14 @@ class User implements IDBAccessObject {
 		}
 
 		// Get a new user_touched that is higher than the old one
-		$oldTouched = $this->mTouched;
 		$newTouched = $this->newTouchedTimestamp();
 
 		$dbw = wfGetDB( DB_MASTER );
 		$dbw->update( 'user',
 			[ 'user_touched' => $dbw->timestamp( $newTouched ) ],
-			[
+			$this->makeUpdateConditions( $dbw, [
 				'user_id' => $this->mId,
-				'user_touched' => $dbw->timestamp( $oldTouched ) // CAS check
-			],
+			] ),
 			__METHOD__
 		);
 		$success = ( $dbw->affectedRows() > 0 );
@@ -1514,22 +1524,28 @@ class User implements IDBAccessObject {
 		global $wgNamespacesToBeSearchedDefault, $wgDefaultUserOptions, $wgContLang, $wgDefaultSkin;
 
 		static $defOpt = null;
-		if ( !defined( 'MW_PHPUNIT_TEST' ) && $defOpt !== null ) {
-			// Disabling this for the unit tests, as they rely on being able to change $wgContLang
-			// mid-request and see that change reflected in the return value of this function.
-			// Which is insane and would never happen during normal MW operation
+		static $defOptLang = null;
+
+		if ( $defOpt !== null && $defOptLang === $wgContLang->getCode() ) {
+			// $wgContLang does not change (and should not change) mid-request,
+			// but the unit tests change it anyway, and expect this method to
+			// return values relevant to the current $wgContLang.
 			return $defOpt;
 		}
 
 		$defOpt = $wgDefaultUserOptions;
 		// Default language setting
-		$defOpt['language'] = $wgContLang->getCode();
+		$defOptLang = $wgContLang->getCode();
+		$defOpt['language'] = $defOptLang;
 		foreach ( LanguageConverter::$languagesWithVariants as $langCode ) {
 			$defOpt[$langCode == $wgContLang->getCode() ? 'variant' : "variant-$langCode"] = $langCode;
 		}
-		$namespaces = MediaWikiServices::getInstance()->getSearchEngineConfig()->searchableNamespaces();
-		foreach ( $namespaces as $nsnum => $nsname ) {
-			$defOpt['searchNs' . $nsnum] = !empty( $wgNamespacesToBeSearchedDefault[$nsnum] );
+
+		// NOTE: don't use SearchEngineConfig::getSearchableNamespaces here,
+		// since extensions may change the set of searchable namespaces depending
+		// on user groups/permissions.
+		foreach ( $wgNamespacesToBeSearchedDefault as $nsnum => $val ) {
+			$defOpt['searchNs' . $nsnum] = (boolean)$val;
 		}
 		$defOpt['skin'] = Skin::normalizeKey( $wgDefaultSkin );
 
@@ -1555,8 +1571,8 @@ class User implements IDBAccessObject {
 
 	/**
 	 * Get blocking information
-	 * @param bool $bFromSlave Whether to check the slave database first.
-	 *   To improve performance, non-critical checks are done against slaves.
+	 * @param bool $bFromSlave Whether to check the replica DB first.
+	 *   To improve performance, non-critical checks are done against replica DBs.
 	 *   Check when actually saving should be done against master.
 	 */
 	private function getBlockedStatus( $bFromSlave = true ) {
@@ -1787,12 +1803,16 @@ class User implements IDBAccessObject {
 			return false;
 		}
 
+		$limits = array_merge(
+			[ '&can-bypass' => true ],
+			$wgRateLimits[$action]
+		);
+
 		// Some groups shouldn't trigger the ping limiter, ever
-		if ( !$this->isPingLimitable() ) {
+		if ( $limits['&can-bypass'] && !$this->isPingLimitable() ) {
 			return false;
 		}
 
-		$limits = $wgRateLimits[$action];
 		$keys = [];
 		$id = $this->getId();
 		$userLimit = false;
@@ -1907,7 +1927,7 @@ class User implements IDBAccessObject {
 	/**
 	 * Check if user is blocked
 	 *
-	 * @param bool $bFromSlave Whether to check the slave database instead of
+	 * @param bool $bFromSlave Whether to check the replica DB instead of
 	 *   the master. Hacked from false due to horrible probs on site.
 	 * @return bool True if blocked, false otherwise
 	 */
@@ -1918,7 +1938,7 @@ class User implements IDBAccessObject {
 	/**
 	 * Get the block affecting the user, or null if the user is not blocked
 	 *
-	 * @param bool $bFromSlave Whether to check the slave database instead of the master
+	 * @param bool $bFromSlave Whether to check the replica DB instead of the master
 	 * @return Block|null
 	 */
 	public function getBlock( $bFromSlave = true ) {
@@ -1930,7 +1950,7 @@ class User implements IDBAccessObject {
 	 * Check if user is blocked from editing a particular article
 	 *
 	 * @param Title $title Title to check
-	 * @param bool $bFromSlave Whether to check the slave database instead of the master
+	 * @param bool $bFromSlave Whether to check the replica DB instead of the master
 	 * @return bool
 	 */
 	public function isBlockedFrom( $title, $bFromSlave = false ) {
@@ -2175,7 +2195,7 @@ class User implements IDBAccessObject {
 			return [];
 		}
 		$utp = $this->getTalkPage();
-		$dbr = wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_REPLICA );
 		// Get the "last viewed rev" timestamp from the oldest message notification
 		$timestamp = $dbr->selectField( 'user_newtalk',
 			'MIN(user_last_timestamp)',
@@ -2218,7 +2238,7 @@ class User implements IDBAccessObject {
 	 * @return bool True if the user has new messages
 	 */
 	protected function checkNewtalk( $field, $id ) {
-		$dbr = wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_REPLICA );
 
 		$ok = $dbr->selectField( 'user_newtalk', $field, [ $field => $id ], __METHOD__ );
 
@@ -2336,17 +2356,15 @@ class User implements IDBAccessObject {
 		}
 
 		$cache = ObjectCache::getMainWANInstance();
-		$processCache = self::getInProcessCache();
 		$key = $this->getCacheKey( $cache );
 		if ( $mode === 'refresh' ) {
 			$cache->delete( $key, 1 );
-			$processCache->delete( $key );
 		} else {
 			wfGetDB( DB_MASTER )->onTransactionPreCommitOrIdle(
-				function() use ( $cache, $processCache, $key ) {
+				function() use ( $cache, $key ) {
 					$cache->delete( $key );
-					$processCache->delete( $key );
-				}
+				},
+				__METHOD__
 			);
 		}
 	}
@@ -2851,7 +2869,7 @@ class User implements IDBAccessObject {
 	 * @return string|bool User's current value for the option, or false if this option is disabled.
 	 * @see resetTokenFromOption()
 	 * @see getOption()
-	 * @deprecated 1.26 Applications should use the OAuth extension
+	 * @deprecated since 1.26 Applications should use the OAuth extension
 	 */
 	public function getTokenFromOption( $oname ) {
 		global $wgHiddenPrefs;
@@ -3231,7 +3249,7 @@ class User implements IDBAccessObject {
 		if ( is_null( $this->mFormerGroups ) ) {
 			$db = ( $this->queryFlagsUsed & self::READ_LATEST )
 				? wfGetDB( DB_MASTER )
-				: wfGetDB( DB_SLAVE );
+				: wfGetDB( DB_REPLICA );
 			$res = $db->select( 'user_former_groups',
 				[ 'ufg_group' ],
 				[ 'ufg_user' => $this->mId ],
@@ -3256,7 +3274,7 @@ class User implements IDBAccessObject {
 
 		if ( $this->mEditCount === null ) {
 			/* Populate the count, if it has not been populated yet */
-			$dbr = wfGetDB( DB_SLAVE );
+			$dbr = wfGetDB( DB_REPLICA );
 			// check if the user_editcount field has been initialized
 			$count = $dbr->selectField(
 				'user', 'user_editcount',
@@ -3372,6 +3390,21 @@ class User implements IDBAccessObject {
 	}
 
 	/**
+	 * @return bool Whether this user is flagged as being a bot role account
+	 * @since 1.28
+	 */
+	public function isBot() {
+		if ( in_array( 'bot', $this->getGroups() ) && $this->isAllowed( 'bot' ) ) {
+			return true;
+		}
+
+		$isBot = false;
+		Hooks::run( "UserIsBot", [ $this, &$isBot ] );
+
+		return $isBot;
+	}
+
+	/**
 	 * Check if user is allowed to access a feature / make an action
 	 *
 	 * @param string ... Permissions to test
@@ -3473,7 +3506,7 @@ class User implements IDBAccessObject {
 	 */
 	public function isWatched( $title, $checkRights = self::CHECK_USER_RIGHTS ) {
 		if ( $title->isWatchable() && ( !$checkRights || $this->isAllowed( 'viewmywatchlist' ) ) ) {
-			return WatchedItemStore::getDefaultInstance()->isWatched( $this, $title );
+			return MediaWikiServices::getInstance()->getWatchedItemStore()->isWatched( $this, $title );
 		}
 		return false;
 	}
@@ -3487,7 +3520,7 @@ class User implements IDBAccessObject {
 	 */
 	public function addWatch( $title, $checkRights = self::CHECK_USER_RIGHTS ) {
 		if ( !$checkRights || $this->isAllowed( 'editmywatchlist' ) ) {
-			WatchedItemStore::getDefaultInstance()->addWatchBatchForUser(
+			MediaWikiServices::getInstance()->getWatchedItemStore()->addWatchBatchForUser(
 				$this,
 				[ $title->getSubjectPage(), $title->getTalkPage() ]
 			);
@@ -3504,8 +3537,9 @@ class User implements IDBAccessObject {
 	 */
 	public function removeWatch( $title, $checkRights = self::CHECK_USER_RIGHTS ) {
 		if ( !$checkRights || $this->isAllowed( 'editmywatchlist' ) ) {
-			WatchedItemStore::getDefaultInstance()->removeWatch( $this, $title->getSubjectPage() );
-			WatchedItemStore::getDefaultInstance()->removeWatch( $this, $title->getTalkPage() );
+			$store = MediaWikiServices::getInstance()->getWatchedItemStore();
+			$store->removeWatch( $this, $title->getSubjectPage() );
+			$store->removeWatch( $this, $title->getTalkPage() );
 		}
 		$this->invalidateCache();
 	}
@@ -3567,14 +3601,14 @@ class User implements IDBAccessObject {
 
 		// Only update the timestamp if the page is being watched.
 		// The query to find out if it is watched is cached both in memcached and per-invocation,
-		// and when it does have to be executed, it can be on a slave
+		// and when it does have to be executed, it can be on a replica DB
 		// If this is the user's newtalk page, we always update the timestamp
 		$force = '';
 		if ( $title->getNamespace() == NS_USER_TALK && $title->getText() == $this->getName() ) {
 			$force = 'force';
 		}
 
-		WatchedItemStore::getDefaultInstance()
+		MediaWikiServices::getInstance()->getWatchedItemStore()
 			->resetNotificationTimestamp( $this, $title, $force, $oldid );
 	}
 
@@ -3585,31 +3619,69 @@ class User implements IDBAccessObject {
 	 * @note If the user doesn't have 'editmywatchlist', this will do nothing.
 	 */
 	public function clearAllNotifications() {
-		if ( wfReadOnly() ) {
-			return;
-		}
-
-		// Do nothing if not allowed to edit the watchlist
-		if ( !$this->isAllowed( 'editmywatchlist' ) ) {
-			return;
-		}
-
 		global $wgUseEnotif, $wgShowUpdatedMarker;
+		// Do nothing if not allowed to edit the watchlist
+		if ( wfReadOnly() || !$this->isAllowed( 'editmywatchlist' ) ) {
+			return;
+		}
+
 		if ( !$wgUseEnotif && !$wgShowUpdatedMarker ) {
 			$this->setNewtalk( false );
 			return;
 		}
+
 		$id = $this->getId();
-		if ( $id != 0 ) {
-			$dbw = wfGetDB( DB_MASTER );
-			$dbw->update( 'watchlist',
-				[ /* SET */ 'wl_notificationtimestamp' => null ],
-				[ /* WHERE */ 'wl_user' => $id, 'wl_notificationtimestamp IS NOT NULL' ],
-				__METHOD__
-			);
-			// We also need to clear here the "you have new message" notification for the own user_talk page;
-			// it's cleared one page view later in WikiPage::doViewUpdates().
+		if ( !$id ) {
+			return;
 		}
+
+		$dbw = wfGetDB( DB_MASTER );
+		$asOfTimes = array_unique( $dbw->selectFieldValues(
+			'watchlist',
+			'wl_notificationtimestamp',
+			[ 'wl_user' => $id, 'wl_notificationtimestamp IS NOT NULL' ],
+			__METHOD__,
+			[ 'ORDER BY' => 'wl_notificationtimestamp DESC', 'LIMIT' => 500 ]
+		) );
+		if ( !$asOfTimes ) {
+			return;
+		}
+		// Immediately update the most recent touched rows, which hopefully covers what
+		// the user sees on the watchlist page before pressing "mark all pages visited"....
+		$dbw->update(
+			'watchlist',
+			[ 'wl_notificationtimestamp' => null ],
+			[ 'wl_user' => $id, 'wl_notificationtimestamp' => $asOfTimes ],
+			__METHOD__
+		);
+		// ...and finish the older ones in a post-send update with lag checks...
+		DeferredUpdates::addUpdate( new AutoCommitUpdate(
+			$dbw,
+			__METHOD__,
+			function () use ( $dbw, $id ) {
+				global $wgUpdateRowsPerQuery;
+
+				$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
+				$ticket = $lbFactory->getEmptyTransactionTicket( __METHOD__ );
+				$asOfTimes = array_unique( $dbw->selectFieldValues(
+					'watchlist',
+					'wl_notificationtimestamp',
+					[ 'wl_user' => $id, 'wl_notificationtimestamp IS NOT NULL' ],
+					__METHOD__
+				) );
+				foreach ( array_chunk( $asOfTimes, $wgUpdateRowsPerQuery ) as $asOfTimeBatch ) {
+					$dbw->update(
+						'watchlist',
+						[ 'wl_notificationtimestamp' => null ],
+						[ 'wl_user' => $id, 'wl_notificationtimestamp' => $asOfTimeBatch ],
+						__METHOD__
+					);
+					$lbFactory->commitAndWaitForReplication( __METHOD__, $ticket );
+				}
+			}
+		) );
+		// We also need to clear here the "you have new message" notification for the own
+		// user_talk page; it's cleared one page view later in WikiPage::doViewUpdates().
 	}
 
 	/**
@@ -3741,6 +3813,7 @@ class User implements IDBAccessObject {
 		if ( !$session->canSetUser() ) {
 			\MediaWiki\Logger\LoggerFactory::getInstance( 'session' )
 				->warning( __METHOD__ . ": Cannot log out of an immutable session" );
+			$error = 'immutable';
 		} elseif ( !$session->getUser()->equals( $this ) ) {
 			\MediaWiki\Logger\LoggerFactory::getInstance( 'session' )
 				->warning( __METHOD__ .
@@ -3748,6 +3821,7 @@ class User implements IDBAccessObject {
 				);
 			// But we still may as well make this user object anon
 			$this->clearInstanceCache( 'defaults' );
+			$error = 'wronguser';
 		} else {
 			$this->clearInstanceCache( 'defaults' );
 			$delay = $session->delaySave();
@@ -3757,7 +3831,13 @@ class User implements IDBAccessObject {
 			$session->set( 'wsUserID', 0 ); // Other code expects this
 			$session->resetAllTokens();
 			ScopedCallback::consume( $delay );
+			$error = false;
 		}
+		\MediaWiki\Logger\LoggerFactory::getInstance( 'authevents' )->info( 'Logout', [
+			'event' => 'logout',
+			'successful' => $error === false,
+			'status' => $error ?: 'success',
+		] );
 	}
 
 	/**
@@ -3782,8 +3862,7 @@ class User implements IDBAccessObject {
 
 		// Get a new user_touched that is higher than the old one.
 		// This will be used for a CAS check as a last-resort safety
-		// check against race conditions and slave lag.
-		$oldTouched = $this->mTouched;
+		// check against race conditions and replica DB lag.
 		$newTouched = $this->newTouchedTimestamp();
 
 		$dbw = wfGetDB( DB_MASTER );
@@ -3797,17 +3876,16 @@ class User implements IDBAccessObject {
 				'user_token' => strval( $this->mToken ),
 				'user_email_token' => $this->mEmailToken,
 				'user_email_token_expires' => $dbw->timestampOrNull( $this->mEmailTokenExpires ),
-			], [ /* WHERE */
+			], $this->makeUpdateConditions( $dbw, [ /* WHERE */
 				'user_id' => $this->mId,
-				'user_touched' => $dbw->timestamp( $oldTouched ) // CAS check
-			], __METHOD__
+			] ), __METHOD__
 		);
 
 		if ( !$dbw->affectedRows() ) {
 			// Maybe the problem was a missed cache update; clear it to be safe
 			$this->clearSharedCache( 'refresh' );
 			// User was changed in the meantime or loaded with stale data
-			$from = ( $this->queryFlagsUsed & self::READ_LATEST ) ? 'master' : 'slave';
+			$from = ( $this->queryFlagsUsed & self::READ_LATEST ) ? 'master' : 'replica';
 			throw new MWException(
 				"CAS update failed on user_touched for user ID '{$this->mId}' (read from $from);" .
 				" the version of the user to be saved is older than the current version."
@@ -3836,7 +3914,7 @@ class User implements IDBAccessObject {
 
 		$db = ( ( $flags & self::READ_LATEST ) == self::READ_LATEST )
 			? wfGetDB( DB_MASTER )
-			: wfGetDB( DB_SLAVE );
+			: wfGetDB( DB_REPLICA );
 
 		$options = ( ( $flags & self::READ_LOCKING ) == self::READ_LOCKING )
 			? [ 'LOCK IN SHARE MODE' ]
@@ -3945,7 +4023,6 @@ class User implements IDBAccessObject {
 		$noPass = PasswordFactory::newInvalidPassword()->toString();
 
 		$dbw = wfGetDB( DB_MASTER );
-		$inWrite = $dbw->writesOrCallbacksPending();
 		$seqVal = $dbw->nextSequenceValue( 'user_user_id_seq' );
 		$dbw->insert( 'user',
 			[
@@ -3964,25 +4041,17 @@ class User implements IDBAccessObject {
 			[ 'IGNORE' ]
 		);
 		if ( !$dbw->affectedRows() ) {
-			// The queries below cannot happen in the same REPEATABLE-READ snapshot.
-			// Handle this by COMMIT, if possible, or by LOCK IN SHARE MODE otherwise.
-			if ( $inWrite ) {
-				// Can't commit due to pending writes that may need atomicity.
-				// This may cause some lock contention unlike the case below.
-				$options = [ 'LOCK IN SHARE MODE' ];
-				$flags = self::READ_LOCKING;
-			} else {
-				// Often, this case happens early in views before any writes when
-				// using CentralAuth. It's should be OK to commit and break the snapshot.
-				$dbw->commit( __METHOD__, 'flush' );
-				$options = [];
-				$flags = self::READ_LATEST;
-			}
-			$this->mId = $dbw->selectField( 'user', 'user_id',
-				[ 'user_name' => $this->mName ], __METHOD__, $options );
+			// Use locking reads to bypass any REPEATABLE-READ snapshot.
+			$this->mId = $dbw->selectField(
+				'user',
+				'user_id',
+				[ 'user_name' => $this->mName ],
+				__METHOD__,
+				[ 'LOCK IN SHARE MODE' ]
+			);
 			$loaded = false;
 			if ( $this->mId ) {
-				if ( $this->loadFromDatabase( $flags ) ) {
+				if ( $this->loadFromDatabase( self::READ_LOCKING ) ) {
 					$loaded = true;
 				}
 			}
@@ -4173,6 +4242,8 @@ class User implements IDBAccessObject {
 	 * which can be used in edit forms to show that the user's
 	 * login credentials aren't being hijacked with a foreign form
 	 * submission.
+	 *
+	 * The $salt for 'edit' and 'csrf' tokens is the default (empty string).
 	 *
 	 * @since 1.19
 	 * @param string|array $salt Array of Strings Optional function-specific data for hashing
@@ -4483,7 +4554,7 @@ class User implements IDBAccessObject {
 		if ( $this->getId() == 0 ) {
 			return false; // anons
 		}
-		$dbr = wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_REPLICA );
 		$time = $dbr->selectField( 'revision', 'rev_timestamp',
 			[ 'rev_user' => $this->getId() ],
 			__METHOD__,
@@ -4862,9 +4933,12 @@ class User implements IDBAccessObject {
 	 * Deferred version of incEditCountImmediate()
 	 */
 	public function incEditCount() {
-		wfGetDB( DB_MASTER )->onTransactionPreCommitOrIdle( function() {
-			$this->incEditCountImmediate();
-		} );
+		wfGetDB( DB_MASTER )->onTransactionPreCommitOrIdle(
+			function () {
+				$this->incEditCountImmediate();
+			},
+			__METHOD__
+		);
 	}
 
 	/**
@@ -4888,17 +4962,25 @@ class User implements IDBAccessObject {
 		// Lazy initialization check...
 		if ( $dbw->affectedRows() == 0 ) {
 			// Now here's a goddamn hack...
-			$dbr = wfGetDB( DB_SLAVE );
+			$dbr = wfGetDB( DB_REPLICA );
 			if ( $dbr !== $dbw ) {
-				// If we actually have a slave server, the count is
+				// If we actually have a replica DB server, the count is
 				// at least one behind because the current transaction
 				// has not been committed and replicated.
-				$this->initEditCount( 1 );
+				$this->mEditCount = $this->initEditCount( 1 );
 			} else {
-				// But if DB_SLAVE is selecting the master, then the
+				// But if DB_REPLICA is selecting the master, then the
 				// count we just read includes the revision that was
 				// just added in the working transaction.
-				$this->initEditCount();
+				$this->mEditCount = $this->initEditCount();
+			}
+		} else {
+			if ( $this->mEditCount === null ) {
+				$this->getEditCount();
+				$dbr = wfGetDB( DB_REPLICA );
+				$this->mEditCount += ( $dbr !== $dbw ) ? 1 : 0;
+			} else {
+				$this->mEditCount++;
 			}
 		}
 		// Edit count in user cache too
@@ -4912,9 +4994,9 @@ class User implements IDBAccessObject {
 	 * @return int Number of edits
 	 */
 	protected function initEditCount( $add = 0 ) {
-		// Pull from a slave to be less cruel to servers
+		// Pull from a replica DB to be less cruel to servers
 		// Accuracy isn't the point anyway here
-		$dbr = wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_REPLICA );
 		$count = (int)$dbr->selectField(
 			'revision',
 			'COUNT(rev_user)',
@@ -5072,7 +5154,7 @@ class User implements IDBAccessObject {
 				// Load from database
 				$dbr = ( $this->queryFlagsUsed & self::READ_LATEST )
 					? wfGetDB( DB_MASTER )
-					: wfGetDB( DB_SLAVE );
+					: wfGetDB( DB_REPLICA );
 
 				$res = $dbr->select(
 					'user_properties',
@@ -5138,7 +5220,7 @@ class User implements IDBAccessObject {
 			[ 'up_property', 'up_value' ], [ 'up_user' => $userId ], __METHOD__ );
 
 		// Find prior rows that need to be removed or updated. These rows will
-		// all be deleted (the later so that INSERT IGNORE applies the new values).
+		// all be deleted (the latter so that INSERT IGNORE applies the new values).
 		$keysDelete = [];
 		foreach ( $res as $row ) {
 			if ( !isset( $saveOptions[$row->up_property] )
@@ -5282,7 +5364,7 @@ class User implements IDBAccessObject {
 	 * Get a new instance of this user that was loaded from the master via a locking read
 	 *
 	 * Use this instead of the main context User when updating that user. This avoids races
-	 * where that user was loaded from a slave or even the master but without proper locks.
+	 * where that user was loaded from a replica DB or even the master but without proper locks.
 	 *
 	 * @return User|null Returns null if the user was not found in the DB
 	 * @since 1.27

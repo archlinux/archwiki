@@ -9,7 +9,7 @@
 		]
 	},
 	"syntaxhighlight-desc": "Zapewnia kolorowanie składni dla znacznika <code>&lt;syntaxhighlight&gt;</code> wykorzystując [http://pygments.org/ Pygments - Pythonowe kolorowanie składni]",
-	"syntaxhighlight-error-category": "Strony z podświetlaniem składni błędów",
+	"syntaxhighlight-error-category": "Strony z błędami podświetlania składni",
 	"syntaxhighlight-error-category-desc": "Wystąpił błąd podczas próby podświetlenia kodu zawartego na stronie.",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "Kod",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Język",

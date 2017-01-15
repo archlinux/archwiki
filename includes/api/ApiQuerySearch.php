@@ -24,22 +24,16 @@
  * @file
  */
 
-use MediaWiki\MediaWikiServices;
-
 /**
  * Query module to perform full text search within wiki titles and content
  *
  * @ingroup API
  */
 class ApiQuerySearch extends ApiQueryGeneratorBase {
+	use SearchApi;
 
-	/**
-	 * When $wgSearchType is null, $wgSearchAlternatives[0] is null. Null isn't
-	 * a valid option for an array for PARAM_TYPE, so we'll use a fake name
-	 * that can't possibly be a class name and describes what the null behavior
-	 * does
-	 */
-	const BACKEND_NULL_PARAM = 'database-backed';
+	/** @var array list of api allowed params */
+	private $allowedParams;
 
 	public function __construct( ApiQuery $query, $moduleName ) {
 		parent::__construct( $query, $moduleName, 'sr' );
@@ -62,7 +56,6 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 		$params = $this->extractRequestParams();
 
 		// Extract parameters
-		$limit = $params['limit'];
 		$query = $params['search'];
 		$what = $params['what'];
 		$interwiki = $params['interwiki'];
@@ -80,12 +73,9 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 		}
 
 		// Create search engine instance and set options
-		$type = isset( $params['backend'] ) && $params['backend'] != self::BACKEND_NULL_PARAM ?
-			$params['backend'] : null;
-		$search = MediaWikiServices::getInstance()->getSearchEngineFactory()->create( $type );
-		$search->setLimitOffset( $limit + 1, $params['offset'] );
-		$search->setNamespaces( $params['namespace'] );
+		$search = $this->buildSearchEngine( $params );
 		$search->setFeatureData( 'rewrite', (bool)$params['enablerewrites'] );
+		$search->setFeatureData( 'interwiki', (bool)$interwiki );
 
 		$query = $search->transformSearchTerm( $query );
 		$query = $search->replacePrefixes( $query );
@@ -152,6 +142,7 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 		$titles = [];
 		$count = 0;
 		$result = $matches->next();
+		$limit = $params['limit'];
 
 		while ( $result ) {
 			if ( ++$count > $limit ) {
@@ -227,16 +218,15 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 		$hasInterwikiResults = false;
 		$totalhits = null;
 		if ( $interwiki && $resultPageSet === null && $matches->hasInterwikiResults() ) {
-			foreach ( $matches->getInterwikiResults() as $matches ) {
-				$matches = $matches->getInterwikiResults();
+			foreach ( $matches->getInterwikiResults() as $interwikiMatches ) {
 				$hasInterwikiResults = true;
 
 				// Include number of results if requested
 				if ( $resultPageSet === null && isset( $searchInfo['totalhits'] ) ) {
-					$totalhits += $matches->getTotalHits();
+					$totalhits += $interwikiMatches->getTotalHits();
 				}
 
-				$result = $matches->next();
+				$result = $interwikiMatches->next();
 				while ( $result ) {
 					$title = $result->getTitle();
 
@@ -244,7 +234,7 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 						$vals = [
 							'namespace' => $result->getInterwikiNamespaceText(),
 							'title' => $title->getText(),
-							'url' => $title->getFullUrl(),
+							'url' => $title->getFullURL(),
 						];
 
 						// Add item to results and see whether it fits
@@ -263,7 +253,7 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 						$titles[] = $title;
 					}
 
-					$result = $matches->next();
+					$result = $interwikiMatches->next();
 				}
 			}
 			if ( $totalhits !== null ) {
@@ -301,16 +291,11 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 	}
 
 	public function getAllowedParams() {
-		$params = [
-			'search' => [
-				ApiBase::PARAM_TYPE => 'string',
-				ApiBase::PARAM_REQUIRED => true
-			],
-			'namespace' => [
-				ApiBase::PARAM_DFLT => NS_MAIN,
-				ApiBase::PARAM_TYPE => 'namespace',
-				ApiBase::PARAM_ISMULTI => true,
-			],
+		if ( $this->allowedParams !== null ) {
+			return $this->allowedParams;
+		}
+
+		$this->allowedParams = $this->buildCommonApiParams() + [
 			'what' => [
 				ApiBase::PARAM_TYPE => [
 					'title',
@@ -347,34 +332,20 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 				ApiBase::PARAM_ISMULTI => true,
 				ApiBase::PARAM_HELP_MSG_PER_VALUE => [],
 			],
-			'offset' => [
-				ApiBase::PARAM_DFLT => 0,
-				ApiBase::PARAM_HELP_MSG => 'api-help-param-continue',
-			],
-			'limit' => [
-				ApiBase::PARAM_DFLT => 10,
-				ApiBase::PARAM_TYPE => 'limit',
-				ApiBase::PARAM_MIN => 1,
-				ApiBase::PARAM_MAX => ApiBase::LIMIT_BIG1,
-				ApiBase::PARAM_MAX2 => ApiBase::LIMIT_BIG2
-			],
 			'interwiki' => false,
 			'enablerewrites' => false,
 		];
 
-		$searchConfig = MediaWikiServices::getInstance()->getSearchEngineConfig();
-		$alternatives = $searchConfig->getSearchTypes();
-		if ( count( $alternatives ) > 1 ) {
-			if ( $alternatives[0] === null ) {
-				$alternatives[0] = self::BACKEND_NULL_PARAM;
-			}
-			$params['backend'] = [
-				ApiBase::PARAM_DFLT => $searchConfig->getSearchType(),
-				ApiBase::PARAM_TYPE => $alternatives,
-			];
-		}
+		return $this->allowedParams;
+	}
 
-		return $params;
+	public function getSearchProfileParams() {
+		return [
+			'qiprofile' => [
+				'profile-type' => SearchEngine::FT_QUERY_INDEP_PROFILE_TYPE,
+				'help-message' => 'apihelp-query+search-param-qiprofile',
+			],
+		];
 	}
 
 	protected function getExamplesMessages() {

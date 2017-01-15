@@ -30,11 +30,6 @@ class LinkSearchPage extends QueryPage {
 	/** @var array|bool */
 	private $mungedQuery = false;
 
-	/**
-	 * @var PageLinkRenderer
-	 */
-	protected $linkRenderer = null;
-
 	function setParams( $params ) {
 		$this->mQuery = $params['query'];
 		$this->mNs = $params['namespace'];
@@ -49,39 +44,11 @@ class LinkSearchPage extends QueryPage {
 		// using the setServices() method.
 	}
 
-	/**
-	 * Initialize or override the PageLinkRenderer LinkSearchPage collaborates with.
-	 * Useful mainly for testing.
-	 *
-	 * @todo query logic and rendering logic should be split and also injected
-	 *
-	 * @param PageLinkRenderer $linkRenderer
-	 */
-	public function setPageLinkRenderer(
-		PageLinkRenderer $linkRenderer
-	) {
-		$this->linkRenderer = $linkRenderer;
-	}
-
-	/**
-	 * Initialize any services we'll need (unless it has already been provided via a setter).
-	 * This allows for dependency injection even though we don't control object creation.
-	 */
-	private function initServices() {
-		global $wgContLang;
-		if ( !$this->linkRenderer ) {
-			$titleFormatter = new MediaWikiTitleCodec( $wgContLang, GenderCache::singleton() );
-			$this->linkRenderer = new MediaWikiPageLinkRenderer( $titleFormatter );
-		}
-	}
-
 	function isCacheable() {
 		return false;
 	}
 
 	public function execute( $par ) {
-		$this->initServices();
-
 		$this->setHeaders();
 		$this->outputHeader();
 
@@ -186,7 +153,7 @@ class LinkSearchPage extends QueryPage {
 	 */
 	static function mungeQuery( $query, $prot ) {
 		$field = 'el_index';
-		$dbr = wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_REPLICA );
 
 		if ( $query === '*' && $prot !== '' ) {
 			// Allow queries like 'ftp://*' to find all ftp links
@@ -218,7 +185,7 @@ class LinkSearchPage extends QueryPage {
 	}
 
 	public function getQueryInfo() {
-		$dbr = wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_REPLICA );
 		// strip everything past first wildcard, so that
 		// index-based-only lookup would be done
 		list( $this->mungedQuery, $clause ) = self::mungeQuery( $this->mQuery, $this->mProt );
@@ -277,7 +244,7 @@ class LinkSearchPage extends QueryPage {
 	 */
 	function formatResult( $skin, $result ) {
 		$title = new TitleValue( (int)$result->namespace, $result->title );
-		$pageLink = $this->linkRenderer->renderHtmlLink( $title );
+		$pageLink = $this->getLinkRenderer()->makeLink( $title );
 
 		$url = $result->url;
 		$urlLink = Linker::makeExternalLink( $url, $url );

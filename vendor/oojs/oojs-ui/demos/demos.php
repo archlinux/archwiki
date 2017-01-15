@@ -56,10 +56,12 @@
 						new OOUI\ButtonWidget( array(
 							'label' => 'MediaWiki',
 							'href' => '?' . http_build_query( array_merge( $query, array( 'theme' => 'mediawiki' ) ) ),
+							'active' => $query['theme'] === 'mediawiki',
 						) ),
 						new OOUI\ButtonWidget( array(
 							'label' => 'Apex',
 							'href' => '?' . http_build_query( array_merge( $query, array( 'theme' => 'apex' ) ) ),
+							'active' => $query['theme'] === 'apex',
 						) ),
 					)
 				) );
@@ -69,10 +71,12 @@
 						new OOUI\ButtonWidget( array(
 							'label' => 'LTR',
 							'href' => '?' . http_build_query( array_merge( $query, array( 'direction' => 'ltr' ) ) ),
+							'active' => $query['direction'] === 'ltr',
 						) ),
 						new OOUI\ButtonWidget( array(
 							'label' => 'RTL',
 							'href' => '?' . http_build_query( array_merge( $query, array( 'direction' => 'rtl' ) ) ),
+							'active' => $query['direction'] === 'rtl',
 						) ),
 					)
 				) );
@@ -83,10 +87,12 @@
 						new OOUI\ButtonWidget( array(
 							'label' => 'JS',
 							'href' => ".#$page-$theme-$direction",
+							'active' => false,
 						) ),
 						new OOUI\ButtonWidget( array(
 							'label' => 'PHP',
 							'href' => '?' . http_build_query( $query ),
+							'active' => true,
 						) ),
 					)
 				) );

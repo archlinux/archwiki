@@ -15,7 +15,6 @@
 	cursor: pointer;
 	vertical-align: bottom;
 	line-height: normal;
-
 	font-weight: normal;
 
 	& > input[type="checkbox"],
@@ -24,7 +23,7 @@
 		height: auto;
 		margin: 0 0.1em 0 0;
 		padding: 0;
-		border: 1px solid @colorFieldBorder;
+		border: 1px solid @colorGray7;
 		cursor: pointer;
 	}
 }
@@ -34,74 +33,91 @@
 // ----------------------------------------------------------------------------
 
 .button-colors( @bgColor, @highlightColor, @activeColor ) {
-	background: @bgColor;
+	background-color: @bgColor;
+	color: @colorButtonText;
+	border: 1px solid @colorFieldBorder;
+
+	// Make sure that `color` isn't inheriting from user-agent styles
+	&:visited {
+		color: @colorButtonText;
+	}
 
 	&:hover {
-		// The inner bottom bevel should match the active background color.
 		background-color: @highlightColor;
+		color: @colorGray4;
+		border-color: @colorGray10;
 	}
 
 	&:focus {
-		border-color: @colorWhite;
-		box-shadow: 0 0 0 1px @highlightColor;
-
-		outline: none;
-		// remove outline in Firefox
-		&::-moz-focus-inner {
-			border-color: transparent;
-		}
+		background-color: @highlightColor;
+		// Make sure that `color` isn't inheriting from user-agent styles
+		color: @colorButtonText;
+		border-color: @colorProgressive;
+		box-shadow: inset 0 0 0 1px @colorProgressive, inset 0 0 0 2px #fff;
 	}
 
 	&:active,
 	&.is-on,
 	&.mw-ui-checked {
-		background: @activeColor;
+		background-color: @activeColor;
+		color: @colorGray1;
+		border-color: @colorGray7;
 		box-shadow: none;
-	}
-}
-
-.button-colors( @bgColor, @highlightColor, @activeColor ) when ( lightness( @bgColor ) >= 70% ) {
-	color: @colorButtonText;
-	border: 1px solid @colorGray12;
-
-	&:hover,
-	&:active,
-	&:visited {
-		// make sure that is isn't inheriting from a general rule
-		color: @colorButtonText;
-	}
-
-	&:focus {
-		background-color: @highlightColor;
 	}
 
 	&:disabled {
-		color: @colorDisabledText;
+		background-color: @colorGray12;
+		color: #fff;
+		border-color: @colorGray12;
 
-		// make sure disabled buttons don't have hover and active states
+		// Make sure disabled buttons don't have hover and active states
 		&:hover,
 		&:active {
-			background: @bgColor;
+			background-color: @colorGray12;
+			color: #fff;
 			box-shadow: none;
+			border-color: @colorGray12;
 		}
 	}
 }
 
-.button-colors( @bgColor, @highlightColor, @activeColor ) when ( lightness( @bgColor ) < 70% ) {
+.button-colors-primary( @bgColor, @highlightColor, @activeColor ) {
+	background-color: @bgColor;
 	color: #fff;
 	// border of the same color as background so that light background and
 	// dark background buttons are the same height and width
 	border: 1px solid @bgColor;
-	text-shadow: 0 1px rgba(0, 0, 0, .1);
+	text-shadow: 0 1px rgba( 0, 0, 0, 0.1 );
+
+	&:hover {
+		background-color: @highlightColor;
+		border-color: @highlightColor;
+	}
+
+	&:focus {
+		box-shadow: inset 0 0 0 1px @bgColor, inset 0 0 0 2px #fff;
+	}
+
+	&:active,
+	&.is-on,
+	&.mw-ui-checked {
+		background-color: @activeColor;
+		border-color: @activeColor;
+		box-shadow: none;
+	}
 
 	&:disabled {
-		background: @colorGray13;
-		border-color: @colorGray13;
+		background-color: @colorGray12;
+		color: #fff;
+		border-color: @colorGray12;
 
-		// make sure disabled buttons don't have hover and active states
+		// Make sure disabled buttons don't have hover and active states
 		&:hover,
 		&:active,
 		&.mw-ui-checked {
+			background-color: @colorGray12;
+			color: #fff;
+			border-color: @colorGray12;
 			box-shadow: none;
 		}
 	}
@@ -109,18 +125,22 @@
 
 .button-colors-quiet( @textColor, @highlightColor, @activeColor ) {
 	// Quiet buttons all start gray, and reveal
-	// constructive/progressive/destructive color on hover and active.
+	// progressive/destructive color on hover and active.
 	color: @colorButtonText;
 
-	&:hover,
-	&:focus {
-		background: transparent;
-		color: @textColor;
+	&:hover {
+		background-color: transparent;
+		color: @highlightColor;
 	}
 
 	&:active,
 	&.mw-ui-checked {
 		color: @activeColor;
+	}
+
+	&:focus {
+		background-color: transparent;
+		color: @textColor;
 	}
 
 	&:disabled {

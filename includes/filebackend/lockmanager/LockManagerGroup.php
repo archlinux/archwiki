@@ -20,6 +20,8 @@
  * @file
  * @ingroup LockManager
  */
+use MediaWiki\MediaWikiServices;
+use MediaWiki\Logger\LoggerFactory;
 
 /**
  * Class to handle file lock manager registration
@@ -29,7 +31,7 @@
  * @since 1.19
  */
 class LockManagerGroup {
-	/** @var array (domain => LockManager) */
+	/** @var LockManagerGroup[] (domain => LockManagerGroup) */
 	protected static $instances = [];
 
 	protected $domain; // string; domain (usually wiki ID)
@@ -115,6 +117,16 @@ class LockManagerGroup {
 		if ( !isset( $this->managers[$name]['instance'] ) ) {
 			$class = $this->managers[$name]['class'];
 			$config = $this->managers[$name]['config'];
+			if ( $class === 'DBLockManager' ) {
+				$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
+				$lb = $lbFactory->newMainLB( $config['domain'] );
+				$dbw = $lb->getLazyConnectionRef( DB_MASTER, [], $config['domain'] );
+
+				$config['dbServers']['localDBMaster'] = $dbw;
+				$config['srvCache'] = ObjectCache::getLocalServerInstance( 'hash' );
+			}
+			$config['logger'] = LoggerFactory::getInstance( 'LockManager' );
+
 			$this->managers[$name]['instance'] = new $class( $config );
 		}
 

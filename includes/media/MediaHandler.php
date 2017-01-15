@@ -20,6 +20,7 @@
  * @file
  * @ingroup Media
  */
+use MediaWiki\MediaWikiServices;
 
 /**
  * Base media handler class
@@ -36,39 +37,15 @@ abstract class MediaHandler {
 	 */
 	const MAX_ERR_LOG_SIZE = 65535;
 
-	/** @var MediaHandler[] Instance cache with array of MediaHandler */
-	protected static $handlers = [];
-
 	/**
 	 * Get a MediaHandler for a given MIME type from the instance cache
 	 *
 	 * @param string $type
-	 * @return MediaHandler
+	 * @return MediaHandler|bool
 	 */
 	static function getHandler( $type ) {
-		global $wgMediaHandlers;
-		if ( !isset( $wgMediaHandlers[$type] ) ) {
-			wfDebug( __METHOD__ . ": no handler found for $type.\n" );
-
-			return false;
-		}
-		$class = $wgMediaHandlers[$type];
-		if ( !isset( self::$handlers[$class] ) ) {
-			self::$handlers[$class] = new $class;
-			if ( !self::$handlers[$class]->isEnabled() ) {
-				wfDebug( __METHOD__ . ": $class is not enabled\n" );
-				self::$handlers[$class] = false;
-			}
-		}
-
-		return self::$handlers[$class];
-	}
-
-	/**
-	 * Resets all static caches
-	 */
-	public static function resetCache() {
-		self::$handlers = [];
+		return MediaWikiServices::getInstance()
+			->getMediaHandlerFactory()->getHandler( $type );
 	}
 
 	/**
@@ -123,21 +100,22 @@ abstract class MediaHandler {
 	 * @note If this is a multipage file, return the width and height of the
 	 *  first page.
 	 *
-	 * @param File $image The image object, or false if there isn't one
+	 * @param File|FSFile $image The image object, or false if there isn't one.
+	 *   Warning, FSFile::getPropsFromPath might pass an FSFile instead of File (!)
 	 * @param string $path The filename
-	 * @return array Follow the format of PHP getimagesize() internal function.
+	 * @return array|bool Follow the format of PHP getimagesize() internal function.
 	 *   See http://www.php.net/getimagesize. MediaWiki will only ever use the
 	 *   first two array keys (the width and height), and the 'bits' associative
 	 *   key. All other array keys are ignored. Returning a 'bits' key is optional
-	 *   as not all formats have a notion of "bitdepth".
+	 *   as not all formats have a notion of "bitdepth". Returns false on failure.
 	 */
 	abstract function getImageSize( $image, $path );
 
 	/**
 	 * Get handler-specific metadata which will be saved in the img_metadata field.
 	 *
-	 * @param File $image The image object, or false if there isn't one.
-	 *   Warning, FSFile::getPropsFromPath might pass an (object)array() instead (!)
+	 * @param File|FSFile $image The image object, or false if there isn't one.
+	 *   Warning, FSFile::getPropsFromPath might pass an FSFile instead of File (!)
 	 * @param string $path The filename
 	 * @return string A string of metadata in php serialized form (Run through serialize())
 	 */
@@ -485,16 +463,16 @@ abstract class MediaHandler {
 	/**
 	 * Get an array structure that looks like this:
 	 *
-	 * array(
-	 *    'visible' => array(
+	 * [
+	 *    'visible' => [
 	 *       'Human-readable name' => 'Human readable value',
 	 *       ...
-	 *    ),
-	 *    'collapsed' => array(
+	 *    ],
+	 *    'collapsed' => [
 	 *       'Human-readable name' => 'Human readable value',
 	 *       ...
-	 *    )
-	 * )
+	 *    ]
+	 * ]
 	 * The UI will format this into a table where the visible fields are always
 	 * visible, and the collapsed fields are optionally visible.
 	 *
@@ -865,11 +843,11 @@ abstract class MediaHandler {
 	/**
 	 * Gets configuration for the file warning message. Return value of
 	 * the following structure:
-	 *   array(
+	 *   [
 	 *     // Required, module with messages loaded for the client
 	 *     'module' => 'example.filewarning.messages',
 	 *     // Required, array of names of messages
-	 *     'messages' => array(
+	 *     'messages' => [
 	 *       // Required, main warning message
 	 *       'main' => 'example-filewarning-main',
 	 *       // Optional, header for warning dialog
@@ -878,10 +856,10 @@ abstract class MediaHandler {
 	 *       'footer' => 'example-filewarning-footer',
 	 *       // Optional, text for more-information link (see below)
 	 *       'info' => 'example-filewarning-info',
-	 *     ),
+	 *     ],
 	 *     // Optional, link for more information
 	 *     'link' => 'http://example.com',
-	 *   )
+	 *   ]
 	 *
 	 * Returns null if no warning is necessary.
 	 * @param File $file

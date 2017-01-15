@@ -78,8 +78,8 @@ class TitleBlacklist {
 	/**
 	 * Get the text of a blacklist from a specified source
 	 *
-	 * @param $source A blacklist source from $wgTitleBlacklistSources
-	 * @return The content of the blacklist source as a string
+	 * @param string $source A blacklist source from $wgTitleBlacklistSources
+	 * @return string The content of the blacklist source as a string
 	 */
 	private static function getBlacklistText( $source ) {
 		if ( !is_array( $source ) || count( $source ) <= 0 ) {
@@ -101,10 +101,9 @@ class TitleBlacklist {
 					return '';
 				}
 			} else {
-				$article = new Article( $title );
-				if ( $article->exists() ) {
-					$article->followRedirect();
-					return $article->getContent();
+				$page = WikiPage::factory( $title );
+				if ( $page->exists() ) {
+					return ContentHandler::getContentText( $page->getContent() );
 				}
 			}
 		} elseif ( $source['type'] == 'url' && count( $source ) >= 2 ) {
@@ -357,26 +356,40 @@ class TitleBlacklistEntry {
 	}
 
 	/**
-	 * Check whether a user can perform the specified action
-	 * on the specified Title
+	 * Check whether a user can perform the specified action on the specified Title
 	 *
-	 * @param $title string to check
-	 * @param $action %Action to check
+	 * @param string $title Title to check
+	 * @param string $action Action to check
 	 * @return bool TRUE if the the regex matches the title, and is not overridden
 	 * else false if it doesn't match (or was overridden)
 	 */
 	public function matches( $title, $action ) {
-		if ( !$title ) {
+		if ( $title == '' ) {
 			return false;
 		}
 
-		if( $action == 'new-account' && !$this->filtersNewAccounts() ) {
+		if ( $action === 'new-account' && !$this->filtersNewAccounts() ) {
 			return false;
 		}
 
-		if ( isset( $this->mParams['antispoof'] ) && is_callable( 'AntiSpoof::checkUnicodeString' ) ) {
-			list( $ok, $norm ) = AntiSpoof::checkUnicodeString( $title );
-			if ( $ok == "OK" ) {
+		if ( isset( $this->mParams['antispoof'] )
+			&& is_callable( 'AntiSpoof::checkUnicodeString' )
+		) {
+			if ( $action === 'edit' ) {
+				// Use process cache for frequently edited pages
+				$cache = ObjectCache::getMainWANInstance();
+				list( $ok, $norm ) = $cache->getWithSetCallback(
+					$cache->makeKey( 'titleblacklist', 'normalized-unicode', md5( $title ) ),
+					$cache::TTL_MONTH,
+					function () use ( $title ) {
+						return AntiSpoof::checkUnicodeString( $title );
+					}
+				);
+			} else {
+				list( $ok, $norm ) = AntiSpoof::checkUnicodeString( $title );
+			}
+
+			if ( $ok === "OK" ) {
 				list( $ver, $title ) = explode( ':', $norm, 2 );
 			} else {
 				wfDebugLog( 'TitleBlacklist', 'AntiSpoof could not normalize "' . $title . '".' );
@@ -384,7 +397,10 @@ class TitleBlacklistEntry {
 		}
 
 		wfSuppressWarnings();
-		$match = preg_match( "/^(?:{$this->mRegex})$/us" . ( isset( $this->mParams['casesensitive'] ) ? '' : 'i' ), $title );
+		$match = preg_match(
+			"/^(?:{$this->mRegex})$/us" . ( isset( $this->mParams['casesensitive'] ) ? '' : 'i' ),
+			$title
+		);
 		wfRestoreWarnings();
 
 		if ( $match ) {
@@ -403,6 +419,7 @@ class TitleBlacklistEntry {
 			}
 			return true;
 		}
+
 		return false;
 	}
 

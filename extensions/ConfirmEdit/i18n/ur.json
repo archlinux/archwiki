@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"عثمان خان شاہ"
+			"عثمان خان شاہ",
+			"Muhammad Shuaib"
 		]
 	},
-	"captcha-label": "کیپچا"
+	"captcha-label": "کیپچا",
+	"right-skipcaptcha": " کیپچا سے گزرے بغیر  کیپچا فعال کرنے والے اقدمات کی انجام دہی"
 }

@@ -21,7 +21,7 @@ class PHPReader implements Reader {
 	public function parse( $contents ) {
 		if ( strpos( $contents, '$messages' ) === false ) {
 			// This happens for some core languages that only have a fallback.
-			return array();
+			return [];
 		}
 
 		$php = $this->cleanupFile( $contents );
@@ -29,7 +29,7 @@ class PHPReader implements Reader {
 		$messages = $reader->getVar( 'messages' );
 
 		if ( $this->code ) {
-			return array( $this->code => $messages );
+			return [ $this->code => $messages ];
 		}
 
 		// Assuming that the array is keyed by language codes
@@ -47,7 +47,7 @@ class PHPReader implements Reader {
 		$contents = preg_replace( '/\r\n?/', "\n", $contents );
 
 		// We only want message arrays.
-		$results = array();
+		$results = [];
 		preg_match_all( '/\$messages(?:.*\s)*?\);/', $contents, $results );
 
 		// But we want them all in one string.

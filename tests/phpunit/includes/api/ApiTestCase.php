@@ -8,11 +8,6 @@ abstract class ApiTestCase extends MediaWikiLangTestCase {
 	 */
 	protected $apiContext;
 
-	/**
-	 * @var array
-	 */
-	protected $tablesUsed = [ 'user', 'user_groups', 'user_properties' ];
-
 	protected function setUp() {
 		global $wgServer;
 
@@ -22,24 +17,14 @@ abstract class ApiTestCase extends MediaWikiLangTestCase {
 		ApiQueryInfo::resetTokenCache(); // tokens are invalid because we cleared the session
 
 		self::$users = [
-			'sysop' => new TestUser(
-				'Apitestsysop',
-				'Api Test Sysop',
-				'api_test_sysop@example.com',
-				[ 'sysop' ]
-			),
-			'uploader' => new TestUser(
-				'Apitestuser',
-				'Api Test User',
-				'api_test_user@example.com',
-				[]
-			)
+			'sysop' => static::getTestSysop(),
+			'uploader' => static::getTestUser(),
 		];
 
 		$this->setMwGlobals( [
 			'wgAuth' => new MediaWiki\Auth\AuthManagerAuthPlugin,
 			'wgRequest' => new FauxRequest( [] ),
-			'wgUser' => self::$users['sysop']->user,
+			'wgUser' => self::$users['sysop']->getUser(),
 		] );
 
 		$this->apiContext = new ApiTestContext();
@@ -162,15 +147,19 @@ abstract class ApiTestCase extends MediaWikiLangTestCase {
 		}
 	}
 
-	protected function doLogin( $user = 'sysop' ) {
-		if ( !array_key_exists( $user, self::$users ) ) {
-			throw new MWException( "Can not log in to undefined user $user" );
+	protected function doLogin( $testUser = 'sysop' ) {
+		if ( $testUser === null ) {
+			$testUser = static::getTestSysop();
+		} elseif ( is_string( $testUser ) && array_key_exists( $testUser, self::$users ) ) {
+			$testUser = self::$users[ $testUser ];
+		} elseif ( !$testUser instanceof TestUser ) {
+			throw new MWException( "Can not log in to undefined user $testUser" );
 		}
 
 		$data = $this->doApiRequest( [
 			'action' => 'login',
-			'lgname' => self::$users[$user]->username,
-			'lgpassword' => self::$users[$user]->password ] );
+			'lgname' => $testUser->getUser()->getName(),
+			'lgpassword' => $testUser->getPassword() ] );
 
 		$token = $data[0]['login']['token'];
 
@@ -178,8 +167,8 @@ abstract class ApiTestCase extends MediaWikiLangTestCase {
 			[
 				'action' => 'login',
 				'lgtoken' => $token,
-				'lgname' => self::$users[$user]->username,
-				'lgpassword' => self::$users[$user]->password,
+				'lgname' => $testUser->getUser()->getName(),
+				'lgpassword' => $testUser->getPassword(),
 			],
 			$data[2]
 		);
@@ -187,18 +176,18 @@ abstract class ApiTestCase extends MediaWikiLangTestCase {
 		if ( $data[0]['login']['result'] === 'Success' ) {
 			// DWIM
 			global $wgUser;
-			$wgUser = self::$users[$user]->getUser();
+			$wgUser = $testUser->getUser();
 			RequestContext::getMain()->setUser( $wgUser );
 		}
 
 		return $data;
 	}
 
-	protected function getTokenList( $user, $session = null ) {
+	protected function getTokenList( TestUser $user, $session = null ) {
 		$data = $this->doApiRequest( [
 			'action' => 'tokens',
 			'type' => 'edit|delete|protect|move|block|unblock|watch'
-		], $session, false, $user->user );
+		], $session, false, $user->getUser() );
 
 		if ( !array_key_exists( 'tokens', $data[0] ) ) {
 			throw new MWException( 'Api failed to return a token list' );

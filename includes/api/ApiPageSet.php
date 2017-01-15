@@ -58,7 +58,7 @@ class ApiPageSet extends ApiBase {
 	private $mGoodTitles = [];
 	private $mMissingPages = []; // [ns][dbkey] => fake page_id
 	private $mMissingTitles = [];
-	/** @var array [fake_page_id] => array( 'title' => $title, 'invalidreason' => $reason ) */
+	/** @var array [fake_page_id] => [ 'title' => $title, 'invalidreason' => $reason ] */
 	private $mInvalidTitles = [];
 	private $mMissingPageIDs = [];
 	private $mRedirectTitles = [];
@@ -86,10 +86,10 @@ class ApiPageSet extends ApiBase {
 	 * Add all items from $values into the result
 	 * @param array $result Output
 	 * @param array $values Values to add
-	 * @param string $flag The name of the boolean flag to mark this element
+	 * @param string[] $flags The names of boolean flags to mark this element
 	 * @param string $name If given, name of the value
 	 */
-	private static function addValues( array &$result, $values, $flag = null, $name = null ) {
+	private static function addValues( array &$result, $values, $flags = [], $name = null ) {
 		foreach ( $values as $val ) {
 			if ( $val instanceof Title ) {
 				$v = [];
@@ -99,7 +99,7 @@ class ApiPageSet extends ApiBase {
 			} else {
 				$v = $val;
 			}
-			if ( $flag !== null ) {
+			foreach ( $flags as $flag ) {
 				$v[$flag] = true;
 			}
 			$result[] = $v;
@@ -309,8 +309,9 @@ class ApiPageSet extends ApiBase {
 			$pageFlds['page_lang'] = null;
 		}
 
-		// only store non-default fields
-		$this->mRequestedPageFields = array_diff_key( $this->mRequestedPageFields, $pageFlds );
+		foreach ( LinkCache::getSelectFields() as $field ) {
+			$pageFlds[$field] = null;
+		}
 
 		$pageFlds = array_merge( $pageFlds, $this->mRequestedPageFields );
 
@@ -495,10 +496,14 @@ class ApiPageSet extends ApiBase {
 	 * @since 1.21
 	 */
 	public function getNormalizedTitlesAsResult( $result = null ) {
+		global $wgContLang;
+
 		$values = [];
 		foreach ( $this->getNormalizedTitles() as $rawTitleStr => $titleStr ) {
+			$encode = ( $wgContLang->normalize( $rawTitleStr ) !== $rawTitleStr );
 			$values[] = [
-				'from' => $rawTitleStr,
+				'fromencoded' => $encode,
+				'from' => $encode ? rawurlencode( $rawTitleStr ) : $rawTitleStr,
 				'to' => $titleStr
 			];
 		}
@@ -596,19 +601,39 @@ class ApiPageSet extends ApiBase {
 	) {
 		$result = [];
 		if ( in_array( 'invalidTitles', $invalidChecks ) ) {
-			self::addValues( $result, $this->getInvalidTitlesAndReasons(), 'invalid' );
+			self::addValues( $result, $this->getInvalidTitlesAndReasons(), [ 'invalid' ] );
 		}
 		if ( in_array( 'special', $invalidChecks ) ) {
-			self::addValues( $result, $this->getSpecialTitles(), 'special', 'title' );
+			$known = [];
+			$unknown = [];
+			foreach ( $this->getSpecialTitles() as $title ) {
+				if ( $title->isKnown() ) {
+					$known[] = $title;
+				} else {
+					$unknown[] = $title;
+				}
+			}
+			self::addValues( $result, $unknown, [ 'special', 'missing' ] );
+			self::addValues( $result, $known, [ 'special' ] );
 		}
 		if ( in_array( 'missingIds', $invalidChecks ) ) {
-			self::addValues( $result, $this->getMissingPageIDs(), 'missing', 'pageid' );
+			self::addValues( $result, $this->getMissingPageIDs(), [ 'missing' ], 'pageid' );
 		}
 		if ( in_array( 'missingRevIds', $invalidChecks ) ) {
-			self::addValues( $result, $this->getMissingRevisionIDs(), 'missing', 'revid' );
+			self::addValues( $result, $this->getMissingRevisionIDs(), [ 'missing' ], 'revid' );
 		}
 		if ( in_array( 'missingTitles', $invalidChecks ) ) {
-			self::addValues( $result, $this->getMissingTitles(), 'missing' );
+			$known = [];
+			$unknown = [];
+			foreach ( $this->getMissingTitles() as $title ) {
+				if ( $title->isKnown() ) {
+					$known[] = $title;
+				} else {
+					$unknown[] = $title;
+				}
+			}
+			self::addValues( $result, $unknown, [ 'missing' ] );
+			self::addValues( $result, $known, [ 'missing', 'known' ] );
 		}
 		if ( in_array( 'interwikiTitles', $invalidChecks ) ) {
 			self::addValues( $result, $this->getInterwikiTitlesAsResult() );
@@ -730,6 +755,8 @@ class ApiPageSet extends ApiBase {
 		// Store Title object in various data structures
 		$title = Title::newFromRow( $row );
 
+		LinkCache::singleton()->addGoodLinkObjFromRow( $title, $row );
+
 		$pageId = intval( $row->page_id );
 		$this->mAllPages[$row->page_namespace][$row->page_title] = $pageId;
 		$this->mTitles[] = $title;
@@ -777,7 +804,7 @@ class ApiPageSet extends ApiBase {
 		$res = $db->select( 'page', $this->getPageTableFields(), $set,
 			__METHOD__ );
 
-		// Hack: get the ns:titles stored in array(ns => array(titles)) format
+		// Hack: get the ns:titles stored in [ ns => [ titles ] ] format
 		$this->initFromQueryResult( $res, $linkBatch->data, true ); // process Titles
 
 		// Resolve any found redirects
@@ -859,9 +886,11 @@ class ApiPageSet extends ApiBase {
 			// Any items left in the $remaining list are added as missing
 			if ( $processTitles ) {
 				// The remaining titles in $remaining are non-existent pages
+				$linkCache = LinkCache::singleton();
 				foreach ( $remaining as $ns => $dbkeys ) {
 					foreach ( array_keys( $dbkeys ) as $dbkey ) {
 						$title = Title::makeTitle( $ns, $dbkey );
+						$linkCache->addBadLinkObj( $title );
 						$this->mAllPages[$ns][$dbkey] = $this->mFakePageId;
 						$this->mMissingPages[$ns][$dbkey] = $this->mFakePageId;
 						$this->mGoodAndMissingPages[$ns][$dbkey] = $this->mFakePageId;
@@ -1002,7 +1031,7 @@ class ApiPageSet extends ApiBase {
 				// Get pageIDs data from the `page` table
 				$res = $db->select( 'page', $pageFlds, $set, __METHOD__ );
 
-				// Hack: get the ns:titles stored in array(ns => array(titles)) format
+				// Hack: get the ns:titles stored in [ns => array(titles)] format
 				$this->initFromQueryResult( $res, $linkBatch->data, true );
 			}
 		}
@@ -1326,7 +1355,7 @@ class ApiPageSet extends ApiBase {
 
 	/**
 	 * Get the database connection (read-only)
-	 * @return DatabaseBase
+	 * @return Database
 	 */
 	protected function getDB() {
 		return $this->mDbSource->getDB();
@@ -1401,6 +1430,23 @@ class ApiPageSet extends ApiBase {
 		}
 
 		return $result;
+	}
+
+	protected function handleParamNormalization( $paramName, $value, $rawValue ) {
+		parent::handleParamNormalization( $paramName, $value, $rawValue );
+
+		if ( $paramName === 'titles' ) {
+			// For the 'titles' parameter, we want to split it like ApiBase would
+			// and add any changed titles to $this->mNormalizedTitles
+			$value = $this->explodeMultiValue( $value, self::LIMIT_SML2 + 1 );
+			$l = count( $value );
+			$rawValue = $this->explodeMultiValue( $rawValue, $l );
+			for ( $i = 0; $i < $l; $i++ ) {
+				if ( $value[$i] !== $rawValue[$i] ) {
+					$this->mNormalizedTitles[$rawValue[$i]] = $value[$i];
+				}
+			}
+		}
 	}
 
 	private static $generators = null;

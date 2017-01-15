@@ -16,17 +16,24 @@ class DatabaseUpdaterTest extends MediaWikiTestCase {
 	}
 }
 
-class FakeDatabase extends DatabaseBase {
+class FakeDatabase extends Database {
 	public $lastInsertTable;
 	public $lastInsertData;
 
 	function __construct() {
+		$this->cliMode = true;
+		$this->connLogger = new \Psr\Log\NullLogger();
+		$this->queryLogger = new \Psr\Log\NullLogger();
+		$this->errorLogger = function ( Exception $e ) {
+			wfWarn( get_class( $e ) . ": {$e->getMessage()}" );
+		};
+		$this->currentDomain = DatabaseDomain::newUnspecified();
 	}
 
-	function clearFlag( $arg ) {
+	function clearFlag( $arg, $remember = self::REMEMBER_NOTHING ) {
 	}
 
-	function setFlag( $arg ) {
+	function setFlag( $arg, $remember = self::REMEMBER_NOTHING ) {
 	}
 
 	public function insert( $table, $a, $fname = __METHOD__, $options = [] ) {
@@ -63,7 +70,7 @@ class FakeDatabase extends DatabaseBase {
 	 * member variables.
 	 * If no more rows are available, false is returned.
 	 *
-	 * @param ResultWrapper|stdClass $res Object as returned from DatabaseBase::query(), etc.
+	 * @param ResultWrapper|stdClass $res Object as returned from Database::query(), etc.
 	 * @return stdClass|bool
 	 * @throws DBUnexpectedError Thrown if the database returns an error
 	 */
@@ -76,7 +83,7 @@ class FakeDatabase extends DatabaseBase {
 	 * form. Fields are retrieved with $row['fieldname'].
 	 * If no more rows are available, false is returned.
 	 *
-	 * @param ResultWrapper $res Result object as returned from DatabaseBase::query(), etc.
+	 * @param ResultWrapper $res Result object as returned from Database::query(), etc.
 	 * @return array|bool
 	 * @throws DBUnexpectedError Thrown if the database returns an error
 	 */
@@ -124,7 +131,7 @@ class FakeDatabase extends DatabaseBase {
 	 *
 	 * Example:
 	 * $id = $dbw->nextSequenceValue( 'page_page_id_seq' );
-	 * $dbw->insert( 'page', array( 'page_id' => $id ) );
+	 * $dbw->insert( 'page', [ 'page_id' => $id ] );
 	 * $id = $dbw->insertId();
 	 *
 	 * @return int

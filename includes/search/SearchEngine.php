@@ -54,6 +54,12 @@ abstract class SearchEngine {
 	/** @var array Feature values */
 	protected $features = [];
 
+	/** @const string profile type for completionSearch */
+	const COMPLETION_PROFILE_TYPE = 'completionSearchProfile';
+
+	/** @const string profile type for query independent ranking features */
+	const FT_QUERY_INDEP_PROFILE_TYPE = 'fulltextQueryIndepProfile';
+
 	/**
 	 * Perform a full text search query and return a result set.
 	 * If full text searches are not supported or disabled, return null.
@@ -261,36 +267,60 @@ abstract class SearchEngine {
 
 	/**
 	 * Parse some common prefixes: all (search everything)
-	 * or namespace names
+	 * or namespace names and set the list of namespaces
+	 * of this class accordingly.
 	 *
 	 * @param string $query
 	 * @return string
 	 */
 	function replacePrefixes( $query ) {
+		$queryAndNs = self::parseNamespacePrefixes( $query );
+		if ( $queryAndNs === false ) {
+			return $query;
+		}
+		$this->namespaces = $queryAndNs[1];
+		return $queryAndNs[0];
+	}
+
+	/**
+	 * Parse some common prefixes: all (search everything)
+	 * or namespace names
+	 *
+	 * @param string $query
+	 * @return false|array false if no namespace was extracted, an array
+	 * with the parsed query at index 0 and an array of namespaces at index
+	 * 1 (or null for all namespaces).
+	 */
+	public static function parseNamespacePrefixes( $query ) {
 		global $wgContLang;
 
 		$parsed = $query;
 		if ( strpos( $query, ':' ) === false ) { // nothing to do
-			return $parsed;
+			return false;
 		}
+		$extractedNamespace = null;
 
 		$allkeyword = wfMessage( 'searchall' )->inContentLanguage()->text() . ":";
 		if ( strncmp( $query, $allkeyword, strlen( $allkeyword ) ) == 0 ) {
-			$this->namespaces = null;
+			$extractedNamespace = null;
 			$parsed = substr( $query, strlen( $allkeyword ) );
 		} elseif ( strpos( $query, ':' ) !== false ) {
+			// TODO: should we unify with PrefixSearch::extractNamespace ?
 			$prefix = str_replace( ' ', '_', substr( $query, 0, strpos( $query, ':' ) ) );
 			$index = $wgContLang->getNsIndex( $prefix );
 			if ( $index !== false ) {
-				$this->namespaces = [ $index ];
+				$extractedNamespace = [ $index ];
 				$parsed = substr( $query, strlen( $prefix ) + 1 );
+			} else {
+				return false;
 			}
 		}
+
 		if ( trim( $parsed ) == '' ) {
 			$parsed = $query; // prefix was the whole query
 		}
 
-		return $parsed;
+		return [ $parsed, $extractedNamespace ];
 	}
 
 	/**
@@ -517,13 +547,20 @@ abstract class SearchEngine {
 			return $sugg->getSuggestedTitle()->getPrefixedText();
 		} );
 
-		// Rescore results with an exact title match
-		// NOTE: in some cases like cross-namespace redirects
-		// (frequently used as shortcuts e.g. WP:WP on huwiki) some
-		// backends like Cirrus will return no results. We should still
-		// try an exact title match to workaround this limitation
-		$rescorer = new SearchExactMatchRescorer();
-		$rescoredResults = $rescorer->rescore( $search, $this->namespaces, $results, $this->limit );
+		if ( $this->offset === 0 ) {
+			// Rescore results with an exact title match
+			// NOTE: in some cases like cross-namespace redirects
+			// (frequently used as shortcuts e.g. WP:WP on huwiki) some
+			// backends like Cirrus will return no results. We should still
+			// try an exact title match to workaround this limitation
+			$rescorer = new SearchExactMatchRescorer();
+			$rescoredResults = $rescorer->rescore( $search, $this->namespaces, $results, $this->limit );
+		} else {
+			// No need to rescore if offset is not 0
+			// The exact match must have been returned at position 0
+			// if it existed.
+			$rescoredResults = $results;
+		}
 
 		if ( count( $rescoredResults ) > 0 ) {
 			$found = array_search( $rescoredResults[0], $results );
@@ -631,6 +668,96 @@ abstract class SearchEngine {
 		return MediaWikiServices::getInstance()->getSearchEngineConfig()->getSearchTypes();
 	}
 
+	/**
+	 * Get a list of supported profiles.
+	 * Some search engine implementations may expose specific profiles to fine-tune
+	 * its behaviors.
+	 * The profile can be passed as a feature data with setFeatureData( $profileType, $profileName )
+	 * The array returned by this function contains the following keys:
+	 * - name: the profile name to use with setFeatureData
+	 * - desc-message: the i18n description
+	 * - default: set to true if this profile is the default
+	 *
+	 * @since 1.28
+	 * @param string $profileType the type of profiles
+	 * @param User|null $user the user requesting the list of profiles
+	 * @return array|null the list of profiles or null if none available
+	 */
+	public function getProfiles( $profileType, User $user = null ) {
+		return null;
+	}
+
+	/**
+	 * Create a search field definition.
+	 * Specific search engines should override this method to create search fields.
+	 * @param string $name
+	 * @param int    $type One of the types in SearchIndexField::INDEX_TYPE_*
+	 * @return SearchIndexField
+	 * @since 1.28
+	 */
+	public function makeSearchFieldMapping( $name, $type ) {
+		return new NullIndexField();
+	}
+
+	/**
+	 * Get fields for search index
+	 * @since 1.28
+	 * @return SearchIndexField[] Index field definitions for all content handlers
+	 */
+	public function getSearchIndexFields() {
+		$models = ContentHandler::getContentModels();
+		$fields = [];
+		foreach ( $models as $model ) {
+			$handler = ContentHandler::getForModelID( $model );
+			$handlerFields = $handler->getFieldsForSearchIndex( $this );
+			foreach ( $handlerFields as $fieldName => $fieldData ) {
+				if ( empty( $fields[$fieldName] ) ) {
+					$fields[$fieldName] = $fieldData;
+				} else {
+					// TODO: do we allow some clashes with the same type or reject all of them?
+					$mergeDef = $fields[$fieldName]->merge( $fieldData );
+					if ( !$mergeDef ) {
+						throw new InvalidArgumentException( "Duplicate field $fieldName for model $model" );
+					}
+					$fields[$fieldName] = $mergeDef;
+				}
+			}
+		}
+		// Hook to allow extensions to produce search mapping fields
+		Hooks::run( 'SearchIndexFields', [ &$fields, $this ] );
+		return $fields;
+	}
+
+	/**
+	 * Augment search results with extra data.
+	 *
+	 * @param SearchResultSet $resultSet
+	 */
+	public function augmentSearchResults( SearchResultSet $resultSet ) {
+		$setAugmentors = [];
+		$rowAugmentors = [];
+		Hooks::run( "SearchResultsAugment", [ &$setAugmentors, &$rowAugmentors ] );
+
+		if ( !$setAugmentors && !$rowAugmentors ) {
+			// We're done here
+			return;
+		}
+
+		// Convert row augmentors to set augmentor
+		foreach ( $rowAugmentors as $name => $row ) {
+			if ( isset( $setAugmentors[$name] ) ) {
+				throw new InvalidArgumentException( "Both row and set augmentors are defined for $name" );
+			}
+			$setAugmentors[$name] = new PerRowAugmentor( $row );
+		}
+
+		foreach ( $setAugmentors as $name => $augmentor ) {
+			$data = $augmentor->augmentAll( $resultSet );
+			if ( $data ) {
+				$resultSet->setAugmentedData( $name, $data );
+			}
+		}
+	}
 }
 
 /**

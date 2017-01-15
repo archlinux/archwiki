@@ -25,6 +25,7 @@
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use Wikimedia\ScopedCallback;
 
 /**
  * Abstraction for ResourceLoader modules, with name registration and maxage functionality.
@@ -34,6 +35,12 @@ abstract class ResourceLoaderModule implements LoggerAwareInterface {
 	const TYPE_SCRIPTS = 'scripts';
 	const TYPE_STYLES = 'styles';
 	const TYPE_COMBINED = 'combined';
+
+	# Desired load type
+	// Module only has styles (loaded via <style> or <link rel=stylesheet>)
+	const LOAD_STYLES = 'styles';
+	// Module may have other resources (loaded via mw.loader from a script)
+	const LOAD_GENERAL = 'general';
 
 	# sitewide core module like a skin file or jQuery component
 	const ORIGIN_CORE_SITEWIDE = 1;
@@ -77,6 +84,11 @@ abstract class ResourceLoaderModule implements LoggerAwareInterface {
 	protected $config;
 
 	/**
+	 * @var array|bool
+	 */
+	protected $deprecated = false;
+
+	/**
 	 * @var LoggerInterface
 	 */
 	protected $logger;
@@ -115,16 +127,6 @@ abstract class ResourceLoaderModule implements LoggerAwareInterface {
 	}
 
 	/**
-	 * Set this module's origin. This is called by ResourceLoader::register()
-	 * when registering the module. Other code should not call this.
-	 *
-	 * @param int $origin Origin
-	 */
-	public function setOrigin( $origin ) {
-		$this->origin = $origin;
-	}
-
-	/**
 	 * @param ResourceLoaderContext $context
 	 * @return bool
 	 */
@@ -132,6 +134,28 @@ abstract class ResourceLoaderModule implements LoggerAwareInterface {
 		global $wgContLang;
 
 		return $wgContLang->getDir() !== $context->getDirection();
+	}
+
+	/**
+	 * Get JS representing deprecation information for the current module if available
+	 *
+	 * @return string JavaScript code
+	 */
+	protected function getDeprecationInformation() {
+		$deprecationInfo = $this->deprecated;
+		if ( $deprecationInfo ) {
+			$name = $this->getName();
+			$warning = 'This page is using the deprecated ResourceLoader module "' . $name . '".';
+			if ( !is_bool( $deprecationInfo ) && isset( $deprecationInfo['message'] ) ) {
+				$warning .= "\n" . $deprecationInfo['message'];
+			}
+			return Xml::encodeJsCall(
+				'mw.log.warn',
+				[ $warning ]
+			);
+		} else {
+			return '';
+		}
 	}
 
 	/**
@@ -241,8 +265,8 @@ abstract class ResourceLoaderModule implements LoggerAwareInterface {
 	 *
 	 * @param ResourceLoaderContext $context
 	 * @return array List of CSS strings or array of CSS strings keyed by media type.
-	 *  like array( 'screen' => '.foo { width: 0 }' );
-	 *  or array( 'screen' => array( '.foo { width: 0 }' ) );
+	 *  like [ 'screen' => '.foo { width: 0 }' ];
+	 *  or [ 'screen' => [ '.foo { width: 0 }' ] ];
 	 */
 	public function getStyles( ResourceLoaderContext $context ) {
 		// Stub, override expected
@@ -256,7 +280,7 @@ abstract class ResourceLoaderModule implements LoggerAwareInterface {
 	 * load the files directly. See also getScriptURLsForDebug()
 	 *
 	 * @param ResourceLoaderContext $context
-	 * @return array Array( mediaType => array( URL1, URL2, ... ), ... )
+	 * @return array [ mediaType => [ URL1, URL2, ... ], ... ]
 	 */
 	public function getStyleURLsForDebug( ResourceLoaderContext $context ) {
 		$resourceLoader = $context->getResourceLoader();
@@ -354,6 +378,16 @@ abstract class ResourceLoaderModule implements LoggerAwareInterface {
 	}
 
 	/**
+	 * Get the module's load type.
+	 *
+	 * @since 1.28
+	 * @return string ResourceLoaderModule LOAD_* constant
+	 */
+	public function getType() {
+		return self::LOAD_GENERAL;
+	}
+
+	/**
 	 * Get the skip function.
 	 *
 	 * Modules that provide fallback functionality can provide a "skip function". This
@@ -384,7 +418,7 @@ abstract class ResourceLoaderModule implements LoggerAwareInterface {
 
 		// Try in-object cache first
 		if ( !isset( $this->fileDeps[$vary] ) ) {
-			$dbr = wfGetDB( DB_SLAVE );
+			$dbr = wfGetDB( DB_REPLICA );
 			$deps = $dbr->selectField( 'module_deps',
 				'md_deps',
 				[
@@ -453,9 +487,14 @@ abstract class ResourceLoaderModule implements LoggerAwareInterface {
 					]
 				);
 
-				$dbw->onTransactionIdle( function () use ( &$scopeLock ) {
-					ScopedCallback::consume( $scopeLock ); // release after commit
-				} );
+				if ( $dbw->trxLevel() ) {
+					$dbw->onTransactionResolution(
+						function () use ( &$scopeLock ) {
+							ScopedCallback::consume( $scopeLock ); // release after commit
+						},
+						__METHOD__
+					);
+				}
 			}
 		} catch ( Exception $e ) {
 			wfDebugLog( 'resourceloader', __METHOD__ . ": failed to update DB: $e" );
@@ -604,7 +643,7 @@ abstract class ResourceLoaderModule implements LoggerAwareInterface {
 		// Styles
 		if ( $context->shouldIncludeStyles() ) {
 			$styles = [];
-			// Don't create empty stylesheets like array( '' => '' ) for modules
+			// Don't create empty stylesheets like [ '' => '' ] for modules
 			// that don't *have* any stylesheets (bug 38024).
 			$stylePairs = $this->getStyles( $context );
 			if ( count( $stylePairs ) ) {
@@ -754,10 +793,10 @@ abstract class ResourceLoaderModule implements LoggerAwareInterface {
 	 *
 	 * @code
 	 *     $summary = parent::getDefinitionSummary( $context );
-	 *     $summary[] = array(
+	 *     $summary[] = [
 	 *         'foo' => 123,
 	 *         'bar' => 'quux',
-	 *     );
+	 *     ];
 	 *     return $summary;
 	 * @endcode
 	 *

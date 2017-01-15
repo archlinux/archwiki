@@ -114,28 +114,113 @@ class ResourceLoaderWikiModuleTest extends ResourceLoaderTestCase {
 			[ [], 'test1', true ],
 			// 'site' module with a non-empty page
 			[
-				[ 'MediaWiki:Common.js' => [ 'rev_sha1' => 'dmh6qn', 'rev_len' => 1234 ] ],
+				[ 'MediaWiki:Common.js' => [ 'page_len' => 1234 ] ],
 				'site',
 				false,
 			],
 			// 'site' module with an empty page
 			[
-				[ 'MediaWiki:Foo.js' => [ 'rev_sha1' => 'phoi', 'rev_len' => 0 ] ],
+				[ 'MediaWiki:Foo.js' => [ 'page_len' => 0 ] ],
 				'site',
 				false,
 			],
 			// 'user' module with a non-empty page
 			[
-				[ 'User:Example/common.js' => [ 'rev_sha1' => 'j7ssba', 'rev_len' => 25 ] ],
+				[ 'User:Example/common.js' => [ 'page_len' => 25 ] ],
 				'user',
 				false,
 			],
 			// 'user' module with an empty page
 			[
-				[ 'User:Example/foo.js' => [ 'rev_sha1' => 'phoi', 'rev_len' => 0 ] ],
+				[ 'User:Example/foo.js' => [ 'page_len' => 0 ] ],
 				'user',
 				true,
 			],
 		];
+	}
+
+	/**
+	 * @covers ResourceLoaderWikiModule::getTitleInfo
+	 */
+	public function testGetTitleInfo() {
+		$pages = [
+			'MediaWiki:Common.css' => [ 'type' => 'styles' ],
+			'mediawiki: fallback.css' => [ 'type' => 'styles' ],
+		];
+		$titleInfo = [
+			'MediaWiki:Common.css' => [ 'page_len' => 1234 ],
+			'MediaWiki:Fallback.css' => [ 'page_len' => 0 ],
+		];
+		$expected = $titleInfo;
+
+		$module = $this->getMockBuilder( 'TestResourceLoaderWikiModule' )
+			->setMethods( [ 'getPages' ] )
+			->getMock();
+		$module->method( 'getPages' )->willReturn( $pages );
+		// Can't mock static methods
+		$module::$returnFetchTitleInfo = $titleInfo;
+
+		$context = $this->getMockBuilder( 'ResourceLoaderContext' )
+			->disableOriginalConstructor()
+			->getMock();
+
+		$module = TestingAccessWrapper::newFromObject( $module );
+		$this->assertEquals( $expected, $module->getTitleInfo( $context ), 'Title info' );
+	}
+
+	/**
+	 * @covers ResourceLoaderWikiModule::getTitleInfo
+	 * @covers ResourceLoaderWikiModule::setTitleInfo
+	 * @covers ResourceLoaderWikiModule::preloadTitleInfo
+	 */
+	public function testGetPreloadedTitleInfo() {
+		$pages = [
+			'MediaWiki:Common.css' => [ 'type' => 'styles' ],
+			// Regression against T145673. It's impossible to statically declare page names in
+			// a canonical way since the canonical prefix is localised. As such, the preload
+			// cache computed the right cache key, but failed to find the results when
+			// doing an intersect on the canonical result, producing an empty array.
+			'mediawiki: fallback.css' => [ 'type' => 'styles' ],
+		];
+		$titleInfo = [
+			'MediaWiki:Common.css' => [ 'page_len' => 1234 ],
+			'MediaWiki:Fallback.css' => [ 'page_len' => 0 ],
+		];
+		$expected = $titleInfo;
+
+		$module = $this->getMockBuilder( 'TestResourceLoaderWikiModule' )
+			->setMethods( [ 'getPages' ] )
+			->getMock();
+		$module->method( 'getPages' )->willReturn( $pages );
+		// Can't mock static methods
+		$module::$returnFetchTitleInfo = $titleInfo;
+
+		$rl = new EmptyResourceLoader();
+		$rl->register( 'testmodule', $module );
+		$context = new ResourceLoaderContext( $rl, new FauxRequest() );
+
+		TestResourceLoaderWikiModule::invalidateModuleCache(
+			Title::newFromText( 'MediaWiki:Common.css' ),
+			null,
+			null,
+			wfWikiID()
+		);
+		TestResourceLoaderWikiModule::preloadTitleInfo(
+			$context,
+			wfGetDB( DB_REPLICA ),
+			[ 'testmodule' ]
+		);
+
+		$module = TestingAccessWrapper::newFromObject( $module );
+		$this->assertEquals( $expected, $module->getTitleInfo( $context ), 'Title info' );
+	}
+}
+
+class TestResourceLoaderWikiModule extends ResourceLoaderWikiModule {
+	public static $returnFetchTitleInfo = null;
+	protected static function fetchTitleInfo( IDatabase $db, array $pages, $fname = null ) {
+		$ret = self::$returnFetchTitleInfo;
+		self::$returnFetchTitleInfo = null;
+		return $ret;
 	}
 }

@@ -3,7 +3,8 @@
 		"authors": [
 			"Amire80",
 			"Ofekalef",
-			"Rotem Liss"
+			"Rotem Liss",
+			"Guycn2"
 		]
 	},
 	"spam-blacklist": " # כתובות URL חיצוניות התואמות לרשימה זו ייחסמו בעת הוספתן לדף.\n # רשימה זו משפיעה על אתר זה בלבד; שימו לב גם לרשימה הכללית.\n # לתיעוד ראו https://www.mediawiki.org/wiki/Extension:SpamBlacklist\n #<!-- נא להשאיר שורה זו בדיוק כפי שהיא --> <pre>\n#\n# התחביר הוא כדלקמן:\n#   * כל דבר מתו \"#\" לסוף השורה הוא הערה\n#   * כל שורה לא ריקה היא קטע מביטוי רגולרי שיתאים לשמות המתחם של כתובות URL\n\n #</pre> <!-- נא להשאיר שורה זו בדיוק כפי שהיא -->",
@@ -18,8 +19,8 @@
 	"log-name-spamblacklist": "יומן רשימה שחורה של ספאם",
 	"log-description-spamblacklist": "האירועים האלה עוקבים אחרי הפעלות של רשימה שחורה של ספאם.",
 	"logentry-spamblacklist-hit": "$1 {{GENDER:$1|גרם|גרמה}} לפעולת רשימה שחורה בדף $3 תוך כדי ניסיון להוסיף את הכתובת $4.",
-	"right-spamblacklistlog": "תצוגת יומן רשימה שחורה של ספאם",
-	"action-spamblacklistlog": "תצוגת יומן רשימה שחורה של ספאם",
+	"right-spamblacklistlog": "צפייה ביומן הרשימה השחורה של הספאם",
+	"action-spamblacklistlog": "לצפות ביומן הרשימה השחורה של הספאם",
 	"apihelp-spamblacklist-description": "לבדוק URL אחד או יותר אל מול SpamBlacklist.",
 	"apihelp-spamblacklist-param-url": "URL־ים לבדוק אל מול SpamBlacklist.",
 	"apihelp-spamblacklist-example-1": "לבדוק שני URL־ים אל מול הרשימה השחורה."

@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica\Suggest;
 
 use Elastica\Suggest\CandidateGenerator\AbstractCandidateGenerator;
@@ -6,7 +7,7 @@ use Elastica\Suggest\CandidateGenerator\AbstractCandidateGenerator;
 /**
  * Class Phrase.
  *
- * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggesters-phrase.html
+ * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggesters-phrase.html
  */
 class Phrase extends AbstractSuggest
 {

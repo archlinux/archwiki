@@ -80,7 +80,7 @@ table.rimage {
 div.thumb {
 	margin-bottom: .5em;
 	border-style: solid;
-	border-color: white;
+	border-color: #fff;
 	width: auto;
 }
 
@@ -90,6 +90,8 @@ div.thumbinner {
 	background-color: #f9f9f9;
 	font-size: 94%;
 	text-align: center;
+	/* new block formatting context,
+	 * to clear background from floating content  */
 	overflow: hidden;
 }
 
@@ -120,9 +122,9 @@ div.magnify a {
 	width: 15px;
 	height: 11px;
 	/* Use same SVG support hack as mediawiki.legacy's shared.css */
-	background: url(images/magnify-clip-ltr.png) center center no-repeat;
+	background: url( images/magnify-clip-ltr.png ) center center no-repeat;
 	/* @embed */
-	background-image: linear-gradient(transparent, transparent), url(images/magnify-clip-ltr.svg);
+	background-image: linear-gradient( transparent, transparent ), url( images/magnify-clip-ltr.svg );
 	/* Don't annoy people who copy-paste everything too much */
 	-moz-user-select: none;
 	-webkit-user-select: none;
@@ -146,7 +148,7 @@ div.tleft {
 }
 
 img.thumbborder {
-	border: 1px solid #dddddd;
+	border: 1px solid #ddd;
 }
 
 /* Page history styling */
@@ -211,7 +213,7 @@ table.toc td {
 }
 
 .error {
-	color: red;
+	color: #f00;
 	font-size: larger;
 }
 
@@ -223,12 +225,12 @@ table.toc td {
 }
 
 #preftoc li {
-	border: 1px solid White;
+	border: 1px solid #fff;
 }
 
 #preftoc li.selected {
 	background-color: #f9f9f9;
-	border: 1px dashed #aaaaaa;
+	border: 1px dashed #aaa;
 }
 
 #preftoc a,
@@ -271,14 +273,14 @@ table.small {
 
 /* use this instead of #toc for page content */
 .toccolours {
-	border: 1px solid #aaaaaa;
+	border: 1px solid #aaa;
 	background-color: #f9f9f9;
 	padding: 5px;
 	font-size: 95%;
 }
 
 #siteNotice {
-	border: 1px solid #aaaaaa;
+	border: 1px solid #aaa;
 	padding-left: 0.5em;
 	padding-right: 0.5em;
 }
@@ -289,12 +291,7 @@ table.small {
 
 span.unpatrolled {
 	font-weight: bold;
-	color: red;
-}
-
-span.updatedmarker {
-	color: black;
-	background-color: #00FF00;
+	color: #f00;
 }
 
 div.gallerybox {
@@ -307,14 +304,14 @@ span.comment {
 
 .previewnote {
 	text-align: center;
-	color: #cc0000;
+	color: #c00;
 }
 
 .editExternally {
 	border-style: solid;
 	border-width: 1px;
-	border-color: gray;
-	background: #ffffff;
+	border-color: #808080;
+	background: #fff;
 	padding: 3px;
 	margin-top: 0.5em;
 	float: left;
@@ -324,7 +321,7 @@ span.comment {
 
 .editExternallyHelp {
 	font-style: italic;
-	color: gray;
+	color: #808080;
 }
 
 li span.deleted {
@@ -357,7 +354,7 @@ table.mw_metadata {
 
 table.mw_metadata td,
 table.mw_metadata th {
-	border: 1px solid #aaaaaa;
+	border: 1px solid #aaa;
 	padding-left: 4px;
 	padding-right: 4px;
 }
@@ -402,7 +399,7 @@ table.mw_metadata td.spacer {
 }
 
 div.multipageimagenavbox {
-	border: solid 1px silver;
+	border: solid 1px #c0c0c0;
 	padding: 4px;
 	margin: 1em;
 	background: #f0f0f0;
@@ -449,7 +446,7 @@ body {
 }
 
 body.ns-0 {
-	background-color: white;
+	background-color: #fff;
 }
 
 /** RTL specific CSS starts here **/

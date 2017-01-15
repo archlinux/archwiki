@@ -7,7 +7,7 @@
 	},
 	"gadgets-desc": "Võimaldab kasutajal [[Special:Preferences#mw-prefsection-gadgets|eelistuste leheküljel]] erinevaid [[Special:Gadgets|CSS- ja JavaScript-tööriistu]] valida.",
 	"prefs-gadgets": "Tööriistad",
-	"gadgets-prefstext": "Allpool on nimekiri eririistadest, mida kasutajad saavad oma konto jaoks sisse lülitada.\nEnamasti põhinevad need riistad JavaScriptil, seega peab nende töötamiseks sinu veebilehitsejas JavaScript lubatud olema.\nPane tähele, et need riistad ei mõjuta kuidagi seda eelistuste lehekülge.\n\nSamuti pane tähele, et need eririistad ei ole osa MediaWiki tarkvarast ja on tavaliselt arendatud ja ülalpeetud sinu kohalikus vikis.\nKohalikud administraatorid saavad olemasolevaid riistu muuta [[MediaWiki:Gadgets-definition|määratluste]] ja [[Special:Gadgets|kirjelduste]] abil.",
+	"gadgets-prefstext": "Allpool on nimekiri eririistadest, mida kasutajad saavad oma konto jaoks sisse lülitada.\nEnamasti põhinevad need riistad JavaScriptil, seega peab nende töötamiseks sinu veebilehitsejas JavaScript lubatud olema.\nPane tähele, et need riistad ei mõjuta kuidagi seda eelistuste lehekülge.\n\nSamuti pane tähele, et need eririistad ei ole osa MediaWiki tarkvarast ja on tavaliselt arendatud ja ülalpeetud sinu kohalikus vikis.\nKohalikud administraatorid saavad olemasolevaid riistu muuta [[MediaWiki:Gadgets-definition|määratluste]] ja [[Special:Gadgets|kirjelduste]] abil. Iga tööriista kasutajate arv selles vikis on ära toodud [[Special:GadgetUsage|tööriistade kasutuse arvandmestikus]].",
 	"gadgets": "Tööriistad",
 	"gadgetusage": "Tööriistade kasutuse arvandmestik",
 	"gadgetusage-gadget": "Tööriist",

@@ -48,7 +48,7 @@ class BacklinkCache {
 	 *  > (string) links table name
 	 *   > (int) batch size
 	 *    > 'numRows' : Number of rows for this link table
-	 *    > 'batches' : array( $start, $end )
+	 *    > 'batches' : [ $start, $end ]
 	 *
 	 * @see BacklinkCache::partitionResult()
 	 *
@@ -137,13 +137,13 @@ class BacklinkCache {
 	}
 
 	/**
-	 * Get the slave connection to the database
+	 * Get the replica DB connection to the database
 	 * When non existing, will initialize the connection.
-	 * @return DatabaseBase
+	 * @return Database
 	 */
 	protected function getDB() {
 		if ( !isset( $this->db ) ) {
-			$this->db = wfGetDB( DB_SLAVE );
+			$this->db = wfGetDB( DB_REPLICA );
 		}
 
 		return $this->db;

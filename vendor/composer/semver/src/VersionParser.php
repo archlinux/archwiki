@@ -110,18 +110,19 @@ class VersionParser
             $version = $match[1];
         }
 
-        // strip off build metadata
-        if (preg_match('{^([^,\s+]++)\+[^\s]++$}', $version, $match)) {
-            $version = $match[1];
-        }
-
         // match master-like branches
         if (preg_match('{^(?:dev-)?(?:master|trunk|default)$}i', $version)) {
             return '9999999-dev';
         }
 
+        // if requirement is branch-like, use full name
         if ('dev-' === strtolower(substr($version, 0, 4))) {
             return 'dev-' . substr($version, 4);
+        }
+
+        // strip off build metadata
+        if (preg_match('{^([^,\s+]++)\+[^\s]++$}', $version, $match)) {
+            $version = $match[1];
         }
 
         // match classical versioning
@@ -264,6 +265,8 @@ class VersionParser
             // them into one constraint
             && $orGroups[0] instanceof MultiConstraint
             && $orGroups[1] instanceof MultiConstraint
+            && 2 === count($orGroups[0]->getConstraints())
+            && 2 === count($orGroups[1]->getConstraints())
             && ($a = (string) $orGroups[0])
             && substr($a, 0, 3) === '[>=' && (false !== ($posA = strpos($a, '<', 4)))
             && ($b = (string) $orGroups[1])

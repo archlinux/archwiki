@@ -243,4 +243,29 @@ class WikitextContentHandlerTest extends MediaWikiLangTestCase {
 	) {
 	}
 	*/
+
+	public function testDataIndexFieldsFile() {
+		$mockEngine = $this->getMock( 'SearchEngine' );
+		$title = Title::newFromText( 'Somefile.jpg', NS_FILE );
+		$page = new WikiPage( $title );
+
+		$fileHandler = $this->getMockBuilder( FileContentHandler::class )
+			->disableOriginalConstructor()
+			->setMethods( [ 'getDataForSearchIndex' ] )
+			->getMock();
+
+		$handler = $this->getMockBuilder( WikitextContentHandler::class )
+			->disableOriginalConstructor()
+			->setMethods( [ 'getFileHandler' ] )
+			->getMock();
+
+		$handler->method( 'getFileHandler' )->will( $this->returnValue( $fileHandler ) );
+		$fileHandler->expects( $this->once() )
+			->method( 'getDataForSearchIndex' )
+			->will( $this->returnValue( [ 'file_text' => 'This is file content' ] ) );
+
+		$data = $handler->getDataForSearchIndex( $page, new ParserOutput(), $mockEngine );
+		$this->assertArrayHasKey( 'file_text', $data );
+		$this->assertEquals( 'This is file content', $data['file_text'] );
+	}
 }

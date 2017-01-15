@@ -28,7 +28,7 @@
  * @ingroup SpecialPage
  */
 class SpecialBlock extends FormSpecialPage {
-	/** @var User User to be blocked, as passed either by parameter (url?wpTarget=Foo)
+	/** @var User|string|null User to be blocked, as passed either by parameter (url?wpTarget=Foo)
 	 * or as subpage (Special:Block/Foo) */
 	protected $target;
 
@@ -330,8 +330,12 @@ class SpecialBlock extends FormSpecialPage {
 
 		$otherBlockMessages = [];
 		if ( $this->target !== null ) {
+			$targetName = $this->target;
+			if ( $this->target instanceof User ) {
+				$targetName = $this->target->getName();
+			}
 			# Get other blocks, i.e. from GlobalBlocking or TorBlock extension
-			Hooks::run( 'OtherBlockLogLink', [ &$otherBlockMessages, $this->target ] );
+			Hooks::run( 'OtherBlockLogLink', [ &$otherBlockMessages, $targetName ] );
 
 			if ( count( $otherBlockMessages ) ) {
 				$s = Html::rawElement(
@@ -641,8 +645,10 @@ class SpecialBlock extends FormSpecialPage {
 				return [ 'ipb-blockingself', 'ipb-confirmaction' ];
 			}
 		} elseif ( $type == Block::TYPE_RANGE ) {
+			$user = null;
 			$userId = 0;
 		} elseif ( $type == Block::TYPE_IP ) {
+			$user = null;
 			$target = $target->getName();
 			$userId = 0;
 		} else {
@@ -725,6 +731,7 @@ class SpecialBlock extends FormSpecialPage {
 			return $reason;
 		}
 
+		$priorBlock = null;
 		# Try to insert block. Is there a conflicting block?
 		$status = $block->insert();
 		if ( !$status ) {
@@ -744,17 +751,16 @@ class SpecialBlock extends FormSpecialPage {
 				# This returns direct blocks before autoblocks/rangeblocks, since we should
 				# be sure the user is blocked by now it should work for our purposes
 				$currentBlock = Block::newFromTarget( $target );
-
 				if ( $block->equals( $currentBlock ) ) {
 					return [ [ 'ipb_already_blocked', $block->getTarget() ] ];
 				}
-
 				# If the name was hidden and the blocking user cannot hide
 				# names, then don't allow any block changes...
 				if ( $currentBlock->mHideName && !$performer->isAllowed( 'hideuser' ) ) {
 					return [ 'cant-see-hidden-user' ];
 				}
 
+				$priorBlock = clone $currentBlock;
 				$currentBlock->isHardblock( $block->isHardblock() );
 				$currentBlock->prevents( 'createaccount', $block->prevents( 'createaccount' ) );
 				$currentBlock->mExpiry = $block->mExpiry;
@@ -782,7 +788,7 @@ class SpecialBlock extends FormSpecialPage {
 			$logaction = 'block';
 		}
 
-		Hooks::run( 'BlockIpComplete', [ $block, $performer ] );
+		Hooks::run( 'BlockIpComplete', [ $block, $performer, $priorBlock ] );
 
 		# Set *_deleted fields if requested
 		if ( $data['HideUser'] ) {

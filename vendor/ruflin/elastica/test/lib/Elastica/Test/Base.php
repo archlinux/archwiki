@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica\Test;
 
 use Elastica\Client;
@@ -7,6 +8,51 @@ use Elastica\Index;
 
 class Base extends \PHPUnit_Framework_TestCase
 {
+    public static function hideDeprecated()
+    {
+        error_reporting(error_reporting() & ~E_USER_DEPRECATED);
+    }
+
+    public static function showDeprecated()
+    {
+        error_reporting(error_reporting() | E_USER_DEPRECATED);
+    }
+
+    protected function assertFileDeprecated($file, $deprecationMessage)
+    {
+        $content = file_get_contents($file);
+        $content = preg_replace('/^(abstract class|class) ([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]+)/m', '${1} ${2}'.uniqid(), $content);
+        $newFile = tempnam(sys_get_temp_dir(), 'elastica-test-');
+        file_put_contents($newFile, $content);
+
+        $errorsCollector = $this->startCollectErrors();
+
+        require $newFile;
+        unlink($newFile);
+
+        $this->finishCollectErrors();
+        $errorsCollector->assertOnlyOneDeprecatedError($deprecationMessage);
+    }
+
+    /**
+     * @return ErrorsCollector
+     */
+    protected function startCollectErrors()
+    {
+        $errorsCollector = new ErrorsCollector($this);
+
+        set_error_handler(function () use ($errorsCollector) {
+            $errorsCollector->add(func_get_args());
+        });
+
+        return $errorsCollector;
+    }
+
+    protected function finishCollectErrors()
+    {
+        restore_error_handler();
+    }
+
     /**
      * @param array    $params   Additional configuration params. Host and Port are already set
      * @param callback $callback
@@ -121,10 +167,12 @@ class Base extends \PHPUnit_Framework_TestCase
     protected function _waitForAllocation(Index $index)
     {
         do {
-            $settings = $index->getStatus()->get();
+            $state = $index->getClient()->getCluster()->getState();
+            $indexState = $state['routing_table']['indices'][$index->getName()];
+
             $allocated = true;
-            foreach ($settings['shards'] as $shard) {
-                if ($shard[0]['routing']['state'] != 'STARTED') {
+            foreach ($indexState['shards'] as $shard) {
+                if ($shard[0]['state'] != 'STARTED') {
                     $allocated = false;
                 }
             }
@@ -137,6 +185,7 @@ class Base extends \PHPUnit_Framework_TestCase
 
         $hasGroup = $this->_isUnitGroup() || $this->_isFunctionalGroup() || $this->_isShutdownGroup() || $this->_isBenchmarkGroup();
         $this->assertTrue($hasGroup, 'Every test must have one of "unit", "functional", "shutdown" or "benchmark" group');
+        $this->showDeprecated();
     }
 
     protected function tearDown()

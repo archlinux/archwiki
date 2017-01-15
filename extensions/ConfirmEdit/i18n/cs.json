@@ -4,13 +4,18 @@
 			"Danny B.",
 			"Li-sung",
 			"Matěj Grabovský",
-			"Mormegil"
+			"Mormegil",
+			"Dvorapa"
 		]
 	},
 	"captcha-edit": "Abyste mohli editovat tuto stránku, musíte vyřešit následující jednoduchý součet a napsat výsledek. ([[Special:Captcha/help|Co tohle znamená?]])",
 	"captcha-edit-fail": "Chybějící či neplatný potvrzovací kód.",
 	"captcha-desc": "Poskytuje techniky CAPTCHA pro ochranu před spamem a hádáním hesel",
 	"captcha-label": "CAPTCHA",
+	"captcha-help": "Řešení CAPTCHA.",
+	"captcha-info-help": "Popis CAPTCHA.",
+	"captcha-id-label": "ID CAPTCHA",
+	"captcha-id-help": "Tato hodnota by měla být beze změny poslána zpět.",
 	"captcha-addurl": "Vaše editace obsahuje nové externí odkazy.\nV zájmu ochrany této wiki před automatickým spamováním vás prosíme o vyřešení následujícího jednoduchého součtu a napsání výsledku, abychom mohli vaši editaci uložit. ([[Special:Captcha/help|Co tohle znamená?]])",
 	"captcha-badlogin": "V zájmu ochrany této wiki proti automatickým pokusům uhodnout heslo vás prosíme o vyřešení následujícího jednoduchého součtu a napsání výsledku. ([[Special:Captcha/help|Co tohle znamená?]])",
 	"captcha-createaccount": "V zájmu ochrany této wiki před automatickým vytvářením účtů vás prosíme o vyřešení následujícího jednoduchého součtu a napsání výsledku. ([[Special:Captcha/help|Co tohle znamená?]])",
@@ -19,6 +24,7 @@
 	"captcha-sendemail": "V zájmu ochrany této wiki před automatickým spamováním vás prosíme o vyřešení následujícího jednoduchého součtu a napsání výsledku. ([[Special:Captcha/help|Co tohle znamená?]])",
 	"captcha-sendemail-fail": "Chybějící či neplatný potvrzovací kód.",
 	"captcha-disabledinapi": "Tato operace vyžaduje splnění CAPTCHA, takže ji nelze provést prostřednictvím API.",
+	"captcha-error": "Ověření CAPTCHA se nezdařilo kvůli vnitřní chybě: $1",
 	"captchahelp-title": "Nápověda ke captcha",
 	"captchahelp-cookies-needed": "Aby to fungovalo, musíte mít ve svém prohlížeči zapnuty cookies.",
 	"captchahelp-text": "Webové stránky, do kterých mohou přispívat jejich návštěvníci (jako například tato wiki), jsou často terčem spammerů, kteří pomocí automatických nástrojů vkládají své odkazy na velké množství stránek. Přestože lze tento spam odstranit, představuje nepříjemné obtěžování.\n\nNěkdy, zvláště při přidávání nových webových odkazů, vám může wiki ukázat obrázek barevného či pokrouceného textu a požádat vás o opsání zobrazených znaků. Jelikož takovou úlohu lze jen těžko automatizovat, skuteční lidé mohou dále přispívat, zatímco většinu spammerů a jiných robotických útočníků to zastaví.\n\nBohužel to však může představovat nepříjemný problém pro uživatele se zrakovým postižením či uživatele používající textové prohlížeče či hlasové čtečky. V současné době nemáme alternativní zvukovou verzi. Kontaktujte laskavě [[Special:ListAdmins|správce serveru]], pokud vám to brání v užitečných příspěvcích a potřebujete pomoc.\n\nPro návrat na předchozí stránku stiskněte ve svém prohlížeči tlačítko „zpět“.",

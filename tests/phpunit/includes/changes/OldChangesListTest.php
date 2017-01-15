@@ -93,7 +93,6 @@ class OldChangesListTest extends MediaWikiLangTestCase {
 			'assert diff link'
 		);
 
-		$this->assertRegExp( '/tabindex="0"/', $line, 'assert tab index' );
 		$this->assertRegExp(
 			'/title=Cat&amp;curid=20131103212153&amp;action=history"/',
 			$line,
@@ -151,7 +150,7 @@ class OldChangesListTest extends MediaWikiLangTestCase {
 	}
 
 	private function getNewBotEditChange() {
-		$user = $this->getTestUser();
+		$user = $this->getMutableTestUser()->getUser();
 
 		$recentChange = $this->testRecentChangesHelper->makeNewBotEditRecentChange(
 			$user, 'Abc', '20131103212153', 5, 191, 190, 0, 0
@@ -161,7 +160,7 @@ class OldChangesListTest extends MediaWikiLangTestCase {
 	}
 
 	private function getLogChange( $logType, $logAction ) {
-		$user = $this->getTestUser();
+		$user = $this->getMutableTestUser()->getUser();
 
 		$recentChange = $this->testRecentChangesHelper->makeLogRecentChange(
 			$logType, $logAction, $user, 'Abc', '20131103212153', 0, 0
@@ -171,7 +170,7 @@ class OldChangesListTest extends MediaWikiLangTestCase {
 	}
 
 	private function getEditChange() {
-		$user = $this->getTestUser();
+		$user = $this->getMutableTestUser()->getUser();
 		$recentChange = $this->testRecentChangesHelper->makeEditRecentChange(
 			$user, 'Cat', '20131103212153', 5, 191, 190, 0, 0
 		);
@@ -184,18 +183,8 @@ class OldChangesListTest extends MediaWikiLangTestCase {
 		return new OldChangesList( $context );
 	}
 
-	private function getTestUser() {
-		$user = User::newFromName( 'TestRecentChangesUser' );
-
-		if ( !$user->getId() ) {
-			$user->addToDatabase();
-		}
-
-		return $user;
-	}
-
 	private function getContext() {
-		$user = $this->getTestUser();
+		$user = $this->getMutableTestUser()->getUser();
 		$context = $this->testRecentChangesHelper->getTestContext( $user );
 		$context->setLanguage( 'qqx' );
 

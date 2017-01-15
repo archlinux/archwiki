@@ -10,7 +10,8 @@
 			"Misibacsi",
 			"Csega",
 			"Macofe",
-			"Tacsipacsi"
+			"Tacsipacsi",
+			"Bináris"
 		]
 	},
 	"wikieditor": "Fejlett szerkesztőfelület wikiszöveghez",
@@ -21,7 +22,7 @@
 	"wikieditor-preview-tab": "Előnézet",
 	"wikieditor-preview-changes-tab": "Változtatások",
 	"wikieditor-preview-loading": "Betöltés…",
-	"wikieditor-publish-preference": "Lépésről-lépésre közzététel engedélyezése",
+	"wikieditor-publish-preference": "Lépésről lépésre közzététel engedélyezése",
 	"wikieditor-publish-button-publish": "Közzététel",
 	"wikieditor-publish-button-cancel": "Mégse",
 	"wikieditor-publish-dialog-title": "Közzététel a(z) {{SITENAME}} wikin",

@@ -39,5 +39,6 @@
 	"cite-ve-referenceslist-isempty": "Nu există referințe cu grupul „$1” în această pagină pentru includere în această listă.",
 	"cite-ve-referenceslist-isempty-default": "Nu există referințe în această pagină pentru includere în această listă.",
 	"cite-ve-referenceslist-missingref": "Această referință este definită printr-un format sau alt cadru generat și, pentru moment, poate fi modificată doar editând codul sursă al paginii.",
-	"cite-ve-toolbar-group-label": "Citare"
+	"cite-ve-toolbar-group-label": "Citare",
+	"cite-ve-othergroup-item": "referință $1"
 }

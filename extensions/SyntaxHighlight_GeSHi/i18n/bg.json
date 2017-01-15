@@ -3,8 +3,10 @@
 		"authors": [
 			"Borislav",
 			"DCLXVI",
-			"Turin"
+			"Turin",
+			"Лорд Бъмбъри"
 		]
 	},
-	"syntaxhighlight-desc": "Осигурява синтактично осветяване на <code>&lt;syntaxhighlight&gt;</code> чрез [http://pygments.org/ Pygments]"
+	"syntaxhighlight-desc": "Осигурява синтактично осветяване на <code>&lt;syntaxhighlight&gt;</code> чрез [http://pygments.org/ Pygments]",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Блок с код"
 }

@@ -19,22 +19,22 @@ class ReaderFactoryTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function getReaderProvider() {
-		return array(
-			array(
+		return [
+			[
 				'languages/messages/MessagesFi.php',
 				'LocalisationUpdate\PHPReader',
 				'core php file',
-			),
-			array(
+			],
+			[
 				'extensions/Translate/Translate.i18n.php',
 				'LocalisationUpdate\PHPReader',
 				'extension php file',
-			),
-			array(
+			],
+			[
 				'extension/Translate/i18n/core/de.json',
 				'LocalisationUpdate\JSONReader',
 				'extension json file',
-			),
-		);
+			],
+		];
 	}
 }

@@ -25,10 +25,12 @@
 			"Cwek"
 		]
 	},
+	"visualeditor-cite-tool-definition.json": "空",
 	"visualeditor-cite-tool-name-book": "图书",
 	"visualeditor-cite-tool-name-journal": "期刊",
 	"visualeditor-cite-tool-name-news": "新闻",
 	"visualeditor-cite-tool-name-web": "网站",
+	"cite-tool-definition.json": "空",
 	"cite-ve-dialog-reference-editing-reused": "这个引用在此页面使用了$1{{PLURAL:$1|次}}。",
 	"cite-ve-dialog-reference-options-group-label": "使用该组",
 	"cite-ve-dialog-reference-options-group-placeholder": "一般参考文献",
@@ -51,5 +53,6 @@
 	"cite-ve-referenceslist-isempty": "本页面没有可包含在该列表中的组为“$1”的参考文献。",
 	"cite-ve-referenceslist-isempty-default": "本页面没有可包含在该列表中的参考文献。",
 	"cite-ve-referenceslist-missingref": "该参考文献定义在模板或其他生成块中，目前只能在源代码模式下编辑。",
-	"cite-ve-toolbar-group-label": "引用"
+	"cite-ve-toolbar-group-label": "引用",
+	"cite-ve-othergroup-item": "$1参考文献"
 }

@@ -10,11 +10,12 @@ class ExtensionProcessor implements Processor {
 	protected static $globalSettings = [
 		'ResourceLoaderSources',
 		'ResourceLoaderLESSVars',
-		'ResourceLoaderLESSImportPaths',
 		'DefaultUserOptions',
 		'HiddenPrefs',
 		'GroupPermissions',
 		'RevokePermissions',
+		'GrantPermissions',
+		'GrantPermissionGroups',
 		'ImplicitGroups',
 		'GroupsAddToSelf',
 		'GroupsRemoveFromSelf',
@@ -26,6 +27,8 @@ class ExtensionProcessor implements Processor {
 		'SessionProviders',
 		'AuthManagerAutoConfig',
 		'CentralIdLookupProviders',
+		'ChangeCredentialsBlacklist',
+		'RemoveCredentialsBlacklist',
 		'RateLimits',
 		'RecentChangesFlags',
 		'MediaHandlers',
@@ -61,6 +64,7 @@ class ExtensionProcessor implements Processor {
 	protected static $mergeStrategies = [
 		'wgGroupPermissions' => 'array_plus_2d',
 		'wgRevokePermissions' => 'array_plus_2d',
+		'wgGrantPermissions' => 'array_plus_2d',
 		'wgHooks' => 'array_merge_recursive',
 		'wgExtensionCredits' => 'array_merge_recursive',
 		'wgExtraGenderNamespaces' => 'array_plus',
@@ -105,6 +109,8 @@ class ExtensionProcessor implements Processor {
 		'MessagesDirs',
 		'type',
 		'config',
+		'config_prefix',
+		'ServiceWiringFiles',
 		'ParserTestFiles',
 		'AutoloadClasses',
 		'manifest_version',
@@ -164,6 +170,7 @@ class ExtensionProcessor implements Processor {
 		$this->extractMessagesDirs( $dir, $info );
 		$this->extractNamespaces( $info );
 		$this->extractResourceLoaderModules( $dir, $info );
+		$this->extractServiceWiringFiles( $dir, $info );
 		$this->extractParserTestFiles( $dir, $info );
 		if ( isset( $info['callback'] ) ) {
 			$this->callbacks[] = $info['callback'];
@@ -233,7 +240,10 @@ class ExtensionProcessor implements Processor {
 			foreach ( $info['namespaces'] as $ns ) {
 				$id = $ns['id'];
 				$this->defines[$ns['constant']] = $id;
-				$this->attributes['ExtensionNamespaces'][$id] = $ns['name'];
+				if ( !( isset( $ns['conditional'] ) && $ns['conditional'] ) ) {
+					// If it is not conditional, register it
+					$this->attributes['ExtensionNamespaces'][$id] = $ns['name'];
+				}
 				if ( isset( $ns['gender'] ) ) {
 					$this->globals['wgExtraGenderNamespaces'][$id] = $ns['gender'];
 				}
@@ -362,6 +372,14 @@ class ExtensionProcessor implements Processor {
 				if ( $key[0] !== '@' ) {
 					$this->globals["$prefix$key"] = $val;
 				}
+			}
+		}
+	}
+
+	protected function extractServiceWiringFiles( $dir, array $info ) {
+		if ( isset( $info['ServiceWiringFiles'] ) ) {
+			foreach ( $info['ServiceWiringFiles'] as $path ) {
+				$this->globals['wgServiceWiringFiles'][] = "$dir/$path";
 			}
 		}
 	}

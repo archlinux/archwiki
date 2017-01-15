@@ -37,8 +37,46 @@ use WebRequest;
  * In the future, it may also serve as the entry point to the authorization
  * system.
  *
+ * If you are looking at this because you are working on an extension that creates its own
+ * login or signup page, then 1) you really shouldn't do that, 2) if you feel you absolutely
+ * have to, subclass AuthManagerSpecialPage or build it on the client side using the clientlogin
+ * or the createaccount API. Trying to call this class directly will very likely end up in
+ * security vulnerabilities or broken UX in edge cases.
+ *
+ * If you are working on an extension that needs to integrate with the authentication system
+ * (e.g. by providing a new login method, or doing extra permission checks), you'll probably
+ * need to write an AuthenticationProvider.
+ *
+ * If you want to create a "reserved" user programmatically, User::newSystemUser() might be what
+ * you are looking for. If you want to change user data, use User::changeAuthenticationData().
+ * Code that is related to some SessionProvider or PrimaryAuthenticationProvider can
+ * create a (non-reserved) user by calling AuthManager::autoCreateUser(); it is then the provider's
+ * responsibility to ensure that the user can authenticate somehow (see especially
+ * PrimaryAuthenticationProvider::autoCreatedAccount()).
+ * If you are writing code that is not associated with such a provider and needs to create accounts
+ * programmatically for real users, you should rethink your architecture. There is no good way to
+ * do that as such code has no knowledge of what authentication methods are enabled on the wiki and
+ * cannot provide any means for users to access the accounts it would create.
+ *
+ * The two main control flows when using this class are as follows:
+ * * Login, user creation or account linking code will call getAuthenticationRequests(), populate
+ *   the requests with data (by using them to build a HTMLForm and have the user fill it, or by
+ *   exposing a form specification via the API, so that the client can build it), and pass them to
+ *   the appropriate begin* method. That will return either a success/failure response, or more
+ *   requests to fill (either by building a form or by redirecting the user to some external
+ *   provider which will send the data back), in which case they need to be submitted to the
+ *   appropriate continue* method and that step has to be repeated until the response is a success
+ *   or failure response. AuthManager will use the session to maintain internal state during the
+ *   process.
+ * * Code doing an authentication data change will call getAuthenticationRequests(), select
+ *   a single request, populate it, and pass it to allowsAuthenticationDataChange() and then
+ *   changeAuthenticationData(). If the data change is user-initiated, the whole process needs
+ *   to be preceded by a call to securitySensitiveOperationStatus() and aborted if that returns
+ *   a non-OK status.
+ *
  * @ingroup Auth
  * @since 1.27
+ * @see https://www.mediawiki.org/wiki/Manual:SessionManager_and_AuthManager
  */
 class AuthManager implements LoggerAwareInterface {
 	/** Log in with an existing (not necessarily local) user */
@@ -568,6 +606,7 @@ class AuthManager implements LoggerAwareInterface {
 
 			$user = User::newFromName( $res->username, 'usable' );
 			if ( !$user ) {
+				$provider = $this->getAuthenticationProvider( $state['primary'] );
 				throw new \DomainException(
 					get_class( $provider ) . " returned an invalid username: {$res->username}"
 				);
@@ -643,6 +682,7 @@ class AuthManager implements LoggerAwareInterface {
 			$this->logger->info( 'Login for {user} succeeded', [
 				'user' => $user->getName(),
 			] );
+			/** @var RememberMeAuthenticationRequest $req */
 			$req = AuthenticationRequest::getRequestByClass(
 				$beginReqs, RememberMeAuthenticationRequest::class
 			);
@@ -737,7 +777,10 @@ class AuthManager implements LoggerAwareInterface {
 	/**
 	 * Determine whether a username can authenticate
 	 *
-	 * @param string $username
+	 * This is mainly for internal purposes and only takes authentication data into account,
+	 * not things like blocks that can change without the authentication system being aware.
+	 *
+	 * @param string $username MediaWiki username
 	 * @return bool
 	 */
 	public function userCanAuthenticate( $username ) {
@@ -832,6 +875,9 @@ class AuthManager implements LoggerAwareInterface {
 	 * If $req was returned for AuthManager::ACTION_REMOVE, using $req should
 	 * no longer result in a successful login.
 	 *
+	 * This method should only be called if allowsAuthenticationDataChange( $req, true )
+	 * returned success.
+	 *
 	 * @param AuthenticationRequest $req
 	 */
 	public function changeAuthenticationData( AuthenticationRequest $req ) {
@@ -871,11 +917,23 @@ class AuthManager implements LoggerAwareInterface {
 
 	/**
 	 * Determine whether a particular account can be created
-	 * @param string $username
-	 * @param int $flags Bitfield of User:READ_* constants
+	 * @param string $username MediaWiki username
+	 * @param array $options
+	 *  - flags: (int) Bitfield of User:READ_* constants, default User::READ_NORMAL
+	 *  - creating: (bool) For internal use only. Never specify this.
 	 * @return Status
 	 */
-	public function canCreateAccount( $username, $flags = User::READ_NORMAL ) {
+	public function canCreateAccount( $username, $options = [] ) {
+		// Back compat
+		if ( is_int( $options ) ) {
+			$options = [ 'flags' => $options ];
+		}
+		$options += [
+			'flags' => User::READ_NORMAL,
+			'creating' => false,
+		];
+		$flags = $options['flags'];
+
 		if ( !$this->canCreateAccounts() ) {
 			return Status::newFatal( 'authmanager-create-disabled' );
 		}
@@ -899,7 +957,7 @@ class AuthManager implements LoggerAwareInterface {
 			$this->getPrimaryAuthenticationProviders() +
 			$this->getSecondaryAuthenticationProviders();
 		foreach ( $providers as $provider ) {
-			$status = $provider->testUserForCreation( $user, false );
+			$status = $provider->testUserForCreation( $user, false, $options );
 			if ( !$status->isGood() ) {
 				return Status::wrap( $status );
 			}
@@ -1004,7 +1062,9 @@ class AuthManager implements LoggerAwareInterface {
 			return AuthenticationResponse::newFail( $status->getMessage() );
 		}
 
-		$status = $this->canCreateAccount( $username, User::READ_LOCKING );
+		$status = $this->canCreateAccount(
+			$username, [ 'flags' => User::READ_LOCKING, 'creating' => true ]
+		);
 		if ( !$status->isGood() ) {
 			$this->logger->debug( __METHOD__ . ': {user} cannot be created: {reason}', [
 				'user' => $username,
@@ -1340,7 +1400,7 @@ class AuthManager implements LoggerAwareInterface {
 					'creator' => $creator->getName(),
 				] );
 				$status = $user->addToDatabase();
-				if ( !$status->isOk() ) {
+				if ( !$status->isOK() ) {
 					// @codeCoverageIgnoreStart
 					$ret = AuthenticationResponse::newFail( $status->getMessage() );
 					$this->callMethodOnProviders( 7, 'postAccountCreation', [ $user, $creator, $ret ] );
@@ -1371,6 +1431,7 @@ class AuthManager implements LoggerAwareInterface {
 					);
 					$logEntry->setPerformer( $isAnon ? $user : $creator );
 					$logEntry->setTarget( $user->getUserPage() );
+					/** @var CreationReasonAuthenticationRequest $req */
 					$req = AuthenticationRequest::getRequestByClass(
 						$state['reqs'], CreationReasonAuthenticationRequest::class
 					);
@@ -1460,6 +1521,13 @@ class AuthManager implements LoggerAwareInterface {
 
 	/**
 	 * Auto-create an account, and log into that account
+	 *
+	 * PrimaryAuthenticationProviders can invoke this method by returning a PASS from
+	 * beginPrimaryAuthentication/continuePrimaryAuthentication with the username of a
+	 * non-existing user. SessionProviders can invoke it by returning a SessionInfo with
+	 * the username of a non-existing user from provideSessionInfo(). Calling this method
+	 * explicitly (e.g. from a maintenance script) is also fine.
+	 *
 	 * @param User $user User to auto-create
 	 * @param string $source What caused the auto-creation? This must be the ID
 	 *  of a PrimaryAuthenticationProvider or the constant self::AUTOCREATE_SOURCE_SESSION.
@@ -1475,7 +1543,7 @@ class AuthManager implements LoggerAwareInterface {
 
 		$username = $user->getName();
 
-		// Try the local user from the slave DB
+		// Try the local user from the replica DB
 		$localId = User::idFromName( $username );
 		$flags = User::READ_NORMAL;
 
@@ -1536,7 +1604,7 @@ class AuthManager implements LoggerAwareInterface {
 			$this->logger->debug( __METHOD__ . ': name "{username}" is not creatable', [
 				'username' => $username,
 			] );
-			$session->set( 'AuthManager::AutoCreateBlacklist', 'noname', 600 );
+			$session->set( 'AuthManager::AutoCreateBlacklist', 'noname' );
 			$user->setId( 0 );
 			$user->loadFromId();
 			return Status::newFatal( 'noname' );
@@ -1549,7 +1617,7 @@ class AuthManager implements LoggerAwareInterface {
 				'username' => $username,
 				'ip' => $anon->getName(),
 			] );
-			$session->set( 'AuthManager::AutoCreateBlacklist', 'authmanager-autocreate-noperm', 600 );
+			$session->set( 'AuthManager::AutoCreateBlacklist', 'authmanager-autocreate-noperm' );
 			$session->persist();
 			$user->setId( 0 );
 			$user->loadFromId();
@@ -1569,26 +1637,27 @@ class AuthManager implements LoggerAwareInterface {
 		}
 
 		// Denied by providers?
+		$options = [
+			'flags' => User::READ_LATEST,
+			'creating' => true,
+		];
 		$providers = $this->getPreAuthenticationProviders() +
 			$this->getPrimaryAuthenticationProviders() +
 			$this->getSecondaryAuthenticationProviders();
 		foreach ( $providers as $provider ) {
-			$status = $provider->testUserForCreation( $user, $source );
+			$status = $provider->testUserForCreation( $user, $source, $options );
 			if ( !$status->isGood() ) {
 				$ret = Status::wrap( $status );
 				$this->logger->debug( __METHOD__ . ': Provider denied creation of {username}: {reason}', [
 					'username' => $username,
 					'reason' => $ret->getWikiText( null, null, 'en' ),
 				] );
-				$session->set( 'AuthManager::AutoCreateBlacklist', $status, 600 );
+				$session->set( 'AuthManager::AutoCreateBlacklist', $status );
 				$user->setId( 0 );
 				$user->loadFromId();
 				return $ret;
 			}
 		}
-
-		// Ignore warnings about master connections/writes...hard to avoid here
-		\Profiler::instance()->getTransactionProfiler()->resetExpectations();
 
 		$backoffKey = wfMemcKey( 'AuthManager', 'autocreate-failed', md5( $username ) );
 		if ( $cache->get( $backoffKey ) ) {
@@ -1607,26 +1676,27 @@ class AuthManager implements LoggerAwareInterface {
 			'from' => $from,
 		] );
 
+		// Ignore warnings about master connections/writes...hard to avoid here
+		$trxProfiler = \Profiler::instance()->getTransactionProfiler();
+		$old = $trxProfiler->setSilenced( true );
 		try {
 			$status = $user->addToDatabase();
-			if ( !$status->isOk() ) {
-				// double-check for a race condition (T70012)
-				$localId = User::idFromName( $username, User::READ_LATEST );
-				if ( $localId ) {
+			if ( !$status->isOK() ) {
+				// Double-check for a race condition (T70012). We make use of the fact that when
+				// addToDatabase fails due to the user already existing, the user object gets loaded.
+				if ( $user->getId() ) {
 					$this->logger->info( __METHOD__ . ': {username} already exists locally (race)', [
 						'username' => $username,
 					] );
-					$user->setId( $localId );
-					$user->loadFromId( User::READ_LATEST );
 					if ( $login ) {
 						$this->setSessionDataForUser( $user );
 					}
 					$status = Status::newGood();
 					$status->warning( 'userexists' );
 				} else {
-					$this->logger->error( __METHOD__ . ': {username} failed with message {message}', [
+					$this->logger->error( __METHOD__ . ': {username} failed with message {msg}', [
 						'username' => $username,
-						'message' => $status->getWikiText( null, null, 'en' )
+						'msg' => $status->getWikiText( null, null, 'en' )
 					] );
 					$user->setId( 0 );
 					$user->loadFromId();
@@ -1634,6 +1704,7 @@ class AuthManager implements LoggerAwareInterface {
 				return $status;
 			}
 		} catch ( \Exception $ex ) {
+			$trxProfiler->setSilenced( $old );
 			$this->logger->error( __METHOD__ . ': {username} failed with exception {exception}', [
 				'username' => $username,
 				'exception' => $ex,
@@ -1644,7 +1715,7 @@ class AuthManager implements LoggerAwareInterface {
 			throw $ex;
 		}
 
-		$this->setDefaultUserOptions( $user, true );
+		$this->setDefaultUserOptions( $user, false );
 
 		// Inform the providers
 		$this->callMethodOnProviders( 6, 'autoCreatedAccount', [ $user, $source ] );
@@ -1655,9 +1726,10 @@ class AuthManager implements LoggerAwareInterface {
 
 		// Update user count
 		\DeferredUpdates::addUpdate( new \SiteStatsUpdate( 0, 0, 0, 0, 1 ) );
-
 		// Watch user's userpage and talk page
-		$user->addWatch( $user->getUserPage(), User::IGNORE_USER_RIGHTS );
+		\DeferredUpdates::addCallableUpdate( function () use ( $user ) {
+			$user->addWatch( $user->getUserPage(), User::IGNORE_USER_RIGHTS );
+		} );
 
 		// Log the creation
 		if ( $this->config->get( 'NewUserLog' ) ) {
@@ -1668,8 +1740,10 @@ class AuthManager implements LoggerAwareInterface {
 			$logEntry->setParameters( [
 				'4::userid' => $user->getId(),
 			] );
-			$logid = $logEntry->insert();
+			$logEntry->insert();
 		}
+
+		$trxProfiler->setSilenced( $old );
 
 		if ( $login ) {
 			$this->setSessionDataForUser( $user );
@@ -2000,37 +2074,26 @@ class AuthManager implements LoggerAwareInterface {
 
 		// Query them and merge results
 		$reqs = [];
-		$allPrimaryRequired = null;
 		foreach ( $providers as $provider ) {
 			$isPrimary = $provider instanceof PrimaryAuthenticationProvider;
-			$thisRequired = [];
 			foreach ( $provider->getAuthenticationRequests( $providerAction, $options ) as $req ) {
 				$id = $req->getUniqueId();
 
-				// If it's from a Primary, mark it as "primary-required" but
-				// track it for later.
+				// If a required request if from a Primary, mark it as "primary-required" instead
 				if ( $isPrimary ) {
 					if ( $req->required ) {
-						$thisRequired[$id] = true;
 						$req->required = AuthenticationRequest::PRIMARY_REQUIRED;
 					}
 				}
 
-				if ( !isset( $reqs[$id] ) || $req->required === AuthenticationRequest::REQUIRED ) {
+				if (
+					!isset( $reqs[$id] )
+					|| $req->required === AuthenticationRequest::REQUIRED
+					|| $reqs[$id] === AuthenticationRequest::OPTIONAL
+				) {
 					$reqs[$id] = $req;
 				}
 			}
-
-			// Track which requests are required by all primaries
-			if ( $isPrimary ) {
-				$allPrimaryRequired = $allPrimaryRequired === null
-					? $thisRequired
-					: array_intersect_key( $allPrimaryRequired, $thisRequired );
-			}
-		}
-		// Any requests that were required by all primaries are required.
-		foreach ( (array)$allPrimaryRequired as $id => $dummy ) {
-			$reqs[$id]->required = AuthenticationRequest::REQUIRED;
 		}
 
 		// AuthManager has its own req for some actions
@@ -2299,6 +2362,7 @@ class AuthManager implements LoggerAwareInterface {
 	}
 
 	/**
+	 * Log the user in
 	 * @param User $user
 	 * @param bool|null $remember
 	 */
@@ -2318,7 +2382,7 @@ class AuthManager implements LoggerAwareInterface {
 		$session->set( 'AuthManager:lastAuthTimestamp', time() );
 		$session->persist();
 
-		\ScopedCallback::consume( $delay );
+		\Wikimedia\ScopedCallback::consume( $delay );
 
 		\Hooks::run( 'UserLoggedIn', [ $user ] );
 	}
@@ -2363,6 +2427,7 @@ class AuthManager implements LoggerAwareInterface {
 
 	/**
 	 * Reset the internal caching for unit testing
+	 * @protected Unit tests only
 	 */
 	public static function resetCache() {
 		if ( !defined( 'MW_PHPUNIT_TEST' ) ) {

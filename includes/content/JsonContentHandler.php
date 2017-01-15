@@ -37,6 +37,11 @@ class JsonContentHandler extends CodeContentHandler {
 	 * @return string
 	 */
 	protected function getContentClass() {
-		return 'JsonContent';
+		return JsonContent::class;
+	}
+
+	public function makeEmptyContent() {
+		$class = $this->getContentClass();
+		return new $class( '{}' );
 	}
 }

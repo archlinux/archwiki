@@ -456,10 +456,19 @@ class CoreParserFunctions {
 						$converter->markNoConversion( wfEscapeWikiText( $text ) )
 					)->inContentLanguage()->text() .
 					'</span>';
+			} else {
+				return '';
 			}
+		} else {
+			$converter = $parser->getConverterLanguage()->getConverter();
+			$parser->getOutput()->addWarning(
+				wfMessage( 'restricted-displaytitle',
+					// Message should be parsed, but this param should only be escaped.
+					$converter->markNoConversion( wfEscapeWikiText( $text ) )
+				)->text()
+			);
+			$parser->addTrackingCategory( 'restricted-displaytitle-ignored' );
 		}
-
-		return '';
 	}
 
 	/**
@@ -766,6 +775,10 @@ class CoreParserFunctions {
 		// fetch revision from cache/database and return the value
 		$rev = self::getCachedRevisionObject( $parser, $title );
 		$length = $rev ? $rev->getSize() : 0;
+		if ( $length === null ) {
+			// We've had bugs where rev_len was not being recorded for empty pages, see T135414
+			$length = 0;
+		}
 		return self::formatRaw( $length, $raw );
 	}
 

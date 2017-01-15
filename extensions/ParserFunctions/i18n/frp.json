@@ -12,7 +12,7 @@
 	"pfunc_expr_unexpected_number": "Èrror d’èxprèssion : nombro emprèvu",
 	"pfunc_expr_preg_match_failure": "Èrror d’èxprèssion : falyita emprèvua de preg_match",
 	"pfunc_expr_unrecognised_word": "Fôta d’èxprèssion : mot « $1 » pas recognu.",
-	"pfunc_expr_unexpected_operator": "Èrror d’èxprèssion : opèrator « $1 » emprèvu",
+	"pfunc_expr_unexpected_operator": "Fôta d’èxprèssion : opèrator « $1 » emprèviu",
 	"pfunc_expr_missing_operand": "Fôta d’èxprèssion : opèrando manquent por « $1 ».",
 	"pfunc_expr_unexpected_closing_bracket": "Èrror d’èxprèssion : parentèsa cllosenta emprèvua",
 	"pfunc_expr_unrecognised_punctuation": "Fôta d’èxprèssion : caractèro de ponctuacion « $1 » pas recognu.",

@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica\Test\Query;
 
 use Elastica\Query;
@@ -200,6 +201,8 @@ class RescoreTest extends BaseTest
 
         $index = $this->_createIndex();
         $index->refresh();
+        $index->optimize();
+
         $results = $index->search($query);
         $response = $results->getResponse();
 
@@ -227,6 +230,8 @@ class RescoreTest extends BaseTest
 
         $index = $this->_createIndex();
         $index->refresh();
+        $index->optimize();
+
         $results = $index->search($query);
         $response = $results->getResponse();
 

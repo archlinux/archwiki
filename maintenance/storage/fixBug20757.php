@@ -42,7 +42,7 @@ class FixBug20757 extends Maintenance {
 	}
 
 	function execute() {
-		$dbr = $this->getDB( DB_SLAVE );
+		$dbr = $this->getDB( DB_REPLICA );
 		$dbw = $this->getDB( DB_MASTER );
 
 		$dryRun = $this->getOption( 'dry-run' );
@@ -57,10 +57,8 @@ class FixBug20757 extends Maintenance {
 
 		$totalRevs = $dbr->selectField( 'text', 'MAX(old_id)', false, __METHOD__ );
 
-		if ( $dbr->getType() == 'mysql' ) {
-			// In MySQL 4.1+, the binary field old_text has a non-working LOWER() function
-			$lowerLeft = 'LOWER(CONVERT(LEFT(old_text,22) USING latin1))';
-		}
+		// In MySQL 4.1+, the binary field old_text has a non-working LOWER() function
+		$lowerLeft = 'LOWER(CONVERT(LEFT(old_text,22) USING latin1))';
 
 		while ( true ) {
 			print "ID: $startId / $totalRevs\r";
@@ -283,7 +281,7 @@ class FixBug20757 extends Maintenance {
 				unset( $this->mapCache[$key] );
 			}
 
-			$dbr = $this->getDB( DB_SLAVE );
+			$dbr = $this->getDB( DB_REPLICA );
 			$map = [];
 			$res = $dbr->select( 'revision',
 				[ 'rev_id', 'rev_text_id' ],

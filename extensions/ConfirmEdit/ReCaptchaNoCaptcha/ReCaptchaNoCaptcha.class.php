@@ -10,19 +10,12 @@ class ReCaptchaNoCaptcha extends SimpleCaptcha {
 	private $error = null;
 	/**
 	 * Get the captcha form.
-	 * @return string
+	 * @return array
 	 */
-	function getForm( OutputPage $out, $tabIndex = 1 ) {
-		global $wgReCaptchaSiteKey;
-		$lang = htmlspecialchars( urlencode( $out->getLanguage()->getCode() ) );
+	function getFormInformation( $tabIndex = 1 ) {
+		global $wgReCaptchaSiteKey, $wgLang;
+		$lang = htmlspecialchars( urlencode( $wgLang->getCode() ) );
 
-		// Insert reCAPTCHA script, in display language, if available.
-		// Language falls back to the browser's display language.
-		// See https://developers.google.com/recaptcha/docs/faq
-		$out->addHeadItem(
-			'g-recaptchascript',
-			"<script src=\"https://www.google.com/recaptcha/api.js?hl={$lang}\" async defer></script>"
-		);
 		$output = Html::element( 'div', [
 			'class' => [
 				'g-recaptcha',
@@ -54,7 +47,15 @@ class ReCaptchaNoCaptcha extends SimpleCaptcha {
   </div>
 </noscript>
 HTML;
-		return $output;
+		return [
+			'html' => $output,
+			'headitems' => [
+				// Insert reCAPTCHA script, in display language, if available.
+				// Language falls back to the browser's display language.
+				// See https://developers.google.com/recaptcha/docs/faq
+				"<script src=\"https://www.google.com/recaptcha/api.js?hl={$lang}\" async defer></script>"
+			]
+		];
 	}
 
 	protected function logCheckError( $info ) {
@@ -131,7 +132,7 @@ HTML;
 		global $wgReCaptchaSiteKey;
 		return [
 			'type' => 'recaptchanocaptcha',
-			'mime' => 'mage/png',
+			'mime' => 'image/png',
 			'key' => $wgReCaptchaSiteKey,
 		];
 	}
@@ -153,25 +154,9 @@ HTML;
 
 	public function APIGetAllowedParams( &$module, &$params, $flags ) {
 		if ( $flags && $this->isAPICaptchaModule( $module ) ) {
-			if ( defined( 'ApiBase::PARAM_HELP_MSG' ) ) {
-				$params['g-recaptcha-response'] = [
-					ApiBase::PARAM_HELP_MSG => 'renocaptcha-apihelp-param-g-recaptcha-response',
-				];
-			} else {
-				// @todo: Remove this branch when support for MediaWiki < 1.25 is dropped
-				$params['g-recaptcha-response'] = null;
-			}
-		}
-
-		return true;
-	}
-
-	/**
-	 * @deprecated since MediaWiki 1.25
-	 */
-	public function APIGetParamDescription( &$module, &$desc ) {
-		if ( $this->isAPICaptchaModule( $module ) ) {
-			$desc['g-recaptcha-response'] = 'Field from the ReCaptcha widget';
+			$params['g-recaptcha-response'] = [
+				ApiBase::PARAM_HELP_MSG => 'renocaptcha-apihelp-param-g-recaptcha-response',
+			];
 		}
 
 		return true;

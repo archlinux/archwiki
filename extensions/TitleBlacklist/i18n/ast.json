@@ -18,6 +18,7 @@
 	"titleblacklist-forbidden-new-account": "Torgóse la creación del nome d'usuariu \"$2\".\nConcueya cola siguiente entrada na llista prieta: <code>$1</code>",
 	"titleblacklist-invalid": "{{PLURAL:$1|La siguiente llinia|Les siguientes llinies}} de la llista prieta de títulos {{PLURAL:$1|nun ye válida|nun son válides}};\npor favor {{PLURAL:$1|corríxila|corríxiles}} enantes de guardar:",
 	"titleblacklist-override": "Inorar la llista prieta",
+	"titleblacklist-override-help": "Los usuarios con permisu bastante pueden configurar esto pa ignorar les comprobaciones de títulos de la llista prieta.",
 	"titleblacklist-warning": "<strong>Atención: Esta páxina sólo puen editala alministradores y otros usuarios col permisu <code>tboverride</code> porque casa cola siguiente entrada de la llista prieta de títulos:</strong><br /><code>$1</code>",
 	"right-tboverride": "Sobrescribir la llista prieta de títulos o nomes d'usuariu",
 	"right-tboverride-account": "Saltar la llista prieta d'usuarios",

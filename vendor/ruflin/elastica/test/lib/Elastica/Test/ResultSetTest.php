@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica\Test;
 
 use Elastica\Document;
@@ -54,6 +55,36 @@ class ResultSetTest extends BaseTest
         $this->assertInstanceOf('Elastica\Result', $resultSet[2]);
 
         $this->assertFalse(isset($resultSet[3]));
+    }
+
+    /**
+     * @group functional
+     */
+    public function testDocumentsAccess()
+    {
+        $index = $this->_createIndex();
+        $type = $index->getType('test');
+
+        $type->addDocuments(array(
+            new Document(1, array('name' => 'elastica search')),
+            new Document(2, array('name' => 'elastica library')),
+            new Document(3, array('name' => 'elastica test')),
+        ));
+        $index->refresh();
+
+        $resultSet = $type->search('elastica search');
+
+        $this->assertInstanceOf('Elastica\ResultSet', $resultSet);
+
+        $documents = $resultSet->getDocuments();
+
+        $this->assertInternalType('array', $documents);
+        $this->assertEquals(3, count($documents));
+        $this->assertInstanceOf('Elastica\Document', $documents[0]);
+        $this->assertInstanceOf('Elastica\Document', $documents[1]);
+        $this->assertInstanceOf('Elastica\Document', $documents[2]);
+        $this->assertFalse(isset($documents[3]));
+        $this->assertEquals('elastica search', $documents[0]->get('name'));
     }
 
     /**

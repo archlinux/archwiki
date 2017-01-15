@@ -20,6 +20,8 @@
  * @file
  */
 
+use MediaWiki\Logger\LegacyLogger;
+
 /**
  * New debugger system that outputs a toolbar on page view.
  *
@@ -76,6 +78,15 @@ class MWDebug {
 	}
 
 	/**
+	 * Disable the debugger.
+	 *
+	 * @since 1.28
+	 */
+	public static function deinit() {
+		self::$enabled = false;
+	}
+
+	/**
 	 * Add ResourceLoader modules to the OutputPage object if debugging is
 	 * enabled.
 	 *
@@ -84,7 +95,7 @@ class MWDebug {
 	 */
 	public static function addModules( OutputPage $out ) {
 		if ( self::$enabled ) {
-			$out->addModules( 'mediawiki.debug.init' );
+			$out->addModules( 'mediawiki.debug' );
 		}
 	}
 
@@ -325,6 +336,7 @@ class MWDebug {
 				if ( isset( $context['seconds_elapsed'] ) && isset( $context['memory_used'] ) ) {
 					$prefix .= "{$context['seconds_elapsed']} {$context['memory_used']}  ";
 				}
+				$str = LegacyLogger::interpolate( $str, $context );
 				$str = $prefix . $str;
 			}
 			self::$debug[] = rtrim( UtfNormal\Validator::cleanUp( $str ) );
@@ -338,10 +350,11 @@ class MWDebug {
 	 * @param string $sql
 	 * @param string $function
 	 * @param bool $isMaster
+	 * @param float $runTime Query run time
 	 * @return int ID number of the query to pass to queryTime or -1 if the
 	 *  debugger is disabled
 	 */
-	public static function query( $sql, $function, $isMaster ) {
+	public static function query( $sql, $function, $isMaster, $runTime ) {
 		if ( !self::$enabled ) {
 			return -1;
 		}
@@ -375,26 +388,10 @@ class MWDebug {
 			'sql' => $sql,
 			'function' => $function,
 			'master' => (bool)$isMaster,
-			'time' => 0.0,
-			'_start' => microtime( true ),
+			'time' => $runTime,
 		];
 
 		return count( self::$query ) - 1;
-	}
-
-	/**
-	 * Calculates how long a query took.
-	 *
-	 * @since 1.19
-	 * @param int $id
-	 */
-	public static function queryTime( $id ) {
-		if ( $id === -1 || !self::$enabled ) {
-			return;
-		}
-
-		self::$query[$id]['time'] = microtime( true ) - self::$query[$id]['_start'];
-		unset( self::$query[$id]['_start'] );
 	}
 
 	/**
@@ -442,7 +439,7 @@ class MWDebug {
 
 		if ( $wgDebugComments ) {
 			$html .= "<!-- Debug output:\n" .
-				htmlspecialchars( implode( "\n", self::$debug ) ) .
+				htmlspecialchars( implode( "\n", self::$debug ), ENT_NOQUOTES ) .
 				"\n\n-->";
 		}
 
@@ -531,12 +528,19 @@ class MWDebug {
 		// see: https://github.com/facebook/hhvm/issues/2257#issuecomment-39362246
 		$realMemoryUsage = wfIsHHVM();
 
+		$branch = GitInfo::currentBranch();
+		if ( GitInfo::isSHA1( $branch ) ) {
+			// If it's a detached HEAD, the SHA1 will already be
+			// included in the MW version, so don't show it.
+			$branch = false;
+		}
+
 		return [
 			'mwVersion' => $wgVersion,
 			'phpEngine' => wfIsHHVM() ? 'HHVM' : 'PHP',
 			'phpVersion' => wfIsHHVM() ? HHVM_VERSION : PHP_VERSION,
 			'gitRevision' => GitInfo::headSHA1(),
-			'gitBranch' => GitInfo::currentBranch(),
+			'gitBranch' => $branch,
 			'gitViewUrl' => GitInfo::headViewUrl(),
 			'time' => microtime( true ) - $wgRequestTime,
 			'log' => self::$log,

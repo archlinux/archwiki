@@ -54,12 +54,14 @@ class DeleteLogFormatter extends LogFormatter {
 			// 'filearchive' for file versions, or a comma-separated list of log_ids for log
 			// entries. $subtype here is 'revision' for page revisions and file
 			// versions, or 'event' for log entries.
-			if ( ( $subtype === 'event' && count( $params ) === 6 )
-				|| ( $subtype === 'revision' && isset( $params[3] )
-					&& ( $params[3] === 'revision' || $params[3] === 'oldimage'
-						|| $params[3] === 'archive' || $params[3] === 'filearchive' )
+			if (
+				( $subtype === 'event' && count( $params ) === 6 )
+				|| (
+					$subtype === 'revision' && isset( $params[3] )
+					&& in_array( $params[3], [ 'revision', 'archive', 'oldimage', 'filearchive' ] )
 				)
 			) {
+				// See RevDelList::getLogParams()/RevDelLogList::getLogParams()
 				$paramStart = $subtype === 'revision' ? 4 : 3;
 
 				$old = $this->parseBitField( $params[$paramStart + 1] );
@@ -70,7 +72,8 @@ class DeleteLogFormatter extends LogFormatter {
 				foreach ( $hid as $v ) {
 					$changes[] = $this->msg( "$v-hid" )->plain();
 				}
-				// messages used: revdelete-content-unhid, revdelete-summary-unhid, revdelete-uname-unhid
+				// messages used: revdelete-content-unhid, revdelete-summary-unhid,
+				// revdelete-uname-unhid
 				foreach ( $unhid as $v ) {
 					$changes[] = $this->msg( "$v-unhid" )->plain();
 				}
@@ -119,6 +122,7 @@ class DeleteLogFormatter extends LogFormatter {
 
 		switch ( $this->entry->getSubtype() ) {
 			case 'delete': // Show undelete link
+			case 'delete_redir':
 				if ( $user->isAllowed( 'undelete' ) ) {
 					$message = 'undeletelink';
 				} else {

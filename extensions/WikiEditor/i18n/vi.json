@@ -19,7 +19,7 @@
 	"wikieditor-publish-preference": "Xuất bản từng bước một",
 	"wikieditor-publish-button-publish": "Xuất bản",
 	"wikieditor-publish-button-cancel": "Hủy bỏ",
-	"wikieditor-publish-dialog-title": "Xuất bản tới {{SITENAME}}",
+	"wikieditor-publish-dialog-title": "Đăng vào {{SITENAME}}",
 	"wikieditor-publish-dialog-summary": "Tóm lược sửa đổi (miêu tả ngắn gọn các thay đổi của bạn):",
 	"wikieditor-publish-dialog-minor": "Sửa đổi nhỏ",
 	"wikieditor-publish-dialog-watch": "Theo dõi trang này",

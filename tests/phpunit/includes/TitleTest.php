@@ -90,6 +90,8 @@ class TitleTest extends MediaWikiTestCase {
 			[ 'A < B', 'title-invalid-characters' ],
 			[ 'A > B', 'title-invalid-characters' ],
 			[ 'A | B', 'title-invalid-characters' ],
+			[ "A \t B", 'title-invalid-characters' ],
+			[ "A \n B", 'title-invalid-characters' ],
 			// URL encoding
 			[ 'A%20B', 'title-invalid-characters' ],
 			[ 'A%23B', 'title-invalid-characters' ],
@@ -144,6 +146,13 @@ class TitleTest extends MediaWikiTestCase {
 				]
 			]
 		] );
+
+		// Reset TitleParser since we modified $wgLocalInterwikis
+		$this->setService( 'TitleParser', new MediaWikiTitleCodec(
+				Language::factory( 'en' ),
+				new GenderCache(),
+				[ 'localtestiw' ]
+		) );
 	}
 
 	/**
@@ -701,5 +710,43 @@ class TitleTest extends MediaWikiTestCase {
 		$this->assertEquals( $title->getText(), $fragmentTitle->getText() );
 		$this->assertEquals( $title->getInterwiki(), $fragmentTitle->getInterwiki() );
 		$this->assertEquals( $fragment, $fragmentTitle->getFragment() );
+	}
+
+	public function provideGetPrefixedText() {
+		return [
+			// ns = 0
+			[
+				Title::makeTitle( NS_MAIN, 'Foobar' ),
+				'Foobar'
+			],
+			// ns = 2
+			[
+				Title::makeTitle( NS_USER, 'Foobar' ),
+				'User:Foobar'
+			],
+			// fragment not included
+			[
+				Title::makeTitle( NS_MAIN, 'Foobar', 'fragment' ),
+				'Foobar'
+			],
+			// ns = -2
+			[
+				Title::makeTitle( NS_MEDIA, 'Foobar' ),
+				'Media:Foobar'
+			],
+			// non-existent namespace
+			[
+				Title::makeTitle( 100000, 'Foobar' ),
+				':Foobar'
+			],
+		];
+	}
+
+	/**
+	 * @covers Title::getPrefixedText
+	 * @dataProvider provideGetPrefixedText
+	 */
+	public function testGetPrefixedText( Title $title, $expected ) {
+		$this->assertEquals( $expected, $title->getPrefixedText() );
 	}
 }

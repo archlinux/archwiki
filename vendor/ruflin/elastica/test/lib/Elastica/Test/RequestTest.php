@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica\Test;
 
 use Elastica\Connection;
@@ -44,7 +45,7 @@ class RequestTest extends BaseTest
         $connection->setHost($this->_getHost());
         $connection->setPort('9200');
 
-        $request = new Request('_status', Request::GET, array(), array(), $connection);
+        $request = new Request('_stats', Request::GET, array(), array(), $connection);
 
         $response = $request->send();
 

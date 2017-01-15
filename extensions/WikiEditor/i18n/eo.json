@@ -10,7 +10,8 @@
 			"Ziko",
 			"Nemo bis",
 			"KuboF",
-			"Macofe"
+			"Macofe",
+			"Robin van der Vliet"
 		]
 	},
 	"wikieditor": "Progresa redaktilo por vikiteksto",
@@ -78,6 +79,7 @@
 	"wikieditor-toolbar-file-format-none": "neniu",
 	"wikieditor-toolbar-tool-file-insert": "Enmeti",
 	"wikieditor-toolbar-tool-file-cancel": "Nuligi",
+	"wikieditor-toolbar-tool-file-upload": "Alŝuti",
 	"wikieditor-toolbar-tool-reference": "Piednoto",
 	"wikieditor-toolbar-tool-reference-example": "Enmetu tekston de piednoto ĉi tien",
 	"wikieditor-toolbar-tool-reference-cancel": "Nuligi",

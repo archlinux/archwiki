@@ -20,6 +20,7 @@
 	"cite_error_ref_no_key": "Kelpaamaton <code>&lt;ref&gt;</code>-elementti: sisällöttömille refeille pitää määrittää nimi.",
 	"cite_error_ref_too_many_keys": "Kelpaamaton <code>&lt;ref&gt;</code>-elementti: virheelliset nimet, esim. liian monta",
 	"cite_error_ref_no_input": "Kelpaamaton <code>&lt;ref&gt;</code>-elementti: viitteillä ilman nimiä täytyy olla sisältöä",
+	"cite_error_references_duplicate_key": "Virheellinen <code>&lt;ref&gt;</code>-elementti; nimi \"$1\" on määritetty usean kerran eri sisällöillä",
 	"cite_error_references_invalid_parameters": "Kelpaamaton <code>&lt;references&gt;</code>-elementti: parametrit eivät ole sallittuja. Käytä muotoa <code>&lt;references /&gt;</code>.",
 	"cite_error_references_invalid_parameters_group": "Kelpaamaton <code>&lt;references&gt;</code>-elementti: vain parametri ”group” on sallittu. Käytä muotoa <code>&lt;references /&gt;</code> tai <code>&lt;references group=\"...\" /&gt;</code>",
 	"cite_error_references_no_backlink_label": "Määritetyt takaisinviittausnimikkeet loppuivat kesken.\nNiitä voi määritellä lisää sivulla <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>.",
@@ -33,6 +34,9 @@
 	"cite_error_references_no_key": "<code>&lt;references&gt;</code>-elementissä määritetyllä <code>&lt;ref&gt;</code>-elementillä ei ole nimimääritettä.",
 	"cite_error_empty_references_define": "<code>&lt;references&gt;</code>-elementissä määritetyllä <code>&lt;ref&gt;</code>-elementillä nimellä ”$1” ei ole sisältöä.",
 	"cite-tracking-category-cite-error": "Sivut, joissa on viittausvirheitä",
+	"cite-tracking-category-cite-error-desc": "Tässä luokassa olevissa sivuissa on virheitä viite-elementtien käytössä.",
+	"cite_references_link_accessibility_label": "Siirry ylös",
+	"cite_references_link_many_accessibility_label": "Siirry ylös kohtaan:",
 	"cite_section_preview_references": "Viitteiden esikatselu",
 	"cite_warning": "Viittausvaroitus: $1",
 	"cite_warning_sectionpreview_no_text": "<code>&lt;ref&gt;</code>-viitettä, jonka nimenä on <code>$1</code>, ei voida näyttää esikatselussa, koska se määritetään tämän osion ulkopuolella tai sitä ei ole määritetty lainkaan."

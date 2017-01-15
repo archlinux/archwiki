@@ -35,7 +35,8 @@ class ApiQueryContributions extends ApiQueryBase {
 		parent::__construct( $query, $moduleName, 'uc' );
 	}
 
-	private $params, $prefixMode, $userprefix, $multiUserMode, $usernames, $parentLens;
+	private $params, $prefixMode, $userprefix, $multiUserMode, $idMode, $usernames, $userids,
+		$parentLens;
 	private $fld_ids = false, $fld_title = false, $fld_timestamp = false,
 		$fld_comment = false, $fld_parsedcomment = false, $fld_flags = false,
 		$fld_patrolled = false, $fld_tags = false, $fld_size = false, $fld_sizediff = false;
@@ -56,19 +57,22 @@ class ApiQueryContributions extends ApiQueryBase {
 		$this->fld_patrolled = isset( $prop['patrolled'] );
 		$this->fld_tags = isset( $prop['tags'] );
 
-		// Most of this code will use the 'contributions' group DB, which can map to slaves
+		// Most of this code will use the 'contributions' group DB, which can map to replica DBs
 		// with extra user based indexes or partioning by user. The additional metadata
-		// queries should use a regular slave since the lookup pattern is not all by user.
-		$dbSecondary = $this->getDB(); // any random slave
+		// queries should use a regular replica DB since the lookup pattern is not all by user.
+		$dbSecondary = $this->getDB(); // any random replica DB
 
 		// TODO: if the query is going only against the revision table, should this be done?
-		$this->selectNamedDB( 'contributions', DB_SLAVE, 'contributions' );
+		$this->selectNamedDB( 'contributions', DB_REPLICA, 'contributions' );
 
+		$this->idMode = false;
 		if ( isset( $this->params['userprefix'] ) ) {
 			$this->prefixMode = true;
 			$this->multiUserMode = true;
 			$this->userprefix = $this->params['userprefix'];
 		} else {
+			$anyIPs = false;
+			$this->userids = [];
 			$this->usernames = [];
 			if ( !is_array( $this->params['user'] ) ) {
 				$this->params['user'] = [ $this->params['user'] ];
@@ -77,16 +81,39 @@ class ApiQueryContributions extends ApiQueryBase {
 				$this->dieUsage( 'User parameter may not be empty.', 'param_user' );
 			}
 			foreach ( $this->params['user'] as $u ) {
-				$this->prepareUsername( $u );
+				if ( is_null( $u ) || $u === '' ) {
+					$this->dieUsage( 'User parameter may not be empty', 'param_user' );
+				}
+
+				if ( User::isIP( $u ) ) {
+					$anyIPs = true;
+					$this->usernames[] = $u;
+				} else {
+					$name = User::getCanonicalName( $u, 'valid' );
+					if ( $name === false ) {
+						$this->dieUsage( "User name {$u} is not valid", 'param_user' );
+					}
+					$this->usernames[] = $name;
+				}
 			}
 			$this->prefixMode = false;
 			$this->multiUserMode = ( count( $this->params['user'] ) > 1 );
+
+			if ( !$anyIPs ) {
+				$dbr = $this->getDB();
+				$res = $dbr->select( 'user', 'user_id', [ 'user_name' => $this->usernames ], __METHOD__ );
+				foreach ( $res as $row ) {
+					$this->userids[] = $row->user_id;
+				}
+				$this->idMode = count( $this->userids ) === count( $this->usernames );
+			}
 		}
 
 		$this->prepareQuery();
 
+		$hookData = [];
 		// Do the actual query.
-		$res = $this->select( __METHOD__ );
+		$res = $this->select( __METHOD__, [], $hookData );
 
 		if ( $this->fld_sizediff ) {
 			$revIds = [];
@@ -113,7 +140,8 @@ class ApiQueryContributions extends ApiQueryBase {
 			}
 
 			$vals = $this->extractRowInfo( $row );
-			$fit = $this->getResult()->addValue( [ 'query', $this->getModuleName() ], null, $vals );
+			$fit = $this->processRow( $row, $vals, $hookData ) &&
+				$this->getResult()->addValue( [ 'query', $this->getModuleName() ], null, $vals );
 			if ( !$fit ) {
 				$this->setContinueEnumParameter( 'continue', $this->continueStr( $row ) );
 				break;
@@ -124,27 +152,6 @@ class ApiQueryContributions extends ApiQueryBase {
 			[ 'query', $this->getModuleName() ],
 			'item'
 		);
-	}
-
-	/**
-	 * Validate the 'user' parameter and set the value to compare
-	 * against `revision`.`rev_user_text`
-	 *
-	 * @param string $user
-	 */
-	private function prepareUsername( $user ) {
-		if ( !is_null( $user ) && $user !== '' ) {
-			$name = User::isIP( $user )
-				? $user
-				: User::getCanonicalName( $user, 'valid' );
-			if ( $name === false ) {
-				$this->dieUsage( "User name {$user} is not valid", 'param_user' );
-			} else {
-				$this->usernames[] = $name;
-			}
-		} else {
-			$this->dieUsage( 'User parameter may not be empty', 'param_user' );
-		}
 	}
 
 	/**
@@ -163,7 +170,17 @@ class ApiQueryContributions extends ApiQueryBase {
 			$continue = explode( '|', $this->params['continue'] );
 			$db = $this->getDB();
 			if ( $this->multiUserMode ) {
-				$this->dieContinueUsageIf( count( $continue ) != 3 );
+				$this->dieContinueUsageIf( count( $continue ) != 4 );
+				$modeFlag = array_shift( $continue );
+				$this->dieContinueUsageIf( !in_array( $modeFlag, [ 'id', 'name' ] ) );
+				if ( $this->idMode && $modeFlag === 'name' ) {
+					// The users were created since this query started, but we
+					// can't go back and change modes now. So just keep on with
+					// name mode.
+					$this->idMode = false;
+				}
+				$this->dieContinueUsageIf( ( $modeFlag === 'id' ) !== $this->idMode );
+				$userField = $this->idMode ? 'rev_user' : 'rev_user_text';
 				$encUser = $db->addQuotes( array_shift( $continue ) );
 			} else {
 				$this->dieContinueUsageIf( count( $continue ) != 2 );
@@ -174,8 +191,8 @@ class ApiQueryContributions extends ApiQueryBase {
 			$op = ( $this->params['dir'] == 'older' ? '<' : '>' );
 			if ( $this->multiUserMode ) {
 				$this->addWhere(
-					"rev_user_text $op $encUser OR " .
-					"(rev_user_text = $encUser AND " .
+					"$userField $op $encUser OR " .
+					"($userField = $encUser AND " .
 					"(rev_timestamp $op $encTS OR " .
 					"(rev_timestamp = $encTS AND " .
 					"rev_id $op= $encId)))"
@@ -206,14 +223,17 @@ class ApiQueryContributions extends ApiQueryBase {
 		if ( $this->prefixMode ) {
 			$this->addWhere( 'rev_user_text' .
 				$this->getDB()->buildLike( $this->userprefix, $this->getDB()->anyString() ) );
+		} elseif ( $this->idMode ) {
+			$this->addWhereFld( 'rev_user', $this->userids );
 		} else {
 			$this->addWhereFld( 'rev_user_text', $this->usernames );
 		}
 		// ... and in the specified timeframe.
-		// Ensure the same sort order for rev_user_text and rev_timestamp
+		// Ensure the same sort order for rev_user/rev_user_text and rev_timestamp
 		// so our query is indexed
 		if ( $this->multiUserMode ) {
-			$this->addWhereRange( 'rev_user_text', $this->params['dir'], null, null );
+			$this->addWhereRange( $this->idMode ? 'rev_user' : 'rev_user_text',
+				$this->params['dir'], null, null );
 		}
 		$this->addTimestampWhereRange( 'rev_timestamp',
 			$this->params['dir'], $this->params['start'], $this->params['end'] );
@@ -247,7 +267,6 @@ class ApiQueryContributions extends ApiQueryBase {
 			$this->addWhereIf( 'rev_parent_id = 0', isset( $show['new'] ) );
 		}
 		$this->addOption( 'LIMIT', $this->params['limit'] + 1 );
-		$index = [ 'revision' => 'usertext_timestamp' ];
 
 		// Mandatory fields: timestamp allows request continuation
 		// ns+title checks if the user has access rights for this page
@@ -320,7 +339,9 @@ class ApiQueryContributions extends ApiQueryBase {
 			$this->addWhereFld( 'ct_tag', $this->params['tag'] );
 		}
 
-		$this->addOption( 'USE INDEX', $index );
+		if ( isset( $index ) ) {
+			$this->addOption( 'USE INDEX', $index );
+		}
 	}
 
 	/**
@@ -430,7 +451,11 @@ class ApiQueryContributions extends ApiQueryBase {
 
 	private function continueStr( $row ) {
 		if ( $this->multiUserMode ) {
-			return "$row->rev_user_text|$row->rev_timestamp|$row->rev_id";
+			if ( $this->idMode ) {
+				return "id|$row->rev_user|$row->rev_timestamp|$row->rev_id";
+			} else {
+				return "name|$row->rev_user_text|$row->rev_timestamp|$row->rev_id";
+			}
 		} else {
 			return "$row->rev_timestamp|$row->rev_id";
 		}

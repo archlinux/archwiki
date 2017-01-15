@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica\Query;
 
 /**
@@ -8,7 +9,7 @@ namespace Elastica\Query;
  * @author Wong Wing Lun <luiges90@gmail.com>
  * @author Tristan Maindron <tmaindron@gmail.com>
  *
- * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-multi-match-query.html
+ * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-multi-match-query.html
  */
 class MultiMatch extends AbstractQuery
 {
@@ -23,6 +24,8 @@ class MultiMatch extends AbstractQuery
 
     const ZERO_TERM_NONE = 'none';
     const ZERO_TERM_ALL = 'all';
+
+    const FUZZINESS_AUTO = 'AUTO';
 
     /**
      * Sets the query.
@@ -143,13 +146,13 @@ class MultiMatch extends AbstractQuery
     /**
      * Set fuzziness.
      *
-     * @param float $fuzziness
+     * @param float|string $fuzziness
      *
      * @return $this
      */
     public function setFuzziness($fuzziness)
     {
-        return $this->setParam('fuzziness', (float) $fuzziness);
+        return $this->setParam('fuzziness', $fuzziness);
     }
 
     /**

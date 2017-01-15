@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Andrewboltachev"
+			"Andrewboltachev",
+			"Kaganer"
 		]
 	},
 	"vector-action-addsection": "Выль темаез ватсано",
@@ -12,5 +13,6 @@
 	"vector-view-edit": "Тупатоно",
 	"vector-view-history": "История",
 	"vector-view-view": "Лыдӟоно",
-	"vector-view-viewsource": "Кодзэ учкыны"
+	"vector-view-viewsource": "Кодзэ учкыны",
+	"vector-more-actions": "Эшшо"
 }

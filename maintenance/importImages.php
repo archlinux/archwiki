@@ -245,7 +245,8 @@ if ( $count > 0 ) {
 		if ( isset( $options['dry'] ) ) {
 			echo " publishing {$file} by '" . $wgUser->getName() . "', comment '$commentText'... ";
 		} else {
-			$props = FSFile::getPropsFromPath( $file );
+			$mwProps = new MWFileProps( MimeMagic::singleton() );
+			$props = $mwProps->getPropsFromPath( $file, true );
 			$flags = 0;
 			$publishOptions = [];
 			$handler = MediaHandler::getHandler( $props['mime'] );
@@ -297,8 +298,8 @@ if ( $count > 0 ) {
 
 			if ( $doProtect ) {
 				# Protect the file
-				echo "\nWaiting for slaves...\n";
-				// Wait for slaves.
+				echo "\nWaiting for replica DBs...\n";
+				// Wait for replica DBs.
 				sleep( 2.0 ); # Why this sleep?
 				wfWaitForSlaves();
 

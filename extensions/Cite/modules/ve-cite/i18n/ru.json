@@ -28,10 +28,12 @@
 			"Краснорядцева Елена"
 		]
 	},
+	"visualeditor-cite-tool-definition.json": "null",
 	"visualeditor-cite-tool-name-book": "Книга",
 	"visualeditor-cite-tool-name-journal": "Статья",
 	"visualeditor-cite-tool-name-news": "Новости",
 	"visualeditor-cite-tool-name-web": "Веб-сайт",
+	"cite-tool-definition.json": "null",
 	"cite-ve-dialog-reference-editing-reused": "Эта ссылка используется на странице $1 раз{{PLURAL:$1|||а}}.",
 	"cite-ve-dialog-reference-options-group-label": "Использовать эту группу",
 	"cite-ve-dialog-reference-options-group-placeholder": "Общие ссылки",
@@ -54,5 +56,6 @@
 	"cite-ve-referenceslist-isempty": "На этой странице нет ссылок с группой «$1» для включения в этот список.",
 	"cite-ve-referenceslist-isempty-default": "На этой странице нет ссылок для включения в этот список.",
 	"cite-ve-referenceslist-missingref": "Эта сноска определена в шаблоне или другом генерируемом блоке и на данный момент может быть отредактирована только в режиме правки исходного текста.",
-	"cite-ve-toolbar-group-label": "Источники"
+	"cite-ve-toolbar-group-label": "Источники",
+	"cite-ve-othergroup-item": "$1 примечание"
 }

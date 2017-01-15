@@ -1,4 +1,6 @@
 <?php
+use Wikimedia\ScopedCallback;
+
 /**
  * Factory for handling the special page list and generating SpecialPage objects.
  *
@@ -55,17 +57,19 @@ class SpecialPageFactoryTest extends MediaWikiTestCase {
 		$specialPageTestHelper = new SpecialPageTestHelper();
 
 		return [
-			'class name' => [ 'SpecialAllPages' ],
+			'class name' => [ 'SpecialAllPages', false ],
 			'closure' => [ function () {
 				return new SpecialAllPages();
-			} ],
-			'function' => [ [ $this, 'newSpecialAllPages' ] ],
-			'callback string' => [ 'SpecialPageTestHelper::newSpecialAllPages' ],
+			}, false ],
+			'function' => [ [ $this, 'newSpecialAllPages' ], false ],
+			'callback string' => [ 'SpecialPageTestHelper::newSpecialAllPages', false ],
 			'callback with object' => [
-				[ $specialPageTestHelper, 'newSpecialAllPages' ]
+				[ $specialPageTestHelper, 'newSpecialAllPages' ],
+				false
 			],
 			'callback array' => [
-				[ 'SpecialPageTestHelper', 'newSpecialAllPages' ]
+				[ 'SpecialPageTestHelper', 'newSpecialAllPages' ],
+				false
 			]
 		];
 	}
@@ -74,7 +78,7 @@ class SpecialPageFactoryTest extends MediaWikiTestCase {
 	 * @covers SpecialPageFactory::getPage
 	 * @dataProvider specialPageProvider
 	 */
-	public function testGetPage( $spec ) {
+	public function testGetPage( $spec, $shouldReuseInstance ) {
 		$this->mergeMwGlobalArrayValue( 'wgSpecialPages', [ 'testdummy' => $spec ] );
 		SpecialPageFactory::resetList();
 
@@ -82,7 +86,7 @@ class SpecialPageFactoryTest extends MediaWikiTestCase {
 		$this->assertInstanceOf( 'SpecialPage', $page );
 
 		$page2 = SpecialPageFactory::getPage( 'testdummy' );
-		$this->assertEquals( true, $page2 === $page, "Should re-use instance:" );
+		$this->assertEquals( $shouldReuseInstance, $page2 === $page, "Should re-use instance:" );
 	}
 
 	/**

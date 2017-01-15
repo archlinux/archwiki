@@ -60,7 +60,8 @@ OO.ui.Demo.static.pages.icons = function ( demo ) {
 				'signature',
 				'speechBubble',
 				'speechBubbleAdd',
-				'speechBubbles'
+				'speechBubbles',
+				'tray'
 			],
 			interactions: [
 				'beta',

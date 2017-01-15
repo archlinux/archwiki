@@ -70,6 +70,14 @@ class ApiLogin extends ApiBase {
 			return;
 		}
 
+		try {
+			$this->requirePostedParameters( [ 'password', 'token' ] );
+		} catch ( UsageException $ex ) {
+			// Make this a warning for now, upgrade to an error in 1.29.
+			$this->setWarning( $ex->getMessage() );
+			$this->logFeatureUsage( 'login-params-in-query-string' );
+		}
+
 		$params = $this->extractRequestParams();
 
 		$result = [];
@@ -102,20 +110,21 @@ class ApiLogin extends ApiBase {
 		}
 
 		// Try bot passwords
-		if ( $authRes === false && $this->getConfig()->get( 'EnableBotPasswords' ) &&
-			strpos( $params['name'], BotPassword::getSeparator() ) !== false
+		if (
+			$authRes === false && $this->getConfig()->get( 'EnableBotPasswords' ) &&
+			( $botLoginData = BotPassword::canonicalizeLoginData( $params['name'], $params['password'] ) )
 		) {
 			$status = BotPassword::login(
-				$params['name'], $params['password'], $this->getRequest()
+				$botLoginData[0], $botLoginData[1], $this->getRequest()
 			);
 			if ( $status->isOK() ) {
 				$session = $status->getValue();
 				$authRes = 'Success';
 				$loginType = 'BotPassword';
-			} else {
+			} elseif ( !$botLoginData[2] ) {
 				$authRes = 'Failed';
 				$message = $status->getMessage();
-				LoggerFactory::getInstance( 'authmanager' )->info(
+				LoggerFactory::getInstance( 'authentication' )->info(
 					'BotPassword login failed: ' . $status->getWikiText( false, false, 'en' )
 				);
 			}
@@ -155,10 +164,14 @@ class ApiLogin extends ApiBase {
 					$authRes = 'Failed';
 					$message = $res->message;
 					\MediaWiki\Logger\LoggerFactory::getInstance( 'authentication' )
-						->info( __METHOD__ . ': Authentication failed: ' . $message->plain() );
+						->info( __METHOD__ . ': Authentication failed: '
+						. $message->inLanguage( 'en' )->plain() );
 					break;
 
 				default:
+					\MediaWiki\Logger\LoggerFactory::getInstance( 'authentication' )
+						->info( __METHOD__ . ': Authentication failed due to unsupported response type: '
+						. $res->status, $this->getAuthenticationResponseLogData( $res ) );
 					$authRes = 'Aborted';
 					break;
 			}
@@ -173,19 +186,10 @@ class ApiLogin extends ApiBase {
 
 				// Deprecated hook
 				$injected_html = '';
-				Hooks::run( 'UserLoginComplete', [ &$user, &$injected_html ] );
+				Hooks::run( 'UserLoginComplete', [ &$user, &$injected_html, true ] );
 
 				$result['lguserid'] = intval( $user->getId() );
 				$result['lgusername'] = $user->getName();
-
-				// @todo: These are deprecated, and should be removed at some
-				// point (1.28 at the earliest, and see T121527). They were ok
-				// when the core cookie-based login was the only thing, but
-				// CentralAuth broke that a while back and
-				// SessionManager/AuthManager *really* break it.
-				$result['lgtoken'] = $user->getToken();
-				$result['cookieprefix'] = $this->getConfig()->get( 'CookiePrefix' );
-				$result['sessionid'] = $session->getId();
 				break;
 
 			case 'NeedToken':
@@ -193,10 +197,6 @@ class ApiLogin extends ApiBase {
 				$this->setWarning( 'Fetching a token via action=login is deprecated. ' .
 				   'Use action=query&meta=tokens&type=login instead.' );
 				$this->logFeatureUsage( 'action=login&!lgtoken' );
-
-				// @todo: See above about deprecation
-				$result['cookieprefix'] = $this->getConfig()->get( 'CookiePrefix' );
-				$result['sessionid'] = $session->getId();
 				break;
 
 			case 'WrongToken':
@@ -226,7 +226,7 @@ class ApiLogin extends ApiBase {
 		if ( $loginType === 'LoginForm' && isset( LoginForm::$statusCodes[$authRes] ) ) {
 			$authRes = LoginForm::$statusCodes[$authRes];
 		}
-		LoggerFactory::getInstance( 'authmanager' )->info( 'Login attempt', [
+		LoggerFactory::getInstance( 'authevents' )->info( 'Login attempt', [
 			'event' => 'login',
 			'successful' => $authRes === 'Success',
 			'loginType' => $loginType,
@@ -272,5 +272,33 @@ class ApiLogin extends ApiBase {
 
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/API:Login';
+	}
+
+	/**
+	 * Turns an AuthenticationResponse into a hash suitable for passing to Logger
+	 * @param AuthenticationResponse $response
+	 * @return array
+	 */
+	protected function getAuthenticationResponseLogData( AuthenticationResponse $response ) {
+		$ret = [
+			'status' => $response->status,
+		];
+		if ( $response->message ) {
+			$ret['message'] = $response->message->inLanguage( 'en' )->plain();
+		};
+		$reqs = [
+			'neededRequests' => $response->neededRequests,
+			'createRequest' => $response->createRequest,
+			'linkRequest' => $response->linkRequest,
+		];
+		foreach ( $reqs as $k => $v ) {
+			if ( $v ) {
+				$v = is_array( $v ) ? $v : [ $v ];
+				$reqClasses = array_unique( array_map( 'get_class', $v ) );
+				sort( $reqClasses );
+				$ret[$k] = implode( ', ', $reqClasses );
+			}
+		}
+		return $ret;
 	}
 }

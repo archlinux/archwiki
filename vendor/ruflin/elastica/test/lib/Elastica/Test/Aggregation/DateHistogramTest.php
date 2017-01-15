@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica\Test\Aggregation;
 
 use Elastica\Aggregation\DateHistogram;
@@ -39,7 +40,19 @@ class DateHistogramTest extends BaseAggregationTest
         $query->addAggregation($agg);
         $results = $this->_getIndexForTest()->search($query)->getAggregation('hist');
 
-        $this->assertEquals(3, sizeof($results['buckets']));
+        $docCount = 0;
+        $nonDocCount = 0;
+        foreach ($results['buckets'] as $bucket) {
+            if ($bucket['doc_count'] == 1) {
+                ++$docCount;
+            } else {
+                ++$nonDocCount;
+            }
+        }
+        // 3 Documents that were added
+        $this->assertEquals(3, $docCount);
+        // 1 document that was generated in between for the missing hour
+        $this->assertEquals(1, $nonDocCount);
     }
 
     /**

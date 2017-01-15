@@ -184,9 +184,7 @@ QUnit.test( 'newFromDocumentInsertion with references', function ( assert ) {
 		actualStoreItems = [];
 		expectedStoreItems = cases[ i ].expectedStoreItems || [];
 		for ( j = 0; j < expectedStoreItems.length; j++ ) {
-			actualStoreItems[ j ] = doc.store.value( doc.store.indexOfHash(
-				OO.getHash( expectedStoreItems[ j ] )
-			) );
+			actualStoreItems[ j ] = doc.store.value( OO.getHash( expectedStoreItems[ j ] ) );
 		}
 		assert.deepEqual( actualStoreItems, expectedStoreItems, cases[ i ].msg + ': store items' );
 	}

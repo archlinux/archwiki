@@ -28,7 +28,7 @@
 /**
  * @ingroup Database
  */
-class DatabaseMssql extends Database {
+class DatabaseMssql extends DatabaseBase {
 	protected $mInsertId = null;
 	protected $mLastResult = null;
 	protected $mAffectedRows = null;
@@ -42,32 +42,12 @@ class DatabaseMssql extends Database {
 
 	protected $mPort;
 
-	public function cascadingDeletes() {
-		return true;
-	}
-
-	public function cleanupTriggers() {
-		return false;
-	}
-
-	public function strictIPs() {
-		return false;
-	}
-
-	public function realTimestamps() {
-		return false;
-	}
-
 	public function implicitGroupby() {
 		return false;
 	}
 
 	public function implicitOrderby() {
 		return false;
-	}
-
-	public function functionalIndexes() {
-		return true;
 	}
 
 	public function unionSupportsOrderAndLimit() {
@@ -81,7 +61,7 @@ class DatabaseMssql extends Database {
 	 * @param string $password
 	 * @param string $dbName
 	 * @throws DBConnectionError
-	 * @return bool|DatabaseBase|null
+	 * @return bool|resource|null
 	 */
 	public function open( $server, $user, $password, $dbName ) {
 		# Test for driver support, to avoid suppressed fatal error
@@ -165,7 +145,7 @@ class DatabaseMssql extends Database {
 	 * @throws DBUnexpectedError
 	 */
 	protected function doQuery( $sql ) {
-		if ( $this->debug() ) {
+		if ( $this->getFlag( DBO_DEBUG ) ) {
 			wfDebug( "SQL: [$sql]\n" );
 		}
 		$this->offset = 0;
@@ -378,10 +358,10 @@ class DatabaseMssql extends Database {
 	 * @param mixed $conds Array or string, condition(s) for WHERE
 	 * @param string $fname Calling function name (use __METHOD__) for logs/profiling
 	 * @param array $options Associative array of options (e.g.
-	 *   array('GROUP BY' => 'page_title')), see Database::makeSelectOptions
+	 *   [ 'GROUP BY' => 'page_title' ]), see Database::makeSelectOptions
 	 *   code for list of supported stuff
 	 * @param array $join_conds Associative array of table join conditions
-	 *   (optional) (e.g. array( 'page' => array('LEFT JOIN','page_latest=rev_id') )
+	 *   (optional) (e.g. [ 'page' => [ 'LEFT JOIN','page_latest=rev_id' ] ]
 	 * @return mixed Database result resource (feed to Database::fetchObject
 	 *   or whatever), or false on failure
 	 * @throws DBQueryError
@@ -434,10 +414,10 @@ class DatabaseMssql extends Database {
 	 * @param mixed $vars Array or string, field name(s) to be retrieved
 	 * @param mixed $conds Array or string, condition(s) for WHERE
 	 * @param string $fname Calling function name (use __METHOD__) for logs/profiling
-	 * @param array $options Associative array of options (e.g. array('GROUP BY' => 'page_title')),
+	 * @param array $options Associative array of options (e.g. [ 'GROUP BY' => 'page_title' ]),
 	 *   see Database::makeSelectOptions code for list of supported stuff
 	 * @param array $join_conds Associative array of table join conditions (optional)
-	 *    (e.g. array( 'page' => array('LEFT JOIN','page_latest=rev_id') )
+	 *    (e.g. [ 'page' => [ 'LEFT JOIN','page_latest=rev_id' ] ]
 	 * @return string The SQL text
 	 */
 	public function selectSQLText( $table, $vars, $conds = '', $fname = __METHOD__,
@@ -717,7 +697,7 @@ class DatabaseMssql extends Database {
 
 	/**
 	 * INSERT SELECT wrapper
-	 * $varMap must be an associative array of the form array( 'dest1' => 'source1', ...)
+	 * $varMap must be an associative array of the form [ 'dest1' => 'source1', ... ]
 	 * Source items may be literals rather than field names, but strings should
 	 * be quoted with Database::addQuotes().
 	 * @param string $destTable
@@ -730,12 +710,12 @@ class DatabaseMssql extends Database {
 	 * @return null|ResultWrapper
 	 * @throws Exception
 	 */
-	public function insertSelect( $destTable, $srcTable, $varMap, $conds, $fname = __METHOD__,
+	public function nativeInsertSelect( $destTable, $srcTable, $varMap, $conds, $fname = __METHOD__,
 		$insertOptions = [], $selectOptions = []
 	) {
 		$this->mScrollableCursor = false;
 		try {
-			$ret = parent::insertSelect(
+			$ret = parent::nativeInsertSelect(
 				$destTable,
 				$srcTable,
 				$varMap,
@@ -757,15 +737,15 @@ class DatabaseMssql extends Database {
 	 * UPDATE wrapper. Takes a condition array and a SET array.
 	 *
 	 * @param string $table Name of the table to UPDATE. This will be passed through
-	 *                DatabaseBase::tableName().
+	 *                Database::tableName().
 	 *
 	 * @param array $values An array of values to SET. For each array element,
 	 *                the key gives the field name, and the value gives the data
 	 *                to set that field to. The data will be quoted by
-	 *                DatabaseBase::addQuotes().
+	 *                Database::addQuotes().
 	 *
 	 * @param array $conds An array of conditions (WHERE). See
-	 *                DatabaseBase::select() for the details of the format of
+	 *                Database::select() for the details of the format of
 	 *                condition arrays. Use '*' to update all rows.
 	 *
 	 * @param string $fname The function name of the caller (from __METHOD__),
@@ -777,7 +757,6 @@ class DatabaseMssql extends Database {
 	 * @return bool
 	 * @throws DBUnexpectedError
 	 * @throws Exception
-	 * @throws MWException
 	 */
 	function update( $table, $values, $conds, $fname = __METHOD__, $options = [] ) {
 		$table = $this->tableName( $table );
@@ -792,7 +771,7 @@ class DatabaseMssql extends Database {
 
 		$this->mScrollableCursor = false;
 		try {
-			$ret = $this->query( $sql );
+			$this->query( $sql );
 		} catch ( Exception $e ) {
 			$this->mScrollableCursor = true;
 			throw $e;
@@ -807,20 +786,19 @@ class DatabaseMssql extends Database {
 	 * @param int $mode Constant
 	 *      - LIST_COMMA:          comma separated, no field names
 	 *      - LIST_AND:            ANDed WHERE clause (without the WHERE). See
-	 *        the documentation for $conds in DatabaseBase::select().
+	 *        the documentation for $conds in Database::select().
 	 *      - LIST_OR:             ORed WHERE clause (without the WHERE)
 	 *      - LIST_SET:            comma separated with field names, like a SET clause
 	 *      - LIST_NAMES:          comma separated field names
 	 * @param array $binaryColumns Contains a list of column names that are binary types
 	 *      This is a custom parameter only present for MS SQL.
 	 *
-	 * @throws MWException|DBUnexpectedError
+	 * @throws DBUnexpectedError
 	 * @return string
 	 */
 	public function makeList( $a, $mode = LIST_COMMA, $binaryColumns = [] ) {
 		if ( !is_array( $a ) ) {
-			throw new DBUnexpectedError( $this,
-				'DatabaseBase::makeList called with incorrect parameters' );
+			throw new DBUnexpectedError( $this, __METHOD__ . ' called with incorrect parameters' );
 		}
 
 		if ( $mode != LIST_NAMES ) {
@@ -1075,22 +1053,22 @@ class DatabaseMssql extends Database {
 	 * Throws an exception if it is invalid.
 	 * Reference: http://msdn.microsoft.com/en-us/library/aa224033%28v=SQL.80%29.aspx
 	 * @param string $identifier
-	 * @throws MWException
+	 * @throws InvalidArgumentException
 	 * @return string
 	 */
 	private function escapeIdentifier( $identifier ) {
 		if ( strlen( $identifier ) == 0 ) {
-			throw new MWException( "An identifier must not be empty" );
+			throw new InvalidArgumentException( "An identifier must not be empty" );
 		}
 		if ( strlen( $identifier ) > 128 ) {
-			throw new MWException( "The identifier '$identifier' is too long (max. 128)" );
+			throw new InvalidArgumentException( "The identifier '$identifier' is too long (max. 128)" );
 		}
 		if ( ( strpos( $identifier, '[' ) !== false )
 			|| ( strpos( $identifier, ']' ) !== false )
 		) {
 			// It may be allowed if you quoted with double quotation marks, but
 			// that would break if QUOTED_IDENTIFIER is OFF
-			throw new MWException( "Square brackets are not allowed in '$identifier'" );
+			throw new InvalidArgumentException( "Square brackets are not allowed in '$identifier'" );
 		}
 
 		return "[$identifier]";
@@ -1107,8 +1085,8 @@ class DatabaseMssql extends Database {
 	}
 
 	/**
-	 * @param string|Blob $s
-	 * @return string
+	 * @param string|int|null|bool|Blob $s
+	 * @return string|int
 	 */
 	public function addQuotes( $s ) {
 		if ( $s instanceof MssqlBlob ) {
@@ -1216,7 +1194,7 @@ class DatabaseMssql extends Database {
 		}
 
 		// we want this to be compatible with the output of parent::makeSelectOptions()
-		return [ $startOpts, '', $tailOpts, '' ];
+		return [ $startOpts, '', $tailOpts, '', '' ];
 	}
 
 	/**
@@ -1265,13 +1243,6 @@ class DatabaseMssql extends Database {
 			. ") {$gcsq} ({$field}))";
 
 		return $sql;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getSearchEngine() {
-		return "SearchMssql";
 	}
 
 	/**
@@ -1411,148 +1382,3 @@ class DatabaseMssql extends Database {
 		return wfSetVar( $this->mIgnoreErrors, $value );
 	}
 } // end DatabaseMssql class
-
-/**
- * Utility class.
- *
- * @ingroup Database
- */
-class MssqlField implements Field {
-	private $name, $tableName, $default, $max_length, $nullable, $type;
-
-	function __construct( $info ) {
-		$this->name = $info['COLUMN_NAME'];
-		$this->tableName = $info['TABLE_NAME'];
-		$this->default = $info['COLUMN_DEFAULT'];
-		$this->max_length = $info['CHARACTER_MAXIMUM_LENGTH'];
-		$this->nullable = !( strtolower( $info['IS_NULLABLE'] ) == 'no' );
-		$this->type = $info['DATA_TYPE'];
-	}
-
-	function name() {
-		return $this->name;
-	}
-
-	function tableName() {
-		return $this->tableName;
-	}
-
-	function defaultValue() {
-		return $this->default;
-	}
-
-	function maxLength() {
-		return $this->max_length;
-	}
-
-	function isNullable() {
-		return $this->nullable;
-	}
-
-	function type() {
-		return $this->type;
-	}
-}
-
-class MssqlBlob extends Blob {
-	public function __construct( $data ) {
-		if ( $data instanceof MssqlBlob ) {
-			return $data;
-		} elseif ( $data instanceof Blob ) {
-			$this->mData = $data->fetch();
-		} elseif ( is_array( $data ) && is_object( $data ) ) {
-			$this->mData = serialize( $data );
-		} else {
-			$this->mData = $data;
-		}
-	}
-
-	/**
-	 * Returns an unquoted hex representation of a binary string
-	 * for insertion into varbinary-type fields
-	 * @return string
-	 */
-	public function fetch() {
-		if ( $this->mData === null ) {
-			return 'null';
-		}
-
-		$ret = '0x';
-		$dataLength = strlen( $this->mData );
-		for ( $i = 0; $i < $dataLength; $i++ ) {
-			$ret .= bin2hex( pack( 'C', ord( $this->mData[$i] ) ) );
-		}
-
-		return $ret;
-	}
-}
-
-class MssqlResultWrapper extends ResultWrapper {
-	private $mSeekTo = null;
-
-	/**
-	 * @return stdClass|bool
-	 */
-	public function fetchObject() {
-		$res = $this->result;
-
-		if ( $this->mSeekTo !== null ) {
-			$result = sqlsrv_fetch_object( $res, 'stdClass', [],
-				SQLSRV_SCROLL_ABSOLUTE, $this->mSeekTo );
-			$this->mSeekTo = null;
-		} else {
-			$result = sqlsrv_fetch_object( $res );
-		}
-
-		// MediaWiki expects us to return boolean false when there are no more rows instead of null
-		if ( $result === null ) {
-			return false;
-		}
-
-		return $result;
-	}
-
-	/**
-	 * @return array|bool
-	 */
-	public function fetchRow() {
-		$res = $this->result;
-
-		if ( $this->mSeekTo !== null ) {
-			$result = sqlsrv_fetch_array( $res, SQLSRV_FETCH_BOTH,
-				SQLSRV_SCROLL_ABSOLUTE, $this->mSeekTo );
-			$this->mSeekTo = null;
-		} else {
-			$result = sqlsrv_fetch_array( $res );
-		}
-
-		// MediaWiki expects us to return boolean false when there are no more rows instead of null
-		if ( $result === null ) {
-			return false;
-		}
-
-		return $result;
-	}
-
-	/**
-	 * @param int $row
-	 * @return bool
-	 */
-	public function seek( $row ) {
-		$res = $this->result;
-
-		// check bounds
-		$numRows = $this->db->numRows( $res );
-		$row = intval( $row );
-
-		if ( $numRows === 0 ) {
-			return false;
-		} elseif ( $row < 0 || $row > $numRows - 1 ) {
-			return false;
-		}
-
-		// Unlike MySQL, the seek actually happens on the next access
-		$this->mSeekTo = $row;
-		return true;
-	}
-}

@@ -49,7 +49,7 @@ class FetchText extends Maintenance {
 	 * note that the text string itself is *not* followed by newline
 	 */
 	public function execute() {
-		$db = $this->getDB( DB_SLAVE );
+		$db = $this->getDB( DB_REPLICA );
 		$stdin = $this->getStdin();
 		while ( !feof( $stdin ) ) {
 			$line = fgets( $stdin );
@@ -71,7 +71,7 @@ class FetchText extends Maintenance {
 
 	/**
 	 * May throw a database error if, say, the server dies during query.
-	 * @param DatabaseBase $db
+	 * @param Database $db
 	 * @param int $id The old_id
 	 * @return string
 	 */

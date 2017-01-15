@@ -9,5 +9,8 @@
 	},
 	"cite-desc": "Pievieno <nowiki><ref[ name=id]></nowiki> un <nowiki><references/></nowiki> tagus, atsaucēm",
 	"cite_error": "Kļūda atsaucē: $1",
+	"cite_error_ref_numeric_key": "Nederīga <code>&lt;ref&gt;</code> iezīme;\n\"name\" vērtība nevar būt vienkāršs skaitlis. Izmanto aprakstošāku nosaukumu",
+	"cite-tracking-category-cite-error": "Lapas ar atsauču kļūdām",
+	"cite_section_preview_references": "Atsauču priekšskats",
 	"cite_warning": "Atsauces brīdinājums: $1"
 }

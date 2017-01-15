@@ -26,6 +26,7 @@
  */
 class OOUIHTMLForm extends HTMLForm {
 	private $oouiErrors;
+	private $oouiWarnings;
 
 	public function __construct( $descriptor, $context = null, $messagePrefix = '' ) {
 		parent::__construct( $descriptor, $context, $messagePrefix );
@@ -86,6 +87,17 @@ class OOUIHTMLForm extends HTMLForm {
 			] );
 		}
 
+		if ( $this->mShowCancel ) {
+			$target = $this->mCancelTarget ?: Title::newMainPage();
+			if ( $target instanceof Title ) {
+				$target = $target->getLocalURL();
+			}
+			$buttons .= new OOUI\ButtonWidget( [
+				'label' => $this->msg( 'cancel' )->text(),
+				'href' => $target,
+			] );
+		}
+
 		foreach ( $this->mButtons as $button ) {
 			$attrs = [];
 
@@ -117,6 +129,7 @@ class OOUIHTMLForm extends HTMLForm {
 				'value' => $button['value'],
 				'label' => $label,
 				'flags' => $button['flags'],
+				'framed' => $button['framed'],
 				'useInputTag' => $isBadIE,
 			] + $attrs );
 		}
@@ -173,28 +186,34 @@ class OOUIHTMLForm extends HTMLForm {
 	}
 
 	/**
-	 * @param string|array|Status $err
+	 * @param string|array|Status $elements
+	 * @param string $elementsType
 	 * @return string
 	 */
-	function getErrors( $err ) {
-		if ( !$err ) {
+	function getErrorsOrWarnings( $elements, $elementsType ) {
+		if ( !in_array( $elementsType, [ 'error', 'warning' ] ) ) {
+			throw new DomainException( $elementsType . ' is not a valid type.' );
+		}
+		if ( !$elements ) {
 			$errors = [];
-		} elseif ( $err instanceof Status ) {
-			if ( $err->isOK() ) {
+		} elseif ( $elements instanceof Status ) {
+			if ( $elements->isGood() ) {
 				$errors = [];
 			} else {
-				$errors = $err->getErrorsByType( 'error' );
+				$errors = $elements->getErrorsByType( $elementsType );
 				foreach ( $errors as &$error ) {
-					// Input:  array( 'message' => 'foo', 'errors' => array( 'a', 'b', 'c' ) )
-					// Output: array( 'foo', 'a', 'b', 'c' )
+					// Input:  [ 'message' => 'foo', 'errors' => [ 'a', 'b', 'c' ] ]
+					// Output: [ 'foo', 'a', 'b', 'c' ]
 					$error = array_merge( [ $error['message'] ], $error['params'] );
 				}
 			}
-		} else {
-			$errors = $err;
+		} elseif ( $elementsType === 'errors' )  {
+			$errors = $elements;
 			if ( !is_array( $errors ) ) {
 				$errors = [ $errors ];
 			}
+		} else {
+			$errors = [];
 		}
 
 		foreach ( $errors as &$error ) {
@@ -203,7 +222,11 @@ class OOUIHTMLForm extends HTMLForm {
 		}
 
 		// Used in getBody()
-		$this->oouiErrors = $errors;
+		if ( $elementsType === 'error' ) {
+			$this->oouiErrors = $errors;
+		} else {
+			$this->oouiWarnings = $errors;
+		}
 		return '';
 	}
 
@@ -221,22 +244,31 @@ class OOUIHTMLForm extends HTMLForm {
 		// FIXME This only works for forms with no subsections
 		if ( $fieldset instanceof OOUI\FieldsetLayout ) {
 			$classes = [ 'mw-htmlform-ooui-header' ];
-			if ( !$this->mHeader ) {
-				$classes[] = 'mw-htmlform-ooui-header-empty';
-			}
 			if ( $this->oouiErrors ) {
 				$classes[] = 'mw-htmlform-ooui-header-errors';
 			}
-			$fieldset->addItems( [
-				new OOUI\FieldLayout(
-					new OOUI\LabelWidget( [ 'label' => new OOUI\HtmlSnippet( $this->mHeader ) ] ),
-					[
-						'align' => 'top',
-						'errors' => $this->oouiErrors,
-						'classes' => $classes,
-					]
-				)
-			], 0 );
+			if ( $this->oouiWarnings ) {
+				$classes[] = 'mw-htmlform-ooui-header-warnings';
+			}
+			if ( $this->mHeader || $this->oouiErrors || $this->oouiWarnings ) {
+				// if there's no header, don't create an (empty) LabelWidget, simply use a placeholder
+				if ( $this->mHeader ) {
+					$element = new OOUI\LabelWidget( [ 'label' => new OOUI\HtmlSnippet( $this->mHeader ) ] );
+				} else {
+					$element = new OOUI\Widget( [] );
+				}
+				$fieldset->addItems( [
+					new OOUI\FieldLayout(
+						$element,
+						[
+							'align' => 'top',
+							'errors' => $this->oouiErrors,
+							'notices' => $this->oouiWarnings,
+							'classes' => $classes,
+						]
+					)
+				], 0 );
+			}
 		}
 		return $fieldset;
 	}

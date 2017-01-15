@@ -25,7 +25,7 @@ trait LabelElement {
 	 * @param string|HtmlSnippet $config['label'] Label text
 	 */
 	public function initializeLabelElement( array $config = [] ) {
-		// Parent constructor
+		// Properties
 		// FIXME 'labelElement' is a very stupid way to call '$label'
 		$this->label = isset( $config['labelElement'] ) ? $config['labelElement'] : new Tag( 'span' );
 

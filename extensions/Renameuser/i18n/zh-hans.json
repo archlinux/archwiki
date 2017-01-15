@@ -33,7 +33,7 @@
 	"renameusererrorexists": "{{GENDER:$1|用户}}“<nowiki>$1</nowiki>”已经存在。",
 	"renameusererrorinvalid": "用户名“<nowiki>$1</nowiki>”无效。",
 	"renameuser-error-request": "接收申请出错。请返回重试。",
-	"renameuser-error-same-user": "你不可以填写原来的用户名。",
+	"renameuser-error-same-user": "您不能将用户重命名至与其之前相同的用户名。",
 	"renameusersuccess": "{{GENDER:$2|用户}}“<nowiki>$1</nowiki>”已更名为“<nowiki>$2</nowiki>”。",
 	"renameuser-page-exists": "页面$1已经存在，不能被自动覆盖。",
 	"renameuser-page-moved": "页面$1已移动至$2。",

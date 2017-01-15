@@ -10,7 +10,7 @@
 }
 
 .ve-ui-mwSyntaxHighlightDialog-content .ve-ui-mwExtensionWindow-input textarea {
-	font-family: monospace, Courier;
+	font-family: monospace, 'Courier';
 }
 
 .ve-ui-mwSyntaxHighlightDialog-content .oo-ui-comboBoxWidget > .oo-ui-menuSelectWidget {

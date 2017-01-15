@@ -7,10 +7,12 @@
 			"Yerpo"
 		]
 	},
+	"visualeditor-cite-tool-definition.json": "null",
 	"visualeditor-cite-tool-name-book": "Knjiga",
 	"visualeditor-cite-tool-name-journal": "Revija",
 	"visualeditor-cite-tool-name-news": "Novice",
 	"visualeditor-cite-tool-name-web": "Spletna stran",
+	"cite-tool-definition.json": "null",
 	"cite-ve-dialog-reference-editing-reused": "Sklic je na strani uporabljen $1-{{PLURAL:$1|krat}}.",
 	"cite-ve-dialog-reference-options-group-label": "Uporabi to skupino",
 	"cite-ve-dialog-reference-options-group-placeholder": "Splošni sklici",
@@ -33,5 +35,6 @@
 	"cite-ve-referenceslist-isempty": "Na tej strani ni sklicev s skupino »$1« za vključitev na ta seznam.",
 	"cite-ve-referenceslist-isempty-default": "Na tej strani ni sklicev, ki bi jih lahko vključili v ta seznam.",
 	"cite-ve-referenceslist-missingref": "Sklic je opredeljen v predlogi ali drugem ustvarjenem bloku, zato ga lahko trenutno urejate samo v urejevalniku izvorne kode.",
-	"cite-ve-toolbar-group-label": "Navedi"
+	"cite-ve-toolbar-group-label": "Navedi",
+	"cite-ve-othergroup-item": "$1 sklic"
 }

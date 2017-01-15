@@ -16,6 +16,13 @@ class ButtonWidget extends Widget {
 	use AccessKeyedElement;
 
 	/**
+	 * Whether button is active.
+	 *
+	 * @var boolean
+	 */
+	protected $active = false;
+
+	/**
 	 * Hyperlink to visit when clicked.
 	 *
 	 * @var string
@@ -40,6 +47,7 @@ class ButtonWidget extends Widget {
 
 	/**
 	 * @param array $config Configuration options
+	 * @param boolean $config['active'] Whether button should be shown as active (default: false)
 	 * @param string $config['href'] Hyperlink to visit when clicked
 	 * @param string $config['target'] Target to open hyperlink in
 	 * @param boolean $config['noFollow'] Search engine traversal hint (default: true)
@@ -67,6 +75,7 @@ class ButtonWidget extends Widget {
 			->addClasses( [ 'oo-ui-buttonWidget' ] )
 			->appendContent( $this->button );
 
+		$this->setActive( isset( $config['active'] ) ? $config['active'] : false );
 		$this->setHref( isset( $config['href'] ) ? $config['href'] : null );
 		$this->setTarget( isset( $config['target'] ) ? $config['target'] : null );
 		$this->setNoFollow( isset( $config['noFollow'] ) ? $config['noFollow'] : true );
@@ -164,7 +173,33 @@ class ButtonWidget extends Widget {
 		return $this;
 	}
 
+	/**
+	 * Toggle active state.
+	 *
+	 * A button should be marked as active when clicking it would only refresh the page.
+	 *
+	 * @param boolean $active Make button active
+	 * @return $this
+	 */
+	public function setActive( $active = null ) {
+		$this->active = !!$active;
+		$this->toggleClasses( [ 'oo-ui-buttonElement-active' ], $this->active );
+		return $this;
+	}
+
+	/**
+	 * Check if button is active.
+	 *
+	 * @return boolean Button is active
+	 */
+	public function isActive() {
+		return $this->active;
+	}
+
 	public function getConfig( &$config ) {
+		if ( $this->active !== false ) {
+			$config['active'] = $this->active;
+		}
 		if ( $this->href !== null ) {
 			$config['href'] = $this->href;
 		}

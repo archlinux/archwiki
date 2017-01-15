@@ -16,7 +16,8 @@
 			"Temuri rajavi",
 			"Александр Сигачёв",
 			"Amire80",
-			"Sealle"
+			"Sealle",
+			"Jack who built the house"
 		]
 	},
 	"wikieditor": "Расширенный интерфейс редактирования викитекста",
@@ -202,11 +203,11 @@
 	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Example.png|$2|$3]]",
 	"wikieditor-toolbar-help-content-file-caption": "Пояснительный текст",
 	"wikieditor-toolbar-help-content-reference-description": "Примечание",
-	"wikieditor-toolbar-help-content-reference-syntax": "Текст страницы.&lt;ref&gt;[http://www.example.org Текст ссылки], дополнительный текст.&lt;/ref&gt;",
-	"wikieditor-toolbar-help-content-reference-result": "Текст страницы.<sup><a href='#'>[1]</a></sup>",
+	"wikieditor-toolbar-help-content-reference-syntax": "Текст страницы&lt;ref&gt;[http://www.example.org Текст ссылки], дополнительный текст.&lt;/ref&gt;.",
+	"wikieditor-toolbar-help-content-reference-result": "Текст страницы<sup><a href='#'>[1]</a></sup>.",
 	"wikieditor-toolbar-help-content-named-reference-description": "Сноска с названием",
-	"wikieditor-toolbar-help-content-named-reference-syntax": "Текст страницы.&lt;ref name=\"test\"&gt;[http://www.example.org Текст ссылки]&lt;/ref&gt;",
-	"wikieditor-toolbar-help-content-named-reference-result": "Текст страницы.<sup><a href='#'>[2]</a></sup>",
+	"wikieditor-toolbar-help-content-named-reference-syntax": "Текст страницы&lt;ref name=\"test\"&gt;[http://www.example.org Текст ссылки]&lt;/ref&gt;.",
+	"wikieditor-toolbar-help-content-named-reference-result": "Текст страницы<sup><a href='#'>[2]</a></sup>.",
 	"wikieditor-toolbar-help-content-rereference-description": "Дополнительное использование той же ссылки",
 	"wikieditor-toolbar-help-content-rereference-syntax": "&lt;ref name=\"test\" /&gt;",
 	"wikieditor-toolbar-help-content-rereference-result": "Текст страницы<sup><a href='#'>[2]</a></sup>.",

@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica\Cluster\Health;
 
 /**
@@ -6,7 +7,7 @@ namespace Elastica\Cluster\Health;
  *
  * @author Ray Ward <ray.ward@bigcommerce.com>
  *
- * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-health.html
+ * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-health.html
  */
 class Index
 {

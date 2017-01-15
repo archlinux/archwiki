@@ -52,6 +52,7 @@ ve.ui.MWSyntaxHighlightDialog.prototype.initialize = function () {
 		rows: 10,
 		maxRows: 25,
 		autosize: true,
+		autocomplete: 'live',
 		classes: [ 've-ui-mwExtensionWindow-input' ]
 	} );
 

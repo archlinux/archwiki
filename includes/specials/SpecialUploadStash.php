@@ -181,7 +181,7 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 	 * Scale a file (probably with a locally installed imagemagick, or similar)
 	 * and output it to STDOUT.
 	 * @param File $file
-	 * @param array $params Scaling parameters ( e.g. array( width => '50' ) );
+	 * @param array $params Scaling parameters ( e.g. [ width => '50' ] );
 	 * @param int $flags Scaling flags ( see File:: constants )
 	 * @throws MWException|UploadStashFileNotFoundException
 	 * @return bool Success
@@ -227,7 +227,7 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 	 * client to cache it forever.
 	 *
 	 * @param File $file
-	 * @param array $params Scaling parameters ( e.g. array( width => '50' ) );
+	 * @param array $params Scaling parameters ( e.g. [ width => '50' ] );
 	 * @param int $flags Scaling flags ( see File:: constants )
 	 * @throws MWException
 	 * @return bool Success
@@ -391,17 +391,21 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 		if ( $files && count( $files ) ) {
 			sort( $files );
 			$fileListItemsHtml = '';
+			$linkRenderer = $this->getLinkRenderer();
 			foreach ( $files as $file ) {
-				$itemHtml = Linker::linkKnown( $this->getPageTitle( "file/$file" ), htmlspecialchars( $file ) );
+				$itemHtml = $linkRenderer->makeKnownLink(
+					$this->getPageTitle( "file/$file" ),
+					$file
+				);
 				try {
 					$fileObj = $this->stash->getFile( $file );
 					$thumb = $fileObj->generateThumbName( $file, [ 'width' => 220 ] );
 					$itemHtml .=
 						$this->msg( 'word-separator' )->escaped() .
 						$this->msg( 'parentheses' )->rawParams(
-							Linker::linkKnown(
+							$linkRenderer->makeKnownLink(
 								$this->getPageTitle( "thumb/$file/$thumb" ),
-								$this->msg( 'uploadstash-thumbnail' )->escaped()
+								$this->msg( 'uploadstash-thumbnail' )->text()
 							)
 						)->escaped();
 				} catch ( Exception $e ) {

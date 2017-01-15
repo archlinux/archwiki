@@ -48,7 +48,7 @@ class WrappedString {
 	}
 
 	/**
-	 * @param string $content
+	 * @param string $value
 	 * @return WrappedString Newly wrapped string
 	 */
 	protected function extend( $value ) {
@@ -62,14 +62,16 @@ class WrappedString {
 	}
 
 	/**
-	 * Merge consecutive wrapped strings with the same before/after values.
+	 * Merge consecutive WrappedString objects with the same prefix and suffix.
 	 *
 	 * Does not modify the array or the WrappedString objects.
 	 *
+	 * NOTE: This is an internal method. Use join() or WrappedStringList instead.
+	 *
 	 * @param WrappedString[] $wraps
-	 * @return WrappedString[]
+	 * @return WrappedString[] Compacted list
 	 */
-	protected static function compact( array &$wraps ) {
+	public static function compact( array $wraps ) {
 		$consolidated = array();
 		$prev = current( $wraps );
 		while ( ( $wrap = next( $wraps ) ) !== false ) {
@@ -93,14 +95,18 @@ class WrappedString {
 	}
 
 	/**
-	 * Join a several wrapped strings with a separator between each.
+	 * Join several wrapped strings with a separator between each.
+	 *
+	 * This method is compatibile with native PHP implode(). The actual join
+	 * operation is deferred to WrappedStringList::__toString(). This allows
+	 * callers to collect multiple lists and compact them together.
 	 *
 	 * @param string $sep
 	 * @param WrappedString[] $wraps
-	 * @return string
+	 * @return WrappedStringList
 	 */
 	public static function join( $sep, array $wraps ) {
-		return implode( $sep, self::compact( $wraps ) );
+		return new WrappedStringList( $sep, $wraps );
 	}
 
 	/** @return string */

@@ -2,14 +2,9 @@
 
 class ResourceLoaderStartUpModuleTest extends ResourceLoaderTestCase {
 
-	// Version hash for a blank file module.
-	// Result of ResourceLoader::makeHash(), ResourceLoaderTestModule
-	// and ResourceLoaderFileModule::getDefinitionSummary().
-	protected static $blankVersion = 'GqV9IPpY';
-
 	protected static function expandPlaceholders( $text ) {
 		return strtr( $text, [
-			'{blankVer}' => self::$blankVersion
+			'{blankVer}' => self::BLANK_VERSION
 		] );
 	}
 
@@ -310,7 +305,6 @@ mw.loader.register( [
 	 * @dataProvider provideGetModuleRegistrations
 	 * @covers ResourceLoaderStartUpModule::compileUnresolvedDependencies
 	 * @covers ResourceLoaderStartUpModule::getModuleRegistrations
-	 * @covers ResourceLoader::makeLoaderSourcesScript
 	 * @covers ResourceLoader::makeLoaderRegisterScript
 	 */
 	public function testGetModuleRegistrations( $case ) {

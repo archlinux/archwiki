@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Yekrats"
+			"Yekrats",
+			"Lucas"
 		]
 	},
 	"pfunc_desc": "Etendi sintaksan analizilon kun logikaj funkcioj",
@@ -12,11 +13,11 @@
 	"pfunc_expr_stack_exhausted": "Esprima eraro: Stako estis malplenigita",
 	"pfunc_expr_unexpected_number": "Esprima eraro: Neatendita numeralo",
 	"pfunc_expr_preg_match_failure": "Esprima eraro: Neatendita preg_match malsukceso",
-	"pfunc_expr_unrecognised_word": "Esprima eraro: Nekonata vorto \"$1\"",
+	"pfunc_expr_unrecognised_word": "Esprima eraro: Nekonata vorto “$1”.",
 	"pfunc_expr_unexpected_operator": "Esprima eraro: Neatendita operacisimbolo $1",
 	"pfunc_expr_missing_operand": "Esprima eraro: Mankas operando por $1",
 	"pfunc_expr_unexpected_closing_bracket": "Esprima eraro: Neatendita ferma krampo",
-	"pfunc_expr_unrecognised_punctuation": "Esprima eraro: Nekonata interpunkcia simbolo \"$1\"",
+	"pfunc_expr_unrecognised_punctuation": "Esprima eraro: Nekonata interpunkcia simbolo “$1”.",
 	"pfunc_expr_unclosed_bracket": "Esprima eraro: Malferma krampo",
 	"pfunc_expr_division_by_zero": "Divido per nulo",
 	"pfunc_expr_invalid_argument": "Malvalida argumento por $1: < -1 or > 1",

@@ -1,7 +1,5 @@
 <?php
 /**
- * ResourceLoader module for user customizations.
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -23,52 +21,50 @@
  */
 
 /**
- * Module for user customizations
+ * Module for user customizations scripts
  */
 class ResourceLoaderUserModule extends ResourceLoaderWikiModule {
 
 	protected $origin = self::ORIGIN_USER_INDIVIDUAL;
+	protected $targets = [ 'desktop', 'mobile' ];
 
 	/**
-	 * Get list of pages used by this module
-	 *
 	 * @param ResourceLoaderContext $context
 	 * @return array List of pages
 	 */
 	protected function getPages( ResourceLoaderContext $context ) {
-		$allowUserJs = $this->getConfig()->get( 'AllowUserJs' );
-		$allowUserCss = $this->getConfig()->get( 'AllowUserCss' );
-		if ( !$allowUserJs && !$allowUserCss ) {
-			return [];
-		}
-
+		$config = $this->getConfig();
 		$user = $context->getUserObj();
-		if ( !$user || $user->isAnon() ) {
+		if ( $user->isAnon() ) {
 			return [];
 		}
 
-		// Needed so $excludepages works
+		// Use localised/normalised variant to ensure $excludepage matches
 		$userPage = $user->getUserPage()->getPrefixedDBkey();
-
 		$pages = [];
-		if ( $allowUserJs ) {
+
+		if ( $config->get( 'AllowUserJs' ) ) {
 			$pages["$userPage/common.js"] = [ 'type' => 'script' ];
 			$pages["$userPage/" . $context->getSkin() . '.js'] = [ 'type' => 'script' ];
 		}
-		if ( $allowUserCss ) {
-			$pages["$userPage/common.css"] = [ 'type' => 'style' ];
-			$pages["$userPage/" . $context->getSkin() . '.css'] = [ 'type' => 'style' ];
+
+		// User group pages are maintained site-wide and enabled with site JS/CSS.
+		if ( $config->get( 'UseSiteJs' ) ) {
+			foreach ( $user->getEffectiveGroups() as $group ) {
+				if ( $group == '*' ) {
+					continue;
+				}
+				$pages["MediaWiki:Group-$group.js"] = [ 'type' => 'script' ];
+			}
 		}
 
-		// Hack for bug 26283: if we're on a preview page for a CSS/JS page,
-		// we need to exclude that page from this module. In that case, the excludepage
-		// parameter will be set to the name of the page we need to exclude.
+		// Hack for T28283: Allow excluding pages for preview on a CSS/JS page.
+		// The excludepage parameter is set by OutputPage.
 		$excludepage = $context->getRequest()->getVal( 'excludepage' );
 		if ( isset( $pages[$excludepage] ) ) {
-			// This works because $excludepage is generated with getPrefixedDBkey(),
-			// just like the keys in $pages[] above
 			unset( $pages[$excludepage] );
 		}
+
 		return $pages;
 	}
 
@@ -79,5 +75,12 @@ class ResourceLoaderUserModule extends ResourceLoaderWikiModule {
 	 */
 	public function getGroup() {
 		return 'user';
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getDependencies( ResourceLoaderContext $context = null ) {
+		return [ 'user.styles' ];
 	}
 }

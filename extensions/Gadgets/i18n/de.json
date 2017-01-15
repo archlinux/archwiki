@@ -17,7 +17,7 @@
 	"prefs-gadgets": "Helferlein",
 	"gadgets-prefstext": "Dies ist eine Liste spezieller Helferlein, die jeder Benutzer aktivieren kann.\nDie Helferlein basieren zumeist auf JavaScript. Daher muss JavaScript im Browser aktiviert sein, damit sie funktionieren können.\nSie funktionieren allerdings nicht auf dieser Spezialseite mit den persönlichen Einstellungen.\n\nAußerdem ist zu beachten, dass diese Helferlein im Allgemeinen nicht Teil von MediaWiki sind, sondern meist von Benutzern lokaler Wikis entwickelt und gewartet werden.\nLokale Administratoren können die verfügbaren Helferlein bearbeiten. Dafür stehen die [[MediaWiki:Gadgets-definition|Definitionen]] und [[Special:Gadgets|Beschreibungen]] zur Verfügung. Die Anzahl der Benutzer für jedes Helferlein auf diesem Wiki ist in den [[Special:GadgetUsage|Nutzungsstatistiken von Helferlein]] gelistet.",
 	"gadgets": "Helferlein",
-	"gadgetusage": "Nutzungsstatistik von Helferlein",
+	"gadgetusage": "Statistik zur Nutzung der Helferlein",
 	"gadgetusage-gadget": "Helferlein",
 	"gadgetusage-usercount": "Anzahl der Benutzer",
 	"gadgetusage-noresults": "Keine Helferlein gefunden.",

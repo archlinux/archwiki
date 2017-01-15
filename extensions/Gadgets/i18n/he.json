@@ -28,7 +28,7 @@
 	"gadgets-default": "מופעל לכולם כברירת מחדל.",
 	"gadgets-legacy": "הגאדג'ט לא נטען. נא לעדכן לשימוש ב־ResourceLoader. ([https://www.mediawiki.org/wiki/ResourceLoader/Migration_guide_(users) מידע נוסף])",
 	"gadgets-export": "ייצוא",
-	"gadgets-export-title": "יצוא גאדג'טים",
+	"gadgets-export-title": "ייצוא גאדג'טים",
 	"gadgets-not-found": "הגאדג׳ט \"$1\" לא נמצא.",
 	"gadgets-export-text": "כדי לייצא את הגאדג׳ט $1, יש ללחוץ על הלחצן \"{{int:gadgets-export-download}}\", לשמור את הקובץ שהתקבל,\nלגשת אל Special:Import באתר הוויקי המיועד ולהעלות אותו. ואז להוסיף את הדברים הבאים לדף MediaWiki:Gadgets-definition:\n<pre>$2</pre>\nעליך להיות עם הרשאות מתאימות באתר הוויקי המיועד (לרבות הרשאות לעריכת הודעות מערכת) והאפשרות לייבוא מקובץ חייבת להיות מופעלת.",
 	"gadgets-export-download": "הורדה",
@@ -52,6 +52,6 @@
 	"apihelp-query+gadgets-example-5": "קבלת רשימת גאדג'טים שמופעלים למשתמש הנוכחי",
 	"right-gadgets-edit": "עריכת דפי JavaScript ו־CSS של גאדג'טים",
 	"action-gadgets-edit": "לערוף את דף ה־JavaScript או דף ה־CSS של הגאדג'ט הזה",
-	"right-gadgets-definition-edit": "עריכת הגדרות גאדג'טים",
+	"right-gadgets-definition-edit": "עריכת הגדרות של גאדג'טים",
 	"action-gadgets-definition-edit": "לערוך את הגדרת הגאדג'ט הזה"
 }

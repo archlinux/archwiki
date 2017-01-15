@@ -51,6 +51,11 @@
 			calendar: {}
 		}, config );
 
+		// See InputWidget#reusePreInfuseDOM about config.$input
+		if ( config.$input ) {
+			config.$input.addClass( 'oo-ui-element-hidden' );
+		}
+
 		if ( $.isPlainObject( config.formatter ) && config.formatter.format === undefined ) {
 			config.formatter.format = '@' + config.type;
 		}

@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\MediaWikiServices;
+
 /**
  * ExtensionRegistry class
  *
@@ -82,11 +84,10 @@ class ExtensionRegistry {
 	}
 
 	public function __construct() {
-		// We use a try/catch instead of the $fallback parameter because
-		// we don't want to fail here if $wgObjectCaches is not configured
-		// properly for APC setup
+		// We use a try/catch because we don't want to fail here
+		// if $wgObjectCaches is not configured properly for APC setup
 		try {
-			$this->cache = ObjectCache::getLocalServerInstance();
+			$this->cache = MediaWikiServices::getInstance()->getLocalServerObjectCache();
 		} catch ( MWException $e ) {
 			$this->cache = new EmptyBagOStuff();
 		}
@@ -256,6 +257,9 @@ class ExtensionRegistry {
 			switch ( $mergeStrategy ) {
 				case 'array_merge_recursive':
 					$GLOBALS[$key] = array_merge_recursive( $GLOBALS[$key], $val );
+					break;
+				case 'array_replace_recursive':
+					$GLOBALS[$key] = array_replace_recursive( $GLOBALS[$key], $val );
 					break;
 				case 'array_plus_2d':
 					$GLOBALS[$key] = wfArrayPlus2d( $GLOBALS[$key], $val );

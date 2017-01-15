@@ -24,32 +24,19 @@
  * @defgroup Constants MediaWiki constants
  */
 
-/**@{
- * Database related constants
- */
-define( 'DBO_DEBUG', 1 );
-define( 'DBO_NOBUFFER', 2 );
-define( 'DBO_IGNORE', 4 );
-define( 'DBO_TRX', 8 ); // automatically start transaction on first query
-define( 'DBO_DEFAULT', 16 );
-define( 'DBO_PERSISTENT', 32 );
-define( 'DBO_SYSDBA', 64 ); // for oracle maintenance
-define( 'DBO_DDLMODE', 128 ); // when using schema files: mostly for Oracle
-define( 'DBO_SSL', 256 );
-define( 'DBO_COMPRESS', 512 );
-/**@}*/
-
-/**@{
- * Valid database indexes
- * Operation-based indexes
- */
-define( 'DB_SLAVE', -1 );     # Read from the slave (or only server)
-define( 'DB_MASTER', -2 );    # Write to master (or only server)
-/**@}*/
-
 # Obsolete aliases
-define( 'DB_READ', -1 );
-define( 'DB_WRITE', -2 );
+define( 'DB_SLAVE', -1 );
+
+/**@{
+ * Obsolete IDatabase::makeList() constants
+ * These are also available as Database class constants
+ */
+define( 'LIST_COMMA', IDatabase::LIST_COMMA );
+define( 'LIST_AND', IDatabase::LIST_AND );
+define( 'LIST_SET', IDatabase::LIST_SET );
+define( 'LIST_NAMES', IDatabase::LIST_NAMES );
+define( 'LIST_OR', IDatabase::LIST_OR );
+/**@}*/
 
 /**@{
  * Virtual namespaces; don't appear in the page database
@@ -90,8 +77,13 @@ define( 'NS_CATEGORY_TALK', 15 );
  * When writing code that should be compatible with older MediaWiki
  * versions, either stick to the old names or define the new constants
  * yourself, if they're not defined already.
+ *
+ * @deprecated since 1.14
  */
 define( 'NS_IMAGE', NS_FILE );
+/**
+ * @deprecated since 1.14
+ */
 define( 'NS_IMAGE_TALK', NS_FILE_TALK );
 /**@}*/
 
@@ -105,32 +97,7 @@ define( 'CACHE_MEMCACHED', 2 );  // MemCached, must specify servers in $wgMemCac
 define( 'CACHE_ACCEL', 3 );      // APC, XCache or WinCache
 /**@}*/
 
-/**@{
- * Media types.
- * This defines constants for the value returned by File::getMediaType()
- */
-// unknown format
-define( 'MEDIATYPE_UNKNOWN', 'UNKNOWN' );
-// some bitmap image or image source (like psd, etc). Can't scale up.
-define( 'MEDIATYPE_BITMAP', 'BITMAP' );
-// some vector drawing (SVG, WMF, PS, ...) or image source (oo-draw, etc). Can scale up.
-define( 'MEDIATYPE_DRAWING', 'DRAWING' );
-// simple audio file (ogg, mp3, wav, midi, whatever)
-define( 'MEDIATYPE_AUDIO', 'AUDIO' );
-// simple video file (ogg, mpg, etc;
-// no not include formats here that may contain executable sections or scripts!)
-define( 'MEDIATYPE_VIDEO', 'VIDEO' );
-// Scriptable Multimedia (flash, advanced video container formats, etc)
-define( 'MEDIATYPE_MULTIMEDIA', 'MULTIMEDIA' );
-// Office Documents, Spreadsheets (office formats possibly containing apples, scripts, etc)
-define( 'MEDIATYPE_OFFICE', 'OFFICE' );
-// Plain text (possibly containing program code or scripts)
-define( 'MEDIATYPE_TEXT', 'TEXT' );
-// binary executable
-define( 'MEDIATYPE_EXECUTABLE', 'EXECUTABLE' );
-// archive file (zip, tar, etc)
-define( 'MEDIATYPE_ARCHIVE', 'ARCHIVE' );
-/**@}*/
+require_once __DIR__ . '/libs/mime/defines.php';
 
 /**@{
  * Antivirus result codes, for use in $wgAntivirusSetup.
@@ -183,18 +150,13 @@ define( 'EDIT_SUPPRESS_RC', 8 );
 define( 'EDIT_FORCE_BOT', 16 );
 define( 'EDIT_DEFER_UPDATES', 32 ); // Unused since 1.27
 define( 'EDIT_AUTOSUMMARY', 64 );
+define( 'EDIT_INTERNAL', 128 );
 /**@}*/
 
-/**@{
- * Flags for Database::makeList()
- * These are also available as Database class constants
+/**
+ * Database related
  */
-define( 'LIST_COMMA', 0 );
-define( 'LIST_AND', 1 );
-define( 'LIST_SET', 2 );
-define( 'LIST_NAMES', 3 );
-define( 'LIST_OR', 4 );
-/**@}*/
+require_once __DIR__ . '/libs/rdbms/defines.php';
 
 /**
  * Unicode and normalisation related

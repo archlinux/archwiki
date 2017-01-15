@@ -5,6 +5,7 @@
 			"Macofe"
 		]
 	},
+	"apihelp-main-param-assertuser": "Iwwerpréifen ob den aktuelle Benotzer de Benotzer mat deem Numm ass.",
 	"apihelp-main-param-curtimestamp": "Den aktuellen Zäitstempel an d'Resultat integréieren.",
 	"apihelp-block-description": "E Benotzer spären.",
 	"apihelp-block-param-user": "Benotzernumm, IP-Adress oder IP-Beräich deen Dir späre wëllt.",
@@ -30,7 +31,7 @@
 	"apihelp-edit-param-text": "Säiteninhalt.",
 	"apihelp-edit-param-minor": "Kleng Ännerung.",
 	"apihelp-edit-param-notminor": "Keng kleng Ännerung",
-	"apihelp-edit-param-bot": "Dës Ännerung als Bot-Ännerung markéieren.",
+	"apihelp-edit-param-bot": "Dës Ännerung als eng Bot-Ännerung markéieren.",
 	"apihelp-edit-param-createonly": "D'Säit net ännere wann et se scho gëtt.",
 	"apihelp-edit-param-watch": "D'Säit op dem aktuelle Benotzer seng Iwwerwaachungslëscht dobäisetzen.",
 	"apihelp-edit-example-edit": "Eng Säit änneren",
@@ -41,6 +42,7 @@
 	"apihelp-feedcontributions-param-month": "Vum Mount (a virdrun).",
 	"apihelp-feedcontributions-param-deletedonly": "Nëmme geläscht Kontributioune weisen.",
 	"apihelp-feedcontributions-param-toponly": "Nëmmen Ännerunge weisen déi déi lescht Versioun sinn.",
+	"apihelp-feedcontributions-param-hideminor": "Kleng Ännerunge verstoppen.",
 	"apihelp-feedrecentchanges-param-days": "Deeg, op déi d'Resultater limitéiert gi sollen",
 	"apihelp-feedrecentchanges-param-hideminor": "Kleng Ännerunge verstoppen.",
 	"apihelp-feedrecentchanges-param-hidebots": "Ännerunge vu Botte verstoppen.",
@@ -159,6 +161,7 @@
 	"apihelp-stashedit-param-title": "Titel vun der Säit déi geännert gëtt.",
 	"apihelp-stashedit-param-sectiontitle": "Den Titel fir en neien Abschnitt.",
 	"apihelp-stashedit-param-text": "Inhalt vun der Säit",
+	"apihelp-stashedit-param-summary": "Resumé änneren",
 	"apihelp-tag-param-reason": "Grond fir d'Ännerung.",
 	"apihelp-unblock-description": "D'Spär vun engem Benotzer ophiewen.",
 	"apihelp-unblock-param-reason": "Grond fir d'Spär opzehiewen",

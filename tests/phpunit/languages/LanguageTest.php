@@ -638,6 +638,24 @@ class LanguageTest extends LanguageClassesTestCase {
 		);
 	}
 
+	/**
+	 * sprintfDate should only calculate a TTL if the caller is going to use it.
+	 * @covers Language::sprintfDate
+	 */
+	public function testSprintfDateNoTtlIfNotNeeded() {
+		$noTtl = 'unused'; // Value used to represent that the caller didn't pass a variable in.
+		$ttl = null;
+		$this->getLang()->sprintfDate( 'YmdHis', wfTimestampNow(), null, $noTtl );
+		$this->getLang()->sprintfDate( 'YmdHis', wfTimestampNow(), null, $ttl );
+
+		$this->assertSame(
+			'unused',
+			$noTtl,
+			'If the caller does not set the $ttl variable, do not compute it.'
+		);
+		$this->assertInternalType( 'int', $ttl, 'TTL should have been computed.' );
+	}
+
 	public static function provideSprintfDateSamples() {
 		return [
 			[
@@ -1737,5 +1755,18 @@ class LanguageTest extends LanguageClassesTestCase {
 				],
 			],
 		];
+	}
+
+	public function testEquals() {
+		$en1 = new Language();
+		$en1->setCode( 'en' );
+
+		$en2 = Language::factory( 'en' );
+		$en2->setCode( 'en' );
+
+		$this->assertTrue( $en1->equals( $en2 ), 'en equals en' );
+
+		$fr = Language::factory( 'fr' );
+		$this->assertFalse( $en1->equals( $fr ), 'en not equals fr' );
 	}
 }

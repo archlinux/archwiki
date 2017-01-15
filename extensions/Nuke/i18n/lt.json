@@ -21,5 +21,6 @@
 	"nuke-userorip": "Vartotojo vardas, IP adresas arba tuščia:",
 	"nuke-maxpages": "Didžiausias puslapių skaičius:",
 	"nuke-deleted": "Puslapis '''$1''' buvo ištrintas.",
-	"nuke-not-deleted": "Puslapis [[:$1]] '''negalimas''' ištrinti."
+	"nuke-not-deleted": "Puslapis [[:$1]] '''negalimas''' ištrinti.",
+	"nuke-linkoncontribs": "masinis trynimas"
 }

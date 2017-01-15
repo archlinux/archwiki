@@ -24,8 +24,10 @@
  * Functions related to the output of file content
  */
 class StreamFile {
-	const READY_STREAM = 1;
-	const NOT_MODIFIED = 2;
+	// Do not send any HTTP headers unless requested by caller (e.g. body only)
+	const STREAM_HEADLESS = HTTPFileStreamer::STREAM_HEADLESS;
+	// Do not try to tear down any PHP output buffers
+	const STREAM_ALLOW_OB = HTTPFileStreamer::STREAM_ALLOW_OB;
 
 	/**
 	 * Stream a file to the browser, adding all the headings and fun stuff.
@@ -33,107 +35,52 @@ class StreamFile {
 	 * and Content-Disposition.
 	 *
 	 * @param string $fname Full name and path of the file to stream
-	 * @param array $headers Any additional headers to send
+	 * @param array $headers Any additional headers to send if the file exists
 	 * @param bool $sendErrors Send error messages if errors occur (like 404)
+	 * @param array $optHeaders HTTP request header map (e.g. "range") (use lowercase keys)
+	 * @param integer $flags Bitfield of STREAM_* constants
 	 * @throws MWException
 	 * @return bool Success
 	 */
-	public static function stream( $fname, $headers = [], $sendErrors = true ) {
-
+	public static function stream(
+		$fname, $headers = [], $sendErrors = true, $optHeaders = [], $flags = 0
+	) {
 		if ( FileBackend::isStoragePath( $fname ) ) { // sanity
-			throw new MWException( __FUNCTION__ . " given storage path '$fname'." );
+			throw new InvalidArgumentException( __FUNCTION__ . " given storage path '$fname'." );
 		}
 
-		MediaWiki\suppressWarnings();
-		$stat = stat( $fname );
-		MediaWiki\restoreWarnings();
+		$streamer = new HTTPFileStreamer(
+			$fname,
+			[
+				'obResetFunc' => 'wfResetOutputBuffers',
+				'streamMimeFunc' => [ __CLASS__, 'contentTypeFromPath' ]
+			]
+		);
 
-		$res = self::prepareForStream( $fname, $stat, $headers, $sendErrors );
-		if ( $res == self::NOT_MODIFIED ) {
-			$ok = true; // use client cache
-		} elseif ( $res == self::READY_STREAM ) {
-			$ok = readfile( $fname );
-		} else {
-			$ok = false; // failed
-		}
-
-		return $ok;
+		return $streamer->stream( $headers, $sendErrors, $optHeaders, $flags );
 	}
 
 	/**
-	 * Call this function used in preparation before streaming a file.
-	 * This function does the following:
-	 * (a) sends Last-Modified, Content-type, and Content-Disposition headers
-	 * (b) cancels any PHP output buffering and automatic gzipping of output
-	 * (c) sends Content-Length header based on HTTP_IF_MODIFIED_SINCE check
+	 * Send out a standard 404 message for a file
 	 *
-	 * @param string $path Storage path or file system path
-	 * @param array|bool $info File stat info with 'mtime' and 'size' fields
-	 * @param array $headers Additional headers to send
-	 * @param bool $sendErrors Send error messages if errors occur (like 404)
-	 * @return int|bool READY_STREAM, NOT_MODIFIED, or false on failure
+	 * @param string $fname Full name and path of the file to stream
+	 * @param integer $flags Bitfield of STREAM_* constants
+	 * @since 1.24
 	 */
-	public static function prepareForStream(
-		$path, $info, $headers = [], $sendErrors = true
-	) {
-		if ( !is_array( $info ) ) {
-			if ( $sendErrors ) {
-				HttpStatus::header( 404 );
-				header( 'Cache-Control: no-cache' );
-				header( 'Content-Type: text/html; charset=utf-8' );
-				$encFile = htmlspecialchars( $path );
-				$encScript = htmlspecialchars( $_SERVER['SCRIPT_NAME'] );
-				echo "<html><body>
-					<h1>File not found</h1>
-					<p>Although this PHP script ($encScript) exists, the file requested for output
-					($encFile) does not.</p>
-					</body></html>
-					";
-			}
-			return false;
-		}
+	public static function send404Message( $fname, $flags = 0 ) {
+		HTTPFileStreamer::send404Message( $fname, $flags );
+	}
 
-		// Sent Last-Modified HTTP header for client-side caching
-		header( 'Last-Modified: ' . wfTimestamp( TS_RFC2822, $info['mtime'] ) );
-
-		// Cancel output buffering and gzipping if set
-		wfResetOutputBuffers();
-
-		$type = self::contentTypeFromPath( $path );
-		if ( $type && $type != 'unknown/unknown' ) {
-			header( "Content-type: $type" );
-		} else {
-			// Send a content type which is not known to Internet Explorer, to
-			// avoid triggering IE's content type detection. Sending a standard
-			// unknown content type here essentially gives IE license to apply
-			// whatever content type it likes.
-			header( 'Content-type: application/x-wiki' );
-		}
-
-		// Don't stream it out as text/html if there was a PHP error
-		if ( headers_sent() ) {
-			echo "Headers already sent, terminating.\n";
-			return false;
-		}
-
-		// Send additional headers
-		foreach ( $headers as $header ) {
-			header( $header );
-		}
-
-		// Don't send if client has up to date cache
-		if ( !empty( $_SERVER['HTTP_IF_MODIFIED_SINCE'] ) ) {
-			$modsince = preg_replace( '/;.*$/', '', $_SERVER['HTTP_IF_MODIFIED_SINCE'] );
-			if ( wfTimestamp( TS_UNIX, $info['mtime'] ) <= strtotime( $modsince ) ) {
-				ini_set( 'zlib.output_compression', 0 );
-				HttpStatus::header( 304 );
-				return self::NOT_MODIFIED; // ok
-			}
-		}
-
-		header( 'Content-Length: ' . $info['size'] );
-
-		return self::READY_STREAM; // ok
+	/**
+	 * Convert a Range header value to an absolute (start, end) range tuple
+	 *
+	 * @param string $range Range header value
+	 * @param integer $size File size
+	 * @return array|string Returns error string on failure (start, end, length)
+	 * @since 1.24
+	 */
+	public static function parseRange( $range, $size ) {
+		return HTTPFileStreamer::parseRange( $range, $size );
 	}
 
 	/**

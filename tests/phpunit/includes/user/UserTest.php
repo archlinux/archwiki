@@ -110,7 +110,7 @@ class UserTest extends MediaWikiTestCase {
 		// Add a hook manipluating the rights
 		$this->mergeMwGlobalArrayValue( 'wgHooks', [ 'UserGetRights' => [ function ( $user, &$rights ) {
 			$rights[] = 'nukeworld';
-			$rights = array_diff( $rights, array( 'writetest' ) );
+			$rights = array_diff( $rights, [ 'writetest' ] );
 		} ] ] );
 
 		$userWrapper->mRights = null;
@@ -263,34 +263,75 @@ class UserTest extends MediaWikiTestCase {
 	 * @group medium
 	 * @covers User::getEditCount
 	 */
-	public function testEditCount() {
-		$user = User::newFromName( 'UnitTestUser' );
-
-		if ( !$user->getId() ) {
-			$user->addToDatabase();
-		}
+	public function testGetEditCount() {
+		$user = $this->getMutableTestUser()->getUser();
 
 		// let the user have a few (3) edits
 		$page = WikiPage::factory( Title::newFromText( 'Help:UserTest_EditCount' ) );
 		for ( $i = 0; $i < 3; $i++ ) {
-			$page->doEdit( (string)$i, 'test', 0, false, $user );
+
+			$page->doEditContent(
+				ContentHandler::makeContent( (string)$i, $page->getTitle() ),
+				'test',
+				0,
+				false,
+				$user
+			);
 		}
 
-		$user->clearInstanceCache();
 		$this->assertEquals(
 			3,
 			$user->getEditCount(),
 			'After three edits, the user edit count should be 3'
 		);
 
-		// increase the edit count and clear the cache
+		// increase the edit count
 		$user->incEditCount();
 
-		$user->clearInstanceCache();
 		$this->assertEquals(
 			4,
 			$user->getEditCount(),
 			'After increasing the edit count manually, the user edit count should be 4'
+		);
+	}
+
+	/**
+	 * Test User::editCount
+	 * @group medium
+	 * @covers User::getEditCount
+	 */
+	public function testGetEditCountForAnons() {
+		$user = User::newFromName( 'Anonymous' );
+
+		$this->assertNull(
+			$user->getEditCount(),
+			'Edit count starts null for anonymous users.'
+		);
+
+		$user->incEditCount();
+
+		$this->assertNull(
+			$user->getEditCount(),
+			'Edit count remains null for anonymous users despite calls to increase it.'
+		);
+	}
+
+	/**
+	 * Test User::editCount
+	 * @group medium
+	 * @covers User::incEditCount
+	 */
+	public function testIncEditCount() {
+		$user = $this->getMutableTestUser()->getUser();
+		$user->incEditCount();
+
+		$reloadedUser = User::newFromId( $user->getId() );
+		$reloadedUser->incEditCount();
+
+		$this->assertEquals(
+			2,
+			$reloadedUser->getEditCount(),
+			'Increasing the edit count after a fresh load leaves the object up to date.'
 		);
 	}
 
@@ -300,17 +341,13 @@ class UserTest extends MediaWikiTestCase {
 	 * @covers User::getOption
 	 */
 	public function testOptions() {
-		$user = User::newFromName( 'UnitTestUser' );
-
-		if ( !$user->getId() ) {
-			$user->addToDatabase();
-		}
+		$user = $this->getMutableTestUser()->getUser();
 
 		$user->setOption( 'userjs-someoption', 'test' );
 		$user->setOption( 'cols', 200 );
 		$user->saveSettings();
 
-		$user = User::newFromName( 'UnitTestUser' );
+		$user = User::newFromName( $user->getName() );
 		$this->assertEquals( 'test', $user->getOption( 'userjs-someoption' ) );
 		$this->assertEquals( 200, $user->getOption( 'cols' ) );
 	}
@@ -349,7 +386,7 @@ class UserTest extends MediaWikiTestCase {
 						'MinimalPasswordLength' => 6,
 						'PasswordCannotMatchUsername' => true,
 						'PasswordCannotMatchBlacklist' => true,
-						'MaximalPasswordLength' => 30,
+						'MaximalPasswordLength' => 40,
 					],
 				],
 				'checks' => [
@@ -362,7 +399,8 @@ class UserTest extends MediaWikiTestCase {
 			],
 		] );
 
-		$user = User::newFromName( 'Useruser' );
+		$user = static::getTestUser()->getUser();
+
 		// Sanity
 		$this->assertTrue( $user->isValidPassword( 'Password1234' ) );
 
@@ -373,18 +411,19 @@ class UserTest extends MediaWikiTestCase {
 		$this->assertEquals( 'passwordtooshort', $user->getPasswordValidity( 'a' ) );
 
 		// Maximum length
-		$longPass = str_repeat( 'a', 31 );
+		$longPass = str_repeat( 'a', 41 );
 		$this->assertFalse( $user->isValidPassword( $longPass ) );
 		$this->assertFalse( $user->checkPasswordValidity( $longPass )->isGood() );
 		$this->assertFalse( $user->checkPasswordValidity( $longPass )->isOK() );
 		$this->assertEquals( 'passwordtoolong', $user->getPasswordValidity( $longPass ) );
 
 		// Matches username
-		$this->assertFalse( $user->checkPasswordValidity( 'Useruser' )->isGood() );
-		$this->assertTrue( $user->checkPasswordValidity( 'Useruser' )->isOK() );
-		$this->assertEquals( 'password-name-match', $user->getPasswordValidity( 'Useruser' ) );
+		$this->assertFalse( $user->checkPasswordValidity( $user->getName() )->isGood() );
+		$this->assertTrue( $user->checkPasswordValidity( $user->getName() )->isOK() );
+		$this->assertEquals( 'password-name-match', $user->getPasswordValidity( $user->getName() ) );
 
 		// On the forbidden list
+		$user = User::newFromName( 'Useruser' );
 		$this->assertFalse( $user->checkPasswordValidity( 'Passpass' )->isGood() );
 		$this->assertEquals( 'password-login-forbidden', $user->getPasswordValidity( 'Passpass' ) );
 	}
@@ -440,29 +479,23 @@ class UserTest extends MediaWikiTestCase {
 	 * @covers User::equals
 	 */
 	public function testEquals() {
-		$first = User::newFromName( 'EqualUser' );
-		$second = User::newFromName( 'EqualUser' );
+		$first = $this->getMutableTestUser()->getUser();
+		$second = User::newFromName( $first->getName() );
 
 		$this->assertTrue( $first->equals( $first ) );
 		$this->assertTrue( $first->equals( $second ) );
 		$this->assertTrue( $second->equals( $first ) );
 
-		$third = User::newFromName( '0' );
-		$fourth = User::newFromName( '000' );
+		$third = $this->getMutableTestUser()->getUser();
+		$fourth = $this->getMutableTestUser()->getUser();
 
 		$this->assertFalse( $third->equals( $fourth ) );
 		$this->assertFalse( $fourth->equals( $third ) );
 
 		// Test users loaded from db with id
-		$user = User::newFromName( 'EqualUnitTestUser' );
-		if ( !$user->getId() ) {
-			$user->addToDatabase();
-		}
-
-		$id = $user->getId();
-
-		$fifth = User::newFromId( $id );
-		$sixth = User::newFromName( 'EqualUnitTestUser' );
+		$user = $this->getMutableTestUser()->getUser();
+		$fifth = User::newFromId( $user->getId() );
+		$sixth = User::newFromName( $user->getName() );
 		$this->assertTrue( $fifth->equals( $sixth ) );
 	}
 
@@ -470,7 +503,7 @@ class UserTest extends MediaWikiTestCase {
 	 * @covers User::getId
 	 */
 	public function testGetId() {
-		$user = User::newFromName( 'UTSysop' );
+		$user = static::getTestUser()->getUser();
 		$this->assertTrue( $user->getId() > 0 );
 
 	}
@@ -480,7 +513,7 @@ class UserTest extends MediaWikiTestCase {
 	 * @covers User::isAnon
 	 */
 	public function testLoggedIn() {
-		$user = User::newFromName( 'UTSysop' );
+		$user = $this->getMutableTestUser()->getUser();
 		$this->assertTrue( $user->isLoggedIn() );
 		$this->assertFalse( $user->isAnon() );
 
@@ -498,7 +531,8 @@ class UserTest extends MediaWikiTestCase {
 	 * @covers User::checkAndSetTouched
 	 */
 	public function testCheckAndSetTouched() {
-		$user = TestingAccessWrapper::newFromObject( User::newFromName( 'UTSysop' ) );
+		$user = $this->getMutableTestUser()->getUser();
+		$user = TestingAccessWrapper::newFromObject( $user );
 		$this->assertTrue( $user->isLoggedIn() );
 
 		$touched = $user->getDBTouched();
@@ -512,5 +546,38 @@ class UserTest extends MediaWikiTestCase {
 			$user->checkAndSetTouched(), "checkAndSetTouched() succeded #2" );
 		$this->assertGreaterThan(
 			$touched, $user->getDBTouched(), "user_touched increased with casOnTouched() #2" );
+	}
+
+	/**
+	 * @covers User::findUsersByGroup
+	 */
+	public function testFindUsersByGroup() {
+		$users = User::findUsersByGroup( [] );
+		$this->assertEquals( 0, iterator_count( $users ) );
+
+		$users = User::findUsersByGroup( 'foo' );
+		$this->assertEquals( 0, iterator_count( $users ) );
+
+		$user = $this->getMutableTestUser( [ 'foo' ] )->getUser();
+		$users = User::findUsersByGroup( 'foo' );
+		$this->assertEquals( 1, iterator_count( $users ) );
+		$users->rewind();
+		$this->assertTrue( $user->equals( $users->current() ) );
+
+		// arguments have OR relationship
+		$user2 = $this->getMutableTestUser( [ 'bar' ] )->getUser();
+		$users = User::findUsersByGroup( [ 'foo', 'bar' ] );
+		$this->assertEquals( 2, iterator_count( $users ) );
+		$users->rewind();
+		$this->assertTrue( $user->equals( $users->current() ) );
+		$users->next();
+		$this->assertTrue( $user2->equals( $users->current() ) );
+
+		// users are not duplicated
+		$user = $this->getMutableTestUser( [ 'baz', 'boom' ] )->getUser();
+		$users = User::findUsersByGroup( [ 'baz', 'boom' ] );
+		$this->assertEquals( 1, iterator_count( $users ) );
+		$users->rewind();
+		$this->assertTrue( $user->equals( $users->current() ) );
 	}
 }

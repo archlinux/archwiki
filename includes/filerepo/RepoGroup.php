@@ -135,17 +135,18 @@ class RepoGroup {
 		}
 
 		# Check the cache
+		$dbkey = $title->getDBkey();
 		if ( empty( $options['ignoreRedirect'] )
 			&& empty( $options['private'] )
 			&& empty( $options['bypassCache'] )
 		) {
 			$time = isset( $options['time'] ) ? $options['time'] : '';
-			$dbkey = $title->getDBkey();
 			if ( $this->cache->has( $dbkey, $time, 60 ) ) {
 				return $this->cache->get( $dbkey, $time );
 			}
 			$useCache = true;
 		} else {
+			$time = false;
 			$useCache = false;
 		}
 
@@ -177,8 +178,8 @@ class RepoGroup {
 	 * @param array $inputItems An array of titles, or an array of findFile() options with
 	 *    the "title" option giving the title. Example:
 	 *
-	 *     $findItem = array( 'title' => $title, 'private' => true );
-	 *     $findBatch = array( $findItem );
+	 *     $findItem = [ 'title' => $title, 'private' => true ];
+	 *     $findBatch = [ $findItem ];
 	 *     $repo->findFiles( $findBatch );
 	 *
 	 *    No title should appear in $items twice, as the result use titles as keys
@@ -451,7 +452,9 @@ class RepoGroup {
 
 			return $repo->getFileProps( $fileName );
 		} else {
-			return FSFile::getPropsFromPath( $fileName );
+			$mwProps = new MWFileProps( MimeMagic::singleton() );
+
+			return $mwProps->getPropsFromPath( $fileName, true );
 		}
 	}
 

@@ -7,7 +7,7 @@
 	"cite-desc": "Lisab viitamiseks sildid <nowiki><ref[ name=id]></nowiki> ja <nowiki><references/></nowiki>.",
 	"cite_error": "Viitamistõrge: $1",
 	"cite_error_ref_numeric_key": "Vigane <code>&lt;ref&gt;</code>-silt.\nNimeparameeter ei tohi olla numbriline. Kasuta kirjeldavat nime.",
-	"cite_error_ref_no_key": "Vigane <code>&lt;ref&gt;</code>-silt.\nSisuta viitamissiltidel peab olema nimi.",
+	"cite_error_ref_no_key": "Algussilt <code>&lt;ref&gt;</code> on väärdunud või selle nimi on vigane.",
 	"cite_error_ref_too_many_keys": "Vigane <code>&lt;ref&gt;</code>-silt;\n\"name\" on vigane või liiga pikk.",
 	"cite_error_ref_no_input": "Vigane <code>&lt;ref&gt;</code>-silt.\nNimeta viitamissiltidel peab olema sisu.",
 	"cite_error_references_duplicate_key": "Vigane <code>&lt;ref&gt;</code>-silt; nime \"$1\" on määratud mitu korda erineva sisuga.",

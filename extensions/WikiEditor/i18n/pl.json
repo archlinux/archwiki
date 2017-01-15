@@ -13,7 +13,8 @@
 			"WTM",
 			"Wpedzich",
 			"Mareklug",
-			"Chrumps"
+			"Chrumps",
+			"Woytecr"
 		]
 	},
 	"wikieditor": "Zaawansowany interfejs edycji wikitekstu",
@@ -24,7 +25,7 @@
 	"wikieditor-preview-tab": "Podgląd",
 	"wikieditor-preview-changes-tab": "Zmiany",
 	"wikieditor-preview-loading": "Wczytywanie...",
-	"wikieditor-publish-preference": "Wspomaga publikację materiału krok po kroku",
+	"wikieditor-publish-preference": "Wspomaganie publikacji materiału krok po kroku",
 	"wikieditor-publish-button-publish": "Opublikuj",
 	"wikieditor-publish-button-cancel": "Anuluj",
 	"wikieditor-publish-dialog-title": "Opublikuj w {{GRAMMAR:MS.lp|{{SITENAME}}}}",
@@ -132,7 +133,7 @@
 	"wikieditor-toolbar-tool-table-preview": "Podgląd",
 	"wikieditor-toolbar-tool-table-insert": "Wstaw",
 	"wikieditor-toolbar-tool-table-cancel": "Anuluj",
-	"wikieditor-toolbar-tool-table-toomany": "Wstawianie tabeli o większej liczbie komórek niż $1 nie jest możliwe z użyciem tego okna.",
+	"wikieditor-toolbar-tool-table-toomany": "Wstawianie tabeli o większej liczbie {{PLURAL:$1|komórek}} niż $1 nie jest możliwe z użyciem tego okna.",
 	"wikieditor-toolbar-tool-table-invalidnumber": "Nie wprowadziłeś poprawnej liczby wierszy i kolumn.",
 	"wikieditor-toolbar-tool-table-zero": "Nie można wstawić tabeli z zerową liczbą wierszy lub kolumn.",
 	"wikieditor-toolbar-tool-replace": "Wyszukaj i zastąp",
@@ -196,6 +197,7 @@
 	"wikieditor-toolbar-help-content-olist-result": "<ol><li>Pozycja listy</li><li>Pozycja listy</li></ol>",
 	"wikieditor-toolbar-help-content-file-description": "Plik osadzony",
 	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Przykład.png|$2|$3]]",
+	"wikieditor-toolbar-help-content-file-caption": "Tekst podpisu",
 	"wikieditor-toolbar-help-content-reference-description": "Przypis",
 	"wikieditor-toolbar-help-content-reference-syntax": "Treść strony&lt;ref&gt; [http://www.przyklad.org Opis linku], dodatkowy tekst. &lt;/ref&gt;.",
 	"wikieditor-toolbar-help-content-reference-result": "Treść strony<sup><a href='#'>[1]</a></sup>.",

@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica;
 
 /**
@@ -6,7 +7,7 @@ namespace Elastica;
  *
  * @author Nicolas Ruflin <spam@ruflin.com>
  *
- * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/search-percolate.html
+ * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/search-percolate.html
  */
 class Percolator
 {
@@ -15,7 +16,6 @@ class Percolator
     const EXTRA_SIZE = 'size';
     const EXTRA_TRACK_SCORES = 'track_scores';
     const EXTRA_SORT = 'sort';
-    const EXTRA_FACETS = 'facets';
     const EXTRA_AGGS = 'aggs';
     const EXTRA_HIGHLIGHT = 'highlight';
 
@@ -25,7 +25,6 @@ class Percolator
         self::EXTRA_SIZE,
         self::EXTRA_TRACK_SCORES,
         self::EXTRA_SORT,
-        self::EXTRA_FACETS,
         self::EXTRA_AGGS,
         self::EXTRA_HIGHLIGHT,
     );
@@ -94,7 +93,6 @@ class Percolator
      *                                                                     Percolator::EXTRA_SIZE,
      *                                                                     Percolator::EXTRA_TRACK_SCORES,
      *                                                                     Percolator::EXTRA_SORT,
-     *                                                                     Percolator::EXTRA_FACETS,
      *                                                                     Percolator::EXTRA_AGGS,
      *                                                                     Percolator::EXTRA_HIGHLIGHT ]
      *
@@ -123,7 +121,6 @@ class Percolator
      *                                                                     Percolator::EXTRA_SIZE,
      *                                                                     Percolator::EXTRA_TRACK_SCORES,
      *                                                                     Percolator::EXTRA_SORT,
-     *                                                                     Percolator::EXTRA_FACETS,
      *                                                                     Percolator::EXTRA_AGGS,
      *                                                                     Percolator::EXTRA_HIGHLIGHT ]
      *

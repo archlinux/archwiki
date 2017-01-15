@@ -59,5 +59,6 @@
 	"cite-ve-referenceslist-isempty": "Er zijn geen referenties op deze pagina met de groep \"$1\" om toe te voegen aan deze lijst.",
 	"cite-ve-referenceslist-isempty-default": "Er zijn op deze pagina geen referenties die in deze lijst opgenomen kunnen worden.",
 	"cite-ve-referenceslist-missingref": "Deze referentie bevindt zich in een sjabloon of een ander soort gegenereerd blok en kan voorlopig alleen in de broncodemodus bewerkt worden.",
-	"cite-ve-toolbar-group-label": "Citeren"
+	"cite-ve-toolbar-group-label": "Citeren",
+	"cite-ve-othergroup-item": "$1 referentie"
 }

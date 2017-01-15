@@ -187,6 +187,7 @@
 	"wikieditor-toolbar-help-content-reference-description": "Referensie",
 	"wikieditor-toolbar-help-content-reference-syntax": "Ziedtekste.&lt;ref&gt;[http://www.example.org Beschrieving], eventuele tekste.&lt;/ref&gt;",
 	"wikieditor-toolbar-help-content-reference-result": "Ziedtekste <sup><a href='#'>[1]</a></sup>",
+	"wikieditor-toolbar-help-content-named-reference-description": "Beneumden rifferensie",
 	"wikieditor-toolbar-help-content-rereference-description": "Hergebruuk van de zelfde referensie",
 	"wikieditor-toolbar-help-content-rereference-result": "Ziedtekste <sup><a href='#'>[2]</a></sup>",
 	"wikieditor-toolbar-help-content-showreferences-description": "Referensies weergeven",

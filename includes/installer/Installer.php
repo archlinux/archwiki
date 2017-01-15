@@ -23,6 +23,7 @@
  * @file
  * @ingroup Deployment
  */
+use MediaWiki\MediaWikiServices;
 
 /**
  * This documentation group collects source code files with deployment functionality.
@@ -179,6 +180,7 @@ abstract class Installer {
 		'wgUseInstantCommons',
 		'wgUpgradeKey',
 		'wgDefaultSkin',
+		'wgPingback',
 	];
 
 	/**
@@ -242,6 +244,7 @@ abstract class Installer {
 	protected $objectCaches = [
 		'xcache' => 'xcache_get',
 		'apc' => 'apc_fetch',
+		'apcu' => 'apcu_fetch',
 		'wincache' => 'wincache_ucache_get'
 	];
 
@@ -291,10 +294,6 @@ abstract class Installer {
 		'cc-0' => [
 			'url' => 'https://creativecommons.org/publicdomain/zero/1.0/',
 			'icon' => '$wgResourceBasePath/resources/assets/licenses/cc-0.png',
-		],
-		'pd' => [
-			'url' => '',
-			'icon' => '$wgResourceBasePath/resources/assets/licenses/public-domain.png',
 		],
 		'gfdl' => [
 			'url' => 'https://www.gnu.org/copyleft/fdl.html',
@@ -350,36 +349,77 @@ abstract class Installer {
 	abstract public function showStatusMessage( Status $status );
 
 	/**
+	 * Constructs a Config object that contains configuration settings that should be
+	 * overwritten for the installation process.
+	 *
+	 * @since 1.27
+	 *
+	 * @param Config $baseConfig
+	 *
+	 * @return Config The config to use during installation.
+	 */
+	public static function getInstallerConfig( Config $baseConfig ) {
+		$configOverrides = new HashConfig();
+
+		// disable (problematic) object cache types explicitly, preserving all other (working) ones
+		// bug T113843
+		$emptyCache = [ 'class' => 'EmptyBagOStuff' ];
+
+		$objectCaches = [
+				CACHE_NONE => $emptyCache,
+				CACHE_DB => $emptyCache,
+				CACHE_ANYTHING => $emptyCache,
+				CACHE_MEMCACHED => $emptyCache,
+			] + $baseConfig->get( 'ObjectCaches' );
+
+		$configOverrides->set( 'ObjectCaches', $objectCaches );
+
+		// Load the installer's i18n.
+		$messageDirs = $baseConfig->get( 'MessagesDirs' );
+		$messageDirs['MediawikiInstaller'] = __DIR__ . '/i18n';
+
+		$configOverrides->set( 'MessagesDirs', $messageDirs );
+
+		$installerConfig = new MultiConfig( [ $configOverrides, $baseConfig ] );
+
+		// make sure we use the installer config as the main config
+		$configRegistry = $baseConfig->get( 'ConfigRegistry' );
+		$configRegistry['main'] = function() use ( $installerConfig ) {
+			return $installerConfig;
+		};
+
+		$configOverrides->set( 'ConfigRegistry', $configRegistry );
+
+		return $installerConfig;
+	}
+
+	/**
 	 * Constructor, always call this from child classes.
 	 */
 	public function __construct() {
-		global $wgMessagesDirs, $wgUser;
+		global $wgMemc, $wgUser, $wgObjectCaches;
+
+		$defaultConfig = new GlobalVarConfig(); // all the stuff from DefaultSettings.php
+		$installerConfig = self::getInstallerConfig( $defaultConfig );
+
+		// Reset all services and inject config overrides
+		MediaWiki\MediaWikiServices::resetGlobalInstance( $installerConfig );
 
 		// Don't attempt to load user language options (T126177)
 		// This will be overridden in the web installer with the user-specified language
 		RequestContext::getMain()->setLanguage( 'en' );
 
 		// Disable the i18n cache
+		// TODO: manage LocalisationCache singleton in MediaWikiServices
 		Language::getLocalisationCache()->disableBackend();
-		// Disable LoadBalancer and wfGetDB etc.
-		LBFactory::disableBackend();
+
+		// Disable all global services, since we don't have any configuration yet!
+		MediaWiki\MediaWikiServices::disableStorageBackend();
 
 		// Disable object cache (otherwise CACHE_ANYTHING will try CACHE_DB and
 		// SqlBagOStuff will then throw since we just disabled wfGetDB)
-		$GLOBALS['wgMemc'] = new EmptyBagOStuff;
-		ObjectCache::clear();
-		$emptyCache = [ 'class' => 'EmptyBagOStuff' ];
-		// disable (problematic) object cache types explicitly, preserving all other (working) ones
-		// bug T113843
-		$GLOBALS['wgObjectCaches'] = [
-			CACHE_NONE => $emptyCache,
-			CACHE_DB => $emptyCache,
-			CACHE_ANYTHING => $emptyCache,
-			CACHE_MEMCACHED => $emptyCache,
-		] + $GLOBALS['wgObjectCaches'];
-
-		// Load the installer's i18n.
-		$wgMessagesDirs['MediawikiInstaller'] = __DIR__ . '/i18n';
+		$wgObjectCaches = MediaWikiServices::getInstance()->getMainConfig()->get( 'ObjectCaches' );
+		$wgMemc = ObjectCache::getInstance( CACHE_NONE );
 
 		// Having a user with id = 0 safeguards us from DB access via User::loadOptions().
 		$wgUser = User::newFromId( 0 );
@@ -1162,7 +1202,7 @@ abstract class Installer {
 			$command = $path . DIRECTORY_SEPARATOR . $name;
 
 			MediaWiki\suppressWarnings();
-			$file_exists = file_exists( $command );
+			$file_exists = is_executable( $command );
 			MediaWiki\restoreWarnings();
 
 			if ( $file_exists ) {
@@ -1398,10 +1438,10 @@ abstract class Installer {
 
 	/**
 	 * Get an array of install steps. Should always be in the format of
-	 * array(
+	 * [
 	 *   'name'     => 'someuniquename',
-	 *   'callback' => array( $obj, 'method' ),
-	 * )
+	 *   'callback' => [ $obj, 'method' ],
+	 * ]
 	 * There must be a config-install-$name message defined per step, which will
 	 * be shown on install.
 	 *
@@ -1685,7 +1725,7 @@ abstract class Installer {
 	 * Add an installation step following the given step.
 	 *
 	 * @param callable $callback A valid installation callback array, in this form:
-	 *    array( 'name' => 'some-unique-name', 'callback' => array( $obj, 'function' ) );
+	 *    [ 'name' => 'some-unique-name', 'callback' => [ $obj, 'function' ] ];
 	 * @param string $findStep The step to find. Omit to put the step at the beginning
 	 */
 	public function addInstallStep( $callback, $findStep = 'BEGINNING' ) {

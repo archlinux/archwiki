@@ -1,6 +1,6 @@
 <?php
 
-class WANObjectCacheTest extends MediaWikiTestCase {
+class WANObjectCacheTest extends PHPUnit_Framework_TestCase  {
 	/** @var WANObjectCache */
 	private $cache;
 	/**@var BagOStuff */
@@ -9,19 +9,14 @@ class WANObjectCacheTest extends MediaWikiTestCase {
 	protected function setUp() {
 		parent::setUp();
 
-		if ( $this->getCliArg( 'use-wanobjectcache' ) ) {
-			$name = $this->getCliArg( 'use-wanobjectcache' );
-
-			$this->cache = ObjectCache::getWANInstance( $name );
-		} else {
-			$this->cache = new WANObjectCache( [
-				'cache' => new HashBagOStuff(),
-				'pool' => 'testcache-hash',
-				'relayer' => new EventRelayerNull( [] )
-			] );
-		}
+		$this->cache = new WANObjectCache( [
+			'cache' => new HashBagOStuff(),
+			'pool' => 'testcache-hash',
+			'relayer' => new EventRelayerNull( [] )
+		] );
 
 		$wanCache = TestingAccessWrapper::newFromObject( $this->cache );
+		/** @noinspection PhpUndefinedFieldInspection */
 		$this->internalCache = $wanCache->cache;
 	}
 
@@ -29,21 +24,31 @@ class WANObjectCacheTest extends MediaWikiTestCase {
 	 * @dataProvider provideSetAndGet
 	 * @covers WANObjectCache::set()
 	 * @covers WANObjectCache::get()
+	 * @covers WANObjectCache::makeKey()
 	 * @param mixed $value
 	 * @param integer $ttl
 	 */
 	public function testSetAndGet( $value, $ttl ) {
-		$key = wfRandomString();
+		$curTTL = null;
+		$asOf = null;
+		$key = $this->cache->makeKey( 'x', wfRandomString() );
+
+		$this->cache->get( $key, $curTTL, [], $asOf );
+		$this->assertNull( $curTTL, "Current TTL is null" );
+		$this->assertNull( $asOf, "Current as-of-time is infinite" );
+
+		$t = microtime( true );
 		$this->cache->set( $key, $value, $ttl );
 
-		$curTTL = null;
-		$this->assertEquals( $value, $this->cache->get( $key, $curTTL ) );
+		$this->assertEquals( $value, $this->cache->get( $key, $curTTL, [], $asOf ) );
 		if ( is_infinite( $ttl ) || $ttl == 0 ) {
 			$this->assertTrue( is_infinite( $curTTL ), "Current TTL is infinite" );
 		} else {
 			$this->assertGreaterThan( 0, $curTTL, "Current TTL > 0" );
 			$this->assertLessThanOrEqual( $ttl, $curTTL, "Current TTL < nominal TTL" );
 		}
+		$this->assertGreaterThanOrEqual( $t - 1, $asOf, "As-of-time in range of set() time" );
+		$this->assertLessThanOrEqual( $t + 1, $asOf, "As-of-time in range of set() time" );
 	}
 
 	public static function provideSetAndGet() {
@@ -62,9 +67,10 @@ class WANObjectCacheTest extends MediaWikiTestCase {
 
 	/**
 	 * @covers WANObjectCache::get()
+	 * @covers WANObjectCache::makeGlobalKey()
 	 */
 	public function testGetNotExists() {
-		$key = wfRandomString();
+		$key = $this->cache->makeGlobalKey( 'y', wfRandomString(), 'p' );
 		$curTTL = null;
 		$value = $this->cache->get( $key, $curTTL );
 
@@ -96,11 +102,68 @@ class WANObjectCacheTest extends MediaWikiTestCase {
 		$this->assertFalse( $this->cache->get( $key ), "Stale set() value ignored" );
 	}
 
+	public function testProcessCache() {
+		$hit = 0;
+		$callback = function () use ( &$hit ) {
+			++$hit;
+			return 42;
+		};
+		$keys = [ wfRandomString(), wfRandomString(), wfRandomString() ];
+		$groups = [ 'thiscache:1', 'thatcache:1', 'somecache:1' ];
+
+		foreach ( $keys as $i => $key ) {
+			$this->cache->getWithSetCallback(
+				$key, 100, $callback, [ 'pcTTL' => 5, 'pcGroup' => $groups[$i] ] );
+		}
+		$this->assertEquals( 3, $hit );
+
+		foreach ( $keys as $i => $key ) {
+			$this->cache->getWithSetCallback(
+				$key, 100, $callback, [ 'pcTTL' => 5, 'pcGroup' => $groups[$i] ] );
+		}
+		$this->assertEquals( 3, $hit, "Values cached" );
+
+		foreach ( $keys as $i => $key ) {
+			$this->cache->getWithSetCallback(
+				"$key-2", 100, $callback, [ 'pcTTL' => 5, 'pcGroup' => $groups[$i] ] );
+		}
+		$this->assertEquals( 6, $hit );
+
+		foreach ( $keys as $i => $key ) {
+			$this->cache->getWithSetCallback(
+				"$key-2", 100, $callback, [ 'pcTTL' => 5, 'pcGroup' => $groups[$i] ] );
+		}
+		$this->assertEquals( 6, $hit, "New values cached" );
+
+		foreach ( $keys as $i => $key ) {
+			$this->cache->delete( $key );
+			$this->cache->getWithSetCallback(
+				$key, 100, $callback, [ 'pcTTL' => 5, 'pcGroup' => $groups[$i] ] );
+		}
+		$this->assertEquals( 9, $hit, "Values evicted" );
+
+		$key = reset( $keys );
+		// Get into cache
+		$this->cache->getWithSetCallback( $key, 100, $callback, [ 'pcTTL' => 5 ] );
+		$this->cache->getWithSetCallback( $key, 100, $callback, [ 'pcTTL' => 5 ] );
+		$this->assertEquals( 10, $hit, "Value cached" );
+		$outerCallback = function () use ( &$callback, $key ) {
+			$v = $this->cache->getWithSetCallback( $key, 100, $callback, [ 'pcTTL' => 5 ] );
+
+			return 43 + $v;
+		};
+		$this->cache->getWithSetCallback( $key, 100, $outerCallback );
+		$this->assertEquals( 11, $hit, "Nested callback value process cache skipped" );
+	}
+
 	/**
+	 * @dataProvider getWithSetCallback_provider
 	 * @covers WANObjectCache::getWithSetCallback()
 	 * @covers WANObjectCache::doGetWithSetCallback()
+	 * @param array $extOpts
+	 * @param bool $versioned
 	 */
-	public function testGetWithSetCallback() {
+	public function testGetWithSetCallback( array $extOpts, $versioned ) {
 		$cache = $this->cache;
 
 		$key = wfRandomString();
@@ -108,17 +171,25 @@ class WANObjectCacheTest extends MediaWikiTestCase {
 		$cKey1 = wfRandomString();
 		$cKey2 = wfRandomString();
 
+		$priorValue = null;
+		$priorAsOf = null;
 		$wasSet = 0;
-		$func = function( $old, &$ttl ) use ( &$wasSet, $value ) {
+		$func = function( $old, &$ttl, &$opts, $asOf )
+		use ( &$wasSet, &$priorValue, &$priorAsOf, $value )
+		{
 			++$wasSet;
+			$priorValue = $old;
+			$priorAsOf = $asOf;
 			$ttl = 20; // override with another value
 			return $value;
 		};
 
 		$wasSet = 0;
-		$v = $cache->getWithSetCallback( $key, 30, $func, [ 'lockTSE' => 5 ] );
+		$v = $cache->getWithSetCallback( $key, 30, $func, [ 'lockTSE' => 5 ] + $extOpts );
 		$this->assertEquals( $value, $v, "Value returned" );
 		$this->assertEquals( 1, $wasSet, "Value regenerated" );
+		$this->assertFalse( $priorValue, "No prior value" );
+		$this->assertNull( $priorAsOf, "No prior value" );
 
 		$curTTL = null;
 		$cache->get( $key, $curTTL );
@@ -127,19 +198,22 @@ class WANObjectCacheTest extends MediaWikiTestCase {
 
 		$wasSet = 0;
 		$v = $cache->getWithSetCallback( $key, 30, $func, [
-			'lowTTL' => 0,
-			'lockTSE' => 5,
-		] );
+				'lowTTL' => 0,
+				'lockTSE' => 5,
+			] + $extOpts );
 		$this->assertEquals( $value, $v, "Value returned" );
 		$this->assertEquals( 0, $wasSet, "Value not regenerated" );
 
 		$priorTime = microtime( true );
 		usleep( 1 );
 		$wasSet = 0;
-		$v = $cache->getWithSetCallback( $key, 30, $func,
-			[ 'checkKeys' => [ $cKey1, $cKey2 ] ] );
+		$v = $cache->getWithSetCallback(
+			$key, 30, $func, [ 'checkKeys' => [ $cKey1, $cKey2 ] ] + $extOpts
+		);
 		$this->assertEquals( $value, $v, "Value returned" );
 		$this->assertEquals( 1, $wasSet, "Value regenerated due to check keys" );
+		$this->assertEquals( $value, $priorValue, "Has prior value" );
+		$this->assertInternalType( 'float', $priorAsOf, "Has prior value" );
 		$t1 = $cache->getCheckKeyTime( $cKey1 );
 		$this->assertGreaterThanOrEqual( $priorTime, $t1, 'Check keys generated on miss' );
 		$t2 = $cache->getCheckKeyTime( $cKey2 );
@@ -147,8 +221,9 @@ class WANObjectCacheTest extends MediaWikiTestCase {
 
 		$priorTime = microtime( true );
 		$wasSet = 0;
-		$v = $cache->getWithSetCallback( $key, 30, $func,
-			[ 'checkKeys' => [ $cKey1, $cKey2 ] ] );
+		$v = $cache->getWithSetCallback(
+			$key, 30, $func, [ 'checkKeys' => [ $cKey1, $cKey2 ] ] + $extOpts
+		);
 		$this->assertEquals( $value, $v, "Value returned" );
 		$this->assertEquals( 1, $wasSet, "Value regenerated due to still-recent check keys" );
 		$t1 = $cache->getCheckKeyTime( $cKey1 );
@@ -158,17 +233,172 @@ class WANObjectCacheTest extends MediaWikiTestCase {
 
 		$curTTL = null;
 		$v = $cache->get( $key, $curTTL, [ $cKey1, $cKey2 ] );
-		$this->assertEquals( $value, $v, "Value returned" );
+		if ( $versioned ) {
+			$this->assertEquals( $value, $v[$cache::VFLD_DATA], "Value returned" );
+		} else {
+			$this->assertEquals( $value, $v, "Value returned" );
+		}
 		$this->assertLessThanOrEqual( 0, $curTTL, "Value has current TTL < 0 due to check keys" );
 
 		$wasSet = 0;
 		$key = wfRandomString();
-		$v = $cache->getWithSetCallback( $key, 30, $func, [ 'pcTTL' => 5 ] );
+		$v = $cache->getWithSetCallback( $key, 30, $func, [ 'pcTTL' => 5 ] + $extOpts );
 		$this->assertEquals( $value, $v, "Value returned" );
 		$cache->delete( $key );
-		$v = $cache->getWithSetCallback( $key, 30, $func, [ 'pcTTL' => 5 ] );
+		$v = $cache->getWithSetCallback( $key, 30, $func, [ 'pcTTL' => 5 ] + $extOpts );
 		$this->assertEquals( $value, $v, "Value still returned after deleted" );
 		$this->assertEquals( 1, $wasSet, "Value process cached while deleted" );
+	}
+
+	public static function getWithSetCallback_provider() {
+		return [
+			[ [], false ],
+			[ [ 'version' => 1 ], true ]
+		];
+	}
+
+	/**
+	 * @dataProvider getMultiWithSetCallback_provider
+	 * @covers WANObjectCache::getMultiWithSetCallback()
+	 * @covers WANObjectCache::makeMultiKeys()
+	 * @param array $extOpts
+	 * @param bool $versioned
+	 */
+	public function testGetMultiWithSetCallback( array $extOpts, $versioned ) {
+		$cache = $this->cache;
+
+		$keyA = wfRandomString();
+		$keyB = wfRandomString();
+		$keyC = wfRandomString();
+		$cKey1 = wfRandomString();
+		$cKey2 = wfRandomString();
+
+		$priorValue = null;
+		$priorAsOf = null;
+		$wasSet = 0;
+		$genFunc = function ( $id, $old, &$ttl, &$opts, $asOf ) use (
+			&$wasSet, &$priorValue, &$priorAsOf
+		) {
+			++$wasSet;
+			$priorValue = $old;
+			$priorAsOf = $asOf;
+			$ttl = 20; // override with another value
+			return "@$id$";
+		};
+
+		$wasSet = 0;
+		$keyedIds = new ArrayIterator( [ $keyA => 3353 ] );
+		$value = "@3353$";
+		$v = $cache->getMultiWithSetCallback(
+			$keyedIds, 30, $genFunc, [ 'lockTSE' => 5 ] + $extOpts );
+		$this->assertEquals( $value, $v[$keyA], "Value returned" );
+		$this->assertEquals( 1, $wasSet, "Value regenerated" );
+		$this->assertFalse( $priorValue, "No prior value" );
+		$this->assertNull( $priorAsOf, "No prior value" );
+
+		$curTTL = null;
+		$cache->get( $keyA, $curTTL );
+		$this->assertLessThanOrEqual( 20, $curTTL, 'Current TTL between 19-20 (overriden)' );
+		$this->assertGreaterThanOrEqual( 19, $curTTL, 'Current TTL between 19-20 (overriden)' );
+
+		$wasSet = 0;
+		$value = "@efef$";
+		$keyedIds = new ArrayIterator( [ $keyB => 'efef' ] );
+		$v = $cache->getMultiWithSetCallback(
+			$keyedIds, 30, $genFunc, [ 'lowTTL' => 0, 'lockTSE' => 5, ] + $extOpts );
+		$this->assertEquals( $value, $v[$keyB], "Value returned" );
+		$this->assertEquals( 1, $wasSet, "Value regenerated" );
+		$v = $cache->getMultiWithSetCallback(
+			$keyedIds, 30, $genFunc, [ 'lowTTL' => 0, 'lockTSE' => 5, ] + $extOpts );
+		$this->assertEquals( $value, $v[$keyB], "Value returned" );
+		$this->assertEquals( 1, $wasSet, "Value not regenerated" );
+
+		$priorTime = microtime( true );
+		usleep( 1 );
+		$wasSet = 0;
+		$keyedIds = new ArrayIterator( [ $keyB => 'efef' ] );
+		$v = $cache->getMultiWithSetCallback(
+			$keyedIds, 30, $genFunc, [ 'checkKeys' => [ $cKey1, $cKey2 ] ] + $extOpts
+		);
+		$this->assertEquals( $value, $v[$keyB], "Value returned" );
+		$this->assertEquals( 1, $wasSet, "Value regenerated due to check keys" );
+		$this->assertEquals( $value, $priorValue, "Has prior value" );
+		$this->assertInternalType( 'float', $priorAsOf, "Has prior value" );
+		$t1 = $cache->getCheckKeyTime( $cKey1 );
+		$this->assertGreaterThanOrEqual( $priorTime, $t1, 'Check keys generated on miss' );
+		$t2 = $cache->getCheckKeyTime( $cKey2 );
+		$this->assertGreaterThanOrEqual( $priorTime, $t2, 'Check keys generated on miss' );
+
+		$priorTime = microtime( true );
+		$value = "@43636$";
+		$wasSet = 0;
+		$keyedIds = new ArrayIterator( [ $keyC => 43636 ] );
+		$v = $cache->getMultiWithSetCallback(
+			$keyedIds, 30, $genFunc, [ 'checkKeys' => [ $cKey1, $cKey2 ] ] + $extOpts
+		);
+		$this->assertEquals( $value, $v[$keyC], "Value returned" );
+		$this->assertEquals( 1, $wasSet, "Value regenerated due to still-recent check keys" );
+		$t1 = $cache->getCheckKeyTime( $cKey1 );
+		$this->assertLessThanOrEqual( $priorTime, $t1, 'Check keys did not change again' );
+		$t2 = $cache->getCheckKeyTime( $cKey2 );
+		$this->assertLessThanOrEqual( $priorTime, $t2, 'Check keys did not change again' );
+
+		$curTTL = null;
+		$v = $cache->get( $keyC, $curTTL, [ $cKey1, $cKey2 ] );
+		if ( $versioned ) {
+			$this->assertEquals( $value, $v[$cache::VFLD_DATA], "Value returned" );
+		} else {
+			$this->assertEquals( $value, $v, "Value returned" );
+		}
+		$this->assertLessThanOrEqual( 0, $curTTL, "Value has current TTL < 0 due to check keys" );
+
+		$wasSet = 0;
+		$key = wfRandomString();
+		$keyedIds = new ArrayIterator( [ $key => 242424 ] );
+		$v = $cache->getMultiWithSetCallback(
+			$keyedIds, 30, $genFunc, [ 'pcTTL' => 5 ] + $extOpts );
+		$this->assertEquals( "@{$keyedIds[$key]}$", $v[$key], "Value returned" );
+		$cache->delete( $key );
+		$keyedIds = new ArrayIterator( [ $key => 242424 ] );
+		$v = $cache->getMultiWithSetCallback(
+			$keyedIds, 30, $genFunc, [ 'pcTTL' => 5 ] + $extOpts );
+		$this->assertEquals( "@{$keyedIds[$key]}$", $v[$key], "Value still returned after deleted" );
+		$this->assertEquals( 1, $wasSet, "Value process cached while deleted" );
+
+		$calls = 0;
+		$ids = [ 1, 2, 3, 4, 5, 6 ];
+		$keyFunc = function ( $id, WANObjectCache $wanCache ) {
+			return $wanCache->makeKey( 'test', $id );
+		};
+		$keyedIds = $cache->makeMultiKeys( $ids, $keyFunc );
+		$genFunc = function ( $id, $oldValue, &$ttl, array &$setops ) use ( &$calls ) {
+			++$calls;
+
+			return "val-{$id}";
+		};
+		$values = $cache->getMultiWithSetCallback( $keyedIds, 10, $genFunc );
+
+		$this->assertEquals(
+			[ "val-1", "val-2", "val-3", "val-4", "val-5", "val-6" ],
+			array_values( $values ),
+			"Correct values in correct order"
+		);
+		$this->assertEquals(
+			array_map( $keyFunc, $ids, array_fill( 0, count( $ids ), $this->cache ) ),
+			array_keys( $values ),
+			"Correct keys in correct order"
+		);
+		$this->assertEquals( count( $ids ), $calls );
+
+		$cache->getMultiWithSetCallback( $keyedIds, 10, $genFunc );
+		$this->assertEquals( count( $ids ), $calls, "Values cached" );
+	}
+
+	public static function getMultiWithSetCallback_provider() {
+		return [
+			[ [], false ],
+			[ [ 'version' => 1 ], true ]
+		];
 	}
 
 	/**
@@ -181,8 +411,10 @@ class WANObjectCacheTest extends MediaWikiTestCase {
 		$value = wfRandomString();
 
 		$calls = 0;
-		$func = function() use ( &$calls, $value ) {
+		$func = function() use ( &$calls, $value, $cache, $key ) {
 			++$calls;
+			// Immediately kill any mutex rather than waiting a second
+			$cache->delete( $cache::MUTEX_KEY_PREFIX . $key );
 			return $value;
 		};
 
@@ -191,10 +423,24 @@ class WANObjectCacheTest extends MediaWikiTestCase {
 		$this->assertEquals( 1, $calls, 'Value was populated' );
 
 		// Acquire a lock to verify that getWithSetCallback uses lockTSE properly
-		$this->internalCache->lock( $key, 0 );
-		$ret = $cache->getWithSetCallback( $key, 30, $func, [ 'lockTSE' => 5 ] );
-		$this->assertEquals( $value, $ret );
+		$this->internalCache->add( $cache::MUTEX_KEY_PREFIX . $key, 1, 0 );
+
+		$checkKeys = [ wfRandomString() ]; // new check keys => force misses
+		$ret = $cache->getWithSetCallback( $key, 30, $func,
+			[ 'lockTSE' => 5, 'checkKeys' => $checkKeys ] );
+		$this->assertEquals( $value, $ret, 'Old value used' );
 		$this->assertEquals( 1, $calls, 'Callback was not used' );
+
+		$cache->delete( $key );
+		$ret = $cache->getWithSetCallback( $key, 30, $func,
+			[ 'lockTSE' => 5, 'checkKeys' => $checkKeys ] );
+		$this->assertEquals( $value, $ret, 'Callback was used; interim saved' );
+		$this->assertEquals( 2, $calls, 'Callback was used; interim saved' );
+
+		$ret = $cache->getWithSetCallback( $key, 30, $func,
+			[ 'lockTSE' => 5, 'checkKeys' => $checkKeys ] );
+		$this->assertEquals( $value, $ret, 'Callback was not used; used interim' );
+		$this->assertEquals( 2, $calls, 'Callback was not used; used interim' );
 	}
 
 	/**
@@ -207,9 +453,11 @@ class WANObjectCacheTest extends MediaWikiTestCase {
 		$value = wfRandomString();
 
 		$calls = 0;
-		$func = function( $oldValue, &$ttl, &$setOpts ) use ( &$calls, $value ) {
+		$func = function( $oldValue, &$ttl, &$setOpts ) use ( &$calls, $value, $cache, $key ) {
 			++$calls;
 			$setOpts['since'] = microtime( true ) - 10;
+			// Immediately kill any mutex rather than waiting a second
+			$cache->delete( $cache::MUTEX_KEY_PREFIX . $key );
 			return $value;
 		};
 
@@ -222,10 +470,65 @@ class WANObjectCacheTest extends MediaWikiTestCase {
 		$this->assertEquals( 1, $calls, 'Value was generated' );
 
 		// Acquire a lock to verify that getWithSetCallback uses lockTSE properly
-		$this->internalCache->lock( $key, 0 );
+		$this->internalCache->add( $cache::MUTEX_KEY_PREFIX . $key, 1, 0 );
 		$ret = $cache->getWithSetCallback( $key, 30, $func, [ 'lockTSE' => 5 ] );
 		$this->assertEquals( $value, $ret );
 		$this->assertEquals( 1, $calls, 'Callback was not used' );
+	}
+
+	/**
+	 * @covers WANObjectCache::getWithSetCallback()
+	 * @covers WANObjectCache::doGetWithSetCallback()
+	 */
+	public function testBusyValue() {
+		$cache = $this->cache;
+		$key = wfRandomString();
+		$value = wfRandomString();
+		$busyValue = wfRandomString();
+
+		$calls = 0;
+		$func = function() use ( &$calls, $value, $cache, $key ) {
+			++$calls;
+			// Immediately kill any mutex rather than waiting a second
+			$cache->delete( $cache::MUTEX_KEY_PREFIX . $key );
+			return $value;
+		};
+
+		$ret = $cache->getWithSetCallback( $key, 30, $func, [ 'busyValue' => $busyValue ] );
+		$this->assertEquals( $value, $ret );
+		$this->assertEquals( 1, $calls, 'Value was populated' );
+
+		// Acquire a lock to verify that getWithSetCallback uses busyValue properly
+		$this->internalCache->add( $cache::MUTEX_KEY_PREFIX . $key, 1, 0 );
+
+		$checkKeys = [ wfRandomString() ]; // new check keys => force misses
+		$ret = $cache->getWithSetCallback( $key, 30, $func,
+			[ 'busyValue' => $busyValue, 'checkKeys' => $checkKeys ] );
+		$this->assertEquals( $value, $ret, 'Callback used' );
+		$this->assertEquals( 2, $calls, 'Callback used' );
+
+		$ret = $cache->getWithSetCallback( $key, 30, $func,
+			[ 'lockTSE' => 30, 'busyValue' => $busyValue, 'checkKeys' => $checkKeys ] );
+		$this->assertEquals( $value, $ret, 'Old value used' );
+		$this->assertEquals( 2, $calls, 'Callback was not used' );
+
+		$cache->delete( $key ); // no value at all anymore and still locked
+		$ret = $cache->getWithSetCallback( $key, 30, $func,
+			[ 'busyValue' => $busyValue, 'checkKeys' => $checkKeys ] );
+		$this->assertEquals( $busyValue, $ret, 'Callback was not used; used busy value' );
+		$this->assertEquals( 2, $calls, 'Callback was not used; used busy value' );
+
+		$this->internalCache->delete( $cache::MUTEX_KEY_PREFIX . $key );
+		$ret = $cache->getWithSetCallback( $key, 30, $func,
+			[ 'lockTSE' => 30, 'busyValue' => $busyValue, 'checkKeys' => $checkKeys ] );
+		$this->assertEquals( $value, $ret, 'Callback was used; saved interim' );
+		$this->assertEquals( 3, $calls, 'Callback was used; saved interim' );
+
+		$this->internalCache->add( $cache::MUTEX_KEY_PREFIX . $key, 1, 0 );
+		$ret = $cache->getWithSetCallback( $key, 30, $func,
+			[ 'busyValue' => $busyValue, 'checkKeys' => $checkKeys ] );
+		$this->assertEquals( $value, $ret, 'Callback was not used; used interim' );
+		$this->assertEquals( 3, $calls, 'Callback was not used; used interim' );
 	}
 
 	/**
@@ -435,6 +738,71 @@ class WANObjectCacheTest extends MediaWikiTestCase {
 	}
 
 	/**
+	 * @dataProvider getWithSetCallback_versions_provider
+	 * @param array $extOpts
+	 * @param $versioned
+	 */
+	public function testGetWithSetCallback_versions( array $extOpts, $versioned ) {
+		$cache = $this->cache;
+
+		$key = wfRandomString();
+		$value = wfRandomString();
+
+		$wasSet = 0;
+		$func = function( $old, &$ttl ) use ( &$wasSet, $value ) {
+			++$wasSet;
+			return $value;
+		};
+
+		// Set the main key (version N if versioned)
+		$wasSet = 0;
+		$v = $cache->getWithSetCallback( $key, 30, $func, $extOpts );
+		$this->assertEquals( $value, $v, "Value returned" );
+		$this->assertEquals( 1, $wasSet, "Value regenerated" );
+		$cache->getWithSetCallback( $key, 30, $func, $extOpts );
+		$this->assertEquals( 1, $wasSet, "Value not regenerated" );
+		// Set the key for version N+1 (if versioned)
+		if ( $versioned ) {
+			$verOpts = [ 'version' => $extOpts['version'] + 1 ];
+
+			$wasSet = 0;
+			$v = $cache->getWithSetCallback( $key, 30, $func, $verOpts + $extOpts );
+			$this->assertEquals( $value, $v, "Value returned" );
+			$this->assertEquals( 1, $wasSet, "Value regenerated" );
+
+			$wasSet = 0;
+			$v = $cache->getWithSetCallback( $key, 30, $func, $verOpts + $extOpts );
+			$this->assertEquals( $value, $v, "Value returned" );
+			$this->assertEquals( 0, $wasSet, "Value not regenerated" );
+		}
+
+		$wasSet = 0;
+		$cache->getWithSetCallback( $key, 30, $func, $extOpts );
+		$this->assertEquals( 0, $wasSet, "Value not regenerated" );
+
+		$wasSet = 0;
+		$cache->delete( $key );
+		$v = $cache->getWithSetCallback( $key, 30, $func, $extOpts );
+		$this->assertEquals( $value, $v, "Value returned" );
+		$this->assertEquals( 1, $wasSet, "Value regenerated" );
+
+		if ( $versioned ) {
+			$wasSet = 0;
+			$verOpts = [ 'version' => $extOpts['version'] + 1 ];
+			$v = $cache->getWithSetCallback( $key, 30, $func, $verOpts + $extOpts );
+			$this->assertEquals( $value, $v, "Value returned" );
+			$this->assertEquals( 1, $wasSet, "Value regenerated" );
+		}
+	}
+
+	public static function getWithSetCallback_versions_provider() {
+		return [
+			[ [], false ],
+			[ [ 'version' => 1 ], true ]
+		];
+	}
+
+	/**
 	 * @covers WANObjectCache::touchCheckKey()
 	 * @covers WANObjectCache::resetCheckKey()
 	 * @covers WANObjectCache::getCheckKeyTime()
@@ -536,5 +904,60 @@ class WANObjectCacheTest extends MediaWikiTestCase {
 		$opts = [ 'pending' => true ];
 		$this->cache->set( $key, $value, 30, $opts );
 		$this->assertEquals( false, $this->cache->get( $key ), "Pending value not written." );
+	}
+
+	public function testMcRouterSupport() {
+		$localBag = $this->getMock( 'EmptyBagOStuff', [ 'set', 'delete' ] );
+		$localBag->expects( $this->never() )->method( 'set' );
+		$localBag->expects( $this->never() )->method( 'delete' );
+		$wanCache = new WANObjectCache( [
+			'cache' => $localBag,
+			'pool' => 'testcache-hash',
+			'relayer' => new EventRelayerNull( [] )
+		] );
+		$valFunc = function () {
+			return 1;
+		};
+
+		// None of these should use broadcasting commands (e.g. SET, DELETE)
+		$wanCache->get( 'x' );
+		$wanCache->get( 'x', $ctl, [ 'check1' ] );
+		$wanCache->getMulti( [ 'x', 'y' ] );
+		$wanCache->getMulti( [ 'x', 'y' ], $ctls, [ 'check2' ] );
+		$wanCache->getWithSetCallback( 'p', 30, $valFunc );
+		$wanCache->getCheckKeyTime( 'zzz' );
+	}
+
+	/**
+	 * @dataProvider provideAdaptiveTTL
+	 * @covers WANObjectCache::adaptiveTTL()
+	 * @param float|int $ago
+	 * @param int $maxTTL
+	 * @param int $minTTL
+	 * @param float $factor
+	 * @param int $adaptiveTTL
+	 */
+	public function testAdaptiveTTL( $ago, $maxTTL, $minTTL, $factor, $adaptiveTTL ) {
+		$mtime = $ago ? time() - $ago : $ago;
+		$margin = 5;
+		$ttl = $this->cache->adaptiveTTL( $mtime, $maxTTL, $minTTL, $factor );
+
+		$this->assertGreaterThanOrEqual( $adaptiveTTL - $margin, $ttl );
+		$this->assertLessThanOrEqual( $adaptiveTTL + $margin, $ttl );
+
+		$ttl = $this->cache->adaptiveTTL( (string)$mtime, $maxTTL, $minTTL, $factor );
+
+		$this->assertGreaterThanOrEqual( $adaptiveTTL - $margin, $ttl );
+		$this->assertLessThanOrEqual( $adaptiveTTL + $margin, $ttl );
+	}
+
+	public static function provideAdaptiveTTL() {
+		return [
+			[ 3600, 900, 30, .2, 720 ],
+			[ 3600, 500, 30, .2, 500 ],
+			[ 3600, 86400, 800, .2, 800 ],
+			[ false, 86400, 800, .2, 800 ],
+			[ null, 86400, 800, .2, 800 ]
+		];
 	}
 }

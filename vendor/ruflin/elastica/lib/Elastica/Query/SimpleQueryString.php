@@ -1,10 +1,11 @@
 <?php
+
 namespace Elastica\Query;
 
 /**
  * Class SimpleQueryString.
  *
- * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-simple-query-string-query.html
+ * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-simple-query-string-query.html
  */
 class SimpleQueryString extends AbstractQuery
 {

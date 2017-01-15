@@ -9,6 +9,8 @@
 
 namespace JsonSchema\Constraints;
 
+use JsonSchema\Entity\JsonPointer;
+
 /**
  * The CollectionConstraint Constraints, validates an array against a given schema
  *
@@ -20,7 +22,7 @@ class CollectionConstraint extends Constraint
     /**
      * {@inheritDoc}
      */
-    public function check($value, $schema = null, $path = null, $i = null)
+    public function check($value, $schema = null, JsonPointer $path = null, $i = null)
     {
         // Verify minItems
         if (isset($schema->minItems) && count($value) < $schema->minItems) {
@@ -52,12 +54,12 @@ class CollectionConstraint extends Constraint
     /**
      * Validates the items
      *
-     * @param array     $value
-     * @param \stdClass $schema
-     * @param string    $path
-     * @param string    $i
+     * @param array            $value
+     * @param \stdClass        $schema
+     * @param JsonPointer|null $path
+     * @param string           $i
      */
-    protected function validateItems($value, $schema = null, $path = null, $i = null)
+    protected function validateItems($value, $schema = null, JsonPointer $path = null, $i = null)
     {
         if (is_object($schema->items)) {
             // just one type definition for the whole array
@@ -76,7 +78,7 @@ class CollectionConstraint extends Constraint
                 // Reset errors if needed
                 if (isset($secondErrors) && count($secondErrors) < count($this->getErrors())) {
                     $this->errors = $secondErrors;
-                } else if (isset($secondErrors) && count($secondErrors) === count($this->getErrors())) {
+                } elseif (isset($secondErrors) && count($secondErrors) === count($this->getErrors())) {
                     $this->errors = $initErrors;
                 }
             }
@@ -102,7 +104,7 @@ class CollectionConstraint extends Constraint
             }
 
             // Treat when we have more schema definitions than values, not for empty arrays
-            if(count($value) > 0) {
+            if (count($value) > 0) {
                 for ($k = count($value); $k < count($schema->items); $k++) {
                     $this->checkUndefined(new UndefinedConstraint(), $schema->items[$k], $path, $k);
                 }

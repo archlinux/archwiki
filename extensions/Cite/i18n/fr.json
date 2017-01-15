@@ -15,7 +15,9 @@
 			"Verdy p",
 			"Orlodrim",
 			"Wyz",
-			"Wladek92"
+			"Wladek92",
+			"The RedBurn",
+			"Trial"
 		]
 	},
 	"apihelp-query+references-description": "Renvoyer une représentation des données des références associées avec les pages fournies.",
@@ -36,7 +38,7 @@
 	"cite_error_group_refs_without_references": "Des balises <code>&lt;ref&gt;</code> existent pour un groupe nommé « $1 », mais aucune balise <code>&lt;references group=\"$1\"/&gt;</code> correspondante n’a été trouvée, ou bien une balise fermante <code>&lt;/ref&gt;</code> manque.",
 	"cite_error_references_group_mismatch": "La balise <code>&lt;ref&gt;</code> dans <code>&lt;references&gt;</code> a l’attribut de groupe « $1 » qui entre en conflit avec celui de <code>&lt;references&gt;</code>.",
 	"cite_error_references_missing_group": "La balise <code>&lt;ref&gt;</code> définie dans <code>&lt;references&gt;</code> a un groupe attribué « $1 » qui ne figure pas dans le texte précédent.",
-	"cite_error_references_missing_key": "La balise <code>&lt;ref&gt;</code> avec le nom « $1 » définie dans <code>&lt;references&gt;</code> n’est pas utilisé dans le texte précédent.",
+	"cite_error_references_missing_key": "La balise <code>&lt;ref&gt;</code> nommée « $1 » définie dans <code>&lt;references&gt;</code> n’est pas utilisée dans le texte précédent.",
 	"cite_error_references_no_key": "La balise <code>&lt;ref&gt;</code> définie dans <code>&lt;references&gt;</code> n’a pas d’attribut de nom.",
 	"cite_error_empty_references_define": "La balise <code>&lt;ref&gt;</code> défini dans <code>&lt;references&gt;</code> avec le nom « $1 » n’a pas de contenu.",
 	"cite-tracking-category-cite-error": "Pages avec des erreurs de référence",

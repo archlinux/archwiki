@@ -43,7 +43,7 @@
 	"config-help-restart": "คุณต้องการล้างข้อมูลทั้งหมดที่คุณกรอกและเริ่มกระบวนการติดตั้งอีกครั้งหรือไม่?",
 	"config-restart": "ใช่ เริ่มใหม่อีกครั้ง",
 	"config-welcome": "=== การตรวจสอบสภาพแวดล้อม ===\nการตรวจสอบเบื้องต้นจะกระทำขึ้นเพื่อดูว่าสภาพแวดล้อมนี้เหมาะสมสำหรับการติดตั้งมีเดียวิกิหรือไม่\nจำไว้ว่าให้รวบรวมสารสนเทศนี้ ถ้าคุณแสวงหาการสนับสนุนเพื่อที่จะติดตั้งให้สมบูรณ์",
-	"config-sidebar": "* [//www.mediawiki.org โฮมเพจมีเดียวิกิ]\n* [//www.mediawiki.org/wiki/Special:MyLanguage/Help:Contents แนวปฏิบัติของผู้ใช้]\n* [//www.mediawiki.org/wiki/Special:MyLanguage/Manual:Contents แนวปฏิบัติของผู้ดูแลระบบ]\n* [//www.mediawiki.org/wiki/Special:MyLanguage/Manual:FAQ คำถามที่ถามบ่อย]\n----\n* <doclink href=Readme>อ่านเอกสารกำกับ</doclink>\n* <doclink href=ReleaseNotes>บันทึกการเผยแพร่</doclink>\n* <doclink href=Copying>การคัดลอก</doclink>\n* <doclink href=UpgradeDoc>การอัปเกรด</doclink>",
+	"config-sidebar": "* [https://www.mediawiki.org โฮมเพจมีเดียวิกิ]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Contents แนวปฏิบัติของผู้ใช้]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Contents แนวปฏิบัติของผู้ดูแลระบบ]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:FAQ คำถามที่ถามบ่อย]\n----\n* <doclink href=Readme>อ่านเอกสารกำกับ</doclink>\n* <doclink href=ReleaseNotes>บันทึกการเผยแพร่</doclink>\n* <doclink href=Copying>การคัดลอก</doclink>\n* <doclink href=UpgradeDoc>การอัปเกรด</doclink>",
 	"config-env-good": "สภาพแวดล้อมถูกตรวจสอบแล้ว\nคุณสามารถติดตั้งมีเดียวิกิ",
 	"config-env-bad": "สภาพแวดล้อมถูกตรวจสอบแล้ว\nคุณไม่สามารถติดตั้งมีเดียวิกิ",
 	"config-env-php": "PHP $1 ติดตั้งแล้ว",
@@ -53,7 +53,6 @@
 	"config-xcache": "[http://xcache.lighttpd.net/ XCache] ติดตั้งแล้ว",
 	"config-apc": "[http://www.php.net/apc APC] ติดตั้งแล้ว",
 	"config-wincache": "[http://www.iis.net/download/WinCacheForPhp WinCache] ติดตั้งแล้ว",
-	"config-no-cache": "<strong>คำเตือน:</strong> ไม่พบ [http://www.php.net/apc APC], [http://xcache.lighttpd.net/ XCache] หรือ [http://www.iis.net/download/WinCacheForPhp WinCache]\nการแคชอ็อบเจกต์จะไม่ถูกเปิดใช้งาน",
 	"config-mod-security": "<strong>คำเตือน:</strong> เว็บเซิร์ฟเวอร์ของคุณมี [http://modsecurity.org/ mod_security]/mod_security2 เปิดใช้งานอยู่ การตั้งค่าทั่วไปหลายอย่างของสิ่งนี้จะก่อให้เกิดปัญหาสำหรับมีเดียวิกิ และซอฟต์แวร์อื่นที่อนุญาตให้ผู้ใช้สามารถโพสต์เนื้อหาได้ตามใจ\nหากเป็นไปได้ สิ่งนี้ควรปิดใช้งาน หรือมิฉะนั้นก็ อ้างไปยัง[http://modsecurity.org/documentation/ เอกสารกำกับการใช้งาน mod_security] หรือติดต่อการสนับสนุนจากโฮสต์ของคุณ ถ้าคุณพบความผิดพลาดโดยสุ่ม",
 	"config-diff3-bad": "ไม่พบ GNU diff3",
 	"config-git": "พบซอฟต์แวร์ควบคุมรุ่น Git: <code>$1</code>",
@@ -94,5 +93,5 @@
 	"config-help-tooltip": "คลิกเพื่อขยาย",
 	"config-nofile": "ไม่พบไฟล์ \"$1\" มันอาจถูกลบไปแล้วหรือไม่?",
 	"mainpagetext": "<strong>ติดตั้งมีเดียวิกิสำเร็จ</strong>",
-	"mainpagedocfooter": "ศึกษา[//meta.wikimedia.org/wiki/Help:Contents คู่มือการใช้งาน] สำหรับเริ่มต้นใช้งานซอฟต์แวร์วิกิ\n\n== เริ่มต้น ==\n\n* [//www.mediawiki.org/wiki/Special:MyLanguage/Manual:Configuration_settings รายการการปรับแต่งระบบ] (ภาษาอังกฤษ)\n* [//www.mediawiki.org/wiki/Special:MyLanguage/Manual:FAQ คำถามที่ถามบ่อยในมีเดียวิกิ] (ภาษาอังกฤษ)\n* [https://lists.wikimedia.org/mailman/listinfo/mediawiki-announce เมลลิงลิสต์ของมีเดียวิกิ]"
+	"mainpagedocfooter": "ศึกษา[https://meta.wikimedia.org/wiki/Help:Contents คู่มือการใช้งาน] สำหรับเริ่มต้นใช้งานซอฟต์แวร์วิกิ\n\n== เริ่มต้น ==\n\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Configuration_settings รายการการปรับแต่งระบบ] (ภาษาอังกฤษ)\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:FAQ คำถามที่ถามบ่อยในมีเดียวิกิ] (ภาษาอังกฤษ)\n* [https://lists.wikimedia.org/mailman/listinfo/mediawiki-announce เมลลิงลิสต์ของมีเดียวิกิ]"
 }

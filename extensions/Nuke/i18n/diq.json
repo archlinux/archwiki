@@ -3,7 +3,8 @@
 		"authors": [
 			"Aspar",
 			"Erdemaslancan",
-			"Mirzali"
+			"Mirzali",
+			"Kumkumuk"
 		]
 	},
 	"nuke": "pêropiya hewnakeno..",
@@ -14,9 +15,16 @@
 	"nuke-defaultreason": "Peleyê ke [[Special:Contributions/$1|{{GENDER:$1|$1}}]] dekerdê de ena pêron hewadayış",
 	"nuke-tools": "No hacet mısade dano be esteriyayışê pelanê ke nêzdi de terefê yew karberi ya zi yew adresa IPyi ra ilawe biyê.\nSeba gırewtışê lista pelan ra êyê ke esteriyenê nameyê karberi ya zi adresa IPyi cı kewe, ya zi seba pêro karberan ra veng caverde.",
 	"nuke-submit-user": "Şo",
+	"nuke-toggleinvert": "Rageyre",
 	"nuke-submit-delete": "Weçinayi esterne",
 	"right-nuke": "pelan yew hew de hewnaker",
 	"nuke-select": "Weçinaye: $1",
-	"nuke-delete-more": "[[Special:Nuke|Zêde pelan bestere]]",
-	"nuke-viewchanges": "vurnayışan bıvêne"
+	"nuke-userorip": "Nameyê karberi, adresa IP ya zi veng:",
+	"nuke-maxpages": "Amarê pelanê zêdeyêran:",
+	"nuke-editby": "[[Special:Contributions/$1|{{GENDER:$1|$1}}]] vıraşt bi",
+	"nuke-deleted": "Pela '''$1''' esteriye.",
+	"nuke-not-deleted": "Pela  [[:$1]] '''nêşena''' ke besteriyo.",
+	"nuke-delete-more": "[[Special:Nuke|Tayêna pelan bestere]]",
+	"nuke-pattern": "Nameyê pele rê nımune:",
+	"nuke-viewchanges": "vurriyayışan bıvêne"
 }

@@ -26,7 +26,8 @@
  * Abstraction for ResourceLoader modules which pull from wiki pages
  *
  * This can only be used for wiki pages in the MediaWiki and User namespaces,
- * because of its dependence on the functionality of Title::isCssJsSubpage.
+ * because of its dependence on the functionality of Title::isCssJsSubpage
+ * and Title::isCssOrJsPage().
  *
  * This module supports being used as a placeholder for a module on a remote wiki.
  * To do so, getDB() must be overloaded to return a foreign database object that
@@ -130,7 +131,7 @@ class ResourceLoaderWikiModule extends ResourceLoaderModule {
 	/**
 	 * Get the Database object used in getTitleInfo().
 	 *
-	 * Defaults to the local slave DB. Subclasses may want to override this to return a foreign
+	 * Defaults to the local replica DB. Subclasses may want to override this to return a foreign
 	 * database object, or null if getTitleInfo() shouldn't access the database.
 	 *
 	 * NOTE: This ONLY works for getTitleInfo() and isKnownEmpty(), NOT FOR ANYTHING ELSE.
@@ -139,11 +140,11 @@ class ResourceLoaderWikiModule extends ResourceLoaderModule {
 	 * @return IDatabase|null
 	 */
 	protected function getDB() {
-		return wfGetDB( DB_SLAVE );
+		return wfGetDB( DB_REPLICA );
 	}
 
 	/**
-	 * @param string $title
+	 * @param string $titleText
 	 * @return null|string
 	 */
 	protected function getContent( $titleText ) {
@@ -246,7 +247,7 @@ class ResourceLoaderWikiModule extends ResourceLoaderModule {
 		$summary = parent::getDefinitionSummary( $context );
 		$summary[] = [
 			'pages' => $this->getPages( $context ),
-			// Includes SHA1 of content
+			// Includes meta data of current revisions
 			'titleInfo' => $this->getTitleInfo( $context ),
 		];
 		return $summary;
@@ -262,7 +263,7 @@ class ResourceLoaderWikiModule extends ResourceLoaderModule {
 		// For user modules, don't needlessly load if there are no non-empty pages
 		if ( $this->getGroup() === 'user' ) {
 			foreach ( $revisions as $revision ) {
-				if ( $revision['rev_len'] > 0 ) {
+				if ( $revision['page_len'] > 0 ) {
 					// At least one non-empty page, module should be loaded
 					return false;
 				}
@@ -276,10 +277,14 @@ class ResourceLoaderWikiModule extends ResourceLoaderModule {
 		return count( $revisions ) === 0;
 	}
 
+	private function setTitleInfo( $key, array $titleInfo ) {
+		$this->titleInfo[$key] = $titleInfo;
+	}
+
 	/**
 	 * Get the information about the wiki pages for a given context.
 	 * @param ResourceLoaderContext $context
-	 * @return array Keyed by page name. Contains arrays with 'rev_len' and 'rev_sha1' keys
+	 * @return array Keyed by page name
 	 */
 	protected function getTitleInfo( ResourceLoaderContext $context ) {
 		$dbr = $this->getDB();
@@ -288,40 +293,162 @@ class ResourceLoaderWikiModule extends ResourceLoaderModule {
 			return [];
 		}
 
-		$pages = $this->getPages( $context );
-		$key = implode( '|', array_keys( $pages ) );
+		$pageNames = array_keys( $this->getPages( $context ) );
+		sort( $pageNames );
+		$key = implode( '|', $pageNames );
 		if ( !isset( $this->titleInfo[$key] ) ) {
-			$this->titleInfo[$key] = [];
-			$batch = new LinkBatch;
-			foreach ( $pages as $titleText => $options ) {
-				$batch->addObj( Title::newFromText( $titleText ) );
-			}
-
-			if ( !$batch->isEmpty() ) {
-				$res = $dbr->select( [ 'page', 'revision' ],
-					// Include page_touched to allow purging if cache is poisoned (T117587, T113916)
-					[ 'page_namespace', 'page_title', 'page_touched', 'rev_len', 'rev_sha1' ],
-					$batch->constructSet( 'page', $dbr ),
-					__METHOD__,
-					[],
-					[ 'revision' => [ 'INNER JOIN', [ 'page_latest=rev_id' ] ] ]
-				);
-				foreach ( $res as $row ) {
-					// Avoid including ids or timestamps of revision/page tables so
-					// that versions are not wasted
-					$title = Title::makeTitle( $row->page_namespace, $row->page_title );
-					$this->titleInfo[$key][$title->getPrefixedText()] = [
-						'rev_len' => $row->rev_len,
-						'rev_sha1' => $row->rev_sha1,
-						'page_touched' => $row->page_touched,
-					];
-				}
-			}
+			$this->titleInfo[$key] = static::fetchTitleInfo( $dbr, $pageNames, __METHOD__ );
 		}
 		return $this->titleInfo[$key];
 	}
 
+	protected static function fetchTitleInfo( IDatabase $db, array $pages, $fname = __METHOD__ ) {
+		$titleInfo = [];
+		$batch = new LinkBatch;
+		foreach ( $pages as $titleText ) {
+			$title = Title::newFromText( $titleText );
+			if ( $title ) {
+				// Page name may be invalid if user-provided (e.g. gadgets)
+				$batch->addObj( $title );
+			}
+		}
+		if ( !$batch->isEmpty() ) {
+			$res = $db->select( 'page',
+				// Include page_touched to allow purging if cache is poisoned (T117587, T113916)
+				[ 'page_namespace', 'page_title', 'page_touched', 'page_len', 'page_latest' ],
+				$batch->constructSet( 'page', $db ),
+				$fname
+			);
+			foreach ( $res as $row ) {
+				// Avoid including ids or timestamps of revision/page tables so
+				// that versions are not wasted
+				$title = Title::makeTitle( $row->page_namespace, $row->page_title );
+				$titleInfo[$title->getPrefixedText()] = [
+					'page_len' => $row->page_len,
+					'page_latest' => $row->page_latest,
+					'page_touched' => $row->page_touched,
+				];
+			}
+		}
+		return $titleInfo;
+	}
+
+	/**
+	 * @since 1.28
+	 * @param ResourceLoaderContext $context
+	 * @param IDatabase $db
+	 * @param string[] $moduleNames
+	 */
+	public static function preloadTitleInfo(
+		ResourceLoaderContext $context, IDatabase $db, array $moduleNames
+	) {
+		$rl = $context->getResourceLoader();
+		// getDB() can be overridden to point to a foreign database.
+		// For now, only preload local. In the future, we could preload by wikiID.
+		$allPages = [];
+		/** @var ResourceLoaderWikiModule[] $wikiModules */
+		$wikiModules = [];
+		foreach ( $moduleNames as $name ) {
+			$module = $rl->getModule( $name );
+			if ( $module instanceof self ) {
+				$mDB = $module->getDB();
+				// Subclasses may disable getDB and implement getTitleInfo differently
+				if ( $mDB && $mDB->getWikiID() === $db->getWikiID() ) {
+					$wikiModules[] = $module;
+					$allPages += $module->getPages( $context );
+				}
+			}
+		}
+
+		$pageNames = array_keys( $allPages );
+		sort( $pageNames );
+		$hash = sha1( implode( '|', $pageNames ) );
+
+		// Avoid Zend bug where "static::" does not apply LSB in the closure
+		$func = [ static::class, 'fetchTitleInfo' ];
+		$fname = __METHOD__;
+
+		$cache = ObjectCache::getMainWANInstance();
+		$allInfo = $cache->getWithSetCallback(
+			$cache->makeGlobalKey( 'resourceloader', 'titleinfo', $db->getWikiID(), $hash ),
+			$cache::TTL_HOUR,
+			function ( $curVal, &$ttl, array &$setOpts ) use ( $func, $pageNames, $db, $fname ) {
+				$setOpts += Database::getCacheSetOptions( $db );
+
+				return call_user_func( $func, $db, $pageNames, $fname );
+			},
+			[ 'checkKeys' => [ $cache->makeGlobalKey( 'resourceloader', 'titleinfo', $db->getWikiID() ) ] ]
+		);
+
+		foreach ( $wikiModules as $wikiModule ) {
+			$pages = $wikiModule->getPages( $context );
+			// Before we intersect, map the names to canonical form (T145673).
+			$intersect = [];
+			foreach ( $pages as $page => $unused ) {
+				$title = Title::newFromText( $page );
+				if ( $title ) {
+					$intersect[ $title->getPrefixedText() ] = 1;
+				} else {
+					// Page name may be invalid if user-provided (e.g. gadgets)
+					$rl->getLogger()->info(
+						'Invalid wiki page title "{title}" in ' . __METHOD__,
+						[ 'title' => $page ]
+					);
+				}
+			}
+			$info = array_intersect_key( $allInfo, $intersect );
+			$pageNames = array_keys( $pages );
+			sort( $pageNames );
+			$key = implode( '|', $pageNames );
+			$wikiModule->setTitleInfo( $key, $info );
+		}
+	}
+
+	/**
+	 * Clear the preloadTitleInfo() cache for all wiki modules on this wiki on
+	 * page change if it was a JS or CSS page
+	 *
+	 * @param Title $title
+	 * @param Revision|null $old Prior page revision
+	 * @param Revision|null $new New page revision
+	 * @param string $wikiId
+	 * @since 1.28
+	 */
+	public static function invalidateModuleCache(
+		Title $title, Revision $old = null, Revision $new = null, $wikiId
+	) {
+		static $formats = [ CONTENT_FORMAT_CSS, CONTENT_FORMAT_JAVASCRIPT ];
+
+		if ( $old && in_array( $old->getContentFormat(), $formats ) ) {
+			$purge = true;
+		} elseif ( $new && in_array( $new->getContentFormat(), $formats ) ) {
+			$purge = true;
+		} else {
+			$purge = ( $title->isCssOrJsPage() || $title->isCssJsSubpage() );
+		}
+
+		if ( $purge ) {
+			$cache = ObjectCache::getMainWANInstance();
+			$key = $cache->makeGlobalKey( 'resourceloader', 'titleinfo', $wikiId );
+			$cache->touchCheckKey( $key );
+		}
+	}
+
+	/**
+	 * @return string
+	 */
 	public function getPosition() {
 		return $this->position;
+	}
+
+	/**
+	 * @since 1.28
+	 * @return string
+	 */
+	public function getType() {
+		// Check both because subclasses don't always pass pages via the constructor,
+		// they may also override getPages() instead, in which case we should keep
+		// defaulting to LOAD_GENERAL and allow them to override getType() separately.
+		return ( $this->styles && !$this->scripts ) ? self::LOAD_STYLES : self::LOAD_GENERAL;
 	}
 }

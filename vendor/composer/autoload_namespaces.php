@@ -8,6 +8,7 @@ $baseDir = $vendorDir;
 return array(
     'TextCat' => array($vendorDir . '/wikimedia/textcat'),
     'Psr\\Log\\' => array($vendorDir . '/psr/log'),
+    'Pimple' => array($vendorDir . '/pimple/pimple/src'),
     'PEAR' => array($vendorDir . '/pear/pear_exception'),
     'Net' => array($vendorDir . '/pear/net_socket', $vendorDir . '/pear/net_smtp'),
     'Mail_mimeDecode' => array($vendorDir . '/pear/mail_mime-decode'),

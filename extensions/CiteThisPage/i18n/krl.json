@@ -1,9 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Mashoi7"
+			"Mashoi7",
+			"Varvana"
 		]
 	},
-	"citethispage-link": "Viittua täh sivuh",
-	"tooltip-citethispage": "Tietuo täh šivuh viittuamišešta"
+	"citethispage-link": "Viittua täh šivuh",
+	"tooltip-citethispage": "Tietuo šiitä, kuin viitata täh šivuh"
 }

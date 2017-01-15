@@ -28,10 +28,12 @@
 			"Ncontinanza"
 		]
 	},
+	"visualeditor-cite-tool-definition.json": "nulo",
 	"visualeditor-cite-tool-name-book": "Libro",
 	"visualeditor-cite-tool-name-journal": "Diario",
 	"visualeditor-cite-tool-name-news": "Noticias",
 	"visualeditor-cite-tool-name-web": "Sitio web",
+	"cite-tool-definition.json": "nulo",
 	"cite-ve-dialog-reference-editing-reused": "Esta referencia se utiliza $1 {{PLURAL:$1|vez|veces}} en esta página.",
 	"cite-ve-dialog-reference-options-group-label": "Usar este grupo",
 	"cite-ve-dialog-reference-options-group-placeholder": "Referencias generales",
@@ -54,5 +56,6 @@
 	"cite-ve-referenceslist-isempty": "No hay referencias con el grupo «$1» en esta página para incluir en la lista.",
 	"cite-ve-referenceslist-isempty-default": "No hay referencias en esta página para incluir en esta lista.",
 	"cite-ve-referenceslist-missingref": "Esta referencia está definida en una plantilla u otro tipo de bloque generado, y por ahora sólo puede editarse en el editor de fuente.",
-	"cite-ve-toolbar-group-label": "Citar"
+	"cite-ve-toolbar-group-label": "Citar",
+	"cite-ve-othergroup-item": "referencia $1"
 }

@@ -22,6 +22,9 @@
  * @ingroup Upload
  */
 
+use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\MediaWikiServices;
+
 /**
  * Form for handling uploads and special page.
  *
@@ -261,7 +264,7 @@ class SpecialUpload extends SpecialPage {
 			'texttop' => $this->uploadFormTextTop,
 			'textaftersummary' => $this->uploadFormTextAfterSummary,
 			'destfile' => $this->mDesiredDestName,
-		], $context );
+		], $context, $this->getLinkRenderer() );
 
 		# Check the token, but only if necessary
 		if (
@@ -313,9 +316,9 @@ class SpecialUpload extends SpecialPage {
 		if ( $title instanceof Title ) {
 			$count = $title->isDeleted();
 			if ( $count > 0 && $user->isAllowed( 'deletedhistory' ) ) {
-				$restorelink = Linker::linkKnown(
+				$restorelink = $this->getLinkRenderer()->makeKnownLink(
 					SpecialPage::getTitleFor( 'Undelete', $title->getPrefixedText() ),
-					$this->msg( 'restorelink' )->numParams( $count )->escaped()
+					$this->msg( 'restorelink' )->numParams( $count )->text()
 				);
 				$link = $this->msg( $user->isAllowed( 'delete' ) ? 'thisisdeleted' : 'viewdeleted' )
 					->rawParams( $restorelink )->parseAsBlock();
@@ -336,7 +339,13 @@ class SpecialUpload extends SpecialPage {
 	 * @param string $message HTML message to be passed to mainUploadForm
 	 */
 	protected function showRecoverableUploadError( $message ) {
-		$sessionKey = $this->mUpload->stashSession();
+		$stashStatus = $this->mUpload->tryStashFile( $this->getUser() );
+		if ( $stashStatus->isGood() ) {
+			$sessionKey = $stashStatus->getValue()->getFileKey();
+		} else {
+			$sessionKey = null;
+			// TODO Add a warning message about the failure to stash here?
+		}
 		$message = '<h2>' . $this->msg( 'uploaderror' )->escaped() . "</h2>\n" .
 			'<div class="error">' . $message . "</div>\n";
 
@@ -365,11 +374,18 @@ class SpecialUpload extends SpecialPage {
 			return false;
 		}
 
-		$sessionKey = $this->mUpload->stashSession();
+		$stashStatus = $this->mUpload->tryStashFile( $this->getUser() );
+		if ( $stashStatus->isGood() ) {
+			$sessionKey = $stashStatus->getValue()->getFileKey();
+		} else {
+			$sessionKey = null;
+			// TODO Add a warning message about the failure to stash here?
+		}
 
 		// Add styles for the warning, reused from the live preview
-		$this->getOutput()->addModuleStyles( 'mediawiki.special.upload' );
+		$this->getOutput()->addModuleStyles( 'mediawiki.special.upload.styles' );
 
+		$linkRenderer = $this->getLinkRenderer();
 		$warningHtml = '<h2>' . $this->msg( 'uploadwarning' )->escaped() . "</h2>\n"
 			. '<div class="mw-destfile-warning"><ul>';
 		foreach ( $warnings as $warning => $args ) {
@@ -378,12 +394,24 @@ class SpecialUpload extends SpecialPage {
 			}
 			if ( $warning == 'exists' ) {
 				$msg = "\t<li>" . self::getExistsWarning( $args ) . "</li>\n";
+			} elseif ( $warning == 'no-change' ) {
+				$file = $args;
+				$filename = $file->getTitle()->getPrefixedText();
+				$msg = "\t<li>" . wfMessage( 'fileexists-no-change', $filename )->parse() . "</li>\n";
+			} elseif ( $warning == 'duplicate-version' ) {
+				$file = $args[0];
+				$count = count( $args );
+				$filename = $file->getTitle()->getPrefixedText();
+				$message = wfMessage( 'fileexists-duplicate-version' )
+					->params( $filename )
+					->numParams( $count );
+				$msg = "\t<li>" . $message->parse() . "</li>\n";
 			} elseif ( $warning == 'was-deleted' ) {
 				# If the file existed before and was deleted, warn the user of this
 				$ltitle = SpecialPage::getTitleFor( 'Log' );
-				$llink = Linker::linkKnown(
+				$llink = $linkRenderer->makeKnownLink(
 					$ltitle,
-					wfMessage( 'deletionlog' )->escaped(),
+					wfMessage( 'deletionlog' )->text(),
 					[],
 					[
 						'type' => 'delete',
@@ -535,7 +563,7 @@ class SpecialUpload extends SpecialPage {
 		);
 
 		if ( !$status->isGood() ) {
-			$this->showUploadError( $this->getOutput()->parse( $status->getWikiText() ) );
+			$this->showRecoverableUploadError( $this->getOutput()->parse( $status->getWikiText() ) );
 
 			return;
 		}
@@ -747,31 +775,31 @@ class SpecialUpload extends SpecialPage {
 
 		$file = $exists['file'];
 		$filename = $file->getTitle()->getPrefixedText();
-		$warning = '';
+		$warnMsg = null;
 
 		if ( $exists['warning'] == 'exists' ) {
 			// Exact match
-			$warning = wfMessage( 'fileexists', $filename )->parse();
+			$warnMsg = wfMessage( 'fileexists', $filename );
 		} elseif ( $exists['warning'] == 'page-exists' ) {
 			// Page exists but file does not
-			$warning = wfMessage( 'filepageexists', $filename )->parse();
+			$warnMsg = wfMessage( 'filepageexists', $filename );
 		} elseif ( $exists['warning'] == 'exists-normalized' ) {
-			$warning = wfMessage( 'fileexists-extension', $filename,
-				$exists['normalizedFile']->getTitle()->getPrefixedText() )->parse();
+			$warnMsg = wfMessage( 'fileexists-extension', $filename,
+				$exists['normalizedFile']->getTitle()->getPrefixedText() );
 		} elseif ( $exists['warning'] == 'thumb' ) {
 			// Swapped argument order compared with other messages for backwards compatibility
-			$warning = wfMessage( 'fileexists-thumbnail-yes',
-				$exists['thumbFile']->getTitle()->getPrefixedText(), $filename )->parse();
+			$warnMsg = wfMessage( 'fileexists-thumbnail-yes',
+				$exists['thumbFile']->getTitle()->getPrefixedText(), $filename );
 		} elseif ( $exists['warning'] == 'thumb-name' ) {
 			// Image w/o '180px-' does not exists, but we do not like these filenames
 			$name = $file->getName();
 			$badPart = substr( $name, 0, strpos( $name, '-' ) + 1 );
-			$warning = wfMessage( 'file-thumbnail-no', $badPart )->parse();
+			$warnMsg = wfMessage( 'file-thumbnail-no', $badPart );
 		} elseif ( $exists['warning'] == 'bad-prefix' ) {
-			$warning = wfMessage( 'filename-bad-prefix', $exists['prefix'] )->parse();
+			$warnMsg = wfMessage( 'filename-bad-prefix', $exists['prefix'] );
 		}
 
-		return $warning;
+		return $warnMsg ? $warnMsg->title( $file->getTitle() )->parse() : '';
 	}
 
 	/**
@@ -833,9 +861,15 @@ class UploadForm extends HTMLForm {
 
 	protected $mMaxUploadSize = [];
 
-	public function __construct( array $options = [], IContextSource $context = null ) {
+	public function __construct( array $options = [], IContextSource $context = null,
+		LinkRenderer $linkRenderer = null
+	) {
 		if ( $context instanceof IContextSource ) {
 			$this->setContext( $context );
+		}
+
+		if ( !$linkRenderer ) {
+			$linkRenderer = MediaWikiServices::getInstance()->getLinkRenderer();
 		}
 
 		$this->mWatch = !empty( $options['watch'] );
@@ -862,12 +896,12 @@ class UploadForm extends HTMLForm {
 		Hooks::run( 'UploadFormInitDescriptor', [ &$descriptor ] );
 		parent::__construct( $descriptor, $context, 'upload' );
 
-		# Add a link to edit MediaWik:Licenses
+		# Add a link to edit MediaWiki:Licenses
 		if ( $this->getUser()->isAllowed( 'editinterface' ) ) {
-			$this->getOutput()->addModuleStyles( 'mediawiki.special' );
-			$licensesLink = Linker::linkKnown(
+			$this->getOutput()->addModuleStyles( 'mediawiki.special.upload.styles' );
+			$licensesLink = $linkRenderer->makeKnownLink(
 				$this->msg( 'licenses' )->inContentLanguage()->getTitle(),
-				$this->msg( 'licenses-edit' )->escaped(),
+				$this->msg( 'licenses-edit' )->text(),
 				[],
 				[ 'action' => 'edit' ]
 			);

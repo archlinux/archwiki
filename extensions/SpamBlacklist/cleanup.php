@@ -18,7 +18,11 @@ function cleanupArticle( Revision $rev, $regexes, $match ) {
 	while ( $rev ) {
 		$matches = false;
 		foreach ( $regexes as $regex ) {
-			$matches = $matches || preg_match( $regex, $rev->getText() );
+			$matches = $matches
+				|| preg_match(
+					$regex,
+					ContentHandler::getContentText( $rev->getContent() )
+				);
 		}
 		if ( !$matches ) {
 			// Didn't find any spam
@@ -46,11 +50,11 @@ function cleanupArticle( Revision $rev, $regexes, $match ) {
 		$comment = "All revisions matched the spam blacklist ($match), blanking";
 	} else {
 		// Revert to this revision
-		$text = $rev->getText();
+		$text = ContentHandler::getContentText( $rev->getContent() );
 		$comment = "Cleaning up links to $match";
 	}
 	$wikiPage = new WikiPage( $title );
-	$wikiPage->doEdit( $text, $comment );
+	$wikiPage->doEditContent( ContentHandler::makeContent( $text, $title ), $comment );
 }
 
 //------------------------------------------------------------------------------
@@ -103,7 +107,7 @@ for ( $id = 1; $id <= $maxID; $id++ ) {
 	}
 	$revision = Revision::loadFromPageId( $dbr, $id );
 	if ( $revision ) {
-		$text = $revision->getText();
+		$text = ContentHandler::getContentText( $revision->getContent() );
 		if ( $text ) {
 			foreach ( $regexes as $regex ) {
 				if ( preg_match( $regex, $text, $matches ) ) {

@@ -21,10 +21,12 @@
 			"Macofe"
 		]
 	},
+	"visualeditor-cite-tool-definition.json": "nulo",
 	"visualeditor-cite-tool-name-book": "Livro",
 	"visualeditor-cite-tool-name-journal": "Periódico",
 	"visualeditor-cite-tool-name-news": "Notícias",
 	"visualeditor-cite-tool-name-web": "Sítio",
+	"cite-tool-definition.json": "nulo",
 	"cite-ve-dialog-reference-editing-reused": "Esta referência é usada $1 {{PLURAL:$1|vezes}} nesta página.",
 	"cite-ve-dialog-reference-options-group-label": "Usar este grupo",
 	"cite-ve-dialog-reference-options-group-placeholder": "Referências gerais",
@@ -47,5 +49,6 @@
 	"cite-ve-referenceslist-isempty": "Não existem referências com o grupo \"$1\" nesta página para incluir nesta lista.",
 	"cite-ve-referenceslist-isempty-default": "Não há nenhuma referência nesta página para incluir nesta lista.",
 	"cite-ve-referenceslist-missingref": "Esta referência está definida numa predefinição ou outro tipo de bloqueio gerado, e no momento só pode ser editada através do seu código-fonte.",
-	"cite-ve-toolbar-group-label": "Citar"
+	"cite-ve-toolbar-group-label": "Citar",
+	"cite-ve-othergroup-item": "Referência $1"
 }

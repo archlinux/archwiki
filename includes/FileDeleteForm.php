@@ -125,7 +125,7 @@ class FileDeleteForm {
 					$status->getWikiText( 'filedeleteerror-short', 'filedeleteerror-long' )
 					. '</div>' );
 			}
-			if ( $status->ok ) {
+			if ( $status->isOK() ) {
 				$wgOut->setPageTitle( wfMessage( 'actioncomplete' ) );
 				$wgOut->addHTML( $this->prepareMessage( 'filedelete-success' ) );
 				// Return to the main page if we just deleted all versions of the
@@ -150,11 +150,12 @@ class FileDeleteForm {
 	 * @param string $reason Reason of the deletion
 	 * @param bool $suppress Whether to mark all deleted versions as restricted
 	 * @param User $user User object performing the request
+	 * @param array $tags Tags to apply to the deletion action
 	 * @throws MWException
 	 * @return bool|Status
 	 */
 	public static function doDelete( &$title, &$file, &$oldimage, $reason,
-		$suppress, User $user = null
+		$suppress, User $user = null, $tags = []
 	) {
 		if ( $user === null ) {
 			global $wgUser;
@@ -178,6 +179,7 @@ class FileDeleteForm {
 				$logEntry->setPerformer( $user );
 				$logEntry->setTarget( $title );
 				$logEntry->setComment( $logComment );
+				$logEntry->setTags( $tags );
 				$logid = $logEntry->insert();
 				$logEntry->publish( $logid );
 
@@ -189,31 +191,25 @@ class FileDeleteForm {
 			);
 			$page = WikiPage::factory( $title );
 			$dbw = wfGetDB( DB_MASTER );
-			try {
-				$dbw->startAtomic( __METHOD__ );
-				// delete the associated article first
-				$error = '';
-				$deleteStatus = $page->doDeleteArticleReal( $reason, $suppress, 0, false, $error, $user );
-				// doDeleteArticleReal() returns a non-fatal error status if the page
-				// or revision is missing, so check for isOK() rather than isGood()
-				if ( $deleteStatus->isOK() ) {
-					$status = $file->delete( $reason, $suppress, $user );
-					if ( $status->isOK() ) {
-						$status->value = $deleteStatus->value; // log id
-						$dbw->endAtomic( __METHOD__ );
-					} else {
-						// Page deleted but file still there? rollback page delete
-						$dbw->rollback( __METHOD__ );
-					}
-				} else {
-					// Done; nothing changed
+			$dbw->startAtomic( __METHOD__ );
+			// delete the associated article first
+			$error = '';
+			$deleteStatus = $page->doDeleteArticleReal( $reason, $suppress, 0, false, $error,
+				$user, $tags );
+			// doDeleteArticleReal() returns a non-fatal error status if the page
+			// or revision is missing, so check for isOK() rather than isGood()
+			if ( $deleteStatus->isOK() ) {
+				$status = $file->delete( $reason, $suppress, $user );
+				if ( $status->isOK() ) {
+					$status->value = $deleteStatus->value; // log id
 					$dbw->endAtomic( __METHOD__ );
+				} else {
+					// Page deleted but file still there? rollback page delete
+					wfGetLBFactory()->rollbackMasterChanges( __METHOD__ );
 				}
-			} catch ( Exception $e ) {
-				// Rollback before returning to prevent UI from displaying
-				// incorrect "View or restore N deleted edits?"
-				$dbw->rollback( __METHOD__ );
-				throw $e;
+			} else {
+				// Done; nothing changed
+				$dbw->endAtomic( __METHOD__ );
 			}
 		}
 

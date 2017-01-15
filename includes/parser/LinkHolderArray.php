@@ -282,14 +282,14 @@ class LinkHolderArray {
 			return;
 		}
 
-		global $wgContLang, $wgContentHandlerUseDB, $wgPageLanguageUseDB;
+		global $wgContLang;
 
 		$colours = [];
 		$linkCache = LinkCache::singleton();
 		$output = $this->parent->getOutput();
+		$linkRenderer = $this->parent->getLinkRenderer();
 
-		$dbr = wfGetDB( DB_SLAVE );
-		$threshold = $this->parent->getOptions()->getStubThreshold();
+		$dbr = wfGetDB( DB_REPLICA );
 
 		# Sort by namespace
 		ksort( $this->internals );
@@ -297,7 +297,9 @@ class LinkHolderArray {
 		$linkcolour_ids = [];
 
 		# Generate query
-		$queries = [];
+		$lb = new LinkBatch();
+		$lb->setCaller( __METHOD__ );
+
 		foreach ( $this->internals as $ns => $entries ) {
 			foreach ( $entries as $entry ) {
 				/** @var Title $title */
@@ -318,44 +320,28 @@ class LinkHolderArray {
 				} else {
 					$id = $linkCache->getGoodLinkID( $pdbk );
 					if ( $id != 0 ) {
-						$colours[$pdbk] = Linker::getLinkColour( $title, $threshold );
+						$colours[$pdbk] = $linkRenderer->getLinkClasses( $title );
 						$output->addLink( $title, $id );
 						$linkcolour_ids[$id] = $pdbk;
 					} elseif ( $linkCache->isBadLink( $pdbk ) ) {
 						$colours[$pdbk] = 'new';
 					} else {
 						# Not in the link cache, add it to the query
-						$queries[$ns][] = $title->getDBkey();
+						$lb->addObj( $title );
 					}
 				}
 			}
 		}
-		if ( $queries ) {
-			$where = [];
-			foreach ( $queries as $ns => $pages ) {
-				$where[] = $dbr->makeList(
-					[
-						'page_namespace' => $ns,
-						'page_title' => array_unique( $pages ),
-					],
-					LIST_AND
-				);
-			}
-
-			$fields = [ 'page_id', 'page_namespace', 'page_title',
-				'page_is_redirect', 'page_len', 'page_latest' ];
-
-			if ( $wgContentHandlerUseDB ) {
-				$fields[] = 'page_content_model';
-			}
-			if ( $wgPageLanguageUseDB ) {
-				$fields[] = 'page_lang';
-			}
+		if ( !$lb->isEmpty() ) {
+			$fields = array_merge(
+				LinkCache::getSelectFields(),
+				[ 'page_namespace', 'page_title' ]
+			);
 
 			$res = $dbr->select(
 				'page',
 				$fields,
-				$dbr->makeList( $where, LIST_OR ),
+				$lb->constructSet( 'page', $dbr ),
 				__METHOD__
 			);
 
@@ -366,10 +352,7 @@ class LinkHolderArray {
 				$pdbk = $title->getPrefixedDBkey();
 				$linkCache->addGoodLinkObjFromRow( $title, $s );
 				$output->addLink( $title, $s->page_id );
-				# @todo FIXME: Convoluted data flow
-				# The redirect status and length is passed to getLinkColour via the LinkCache
-				# Use formal parameters instead
-				$colours[$pdbk] = Linker::getLinkColour( $title, $threshold );
+				$colours[$pdbk] = $linkRenderer->getLinkClasses( $title );
 				// add id to the extension todolist
 				$linkcolour_ids[$s->page_id] = $pdbk;
 			}
@@ -401,6 +384,8 @@ class LinkHolderArray {
 				}
 				if ( $displayText === '' ) {
 					$displayText = null;
+				} else {
+					$displayText = new HtmlArmor( $displayText );
 				}
 				if ( !isset( $colours[$pdbk] ) ) {
 					$colours[$pdbk] = 'new';
@@ -409,15 +394,16 @@ class LinkHolderArray {
 				if ( $colours[$pdbk] == 'new' ) {
 					$linkCache->addBadLinkObj( $title );
 					$output->addLink( $title, 0 );
-					$type = [ 'broken' ];
+					$link = $linkRenderer->makeBrokenLink(
+						$title, $displayText, $attribs, $query
+					);
 				} else {
-					if ( $colours[$pdbk] != '' ) {
-						$attribs['class'] = $colours[$pdbk];
-					}
-					$type = [ 'known', 'noclasses' ];
+					$link = $linkRenderer->makePreloadedLink(
+						$title, $displayText, $colours[$pdbk], $attribs, $query
+					);
 				}
-				$replacePairs[$searchkey] = Linker::link( $title, $displayText,
-						$attribs, $query, $type );
+
+				$replacePairs[$searchkey] = $link;
 			}
 		}
 		$replacer = new HashtableReplacer( $replacePairs, 1 );
@@ -443,11 +429,12 @@ class LinkHolderArray {
 		# Make interwiki link HTML
 		$output = $this->parent->getOutput();
 		$replacePairs = [];
-		$options = [
-			'stubThreshold' => $this->parent->getOptions()->getStubThreshold(),
-		];
+		$linkRenderer = $this->parent->getLinkRenderer();
 		foreach ( $this->interwikis as $key => $link ) {
-			$replacePairs[$key] = Linker::link( $link['title'], $link['text'], [], [], $options );
+			$replacePairs[$key] = $linkRenderer->makeLink(
+				$link['title'],
+				new HtmlArmor( $link['text'] )
+			);
 			$output->addInterwikiLink( $link['title'] );
 		}
 		$replacer = new HashtableReplacer( $replacePairs, 1 );
@@ -463,12 +450,11 @@ class LinkHolderArray {
 	 * @param array $colours
 	 */
 	protected function doVariants( &$colours ) {
-		global $wgContLang, $wgContentHandlerUseDB, $wgPageLanguageUseDB;
+		global $wgContLang;
 		$linkBatch = new LinkBatch();
 		$variantMap = []; // maps $pdbkey_Variant => $keys (of link holders)
 		$output = $this->parent->getOutput();
 		$linkCache = LinkCache::singleton();
-		$threshold = $this->parent->getOptions()->getStubThreshold();
 		$titlesToBeConverted = '';
 		$titlesAttrs = [];
 
@@ -513,9 +499,6 @@ class LinkHolderArray {
 				}
 
 				$variantTitle = Title::makeTitle( $ns, $textVariant );
-				if ( is_null( $variantTitle ) ) {
-					continue;
-				}
 
 				// Self-link checking for mixed/different variant titles. At this point, we
 				// already know the exact title does not exist, so the link cannot be to a
@@ -551,16 +534,11 @@ class LinkHolderArray {
 
 		if ( !$linkBatch->isEmpty() ) {
 			// construct query
-			$dbr = wfGetDB( DB_SLAVE );
-			$fields = [ 'page_id', 'page_namespace', 'page_title',
-				'page_is_redirect', 'page_len', 'page_latest' ];
-
-			if ( $wgContentHandlerUseDB ) {
-				$fields[] = 'page_content_model';
-			}
-			if ( $wgPageLanguageUseDB ) {
-				$fields[] = 'page_lang';
-			}
+			$dbr = wfGetDB( DB_REPLICA );
+			$fields = array_merge(
+				LinkCache::getSelectFields(),
+				[ 'page_namespace', 'page_title' ]
+			);
 
 			$varRes = $dbr->select( 'page',
 				$fields,
@@ -569,6 +547,7 @@ class LinkHolderArray {
 			);
 
 			$linkcolour_ids = [];
+			$linkRenderer = $this->parent->getLinkRenderer();
 
 			// for each found variants, figure out link holders and replace
 			foreach ( $varRes as $s ) {
@@ -595,10 +574,7 @@ class LinkHolderArray {
 						$entry['pdbk'] = $varPdbk;
 
 						// set pdbk and colour
-						# @todo FIXME: Convoluted data flow
-						# The redirect status and length is passed to getLinkColour via the LinkCache
-						# Use formal parameters instead
-						$colours[$varPdbk] = Linker::getLinkColour( $variantTitle, $threshold );
+						$colours[$varPdbk] = $linkRenderer->getLinkClasses( $variantTitle );
 						$linkcolour_ids[$s->page_id] = $pdbk;
 					}
 				}

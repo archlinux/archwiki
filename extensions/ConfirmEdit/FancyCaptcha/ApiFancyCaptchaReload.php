@@ -17,22 +17,8 @@ class ApiFancyCaptchaReload extends ApiBase {
 		return true;
 	}
 
-	/**
-	 * @deprecated since MediaWiki core 1.25
-	 */
-	public function getDescription() {
-		return 'Get a new FancyCaptcha.';
-	}
-
 	public function getAllowedParams() {
 		return [];
-	}
-
-	/**
-	 * @deprecated since MediaWiki core 1.25
-	 */
-	public function getExamples() {
-		return [ 'api.php?action=fancycaptchareload&format=xml' ];
 	}
 
 	/**

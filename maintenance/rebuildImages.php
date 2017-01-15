@@ -40,7 +40,7 @@ require_once __DIR__ . '/Maintenance.php';
 class ImageBuilder extends Maintenance {
 
 	/**
-	 * @var DatabaseBase
+	 * @var Database
 	 */
 	protected $dbw;
 
@@ -127,7 +127,7 @@ class ImageBuilder extends Maintenance {
 		$this->init( $count, $table );
 		$this->output( "Processing $table...\n" );
 
-		$result = $this->getDB( DB_SLAVE )->select( $table, '*', [], __METHOD__ );
+		$result = $this->getDB( DB_REPLICA )->select( $table, '*', [], __METHOD__ );
 
 		foreach ( $result as $row ) {
 			$update = call_user_func( $callback, $row, null );

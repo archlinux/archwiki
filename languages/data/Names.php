@@ -78,6 +78,7 @@ class Names {
 		'az' => 'azərbaycanca', # Azerbaijani
 		'azb' => 'تۆرکجه', # South Azerbaijani
 		'ba' => 'башҡортса', # Bashkir
+		'ban' => 'Basa Bali', # Balinese
 		'bar' => 'Boarisch', # Bavarian (Austro-Bavarian and South Tyrolean)
 		'bat-smg' => 'žemaitėška', # Samogitian (deprecated code, 'sgs' in ISO 693-3 since 2010-06-30 )
 		'bbc' => 'Batak Toba', # Batak Toba (falls back to bbc-latn)
@@ -315,7 +316,7 @@ class Names {
 		'nv' => 'Diné bizaad', # Navajo
 		'ny' => 'Chi-Chewa', # Chichewa
 		'oc' => 'occitan', # Occitan
-		'olo' => 'Livvinкarjala', # Livvi-Karelian
+		'olo' => 'Livvinkarjala', # Livvi-Karelian
 		'om' => 'Oromoo', # Oromo
 		'or' => 'ଓଡ଼ିଆ', # Oriya
 		'os' => 'Ирон', # Ossetic, bug 29091
@@ -373,6 +374,7 @@ class Names {
 		'shi' => 'Tašlḥiyt/ⵜⴰⵛⵍⵃⵉⵜ', # Tachelhit (multiple scripts - defaults to Latin)
 		'shi-tfng' => 'ⵜⴰⵛⵍⵃⵉⵜ', # Tachelhit (Tifinagh script)
 		'shi-latn' => 'Tašlḥiyt', # Tachelhit (Latin script)
+		'shn' => 'ၽႃႇသႃႇတႆး ', # Shan
 		'si' => 'සිංහල', # Sinhalese
 		'simple' => 'Simple English', # Simple English
 		'sk' => 'slovenčina', # Slovak

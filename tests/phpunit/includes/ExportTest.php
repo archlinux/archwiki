@@ -30,14 +30,14 @@ class ExportTest extends MediaWikiLangTestCase {
 
 		$title = Title::newFromText( $pageTitle );
 
-		ob_start();
+		$sink = new DumpStringOutput;
+		$exporter->setOutputSink( $sink );
 		$exporter->openStream();
 		$exporter->pageByTitle( $title );
 		$exporter->closeStream();
-		$xmlString = ob_get_clean();
 
 		// This throws error if invalid xml output
-		$xmlObject = simplexml_load_string( $xmlString );
+		$xmlObject = simplexml_load_string( $sink );
 
 		/**
 		 * Check namespaces match xml

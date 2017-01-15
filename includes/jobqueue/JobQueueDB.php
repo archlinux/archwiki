@@ -20,6 +20,8 @@
  * @file
  * @author Aaron Schulz
  */
+use MediaWiki\MediaWikiServices;
+use Wikimedia\ScopedCallback;
 
 /**
  * Class to handle job queues stored in the DB
@@ -185,7 +187,8 @@ class JobQueueDB extends JobQueue {
 		$dbw->onTransactionIdle(
 			function () use ( $dbw, $jobs, $flags, $method ) {
 				$this->doBatchPushInternal( $dbw, $jobs, $flags, $method );
-			}
+			},
+			__METHOD__
 		);
 	}
 
@@ -236,7 +239,7 @@ class JobQueueDB extends JobQueue {
 			}
 			// Build the full list of job rows to insert
 			$rows = array_merge( $rowList, array_values( $rowSet ) );
-			// Insert the job rows in chunks to avoid slave lag...
+			// Insert the job rows in chunks to avoid replica DB lag...
 			foreach ( array_chunk( $rows, 50 ) as $rowBatch ) {
 				$dbw->insert( 'job', $rowBatch, $method );
 			}
@@ -245,10 +248,7 @@ class JobQueueDB extends JobQueue {
 				count( $rowSet ) + count( $rowList ) - count( $rows )
 			);
 		} catch ( DBError $e ) {
-			if ( $flags & self::QOS_ATOMIC ) {
-				$dbw->rollback( $method );
-			}
-			throw $e;
+			$this->throwDBException( $e );
 		}
 		if ( $flags & self::QOS_ATOMIC ) {
 			$dbw->endAtomic( $method );
@@ -264,7 +264,6 @@ class JobQueueDB extends JobQueue {
 	protected function doPop() {
 		$dbw = $this->getMasterDB();
 		try {
-			$dbw->commit( __METHOD__, 'flush' ); // flush existing transaction
 			$autoTrx = $dbw->getFlag( DBO_TRX ); // get current setting
 			$dbw->clearFlag( DBO_TRX ); // make each query its own transaction
 			$scopedReset = new ScopedCallback( function () use ( $dbw, $autoTrx ) {
@@ -460,7 +459,6 @@ class JobQueueDB extends JobQueue {
 
 		$dbw = $this->getMasterDB();
 		try {
-			$dbw->commit( __METHOD__, 'flush' ); // flush existing transaction
 			$autoTrx = $dbw->getFlag( DBO_TRX ); // get current setting
 			$dbw->clearFlag( DBO_TRX ); // make each query its own transaction
 			$scopedReset = new ScopedCallback( function () use ( $dbw, $autoTrx ) {
@@ -498,15 +496,18 @@ class JobQueueDB extends JobQueue {
 		// jobs to become no-ops without any actual jobs that made them redundant.
 		$dbw = $this->getMasterDB();
 		$cache = $this->dupCache;
-		$dbw->onTransactionIdle( function () use ( $cache, $params, $key, $dbw ) {
-			$timestamp = $cache->get( $key ); // current last timestamp of this job
-			if ( $timestamp && $timestamp >= $params['rootJobTimestamp'] ) {
-				return true; // a newer version of this root job was enqueued
-			}
+		$dbw->onTransactionIdle(
+			function () use ( $cache, $params, $key, $dbw ) {
+				$timestamp = $cache->get( $key ); // current last timestamp of this job
+				if ( $timestamp && $timestamp >= $params['rootJobTimestamp'] ) {
+					return true; // a newer version of this root job was enqueued
+				}
 
-			// Update the timestamp of the last root job started at the location...
-			return $cache->set( $key, $params['rootJobTimestamp'], JobQueueDB::ROOTJOB_TTL );
-		} );
+				// Update the timestamp of the last root job started at the location...
+				return $cache->set( $key, $params['rootJobTimestamp'], JobQueueDB::ROOTJOB_TTL );
+			},
+			__METHOD__
+		);
 
 		return true;
 	}
@@ -531,7 +532,8 @@ class JobQueueDB extends JobQueue {
 	 * @return void
 	 */
 	protected function doWaitForBackups() {
-		wfWaitForSlaves( false, $this->wiki, $this->cluster ?: false );
+		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
+		$lbFactory->waitForReplication( [ 'wiki' => $this->wiki, 'cluster' => $this->cluster ] );
 	}
 
 	/**
@@ -737,7 +739,7 @@ class JobQueueDB extends JobQueue {
 	 */
 	protected function getSlaveDB() {
 		try {
-			return $this->getDB( DB_SLAVE );
+			return $this->getDB( DB_REPLICA );
 		} catch ( DBConnectionError $e ) {
 			throw new JobQueueConnectionError( "DBConnectionError:" . $e->getMessage() );
 		}
@@ -756,13 +758,14 @@ class JobQueueDB extends JobQueue {
 	}
 
 	/**
-	 * @param int $index (DB_SLAVE/DB_MASTER)
+	 * @param int $index (DB_REPLICA/DB_MASTER)
 	 * @return DBConnRef
 	 */
 	protected function getDB( $index ) {
+		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
 		$lb = ( $this->cluster !== false )
-			? wfGetLBFactory()->getExternalLB( $this->cluster, $this->wiki )
-			: wfGetLB( $this->wiki );
+			? $lbFactory->getExternalLB( $this->cluster, $this->wiki )
+			: $lbFactory->getMainLB( $this->wiki );
 
 		return $lb->getConnectionRef( $index, [], $this->wiki );
 	}

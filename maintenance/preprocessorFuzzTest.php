@@ -43,10 +43,13 @@ class PPFuzzTester {
 	public $minLength = 0;
 	public $maxLength = 20;
 	public $maxTemplates = 5;
-	// public $outputTypes = array( 'OT_HTML', 'OT_WIKI', 'OT_PREPROCESS' );
+	// public $outputTypes = [ 'OT_HTML', 'OT_WIKI', 'OT_PREPROCESS' ];
 	public $entryPoints = [ 'testSrvus', 'testPst', 'testPreprocess' ];
 	public $verbose = false;
 
+	/**
+	 * @var bool|PPFuzzTest
+	 */
 	private static $currentTest = false;
 
 	function execute() {

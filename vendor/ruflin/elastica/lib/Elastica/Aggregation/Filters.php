@@ -1,13 +1,15 @@
 <?php
+
 namespace Elastica\Aggregation;
 
 use Elastica\Exception\InvalidException;
 use Elastica\Filter\AbstractFilter;
+use Elastica\Query\AbstractQuery;
 
 /**
  * Class Filters.
  *
- * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-filters-aggregation.html
+ * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-filters-aggregation.html
  */
 class Filters extends AbstractAggregation
 {
@@ -24,13 +26,19 @@ class Filters extends AbstractAggregation
      *
      * If a name is given, it will be added as a key, otherwise considered as an anonymous filter
      *
-     * @param AbstractFilter $filter
-     * @param string         $name
+     * @param AbstractQuery $filter
+     * @param string        $name
      *
      * @return $this
      */
-    public function addFilter(AbstractFilter $filter, $name = null)
+    public function addFilter($filter, $name = null)
     {
+        if ($filter instanceof AbstractFilter) {
+            trigger_error('Deprecated: Elastica\Aggregation\Filters\addFilter() passing filter as AbstractFilter is deprecated. Pass instance of AbstractQuery instead.', E_USER_DEPRECATED);
+        } elseif (!($filter instanceof AbstractQuery)) {
+            throw new InvalidException('Filter must be instance of AbstractQuery');
+        }
+
         if (null !== $name && !is_string($name)) {
             throw new InvalidException('Name must be a string');
         }

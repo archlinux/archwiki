@@ -15,7 +15,7 @@
 	"cite_error_references_no_backlink_label": "ନିଜ ପସନ୍ଦର ବ୍ୟାକଲିଙ୍କ ଚିହ୍ନ ସବୁ ସରିଗଲା ।\n<nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>ସୂଚନାରେ ଅଧିକ ଦେଖନ୍ତୁ ।",
 	"cite_error_no_link_label_group": "\"$1\" ଗୋଠ ଲାଗି ନିଜ ପସନ୍ଦର ବ୍ୟାକଲିଙ୍କ ଚିହ୍ନ ସବୁ ସରିଗଲା ।\n<nowiki>[[MediaWiki:$2]]</nowiki>ସୂଚନାରେ ଅଧିକ ଚିହ୍ନିତ କରନ୍ତୁ ।",
 	"cite_error_references_no_text": "ଅଚଳ <code>&lt;ref&gt;</code> ଚିହ୍ନ;\n<code>$1</code> ନାମରେ ଥିବା ଆଧାର ଭିତରେ କିଛି ଲେଖା ନାହିଁ ।",
-	"cite_error_included_ref": "<code>&lt;/ref&gt;</code> କୁ ବନ୍ଦ କରୁଅଛୁ; <code>&lt;ref&gt;</code> ନାହିଁ; ଚିହ୍ନ",
+	"cite_error_included_ref": "<code>&lt;ref&gt;</code> ଟ୍ୟାଗ ପାଇଁ ବନ୍ଦକରିବା <code>&lt;/ref&gt;</code> ନାହିଁ",
 	"cite_error_group_refs_without_references": "<code>&lt;ref&gt;</code> ଟ୍ୟାଗସବୁ କେବଳ \"$1\" ନାମକ ଦଳ ପାଇଁ ରହିଥିଲେ ହେଁ କୌଣସି ସମ୍ବନ୍ଧିତ <code>&lt;references group=\"$1\"/&gt;</code> ଟ୍ୟାଗ ମିଳିଲା ନାହିଁ କିମ୍ବା <code>&lt;/ref&gt;</code> ବନ୍ଦ କରିବା ଟ୍ୟାଗଟି ନାହିଁ ।",
 	"cite_error_references_group_mismatch": "<code>&lt;references&gt ରେ <code>&lt;ref&gt;</code> ଚିହ୍ନ;</code> ର ଅସୁବିଧାଜନକ ଗୋଠ ବିଶେଷତା \"$1\" ।",
 	"cite_error_references_missing_group": "<code>&lt;references&gt;</code>ରେ ଦିଆଯାଇଥିବା <code>&lt;ref&gt;</code> ଚିହ୍ନରେ \"$1\" ଗୋଠ ପାଇଁ ଚିହ୍ନ ଅଛି ଯାହାକି ଦରକାରୀ ଲେଖାରେ ଆସୁନାହିଁ ।",

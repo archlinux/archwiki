@@ -31,18 +31,16 @@
 		"forum": "https://www.mediawiki.org/wiki/Extension_talk:LocalisationUpdate",
 		"wiki": "https://www.mediawiki.org/wiki/Extension:LocalisationUpdate"
 	},
-	"autoload": {
-		"files": [
-			"LocalisationUpdate.php"
-		]
-	},
 	"require-dev": {
 		"jakub-onderka/php-parallel-lint": "0.9.2",
-		"mediawiki/mediawiki-codesniffer": "0.5.1"
+		"mediawiki/mediawiki-codesniffer": "0.7.2"
 	},
 	"scripts": {
+		"fix": [
+			"phpcbf"
+		],
 		"test": [
-			"parallel-lint . --exclude vendor --exclude extensions",
+			"parallel-lint . --exclude vendor",
 			"phpcs -p -s"
 		]
 	}

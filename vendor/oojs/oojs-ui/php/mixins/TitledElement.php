@@ -28,7 +28,7 @@ trait TitledElement {
 	 * @param string $config['title'] Title. If not provided, the static property 'title' is used.
 	 */
 	public function initializeTitledElement( array $config = [] ) {
-		// Parent constructor
+		// Properties
 		$this->titled = isset( $config['titled'] ) ? $config['titled'] : $this;
 
 		// Initialization

@@ -2,11 +2,11 @@
 
 /**
  * @group Database
- * @group DatabaseBase
+ * @group Database
  */
 class DatabaseTest extends MediaWikiTestCase {
 	/**
-	 * @var DatabaseBase
+	 * @var Database
 	 */
 	protected $db;
 
@@ -23,9 +23,11 @@ class DatabaseTest extends MediaWikiTestCase {
 			$this->dropFunctions();
 			$this->functionTest = false;
 		}
+		$this->db->restoreFlags( IDatabase::RESTORE_INITIAL );
 	}
+
 	/**
-	 * @covers DatabaseBase::dropTable
+	 * @covers Database::dropTable
 	 */
 	public function testAddQuotesNull() {
 		$check = "NULL";
@@ -67,21 +69,26 @@ class DatabaseTest extends MediaWikiTestCase {
 	}
 
 	private function getSharedTableName( $table, $database, $prefix, $format = 'quoted' ) {
-		global $wgSharedDB, $wgSharedTables, $wgSharedPrefix;
+		global $wgSharedDB, $wgSharedTables, $wgSharedPrefix, $wgSharedSchema;
 
-		$oldName = $wgSharedDB;
-		$oldTables = $wgSharedTables;
-		$oldPrefix = $wgSharedPrefix;
-
-		$wgSharedDB = $database;
-		$wgSharedTables = [ $table ];
-		$wgSharedPrefix = $prefix;
+		$this->db->setTableAliases( [
+			$table => [
+				'dbname' => $database,
+				'schema' => null,
+				'prefix' => $prefix
+			]
+		] );
 
 		$ret = $this->db->tableName( $table, $format );
 
-		$wgSharedDB = $oldName;
-		$wgSharedTables = $oldTables;
-		$wgSharedPrefix = $oldPrefix;
+		$this->db->setTableAliases( array_fill_keys(
+			$wgSharedDB ? $wgSharedTables : [],
+			[
+				'dbname' => $wgSharedDB,
+				'schema' => $wgSharedSchema,
+				'prefix' => $wgSharedPrefix
+			]
+		) );
 
 		return $ret;
 	}
@@ -168,47 +175,6 @@ class DatabaseTest extends MediaWikiTestCase {
 		);
 	}
 
-	public function testFillPreparedEmpty() {
-		$sql = $this->db->fillPrepared(
-			'SELECT * FROM interwiki', [] );
-		$this->assertEquals(
-			"SELECT * FROM interwiki",
-			$sql );
-	}
-
-	public function testFillPreparedQuestion() {
-		$sql = $this->db->fillPrepared(
-			'SELECT * FROM cur WHERE cur_namespace=? AND cur_title=?',
-			[ 4, "Snicker's_paradox" ] );
-
-		$check = "SELECT * FROM cur WHERE cur_namespace='4' AND cur_title='Snicker''s_paradox'";
-		if ( $this->db->getType() === 'mysql' ) {
-			$check = "SELECT * FROM cur WHERE cur_namespace='4' AND cur_title='Snicker\'s_paradox'";
-		}
-		$this->assertEquals( $check, $sql );
-	}
-
-	public function testFillPreparedBang() {
-		$sql = $this->db->fillPrepared(
-			'SELECT user_id FROM ! WHERE user_name=?',
-			[ '"user"', "Slash's Dot" ] );
-
-		$check = "SELECT user_id FROM \"user\" WHERE user_name='Slash''s Dot'";
-		if ( $this->db->getType() === 'mysql' ) {
-			$check = "SELECT user_id FROM \"user\" WHERE user_name='Slash\'s Dot'";
-		}
-		$this->assertEquals( $check, $sql );
-	}
-
-	public function testFillPreparedRaw() {
-		$sql = $this->db->fillPrepared(
-			"SELECT * FROM cur WHERE cur_title='This_\\&_that,_WTF\\?\\!'",
-			[ '"user"', "Slash's Dot" ] );
-		$this->assertEquals(
-			"SELECT * FROM cur WHERE cur_title='This_&_that,_WTF?!'",
-			$sql );
-	}
-
 	public function testStoredFunctions() {
 		if ( !in_array( wfGetDB( DB_MASTER )->getType(), [ 'mysql', 'postgres' ] ) ) {
 			$this->markTestSkipped( 'MySQL or Postgres required' );
@@ -225,7 +191,7 @@ class DatabaseTest extends MediaWikiTestCase {
 
 	private function dropFunctions() {
 		$this->db->query( 'DROP FUNCTION IF EXISTS mw_test_function'
-				. ( $this->db->getType() == 'postgres' ? '()' : '' )
+			. ( $this->db->getType() == 'postgres' ? '()' : '' )
 		);
 	}
 
@@ -239,25 +205,209 @@ class DatabaseTest extends MediaWikiTestCase {
 		$db = $this->db;
 
 		$db->setFlag( DBO_TRX );
+		$called = false;
 		$flagSet = null;
-		$db->onTransactionIdle( function() use ( $db, &$flagSet ) {
-			$flagSet = $db->getFlag( DBO_TRX );
-		} );
+		$db->onTransactionIdle(
+			function () use ( $db, &$flagSet, &$called ) {
+				$called = true;
+				$flagSet = $db->getFlag( DBO_TRX );
+			},
+			__METHOD__
+		);
 		$this->assertFalse( $flagSet, 'DBO_TRX off in callback' );
 		$this->assertTrue( $db->getFlag( DBO_TRX ), 'DBO_TRX restored to default' );
+		$this->assertTrue( $called, 'Callback reached' );
 
 		$db->clearFlag( DBO_TRX );
 		$flagSet = null;
-		$db->onTransactionIdle( function() use ( $db, &$flagSet ) {
-			$flagSet = $db->getFlag( DBO_TRX );
-		} );
+		$db->onTransactionIdle(
+			function () use ( $db, &$flagSet ) {
+				$flagSet = $db->getFlag( DBO_TRX );
+			},
+			__METHOD__
+		);
 		$this->assertFalse( $flagSet, 'DBO_TRX off in callback' );
 		$this->assertFalse( $db->getFlag( DBO_TRX ), 'DBO_TRX restored to default' );
 
 		$db->clearFlag( DBO_TRX );
-		$db->onTransactionIdle( function() use ( $db ) {
+		$db->onTransactionIdle(
+			function () use ( $db ) {
+				$db->setFlag( DBO_TRX );
+			},
+			__METHOD__
+		);
+		$this->assertFalse( $db->getFlag( DBO_TRX ), 'DBO_TRX restored to default' );
+	}
+
+	public function testTransactionResolution() {
+		$db = $this->db;
+
+		$db->clearFlag( DBO_TRX );
+		$db->begin( __METHOD__ );
+		$called = false;
+		$db->onTransactionResolution( function () use ( $db, &$called ) {
+			$called = true;
 			$db->setFlag( DBO_TRX );
 		} );
+		$db->commit( __METHOD__ );
 		$this->assertFalse( $db->getFlag( DBO_TRX ), 'DBO_TRX restored to default' );
+		$this->assertTrue( $called, 'Callback reached' );
+
+		$db->clearFlag( DBO_TRX );
+		$db->begin( __METHOD__ );
+		$called = false;
+		$db->onTransactionResolution( function () use ( $db, &$called ) {
+			$called = true;
+			$db->setFlag( DBO_TRX );
+		} );
+		$db->rollback( __METHOD__, IDatabase::FLUSHING_ALL_PEERS );
+		$this->assertFalse( $db->getFlag( DBO_TRX ), 'DBO_TRX restored to default' );
+		$this->assertTrue( $called, 'Callback reached' );
+	}
+
+	/**
+	 * @covers Database::setTransactionListener()
+	 */
+	public function testTransactionListener() {
+		$db = $this->db;
+
+		$db->setTransactionListener( 'ping', function () use ( $db, &$called ) {
+			$called = true;
+		} );
+
+		$called = false;
+		$db->begin( __METHOD__ );
+		$db->commit( __METHOD__ );
+		$this->assertTrue( $called, 'Callback reached' );
+
+		$called = false;
+		$db->begin( __METHOD__ );
+		$db->commit( __METHOD__ );
+		$this->assertTrue( $called, 'Callback still reached' );
+
+		$called = false;
+		$db->begin( __METHOD__ );
+		$db->rollback( __METHOD__ );
+		$this->assertTrue( $called, 'Callback reached' );
+
+		$db->setTransactionListener( 'ping', null );
+		$called = false;
+		$db->begin( __METHOD__ );
+		$db->commit( __METHOD__ );
+		$this->assertFalse( $called, 'Callback not reached' );
+	}
+
+	/**
+	 * @covers Database::flushSnapshot()
+	 */
+	public function testFlushSnapshot() {
+		$db = $this->db;
+
+		$db->flushSnapshot( __METHOD__ ); // ok
+		$db->flushSnapshot( __METHOD__ ); // ok
+
+		$db->setFlag( DBO_TRX, $db::REMEMBER_PRIOR );
+		$db->query( 'SELECT 1', __METHOD__ );
+		$this->assertTrue( (bool)$db->trxLevel(), "Transaction started." );
+		$db->flushSnapshot( __METHOD__ ); // ok
+		$db->restoreFlags( $db::RESTORE_PRIOR );
+
+		$this->assertFalse( (bool)$db->trxLevel(), "Transaction cleared." );
+	}
+
+	public function testGetScopedLock() {
+		$db = $this->db;
+
+		$db->setFlag( DBO_TRX );
+		try {
+			$this->badLockingMethodImplicit( $db );
+		} catch ( RunTimeException $e ) {
+			$this->assertTrue( $db->trxLevel() > 0, "Transaction not committed." );
+		}
+		$db->clearFlag( DBO_TRX );
+		$db->rollback( __METHOD__, IDatabase::FLUSHING_ALL_PEERS );
+		$this->assertTrue( $db->lockIsFree( 'meow', __METHOD__ ) );
+
+		try {
+			$this->badLockingMethodExplicit( $db );
+		} catch ( RunTimeException $e ) {
+			$this->assertTrue( $db->trxLevel() > 0, "Transaction not committed." );
+		}
+		$db->rollback( __METHOD__, IDatabase::FLUSHING_ALL_PEERS );
+		$this->assertTrue( $db->lockIsFree( 'meow', __METHOD__ ) );
+	}
+
+	private function badLockingMethodImplicit( IDatabase $db ) {
+		$lock = $db->getScopedLockAndFlush( 'meow', __METHOD__, 1 );
+		$db->query( "SELECT 1" ); // trigger DBO_TRX
+		throw new RunTimeException( "Uh oh!" );
+	}
+
+	private function badLockingMethodExplicit( IDatabase $db ) {
+		$lock = $db->getScopedLockAndFlush( 'meow', __METHOD__, 1 );
+		$db->begin( __METHOD__ );
+		throw new RunTimeException( "Uh oh!" );
+	}
+
+	/**
+	 * @covers Database::getFlag(
+	 * @covers Database::setFlag()
+	 * @covers Database::restoreFlags()
+	 */
+	public function testFlagSetting() {
+		$db = $this->db;
+		$origTrx = $db->getFlag( DBO_TRX );
+		$origSsl = $db->getFlag( DBO_SSL );
+
+		$origTrx
+			? $db->clearFlag( DBO_TRX, $db::REMEMBER_PRIOR )
+			: $db->setFlag( DBO_TRX, $db::REMEMBER_PRIOR );
+		$this->assertEquals( !$origTrx, $db->getFlag( DBO_TRX ) );
+
+		$origSsl
+			? $db->clearFlag( DBO_SSL, $db::REMEMBER_PRIOR )
+			: $db->setFlag( DBO_SSL, $db::REMEMBER_PRIOR );
+		$this->assertEquals( !$origSsl, $db->getFlag( DBO_SSL ) );
+
+		$db->restoreFlags( $db::RESTORE_INITIAL );
+		$this->assertEquals( $origTrx, $db->getFlag( DBO_TRX ) );
+		$this->assertEquals( $origSsl, $db->getFlag( DBO_SSL ) );
+
+		$origTrx
+			? $db->clearFlag( DBO_TRX, $db::REMEMBER_PRIOR )
+			: $db->setFlag( DBO_TRX, $db::REMEMBER_PRIOR );
+		$origSsl
+			? $db->clearFlag( DBO_SSL, $db::REMEMBER_PRIOR )
+			: $db->setFlag( DBO_SSL, $db::REMEMBER_PRIOR );
+
+		$db->restoreFlags();
+		$this->assertEquals( $origSsl, $db->getFlag( DBO_SSL ) );
+		$this->assertEquals( !$origTrx, $db->getFlag( DBO_TRX ) );
+
+		$db->restoreFlags();
+		$this->assertEquals( $origSsl, $db->getFlag( DBO_SSL ) );
+		$this->assertEquals( $origTrx, $db->getFlag( DBO_TRX ) );
+	}
+
+	/**
+	 * @covers Database::tablePrefix()
+	 * @covers Database::dbSchema()
+	 */
+	public function testMutators() {
+		$old = $this->db->tablePrefix();
+		$this->assertType( 'string', $old, 'Prefix is string' );
+		$this->assertEquals( $old, $this->db->tablePrefix(), "Prefix unchanged" );
+		$this->assertEquals( $old, $this->db->tablePrefix( 'xxx' ) );
+		$this->assertEquals( 'xxx', $this->db->tablePrefix(), "Prefix set" );
+		$this->db->tablePrefix( $old );
+		$this->assertNotEquals( 'xxx', $this->db->tablePrefix() );
+
+		$old = $this->db->dbSchema();
+		$this->assertType( 'string', $old, 'Schema is string' );
+		$this->assertEquals( $old, $this->db->dbSchema(), "Schema unchanged" );
+		$this->assertEquals( $old, $this->db->dbSchema( 'xxx' ) );
+		$this->assertEquals( 'xxx', $this->db->dbSchema(), "Schema set" );
+		$this->db->dbSchema( $old );
+		$this->assertNotEquals( 'xxx', $this->db->dbSchema() );
 	}
 }

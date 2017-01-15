@@ -29,7 +29,7 @@ trait ButtonElement {
 	 * @param boolean $config['framed'] Render button with a frame (default: true)
 	 */
 	public function initializeButtonElement( array $config = [] ) {
-		// Parent constructor
+		// Properties
 		if ( ! $this instanceof Element ) {
 			throw new Exception( "ButtonElement trait can only be used on Element instances" );
 		}

@@ -20,7 +20,7 @@ class HttpFetcher implements Fetcher {
 	 * implementation of this.
 	 */
 	public function fetchDirectory( $pattern ) {
-		$files = array();
+		$files = [];
 
 		$languages = \Language::fetchLanguageNames( null, 'mwfile' );
 

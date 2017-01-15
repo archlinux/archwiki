@@ -1,6 +1,6 @@
 /* Galleries */
 /* These display attributes look nonsensical, but are needed to support IE and FF2 */
-/* Don't forget to update gallery-print.css */
+/* Don't forget to update gallery.print.css */
 li.gallerybox {
 	vertical-align: top;
 	display: -moz-inline-box;
@@ -45,6 +45,16 @@ div.gallerytext {
 	word-wrap: break-word;
 }
 
+.galleryfilename {
+	display: block;
+}
+
+.galleryfilename-truncate {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
 /* new gallery stuff */
 ul.mw-gallery-nolines li.gallerybox div.thumb {
 	background-color: transparent;
@@ -84,18 +94,89 @@ ul.mw-gallery-packed-hover li.gallerybox:hover div.gallerytextwrapper,
 ul.mw-gallery-packed-overlay li.gallerybox div.gallerytextwrapper,
 ul.mw-gallery-packed-hover li.gallerybox.mw-gallery-focused div.gallerytextwrapper {
 	position: absolute;
-	background: white;
+	background: #fff;
 	background: rgba(255, 255, 255, 0.8);
 	padding: 5px 10px;
 	bottom: 0;
 	left: 0; /* Needed for IE */
 	height: auto;
+	max-height: 40%;
+	overflow: hidden;
 	font-weight: bold;
 	margin: 2px; /* correspond to style on div.thumb */
+}
+
+ul.mw-gallery-packed-hover li.gallerybox:hover div.gallerytextwrapper p,
+ul.mw-gallery-packed-overlay li.gallerybox div.gallerytextwrapper p,
+ul.mw-gallery-packed-hover li.gallerybox.mw-gallery-focused div.gallerytextwrapper p {
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+ul.mw-gallery-packed-hover li.gallerybox div.gallerytextwrapper:hover,
+ul.mw-gallery-packed-overlay li.gallerybox div.gallerytextwrapper:hover,
+ul.mw-gallery-packed-hover li.gallerybox.mw-gallery-focused div.gallerytextwrapper:hover {
+	overflow: visible;
+	max-height: none;
+}
+
+ul.mw-gallery-packed-hover li.gallerybox div.gallerytextwrapper:hover p,
+ul.mw-gallery-packed-overlay li.gallerybox div.gallerytextwrapper:hover p,
+ul.mw-gallery-packed-hover li.gallerybox.mw-gallery-focused div.gallerytextwrapper:hover p {
+	text-overflow: clip;
+	white-space: normal;
+	overflow: visible;
 }
 
 ul.mw-gallery-packed-hover,
 ul.mw-gallery-packed-overlay,
 ul.mw-gallery-packed {
 	text-align: center;
+}
+
+/* Slideshow */
+ul.gallery.mw-gallery-slideshow {
+	display: block;
+	margin: 4em 0;
+}
+
+ul.gallery.mw-gallery-slideshow .gallerycaption {
+	font-size: 1.3em;
+	margin: 0;
+}
+
+ul.gallery.mw-gallery-slideshow .gallerycarousel.mw-gallery-slideshow-thumbnails-toggled {
+	margin-bottom: 1.3em;
+}
+
+ul.gallery.mw-gallery-slideshow .mw-gallery-slideshow-buttons {
+	opacity: 0.5;
+	padding: 1.3em 0;
+}
+
+ul.gallery.mw-gallery-slideshow .mw-gallery-slideshow-buttons .oo-ui-buttonElement {
+	margin: 0 2em;
+}
+
+.mw-gallery-slideshow li.gallerybox.slideshow-current {
+	background: #efefef;
+}
+
+.mw-gallery-slideshow .gallerybox > div {
+	max-width: 120px;
+}
+
+ul.mw-gallery-slideshow li.gallerybox div.thumb {
+	border: none;
+	background: transparent;
+}
+
+ul.mw-gallery-slideshow li.gallerycarousel {
+	display: block;
+	text-align: center;
+}
+
+.mw-gallery-slideshow-img-container a {
+	display: block;
 }

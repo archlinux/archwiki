@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica;
 
 /**
@@ -6,7 +7,7 @@ namespace Elastica;
  *
  * @author Manuel Andreo Garcia <andreo.garcia@gmail.com>
  *
- * @link http://www.elastic.co/guide/en/elasticsearch/guide/current/scan-scroll.html
+ * @link https://www.elastic.co/guide/en/elasticsearch/guide/current/scan-scroll.html
  */
 class ScanAndScroll extends Scroll
 {

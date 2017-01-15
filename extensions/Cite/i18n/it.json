@@ -7,7 +7,8 @@
 			"Erdemaslancan",
 			"Gianfranco",
 			"Pietrodn",
-			"Horcrux92"
+			"Horcrux92",
+			"Nemo bis"
 		]
 	},
 	"apihelp-query+references-description": "Restituisce una rappresentazione dati dei riferimenti associati con le pagine indicate.",
@@ -35,7 +36,7 @@
 	"cite-tracking-category-cite-error-desc": "Le pagine in questa categoria hanno errori nell'uso dei tag per le note.",
 	"cite_references_link_accessibility_label": "Salta",
 	"cite_references_link_many_accessibility_label": "Salta a:",
-	"cite_section_preview_references": "Anteprima dei riferimenti",
+	"cite_section_preview_references": "Anteprima delle note",
 	"cite_warning": "Attenzione nelle note: $1",
 	"cite_warning_sectionpreview_no_text": "Il tag <code>&lt;ref&gt;</code> con nome <code>$1</code> non può essere visualizzato in anteprima, perché è definito al di fuori della sezione attuale o non definito affatto."
 }

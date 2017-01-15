@@ -40,7 +40,7 @@ class HTMLFancyCaptchaField extends HTMLFormField {
 			$captchaReload = Html::element(
 				'small',
 				[ 'class' => 'confirmedit-captcha-reload fancycaptcha-reload' ],
-				wfMessage( 'fancycaptcha-reload-text' )->text()
+				$this->mParent->msg( 'fancycaptcha-reload-text' )->text()
 			);
 		} else {
 			$captchaReload = '';
@@ -56,7 +56,7 @@ class HTMLFancyCaptchaField extends HTMLFormField {
 			'autocomplete' => 'off',
 			'autocorrect' => 'off',
 			'autocapitalize' => 'off',
-			'placeholder' => wfMessage( 'fancycaptcha-imgcaptcha-ph' )
+			'placeholder' => $this->mParent->msg( 'fancycaptcha-imgcaptcha-ph' )->text()
 		];
 		$attribs += $this->getAttributes( [ 'tabindex', 'required', 'autofocus' ] );
 
@@ -74,7 +74,7 @@ class HTMLFancyCaptchaField extends HTMLFormField {
 			// use raw element, the message will contain a link
 			$html .= Html::rawElement( 'small', [
 				'class' => 'mw-createacct-captcha-assisted'
-			], wfMessage( 'createacct-imgcaptcha-help' )->parse() );
+			], $this->mParent->msg( 'createacct-imgcaptcha-help' )->parse() );
 		}
 
 		$html .= Html::closeElement( 'div' );
@@ -85,7 +85,8 @@ class HTMLFancyCaptchaField extends HTMLFormField {
 	public function getLabel() {
 		// slight abuse of what getLabel() should mean; $mLabel is used for the pre-label text
 		// as the actual label is always the same
-		return wfMessage( 'captcha-label' )->text() . ' ' . wfMessage( 'fancycaptcha-captcha' )->text();
+		return $this->mParent->msg( 'captcha-label' )->text() . ' '
+			. $this->mParent->msg( 'fancycaptcha-captcha' )->text();
 	}
 
 	public function getLabelHtml( $cellAttributes = [] ) {

@@ -34,7 +34,7 @@
 class ApiExpandTemplates extends ApiBase {
 
 	public function execute() {
-		// Cache may vary on $wgUser because ParserOptions gets data from it
+		// Cache may vary on the user because ParserOptions gets data from it
 		$this->getMain()->setCacheMode( 'anon-public-user-private' );
 
 		// Get parameters
@@ -76,6 +76,11 @@ class ApiExpandTemplates extends ApiBase {
 		if ( $params['includecomments'] ) {
 			$options->setRemoveComments( false );
 		}
+
+		$reset = null;
+		$suppressCache = false;
+		Hooks::run( 'ApiMakeParserOptions',
+			[ $options, $title_obj, $params, $this, &$reset, &$suppressCache ] );
 
 		$retval = [];
 

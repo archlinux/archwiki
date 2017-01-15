@@ -103,7 +103,7 @@ class TextInputWidget extends InputWidget {
 		if ( !$config['autocomplete'] ) {
 			$this->input->setAttributes( [ 'autocomplete' => 'off' ] );
 		}
-		if ( $this->multiline && isset( $config['rows'] ) ) {
+		if ( $this->multiline && isset( $config['rows'] ) && $config['rows'] ) {
 			$this->input->setAttributes( [ 'rows' => $config['rows'] ] );
 		}
 	}
@@ -148,15 +148,16 @@ class TextInputWidget extends InputWidget {
 	}
 
 	private function getSaneType( $config ) {
-		if ( isset( $config['multiline'] ) && $config['multiline'] ) {
-			return 'multiline';
-		} else {
-			$type = in_array(
-					$config['type'],
-					[ 'text', 'password', 'search', 'email', 'url', 'date', 'number' ]
-				) ? $config['type'] : 'text';
-			return $type;
-		}
+		$allowedTypes = [
+			'text',
+			'password',
+			'search',
+			'email',
+			'url',
+			'date',
+			'number'
+		];
+		return in_array( $config['type'], $allowedTypes ) ? $config['type'] : 'text';
 	}
 
 	/**
@@ -175,11 +176,9 @@ class TextInputWidget extends InputWidget {
 			if ( $rows !== null ) {
 				$config['rows'] = $rows;
 			}
-		} else {
-			$type = $this->input->getAttribute( 'type' );
-			if ( $type !== 'text' ) {
-				$config['type'] = $type;
-			}
+		}
+		if ( $this->type !== 'text' ) {
+			$config['type'] = $this->type;
 		}
 		if ( $this->isReadOnly() ) {
 			$config['readOnly'] = true;

@@ -3,6 +3,7 @@
 use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
 use MediaWiki\Linker\LinkTarget;
 use Wikimedia\Assert\Assert;
+use Wikimedia\ScopedCallback;
 
 /**
  * Storage layer class for WatchedItems.
@@ -51,11 +52,6 @@ class WatchedItemStore implements StatsdAwareInterface {
 	private $stats;
 
 	/**
-	 * @var self|null
-	 */
-	private static $instance;
-
-	/**
 	 * @param LoadBalancer $loadBalancer
 	 * @param HashBagOStuff $cache
 	 */
@@ -85,14 +81,12 @@ class WatchedItemStore implements StatsdAwareInterface {
 	 * @return ScopedCallback to reset the overridden value
 	 * @throws MWException
 	 */
-	public function overrideDeferredUpdatesAddCallableUpdateCallback( $callback ) {
+	public function overrideDeferredUpdatesAddCallableUpdateCallback( callable $callback ) {
 		if ( !defined( 'MW_PHPUNIT_TEST' ) ) {
 			throw new MWException(
 				'Cannot override DeferredUpdates::addCallableUpdate callback in operation.'
 			);
 		}
-		Assert::parameterType( 'callable', $callback, '$callback' );
-
 		$previousValue = $this->deferredUpdatesAddCallableUpdateCallback;
 		$this->deferredUpdatesAddCallableUpdateCallback = $callback;
 		return new ScopedCallback( function() use ( $previousValue ) {
@@ -110,59 +104,17 @@ class WatchedItemStore implements StatsdAwareInterface {
 	 * @return ScopedCallback to reset the overridden value
 	 * @throws MWException
 	 */
-	public function overrideRevisionGetTimestampFromIdCallback( $callback ) {
+	public function overrideRevisionGetTimestampFromIdCallback( callable $callback ) {
 		if ( !defined( 'MW_PHPUNIT_TEST' ) ) {
 			throw new MWException(
 				'Cannot override Revision::getTimestampFromId callback in operation.'
 			);
 		}
-		Assert::parameterType( 'callable', $callback, '$callback' );
-
 		$previousValue = $this->revisionGetTimestampFromIdCallback;
 		$this->revisionGetTimestampFromIdCallback = $callback;
 		return new ScopedCallback( function() use ( $previousValue ) {
 			$this->revisionGetTimestampFromIdCallback = $previousValue;
 		} );
-	}
-
-	/**
-	 * Overrides the default instance of this class
-	 * This is intended for use while testing and will fail if MW_PHPUNIT_TEST is not defined.
-	 *
-	 * If this method is used it MUST also be called with null after a test to ensure a new
-	 * default instance is created next time getDefaultInstance is called.
-	 *
-	 * @param WatchedItemStore|null $store
-	 *
-	 * @return ScopedCallback to reset the overridden value
-	 * @throws MWException
-	 */
-	public static function overrideDefaultInstance( WatchedItemStore $store = null ) {
-		if ( !defined( 'MW_PHPUNIT_TEST' ) ) {
-			throw new MWException(
-				'Cannot override ' . __CLASS__ . 'default instance in operation.'
-			);
-		}
-
-		$previousValue = self::$instance;
-		self::$instance = $store;
-		return new ScopedCallback( function() use ( $previousValue ) {
-			self::$instance = $previousValue;
-		} );
-	}
-
-	/**
-	 * @return self
-	 */
-	public static function getDefaultInstance() {
-		if ( !self::$instance ) {
-			self::$instance = new self(
-				wfGetLB(),
-				new HashBagOStuff( [ 'maxKeys' => 100 ] )
-			);
-			self::$instance->setStatsdDataFactory( RequestContext::getMain()->getStats() );
-		}
-		return self::$instance;
 	}
 
 	private function getCacheKey( User $user, LinkTarget $target ) {
@@ -189,13 +141,25 @@ class WatchedItemStore implements StatsdAwareInterface {
 	}
 
 	private function uncacheLinkTarget( LinkTarget $target ) {
+		$this->stats->increment( 'WatchedItemStore.uncacheLinkTarget' );
 		if ( !isset( $this->cacheIndex[$target->getNamespace()][$target->getDBkey()] ) ) {
 			return;
 		}
-		$this->stats->increment( 'WatchedItemStore.uncacheLinkTarget' );
 		foreach ( $this->cacheIndex[$target->getNamespace()][$target->getDBkey()] as $key ) {
 			$this->stats->increment( 'WatchedItemStore.uncacheLinkTarget.items' );
 			$this->cache->delete( $key );
+		}
+	}
+
+	private function uncacheUser( User $user ) {
+		$this->stats->increment( 'WatchedItemStore.uncacheUser' );
+		foreach ( $this->cacheIndex as $ns => $dbKeyArray ) {
+			foreach ( $dbKeyArray as $dbKey => $userArray ) {
+				if ( isset( $userArray[$user->getId()] ) ) {
+					$this->stats->increment( 'WatchedItemStore.uncacheUser.items' );
+					$this->cache->delete( $userArray[$user->getId()] );
+				}
+			}
 		}
 	}
 
@@ -227,22 +191,13 @@ class WatchedItemStore implements StatsdAwareInterface {
 	}
 
 	/**
-	 * @param int $slaveOrMaster DB_MASTER or DB_SLAVE
+	 * @param int $dbIndex DB_MASTER or DB_REPLICA
 	 *
-	 * @return DatabaseBase
+	 * @return IDatabase
 	 * @throws MWException
 	 */
-	private function getConnection( $slaveOrMaster ) {
-		return $this->loadBalancer->getConnection( $slaveOrMaster, [ 'watchlist' ] );
-	}
-
-	/**
-	 * @param DatabaseBase $connection
-	 *
-	 * @throws MWException
-	 */
-	private function reuseConnection( $connection ) {
-		$this->loadBalancer->reuseConnection( $connection );
+	private function getConnectionRef( $dbIndex ) {
+		return $this->loadBalancer->getConnectionRef( $dbIndex, [ 'watchlist' ] );
 	}
 
 	/**
@@ -254,7 +209,7 @@ class WatchedItemStore implements StatsdAwareInterface {
 	 * @return int
 	 */
 	public function countWatchedItems( User $user ) {
-		$dbr = $this->getConnection( DB_SLAVE );
+		$dbr = $this->getConnectionRef( DB_REPLICA );
 		$return = (int)$dbr->selectField(
 			'watchlist',
 			'COUNT(*)',
@@ -263,7 +218,6 @@ class WatchedItemStore implements StatsdAwareInterface {
 			],
 			__METHOD__
 		);
-		$this->reuseConnection( $dbr );
 
 		return $return;
 	}
@@ -274,7 +228,7 @@ class WatchedItemStore implements StatsdAwareInterface {
 	 * @return int
 	 */
 	public function countWatchers( LinkTarget $target ) {
-		$dbr = $this->getConnection( DB_SLAVE );
+		$dbr = $this->getConnectionRef( DB_REPLICA );
 		$return = (int)$dbr->selectField(
 			'watchlist',
 			'COUNT(*)',
@@ -284,7 +238,6 @@ class WatchedItemStore implements StatsdAwareInterface {
 			],
 			__METHOD__
 		);
-		$this->reuseConnection( $dbr );
 
 		return $return;
 	}
@@ -300,7 +253,7 @@ class WatchedItemStore implements StatsdAwareInterface {
 	 * @throws MWException
 	 */
 	public function countVisitingWatchers( LinkTarget $target, $threshold ) {
-		$dbr = $this->getConnection( DB_SLAVE );
+		$dbr = $this->getConnectionRef( DB_REPLICA );
 		$visitingWatchers = (int)$dbr->selectField(
 			'watchlist',
 			'COUNT(*)',
@@ -313,7 +266,6 @@ class WatchedItemStore implements StatsdAwareInterface {
 			],
 			__METHOD__
 		);
-		$this->reuseConnection( $dbr );
 
 		return $visitingWatchers;
 	}
@@ -330,7 +282,7 @@ class WatchedItemStore implements StatsdAwareInterface {
 	public function countWatchersMultiple( array $targets, array $options = [] ) {
 		$dbOptions = [ 'GROUP BY' => [ 'wl_namespace', 'wl_title' ] ];
 
-		$dbr = $this->getConnection( DB_SLAVE );
+		$dbr = $this->getConnectionRef( DB_REPLICA );
 
 		if ( array_key_exists( 'minimumWatchers', $options ) ) {
 			$dbOptions['HAVING'] = 'COUNT(*) >= ' . (int)$options['minimumWatchers'];
@@ -344,8 +296,6 @@ class WatchedItemStore implements StatsdAwareInterface {
 			__METHOD__,
 			$dbOptions
 		);
-
-		$this->reuseConnection( $dbr );
 
 		$watchCounts = [];
 		foreach ( $targets as $linkTarget ) {
@@ -378,7 +328,7 @@ class WatchedItemStore implements StatsdAwareInterface {
 		array $targetsWithVisitThresholds,
 		$minimumWatchers = null
 	) {
-		$dbr = $this->getConnection( DB_SLAVE );
+		$dbr = $this->getConnectionRef( DB_REPLICA );
 
 		$conds = $this->getVisitingWatchersCondition( $dbr, $targetsWithVisitThresholds );
 
@@ -393,8 +343,6 @@ class WatchedItemStore implements StatsdAwareInterface {
 			__METHOD__,
 			$dbOptions
 		);
-
-		$this->reuseConnection( $dbr );
 
 		$watcherCounts = [];
 		foreach ( $targetsWithVisitThresholds as list( $target ) ) {
@@ -489,14 +437,13 @@ class WatchedItemStore implements StatsdAwareInterface {
 			return false;
 		}
 
-		$dbr = $this->getConnection( DB_SLAVE );
+		$dbr = $this->getConnectionRef( DB_REPLICA );
 		$row = $dbr->selectRow(
 			'watchlist',
 			'wl_notificationtimestamp',
 			$this->dbCond( $user, $target ),
 			__METHOD__
 		);
-		$this->reuseConnection( $dbr );
 
 		if ( !$row ) {
 			return false;
@@ -536,7 +483,7 @@ class WatchedItemStore implements StatsdAwareInterface {
 				"wl_title {$options['sort']}"
 			];
 		}
-		$db = $this->getConnection( $options['forWrite'] ? DB_MASTER : DB_SLAVE );
+		$db = $this->getConnectionRef( $options['forWrite'] ? DB_MASTER : DB_REPLICA );
 
 		$res = $db->select(
 			'watchlist',
@@ -545,7 +492,6 @@ class WatchedItemStore implements StatsdAwareInterface {
 			__METHOD__,
 			$dbOptions
 		);
-		$this->reuseConnection( $db );
 
 		$watchedItems = [];
 		foreach ( $res as $row ) {
@@ -606,7 +552,7 @@ class WatchedItemStore implements StatsdAwareInterface {
 			return $timestamps;
 		}
 
-		$dbr = $this->getConnection( DB_SLAVE );
+		$dbr = $this->getConnectionRef( DB_REPLICA );
 
 		$lb = new LinkBatch( $targetsToLoad );
 		$res = $dbr->select(
@@ -618,7 +564,6 @@ class WatchedItemStore implements StatsdAwareInterface {
 			],
 			__METHOD__
 		);
-		$this->reuseConnection( $dbr );
 
 		foreach ( $res as $row ) {
 			$timestamps[$row->wl_namespace][$row->wl_title] = $row->wl_notificationtimestamp;
@@ -667,13 +612,12 @@ class WatchedItemStore implements StatsdAwareInterface {
 			$this->uncache( $user, $target );
 		}
 
-		$dbw = $this->getConnection( DB_MASTER );
+		$dbw = $this->getConnectionRef( DB_MASTER );
 		foreach ( array_chunk( $rows, 100 ) as $toInsert ) {
 			// Use INSERT IGNORE to avoid overwriting the notification timestamp
 			// if there's already an entry for this page
 			$dbw->insert( 'watchlist', $toInsert, __METHOD__, 'IGNORE' );
 		}
-		$this->reuseConnection( $dbw );
 
 		return true;
 	}
@@ -697,7 +641,7 @@ class WatchedItemStore implements StatsdAwareInterface {
 
 		$this->uncache( $user, $target );
 
-		$dbw = $this->getConnection( DB_MASTER );
+		$dbw = $this->getConnectionRef( DB_MASTER );
 		$dbw->delete( 'watchlist',
 			[
 				'wl_user' => $user->getId(),
@@ -706,7 +650,39 @@ class WatchedItemStore implements StatsdAwareInterface {
 			], __METHOD__
 		);
 		$success = (bool)$dbw->affectedRows();
-		$this->reuseConnection( $dbw );
+
+		return $success;
+	}
+
+	/**
+	 * @param User $user The user to set the timestamp for
+	 * @param string $timestamp Set the update timestamp to this value
+	 * @param LinkTarget[] $targets List of targets to update. Default to all targets
+	 *
+	 * @return bool success
+	 */
+	public function setNotificationTimestampsForUser( User $user, $timestamp, array $targets = [] ) {
+		// Only loggedin user can have a watchlist
+		if ( $user->isAnon() ) {
+			return false;
+		}
+
+		$dbw = $this->getConnectionRef( DB_MASTER );
+
+		$conds = [ 'wl_user' => $user->getId() ];
+		if ( $targets ) {
+			$batch = new LinkBatch( $targets );
+			$conds[] = $batch->constructSet( 'wl', $dbw );
+		}
+
+		$success = $dbw->update(
+			'watchlist',
+			[ 'wl_notificationtimestamp' => $dbw->timestamp( $timestamp ) ],
+			$conds,
+			__METHOD__
+		);
+
+		$this->uncacheUser( $user );
 
 		return $success;
 	}
@@ -720,42 +696,54 @@ class WatchedItemStore implements StatsdAwareInterface {
 	 * @return int[] Array of user IDs the timestamp has been updated for
 	 */
 	public function updateNotificationTimestamp( User $editor, LinkTarget $target, $timestamp ) {
-		$dbw = $this->getConnection( DB_MASTER );
-		$res = $dbw->select( [ 'watchlist' ],
-			[ 'wl_user' ],
+		$dbw = $this->getConnectionRef( DB_MASTER );
+		$uids = $dbw->selectFieldValues(
+			'watchlist',
+			'wl_user',
 			[
 				'wl_user != ' . intval( $editor->getId() ),
 				'wl_namespace' => $target->getNamespace(),
 				'wl_title' => $target->getDBkey(),
 				'wl_notificationtimestamp IS NULL',
-			], __METHOD__
+			],
+			__METHOD__
 		);
 
-		$watchers = [];
-		foreach ( $res as $row ) {
-			$watchers[] = intval( $row->wl_user );
-		}
-
+		$watchers = array_map( 'intval', $uids );
 		if ( $watchers ) {
 			// Update wl_notificationtimestamp for all watching users except the editor
 			$fname = __METHOD__;
-			$dbw->onTransactionIdle(
-				function () use ( $dbw, $timestamp, $watchers, $target, $fname ) {
-					$dbw->update( 'watchlist',
-						[ /* SET */
-							'wl_notificationtimestamp' => $dbw->timestamp( $timestamp )
-						], [ /* WHERE */
-							'wl_user' => $watchers,
-							'wl_namespace' => $target->getNamespace(),
-							'wl_title' => $target->getDBkey(),
-						], $fname
-					);
+			DeferredUpdates::addCallableUpdate(
+				function () use ( $timestamp, $watchers, $target, $fname ) {
+					global $wgUpdateRowsPerQuery;
+
+					$dbw = $this->getConnectionRef( DB_MASTER );
+					$factory = wfGetLBFactory();
+					$ticket = $factory->getEmptyTransactionTicket( __METHOD__ );
+
+					$watchersChunks = array_chunk( $watchers, $wgUpdateRowsPerQuery );
+					foreach ( $watchersChunks as $watchersChunk ) {
+						$dbw->update( 'watchlist',
+							[ /* SET */
+								'wl_notificationtimestamp' => $dbw->timestamp( $timestamp )
+							], [ /* WHERE - TODO Use wl_id T130067 */
+								'wl_user' => $watchersChunk,
+								'wl_namespace' => $target->getNamespace(),
+								'wl_title' => $target->getDBkey(),
+							], $fname
+						);
+						if ( count( $watchersChunks ) > 1 ) {
+							$factory->commitAndWaitForReplication(
+								__METHOD__, $ticket, [ 'wiki' => $dbw->getWikiID() ]
+							);
+						}
+					}
 					$this->uncacheLinkTarget( $target );
-				}
+				},
+				DeferredUpdates::POSTSEND,
+				$dbw
 			);
 		}
-
-		$this->reuseConnection( $dbw );
 
 		return $watchers;
 	}
@@ -872,7 +860,7 @@ class WatchedItemStore implements StatsdAwareInterface {
 			$queryOptions['LIMIT'] = $unreadLimit;
 		}
 
-		$dbr = $this->getConnection( DB_SLAVE );
+		$dbr = $this->getConnectionRef( DB_REPLICA );
 		$rowCount = $dbr->selectRowCount(
 			'watchlist',
 			'1',
@@ -883,7 +871,6 @@ class WatchedItemStore implements StatsdAwareInterface {
 			__METHOD__,
 			$queryOptions
 		);
-		$this->reuseConnection( $dbr );
 
 		if ( !isset( $unreadLimit ) ) {
 			return $rowCount;
@@ -924,7 +911,7 @@ class WatchedItemStore implements StatsdAwareInterface {
 	 * @param LinkTarget $newTarget
 	 */
 	public function duplicateEntry( LinkTarget $oldTarget, LinkTarget $newTarget ) {
-		$dbw = $this->getConnection( DB_MASTER );
+		$dbw = $this->getConnectionRef( DB_MASTER );
 
 		$result = $dbw->select(
 			'watchlist',
@@ -962,8 +949,6 @@ class WatchedItemStore implements StatsdAwareInterface {
 				__METHOD__
 			);
 		}
-
-		$this->reuseConnection( $dbw );
 	}
 
 }

@@ -34,7 +34,7 @@ class SpecialLockdb extends FormSpecialPage {
 	}
 
 	public function doesWrites() {
-		return true;
+		return false;
 	}
 
 	public function requiresWrite() {
@@ -46,6 +46,9 @@ class SpecialLockdb extends FormSpecialPage {
 		# If the lock file isn't writable, we can do sweet bugger all
 		if ( !is_writable( dirname( $this->getConfig()->get( 'ReadOnlyFile' ) ) ) ) {
 			throw new ErrorPageError( 'lockdb', 'lockfilenotwritable' );
+		}
+		if ( file_exists( $this->getConfig()->get( 'ReadOnlyFile' ) ) ) {
+			throw new ErrorPageError( 'lockdb', 'databaselocked' );
 		}
 	}
 
@@ -65,9 +68,9 @@ class SpecialLockdb extends FormSpecialPage {
 	}
 
 	protected function alterForm( HTMLForm $form ) {
-		$form->setWrapperLegend( false );
-		$form->setHeaderText( $this->msg( 'lockdbtext' )->parseAsBlock() );
-		$form->setSubmitTextMsg( 'lockbtn' );
+		$form->setWrapperLegend( false )
+			->setHeaderText( $this->msg( 'lockdbtext' )->parseAsBlock() )
+			->setSubmitTextMsg( 'lockbtn' );
 	}
 
 	public function onSubmit( array $data ) {
@@ -103,6 +106,10 @@ class SpecialLockdb extends FormSpecialPage {
 		$out = $this->getOutput();
 		$out->addSubtitle( $this->msg( 'lockdbsuccesssub' ) );
 		$out->addWikiMsg( 'lockdbsuccesstext' );
+	}
+
+	protected function getDisplayFormat() {
+		return 'ooui';
 	}
 
 	protected function getGroupName() {

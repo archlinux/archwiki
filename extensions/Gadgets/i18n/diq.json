@@ -6,12 +6,13 @@
 			"Mirzali",
 			"Neribij",
 			"Olvörg",
-			"Xoser"
+			"Xoser",
+			"Kumkumuk"
 		]
 	},
 	"gadgets-desc": "Karberan ré destur bidek [[Special:Preferences#mw-prefsection-gadgets|hesıbyayan]]'ra [[Special:Gadgets|Hacetanê CSS u JavaScriptî]] bışé weçiné",
 	"prefs-gadgets": "Haleti",
-	"gadgets-prefstext": "Cêr de yew lista hacetanê xasan esta ke tı şenay xesabê xo de a kerê.\nEnê haceti JavaScript sero gureyenê, aye ra tı gani ageyrayoğê xo de JavaScript a kerê.\nEna pela opsiyoni de haceti tesir nêkenê.\n\nEnê hacetê xasi parçê sofwarê Mediyawiki niyê, aye ra karberê locali enê haceti vırazenê.\nİdarekarê meheli şenê be [[MediaWiki:Gadgets-definition|kıfşkerdeyan]] û [[Special:Gadgets|arezekerdışan]] ra hacetanê mınasıban bıvurnê.",
+	"gadgets-prefstext": "Cêr de yew lista hacetanê xasan esta ke tı şenay xesabê xo de a kerê.\nEnê haceti JavaScript sero gureyenê, aye ra tı gani ageyrayoğê xo de JavaScript a kerê.\nEna pela opsiyoni de haceti tesir nêkenê.\n\nEnê hacetê xasi parçê sofwarê Mediyawiki niyê, aye ra karberê locali enê haceti vırazenê.\nİdarekarê meheli şenê be [[MediaWiki:Gadgets-definition|kıfşkerdeyan]] û [[Special:GadgetUsage|şınasnayış]] ra hacetanê mınasıban bıvurnê.",
 	"gadgets": "Haleti",
 	"gadgetusage": "İstatistike kaekerdışa hacetan",
 	"gadgetusage-gadget": "Hacet",

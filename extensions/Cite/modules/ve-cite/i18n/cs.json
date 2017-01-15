@@ -16,13 +16,16 @@
 			"Vojtěch Dostál",
 			"Aktron",
 			"Cvanca",
-			"Kusavica"
+			"Kusavica",
+			"Dvorapa"
 		]
 	},
+	"visualeditor-cite-tool-definition.json": "prázdný",
 	"visualeditor-cite-tool-name-book": "Kniha",
 	"visualeditor-cite-tool-name-journal": "Časopis",
 	"visualeditor-cite-tool-name-news": "Časopis / noviny",
 	"visualeditor-cite-tool-name-web": "Webová stránka",
+	"cite-tool-definition.json": "prázdný",
 	"cite-ve-dialog-reference-editing-reused": "Tato reference se na této stránce používá $1{{PLURAL:$1|krát}}.",
 	"cite-ve-dialog-reference-options-group-label": "Použít tuto skupinu",
 	"cite-ve-dialog-reference-options-group-placeholder": "Obecné reference",
@@ -45,5 +48,6 @@
 	"cite-ve-referenceslist-isempty": "Na této stránce nejsou žádné reference se skupinou „$1“, které by se v tomto seznamu zobrazily.",
 	"cite-ve-referenceslist-isempty-default": "Na této stránce nejsou žádné reference, které by se v tomto seznamu zobrazily.",
 	"cite-ve-referenceslist-missingref": "Tato reference je definována v šabloně nebo jiné generované části textu a zatím ji lze editovat jen v režimu zdrojového textu.",
-	"cite-ve-toolbar-group-label": "Citace"
+	"cite-ve-toolbar-group-label": "Citace",
+	"cite-ve-othergroup-item": "$1 reference"
 }

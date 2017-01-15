@@ -434,7 +434,7 @@ OO.ui.Demo.static.pages.dialogs = function ( demo ) {
 		IndexedDialog.parent.call( this, config );
 	}
 	OO.inheritClass( IndexedDialog, OO.ui.ProcessDialog );
-	IndexedDialog.static.title = 'Index dialog';
+	IndexedDialog.static.title = 'Indexed dialog';
 	IndexedDialog.static.actions = [
 		{ action: 'save', label: 'Done', flags: [ 'primary', 'progressive' ] },
 		{ action: 'cancel', label: 'Cancel', flags: 'safe' }
@@ -642,8 +642,8 @@ OO.ui.Demo.static.pages.dialogs = function ( demo ) {
 				} ), $spacer.clone() ]
 			} ),
 			new SamplePage( 'capsule', {
-				label: 'CapsuleMultiSelectWidget',
-				content: [ $spacer.clone(), new OO.ui.CapsuleMultiSelectWidget( {
+				label: 'CapsuleMultiselectWidget',
+				content: [ $spacer.clone(), new OO.ui.CapsuleMultiselectWidget( {
 					$overlay: this.$overlay,
 					menu: {
 						items: this.makeItems()
@@ -651,9 +651,9 @@ OO.ui.Demo.static.pages.dialogs = function ( demo ) {
 				} ), $spacer.clone() ]
 			} ),
 			new SamplePage( 'capsule2', {
-				label: 'CapsuleMultiSelectWidget',
+				label: 'CapsuleMultiselectWidget',
 				icon: 'alert',
-				content: [ $spacer.clone(), new OO.ui.CapsuleMultiSelectWidget( {
+				content: [ $spacer.clone(), new OO.ui.CapsuleMultiselectWidget( {
 					menu: {
 						items: this.makeItems()
 					}
@@ -689,9 +689,6 @@ OO.ui.Demo.static.pages.dialogs = function ( demo ) {
 			name: 'Simple dialog (small)',
 			config: {
 				size: 'small'
-			},
-			data: {
-				title: 'Sample dialog with very long title that does not fit'
 			}
 		},
 		{
@@ -747,6 +744,16 @@ OO.ui.Demo.static.pages.dialogs = function ( demo ) {
 			}
 		},
 		{
+			name: 'Process dialog (medium, long title)',
+			dialogClass: ProcessDialog,
+			config: {
+				size: 'medium'
+			},
+			data: {
+				title: 'Sample dialog with very long title that does not fit'
+			}
+		},
+		{
 			name: 'Process dialog (medium, long)',
 			dialogClass: LongProcessDialog,
 			config: {
@@ -789,21 +796,21 @@ OO.ui.Demo.static.pages.dialogs = function ( demo ) {
 			}
 		},
 		{
-			name: 'Outlined booklet dialog',
+			name: 'Outlined booklet dialog (aside navigation)',
 			dialogClass: OutlinedBookletDialog,
 			config: {
 				size: 'medium'
 			}
 		},
 		{
-			name: 'Continuous outlined booklet dialog',
+			name: 'Continuous outlined booklet dialog (aside navigation)',
 			dialogClass: ContinuousOutlinedBookletDialog,
 			config: {
 				size: 'medium'
 			}
 		},
 		{
-			name: 'Indexed dialog',
+			name: 'Indexed dialog (tab navigation)',
 			dialogClass: IndexedDialog,
 			config: {
 				size: 'medium'

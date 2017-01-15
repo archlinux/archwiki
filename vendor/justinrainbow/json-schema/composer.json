@@ -4,7 +4,7 @@
     "keywords": ["json", "schema"],
     "homepage": "https://github.com/justinrainbow/json-schema",
     "type": "library",
-    "license": "BSD-3-Clause",
+    "license": "MIT",
     "authors": [
         {
             "name": "Bruno Prieto Reis",
@@ -27,32 +27,32 @@
         "type": "package",
         "package": {
             "name": "json-schema/JSON-Schema-Test-Suite",
-            "version": "1.1.0",
+            "version": "1.2.0",
             "source": {
                 "url": "https://github.com/json-schema/JSON-Schema-Test-Suite",
                 "type": "git",
-                "reference": "1.1.0"
+                "reference": "1.2.0"
             }
         }
     }],
     "require": {
-        "php": ">=5.3.29"
+        "php": ">=5.3.3"
     },
     "require-dev": {
-        "json-schema/JSON-Schema-Test-Suite": "1.1.0",
-        "phpunit/phpunit": "~3.7",
+        "json-schema/JSON-Schema-Test-Suite": "1.2.0",
+        "phpunit/phpunit": "^4.8.22",
         "phpdocumentor/phpdocumentor": "~2"
     },
     "autoload": {
         "psr-4": { "JsonSchema\\": "src/JsonSchema/" }
     },
     "autoload-dev": {
-        "psr-4": { "JsonSchema\\Tests\\": "tests/JsonSchema/Tests/" }
+        "psr-4": { "JsonSchema\\Tests\\": "tests/" }
     },
     "bin": ["bin/validate-json"],
     "extra": {
         "branch-alias": {
-            "dev-master": "1.6.x-dev"
+            "dev-master": "3.0.x-dev"
         }
     }
 }

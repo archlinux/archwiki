@@ -200,9 +200,9 @@
 	"wikieditor-toolbar-help-content-showreferences-description": "Viidete kuvamine",
 	"wikieditor-toolbar-help-content-showreferences-result": "<ol class='references'><li id='cite_note-test-0'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.näide.ee' class='external text' href='#'>Lingi tekst</a>, täiendav tekst.</li><li id='cite_note-test-1'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.näide.ee' class='external text' href='#'>Lingi tekst</a></li></ol>",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "Allkiri ja ajatempel",
-	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='$1:Username'>Kasutajanimi</a> (<a href='#' title='$2:Username'>arutelu</a>) 10. juuni 2009, kell 15:54 (UTC)",
+	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='$1:Kasutajanimi'>Kasutajanimi</a> (<a href='#' title='$2:Kasutajanimi'>arutelu</a>) 10. juuni 2009, kell 15:54 (UTC)",
 	"wikieditor-toolbar-help-content-signature-description": "Allkiri",
-	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>Kasutajanimi</a> (<a href='#' title='$2:Username'>arutelu</a>)",
+	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Kasutajanimi'>Kasutajanimi</a> (<a href='#' title='$2:Kasutajanimi'>arutelu</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "Taane",
 	"wikieditor-toolbar-help-content-indent-syntax": "Harilik tekst<br />:Taandega tekst<br />::Taandega tekst",
 	"wikieditor-toolbar-help-content-indent-result": "Harilik tekst<dl><dd>Taandega tekst<dl><dd>Taandega tekst</dd></dl></dd></dl>"

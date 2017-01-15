@@ -55,6 +55,14 @@ body {
 		line-height: @heading-line-height;
 		margin-bottom: 0.25em;
 		padding: 0;
+
+		/* Fallback heading font for scripts which render poorly in @content-heading-font-family. */
+		/* See T73240 */
+		&:lang( ja ), /* See T65817 */
+		&:lang( he ), /* See T65843 and T65844 */
+		&:lang( ko ) { /* See T65827 */
+			font-family: @content-heading-font-family-generic;
+		}
 	}
 
 	h1 {

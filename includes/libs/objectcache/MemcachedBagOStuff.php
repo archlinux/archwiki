@@ -30,6 +30,12 @@ class MemcachedBagOStuff extends BagOStuff {
 	/** @var MemcachedClient|Memcached */
 	protected $client;
 
+	function __construct( array $params ) {
+		parent::__construct( $params );
+
+		$this->attrMap[self::ATTR_SYNCWRITES] = self::QOS_SYNCWRITES_BE; // unreliable
+	}
+
 	/**
 	 * Fill in some defaults for missing keys in $params.
 	 *
@@ -37,13 +43,11 @@ class MemcachedBagOStuff extends BagOStuff {
 	 * @return array
 	 */
 	protected function applyDefaultParams( $params ) {
-		if ( !isset( $params['compress_threshold'] ) ) {
-			$params['compress_threshold'] = 1500;
-		}
-		if ( !isset( $params['connect_timeout'] ) ) {
-			$params['connect_timeout'] = 0.5;
-		}
-		return $params;
+		return $params + [
+			'compress_threshold' => 1500,
+			'connect_timeout' => .5,
+			'debug' => false
+		];
 	}
 
 	protected function doGet( $key, $flags = 0 ) {
@@ -75,12 +79,13 @@ class MemcachedBagOStuff extends BagOStuff {
 			$this->fixExpiry( $exptime ) );
 	}
 
-	public function merge( $key, $callback, $exptime = 0, $attempts = 10, $flags = 0 ) {
-		if ( !is_callable( $callback ) ) {
-			throw new Exception( "Got invalid callback." );
-		}
-
+	public function merge( $key, callable $callback, $exptime = 0, $attempts = 10, $flags = 0 ) {
 		return $this->mergeViaCas( $key, $callback, $exptime, $attempts );
+	}
+
+	public function changeTTL( $key, $exptime = 0 ) {
+		return $this->client->touch( $this->validateKeyEncoding( $key ),
+			$this->fixExpiry( $exptime ) );
 	}
 
 	/**

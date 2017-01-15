@@ -39,7 +39,7 @@ class GadgetDefinitionContentHandler extends JsonContentHandler {
 
 	public function makeEmptyContent() {
 		$class = $this->getContentClass();
-		return new $class( FormatJson::encode( $this->getDefaultMetadata(), true ) );
+		return new $class( FormatJson::encode( $this->getDefaultMetadata(), "\t" ) );
 	}
 
 	public function getDefaultMetadata() {
@@ -57,6 +57,7 @@ class GadgetDefinitionContentHandler extends JsonContentHandler {
 				'dependencies' => array(),
 				'messages' => array(),
 				'position' => 'bottom',
+				'type' => '',
 			),
 		);
 

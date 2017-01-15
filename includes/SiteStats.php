@@ -24,7 +24,7 @@
  * Static accessor class for site_stats and related things
  */
 class SiteStats {
-	/** @var bool|ResultWrapper */
+	/** @var bool|stdClass */
 	private static $row;
 
 	/** @var bool */
@@ -35,6 +35,10 @@ class SiteStats {
 
 	/** @var int[] */
 	private static $pageCount = [];
+
+	static function unload() {
+		self::$loaded = false;
+	}
 
 	static function recache() {
 		self::load( true );
@@ -55,24 +59,24 @@ class SiteStats {
 			# Update schema
 			$u = new SiteStatsUpdate( 0, 0, 0 );
 			$u->doUpdate();
-			self::$row = self::doLoad( wfGetDB( DB_SLAVE ) );
+			self::$row = self::doLoad( wfGetDB( DB_REPLICA ) );
 		}
 
 		self::$loaded = true;
 	}
 
 	/**
-	 * @return bool|ResultWrapper
+	 * @return bool|stdClass
 	 */
 	static function loadAndLazyInit() {
 		global $wgMiserMode;
 
-		wfDebug( __METHOD__ . ": reading site_stats from slave\n" );
-		$row = self::doLoad( wfGetDB( DB_SLAVE ) );
+		wfDebug( __METHOD__ . ": reading site_stats from replica DB\n" );
+		$row = self::doLoad( wfGetDB( DB_REPLICA ) );
 
 		if ( !self::isSane( $row ) ) {
 			// Might have just been initialized during this request? Underflow?
-			wfDebug( __METHOD__ . ": site_stats damaged or missing on slave\n" );
+			wfDebug( __METHOD__ . ": site_stats damaged or missing on replica DB\n" );
 			$row = self::doLoad( wfGetDB( DB_MASTER ) );
 		}
 
@@ -83,7 +87,7 @@ class SiteStats {
 			// clean schema with mwdumper.
 			wfDebug( __METHOD__ . ": initializing damaged or missing site_stats\n" );
 
-			SiteStatsInit::doAllAndCommit( wfGetDB( DB_SLAVE ) );
+			SiteStatsInit::doAllAndCommit( wfGetDB( DB_REPLICA ) );
 
 			$row = self::doLoad( wfGetDB( DB_MASTER ) );
 		}
@@ -96,7 +100,7 @@ class SiteStats {
 
 	/**
 	 * @param IDatabase $db
-	 * @return bool|ResultWrapper
+	 * @return bool|stdClass
 	 */
 	static function doLoad( $db ) {
 		return $db->selectRow( 'site_stats', [
@@ -107,7 +111,7 @@ class SiteStats {
 				'ss_users',
 				'ss_active_users',
 				'ss_images',
-			], false, __METHOD__ );
+			], [], __METHOD__ );
 	}
 
 	/**
@@ -182,7 +186,7 @@ class SiteStats {
 			wfMemcKey( 'SiteStats', 'groupcounts', $group ),
 			$cache::TTL_HOUR,
 			function ( $oldValue, &$ttl, array &$setOpts ) use ( $group ) {
-				$dbr = wfGetDB( DB_SLAVE );
+				$dbr = wfGetDB( DB_REPLICA );
 
 				$setOpts += Database::getCacheSetOptions( $dbr );
 
@@ -193,7 +197,7 @@ class SiteStats {
 					__METHOD__
 				);
 			},
-			[ 'pcTTL' => 10 ]
+			[ 'pcTTL' => $cache::TTL_PROC_LONG ]
 		);
 	}
 
@@ -225,7 +229,7 @@ class SiteStats {
 	 */
 	static function pagesInNs( $ns ) {
 		if ( !isset( self::$pageCount[$ns] ) ) {
-			$dbr = wfGetDB( DB_SLAVE );
+			$dbr = wfGetDB( DB_REPLICA );
 			self::$pageCount[$ns] = (int)$dbr->selectField(
 				'page',
 				'COUNT(*)',
@@ -292,7 +296,7 @@ class SiteStatsInit {
 		} elseif ( $database ) {
 			$this->db = wfGetDB( DB_MASTER );
 		} else {
-			$this->db = wfGetDB( DB_SLAVE, 'vslow' );
+			$this->db = wfGetDB( DB_REPLICA, 'vslow' );
 		}
 	}
 

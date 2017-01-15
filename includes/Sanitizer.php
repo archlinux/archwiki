@@ -381,14 +381,17 @@ class Sanitizer {
 				'kbd', 'samp', 'data', 'time', 'mark'
 			];
 			$htmlsingle = [
-				'br', 'wbr', 'hr', 'li', 'dt', 'dd'
-			];
-			$htmlsingleonly = [ # Elements that cannot have close tags
-				'br', 'wbr', 'hr'
+				'br', 'wbr', 'hr', 'li', 'dt', 'dd', 'meta', 'link'
 			];
 
-			$htmlsingle[] = $htmlsingleonly[] = 'meta';
-			$htmlsingle[] = $htmlsingleonly[] = 'link';
+			# Elements that cannot have close tags. This is (not coincidentally)
+			# also the list of tags for which the HTML 5 parsing algorithm
+			# requires you to "acknowledge the token's self-closing flag", i.e.
+			# a self-closing tag like <br/> is not an HTML 5 parse error only
+			# for this list.
+			$htmlsingleonly = [
+				'br', 'wbr', 'hr', 'meta', 'link'
+			];
 
 			$htmlnest = [ # Tags that can be nested--??
 				'table', 'tr', 'td', 'th', 'div', 'blockquote', 'ol', 'ul',
@@ -450,10 +453,14 @@ class Sanitizer {
 	 * @param array|bool $args Arguments for the processing callback
 	 * @param array $extratags For any extra tags to include
 	 * @param array $removetags For any tags (default or extra) to exclude
+	 * @param callable $warnCallback (Deprecated) Callback allowing the
+	 *   addition of a tracking category when bad input is encountered.
+	 *   DO NOT ADD NEW PARAMETERS AFTER $warnCallback, since it will be
+	 *   removed shortly.
 	 * @return string
 	 */
 	public static function removeHTMLtags( $text, $processCallback = null,
-		$args = [], $extratags = [], $removetags = []
+		$args = [], $extratags = [], $removetags = [], $warnCallback = null
 	) {
 		extract( self::getRecognizedTagData( $extratags, $removetags ) );
 
@@ -540,6 +547,14 @@ class Sanitizer {
 							$badtag = true;
 						#  Is it a self closed htmlpair ? (bug 5487)
 						} elseif ( $brace == '/>' && isset( $htmlpairs[$t] ) ) {
+							// Eventually we'll just remove the self-closing
+							// slash, in order to be consistent with HTML5
+							// semantics.
+							// $brace = '>';
+							// For now, let's just warn authors to clean up.
+							if ( is_callable( $warnCallback ) ) {
+								call_user_func_array( $warnCallback, [ 'deprecated-self-close-category' ] );
+							}
 							$badtag = true;
 						} elseif ( isset( $htmlsingleonly[$t] ) ) {
 							# Hack to force empty tag for unclosable elements
@@ -604,12 +619,29 @@ class Sanitizer {
 							call_user_func_array( $processCallback, [ &$params, $args ] );
 						}
 
+						if ( $brace == '/>' && !( isset( $htmlsingle[$t] ) || isset( $htmlsingleonly[$t] ) ) ) {
+							// Eventually we'll just remove the self-closing
+							// slash, in order to be consistent with HTML5
+							// semantics.
+							// $brace = '>';
+							// For now, let's just warn authors to clean up.
+							if ( is_callable( $warnCallback ) ) {
+								call_user_func_array( $warnCallback, [ 'deprecated-self-close-category' ] );
+							}
+						}
 						if ( !Sanitizer::validateTag( $params, $t ) ) {
 							$badtag = true;
 						}
 
 						$newparams = Sanitizer::fixTagAttributes( $params, $t );
 						if ( !$badtag ) {
+							if ( $brace === '/>' && !isset( $htmlsingleonly[$t] ) ) {
+								# Interpret self-closing tags as empty tags even when
+								# HTML 5 would interpret them as start tags. Such input
+								# is commonly seen on Wikimedia wikis with this intention.
+								$brace = "></$t>";
+							}
+
 							$rest = str_replace( '>', '&gt;', $rest );
 							$text .= "<$slash$t$newparams$brace$rest";
 							continue;
@@ -983,6 +1015,7 @@ class Sanitizer {
 				| url\s*\(
 				| image\s*\(
 				| image-set\s*\(
+				| attr\s*\([^)]+[\s,]+url
 			!ix', $value ) ) {
 			return '/* insecure input */';
 		}
@@ -1028,18 +1061,24 @@ class Sanitizer {
 	 * - Double attributes are discarded
 	 * - Unsafe style attributes are discarded
 	 * - Prepends space if there are attributes.
+	 * - (Optionally) Sorts attributes by name.
 	 *
 	 * @param string $text
 	 * @param string $element
+	 * @param bool $sorted Whether to sort the attributes (default: false)
 	 * @return string
 	 */
-	static function fixTagAttributes( $text, $element ) {
+	static function fixTagAttributes( $text, $element, $sorted = false ) {
 		if ( trim( $text ) == '' ) {
 			return '';
 		}
 
 		$decoded = Sanitizer::decodeTagAttributes( $text );
 		$stripped = Sanitizer::validateTagAttributes( $decoded, $element );
+
+		if ( $sorted ) {
+			ksort( $stripped );
+		}
 
 		return Sanitizer::safeEncodeTagAttributes( $stripped );
 	}
@@ -1829,7 +1868,7 @@ class Sanitizer {
 			list( /* $whole */, $protocol, $host, $rest ) = $matches;
 
 			// Characters that will be ignored in IDNs.
-			// http://tools.ietf.org/html/3454#section-3.1
+			// https://tools.ietf.org/html/rfc3454#section-3.1
 			// Strip them before further processing so blacklists and such work.
 			$strip = "/
 				\\s|          # general whitespace

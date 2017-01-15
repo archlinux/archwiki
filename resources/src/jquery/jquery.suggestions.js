@@ -555,14 +555,14 @@
 					} else if ( selected.is( '.suggestions-special' ) ) {
 						if ( typeof context.config.special.select === 'function' ) {
 							// Allow the callback to decide whether to prevent default or not
-							if ( context.config.special.select.call( selected, context.data.$textbox ) === true ) {
+							if ( context.config.special.select.call( selected, context.data.$textbox, 'keyboard' ) === true ) {
 								preventDefault = false;
 							}
 						}
 					} else {
 						if ( typeof context.config.result.select === 'function' ) {
 							// Allow the callback to decide whether to prevent default or not
-							if ( context.config.result.select.call( selected, context.data.$textbox ) === true ) {
+							if ( context.config.result.select.call( selected, context.data.$textbox, 'keyboard' ) === true ) {
 								preventDefault = false;
 							}
 						}
@@ -675,12 +675,12 @@
 								if ( $result.get( 0 ) !== $other.get( 0 ) ) {
 									return;
 								}
+								$.suggestions.highlight( context, $result, true );
+								if ( typeof context.config.result.select === 'function' ) {
+									context.config.result.select.call( $result, context.data.$textbox, 'mouse' );
+								}
 								// Don't interfere with special clicks (e.g. to open in new tab)
 								if ( !( e.which !== 1 || e.altKey || e.ctrlKey || e.shiftKey || e.metaKey ) ) {
-									$.suggestions.highlight( context, $result, true );
-									if ( typeof context.config.result.select === 'function' ) {
-										context.config.result.select.call( $result, context.data.$textbox );
-									}
 									// This will hide the link we're just clicking on, which causes problems
 									// when done synchronously in at least Firefox 3.6 (bug 62858).
 									setTimeout( function () {
@@ -708,11 +708,11 @@
 								if ( $special.get( 0 ) !== $other.get( 0 ) ) {
 									return;
 								}
+								if ( typeof context.config.special.select === 'function' ) {
+									context.config.special.select.call( $special, context.data.$textbox, 'mouse' );
+								}
 								// Don't interfere with special clicks (e.g. to open in new tab)
 								if ( !( e.which !== 1 || e.altKey || e.ctrlKey || e.shiftKey || e.metaKey ) ) {
-									if ( typeof context.config.special.select === 'function' ) {
-										context.config.special.select.call( $special, context.data.$textbox );
-									}
 									// This will hide the link we're just clicking on, which causes problems
 									// when done synchronously in at least Firefox 3.6 (bug 62858).
 									setTimeout( function () {
@@ -745,9 +745,23 @@
 						$.suggestions.keypress( e, context, context.data.keypressed );
 					} )
 					.keyup( function ( e ) {
-						// Some browsers won't throw keypress() for arrow keys. If we got a keydown and a keyup without a
-						// keypress in between, solve it
-						if ( context.data.keypressedCount === 0 ) {
+						// The keypress event is fired when a key is pressed down and that key normally
+						// produces a character value. We also want to handle some keys that don't
+						// produce a character value so we also attach to the keydown/keyup events.
+						// List of codes sourced from
+						// https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/keyCode
+						var allowed = [
+							40, // up arrow
+							38, // down arrow
+							27, // escape
+							13, // enter
+							46, // delete
+							8   // backspace
+						];
+						if ( context.data.keypressedCount === 0
+							&& e.which === context.data.keypressed
+							&& $.inArray( e.which, allowed ) !== -1
+						) {
 							$.suggestions.keypress( e, context, context.data.keypressed );
 						}
 					} )

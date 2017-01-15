@@ -6,7 +6,7 @@
 		]
 	},
 	"fancycaptcha-captcha": "安全检查",
-	"fancycaptcha-createaccount": "为著保护本wiki弗受自动账号创建个破坏，阿拉要麻烦侬输入下底方框中显示个文字（[[Special:Captcha/help|更多信息]]）：",
-	"fancycaptcha-imgcaptcha-ph": "拿上头个文字打勒箇𡍲",
+	"fancycaptcha-accountcreate": "为著保护本站弗畀自动化建账号，阿拉要麻烦侬输入下底只框里向显示个文字（[[Special:Captcha/help|更多信息]]）：",
+	"fancycaptcha-imgcaptcha-ph": "拿图片上个文字打勒里",
 	"fancycaptcha-reload-text": "刷新"
 }

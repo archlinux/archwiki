@@ -16,10 +16,12 @@
 			"Amir E. Aharoni"
 		]
 	},
+	"visualeditor-cite-tool-definition.json": "null",
 	"visualeditor-cite-tool-name-book": "Book",
 	"visualeditor-cite-tool-name-journal": "Journal",
 	"visualeditor-cite-tool-name-news": "News",
 	"visualeditor-cite-tool-name-web": "Website",
+	"cite-tool-definition.json": "null",
 	"cite-ve-dialog-reference-editing-reused": "This reference is used $1 {{PLURAL:$1|times}} on this page.",
 	"cite-ve-dialog-reference-options-group-label": "Use this group",
 	"cite-ve-dialog-reference-options-group-placeholder": "General references",
@@ -42,5 +44,6 @@
 	"cite-ve-referenceslist-isempty": "There are no references with the group \"$1\" on this page to include in this list.",
 	"cite-ve-referenceslist-isempty-default": "There are no references on this page to include in this list.",
 	"cite-ve-referenceslist-missingref": "This reference is defined in a template or other generated block, and for now can only be edited in source mode.",
-	"cite-ve-toolbar-group-label": "Cite"
+	"cite-ve-toolbar-group-label": "Cite",
+	"cite-ve-othergroup-item": "$1 reference"
 }

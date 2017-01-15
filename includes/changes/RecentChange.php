@@ -91,6 +91,11 @@ class RecentChange {
 	public $counter = -1;
 
 	/**
+	 * @var array List of tags to apply
+	 */
+	private $tags = [];
+
+	/**
 	 * @var array Array of change types
 	 */
 	private static $changeTypes = [
@@ -180,7 +185,7 @@ class RecentChange {
 	public static function newFromConds(
 		$conds,
 		$fname = __METHOD__,
-		$dbType = DB_SLAVE
+		$dbType = DB_REPLICA
 	) {
 		$db = wfGetDB( $dbType );
 		$row = $db->selectRow( 'recentchanges', self::selectFields(), $conds, $fname );
@@ -285,8 +290,20 @@ class RecentChange {
 			$this->mAttribs['rc_ip'] = '';
 		}
 
+		# Strict mode fixups (not-NULL fields)
+		foreach ( [ 'minor', 'bot', 'new', 'patrolled', 'deleted' ] as $field ) {
+			$this->mAttribs["rc_$field"] = (int)$this->mAttribs["rc_$field"];
+		}
+		# ...more fixups (NULL fields)
+		foreach ( [ 'old_len', 'new_len' ] as $field ) {
+			$this->mAttribs["rc_$field"] = isset( $this->mAttribs["rc_$field"] )
+				? (int)$this->mAttribs["rc_$field"]
+				: null;
+		}
+
 		# If our database is strict about IP addresses, use NULL instead of an empty string
-		if ( $dbw->strictIPs() && $this->mAttribs['rc_ip'] == '' ) {
+		$strictIPs = in_array( $dbw->getType(), [ 'oracle', 'postgres' ] ); // legacy
+		if ( $strictIPs && $this->mAttribs['rc_ip'] == '' ) {
 			unset( $this->mAttribs['rc_ip'] );
 		}
 
@@ -301,7 +318,7 @@ class RecentChange {
 		$this->mAttribs['rc_id'] = $dbw->nextSequenceValue( 'recentchanges_rc_id_seq' );
 
 		# # If we are using foreign keys, an entry of 0 for the page_id will fail, so use NULL
-		if ( $dbw->cascadingDeletes() && $this->mAttribs['rc_cur_id'] == 0 ) {
+		if ( $this->mAttribs['rc_cur_id'] == 0 ) {
 			unset( $this->mAttribs['rc_cur_id'] );
 		}
 
@@ -314,6 +331,11 @@ class RecentChange {
 		# Notify extensions
 		Hooks::run( 'RecentChange_save', [ &$this ] );
 
+		if ( count( $this->tags ) ) {
+			ChangeTags::addTags( $this->tags, $this->mAttribs['rc_id'],
+				$this->mAttribs['rc_this_oldid'], $this->mAttribs['rc_logid'], null, $this );
+		}
+
 		# Notify external application via UDP
 		if ( !$noudp ) {
 			$this->notifyRCFeeds();
@@ -325,20 +347,27 @@ class RecentChange {
 			$title = $this->getTitle();
 
 			// Never send an RC notification email about categorization changes
-			if ( $this->mAttribs['rc_type'] != RC_CATEGORIZE ) {
-				if ( Hooks::run( 'AbortEmailNotification', [ $editor, $title, $this ] ) ) {
-					# @todo FIXME: This would be better as an extension hook
-					$enotif = new EmailNotification();
-					$enotif->notifyOnPageChange(
-						$editor,
-						$title,
-						$this->mAttribs['rc_timestamp'],
-						$this->mAttribs['rc_comment'],
-						$this->mAttribs['rc_minor'],
-						$this->mAttribs['rc_last_oldid'],
-						$this->mExtra['pageStatus']
-					);
-				}
+			if (
+				$this->mAttribs['rc_type'] != RC_CATEGORIZE &&
+				Hooks::run( 'AbortEmailNotification', [ $editor, $title, $this ] )
+			) {
+				// @FIXME: This would be better as an extension hook
+				// Send emails or email jobs once this row is safely committed
+				$dbw->onTransactionIdle(
+					function () use ( $editor, $title ) {
+						$enotif = new EmailNotification();
+						$enotif->notifyOnPageChange(
+							$editor,
+							$title,
+							$this->mAttribs['rc_timestamp'],
+							$this->mAttribs['rc_comment'],
+							$this->mAttribs['rc_minor'],
+							$this->mAttribs['rc_last_oldid'],
+							$this->mExtra['pageStatus']
+						);
+					},
+					__METHOD__
+				);
 			}
 		}
 
@@ -589,16 +618,17 @@ class RecentChange {
 			'pageStatus' => 'changed'
 		];
 
-		DeferredUpdates::addCallableUpdate( function() use ( $rc, $tags ) {
-			$rc->save();
-			if ( $rc->mAttribs['rc_patrolled'] ) {
-				PatrolLog::record( $rc, true, $rc->getPerformer() );
-			}
-			if ( count( $tags ) ) {
-				ChangeTags::addTags( $tags, $rc->mAttribs['rc_id'],
-					$rc->mAttribs['rc_this_oldid'], null, null );
-			}
-		} );
+		DeferredUpdates::addCallableUpdate(
+			function () use ( $rc, $tags ) {
+				$rc->addTags( $tags );
+				$rc->save();
+				if ( $rc->mAttribs['rc_patrolled'] ) {
+					PatrolLog::record( $rc, true, $rc->getPerformer() );
+				}
+			},
+			DeferredUpdates::POSTSEND,
+			wfGetDB( DB_MASTER )
+		);
 
 		return $rc;
 	}
@@ -661,16 +691,17 @@ class RecentChange {
 			'pageStatus' => 'created'
 		];
 
-		DeferredUpdates::addCallableUpdate( function() use ( $rc, $tags ) {
-			$rc->save();
-			if ( $rc->mAttribs['rc_patrolled'] ) {
-				PatrolLog::record( $rc, true, $rc->getPerformer() );
-			}
-			if ( count( $tags ) ) {
-				ChangeTags::addTags( $tags, $rc->mAttribs['rc_id'],
-					$rc->mAttribs['rc_this_oldid'], null, null );
-			}
-		} );
+		DeferredUpdates::addCallableUpdate(
+			function () use ( $rc, $tags ) {
+				$rc->addTags( $tags );
+				$rc->save();
+				if ( $rc->mAttribs['rc_patrolled'] ) {
+					PatrolLog::record( $rc, true, $rc->getPerformer() );
+				}
+			},
+			DeferredUpdates::POSTSEND,
+			wfGetDB( DB_MASTER )
+		);
 
 		return $rc;
 	}
@@ -731,6 +762,7 @@ class RecentChange {
 		# # Get pageStatus for email notification
 		switch ( $type . '-' . $action ) {
 			case 'delete-delete':
+			case 'delete-delete_redir':
 				$pageStatus = 'deleted';
 				break;
 			case 'move-move':
@@ -768,7 +800,7 @@ class RecentChange {
 			'rc_comment' => $logComment,
 			'rc_this_oldid' => $revId,
 			'rc_last_oldid' => 0,
-			'rc_bot' => $user->isAllowed( 'bot' ) ? $wgRequest->getBool( 'bot', true ) : 0,
+			'rc_bot' => $user->isAllowed( 'bot' ) ? (int)$wgRequest->getBool( 'bot', true ) : 0,
 			'rc_ip' => self::checkIPAddress( $ip ),
 			'rc_patrolled' => $markPatrolled ? 1 : 0,
 			'rc_new' => 0, # obsolete
@@ -998,5 +1030,21 @@ class RecentChange {
 		MediaWiki\restoreWarnings();
 
 		return $unserializedParams;
+	}
+
+	/**
+	 * Tags to append to the recent change,
+	 * and associated revision/log
+	 *
+	 * @since 1.28
+	 *
+	 * @param string|array $tags
+	 */
+	public function addTags( $tags ) {
+		if ( is_string( $tags ) ) {
+			$this->tags[] = $tags;
+		} else {
+			$this->tags = array_merge( $tags, $this->tags );
+		}
 	}
 }

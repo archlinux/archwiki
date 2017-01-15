@@ -6,7 +6,6 @@
 				"name": "Base",
 				"classes": [
 					"mw",
-					"mw.Map",
 					"mw.Message",
 					"mw.loader",
 					"mw.loader.store",
@@ -64,7 +63,8 @@
 					"mw.Feedback*",
 					"mw.Upload*",
 					"mw.ForeignUpload",
-					"mw.ForeignStructuredUpload*"
+					"mw.ForeignStructuredUpload*",
+					"mw.GallerySlideshow"
 				]
 			},
 			{

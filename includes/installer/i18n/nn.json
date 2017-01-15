@@ -3,7 +3,8 @@
 		"authors": [
 			"Harald Khan",
 			"Nghtwlkr",
-			"Njardarlogar"
+			"Njardarlogar",
+			"Jon Harald Søby"
 		]
 	},
 	"config-your-language": "Språket ditt:",
@@ -13,16 +14,12 @@
 	"config-page-language": "Språk",
 	"config-memory-raised": "PHPs <code>memory_limit</code> er $1, auka til $2.",
 	"config-memory-bad": "'''Advarsel:''' PHPs <code>memory_limit</code> er $1.\nDette er sannsynlegvis for lågt.\nInstallasjonen kan mislukkast!",
-	"config-xcache": "[http://xcache.lighttpd.net/ XCache] er innstallert",
-	"config-apc": "[http://www.php.net/apc APC] er innstallert",
+	"config-xcache": "[http://xcache.lighttpd.net/ XCache] er installert",
+	"config-apc": "[http://www.php.net/apc APC] er installert",
 	"config-wincache": "[http://www.iis.net/download/WinCacheForPhp WinCache] er installert",
 	"config-db-name": "Databasenamn:",
 	"config-db-username": "Databasebrukarnamn:",
 	"config-db-password": "Databasepassord:",
-	"config-db-charset": "Databaseteiknsett",
-	"config-charset-mysql5-binary": "MySQL 4.1/5.0 binær",
-	"config-charset-mysql5": "MySQL 4.1/5.0 UTF-8",
-	"config-charset-mysql4": "MySQL 4.0 bakoverkompatibel UTF-8",
 	"config-mysql-old": "MySQL $1 eller seinare krevst, du har $2.",
 	"config-db-port": "Databaseport:",
 	"config-db-schema": "Skjema for MediaWiki",
@@ -39,5 +36,5 @@
 	"config-logo": "Logo-URL:",
 	"config-help": "hjelp",
 	"mainpagetext": "'''MediaWiki er no installert.'''",
-	"mainpagedocfooter": "Sjå [//meta.wikimedia.org/wiki/Help:Contents brukarmanualen] for informasjon om bruk og oppsettshjelp for wikiprogramvara.\n\n==Kome i gang==\n* [//www.mediawiki.org/wiki/Special:MyLanguage/Manual:Configuration_settings Liste over oppsettsinnstillingar]\n* [//www.mediawiki.org/wiki/Special:MyLanguage/Manual:FAQ Spørsmål og svar om MediaWiki]\n* [https://lists.wikimedia.org/mailman/listinfo/mediawiki-announce E-postliste med informasjon om nye MediaWiki-versjonar]"
+	"mainpagedocfooter": "Sjå [https://meta.wikimedia.org/wiki/Help:Contents brukarmanualen] for informasjon om bruk og oppsettshjelp for wikiprogramvara.\n\n==Kome i gang==\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Configuration_settings Liste over oppsettsinnstillingar]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:FAQ Spørsmål og svar om MediaWiki]\n* [https://lists.wikimedia.org/mailman/listinfo/mediawiki-announce E-postliste med informasjon om nye MediaWiki-versjonar]"
 }

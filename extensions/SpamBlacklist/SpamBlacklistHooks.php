@@ -7,28 +7,8 @@ use MediaWiki\Auth\AuthManager;
  */
 class SpamBlacklistHooks {
 
-    /**
-     * T99257: Extension registration does not properly support 2d arrays so set it as a global for now
-     */
 	public static function registerExtension() {
-		global $wgSpamBlacklistFiles, $wgBlacklistSettings, $wgSpamBlacklistSettings;
 		global $wgDisableAuthManager, $wgAuthManagerAutoConfig;
-
-		$wgBlacklistSettings = array(
-			'spam' => array(
-				'files' => array( "https://meta.wikimedia.org/w/index.php?title=Spam_blacklist&action=raw&sb_ver=1" )
-			)
-		);
-
-		/**
-		 * @deprecated
-		 */
-		$wgSpamBlacklistFiles =& $wgBlacklistSettings['spam']['files'];
-
-		/**
-		 * @deprecated
-		 */
-		$wgSpamBlacklistSettings =& $wgBlacklistSettings['spam'];
 
 		if ( class_exists( AuthManager::class ) && !$wgDisableAuthManager ) {
 			$wgAuthManagerAutoConfig['preauth'][SpamBlacklistPreAuthenticationProvider::class] =
@@ -53,11 +33,6 @@ class SpamBlacklistHooks {
 	static function filterMergedContent( IContextSource $context, Content $content, Status $status, $summary, User $user, $minoredit ) {
 		$title = $context->getTitle();
 
-		if ( isset( $title->spamBlackListFiltered ) && $title->spamBlackListFiltered ) {
-			// already filtered
-			return true;
-		}
-
 		// get the link from the not-yet-saved page content.
 		$editInfo = $context->getWikiPage()->prepareContentForEdit( $content );
 		$pout = $editInfo->output;
@@ -67,9 +42,6 @@ class SpamBlacklistHooks {
 		// that looks like it could be a URL or e-mail address.
 		if ( preg_match( '/\S(\.[^\s\d]{2,}|[\/@]\S)/', $summary ) ) {
 			$links[] = $summary;
-		}
-		if ( !$links ) {
-			return true;
 		}
 
 		$spamObj = BaseBlacklist::getInstance( 'spam' );
@@ -81,59 +53,22 @@ class SpamBlacklistHooks {
 			foreach ( $matches as $match ) {
 				$status->fatal( 'spamprotectionmatch', $match );
 			}
+
+			$status->apiHookResult = [
+				'spamblacklist' => implode( '|', $matches ),
+			];
 		}
 
 		// Always return true, EditPage will look at $status->isOk().
 		return true;
 	}
 
-	public static function onParserOutputStashForEdit( WikiPage $page ) {
+	public static function onParserOutputStashForEdit(
+		WikiPage $page, Content $content, ParserOutput $output
+	) {
+		$links = array_keys( $output->getExternalLinks() );
 		$spamObj = BaseBlacklist::getInstance( 'spam' );
-		$spamObj->warmCachesForFilter( $page->getTitle() );
-	}
-
-	/**
-	 * Hook function for APIEditBeforeSave.
-	 * This allows blacklist matches to be reported directly in the result structure
-	 * of the API call.
-	 *
-	 * @param $editPage EditPage
-	 * @param $text string
-	 * @param $resultArr array
-	 * @return bool
-	 */
-	static function filterAPIEditBeforeSave( $editPage, $text, &$resultArr ) {
-		$title = $editPage->mArticle->getTitle();
-
-		// get the links from the not-yet-saved page content.
-		$content = ContentHandler::makeContent(
-			$text,
-			$editPage->getTitle(),
-			$editPage->contentModel,
-			$editPage->contentFormat
-		);
-		$editInfo = $editPage->mArticle->prepareContentForEdit( $content, null, null, $editPage->contentFormat );
-		$pout = $editInfo->output;
-		$links = array_keys( $pout->getExternalLinks() );
-
-		// HACK: treat the edit summary as a link
-		$summary = $editPage->summary;
-		if ( $summary !== '' ) {
-			$links[] = $summary;
-		}
-
-		$spamObj = BaseBlacklist::getInstance( 'spam' );
-		$matches = $spamObj->filter( $links, $title );
-
-		if ( $matches !== false ) {
-			$resultArr['spamblacklist'] = implode( '|', $matches );
-		}
-
-		// mark the title, so filterMergedContent can skip it.
-		$title->spamBlackListFiltered = true;
-
-		// return convention for hooks is the inverse of $wgFilterCallback
-		return ( $matches === false );
+		$spamObj->warmCachesForFilter( $page->getTitle(), $links );
 	}
 
 	/**
@@ -252,6 +187,11 @@ class SpamBlacklistHooks {
 		Status $status,
 		$baseRevId
 	) {
+		if ( $revision ) {
+			BaseBlacklist::getInstance( 'spam' )
+				->doLogging( $user, $wikiPage->getTitle(), $revision->getId() );
+		}
+
 		if ( !BaseBlacklist::isLocalSource( $wikiPage->getTitle() ) ) {
 			return true;
 		}
@@ -262,11 +202,89 @@ class SpamBlacklistHooks {
 			$blacklist->clearCache();
 		}
 
-		if ( $revision ) {
-			BaseBlacklist::getInstance( 'spam' )
-				->doLogging( $user, $wikiPage->getTitle(), $revision );
+
+		return true;
+	}
+
+	/**
+	 * @param UploadBase $upload
+	 * @param User $user
+	 * @param array $props
+	 * @param string $comment
+	 * @param string $pageText
+	 * @param array|ApiMessage &$error
+	 * @return bool
+	 */
+	public static function onUploadVerifyUpload( UploadBase $upload, User $user, array $props, $comment, $pageText, &$error ) {
+		$title = $upload->getTitle();
+
+		// get the link from the not-yet-saved page content.
+		$content = ContentHandler::makeContent( $pageText, $title );
+		$parserOptions = $content->getContentHandler()->makeParserOptions( 'canonical' );
+		$output = $content->getParserOutput( $title, null, $parserOptions );
+		$links = array_keys( $output->getExternalLinks() );
+
+		// HACK: treat comment as a link if it contains anything
+		// that looks like it could be a URL or e-mail address.
+		if ( preg_match( '/\S(\.[^\s\d]{2,}|[\/@]\S)/', $comment ) ) {
+			$links[] = $comment;
+		}
+		if ( !$links ) {
+			return true;
+		}
+
+		$spamObj = BaseBlacklist::getInstance( 'spam' );
+		$matches = $spamObj->filter( $links, $title );
+
+		if ( $matches !== false ) {
+			$error = new ApiMessage(
+				wfMessage( 'spamprotectiontext' ),
+				'spamblacklist',
+				array(
+					'spamblacklist' => array( 'matches' => $matches ),
+					'message' => array(
+						'key' => 'spamprotectionmatch',
+						'params' => $matches[0],
+					),
+				)
+			);
 		}
 
 		return true;
+	}
+
+	/**
+	 * @param WikiPage $article
+	 * @param User $user
+	 * @param $reason
+	 * @param $error
+	 */
+	public static function onArticleDelete( WikiPage &$article, User &$user, &$reason, &$error ) {
+		/** @var SpamBlacklist $spam */
+		$spam = BaseBlacklist::getInstance( 'spam' );
+		if ( !$spam->isLoggingEnabled() ) {
+			return;
+		}
+
+		// Log the changes, but we only commit them once the deletion has happened.
+		// We do that since the external links table could get cleared before the
+		// ArticleDeleteComplete hook runs
+		$spam->logUrlChanges( $spam->getCurrentLinks( $article->getTitle() ), [], [] );
+	}
+
+	/**
+	 * @param WikiPage $page
+	 * @param User $user
+	 * @param $reason
+	 * @param $id
+	 * @param Content|null $content
+	 * @param LogEntry $logEntry
+	 */
+	public static function onArticleDeleteComplete( &$page, User &$user, $reason,
+		$id, Content $content = null, LogEntry $logEntry
+	) {
+		/** @var SpamBlacklist $spam */
+		$spam = BaseBlacklist::getInstance( 'spam' );
+		$spam->doLogging( $user, $page->getTitle(), $page->getLatest() );
 	}
 }

@@ -4,7 +4,8 @@
 			"Alma",
 			"Toliño",
 			"Xosé",
-			"Elisardojm"
+			"Elisardojm",
+			"Banjo"
 		]
 	},
 	"action-titleblacklistlog": "ver o rexistro da lista negra de títulos",
@@ -20,6 +21,7 @@
 	"titleblacklist-forbidden-new-account": "O nome de usuario \"$2\" foi protexido fronte á súa creación.\nCoincide coa seguinte entrada da lista negra: <code>$1</code>",
 	"titleblacklist-invalid": "{{PLURAL:$1|A seguinte liña|As seguintes liñas}} da lista negra {{PLURAL:$1|é inválida|son inválidas}}; por favor  {{PLURAL:$1|corríxaa|corríxaas}} antes de gardar:",
 	"titleblacklist-override": "Ignorar a lista negra",
+	"titleblacklist-override-help": "Os usuarios con privilexios suficientes poden configurar isto para ignorar as comprobacións de títulos no blacklist.",
 	"titleblacklist-warning": "<strong>Aviso: Esta páxina só pode ser editada por administradores e outros usuario co privilexio <code>tboverride</code>, pois corresponde co seguinte título da lista negra:</strong><br /><code>$1</code>",
 	"right-tboverride": "Ignorar a lista negra de títulos ou nomes de usuario",
 	"right-tboverride-account": "Ignorar a lista negra de nomes de usuario",

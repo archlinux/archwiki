@@ -59,6 +59,16 @@ class TraditionalImageGallery extends ImageGalleryBase {
 			$output .= "\n\t<li class='gallerycaption'>{$this->mCaption}</li>";
 		}
 
+		if ( $this->mShowFilename ) {
+			// Preload LinkCache info for when generating links
+			// of the filename below
+			$lb = new LinkBatch();
+			foreach ( $this->mImages as $img ) {
+				$lb->addObj( $img[0] );
+			}
+			$lb->execute();
+		}
+
 		$lang = $this->getRenderLang();
 		# Output each image...
 		foreach ( $this->mImages as $pair ) {
@@ -176,10 +186,19 @@ class TraditionalImageGallery extends ImageGalleryBase {
 			}
 
 			$textlink = $this->mShowFilename ?
+				// Preloaded into LinkCache above
 				Linker::linkKnown(
 					$nt,
-					htmlspecialchars( $lang->truncate( $nt->getText(), $this->mCaptionLength ) )
-				) . "<br />\n" :
+					htmlspecialchars(
+						$this->mCaptionLength !== true ?
+							$lang->truncate( $nt->getText(), $this->mCaptionLength ) :
+							$nt->getText()
+					),
+					[
+						'class' => 'galleryfilename' .
+							( $this->mCaptionLength === true ? ' galleryfilename-truncate' : '' )
+					]
+				) . "\n" :
 				'';
 
 			$galleryText = $textlink . $text . $fileSize;
@@ -219,8 +238,8 @@ class TraditionalImageGallery extends ImageGalleryBase {
 	}
 
 	/**
-	 * How much padding such the thumb have between image and inner div that
-	 * that contains the border. This is both for verical and horizontal
+	 * How much padding the thumb has between the image and the inner div
+	 * that contains the border. This is for both vertical and horizontal
 	 * padding. (However, it is cut in half in the vertical direction).
 	 * @return int
 	 */

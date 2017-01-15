@@ -27,6 +27,15 @@ class ResourceLoaderFileModuleTest extends ResourceLoaderTestCase {
 		return [
 			'noTemplateModule' => [],
 
+			'deprecatedModule' => $base + [
+				'deprecated' => true,
+			],
+			'deprecatedTomorrow' => $base + [
+				'deprecated' => [
+					'message' => 'Will be removed tomorrow.'
+				],
+			],
+
 			'htmlTemplateModule' => $base + [
 				'templates' => [
 					'templates/template.html',
@@ -93,7 +102,36 @@ class ResourceLoaderFileModuleTest extends ResourceLoaderTestCase {
 	 */
 	public function testTemplateDependencies( $module, $expected ) {
 		$rl = new ResourceLoaderFileModule( $module );
+		$rl->setName( 'testing' );
 		$this->assertEquals( $rl->getDependencies(), $expected );
+	}
+
+	public static function providerDeprecatedModules() {
+		return [
+			[
+				'deprecatedModule',
+				'mw.log.warn("This page is using the deprecated ResourceLoader module \"deprecatedModule\".");',
+			],
+			[
+				'deprecatedTomorrow',
+				'mw.log.warn(' .
+					'"This page is using the deprecated ResourceLoader module \"deprecatedTomorrow\".\\n' .
+					"Will be removed tomorrow." .
+					'");'
+			]
+		];
+	}
+
+	/**
+	 * @dataProvider providerDeprecatedModules
+	 * @covers ResourceLoaderFileModule::getScript
+	 */
+	public function testDeprecatedModules( $name, $expected ) {
+		$modules = self::getModules();
+		$rl = new ResourceLoaderFileModule( $modules[$name] );
+		$rl->setName( $name );
+		$ctx = $this->getResourceLoaderContext( 'en', 'ltr' );
+		$this->assertEquals( $rl->getScript( $ctx ), $expected );
 	}
 
 	/**
@@ -127,6 +165,7 @@ class ResourceLoaderFileModuleTest extends ResourceLoaderTestCase {
 		];
 
 		$module = new ResourceLoaderFileModule( $baseParams );
+		$module->setName( 'testing' );
 
 		$this->assertEquals(
 			[
@@ -164,10 +203,12 @@ class ResourceLoaderFileModuleTest extends ResourceLoaderTestCase {
 			'localBasePath' => $basePath,
 			'styles' => [ 'test.css' ],
 		] );
+		$testModule->setName( 'testing' );
 		$expectedModule = new ResourceLoaderFileModule( [
 			'localBasePath' => $basePath,
 			'styles' => [ 'expected.css' ],
 		] );
+		$expectedModule->setName( 'testing' );
 
 		$contextLtr = $this->getResourceLoaderContext( 'en', 'ltr' );
 		$contextRtl = $this->getResourceLoaderContext( 'he', 'rtl' );
@@ -223,6 +264,7 @@ class ResourceLoaderFileModuleTest extends ResourceLoaderTestCase {
 	 */
 	public function testGetTemplates( $module, $expected ) {
 		$rl = new ResourceLoaderFileModule( $module );
+		$rl->setName( 'testing' );
 
 		$this->assertEquals( $rl->getTemplates(), $expected );
 	}
@@ -233,6 +275,7 @@ class ResourceLoaderFileModuleTest extends ResourceLoaderTestCase {
 			'localBasePath' => $basePath,
 			'styles' => [ 'bom.css' ],
 			] );
+		$testModule->setName( 'testing' );
 		$this->assertEquals(
 			substr( file_get_contents( "$basePath/bom.css" ), 0, 10 ),
 			"\xef\xbb\xbf.efbbbf",

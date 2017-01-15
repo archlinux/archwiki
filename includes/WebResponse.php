@@ -39,7 +39,11 @@ class WebResponse {
 	 * @param null|int $http_response_code Forces the HTTP response code to the specified value.
 	 */
 	public function header( $string, $replace = true, $http_response_code = null ) {
-		header( $string, $replace, $http_response_code );
+		if ( $http_response_code ) {
+			header( $string, $replace, $http_response_code );
+		} else {
+			header( $string, $replace );
+		}
 	}
 
 	/**
@@ -89,26 +93,12 @@ class WebResponse {
 	 *     path: string, cookie path ($wgCookiePath)
 	 *     secure: bool, secure attribute ($wgCookieSecure)
 	 *     httpOnly: bool, httpOnly attribute ($wgCookieHttpOnly)
-	 *     raw: bool, if true uses PHP's setrawcookie() instead of setcookie()
-	 *   For backwards compatibility, if $options is not an array then it and
-	 *   the following two parameters will be interpreted as values for
-	 *   'prefix', 'domain', and 'secure'
 	 * @since 1.22 Replaced $prefix, $domain, and $forceSecure with $options
 	 */
 	public function setCookie( $name, $value, $expire = 0, $options = [] ) {
 		global $wgCookiePath, $wgCookiePrefix, $wgCookieDomain;
 		global $wgCookieSecure, $wgCookieExpiration, $wgCookieHttpOnly;
 
-		if ( !is_array( $options ) ) {
-			// Backwards compatibility
-			$options = [ 'prefix' => $options ];
-			if ( func_num_args() >= 5 ) {
-				$options['domain'] = func_get_arg( 4 );
-			}
-			if ( func_num_args() >= 6 ) {
-				$options['secure'] = func_get_arg( 5 );
-			}
-		}
 		$options = array_filter( $options, function ( $a ) {
 			return $a !== null;
 		} ) + [
@@ -268,16 +258,6 @@ class FauxResponse extends WebResponse {
 		global $wgCookiePath, $wgCookiePrefix, $wgCookieDomain;
 		global $wgCookieSecure, $wgCookieExpiration, $wgCookieHttpOnly;
 
-		if ( !is_array( $options ) ) {
-			// Backwards compatibility
-			$options = [ 'prefix' => $options ];
-			if ( func_num_args() >= 5 ) {
-				$options['domain'] = func_get_arg( 4 );
-			}
-			if ( func_num_args() >= 6 ) {
-				$options['secure'] = func_get_arg( 5 );
-			}
-		}
 		$options = array_filter( $options, function ( $a ) {
 			return $a !== null;
 		} ) + [

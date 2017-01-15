@@ -8,17 +8,19 @@
 			"아라",
 			"Hwangjy9",
 			"Revi",
-			"Bluemersen"
+			"Bluemersen",
+			"Ykhwong"
 		]
 	},
+	"apihelp-query+references-example-1": "<kbd>Albert Einstein</kbd>과 관련된 주석.",
 	"cite-desc": "인용에 쓰이는 <nowiki><ref[ name=id]></nowiki>와 <nowiki><references/></nowiki> 태그를 추가합니다",
 	"cite_error": "인용 오류: $1",
 	"cite_error_ref_numeric_key": "<code>&lt;ref&gt;</code> 태그가 잘못되었습니다;\n이름은 숫자가 될 수 없습니다. 설명적인 이름을 사용하세요",
-	"cite_error_ref_no_key": "<code>&lt;ref&gt;</code> 태그가 잘못되었습니다;\n내용이 없는 주석은 이름이 있어야 합니다",
+	"cite_error_ref_no_key": "열린 <code>&lt;ref&gt;</code> 태그가 잘못되었거나 이름이 잘못되었습니다.",
 	"cite_error_ref_too_many_keys": "<code>&lt;ref&gt;</code> 태그가 잘못되었습니다;\n잘못된 이름입니다, 너무 많은 등",
 	"cite_error_ref_no_input": "<code>&lt;ref&gt;</code> 태그가 잘못되었습니다;\n이름이 없는 ref 태그는 반드시 내용이 있어야 합니다",
 	"cite_error_references_duplicate_key": "잘못된 <code>&lt;ref&gt;</code> 태그; \"$1\"이 다른 콘텐츠로 여러 번 정의되었습니다",
-	"cite_error_references_invalid_parameters": "<code>&lt;references&gt;</code> 태그가 잘못되었습니다;\n변수를 넣으면 안됩니다.\n<code>&lt;references /&gt;</code>를 사용하세요",
+	"cite_error_references_invalid_parameters": "<code>&lt;references&gt;</code> 태그가 잘못되었습니다;\n변수를 넣으면 안 됩니다.\n<code>&lt;references /&gt;</code>를 사용하세요",
 	"cite_error_references_invalid_parameters_group": "<code>&lt;references&gt;</code> 태그가 잘못되었습니다;\n\"group\" 변수만 사용할 수 있습니다.\n<code>&lt;references /&gt;</code>나 <code>&lt;references group=\"...\" /&gt;</code>를 사용하세요",
 	"cite_error_references_no_backlink_label": "사용자 지정 백링크 라벨이 바닥이 났습니다.\n<nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>메시지에 더 정의하세요.",
 	"cite_error_no_link_label_group": "\"$1\" 그룹에 대해 사용자 지정 링크 레이블이 바닥이 났습니다.\n<nowiki>[[MediaWiki:$2]]</nowiki> 메시지에 더 정의하세요.",

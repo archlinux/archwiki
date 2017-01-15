@@ -3,7 +3,7 @@
  *
  * This file is where we decide whether to initialise the modern run-time.
  */
-/*jshint unused: false, evil: true */
+/*jshint unused: false */
 /*globals mw, RLQ: true, NORLQ: true, $VARS, $CODE, performance */
 
 var mediaWikiLoadStart = ( new Date() ).getTime(),
@@ -77,7 +77,7 @@ function isCompatible( str ) {
 	var NORLQ, script;
 	if ( !isCompatible() ) {
 		// Undo class swapping in case of an unsupported browser.
-		// See OutputPage::getHeadScripts().
+		// See ResourceLoaderClientHtml::getDocumentAttributes().
 		document.documentElement.className = document.documentElement.className
 			.replace( /(^|\s)client-js(\s|$)/, '$1client-nojs$2' );
 

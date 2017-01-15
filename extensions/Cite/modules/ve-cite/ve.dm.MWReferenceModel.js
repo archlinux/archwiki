@@ -226,26 +226,12 @@ ve.dm.MWReferenceModel.prototype.getDocument = function () {
 		if ( this.deferDoc ) {
 			this.doc = this.deferDoc();
 		} else {
-			this.doc = new ve.dm.Document(
-				[
-					{ type: 'paragraph', internal: { generated: 'wrapper' } },
-					{ type: '/paragraph' },
-					{ type: 'internalList' },
-					{ type: '/internalList' }
-				],
-				// htmlDocument
-				this.parentDoc.getHtmlDocument(),
-				// parentDocument
-				null,
-				// internalList
-				null,
-				// innerWhitespace
-				null,
-				// lang
-				this.parentDoc.getLang(),
-				// dir
-				this.parentDoc.getDir()
-			);
+			this.doc = this.parentDoc.cloneWithData( [
+				{ type: 'paragraph', internal: { generated: 'wrapper' } },
+				{ type: '/paragraph' },
+				{ type: 'internalList' },
+				{ type: '/internalList' }
+			] );
 		}
 	}
 	return this.doc;

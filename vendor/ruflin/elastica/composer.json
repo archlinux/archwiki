@@ -12,18 +12,18 @@
         }
     ],
     "require": {
-        "php": ">=5.3.3",
+        "php": ">=5.4.0",
         "psr/log": "~1.0"
     },
     "require-dev": {
-        "munkie/elasticsearch-thrift-php": "1.4.*",
-        "guzzlehttp/guzzle": "5.3.*"
+        "guzzlehttp/guzzle": "~6.0",
+        "aws/aws-sdk-php": "~3.0"
     },
     "suggest": {
-        "munkie/elasticsearch-thrift-php": "Allow using thrift transport",
-        "guzzlehttp/guzzle": "Allow using guzzle 5.3.x as the http transport (Requires php 5.4)",
+        "guzzlehttp/guzzle": "Allow using guzzle 6 as the http transport (Requires php 5.5)",
         "egeloen/http-adapter": "Allow using httpadapter transport",
-        "monolog/monolog": "Logging request"
+        "monolog/monolog": "Logging request",
+        "aws/aws-sdk-php": "Allow using IAM authentication with Amazon ElasticSearch Service"
     },
     "autoload": {
         "psr-4": {
@@ -37,7 +37,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.2.x-dev"
+            "dev-master": "3.1.x-dev"
         }
     }
 }

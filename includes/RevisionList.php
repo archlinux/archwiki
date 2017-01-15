@@ -23,7 +23,7 @@
 /**
  * List for revision table items for a single page
  */
-abstract class RevisionListBase extends ContextSource {
+abstract class RevisionListBase extends ContextSource implements Iterator {
 	/** @var Title */
 	public $title;
 
@@ -81,12 +81,16 @@ abstract class RevisionListBase extends ContextSource {
 	 */
 	public function reset() {
 		if ( !$this->res ) {
-			$this->res = $this->doQuery( wfGetDB( DB_SLAVE ) );
+			$this->res = $this->doQuery( wfGetDB( DB_REPLICA ) );
 		} else {
 			$this->res->rewind();
 		}
 		$this->initCurrent();
 		return $this->current;
+	}
+
+	public function rewind() {
+		$this->reset();
 	}
 
 	/**
@@ -105,6 +109,14 @@ abstract class RevisionListBase extends ContextSource {
 		$this->res->next();
 		$this->initCurrent();
 		return $this->current;
+	}
+
+	public function key() {
+		return $this->res ? $this->res->key(): 0;
+	}
+
+	public function valid() {
+		return $this->res ? $this->res->valid() : false;
 	}
 
 	/**

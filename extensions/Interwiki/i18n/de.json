@@ -12,7 +12,7 @@
 			"Umherirrender"
 		]
 	},
-	"interwiki": "Interwikidaten ansehen und bearbeiten",
+	"interwiki": "Interwikidaten verwalten",
 	"interwiki-title-norights": "Interwikidaten ansehen",
 	"interwiki-desc": "Eine [[Special:Interwiki|Spezialseite]] zur Pflege der Interwikitabelle",
 	"interwiki_intro": "Diese Seite bietet einen Überblick des Inhalts der Interwikitabelle dieses Wikis, die die verwendeten Präfixkürzel zur schnellen Verlinkung auf unterschiedliche Wikis und andere externe Websites definiert. Zur empfohlenen Verwendung, siehe bitte [//www.mediawiki.org/wiki/Extension:Interwiki das Handbuch auf MediaWiki.org].",

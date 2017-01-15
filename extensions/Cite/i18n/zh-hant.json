@@ -7,7 +7,8 @@
 			"Philip",
 			"乌拉跨氪",
 			"Cwlin0416",
-			"Bowleerin"
+			"Bowleerin",
+			"Waihorace"
 		]
 	},
 	"cite-desc": "支援 <nowiki><ref[ name=id]></nowiki> 與 <nowiki><references/></nowiki> 標籤，可用來註明參考文獻",
@@ -32,5 +33,6 @@
 	"cite-tracking-category-cite-error-desc": "在此分類內的頁面在參考來源的使用上有錯誤。",
 	"cite_references_link_accessibility_label": "移至",
 	"cite_references_link_many_accessibility_label": "移至：",
+	"cite_section_preview_references": "預覽參考文獻",
 	"cite_warning": "引用警告：$1"
 }

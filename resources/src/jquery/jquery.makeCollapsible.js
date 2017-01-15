@@ -270,7 +270,11 @@
 			};
 			// Default toggle link. Only build it when needed to avoid jQuery memory leaks (event data).
 			buildDefaultToggleLink = function () {
-				return $( '<a href="#"></a>' )
+				return $( '<a>' )
+					.attr( {
+						role: 'button',
+						tabindex: 0
+					} )
 					.text( collapseText )
 					.wrap( '<span class="mw-collapsible-toggle"></span>' )
 						.parent()
@@ -314,6 +318,7 @@
 				// If this is not a custom case, do the default: wrap the
 				// contents and add the toggle link. Different elements are
 				// treated differently.
+
 				if ( $collapsible.is( 'table' ) ) {
 
 					// If the table has a caption, collapse to the caption
@@ -345,6 +350,13 @@
 						}
 					}
 
+				} else if ( $collapsible.parent().is( 'li' ) &&
+					$collapsible.parent().children( '.mw-collapsible' ).length === 1 &&
+					$collapsible.find( '> .mw-collapsible-toggle' ).length === 0
+				) {
+					// special case of one collapsible in <li> tag
+					$toggleLink = buildDefaultToggleLink();
+					$collapsible.before( $toggleLink );
 				} else if ( $collapsible.is( 'ul' ) || $collapsible.is( 'ol' ) ) {
 					// The toggle-link will be in the first list-item
 					$firstItem = $collapsible.find( 'li:first' );

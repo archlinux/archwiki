@@ -36,6 +36,7 @@ class Gadget {
 			$onByDefault = false,
 			$hidden = false,
 			$position = 'bottom',
+			$type = '',
 			$category;
 
 	public function __construct( array $options ) {
@@ -53,6 +54,7 @@ class Gadget {
 				case 'targets':
 				case 'onByDefault':
 				case 'position':
+				case 'type':
 				case 'hidden':
 				case 'category':
 					$this->{$member} = $option;
@@ -88,6 +90,7 @@ class Gadget {
 			'dependencies' => $data['module']['dependencies'],
 			'messages' => $data['module']['messages'],
 			'position' => $data['module']['position'],
+			'type' => $data['module']['type'],
 		);
 
 		return new self( $info );
@@ -286,5 +289,24 @@ class Gadget {
 	public function getPosition() {
 		return $this->position;
 	}
-}
 
+	/**
+	 * Returns the load type of this Gadget's ResourceLoader module
+	 * @return string 'styles', 'general' or ''
+	 */
+	public function getType() {
+		if ( $this->type === 'styles' || $this->type === 'general' ) {
+			return $this->type;
+		}
+		if ( $this->styles && !$this->scripts ) {
+			// Similar to ResourceLoaderWikiModule default
+			return 'styles';
+		}
+		if ( !$this->styles && $this->supportsResourceLoader() && $this->scripts ) {
+			return 'general';
+		}
+		// Real default is in GadgetResourceLoaderModule so that beforePageDisplay
+		// can distinguish between explicit and fallback.
+		return '';
+	}
+}

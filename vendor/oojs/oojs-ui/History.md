@@ -1,4 +1,220 @@
 # OOjs UI Release History
+## v0.17.10 / 2016-10-03
+### Styles
+* FieldsetLayout: Styling fixes for `<legend>` labels (Bartosz Dziewoński)
+* FieldsetLayout: Work around positioning problems in Firefox (Bartosz Dziewoński)
+
+## v0.17.9 / 2016-09-13
+### Features
+* DropdownWidget: Add CSS class to widgets with open dropdown menus (Volker E)
+* SelectFileWidget: Remove MIME type information (Volker E)
+* TextInputWidget: Make disabled fields' inner labels unselectable (Volker E)
+
+### Styles
+* ActionToolGroup: Show left border, instead of right (Ed Sanders)
+* ButtonElement: Centralize styling properties (Volker E)
+* ButtonOptionWidget: Make active state carry default cursor (Volker E)
+* Radio- and CheckboxInputWidget: Fix visual disabled state on labels (Volker E)
+* ToggleButtonWidget: Use inverted variant when initially active (Leszek Manicki)
+
+* MediaWiki theme: Adjust CheckboxInputWidget to match M30 design (Volker E)
+* MediaWiki theme: Adjust RadioInputWidget to match M29 design (Volker E)
+* MediaWiki theme: Align Dropdown- & CapsuleMultiSelectWidget `:focus` state (Volker E)
+* MediaWiki theme: Align disabled text contrast to WCAG compliance (Volker E)
+* MediaWiki theme: Enhance button styles and align them to new color palette (Volker E)
+* MediaWiki theme: Fix ButtonElement-active on flagged & primary buttons (Volker E)
+* MediaWiki theme: Fix `:hover` state of ComboBoxInputWidget (Volker E)
+* MediaWiki theme: Fix regression on `border` of active (selected) buttons (Volker E)
+* MediaWiki theme: Improve appearance of CapsuleMultiselectWidget with child (Volker E)
+* MediaWiki theme: Make ToggleSwitchWidget's disabled state follow enabled (Volker E)
+* MediaWiki theme: Make colors' contrast compliant to WCAG 2.0 level AA (Volker E)
+* MediaWiki theme: Toolbar: Use progressive colors for active and active-hover (Prateek Saxena)
+* MediaWiki theme: Unify `-pressed` and `-emphasized` color var (Volker E)
+* MediaWiki theme: Unify different widgets' selected menu state (Volker E)
+* MediaWiki theme: Use a solid border for disabled SelectFile drop target (Volker E)
+
+### Code
+* FieldsetLayout: Make use of `<fieldset>` and `<legend>` tags (Volker E)
+* NumberInputWidget: Clean-up Less code & remove style properties (Volker E)
+* NumberInputWidget: Simplify CSS selectors & fix button text alignment (Volker E)
+* TextInputWidget: Treat `rows: 0` the same in PHP and in JS (Bartosz Dziewoński)
+* Toolbar: Simplify and concatenate selectors (Volker E)
+* MediaWiki theme: Align tools' variables to common vars naming convention (Volker E)
+* MediaWiki theme: Clean-up unnecessary properties in ToolGroup (Volker E)
+* build: Align csscomb configuration with CSS coding conventions (Volker E)
+* build: Introduce eslint to replace jshint and jscs (James D. Forrester)
+* build: Limit the file list of jsonlint (Ed Sanders)
+* build: Remove jshint and jscs, now done in eslint (James D. Forrester)
+* docs: IndexLayout: Fix ReferenceError in code sample (Prateek Saxena)
+* git: Add .idea directory to .gitignore (Florian)
+* testsuitegenerator: Also support 'int' and 'bool' (Bartosz Dziewoński)
+* testsuitegenerator: Simplify code generating all possible config options (Bartosz Dziewoński)
+
+
+## v0.17.8 / 2016-08-16
+### Features
+* ProgressBarWidget: Do not make zero progress indeterminate (Leszek Manicki)
+* ProgressBarWidget: Add PHP version (Leszek Manicki)
+* TextInputWidget: Show state as valid (no matter the case) on focus (Prateek Saxena)
+
+### Styles
+* ButtonElement: Fix 'active' state icon variants in MediaWiki theme (Bartosz Dziewoński)
+* FieldLayout: Use saner line-height for errors/notices (Bartosz Dziewoński)
+* SelectFileWidget: Improve thumbnail appearance (Volker E)
+* styles: Inherit specific `font` properties, not all (Volker E)
+* MediaWiki theme: Clear border on selected framed buttons (Volker E)
+* MediaWiki theme: Fix ButtonWidget (frameless, indicator) `:focus` appearance (Volker E)
+* MediaWiki theme: Fix ToggleSwitchWidget's sub-pixel rounding errors (Volker E)
+
+
+### Code
+* MediaWiki theme: Improve CapsuleMultiselectWidget Less code and behaviour (Volker E)
+* MediaWiki theme: Improve DropdownWidget Less code and behaviour (Volker E)
+* MediaWiki theme: Removing never applied styles on BarToolGroup (Volker E)
+* MediaWiki theme: Simplify ToolGroup selectors (Volker E)
+* testsuitegenerator: Specify sensible values to test for 'progress' (Bartosz Dziewoński)
+
+
+## v0.17.7 / 2016-08-03
+### Styles
+* MediaWiki theme: Apply `border-color` on `:hover` to textInputWidgets (Volker E)
+* MediaWiki theme: Decrease `margin`/`padding` on `legend` replacement (Volker E)
+* MediaWiki theme: Decrease distance between label and Checkbox*-/Radio*Widget (Volker E)
+* MediaWiki theme: Improve UX on ToggleSwitchWidget (Volker E)
+* icons: Fix vertical alignment of 'bell' by moving up 1px (Ed Sanders)
+* icons: Provide a 'tray' icon in alerts pack (James D. Forrester)
+* icons: Provide the alerts pack for Apex theme too (James D. Forrester)
+
+### Code
+* CheckboxMultiselectWidget: Rewrite Shift-clicking code (Bartosz Dziewoński)
+* NumberInputWidget: Merge object literals being passed as config for buttons (Prateek Saxena)
+* SelectFileWidget: Reduce div soup when 'showDropTarget' is enabled (Prateek Saxena)
+* styles: Replace unprefixed `box-sizing` property with mixin (Volker E)
+* MediaWiki theme: Disable vendor UI extensions on every `type=number` input (Volker E)
+* MediaWiki theme: Remove unnecessary toolGroup selector (Volker E)
+* MediaWiki theme: Replace `border` property values with Less variables (Volker E)
+* MediaWiki theme: Replace static `color` value with Less variable (Volker E)
+* build: Add 'prep-test' task to be run before running tests in the browser (Prateek Saxena)
+* build: Align to stylelint-config-wikimedia for `!important` (James D. Forrester)
+* build: Align to stylelint-config-wikimedia for string quotes (James D. Forrester)
+* build: Bump stylelint-related devDependencies to latest (James D. Forrester)
+* build: Downgrade grunt-jscs to 2.8.0 to avoid cst bug (James D. Forrester)
+* doc: Correct some code comments in PHP mixins (Bartosz Dziewoński)
+* standalone tests: Correct error message (Bartosz Dziewoński)
+
+
+## v0.17.6 / 2016-07-12
+### Features
+* CapsuleMultiselectWidget: Allow ignoring user input for 'allowArbitrary' widgets (Bartosz Dziewoński)
+* Dialog: Set the 'title' attribute on the title LabelWidget (Prateek Saxena)
+* ToolFactory: Allow '\*' as an item in a toolgroup include list (Ed Sanders)
+* Window: make the focus trap smarter (David Lynch)
+
+### Styles
+* Add aria-hidden to several Layouts (David Lynch)
+* Add dialog transition duration to theme JS file (Ed Sanders)
+* ButtonGroupWidget: Fix border on button's CSS states (Volker E)
+* MediaWiki theme: Normalize [placeholder] appearance x-browser and ensure a11y (Volker E)
+* MediaWiki theme: Unify ButtonWidget focus `border-radius` values (Volker E)
+* styles: Set `line-height` to unitless values to follow best practice (Volker E)
+* icons: Give "Stop" a filled background, aligned with others in the pack (Volker E)
+* icons: Unify cross-out lines direction to top-left/bottom-right (Volker E)
+
+### Code
+* README: Replace git.wikimedia.org URL with Phabricator one (Paladox)
+* build: Bump stylelint devDependencies to latest (James D. Forrester)
+* build: Update karma and karma-coverage to latest (Paladox)
+* demo: Dialogs: Removing title from SimpleDialog as it'll never show (Prateek Saxena)
+* docs: Remove self-closing tag syntax in comments and demos (Volker E)
+* docs: LabelWidget: Add TitledElement mixin (Prateek Saxena)
+* package: Replace git.wikimedia.org url with diffusion url (Paladox)
+
+
+## v0.17.5 / 2016-06-19
+### Styles
+* Dropdown,SelectFileWidget: Improve user experience on disabled widgets (Volker E)
+* MediaWiki theme: Fix ToggleSwitchWidget's grip circle shape (Volker E)
+* MediaWiki theme: Fix focus states of ActionWidget's buttons (Volker E)
+* MediaWiki theme: Improve focus states of primary buttons & ToggleSwitchWidget (Volker E)
+
+### Code
+* DraggableGroupWidget: Remove unnecessary `cursor` property (Volker E)
+* GroupElement#removeItems: Fix to actually unbind events (Ed Sanders)
+* ProcessDialog: Change DOM ordering of actions (David Lynch)
+* MediaWiki theme: Remove `line-height` from TextInputWidget `input` (Volker E)
+* MediaWiki theme: Remove obsolete `color` property, which never gets applied (Volker E)
+* build: Bump devDependencies to latest and make pass (James D. Forrester)
+* composer: Exclude copied demo PHP from phpcs test (James D. Forrester)
+* demos: Add descriptive hints on navigation types to dialog names (Volker E)
+
+
+## v0.17.4 / 2016-05-31
+### Features
+* DropdownWidget: Handle type-to-search when menu is not expanded (Bartosz Dziewoński)
+* Implement MultiselectWidget, CheckboxMultiselectWidget and CheckboxMultiselectInputWidget (Bartosz Dziewoński)
+* SelectWidget: Improve focus behaviour (Bartosz Dziewoński)
+
+### Styles
+* icons: Use B/I/S/U icons for British and Candian English variants (Ed Sanders)
+* MediaWiki theme: Provide an adjacent disabled ButtonGroup/SelectWidget button border (Volker E)
+* MediaWiki theme: Make iconed and non-iconed buttons have the same height (Roan Kattouw)
+
+### Code
+* ButtonElement: Remove unnecessary inheritance duplication of `display` (Volker E)
+* GroupWidget: Mix in GroupElement, rather than inherit from it (Bartosz Dziewoński)
+* LookupElement: Add missing `@mixins` documentation (Bartosz Dziewoński)
+* SelectWidget: Implement `#getFirstSelectableItem` in terms of `#getRelativeSelectableItem` (Bartosz Dziewoński)
+* SelectWidget: Optimize `#getRelativeSelectableItem` without filter (Bartosz Dziewoński)
+* styles: Remove unnecessary CSS rules on disabled buttons (Volker E)
+* styles: Simplify disabled `.oo-ui-tool-link` rules (Volker E)
+
+
+## v0.17.3 / 2016-05-24
+### Deprecations
+* [DEPRECATING CHANGE] CapsuleMultiSelectWidget: Rename to CapsuleMultiselectWidget (Bartosz Dziewoński)
+
+### Features
+* SelectWidget/OptionWidget: Implement selecting by accesskey (Bartosz Dziewoński)
+* TextInputWidget: Stop returning 'multiline' from 'getSaneType' (Prateek Saxena)
+
+### Styles
+* SelectFileWidget: Improve consistency to other widgets (Volker E)
+* MediaWiki theme: Align styles of normal and not-supported SelectFileWidgets (Volker E)
+
+### Code
+* CapsuleMultiselectWidget: Prefer Array#map to jQuery.map (Bartosz Dziewoński)
+* CapsuleMultiselectWidget: Use OO.ui.findFocusable() (Bartosz Dziewoński)
+* dependencies: Update es5-shim to v4.5.8 (James D. Forrester)
+* build: Bump grunt-stylelint to v0.3.0 (James D. Forrester)
+* build: Bump various devDependencies to latest (James D. Forrester)
+* build: Fix watch path for css (Ed Sanders)
+* build: Remove grunt-cli (Ed Sanders)
+* build: Upgrade stylelint-config-wikimedia to 0.2.0 and make pass (James D. Forrester)
+* build: Use stylelint instead of csslint (Volker E)
+* docs: Add some missing @mixins documentation (Bartosz Dziewoński)
+* stylelint: Add `@` whitespace and name case rules (Volker E)
+* stylelint: Add `@media` whitespace rules (Volker E)
+* stylelint: Add block formatting rules (Volker E)
+* stylelint: Add font rules (Volker E)
+* stylelint: Add no duplicate property rule (Volker E)
+* stylelint: Add selector whitespace (Volker E)
+* stylelint: Add whitespace rules (Volker E)
+* stylelint: Change to use central Wikimedia configuration (Volker E)
+* stylelint: Use null instead of false to disable rules (Ed Sanders)
+
+
+## v0.17.2 / 2016-05-10
+### Features
+* ButtonWidget: Implement, document and demonstrate the 'active' config option (Bartosz Dziewoński)
+
+### Styles
+* ToggleSwitchWidget: Align focus state with other widgets (Volker E)
+* MediaWiki theme: Remove `border-radius` from disabled numberInputWidget buttons (Volker E)
+
+### Code
+* TextInputWidget: Remove proprietary `<input results>` attribute styles (Volker E)
+* MediaWiki theme: Align `input` & `textarea` coding style to Less way (Volker E)
+
 
 ## v0.17.1 / 2016-05-03
 ### Styles
@@ -10,6 +226,7 @@
 
 ### Code
 * DraggableGroupElement: Simplify and improve drag logic (Ed Sanders)
+
 
 ## v0.17.0 / 2016-04-26
 ### Breaking changes

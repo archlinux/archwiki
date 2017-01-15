@@ -14,5 +14,6 @@
 	"titleblacklist-forbidden-upload": "Filnamnet «$2» er blokkert for oppretting. Det svarar til følgjande svartelisteelement: <code>$1</code>",
 	"titleblacklist-forbidden-new-account": "Brukarnamnet «$2» kan ikkje opprettast. \nDet svarar til følgjande svartelisteelement: <code>$1</code>",
 	"titleblacklist-invalid": "Følgjande {{PLURAL:$1|linje|linjer}} i tittelsvartelista er {{PLURAL:$1|ugyldig|ugyldige}}; ver venleg å rette {{PLURAL:$1|ho|dei}} før du lagrar:",
+	"titleblacklist-warning": "<strong>Åtvaring: Denne sida kan berre endrast av administratorar og andre brukarar med <code>tboverride</code>-retten av di ho passar med denne oppføringa i svartelista:</strong><br /><code>$1</code>",
 	"right-tboverride": "Overkøyre tittelsvartelista"
 }

@@ -41,7 +41,7 @@ abstract class DatabaseInstaller {
 	/**
 	 * The database connection.
 	 *
-	 * @var DatabaseBase
+	 * @var Database
 	 */
 	public $db = null;
 
@@ -167,7 +167,7 @@ abstract class DatabaseInstaller {
 	 *
 	 * @param string $sourceFileMethod
 	 * @param string $stepName
-	 * @param string $archiveTableMustNotExist
+	 * @param bool $archiveTableMustNotExist
 	 * @return Status
 	 */
 	private function stepApplySourceFile(
@@ -192,7 +192,7 @@ abstract class DatabaseInstaller {
 		$this->db->begin( __METHOD__ );
 
 		$error = $this->db->sourceFile(
-			call_user_func( [ $this->db, $sourceFileMethod ] )
+			call_user_func( [ $this, $sourceFileMethod ], $this->db )
 		);
 		if ( $error !== true ) {
 			$this->db->reportQueryError( $error, 0, '', __METHOD__ );
@@ -225,6 +225,47 @@ abstract class DatabaseInstaller {
 	 */
 	public function insertUpdateKeys() {
 		return $this->stepApplySourceFile( 'getUpdateKeysPath', 'updates', false );
+	}
+
+	/**
+	 * Return a path to the DBMS-specific SQL file if it exists,
+	 * otherwise default SQL file
+	 *
+	 * @param IDatabase $db
+	 * @param string $filename
+	 * @return string
+	 */
+	private function getSqlFilePath( $db, $filename ) {
+		global $IP;
+
+		$dbmsSpecificFilePath = "$IP/maintenance/" . $db->getType() . "/$filename";
+		if ( file_exists( $dbmsSpecificFilePath ) ) {
+			return $dbmsSpecificFilePath;
+		} else {
+			return "$IP/maintenance/$filename";
+		}
+	}
+
+	/**
+	 * Return a path to the DBMS-specific schema file,
+	 * otherwise default to tables.sql
+	 *
+	 * @param IDatabase $db
+	 * @return string
+	 */
+	public function getSchemaPath( $db ) {
+		return $this->getSqlFilePath( $db, 'tables.sql' );
+	}
+
+	/**
+	 * Return a path to the DBMS-specific update key file,
+	 * otherwise default to update-keys.sql
+	 *
+	 * @param IDatabase $db
+	 * @return string
+	 */
+	public function getUpdateKeysPath( $db ) {
+		return $this->getSqlFilePath( $db, 'update-keys.sql' );
 	}
 
 	/**
@@ -287,8 +328,15 @@ abstract class DatabaseInstaller {
 		if ( !$status->isOK() ) {
 			throw new MWException( __METHOD__ . ': unexpected DB connection error' );
 		}
-		LBFactory::setInstance( new LBFactorySingle( [
-			'connection' => $status->value ] ) );
+
+		\MediaWiki\MediaWikiServices::resetGlobalInstance();
+		$services = \MediaWiki\MediaWikiServices::getInstance();
+
+		$connection = $status->value;
+		$services->redefineService( 'DBLoadBalancerFactory', function() use ( $connection ) {
+			return LBFactorySingle::newFromConnection( $connection );
+		} );
+
 	}
 
 	/**
@@ -305,9 +353,13 @@ abstract class DatabaseInstaller {
 		$up = DatabaseUpdater::newForDB( $this->db );
 		try {
 			$up->doUpdates();
-		} catch ( Exception $e ) {
+		} catch ( MWException $e ) {
 			echo "\nAn error occurred:\n";
 			echo $e->getText();
+			$ret = false;
+		} catch ( Exception $e ) {
+			echo "\nAn error occurred:\n";
+			echo $e->getMessage();
 			$ret = false;
 		}
 		$up->purgeCache();

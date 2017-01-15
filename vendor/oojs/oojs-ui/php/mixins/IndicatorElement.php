@@ -30,6 +30,7 @@ trait IndicatorElement {
 	 * @param string $config['indicator'] Symbolic indicator name
 	 */
 	public function initializeIndicatorElement( array $config = [] ) {
+		// Properties
 		// FIXME 'indicatorElement' is a very stupid way to call '$indicator'
 		$this->indicator = isset( $config['indicatorElement'] )
 			? $config['indicatorElement']

@@ -32,7 +32,7 @@
 	"gadgets-required-rights": "{{PLURAL:$2|1=Требуется право|Требуются права}}:\n\n$1",
 	"gadgets-required-skins": "Доступен в {{PLURAL:$2|1=теме оформления «$1»|следующих темах оформления: $1}}.",
 	"gadgets-default": "Включён для всех по умолчанию.",
-	"gadgets-legacy": "Гаджет не загружен. Просьба перейдите на ResourceLoader. ([https://www.mediawiki.org/wiki/ResourceLoader/Migration_guide_(пользователей) узнать больше])",
+	"gadgets-legacy": "Гаджет не загружен. Пожалуйста, исправьте код этого гаджета, чтобы он вызывался с помощью ResourceLoader. ([https://www.mediawiki.org/wiki/ResourceLoader/Migration_guide_(users) Узнать подробности])",
 	"gadgets-export": "Экспортировать",
 	"gadgets-export-title": "Экспорт гаджета",
 	"gadgets-not-found": "Гаджет «$1» не найден.",

@@ -20,7 +20,7 @@
 	"support": {
 		"wiki": "https://www.mediawiki.org/wiki/Skin:Vector",
 		"forum": "https://www.mediawiki.org/wiki/Skin_talk:Vector",
-		"source": "https://git.wikimedia.org/summary/mediawiki%2Fskins%2FVector",
+		"source": "https://phabricator.wikimedia.org/diffusion/SVEC/",
 		"irc": "irc://irc.freenode.org/mediawiki"
 	},
 	"require": {
@@ -35,7 +35,7 @@
 	},
 	"require-dev": {
 		"jakub-onderka/php-parallel-lint": "0.9.*",
-		"mediawiki/mediawiki-codesniffer": "0.6.0"
+		"mediawiki/mediawiki-codesniffer": "0.7.2"
 	},
 	"scripts": {
 		"fix": "phpcbf",

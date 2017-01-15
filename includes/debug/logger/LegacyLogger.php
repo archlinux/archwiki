@@ -71,6 +71,14 @@ class LegacyLogger extends AbstractLogger {
 	];
 
 	/**
+	 * @var array
+	 */
+	protected static $dbChannels = [
+		'DBQuery' => true,
+		'DBConnection' => true
+	];
+
+	/**
 	 * @param string $channel
 	 */
 	public function __construct( $channel ) {
@@ -83,11 +91,31 @@ class LegacyLogger extends AbstractLogger {
 	 * @param string|int $level
 	 * @param string $message
 	 * @param array $context
+	 * @return null
 	 */
 	public function log( $level, $message, array $context = [] ) {
-		if ( self::shouldEmit( $this->channel, $message, $level, $context ) ) {
-			$text = self::format( $this->channel, $message, $context );
-			$destination = self::destination( $this->channel, $message, $context );
+		if ( is_string( $level ) ) {
+			$level = self::$levelMapping[$level];
+		}
+		if ( $this->channel === 'DBQuery' && isset( $context['method'] )
+			&& isset( $context['master'] ) && isset( $context['runtime'] )
+		) {
+			MWDebug::query( $message, $context['method'], $context['master'], $context['runtime'] );
+			return; // only send profiling data to MWDebug profiling
+		}
+
+		if ( isset( self::$dbChannels[$this->channel] )
+			&& $level >= self::$levelMapping[LogLevel::ERROR]
+		) {
+			// Format and write DB errors to the legacy locations
+			$effectiveChannel = 'wfLogDBError';
+		} else {
+			$effectiveChannel = $this->channel;
+		}
+
+		if ( self::shouldEmit( $effectiveChannel, $message, $level, $context ) ) {
+			$text = self::format( $effectiveChannel, $message, $context );
+			$destination = self::destination( $effectiveChannel, $message, $context );
 			self::emit( $text, $destination );
 		}
 		if ( !isset( $context['private'] ) || !$context['private'] ) {
@@ -101,13 +129,17 @@ class LegacyLogger extends AbstractLogger {
 	 *
 	 * @param string $channel
 	 * @param string $message
-	 * @param string|int $level \Psr\Log\LogEvent constant or Monlog level int
+	 * @param string|int $level \Psr\Log\LogEvent constant or Monolog level int
 	 * @param array $context
 	 * @return bool True if message should be sent to disk/network, false
 	 * otherwise
 	 */
 	public static function shouldEmit( $channel, $message, $level, $context ) {
 		global $wgDebugLogFile, $wgDBerrorLog, $wgDebugLogGroups;
+
+		if ( is_string( $level ) ) {
+			$level = self::$levelMapping[$level];
+		}
 
 		if ( $channel === 'wfLogDBError' ) {
 			// wfLogDBError messages are emitted if a database log location is
@@ -136,9 +168,6 @@ class LegacyLogger extends AbstractLogger {
 				}
 
 				if ( isset( $logConfig['level'] ) ) {
-					if ( is_string( $level ) ) {
-						$level = self::$levelMapping[$level];
-					}
 					$shouldEmit = $level >= self::$levelMapping[$logConfig['level']];
 				}
 			} else {
@@ -298,6 +327,7 @@ class LegacyLogger extends AbstractLogger {
 	 * @param string $channel
 	 * @param string $message
 	 * @param array $context
+	 * @return null
 	 */
 	protected static function formatAsWfDebugLog( $channel, $message, $context ) {
 		$time = wfTimestamp( TS_DB );
@@ -432,7 +462,6 @@ class LegacyLogger extends AbstractLogger {
 	*
 	* @param string $text
 	* @param string $file Filename
-	* @throws MWException
 	*/
 	public static function emit( $text, $file ) {
 		if ( substr( $file, 0, 4 ) == 'udp:' ) {

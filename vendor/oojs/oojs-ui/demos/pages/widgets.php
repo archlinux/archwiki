@@ -451,6 +451,29 @@ $demoContainer->appendContent( new OOUI\FieldsetLayout( [
 			]
 		),
 		new OOUI\FieldLayout(
+			new OOUI\CheckboxMultiselectInputWidget( [
+				'value' => [ 'dog', 'cat' ],
+				'options' => [
+					[
+						'data' => 'cat',
+						'label' => 'Cat'
+					],
+					[
+						'data' => 'dog',
+						'label' => 'Dog'
+					],
+					[
+						'data' => 'goldfish',
+						'label' => 'Goldfish'
+					],
+				]
+			] ),
+			[
+				'align' => 'top',
+				'label' => 'CheckboxMultiselectInputWidget',
+			]
+		),
+		new OOUI\FieldLayout(
 			new OOUI\TextInputWidget( [ 'value' => 'Text input' ] ),
 			[
 				'label' => "TextInputWidget\xE2\x80\x8E",
@@ -696,7 +719,7 @@ $demoContainer->appendContent( new OOUI\FieldsetLayout( [
 			] ),
 			[
 				'align' => 'top',
-				'label' => "ButtonInputWidget (using <input/>)\xE2\x80\x8E"
+				'label' => "ButtonInputWidget (using <input>)\xE2\x80\x8E"
 			]
 		)
 	]
@@ -955,6 +978,24 @@ $demoContainer->appendContent( new OOUI\FieldsetLayout( [
 				'label' => 'FieldLayout with notice and error message',
 				'notices' => [ 'Please input a number.' ],
 				'errors' => [ 'The value must be a number.' ],
+				'align' => 'top'
+			]
+		),
+		new OOUI\FieldLayout(
+			new OOUI\ProgressBarWidget( [
+				'progress' => 33
+			] ),
+			[
+				'label' => 'Progress bar',
+				'align' => 'top'
+			]
+		),
+		new OOUI\FieldLayout(
+			new OOUI\ProgressBarWidget( [
+				'progress' => false
+			] ),
+			[
+				'label' => 'Progress bar (indeterminate)',
 				'align' => 'top'
 			]
 		),

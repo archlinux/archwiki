@@ -20,6 +20,7 @@
  * @file
  * @ingroup Media
  */
+use Wikimedia\ScopedCallback;
 
 /**
  * Handler for SVG images.
@@ -301,13 +302,13 @@ class SvgHandler extends ImageHandler {
 	}
 
 	/**
-	 * @param File $file
+	 * @param File|FSFile $file
 	 * @param string $path Unused
 	 * @param bool|array $metadata
 	 * @return array
 	 */
 	function getImageSize( $file, $path, $metadata = false ) {
-		if ( $metadata === false ) {
+		if ( $metadata === false && $file instanceof File ) {
 			$metadata = $file->getMetadata();
 		}
 		$metadata = $this->unpackMetadata( $metadata );
@@ -355,7 +356,7 @@ class SvgHandler extends ImageHandler {
 	}
 
 	/**
-	 * @param File $file
+	 * @param File|FSFile $file
 	 * @param string $filename
 	 * @return string Serialised metadata
 	 */

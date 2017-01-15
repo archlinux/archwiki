@@ -1,21 +1,47 @@
 <?php
+
 namespace Elastica\Test;
 
-use Elastica\Aggregation;
 use Elastica\Document;
 use Elastica\Exception\ResponseException;
+use Elastica\Filter\Exists;
 use Elastica\Index;
 use Elastica\Query;
 use Elastica\Query\FunctionScore;
 use Elastica\Query\MatchAll;
 use Elastica\Query\QueryString;
-use Elastica\Script;
+use Elastica\Script\Script;
 use Elastica\Search;
 use Elastica\Test\Base as BaseTest;
 use Elastica\Type;
 
 class SearchTest extends BaseTest
 {
+    /**
+     * @group unit
+     */
+    public function testSetQueryWithLegacyFilterDeprecated()
+    {
+        $this->hideDeprecated();
+        $existsFilter = new Exists('test');
+        $this->showDeprecated();
+
+        $client = $this->_getClient();
+        $search = new Search($client);
+
+        $errorsCollector = $this->startCollectErrors();
+        $search->setQuery($existsFilter);
+        $this->finishCollectErrors();
+
+        $errorsCollector->assertOnlyDeprecatedErrors(
+            array(
+                'Deprecated: Elastica\Search::setQuery() passing AbstractFilter is deprecated. Create query and use setPostFilter with AbstractQuery instead.',
+                'Deprecated: Elastica\Query::create() passing filter is deprecated. Create query and use setPostFilter with AbstractQuery instead.',
+                'Deprecated: Elastica\Query::setPostFilter() passing filter as AbstractFilter is deprecated. Pass instance of AbstractQuery instead.',
+            )
+        );
+    }
+
     /**
      * @group unit
      */
@@ -579,69 +605,10 @@ class SearchTest extends BaseTest
         } catch (ResponseException $e) {
             $exception = $e;
         }
-        $this->assertEquals('IndexMissingException', $exception->getElasticsearchException()->getExceptionName());
+        $error = $exception->getResponse()->getFullError();
+        $this->assertEquals('index_not_found_exception', $error['type']);
 
         $results = $search->search($query, array(Search::OPTION_SEARCH_IGNORE_UNAVAILABLE => true));
         $this->assertInstanceOf('\Elastica\ResultSet', $results);
-    }
-
-    /**
-     * @group functional
-     */
-    public function testQueryCacheOption()
-    {
-        $client = $this->_getClient();
-
-        $index = $client->getIndex('zero');
-        $index->create(array('index' => array('number_of_shards' => 1, 'number_of_replicas' => 0)), true);
-        $type = $index->getType('zeroType');
-        $type->addDocuments(array(
-            new Document(1, array('id' => 1, 'username' => 'farrelley')),
-            new Document(2, array('id' => 2, 'username' => 'bunny')),
-        ));
-        $index->refresh();
-
-        $aggregation = new Aggregation\Terms('username');
-        $aggregation->setField('username');
-
-        $query = new Query();
-        $query->addAggregation($aggregation);
-
-        $search = new Search($client);
-        $search->addIndex($index);
-        $search->setQuery($query);
-        $search->setOption(Search::OPTION_SEARCH_TYPE, Search::OPTION_SEARCH_TYPE_COUNT);
-        $search->setOption(Search::OPTION_QUERY_CACHE, true);
-
-        // before search query cache should be empty
-        $statsData = $index->getStats()->getData();
-        $queryCache = $statsData['_all']['primaries']['query_cache'];
-
-        $this->assertEquals(0, $queryCache['memory_size_in_bytes']);
-        $this->assertEquals(0, $queryCache['evictions']);
-        $this->assertEquals(0, $queryCache['hit_count']);
-        $this->assertEquals(0, $queryCache['miss_count']);
-
-        // first search should result in cache miss and save data to cache
-        $search->search();
-        $index->getStats()->refresh();
-        $statsData = $index->getStats()->getData();
-        $queryCache = $statsData['_all']['primaries']['query_cache'];
-
-        $this->assertNotEquals(0, $queryCache['memory_size_in_bytes']);
-        $this->assertEquals(0, $queryCache['evictions']);
-        $this->assertEquals(0, $queryCache['hit_count']);
-        $this->assertEquals(1, $queryCache['miss_count']);
-
-        // next search should result in cache hit
-        $search->search();
-        $index->getStats()->refresh();
-        $statsData = $index->getStats()->getData();
-        $queryCache = $statsData['_all']['primaries']['query_cache'];
-
-        $this->assertNotEquals(0, $queryCache['memory_size_in_bytes']);
-        $this->assertEquals(0, $queryCache['evictions']);
-        $this->assertEquals(1, $queryCache['hit_count']);
-        $this->assertEquals(1, $queryCache['miss_count']);
     }
 }

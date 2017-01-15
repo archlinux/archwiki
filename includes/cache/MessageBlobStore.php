@@ -165,7 +165,7 @@ class MessageBlobStore implements LoggerAwareInterface {
 		$cache->set( $cacheKey, $blob,
 			// Add part of a day to TTL to avoid all modules expiring at once
 			$cache::TTL_WEEK + mt_rand( 0, $cache::TTL_DAY ),
-			Database::getCacheSetOptions( wfGetDB( DB_SLAVE ) )
+			Database::getCacheSetOptions( wfGetDB( DB_REPLICA ) )
 		);
 		return $blob;
 	}
@@ -179,7 +179,7 @@ class MessageBlobStore implements LoggerAwareInterface {
 	public function updateMessage( $key ) {
 		$moduleNames = $this->getResourceLoader()->getModulesByMessage( $key );
 		foreach ( $moduleNames as $moduleName ) {
-			// Uses a holdoff to account for database slave lag (for MessageCache)
+			// Uses a holdoff to account for database replica DB lag (for MessageCache)
 			$this->wanCache->touchCheckKey( $this->wanCache->makeKey( __CLASS__, $moduleName ) );
 		}
 	}

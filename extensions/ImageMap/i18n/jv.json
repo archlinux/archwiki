@@ -2,12 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Meursault2004",
-			"Pras"
+			"Pras",
+			"NoiX180"
 		]
 	},
 	"imagemap_desc": "Nyedyakaké péta gambar sing bisa diklik saka klièn mawa nganggo tag <code>&lt;imagemap&gt;</code>",
 	"imagemap_no_image": "Error: kudu mènèhi sawijining gambar ing baris kapisan",
-	"imagemap_invalid_image": "Error: gambar ora absah utawa ora ditemokaké",
+	"imagemap_invalid_image": "Cacad: Gambar ora sah utawa ora ana.",
 	"imagemap_bad_image": "Kasalahan: berkas ora diidinaké ing kaca iki",
 	"imagemap_no_link": "Kasalahan: ora ditemokaké pranala sing absah ing pungkasan baris kaping $1",
 	"imagemap_invalid_title": "Error: irah-irahan ora absah ing pranala ing baris kaping $1",

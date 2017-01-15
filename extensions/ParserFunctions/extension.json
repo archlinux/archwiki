@@ -31,9 +31,6 @@
 		"ParserFirstCallInit": [
 			"ParserFunctionsHooks::onParserFirstCallInit"
 		],
-		"UnitTestsList": [
-			"ParserFunctionsHooks::onUnitTestsList"
-		],
 		"ScribuntoExternalLibraries": [
 			"ParserFunctionsHooks::onScribuntoExternalLibraries"
 		]

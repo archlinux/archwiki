@@ -30,7 +30,6 @@ class SearchInputWidget extends TitleInputWidget {
 	 */
 	public function __construct( array $config = [] ) {
 		$config = array_merge( [
-			'infusable' => true,
 			'maxLength' => null,
 			'type' => 'search',
 			'icon' => 'search',
@@ -48,7 +47,7 @@ class SearchInputWidget extends TitleInputWidget {
 			$this->performSearchOnClick = $config['performSearchOnClick'];
 		}
 
-		if ( $config['dataLocation'] ) {
+		if ( isset( $config['dataLocation'] ) ) {
 			// identifies the location of the search bar for tracking purposes
 			$this->dataLocation = $config['dataLocation'];
 		}

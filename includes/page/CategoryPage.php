@@ -43,18 +43,6 @@ class CategoryPage extends Article {
 		return new WikiCategoryPage( $title );
 	}
 
-	/**
-	 * Constructor from a page id
-	 * @param int $id Article ID to load
-	 * @return CategoryPage|null
-	 */
-	public static function newFromID( $id ) {
-		$t = Title::newFromID( $id );
-		# @todo FIXME: Doesn't inherit right
-		return $t == null ? null : new self( $t );
-		# return $t == null ? null : new static( $t ); // PHP 5.3
-	}
-
 	function view() {
 		$request = $this->getContext()->getRequest();
 		$diff = $request->getVal( 'diff' );
@@ -71,15 +59,19 @@ class CategoryPage extends Article {
 		}
 
 		$title = $this->getTitle();
-		if ( NS_CATEGORY == $title->getNamespace() ) {
+		if ( $title->inNamespace( NS_CATEGORY ) ) {
 			$this->openShowCategory();
 		}
 
 		parent::view();
 
-		if ( NS_CATEGORY == $title->getNamespace() ) {
+		if ( $title->inNamespace( NS_CATEGORY ) ) {
 			$this->closeShowCategory();
 		}
+
+		# Use adaptive TTLs for CDN so delayed/failed purges are noticed less often
+		$outputPage = $this->getContext()->getOutput();
+		$outputPage->adaptCdnTTL( $this->mPage->getTouched(), IExpiringStore::TTL_MINUTE );
 	}
 
 	function openShowCategory() {

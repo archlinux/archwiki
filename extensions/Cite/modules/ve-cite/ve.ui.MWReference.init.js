@@ -1,5 +1,5 @@
 ( function () {
-	var i, j, jLen, toolGroups, linkIndex, target, label, group;
+	var i, j, jLen, toolGroup, toolGroups, linkIndex, target, label, group;
 
 	// HACK: Find the position of the current citation toolbar definition
 	// and manipulate it.
@@ -12,6 +12,18 @@
 		}
 		toolGroups = target.static.toolbarGroups;
 		linkIndex = toolGroups.length;
+
+		if ( mw.config.get( 'wgCiteVisualEditorOtherGroup' ) ) {
+			for ( j = 0; j < linkIndex; j++ ) {
+				toolGroup = toolGroups[ j ];
+				if ( toolGroup.include === '*' && ( !toolGroup.demote || toolGroup.demote.indexOf( 'reference' ) === -1 ) ) {
+					toolGroup.demote = toolGroup.demote || [];
+					toolGroup.demote.push( { group: 'cite' }, 'reference', 'reference/existing' );
+				}
+			}
+			continue;
+		}
+
 		for ( j = 0, jLen = toolGroups.length; j < jLen; j++ ) {
 			if ( ve.getProp( toolGroups[ j ], 'include', 0, 'group' ) === 'cite' ) {
 				// Skip if the cite group exists already
@@ -75,8 +87,14 @@
 
 		try {
 			// Must use mw.message to avoid JSON being parsed as Wikitext
-			tools = JSON.parse( mw.message( 'visualeditor-cite-tool-definition.json' ).plain() );
+			tools = JSON.parse( mw.message( 'cite-tool-definition.json' ).plain() );
 		} catch ( e ) {}
+		if ( !tools ) {
+			try {
+				// Must use mw.message to avoid JSON being parsed as Wikitext
+				tools = JSON.parse( mw.message( 'visualeditor-cite-tool-definition.json' ).plain() );
+			} catch ( e ) {}
+		}
 
 		if ( Array.isArray( tools ) ) {
 			for ( i = 0, len = Math.min( limit, tools.length ); i < len; i++ ) {
@@ -93,7 +111,11 @@
 					tool.static.group = 'cite';
 					tool.static.name = name;
 					tool.static.icon = item.icon;
-					tool.static.title = item.title;
+					if ( mw.config.get( 'wgCiteVisualEditorOtherGroup' ) ) {
+						tool.static.title = mw.msg( 'cite-ve-othergroup-item', item.title );
+					} else {
+						tool.static.title = item.title;
+					}
 					tool.static.commandName = name;
 					tool.static.template = item.template;
 					tool.static.autoAddToCatchall = false;

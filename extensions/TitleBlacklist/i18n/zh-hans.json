@@ -25,6 +25,7 @@
 	"titleblacklist-forbidden-new-account": "用户名“$2”已被禁止创建。\n其与以下黑名单项匹配：<code>$1</code>",
 	"titleblacklist-invalid": "标题黑名单中以下{{PLURAL:$1|一行|多行}}无效；请在保存前改正{{PLURAL:$1|它|它们}}：",
 	"titleblacklist-override": "忽略黑名单",
+	"titleblacklist-override-help": "有足够特权的用户可以将其设置为忽略标题黑名单检查。",
 	"titleblacklist-warning": "<strong>警告：此页面只能由管理员和其他拥有<code>tboverride</code>权限的用户编辑，因为它匹配以下标题黑名单：</strong><br /><code>$1</code>",
 	"right-tboverride": "覆盖标题或用户名黑名单",
 	"right-tboverride-account": "覆盖用户名黑名单",

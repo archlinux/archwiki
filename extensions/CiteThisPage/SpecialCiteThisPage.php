@@ -1,64 +1,60 @@
 <?php
 
-class SpecialCiteThisPage extends SpecialPage {
+class SpecialCiteThisPage extends FormSpecialPage {
+
+	/**
+	 * @var Parser
+	 */
+	private $citationParser;
+
+	/**
+	 * @var Title|bool
+	 */
+	protected $title = false;
+
 	public function __construct() {
 		parent::__construct( 'CiteThisPage' );
 	}
 
+	/**
+	 * @param $par string
+	 */
 	public function execute( $par ) {
-		global $wgUseTidy;
-
-		// Having tidy on causes whitespace and <pre> tags to
-		// be generated around the output of the CiteThisPageOutput
-		// class TODO FIXME.
-		$wgUseTidy = false;
-
 		$this->setHeaders();
-		$this->outputHeader();
-
-		$page = $par !== null ? $par : $this->getRequest()->getText( 'page' );
-		$title = Title::newFromText( $page );
-
-		$this->showForm( $title );
-
-		if ( $title && $title->exists() ) {
+		parent::execute( $par );
+		if ( $this->title instanceof Title ) {
 			$id = $this->getRequest()->getInt( 'id' );
-			$cout = new CiteThisPageOutput( $title, $id );
-			$cout->execute();
+			$this->showCitations( $this->title, $id );
 		}
 	}
 
-	private function showForm( Title $title = null ) {
-		$this->getOutput()->addHTML(
-			Xml::openElement( 'form',
-				array(
-					'id' => 'specialCiteThisPage',
-					'method' => 'get',
-					'action' => wfScript(),
-				) ) .
-			Html::hidden( 'title', SpecialPage::getTitleFor( 'CiteThisPage' )->getPrefixedDBkey() ) .
-			Xml::openElement( 'label' ) .
-			$this->msg( 'citethispage-change-target' )->escaped() . ' ' .
-			Xml::element( 'input',
-				array(
-					'type' => 'text',
-					'size' => 30,
-					'name' => 'page',
-					'value' => $title ? $title->getPrefixedText() : ''
-				),
-				''
-			) .
-			' ' .
-			Xml::element( 'input',
-				array(
-					'type' => 'submit',
-					'value' => $this->msg( 'citethispage-change-submit' )->escaped()
-				),
-				''
-			) .
-			Xml::closeElement( 'label' ) .
-			Xml::closeElement( 'form' )
-		);
+	protected function alterForm( HTMLForm $form ) {
+		$form->setMethod( 'get' );
+	}
+
+	protected function getFormFields() {
+		if ( isset( $this->par ) ) {
+			$default = $this->par;
+		} else {
+			$default = '';
+		}
+		return [
+			'page' => [
+				'name' => 'page',
+				'type' => 'title',
+				'default' => $default,
+				'label-message' => 'citethispage-change-target'
+			]
+		];
+	}
+
+	public function onSubmit( array $data ) {
+		// GET forms are "submitted" on every view, so check
+		// that some data was put in for page, as empty string
+		// will pass validation
+		if ( strlen( $data['page'] ) ) {
+			$this->title = Title::newFromText( $data['page'] );
+		}
 	}
 
 	/**
@@ -73,65 +69,73 @@ class SpecialCiteThisPage extends SpecialPage {
 		$title = Title::newFromText( $search );
 		if ( !$title || !$title->canExist() ) {
 			// No prefix suggestion in special and media namespace
-			return array();
+			return [];
 		}
 		// Autocomplete subpage the same as a normal search
 		$prefixSearcher = new StringPrefixSearch;
-		$result = $prefixSearcher->search( $search, $limit, array(), $offset );
+		$result = $prefixSearcher->search( $search, $limit, [], $offset );
 		return $result;
 	}
 
 	protected function getGroupName() {
 		return 'pagetools';
 	}
-}
 
-class CiteThisPageOutput {
-	/**
-	 * @var Title
-	 */
-	public $mTitle;
+	private function showCitations( Title $title, $revId ) {
+		if ( !$revId ) {
+			$revId = $title->getLatestRevID();
+		}
 
-	/**
-	 * @var Article
-	 */
-	public $mArticle;
+		$out = $this->getOutput();
 
-	public $mId;
+		$revision = Revision::newFromTitle( $title, $revId );
+		if ( !$revision ) {
+			$out->wrapWikiMsg( '<div class="errorbox">$1</div>',
+				[ 'citethispage-badrevision', $title->getPrefixedText(), $revId ] );
+			return;
+		}
 
-	/**
-	 * @var Parser
-	 */
-	public $mParser;
+		$parserOptions = $this->getParserOptions();
+		// Set the overall timestamp to the revision's timestamp
+		$parserOptions->setTimestamp( $revision->getTimestamp() );
 
-	/**
-	 * @var ParserOptions
-	 */
-	public $mParserOptions;
+		$parser = $this->getParser();
+		// Register our <citation> tag which just parses using a different
+		// context
+		$parser->setHook( 'citation', [ $this, 'citationTag' ] );
+		// Also hold on to a separate Parser instance for <citation> tag parsing
+		// since we can't parse in a parse using the same Parser
+		$this->citationParser = $this->getParser();
 
-	public $mSpTitle;
+		$ret = $parser->parse(
+			$this->getContentText(),
+			$title,
+			$parserOptions,
+			/* $linestart = */ false,
+			/* $clearstate = */ true,
+			$revId
+		);
 
-	function __construct( $title, $id ) {
-		global $wgHooks, $wgParser;
+		$this->getOutput()->addModuleStyles( 'ext.citeThisPage' );
+		$this->getOutput()->addParserOutputContent( $ret );
 
-		$this->mTitle = $title;
-		$this->mArticle = new Article( $title );
-		$this->mId = $id;
-
-		$wgHooks['ParserGetVariableValueVarCache'][] = array( $this, 'varCache' );
-
-		$this->genParserOptions();
-		$this->genParser();
-
-		$wgParser->setHook( 'citation', array( $this, 'citationTagParse' ) );
 	}
 
-	function execute() {
-		global $wgOut, $wgParser, $wgHooks;
+	/**
+	 * @return Parser
+	 */
+	private function getParser() {
+		$parserConf = $this->getConfig()->get( 'ParserConf' );
+		return new $parserConf['class']( $parserConf );
+	}
 
-		$wgHooks['ParserGetVariableValueTs'][] = array( $this, 'timestamp' );
-
-		$msg = wfMessage( 'citethispage-content' )->inContentLanguage()->plain();
+	/**
+	 * Get the content to parse
+	 *
+	 * @return string
+	 */
+	private function getContentText() {
+		$msg = $this->msg( 'citethispage-content' )->inContentLanguage()->plain();
 		if ( $msg == '' ) {
 			# With MediaWiki 1.20 the plain text files were deleted
 			# and the text moved into SpecialCite.i18n.php
@@ -142,58 +146,65 @@ class CiteThisPageOutput {
 			$code = $wgContLang->lc( $wgContLanguageCode );
 			if ( file_exists( "${dir}citethispage-content-$code" ) ) {
 				$msg = file_get_contents( "${dir}citethispage-content-$code" );
-			} elseif( file_exists( "${dir}citethispage-content" ) ){
+			} elseif ( file_exists( "${dir}citethispage-content" ) ){
 				$msg = file_get_contents( "${dir}citethispage-content" );
 			}
 		}
-		$ret = $wgParser->parse(
-			$msg, $this->mTitle, $this->mParserOptions, false, true, $this->getRevId()
+
+		return $msg;
+	}
+
+	/**
+	 * Get the common ParserOptions for both parses
+	 *
+	 * @return ParserOptions
+	 */
+	private function getParserOptions() {
+		$parserOptions = ParserOptions::newFromUser( $this->getUser() );
+		$parserOptions->setDateFormat( 'default' );
+		$parserOptions->setEditSection( false );
+
+		// Having tidy on causes whitespace and <pre> tags to
+		// be generated around the output of the CiteThisPageOutput
+		// class TODO FIXME.
+		$parserOptions->setTidy( false );
+
+		return $parserOptions;
+	}
+
+	/**
+	 * Implements the <citation> tag.
+	 *
+	 * This is a hack to allow content that is typically parsed
+	 * using the page's timestamp/pagetitle to use the current
+	 * request's time and title
+	 *
+	 * @param string $text
+	 * @param array $params
+	 * @param Parser $parser
+	 * @return string
+	 */
+	public function citationTag( $text, $params, Parser $parser ) {
+		$ret = $this->citationParser->parse(
+			$text,
+			$this->getPageTitle(),
+			$this->getParserOptions(),
+			/* $linestart = */ false
 		);
-		$wgOut->addModuleStyles( 'ext.citeThisPage' );
-
-		# Introduced in 1.24
-		if ( method_exists( $wgOut, 'addParserOutputContent' ) ) {
-			$wgOut->addParserOutputContent( $ret );
-		} else {
-			$wgOut->addHTML( $ret->getText() );
-		}
-	}
-
-	function genParserOptions() {
-		global $wgUser;
-		$this->mParserOptions = ParserOptions::newFromUser( $wgUser );
-		$this->mParserOptions->setDateFormat( 'default' );
-		$this->mParserOptions->setEditSection( false );
-	}
-
-	function genParser() {
-		$this->mParser = new Parser;
-		$this->mSpTitle = SpecialPage::getTitleFor( 'CiteThisPage' );
-	}
-
-	function citationTagParse( $in, $argv ) {
-		$ret = $this->mParser->parse( $in, $this->mSpTitle, $this->mParserOptions, false );
 
 		return $ret->getText();
+
 	}
 
-	function varCache() {
+	protected function getDisplayFormat() {
+		return 'ooui';
+	}
+
+	public function requiresUnblock() {
 		return false;
 	}
 
-	function timestamp( &$parser, &$ts ) {
-		if ( isset( $parser->mTagHooks['citation'] ) ) {
-			$ts = wfTimestamp( TS_UNIX, $this->mArticle->getTimestamp() );
-		}
-
-		return true;
-	}
-
-	function getRevId() {
-		if ( $this->mId ) {
-			return $this->mId;
-		} else {
-			return $this->mTitle->getLatestRevID();
-		}
+	public function requiresWrite() {
+		return false;
 	}
 }

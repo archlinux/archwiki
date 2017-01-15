@@ -9,10 +9,12 @@
 			"Macofe"
 		]
 	},
+	"visualeditor-cite-tool-definition.json": "nulu",
 	"visualeditor-cite-tool-name-book": "Liburua",
 	"visualeditor-cite-tool-name-journal": "Aldizkaria",
 	"visualeditor-cite-tool-name-news": "Albisteak",
 	"visualeditor-cite-tool-name-web": "Webgunea",
+	"cite-tool-definition.json": "nulu",
 	"cite-ve-dialog-reference-editing-reused": "Erreferentzia hau $1{{PLURAL:$1|aldiz}} agertzen da orri honetan",
 	"cite-ve-dialog-reference-options-group-label": "Talde hau erabili",
 	"cite-ve-dialog-reference-options-group-placeholder": "Erreferentzia orokorrak",
@@ -25,6 +27,8 @@
 	"cite-ve-dialog-referenceslist-contextitem-description-general": "Erreferentzia orokorren zerrenda",
 	"cite-ve-dialog-referenceslist-contextitem-description-named": "Erreferentzia zerrenda \"$1\" talderako",
 	"cite-ve-dialog-referenceslist-title": "Erreferentzia-zerrenda",
+	"cite-ve-dialogbutton-citation-educationpopup-text": "Hobe zure edukia informazioa iturriak gehituz. Liburuetatik, egunkarietatik eta webguneetatik aipatu ditzakezu.",
+	"cite-ve-dialogbutton-citation-educationpopup-title": "Erreferentziak",
 	"cite-ve-dialogbutton-reference-full-label": "Oinarrizko forma",
 	"cite-ve-dialogbutton-reference-title": "Erreferentzia",
 	"cite-ve-dialogbutton-reference-tooltip": "Oinarrizkoa",
@@ -33,5 +37,6 @@
 	"cite-ve-referenceslist-isempty": "Ez dago «$1» taldearekiko erreferentziarik orri honetan.",
 	"cite-ve-referenceslist-isempty-default": "Orri honetan ez dago zerrendan sartzeko erreferentziarik.",
 	"cite-ve-referenceslist-missingref": "Erreferentzia hau txantiloi batean edo sortutako beste bloke mota batean dago zehaztuta, eta oraingoz iturburu kodeko moduan baizik ezin da editatu.",
-	"cite-ve-toolbar-group-label": "Aipatu"
+	"cite-ve-toolbar-group-label": "Aipatu",
+	"cite-ve-othergroup-item": "$1 erreferentzia"
 }

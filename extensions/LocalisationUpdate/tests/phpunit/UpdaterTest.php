@@ -24,13 +24,13 @@ class UpdaterTest extends \PHPUnit_Framework_TestCase {
 
 	public function testExpandRemotePath() {
 		$updater = new Updater();
-		$repos = array( 'main' => 'file:///repos/%NAME%/%SOME-VAR%' );
+		$repos = [ 'main' => 'file:///repos/%NAME%/%SOME-VAR%' ];
 
-		$info = array(
+		$info = [
 			'repo' => 'main',
 			'name' => 'product',
 			'some-var' => 'file',
-		);
+		];
 		$this->assertEquals(
 			'file:///repos/product/file',
 			$updater->expandRemotePath( $info, $repos ),
@@ -41,8 +41,8 @@ class UpdaterTest extends \PHPUnit_Framework_TestCase {
 	public function testReadMessages() {
 		$updater = $updater = new Updater();
 
-		$input = array( 'file' => 'Hello World!' );
-		$output = array( 'en' => array( 'key' => $input['file'] ) );
+		$input = [ 'file' => 'Hello World!' ];
+		$output = [ 'en' => [ 'key' => $input['file'] ] ];
 
 		$reader = $this->getMock( 'LocalisationUpdate\Reader' );
 		$reader
@@ -63,19 +63,19 @@ class UpdaterTest extends \PHPUnit_Framework_TestCase {
 	public function testFindChangedTranslations() {
 		$updater = $updater = new Updater();
 
-		$origin = array(
+		$origin = [
 			'A' => '1',
 			'C' => '3',
 			'D' => '4',
-		);
-		$remote = array(
+		];
+		$remote = [
 			'A' => '1', // No change key
 			'B' => '2', // New key
 			'C' => '33', // Changed key
 			'D' => '44', // Blacklisted key
-		);
-		$blacklist = array( 'D' => 0 );
-		$expected = array( 'B' => '2', 'C' => '33' );
+		];
+		$blacklist = [ 'D' => 0 ];
+		$expected = [ 'B' => '2', 'C' => '33' ];
 		$observed = $updater->findChangedTranslations( $origin, $remote, $blacklist );
 		$this->assertEquals( $expected, $observed, 'Changed and new keys returned' );
 	}

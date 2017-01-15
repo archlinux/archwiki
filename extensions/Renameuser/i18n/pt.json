@@ -35,7 +35,7 @@
 	"renameuser-page-moved": "A página $1 foi movida para $2.",
 	"renameuser-page-unmoved": "Não foi possível mover a página $1 para $2.",
 	"log-name-renameuser": "Registo de alteração do nome de utilizadores",
-	"log-description-renameuser": "Este é um registro de alterações efetuadas a nomes de utilizadores.",
+	"log-description-renameuser": "Este é um registo de alterações efetuadas a nomes de utilizadores.",
 	"logentry-renameuser-renameuser": "$1 renomeou {{GENDER:$2|o utilizador|a utilizadora|o(a) utilizador(a)}} $4 (com {{PLURAL:$6|$6 edição|$6 edições}}) para {{GENDER:$7|$5}}",
 	"logentry-renameuser-renameuser-legacier": "$1 renomeou $4 para {{GENDER:$7|$5}}",
 	"renameuser-move-log": "Página movida automaticamente ao alterar o nome {{GENDER:$2|do utilizador|da utilizadora|do(a) utilizador(a)}} \"[[User:$1|$1]]\" para \"[[User:$2|$2]]\"",

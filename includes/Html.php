@@ -46,13 +46,12 @@
  * @since 1.16
  */
 class Html {
-	// List of void elements from HTML5, section 8.1.2 as of 2011-08-12
+	// List of void elements from HTML5, section 8.1.2 as of 2016-09-19
 	private static $voidElements = [
 		'area',
 		'base',
 		'br',
 		'col',
-		'command',
 		'embed',
 		'hr',
 		'img',
@@ -156,8 +155,8 @@ class Html {
 	 *
 	 * @param string $contents The raw HTML contents of the element: *not*
 	 *   escaped!
-	 * @param array $attrs Associative array of attributes, e.g., array(
-	 *   'href' => 'http://www.mediawiki.org/' ). See expandAttributes() for
+	 * @param array $attrs Associative array of attributes, e.g., [
+	 *   'href' => 'http://www.mediawiki.org/' ]. See expandAttributes() for
 	 *   further documentation.
 	 * @param string[] $modifiers classes to add to the button
 	 * @see http://tools.wmflabs.org/styleguide/desktop/index.html for guidance on available modifiers
@@ -176,8 +175,8 @@ class Html {
 	 *
 	 * @param string $contents The raw HTML contents of the element: *not*
 	 *   escaped!
-	 * @param array $attrs Associative array of attributes, e.g., array(
-	 *   'href' => 'http://www.mediawiki.org/' ). See expandAttributes() for
+	 * @param array $attrs Associative array of attributes, e.g., [
+	 *   'href' => 'http://www.mediawiki.org/' ]. See expandAttributes() for
 	 *   further documentation.
 	 * @param string[] $modifiers classes to add to the button
 	 * @see http://tools.wmflabs.org/styleguide/desktop/index.html for guidance on available modifiers
@@ -200,8 +199,8 @@ class Html {
 	 * content model.
 	 *
 	 * @param string $element The element's name, e.g., 'a'
-	 * @param array $attribs Associative array of attributes, e.g., array(
-	 *   'href' => 'http://www.mediawiki.org/' ). See expandAttributes() for
+	 * @param array $attribs Associative array of attributes, e.g., [
+	 *   'href' => 'http://www.mediawiki.org/' ]. See expandAttributes() for
 	 *   further documentation.
 	 * @param string $contents The raw HTML contents of the element: *not*
 	 *   escaped!
@@ -321,8 +320,8 @@ class Html {
 	 * to the input array (currently per the HTML 5 draft as of 2009-09-06).
 	 *
 	 * @param string $element Name of the element, e.g., 'a'
-	 * @param array $attribs Associative array of attributes, e.g., array(
-	 *   'href' => 'http://www.mediawiki.org/' ).  See expandAttributes() for
+	 * @param array $attribs Associative array of attributes, e.g., [
+	 *   'href' => 'http://www.mediawiki.org/' ].  See expandAttributes() for
 	 *   further documentation.
 	 * @return array An array of attributes functionally identical to $attribs
 	 */
@@ -339,7 +338,6 @@ class Html {
 				'height' => '150',
 				'width' => '300',
 			],
-			'command' => [ 'type' => 'command' ],
 			'form' => [
 				'action' => 'GET',
 				'autocomplete' => 'on',
@@ -432,8 +430,8 @@ class Html {
 
 	/**
 	 * Given an associative array of element attributes, generate a string
-	 * to stick after the element name in HTML output.  Like array( 'href' =>
-	 * 'http://www.mediawiki.org/' ) becomes something like
+	 * to stick after the element name in HTML output.  Like [ 'href' =>
+	 * 'http://www.mediawiki.org/' ] becomes something like
 	 * ' href="http://www.mediawiki.org"'.  Again, this is like
 	 * Xml::expandAttributes(), but it implements some HTML-specific logic.
 	 *
@@ -445,25 +443,25 @@ class Html {
 	 *
 	 * @par Numerical array
 	 * @code
-	 *     Html::element( 'em', array(
-	 *         'class' => array( 'foo', 'bar' )
-	 *     ) );
+	 *     Html::element( 'em', [
+	 *         'class' => [ 'foo', 'bar' ]
+	 *     ] );
 	 *     // gives '<em class="foo bar"></em>'
 	 * @endcode
 	 *
 	 * @par Associative array
 	 * @code
-	 *     Html::element( 'em', array(
-	 *         'class' => array( 'foo', 'bar', 'foo' => false, 'quux' => true )
-	 *     ) );
+	 *     Html::element( 'em', [
+	 *         'class' => [ 'foo', 'bar', 'foo' => false, 'quux' => true ]
+	 *     ] );
 	 *     // gives '<em class="bar quux"></em>'
 	 * @endcode
 	 *
-	 * @param array $attribs Associative array of attributes, e.g., array(
-	 *   'href' => 'http://www.mediawiki.org/' ).  Values will be HTML-escaped.
+	 * @param array $attribs Associative array of attributes, e.g., [
+	 *   'href' => 'http://www.mediawiki.org/' ].  Values will be HTML-escaped.
 	 *   A value of false means to omit the attribute.  For boolean attributes,
-	 *   you can omit the key, e.g., array( 'checked' ) instead of
-	 *   array( 'checked' => 'checked' ) or such.
+	 *   you can omit the key, e.g., [ 'checked' ] instead of
+	 *   [ 'checked' => 'checked' ] or such.
 	 *
 	 * @throws MWException If an attribute that doesn't allow lists is set to an array
 	 * @return string HTML fragment that goes between element name and '>'
@@ -472,13 +470,13 @@ class Html {
 	public static function expandAttributes( array $attribs ) {
 		$ret = '';
 		foreach ( $attribs as $key => $value ) {
-			// Support intuitive array( 'checked' => true/false ) form
+			// Support intuitive [ 'checked' => true/false ] form
 			if ( $value === false || is_null( $value ) ) {
 				continue;
 			}
 
-			// For boolean attributes, support array( 'foo' ) instead of
-			// requiring array( 'foo' => 'meaningless' ).
+			// For boolean attributes, support [ 'foo' ] instead of
+			// requiring [ 'foo' => 'meaningless' ].
 			if ( is_int( $key ) && in_array( strtolower( $value ), self::$boolAttribs ) ) {
 				$key = $value;
 			}
@@ -535,7 +533,7 @@ class Html {
 							}
 						} elseif ( $v ) {
 							// If the value is truthy but not a string this is likely
-							// an array( 'foo' => true ), falsy values don't add strings
+							// an [ 'foo' => true ], falsy values don't add strings
 							$newValue[] = $k;
 						}
 					}
@@ -619,7 +617,8 @@ class Html {
 
 	/**
 	 * Output a "<style>" tag with the given contents for the given media type
-	 * (if any).
+	 * (if any).  TODO: do some useful escaping as well, like if $contents
+	 * contains literal "</style>" (admittedly unlikely).
 	 *
 	 * @param string $contents CSS
 	 * @param string $media A media type string, like 'screen'
@@ -945,13 +944,7 @@ class Html {
 			$attribs['version'] = $wgHtml5Version;
 		}
 
-		$html = self::openElement( 'html', $attribs );
-
-		if ( $html ) {
-			$html .= "\n";
-		}
-
-		$ret .= $html;
+		$ret .= self::openElement( 'html', $attribs );
 
 		return $ret;
 	}
@@ -1016,11 +1009,11 @@ class Html {
 	 *
 	 * @par Example:
 	 * @code
-	 *     Html::srcSet( array(
+	 *     Html::srcSet( [
 	 *         '1x'   => 'standard.jpeg',
 	 *         '1.5x' => 'large.jpeg',
 	 *         '3x'   => 'extra-large.jpeg',
-	 *     ) );
+	 *     ] );
 	 *     // gives 'standard.jpeg 1x, large.jpeg 1.5x, extra-large.jpeg 2x'
 	 * @endcode
 	 *
@@ -1030,9 +1023,21 @@ class Html {
 	static function srcSet( array $urls ) {
 		$candidates = [];
 		foreach ( $urls as $density => $url ) {
-			// Cast density to float to strip 'x'.
-			$candidates[] = $url . ' ' . (float)$density . 'x';
+			// Cast density to float to strip 'x', then back to string to serve
+			// as array index.
+			$density = (string)(float)$density;
+			$candidates[$density] = $url;
 		}
+
+		// Remove duplicates that are the same as a smaller value
+		ksort( $candidates, SORT_NUMERIC );
+		$candidates = array_unique( $candidates );
+
+		// Append density info to the url
+		foreach ( $candidates as $density => $url ) {
+			$candidates[$density] = $url . ' ' . $density . 'x';
+		}
+
 		return implode( ", ", $candidates );
 	}
 }

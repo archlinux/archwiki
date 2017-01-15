@@ -13,6 +13,10 @@ a {
 	background: none;
 }
 
+a:not( [href] ) {
+	cursor: pointer; /* Always cursor:pointer even without href */
+}
+
 a:visited {
 	color: #0b0080;
 }
@@ -34,7 +38,7 @@ a:lang(ur) {
 }
 
 a.stub {
-	color: #772233;
+	color: #723;
 }
 
 a.new, #p-personal a.new {
@@ -97,7 +101,7 @@ h3,
 h4,
 h5,
 h6 {
-	color: black;
+	color: #000;
 	background: none;
 	font-weight: normal;
 	margin: 0;
@@ -195,11 +199,11 @@ pre, code, tt, kbd, samp, .mw-code {
 	 * Some browsers will render the monospace text too small, namely Firefox, Chrome and Safari.
 	 * Specifying any valid, second value will trigger correct behavior without forcing a different font.
 	 */
-	font-family: monospace, Courier;
+	font-family: monospace, 'Courier';
 }
 
 code {
-	color: black;
+	color: #000;
 	background-color: #f9f9f9;
 	border: 1px solid #ddd;
 	border-radius: 2px;
@@ -208,7 +212,7 @@ code {
 
 pre,
 .mw-code {
-	color: black;
+	color: #000;
 	background-color: #f9f9f9;
 	border: 1px solid #ddd;
 	padding: 1em;

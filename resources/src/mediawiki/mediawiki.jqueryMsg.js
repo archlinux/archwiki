@@ -15,6 +15,8 @@
 		slice = Array.prototype.slice,
 		parserDefaults = {
 			magic: {
+				PAGENAME: mw.config.get( 'wgPageName' ),
+				PAGENAMEE: mw.util.wikiUrlencode( mw.config.get( 'wgPageName' ) ),
 				SITENAME: mw.config.get( 'wgSiteName' )
 			},
 			// Whitelist for allowed HTML elements in wikitext.
@@ -142,6 +144,10 @@
 			} catch ( e ) {
 				fallback = parser.settings.messages.get( key );
 				mw.log.warn( 'mediawiki.jqueryMsg: ' + key + ': ' + e.message );
+				mw.track( 'mediawiki.jqueryMsg.error', {
+					messageKey: key,
+					errorMessage: e.message
+				} );
 				return $( '<span>' ).text( fallback );
 			}
 		};
@@ -534,7 +540,7 @@
 				return result === null ? null : result.join( '' );
 			}
 
-			asciiAlphabetLiteral = makeRegexParser( /[A-Za-z]+/ );
+			asciiAlphabetLiteral = makeRegexParser( /^[A-Za-z]+/ );
 			htmlDoubleQuoteAttributeValue = makeRegexParser( /^[^"]*/ );
 			htmlSingleQuoteAttributeValue = makeRegexParser( /^[^']*/ );
 
@@ -775,6 +781,25 @@
 				return result;
 			}
 
+			// <nowiki>...</nowiki> tag. The tags are stripped and the contents are returned unparsed.
+			function nowiki() {
+				var parsedResult, plainText,
+					result = null;
+
+				parsedResult = sequence( [
+					makeStringParser( '<nowiki>' ),
+					// We use a greedy non-backtracking parser, so we must ensure here that we don't take too much
+					makeRegexParser( /^.*?(?=<\/nowiki>)/ ),
+					makeStringParser( '</nowiki>' )
+				] );
+				if ( parsedResult !== null ) {
+					plainText = parsedResult[ 1 ];
+					result = [ 'CONCAT' ].concat( plainText );
+				}
+
+				return result;
+			}
+
 			templateName = transform(
 				// see $wgLegalTitleChars
 				// not allowing : due to the need to catch "PLURAL:$1"
@@ -862,6 +887,7 @@
 				wikilink,
 				extlink,
 				replacement,
+				nowiki,
 				html,
 				literal
 			] );
@@ -1100,11 +1126,18 @@
 			} else {
 				$el = $( '<a>' );
 				if ( typeof arg === 'function' ) {
-					$el.attr( 'href', '#' )
-					.click( function ( e ) {
-						e.preventDefault();
+					$el.attr( {
+						role: 'button',
+						tabindex: 0
 					} )
-					.click( arg );
+					.on( 'click keypress', function ( e ) {
+						if (
+							e.type === 'click' ||
+							e.type === 'keypress' && e.which === 13
+						) {
+							arg.call( this, e );
+						}
+					} );
 				} else {
 					$el.attr( 'href', textify( arg ) );
 				}
@@ -1328,6 +1361,7 @@
 	 *
 	 * This method is only available when jqueryMsg is loaded.
 	 *
+	 * @since 1.27
 	 * @method parseDom
 	 * @member mw.Message
 	 * @return {jQuery}

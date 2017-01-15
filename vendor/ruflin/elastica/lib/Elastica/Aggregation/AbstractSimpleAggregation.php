@@ -1,7 +1,8 @@
 <?php
+
 namespace Elastica\Aggregation;
 
-use Elastica\Script;
+use Elastica\Exception\InvalidException;
 
 abstract class AbstractSimpleAggregation extends AbstractAggregation
 {
@@ -20,7 +21,7 @@ abstract class AbstractSimpleAggregation extends AbstractAggregation
     /**
      * Set a script for this aggregation.
      *
-     * @param string|Script $script
+     * @param string|\Elastica\Script\AbstractScript $script
      *
      * @return $this
      */
@@ -34,6 +35,11 @@ abstract class AbstractSimpleAggregation extends AbstractAggregation
      */
     public function toArray()
     {
+        if (!$this->hasParam('field') && !$this->hasParam('script')) {
+            throw new InvalidException(
+                'Either the field param or the script param should be set'
+            );
+        }
         $array = parent::toArray();
 
         $baseName = $this->_getBaseName();

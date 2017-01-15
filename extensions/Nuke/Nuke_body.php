@@ -11,24 +11,18 @@ class SpecialNuke extends SpecialPage {
 	}
 
 	public function execute( $par ) {
-		if ( !$this->userCanExecute( $this->getUser() ) ) {
-			$this->displayRestrictionError();
-		}
 		$this->setHeaders();
+		$this->checkPermissions();
+		$this->checkReadOnly();
 		$this->outputHeader();
 
-		if ( $this->getUser()->isBlocked() ) {
-			$block = $this->getUser()->getBlock();
+		$currentUser = $this->getUser();
+		if ( $currentUser->isBlocked() ) {
+			$block = $currentUser->getBlock();
 			throw new UserBlockedError( $block );
 		}
 
-		if ( method_exists( $this, 'checkReadOnly' ) ) {
-			// checkReadOnly was introduced only in 1.19
-			$this->checkReadOnly();
-		}
-
 		$req = $this->getRequest();
-
 		$target = trim( $req->getText( 'target', $par ) );
 
 		// Normalise name
@@ -50,7 +44,7 @@ class SpecialNuke extends SpecialPage {
 		$namespace = ctype_digit( $namespace ) ? (int)$namespace : null;
 
 		if ( $req->wasPosted()
-			&& $this->getUser()->matchEditToken( $req->getVal( 'wpEditToken' ) )
+			&& $currentUser->matchEditToken( $req->getVal( 'wpEditToken' ) )
 		) {
 
 			if ( $req->getVal( 'action' ) === 'delete' ) {
@@ -158,8 +152,6 @@ class SpecialNuke extends SpecialPage {
 
 		$nuke = $this->getPageTitle();
 
-		$out->addModules( 'ext.nuke' );
-
 		$out->addHTML(
 			Xml::openElement( 'form', [
 					'action' => $nuke->getLocalURL( 'action=delete' ),
@@ -176,27 +168,32 @@ class SpecialNuke extends SpecialPage {
 		);
 
 		// Select: All, None, Invert
-		$links = [];
-		$links[] = '<a href="#" id="toggleall">' .
-			$this->msg( 'powersearch-toggleall' )->escaped() . '</a>';
-		$links[] = '<a href="#" id="togglenone">' .
-			$this->msg( 'powersearch-togglenone' )->escaped() . '</a>';
-		$links[] = '<a href="#" id="toggleinvert">' .
-			$this->msg( 'nuke-toggleinvert' )->escaped() . '</a>';
-		$out->addHTML(
-			Xml::tags( 'p',
+		// ListToggle was introduced in 1.27, old code kept for B/C
+		if ( class_exists( 'ListToggle' ) ) {
+			$listToggle = new ListToggle( $this->getOutput() );
+			$selectLinks = $listToggle->getHTML();
+		} else {
+			$out->addModules( 'ext.nuke' );
+
+			$links = [];
+			$links[] = '<a href="#" id="toggleall">' .
+				$this->msg( 'powersearch-toggleall' )->escaped() . '</a>';
+			$links[] = '<a href="#" id="togglenone">' .
+				$this->msg( 'powersearch-togglenone' )->escaped() . '</a>';
+			$links[] = '<a href="#" id="toggleinvert">' .
+				$this->msg( 'nuke-toggleinvert' )->escaped() . '</a>';
+
+			$selectLinks = Xml::tags( 'p',
 				null,
 				$this->msg( 'nuke-select' )
 					->rawParams( $this->getLanguage()->commaList( $links ) )->escaped()
-			)
-		);
+			);
+		}
 
-		// Delete button
 		$out->addHTML(
-			Xml::submitButton( $this->msg( 'nuke-submit-delete' )->text() )
+			$selectLinks .
+			'<ul>'
 		);
-
-		$out->addHTML( '<ul>' );
 
 		$wordSeparator = $this->msg( 'word-separator' )->escaped();
 		$commaSeparator = $this->msg( 'comma-separator' )->escaped();
@@ -207,7 +204,7 @@ class SpecialNuke extends SpecialPage {
 			 */
 			list( $title, $userName ) = $info;
 
-			$image = $title->getNamespace() === NS_IMAGE ? wfLocalFile( $title ) : false;
+			$image = $title->inNamespace( NS_FILE ) ? wfLocalFile( $title ) : false;
 			$thumb = $image && $image->exists() ?
 				$image->transform( [ 'width' => 120, 'height' => 120 ], 0 ) :
 				false;
@@ -235,7 +232,7 @@ class SpecialNuke extends SpecialPage {
 
 		$out->addHTML(
 			"</ul>\n" .
-			Xml::submitButton( wfMessage( 'nuke-submit-delete' )->text() ) .
+			Xml::submitButton( $this->msg( 'nuke-submit-delete' )->text() ) .
 			'</form>'
 		);
 	}
@@ -326,9 +323,9 @@ class SpecialNuke extends SpecialPage {
 			$deletionResult = false;
 			if ( !Hooks::run( 'NukeDeletePage', [ $title, $reason, &$deletionResult ] ) ) {
 				if ( $deletionResult ) {
-					$res[] = wfMessage( 'nuke-deleted', $title->getPrefixedText() )->parse();
+					$res[] = $this->msg( 'nuke-deleted', $title->getPrefixedText() )->parse();
 				} else {
-					$res[] = wfMessage( 'nuke-not-deleted', $title->getPrefixedText() )->parse();
+					$res[] = $this->msg( 'nuke-not-deleted', $title->getPrefixedText() )->parse();
 				}
 				continue;
 			}
@@ -349,9 +346,9 @@ class SpecialNuke extends SpecialPage {
 			}
 
 			if ( $ok ) {
-				$res[] = wfMessage( 'nuke-deleted', $title->getPrefixedText() )->parse();
+				$res[] = $this->msg( 'nuke-deleted', $title->getPrefixedText() )->parse();
 			} else {
-				$res[] = wfMessage( 'nuke-not-deleted', $title->getPrefixedText() )->parse();
+				$res[] = $this->msg( 'nuke-not-deleted', $title->getPrefixedText() )->parse();
 			}
 		}
 

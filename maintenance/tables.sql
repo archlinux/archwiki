@@ -369,7 +369,7 @@ CREATE TABLE /*_*/revision (
 ) /*$wgDBTableOptions*/ MAX_ROWS=10000000 AVG_ROW_LENGTH=1024;
 -- In case tables are created as MyISAM, use row hints for MySQL <5.0 to avoid 4GB limit
 
-CREATE UNIQUE INDEX /*i*/rev_page_id ON /*_*/revision (rev_page, rev_id);
+CREATE INDEX /*i*/rev_page_id ON /*_*/revision (rev_page, rev_id);
 CREATE INDEX /*i*/rev_timestamp ON /*_*/revision (rev_timestamp);
 CREATE INDEX /*i*/page_timestamp ON /*_*/revision (rev_page,rev_timestamp);
 CREATE INDEX /*i*/user_timestamp ON /*_*/revision (rev_user,rev_timestamp);
@@ -623,9 +623,9 @@ CREATE INDEX /*i*/cl_timestamp ON /*_*/categorylinks (cl_to,cl_timestamp);
 CREATE INDEX /*i*/cl_collation_ext ON /*_*/categorylinks (cl_collation, cl_to, cl_type, cl_from);
 
 --
--- Track all existing categories.  Something is a category if 1) it has an en-
--- try somewhere in categorylinks, or 2) it once did.  Categories might not
--- have corresponding pages, so they need to be tracked separately.
+-- Track all existing categories. Something is a category if 1) it has an entry
+-- somewhere in categorylinks, or 2) it has a description page. Categories
+-- might not have corresponding pages, so they need to be tracked separately.
 --
 CREATE TABLE /*_*/category (
   -- Primary key
@@ -1136,6 +1136,7 @@ CREATE INDEX /*i*/new_name_timestamp ON /*_*/recentchanges (rc_new,rc_namespace,
 CREATE INDEX /*i*/rc_ip ON /*_*/recentchanges (rc_ip);
 CREATE INDEX /*i*/rc_ns_usertext ON /*_*/recentchanges (rc_namespace, rc_user_text);
 CREATE INDEX /*i*/rc_user_text ON /*_*/recentchanges (rc_user_text, rc_timestamp);
+CREATE INDEX /*i*/rc_name_type_patrolled_timestamp ON /*_*/recentchanges (rc_namespace, rc_type, rc_patrolled, rc_timestamp);
 
 
 CREATE TABLE /*_*/watchlist (
@@ -1471,6 +1472,7 @@ CREATE TABLE /*_*/updatelog (
 
 -- A table to track tags for revisions, logs and recent changes.
 CREATE TABLE /*_*/change_tag (
+  ct_id int unsigned NOT NULL PRIMARY KEY AUTO_INCREMENT,
   -- RCID for the change
   ct_rc_id int NULL,
   -- LOGID for the change
@@ -1493,6 +1495,7 @@ CREATE INDEX /*i*/change_tag_tag_id ON /*_*/change_tag (ct_tag,ct_rc_id,ct_rev_i
 -- Rollup table to pull a LIST of tags simply without ugly GROUP_CONCAT
 -- that only works on MySQL 4.1+
 CREATE TABLE /*_*/tag_summary (
+  ts_id int unsigned NOT NULL PRIMARY KEY AUTO_INCREMENT,
   -- RCID for the change
   ts_rc_id int NULL,
   -- LOGID for the change

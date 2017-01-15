@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Better"
+			"Better",
+			"Crucifunked"
 		]
 	},
 	"vector-action-addsection": "Añiil tema",
@@ -14,5 +15,6 @@
 	"vector-view-edit": "Eital",
 	"vector-view-history": "Guipal estorial",
 	"vector-view-view": "Leyel",
-	"vector-view-viewsource": "Guipal cóigu"
+	"vector-view-viewsource": "Guipal cóigu",
+	"vector-more-actions": "Más"
 }

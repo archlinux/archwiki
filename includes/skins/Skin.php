@@ -141,10 +141,8 @@ abstract class Skin extends ContextSource {
 	/**
 	 * @param OutputPage $out
 	 */
-	function initPage( OutputPage $out ) {
-
+	public function initPage( OutputPage $out ) {
 		$this->preloadExistence();
-
 	}
 
 	/**
@@ -199,30 +197,29 @@ abstract class Skin extends ContextSource {
 	/**
 	 * Preload the existence of three commonly-requested pages in a single query
 	 */
-	function preloadExistence() {
+	protected function preloadExistence() {
 		$titles = [];
 
-		$user = $this->getUser();
-		$title = $this->getRelevantTitle();
-
 		// User/talk link
+		$user = $this->getUser();
 		if ( $user->isLoggedIn() ) {
 			$titles[] = $user->getUserPage();
 			$titles[] = $user->getTalkPage();
 		}
 
 		// Check, if the page can hold some kind of content, otherwise do nothing
-		if ( !$title->canExist() ) {
-			// nothing
-		} elseif ( $title->isTalkPage() ) {
-			$titles[] = $title->getSubjectPage();
-		} else {
-			$titles[] = $title->getTalkPage();
+		$title = $this->getRelevantTitle();
+		if ( $title->canExist() ) {
+			if ( $title->isTalkPage() ) {
+				$titles[] = $title->getSubjectPage();
+			} else {
+				$titles[] = $title->getTalkPage();
+			}
 		}
 
 		Hooks::run( 'SkinPreloadExistence', [ &$titles, $this ] );
 
-		if ( count( $titles ) ) {
+		if ( $titles ) {
 			$lb = new LinkBatch( $titles );
 			$lb->setCaller( __METHOD__ );
 			$lb->execute();
@@ -649,19 +646,23 @@ abstract class Skin extends ContextSource {
 	}
 
 	/**
+	 * @param OutputPage $out Defaults to $this->getOutput() if left as null
 	 * @return string
 	 */
-	function subPageSubtitle() {
-		$out = $this->getOutput();
+	function subPageSubtitle( $out = null ) {
+		if ( $out === null ) {
+			$out = $this->getOutput();
+		}
+		$title = $out->getTitle();
 		$subpages = '';
 
 		if ( !Hooks::run( 'SkinSubPageSubtitle', [ &$subpages, $this, $out ] ) ) {
 			return $subpages;
 		}
 
-		if ( $out->isArticle() && MWNamespace::hasSubpages( $out->getTitle()->getNamespace() ) ) {
-			$ptext = $this->getTitle()->getPrefixedText();
-			if ( preg_match( '/\//', $ptext ) ) {
+		if ( $out->isArticle() && MWNamespace::hasSubpages( $title->getNamespace() ) ) {
+			$ptext = $title->getPrefixedText();
+			if ( strpos( $ptext, '/' ) !== false ) {
 				$links = explode( '/', $ptext );
 				array_pop( $links );
 				$c = 0;
@@ -845,7 +846,7 @@ abstract class Skin extends ContextSource {
 			$s = '';
 		}
 
-		if ( wfGetLB()->getLaggedSlaveMode() ) {
+		if ( wfGetLB()->getLaggedReplicaMode() ) {
 			$s .= ' <strong>' . $this->msg( 'laggedslavemode' )->parse() . '</strong>';
 		}
 
@@ -1168,7 +1169,7 @@ abstract class Skin extends ContextSource {
 	 *
 	 * BaseTemplate::getSidebar can be used to simplify the format and id generation in new skins.
 	 *
-	 * The format of the returned array is array( heading => content, ... ), where:
+	 * The format of the returned array is [ heading => content, ... ], where:
 	 * - heading is the heading of a navigation portlet. It is either:
 	 *   - magic string to be handled by the skins ('SEARCH' / 'LANGUAGES' / 'TOOLBOX' / ...)
 	 *   - a message name (e.g. 'navigation'), the message should be HTML-escaped by the skin
@@ -1240,6 +1241,8 @@ abstract class Skin extends ContextSource {
 		$lines = explode( "\n", $text );
 
 		$heading = '';
+		$messageTitle = $this->getConfig()->get( 'EnableSidebarCache' )
+			? Title::newMainPage() : $this->getTitle();
 
 		foreach ( $lines as $line ) {
 			if ( strpos( $line, '*' ) !== 0 ) {
@@ -1256,7 +1259,7 @@ abstract class Skin extends ContextSource {
 				$line = trim( $line, '* ' );
 
 				if ( strpos( $line, '|' ) !== false ) { // sanity check
-					$line = MessageCache::singleton()->transform( $line, false, null, $this->getTitle() );
+					$line = MessageCache::singleton()->transform( $line, false, null, $messageTitle );
 					$line = array_map( 'trim', explode( '|', $line, 2 ) );
 					if ( count( $line ) !== 2 ) {
 						// Second sanity check, could be hit by people doing
@@ -1266,7 +1269,7 @@ abstract class Skin extends ContextSource {
 
 					$extraAttribs = [];
 
-					$msgLink = $this->msg( $line[0] )->inContentLanguage();
+					$msgLink = $this->msg( $line[0] )->title( $messageTitle )->inContentLanguage();
 					if ( $msgLink->exists() ) {
 						$link = $msgLink->text();
 						if ( $link == '-' ) {
@@ -1275,7 +1278,7 @@ abstract class Skin extends ContextSource {
 					} else {
 						$link = $line[0];
 					}
-					$msgText = $this->msg( $line[1] );
+					$msgText = $this->msg( $line[1] )->title( $messageTitle );
 					if ( $msgText->exists() ) {
 						$text = $msgText->text();
 					} else {
@@ -1561,58 +1564,6 @@ abstract class Skin extends ContextSource {
 			'1.25'
 		);
 		return $result;
-	}
-
-	/** @deprecated in 1.21 */
-	public function commentBlock( $comment, $title = null, $local = false, $wikiId = null ) {
-		wfDeprecated( __METHOD__, '1.21' );
-		return Linker::commentBlock( $comment, $title, $local, $wikiId );
-	}
-
-	/** @deprecated in 1.21 */
-	public function generateRollback(
-		$rev,
-		IContextSource $context = null,
-		$options = [ 'verify' ]
-	) {
-		wfDeprecated( __METHOD__, '1.21' );
-		return Linker::generateRollback( $rev, $context, $options );
-	}
-
-	/** @deprecated in 1.21 */
-	public function link( $target, $html = null, $customAttribs = [], $query = [], $options = [] ) {
-		wfDeprecated( __METHOD__, '1.21' );
-		return Linker::link( $target, $html, $customAttribs, $query, $options );
-	}
-
-	/** @deprecated in 1.21 */
-	public function linkKnown(
-		$target,
-		$html = null,
-		$customAttribs = [],
-		$query = [],
-		$options = [ 'known', 'noclasses' ]
-	) {
-		wfDeprecated( __METHOD__, '1.21' );
-		return Linker::linkKnown( $target, $html, $customAttribs, $query, $options );
-	}
-
-	/** @deprecated in 1.21 */
-	public function userLink( $userId, $userName, $altUserName = false ) {
-		wfDeprecated( __METHOD__, '1.21' );
-		return Linker::userLink( $userId, $userName, $altUserName );
-	}
-
-	/** @deprecated in 1.21 */
-	public function userToolLinks(
-		$userId,
-		$userText,
-		$redContribsWhenNoEdits = false,
-		$flags = 0,
-		$edits = null
-	) {
-		wfDeprecated( __METHOD__, '1.21' );
-		return Linker::userToolLinks( $userId, $userText, $redContribsWhenNoEdits, $flags, $edits );
 	}
 
 }

@@ -6,7 +6,8 @@
 			"Naudefj",
 			"පසිඳු කාවින්ද",
 			"Macofe",
-			"Fwolff"
+			"Fwolff",
+			"Servien"
 		]
 	},
 	"wikieditor": "Uitgebreide teksverwerker vir wikiteks",
@@ -74,6 +75,7 @@
 	"wikieditor-toolbar-file-format-none": "geen",
 	"wikieditor-toolbar-tool-file-insert": "Invoeg",
 	"wikieditor-toolbar-tool-file-cancel": "Kanselleer",
+	"wikieditor-toolbar-tool-file-upload": "Laai op",
 	"wikieditor-toolbar-tool-reference": "Verwysing",
 	"wikieditor-toolbar-tool-reference-example": "Voeg teks vir voetnota hier in",
 	"wikieditor-toolbar-tool-reference-cancel": "Kanselleer",
@@ -188,9 +190,13 @@
 	"wikieditor-toolbar-help-content-olist-result": "<ol><li>Lyn in genommerde lys</li><li>Lyn in genommerde lys</li></ol>",
 	"wikieditor-toolbar-help-content-file-description": "Ingebedde lêer",
 	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Voorbeeld.png|$2|$3]]",
+	"wikieditor-toolbar-help-content-file-caption": "Byskrif",
 	"wikieditor-toolbar-help-content-reference-description": "Verwysing",
 	"wikieditor-toolbar-help-content-reference-syntax": "Bladsyteks.&lt;ref&gt;[http://www.voorbeeld.org Skakel se teks], addisionele teks.&lt;/ref&gt;",
 	"wikieditor-toolbar-help-content-reference-result": "Bladsyteks <sup><a href='#'>[1]</a></sup>",
+	"wikieditor-toolbar-help-content-named-reference-description": "Benoemde verwysing",
+	"wikieditor-toolbar-help-content-named-reference-syntax": "Bladsyteks.&lt;ref name=\"test\"&gt;[http://www.voorbeeld.org Skakel se teks]&lt;/ref&gt;",
+	"wikieditor-toolbar-help-content-named-reference-result": "Bladsyteks.<sup><a href='#'>[2]</a></sup>",
 	"wikieditor-toolbar-help-content-rereference-description": "Hergebruik van dieselfde verwysing",
 	"wikieditor-toolbar-help-content-rereference-result": "Bladsyteks <sup><a href='#'>[2]</a></sup>",
 	"wikieditor-toolbar-help-content-showreferences-description": "Wys verwysings",

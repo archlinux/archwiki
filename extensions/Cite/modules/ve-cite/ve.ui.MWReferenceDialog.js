@@ -244,12 +244,12 @@ ve.ui.MWReferenceDialog.prototype.useReference = function ( ref ) {
 		this.referenceTarget.destroy();
 	}
 
-	citeCommands = Object.keys( ve.init.target.commandRegistry.registry ).filter( function ( command ) {
+	citeCommands = Object.keys( ve.init.target.getSurface().commandRegistry.registry ).filter( function ( command ) {
 		return command.indexOf( 'cite-' ) !== -1;
 	} );
 
 	// Properties
-	this.referenceTarget = new ve.ui.MWTargetWidget(
+	this.referenceTarget = ve.init.target.createTargetWidget(
 		this.referenceModel.getDocument(),
 		{
 			tools: ve.copy( ve.init.target.constructor.static.toolbarGroups ),

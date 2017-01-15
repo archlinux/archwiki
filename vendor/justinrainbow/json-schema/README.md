@@ -19,26 +19,18 @@ See [json-schema](http://json-schema.org/) for more details.
 #### [`Composer`](https://github.com/composer/composer) (*will use the Composer ClassLoader*)
 
     $ wget http://getcomposer.org/composer.phar
-    $ php composer.phar require justinrainbow/json-schema:~1.3
+    $ php composer.phar require justinrainbow/json-schema:~2.0
 
 ## Usage
 
 ```php
 <?php
 
-// Get the schema and data as objects
-$retriever = new JsonSchema\Uri\UriRetriever;
-$schema = $retriever->retrieve('file://' . realpath('schema.json'));
 $data = json_decode(file_get_contents('data.json'));
 
-// If you use $ref or if you are unsure, resolve those references here
-// This modifies the $schema object
-$refResolver = new JsonSchema\RefResolver($retriever);
-$refResolver->resolve($schema, 'file://' . __DIR__);
-
 // Validate
-$validator = new JsonSchema\Validator();
-$validator->check($data, $schema);
+$validator = new JsonSchema\Validator;
+$validator->check($data, (object)['$ref' => 'file://' . realpath('schema.json')]);
 
 if ($validator->isValid()) {
     echo "The supplied JSON validates against the schema.\n";

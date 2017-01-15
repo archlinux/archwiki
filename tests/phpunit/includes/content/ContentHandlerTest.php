@@ -1,7 +1,9 @@
 <?php
+use MediaWiki\MediaWikiServices;
 
 /**
  * @group ContentHandler
+ * @group Database
  */
 class ContentHandlerTest extends MediaWikiTestCase {
 
@@ -36,7 +38,7 @@ class ContentHandlerTest extends MediaWikiTestCase {
 		MWNamespace::getCanonicalNamespaces( true );
 		$wgContLang->resetNamespaces();
 		// And LinkCache
-		LinkCache::destroySingleton();
+		MediaWikiServices::getInstance()->resetServiceForTesting( 'LinkCache' );
 	}
 
 	protected function tearDown() {
@@ -46,9 +48,14 @@ class ContentHandlerTest extends MediaWikiTestCase {
 		MWNamespace::getCanonicalNamespaces( true );
 		$wgContLang->resetNamespaces();
 		// And LinkCache
-		LinkCache::destroySingleton();
+		MediaWikiServices::getInstance()->resetServiceForTesting( 'LinkCache' );
 
 		parent::tearDown();
+	}
+
+	public function addDBDataOnce() {
+		$this->insertPage( 'Not_Main_Page', 'This is not a main page' );
+		$this->insertPage( 'Smithee', 'A smithee is one who smiths. See also [[Alan Smithee]]' );
 	}
 
 	public static function dataGetDefaultModelFor() {
@@ -369,8 +376,7 @@ class ContentHandlerTest extends MediaWikiTestCase {
 		$content = new WikitextContent( 'test text' );
 		$ok = ContentHandler::runLegacyHooks(
 			'testRunLegacyHooks',
-			[ 'foo', &$content, 'bar' ],
-			false
+			[ 'foo', &$content, 'bar' ]
 		);
 
 		$this->assertTrue( $ok, "runLegacyHooks should have returned true" );
@@ -406,6 +412,67 @@ class ContentHandlerTest extends MediaWikiTestCase {
 		$handler = ContentHandler::getForModelID( $modelId );
 
 		$this->assertInstanceOf( $handlerClass, $handler );
+	}
+
+	public function testGetFieldsForSearchIndex() {
+		$searchEngine = $this->newSearchEngine();
+
+		$handler = ContentHandler::getForModelID( CONTENT_MODEL_WIKITEXT );
+
+		$fields = $handler->getFieldsForSearchIndex( $searchEngine );
+
+		$this->assertArrayHasKey( 'category', $fields );
+		$this->assertArrayHasKey( 'external_link', $fields );
+		$this->assertArrayHasKey( 'outgoing_link', $fields );
+		$this->assertArrayHasKey( 'template', $fields );
+	}
+
+	private function newSearchEngine() {
+		$searchEngine = $this->getMockBuilder( 'SearchEngine' )
+			->getMock();
+
+		$searchEngine->expects( $this->any() )
+			->method( 'makeSearchFieldMapping' )
+			->will( $this->returnCallback( function( $name, $type ) {
+					return new DummySearchIndexFieldDefinition( $name, $type );
+			} ) );
+
+		return $searchEngine;
+	}
+
+	/**
+	 * @covers ContentHandler::getDataForSearchIndex
+	 */
+	public function testDataIndexFields() {
+		$mockEngine = $this->getMock( 'SearchEngine' );
+		$title = Title::newFromText( 'Not_Main_Page', NS_MAIN );
+		$page = new WikiPage( $title );
+
+		$this->setTemporaryHook( 'SearchDataForIndex',
+			function ( &$fields, ContentHandler $handler, WikiPage $page, ParserOutput $output,
+					   SearchEngine $engine ) {
+				$fields['testDataField'] = 'test content';
+			} );
+
+		$output = $page->getContent()->getParserOutput( $title );
+		$data = $page->getContentHandler()->getDataForSearchIndex( $page, $output, $mockEngine );
+		$this->assertArrayHasKey( 'text', $data );
+		$this->assertArrayHasKey( 'text_bytes', $data );
+		$this->assertArrayHasKey( 'language', $data );
+		$this->assertArrayHasKey( 'testDataField', $data );
+		$this->assertEquals( 'test content', $data['testDataField'] );
+	}
+
+	/**
+	 * @covers ContentHandler::getParserOutputForIndexing
+	 */
+	public function testParserOutputForIndexing() {
+		$title = Title::newFromText( 'Smithee', NS_MAIN );
+		$page = new WikiPage( $title );
+
+		$out = $page->getContentHandler()->getParserOutputForIndexing( $page );
+		$this->assertInstanceOf( ParserOutput::class, $out );
+		$this->assertContains( 'one who smiths', $out->getRawText() );
 	}
 
 }

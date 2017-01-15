@@ -21,7 +21,7 @@ sup.reference {
 ol.references li:target,
 sup.reference:target {
 	background-color: #def; /* fallback */
-	background-color: rgba(0, 127, 255, 0.133);
+	background-color: rgba( 0, 127, 255, 0.133 );
 }
 
 /* Make cite errors "strong" */

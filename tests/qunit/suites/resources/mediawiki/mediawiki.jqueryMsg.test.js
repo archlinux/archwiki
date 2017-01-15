@@ -1,6 +1,6 @@
 ( function ( mw, $ ) {
 	var formatText, formatParse, formatnumTests, specialCharactersPageName, expectedListUsers,
-		expectedListUsersSitename, expectedEntrypoints,
+		expectedListUsersSitename, expectedLinkPagenamee, expectedEntrypoints,
 		mwLanguageCache = {},
 		hasOwn = Object.hasOwnProperty;
 
@@ -16,6 +16,8 @@
 			this.parserDefaults = mw.jqueryMsg.getParserDefaults();
 			mw.jqueryMsg.setParserDefaults( {
 				magic: {
+					PAGENAME: '2 + 2',
+					PAGENAMEE: mw.util.wikiUrlencode( '2 + 2' ),
 					SITENAME: 'Wiki'
 				}
 			} );
@@ -25,6 +27,7 @@
 			expectedListUsers = '注册<a title="Special:ListUsers" href="/wiki/Special:ListUsers">用户</a>';
 			expectedListUsersSitename = '注册<a title="Special:ListUsers" href="/wiki/Special:ListUsers">用户' +
 				'Wiki</a>';
+			expectedLinkPagenamee = '<a href="https://example.org/wiki/Foo?bar=baz#val/2_%2B_2">Test</a>';
 
 			expectedEntrypoints = '<a href="https://www.mediawiki.org/wiki/Manual:index.php">index.php</a>';
 
@@ -77,6 +80,7 @@
 
 			'jquerymsg-test-statistics-users': '注册[[Special:ListUsers|用户]]',
 			'jquerymsg-test-statistics-users-sitename': '注册[[Special:ListUsers|用户{{SITENAME}}]]',
+			'jquerymsg-test-link-pagenamee': '[https://example.org/wiki/Foo?bar=baz#val/{{PAGENAMEE}} Test]',
 
 			'jquerymsg-test-version-entrypoints-index-php': '[https://www.mediawiki.org/wiki/Manual:index.php index.php]',
 
@@ -385,7 +389,7 @@
 		process( tasks );
 	} );
 
-	QUnit.test( 'Links', 14, function ( assert ) {
+	QUnit.test( 'Links', 15, function ( assert ) {
 		var testCases,
 			expectedDisambiguationsText,
 			expectedMultipleBars,
@@ -466,6 +470,12 @@
 			formatParse( 'jquerymsg-test-statistics-users-sitename' ),
 			expectedListUsersSitename,
 			'Piped wikilink with parser function in the text'
+		);
+
+		assert.htmlEqual(
+			formatParse( 'jquerymsg-test-link-pagenamee' ),
+			expectedLinkPagenamee,
+			'External link with parser function in the URL'
 		);
 
 		testCases = [
@@ -652,7 +662,7 @@
 		);
 		assert.htmlEqual(
 			formatParse( 'external-link-replace', function () {} ),
-			'Foo <a href="#">bar</a>',
+			'Foo <a role="button" tabindex="0">bar</a>',
 			'External link message processed as function when format is \'parse\''
 		);
 
@@ -908,7 +918,7 @@
 	} );
 
 	// HTML in wikitext
-	QUnit.test( 'HTML', 32, function ( assert ) {
+	QUnit.test( 'HTML', 33, function ( assert ) {
 		mw.messages.set( 'jquerymsg-italics-msg', '<i>Very</i> important' );
 
 		assertBothModes( assert, [ 'jquerymsg-italics-msg' ], mw.messages.get( 'jquerymsg-italics-msg' ), 'Simple italics unchanged' );
@@ -1048,6 +1058,13 @@
 			'Self-closing tags don\'t cause a parse error'
 		);
 
+		mw.messages.set( 'jquerymsg-asciialphabetliteral-regression', '<b >>>="dir">asd</b>' );
+		assert.htmlEqual(
+			formatParse( 'jquerymsg-asciialphabetliteral-regression' ),
+			'<b>&gt;&gt;="dir"&gt;asd</b>',
+			'Regression test for bad "asciiAlphabetLiteral" definition'
+		);
+
 		mw.messages.set( 'jquerymsg-entities1', 'A&B' );
 		mw.messages.set( 'jquerymsg-entities2', 'A&gt;B' );
 		mw.messages.set( 'jquerymsg-entities3', 'A&rarr;B' );
@@ -1084,6 +1101,29 @@
 			formatParse( 'jquerymsg-entities-attr3' ),
 			'<i title="A&amp;rarr;B"></i>',
 			'"&rarr;" entity is double-escaped in attribute'
+		);
+	} );
+
+	QUnit.test( 'Nowiki', 3, function ( assert ) {
+		mw.messages.set( 'jquerymsg-nowiki-link', 'Foo <nowiki>[[bar]]</nowiki> baz.' );
+		assert.equal(
+			formatParse( 'jquerymsg-nowiki-link' ),
+			'Foo [[bar]] baz.',
+			'Link inside nowiki is not parsed'
+		);
+
+		mw.messages.set( 'jquerymsg-nowiki-htmltag', 'Foo <nowiki><b>bar</b></nowiki> baz.' );
+		assert.equal(
+			formatParse( 'jquerymsg-nowiki-htmltag' ),
+			'Foo &lt;b&gt;bar&lt;/b&gt; baz.',
+			'HTML inside nowiki is not parsed and escaped'
+		);
+
+		mw.messages.set( 'jquerymsg-nowiki-template', 'Foo <nowiki>{{bar}}</nowiki> baz.' );
+		assert.equal(
+			formatParse( 'jquerymsg-nowiki-template' ),
+			'Foo {{bar}} baz.',
+			'Template inside nowiki is not parsed and does not cause a parse error'
 		);
 	} );
 

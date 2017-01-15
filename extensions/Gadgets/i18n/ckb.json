@@ -24,7 +24,7 @@
 	"gadgets-export-title": "ھەناردنی ئامراز",
 	"gadgets-not-found": "ئامرازی «$1» نەدۆزرایەوە.",
 	"gadgets-export-text": "بۆ ھەناردنی ئامرازی $1، لەسەر دوگمەی «{{int:gadgets-export-download}}» کرتە بکە، پەڕگە داگرتووەکە پاشەکەوت بکە،\nبچۆ بۆ Special:Import لە ویکیی مەبەستدا و باری بکە. پاشان ئەمەی ژێرەوە بە پەڕەی MediaWiki:Gadgets-definition زیاد بکە:\n<pre>$2</pre>\nپێویستە لە ویکیی مەبەستدا مافی گونجاوت ھەبێ (وەک مافی دەستکاریی پەیامەکانی سیستەم) و ھاوردنی پەڕگە بارکراوەکان دەبێ چالاک کرابێ.",
-	"gadgets-export-download": "دایبگرە",
+	"gadgets-export-download": "داگرتن",
 	"gadgets-validate-notset": "تایبەتمەندیی <code>$1</code> دەستنیشان نەکراوە.",
 	"right-gadgets-definition-edit": "پێناسەکانی ئامراز دەستکاری بکە",
 	"action-gadgets-definition-edit": "دەستکاری کردنی ئەم پێناسەی ئامرازە"

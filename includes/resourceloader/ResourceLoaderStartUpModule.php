@@ -66,6 +66,8 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 			}
 		}
 
+		$illegalFileChars = $conf->get( 'IllegalFileChars' );
+
 		// Build list of variables
 		$vars = [
 			'wgLoadScript' => wfScript( 'load' ),
@@ -107,6 +109,7 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 			'wgResourceLoaderMaxQueryLength' => $conf->get( 'ResourceLoaderMaxQueryLength' ),
 			'wgCaseSensitiveNamespaces' => $caseSensitiveNamespaces,
 			'wgLegalTitleChars' => Title::convertByteClassToUnicodeClass( Title::legalChars() ),
+			'wgIllegalFileChars' => Title::convertByteClassToUnicodeClass( $illegalFileChars ),
 			'wgResourceLoaderStorageVersion' => $conf->get( 'ResourceLoaderStorageVersion' ),
 			'wgResourceLoaderStorageEnabled' => $conf->get( 'ResourceLoaderStorageEnabled' ),
 			'wgResourceLoaderLegacyModules' => self::getLegacyModules(),
@@ -217,7 +220,7 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 			}
 
 			$versionHash = $module->getVersionHash( $context );
-			if ( strlen( $versionHash ) !== 8 ) {
+			if ( strlen( $versionHash ) !== 7 ) {
 				$context->getLogger()->warning(
 					"Module '{module}' produced an invalid version hash: '{version}'.",
 					[
@@ -308,19 +311,14 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 	 */
 	public static function getStartupModulesUrl( ResourceLoaderContext $context ) {
 		$rl = $context->getResourceLoader();
-		$moduleNames = self::getStartupModules();
 
-		$query = [
-			'modules' => ResourceLoader::makePackedModulesString( $moduleNames ),
-			'only' => 'scripts',
-			'lang' => $context->getLanguage(),
-			'skin' => $context->getSkin(),
-			'debug' => $context->getDebug() ? 'true' : 'false',
-			'version' => $rl->getCombinedVersion( $context, $moduleNames ),
-		];
-		// Ensure uniform query order
-		ksort( $query );
-		return wfAppendQuery( wfScript( 'load' ), $query );
+		$derivative = new DerivativeResourceLoaderContext( $context );
+		$derivative->setModules( self::getStartupModules() );
+		$derivative->setOnly( 'scripts' );
+		// Must setModules() before makeVersionQuery()
+		$derivative->setVersion( $rl->makeVersionQuery( $derivative ) );
+
+		return $rl->createLoaderURL( 'local', $derivative );
 	}
 
 	/**

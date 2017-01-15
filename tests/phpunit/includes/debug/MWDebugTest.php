@@ -4,20 +4,20 @@ class MWDebugTest extends MediaWikiTestCase {
 
 	protected function setUp() {
 		parent::setUp();
-		// Make sure MWDebug class is enabled
-		static $MWDebugEnabled = false;
-		if ( !$MWDebugEnabled ) {
-			MWDebug::init();
-			$MWDebugEnabled = true;
-		}
 		/** Clear log before each test */
 		MWDebug::clearLog();
+	}
+
+	public static function setUpBeforeClass() {
+		parent::setUpBeforeClass();
+		MWDebug::init();
 		MediaWiki\suppressWarnings();
 	}
 
-	protected function tearDown() {
+	public static function tearDownAfterClass() {
+		parent::tearDownAfterClass();
+		MWDebug::deinit();
 		MediaWiki\restoreWarnings();
-		parent::tearDown();
 	}
 
 	/**

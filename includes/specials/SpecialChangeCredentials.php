@@ -81,12 +81,6 @@ class SpecialChangeCredentials extends AuthManagerSpecialPage {
 			return;
 		}
 
-		if ( $this->getRequest()->getCheck( 'wpCancel' ) ) {
-			$returnUrl = $this->getReturnUrl() ?: Title::newMainPage()->getFullURL();
-			$this->getOutput()->redirect( $returnUrl );
-			return;
-		}
-
 		if ( !$this->authRequests ) {
 			// messages used: changecredentials-invalidsubpage, removecredentials-invalidsubpage
 			$this->showSubpageList( $this->msg( static::$messagePrefix . '-invalidsubpage', $subPage ) );
@@ -149,17 +143,13 @@ class SpecialChangeCredentials extends AuthManagerSpecialPage {
 		);
 
 		// messages used: changecredentials-submit removecredentials-submit
-		// changecredentials-submit-cancel removecredentials-submit-cancel
 		$form->setSubmitTextMsg( static::$messagePrefix . '-submit' );
-		$form->addButton( [
-			'name' => 'wpCancel',
-			'value' => $this->msg( static::$messagePrefix . '-submit-cancel' )->text()
-		] );
+		$form->showCancel()->setCancelTarget( $this->getReturnUrl() ?: Title::newMainPage() );
 
 		return $form;
 	}
 
-	protected function needsSubmitButton( $formDescriptor ) {
+	protected function needsSubmitButton( array $requests ) {
 		// Change/remove forms show are built from a single AuthenticationRequest and do not allow
 		// for redirect flow; they always need a submit button.
 		return true;
@@ -194,6 +184,7 @@ class SpecialChangeCredentials extends AuthManagerSpecialPage {
 			$groupedRequests[(string)$info['provider']][] = $req;
 		}
 
+		$linkRenderer = $this->getLinkRenderer();
 		$out->addHTML( Html::openElement( 'dl' ) );
 		foreach ( $groupedRequests as $group => $members ) {
 			$out->addHTML( Html::element( 'dt', [], $group ) );
@@ -201,8 +192,10 @@ class SpecialChangeCredentials extends AuthManagerSpecialPage {
 				/** @var AuthenticationRequest $req */
 				$info = $req->describeCredentials();
 				$out->addHTML( Html::rawElement( 'dd', [],
-					Linker::link( $this->getPageTitle( $req->getUniqueId() ),
-						htmlspecialchars( $info['account'], ENT_QUOTES ) )
+					$linkRenderer->makeLink(
+						$this->getPageTitle( $req->getUniqueId() ),
+						$info['account']
+					)
 				) );
 			}
 		}

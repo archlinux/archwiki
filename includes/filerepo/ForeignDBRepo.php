@@ -51,9 +51,12 @@ class ForeignDBRepo extends LocalRepo {
 	/** @var bool */
 	protected $hasSharedCache;
 
-	# Other stuff
+	/** @var IDatabase */
 	protected $dbConn;
+
+	/** @var callable */
 	protected $fileFactory = [ 'ForeignDBFile', 'newFromTitle' ];
+	/** @var callable */
 	protected $fileFromRowFactory = [ 'ForeignDBFile', 'newFromRow' ];
 
 	/**
@@ -106,7 +109,7 @@ class ForeignDBRepo extends LocalRepo {
 		];
 
 		return function ( $index ) use ( $type, $params ) {
-			return DatabaseBase::factory( $type, $params );
+			return Database::factory( $type, $params );
 		};
 	}
 

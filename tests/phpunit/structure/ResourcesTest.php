@@ -40,7 +40,7 @@ class ResourcesTest extends MediaWikiTestCase {
 		$data = self::getAllModules();
 		foreach ( $data['modules'] as $moduleName => $module ) {
 			$version = $module->getVersionHash( $data['context'] );
-			$this->assertEquals( 8, strlen( $version ), "$moduleName must use ResourceLoader::makeHash" );
+			$this->assertEquals( 7, strlen( $version ), "$moduleName must use ResourceLoader::makeHash" );
 		}
 	}
 
@@ -81,6 +81,25 @@ class ResourcesTest extends MediaWikiTestCase {
 					$dep,
 					$validDeps,
 					"The module '$dep' required by '$moduleName' must exist"
+				);
+			}
+		}
+	}
+
+	/**
+	 * Verify that all specified messages actually exist.
+	 */
+	public function testMissingMessages() {
+		$data = self::getAllModules();
+		$validDeps = array_keys( $data['modules'] );
+		$lang = Language::factory( 'en' );
+
+		/** @var ResourceLoaderModule $module */
+		foreach ( $data['modules'] as $moduleName => $module ) {
+			foreach ( $module->getMessages() as $msgKey ) {
+				$this->assertTrue(
+					wfMessage( $msgKey )->useDatabase( false )->inLanguage( $lang )->exists(),
+					"Message '$msgKey' required by '$moduleName' must exist"
 				);
 			}
 		}
