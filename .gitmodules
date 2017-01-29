@@ -1,8 +1,8 @@
 [submodule "extensions/CheckUser"]
 	path = extensions/CheckUser
-	url = https://gerrit.wikimedia.org/r/p/mediawiki/extensions/CheckUser.git
-	branch = REL1_26
+	url = https://github.com/wikimedia/mediawiki-extensions-CheckUser.git
+	branch = REL1_28
 [submodule "extensions/AbuseFilter"]
 	path = extensions/AbuseFilter
 	url = https://github.com/wikimedia/mediawiki-extensions-AbuseFilter.git
-	branch = REL1_26
+	branch = REL1_28
