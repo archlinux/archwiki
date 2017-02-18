@@ -192,6 +192,7 @@ $wgArchNavBar = array(
 			'Forums' => 'https://bbs.archlinux.org/',
 			'Wiki' => 'https://wiki.archlinux.org/',
 			'Bugs' => 'https://bugs.archlinux.org/',
+			'Security' => 'https://security.archlinux.org/',
 			'AUR' => 'https://aur.archlinux.org/',
 			'Download' => 'https://www.archlinux.org/download/'
 		);
