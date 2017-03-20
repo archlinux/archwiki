@@ -6,3 +6,7 @@
 	path = extensions/AbuseFilter
 	url = https://github.com/wikimedia/mediawiki-extensions-AbuseFilter.git
 	branch = REL1_28
+[submodule "extensions/MobileFrontend"]
+	path = extensions/MobileFrontend
+	url = https://github.com/wikimedia/mediawiki-extensions-MobileFrontend.git
+	branch = REL1_28

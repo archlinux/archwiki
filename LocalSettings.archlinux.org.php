@@ -294,6 +294,11 @@ wfLoadExtension( 'ParserFunctions' );
 wfLoadExtension( 'Interwiki' );
 $wgGroupPermissions['sysop']['interwiki'] = true;
 
+# MobileFrontend extension
+wfLoadExtension( 'MobileFrontend' );
+$wgMFAutodetectMobileView = true;
+$wgMFVaryOnUA = true;
+
 ##
 ## Temporary settings for maintenance
 ##
