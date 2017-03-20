@@ -1,10 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"පසිඳු කාවින්ද"
+			"පසිඳු කාවින්ද",
+			"Muhammad Shuaib"
 		]
 	},
-	"titleblacklist-override": "نظر انداز کی بلیک لسٹ",
+	"action-titleblacklistlog": "عنوان کے نوشتۂ فہرست سیاہ کو دیکھنے",
+	"titleblacklist-override": "سیاہ فہرست کو نظر انداز کریں",
 	"right-tboverride": "اس عنوان کے بلیک لسٹ کی جگہ لے لے",
-	"right-tboverride-account": "کے صارف کا نام بلیک لسٹ کی جگہ لے لے"
+	"right-tboverride-account": "صارف ناموں کی سیاہ فہرست کی منسوخی",
+	"right-titleblacklistlog": "عنوان کے نوشتۂ فہرست سیاہ کا معائنہ"
 }

@@ -4,12 +4,14 @@
 			"Autokrator",
 			"OrbiliusMagister",
 			"UV",
-			"Macofe"
+			"Macofe",
+			"Laurentianus"
 		]
 	},
-	"wikieditor-preview-tab": "Praevisum",
+	"wikieditor-preview-tab": "Prospectus",
 	"wikieditor-preview-changes-tab": "Mutata",
 	"wikieditor-preview-loading": "Depromens...",
+	"wikieditor-toolbar-preference": "Maiorem trabem editoriam offerre",
 	"wikieditor-toolbar-loading": "Depromens…",
 	"wikieditor-toolbar-tool-bold": "Litterae pingues",
 	"wikieditor-toolbar-tool-bold-example": "Textus litteris pinguibus scriptus",
@@ -100,7 +102,7 @@
 	"wikieditor-toolbar-help-content-showreferences-description": "Referentias bibliographicas monstrare",
 	"wikieditor-toolbar-help-content-showreferences-result": "<ol class='references'><li id='cite_note-test-0'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.example.org' class='external text' href='#'>Textus nexus</a>, textus additus.</li></ol>",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "Subscriptio tua cum indicatione temporis",
-	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='{{#special:mypage}}'>Nomen usoris</a> (<a href='#' title='{{#special:mytalk}}'>disputatio</a>) 15:54, 10 Iunii 2009 (UTC)",
+	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='$1:Nomen usoris'>Nomen usoris</a> (<a href='#' title='$2:Nomen usoris'>disputatio</a>) 15:54, 10 Iunii 2009 (UTC)",
 	"wikieditor-toolbar-help-content-signature-description": "Subscriptio",
-	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='{{#special:mypage}}'>Nomen usoris</a> (<a href='#' title='{{#special:mytalk}}'>disputatio</a>)"
+	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Nomen usoris'>Nomen usoris</a> (<a href='#' title='$2:Nomen usoris'>disputatio</a>)"
 }

@@ -5,33 +5,35 @@
  * @license GPL-2.0+
  */
 
-class LU_JSONReaderTest extends MediaWikiTestCase {
+namespace LocalisationUpdate;
+
+class JSONReaderTest extends \PHPUnit_Framework_TestCase {
 	/**
 	 * @dataProvider parseProvider
 	 */
 	public function testParse( $input, $expected, $comment ) {
-		$reader = new LU_JSONReader( 'xx' );
+		$reader = new JSONReader( 'xx' );
 		$observed = $reader->parse( $input );
 		$this->assertEquals( $expected, $observed['xx'], $comment );
 	}
 
 	public function parseProvider() {
-		return array(
-			array(
+		return [
+			[
 				'{}',
-				array(),
+				[],
 				'empty file',
-			),
-			array(
+			],
+			[
 				'{"key":"value"}',
-				array( 'key' => 'value' ),
+				[ 'key' => 'value' ],
 				'file with one string',
-			),
-			array(
+			],
+			[
 				'{"@metadata":{"authors":["Nike"]},"key":"value2"}',
-				array( 'key' => 'value2' ),
+				[ 'key' => 'value2' ],
 				'@metadata is ignored',
-			)
-		);
+			]
+		];
 	}
 }

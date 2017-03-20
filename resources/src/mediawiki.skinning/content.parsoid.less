@@ -15,7 +15,7 @@
 }
 
 .mw-body-content a[rel~="mw:ExtLink"]:empty:after {
-	content: "[" counter(mw-NumberedExtLink) "]";
+	content: "[" counter( mw-NumberedExtLink ) "]";
 	counter-increment: mw-NumberedExtLink;
 }
 
@@ -35,7 +35,6 @@ span.reference {
 	line-height: 1;
 	vertical-align: super;
 	unicode-bidi: -moz-isolate;
-	unicode-bidi: -webkit-isolate;
 	unicode-bidi: isolate;
 }
 
@@ -100,6 +99,11 @@ figure[typeof*='mw:Image'] {
 		/* taken from .thumbcaption, plus .thumbinner */
 		padding: 1px 5px 5px;
 		background-color: #f9f9f9;
+
+		table {
+			/* reset caption side for tables inside figcaptions */
+			caption-side: top;
+		}
 	}
 }
 
@@ -122,7 +126,7 @@ figure[typeof~='mw:Image/Frame'] {
 figure[typeof~='mw:Image/Thumb'] > *:first-child > img,
 figure[typeof~='mw:Image/Frame'] > *:first-child > img,
 .mw-image-border > *:first-child > img {
-	border: 1px solid #cccccc;
+	border: 1px solid #ccc;
 	margin: 3px;
 }
 

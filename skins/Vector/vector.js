@@ -2,6 +2,24 @@
  * Vector-specific scripts
  */
 jQuery( function ( $ ) {
+
+	/**
+	 * Collapsible tabs
+	 */
+	var $cactions = $( '#p-cactions' ),
+		$tabContainer = $( '#p-views ul' ),
+		rAF = window.requestAnimationFrame || setTimeout,
+		// Avoid forced style calculation during page load
+		initialCactionsWidth = function () {
+			var width = $cactions.width();
+			initialCactionsWidth = function () {
+				return width;
+			};
+			return width;
+		};
+
+	rAF( initialCactionsWidth );
+
 	/**
 	 * Focus search input at the very end
 	 */
@@ -33,13 +51,6 @@ jQuery( function ( $ ) {
 			.attr( 'tabindex', '-1' );
 	} );
 
-	/**
-	 * Collapsible tabs
-	 */
-	var $cactions = $( '#p-cactions' ),
-		$tabContainer = $( '#p-views ul' ),
-		originalDropdownWidth = $cactions.width();
-
 	// Bind callback functions to animate our drop down menu in and out
 	// and then call the collapsibleTabs function on the menu
 	$tabContainer
@@ -49,7 +60,7 @@ jQuery( function ( $ ) {
 				$cactions
 					.removeClass( 'emptyPortlet' )
 					.find( 'h3' )
-						.css( 'width', '1px' ).animate( { width: originalDropdownWidth }, 'normal' );
+						.css( 'width', '1px' ).animate( { width: initialCactionsWidth() }, 'normal' );
 			}
 		} )
 		.bind( 'beforeTabExpand', function () {
@@ -74,7 +85,7 @@ jQuery( function ( $ ) {
 					// Maybe we can still expand? Account for the width of the "Actions" dropdown if the
 					// expansion would hide it.
 					if ( $cactions.find( 'li' ).length === 1 ) {
-						return distance >= eleWidth + 1 - originalDropdownWidth;
+						return distance >= eleWidth + 1 - initialCactionsWidth();
 					} else {
 						return false;
 					}
@@ -90,7 +101,7 @@ jQuery( function ( $ ) {
 					// But only if the width of the tab to collapse is smaller than the width of the dropdown
 					// we would have to insert. An example language where this happens is Lithuanian (lt).
 					if ( $cactions.hasClass( 'emptyPortlet' ) ) {
-						return $tabContainer.children( 'li.collapsible:last' ).width() > originalDropdownWidth;
+						return $tabContainer.children( 'li.collapsible:last' ).width() > initialCactionsWidth();
 					} else {
 						return true;
 					}

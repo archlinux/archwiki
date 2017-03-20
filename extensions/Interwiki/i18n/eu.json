@@ -4,7 +4,8 @@
 			"An13sa",
 			"Kobazulo",
 			"Theklan",
-			"Xabier Armendaritz"
+			"Xabier Armendaritz",
+			"Sator"
 		]
 	},
 	"interwiki": "Ikusi eta aldatu interwikiak",
@@ -26,5 +27,7 @@
 	"interwiki_addbutton": "Gehitu",
 	"interwiki_edittext": "Interwiki aurrizkia editatzen",
 	"right-interwiki": "Interwiki datuak aldatu",
-	"action-interwiki": "aldatu interwiki sarrera hau"
+	"action-interwiki": "aldatu interwiki sarrera hau",
+	"interwiki-links": "Interwiki aurrizkiak",
+	"interwiki-language-links": "Interlanguage aurrizkiak"
 }

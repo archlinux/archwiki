@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica\QueryBuilder\Version;
 
 use Elastica\QueryBuilder\Version;
@@ -6,7 +7,7 @@ use Elastica\QueryBuilder\Version;
 /**
  * elasticsearch 0.9 DSL.
  *
- * @link http://www.elastic.co/guide/en/elasticsearch/reference/0.90/index.html
+ * @link https://www.elastic.co/guide/en/elasticsearch/reference/0.90/index.html
  *
  * @author Manuel Andreo Garcia <andreo.garcia@googlemail.com>
  */

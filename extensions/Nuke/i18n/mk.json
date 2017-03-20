@@ -17,7 +17,7 @@
 	"nuke-toggleinvert": "Избери обратно",
 	"nuke-submit-delete": "Избриши ги избраните",
 	"right-nuke": "Групно бришење на страници",
-	"nuke-select": "Одбери: $1",
+	"nuke-select": "Избор: $1",
 	"nuke-userorip": "Корисничко име, IP-адреса или празно:",
 	"nuke-maxpages": "Макс. број на страници:",
 	"nuke-editby": "Создавач: [[Special:Contributions/$1|{{GENDER:$1|$1}}]]",

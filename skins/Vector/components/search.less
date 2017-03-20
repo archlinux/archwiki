@@ -1,3 +1,5 @@
+@import "mediawiki.mixins";
+
 /* Search */
 #p-search {
 	/* @noflip */
@@ -6,7 +8,7 @@
 	margin-left: 0.5em;
 
 	h3 {
-		display: none;
+		.mixin-screen-reader-text;
 	}
 
 	form,
@@ -19,6 +21,9 @@
 div#simpleSearch {
 	display: block;
 	width: 12.6em;
+	width: 20vw; /* responsive width */
+	min-width: 5em;
+	max-width: 20em;
 	padding-right: 1.4em;
 	height: 1.4em;
 	margin-top: 0.65em;
@@ -100,6 +105,9 @@ div#simpleSearch {
 		direction: ltr;
 		white-space: nowrap;
 		overflow: hidden;
+	}
+
+	#searchButton {
 		.background-image-svg('images/search-ltr.svg', 'images/search-ltr.png');
 		background-position: center center;
 		background-repeat: no-repeat;

@@ -70,38 +70,8 @@ class MWException extends Exception {
 	 * @param array $args Arguments to pass to the callback functions
 	 * @return string|null String to output or null if any hook has been called
 	 */
-	public function runHooks( $name, $args = array() ) {
-		global $wgExceptionHooks;
-
-		if ( !isset( $wgExceptionHooks ) || !is_array( $wgExceptionHooks ) ) {
-			return null; // Just silently ignore
-		}
-
-		if ( !array_key_exists( $name, $wgExceptionHooks ) ||
-			!is_array( $wgExceptionHooks[$name] )
-		) {
-			return null;
-		}
-
-		$hooks = $wgExceptionHooks[$name];
-		$callargs = array_merge( array( $this ), $args );
-
-		foreach ( $hooks as $hook ) {
-			if (
-				is_string( $hook ) ||
-				( is_array( $hook ) && count( $hook ) >= 2 && is_string( $hook[0] ) )
-			) {
-				// 'function' or array( 'class', hook' )
-				$result = call_user_func_array( $hook, $callargs );
-			} else {
-				$result = null;
-			}
-
-			if ( is_string( $result ) ) {
-				return $result;
-			}
-		}
-		return null;
+	public function runHooks( $name, $args = [] ) {
+		return MWExceptionRenderer::runHooks( $this, $name, $args );
 	}
 
 	/**
@@ -141,7 +111,7 @@ class MWException extends Exception {
 			nl2br( htmlspecialchars( MWExceptionHandler::getRedactedTraceAsString( $this ) ) ) .
 			"</p>\n";
 		} else {
-			$logId = MWExceptionHandler::getLogId( $this );
+			$logId = WebRequest::getRequestId();
 			$type = get_class( $this );
 			return "<div class=\"errorbox\">" .
 			'[' . $logId . '] ' .
@@ -236,7 +206,13 @@ class MWException extends Exception {
 			self::header( 'MediaWiki-API-Error: internal_api_error_' . get_class( $this ) );
 			wfHttpError( 500, 'Internal Server Error', $this->getText() );
 		} elseif ( self::isCommandLine() ) {
-			MWExceptionHandler::printError( $this->getText() );
+			$message = $this->getText();
+			// T17602: STDERR may not be available
+			if ( defined( 'STDERR' ) ) {
+				fwrite( STDERR, $message );
+			} else {
+				echo $message;
+			}
 		} else {
 			self::statusHeader( 500 );
 			self::header( "Content-Type: $wgMimeType; charset=utf-8" );

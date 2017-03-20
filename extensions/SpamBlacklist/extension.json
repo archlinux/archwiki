@@ -8,7 +8,11 @@
 	"url": "https://www.mediawiki.org/wiki/Extension:SpamBlacklist",
 	"descriptionmsg": "spam-blacklist-desc",
 	"type": "antispam",
+	"license-name": "GPL-2.0+",
 	"callback": "SpamBlacklistHooks::registerExtension",
+	"requires": {
+		"MediaWiki": ">= 1.26.0"
+	},
 	"GroupPermissions": {
 		"sysop": {
 			"spamblacklistlog": true
@@ -40,14 +44,12 @@
 		"EmailBlacklist": "EmailBlacklist.php",
 		"SpamBlacklistHooks": "SpamBlacklistHooks.php",
 		"SpamBlacklist": "SpamBlacklist_body.php",
-		"SpamRegexBatch": "SpamRegexBatch.php"
+		"SpamRegexBatch": "SpamRegexBatch.php",
+		"SpamBlacklistPreAuthenticationProvider": "SpamBlacklistPreAuthenticationProvider.php"
 	},
 	"Hooks": {
 		"EditFilterMergedContent": [
 			"SpamBlacklistHooks::filterMergedContent"
-		],
-		"APIEditBeforeSave": [
-			"SpamBlacklistHooks::filterAPIEditBeforeSave"
 		],
 		"EditFilter": [
 			"SpamBlacklistHooks::validate"
@@ -58,13 +60,24 @@
 		"UserCanSendEmail": [
 			"SpamBlacklistHooks::userCanSendEmail"
 		],
-		"AbortNewAccount": [
-			"SpamBlacklistHooks::abortNewAccount"
-		]
+		"ParserOutputStashForEdit": [
+			"SpamBlacklistHooks::onParserOutputStashForEdit"
+		],
+		"UploadVerifyUpload": [
+			"SpamBlacklistHooks::onUploadVerifyUpload"
+		],
+		"ArticleDelete": "SpamBlacklistHooks::onArticleDelete",
+		"ArticleDeleteComplete": "SpamBlacklistHooks::onArticleDeleteComplete"
 	},
 	"config": {
-		"@doc": "BlacklistSettings are set in SpamBlacklistHooks.php",
-		"LogSpamBlacklistHits": false
+		"BlacklistSettings": {
+			"spam": {
+				"files": [ "https://meta.wikimedia.org/w/index.php?title=Spam_blacklist&action=raw&sb_ver=1" ]
+			},
+			"_merge_strategy": "array_plus_2d"
+		},
+		"LogSpamBlacklistHits": false,
+		"SpamBlacklistEventLogging": false
 	},
 	"manifest_version": 1
 }

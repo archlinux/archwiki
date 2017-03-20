@@ -25,7 +25,8 @@
 			"constant": "NS_GADGET_DEFINITION",
 			"name": "Gadget_definition",
 			"protection": "gadgets-definition-edit",
-			"capitallinkoverride": false
+			"capitallinkoverride": false,
+			"defaultcontentmodel": "GadgetDefinition"
 		},
 		{
 			"id": 2303,
@@ -33,12 +34,16 @@
 			"name": "Gadget_definition_talk"
 		}
 	],
+	"ContentHandlers": {
+		"GadgetDefinition": "GadgetDefinitionContentHandler"
+	},
 	"AvailableRights": [
 		"gadgets-edit",
 		"gadgets-definition-edit"
 	],
 	"SpecialPages": {
-		"Gadgets": "SpecialGadgets"
+		"Gadgets": "SpecialGadgets",
+		"GadgetUsage": "SpecialGadgetUsage"
 	},
 	"APIListModules": {
 		"gadgetcategories": "ApiQueryGadgetCategories",
@@ -60,15 +65,34 @@
 		"GadgetHooks": "GadgetHooks.php",
 		"GadgetResourceLoaderModule": "includes/GadgetResourceLoaderModule.php",
 		"SpecialGadgets": "SpecialGadgets.php",
+		"SpecialGadgetUsage": "SpecialGadgetUsage.php",
 		"GadgetRepo": "includes/GadgetRepo.php",
-		"MediaWikiGadgetsDefinitionRepo": "includes/MediaWikiGadgetsDefinitionRepo.php"
+		"GadgetDefinitionNamespaceRepo": "includes/GadgetDefinitionNamespaceRepo.php",
+		"MediaWikiGadgetsDefinitionRepo": "includes/MediaWikiGadgetsDefinitionRepo.php",
+		"GadgetDefinitionContent": "includes/content/GadgetDefinitionContent.php",
+		"GadgetDefinitionContentHandler": "includes/content/GadgetDefinitionContentHandler.php",
+		"GadgetDefinitionValidator": "includes/content/GadgetDefinitionValidator.php",
+		"GadgetDefinitionSecondaryDataUpdate": "includes/content/GadgetDefinitionSecondaryDataUpdate.php",
+		"GadgetDefinitionDeletionUpdate": "includes/content/GadgetDefinitionDeletionUpdate.php"
 	},
 	"Hooks": {
-		"ArticleSaveComplete": [
-			"GadgetHooks::articleSaveComplete"
+		"PageContentSaveComplete": [
+			"GadgetHooks::onPageContentSaveComplete"
 		],
 		"BeforePageDisplay": [
 			"GadgetHooks::beforePageDisplay"
+		],
+		"CodeEditorGetPageLanguage": [
+			"GadgetHooks::onCodeEditorGetPageLanguage"
+		],
+		"ContentHandlerDefaultModelFor": [
+			"GadgetHooks::onContentHandlerDefaultModelFor"
+		],
+		"EditFilterMergedContent": [
+			"GadgetHooks::onEditFilterMergedContent"
+		],
+		"PageContentInsertComplete": [
+			"GadgetHooks::onPageContentInsertComplete"
 		],
 		"UserGetDefaultOptions": [
 			"GadgetHooks::userGetDefaultOptions"
@@ -79,9 +103,13 @@
 		"ResourceLoaderRegisterModules": [
 			"GadgetHooks::registerModules"
 		],
-		"UnitTestsList": [
-			"GadgetHooks::onUnitTestsList"
+		"wgQueryPages": [
+			"GadgetHooks::onwgQueryPages"
 		]
+	},
+	"config": {
+		"GadgetsRepoClass": "MediaWikiGadgetsDefinitionRepo",
+		"SpecialGadgetUsageActiveUsers": true
 	},
 	"manifest_version": 1
 }

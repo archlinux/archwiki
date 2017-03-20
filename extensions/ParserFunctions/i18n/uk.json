@@ -3,7 +3,8 @@
 		"authors": [
 			"AS",
 			"Ahonc",
-			"Base"
+			"Base",
+			"Piramidion"
 		]
 	},
 	"pfunc_desc": "Покращений синтаксичний аналізатор з логічними функціями",
@@ -18,7 +19,7 @@
 	"pfunc_expr_unrecognised_word": "Помилка виразу: незрозуміле слово «$1»",
 	"pfunc_expr_unexpected_operator": "Помилка виразу: неочікуваний оператор $1",
 	"pfunc_expr_missing_operand": "Помилка виразу: бракує операнда для $1",
-	"pfunc_expr_unexpected_closing_bracket": "Помилка виразу: неочікувана закрита дужка",
+	"pfunc_expr_unexpected_closing_bracket": "Помилка виразу: неочікувана закривальна дужка",
 	"pfunc_expr_unrecognised_punctuation": "Помилка виразу: незрозумілий розділовий знак «$1»",
 	"pfunc_expr_unclosed_bracket": "Помилка виразу: незакрита дужка",
 	"pfunc_expr_division_by_zero": "Ділення на нуль",

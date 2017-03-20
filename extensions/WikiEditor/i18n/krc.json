@@ -3,7 +3,8 @@
 		"authors": [
 			"Iltever",
 			"Къарачайлы",
-			"Macofe"
+			"Macofe",
+			"Ernác"
 		]
 	},
 	"wikieditor": "Викитекст редакторлауну кенгертилген интерфейси",
@@ -27,7 +28,6 @@
 	"wikieditor-toolbar-desc": "Хайырланыр мадары игиленнген тюрлендириу панель",
 	"wikieditor-toolbar-preference": "Игиленнген тюрлендириу панелни джандыр",
 	"wikieditor-toolbar-dialogs-preference": "Джибериулени, таблицаланы эмда андан башханы къошар ючюн мастерни джандыр",
-	"wikieditor-toolbar-hidesig": "Баш атла аламдагъы бетледе башлыкъны тиегин джашыр",
 	"wikieditor-toolbar-loading": "Джюклениу...",
 	"wikieditor-toolbar-tool-bold": "Къалын",
 	"wikieditor-toolbar-tool-bold-example": "Къалын джазыу",
@@ -193,9 +193,9 @@
 	"wikieditor-toolbar-help-content-showreferences-description": "Белгилени кёргюз",
 	"wikieditor-toolbar-help-content-showreferences-result": "<ol class='references'><li id='cite_note-test-0'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.example.org' class='external text' href='#'>Джибериуню тексти</a>, къошакъ текст.</li></ol>",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "Къол  салыннган бла заман белгиси",
-	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='{{#special:mypage}}'>Къошлуучуну аты</a> (<a href='#' title='{{#special:mytalk}}'>сюзюу</a>) 15:54, 10 июнь 2009 (UTC)",
+	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='$1:Username'>Къошлуучуну аты</a> (<a href='#' title='$2:Username'>сюзюу</a>) 15:54, 10 июнь 2009 (UTC)",
 	"wikieditor-toolbar-help-content-signature-description": "Къол",
-	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='{{#special:mypage}}'>Къошлуучуну аты</a> (<a href='#' title='{{#special:mytalk}}'>сюзюу</a>)",
+	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>Къошлуучуну аты</a> (<a href='#' title='$2:Username'>сюзюу</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "Бош атлам",
 	"wikieditor-toolbar-help-content-indent-syntax": "Нормал текст<br />:Бош атламы бла текст<br />::Бош атламы бла текст",
 	"wikieditor-toolbar-help-content-indent-result": "Нормал текст<dl><dd>Бош атламы бла текст<dl><dd>Бош атламы бла текст</dd></dl></dd></dl>"

@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica\Query;
 
 use Elastica\Type;
@@ -10,7 +11,7 @@ use Elastica\Type;
  * @author Nicolas Ruflin <spam@ruflin.com>
  * @author Tim Rupp
  *
- * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-ids-query.html
+ * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-ids-query.html
  */
 class Ids extends AbstractQuery
 {

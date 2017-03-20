@@ -24,10 +24,10 @@
 if ( getenv( 'MW_INSTALL_PATH' ) ) {
 	$IP = getenv( 'MW_INSTALL_PATH' );
 } else {
-	$IP = dirname(__FILE__).'/../../..';
+	$IP = __DIR__.'/../../..';
 }
 
-require_once( "$IP/maintenance/Maintenance.php" );
+require_once ( "$IP/maintenance/Maintenance.php" );
 
 /**
  * Maintenance script to change the password of a given user.
@@ -79,7 +79,7 @@ class GenerateFancyCaptchas extends Maintenance {
 				wfEscapeShellArg( $countGen ),
 				wfEscapeShellArg( $wgCaptchaDirectoryLevels )
 			);
-			foreach ( array( 'wordlist', 'font', 'font-size', 'blacklist', 'verbose' ) as $par ) {
+			foreach ( [ 'wordlist', 'font', 'font-size', 'blacklist', 'verbose' ] as $par ) {
 				if ( $this->hasOption( $par ) ) {
 					$cmd .= " --$par " . wfEscapeShellArg( $this->getOption( $par ) );
 				}
@@ -87,7 +87,7 @@ class GenerateFancyCaptchas extends Maintenance {
 
 			$this->output( "Generating $countGen new captchas...\n" );
 			$retVal = 1;
-			wfShellExec( $cmd, $retVal, array(), array( 'time' => 0 ) );
+			wfShellExec( $cmd, $retVal, [], [ 'time' => 0 ] );
 			if ( $retVal != 0 ) {
 				wfRecursiveRemoveDir( $tmpDir );
 				$this->error( "Could not run generation script.\n", 1 );
@@ -106,11 +106,11 @@ class GenerateFancyCaptchas extends Maintenance {
 				}
 				list( $salt, $hash ) = $instance->hashFromImageName( $fileInfo->getBasename() );
 				$dest = $instance->imagePath( $salt, $hash );
-				$backend->prepare( array( 'dir' => dirname( $dest ) ) );
-				$status = $backend->quickStore( array(
+				$backend->prepare( [ 'dir' => dirname( $dest ) ] );
+				$status = $backend->quickStore( [
 					'src' => $fileInfo->getPathname(),
 					'dst' => $dest
-				) );
+				] );
 				if ( !$status->isOK() ) {
 					$this->error( "Could not save file '{$fileInfo->getPathname()}'.\n" );
 				}
@@ -127,4 +127,4 @@ class GenerateFancyCaptchas extends Maintenance {
 }
 
 $maintClass = "GenerateFancyCaptchas";
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once ( RUN_MAINTENANCE_IF_MAIN );

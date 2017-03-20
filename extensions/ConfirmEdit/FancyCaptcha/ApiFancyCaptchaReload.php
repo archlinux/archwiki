@@ -9,38 +9,25 @@ class ApiFancyCaptchaReload extends ApiBase {
 	public function execute() {
 		# Get a new FancyCaptcha form data
 		$captcha = new FancyCaptcha();
-		$captchaIndex = $captcha->getCaptchaIndex();
+		$info = $captcha->getCaptcha();
+		$captchaIndex = $captcha->storeCaptcha( $info );
 
 		$result = $this->getResult();
-		$result->addValue( null, $this->getModuleName(), array ( 'index' => $captchaIndex ) );
+		$result->addValue( null, $this->getModuleName(), [ 'index' => $captchaIndex ] );
 		return true;
 	}
 
-	/**
-	 * @deprecated since MediaWiki core 1.25
-	 */
-	public function getDescription() {
-		return 'Get a new FancyCaptcha.';
-	}
-
 	public function getAllowedParams() {
-		return array();
-	}
-
-	/**
-	 * @deprecated since MediaWiki core 1.25
-	 */
-	public function getExamples() {
-		return array( 'api.php?action=fancycaptchareload&format=xml' );
+		return [];
 	}
 
 	/**
 	 * @see ApiBase::getExamplesMessages()
 	 */
 	protected function getExamplesMessages() {
-		return array(
+		return [
 			'action=fancycaptchareload'
 				=> 'apihelp-fancycaptchareload-example-1',
-		);
+		];
 	}
 }

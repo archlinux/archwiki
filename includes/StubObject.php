@@ -48,6 +48,9 @@ class StubObject {
 	/** @var null|string */
 	protected $class;
 
+	/** @var null|callable */
+	protected $factory;
+
 	/** @var array */
 	protected $params;
 
@@ -55,12 +58,17 @@ class StubObject {
 	 * Constructor.
 	 *
 	 * @param string $global Name of the global variable.
-	 * @param string $class Name of the class of the real object.
+	 * @param string|callable $class Name of the class of the real object
+	 *                               or a factory function to call
 	 * @param array $params Parameters to pass to constructor of the real object.
 	 */
-	public function __construct( $global = null, $class = null, $params = array() ) {
+	public function __construct( $global = null, $class = null, $params = [] ) {
 		$this->global = $global;
-		$this->class = $class;
+		if ( is_callable( $class ) ) {
+			$this->factory = $class;
+		} else {
+			$this->class = $class;
+		}
 		$this->params = $params;
 	}
 
@@ -102,7 +110,7 @@ class StubObject {
 	 */
 	public function _call( $name, $args ) {
 		$this->_unstub( $name, 5 );
-		return call_user_func_array( array( $GLOBALS[$this->global], $name ), $args );
+		return call_user_func_array( [ $GLOBALS[$this->global], $name ], $args );
 	}
 
 	/**
@@ -110,11 +118,13 @@ class StubObject {
 	 * @return object
 	 */
 	public function _newObject() {
-		return ObjectFactory::getObjectFromSpec( array(
-			'class' => $this->class,
+		$params = $this->factory
+			? [ 'factory' => $this->factory ]
+			: [ 'class' => $this->class ];
+		return ObjectFactory::getObjectFromSpec( $params + [
 			'args' => $this->params,
 			'closure_expansion' => false,
-		) );
+		] );
 	}
 
 	/**
@@ -149,7 +159,6 @@ class StubObject {
 		}
 
 		if ( get_class( $GLOBALS[$this->global] ) != $this->class ) {
-			$fname = __METHOD__ . '-' . $this->global;
 			$caller = wfGetCaller( $level );
 			if ( ++$recursionLevel > 2 ) {
 				throw new MWException( "Unstub loop detected on call of "
@@ -165,18 +174,12 @@ class StubObject {
 }
 
 /**
- * Stub object for the user language. It depends of the user preferences and
- * "uselang" parameter that can be passed to index.php. This object have to be
- * in $wgLang global.
+ * Stub object for the user language. Assigned to the $wgLang global.
  */
 class StubUserLang extends StubObject {
 
 	public function __construct() {
 		parent::__construct( 'wgLang' );
-	}
-
-	public function __call( $name, $args ) {
-		return $this->_call( $name, $args );
 	}
 
 	/**

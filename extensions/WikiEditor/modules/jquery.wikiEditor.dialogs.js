@@ -6,30 +6,40 @@
 $.wikiEditor.modules.dialogs = {
 
 	/**
-	 * Compatability map
+	 * Compatibility map
 	 */
 	browsers: {
 		// Left-to-right languages
 		ltr: {
-			msie: [['>=', 7]],
+			msie: [ [ '>=', 7 ] ],
 			// jQuery UI appears to be broken in FF 2.0 - 2.0.0.4
 			firefox: [
-				['>=', 2], ['!=', '2.0'], ['!=', '2.0.0.1'], ['!=', '2.0.0.2'], ['!=', '2.0.0.3'], ['!=', '2.0.0.4']
+				[ '>=', 2 ],
+				[ '!=', '2.0' ],
+				[ '!=', '2.0.0.1' ],
+				[ '!=', '2.0.0.2' ],
+				[ '!=', '2.0.0.3' ],
+				[ '!=', '2.0.0.4' ]
 			],
-			opera: [['>=', 9.6]],
-			safari: [['>=', 3]],
-			chrome: [['>=', 3]]
+			opera: [ [ '>=', 9.6 ] ],
+			safari: [ [ '>=', 3 ] ],
+			chrome: [ [ '>=', 3 ] ]
 		},
 		// Right-to-left languages
 		rtl: {
-			msie: [['>=', 7]],
+			msie: [ [ '>=', 7 ] ],
 			// jQuery UI appears to be broken in FF 2.0 - 2.0.0.4
 			firefox: [
-				['>=', 2], ['!=', '2.0'], ['!=', '2.0.0.1'], ['!=', '2.0.0.2'], ['!=', '2.0.0.3'], ['!=', '2.0.0.4']
+				[ '>=', 2 ],
+				[ '!=', '2.0' ],
+				[ '!=', '2.0.0.1' ],
+				[ '!=', '2.0.0.2' ],
+				[ '!=', '2.0.0.3' ],
+				[ '!=', '2.0.0.4' ]
 			],
-			opera: [['>=', 9.6]],
-			safari: [['>=', 3]],
-			chrome: [['>=', 3]]
+			opera: [ [ '>=', 9.6 ] ],
+			safari: [ [ '>=', 3 ] ],
+			chrome: [ [ '>=', 3 ] ]
 		}
 	},
 
@@ -42,7 +52,7 @@ $.wikiEditor.modules.dialogs = {
 		},
 		openDialog: function ( context, module ) {
 			if ( module in $.wikiEditor.modules.dialogs.modules ) {
-				var mod = $.wikiEditor.modules.dialogs.modules[module],
+				var mod = $.wikiEditor.modules.dialogs.modules[ module ],
 					$dialog = $( '#' + mod.id );
 				if ( $dialog.length === 0 ) {
 					$.wikiEditor.modules.dialogs.fn.reallyCreate( context, mod, module );
@@ -59,7 +69,7 @@ $.wikiEditor.modules.dialogs = {
 		},
 		closeDialog: function ( context, module ) {
 			if ( module in $.wikiEditor.modules.dialogs.modules ) {
-				$( '#' + $.wikiEditor.modules.dialogs.modules[module].id ).dialog( 'close' );
+				$( '#' + $.wikiEditor.modules.dialogs.modules[ module ].id ).dialog( 'close' );
 			}
 		}
 	},
@@ -79,12 +89,12 @@ $.wikiEditor.modules.dialogs = {
 
 			// Defer building of modules, unless they require immediate creation
 			for ( mod in config ) {
-				module = config[mod];
+				module = config[ mod ];
 				// Only create the dialog if it's supported, isn't filtered and doesn't exist yet
 				filtered = false;
 				if ( typeof module.filters !== 'undefined' ) {
 					for ( i = 0; i < module.filters.length; i++ ) {
-						if ( $( module.filters[i] ).length === 0 ) {
+						if ( $( module.filters[ i ] ).length === 0 ) {
 							filtered = true;
 							break;
 						}
@@ -98,7 +108,7 @@ $.wikiEditor.modules.dialogs = {
 				// Re-select from the DOM, we might have removed the dialog just now
 				$existingDialog = $( '#' + module.id );
 				if ( !filtered && $.wikiEditor.isSupported( module ) && $existingDialog.length === 0 ) {
-					$.wikiEditor.modules.dialogs.modules[mod] = module;
+					$.wikiEditor.modules.dialogs.modules[ mod ] = module;
 					context.$textarea.trigger( 'wikiEditor-dialogs-setup-' + mod );
 					// If this dialog requires immediate creation, create it now
 					if ( typeof module.immediateCreate !== 'undefined' && module.immediateCreate ) {
@@ -110,9 +120,10 @@ $.wikiEditor.modules.dialogs = {
 
 		/**
 		 * Build the actual dialog. This done on-demand rather than in create()
+		 *
 		 * @param {Object} context Context object of editor dialog belongs to
 		 * @param {Object} module Dialog module object
-		 * @param {String} name Dialog name (key in $.wikiEditor.modules.dialogs.modules)
+		 * @param {string} name Dialog name (key in $.wikiEditor.modules.dialogs.modules)
 		 */
 		reallyCreate: function ( context, module, name ) {
 			var msg, dialogDiv, $content,
@@ -120,7 +131,7 @@ $.wikiEditor.modules.dialogs = {
 			// Add some stuff to configuration
 			configuration.bgiframe = true;
 			configuration.autoOpen = false;
-			// By default our dialogs are modal, unless explicitely defined in their specific configuration.
+			// By default our dialogs are modal, unless explicitly defined in their specific configuration.
 			if ( typeof configuration.modal === 'undefined' ) {
 				configuration.modal = true;
 			}
@@ -130,7 +141,7 @@ $.wikiEditor.modules.dialogs = {
 			// foo = { mw.msg( 'bar' ): baz }
 			configuration.newButtons = {};
 			for ( msg in configuration.buttons ) {
-				configuration.newButtons[mw.msg( msg )] = configuration.buttons[msg];
+				configuration.newButtons[ mw.msg( msg ) ] = configuration.buttons[ msg ];
 			}
 			configuration.buttons = configuration.newButtons;
 			if ( module.htmlTemplate ) {
@@ -199,7 +210,7 @@ $.wikiEditor.modules.dialogs = {
 				wrapperWidth = Math.max( wrapper.get( 0 ).scrollWidth, wrapperWidth );
 				wrapper.width( wrapperWidth );
 				$( this ).data( 'wrapperWidth', wrapperWidth );
-				$( this ).dialog( { 'width': wrapper.width() } );
+				$( this ).dialog( { width: wrapper.width() } );
 				wrapper.css( 'left', parseInt( wrapper.css( 'left' ), 10 ) - ( wrapper.width() - oldWidth ) / 2 );
 			}
 			$( this ).css( 'white-space', oldWS );
@@ -207,9 +218,11 @@ $.wikiEditor.modules.dialogs = {
 				$( this ).attr( 'style', $( this ).data( 'oldstyle' ) );
 			} );
 		},
+
 		/**
 		 * Set the right tabindexes on elements in a dialog
-		 * @param $elements Elements to set tabindexes on. If they already have tabindexes, this function can behave a bit weird
+		 *
+		 * @param {Object} $elements Elements to set tabindexes on. If they already have tabindexes, this function can behave a bit weird
 		 */
 		setTabindexes: function ( $elements ) {
 			// Get the highest tab index

@@ -1,15 +1,15 @@
 <?php
+
 namespace Elastica;
 
 use Elastica\Exception\ResponseException;
-use Elastica\Index\Status as IndexStatus;
 
 /**
  * Elastica general status.
  *
  * @author Nicolas Ruflin <spam@ruflin.com>
  *
- * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/indices-status.html
+ * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-status.html
  */
 class Status
 {
@@ -25,7 +25,7 @@ class Status
      *
      * @var array Data
      */
-    protected $_data = array();
+    protected $_data = null;
 
     /**
      * Client object.
@@ -42,7 +42,6 @@ class Status
     public function __construct(Client $client)
     {
         $this->_client = $client;
-        $this->refresh();
     }
 
     /**
@@ -52,23 +51,11 @@ class Status
      */
     public function getData()
     {
-        return $this->_data;
-    }
-
-    /**
-     * Returns status objects of all indices.
-     *
-     * @return array|\Elastica\Index\Status[] List of Elastica\Client\Index objects
-     */
-    public function getIndexStatuses()
-    {
-        $statuses = array();
-        foreach ($this->getIndexNames() as $name) {
-            $index = new Index($this->_client, $name);
-            $statuses[] = new IndexStatus($index);
+        if (is_null($this->_data)) {
+            $this->refresh();
         }
 
-        return $statuses;
+        return $this->_data;
     }
 
     /**
@@ -78,7 +65,9 @@ class Status
      */
     public function getIndexNames()
     {
-        return array_keys($this->_data['indices']);
+        $data = $this->getData();
+
+        return array_keys($data['indices']);
     }
 
     /**
@@ -141,6 +130,10 @@ class Status
      */
     public function getResponse()
     {
+        if (is_null($this->_response)) {
+            $this->refresh();
+        }
+
         return $this->_response;
     }
 
@@ -151,7 +144,9 @@ class Status
      */
     public function getShards()
     {
-        return $this->_data['shards'];
+        $data = $this->getData();
+
+        return $data['shards'];
     }
 
     /**
@@ -159,19 +154,8 @@ class Status
      */
     public function refresh()
     {
-        $path = '_status';
+        $path = '_stats';
         $this->_response = $this->_client->request($path, Request::GET);
         $this->_data = $this->getResponse()->getData();
-    }
-
-    /**
-     * Refresh serverStatus object.
-     */
-    public function getServerStatus()
-    {
-        $path = '';
-        $response = $this->_client->request($path, Request::GET);
-
-        return  $response->getData();
     }
 }

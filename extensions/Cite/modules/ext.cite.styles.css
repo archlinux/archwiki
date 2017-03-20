@@ -6,16 +6,27 @@
 	user-select: none;
 }
 
-/* Isolation to fix references in case of RTL words at the end of a reference */
 sup.reference {
+	/* Isolation to fix references in case of RTL words at the end of a reference */
 	unicode-bidi: -moz-isolate;
 	unicode-bidi: -webkit-isolate;
 	unicode-bidi: isolate;
+
+	/* Don't allow a reference that includes a group name
+	to break in the end of the line */
+	white-space: nowrap;
 }
 
 /* Highlight clicked reference in blue to help navigation */
 ol.references li:target,
 sup.reference:target {
 	background-color: #def; /* fallback */
-	background-color: rgba(0, 127, 255, 0.133);
+	background-color: rgba( 0, 127, 255, 0.133 );
+}
+
+/* Make cite errors "strong" */
+.mw-ext-cite-error {
+	font-weight: bold;
+	/* For the case that the error is embedded in an element with a different direction */
+	unicode-bidi: embed;
 }

@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Freeyak",
-			"Phurbutsering"
+			"Phurbutsering",
+			"ཁ་བཏགས་ནག་པོ"
 		]
 	},
 	"vector-action-addsection": "བརྗོད་གཞི་ཁ་སྣོན།",
@@ -15,5 +16,6 @@
 	"vector-view-edit": "རྩོམ་སྒྲིག",
 	"vector-view-history": "ལོ་རྒྱུས་ལ་ལྟ་བ།",
 	"vector-view-view": "ཀློག་པ།",
-	"vector-view-viewsource": "ཁུངས་ལ་ལྟ་བ།"
+	"vector-view-viewsource": "ཁུངས་ལ་ལྟ་བ།",
+	"vector-more-actions": "དེ་ལས་མང་བ།"
 }

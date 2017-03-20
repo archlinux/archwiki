@@ -14,6 +14,7 @@
 	"cite_error_ref_no_key": "Ugyldigt <code>&lt;ref&gt;</code>-tag: Et <code>&lt;ref&gt;</code>-tag uden indhold skal have et navn",
 	"cite_error_ref_too_many_keys": "Ugyldigt <code>&lt;ref&gt;</code>-tag: Ugyldige navne, fx for mange",
 	"cite_error_ref_no_input": "Ugyldigt <code>&lt;ref&gt;</code>-tag: Et <code>&lt;ref&gt;</code>-tag uden navn skal have indhold",
+	"cite_error_references_duplicate_key": "Ugyldigt <code>&lt;ref&gt;</code> tag; navnet \"$1\" er defineret flere gange med forskelligt indhold",
 	"cite_error_references_invalid_parameters": "Ugyldigt <code>&lt;references&gt;</code>-tag: Parametre er ikke tilladt, brug i stedet <code>&lt;references /&gt;</code>",
 	"cite_error_references_invalid_parameters_group": "Ugyldigt <code>&lt;references&gt;</code>-tag; den eneste tilladte parameter er \"group\".\nBrug <code>&lt;references /&gt;</code> eller <code>&lt;references group=\"...\" /&gt;</code>",
 	"cite_error_references_no_backlink_label": "Løb tør for backlink-etiketter.\nDefiner flere i beskeden <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>.",
@@ -26,6 +27,10 @@
 	"cite_error_references_missing_key": "<code>&lt;ref&gt;</code>-tag med navn \"$1\" defineret inden i <code>&lt;references&gt;</code> anvendes ikke i den ovenstående tekst.",
 	"cite_error_references_no_key": "<code>&lt;ref&gt;</code>-tag defineret inden i <code>&lt;references&gt;</code> har ikke en navne-attribut.",
 	"cite_error_empty_references_define": "<code>&lt;ref&gt;</code>-tag defineret inden i <code>&lt;references&gt;</code> med navnet \"$1\" har ikke noget indhold.",
+	"cite-tracking-category-cite-error": "Sider med fejl i referencer",
+	"cite-tracking-category-cite-error-desc": "Sider i denne kategori har fejl i brugen af reference-tags.",
 	"cite_references_link_accessibility_label": "Hoppe op",
-	"cite_references_link_many_accessibility_label": "Hoppe op til:"
+	"cite_references_link_many_accessibility_label": "Hoppe op til:",
+	"cite_warning": "Citeringsadvarsel: $1",
+	"cite_warning_sectionpreview_no_text": "<code>&lt;ref&gt;</code> tag med navnet <code>$1</code> kan ikke ses, fordi den er defineret uden for det aktuelle afsnit eller ikke defineret overhovedet."
 }

@@ -17,7 +17,8 @@
 			"Translationista",
 			"Vivaelcelta",
 			"Luis Felipe Schenone",
-			"Macofe"
+			"Macofe",
+			"Yllelder"
 		]
 	},
 	"wikieditor": "Interfaz avanzada de edición de wikitexto",
@@ -41,7 +42,6 @@
 	"wikieditor-toolbar-desc": "Barra de herramientas de la página de edición con usabilidad mejorada",
 	"wikieditor-toolbar-preference": "Activar la barra de herramientas de edición mejorada",
 	"wikieditor-toolbar-dialogs-preference": "Activar los asistentes para insertar enlaces y tablas, y la función de buscar y reemplazar",
-	"wikieditor-toolbar-hidesig": "Ocultar el botón firmar de las páginas en el espacio de nombres principal",
 	"wikieditor-toolbar-loading": "Cargando...",
 	"wikieditor-toolbar-tool-bold": "Negrita",
 	"wikieditor-toolbar-tool-bold-example": "Texto en negrita",
@@ -86,6 +86,7 @@
 	"wikieditor-toolbar-file-format-none": "ninguno",
 	"wikieditor-toolbar-tool-file-insert": "Insertar",
 	"wikieditor-toolbar-tool-file-cancel": "Cancelar",
+	"wikieditor-toolbar-tool-file-upload": "Subir",
 	"wikieditor-toolbar-tool-reference": "Referencia",
 	"wikieditor-toolbar-tool-reference-example": "Insertar nota a pie de página aquí",
 	"wikieditor-toolbar-tool-reference-cancel": "Cancelar",
@@ -136,7 +137,7 @@
 	"wikieditor-toolbar-tool-table-preview": "Previsualización",
 	"wikieditor-toolbar-tool-table-insert": "Insertar",
 	"wikieditor-toolbar-tool-table-cancel": "Cancelar",
-	"wikieditor-toolbar-tool-table-toomany": "No se puede insertar una tabla con más de mil celdas con este diálogo.",
+	"wikieditor-toolbar-tool-table-toomany": "No se puede insertar una tabla con más de $1 {{PLURAL:$1|celdas}} con este diálogo.",
 	"wikieditor-toolbar-tool-table-invalidnumber": "No se ha introducido un número válido de filas o columnas.",
 	"wikieditor-toolbar-tool-table-zero": "No se puede insertar una tabla con cero filas o columnas.",
 	"wikieditor-toolbar-tool-replace": "Buscar y reemplazar",
@@ -212,9 +213,9 @@
 	"wikieditor-toolbar-help-content-showreferences-description": "Mostrar referencias",
 	"wikieditor-toolbar-help-content-showreferences-result": "<ol class='references'><li id='cite_note-test-0'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.example.org' class='external text' href='#'>Texto del enlace</a>, texto adicional.</li><li id='cite_note-test-1'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.example.org' class='external text' href='#'>Texto del enlace</a></li></ol>",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "Fecha y firma",
-	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='{{#special:mypage}}'>Nombre de usuario</a> (<a href='#' title='{{#special:mytalk}}'>discusión</a>) 15:54, 10 de junio de 2009 (UTC)",
+	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='$1:Username'>Nombre de usuario</a> (<a href='#' title='$2:Username'>discusión</a>) 15:54, 10 June 2009 (UTC)",
 	"wikieditor-toolbar-help-content-signature-description": "Firma",
-	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='{{#special:mypage}}'>Nombre de usuario</a> (<a href='#' title='{{#special:mytalk}}'>discusión</a>)",
+	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>Nombre de usuario</a> (<a href='#' title='$2:Username'>discusión</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "Sangría",
 	"wikieditor-toolbar-help-content-indent-syntax": "Texto normal<br />:Texto con sangría<br />::Texto con sangría",
 	"wikieditor-toolbar-help-content-indent-result": "Texto normal<dl><dd>Texto con sangría<dl><dd>Texto con sangría</dd></dl></dd></dl>"

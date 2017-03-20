@@ -10,7 +10,8 @@ namespace OOUI;
  *
  * @abstract
  */
-class ButtonElement extends ElementMixin {
+trait ButtonElement {
+
 	/**
 	 * Button is framed.
 	 *
@@ -18,37 +19,49 @@ class ButtonElement extends ElementMixin {
 	 */
 	protected $framed = false;
 
-	public static $targetPropertyName = 'button';
+	/**
+	 * @var Tag
+	 */
+	protected $button;
 
 	/**
-	 * @param Element $element Element being mixed into
 	 * @param array $config Configuration options
 	 * @param boolean $config['framed'] Render button with a frame (default: true)
 	 */
-	public function __construct( Element $element, array $config = array() ) {
-		// Parent constructor
+	public function initializeButtonElement( array $config = [] ) {
+		// Properties
+		if ( ! $this instanceof Element ) {
+			throw new Exception( "ButtonElement trait can only be used on Element instances" );
+		}
 		$target = isset( $config['button'] ) ? $config['button'] : new Tag( 'a' );
-		parent::__construct( $element, $target, $config );
+		$this->button = $target;
 
 		// Initialization
-		$this->element->addClasses( array( 'oo-ui-buttonElement' ) );
-		$this->target->addClasses( array( 'oo-ui-buttonElement-button' ) );
+		$this->addClasses( [ 'oo-ui-buttonElement' ] );
+		$this->button->addClasses( [ 'oo-ui-buttonElement-button' ] );
 		$this->toggleFramed( isset( $config['framed'] ) ? $config['framed'] : true );
-		$this->target->setAttributes( array(
+		$this->button->setAttributes( [
 			'role' => 'button',
-		) );
+		] );
+
+		$this->registerConfigCallback( function( &$config ) {
+			if ( $this->framed !== true ) {
+				$config['framed'] = $this->framed;
+			}
+		} );
 	}
 
 	/**
 	 * Toggle frame.
 	 *
 	 * @param boolean $framed Make button framed, omit to toggle
-	 * @chainable
+	 * @return $this
 	 */
 	public function toggleFramed( $framed = null ) {
 		$this->framed = $framed !== null ? !!$framed : !$this->framed;
-		$this->element->toggleClasses( array( 'oo-ui-buttonElement-framed' ), $this->framed );
-		$this->element->toggleClasses( array( 'oo-ui-buttonElement-frameless' ), !$this->framed );
+		$this->toggleClasses( [ 'oo-ui-buttonElement-framed' ], $this->framed );
+		$this->toggleClasses( [ 'oo-ui-buttonElement-frameless' ], !$this->framed );
+		return $this;
 	}
 
 	/**
@@ -58,12 +71,5 @@ class ButtonElement extends ElementMixin {
 	 */
 	public function isFramed() {
 		return $this->framed;
-	}
-
-	public function getConfig( &$config ) {
-		if ( $this->framed !== true ) {
-			$config['framed'] = $this->framed;
-		}
-		return parent::getConfig( $config );
 	}
 }

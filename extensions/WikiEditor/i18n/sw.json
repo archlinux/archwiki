@@ -187,9 +187,9 @@
 	"wikieditor-toolbar-help-content-showreferences-description": "Onyesha marejeo",
 	"wikieditor-toolbar-help-content-showreferences-result": "<ol class='references'><li id='cite_note-test-0'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.example.org' class='external text' href='#'>Maandishi ya kiungo</a>, maandishi mengine.</li></ol>",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "Sahihi pamoja na stempu ya saa",
-	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='{{#special:mypage}}'>Jina la mtumiaji</a> (<a href='#' title='{{#special:mytalk}}'>majadiliano</a>) 15:54, 10 June 2009 (UTC)",
+	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='$1:Username'>Jina la mtumiaji</a> (<a href='#' title='$2:Username'>majadiliano</a>) 15:54, 10 June 2009 (UTC)",
 	"wikieditor-toolbar-help-content-signature-description": "Sahihi",
-	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='{{#special:mypage}}'>Jina la mtumiaji</a> (<a href='#' title='{{#special:mytalk}}'>majadiliano</a>)",
+	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>Jina la mtumiaji</a> (<a href='#' title='$2:Username'>majadiliano</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "Jongeza ndani",
 	"wikieditor-toolbar-help-content-indent-syntax": "Maandiko ya kawaida<br />:Yaliyojongezwa ndani<br />::Yaliyojongezwa ndani",
 	"wikieditor-toolbar-help-content-indent-result": "Maandiko ya kawaida<dl><dd>Yaliyojongezwa ndani<dl><dd>Yaliyojongezwa ndani</dd></dl></dd></dl>"

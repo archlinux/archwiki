@@ -1,8 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"Mirzali"
+			"Mirzali",
+			"Kumkumuk"
 		]
 	},
-	"wikieditor-toolbar-tool-link": "Girê"
+	"wikieditor-publish-button-cancel": "Bıtexelne",
+	"wikieditor-toolbar-tool-link": "Girê",
+	"wikieditor-toolbar-tool-link-cancel": "Bıtexelne",
+	"wikieditor-toolbar-tool-file-cancel": "Bıtexelne",
+	"wikieditor-toolbar-tool-reference-cancel": "Bıtexelne",
+	"wikieditor-toolbar-tool-table-cancel": "Bıtexelne"
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica\Query;
 
 /**
@@ -6,7 +7,7 @@ namespace Elastica\Query;
  *
  * @author Balazs Nadasdi <yitsushi@gmail.com>
  *
- * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-boosting-query.html
+ * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-boosting-query.html
  */
 class Boosting extends AbstractQuery
 {
@@ -21,7 +22,7 @@ class Boosting extends AbstractQuery
      */
     public function setPositiveQuery(AbstractQuery $query)
     {
-        return $this->setParam('positive', $query->toArray());
+        return $this->setParam('positive', $query);
     }
 
     /**
@@ -33,13 +34,13 @@ class Boosting extends AbstractQuery
      */
     public function setNegativeQuery(AbstractQuery $query)
     {
-        return $this->setParam('negative', $query->toArray());
+        return $this->setParam('negative', $query);
     }
 
     /**
      * Set the negative_boost parameter for this Boosting Query.
      *
-     * @param Float $negativeBoost
+     * @param float $negativeBoost
      *
      * @return $this
      */

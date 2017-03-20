@@ -30,8 +30,8 @@ class CheckLess extends Maintenance {
 
 	public function __construct() {
 		parent::__construct();
-		$this->mDescription =
-			'Checks LESS files for errors by running the LessTestSuite PHPUnit test suite';
+		$this->addDescription(
+			'Checks LESS files for errors by running the LessTestSuite PHPUnit test suite' );
 	}
 
 	public function execute() {
@@ -40,7 +40,7 @@ class CheckLess extends Maintenance {
 		// NOTE (phuedx, 2014-03-26) wgAutoloadClasses isn't set up
 		// by either of the dependencies at the top of the file, so
 		// require it here.
-		require_once __DIR__ . '/../tests/TestsAutoLoader.php';
+		self::requireTestsAutoloader();
 
 		// If phpunit isn't available by autoloader try pulling it in
 		if ( !class_exists( 'PHPUnit_Framework_TestCase' ) ) {
@@ -54,10 +54,10 @@ class CheckLess extends Maintenance {
 		}
 
 		$textUICommand = new PHPUnit_TextUI_Command();
-		$argv = array(
+		$argv = [
 			"$IP/tests/phpunit/phpunit.php",
 			"$IP/tests/phpunit/suites/LessTestSuite.php"
-		);
+		];
 		$textUICommand->run( $argv );
 	}
 }

@@ -1,0 +1,34 @@
+{
+	"@metadata": {
+		"authors": [
+			"Malafaya",
+			"פוילישער",
+			"十弌"
+		]
+	},
+	"visualeditor-cite-tool-name-book": "בוך",
+	"visualeditor-cite-tool-name-journal": "זשורנאל",
+	"visualeditor-cite-tool-name-news": "נײַעס",
+	"visualeditor-cite-tool-name-web": "וועבזײַטל",
+	"cite-ve-dialog-reference-editing-reused": "דער רעפערענץ ווערט געניצט $1 {{PLURAL:$1|מאל}} אויף דעם בלאט.",
+	"cite-ve-dialog-reference-options-group-label": "ניצן די גרופע",
+	"cite-ve-dialog-reference-options-group-placeholder": "אלגעמיינע רעפערענצן",
+	"cite-ve-dialog-reference-options-name-label": "ווידערניצן מיט דעם נאמען",
+	"cite-ve-dialog-reference-options-section": "ברירות",
+	"cite-ve-dialog-reference-title": "רעפערענץ",
+	"cite-ve-dialog-reference-useexisting-full-label": "ווידערניצן א ציטירונג וואס אעז שוין פאראן אויף דעם בלאט",
+	"cite-ve-dialog-reference-useexisting-label": "ניצן אן עקזיסטירנדן רעפערענץ",
+	"cite-ve-dialog-reference-useexisting-tool": "ווידערניצן",
+	"cite-ve-dialog-referenceslist-contextitem-description-general": "לעסטע פון אלגעמיינע רעפערענצן",
+	"cite-ve-dialog-referenceslist-contextitem-description-named": "ליסטע פון רעפערענצן פאר גרופע \"$1\"",
+	"cite-ve-dialog-referenceslist-title": "רעפערענצן ליסטע",
+	"cite-ve-dialogbutton-citation-educationpopup-title": "ציטירונגען",
+	"cite-ve-dialogbutton-reference-full-label": "באזיס־פארעם",
+	"cite-ve-dialogbutton-reference-tooltip": "איינפאך",
+	"cite-ve-dialogbutton-reference-title": "רעפערענץ",
+	"cite-ve-dialogbutton-referenceslist-tooltip": "רעפערענצן ליסטע",
+	"cite-ve-reference-input-placeholder": "זוכן אינערהאלב אקטועלע ציטירונגען",
+	"cite-ve-referenceslist-isempty": "נישט פֿאראן קיין רעפערענצן מיט דער גרופע \"$1\" אויף דעם בלאט אריינצושליסן אין דער דאזיקער ליסטע.",
+	"cite-ve-referenceslist-isempty-default": "נישט פאראן קיין רעפערענצן אויף דעם בלאט אריינצושליסן אין דער ליסטע.",
+	"cite-ve-toolbar-group-label": "ציטירן"
+}

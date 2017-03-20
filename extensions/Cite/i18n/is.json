@@ -7,7 +7,7 @@
 	"cite-desc": "Bætir <nowiki><ref[ name=id]></nowiki> og <nowiki><references/></nowiki> tögum við fyrir heimildir",
 	"cite_error": "Tilvísunar villa: $1",
 	"cite_error_ref_numeric_key": "Villa í <code>&lt;ref&gt;</code> tag;\nnafn tilvísunar má ekki vera heil tala. Notaðu lýsandi titil",
-	"cite_error_ref_no_key": "Villa í <code>&lt;ref&gt;</code> tag;\ntilvísunin verður annaðhvort að hafa nafn eða innihald.",
+	"cite_error_ref_no_key": "Opna <code>&lt;ref&gt;</code> merkið er gallað eða hefur ógilt nafn",
 	"cite_error_ref_too_many_keys": "Villa í <code>&lt;ref&gt;</code> tag;\nógilt nafn, t.d. of mörg",
 	"cite_error_ref_no_input": "Villa í <code>&lt;ref&gt;</code> tag;\ntilvísunin verður annaðhvort að hafa nafn eða innihald.",
 	"cite_error_references_invalid_parameters": "Villa í <code>&lt;ref&gt;</code> tag;\nengir stikar eru leyfðir\nNotaðu <code>&lt;references /&gt;</code> í staðinn",

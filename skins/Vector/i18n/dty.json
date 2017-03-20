@@ -3,14 +3,15 @@
 		"authors": [
 			"जनक राज भट्ट",
 			"राम प्रसाद जोशी",
-			"रमेश सिंह बोहरा"
+			"रमेश सिंह बोहरा",
+			"Nirajan pant"
 		]
 	},
 	"vector-action-addsection": "विषय थपिदिय",
 	"vector-action-move": "साद्दे",
 	"vector-view-create": "सृजना गर्न्या",
 	"vector-view-edit": "सम्पादन",
-	"vector-view-history": "इतिहास हेद्य्या",
-	"vector-view-view": "पढ्या",
+	"vector-view-history": "इतिहास तकऽ",
+	"vector-view-view": "पढ़ऽ",
 	"vector-more-actions": "झिक्क"
 }

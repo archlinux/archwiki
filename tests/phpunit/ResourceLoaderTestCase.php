@@ -1,6 +1,14 @@
 <?php
 
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
+
 abstract class ResourceLoaderTestCase extends MediaWikiTestCase {
+	// Version hash for a blank file module.
+	// Result of ResourceLoader::makeHash(), ResourceLoaderTestModule
+	// and ResourceLoaderFileModule::getDefinitionSummary().
+	const BLANK_VERSION = '09p30q0';
+
 	/**
 	 * @param string $lang
 	 * @param string $dir
@@ -8,25 +16,23 @@ abstract class ResourceLoaderTestCase extends MediaWikiTestCase {
 	 */
 	protected function getResourceLoaderContext( $lang = 'en', $dir = 'ltr' ) {
 		$resourceLoader = new ResourceLoader();
-		$request = new FauxRequest( array(
+		$request = new FauxRequest( [
 				'lang' => $lang,
 				'modules' => 'startup',
 				'only' => 'scripts',
 				'skin' => 'vector',
-				'target' => 'test',
-		) );
+				'target' => 'phpunit',
+		] );
 		$ctx = $this->getMockBuilder( 'ResourceLoaderContext' )
-			->setConstructorArgs( array( $resourceLoader, $request ) )
-			->setMethods( array( 'getDirection' ) )
+			->setConstructorArgs( [ $resourceLoader, $request ] )
+			->setMethods( [ 'getDirection' ] )
 			->getMock();
-		$ctx->expects( $this->any() )->method( 'getDirection' )->will(
-			$this->returnValue( $dir )
-		);
+		$ctx->method( 'getDirection' )->willReturn( $dir );
 		return $ctx;
 	}
 
 	public static function getSettings() {
-		return array(
+		return [
 			// For ResourceLoader::inDebugMode since it doesn't have context
 			'ResourceLoaderDebug' => true,
 
@@ -34,14 +40,14 @@ abstract class ResourceLoaderTestCase extends MediaWikiTestCase {
 			'CacheEpoch' => '20140101000000',
 
 			// For ResourceLoader::__construct()
-			'ResourceLoaderSources' => array(),
+			'ResourceLoaderSources' => [],
 
 			// For wfScript()
 			'ScriptPath' => '/w',
 			'ScriptExtension' => '.php',
 			'Script' => '/w/index.php',
 			'LoadScript' => '/w/load.php',
-		);
+		];
 	}
 
 	protected function setUp() {
@@ -49,7 +55,7 @@ abstract class ResourceLoaderTestCase extends MediaWikiTestCase {
 
 		ResourceLoader::clearCache();
 
-		$globals = array();
+		$globals = [];
 		foreach ( self::getSettings() as $key => $value ) {
 			$globals['wg' . $key] = $value;
 		}
@@ -60,16 +66,20 @@ abstract class ResourceLoaderTestCase extends MediaWikiTestCase {
 /* Stubs */
 
 class ResourceLoaderTestModule extends ResourceLoaderModule {
-	protected $dependencies = array();
+	protected $messages = [];
+	protected $dependencies = [];
 	protected $group = null;
 	protected $source = 'local';
+	protected $position = 'bottom';
 	protected $script = '';
 	protected $styles = '';
 	protected $skipFunction = null;
 	protected $isRaw = false;
-	protected $targets = array( 'test' );
+	protected $isKnownEmpty = false;
+	protected $type = ResourceLoaderModule::LOAD_GENERAL;
+	protected $targets = [ 'phpunit' ];
 
-	public function __construct( $options = array() ) {
+	public function __construct( $options = [] ) {
 		foreach ( $options as $key => $value ) {
 			$this->$key = $value;
 		}
@@ -80,7 +90,11 @@ class ResourceLoaderTestModule extends ResourceLoaderModule {
 	}
 
 	public function getStyles( ResourceLoaderContext $context ) {
-		return array( '' => $this->styles );
+		return [ '' => $this->styles ];
+	}
+
+	public function getMessages() {
+		return $this->messages;
 	}
 
 	public function getDependencies( ResourceLoaderContext $context = null ) {
@@ -94,6 +108,13 @@ class ResourceLoaderTestModule extends ResourceLoaderModule {
 	public function getSource() {
 		return $this->source;
 	}
+	public function getPosition() {
+		return $this->position;
+	}
+
+	public function getType() {
+		return $this->type;
+	}
 
 	public function getSkipFunction() {
 		return $this->skipFunction;
@@ -102,6 +123,9 @@ class ResourceLoaderTestModule extends ResourceLoaderModule {
 	public function isRaw() {
 		return $this->isRaw;
 	}
+	public function isKnownEmpty( ResourceLoaderContext $context ) {
+		return $this->isKnownEmpty;
+	}
 
 	public function enableModuleContentVersion() {
 		return true;
@@ -109,4 +133,14 @@ class ResourceLoaderTestModule extends ResourceLoaderModule {
 }
 
 class ResourceLoaderFileModuleTestModule extends ResourceLoaderFileModule {
+}
+
+class EmptyResourceLoader extends ResourceLoader {
+	// TODO: This won't be needed once ResourceLoader is empty by default
+	// and default registrations are done from ServiceWiring instead.
+	public function __construct( Config $config = null, LoggerInterface $logger = null ) {
+		$this->setLogger( $logger ?: new NullLogger() );
+		$this->config = $config ?: ConfigFactory::getDefaultInstance()->makeConfig( 'main' );
+		$this->setMessageBlobStore( new MessageBlobStore( $this, $this->getLogger() ) );
+	}
 }

@@ -61,7 +61,7 @@
 	"logentry-interwiki-iw_delete": "$1 {{GENDER:$2|已移除}}在跨 Wiki 資料表中的字首 \"$4\"",
 	"log-description-interwiki": "此頁面顯示 [[Special:Interwiki|跨 Wiki 資料表]] 的修改日誌。",
 	"right-interwiki": "編輯跨 Wiki 資料",
-	"action-interwiki": "更改此跨 Wiki 項目",
+	"action-interwiki": "變更此跨 Wiki 項目",
 	"interwiki-global-links": "全域跨 Wiki 字首",
 	"interwiki-global-description": "這些字首均繼承自全域設定，且僅可於來源 Wiki 編輯。",
 	"interwiki-local-links": "本地跨 Wiki 字首",

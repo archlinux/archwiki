@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica\Transport;
 
 use Elastica\Exception\Connection\HttpException;
@@ -70,6 +71,11 @@ class Http extends AbstractTransport
         curl_setopt($conn, CURLOPT_TIMEOUT, $connection->getTimeout());
         curl_setopt($conn, CURLOPT_FORBID_REUSE, 0);
 
+        // Tell ES that we support the compressed responses
+        // An "Accept-Encoding" header containing all supported encoding types is sent
+        // curl will decode the response automatically if the response is encoded
+        curl_setopt($conn, CURLOPT_ENCODING, '');
+
         /* @see Connection::setConnectTimeout() */
         $connectTimeout = $connection->getConnectTimeout();
         if ($connectTimeout > 0) {
@@ -85,6 +91,13 @@ class Http extends AbstractTransport
 
         if (!is_null($proxy)) {
             curl_setopt($conn, CURLOPT_PROXY, $proxy);
+        }
+
+        $username = $connection->getUsername();
+        $password = $connection->getPassword();
+        if (!is_null($username) and !is_null($password)) {
+            curl_setopt($conn, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+            curl_setopt($conn, CURLOPT_USERPWD, "$username:$password");
         }
 
         $this->_setupCurl($conn);
@@ -118,7 +131,15 @@ class Http extends AbstractTransport
             // Escaping of / not necessary. Causes problems in base64 encoding of files
             $content = str_replace('\/', '/', $content);
 
-            curl_setopt($conn, CURLOPT_POSTFIELDS, $content);
+            if ($connection->hasCompression()) {
+                // Compress the body of the request ...
+                curl_setopt($conn, CURLOPT_POSTFIELDS, gzencode($content));
+
+                // ... and tell ES that it is compressed
+                curl_setopt($conn, CURLOPT_HTTPHEADER, array('Content-Encoding: gzip'));
+            } else {
+                curl_setopt($conn, CURLOPT_POSTFIELDS, $content);
+            }
         } else {
             curl_setopt($conn, CURLOPT_POSTFIELDS, '');
         }
@@ -142,6 +163,9 @@ class Http extends AbstractTransport
         $response = new Response($responseString, curl_getinfo($conn, CURLINFO_HTTP_CODE));
         $response->setQueryTime($end - $start);
         $response->setTransferInfo(curl_getinfo($conn));
+        if ($connection->hasConfig('bigintConversion')) {
+            $response->setJsonBigintConversion($connection->getConfig('bigintConversion'));
+        }
 
         if ($response->hasError()) {
             throw new ResponseException($request, $response);

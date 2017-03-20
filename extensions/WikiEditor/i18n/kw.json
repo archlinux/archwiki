@@ -171,9 +171,9 @@
 	"wikieditor-toolbar-help-content-showreferences-description": "Diskwedhes devynnow",
 	"wikieditor-toolbar-help-content-showreferences-result": "<ol class='references'><li id='cite_note-test-0'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.ensampel.org' class='external text' href='#'>Tekst an gevren</a>, tekst keworansel.</li></ol>",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "Sinans gans an dedhyans",
-	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='{{#special:mypage}}'>Hanow usyer</a> (<a href='#' title='{{#special:mytalk}}'>keskows</a>) 15:54, 10 Metheven 2009 (UTC)",
+	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='$1:Username'>Hanow usyer</a> (<a href='#' title='$2:Username'>keskows</a>) 15:54, 10 Metheven 2009 (UTC)",
 	"wikieditor-toolbar-help-content-signature-description": "Sinans",
-	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='{{#special:mypage}}'>Hanow devnydhyer</a> (<a href='#' title='{{#special:mytalk}}'>keskows</a>)",
+	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>Hanow devnydhyer</a> (<a href='#' title='$2:Username'>keskows</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "Kryba",
 	"wikieditor-toolbar-help-content-indent-syntax": "Tekst usadow<br />:Tekst krybys<br />::Tekst krybys",
 	"wikieditor-toolbar-help-content-indent-result": "Tekst usadow<dl><dd>Tekst krybys<dl><dd>Tekst krybys</dd></dl></dd></dl>"

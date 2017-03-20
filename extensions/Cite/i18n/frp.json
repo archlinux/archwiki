@@ -5,7 +5,7 @@
 		]
 	},
 	"cite-desc": "Apond les balises <nowiki><ref[ name=id]></nowiki> et <nowiki><references/></nowiki>, por les citacions.",
-	"cite_error": "Èrror de citacion $1",
+	"cite_error": "Fôta de rèference : $1",
 	"cite_error_ref_numeric_key": "Apèl envalido ; cllâf pas entègrâla atendua.",
 	"cite_error_ref_no_key": "Balisa <code>&lt;ref&gt;</code> fôssa ;\nles refèrences sen contegnu dêvont avêr un nom.",
 	"cite_error_ref_too_many_keys": "Apèl envalido ; cllâfs envalides, per ègzemplo, trop de cllâfs spècefiâs ou ben cllâf fôssa.",

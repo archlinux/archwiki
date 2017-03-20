@@ -20,6 +20,7 @@
  * @file
  * @ingroup Upload
  */
+use Wikimedia\ScopedCallback;
 
 /**
  * Assemble the segments of a chunked upload.
@@ -34,6 +35,10 @@ class AssembleUploadChunksJob extends Job {
 
 	public function run() {
 		$scope = RequestContext::importScopedSession( $this->params['session'] );
+		$this->addTeardownCallback( function () use ( &$scope ) {
+			ScopedCallback::consume( $scope ); // T126450
+		} );
+
 		$context = RequestContext::getMain();
 		$user = $context->getUser();
 		try {
@@ -46,14 +51,14 @@ class AssembleUploadChunksJob extends Job {
 			UploadBase::setSessionStatus(
 				$user,
 				$this->params['filekey'],
-				array( 'result' => 'Poll', 'stage' => 'assembling', 'status' => Status::newGood() )
+				[ 'result' => 'Poll', 'stage' => 'assembling', 'status' => Status::newGood() ]
 			);
 
 			$upload = new UploadFromChunks( $user );
 			$upload->continueChunks(
 				$this->params['filename'],
 				$this->params['filekey'],
-				$context->getRequest()
+				new WebRequestUpload( $context->getRequest(), 'null' )
 			);
 
 			// Combine all of the chunks into a local file and upload that to a new stash file
@@ -62,15 +67,19 @@ class AssembleUploadChunksJob extends Job {
 				UploadBase::setSessionStatus(
 					$user,
 					$this->params['filekey'],
-					array( 'result' => 'Failure', 'stage' => 'assembling', 'status' => $status )
+					[ 'result' => 'Failure', 'stage' => 'assembling', 'status' => $status ]
 				);
-				$this->setLastError( $status->getWikiText() );
+				$this->setLastError( $status->getWikiText( false, false, 'en' ) );
 
 				return false;
 			}
 
+			// We can only get warnings like 'duplicate' after concatenating the chunks
+			$status = Status::newGood();
+			$status->value = [ 'warnings' => $upload->checkWarnings() ];
+
 			// We have a new filekey for the fully concatenated file
-			$newFileKey = $upload->getLocalFile()->getFileKey();
+			$newFileKey = $upload->getStashFile()->getFileKey();
 
 			// Remove the old stash file row and first chunk file
 			$upload->stash->removeFileNoAuth( $this->params['filekey'] );
@@ -86,25 +95,25 @@ class AssembleUploadChunksJob extends Job {
 			UploadBase::setSessionStatus(
 				$user,
 				$this->params['filekey'],
-				array(
+				[
 					'result' => 'Success',
 					'stage' => 'assembling',
 					'filekey' => $newFileKey,
 					'imageinfo' => $imageInfo,
-					'status' => Status::newGood()
-				)
+					'status' => $status
+				]
 			);
 		} catch ( Exception $e ) {
 			UploadBase::setSessionStatus(
 				$user,
 				$this->params['filekey'],
-				array(
+				[
 					'result' => 'Failure',
 					'stage' => 'assembling',
 					'status' => Status::newFatal( 'api-error-stashfailed' )
-				)
+				]
 			);
-			$this->setLastError( get_class( $e ) . ": " . $e->getText() );
+			$this->setLastError( get_class( $e ) . ": " . $e->getMessage() );
 			// To be extra robust.
 			MWExceptionHandler::rollbackMasterChangesAndLog( $e );
 
@@ -117,7 +126,7 @@ class AssembleUploadChunksJob extends Job {
 	public function getDeduplicationInfo() {
 		$info = parent::getDeduplicationInfo();
 		if ( is_array( $info['params'] ) ) {
-			$info['params'] = array( 'filekey' => $info['params']['filekey'] );
+			$info['params'] = [ 'filekey' => $info['params']['filekey'] ];
 		}
 
 		return $info;

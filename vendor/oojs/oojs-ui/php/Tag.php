@@ -18,21 +18,21 @@ class Tag {
 	 *
 	 * @var array HTML attributes
 	 */
-	protected $attributes = array();
+	protected $attributes = [];
 
 	/**
 	 * Classes.
 	 *
 	 * @var array CSS classes
 	 */
-	protected $classes = array();
+	protected $classes = [];
 
 	/**
 	 * Content.
 	 *
 	 * @var array Content text and elements
 	 */
-	protected $content = array();
+	protected $content = [];
 
 	/**
 	 * Group.
@@ -73,7 +73,7 @@ class Tag {
 	 * Add CSS classes.
 	 *
 	 * @param array $classes List of classes to add
-	 * @chainable
+	 * @return $this
 	 */
 	public function addClasses( array $classes ) {
 		$this->classes = array_merge( $this->classes, $classes );
@@ -84,7 +84,7 @@ class Tag {
 	 * Remove CSS classes.
 	 *
 	 * @param array $classes List of classes to remove
-	 * @chainable
+	 * @return $this
 	 */
 	public function removeClasses( array $classes ) {
 		$this->classes = array_diff( $this->classes, $classes );
@@ -96,7 +96,7 @@ class Tag {
 	 *
 	 * @param array $classes List of classes to add
 	 * @param boolean $toggle Add classes
-	 * @chainable
+	 * @return $this
 	 */
 	public function toggleClasses( array $classes, $toggle = null ) {
 		if ( $toggle === null ) {
@@ -126,7 +126,7 @@ class Tag {
 	 * Add HTML attributes.
 	 *
 	 * @param array $attributes List of attribute key/value pairs to add
-	 * @chainable
+	 * @return $this
 	 */
 	public function setAttributes( array $attributes ) {
 		foreach ( $attributes as $key => $value ) {
@@ -139,14 +139,14 @@ class Tag {
 	 * Set value of input element ('value' attribute for most, element content for textarea).
 	 *
 	 * @param string $value Value to set
-	 * @chainable
+	 * @return $this
 	 */
 	public function setValue( $value ) {
 		if ( strtolower( $this->tag ) === 'textarea' ) {
 			$this->clearContent();
 			$this->appendContent( $value );
 		} else {
-			$this->setAttributes( array( 'value' => $value ) );
+			$this->setAttributes( [ 'value' => $value ] );
 		}
 		return $this;
 	}
@@ -155,7 +155,7 @@ class Tag {
 	 * Remove HTML attributes.
 	 *
 	 * @param array $keys List of attribute keys to remove
-	 * @chainable
+	 * @return $this
 	 */
 	public function removeAttributes( array $keys ) {
 		foreach ( $keys as $key ) {
@@ -167,40 +167,62 @@ class Tag {
 	/**
 	 * Add content to the end.
 	 *
-	 * Accepts variadic arguments (the $content argument can be repeated any number of times).
+	 * Accepts either variadic arguments (the $content argument can be repeated any number of times)
+	 * or an array of arguments.
+	 *
+	 * For example, these uses are valid:
+	 * * $tag->appendContent( [ $element1, $element2 ] );
+	 * * $tag->appendContent( $element1, $element2 );
+	 * This, however, is not acceptable
+	 * * $tag->appendContent( [ $element1, $element2 ], $element3 );
 	 *
 	 * @param string|Tag|HtmlSnippet $content Content to append. Strings will be HTML-escaped
 	 *   for output, use a HtmlSnippet instance to prevent that.
-	 * @chainable
+	 * @return $this
 	 */
 	public function appendContent( /* $content... */ ) {
 		$contents = func_get_args();
-		$this->content = array_merge( $this->content, $contents );
+		if ( is_array( $contents[ 0 ] ) ) {
+			$this->content = array_merge( $this->content, $contents[ 0 ] );
+		} else {
+			$this->content = array_merge( $this->content, $contents );
+		}
 		return $this;
 	}
 
 	/**
 	 * Add content to the beginning.
 	 *
-	 * Accepts variadic arguments (the $content argument can be repeated any number of times).
+	 * Accepts either variadic arguments (the $content argument can be repeated any number of times)
+	 * or an array of arguments.
+	 *
+	 * For example, these uses are valid:
+	 * * $tag->prependContent( [ $element1, $element2 ] );
+	 * * $tag->prependContent( $element1, $element2 );
+	 * This, however, is not acceptable
+	 * * $tag->prependContent( [ $element1, $element2 ], $element3 );
 	 *
 	 * @param string|Tag|HtmlSnippet $content Content to prepend. Strings will be HTML-escaped
 	 *   for output, use a HtmlSnippet instance to prevent that.
-	 * @chainable
+	 * @return $this
 	 */
 	public function prependContent( /* $content... */ ) {
 		$contents = func_get_args();
-		array_splice( $this->content, 0, 0, $contents );
+		if ( is_array( $contents[ 0 ] ) ) {
+			array_splice( $this->content, 0, 0, $contents[ 0 ] );
+		} else {
+			array_splice( $this->content, 0, 0, $contents );
+		}
 		return $this;
 	}
 
 	/**
 	 * Remove all content.
 	 *
-	 * @chainable
+	 * @return $this
 	 */
 	public function clearContent() {
-		$this->content = array();
+		$this->content = [];
 		return $this;
 	}
 
@@ -217,7 +239,7 @@ class Tag {
 	 * Set group element is in.
 	 *
 	 * @param GroupElement|null $group Group element, null if none
-	 * @chainable
+	 * @return $this
 	 */
 	public function setElementGroup( $group ) {
 		$this->elementGroup = $group;
@@ -228,7 +250,7 @@ class Tag {
 	 * Enable widget for client-side infusion.
 	 *
 	 * @param boolean $infusable True to allow tag/element/widget to be referenced client-side.
-	 * @chainable
+	 * @return $this
 	 */
 	public function setInfusable( $infusable ) {
 		$this->infusable = $infusable;
@@ -248,12 +270,12 @@ class Tag {
 	/**
 	 * Ensure that this given Tag is infusable and has a unique `id`
 	 * attribute.
-	 * @chainable
+	 * @return $this
 	 */
 	public function ensureInfusableId() {
 		$this->setInfusable( true );
 		if ( $this->getAttribute( 'id' ) === null ) {
-			$this->setAttributes( array( 'id' => "ooui-" . ( self::$id_cnt++ ) ) );
+			$this->setAttributes( [ 'id' => "ooui-" . ( self::$id_cnt++ ) ] );
 		}
 		return $this;
 	}
@@ -272,15 +294,78 @@ class Tag {
 		}
 		if ( $this->infusable ) {
 			// Indicate that this is "just" a tag (not a widget)
-			$attributesArray['data-ooui'] = json_encode( array( '_' => 'Tag' ) );
+			$attributesArray['data-ooui'] = json_encode( [ '_' => 'Tag' ] );
 		}
 		return $attributesArray;
 	}
 
 	/**
-	 * Render element into HTML.
+	 * Check whether the string $haystack begins with the string $needle.
 	 *
+	 * @param string $haystack
+	 * @param string $needle
+	 * @return bool True if $haystack begins with $needle, false otherwise.
+	 */
+	private static function stringStartsWith( $haystack, $needle ) {
+		return strncmp( $haystack, $needle, strlen( $needle ) ) === 0;
+	}
+
+	/**
+	 * Check whether user-supplied URL is safe, that is, whether outputting it will not result in XSS
+	 * vulnerability. (Note that URLs must be HTML-escaped regardless of this check.)
+	 *
+	 * The point is to disallow 'javascript:' URLs (there are no good reasons to ever use them
+	 * anyway), but there's no good way to blacklist them because of very lax parsing in browsers.
+	 *
+	 * An URL is safe if:
+	 *
+	 *  - it is empty, or
+	 *  - it starts with a whitelisted protocol, followed by a colon (absolute URL), or
+	 *  - it starts with two slashes `//` (protocol-relative URL), or
+	 *  - it starts with a single slash `/`, or dot and slash `./` (relative URL), or
+	 *  - it starts with a question mark `?` (replace query part in current URL), or
+	 *  - it starts with a pound sign `#` (replace fragment part in current URL)
+	 *
+	 * Plain relative URLs (like `index.php`) are not allowed, since it's pretty much impossible to
+	 * distinguish them from malformed absolute ones (again, very lax rules for parsing protocols).
+	 *
+	 * @param string $url URL
+	 * @return boolean [description]
+	 */
+	public static function isSafeUrl( $url ) {
+		// Keep this function in sync with OO.ui.isSafeUrl
+		$protocolWhitelist = [
+			// Sourced from MediaWiki's $wgUrlProtocols
+			'bitcoin', 'ftp', 'ftps', 'geo', 'git', 'gopher', 'http', 'https', 'irc', 'ircs',
+			'magnet', 'mailto', 'mms', 'news', 'nntp', 'redis', 'sftp', 'sip', 'sips', 'sms', 'ssh',
+			'svn', 'tel', 'telnet', 'urn', 'worldwind', 'xmpp',
+		];
+
+		if ( $url === '' ) {
+			return true;
+		}
+
+		foreach ( $protocolWhitelist as $protocol ) {
+			if ( self::stringStartsWith( $url, $protocol . ':' ) ) {
+				return true;
+			}
+		}
+
+		// This matches '//' too
+		if ( self::stringStartsWith( $url, '/' ) || self::stringStartsWith( $url, './' ) ) {
+			return true;
+		}
+		if ( self::stringStartsWith( $url, '?' ) || self::stringStartsWith( $url, '#' ) ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Render element into HTML.
 	 * @return string HTML serialization
+	 * @throws Exception
 	 */
 	public function toString() {
 		$attributes = '';
@@ -289,36 +374,14 @@ class Tag {
 				throw new Exception( 'Attribute name must consist of only ASCII letters, numbers and dash' );
 			}
 
+			// Note that this is not a complete list of HTML attributes that need this validation.
+			// We only check for the ones that are generated by built-in OOjs UI PHP elements.
 			if ( $key === 'href' || $key === 'action' ) {
-				// Make it impossible to point a link or a form to a 'javascript:' URL. There's no good way
-				// to blacklist them because of very lax parsing, so instead we whitelist known-good
-				// protocols (and also accept protocol-less and protocol-relative links). There are no good
-				// reasons to ever use 'javascript:' URLs anyway.
-				$protocolWhitelist = array(
-					// Sourced from MediaWiki's $wgUrlProtocols
-					// Keep in sync with OO.ui.isSafeUrl
-					'bitcoin', 'ftp', 'ftps', 'geo', 'git', 'gopher', 'http', 'https', 'irc', 'ircs',
-					'magnet', 'mailto', 'mms', 'news', 'nntp', 'redis', 'sftp', 'sip', 'sips', 'sms', 'ssh',
-					'svn', 'tel', 'telnet', 'urn', 'worldwind', 'xmpp',
-					'(protocol-relative)', '(relative)',
-				);
-
-				// Protocol-relative URLs are handled really badly by parse_url()
-				if ( substr( $value, 0, 2 ) === '//' ) {
-					$scheme = '(protocol-relative)';
-				} else {
-					// Must suppress warnings when the value is not a valid URL. parse_url() returns false then.
-					\MediaWiki\suppressWarnings();
-					$scheme = parse_url( $value, PHP_URL_SCHEME );
-					\MediaWiki\restoreWarnings();
-					if ( $scheme === null || ( !$scheme && substr( $value, 0, 1 ) === '/' ) ) {
-						$scheme = '(relative)';
-					}
-				}
-
-				if ( !in_array( strtolower( $scheme ), $protocolWhitelist ) ) {
-					throw new Exception( "Potentially unsafe '$key' attribute value. " .
-						"Scheme: '$scheme'; value: '$value'." );
+				if ( !self::isSafeUrl( $value ) ) {
+					// We can't tell for sure whether this URL is safe (although it might be). The only safe
+					// URLs that we can't check for is relative ones, so just prefix with './'. This should
+					// change nothing for relative URLs, and it will neutralize sneaky 'javascript:' URLs.
+					$value = './' . $value;
 				}
 			}
 

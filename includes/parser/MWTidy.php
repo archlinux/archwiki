@@ -41,11 +41,12 @@ class MWTidy {
 	 * @param string $text HTML input fragment. This should not contain a
 	 *                     <body> or <html> tag.
 	 * @return string Corrected HTML output
+	 * @throws MWException
 	 */
 	public static function tidy( $text ) {
 		$driver = self::singleton();
 		if ( !$driver ) {
-			throw new MWException( __METHOD__.
+			throw new MWException( __METHOD__ .
 				': tidy is disabled, caller should have checked MWTidy::isEnabled()' );
 		}
 		return $driver->tidy( $text );
@@ -57,11 +58,12 @@ class MWTidy {
 	 * @param string $text
 	 * @param string &$errorStr Return the error string
 	 * @return bool Whether the HTML is valid
+	 * @throws MWException
 	 */
 	public static function checkErrors( $text, &$errorStr = null ) {
 		$driver = self::singleton();
 		if ( !$driver ) {
-			throw new MWException( __METHOD__.
+			throw new MWException( __METHOD__ .
 				': tidy is disabled, caller should have checked MWTidy::isEnabled()' );
 		}
 		if ( $driver->supportsValidate() ) {
@@ -71,10 +73,16 @@ class MWTidy {
 		}
 	}
 
+	/**
+	 * @return bool
+	 */
 	public static function isEnabled() {
 		return self::singleton() !== false;
 	}
 
+	/**
+	 * @return bool|\MediaWiki\Tidy\TidyDriverBase
+	 */
 	protected static function singleton() {
 		global $wgUseTidy, $wgTidyInternal, $wgTidyConf, $wgDebugTidy, $wgTidyConfig,
 			$wgTidyBin, $wgTidyOpts;
@@ -84,11 +92,11 @@ class MWTidy {
 				$config = $wgTidyConfig;
 			} elseif ( $wgUseTidy ) {
 				// b/c configuration
-				$config = array(
+				$config = [
 					'tidyConfigFile' => $wgTidyConf,
 					'debugComment' => $wgDebugTidy,
 					'tidyBin' => $wgTidyBin,
-					'tidyCommandLine' => $wgTidyOpts );
+					'tidyCommandLine' => $wgTidyOpts ];
 				if ( $wgTidyInternal ) {
 					if ( wfIsHHVM() ) {
 						$config['driver'] = 'RaggettInternalHHVM';
@@ -101,29 +109,46 @@ class MWTidy {
 			} else {
 				return false;
 			}
-			switch ( $config['driver'] ) {
-				case 'RaggettInternalHHVM':
-					self::$instance = new MediaWiki\Tidy\RaggettInternalHHVM( $config );
-					break;
-				case 'RaggettInternalPHP':
-					self::$instance = new MediaWiki\Tidy\RaggettInternalPHP( $config );
-					break;
-				case 'RaggettExternal':
-					self::$instance = new MediaWiki\Tidy\RaggettExternal( $config );
-					break;
-				case 'Html5Depurate':
-					self::$instance = new MediaWiki\Tidy\Html5Depurate( $config );
-					break;
-				default:
-					throw new MWException( "Invalid tidy driver: \"{$config['driver']}\"" );
-			}
+			self::$instance = self::factory( $config );
 		}
 		return self::$instance;
 	}
 
 	/**
+	 * Create a new Tidy driver object from configuration.
+	 * @see $wgTidyConfig
+	 * @param array $config
+	 * @return bool|\MediaWiki\Tidy\TidyDriverBase
+	 * @throws MWException
+	 */
+	public static function factory( array $config ) {
+		switch ( $config['driver'] ) {
+			case 'RaggettInternalHHVM':
+				$instance = new MediaWiki\Tidy\RaggettInternalHHVM( $config );
+				break;
+			case 'RaggettInternalPHP':
+				$instance = new MediaWiki\Tidy\RaggettInternalPHP( $config );
+				break;
+			case 'RaggettExternal':
+				$instance = new MediaWiki\Tidy\RaggettExternal( $config );
+				break;
+			case 'Html5Depurate':
+				$instance = new MediaWiki\Tidy\Html5Depurate( $config );
+				break;
+			case 'Html5Internal':
+				$instance = new MediaWiki\Tidy\Html5Internal( $config );
+				break;
+			case 'disabled':
+				return false;
+			default:
+				throw new MWException( "Invalid tidy driver: \"{$config['driver']}\"" );
+		}
+		return $instance;
+	}
+
+	/**
 	 * Set the driver to be used. This is for testing.
-	 * @param TidyDriverBase|false|null $instance
+	 * @param MediaWiki\Tidy\TidyDriverBase|false|null $instance
 	 */
 	public static function setInstance( $instance ) {
 		self::$instance = $instance;

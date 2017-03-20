@@ -3,7 +3,8 @@
 		"authors": [
 			"Effeietsanders",
 			"SPQRobin",
-			"Siebrand"
+			"Siebrand",
+			"Sjoerddebruin"
 		]
 	},
 	"renameuser": "Gebruiker hernoemen",
@@ -21,18 +22,18 @@
 	"renameusersubmit": "Opslaan",
 	"renameuser-submit-blocklog": "Blokkeerlogboek voor gebruiker weergeven",
 	"renameusererrordoesnotexist": "De gebruiker \"<nowiki>$1</nowiki>\" bestaat niet.",
-	"renameusererrorexists": "De gebruiker \"<nowiki>$1</nowiki>\" bestaat al.",
+	"renameusererrorexists": "De {{GENDER:$1|gebruiker}} \"<nowiki>$1</nowiki>\" bestaat al.",
 	"renameusererrorinvalid": "De gebruikersnaam \"<nowiki>$1</nowiki>\" is ongeldig.",
 	"renameuser-error-request": "Er was een probleem bij het ontvangen van de aanvraag.\nGa terug en probeer het opnieuw.",
 	"renameuser-error-same-user": "U kunt geen gebruiker hernoemen naar dezelfde naam.",
-	"renameusersuccess": "De gebruiker \"<nowiki>$1</nowiki>\" is hernoemd naar \"<nowiki>$2</nowiki>\".",
+	"renameusersuccess": "De {{GENDER:$2|gebruiker}} \"<nowiki>$1</nowiki>\" is hernoemd naar \"<nowiki>$2</nowiki>\".",
 	"renameuser-page-exists": "De pagina $1 bestaat al en kan niet automatisch overschreven worden.",
 	"renameuser-page-moved": "De pagina $1 is hernoemd naar $2.",
 	"renameuser-page-unmoved": "De pagina $1 kon niet hernoemd worden naar $2.",
 	"log-name-renameuser": "Logboek gebruikersnaamwijzigingen",
 	"log-description-renameuser": "Hieronder staan gebruikersnamen die gewijzigd zijn.",
-	"logentry-renameuser-renameuser": "$1 {{GENDER:$2|heeft}} gebruiker $4 ($6 {{PLURAL:$6|bewerking|bewerkingen}}) hernoemd naar $5",
-	"logentry-renameuser-renameuser-legacier": "$1 heeft de gebruiker $4 hernoemd naar $5",
+	"logentry-renameuser-renameuser": "$1 heeft gebruiker $4 ($6 {{PLURAL:$6|bewerking|bewerkingen}}) {{GENDER:$2|hernoemd}} naar {{GENDER:$7|$5}}",
+	"logentry-renameuser-renameuser-legacier": "$1 heeft de gebruiker $4 hernoemd naar {{GENDER:$7|$5}}",
 	"renameuser-move-log": "Automatisch hernoemd bij het wijzigen van gebruiker \"[[User:$1|$1]]\" naar \"[[User:$2|$2]]\"",
 	"action-renameuser": "gebruikers te hernoemen",
 	"right-renameuser": "Gebruikers hernoemen",

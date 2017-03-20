@@ -12,5 +12,6 @@
 	"nuke-tools": "Aquesta aisina autoriza las supressions en massa de las paginas apondudas recentament per un utilizaire enregistrat o per una adreça IP. Indicatz l’adreça IP per obténer la lista de las paginas de suprimir, o daissar blanc per totes los utilizaires.",
 	"nuke-submit-user": "Validar",
 	"nuke-submit-delete": "Supression seleccionada",
-	"right-nuke": "Suprimir de paginas en massa"
+	"right-nuke": "Suprimir de paginas en massa",
+	"nuke-linkoncontribs": "supression en massa"
 }

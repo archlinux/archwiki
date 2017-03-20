@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Crazymadlover",
-			"Omnipaedista"
+			"Omnipaedista",
+			"Gts-tg"
 		]
 	},
 	"vector-action-addsection": "Θέμα προστιθέναι",
@@ -15,5 +16,6 @@
 	"vector-view-edit": "Μεταγράφειν",
 	"vector-view-history": "Ἱστορίαν ὁρᾶν",
 	"vector-view-view": "Ἀναγνῶναι",
-	"vector-view-viewsource": "Ὁρᾶν τὴν πηγήν"
+	"vector-view-viewsource": "Ὁρᾶν τὴν πηγήν",
+	"vector-more-actions": "Πλεῖον"
 }

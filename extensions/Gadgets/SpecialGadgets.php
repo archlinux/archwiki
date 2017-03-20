@@ -44,6 +44,7 @@ class SpecialGadgets extends SpecialPage {
 			return;
 		}
 
+		$output->disallowUserJs();
 		$lang = $this->getLanguage();
 		$langSuffix = "";
 		if ( $lang->getCode() != $wgContLang->getCode() ) {
@@ -62,7 +63,7 @@ class SpecialGadgets extends SpecialPage {
 				$lnkTarget = $t
 					? Linker::link( $t, $this->msg( $editInterfaceMessage )->escaped(), array(), array( 'action' => 'edit' ) )
 					: htmlspecialchars( $section );
-				$lnk =  "&#160; &#160; [$lnkTarget]";
+				$lnk = "&#160; &#160; [$lnkTarget]";
 
 				$ttext = $this->msg( "gadget-section-$section" )->parse();
 
@@ -113,7 +114,7 @@ class SpecialGadgets extends SpecialPage {
 
 				$lnk = array();
 				foreach ( $gadget->getScriptsAndStyles() as $codePage ) {
-					$t = Title::makeTitleSafe( NS_MEDIAWIKI, $codePage );
+					$t = Title::newFromText( $codePage );
 
 					if ( !$t ) {
 						continue;
@@ -140,21 +141,25 @@ class SpecialGadgets extends SpecialPage {
 					);
 				}
 
-				$skins = array();
-				$validskins = Skin::getSkinNames();
-				foreach ( $gadget->getRequiredSkins() as $skinid ) {
-					if ( isset( $validskins[$skinid] ) ) {
-						$skins[] = $this->msg( "skinname-$skinid" )->plain();
-					} else {
-						$skins[] = $skinid;
+				$requiredSkins = $gadget->getRequiredSkins();
+				// $requiredSkins can be an array or true (if all skins are supported)
+				if ( is_array( $requiredSkins ) ) {
+					$skins = array();
+					$validskins = Skin::getSkinNames();
+					foreach ( $requiredSkins as $skinid ) {
+						if ( isset( $validskins[$skinid] ) ) {
+							$skins[] = $this->msg( "skinname-$skinid" )->plain();
+						} else {
+							$skins[] = $skinid;
+						}
 					}
-				}
-				if ( count( $skins ) ) {
-					$output->addHTML(
-						'<br />' .
-						$this->msg( 'gadgets-required-skins', $lang->commaList( $skins ) )
-							->numParams( count( $skins ) )->parse()
-					);
+					if ( count( $skins ) ) {
+						$output->addHTML(
+							'<br />' .
+							$this->msg( 'gadgets-required-skins', $lang->commaList( $skins ) )
+								->numParams( count( $skins ) )->parse()
+						);
+					}
 				}
 
 				if ( $gadget->isOnByDefault() ) {
@@ -191,7 +196,7 @@ class SpecialGadgets extends SpecialPage {
 
 		$exportList = "MediaWiki:gadget-$gadget\n";
 		foreach ( $g->getScriptsAndStyles() as $page ) {
-			$exportList .= "MediaWiki:$page\n";
+			$exportList .= "$page\n";
 		}
 
 		$output->addHTML( Html::openElement( 'form', array( 'method' => 'get', 'action' => $wgScript ) )

@@ -5,10 +5,12 @@
  * @license GPL-2.0+
  */
 
+namespace LocalisationUpdate;
+
 /**
  * Reads MediaWiki JSON i18n files.
  */
-class LU_JSONReader implements LU_Reader {
+class JSONReader implements Reader {
 	/// @var string Language tag
 	protected $code;
 
@@ -17,11 +19,11 @@ class LU_JSONReader implements LU_Reader {
 	}
 
 	public function parse( $contents ) {
-		$messages = FormatJson::decode( $contents, true );
+		$messages = \FormatJson::decode( $contents, true );
 		unset( $messages['@metadata'] );
 
 		if ( $this->code ) {
-			return array( $this->code => $messages );
+			return [ $this->code => $messages ];
 		}
 
 		// Assuming that the array is keyed by language codes

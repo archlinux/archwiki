@@ -4,7 +4,8 @@
 			"Aspar",
 			"Erdemaslancan",
 			"Xoser",
-			"Mirzali"
+			"Mirzali",
+			"Kumkumuk"
 		]
 	},
 	"inputbox-desc": "desturê daxilbiyayişê formê HTMLyi dano, no HTML gani ver ra şınasi bıbo.",
@@ -13,5 +14,8 @@
 	"inputbox-tryexact": "tam hemcıt biyayiş tesel bıker/bıcereb",
 	"inputbox-searchfulltext": "pêroyê metni bıgêr",
 	"inputbox-createarticle": "Pele vıraze",
+	"inputbox-movearticle": "Pele bıkırışe",
+	"inputbox-postcomment": "Leteyo newe",
+	"inputbox-postcommenttitle": "Leteyo newe",
 	"inputbox-ns-main": "Ser"
 }

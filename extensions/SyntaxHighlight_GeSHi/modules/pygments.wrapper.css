@@ -5,6 +5,14 @@
 	unicode-bidi: embed;
 }
 
+.mw-highlight pre {
+	/* Use a more commonly found tab size of 4 (e.g. as used in CodeEditor)
+	instead of the browser-default value of 8 */
+	-moz-tab-size: 4;
+	-o-tab-size: 4;
+	tab-size: 4;
+}
+
 /* Avoid displaying double borders for nested 'code' elements.
    Before we started using the 'code' tag for inline code snippets,
    <code><syntaxhighlight enclose=none ...>...</syntaxhighlight></code>
@@ -28,6 +36,13 @@ code code.mw-highlight {
 /* Highlight background of whole lines, not just text in them */
 .mw-highlight .hll {
 	display: block;
+}
+
+/* Make line numbers non copyable */
+.mw-highlight .lineno {
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
 }
 
 /* To interact better with the 'display: block' above, doesn't affect other uses */

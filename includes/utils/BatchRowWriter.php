@@ -20,9 +20,11 @@
  * @file
  * @ingroup Maintenance
  */
+use \MediaWiki\MediaWikiServices;
+
 class BatchRowWriter {
 	/**
-	 * @var DatabaseBase $db The database to write to
+	 * @var IDatabase $db The database to write to
 	 */
 	protected $db;
 
@@ -37,11 +39,11 @@ class BatchRowWriter {
 	protected $clusterName;
 
 	/**
-	 * @param DatabaseBase $db          The database to write to
+	 * @param IDatabase $db The database to write to
 	 * @param string       $table       The name of the table to update
 	 * @param string|bool  $clusterName A cluster name valid for use with LBFactory
 	 */
-	public function __construct( DatabaseBase $db, $table, $clusterName = false ) {
+	public function __construct( IDatabase $db, $table, $clusterName = false ) {
 		$this->db = $db;
 		$this->table = $table;
 		$this->clusterName = $clusterName;
@@ -54,7 +56,8 @@ class BatchRowWriter {
 	 *  names to update values to apply to the row.
 	 */
 	public function write( array $updates ) {
-		$this->db->begin();
+		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
+		$ticket = $lbFactory->getEmptyTransactionTicket( __METHOD__ );
 
 		foreach ( $updates as $update ) {
 			$this->db->update(
@@ -65,7 +68,6 @@ class BatchRowWriter {
 			);
 		}
 
-		$this->db->commit();
-		wfWaitForSlaves( false, false, $this->clusterName );
+		$lbFactory->commitAndWaitForReplication( __METHOD__, $ticket );
 	}
 }

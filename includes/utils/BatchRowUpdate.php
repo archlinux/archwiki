@@ -4,7 +4,7 @@
  * method of batch updating rows in a database. To use create a class
  * implementing the RowUpdateGenerator interface and configure the
  * BatchRowIterator and BatchRowWriter for access to the correct table.
- * The components will handle reading, writing, and waiting for slaves
+ * The components will handle reading, writing, and waiting for replica DBs
  * while the generator implementation handles generating update arrays
  * for singular rows.
  *
@@ -71,7 +71,9 @@ class BatchRowUpdate {
 	 * @param RowUpdateGenerator $generator Generates single row updates
 	 *  based on the rows content
 	 */
-	public function __construct( BatchRowIterator $reader, BatchRowWriter $writer, RowUpdateGenerator $generator ) {
+	public function __construct(
+		BatchRowIterator $reader, BatchRowWriter $writer, RowUpdateGenerator $generator
+	) {
 		$this->reader = $reader;
 		$this->writer = $writer;
 		$this->generator = $generator;
@@ -84,14 +86,14 @@ class BatchRowUpdate {
 	 */
 	public function execute() {
 		foreach ( $this->reader as $rows ) {
-			$updates = array();
+			$updates = [];
 			foreach ( $rows as $row ) {
 				$update = $this->generator->update( $row );
 				if ( $update ) {
-					$updates[] = array(
+					$updates[] = [
 						'primaryKey' => $this->reader->extractPrimaryKeys( $row ),
 						'changes' => $update,
-					);
+					];
 				}
 			}
 
@@ -110,15 +112,8 @@ class BatchRowUpdate {
 	 *
 	 * @param callable $output A callback taking a single string
 	 *  parameter to output
-	 *
-	 * @throws MWException
 	 */
-	public function setOutput( $output ) {
-		if ( !is_callable( $output ) ) {
-			throw new MWException(
-				'Provided $output param is required to be callable.'
-			);
-		}
+	public function setOutput( callable $output ) {
 		$this->output = $output;
 	}
 

@@ -30,13 +30,18 @@
 class JsonContentHandler extends CodeContentHandler {
 
 	public function __construct( $modelId = CONTENT_MODEL_JSON ) {
-		parent::__construct( $modelId, array( CONTENT_FORMAT_JSON ) );
+		parent::__construct( $modelId, [ CONTENT_FORMAT_JSON ] );
 	}
 
 	/**
 	 * @return string
 	 */
 	protected function getContentClass() {
-		return 'JsonContent';
+		return JsonContent::class;
+	}
+
+	public function makeEmptyContent() {
+		$class = $this->getContentClass();
+		return new $class( '{}' );
 	}
 }

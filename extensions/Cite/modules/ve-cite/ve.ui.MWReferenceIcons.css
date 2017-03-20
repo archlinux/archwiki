@@ -1,0 +1,116 @@
+/*!
+ * Cite VisualEditor UserInterface icon styles.
+ *
+ * @copyright 2011-2016 Cite VisualEditor Team and others; see AUTHORS.txt
+ * @license The MIT License (MIT); see LICENSE.txt
+ */
+
+/* @noflip */
+.ve-ui-dir-block-rtl .oo-ui-icon-reference,
+/* HACK */
+.ve-ui-surface-dir-rtl .oo-ui-icon-reference,
+/* HACK */
+.oo-ui-rtl .oo-ui-icon-reference {
+	/* @embed */
+	background-image: url( icons/reference-rtl.svg );
+}
+
+/* @noflip */
+.ve-ui-dir-block-ltr .oo-ui-icon-reference,
+/* HACK */
+.ve-ui-surface-dir-ltr .oo-ui-icon-reference,
+/* HACK */
+.oo-ui-ltr .oo-ui-icon-reference {
+	/* @embed */
+	background-image: url( icons/reference-ltr.svg );
+}
+
+/* @noflip */
+.ve-ui-dir-block-rtl .oo-ui-icon-reference-existing,
+/* HACK */
+.ve-ui-surface-dir-rtl .oo-ui-icon-reference-existing,
+/* HACK */
+.oo-ui-rtl .oo-ui-icon-reference-existing {
+	/* @embed */
+	background-image: url( icons/reference-existing-rtl.svg );
+}
+
+/* @noflip */
+.ve-ui-dir-block-ltr .oo-ui-icon-reference-existing,
+/* HACK */
+.ve-ui-surface-dir-ltr .oo-ui-icon-reference-existing,
+/* HACK */
+.oo-ui-ltr .oo-ui-icon-reference-existing {
+	/* @embed */
+	background-image: url( icons/reference-existing-ltr.svg );
+}
+
+/* @noflip */
+.ve-ui-dir-block-rtl .oo-ui-icon-references,
+/* HACK */
+.ve-ui-surface-dir-rtl .oo-ui-icon-references,
+/* HACK */
+.oo-ui-rtl .oo-ui-icon-references {
+	/* @embed */
+	background-image: url( icons/references-rtl.svg );
+}
+
+/* @noflip */
+.ve-ui-dir-block-ltr .oo-ui-icon-references,
+/* HACK */
+.ve-ui-surface-dir-ltr .oo-ui-icon-references,
+/* HACK */
+.oo-ui-ltr .oo-ui-icon-references {
+	/* @embed */
+	background-image: url( icons/references-ltr.svg );
+}
+
+.oo-ui-icon-ref-cite-book {
+	/* @embed */
+	background-image: url( icons/ref-cite-book.svg );
+}
+
+/* @noflip */
+.ve-ui-dir-block-rtl .oo-ui-icon-ref-cite-journal,
+/* HACK */
+.ve-ui-surface-dir-rtl .oo-ui-icon-ref-cite-journal,
+/* HACK */
+.oo-ui-rtl .oo-ui-icon-ref-cite-journal {
+	/* @embed */
+	background-image: url( icons/ref-cite-journal-rtl.svg );
+}
+
+/* @noflip */
+.ve-ui-dir-block-ltr .oo-ui-icon-ref-cite-journal,
+/* HACK */
+.ve-ui-surface-dir-ltr .oo-ui-icon-ref-cite-journal,
+/* HACK */
+.oo-ui-ltr .oo-ui-icon-ref-cite-journal {
+	/* @embed */
+	background-image: url( icons/ref-cite-journal-ltr.svg );
+}
+
+/* @noflip */
+.ve-ui-dir-block-rtl .oo-ui-icon-ref-cite-news,
+/* HACK */
+.ve-ui-surface-dir-rtl .oo-ui-icon-ref-cite-news,
+/* HACK */
+.oo-ui-rtl .oo-ui-icon-ref-cite-news {
+	/* @embed */
+	background-image: url( icons/ref-cite-news-rtl.svg );
+}
+
+/* @noflip */
+.ve-ui-dir-block-ltr .oo-ui-icon-ref-cite-news,
+/* HACK */
+.ve-ui-surface-dir-ltr .oo-ui-icon-ref-cite-news,
+/* HACK */
+.oo-ui-ltr .oo-ui-icon-ref-cite-news {
+	/* @embed */
+	background-image: url( icons/ref-cite-news-ltr.svg );
+}
+
+.oo-ui-icon-ref-cite-web {
+	/* @embed */
+	background-image: url( icons/ref-cite-web.svg );
+}

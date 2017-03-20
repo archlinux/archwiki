@@ -24,6 +24,7 @@
 define( 'REPORTING_INTERVAL', 1 );
 
 if ( !defined( 'MEDIAWIKI' ) ) {
+	$optionsWithArgs = [ 'e', 's' ];
 	require_once __DIR__ . '/../commandLine.inc';
 	require_once 'resolveStubs.php';
 
@@ -50,7 +51,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 function moveToExternal( $cluster, $maxID, $minID = 1 ) {
 	$fname = 'moveToExternal';
 	$dbw = wfGetDB( DB_MASTER );
-	$dbr = wfGetDB( DB_SLAVE );
+	$dbr = wfGetDB( DB_REPLICA );
 
 	$count = $maxID - $minID + 1;
 	$blockSize = 1000;
@@ -68,11 +69,11 @@ function moveToExternal( $cluster, $maxID, $minID = 1 ) {
 			wfWaitForSlaves();
 		}
 
-		$res = $dbr->select( 'text', array( 'old_id', 'old_flags', 'old_text' ),
-			array(
+		$res = $dbr->select( 'text', [ 'old_id', 'old_flags', 'old_text' ],
+			[
 				"old_id BETWEEN $blockStart AND $blockEnd",
 				'old_flags NOT ' . $dbr->buildLike( $dbr->anyString(), 'external', $dbr->anyString() ),
-			), $fname );
+			], $fname );
 		foreach ( $res as $row ) {
 			# Resolve stubs
 			$text = $row->old_text;
@@ -117,8 +118,8 @@ function moveToExternal( $cluster, $maxID, $minID = 1 ) {
 				exit;
 			}
 			$dbw->update( 'text',
-				array( 'old_flags' => $flags, 'old_text' => $url ),
-				array( 'old_id' => $id ), $fname );
+				[ 'old_flags' => $flags, 'old_text' => $url ],
+				[ 'old_id' => $id ], $fname );
 			$numMoved++;
 		}
 	}

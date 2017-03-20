@@ -8,6 +8,9 @@ namespace OOUI;
  * See IconElement for more information.
  */
 class IconWidget extends Widget {
+	use IconElement;
+	use TitledElement;
+	use FlaggedElement;
 
 	/* Static Properties */
 
@@ -16,19 +19,18 @@ class IconWidget extends Widget {
 	/**
 	 * @param array $config Configuration options
 	 */
-	public function __construct( array $config = array() ) {
+	public function __construct( array $config = [] ) {
 		// Parent constructor
 		parent::__construct( $config );
 
-		// Mixins
-		$this->mixin( new IconElement( $this,
-			array_merge( $config, array( 'iconElement' => $this ) ) ) );
-		$this->mixin( new TitledElement( $this,
-			array_merge( $config, array( 'titled' => $this ) ) ) );
-		$this->mixin( new FlaggedElement( $this,
-			array_merge( $config, array( 'flagged' => $this ) ) ) );
+		// Traits
+		$this->initializeIconElement(
+			array_merge( $config, [ 'iconElement' => $this ] ) );
+		$this->initializeTitledElement(
+			array_merge( $config, [ 'titled' => $this ] ) );
+		$this->initializeFlaggedElement( array_merge( $config, [ 'flagged' => $this ] ) );
 
 		// Initialization
-		$this->addClasses( array( 'oo-ui-iconWidget' ) );
+		$this->addClasses( [ 'oo-ui-iconWidget' ] );
 	}
 }

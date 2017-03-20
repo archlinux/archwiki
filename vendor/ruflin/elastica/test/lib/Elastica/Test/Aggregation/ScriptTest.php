@@ -1,10 +1,11 @@
 <?php
+
 namespace Elastica\Test\Aggregation;
 
 use Elastica\Aggregation\Sum;
 use Elastica\Document;
 use Elastica\Query;
-use Elastica\Script;
+use Elastica\Script\Script;
 
 class ScriptTest extends BaseAggregationTest
 {
@@ -29,6 +30,7 @@ class ScriptTest extends BaseAggregationTest
      */
     public function testAggregationScript()
     {
+        $this->_checkScriptInlineSetting();
         $agg = new Sum('sum');
         // x = (0..1) is groovy-specific syntax, to see if lang is recognized
         $script = new Script("x = (0..1); return doc['price'].value", null, 'groovy');
@@ -46,6 +48,7 @@ class ScriptTest extends BaseAggregationTest
      */
     public function testAggregationScriptAsString()
     {
+        $this->_checkScriptInlineSetting();
         $agg = new Sum('sum');
         $agg->setScript("doc['price'].value");
 

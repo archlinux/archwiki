@@ -45,7 +45,7 @@ class ApiHelpParamValueMessage extends Message {
 	 * @param array $params Parameters for the message.
 	 * @throws InvalidArgumentException
 	 */
-	public function __construct( $paramValue, $text, $params = array() ) {
+	public function __construct( $paramValue, $text, $params = [] ) {
 		parent::__construct( $text, $params );
 		$this->paramValue = $paramValue;
 	}
@@ -64,7 +64,8 @@ class ApiHelpParamValueMessage extends Message {
 	 */
 	public function fetchMessage() {
 		if ( $this->message === null ) {
-			$this->message = ";{$this->paramValue}:" . parent::fetchMessage();
+			$this->message = ";<span dir=\"ltr\" lang=\"en\">{$this->paramValue}</span>:"
+				. parent::fetchMessage();
 		}
 		return $this->message;
 	}

@@ -1,10 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Sindhu"
+			"Sindhu",
+			"Aursani"
 		]
 	},
-	"citethispage": "حواليو",
+	"citethispage": "هيءُ صفحو حواليو",
 	"citethispage-link": "هن صفحي جو حوالو ڏيو",
 	"tooltip-citethispage": "هن صفحي جو حوالو ڪيئن ڏجي بابت معلومات"
 }

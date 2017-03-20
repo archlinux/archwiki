@@ -5,12 +5,12 @@
 body {
 	margin: 0;
 	background: #eee;
-	font-family: Verdana;
+	font-family: 'Verdana';
 	color: #333;
 }
 
 #main {
-	border: 1px solid #D0D0D0;
+	border: 1px solid #d0d0d0;
 	background: #fff;
 	margin: 0.5em;
 }
@@ -25,7 +25,7 @@ body {
 	border-left: 1px dotted #ccc;
 	float: right;
 	width: 230px;
-	background: white;
+	background: #fff;
 	margin: 0 0 10px 10px;
 }
 

@@ -35,10 +35,10 @@ class SqliteInstaller extends DatabaseInstaller {
 	 */
 	public $db;
 
-	protected $globalNames = array(
+	protected $globalNames = [
 		'wgDBname',
 		'wgSQLiteDataDir',
-	);
+	];
 
 	public function getName() {
 		return 'sqlite';
@@ -71,7 +71,7 @@ class SqliteInstaller extends DatabaseInstaller {
 		$defaults = parent::getGlobalDefaults();
 		if ( isset( $_SERVER['DOCUMENT_ROOT'] ) ) {
 			$path = str_replace(
-				array( '/', '\\' ),
+				[ '/', '\\' ],
 				DIRECTORY_SEPARATOR,
 				dirname( $_SERVER['DOCUMENT_ROOT'] ) . '/data'
 			);
@@ -84,13 +84,13 @@ class SqliteInstaller extends DatabaseInstaller {
 	public function getConnectForm() {
 		return $this->getTextBox(
 			'wgSQLiteDataDir',
-			'config-sqlite-dir', array(),
+			'config-sqlite-dir', [],
 			$this->parent->getHelpBox( 'config-sqlite-dir-help' )
 		) .
 		$this->getTextBox(
 			'wgDBname',
 			'config-db-name',
-			array(),
+			[],
 			$this->parent->getHelpBox( 'config-sqlite-name-help' )
 		);
 	}
@@ -115,7 +115,7 @@ class SqliteInstaller extends DatabaseInstaller {
 	 * @return Status
 	 */
 	public function submitConnectForm() {
-		$this->setVarsFromRequest( array( 'wgSQLiteDataDir', 'wgDBname' ) );
+		$this->setVarsFromRequest( [ 'wgSQLiteDataDir', 'wgDBname' ] );
 
 		# Try realpath() if the directory already exists
 		$dir = self::realpath( $this->getVar( 'wgSQLiteDataDir' ) );
@@ -179,16 +179,12 @@ class SqliteInstaller extends DatabaseInstaller {
 	 * @return Status
 	 */
 	public function openConnection() {
-		global $wgSQLiteDataDir;
-
 		$status = Status::newGood();
 		$dir = $this->getVar( 'wgSQLiteDataDir' );
 		$dbName = $this->getVar( 'wgDBname' );
 		try {
 			# @todo FIXME: Need more sensible constructor parameters, e.g. single associative array
-			# Setting globals kind of sucks
-			$wgSQLiteDataDir = $dir;
-			$db = DatabaseBase::factory( 'sqlite', array( 'dbname' => $dbName ) );
+			$db = Database::factory( 'sqlite', [ 'dbname' => $dbName, 'dbDirectory' => $dir ] );
 			$status->value = $db;
 		} catch ( DBConnectionError $e ) {
 			$status->fatal( 'config-sqlite-connection-error', $e->getMessage() );
@@ -243,10 +239,7 @@ class SqliteInstaller extends DatabaseInstaller {
 
 		# Create the global cache DB
 		try {
-			global $wgSQLiteDataDir;
-			# @todo FIXME: setting globals kind of sucks
-			$wgSQLiteDataDir = $dir;
-			$conn = DatabaseBase::factory( 'sqlite', array( 'dbname' => "wikicache" ) );
+			$conn = Database::factory( 'sqlite', [ 'dbname' => 'wikicache', 'dbDirectory' => $dir ] );
 			# @todo: don't duplicate objectcache definition, though it's very simple
 			$sql =
 <<<EOT
@@ -268,6 +261,11 @@ EOT;
 		return $this->getConnection();
 	}
 
+	/**
+	 * @param $dir
+	 * @param $db
+	 * @return Status
+	 */
 	protected function makeStubDBFile( $dir, $db ) {
 		$file = DatabaseSqlite::generateFileName( $dir, $db );
 		if ( file_exists( $file ) ) {
@@ -319,15 +317,16 @@ EOT;
 
 		return "# SQLite-specific settings
 \$wgSQLiteDataDir = \"{$dir}\";
-\$wgObjectCaches[CACHE_DB] = array(
+\$wgObjectCaches[CACHE_DB] = [
 	'class' => 'SqlBagOStuff',
 	'loggroup' => 'SQLBagOStuff',
-	'server' => array(
+	'server' => [
 		'type' => 'sqlite',
 		'dbname' => 'wikicache',
 		'tablePrefix' => '',
+		'dbDirectory' => \$wgSQLiteDataDir,
 		'flags' => 0
-	)
-);";
+	]
+];";
 	}
 }

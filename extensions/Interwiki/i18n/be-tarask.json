@@ -11,6 +11,7 @@
 	"interwiki-title-norights": "Прагляд зьвестак пра інтэрвікі",
 	"interwiki-desc": "Дадае [[Special:Interwiki|службовую старонку]] для прагляду і рэдагаваньня табліцы інтэрвікі.",
 	"interwiki_intro": "Гэта агляд табліцы інтэрвікі, якая вызначае прэфіксы для выкарыстаньня ў кароткіх спасылках на розныя вікі і іншыя вонкавыя сайты. Дзеля рэкамэндацыяў у выкарыстаньні, калі ласка, глядзіце [//www.mediawiki.org/wiki/Extension:Interwiki інструкцыю на MediaWiki.org].",
+	"interwiki-legend-label": "Легенда",
 	"interwiki_prefix": "Прэфікс",
 	"interwiki-prefix-label": "Прэфікс:",
 	"interwiki_prefix_intro": "Прэфікс інтэрвікі, які будзе выкарыстоўвацца ў сынтаксісе <code>[<nowiki />[prefix:<em>назва старонкі</em>]]</code>.",
@@ -51,5 +52,6 @@
 	"logentry-interwiki-iw_delete": "$1 {{GENDER:$2|выдаліў|выдаліла}} прэфікс «$4» з інтэрвікі-табліцы",
 	"log-description-interwiki": "Гэта журнал зьменаў [[Special:Interwiki|табліцы інтэрвікі]].",
 	"right-interwiki": "Рэдагаваньне зьвестак інтэрвікі",
-	"action-interwiki": "зьмяніць гэты элемэнт інтэрвікі"
+	"action-interwiki": "зьмяніць гэты элемэнт інтэрвікі",
+	"interwiki-links": "Прэфіксы інтэрвікі"
 }

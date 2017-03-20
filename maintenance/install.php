@@ -21,9 +21,7 @@
  * @ingroup Maintenance
  */
 
-// Checking for old versions of PHP is done in Maintenance.php
-// We need to use dirname( __FILE__ ) here cause __DIR__ is PHP5.3+
-require_once dirname( __FILE__ ) . '/Maintenance.php';
+require_once __DIR__ . '/Maintenance.php';
 
 define( 'MW_CONFIG_CALLBACK', 'Installer::overrideConfig' );
 define( 'MEDIAWIKI_INSTALL', true );
@@ -43,7 +41,7 @@ class CommandLineInstaller extends Maintenance {
 		global $IP;
 
 		$this->addDescription( "CLI-based MediaWiki installation and configuration.\n" .
-			"Defaut options are indicated in parenthesis." );
+			"Default options are indicated in parentheses." );
 
 		$this->addArg( 'name', 'The name of the wiki (MediaWiki)', false );
 

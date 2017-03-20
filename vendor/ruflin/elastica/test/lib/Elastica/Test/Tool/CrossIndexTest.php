@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica\Test\Tool;
 
 use Elastica\Document;
@@ -10,6 +11,8 @@ class CrossIndexTest extends Base
 {
     /**
      * Test default reindex.
+     *
+     * @group functional
      */
     public function testReindex()
     {
@@ -24,10 +27,26 @@ class CrossIndexTest extends Base
         );
 
         $this->assertEquals(10, $newIndex->count());
+
+        $oldResult = array();
+
+        foreach ($oldIndex->search()->getResults() as $result) {
+            $oldResult[] = $result->getData();
+        }
+
+        $newResult = array();
+
+        foreach ($newIndex->search()->getResults() as $result) {
+            $newResult[] = $result->getData();
+        }
+
+        $this->assertEquals($oldResult, $newResult);
     }
 
     /**
      * Test reindex type option.
+     *
+     * @group functional
      */
     public function testReindexTypeOption()
     {
@@ -66,6 +85,8 @@ class CrossIndexTest extends Base
 
     /**
      * Test default copy.
+     *
+     * @group functional
      */
     public function testCopy()
     {
@@ -123,8 +144,8 @@ class CrossIndexTest extends Base
     private function _addDocs(Type $type, $docs)
     {
         $insert = array();
-        for ($i = 1; $i <= $docs; $i++) {
-            $insert[] = new Document($i, array('_id' => $i, 'key' => 'value'));
+        for ($i = 1; $i <= $docs; ++$i) {
+            $insert[] = new Document($i, array('id' => $i, 'key' => 'value'));
         }
 
         $type->addDocuments($insert);

@@ -42,7 +42,7 @@ class LanguageWa extends Language {
 	 * @param bool $tc
 	 * @return string
 	 */
-	function date( $ts, $adj = false, $format = true, $tc = false ) {
+	public function date( $ts, $adj = false, $format = true, $tc = false ) {
 		$ts = wfTimestamp( TS_MW, $ts );
 		if ( $adj ) {
 			$ts = $this->userAdjust( $ts, $tc );
@@ -50,7 +50,6 @@ class LanguageWa extends Language {
 		$datePreference = $this->dateFormat( $format );
 
 		# ISO (YYYY-mm-dd) format
-		#
 		# we also output this format for YMD (eg: 2001 January 15)
 		if ( $datePreference == 'ISO 8601' ) {
 			$d = substr( $ts, 0, 4 ) . '-' . substr( $ts, 4, 2 ) . '-' . substr( $ts, 6, 2 );
@@ -64,7 +63,6 @@ class LanguageWa extends Language {
 		}
 
 		# Walloon format
-		#
 		# we output this in all other cases
 		$m = substr( $ts, 4, 2 );
 		$n = substr( $ts, 6, 2 );
@@ -91,7 +89,7 @@ class LanguageWa extends Language {
 	 * @param bool $tc
 	 * @return string
 	 */
-	function timeanddate( $ts, $adj = false, $format = true, $tc = false ) {
+	public function timeanddate( $ts, $adj = false, $format = true, $tc = false ) {
 		if ( $adj ) {
 			$ts = $this->userAdjust( $ts, $tc );
 		}

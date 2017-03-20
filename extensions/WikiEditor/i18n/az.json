@@ -137,9 +137,9 @@
 	"wikieditor-toolbar-help-content-showreferences-description": "İstinadları göstər",
 	"wikieditor-toolbar-help-content-showreferences-result": "<ol class='references'><li id='cite_note-test-0'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.example.org' class='external text' href='#'>Keçid mətni</a>, əlavə mətn.</li></ol>",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "Vaxt qeydi ilə imza",
-	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='{{#special:mypage}}'>İstifadəçi adı</a> (<a href='#' title='{{#special:mytalk}}'>müzakirə</a>) 15:54, 10 iyun 2009 (UTC)",
+	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='$1:Username'>İstifadəçi adı</a> (<a href='#' title='$2:Username'>müzakirə</a>) 15:54, 10 iyun 2009 (UTC)",
 	"wikieditor-toolbar-help-content-signature-description": "İmza",
-	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='{{#special:mypage}}'>İstifadəçi adı</a> (<a href='#' title='{{#special:mytalk}}'>müzakirə</a>)",
+	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>İstifadəçi adı</a> (<a href='#' title='$2:Username'>müzakirə</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "Abzas",
 	"wikieditor-toolbar-help-content-indent-syntax": "Normal mətn<br />:Abzasla mətn<br />::Abzasla mətn",
 	"wikieditor-toolbar-help-content-indent-result": "Normal mətn<dl><dd>Abzasla mətn<dl><dd>Abzasla mətn</dd></dl></dd></dl>"

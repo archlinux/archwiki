@@ -6,5 +6,6 @@
 	},
 	"renameuserold": "Esams nauduotuojė vards:",
 	"renameusernew": "Naus nauduotuojė vards:",
-	"renameusersuccess": "Nauduotuos \"<nowiki>$1</nowiki>\" bova parvadėnts i \"<nowiki>$2</nowiki>\"."
+	"renameusersuccess": "Nauduotuos \"<nowiki>$1</nowiki>\" bova parvadėnts i \"<nowiki>$2</nowiki>\".",
+	"log-name-renameuser": "Nauduotuoju pervadėnėma sārašos"
 }

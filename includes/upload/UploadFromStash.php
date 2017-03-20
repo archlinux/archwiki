@@ -36,7 +36,7 @@ class UploadFromStash extends UploadBase {
 	// an instance of UploadStash
 	private $stash;
 
-	//LocalFile repo
+	// LocalFile repo
 	private $repo;
 
 	/**
@@ -143,32 +143,6 @@ class UploadFromStash extends UploadBase {
 		return $this->mFileProps['sha1'];
 	}
 
-	/*
-	 * protected function verifyFile() inherited
-	 */
-
-	/**
-	 * Stash the file.
-	 *
-	 * @param User $user
-	 * @return UploadStashFile
-	 */
-	public function stashFile( User $user = null ) {
-		// replace mLocalFile with an instance of UploadStashFile, which adds some methods
-		// that are useful for stashed files.
-		$this->mLocalFile = parent::stashFile( $user );
-
-		return $this->mLocalFile;
-	}
-
-	/**
-	 * This should return the key instead of the UploadStashFile instance, for backward compatibility.
-	 * @return string
-	 */
-	public function stashSession() {
-		return $this->stashFile()->getFileKey();
-	}
-
 	/**
 	 * Remove a temporarily kept file stashed by saveTempUploadedFile().
 	 * @return bool Success
@@ -178,17 +152,10 @@ class UploadFromStash extends UploadBase {
 	}
 
 	/**
-	 * Perform the upload, then remove the database record afterward.
-	 * @param string $comment
-	 * @param string $pageText
-	 * @param bool $watch
-	 * @param User $user
-	 * @return Status
+	 * Remove the database record after a successful upload.
 	 */
-	public function performUpload( $comment, $pageText, $watch, $user ) {
-		$rv = parent::performUpload( $comment, $pageText, $watch, $user );
+	public function postProcessUpload() {
+		parent::postProcessUpload();
 		$this->unsaveUploadedFile();
-
-		return $rv;
 	}
 }

@@ -91,34 +91,6 @@ class ApiQueryTitleBlacklist extends ApiBase {
 	}
 
 	/**
-	 * @deprecated since MediaWiki core 1.25
-	 */
-	public function getParamDescription() {
-		return array(
-			'title' => 'The string to validate against the blacklist',
-			'nooverride' => 'Don\'t try to override the titleblacklist',
-			'action' => 'The thing you\'re trying to do',
-		);
-	}
-
-	/**
-	 * @deprecated since MediaWiki core 1.25
-	 */
-	public function getDescription() {
-		return 'Validate an article title, filename, or username against the TitleBlacklist.';
-	}
-
-	/**
-	 * @deprecated since MediaWiki core 1.25
-	 */
-	public function getExamples() {
-		return array(
-			'api.php?action=titleblacklist&tbtitle=Foo',
-			'api.php?action=titleblacklist&tbtitle=Bar&tbaction=edit',
-		);
-	}
-
-	/**
 	 * @see ApiBase::getExamplesMessages()
 	 */
 	protected function getExamplesMessages() {

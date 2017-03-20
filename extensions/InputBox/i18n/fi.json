@@ -4,7 +4,8 @@
 			"Crt",
 			"Nike",
 			"Olli",
-			"Stryn"
+			"Stryn",
+			"01miki10"
 		]
 	},
 	"inputbox-desc": "Mahdollistaa ennalta määriteltyjen lomakkeiden sisällyttämisen sivuille.",
@@ -13,6 +14,7 @@
 	"inputbox-tryexact": "Yritä tarkkaa osumaa",
 	"inputbox-searchfulltext": "Etsi koko tekstiä",
 	"inputbox-createarticle": "Luo sivu",
+	"inputbox-movearticle": "Siirrä sivu",
 	"inputbox-postcomment": "Uusi osio",
 	"inputbox-postcommenttitle": "Uusi osio",
 	"inputbox-ns-main": "(sivut)"

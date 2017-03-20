@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica\Test\QueryBuilder;
 
 use Elastica\QueryBuilder\DSL;
@@ -27,6 +28,7 @@ class VersionTest extends BaseTest
             new Version\Version130(),
             new Version\Version140(),
             new Version\Version150(),
+            new Version\Latest(),
         );
 
         foreach ($versions as $version) {

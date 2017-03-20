@@ -31,7 +31,7 @@ abstract class PoolCounterWork {
 	protected $cacheable = false; // does this override getCachedWork() ?
 
 	/**
-	 * @param string $type The type of PoolCounter to use
+	 * @param string $type The class of actions to limit concurrency for (task type)
 	 * @param string $key Key that identifies the queue this work is placed on
 	 */
 	public function __construct( $type, $key ) {
@@ -146,9 +146,9 @@ abstract class PoolCounterWork {
 			/* These two cases should never be hit... */
 			case PoolCounter::ERROR:
 			default:
-				$errors = array(
+				$errors = [
 					PoolCounter::QUEUE_FULL => 'pool-queuefull',
-					PoolCounter::TIMEOUT => 'pool-timeout' );
+					PoolCounter::TIMEOUT => 'pool-timeout' ];
 
 				$status = Status::newFatal( isset( $errors[$status->value] )
 					? $errors[$status->value]

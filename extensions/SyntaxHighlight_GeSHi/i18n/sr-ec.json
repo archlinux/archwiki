@@ -3,8 +3,9 @@
 		"authors": [
 			"Millosh",
 			"Rancher",
-			"Sasa Stefanovic"
+			"Sasa Stefanovic",
+			"Сербијана"
 		]
 	},
-	"syntaxhighlight-desc": "Омогућава визуелно означавање синтаксе <code>&lt;syntaxhighlight&gt;</code> коришћењем [http://pygments.org/ GeSHi хајлајтера]."
+	"syntaxhighlight-desc": "Омогућава визуелно означавање синтаксе <code>&lt;syntaxhighlight&gt;</code> коришћењем [http://pygments.org/ Pygments хајлајтера]."
 }

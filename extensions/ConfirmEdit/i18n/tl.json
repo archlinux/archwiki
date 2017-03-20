@@ -2,10 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"AnakngAraw",
-			"Jojit fb"
+			"Jojit fb",
+			"Leeheonjin"
 		]
 	},
 	"captcha-edit": "Para magawaan ng pagbabago ang pahinang ito, pakisagot lamang ang payak na pagtutuos na nasa ibaba at ipasok ang sagot sa loob ng kahon ([[Special:Captcha/help|mas marami pang kabatiran]]):",
+	"captcha-edit-fail": "Di-tama o nawawalang CAPTCHA.",
 	"captcha-desc": "Nagbibigay ng mga pamamaraan ng CAPTCHA upang maisanggalang laban sa mga basurang email o spam at panghuhula ng password",
 	"captcha-label": "CAPTCHA",
 	"captcha-addurl": "Kasama sa mga pagbabagong ginawa mo ang bagong panlabas na mga kawing.\nUpang makatulong sa pagsasanggalang laban sa mga kusang dumarating na \"manlulusob\" (''spam''), pakisagot ang payak na pagtutuos sa ibaba at ipasok ang sagot sa loob ng kahon ([[Special:Captcha/help|mas marami pang kabatiran]]):",

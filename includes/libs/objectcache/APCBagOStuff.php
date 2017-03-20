@@ -51,7 +51,7 @@ class APCBagOStuff extends BagOStuff {
 	 *
 	 * @param array $params
 	 */
-	public function __construct( array $params = array() ) {
+	public function __construct( array $params = [] ) {
 		parent::__construct( $params );
 
 		if ( isset( $params['nativeSerialize'] ) ) {
@@ -74,28 +74,36 @@ class APCBagOStuff extends BagOStuff {
 		}
 	}
 
-	public function get( $key, &$casToken = null, $flags = 0 ) {
-		$val = apc_fetch( $key . self::KEY_SUFFIX );
-
-		$casToken = $val;
-
-		if ( is_string( $val ) && !$this->nativeSerialize ) {
-			$val = $this->isInteger( $val )
-				? intval( $val )
-				: unserialize( $val );
-		}
-
-		return $val;
+	protected function doGet( $key, $flags = 0 ) {
+		return $this->getUnserialize(
+			apc_fetch( $key . self::KEY_SUFFIX )
+		);
 	}
 
-	public function set( $key, $value, $exptime = 0 ) {
+	protected function getUnserialize( $value ) {
+		if ( is_string( $value ) && !$this->nativeSerialize ) {
+			$value = $this->isInteger( $value )
+				? intval( $value )
+				: unserialize( $value );
+		}
+		return $value;
+	}
+
+	public function set( $key, $value, $exptime = 0, $flags = 0 ) {
+		apc_store(
+			$key . self::KEY_SUFFIX,
+			$this->setSerialize( $value ),
+			$exptime
+		);
+
+		return true;
+	}
+
+	protected function setSerialize( $value ) {
 		if ( !$this->nativeSerialize && !$this->isInteger( $value ) ) {
 			$value = serialize( $value );
 		}
-
-		apc_store( $key . self::KEY_SUFFIX, $value, $exptime );
-
-		return true;
+		return $value;
 	}
 
 	public function delete( $key ) {

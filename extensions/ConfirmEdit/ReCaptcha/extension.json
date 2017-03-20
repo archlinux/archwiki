@@ -9,7 +9,10 @@
 		]
 	},
 	"AutoloadClasses": {
-		"ReCaptcha": "ReCaptcha.class.php"
+		"ReCaptcha": "ReCaptcha.class.php",
+		"HTMLReCaptchaField": "HTMLReCaptchaField.php",
+		"HTMLSubmittedValueField": "HTMLSubmittedValueField.php",
+		"ReCaptchaAuthenticationRequest": "ReCaptchaAuthenticationRequest.php"
 	},
 	"config": {
 		"CaptchaClass": "ReCaptcha",
@@ -17,5 +20,6 @@
 		"ReCaptchaPrivateKey": "",
 		"ReCaptchaTheme": "red"
 	},
-	"callback": "ConfirmEditHooks::onReCaptchaSetup"
+	"callback": "ConfirmEditHooks::onReCaptchaSetup",
+	"manifest_version": 1
 }

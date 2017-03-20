@@ -7,7 +7,7 @@ namespace OOUI;
  *
  * @abstract
  */
-class TabIndexedElement extends ElementMixin {
+trait TabIndexedElement {
 	/**
 	 * Tab index value.
 	 *
@@ -15,28 +15,36 @@ class TabIndexedElement extends ElementMixin {
 	 */
 	protected $tabIndex = null;
 
-	public static $targetPropertyName = 'tabIndexed';
+	/**
+	 * @var Element
+	 */
+	protected $tabIndexed;
 
 	/**
-	 * @param Element $element Element being mixed into
 	 * @param array $config Configuration options
 	 * @param number|null $config['tabIndex'] Tab index value. Use 0 to use default ordering, use -1 to
 	 *   prevent tab focusing, use null to suppress the `tabindex` attribute. (default: 0)
 	 */
-	public function __construct( Element $element, array $config = array() ) {
-		// Parent constructor
-		$target = isset( $config['tabIndexed'] ) ? $config['tabIndexed'] : $element;
-		parent::__construct( $element, $target, $config );
+	public function initializeTabIndexedElement( array $config = [] ) {
+		// Properties
+		$this->tabIndexed = isset( $config['tabIndexed'] ) ? $config['tabIndexed'] : $this;
 
 		// Initialization
 		$this->setTabIndex( isset( $config['tabIndex'] ) ? $config['tabIndex'] : 0 );
+
+		$this->registerConfigCallback( function( &$config ) {
+			if ( $this->tabIndex !== 0 ) {
+				$config['tabIndex'] = $this->tabIndex;
+			}
+		} );
+
 	}
 
 	/**
 	 * Set tab index value.
 	 *
 	 * @param number|null $tabIndex Tab index value or null for no tab index
-	 * @chainable
+	 * @return $this
 	 */
 	public function setTabIndex( $tabIndex ) {
 		$tabIndex = is_numeric( $tabIndex ) ? $tabIndex : null;
@@ -53,19 +61,19 @@ class TabIndexedElement extends ElementMixin {
 	 * Update the tabIndex attribute, in case of changes to tabIndex or disabled
 	 * state.
 	 *
-	 * @chainable
+	 * @return $this
 	 */
 	public function updateTabIndex() {
-		$disabled = $this->element->isDisabled();
+		$disabled = $this->isDisabled();
 		if ( $this->tabIndex !== null ) {
-			$this->target->setAttributes( array(
+			$this->tabIndexed->setAttributes( [
 				// Do not index over disabled elements
 				'tabindex' => $disabled ? -1 : $this->tabIndex,
 				// ChromeVox and NVDA do not seem to inherit this from parent elements
 				'aria-disabled' => ( $disabled ? 'true' : 'false' )
-			) );
+			] );
 		} else {
-			$this->target->removeAttributes( array( 'tabindex', 'aria-disabled' ) );
+			$this->tabIndexed->removeAttributes( [ 'tabindex', 'aria-disabled' ] );
 		}
 		return $this;
 	}
@@ -77,12 +85,5 @@ class TabIndexedElement extends ElementMixin {
 	 */
 	public function getTabIndex() {
 		return $this->tabIndex;
-	}
-
-	public function getConfig( &$config ) {
-		if ( $this->tabIndex !== 0 ) {
-			$config['tabIndex'] = $this->tabIndex;
-		}
-		return parent::getConfig( $config );
 	}
 }

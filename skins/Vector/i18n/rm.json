@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Gion-andri"
+			"Gion-andri",
+			"Terfili"
 		]
 	},
 	"vector-action-addsection": "Agiuntar chapitel",
@@ -14,5 +15,6 @@
 	"vector-view-edit": "Modifitgar",
 	"vector-view-history": "Cronologia",
 	"vector-view-view": "Leger",
-	"vector-view-viewsource": "Mussar il code"
+	"vector-view-viewsource": "Mussar il code",
+	"vector-more-actions": "dapli"
 }

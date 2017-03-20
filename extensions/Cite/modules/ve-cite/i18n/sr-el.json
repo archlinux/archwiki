@@ -1,0 +1,28 @@
+{
+	"@metadata": {
+		"authors": [
+			"Milicevic01",
+			"Msannakoval",
+			"Srdjan m"
+		]
+	},
+	"visualeditor-cite-tool-name-book": "Knjiga",
+	"visualeditor-cite-tool-name-journal": "Žurnal",
+	"visualeditor-cite-tool-name-news": "Novine",
+	"visualeditor-cite-tool-name-web": "Veb-sajt",
+	"cite-ve-dialog-reference-options-group-label": "Koristi ovu grupu",
+	"cite-ve-dialog-reference-options-group-placeholder": "Opšte reference",
+	"cite-ve-dialog-reference-options-name-label": "Ponovo upotrebi pod ovim imenom",
+	"cite-ve-dialog-reference-options-section": "Opcije",
+	"cite-ve-dialog-reference-title": "Referenca",
+	"cite-ve-dialog-reference-useexisting-label": "Koristi postojeću referencu",
+	"cite-ve-dialog-reference-useexisting-tool": "Ponovno korišćenje",
+	"cite-ve-dialog-referenceslist-title": "Spisak referenci",
+	"cite-ve-dialogbutton-citation-educationpopup-title": "Navođenje",
+	"cite-ve-dialogbutton-reference-full-label": "Osnovni oblik",
+	"cite-ve-dialogbutton-reference-title": "Referenca",
+	"cite-ve-dialogbutton-reference-tooltip": "Osnovne",
+	"cite-ve-dialogbutton-referenceslist-tooltip": "Spisak referenci",
+	"cite-ve-reference-input-placeholder": "Pretražite postojeće reference",
+	"cite-ve-toolbar-group-label": "Citiraj"
+}

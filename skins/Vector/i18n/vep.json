@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Игорь Бродский"
+			"Игорь Бродский",
+			"Sebranik"
 		]
 	},
 	"vector-action-addsection": "Ližada tem",
@@ -14,5 +15,6 @@
 	"vector-view-edit": "Redaktiruida",
 	"vector-view-history": "Kacta istorii",
 	"vector-view-view": "Lugeda",
-	"vector-view-viewsource": "Kacta purtkehe"
+	"vector-view-viewsource": "Kacta purtkehe",
+	"vector-more-actions": "Völ"
 }

@@ -1,12 +1,16 @@
 <?php
+
 namespace Elastica\Filter;
+
+trigger_error('Deprecated: Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html', E_USER_DEPRECATED);
 
 /**
  * Returns parent documents having child docs matching the query.
  *
  * @author Fabian Vogler <fabian@equivalence.ch>
  *
- * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-has-child-filter.html
+ * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-has-child-filter.html
+ * @deprecated Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html
  */
 class HasChild extends AbstractFilter
 {
@@ -35,10 +39,7 @@ class HasChild extends AbstractFilter
      */
     public function setQuery($query)
     {
-        $query = \Elastica\Query::create($query);
-        $data = $query->toArray();
-
-        return $this->setParam('query', $data['query']);
+        return $this->setParam('query', \Elastica\Query::create($query));
     }
 
     /**
@@ -50,7 +51,7 @@ class HasChild extends AbstractFilter
      */
     public function setFilter($filter)
     {
-        return $this->setParam('filter', $filter->toArray());
+        return $this->setParam('filter', $filter);
     }
 
     /**
@@ -91,5 +92,21 @@ class HasChild extends AbstractFilter
     public function setMaximumChildrenCount($count)
     {
         return $this->setParam('max_children', (int) $count);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toArray()
+    {
+        $array = parent::toArray();
+
+        $baseName = $this->_getBaseName();
+
+        if (isset($array[$baseName]['query'])) {
+            $array[$baseName]['query'] = $array[$baseName]['query']['query'];
+        }
+
+        return $array;
     }
 }

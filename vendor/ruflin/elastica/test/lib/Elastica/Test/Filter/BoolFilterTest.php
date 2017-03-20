@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica\Test\Filter;
 
 use Elastica\Document;
@@ -7,15 +8,26 @@ use Elastica\Filter\Ids;
 use Elastica\Filter\Term;
 use Elastica\Filter\Terms;
 use Elastica\Query;
-use Elastica\Test\Base as BaseTest;
+use Elastica\Test\DeprecatedClassBase as BaseTest;
 
 class BoolFilterTest extends BaseTest
 {
+    /**
+     * @group unit
+     */
+    public function testDeprecated()
+    {
+        $reflection = new \ReflectionClass(new BoolFilter());
+        $this->assertFileDeprecated($reflection->getFileName(), 'Deprecated: Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html');
+    }
+
     /**
      * @return array
      */
     public function getTestToArrayData()
     {
+        $this->hideDeprecated();
+
         $out = array();
 
         // case #0
@@ -29,6 +41,7 @@ class BoolFilterTest extends BaseTest
         $idsFilter3->setIds(3);
 
         $childBool = new BoolFilter();
+
         $childBool->addShould(array($idsFilter1, $idsFilter2));
         $mainBool->addShould(array($childBool, $idsFilter3));
 
@@ -75,6 +88,8 @@ class BoolFilterTest extends BaseTest
         );
         $out[] = array($bool, $expected);
 
+        $this->showDeprecated();
+
         return $out;
     }
 
@@ -82,7 +97,7 @@ class BoolFilterTest extends BaseTest
      * @group unit
      * @dataProvider getTestToArrayData()
      *
-     * @param Bool  $bool
+     * @param bool  $bool
      * @param array $expectedArray
      */
     public function testToArray(BoolFilter $bool, $expectedArray)
@@ -195,6 +210,20 @@ class BoolFilterTest extends BaseTest
         }
 
         $filter = new \Elastica\Filter\Bool();
+
         $filter->addShould('fail!');
+    }
+
+    /**
+     * @group unit
+     */
+    public function testOldObjectDeprecated()
+    {
+        if (version_compare(phpversion(), 7, '>=')) {
+            self::markTestSkipped('These objects are not supported in PHP 7');
+        }
+
+        $reflection = new \ReflectionClass(new \Elastica\Filter\Bool());
+        $this->assertFileDeprecated($reflection->getFileName(), 'Deprecated: Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html');
     }
 }

@@ -6,12 +6,32 @@
  * @license GNU General Public License 2.0 or later
  */
 
+use MediaWiki\Auth\AuthManager;
+
 /**
  * Hooks for the TitleBlacklist class
  *
  * @ingroup Extensions
  */
 class TitleBlacklistHooks {
+
+	/**
+	 * Called right after configuration variables have been set.
+	 */
+	public static function onRegistration() {
+		global $wgDisableAuthManager, $wgAuthManagerAutoConfig;
+
+		if ( class_exists( AuthManager::class ) && !$wgDisableAuthManager ) {
+			$wgAuthManagerAutoConfig['preauth'][TitleBlacklistPreAuthenticationProvider::class] =
+				[ 'class' => TitleBlacklistPreAuthenticationProvider::class ];
+		} else {
+			Hooks::register( 'AbortNewAccount', 'TitleBlacklistHooks::abortNewAccount' );
+			Hooks::register( 'AbortAutoAccount', 'TitleBlacklistHooks::abortAutoAccount' );
+			Hooks::register( 'UserCreateForm', 'TitleBlacklistHooks::addOverrideCheckbox' );
+			Hooks::register( 'APIGetAllowedParams', 'TitleBlacklistHooks::onAPIGetAllowedParams' );
+			Hooks::register( 'AddNewAccountApiForm', 'TitleBlacklistHooks::onAddNewAccountApiForm' );
+		}
+	}
 
 	/**
 	 * getUserPermissionsErrorsExpensive hook
@@ -33,13 +53,30 @@ class TitleBlacklistHooks {
 			$blacklisted = TitleBlacklist::singleton()->userCannot( $title, $user, $action );
 			if ( $blacklisted instanceof TitleBlacklistEntry ) {
 				$errmsg = $blacklisted->getErrorMessage( 'edit' );
-				ApiBase::$messageMap[$errmsg] = array(
-					'code' => $errmsg,
-					'info' => 'TitleBlacklist prevents this title from being created'
+				$params = array(
+					$blacklisted->getRaw(),
+					$title->getFullText()
 				);
-				$result = array( $errmsg,
-					htmlspecialchars( $blacklisted->getRaw() ),
-					$title->getFullText() );
+				ApiResult::setIndexedTagName( $params, 'param' );
+				$result = ApiMessage::create(
+					wfMessage(
+						$errmsg,
+						htmlspecialchars( $blacklisted->getRaw() ),
+						$title->getFullText()
+					),
+					'titleblacklist-forbidden',
+					array(
+						'message' => array(
+							'key' => $errmsg,
+							'params' => $params,
+						),
+						'line' => $blacklisted->getRaw(),
+						// As $errmsg usually represents a non-default message here, and ApiBase uses
+						// ->inLanguage( 'en' )->useDatabase( false ) for all messages, it will never result in
+						// useful 'info' text in the API. Try this, extra data seems to override the default.
+						'info' => 'TitleBlacklist prevents this title from being created',
+					)
+				);
 				return false;
 			}
 		}
@@ -68,6 +105,10 @@ class TitleBlacklistHooks {
 		}
 
 		$params = $blacklisted->getParams();
+		if ( isset( $params['autoconfirmed'] ) ) {
+			return true;
+		}
+
 		$msg = wfMessage( 'titleblacklist-warning' );
 		$notices['titleblacklist'] = $msg->rawParams(
 			htmlspecialchars( $blacklisted->getRaw() ) )->parseAsBlock();
@@ -116,23 +157,52 @@ class TitleBlacklistHooks {
 	 * @return bool Acceptable
 	 */
 	public static function acceptNewUserName( $userName, $permissionsUser, &$err, $override = true, $log = false ) {
-		global $wgUser;
+		$sv = self::testUserName( $userName, $permissionsUser, $override, $log );
+		if ( !$sv->isGood() ) {
+			$err = Status::wrap( $sv )->getMessage()->parse();
+		}
+		return $sv->isGood();
+	}
+
+	/**
+	 * Check whether a user name is acceptable for account creation or autocreation, and explain
+	 * why not if that's the case.
+	 *
+	 * @param string $userName
+	 * @param User $creatingUser
+	 * @param bool $override Should the test be skipped, if the user has sufficient privileges?
+	 * @param bool $log Log blacklist hits to Special:Log
+	 * @return StatusValue
+	 */
+	public static function testUserName( $userName, User $creatingUser, $override = true, $log = false ) {
 		$title = Title::makeTitleSafe( NS_USER, $userName );
-		$blacklisted = TitleBlacklist::singleton()->userCannot( $title, $permissionsUser,
+		$blacklisted = TitleBlacklist::singleton()->userCannot( $title, $creatingUser,
 			'new-account', $override );
 		if ( $blacklisted instanceof TitleBlacklistEntry ) {
-			$message = $blacklisted->getErrorMessage( 'new-account' );
-			ApiBase::$messageMap[$message] = array(
-				'code' => $message,
-				'info' => 'TitleBlacklist prevents this username from being created'
-			);
-			$err = wfMessage( $message, $blacklisted->getRaw(), $userName )->parse();
 			if ( $log ) {
-				self::logFilterHitUsername( $wgUser, $title, $blacklisted->getRaw() );
+				self::logFilterHitUsername( $creatingUser, $title, $blacklisted->getRaw() );
 			}
-			return false;
+			$message = $blacklisted->getErrorMessage( 'new-account' );
+			$params = [
+				$blacklisted->getRaw(),
+				$userName,
+			];
+			ApiResult::setIndexedTagName( $params, 'param' );
+			return StatusValue::newFatal( ApiMessage::create(
+				[ $message, $blacklisted->getRaw(), $userName ],
+				'titleblacklist-forbidden',
+				[
+					'message' => [
+						'key' => $message,
+						'params' => $params,
+					],
+					'line' => $blacklisted->getRaw(),
+					// The text of the message probably isn't useful API info, so do this instead
+					'info' => 'TitleBlacklist prevents this username from being created',
+				]
+			) );
 		}
-		return true;
+		return StatusValue::newGood();
 	}
 
 	/**
@@ -140,12 +210,18 @@ class TitleBlacklistHooks {
 	 *
 	 * @param User $user
 	 * @param string &$message
+	 * @param Status $status
 	 * @return bool
 	 */
-	public static function abortNewAccount( $user, &$message ) {
+	public static function abortNewAccount( $user, &$message, &$status ) {
 		global $wgUser, $wgRequest;
 		$override = $wgRequest->getCheck( 'wpIgnoreTitleBlacklist' );
-		return self::acceptNewUserName( $user->getName(), $wgUser, $message, $override, true );
+		$sv = self::testUserName( $user->getName(), $wgUser, $override, true );
+		if ( !$sv->isGood() ) {
+			$status = Status::wrap( $sv );
+			$message = $status->getMessage()->parse();
+		}
+		return $sv->isGood();
 	}
 
 	/**
@@ -196,12 +272,12 @@ class TitleBlacklistHooks {
 	}
 
 	/**
-	 * ArticleSaveComplete hook
+	 * PageContentSaveComplete hook
 	 *
 	 * @param Article $article
 	 */
 	public static function clearBlacklist( &$article, &$user,
-		$text, $summary, $isminor, $iswatch, $section )
+		$content, $summary, $isminor, $iswatch, $section )
 	{
 		$title = $article->getTitle();
 		if ( $title->getNamespace() == NS_MEDIAWIKI && $title->getDBkey() == 'Titleblacklist' ) {
@@ -219,6 +295,44 @@ class TitleBlacklistHooks {
 				$wgRequest->getCheck( 'wpIgnoreTitleBlacklist' ),
 				'checkbox', 'titleblacklist-override' );
 		}
+		return true;
+	}
+
+	/**
+	 * @param ApiBase $module
+	 * @param array $params
+	 * @return bool
+	 */
+	public static function onAPIGetAllowedParams( ApiBase &$module, array &$params ) {
+		if ( $module instanceof ApiCreateAccount ) {
+			$params['ignoretitleblacklist'] = array(
+				ApiBase::PARAM_TYPE => 'boolean',
+				ApiBase::PARAM_DFLT => false
+			);
+		}
+
+		return true;
+	}
+
+	/**
+	 * Pass API parameter on to the login form when using
+	 * API account creation.
+	 *
+	 * @param ApiBase $apiModule
+	 * @param LoginForm $loginForm
+	 * @return bool Always true
+	 */
+	public static function onAddNewAccountApiForm( ApiBase $apiModule, LoginForm $loginForm ) {
+		global $wgRequest;
+		$main = $apiModule->getMain();
+
+		if ( $main->getVal( 'ignoretitleblacklist' ) !== null ) {
+			$wgRequest->setVal( 'wpIgnoreTitleBlacklist', '1' );
+
+			// Suppress "unrecognized parameter" warning:
+			$main->getVal( 'wpIgnoreTitleBlacklist' );
+		}
+
 		return true;
 	}
 
@@ -242,17 +356,6 @@ class TitleBlacklistHooks {
 			$logid = $logEntry->insert();
 			$logEntry->publish( $logid );
 		}
-	}
-
-	/**
-	 * Add phpunit tests
-	 *
-	 * @param array &$files List of test cases and directories to search
-	 * @return bool
-	 */
-	public static function unitTestsList( &$files ) {
-		$files = array_merge( $files, glob( __DIR__ . '/tests/*Test.php' ) );
-		return true;
 	}
 
 	/**

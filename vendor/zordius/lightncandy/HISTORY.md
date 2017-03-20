@@ -1,8 +1,22 @@
 HISTORY
 =======
 
-master current trunk
-   * align with handlebars.js master
+current master
+   * I am working on new features to align with handlebars 4.0.4. Thanks for the new <a href="https://github.com/jbboehr/handlebars-spec">handlebars-spec</a>. You may go to the <a href="https://github.com/zordius/lightncandy/tree/v0.89-develop">v0.89-develop</a> branch to check the progress.
+
+v0.23 https://github.com/zordius/lightncandy/tree/v0.23
+   * align with handlebars.js 3.0.3
+   * b194f37430 support `{{{{rawblock}}}} ... {{{{/rawblock}}}}` when FLAG_RAWBLOCK enabled
+   * 927741a07c add `prePartial()` static method and `prepartial` compile option for extendibility
+   * f9f41277d7 support private variable injection from handlebars custom block helpers
+   * 850dcd7082 fix `{{!-- --}}` bug when it inside a partial
+   * edb486ac87 fix support for nested raw block
+
+v0.22 https://github.com/zordius/lightncandy/tree/v0.22
+   * align with handlebars.js 3.0.3
+   * 1d1e8829cb fix `{{foo bar=(tee_taa "hoo")}}` parsing issue
+   * 9bd994ee94 fix JavaScript function in runtime partial be changed bug
+   * a514e4652e fix `{{#foo}}` issue when foo is an empty ArrayObject
 
 v0.21 https://github.com/zordius/lightncandy/tree/v0.21
    * align with handlebars.js 3.0.3

@@ -2,6 +2,7 @@
 module.exports = function ( grunt ) {
 	grunt.loadNpmTasks( 'grunt-contrib-copy' );
 	grunt.loadNpmTasks( 'grunt-contrib-jshint' );
+	grunt.loadNpmTasks( 'grunt-stylelint' );
 	grunt.loadNpmTasks( 'grunt-contrib-watch' );
 	grunt.loadNpmTasks( 'grunt-banana-checker' );
 	grunt.loadNpmTasks( 'grunt-jscs' );
@@ -33,17 +34,21 @@ module.exports = function ( grunt ) {
 		},
 		banana: {
 			options: {
-				disallowBlankTranslations: false,
-				disallowDuplicateTranslations: false,
-				disallowUnusedTranslations: false
+				disallowBlankTranslations: false
 			},
 			core: 'languages/i18n/',
 			api: 'includes/api/i18n/',
 			installer: 'includes/installer/i18n/'
 		},
+		stylelint: {
+			options: {
+				syntax: 'less'
+			},
+			src: '{resources/src/*,mw-config/**}/*.{css,less}'
+		},
 		watch: {
 			files: [
-				'.js*',
+				'.{stylelintrc,jscsrc,jshintignore,jshintrc}',
 				'**/*',
 				'!{docs,extensions,node_modules,skins,vendor}/**'
 			],
@@ -58,8 +63,9 @@ module.exports = function ( grunt ) {
 					included: true,
 					served: false
 				} ],
+				logLevel: 'DEBUG',
 				frameworks: [ 'qunit' ],
-				reporters: [ 'dots' ],
+				reporters: [ 'progress' ],
 				singleRun: true,
 				autoWatch: false,
 				// Some tests in extensions don't yield for more than the default 10s (T89075)
@@ -97,7 +103,7 @@ module.exports = function ( grunt ) {
 		return !!( process.env.MW_SERVER && process.env.MW_SCRIPT_PATH );
 	} );
 
-	grunt.registerTask( 'lint', [ 'jshint', 'jscs', 'jsonlint', 'banana' ] );
+	grunt.registerTask( 'lint', [ 'jshint', 'jscs', 'jsonlint', 'banana', 'stylelint' ] );
 	grunt.registerTask( 'qunit', [ 'assert-mw-env', 'karma:main' ] );
 
 	grunt.registerTask( 'test', [ 'lint' ] );

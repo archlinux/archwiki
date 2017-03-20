@@ -46,27 +46,27 @@ class ListredirectsPage extends QueryPage {
 	}
 
 	public function getQueryInfo() {
-		return array(
-			'tables' => array( 'p1' => 'page', 'redirect', 'p2' => 'page' ),
-			'fields' => array( 'namespace' => 'p1.page_namespace',
+		return [
+			'tables' => [ 'p1' => 'page', 'redirect', 'p2' => 'page' ],
+			'fields' => [ 'namespace' => 'p1.page_namespace',
 				'title' => 'p1.page_title',
 				'value' => 'p1.page_title',
 				'rd_namespace',
 				'rd_title',
 				'rd_fragment',
 				'rd_interwiki',
-				'redirid' => 'p2.page_id' ),
-			'conds' => array( 'p1.page_is_redirect' => 1 ),
-			'join_conds' => array( 'redirect' => array(
-				'LEFT JOIN', 'rd_from=p1.page_id' ),
-				'p2' => array( 'LEFT JOIN', array(
+				'redirid' => 'p2.page_id' ],
+			'conds' => [ 'p1.page_is_redirect' => 1 ],
+			'join_conds' => [ 'redirect' => [
+				'LEFT JOIN', 'rd_from=p1.page_id' ],
+				'p2' => [ 'LEFT JOIN', [
 					'p2.page_namespace=rd_namespace',
-					'p2.page_title=rd_title' ) ) )
-		);
+					'p2.page_title=rd_title' ] ] ]
+		];
 	}
 
 	function getOrderFields() {
-		return array( 'p1.page_namespace', 'p1.page_title' );
+		return [ 'p1.page_namespace', 'p1.page_title' ];
 	}
 
 	/**
@@ -83,7 +83,10 @@ class ListredirectsPage extends QueryPage {
 		$batch = new LinkBatch;
 		foreach ( $res as $row ) {
 			$batch->add( $row->namespace, $row->title );
-			$batch->addObj( $this->getRedirectTarget( $row ) );
+			$redirTarget = $this->getRedirectTarget( $row );
+			if ( $redirTarget ) {
+				$batch->addObj( $redirTarget );
+			}
 		}
 		$batch->execute();
 
@@ -91,6 +94,10 @@ class ListredirectsPage extends QueryPage {
 		$res->seek( 0 );
 	}
 
+	/**
+	 * @param stdClass $row
+	 * @return Title|null
+	 */
 	protected function getRedirectTarget( $row ) {
 		if ( isset( $row->rd_title ) ) {
 			return Title::makeTitle( $row->rd_namespace,
@@ -111,13 +118,14 @@ class ListredirectsPage extends QueryPage {
 	 * @return string
 	 */
 	function formatResult( $skin, $result ) {
+		$linkRenderer = $this->getLinkRenderer();
 		# Make a link to the redirect itself
 		$rd_title = Title::makeTitle( $result->namespace, $result->title );
-		$rd_link = Linker::link(
+		$rd_link = $linkRenderer->makeLink(
 			$rd_title,
 			null,
-			array(),
-			array( 'redirect' => 'no' )
+			[],
+			[ 'redirect' => 'no' ]
 		);
 
 		# Find out where the redirect leads
@@ -126,7 +134,7 @@ class ListredirectsPage extends QueryPage {
 			# Make a link to the destination page
 			$lang = $this->getLanguage();
 			$arr = $lang->getArrow() . $lang->getDirMark();
-			$targetLink = Linker::link( $target );
+			$targetLink = $linkRenderer->makeLink( $target );
 
 			return "$rd_link $arr $targetLink";
 		} else {

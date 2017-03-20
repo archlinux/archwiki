@@ -6,7 +6,8 @@
 			"Odisha1",
 			"Psubhashish",
 			"Shisir 1945",
-			"Macofe"
+			"Macofe",
+			"MKar"
 		]
 	},
 	"wikieditor": "ଉନ୍ନତ ଉଇକିଟେକ୍ସଟ ସମ୍ପାଦନା ଇଣ୍ଟରଫେସ",
@@ -30,7 +31,6 @@
 	"wikieditor-toolbar-desc": "ଅଧିକ ବ୍ୟବହାର ସୁବିଧା ସହ ପୃଷ୍ଠା ସମ୍ପାଦନା ଉପକରଣ ଟୁଲବାର",
 	"wikieditor-toolbar-preference": "ଉନ୍ନତ ସମ୍ପାଦନା ଉପକରଣ ଟୁଲବାର ସଚଳ କରନ୍ତୁ",
 	"wikieditor-toolbar-dialogs-preference": "ଲିଙ୍କ, ସାରଣୀ (ଟେବୁଲ), ଖୋଜିବା ଓ ବଦଳାଇବା ଆଦି କାମ ପାଇଁ ଉଇଜାର୍ଡ଼ମାନ ସକ୍ରିୟ କରନ୍ତୁ",
-	"wikieditor-toolbar-hidesig": "ମୂଳ ନେମସ୍ପେସରେ ପୃଷ୍ଠାମାନଙ୍କରୁ ସନ୍ତକ (Sign) ଦେବା ସୁବିଧାଟିକୁ ଲୁଚାଇଦେବେ",
 	"wikieditor-toolbar-loading": "ଖୋଲୁଅଛି...",
 	"wikieditor-toolbar-tool-bold": "ବୋଲ୍‌ଡ (Bold)",
 	"wikieditor-toolbar-tool-bold-example": "ବୋଲ୍‌ଡ (Bold) ଲେଖା",
@@ -78,7 +78,7 @@
 	"wikieditor-toolbar-tool-reference": "ଆଧାର",
 	"wikieditor-toolbar-tool-reference-example": "ଏଠାରେ ପାଦଟୀକାଟି ଭରିବେ",
 	"wikieditor-toolbar-tool-reference-cancel": "ନାକଚ",
-	"wikieditor-toolbar-tool-reference-title": "ଆଧାର ଦେବେ",
+	"wikieditor-toolbar-tool-reference-title": "ଆଧାର ଦିଅନ୍ତୁ",
 	"wikieditor-toolbar-tool-reference-insert": "ଭରିବେ",
 	"wikieditor-toolbar-tool-reference-text": "ଆଧାର ଟେକ୍ସଟ",
 	"wikieditor-toolbar-tool-signature": "ସନ୍ତକ ଓ ସମୟଚିହ୍ନ (Signature & timestamp)",
@@ -197,9 +197,9 @@
 	"wikieditor-toolbar-help-content-showreferences-description": "ଡିସ‌ପ୍ଲେ ଆଧାରସମୂହ",
 	"wikieditor-toolbar-help-content-showreferences-result": "<ol class='references'><li id='cite_note-test-0'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.example.org' class='external text' href='#'>Link text</a>, ଅଧିକ ଲେଖା ।</li></ol>",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "ଦସ୍ତଖତ ଓ ସମୟଚିହ୍ନ (Signature with timestamp)",
-	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='{{#special:mypage}}'>Username</a> (<a href='#' title='{{#special:mytalk}}'>talk</a>) 15:54, 10 June 2009 (UTC)",
+	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='$1:Username'>Username</a> (<a href='#' title='$2:Username'>talk</a>) 15:54, 10 June 2009 (UTC)",
 	"wikieditor-toolbar-help-content-signature-description": "ଦସ୍ତଖତ (Signature)",
-	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='{{#special:mypage}}'>Username</a> (<a href='#' title='{{#special:mytalk}}'>talk</a>)",
+	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>Username</a> (<a href='#' title='$2:Username'>talk</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "ଅନୁଚ୍ଛେଦ ଛାଡ଼",
 	"wikieditor-toolbar-help-content-indent-syntax": "ସାଧାରଣ ଲେଖା<br />:ମାର୍ଜିନ ଦିଆ ଲେଖା<br />::ମାର୍ଜିନ ଦିଆ ଲେଖା",
 	"wikieditor-toolbar-help-content-indent-result": "Normal text<dl><dd>Indented text<dl><dd>Indented text</dd></dl></dd></dl>"

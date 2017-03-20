@@ -4,6 +4,8 @@
 			"JinJian"
 		]
 	},
-	"fancycaptcha-createaccount": "Para mapasaliporan an wiki kontra han automated account creation, nahangyo kami nga igbutang an mga pulong nga nagawas ha ubos han kahon ([[Special:Captcha/help|dugang nga impormasyon]]):",
+	"fancycaptcha-captcha": "Pagkita han seguridad",
+	"fancycaptcha-accountcreate": "Para maprotektahan an wiki kontra hin automated account creation, nahangyo kami nga igbutang an mga nakasurat nga nagawas ha ubos han kahon ([[Special:Captcha/help|dugang nga impormasyon]]):",
+	"fancycaptcha-imgcaptcha-ph": "Igbutang an sinurat nga nakikita mo ha igbaw",
 	"fancycaptcha-reload-text": "Refresh"
 }

@@ -4,6 +4,8 @@
 			"Jagwar"
 		]
 	},
-	"fancycaptcha-createaccount": "Mba hiarovana ity wiki ity amin'ny famoronana kaonty ho azy, soraty ny teny hitanao amin'ny boaty eo embany ([[Special:Captcha/help|fampahalalana fanampiny]]):",
+	"fancycaptcha-captcha": "Fitsapana ny antoka",
+	"fancycaptcha-accountcreate": "Mba hiarovana ity wiki ity amin'ny famoronana kaonty ho azy, soraty ny teny hitanao amin'ny boaty eo embany ([[Special:Captcha/help|fampahalalana fanampiny]]):",
+	"fancycaptcha-imgcaptcha-ph": "Atsofohy ny teny hitanao eo ambony",
 	"fancycaptcha-reload-text": "Vaozina"
 }

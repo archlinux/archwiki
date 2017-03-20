@@ -80,7 +80,7 @@ class Constants {
 	const UTF8_MAX = "\xf4\x8f\xbf\xbf";
 	# codepointToUtf8( UNICODE_REPLACEMENT )
 	const UTF8_REPLACEMENT = "\xef\xbf\xbd";
-	#const UTF8_REPLACEMENT = '!';
+	# const UTF8_REPLACEMENT = '!';
 
 	const UTF8_OVERLONG_A = "\xc1\xbf";
 	const UTF8_OVERLONG_B = "\xe0\x9f\xbf";

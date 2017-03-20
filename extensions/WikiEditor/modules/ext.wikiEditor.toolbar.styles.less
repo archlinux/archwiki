@@ -18,3 +18,17 @@ form#editform {
 .wikiEditor-ui-toolbar {
 	display: none;
 }
+
+/* This disables margin collapse for the children */
+.client-js #editform:before,
+.client-js #editform:after {
+	content: ' ';
+	display: table;
+}
+/* Set a margin on the textarea while we load, matching the height,
+ * of the wikieditor toolbar to prevent reflow. After the wikieditor ui is loaded,
+ * the textarea is wrapped inside wikieditor-ui div and no longer matches */
+.client-js .wikiEditor-oldToolbar + #wpTextbox1 {
+	/* Toolbar height + padding + bottom border = 26 + 2*3 + 1 */
+	margin-top: 33px;
+}

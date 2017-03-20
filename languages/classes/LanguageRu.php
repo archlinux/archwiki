@@ -24,12 +24,13 @@
 /**
  * Russian (русский язык)
  *
- * You can contact Alexander Sigachov (alexander.sigachov at Googgle Mail)
+ * You can contact:
+ * Alexander Sigachov (alexander.sigachov at Googgle Mail)
+ * Amir E. Aharoni (amir.aharoni@mail.huji.ac.il)
  *
  * @ingroup Language
  */
 class LanguageRu extends Language {
-
 	/**
 	 * Convert from the nominative form of a noun to some other case
 	 * Invoked with {{grammar:case|word}}
@@ -44,63 +45,25 @@ class LanguageRu extends Language {
 			return $wgGrammarForms['ru'][$case][$word];
 		}
 
-		# These rules are not perfect, but they are currently only used for Wikimedia
-		# site names so it doesn't matter if they are wrong sometimes.
-		# Just add a special case for your site name if necessary.
+		$grammarTransformations = $this->getGrammarTransformations();
 
-		# substr doesn't support Unicode and mb_substr has issues,
-		# so break it to characters using preg_match_all and then use array_slice and join
-		$chars = array();
-		preg_match_all( '/./us', $word, $chars );
-		if ( !preg_match( "/[a-zA-Z_]/us", $word ) ) {
-			switch ( $case ) {
-				case 'genitive': # родительный падеж
-					if ( join( '', array_slice( $chars[0], -1 ) ) === 'ь' ) {
-						$word = join( '', array_slice( $chars[0], 0, -1 ) ) . 'я';
-					} elseif ( join( '', array_slice( $chars[0], -2 ) ) === 'ия' ) {
-						$word = join( '', array_slice( $chars[0], 0, -2 ) ) . 'ии';
-					} elseif ( join( '', array_slice( $chars[0], -2 ) ) === 'ка' ) {
-						$word = join( '', array_slice( $chars[0], 0, -2 ) ) . 'ки';
-					} elseif ( join( '', array_slice( $chars[0], -2 ) ) === 'ти' ) {
-						$word = join( '', array_slice( $chars[0], 0, -2 ) ) . 'тей';
-					} elseif ( join( '', array_slice( $chars[0], -2 ) ) === 'ды' ) {
-						$word = join( '', array_slice( $chars[0], 0, -2 ) ) . 'дов';
-					} elseif ( join( '', array_slice( $chars[0], -1 ) ) === 'д' ) {
-						$word = join( '', array_slice( $chars[0], 0, -1 ) ) . 'да';
-					} elseif ( join( '', array_slice( $chars[0], -3 ) ) === 'ник' ) {
-						$word = join( '', array_slice( $chars[0], 0, -3 ) ) . 'ника';
-					} elseif ( join( '', array_slice( $chars[0], -3 ) ) === 'ные' ) {
-						$word = join( '', array_slice( $chars[0], 0, -3 ) ) . 'ных';
-					}
+		if ( isset( $grammarTransformations[$case] ) ) {
+			foreach ( array_values( $grammarTransformations[$case] ) as $rule ) {
+				$form = $rule[0];
+
+				if ( $form === '@metadata' ) {
+					continue;
+				}
+
+				$replacement = $rule[1];
+
+				$regex = "/$form/";
+
+				if ( preg_match( $regex, $word ) ) {
+					$word = preg_replace( $regex, $replacement, $word );
+
 					break;
-				case 'dative': # дательный падеж
-					# stub
-					break;
-				case 'accusative': # винительный падеж
-					# stub
-					break;
-				case 'instrumental': # творительный падеж
-					# stub
-					break;
-				case 'prepositional': # предложный падеж
-					if ( join( '', array_slice( $chars[0], -1 ) ) === 'ь' ) {
-						$word = join( '', array_slice( $chars[0], 0, -1 ) ) . 'е';
-					} elseif ( join( '', array_slice( $chars[0], -2 ) ) === 'ия' ) {
-						$word = join( '', array_slice( $chars[0], 0, -2 ) ) . 'ии';
-					} elseif ( join( '', array_slice( $chars[0], -2 ) ) === 'ка' ) {
-						$word = join( '', array_slice( $chars[0], 0, -2 ) ) . 'ке';
-					} elseif ( join( '', array_slice( $chars[0], -2 ) ) === 'ти' ) {
-						$word = join( '', array_slice( $chars[0], 0, -2 ) ) . 'тях';
-					} elseif ( join( '', array_slice( $chars[0], -2 ) ) === 'ды' ) {
-						$word = join( '', array_slice( $chars[0], 0, -2 ) ) . 'дах';
-					} elseif ( join( '', array_slice( $chars[0], -1 ) ) === 'д' ) {
-						$word = join( '', array_slice( $chars[0], 0, -1 ) ) . 'де';
-					} elseif ( join( '', array_slice( $chars[0], -3 ) ) === 'ник' ) {
-						$word = join( '', array_slice( $chars[0], 0, -3 ) ) . 'нике';
-					} elseif ( join( '', array_slice( $chars[0], -3 ) ) === 'ные' ) {
-						$word = join( '', array_slice( $chars[0], 0, -3 ) ) . 'ных';
-					}
-					break;
+				}
 			}
 		}
 
@@ -109,7 +72,7 @@ class LanguageRu extends Language {
 
 	/**
 	 * Four-digit number should be without group commas (spaces)
-	 * See manual of style at http://ru.wikipedia.org/wiki/Википедия:Оформление_статей
+	 * See manual of style at https://ru.wikipedia.org/wiki/Википедия:Оформление_статей
 	 * So "1 234 567", "12 345" but "1234"
 	 *
 	 * @param string $_

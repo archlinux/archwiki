@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Don Alessandro"
+			"Don Alessandro",
+			"Frhdkazan"
 		]
 	},
 	"skinname-vector": "Sızımlı",
@@ -15,5 +16,6 @@
 	"vector-view-edit": "Üzgärtü",
 	"vector-view-history": "Tarixın qaraw",
 	"vector-view-view": "Uqu",
-	"vector-view-viewsource": "Çığanağın qaraw"
+	"vector-view-viewsource": "Çığanağın qaraw",
+	"vector-more-actions": "Başqalar"
 }

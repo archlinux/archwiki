@@ -21,6 +21,7 @@
  * @author Niklas Laxström
  * @ingroup Cache
  */
+use MediaWiki\MediaWikiServices;
 
 /**
  * Caches user genders when needed to use correct namespace aliases.
@@ -28,24 +29,17 @@
  * @since 1.18
  */
 class GenderCache {
-	protected $cache = array();
+	protected $cache = [];
 	protected $default;
 	protected $misses = 0;
 	protected $missLimit = 1000;
 
 	/**
+	 * @deprecated in 1.28 see MediaWikiServices::getInstance()->getGenderCache()
 	 * @return GenderCache
 	 */
 	public static function singleton() {
-		static $that = null;
-		if ( $that === null ) {
-			$that = new self();
-		}
-
-		return $that;
-	}
-
-	protected function __construct() {
+		return MediaWikiServices::getInstance()->getGenderCache();
 	}
 
 	/**
@@ -101,7 +95,7 @@ class GenderCache {
 	 * @param string $caller
 	 */
 	public function doLinkBatch( $data, $caller = '' ) {
-		$users = array();
+		$users = [];
 		foreach ( $data as $ns => $pagenames ) {
 			if ( !MWNamespace::hasGenderDistinction( $ns ) ) {
 				continue;
@@ -122,7 +116,7 @@ class GenderCache {
 	 * @param string $caller The calling method
 	 */
 	public function doTitlesArray( $titles, $caller = '' ) {
-		$users = array();
+		$users = [];
 		foreach ( $titles as $title ) {
 			$titleObj = is_string( $title ) ? Title::newFromText( $title ) : $title;
 			if ( !$titleObj ) {
@@ -145,7 +139,7 @@ class GenderCache {
 	public function doQuery( $users, $caller = '' ) {
 		$default = $this->getDefault();
 
-		$usersToCheck = array();
+		$usersToCheck = [];
 		foreach ( (array)$users as $value ) {
 			$name = self::normalizeUsername( $value );
 			// Skip users whose gender setting we already know
@@ -163,18 +157,18 @@ class GenderCache {
 			return;
 		}
 
-		$dbr = wfGetDB( DB_SLAVE );
-		$table = array( 'user', 'user_properties' );
-		$fields = array( 'user_name', 'up_value' );
-		$conds = array( 'user_name' => $usersToCheck );
-		$joins = array( 'user_properties' =>
-			array( 'LEFT JOIN', array( 'user_id = up_user', 'up_property' => 'gender' ) ) );
+		$dbr = wfGetDB( DB_REPLICA );
+		$table = [ 'user', 'user_properties' ];
+		$fields = [ 'user_name', 'up_value' ];
+		$conds = [ 'user_name' => $usersToCheck ];
+		$joins = [ 'user_properties' =>
+			[ 'LEFT JOIN', [ 'user_id = up_user', 'up_property' => 'gender' ] ] ];
 
 		$comment = __METHOD__;
 		if ( strval( $caller ) !== '' ) {
 			$comment .= "/$caller";
 		}
-		$res = $dbr->select( $table, $fields, $conds, $comment, array(), $joins );
+		$res = $dbr->select( $table, $fields, $conds, $comment, [], $joins );
 
 		foreach ( $res as $row ) {
 			$this->cache[$row->user_name] = $row->up_value ? $row->up_value : $default;

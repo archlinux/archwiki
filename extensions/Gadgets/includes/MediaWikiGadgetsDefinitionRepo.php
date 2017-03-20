@@ -1,11 +1,12 @@
 <?php
+use MediaWiki\MediaWikiServices;
 
 /**
  * Gadgets repo powered by MediaWiki:Gadgets-definition
  */
 class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
 
-	const CACHE_VERSION = 1;
+	const CACHE_VERSION = 2;
 
 	private $definitionCache;
 
@@ -32,7 +33,8 @@ class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
 	 * was edited.
 	 */
 	public function purgeDefinitionCache() {
-		ObjectCache::getMainWANInstance()->touchCheckKey( $this->getCheckKey() );
+		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
+		$cache->touchCheckKey( $this->getCheckKey() );
 	}
 
 	private function getCheckKey() {
@@ -51,8 +53,8 @@ class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
 		}
 
 		// Ideally $t1Cache is APC, and $wanCache is memcached
-		$t1Cache = ObjectCache::newAccelerator( array(), 'hash' );
-		$wanCache = ObjectCache::getMainWANInstance();
+		$t1Cache = ObjectCache::getLocalServerInstance( 'hash' );
+		$wanCache = MediaWikiServices::getInstance()->getMainWANObjectCache();
 
 		$key = $this->getCheckKey();
 
@@ -75,7 +77,8 @@ class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
 		$us = $this;
 		$value = $wanCache->getWithSetCallback(
 			$key,
-			function( $old, &$ttl ) use ( $us ) {
+			Gadget::CACHE_TTL,
+			function ( $old, &$ttl ) use ( $us ) {
 				$now = microtime( true );
 				$gadgets = $us->fetchStructuredList();
 				if ( $gadgets === false ) {
@@ -84,9 +87,7 @@ class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
 
 				return array( 'gadgets' => $gadgets, 'time' => $now );
 			},
-			Gadget::CACHE_TTL,
-			array( $key ),
-			array( 'lockTSE' => 300 )
+			array( 'checkKeys' => array( $key ), 'lockTSE' => 300 )
 		);
 
 		// Update the tier 1 cache as needed
@@ -182,7 +183,7 @@ class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
 		$options = trim( $m[2], ' []' );
 
 		foreach ( preg_split( '/\s*\|\s*/', $options, -1, PREG_SPLIT_NO_EMPTY ) as $option ) {
-			$arr  = preg_split( '/\s*=\s*/', $option, 2 );
+			$arr = preg_split( '/\s*=\s*/', $option, 2 );
 			$option = $arr[0];
 			if ( isset( $arr[1] ) ) {
 				$params = explode( ',', $arr[1] );
@@ -201,6 +202,9 @@ class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
 				case 'rights':
 					$info['requiredRights'] = $params;
 					break;
+				case 'hidden':
+					$info['hidden'] = true;
+					break;
 				case 'skins':
 					$info['requiredSkins'] = $params;
 					break;
@@ -213,11 +217,15 @@ class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
 				case 'top':
 					$info['position'] = 'top';
 					break;
+				case 'type':
+					// Single value, not a list
+					$info['type'] = isset( $params[0] ) ? $params[0] : '';
+					break;
 			}
 		}
 
 		foreach ( preg_split( '/\s*\|\s*/', $m[3], -1, PREG_SPLIT_NO_EMPTY ) as $page ) {
-			$page = "Gadget-$page";
+			$page = "MediaWiki:Gadget-$page";
 
 			if ( preg_match( '/\.js/', $page ) ) {
 				$info['scripts'][] = $page;
@@ -228,6 +236,5 @@ class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
 
 		return new Gadget( $info );
 	}
-
 
 }

@@ -6,35 +6,31 @@
  */
 class TestUser {
 	/**
-	 * @deprecated Since 1.25. Use TestUser::getUser()->getName()
-	 * @private
 	 * @var string
 	 */
-	public $username;
+	private $username;
 
 	/**
-	 * @deprecated Since 1.25. Use TestUser::getPassword()
-	 * @private
 	 * @var string
 	 */
-	public $password;
+	private $password;
 
 	/**
-	 * @deprecated Since 1.25. Use TestUser::getUser()
-	 * @private
 	 * @var User
 	 */
-	public $user;
+	private $user;
 
 	private function assertNotReal() {
 		global $wgDBprefix;
-		if ( $wgDBprefix !== MediaWikiTestCase::DB_PREFIX && $wgDBprefix !== MediaWikiTestCase::ORA_DB_PREFIX ) {
+		if ( $wgDBprefix !== MediaWikiTestCase::DB_PREFIX &&
+			$wgDBprefix !== MediaWikiTestCase::ORA_DB_PREFIX
+		) {
 			throw new MWException( "Can't create user on real database" );
 		}
 	}
 
 	public function __construct( $username, $realname = 'Real Name',
-		$email = 'sample@example.com', $groups = array()
+		$email = 'sample@example.com', $groups = []
 	) {
 		$this->assertNotReal();
 
@@ -51,10 +47,10 @@ class TestUser {
 		if ( !$this->user->isLoggedIn() ) {
 			// create the user
 			$this->user = User::createNew(
-				$this->username, array(
+				$this->username, [
 					"email" => $email,
 					"real_name" => $realname
-				)
+				]
 			);
 
 			if ( !$this->user ) {
@@ -63,8 +59,8 @@ class TestUser {
 		}
 
 		// Update the user to use the password and other details
-		$change = $this->setPassword( $this->password ) ||
-			$this->setEmail( $email ) ||
+		$this->setPassword( $this->password );
+		$change = $this->setEmail( $email ) ||
 			$this->setRealName( $realname );
 
 		// Adjust groups by adding any missing ones and removing any extras
@@ -76,6 +72,12 @@ class TestUser {
 			$this->user->removeGroup( $group );
 		}
 		if ( $change ) {
+			// Disable CAS check before saving. The User object may have been initialized from cached
+			// information that may be out of whack with the database during testing. If tests were
+			// perfectly isolated, this would not happen. But if it does happen, let's just ignore the
+			// inconsistency, and just write the data we want - during testing, we are not worried
+			// about data loss.
+			$this->user->mTouched = '';
 			$this->user->saveSettings();
 		}
 	}
@@ -108,29 +110,51 @@ class TestUser {
 
 	/**
 	 * @param string $password
-	 * @return bool
 	 */
 	private function setPassword( $password ) {
-		$passwordFactory = $this->user->getPasswordFactory();
-		$oldDefaultType = $passwordFactory->getDefaultType();
-
-		// A is unsalted MD5 (thus fast) ... we don't care about security here, this is test only
-		$passwordFactory->setDefaultType( 'A' );
-		$newPassword = $passwordFactory->newFromPlaintext( $password, $this->user->getPassword() );
-
-		$change = false;
-		if ( !$this->user->getPassword()->equals( $newPassword ) ) {
-			// Password changed
-			$this->user->setPassword( $password );
-			$change = true;
-		}
-
-		$passwordFactory->setDefaultType( $oldDefaultType );
-
-		return $change;
+		self::setPasswordForUser( $this->user, $password );
 	}
 
 	/**
+	 * Set the password on a testing user
+	 *
+	 * This assumes we're still using the generic AuthManager config from
+	 * PHPUnitMaintClass::finalSetup(), and just sets the password in the
+	 * database directly.
+	 * @param User $user
+	 * @param string $password
+	 */
+	public static function setPasswordForUser( User $user, $password ) {
+		if ( !$user->getId() ) {
+			throw new MWException( "Passed User has not been added to the database yet!" );
+		}
+
+		$dbw = wfGetDB( DB_MASTER );
+		$row = $dbw->selectRow(
+			'user',
+			[ 'user_password' ],
+			[ 'user_id' => $user->getId() ],
+			__METHOD__
+		);
+		if ( !$row ) {
+			throw new MWException( "Passed User has an ID but is not in the database?" );
+		}
+
+		$passwordFactory = new PasswordFactory();
+		$passwordFactory->init( RequestContext::getMain()->getConfig() );
+		if ( !$passwordFactory->newFromCiphertext( $row->user_password )->equals( $password ) ) {
+			$passwordHash = $passwordFactory->newFromPlaintext( $password );
+			$dbw->update(
+				'user',
+				[ 'user_password' => $passwordHash->toString() ],
+				[ 'user_id' => $user->getId() ],
+				__METHOD__
+			);
+		}
+	}
+
+	/**
+	 * @since 1.25
 	 * @return User
 	 */
 	public function getUser() {
@@ -138,6 +162,7 @@ class TestUser {
 	}
 
 	/**
+	 * @since 1.25
 	 * @return string
 	 */
 	public function getPassword() {

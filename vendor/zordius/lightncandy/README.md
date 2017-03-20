@@ -1,7 +1,7 @@
 LightnCandy
 ===========
 
-An extremely fast PHP implementation of handlebars ( http://handlebarsjs.com/ ) and mustache ( http://mustache.github.io/ ).
+⚡🍭 An extremely fast PHP implementation of handlebars ( http://handlebarsjs.com/ ) and mustache ( http://mustache.github.io/ ).
 
 Travis CI status: [![Unit testing](https://travis-ci.org/zordius/lightncandy.svg?branch=master)](https://travis-ci.org/zordius/lightncandy) [![Regression testing](https://travis-ci.org/zordius/HandlebarsTest.svg?branch=master)](https://travis-ci.org/zordius/HandlebarsTest)
 
@@ -17,11 +17,11 @@ Features
    * <a href="https://github.com/zordius/HandlebarsTest/blob/master/fixture/001-simple-vars.tmpl">Template A</a> generated <a href="https://github.com/zordius/HandlebarsTest/blob/master/fixture/001-simple-vars.php">PHP A</a>
    * <a href="https://github.com/zordius/HandlebarsTest/blob/master/fixture/016-hb-eachthis.tmpl">Template B</a> generated <a href="https://github.com/zordius/HandlebarsTest/blob/master/fixture/016-hb-eachthis.php">PHP B</a>
 * **FAST!**
-   * Runs 4~6 times faster than <a href="https://github.com/bobthecow/mustache.php">mustache.php</a>.
-   * Runs 4~10 times faster than <a href="https://github.com/dingram/mustache-php">mustache-php</a>.
-   * Runs 10~30 times faster than <a href="https://github.com/XaminProject/handlebars.php">handlebars.php</a>.
+   * Runs 3~6 times faster than <a href="https://github.com/bobthecow/mustache.php">mustache.php</a>.
+   * Runs 2~7 times faster than <a href="https://github.com/dingram/mustache-php">mustache-php</a>.
+   * Runs 15~50 times faster than <a href="https://github.com/XaminProject/handlebars.php">handlebars.php</a>.
    * Detail performance test reports can be found <a href="https://github.com/zordius/HandlebarsTest">here</a>, go http://zordius.github.io/HandlebarsTest/ to see charts.
-* **SMALL!** single PHP file, only 120K!
+* **SMALL!** single PHP file, only 124K!
 * **ROBUST!**
    * 100% support <a href="https://github.com/mustache/spec">mustache spec v1.1.2</a> (without lambda module)
    * Supports almost all <a href="https://github.com/kasperisager/handlebars-spec">handlebars.js spec</a>
@@ -133,13 +133,14 @@ Default is to compile the template as PHP, which can be run as fast as possible 
 * `FLAG_RUNTIMEPARTIAL` : compile partial as runtime function, This enables recursive partials or context change for partials.
 * `FLAG_SLASH` : Skip a delimiter when it behind `\` .
 * `FLAG_ELSE` : support `{{else}}` or `{{^}}` as handlebars specification. Otherwise, `{{else}}` will be resolved as normal variable , and {{^}} will cause template error.
+* `FLAG_RAWBLOCK`: support `{{{{raw_block}}}} any char or {{foo}} as none parsed raw string {{{{/raw_block}}}}`.
 * `FLAG_PROPERTY` : support object instance attribute access. You MUST apply this if your data contains object. And, the rendering performance will be worse.
 * `FLAG_METHOD` : support object instance method access. You MUST apply this if your data contains object. And, the rendering performance will be worse.
 * `FLAG_INSTANCE` : same with `FLAG_PROPERTY` + `FLAG_METHOD`
 * `FLAG_SPACECTL` : support space control `{{~ }}` or `{{ ~}}` in template. Otherwise, `{{~ }}` or `{{ ~}}` will cause template error.
 * `FLAG_SPVARS` : support special variables include @root, @index, @key, @first, @last. Otherwise, compile these variable names with default parsing logic.
 * `FLAG_JS` : simulate all JavaScript string conversion behavior, same with `FLAG_JSTRUE` + `FLAG_JSOBJECT`.
-* `FLAG_HANDLEBARS` : support all handlebars extensions (which mustache do not supports) , same with `FLAG_THIS` + `FLAG_WITH` + `FLAG_PARENT` + `FLAG_JSQUOTE` + `FLAG_ADVARNAME` + `FLAG_NAMEDARG` + `FLAG_SLASH` + `FLAG_ELSE` + `FLAG_MUSTACHESP` + `FLAG_MUSTACHEPAIN`.
+* `FLAG_HANDLEBARS` : support all handlebars extensions (which mustache do not supports) , same with `FLAG_THIS` + `FLAG_WITH` + `FLAG_PARENT` + `FLAG_JSQUOTE` + `FLAG_ADVARNAME` + `FLAG_NAMEDARG` + `FLAG_SLASH` + `FLAG_ELSE` + `FLAG_RAWBLOCK` + `FLAG_MUSTACHESP` + `FLAG_MUSTACHEPAIN`.
 * `FLAG_HANDLEBARSJS` : align with handlebars.js behaviors, same with `FLAG_JS` + `FLAG_HANDLEBARS`.
 * `FLAG_MUSTACHESP` : align line change and spacing behaviors with mustache specification.
 * `FLAG_MUSTACHELOOKUP` : align recursive lookup up behaviors with mustache specification. And, the rendering performance will be worse.
@@ -210,7 +211,38 @@ By default, partial uses the same context with original template. If you want to
                              // also merge key into new context.
 ```
 
-You can use dynamic partial name by passing a custom helper as subexpression syntax, for example: `{{> (foo)}}` . the return value of custom helper `foo` will be the partial name. When you using dynamic partial, LightnCandy will compile all partial inside the `partials` option into template. (**TODO: add an example to show how to provide partials across templates to reduce size**)
+Dynamic Partial
+---------------
+
+You can use dynamic partial name by passing a custom helper as subexpression syntax, for example: `{{> (foo)}}` . the return value of custom helper `foo` will be the partial name.
+
+```php
+$php = LightnCandy::compile('{{> (partial_name_helper obj_type)}}', Array(
+    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_RUNTIMEPARTIAL,
+    'helpers' => Array(
+        'partial_name_helper' => function ($args) {
+            switch ($args[0]) {
+                ....
+            }
+        }
+    ),
+    'partials' => Array(
+        'people' => 'This is {{name}}, he is {{age}} years old.',
+        'animal' => 'This is {{name}}, it is {{age}} years old.',
+    )
+));
+
+$renderer = LightnCandy::prepare($php);
+
+// Will use people partial and output: 'This is John, he is 15 years old.'
+echo $renderer(Array(
+   'obj_type' => 'people',
+   'name' => 'John',
+   'age' => '15',
+));
+```
+
+When you using dynamic partial, LightnCandy will compile all partials inside the `partials` option into template. This makes the generated code larger, but this can make sure all partials are included for rendering. (TODO: add an example to show how to provide partials across templates to reduce size)
 
 Custom Helper
 -------------
@@ -502,6 +534,8 @@ Handlebars.registerHelper('myif', function(conditional, options) {
 });
 ```
 
+You can use `isset($options['fn'])` to detect your custom helper is a block or not; you can also use `isset($options['inverse'])` to detect the existence of `{{else}}`.
+
 **Hashed arguments**
 * LightnCandy
 ```php
@@ -531,7 +565,7 @@ $php = LightnCandy::compile($template, Array(
     'flags' => LightnCandy::FLAG_HANDLEBARSJS,
     'hbhelpers' => Array(
         'getRoot' => function ($options) {
-            print_($options['_this']); // dump current context
+            print_r($options['_this']); // dump current context
             return $options['data']['root']; // same as {{@root}}
         }
     )
@@ -543,6 +577,46 @@ $php = LightnCandy::compile($template, Array(
 Handlebars.registerHelper('getRoot', function(options) {
     console.log(this); // dump current context
     return options.data.root; // same as {{@root}}
+});
+```
+
+**Private variables**
+
+You can inject private variables into inner block when you execute child block with second parameter. The example code showed similar behavior with `{{#each}}` which sets index for child block and can be accessed with `{{@index}}`.
+
+* LightnCandy
+```php
+$php = LightnCandy::compile($template, Array(
+    'flags' => LightnCandy::FLAG_HANDLEBARSJS,
+    'hbhelpers' => Array(
+        'list' => function ($context, $options) {
+            $out = '';
+            $data = $options['data'];
+
+            foreach ($context as $idx => $cx) {
+                $data['index'] = $idx;
+                $out .= $options['fn']($cx, Array('data' => $data));
+            }
+
+            return $out;
+        }
+    )
+));
+```
+
+* Handlebars.js
+```javascript
+Handlebars.registerHelper('list', function(context, options) {
+  var out = '';
+  var data = options.data ? Handlebars.createFrame(options.data) : undefined;
+
+  for (var i=0; i<context.length; i++) {
+    if (data) {
+      data.index = i;
+    }
+    out += options.fn(context[i], {data: data});
+  }
+  return out;
 });
 ```
 
@@ -597,7 +671,7 @@ echo $renderer(Array('name' => 'John'), LCRun3::DEBUG_TAGS_HTML);
 
 The ANSI output will be: 
 
-<a href="tests/example_debug.php"><img src="example_debug.png"/></a>
+<a href="tests/example_debug.php"><img src="https://github.com/zordius/lightncandy/raw/master/example_debug.png"/></a>
 
 Here are the list of LCRun3 debug options for render function:
 
@@ -606,6 +680,22 @@ Here are the list of LCRun3 debug options for render function:
 * `DEBUG_TAGS` : turn the return value of render function into normalized mustache tags
 * `DEBUG_TAGS_ANSI` : turn the return value of render function into normalized mustache tags with ANSI color
 * `DEBUG_TAGS_HTML` : turn the return value of render function into normalized mustache tags with HTML comments
+
+Preprocess Partials
+-------------------
+
+If you want to do extra process before the partial be compiled, you may use `prepartial` when `compile()`. For example, this sample adds HTML comments to identify the partial by the name:
+
+```php
+$php = LightnCandy::compile($template, Array(
+    'flags' => LightnCandy::FLAG_HANDLEBARSJS,
+    'prepartial' => function ($partial, $name) {
+        return "<!-- partial start: $name -->$partial<!-- partial end: $name -->";
+    }
+));
+```
+
+You may also extend `LightnCandy` by override the `prePartial()` static method to turn your preprocess into a built-in feature.
 
 Customize Render Function
 -------------------------
@@ -735,9 +825,23 @@ Go http://handlebarsjs.com/ to see more feature description about handlebars.js.
 * `{{helper name1=var name2=var2}}` : Execute custom helper with named arguments (require `FLAG_NAMEDARG`)
 * `{{#helper ...}}...{{/helper}}` : Execute block custom helper
 * `{{helper (helper2 foo) bar}}` : Execute custom helpers as subexpression (require `FLAG_ADVARNAME`)
+* `{{{{raw_block}}}} {{will_not_parsed}} {{{{/raw_block}}}}` : Raw block (require FLAG_RAWBLOCK`)
+
+*TODO*
+
+* https://github.com/wycats/handlebars.js/issues/1114
+* https://github.com/wycats/handlebars.js/issues/1099
+* https://github.com/wycats/handlebars.js/issues/1092
 
 Framework Integration
 ---------------------
 
 - [Slim 3.0.x](https://github.com/endel/slim-lightncandy-view)
 - [Laravel 4](https://github.com/samwalshnz/lightncandy-l4)
+- [Laravel 5](https://github.com/ProAI/laravel-handlebars)
+- [yii2](https://github.com/kfreiman/yii2-lightncandy)
+
+Tools
+-----
+
+- CLI: https://github.com/PXLbros/LightnCandy-CLI

@@ -32,7 +32,7 @@
 function wfGetRusage() {
 	if ( !function_exists( 'getrusage' ) ) {
 		return false;
-	} elseif ( defined( 'HHVM_VERSION' ) ) {
+	} elseif ( defined( 'HHVM_VERSION' ) && PHP_OS === 'Linux' ) {
 		return getrusage( 2 /* RUSAGE_THREAD */ );
 	} else {
 		return getrusage( 0 /* RUSAGE_SELF */ );
@@ -42,7 +42,7 @@ function wfGetRusage() {
 /**
  * Begin profiling of a function
  * @param string $functionname Name of the function we will profile
- * @deprecated 1.25
+ * @deprecated since 1.25
  */
 function wfProfileIn( $functionname ) {
 }
@@ -50,7 +50,7 @@ function wfProfileIn( $functionname ) {
 /**
  * Stop profiling of a function
  * @param string $functionname Name of the function we have profiled
- * @deprecated 1.25
+ * @deprecated since 1.25
  */
 function wfProfileOut( $functionname = 'missing' ) {
 }

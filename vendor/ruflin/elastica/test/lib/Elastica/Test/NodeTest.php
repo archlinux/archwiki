@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica\Test;
 
 use Elastica\Node;
@@ -56,12 +57,17 @@ class NodeTest extends BaseTest
      */
     public function testGetName()
     {
-        $nodes = $this->_getClient()->getCluster()->getNodes();
+        $client = $this->_getClient();
+
+        $nodes = $client->getCluster()->getNodes();
         // At least 1 instance must exist
         $this->assertGreaterThan(0, $nodes);
 
+        $data = $client->request('/_nodes')->getData();
+        $rawNodes = $data['nodes'];
+
         foreach ($nodes as $node) {
-            $this->assertEquals($node->getName(), 'Elastica');
+            $this->assertEquals($rawNodes[$node->getId()]['name'], $node->getName());
         }
     }
 

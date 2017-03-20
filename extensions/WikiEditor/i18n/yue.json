@@ -185,9 +185,9 @@
 	"wikieditor-toolbar-help-content-showreferences-description": "顯示喜好",
 	"wikieditor-toolbar-help-content-showreferences-result": "<ol class='references'><li id='cite_note-test-0'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.example.org' class='external text' href='#'>拎字</a>，附加字。</li></ol>",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "簽名加埋時間印",
-	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='{{#special:mypage}}'>用戶名</a> (<a href='#' title='{{#special:mytalk}}'>討論</a>) 15:54, 10 June 2009 (UTC)",
+	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='$1:Username'>用戶名</a> (<a href='#' title='$2:Username'>討論</a>) 15:54, 10 June 2009 (UTC)",
 	"wikieditor-toolbar-help-content-signature-description": "簽名",
-	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='{{#special:mypage}}'>用戶名</a> (<a href='#' title='{{#special:mytalk}}'>討論</a>)",
+	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>用戶名</a> (<a href='#' title='$2:Username'>討論</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "縮排",
 	"wikieditor-toolbar-help-content-indent-syntax": "標準字<br />:縮排字<br />::縮排字",
 	"wikieditor-toolbar-help-content-indent-result": "標準字<dl><dd>縮排字<dl><dd>縮排字</dd></dl></dd></dl>"

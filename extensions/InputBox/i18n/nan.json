@@ -1,4 +1,8 @@
 {
-	"@metadata": [],
-	"inputbox-searchfulltext": "Chhiau choan-bûn"
+	"@metadata": {
+		"authors": [
+			"唐吉訶德的侍從"
+		]
+	},
+	"inputbox-searchfulltext": "Chhoē choan-bûn"
 }

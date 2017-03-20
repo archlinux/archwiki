@@ -12,6 +12,7 @@ OO.ui.Demo = function OoUiDemo() {
 	this.normalizeHash();
 
 	// Properties
+	this.stylesheetLinks = this.getStylesheetLinks();
 	this.mode = this.getCurrentMode();
 	this.$menu = $( '<div>' );
 	this.pageDropdown = new OO.ui.DropdownWidget( {
@@ -30,11 +31,6 @@ OO.ui.Demo = function OoUiDemo() {
 		new OO.ui.ButtonOptionWidget( { data: 'mediawiki', label: 'MediaWiki' } ),
 		new OO.ui.ButtonOptionWidget( { data: 'apex', label: 'Apex' } )
 	] );
-	this.graphicsSelect = new OO.ui.ButtonSelectWidget().addItems( [
-		new OO.ui.ButtonOptionWidget( { data: 'mixed', label: 'Mixed' } ),
-		new OO.ui.ButtonOptionWidget( { data: 'vector', label: 'Vector' } ),
-		new OO.ui.ButtonOptionWidget( { data: 'raster', label: 'Raster' } )
-	] );
 	this.directionSelect = new OO.ui.ButtonSelectWidget().addItems( [
 		new OO.ui.ButtonOptionWidget( { data: 'ltr', label: 'LTR' } ),
 		new OO.ui.ButtonOptionWidget( { data: 'rtl', label: 'RTL' } )
@@ -43,9 +39,9 @@ OO.ui.Demo = function OoUiDemo() {
 		new OO.ui.ButtonWidget( { label: 'JS' } ).setActive( true ),
 		new OO.ui.ButtonWidget( {
 			label: 'PHP',
-			href: 'widgets.php' +
-				'?theme=' + this.mode.theme +
-				'&graphic=' + this.mode.graphics +
+			href: 'demos.php' +
+				'?page=widgets' +
+				'&theme=' + this.mode.theme +
 				'&direction=' + this.mode.direction
 		} )
 	] );
@@ -53,30 +49,25 @@ OO.ui.Demo = function OoUiDemo() {
 	// Events
 	this.pageMenu.on( 'choose', OO.ui.bind( this.onModeChange, this ) );
 	this.themeSelect.on( 'choose', OO.ui.bind( this.onModeChange, this ) );
-	this.graphicsSelect.on( 'choose', OO.ui.bind( this.onModeChange, this ) );
 	this.directionSelect.on( 'choose', OO.ui.bind( this.onModeChange, this ) );
 
 	// Initialization
 	this.pageMenu.selectItemByData( this.mode.page );
 	this.themeSelect.selectItemByData( this.mode.theme );
-	this.graphicsSelect.selectItemByData( this.mode.graphics );
 	this.directionSelect.selectItemByData( this.mode.direction );
 	this.$menu
 		.addClass( 'oo-ui-demo-menu' )
 		.append(
 			this.pageDropdown.$element,
 			this.themeSelect.$element,
-			this.graphicsSelect.$element,
 			this.directionSelect.$element,
 			this.jsPhpSelect.$element
 		);
 	this.$element
 		.addClass( 'oo-ui-demo' )
 		.append( this.$menu );
-	$( 'body' ).addClass( 'oo-ui-' + this.mode.direction );
-	// Correctly apply direction to the <html> tags as well
 	$( 'html' ).attr( 'dir', this.mode.direction );
-	this.stylesheetLinks = this.addStylesheetLinks( $( 'head' ) );
+	$( 'head' ).append( this.stylesheetLinks );
 	OO.ui.theme = new ( this.constructor.static.themes[ this.mode.theme ].theme )();
 };
 
@@ -132,29 +123,18 @@ OO.ui.Demo.static.themes = {
 		fileSuffix: '-apex',
 		additionalSuffixes: [
 			'-icons-movement',
+			'-icons-content',
+			'-icons-alerts',
+			'-icons-interactions',
 			'-icons-moderation',
 			'-icons-editing-core',
 			'-icons-editing-styling',
 			'-icons-editing-list',
-			'-icons-editing-advanced'
+			'-icons-editing-advanced',
+			'-icons-media'
 		],
 		theme: OO.ui.ApexTheme
 	}
-};
-
-/**
- * Available graphics formats.
- *
- * List of graphics format descriptions, each containing a `fileSuffix` property used for linking
- * to the correct stylesheet file.
- *
- * @static
- * @property {Object.<string,Object>}
- */
-OO.ui.Demo.static.graphics = {
-	mixed: { fileSuffix: '' },
-	vector: { fileSuffix: '.vector' },
-	raster: { fileSuffix: '.raster' }
 };
 
 /**
@@ -199,16 +179,6 @@ OO.ui.Demo.static.defaultTheme = 'mediawiki';
  * @static
  * @property {string}
  */
-OO.ui.Demo.static.defaultGraphics = 'mixed';
-
-/**
- * Default page.
- *
- * Set by one of the page scripts in the `pages` directory.
- *
- * @static
- * @property {string}
- */
 OO.ui.Demo.static.defaultDirection = 'ltr';
 
 /* Methods */
@@ -221,9 +191,21 @@ OO.ui.Demo.prototype.initialize = function () {
 		promises = this.stylesheetLinks.map( function ( el ) {
 			return $( el ).data( 'load-promise' );
 		} );
+
+	// Helper function to get high resolution profiling data, where available.
+	function now() {
+		/* global performance */
+		return ( typeof performance !== 'undefined' ) ? performance.now() :
+			Date.now ? Date.now() : new Date().getTime();
+	}
+
 	$.when.apply( $, promises )
 		.done( function () {
+			var start, end;
+			start = now();
 			demo.constructor.static.pages[ demo.mode.page ]( demo );
+			end = now();
+			window.console.log( 'Took ' + ( end - start ) + ' ms to build demo page.' );
 		} )
 		.fail( function () {
 			demo.$element.append( $( '<p>' ).text( 'Demo styles failed to load.' ) );
@@ -238,10 +220,9 @@ OO.ui.Demo.prototype.initialize = function () {
 OO.ui.Demo.prototype.onModeChange = function () {
 	var page = this.pageMenu.getSelectedItem().getData(),
 		theme = this.themeSelect.getSelectedItem().getData(),
-		direction = this.directionSelect.getSelectedItem().getData(),
-		graphics = this.graphicsSelect.getSelectedItem().getData();
+		direction = this.directionSelect.getSelectedItem().getData();
 
-	location.hash = '#' + [ page, theme, graphics, direction ].join( '-' );
+	location.hash = '#' + [ page, theme, direction ].join( '-' );
 };
 
 /**
@@ -250,14 +231,14 @@ OO.ui.Demo.prototype.onModeChange = function () {
  * Factors are a mapping between symbolic names used in the URL hash and internal information used
  * to act on those symbolic names.
  *
- * Factor lists are in URL order: page, theme, graphics, direction. Page contains the symbolic
+ * Factor lists are in URL order: page, theme, direction. Page contains the symbolic
  * page name, others contain file suffixes.
  *
  * @return {Object[]} List of mode factors, keyed by symbolic name
  */
 OO.ui.Demo.prototype.getFactors = function () {
 	var key,
-		factors = [ {}, {}, {}, {} ];
+		factors = [ {}, {}, {} ];
 
 	for ( key in this.constructor.static.pages ) {
 		factors[ 0 ][ key ] = key;
@@ -265,11 +246,8 @@ OO.ui.Demo.prototype.getFactors = function () {
 	for ( key in this.constructor.static.themes ) {
 		factors[ 1 ][ key ] = this.constructor.static.themes[ key ].fileSuffix;
 	}
-	for ( key in this.constructor.static.graphics ) {
-		factors[ 2 ][ key ] = this.constructor.static.graphics[ key ].fileSuffix;
-	}
 	for ( key in this.constructor.static.directions ) {
-		factors[ 3 ][ key ] = this.constructor.static.directions[ key ].fileSuffix;
+		factors[ 2 ][ key ] = this.constructor.static.directions[ key ].fileSuffix;
 	}
 
 	return factors;
@@ -278,7 +256,7 @@ OO.ui.Demo.prototype.getFactors = function () {
 /**
  * Get a list of default factors.
  *
- * Factor defaults are in URL order: page, theme, graphics, direction. Each contains a symbolic
+ * Factor defaults are in URL order: page, theme, direction. Each contains a symbolic
  * factor name which should be used as a fallback when the URL hash is missing or invalid.
  *
  * @return {Object[]} List of default factors
@@ -287,7 +265,6 @@ OO.ui.Demo.prototype.getDefaultFactorValues = function () {
 	return [
 		this.constructor.static.defaultPage,
 		this.constructor.static.defaultTheme,
-		this.constructor.static.defaultGraphics,
 		this.constructor.static.defaultDirection
 	];
 };
@@ -295,7 +272,7 @@ OO.ui.Demo.prototype.getDefaultFactorValues = function () {
 /**
  * Parse the current URL hash into factor values.
  *
- * @return {string[]} Factor values in URL order: page, theme, graphics, direction
+ * @return {string[]} Factor values in URL order: page, theme, direction
  */
 OO.ui.Demo.prototype.getCurrentFactorValues = function () {
 	return location.hash.slice( 1 ).split( '-' );
@@ -314,18 +291,16 @@ OO.ui.Demo.prototype.getCurrentMode = function () {
 	return {
 		page: factorValues[ 0 ],
 		theme: factorValues[ 1 ],
-		graphics: factorValues[ 2 ],
-		direction: factorValues[ 3 ]
+		direction: factorValues[ 2 ]
 	};
 };
 
 /**
- * Get and insert link elements for the current mode.
+ * Get link elements for the current mode.
  *
- * @param {jQuery} $where Node to insert the links into
  * @return {HTMLElement[]} List of link elements
  */
-OO.ui.Demo.prototype.addStylesheetLinks = function ( $where ) {
+OO.ui.Demo.prototype.getStylesheetLinks = function () {
 	var i, len, links, fragments,
 		factors = this.getFactors(),
 		theme = this.getCurrentFactorValues()[ 1 ],
@@ -340,11 +315,11 @@ OO.ui.Demo.prototype.addStylesheetLinks = function ( $where ) {
 	// Theme styles
 	urls.push( 'dist/oojs-ui' + fragments.slice( 1 ).join( '' ) + '.css' );
 	for ( i = 0, len = suffixes.length; i < len; i++ ) {
-		urls.push( 'dist/oojs-ui' + fragments[ 1 ] + suffixes[ i ] + fragments.slice( 2 ).join( '' ) + '.css' );
+		urls.push( 'dist/oojs-ui' + fragments[ 1 ] + suffixes[ i ] + '.css' );
 	}
 
 	// Demo styles
-	urls.push( 'styles/demo' + fragments[ 3 ] + '.css' );
+	urls.push( 'styles/demo' + fragments[ 2 ] + '.css' );
 
 	// Add link tags
 	links = urls.map( function ( url ) {
@@ -357,8 +332,6 @@ OO.ui.Demo.prototype.addStylesheetLinks = function ( $where ) {
 			load: deferred.resolve,
 			error: deferred.reject
 		} );
-		// Insert into DOM before setting 'href' for IE 8 compatibility
-		$where.append( $link );
 		link.rel = 'stylesheet';
 		link.href = url;
 		return link;
@@ -408,7 +381,6 @@ OO.ui.Demo.prototype.buildConsole = function ( item, layout, widget ) {
 
 	function exec( str ) {
 		var func, ret;
-		/*jshint evil:true */
 		if ( str.indexOf( 'return' ) !== 0 ) {
 			str = 'return ' + str;
 		}

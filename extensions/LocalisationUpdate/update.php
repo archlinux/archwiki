@@ -2,8 +2,7 @@
 
 $IP = strval( getenv( 'MW_INSTALL_PATH' ) ) !== ''
 	? getenv( 'MW_INSTALL_PATH' )
-	: realpath( dirname( __FILE__ ) . "/../../" );
-// Can use __DIR__ once we drop support for MW 1.19
+	: realpath( __DIR__ . '/../../' );
 
 require "$IP/maintenance/Maintenance.php";
 
@@ -25,7 +24,10 @@ class LU extends Maintenance {
 		ini_set( "max_execution_time", 0 );
 		ini_set( 'memory_limit', -1 );
 
-		global $wgExtensionMessagesFiles, $IP;
+		// @codingStandardsIgnoreStart Ignore MediaWiki.NamingConventions.ValidGlobalName.wgPrefix
+		global $IP;
+		// @codingStandardsIgnoreEnd
+		global $wgExtensionMessagesFiles;
 		global $wgLocalisationUpdateRepositories;
 		global $wgLocalisationUpdateRepository;
 
@@ -36,16 +38,11 @@ class LU extends Maintenance {
 		}
 
 		$lc = Language::getLocalisationCache();
-		if ( is_callable( array( $lc, 'getMessagesDirs' ) ) ) { // Introduced in 1.25
-			$messagesDirs = $lc->getMessagesDirs();
-		} else {
-			global $wgMessagesDirs;
-			$messagesDirs = $wgMessagesDirs;
-		}
+		$messagesDirs = $lc->getMessagesDirs();
 
-		$finder = new LU_Finder( $wgExtensionMessagesFiles, $messagesDirs, $IP );
-		$readerFactory = new LU_ReaderFactory();
-		$fetcherFactory = new LU_FetcherFactory();
+		$finder = new LocalisationUpdate\Finder( $wgExtensionMessagesFiles, $messagesDirs, $IP );
+		$readerFactory = new LocalisationUpdate\ReaderFactory();
+		$fetcherFactory = new LocalisationUpdate\FetcherFactory();
 
 		$repoid = $this->getOption( 'repoid', $wgLocalisationUpdateRepository );
 		if ( !isset( $wgLocalisationUpdateRepositories[$repoid] ) ) {
@@ -56,7 +53,7 @@ class LU extends Maintenance {
 		$repos = $wgLocalisationUpdateRepositories[$repoid];
 
 		// Do it ;)
-		$updater = new LU_Updater();
+		$updater = new LocalisationUpdate\Updater();
 		$updatedMessages = $updater->execute(
 			$finder,
 			$readerFactory,

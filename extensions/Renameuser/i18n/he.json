@@ -25,7 +25,7 @@
 	"renameusersubmit": "שינוי שם משתמש",
 	"renameuser-submit-blocklog": "הצגת יומן החסימות של המשתמש",
 	"renameusererrordoesnotexist": "המשתמש \"<nowiki>$1</nowiki>\" אינו קיים.",
-	"renameusererrorexists": "המשתמש \"<nowiki>$1</nowiki>\" כבר קיים.",
+	"renameusererrorexists": "{{GENDER:$1|המשתמש|המשתמשת}} \"<nowiki>$1</nowiki>\" כבר {{GENDER:$1|קיים|קיימת}}.",
 	"renameusererrorinvalid": "שם המשתמש \"<nowiki>$1</nowiki>\" אינו תקין.",
 	"renameuser-error-request": "הייתה בעיה בקבלת הבקשה. אנא חזרו לדף הקודם ונסו שנית.",
 	"renameuser-error-same-user": "לא ניתן לשנות את שם המשתמש לשם זהה לשמו הישן.",
@@ -35,10 +35,10 @@
 	"renameuser-page-unmoved": "לא ניתן היה להעביר את הדף $1 ל$2.",
 	"log-name-renameuser": "יומן שינויי שמות משתמש",
 	"log-description-renameuser": "זהו יומן השינויים בשמות המשתמשים.",
-	"logentry-renameuser-renameuser": "$1 {{GENDER:$2|שינה|שינתה}} את שם המשתמש $4 &rlm;({{PLURAL:$6|עריכה אחת|$6 עריכות}}) אל $5&rlm;",
-	"logentry-renameuser-renameuser-legacier": "$1 {{GENDER:$2|שינה|שינתה}} את שם המשתמש $4 ל{{GRAMMAR:תחילית|$5}}&rlm;",
+	"logentry-renameuser-renameuser": "$1 {{GENDER:$2|שינה|שינתה}} את שם המשתמש $4 &rlm;({{PLURAL:$6|עריכה אחת|$6 עריכות}}) לשם {{GENDER:$7|$5}}&rlm;",
+	"logentry-renameuser-renameuser-legacier": "$1 {{GENDER:$2|שינה|שינתה}} את שם המשתמש $4 ל{{GRAMMAR:תחילית|$5}}",
 	"renameuser-move-log": "העברה אוטומטית בעקבות שינוי שם המשתמש \"[[User:$1|$1]]\" ל־\"[[User:$2|$2]]\"",
-	"action-renameuser": "לשנות שמות משתמש",
+	"action-renameuser": "לשנות שמות משתמשים",
 	"right-renameuser": "שינוי שמות משתמשים",
-	"renameuser-renamed-notice": "שם המשתמש הזה שונה.\nיומן שינויי שמות המשתמש מוצג להלן."
+	"renameuser-renamed-notice": "שם המשתמש הזה שוּנה.\nיומן שינויי שמות המשתמש מוצג להלן."
 }

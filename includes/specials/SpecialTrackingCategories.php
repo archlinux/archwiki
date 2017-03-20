@@ -41,7 +41,7 @@ class SpecialTrackingCategories extends SpecialPage {
 	 *
 	 * @var array
 	 */
-	private static $coreTrackingCategories = array(
+	private static $coreTrackingCategories = [
 		'index-category',
 		'noindex-category',
 		'duplicate-args-category',
@@ -52,15 +52,17 @@ class SpecialTrackingCategories extends SpecialPage {
 		'broken-file-category',
 		'node-count-exceeded-category',
 		'expansion-depth-exceeded-category',
-	);
+		'restricted-displaytitle-ignored',
+		'deprecated-self-close-category',
+	];
 
 	function execute( $par ) {
 		$this->setHeaders();
 		$this->outputHeader();
 		$this->getOutput()->allowClickjacking();
 		$this->getOutput()->addHTML(
-			Html::openElement( 'table', array( 'class' => 'mw-datatable',
-				'id' => 'mw-trackingcategories-table' ) ) . "\n" .
+			Html::openElement( 'table', [ 'class' => 'mw-datatable',
+				'id' => 'mw-trackingcategories-table' ] ) . "\n" .
 			"<thead><tr>
 			<th>" .
 				$this->msg( 'trackingcategories-msg' )->escaped() . "
@@ -86,7 +88,7 @@ class SpecialTrackingCategories extends SpecialPage {
 		$batch->execute();
 
 		foreach ( $trackingCategories as $catMsg => $data ) {
-			$allMsgs = array();
+			$allMsgs = [];
 			$catDesc = $catMsg . '-desc';
 
 			$catMsgTitleText = Linker::link(
@@ -118,13 +120,13 @@ class SpecialTrackingCategories extends SpecialPage {
 
 			$this->getOutput()->addHTML(
 				Html::openElement( 'tr' ) .
-				Html::openElement( 'td', array( 'class' => 'mw-trackingcategories-name' ) ) .
+				Html::openElement( 'td', [ 'class' => 'mw-trackingcategories-name' ] ) .
 					$this->getLanguage()->commaList( array_unique( $allMsgs ) ) .
 				Html::closeElement( 'td' ) .
-				Html::openElement( 'td', array( 'class' => 'mw-trackingcategories-msg' ) ) .
+				Html::openElement( 'td', [ 'class' => 'mw-trackingcategories-msg' ] ) .
 					$catMsgTitleText .
 				Html::closeElement( 'td' ) .
-				Html::openElement( 'td', array( 'class' => 'mw-trackingcategories-desc' ) ) .
+				Html::openElement( 'td', [ 'class' => 'mw-trackingcategories-desc' ] ) .
 					$descMsg->parse() .
 				Html::closeElement( 'td' ) .
 				Html::closeElement( 'tr' )
@@ -143,7 +145,20 @@ class SpecialTrackingCategories extends SpecialPage {
 			ExtensionRegistry::getInstance()->getAttribute( 'TrackingCategories' ),
 			$this->getConfig()->get( 'TrackingCategories' ) // deprecated
 		);
-		$trackingCategories = array();
+
+		// Only show magic link tracking categories if they are enabled
+		$enableMagicLinks = $this->getConfig()->get( 'EnableMagicLinks' );
+		if ( $enableMagicLinks['ISBN'] ) {
+			$categories[] = 'magiclink-tracking-isbn';
+		}
+		if ( $enableMagicLinks['RFC'] ) {
+			$categories[] = 'magiclink-tracking-rfc';
+		}
+		if ( $enableMagicLinks['PMID'] ) {
+			$categories[] = 'magiclink-tracking-pmid';
+		}
+
+		$trackingCategories = [];
 		foreach ( $categories as $catMsg ) {
 			/*
 			 * Check if the tracking category varies by namespace
@@ -151,7 +166,7 @@ class SpecialTrackingCategories extends SpecialPage {
 			 * If it does vary, show pages considering all namespaces
 			 */
 			$msgObj = $this->msg( $catMsg )->inContentLanguage();
-			$allCats = array();
+			$allCats = [];
 			$catMsgTitle = Title::makeTitleSafe( NS_MEDIAWIKI, $catMsg );
 			if ( !$catMsgTitle ) {
 				continue;
@@ -185,10 +200,10 @@ class SpecialTrackingCategories extends SpecialPage {
 					}
 				}
 			}
-			$trackingCategories[$catMsg] = array(
+			$trackingCategories[$catMsg] = [
 				'cats' => $allCats,
 				'msg' => $catMsgTitle,
-			);
+			];
 		}
 
 		return $trackingCategories;

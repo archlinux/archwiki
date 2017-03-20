@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica\Test\QueryBuilder\DSL;
 
 use Elastica\Exception\NotImplementedException;
@@ -55,7 +56,7 @@ abstract class AbstractDSLTest extends BaseTest
     {
         $this->assertEquals(count($left), count($right), 'Parameters count mismatch');
 
-        for ($i = 0; $i < count($left); $i++) {
+        for ($i = 0; $i < count($left); ++$i) {
             $this->assertEquals($left[$i]->getName(), $right[$i]->getName(), 'Parameters names mismatch');
             $this->assertEquals($left[$i]->isOptional(), $right[$i]->isOptional(), 'Parameters optionality mismatch');
             $this->assertEquals($this->_getHintName($left[$i]), $this->_getHintName($right[$i]), 'Parameters typehints mismatch');

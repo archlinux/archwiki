@@ -32,8 +32,8 @@ require_once __DIR__ . '/Maintenance.php';
 class UploadDumper extends Maintenance {
 	public function __construct() {
 		parent::__construct();
-		$this->mDescription = "Generates list of uploaded files which can be fed to tar or similar.
-By default, outputs relative paths against the parent directory of \$wgUploadDirectory.";
+		$this->addDescription( 'Generates list of uploaded files which can be fed to tar or similar.
+By default, outputs relative paths against the parent directory of $wgUploadDirectory.' );
 		$this->addOption( 'base', 'Set base relative path instead of wiki include root', false, true );
 		$this->addOption( 'local', 'List all local files, used or not. No shared files included' );
 		$this->addOption( 'used', 'Skip local images that are not used' );
@@ -76,7 +76,7 @@ By default, outputs relative paths against the parent directory of \$wgUploadDir
 	 * @param bool $shared True to pass shared-dir settings to hash func
 	 */
 	function fetchUsed( $shared ) {
-		$dbr = wfGetDB( DB_SLAVE );
+		$dbr = $this->getDB( DB_REPLICA );
 		$image = $dbr->tableName( 'image' );
 		$imagelinks = $dbr->tableName( 'imagelinks' );
 
@@ -97,9 +97,9 @@ By default, outputs relative paths against the parent directory of \$wgUploadDir
 	 * @param bool $shared True to pass shared-dir settings to hash func
 	 */
 	function fetchLocal( $shared ) {
-		$dbr = wfGetDB( DB_SLAVE );
+		$dbr = $this->getDB( DB_REPLICA );
 		$result = $dbr->select( 'image',
-			array( 'img_name' ),
+			[ 'img_name' ],
 			'',
 			__METHOD__ );
 
@@ -111,7 +111,7 @@ By default, outputs relative paths against the parent directory of \$wgUploadDir
 	function outputItem( $name, $shared ) {
 		$file = wfFindFile( $name );
 		if ( $file && $this->filterItem( $file, $shared ) ) {
-			$filename = $file->getPath();
+			$filename = $file->getLocalRefPath();
 			$rel = wfRelativePath( $filename, $this->mBasePath );
 			$this->output( "$rel\n" );
 		} else {

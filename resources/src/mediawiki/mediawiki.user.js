@@ -4,41 +4,20 @@
  */
 ( function ( mw, $ ) {
 	var i,
-		deferreds = {},
+		userInfoPromise,
 		byteToHex = [];
 
 	/**
 	 * Get the current user's groups or rights
 	 *
 	 * @private
-	 * @param {string} info One of 'groups' or 'rights'
 	 * @return {jQuery.Promise}
 	 */
-	function getUserInfo( info ) {
-		var api;
-		if ( !deferreds[ info ] ) {
-
-			deferreds.rights = $.Deferred();
-			deferreds.groups = $.Deferred();
-
-			api = new mw.Api();
-			api.get( {
-				action: 'query',
-				meta: 'userinfo',
-				uiprop: 'rights|groups'
-			} ).always( function ( data ) {
-				var rights, groups;
-				if ( data.query && data.query.userinfo ) {
-					rights = data.query.userinfo.rights;
-					groups = data.query.userinfo.groups;
-				}
-				deferreds.rights.resolve( rights || [] );
-				deferreds.groups.resolve( groups || [] );
-			} );
-
+	function getUserInfo() {
+		if ( !userInfoPromise ) {
+			userInfoPromise = new mw.Api().getUserInfo();
 		}
-
-		return deferreds[ info ].promise();
+		return userInfoPromise;
 	}
 
 	// Map from numbers 0-255 to a hex string (with padding)
@@ -97,8 +76,8 @@
 				hexRnds[ i ] = byteToHex[ rnds[ i ] ];
 			}
 
-			// Concatenation of two random integers with entrophy n and m
-			// returns a string with entrophy n+m if those strings are independent
+			// Concatenation of two random integers with entropy n and m
+			// returns a string with entropy n+m if those strings are independent
 			return hexRnds.join( '' );
 		},
 
@@ -110,7 +89,7 @@
 		 * @return {number} Current user's id, or 0 if user is anonymous
 		 */
 		getId: function () {
-			return mw.config.get( 'wgUserId', 0 );
+			return mw.config.get( 'wgUserId' ) || 0;
 		},
 
 		/**
@@ -125,20 +104,17 @@
 		/**
 		 * Get date user registered, if available
 		 *
-		 * @return {Date|boolean|null} Date user registered, or false for anonymous users, or
-		 *  null when data is not available
+		 * @return {boolean|null|Date} False for anonymous users, null if data is
+		 *  unavailable, or Date for when the user registered.
 		 */
 		getRegistration: function () {
-			var registration = mw.config.get( 'wgUserRegistration' );
 			if ( mw.user.isAnon() ) {
 				return false;
 			}
-			if ( registration === null ) {
-				// Information may not be available if they signed up before
-				// MW began storing this.
-				return null;
-			}
-			return new Date( registration );
+			var registration = mw.config.get( 'wgUserRegistration' );
+			// Registration may be unavailable if the user signed up before MediaWiki
+			// began tracking this.
+			return !registration ? null : new Date( registration );
 		},
 
 		/**
@@ -262,7 +238,10 @@
 		 * @return {jQuery.Promise}
 		 */
 		getGroups: function ( callback ) {
-			return getUserInfo( 'groups' ).done( callback );
+			var userGroups = mw.config.get( 'wgUserGroups', [] );
+
+			// Uses promise for backwards compatibility
+			return $.Deferred().resolve( userGroups ).done( callback );
 		},
 
 		/**
@@ -272,7 +251,10 @@
 		 * @return {jQuery.Promise}
 		 */
 		getRights: function ( callback ) {
-			return getUserInfo( 'rights' ).done( callback );
+			return getUserInfo().then(
+				function ( userInfo ) { return userInfo.rights; },
+				function () { return []; }
+			).done( callback );
 		}
 	} );
 

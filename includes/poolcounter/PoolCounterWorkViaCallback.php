@@ -44,14 +44,14 @@ class PoolCounterWorkViaCallback extends PoolCounterWork {
 	 * If a 'doCachedWork' callback is provided, then execute() may wait for any prior
 	 * process in the pool to finish and reuse its cached result.
 	 *
-	 * @param string $type
+	 * @param string $type The class of actions to limit concurrency for
 	 * @param string $key
 	 * @param array $callbacks Map of callbacks
 	 * @throws MWException
 	 */
 	public function __construct( $type, $key, array $callbacks ) {
 		parent::__construct( $type, $key );
-		foreach ( array( 'doWork', 'doCachedWork', 'fallback', 'error' ) as $name ) {
+		foreach ( [ 'doWork', 'doCachedWork', 'fallback', 'error' ] as $name ) {
 			if ( isset( $callbacks[$name] ) ) {
 				if ( !is_callable( $callbacks[$name] ) ) {
 					throw new MWException( "Invalid callback provided for '$name' function." );
@@ -66,26 +66,26 @@ class PoolCounterWorkViaCallback extends PoolCounterWork {
 	}
 
 	public function doWork() {
-		return call_user_func_array( $this->doWork, array() );
+		return call_user_func_array( $this->doWork, [] );
 	}
 
 	public function getCachedWork() {
 		if ( $this->doCachedWork ) {
-			return call_user_func_array( $this->doCachedWork, array() );
+			return call_user_func_array( $this->doCachedWork, [] );
 		}
 		return false;
 	}
 
 	public function fallback() {
 		if ( $this->fallback ) {
-			return call_user_func_array( $this->fallback, array() );
+			return call_user_func_array( $this->fallback, [] );
 		}
 		return false;
 	}
 
 	public function error( $status ) {
 		if ( $this->error ) {
-			return call_user_func_array( $this->error, array( $status ) );
+			return call_user_func_array( $this->error, [ $status ] );
 		}
 		return false;
 	}

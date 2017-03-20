@@ -23,9 +23,15 @@
  * Item class for a filearchive table row
  */
 class RevDelArchivedFileItem extends RevDelFileItem {
+	/** @var $list RevDelArchivedFileList */
+	/** @var $file ArchivedFile */
+	/** @var LocalFile */
+	protected $lockFile;
+
 	public function __construct( $list, $row ) {
 		RevDelItem::__construct( $list, $row );
 		$this->file = ArchivedFile::newFromRow( $row );
+		$this->lockFile = RepoGroup::singleton()->getLocalRepo()->newFile( $row->fa_name );
 	}
 
 	public function getIdField() {
@@ -51,11 +57,11 @@ class RevDelArchivedFileItem extends RevDelFileItem {
 	public function setBits( $bits ) {
 		$dbw = wfGetDB( DB_MASTER );
 		$dbw->update( 'filearchive',
-			array( 'fa_deleted' => $bits ),
-			array(
+			[ 'fa_deleted' => $bits ],
+			[
 				'fa_id' => $this->row->fa_id,
 				'fa_deleted' => $this->getBits(),
-			),
+			],
 			__METHOD__
 		);
 
@@ -72,12 +78,12 @@ class RevDelArchivedFileItem extends RevDelFileItem {
 		} else {
 			$undelete = SpecialPage::getTitleFor( 'Undelete' );
 			$key = $this->file->getKey();
-			$link = Linker::link( $undelete, $date, array(),
-				array(
+			$link = Linker::link( $undelete, $date, [],
+				[
 					'target' => $this->list->title->getPrefixedText(),
 					'file' => $key,
 					'token' => $this->list->getUser()->getEditToken( $key )
-				)
+				]
 			);
 		}
 		if ( $this->isDeleted() ) {
@@ -90,40 +96,47 @@ class RevDelArchivedFileItem extends RevDelFileItem {
 	public function getApiData( ApiResult $result ) {
 		$file = $this->file;
 		$user = $this->list->getUser();
-		$ret = array(
+		$ret = [
 			'title' => $this->list->title->getPrefixedText(),
 			'timestamp' => wfTimestamp( TS_ISO_8601, $file->getTimestamp() ),
 			'width' => $file->getWidth(),
 			'height' => $file->getHeight(),
 			'size' => $file->getSize(),
-		);
-		$ret += $file->isDeleted( Revision::DELETED_USER ) ? array( 'userhidden' => '' ) : array();
-		$ret += $file->isDeleted( Revision::DELETED_COMMENT ) ? array( 'commenthidden' => '' ) : array();
-		$ret += $this->isDeleted() ? array( 'contenthidden' => '' ) : array();
+		];
+		$ret += $file->isDeleted( Revision::DELETED_USER ) ? [ 'userhidden' => '' ] : [];
+		$ret += $file->isDeleted( Revision::DELETED_COMMENT ) ? [ 'commenthidden' => '' ] : [];
+		$ret += $this->isDeleted() ? [ 'contenthidden' => '' ] : [];
 		if ( $this->canViewContent() ) {
-			$ret += array(
+			$ret += [
 				'url' => SpecialPage::getTitleFor( 'Revisiondelete' )->getLinkURL(
-					array(
+					[
 						'target' => $this->list->title->getPrefixedText(),
 						'file' => $file->getKey(),
 						'token' => $user->getEditToken( $file->getKey() )
-					),
-					false, PROTO_RELATIVE
+					]
 				),
-			);
+			];
 		}
 		if ( $file->userCan( Revision::DELETED_USER, $user ) ) {
-			$ret += array(
+			$ret += [
 				'userid' => $file->getUser( 'id' ),
 				'user' => $file->getUser( 'text' ),
-			);
+			];
 		}
 		if ( $file->userCan( Revision::DELETED_COMMENT, $user ) ) {
-			$ret += array(
+			$ret += [
 				'comment' => $file->getRawDescription(),
-			);
+			];
 		}
 
 		return $ret;
+	}
+
+	public function lock() {
+		return $this->lockFile->acquireFileLock();
+	}
+
+	public function unlock() {
+		return $this->lockFile->releaseFileLock();
 	}
 }

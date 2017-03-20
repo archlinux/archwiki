@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica\Test\Multi;
 
 use Elastica\Document;
@@ -328,7 +329,7 @@ class SearchTest extends BaseTest
 
         $searchBad = new Search($client);
         $searchBadQuery = new Range();
-        $searchBadQuery->addField('bad', array('from' => 0));
+        $searchBadQuery->addField('bad', array('_id' => 0));
         $searchBadQuery->setParam('_cache', true);
         $searchBad->setQuery($searchBadQuery);
         $searchBad->addIndex($index)->addType($type);
@@ -352,6 +353,7 @@ class SearchTest extends BaseTest
         $this->assertSame($searchBad->getQuery(), $resultSets[1]->getQuery());
         $this->assertSame(0, $resultSets[1]->getTotalHits());
         $this->assertCount(0, $resultSets[1]);
+
         $this->assertTrue($resultSets[1]->getResponse()->hasError());
 
         $this->assertTrue($multiResultSet->hasError());
@@ -376,7 +378,7 @@ class SearchTest extends BaseTest
 
         $searchBad = new Search($client);
         $searchBadQuery = new Range();
-        $searchBadQuery->addField('bad', array('from' => 0));
+        $searchBadQuery->addField('bad', array('_id' => 0));
         $searchBadQuery->setParam('_cache', true);
         $searchBad->setQuery($searchBadQuery);
         $searchBad->addIndex($index)->addType($type);
@@ -400,6 +402,7 @@ class SearchTest extends BaseTest
         $this->assertSame($searchBad->getQuery(), $resultSets[0]->getQuery());
         $this->assertSame(0, $resultSets[0]->getTotalHits());
         $this->assertCount(0, $resultSets[0]);
+
         $this->assertTrue($resultSets[0]->getResponse()->hasError());
 
         $this->assertTrue($multiResultSet->hasError());

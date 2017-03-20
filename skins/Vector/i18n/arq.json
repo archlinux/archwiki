@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Bachounda",
-			"Oldstoneage"
+			"Oldstoneage",
+			"GeekEmad"
 		]
 	},
 	"vector-skin-desc": "طبعة جديدة تاع مونوبوك، ب شبحة جديدة و تحسانات فل إستعماليّة",
@@ -13,9 +14,9 @@
 	"vector-action-undelete": "ردّ كيما كان",
 	"vector-action-unprotect": "بدّل الـحماية",
 	"vector-view-create": "أصنع",
-	"vector-view-edit": "بدل",
-	"vector-view-history": "السجّيل تاع الحدات",
-	"vector-view-view": "أقرى",
+	"vector-view-edit": "بدّل",
+	"vector-view-history": "شوف التاريخ",
+	"vector-view-view": "اقرى",
 	"vector-view-viewsource": "شوف المصدر",
-	"vector-more-actions": "زيادة"
+	"vector-more-actions": "اكثر"
 }

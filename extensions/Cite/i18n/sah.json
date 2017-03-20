@@ -1,13 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"HalanTul"
+			"HalanTul",
+			"София"
 		]
 	},
 	"cite-desc": "Хос быһаарыы <nowiki><ref[ name=id]></nowiki> уонна <nowiki><references/></nowiki> тиэктэрин эбэр",
 	"cite_error": "Цитата сыыһата: $1",
 	"cite_error_ref_numeric_key": "Неправильный вызов: ожидался нечисловой ключ",
-	"cite_error_ref_no_key": "<code>&lt;ref&gt;</code> тиэк алҕаһа (Неправильный вызов): аата (күлүүһэ) ыйыллыбатах",
+	"cite_error_ref_no_key": "<code>&lt;ref&gt;</code> тиэк алҕаһа: аата (күлүүһэ) ыйыллыбатах",
 	"cite_error_ref_too_many_keys": "<code>&lt;ref&gt;</code> тиэк алҕаһа (Неправильный вызов): аата сыыһа ыйыллыбыт, эбэтэр наһаа элбэх аат суруллубут",
 	"cite_error_ref_no_input": "<code>&lt;ref&gt;</code> тиэк алҕастаах (Неверный вызов): иһинээҕитэ сыыһа",
 	"cite_error_references_invalid_parameters": "Сыыһа параметрдар бэриллибиттэр; <code>&lt;references /&gt;</code> тиэккэ отой суох буолуохтаахтар",

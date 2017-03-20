@@ -29,10 +29,11 @@ abstract class BaseTemplate extends QuickTemplate {
 	 * Get a Message object with its context set
 	 *
 	 * @param string $name Message name
+	 * @param ... $params Message params
 	 * @return Message
 	 */
-	public function getMsg( $name ) {
-		return $this->getSkin()->msg( $name );
+	public function getMsg( $name /* ... */ ) {
+		return call_user_func_array( [ $this->getSkin(), 'msg' ], func_get_args() );
 	}
 
 	function msg( $str ) {
@@ -55,8 +56,7 @@ abstract class BaseTemplate extends QuickTemplate {
 	 * @return array
 	 */
 	function getToolbox() {
-
-		$toolbox = array();
+		$toolbox = [];
 		if ( isset( $this->data['nav_urls']['whatlinkshere'] )
 			&& $this->data['nav_urls']['whatlinkshere']
 		) {
@@ -69,10 +69,11 @@ abstract class BaseTemplate extends QuickTemplate {
 			$toolbox['recentchangeslinked'] = $this->data['nav_urls']['recentchangeslinked'];
 			$toolbox['recentchangeslinked']['msg'] = 'recentchangeslinked-toolbox';
 			$toolbox['recentchangeslinked']['id'] = 't-recentchangeslinked';
+			$toolbox['recentchangeslinked']['rel'] = 'nofollow';
 		}
 		if ( isset( $this->data['feeds'] ) && $this->data['feeds'] ) {
 			$toolbox['feeds']['id'] = 'feedlinks';
-			$toolbox['feeds']['links'] = array();
+			$toolbox['feeds']['links'] = [];
 			foreach ( $this->data['feeds'] as $key => $feed ) {
 				$toolbox['feeds']['links'][$key] = $feed;
 				$toolbox['feeds']['links'][$key]['id'] = "feed-$key";
@@ -81,8 +82,8 @@ abstract class BaseTemplate extends QuickTemplate {
 				$toolbox['feeds']['links'][$key]['class'] = 'feedlink';
 			}
 		}
-		foreach ( array( 'contributions', 'log', 'blockip', 'emailuser',
-			'userrights', 'upload', 'specialpages' ) as $special
+		foreach ( [ 'contributions', 'log', 'blockip', 'emailuser',
+			'userrights', 'upload', 'specialpages' ] as $special
 		) {
 			if ( isset( $this->data['nav_urls'][$special] ) && $this->data['nav_urls'][$special] ) {
 				$toolbox[$special] = $this->data['nav_urls'][$special];
@@ -111,7 +112,7 @@ abstract class BaseTemplate extends QuickTemplate {
 			$toolbox['info']['id'] = 't-info';
 		}
 
-		Hooks::run( 'BaseTemplateToolbox', array( &$this, &$toolbox ) );
+		Hooks::run( 'BaseTemplateToolbox', [ &$this, &$toolbox ] );
 		return $toolbox;
 	}
 
@@ -126,21 +127,21 @@ abstract class BaseTemplate extends QuickTemplate {
 	 * @return array
 	 */
 	function getPersonalTools() {
-		$personal_tools = array();
+		$personal_tools = [];
 		foreach ( $this->get( 'personal_urls' ) as $key => $plink ) {
 			# The class on a personal_urls item is meant to go on the <a> instead
 			# of the <li> so we have to use a single item "links" array instead
 			# of using most of the personal_url's keys directly.
-			$ptool = array(
-				'links' => array(
-					array( 'single-id' => "pt-$key" ),
-				),
+			$ptool = [
+				'links' => [
+					[ 'single-id' => "pt-$key" ],
+				],
 				'id' => "pt-$key",
-			);
+			];
 			if ( isset( $plink['active'] ) ) {
 				$ptool['active'] = $plink['active'];
 			}
-			foreach ( array( 'href', 'class', 'text', 'dir' ) as $k ) {
+			foreach ( [ 'href', 'class', 'text', 'dir', 'data' ] as $k ) {
 				if ( isset( $plink[$k] ) ) {
 					$ptool['links'][0][$k] = $plink[$k];
 				}
@@ -150,7 +151,7 @@ abstract class BaseTemplate extends QuickTemplate {
 		return $personal_tools;
 	}
 
-	function getSidebar( $options = array() ) {
+	function getSidebar( $options = [] ) {
 		// Force the rendering of the following portals
 		$sidebar = $this->data['sidebar'];
 		if ( !isset( $sidebar['SEARCH'] ) ) {
@@ -173,7 +174,7 @@ abstract class BaseTemplate extends QuickTemplate {
 			unset( $sidebar['LANGUAGES'] );
 		}
 
-		$boxes = array();
+		$boxes = [];
 		foreach ( $sidebar as $boxName => $content ) {
 			if ( $content === false ) {
 				continue;
@@ -181,41 +182,41 @@ abstract class BaseTemplate extends QuickTemplate {
 			switch ( $boxName ) {
 			case 'SEARCH':
 				// Search is a special case, skins should custom implement this
-				$boxes[$boxName] = array(
+				$boxes[$boxName] = [
 					'id' => 'p-search',
 					'header' => $this->getMsg( 'search' )->text(),
 					'generated' => false,
 					'content' => true,
-				);
+				];
 				break;
 			case 'TOOLBOX':
 				$msgObj = $this->getMsg( 'toolbox' );
-				$boxes[$boxName] = array(
+				$boxes[$boxName] = [
 					'id' => 'p-tb',
 					'header' => $msgObj->exists() ? $msgObj->text() : 'toolbox',
 					'generated' => false,
 					'content' => $this->getToolbox(),
-				);
+				];
 				break;
 			case 'LANGUAGES':
 				if ( $this->data['language_urls'] ) {
 					$msgObj = $this->getMsg( 'otherlanguages' );
-					$boxes[$boxName] = array(
+					$boxes[$boxName] = [
 						'id' => 'p-lang',
 						'header' => $msgObj->exists() ? $msgObj->text() : 'otherlanguages',
 						'generated' => false,
 						'content' => $this->data['language_urls'],
-					);
+					];
 				}
 				break;
 			default:
 				$msgObj = $this->getMsg( $boxName );
-				$boxes[$boxName] = array(
+				$boxes[$boxName] = [
 					'id' => "p-$boxName",
 					'header' => $msgObj->exists() ? $msgObj->text() : $boxName,
 					'generated' => true,
 					'content' => $content,
-				);
+				];
 				break;
 			}
 		}
@@ -226,7 +227,7 @@ abstract class BaseTemplate extends QuickTemplate {
 			ob_start();
 			// We pass an extra 'true' at the end so extensions using BaseTemplateToolbox
 			// can abort and avoid outputting double toolbox links
-			Hooks::run( 'SkinTemplateToolboxEnd', array( &$this, true ) );
+			Hooks::run( 'SkinTemplateToolboxEnd', [ &$this, true ] );
 			$hookContents = ob_get_contents();
 			ob_end_clean();
 			if ( !trim( $hookContents ) ) {
@@ -253,14 +254,14 @@ abstract class BaseTemplate extends QuickTemplate {
 			}
 		} else {
 			if ( $hookContents ) {
-				$boxes['TOOLBOXEND'] = array(
+				$boxes['TOOLBOXEND'] = [
 					'id' => 'p-toolboxend',
 					'header' => $boxes['TOOLBOX']['header'],
 					'generated' => false,
 					'content' => "<ul>{$hookContents}</ul>",
-				);
+				];
 				// HACK: Make sure that TOOLBOXEND is sorted next to TOOLBOX
-				$boxes2 = array();
+				$boxes2 = [];
 				foreach ( $boxes as $key => $box ) {
 					if ( $key === 'TOOLBOXEND' ) {
 						continue;
@@ -283,7 +284,7 @@ abstract class BaseTemplate extends QuickTemplate {
 	 */
 	protected function renderAfterPortlet( $name ) {
 		$content = '';
-		Hooks::run( 'BaseTemplateAfterPortlet', array( $this, $name, &$content ) );
+		Hooks::run( 'BaseTemplateAfterPortlet', [ $this, $name, &$content ] );
 
 		if ( $content !== '' ) {
 			echo "<div class='after-portlet after-portlet-$name'>$content</div>";
@@ -318,13 +319,22 @@ abstract class BaseTemplate extends QuickTemplate {
 	 *
 	 * If you don't want an accesskey, set $item['tooltiponly'] = true;
 	 *
+	 * If a "data" key is present, it must be an array, where the keys represent
+	 * the data-xxx properties with their provided values. For example,
+	 *  $item['data'] = [
+	 *  	 'foo' => 1,
+	 *  	 'bar' => 'baz',
+	 *  ];
+	 * will render as element properties:
+	 *  data-foo='1' data-bar='baz'
+	 *
 	 * @param array $options Can be used to affect the output of a link.
 	 * Possible options are:
 	 *   - 'text-wrapper' key to specify a list of elements to wrap the text of
 	 *   a link in. This should be an array of arrays containing a 'tag' and
 	 *   optionally an 'attributes' key. If you only have one element you don't
 	 *   need to wrap it in another array. eg: To use <a><span>...</span></a>
-	 *   in all links use array( 'text-wrapper' => array( 'tag' => 'span' ) )
+	 *   in all links use [ 'text-wrapper' => [ 'tag' => 'span' ] ]
 	 *   for your options.
 	 *   - 'link-class' key can be used to specify additional classes to apply
 	 *   to all links.
@@ -334,7 +344,7 @@ abstract class BaseTemplate extends QuickTemplate {
 	 *
 	 * @return string
 	 */
-	function makeLink( $key, $item, $options = array() ) {
+	function makeLink( $key, $item, $options = [] ) {
 		if ( isset( $item['text'] ) ) {
 			$text = $item['text'];
 		} else {
@@ -346,7 +356,7 @@ abstract class BaseTemplate extends QuickTemplate {
 		if ( isset( $options['text-wrapper'] ) ) {
 			$wrapper = $options['text-wrapper'];
 			if ( isset( $wrapper['tag'] ) ) {
-				$wrapper = array( $wrapper );
+				$wrapper = [ $wrapper ];
 			}
 			while ( count( $wrapper ) > 0 ) {
 				$element = array_pop( $wrapper );
@@ -358,21 +368,35 @@ abstract class BaseTemplate extends QuickTemplate {
 
 		if ( isset( $item['href'] ) || isset( $options['link-fallback'] ) ) {
 			$attrs = $item;
-			foreach ( array( 'single-id', 'text', 'msg', 'tooltiponly', 'context', 'primary' ) as $k ) {
+			foreach ( [ 'single-id', 'text', 'msg', 'tooltiponly', 'context', 'primary',
+				'tooltip-params' ] as $k ) {
 				unset( $attrs[$k] );
+			}
+
+			if ( isset( $attrs['data'] ) ) {
+				foreach ( $attrs['data'] as $key => $value ) {
+					$attrs[ 'data-' . $key ] = $value;
+				}
+				unset( $attrs[ 'data' ] );
 			}
 
 			if ( isset( $item['id'] ) && !isset( $item['single-id'] ) ) {
 				$item['single-id'] = $item['id'];
 			}
+
+			$tooltipParams = [];
+			if ( isset( $item['tooltip-params'] ) ) {
+				$tooltipParams = $item['tooltip-params'];
+			}
+
 			if ( isset( $item['single-id'] ) ) {
 				if ( isset( $item['tooltiponly'] ) && $item['tooltiponly'] ) {
-					$title = Linker::titleAttrib( $item['single-id'] );
+					$title = Linker::titleAttrib( $item['single-id'], null, $tooltipParams );
 					if ( $title !== false ) {
 						$attrs['title'] = $title;
 					}
 				} else {
-					$tip = Linker::tooltipAndAccesskeyAttribs( $item['single-id'] );
+					$tip = Linker::tooltipAndAccesskeyAttribs( $item['single-id'], $tooltipParams );
 					if ( isset( $tip['title'] ) && $tip['title'] !== false ) {
 						$attrs['title'] = $tip['title'];
 					}
@@ -418,15 +442,16 @@ abstract class BaseTemplate extends QuickTemplate {
 	 * list item directly so they will not be passed to makeLink
 	 * (however the link will still support a tooltip and accesskey from it)
 	 * If you need an id or class on a single link you should include a "links"
-	 * array with just one link item inside of it. If you want to add a title
+	 * array with just one link item inside of it. You can also set "link-class" in
+	 * $item to set a class on the link itself. If you want to add a title
 	 * to the list item itself, you can set "itemtitle" to the value.
 	 * $options is also passed on to makeLink calls
 	 *
 	 * @return string
 	 */
-	function makeListItem( $key, $item, $options = array() ) {
+	function makeListItem( $key, $item, $options = [] ) {
 		if ( isset( $item['links'] ) ) {
-			$links = array();
+			$links = [];
 			foreach ( $item['links'] as $linkKey => $link ) {
 				$links[] = $this->makeLink( $linkKey, $link, $options );
 			}
@@ -434,7 +459,7 @@ abstract class BaseTemplate extends QuickTemplate {
 		} else {
 			$link = $item;
 			// These keys are used by makeListItem and shouldn't be passed on to the link
-			foreach ( array( 'id', 'class', 'active', 'tag', 'itemtitle' ) as $k ) {
+			foreach ( [ 'id', 'class', 'active', 'tag', 'itemtitle' ] as $k ) {
 				unset( $link[$k] );
 			}
 			if ( isset( $item['id'] ) && !isset( $item['single-id'] ) ) {
@@ -443,11 +468,17 @@ abstract class BaseTemplate extends QuickTemplate {
 				// generating tooltips and accesskeys.
 				$link['single-id'] = $item['id'];
 			}
+			if ( isset( $link['link-class'] ) ) {
+				// link-class should be set on the <a> itself,
+				// so pass it in as 'class'
+				$link['class'] = $link['link-class'];
+				unset( $link['link-class'] );
+			}
 			$html = $this->makeLink( $key, $link, $options );
 		}
 
-		$attrs = array();
-		foreach ( array( 'id', 'class' ) as $attr ) {
+		$attrs = [];
+		foreach ( [ 'id', 'class' ] as $attr ) {
 			if ( isset( $item[$attr] ) ) {
 				$attrs[$attr] = $item[$attr];
 			}
@@ -465,27 +496,27 @@ abstract class BaseTemplate extends QuickTemplate {
 		return Html::rawElement( isset( $options['tag'] ) ? $options['tag'] : 'li', $attrs, $html );
 	}
 
-	function makeSearchInput( $attrs = array() ) {
-		$realAttrs = array(
+	function makeSearchInput( $attrs = [] ) {
+		$realAttrs = [
 			'type' => 'search',
 			'name' => 'search',
 			'placeholder' => wfMessage( 'searchsuggest-search' )->text(),
 			'value' => $this->get( 'search', '' ),
-		);
+		];
 		$realAttrs = array_merge( $realAttrs, Linker::tooltipAndAccesskeyAttribs( 'search' ), $attrs );
 		return Html::element( 'input', $realAttrs );
 	}
 
-	function makeSearchButton( $mode, $attrs = array() ) {
+	function makeSearchButton( $mode, $attrs = [] ) {
 		switch ( $mode ) {
 			case 'go':
 			case 'fulltext':
-				$realAttrs = array(
+				$realAttrs = [
 					'type' => 'submit',
 					'name' => $mode,
 					'value' => $this->translator->translate(
 						$mode == 'go' ? 'searcharticle' : 'searchbutton' ),
-				);
+				];
 				$realAttrs = array_merge(
 					$realAttrs,
 					Linker::tooltipAndAccesskeyAttribs( "search-$mode" ),
@@ -493,10 +524,10 @@ abstract class BaseTemplate extends QuickTemplate {
 				);
 				return Html::element( 'input', $realAttrs );
 			case 'image':
-				$buttonAttrs = array(
+				$buttonAttrs = [
 					'type' => 'submit',
 					'name' => 'button',
-				);
+				];
 				$buttonAttrs = array_merge(
 					$buttonAttrs,
 					Linker::tooltipAndAccesskeyAttribs( 'search-fulltext' ),
@@ -506,14 +537,14 @@ abstract class BaseTemplate extends QuickTemplate {
 				unset( $buttonAttrs['alt'] );
 				unset( $buttonAttrs['width'] );
 				unset( $buttonAttrs['height'] );
-				$imgAttrs = array(
+				$imgAttrs = [
 					'src' => $attrs['src'],
 					'alt' => isset( $attrs['alt'] )
 						? $attrs['alt']
 						: $this->translator->translate( 'searchbutton' ),
 					'width' => isset( $attrs['width'] ) ? $attrs['width'] : null,
 					'height' => isset( $attrs['height'] ) ? $attrs['height'] : null,
-				);
+				];
 				return Html::rawElement( 'button', $buttonAttrs, Html::element( 'img', $imgAttrs ) );
 			default:
 				throw new MWException( 'Unknown mode passed to BaseTemplate::makeSearchButton' );
@@ -533,9 +564,9 @@ abstract class BaseTemplate extends QuickTemplate {
 		$footerlinks = $this->get( 'footerlinks' );
 
 		// Reduce footer links down to only those which are being used
-		$validFooterLinks = array();
+		$validFooterLinks = [];
 		foreach ( $footerlinks as $category => $links ) {
-			$validFooterLinks[$category] = array();
+			$validFooterLinks[$category] = [];
 			foreach ( $links as $link ) {
 				if ( isset( $this->data[$link] ) && $this->data[$link] ) {
 					$validFooterLinks[$category][] = $link;
@@ -567,7 +598,7 @@ abstract class BaseTemplate extends QuickTemplate {
 	 * display the text from footericons instead of the images and don't want a
 	 * duplicate copyright statement because footerlinks already rendered one.
 	 * @param string $option
-	 * @return string
+	 * @return array
 	 */
 	function getFooterIcons( $option = null ) {
 		// Generate additional footer icons
@@ -618,10 +649,10 @@ abstract class BaseTemplate extends QuickTemplate {
 		foreach ( $this->data['indicators'] as $id => $content ) {
 			$out .= Html::rawElement(
 				'div',
-				array(
+				[
 					'id' => Sanitizer::escapeId( "mw-indicator-$id" ),
 					'class' => 'mw-indicator',
-				),
+				],
 				$content
 			) . "\n";
 		}

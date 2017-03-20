@@ -21,6 +21,8 @@
  * @ingroup Search
  */
 
+use MediaWiki\MediaWikiServices;
+
 /**
  * @todo FIXME: This class is horribly factored. It would probably be better to
  * have a useful base class to which you pass some standard information, then
@@ -50,14 +52,29 @@ class SearchResult {
 	protected $mText;
 
 	/**
+	 * @var SearchEngine
+	 */
+	protected $searchEngine;
+
+	/**
+	 * A set of extension data.
+	 * @var array[]
+	 */
+	protected $extensionData;
+
+	/**
 	 * Return a new SearchResult and initializes it with a title.
 	 *
-	 * @param Title $title
+	 * @param Title           $title
+	 * @param SearchResultSet $parentSet
 	 * @return SearchResult
 	 */
-	public static function newFromTitle( $title ) {
-		$result = new self();
+	public static function newFromTitle( $title, SearchResultSet $parentSet = null ) {
+		$result = new static();
 		$result->initFromTitle( $title );
+		if ( $parentSet ) {
+			$parentSet->augmentResult( $result );
+		}
 		return $result;
 	}
 
@@ -71,13 +88,14 @@ class SearchResult {
 		$this->mTitle = $title;
 		if ( !is_null( $this->mTitle ) ) {
 			$id = false;
-			Hooks::run( 'SearchResultInitFromTitle', array( $title, &$id ) );
+			Hooks::run( 'SearchResultInitFromTitle', [ $title, &$id ] );
 			$this->mRevision = Revision::newFromTitle(
 				$this->mTitle, $id, Revision::READ_NORMAL );
 			if ( $this->mTitle->getNamespace() === NS_FILE ) {
 				$this->mImage = wfFindFile( $this->mTitle );
 			}
 		}
+		$this->searchEngine = MediaWikiServices::getInstance()->newSearchEngine();
 	}
 
 	/**
@@ -119,8 +137,8 @@ class SearchResult {
 	protected function initText() {
 		if ( !isset( $this->mText ) ) {
 			if ( $this->mRevision != null ) {
-				$this->mText = SearchEngine::create()
-					->getTextFromContent( $this->mTitle, $this->mRevision->getContent() );
+				$this->mText = $this->searchEngine->getTextFromContent(
+						$this->mTitle, $this->mRevision->getContent() );
 			} else { // TODO: can we fetch raw wikitext for commons images?
 				$this->mText = '';
 			}
@@ -136,7 +154,7 @@ class SearchResult {
 		$this->initText();
 
 		// TODO: make highliter take a content object. Make ContentHandler a factory for SearchHighliter.
-		list( $contextlines, $contextchars ) = SearchEngine::userHighlightPrefs();
+		list( $contextlines, $contextchars ) = $this->searchEngine->userHighlightPrefs();
 
 		$h = new SearchHighlighter();
 		if ( count( $terms ) > 0 ) {
@@ -165,7 +183,7 @@ class SearchResult {
 	}
 
 	/**
-	 * @return Title Title object for the redirect to this page, null if none or not supported
+	 * @return Title|null Title object for the redirect to this page, null if none or not supported
 	 */
 	function getRedirectTitle() {
 		return null;
@@ -179,7 +197,8 @@ class SearchResult {
 	}
 
 	/**
-	 * @return Title Title object (pagename+fragment) for the section, null if none or not supported
+	 * @return Title|null Title object (pagename+fragment) for the section,
+	 *  null if none or not supported
 	 */
 	function getSectionTitle() {
 		return null;
@@ -241,4 +260,24 @@ class SearchResult {
 	function isFileMatch() {
 		return false;
 	}
+
+	/**
+	 * Get the extension data as:
+	 * augmentor name => data
+	 * @return array[]
+	 */
+	public function getExtensionData() {
+		return $this->extensionData;
+	}
+
+	/**
+	 * Set extension data for this result.
+	 * The data is:
+	 * augmentor name => data
+	 * @param array[] $extensionData
+	 */
+	public function setExtensionData( array $extensionData ) {
+		$this->extensionData = $extensionData;
+	}
+
 }

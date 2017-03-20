@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"UV"
+			"UV",
+			"Laurentianus"
 		]
 	},
 	"vector-action-addsection": "Partem novam addere",
@@ -15,5 +16,5 @@
 	"vector-view-history": "Historiam inspicere",
 	"vector-view-view": "Legere",
 	"vector-view-viewsource": "Fontem inspicere",
-	"vector-more-actions": "Plus"
+	"vector-more-actions": "Plura"
 }

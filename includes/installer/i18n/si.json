@@ -43,10 +43,6 @@
 	"config-db-password": "දත්ත සංචිතයේ මුරපදය:",
 	"config-db-wiki-account": "සාමාන්‍ය ක්‍රියාකාරිත්වය සඳහා පරිශීලක ගිණුම",
 	"config-db-prefix": "දත්ත සංචිත වගු උපසර්ගය:",
-	"config-db-charset": "දත්ත සංචිත අක්ෂර කට්ටලය",
-	"config-charset-mysql5-binary": "MySQL 4.1/5.0 ද්විමය",
-	"config-charset-mysql5": "MySQL 4.1/5.0 UTF-8",
-	"config-charset-mysql4": "MySQL 4.0 ආපස්සට-ගැළපෙන UTF-8",
 	"config-db-port": "දත්ත සංචිතයේ කවුළුව:",
 	"config-db-schema": "මාධ්‍යවිකි සඳහා සංක්ෂිප්ත නිරූපණය:",
 	"config-pg-test-error": "'''$1''' දත්ත සංචිතය වෙත සම්බන්ධ විය නොහැක: $2",
@@ -140,5 +136,5 @@
 	"config-help": "උදව්",
 	"config-nofile": "\"$1\" ගොනුව සොයාගත නොහැක. එක මැකිලා ගියාවත්ද?",
 	"mainpagetext": "'''මීඩියාවිකි සාර්ථක ලෙස ස්ථාපනය කරන ලදි.'''",
-	"mainpagedocfooter": "විකි මෘදුකාංග භාවිතා කිරීම පිළිබඳ තොරතුරු සඳහා  [//meta.wikimedia.org/wiki/Help:Contents පරිශීලකයන් සඳහා නියමුව] හදාරන්න.\n\n== ඇරඹුම ==\n* [//www.mediawiki.org/wiki/Special:MyLanguage/Manual:Configuration_settings වින්‍යාස සැකසුම්]\n* [//www.mediawiki.org/wiki/Special:MyLanguage/Manual:FAQ මීඩියාවිකි නිති-විමසන-පැන]\n* [https://lists.wikimedia.org/mailman/listinfo/mediawiki-announce මීඩියාවිකි නිකුතුව තැපැල් ලැයිස්තුව]"
+	"mainpagedocfooter": "විකි මෘදුකාංග භාවිතා කිරීම පිළිබඳ තොරතුරු සඳහා  [https://meta.wikimedia.org/wiki/Help:Contents පරිශීලකයන් සඳහා නියමුව] හදාරන්න.\n\n== ඇරඹුම ==\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Configuration_settings වින්‍යාස සැකසුම්]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:FAQ මීඩියාවිකි නිති-විමසන-පැන]\n* [https://lists.wikimedia.org/mailman/listinfo/mediawiki-announce මීඩියාවිකි නිකුතුව තැපැල් ලැයිස්තුව]"
 }

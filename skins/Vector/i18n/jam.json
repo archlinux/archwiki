@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Hazard-SJ",
-			"Yocahuna"
+			"Yocahuna",
+			"Katxis"
 		]
 	},
 	"vector-action-addsection": "Ad tapik",
@@ -15,5 +16,6 @@
 	"vector-view-edit": "Hedit",
 	"vector-view-history": "Vyuu ischri",
 	"vector-view-view": "Riid",
-	"vector-view-viewsource": "Vyuu Suos"
+	"vector-view-viewsource": "Vyuu Suos",
+	"vector-more-actions": "Muo"
 }

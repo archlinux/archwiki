@@ -1,12 +1,23 @@
 <?php
+
 namespace Elastica\Test\Filter;
 
 use Elastica\Filter\AbstractMulti;
 use Elastica\Filter\MatchAll;
-use Elastica\Test\Base as BaseTest;
+use Elastica\Test\Base;
+use Elastica\Test\DeprecatedClassBase as BaseTest;
 
 class AbstractMultiTest extends BaseTest
 {
+    /**
+     * @group unit
+     */
+    public function testDeprecated()
+    {
+        $reflection = new \ReflectionClass('Elastica\Filter\AbstractMulti');
+        $this->assertFileDeprecated($reflection->getFileName(), 'Deprecated: Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html');
+    }
+
     /**
      * @group unit
      */
@@ -28,10 +39,10 @@ class AbstractMultiTest extends BaseTest
         $stub->addFilter($filter);
 
         $expected = array(
-            $filter->toArray(),
+            $filter,
         );
 
-        $this->assertEquals($expected, $stub->getFilters());
+        $this->assertSame($expected, $stub->getFilters());
     }
 
     /**
@@ -45,10 +56,10 @@ class AbstractMultiTest extends BaseTest
         $stub->setFilters(array($filter));
 
         $expected = array(
-            $filter->toArray(),
+            $filter,
         );
 
-        $this->assertEquals($expected, $stub->getFilters());
+        $this->assertSame($expected, $stub->getFilters());
     }
 
     /**
@@ -100,6 +111,8 @@ class AbstractMultiTest extends BaseTest
     }
 }
 
+Base::hideDeprecated();
+
 class AbstractMultiDebug extends AbstractMulti
 {
     public function getBaseName()
@@ -107,3 +120,5 @@ class AbstractMultiDebug extends AbstractMulti
         return parent::_getBaseName();
     }
 }
+
+Base::showDeprecated();

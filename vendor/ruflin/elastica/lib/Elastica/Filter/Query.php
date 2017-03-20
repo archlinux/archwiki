@@ -1,15 +1,19 @@
 <?php
+
 namespace Elastica\Filter;
 
 use Elastica\Exception\InvalidException;
 use Elastica\Query\AbstractQuery;
+
+trigger_error('Deprecated: Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html', E_USER_DEPRECATED);
 
 /**
  * Query filter.
  *
  * @author Nicolas Ruflin <spam@ruflin.com>
  *
- * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-filter.html
+ * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-filter.html
+ * @deprecated Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html
  */
 class Query extends AbstractFilter
 {
@@ -47,10 +51,6 @@ class Query extends AbstractFilter
             throw new InvalidException('expected an array or instance of Elastica\Query\AbstractQuery');
         }
 
-        if ($query instanceof AbstractQuery) {
-            $query = $query->toArray();
-        }
-
         $this->_query = $query;
 
         return $this;
@@ -86,6 +86,6 @@ class Query extends AbstractFilter
 
         $data[$name] = $filterData;
 
-        return $data;
+        return $this->_convertArrayable($data);
     }
 }

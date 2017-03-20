@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica\QueryBuilder\DSL;
 
 use Elastica\Exception\NotImplementedException;
@@ -12,7 +13,7 @@ use Elastica\Suggest\Term;
  *
  * @author Manuel Andreo Garcia <andreo.garcia@googlemail.com>
  *
- * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggesters.html
+ * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggesters.html
  */
 class Suggest implements DSL
 {
@@ -29,7 +30,7 @@ class Suggest implements DSL
     /**
      * term suggester.
      *
-     * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggesters-term.html
+     * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggesters-term.html
      *
      * @param $name
      * @param $field
@@ -44,7 +45,7 @@ class Suggest implements DSL
     /**
      * phrase suggester.
      *
-     * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggesters-phrase.html
+     * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggesters-phrase.html
      *
      * @param $name
      * @param $field
@@ -59,7 +60,7 @@ class Suggest implements DSL
     /**
      * completion suggester.
      *
-     * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggesters-completion.html
+     * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggesters-completion.html
      *
      * @param string $name
      * @param string $field
@@ -74,7 +75,7 @@ class Suggest implements DSL
     /**
      * context suggester.
      *
-     * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/suggester-context.html
+     * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/suggester-context.html
      */
     public function context()
     {

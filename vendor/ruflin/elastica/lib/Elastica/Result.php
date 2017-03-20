@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica;
 
 /**
@@ -142,7 +143,7 @@ class Result
     /**
      * Returns result data.
      *
-     * Checks for partial result data with getFields, falls back to getSource
+     * Checks for partial result data with getFields, falls back to getSource or both
      *
      * @return array Result data array
      */
@@ -150,6 +151,8 @@ class Result
     {
         if (isset($this->_hit['fields']) && !isset($this->_hit['_source'])) {
             return $this->getFields();
+        } elseif (isset($this->_hit['fields']) && isset($this->_hit['_source'])) {
+            return array_merge($this->getFields(), $this->getSource());
         }
 
         return $this->getSource();
@@ -183,6 +186,33 @@ class Result
     public function getExplanation()
     {
         return $this->getParam('_explanation');
+    }
+
+    /**
+     * Returns Document.
+     * 
+     * @return \Elastica\Document
+     */
+    public function getDocument()
+    {
+        $doc = new \Elastica\Document();
+        $doc->setData($this->getSource());
+        $hit = $this->getHit();
+        if ($this->hasParam('_source')) {
+            unset($hit['_source']);
+        }
+        if ($this->hasParam('_explanation')) {
+            unset($hit['_explanation']);
+        }
+        if ($this->hasParam('highlight')) {
+            unset($hit['highlight']);
+        }
+        if ($this->hasParam('_score')) {
+            unset($hit['_score']);
+        }
+        $doc->setParams($hit);
+
+        return $doc;
     }
 
     /**

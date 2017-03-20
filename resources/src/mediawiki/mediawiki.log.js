@@ -8,9 +8,8 @@
 
 ( function ( mw, $ ) {
 
-	// Reference to dummy
-	// We don't need the dummy, but it has other methods on it
-	// that we need to restore afterwards.
+	// Keep reference to the dummy placeholder from mediawiki.js
+	// The root is replaced below, but it has other methods that we need to restore.
 	var original = mw.log,
 		slice = Array.prototype.slice;
 
@@ -22,7 +21,7 @@
 	 * messages to that, instead of the console.
 	 *
 	 * @member mw.log
-	 * @param {string...} msg Messages to output to console.
+	 * @param {...string} msg Messages to output to console.
 	 */
 	mw.log = function () {
 		// Turn arguments into an array

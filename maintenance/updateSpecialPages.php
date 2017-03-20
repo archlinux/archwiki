@@ -42,7 +42,7 @@ class UpdateSpecialPages extends Maintenance {
 	public function execute() {
 		global $wgQueryCacheLimit, $wgDisableQueryPageUpdate;
 
-		$dbw = wfGetDB( DB_MASTER );
+		$dbw = $this->getDB( DB_MASTER );
 
 		$this->doSpecialPageCacheUpdates( $dbw );
 
@@ -71,11 +71,9 @@ class UpdateSpecialPages extends Maintenance {
 			if ( $specialObj instanceof QueryPage ) {
 				$queryPage = $specialObj;
 			} else {
-				if ( !class_exists( $class ) ) {
-					$file = $specialObj->getFile();
-					require_once $file;
-				}
-				$queryPage = new $class;
+				$class = get_class( $specialObj );
+				$this->error( "$class is not an instance of QueryPage.\n", 1 );
+				die;
 			}
 
 			if ( !$this->hasOption( 'only' ) || $this->getOption( 'only' ) == $queryPage->getName() ) {
@@ -111,7 +109,7 @@ class UpdateSpecialPages extends Maintenance {
 						} while ( !wfGetLB()->pingAll() );
 						$this->output( "Reconnected\n\n" );
 					}
-					# Wait for the slave to catch up
+					# Wait for the replica DB to catch up
 					wfWaitForSlaves();
 				} else {
 					$this->output( "cheap, skipped\n" );
@@ -155,7 +153,7 @@ class UpdateSpecialPages extends Maintenance {
 					$this->output( $minutes . 'm ' );
 				}
 				$this->output( sprintf( "%.2fs\n", $seconds ) );
-				# Wait for the slave to catch up
+				# Wait for the replica DB to catch up
 				wfWaitForSlaves();
 			}
 		}

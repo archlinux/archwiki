@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Assele"
+			"Assele",
+			"Sagan"
 		]
 	},
-	"skinname-cologneblue": "Кёльн һағышы"
+	"skinname-cologneblue": "Кёльн һағышы",
+	"cologneblue-desc": "Минималь форматлау булған еңел тема."
 }

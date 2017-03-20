@@ -9,7 +9,9 @@
 			"Meithal",
 			"PieRRoMaN",
 			"Urhixidur",
-			"Zetud"
+			"Zetud",
+			"JackPotte",
+			"Yasten"
 		]
 	},
 	"action-titleblacklistlog": "afficher le journal de la liste noire des titres",
@@ -25,7 +27,8 @@
 	"titleblacklist-forbidden-new-account": "Le nom d’utilisateur « $2 » a été banni à la création.\nIl correspond à l’entrée suivante de la liste noire : <code>$1</code>",
 	"titleblacklist-invalid": "{{PLURAL:$1|La ligne suivante|Les lignes suivantes}} dans la liste noire des titres {{PLURAL:$1|est invalide. Veuillez la|sont invalides. Veuillez les}} corriger avant de publier.",
 	"titleblacklist-override": "Ignorer la liste noire",
-	"titleblacklist-warning": "<strong>Attention : Cette page ne peut être modifiée que par des administrateurs et autres utilisateurs avec le droit <code>tboverride</code>, parce qu’ellle correspond à l’entrée suivante de la liste noire des titres :</strong><br /><code>$1</code>",
+	"titleblacklist-override-help": "Les utilisateurs avec des privilèges suffisants peuvent choisir d'ignorer les vérifications de la liste noire des titres.",
+	"titleblacklist-warning": "<strong>Attention : Cette page ne peut être modifiée que par des administrateurs et autres utilisateurs avec le droit <code>tboverride</code>, parce qu’elle correspond à l’entrée suivante de la liste noire des titres :</strong><br /><code>$1</code>",
 	"right-tboverride": "Remplacer la liste noire des titres ou des noms d'utilisateur",
 	"right-tboverride-account": "Ignorer la liste noire des noms d'utilisateur",
 	"right-titleblacklistlog": "Afficher le journal de la liste noire des titres",
@@ -34,5 +37,6 @@
 	"apihelp-titleblacklist-param-action": "L’action à vérifier.",
 	"apihelp-titleblacklist-param-nooverride": "N’essayez pas d’écraser la liste noire des titres.",
 	"apihelp-titleblacklist-example-1": "Vérifier si [[Foo]] est en liste noire",
-	"apihelp-titleblacklist-example-2": "Vérifier si [[Bar]] est en liste noire pour modification"
+	"apihelp-titleblacklist-example-2": "Vérifier si [[Bar]] est en liste noire pour modification",
+	"apihelp-createaccount-param-ignoretitleblacklist": "Ignorer les contrôles d’usurpation (nécessite un des droits suivants : <code>tboverride</code>, <code>tboverride-account</code>)."
 }

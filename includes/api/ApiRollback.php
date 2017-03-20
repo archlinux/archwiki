@@ -45,31 +45,47 @@ class ApiRollback extends ApiBase {
 		$user = $this->getUser();
 		$params = $this->extractRequestParams();
 
-		// WikiPage::doRollback needs a Web UI token, so get one of those if we
-		// validated based on an API rollback token.
-		$token = $params['token'];
-		if ( $user->matchEditToken( $token, 'rollback', $this->getRequest() ) ) {
-			$token = $this->getUser()->getEditToken(
-				$this->getWebUITokenSalt( $params ),
-				$this->getRequest()
-			);
-		}
-
 		$titleObj = $this->getRbTitle( $params );
 		$pageObj = WikiPage::factory( $titleObj );
 		$summary = $params['summary'];
-		$details = array();
+		$details = [];
+
+		// If change tagging was requested, check that the user is allowed to tag,
+		// and the tags are valid
+		if ( count( $params['tags'] ) ) {
+			$tagStatus = ChangeTags::canAddTagsAccompanyingChange( $params['tags'], $user );
+			if ( !$tagStatus->isOK() ) {
+				$this->dieStatus( $tagStatus );
+			}
+		}
+
 		$retval = $pageObj->doRollback(
 			$this->getRbUser( $params ),
 			$summary,
-			$token,
+			$params['token'],
 			$params['markbot'],
 			$details,
-			$user
+			$user,
+			$params['tags']
 		);
 
+		// We don't care about multiple errors, just report one of them
 		if ( $retval ) {
-			// We don't care about multiple errors, just report one of them
+			if ( isset( $retval[0][0] ) &&
+				( $retval[0][0] == 'alreadyrolled' || $retval[0][0] == 'cantrollback' )
+			) {
+				$error = $retval[0];
+				$userMessage = $this->msg( $error[0], array_slice( $error, 1 ) );
+				// dieUsageMsg() doesn't support $extraData
+				$errorCode = $error[0];
+				$errorInfo = isset( ApiBase::$messageMap[$errorCode] ) ?
+					ApiBase::$messageMap[$errorCode]['info'] :
+					$errorCode;
+				$this->dieUsage( $errorInfo, $errorCode, 0, [
+					'messageHtml' => $userMessage->parseAsBlock()
+				] );
+			}
+
 			$this->dieUsageMsg( reset( $retval ) );
 		}
 
@@ -81,14 +97,27 @@ class ApiRollback extends ApiBase {
 		// Watch pages
 		$this->setWatch( $watch, $titleObj, 'watchrollback' );
 
-		$info = array(
+		$info = [
 			'title' => $titleObj->getPrefixedText(),
 			'pageid' => intval( $details['current']->getPage() ),
 			'summary' => $details['summary'],
 			'revid' => intval( $details['newid'] ),
+			// The revision being reverted (previously the current revision of the page)
 			'old_revid' => intval( $details['current']->getID() ),
+			// The revision being restored (the last revision before revision(s) by the reverted user)
 			'last_revid' => intval( $details['target']->getID() )
-		);
+		];
+
+		$oldUser = $details['current']->getUserText( Revision::FOR_THIS_USER );
+		$lastUser = $details['target']->getUserText( Revision::FOR_THIS_USER );
+		$diffUrl = $titleObj->getFullURL( [
+			'diff' => $info['revid'],
+			'oldid' => $info['old_revid'],
+			'diffonly' => '1'
+		] );
+		$info['messageHtml'] = $this->msg( 'rollback-success-notify' )
+			->params( $oldUser, $lastUser, $diffUrl )
+			->parseAsBlock();
 
 		$this->getResult()->addValue( null, $this->getModuleName(), $info );
 	}
@@ -102,42 +131,39 @@ class ApiRollback extends ApiBase {
 	}
 
 	public function getAllowedParams() {
-		return array(
+		return [
 			'title' => null,
-			'pageid' => array(
+			'pageid' => [
 				ApiBase::PARAM_TYPE => 'integer'
-			),
-			'user' => array(
-				ApiBase::PARAM_TYPE => 'string',
+			],
+			'tags' => [
+				ApiBase::PARAM_TYPE => 'tags',
+				ApiBase::PARAM_ISMULTI => true,
+			],
+			'user' => [
+				ApiBase::PARAM_TYPE => 'user',
 				ApiBase::PARAM_REQUIRED => true
-			),
+			],
 			'summary' => '',
 			'markbot' => false,
-			'watchlist' => array(
+			'watchlist' => [
 				ApiBase::PARAM_DFLT => 'preferences',
-				ApiBase::PARAM_TYPE => array(
+				ApiBase::PARAM_TYPE => [
 					'watch',
 					'unwatch',
 					'preferences',
 					'nochange'
-				),
-			),
-			'token' => array(
+				],
+			],
+			'token' => [
 				// Standard definition automatically inserted
-				ApiBase::PARAM_HELP_MSG_APPEND => array( 'api-help-param-token-webui' ),
-			),
-		);
+				ApiBase::PARAM_HELP_MSG_APPEND => [ 'api-help-param-token-webui' ],
+			],
+		];
 	}
 
 	public function needsToken() {
 		return 'rollback';
-	}
-
-	protected function getWebUITokenSalt( array $params ) {
-		return array(
-			$this->getRbTitle( $params )->getPrefixedText(),
-			$this->getRbUser( $params )
-		);
 	}
 
 	/**
@@ -155,7 +181,7 @@ class ApiRollback extends ApiBase {
 			? $params['user']
 			: User::getCanonicalName( $params['user'] );
 		if ( !$this->mUser ) {
-			$this->dieUsageMsg( array( 'invaliduser', $params['user'] ) );
+			$this->dieUsageMsg( [ 'invaliduser', $params['user'] ] );
 		}
 
 		return $this->mUser;
@@ -176,12 +202,12 @@ class ApiRollback extends ApiBase {
 		if ( isset( $params['title'] ) ) {
 			$this->mTitleObj = Title::newFromText( $params['title'] );
 			if ( !$this->mTitleObj || $this->mTitleObj->isExternal() ) {
-				$this->dieUsageMsg( array( 'invalidtitle', $params['title'] ) );
+				$this->dieUsageMsg( [ 'invalidtitle', $params['title'] ] );
 			}
 		} elseif ( isset( $params['pageid'] ) ) {
 			$this->mTitleObj = Title::newFromID( $params['pageid'] );
 			if ( !$this->mTitleObj ) {
-				$this->dieUsageMsg( array( 'nosuchpageid', $params['pageid'] ) );
+				$this->dieUsageMsg( [ 'nosuchpageid', $params['pageid'] ] );
 			}
 		}
 
@@ -193,13 +219,13 @@ class ApiRollback extends ApiBase {
 	}
 
 	protected function getExamplesMessages() {
-		return array(
+		return [
 			'action=rollback&title=Main%20Page&user=Example&token=123ABC' =>
 				'apihelp-rollback-example-simple',
 			'action=rollback&title=Main%20Page&user=192.0.2.5&' .
 				'token=123ABC&summary=Reverting%20vandalism&markbot=1' =>
 				'apihelp-rollback-example-summary',
-		);
+		];
 	}
 
 	public function getHelpUrls() {

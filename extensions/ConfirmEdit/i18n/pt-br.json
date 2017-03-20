@@ -7,10 +7,12 @@
 			"Jesielt",
 			"555",
 			"Dianakc",
-			"He7d3r"
+			"He7d3r",
+			"Eduardo Addad de Oliveira"
 		]
 	},
 	"captcha-edit": "Para editar esta página será necessário que você resolva a simples soma abaixo e entre com a resposta no respectivo campo ([[Special:Captcha/help|o que é isto?]])",
+	"captcha-edit-fail": "Código CAPTCHA incorreto ou não preenchido.",
 	"captcha-desc": "Fornece técnicas captcha para proteção contra spam e tentativas de obtenção de senhas",
 	"captcha-label": "CAPTCHA",
 	"captcha-addurl": "Sua edição inclui novos links externos.\nComo prevenção contra sistemas automatizados que inserem spam, será necessário resolver a simples soma abaixo e inserir sua resposta no respectivo campo ([[Special:Captcha/help|detalhes]])",

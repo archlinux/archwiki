@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is the entry point for the resource loader.
+ * This file is the entry point for ResourceLoader.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,28 +23,34 @@
  */
 
 use MediaWiki\Logger\LoggerFactory;
+use MediaWiki\MediaWikiServices;
 
-// Bail on old versions of PHP, or if composer has not been run yet to install
-// dependencies. Using dirname( __FILE__ ) here because __DIR__ is PHP5.3+.
-require_once dirname( __FILE__ ) . '/includes/PHPVersionCheck.php';
-wfEntryPointCheck( 'load.php' );
+// This endpoint is supposed to be independent of request cookies and other
+// details of the session. Enforce this constraint with respect to session use.
+define( 'MW_NO_SESSION', 1 );
 
 require __DIR__ . '/includes/WebStart.php';
-
 
 // URL safety checks
 if ( !$wgRequest->checkUrlExtension() ) {
 	return;
 }
 
-// Respond to resource loading request.
-// foo()->bar() syntax is not supported in PHP4, and this file needs to *parse* in PHP4.
-$configFactory = ConfigFactory::getDefaultInstance();
+// Don't initialise ChronologyProtector from object cache, and
+// don't wait for unrelated MediaWiki writes when querying ResourceLoader.
+MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->setRequestInfo( [
+	'ChronologyProtection' => 'false',
+] );
+
+// Set up ResourceLoader
 $resourceLoader = new ResourceLoader(
-	$configFactory->makeConfig( 'main' ),
+	ConfigFactory::getDefaultInstance()->makeConfig( 'main' ),
 	LoggerFactory::getInstance( 'resourceloader' )
 );
-$resourceLoader->respond( new ResourceLoaderContext( $resourceLoader, $wgRequest ) );
+$context = new ResourceLoaderContext( $resourceLoader, $wgRequest );
+
+// Respond to ResourceLoader request
+$resourceLoader->respond( $context );
 
 Profiler::instance()->setTemplated( true );
 

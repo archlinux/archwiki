@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica\Aggregation;
 
 use Elastica\Exception\InvalidException;
@@ -6,7 +7,7 @@ use Elastica\Exception\InvalidException;
 /**
  * Class Range.
  *
- * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-range-aggregation.html
+ * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-range-aggregation.html
  */
 class Range extends AbstractSimpleAggregation
 {

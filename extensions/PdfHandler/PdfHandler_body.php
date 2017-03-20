@@ -146,23 +146,13 @@ class PdfHandler extends ImageHandler {
 	function doTransform( $image, $dstPath, $dstUrl, $params, $flags = 0 ) {
 		global $wgPdfProcessor, $wgPdfPostProcessor, $wgPdfHandlerDpi, $wgPdfHandlerJpegQuality;
 
-		$metadata = $image->getMetadata();
-
-		if ( !$metadata ) {
-			return $this->doThumbError(
-				isset( $params['width'] ) ? $params['width'] : null,
-				isset( $params['height'] ) ? $params['height'] : null,
-				'pdf_no_metadata'
-			);
-		}
-
 		if ( !$this->normaliseParams( $image, $params ) ) {
 			return new TransformParameterError( $params );
 		}
 
-		$width = $params['width'];
-		$height = $params['height'];
-		$page = $params['page'];
+		$width = (int)$params['width'];
+		$height = (int)$params['height'];
+		$page = (int)$params['page'];
 
 		if ( $page > $this->pageCount( $image ) ) {
 			return $this->doThumbError( $width, $height, 'pdf_page_error' );
@@ -221,11 +211,9 @@ class PdfHandler extends ImageHandler {
 		);
 		$cmd .= ")";
 
-		wfProfileIn( 'PdfHandler' );
 		wfDebug( __METHOD__ . ": $cmd\n" );
 		$retval = '';
 		$err = wfShellExecWithStderr( $cmd, $retval );
-		wfProfileOut( 'PdfHandler' );
 
 		$removed = $this->removeBadFile( $dstPath, $retval );
 
@@ -336,7 +324,7 @@ class PdfHandler extends ImageHandler {
 	/**
 	 * @param $image File
 	 * @param bool|IContextSource $context Context to use (optional)
-	 * @return bool|int
+	 * @return bool|array
 	 */
 	function formatMetadata( $image, $context = false ) {
 		$meta = $image->getMetadata();
@@ -360,15 +348,13 @@ class PdfHandler extends ImageHandler {
 	}
 
 	/**
-	 * @param $image
+	 * @param File $image
 	 * @return bool|int
 	 */
-	function pageCount( $image ) {
-		$data = $this->getMetaArray( $image );
-		if ( !$data || !isset( $data['Pages'] ) ) {
-			return false;
-		}
-		return intval( $data['Pages'] );
+	function pageCount( File $image ) {
+		$info = $this->getDimensionInfo( $image );
+
+		return $info ? $info['pageCount'] : false;
 	}
 
 	/**
@@ -376,9 +362,39 @@ class PdfHandler extends ImageHandler {
 	 * @param $page int
 	 * @return array|bool
 	 */
-	function getPageDimensions( $image, $page ) {
-		$data = $this->getMetaArray( $image );
-		return PdfImage::getPageSize( $data, $page );
+	function getPageDimensions( File $image, $page ) {
+		$index = $page; // MW starts pages at 1, as they are stored here
+
+		$info = $this->getDimensionInfo( $image );
+		if ( $info && isset( $info['dimensionsByPage'][$index] ) ) {
+			return $info['dimensionsByPage'][$index];
+		}
+
+		return false;
+	}
+
+	protected function getDimensionInfo( File $file ) {
+		$cache = ObjectCache::getMainWANInstance();
+		return $cache->getWithSetCallback(
+			$cache->makeKey( 'file-pdf', 'dimensions', $file->getSha1() ),
+			$cache::TTL_INDEFINITE,
+			function () use ( $file ) {
+				$data = $this->getMetaArray( $file );
+				if ( !$data || !isset( $data['Pages'] )  ) {
+					return false;
+				}
+				unset( $data['text'] ); // lower peak RAM
+
+				$dimsByPage = [];
+				$count = intval( $data['Pages'] );
+				for ( $i = 1; $i <= $count; $i++ ) {
+					$dimsByPage[$i] = PdfImage::getPageSize( $data, $i );
+				}
+
+				return [ 'pageCount' => $count, 'dimensionsByPage' => $dimsByPage ];
+			},
+			[ 'pcTTL' => $cache::TTL_INDEFINITE ]
+		);
 	}
 
 	/**
@@ -386,8 +402,8 @@ class PdfHandler extends ImageHandler {
 	 * @param $page int
 	 * @return bool
 	 */
-	function getPageText( $image, $page ) {
-		$data = $this->getMetaArray( $image, true );
+	function getPageText( File $image, $page ) {
+		$data = $this->getMetaArray( $image );
 		if ( !$data || !isset( $data['text'] ) || !isset( $data['text'][$page - 1] ) ) {
 			return false;
 		}

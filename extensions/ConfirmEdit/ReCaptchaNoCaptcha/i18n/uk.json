@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ата"
+			"Ата",
+			"Piramidion"
 		]
 	},
 	"renocaptcha-edit": "Щоб захистити вікі від автоматичного спаму в редагуваннях, ми уклінно просимо Вас ввести CAPTCHA:",
@@ -10,5 +11,7 @@
 	"renocaptcha-createaccount": "Щоб захистити вікі від автоматичного створення облікових записів, ми уклінно просимо Вас ввести CAPTCHA:",
 	"renocaptcha-createaccount-fail": "Схоже, Вам не вдалося ввести CAPTCHA.",
 	"renocaptcha-create": "Щоб захистити вікі від автоматичного створення сторінок, ми уклінно просимо Вас ввести CAPTCHA:",
-	"renocaptcha-noscript": "На жаль, Ви вимкнули JavaScript, і ми не можемо розпізнати автоматично, людина Ви чи ні. Будь ласка, введіть текст із CAPTCHA, що вгорі, у відповідне текстове поле:"
+	"renocaptcha-noscript": "На жаль, Ви вимкнули JavaScript, і ми не можемо розпізнати автоматично, людина Ви чи ні. Будь ласка, введіть текст із CAPTCHA, що вгорі, у відповідне текстове поле:",
+	"renocaptcha-help": "Будь ласка, вирішіть завдання ReCaptcha NoCaptcha і введіть значення відповіді як captchaWord.",
+	"renocaptcha-apihelp-param-g-recaptcha-response": "Поле із віджета ReCaptcha."
 }

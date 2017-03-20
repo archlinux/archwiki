@@ -28,11 +28,8 @@
  * @ingroup Cache
  */
 class WinCacheBagOStuff extends BagOStuff {
-	public function get( $key, &$casToken = null, $flags = 0 ) {
+	protected function doGet( $key, $flags = 0 ) {
 		$val = wincache_ucache_get( $key );
-
-		$casToken = $val;
-
 		if ( is_string( $val ) ) {
 			$val = unserialize( $val );
 		}
@@ -40,16 +37,12 @@ class WinCacheBagOStuff extends BagOStuff {
 		return $val;
 	}
 
-	public function set( $key, $value, $expire = 0 ) {
+	public function set( $key, $value, $expire = 0, $flags = 0 ) {
 		$result = wincache_ucache_set( $key, serialize( $value ), $expire );
 
 		/* wincache_ucache_set returns an empty array on success if $value
 		   was an array, bool otherwise */
-		return ( is_array( $result ) && $result === array() ) || $result;
-	}
-
-	protected function cas( $casToken, $key, $value, $exptime = 0 ) {
-		return wincache_ucache_cas( $key, $casToken, serialize( $value ) );
+		return ( is_array( $result ) && $result === [] ) || $result;
 	}
 
 	public function delete( $key ) {
@@ -58,11 +51,14 @@ class WinCacheBagOStuff extends BagOStuff {
 		return true;
 	}
 
-	public function merge( $key, $callback, $exptime = 0, $attempts = 10 ) {
-		if ( !is_callable( $callback ) ) {
-			throw new Exception( "Got invalid callback." );
+	public function merge( $key, callable $callback, $exptime = 0, $attempts = 10, $flags = 0 ) {
+		if ( wincache_lock( $key ) ) { // optimize with FIFO lock
+			$ok = $this->mergeViaLock( $key, $callback, $exptime, $attempts, $flags );
+			wincache_unlock( $key );
+		} else {
+			$ok = false;
 		}
 
-		return $this->mergeViaCas( $key, $callback, $exptime, $attempts );
+		return $ok;
 	}
 }

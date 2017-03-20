@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica\Test\Transport;
 
 use Elastica\Document;
@@ -136,6 +137,7 @@ class HttpTest extends BaseTest
      */
     public function testWithEnvironmentalProxy()
     {
+        $this->checkProxy($this->_getProxyUrl());
         putenv('http_proxy='.$this->_getProxyUrl().'/');
 
         $client = $this->_getClient();
@@ -154,6 +156,7 @@ class HttpTest extends BaseTest
      */
     public function testWithEnabledEnvironmentalProxy()
     {
+        $this->checkProxy($this->_getProxyUrl403());
         putenv('http_proxy='.$this->_getProxyUrl403().'/');
         $client = $this->_getClient();
         $transferInfo = $client->request('/_nodes')->getTransferInfo();
@@ -170,6 +173,7 @@ class HttpTest extends BaseTest
      */
     public function testWithProxy()
     {
+        $this->checkProxy($this->_getProxyUrl());
         $client = $this->_getClient();
         $client->getConnection()->setProxy($this->_getProxyUrl());
 
@@ -224,18 +228,39 @@ class HttpTest extends BaseTest
     /**
      * @group functional
      */
-    public function testPostWith0Body()
+    public function testRequestSuccessWithHttpCompressionEnabled()
     {
-        $client = $this->_getClient();
+        $client = $this->_getClient(array('transport' => array('type' => 'Http', 'compression' => true, 'curl' => array(CURLINFO_HEADER_OUT => true))));
 
-        $index = $client->getIndex('elastica_0_body');
-        $index->create(array(), true);
-        $this->_waitForAllocation($index);
-        $index->refresh();
+        $index = $client->getIndex('elastica_request_with_body_and_http_compression_enabled');
 
-        $tokens = $index->analyze('0');
+        $createIndexResponse = $index->create(array(), true);
 
-        $this->assertNotEmpty($tokens);
+        $createIndexResponseTransferInfo = $createIndexResponse->getTransferInfo();
+        $this->assertRegExp('/Accept-Encoding:\ (gzip|deflate)/', $createIndexResponseTransferInfo['request_header']);
+        $this->assertArrayHasKey('acknowledged', $createIndexResponse->getData());
+    }
+
+    /**
+     * @group functional
+     */
+    public function testRequestSuccessWithHttpCompressionDisabled()
+    {
+        $client = $this->_getClient(array('transport' => array('type' => 'Http', 'compression' => false, 'curl' => array(CURLINFO_HEADER_OUT => true))));
+
+        $index = $client->getIndex('elastica_request_with_body_and_http_compression_disabled');
+
+        $createIndexResponse = $index->create(array(), true);
+
+        $createIndexResponseTransferInfo = $createIndexResponse->getTransferInfo();
+        $this->assertRegExp('/Accept-Encoding:\ (gzip|deflate)/', $createIndexResponseTransferInfo['request_header']);
+        $this->assertArrayHasKey('acknowledged', $createIndexResponse->getData());
+    }
+
+    protected function checkProxy($url)
+    {
+        $url = parse_url($url);
+        $this->_checkConnection($url['host'], $url['port']);
     }
 
     protected function tearDown()

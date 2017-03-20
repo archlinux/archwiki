@@ -18,12 +18,15 @@ DROP SEQUENCE IF EXISTS ipblocks_ipb_id_seq CASCADE;
 DROP SEQUENCE IF EXISTS filearchive_fa_id_seq CASCADE;
 DROP SEQUENCE IF EXISTS uploadstash_us_id_seq CASCADE;
 DROP SEQUENCE IF EXISTS recentchanges_rc_id_seq CASCADE;
+DROP SEQUENCE IF EXISTS watchlist_wl_id_seq CASCADE;
 DROP SEQUENCE IF EXISTS logging_log_id_seq CASCADE;
 DROP SEQUENCE IF EXISTS job_job_id_seq CASCADE;
 DROP SEQUENCE IF EXISTS category_cat_id_seq CASCADE;
 DROP SEQUENCE IF EXISTS archive_ar_id_seq CASCADE;
 DROP SEQUENCE IF EXISTS externallinks_el_id_seq CASCADE;
 DROP SEQUENCE IF EXISTS sites_site_id_seq CASCADE;
+DROP SEQUENCE IF EXISTS change_tag_ct_id_seq CASCADE;
+DROP SEQUENCE IF EXISTS tag_summary_ts_id_seq CASCADE;
 DROP FUNCTION IF EXISTS page_deleted() CASCADE;
 DROP FUNCTION IF EXISTS ts2_page_title() CASCADE;
 DROP FUNCTION IF EXISTS ts2_page_text() CASCADE;
@@ -74,6 +77,15 @@ CREATE TABLE user_newtalk (
 CREATE INDEX user_newtalk_id_idx ON user_newtalk (user_id);
 CREATE INDEX user_newtalk_ip_idx ON user_newtalk (user_ip);
 
+CREATE TABLE bot_passwords (
+  bp_user INTEGER NOT NULL,
+  bp_app_id TEXT NOT NULL,
+  bp_password TEXT NOT NULL,
+  bp_token TEXT NOT NULL,
+  bp_restrictions TEXT NOT NULL,
+  bp_grants TEXT NOT NULL,
+  PRIMARY KEY ( bp_user, bp_app_id )
+);
 
 CREATE SEQUENCE page_page_id_seq;
 CREATE TABLE page (
@@ -436,9 +448,12 @@ CREATE INDEX rc_namespace_title ON recentchanges (rc_namespace, rc_title);
 CREATE INDEX rc_cur_id          ON recentchanges (rc_cur_id);
 CREATE INDEX new_name_timestamp ON recentchanges (rc_new, rc_namespace, rc_timestamp);
 CREATE INDEX rc_ip              ON recentchanges (rc_ip);
+CREATE INDEX rc_name_type_patrolled_timestamp ON recentchanges (rc_namespace, rc_type, rc_patrolled, rc_timestamp);
 
 
+CREATE SEQUENCE watchlist_wl_id_seq;
 CREATE TABLE watchlist (
+  wl_id                     INTEGER     NOT NULL  PRIMARY KEY DEFAULT nextval('watchlist_wl_id_seq'),
   wl_user                   INTEGER     NOT NULL  REFERENCES mwuser(user_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED,
   wl_namespace              SMALLINT    NOT NULL  DEFAULT 0,
   wl_title                  TEXT        NOT NULL,
@@ -640,7 +655,9 @@ CREATE TABLE category (
 CREATE UNIQUE INDEX category_title ON category(cat_title);
 CREATE INDEX category_pages ON category(cat_pages);
 
+CREATE SEQUENCE change_tag_ct_id_seq;
 CREATE TABLE change_tag (
+  ct_id      INTEGER  NOT NULL  PRIMARY KEY DEFAULT nextval('change_tag_ct_id_seq'),
   ct_rc_id   INTEGER      NULL,
   ct_log_id  INTEGER      NULL,
   ct_rev_id  INTEGER      NULL,
@@ -652,11 +669,13 @@ CREATE UNIQUE INDEX change_tag_log_tag ON change_tag(ct_log_id,ct_tag);
 CREATE UNIQUE INDEX change_tag_rev_tag ON change_tag(ct_rev_id,ct_tag);
 CREATE INDEX change_tag_tag_id ON change_tag(ct_tag,ct_rc_id,ct_rev_id,ct_log_id);
 
+CREATE SEQUENCE tag_summary_ts_id_seq;
 CREATE TABLE tag_summary (
-  ts_rc_id   INTEGER     NULL,
-  ts_log_id  INTEGER     NULL,
-  ts_rev_id  INTEGER     NULL,
-  ts_tags    TEXT    NOT NULL
+  ts_id      INTEGER  NOT NULL  PRIMARY KEY DEFAULT nextval('tag_summary_ts_id_seq'),
+  ts_rc_id   INTEGER      NULL,
+  ts_log_id  INTEGER      NULL,
+  ts_rev_id  INTEGER      NULL,
+  ts_tags    TEXT     NOT NULL
 );
 CREATE UNIQUE INDEX tag_summary_rc_id ON tag_summary(ts_rc_id);
 CREATE UNIQUE INDEX tag_summary_log_id ON tag_summary(ts_log_id);
@@ -689,20 +708,6 @@ CREATE TABLE iwlinks (
 CREATE UNIQUE INDEX iwl_from ON iwlinks (iwl_from, iwl_prefix, iwl_title);
 CREATE UNIQUE INDEX iwl_prefix_title_from ON iwlinks (iwl_prefix, iwl_title, iwl_from);
 CREATE UNIQUE INDEX iwl_prefix_from_title ON iwlinks (iwl_prefix, iwl_from, iwl_title);
-
-CREATE TABLE msg_resource (
-  mr_resource   TEXT         NOT NULL,
-  mr_lang       TEXT         NOT NULL,
-  mr_blob       TEXT         NOT NULL,
-  mr_timestamp  TIMESTAMPTZ  NOT NULL
-);
-CREATE UNIQUE INDEX mr_resource_lang ON msg_resource (mr_resource, mr_lang);
-
-CREATE TABLE msg_resource_links (
-  mrl_resource  TEXT  NOT NULL,
-  mrl_message   TEXT  NOT NULL
-);
-CREATE UNIQUE INDEX mrl_message_resource ON msg_resource_links (mrl_message, mrl_resource);
 
 CREATE TABLE module_deps (
   md_module  TEXT  NOT NULL,

@@ -5,6 +5,8 @@
 			"Ильнар"
 		]
 	},
-	"fancycaptcha-createaccount": "Кулланучы язмалары автоматик рәвештә ясалудан саклар өчен, почмакта курәсәтелгән сузләрне кертүне сорыйбыз ([[Special:Captcha/help|тулырак…]]):",
+	"fancycaptcha-captcha": "Саклыкны тикшерү",
+	"fancycaptcha-accountcreate": "Кулланучы язмалары автоматик рәвештә ясалудан саклар өчен, почмакта курәсәтелгән сузләрне кертүне сорыйбыз ([[Special:Captcha/help|тулырак…]]):",
+	"fancycaptcha-imgcaptcha-ph": "Рәсемдә күрсәтелгән текстны кертегез",
 	"fancycaptcha-reload-text": "Яңарту"
 }

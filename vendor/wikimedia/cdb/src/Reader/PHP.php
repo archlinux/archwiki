@@ -36,8 +36,8 @@ class PHP extends Reader {
 	/** @var string The file name of the CDB file. **/
 	protected $fileName;
 
-	/** @var string First 2048b of CDB file, containing the hash table. **/
-	protected $hashTable;
+	/** @var string First 2048b of CDB file, containing pointers to hash table. **/
+	protected $index;
 
 	/** @var int Offset in file where value of found key starts. **/
 	protected $dataPos;
@@ -47,6 +47,9 @@ class PHP extends Reader {
 
 	/** @var int File position indicator when iterating over keys. **/
 	protected $keyIterPos = 2048;
+
+	/** @var int Offset in file where hash tables start. **/
+	protected $keyIterStop;
 
 	/** @var string Read buffer for CDB file. **/
 	protected $buf;
@@ -70,8 +73,8 @@ class PHP extends Reader {
 		if ( !$this->handle ) {
 			throw new Exception( 'Unable to open CDB file "' . $this->fileName . '".' );
 		}
-		$this->hashTable = fread( $this->handle, 2048 );
-		if ( strlen( $this->hashTable ) !== 2048 ) {
+		$this->index = fread( $this->handle, 2048 );
+		if ( strlen( $this->index ) !== 2048 ) {
 			throw new Exception( 'CDB file contains fewer than 2048 bytes of data.' );
 		}
 	}
@@ -115,7 +118,7 @@ class PHP extends Reader {
 		// The first 2048 bytes are the lookup table, which is read into
 		// memory on initialization.
 		if ( $end <= 2048 ) {
-			return substr( $this->hashTable, $start, $len );
+			return substr( $this->index, $start, $len );
 		}
 
 		// Read data from the internal buffer first.
@@ -281,9 +284,19 @@ class PHP extends Reader {
 	/**
 	 * Get the first key from the CDB file and reset the key iterator.
 	 *
-	 * @return string Key.
+	 * @return string|bool Key, or false if no keys in file.
 	 */
 	public function firstkey() {
+		$this->keyIterPos = 4;
+
+		if ( !$this->keyIterStop ) {
+			$pos = INF;
+			for ( $i = 0; $i < 2048; $i+= 8 ) {
+				$pos = min( $this->readInt31( $i ), $pos );
+			}
+			$this->keyIterStop = $pos;
+		}
+
 		$this->keyIterPos = 2048;
 		return $this->nextkey();
 	}
@@ -291,9 +304,12 @@ class PHP extends Reader {
 	/**
 	 * Get the next key from the CDB file.
 	 *
-	 * @return string Key.
+	 * @return string|bool Key, or false if no more keys.
 	 */
 	public function nextkey() {
+		if ( $this->keyIterPos >= $this->keyIterStop ) {
+			return false;
+		}
 		$keyLen = $this->readInt31( $this->keyIterPos );
 		$dataLen = $this->readInt31( $this->keyIterPos + 4 );
 		$key = $this->read( $this->keyIterPos + 8, $keyLen );

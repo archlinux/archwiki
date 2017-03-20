@@ -12,48 +12,55 @@ namespace OOUI;
  *
  * @abstract
  */
-class IconElement extends ElementMixin {
+trait IconElement {
 	/**
 	 * Symbolic icon name.
 	 *
 	 * @var string
 	 */
-	protected $icon = null;
-
-	public static $targetPropertyName = 'icon';
+	protected $iconName = null;
 
 	/**
-	 * @param Element $element Element being mixed into
+	 * @var Tag
+	 */
+	protected $icon;
+
+	/**
 	 * @param array $config Configuration options
 	 * @param string $config['icon'] Symbolic icon name
 	 */
-	public function __construct( Element $element, array $config = array() ) {
-		// Parent constructor
+	public function initializeIconElement( array $config = [] ) {
+		// Properties
 		// FIXME 'iconElement' is a very stupid way to call '$icon'
-		$target = isset( $config['iconElement'] ) ? $config['iconElement'] : new Tag( 'span' );
-		parent::__construct( $element, $target, $config );
+		$this->icon = isset( $config['iconElement'] ) ? $config['iconElement'] : new Tag( 'span' );
 
 		// Initialization
-		$this->target->addClasses( array( 'oo-ui-iconElement-icon' ) );
+		$this->icon->addClasses( [ 'oo-ui-iconElement-icon' ] );
 		$this->setIcon( isset( $config['icon'] ) ? $config['icon'] : null );
+
+		$this->registerConfigCallback( function( &$config ) {
+			if ( $this->iconName !== null ) {
+				$config['icon'] = $this->iconName;
+			}
+		} );
 	}
 
 	/**
 	 * Set icon name.
 	 *
 	 * @param string|null $icon Symbolic icon name
-	 * @chainable
+	 * @return $this
 	 */
 	public function setIcon( $icon = null ) {
-		if ( $this->icon !== null ) {
-			$this->target->removeClasses( array( 'oo-ui-icon-' . $this->icon ) );
+		if ( $this->iconName !== null ) {
+			$this->icon->removeClasses( [ 'oo-ui-icon-' . $this->iconName ] );
 		}
 		if ( $icon !== null ) {
-			$this->target->addClasses( array( 'oo-ui-icon-' . $icon ) );
+			$this->icon->addClasses( [ 'oo-ui-icon-' . $icon ] );
 		}
 
-		$this->icon = $icon;
-		$this->element->toggleClasses( array( 'oo-ui-iconElement' ), (bool)$this->icon );
+		$this->iconName = $icon;
+		$this->toggleClasses( [ 'oo-ui-iconElement' ], (bool)$this->iconName );
 
 		return $this;
 	}
@@ -64,13 +71,16 @@ class IconElement extends ElementMixin {
 	 * @return string Icon name
 	 */
 	public function getIcon() {
-		return $this->icon;
+		return $this->iconName;
 	}
 
-	public function getConfig( &$config ) {
-		if ( $this->icon !== null ) {
-			$config['icon'] = $this->icon;
-		}
-		return parent::getConfig( $config );
+	/**
+	 * Do not use outside of Theme::updateElementClasses
+	 *
+	 * @protected
+	 * @return Tag
+	 */
+	public function getIconElement() {
+		return $this->icon;
 	}
 }

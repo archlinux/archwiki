@@ -1,0 +1,23 @@
+/*!
+ * VisualEditor UserInterface MWSyntaxHighlightDialog styles.
+ *
+ * @copyright 2011-2015 VisualEditor Team and others; see AUTHORS.txt
+ * @license The MIT License (MIT); see LICENSE.txt
+ */
+
+.ve-ui-mwSyntaxHighlightDialog-content .ve-ui-mwExtensionWindow-input {
+	max-width: none;
+}
+
+.ve-ui-mwSyntaxHighlightDialog-content .ve-ui-mwExtensionWindow-input textarea {
+	font-family: monospace, 'Courier';
+}
+
+.ve-ui-mwSyntaxHighlightDialog-content .oo-ui-comboBoxWidget > .oo-ui-menuSelectWidget {
+	/* Force combo box dropdowns to appear above Ace editor */
+	z-index: 10;
+}
+
+.ve-ui-mwSyntaxHighlightDialog-content .ve-ui-mwSyntaxHighlightWindow-languageField {
+	max-width: 30em;
+}

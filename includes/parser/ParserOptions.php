@@ -20,6 +20,7 @@
  * @file
  * @ingroup Parser
  */
+use Wikimedia\ScopedCallback;
 
 /**
  * @brief Set options of the Parser
@@ -117,16 +118,21 @@ class ParserOptions {
 	private $mRemoveComments = true;
 
 	/**
-	 * Callback for current revision fetching. Used as first argument to call_user_func().
+	 * @var callable Callback for current revision fetching; first argument to call_user_func().
 	 */
 	private $mCurrentRevisionCallback =
-		array( 'Parser', 'statelessFetchRevision' );
+		[ 'Parser', 'statelessFetchRevision' ];
 
 	/**
-	 * Callback for template fetching. Used as first argument to call_user_func().
+	 * @var callable Callback for template fetching; first argument to call_user_func().
 	 */
 	private $mTemplateCallback =
-		array( 'Parser', 'statelessFetchTemplate' );
+		[ 'Parser', 'statelessFetchTemplate' ];
+
+	/**
+	 * @var callable|null Callback to generate a guess for {{REVISIONID}}
+	 */
+	private $mSpeculativeRevIdCallback;
 
 	/**
 	 * Enable limit report in an HTML comment on output
@@ -209,6 +215,21 @@ class ParserOptions {
 	 * Extra key that should be present in the caching key.
 	 */
 	private $mExtraKey = '';
+
+	/**
+	 * Are magic ISBN links enabled?
+	 */
+	private $mMagicISBNLinks = true;
+
+	/**
+	 * Are magic PMID links enabled?
+	 */
+	private $mMagicPMIDLinks = true;
+
+	/**
+	 * Are magic RFC links enabled?
+	 */
+	private $mMagicRFCLinks = true;
 
 	/**
 	 * Function to be called when an option is accessed.
@@ -300,6 +321,11 @@ class ParserOptions {
 
 	public function getTemplateCallback() {
 		return $this->mTemplateCallback;
+	}
+
+	/** @since 1.28 */
+	public function getSpeculativeRevIdCallback() {
+		return $this->mSpeculativeRevIdCallback;
 	}
 
 	public function getEnableLimitReport() {
@@ -409,6 +435,28 @@ class ParserOptions {
 		return $this->getUserLangObj()->getCode();
 	}
 
+	/**
+	 * @since 1.28
+	 * @return bool
+	 */
+	public function getMagicISBNLinks() {
+		return $this->mMagicISBNLinks;
+	}
+
+	/**
+	 * @since 1.28
+	 * @return bool
+	 */
+	public function getMagicPMIDLinks() {
+		return $this->mMagicPMIDLinks;
+	}
+	/**
+	 * @since 1.28
+	 * @return bool
+	 */
+	public function getMagicRFCLinks() {
+		return $this->mMagicRFCLinks;
+	}
 	public function setInterwikiMagic( $x ) {
 		return wfSetVar( $this->mInterwikiMagic, $x );
 	}
@@ -481,6 +529,11 @@ class ParserOptions {
 	/* @since 1.24 */
 	public function setCurrentRevisionCallback( $x ) {
 		return wfSetVar( $this->mCurrentRevisionCallback, $x );
+	}
+
+	/** @since 1.28 */
+	public function setSpeculativeRevIdCallback( $x ) {
+		return wfSetVar( $this->mSpeculativeRevIdCallback, $x );
 	}
 
 	public function setTemplateCallback( $x ) {
@@ -600,6 +653,16 @@ class ParserOptions {
 	}
 
 	/**
+	 * Get a ParserOptions object for an anonymous user
+	 * @since 1.27
+	 * @return ParserOptions
+	 */
+	public static function newFromAnon() {
+		global $wgContLang;
+		return new ParserOptions( new User, $wgContLang );
+	}
+
+	/**
 	 * Get a ParserOptions object from a given user.
 	 * Language will be taken from $wgLang.
 	 *
@@ -642,7 +705,8 @@ class ParserOptions {
 			$wgAllowExternalImagesFrom, $wgEnableImageWhitelist, $wgAllowSpecialInclusion,
 			$wgMaxArticleSize, $wgMaxPPNodeCount, $wgMaxTemplateDepth, $wgMaxPPExpandDepth,
 			$wgCleanSignatures, $wgExternalLinkTarget, $wgExpensiveParserFunctionLimit,
-			$wgMaxGeneratedPPNodeCount, $wgDisableLangConversion, $wgDisableTitleConversion;
+			$wgMaxGeneratedPPNodeCount, $wgDisableLangConversion, $wgDisableTitleConversion,
+			$wgEnableMagicLinks;
 
 		// *UPDATE* ParserOptions::matches() if any of this changes as needed
 		$this->mInterwikiMagic = $wgInterwikiMagic;
@@ -660,6 +724,9 @@ class ParserOptions {
 		$this->mExternalLinkTarget = $wgExternalLinkTarget;
 		$this->mDisableContentConversion = $wgDisableLangConversion;
 		$this->mDisableTitleConversion = $wgDisableLangConversion || $wgDisableTitleConversion;
+		$this->mMagicISBNLinks = $wgEnableMagicLinks['ISBN'];
+		$this->mMagicPMIDLinks = $wgEnableMagicLinks['PMID'];
+		$this->mMagicRFCLinks = $wgEnableMagicLinks['RFC'];
 
 		$this->mUser = $user;
 		$this->mNumberHeadings = $user->getOption( 'numberheadings' );
@@ -680,10 +747,10 @@ class ParserOptions {
 	 */
 	public function matches( ParserOptions $other ) {
 		$fields = array_keys( get_class_vars( __CLASS__ ) );
-		$fields = array_diff( $fields, array(
+		$fields = array_diff( $fields, [
 			'mEnableLimitReport', // only effects HTML comments
 			'onAccessCallback', // only used for ParserOutput option tracking
-		) );
+		] );
 		foreach ( $fields as $field ) {
 			if ( !is_object( $this->$field ) && $this->$field !== $other->$field ) {
 				return false;
@@ -691,7 +758,7 @@ class ParserOptions {
 		}
 		// Check the object and lazy-loaded options
 		return (
-			$this->mUserLang->getCode() === $other->mUserLang->getCode() &&
+			$this->mUserLang->equals( $other->mUserLang ) &&
 			$this->getDateFormat() === $other->getDateFormat()
 		);
 	}
@@ -726,14 +793,14 @@ class ParserOptions {
 	 * @return array
 	 */
 	public static function legacyOptions() {
-		return array(
+		return [
 			'stubthreshold',
 			'numberheadings',
 			'userlang',
 			'thumbsize',
 			'editsection',
 			'printable'
-		);
+		];
 	}
 
 	/**
@@ -822,7 +889,7 @@ class ParserOptions {
 
 		// Give a chance for extensions to modify the hash, if they have
 		// extra options or other effects on the parser cache.
-		Hooks::run( 'PageRenderingHash', array( &$confstr, $this->getUser(), &$forOptions ) );
+		Hooks::run( 'PageRenderingHash', [ &$confstr, $this->getUser(), &$forOptions ] );
 
 		// Make it a valid memcached key fragment
 		$confstr = str_replace( ' ', '_', $confstr );
@@ -831,8 +898,8 @@ class ParserOptions {
 	}
 
 	/**
-	 * Sets a hook to force that a page exists, and sets a current revision callback to return a
-	 * revision with custom content when the current revision of the page is requested.
+	 * Sets a hook to force that a page exists, and sets a current revision callback to return
+	 * a revision with custom content when the current revision of the page is requested.
 	 *
 	 * @since 1.25
 	 * @param Title $title
@@ -841,20 +908,25 @@ class ParserOptions {
 	 * @return ScopedCallback to unset the hook
 	 */
 	public function setupFakeRevision( $title, $content, $user ) {
-		$oldCallback = $this->setCurrentRevisionCallback( function ( $titleToCheck, $parser = false ) use ( $title, $content, $user, &$oldCallback ) {
-			if ( $titleToCheck->equals( $title ) ) {
-				return new Revision( array(
-					'page' => $title->getArticleID(),
-					'user_text' => $user->getName(),
-					'user' => $user->getId(),
-					'parent_id' => $title->getLatestRevId(),
-					'title' => $title,
-					'content' => $content
-				) );
-			} else {
-				return call_user_func( $oldCallback, $titleToCheck, $parser );
+		$oldCallback = $this->setCurrentRevisionCallback(
+			function (
+				$titleToCheck, $parser = false ) use ( $title, $content, $user, &$oldCallback
+			) {
+				if ( $titleToCheck->equals( $title ) ) {
+					return new Revision( [
+						'page' => $title->getArticleID(),
+						'user_text' => $user->getName(),
+						'user' => $user->getId(),
+						'parent_id' => $title->getLatestRevID(),
+						'title' => $title,
+						'content' => $content
+					] );
+				} else {
+					return call_user_func( $oldCallback, $titleToCheck, $parser );
+				}
 			}
-		} );
+		);
+
 		global $wgHooks;
 		$wgHooks['TitleExists'][] =
 			function ( $titleToCheck, &$exists ) use ( $title ) {

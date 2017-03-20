@@ -12,7 +12,7 @@
 	"captcha-label": "CAPTCHA",
 	"captcha-addurl": "Suntingan panjenengan iku nyertakaké pranala jaba anyar.\nKanggo ngéwangi ngreksa lawan ''spam'' otomatis, tulung pecahna itung-itungan ing ngisor iki lan lebokna kasilna sajroning kothak ([[Special:Captcha/help|info sabanjuré]]):",
 	"captcha-badlogin": "Kanggo ngreksa lawan parengkahan tembung sandhi otomatis, tulung lebokna tembung utawa kasil itung-itungan gampang ing ngisor sajroning kothak sing wis sumedya ([[Special:Captcha/help|info sabanjuré]]):",
-	"captcha-createaccount": "Kanggo ngreksa lawan panggawéyan rékening (akun) otomatis, tulung pecahna itung-itungan ing ngisor iki lan lebokna kasilna sajroning kothak ([[Special:Captcha/help|info sabanjuré]]):",
+	"captcha-createaccount": "Kanggo ngreksa wiki saka panggawé akun otomatis, tulung jawab ètung-ètungan ana ngisor iki lan tulisaké ing kothak ngisor ([[Special:Captcha/help|katerangan jangkep]]):",
 	"captcha-createaccount-fail": "Kode CAPTCHA salah utawa durung diisi.",
 	"captcha-create": "Kanggo nggawé kaca iki, mangga itung-itungan ing ngisor iki diwangsuli sajroning kothak ([[Special:Captcha/help|info sabanjuré]]):",
 	"captcha-sendemail": "Kanggo ngreksa lawan spam otomatis, tulung lebokna tembung utawa kasil itung-itungan gampang ing ngisor sajroning kothak sing wis sumedya ([[Special:Captcha/help|info sabanjuré]]):",

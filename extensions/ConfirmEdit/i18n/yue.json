@@ -3,10 +3,12 @@
 		"authors": [
 			"Yueman",
 			"CRCHF",
-			"Wong128hk"
+			"Wong128hk",
+			"Ktchankt"
 		]
 	},
 	"captcha-edit": "要編輯呢一篇文，請答出一個簡單嘅加數和，跟住響個盒度打入 ([[Special:Captcha/help|更多資料]]):",
+	"captcha-edit-fail": "錯咗或者漏咗CAPTCHA。",
 	"captcha-desc": "簡單嘅 captcha 實行",
 	"captcha-label": "CAPTCHA",
 	"captcha-addurl": "你編輯嘅內容裏面有新嘅URL連結；為咗避免受到自動垃圾程式的侵擾，請答出一個簡單嘅加數和，跟住響個盒度打入 ([[Special:Captcha/help|更多資料]]):",

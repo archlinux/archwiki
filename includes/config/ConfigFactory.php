@@ -20,71 +20,95 @@
  *
  * @file
  */
+use MediaWiki\Services\SalvageableService;
+use Wikimedia\Assert\Assert;
 
 /**
  * Factory class to create Config objects
  *
  * @since 1.23
  */
-class ConfigFactory {
+class ConfigFactory implements SalvageableService {
 
 	/**
 	 * Map of config name => callback
 	 * @var array
 	 */
-	protected $factoryFunctions = array();
+	protected $factoryFunctions = [];
 
 	/**
 	 * Config objects that have already been created
 	 * name => Config object
 	 * @var array
 	 */
-	protected $configs = array();
+	protected $configs = [];
 
 	/**
-	 * @var ConfigFactory
-	 */
-	private static $self;
-
-	/**
+	 * @deprecated since 1.27, use MediaWikiServices::getConfigFactory() instead.
+	 *
 	 * @return ConfigFactory
 	 */
 	public static function getDefaultInstance() {
-		if ( !self::$self ) {
-			self::$self = new self;
-			global $wgConfigRegistry;
-			foreach ( $wgConfigRegistry as $name => $callback ) {
-				self::$self->register( $name, $callback );
+		return \MediaWiki\MediaWikiServices::getInstance()->getConfigFactory();
+	}
+
+	/**
+	 * Re-uses existing Cache objects from $other. Cache objects are only re-used if the
+	 * registered factory function for both is the same. Cache config is not copied,
+	 * and only instances of caches defined on this instance with the same config
+	 * are copied.
+	 *
+	 * @see SalvageableService::salvage()
+	 *
+	 * @param SalvageableService $other The object to salvage state from. $other must have the
+	 * exact same type as $this.
+	 */
+	public function salvage( SalvageableService $other ) {
+		Assert::parameterType( self::class, $other, '$other' );
+
+		/** @var ConfigFactory $other */
+		foreach ( $other->factoryFunctions as $name => $otherFunc ) {
+			if ( !isset( $this->factoryFunctions[$name] ) ) {
+				continue;
+			}
+
+			// if the callback function is the same, salvage the Cache object
+			// XXX: Closures are never equal!
+			if ( isset( $other->configs[$name] )
+				&& $this->factoryFunctions[$name] == $otherFunc
+			) {
+				$this->configs[$name] = $other->configs[$name];
+				unset( $other->configs[$name] );
 			}
 		}
-		return self::$self;
+
+		// disable $other
+		$other->factoryFunctions = [];
+		$other->configs = [];
 	}
 
 	/**
-	 * Destroy the default instance
-	 * Should only be called inside unit tests
-	 * @throws MWException
-	 * @codeCoverageIgnore
+	 * @return string[]
 	 */
-	public static function destroyDefaultInstance() {
-		if ( !defined( 'MW_PHPUNIT_TEST' ) ) {
-			throw new MWException( __METHOD__ . ' was called outside of unit tests' );
-		}
-
-		self::$self = null;
+	public function getConfigNames() {
+		return array_keys( $this->factoryFunctions );
 	}
 
 	/**
-	 * Register a new config factory function
-	 * Will override if it's already registered
+	 * Register a new config factory function.
+	 * Will override if it's already registered.
+	 * Use "*" for $name to provide a fallback config for all unknown names.
 	 * @param string $name
-	 * @param callable $callback That takes this ConfigFactory as an argument
+	 * @param callable|Config $callback A factory callabck that takes this ConfigFactory
+	 *        as an argument and returns a Config instance, or an existing Config instance.
 	 * @throws InvalidArgumentException If an invalid callback is provided
 	 */
 	public function register( $name, $callback ) {
-		if ( !is_callable( $callback ) ) {
+		if ( !is_callable( $callback ) && !( $callback instanceof Config ) ) {
 			throw new InvalidArgumentException( 'Invalid callback provided' );
 		}
+
+		unset( $this->configs[$name] );
 		$this->factoryFunctions[$name] = $callback;
 	}
 
@@ -99,10 +123,20 @@ class ConfigFactory {
 	 */
 	public function makeConfig( $name ) {
 		if ( !isset( $this->configs[$name] ) ) {
-			if ( !isset( $this->factoryFunctions[$name] ) ) {
+			$key = $name;
+			if ( !isset( $this->factoryFunctions[$key] ) ) {
+				$key = '*';
+			}
+			if ( !isset( $this->factoryFunctions[$key] ) ) {
 				throw new ConfigException( "No registered builder available for $name." );
 			}
-			$conf = call_user_func( $this->factoryFunctions[$name], $this );
+
+			if ( $this->factoryFunctions[$key] instanceof Config ) {
+				$conf = $this->factoryFunctions[$key];
+			} else {
+				$conf = call_user_func( $this->factoryFunctions[$key], $this );
+			}
+
 			if ( $conf instanceof Config ) {
 				$this->configs[$name] = $conf;
 			} else {
@@ -112,4 +146,5 @@ class ConfigFactory {
 
 		return $this->configs[$name];
 	}
+
 }

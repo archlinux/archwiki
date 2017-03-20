@@ -23,6 +23,7 @@
 /**
  * Handles searching prefixes of titles and finding any page
  * names that match. Used largely by the OpenSearch implementation.
+ * @deprecated Since 1.27, Use SearchEngine::prefixSearchSubpages or SearchEngine::completionSearch
  *
  * @ingroup Search
  */
@@ -37,7 +38,7 @@ abstract class PrefixSearch {
 	 * @param int $offset How many results to offset from the beginning
 	 * @return array Array of strings
 	 */
-	public static function titleSearch( $search, $limit, $namespaces = array(), $offset = 0 ) {
+	public static function titleSearch( $search, $limit, $namespaces = [], $offset = 0 ) {
 		$prefixSearch = new StringPrefixSearch;
 		return $prefixSearch->search( $search, $limit, $namespaces, $offset );
 	}
@@ -51,38 +52,58 @@ abstract class PrefixSearch {
 	 * @param int $offset How many results to offset from the beginning
 	 * @return array Array of strings or Title objects
 	 */
-	public function search( $search, $limit, $namespaces = array(), $offset = 0 ) {
+	public function search( $search, $limit, $namespaces = [], $offset = 0 ) {
 		$search = trim( $search );
 		if ( $search == '' ) {
-			return array(); // Return empty result
-		}
-		$namespaces = $this->validateNamespaces( $namespaces );
-
-		// Find a Title which is not an interwiki and is in NS_MAIN
-		$title = Title::newFromText( $search );
-		if ( $title && !$title->isExternal() ) {
-			$ns = array( $title->getNamespace() );
-			$search = $title->getText();
-			if ( $ns[0] == NS_MAIN ) {
-				$ns = $namespaces; // no explicit prefix, use default namespaces
-				Hooks::run( 'PrefixSearchExtractNamespace', array( &$ns, &$search ) );
-			}
-			return $this->searchBackend( $ns, $search, $limit, $offset );
+			return []; // Return empty result
 		}
 
-		// Is this a namespace prefix?
-		$title = Title::newFromText( $search . 'Dummy' );
-		if ( $title && $title->getText() == 'Dummy'
-			&& $title->getNamespace() != NS_MAIN
-			&& !$title->isExternal() )
-		{
-			$namespaces = array( $title->getNamespace() );
-			$search = '';
+		$hasNamespace = $this->extractNamespace( $search );
+		if ( $hasNamespace ) {
+			list( $namespace, $search ) = $hasNamespace;
+			$namespaces = [ $namespace ];
 		} else {
-			Hooks::run( 'PrefixSearchExtractNamespace', array( &$namespaces, &$search ) );
+			$namespaces = $this->validateNamespaces( $namespaces );
+			Hooks::run( 'PrefixSearchExtractNamespace', [ &$namespaces, &$search ] );
 		}
 
 		return $this->searchBackend( $namespaces, $search, $limit, $offset );
+	}
+
+	/**
+	 * Figure out if given input contains an explicit namespace.
+	 *
+	 * @param string $input
+	 * @return false|array Array of namespace and remaining text, or false if no namespace given.
+	 */
+	protected function extractNamespace( $input ) {
+		if ( strpos( $input, ':' ) === false ) {
+			return false;
+		}
+
+		// Namespace prefix only
+		$title = Title::newFromText( $input . 'Dummy' );
+		if (
+			$title &&
+			$title->getText() === 'Dummy' &&
+			!$title->inNamespace( NS_MAIN ) &&
+			!$title->isExternal()
+		) {
+			return [ $title->getNamespace(), '' ];
+		}
+
+		// Namespace prefix with additional input
+		$title = Title::newFromText( $input );
+		if (
+			$title &&
+			!$title->inNamespace( NS_MAIN ) &&
+			!$title->isExternal()
+		) {
+			// getText provides correct capitalization
+			return [ $title->getNamespace(), $title->getText() ];
+		}
+
+		return false;
 	}
 
 	/**
@@ -103,7 +124,7 @@ abstract class PrefixSearch {
 			global $wgContLang;
 
 			$fallbackSearches = $wgContLang->autoConvertToAllVariants( $search );
-			$fallbackSearches = array_diff( array_unique( $fallbackSearches ), array( $search ) );
+			$fallbackSearches = array_diff( array_unique( $fallbackSearches ), [ $search ] );
 
 			foreach ( $fallbackSearches as $fbs ) {
 				$fallbackSearchResult = $this->search( $fbs, $fallbackLimit, $namespaces );
@@ -149,121 +170,32 @@ abstract class PrefixSearch {
 		if ( count( $namespaces ) == 1 ) {
 			$ns = $namespaces[0];
 			if ( $ns == NS_MEDIA ) {
-				$namespaces = array( NS_FILE );
+				$namespaces = [ NS_FILE ];
 			} elseif ( $ns == NS_SPECIAL ) {
 				return $this->titles( $this->specialSearch( $search, $limit, $offset ) );
 			}
 		}
-		$srchres = array();
+		$srchres = [];
 		if ( Hooks::run(
 			'PrefixSearchBackend',
-			array( $namespaces, $search, $limit, &$srchres, $offset )
+			[ $namespaces, $search, $limit, &$srchres, $offset ]
 		) ) {
 			return $this->titles( $this->defaultSearchBackend( $namespaces, $search, $limit, $offset ) );
 		}
-		return $this->strings( $this->handleResultFromHook( $srchres, $namespaces, $search, $limit ) );
+		return $this->strings(
+			$this->handleResultFromHook( $srchres, $namespaces, $search, $limit, $offset ) );
 	}
 
-	/**
-	 * Default search backend does proper prefix searching, but custom backends
-	 * may sort based on other algorythms that may cause the exact title match
-	 * to not be in the results or be lower down the list.
-	 * @param array $srchres results from the hook
-	 * @return array munged results from the hook
-	 */
-	private function handleResultFromHook( $srchres, $namespaces, $search, $limit ) {
-		// Pick namespace (based on PrefixSearch::defaultSearchBackend)
-		$ns = in_array( NS_MAIN, $namespaces ) ? NS_MAIN : $namespaces[0];
-		$t = Title::newFromText( $search, $ns );
-		if ( !$t || !$t->exists() ) {
-			// No exact match so just return the search results
-			return $srchres;
-		}
-		$string = $t->getPrefixedText();
-		$key = array_search( $string, $srchres );
-		if ( $key !== false ) {
-			// Exact match was in the results so just move it to the front
-			return $this->pullFront( $key, $srchres );
-		}
-		// Exact match not in the search results so check for some redirect handling cases
-		if ( $t->isRedirect() ) {
-			$target = $this->getRedirectTarget( $t );
-			$key = array_search( $target, $srchres );
-			if ( $key !== false ) {
-				// Exact match is a redirect to one of the returned matches so pull the
-				// returned match to the front.  This might look odd but the alternative
-				// is to put the redirect in front and drop the match.  The name of the
-				// found match is often more descriptive/better formed than the name of
-				// the redirect AND by definition they share a prefix.  Hopefully this
-				// choice is less confusing and more helpful.  But it might not be.  But
-				// it is the choice we're going with for now.
-				return $this->pullFront( $key, $srchres );
-			}
-			$redirectTargetsToRedirect = $this->redirectTargetsToRedirect( $srchres );
-			if ( isset( $redirectTargetsToRedirect[$target] ) ) {
-				// The exact match and something in the results list are both redirects
-				// to the same thing!  In this case we'll pull the returned match to the
-				// top following the same logic above.  Again, it might not be a perfect
-				// choice but it'll do.
-				return $this->pullFront( $redirectTargetsToRedirect[$target], $srchres );
-			}
-		} else {
-			$redirectTargetsToRedirect = $this->redirectTargetsToRedirect( $srchres );
-			if ( isset( $redirectTargetsToRedirect[$string] ) ) {
-				// The exact match is the target of a redirect already in the results list so remove
-				// the redirect from the results list and push the exact match to the front
-				array_splice( $srchres, $redirectTargetsToRedirect[$string], 1 );
-				array_unshift( $srchres, $string );
-				return $srchres;
-			}
-		}
-
-		// Exact match is totally unique from the other results so just add it to the front
-		array_unshift( $srchres, $string );
-		// And roll one off the end if the results are too long
-		if ( count( $srchres ) > $limit ) {
-			array_pop( $srchres );
+	private function handleResultFromHook( $srchres, $namespaces, $search, $limit, $offset ) {
+		if ( $offset === 0 ) {
+			// Only perform exact db match if offset === 0
+			// This is still far from perfect but at least we avoid returning the
+			// same title afain and again when the user is scrolling with a query
+			// that matches a title in the db.
+			$rescorer = new SearchExactMatchRescorer();
+			$srchres = $rescorer->rescore( $search, $namespaces, $srchres, $limit );
 		}
 		return $srchres;
-	}
-
-	/**
-	 * @param Array(string) $titles as strings
-	 * @return Array(string => int) redirect target prefixedText to index of title in titles
-	 *   that is a redirect to it.
-	 */
-	private function redirectTargetsToRedirect( $titles ) {
-		$result = array();
-		foreach ( $titles as $key => $titleText ) {
-			$title = Title::newFromText( $titleText );
-			if ( !$title || !$title->isRedirect() ) {
-				continue;
-			}
-			$target = $this->getRedirectTarget( $title );
-			if ( !$target ) {
-				continue;
-			}
-			$result[$target] = $key;
-		}
-		return $result;
-	}
-
-	/**
-	 * @param int $key key to pull to the front
-	 * @return array $array with the item at $key pulled to the front
-	 */
-	private function pullFront( $key, $array ) {
-		$cut = array_splice( $array, $key, 1 );
-		array_unshift( $array, $cut[0] );
-		return $array;
-	}
-
-	private function getRedirectTarget( $title ) {
-		$page = WikiPage::factory( $title );
-		if ( !$page->exists() ) {
-			return null;
-		}
-		return $page->getRedirectTarget()->getPrefixedText();
 	}
 
 	/**
@@ -286,7 +218,7 @@ abstract class PrefixSearch {
 			// Try matching the full search string as a page name
 			$specialTitle = Title::makeTitleSafe( NS_SPECIAL, $searchKey );
 			if ( !$specialTitle ) {
-				return array();
+				return [];
 			}
 			$special = SpecialPageFactory::getPage( $specialTitle->getText() );
 			if ( $special ) {
@@ -295,7 +227,7 @@ abstract class PrefixSearch {
 					return $specialTitle->getSubpage( $sub );
 				}, $subpages );
 			} else {
-				return array();
+				return [];
 			}
 		}
 
@@ -305,7 +237,7 @@ abstract class PrefixSearch {
 
 		// Unlike SpecialPage itself, we want the canonical forms of both
 		// canonical and alias title forms...
-		$keys = array();
+		$keys = [];
 		foreach ( SpecialPageFactory::getNames() as $page ) {
 			$keys[$wgContLang->caseFold( $page )] = $page;
 		}
@@ -321,7 +253,7 @@ abstract class PrefixSearch {
 		}
 		ksort( $keys );
 
-		$srchres = array();
+		$srchres = [];
 		$skipped = 0;
 		foreach ( $keys as $pageKey => $page ) {
 			if ( $searchKey === '' || strpos( $pageKey, $searchKey ) === 0 ) {
@@ -350,43 +282,60 @@ abstract class PrefixSearch {
 	 * be automatically capitalized by Title::secureAndSpit()
 	 * later on depending on $wgCapitalLinks)
 	 *
-	 * @param array $namespaces Namespaces to search in
+	 * @param array|null $namespaces Namespaces to search in
 	 * @param string $search Term
 	 * @param int $limit Max number of items to return
 	 * @param int $offset Number of items to skip
-	 * @return array Array of Title objects
+	 * @return Title[] Array of Title objects
 	 */
-	protected function defaultSearchBackend( $namespaces, $search, $limit, $offset ) {
-		$ns = array_shift( $namespaces ); // support only one namespace
-		if ( in_array( NS_MAIN, $namespaces ) ) {
-			$ns = NS_MAIN; // if searching on many always default to main
+	public function defaultSearchBackend( $namespaces, $search, $limit, $offset ) {
+		// Backwards compatability with old code. Default to NS_MAIN if no namespaces provided.
+		if ( $namespaces === null ) {
+			$namespaces = [];
+		}
+		if ( !$namespaces ) {
+			$namespaces[] = NS_MAIN;
 		}
 
-		$t = null;
-		if ( is_string( $search ) ) {
-			$t = Title::newFromText( $search, $ns );
+		// Construct suitable prefix for each namespace. They differ in cases where
+		// some namespaces always capitalize and some don't.
+		$prefixes = [];
+		foreach ( $namespaces as $namespace ) {
+			// For now, if special is included, ignore the other namespaces
+			if ( $namespace == NS_SPECIAL ) {
+				return $this->specialSearch( $search, $limit, $offset );
+			}
+
+			$title = Title::makeTitleSafe( $namespace, $search );
+			// Why does the prefix default to empty?
+			$prefix = $title ? $title->getDBkey() : '';
+			$prefixes[$prefix][] = $namespace;
 		}
 
-		$prefix = $t ? $t->getDBkey() : '';
-		$dbr = wfGetDB( DB_SLAVE );
-		$res = $dbr->select( 'page',
-			array( 'page_id', 'page_namespace', 'page_title' ),
-			array(
-				'page_namespace' => $ns,
-				'page_title ' . $dbr->buildLike( $prefix, $dbr->anyString() )
-			),
-			__METHOD__,
-			array(
-				'LIMIT' => $limit,
-				'ORDER BY' => 'page_title',
-				'OFFSET' => $offset
-			)
-		);
-		$srchres = array();
-		foreach ( $res as $row ) {
-			$srchres[] = Title::newFromRow( $row );
+		$dbr = wfGetDB( DB_REPLICA );
+		// Often there is only one prefix that applies to all requested namespaces,
+		// but sometimes there are two if some namespaces do not always capitalize.
+		$conds = [];
+		foreach ( $prefixes as $prefix => $namespaces ) {
+			$condition = [
+				'page_namespace' => $namespaces,
+				'page_title' . $dbr->buildLike( $prefix, $dbr->anyString() ),
+			];
+			$conds[] = $dbr->makeList( $condition, LIST_AND );
 		}
-		return $srchres;
+
+		$table = 'page';
+		$fields = [ 'page_id', 'page_namespace', 'page_title' ];
+		$conds = $dbr->makeList( $conds, LIST_OR );
+		$options = [
+			'LIMIT' => $limit,
+			'ORDER BY' => [ 'page_title', 'page_namespace' ],
+			'OFFSET' => $offset
+		];
+
+		$res = $dbr->select( $table, $fields, $conds, __METHOD__, $options );
+
+		return iterator_to_array( TitleArray::newFromResult( $res ) );
 	}
 
 	/**
@@ -401,7 +350,7 @@ abstract class PrefixSearch {
 		// We will look at each given namespace against wgContLang namespaces
 		$validNamespaces = $wgContLang->getNamespaces();
 		if ( is_array( $namespaces ) && count( $namespaces ) > 0 ) {
-			$valid = array();
+			$valid = [];
 			foreach ( $namespaces as $ns ) {
 				if ( is_numeric( $ns ) && array_key_exists( $ns, $validNamespaces ) ) {
 					$valid[] = $ns;
@@ -412,12 +361,13 @@ abstract class PrefixSearch {
 			}
 		}
 
-		return array( NS_MAIN );
+		return [ NS_MAIN ];
 	}
 }
 
 /**
  * Performs prefix search, returning Title objects
+ * @deprecated Since 1.27, Use SearchEngine::prefixSearchSubpages or SearchEngine::completionSearch
  * @ingroup Search
  */
 class TitlePrefixSearch extends PrefixSearch {
@@ -437,6 +387,7 @@ class TitlePrefixSearch extends PrefixSearch {
 
 /**
  * Performs prefix search, returning strings
+ * @deprecated Since 1.27, Use SearchEngine::prefixSearchSubpages or SearchEngine::completionSearch
  * @ingroup Search
  */
 class StringPrefixSearch extends PrefixSearch {

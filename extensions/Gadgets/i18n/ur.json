@@ -7,8 +7,20 @@
 	},
 	"prefs-gadgets": "آلات",
 	"gadgets": "آلات",
+	"gadgetusage": "آلات کے استعمال کے اعداد و شمار",
+	"gadgetusage-gadget": "آلہ",
+	"gadgetusage-usercount": "صارفین کی تعداد",
+	"gadgetusage-noresults": "کوئی آلہ نہیں مل سکا۔",
+	"gadgetusage-activeusers": "فعال صارفین",
+	"gadgetusage-default": "طے شدہ",
 	"gadgets-title": "آلات",
 	"gadgets-uses": "استعمال کرتا ہے",
+	"gadgets-required-rights": "حسب ذیل {{PLURAL:$2|اختیار|اختیارات}} درکار {{PLURAL:$2|ہے|ہیں}}:\n\n$1",
+	"gadgets-default": "ابتدائی طور پر ہر ایک کے لیے فعال ہے۔",
 	"gadgets-export": "برآمد",
-	"gadgets-export-title": "برآمد آلہ"
+	"gadgets-export-title": "برآمد آلہ",
+	"gadgets-export-download": "ڈاؤنلوڈ",
+	"right-gadgets-edit": "آلات کے جاوا اسکرپٹ اور سی ایس ایس صفحات میں ترمیم",
+	"right-gadgets-definition-edit": "آلات کے صفحہ تعریفات میں ترمیم",
+	"action-gadgets-definition-edit": "اس آلہ کی تعریف میں ترمیم کریں"
 }

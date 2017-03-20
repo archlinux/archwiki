@@ -4,6 +4,8 @@
 			"Dağlı95"
 		]
 	},
-	"fancycaptcha-createaccount": "Vikidə avtomatik hesab yaradılmasının qarşısını almaq üçün xahiş edirik tələb olunan sözləri daxil edin ([[Special:Captcha/help|ətraflı məlumat]]):",
+	"fancycaptcha-captcha": "Təhlükəsizlik nəzarəti",
+	"fancycaptcha-accountcreate": "Vikidə avtomatik hesab yaradılmasının qarşısını almaq üçün xahiş edirik tələb olunan sözləri daxil edin ([[Special:Captcha/help|ətraflı məlumat]]):",
+	"fancycaptcha-imgcaptcha-ph": "Yuxarıda gördüyünüz mətni daxil edin",
 	"fancycaptcha-reload-text": "Yenilə"
 }

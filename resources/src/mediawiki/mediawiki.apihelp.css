@@ -3,6 +3,16 @@
 	margin-bottom: 0.1em;
 }
 
+.apihelp-header.apihelp-module-name {
+	/*
+	 * This element is explicitly set to dir="ltr" in HTML.
+	 * Set explicit alignment so that CSSJanus will flip it to "right";
+	 * otherwise the alignment will be automatically set to "left" according
+	 * to the element's direction, and this will have an inconsistent look.
+	 */
+	text-align: left;
+}
+
 div.apihelp-linktrail {
 	font-size: smaller;
 }
@@ -18,7 +28,7 @@ div.apihelp-linktrail {
 .apihelp-flags {
 	font-size: smaller;
 	float: right;
-	border: 1px solid black;
+	border: 1px solid #000;
 	padding: 0.25em;
 	width: 20em;
 }
@@ -26,7 +36,7 @@ div.apihelp-linktrail {
 .apihelp-deprecated, .apihelp-flag-deprecated,
 .apihelp-flag-internal strong {
 	font-weight: bold;
-	color: red;
+	color: #f00;
 }
 
 .apihelp-unknown {

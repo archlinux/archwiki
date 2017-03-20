@@ -1,0 +1,10 @@
+/*!
+ * VisualEditor MediaWiki UserInterface MWReferenceGroupInputWidget styles.
+ *
+ * @copyright 2011-2016 Cite VisualEditor Team and others; see AUTHORS.txt
+ * @license The MIT License (MIT); see LICENSE.txt
+ */
+
+.ve-ui-mwReferenceGroupInputWidget .oo-ui-flaggableElement-emptyGroupPlaceholder {
+	color: #888;
+}

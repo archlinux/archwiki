@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica\Test;
 
 use Elastica\Document;
@@ -13,7 +14,7 @@ class ScanAndScrollTest extends BaseTest
     /**
      * Full foreach test.
      *
-     * @gropu functional
+     * @group functional
      */
     public function testForeach()
     {
@@ -62,7 +63,7 @@ class ScanAndScrollTest extends BaseTest
         $index->refresh();
 
         $docs = array();
-        for ($x = 1; $x <= 12; $x++) {
+        for ($x = 1; $x <= 12; ++$x) {
             $docs[] = new Document($x, array('id' => $x, 'key' => 'value'));
         }
 

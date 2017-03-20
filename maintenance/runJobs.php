@@ -33,13 +33,14 @@ use MediaWiki\Logger\LoggerFactory;
 class RunJobs extends Maintenance {
 	public function __construct() {
 		parent::__construct();
-		$this->mDescription = "Run pending jobs";
+		$this->addDescription( 'Run pending jobs' );
 		$this->addOption( 'maxjobs', 'Maximum number of jobs to run', false, true );
 		$this->addOption( 'maxtime', 'Maximum amount of wall-clock time', false, true );
 		$this->addOption( 'type', 'Type of job to run', false, true );
 		$this->addOption( 'procs', 'Number of processes to use', false, true );
 		$this->addOption( 'nothrottle', 'Ignore job throttling configuration', false, false );
 		$this->addOption( 'result', 'Set to JSON to print only a JSON response', false, true );
+		$this->addOption( 'wait', 'Wait for new jobs instead of exiting', false, false );
 	}
 
 	public function memoryLimit() {
@@ -52,8 +53,6 @@ class RunJobs extends Maintenance {
 	}
 
 	public function execute() {
-		global $wgCommandLineMode;
-
 		if ( $this->hasOption( 'procs' ) ) {
 			$procs = intval( $this->getOption( 'procs' ) );
 			if ( $procs < 1 || $procs > 1000 ) {
@@ -67,28 +66,45 @@ class RunJobs extends Maintenance {
 		}
 
 		$outputJSON = ( $this->getOption( 'result' ) === 'json' );
-
-		// Enable DBO_TRX for atomicity; JobRunner manages transactions
-		// and works well in web server mode already (@TODO: this is a hack)
-		$wgCommandLineMode = false;
+		$wait = $this->hasOption( 'wait' );
 
 		$runner = new JobRunner( LoggerFactory::getInstance( 'runJobs' ) );
 		if ( !$outputJSON ) {
-			$runner->setDebugHandler( array( $this, 'debugInternal' ) );
+			$runner->setDebugHandler( [ $this, 'debugInternal' ] );
 		}
 
-		$response = $runner->run( array(
-			'type'     => $this->getOption( 'type', false ),
-			'maxJobs'  => $this->getOption( 'maxjobs', false ),
-			'maxTime'  => $this->getOption( 'maxtime', false ),
-			'throttle' => $this->hasOption( 'nothrottle' ) ? false : true,
-		) );
+		$type = $this->getOption( 'type', false );
+		$maxJobs = $this->getOption( 'maxjobs', false );
+		$maxTime = $this->getOption( 'maxtime', false );
+		$throttle = !$this->hasOption( 'nothrottle' );
 
-		if ( $outputJSON ) {
-			$this->output( FormatJson::encode( $response, true ) );
+		while ( true ) {
+			$response = $runner->run( [
+				'type'     => $type,
+				'maxJobs'  => $maxJobs,
+				'maxTime'  => $maxTime,
+				'throttle' => $throttle,
+			] );
+
+			if ( $outputJSON ) {
+				$this->output( FormatJson::encode( $response, true ) );
+			}
+
+			if (
+				!$wait ||
+				$response['reached'] === 'time-limit' ||
+				$response['reached'] === 'job-limit' ||
+				$response['reached'] === 'memory-limit'
+			) {
+				break;
+			}
+
+			if ( $maxJobs !== false ) {
+				$maxJobs -= count( $response['jobs'] );
+			}
+
+			sleep( 1 );
 		}
-
-		$wgCommandLineMode = true;
 	}
 
 	/**

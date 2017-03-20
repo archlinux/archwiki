@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica\Test\Aggregation;
 
 use Elastica\Aggregation\DateRange;
@@ -48,5 +49,22 @@ class DateRangeTest extends BaseAggregationTest
                 $this->assertEquals(2, $bucket['doc_count']);
             }
         }
+    }
+
+    /**
+     * @group functional
+     */
+    public function testDateRangeSetFormat()
+    {
+        $agg = new DateRange('date');
+        $agg->setField('created');
+        $agg->addRange(1390958535000)->addRange(null, 1390958535000);
+        $agg->setFormat('m-y-d');
+
+        $query = new Query();
+        $query->addAggregation($agg);
+
+        $results = $this->_getIndexForTest()->search($query)->getAggregation('date');
+        $this->assertEquals('22-2014-29', $results['buckets'][0]['to_as_string']);
     }
 }

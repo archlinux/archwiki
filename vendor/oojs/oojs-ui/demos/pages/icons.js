@@ -9,7 +9,6 @@ OO.ui.Demo.static.pages.icons = function ( demo ) {
 				'check',
 				'circle',
 				'close',
-				'code',
 				'collapse',
 				'comment',
 				'ellipsis',
@@ -20,14 +19,10 @@ OO.ui.Demo.static.pages.icons = function ( demo ) {
 				'menu',
 				'next',
 				'notice',
-				'picture',
 				'previous',
-				'redo',
-				'remove',
 				'search',
 				'settings',
 				'tag',
-				'undo',
 				'window'
 			],
 			movement: [
@@ -43,8 +38,10 @@ OO.ui.Demo.static.pages.icons = function ( demo ) {
 			],
 			content: [
 				'article',
+				'articles',
 				'articleCheck',
 				'articleSearch',
+				'articleRedirect',
 				'citeArticle',
 				'book',
 				'journal',
@@ -63,7 +60,8 @@ OO.ui.Demo.static.pages.icons = function ( demo ) {
 				'signature',
 				'speechBubble',
 				'speechBubbleAdd',
-				'speechBubbles'
+				'speechBubbles',
+				'tray'
 			],
 			interactions: [
 				'beta',
@@ -102,7 +100,9 @@ OO.ui.Demo.static.pages.icons = function ( demo ) {
 				'editUndo',
 				'link',
 				'linkExternal',
-				'linkSecure'
+				'linkSecure',
+				'redo',
+				'undo'
 			],
 			'editing-styling': [
 				'bigger',
@@ -113,7 +113,6 @@ OO.ui.Demo.static.pages.icons = function ( demo ) {
 				'italic',
 				'strikethrough',
 				'underline',
-				'textLanguage',
 				'textDirLTR',
 				'textDirRTL',
 				'textStyle'
@@ -128,17 +127,19 @@ OO.ui.Demo.static.pages.icons = function ( demo ) {
 				'alignCentre',
 				'alignLeft',
 				'alignRight',
+				'attachment',
 				'calendar',
+				'code',
 				'find',
-				'insert',
+				'language',
 				'layout',
+				'markup',
 				'newline',
 				'noWikiText',
 				'outline',
 				'puzzle',
 				'quotes',
 				'quotesAdd',
-				'redirect',
 				'searchCaseSensitive',
 				'searchRegularExpression',
 				'specialCharacter',
@@ -150,13 +151,14 @@ OO.ui.Demo.static.pages.icons = function ( demo ) {
 				'tableCaption',
 				'tableMergeCells',
 				'templateAdd',
-				'translation',
 				'wikiText'
 			],
 			media: [
+				'fullScreen',
 				'image',
 				'imageAdd',
 				'imageLock',
+				'imageGallery',
 				'photoGallery',
 				'play',
 				'stop'

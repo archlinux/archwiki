@@ -11,5 +11,6 @@
 	"citethispage-link": "Dës Säit zitéieren",
 	"tooltip-citethispage": "Informatioune wéi een dës Säit zitéiere kann",
 	"citethispage-change-submit": "weisen",
-	"citethispage-change-target": "Säit:"
+	"citethispage-change-target": "Säit:",
+	"citethispage-badrevision": "Feeler: Et gouf keng Versioun fir d'Säit \"$1\" mat der Versiounsnummer (ID) $2 fonnt."
 }

@@ -24,6 +24,7 @@
 	"titleblacklist-forbidden-new-account": "Parameters:\n* $1 - blacklist entry\n* $2 - username\n{{Related|Titleblacklist-forbidden}}",
 	"titleblacklist-invalid": "Used as error message.\n\nThis message is followed by a list of the invalid lines.\n\nParameters:\n* $1 - number of invalid lines in the title blacklist",
 	"titleblacklist-override": "Check box label on \"Create account\" form if the user has the user right ''tboverride-account''. If checked, the [[MediaWiki:Titleblacklist]] is ignored during account creation.",
+	"titleblacklist-override-help": "API help message giving more information about {{msg-mw|titleblacklist-override}}.",
 	"titleblacklist-warning": "Displayed when a user is editing a page that only administrators (or custom user groups with the tboverride right) can edit due to the title blacklist. Parameters:\n* $1 - blacklist entry",
 	"right-tboverride": "{{doc-right|tboverride}}",
 	"right-tboverride-account": "{{doc-right|tboverride-account}}",
@@ -33,5 +34,6 @@
 	"apihelp-titleblacklist-param-action": "{{doc-apihelp-param|titleblacklist|action}}",
 	"apihelp-titleblacklist-param-nooverride": "{{doc-apihelp-param|titleblacklist|nooverride}}",
 	"apihelp-titleblacklist-example-1": "{{doc-apihelp-example|titleblacklist}}",
-	"apihelp-titleblacklist-example-2": "Replace \"Bar\" with any example string suitable for your language, for instance the translation of \"Example\".\n----\n{{doc-apihelp-example|titleblacklist}}"
+	"apihelp-titleblacklist-example-2": "Replace \"Bar\" with any example string suitable for your language, for instance the translation of \"Example\".\n----\n{{doc-apihelp-example|titleblacklist}}",
+	"apihelp-createaccount-param-ignoretitleblacklist": "{{doc-apihelp-param|createaccount|ignoretitleblacklist}}"
 }

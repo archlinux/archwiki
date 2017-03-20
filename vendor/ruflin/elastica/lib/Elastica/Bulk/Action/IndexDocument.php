@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica\Bulk\Action;
 
 use Elastica\AbstractUpdateAction;
@@ -26,7 +27,7 @@ class IndexDocument extends AbstractDocument
     }
 
     /**
-     * @param \Elastica\AbstractUpdateAction $source
+     * @param \Elastica\AbstractUpdateAction $action
      *
      * @return array
      */
@@ -39,7 +40,6 @@ class IndexDocument extends AbstractDocument
             'version',
             'version_type',
             'routing',
-            'percolate',
             'parent',
             'ttl',
             'timestamp',

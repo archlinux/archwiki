@@ -21,6 +21,10 @@
  * @ingroup SpecialPage
  */
 
+use MediaWiki\Auth\AuthManager;
+use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\MediaWikiServices;
+
 /**
  * Parent class for all special pages.
  *
@@ -57,7 +61,17 @@ class SpecialPage {
 	protected $mContext;
 
 	/**
+	 * @var \MediaWiki\Linker\LinkRenderer|null
+	 */
+	private $linkRenderer;
+
+	/**
 	 * Get a localised Title object for a specified special page name
+	 * If you don't need a full Title object, consider using TitleValue through
+	 * getTitleValueFor() below.
+	 *
+	 * @since 1.9
+	 * @since 1.21 $fragment parameter added
 	 *
 	 * @param string $name
 	 * @param string|bool $subpage Subpage string, or false to not use a subpage
@@ -66,9 +80,24 @@ class SpecialPage {
 	 * @throws MWException
 	 */
 	public static function getTitleFor( $name, $subpage = false, $fragment = '' ) {
+		return Title::newFromTitleValue(
+			self::getTitleValueFor( $name, $subpage, $fragment )
+		);
+	}
+
+	/**
+	 * Get a localised TitleValue object for a specified special page name
+	 *
+	 * @since 1.28
+	 * @param string $name
+	 * @param string|bool $subpage Subpage string, or false to not use a subpage
+	 * @param string $fragment The link fragment (after the "#")
+	 * @return TitleValue
+	 */
+	public static function getTitleValueFor( $name, $subpage = false, $fragment = '' ) {
 		$name = SpecialPageFactory::getLocalNameFor( $name, $subpage );
 
-		return Title::makeTitle( NS_SPECIAL, $name, $fragment );
+		return new TitleValue( NS_SPECIAL, $name, $fragment );
 	}
 
 	/**
@@ -166,6 +195,27 @@ class SpecialPage {
 	 */
 	public function isIncludable() {
 		return $this->mIncludable;
+	}
+
+	/**
+	 * How long to cache page when it is being included.
+	 *
+	 * @note If cache time is not 0, then the current user becomes an anon
+	 *   if you want to do any per-user customizations, than this method
+	 *   must be overriden to return 0.
+	 * @since 1.26
+	 * @return int Time in seconds, 0 to disable caching altogether,
+	 *  false to use the parent page's cache settings
+	 */
+	public function maxIncludeCacheTime() {
+		return $this->getConfig()->get( 'MiserMode' ) ? $this->getCacheTTL() : 0;
+	}
+
+	/**
+	 * @return int Seconds that this page can be cached
+	 */
+	protected function getCacheTTL() {
+		return 60 * 60;
 	}
 
 	/**
@@ -292,6 +342,66 @@ class SpecialPage {
 	}
 
 	/**
+	 * Tells if the special page does something security-sensitive and needs extra defense against
+	 * a stolen account (e.g. a reauthentication). What exactly that will mean is decided by the
+	 * authentication framework.
+	 * @return bool|string False or the argument for AuthManager::securitySensitiveOperationStatus().
+	 *   Typically a special page needing elevated security would return its name here.
+	 */
+	protected function getLoginSecurityLevel() {
+		return false;
+	}
+
+	/**
+	 * Verifies that the user meets the security level, possibly reauthenticating them in the process.
+	 *
+	 * This should be used when the page does something security-sensitive and needs extra defense
+	 * against a stolen account (e.g. a reauthentication). The authentication framework will make
+	 * an extra effort to make sure the user account is not compromised. What that exactly means
+	 * will depend on the system and user settings; e.g. the user might be required to log in again
+	 * unless their last login happened recently, or they might be given a second-factor challenge.
+	 *
+	 * Calling this method will result in one if these actions:
+	 * - return true: all good.
+	 * - return false and set a redirect: caller should abort; the redirect will take the user
+	 *   to the login page for reauthentication, and back.
+	 * - throw an exception if there is no way for the user to meet the requirements without using
+	 *   a different access method (e.g. this functionality is only available from a specific IP).
+	 *
+	 * Note that this does not in any way check that the user is authorized to use this special page
+	 * (use checkPermissions() for that).
+	 *
+	 * @param string $level A security level. Can be an arbitrary string, defaults to the page name.
+	 * @return bool False means a redirect to the reauthentication page has been set and processing
+	 *   of the special page should be aborted.
+	 * @throws ErrorPageError If the security level cannot be met, even with reauthentication.
+	 */
+	protected function checkLoginSecurityLevel( $level = null ) {
+		$level = $level ?: $this->getName();
+		$securityStatus = AuthManager::singleton()->securitySensitiveOperationStatus( $level );
+		if ( $securityStatus === AuthManager::SEC_OK ) {
+			return true;
+		} elseif ( $securityStatus === AuthManager::SEC_REAUTH ) {
+			$request = $this->getRequest();
+			$title = SpecialPage::getTitleFor( 'Userlogin' );
+			$query = [
+				'returnto' => $this->getFullTitle()->getPrefixedDBkey(),
+				'returntoquery' => wfArrayToCgi( array_diff_key( $request->getQueryValues(),
+					[ 'title' => true ] ) ),
+				'force' => $level,
+			];
+			$url = $title->getFullURL( $query, false, PROTO_HTTPS );
+
+			$this->getOutput()->redirect( $url );
+			return false;
+		}
+
+		$titleMessage = wfMessage( 'specialpage-securitylevel-not-allowed-title' );
+		$errorMessage = wfMessage( 'specialpage-securitylevel-not-allowed' );
+		throw new ErrorPageError( $titleMessage, $errorMessage );
+	}
+
+	/**
 	 * Return an array of subpages beginning with $search that this special page will accept.
 	 *
 	 * For example, if a page supports subpages "foo", "bar" and "baz" (as in Special:PageName/foo,
@@ -310,7 +420,7 @@ class SpecialPage {
 	public function prefixSearchSubpages( $search, $limit, $offset ) {
 		$subpages = $this->getSubpagesForPrefixSearch();
 		if ( !$subpages ) {
-			return array();
+			return [];
 		}
 
 		return self::prefixSearchArray( $search, $limit, $subpages, $offset );
@@ -325,7 +435,30 @@ class SpecialPage {
 	 * @return string[] subpages to search from
 	 */
 	protected function getSubpagesForPrefixSearch() {
-		return array();
+		return [];
+	}
+
+	/**
+	 * Perform a regular substring search for prefixSearchSubpages
+	 * @param string $search Prefix to search for
+	 * @param int $limit Maximum number of results to return (usually 10)
+	 * @param int $offset Number of results to skip (usually 0)
+	 * @return string[] Matching subpages
+	 */
+	protected function prefixSearchString( $search, $limit, $offset ) {
+		$title = Title::newFromText( $search );
+		if ( !$title || !$title->canExist() ) {
+			// No prefix suggestion in special and media namespace
+			return [];
+		}
+
+		$searchEngine = MediaWikiServices::getInstance()->newSearchEngine();
+		$searchEngine->setLimitOffset( $limit, $offset );
+		$searchEngine->setNamespaces( [] );
+		$result = $searchEngine->defaultPrefixSearch( $search );
+		return array_map( function( Title $t ) {
+			return $t->getPrefixedText();
+		}, $result );
 	}
 
 	/**
@@ -354,11 +487,11 @@ class SpecialPage {
 		$out->setRobotPolicy( $this->getRobotPolicy() );
 		$out->setPageTitle( $this->getDescription() );
 		if ( $this->getConfig()->get( 'UseMediaWikiUIEverywhere' ) ) {
-			$out->addModuleStyles( array(
+			$out->addModuleStyles( [
 				'mediawiki.ui.input',
 				'mediawiki.ui.radio',
 				'mediawiki.ui.checkbox',
-			) );
+			] );
 		}
 	}
 
@@ -372,15 +505,20 @@ class SpecialPage {
 	final public function run( $subPage ) {
 		/**
 		 * Gets called before @see SpecialPage::execute.
+		 * Return false to prevent calling execute() (since 1.27+).
 		 *
 		 * @since 1.20
 		 *
 		 * @param SpecialPage $this
 		 * @param string|null $subPage
 		 */
-		Hooks::run( 'SpecialPageBeforeExecute', array( $this, $subPage ) );
+		if ( !Hooks::run( 'SpecialPageBeforeExecute', [ $this, $subPage ] ) ) {
+			return;
+		}
 
-		$this->beforeExecute( $subPage );
+		if ( $this->beforeExecute( $subPage ) === false ) {
+			return;
+		}
 		$this->execute( $subPage );
 		$this->afterExecute( $subPage );
 
@@ -392,15 +530,17 @@ class SpecialPage {
 		 * @param SpecialPage $this
 		 * @param string|null $subPage
 		 */
-		Hooks::run( 'SpecialPageAfterExecute', array( $this, $subPage ) );
+		Hooks::run( 'SpecialPageAfterExecute', [ $this, $subPage ] );
 	}
 
 	/**
 	 * Gets called before @see SpecialPage::execute.
+	 * Return false to prevent calling execute() (since 1.27+).
 	 *
 	 * @since 1.20
 	 *
 	 * @param string|null $subPage
+	 * @return bool|void
 	 */
 	protected function beforeExecute( $subPage ) {
 		// No-op
@@ -428,6 +568,7 @@ class SpecialPage {
 	public function execute( $subPage ) {
 		$this->setHeaders();
 		$this->checkPermissions();
+		$this->checkLoginSecurityLevel( $this->getLoginSecurityLevel() );
 		$this->outputHeader();
 	}
 
@@ -598,12 +739,13 @@ class SpecialPage {
 	/**
 	 * Wrapper around wfMessage that sets the current context.
 	 *
+	 * @since 1.16
 	 * @return Message
 	 * @see wfMessage
 	 */
 	public function msg( /* $args */ ) {
 		$message = call_user_func_array(
-			array( $this->getContext(), 'msg' ),
+			[ $this->getContext(), 'msg' ],
 			func_get_args()
 		);
 		// RequestContext passes context to wfMessage, and the language is set from
@@ -626,7 +768,7 @@ class SpecialPage {
 		$feedTemplate = wfScript( 'api' );
 
 		foreach ( $this->getConfig()->get( 'FeedClasses' ) as $format => $class ) {
-			$theseParams = $params + array( 'feedformat' => $format );
+			$theseParams = $params + [ 'feedformat' => $format ];
 			$url = wfAppendQuery( $feedTemplate, $theseParams );
 			$this->getOutput()->addFeedLink( $format, $url );
 		}
@@ -676,6 +818,16 @@ class SpecialPage {
 	}
 
 	/**
+	 * Indicates whether this special page may perform database writes
+	 *
+	 * @return bool
+	 * @since 1.27
+	 */
+	public function doesWrites() {
+		return false;
+	}
+
+	/**
 	 * Under which header this special page is listed in Special:SpecialPages
 	 * See messages 'specialpages-group-*' for valid names
 	 * This method defaults to group 'other'
@@ -695,5 +847,25 @@ class SpecialPage {
 		if ( $this->getRequest()->wasPosted() ) {
 			wfTransactionalTimeLimit();
 		}
+	}
+
+	/**
+	 * @since 1.28
+	 * @return \MediaWiki\Linker\LinkRenderer
+	 */
+	protected function getLinkRenderer() {
+		if ( $this->linkRenderer ) {
+			return $this->linkRenderer;
+		} else {
+			return MediaWikiServices::getInstance()->getLinkRenderer();
+		}
+	}
+
+	/**
+	 * @since 1.28
+	 * @param \MediaWiki\Linker\LinkRenderer $linkRenderer
+	 */
+	public function setLinkRenderer( LinkRenderer $linkRenderer ) {
+		$this->linkRenderer = $linkRenderer;
 	}
 }

@@ -1,8 +1,9 @@
 <?php
+
 namespace Elastica\Aggregation;
 
 /**
- * Class AbstractTermsAggergation.
+ * Class AbstractTermsAggregation.
  */
 abstract class AbstractTermsAggregation extends AbstractSimpleAggregation
 {

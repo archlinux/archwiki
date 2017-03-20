@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica\Aggregation;
 
 use Elastica\Exception\InvalidException;
@@ -6,7 +7,7 @@ use Elastica\Exception\InvalidException;
 /**
  * Class IpRange.
  *
- * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-iprange-aggregation.html
+ * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-iprange-aggregation.html
  */
 class IpRange extends AbstractAggregation
 {

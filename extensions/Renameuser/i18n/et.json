@@ -33,7 +33,7 @@
 	"renameuser-page-unmoved": "Lehekülje $1 teisaldamine nime $2 alla ei õnnestunud.",
 	"log-name-renameuser": "Kasutajanime muutmise logi",
 	"log-description-renameuser": "See on kasutajanimede muutmise logi.",
-	"logentry-renameuser-renameuser": "$1 {{GENDER:$2|nimetas}} kasutaja ({{PLURAL:$6|üks redigeerimine|$6 redigeerimist}}) $4 ümber kasutajaks $5",
+	"logentry-renameuser-renameuser": "$1 {{GENDER:$2|nimetas}} kasutaja ({{PLURAL:$6|üks redigeerimine|$6 redigeerimist}}) $4 ümber kasutajaks {{GENDER:$7|$5}}",
 	"logentry-renameuser-renameuser-legacier": "$1 nimetas kasutaja $4 ümber kasutajaks $5",
 	"renameuser-move-log": "Teisaldatud automaatselt, kui kasutaja \"[[User:$1|$1]]\" nimetati ümber kasutajaks \"[[User:$2|$2]]\"",
 	"action-renameuser": "kasutajaid ümber nimetadata",

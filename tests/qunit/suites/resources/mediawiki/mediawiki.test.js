@@ -1,5 +1,5 @@
 /*jshint -W024 */
-( function ( mw, $ ) {
+( function ( mw ) {
 	var specialCharactersPageName,
 		// Can't mock SITENAME since jqueryMsg caches it at load
 		siteName = mw.config.get( 'wgSiteName' );
@@ -32,11 +32,6 @@
 		}
 	} ) );
 
-	mw.loader.addSource(
-		'testloader',
-		QUnit.fixurl( mw.config.get( 'wgScriptPath' ) + '/tests/qunit/data/load.mock.php' )
-	);
-
 	QUnit.test( 'Initial check', 8, function ( assert ) {
 		assert.ok( window.jQuery, 'jQuery defined' );
 		assert.ok( window.$, '$ defined' );
@@ -57,10 +52,24 @@
 		this.restoreWarnings();
 	} );
 
-	QUnit.test( 'mw.Map', 35, function ( assert ) {
+	QUnit.test( 'mw.format', 2, function ( assert ) {
+		assert.equal(
+			mw.format( 'Format $1 $2', 'foo', 'bar' ),
+			'Format foo bar',
+			'Simple parameters'
+		);
+		assert.equal(
+			mw.format( 'Format $1 $2' ),
+			'Format $1 $2',
+			'Missing parameters'
+		);
+	} );
+
+	QUnit.test( 'mw.Map', function ( assert ) {
 		var arry, conf, funky, globalConf, nummy, someValues;
 
 		conf = new mw.Map();
+
 		// Dummy variables
 		funky = function () {};
 		arry = [];
@@ -118,15 +127,15 @@
 			lorem: 'ipsum'
 		}, 'Map.get returns multiple values correctly as an object' );
 
-		assert.deepEqual( conf, new mw.Map( conf.values ), 'new mw.Map maps over existing values-bearing object' );
-
 		assert.deepEqual( conf.get( [ 'foo', 'notExist' ] ), {
 			foo: 'bar',
 			notExist: null
 		}, 'Map.get return includes keys that were not found as null values' );
 
 		// Interacting with globals and accessing the values object
+		this.suppressWarnings();
 		assert.strictEqual( conf.get(), conf.values, 'Map.get returns the entire values object by reference (if called without arguments)' );
+		this.restoreWarnings();
 
 		conf.set( 'globalMapChecker', 'Hi' );
 
@@ -162,11 +171,7 @@
 		}
 	} );
 
-	QUnit.test( 'mw.config', 1, function ( assert ) {
-		assert.ok( mw.config instanceof mw.Map, 'mw.config instance of mw.Map' );
-	} );
-
-	QUnit.test( 'mw.message & mw.messages', 100, function ( assert ) {
+	QUnit.test( 'mw.message & mw.messages', function ( assert ) {
 		var goodbye, hello;
 
 		// Convenience method for asserting the same result for multiple formats
@@ -181,19 +186,18 @@
 		}
 
 		assert.ok( mw.messages, 'messages defined' );
-		assert.ok( mw.messages instanceof mw.Map, 'mw.messages instance of mw.Map' );
 		assert.ok( mw.messages.set( 'hello', 'Hello <b>awesome</b> world' ), 'mw.messages.set: Register' );
 
 		hello = mw.message( 'hello' );
 
-		// https://bugzilla.wikimedia.org/show_bug.cgi?id=44459
+		// https://phabricator.wikimedia.org/T46459
 		assert.equal( hello.format, 'text', 'Message property "format" defaults to "text"' );
 
 		assert.strictEqual( hello.map, mw.messages, 'Message property "map" defaults to the global instance in mw.messages' );
 		assert.equal( hello.key, 'hello', 'Message property "key" (currect key)' );
 		assert.deepEqual( hello.parameters, [], 'Message property "parameters" defaults to an empty array' );
 
-		// Todo
+		// TODO
 		assert.ok( hello.params, 'Message prototype "params"' );
 
 		hello.format = 'plain';
@@ -336,708 +340,6 @@
 		assert.equal( mw.msg( 'int-msg' ), 'Some Other Message', 'int is resolved' );
 	} );
 
-	/**
-	 * The sync style load test (for @import). This is, in a way, also an open bug for
-	 * ResourceLoader ("execute js after styles are loaded"), but browsers don't offer a
-	 * way to get a callback from when a stylesheet is loaded (that is, including any
-	 * `@import` rules inside). To work around this, we'll have a little time loop to check
-	 * if the styles apply.
-	 *
-	 * Note: This test originally used new Image() and onerror to get a callback
-	 * when the url is loaded, but that is fragile since it doesn't monitor the
-	 * same request as the css @import, and Safari 4 has issues with
-	 * onerror/onload not being fired at all in weird cases like this.
-	 */
-	function assertStyleAsync( assert, $element, prop, val, fn ) {
-		var styleTestStart,
-			el = $element.get( 0 ),
-			styleTestTimeout = ( QUnit.config.testTimeout || 5000 ) - 200;
-
-		function isCssImportApplied() {
-			// Trigger reflow, repaint, redraw, whatever (cross-browser)
-			var x = $element.css( 'height' );
-			x = el.innerHTML;
-			el.className = el.className;
-			x = document.documentElement.clientHeight;
-
-			return $element.css( prop ) === val;
-		}
-
-		function styleTestLoop() {
-			var styleTestSince = new Date().getTime() - styleTestStart;
-			// If it is passing or if we timed out, run the real test and stop the loop
-			if ( isCssImportApplied() || styleTestSince > styleTestTimeout ) {
-				assert.equal( $element.css( prop ), val,
-					'style "' + prop + ': ' + val + '" from url is applied (after ' + styleTestSince + 'ms)'
-				);
-
-				if ( fn ) {
-					fn();
-				}
-
-				return;
-			}
-			// Otherwise, keep polling
-			setTimeout( styleTestLoop );
-		}
-
-		// Start the loop
-		styleTestStart = new Date().getTime();
-		styleTestLoop();
-	}
-
-	function urlStyleTest( selector, prop, val ) {
-		return QUnit.fixurl(
-			mw.config.get( 'wgScriptPath' ) +
-				'/tests/qunit/data/styleTest.css.php?' +
-				$.param( {
-					selector: selector,
-					prop: prop,
-					val: val
-				} )
-		);
-	}
-
-	QUnit.asyncTest( 'mw.loader', 2, function ( assert ) {
-		var isAwesomeDone;
-
-		mw.loader.testCallback = function () {
-			QUnit.start();
-			assert.strictEqual( isAwesomeDone, undefined, 'Implementing module is.awesome: isAwesomeDone should still be undefined' );
-			isAwesomeDone = true;
-		};
-
-		mw.loader.implement( 'test.callback', [ QUnit.fixurl( mw.config.get( 'wgScriptPath' ) + '/tests/qunit/data/callMwLoaderTestCallback.js' ) ] );
-
-		mw.loader.using( 'test.callback', function () {
-
-			// /sample/awesome.js declares the "mw.loader.testCallback" function
-			// which contains a call to start() and ok()
-			assert.strictEqual( isAwesomeDone, true, 'test.callback module should\'ve caused isAwesomeDone to be true' );
-			delete mw.loader.testCallback;
-
-		}, function () {
-			QUnit.start();
-			assert.ok( false, 'Error callback fired while loader.using "test.callback" module' );
-		} );
-	} );
-
-	QUnit.asyncTest( 'mw.loader with Object method as module name', 2, function ( assert ) {
-		var isAwesomeDone;
-
-		mw.loader.testCallback = function () {
-			QUnit.start();
-			assert.strictEqual( isAwesomeDone, undefined, 'Implementing module hasOwnProperty: isAwesomeDone should still be undefined' );
-			isAwesomeDone = true;
-		};
-
-		mw.loader.implement( 'hasOwnProperty', [ QUnit.fixurl( mw.config.get( 'wgScriptPath' ) + '/tests/qunit/data/callMwLoaderTestCallback.js' ) ], {}, {} );
-
-		mw.loader.using( 'hasOwnProperty', function () {
-
-			// /sample/awesome.js declares the "mw.loader.testCallback" function
-			// which contains a call to start() and ok()
-			assert.strictEqual( isAwesomeDone, true, 'hasOwnProperty module should\'ve caused isAwesomeDone to be true' );
-			delete mw.loader.testCallback;
-
-		}, function () {
-			QUnit.start();
-			assert.ok( false, 'Error callback fired while loader.using "hasOwnProperty" module' );
-		} );
-	} );
-
-	QUnit.asyncTest( 'mw.loader.using( .. ).promise', 2, function ( assert ) {
-		var isAwesomeDone;
-
-		mw.loader.testCallback = function () {
-			QUnit.start();
-			assert.strictEqual( isAwesomeDone, undefined, 'Implementing module is.awesome: isAwesomeDone should still be undefined' );
-			isAwesomeDone = true;
-		};
-
-		mw.loader.implement( 'test.promise', [ QUnit.fixurl( mw.config.get( 'wgScriptPath' ) + '/tests/qunit/data/callMwLoaderTestCallback.js' ) ] );
-
-		mw.loader.using( 'test.promise' )
-		.done( function () {
-
-			// /sample/awesome.js declares the "mw.loader.testCallback" function
-			// which contains a call to start() and ok()
-			assert.strictEqual( isAwesomeDone, true, 'test.promise module should\'ve caused isAwesomeDone to be true' );
-			delete mw.loader.testCallback;
-
-		} )
-		.fail( function () {
-			QUnit.start();
-			assert.ok( false, 'Error callback fired while loader.using "test.promise" module' );
-		} );
-	} );
-
-	QUnit.asyncTest( 'mw.loader.implement( styles={ "css": [text, ..] } )', 2, function ( assert ) {
-		var $element = $( '<div class="mw-test-implement-a"></div>' ).appendTo( '#qunit-fixture' );
-
-		assert.notEqual(
-			$element.css( 'float' ),
-			'right',
-			'style is clear'
-		);
-
-		mw.loader.implement(
-			'test.implement.a',
-			function () {
-				assert.equal(
-					$element.css( 'float' ),
-					'right',
-					'style is applied'
-				);
-				QUnit.start();
-			},
-			{
-				all: '.mw-test-implement-a { float: right; }'
-			}
-		);
-
-		mw.loader.load( [
-			'test.implement.a'
-		] );
-	} );
-
-	QUnit.asyncTest( 'mw.loader.implement( styles={ "url": { <media>: [url, ..] } } )', 7, function ( assert ) {
-		var $element1 = $( '<div class="mw-test-implement-b1"></div>' ).appendTo( '#qunit-fixture' ),
-			$element2 = $( '<div class="mw-test-implement-b2"></div>' ).appendTo( '#qunit-fixture' ),
-			$element3 = $( '<div class="mw-test-implement-b3"></div>' ).appendTo( '#qunit-fixture' );
-
-		assert.notEqual(
-			$element1.css( 'text-align' ),
-			'center',
-			'style is clear'
-		);
-		assert.notEqual(
-			$element2.css( 'float' ),
-			'left',
-			'style is clear'
-		);
-		assert.notEqual(
-			$element3.css( 'text-align' ),
-			'right',
-			'style is clear'
-		);
-
-		mw.loader.implement(
-			'test.implement.b',
-			function () {
-				// Note: QUnit.start() must only be called when the entire test is
-				// complete. So, make sure that we don't start until *both*
-				// assertStyleAsync calls have completed.
-				var pending = 2;
-				assertStyleAsync( assert, $element2, 'float', 'left', function () {
-					assert.notEqual( $element1.css( 'text-align' ), 'center', 'print style is not applied' );
-
-					pending--;
-					if ( pending === 0 ) {
-						QUnit.start();
-					}
-				} );
-				assertStyleAsync( assert, $element3, 'float', 'right', function () {
-					assert.notEqual( $element1.css( 'text-align' ), 'center', 'print style is not applied' );
-
-					pending--;
-					if ( pending === 0 ) {
-						QUnit.start();
-					}
-				} );
-			},
-			{
-				url: {
-					print: [ urlStyleTest( '.mw-test-implement-b1', 'text-align', 'center' ) ],
-					screen: [
-						// bug 40834: Make sure it actually works with more than 1 stylesheet reference
-						urlStyleTest( '.mw-test-implement-b2', 'float', 'left' ),
-						urlStyleTest( '.mw-test-implement-b3', 'float', 'right' )
-					]
-				}
-			}
-		);
-
-		mw.loader.load( [
-			'test.implement.b'
-		] );
-	} );
-
-	// Backwards compatibility
-	QUnit.asyncTest( 'mw.loader.implement( styles={ <media>: text } ) (back-compat)', 2, function ( assert ) {
-		var $element = $( '<div class="mw-test-implement-c"></div>' ).appendTo( '#qunit-fixture' );
-
-		assert.notEqual(
-			$element.css( 'float' ),
-			'right',
-			'style is clear'
-		);
-
-		mw.loader.implement(
-			'test.implement.c',
-			function () {
-				assert.equal(
-					$element.css( 'float' ),
-					'right',
-					'style is applied'
-				);
-				QUnit.start();
-			},
-			{
-				all: '.mw-test-implement-c { float: right; }'
-			}
-		);
-
-		mw.loader.load( [
-			'test.implement.c'
-		] );
-	} );
-
-	// Backwards compatibility
-	QUnit.asyncTest( 'mw.loader.implement( styles={ <media>: [url, ..] } ) (back-compat)', 4, function ( assert ) {
-		var $element = $( '<div class="mw-test-implement-d"></div>' ).appendTo( '#qunit-fixture' ),
-			$element2 = $( '<div class="mw-test-implement-d2"></div>' ).appendTo( '#qunit-fixture' );
-
-		assert.notEqual(
-			$element.css( 'float' ),
-			'right',
-			'style is clear'
-		);
-		assert.notEqual(
-			$element2.css( 'text-align' ),
-			'center',
-			'style is clear'
-		);
-
-		mw.loader.implement(
-			'test.implement.d',
-			function () {
-				assertStyleAsync( assert, $element, 'float', 'right', function () {
-
-					assert.notEqual( $element2.css( 'text-align' ), 'center', 'print style is not applied (bug 40500)' );
-
-					QUnit.start();
-				} );
-			},
-			{
-				all: [ urlStyleTest( '.mw-test-implement-d', 'float', 'right' ) ],
-				print: [ urlStyleTest( '.mw-test-implement-d2', 'text-align', 'center' ) ]
-			}
-		);
-
-		mw.loader.load( [
-			'test.implement.d'
-		] );
-	} );
-
-	// @import (bug 31676)
-	QUnit.asyncTest( 'mw.loader.implement( styles has @import)', 7, function ( assert ) {
-		var isJsExecuted, $element;
-
-		mw.loader.implement(
-			'test.implement.import',
-			function () {
-				assert.strictEqual( isJsExecuted, undefined, 'script not executed multiple times' );
-				isJsExecuted = true;
-
-				assert.equal( mw.loader.getState( 'test.implement.import' ), 'executing', 'module state during implement() script execution' );
-
-				$element = $( '<div class="mw-test-implement-import">Foo bar</div>' ).appendTo( '#qunit-fixture' );
-
-				assert.equal( mw.msg( 'test-foobar' ), 'Hello Foobar, $1!', 'messages load before script execution' );
-
-				assertStyleAsync( assert, $element, 'float', 'right', function () {
-					assert.equal( $element.css( 'text-align' ), 'center',
-						'CSS styles after the @import rule are working'
-					);
-
-					QUnit.start();
-				} );
-			},
-			{
-				css: [
-					'@import url(\''
-						+ urlStyleTest( '.mw-test-implement-import', 'float', 'right' )
-						+ '\');\n'
-						+ '.mw-test-implement-import { text-align: center; }'
-				]
-			},
-			{
-				'test-foobar': 'Hello Foobar, $1!'
-			}
-		);
-
-		mw.loader.using( 'test.implement.import' ).always( function () {
-			assert.strictEqual( isJsExecuted, true, 'script executed' );
-			assert.equal( mw.loader.getState( 'test.implement.import' ), 'ready', 'module state after script execution' );
-		} );
-	} );
-
-	QUnit.asyncTest( 'mw.loader.implement( dependency with styles )', 4, function ( assert ) {
-		var $element = $( '<div class="mw-test-implement-e"></div>' ).appendTo( '#qunit-fixture' ),
-			$element2 = $( '<div class="mw-test-implement-e2"></div>' ).appendTo( '#qunit-fixture' );
-
-		assert.notEqual(
-			$element.css( 'float' ),
-			'right',
-			'style is clear'
-		);
-		assert.notEqual(
-			$element2.css( 'float' ),
-			'left',
-			'style is clear'
-		);
-
-		mw.loader.register( [
-			[ 'test.implement.e', '0', [ 'test.implement.e2' ] ],
-			[ 'test.implement.e2', '0' ]
-		] );
-
-		mw.loader.implement(
-			'test.implement.e',
-			function () {
-				assert.equal(
-					$element.css( 'float' ),
-					'right',
-					'Depending module\'s style is applied'
-				);
-				QUnit.start();
-			},
-			{
-				all: '.mw-test-implement-e { float: right; }'
-			}
-		);
-
-		mw.loader.implement(
-			'test.implement.e2',
-			function () {
-				assert.equal(
-					$element2.css( 'float' ),
-					'left',
-					'Dependency\'s style is applied'
-				);
-			},
-			{
-				all: '.mw-test-implement-e2 { float: left; }'
-			}
-		);
-
-		mw.loader.load( [
-			'test.implement.e'
-		] );
-	} );
-
-	QUnit.test( 'mw.loader.implement( only scripts )', 1, function ( assert ) {
-		mw.loader.implement( 'test.onlyscripts', function () {} );
-		assert.strictEqual( mw.loader.getState( 'test.onlyscripts' ), 'ready' );
-	} );
-
-	QUnit.asyncTest( 'mw.loader.implement( only messages )', 2, function ( assert ) {
-		assert.assertFalse( mw.messages.exists( 'bug_29107' ), 'Verify that the test message doesn\'t exist yet' );
-
-		// jscs: disable requireCamelCaseOrUpperCaseIdentifiers
-		mw.loader.implement( 'test.implement.msgs', [], {}, { bug_29107: 'loaded' } );
-		// jscs: enable requireCamelCaseOrUpperCaseIdentifiers
-		mw.loader.using( 'test.implement.msgs', function () {
-			QUnit.start();
-			assert.ok( mw.messages.exists( 'bug_29107' ), 'Bug 29107: messages-only module should implement ok' );
-		}, function () {
-			QUnit.start();
-			assert.ok( false, 'Error callback fired while implementing "test.implement.msgs" module' );
-		} );
-	} );
-
-	QUnit.test( 'mw.loader erroneous indirect dependency', 4, function ( assert ) {
-		// don't emit an error event
-		this.sandbox.stub( mw, 'track' );
-
-		mw.loader.register( [
-			[ 'test.module1', '0' ],
-			[ 'test.module2', '0', [ 'test.module1' ] ],
-			[ 'test.module3', '0', [ 'test.module2' ] ]
-		] );
-		mw.loader.implement( 'test.module1', function () {
-			throw new Error( 'expected' );
-		}, {}, {} );
-		assert.strictEqual( mw.loader.getState( 'test.module1' ), 'error', 'Expected "error" state for test.module1' );
-		assert.strictEqual( mw.loader.getState( 'test.module2' ), 'error', 'Expected "error" state for test.module2' );
-		assert.strictEqual( mw.loader.getState( 'test.module3' ), 'error', 'Expected "error" state for test.module3' );
-
-		assert.strictEqual( mw.track.callCount, 1 );
-	} );
-
-	QUnit.test( 'mw.loader out-of-order implementation', 9, function ( assert ) {
-		mw.loader.register( [
-			[ 'test.module4', '0' ],
-			[ 'test.module5', '0', [ 'test.module4' ] ],
-			[ 'test.module6', '0', [ 'test.module5' ] ]
-		] );
-		mw.loader.implement( 'test.module4', function () {} );
-		assert.strictEqual( mw.loader.getState( 'test.module4' ), 'ready', 'Expected "ready" state for test.module4' );
-		assert.strictEqual( mw.loader.getState( 'test.module5' ), 'registered', 'Expected "registered" state for test.module5' );
-		assert.strictEqual( mw.loader.getState( 'test.module6' ), 'registered', 'Expected "registered" state for test.module6' );
-		mw.loader.implement( 'test.module6', function () {} );
-		assert.strictEqual( mw.loader.getState( 'test.module4' ), 'ready', 'Expected "ready" state for test.module4' );
-		assert.strictEqual( mw.loader.getState( 'test.module5' ), 'registered', 'Expected "registered" state for test.module5' );
-		assert.strictEqual( mw.loader.getState( 'test.module6' ), 'loaded', 'Expected "loaded" state for test.module6' );
-		mw.loader.implement( 'test.module5', function () {} );
-		assert.strictEqual( mw.loader.getState( 'test.module4' ), 'ready', 'Expected "ready" state for test.module4' );
-		assert.strictEqual( mw.loader.getState( 'test.module5' ), 'ready', 'Expected "ready" state for test.module5' );
-		assert.strictEqual( mw.loader.getState( 'test.module6' ), 'ready', 'Expected "ready" state for test.module6' );
-	} );
-
-	QUnit.test( 'mw.loader missing dependency', 13, function ( assert ) {
-		mw.loader.register( [
-			[ 'test.module7', '0' ],
-			[ 'test.module8', '0', [ 'test.module7' ] ],
-			[ 'test.module9', '0', [ 'test.module8' ] ]
-		] );
-		mw.loader.implement( 'test.module8', function () {} );
-		assert.strictEqual( mw.loader.getState( 'test.module7' ), 'registered', 'Expected "registered" state for test.module7' );
-		assert.strictEqual( mw.loader.getState( 'test.module8' ), 'loaded', 'Expected "loaded" state for test.module8' );
-		assert.strictEqual( mw.loader.getState( 'test.module9' ), 'registered', 'Expected "registered" state for test.module9' );
-		mw.loader.state( 'test.module7', 'missing' );
-		assert.strictEqual( mw.loader.getState( 'test.module7' ), 'missing', 'Expected "missing" state for test.module7' );
-		assert.strictEqual( mw.loader.getState( 'test.module8' ), 'error', 'Expected "error" state for test.module8' );
-		assert.strictEqual( mw.loader.getState( 'test.module9' ), 'error', 'Expected "error" state for test.module9' );
-		mw.loader.implement( 'test.module9', function () {} );
-		assert.strictEqual( mw.loader.getState( 'test.module7' ), 'missing', 'Expected "missing" state for test.module7' );
-		assert.strictEqual( mw.loader.getState( 'test.module8' ), 'error', 'Expected "error" state for test.module8' );
-		assert.strictEqual( mw.loader.getState( 'test.module9' ), 'error', 'Expected "error" state for test.module9' );
-		mw.loader.using(
-			[ 'test.module7' ],
-			function () {
-				assert.ok( false, 'Success fired despite missing dependency' );
-				assert.ok( true, 'QUnit expected() count dummy' );
-			},
-			function ( e, dependencies ) {
-				assert.strictEqual( $.isArray( dependencies ), true, 'Expected array of dependencies' );
-				assert.deepEqual( dependencies, [ 'test.module7' ], 'Error callback called with module test.module7' );
-			}
-		);
-		mw.loader.using(
-			[ 'test.module9' ],
-			function () {
-				assert.ok( false, 'Success fired despite missing dependency' );
-				assert.ok( true, 'QUnit expected() count dummy' );
-			},
-			function ( e, dependencies ) {
-				assert.strictEqual( $.isArray( dependencies ), true, 'Expected array of dependencies' );
-				dependencies.sort();
-				assert.deepEqual(
-					dependencies,
-					[ 'test.module7', 'test.module8', 'test.module9' ],
-					'Error callback called with all three modules as dependencies'
-				);
-			}
-		);
-	} );
-
-	QUnit.asyncTest( 'mw.loader dependency handling', 5, function ( assert ) {
-		mw.loader.register( [
-			// [module, version, dependencies, group, source]
-			[ 'testMissing', '1', [], null, 'testloader' ],
-			[ 'testUsesMissing', '1', [ 'testMissing' ], null, 'testloader' ],
-			[ 'testUsesNestedMissing', '1', [ 'testUsesMissing' ], null, 'testloader' ]
-		] );
-
-		function verifyModuleStates() {
-			assert.equal( mw.loader.getState( 'testMissing' ), 'missing', 'Module not known to server must have state "missing"' );
-			assert.equal( mw.loader.getState( 'testUsesMissing' ), 'error', 'Module with missing dependency must have state "error"' );
-			assert.equal( mw.loader.getState( 'testUsesNestedMissing' ), 'error', 'Module with indirect missing dependency must have state "error"' );
-		}
-
-		mw.loader.using( [ 'testUsesNestedMissing' ],
-			function () {
-				assert.ok( false, 'Error handler should be invoked.' );
-				assert.ok( true ); // Dummy to reach QUnit expect()
-
-				verifyModuleStates();
-
-				QUnit.start();
-			},
-			function ( e, badmodules ) {
-				assert.ok( true, 'Error handler should be invoked.' );
-				// As soon as server spits out state('testMissing', 'missing');
-				// it will bubble up and trigger the error callback.
-				// Therefor the badmodules array is not testUsesMissing or testUsesNestedMissing.
-				assert.deepEqual( badmodules, [ 'testMissing' ], 'Bad modules as expected.' );
-
-				verifyModuleStates();
-
-				QUnit.start();
-			}
-		);
-	} );
-
-	QUnit.asyncTest( 'mw.loader skin-function handling', 5, function ( assert ) {
-		mw.loader.register( [
-			// [module, version, dependencies, group, source, skip]
-			[ 'testSkipped', '1', [], null, 'testloader', 'return true;' ],
-			[ 'testNotSkipped', '1', [], null, 'testloader', 'return false;' ],
-			[ 'testUsesSkippable', '1', [ 'testSkipped', 'testNotSkipped' ], null, 'testloader' ]
-		] );
-
-		function verifyModuleStates() {
-			assert.equal( mw.loader.getState( 'testSkipped' ), 'ready', 'Module is ready when skipped' );
-			assert.equal( mw.loader.getState( 'testNotSkipped' ), 'ready', 'Module is ready when not skipped but loaded' );
-			assert.equal( mw.loader.getState( 'testUsesSkippable' ), 'ready', 'Module is ready when skippable dependencies are ready' );
-		}
-
-		mw.loader.using( [ 'testUsesSkippable' ],
-			function () {
-				assert.ok( true, 'Success handler should be invoked.' );
-				assert.ok( true ); // Dummy to match error handler and reach QUnit expect()
-
-				verifyModuleStates();
-
-				QUnit.start();
-			},
-			function ( e, badmodules ) {
-				assert.ok( false, 'Error handler should not be invoked.' );
-				assert.deepEqual( badmodules, [], 'Bad modules as expected.' );
-
-				verifyModuleStates();
-
-				QUnit.start();
-			}
-		);
-	} );
-
-	QUnit.asyncTest( 'mw.loader( "//protocol-relative" ) (bug 30825)', 2, function ( assert ) {
-		// This bug was actually already fixed in 1.18 and later when discovered in 1.17.
-		// Test is for regressions!
-
-		// Forge a URL to the test callback script
-		var target = QUnit.fixurl(
-			mw.config.get( 'wgServer' ) + mw.config.get( 'wgScriptPath' ) + '/tests/qunit/data/qunitOkCall.js'
-		);
-
-		// Confirm that mw.loader.load() works with protocol-relative URLs
-		target = target.replace( /https?:/, '' );
-
-		assert.equal( target.slice( 0, 2 ), '//',
-			'URL must be relative to test relative URLs!'
-		);
-
-		// Async!
-		// The target calls QUnit.start
-		mw.loader.load( target );
-	} );
-
-	QUnit.asyncTest( 'mw.loader( "/absolute-path" )', 2, function ( assert ) {
-		// Forge a URL to the test callback script
-		var target = QUnit.fixurl(
-			mw.config.get( 'wgScriptPath' ) + '/tests/qunit/data/qunitOkCall.js'
-		);
-
-		// Confirm that mw.loader.load() works with absolute-paths (relative to current hostname)
-		assert.equal( target.slice( 0, 1 ), '/', 'URL is relative to document root' );
-
-		// Async!
-		// The target calls QUnit.start
-		mw.loader.load( target );
-	} );
-
-	QUnit.asyncTest( 'mw.loader() executing race (T112232)', 2, function ( assert ) {
-		var done = false;
-
-		// The red herring schedules its CSS buffer first. In T112232, a bug in the
-		// state machine would cause the job for testRaceLoadMe to run with an earlier job.
-		mw.loader.implement(
-			'testRaceRedHerring',
-			function () {},
-			{ css: [ '.mw-testRaceRedHerring {}' ] }
-		);
-		mw.loader.implement(
-			'testRaceLoadMe',
-			function () {
-				done = true;
-			},
-			{ css: [ '.mw-testRaceLoadMe { float: left; }' ] }
-		);
-
-		mw.loader.load( [ 'testRaceRedHerring', 'testRaceLoadMe' ] );
-		mw.loader.using( 'testRaceLoadMe', function () {
-			assert.strictEqual( done, true, 'script ran' );
-			assert.strictEqual( mw.loader.getState( 'testRaceLoadMe' ), 'ready', 'state' );
-		} ).always( QUnit.start );
-	} );
-
-	QUnit.test( 'mw.html', 13, function ( assert ) {
-		assert.throws( function () {
-			mw.html.escape();
-		}, TypeError, 'html.escape throws a TypeError if argument given is not a string' );
-
-		assert.equal( mw.html.escape( '<mw awesome="awesome" value=\'test\' />' ),
-			'&lt;mw awesome=&quot;awesome&quot; value=&#039;test&#039; /&gt;', 'escape() escapes special characters to html entities' );
-
-		assert.equal( mw.html.element(),
-			'<undefined/>', 'element() always returns a valid html string (even without arguments)' );
-
-		assert.equal( mw.html.element( 'div' ), '<div/>', 'element() Plain DIV (simple)' );
-
-		assert.equal( mw.html.element( 'div', {}, '' ), '<div></div>', 'element() Basic DIV (simple)' );
-
-		assert.equal(
-			mw.html.element(
-				'div', {
-					id: 'foobar'
-				}
-			),
-			'<div id="foobar"/>',
-			'html.element DIV (attribs)' );
-
-		assert.equal( mw.html.element( 'p', null, 12 ), '<p>12</p>', 'Numbers are valid content and should be casted to a string' );
-
-		assert.equal( mw.html.element( 'p', { title: 12 }, '' ), '<p title="12"></p>', 'Numbers are valid attribute values' );
-
-		// Example from https://www.mediawiki.org/wiki/ResourceLoader/Default_modules#mediaWiki.html
-		assert.equal(
-			mw.html.element(
-				'div',
-				{},
-				new mw.html.Raw(
-					mw.html.element( 'img', { src: '<' } )
-				)
-			),
-			'<div><img src="&lt;"/></div>',
-			'Raw inclusion of another element'
-		);
-
-		assert.equal(
-			mw.html.element(
-				'option', {
-					selected: true
-				}, 'Foo'
-			),
-			'<option selected="selected">Foo</option>',
-			'Attributes may have boolean values. True copies the attribute name to the value.'
-		);
-
-		assert.equal(
-			mw.html.element(
-				'option', {
-					value: 'foo',
-					selected: false
-				}, 'Foo'
-			),
-			'<option value="foo">Foo</option>',
-			'Attributes may have boolean values. False keeps the attribute from output.'
-		);
-
-		assert.equal( mw.html.element( 'div',
-			null, 'a' ),
-			'<div>a</div>',
-			'html.element DIV (content)' );
-
-		assert.equal( mw.html.element( 'a',
-			{ href: 'http://mediawiki.org/w/index.php?title=RL&action=history' }, 'a' ),
-			'<a href="http://mediawiki.org/w/index.php?title=RL&amp;action=history">a</a>',
-			'html.element DIV (attribs + content)' );
-
-	} );
-
 	QUnit.test( 'mw.hook', 13, function ( assert ) {
 		var hook, add, fire, chars, callback;
 
@@ -1130,4 +432,4 @@
 		);
 	} );
 
-}( mediaWiki, jQuery ) );
+}( mediaWiki ) );

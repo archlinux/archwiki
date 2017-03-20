@@ -1,7 +1,8 @@
 {
 	"@note": "This file must be kept in sync with LocalisationUpdate.php",
 	"name": "LocalisationUpdate",
-	"version": "1.3.0",
+	"namemsg": "localisationupdate-extensionname",
+	"version": "1.4.0",
 	"author": [
 		"Tom Maaswinkel",
 		"Niklas Laxström",
@@ -18,18 +19,18 @@
 	},
 	"AutoloadClasses": {
 		"LocalisationUpdate": "LocalisationUpdate.class.php",
-		"LU_Updater": "Updater.php",
+		"LocalisationUpdate\\Updater": "Updater.php",
 		"QuickArrayReader": "QuickArrayReader.php",
-		"LU_Fetcher": "fetcher/Fetcher.php",
-		"LU_FetcherFactory": "fetcher/FetcherFactory.php",
-		"LU_FileSystemFetcher": "fetcher/FileSystemFetcher.php",
-		"LU_GitHubFetcher": "fetcher/GitHubFetcher.php",
-		"LU_HttpFetcher": "fetcher/HttpFetcher.php",
-		"LU_Finder": "finder/Finder.php",
-		"LU_JSONReader": "reader/JSONReader.php",
-		"LU_PHPReader": "reader/PHPReader.php",
-		"LU_Reader": "reader/Reader.php",
-		"LU_ReaderFactory": "reader/ReaderFactory.php"
+		"LocalisationUpdate\\Fetcher": "fetcher/Fetcher.php",
+		"LocalisationUpdate\\FetcherFactory": "fetcher/FetcherFactory.php",
+		"LocalisationUpdate\\FileSystemFetcher": "fetcher/FileSystemFetcher.php",
+		"LocalisationUpdate\\GitHubFetcher": "fetcher/GitHubFetcher.php",
+		"LocalisationUpdate\\HttpFetcher": "fetcher/HttpFetcher.php",
+		"LocalisationUpdate\\Finder": "finder/Finder.php",
+		"LocalisationUpdate\\JSONReader": "reader/JSONReader.php",
+		"LocalisationUpdate\\PHPReader": "reader/PHPReader.php",
+		"LocalisationUpdate\\Reader": "reader/Reader.php",
+		"LocalisationUpdate\\ReaderFactory": "reader/ReaderFactory.php"
 	},
 	"Hooks": {
 		"LocalisationCacheRecache": [
@@ -37,9 +38,6 @@
 		],
 		"LocalisationCacheRecacheFallback": [
 			"LocalisationUpdate::onRecacheFallback"
-		],
-		"UnitTestsList": [
-			"LocalisationUpdate::setupUnitTests"
 		]
 	},
 	"config": {

@@ -9,6 +9,9 @@
 	"namemsg": "skinname-monobook",
 	"license-name": "GPL-2.0+",
 	"type": "skin",
+	"requires": {
+		"MediaWiki": ">= 1.25.0"
+	},
 	"ValidSkinNames": {
 		"monobook": "MonoBook"
 	},
@@ -33,6 +36,11 @@
 	"ResourceFileModulePaths": {
 		"localBasePath": "",
 		"remoteSkinPath": "MonoBook"
+	},
+	"ResourceModuleSkinStyles": {
+		"monobook": {
+			"+mediawiki.special.preferences.styles": "skinStyles/mediawiki.special.preferences.styles.less"
+		}
 	},
 	"AutoloadClasses": {
 		"SkinMonoBook": "SkinMonoBook.php",

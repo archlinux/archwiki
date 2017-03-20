@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Omnipaedista"
+			"Omnipaedista",
+			"Gts-tg"
 		]
 	},
+	"captcha-label": "CAPTCHA",
 	"captchahelp-title": "Βοήθεια περὶ τοῦ captcha"
 }

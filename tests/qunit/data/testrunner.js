@@ -1,5 +1,4 @@
 /*global CompletenessTest, sinon */
-/*jshint evil: true */
 ( function ( $, mw, QUnit ) {
 	'use strict';
 
@@ -8,9 +7,9 @@
 	/**
 	 * Add bogus to url to prevent IE crazy caching
 	 *
-	 * @param {String} value a relative path (eg. 'data/foo.js'
+	 * @param {string} value a relative path (eg. 'data/foo.js'
 	 * or 'data/test.php?foo=bar').
-	 * @return {String} Such as 'data/foo.js?131031765087663960'
+	 * @return {string} Such as 'data/foo.js?131031765087663960'
 	 */
 	QUnit.fixurl = function ( value ) {
 		return value + ( /\?/.test( value ) ? '&' : '?' )
@@ -22,10 +21,9 @@
 	 * Configuration
 	 */
 
-	// When a test() indicates asynchronicity with stop(),
-	// allow 30 seconds to pass before killing the test(),
-	// and assuming failure.
-	QUnit.config.testTimeout = 30 * 1000;
+	// For each test() that is asynchronous, allow this time to pass before
+	// killing the test and assuming timeout failure.
+	QUnit.config.testTimeout = 60 * 1000;
 
 	// Add a checkbox to QUnit header to toggle MediaWiki ResourceLoader debug mode.
 	QUnit.config.urlConfig.push( {
@@ -169,10 +167,11 @@
 	 */
 	QUnit.newMwEnvironment = ( function () {
 		var warn, error, liveConfig, liveMessages,
+			MwMap = mw.config.constructor, // internal use only
 			ajaxRequests = [];
 
-		liveConfig = mw.config.values;
-		liveMessages = mw.messages.values;
+		liveConfig = mw.config;
+		liveMessages = mw.messages;
 
 		function suppressWarnings() {
 			warn = mw.log.warn;
@@ -200,14 +199,14 @@
 			// NOTE: It is important that we suppress warnings because extend() will also access
 			// deprecated properties and trigger deprecation warnings from mw.log#deprecate.
 			suppressWarnings();
-			copy = $.extend( {}, liveConfig, custom );
+			copy = $.extend( {}, liveConfig.get(), custom );
 			restoreWarnings();
 
 			return copy;
 		}
 
 		function freshMessagesCopy( custom ) {
-			return $.extend( /*deep=*/true, {}, liveMessages, custom );
+			return $.extend( /*deep=*/true, {}, liveMessages.get(), custom );
 		}
 
 		/**
@@ -233,8 +232,15 @@
 				setup: function () {
 
 					// Greetings, mock environment!
-					mw.config.values = freshConfigCopy( localEnv.config );
-					mw.messages.values = freshMessagesCopy( localEnv.messages );
+					mw.config = new MwMap();
+					mw.config.set( freshConfigCopy( localEnv.config ) );
+					mw.messages = new MwMap();
+					mw.messages.set( freshMessagesCopy( localEnv.messages ) );
+					// Update reference to mw.messages
+					mw.jqueryMsg.setParserDefaults( {
+						messages: mw.messages
+					} );
+
 					this.suppressWarnings = suppressWarnings;
 					this.restoreWarnings = restoreWarnings;
 
@@ -253,8 +259,12 @@
 					$( document ).off( 'ajaxSend', trackAjax );
 
 					// Farewell, mock environment!
-					mw.config.values = liveConfig;
-					mw.messages.values = liveMessages;
+					mw.config = liveConfig;
+					mw.messages = liveMessages;
+					// Restore reference to mw.messages
+					mw.jqueryMsg.setParserDefaults( {
+						messages: liveMessages
+					} );
 
 					// As a convenience feature, automatically restore warnings if they're
 					// still suppressed by the end of the test.

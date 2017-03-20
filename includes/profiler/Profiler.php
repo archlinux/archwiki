@@ -21,6 +21,7 @@
  * @ingroup Profiler
  * @defgroup Profiler Profiler
  */
+use Wikimedia\ScopedCallback;
 
 /**
  * Profiler base class that defines the interface and some trivial
@@ -34,7 +35,7 @@ abstract class Profiler {
 	/** @var bool Whether MediaWiki is in a SkinTemplate output context */
 	protected $templated = false;
 	/** @var array All of the params passed from $wgProfiler */
-	protected $params = array();
+	protected $params = [];
 	/** @var IContextSource Current request context */
 	protected $context = null;
 	/** @var TransactionProfiler */
@@ -61,12 +62,12 @@ abstract class Profiler {
 		if ( self::$instance === null ) {
 			global $wgProfiler, $wgProfileLimit;
 
-			$params = array(
+			$params = [
 				'class'     => 'ProfilerStub',
 				'sampling'  => 1,
 				'threshold' => $wgProfileLimit,
-				'output'    => array(),
-			);
+				'output'    => [],
+			];
 			if ( is_array( $wgProfiler ) ) {
 				$params = array_merge( $params, $wgProfiler );
 			}
@@ -77,7 +78,7 @@ abstract class Profiler {
 			}
 
 			if ( !is_array( $params['output'] ) ) {
-				$params['output'] = array( $params['output'] );
+				$params['output'] = [ $params['output'] ];
 			}
 
 			self::$instance = new $params['class']( $params );
@@ -162,9 +163,9 @@ abstract class Profiler {
 	abstract public function scopedProfileIn( $section );
 
 	/**
-	 * @param ScopedCallback $section
+	 * @param SectionProfileCallback $section
 	 */
-	public function scopedProfileOut( ScopedCallback &$section = null ) {
+	public function scopedProfileOut( SectionProfileCallback &$section = null ) {
 		$section = null;
 	}
 
@@ -189,11 +190,11 @@ abstract class Profiler {
 	 * @since 1.25
 	 */
 	private function getOutputs() {
-		$outputs = array();
+		$outputs = [];
 		foreach ( $this->params['output'] as $outputType ) {
 			// The class may be specified as either the full class name (for
-			// example, 'ProfilerOutputUdp') or (for backward compatibility)
-			// the trailing portion of the class name (for example, 'udp').
+			// example, 'ProfilerOutputStats') or (for backward compatibility)
+			// the trailing portion of the class name (for example, 'stats').
 			$outputClass = strpos( $outputType, 'ProfilerOutput' ) === false
 				? 'ProfilerOutput' . ucfirst( $outputType )
 				: $outputType;

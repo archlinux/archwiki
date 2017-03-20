@@ -12,6 +12,7 @@ $specialPageAliases = array();
 /** English (English) */
 $specialPageAliases['en'] = array(
 	'Gadgets' => array( 'Gadgets' ),
+	'GadgetUsage' => array( 'GadgetUsage' ),
 );
 
 /** Afrikaans (Afrikaans) */
@@ -122,6 +123,7 @@ $specialPageAliases['eu'] = array(
 /** Persian (فارسی) */
 $specialPageAliases['fa'] = array(
 	'Gadgets' => array( 'ابزارها' ),
+	'GadgetUsage' => array( 'استفاده_ابزار' ),
 );
 
 /** Finnish (suomi) */

@@ -50,7 +50,6 @@ def smart_compare_process val, type
 		val = val.dup
 		val[:mixins].delete 'OO.EventEmitter' # JS only
 		val[:mixins].delete 'PendingElement' # JS only
-		val.delete :parent if val[:parent] == 'ElementMixin' # PHP only
 		val.delete :methods
 		val.delete :properties
 		val.delete :events
@@ -105,7 +104,8 @@ def compare_hash a, b, a_name, b_name, nested=:compare_hash
 		b_val = b ? canonicalize(b[key]) : nil
 
 		if [a_val, b_val] == [{}, []] || [a_val, b_val] == [[], {}]
-			a_val, b_val = {}, {}
+			a_val = {}
+			b_val = {}
 		end
 
 		if a_val.is_a?(Hash) && b_val.is_a?(Hash)
@@ -115,16 +115,14 @@ def compare_hash a, b, a_name, b_name, nested=:compare_hash
 			else
 				"#{key}: MISMATCH\n#{comparison_result}"
 			end
+		elsif a_val == b_val
+			"#{key}: match" if $VERBOSE
+		elsif a_val.nil?
+			"#{key}: #{a_name} missing"
+		elsif b_val.nil?
+			"#{key}: #{b_name} missing"
 		else
-			if a_val == b_val
-				"#{key}: match" if $VERBOSE
-			elsif a_val.nil?
-				"#{key}: #{a_name} missing"
-			elsif b_val.nil?
-				"#{key}: #{b_name} missing"
-			else
-				"#{key}: MISMATCH\n  #{a_name}: #{a_val.inspect}\n  #{b_name}: #{b_val.inspect}"
-			end
+			"#{key}: MISMATCH\n  #{a_name}: #{a_val.inspect}\n  #{b_name}: #{b_val.inspect}"
 		end
 	end
 	out.compact.join "\n"

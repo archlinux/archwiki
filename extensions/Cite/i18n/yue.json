@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"CRCHF"
+			"CRCHF",
+			"Ktchankt"
 		]
 	},
 	"cite-desc": "加 <nowiki><ref[ name=id]></nowiki> 同 <nowiki><references/></nowiki> 標籤用響引用度",
@@ -13,5 +14,7 @@
 	"cite_error_references_invalid_parameters": "無效嘅參數; 唔需要有嘢",
 	"cite_error_references_invalid_parameters_group": "無效嘅<code>&lt;references&gt;</code>標籤；\n只容許 \"group\" 參數。\n用<code>&lt;references /&gt;</code>，或<code>&lt;references group=\"...\" /&gt;</code>",
 	"cite_error_references_no_backlink_label": "用晒啲自定返回標籤, 響 <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki> 信息再整多啲",
-	"cite_error_references_no_text": "無效嘅<code>&lt;ref&gt;</code>標籤；\n無文字提供於名為<code>$1</code>嘅參照"
+	"cite_error_references_no_text": "無效嘅<code>&lt;ref&gt;</code>標籤；\n無文字提供於名為<code>$1</code>嘅參照",
+	"cite_references_link_accessibility_label": "跳到",
+	"cite_references_link_many_accessibility_label": "跳到去："
 }

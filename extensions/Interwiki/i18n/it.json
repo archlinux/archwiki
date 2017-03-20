@@ -37,7 +37,7 @@
 	"interwiki_reasonfield": "Motivo:",
 	"interwiki_delquestion": "Cancello \"$1\"",
 	"interwiki_deleting": "Stai cancellando il prefisso \"$1\"",
-	"interwiki_deleted": "Il prefisso \"$1\" è stato cancellato con successo dalla tabella degli interwiki.",
+	"interwiki_deleted": "Il prefisso \"$1\" è stato rimosso dalla tabella degli interwiki.",
 	"interwiki_delfailed": "Rimozione del prefisso \"$1\" dalla tabella degli interwiki fallita.",
 	"interwiki-logtext": "Vedi registro",
 	"interwiki_addtext": "Aggiungi un prefisso interwiki o lingua",

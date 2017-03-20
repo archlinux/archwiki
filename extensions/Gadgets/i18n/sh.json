@@ -1,10 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"Kolega2357"
+			"Kolega2357",
+			"Conquistador"
 		]
 	},
-	"gadgets": "Alatke / Алатке",
-	"gadgets-title": "Alatke / Алатке",
+	"prefs-gadgets": "Gadgeti",
+	"gadgets": "Gadgeti",
+	"gadgetusage-gadget": "Gadget",
+	"gadgets-title": "Gadgeti",
 	"gadgets-uses": "Upotrebe / Употребе"
 }

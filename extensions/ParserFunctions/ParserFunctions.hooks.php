@@ -50,17 +50,8 @@ class ParserFunctionsHooks {
 		return true;
 	}
 
-	/**
-	 * @param $files array
-	 * @return bool
-	 */
-	public static function onUnitTestsList( &$files ) {
-		$files[] = __DIR__ . '/tests/ExpressionTest.php';
-		return true;
-	}
-
 	public static function onScribuntoExternalLibraries( $engine, array &$extraLibraries ) {
-		if ( $engine == 'lua' ) {
+		if ( $engine === 'lua' ) {
 			$extraLibraries['mw.ext.ParserFunctions'] = 'Scribunto_LuaParserFunctionsLibrary';
 		}
 		return true;

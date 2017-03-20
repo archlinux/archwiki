@@ -14,7 +14,7 @@
 	"captcha-desc": "CAPTCHA teknika erabiltzen ditu, spametik eta pasahitz-asmatzeetatik babesteko",
 	"captcha-label": "CAPTCHA",
 	"captcha-addurl": "Zure aldaketan URL lotura berriak daude; spam-a saihesteko, jarraian dagoen irudiko hitzak idaztea beharrezkoa da:<br /> ([[Special:Captcha/help|Zer da hau?]])",
-	"captcha-createaccount": "Spam-a saihesteko, mesedez, irudian agertzen den hizki edo zenbaki kodea, beheko laukian idatzi zure kontua sortzeko:<br /> ([[Special:Captcha/help|Zer da hau?]])",
+	"captcha-createaccount": "Wikian kontuen sorkuntza automatikoa saihesteko, mesedez, azpiko taulan agertzen den batura erraz hori egin eta sartu erantzuna taulatxoan ([[Special:Captcha/help|Zer da hau?]]):",
 	"captcha-createaccount-fail": "CAPTCHA kodea falta da, edo desegokia da.",
 	"captcha-create": "Orri hau sortzeko, ebatz ezazu beheko batuketa erraz hau, eta idatz ezazu erantzuna kutxan ([[Special:Captcha/help|argibide gehiago]]):",
 	"captcha-sendemail-fail": "CAPTCHA kodea falta da, edo desegokia da.",

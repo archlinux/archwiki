@@ -10,29 +10,37 @@ namespace OOUI;
  *
  * @abstract
  */
-class FlaggedElement extends ElementMixin {
+trait FlaggedElement {
 	/**
 	 * Flags.
 	 *
-	 * @var string
+	 * @var string[]
 	 */
-	protected $flags = array();
-
-	public static $targetPropertyName = 'flagged';
+	protected $flags = [];
 
 	/**
-	 * @param Element $element Element being mixed into
+	 * @var Element
+	 */
+	protected $flagged;
+
+	/**
 	 * @param array $config Configuration options
 	 * @param string|string[] $config['flags'] Flags describing importance and functionality, e.g.
 	 *   'primary', 'safe', 'progressive', 'destructive' or 'constructive'
 	 */
-	public function __construct( Element $element, array $config = array() ) {
-		// Parent constructor
-		$target = isset( $config['flagged'] ) ? $config['flagged'] : $element;
-		parent::__construct( $element, $target, $config );
+	public function initializeFlaggedElement( array $config = [] ) {
+		// Properties
+		$this->flagged = isset( $config['flagged'] ) ? $config['flagged'] : $this;
 
 		// Initialization
 		$this->setFlags( isset( $config['flags'] ) ? $config['flags'] : null );
+
+		$this->registerConfigCallback( function( &$config ) {
+			if ( !empty( $this->flags ) ) {
+				$config['flags'] = $this->getFlags();
+			}
+		} );
+
 	}
 
 	/**
@@ -57,18 +65,18 @@ class FlaggedElement extends ElementMixin {
 	/**
 	 * Clear all flags.
 	 *
-	 * @chainable
+	 * @return $this
 	 */
 	public function clearFlags() {
-		$remove = array();
+		$remove = [];
 		$classPrefix = 'oo-ui-flaggedElement-';
 
 		foreach ( $this->flags as $flag ) {
 			$remove[] = $classPrefix . $flag;
 		}
 
-		$this->target->removeClasses( $remove );
-		$this->flags = array();
+		$this->flagged->removeClasses( $remove );
+		$this->flags = [];
 
 		return $this;
 	}
@@ -78,11 +86,11 @@ class FlaggedElement extends ElementMixin {
 	 *
 	 * @param string|array $flags One or more flags to add, or an array keyed by flag name
 	 *   containing boolean set/remove instructions.
-	 * @chainable
+	 * @return $this
 	 */
 	public function setFlags( $flags ) {
-		$add = array();
-		$remove = array();
+		$add = [];
+		$remove = [];
 		$classPrefix = 'oo-ui-flaggedElement-';
 
 		if ( is_string( $flags ) ) {
@@ -117,17 +125,10 @@ class FlaggedElement extends ElementMixin {
 			}
 		}
 
-		$this->target
+		$this->flagged
 			->addClasses( $add )
 			->removeClasses( $remove );
 
 		return $this;
-	}
-
-	public function getConfig( &$config ) {
-		if ( !empty( $this->flags ) ) {
-			$config['flags'] = $this->getFlags();
-		}
-		return parent::getConfig( $config );
 	}
 }

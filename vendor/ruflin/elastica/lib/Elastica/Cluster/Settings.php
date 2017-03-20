@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica\Cluster;
 
 use Elastica\Client;
@@ -9,7 +10,7 @@ use Elastica\Request;
  *
  * @author   Nicolas Ruflin <spam@ruflin.com>
  *
- * @link     http://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-update-settings.html
+ * @link     https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-update-settings.html
  */
 class Settings
 {

@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica;
 
 use Elastica\Exception\InvalidException;
@@ -27,6 +28,13 @@ class Connection extends Param
      * @var string
      */
     const DEFAULT_TRANSPORT = 'Http';
+
+    /**
+     * Default compression.
+     *
+     * @var string
+     */
+    const DEFAULT_COMPRESSION = false;
 
     /**
      * Number of seconds after a timeout occurs for every request
@@ -132,6 +140,24 @@ class Connection extends Param
     public function setTransport($transport)
     {
         return $this->setParam('transport', $transport);
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasCompression()
+    {
+        return (bool) $this->hasParam('compression') ? $this->getParam('compression') : self::DEFAULT_COMPRESSION;
+    }
+
+    /**
+     * @param bool $compression
+     *
+     * @return $this
+     */
+    public function setCompression($compression = null)
+    {
+        return $this->setParam('compression', $compression);
     }
 
     /**
@@ -316,5 +342,21 @@ class Connection extends Param
         }
 
         return $connection;
+    }
+
+    /**
+     * @return string User
+     */
+    public function getUsername()
+    {
+        return $this->hasParam('username') ? $this->getParam('username') : null;
+    }
+
+    /**
+     * @return string Password
+     */
+    public function getPassword()
+    {
+        return $this->hasParam('password') ? $this->getParam('password') : null;
     }
 }

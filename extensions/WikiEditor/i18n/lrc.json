@@ -125,9 +125,9 @@
 	"wikieditor-toolbar-help-content-showreferences-description": "نشو دئن سرچشمه یا",
 	"wikieditor-toolbar-help-content-showreferences-result": "<ol class='references'><li id='cite_note-test-0'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.example.org' class='external text' href='#'>نیسسه هوم پیوند</a>, نیسسه اضافی.</li></ol>",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "امضا و دیسمن وخت",
-	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='{{#special:mypage}}'>نوم کاریاری</a> (<a href='#' title='{{#special:mytalk}}'>چک چنه</a>) 15:54, 10 جوئن2009 (UTC)",
+	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='$1:Username'>نوم کاریاری</a> (<a href='#' title='$2:Username'>چک چنه</a>) 15:54, 10 جوئن2009 (UTC)",
 	"wikieditor-toolbar-help-content-signature-description": "امضا",
-	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='{{#special:mypage}}'>نوم کاریاری</a> (<a href='#' title='{{#special:mytalk}}'>چک چنه</a>)",
+	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>نوم کاریاری</a> (<a href='#' title='$2:Username'>چک چنه</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "مئن رئته",
 	"wikieditor-toolbar-help-content-indent-syntax": "نیسسه نرمال<br />:نیسسه مین رئته<br />::نیسسه مین رئته",
 	"wikieditor-toolbar-help-content-indent-result": "نیسسه نرمال<dl><dd>نیسسه مین رئته<dl><dd>نیسسه مین رئته</dd></dl></dd></dl>"

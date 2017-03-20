@@ -33,11 +33,11 @@ class CssContentHandler extends CodeContentHandler {
 	 * @param string $modelId
 	 */
 	public function __construct( $modelId = CONTENT_MODEL_CSS ) {
-		parent::__construct( $modelId, array( CONTENT_FORMAT_CSS ) );
+		parent::__construct( $modelId, [ CONTENT_FORMAT_CSS ] );
 	}
 
 	protected function getContentClass() {
-		return 'CssContent';
+		return CssContent::class;
 	}
 
 	public function supportsRedirects() {

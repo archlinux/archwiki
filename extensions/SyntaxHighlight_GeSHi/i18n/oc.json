@@ -4,5 +4,6 @@
 			"Cedric31"
 		]
 	},
-	"syntaxhighlight-desc": "Provesís la mesa en relèu de la sintaxi per la balisa <code>&lt;syntaxhighlight&gt;</code> en utilizant [http://pygments.org/ la coloracion sintaxica GeSHi]"
+	"syntaxhighlight-desc": "Provesís la mesa en relèu de la sintaxi per la balisa <code>&lt;syntaxhighlight&gt;</code> en utilizant [http://pygments.org/ la coloracion sintaxica GeSHi]",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Lenga"
 }

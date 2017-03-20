@@ -320,3 +320,24 @@ a&amp;#39;b
 &lt;&gt;
 </p>
 !! end
+
+!! test
+#switch Test php truthy
+!!input
+{{#switch: 01 | 1 = yes | no}}
+{{#switch: 0 | -0 = yes | no}}
+{{#switch: foo | bar = yes | no}}
+{{#switch: foo | Foo = yes | no}}
+{{#switch: "01" | "1" = yes | no}}
+{{#switch: 1 | 02 | 01 = yes | no}}
+{{#switch: 1 | "01" | "1" = yes | no}}
+!! result
+<p>yes
+yes
+no
+no
+no
+yes
+no
+</p>
+!! end

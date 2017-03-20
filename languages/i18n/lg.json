@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Kizito",
-			"아라"
+			"아라",
+			"Macofe"
 		]
 	},
 	"tog-underline": "Enyunzi ebengako olukoloboze?",
@@ -289,7 +290,7 @@
 	"cascadeprotected": "Olupapula luno lulandideko ekikugizo ekirugaana okukyusibwako ekisibuka ku {{PLURAL:$1|lunnaalwo luno olulukozesa|zinnalwo zino ezirukozesa}}:<br />\n$2",
 	"namespaceprotected": "Tolina buyinza bwa kukyusa ku mpapula ez'omu kkuŋaanizo erya '''$1'''.",
 	"ns-specialprotected": "Empapula enjawule tezikukkiriza kuzikyusaako.",
-	"titleprotected": "[[User:$1|$1]] ataddewo ekikugizo ekigaana okukozesa omutwe guno.<br />\nEnsonga gy'awadde eri nti \"''$2''\".",
+	"titleprotected": "[[User:$1|$1]] ataddewo ekikugizo ekigaana okukozesa omutwe guno.<br />\nEnsonga gy'awadde eri nti <em>$2</em>.",
 	"virus-badscanner": "Kiremya mu nteekateeka: ekinoonya vayirasi kino tekimanyidwa: ''$1''",
 	"virus-scanfailed": "okunoonya vayirasi kulemye (obubaka buli $1)",
 	"virus-unknownscanner": "ekinoonya vayirasi ekitamanyidwa:",
@@ -325,7 +326,7 @@
 	"noname": "Towandise linnya ly'obwa memba eriyinz'okukkirizibwa.",
 	"loginsuccesstitle": "Oyingidde",
 	"loginsuccess": "'''Kati oyingidde mu {{SITENAME}} nga okozesa erinnya \"$1\".'''",
-	"nosuchuser": "Tewali memba akozesa lya \"$1\".<br />\nEry'obwa memba bw'okyusa obunene bw'ennukuta z'oliwandisa obeera owandise eddala.<br />\nKebera bw'oliwandise, oba [[Special:UserLogin/signup|kolawo akawunti empya]].",
+	"nosuchuser": "Tewali memba akozesa lya \"$1\".<br />\nEry'obwa memba bw'okyusa obunene bw'ennukuta z'oliwandisa obeera owandise eddala.<br />\nKebera bw'oliwandise, oba [[Special:CreateAccount|kolawo akawunti empya]].",
 	"nosuchusershort": "Tewali memba akozesa lya \"$1\".<br />\nKebera bw'oliwandise.",
 	"nouserspecified": "Kyetaagisa owandikewo erinnya ly'obwa memba.",
 	"login-userblocked": "Memba ono agaanidwa. Takkirizibwa kuyingira.",
@@ -424,7 +425,7 @@
 	"accmailtext": "Ekigambo ekikuumi ekya akawunti empya [[User talk:$1|$1]] kisindikiddwa ku $2.\n\nOkukyusa ekigambo kino memba, ng'ayingidde mu wiki, alage ku lupapula ''[[Special:ChangePassword|change password]]''.",
 	"newarticle": "(Lupapula lupya)",
 	"newarticletext": "Enyunzi gy'ogenzeko egguka ku lupapula olutannakolebwawo.<br />\nOba gwe oyagala okulukolawo, wandika mu kabokisi akaddako wano.\n(okuyiga ebisingawo, genda ku [$1 lupapula olw'obuyambi]).<br />\nBw'obanga tewagenderedde kutuuka wano, nyigabunyizi eppeesa ery'omu kalambula-neti yo\nerya '''ddayo'''.",
-	"anontalkpagetext": "----''Olupapula olw'emboozi luno lukoledwawo at'eyanjula atakolera mu akawunti ya ku wiki eno.<br />\nKino kitwetaagisizza okumwawulira ku ndagiriro ya IP kwe yayimidde.<br />\nAbantu bangi basobola okukozesa endagiriro eya IP y'emu.<br />\nBw'obanga naawe okola ng'at'eyanjudde nga owulira nti ebimu ku birowozo ebikwolekezedwa wano<br />\ntebiggirawo oba tebikwatagana naawe, [[Special:UserLogin/signup|funa akawunti]] oba [[Special:UserLogin|yingira]] baleme okukutabula n'abalala abakola ng'abat'eyanjudde.",
+	"anontalkpagetext": "----''Olupapula olw'emboozi luno lukoledwawo at'eyanjula atakolera mu akawunti ya ku wiki eno.<br />\nKino kitwetaagisizza okumwawulira ku ndagiriro ya IP kwe yayimidde.<br />\nAbantu bangi basobola okukozesa endagiriro eya IP y'emu.<br />\nBw'obanga naawe okola ng'at'eyanjudde nga owulira nti ebimu ku birowozo ebikwolekezedwa wano<br />\ntebiggirawo oba tebikwatagana naawe, [[Special:CreateAccount|funa akawunti]] oba [[Special:UserLogin|yingira]] baleme okukutabula n'abalala abakola ng'abat'eyanjudde.",
 	"noarticletext": "Wano tewali kyawandikidwawo.<br />\nKy'obadde onoonya osobola [[Special:Search/{{PAGENAME}}| okukinoonyeza]] ku mpapula ndala oba oyinza [{{fullurl:{{FULLPAGENAME}}|action=edit}} gwe okukiwandikako] wano.",
 	"noarticletext-nopermission": "Wano tewali kyawandikidwawo.<br />\nKy'obadde onoonya osobola [[Special:Search/{{PAGENAME}}| okukinoonyeza]] ku mpapula ndala oba\noyinza <span class=\"plainlinks\">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} okukinoonyeza mu nkalala z'ebifuddeyo ebyekuusana nakyo]</span>.",
 	"userpage-userdoesnotexist": "Akawunti y'obwamemba \"<nowiki>$1</nowiki>\" teri mu nkalala za wiki eno.<br />\nSooka okakase oba ddala oyagala okukolawo olupapula olupya luno.",
@@ -768,7 +769,6 @@
 	"move-page-legend": "Simbuliza olupapula luno",
 	"movepagetext": "Foomu eno ekyusa erinnya ly'olupapula era n'ekyusa n'olukalala lw'ebyafaayo lwa lwo lwogere ku linnya ppya.\n\nWajjakukolebwawo n'olupapula olulina erinnya kkadde nga lwo lukutwalabutwazi ku lupapula olukyusidw'erinnya.\nOsobola okulagira sisitemu n'ekukyusiza empapula endala ezikutwalabutwazi ku linnya kkadde, zikutwalenga ku linnya ppya.\n\nBw'oba ng'ekyo toyagadde ekikukolere, laba nti onoonya n'ogolola empapula [[Special:DoubleRedirects|'''ezikutwalabutwazi ku ndala ng'ate ne'yo eyagala okukutwalabutwazi ku ndala''']] n'ezo [[Special:BrokenRedirects|'''ezikutwalabutwazi ku ndala etaliwo''']] zonna ezireetedwawo okusimbuliza kw'okoze.\n\nBuvunaanyizibwa bwo okulaba nti enyunzi zonna zisigala nga ziggukira gye wali ogenderedde.\n\nGenderera nti olupapula terujjakukyusibwa linnya ssinga waba nga waliwo olupapula olulala olulina erinnya ly'oyagala okukozesa, okugyako nga olwo lwereere oba nga lukutwalabutwazi ku lulala era nga teruliko olukalala lw'ebyafayo.\nKino kitegeeza nti bw'okola nsobi mu kukyusa linnya, oyinza okuluzzayo ku linnya kkadde, naye tosobola okubuutikira olupapula olusangidwawo.\n\n'''Kulabula!'''\n\nOlupapula lw'oyagala okusimbuliza luyinz'okuba nga lujjumbirwa bangi. Okulukyusa erinnya kiyinz'okubagwakobugwi nga tebakiriindiridde. Sooka weroowoze nnyo olabe nti ebiyinz'okuva mu kikolwa kino obitegeera era tebireetewo obukosefu okuteetaagisibwa.",
 	"movepagetalktext": "Olupapula olwa yogera nange nalwo sisitemu ejjakulukyusizaako '''okugyako nga:'''\n\n*Ku linnya ppya wasangibwawo olupapula lya yogera nange olulala olutali lwereere, oba\n\n*Ogyamu akali mu kabokisi akalagira sistemu okukikola.\n\n\nEkimu ku ebyo ebibiri bwe kibawo, olwo gwe oba olina okwekyusiza olwa yogera nange.",
-	"movearticle": "Simbuliza olupapula luno",
 	"newtitle": "Luyitibwe:",
 	"move-watch": "Goberera olupapula luno",
 	"movepagebtn": "Lusimbulize",
@@ -784,7 +784,7 @@
 	"allmessagesname": "Erinnya",
 	"allmessagesdefault": "Ebigambo ebya bulijjo",
 	"allmessagescurrent": "Ebiriwo kakano",
-	"allmessagestext": "Luno lwe lukalala olw'obubaka obwa sisitemu obw'omu kkuŋŋaanizo erya MediaWiki.\n\nOb'oyagala okuyamba ku kuvvuunula eby'omu MediaWiki yonna, kebera ku [https://www.mediawiki.org/wiki/Special:MyLanguage/Localisation MediaWiki Localisation] ne [//translatewiki.net translatewiki.net].",
+	"allmessagestext": "Luno lwe lukalala olw'obubaka obwa sisitemu obw'omu kkuŋŋaanizo erya MediaWiki.\n\nOb'oyagala okuyamba ku kuvvuunula eby'omu MediaWiki yonna, kebera ku [https://www.mediawiki.org/wiki/Special:MyLanguage/Localisation MediaWiki Localisation] ne [https://translatewiki.net translatewiki.net].",
 	"allmessages-filter-legend": "Ensunsula",
 	"allmessages-filter": "Londamu:",
 	"allmessages-filter-unmodified": "Ebitannakyusibwamu",

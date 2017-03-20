@@ -16,6 +16,6 @@
 	"titleblacklist-forbidden-new-account": "Suradnički račun \"$2\" je zabranjen za kreiranje.\nPoklapa se sa sljedećim izrazom iz crnog popisa: <code>$1</code>",
 	"titleblacklist-invalid": "Sljedeći {{PLURAL:$1|redak|redci}} u popisu zabranjenih naslova {{PLURAL:$1|je|su}} nedozvoljeni; molimo ispravite {{PLURAL:$1|ga|ih}} prije spremanja:",
 	"titleblacklist-override": "Zanemari crnu listu",
-	"right-tboverride": "Premošćivanje naslova u crnom popisu",
+	"right-tboverride": "Premošćivanje naslova ili suradničkog imena na crnom popisu",
 	"right-tboverride-account": "Zaobilaženje popisa zabranjenih suradničkih imena"
 }

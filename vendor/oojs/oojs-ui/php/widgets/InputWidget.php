@@ -8,6 +8,10 @@ namespace OOUI;
  * @abstract
  */
 class InputWidget extends Widget {
+	use FlaggedElement;
+	use TabIndexedElement;
+	use TitledElement;
+	use AccessKeyedElement;
 
 	/* Static Properties */
 
@@ -33,36 +37,39 @@ class InputWidget extends Widget {
 	 * @param array $config Configuration options
 	 * @param string $config['name'] HTML input name (default: '')
 	 * @param string $config['value'] Input value (default: '')
+	 * @param string $config['dir'] The directionality of the input (ltr/rtl)
 	 */
-	public function __construct( array $config = array() ) {
+	public function __construct( array $config = [] ) {
 		// Parent constructor
 		parent::__construct( $config );
 
 		// Properties
 		$this->input = $this->getInputElement( $config );
 
-		// Mixins
-		$this->mixin( new FlaggedElement( $this,
-			array_merge( $config, array( 'flagged' => $this ) ) ) );
-		$this->mixin( new TabIndexedElement( $this,
-			array_merge( $config, array( 'tabIndexed' => $this->input ) ) ) );
-		$this->mixin( new TitledElement( $this,
-			array_merge( $config, array( 'titled' => $this->input ) ) ) );
-		$this->mixin( new AccessKeyedElement( $this,
-			array_merge( $config, array( 'accessKeyed' => $this->input ) ) ) );
+		// Traits
+		$this->initializeFlaggedElement( array_merge( $config, [ 'flagged' => $this ] ) );
+		$this->initializeTabIndexedElement(
+			array_merge( $config, [ 'tabIndexed' => $this->input ] ) );
+		$this->initializeTitledElement(
+			array_merge( $config, [ 'titled' => $this->input ] ) );
+		$this->initializeAccessKeyedElement(
+			array_merge( $config, [ 'accessKeyed' => $this->input ] ) );
 
 		// Initialization
 		if ( isset( $config['name'] ) ) {
-			$this->input->setAttributes( array( 'name' => $config['name'] ) );
+			$this->input->setAttributes( [ 'name' => $config['name'] ] );
 		}
 		if ( $this->isDisabled() ) {
-			$this->input->setAttributes( array( 'disabled' => 'disabled' ) );
+			$this->input->setAttributes( [ 'disabled' => 'disabled' ] );
 		}
 		$this
-			->addClasses( array( 'oo-ui-inputWidget' ) )
+			->addClasses( [ 'oo-ui-inputWidget' ] )
 			->appendContent( $this->input );
-		$this->input->addClasses( array( 'oo-ui-inputWidget-input' ) );
+		$this->input->addClasses( [ 'oo-ui-inputWidget-input' ] );
 		$this->setValue( isset( $config['value'] ) ? $config['value'] : null );
+		if ( isset( $config['dir'] ) ) {
+			$this->setDir( $config['dir'] );
+		}
 	}
 
 	/**
@@ -85,25 +92,33 @@ class InputWidget extends Widget {
 	}
 
 	/**
-	 * Sets the direction of the current input, either RTL or LTR
+	 * Set the directionality of the input, either RTL (right-to-left) or LTR (left-to-right).
 	 *
-	 * @param boolean $isRTL
+	 * @deprecated since v0.13.1, use #setDir directly
+	 * @param boolean $isRTL Directionality is right-to-left
+	 * @return $this
 	 */
 	public function setRTL( $isRTL ) {
-		if ( $isRTL ) {
-			$this->input->removeClasses( array( 'oo-ui-ltr' ) );
-			$this->input->addClasses( array( 'oo-ui-rtl' ) );
-		} else {
-			$this->input->removeClasses( array( 'oo-ui-rtl' ) );
-			$this->input->addClasses( array( 'oo-ui-ltr' ) );
-		}
+		$this->setDir( $isRTL ? 'rtl' : 'ltr' );
+		return $this;
+	}
+
+	/**
+	 * Set the directionality of the input.
+	 *
+	 * @param string $dir Text directionality: 'ltr', 'rtl' or 'auto'
+	 * @return $this
+	 */
+	public function setDir( $dir ) {
+		$this->input->setAttributes( [ 'dir' => $dir ] );
+		return $this;
 	}
 
 	/**
 	 * Set the value of the input.
 	 *
 	 * @param string $value New value
-	 * @chainable
+	 * @return $this
 	 */
 	public function setValue( $value ) {
 		$this->value = $this->cleanUpValue( $value );
@@ -131,9 +146,9 @@ class InputWidget extends Widget {
 		parent::setDisabled( $state );
 		if ( isset( $this->input ) ) {
 			if ( $this->isDisabled() ) {
-				$this->input->setAttributes( array( 'disabled' => 'disabled' ) );
+				$this->input->setAttributes( [ 'disabled' => 'disabled' ] );
 			} else {
-				$this->input->removeAttributes( array( 'disabled' ) );
+				$this->input->removeAttributes( [ 'disabled' ] );
 			}
 		}
 		return $this;

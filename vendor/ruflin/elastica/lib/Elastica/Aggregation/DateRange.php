@@ -1,10 +1,11 @@
 <?php
+
 namespace Elastica\Aggregation;
 
 /**
  * Class DateRange.
  *
- * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-daterange-aggregation.html
+ * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-daterange-aggregation.html
  */
 class DateRange extends Range
 {

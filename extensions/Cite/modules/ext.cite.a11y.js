@@ -35,4 +35,4 @@
 			);
 		} );
 	} );
-} )( mediaWiki, jQuery );
+}( mediaWiki, jQuery ) );

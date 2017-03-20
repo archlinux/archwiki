@@ -20,6 +20,8 @@
  * @file
  * @ingroup LockManager
  */
+use MediaWiki\MediaWikiServices;
+use MediaWiki\Logger\LoggerFactory;
 
 /**
  * Class to handle file lock manager registration
@@ -29,13 +31,13 @@
  * @since 1.19
  */
 class LockManagerGroup {
-	/** @var array (domain => LockManager) */
-	protected static $instances = array();
+	/** @var LockManagerGroup[] (domain => LockManagerGroup) */
+	protected static $instances = [];
 
 	protected $domain; // string; domain (usually wiki ID)
 
 	/** @var array Array of (name => ('class' => ..., 'config' => ..., 'instance' => ...)) */
-	protected $managers = array();
+	protected $managers = [];
 
 	/**
 	 * @param string $domain Domain (usually wiki ID)
@@ -62,7 +64,7 @@ class LockManagerGroup {
 	 * Destroy the singleton instances
 	 */
 	public static function destroySingletons() {
-		self::$instances = array();
+		self::$instances = [];
 	}
 
 	/**
@@ -92,11 +94,11 @@ class LockManagerGroup {
 			}
 			$class = $config['class'];
 			unset( $config['class'] ); // lock manager won't need this
-			$this->managers[$name] = array(
+			$this->managers[$name] = [
 				'class' => $class,
 				'config' => $config,
 				'instance' => null
-			);
+			];
 		}
 	}
 
@@ -115,6 +117,16 @@ class LockManagerGroup {
 		if ( !isset( $this->managers[$name]['instance'] ) ) {
 			$class = $this->managers[$name]['class'];
 			$config = $this->managers[$name]['config'];
+			if ( $class === 'DBLockManager' ) {
+				$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
+				$lb = $lbFactory->newMainLB( $config['domain'] );
+				$dbw = $lb->getLazyConnectionRef( DB_MASTER, [], $config['domain'] );
+
+				$config['dbServers']['localDBMaster'] = $dbw;
+				$config['srvCache'] = ObjectCache::getLocalServerInstance( 'hash' );
+			}
+			$config['logger'] = LoggerFactory::getInstance( 'LockManager' );
+
 			$this->managers[$name]['instance'] = new $class( $config );
 		}
 
@@ -134,7 +146,7 @@ class LockManagerGroup {
 		}
 		$class = $this->managers[$name]['class'];
 
-		return array( 'class' => $class ) + $this->managers[$name]['config'];
+		return [ 'class' => $class ] + $this->managers[$name]['config'];
 	}
 
 	/**
@@ -146,7 +158,7 @@ class LockManagerGroup {
 	public function getDefault() {
 		return isset( $this->managers['default'] )
 			? $this->get( 'default' )
-			: new NullLockManager( array() );
+			: new NullLockManager( [] );
 	}
 
 	/**

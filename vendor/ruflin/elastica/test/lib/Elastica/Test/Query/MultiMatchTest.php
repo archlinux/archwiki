@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica\Test\Query;
 
 use Elastica\Document;
@@ -69,7 +70,7 @@ class MultiMatchTest extends BaseTest
     public function testFuzzy()
     {
         $multiMatch = new MultiMatch();
-        $multiMatch->setQuery('Tritsan'); // Mispell on purpose
+        $multiMatch->setQuery('Tritsan'); // Misspell on purpose
         $multiMatch->setFields(array('full_name', 'name'));
         $multiMatch->setFuzziness(2);
         $resultSet = $this->_getResults($multiMatch);
@@ -77,12 +78,20 @@ class MultiMatchTest extends BaseTest
         $this->assertEquals(1, $resultSet->count());
 
         $multiMatch = new MultiMatch();
-        $multiMatch->setQuery('Tritsan'); // Mispell on purpose
+        $multiMatch->setQuery('Tritsan'); // Misspell on purpose
         $multiMatch->setFields(array('full_name', 'name'));
         $multiMatch->setFuzziness(0);
         $resultSet = $this->_getResults($multiMatch);
 
         $this->assertEquals(0, $resultSet->count());
+
+        $multiMatch = new MultiMatch();
+        $multiMatch->setQuery('Tritsan'); // Misspell on purpose
+        $multiMatch->setFields(array('full_name', 'name'));
+        $multiMatch->setFuzziness(MultiMatch::FUZZINESS_AUTO);
+        $resultSet = $this->_getResults($multiMatch);
+
+        $this->assertEquals(1, $resultSet->count());
     }
 
     /**
@@ -93,7 +102,7 @@ class MultiMatchTest extends BaseTest
         // Here Elasticsearch will not accept mispells
         // on the first 6 letters.
         $multiMatch = new MultiMatch();
-        $multiMatch->setQuery('Tritsan'); // Mispell on purpose
+        $multiMatch->setQuery('Tritsan'); // Misspell on purpose
         $multiMatch->setFields(array('full_name', 'name'));
         $multiMatch->setFuzziness(2);
         $multiMatch->setPrefixLength(6);

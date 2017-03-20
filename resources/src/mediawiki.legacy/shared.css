@@ -44,8 +44,8 @@
 
 /* User-Agent styles for new HTML5 elements */
 mark {
-	background-color: yellow;
-	color: black;
+	background-color: #ff0;
+	color: #000;
 }
 
 /* Helper for wbr element on IE 8+; in HTML5, but not supported by default as of IE 11. */
@@ -91,66 +91,11 @@ abbr[title],
 	}
 }
 
-/* Colored watchlist and recent changes numbers */
-.mw-plusminus-pos {
-	color: #006400; /* dark green */
-}
-
-.mw-plusminus-neg {
-	color: #8b0000; /* dark red */
-}
-
-.mw-plusminus-null {
-	color: #aaa; /* gray */
-}
-
-/*
- * Bidi-isolate these numbers.
- * See https://phabricator.wikimedia.org/T93484
- */
-.mw-plusminus-pos,
-.mw-plusminus-neg,
-.mw-plusminus-null {
-	unicode-bidi: -moz-isolate;
-	unicode-bidi: -webkit-isolate;
-	unicode-bidi: isolate;
-}
-
-/**
- * Links to redirects appear italicized on [[Special:AllPages]], [[Special:PrefixIndex]],
- * [[Special:Watchlist/edit]] and in category listings.
- */
-.allpagesredirect,
-.redirect-in-category,
-.watchlistredir {
-	font-style: italic;
-}
-
 /* Comment portions of RC entries */
 span.comment {
 	font-style: italic;
-}
-
-/* Math */
-.texvc {
-	direction: ltr;
-	unicode-bidi: embed;
-}
-
-img.tex {
-	vertical-align: middle;
-}
-
-span.texhtml {
-	font-family: serif;
-}
-
-/**
- * Add a bit of margin space between the preview and the toolbar.
- * This replaces the ugly <p><br /></p> we used to insert into the page source
- */
-#wikiPreview.ontop {
-	margin-bottom: 1em;
+	unicode-bidi: -moz-isolate;
+	unicode-bidi: isolate;
 }
 
 /* Stop floats from intruding into edit area in previews */
@@ -158,6 +103,25 @@ span.texhtml {
 #toolbar,
 #wpTextbox1 {
 	clear: both;
+}
+
+/* Edit font preference */
+/* TODO: for 'default' on non-textareas we could compute the default font of textarea in the client */
+.mw-editfont-default:not( textarea ) {
+	font-family: monospace;
+}
+
+/* Keep this rule separate from the :not rule above so it still works in older browsers */
+.mw-editfont-monospace {
+	font-family: monospace;
+}
+
+.mw-editfont-sans-serif {
+	font-family: sans-serif;
+}
+
+.mw-editfont-serif {
+	font-family: serif;
 }
 
 /**
@@ -179,7 +143,7 @@ span.history-deleted {
 
 .unpatrolled {
 	font-weight: bold;
-	color: red;
+	color: #f00;
 }
 
 div.patrollink {
@@ -213,6 +177,11 @@ td.mw-submit {
 input#wpSummary {
 	width: 80%;
 	margin-bottom: 1em;
+}
+
+.mw-input-with-label {
+	white-space: nowrap;
+	display: inline-block;
 }
 
 /**
@@ -265,7 +234,7 @@ input#wpSummary {
 .catlinks li {
 	display: inline-block;
 	line-height: 1.25em;
-	border-left: 1px solid #AAA;
+	border-left: 1px solid #aaa;
 	margin: 0.125em 0;
 	padding: 0 0.5em;
 	zoom: 1;
@@ -294,46 +263,18 @@ input#wpSummary {
 }
 
 /**
- * Convenience links to edit block, delete and protect reasons
- * and upload licenses
+ * Convenience links to edit delete and protect reasons
  */
-p.mw-ipb-conveniencelinks,
 p.mw-protect-editreasons,
 p.mw-filedelete-editreasons,
-p.mw-delete-editreasons,
-p.mw-revdel-editreasons,
-p.mw-upload-editlicenses {
+p.mw-delete-editreasons {
 	font-size: 90%;
 	text-align: right;
 }
 
-/* Page history styling */
-
 /* The auto-generated edit comments */
 .autocomment {
-	color: gray;
-}
-
-#pagehistory .history-user {
-	margin-left: 0.4em;
-	margin-right: 0.2em;
-}
-
-#pagehistory span.minor {
-	font-weight: bold;
-}
-
-#pagehistory li {
-	border: 1px solid white;
-}
-
-#pagehistory li.selected {
-	background-color: #f9f9f9;
-	border: 1px dashed #aaa;
-}
-
-.mw-history-revisionactions, #mw-fileduplicatesearch-icon {
-	float: right;
+	color: #808080;
 }
 
 /** Generic minor/bot/newpage styling (recent changes) */
@@ -352,7 +293,7 @@ p.mw-upload-editlicenses {
 div.mw-warning-with-logexcerpt {
 	padding: 3px;
 	margin-bottom: 3px;
-	border: 2px solid #2F6FAB;
+	border: 2px solid #2f6fab;
 	clear: both;
 }
 
@@ -379,7 +320,7 @@ th.mw-revdel-checkbox {
 
 /* red links; see bug 36276 */
 a.new {
-	color: #BA0000;
+	color: #ba0000;
 }
 
 /* Plainlinks - this can be used to switch
@@ -405,7 +346,7 @@ table.wikitable {
 	background-color: #f9f9f9;
 	border: 1px solid #aaa;
 	border-collapse: collapse;
-	color: black;
+	color: #000;
 }
 
 table.wikitable > tr > th,
@@ -434,7 +375,7 @@ table.wikitable > caption {
 }
 
 .error {
-	color: #cc0000;
+	color: #c00;
 }
 
 .warning {
@@ -468,7 +409,7 @@ table.wikitable > caption {
 }
 
 .errorbox {
-	color: #cc0000;
+	color: #c00;
 	border-color: #fac5c5;
 	background-color: #fae3e3;
 }
@@ -531,69 +472,20 @@ table.wikitable > caption {
 .mw-datatable,
 .mw-datatable td,
 .mw-datatable th {
-	border: 1px solid #aaaaaa;
+	border: 1px solid #aaa;
 	padding: 0 0.15em 0 0.15em;
 }
 
 .mw-datatable th {
-	background-color: #ddddff;
+	background-color: #ddf;
 }
 
 .mw-datatable td {
-	background-color: #ffffff;
+	background-color: #fff;
 }
 
 .mw-datatable tr:hover td {
-	background-color: #eeeeff;
-}
-
-/* Classes for Exif data display */
-table.mw_metadata {
-	font-size: 0.8em;
-	margin-left: 0.5em;
-	margin-bottom: 0.5em;
-	width: 400px;
-}
-
-table.mw_metadata caption {
-	font-weight: bold;
-}
-
-table.mw_metadata th {
-	font-weight: normal;
-}
-
-table.mw_metadata td {
-	padding: 0.1em;
-}
-
-table.mw_metadata {
-	border: none;
-	border-collapse: collapse;
-}
-
-table.mw_metadata td,
-table.mw_metadata th {
-	text-align: center;
-	border: 1px solid #aaaaaa;
-	padding-left: 5px;
-	padding-right: 5px;
-}
-
-table.mw_metadata th {
-	background-color: #f9f9f9;
-}
-
-table.mw_metadata td {
-	background-color: #fcfcfc;
-}
-
-table.mw_metadata ul.metadata-langlist {
-	list-style-type: none;
-	list-style-image: none;
-	padding-right: 5px;
-	padding-left: 5px;
-	margin: 0;
+	background-color: #eef;
 }
 
 /* Correct directionality when page dir is different from site/user dir */
@@ -640,7 +532,7 @@ table.mw_metadata ul.metadata-langlist {
 }
 
 .mw-ajax-loader {
-	background-image: url(images/ajax-loader.gif);
+	background-image: url( images/ajax-loader.gif );
 	background-position: center center;
 	background-repeat: no-repeat;
 	padding: 16px;
@@ -651,7 +543,7 @@ table.mw_metadata ul.metadata-langlist {
 .mw-small-spinner {
 	padding: 10px !important;
 	margin-right: 0.6em;
-	background-image: url(images/spinner.gif);
+	background-image: url( images/spinner.gif );
 	background-position: center center;
 	background-repeat: no-repeat;
 }
@@ -784,33 +676,6 @@ ol:lang(or) li {
 	direction: ltr;
 }
 
-/* tooltip styles */
-.mw-help-field-hint {
-	display: none;
-	margin-left: 2px;
-	margin-bottom: -8px;
-	padding: 0 0 0 15px;
-	background-image: url(images/help-question.gif);
-	background-position: left center;
-	background-repeat: no-repeat;
-	cursor: pointer;
-	font-size: .8em;
-	text-decoration: underline;
-	color: #0645ad;
-}
-
-.mw-help-field-hint:hover {
-	background-image: url(images/help-question-hover.gif);
-}
-
-.mw-help-field-data {
-	display: block;
-	background-color: #d6f3ff;
-	padding: 5px 8px 4px 8px;
-	border: 1px solid #5dc9f4;
-	margin-left: 20px;
-}
-
 #mw-clearyourcache,
 #mw-sitecsspreview,
 #mw-sitejspreview,
@@ -820,36 +685,10 @@ ol:lang(or) li {
 	unicode-bidi: embed;
 }
 
-/* Correct user & content directionality when viewing a diff */
-.diff-currentversion-title,
-.diff {
-	direction: ltr;
-	unicode-bidi: embed;
-}
-
-/* @noflip */ .diff-contentalign-right td {
-	direction: rtl;
-	unicode-bidi: embed;
-}
-
-/* @noflip */ .diff-contentalign-left td {
-	direction: ltr;
-	unicode-bidi: embed;
-}
-
-.diff-multi,
-.diff-otitle,
-.diff-ntitle,
-.diff-lineno {
-	direction: ltr !important;
-	unicode-bidi: embed;
-}
-
 #mw-revision-info,
 #mw-revision-info-current,
 #mw-revision-nav {
 	direction: ltr;
-	display: inline;
 }
 
 /* Images */
@@ -900,8 +739,6 @@ table.floatleft {
 }
 
 .mw-editsection,
-.toctoggle,
-.tochidden,
 #jump-to-nav {
 	-moz-user-select: none;
 	-webkit-user-select: none;

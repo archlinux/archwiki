@@ -6,7 +6,7 @@
  * @author Moriel Schottlender, 2015
  * @since 1.19
  */
-/*jshint es3:false */
+/*jshint esversion:5 */
 /*global OO*/
 ( function ( mw, $ ) {
 	/**
@@ -38,9 +38,10 @@
 	 * @param {Object} [config] Configuration object
 	 * @cfg {mw.Title} [title="Feedback"] The title of the page where you collect
 	 *  feedback.
+	 * @cfg {string} [apiUrl] api.php URL if the feedback page is on another wiki
 	 * @cfg {string} [dialogTitleMessageKey="feedback-dialog-title"] Message key for the
 	 *  title of the dialog box
-	 * @cfg {mw.Uri|string} [bugsLink="//phabricator.wikimedia.org/maniphest/task/create/"] URL where
+	 * @cfg {mw.Uri|string} [bugsLink="//phabricator.wikimedia.org/maniphest/task/edit/form/1/"] URL where
 	 *  bugs can be posted
 	 * @cfg {mw.Uri|string} [bugsListLink="//phabricator.wikimedia.org/maniphest/query/advanced"] URL
 	 *  where bugs can be listed
@@ -57,10 +58,10 @@
 		// Feedback page title
 		this.feedbackPageTitle = config.title || new mw.Title( 'Feedback' );
 
-		this.messagePosterPromise = mw.messagePoster.factory.create( this.feedbackPageTitle );
+		this.messagePosterPromise = mw.messagePoster.factory.create( this.feedbackPageTitle, config.apiUrl );
 
 		// Links
-		this.bugsTaskSubmissionLink = config.bugsLink || '//phabricator.wikimedia.org/maniphest/task/create/';
+		this.bugsTaskSubmissionLink = config.bugsLink || '//phabricator.wikimedia.org/maniphest/task/edit/form/1/';
 		this.bugsTaskListLink = config.bugsListLink || '//phabricator.wikimedia.org/maniphest/query/advanced';
 
 		// Terms of use
@@ -98,33 +99,14 @@
 			case 'submitted':
 				dialogConfig = {
 					title: mw.msg( 'feedback-thanks-title' ),
-					message: $( '<span>' ).append(
-						mw.message(
-							'feedback-thanks',
-							this.feedbackPageTitle.getNameText(),
-							$( '<a>' )
-								.attr( {
-									target: '_blank',
-									href: this.feedbackPageTitle.getUrl()
-								} )
-						).parse()
+					message: $( '<span>' ).msg(
+						'feedback-thanks',
+						this.feedbackPageTitle.getNameText(),
+						$( '<a>' ).attr( {
+							target: '_blank',
+							href: this.feedbackPageTitle.getUrl()
+						} )
 					),
-					actions: [
-						{
-							action: 'accept',
-							label: mw.msg( 'feedback-close' ),
-							flags: 'primary'
-						}
-					]
-				};
-				break;
-			case 'error1':
-			case 'error2':
-			case 'error3':
-			case 'error4':
-				dialogConfig = {
-					title: mw.msg( 'feedback-error-title' ),
-					message: mw.msg( 'feedback-' + status ),
 					actions: [
 						{
 							action: 'accept',
@@ -218,12 +200,12 @@
 		{
 			action: 'submit',
 			label: mw.msg( 'feedback-submit' ),
-			flags: [ 'primary', 'constructive' ]
+			flags: [ 'primary', 'progressive' ]
 		},
 		{
 			action: 'external',
 			label: mw.msg( 'feedback-external-bug-report-button' ),
-			flags: 'constructive'
+			flags: 'progressive'
 		},
 		{
 			action: 'cancel',
@@ -256,6 +238,7 @@
 			classes: [ 'mw-feedbackDialog-welcome-message' ]
 		} );
 		this.feedbackSubjectInput = new OO.ui.TextInputWidget( {
+			indicator: 'required',
 			multiline: false
 		} );
 		this.feedbackMessageInput = new OO.ui.TextInputWidget( {
@@ -310,10 +293,7 @@
 					!this.useragentMandatory ||
 					this.useragentCheckbox.isSelected()
 				) &&
-				(
-					!!this.feedbackMessageInput.getValue() ||
-					!!this.feedbackSubjectInput.getValue()
-				)
+				this.feedbackSubjectInput.getValue()
 			);
 
 		this.actions.setAbilities( { submit:  isValid } );
@@ -426,13 +406,33 @@
 				}, function () {
 					fb.status = 'error4';
 					mw.log.warn( 'Feedback report failed because MessagePoster could not be fetched' );
-				} ).always( function () {
+				} ).then( function () {
 					fb.close();
+				}, function () {
+					return fb.getErrorMessage();
 				} );
 			}, this );
 		}
 		// Fallback to parent handler
 		return mw.Feedback.Dialog.parent.prototype.getActionProcess.call( this, action );
+	};
+
+	/**
+	 * Returns an error message for the current status.
+	 *
+	 * @private
+	 *
+	 * @return {OO.ui.Error}
+	 */
+	mw.Feedback.Dialog.prototype.getErrorMessage = function () {
+		switch ( this.status ) {
+			case 'error1':
+			case 'error2':
+			case 'error3':
+			case 'error4':
+				// Messages: feedback-error1, feedback-error2, feedback-error3, feedback-error4
+				return new OO.ui.Error( mw.msg( 'feedback-' + this.status ) );
+		}
 	};
 
 	/**
@@ -497,7 +497,7 @@
 	/**
 	 * Get the bug report link
 	 *
-	 * @returns {string} Link to the external bug report form
+	 * @return {string} Link to the external bug report form
 	 */
 	mw.Feedback.Dialog.prototype.getBugReportLink = function () {
 		return this.bugReportLink;

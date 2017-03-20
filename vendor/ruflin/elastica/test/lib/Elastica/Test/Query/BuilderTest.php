@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica\Test\Query;
 
 use Elastica\Query\Builder;
@@ -6,6 +7,18 @@ use Elastica\Test\Base as BaseTest;
 
 class BuilderTest extends BaseTest
 {
+    /**
+     * @group unit
+     */
+    public function testDeprecated()
+    {
+        $this->hideDeprecated();
+        $reflection = new \ReflectionClass(new Builder());
+        $this->showDeprecated();
+
+        $this->assertFileDeprecated($reflection->getFileName(), 'This builder is deprecated and will be removed in further Elastica releases. Use new Elastica\QueryBuilder instead.');
+    }
+
     /**
      * @group unit
      * @covers \Elastica\Query\Builder::factory
@@ -96,7 +109,6 @@ class BuilderTest extends BaseTest
             array('bool', 'bool'),
             array('constantScore', 'constant_score'),
             array('disMax', 'dis_max'),
-            array('facets', 'facets'),
             array('filter', 'filter'),
             array('filteredQuery', 'filtered'),
             array('must', 'must'),
@@ -124,8 +136,6 @@ class BuilderTest extends BaseTest
      * @covers \Elastica\Query\Builder::constantScoreClose
      * @covers \Elastica\Query\Builder::disMax
      * @covers \Elastica\Query\Builder::disMaxClose
-     * @covers \Elastica\Query\Builder::facets
-     * @covers \Elastica\Query\Builder::facetsClose
      * @covers \Elastica\Query\Builder::filter
      * @covers \Elastica\Query\Builder::filterClose
      * @covers \Elastica\Query\Builder::filteredQuery

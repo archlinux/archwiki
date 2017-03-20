@@ -24,6 +24,7 @@
  *
  * @file
  */
+use MediaWiki\MediaWikiServices;
 
 /**
  * API interface for setting the wl_notificationtimestamp field
@@ -46,7 +47,7 @@ class ApiSetNotificationTimestamp extends ApiBase {
 		$params = $this->extractRequestParams();
 		$this->requireMaxOneParameter( $params, 'timestamp', 'torevid', 'newerthanrevid' );
 
-		$continuationManager = new ApiContinuationManager( $this, array(), array() );
+		$continuationManager = new ApiContinuationManager( $this, [], [] );
 		$this->setContinuationManager( $continuationManager );
 
 		$pageSet = $this->getPageSet();
@@ -98,13 +99,14 @@ class ApiSetNotificationTimestamp extends ApiBase {
 			}
 		}
 
+		$watchedItemStore = MediaWikiServices::getInstance()->getWatchedItemStore();
 		$apiResult = $this->getResult();
-		$result = array();
+		$result = [];
 		if ( $params['entirewatchlist'] ) {
 			// Entire watchlist mode: Just update the thing and return a success indicator
-			$dbw->update( 'watchlist', array( 'wl_notificationtimestamp' => $timestamp ),
-				array( 'wl_user' => $user->getID() ),
-				__METHOD__
+			$watchedItemStore->setNotificationTimestampsForUser(
+				$user,
+				$timestamp
 			);
 
 			$result['notificationtimestamp'] = is_null( $timestamp )
@@ -117,14 +119,14 @@ class ApiSetNotificationTimestamp extends ApiBase {
 				$result[] = $r;
 			}
 			foreach ( $pageSet->getMissingPageIDs() as $p ) {
-				$page = array();
+				$page = [];
 				$page['pageid'] = $p;
 				$page['missing'] = true;
 				$page['notwatched'] = true;
 				$result[] = $page;
 			}
 			foreach ( $pageSet->getMissingRevisionIDs() as $r ) {
-				$rev = array();
+				$rev = [];
 				$rev['revid'] = $r;
 				$rev['missing'] = true;
 				$rev['notwatched'] = true;
@@ -133,35 +135,32 @@ class ApiSetNotificationTimestamp extends ApiBase {
 
 			if ( $pageSet->getTitles() ) {
 				// Now process the valid titles
-				$lb = new LinkBatch( $pageSet->getTitles() );
-				$dbw->update( 'watchlist', array( 'wl_notificationtimestamp' => $timestamp ),
-					array( 'wl_user' => $user->getID(), $lb->constructSet( 'wl', $dbw ) ),
-					__METHOD__
+				$watchedItemStore->setNotificationTimestampsForUser(
+					$user,
+					$timestamp,
+					$pageSet->getTitles()
 				);
 
 				// Query the results of our update
-				$timestamps = array();
-				$res = $dbw->select(
-					'watchlist',
-					array( 'wl_namespace', 'wl_title', 'wl_notificationtimestamp' ),
-					array( 'wl_user' => $user->getID(), $lb->constructSet( 'wl', $dbw ) ),
-					__METHOD__
+				$timestamps = $watchedItemStore->getNotificationTimestampsBatch(
+					$user,
+					$pageSet->getTitles()
 				);
-				foreach ( $res as $row ) {
-					$timestamps[$row->wl_namespace][$row->wl_title] = $row->wl_notificationtimestamp;
-				}
 
 				// Now, put the valid titles into the result
 				/** @var $title Title */
 				foreach ( $pageSet->getTitles() as $title ) {
 					$ns = $title->getNamespace();
 					$dbkey = $title->getDBkey();
-					$r = array(
+					$r = [
 						'ns' => intval( $ns ),
 						'title' => $title->getPrefixedText(),
-					);
+					];
 					if ( !$title->exists() ) {
 						$r['missing'] = true;
+						if ( $title->isKnown() ) {
+							$r['known'] = true;
+						}
 					}
 					if ( isset( $timestamps[$ns] ) && array_key_exists( $dbkey, $timestamps[$ns] ) ) {
 						$r['notificationtimestamp'] = '';
@@ -208,23 +207,23 @@ class ApiSetNotificationTimestamp extends ApiBase {
 	}
 
 	public function getAllowedParams( $flags = 0 ) {
-		$result = array(
-			'entirewatchlist' => array(
+		$result = [
+			'entirewatchlist' => [
 				ApiBase::PARAM_TYPE => 'boolean'
-			),
-			'timestamp' => array(
+			],
+			'timestamp' => [
 				ApiBase::PARAM_TYPE => 'timestamp'
-			),
-			'torevid' => array(
+			],
+			'torevid' => [
 				ApiBase::PARAM_TYPE => 'integer'
-			),
-			'newerthanrevid' => array(
+			],
+			'newerthanrevid' => [
 				ApiBase::PARAM_TYPE => 'integer'
-			),
-			'continue' => array(
+			],
+			'continue' => [
 				ApiBase::PARAM_HELP_MSG => 'api-help-param-continue',
-			),
-		);
+			],
+		];
 		if ( $flags ) {
 			$result += $this->getPageSet()->getFinalParams( $flags );
 		}
@@ -233,7 +232,7 @@ class ApiSetNotificationTimestamp extends ApiBase {
 	}
 
 	protected function getExamplesMessages() {
-		return array(
+		return [
 			'action=setnotificationtimestamp&entirewatchlist=&token=123ABC'
 				=> 'apihelp-setnotificationtimestamp-example-all',
 			'action=setnotificationtimestamp&titles=Main_page&token=123ABC'
@@ -243,7 +242,7 @@ class ApiSetNotificationTimestamp extends ApiBase {
 				=> 'apihelp-setnotificationtimestamp-example-pagetimestamp',
 			'action=setnotificationtimestamp&generator=allpages&gapnamespace=2&token=123ABC'
 				=> 'apihelp-setnotificationtimestamp-example-allpages',
-		);
+		];
 	}
 
 	public function getHelpUrls() {

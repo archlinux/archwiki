@@ -20,12 +20,17 @@
  * @file
  */
 
+use MediaWiki\MediaWikiServices;
+use Wikimedia\ScopedCallback;
+
 /**
- * See docs/deferred.txt
+ * Class the manages updates of *_link tables as well as similar extension-managed tables
  *
- * @todo document (e.g. one-sentence top-level class description).
+ * @note: LinksUpdate is managed by DeferredUpdates::execute(). Do not run this in a transaction.
+ *
+ * See docs/deferred.txt
  */
-class LinksUpdate extends SqlDataUpdate {
+class LinksUpdate extends DataUpdate implements EnqueueableDataUpdate {
 	// @todo make members protected, but make sure extensions don't break
 
 	/** @var int Page ID of the article linked from */
@@ -55,11 +60,17 @@ class LinksUpdate extends SqlDataUpdate {
 	/** @var array Map of language codes to titles */
 	public $mInterlangs;
 
+	/** @var array 2-D map of (prefix => DBK => 1) */
+	public $mInterwikis;
+
 	/** @var array Map of arbitrary name to value */
 	public $mProperties;
 
 	/** @var bool Whether to queue jobs for recursive updates */
 	public $mRecursive;
+
+	/** @var Revision Revision for which this update has been triggered */
+	private $mRevision;
 
 	/**
 	 * @var null|array Added links if calculated.
@@ -72,6 +83,24 @@ class LinksUpdate extends SqlDataUpdate {
 	private $linkDeletions = null;
 
 	/**
+	 * @var null|array Added properties if calculated.
+	 */
+	private $propertyInsertions = null;
+
+	/**
+	 * @var null|array Deleted properties if calculated.
+	 */
+	private $propertyDeletions = null;
+
+	/**
+	 * @var User|null
+	 */
+	private $user;
+
+	/** @var IDatabase */
+	private $db;
+
+	/**
 	 * Constructor
 	 *
 	 * @param Title $title Title of the page we're updating
@@ -79,25 +108,16 @@ class LinksUpdate extends SqlDataUpdate {
 	 * @param bool $recursive Queue jobs for recursive updates?
 	 * @throws MWException
 	 */
-	function __construct( $title, $parserOutput, $recursive = true ) {
-		parent::__construct( false ); // no implicit transaction
-
-		if ( !( $title instanceof Title ) ) {
-			throw new MWException( "The calling convention to LinksUpdate::LinksUpdate() has changed. " .
-				"Please see Article::editUpdates() for an invocation example.\n" );
-		}
-
-		if ( !( $parserOutput instanceof ParserOutput ) ) {
-			throw new MWException( "The calling convention to LinksUpdate::__construct() has changed. " .
-				"Please see WikiPage::doEditUpdates() for an invocation example.\n" );
-		}
+	function __construct( Title $title, ParserOutput $parserOutput, $recursive = true ) {
+		parent::__construct();
 
 		$this->mTitle = $title;
-		$this->mId = $title->getArticleID();
+		$this->mId = $title->getArticleID( Title::GAID_FOR_UPDATE );
 
 		if ( !$this->mId ) {
-			throw new MWException( "The Title object did not provide an article " .
-				"ID. Perhaps the page doesn't exist?" );
+			throw new InvalidArgumentException(
+				"The Title object yields no ID. Perhaps the page doesn't exist?"
+			);
 		}
 
 		$this->mParserOutput = $parserOutput;
@@ -115,7 +135,7 @@ class LinksUpdate extends SqlDataUpdate {
 		# the way back to the skin, so either a skin API break would be required, or an
 		# inefficient back-conversion.
 		$ill = $parserOutput->getLanguageLinks();
-		$this->mInterlangs = array();
+		$this->mInterlangs = [];
 		foreach ( $ill as $link ) {
 			list( $key, $title ) = explode( ':', $link, 2 );
 			$this->mInterlangs[$key] = $title;
@@ -134,20 +154,56 @@ class LinksUpdate extends SqlDataUpdate {
 
 		$this->mRecursive = $recursive;
 
-		Hooks::run( 'LinksUpdateConstructed', array( &$this ) );
+		Hooks::run( 'LinksUpdateConstructed', [ &$this ] );
 	}
 
 	/**
 	 * Update link tables with outgoing links from an updated article
+	 *
+	 * @note: this is managed by DeferredUpdates::execute(). Do not run this in a transaction.
 	 */
 	public function doUpdate() {
-		Hooks::run( 'LinksUpdate', array( &$this ) );
+		if ( $this->ticket ) {
+			// Make sure all links update threads see the changes of each other.
+			// This handles the case when updates have to batched into several COMMITs.
+			$scopedLock = self::acquirePageLock( $this->getDB(), $this->mId );
+		}
+
+		Hooks::run( 'LinksUpdate', [ &$this ] );
 		$this->doIncrementalUpdate();
-		Hooks::run( 'LinksUpdateComplete', array( &$this ) );
+
+		// Commit and release the lock (if set)
+		ScopedCallback::consume( $scopedLock );
+		// Run post-commit hooks without DBO_TRX
+		$this->getDB()->onTransactionIdle(
+			function () {
+				Hooks::run( 'LinksUpdateComplete', [ &$this, $this->ticket ] );
+			},
+			__METHOD__
+		);
+	}
+
+	/**
+	 * Acquire a lock for performing link table updates for a page on a DB
+	 *
+	 * @param IDatabase $dbw
+	 * @param integer $pageId
+	 * @param string $why One of (job, atomicity)
+	 * @return ScopedCallback
+	 * @throws RuntimeException
+	 * @since 1.27
+	 */
+	public static function acquirePageLock( IDatabase $dbw, $pageId, $why = 'atomicity' ) {
+		$key = "LinksUpdate:$why:pageid:$pageId";
+		$scopedLock = $dbw->getScopedLockAndFlush( $key, __METHOD__, 15 );
+		if ( !$scopedLock ) {
+			throw new RuntimeException( "Could not acquire lock '$key'." );
+		}
+
+		return $scopedLock;
 	}
 
 	protected function doIncrementalUpdate() {
-
 		# Page links
 		$existing = $this->getExistingLinks();
 		$this->linkDeletions = $this->getLinkDeletions( $existing );
@@ -156,7 +212,6 @@ class LinksUpdate extends SqlDataUpdate {
 
 		# Image links
 		$existing = $this->getExistingImages();
-
 		$imageDeletes = $this->getImageDeletions( $existing );
 		$this->incrTableUpdate( 'imagelinks', 'il', $imageDeletes,
 			$this->getImageInsertions( $existing ) );
@@ -187,9 +242,7 @@ class LinksUpdate extends SqlDataUpdate {
 
 		# Category links
 		$existing = $this->getExistingCategories();
-
 		$categoryDeletes = $this->getCategoryDeletions( $existing );
-
 		$this->incrTableUpdate( 'categorylinks', 'cl', $categoryDeletes,
 			$this->getCategoryInsertions( $existing ) );
 
@@ -201,18 +254,14 @@ class LinksUpdate extends SqlDataUpdate {
 
 		# Page properties
 		$existing = $this->getExistingProperties();
-
-		$propertiesDeletes = $this->getPropertyDeletions( $existing );
-
-		$this->incrTableUpdate( 'page_props', 'pp', $propertiesDeletes,
+		$this->propertyDeletions = $this->getPropertyDeletions( $existing );
+		$this->incrTableUpdate( 'page_props', 'pp', $this->propertyDeletions,
 			$this->getPropertyInsertions( $existing ) );
 
 		# Invalidate the necessary pages
-		$changed = $propertiesDeletes + array_diff_assoc( $this->mProperties, $existing );
+		$this->propertyInsertions = array_diff_assoc( $this->mProperties, $existing );
+		$changed = $this->propertyDeletions + $this->propertyInsertions;
 		$this->invalidateProperties( $changed );
-
-		# Update the links table freshness for this title
-		$this->updateLinksTimestamp();
 
 		# Refresh links of all pages including this page
 		# This will be in a separate transaction
@@ -220,6 +269,8 @@ class LinksUpdate extends SqlDataUpdate {
 			$this->queueRecursiveJobs();
 		}
 
+		# Update the links table freshness for this title
+		$this->updateLinksTimestamp();
 	}
 
 	/**
@@ -241,9 +292,9 @@ class LinksUpdate extends SqlDataUpdate {
 		// should be implicitly protected as soon as possible, if applicable.
 		// These jobs duplicate a subset of the above ones, but can run sooner.
 		// Which ever runs first generally no-ops the other one.
-		$jobs = array();
+		$jobs = [];
 		foreach ( $bc->getCascadeProtectedLinks() as $title ) {
-			$jobs[] = new RefreshLinksJob( $title, array( 'prioritize' => true ) );
+			$jobs[] = RefreshLinksJob::newPrioritized( $title, [] );
 		}
 		JobQueueGroup::singleton()->push( $jobs );
 	}
@@ -258,10 +309,10 @@ class LinksUpdate extends SqlDataUpdate {
 		if ( $title->getBacklinkCache()->hasLinks( $table ) ) {
 			$job = new RefreshLinksJob(
 				$title,
-				array(
+				[
 					'table' => $table,
 					'recursive' => true,
-				) + Job::newRootJobParams( // "overall" refresh links job info
+				] + Job::newRootJobParams( // "overall" refresh links job info
 					"refreshlinks:{$table}:{$title->getPrefixedText()}"
 				)
 			);
@@ -274,7 +325,7 @@ class LinksUpdate extends SqlDataUpdate {
 	 * @param array $cats
 	 */
 	function invalidateCategories( $cats ) {
-		$this->invalidatePages( NS_CATEGORY, array_keys( $cats ) );
+		PurgeJobUtils::invalidatePages( $this->getDB(), NS_CATEGORY, array_keys( $cats ) );
 	}
 
 	/**
@@ -293,7 +344,7 @@ class LinksUpdate extends SqlDataUpdate {
 	 * @param array $images
 	 */
 	function invalidateImageDescriptions( $images ) {
-		$this->invalidatePages( NS_FILE, array_keys( $images ) );
+		PurgeJobUtils::invalidatePages( $this->getDB(), NS_FILE, array_keys( $images ) );
 	}
 
 	/**
@@ -303,45 +354,76 @@ class LinksUpdate extends SqlDataUpdate {
 	 * @param array $deletions
 	 * @param array $insertions Rows to insert
 	 */
-	function incrTableUpdate( $table, $prefix, $deletions, $insertions ) {
-		if ( $table == 'page_props' ) {
+	private function incrTableUpdate( $table, $prefix, $deletions, $insertions ) {
+		$services = MediaWikiServices::getInstance();
+		$bSize = $services->getMainConfig()->get( 'UpdateRowsPerQuery' );
+		$factory = $services->getDBLoadBalancerFactory();
+
+		if ( $table === 'page_props' ) {
 			$fromField = 'pp_page';
 		} else {
 			$fromField = "{$prefix}_from";
 		}
-		$where = array( $fromField => $this->mId );
-		if ( $table == 'pagelinks' || $table == 'templatelinks' || $table == 'iwlinks' ) {
-			if ( $table == 'iwlinks' ) {
-				$baseKey = 'iwl_prefix';
-			} else {
-				$baseKey = "{$prefix}_namespace";
+
+		$deleteWheres = []; // list of WHERE clause arrays for each DB delete() call
+		if ( $table === 'pagelinks' || $table === 'templatelinks' || $table === 'iwlinks' ) {
+			$baseKey =  ( $table === 'iwlinks' ) ? 'iwl_prefix' : "{$prefix}_namespace";
+
+			$curBatchSize = 0;
+			$curDeletionBatch = [];
+			$deletionBatches = [];
+			foreach ( $deletions as $ns => $dbKeys ) {
+				foreach ( $dbKeys as $dbKey => $unused ) {
+					$curDeletionBatch[$ns][$dbKey] = 1;
+					if ( ++$curBatchSize >= $bSize ) {
+						$deletionBatches[] = $curDeletionBatch;
+						$curDeletionBatch = [];
+						$curBatchSize = 0;
+					}
+				}
 			}
-			$clause = $this->mDb->makeWhereFrom2d( $deletions, $baseKey, "{$prefix}_title" );
-			if ( $clause ) {
-				$where[] = $clause;
-			} else {
-				$where = false;
+			if ( $curDeletionBatch ) {
+				$deletionBatches[] = $curDeletionBatch;
+			}
+
+			foreach ( $deletionBatches as $deletionBatch ) {
+				$deleteWheres[] = [
+					$fromField => $this->mId,
+					$this->getDB()->makeWhereFrom2d( $deletionBatch, $baseKey, "{$prefix}_title" )
+				];
 			}
 		} else {
-			if ( $table == 'langlinks' ) {
+			if ( $table === 'langlinks' ) {
 				$toField = 'll_lang';
-			} elseif ( $table == 'page_props' ) {
+			} elseif ( $table === 'page_props' ) {
 				$toField = 'pp_propname';
 			} else {
 				$toField = $prefix . '_to';
 			}
-			if ( count( $deletions ) ) {
-				$where[$toField] = array_keys( $deletions );
-			} else {
-				$where = false;
+
+			$deletionBatches = array_chunk( array_keys( $deletions ), $bSize );
+			foreach ( $deletionBatches as $deletionBatch ) {
+				$deleteWheres[] = [ $fromField => $this->mId, $toField => $deletionBatch ];
 			}
 		}
-		if ( $where ) {
-			$this->mDb->delete( $table, $where, __METHOD__ );
+
+		foreach ( $deleteWheres as $deleteWhere ) {
+			$this->getDB()->delete( $table, $deleteWhere, __METHOD__ );
+			$factory->commitAndWaitForReplication(
+				__METHOD__, $this->ticket, [ 'wiki' => $this->getDB()->getWikiID() ]
+			);
 		}
+
+		$insertBatches = array_chunk( $insertions, $bSize );
+		foreach ( $insertBatches as $insertBatch ) {
+			$this->getDB()->insert( $table, $insertBatch, __METHOD__, 'IGNORE' );
+			$factory->commitAndWaitForReplication(
+				__METHOD__, $this->ticket, [ 'wiki' => $this->getDB()->getWikiID() ]
+			);
+		}
+
 		if ( count( $insertions ) ) {
-			$this->mDb->insert( $table, $insertions, __METHOD__, 'IGNORE' );
-			Hooks::run( 'LinksUpdateAfterInsert', array( $this, $table, $insertions ) );
+			Hooks::run( 'LinksUpdateAfterInsert', [ $this, $table, $insertions ] );
 		}
 	}
 
@@ -351,19 +433,19 @@ class LinksUpdate extends SqlDataUpdate {
 	 * @param array $existing
 	 * @return array
 	 */
-	private function getLinkInsertions( $existing = array() ) {
-		$arr = array();
+	private function getLinkInsertions( $existing = [] ) {
+		$arr = [];
 		foreach ( $this->mLinks as $ns => $dbkeys ) {
 			$diffs = isset( $existing[$ns] )
 				? array_diff_key( $dbkeys, $existing[$ns] )
 				: $dbkeys;
 			foreach ( $diffs as $dbk => $id ) {
-				$arr[] = array(
+				$arr[] = [
 					'pl_from' => $this->mId,
 					'pl_from_namespace' => $this->mTitle->getNamespace(),
 					'pl_namespace' => $ns,
 					'pl_title' => $dbk
-				);
+				];
 			}
 		}
 
@@ -375,17 +457,17 @@ class LinksUpdate extends SqlDataUpdate {
 	 * @param array $existing
 	 * @return array
 	 */
-	private function getTemplateInsertions( $existing = array() ) {
-		$arr = array();
+	private function getTemplateInsertions( $existing = [] ) {
+		$arr = [];
 		foreach ( $this->mTemplates as $ns => $dbkeys ) {
 			$diffs = isset( $existing[$ns] ) ? array_diff_key( $dbkeys, $existing[$ns] ) : $dbkeys;
 			foreach ( $diffs as $dbk => $id ) {
-				$arr[] = array(
+				$arr[] = [
 					'tl_from' => $this->mId,
 					'tl_from_namespace' => $this->mTitle->getNamespace(),
 					'tl_namespace' => $ns,
 					'tl_title' => $dbk
-				);
+				];
 			}
 		}
 
@@ -398,15 +480,15 @@ class LinksUpdate extends SqlDataUpdate {
 	 * @param array $existing
 	 * @return array
 	 */
-	private function getImageInsertions( $existing = array() ) {
-		$arr = array();
+	private function getImageInsertions( $existing = [] ) {
+		$arr = [];
 		$diffs = array_diff_key( $this->mImages, $existing );
 		foreach ( $diffs as $iname => $dummy ) {
-			$arr[] = array(
+			$arr[] = [
 				'il_from' => $this->mId,
 				'il_from_namespace' => $this->mTitle->getNamespace(),
 				'il_to' => $iname
-			);
+			];
 		}
 
 		return $arr;
@@ -417,17 +499,17 @@ class LinksUpdate extends SqlDataUpdate {
 	 * @param array $existing
 	 * @return array
 	 */
-	private function getExternalInsertions( $existing = array() ) {
-		$arr = array();
+	private function getExternalInsertions( $existing = [] ) {
+		$arr = [];
 		$diffs = array_diff_key( $this->mExternals, $existing );
 		foreach ( $diffs as $url => $dummy ) {
 			foreach ( wfMakeUrlIndexes( $url ) as $index ) {
-				$arr[] = array(
-					'el_id' => $this->mDb->nextSequenceValue( 'externallinks_el_id_seq' ),
+				$arr[] = [
+					'el_id' => $this->getDB()->nextSequenceValue( 'externallinks_el_id_seq' ),
 					'el_from' => $this->mId,
 					'el_to' => $url,
 					'el_index' => $index,
-				);
+				];
 			}
 		}
 
@@ -442,10 +524,10 @@ class LinksUpdate extends SqlDataUpdate {
 	 *
 	 * @return array
 	 */
-	private function getCategoryInsertions( $existing = array() ) {
+	private function getCategoryInsertions( $existing = [] ) {
 		global $wgContLang, $wgCategoryCollation;
 		$diffs = array_diff_assoc( $this->mCategories, $existing );
-		$arr = array();
+		$arr = [];
 		foreach ( $diffs as $name => $prefix ) {
 			$nt = Title::makeTitleSafe( NS_CATEGORY, $name );
 			$wgContLang->findVariantLink( $name, $nt, true );
@@ -465,15 +547,15 @@ class LinksUpdate extends SqlDataUpdate {
 			$sortkey = Collation::singleton()->getSortKey(
 				$this->mTitle->getCategorySortkey( $prefix ) );
 
-			$arr[] = array(
+			$arr[] = [
 				'cl_from' => $this->mId,
 				'cl_to' => $name,
 				'cl_sortkey' => $sortkey,
-				'cl_timestamp' => $this->mDb->timestamp(),
+				'cl_timestamp' => $this->getDB()->timestamp(),
 				'cl_sortkey_prefix' => $prefix,
 				'cl_collation' => $wgCategoryCollation,
 				'cl_type' => $type,
-			);
+			];
 		}
 
 		return $arr;
@@ -486,15 +568,15 @@ class LinksUpdate extends SqlDataUpdate {
 	 *
 	 * @return array
 	 */
-	private function getInterlangInsertions( $existing = array() ) {
+	private function getInterlangInsertions( $existing = [] ) {
 		$diffs = array_diff_assoc( $this->mInterlangs, $existing );
-		$arr = array();
+		$arr = [];
 		foreach ( $diffs as $lang => $title ) {
-			$arr[] = array(
+			$arr[] = [
 				'll_from' => $this->mId,
 				'll_lang' => $lang,
 				'll_title' => $title
-			);
+			];
 		}
 
 		return $arr;
@@ -505,10 +587,10 @@ class LinksUpdate extends SqlDataUpdate {
 	 * @param array $existing
 	 * @return array
 	 */
-	function getPropertyInsertions( $existing = array() ) {
+	function getPropertyInsertions( $existing = [] ) {
 		$diffs = array_diff_assoc( $this->mProperties, $existing );
 
-		$arr = array();
+		$arr = [];
 		foreach ( array_keys( $diffs ) as $name ) {
 			$arr[] = $this->getPagePropRowData( $name );
 		}
@@ -537,11 +619,11 @@ class LinksUpdate extends SqlDataUpdate {
 
 		$value = $this->mProperties[$prop];
 
-		$row = array(
+		$row = [
 			'pp_page' => $this->mId,
 			'pp_propname' => $prop,
 			'pp_value' => $value,
-		);
+		];
 
 		if ( $wgPagePropsHaveSortkey ) {
 			$row['pp_sortkey'] = $this->getPropertySortKeyValue( $value );
@@ -576,19 +658,19 @@ class LinksUpdate extends SqlDataUpdate {
 	 * @param array $existing
 	 * @return array
 	 */
-	private function getInterwikiInsertions( $existing = array() ) {
-		$arr = array();
+	private function getInterwikiInsertions( $existing = [] ) {
+		$arr = [];
 		foreach ( $this->mInterwikis as $prefix => $dbkeys ) {
 			$diffs = isset( $existing[$prefix] )
 				? array_diff_key( $dbkeys, $existing[$prefix] )
 				: $dbkeys;
 
 			foreach ( $diffs as $dbk => $id ) {
-				$arr[] = array(
+				$arr[] = [
 					'iwl_from' => $this->mId,
 					'iwl_prefix' => $prefix,
 					'iwl_title' => $dbk
-				);
+				];
 			}
 		}
 
@@ -602,7 +684,7 @@ class LinksUpdate extends SqlDataUpdate {
 	 * @return array
 	 */
 	private function getLinkDeletions( $existing ) {
-		$del = array();
+		$del = [];
 		foreach ( $existing as $ns => $dbkeys ) {
 			if ( isset( $this->mLinks[$ns] ) ) {
 				$del[$ns] = array_diff_key( $existing[$ns], $this->mLinks[$ns] );
@@ -621,7 +703,7 @@ class LinksUpdate extends SqlDataUpdate {
 	 * @return array
 	 */
 	private function getTemplateDeletions( $existing ) {
-		$del = array();
+		$del = [];
 		foreach ( $existing as $ns => $dbkeys ) {
 			if ( isset( $this->mTemplates[$ns] ) ) {
 				$del[$ns] = array_diff_key( $existing[$ns], $this->mTemplates[$ns] );
@@ -689,7 +771,7 @@ class LinksUpdate extends SqlDataUpdate {
 	 * @return array
 	 */
 	private function getInterwikiDeletions( $existing ) {
-		$del = array();
+		$del = [];
 		foreach ( $existing as $prefix => $dbkeys ) {
 			if ( isset( $this->mInterwikis[$prefix] ) ) {
 				$del[$prefix] = array_diff_key( $existing[$prefix], $this->mInterwikis[$prefix] );
@@ -707,12 +789,12 @@ class LinksUpdate extends SqlDataUpdate {
 	 * @return array
 	 */
 	private function getExistingLinks() {
-		$res = $this->mDb->select( 'pagelinks', array( 'pl_namespace', 'pl_title' ),
-			array( 'pl_from' => $this->mId ), __METHOD__, $this->mOptions );
-		$arr = array();
+		$res = $this->getDB()->select( 'pagelinks', [ 'pl_namespace', 'pl_title' ],
+			[ 'pl_from' => $this->mId ], __METHOD__ );
+		$arr = [];
 		foreach ( $res as $row ) {
 			if ( !isset( $arr[$row->pl_namespace] ) ) {
-				$arr[$row->pl_namespace] = array();
+				$arr[$row->pl_namespace] = [];
 			}
 			$arr[$row->pl_namespace][$row->pl_title] = 1;
 		}
@@ -726,12 +808,12 @@ class LinksUpdate extends SqlDataUpdate {
 	 * @return array
 	 */
 	private function getExistingTemplates() {
-		$res = $this->mDb->select( 'templatelinks', array( 'tl_namespace', 'tl_title' ),
-			array( 'tl_from' => $this->mId ), __METHOD__, $this->mOptions );
-		$arr = array();
+		$res = $this->getDB()->select( 'templatelinks', [ 'tl_namespace', 'tl_title' ],
+			[ 'tl_from' => $this->mId ], __METHOD__ );
+		$arr = [];
 		foreach ( $res as $row ) {
 			if ( !isset( $arr[$row->tl_namespace] ) ) {
-				$arr[$row->tl_namespace] = array();
+				$arr[$row->tl_namespace] = [];
 			}
 			$arr[$row->tl_namespace][$row->tl_title] = 1;
 		}
@@ -745,9 +827,9 @@ class LinksUpdate extends SqlDataUpdate {
 	 * @return array
 	 */
 	private function getExistingImages() {
-		$res = $this->mDb->select( 'imagelinks', array( 'il_to' ),
-			array( 'il_from' => $this->mId ), __METHOD__, $this->mOptions );
-		$arr = array();
+		$res = $this->getDB()->select( 'imagelinks', [ 'il_to' ],
+			[ 'il_from' => $this->mId ], __METHOD__ );
+		$arr = [];
 		foreach ( $res as $row ) {
 			$arr[$row->il_to] = 1;
 		}
@@ -761,9 +843,9 @@ class LinksUpdate extends SqlDataUpdate {
 	 * @return array
 	 */
 	private function getExistingExternals() {
-		$res = $this->mDb->select( 'externallinks', array( 'el_to' ),
-			array( 'el_from' => $this->mId ), __METHOD__, $this->mOptions );
-		$arr = array();
+		$res = $this->getDB()->select( 'externallinks', [ 'el_to' ],
+			[ 'el_from' => $this->mId ], __METHOD__ );
+		$arr = [];
 		foreach ( $res as $row ) {
 			$arr[$row->el_to] = 1;
 		}
@@ -777,9 +859,9 @@ class LinksUpdate extends SqlDataUpdate {
 	 * @return array
 	 */
 	private function getExistingCategories() {
-		$res = $this->mDb->select( 'categorylinks', array( 'cl_to', 'cl_sortkey_prefix' ),
-			array( 'cl_from' => $this->mId ), __METHOD__, $this->mOptions );
-		$arr = array();
+		$res = $this->getDB()->select( 'categorylinks', [ 'cl_to', 'cl_sortkey_prefix' ],
+			[ 'cl_from' => $this->mId ], __METHOD__ );
+		$arr = [];
 		foreach ( $res as $row ) {
 			$arr[$row->cl_to] = $row->cl_sortkey_prefix;
 		}
@@ -794,9 +876,9 @@ class LinksUpdate extends SqlDataUpdate {
 	 * @return array
 	 */
 	private function getExistingInterlangs() {
-		$res = $this->mDb->select( 'langlinks', array( 'll_lang', 'll_title' ),
-			array( 'll_from' => $this->mId ), __METHOD__, $this->mOptions );
-		$arr = array();
+		$res = $this->getDB()->select( 'langlinks', [ 'll_lang', 'll_title' ],
+			[ 'll_from' => $this->mId ], __METHOD__ );
+		$arr = [];
 		foreach ( $res as $row ) {
 			$arr[$row->ll_lang] = $row->ll_title;
 		}
@@ -808,13 +890,13 @@ class LinksUpdate extends SqlDataUpdate {
 	 * Get an array of existing inline interwiki links, as a 2-D array
 	 * @return array (prefix => array(dbkey => 1))
 	 */
-	protected function getExistingInterwikis() {
-		$res = $this->mDb->select( 'iwlinks', array( 'iwl_prefix', 'iwl_title' ),
-			array( 'iwl_from' => $this->mId ), __METHOD__, $this->mOptions );
-		$arr = array();
+	private function getExistingInterwikis() {
+		$res = $this->getDB()->select( 'iwlinks', [ 'iwl_prefix', 'iwl_title' ],
+			[ 'iwl_from' => $this->mId ], __METHOD__ );
+		$arr = [];
 		foreach ( $res as $row ) {
 			if ( !isset( $arr[$row->iwl_prefix] ) ) {
-				$arr[$row->iwl_prefix] = array();
+				$arr[$row->iwl_prefix] = [];
 			}
 			$arr[$row->iwl_prefix][$row->iwl_title] = 1;
 		}
@@ -828,9 +910,9 @@ class LinksUpdate extends SqlDataUpdate {
 	 * @return array Array of property names and values
 	 */
 	private function getExistingProperties() {
-		$res = $this->mDb->select( 'page_props', array( 'pp_propname', 'pp_value' ),
-			array( 'pp_page' => $this->mId ), __METHOD__, $this->mOptions );
-		$arr = array();
+		$res = $this->getDB()->select( 'page_props', [ 'pp_propname', 'pp_value' ],
+			[ 'pp_page' => $this->mId ], __METHOD__ );
+		$arr = [];
 		foreach ( $res as $row ) {
 			$arr[$row->pp_propname] = $row->pp_value;
 		}
@@ -864,6 +946,43 @@ class LinksUpdate extends SqlDataUpdate {
 	}
 
 	/**
+	 * Set the revision corresponding to this LinksUpdate
+	 *
+	 * @since 1.27
+	 *
+	 * @param Revision $revision
+	 */
+	public function setRevision( Revision $revision ) {
+		$this->mRevision = $revision;
+	}
+
+	/**
+	 * @since 1.28
+	 * @return null|Revision
+	 */
+	public function getRevision() {
+		return $this->mRevision;
+	}
+
+	/**
+	 * Set the User who triggered this LinksUpdate
+	 *
+	 * @since 1.27
+	 * @param User $user
+	 */
+	public function setTriggeringUser( User $user ) {
+		$this->user = $user;
+	}
+
+	/**
+	 * @since 1.27
+	 * @return null|User
+	 */
+	public function getTriggeringUser() {
+		return $this->user;
+	}
+
+	/**
 	 * Invalidate any necessary link lists related to page property changes
 	 * @param array $changed
 	 */
@@ -874,11 +993,10 @@ class LinksUpdate extends SqlDataUpdate {
 			if ( isset( $wgPagePropLinkInvalidations[$name] ) ) {
 				$inv = $wgPagePropLinkInvalidations[$name];
 				if ( !is_array( $inv ) ) {
-					$inv = array( $inv );
+					$inv = [ $inv ];
 				}
 				foreach ( $inv as $table ) {
-					$update = new HTMLCacheUpdate( $this->mTitle, $table );
-					$update->doUpdate();
+					DeferredUpdates::addUpdate( new HTMLCacheUpdate( $this->mTitle, $table ) );
 				}
 			}
 		}
@@ -893,7 +1011,7 @@ class LinksUpdate extends SqlDataUpdate {
 		if ( $this->linkInsertions === null ) {
 			return null;
 		}
-		$result = array();
+		$result = [];
 		foreach ( $this->linkInsertions as $insertion ) {
 			$result[] = Title::makeTitle( $insertion['pl_namespace'], $insertion['pl_title'] );
 		}
@@ -910,7 +1028,7 @@ class LinksUpdate extends SqlDataUpdate {
 		if ( $this->linkDeletions === null ) {
 			return null;
 		}
-		$result = array();
+		$result = [];
 		foreach ( $this->linkDeletions as $ns => $titles ) {
 			foreach ( $titles as $title => $unused ) {
 				$result[] = Title::makeTitle( $ns, $title );
@@ -921,17 +1039,81 @@ class LinksUpdate extends SqlDataUpdate {
 	}
 
 	/**
+	 * Fetch page properties added by this LinksUpdate.
+	 * Only available after the update is complete.
+	 * @since 1.28
+	 * @return null|array
+	 */
+	public function getAddedProperties() {
+		return $this->propertyInsertions;
+	}
+
+	/**
+	 * Fetch page properties removed by this LinksUpdate.
+	 * Only available after the update is complete.
+	 * @since 1.28
+	 * @return null|array
+	 */
+	public function getRemovedProperties() {
+		return $this->propertyDeletions;
+	}
+
+	/**
 	 * Update links table freshness
 	 */
-	protected function updateLinksTimestamp() {
+	private function updateLinksTimestamp() {
 		if ( $this->mId ) {
 			// The link updates made here only reflect the freshness of the parser output
 			$timestamp = $this->mParserOutput->getCacheTime();
-			$this->mDb->update( 'page',
-				array( 'page_links_updated' => $this->mDb->timestamp( $timestamp ) ),
-				array( 'page_id' => $this->mId ),
+			$this->getDB()->update( 'page',
+				[ 'page_links_updated' => $this->getDB()->timestamp( $timestamp ) ],
+				[ 'page_id' => $this->mId ],
 				__METHOD__
 			);
 		}
+	}
+
+	/**
+	 * @return IDatabase
+	 */
+	private function getDB() {
+		if ( !$this->db ) {
+			$this->db = wfGetDB( DB_MASTER );
+		}
+
+		return $this->db;
+	}
+
+	public function getAsJobSpecification() {
+		if ( $this->user ) {
+			$userInfo = [
+				'userId' => $this->user->getId(),
+				'userName' => $this->user->getName(),
+			];
+		} else {
+			$userInfo = false;
+		}
+
+		if ( $this->mRevision ) {
+			$triggeringRevisionId = $this->mRevision->getId();
+		} else {
+			$triggeringRevisionId = false;
+		}
+
+		return [
+			'wiki' => $this->getDB()->getWikiID(),
+			'job'  => new JobSpecification(
+				'refreshLinksPrioritized',
+				[
+					// Reuse the parser cache if it was saved
+					'rootJobTimestamp' => $this->mParserOutput->getCacheTime(),
+					'useRecursiveLinksUpdate' => $this->mRecursive,
+					'triggeringUser' => $userInfo,
+					'triggeringRevisionId' => $triggeringRevisionId,
+				],
+				[ 'removeDuplicates' => true ],
+				$this->getTitle()
+			)
+		];
 	}
 }

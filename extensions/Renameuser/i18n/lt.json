@@ -29,6 +29,8 @@
 	"renameuser-page-moved": "Puslapis $1 buvo perkeltas į $2.",
 	"renameuser-page-unmoved": "Puslapis $1 negali būti perkeltas į $2.",
 	"log-name-renameuser": "Naudotojų pervadinimo sąrašas",
+	"log-description-renameuser": "Šiame sąraše pateikiami naudotojų vardų pakeitimai.",
+	"logentry-renameuser-renameuser": "$1 {{GENDER:$2|pervadino}} naudotoją $4 ({{PLURAL:$6|keitimų|keitimų}}: $6) į {{GENDER:$7|$5}}",
 	"renameuser-move-log": "Puslapis automatiškai perkeltas, kai buvo pervadinamas naudotojas \"[[User:$1|$1]]\" į \"[[User:$2|$2]]\"",
 	"action-renameuser": "pervadinti naudotojus",
 	"right-renameuser": "Pervadinti naudotojus"

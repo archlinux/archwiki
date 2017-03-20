@@ -73,12 +73,18 @@ class StatsDFormatter extends LineFormatter
         // creating more rows for context content
         if ($this->logContext && isset($vars['context'])) {
             foreach ($vars['context'] as $key => $parameter) {
+                if (!is_string($parameter)) {
+                    $parameter = json_encode($parameter);
+                }
                 $output[] = sprintf("%s.context.%s.%s", $firstRow, $key, $parameter);
             }
         }
         // creating more rows for extra content
         if ($this->logExtra && isset($vars['extra'])) {
             foreach ($vars['extra'] as $key => $parameter) {
+                if (!is_string($parameter)) {
+                    $parameter = json_encode($parameter);
+                }
                 $output[] = sprintf("%s.extra.%s.%s", $firstRow, $key, $parameter);
             }
         }

@@ -52,18 +52,18 @@ class Category {
 		if ( $this->mName === null && $this->mID === null ) {
 			throw new MWException( __METHOD__ . ' has both names and IDs null' );
 		} elseif ( $this->mID === null ) {
-			$where = array( 'cat_title' => $this->mName );
+			$where = [ 'cat_title' => $this->mName ];
 		} elseif ( $this->mName === null ) {
-			$where = array( 'cat_id' => $this->mID );
+			$where = [ 'cat_id' => $this->mID ];
 		} else {
 			# Already initialized
 			return true;
 		}
 
-		$dbr = wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_REPLICA );
 		$row = $dbr->selectRow(
 			'category',
-			array( 'cat_id', 'cat_title', 'cat_pages', 'cat_subcats', 'cat_files' ),
+			[ 'cat_id', 'cat_title', 'cat_pages', 'cat_subcats', 'cat_files' ],
 			$where,
 			__METHOD__
 		);
@@ -78,6 +78,11 @@ class Category {
 				$this->mPages = 0;
 				$this->mSubcats = 0;
 				$this->mFiles = 0;
+
+				# If the title exists, call refreshCounts to add a row for it.
+				if ( $this->mTitle->exists() ) {
+					DeferredUpdates::addCallableUpdate( [ $this, 'refreshCounts' ] );
+				}
 
 				return true;
 			} else {
@@ -95,7 +100,11 @@ class Category {
 		# and should not be kept, and 2) we *probably* don't have to scan many
 		# rows to obtain the correct figure, so let's risk a one-time recount.
 		if ( $this->mPages < 0 || $this->mSubcats < 0 || $this->mFiles < 0 ) {
-			$this->refreshCounts();
+			$this->mPages = max( $this->mPages, 0 );
+			$this->mSubcats = max( $this->mSubcats, 0 );
+			$this->mFiles = max( $this->mFiles, 0 );
+
+			DeferredUpdates::addCallableUpdate( [ $this, 'refreshCounts' ] );
 		}
 
 		return true;
@@ -255,10 +264,10 @@ class Category {
 	 */
 	public function getMembers( $limit = false, $offset = '' ) {
 
-		$dbr = wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_REPLICA );
 
-		$conds = array( 'cl_to' => $this->getName(), 'cl_from = page_id' );
-		$options = array( 'ORDER BY' => 'cl_sortkey' );
+		$conds = [ 'cl_to' => $this->getName(), 'cl_from = page_id' ];
+		$options = [ 'ORDER BY' => 'cl_sortkey' ];
 
 		if ( $limit ) {
 			$options['LIMIT'] = $limit;
@@ -270,9 +279,9 @@ class Category {
 
 		$result = TitleArray::newFromResult(
 			$dbr->select(
-				array( 'page', 'categorylinks' ),
-				array( 'page_id', 'page_namespace', 'page_title', 'page_len',
-					'page_is_redirect', 'page_latest' ),
+				[ 'page', 'categorylinks' ],
+				[ 'page_id', 'page_namespace', 'page_title', 'page_len',
+					'page_is_redirect', 'page_latest' ],
 				$conds,
 				__METHOD__,
 				$options
@@ -304,54 +313,78 @@ class Category {
 			return false;
 		}
 
-		# Note, we must use names for this, since categorylinks does.
-		if ( $this->mName === null ) {
-			if ( !$this->initialize() ) {
-				return false;
-			}
+		# If we have just a category name, find out whether there is an
+		# existing row. Or if we have just an ID, get the name, because
+		# that's what categorylinks uses.
+		if ( !$this->initialize() ) {
+			return false;
 		}
 
 		$dbw = wfGetDB( DB_MASTER );
 		$dbw->startAtomic( __METHOD__ );
 
-		# Insert the row if it doesn't exist yet (e.g., this is being run via
-		# update.php from a pre-1.16 schema).  TODO: This will cause lots and
-		# lots of gaps on some non-MySQL DBMSes if you run populateCategory.php
-		# repeatedly.  Plus it's an extra query that's unneeded almost all the
-		# time.  This should be rewritten somehow, probably.
-		$seqVal = $dbw->nextSequenceValue( 'category_cat_id_seq' );
-		$dbw->insert(
-			'category',
-			array(
-				'cat_id' => $seqVal,
-				'cat_title' => $this->mName
-			),
-			__METHOD__,
-			'IGNORE'
-		);
-
-		$cond1 = $dbw->conditional( array( 'page_namespace' => NS_CATEGORY ), 1, 'NULL' );
-		$cond2 = $dbw->conditional( array( 'page_namespace' => NS_FILE ), 1, 'NULL' );
+		$cond1 = $dbw->conditional( [ 'page_namespace' => NS_CATEGORY ], 1, 'NULL' );
+		$cond2 = $dbw->conditional( [ 'page_namespace' => NS_FILE ], 1, 'NULL' );
 		$result = $dbw->selectRow(
-			array( 'categorylinks', 'page' ),
-			array( 'pages' => 'COUNT(*)',
+			[ 'categorylinks', 'page' ],
+			[ 'pages' => 'COUNT(*)',
 				'subcats' => "COUNT($cond1)",
 				'files' => "COUNT($cond2)"
-			),
-			array( 'cl_to' => $this->mName, 'page_id = cl_from' ),
+			],
+			[ 'cl_to' => $this->mName, 'page_id = cl_from' ],
 			__METHOD__,
-			array( 'LOCK IN SHARE MODE' )
+			[ 'LOCK IN SHARE MODE' ]
 		);
-		$ret = $dbw->update(
-			'category',
-			array(
-				'cat_pages' => $result->pages,
-				'cat_subcats' => $result->subcats,
-				'cat_files' => $result->files
-			),
-			array( 'cat_title' => $this->mName ),
-			__METHOD__
-		);
+
+		$shouldExist = $result->pages > 0 || $this->getTitle()->exists();
+
+		if ( $this->mID ) {
+			if ( $shouldExist ) {
+				# The category row already exists, so do a plain UPDATE instead
+				# of INSERT...ON DUPLICATE KEY UPDATE to avoid creating a gap
+				# in the cat_id sequence. The row may or may not be "affected".
+				$dbw->update(
+					'category',
+					[
+						'cat_pages' => $result->pages,
+						'cat_subcats' => $result->subcats,
+						'cat_files' => $result->files
+					],
+					[ 'cat_title' => $this->mName ],
+					__METHOD__
+				);
+			} else {
+				# The category is empty and has no description page, delete it
+				$dbw->delete(
+					'category',
+					[ 'cat_title' => $this->mName ],
+					__METHOD__
+				);
+				$this->mID = false;
+			}
+		} elseif ( $shouldExist ) {
+			# The category row doesn't exist but should, so create it. Use
+			# upsert in case of races.
+			$dbw->upsert(
+				'category',
+				[
+					'cat_title' => $this->mName,
+					'cat_pages' => $result->pages,
+					'cat_subcats' => $result->subcats,
+					'cat_files' => $result->files
+				],
+				[ 'cat_title' ],
+				[
+					'cat_pages' => $result->pages,
+					'cat_subcats' => $result->subcats,
+					'cat_files' => $result->files
+				],
+				__METHOD__
+			);
+			// @todo: Should we update $this->mID here? Or not since Category
+			// objects tend to be short lived enough to not matter?
+		}
+
 		$dbw->endAtomic( __METHOD__ );
 
 		# Now we should update our local counts.
@@ -359,6 +392,6 @@ class Category {
 		$this->mSubcats = $result->subcats;
 		$this->mFiles = $result->files;
 
-		return $ret;
+		return true;
 	}
 }

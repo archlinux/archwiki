@@ -59,6 +59,18 @@
 		},
 
 		/**
+		 * Encode the string like Sanitizer::escapeId in PHP
+		 *
+		 * @param {string} str String to be encoded.
+		 */
+		escapeId: function ( str ) {
+			str = String( str );
+			return util.rawurlencode( str.replace( / /g, '_' ) )
+				.replace( /%3A/g, ':' )
+				.replace( /%/g, '.' );
+		},
+
+		/**
 		 * Encode page titles for use in a URL
 		 *
 		 * We want / and : to be included as literal characters in our title URLs
@@ -89,19 +101,39 @@
 		/**
 		 * Get the link to a page name (relative to `wgServer`),
 		 *
-		 * @param {string|null} [str=wgPageName] Page name
+		 * @param {string|null} [pageName=wgPageName] Page name
 		 * @param {Object} [params] A mapping of query parameter names to values,
 		 *  e.g. `{ action: 'edit' }`
-		 * @return {string} Url of the page with name of `str`
+		 * @return {string} Url of the page with name of `pageName`
 		 */
-		getUrl: function ( str, params ) {
-			var url = mw.config.get( 'wgArticlePath' ).replace(
-				'$1',
-				util.wikiUrlencode( typeof str === 'string' ? str : mw.config.get( 'wgPageName' ) )
-			);
+		getUrl: function ( pageName, params ) {
+			var titleFragmentStart, url, query,
+				fragment = '',
+				title = typeof pageName === 'string' ? pageName : mw.config.get( 'wgPageName' );
 
-			if ( params && !$.isEmptyObject( params ) ) {
-				url += ( url.indexOf( '?' ) !== -1 ? '&' : '?' ) + $.param( params );
+			// Find any fragment
+			titleFragmentStart = title.indexOf( '#' );
+			if ( titleFragmentStart !== -1 ) {
+				fragment = title.slice( titleFragmentStart + 1 );
+				// Exclude the fragment from the page name
+				title = title.slice( 0, titleFragmentStart );
+			}
+
+			// Produce query string
+			if ( params ) {
+				query = $.param( params );
+			}
+			if ( query ) {
+				url = title
+					? util.wikiScript() + '?title=' + util.wikiUrlencode( title ) + '&' + query
+					: util.wikiScript() + '?' + query;
+			} else {
+				url = mw.config.get( 'wgArticlePath' ).replace( '$1', util.wikiUrlencode( title ) );
+			}
+
+			// Append the encoded fragment
+			if ( fragment.length ) {
+				url += '#' + util.escapeId( fragment );
 			}
 
 			return url;
@@ -122,8 +154,7 @@
 			} else if ( str === 'load' ) {
 				return mw.config.get( 'wgLoadScript' );
 			} else {
-				return mw.config.get( 'wgScriptPath' ) + '/' + str +
-					mw.config.get( 'wgScriptExtension' );
+				return mw.config.get( 'wgScriptPath' ) + '/' + str + '.php';
 			}
 		},
 
@@ -206,9 +237,19 @@
 		 * (e.g. `'#foobar'`) for that item.
 		 *
 		 *     mw.util.addPortletLink(
-		 *         'p-tb', 'http://mediawiki.org/',
-		 *         'MediaWiki.org', 't-mworg', 'Go to MediaWiki.org ', 'm', '#t-print'
+		 *         'p-tb', 'https://www.mediawiki.org/',
+		 *         'mediawiki.org', 't-mworg', 'Go to mediawiki.org', 'm', '#t-print'
 		 *     );
+		 *
+		 *     var node = mw.util.addPortletLink(
+		 *         'p-tb',
+		 *         new mw.Title( 'Special:Example' ).getUrl(),
+		 *         'Example'
+		 *     );
+		 *     $( node ).on( 'click', function ( e ) {
+		 *         console.log( 'Example' );
+		 *         e.preventDefault();
+		 *     } );
 		 *
 		 * @param {string} portlet ID of the target portlet ( 'p-cactions' or 'p-personal' etc.)
 		 * @param {string} href Link URL
@@ -346,7 +387,7 @@
 			// - atext   : defined in RFC 5322 section 3.2.3
 			// - ldh-str : defined in RFC 1034 section 3.5
 			//
-			// (see STD 68 / RFC 5234 http://tools.ietf.org/html/std68)
+			// (see STD 68 / RFC 5234 https://tools.ietf.org/html/std68)
 			// First, define the RFC 5322 'atext' which is pretty easy:
 			// atext = ALPHA / DIGIT / ; Printable US-ASCII
 			//     "!" / "#" /    ; characters not including
@@ -410,7 +451,7 @@
 				RE_IP_BYTE = '(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|0?[0-9]?[0-9])',
 				RE_IP_ADD = '(?:' + RE_IP_BYTE + '\\.){3}' + RE_IP_BYTE;
 
-			return address.search( new RegExp( '^' + RE_IP_ADD + block + '$' ) ) !== -1;
+			return ( new RegExp( '^' + RE_IP_ADD + block + '$' ).test( address ) );
 		},
 
 		/**
@@ -435,15 +476,18 @@
 			'[0-9A-Fa-f]{1,4}' + '(?::' + '[0-9A-Fa-f]{1,4}' + '){7}' +
 			')';
 
-			if ( address.search( new RegExp( '^' + RE_IPV6_ADD + block + '$' ) ) !== -1 ) {
+			if ( new RegExp( '^' + RE_IPV6_ADD + block + '$' ).test( address ) ) {
 				return true;
 			}
 
-			RE_IPV6_ADD = // contains one "::" in the middle (single '::' check below)
-				'[0-9A-Fa-f]{1,4}' + '(?:::?' + '[0-9A-Fa-f]{1,4}' + '){1,6}';
+			// contains one "::" in the middle (single '::' check below)
+			RE_IPV6_ADD = '[0-9A-Fa-f]{1,4}' + '(?:::?' + '[0-9A-Fa-f]{1,4}' + '){1,6}';
 
-			return address.search( new RegExp( '^' + RE_IPV6_ADD + block + '$' ) ) !== -1
-				&& address.search( /::/ ) !== -1 && address.search( /::.*::/ ) === -1;
+			return (
+				new RegExp( '^' + RE_IPV6_ADD + block + '$' ).test( address )
+				&& /::/.test( address )
+				&& !/::.*::/.test( address )
+			);
 		},
 
 		/**
@@ -468,38 +512,10 @@
 	mw.log.deprecate( util, 'wikiGetlink', util.getUrl, 'Use mw.util.getUrl instead.' );
 
 	/**
-	 * Access key prefix. Might be wrong for browsers implementing the accessKeyLabel property.
-	 * @property {string} tooltipAccessKeyPrefix
-	 * @deprecated since 1.24 Use the module jquery.accessKeyLabel instead.
-	 */
-	mw.log.deprecate( util, 'tooltipAccessKeyPrefix', $.fn.updateTooltipAccessKeys.getAccessKeyPrefix(), 'Use jquery.accessKeyLabel instead.' );
-
-	/**
-	 * Regex to match accesskey tooltips.
-	 *
-	 * Should match:
-	 *
-	 * - "[ctrl-option-x]"
-	 * - "[alt-shift-x]"
-	 * - "[ctrl-alt-x]"
-	 * - "[ctrl-x]"
-	 *
-	 * The accesskey is matched in group $6.
-	 *
-	 * Will probably not work for browsers implementing the accessKeyLabel property.
-	 *
-	 * @property {RegExp} tooltipAccessKeyRegexp
-	 * @deprecated since 1.24 Use the module jquery.accessKeyLabel instead.
-	 */
-	mw.log.deprecate( util, 'tooltipAccessKeyRegexp', /\[(ctrl-)?(option-)?(alt-)?(shift-)?(esc-)?(.)\]$/, 'Use jquery.accessKeyLabel instead.' );
-
-	/**
 	 * Add the appropriate prefix to the accesskey shown in the tooltip.
 	 *
 	 * If the `$nodes` parameter is given, only those nodes are updated;
-	 * otherwise, depending on browser support, we update either all elements
-	 * with accesskeys on the page or a bunch of elements which are likely to
-	 * have them on core skins.
+	 * otherwise we update all elements with accesskeys on the page.
 	 *
 	 * @method updateTooltipAccessKeys
 	 * @param {Array|jQuery} [$nodes] A jQuery object, or array of nodes to update.
@@ -507,19 +523,7 @@
 	 */
 	mw.log.deprecate( util, 'updateTooltipAccessKeys', function ( $nodes ) {
 		if ( !$nodes ) {
-			if ( document.querySelectorAll ) {
-				// If we're running on a browser where we can do this efficiently,
-				// just find all elements that have accesskeys. We can't use jQuery's
-				// polyfill for the selector since looping over all elements on page
-				// load might be too slow.
-				$nodes = $( document.querySelectorAll( '[accesskey]' ) );
-			} else {
-				// Otherwise go through some elements likely to have accesskeys rather
-				// than looping over all of them. Unfortunately this will not fully
-				// work for custom skins with different HTML structures. Input, label
-				// and button should be rare enough that no optimizations are needed.
-				$nodes = $( '#column-one a, #mw-head a, #mw-panel a, #p-logo a, input, label, button' );
-			}
+			$nodes = $( '[accesskey]' );
 		} else if ( !( $nodes instanceof $ ) ) {
 			$nodes = $( $nodes );
 		}

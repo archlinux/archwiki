@@ -69,8 +69,8 @@ class DjVuImage {
 			$width = $data['width'];
 			$height = $data['height'];
 
-			return array( $width, $height, 'DjVu',
-				"width=\"$width\" height=\"$height\"" );
+			return [ $width, $height, 'DjVu',
+				"width=\"$width\" height=\"$height\"" ];
 		}
 
 		return false;
@@ -84,11 +84,9 @@ class DjVuImage {
 	function dump() {
 		$file = fopen( $this->mFilename, 'rb' );
 		$header = fread( $file, 12 );
-		// @todo FIXME: Would be good to replace this extract() call with
-		// something that explicitly initializes local variables.
-		extract( unpack( 'a4magic/a4chunk/NchunkLength', $header ) );
-		/** @var string $chunk
-		 * @var string $chunkLength */
+		$arr = unpack( 'a4magic/a4chunk/NchunkLength', $header );
+		$chunk = $arr['chunk'];
+		$chunkLength = $arr['chunkLength'];
 		echo "$chunk $chunkLength\n";
 		$this->dumpForm( $file, $chunkLength, 1 );
 		fclose( $file );
@@ -103,11 +101,9 @@ class DjVuImage {
 			if ( $chunkHeader == '' ) {
 				break;
 			}
-			// @todo FIXME: Would be good to replace this extract() call with
-			// something that explicitly initializes local variables.
-			extract( unpack( 'a4chunk/NchunkLength', $chunkHeader ) );
-			/** @var string $chunk
-			 * @var string $chunkLength */
+			$arr = unpack( 'a4chunk/NchunkLength', $chunkHeader );
+			$chunk = $arr['chunk'];
+			$chunkLength = $arr['chunkLength'];
 			echo str_repeat( ' ', $indent * 4 ) . "$chunk $chunkLength\n";
 
 			if ( $chunk == 'FORM' ) {
@@ -138,24 +134,19 @@ class DjVuImage {
 		if ( strlen( $header ) < 16 ) {
 			wfDebug( __METHOD__ . ": too short file header\n" );
 		} else {
-			// @todo FIXME: Would be good to replace this extract() call with
-			// something that explicitly initializes local variables.
-			extract( unpack( 'a4magic/a4form/NformLength/a4subtype', $header ) );
+			$arr = unpack( 'a4magic/a4form/NformLength/a4subtype', $header );
 
-			/** @var string $magic
-			 * @var string $subtype
-			 * @var string $formLength
-			 * @var string $formType */
-			if ( $magic != 'AT&T' ) {
+			$subtype = $arr['subtype'];
+			if ( $arr['magic'] != 'AT&T' ) {
 				wfDebug( __METHOD__ . ": not a DjVu file\n" );
 			} elseif ( $subtype == 'DJVU' ) {
 				// Single-page document
 				$info = $this->getPageInfo( $file );
 			} elseif ( $subtype == 'DJVM' ) {
 				// Multi-page document
-				$info = $this->getMultiPageInfo( $file, $formLength );
+				$info = $this->getMultiPageInfo( $file, $arr['formLength'] );
 			} else {
-				wfDebug( __METHOD__ . ": unrecognized DJVU file type '$formType'\n" );
+				wfDebug( __METHOD__ . ": unrecognized DJVU file type '{$arr['subtype']}'\n" );
 			}
 		}
 		fclose( $file );
@@ -166,15 +157,11 @@ class DjVuImage {
 	private function readChunk( $file ) {
 		$header = fread( $file, 8 );
 		if ( strlen( $header ) < 8 ) {
-			return array( false, 0 );
+			return [ false, 0 ];
 		} else {
-			// @todo FIXME: Would be good to replace this extract() call with
-			// something that explicitly initializes local variables.
-			extract( unpack( 'a4chunk/Nlength', $header ) );
+			$arr = unpack( 'a4chunk/Nlength', $header );
 
-			/** @var string $chunk
-			 * @var string $length */
-			return array( $chunk, $length );
+			return [ $arr['chunk'], $arr['length'] ];
 		}
 	}
 
@@ -236,31 +223,22 @@ class DjVuImage {
 			return false;
 		}
 
-		// @todo FIXME: Would be good to replace this extract() call with
-		// something that explicitly initializes local variables.
-		extract( unpack(
+		$arr = unpack(
 			'nwidth/' .
 			'nheight/' .
 			'Cminor/' .
 			'Cmajor/' .
 			'vresolution/' .
-			'Cgamma', $data ) );
+			'Cgamma', $data );
 
 		# Newer files have rotation info in byte 10, but we don't use it yet.
 
-		/** @var string $width
-		 * @var string $height
-		 * @var string $major
-		 * @var string $minor
-		 * @var string $resolution
-		 * @var string $length
-		 * @var string $gamma */
-		return array(
-			'width' => $width,
-			'height' => $height,
-			'version' => "$major.$minor",
-			'resolution' => $resolution,
-			'gamma' => $gamma / 10.0 );
+		return [
+			'width' => $arr['width'],
+			'height' => $arr['height'],
+			'version' => "{$arr['major']}.{$arr['minor']}",
+			'resolution' => $arr['resolution'],
+			'gamma' => $arr['gamma'] / 10.0 ];
 	}
 
 	/**
@@ -292,7 +270,7 @@ class DjVuImage {
 			$cmd = wfEscapeShellArg( $wgDjvuTxt ) . ' --detail=page ' . wfEscapeShellArg( $this->mFilename );
 			wfDebug( __METHOD__ . ": $cmd\n" );
 			$retval = '';
-			$txt = wfShellExec( $cmd, $retval, array(), array( 'memory' => self::DJVUTXT_MEMORY_LIMIT ) );
+			$txt = wfShellExec( $cmd, $retval, [], [ 'memory' => self::DJVUTXT_MEMORY_LIMIT ] );
 			if ( $retval == 0 ) {
 				# Strip some control characters
 				$txt = preg_replace( "/[\013\035\037]/", "", $txt );
@@ -307,7 +285,7 @@ class DjVuImage {
 					| # Or page can be empty ; in this case, djvutxt dumps ()
 					\(\s*()\)/sx
 EOR;
-				$txt = preg_replace_callback( $reg, array( $this, 'pageTextCallback' ), $txt );
+				$txt = preg_replace_callback( $reg, [ $this, 'pageTextCallback' ], $txt );
 				$txt = "<DjVuTxt>\n<HEAD></HEAD>\n<BODY>\n" . $txt . "</BODY>\n</DjVuTxt>\n";
 				$xml = preg_replace( "/<DjVuXML>/", "<mw-djvu><DjVuXML>", $xml, 1 );
 				$xml = $xml . $txt . '</mw-djvu>';
@@ -320,7 +298,7 @@ EOR;
 	function pageTextCallback( $matches ) {
 		# Get rid of invalid UTF-8, strip control characters
 		$val = htmlspecialchars( UtfNormal\Validator::cleanUp( stripcslashes( $matches[1] ) ) );
-		$val = str_replace( array( "\n", '�' ), array( '&#10;', '' ), $val );
+		$val = str_replace( [ "\n", '�' ], [ '&#10;', '' ], $val );
 		return '<PAGE value="' . $val . '" />';
 	}
 
@@ -409,16 +387,16 @@ EOT;
 			) ) {
 				$xml .= Xml::tags(
 					'OBJECT',
-					array(
-						#'data' => '',
-						#'type' => 'image/x.djvu',
+					[
+						# 'data' => '',
+						# 'type' => 'image/x.djvu',
 						'height' => $m[2],
 						'width' => $m[1],
-						#'usemap' => '',
-					),
+						# 'usemap' => '',
+					],
 					"\n" .
-						Xml::element( 'PARAM', array( 'name' => 'DPI', 'value' => $m[3] ) ) . "\n" .
-						Xml::element( 'PARAM', array( 'name' => 'GAMMA', 'value' => $m[4] ) ) . "\n"
+						Xml::element( 'PARAM', [ 'name' => 'DPI', 'value' => $m[3] ] ) . "\n" .
+						Xml::element( 'PARAM', [ 'name' => 'GAMMA', 'value' => $m[4] ] ) . "\n"
 				) . "\n";
 
 				return true;

@@ -37,7 +37,7 @@ Step 1. Edit your `composer.json`:
 ```json
 {
     "require": {
-        "oyejorge/less.php": "~1.5"
+        "oyejorge/less.php": "~1.7.0.9"
     }
 }
 ```

@@ -14,7 +14,7 @@ class EnhancedChangesListTest extends MediaWikiLangTestCase {
 	 */
 	private $testRecentChangesHelper;
 
-	public function __construct( $name = null, array $data = array(), $dataName = '' ) {
+	public function __construct( $name = null, array $data = [], $dataName = '' ) {
 		parent::__construct( $name, $data, $dataName );
 
 		$this->testRecentChangesHelper = new TestRecentChangesHelper();
@@ -74,6 +74,20 @@ class EnhancedChangesListTest extends MediaWikiLangTestCase {
 		$this->assertEquals( '', $html );
 	}
 
+	public function testCategorizationLineFormatting() {
+		$html = $this->createCategorizationLine(
+			$this->getCategorizationChange( '20150629191735', 0, 0 )
+		);
+		$this->assertNotContains( '(diff | hist)', strip_tags( $html ) );
+	}
+
+	public function testCategorizationLineFormattingWithRevision() {
+		$html = $this->createCategorizationLine(
+			$this->getCategorizationChange( '20150629191735', 1025, 1024 )
+		);
+		$this->assertContains( '(diff | hist)', strip_tags( $html ) );
+	}
+
 	/**
 	 * @todo more tests for actual formatting, this is more of a smoke test
 	 */
@@ -107,7 +121,7 @@ class EnhancedChangesListTest extends MediaWikiLangTestCase {
 	 * @return RecentChange
 	 */
 	private function getEditChange( $timestamp ) {
-		$user = $this->getTestUser();
+		$user = $this->getMutableTestUser()->getUser();
 		$recentChange = $this->testRecentChangesHelper->makeEditRecentChange(
 			$user, 'Cat', $timestamp, 5, 191, 190, 0, 0
 		);
@@ -116,16 +130,32 @@ class EnhancedChangesListTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @return User
+	 * @return RecentChange
 	 */
-	private function getTestUser() {
-		$user = User::newFromName( 'TestRecentChangesUser' );
+	private function getCategorizationChange( $timestamp, $thisId, $lastId ) {
+		$wikiPage = new WikiPage( Title::newFromText( 'Testpage' ) );
+		$wikiPage->doEditContent( new WikitextContent( 'Some random text' ), 'page created' );
 
-		if ( !$user->getId() ) {
-			$user->addToDatabase();
-		}
+		$wikiPage = new WikiPage( Title::newFromText( 'Category:Foo' ) );
+		$wikiPage->doEditContent( new WikitextContent( 'Some random text' ), 'category page created' );
 
-		return $user;
+		$user = $this->getMutableTestUser()->getUser();
+		$recentChange = $this->testRecentChangesHelper->makeCategorizationRecentChange(
+			$user, 'Category:Foo', $wikiPage->getId(), $thisId, $lastId, $timestamp
+		);
+
+		return $recentChange;
+	}
+
+	private function createCategorizationLine( $recentChange ) {
+		$enhancedChangesList = $this->newEnhancedChangesList();
+		$cacheEntry = $this->testRecentChangesHelper->getCacheEntry( $recentChange );
+
+		$reflection = new \ReflectionClass( get_class( $enhancedChangesList ) );
+		$method = $reflection->getMethod( 'recentChangesBlockLine' );
+		$method->setAccessible( true );
+
+		return $method->invokeArgs( $enhancedChangesList, [ $cacheEntry ] );
 	}
 
 }

@@ -8,7 +8,8 @@
 			"Iwan Novirion",
 			"Kenrick95",
 			"William Surya Permana",
-			"Macofe"
+			"Macofe",
+			"WongKentir"
 		]
 	},
 	"wikieditor": "Antarmuka penyuntingan teks wiki canggih",
@@ -32,7 +33,6 @@
 	"wikieditor-toolbar-desc": "Bilah alat penyuntingan dengan kebergunaan yang ditingkatkan",
 	"wikieditor-toolbar-preference": "Aktifkan bilah alat penyuntingan yang telah ditingkatkan",
 	"wikieditor-toolbar-dialogs-preference": "Aktifkan bantuan untuk menambahkan pranala, tabel dan lainnya",
-	"wikieditor-toolbar-hidesig": "Sembunyikan tombol tanda tangan dari halaman pada ruang nama utama",
 	"wikieditor-toolbar-loading": "Mengunggah...",
 	"wikieditor-toolbar-tool-bold": "Tebal",
 	"wikieditor-toolbar-tool-bold-example": "Teks tebal",
@@ -76,6 +76,7 @@
 	"wikieditor-toolbar-file-format-none": "tidak ada",
 	"wikieditor-toolbar-tool-file-insert": "Sisipkan",
 	"wikieditor-toolbar-tool-file-cancel": "Batal",
+	"wikieditor-toolbar-tool-file-upload": "Unggah",
 	"wikieditor-toolbar-tool-reference": "Referensi",
 	"wikieditor-toolbar-tool-reference-example": "Sisipkan teks catatan kaki di sini",
 	"wikieditor-toolbar-tool-reference-cancel": "Batalkan",
@@ -189,7 +190,7 @@
 	"wikieditor-toolbar-help-content-olist-syntax": "# Isi daftar<br /># Isi daftar",
 	"wikieditor-toolbar-help-content-olist-result": "<ol><li>Isi daftar</li><li>Isi daftar</li></ol>",
 	"wikieditor-toolbar-help-content-file-description": "Menyisipkan berkas",
-	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Contoh.png|$2|$3]]",
+	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Example.png|$2|$3]]",
 	"wikieditor-toolbar-help-content-reference-description": "Referensi",
 	"wikieditor-toolbar-help-content-reference-syntax": "Teks halaman.&lt;ref&gt;[http://www.contoh.org Teks pranala], teks tambahan.&lt;/ref&gt;",
 	"wikieditor-toolbar-help-content-reference-result": "Teks halaman.<sup><a href='#'>[1]</a></sup>",
@@ -198,9 +199,9 @@
 	"wikieditor-toolbar-help-content-showreferences-description": "Menampilkan referensi",
 	"wikieditor-toolbar-help-content-showreferences-result": "<ol class='references'><li id='cite_note-test-0'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.contoh.org' class='external text' href='#'>Teks pranala</a>, teks tambahan.</li></ol>",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "Tanda tangan dengan waktu",
-	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='{{#special:mypage}}'>Nama pengguna</a> (<a href='#' title='{{#special:mytalk}}'>bicara</a>) 15:54, 10 Mei 2013 (UTC)",
+	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='$1:Username'>Nama pengguna</a> (<a href='#' title='$2:Username'>bicara</a>) 15:54, 10 Mei 2013 (UTC)",
 	"wikieditor-toolbar-help-content-signature-description": "Tanda tangan",
-	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='{{#special:mypage}}'>Nama pengguna</a> (<a href='#' title='{{#special:mytalk}}'>bicara</a>)",
+	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>Nama pengguna</a> (<a href='#' title='$2:Username'>bicara</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "Inden",
 	"wikieditor-toolbar-help-content-indent-syntax": "Teks biasa<br />:Teks inden<br />::Teks inden",
 	"wikieditor-toolbar-help-content-indent-result": "Teks normal<dl><dd>Teks inden<dl><dd>Teks inden</dd></dl></dd></dl>"

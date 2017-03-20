@@ -29,7 +29,7 @@
  *   - a) Recursive jobs to purge caches for backlink pages for a given title.
  *        These jobs have (recursive:true,table:<table>) set.
  *   - b) Jobs to purge caches for a set of titles (the job title is ignored).
- *	      These jobs have (pages:(<page ID>:(<namespace>,<title>),...) set.
+ *        These jobs have (pages:(<page ID>:(<namespace>,<title>),...) set.
  *
  * @ingroup JobQueue
  */
@@ -38,6 +38,23 @@ class HTMLCacheUpdateJob extends Job {
 		parent::__construct( 'htmlCacheUpdate', $title, $params );
 		// Base backlink purge jobs can be de-duplicated
 		$this->removeDuplicates = ( !isset( $params['range'] ) && !isset( $params['pages'] ) );
+	}
+
+	/**
+	 * @param Title $title Title to purge backlink pages from
+	 * @param string $table Backlink table name
+	 * @return HTMLCacheUpdateJob
+	 */
+	public static function newForBacklinks( Title $title, $table ) {
+		return new self(
+			$title,
+			[
+				'table' => $table,
+				'recursive' => true
+			] + Job::newRootJobParams( // "overall" refresh links job info
+				"htmlCacheUpdate:{$table}:{$title->getPrefixedText()}"
+			)
+		);
 	}
 
 	function run() {
@@ -56,7 +73,7 @@ class HTMLCacheUpdateJob extends Job {
 				$wgUpdateRowsPerJob,
 				$wgUpdateRowsPerQuery, // jobs-per-title
 				// Carry over information for de-duplication
-				array( 'params' => $this->getRootJobParams() )
+				[ 'params' => $this->getRootJobParams() ]
 			);
 			JobQueueGroup::singleton()->push( $jobs );
 		// Job to purge pages for a set of titles
@@ -65,9 +82,9 @@ class HTMLCacheUpdateJob extends Job {
 		// Job to update a single title
 		} else {
 			$t = $this->title;
-			$this->invalidateTitles( array(
-				$t->getArticleID() => array( $t->getNamespace(), $t->getDBkey() )
-			) );
+			$this->invalidateTitles( [
+				$t->getArticleID() => [ $t->getNamespace(), $t->getDBkey() ]
+			] );
 		}
 
 		return true;
@@ -77,7 +94,7 @@ class HTMLCacheUpdateJob extends Job {
 	 * @param array $pages Map of (page ID => (namespace, DB key)) entries
 	 */
 	protected function invalidateTitles( array $pages ) {
-		global $wgUpdateRowsPerQuery, $wgUseFileCache, $wgUseSquid;
+		global $wgUpdateRowsPerQuery, $wgUseFileCache;
 
 		// Get all page IDs in this query into an array
 		$pageIds = array_keys( $pages );
@@ -85,46 +102,44 @@ class HTMLCacheUpdateJob extends Job {
 			return;
 		}
 
+		// Bump page_touched to the current timestamp. This used to use the root job timestamp
+		// (e.g. template/file edit time), which was a bit more efficient when template edits are
+		// rare and don't effect the same pages much. However, this way allows for better
+		// de-duplication, which is much more useful for wikis with high edit rates. Note that
+		// RefreshLinksJob, which is enqueued alongside HTMLCacheUpdateJob, saves the parser output
+		// since it has to parse anyway. We assume that vast majority of the cache jobs finish
+		// before the link jobs, so using the current timestamp instead of the root timestamp is
+		// not expected to invalidate these cache entries too often.
+		$touchTimestamp = wfTimestampNow();
+
 		$dbw = wfGetDB( DB_MASTER );
-
-		// The page_touched field will need to be bumped for these pages.
-		// Only bump it to the present time if no "rootJobTimestamp" was known.
-		// If it is known, it can be used instead, which avoids invalidating output
-		// that was in fact generated *after* the relevant dependency change time
-		// (e.g. template edit). This is particularily useful since refreshLinks jobs
-		// save back parser output and usually run along side htmlCacheUpdate jobs;
-		// their saved output would be invalidated by using the current timestamp.
-		if ( isset( $this->params['rootJobTimestamp'] ) ) {
-			$touchTimestamp = $this->params['rootJobTimestamp'];
-		} else {
-			$touchTimestamp = wfTimestampNow();
-		}
-
+		$factory = wfGetLBFactory();
+		$ticket = $factory->getEmptyTransactionTicket( __METHOD__ );
 		// Update page_touched (skipping pages already touched since the root job).
 		// Check $wgUpdateRowsPerQuery for sanity; batch jobs are sized by that already.
 		foreach ( array_chunk( $pageIds, $wgUpdateRowsPerQuery ) as $batch ) {
+			$factory->commitAndWaitForReplication( __METHOD__, $ticket );
+
 			$dbw->update( 'page',
-				array( 'page_touched' => $dbw->timestamp( $touchTimestamp ) ),
-				array( 'page_id' => $batch,
+				[ 'page_touched' => $dbw->timestamp( $touchTimestamp ) ],
+				[ 'page_id' => $batch,
 					// don't invalidated pages that were already invalidated
 					"page_touched < " . $dbw->addQuotes( $dbw->timestamp( $touchTimestamp ) )
-				),
+				],
 				__METHOD__
 			);
 		}
 		// Get the list of affected pages (races only mean something else did the purge)
 		$titleArray = TitleArray::newFromResult( $dbw->select(
 			'page',
-			array( 'page_namespace', 'page_title' ),
-			array( 'page_id' => $pageIds, 'page_touched' => $dbw->timestamp( $touchTimestamp ) ),
+			[ 'page_namespace', 'page_title' ],
+			[ 'page_id' => $pageIds, 'page_touched' => $dbw->timestamp( $touchTimestamp ) ],
 			__METHOD__
 		) );
 
-		// Update squid
-		if ( $wgUseSquid ) {
-			$u = SquidUpdate::newFromTitles( $titleArray );
-			$u->doUpdate();
-		}
+		// Update CDN
+		$u = CdnCacheUpdate::newFromTitles( $titleArray );
+		$u->doUpdate();
 
 		// Update file cache
 		if ( $wgUseFileCache ) {

@@ -34,15 +34,15 @@ class Widget extends Element {
 	 * @param array $config Configuration options
 	 * @param boolean $config['disabled'] Disable (default: false)
 	 */
-	public function __construct( array $config = array() ) {
+	public function __construct( array $config = [] ) {
 		// Initialize config
-		$config = array_merge( array( 'disabled' => false ), $config );
+		$config = array_merge( [ 'disabled' => false ], $config );
 
 		// Parent constructor
 		parent::__construct( $config );
 
 		// Initialization
-		$this->addClasses( array( 'oo-ui-widget' ) );
+		$this->addClasses( [ 'oo-ui-widget' ] );
 		$this->setDisabled( $config['disabled'] );
 	}
 
@@ -61,13 +61,13 @@ class Widget extends Element {
 	 * This should probably change the widgets' appearance and prevent it from being used.
 	 *
 	 * @param boolean $disabled Disable widget
-	 * @chainable
+	 * @return $this
 	 */
 	public function setDisabled( $disabled ) {
 		$this->disabled = !!$disabled;
-		$this->toggleClasses( array( 'oo-ui-widget-disabled' ), $this->disabled );
-		$this->toggleClasses( array( 'oo-ui-widget-enabled' ), !$this->disabled );
-		$this->setAttributes( array( 'aria-disabled' => $this->disabled ? 'true' : 'false' ) );
+		$this->toggleClasses( [ 'oo-ui-widget-disabled' ], $this->disabled );
+		$this->toggleClasses( [ 'oo-ui-widget-enabled' ], !$this->disabled );
+		$this->setAttributes( [ 'aria-disabled' => $this->disabled ? 'true' : 'false' ] );
 
 		return $this;
 	}

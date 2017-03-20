@@ -25,6 +25,26 @@ abstract class DumpTestCase extends MediaWikiLangTestCase {
 	 */
 	protected $xml = null;
 
+	/** @var bool|null Whether the 'gzip' utility is available */
+	protected static $hasGzip = null;
+
+	/**
+	 * Skip the test if 'gzip' is not in $PATH.
+	 *
+	 * @return bool
+	 */
+	protected function checkHasGzip() {
+		if ( self::$hasGzip === null ) {
+			self::$hasGzip = ( Installer::locateExecutableInDefaultPaths( 'gzip' ) !== false );
+		}
+
+		if ( !self::$hasGzip ) {
+			$this->markTestSkipped( "Skip test, requires the gzip utility in PATH" );
+		}
+
+		return self::$hasGzip;
+	}
+
 	/**
 	 * Adds a revision to a page, while returning the resuting revision's id
 	 *
@@ -49,11 +69,12 @@ abstract class DumpTestCase extends MediaWikiLangTestCase {
 			$text_id = $revision->getTextId();
 
 			if ( ( $revision_id > 0 ) && ( $text_id > 0 ) ) {
-				return array( $revision_id, $text_id );
+				return [ $revision_id, $text_id ];
 			}
 		}
 
-		throw new MWException( "Could not determine revision id (" . $status->getWikiText() . ")" );
+		throw new MWException( "Could not determine revision id ("
+			. $status->getWikiText( false, false, 'en' ) . ")" );
 	}
 
 	/**
@@ -102,7 +123,7 @@ abstract class DumpTestCase extends MediaWikiLangTestCase {
 		// expectOutput[...] functions. However, the PHPUnit shipped prediactes
 		// do not allow to check /each/ line of the output using /readable/ REs.
 		// So we ...
-		//
+
 		// 1. ... add a dummy output checking to make PHPUnit not complain
 		//    about unchecked test output
 		$this->expectOutputRegex( '//' );

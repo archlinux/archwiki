@@ -11,6 +11,7 @@
 	"cite_error_ref_no_key": "ป้ายระบุ <code>&lt;ref&gt;</code> ไม่ถูกต้อง\nอ้างอิงที่ไม่มีเนื้อหาต้องมีชื่อ",
 	"cite_error_ref_too_many_keys": "ป้ายระบุ <code>&lt;ref&gt;</code> ไม่ถูกต้อง\nชื่อไม่ถูกต้อง เช่น มากเกินไป",
 	"cite_error_ref_no_input": "ป้ายระบุ <code>&lt;ref&gt;</code> ไม่ถูกต้อง\nอ้างอิงที่ไม่มีชื่อต้องมีเนื้อหา",
+	"cite_error_references_duplicate_key": "ป้ายระบุ <code>&lt;ref&gt;</code> ไม่สมเหตุสมผล มีนิยามชื่อ \"$1\" หลายครั้งด้วยเนื้อหาต่างกัน",
 	"cite_error_references_invalid_parameters": "ป้ายระบุ <code>&lt;references&gt;</code> ไม่ถูกต้อง\nไม่อนุญาตให้มีพารามิเตอร์\nให้ใช้ <code>&lt;references /&gt;</code>",
 	"cite_error_references_invalid_parameters_group": "ป้ายระบุ <code>&lt;references&gt;</code> ไม่ถูกต้อง\nอนุญาตเฉพาะพารามิเตอร์ \"group\"\nให้ใช้ <code>&lt;references /&gt;</code> หรือ <code>&lt;references group=\"...\" /&gt;</code>",
 	"cite_error_references_no_text": "ป้ายระบุ <code>&lt;ref&gt;</code> ไม่ถูกต้อง\nไม่มีการกำหนดข้อความสำหรับอ้างอิงชื่อ <code>$1</code>",
@@ -21,6 +22,8 @@
 	"cite_error_references_missing_key": "ป้ายระบุ <code>&lt;ref&gt;</code> ชื่อ \"$1\" ซึ่งนิยามใน  <code>&lt;references&gt;</code> ไม่ถูกใช้ในข้อความก่อนหน้า",
 	"cite_error_references_no_key": "ป้ายระบุ <code>&lt;ref&gt;</code> ที่นิยามใน <code>&lt;references&gt;</code> ไม่มีลักษณะชื่อ",
 	"cite_error_empty_references_define": "ป้ายระบุ <code>&lt;ref&gt;</code> ที่นิยามใน <code>&lt;references&gt;</code> ด้วยชื่อ \"$1\" ไม่มีเนื้อหา",
+	"cite-tracking-category-cite-error": "หน้าที่มีข้อผิดพลาดการอ้างอิง",
+	"cite-tracking-category-cite-error-desc": "หน้าในหมวดหมู่นี้มีข้อผิดพลาดในการใช้ป้ายระบุอ้างอิง",
 	"cite_references_link_accessibility_label": "กระโดดขึ้น",
 	"cite_references_link_many_accessibility_label": "กระโดดขึ้นไป:"
 }

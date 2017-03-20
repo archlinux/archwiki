@@ -32,8 +32,8 @@ require_once __DIR__ . '/Maintenance.php';
 class PopulateRecentChangesSource extends LoggedUpdateMaintenance {
 	public function __construct() {
 		parent::__construct();
-		$this->mDescription =
-			"Populates rc_source field of the recentchanges table with the data in rc_type.";
+		$this->addDescription(
+			'Populates rc_source field of the recentchanges table with the data in rc_type.' );
 		$this->setBatchSize( 100 );
 	}
 
@@ -61,11 +61,11 @@ class PopulateRecentChangesSource extends LoggedUpdateMaintenance {
 
 			$dbw->update(
 				'recentchanges',
-				array( $updatedValues ),
-				array(
+				[ $updatedValues ],
+				[
 					"rc_source = ''",
 					"rc_id BETWEEN $blockStart AND $blockEnd"
-				),
+				],
 				__METHOD__
 			);
 
@@ -83,7 +83,7 @@ class PopulateRecentChangesSource extends LoggedUpdateMaintenance {
 		return __CLASS__;
 	}
 
-	protected function buildUpdateCondition( DatabaseBase $dbw ) {
+	protected function buildUpdateCondition( Database $dbw ) {
 		$rcNew = $dbw->addQuotes( RC_NEW );
 		$rcSrcNew = $dbw->addQuotes( RecentChange::SRC_NEW );
 		$rcEdit = $dbw->addQuotes( RC_EDIT );

@@ -9,12 +9,13 @@ class RenameuserLogFormatter extends LogFormatter {
 		$params = parent::getMessageParameters();
 		/* Current format:
 		 * 1,2,3: normal logformatter params
-		 * 4: old username
+		 * 4: old username (linked)
 		 *    (legaciest doesn't have this at all, all in comment)
 		 *    (legacier uses this as new name and stores old name in target)
-		 * 5: new username
+		 * 5: new username (linked)
 		 * 6: number of edits the user had at the time
 		 *    (not available except in newest log entries)
+		 * 7: new username (raw format for GENDER)
 		 * Note that the arrays are zero-indexed, while message parameters
 		 * start from 1, so substract one to get array entries below.
 		 */
@@ -37,6 +38,8 @@ class RenameuserLogFormatter extends LogFormatter {
 		$title = Title::makeTitleSafe( NS_USER, $params[4] );
 		$link = $this->myPageLink( $title, $params[4] );
 		$params[4] = Message::rawParam( $link );
+		// GENDER support (using new user page)
+		$params[6] = $title->getText();
 
 		return $params;
 	}
@@ -74,7 +77,7 @@ class RenameuserLogFormatter extends LogFormatter {
 		$params = $this->extractParameters();
 		if ( !isset( $params[3] ) ) {
 			// Very old log format, everything in comment - legaciest
-			return array();
+			return [];
 		}
 		if ( !isset( $params[4] ) ) {
 			// Old log format - legacier
@@ -85,9 +88,9 @@ class RenameuserLogFormatter extends LogFormatter {
 
 		$title = Title::makeTitleSafe( NS_USER, $newUserName );
 		if ( $title ) {
-			return array( $title );
+			return [ $title ];
 		}
 
-		return array();
+		return [];
 	}
 }

@@ -8,25 +8,29 @@
 class ExtensionsTestSuite extends PHPUnit_Framework_TestSuite {
 	public function __construct() {
 		parent::__construct();
-		$paths = array();
+
+		$paths = [];
+		// Autodiscover extension unit tests
+		$registry = ExtensionRegistry::getInstance();
+		foreach ( $registry->getAllThings() as $info ) {
+			$paths[] = dirname( $info['path'] ) . '/tests/phpunit';
+		}
 		// Extensions can return a list of files or directories
-		Hooks::run( 'UnitTestsList', array( &$paths ) );
-		foreach ( $paths as $path ) {
+		Hooks::run( 'UnitTestsList', [ &$paths ] );
+		foreach ( array_unique( $paths ) as $path ) {
 			if ( is_dir( $path ) ) {
 				// If the path is a directory, search for test cases.
 				// @since 1.24
-				$suffixes = array(
-					'Test.php',
-				);
+				$suffixes = [ 'Test.php' ];
 				$fileIterator = new File_Iterator_Facade();
 				$matchingFiles = $fileIterator->getFilesAsArray( $path, $suffixes );
 				$this->addTestFiles( $matchingFiles );
-			} else {
+			} elseif ( file_exists( $path ) ) {
 				// Add a single test case or suite class
 				$this->addTestFile( $path );
 			}
 		}
-		if ( !count( $paths ) ) {
+		if ( !$paths ) {
 			$this->addTest( new DummyExtensionsTest( 'testNothing' ) );
 		}
 	}

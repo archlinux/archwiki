@@ -1,16 +1,9 @@
-#
-# This file is subject to the license terms in the LICENSE file found in the
-# qa-browsertests top-level directory and at
-# https://git.wikimedia.org/blob/qa%2Fbrowsertests/HEAD/LICENSE. No part of
-# qa-browsertests, including this file, may be copied, modified, propagated, or
-# distributed except according to the terms contained in the LICENSE file.
-#
-# Copyright 2012-2014 by the Mediawiki developers. See the CREDITS file in the
-# qa-browsertests top-level directory and at
-# https://git.wikimedia.org/blob/qa%2Fbrowsertests/HEAD/CREDITS
-#
 Given(/^I am at Log in page$/) do
   visit LoginPage
+end
+
+When(/^I log in$/) do
+  on(LoginPage).login_with(user, password, false)
 end
 
 When(/^I log in with incorrect password$/) do
@@ -30,11 +23,11 @@ When(/^I log in without entering password$/) do
 end
 
 Then(/^error box should be visible$/) do
-  expect(on(LoginErrorPage).error_box_element).to be_visible
+  expect(on(LoginPage).error_message_element).to exist
 end
 
 Then(/^error box should not be visible$/) do
-  expect(on(LoginErrorPage).error_box_element).not_to be_visible
+  expect(on(LoginPage).error_message_element).not_to exist
 end
 
 Then(/^feedback should be (.+)$/) do |feedback|

@@ -1,14 +1,18 @@
 <?php
+
 namespace Elastica\Filter;
 
 use Elastica\Exception\InvalidException;
+
+trigger_error('Deprecated: Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html', E_USER_DEPRECATED);
 
 /**
  * Bool Filter.
  *
  * @author Nicolas Ruflin <spam@ruflin.com>
  *
- * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-bool-filter.html
+ * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-bool-filter.html
+ * @deprecated Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html
  */
 class BoolFilter extends AbstractFilter
 {
@@ -81,17 +85,19 @@ class BoolFilter extends AbstractFilter
      */
     protected function _addFilter($type, $args)
     {
-        if ($args instanceof AbstractFilter) {
-            $args = $args->toArray();
-        } elseif (!is_array($args)) {
+        if (!is_array($args) && !($args instanceof AbstractFilter)) {
             throw new InvalidException('Invalid parameter. Has to be array or instance of Elastica\Filter');
-        } else {
+        }
+
+        if (is_array($args)) {
             $parsedArgs = array();
+
             foreach ($args as $filter) {
                 if ($filter instanceof AbstractFilter) {
-                    $parsedArgs[] = $filter->toArray();
+                    $parsedArgs[] = $filter;
                 }
             }
+
             $args = $parsedArgs;
         }
 
@@ -128,6 +134,6 @@ class BoolFilter extends AbstractFilter
             $args['bool'] = array_merge($args['bool'], $this->getParams());
         }
 
-        return $args;
+        return $this->_convertArrayable($args);
     }
 }

@@ -3,7 +3,8 @@
 		"authors": [
 			"Iwan Novirion",
 			"Luthfi94",
-			"VoteITP"
+			"VoteITP",
+			"Naval Scene"
 		]
 	},
 	"skinname-vector": "Vektor",
@@ -17,5 +18,6 @@
 	"vector-view-edit": "Suntiang",
 	"vector-view-history": "Riwayaik",
 	"vector-view-view": "Baco",
-	"vector-view-viewsource": "Caliak sumber"
+	"vector-view-viewsource": "Caliak sumber",
+	"vector-more-actions": "Lainnyo"
 }

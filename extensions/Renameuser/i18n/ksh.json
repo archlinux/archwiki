@@ -31,7 +31,7 @@
 	"log-description-renameuser": "Dat es et Logbohch vun de ömjedäufte Metmaachere",
 	"logentry-renameuser-renameuser": "{{GENDER:$2|Dä|Dat|Dä Metmaacher|De|Dat}} $1 Hät dä Metmaacher „$4“, dä {{PLURAL:$6|ein Änderong|$6 Änderonge|kein Änderonge}} aam Wikki jemaat hät, op „$5“ ömjedäuf.",
 	"logentry-renameuser-renameuser-legacier": "{{GENDER:$2|Dä|Dat|Dä Metmaacher|De|Dat}} $1 Hät dä Metmaacher „$4“ op „$5“ ömjedäuf.",
-	"renameuser-move-log": "Di Sigg weet automatesch ömjenannt weil mer dä Metmaacher „[[User:$1|$1]]“ op „[[User:$2|$2]]“ öm am däufe sin.",
+	"renameuser-move-log": "Di Sigg weet automatesch ömjenannt weil mer \n{{GENDER:$2|dä|dat|dä Metmaacher|de|dat}} „[[User:$1|$1]]“ op „[[User:$2|$2]]“ öm aam däufe sin.",
 	"action-renameuser": "Metmaacher ömzedäufe",
 	"right-renameuser": "Metmaacher ömdäufe",
 	"renameuser-renamed-notice": "Dä Metmaacher es ömjenannt woode.\nDat kanns De unge en däm Ußzoch uss_em Logbohch vum Metmaacher_Ömnänne fenge."

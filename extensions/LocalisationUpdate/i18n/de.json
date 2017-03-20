@@ -2,8 +2,10 @@
 	"@metadata": {
 		"authors": [
 			"Kghbln",
-			"Purodha"
+			"Purodha",
+			"Metalhead64"
 		]
 	},
+	"localisationupdate-extensionname": "LocalisationUpdate",
 	"localisationupdate-desc": "Ermöglicht es lokalisierte Texte und Nachrichten so aktuell wie möglich zu halten"
 }

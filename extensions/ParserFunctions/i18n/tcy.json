@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Vishwanatha Badikana"
+		]
+	},
+	"pfunc_expr_unrecognised_word": "ಸಾಲ್‍ದ ದೋಸೊ: ಪತ್ತೆದಾಂತಿನ ಪದೊ \"$1\".",
+	"pfunc_expr_unexpected_operator": "ಅಬಿವ್ಯಕ್ತಿ ದೋಸೊ: ಅನಿರೀಕ್ಷಿತೊ $1 ನಡಪಾವುನಾರ್.",
+	"pfunc_expr_missing_operand": "ಸಾಲ್‍ದ ದೋಸೊ:$1 ತತ್ತ್‌ದ್ ಫೋಂಡ್",
+	"pfunc_expr_unrecognised_punctuation": "ವಿವರೊ ದೋಸೊ:ಗುರ್ತೊ ಮಲ್ಪಂದಿನ ಚಿನ್ನೆಲು $1"
+}

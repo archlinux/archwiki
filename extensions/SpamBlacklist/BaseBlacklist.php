@@ -110,7 +110,8 @@ abstract class BaseBlacklist {
 				$wgBlacklistSettings[$type] = array();
 			}
 
-			self::$instances[$type] = new self::$blacklistTypes[$type]( $wgBlacklistSettings[$type] );
+			$class = self::$blacklistTypes[$type];
+			self::$instances[$type] = new $class( $wgBlacklistSettings[$type] );
 		}
 
 		return self::$instances[$type];
@@ -217,10 +218,10 @@ abstract class BaseBlacklist {
 
 		return ObjectCache::getMainWANInstance()->getWithSetCallback(
 			wfMemcKey( 'spamblacklist', $type, 'blacklist-regex' ),
+			$this->expiryTime,
 			function () use ( $that, $type ) {
 				return SpamRegexBatch::regexesFromMessage( "{$type}-blacklist", $that );
-			},
-			$this->expiryTime
+			}
 		);
 	}
 
@@ -235,10 +236,10 @@ abstract class BaseBlacklist {
 
 		return ObjectCache::getMainWANInstance()->getWithSetCallback(
 			wfMemcKey( 'spamblacklist', $type, 'whitelist-regex' ),
+			$this->expiryTime,
 			function () use ( $that, $type ) {
 				return SpamRegexBatch::regexesFromMessage( "{$type}-whitelist", $that );
-			},
-			$this->expiryTime
+			}
 		);
 	}
 
@@ -264,11 +265,11 @@ abstract class BaseBlacklist {
 			// This used to be cached per-site, but that could be bad on a shared
 			// server where not all wikis have the same configuration.
 			wfMemcKey( 'spamblacklist', $listType, 'shared-blacklist-regex' ),
+			$this->expiryTime,
 			function () use ( $that, &$miss ) {
 				$miss = true;
 				return $that->buildSharedBlacklists();
-			},
-			$this->expiryTime
+			}
 		);
 
 		if ( !$miss ) {
@@ -385,7 +386,9 @@ abstract class BaseBlacklist {
 			__METHOD__
 		);
 
-		return $row ? Revision::newFromRow( $row )->getText() : false;
+		return $row
+			? ContentHandler::getContentText( Revision::newFromRow( $row )->getContent() )
+			: false;
 	}
 
 	/**
@@ -405,5 +408,13 @@ abstract class BaseBlacklist {
 	 */
 	public function getRegexEnd( $batchSize ) {
 		return ($batchSize > 0 ) ? '/Sim' : '/im';
+	}
+
+	/**
+	 * @param Title $title
+	 * @param string[] $entries
+	 */
+	public function warmCachesForFilter( Title $title, array $entries ) {
+		// subclass this
 	}
 }

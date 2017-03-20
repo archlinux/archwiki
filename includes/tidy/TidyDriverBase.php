@@ -27,14 +27,14 @@ abstract class TidyDriverBase {
 	 * @return bool Whether the HTML is valid
 	 */
 	public function validate( $text, &$errorStr ) {
-		throw new MWException( get_class( $this ) . " does not support validate()" );
+		throw new \MWException( get_class( $this ) . " does not support validate()" );
 	}
 
 	/**
 	 * Clean up HTML
 	 *
-	 * @param string HTML document fragment to clean up
-	 * @param string The corrected HTML output
+	 * @param string $text HTML document fragment to clean up
+	 * @return string The corrected HTML output
 	 */
-	public abstract function tidy( $text );
+	abstract public function tidy( $text );
 }

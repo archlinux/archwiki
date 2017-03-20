@@ -10,6 +10,7 @@
 	"cite_error_ref_no_key": "Tag <code>&lt;ref&gt;</code> invalide;\nle referimende senza condenute onne tenè 'nu nome",
 	"cite_error_ref_too_many_keys": "Tag <code>&lt;ref&gt;</code> invalide;\nnome invalide, pe esembie troppe luènghe",
 	"cite_error_ref_no_input": "Tag <code>&lt;ref&gt;</code> invalide;\nreferimende senza nome onne tenè 'nu condenute",
+	"cite_error_references_duplicate_key": "Tag <code>&lt;ref&gt;</code> invalide; 'u nome \"$1\" definite cchiù vote cu condenute diverse",
 	"cite_error_references_invalid_parameters": "Tag <code>&lt;references&gt;</code> invalide;\nnon ge se pò mettere nisciune parametre.\nAuse <code>&lt;references /&gt;</code>",
 	"cite_error_references_invalid_parameters_group": "Tag <code>&lt;references&gt;</code> invalide;\nsulamende 'u parametre \"group\" pò essere ausate.\nAuse <code>&lt;references /&gt;</code> o <code>&lt;references group=\"...\" /&gt;</code>",
 	"cite_error_references_no_backlink_label": "Le etichette personalizzate pe le collegaminde de rrete onne spicciate.\nDefiniscene otre jndr'à 'u messàgge <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>.",
@@ -22,6 +23,8 @@
 	"cite_error_references_missing_key": "'U tag <code>&lt;ref&gt;</code> cu 'u nome \"$1\" definite jndr'à <code>&lt;references&gt;</code> non g'avene ausate jndr'à 'u teste prengepàle.",
 	"cite_error_references_no_key": "'U tag <code>&lt;ref&gt;</code> definite jndr'à <code>&lt;references&gt;</code> non ge tène 'nu nome d'attrebbute.",
 	"cite_error_empty_references_define": "'U tag <code>&lt;ref&gt;</code> definite jndr'à <code>&lt;references&gt;</code> cu 'u nome \"$1\" non ge tène condenute.",
+	"cite-tracking-category-cite-error": "Pàggene cu errore de referimende",
+	"cite-tracking-category-cite-error-desc": "Pàggene jndr'à sta categorije ca ave errore de ause de le tag de referimende.",
 	"cite_references_link_accessibility_label": "Zumbe sus",
 	"cite_references_link_many_accessibility_label": "Zumbe sus a:"
 }

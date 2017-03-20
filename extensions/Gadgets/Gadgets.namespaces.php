@@ -9,11 +9,25 @@ if ( !defined( 'NS_GADGET' ) ) {
 	define( 'NS_GADGET_DEFINITION_TALK', 2303 );
 }
 
+$namespaceNames['an'] = array(
+	NS_GADGET => 'Accesorio',
+	NS_GADGET_TALK => 'Descusión_accesorio',
+	NS_GADGET_DEFINITION => 'Accesorio_definición',
+	NS_GADGET_DEFINITION_TALK => 'Descusión_definición_accesorio',
+);
+
 $namespaceNames['ar'] = array(
 	NS_GADGET => 'إضافة',
 	NS_GADGET_TALK => 'نقاش_الإضافة',
 	NS_GADGET_DEFINITION => 'تعريف_الإضافة',
 	NS_GADGET_DEFINITION_TALK => 'نقاش_تعريف_الإضافة',
+);
+
+$namespaceNames['ast'] = array(
+	NS_GADGET => 'Accesoriu',
+	NS_GADGET_TALK => 'Accesoriu_alderique',
+	NS_GADGET_DEFINITION => 'Accesoriu_definición',
+	NS_GADGET_DEFINITION_TALK => 'Accesoriu_definición_alderique',
 );
 
 $namespaceNames['azb'] = array(
@@ -37,6 +51,13 @@ $namespaceNames['ckb'] = array(
 	NS_GADGET_DEFINITION_TALK => 'وتووێژی_پێناسه‌ی_ئامراز',
 );
 
+$namespaceNames['cs'] = array(
+	NS_GADGET => 'Udělátko',
+	NS_GADGET_TALK => 'Diskuse_k_udělátku',
+	NS_GADGET_DEFINITION => 'Definice_udělátka',
+	NS_GADGET_DEFINITION_TALK => 'Diskuse_k_definici_udělátka',
+);
+
 $namespaceNames['de'] = array(
 	NS_GADGET => 'Gadget',
 	NS_GADGET_TALK => 'Gadget_Diskussion',
@@ -44,11 +65,32 @@ $namespaceNames['de'] = array(
 	NS_GADGET_DEFINITION_TALK => 'Gadget-Definition_Diskussion',
 );
 
+$namespaceNames['diq'] = array(
+	NS_GADGET => 'Halet',
+	NS_GADGET_TALK => 'Halet_vaten',
+	NS_GADGET_DEFINITION => 'Halet_şınasnayış',
+	NS_GADGET_DEFINITION_TALK => 'Halet_şınasnayış_vaten',
+);
+
 $namespaceNames['en'] = array(
 	NS_GADGET => 'Gadget',
 	NS_GADGET_TALK => 'Gadget_talk',
 	NS_GADGET_DEFINITION => 'Gadget_definition',
 	NS_GADGET_DEFINITION_TALK => 'Gadget_definition_talk',
+);
+
+$namespaceNames['es'] = array(
+	NS_GADGET => 'Accesorio',
+	NS_GADGET_TALK => 'Accesorio_discusión',
+	NS_GADGET_DEFINITION => 'Accesorio_definición',
+	NS_GADGET_DEFINITION_TALK => 'Accesorio_definición_discusión',
+);
+
+$namespaceNames['et'] = array(
+	NS_GADGET => 'Tööriist',
+	NS_GADGET_TALK => 'Tööriista_arutelu',
+	NS_GADGET_DEFINITION => 'Tööriista_määratlus',
+	NS_GADGET_DEFINITION_TALK => 'Tööriista_määratluse_arutelu',
 );
 
 $namespaceNames['fa'] = array(
@@ -63,6 +105,13 @@ $namespaceNames['he'] = array(
 	NS_GADGET_TALK => 'שיחת_גאדג\'ט',
 	NS_GADGET_DEFINITION => 'הגדרת_גאדג\'ט',
 	NS_GADGET_DEFINITION_TALK => 'שיחת_הגדרת_גאדג\'ט',
+);
+
+$namespaceNames['is'] = array(
+	NS_GADGET => 'Smától',
+	NS_GADGET_TALK => 'Smátólaspjall',
+	NS_GADGET_DEFINITION => 'Smátóla_skilgreining',
+	NS_GADGET_DEFINITION_TALK => 'Smátóla_skilgreiningarspjall',
 );
 
 $namespaceNames['it'] = array(
@@ -91,6 +140,13 @@ $namespaceNames['mzn'] = array(
 	NS_GADGET_TALK => 'گجت_گپ',
 	NS_GADGET_DEFINITION => 'گجت_توضیحات',
 	NS_GADGET_DEFINITION_TALK => 'گجت_توضیحات_گپ',
+);
+
+$namespaceNames['nl'] = array(
+	NS_GADGET => 'Uitbreiding',
+	NS_GADGET_TALK => 'Overleg_uitbreiding',
+	NS_GADGET_DEFINITION => 'Uitbreidingsdefinitie',
+	NS_GADGET_DEFINITION_TALK => 'Overleg_uitbreidingsdefinitie',
 );
 
 $namespaceNames['or'] = array(

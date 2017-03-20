@@ -18,6 +18,7 @@
  * @file
  * @author Aaron Schulz
  */
+use Psr\Log\LoggerInterface;
 
 /**
  * Version of PoolCounter that uses Redis
@@ -55,6 +56,8 @@ class PoolCounterRedis extends PoolCounter {
 	protected $ring;
 	/** @var RedisConnectionPool */
 	protected $pool;
+	/** @var LoggerInterface */
+	protected $logger;
 	/** @var array (server label => host) map */
 	protected $serversByLabel;
 	/** @var string SHA-1 of the key */
@@ -87,14 +90,15 @@ class PoolCounterRedis extends PoolCounter {
 
 		$conf['redisConfig']['serializer'] = 'none'; // for use with Lua
 		$this->pool = RedisConnectionPool::singleton( $conf['redisConfig'] );
+		$this->logger = \MediaWiki\Logger\LoggerFactory::getInstance( 'redis' );
 
 		$this->keySha1 = sha1( $this->key );
 		$met = ini_get( 'max_execution_time' ); // usually 0 in CLI mode
 		$this->lockTTL = $met ? 2 * $met : 3600;
 
 		if ( self::$active === null ) {
-			self::$active = array();
-			register_shutdown_function( array( __CLASS__, 'releaseAll' ) );
+			self::$active = [];
+			register_shutdown_function( [ __CLASS__, 'releaseAll' ] );
 		}
 	}
 
@@ -107,7 +111,7 @@ class PoolCounterRedis extends PoolCounter {
 			$servers = $this->ring->getLocations( $this->key, 3 );
 			ArrayUtils::consistentHashSort( $servers, $this->key );
 			foreach ( $servers as $server ) {
-				$conn = $this->pool->getConnection( $this->serversByLabel[$server] );
+				$conn = $this->pool->getConnection( $this->serversByLabel[$server], $this->logger );
 				if ( $conn ) {
 					break;
 				}
@@ -149,7 +153,9 @@ class PoolCounterRedis extends PoolCounter {
 		}
 		$conn = $status->value;
 
+		// @codingStandardsIgnoreStart Generic.Files.LineLength
 		static $script =
+		/** @lang Lua */
 <<<LUA
 		local kSlots,kSlotsNextRelease,kWakeup,kWaiting = unpack(KEYS)
 		local rMaxWorkers,rExpiry,rSlot,rSlotTime,rAwakeAll,rTime = unpack(ARGV)
@@ -186,9 +192,11 @@ class PoolCounterRedis extends PoolCounter {
 		end
 		return 1
 LUA;
+		// @codingStandardsIgnoreEnd
+
 		try {
 			$conn->luaEval( $script,
-				array(
+				[
 					$this->getSlotListKey(),
 					$this->getSlotRTimeSetKey(),
 					$this->getWakeupListKey(),
@@ -199,7 +207,7 @@ LUA;
 					$this->slotTime, // used for CAS-style sanity check
 					( $this->onRelease === self::AWAKE_ALL ) ? 1 : 0,
 					microtime( true )
-				),
+				],
 				4 # number of first argument(s) that are keys
 			);
 		} catch ( RedisException $e ) {
@@ -243,13 +251,13 @@ LUA;
 			} elseif ( $slot === 'QUEUE_WAIT' ) {
 				// This process is now registered as waiting
 				$keys = ( $doWakeup == self::AWAKE_ALL )
-					// Wait for an open slot or wake-up signal (preferring the later)
-					? array( $this->getWakeupListKey(), $this->getSlotListKey() )
+					// Wait for an open slot or wake-up signal (preferring the latter)
+					? [ $this->getWakeupListKey(), $this->getSlotListKey() ]
 					// Just wait for an actual pool slot
-					: array( $this->getSlotListKey() );
+					: [ $this->getSlotListKey() ];
 
 				$res = $conn->blPop( $keys, $this->timeout );
-				if ( $res === array() ) {
+				if ( $res === [] ) {
 					$conn->zRem( $this->getWaitSetKey(), $this->session ); // no longer waiting
 					return Status::newGood( PoolCounter::TIMEOUT );
 				}
@@ -284,12 +292,13 @@ LUA;
 	 */
 	protected function initAndPopPoolSlotList( RedisConnRef $conn, $now ) {
 		static $script =
+		/** @lang Lua */
 <<<LUA
 		local kSlots,kSlotsNextRelease,kSlotWaits = unpack(KEYS)
 		local rMaxWorkers,rMaxQueue,rTimeout,rExpiry,rSess,rTime = unpack(ARGV)
 		-- Initialize if the "next release" time sorted-set is empty. The slot key
 		-- itself is empty if all slots are busy or when nothing is initialized.
-		-- If the list is empty but the set is not, then it is the later case.
+		-- If the list is empty but the set is not, then it is the latter case.
 		-- For sanity, if the list exists but not the set, then reset everything.
 		if redis.call('exists',kSlotsNextRelease) == 0 then
 			redis.call('del',kSlots)
@@ -329,7 +338,7 @@ LUA;
 		return slot
 LUA;
 		return $conn->luaEval( $script,
-			array(
+			[
 				$this->getSlotListKey(),
 				$this->getSlotRTimeSetKey(),
 				$this->getWaitSetKey(),
@@ -339,7 +348,7 @@ LUA;
 				$this->lockTTL,
 				$this->session,
 				$now
-			),
+			],
 			3 # number of first argument(s) that are keys
 		);
 	}
@@ -352,6 +361,7 @@ LUA;
 	 */
 	protected function registerAcquisitionTime( RedisConnRef $conn, $slot, $now ) {
 		static $script =
+		/** @lang Lua */
 <<<LUA
 		local kSlots,kSlotsNextRelease,kSlotWaits = unpack(KEYS)
 		local rSlot,rExpiry,rSess,rTime = unpack(ARGV)
@@ -368,7 +378,7 @@ LUA;
 		return 1
 LUA;
 		return $conn->luaEval( $script,
-			array(
+			[
 				$this->getSlotListKey(),
 				$this->getSlotRTimeSetKey(),
 				$this->getWaitSetKey(),
@@ -376,7 +386,7 @@ LUA;
 				$this->lockTTL,
 				$this->session,
 				$now
-			),
+			],
 			3 # number of first argument(s) that are keys
 		);
 	}

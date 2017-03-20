@@ -15,14 +15,18 @@ class ApiQueryRevisionsTest extends ApiTestCase {
 		$pageName = 'Help:' . __METHOD__;
 		$title = Title::newFromText( $pageName );
 		$page = WikiPage::factory( $title );
-		$page->doEdit( 'Some text', 'inserting content' );
 
-		$apiResult = $this->doApiRequest( array(
+		$page->doEditContent(
+			ContentHandler::makeContent( 'Some text', $page->getTitle() ),
+			'inserting content'
+		);
+
+		$apiResult = $this->doApiRequest( [
 			'action' => 'query',
 			'prop' => 'revisions',
 			'titles' => $pageName,
 			'rvprop' => 'content',
-		) );
+		] );
 		$this->assertArrayHasKey( 'query', $apiResult[0] );
 		$this->assertArrayHasKey( 'pages', $apiResult[0]['query'] );
 		foreach ( $apiResult[0]['query']['pages'] as $page ) {

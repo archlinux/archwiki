@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica\Query;
 
 use Elastica\Query as BaseQuery;
@@ -8,7 +9,7 @@ use Elastica\Query as BaseQuery;
  *
  * @author Wu Yang <darkyoung@gmail.com>
  *
- * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-top-children-query.html
+ * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-top-children-query.html
  */
 class TopChildren extends AbstractQuery
 {
@@ -33,10 +34,7 @@ class TopChildren extends AbstractQuery
      */
     public function setQuery($query)
     {
-        $query = BaseQuery::create($query);
-        $data = $query->toArray();
-
-        return $this->setParam('query', $data['query']);
+        return $this->setParam('query', BaseQuery::create($query));
     }
 
     /**

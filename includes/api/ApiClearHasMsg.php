@@ -30,7 +30,13 @@
 class ApiClearHasMsg extends ApiBase {
 	public function execute() {
 		$user = $this->getUser();
-		$user->setNewtalk( false );
+		if ( $this->getRequest()->wasPosted() ) {
+			$user->setNewtalk( false );
+		} else {
+			DeferredUpdates::addCallableUpdate( function () use ( $user ) {
+				$user->setNewtalk( false );
+			} );
+		}
 		$this->getResult()->addValue( null, $this->getModuleName(), 'success' );
 	}
 
@@ -43,10 +49,10 @@ class ApiClearHasMsg extends ApiBase {
 	}
 
 	protected function getExamplesMessages() {
-		return array(
+		return [
 			'action=clearhasmsg'
 				=> 'apihelp-clearhasmsg-example-1',
-		);
+		];
 	}
 
 	public function getHelpUrls() {

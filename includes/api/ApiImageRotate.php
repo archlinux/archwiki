@@ -24,59 +24,36 @@
 class ApiImageRotate extends ApiBase {
 	private $mPageSet = null;
 
-	/**
-	 * Add all items from $values into the result
-	 * @param array $result Output
-	 * @param array $values Values to add
-	 * @param string $flag The name of the boolean flag to mark this element
-	 * @param string $name If given, name of the value
-	 */
-	private static function addValues( array &$result, $values, $flag = null, $name = null ) {
-		foreach ( $values as $val ) {
-			if ( $val instanceof Title ) {
-				$v = array();
-				ApiQueryBase::addTitleInfo( $v, $val );
-			} elseif ( $name !== null ) {
-				$v = array( $name => $val );
-			} else {
-				$v = $val;
-			}
-			if ( $flag !== null ) {
-				$v[$flag] = true;
-			}
-			$result[] = $v;
-		}
-	}
-
 	public function execute() {
 		$this->useTransactionalTimeLimit();
 
 		$params = $this->extractRequestParams();
 		$rotation = $params['rotation'];
 
-		$continuationManager = new ApiContinuationManager( $this, array(), array() );
+		$continuationManager = new ApiContinuationManager( $this, [], [] );
 		$this->setContinuationManager( $continuationManager );
 
 		$pageSet = $this->getPageSet();
 		$pageSet->execute();
 
-		$result = array();
+		$result = [];
 
-		self::addValues( $result, $pageSet->getInvalidTitlesAndReasons(), 'invalid' );
-		self::addValues( $result, $pageSet->getSpecialTitles(), 'special', 'title' );
-		self::addValues( $result, $pageSet->getMissingPageIDs(), 'missing', 'pageid' );
-		self::addValues( $result, $pageSet->getMissingRevisionIDs(), 'missing', 'revid' );
-		self::addValues( $result, $pageSet->getInterwikiTitlesAsResult() );
+		$result = $pageSet->getInvalidTitlesAndRevisions( [
+			'invalidTitles', 'special', 'missingIds', 'missingRevIds', 'interwikiTitles',
+		] );
 
 		foreach ( $pageSet->getTitles() as $title ) {
-			$r = array();
+			$r = [];
 			$r['id'] = $title->getArticleID();
 			ApiQueryBase::addTitleInfo( $r, $title );
 			if ( !$title->exists() ) {
 				$r['missing'] = true;
+				if ( $title->isKnown() ) {
+					$r['known'] = true;
+				}
 			}
 
-			$file = wfFindFile( $title, array( 'latest' => true ) );
+			$file = wfFindFile( $title, [ 'latest' => true ] );
 			if ( !$file ) {
 				$r['result'] = 'Failure';
 				$r['errormessage'] = 'File does not exist';
@@ -108,13 +85,13 @@ class ApiImageRotate extends ApiBase {
 				continue;
 			}
 			$ext = strtolower( pathinfo( "$srcPath", PATHINFO_EXTENSION ) );
-			$tmpFile = TempFSFile::factory( 'rotate_', $ext );
+			$tmpFile = TempFSFile::factory( 'rotate_', $ext, wfTempDir() );
 			$dstPath = $tmpFile->getPath();
-			$err = $handler->rotate( $file, array(
-				"srcPath" => $srcPath,
-				"dstPath" => $dstPath,
-				"rotation" => $rotation
-			) );
+			$err = $handler->rotate( $file, [
+				'srcPath' => $srcPath,
+				'dstPath' => $dstPath,
+				'rotation' => $rotation
+			] );
 			if ( !$err ) {
 				$comment = wfMessage(
 					'rotate-comment'
@@ -184,15 +161,15 @@ class ApiImageRotate extends ApiBase {
 	}
 
 	public function getAllowedParams( $flags = 0 ) {
-		$result = array(
-			'rotation' => array(
-				ApiBase::PARAM_TYPE => array( '90', '180', '270' ),
+		$result = [
+			'rotation' => [
+				ApiBase::PARAM_TYPE => [ '90', '180', '270' ],
 				ApiBase::PARAM_REQUIRED => true
-			),
-			'continue' => array(
+			],
+			'continue' => [
 				ApiBase::PARAM_HELP_MSG => 'api-help-param-continue',
-			),
-		);
+			],
+		];
 		if ( $flags ) {
 			$result += $this->getPageSet()->getFinalParams( $flags );
 		}
@@ -205,12 +182,12 @@ class ApiImageRotate extends ApiBase {
 	}
 
 	protected function getExamplesMessages() {
-		return array(
+		return [
 			'action=imagerotate&titles=File:Example.jpg&rotation=90&token=123ABC'
 				=> 'apihelp-imagerotate-example-simple',
 			'action=imagerotate&generator=categorymembers&gcmtitle=Category:Flip&gcmtype=file&' .
 				'rotation=180&token=123ABC'
 				=> 'apihelp-imagerotate-example-generator',
-		);
+		];
 	}
 }

@@ -26,31 +26,33 @@
 class ApiContinuationManager {
 	private $source;
 
-	private $allModules = array();
-	private $generatedModules = array();
+	private $allModules = [];
+	private $generatedModules = [];
 
-	private $continuationData = array();
-	private $generatorContinuationData = array();
+	private $continuationData = [];
+	private $generatorContinuationData = [];
+	private $generatorNonContinuationData = [];
 
-	private $generatorParams = array();
+	private $generatorParams = [];
 	private $generatorDone = false;
 
 	/**
 	 * @param ApiBase $module Module starting the continuation
 	 * @param ApiBase[] $allModules Contains ApiBase instances that will be executed
 	 * @param array $generatedModules Names of modules that depend on the generator
+	 * @throws UsageException
 	 */
 	public function __construct(
-		ApiBase $module, array $allModules = array(), array $generatedModules = array()
+		ApiBase $module, array $allModules = [], array $generatedModules = []
 	) {
 		$this->source = get_class( $module );
 		$request = $module->getRequest();
 
 		$this->generatedModules = $generatedModules
 			? array_combine( $generatedModules, $generatedModules )
-			: array();
+			: [];
 
-		$skip = array();
+		$skip = [];
 		$continue = $request->getVal( 'continue', '' );
 		if ( $continue !== '' ) {
 			$continue = explode( '||', $continue );
@@ -136,9 +138,29 @@ class ApiContinuationManager {
 		}
 		$paramName = $module->encodeParamName( $paramName );
 		if ( is_array( $paramValue ) ) {
-			$paramValue = join( '|', $paramValue );
+			$paramValue = implode( '|', $paramValue );
 		}
 		$this->continuationData[$name][$paramName] = $paramValue;
+	}
+
+	/**
+	 * Set the non-continuation parameter for the generator module
+	 *
+	 * In case the generator isn't going to be continued, this sets the fields
+	 * to return.
+	 *
+	 * @since 1.28
+	 * @param ApiBase $module
+	 * @param string $paramName
+	 * @param string|array $paramValue
+	 */
+	public function addGeneratorNonContinueParam( ApiBase $module, $paramName, $paramValue ) {
+		$name = $module->getModuleName();
+		$paramName = $module->encodeParamName( $paramName );
+		if ( is_array( $paramValue ) ) {
+			$paramValue = implode( '|', $paramValue );
+		}
+		$this->generatorNonContinuationData[$name][$paramName] = $paramValue;
 	}
 
 	/**
@@ -151,7 +173,7 @@ class ApiContinuationManager {
 		$name = $module->getModuleName();
 		$paramName = $module->encodeParamName( $paramName );
 		if ( is_array( $paramValue ) ) {
-			$paramValue = join( '|', $paramValue );
+			$paramValue = implode( '|', $paramValue );
 		}
 		$this->generatorContinuationData[$name][$paramName] = $paramValue;
 	}
@@ -165,11 +187,20 @@ class ApiContinuationManager {
 	}
 
 	/**
+	 * Fetch raw non-continuation data
+	 * @since 1.28
+	 * @return array
+	 */
+	public function getRawNonContinuation() {
+		return $this->generatorNonContinuationData;
+	}
+
+	/**
 	 * Fetch continuation result data
-	 * @return array Array( (array)$data, (bool)$batchcomplete )
+	 * @return array [ (array)$data, (bool)$batchcomplete ]
 	 */
 	public function getContinuation() {
-		$data = array();
+		$data = [];
 		$batchcomplete = false;
 
 		$finishedModules = array_diff(
@@ -191,19 +222,24 @@ class ApiContinuationManager {
 			foreach ( $continuationData as $module => $kvp ) {
 				$data += $kvp;
 			}
-			$data += $this->generatorParams;
-			$generatorKeys = join( '|', array_keys( $this->generatorParams ) );
+			$generatorParams = [];
+			foreach ( $this->generatorNonContinuationData as $kvp ) {
+				$generatorParams += $kvp;
+			}
+			$generatorParams += $this->generatorParams;
+			$data += $generatorParams;
+			$generatorKeys = implode( '|', array_keys( $generatorParams ) );
 		} elseif ( $this->generatorContinuationData ) {
 			// All the generator-using modules are complete, but the
 			// generator isn't. Continue the generator and restart the
 			// generator-using modules
-			$generatorParams = array();
+			$generatorParams = [];
 			foreach ( $this->generatorContinuationData as $kvp ) {
 				$generatorParams += $kvp;
 			}
 			$data += $generatorParams;
 			$finishedModules = array_diff( $finishedModules, $this->generatedModules );
-			$generatorKeys = join( '|', array_keys( $generatorParams ) );
+			$generatorKeys = implode( '|', array_keys( $generatorParams ) );
 			$batchcomplete = true;
 		} else {
 			// Generator and prop modules are all done. Mark it so.
@@ -214,10 +250,10 @@ class ApiContinuationManager {
 		// Set 'continue' if any continuation data is set or if the generator
 		// still needs to run
 		if ( $data || $generatorKeys !== '-' ) {
-			$data['continue'] = $generatorKeys . '||' . join( '|', $finishedModules );
+			$data['continue'] = $generatorKeys . '||' . implode( '|', $finishedModules );
 		}
 
-		return array( $data, $batchcomplete );
+		return [ $data, $batchcomplete ];
 	}
 
 	/**

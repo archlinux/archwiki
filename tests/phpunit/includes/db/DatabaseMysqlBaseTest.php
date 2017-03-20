@@ -29,8 +29,17 @@
  * Fake class around abstract class so we can call concrete methods.
  */
 class FakeDatabaseMysqlBase extends DatabaseMysqlBase {
-	// From DatabaseBase
+	// From Database
 	function __construct() {
+		$this->profiler = new ProfilerStub( [] );
+		$this->trxProfiler = new TransactionProfiler();
+		$this->cliMode = true;
+		$this->connLogger = new \Psr\Log\NullLogger();
+		$this->queryLogger = new \Psr\Log\NullLogger();
+		$this->errorLogger = function ( Exception $e ) {
+			wfWarn( get_class( $e ) . ": {$e->getMessage()}" );
+		};
+		$this->currentDomain = DatabaseDomain::newUnspecified();
 	}
 
 	protected function closeConnection() {
@@ -76,10 +85,10 @@ class FakeDatabaseMysqlBase extends DatabaseMysqlBase {
 	protected function mysqlFetchField( $res, $n ) {
 	}
 
-	protected function mysqlPing() {
+	protected function mysqlRealEscapeString( $s ) {
+
 	}
 
-	// From interface DatabaseType
 	function insertId() {
 	}
 
@@ -110,50 +119,50 @@ class DatabaseMysqlBaseTest extends MediaWikiTestCase {
 	 * Named per bug 20281 convention.
 	 */
 	function provideDiapers() {
-		return array(
+		return [
 			// Format: expected, input
-			array( '``', '' ),
+			[ '``', '' ],
 
 			// Yeah I really hate loosely typed PHP idiocies nowadays
-			array( '``', null ),
+			[ '``', null ],
 
 			// Dear codereviewer, guess what addIdentifierQuotes()
 			// will return with thoses:
-			array( '``', false ),
-			array( '`1`', true ),
+			[ '``', false ],
+			[ '`1`', true ],
 
 			// We never know what could happen
-			array( '`0`', 0 ),
-			array( '`1`', 1 ),
+			[ '`0`', 0 ],
+			[ '`1`', 1 ],
 
 			// Whatchout! Should probably use something more meaningful
-			array( "`'`", "'" ),  # single quote
-			array( '`"`', '"' ),  # double quote
-			array( '````', '`' ), # backtick
-			array( '`’`', '’' ),  # apostrophe (look at your encyclopedia)
+			[ "`'`", "'" ],  # single quote
+			[ '`"`', '"' ],  # double quote
+			[ '````', '`' ], # backtick
+			[ '`’`', '’' ],  # apostrophe (look at your encyclopedia)
 
 			// sneaky NUL bytes are lurking everywhere
-			array( '``', "\0" ),
-			array( '`xyzzy`', "\0x\0y\0z\0z\0y\0" ),
+			[ '``', "\0" ],
+			[ '`xyzzy`', "\0x\0y\0z\0z\0y\0" ],
 
 			// unicode chars
-			array(
+			[
 				self::createUnicodeString( '`\u0001a\uFFFFb`' ),
 				self::createUnicodeString( '\u0001a\uFFFFb' )
-			),
-			array(
+			],
+			[
 				self::createUnicodeString( '`\u0001\uFFFF`' ),
 				self::createUnicodeString( '\u0001\u0000\uFFFF\u0000' )
-			),
-			array( '`☃`', '☃' ),
-			array( '`メインページ`', 'メインページ' ),
-			array( '`Басты_бет`', 'Басты_бет' ),
+			],
+			[ '`☃`', '☃' ],
+			[ '`メインページ`', 'メインページ' ],
+			[ '`Басты_бет`', 'Басты_бет' ],
 
 			// Real world:
-			array( '`Alix`', 'Alix' ),  # while( ! $recovered ) { sleep(); }
-			array( '`Backtick: ```', 'Backtick: `' ),
-			array( '`This is a test`', 'This is a test' ),
-		);
+			[ '`Alix`', 'Alix' ],  # while( ! $recovered ) { sleep(); }
+			[ '`Backtick: ```', 'Backtick: `' ],
+			[ '`This is a test`', 'This is a test' ],
+		];
 	}
 
 	private static function createUnicodeString( $str ) {
@@ -163,25 +172,17 @@ class DatabaseMysqlBaseTest extends MediaWikiTestCase {
 	function getMockForViews() {
 		$db = $this->getMockBuilder( 'DatabaseMysql' )
 			->disableOriginalConstructor()
-			->setMethods( array( 'fetchRow', 'query' ) )
+			->setMethods( [ 'fetchRow', 'query' ] )
 			->getMock();
 
-		$db->expects( $this->any() )
-			->method( 'query' )
+		$db->method( 'query' )
 			->with( $this->anything() )
-			->will(
-				$this->returnValue( null )
-			);
+			->willReturn( new FakeResultWrapper( [
+				(object)[ 'Tables_in_' => 'view1' ],
+				(object)[ 'Tables_in_' => 'view2' ],
+				(object)[ 'Tables_in_' => 'myview' ]
+			] ) );
 
-		$db->expects( $this->any() )
-			->method( 'fetchRow' )
-			->with( $this->anything() )
-			->will( $this->onConsecutiveCalls(
-				array( 'Tables_in_' => 'view1' ),
-				array( 'Tables_in_' => 'view2' ),
-				array( 'Tables_in_' => 'myview' ),
-				false  # no more rows
-			) );
 		return $db;
 	}
 	/**
@@ -190,57 +191,174 @@ class DatabaseMysqlBaseTest extends MediaWikiTestCase {
 	function testListviews() {
 		$db = $this->getMockForViews();
 
-		// The first call populate an internal cache of views
-		$this->assertEquals( array( 'view1', 'view2', 'myview' ),
-			$db->listViews() );
-		$this->assertEquals( array( 'view1', 'view2', 'myview' ),
+		$this->assertEquals( [ 'view1', 'view2', 'myview' ],
 			$db->listViews() );
 
 		// Prefix filtering
-		$this->assertEquals( array( 'view1', 'view2' ),
+		$this->assertEquals( [ 'view1', 'view2' ],
 			$db->listViews( 'view' ) );
-		$this->assertEquals( array( 'myview' ),
+		$this->assertEquals( [ 'myview' ],
 			$db->listViews( 'my' ) );
-		$this->assertEquals( array(),
+		$this->assertEquals( [],
 			$db->listViews( 'UNUSED_PREFIX' ) );
-		$this->assertEquals( array( 'view1', 'view2', 'myview' ),
+		$this->assertEquals( [ 'view1', 'view2', 'myview' ],
 			$db->listViews( '' ) );
 	}
 
 	/**
-	 * @covers DatabaseMysqlBase::isView
-	 * @dataProvider provideViewExistanceChecks
+	 * @dataProvider provideComparePositions
 	 */
-	function testIsView( $isView, $viewName ) {
-		$db = $this->getMockForViews();
+	function testHasReached( MySQLMasterPos $lowerPos, MySQLMasterPos $higherPos, $match ) {
+		if ( $match ) {
+			$this->assertTrue( $lowerPos->channelsMatch( $higherPos ) );
 
-		switch ( $isView ) {
-			case true:
-				$this->assertTrue( $db->isView( $viewName ),
-					"$viewName should be considered a view" );
-			break;
+			$this->assertTrue( $higherPos->hasReached( $lowerPos ) );
+			$this->assertTrue( $higherPos->hasReached( $higherPos ) );
+			$this->assertTrue( $lowerPos->hasReached( $lowerPos ) );
+			$this->assertFalse( $lowerPos->hasReached( $higherPos ) );
+		} else { // channels don't match
+			$this->assertFalse( $lowerPos->channelsMatch( $higherPos ) );
 
-			case false:
-				$this->assertFalse( $db->isView( $viewName ),
-					"$viewName has not been defined as a view" );
-			break;
+			$this->assertFalse( $higherPos->hasReached( $lowerPos ) );
+			$this->assertFalse( $lowerPos->hasReached( $higherPos ) );
 		}
-
 	}
 
-	function provideViewExistanceChecks() {
-		return array(
-			// format: whether it is a view, view name
-			array( true, 'view1' ),
-			array( true, 'view2' ),
-			array( true, 'myview' ),
-
-			array( false, 'user' ),
-
-			array( false, 'view10' ),
-			array( false, 'my' ),
-			array( false, 'OH_MY_GOD' ),  # they killed kenny!
-		);
+	function provideComparePositions() {
+		return [
+			// Binlog style
+			[
+				new MySQLMasterPos( 'db1034-bin.000976', '843431247' ),
+				new MySQLMasterPos( 'db1034-bin.000976', '843431248' ),
+				true
+			],
+			[
+				new MySQLMasterPos( 'db1034-bin.000976', '999' ),
+				new MySQLMasterPos( 'db1034-bin.000976', '1000' ),
+				true
+			],
+			[
+				new MySQLMasterPos( 'db1034-bin.000976', '999' ),
+				new MySQLMasterPos( 'db1035-bin.000976', '1000' ),
+				false
+			],
+			// MySQL GTID style
+			[
+				new MySQLMasterPos( 'db1-bin.2', '1', '3E11FA47-71CA-11E1-9E33-C80AA9429562:23' ),
+				new MySQLMasterPos( 'db1-bin.2', '2', '3E11FA47-71CA-11E1-9E33-C80AA9429562:24' ),
+				true
+			],
+			[
+				new MySQLMasterPos( 'db1-bin.2', '1', '3E11FA47-71CA-11E1-9E33-C80AA9429562:99' ),
+				new MySQLMasterPos( 'db1-bin.2', '2', '3E11FA47-71CA-11E1-9E33-C80AA9429562:100' ),
+				true
+			],
+			[
+				new MySQLMasterPos( 'db1-bin.2', '1', '3E11FA47-71CA-11E1-9E33-C80AA9429562:99' ),
+				new MySQLMasterPos( 'db1-bin.2', '2', '1E11FA47-71CA-11E1-9E33-C80AA9429562:100' ),
+				false
+			],
+			// MariaDB GTID style
+			[
+				new MySQLMasterPos( 'db1-bin.2', '1', '255-11-23' ),
+				new MySQLMasterPos( 'db1-bin.2', '2', '255-11-24' ),
+				true
+			],
+			[
+				new MySQLMasterPos( 'db1-bin.2', '1', '255-11-99' ),
+				new MySQLMasterPos( 'db1-bin.2', '2', '255-11-100' ),
+				true
+			],
+			[
+				new MySQLMasterPos( 'db1-bin.2', '1', '255-11-999' ),
+				new MySQLMasterPos( 'db1-bin.2', '2', '254-11-1000' ),
+				false
+			],
+		];
 	}
 
+	/**
+	 * @dataProvider provideChannelPositions
+	 */
+	function testChannelsMatch( MySQLMasterPos $pos1, MySQLMasterPos $pos2, $matches ) {
+		$this->assertEquals( $matches, $pos1->channelsMatch( $pos2 ) );
+		$this->assertEquals( $matches, $pos2->channelsMatch( $pos1 ) );
+	}
+
+	function provideChannelPositions() {
+		return [
+			[
+				new MySQLMasterPos( 'db1034-bin.000876', '44' ),
+				new MySQLMasterPos( 'db1034-bin.000976', '74' ),
+				true
+			],
+			[
+				new MySQLMasterPos( 'db1052-bin.000976', '999' ),
+				new MySQLMasterPos( 'db1052-bin.000976', '1000' ),
+				true
+			],
+			[
+				new MySQLMasterPos( 'db1066-bin.000976', '9999' ),
+				new MySQLMasterPos( 'db1035-bin.000976', '10000' ),
+				false
+			],
+			[
+				new MySQLMasterPos( 'db1066-bin.000976', '9999' ),
+				new MySQLMasterPos( 'trump2016.000976', '10000' ),
+				false
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider provideLagAmounts
+	 */
+	function testPtHeartbeat( $lag ) {
+		$db = $this->getMockBuilder( 'DatabaseMysql' )
+			->disableOriginalConstructor()
+			->setMethods( [
+				'getLagDetectionMethod', 'getHeartbeatData', 'getMasterServerInfo' ] )
+			->getMock();
+
+		$db->method( 'getLagDetectionMethod' )
+			->willReturn( 'pt-heartbeat' );
+
+		$db->method( 'getMasterServerInfo' )
+			->willReturn( [ 'serverId' => 172, 'asOf' => time() ] );
+
+		// Fake the current time.
+		list( $nowSecFrac, $nowSec ) = explode( ' ', microtime() );
+		$now = (float)$nowSec + (float)$nowSecFrac;
+		// Fake the heartbeat time.
+		// Work arounds for weak DataTime microseconds support.
+		$ptTime = $now - $lag;
+		$ptSec = (int)$ptTime;
+		$ptSecFrac = ( $ptTime - $ptSec );
+		$ptDateTime = new DateTime( "@$ptSec" );
+		$ptTimeISO = $ptDateTime->format( 'Y-m-d\TH:i:s' );
+		$ptTimeISO .= ltrim( number_format( $ptSecFrac, 6 ), '0' );
+
+		$db->method( 'getHeartbeatData' )
+			->with( [ 'server_id' => 172 ] )
+			->willReturn( [ $ptTimeISO, $now ] );
+
+		$db->setLBInfo( 'clusterMasterHost', 'db1052' );
+		$lagEst = $db->getLag();
+
+		$this->assertGreaterThan( $lag - .010, $lagEst, "Correct heatbeat lag" );
+		$this->assertLessThan( $lag + .010, $lagEst, "Correct heatbeat lag" );
+	}
+
+	function provideLagAmounts() {
+		return [
+			[ 0 ],
+			[ 0.3 ],
+			[ 6.5 ],
+			[ 10.1 ],
+			[ 200.2 ],
+			[ 400.7 ],
+			[ 600.22 ],
+			[ 1000.77 ],
+		];
+	}
 }

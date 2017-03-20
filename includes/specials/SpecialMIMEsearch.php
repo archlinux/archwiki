@@ -35,7 +35,7 @@ class MIMEsearchPage extends QueryPage {
 	}
 
 	public function isExpensive() {
-		return true;
+		return false;
 	}
 
 	function isSyndicated() {
@@ -47,18 +47,18 @@ class MIMEsearchPage extends QueryPage {
 	}
 
 	function linkParameters() {
-		return array( 'mime' => "{$this->major}/{$this->minor}" );
+		return [ 'mime' => "{$this->major}/{$this->minor}" ];
 	}
 
 	public function getQueryInfo() {
-		$minorType = array();
+		$minorType = [];
 		if ( $this->minor !== '*' ) {
 			// Allow wildcard searching
 			$minorType['img_minor_mime'] = $this->minor;
 		}
-		$qi = array(
-			'tables' => array( 'image' ),
-			'fields' => array(
+		$qi = [
+			'tables' => [ 'image' ],
+			'fields' => [
 				'namespace' => NS_FILE,
 				'title' => 'img_name',
 				// Still have a value field just in case,
@@ -69,12 +69,12 @@ class MIMEsearchPage extends QueryPage {
 				'img_height',
 				'img_user_text',
 				'img_timestamp'
-			),
-			'conds' => array(
+			],
+			'conds' => [
 				'img_major_mime' => $this->major,
 				// This is in order to trigger using
 				// the img_media_mime index in "range" mode.
-				'img_media_type' => array(
+				'img_media_type' => [
 					MEDIATYPE_BITMAP,
 					MEDIATYPE_DRAWING,
 					MEDIATYPE_AUDIO,
@@ -85,9 +85,9 @@ class MIMEsearchPage extends QueryPage {
 					MEDIATYPE_TEXT,
 					MEDIATYPE_EXECUTABLE,
 					MEDIATYPE_ARCHIVE,
-				),
-			) + $minorType,
-		);
+				],
+			] + $minorType,
+		];
 
 		return $qi;
 	}
@@ -102,25 +102,30 @@ class MIMEsearchPage extends QueryPage {
 	 * @return array
 	 */
 	function getOrderFields() {
-		return array();
+		return [];
 	}
 
 	/**
-	 * Return HTML to put just before the results.
+	 * Generate and output the form
 	 */
 	function getPageHeader() {
-		return Xml::openElement(
-				'form',
-				array( 'id' => 'specialmimesearch', 'method' => 'get', 'action' => wfScript() )
-			) .
-			Xml::openElement( 'fieldset' ) .
-			Html::hidden( 'title', $this->getPageTitle()->getPrefixedText() ) .
-			Xml::element( 'legend', null, $this->msg( 'mimesearch' )->text() ) .
-			Xml::inputLabel( $this->msg( 'mimetype' )->text(), 'mime', 'mime', 20, $this->mime ) .
-			' ' .
-			Xml::submitButton( $this->msg( 'ilsubmit' )->text() ) .
-					Xml::closeElement( 'fieldset' ) .
-					Xml::closeElement( 'form' );
+		$formDescriptor = [
+			'mime' => [
+				'type' => 'text',
+				'name' => 'mime',
+				'label-message' => 'mimetype',
+				'required' => true,
+				'default' => $this->mime,
+			],
+		];
+
+		$form = HTMLForm::factory( 'ooui', $formDescriptor, $this->getContext() )
+			->setWrapperLegendMsg( 'mimesearch' )
+			->setSubmitTextMsg( 'ilsubmit' )
+			->setAction( $this->getPageTitle()->getLocalURL() )
+			->setMethod( 'get' )
+			->prepareForm()
+			->displayForm( false );
 	}
 
 	public function execute( $par ) {
@@ -133,7 +138,7 @@ class MIMEsearchPage extends QueryPage {
 		) {
 			$this->setHeaders();
 			$this->outputHeader();
-			$this->getOutput()->addHTML( $this->getPageHeader() );
+			$this->getPageHeader();
 			return;
 		}
 
@@ -178,7 +183,7 @@ class MIMEsearchPage extends QueryPage {
 	 */
 	protected static function isValidType( $type ) {
 		// From maintenance/tables.sql => img_major_mime
-		$types = array(
+		$types = [
 			'unknown',
 			'application',
 			'audio',
@@ -189,7 +194,7 @@ class MIMEsearchPage extends QueryPage {
 			'model',
 			'multipart',
 			'chemical'
-		);
+		];
 
 		return in_array( $type, $types );
 	}

@@ -8,14 +8,15 @@
 			"OsamaK",
 			"أحمد",
 			"زكريا",
-			"Khaled"
+			"Khaled",
+			"علاء"
 		]
 	},
 	"skinname-vector": "فكتور",
 	"vector-skin-desc": "نسة حديثة من مونوبوك بمظهر جديد وسهولة الاستخدام",
 	"vector.css": "/* الأنماط المتراصة CSS المعروضة هنا ستؤثر على مستخدمي واجهة فكتور */",
 	"vector.js": "/* أي جافاسكريبت هنا سيتم تحميلها للمستخدمين الذين يستعملون واجهة فكتور */",
-	"vector-action-addsection": "أضف موضوعا",
+	"vector-action-addsection": "أضف موضوعاً",
 	"vector-action-delete": "احذف",
 	"vector-action-move": "انقل",
 	"vector-action-protect": "احم",

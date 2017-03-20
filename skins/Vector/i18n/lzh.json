@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Justincheng12345"
+			"Justincheng12345",
+			"Nemo bis"
 		]
 	},
 	"skinname-vector": "動力",
@@ -17,5 +18,6 @@
 	"vector-view-edit": "纂",
 	"vector-view-history": "覽史",
 	"vector-view-view": "閱",
-	"vector-view-viewsource": "覽源"
+	"vector-view-viewsource": "覽源",
+	"vector-more-actions": "益多"
 }

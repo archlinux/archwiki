@@ -1,0 +1,29 @@
+{
+	"@metadata": {
+		"authors": [
+			"Joetaras"
+		]
+	},
+	"visualeditor-cite-tool-name-book": "Libbre",
+	"visualeditor-cite-tool-name-journal": "Sciurnale",
+	"visualeditor-cite-tool-name-news": "Notizie",
+	"visualeditor-cite-tool-name-web": "Site web",
+	"cite-ve-dialog-reference-options-group-label": "Ause stu gruppe",
+	"cite-ve-dialog-reference-options-name-label": "Ause arrete stu nome",
+	"cite-ve-dialog-reference-options-section": "Opziune",
+	"cite-ve-dialog-reference-title": "Referimende",
+	"cite-ve-dialog-reference-useexisting-label": "Ause 'na referenze ca esiste",
+	"cite-ve-dialog-reference-useexisting-tool": "Ause arrete",
+	"cite-ve-dialog-referenceslist-contextitem-description-general": "Elenghe de le referimende generale",
+	"cite-ve-dialog-referenceslist-contextitem-description-named": "Elenghe de le referimende pu gruppe \"$1\"",
+	"cite-ve-dialog-referenceslist-title": "Elenghe de le referimende",
+	"cite-ve-dialogbutton-citation-educationpopup-title": "Citaziune",
+	"cite-ve-dialogbutton-reference-tooltip": "Nderre-nderre",
+	"cite-ve-dialogbutton-reference-title": "Riferimende",
+	"cite-ve-dialogbutton-referenceslist-tooltip": "Elenghe de le referimende",
+	"cite-ve-reference-input-placeholder": "Cirche cu le citaziune de mò",
+	"cite-ve-referenceslist-isempty": "Non ge stonne refèreminde cu 'u gruppe \"$1\" sus a sta pàgene da 'ngludere jndr'à st'elenghe.",
+	"cite-ve-referenceslist-isempty-default": "Non ge stonne refereminde a sta pàgene da 'ngludere jndr'à l'elenghe.",
+	"cite-ve-referenceslist-missingref": "Stu refèrimende jè definite jndr'à 'nu template o otre blocche generate e pe mò pò sulamende essere cangiate jndr'à 'u mode sorgende.",
+	"cite-ve-toolbar-group-label": "Cite"
+}

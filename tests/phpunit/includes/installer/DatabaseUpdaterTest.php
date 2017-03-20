@@ -5,31 +5,38 @@ class DatabaseUpdaterTest extends MediaWikiTestCase {
 	public function testSetAppliedUpdates() {
 		$db = new FakeDatabase();
 		$dbu = new FakeDatabaseUpdater( $db );
-		$dbu->setAppliedUpdates( "test", array() );
+		$dbu->setAppliedUpdates( "test", [] );
 		$expected = "updatelist-test-" . time() . "0";
 		$actual = $db->lastInsertData['ul_key'];
 		$this->assertEquals( $expected, $actual, var_export( $db->lastInsertData, true ) );
-		$dbu->setAppliedUpdates( "test", array() );
+		$dbu->setAppliedUpdates( "test", [] );
 		$expected = "updatelist-test-" . time() . "1";
 		$actual = $db->lastInsertData['ul_key'];
 		$this->assertEquals( $expected, $actual, var_export( $db->lastInsertData, true ) );
 	}
 }
 
-class FakeDatabase extends DatabaseBase {
+class FakeDatabase extends Database {
 	public $lastInsertTable;
 	public $lastInsertData;
 
 	function __construct() {
+		$this->cliMode = true;
+		$this->connLogger = new \Psr\Log\NullLogger();
+		$this->queryLogger = new \Psr\Log\NullLogger();
+		$this->errorLogger = function ( Exception $e ) {
+			wfWarn( get_class( $e ) . ": {$e->getMessage()}" );
+		};
+		$this->currentDomain = DatabaseDomain::newUnspecified();
 	}
 
-	function clearFlag( $arg ) {
+	function clearFlag( $arg, $remember = self::REMEMBER_NOTHING ) {
 	}
 
-	function setFlag( $arg ) {
+	function setFlag( $arg, $remember = self::REMEMBER_NOTHING ) {
 	}
 
-	public function insert( $table, $a, $fname = __METHOD__, $options = array() ) {
+	public function insert( $table, $a, $fname = __METHOD__, $options = [] ) {
 		$this->lastInsertTable = $table;
 		$this->lastInsertData = $a;
 	}
@@ -63,7 +70,7 @@ class FakeDatabase extends DatabaseBase {
 	 * member variables.
 	 * If no more rows are available, false is returned.
 	 *
-	 * @param ResultWrapper|stdClass $res Object as returned from DatabaseBase::query(), etc.
+	 * @param ResultWrapper|stdClass $res Object as returned from Database::query(), etc.
 	 * @return stdClass|bool
 	 * @throws DBUnexpectedError Thrown if the database returns an error
 	 */
@@ -76,7 +83,7 @@ class FakeDatabase extends DatabaseBase {
 	 * form. Fields are retrieved with $row['fieldname'].
 	 * If no more rows are available, false is returned.
 	 *
-	 * @param ResultWrapper $res Result object as returned from DatabaseBase::query(), etc.
+	 * @param ResultWrapper $res Result object as returned from Database::query(), etc.
 	 * @return array|bool
 	 * @throws DBUnexpectedError Thrown if the database returns an error
 	 */
@@ -124,7 +131,7 @@ class FakeDatabase extends DatabaseBase {
 	 *
 	 * Example:
 	 * $id = $dbw->nextSequenceValue( 'page_page_id_seq' );
-	 * $dbw->insert( 'page', array( 'page_id' => $id ) );
+	 * $dbw->insert( 'page', [ 'page_id' => $id ] );
 	 * $id = $dbw->insertId();
 	 *
 	 * @return int
@@ -266,14 +273,14 @@ class FakeDatabaseUpdater extends DatabaseUpdater {
 	 * @return array
 	 */
 	protected function getCoreUpdateList() {
-		return array();
+		return [];
 	}
 
 	public function canUseNewUpdatelog() {
 		return true;
 	}
 
-	public function setAppliedUpdates( $version, $updates = array() ) {
+	public function setAppliedUpdates( $version, $updates = [] ) {
 		parent::setAppliedUpdates( $version, $updates );
 	}
 }

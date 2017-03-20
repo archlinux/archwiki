@@ -27,6 +27,11 @@
  */
 class WebResponse {
 
+	/** @var array Used to record set cookies, because PHP's setcookie() will
+	 * happily send an identical Set-Cookie to the client.
+	 */
+	protected static $setCookies = [];
+
 	/**
 	 * Output an HTTP header, wrapper for PHP's header()
 	 * @param string $string Header to output
@@ -34,7 +39,11 @@ class WebResponse {
 	 * @param null|int $http_response_code Forces the HTTP response code to the specified value.
 	 */
 	public function header( $string, $replace = true, $http_response_code = null ) {
-		header( $string, $replace, $http_response_code );
+		if ( $http_response_code ) {
+			header( $string, $replace, $http_response_code );
+		} else {
+			header( $string, $replace );
+		}
 	}
 
 	/**
@@ -63,6 +72,15 @@ class WebResponse {
 	}
 
 	/**
+	 * Test if headers have been sent
+	 * @since 1.27
+	 * @return bool
+	 */
+	public function headersSent() {
+		return headers_sent();
+	}
+
+	/**
 	 * Set the browser cookie
 	 * @param string $name The name of the cookie.
 	 * @param string $value The value to be stored in the cookie.
@@ -75,36 +93,22 @@ class WebResponse {
 	 *     path: string, cookie path ($wgCookiePath)
 	 *     secure: bool, secure attribute ($wgCookieSecure)
 	 *     httpOnly: bool, httpOnly attribute ($wgCookieHttpOnly)
-	 *     raw: bool, if true uses PHP's setrawcookie() instead of setcookie()
-	 *   For backwards compatibility, if $options is not an array then it and
-	 *   the following two parameters will be interpreted as values for
-	 *   'prefix', 'domain', and 'secure'
 	 * @since 1.22 Replaced $prefix, $domain, and $forceSecure with $options
 	 */
-	public function setcookie( $name, $value, $expire = 0, $options = array() ) {
+	public function setCookie( $name, $value, $expire = 0, $options = [] ) {
 		global $wgCookiePath, $wgCookiePrefix, $wgCookieDomain;
 		global $wgCookieSecure, $wgCookieExpiration, $wgCookieHttpOnly;
 
-		if ( !is_array( $options ) ) {
-			// Backwards compatibility
-			$options = array( 'prefix' => $options );
-			if ( func_num_args() >= 5 ) {
-				$options['domain'] = func_get_arg( 4 );
-			}
-			if ( func_num_args() >= 6 ) {
-				$options['secure'] = func_get_arg( 5 );
-			}
-		}
 		$options = array_filter( $options, function ( $a ) {
 			return $a !== null;
-		} ) + array(
+		} ) + [
 			'prefix' => $wgCookiePrefix,
 			'domain' => $wgCookieDomain,
 			'path' => $wgCookiePath,
 			'secure' => $wgCookieSecure,
 			'httpOnly' => $wgCookieHttpOnly,
 			'raw' => false,
-		);
+		];
 
 		if ( $expire === null ) {
 			$expire = 0; // Session cookie
@@ -114,27 +118,66 @@ class WebResponse {
 
 		$func = $options['raw'] ? 'setrawcookie' : 'setcookie';
 
-		if ( Hooks::run( 'WebResponseSetCookie', array( &$name, &$value, &$expire, $options ) ) ) {
-			wfDebugLog( 'cookie',
-				$func . ': "' . implode( '", "',
-					array(
-						$options['prefix'] . $name,
-						$value,
-						$expire,
-						$options['path'],
-						$options['domain'],
-						$options['secure'],
-						$options['httpOnly'] ) ) . '"' );
+		if ( Hooks::run( 'WebResponseSetCookie', [ &$name, &$value, &$expire, &$options ] ) ) {
+			$cookie = $options['prefix'] . $name;
+			$data = [
+				'name' => (string)$cookie,
+				'value' => (string)$value,
+				'expire' => (int)$expire,
+				'path' => (string)$options['path'],
+				'domain' => (string)$options['domain'],
+				'secure' => (bool)$options['secure'],
+				'httpOnly' => (bool)$options['httpOnly'],
+			];
 
-			call_user_func( $func,
-				$options['prefix'] . $name,
-				$value,
-				$expire,
-				$options['path'],
-				$options['domain'],
-				$options['secure'],
-				$options['httpOnly'] );
+			// Per RFC 6265, key is name + domain + path
+			$key = "{$data['name']}\n{$data['domain']}\n{$data['path']}";
+
+			// If this cookie name was in the request, fake an entry in
+			// self::$setCookies for it so the deleting check works right.
+			if ( isset( $_COOKIE[$cookie] ) && !array_key_exists( $key, self::$setCookies ) ) {
+				self::$setCookies[$key] = [];
+			}
+
+			// PHP deletes if value is the empty string; also, a past expiry is deleting
+			$deleting = ( $data['value'] === '' || $data['expire'] > 0 && $data['expire'] <= time() );
+
+			if ( $deleting && !isset( self::$setCookies[$key] ) ) { // isset( null ) is false
+				wfDebugLog( 'cookie', 'already deleted ' . $func . ': "' . implode( '", "', $data ) . '"' );
+			} elseif ( !$deleting && isset( self::$setCookies[$key] ) &&
+				self::$setCookies[$key] === [ $func, $data ]
+			) {
+				wfDebugLog( 'cookie', 'already set ' . $func . ': "' . implode( '", "', $data ) . '"' );
+			} else {
+				wfDebugLog( 'cookie', $func . ': "' . implode( '", "', $data ) . '"' );
+				if ( call_user_func_array( $func, array_values( $data ) ) ) {
+					self::$setCookies[$key] = $deleting ? null : [ $func, $data ];
+				}
+			}
 		}
+	}
+
+	/**
+	 * Unset a browser cookie.
+	 * This sets the cookie with an empty value and an expiry set to a time in the past,
+	 * which will cause the browser to remove any cookie with the given name, domain and
+	 * path from its cookie store. Options other than these (and prefix) have no effect.
+	 * @param string $name Cookie name
+	 * @param array $options Cookie options, see {@link setCookie()}
+	 * @since 1.27
+	 */
+	public function clearCookie( $name, $options = [] ) {
+		$this->setCookie( $name, '', time() - 31536000 /* 1 year */, $options );
+	}
+
+	/**
+	 * Checks whether this request is performing cookie operations
+	 *
+	 * @return bool
+	 * @since 1.27
+	 */
+	public function hasCookies() {
+		return (bool)self::$setCookies;
 	}
 }
 
@@ -143,7 +186,7 @@ class WebResponse {
  */
 class FauxResponse extends WebResponse {
 	private $headers;
-	private $cookies;
+	private $cookies = [];
 	private $code;
 
 	/**
@@ -179,6 +222,10 @@ class FauxResponse extends WebResponse {
 		$this->code = intval( $code );
 	}
 
+	public function headersSent() {
+		return false;
+	}
+
 	/**
 	 * @param string $key The name of the header to get (case insensitive).
 	 * @return string|null The header value (if set); null otherwise.
@@ -207,18 +254,64 @@ class FauxResponse extends WebResponse {
 	 * @param int|null $expire Ignored in this faux subclass.
 	 * @param array $options Ignored in this faux subclass.
 	 */
-	public function setcookie( $name, $value, $expire = 0, $options = array() ) {
-		$this->cookies[$name] = $value;
+	public function setCookie( $name, $value, $expire = 0, $options = [] ) {
+		global $wgCookiePath, $wgCookiePrefix, $wgCookieDomain;
+		global $wgCookieSecure, $wgCookieExpiration, $wgCookieHttpOnly;
+
+		$options = array_filter( $options, function ( $a ) {
+			return $a !== null;
+		} ) + [
+			'prefix' => $wgCookiePrefix,
+			'domain' => $wgCookieDomain,
+			'path' => $wgCookiePath,
+			'secure' => $wgCookieSecure,
+			'httpOnly' => $wgCookieHttpOnly,
+			'raw' => false,
+		];
+
+		if ( $expire === null ) {
+			$expire = 0; // Session cookie
+		} elseif ( $expire == 0 && $wgCookieExpiration != 0 ) {
+			$expire = time() + $wgCookieExpiration;
+		}
+
+		$this->cookies[$options['prefix'] . $name] = [
+			'value' => (string)$value,
+			'expire' => (int)$expire,
+			'path' => (string)$options['path'],
+			'domain' => (string)$options['domain'],
+			'secure' => (bool)$options['secure'],
+			'httpOnly' => (bool)$options['httpOnly'],
+			'raw' => (bool)$options['raw'],
+		];
 	}
 
 	/**
 	 * @param string $name
 	 * @return string|null
 	 */
-	public function getcookie( $name ) {
+	public function getCookie( $name ) {
+		if ( isset( $this->cookies[$name] ) ) {
+			return $this->cookies[$name]['value'];
+		}
+		return null;
+	}
+
+	/**
+	 * @param string $name
+	 * @return array|null
+	 */
+	public function getCookieData( $name ) {
 		if ( isset( $this->cookies[$name] ) ) {
 			return $this->cookies[$name];
 		}
 		return null;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getCookies() {
+		return $this->cookies;
 	}
 }

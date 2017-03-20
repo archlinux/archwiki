@@ -20,27 +20,28 @@
 	"support": {
 		"wiki": "https://www.mediawiki.org/wiki/Skin:Vector",
 		"forum": "https://www.mediawiki.org/wiki/Skin_talk:Vector",
-		"source": "https://git.wikimedia.org/summary/mediawiki%2Fskins%2FVector",
+		"source": "https://phabricator.wikimedia.org/diffusion/SVEC/",
 		"irc": "irc://irc.freenode.org/mediawiki"
 	},
 	"require": {
-		"php": ">=5.3.3",
+		"php": ">=5.5.9",
 		"composer/installers": ">1.0.12"
 	},
 	"extra": {
 		"branch-alias": {
 			"dev-master": "1.x-dev"
-		}
+		},
+		"installer-name": "Vector"
 	},
 	"require-dev": {
 		"jakub-onderka/php-parallel-lint": "0.9.*",
-		"mediawiki/mediawiki-codesniffer": "0.3.0"
+		"mediawiki/mediawiki-codesniffer": "0.7.2"
 	},
 	"scripts": {
+		"fix": "phpcbf",
 		"test": [
 			"parallel-lint . --exclude vendor",
-			"phpcs -p"
+			"phpcs -p -s"
 		]
 	}
-
 }

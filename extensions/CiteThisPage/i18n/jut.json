@@ -5,8 +5,9 @@
 			"Jyllanj"
 		]
 	},
-	"citethispage": "Fodnåt",
+	"citethispage": "Citiir",
 	"citethispage-link": "Citiir siden",
-	"citethispage-change-submit": "Fodnåt",
-	"citethispage-change-target": "Side:"
+	"tooltip-citethispage": "Informasjon om hwant man kan citiir siden",
+	"citethispage-change-submit": "Citiir",
+	"citethispage-change-target": "Siid:"
 }

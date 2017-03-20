@@ -8,6 +8,8 @@ namespace OOUI;
  * See IndicatorElement for more information.
  */
 class IndicatorWidget extends Widget {
+	use IndicatorElement;
+	use TitledElement;
 
 	/* Static Properties */
 
@@ -16,17 +18,17 @@ class IndicatorWidget extends Widget {
 	/**
 	 * @param array $config Configuration options
 	 */
-	public function __construct( array $config = array() ) {
+	public function __construct( array $config = [] ) {
 		// Parent constructor
 		parent::__construct( $config );
 
-		// Mixins
-		$this->mixin( new IndicatorElement( $this,
-			array_merge( $config, array( 'indicatorElement' => $this ) ) ) );
-		$this->mixin( new TitledElement( $this,
-			array_merge( $config, array( 'titled' => $this ) ) ) );
+		// Traits
+		$this->initializeIndicatorElement(
+			array_merge( $config, [ 'indicatorElement' => $this ] ) );
+		$this->initializeTitledElement(
+			array_merge( $config, [ 'titled' => $this ] ) );
 
 		// Initialization
-		$this->addClasses( array( 'oo-ui-indicatorWidget' ) );
+		$this->addClasses( [ 'oo-ui-indicatorWidget' ] );
 	}
 }

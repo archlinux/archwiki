@@ -5,34 +5,36 @@
  * @license GPL-2.0+
  */
 
-class LU_ReaderFactoryTest extends MediaWikiTestCase {
+namespace LocalisationUpdate;
+
+class ReaderFactoryTest extends \PHPUnit_Framework_TestCase {
 	/**
 	 * @dataProvider getReaderProvider
 	 */
 	public function testGetReader( $input, $expected, $comment ) {
-		$factory = new LU_ReaderFactory();
+		$factory = new ReaderFactory();
 		$reader = $factory->getReader( $input );
 		$observed = get_class( $reader );
 		$this->assertEquals( $expected, $observed, $comment );
 	}
 
 	public function getReaderProvider() {
-		return array(
-			array(
+		return [
+			[
 				'languages/messages/MessagesFi.php',
-				'LU_PHPReader',
+				'LocalisationUpdate\PHPReader',
 				'core php file',
-			),
-			array(
+			],
+			[
 				'extensions/Translate/Translate.i18n.php',
-				'LU_PHPReader',
+				'LocalisationUpdate\PHPReader',
 				'extension php file',
-			),
-			array(
+			],
+			[
 				'extension/Translate/i18n/core/de.json',
-				'LU_JSONReader',
+				'LocalisationUpdate\JSONReader',
 				'extension json file',
-			),
-		);
+			],
+		];
 	}
 }

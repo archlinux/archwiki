@@ -26,6 +26,10 @@
  * @ingroup Watchlist
  */
 
+use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\Linker\LinkTarget;
+use MediaWiki\MediaWikiServices;
+
 /**
  * Provides the UI through which users can perform editing
  * operations on their watchlist
@@ -47,10 +51,29 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 
 	protected $toc;
 
-	private $badItems = array();
+	private $badItems = [];
+
+	/**
+	 * @var TitleParser
+	 */
+	private $titleParser;
 
 	public function __construct() {
 		parent::__construct( 'EditWatchlist', 'editmywatchlist' );
+	}
+
+	/**
+	 * Initialize any services we'll need (unless it has already been provided via a setter).
+	 * This allows for dependency injection even though we don't control object creation.
+	 */
+	private function initServices() {
+		if ( !$this->titleParser ) {
+			$this->titleParser = MediaWikiServices::getInstance()->getTitleParser();
+		}
+	}
+
+	public function doesWrites() {
+		return true;
 	}
 
 	/**
@@ -59,6 +82,7 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 	 * @param int $mode
 	 */
 	public function execute( $mode ) {
+		$this->initServices();
 		$this->setHeaders();
 
 		# Anons don't get a watchlist
@@ -71,6 +95,7 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 
 		$this->outputHeader();
 		$this->outputSubtitle();
+		$out->addModuleStyles( 'mediawiki.special' );
 
 		# B/C: $mode used to be waaay down the parameter list, and the first parameter
 		# was $wgUser
@@ -113,7 +138,13 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 	protected function outputSubtitle() {
 		$out = $this->getOutput();
 		$out->addSubtitle( $this->msg( 'watchlistfor2', $this->getUser()->getName() )
-			->rawParams( SpecialEditWatchlist::buildTools( null ) ) );
+			->rawParams(
+				self::buildTools(
+					$this->getLanguage(),
+					$this->getLinkRenderer()
+				)
+			)
+		);
 	}
 
 	/**
@@ -142,10 +173,10 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 	public function getSubpagesForPrefixSearch() {
 		// SpecialWatchlist uses SpecialEditWatchlist::getMode, so new types should be added
 		// here and there - no 'edit' here, because that the default for this page
-		return array(
+		return [
 			'clear',
 			'raw',
-		);
+		];
 	}
 
 	/**
@@ -158,10 +189,10 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 	private function extractTitles( $list ) {
 		$list = explode( "\n", trim( $list ) );
 		if ( !is_array( $list ) ) {
-			return array();
+			return [];
 		}
 
-		$titles = array();
+		$titles = [];
 
 		foreach ( $list as $text ) {
 			$text = trim( $text );
@@ -173,9 +204,9 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 			}
 		}
 
-		GenderCache::singleton()->doTitlesArray( $titles );
+		MediaWikiServices::getInstance()->getGenderCache()->doTitlesArray( $titles );
 
-		$list = array();
+		$list = [];
 		/** @var Title $title */
 		foreach ( $titles as $title ) {
 			$list[] = $title->getPrefixedText();
@@ -252,7 +283,7 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 	 * @param string $output
 	 */
 	private function showTitles( $titles, &$output ) {
-		$talk = $this->msg( 'talkpagelinktext' )->escaped();
+		$talk = $this->msg( 'talkpagelinktext' )->text();
 		// Do a batch existence check
 		$batch = new LinkBatch();
 		if ( count( $titles ) >= 100 ) {
@@ -275,16 +306,19 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 		// Print out the list
 		$output .= "<ul>\n";
 
+		$linkRenderer = $this->getLinkRenderer();
 		foreach ( $titles as $title ) {
 			if ( !$title instanceof Title ) {
 				$title = Title::newFromText( $title );
 			}
 
 			if ( $title instanceof Title ) {
-				$output .= "<li>"
-					. Linker::link( $title )
-					. ' (' . Linker::link( $title->getTalkPage(), $talk )
-					. ")</li>\n";
+				$output .= '<li>' .
+					$linkRenderer->makeLink( $title ) . ' ' .
+					$this->msg( 'parentheses' )->rawParams(
+						$linkRenderer->makeLink( $title->getTalkPage(), $talk )
+					)->escaped() .
+					"</li>\n";
 			}
 		}
 
@@ -298,36 +332,29 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 	 * @return array
 	 */
 	private function getWatchlist() {
-		$list = array();
+		$list = [];
 
-		$index = $this->getRequest()->wasPosted() ? DB_MASTER : DB_SLAVE;
-		$dbr = wfGetDB( $index );
-
-		$res = $dbr->select(
-			'watchlist',
-			array(
-				'wl_namespace', 'wl_title'
-			), array(
-				'wl_user' => $this->getUser()->getId(),
-			),
-			__METHOD__
+		$watchedItems = MediaWikiServices::getInstance()->getWatchedItemStore()->getWatchedItemsForUser(
+			$this->getUser(),
+			[ 'forWrite' => $this->getRequest()->wasPosted() ]
 		);
 
-		if ( $res->numRows() > 0 ) {
+		if ( $watchedItems ) {
 			/** @var Title[] $titles */
-			$titles = array();
-			foreach ( $res as $row ) {
-				$title = Title::makeTitleSafe( $row->wl_namespace, $row->wl_title );
+			$titles = [];
+			foreach ( $watchedItems as $watchedItem ) {
+				$namespace = $watchedItem->getLinkTarget()->getNamespace();
+				$dbKey = $watchedItem->getLinkTarget()->getDBkey();
+				$title = Title::makeTitleSafe( $namespace, $dbKey );
 
-				if ( $this->checkTitle( $title, $row->wl_namespace, $row->wl_title )
+				if ( $this->checkTitle( $title, $namespace, $dbKey )
 					&& !$title->isTalkPage()
 				) {
 					$titles[] = $title;
 				}
 			}
-			$res->free();
 
-			GenderCache::singleton()->doTitlesArray( $titles );
+			MediaWikiServices::getInstance()->getGenderCache()->doTitlesArray( $titles );
 
 			foreach ( $titles as $title ) {
 				$list[] = $title->getPrefixedText();
@@ -346,23 +373,19 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 	 * @return array
 	 */
 	protected function getWatchlistInfo() {
-		$titles = array();
-		$dbr = wfGetDB( DB_SLAVE );
+		$titles = [];
 
-		$res = $dbr->select(
-			array( 'watchlist' ),
-			array( 'wl_namespace', 'wl_title' ),
-			array( 'wl_user' => $this->getUser()->getId() ),
-			__METHOD__,
-			array( 'ORDER BY' => array( 'wl_namespace', 'wl_title' ) )
-		);
+		$watchedItems = MediaWikiServices::getInstance()->getWatchedItemStore()
+			->getWatchedItemsForUser( $this->getUser(), [ 'sort' => WatchedItemStore::SORT_ASC ] );
 
 		$lb = new LinkBatch();
 
-		foreach ( $res as $row ) {
-			$lb->add( $row->wl_namespace, $row->wl_title );
-			if ( !MWNamespace::isTalk( $row->wl_namespace ) ) {
-				$titles[$row->wl_namespace][$row->wl_title] = 1;
+		foreach ( $watchedItems as $watchedItem ) {
+			$namespace = $watchedItem->getLinkTarget()->getNamespace();
+			$dbKey = $watchedItem->getLinkTarget()->getDBkey();
+			$lb->add( $namespace, $dbKey );
+			if ( !MWNamespace::isTalk( $namespace ) ) {
+				$titles[$namespace][$dbKey] = 1;
 			}
 		}
 
@@ -392,7 +415,7 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 			|| $title->getNamespace() != $namespace
 			|| $title->getDBkey() != $dbKey
 		) {
-			$this->badItems[] = array( $title, $namespace, $dbKey );
+			$this->badItems[] = [ $title, $namespace, $dbKey ];
 		}
 
 		return (bool)$title;
@@ -403,31 +426,26 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 	 */
 	private function cleanupWatchlist() {
 		if ( !count( $this->badItems ) ) {
-			return; //nothing to do
+			return; // nothing to do
 		}
 
-		$dbw = wfGetDB( DB_MASTER );
 		$user = $this->getUser();
+		$badItems = $this->badItems;
+		DeferredUpdates::addCallableUpdate( function () use ( $user, $badItems ) {
+			$store = MediaWikiServices::getInstance()->getWatchedItemStore();
+			foreach ( $badItems as $row ) {
+				list( $title, $namespace, $dbKey ) = $row;
+				$action = $title ? 'cleaning up' : 'deleting';
+				wfDebug( "User {$user->getName()} has broken watchlist item " .
+					"ns($namespace):$dbKey, $action.\n" );
 
-		foreach ( $this->badItems as $row ) {
-			list( $title, $namespace, $dbKey ) = $row;
-			$action = $title ? 'cleaning up' : 'deleting';
-			wfDebug( "User {$user->getName()} has broken watchlist item ns($namespace):$dbKey, $action.\n" );
-
-			$dbw->delete( 'watchlist',
-				array(
-					'wl_user' => $user->getId(),
-					'wl_namespace' => $namespace,
-					'wl_title' => $dbKey,
-				),
-				__METHOD__
-			);
-
-			// Can't just do an UPDATE instead of DELETE/INSERT due to unique index
-			if ( $title ) {
-				$user->addWatch( $title );
+				$store->removeWatch( $user, new TitleValue( (int)$namespace, $dbKey ) );
+				// Can't just do an UPDATE instead of DELETE/INSERT due to unique index
+				if ( $title ) {
+					$user->addWatch( $title );
+				}
 			}
-		}
+		} );
 	}
 
 	/**
@@ -437,45 +455,38 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 		$dbw = wfGetDB( DB_MASTER );
 		$dbw->delete(
 			'watchlist',
-			array( 'wl_user' => $this->getUser()->getId() ),
+			[ 'wl_user' => $this->getUser()->getId() ],
 			__METHOD__
 		);
 	}
 
 	/**
-	 * Add a list of titles to a user's watchlist
+	 * Add a list of targets to a user's watchlist
 	 *
-	 * $titles can be an array of strings or Title objects; the former
-	 * is preferred, since Titles are very memory-heavy
-	 *
-	 * @param array $titles Array of strings, or Title objects
+	 * @param string[]|LinkTarget[] $targets
 	 */
-	private function watchTitles( $titles ) {
-		$dbw = wfGetDB( DB_MASTER );
-		$rows = array();
-
-		foreach ( $titles as $title ) {
-			if ( !$title instanceof Title ) {
-				$title = Title::newFromText( $title );
+	private function watchTitles( $targets ) {
+		$expandedTargets = [];
+		foreach ( $targets as $target ) {
+			if ( !$target instanceof LinkTarget ) {
+				try {
+					$target = $this->titleParser->parseTitle( $target, NS_MAIN );
+				}
+				catch ( MalformedTitleException $e ) {
+					continue;
+				}
 			}
 
-			if ( $title instanceof Title ) {
-				$rows[] = array(
-					'wl_user' => $this->getUser()->getId(),
-					'wl_namespace' => MWNamespace::getSubject( $title->getNamespace() ),
-					'wl_title' => $title->getDBkey(),
-					'wl_notificationtimestamp' => null,
-				);
-				$rows[] = array(
-					'wl_user' => $this->getUser()->getId(),
-					'wl_namespace' => MWNamespace::getTalk( $title->getNamespace() ),
-					'wl_title' => $title->getDBkey(),
-					'wl_notificationtimestamp' => null,
-				);
-			}
+			$ns = $target->getNamespace();
+			$dbKey = $target->getDBkey();
+			$expandedTargets[] = new TitleValue( MWNamespace::getSubject( $ns ), $dbKey );
+			$expandedTargets[] = new TitleValue( MWNamespace::getTalk( $ns ), $dbKey );
 		}
 
-		$dbw->insert( 'watchlist', $rows, __METHOD__, 'IGNORE' );
+		MediaWikiServices::getInstance()->getWatchedItemStore()->addWatchBatchForUser(
+			$this->getUser(),
+			$expandedTargets
+		);
 	}
 
 	/**
@@ -487,7 +498,7 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 	 * @param array $titles Array of strings, or Title objects
 	 */
 	private function unwatchTitles( $titles ) {
-		$dbw = wfGetDB( DB_MASTER );
+		$store = MediaWikiServices::getInstance()->getWatchedItemStore();
 
 		foreach ( $titles as $title ) {
 			if ( !$title instanceof Title ) {
@@ -495,34 +506,17 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 			}
 
 			if ( $title instanceof Title ) {
-				$dbw->delete(
-					'watchlist',
-					array(
-						'wl_user' => $this->getUser()->getId(),
-						'wl_namespace' => MWNamespace::getSubject( $title->getNamespace() ),
-						'wl_title' => $title->getDBkey(),
-					),
-					__METHOD__
-				);
-
-				$dbw->delete(
-					'watchlist',
-					array(
-						'wl_user' => $this->getUser()->getId(),
-						'wl_namespace' => MWNamespace::getTalk( $title->getNamespace() ),
-						'wl_title' => $title->getDBkey(),
-					),
-					__METHOD__
-				);
+				$store->removeWatch( $this->getUser(), $title->getSubjectPage() );
+				$store->removeWatch( $this->getUser(), $title->getTalkPage() );
 
 				$page = WikiPage::factory( $title );
-				Hooks::run( 'UnwatchArticleComplete', array( $this->getUser(), &$page ) );
+				Hooks::run( 'UnwatchArticleComplete', [ $this->getUser(), &$page ] );
 			}
 		}
 	}
 
 	public function submitNormal( $data ) {
-		$removed = array();
+		$removed = [];
 
 		foreach ( $data as $titles ) {
 			$this->unwatchTitles( $titles );
@@ -548,7 +542,7 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 	protected function getNormalForm() {
 		global $wgContLang;
 
-		$fields = array();
+		$fields = [];
 		$count = 0;
 
 		// Allow subscribers to manipulate the list of watched pages (or use it
@@ -556,11 +550,11 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 		$watchlistInfo = $this->getWatchlistInfo();
 		Hooks::run(
 			'WatchlistEditorBeforeFormRender',
-			array( &$watchlistInfo )
+			[ &$watchlistInfo ]
 		);
 
 		foreach ( $watchlistInfo as $namespace => $pages ) {
-			$options = array();
+			$options = [];
 
 			foreach ( array_keys( $pages ) as $dbkey ) {
 				$title = Title::makeTitleSafe( $namespace, $dbkey );
@@ -574,11 +568,11 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 
 			// checkTitle can filter some options out, avoid empty sections
 			if ( count( $options ) > 0 ) {
-				$fields['TitlesNs' . $namespace] = array(
+				$fields['TitlesNs' . $namespace] = [
 					'class' => 'EditWatchlistCheckboxSeriesField',
 					'options' => $options,
 					'section' => "ns$namespace",
-				);
+				];
 			}
 		}
 		$this->cleanupWatchlist();
@@ -613,7 +607,7 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 		$form->setSubmitTooltip( 'watchlistedit-normal-submit' );
 		$form->setWrapperLegendMsg( 'watchlistedit-normal-legend' );
 		$form->addHeaderText( $this->msg( 'watchlistedit-normal-explain' )->parse() );
-		$form->setSubmitCallback( array( $this, 'submitNormal' ) );
+		$form->setSubmitCallback( [ $this, 'submitNormal' ] );
 
 		return $form;
 	}
@@ -625,32 +619,33 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 	 * @return string
 	 */
 	private function buildRemoveLine( $title ) {
-		$link = Linker::link( $title );
+		$linkRenderer = $this->getLinkRenderer();
+		$link = $linkRenderer->makeLink( $title );
 
-		$tools['talk'] = Linker::link(
+		$tools['talk'] = $linkRenderer->makeLink(
 			$title->getTalkPage(),
-			$this->msg( 'talkpagelinktext' )->escaped()
+			$this->msg( 'talkpagelinktext' )->text()
 		);
 
 		if ( $title->exists() ) {
-			$tools['history'] = Linker::linkKnown(
+			$tools['history'] = $linkRenderer->makeKnownLink(
 				$title,
-				$this->msg( 'history_short' )->escaped(),
-				array(),
-				array( 'action' => 'history' )
+				$this->msg( 'history_short' )->text(),
+				[],
+				[ 'action' => 'history' ]
 			);
 		}
 
 		if ( $title->getNamespace() == NS_USER && !$title->isSubpage() ) {
-			$tools['contributions'] = Linker::linkKnown(
+			$tools['contributions'] = $linkRenderer->makeKnownLink(
 				SpecialPage::getTitleFor( 'Contributions', $title->getText() ),
-				$this->msg( 'contributions' )->escaped()
+				$this->msg( 'contributions' )->text()
 			);
 		}
 
 		Hooks::run(
 			'WatchlistEditorBuildRemoveLine',
-			array( &$tools, $title, $title->isRedirect(), $this->getSkin(), &$link )
+			[ &$tools, $title, $title->isRedirect(), $this->getSkin(), &$link ]
 		);
 
 		if ( $title->isRedirect() ) {
@@ -658,7 +653,8 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 			$link = '<span class="watchlistredir">' . $link . '</span>';
 		}
 
-		return $link . " (" . $this->getLanguage()->pipeList( $tools ) . ")";
+		return $link . ' ' .
+			$this->msg( 'parentheses' )->rawParams( $this->getLanguage()->pipeList( $tools ) )->escaped();
 	}
 
 	/**
@@ -668,13 +664,13 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 	 */
 	protected function getRawForm() {
 		$titles = implode( $this->getWatchlist(), "\n" );
-		$fields = array(
-			'Titles' => array(
+		$fields = [
+			'Titles' => [
 				'type' => 'textarea',
 				'label-message' => 'watchlistedit-raw-titles',
 				'default' => $titles,
-			),
-		);
+			],
+		];
 		$context = new DerivativeContext( $this->getContext() );
 		$context->setTitle( $this->getPageTitle( 'raw' ) ); // Reset subpage
 		$form = new HTMLForm( $fields, $context );
@@ -683,7 +679,7 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 		$form->setSubmitTooltip( 'watchlistedit-raw-submit' );
 		$form->setWrapperLegendMsg( 'watchlistedit-raw-legend' );
 		$form->addHeaderText( $this->msg( 'watchlistedit-raw-explain' )->parse() );
-		$form->setSubmitCallback( array( $this, 'submitRaw' ) );
+		$form->setSubmitCallback( [ $this, 'submitRaw' ] );
 
 		return $form;
 	}
@@ -696,13 +692,13 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 	protected function getClearForm() {
 		$context = new DerivativeContext( $this->getContext() );
 		$context->setTitle( $this->getPageTitle( 'clear' ) ); // Reset subpage
-		$form = new HTMLForm( array(), $context );
+		$form = new HTMLForm( [], $context );
 		$form->setSubmitTextMsg( 'watchlistedit-clear-submit' );
 		# Used message keys: 'accesskey-watchlistedit-clear-submit', 'tooltip-watchlistedit-clear-submit'
 		$form->setSubmitTooltip( 'watchlistedit-clear-submit' );
 		$form->setWrapperLegendMsg( 'watchlistedit-clear-legend' );
 		$form->addHeaderText( $this->msg( 'watchlistedit-clear-explain' )->parse() );
-		$form->setSubmitCallback( array( $this, 'submitClear' ) );
+		$form->setSubmitCallback( [ $this, 'submitClear' ] );
 		$form->setSubmitDestructive();
 
 		return $form;
@@ -738,32 +734,40 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 	 * Build a set of links for convenient navigation
 	 * between watchlist viewing and editing modes
 	 *
-	 * @param null $unused
+	 * @param Language $lang
+	 * @param LinkRenderer|null $linkRenderer
 	 * @return string
 	 */
-	public static function buildTools( $unused ) {
-		global $wgLang;
+	public static function buildTools( $lang, LinkRenderer $linkRenderer = null ) {
+		if ( !$lang instanceof Language ) {
+			// back-compat where the first parameter was $unused
+			global $wgLang;
+			$lang = $wgLang;
+		}
+		if ( !$linkRenderer ) {
+			$linkRenderer = MediaWikiServices::getInstance()->getLinkRenderer();
+		}
 
-		$tools = array();
-		$modes = array(
-			'view' => array( 'Watchlist', false ),
-			'edit' => array( 'EditWatchlist', false ),
-			'raw' => array( 'EditWatchlist', 'raw' ),
-			'clear' => array( 'EditWatchlist', 'clear' ),
-		);
+		$tools = [];
+		$modes = [
+			'view' => [ 'Watchlist', false ],
+			'edit' => [ 'EditWatchlist', false ],
+			'raw' => [ 'EditWatchlist', 'raw' ],
+			'clear' => [ 'EditWatchlist', 'clear' ],
+		];
 
 		foreach ( $modes as $mode => $arr ) {
 			// can use messages 'watchlisttools-view', 'watchlisttools-edit', 'watchlisttools-raw'
-			$tools[] = Linker::linkKnown(
+			$tools[] = $linkRenderer->makeKnownLink(
 				SpecialPage::getTitleFor( $arr[0], $arr[1] ),
-				wfMessage( "watchlisttools-{$mode}" )->escaped()
+				wfMessage( "watchlisttools-{$mode}" )->text()
 			);
 		}
 
 		return Html::rawElement(
 			'span',
-			array( 'class' => 'mw-watchlist-toollinks' ),
-			wfMessage( 'parentheses' )->rawParams( $wgLang->pipeList( $tools ) )->escaped()
+			[ 'class' => 'mw-watchlist-toollinks' ],
+			wfMessage( 'parentheses' )->rawParams( $lang->pipeList( $tools ) )->escaped()
 		);
 	}
 }

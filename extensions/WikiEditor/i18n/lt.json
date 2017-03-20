@@ -9,7 +9,8 @@
 			"Vpovilaitis",
 			"Pofka",
 			"Salpusnis",
-			"Albertas"
+			"Albertas",
+			"Zygimantus"
 		]
 	},
 	"wikieditor": "Išplėstinė wikiteksto redagavimo sąsaja",
@@ -33,7 +34,6 @@
 	"wikieditor-toolbar-desc": "Redaguoti įrankių juostą, siekiant didesnio praktiškumo",
 	"wikieditor-toolbar-preference": "Įjungti naudingesnę įrankių juostą",
 	"wikieditor-toolbar-dialogs-preference": "Įgalinti vedlius nuorodoms, lentelėms įterpti, taip pat paieškos ir keitimo funkciją",
-	"wikieditor-toolbar-hidesig": "Paslėpti parašo mygtuką pagrindinės vardų srities puslapiuose",
 	"wikieditor-toolbar-loading": "Kraunama...",
 	"wikieditor-toolbar-tool-bold": "Paryškinti",
 	"wikieditor-toolbar-tool-bold-example": "Paryškinti tekstą",
@@ -78,6 +78,7 @@
 	"wikieditor-toolbar-file-format-none": "nėra",
 	"wikieditor-toolbar-tool-file-insert": "Įterpti",
 	"wikieditor-toolbar-tool-file-cancel": "Atšaukti",
+	"wikieditor-toolbar-tool-file-upload": "Įkelti",
 	"wikieditor-toolbar-tool-reference": "Išnaša",
 	"wikieditor-toolbar-tool-reference-example": "Čia įterpkite teksto išnašą",
 	"wikieditor-toolbar-tool-reference-cancel": "Atšaukti",
@@ -143,7 +144,7 @@
 	"wikieditor-toolbar-tool-replace-close": "Uždaryti",
 	"wikieditor-toolbar-tool-replace-nomatch": "Jūsų paieška nieko nerado.",
 	"wikieditor-toolbar-tool-replace-success": "Atlikta $1{{PLURAL:$1|}} pakeitimas (-ų).",
-	"wikieditor-toolbar-tool-replace-emptysearch": "Jūs neįvedėte nieko ieškoti.",
+	"wikieditor-toolbar-tool-replace-emptysearch": "Jūs nieko neįvedėte į paiešką.",
 	"wikieditor-toolbar-tool-replace-invalidregex": "Reguliarioji išraiška, kurią įvedėte, yra neleistina: $1",
 	"wikieditor-toolbar-section-characters": "Specialieji simboliai",
 	"wikieditor-toolbar-section-help": "Pagalba",
@@ -204,9 +205,9 @@
 	"wikieditor-toolbar-help-content-showreferences-description": "Rodyti išnašas",
 	"wikieditor-toolbar-help-content-showreferences-result": "<ol class='references'><li id='cite_note-test-0'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.example.org' class='external text' href='#'>Nuorodos tekstas</a>, papildomas tekstas.</li><li id='cite_note-test-1'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.example.org' class='external text' href='#'>Nuorodos tekstas</a></li></ol>",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "Parašas bei laikas",
-	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='{{#special:mypage}}'>Naudotojo vardas</a> (<a href='#' title='{{#special:mytalk}}'>aptarimas</a>) 15:54, 10 June 2009 (UTC)",
+	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='$1:Username'>Naudotojo vardas</a> (<a href='#' title='$2:Username'>aptarimas</a>) 15:54, 10 June 2009 (UTC)",
 	"wikieditor-toolbar-help-content-signature-description": "Parašas",
-	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='{{#special:mypage}}'>Naudotojo vardas</a> (<a href='#' title='{{#special:mytalk}}'>aptarimas</a>)",
+	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>Naudotojo vardas</a> (<a href='#' title='$2:Username'>aptarimas</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "Įtrauka",
 	"wikieditor-toolbar-help-content-indent-syntax": "Normalus tekstas<br />:Įtrauktas tekstas<br />::Įtrauktas tekstas",
 	"wikieditor-toolbar-help-content-indent-result": "Normalus tekstas<dl><dd>Įtrauktas tekstas<dl><dd>Įtrauktas tekstas</dd></dl></dd></dl>"

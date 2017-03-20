@@ -37,7 +37,7 @@ class Utils {
 	 * @return String
 	 * @throws InvalidArgumentException if fed out of range data.
 	 */
-	public static function codepointToUtf8 ( $codepoint ) {
+	public static function codepointToUtf8( $codepoint ) {
 		if ( $codepoint < 0x80 ) {
 			return chr( $codepoint );
 		}
@@ -73,7 +73,7 @@ class Utils {
 	 * @throws InvalidArgumentException if fed out of range data.
 	 * @private Used in tests and data table generation
 	 */
-	public static function hexSequenceToUtf8 ( $sequence ) {
+	public static function hexSequenceToUtf8( $sequence ) {
 		$utf = '';
 		foreach ( explode( ' ', $sequence ) as $hex ) {
 			$n = hexdec( $hex );
@@ -91,7 +91,7 @@ class Utils {
 	 * @return string
 	 * @private
 	 */
-	private static function utf8ToHexSequence ( $str ) {
+	private static function utf8ToHexSequence( $str ) {
 		$buf = '';
 		foreach ( preg_split( '//u', $str, -1, PREG_SPLIT_NO_EMPTY ) as $cp ) {
 			$buf .= sprintf( '%04x ', self::utf8ToCodepoint( $cp ) );
@@ -107,7 +107,7 @@ class Utils {
 	 * @param $char String
 	 * @return Integer
 	 */
-	public static function utf8ToCodepoint ( $char ) {
+	public static function utf8ToCodepoint( $char ) {
 		# Find the length
 		$z = ord( $char[0] );
 		if ( $z & 0x80 ) {
@@ -147,7 +147,7 @@ class Utils {
 	 * @param string $string string to be escaped.
 	 * @return String: escaped string.
 	 */
-	public static function escapeSingleString ( $string ) {
+	public static function escapeSingleString( $string ) {
 		return strtr( $string,
 			array(
 				'\\' => '\\\\',

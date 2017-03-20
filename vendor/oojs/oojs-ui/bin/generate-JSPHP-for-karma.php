@@ -4,7 +4,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 $testSuiteJSON = file_get_contents( __DIR__ . '/../tests/JSPHP-suite.json' );
 $testSuite = json_decode( $testSuiteJSON, true );
-$testSuiteOutput = array();
+$testSuiteOutput = [];
 
 // @codingStandardsIgnoreStart
 function new_OOUI( $class, $config = array() ) {
@@ -17,12 +17,14 @@ function unstub( &$value ) {
 	// @codingStandardsIgnoreEnd
 	if ( is_string( $value ) && substr( $value, 0, 13 ) === '_placeholder_' ) {
 		$value = json_decode( substr( $value, 13 ), true );
-		array_walk_recursive( $value['config'], 'unstub' );
+		if ( isset( $value['config'] ) && is_array( $value['config'] ) ) {
+			array_walk_recursive( $value['config'], 'unstub' );
+		}
 		$value = new_OOUI( $value['class'], $value['config'] );
 	}
 }
 // Keep synchronized with tests/index.php
-$themes = array( 'ApexTheme', 'MediaWikiTheme' );
+$themes = [ 'ApexTheme', 'MediaWikiTheme' ];
 foreach ( $themes as $theme ) {
 	OOUI\Theme::setSingleton( new_OOUI( $theme ) );
 	foreach ( $testSuite as $className => $tests ) {

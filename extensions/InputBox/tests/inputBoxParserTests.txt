@@ -1,0 +1,89 @@
+!! test
+InputBox type=search
+!! wikitext
+<inputbox>
+type=search
+</inputbox>
+!! html+tidy
+<div class="mw-inputbox-centered" style="">
+<form name="searchbox" class="searchbox" action="/wiki/Special:Search" id="searchbox">
+<p><input class="mw-inputbox-input searchboxInput mw-ui-input mw-ui-input-inline" name="search" type="text" value="" placeholder="" size="50" dir="ltr" /><br />
+<input type="submit" name="go" class="mw-ui-button" value="Try exact match" />&#160;<input type="submit" name="fulltext" class="mw-ui-button" value="Search full text" /></p>
+</form>
+</div>
+!! end
+
+!! test
+InputBox type=create
+!! wikitext
+<inputbox>
+type=create
+</inputbox>
+!! html+tidy
+<div class="mw-inputbox-centered" style="">
+<form name="createbox" class="createbox" action="/index.php" method="get" id="createbox">
+<p><input type="hidden" value="edit" name="action" /><input type="hidden" name="preload" /><input type="hidden" name="editintro" /><input type="hidden" name="summary" /><input type="hidden" name="nosummary" /><input type="hidden" name="prefix" /><input type="hidden" name="minor" /><input type="text" name="title" class="mw-inputbox-input mw-ui-input mw-ui-input-inline createboxInput" value="" placeholder="" size="50" dir="ltr" /><br />
+<input type="submit" name="create" class="mw-ui-button mw-ui-progressive createboxButton" value="Create page" /></p>
+</form>
+</div>
+!! end
+
+!! test
+InputBox type=comment
+!! wikitext
+<inputbox>
+type=comment
+</inputbox>
+!! html+tidy
+<div class="mw-inputbox-centered" style="">
+<form name="createbox" class="createbox" action="/index.php" method="get" id="createbox">
+<p><input type="hidden" value="edit" name="action" /><input type="hidden" name="preload" /><input type="hidden" name="editintro" /><input type="hidden" name="summary" /><input type="hidden" name="nosummary" /><input type="hidden" name="prefix" /><input type="hidden" name="minor" /><input type="hidden" value="new" name="section" /><input type="text" name="title" class="mw-inputbox-input mw-ui-input mw-ui-input-inline createboxInput" value="" placeholder="" size="50" dir="ltr" /><br />
+<input type="submit" name="create" class="mw-ui-button mw-ui-progressive createboxButton" value="New section" /></p>
+</form>
+</div>
+!! end
+
+!! test
+InputBox type=commenttitle
+!! wikitext
+<inputbox>
+type=commenttitle
+</inputbox>
+!! html+tidy
+<div class="mw-inputbox-centered" style="">
+<form name="commentbox" class="commentbox" action="/index.php" method="get" id="commentbox">
+<p><input type="hidden" value="edit" name="action" /><input type="hidden" name="preload" /><input type="hidden" name="editintro" /><input type="text" name="preloadtitle" class="mw-inputbox-input commentboxInput mw-ui-input mw-ui-input-inline" value="" placeholder="" size="50" dir="ltr" /><input type="hidden" value="new" name="section" /><input type="hidden" name="title" /><br />
+<input type="submit" name="create" class="mw-ui-button mw-ui-progressive" value="New section" /></p>
+</form>
+</div>
+!! end
+
+!! test
+InputBox type=fulltext
+!! wikitext
+<inputbox>
+type=fulltext
+</inputbox>
+!! html+tidy
+<div class="mw-inputbox-centered" style="">
+<form name="searchbox" class="searchbox" action="/wiki/Special:Search" id="searchbox">
+<p><input class="mw-inputbox-input searchboxInput mw-ui-input mw-ui-input-inline" name="search" type="text" value="" placeholder="" size="50" dir="ltr" /><br />
+<input type="submit" name="fulltext" class="mw-ui-button" value="Search full text" /><input type="hidden" value="Search" name="fulltext" /></p>
+</form>
+</div>
+!! end
+
+!! test
+InputBox type=move
+!! wikitext
+<inputbox>
+type=move
+</inputbox>
+!! html+tidy
+<div class="mw-inputbox-centered" style="">
+<form name="movebox" class="mw-movebox" action="/index.php" method="get" id="movebox">
+<p><input type="hidden" value="Special:MovePage/" name="title" /><input type="hidden" name="wpReason" /><input type="hidden" name="prefix" /><input type="text" name="wpNewTitle" class="mw-inputbox-input mw-moveboxInput mw-ui-input mw-ui-input-inline" value="" placeholder="" size="50" dir="ltr" /><br />
+<input type="submit" class="mw-ui-button mw-ui-progressive" value="Move page" /></p>
+</form>
+</div>
+!! end

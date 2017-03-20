@@ -4,9 +4,14 @@
 			"Friðrik Bragi Dýrfjörð",
 			"Maxí",
 			"Snævar",
-			"Ævar Arnfjörð Bjarmason"
+			"Ævar Arnfjörð Bjarmason",
+			"Sveinn í Felli"
 		]
 	},
+	"skinname-vector": "Vektor",
+	"vector-skin-desc": "Nútímaútgáfa af MonoBook með fersku útliti og mörgum endurbótum á notagildi",
+	"vector.css": "/* Allt CSS sem sett er hér mun  hafa áhrif á alla notendur Vektor-skinnsins. */",
+	"vector.js": "/* Allt JavaScript sem sett er hér mun hafa áhrif á notendur Vektor-skinnsins. */",
 	"vector-action-addsection": "Bæta við umræðu",
 	"vector-action-delete": "Eyða",
 	"vector-action-move": "Færa",

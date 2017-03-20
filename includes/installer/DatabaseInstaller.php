@@ -41,7 +41,7 @@ abstract class DatabaseInstaller {
 	/**
 	 * The database connection.
 	 *
-	 * @var DatabaseBase
+	 * @var Database
 	 */
 	public $db = null;
 
@@ -50,14 +50,14 @@ abstract class DatabaseInstaller {
 	 *
 	 * @var array
 	 */
-	protected $internalDefaults = array();
+	protected $internalDefaults = [];
 
 	/**
 	 * Array of MW configuration globals this class uses.
 	 *
 	 * @var array
 	 */
-	protected $globalNames = array();
+	protected $globalNames = [];
 
 	/**
 	 * Return the internal name, e.g. 'mysql', or 'sqlite'.
@@ -167,7 +167,7 @@ abstract class DatabaseInstaller {
 	 *
 	 * @param string $sourceFileMethod
 	 * @param string $stepName
-	 * @param string $archiveTableMustNotExist
+	 * @param bool $archiveTableMustNotExist
 	 * @return Status
 	 */
 	private function stepApplySourceFile(
@@ -192,7 +192,7 @@ abstract class DatabaseInstaller {
 		$this->db->begin( __METHOD__ );
 
 		$error = $this->db->sourceFile(
-			call_user_func( array( $this->db, $sourceFileMethod ) )
+			call_user_func( [ $this, $sourceFileMethod ], $this->db )
 		);
 		if ( $error !== true ) {
 			$this->db->reportQueryError( $error, 0, '', __METHOD__ );
@@ -202,7 +202,7 @@ abstract class DatabaseInstaller {
 			$this->db->commit( __METHOD__ );
 		}
 		// Resume normal operations
-		if ( $status->isOk() ) {
+		if ( $status->isOK() ) {
 			$this->enableLB();
 		}
 
@@ -228,6 +228,47 @@ abstract class DatabaseInstaller {
 	}
 
 	/**
+	 * Return a path to the DBMS-specific SQL file if it exists,
+	 * otherwise default SQL file
+	 *
+	 * @param IDatabase $db
+	 * @param string $filename
+	 * @return string
+	 */
+	private function getSqlFilePath( $db, $filename ) {
+		global $IP;
+
+		$dbmsSpecificFilePath = "$IP/maintenance/" . $db->getType() . "/$filename";
+		if ( file_exists( $dbmsSpecificFilePath ) ) {
+			return $dbmsSpecificFilePath;
+		} else {
+			return "$IP/maintenance/$filename";
+		}
+	}
+
+	/**
+	 * Return a path to the DBMS-specific schema file,
+	 * otherwise default to tables.sql
+	 *
+	 * @param IDatabase $db
+	 * @return string
+	 */
+	public function getSchemaPath( $db ) {
+		return $this->getSqlFilePath( $db, 'tables.sql' );
+	}
+
+	/**
+	 * Return a path to the DBMS-specific update key file,
+	 * otherwise default to update-keys.sql
+	 *
+	 * @param IDatabase $db
+	 * @return string
+	 */
+	public function getUpdateKeysPath( $db ) {
+		return $this->getSqlFilePath( $db, 'update-keys.sql' );
+	}
+
+	/**
 	 * Create the tables for each extension the user enabled
 	 * @return Status
 	 */
@@ -238,7 +279,7 @@ abstract class DatabaseInstaller {
 		}
 
 		// Now run updates to create tables for old extensions
-		DatabaseUpdater::newForDB( $this->db )->doUpdates( array( 'extensions' ) );
+		DatabaseUpdater::newForDB( $this->db )->doUpdates( [ 'extensions' ] );
 
 		return $status;
 	}
@@ -256,7 +297,7 @@ abstract class DatabaseInstaller {
 	 * @return array
 	 */
 	public function getSchemaVars() {
-		return array();
+		return [];
 	}
 
 	/**
@@ -287,8 +328,15 @@ abstract class DatabaseInstaller {
 		if ( !$status->isOK() ) {
 			throw new MWException( __METHOD__ . ': unexpected DB connection error' );
 		}
-		LBFactory::setInstance( new LBFactorySingle( array(
-			'connection' => $status->value ) ) );
+
+		\MediaWiki\MediaWikiServices::resetGlobalInstance();
+		$services = \MediaWiki\MediaWikiServices::getInstance();
+
+		$connection = $status->value;
+		$services->redefineService( 'DBLoadBalancerFactory', function() use ( $connection ) {
+			return LBFactorySingle::newFromConnection( $connection );
+		} );
+
 	}
 
 	/**
@@ -301,13 +349,17 @@ abstract class DatabaseInstaller {
 		$this->enableLB();
 
 		$ret = true;
-		ob_start( array( $this, 'outputHandler' ) );
+		ob_start( [ $this, 'outputHandler' ] );
 		$up = DatabaseUpdater::newForDB( $this->db );
 		try {
 			$up->doUpdates();
-		} catch ( Exception $e ) {
+		} catch ( MWException $e ) {
 			echo "\nAn error occurred:\n";
 			echo $e->getText();
+			$ret = false;
+		} catch ( Exception $e ) {
+			echo "\nAn error occurred:\n";
+			echo $e->getMessage();
 			$ret = false;
 		}
 		$up->purgeCache();
@@ -373,7 +425,7 @@ abstract class DatabaseInstaller {
 	 * @return array
 	 */
 	public function getGlobalDefaults() {
-		$defaults = array();
+		$defaults = [];
 		foreach ( $this->getGlobalNames() as $var ) {
 			if ( isset( $GLOBALS[$var] ) ) {
 				$defaults[$var] = $GLOBALS[$var];
@@ -426,21 +478,21 @@ abstract class DatabaseInstaller {
 	 * @param string $helpData
 	 * @return string
 	 */
-	public function getTextBox( $var, $label, $attribs = array(), $helpData = "" ) {
+	public function getTextBox( $var, $label, $attribs = [], $helpData = "" ) {
 		$name = $this->getName() . '_' . $var;
 		$value = $this->getVar( $var );
 		if ( !isset( $attribs ) ) {
-			$attribs = array();
+			$attribs = [];
 		}
 
-		return $this->parent->getTextBox( array(
+		return $this->parent->getTextBox( [
 			'var' => $var,
 			'label' => $label,
 			'attribs' => $attribs,
 			'controlName' => $name,
 			'value' => $value,
 			'help' => $helpData
-		) );
+		] );
 	}
 
 	/**
@@ -453,21 +505,21 @@ abstract class DatabaseInstaller {
 	 * @param string $helpData
 	 * @return string
 	 */
-	public function getPasswordBox( $var, $label, $attribs = array(), $helpData = "" ) {
+	public function getPasswordBox( $var, $label, $attribs = [], $helpData = "" ) {
 		$name = $this->getName() . '_' . $var;
 		$value = $this->getVar( $var );
 		if ( !isset( $attribs ) ) {
-			$attribs = array();
+			$attribs = [];
 		}
 
-		return $this->parent->getPasswordBox( array(
+		return $this->parent->getPasswordBox( [
 			'var' => $var,
 			'label' => $label,
 			'attribs' => $attribs,
 			'controlName' => $name,
 			'value' => $value,
 			'help' => $helpData
-		) );
+		] );
 	}
 
 	/**
@@ -479,18 +531,18 @@ abstract class DatabaseInstaller {
 	 * @param string $helpData Optional.
 	 * @return string
 	 */
-	public function getCheckBox( $var, $label, $attribs = array(), $helpData = "" ) {
+	public function getCheckBox( $var, $label, $attribs = [], $helpData = "" ) {
 		$name = $this->getName() . '_' . $var;
 		$value = $this->getVar( $var );
 
-		return $this->parent->getCheckBox( array(
+		return $this->parent->getCheckBox( [
 			'var' => $var,
 			'label' => $label,
 			'attribs' => $attribs,
 			'controlName' => $name,
 			'value' => $value,
 			'help' => $helpData
-		) );
+		] );
 	}
 
 	/**
@@ -554,17 +606,17 @@ abstract class DatabaseInstaller {
 	 */
 	public function getInstallUserBox() {
 		return Html::openElement( 'fieldset' ) .
-			Html::element( 'legend', array(), wfMessage( 'config-db-install-account' )->text() ) .
+			Html::element( 'legend', [], wfMessage( 'config-db-install-account' )->text() ) .
 			$this->getTextBox(
 				'_InstallUser',
 				'config-db-username',
-				array( 'dir' => 'ltr' ),
+				[ 'dir' => 'ltr' ],
 				$this->parent->getHelpBox( 'config-db-install-username' )
 			) .
 			$this->getPasswordBox(
 				'_InstallPassword',
 				'config-db-password',
-				array( 'dir' => 'ltr' ),
+				[ 'dir' => 'ltr' ],
 				$this->parent->getHelpBox( 'config-db-install-password' )
 			) .
 			Html::closeElement( 'fieldset' );
@@ -575,7 +627,7 @@ abstract class DatabaseInstaller {
 	 * @return Status
 	 */
 	public function submitInstallUserBox() {
-		$this->setVarsFromRequest( array( '_InstallUser', '_InstallPassword' ) );
+		$this->setVarsFromRequest( [ '_InstallUser', '_InstallPassword' ] );
 
 		return Status::newGood();
 	}
@@ -590,12 +642,12 @@ abstract class DatabaseInstaller {
 	public function getWebUserBox( $noCreateMsg = false ) {
 		$wrapperStyle = $this->getVar( '_SameAccount' ) ? 'display: none' : '';
 		$s = Html::openElement( 'fieldset' ) .
-			Html::element( 'legend', array(), wfMessage( 'config-db-web-account' )->text() ) .
+			Html::element( 'legend', [], wfMessage( 'config-db-web-account' )->text() ) .
 			$this->getCheckBox(
 				'_SameAccount', 'config-db-web-account-same',
-				array( 'class' => 'hideShowRadio', 'rel' => 'dbOtherAccount' )
+				[ 'class' => 'hideShowRadio', 'rel' => 'dbOtherAccount' ]
 			) .
-			Html::openElement( 'div', array( 'id' => 'dbOtherAccount', 'style' => $wrapperStyle ) ) .
+			Html::openElement( 'div', [ 'id' => 'dbOtherAccount', 'style' => $wrapperStyle ] ) .
 			$this->getTextBox( 'wgDBuser', 'config-db-username' ) .
 			$this->getPasswordBox( 'wgDBpassword', 'config-db-password' ) .
 			$this->parent->getHelpBox( 'config-db-web-help' );
@@ -616,7 +668,7 @@ abstract class DatabaseInstaller {
 	 */
 	public function submitWebUserBox() {
 		$this->setVarsFromRequest(
-			array( 'wgDBuser', 'wgDBpassword', '_SameAccount', '_CreateDBAccount' )
+			[ 'wgDBuser', 'wgDBpassword', '_SameAccount', '_CreateDBAccount' ]
 		);
 
 		if ( $this->getVar( '_SameAccount' ) ) {
@@ -643,7 +695,7 @@ abstract class DatabaseInstaller {
 		}
 		$this->db->selectDB( $this->getVar( 'wgDBname' ) );
 
-		if ( $this->db->selectRow( 'interwiki', '*', array(), __METHOD__ ) ) {
+		if ( $this->db->selectRow( 'interwiki', '*', [], __METHOD__ ) ) {
 			$status->warning( 'config-install-interwiki-exists' );
 
 			return $status;
@@ -653,7 +705,7 @@ abstract class DatabaseInstaller {
 		$rows = file( "$IP/maintenance/interwiki.list",
 			FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES );
 		MediaWiki\restoreWarnings();
-		$interwikis = array();
+		$interwikis = [];
 		if ( !$rows ) {
 			return Status::newFatal( 'config-install-interwiki-list' );
 		}
@@ -664,7 +716,7 @@ abstract class DatabaseInstaller {
 			}
 			$row .= "|";
 			$interwikis[] = array_combine(
-				array( 'iw_prefix', 'iw_url', 'iw_local', 'iw_api', 'iw_wikiid' ),
+				[ 'iw_prefix', 'iw_url', 'iw_local', 'iw_api', 'iw_wikiid' ],
 				explode( '|', $row )
 			);
 		}

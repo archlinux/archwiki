@@ -47,10 +47,15 @@
  * @ingroup SpecialPage
  */
 class SpecialRandomInCategory extends FormSpecialPage {
-	protected $extra = array(); // Extra SQL statements
+	/** @var string[] */
+	protected $extra = []; // Extra SQL statements
+	/** @var Title|false */
 	protected $category = false; // Title object of category
+	/** @var int */
 	protected $maxOffset = 30; // Max amount to fudge randomness by.
+	/** @var int|null */
 	private $maxTimestamp = null;
+	/** @var int|null */
 	private $minTimestamp = null;
 
 	public function __construct( $name = 'RandomInCategory' ) {
@@ -70,15 +75,15 @@ class SpecialRandomInCategory extends FormSpecialPage {
 	protected function getFormFields() {
 		$this->addHelpLink( 'Help:RandomInCategory' );
 
-		return array(
-			'category' => array(
+		return [
+			'category' => [
 				'type' => 'title',
 				'namespace' => NS_CATEGORY,
 				'relative' => true,
 				'label-message' => 'randomincategory-category',
 				'required' => true,
-			)
-		);
+			]
+		];
 	}
 
 	public function requiresWrite() {
@@ -99,7 +104,7 @@ class SpecialRandomInCategory extends FormSpecialPage {
 
 	protected function setParameter( $par ) {
 		// if subpage present, fake form submission
-		$this->onSubmit( array( 'category' => $par ) );
+		$this->onSubmit( [ 'category' => $par ] );
 	}
 
 	public function onSubmit( array $data ) {
@@ -202,23 +207,23 @@ class SpecialRandomInCategory extends FormSpecialPage {
 		if ( !$this->category instanceof Title ) {
 			throw new MWException( 'No category set' );
 		}
-		$qi = array(
-			'tables' => array( 'categorylinks', 'page' ),
-			'fields' => array( 'page_title', 'page_namespace' ),
-			'conds' => array_merge( array(
-				'cl_to' => $this->category->getDBKey(),
-			), $this->extra ),
-			'options' => array(
+		$qi = [
+			'tables' => [ 'categorylinks', 'page' ],
+			'fields' => [ 'page_title', 'page_namespace' ],
+			'conds' => array_merge( [
+				'cl_to' => $this->category->getDBkey(),
+			], $this->extra ),
+			'options' => [
 				'ORDER BY' => 'cl_timestamp ' . $dir,
 				'LIMIT' => 1,
 				'OFFSET' => $offset
-			),
-			'join_conds' => array(
-				'page' => array( 'INNER JOIN', 'cl_from = page_id' )
-			)
-		);
+			],
+			'join_conds' => [
+				'page' => [ 'INNER JOIN', 'cl_from = page_id' ]
+			]
+		];
 
-		$dbr = wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_REPLICA );
 		$minClTime = $this->getTimestampOffset( $rand );
 		if ( $minClTime ) {
 			$qi['conds'][] = 'cl_timestamp ' . $op . ' ' .
@@ -259,26 +264,26 @@ class SpecialRandomInCategory extends FormSpecialPage {
 	 * @throws MWException If category has no entries.
 	 */
 	protected function getMinAndMaxForCat( Title $category ) {
-		$dbr = wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_REPLICA );
 		$res = $dbr->selectRow(
 			'categorylinks',
-			array(
+			[
 				'low' => 'MIN( cl_timestamp )',
 				'high' => 'MAX( cl_timestamp )'
-			),
-			array(
-				'cl_to' => $this->category->getDBKey(),
-			),
+			],
+			[
+				'cl_to' => $this->category->getDBkey(),
+			],
 			__METHOD__,
-			array(
+			[
 				'LIMIT' => 1
-			)
+			]
 		);
 		if ( !$res ) {
 			throw new MWException( 'No entries in category' );
 		}
 
-		return array( wfTimestamp( TS_UNIX, $res->low ), wfTimestamp( TS_UNIX, $res->high ) );
+		return [ wfTimestamp( TS_UNIX, $res->low ), wfTimestamp( TS_UNIX, $res->high ) ];
 	}
 
 	/**
@@ -289,7 +294,7 @@ class SpecialRandomInCategory extends FormSpecialPage {
 	 * @return array Info for the title selected.
 	 */
 	private function selectRandomPageFromDB( $rand, $offset, $up, $fname = __METHOD__ ) {
-		$dbr = wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_REPLICA );
 
 		$query = $this->getQueryInfo( $rand, $offset, $up );
 		$res = $dbr->select(

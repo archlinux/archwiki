@@ -22,6 +22,7 @@
 	"nuke-multiplepeople": "大量刪除最近新增的頁面",
 	"nuke-tools": "此工具可大量刪除指定使用者或 IP 位址最近新增的頁面。\n請輸入使用者名稱或 IP 位址取得欲刪除的頁面清單，或留空代表所有使用者。",
 	"nuke-submit-user": "執行",
+	"nuke-toggleinvert": "反向選擇",
 	"nuke-submit-delete": "刪除已選擇",
 	"right-nuke": "大量刪除頁面",
 	"nuke-select": "選擇：$1",

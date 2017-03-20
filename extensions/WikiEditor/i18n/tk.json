@@ -180,9 +180,9 @@
 	"wikieditor-toolbar-help-content-showreferences-description": "Salgylanmalary görkez",
 	"wikieditor-toolbar-help-content-showreferences-result": "<ol class='references'><li id='cite_note-test-0'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.example.org' class='external text' href='#'>Çykgydyň teksti</a>, goşmaça tekst.</li></ol>",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "Wagt belgili gol",
-	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='{{#special:mypage}}'>Ulanyjy ady</a> (<a href='#' title='{{#special:mytalk}}'>çekişme</a>) 15:54, 10 iýun 2009 (UTC)",
+	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='$1:Username'>Ulanyjy ady</a> (<a href='#' title='$2:Username'>çekişme</a>) 15:54, 10 iýun 2009 (UTC)",
 	"wikieditor-toolbar-help-content-signature-description": "Gol",
-	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='{{#special:mypage}}'>Ulanyjy ady</a> (<a href='#' title='{{#special:mytalk}}'>çekişme</a>)",
+	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>Ulanyjy ady</a> (<a href='#' title='$2:Username'>çekişme</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "Boş ýer",
 	"wikieditor-toolbar-help-content-indent-syntax": "Adaty tekst<br />:Boş ýerli tekst<br />::Boş ýerli tekst",
 	"wikieditor-toolbar-help-content-indent-result": "Adaty tekst<dl><dd>Boş ýerli tekst<dl><dd>Boş ýerli tekst</dd></dl></dd></dl>"

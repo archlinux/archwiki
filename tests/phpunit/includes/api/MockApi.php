@@ -1,17 +1,23 @@
 <?php
 
 class MockApi extends ApiBase {
+	public $warnings = [];
+
 	public function execute() {
 	}
 
 	public function __construct() {
 	}
 
+	public function setWarning( $warning ) {
+		$this->warnings[] = $warning;
+	}
+
 	public function getAllowedParams() {
-		return array(
+		return [
 			'filename' => null,
 			'enablechunks' => false,
 			'sessionkey' => null,
-		);
+		];
 	}
 }

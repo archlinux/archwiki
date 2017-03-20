@@ -1,15 +1,19 @@
 <?php
+
 namespace Elastica\Filter;
 
 use Elastica\Exception\InvalidException;
 use Elastica\Param;
+
+trigger_error('Deprecated: Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html', E_USER_DEPRECATED);
 
 /**
  * Abstract filter object. Should be extended by all filter types.
  *
  * @author Nicolas Ruflin <spam@ruflin.com>
  *
- * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-filters.html
+ * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-filters.html
+ * @deprecated Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html
  */
 abstract class AbstractFilter extends Param
 {

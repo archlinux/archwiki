@@ -28,7 +28,10 @@
  * @ingroup FileAbstraction
  */
 class ForeignAPIFile extends File {
+	/** @var bool */
 	private $mExists;
+	/** @var array */
+	private $mInfo = [];
 
 	protected $repoClass = 'ForeignApiRepo';
 
@@ -53,7 +56,7 @@ class ForeignAPIFile extends File {
 	 * @return ForeignAPIFile|null
 	 */
 	static function newFromTitle( Title $title, $repo ) {
-		$data = $repo->fetchImageQuery( array(
+		$data = $repo->fetchImageQuery( [
 			'titles' => 'File:' . $title->getDBkey(),
 			'iiprop' => self::getProps(),
 			'prop' => 'imageinfo',
@@ -61,7 +64,7 @@ class ForeignAPIFile extends File {
 			// extmetadata is language-dependant, accessing the current language here
 			// would be problematic, so we just get them all
 			'iiextmetadatamultilang' => 1,
-		) );
+		] );
 
 		$info = $repo->getImageInfo( $data );
 
@@ -196,7 +199,7 @@ class ForeignAPIFile extends File {
 		if ( !is_array( $metadata ) ) {
 			return $metadata;
 		}
-		$ret = array();
+		$ret = [];
 		foreach ( $metadata as $meta ) {
 			$ret[$meta['name']] = self::parseMetadata( $meta['value'] );
 		}
@@ -219,13 +222,32 @@ class ForeignAPIFile extends File {
 	}
 
 	/**
+	 * Get short description URL for a file based on the foreign API response,
+	 * or if unavailable, the short URL is constructed from the foreign page ID.
+	 *
+	 * @return null|string
+	 * @since 1.27
+	 */
+	public function getDescriptionShortUrl() {
+		if ( isset( $this->mInfo['descriptionshorturl'] ) ) {
+			return $this->mInfo['descriptionshorturl'];
+		} elseif ( isset( $this->mInfo['pageid'] ) ) {
+			$url = $this->repo->makeUrl( [ 'curid' => $this->mInfo['pageid'] ] );
+			if ( $url !== false ) {
+				return $url;
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * @param string $type
 	 * @return int|null|string
 	 */
 	public function getUser( $type = 'text' ) {
 		if ( $type == 'text' ) {
 			return isset( $this->mInfo['user'] ) ? strval( $this->mInfo['user'] ) : null;
-		} elseif ( $type == 'id' ) {
+		} else {
 			return 0; // What makes sense here, for a remote user?
 		}
 	}
@@ -244,7 +266,7 @@ class ForeignAPIFile extends File {
 	 */
 	function getSha1() {
 		return isset( $this->mInfo['sha1'] )
-			? wfBaseConvert( strval( $this->mInfo['sha1'] ), 16, 36, 31 )
+			? Wikimedia\base_convert( strval( $this->mInfo['sha1'] ), 16, 36, 31 )
 			: null;
 	}
 
@@ -315,9 +337,9 @@ class ForeignAPIFile extends File {
 	 */
 	function getThumbnails() {
 		$dir = $this->getThumbPath( $this->getName() );
-		$iter = $this->repo->getBackend()->getFileList( array( 'dir' => $dir ) );
+		$iter = $this->repo->getBackend()->getFileList( [ 'dir' => $dir ] );
 
-		$files = array();
+		$files = [];
 		foreach ( $iter as $file ) {
 			$files[] = $file;
 		}
@@ -325,31 +347,26 @@ class ForeignAPIFile extends File {
 		return $files;
 	}
 
-	/**
-	 * @see File::purgeCache()
-	 */
-	function purgeCache( $options = array() ) {
+	function purgeCache( $options = [] ) {
 		$this->purgeThumbnails( $options );
 		$this->purgeDescriptionPage();
 	}
 
 	function purgeDescriptionPage() {
-		global $wgMemc, $wgContLang;
+		global $wgContLang;
 
 		$url = $this->repo->getDescriptionRenderUrl( $this->getName(), $wgContLang->getCode() );
 		$key = $this->repo->getLocalCacheKey( 'RemoteFileDescription', 'url', md5( $url ) );
 
-		$wgMemc->delete( $key );
+		ObjectCache::getMainWANInstance()->delete( $key );
 	}
 
 	/**
 	 * @param array $options
 	 */
-	function purgeThumbnails( $options = array() ) {
-		global $wgMemc;
-
+	function purgeThumbnails( $options = [] ) {
 		$key = $this->repo->getLocalCacheKey( 'ForeignAPIRepo', 'ThumbUrl', $this->getName() );
-		$wgMemc->delete( $key );
+		ObjectCache::getMainWANInstance()->delete( $key );
 
 		$files = $this->getThumbnails();
 		// Give media handler a chance to filter the purge list
@@ -359,7 +376,7 @@ class ForeignAPIFile extends File {
 		}
 
 		$dir = $this->getThumbPath( $this->getName() );
-		$purgeList = array();
+		$purgeList = [];
 		foreach ( $files as $file ) {
 			$purgeList[] = "{$dir}{$file}";
 		}

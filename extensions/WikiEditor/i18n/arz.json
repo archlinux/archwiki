@@ -170,9 +170,9 @@
 	"wikieditor-toolbar-help-content-showreferences-description": "اعرض المراجع",
 	"wikieditor-toolbar-help-content-showreferences-result": "<ol class='references'><li id='cite_note-test-0'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.example.org' class='external text' href='#'>Link text</a>, additional text.</li></ol>",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "الامضا مع ختم الوقت",
-	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='{{#special:mypage}}'>اسم اليوزر</a> (<a href='#' title='{{#special:mytalk}}'>كلّمه</a>) 15:54,‏ 10 يونيه 2009 ‏(UTC)‏",
+	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='$1:Username'>اسم اليوزر</a> (<a href='#' title='$2:Username'>كلّمه</a>) 15:54,‏ 10 يونيه 2009 ‏(UTC)‏",
 	"wikieditor-toolbar-help-content-signature-description": "امضا",
-	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='{{#special:mypage}}'>اسم اليوزر</a> (<a href='#' title='{{#special:mytalk}}'>كلّم</a>)",
+	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>اسم اليوزر</a> (<a href='#' title='$2:Username'>كلّم</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "Indent",
 	"wikieditor-toolbar-help-content-indent-syntax": "Normal text<br />:Indented text<br />::Indented text",
 	"wikieditor-toolbar-help-content-indent-result": "Normal text<dl><dd>Indented text<dl><dd>Indented text</dd></dl></dd></dl>"

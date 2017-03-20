@@ -12,12 +12,7 @@ class ComposerJson {
 	 * @param string $location
 	 */
 	public function __construct( $location ) {
-		$this->hash = md5_file( $location );
 		$this->contents = json_decode( file_get_contents( $location ), true );
-	}
-
-	public function getHash() {
-		return $this->hash;
 	}
 
 	/**
@@ -26,10 +21,12 @@ class ComposerJson {
 	 * @return array
 	 */
 	public function getRequiredDependencies() {
-		$deps = array();
-		foreach ( $this->contents['require'] as $package => $version ) {
-			if ( $package !== "php" && strpos( $package, 'ext-' ) !== 0 ) {
-				$deps[$package] = self::normalizeVersion( $version );
+		$deps = [];
+		if ( isset( $this->contents['require'] ) ) {
+			foreach ( $this->contents['require'] as $package => $version ) {
+				if ( $package !== "php" && strpos( $package, 'ext-' ) !== 0 ) {
+					$deps[$package] = self::normalizeVersion( $version );
+				}
 			}
 		}
 

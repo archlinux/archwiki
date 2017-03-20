@@ -4,7 +4,9 @@
 			"AnakngAraw",
 			"McDutchie",
 			"Macofe",
-			"Lam-ang"
+			"Lam-ang",
+			"Leeheonjin",
+			"Jojit fb"
 		]
 	},
 	"wikieditor": "Mas masulong na dugtungang-mukha na pambago ng wikiteksto",
@@ -61,7 +63,7 @@
 	"wikieditor-toolbar-tool-link-empty": "Hindi ka naglagay ng anumang kakawingan.",
 	"wikieditor-toolbar-tool-file": "Talaksang nakabaon",
 	"wikieditor-toolbar-tool-file-example": "Halimbawa.jpg",
-	"wikieditor-toolbar-tool-file-title": "Isingit ang talaksan",
+	"wikieditor-toolbar-tool-file-title": "Isingit ang file",
 	"wikieditor-toolbar-file-target": "Pangalan ng talaksan:",
 	"wikieditor-toolbar-file-caption": "Paliwanag:",
 	"wikieditor-toolbar-file-size": "Sukat:",
@@ -70,6 +72,7 @@
 	"wikieditor-toolbar-file-format": "Kaanyuan:",
 	"wikieditor-toolbar-tool-file-insert": "Isingit",
 	"wikieditor-toolbar-tool-file-cancel": "Huwag ituloy",
+	"wikieditor-toolbar-tool-file-upload": "Ikargang paitaas (upload)",
 	"wikieditor-toolbar-tool-reference": "Sanggunian",
 	"wikieditor-toolbar-tool-reference-example": "Isingit dito ang teksto ng talababa",
 	"wikieditor-toolbar-tool-reference-cancel": "Huwag ituloy",
@@ -147,7 +150,7 @@
 	"wikieditor-toolbar-help-page-link": "Mga kawing",
 	"wikieditor-toolbar-help-page-heading": "Mga paulo",
 	"wikieditor-toolbar-help-page-list": "Mga talaan",
-	"wikieditor-toolbar-help-page-file": "Mga talaksan",
+	"wikieditor-toolbar-help-page-file": "Mga file",
 	"wikieditor-toolbar-help-page-reference": "Mga sanggunian",
 	"wikieditor-toolbar-help-page-discussion": "Mga talakayan",
 	"wikieditor-toolbar-help-content-italic-description": "Nakapahilis",
@@ -195,9 +198,9 @@
 	"wikieditor-toolbar-help-content-showreferences-syntax": "&lt;mga sanggunian /&gt;",
 	"wikieditor-toolbar-help-content-showreferences-result": "<ol class='references'><li id='cite_note-test-0'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.halimbawa.org' class='external text' href='#'>Teksto ng kawing</a>, karagdagang teksto.</li></ol>",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "Lagdang may tatak ng oras",
-	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='{{#special:mypage}}'>Pangalan ng tagagamit</a> (<a href='#' title='{{#special:mytalk}}'>talk</a>) 15:54, 10 Hunyo 2009 (UTC)",
+	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='$1:Username'>Pangalan ng tagagamit</a> (<a href='#' title='$2:Username'>talk</a>) 15:54, 10 Hunyo 2009 (UTC)",
 	"wikieditor-toolbar-help-content-signature-description": "Lagda",
-	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='{{#special:mypage}}'>Pangalan ng tagagamit</a> (<a href='#' title='{{#special:mytalk}}'>usapan</a>)",
+	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>Pangalan ng tagagamit</a> (<a href='#' title='$2:Username'>usapan</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "Iurong",
 	"wikieditor-toolbar-help-content-indent-syntax": "Karaniwang teksto<br />:Tekstong nakaurong<br />::Tekstong nakaurong",
 	"wikieditor-toolbar-help-content-indent-result": "Karaniwang teksto<dl><dd>Tekstong nakaurong<dl><dd>Tekstong nakaurong</dd></dl></dd></dl>"

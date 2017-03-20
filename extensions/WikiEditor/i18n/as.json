@@ -5,7 +5,8 @@
 			"Chaipau",
 			"Gitartha.bordoloi",
 			"Nilamdyuti",
-			"Macofe"
+			"Macofe",
+			"Dibya Dutta"
 		]
 	},
 	"wikieditor": "উচ্চতৰ ৱিকিপাঠ্য সম্পাদনা ইণ্টাৰফে'চ",
@@ -29,7 +30,6 @@
 	"wikieditor-toolbar-desc": "অধিক ব্যৱহাৰযোগ্য সম্পাদনা পৃষ্ঠাৰ টুলবাৰ",
 	"wikieditor-toolbar-preference": "শক্তিশালী সম্পাদনা টুলবাৰ সক্ৰিয় কৰক",
 	"wikieditor-toolbar-dialogs-preference": "লিংক, টেবল আৰু অধিক বস্তু সংযোজনৰ বাবে ডায়লগ সক্ৰিয় কৰক",
-	"wikieditor-toolbar-hidesig": "মুখ্য নামস্থানৰ পৃষ্ঠাবোৰত স্বাক্ষৰ বুটাম লুকুৱাওক",
 	"wikieditor-toolbar-loading": "ল'ড হৈ আছে…",
 	"wikieditor-toolbar-tool-bold": "গাঢ়",
 	"wikieditor-toolbar-tool-bold-example": "গাঢ় পাঠ্য",
@@ -73,6 +73,7 @@
 	"wikieditor-toolbar-file-format-none": "একো নাই",
 	"wikieditor-toolbar-tool-file-insert": "সুমুৱাওক",
 	"wikieditor-toolbar-tool-file-cancel": "বাতিল কৰক",
+	"wikieditor-toolbar-tool-file-upload": "আপল'ড",
 	"wikieditor-toolbar-tool-reference": "তথ্যসংগ্ৰহ",
 	"wikieditor-toolbar-tool-reference-example": "পাদটীকাৰ লিখনি ইয়াত যোগ দিয়ক",
 	"wikieditor-toolbar-tool-reference-cancel": "বাতিল",
@@ -195,9 +196,9 @@
 	"wikieditor-toolbar-help-content-showreferences-description": "তথ্যসংগ্ৰহ প্ৰদৰ্শন কৰক",
 	"wikieditor-toolbar-help-content-showreferences-result": "<ol class='references'><li id='cite_note-test-0'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.example.org' class='external text' href='#'>সংযোগ পাঠ্য</a>, অধিক পাঠ্য।</li></ol>",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "সময়ৰ সৈতে আপোনাৰ স্বাক্ষৰ",
-	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='{{#special:mypage}}'>ব্যৱহাৰকাৰী</a> (<a href='#' title='{{#special:mytalk}}'>আলোচনা</a>) ১৫:৫৪, ১০ জুন ২০০৯ (UTC)",
+	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='$1:Username'>ব্যৱহাৰকাৰী</a> (<a href='#' title='$2:Username'>আলোচনা</a>) ১৫:৫৪, ১০ জুন ২০০৯ (UTC)",
 	"wikieditor-toolbar-help-content-signature-description": "স্বাক্ষৰ",
-	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='{{#special:mypage}}'>ব্যৱহাৰকাৰী</a> (<a href='#' title='{{#special:mytalk}}'>আলোচনা</a>)",
+	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>ব্যৱহাৰকাৰী</a> (<a href='#' title='$2:Username'>আলোচনা</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "ইণ্ডেণ্ট",
 	"wikieditor-toolbar-help-content-indent-syntax": "সাধাৰন আখৰ<br />:ইন্টেন্ডেণ্ট আখৰ<br />::ইন্টেন্ডেণ্ট আখৰ",
 	"wikieditor-toolbar-help-content-indent-result": "সাধাৰণ পাঠ্য<dl><dd>ইণ্ডেণ্ট কৰা পাঠ্য<dl><dd>ইণ্ডেণ্ট কৰা পাঠ্য</dd></dl></dd></dl>"

@@ -1,7 +1,10 @@
 <?php
+
 namespace Elastica\Filter;
 
 use Elastica\Query\AbstractQuery;
+
+trigger_error('Deprecated: Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html', E_USER_DEPRECATED);
 
 /**
  * Nested filter.
@@ -9,6 +12,7 @@ use Elastica\Query\AbstractQuery;
  * @author Nicolas Ruflin <spam@ruflin.com>
  *
  * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-nested-filter.html
+ * @deprecated Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html
  */
 class Nested extends AbstractFilter
 {
@@ -33,7 +37,7 @@ class Nested extends AbstractFilter
      */
     public function setQuery(AbstractQuery $query)
     {
-        return $this->setParam('query', $query->toArray());
+        return $this->setParam('query', $query);
     }
 
     /**
@@ -45,7 +49,7 @@ class Nested extends AbstractFilter
      */
     public function setFilter(AbstractFilter $filter)
     {
-        return $this->setParam('filter', $filter->toArray());
+        return $this->setParam('filter', $filter);
     }
 
     /**

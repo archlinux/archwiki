@@ -16,6 +16,8 @@ namespace OOUI;
  *    checkboxes or radio buttons
  */
 class FieldLayout extends Layout {
+	use LabelElement;
+	use TitledElement;
 
 	/**
 	 * Alignment.
@@ -63,7 +65,7 @@ class FieldLayout extends Layout {
 	 * @param string|HtmlSnippet $config['help'] Explanatory text shown as a '?' icon.
 	 * @throws Exception An exception is thrown if no widget is specified
 	 */
-	public function __construct( $fieldWidget, array $config = array() ) {
+	public function __construct( $fieldWidget, array $config = [] ) {
 		// Allow passing positional parameters inside the config array
 		if ( is_array( $fieldWidget ) && isset( $fieldWidget['fieldWidget'] ) ) {
 			$config = $fieldWidget;
@@ -78,46 +80,46 @@ class FieldLayout extends Layout {
 		$hasInputWidget = $fieldWidget::$supportsSimpleLabel;
 
 		// Config initialization
-		$config = array_merge( array( 'align' => 'left' ), $config );
+		$config = array_merge( [ 'align' => 'left' ], $config );
 
 		// Parent constructor
 		parent::__construct( $config );
 
 		// Properties
 		$this->fieldWidget = $fieldWidget;
-		$this->errors = isset( $config['errors'] ) ? $config['errors'] : array();
-		$this->notices = isset( $config['notices'] ) ? $config['notices'] : array();
+		$this->errors = isset( $config['errors'] ) ? $config['errors'] : [];
+		$this->notices = isset( $config['notices'] ) ? $config['notices'] : [];
 		$this->field = new Tag( 'div' );
 		$this->messages = new Tag( 'ul' );
 		$this->body = new Tag( $hasInputWidget ? 'label' : 'div' );
 		if ( isset( $config['help'] ) ) {
-			$this->help = new ButtonWidget( array(
-				'classes' => array( 'oo-ui-fieldLayout-help' ),
+			$this->help = new ButtonWidget( [
+				'classes' => [ 'oo-ui-fieldLayout-help' ],
 				'framed' => false,
 				'icon' => 'info',
 				'title' => $config['help'],
-			) );
+			] );
 		} else {
 			$this->help = '';
 		}
 
-		// Mixins
-		$this->mixin( new LabelElement( $this, $config ) );
-		$this->mixin( new TitledElement( $this,
-			array_merge( $config, array( 'titled' => $this->label ) ) ) );
+		// Traits
+		$this->initializeLabelElement( $config );
+		$this->initializeTitledElement(
+			array_merge( $config, [ 'titled' => $this->label ] ) );
 
 		// Initialization
 		$this
-			->addClasses( array( 'oo-ui-fieldLayout' ) )
+			->addClasses( [ 'oo-ui-fieldLayout' ] )
+			->toggleClasses( [ 'oo-ui-fieldLayout-disable' ], $this->fieldWidget->isDisabled() )
 			->appendContent( $this->help, $this->body );
 		if ( count( $this->errors ) || count( $this->notices ) ) {
 			$this->appendContent( $this->messages );
 		}
-		$this->body->addClasses( array( 'oo-ui-fieldLayout-body' ) );
-		$this->messages->addClasses( array( 'oo-ui-fieldLayout-messages' ) );
+		$this->body->addClasses( [ 'oo-ui-fieldLayout-body' ] );
+		$this->messages->addClasses( [ 'oo-ui-fieldLayout-messages' ] );
 		$this->field
-			->addClasses( array( 'oo-ui-fieldLayout-field' ) )
-			->toggleClasses( array( 'oo-ui-fieldLayout-disable' ), $this->fieldWidget->isDisabled() )
+			->addClasses( [ 'oo-ui-fieldLayout-field' ] )
 			->appendContent( $this->fieldWidget );
 
 		foreach ( $this->notices as $text ) {
@@ -138,16 +140,16 @@ class FieldLayout extends Layout {
 	private function makeMessage( $kind, $text ) {
 		$listItem = new Tag( 'li' );
 		if ( $kind === 'error' ) {
-			$icon = new IconWidget( array( 'icon' => 'alert', 'flags' => array( 'warning' ) ) );
+			$icon = new IconWidget( [ 'icon' => 'alert', 'flags' => [ 'warning' ] ] );
 		} elseif ( $kind === 'notice' ) {
-			$icon = new IconWidget( array( 'icon' => 'info' ) );
+			$icon = new IconWidget( [ 'icon' => 'info' ] );
 		} else {
 			$icon = null;
 		}
-		$message = new LabelWidget( array( 'label' => $text ) );
+		$message = new LabelWidget( [ 'label' => $text ] );
 		$listItem
 			->appendContent( $icon, $message )
-			->addClasses( array( "oo-ui-fieldLayout-messages-$kind" ) );
+			->addClasses( [ "oo-ui-fieldLayout-messages-$kind" ] );
 		return $listItem;
 	}
 
@@ -164,12 +166,12 @@ class FieldLayout extends Layout {
 	 * Set the field alignment mode.
 	 *
 	 * @param string $value Alignment mode, either 'left', 'right', 'top' or 'inline'
-	 * @chainable
+	 * @return $this
 	 */
 	protected function setAlignment( $value ) {
 		if ( $value !== $this->align ) {
 			// Default to 'left'
-			if ( !in_array( $value, array( 'left', 'right', 'top', 'inline' ) ) ) {
+			if ( !in_array( $value, [ 'left', 'right', 'top', 'inline' ] ) ) {
 				$value = 'left';
 			}
 			// Reorder elements
@@ -185,9 +187,9 @@ class FieldLayout extends Layout {
 			// * oo-ui-fieldLayout-align-top
 			// * oo-ui-fieldLayout-align-inline
 			if ( $this->align ) {
-				$this->removeClasses( array( 'oo-ui-fieldLayout-align-' . $this->align ) );
+				$this->removeClasses( [ 'oo-ui-fieldLayout-align-' . $this->align ] );
 			}
-			$this->addClasses( array( 'oo-ui-fieldLayout-align-' . $value ) );
+			$this->addClasses( [ 'oo-ui-fieldLayout-align-' . $value ] );
 			$this->align = $value;
 		}
 

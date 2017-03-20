@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica\Test\Index;
 
 use Elastica\Document;
@@ -231,9 +232,10 @@ class SettingsTest extends BaseTest
             $type->addDocument($doc2);
             $this->fail('Should throw exception because of read only');
         } catch (ResponseException $e) {
-            $message = $e->getMessage();
-            $this->assertContains('ClusterBlockException', $message);
-            $this->assertContains('index write', $message);
+            $error = $e->getResponse()->getFullError();
+
+            $this->assertContains('cluster_block_exception', $error['type']);
+            $this->assertContains('index write', $error['reason']);
         }
 
         // Remove read only, add document
@@ -306,6 +308,7 @@ class SettingsTest extends BaseTest
         $this->assertFalse($settings->getBlocksMetadata());
 
         $settings->setBlocksMetadata(true);
+
         $this->assertTrue($settings->getBlocksMetadata());
 
         $settings->setBlocksMetadata(false);
@@ -331,8 +334,8 @@ class SettingsTest extends BaseTest
             $settings = $index->getSettings()->get();
             $this->fail('Should throw exception because of index not found');
         } catch (ResponseException $e) {
-            $message = $e->getMessage();
-            $this->assertContains('IndexMissingException', $message);
+            $error = $e->getResponse()->getFullError();
+            $this->assertContains('index_not_found_exception', $error['type']);
         }
     }
 }

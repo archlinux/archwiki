@@ -2,10 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"CERminator",
-			"Kal-El"
+			"Kal-El",
+			"Srdjan m"
 		]
 	},
 	"modern.css": "/* CSS umetnut ovdje uticat će na korisnike koji koriste Modern skin */",
 	"modern.js": "/* Bilo koja JavaScript će biti učitana za sve korisnike koji koriste Modern skin */",
-	"skinname-modern": "Moderna"
+	"skinname-modern": "Moderna",
+	"modern-desc": "Plavosiva tema s bočnom i gornjom trakom. Izvedena iz teme MonoKnjiga"
 }

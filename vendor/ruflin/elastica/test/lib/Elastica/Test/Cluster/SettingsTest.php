@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica\Test\Cluster;
 
 use Elastica\Cluster\Settings;
@@ -84,18 +85,18 @@ class SettingsTest extends BaseTest
             $index1->getType('test')->addDocument($doc3);
             $this->fail('should throw read only exception');
         } catch (ResponseException $e) {
-            $message = $e->getMessage();
-            $this->assertContains('ClusterBlockException', $message);
-            $this->assertContains('cluster read-only', $message);
+            $error = $e->getResponse()->getFullError();
+            $this->assertContains('cluster_block_exception', $error['type']);
+            $this->assertContains('cluster read-only', $error['reason']);
         }
 
         try {
             $index2->getType('test')->addDocument($doc4);
             $this->fail('should throw read only exception');
         } catch (ResponseException $e) {
-            $message = $e->getMessage();
-            $this->assertContains('ClusterBlockException', $message);
-            $this->assertContains('cluster read-only', $message);
+            $error = $e->getResponse()->getFullError();
+            $this->assertContains('cluster_block_exception', $error['type']);
+            $this->assertContains('cluster read-only', $error['reason']);
         }
 
         $response = $settings->setReadOnly(false);

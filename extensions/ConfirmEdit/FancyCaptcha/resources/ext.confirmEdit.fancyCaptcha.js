@@ -1,11 +1,14 @@
 ( function ( $, mw ) {
 	var api = new mw.Api();
 	$( document ).on( 'click', '.fancycaptcha-reload', function () {
-		var $this = $( this ), $captchaImage;
+		var $this = $( this ),
+			$root, $captchaImage;
+
+		$root = $this.closest( '.fancycaptcha-captcha-container' );
 
 		$this.addClass( 'fancycaptcha-reload-loading' );
 
-		$captchaImage = $( '.fancycaptcha-image' );
+		$captchaImage = $root.find( '.fancycaptcha-image' );
 
 		// AJAX request to get captcha index key
 		api.post( {
@@ -16,6 +19,7 @@
 		} )
 		.done( function ( xmldata ) {
 			var imgSrc, captchaIndex;
+
 			captchaIndex = $( xmldata ).find( 'fancycaptchareload' ).attr( 'index' );
 			if ( typeof captchaIndex === 'string' ) {
 				// replace index key with a new one for captcha image
@@ -24,8 +28,12 @@
 				$captchaImage.attr( 'src', imgSrc );
 
 				// replace index key with a new one for hidden tag
-				$( '#wpCaptchaId' ).val( captchaIndex );
-				$( '#wpCaptchaWord' ).val( '' ).focus();
+				$( '#mw-input-captchaId' ).val( captchaIndex );
+				$( '#mw-input-captchaWord' ).val( '' ).focus();
+
+				// now do the same with a selector that works for pre-1.27 login forms
+				$root.find( '[name="wpCaptchaId"]' ).val( captchaIndex );
+				$root.find( '[name="wpCaptchaWord"]' ).val( '' ).focus();
 			}
 		} )
 		.always( function () {

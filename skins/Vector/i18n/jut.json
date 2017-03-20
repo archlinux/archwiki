@@ -4,8 +4,11 @@
 			"Jyllanj"
 		]
 	},
+	"vector-action-addsection": "Ny emn",
+	"vector-action-move": "Flytt",
+	"vector-view-create": "Oprett",
 	"vector-view-edit": "Redigiir",
-	"vector-view-history": "Wis historik",
+	"vector-view-history": "Sie historik",
 	"vector-view-view": "Läs",
 	"vector-more-actions": "Mier"
 }

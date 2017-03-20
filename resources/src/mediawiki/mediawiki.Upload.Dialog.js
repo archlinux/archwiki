@@ -16,8 +16,18 @@
 	 *
 	 * The dialog's closing promise can be used to get details of the upload.
 	 *
+	 * If you want to use a different OO.ui.BookletLayout, for example the
+	 * mw.ForeignStructuredUpload.BookletLayout, like in the case of of the upload
+	 * interface in VisualEditor, you can pass it in the {@link #cfg-bookletClass}:
+	 *
+	 *     var uploadDialog = new mw.Upload.Dialog( {
+	 *         bookletClass: mw.ForeignStructuredUpload.BookletLayout
+	 *     } );
+	 *
+	 *
 	 * @class mw.Upload.Dialog
 	 * @uses mw.Upload
+	 * @uses mw.Upload.BookletLayout
 	 * @extends OO.ui.ProcessDialog
 	 * @cfg {Function} [bookletClass=mw.Upload.BookletLayout] Booklet class to be
 	 *     used for the steps
@@ -59,7 +69,13 @@
 			flags: 'safe',
 			action: 'cancel',
 			label: mw.msg( 'upload-dialog-button-cancel' ),
-			modes: [ 'upload', 'insert', 'info' ]
+			modes: [ 'upload', 'insert' ]
+		},
+		{
+			flags: 'safe',
+			action: 'cancelupload',
+			label: mw.msg( 'upload-dialog-button-back' ),
+			modes: [ 'info' ]
 		},
 		{
 			flags: [ 'primary', 'progressive' ],
@@ -68,7 +84,7 @@
 			modes: 'insert'
 		},
 		{
-			flags: [ 'primary', 'constructive' ],
+			flags: [ 'primary', 'progressive' ],
 			label: mw.msg( 'upload-dialog-button-save' ),
 			action: 'save',
 			modes: 'info'
@@ -118,7 +134,7 @@
 	 * @inheritdoc
 	 */
 	mw.Upload.Dialog.prototype.getBodyHeight = function () {
-		return 300;
+		return 600;
 	};
 
 	/**
@@ -164,7 +180,7 @@
 	mw.Upload.Dialog.prototype.getSetupProcess = function ( data ) {
 		return mw.Upload.Dialog.parent.prototype.getSetupProcess.call( this, data )
 			.next( function () {
-				this.uploadBooklet.initialize();
+				return this.uploadBooklet.initialize();
 			}, this );
 	};
 
@@ -188,6 +204,9 @@
 		if ( action === 'cancel' ) {
 			return new OO.ui.Process( this.close() );
 		}
+		if ( action === 'cancelupload' ) {
+			return new OO.ui.Process( this.uploadBooklet.initialize() );
+		}
 
 		return mw.Upload.Dialog.parent.prototype.getActionProcess.call( this, action );
 	};
@@ -201,5 +220,4 @@
 				this.uploadBooklet.clear();
 			}, this );
 	};
-
 }( jQuery, mediaWiki ) );

@@ -45,9 +45,9 @@
  */
 class VirtualRESTServiceClient {
 	/** @var MultiHttpClient */
-	protected $http;
-	/** @var Array Map of (prefix => VirtualRESTService) */
-	protected $instances = array();
+	private $http;
+	/** @var array Map of (prefix => VirtualRESTService|array) */
+	private $instances = [];
 
 	const VALID_MOUNT_REGEX = '#^/[0-9a-z]+/([0-9a-z]+/)*$#';
 
@@ -61,14 +61,23 @@ class VirtualRESTServiceClient {
 	/**
 	 * Map a prefix to service handler
 	 *
+	 * If $instance is in array, it must have these keys:
+	 *   - class : string; fully qualified VirtualRESTService class name
+	 *   - config : array; map of parameters that is the first __construct() argument
+	 *
 	 * @param string $prefix Virtual path
-	 * @param VirtualRESTService $instance
+	 * @param VirtualRESTService|array $instance Service or info to yield the service
 	 */
-	public function mount( $prefix, VirtualRESTService $instance ) {
+	public function mount( $prefix, $instance ) {
 		if ( !preg_match( self::VALID_MOUNT_REGEX, $prefix ) ) {
 			throw new UnexpectedValueException( "Invalid service mount point '$prefix'." );
 		} elseif ( isset( $this->instances[$prefix] ) ) {
 			throw new UnexpectedValueException( "A service is already mounted on '$prefix'." );
+		}
+		if ( !( $instance instanceof VirtualRESTService ) ) {
+			if ( !isset( $instance['class'] ) || !isset( $instance['config'] ) ) {
+				throw new UnexpectedValueException( "Missing 'class' or 'config' ('$prefix')." );
+			}
 		}
 		$this->instances[$prefix] = $instance;
 	}
@@ -103,8 +112,8 @@ class VirtualRESTServiceClient {
 			return ( $al < $bl ) ? 1 : -1; // largest prefix first
 		};
 
-		$matches = array(); // matching prefixes (mount points)
-		foreach ( $this->instances as $prefix => $service ) {
+		$matches = []; // matching prefixes (mount points)
+		foreach ( $this->instances as $prefix => $unused ) {
 			if ( strpos( $path, $prefix ) === 0 ) {
 				$matches[] = $prefix;
 			}
@@ -112,9 +121,9 @@ class VirtualRESTServiceClient {
 		usort( $matches, $cmpFunc );
 
 		// Return the most specific prefix and corresponding service
-		return isset( $matches[0] )
-			? array( $matches[0], $this->instances[$matches[0]] )
-			: array( null, null );
+		return $matches
+			? [ $matches[0], $this->getInstance( $matches[0] ) ]
+			: [ null, null ];
 	}
 
 	/**
@@ -134,8 +143,7 @@ class VirtualRESTServiceClient {
 	 * @return array Response array for request
 	 */
 	public function run( array $req ) {
-		$responses = $this->runMulti( array( $req ) );
-		return $responses[0];
+		return $this->runMulti( [ $req ] )[0];
 	}
 
 	/**
@@ -166,17 +174,17 @@ class VirtualRESTServiceClient {
 				$req['url'] = $req[1]; // short-form
 				unset( $req[1] );
 			}
-			$req['chain'] = array(); // chain or list of replaced requests
+			$req['chain'] = []; // chain or list of replaced requests
 		}
 		unset( $req ); // don't assign over this by accident
 
 		$curUniqueId = 0;
-		$armoredIndexMap = array(); // (original index => new index)
+		$armoredIndexMap = []; // (original index => new index)
 
-		$doneReqs = array(); // (index => request)
-		$executeReqs = array(); // (index => request)
-		$replaceReqsByService = array(); // (prefix => index => request)
-		$origPending = array(); // (index => 1) for original requests
+		$doneReqs = []; // (index => request)
+		$executeReqs = []; // (index => request)
+		$replaceReqsByService = []; // (prefix => index => request)
+		$origPending = []; // (index => 1) for original requests
 
 		foreach ( $reqs as $origIndex => $req ) {
 			// Re-index keys to consecutive integers (they will be swapped back later)
@@ -210,14 +218,14 @@ class VirtualRESTServiceClient {
 			}
 			// Track requests executed this round that have a prefix/service.
 			// Note that this also includes requests where 'response' was forced.
-			$checkReqIndexesByPrefix = array();
+			$checkReqIndexesByPrefix = [];
 			// Resolve the virtual URLs valid and qualified HTTP(S) URLs
 			// and add any required authentication headers for the backend.
 			// Services can also replace requests with new ones, either to
 			// defer the original or to set a proxy response to the original.
-			$newReplaceReqsByService = array();
+			$newReplaceReqsByService = [];
 			foreach ( $replaceReqsByService as $prefix => $servReqs ) {
-				$service = $this->instances[$prefix];
+				$service = $this->getInstance( $prefix );
 				foreach ( $service->onRequests( $servReqs, $idFunc ) as $index => $req ) {
 					// Services use unique IDs for replacement requests
 					if ( isset( $servReqs[$index] ) || isset( $origPending[$index] ) ) {
@@ -238,22 +246,20 @@ class VirtualRESTServiceClient {
 					$checkReqIndexesByPrefix[$prefix][$index] = 1;
 				}
 			}
-			// Update index of requests to inspect for replacement
-			$replaceReqsByService = $newReplaceReqsByService;
 			// Run the actual work HTTP requests
 			foreach ( $this->http->runMulti( $executeReqs ) as $index => $ranReq ) {
 				$doneReqs[$index] = $ranReq;
 				unset( $origPending[$index] );
 			}
-			$executeReqs = array();
+			$executeReqs = [];
 			// Services can also replace requests with new ones, either to
 			// defer the original or to set a proxy response to the original.
 			// Any replacement requests executed above will need to be replaced
 			// with new requests (eventually the original). The responses can be
 			// forced by setting 'response' rather than actually be sent over the wire.
-			$newReplaceReqsByService = array();
+			$newReplaceReqsByService = [];
 			foreach ( $checkReqIndexesByPrefix as $prefix => $servReqIndexes ) {
-				$service = $this->instances[$prefix];
+				$service = $this->getInstance( $prefix );
 				// $doneReqs actually has the requests (with 'response' set)
 				$servReqs = array_intersect_key( $doneReqs, $servReqIndexes );
 				foreach ( $service->onResponses( $servReqs, $idFunc ) as $index => $req ) {
@@ -278,7 +284,7 @@ class VirtualRESTServiceClient {
 			$replaceReqsByService = $newReplaceReqsByService;
 		} while ( count( $origPending ) );
 
-		$responses = array();
+		$responses = [];
 		// Update $reqs to include 'response' and normalized request 'headers'.
 		// This maintains the original order of $reqs.
 		foreach ( $reqs as $origIndex => $req ) {
@@ -290,5 +296,27 @@ class VirtualRESTServiceClient {
 		}
 
 		return $responses;
+	}
+
+	/**
+	 * @param string $prefix
+	 * @return VirtualRESTService
+	 */
+	private function getInstance( $prefix ) {
+		if ( !isset( $this->instances[$prefix] ) ) {
+			throw new RuntimeException( "No service registered at prefix '{$prefix}'." );
+		}
+
+		if ( !( $this->instances[$prefix] instanceof VirtualRESTService ) ) {
+			$config = $this->instances[$prefix]['config'];
+			$class = $this->instances[$prefix]['class'];
+			$service = new $class( $config );
+			if ( !( $service instanceof VirtualRESTService ) ) {
+				throw new UnexpectedValueException( "Registered service has the wrong class." );
+			}
+			$this->instances[$prefix] = $service;
+		}
+
+		return $this->instances[$prefix];
 	}
 }

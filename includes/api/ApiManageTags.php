@@ -29,8 +29,14 @@ class ApiManageTags extends ApiBase {
 		$params = $this->extractRequestParams();
 
 		// make sure the user is allowed
-		if ( !$this->getUser()->isAllowed( 'managechangetags' ) ) {
-			$this->dieUsage( "You don't have permission to manage change tags", 'permissiondenied' );
+		if ( $params['operation'] !== 'delete'
+			&& !$this->getUser()->isAllowed( 'managechangetags' )
+		) {
+			$this->dieUsage( "You don't have permission to manage change tags",
+				'permissiondenied' );
+		} elseif ( !$this->getUser()->isAllowed( 'deletechangetags' ) ) {
+			$this->dieUsage( "You don't have permission to delete change tags",
+				'permissiondenied' );
 		}
 
 		$result = $this->getResult();
@@ -42,10 +48,10 @@ class ApiManageTags extends ApiBase {
 			$this->dieStatus( $status );
 		}
 
-		$ret = array(
+		$ret = [
 			'operation' => $params['operation'],
 			'tag' => $params['tag'],
-		);
+		];
 		if ( !$status->isGood() ) {
 			$ret['warnings'] = $this->getErrorFormatter()->arrayFromStatus( $status, 'warning' );
 		}
@@ -65,23 +71,23 @@ class ApiManageTags extends ApiBase {
 	}
 
 	public function getAllowedParams() {
-		return array(
-			'operation' => array(
-				ApiBase::PARAM_TYPE => array( 'create', 'delete', 'activate', 'deactivate' ),
+		return [
+			'operation' => [
+				ApiBase::PARAM_TYPE => [ 'create', 'delete', 'activate', 'deactivate' ],
 				ApiBase::PARAM_REQUIRED => true,
-			),
-			'tag' => array(
+			],
+			'tag' => [
 				ApiBase::PARAM_TYPE => 'string',
 				ApiBase::PARAM_REQUIRED => true,
-			),
-			'reason' => array(
+			],
+			'reason' => [
 				ApiBase::PARAM_TYPE => 'string',
-			),
-			'ignorewarnings' => array(
+			],
+			'ignorewarnings' => [
 				ApiBase::PARAM_TYPE => 'boolean',
 				ApiBase::PARAM_DFLT => false,
-			),
-		);
+			],
+		];
 	}
 
 	public function needsToken() {
@@ -89,7 +95,7 @@ class ApiManageTags extends ApiBase {
 	}
 
 	protected function getExamplesMessages() {
-		return array(
+		return [
 			'action=managetags&operation=create&tag=spam&reason=For+use+in+edit+patrolling&token=123ABC'
 				=> 'apihelp-managetags-example-create',
 			'action=managetags&operation=delete&tag=vandlaism&reason=Misspelt&token=123ABC'
@@ -98,7 +104,7 @@ class ApiManageTags extends ApiBase {
 				=> 'apihelp-managetags-example-activate',
 			'action=managetags&operation=deactivate&tag=spam&reason=No+longer+required&token=123ABC'
 				=> 'apihelp-managetags-example-deactivate',
-		);
+		];
 	}
 
 	public function getHelpUrls() {

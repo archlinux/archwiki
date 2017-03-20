@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica\Exception;
 
 use Elastica\Request;
@@ -31,7 +32,7 @@ class ResponseException extends \RuntimeException implements ExceptionInterface
     {
         $this->_request = $request;
         $this->_response = $response;
-        parent::__construct($response->getError());
+        parent::__construct($response->getErrorMessage());
     }
 
     /**
@@ -65,6 +66,6 @@ class ResponseException extends \RuntimeException implements ExceptionInterface
         $transfer = $response->getTransferInfo();
         $code = array_key_exists('http_code', $transfer) ? $transfer['http_code'] : 0;
 
-        return new ElasticsearchException($code, $response->getError());
+        return new ElasticsearchException($code, $response->getErrorMessage());
     }
 }

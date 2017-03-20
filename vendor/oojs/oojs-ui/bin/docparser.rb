@@ -31,8 +31,7 @@ def parse_file filename
 
 	# ewwww
 	# some docblocks are missing and we really need them
-	text = text.sub(/(?<!\*\/\n)^class/, "/**\n*/\nclass")
-	# text = text.sub('public static $targetPropertyName', "/**\n*/\npublic static $targetPropertyName")
+	text = text.sub(/(?<!\*\/\n)^(class|trait)/, "/**\n*/\n\\1")
 
 	# find all documentation blocks, together with the following line (unless it contains another docblock)
 	docblocks = text.scan(/\/\*\*[\s\S]+?\*\/\n[ \t]*(?:(?=\/\*\*)|.*)/)
@@ -58,7 +57,7 @@ def parse_file filename
 		}
 		valid_for_all = %w[name description].map(&:to_sym)
 		valid_per_kind = {
-			class:    valid_for_all + %w[parent mixins methods properties events abstract].map(&:to_sym),
+			class:    valid_for_all + %w[parent mixins methods properties events abstract trait].map(&:to_sym),
 			method:   valid_for_all + %w[params config return visibility static].map(&:to_sym),
 			property: valid_for_all + %w[type static].map(&:to_sym),
 			event:    valid_for_all + %w[params].map(&:to_sym),
@@ -94,6 +93,7 @@ def parse_file filename
 				kind = :method
 			when 'class'
 				kind = :class
+				data[:name] = cleanup_class_name(content.strip) if content && !content.strip.empty?
 			when 'method'
 				kind = :method
 			when 'property', 'var'
@@ -166,7 +166,7 @@ def parse_file filename
 				ignore = true
 			when 'inheritable', 'deprecated', 'singleton', 'throws',
 				 'chainable', 'fires', 'localdoc', 'inheritdoc', 'member',
-				 'see'
+				 'see', 'uses'
 				# skip
 			else
 				bad_input filename, comment_line
@@ -187,12 +187,12 @@ def parse_file filename
 				kind_, name = m.captures
 				data[:static] = true if kind_ == 'static'
 				kind = {'static' => :property, 'prototype' => :method}[ kind_.strip ] if kind_ && !kind
-				data[:name] = cleanup_class_name(name)
+				data[:name] ||= cleanup_class_name(name)
 			when :php
 				m = code_line.match(/
 					\s*
 					(?:(public|protected|private)\s)?
-					(?:(static)\s)?(function\s|class\s|\$)
+					(?:(static)\s)?(function\s|class\s|trait\s|\$)
 					(\w+)
 					(?:\sextends\s(\w+))?
 				/x)
@@ -201,11 +201,12 @@ def parse_file filename
 					next
 				end
 				visibility, static, kind_, name, parent = m.captures
-				kind = {'$' => :property, 'function' => :method, 'class' => :class}[ kind_.strip ]
+				kind = {'$' => :property, 'function' => :method, 'class' => :class, 'trait' => :class}[ kind_.strip ]
 				data[:visibility] = {'private' => :private, 'protected' => :protected, 'public' => :public}[ visibility ] || :public
+				data[:trait] = true if kind_.strip == 'trait'
 				data[:static] = true if static
 				data[:parent] = cleanup_class_name(parent) if parent
-				data[:name] = cleanup_class_name(name)
+				data[:name] ||= cleanup_class_name(name)
 			end
 		end
 
@@ -231,15 +232,17 @@ def parse_file filename
 				property: :properties,
 				event: :events,
 			}
-			current_class[keys[kind]] << data.select{|k, _v| valid_per_kind[kind].include? k }
-			previous_item = current_class[keys[kind]]
+			if current_class
+				current_class[keys[kind]] << data.select{|k, _v| valid_per_kind[kind].include? k }
+				previous_item = current_class[keys[kind]]
+			end
 		end
 	}
 
 	# this is evil, assumes we only have one class in a file, but we'd need a proper parser to do it better
 	if current_class
 		current_class[:mixins] +=
-			text.scan(/\$this->mixin\( .*?new (\w+)\( \$this/).flatten.map(&method(:cleanup_class_name))
+			text.scan(/[ \t]use (\w+)(?: ?\{|;)/).flatten.map(&method(:cleanup_class_name))
 	end
 
 	output << current_class if current_class

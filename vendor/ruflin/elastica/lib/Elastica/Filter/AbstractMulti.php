@@ -1,10 +1,15 @@
 <?php
+
 namespace Elastica\Filter;
+
+trigger_error('Deprecated: Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html', E_USER_DEPRECATED);
 
 /**
  * Multi Abstract filter object. Should be extended by filter types composed of an array of sub filters.
  *
  * @author Nicolas Ruflin <spam@ruflin.com>
+ *
+ * @deprecated Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html
  */
 abstract class AbstractMulti extends AbstractFilter
 {
@@ -16,7 +21,7 @@ abstract class AbstractMulti extends AbstractFilter
     protected $_filters = array();
 
     /**
-     * @param \Elastica\Filter\AbstractFilter $filters
+     * @param array $filters
      */
     public function __construct(array $filters = array())
     {
@@ -34,7 +39,7 @@ abstract class AbstractMulti extends AbstractFilter
      */
     public function addFilter(AbstractFilter $filter)
     {
-        $this->_filters[] = $filter->toArray();
+        $this->_filters[] = $filter;
 
         return $this;
     }
@@ -84,6 +89,6 @@ abstract class AbstractMulti extends AbstractFilter
 
         $data[$name] = $filterData;
 
-        return $data;
+        return $this->_convertArrayable($data);
     }
 }

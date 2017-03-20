@@ -32,27 +32,6 @@
 		.section-hidden {
 			display: none;
 		}
-
-		/* Gets overridden when the section div is in class loading - see below */
-		div {
-			.spinner {
-				display: none;
-			}
-		}
-
-		.loading {
-			.spinner {
-				.background-image('images/toolbar/loading.gif');
-				background-position: left center;
-				background-repeat: no-repeat;
-				color: #666;
-				display: block;
-				float: left;
-				height: 32px;
-				margin-left: 0.5em;
-				padding-left: 32px;
-			}
-		}
 	}
 
 	/* Top Level Containers */
@@ -90,10 +69,6 @@
 				&:hover {
 					text-decoration: none;
 				}
-			}
-
-			a.loading {
-				.background-image('images/toolbar/loading-small.gif');
 			}
 		}
 	}
@@ -340,10 +315,8 @@
 	}
 }
 
-/* Sprited Buttons */
-.wikiEditor-toolbar-spritedButton {
-	.background-image-svg('images/toolbar/button-sprite.svg', 'images/toolbar/button-sprite.png');
-	background-position: 0 0;
+.tool-button {
+	background-position: 2px 2px;
 	background-repeat: no-repeat;
 	display: block;
 	float: left;
@@ -353,6 +326,11 @@
 	padding: 2px;
 	cursor: pointer;
 	overflow: hidden;
+}
+
+/* Sprited Buttons */
+.wikiEditor-toolbar-spritedButton {
+	.background-image-svg('images/toolbar/button-sprite.svg', 'images/toolbar/button-sprite.png');
 }
 
 .ui-widget {

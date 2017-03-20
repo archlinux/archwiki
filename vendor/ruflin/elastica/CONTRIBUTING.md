@@ -15,13 +15,13 @@ Issues
 
 Setup
 -----
-Elastica currently allows two setups for development. Either through vagrant or docker-compose. To use the vagrant environment, run `vagrant up`. To use the docker environment, check out the Makefile for the necessary commands.
+Elastica uses docker for it's development environment. To use the docker environment, check out the Makefile for the necessary commands.
 * Run your changes / tests in the virtual environment to make sure it is reproducible.
-* Run the tests before creating the pull request using vagrant or docker-compose locally.
+* Run the tests before creating the pull request using docker-compose locally.
 
 Commands
 --------
-To run the commands below, you must have docker-compose [installed](https://docs.docker.com/compose/install/). The first time the commands are run it takes some time to download all the partial images. Form then on the commands should run very fast. The advantage in using the commands below is that no local tools and libraries have to be installed and it is guaranteed that everytone is using the same tools.
+To run the commands below, you must have docker-compose [installed](https://docs.docker.com/compose/install/). The first time the commands are run it takes some time to download all the partial images. From then on the commands should run very fast. The advantage in using the commands below is that no local tools and libraries have to be installed and it is guaranteed that everytone is using the same tools.
 
 ## Run Tests
 

@@ -1,10 +1,11 @@
 <?php
+
 namespace Elastica\Test\Aggregation;
 
 use Elastica\Aggregation\Max;
 use Elastica\Document;
 use Elastica\Query;
-use Elastica\Script;
+use Elastica\Script\Script;
 
 class MaxTest extends BaseAggregationTest
 {
@@ -57,6 +58,7 @@ class MaxTest extends BaseAggregationTest
      */
     public function testMaxAggregation()
     {
+        $this->_checkScriptInlineSetting();
         $index = $this->_getIndexForTest();
 
         $agg = new Max('min_price');

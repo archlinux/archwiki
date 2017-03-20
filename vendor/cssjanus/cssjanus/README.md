@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/cssjanus/php-cssjanus.svg?branch=master)](https://travis-ci.org/cssjanus/php-cssjanus) [![Latest Stable Version](https://poser.pugx.org/cssjanus/cssjanus/v/stable.svg)](https://packagist.org/packages/cssjanus/cssjanus)
+[![Build Status](https://travis-ci.org/cssjanus/php-cssjanus.svg?branch=master)](https://travis-ci.org/cssjanus/php-cssjanus) [![Packagist](https://img.shields.io/packagist/v/cssjanus/cssjanus.svg?style=flat)](https://packagist.org/packages/cssjanus/cssjanus)
 
 # CSSJanus
 

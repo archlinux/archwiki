@@ -5,11 +5,13 @@
  * @license GPL-2.0+
  */
 
+namespace LocalisationUpdate;
+
 /**
  * Interface for classes which provide list of components, which should be
  * included for l10n updates.
  */
-class LU_Finder {
+class Finder {
 	/**
 	 * @param array $php See $wgExtensionMessagesFiles
 	 * @param array $json See $wgMessagesDirs
@@ -25,15 +27,15 @@ class LU_Finder {
 	 * @return array
 	 */
 	public function getComponents() {
-		$components = array();
+		$components = [];
 
 		// For older versions of Mediawiki, pull json updates even though its still using php
 		if ( !isset( $this->json['core'] ) ) {
-			$components['core'] = array(
+			$components['core'] = [
 				'repo' => 'mediawiki',
 				'orig' => "file://{$this->core}/languages/messages/Messages*.php",
 				'path' => 'languages/messages/i18n/*.json',
-			);
+			];
 		}
 
 		foreach ( $this->json as $key => $value ) {
@@ -42,13 +44,13 @@ class LU_Finder {
 
 			foreach ( (array)$value as $subkey => $subvalue ) {
 				// Mediawiki core files
-				$matches = array();
+				$matches = [];
 				if ( preg_match( '~/(?P<path>(?:includes|languages|resources)/.*)$~', $subvalue, $matches ) ) {
-					$components["$key-$subkey"] = array(
+					$components["$key-$subkey"] = [
 						'repo' => 'mediawiki',
 						'orig' => "file://$value/*.json",
 						'path' => "{$matches['path']}/*.json",
-					);
+					];
 					continue;
 				}
 
@@ -69,18 +71,18 @@ class LU_Finder {
 		}
 
 		foreach ( $this->php as $key => $value ) {
-			$matches = array();
+			$matches = [];
 			$ok = preg_match( '~/extensions/(?P<name>[^/]+)/(?P<path>.*\.i18n\.php)$~', $value, $matches );
 			if ( !$ok ) {
 				continue;
 			}
 
-			$components[$key] = array(
+			$components[$key] = [
 				'repo' => 'extension',
 				'name' => $matches['name'],
 				'orig' => "file://$value",
 				'path' => $matches['path'],
-			);
+			];
 		}
 
 		return $components;
@@ -93,15 +95,15 @@ class LU_Finder {
 	 */
 	private function getItem( $dir, $subvalue ) {
 		// This ignores magic, alias etc. non message files
-		$matches = array();
+		$matches = [];
 		if ( !preg_match( "~/$dir/(?P<name>[^/]+)/(?P<path>.*)$~", $subvalue, $matches ) ) {
 			return null;
 		}
 
-		return array(
+		return [
 			'name' => $matches['name'],
 			'orig' => "file://$subvalue/*.json",
 			'path' => "{$matches['path']}/*.json",
-		);
+		];
 	}
 }

@@ -24,102 +24,33 @@
 /**
  * Abstract base class for update jobs that do something with some secondary
  * data extracted from article.
- *
- * @note subclasses should NOT start or commit transactions in their doUpdate() method,
- *       a transaction will automatically be wrapped around the update. If need be,
- *       subclasses can override the beginTransaction() and commitTransaction() methods.
  */
 abstract class DataUpdate implements DeferrableUpdate {
-	/**
-	 * Constructor
-	 */
+	/** @var mixed Result from LBFactory::getEmptyTransactionTicket() */
+	protected $ticket;
+
 	public function __construct() {
-		# noop
+		// noop
 	}
 
 	/**
-	 * Begin an appropriate transaction, if any.
-	 * This default implementation does nothing.
+	 * @param mixed $ticket Result of getEmptyTransactionTicket()
+	 * @since 1.28
 	 */
-	public function beginTransaction() {
-		//noop
-	}
-
-	/**
-	 * Commit the transaction started via beginTransaction, if any.
-	 * This default implementation does nothing.
-	 */
-	public function commitTransaction() {
-		//noop
-	}
-
-	/**
-	 * Abort / roll back the transaction started via beginTransaction, if any.
-	 * This default implementation does nothing.
-	 */
-	public function rollbackTransaction() {
-		//noop
+	public function setTransactionTicket( $ticket ) {
+		$this->ticket = $ticket;
 	}
 
 	/**
 	 * Convenience method, calls doUpdate() on every DataUpdate in the array.
 	 *
-	 * This methods supports transactions logic by first calling beginTransaction()
-	 * on all updates in the array, then calling doUpdate() on each, and, if all goes well,
-	 * then calling commitTransaction() on each update. If an error occurs,
-	 * rollbackTransaction() will be called on any update object that had beginTransaction()
-	 * called but not yet commitTransaction().
-	 *
-	 * This allows for limited transactional logic across multiple backends for storing
-	 * secondary data.
-	 *
-	 * @param array $updates A list of DataUpdate instances
-	 * @throws Exception|null
+	 * @param DataUpdate[] $updates A list of DataUpdate instances
+	 * @throws Exception
+	 * @deprecated Since 1.28 Use DeferredUpdates::execute()
 	 */
-	public static function runUpdates( $updates ) {
-		if ( empty( $updates ) ) {
-			return; # nothing to do
-		}
-
-		$open_transactions = array();
-		$exception = null;
-
-		/**
-		 * @var $update DataUpdate
-		 * @var $trans DataUpdate
-		 */
-
-		try {
-			// begin transactions
-			foreach ( $updates as $update ) {
-				$update->beginTransaction();
-				$open_transactions[] = $update;
-			}
-
-			// do work
-			foreach ( $updates as $update ) {
-				$update->doUpdate();
-			}
-
-			// commit transactions
-			while ( count( $open_transactions ) > 0 ) {
-				$trans = array_pop( $open_transactions );
-				$trans->commitTransaction();
-			}
-		} catch ( Exception $ex ) {
-			$exception = $ex;
-			wfDebug( "Caught exception, will rethrow after rollback: " .
-				$ex->getMessage() . "\n" );
-		}
-
-		// rollback remaining transactions
-		while ( count( $open_transactions ) > 0 ) {
-			$trans = array_pop( $open_transactions );
-			$trans->rollbackTransaction();
-		}
-
-		if ( $exception ) {
-			throw $exception; // rethrow after cleanup
+	public static function runUpdates( array $updates ) {
+		foreach ( $updates as $update ) {
+			$update->doUpdate();
 		}
 	}
 }

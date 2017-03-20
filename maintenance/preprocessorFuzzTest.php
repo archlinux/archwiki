@@ -21,12 +21,13 @@
  * @ingroup Maintenance
  */
 
+$optionsWithoutArgs = [ 'verbose' ];
 require_once __DIR__ . '/commandLine.inc';
 
 $wgHooks['BeforeParserFetchTemplateAndtitle'][] = 'PPFuzzTester::templateHook';
 
 class PPFuzzTester {
-	public $hairs = array(
+	public $hairs = [
 		'[[', ']]', '{{', '{{', '}}', '}}', '{{{', '}}}',
 		'<', '>', '<nowiki', '<gallery', '</nowiki>', '</gallery>', '<nOwIkI>', '</NoWiKi>',
 		'<!--', '-->',
@@ -38,14 +39,17 @@ class PPFuzzTester {
 
 		// extensions
 		// '<ref>', '</ref>', '<references/>',
-	);
+	];
 	public $minLength = 0;
 	public $maxLength = 20;
 	public $maxTemplates = 5;
-	// public $outputTypes = array( 'OT_HTML', 'OT_WIKI', 'OT_PREPROCESS' );
-	public $entryPoints = array( 'testSrvus', 'testPst', 'testPreprocess' );
+	// public $outputTypes = [ 'OT_HTML', 'OT_WIKI', 'OT_PREPROCESS' ];
+	public $entryPoints = [ 'testSrvus', 'testPst', 'testPreprocess' ];
 	public $verbose = false;
 
+	/**
+	 * @var bool|PPFuzzTest
+	 */
 	private static $currentTest = false;
 
 	function execute() {
@@ -154,7 +158,7 @@ class PPFuzzTest {
 		$this->entryPoint = $tester->pickEntryPoint();
 		$this->nickname = $tester->makeInputText( $wgMaxSigChars + 10 );
 		$this->fancySig = (bool)mt_rand( 0, 1 );
-		$this->templates = array();
+		$this->templates = [];
 	}
 
 	/**
@@ -181,9 +185,9 @@ class PPFuzzTest {
 					$text = $this->parent->makeInputText();
 				}
 			}
-			$this->templates[$titleText] = array(
+			$this->templates[$titleText] = [
 				'text' => $text,
-				'finalTitle' => $finalTitle );
+				'finalTitle' => $finalTitle ];
 		}
 
 		return $this->templates[$titleText];
@@ -198,10 +202,10 @@ class PPFuzzTest {
 		$wgUser->ppfz_test = $this;
 
 		$options = ParserOptions::newFromUser( $wgUser );
-		$options->setTemplateCallback( array( $this, 'templateHook' ) );
+		$options->setTemplateCallback( [ $this, 'templateHook' ] );
 		$options->setTimestamp( wfTimestampNow() );
 		$this->output = call_user_func(
-			array( $wgParser, $this->entryPoint ),
+			[ $wgParser, $this->entryPoint ],
 			$this->mainText,
 			$this->title,
 			$options
@@ -212,7 +216,7 @@ class PPFuzzTest {
 
 	function getReport() {
 		$s = "Title: " . $this->title->getPrefixedDBkey() . "\n" .
-//			"Output type: {$this->outputType}\n" .
+// 			"Output type: {$this->outputType}\n" .
 			"Entry point: {$this->entryPoint}\n" .
 			"User: " . ( $this->fancySig ? 'fancy' : 'no-fancy' ) .
 			' ' . var_export( $this->nickname, true ) . "\n" .

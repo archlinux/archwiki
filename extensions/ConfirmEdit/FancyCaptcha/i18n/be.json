@@ -1,9 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Чаховіч Уладзіслаў"
+			"Чаховіч Уладзіслаў",
+			"Mikalai Udodau"
 		]
 	},
-	"fancycaptcha-createaccount": "Для прадухілення аўтаматычнай рэгістрацыі ўліковых запісаў просім вас увесці словы, паказаныя ў полі ніжэй ([[Special:Captcha/help|падрабязней…]]):",
+	"fancycaptcha-captcha": "Праверка бяспекі",
+	"fancycaptcha-accountcreate": "Для прадухілення аўтаматычнай рэгістрацыі ўліковых запісаў просім вас увесці словы, паказаныя ў полі ніжэй ([[Special:Captcha/help|падрабязней…]]):",
+	"fancycaptcha-imgcaptcha-ph": "Увядзіце тэкст, які вы бачыце на відарысе",
 	"fancycaptcha-reload-text": "Абнавіць"
 }

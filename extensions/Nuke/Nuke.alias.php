@@ -54,6 +54,11 @@ $specialPageAliases['ce'] = array(
 	'Nuke' => array( 'Дуккха_дӀаяхар' ),
 );
 
+/** Czech (česky) */
+$specialPageAliases['cs'] = array(
+	'Nuke' => array( 'Hromadné_mazání', 'Zničit', 'Zničení' ),
+);
+
 /** German (Deutsch) */
 $specialPageAliases['de'] = array(
 	'Nuke' => array( 'Massenlöschung' ),

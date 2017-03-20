@@ -2,7 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Assele",
-			"Haqmar"
+			"Haqmar",
+			"Лилиә",
+			"Янмурза Баки"
 		]
 	},
 	"inputbox-desc": "Алдан билдәләнгән HTML формаларҙы индереү мөмкинлеген бирә",
@@ -11,5 +13,8 @@
 	"inputbox-tryexact": "Теүәл тура килеү буйынса эҙләү",
 	"inputbox-searchfulltext": "Тулы текст буйынса эҙләү",
 	"inputbox-createarticle": "Яңы бит яһарға",
+	"inputbox-movearticle": "Битте икенсе урынға күсерергә",
+	"inputbox-postcomment": "Яңы бүлек",
+	"inputbox-postcommenttitle": "Яңы бүлек",
 	"inputbox-ns-main": "Төп"
 }

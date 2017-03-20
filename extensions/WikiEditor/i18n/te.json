@@ -161,7 +161,7 @@
 	"wikieditor-toolbar-help-content-rereference-result": "పేజీ పాఠ్యం.<sup><a href='#'>[2]</a></sup>",
 	"wikieditor-toolbar-help-content-showreferences-result": "<ol class='references'><li id='cite_note-test-0'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.example.org' class='external text' href='#'>లంకె పాఠ్యం</a>, అదనపు పాఠ్యం.</li></ol>",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "సమయముద్రతో సంతకం",
-	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='{{#special:mypage}}'>వాడుకరిపేరు</a> (<a href='#' title='{{#special:mytalk}}'>చర్చ</a>) 15:54, 10 జూన్ 2009 (UTC)",
+	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='$1:Username'>వాడుకరిపేరు</a> (<a href='#' title='$2:Username'>చర్చ</a>) 15:54, 10 జూన్ 2009 (UTC)",
 	"wikieditor-toolbar-help-content-signature-description": "సంతకం",
-	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='{{#special:mypage}}'>వాడుకరిపేరు</a> (<a href='#' title='{{#special:mytalk}}'>చర్చ</a>)"
+	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>వాడుకరిపేరు</a> (<a href='#' title='$2:Username'>చర్చ</a>)"
 }

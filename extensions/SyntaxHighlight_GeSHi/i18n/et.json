@@ -5,7 +5,7 @@
 			"[[et:Kasutaja:M2s17]]"
 		]
 	},
-	"syntaxhighlight-desc": "Võimaldab [http://pygments.org/ Pygmentsi] (Pythoni süntaksi esiletõstja) abil <code>&lt;syntaxhighlight&gt;</code>-silti kasutades süntaksit esile tõsta.",
+	"syntaxhighlight-desc": "Võimaldab [http://pygments.org/ Pygmentsi] (Pythoni-põhine süntaksi esiletõstja) ja sildi <code>&lt;syntaxhighlight&gt;</code> abil süntaksit esile tõsta.",
 	"syntaxhighlight-error-category": "Süntaksi esiletõstu tõrgetega leheküljed",
 	"syntaxhighlight-error-category-desc": "Leheküljel prooviti koodi esile tõsta, kuid esines tõrge.",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "Kood",

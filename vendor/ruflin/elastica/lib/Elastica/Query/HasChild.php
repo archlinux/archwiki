@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica\Query;
 
 use Elastica\Query as BaseQuery;
@@ -8,7 +9,7 @@ use Elastica\Query as BaseQuery;
  *
  * @author Fabian Vogler <fabian@equivalence.ch>
  *
- * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-has-child-query.html
+ * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-has-child-query.html
  */
 class HasChild extends AbstractQuery
 {
@@ -33,10 +34,7 @@ class HasChild extends AbstractQuery
      */
     public function setQuery($query)
     {
-        $query = BaseQuery::create($query);
-        $data = $query->toArray();
-
-        return $this->setParam('query', $data['query']);
+        return $this->setParam('query', BaseQuery::create($query));
     }
 
     /**
@@ -61,5 +59,21 @@ class HasChild extends AbstractQuery
     public function setScope($scope)
     {
         return $this->setParam('_scope', $scope);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toArray()
+    {
+        $array = parent::toArray();
+
+        $baseName = $this->_getBaseName();
+
+        if (isset($array[$baseName]['query'])) {
+            $array[$baseName]['query'] = $array[$baseName]['query']['query'];
+        }
+
+        return $array;
     }
 }

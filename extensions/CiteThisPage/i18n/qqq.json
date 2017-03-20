@@ -18,5 +18,6 @@
 	"citethispage-summary": "{{notranslate}}\n\nA description message shown beneath the title of the Special page to explain what the point of the page is; generally un-used.",
 	"citethispage-change-submit": "A button for users to change the page for which they will see a cite. See also {{msg-mw|citethispage-change-target}}.\n\n{{Identical|Cite}}",
 	"citethispage-change-target": "A prompt for users to change the page for which they wish to see a cite. See also {{msg-mw|citethispage-change-submit}}.\n\n{{Identical|Page}}",
+	"citethispage-badrevision": "Error message if the title and/or revision ID cannot be found in the database",
 	"citethispage-content": "Refers to {{msg-mw|Sitesubtitle}}.\n\n* This message is the entire text for the page Special:Cite\n* Any wikilinks in this message point to pages on the local wiki, so they must be translated.\n* Do not translate magic words like CURRENTYEAR, SITENAME etc.\n* Do not translate the parameter names (author, title etc.) for BibTeX entries.\n* Do not translate the div class plainlinks mw-specialCiteThisPage-styles."
 }

@@ -36,10 +36,8 @@ class Gadget {
 			$onByDefault = false,
 			$hidden = false,
 			$position = 'bottom',
+			$type = '',
 			$category;
-
-	/** @var array|bool Result of loadStructuredList() */
-	private static $definitionCache;
 
 	public function __construct( array $options ) {
 		foreach ( $options as $member => $option ) {
@@ -56,6 +54,7 @@ class Gadget {
 				case 'targets':
 				case 'onByDefault':
 				case 'position':
+				case 'type':
 				case 'hidden':
 				case 'category':
 					$this->{$member} = $option;
@@ -67,13 +66,55 @@ class Gadget {
 	}
 
 	/**
+	 * Create a object based on the metadata in a GadgetDefinitionContent object
+	 *
+	 * @param string $id
+	 * @param GadgetDefinitionContent $content
+	 * @return Gadget
+	 */
+	public static function newFromDefinitionContent( $id, GadgetDefinitionContent $content ) {
+		$data = $content->getAssocArray();
+		$prefixGadgetNs = function ( $page ) {
+			return 'Gadget:' . $page;
+		};
+		$info = array(
+			'name' => $id,
+			'resourceLoaded' => true,
+			'requiredRights' => $data['settings']['rights'],
+			'onByDefault' => $data['settings']['default'],
+			'hidden' => $data['settings']['hidden'],
+			'requiredSkins' => $data['settings']['skins'],
+			'category' => $data['settings']['category'],
+			'scripts' => array_map( $prefixGadgetNs, $data['module']['scripts'] ),
+			'styles' => array_map( $prefixGadgetNs, $data['module']['styles'] ),
+			'dependencies' => $data['module']['dependencies'],
+			'messages' => $data['module']['messages'],
+			'position' => $data['module']['position'],
+			'type' => $data['module']['type'],
+		);
+
+		return new self( $info );
+
+	}
+
+	/**
+	 * Get a placeholder object to use if a gadget doesn't exist
+	 *
+	 * @param string $id name
+	 * @return Gadget
+	 */
+	public static function newEmptyGadget( $id ) {
+		return new self( array( 'name' => $id ) );
+	}
+
+	/**
 	 * Whether the provided gadget id is valid
 	 *
 	 * @param string $id
 	 * @return bool
 	 */
 	public static function isValidGadgetID( $id ) {
-		return strlen( $id ) > 0 && ResourceLoader::isValidModuleName( "ext.gadget.$id" );
+		return strlen( $id ) > 0 && ResourceLoader::isValidModuleName( Gadget::getModuleName( $id ) );
 	}
 
 
@@ -106,10 +147,11 @@ class Gadget {
 	}
 
 	/**
-	 * @return String: Name of ResourceLoader module for this gadget
+	 * @param string $id Name of gadget
+	 * @return string Name of ResourceLoader module for the gadget
 	 */
-	public function getModuleName() {
-		return "ext.gadget.{$this->name}";
+	public static function getModuleName( $id ) {
+		return "ext.gadget.{$id}";
 	}
 
 	/**
@@ -130,7 +172,7 @@ class Gadget {
 	 */
 	public function isAllowed( $user ) {
 		return count( array_intersect( $this->requiredRights, $user->getRights() ) ) == count( $this->requiredRights )
-			&& ( !count( $this->requiredSkins ) || in_array( $user->getOption( 'skin' ), $this->requiredSkins ) );
+			&& ( $this->requiredSkins === true || !count( $this->requiredSkins ) || in_array( $user->getOption( 'skin' ), $this->requiredSkins ) );
 	}
 
 	/**
@@ -171,14 +213,14 @@ class Gadget {
 	}
 
 	/**
-	 * @return Array: Array of pages with JS not prefixed with namespace
+	 * @return Array: Array of pages with JS (including namespace)
 	 */
 	public function getScripts() {
 		return $this->scripts;
 	}
 
 	/**
-	 * @return Array: Array of pages with CSS not prefixed with namespace
+	 * @return Array: Array of pages with CSS (including namespace)
 	 */
 	public function getStyles() {
 		return $this->styles;
@@ -192,34 +234,10 @@ class Gadget {
 	}
 
 	/**
-	 * Returns module for ResourceLoader, see getModuleName() for its name.
-	 * If our gadget has no scripts or styles suitable for RL, false will be returned.
-	 * @return Mixed: GadgetResourceLoaderModule or false
+	 * @return array
 	 */
-	public function getModule() {
-		$pages = array();
-
-		foreach ( $this->styles as $style ) {
-			$pages['MediaWiki:' . $style] = array( 'type' => 'style' );
-		}
-
-		if ( $this->supportsResourceLoader() ) {
-			foreach ( $this->scripts as $script ) {
-				$pages['MediaWiki:' . $script] = array( 'type' => 'script' );
-			}
-		}
-
-		if ( !count( $pages ) ) {
-			return null;
-		}
-
-		return new GadgetResourceLoaderModule(
-			$pages,
-			$this->dependencies,
-			$this->targets,
-			$this->position,
-			$this->messages
-		);
+	public function getTargets() {
+		return $this->targets;
 	}
 
 	/**
@@ -271,5 +289,24 @@ class Gadget {
 	public function getPosition() {
 		return $this->position;
 	}
-}
 
+	/**
+	 * Returns the load type of this Gadget's ResourceLoader module
+	 * @return string 'styles', 'general' or ''
+	 */
+	public function getType() {
+		if ( $this->type === 'styles' || $this->type === 'general' ) {
+			return $this->type;
+		}
+		if ( $this->styles && !$this->scripts ) {
+			// Similar to ResourceLoaderWikiModule default
+			return 'styles';
+		}
+		if ( !$this->styles && $this->supportsResourceLoader() && $this->scripts ) {
+			return 'general';
+		}
+		// Real default is in GadgetResourceLoaderModule so that beforePageDisplay
+		// can distinguish between explicit and fallback.
+		return '';
+	}
+}

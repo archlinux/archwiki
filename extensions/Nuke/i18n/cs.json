@@ -6,7 +6,9 @@
 			"Li-sung",
 			"Littledogboy",
 			"Matěj Grabovský",
-			"Mormegil"
+			"Mormegil",
+			"Matěj Suchánek",
+			"Dvorapa"
 		]
 	},
 	"nuke": "Hromadné mazání",
@@ -15,7 +17,7 @@
 	"nuke-nopages": "V posledních změnách nejsou žádné nové stránky od {{GENDER:$1|uživatele|uživatelky}} [[Special:Contributions/$1|$1]].",
 	"nuke-list": "Následující stránky nedávno {{GENDER:$1|vytvořil|vytvořila}} [[Special:Contributions/$1|$1]];\nvyplňte komentář a všechny smažte kliknutím na tlačítko.",
 	"nuke-list-multiple": "Nedávno byly vytvořeny následující stránky;\nzadáním komentáře a stisknutím tlačítka je smažete.",
-	"nuke-defaultreason": "Hromadné smazání stránek, které {{GENDER:$1|vytvořil|vytvořila}}  [[Special:Contributions/$1|$1]]",
+	"nuke-defaultreason": "Hromadné smazání stránek, které {{GENDER:$1|vytvořil|vytvořila|vytvořil(a)}} [[Special:Contributions/$1|$1]]",
 	"nuke-multiplepeople": "Hromadné smazání nedávno založených stránek",
 	"nuke-tools": "Tento nástroj umožňuje hromadné smazání stránek nedávno vytvořených zadaným uživatelem nebo IP adresou.\nZadejte uživatelské jméno nebo IP adresu, zobrazí se seznam stránek ke smazání; případně ponechte prázdné pro všechny uživatele.",
 	"nuke-submit-user": "Provést",

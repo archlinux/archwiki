@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica\Test\Query;
 
 use Elastica\Document;
@@ -23,7 +24,7 @@ class QueryStringTest extends BaseTest
 
         $fields = array();
         $max = rand() % 10 + 1;
-        for ($i = 0; $i <  $max; $i++) {
+        for ($i = 0; $i <  $max; ++$i) {
             $fields[] = md5(rand());
         }
 

@@ -5,12 +5,14 @@
 			"Firilacroco",
 			"KlaudiuMihaila",
 			"Minisarm",
-			"Stelistcristi"
+			"Stelistcristi",
+			"XXN"
 		]
 	},
 	"gadgets-desc": "Permite utilizatorilor să își aleagă [[Special:Gadgets|gadgeturi CSS și JavaScript]] în [[Special:Preferences#mw-prefsection-gadgets|preferințele]] lor",
 	"prefs-gadgets": "Gadgeturi",
 	"gadgets": "Gadgeturi",
+	"gadgetusage-usercount": "Număr de utilizatori",
 	"gadgets-title": "Gadgeturi",
 	"gadgets-uses": "Utilizări",
 	"gadgets-required-rights": "Necesită {{PLURAL:$2|următorul drept|următoarele drepturi}}:\n\n$1",

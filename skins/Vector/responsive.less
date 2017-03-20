@@ -31,10 +31,7 @@ div#mw-navigation {
 }
 
 /* Hide the logo and tabs */
-div#p-logo,
-div#left-navigation,
-div#p-cactions,
-div#p-views {
+div#p-logo {
 	display: none;
 }
 
@@ -62,14 +59,47 @@ div#p-personal {
 	}
 }
 div#right-navigation {
-	max-width: 500px;
 	position: absolute;
 	top: inherit;
-	margin-top: -1px;
+	right: 0;
+	margin-top: 0;
 	float: none;
 }
+div#left-navigation {
+	position: absolute;
+	top: inherit;
+	margin: 0;
+	display: block;
+	float: none;
+}
+div#p-namespaces,
+div#p-views,
+div#p-variants {
+	position: relative;
+	top: 2.5em;
+}
+div#p-namespaces {
+	padding-left: 0;
+}
+div#p-cactions {
+	top: 2.5em;
+	float: right;
+}
 div#p-search {
-	margin-left: 73px;
+	float: none;
+	position: absolute;
+	right: 0;
+	width: 100vw;
+	margin: 0;
+}
+div#simpleSearch {
+	margin: 0 3em;
+	width: 80vw;
+	padding: 0;
+}
+div.vectorMenu div.menu {
+	left: inherit;
+	right: -1px;
 }
 div#content {
 	/* Hide the 1px blue border on the left side */

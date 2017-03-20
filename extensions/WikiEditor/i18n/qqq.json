@@ -23,7 +23,9 @@
 			"Metalhead64",
 			"Mareklug",
 			"Macofe",
-			"Totosunarto"
+			"Totosunarto",
+			"Robby",
+			"Quiddity"
 		]
 	},
 	"wikieditor": "An extension to allow for advanced editing features.\nhttp://www.mediawiki.org/wiki/Extension:WikiEditor",
@@ -91,6 +93,7 @@
 	"wikieditor-toolbar-file-format-none": "Option in file dialog for no format for the added image.\n{{Identical|None}}",
 	"wikieditor-toolbar-tool-file-insert": "{{Identical|Insert}}",
 	"wikieditor-toolbar-tool-file-cancel": "{{Identical|Cancel}}",
+	"wikieditor-toolbar-tool-file-upload": "Label for button that opens the upload dialog\n{{Identical|Upload}}",
 	"wikieditor-toolbar-tool-reference": "{{Identical|Reference}}",
 	"wikieditor-toolbar-tool-reference-example": "Used as example text when inserting a reference into the editbox from the toolbar",
 	"wikieditor-toolbar-tool-reference-cancel": "{{Identical|Cancel}}",
@@ -221,10 +224,10 @@
 	"wikieditor-toolbar-help-content-showreferences-result": "For the <code><nowiki><li></nowiki></code> tag's <code>id</code> attribute, non-ASCII characters are URL-encoded as follows: a period (<code>.</code>) followed by a capital hexadecimal code. For example, <code><nowiki><ref name=\"thử\"></nowiki></code> produces <code><nowiki><li id=\"cite_note-th.E1.BB.AD-0\"></nowiki></code>.\n\nwww.example.org is not a real website, but it has been reserved to use in software documentation. If you translate the word example and try to go to that web address then you might get a message that it doesn't exist. But somebody may have created a commercial web page for that address, such as www.Beispiel.org, using the German word for example. It is therefore recommended that you do not translate http://www.example.org at all. If you do wish to translate it you should first check where the translated link takes you.",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "{{Identical|Signature with timestamp}}",
 	"wikieditor-toolbar-help-content-signaturetimestamp-syntax": "{{notranslate}}",
-	"wikieditor-toolbar-help-content-signaturetimestamp-result": "Html example used in the help section \"discussion\" of the toolbar",
+	"wikieditor-toolbar-help-content-signaturetimestamp-result": "Html example used in the help section \"discussion\" of the toolbar.\n\nParameters:\n* $1 - The \"User\" namespace name\n* $2 - The \"User talk\" namespace name",
 	"wikieditor-toolbar-help-content-signature-description": "{{Identical|Signature}}",
 	"wikieditor-toolbar-help-content-signature-syntax": "{{notranslate}}",
-	"wikieditor-toolbar-help-content-signature-result": "Html example used in the help section \"discussion\" of the toolbar",
+	"wikieditor-toolbar-help-content-signature-result": "Html example used in the help section \"discussion\" of the toolbar.\n\nParameters:\n* $1 - The \"User\" namespace name\n* $2 - The \"User talk\" namespace name",
 	"wikieditor-toolbar-help-content-indent-description": "{{Identical|Indent}}",
 	"wikieditor-toolbar-help-content-indent-syntax": "Syntax example used in the help section \"discussion\" of the toolbar",
 	"wikieditor-toolbar-help-content-indent-result": "Html example used in the help section \"discussion\" of the toolbar"

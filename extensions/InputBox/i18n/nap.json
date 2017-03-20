@@ -11,7 +11,7 @@
 	"inputbox-error-bad-type": "Casciulella d'input \"$1\" scanusciuta.\nPe' piacere specificate \"create\", \"comment\", \"search\", \"search2\" o \"fulltext\".",
 	"inputbox-tryexact": "Pròva cu nu cunfronto eguale-eguale",
 	"inputbox-searchfulltext": "Ascià dint''o testo",
-	"inputbox-createarticle": "Cria paggena",
+	"inputbox-createarticle": "Crèa paggena",
 	"inputbox-movearticle": "Mòve paggena",
 	"inputbox-postcomment": "Seziona nova",
 	"inputbox-postcommenttitle": "Seziona nova",

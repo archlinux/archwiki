@@ -6,6 +6,7 @@ namespace OOUI;
  * Layout with an HTML form.
  */
 class FormLayout extends Layout {
+	use GroupElement;
 
 	/* Static Properties */
 
@@ -18,17 +19,17 @@ class FormLayout extends Layout {
 	 * @param string $config['enctype'] HTML form `enctype` attribute
 	 * @param FieldsetLayout[] $config['items'] Items to add
 	 */
-	public function __construct( array $config = array() ) {
+	public function __construct( array $config = [] ) {
 		// Parent constructor
 		parent::__construct( $config );
 
-		// Mixins
-		$this->mixin( new GroupElement( $this, array_merge( $config, array( 'group' => $this ) ) ) );
+		// Traits
+		$this->initializeGroupElement( array_merge( $config, [ 'group' => $this ] ) );
 
 		// Initialization
-		$attributeWhitelist = array( 'method', 'action', 'enctype' );
+		$attributeWhitelist = [ 'method', 'action', 'enctype' ];
 		$this
-			->addClasses( array( 'oo-ui-formLayout' ) )
+			->addClasses( [ 'oo-ui-formLayout' ] )
 			->setAttributes( array_intersect_key( $config, array_flip( $attributeWhitelist ) ) );
 		if ( isset( $config['items'] ) ) {
 			$this->addItems( $config['items'] );
@@ -36,7 +37,7 @@ class FormLayout extends Layout {
 	}
 
 	public function getConfig( &$config ) {
-		foreach ( array( 'method', 'action', 'enctype' ) as $attr ) {
+		foreach ( [ 'method', 'action', 'enctype' ] as $attr ) {
 			$value = $this->getAttribute( $attr );
 			if ( $value !== null ) {
 				$config[$attr] = $value;

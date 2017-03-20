@@ -34,7 +34,7 @@ require_once __DIR__ . '/Maintenance.php';
 class DeleteArchivedFiles extends Maintenance {
 	public function __construct() {
 		parent::__construct();
-		$this->mDescription = "Deletes all archived images.";
+		$this->addDescription( 'Deletes all archived images.' );
 		$this->addOption( 'delete', 'Perform the deletion' );
 		$this->addOption( 'force', 'Force deletion of rows from filearchive' );
 	}
@@ -47,14 +47,14 @@ class DeleteArchivedFiles extends Maintenance {
 
 		# Data should come off the master, wrapped in a transaction
 		$dbw = $this->getDB( DB_MASTER );
-		$dbw->begin( __METHOD__ );
+		$this->beginTransaction( $dbw, __METHOD__ );
 		$repo = RepoGroup::singleton()->getLocalRepo();
 
 		# Get "active" revisions from the filearchive table
 		$this->output( "Searching for and deleting archived files...\n" );
 		$res = $dbw->select(
 			'filearchive',
-			array( 'fa_id', 'fa_storage_group', 'fa_storage_key', 'fa_sha1' ),
+			[ 'fa_id', 'fa_storage_group', 'fa_storage_key', 'fa_sha1', 'fa_name' ],
 			'',
 			__METHOD__
 		);
@@ -67,9 +67,19 @@ class DeleteArchivedFiles extends Maintenance {
 				continue;
 			}
 
+			/** @var LocalFile $file */
+			$file = $repo->newFile( $row->fa_name );
+			try {
+				$file->lock();
+			} catch ( LocalFileLockError $e ) {
+				$this->error( "Could not acquire lock on '{$row->fa_name}', skipping\n" );
+				continue;
+			}
+
 			$group = $row->fa_storage_group;
 			$id = $row->fa_id;
-			$path = $repo->getZonePath( 'deleted' ) . '/' . $repo->getDeletedHashPath( $key ) . $key;
+			$path = $repo->getZonePath( 'deleted' ) .
+				'/' . $repo->getDeletedHashPath( $key ) . $key;
 			if ( isset( $row->fa_sha1 ) ) {
 				$sha1 = $row->fa_sha1;
 			} else {
@@ -81,12 +91,12 @@ class DeleteArchivedFiles extends Maintenance {
 			$inuse = $dbw->selectField(
 				'oldimage',
 				'1',
-				array(
+				[
 					'oi_sha1' => $sha1,
 					$dbw->bitAnd( 'oi_deleted', File::DELETED_FILE ) => File::DELETED_FILE
-				),
+				],
 				__METHOD__,
-				array( 'FOR UPDATE' )
+				[ 'FOR UPDATE' ]
 			);
 
 			$needForce = true;
@@ -96,6 +106,7 @@ class DeleteArchivedFiles extends Maintenance {
 				$this->output( "Notice - file '$key' is still in use\n" );
 			} elseif ( !$repo->quickPurge( $path ) ) {
 				$this->output( "Unable to remove file $path, skipping\n" );
+				$file->unlock();
 				continue; // don't delete even with --force
 			} else {
 				$needForce = false;
@@ -105,15 +116,17 @@ class DeleteArchivedFiles extends Maintenance {
 				if ( $this->hasOption( 'force' ) ) {
 					$this->output( "Got --force, deleting DB entry\n" );
 				} else {
+					$file->unlock();
 					continue;
 				}
 			}
 
 			$count++;
-			$dbw->delete( 'filearchive', array( 'fa_id' => $id ), __METHOD__ );
+			$dbw->delete( 'filearchive', [ 'fa_id' => $id ], __METHOD__ );
+			$file->unlock();
 		}
 
-		$dbw->commit( __METHOD__ );
+		$this->commitTransaction( $dbw, __METHOD__ );
 		$this->output( "Done! [$count file(s)]\n" );
 	}
 }

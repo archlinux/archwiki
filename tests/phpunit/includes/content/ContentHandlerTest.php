@@ -1,7 +1,9 @@
 <?php
+use MediaWiki\MediaWikiServices;
 
 /**
  * @group ContentHandler
+ * @group Database
  */
 class ContentHandlerTest extends MediaWikiTestCase {
 
@@ -9,31 +11,34 @@ class ContentHandlerTest extends MediaWikiTestCase {
 		global $wgContLang;
 		parent::setUp();
 
-		$this->setMwGlobals( array(
-			'wgExtraNamespaces' => array(
+		$this->setMwGlobals( [
+			'wgExtraNamespaces' => [
 				12312 => 'Dummy',
 				12313 => 'Dummy_talk',
-			),
+			],
 			// The below tests assume that namespaces not mentioned here (Help, User, MediaWiki, ..)
 			// default to CONTENT_MODEL_WIKITEXT.
-			'wgNamespaceContentModels' => array(
+			'wgNamespaceContentModels' => [
 				12312 => 'testing',
-			),
-			'wgContentHandlers' => array(
+			],
+			'wgContentHandlers' => [
 				CONTENT_MODEL_WIKITEXT => 'WikitextContentHandler',
 				CONTENT_MODEL_JAVASCRIPT => 'JavaScriptContentHandler',
 				CONTENT_MODEL_JSON => 'JsonContentHandler',
 				CONTENT_MODEL_CSS => 'CssContentHandler',
 				CONTENT_MODEL_TEXT => 'TextContentHandler',
 				'testing' => 'DummyContentHandlerForTesting',
-			),
-		) );
+				'testing-callbacks' => function( $modelId ) {
+					return new DummyContentHandlerForTesting( $modelId );
+				}
+			],
+		] );
 
 		// Reset namespace cache
 		MWNamespace::getCanonicalNamespaces( true );
 		$wgContLang->resetNamespaces();
 		// And LinkCache
-		LinkCache::destroySingleton();
+		MediaWikiServices::getInstance()->resetServiceForTesting( 'LinkCache' );
 	}
 
 	protected function tearDown() {
@@ -43,37 +48,42 @@ class ContentHandlerTest extends MediaWikiTestCase {
 		MWNamespace::getCanonicalNamespaces( true );
 		$wgContLang->resetNamespaces();
 		// And LinkCache
-		LinkCache::destroySingleton();
+		MediaWikiServices::getInstance()->resetServiceForTesting( 'LinkCache' );
 
 		parent::tearDown();
 	}
 
+	public function addDBDataOnce() {
+		$this->insertPage( 'Not_Main_Page', 'This is not a main page' );
+		$this->insertPage( 'Smithee', 'A smithee is one who smiths. See also [[Alan Smithee]]' );
+	}
+
 	public static function dataGetDefaultModelFor() {
-		return array(
-			array( 'Help:Foo', CONTENT_MODEL_WIKITEXT ),
-			array( 'Help:Foo.js', CONTENT_MODEL_WIKITEXT ),
-			array( 'Help:Foo.css', CONTENT_MODEL_WIKITEXT ),
-			array( 'Help:Foo.json', CONTENT_MODEL_WIKITEXT ),
-			array( 'Help:Foo/bar.js', CONTENT_MODEL_WIKITEXT ),
-			array( 'User:Foo', CONTENT_MODEL_WIKITEXT ),
-			array( 'User:Foo.js', CONTENT_MODEL_WIKITEXT ),
-			array( 'User:Foo.css', CONTENT_MODEL_WIKITEXT ),
-			array( 'User:Foo.json', CONTENT_MODEL_WIKITEXT ),
-			array( 'User:Foo/bar.js', CONTENT_MODEL_JAVASCRIPT ),
-			array( 'User:Foo/bar.css', CONTENT_MODEL_CSS ),
-			array( 'User:Foo/bar.json', CONTENT_MODEL_JSON ),
-			array( 'User:Foo/bar.json.nope', CONTENT_MODEL_WIKITEXT ),
-			array( 'User talk:Foo/bar.css', CONTENT_MODEL_WIKITEXT ),
-			array( 'User:Foo/bar.js.xxx', CONTENT_MODEL_WIKITEXT ),
-			array( 'User:Foo/bar.xxx', CONTENT_MODEL_WIKITEXT ),
-			array( 'MediaWiki:Foo.js', CONTENT_MODEL_JAVASCRIPT ),
-			array( 'MediaWiki:Foo.JS', CONTENT_MODEL_WIKITEXT ),
-			array( 'MediaWiki:Foo.css', CONTENT_MODEL_CSS ),
-			array( 'MediaWiki:Foo.css.xxx', CONTENT_MODEL_WIKITEXT ),
-			array( 'MediaWiki:Foo.CSS', CONTENT_MODEL_WIKITEXT ),
-			array( 'MediaWiki:Foo.json', CONTENT_MODEL_JSON ),
-			array( 'MediaWiki:Foo.JSON', CONTENT_MODEL_WIKITEXT ),
-		);
+		return [
+			[ 'Help:Foo', CONTENT_MODEL_WIKITEXT ],
+			[ 'Help:Foo.js', CONTENT_MODEL_WIKITEXT ],
+			[ 'Help:Foo.css', CONTENT_MODEL_WIKITEXT ],
+			[ 'Help:Foo.json', CONTENT_MODEL_WIKITEXT ],
+			[ 'Help:Foo/bar.js', CONTENT_MODEL_WIKITEXT ],
+			[ 'User:Foo', CONTENT_MODEL_WIKITEXT ],
+			[ 'User:Foo.js', CONTENT_MODEL_WIKITEXT ],
+			[ 'User:Foo.css', CONTENT_MODEL_WIKITEXT ],
+			[ 'User:Foo.json', CONTENT_MODEL_WIKITEXT ],
+			[ 'User:Foo/bar.js', CONTENT_MODEL_JAVASCRIPT ],
+			[ 'User:Foo/bar.css', CONTENT_MODEL_CSS ],
+			[ 'User:Foo/bar.json', CONTENT_MODEL_JSON ],
+			[ 'User:Foo/bar.json.nope', CONTENT_MODEL_WIKITEXT ],
+			[ 'User talk:Foo/bar.css', CONTENT_MODEL_WIKITEXT ],
+			[ 'User:Foo/bar.js.xxx', CONTENT_MODEL_WIKITEXT ],
+			[ 'User:Foo/bar.xxx', CONTENT_MODEL_WIKITEXT ],
+			[ 'MediaWiki:Foo.js', CONTENT_MODEL_JAVASCRIPT ],
+			[ 'MediaWiki:Foo.JS', CONTENT_MODEL_WIKITEXT ],
+			[ 'MediaWiki:Foo.css', CONTENT_MODEL_CSS ],
+			[ 'MediaWiki:Foo.css.xxx', CONTENT_MODEL_WIKITEXT ],
+			[ 'MediaWiki:Foo.CSS', CONTENT_MODEL_WIKITEXT ],
+			[ 'MediaWiki:Foo.json', CONTENT_MODEL_JSON ],
+			[ 'MediaWiki:Foo.JSON', CONTENT_MODEL_WIKITEXT ],
+		];
 	}
 
 	/**
@@ -97,13 +107,13 @@ class ContentHandlerTest extends MediaWikiTestCase {
 	}
 
 	public static function dataGetLocalizedName() {
-		return array(
-			array( null, null ),
-			array( "xyzzy", null ),
+		return [
+			[ null, null ],
+			[ "xyzzy", null ],
 
 			// XXX: depends on content language
-			array( CONTENT_MODEL_JAVASCRIPT, '/javascript/i' ),
-		);
+			[ CONTENT_MODEL_JAVASCRIPT, '/javascript/i' ],
+		];
 	}
 
 	/**
@@ -128,17 +138,17 @@ class ContentHandlerTest extends MediaWikiTestCase {
 	public static function dataGetPageLanguage() {
 		global $wgLanguageCode;
 
-		return array(
-			array( "Main", $wgLanguageCode ),
-			array( "Dummy:Foo", $wgLanguageCode ),
-			array( "MediaWiki:common.js", 'en' ),
-			array( "User:Foo/common.js", 'en' ),
-			array( "MediaWiki:common.css", 'en' ),
-			array( "User:Foo/common.css", 'en' ),
-			array( "User:Foo", $wgLanguageCode ),
+		return [
+			[ "Main", $wgLanguageCode ],
+			[ "Dummy:Foo", $wgLanguageCode ],
+			[ "MediaWiki:common.js", 'en' ],
+			[ "User:Foo/common.js", 'en' ],
+			[ "MediaWiki:common.css", 'en' ],
+			[ "User:Foo/common.css", 'en' ],
+			[ "User:Foo", $wgLanguageCode ],
 
-			array( CONTENT_MODEL_JAVASCRIPT, 'javascript' ),
-		);
+			[ CONTENT_MODEL_JAVASCRIPT, 'javascript' ],
+		];
 	}
 
 	/**
@@ -160,11 +170,11 @@ class ContentHandlerTest extends MediaWikiTestCase {
 	}
 
 	public static function dataGetContentText_Null() {
-		return array(
-			array( 'fail' ),
-			array( 'serialize' ),
-			array( 'ignore' ),
-		);
+		return [
+			[ 'fail' ],
+			[ 'serialize' ],
+			[ 'ignore' ],
+		];
 	}
 
 	/**
@@ -181,11 +191,11 @@ class ContentHandlerTest extends MediaWikiTestCase {
 	}
 
 	public static function dataGetContentText_TextContent() {
-		return array(
-			array( 'fail' ),
-			array( 'serialize' ),
-			array( 'ignore' ),
-		);
+		return [
+			[ 'fail' ],
+			[ 'serialize' ],
+			[ 'ignore' ],
+		];
 	}
 
 	/**
@@ -243,12 +253,12 @@ class ContentHandlerTest extends MediaWikiTestCase {
 	*/
 
 	public static function dataMakeContent() {
-		return array(
-			array( 'hallo', 'Help:Test', null, null, CONTENT_MODEL_WIKITEXT, 'hallo', false ),
-			array( 'hallo', 'MediaWiki:Test.js', null, null, CONTENT_MODEL_JAVASCRIPT, 'hallo', false ),
-			array( serialize( 'hallo' ), 'Dummy:Test', null, null, "testing", 'hallo', false ),
+		return [
+			[ 'hallo', 'Help:Test', null, null, CONTENT_MODEL_WIKITEXT, 'hallo', false ],
+			[ 'hallo', 'MediaWiki:Test.js', null, null, CONTENT_MODEL_JAVASCRIPT, 'hallo', false ],
+			[ serialize( 'hallo' ), 'Dummy:Test', null, null, "testing", 'hallo', false ],
 
-			array(
+			[
 				'hallo',
 				'Help:Test',
 				null,
@@ -256,8 +266,8 @@ class ContentHandlerTest extends MediaWikiTestCase {
 				CONTENT_MODEL_WIKITEXT,
 				'hallo',
 				false
-			),
-			array(
+			],
+			[
 				'hallo',
 				'MediaWiki:Test.js',
 				null,
@@ -265,11 +275,11 @@ class ContentHandlerTest extends MediaWikiTestCase {
 				CONTENT_MODEL_JAVASCRIPT,
 				'hallo',
 				false
-			),
-			array( serialize( 'hallo' ), 'Dummy:Test', null, "testing", "testing", 'hallo', false ),
+			],
+			[ serialize( 'hallo' ), 'Dummy:Test', null, "testing", "testing", 'hallo', false ],
 
-			array( 'hallo', 'Help:Test', CONTENT_MODEL_CSS, null, CONTENT_MODEL_CSS, 'hallo', false ),
-			array(
+			[ 'hallo', 'Help:Test', CONTENT_MODEL_CSS, null, CONTENT_MODEL_CSS, 'hallo', false ],
+			[
 				'hallo',
 				'MediaWiki:Test.js',
 				CONTENT_MODEL_CSS,
@@ -277,8 +287,8 @@ class ContentHandlerTest extends MediaWikiTestCase {
 				CONTENT_MODEL_CSS,
 				'hallo',
 				false
-			),
-			array(
+			],
+			[
 				serialize( 'hallo' ),
 				'Dummy:Test',
 				CONTENT_MODEL_CSS,
@@ -286,12 +296,12 @@ class ContentHandlerTest extends MediaWikiTestCase {
 				CONTENT_MODEL_CSS,
 				serialize( 'hallo' ),
 				false
-			),
+			],
 
-			array( 'hallo', 'Help:Test', CONTENT_MODEL_WIKITEXT, "testing", null, null, true ),
-			array( 'hallo', 'MediaWiki:Test.js', CONTENT_MODEL_CSS, "testing", null, null, true ),
-			array( 'hallo', 'Dummy:Test', CONTENT_MODEL_JAVASCRIPT, "testing", null, null, true ),
-		);
+			[ 'hallo', 'Help:Test', CONTENT_MODEL_WIKITEXT, "testing", null, null, true ],
+			[ 'hallo', 'MediaWiki:Test.js', CONTENT_MODEL_CSS, "testing", null, null, true ],
+			[ 'hallo', 'Dummy:Test', CONTENT_MODEL_JAVASCRIPT, "testing", null, null, true ],
+		];
 	}
 
 	/**
@@ -347,6 +357,11 @@ class ContentHandlerTest extends MediaWikiTestCase {
 	}
 	*/
 
+	public function testSupportsCategories() {
+		$handler = new DummyContentHandlerForTesting( CONTENT_MODEL_WIKITEXT );
+		$this->assertTrue( $handler->supportsCategories(), 'content model supports categories' );
+	}
+
 	public function testSupportsDirectEditing() {
 		$handler = new DummyContentHandlerForTesting( CONTENT_MODEL_JSON );
 		$this->assertFalse( $handler->supportsDirectEditing(), 'direct editing is not supported' );
@@ -361,8 +376,7 @@ class ContentHandlerTest extends MediaWikiTestCase {
 		$content = new WikitextContent( 'test text' );
 		$ok = ContentHandler::runLegacyHooks(
 			'testRunLegacyHooks',
-			array( 'foo', &$content, 'bar' ),
-			false
+			[ 'foo', &$content, 'bar' ]
 		);
 
 		$this->assertTrue( $ok, "runLegacyHooks should have returned true" );
@@ -378,4 +392,87 @@ class ContentHandlerTest extends MediaWikiTestCase {
 
 		return true;
 	}
+
+	public function provideGetModelForID() {
+		return [
+			[ CONTENT_MODEL_WIKITEXT, 'WikitextContentHandler' ],
+			[ CONTENT_MODEL_JAVASCRIPT, 'JavaScriptContentHandler' ],
+			[ CONTENT_MODEL_JSON, 'JsonContentHandler' ],
+			[ CONTENT_MODEL_CSS, 'CssContentHandler' ],
+			[ CONTENT_MODEL_TEXT, 'TextContentHandler' ],
+			[ 'testing', 'DummyContentHandlerForTesting' ],
+			[ 'testing-callbacks', 'DummyContentHandlerForTesting' ],
+		];
+	}
+
+	/**
+	 * @dataProvider provideGetModelForID
+	 */
+	public function testGetModelForID( $modelId, $handlerClass ) {
+		$handler = ContentHandler::getForModelID( $modelId );
+
+		$this->assertInstanceOf( $handlerClass, $handler );
+	}
+
+	public function testGetFieldsForSearchIndex() {
+		$searchEngine = $this->newSearchEngine();
+
+		$handler = ContentHandler::getForModelID( CONTENT_MODEL_WIKITEXT );
+
+		$fields = $handler->getFieldsForSearchIndex( $searchEngine );
+
+		$this->assertArrayHasKey( 'category', $fields );
+		$this->assertArrayHasKey( 'external_link', $fields );
+		$this->assertArrayHasKey( 'outgoing_link', $fields );
+		$this->assertArrayHasKey( 'template', $fields );
+	}
+
+	private function newSearchEngine() {
+		$searchEngine = $this->getMockBuilder( 'SearchEngine' )
+			->getMock();
+
+		$searchEngine->expects( $this->any() )
+			->method( 'makeSearchFieldMapping' )
+			->will( $this->returnCallback( function( $name, $type ) {
+					return new DummySearchIndexFieldDefinition( $name, $type );
+			} ) );
+
+		return $searchEngine;
+	}
+
+	/**
+	 * @covers ContentHandler::getDataForSearchIndex
+	 */
+	public function testDataIndexFields() {
+		$mockEngine = $this->getMock( 'SearchEngine' );
+		$title = Title::newFromText( 'Not_Main_Page', NS_MAIN );
+		$page = new WikiPage( $title );
+
+		$this->setTemporaryHook( 'SearchDataForIndex',
+			function ( &$fields, ContentHandler $handler, WikiPage $page, ParserOutput $output,
+					   SearchEngine $engine ) {
+				$fields['testDataField'] = 'test content';
+			} );
+
+		$output = $page->getContent()->getParserOutput( $title );
+		$data = $page->getContentHandler()->getDataForSearchIndex( $page, $output, $mockEngine );
+		$this->assertArrayHasKey( 'text', $data );
+		$this->assertArrayHasKey( 'text_bytes', $data );
+		$this->assertArrayHasKey( 'language', $data );
+		$this->assertArrayHasKey( 'testDataField', $data );
+		$this->assertEquals( 'test content', $data['testDataField'] );
+	}
+
+	/**
+	 * @covers ContentHandler::getParserOutputForIndexing
+	 */
+	public function testParserOutputForIndexing() {
+		$title = Title::newFromText( 'Smithee', NS_MAIN );
+		$page = new WikiPage( $title );
+
+		$out = $page->getContentHandler()->getParserOutputForIndexing( $page );
+		$this->assertInstanceOf( ParserOutput::class, $out );
+		$this->assertContains( 'one who smiths', $out->getRawText() );
+	}
+
 }

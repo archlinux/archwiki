@@ -40,7 +40,7 @@ class TiffHandler extends ExifBitmapHandler {
 	 * @param File $file
 	 * @return bool
 	 */
-	function canRender( $file ) {
+	public function canRender( $file ) {
 		global $wgTiffThumbnailType;
 
 		return (bool)$wgTiffThumbnailType
@@ -54,7 +54,7 @@ class TiffHandler extends ExifBitmapHandler {
 	 * @param File $file
 	 * @return bool
 	 */
-	function mustRender( $file ) {
+	public function mustRender( $file ) {
 		return true;
 	}
 
@@ -71,13 +71,14 @@ class TiffHandler extends ExifBitmapHandler {
 	}
 
 	/**
-	 * @param File $image
+	 * @param File|FSFile $image
 	 * @param string $filename
 	 * @throws MWException
 	 * @return string
 	 */
 	function getMetadata( $image, $filename ) {
 		global $wgShowEXIF;
+
 		if ( $wgShowEXIF ) {
 			try {
 				$meta = BitmapMetadataHandler::Tiff( $filename );

@@ -5,7 +5,7 @@
 			"Darth Kule"
 		]
 	},
-	"modern.css": "/* Gli stili CSS inseriti qui si applicano agli utenti che usano la skin Modern */",
-	"modern.js": "/* Il codice JavaScript inserito qui viene caricato dagli utenti che usano la skin Modern */",
+	"modern.css": "/* Gli stili CSS inseriti qui si applicano agli utenti che usano il tema Modern */",
+	"modern.js": "/* Il codice JavaScript inserito qui viene caricato dagli utenti che usano il tema Modern */",
 	"modern-desc": "Versione in blu e grigio con barra laterale e superiore. Derivata dal MonoBook."
 }

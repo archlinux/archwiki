@@ -12,6 +12,9 @@
 	"ValidSkinNames": {
 		"cologneblue": "CologneBlue"
 	},
+	"requires": {
+		"MediaWiki": ">= 1.25.0"
+	},
 	"MessagesDirs": {
 		"CologneBlue": [
 			"i18n"

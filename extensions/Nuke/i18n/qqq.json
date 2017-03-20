@@ -11,7 +11,8 @@
 			"The Evil IP address",
 			"Umherirrender",
 			"Yekrats",
-			"Liuxinyu970226"
+			"Liuxinyu970226",
+			"Matěj Suchánek"
 		]
 	},
 	"nuke": "{{doc-special|Nuke}}\nThe Nuke extension allows for sysops to delete a large number of pages (\"Mass delete\").\nFor more information, see http://www.mediawiki.org/wiki/Extension:Nuke\n{{Identical|Mass delete}}",
@@ -20,7 +21,7 @@
 	"nuke-nopages": "Used if there are no pages to delete and the username is not empty.\n\nParameters:\n* $1 - a username\n\nSee also:\n* {{msg-mw|Nuke-nopages-global}}",
 	"nuke-list": "This message refers to:\n* the comment (reason) field which has the label {{msg-mw|deletecomment}}\n* the button labeled {{msg-mw|nuke-submit-delete}}.\nParameters:\n* $1 - username\nSee also:\n* {{msg-mw|Nuke-list-multiple}}",
 	"nuke-list-multiple": "This message refers to:\n* the comment (reason) field which has the label {{msg-mw|deletecomment}}\n* the button labeled {{msg-mw|nuke-submit-delete}}.\nSee also:\n* {{msg-mw|Nuke-list}}",
-	"nuke-defaultreason": "Reason for deletion in logs. {{msg-mw|nuke-multiplepeople}} is used when pages created by multiple people are deleted.\n\nParameters:\n* $1 - a username or IP address, with a link to their contributions",
+	"nuke-defaultreason": "Reason for deletion in logs. {{msg-mw|nuke-multiplepeople}} is used when pages created by multiple people are deleted.\n\nParameters:\n* $1 - a username or IP address",
 	"nuke-multiplepeople": "Reason for deletion in logs, when pages created by multiple users were deleted.\n\n{{msg-mw|nuke-defaultreason}} is used when pages created by only 1 user are deleted.",
 	"nuke-tools": "Used as intro text for the Nuke (mass deletion) form.",
 	"nuke-submit-user": "{{Identical|Go}}",

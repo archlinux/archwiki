@@ -23,8 +23,10 @@
  * Item class for an oldimage table row
  */
 class RevDelFileItem extends RevDelItem {
-	/** @var File */
-	public $file;
+	/** @var RevDelFileList */
+	protected $list;
+	/** @var OldLocalFile */
+	protected $file;
 
 	public function __construct( $list, $row ) {
 		parent::__construct( $list, $row );
@@ -75,29 +77,29 @@ class RevDelFileItem extends RevDelItem {
 				# Newly undeleted
 				$key = $this->file->getStorageKey();
 				$srcRel = $this->file->repo->getDeletedHashPath( $key ) . $key;
-				$this->list->storeBatch[] = array(
+				$this->list->storeBatch[] = [
 					$this->file->repo->getVirtualUrl( 'deleted' ) . '/' . $srcRel,
 					'public',
 					$this->file->getRel()
-				);
+				];
 				$this->list->cleanupBatch[] = $key;
 			}
 		} elseif ( $bits & File::DELETED_FILE ) {
 			# Newly deleted
 			$key = $this->file->getStorageKey();
 			$dstRel = $this->file->repo->getDeletedHashPath( $key ) . $key;
-			$this->list->deleteBatch[] = array( $this->file->getRel(), $dstRel );
+			$this->list->deleteBatch[] = [ $this->file->getRel(), $dstRel ];
 		}
 
 		# Do the database operations
 		$dbw = wfGetDB( DB_MASTER );
 		$dbw->update( 'oldimage',
-			array( 'oi_deleted' => $bits ),
-			array(
+			[ 'oi_deleted' => $bits ],
+			[
 				'oi_name' => $this->row->oi_name,
 				'oi_timestamp' => $this->row->oi_timestamp,
 				'oi_deleted' => $this->getBits()
-			),
+			],
 			__METHOD__
 		);
 
@@ -119,7 +121,7 @@ class RevDelFileItem extends RevDelItem {
 
 		if ( !$this->isDeleted() ) {
 			# Regular files...
-			return Html::rawElement( 'a', array( 'href' => $this->file->getUrl() ), $date );
+			return Html::rawElement( 'a', [ 'href' => $this->file->getUrl() ], $date );
 		}
 
 		# Hidden files...
@@ -129,13 +131,13 @@ class RevDelFileItem extends RevDelItem {
 			$link = Linker::link(
 				SpecialPage::getTitleFor( 'Revisiondelete' ),
 				$date,
-				array(),
-				array(
+				[],
+				[
 					'target' => $this->list->title->getPrefixedText(),
 					'file' => $this->file->getArchiveName(),
 					'token' => $this->list->getUser()->getEditToken(
 						$this->file->getArchiveName() )
-				)
+				]
 			);
 		}
 
@@ -193,45 +195,52 @@ class RevDelFileItem extends RevDelItem {
 	public function getApiData( ApiResult $result ) {
 		$file = $this->file;
 		$user = $this->list->getUser();
-		$ret = array(
+		$ret = [
 			'title' => $this->list->title->getPrefixedText(),
 			'archivename' => $file->getArchiveName(),
 			'timestamp' => wfTimestamp( TS_ISO_8601, $file->getTimestamp() ),
 			'width' => $file->getWidth(),
 			'height' => $file->getHeight(),
 			'size' => $file->getSize(),
-		);
-		$ret += $file->isDeleted( Revision::DELETED_USER ) ? array( 'userhidden' => '' ) : array();
-		$ret += $file->isDeleted( Revision::DELETED_COMMENT ) ? array( 'commenthidden' => '' ) : array();
-		$ret += $this->isDeleted() ? array( 'contenthidden' => '' ) : array();
+		];
+		$ret += $file->isDeleted( Revision::DELETED_USER ) ? [ 'userhidden' => '' ] : [];
+		$ret += $file->isDeleted( Revision::DELETED_COMMENT ) ? [ 'commenthidden' => '' ] : [];
+		$ret += $this->isDeleted() ? [ 'contenthidden' => '' ] : [];
 		if ( !$this->isDeleted() ) {
-			$ret += array(
+			$ret += [
 				'url' => $file->getUrl(),
-			);
+			];
 		} elseif ( $this->canViewContent() ) {
-			$ret += array(
+			$ret += [
 				'url' => SpecialPage::getTitleFor( 'Revisiondelete' )->getLinkURL(
-					array(
+					[
 						'target' => $this->list->title->getPrefixedText(),
 						'file' => $file->getArchiveName(),
 						'token' => $user->getEditToken( $file->getArchiveName() )
-					),
-					false, PROTO_RELATIVE
+					]
 				),
-			);
+			];
 		}
 		if ( $file->userCan( Revision::DELETED_USER, $user ) ) {
-			$ret += array(
+			$ret += [
 				'userid' => $file->user,
 				'user' => $file->user_text,
-			);
+			];
 		}
 		if ( $file->userCan( Revision::DELETED_COMMENT, $user ) ) {
-			$ret += array(
+			$ret += [
 				'comment' => $file->description,
-			);
+			];
 		}
 
 		return $ret;
+	}
+
+	public function lock() {
+		return $this->file->acquireFileLock();
+	}
+
+	public function unlock() {
+		return $this->file->releaseFileLock();
 	}
 }

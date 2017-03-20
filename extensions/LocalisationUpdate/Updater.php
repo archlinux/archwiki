@@ -5,10 +5,12 @@
  * @license GPL-2.0+
  */
 
+namespace LocalisationUpdate;
+
 /**
  * Executes the localisation update.
  */
-class LU_Updater {
+class Updater {
 	/**
 	 * Whether the path is a pattern and thus we need to use appropriate
 	 * code for fetching directories.
@@ -36,7 +38,7 @@ class LU_Updater {
 
 		// This assumes all other keys are used as variables
 		// in the pattern. For example name -> %NAME%.
-		$keys = array();
+		$keys = [];
 		foreach ( array_keys( $info ) as $key ) {
 			$keys[] = '%' . strtoupper( $key ) . '%';
 		}
@@ -48,32 +50,32 @@ class LU_Updater {
 	/**
 	 * Parses translations from given list of files.
 	 *
-	 * @param LU_ReaderFactory $readerFactory Factory to construct parsers.
+	 * @param ReaderFactory $readerFactory Factory to construct parsers.
 	 * @param array $files List of files with their contents as array values.
 	 * @return array List of translations indexed by language code.
 	 */
-	public function readMessages( LU_ReaderFactory $readerFactory, array $files ) {
-		$messages = array();
+	public function readMessages( ReaderFactory $readerFactory, array $files ) {
+		$messages = [];
 
 		foreach ( $files as $filename => $contents ) {
 			$reader = $readerFactory->getReader( $filename );
 			try {
 				$parsed = $reader->parse( $contents );
-			} catch ( Exception $e ) {
+			} catch ( \Exception $e ) {
 				trigger_error( __METHOD__ . ": Unable to parse messages from $filename", E_USER_WARNING );
 				continue;
 			}
 
 			foreach ( $parsed as $code => $langMessages ) {
 				if ( !isset( $messages[$code] ) ) {
-					$messages[$code] = array();
+					$messages[$code] = [];
 				}
 				$messages[$code] = array_merge( $messages[$code], $langMessages );
 			}
 
 			$c = array_sum( array_map( 'count', $parsed ) );
 			// Useful for debugging, maybe create interface to pass this to the script?
-			#echo "$filename with " . get_class( $reader ) . " and $c\n";
+			# echo "$filename with " . get_class( $reader ) . " and $c\n";
 		}
 
 		return $messages;
@@ -87,8 +89,8 @@ class LU_Updater {
 	 * @param array [$blacklist] Array of message keys to ignore, keys as as array keys.
 	 * @return array
 	 */
-	public function findChangedTranslations( $origin, $remote, $blacklist = array() ) {
-		$changed = array();
+	public function findChangedTranslations( $origin, $remote, $blacklist = [] ) {
+		$changed = [];
 		foreach ( $remote as $key => $value ) {
 			if ( isset( $blacklist[$key] ) ) {
 				continue;
@@ -104,17 +106,17 @@ class LU_Updater {
 	/**
 	 * Fetches files from given Url pattern.
 	 *
-	 * @param LU_FetcherFactory $factory Factory to construct fetchers.
+	 * @param FetcherFactory $factory Factory to construct fetchers.
 	 * @param string $path Url to the file or pattern of files.
 	 * @return array List of Urls with file contents as path.
 	 */
-	public function fetchFiles( LU_FetcherFactory $factory, $path ) {
+	public function fetchFiles( FetcherFactory $factory, $path ) {
 		$fetcher = $factory->getFetcher( $path );
 
 		if ( $this->isDirectory( $path ) ) {
 			$files = $fetcher->fetchDirectory( $path );
 		} else {
-			$files = array( $path => $fetcher->fetchFile( $path ) );
+			$files = [ $path => $fetcher->fetchFile( $path ) ];
 		}
 
 		// Remove files which were not found
@@ -122,21 +124,21 @@ class LU_Updater {
 	}
 
 	public function execute(
-		LU_Finder $finder,
-		LU_ReaderFactory $readerFactory,
-		LU_FetcherFactory $fetcherFactory,
+		Finder $finder,
+		ReaderFactory $readerFactory,
+		FetcherFactory $fetcherFactory,
 		array $repos
 	) {
 
 		$components = $finder->getComponents();
 
-		$updatedMessages = array();
+		$updatedMessages = [];
 
 		foreach ( $components as $key => $info ) {
 			$originFiles = $this->fetchFiles( $fetcherFactory, $info['orig'] );
 			$remoteFiles = $this->fetchFiles( $fetcherFactory, $this->expandRemotePath( $info, $repos ) );
 
-			if ( $remoteFiles === array() ) {
+			if ( $remoteFiles === [] ) {
 				// Small optimization: if nothing to compare with, skip
 				continue;
 			}
@@ -163,7 +165,7 @@ class LU_Updater {
 			// message: string in all languages; translation: string in one language.
 			foreach ( $remoteMessages as $language => $remoteTranslations ) {
 				// Check for completely new languages
-				$originTranslations = array();
+				$originTranslations = [];
 				if ( isset( $originMessages[$language] ) ) {
 					$originTranslations = $originMessages[$language];
 				}
@@ -175,12 +177,12 @@ class LU_Updater {
 				);
 
 				// Avoid empty arrays
-				if ( $updatedTranslations === array() ) {
+				if ( $updatedTranslations === [] ) {
 					continue;
 				}
 
 				if ( !isset( $updatedMessages[$language] ) ) {
-					$updatedMessages[$language] = array();
+					$updatedMessages[$language] = [];
 				}
 
 				// In case of conflicts, which should not exist, this prefers the

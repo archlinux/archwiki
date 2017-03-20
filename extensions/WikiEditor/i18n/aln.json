@@ -181,9 +181,9 @@
 	"wikieditor-toolbar-help-content-showreferences-description": "referenca Display",
 	"wikieditor-toolbar-help-content-showreferences-result": "<ol class='references'><li id='cite_note-test-0'> <a title='' href='#'><b>^</b></a> <a rel='nofollow' title=\"http://www.example.org\" class='external text' href='#'>Teksti Link</a> , teksti shtesë. </li></ol>",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "Nënshkrimi me gjithë kohë",
-	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='{{#special:mypage}}'>Emri i përdoruesit</a> ( <a href='#' title=\"{{#special:mytalk}}\">të folur</a> ) 15:54, 10 Qershor 2009 (UTC)",
+	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='$1:Username'>Emri i përdoruesit</a> ( <a href='#' title=\"$2:Username\">të folur</a> ) 15:54, 10 Qershor 2009 (UTC)",
 	"wikieditor-toolbar-help-content-signature-description": "Nënshkrim",
-	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title=\"{{#special:mypage}}\">Emri i përdoruesit</a> ( <a href='#' title=\"{{#special:mytalk}}\">të folur</a> )",
+	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title=\"$1:Username\">Emri i përdoruesit</a> ( <a href='#' title=\"$2:Username\">të folur</a> )",
 	"wikieditor-toolbar-help-content-indent-description": "Porosit",
 	"wikieditor-toolbar-help-content-indent-syntax": "tekstit Normale <br /> : Teksti i prerë <br /> :: Teksti i prerë",
 	"wikieditor-toolbar-help-content-indent-result": "tekstit Normale <dl><dd> Teksti i prerë <dl><dd> Teksti i prerë </dd></dl></dd></dl>"

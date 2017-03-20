@@ -4,7 +4,9 @@
 			"BrokenArrow",
 			"CERminator",
 			"Palapa",
-			"Semso98"
+			"Semso98",
+			"OC Ripper",
+			"Srdjan m"
 		]
 	},
 	"captcha-edit": "Vaša izmjena uključuje nove URL linkove; kao zaštita od automatizovanog vandalizma, moraćete da izračunate zadatak ispod i upišete odgovor u prozor:\n([[Special:Captcha/help|Šta je ovo?]]):",
@@ -15,7 +17,7 @@
 	"captcha-createaccount": "Da bi zaštitili wiki od automatiziranog pravljenja računa, ljubazno Vas molimo da unesete riječi koje će se pojaviti u kutiji ispod ([[Special:Captcha/help|više informacija]]):",
 	"captcha-createaccount-fail": "Netačan unos ili nedostajući CAPTCHA.",
 	"captcha-create": "Da bi ste napravili stranicu; kao zaštita od automatizovanog vandalizma, moraćete da ukucate rezultat prikazane sume u okvir ispod:\n([[Special:Captcha/help|Šta je ovo?]])",
-	"captcha-sendemail": "Da bi ste pomogli protiv automatskog probijanja šifre, molimo riješite jednostavan zadatak sabiranja ispod i unesite rezultat u kutiju ([[Special:Captcha/help|više informacija]]):",
+	"captcha-sendemail": "Da bi ste zaštitilii wiki od automatskog postavljanja neželjenog sadržaja, ljubazno Vas molimo da riješite jednostavan zadatak sabiranja ispod i unesite rezultat u kutiju ([[Special:Captcha/help|više informacija]]):",
 	"captcha-sendemail-fail": "Netačan unos ili nedostajući CAPTCHA.",
 	"captcha-disabledinapi": "Ova akcija zahtjeva captchu, tako da se ne može izvršiti preko API.",
 	"captchahelp-title": "Pomoć pri captcha",

@@ -1,4 +1,5 @@
 <?php
+
 namespace Elastica\Test\Transport;
 
 use Elastica\Document;
@@ -8,6 +9,12 @@ use Elastica\Test\Base as BaseTest;
 
 class TransportBenchmarkTest extends BaseTest
 {
+    protected function setUp()
+    {
+        parent::setUp();
+        $this->markTestIncomplete('Benchmarks currently skipped with es2.0. Has to be reworked');
+    }
+
     protected $_max = 1000;
 
     protected $_maxData = 20;
@@ -39,14 +46,14 @@ class TransportBenchmarkTest extends BaseTest
      */
     public function testAddDocument(array $config, $transport)
     {
-        $this->_checkThrift($transport);
+        $this->_checkTransport($config, $transport);
 
         $type = $this->getType($config);
         $index = $type->getIndex();
         $index->create(array(), true);
 
         $times = array();
-        for ($i = 0; $i < $this->_max; $i++) {
+        for ($i = 0; $i < $this->_max; ++$i) {
             $data = $this->getData($i);
             $doc = new Document($i, $data);
             $result = $type->addDocument($doc);
@@ -66,14 +73,14 @@ class TransportBenchmarkTest extends BaseTest
      */
     public function testRandomRead(array $config, $transport)
     {
-        $this->_checkThrift($transport);
+        $this->_checkTransport($config, $transport);
 
         $type = $this->getType($config);
 
         $type->search('test');
 
         $times = array();
-        for ($i = 0; $i < $this->_max; $i++) {
+        for ($i = 0; $i < $this->_max; ++$i) {
             $test = rand(1, $this->_max);
             $query = new Query();
             $query->setQuery(new \Elastica\Query\MatchAll());
@@ -92,12 +99,14 @@ class TransportBenchmarkTest extends BaseTest
      */
     public function testBulk(array $config, $transport)
     {
+        $this->_checkTransport($config, $transport);
+
         $type = $this->getType($config);
 
         $times = array();
-        for ($i = 0; $i < $this->_max; $i++) {
+        for ($i = 0; $i < $this->_max; ++$i) {
             $docs = array();
-            for ($j = 0; $j < 10; $j++) {
+            for ($j = 0; $j < 10; ++$j) {
                 $data = $this->getData($i.$j);
                 $docs[] = new Document($i, $data);
             }
@@ -115,6 +124,8 @@ class TransportBenchmarkTest extends BaseTest
      */
     public function testGetMapping(array $config, $transport)
     {
+        $this->_checkTransport($config, $transport);
+
         $client = $this->_getClient($config);
         $index = $client->getIndex('benchmark');
         $index->create(array(), true);
@@ -142,7 +153,7 @@ class TransportBenchmarkTest extends BaseTest
         $index->refresh();
 
         $times = array();
-        for ($i = 0; $i < $this->_max; $i++) {
+        for ($i = 0; $i < $this->_max; ++$i) {
             $response = $type->request('_mapping', \Elastica\Request::GET);
             $times[] = $response->getQueryTime();
         }
@@ -170,17 +181,6 @@ class TransportBenchmarkTest extends BaseTest
                 ),
                 'Http:Persistent',
             ),
-            array(
-                array(
-                    'transport' => 'Thrift',
-                    'host' => $this->_getHost(),
-                    'port' => 9500,
-                    'config' => array(
-                        'framedTransport' => false,
-                    ),
-                ),
-                'Thrift:Buffered',
-            ),
         );
     }
 
@@ -195,7 +195,7 @@ class TransportBenchmarkTest extends BaseTest
             'test' => $test,
             'name' => array(),
         );
-        for ($i = 0; $i < $this->_maxData; $i++) {
+        for ($i = 0; $i < $this->_maxData; ++$i) {
             $data['name'][] = uniqid();
         }
 
@@ -236,7 +236,12 @@ class TransportBenchmarkTest extends BaseTest
             }
             $minMean = min($means);
             foreach ($values as $transport => $times) {
-                $perc = (($times['mean'] - $minMean) / $minMean) * 100;
+                $perc = 0;
+
+                if ($minMean != 0) {
+                    $perc = (($times['mean'] - $minMean) / $minMean) * 100;
+                }
+
                 echo sprintf(
                     "%-12s | %-20s | %-12d | %-12.2f | %-12.2f | %-12.2f | %+03.2f\n",
                     $name,
@@ -252,10 +257,8 @@ class TransportBenchmarkTest extends BaseTest
         }
     }
 
-    protected function _checkThrift($transport)
+    protected function _checkTransport(array $config, $transport)
     {
-        if (strpos($transport, 'Thrift') !== false && !class_exists('Elasticsearch\\RestClient')) {
-            self::markTestSkipped('munkie/elasticsearch-thrift-php package should be installed to run thrift transport tests');
-        }
+        $this->_checkConnection($config['host'], $config['port']);
     }
 }

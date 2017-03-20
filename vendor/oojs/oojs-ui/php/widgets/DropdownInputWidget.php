@@ -7,29 +7,24 @@ namespace OOUI;
  * OO.ui.FormLayout.
  */
 class DropdownInputWidget extends InputWidget {
-
 	/**
-	 * HTML `<option>` tags for this widget.
-	 * @var Tag[]
+	 * HTML `<option>` tags for this widget, as Tags.
+	 * @var array
 	 */
-	protected $options = array();
+	protected $options = [];
 
 	/**
 	 * @param array $config Configuration options
 	 * @param array[] $config['options'] Array of menu options in the format
 	 *   `array( 'data' => …, 'label' => … )`
 	 */
-	public function __construct( array $config = array() ) {
+	public function __construct( array $config = [] ) {
 		// Parent constructor
 		parent::__construct( $config );
 
-		// Mixins
-		$this->mixin( new TitledElement( $this,
-			array_merge( $config, array( 'titled' => $this->input ) ) ) );
-
 		// Initialization
-		$this->setOptions( isset( $config['options'] ) ? $config['options'] : array() );
-		$this->addClasses( array( 'oo-ui-dropdownInputWidget' ) );
+		$this->setOptions( isset( $config['options'] ) ? $config['options'] : [] );
+		$this->addClasses( [ 'oo-ui-dropdownInputWidget' ] );
 	}
 
 	protected function getInputElement( $config ) {
@@ -40,34 +35,33 @@ class DropdownInputWidget extends InputWidget {
 		$this->value = $this->cleanUpValue( $value );
 		foreach ( $this->options as &$opt ) {
 			if ( $opt->getAttribute( 'value' ) === $this->value ) {
-				$opt->setAttributes( array( 'selected' => 'selected' ) );
+				$opt->setAttributes( [ 'selected' => 'selected' ] );
 			} else {
-				$opt->removeAttributes( array( 'selected' ) );
+				$opt->removeAttributes( [ 'selected' ] );
 			}
 		}
 		return $this;
 	}
-
 
 	/**
 	 * Set the options available for this input.
 	 *
 	 * @param array[] $options Array of menu options in the format
 	 *   `array( 'data' => …, 'label' => … )`
-	 * @chainable
+	 * @return $this
 	 */
 	public function setOptions( $options ) {
 		$value = $this->getValue();
 		$isValueAvailable = false;
-		$this->options = array();
+		$this->options = [];
 
 		// Rebuild the dropdown menu
 		$this->input->clearContent();
 		foreach ( $options as $opt ) {
 			$optValue = $this->cleanUpValue( $opt['data'] );
-			$option = new Tag( 'option' );
-			$option->setAttributes( array( 'value' => $optValue ) );
-			$option->appendContent( isset( $opt['label'] ) ? $opt['label'] : $optValue );
+			$option = ( new Tag( 'option' ) )
+				->setAttributes( [ 'value' => $optValue ] )
+				->appendContent( isset( $opt['label'] ) ? $opt['label'] : $optValue );
 
 			if ( $value === $optValue ) {
 				$isValueAvailable = true;
@@ -92,11 +86,11 @@ class DropdownInputWidget extends InputWidget {
 	}
 
 	public function getConfig( &$config ) {
-		$o = array();
+		$o = [];
 		foreach ( $this->options as $option ) {
 			$label = $option->content[0];
 			$data = $option->getAttribute( 'value' );
-			$o[] = array( 'data' => $data, 'label' => $label );
+			$o[] = [ 'data' => $data, 'label' => $label ];
 		}
 		$config['options'] = $o;
 		return parent::getConfig( $config );

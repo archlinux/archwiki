@@ -30,18 +30,20 @@ class FeedUtils {
 
 	/**
 	 * Check whether feed's cache should be cleared; for changes feeds
-	 * If the feed should be purged; $timekey and $key will be removed from
-	 * $messageMemc
+	 * If the feed should be purged; $timekey and $key will be removed from cache
 	 *
 	 * @param string $timekey Cache key of the timestamp of the last item
 	 * @param string $key Cache key of feed's content
 	 */
 	public static function checkPurge( $timekey, $key ) {
-		global $wgRequest, $wgUser, $messageMemc;
+		global $wgRequest, $wgUser;
+
 		$purge = $wgRequest->getVal( 'action' ) === 'purge';
+		// Allow users with 'purge' right to clear feed caches
 		if ( $purge && $wgUser->isAllowed( 'purge' ) ) {
-			$messageMemc->delete( $timekey );
-			$messageMemc->delete( $key );
+			$cache = ObjectCache::getMainWANInstance();
+			$cache->delete( $timekey, 1 );
+			$cache->delete( $key, 1 );
 		}
 	}
 
@@ -110,9 +112,9 @@ class FeedUtils {
 		// log entries
 		$completeText = '<p>' . implode( ' ',
 			array_filter(
-				array(
+				[
 					$actiontext,
-					Linker::formatComment( $comment ) ) ) ) . "</p>\n";
+					Linker::formatComment( $comment ) ] ) ) . "</p>\n";
 
 		// NOTE: Check permissions for anonymous users, not current user.
 		//       No "privileged" version should end up in the cache.
@@ -128,11 +130,11 @@ class FeedUtils {
 
 		if ( $oldid ) {
 
-			#$diffText = $de->getDiff( wfMessage( 'revisionasof',
-			#	$wgLang->timeanddate( $timestamp ),
-			#	$wgLang->date( $timestamp ),
-			#	$wgLang->time( $timestamp ) )->text(),
-			#	wfMessage( 'currentrev' )->text() );
+			# $diffText = $de->getDiff( wfMessage( 'revisionasof',
+			# 	$wgLang->timeanddate( $timestamp ),
+			# 	$wgLang->date( $timestamp ),
+			# 	$wgLang->time( $timestamp ) )->text(),
+			# 	wfMessage( 'currentrev' )->text() );
 
 			$diffText = '';
 			// Don't bother generating the diff if we won't be able to show it
@@ -185,10 +187,10 @@ class FeedUtils {
 					$html = nl2br( htmlspecialchars( $text ) );
 				}
 			} else {
-				//XXX: we could get an HTML representation of the content via getParserOutput, but that may
+				// XXX: we could get an HTML representation of the content via getParserOutput, but that may
 				//     contain JS magic and generally may not be suitable for inclusion in a feed.
 				//     Perhaps Content should have a getDescriptiveHtml method and/or a getSourceText method.
-				//Compare also ApiFeedContributions::feedItemDesc
+				// Compare also ApiFeedContributions::feedItemDesc
 				$html = null;
 			}
 
@@ -217,13 +219,13 @@ class FeedUtils {
 	 * @return string
 	 */
 	protected static function getDiffLink( Title $title, $newid, $oldid = null ) {
-		$queryParameters = array( 'diff' => $newid );
+		$queryParameters = [ 'diff' => $newid ];
 		if ( $oldid != null ) {
 			$queryParameters['oldid'] = $oldid;
 		}
 		$diffUrl = $title->getFullURL( $queryParameters );
 
-		$diffLink = Html::element( 'a', array( 'href' => $diffUrl ),
+		$diffLink = Html::element( 'a', [ 'href' => $diffUrl ],
 			wfMessage( 'showdiff' )->inContentLanguage()->text() );
 
 		return $diffLink;
@@ -238,7 +240,7 @@ class FeedUtils {
 	 * @return string Modified HTML
 	 */
 	public static function applyDiffStyle( $text ) {
-		$styles = array(
+		$styles = [
 			'diff'             => 'background-color: white; color:black;',
 			'diff-otitle'      => 'background-color: white; color:black; text-align: center;',
 			'diff-ntitle'      => 'background-color: white; color:black; text-align: center;',
@@ -252,7 +254,7 @@ class FeedUtils {
 				. 'border-style: solid; border-width: 1px 1px 1px 4px; border-radius: 0.33em; '
 				. 'border-color: #e6e6e6; vertical-align: top; white-space: pre-wrap;',
 			'diffchange'       => 'font-weight: bold; text-decoration: none;',
-		);
+		];
 
 		foreach ( $styles as $class => $style ) {
 			$text = preg_replace( "/(<[^>]+)class=(['\"])$class\\2([^>]*>)/",

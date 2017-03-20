@@ -1,28 +1,38 @@
 <?php
+
 namespace Elastica\Test\Filter;
 
 use Elastica\Document;
 use Elastica\Filter\Ids;
 use Elastica\Filter\Type;
 use Elastica\Query;
-use Elastica\Test\Base as BaseTest;
+use Elastica\Test\DeprecatedClassBase as BaseTest;
 
 class IdsTest extends BaseTest
 {
+    /**
+     * @group unit
+     */
+    public function testDeprecated()
+    {
+        $reflection = new \ReflectionClass(new Ids());
+        $this->assertFileDeprecated($reflection->getFileName(), 'Deprecated: Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html');
+    }
+
     protected function _getIndexForTest()
     {
         $index = $this->_createIndex();
 
         // Add documents to first type
         $docs = array();
-        for ($i = 1; $i < 100; $i++) {
+        for ($i = 1; $i < 100; ++$i) {
             $docs[] = new Document($i, array('name' => 'ruflin'));
         }
         $index->getType('helloworld1')->addDocuments($docs);
 
         // Add documents to second type
         $docs = array();
-        for ($i = 1; $i < 100; $i++) {
+        for ($i = 1; $i < 100; ++$i) {
             $docs[] = new Document($i, array('name' => 'ruflin'));
         }
         // This is a special id that will only be in the second type

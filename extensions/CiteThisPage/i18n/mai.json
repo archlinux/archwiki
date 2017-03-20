@@ -1,9 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Tulsi Bhagat"
+			"Tulsi Bhagat",
+			"बिप्लब आनन्द"
 		]
 	},
-	"citethispage-link": "यी पन्ना बनाउ",
-	"tooltip-citethispage": "यी पन्नाके उद्धृत करै कऽ लेल जानकारी"
+	"citethispage-link": "ई पन्ना बनाबी",
+	"tooltip-citethispage": "ई पन्नाक उद्धृत करैक लेल जानकारी"
 }

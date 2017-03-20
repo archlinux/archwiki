@@ -22,7 +22,7 @@ class InterwikiHooks {
 	public static function onInterwikiLoadPrefix( $prefix, &$iwData ) {
 		global $wgInterwikiCentralDB;
 		// docs/hooks.txt says: Return true without providing an interwiki to continue interwiki search.
-		if ( $wgInterwikiCentralDB === null || $wgInterwikiCentralDB === wfWikiId() ) {
+		if ( $wgInterwikiCentralDB === null || $wgInterwikiCentralDB === wfWikiID() ) {
 			// No global set or this is global, nothing to add
 			return true;
 		}
@@ -33,11 +33,11 @@ class InterwikiHooks {
 					return true;
 				}
 			}
-			$dbr = wfGetDB( DB_SLAVE, array(), $wgInterwikiCentralDB );
+			$dbr = wfGetDB( DB_SLAVE, [], $wgInterwikiCentralDB );
 			$res = $dbr->selectRow(
 				'interwiki',
 				'*',
-				array( 'iw_prefix' => $prefix ),
+				[ 'iw_prefix' => $prefix ],
 				__METHOD__
 			);
 			if ( !$res ) {

@@ -1,10 +1,11 @@
 <?php
+
 namespace Elastica\Suggest;
 
 /**
  * Class Term.
  *
- * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggesters-term.html
+ * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggesters-term.html
  */
 class Term extends AbstractSuggest
 {

@@ -2,13 +2,21 @@
 	"@metadata": {
 		"authors": [
 			"Hamilton Abreu",
-			"Fúlvio"
+			"Fúlvio",
+			"Vitorvicentevalente"
 		]
 	},
-	"recaptcha-edit": "Para proteger esta wiki contra o spam de edições automáticas, por favor, digite as duas palavras que você vê na caixa abaixo:",
-	"recaptcha-addurl": "A sua edição contém links externos novos. Para proteger esta wiki contra o spam automatizado, escreva as duas palavras visíveis na caixa abaixo:",
-	"recaptcha-badlogin": "Para proteger esta wiki contra mecanismos automatizados de descoberta de palavras-chave, por favor escreva  as duas palavras visíveis abaixo:",
-	"recaptcha-createaccount": "Para proteger esta wiki contra a criação de contas automatizada, por favor escreva  as duas palavras visíveis abaixo:",
-	"recaptcha-createaccount-fail": "A resposta ao reCAPTCHA é errada.",
-	"recaptcha-create": "Para proteger esta wiki contra a criação de páginas automatizada, por favor escreva  as duas palavras visíveis abaixo:"
+	"recaptcha-edit": "Para proteger esta wiki contra <i>spam</i> automatizado, introduza as palavras que vê abaixo:",
+	"recaptcha-addurl": "A sua edição contém ligações externas novas. Para proteger a wiki contra <i>spam</i> automatizado, introduza as palavras visíveis abaixo:",
+	"recaptcha-badlogin": "Para proteger esta wiki contra mecanismos automatizados de descoberta de palavras-passe, por favor introduza as palavras visíveis abaixo:",
+	"recaptcha-createaccount": "Para proteger esta wiki contra a criação de contas automatizada, introduza as palavras que vê abaixo:",
+	"recaptcha-createaccount-fail": "A resposta ao reCAPTCHA está vazia ou errada.",
+	"recaptcha-create": "Para proteger esta wiki contra a criação de páginas automatizada, introduza as palavras que vê abaixo:",
+	"recaptcha-info": "Resolva o desafio do ReCaptcha e devolva os valores do desafio e da resposta como captchaId e captchaWord.",
+	"recaptcha-apihelp-param-recaptcha_challenge_field": "Campo do <i>widget</i> ReCaptcha",
+	"recaptcha-apihelp-param-recaptcha_response_field": "Campo do <i>widget</i> ReCaptcha",
+	"recaptcha-id-label": "Desafio do ReCaptcha",
+	"recaptcha-id-help": "Valor do desafio do ReCaptcha",
+	"recaptcha-label": "Solução do ReCaptcha",
+	"recaptcha-help": "Valor da solução do ReCaptcha"
 }

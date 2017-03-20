@@ -2,41 +2,37 @@
 
 // Although this defines many shades, be parsimonious in your own use of grays. Prefer
 // colors already in use in MediaWiki. Prefer semantic color names such as "@colorText".
-@colorGray1: #111; // darkest
+@colorGray1: #000; // darkest
 @colorGray2: #222;
 @colorGray3: #333;
 @colorGray4: #444;
-@colorGray5: #555;
+@colorGray5: #54595d;
 @colorGray6: #666;
-@colorGray7: #777;
+@colorGray7: #72777d;
 @colorGray8: #888;
 @colorGray9: #999;
-@colorGray10: #AAA;
-@colorGray11: #BBB;
-@colorGray12: #CCC;
-@colorGray13: #DDD;
-@colorGray14: #EEE;
-@colorGray15: #F9F9F9; // lightest
+@colorGray10: #a2a9b1;
+@colorGray11: #bbb;
+@colorGray12: #c8ccd1;
+@colorGray13: #ddd;
+@colorGray14: #eaecf0;
+@colorGray15: #f8f9fa; // lightest
 
 // Semantic background colors
 // Blue; for contextual use of a continuing action
-@colorProgressive: #347bff;
-@colorProgressiveHighlight: #2962CC;
-@colorProgressiveActive: #2962CC;
-// Green; for contextual use of a positive finalizing action
-@colorConstructive: #00af89;
-@colorConstructiveHighlight: #008C6D;
-@colorConstructiveActive: #008C6D;
+@colorProgressive: #36c;
+@colorProgressiveHighlight: #447ff5;
+@colorProgressiveActive: #2a4b8d;
 // Orange; for contextual use of returning to a past action
-@colorRegressive: #FF5D00;
+@colorRegressive: #ff5d00;
 // Red; for contextual use of a negative action of high severity
-@colorDestructive: #d11d13;
-@colorDestructiveHighlight: #A7170F;
-@colorDestructiveActive: #A7170F;
+@colorDestructive: #c33;
+@colorDestructiveHighlight: #e53939;
+@colorDestructiveActive: #873636;
 // Orange; for contextual use of a potentially negative action of medium severity
-@colorMediumSevere: #FF5D00;
+@colorMediumSevere: #ff5d00;
 // Yellow; for contextual use of a potentially negative action of low severity
-@colorLowSevere: #FFB50D;
+@colorLowSevere: #fc3;
 
 // Used in mixins to darken contextual colors by the same amount (eg. focus)
 @colorDarkenPercentage: 13.5%;
@@ -46,17 +42,29 @@
 // Text colors
 @colorText: @colorGray2;
 @colorTextLight: @colorGray6;
-@colorButtonText: @colorGray5;
-@colorButtonTextHighlight: @colorGray7;
-@colorButtonTextActive: @colorGray7;
+@colorButtonText: @colorGray2;
+@colorButtonTextHighlight: @colorGray4;
+@colorButtonTextActive: @colorGray1;
 @colorDisabledText: @colorGray12;
-@colorErrorText: #CC0000;
+@colorErrorText: #c00;
+@colorWarningText: #705000;
 
 // UI colors
-@colorFieldBorder: @colorGray12;
+@colorFieldBorder: #9aa0a7;
 @colorShadow: @colorGray14;
 @colorPlaceholder: @colorGray10;
 @colorNeutral: @colorGray7;
+
+// Global border radius to be used to buttons and inputs
+@borderRadius: 2px;
+
+// Icon related variables
+@iconSize: 1.5em;
+@iconGutterWidth: 1em;
+
+// Form input sizes
+@checkboxSize: 2em;
+@radioSize: 2em;
 
 // The following rules are deprecated
 @colorWhite: #fff;
@@ -65,11 +73,8 @@
 @colorGrayLight: #ccc;
 @colorGrayLighter: #ddd;
 @colorGrayLightest: #eee;
+// Green; for contextual use of a positive finalizing action
+@colorConstructive: #00af89;
+@colorConstructiveHighlight: #1c6665;
+@colorConstructiveActive: #134645;
 
-// Global border radius to be used to buttons and inputs
-@borderRadius: 2px;
-
-
-// Icon related variables
-@iconSize: 1.5em;
-@iconGutterWidth: 1em;

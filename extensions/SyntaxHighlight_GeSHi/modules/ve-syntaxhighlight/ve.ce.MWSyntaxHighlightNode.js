@@ -24,17 +24,21 @@ OO.initClass( ve.ce.MWSyntaxHighlightNode );
 
 ve.ce.MWSyntaxHighlightNode.static.name = 'mwSyntaxHighlight';
 
-ve.ce.MWSyntaxHighlightNode.static.primaryCommandName = 'syntaxhighlight';
+ve.ce.MWSyntaxHighlightNode.static.primaryCommandName = 'syntaxhighlightDialog';
 
 /* Methods */
 
 /** */
 ve.ce.MWSyntaxHighlightNode.prototype.generateContents = function () {
+	var node = this,
+		args = arguments;
 	if ( !this.getModel().isLanguageSupported() ) {
 		return $.Deferred().reject().promise();
 	}
 	// Parent method
-	return ve.ce.MWExtensionNode.prototype.generateContents.apply( this, arguments );
+	return mw.loader.using( 'ext.pygments' ).then( function () {
+		return ve.ce.MWExtensionNode.prototype.generateContents.apply( node, args );
+	} );
 };
 
 /** */
@@ -82,6 +86,8 @@ OO.inheritClass( ve.ce.MWInlineSyntaxHighlightNode, ve.ce.MWInlineExtensionNode 
 OO.mixinClass( ve.ce.MWInlineSyntaxHighlightNode, ve.ce.MWSyntaxHighlightNode );
 
 ve.ce.MWInlineSyntaxHighlightNode.static.name = 'mwInlineSyntaxHighlight';
+
+ve.ce.MWInlineSyntaxHighlightNode.static.primaryCommandName = 'syntaxhighlightInspector';
 
 /* Registration */
 
