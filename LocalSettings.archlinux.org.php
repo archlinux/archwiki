@@ -76,7 +76,8 @@ $wgResourceLoaderMaxQueryLength = -1;
 
 $wgGitRepositoryViewers['.+projects\.archlinux\.org/vhosts/wiki\.archlinux\.org\.git(.*)'] = 'https://projects.archlinux.org/vhosts/wiki.archlinux.org.git/commit/?id=%H';
 
-$wgJobRunRate = 0;
+$wgJobRunRate = 1;
+$wgRunJobsAsync = 1;
 
 # Enable subpages in the main namespace (FS#39668)
 $wgNamespacesWithSubpages[NS_MAIN] = true;
