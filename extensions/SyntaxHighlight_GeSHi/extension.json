@@ -44,34 +44,6 @@
 				"pygments.generated.css",
 				"pygments.wrapper.css"
 			]
-		},
-		"ext.geshi.visualEditor": {
-			"class": "ResourceLoaderGeSHiVisualEditorModule",
-			"scripts": [
-				"ve-syntaxhighlight/ve.dm.MWSyntaxHighlightNode.js",
-				"ve-syntaxhighlight/ve.ce.MWSyntaxHighlightNode.js",
-				"ve-syntaxhighlight/ve.ui.MWSyntaxHighlightWindow.js",
-				"ve-syntaxhighlight/ve.ui.MWSyntaxHighlightDialog.js",
-				"ve-syntaxhighlight/ve.ui.MWSyntaxHighlightDialogTool.js",
-				"ve-syntaxhighlight/ve.ui.MWSyntaxHighlightInspector.js",
-				"ve-syntaxhighlight/ve.ui.MWSyntaxHighlightInspectorTool.js"
-			],
-			"styles": [
-				"ve-syntaxhighlight/ve.ce.MWSyntaxHighlightNode.css",
-				"ve-syntaxhighlight/ve.ui.MWSyntaxHighlightDialog.css",
-				"ve-syntaxhighlight/ve.ui.MWSyntaxHighlightInspector.css"
-			],
-			"dependencies": [
-				"ext.visualEditor.mwcore"
-			],
-			"messages": [
-				"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code",
-				"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language",
-				"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none",
-				"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines",
-				"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title"
-			],
-			"targets": [ "desktop", "mobile" ]
 		}
 	},
 	"Hooks": {
@@ -86,6 +58,9 @@
 		],
 		"RejectParserCacheValue": [
 			"SyntaxHighlight_GeSHi::onRejectParserCacheValue"
+		],
+		"ResourceLoaderRegisterModules": [
+			"SyntaxHighlight_GeSHi::onResourceLoaderRegisterModules"
 		]
 	},
 	"SyntaxHighlightModels": {

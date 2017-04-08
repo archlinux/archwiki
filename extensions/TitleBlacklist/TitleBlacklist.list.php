@@ -17,6 +17,10 @@
  */
 class TitleBlacklist {
 	private $mBlacklist = null, $mWhitelist = null;
+
+	/** @var TitleBlacklist */
+	protected static $instance = null;
+
 	const VERSION = 3;	// Blacklist format
 
 	/**
@@ -25,12 +29,28 @@ class TitleBlacklist {
 	 * @return TitleBlacklist
 	 */
 	public static function singleton() {
-		static $instance = null;
-
-		if ( $instance === null ) {
-			$instance = new self;
+		if ( self::$instance === null ) {
+			self::$instance = new self;
 		}
-		return $instance;
+		return self::$instance;
+	}
+
+	/**
+	 * Destroy/reset the current singleton instance.
+	 *
+	 * This is solely for testing and will fail unless MW_PHPUNIT_TEST is
+	 * defined.
+	 */
+	public static function destroySingleton() {
+
+		if ( !defined( 'MW_PHPUNIT_TEST' ) ) {
+			throw new MWException(
+				'Can not invoke ' . __METHOD__ . '() ' .
+				'out of tests (MW_PHPUNIT_TEST not set).'
+			);
+		}
+
+		self::$instance = null;
 	}
 
 	/**

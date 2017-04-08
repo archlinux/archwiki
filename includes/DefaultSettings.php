@@ -75,7 +75,7 @@ $wgConfigRegistry = [
  * MediaWiki version number
  * @since 1.2
  */
-$wgVersion = '1.28.0';
+$wgVersion = '1.28.1';
 
 /**
  * Name of the site. It must be changed in LocalSettings.php
@@ -8102,10 +8102,7 @@ $wgJobRunRate = 1;
  *
  * @since 1.23
  */
-$wgRunJobsAsync = (
-	!function_exists( 'register_postsend_function' ) &&
-	!function_exists( 'fastcgi_finish_request' )
-);
+$wgRunJobsAsync = false;
 
 /**
  * Number of rows to update per job

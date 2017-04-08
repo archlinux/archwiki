@@ -1488,6 +1488,7 @@
 	"php-uploaddisabledtext": "File uploads are disabled in PHP.\nPlease check the file_uploads setting.",
 	"uploadscripted": "This file contains HTML or script code that may be erroneously interpreted by a web browser.",
 	"upload-scripted-pi-callback": "Cannot upload a file that contains XML-stylesheet processing instruction.",
+	"upload-scripted-dtd": "Cannot upload SVG files that contain a non-standard DTD declaration.",
 	"uploaded-script-svg": "Found scriptable element \"$1\" in the uploaded SVG file.",
 	"uploaded-hostile-svg": "Found unsafe CSS in the style element of uploaded SVG file.",
 	"uploaded-event-handler-on-svg": "Setting event-handler attributes <code>$1=\"$2\"</code> is not allowed in SVG files.",
@@ -4239,5 +4240,11 @@
 	"restrictionsfield-label": "Allowed IP ranges:",
 	"restrictionsfield-help": "One IP address or CIDR range per line. To enable everything, use<br><code>0.0.0.0/0</code><br><code>::/0</code>",
 	"edit-error-short": "Error: $1",
-	"edit-error-long": "Errors:\n\n$1"
+	"edit-error-long": "Errors:\n\n$1",
+	"rawhtml-notallowed": "&lt;html&gt; tags cannot be used outside of normal pages.",
+	"gotointerwiki": "Leaving {{SITENAME}}",
+	"gotointerwiki-invalid": "The specified title was invalid.",
+	"gotointerwiki-external": "You are about to leave {{SITENAME}} to visit [[$2]] which is a separate website.\n\n[$1 Click here to continue on to $1].",
+	"undelete-cantedit": "You cannot undelete this page as you are not allowed to edit this page.",
+	"undelete-cantcreate": "You cannot undelete this page as there is no existing page with this name and you are not allowed to create this page."
 }

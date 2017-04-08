@@ -45,6 +45,7 @@ class DatabaseSqlite extends Database {
 	protected $mLastResult;
 
 	/** @var $mConn PDO */
+	protected $mConn;
 
 	/** @var FSLockManager (hopefully on the same server as the DB) */
 	protected $lockMgr;
@@ -423,6 +424,16 @@ class DatabaseSqlite extends Database {
 		}
 
 		return str_replace( '"', '', parent::tableName( $name, $format ) );
+	}
+
+	/**
+	 * Index names have DB scope
+	 *
+	 * @param string $index
+	 * @return string
+	 */
+	protected function indexName( $index ) {
+		return $index;
 	}
 
 	/**

@@ -1672,6 +1672,7 @@
 	"php-uploaddisabledtext": "This means that file uploading is disabled in PHP, not upload of PHP-files.",
 	"uploadscripted": "Used as error message when uploading a file.\n\nSee also:\n* {{msg-mw|zip-wrong-format}}\n* {{msg-mw|uploadjava}}\n* {{msg-mw|uploadvirus}}",
 	"upload-scripted-pi-callback": "Used as error message when uploading an SVG file that contains xml-stylesheet processing instruction.",
+	"upload-scripted-dtd": "Used as an error message when uploading an svg file that contains a DTD declaration where the system identifier of the DTD is for something other than the standard SVG DTDS, or it is a SYSTEM DTD, or the public identifier does not start with -//W3C//. Note that errors related to the internal dtd subset do not use this error message.",
 	"uploaded-script-svg": "Used as error message when uploading an SVG file that contains scriptable tags (script, handler, stylesheet, iframe).\n\nParameters:\n* $1 - The scriptable tag that blocked the SVG file from uploading.",
 	"uploaded-hostile-svg": "Used as error message when uploading an SVG file that contains unsafe CSS.",
 	"uploaded-event-handler-on-svg": "Used as error message when uploading an SVG file that contains event-handler attributes.\n\nParameters:\n* $1 - The event-handler attribute that is being modified in the SVG file.\n* $2 - The value that is given to the event-handler attribute.",
@@ -4423,5 +4424,11 @@
 	"restrictionsfield-label": "Field label shown for restriction fields (e.g. on Special:BotPassword).",
 	"restrictionsfield-help": "Placeholder text displayed in restriction fields (e.g. on Special:BotPassword).",
 	"edit-error-short": "Error message. Parameters:\n* $1 - the error details\nSee also:\n* {{msg-mw|edit-error-long}}\n{{Identical|Error}}",
-	"edit-error-long": "Error message. Parameters:\n* $1 - the error details\nSee also:\n* {{msg-mw|edit-error-short}}\n{{Identical|Error}}"
+	"edit-error-long": "Error message. Parameters:\n* $1 - the error details\nSee also:\n* {{msg-mw|edit-error-short}}\n{{Identical|Error}}",
+	"rawhtml-notallowed": "Error message given when $wgRawHtml = true; is set and a user uses an &lt;html&gt; tag in a system message or somewhere other than a normal page.",
+	"gotointerwiki": "{{doc-special|GoToInterwiki}}\n\nSpecial:GoToInterwiki is a warning page displayed before redirecting users to external interwiki links. Its triggered by people going to something like [[Special:Search/google:foo]].",
+	"gotointerwiki-invalid": "Message shown on Special:GoToInterwiki if given an invalid title.",
+	"gotointerwiki-external": "Message shown on Special:GoToInterwiki if given a external interwiki link (e.g. [[Special:GoToInterwiki/Google:Foo]]). $1 is the full url the user is trying to get to. $2 is the text of the interwiki link (e.g. \"Google:foo\").",
+	"undelete-cantedit": "Shown if the user tries to undelete a page that they cannot edit",
+	"undelete-cantcreate": "Shown if the user tries to undelete a page which currently does not exist, and they are not allowed to create it. This could for example happen on a wiki with custom protection levels where the page name has been create-protected and the user has the right to undelete but not the right to edit protected pages."
 }

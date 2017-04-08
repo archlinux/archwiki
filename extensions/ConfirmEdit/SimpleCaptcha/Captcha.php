@@ -674,7 +674,7 @@ class SimpleCaptcha {
 				$newLinks = $this->findLinks( $title, $newtext );
 			}
 
-			$unknownLinks = array_filter( $newLinks, [ &$this, 'filterLink' ] );
+			$unknownLinks = array_filter( $newLinks, [ $this, 'filterLink' ] );
 			$addedLinks = array_diff( $unknownLinks, $oldLinks );
 			$numLinks = count( $addedLinks );
 
