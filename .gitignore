@@ -8,7 +8,6 @@
 .metadata*
 .project
 .settings
-AdminSettings.php
 LocalSettings.php
 StartProfiler.php
 cscope.files
