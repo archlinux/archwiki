@@ -263,8 +263,8 @@ class SyntaxHighlight_GeSHi {
 		}
 
 		// Starting line number
-		if ( isset( $args['start'] ) ) {
-			$options['linenostart'] = $args['start'];
+		if ( isset( $args['start'] ) && ctype_digit( $args['start'] ) ) {
+			$options['linenostart'] = (int)$args['start'];
 		}
 
 		if ( $inline ) {

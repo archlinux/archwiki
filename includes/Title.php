@@ -2318,7 +2318,7 @@ class Title implements LinkTarget {
 				// Undeleting where nothing currently exists implies creating
 				$errors[] = [ 'undelete-cantcreate' ];
 			}
- 		}
+		}
 		return $errors;
 	}
 
