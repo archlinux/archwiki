@@ -1,4 +1,4 @@
-FROM pierres/archlinux
+FROM archlinux/base
 
-RUN pacman -Syu --noconfirm php php-intl php-apcu php-gd imagemagick
+RUN pacman -Syu --noconfirm php php-intl php-apcu php-gd imagemagick git
 ADD etc/ /etc
