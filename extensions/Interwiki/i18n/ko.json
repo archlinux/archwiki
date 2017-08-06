@@ -8,7 +8,8 @@
 			"아라",
 			"Hym411",
 			"Revi",
-			"HDNua"
+			"HDNua",
+			"IRTC1015"
 		]
 	},
 	"interwiki": "인터위키 데이터 보기 및 편집",
@@ -22,8 +23,8 @@
 	"interwiki_url_intro": "URL 서식. $1 자리에는 <code>[<nowiki />[접두어:<em>문서 이름</em>]]</code>에서의 <em>문서 이름</em>으로 바뀔 것입니다.",
 	"interwiki_local": "전달",
 	"interwiki-local-label": "전달:",
-	"interwiki_local_0_intro": "무시함, 보통 \"{{int:badtitle}}\"을 대신 출력합니다.",
-	"interwiki_local_1_intro": "인터위키 링크 정의에 입력된 URL로 이동합니다. (즉, 로컬 문서의 링크로 취급됩니다)",
+	"interwiki_local_0_intro": "이 인터위키 접두어를 사용한 외부 HTTP 요청에 대해 \"{{int:badtitle}}\" 오류 문서가 표시됩니다.",
+	"interwiki_local_1_intro": "이 인터위키 접두어를 사용한 외부 HTTP 요청을 인터위키의 대상 URL로 넘깁니다 (즉, 로컬 문서의 링크처럼 취급됩니다)",
 	"interwiki_trans": "끼워넣기",
 	"interwiki-trans-label": "끼워넣기:",
 	"interwiki_trans_1_intro": "위키문법 <code>{<nowiki />{접두어:<em>문서 이름</em>}}</code>이 쓰였다면, 일반적으로 인터위키 틀 포함(([//www.mediawiki.org/wiki/Manual:$wgEnableScaryTranscluding scary transclusion])이 활성화되었을 때 다른 위키에서 틀/문서 포함을 허용합니다.",

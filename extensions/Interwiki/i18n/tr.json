@@ -23,7 +23,7 @@
 	"interwiki_1": "evet",
 	"interwiki_0": "hayır",
 	"interwiki_error": "Hata: İnterviki tablosu boş ya da başka bir şeyde sorun çıktı.",
-	"interwiki_edit": "Değiştir",
+	"interwiki_edit": "Düzenle",
 	"interwiki_reasonfield": "Neden:",
 	"interwiki_delquestion": "''$1\" siliniyor",
 	"interwiki-logtext": "Günlükleri görüntüleyin",

@@ -9,17 +9,19 @@
 			"Koc61",
 			"Arystanbek",
 			"Mizunee",
-			"HakanIST"
+			"HakanIST",
+			"Vito Genovese"
 		]
 	},
 	"gadgets-desc": "Kullanıcıların [[Special:Preferences#mw-prefsection-gadgets|tercihlerinde]] özel [[Special:Gadgets|CSS ve JavaScript gadgetlerini]] seçmelerine izin verir",
 	"prefs-gadgets": "Küçük araçlar",
 	"gadgets-prefstext": "Aşağıdaki, hesabınız için etkinleştirebileceğiniz özel araçların listesidir. \nBu küçük araçlar çoğunlukla JavaScript temellidir, bu yüzden çalışmaları için tarayıcınızda JavaScript etkinleştirilmelidir. Bu küçük araçların tercihler sayfasına bir etkisinin olmayacağını unutmayın.\n\nAyrıca unutmayın ki, bu özel araçlar MedyaViki yazılımının bir parçası değildir ve genellikle yerel vikinizdeki kullanıcılar tarafından geliştirilip, devam ettirilirler.\nYerel yöneticiler [[MediaWiki:Gadgets-definition|tanımları]] ve [[Special:Gadgets|açıklamaları]] kullanarak uygun araçları değiştirebilirler.",
 	"gadgets": "Küçük araçlar",
+	"gadgetusage": "Küçük araç kullanım istatistikleri",
 	"gadgetusage-usercount": "Kullanıcı sayısı",
 	"gadgets-title": "Küçük araçlar",
 	"gadgets-pagetext": "Aşağıdaki, kullanıcıların [[Special:Preferences#mw-prefsection-gadgets|tercihler sayfasında]] etkin hale getirebileceği, [[MediaWiki:Gadgets-definition|tanımlarla]] belirtildiği gibi, özel gadgetlerin bir listesidir.\nBu genel bakış, her gadget'in tanımını ve kodunu belirten sistem mesaj sayfalarına kolay erişim sağlar.",
-	"gadgets-uses": "Kullanıyor",
+	"gadgets-uses": "Şunu kullanıyor",
 	"gadgets-required-rights": "Aşağıda gösterilen {{PLURAL:$2|hak|haklar}} gereklidir:\n\n$1",
 	"gadgets-required-skins": "Kullanılabilecek {{PLURAL:$2|$1 tema|temalar: $1}}.",
 	"gadgets-default": "Herkes için varsayılan olarak etkindir.",

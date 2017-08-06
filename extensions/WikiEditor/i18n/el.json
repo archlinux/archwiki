@@ -27,7 +27,7 @@
 	"wikieditor-publish-button-cancel": "Άκυρο",
 	"wikieditor-publish-dialog-title": "Δημοσίευση στο {{SITENAME}}",
 	"wikieditor-publish-dialog-summary": "Σύνοψη επεξεργασίας (περιγράψτε συντόμως τις αλλαγές που έχετε κάνει):",
-	"wikieditor-publish-dialog-minor": "\"Μικρή\" επεξεργασία",
+	"wikieditor-publish-dialog-minor": "Μικροεπεξεργασία",
 	"wikieditor-publish-dialog-watch": "Παρακολούθηση αυτής της σελίδας",
 	"wikieditor-publish-dialog-publish": "Δημοσίευση",
 	"wikieditor-publish-dialog-goback": "Πήγαινε πίσω",

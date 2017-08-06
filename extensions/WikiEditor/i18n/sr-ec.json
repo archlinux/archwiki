@@ -11,7 +11,8 @@
 			"Жељко Тодоровић",
 			"Михајло Анђелковић",
 			"Macofe",
-			"Сербијана"
+			"Сербијана",
+			"Srdjan m"
 		]
 	},
 	"wikieditor": "Напредно окружење за уређивање вики-текста",
@@ -79,7 +80,7 @@
 	"wikieditor-toolbar-file-format-none": "ништа",
 	"wikieditor-toolbar-tool-file-insert": "Убаци",
 	"wikieditor-toolbar-tool-file-cancel": "Откажи",
-	"wikieditor-toolbar-tool-file-upload": "Отпремање",
+	"wikieditor-toolbar-tool-file-upload": "Отпреми",
 	"wikieditor-toolbar-tool-reference": "Навод",
 	"wikieditor-toolbar-tool-reference-example": "Овде унесите текст фусноте",
 	"wikieditor-toolbar-tool-reference-cancel": "Откажи",

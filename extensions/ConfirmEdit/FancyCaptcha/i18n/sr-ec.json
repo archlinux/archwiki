@@ -5,17 +5,19 @@
 			"Rancher",
 			"Жељко Тодоровић",
 			"Михајло Анђелковић",
-			"Milicevic01"
+			"Milicevic01",
+			"Srdjan m",
+			"Сербијана"
 		]
 	},
 	"fancycaptcha-desc": "Обогаћен стварач сликовног кода за потврду уређивања",
 	"fancycaptcha-addurl": "Ваша измена садржи нове спољашње везе.\nУ циљу заштите од непожељних порука, унесите речи са слике у поље испод ([[Special:Captcha/help|више информација]]):",
-	"fancycaptcha-badlogin": "У циљу заштите од пробијања лозинки, унесите речи са слике у поље испод ([[Special:Captcha/help|више информација]]):",
+	"fancycaptcha-badlogin": "Ради заштите од аутоматизованог разбијања шифри, унесите речи са слике у поље испод ([[Special:Captcha/help|више информација]]):",
 	"fancycaptcha-captcha": "Сигурносна провера",
 	"fancycaptcha-accountcreate": "У циљу заштите од аутоматског отварања налога, унесите речи са слике у поље испод ([[Special:Captcha/help|више информација]]):",
 	"fancycaptcha-create": "Да бисте направили страницу, унесите речи са слике у поље испод ([[Special:Captcha/help|више информација]]):",
 	"fancycaptcha-edit": "Да бисте уредили ову страницу, унесите речи са слике у поље испод ([[Special:Captcha/help|више информација]]):",
-	"fancycaptcha-imgcaptcha-ph": "Унесите текст који видите изнад",
+	"fancycaptcha-imgcaptcha-ph": "Унесите текст који видите на слици",
 	"fancycaptcha-sendemail": "У циљу заштите од непожељних порука, унесите речи са слике у поље испод ([[Special:Captcha/help|више информација]]):",
 	"fancycaptcha-reload-text": "освежи"
 }

@@ -1,8 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Malafaya"
+			"Malafaya",
+			"Cgboeree"
 		]
 	},
+	"citethispage-link": "Sita esta paje",
+	"tooltip-citethispage": "Informa per sita de esta paje",
 	"citethispage-change-target": "Paje:"
 }

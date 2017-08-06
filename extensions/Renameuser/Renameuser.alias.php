@@ -54,6 +54,11 @@ $specialPageAliases['bjn'] = array(
 	'Renameuser' => array( 'Ganti_ngaran_pamakai' ),
 );
 
+/** Bengali (বাংলা) */
+$specialPageAliases['bn'] = array(
+	'Renameuser' => array( 'ব্যবহারকারী_নামান্তর', 'ব্যবহারকারী_পুনঃনামকরণ' ),
+);
+
 /** Breton (brezhoneg) */
 $specialPageAliases['br'] = array(
 	'Renameuser' => array( 'AdenevelImplijer' ),
@@ -356,7 +361,7 @@ $specialPageAliases['tr'] = array(
 
 /** Ukrainian (українська) */
 $specialPageAliases['uk'] = array(
-	'Renameuser' => array( 'Перейменувати_користувача' ),
+	'Renameuser' => array( 'Перейменувати_користувача', 'Переименовать_участника' ),
 );
 
 /** Vietnamese (Tiếng Việt) */

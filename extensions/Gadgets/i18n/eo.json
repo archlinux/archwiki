@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Yekrats",
-			"Robin van der Vliet"
+			"Robin van der Vliet",
+			"Psychoslave"
 		]
 	},
 	"gadgets-desc": "Permesas al uzantoj elekti proprajn [[Special:Gadgets|CSS kaj JavaScript aldonaĵojn]] en ties [[Special:Preferences#mw-prefsection-gadgets|preferoj]].",
@@ -18,8 +19,8 @@
 	"gadgets-required-skins": "Dispona kun la {{PLURAL:$2|$1 etoso|jenaj etosoj:$1}}.",
 	"gadgets-default": "Ŝaltita por ĉiu defaŭlte.",
 	"gadgets-export": "Elporti",
-	"gadgets-export-title": "Aldonaĵo-eksportado",
+	"gadgets-export-title": "Aldonaĵo-elportado",
 	"gadgets-not-found": "Aldonaĵo \"$1\" ne estis trovita.",
-	"gadgets-export-text": "Eksporti la aldonaĵon $1, klaku butonon \"{{int:gadgets-export-download}}\", konservu la elŝutitan dosieron,\niru Special:Import en cela vikio kaj alŝutu ĝin. Poste aldonu la jenan signoĉenon al paĝo MediaWiki:Gadgets-definition:\n<pre>$2</pre>\nVi nepras la taŭgajn rajtojn ĉe cela vikio (inkluzivante rajton redakti sistemajn mesaĝojn) kaj importebleco de dosieraj alŝutaĵojn devas esti ŝaltita.",
+	"gadgets-export-text": "Elporti la aldonaĵon $1, klaku butonon \"{{int:gadgets-export-download}}\", konservu la elŝutitan dosieron,\niru Special:Import en cela vikio kaj alŝutu ĝin. Poste aldonu la jenan signoĉenon al paĝo MediaWiki:Gadgets-definition:\n<pre>$2</pre>\nVi nepras la taŭgajn rajtojn ĉe cela vikio (inkluzivante rajton redakti sistemajn mesaĝojn) kaj enportebleco de dosieraj alŝutaĵojn devas esti ŝaltita.",
 	"gadgets-export-download": "Elŝuti"
 }

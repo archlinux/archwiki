@@ -8,7 +8,7 @@
 	"pfunc_time_error": "Biddut: Imbalido nga oras.",
 	"pfunc_time_too_long": "Biddut: Adu unay dagiti panagtawag ti #time.",
 	"pfunc_time_too_big": "Biddut: Ti #time ket suportaranna laeng dagiti tawen aginggana iti 9999.",
-	"pfunc_time_too_small": "Biddut: ti #time ket suportaranna laeng dagiti tawen manipud ti 0.",
+	"pfunc_time_too_small": "Biddut: ti #time ket suportaranna laeng dagiti tawen manipud iti 0.",
 	"pfunc_rel2abs_invalid_depth": "Biddut: Imbalido a kauneg iti dalan: \"$1\" (nagpadas a nangserrek ti nodo iti ngato ti ramut a nodo).",
 	"pfunc_expr_stack_exhausted": "Biddut a panangiyebkas: Naibusen ti tuon.",
 	"pfunc_expr_unexpected_number": "Biddut a panangiyebkas:Di nanamnama a bilang.",

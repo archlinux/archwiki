@@ -1,7 +1,7 @@
 /*!
  * VisualEditor DataModel MWReferenceNode class.
  *
- * @copyright 2011-2016 Cite VisualEditor Team and others; see AUTHORS.txt
+ * @copyright 2011-2017 Cite VisualEditor Team and others; see AUTHORS.txt
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
@@ -17,7 +17,7 @@
  */
 ve.dm.MWReferenceNode = function VeDmMWReferenceNode() {
 	// Parent constructor
-	ve.dm.LeafNode.apply( this, arguments );
+	ve.dm.MWReferenceNode.super.apply( this, arguments );
 
 	// Mixin constructors
 	ve.dm.FocusableNode.call( this );
@@ -216,14 +216,16 @@ ve.dm.MWReferenceNode.static.toDomElements = function ( dataElement, doc, conver
 		el.setAttribute( 'data-mw', originalMw );
 
 		// Return the original DOM elements if possible
-		if ( dataElement.originalDomElementsIndex ) {
+		if ( dataElement.originalDomElementsIndex !== undefined ) {
 			return ve.copyDomElements( converter.getStore().value( dataElement.originalDomElementsIndex ), doc );
 		}
 	} else {
 		el.setAttribute( 'data-mw', JSON.stringify( mwData ) );
 		// HTML for the external clipboard, it will be ignored by the converter
 		$( el ).append(
-			$( '<sup>', doc ).text( this.getIndexLabel( dataElement, converter.internalList ) )
+			$( '<a>', doc ).append(
+				$( '<span>', doc ).addClass( 'mw-reflink-text' ).text( this.getIndexLabel( dataElement, converter.internalList ) )
+			)
 		);
 	}
 
@@ -363,9 +365,13 @@ ve.dm.MWReferenceNode.prototype.onRoot = function () {
 
 /**
  * Handle the node being detached from the root
+ *
+ * @param {ve.dm.DocumentNode} oldRoot Old document root
  */
-ve.dm.MWReferenceNode.prototype.onUnroot = function () {
-	this.removeFromInternalList();
+ve.dm.MWReferenceNode.prototype.onUnroot = function ( oldRoot ) {
+	if ( this.getDocument().getDocumentNode() === oldRoot ) {
+		this.removeFromInternalList();
+	}
 };
 
 /**
@@ -389,6 +395,10 @@ ve.dm.MWReferenceNode.prototype.addToInternalList = function () {
  * Unregister the node from the internal list
  */
 ve.dm.MWReferenceNode.prototype.removeFromInternalList = function () {
+	if ( !this.registeredListGroup ) {
+		// Don't try to remove if we haven't been added in the first place.
+		return;
+	}
 	this.getDocument().getInternalList().removeNode(
 		this.registeredListGroup,
 		this.registeredListKey,

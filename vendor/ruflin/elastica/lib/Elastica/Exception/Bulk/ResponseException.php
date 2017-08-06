@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Exception\Bulk;
 
 use Elastica\Bulk\ResponseSet;
@@ -19,7 +18,7 @@ class ResponseException extends BulkException
     /**
      * @var \Elastica\Exception\Bulk\Response\ActionException[]
      */
-    protected $_actionExceptions = array();
+    protected $_actionExceptions = [];
 
     /**
      * Construct Exception.
@@ -67,7 +66,7 @@ class ResponseException extends BulkException
      */
     public function getFailures()
     {
-        $errors = array();
+        $errors = [];
 
         foreach ($this->getActionExceptions() as $actionException) {
             $errors[] = $actionException->getMessage();

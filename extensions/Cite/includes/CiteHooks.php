@@ -4,7 +4,7 @@
  *
  * @file
  * @ingroup Extensions
- * @copyright 2011-2016 Cite VisualEditor Team and others; see AUTHORS.txt
+ * @copyright 2011-2017 Cite VisualEditor Team and others; see AUTHORS.txt
  * @license The MIT License (MIT); see MIT-LICENSE.txt
  */
 
@@ -56,6 +56,7 @@ class CiteHooks {
 					'modules/ve-cite/tests/ve.dm.Converter.test.js',
 					'modules/ve-cite/tests/ve.dm.InternalList.test.js',
 					'modules/ve-cite/tests/ve.dm.Transaction.test.js',
+					'modules/ve-cite/tests/ve.ui.MWWikitextStringTransferHandler.test.js',
 				],
 				'dependencies' => [
 					'ext.cite.visualEditor',

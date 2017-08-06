@@ -9,10 +9,10 @@
 
 namespace JsonSchema\Constraints;
 
+use JsonSchema\Entity\JsonPointer;
 use JsonSchema\SchemaStorage;
 use JsonSchema\Uri\UriRetriever;
 use JsonSchema\UriRetrieverInterface;
-use JsonSchema\Entity\JsonPointer;
 
 /**
  * The Base Constraints, all Validators should extend this class
@@ -20,136 +20,19 @@ use JsonSchema\Entity\JsonPointer;
  * @author Robert Schönthal <seroscho@googlemail.com>
  * @author Bruno Prieto Reis <bruno.p.reis@gmail.com>
  */
-abstract class Constraint implements ConstraintInterface
+abstract class Constraint extends BaseConstraint implements ConstraintInterface
 {
-    protected $schemaStorage;
-    protected $checkMode = self::CHECK_MODE_NORMAL;
-    protected $uriRetriever;
-    protected $errors = array();
     protected $inlineSchemaProperty = '$schema';
 
-    const CHECK_MODE_NORMAL = 1;
-    const CHECK_MODE_TYPE_CAST = 2;
-
-    /**
-     * @var null|Factory
-     */
-    private $factory;
-
-    /**
-     * @param int $checkMode
-     * @param SchemaStorage $schemaStorage
-     * @param UriRetrieverInterface $uriRetriever
-     * @param Factory $factory
-     */
-    public function __construct(
-        $checkMode = self::CHECK_MODE_NORMAL,
-        SchemaStorage $schemaStorage = null,
-        UriRetrieverInterface $uriRetriever = null,
-        Factory $factory = null
-    ) {
-        $this->checkMode     = $checkMode;
-        $this->uriRetriever  = $uriRetriever;
-        $this->factory       = $factory;
-        $this->schemaStorage = $schemaStorage;
-    }
-
-    /**
-     * @return UriRetrieverInterface $uriRetriever
-     */
-    public function getUriRetriever()
-    {
-        if (is_null($this->uriRetriever)) {
-            $this->setUriRetriever(new UriRetriever);
-        }
-
-        return $this->uriRetriever;
-    }
-
-    /**
-     * @return Factory
-     */
-    public function getFactory()
-    {
-        if (!$this->factory) {
-            $this->factory = new Factory($this->getSchemaStorage(), $this->getUriRetriever(), $this->checkMode);
-        }
-
-        return $this->factory;
-    }
-
-    /**
-     * @return SchemaStorage
-     */
-    public function getSchemaStorage()
-    {
-        if (is_null($this->schemaStorage)) {
-            $this->schemaStorage = new SchemaStorage($this->getUriRetriever());
-        }
-
-        return $this->schemaStorage;
-    }
-
-    /**
-     * @param UriRetrieverInterface $uriRetriever
-     */
-    public function setUriRetriever(UriRetrieverInterface $uriRetriever)
-    {
-        $this->uriRetriever = $uriRetriever;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function addError(JsonPointer $path = null, $message, $constraint='', array $more=null)
-    {
-        $error = array(
-            'property' => $this->convertJsonPointerIntoPropertyPath($path ?: new JsonPointer('')),
-            'pointer' => ltrim(strval($path ?: new JsonPointer('')), '#'),
-            'message' => $message,
-            'constraint' => $constraint,
-        );
-
-        if (is_array($more) && count($more) > 0)
-        {
-            $error += $more;
-        }
-
-        $this->errors[] = $error;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function addErrors(array $errors)
-    {
-        $this->errors = array_merge($this->errors, $errors);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getErrors()
-    {
-        return $this->errors;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function isValid()
-    {
-        return !$this->getErrors();
-    }
-
-    /**
-     * Clears any reported errors.  Should be used between
-     * multiple validation checks.
-     */
-    public function reset()
-    {
-        $this->errors = array();
-    }
+    const CHECK_MODE_NONE =             0x00000000;
+    const CHECK_MODE_NORMAL =           0x00000001;
+    const CHECK_MODE_TYPE_CAST =        0x00000002;
+    const CHECK_MODE_COERCE_TYPES =     0x00000004;
+    const CHECK_MODE_APPLY_DEFAULTS =   0x00000008;
+    const CHECK_MODE_EXCEPTIONS =       0x00000010;
+    const CHECK_MODE_DISABLE_FORMAT =   0x00000020;
+    const CHECK_MODE_ONLY_REQUIRED_DEFAULTS   = 0x00000080;
+    const CHECK_MODE_VALIDATE_SCHEMA =  0x00000100;
 
     /**
      * Bubble down the path
@@ -168,6 +51,7 @@ abstract class Constraint implements ConstraintInterface
                 array_filter(array($i), 'strlen')
             )
         );
+
         return $path;
     }
 
@@ -179,9 +63,9 @@ abstract class Constraint implements ConstraintInterface
      * @param JsonPointer|null $path
      * @param mixed            $i
      */
-    protected function checkArray($value, $schema = null, JsonPointer $path = null, $i = null)
+    protected function checkArray(&$value, $schema = null, JsonPointer $path = null, $i = null)
     {
-        $validator = $this->getFactory()->createInstanceFor('collection');
+        $validator = $this->factory->createInstanceFor('collection');
         $validator->check($value, $schema, $path, $i);
 
         $this->addErrors($validator->getErrors());
@@ -196,10 +80,10 @@ abstract class Constraint implements ConstraintInterface
      * @param mixed            $i
      * @param mixed            $patternProperties
      */
-    protected function checkObject($value, $schema = null, JsonPointer $path = null, $i = null, $patternProperties = null)
+    protected function checkObject(&$value, $schema = null, JsonPointer $path = null, $i = null, $patternProperties = null, $appliedDefaults = array())
     {
-        $validator = $this->getFactory()->createInstanceFor('object');
-        $validator->check($value, $schema, $path, $i, $patternProperties);
+        $validator = $this->factory->createInstanceFor('object');
+        $validator->check($value, $schema, $path, $i, $patternProperties, $appliedDefaults);
 
         $this->addErrors($validator->getErrors());
     }
@@ -212,9 +96,9 @@ abstract class Constraint implements ConstraintInterface
      * @param JsonPointer|null $path
      * @param mixed            $i
      */
-    protected function checkType($value, $schema = null, JsonPointer $path = null, $i = null)
+    protected function checkType(&$value, $schema = null, JsonPointer $path = null, $i = null)
     {
-        $validator = $this->getFactory()->createInstanceFor('type');
+        $validator = $this->factory->createInstanceFor('type');
         $validator->check($value, $schema, $path, $i);
 
         $this->addErrors($validator->getErrors());
@@ -228,10 +112,11 @@ abstract class Constraint implements ConstraintInterface
      * @param JsonPointer|null $path
      * @param mixed            $i
      */
-    protected function checkUndefined($value, $schema = null, JsonPointer $path = null, $i = null)
+    protected function checkUndefined(&$value, $schema = null, JsonPointer $path = null, $i = null, $fromDefault = false)
     {
-        $validator = $this->getFactory()->createInstanceFor('undefined');
-        $validator->check($value, $this->schemaStorage->resolveRefSchema($schema), $path, $i);
+        $validator = $this->factory->createInstanceFor('undefined');
+
+        $validator->check($value, $this->factory->getSchemaStorage()->resolveRefSchema($schema), $path, $i, $fromDefault);
 
         $this->addErrors($validator->getErrors());
     }
@@ -246,7 +131,7 @@ abstract class Constraint implements ConstraintInterface
      */
     protected function checkString($value, $schema = null, JsonPointer $path = null, $i = null)
     {
-        $validator = $this->getFactory()->createInstanceFor('string');
+        $validator = $this->factory->createInstanceFor('string');
         $validator->check($value, $schema, $path, $i);
 
         $this->addErrors($validator->getErrors());
@@ -262,7 +147,7 @@ abstract class Constraint implements ConstraintInterface
      */
     protected function checkNumber($value, $schema = null, JsonPointer $path = null, $i = null)
     {
-        $validator = $this->getFactory()->createInstanceFor('number');
+        $validator = $this->factory->createInstanceFor('number');
         $validator->check($value, $schema, $path, $i);
 
         $this->addErrors($validator->getErrors());
@@ -278,7 +163,7 @@ abstract class Constraint implements ConstraintInterface
      */
     protected function checkEnum($value, $schema = null, JsonPointer $path = null, $i = null)
     {
-        $validator = $this->getFactory()->createInstanceFor('enum');
+        $validator = $this->factory->createInstanceFor('enum');
         $validator->check($value, $schema, $path, $i);
 
         $this->addErrors($validator->getErrors());
@@ -294,7 +179,7 @@ abstract class Constraint implements ConstraintInterface
      */
     protected function checkFormat($value, $schema = null, JsonPointer $path = null, $i = null)
     {
-        $validator = $this->getFactory()->createInstanceFor('format');
+        $validator = $this->factory->createInstanceFor('format');
         $validator->check($value, $schema, $path, $i);
 
         $this->addErrors($validator->getErrors());
@@ -307,21 +192,23 @@ abstract class Constraint implements ConstraintInterface
      */
     protected function getTypeCheck()
     {
-        return $this->getFactory()->getTypeCheck();
+        return $this->factory->getTypeCheck();
     }
 
     /**
      * @param JsonPointer $pointer
+     *
      * @return string property path
      */
     protected function convertJsonPointerIntoPropertyPath(JsonPointer $pointer)
     {
         $result = array_map(
-            function($path) {
+            function ($path) {
                 return sprintf(is_numeric($path) ? '[%d]' : '.%s', $path);
             },
             $pointer->getPropertyPaths()
         );
+
         return trim(implode('', $result), '.');
     }
 }

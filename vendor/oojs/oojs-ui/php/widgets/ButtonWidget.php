@@ -15,6 +15,12 @@ class ButtonWidget extends Widget {
 	use TabIndexedElement;
 	use AccessKeyedElement;
 
+	/* Static Properties */
+
+	public static $tagName = 'span';
+
+	/* Properties */
+
 	/**
 	 * Whether button is active.
 	 *

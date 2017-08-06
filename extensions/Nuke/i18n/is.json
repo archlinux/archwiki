@@ -14,7 +14,7 @@
 	"nuke-defaultreason": "Fjöldaeyðing síðna sem búnar voru til af [[Special:Contributions/$1|{{GENDER:$1|$1}}]]",
 	"nuke-multiplepeople": "Fjöldaeyðing nýjustu greina",
 	"nuke-tools": "Hér er hægt að fjöldaeyða síðum sem voru nýlega búnar til af notanda eða vistfangi.\nTilgreindu notendanafn eða vistfang til að fá lista yfir síður til að eyða, eða skildu reitinn eftir tóman til að fá lista yfir síður frá öllum notendum.",
-	"nuke-submit-user": "Áfram",
+	"nuke-submit-user": "Lista síður",
 	"nuke-submit-delete": "Eyða völdum síðum",
 	"right-nuke": "Fjöldaeyða síðum",
 	"nuke-select": "Velja: $1",

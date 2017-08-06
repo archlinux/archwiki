@@ -23,7 +23,8 @@
 			"Nemo bis",
 			"Liuxinyu970226",
 			"Matma Rex",
-			"Umherirrender"
+			"Umherirrender",
+			"McDutchie"
 		]
 	},
 	"visualeditor-cite-tool-definition.json": "{{ignored}}\nLegacy name for cite-tool-definition.json message.\n{{Identical|Null}}",
@@ -46,7 +47,7 @@
 	"cite-ve-dialog-referenceslist-title": "{{Identical|References list}}",
 	"cite-ve-dialogbutton-citation-educationpopup-text": "Text shown in education popup for the citation dialog tool.",
 	"cite-ve-dialogbutton-citation-educationpopup-title": "Title shown at the top of education popup for the citation dialog tool.\n{{Identical|Citation}}",
-	"cite-ve-dialogbutton-reference-full-label": "Full length label for the button to choose the basic reference",
+	"cite-ve-dialogbutton-reference-full-label": "Full length label for the button to choose the basic reference\n\n'''NOTE: \"form\" refers to the type/appearance of reference, not to the kind of form that you can fill in.'''",
 	"cite-ve-dialogbutton-reference-title": "Full title for a context item showing a basic reference. As this does not have the context of other reference types it should just be the word for \"reference\".\n{{Identical|Reference}}",
 	"cite-ve-dialogbutton-reference-tooltip": "An item in the citation menu for a plain reference without any citation template. This should be an adjective for the word \"citation\" or \"reference\". The term should be in contrast to the easier and more powerful citations available when using a template.\n\n{{Identical|Basic}}",
 	"cite-ve-dialogbutton-referenceslist-tooltip": "Tooltip for button for dialog that inserts the references list object (<code><nowiki>References list</nowiki></code>).\n{{Identical|References list}}",

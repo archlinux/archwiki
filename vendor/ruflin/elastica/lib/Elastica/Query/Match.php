@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Query;
 
 /**
@@ -51,7 +50,7 @@ class Match extends AbstractQuery
     public function setFieldParam($field, $key, $value)
     {
         if (!isset($this->_params[$field])) {
-            $this->_params[$field] = array();
+            $this->_params[$field] = [];
         }
 
         $this->_params[$field][$key] = $value;
@@ -79,9 +78,13 @@ class Match extends AbstractQuery
      * @param string $type
      *
      * @return $this
+     *
+     * @deprecated Replaced by Elastica\Query\MatchPhrase and Elastica\Query\MatchPhrasePrefix
      */
     public function setFieldType($field, $type)
     {
+        trigger_error('Deprecated: Elastica\Query\Match::setFieldType() is deprecated and will be removed in further Elastica releases. Use Elastica\Query\MatchPhrase and Elastica\Query\MatchPhrasePrefix instead.', E_USER_DEPRECATED);
+
         return $this->setFieldParam($field, 'type', $type);
     }
 

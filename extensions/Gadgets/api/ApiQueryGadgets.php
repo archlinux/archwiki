@@ -74,10 +74,10 @@ class ApiQueryGadgets extends ApiQueryBase {
 		$gadgets = GadgetRepo::singleton()->getStructuredList();
 
 		if ( $gadgets === false ) {
-			return array();
+			return [];
 		}
 
-		$result = array();
+		$result = [];
 		foreach ( $gadgets as $category => $list ) {
 			if ( $this->categories && !isset( $this->categories[$category] ) ) {
 				continue;
@@ -96,14 +96,14 @@ class ApiQueryGadgets extends ApiQueryBase {
 	 * @param $gadgets array
 	 */
 	private function applyList( $gadgets ) {
-		$data = array();
+		$data = [];
 		$result = $this->getResult();
 
 		/**
 		 * @var $g Gadget
 		 */
 		foreach ( $gadgets as $g ) {
-			$row = array();
+			$row = [];
 			if ( isset( $this->props['id'] ) ) {
 				$row['id'] = $g->getName();
 			}
@@ -142,8 +142,8 @@ class ApiQueryGadgets extends ApiQueryBase {
 	 * @return array
 	 */
 	private function fakeMetadata( Gadget $g ) {
-		return array(
-			'settings' => array(
+		return [
+			'settings' => [
 				'rights' => $g->getRequiredRights(),
 				'skins' => $g->getRequiredSkins(),
 				'default' => $g->isOnByDefault(),
@@ -151,25 +151,27 @@ class ApiQueryGadgets extends ApiQueryBase {
 				'shared' => false,
 				'category' => $g->getCategory(),
 				'legacyscripts' => (bool)$g->getLegacyScripts(),
-			),
-			'module' => array(
+			],
+			'module' => [
 				'scripts' => $g->getScripts(),
 				'styles' => $g->getStyles(),
 				'dependencies' => $g->getDependencies(),
+				'peers' => $g->getPeers(),
 				'messages' => $g->getMessages(),
-			)
-		);
+			]
+		];
 	}
 
 	private function setIndexedTagNameForMetadata( &$metadata ) {
-		static $tagNames = array(
+		static $tagNames = [
 			'rights' => 'right',
 			'skins' => 'skin',
 			'scripts' => 'script',
 			'styles' => 'style',
 			'dependencies' => 'dependency',
+			'peers' => 'peer',
 			'messages' => 'message',
-		);
+		];
 
 		$result = $this->getResult();
 		foreach ( $metadata as &$data ) {
@@ -183,27 +185,27 @@ class ApiQueryGadgets extends ApiQueryBase {
 	}
 
 	public function getAllowedParams() {
-		return array(
-			'prop' => array(
+		return [
+			'prop' => [
 				ApiBase::PARAM_DFLT => 'id|metadata',
 				ApiBase::PARAM_ISMULTI => true,
-				ApiBase::PARAM_TYPE => array(
+				ApiBase::PARAM_TYPE => [
 					'id',
 					'metadata',
 					'desc',
-				),
-			),
-			'categories' => array(
+				],
+			],
+			'categories' => [
 				ApiBase::PARAM_ISMULTI => true,
 				ApiBase::PARAM_TYPE => 'string',
-			),
-			'ids' => array(
+			],
+			'ids' => [
 				ApiBase::PARAM_TYPE => 'string',
 				ApiBase::PARAM_ISMULTI => true,
-			),
+			],
 			'allowedonly' => false,
 			'enabledonly' => false,
-		);
+		];
 	}
 
 	/**
@@ -212,7 +214,7 @@ class ApiQueryGadgets extends ApiQueryBase {
 	protected function getExamplesMessages() {
 		$params = $this->getAllowedParams();
 		$allProps = implode( '|', $params['prop'][ApiBase::PARAM_TYPE] );
-		return array(
+		return [
 			'action=query&list=gadgets&gaprop=id|desc'
 				=> 'apihelp-query+gadgets-example-1',
 			"action=query&list=gadgets&gaprop=$allProps"
@@ -223,6 +225,6 @@ class ApiQueryGadgets extends ApiQueryBase {
 				=> 'apihelp-query+gadgets-example-4',
 			'action=query&list=gadgets&gaenabledonly'
 				=> 'apihelp-query+gadgets-example-5',
-		);
+		];
 	}
 }

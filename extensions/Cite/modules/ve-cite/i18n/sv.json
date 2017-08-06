@@ -17,7 +17,8 @@
 			"Jenniesarina",
 			"Dan Koehl",
 			"Rockyfelle",
-			"Warrakkk"
+			"Warrakkk",
+			"McDutchie"
 		]
 	},
 	"visualeditor-cite-tool-definition.json": "null",
@@ -26,7 +27,7 @@
 	"visualeditor-cite-tool-name-news": "Nyheter",
 	"visualeditor-cite-tool-name-web": "Webbplats",
 	"cite-tool-definition.json": "null",
-	"cite-ve-dialog-reference-editing-reused": "Denna referens används $1 {{PLURAL:$1|gånger}} på denna sida.",
+	"cite-ve-dialog-reference-editing-reused": "Denna referens används $1 {{PLURAL:$1|gång|gånger}} på denna sida.",
 	"cite-ve-dialog-reference-options-group-label": "Använd den här gruppen",
 	"cite-ve-dialog-reference-options-group-placeholder": "Allmänna referenser",
 	"cite-ve-dialog-reference-options-name-label": "Använd med detta namn igen",
@@ -40,7 +41,7 @@
 	"cite-ve-dialog-referenceslist-title": "Referenslista",
 	"cite-ve-dialogbutton-citation-educationpopup-text": "Förbättrar ditt innehåll genom att lägga till informationskällor. Du kan källhänvisa till böcker, tidningar och webbplatser.",
 	"cite-ve-dialogbutton-citation-educationpopup-title": "Referenser",
-	"cite-ve-dialogbutton-reference-full-label": "Grundläggande formulär",
+	"cite-ve-dialogbutton-reference-full-label": "Grundform",
 	"cite-ve-dialogbutton-reference-title": "Referens",
 	"cite-ve-dialogbutton-reference-tooltip": "Enkel",
 	"cite-ve-dialogbutton-referenceslist-tooltip": "Referenslista",

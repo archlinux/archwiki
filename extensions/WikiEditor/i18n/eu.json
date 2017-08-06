@@ -138,7 +138,7 @@
 	"wikieditor-toolbar-tool-replace-button-replaceall": "Denak ordezkatu",
 	"wikieditor-toolbar-tool-replace-close": "Itxi",
 	"wikieditor-toolbar-tool-replace-nomatch": "Ez dago bilaketarekin bat egiten duten emaitzarik.",
-	"wikieditor-toolbar-tool-replace-success": "$1 ordezkapen eginda.",
+	"wikieditor-toolbar-tool-replace-success": "$1 {{PLURAL:$1|ordezkapen}} eginda.",
 	"wikieditor-toolbar-tool-replace-emptysearch": "Ez duzu bilatu beharreko ezer adierazi.",
 	"wikieditor-toolbar-tool-replace-invalidregex": "Txertatu duzun adierazpen erregularra ez da zzuena:  $1",
 	"wikieditor-toolbar-section-characters": "Karaktere bereziak",

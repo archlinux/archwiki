@@ -3,7 +3,8 @@
 		"authors": [
 			"Danmichaelo",
 			"Event",
-			"Nghtwlkr"
+			"Nghtwlkr",
+			"Jon Harald Søby"
 		]
 	},
 	"renameuser": "Døp om bruker",
@@ -21,19 +22,19 @@
 	"renameusersubmit": "Utfør",
 	"renameuser-submit-blocklog": "Vis blokkeringslogg for bruker",
 	"renameusererrordoesnotexist": "Brukeren «<nowiki>$1</nowiki>» finnes ikke.",
-	"renameusererrorexists": "Brukeren «<nowiki>$1</nowiki>» finnes allerede.",
+	"renameusererrorexists": "{{GENDER:$1|Brukeren}} «<nowiki>$1</nowiki>» finnes allerede.",
 	"renameusererrorinvalid": "Brukernavnet «<nowiki>$1</nowiki>» er ugyldig.",
 	"renameuser-error-request": "Det var et problem med å motta forespørselen.\nGå tilbake og prøv igjen.",
 	"renameuser-error-same-user": "Du kan ikke gi en bruker samme navn som han/hun allerede har.",
-	"renameusersuccess": "Brukeren «<nowiki>$1</nowiki>» har blitt omdøpt til «<nowiki>$2</nowiki>».",
+	"renameusersuccess": "{{GENDER:$2|Brukeren}} «<nowiki>$1</nowiki>» har blitt omdøpt til «<nowiki>$2</nowiki>».",
 	"renameuser-page-exists": "Siden $1 finnes allerede, og kunne ikke erstattes automatisk.",
 	"renameuser-page-moved": "Siden $1 har blitt flyttet til $2.",
 	"renameuser-page-unmoved": "Siden $1 kunne ikke flyttes til $2.",
 	"log-name-renameuser": "Omdøpingslogg",
 	"log-description-renameuser": "Dette er en logg over endrede brukernavn",
-	"logentry-renameuser-renameuser": "$1 {{GENDER:$2|omdøpte}} brukeren $4 ({{PLURAL:$6|$6 redigering|$6 redigeringer}}) til $5",
-	"logentry-renameuser-renameuser-legacier": "$1 omdøpte brukeren $4 til $5",
-	"renameuser-move-log": "Flyttet side automatisk under omdøping av brukeren «[[User:$1|$1]]» til «[[User:$2|$2]]»",
+	"logentry-renameuser-renameuser": "$1 {{GENDER:$2|omdøpte}} brukeren $4 ({{PLURAL:$6|$6 redigering|$6 redigeringer}}) til {{GENDER:$7|$5}}",
+	"logentry-renameuser-renameuser-legacier": "$1 omdøpte brukeren $4 til {{GENDER:$7|$5}}",
+	"renameuser-move-log": "Flyttet side automatisk under omdøping av {{GENDER:$2|brukeren}} «[[User:$1|$1]]» til «[[User:$2|$2]]»",
 	"action-renameuser": "endre navn på brukere",
 	"right-renameuser": "Endre navn på brukere",
 	"renameuser-renamed-notice": "Denne brukeren har fått endret navn.\nTil informasjon er navnendringsloggen vist nedenfor."

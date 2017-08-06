@@ -5,7 +5,7 @@ ParserFunctions v1.4.0
 3. Tests
 
 1. Licensing
-Licensed under GNU GPL. See COPYING for more license information.
+Licensed under GNU GPL 2.0 or any later version. See COPYING for more license information.
 
 2. How to install
    a. Download this tarbell and extract the contents to $IP/extensions/ParserFunctions/

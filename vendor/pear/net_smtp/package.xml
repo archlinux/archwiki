@@ -19,10 +19,10 @@
   <email>chuck@horde.org</email>
   <active>yes</active>
  </lead>
- <date>2015-09-07</date>
- <time>10:00:00</time>
+ <date>2017-01-14</date>
+ <time>00:00:00</time>
  <version>
-  <release>1.7.1</release>
+  <release>1.7.3</release>
   <api>1.3.0</api>
  </version>
  <stability>
@@ -30,9 +30,8 @@
   <api>stable</api>
  </stability>
  <license uri="http://www.php.net/license/3_01.txt">PHP License</license>
- <notes>- Fix a syntax error in the quotedata() test.
-- Fix an undefined value resulting from a bad merge. (#23)
-- Add TLSv1.1 and TLSv1.2 support for STARTTLS connections. (#22)
+ <notes>- Fix MIME boundary size calculation (#34)
+- Workaround E_DEPRECATED warning on Auth_SASL::factory() call (#29)
  </notes>
  <contents>
   <dir baseinstalldir="/" name="/">

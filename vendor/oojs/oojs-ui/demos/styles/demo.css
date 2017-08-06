@@ -1,178 +1,132 @@
 body {
-	font-size: 0.8em;
+	color: #222;
+	margin: 1em;
 	font-family: sans-serif;
+	font-size: 0.8em;
+}
+
+p {
+	margin: 0.5em 0;
 }
 
 /* Layout */
-
-.oo-ui-demo-menu > .oo-ui-widget {
-	display: inline-block;
-	vertical-align: middle;
-	margin-right: 1em;
-}
-
-.oo-ui-demo-menu .oo-ui-demo-pageDropdown {
-	width: 10em;
-}
-
-.oo-ui-demo {
+.demo {
 	max-width: 62.5em;
 	margin: 0 auto;
 }
 
-.oo-ui-demo-container {
+.demo-menu {
+	margin-bottom: 1em;
+}
+
+.demo-menu > .oo-ui-widget {
+	display: inline-block;
+	vertical-align: middle;
+	margin-right: 1em;
+	margin-bottom: 1em;
+}
+
+.demo-menu .demo-pageDropdown {
+	width: 10em;
+}
+
+.demo-container {
+	/* Needed for applying `padding` further below */
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 }
 
-@media ( max-width: 750px ) {
-	.oo-ui-demo-menu {
-		margin-bottom: 1em;
-	}
-	.oo-ui-demo-container {
-		padding: 1em 2em;
-	}
-}
-
-@media ( min-width: 751px ) {
-	.oo-ui-demo-menu {
-		margin-bottom: 2em;
-	}
-	.oo-ui-demo-container {
-		padding: 2em 4em;
-	}
-}
-
-/* Toolbars demo */
-
-.oo-ui-demo-toolbars {
-	padding: 0;
-	margin-bottom: 2em;
-}
-
-.oo-ui-demo-toolbars-contents {
-	padding: 2em;
-	min-height: 100px;
-}
-
-/* Icons demo */
-
-.oo-ui-demo-icons .oo-ui-buttonSelectWidget {
-	margin-bottom: 2em;
-}
-
-.oo-ui-demo-icons .oo-ui-fieldLayout {
-	display: inline-block;
-	margin-bottom: 0;
-}
-
-.oo-ui-demo-icons .oo-ui-fieldLayout .oo-ui-labelElement-label {
-	display: none;
-}
-
-.oo-ui-demo-icons .oo-ui-fieldLayout .oo-ui-buttonElement-button {
-	margin: 1em 1em 1em 0;
-	width: 12em;
-	opacity: 0.8;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-
-.oo-ui-demo-icons .oo-ui-fieldLayout .oo-ui-buttonElement-button .oo-ui-labelElement-label {
-	text-transform: capitalize;
-	display: inline;
-}
-
-.oo-ui-demo-icons .oo-ui-fieldLayout .oo-ui-buttonElement-button:hover {
-	opacity: 1;
-}
-
-/* Widgets demo */
-
-.oo-ui-horizontalLayout > .oo-ui-textInputWidget,
-.oo-ui-horizontalLayout > .oo-ui-dropdownInputWidget {
-	max-width: 10em;
-}
-
 /* Console */
 /* stylelint-disable selector-pseudo-element-colon-notation */
-.oo-ui-demo-console {
+.demo-console {
 	clear: both;
 	position: relative;
 	border: 1px solid transparent;
 	margin-bottom: -2px;
 	line-height: 1.4;
+	/* @noflip */
+	direction: ltr;
 }
 
-.oo-ui-demo-console-expanded {
+.demo-console-expanded {
 	width: 100%;
 	background-color: #fff;
-	border-color: #aaa;
+	border-color: #a2a9b1;
 	margin: 0.5em 0;
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 }
 
-.oo-ui-demo-console-toggle {
+.demo-console-toggle {
 	float: right;
 	margin-top: -2em;
-	margin-right: -2em;
 	cursor: pointer;
+	-webkit-transition: background-color 100ms, color 100ms, transform 100ms;
+	-moz-transition: background-color 100ms, color 100ms, transform 100ms;
+	transition: background-color 100ms, color 100ms, transform 100ms;
 }
 
-.oo-ui-demo-console-expanded .oo-ui-demo-console-toggle {
+.demo-console-expanded .demo-console-toggle {
 	margin-top: -2.5em;
 }
 
-.oo-ui-demo-console-toggle::after {
+.demo-console-toggle::after {
+	content: '→';
+	background-color: #f8f9fa;
+	color: #222;
 	position: relative;
 	display: inline-block;
 	width: 1.6em;
-	background: #f9f9f9;
-	border-radius: 50%;
+	border-radius: 2px;
 	line-height: 1.6;
-	color: #999;
 	text-align: center;
-	content: '→';
+	-webkit-transition: background-color 100ms, color 100ms, transform 100ms;
+	-moz-transition: background-color 100ms, color 100ms, transform 100ms;
+	transition: background-color 100ms, color 100ms, transform 100ms;
 }
 
-.oo-ui-demo-console-toggle:hover::after,
-.oo-ui-demo-console-expanded .oo-ui-demo-console-toggle::after {
-	background: #eee;
-	color: #333;
+.demo-console-toggle:hover::after,
+.demo-console-expanded .demo-console-toggle::after {
+	background: #fff;
+	color: #444;
 }
 
-.oo-ui-demo-console-expanded .oo-ui-demo-console-toggle::after {
-	content: '↑';
+.demo-console-expanded .demo-console-toggle::after {
+	-webkit-transform: rotate( -90deg );
+	-moz-transform: rotate( -90deg );
+	-ms-transform: rotate( -90deg );
+	transform: rotate( -90deg );
 }
 
-.oo-ui-demo-console-collapsed .oo-ui-demo-console-log,
-.oo-ui-demo-console-collapsed .oo-ui-demo-console-label,
-.oo-ui-demo-console-collapsed .oo-ui-demo-console-submit {
+.demo-console-collapsed .demo-console-log,
+.demo-console-collapsed .demo-console-label,
+.demo-console-collapsed .demo-console-submit {
 	display: none;
 }
 
-.oo-ui-demo-console-log {
-	border: 1px solid #eee;
+/* @noflip */
+.demo-console-log {
+	border: 1px solid #a2a9b1;
 	border-width: 0 0 1px 0;
 	max-height: 5em;
 	overflow: auto;
 }
 
-.oo-ui-demo-console-log-line {
+/* @noflip */
+.demo-console-log-line {
 	position: relative;
 	padding-left: 20px;
 }
 
-.oo-ui-demo-console-log-line-input {
+.demo-console-log-line-input {
 	font-style: italic;
-	color: #555;
+	color: #54595d;
 }
 
-.oo-ui-demo-console-log-line-input::before {
+/* @noflip */
+.demo-console-log-line-input::before {
 	display: block;
 	position: absolute;
 	top: 0;
@@ -183,11 +137,12 @@ body {
 	content: '→';
 }
 
-.oo-ui-demo-console-log-line-error {
-	color: #f00;
+.demo-console-log-line-error {
+	color: #d33;
 }
 
-.oo-ui-demo-console-label {
+/* @noflip */
+.demo-console-label {
 	position: relative;
 	display: inline-block;
 	width: 100%;
@@ -200,7 +155,10 @@ body {
 	box-sizing: border-box;
 }
 
-.oo-ui-demo-console-label::before {
+/* @noflip */
+.demo-console-label::before {
+	content: '→';
+	color: #00f;
 	display: block;
 	position: absolute;
 	top: 0;
@@ -208,23 +166,24 @@ body {
 	bottom: 0;
 	width: 20px;
 	text-align: center;
-	content: '→';
-	color: #00f;
 }
 
-.oo-ui-demo-console-input {
+.demo-console-input {
 	margin: 0;
 	padding: 0;
 	border: 0;
 	width: 100%;
 }
 
-.oo-ui-demo-console-input:focus {
+.demo-console-input:focus {
 	outline: 0;
 }
 
-.oo-ui-demo-console-submit {
+.demo-console-submit {
+	background: #f8f9fa;
+	color: #222;
 	display: inline-block;
+	position: relative;
 	width: 20px;
 	line-height: 1.6;
 	text-align: center;
@@ -232,13 +191,122 @@ body {
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
-	background: #f9f9f9;
-	color: #888;
 	cursor: pointer;
+	-webkit-transition: background-color 100ms, color 100ms;
+	-moz-transition: background-color 100ms, color 100ms;
+	transition: background-color 100ms, color 100ms;
 }
 
-.oo-ui-demo-console-submit:hover {
-	background: #eee;
-	color: #333;
+.demo-console-submit:hover {
+	background: #fff;
+	color: #444;
 }
+
+/* Toolbars demo */
+
+.demo-container.demo-toolbars {
+	padding: 0;
+	margin-bottom: 2em;
+}
+
+.demo-toolbars-contents {
+	padding: 2em;
+	min-height: 100px;
+}
+
+/* Icons demo */
+
+.demo-icons .oo-ui-buttonSelectWidget {
+	margin-bottom: 2em;
+}
+
+.demo-icons .oo-ui-fieldLayout {
+	display: inline-block;
+	margin: 1em 1em 1em 0;
+	width: 13.75em;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.demo-icons .oo-ui-fieldLayout:nth-child( 4n ) {
+	margin-right: 0;
+}
+
+.demo-icons .oo-ui-fieldLayout .oo-ui-iconElement,
+.demo-icons .oo-ui-fieldLayout .oo-ui-indicatorElement {
+	opacity: 0.8; /* brings icons/indicators closer to text color */
+}
+
+.demo-icons .oo-ui-fieldLayout:hover .oo-ui-labelElement-label {
+	color: #000;
+}
+.demo-icons .oo-ui-fieldLayout:hover .oo-ui-iconElement,
+.demo-icons .oo-ui-fieldLayout:hover .oo-ui-indicatorElement {
+	opacity: 1;
+}
+
+/* Widgets demo */
+
+.oo-ui-horizontalLayout > .oo-ui-textInputWidget,
+.oo-ui-horizontalLayout > .oo-ui-dropdownInputWidget {
+	max-width: 10em;
+}
+
+/* Special cases: ActionFieldLayout top aligned,
+FieldLayout left & right aligned */
+.oo-ui-fieldLayout-align-left,
+.oo-ui-fieldLayout-align-right {
+	max-width: 50em;
+}
+
+.oo-ui-fieldLayout-align-top.oo-ui-actionFieldLayout .demo-console-toggle,
+.oo-ui-fieldLayout-align-left .demo-console-toggle,
+.oo-ui-fieldLayout-align-right .demo-console-toggle {
+	margin-right: -2em;
+}
+
+.oo-ui-fieldLayout-body:after {
+	content: ' ';
+	clear: both;
+	display: block;
+}
+
+/* Special case: FieldsetLayout with "Summary" */
+.oo-ui-formLayout .oo-ui-fieldsetLayout:last-child {
+	background-color: #eaecf0;
+	border: 1px solid #c8ccd1;
+	padding: 1em 1em 1.5em 1em;
+}
+
+/* Media Queries */
+@media ( max-width: 750px ) {
+	body {
+		font-size: 1em;
+	}
+
+	.demo-menu > .oo-ui-widget {
+		margin-bottom: 1em;
+	}
+
+	.demo-container {
+		border-radius: 0;
+		border-width: 1px 0 0;
+		padding: 1.5em 2.5em 1em 0;
+	}
+
+	.demo-container.demo-toolbars {
+		border-width: 1px;
+	}
+
+	.demo-console-toggle {
+		margin-right: -2em;
+	}
+}
+
+@media ( min-width: 751px ) {
+	.demo-container {
+		padding: 2em;
+	}
+}
+
 /* stylelint-enable selector-pseudo-element-colon-notation */

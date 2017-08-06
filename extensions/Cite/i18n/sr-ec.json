@@ -6,17 +6,17 @@
 			"Rancher",
 			"Михајло Анђелковић",
 			"Srdjan m",
-			"Сербијана"
+			"Сербијана",
+			"Obsuser"
 		]
 	},
 	"cite-desc": "Додаје <nowiki><ref[ name=id]></nowiki> и <nowiki><references/></nowiki> ознаке за цитирање.",
 	"cite_error": "Грешка цитата: $1",
 	"cite_error_ref_numeric_key": "Лоша ознака <code>&lt;ref&gt;</code>; име не може бити једноставни интеџер. Користи описни наслов.",
-	"cite_error_ref_no_key": "Лоша ознака <code>&lt;ref&gt;</code>; ref-ови без садржаја морају имати име.",
+	"cite_error_ref_no_key": "Почетка ознака <code>&lt;ref&gt;</code> није исправно обликована или садржи неисправан назив",
 	"cite_error_ref_too_many_keys": "Лоша ознака <code>&lt;ref&gt;</code>; лоша имена, односно много њих.",
 	"cite_error_ref_no_input": "Лоша ознака <code>&lt;ref&gt;</code>; ref-ови без имена морају имати садржај.",
-	"cite_error_references_invalid_parameters": "Лоша ознака <code>&lt;references&gt;</code>; параметри нису дозвољени. Користи <code>&lt;references /&gt;</code>.",
-	"cite_error_references_invalid_parameters_group": "Лоша ознака <code>&lt;references&gt;</code>; само је парамтера \"group\" дозвољен. Користи <code>&lt;references /&gt;</code> или <code>&lt;references group=\"...\"&gt;</code>.",
+	"cite_error_references_invalid_parameters": "Невалидан параметар у тагу <code>&lt;references&gt;</code>",
 	"cite_error_references_no_backlink_label": "Нестале су посебне ознаке за задње везе. Одреди их више у поруци <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>.",
 	"cite_error_references_no_text": "Лоша ознака <code>&lt;ref&gt;</code>; нема текста за ref-ове под именом <code>$1</code>.",
 	"cite_error_included_ref": "Затвара <code>&lt;/ref&gt;</code> који недостаје <code>&lt;ref&gt;</code> тагу",

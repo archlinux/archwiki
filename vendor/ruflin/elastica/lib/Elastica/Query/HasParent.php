@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Query;
 
 use Elastica\Query as BaseQuery;
@@ -44,7 +43,7 @@ class HasParent extends AbstractQuery
      */
     public function setType($type)
     {
-        return $this->setParam('type', $type);
+        return $this->setParam('parent_type', $type);
     }
 
     /**

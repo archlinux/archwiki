@@ -22,6 +22,9 @@
  * @author Brian Wolff
  */
 
+use Wikimedia\Rdbms\ResultWrapper;
+use Wikimedia\Rdbms\IDatabase;
+
 /**
  * @ingroup SpecialPage
  */
@@ -174,10 +177,11 @@ class MediaStatisticsPage extends QueryPage {
 	 */
 	protected function outputTableRow( $mime, $count, $bytes ) {
 		$mimeSearch = SpecialPage::getTitleFor( 'MIMEsearch', $mime );
+		$linkRenderer = $this->getLinkRenderer();
 		$row = Html::rawElement(
 			'td',
 			[],
-			Linker::link( $mimeSearch, htmlspecialchars( $mime ) )
+			$linkRenderer->makeLink( $mimeSearch, $mime )
 		);
 		$row .= Html::element(
 			'td',
@@ -338,7 +342,7 @@ class MediaStatisticsPage extends QueryPage {
 	 * we need to implement since abstract in parent class.
 	 *
 	 * @param Skin $skin
-	 * @param stdObject $result Result row
+	 * @param stdClass $result Result row
 	 * @return bool|string|void
 	 * @throws MWException
 	 */
@@ -353,6 +357,7 @@ class MediaStatisticsPage extends QueryPage {
 	 * @param ResultWrapper $res
 	 */
 	public function preprocessResults( $dbr, $res ) {
+		$this->executeLBFromResultWrapper( $res );
 		$this->totalCount = $this->totalBytes = 0;
 		foreach ( $res as $row ) {
 			$mediaStats = $this->splitFakeTitle( $row->title );

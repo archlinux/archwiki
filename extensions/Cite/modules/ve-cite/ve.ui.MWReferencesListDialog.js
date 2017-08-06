@@ -1,7 +1,7 @@
 /*!
  * VisualEditor user interface MWReferencesListDialog class.
  *
- * @copyright 2011-2016 Cite VisualEditor Team and others; see AUTHORS.txt
+ * @copyright 2011-2017 Cite VisualEditor Team and others; see AUTHORS.txt
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
@@ -97,7 +97,7 @@ ve.ui.MWReferencesListDialog.prototype.getActionProcess = function ( action ) {
 				surfaceModel = this.getFragment().getSurface();
 
 			// Save changes
-			refGroup = this.groupInput.input.getValue();
+			refGroup = this.groupInput.getValue();
 			listGroup = 'mwReference/' + refGroup;
 
 			if ( this.selectedNode ) {
@@ -111,7 +111,7 @@ ve.ui.MWReferencesListDialog.prototype.getActionProcess = function ( action ) {
 						refGroup: refGroup
 					};
 					surfaceModel.change(
-						ve.dm.Transaction.newFromAttributeChanges(
+						ve.dm.TransactionBuilder.static.newFromAttributeChanges(
 							doc, this.selectedNode.getOuterRange().start, attrChanges
 						)
 					);
@@ -137,7 +137,7 @@ ve.ui.MWReferencesListDialog.prototype.getSetupProcess = function ( data ) {
 
 			this.actions.setMode( 'edit' );
 
-			this.groupInput.input.setValue( this.selectedNode.getAttribute( 'refGroup' ) );
+			this.groupInput.setValue( this.selectedNode.getAttribute( 'refGroup' ) );
 			this.groupInput.populateMenu( this.getFragment().getDocument().getInternalList() );
 		}, this );
 };

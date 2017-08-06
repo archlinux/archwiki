@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Asoxor"
+			"Asoxor",
+			"Lost Whispers"
 		]
 	},
-	"pfunc_expr_unrecognised_word": "ھەڵەی Expression: وشەی نەناسراو \"$1\"."
+	"pfunc_expr_unrecognised_word": "ھەڵەی Expression: وشەی نەناسراو \"$1\".",
+	"pfunc_expr_unrecognised_punctuation": "ھەڵەی دەربڕین: پیتێکی نەناسراو ھەیە \"$1\""
 }

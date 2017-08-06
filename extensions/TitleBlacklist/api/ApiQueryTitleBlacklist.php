@@ -36,10 +36,7 @@ class ApiQueryTitleBlacklist extends ApiBase {
 	public function execute() {
 		$params = $this->extractRequestParams();
 		$action = $params['action'];
-		$override = true;
-		if( isset( $params['nooverride'] ) ) {
-			$override = false;
-		}
+		$override = !$params['nooverride'];
 
 		// createtalk and createpage are useless as they're treated exactly like create
 		if ( $action === 'createpage' || $action === 'createtalk' ) {
@@ -48,7 +45,11 @@ class ApiQueryTitleBlacklist extends ApiBase {
 
 		$title = Title::newFromText( $params['title'] );
 		if ( !$title ) {
-			$this->dieUsageMsg( array( 'invalidtitle', $params['title'] ) );
+			if ( is_callable( [ $this, 'dieWithError' ] ) ) {
+				$this->dieWithError( array( 'apierror-invalidtitle', wfEscapeWikiText( $params['title'] ) ) );
+			} else {
+				$this->dieUsageMsg( array( 'invalidtitle', $params['title'] ) );
+			}
 		}
 
 		$blacklisted = TitleBlacklist::singleton()->userCannot( $title, $this->getUser(), $action, $override );
@@ -86,6 +87,7 @@ class ApiQueryTitleBlacklist extends ApiBase {
 				),
 			),
 			'nooverride' => array(
+				ApiBase::PARAM_DFLT => false,
 			)
 		);
 	}

@@ -12,6 +12,7 @@
 	"gadgets-desc": "Permite utilizatorilor să își aleagă [[Special:Gadgets|gadgeturi CSS și JavaScript]] în [[Special:Preferences#mw-prefsection-gadgets|preferințele]] lor",
 	"prefs-gadgets": "Gadgeturi",
 	"gadgets": "Gadgeturi",
+	"gadgetusage": "Statistici de utilizare a gadgeturilor",
 	"gadgetusage-usercount": "Număr de utilizatori",
 	"gadgets-title": "Gadgeturi",
 	"gadgets-uses": "Utilizări",

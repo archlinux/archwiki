@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica;
 
 use Elastica\Cluster\Health;
@@ -7,7 +6,7 @@ use Elastica\Cluster\Settings;
 use Elastica\Exception\NotImplementedException;
 
 /**
- * Cluster informations for elasticsearch.
+ * Cluster information for elasticsearch.
  *
  * @author Nicolas Ruflin <spam@ruflin.com>
  *
@@ -20,7 +19,7 @@ class Cluster
      *
      * @var \Elastica\Client Client object
      */
-    protected $_client = null;
+    protected $_client;
 
     /**
      * Cluster state response.
@@ -74,14 +73,7 @@ class Cluster
      */
     public function getIndexNames()
     {
-        $metaData = $this->_data['metadata']['indices'];
-
-        $indices = array();
-        foreach ($metaData as $key => $value) {
-            $indices[] = $key;
-        }
-
-        return $indices;
+        return array_keys($this->_data['metadata']['indices']);
     }
 
     /**
@@ -104,7 +96,7 @@ class Cluster
     public function getNodeNames()
     {
         $data = $this->getState();
-        $nodeNames = array();
+        $nodeNames = [];
         foreach ($data['nodes'] as $node) {
             $nodeNames[] = $node['name'];
         }
@@ -119,7 +111,7 @@ class Cluster
      */
     public function getNodes()
     {
-        $nodes = array();
+        $nodes = [];
         $data = $this->getState();
 
         foreach ($data['nodes'] as $id => $name) {
@@ -173,21 +165,5 @@ class Cluster
     public function getSettings()
     {
         return new Settings($this->getClient());
-    }
-
-    /**
-     * Shuts down the complete cluster.
-     *
-     * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-nodes-shutdown.html
-     *
-     * @param string $delay OPTIONAL Seconds to shutdown cluster after (default = 1s)
-     *
-     * @return \Elastica\Response
-     */
-    public function shutdown($delay = '1s')
-    {
-        $path = '_shutdown?delay='.$delay;
-
-        return $this->_client->request($path, Request::POST);
     }
 }

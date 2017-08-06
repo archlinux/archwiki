@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Index;
 
 use Elastica\Index as BaseIndex;
@@ -19,21 +18,21 @@ class Stats
      *
      * @var \Elastica\Response Response object
      */
-    protected $_response = null;
+    protected $_response;
 
     /**
      * Stats info.
      *
      * @var array Stats info
      */
-    protected $_data = array();
+    protected $_data = [];
 
     /**
      * Index.
      *
      * @var \Elastica\Index Index object
      */
-    protected $_index = null;
+    protected $_index;
 
     /**
      * Construct.

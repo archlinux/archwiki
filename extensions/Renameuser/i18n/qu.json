@@ -27,6 +27,8 @@
 	"renameuser-page-moved": "\"<nowiki>$1</nowiki>\" ñawpa sutiyuq ruraqpa p'anqanqa \"<nowiki>$2</nowiki>\" nisqa musuq p'anqanman astasqañam.",
 	"renameuser-page-unmoved": "Manam atinichu \"<nowiki>$1</nowiki>\" ñawpa sutiyuq ruraqpa p'anqanta \"<nowiki>$2</nowiki>\" nisqa musuq p'anqanman astayta.",
 	"log-name-renameuser": "Ruraqpa sutin hukchay hallch'a",
+	"logentry-renameuser-renameuser": "$1 sutiyuqqa {{GENDER:$2|hukchan}} $4 nisqa {{GENDER:$7|ruraqpa}} sutinta ({{PLURAL:$6|$6 rurasqan|$6 rurasqankuna}}) $5 nisqa sutiman",
+	"logentry-renameuser-renameuser-legacier": "$1 sutiyuqqa hukchan $4 nisqa {{GENDER:$7|ruraqpa}} sutinta $5 nisqa sutiman",
 	"renameuser-move-log": "\"[[User:$1|$1]]\" ruraqpa sutinta \"[[User:$2|$2]]\" sutiman hukchaspa kikinmanta ruraqpa p'anqatapas astan",
 	"right-renameuser": "Ruraqpa sutinkunata hukchay",
 	"renameuser-renamed-notice": "Kay ruraqpa sutinqa hukchasqañam.\nKay qatiqpiqa hukchay hallch'atam rikunki."

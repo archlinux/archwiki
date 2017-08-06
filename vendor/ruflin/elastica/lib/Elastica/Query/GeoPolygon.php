@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Query;
 
 /**
@@ -16,14 +15,14 @@ class GeoPolygon extends AbstractQuery
      *
      * @var string Key
      */
-    protected $_key = '';
+    protected $_key;
 
     /**
      * Points making up polygon.
      *
      * @var array Points making up polygon
      */
-    protected $_points = array();
+    protected $_points;
 
     /**
      * Construct polygon query.
@@ -46,12 +45,12 @@ class GeoPolygon extends AbstractQuery
      */
     public function toArray()
     {
-        return array(
-            'geo_polygon' => array(
-                $this->_key => array(
+        return [
+            'geo_polygon' => [
+                $this->_key => [
                     'points' => $this->_points,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 }

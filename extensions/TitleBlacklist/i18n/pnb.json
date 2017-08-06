@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Khalid Mahmood"
+			"Khalid Mahmood",
+			"Abbas dhothar"
 		]
 	},
 	"titleblacklist-desc": "مکھیانواں نوں اجازت دیندا اے جے اوہ صفے بنن توں روکن تے ورتن کھاتے [[MediaWiki:Titleblacklist|blacklist]] تے [[MediaWiki:Titlewhitelist|whitelist]]",
@@ -12,7 +13,7 @@
 	"titleblacklist-forbidden-upload": "فائل ناں \"$2\" بنن توں روک دتی گئی اے۔\nایہ تھلے دتی گئی کالی لسٹ انٹری نال رلدا اے: <code>$1</code>",
 	"titleblacklist-forbidden-new-account": "ورتن ناں \"$2\" بنن توں روک دتا گیا اے۔\nاے تھلے دتی گئی کالیلسٹ انٹری نال رلدی اے: <code>$1</code>",
 	"titleblacklist-invalid": "تھلے دتی {{PLURAL:$1|لین|لیناں }} کالیلسٹ سرناویں {{PLURAL:$1|ہے|ہیں}}چ  ناں منیا جان والا؛ مہربانی کرکے بچان توں پہلے {{PLURAL:$1|it|اوناں نون}} اینوں.",
-	"titleblacklist-override": "روکنلسٹ پعل جاؤ",
+	"titleblacklist-override": "بلیک لسٹ بُھل جاؤ",
 	"right-tboverride": "ٹاغٹل شلیکلسٹ تے لکھو۔",
 	"right-tboverride-account": "ورتن ناں بلیکلسٹ تے لکھو۔"
 }

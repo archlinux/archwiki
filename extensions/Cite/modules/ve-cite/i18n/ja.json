@@ -15,7 +15,8 @@
 			"Jdforrester",
 			"Sudachi",
 			"Otokoume",
-			"Vigorous action"
+			"Vigorous action",
+			"おはぐろ蜻蛉"
 		]
 	},
 	"visualeditor-cite-tool-definition.json": "null",
@@ -30,21 +31,21 @@
 	"cite-ve-dialog-reference-options-name-label": "この名前で再使用",
 	"cite-ve-dialog-reference-options-section": "オプション",
 	"cite-ve-dialog-reference-title": "脚注",
-	"cite-ve-dialog-reference-useexisting-full-label": "このページ内にある出典を再利用する",
-	"cite-ve-dialog-reference-useexisting-label": "既存の出典を使用",
+	"cite-ve-dialog-reference-useexisting-full-label": "このページ内にある情報源を再利用する",
+	"cite-ve-dialog-reference-useexisting-label": "既存の情報源を使用",
 	"cite-ve-dialog-reference-useexisting-tool": "再利用",
 	"cite-ve-dialog-referenceslist-contextitem-description-general": "汎用の脚注リスト",
 	"cite-ve-dialog-referenceslist-contextitem-description-named": "グループ「$1」の脚注のリスト",
-	"cite-ve-dialog-referenceslist-title": "出典一覧",
-	"cite-ve-dialogbutton-citation-educationpopup-text": "情報の出典を追加してあなたの編集内容を改善します。書籍、新聞、ウェブサイトを出典にできます。",
+	"cite-ve-dialog-referenceslist-title": "情報源一覧",
+	"cite-ve-dialogbutton-citation-educationpopup-text": "情報源を追加してあなたの編集内容を改善します。書籍、新聞、ウェブサイトを情報源にできます。",
 	"cite-ve-dialogbutton-citation-educationpopup-title": "引用",
 	"cite-ve-dialogbutton-reference-full-label": "標準",
 	"cite-ve-dialogbutton-reference-title": "脚注",
 	"cite-ve-dialogbutton-reference-tooltip": "基本",
-	"cite-ve-dialogbutton-referenceslist-tooltip": "出典一覧",
+	"cite-ve-dialogbutton-referenceslist-tooltip": "情報源一覧",
 	"cite-ve-reference-input-placeholder": "現在の引用内を検索",
-	"cite-ve-referenceslist-isempty": "このページには、この一覧に含めるためのグループ「$1」の出典はありません。",
-	"cite-ve-referenceslist-isempty-default": "このページには、この一覧に含められる出典はありません。",
+	"cite-ve-referenceslist-isempty": "このページには、この一覧に含めるためのグループ「$1」の情報源はありません。",
+	"cite-ve-referenceslist-isempty-default": "このページには、この一覧に含められる情報源はありません。",
 	"cite-ve-referenceslist-missingref": "この出典はテンプレート内または別途生成されたブロック内で定義されているため、現時点ではソース モードのみで編集できます。",
 	"cite-ve-toolbar-group-label": "参照"
 }

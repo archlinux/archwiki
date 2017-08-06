@@ -30,7 +30,7 @@ class ApiQueryReferences extends ApiQueryBase {
 	public function getAllowedParams() {
 		return [
 		   'continue' => [
-		       ApiBase::PARAM_HELP_MSG => 'api-help-param-continue',
+			   ApiBase::PARAM_HELP_MSG => 'api-help-param-continue',
 		   ],
 		];
 	}
@@ -38,7 +38,11 @@ class ApiQueryReferences extends ApiQueryBase {
 	public function execute() {
 		$config = ConfigFactory::getDefaultInstance()->makeConfig( 'cite' );
 		if ( !$config->get( 'CiteStoreReferencesData' ) ) {
-			$this->dieUsage( 'Cite extension reference storage is not enabled', 'citestoragedisabled' );
+			if ( is_callable( [ $this, 'dieWithError' ] ) ) {
+				$this->dieWithError( 'apierror-citestoragedisabled' );
+			} else {
+				$this->dieUsage( 'Cite extension reference storage is not enabled', 'citestoragedisabled' );
+			}
 		}
 		$params = $this->extractRequestParams();
 		$titles = $this->getPageSet()->getGoodTitles();

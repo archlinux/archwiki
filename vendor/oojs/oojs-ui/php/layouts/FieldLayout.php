@@ -52,7 +52,7 @@ class FieldLayout extends Layout {
 	 */
 	protected $help;
 
-	protected $field, $body, $messages;
+	protected $field, $header, $body, $messages;
 
 	/**
 	 * @param Widget $fieldWidget Field widget
@@ -77,8 +77,6 @@ class FieldLayout extends Layout {
 			throw new Exception( 'Widget not found' );
 		}
 
-		$hasInputWidget = $fieldWidget::$supportsSimpleLabel;
-
 		// Config initialization
 		$config = array_merge( [ 'align' => 'left' ], $config );
 
@@ -89,9 +87,10 @@ class FieldLayout extends Layout {
 		$this->fieldWidget = $fieldWidget;
 		$this->errors = isset( $config['errors'] ) ? $config['errors'] : [];
 		$this->notices = isset( $config['notices'] ) ? $config['notices'] : [];
-		$this->field = new Tag( 'div' );
+		$this->field = $this->isFieldInline() ? new Tag( 'span' ) : new Tag( 'div' );
 		$this->messages = new Tag( 'ul' );
-		$this->body = new Tag( $hasInputWidget ? 'label' : 'div' );
+		$this->header = new Tag( 'span' );
+		$this->body = new Tag( 'div' );
 		if ( isset( $config['help'] ) ) {
 			$this->help = new ButtonWidget( [
 				'classes' => [ 'oo-ui-fieldLayout-help' ],
@@ -104,19 +103,25 @@ class FieldLayout extends Layout {
 		}
 
 		// Traits
-		$this->initializeLabelElement( $config );
+		$this->initializeLabelElement( array_merge( $config, [
+			'labelElement' => new Tag( 'label' )
+		] ) );
 		$this->initializeTitledElement(
 			array_merge( $config, [ 'titled' => $this->label ] ) );
 
 		// Initialization
+		if ( $fieldWidget::$supportsSimpleLabel ) {
+			$this->label->setAttributes( [ 'for' => $this->fieldWidget->getInputId() ] );
+		}
 		$this
 			->addClasses( [ 'oo-ui-fieldLayout' ] )
-			->toggleClasses( [ 'oo-ui-fieldLayout-disable' ], $this->fieldWidget->isDisabled() )
-			->appendContent( $this->help, $this->body );
+			->toggleClasses( [ 'oo-ui-fieldLayout-disabled' ], $this->fieldWidget->isDisabled() )
+			->appendContent( $this->body );
 		if ( count( $this->errors ) || count( $this->notices ) ) {
 			$this->appendContent( $this->messages );
 		}
 		$this->body->addClasses( [ 'oo-ui-fieldLayout-body' ] );
+		$this->header->addClasses( [ 'oo-ui-fieldLayout-header' ] );
 		$this->messages->addClasses( [ 'oo-ui-fieldLayout-messages' ] );
 		$this->field
 			->addClasses( [ 'oo-ui-fieldLayout-field' ] )
@@ -163,6 +168,18 @@ class FieldLayout extends Layout {
 	}
 
 	/**
+	 * Return `true` if the given field widget can be used with `'inline'` alignment (see
+	 * setAlignment()). Return `false` if it can't or if this can't be determined.
+	 *
+	 * @return bool
+	 */
+	public function isFieldInline() {
+		// This is very simplistic, but should be good enough. It's important to avoid false positives,
+		// as that will cause the generated HTML to be invalid and go all out of whack when parsed.
+		return strtolower( $this->getField()->getTag() ) === 'span';
+	}
+
+	/**
 	 * Set the field alignment mode.
 	 *
 	 * @param string $value Alignment mode, either 'left', 'right', 'top' or 'inline'
@@ -174,12 +191,21 @@ class FieldLayout extends Layout {
 			if ( !in_array( $value, [ 'left', 'right', 'top', 'inline' ] ) ) {
 				$value = 'left';
 			}
+			// Validate
+			if ( $value === 'inline' && !$this->isFieldInline() ) {
+				$value = 'top';
+			}
 			// Reorder elements
 			$this->body->clearContent();
-			if ( $value === 'inline' ) {
-				$this->body->appendContent( $this->field, $this->label );
+			if ( $value === 'top' ) {
+				$this->header->appendContent( $this->label, $this->help );
+				$this->body->appendContent( $this->header, $this->field );
+			} elseif ( $value === 'inline' ) {
+				$this->header->appendContent( $this->label, $this->help );
+				$this->body->appendContent( $this->field, $this->header );
 			} else {
-				$this->body->appendContent( $this->label, $this->field );
+				$this->header->appendContent( $this->label );
+				$this->body->appendContent( $this->header, $this->help, $this->field );
 			}
 			// Set classes. The following classes can be used here:
 			// * oo-ui-fieldLayout-align-left

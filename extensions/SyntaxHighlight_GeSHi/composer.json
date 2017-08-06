@@ -2,7 +2,7 @@
 	"name": "mediawiki/syntax-highlight_geshi",
 	"description": "Syntax highlighting extension for MediaWiki",
 	"require": {
-		"symfony/process": "~3.0"
+		"symfony/process": "~3.2"
 	},
 	"require-dev": {
 		"jakub-onderka/php-parallel-lint": "0.9.2",

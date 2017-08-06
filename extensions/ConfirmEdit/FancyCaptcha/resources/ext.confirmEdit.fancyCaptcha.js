@@ -42,4 +42,4 @@
 
 		return false;
 	} );
-} )( jQuery, mediaWiki );
+}( jQuery, mediaWiki ) );

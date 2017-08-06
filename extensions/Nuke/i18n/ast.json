@@ -14,7 +14,7 @@
 	"nuke-defaultreason": "Desaniciu en masa de páxines amestaes por [[Special:Contributions/$1|{{GENDER:$1|$1}}]]",
 	"nuke-multiplepeople": "Desaniciu en masa de páxines recién amestaes",
 	"nuke-tools": "Esta ferramienta permite desanicios en masa de páxines añadíes recién por un usuariu o una IP determinada. Escribi'l nome d'usuariu o la IP pa ver una llista de páxines a desaniciar, o dexalo balero pa tolos usuarios.",
-	"nuke-submit-user": "Dir",
+	"nuke-submit-user": "Llista de páxines",
 	"nuke-toggleinvert": "Invertir",
 	"nuke-submit-delete": "Desaniciar seleicionaes",
 	"right-nuke": "Desaniciu en masa de páxines",

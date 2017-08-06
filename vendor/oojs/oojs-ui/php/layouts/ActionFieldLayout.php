@@ -32,8 +32,8 @@ class ActionFieldLayout extends FieldLayout {
 
 		// Properties
 		$this->buttonWidget = $buttonWidget;
-		$this->button = new Tag( 'div' );
-		$this->input = new Tag( 'div' );
+		$this->button = new Tag( 'span' );
+		$this->input = $this->isFieldInline() ? new Tag( 'span' ) : new Tag( 'div' );
 
 		// Initialization
 		$this->addClasses( [ 'oo-ui-actionFieldLayout' ] );

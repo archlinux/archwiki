@@ -12,7 +12,8 @@
 			"Umherirrender",
 			"Yekrats",
 			"Liuxinyu970226",
-			"Matěj Suchánek"
+			"Matěj Suchánek",
+			"TTO"
 		]
 	},
 	"nuke": "{{doc-special|Nuke}}\nThe Nuke extension allows for sysops to delete a large number of pages (\"Mass delete\").\nFor more information, see http://www.mediawiki.org/wiki/Extension:Nuke\n{{Identical|Mass delete}}",
@@ -24,7 +25,7 @@
 	"nuke-defaultreason": "Reason for deletion in logs. {{msg-mw|nuke-multiplepeople}} is used when pages created by multiple people are deleted.\n\nParameters:\n* $1 - a username or IP address",
 	"nuke-multiplepeople": "Reason for deletion in logs, when pages created by multiple users were deleted.\n\n{{msg-mw|nuke-defaultreason}} is used when pages created by only 1 user are deleted.",
 	"nuke-tools": "Used as intro text for the Nuke (mass deletion) form.",
-	"nuke-submit-user": "{{Identical|Go}}",
+	"nuke-submit-user": "The submit button of a form used to generate a list of pages. \"List\" is a verb here.",
 	"nuke-toggleinvert": "Used to invert checkbox selection.\n{{Identical|Invert}}",
 	"nuke-submit-delete": "Submit button to delete the selected pages.",
 	"right-nuke": "{{doc-right|nuke}}",

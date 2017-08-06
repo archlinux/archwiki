@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Cgboeree"
+		]
+	},
+	"pfunc_expr_unrecognised_word": "Era de espresa: Parola nonreconoseda $1",
+	"pfunc_expr_unexpected_operator": "Era de espresa: Operador $1 nonespetada",
+	"pfunc_expr_missing_operand": "Era de espresa: Ojeto asenta per $1.",
+	"pfunc_expr_unrecognised_punctuation": "Era de espresa: Sinia de puntia nonreconoseda \"$1\"."
+}

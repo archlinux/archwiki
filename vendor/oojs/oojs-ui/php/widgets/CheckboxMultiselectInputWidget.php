@@ -35,7 +35,7 @@ class CheckboxMultiselectInputWidget extends InputWidget {
 	/**
 	 * @param array $config Configuration options
 	 * @param array[] $config['options'] Array of menu options in the format
-	 *   `array( 'data' => …, 'label' => … )`
+	 *   `[ 'data' => …, 'label' => …, 'disabled' => … ]`
 	 */
 	public function __construct( array $config = [] ) {
 		// Parent constructor
@@ -102,7 +102,7 @@ class CheckboxMultiselectInputWidget extends InputWidget {
 	 * Set the options available for this input.
 	 *
 	 * @param array[] $options Array of menu options in the format
-	 *   `array( 'data' => …, 'label' => … )`
+	 *   `[ 'data' => …, 'label' => …, 'disabled' => … ]`
 	 * @return $this
 	 */
 	public function setOptions( $options ) {
@@ -113,11 +113,12 @@ class CheckboxMultiselectInputWidget extends InputWidget {
 		$name = $this->name;
 		foreach ( $options as $opt ) {
 			$optValue = parent::cleanUpValue( $opt['data'] );
+			$optDisabled = isset( $opt['disabled'] ) ? $opt['disabled'] : false;
 			$field = new FieldLayout(
 				new CheckboxInputWidget( [
 					'name' => $name,
 					'value' => $optValue,
-					'disabled' => $this->isDisabled(),
+					'disabled' => $this->isDisabled() || $optDisabled,
 				] ),
 				[
 					'label' => isset( $opt['label'] ) ? $opt['label'] : $optValue,
@@ -149,7 +150,8 @@ class CheckboxMultiselectInputWidget extends InputWidget {
 		foreach ( $this->fields as $field ) {
 			$label = $field->getLabel();
 			$data = $field->getField()->getValue();
-			$o[] = [ 'data' => $data, 'label' => $label ];
+			$disabled = $field->getField()->isDisabled();
+			$o[] = [ 'data' => $data, 'label' => $label, 'disabled' => $disabled ];
 		}
 		$config['options'] = $o;
 		return parent::getConfig( $config );

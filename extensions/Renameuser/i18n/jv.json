@@ -25,16 +25,16 @@
 	"renameusererrorinvalid": "Jeneng panganggo \"<nowiki>$1</nowiki>\" ora absah",
 	"renameuser-error-request": "Ana masalah nalika nampa panyuwunan panjenengan.\nMangga balènana lan nyoba manèh.",
 	"renameuser-error-same-user": "Panjenengan ora bisa ngganti jeneng panganggo dadi kaya jeneng asalé.",
-	"renameusersuccess": "{{GENDER:$2|Naraguna}} \"<nowiki>$1</nowiki>\" wis ganti jeneng dadi \"<nowiki>$2</nowiki>\".",
+	"renameusersuccess": "{{GENDER:$2|Panganggo}} \"<nowiki>$1</nowiki>\" wis ganti jeneng dadi \"<nowiki>$2</nowiki>\".",
 	"renameuser-page-exists": "Kaca $1 wis ana lan ora bisa ditimpa sacara otomatis.",
 	"renameuser-page-moved": "Kaca $1 wis dialihaké menyang $2.",
 	"renameuser-page-unmoved": "Kaca $1 ora bisa dialihaké menyang $2.",
 	"log-name-renameuser": "Log ganti jeneng panganggo",
 	"log-description-renameuser": "Iki log owah-owahan jeneng panganggo",
-	"logentry-renameuser-renameuser": "$1 {{GENDER:$2|ngganti jeneng}} naraguna $4 ({{PLURAL:$6|$6 besutan}}) dadi {{GENDER:$7|$5}}",
-	"logentry-renameuser-renameuser-legacier": "$1 ngganti jeneng naraguna $4 dadi {{GENDER:$7|$5}}",
-	"renameuser-move-log": "Otomatis ngalih kaca nalika ngganti jeneng {{GENDER:$2|naraguna}} \"[[User:$1|$1]]\" dadi \"[[User:$2|$2]]\"",
+	"logentry-renameuser-renameuser": "$1 {{GENDER:$2|ngganti jeneng}} panganggo $4 ({{PLURAL:$6|$6 besutan}}) dadi {{GENDER:$7|$5}}",
+	"logentry-renameuser-renameuser-legacier": "$1 ngganti jeneng panganggo $4 dadi {{GENDER:$7|$5}}",
+	"renameuser-move-log": "Otomatis ngalih kaca nalika ngganti jeneng {{GENDER:$2|panganggo}} \"[[User:$1|$1]]\" dadi \"[[User:$2|$2]]\"",
 	"action-renameuser": "ganti jeneng panganggo",
 	"right-renameuser": "Ganti jeneng panganggo-panganggo",
-	"renameuser-renamed-notice": "Naraguna iki wis diganti jenengé.\nCathetan ganti jeneng cumepak ing ngisor iki kanggo rujukan."
+	"renameuser-renamed-notice": "Panganggo iki wis diganti jenengé.\nLog ganti jeneng cumepak ing ngisor iki kanggo rujukan."
 }

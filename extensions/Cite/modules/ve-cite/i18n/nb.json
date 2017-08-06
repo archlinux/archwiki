@@ -14,13 +14,16 @@
 			"Emilbk",
 			"Cocu",
 			"Tarjeimo",
-			"Telaneo"
+			"Telaneo",
+			"Jon Harald Søby"
 		]
 	},
+	"visualeditor-cite-tool-definition.json": "null",
 	"visualeditor-cite-tool-name-book": "Bok",
 	"visualeditor-cite-tool-name-journal": "Tidsskrift",
 	"visualeditor-cite-tool-name-news": "Nyhet",
 	"visualeditor-cite-tool-name-web": "Nettside",
+	"cite-tool-definition.json": "null",
 	"cite-ve-dialog-reference-editing-reused": "Denne referansen er brukt {{PLURAL:$1|én gang|$1  ganger}} på denne siden.",
 	"cite-ve-dialog-reference-options-group-label": "Bruk denne gruppen",
 	"cite-ve-dialog-reference-options-group-placeholder": "Generelle referanser",
@@ -43,5 +46,6 @@
 	"cite-ve-referenceslist-isempty": "Det finnes ingen kildehenvisninger i gruppen «$1» på denne siden som kan  inkluderes i denne lista.",
 	"cite-ve-referenceslist-isempty-default": "Det er ingen kildehenvisninger på denne siden som kan inkluderes i denne lista.",
 	"cite-ve-referenceslist-missingref": "Denne kildehenvisningen er definert ved hjelp av en mal eller en annen generert blokk, og kan foreløpig kun redigeres i kildemodus.",
-	"cite-ve-toolbar-group-label": "Sitér"
+	"cite-ve-toolbar-group-label": "Angi kilde",
+	"cite-ve-othergroup-item": "$1 referanse"
 }

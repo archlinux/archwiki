@@ -15,5 +15,7 @@
 	"fancycaptcha-edit": "За редактиране на страницата е необходимо да се въведат думите от картинката в полето по-долу ([[Special:Captcha/help|повече информация]]):",
 	"fancycaptcha-imgcaptcha-ph": "Въведете текста, който виждате на картинката",
 	"fancycaptcha-sendemail": "Като защита срещу автоматизиран спам, въведете в кутията думите, които са показани по-долу ([[Special:Captcha/help|повече информация]]):",
-	"fancycaptcha-reload-text": "Опресняване"
+	"fancycaptcha-reload-text": "Опресняване",
+	"apihelp-fancycaptchareload-description": "Получаване на нова FancyCaptcha.",
+	"apihelp-fancycaptchareload-example-1": "Получаване на нова FancyCaptcha"
 }

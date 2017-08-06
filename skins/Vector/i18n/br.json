@@ -6,6 +6,7 @@
 		]
 	},
 	"skinname-vector": "Vektor",
+	"vector-skin-desc": "Stumm modern MonoBook freskaet e dres hag enni meur a wellaenn implijout",
 	"vector.css": "/* Talvezout a raio ar CSS lakaet amañ evit implijerien ar gwiskadur Vektor */",
 	"vector.js": "/* Kement JavaScript amañ a vo karget evit an implijerien a ra gant ar gwiskadur Vektor */",
 	"vector-action-addsection": "Rannbennad nevez",

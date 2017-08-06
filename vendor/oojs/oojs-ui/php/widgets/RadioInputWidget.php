@@ -7,6 +7,10 @@ namespace OOUI;
  */
 class RadioInputWidget extends InputWidget {
 
+	/* Static Properties */
+
+	public static $tagName = 'span';
+
 	/**
 	 * @param array $config Configuration options
 	 * @param boolean $config['selected'] Whether the radio button is initially selected

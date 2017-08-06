@@ -39,7 +39,8 @@
 	},
 	"ResourceModuleSkinStyles": {
 		"monobook": {
-			"+mediawiki.special.preferences.styles": "skinStyles/mediawiki.special.preferences.styles.less"
+			"+mediawiki.special.preferences.styles": "skinStyles/mediawiki.special.preferences.styles.less",
+			"+mediawiki.notification": "skinStyles/mediawiki.notification.less"
 		}
 	},
 	"AutoloadClasses": {

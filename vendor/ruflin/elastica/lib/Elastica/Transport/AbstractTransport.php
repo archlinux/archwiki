@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Transport;
 
 use Elastica\Connection;
@@ -79,7 +78,7 @@ abstract class AbstractTransport extends Param
      *
      * @return AbstractTransport
      */
-    public static function create($transport, Connection $connection, array $params = array())
+    public static function create($transport, Connection $connection, array $params = [])
     {
         if (is_array($transport) && isset($transport['type'])) {
             $transportParams = $transport;
@@ -90,24 +89,23 @@ abstract class AbstractTransport extends Param
         }
 
         if (is_string($transport)) {
-            $specialTransports = array(
+            $specialTransports = [
                 'httpadapter' => 'HttpAdapter',
                 'nulltransport' => 'NullTransport',
-            );
+            ];
 
             if (isset($specialTransports[strtolower($transport)])) {
                 $transport = $specialTransports[strtolower($transport)];
             } else {
                 $transport = ucfirst($transport);
             }
-
-            $className = 'Elastica\\Transport\\'.$transport;
-
-            if (!class_exists($className)) {
-                throw new InvalidException('Invalid transport');
+            $classNames = ["Elastica\\Transport\\$transport", $transport];
+            foreach ($classNames as $className) {
+                if (class_exists($className)) {
+                    $transport = new $className();
+                    break;
+                }
             }
-
-            $transport = new $className();
         }
 
         if ($transport instanceof self) {

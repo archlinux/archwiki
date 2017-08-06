@@ -1,7 +1,7 @@
 /*
  * JavaScript for WikiEditor Dialogs
  */
-jQuery( document ).ready( function ( $ ) {
+jQuery( function ( $ ) {
 	if ( !$.wikiEditor.isSupported( $.wikiEditor.modules.dialogs ) ) {
 		return;
 	}

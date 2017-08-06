@@ -74,49 +74,52 @@ class SpecialNuke extends SpecialPage {
 	 */
 	protected function promptForm( $userName = '' ) {
 		$out = $this->getOutput();
-		$out->addModules( 'mediawiki.userSuggest' );
 
 		$out->addWikiMsg( 'nuke-tools' );
 
-		$out->addHTML(
-			Xml::openElement(
-				'form',
-				[
-					'action' => $this->getPageTitle()->getLocalURL( 'action=submit' ),
-					'method' => 'post'
-				]
-			)
-			. '<table><tr>'
-			. '<td>' . Xml::label( $this->msg( 'nuke-userorip' )->text(), 'nuke-target' ) . '</td>'
-			. '<td>' . Xml::input(
-				'target',
-				40,
-				$userName,
-				[
-					'id' => 'nuke-target',
-					'class' => 'mw-autocomplete-user',
-					'autofocus' => true
-				]
-			) . '</td>'
-			. '</tr><tr>'
-			. '<td>' . Xml::label( $this->msg( 'nuke-pattern' )->text(), 'nuke-pattern' ) . '</td>'
-			. '<td>' . Xml::input( 'pattern', 40, '', [ 'id' => 'nuke-pattern' ] ) . '</td>'
-			. '</tr><tr>'
-			. '<td>' . Xml::label( $this->msg( 'nuke-namespace' )->text(), 'nuke-namespace' ) . '</td>'
-			. '<td>' . Html::namespaceSelector(
-				[ 'all' => 'all' ],
-				[ 'name' => 'namespace' ]
-			) . '</td>'
-			. '</tr><tr>'
-			. '<td>' . Xml::label( $this->msg( 'nuke-maxpages' )->text(), 'nuke-limit' ) . '</td>'
-			. '<td>' . Xml::input( 'limit', 7, '500', [ 'id' => 'nuke-limit' ] ) . '</td>'
-			. '</tr><tr>'
-			. '<td></td>'
-			. '<td>' . Xml::submitButton( $this->msg( 'nuke-submit-user' )->text() ) . '</td>'
-			. '</tr></table>'
-			. Html::hidden( 'wpEditToken', $this->getUser()->getEditToken() )
-			. Xml::closeElement( 'form' )
-		);
+		$formDescriptor = [
+			'nuke-target' => [
+				'id' => 'nuke-target',
+				'default' => $userName,
+				'label' => $this->msg( 'nuke-userorip' )->text(),
+				'type' => 'user',
+				'name' => 'target'
+			],
+			'nuke-pattern' => [
+				'id' => 'nuke-pattern',
+				'label' => $this->msg( 'nuke-pattern' )->text(),
+				'maxLength' => 40,
+				'type' => 'text',
+				'name' => 'pattern'
+			],
+			'namespace' => [
+				'id' => 'nuke-namespace',
+				'type' => 'namespaceselect',
+				'label' => $this->msg( 'nuke-namespace' )->text(),
+				'all' => 'all',
+				'name' => 'namespace'
+			],
+			'limit' => [
+				'id' => 'nuke-limit',
+				'maxLength' => 7,
+				'default' => 500,
+				'label' => $this->msg( 'nuke-maxpages' )->text(),
+				'type' => 'int',
+				'name' => 'limit'
+			]
+		];
+
+		HTMLForm::factory( 'ooui', $formDescriptor, $this->getContext() )
+			->setName( 'massdelete' )
+			->setFormIdentifier( 'massdelete' )
+			->setWrapperLegendMsg( 'nuke' )
+			->setSubmitTextMsg( 'nuke-submit-user' )
+			->setSubmitName( 'nuke-submit-user' )
+			->setAction( $this->getPageTitle()->getLocalURL( 'action=submit' ) )
+			->setMethod( 'post' )
+			->addHiddenField( 'wpEditToken', $this->getUser()->getEditToken() )
+			->prepareForm()
+			->displayForm( false );
 	}
 
 	/**
@@ -198,6 +201,7 @@ class SpecialNuke extends SpecialPage {
 		$wordSeparator = $this->msg( 'word-separator' )->escaped();
 		$commaSeparator = $this->msg( 'comma-separator' )->escaped();
 
+		$linkRenderer = $this->getLinkRenderer();
 		foreach ( $pages as $info ) {
 			/**
 			 * @var $title Title
@@ -212,9 +216,9 @@ class SpecialNuke extends SpecialPage {
 			$userNameText = $userName ?
 				$this->msg( 'nuke-editby', $userName )->parse() . $commaSeparator :
 				'';
-			$changesLink = Linker::linkKnown(
+			$changesLink = $linkRenderer->makeKnownLink(
 				$title,
-				$this->msg( 'nuke-viewchanges' )->escaped(),
+				$this->msg( 'nuke-viewchanges' )->text(),
 				[],
 				[ 'action' => 'history' ]
 			);
@@ -225,7 +229,7 @@ class SpecialNuke extends SpecialPage {
 					[ 'value' => $title->getPrefixedDBkey() ]
 				) . '&#160;' .
 				( $thumb ? $thumb->toHtml( [ 'desc-link' => true ] ) : '' ) .
-				Linker::linkKnown( $title ) . $wordSeparator .
+				$linkRenderer->makeKnownLink( $title ) . $wordSeparator .
 				$this->msg( 'parentheses' )->rawParams( $userNameText . $changesLink )->escaped() .
 				"</li>\n" );
 		}
@@ -269,7 +273,9 @@ class SpecialNuke extends SpecialPage {
 
 		$pattern = $this->getRequest()->getText( 'pattern' );
 		if ( !is_null( $pattern ) && trim( $pattern ) !== '' ) {
-			$where[] = 'rc_title ' . $dbr->buildLike( $pattern );
+			// $pattern is a SQL pattern supporting wildcards, so buildLike
+			// will not work.
+			$where[] = 'rc_title LIKE ' . $dbr->addQuotes( $pattern );
 		}
 		$group = implode( ', ', $what );
 

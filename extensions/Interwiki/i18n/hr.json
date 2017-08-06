@@ -5,11 +5,12 @@
 			"Ex13",
 			"Roberta F.",
 			"SpeedyGonsales",
-			"MaGa"
+			"MaGa",
+			"Bugoslav"
 		]
 	},
 	"interwiki": "Vidi i uredi međuwiki podatke",
-	"interwiki-title-norights": "Gledanje međuwiki tablice",
+	"interwiki-title-norights": "Pregled međuwiki podataka",
 	"interwiki-desc": "Dodaje [[Special:Interwiki|posebnu stranicu]] za gledanje i uređivanje interwiki tablice",
 	"interwiki_intro": "Ovo je pregled međuwiki tablice.",
 	"interwiki_prefix": "Prefiks",

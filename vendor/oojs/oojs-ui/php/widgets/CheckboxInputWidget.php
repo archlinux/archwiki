@@ -7,6 +7,10 @@ namespace OOUI;
  */
 class CheckboxInputWidget extends InputWidget {
 
+	/* Static Properties */
+
+	public static $tagName = 'span';
+
 	/* Properties */
 
 	/**

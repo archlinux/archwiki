@@ -5,7 +5,8 @@
 			"Bellayet",
 			"Wikitanvir",
 			"Zaheen",
-			"Aftabuzzaman"
+			"Aftabuzzaman",
+			"Elias Ahmmad"
 		]
 	},
 	"nuke": "গণ অপসারণ",
@@ -17,7 +18,7 @@
 	"nuke-defaultreason": "[[Special:Contributions/$1|{{GENDER:$1|$1}}]] কর্তৃক যোগকৃত পাতাগুলির গণ অপসারণ",
 	"nuke-multiplepeople": "সম্প্রতি যোগ করা পাতার গণ অপসারণ",
 	"nuke-tools": "এই সরঞ্জামটি প্রদত্ত ব্যবহারকারী বা আইপি ঠিকানা দ্বারা সম্প্রতি যোগকৃত পাতাগুলি গণ আকারে অপসারণ করার অনুমতি দেয়। অপসারণ করতে পাতাগুলির তালিকা পেতে ব্যবহারকারী নাম বা আইপি ঠিকানাটি ইনপুট করুন বা সমস্ত ব্যবহারকারীদের জন্য ফাঁকা রেখে দিন।",
-	"nuke-submit-user": "যাও",
+	"nuke-submit-user": "পাতাসমূহের তালিকা",
 	"nuke-toggleinvert": "ব্যুত্ক্রমে",
 	"nuke-submit-delete": "নির্বাচিত অপসারণ করো",
 	"right-nuke": "গণ অপসারণ পাতা",

@@ -1,9 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Aursani"
+			"Aursani",
+			"Mehtab ahmed"
 		]
 	},
-	"cite_error": "هن چڪ جو حوالو ڏيو: $1",
+	"cite_error": "حوالي جي چڪ: $1",
 	"cite-tracking-category-cite-error": "حوالن جي چُڪَ وارا صفحا"
 }

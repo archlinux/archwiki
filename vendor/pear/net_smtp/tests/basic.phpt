@@ -9,11 +9,11 @@ require_once 'Net/SMTP.php';
 require_once 'config.php';
 
 if (! ($smtp = new Net_SMTP(TEST_HOSTNAME, TEST_PORT, TEST_LOCALHOST))) {
-	die("Unable to instantiate Net_SMTP object\n");
+    die("Unable to instantiate Net_SMTP object\n");
 }
 
 if (PEAR::isError($e = $smtp->connect())) {
-	die($e->getMessage() . "\n");
+    die($e->getMessage() . "\n");
 }
 
 if (PEAR::isError($e = $smtp->auth(TEST_AUTH_USER, TEST_AUTH_PASS))) {
@@ -21,16 +21,17 @@ if (PEAR::isError($e = $smtp->auth(TEST_AUTH_USER, TEST_AUTH_PASS))) {
 }
 
 if (PEAR::isError($smtp->mailFrom(TEST_FROM))) {
-	die('Unable to set sender to <' . TEST_FROM . ">\n");
+    die('Unable to set sender to <' . TEST_FROM . ">\n");
 }
 
 if (PEAR::isError($res = $smtp->rcptTo(TEST_TO))) {
-	die('Unable to add recipient <' . TEST_TO . '>: ' .
-		$res->getMessage() . "\n");
+    die('Unable to add recipient <' . TEST_TO . '>: ' .
+        $res->getMessage() . "\n");
 }
 
-if (PEAR::isError($smtp->data('Subject: ' . TEST_SUBJECT . "\r\n\r\n" . TEST_BODY))) {
-	die("Unable to send data\n");
+$headers = 'Subject: ' . TEST_SUBJECT;
+if (PEAR::isError($smtp->data(TEST_BODY, $headers))) {
+    die("Unable to send data\n");
 }
 
 $smtp->disconnect();

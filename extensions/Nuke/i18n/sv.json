@@ -19,7 +19,7 @@
 	"nuke-defaultreason": "Massradering av sidor skapade av [[Special:Contributions/$1|{{GENDER:$1|$1}}]]",
 	"nuke-multiplepeople": "Massradering av nyligen tillagda sidor",
 	"nuke-tools": "Det här verktyget gör det möjligt att massradera sidor som nyligen skapats av en viss användare eller IP-adress.\nAnge användarnamnet eller IP-adressen för att se en lista över sidor som kan tas bort, eller lämna tomt för alla användare.",
-	"nuke-submit-user": "Visa",
+	"nuke-submit-user": "Lista sidor",
 	"nuke-toggleinvert": "Invertera",
 	"nuke-submit-delete": "Ta bort valda",
 	"right-nuke": "Massradera sidor",

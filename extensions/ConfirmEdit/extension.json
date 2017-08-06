@@ -1,7 +1,7 @@
 {
 	"@doc": "Please read README.md",
 	"name": "ConfirmEdit",
-	"version": "1.4.0",
+	"version": "1.5.0",
 	"author": [
 		"Brion Vibber",
 		"Florian Schmidt",
@@ -12,6 +12,9 @@
 	"descriptionmsg": "captcha-desc",
 	"license-name": "GPL-2.0+",
 	"type": "antispam",
+	"requires": {
+		"MediaWiki": ">= 1.28"
+	},
 	"GroupPermissions": {
 		"*": {
 			"skipcaptcha": false
@@ -57,7 +60,6 @@
 		"CaptchaPreAuthenticationProvider": "includes/auth/CaptchaPreAuthenticationProvider.php",
 		"CaptchaAuthenticationRequest": "includes/auth/CaptchaAuthenticationRequest.php"
 	},
-	"callback": "ConfirmEditHooks::onRegistration",
 	"ResourceModules": {
 		"ext.confirmEdit.editPreview.ipwhitelist.styles": {
 			"position": "top",
@@ -77,14 +79,22 @@
 		"EditFilterMergedContent": "ConfirmEditHooks::confirmEditMerged",
 		"APIGetAllowedParams": "ConfirmEditHooks::APIGetAllowedParams",
 		"TitleReadWhitelist": "ConfirmEditHooks::onTitleReadWhitelist",
-		"AlternateEditPreview": "ConfirmEditHooks::onAlternateEditPreview"
+		"AlternateEditPreview": "ConfirmEditHooks::onAlternateEditPreview",
+		"AuthChangeFormFields": "ConfirmEditHooks::onAuthChangeFormFields"
+	},
+	"AuthManagerAutoConfig": {
+		"preauth": {
+			"CaptchaPreAuthenticationProvider":{
+				"class": "CaptchaPreAuthenticationProvider",
+				"sort": 10
+			}
+		}
 	},
 	"config": {
-		"_prefix": "",
-		"wgCaptchaWhitelistIP": false,
-		"wgCaptcha": null,
-		"wgCaptchaClass": "SimpleCaptcha",
-		"wgCaptchaTriggers": {
+		"CaptchaWhitelistIP": false,
+		"Captcha": null,
+		"CaptchaClass": "SimpleCaptcha",
+		"CaptchaTriggers": {
 			"edit": false,
 			"create": false,
 			"sendemail": false,
@@ -94,18 +104,18 @@
 			"badloginperuser": true,
 			"_merge_strategy": "array_plus"
 		},
-		"wgCaptchaTriggersOnNamespace": {
+		"CaptchaTriggersOnNamespace": {
 			"_merge_strategy": "array_plus_2d"
 		},
-		"wgCaptchaStorageClass": "CaptchaSessionStore",
-		"wgCaptchaSessionExpiration": 1800,
-		"wgCaptchaBadLoginExpiration": 300,
-		"wgCaptchaBadLoginPerUserExpiration": 600,
-		"ceAllowConfirmedEmail": false,
-		"wgCaptchaBadLoginAttempts": 3,
-		"wgCaptchaBadLoginPerUserAttempts": 20,
-		"wgCaptchaWhitelist": false,
-		"wgCaptchaRegexes": []
+		"CaptchaStorageClass": "CaptchaSessionStore",
+		"CaptchaSessionExpiration": 1800,
+		"CaptchaBadLoginExpiration": 300,
+		"CaptchaBadLoginPerUserExpiration": 600,
+		"AllowConfirmedEmail": false,
+		"CaptchaBadLoginAttempts": 3,
+		"CaptchaBadLoginPerUserAttempts": 20,
+		"CaptchaWhitelist": false,
+		"CaptchaRegexes": []
 	},
 	"manifest_version": 1
 }

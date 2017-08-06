@@ -4,7 +4,7 @@ body {
 	font-size: x-small;
 
 	font-family: sans-serif;
-	color: black;
+	color: #000;
 	background-color: #f0f0f0;
 
 	direction: ltr;
@@ -23,12 +23,12 @@ body {
 	top: 0;
 	left: 0;
 	margin: 0 0 0 0;
-	padding: 0 0em 0 0em;
-	border: none;
+	padding: 0 0 0 0;
+	border: 0;
 	height: 2em;
 	width: 100%;
-	background-color: #003366;
-	color: white;
+	background-color: #036;
+	color: #fff;
 }
 
 .mw-indicators {
@@ -39,7 +39,7 @@ body {
 	display: -moz-inline-block;
 	display: inline-block;
 	zoom: 1;
-	*display: inline;
+	*display: inline; /* stylelint-disable-line declaration-block-no-duplicate-properties */
 }
 
 #mw_header h1 {
@@ -91,17 +91,17 @@ body {
 
 #p-personal li a {
 	text-decoration: none;
-	color: white;
+	color: #fff;
 	padding: 0 1em 0 1em;
 }
 
 #p-personal li a:hover {
 	text-decoration: none;
-	color: white;
+	color: #fff;
 }
 
 #p-personal li:hover {
-	background-color: #003366;
+	background-color: #036;
 }
 
 #jump-to-nav {
@@ -117,10 +117,10 @@ body {
 #mw_content {
 	margin: 0 0 0 14em;
 
-	background-color: white;
-	border-top: solid 1px #bbbbbb;
-	border-left: solid 1px #bbbbbb;
-	border-bottom: solid 1px #bbbbbb;
+	background-color: #fff;
+	border-top: solid 1px #bbb;
+	border-left: solid 1px #bbb;
+	border-bottom: solid 1px #bbb;
 
 	line-height: 1.5em;
 	padding: 0 1em 1em 1em;
@@ -129,7 +129,7 @@ body {
 #mw_portlets {
 	width: 14em;
 
-	border-right: solid 1px #bbbbbb;
+	border-right: solid 1px #bbb;
 	background-color: #f0f0f0;
 }
 
@@ -157,12 +157,12 @@ div.mw_clear {
 }
 
 .portlet div.pBody {
-	padding: 0em 0 0.5em 0;
+	padding: 0 0 0.5em 0;
 }
 
 textarea {
 	width: 100%;
-	padding: .1em;
+	padding: 0.1em;
 	display: block;
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
@@ -180,13 +180,13 @@ textarea {
 }
 
 #p-search #searchform div div {
-	margin-top: .4em;
+	margin-top: 0.4em;
 }
 
 .portlet h3 {
 	padding: 0.1em 0 0.3em 1em;
 	margin: 0 0 0 0;
-	background-color: #dddddd;
+	background-color: #ddd;
 	font-weight: bold;
 	font-size: 0.83em;
 	border-bottom: solid 1px #3c78b5;
@@ -204,7 +204,7 @@ textarea {
 
 ul {
 	/* @embed */
-	list-style-image: url(images/bullet.gif);
+	list-style-image: url( images/bullet.gif );
 }
 
 #p-cactions {
@@ -220,7 +220,7 @@ ul {
 
 #p-cactions a,
 #p-cactions a:hover {
-	color: black;
+	color: #000;
 	text-decoration: none;
 }
 
@@ -240,21 +240,21 @@ ul {
 }
 
 #p-cactions li.selected {
-	background-color: #bbbbbb;
+	background-color: #bbb;
 }
 
 #p-cactions li a,
 #p-cactions li a:hover,
 #p-cactions li a:visited {
 	text-decoration: underline;
-	color: #003366;
+	color: #036;
 }
 
 #p-cactions li.selected a,
 #p-cactions li.selected a:hover,
 #p-cactions li.selected a:visited {
 	text-decoration: none;
-	color: white;
+	color: #fff;
 }
 
 #p-cactions h3 {
@@ -266,23 +266,22 @@ ul {
 }
 
 #footer {
-	background-color: #f0f0f0;
 	/* @embed */
-	background: url(images/footer-grad.png) repeat-x 0 0;
+	background: #f0f0f0 url( images/footer-grad.png ) repeat-x 0 0;
 	padding: 10px 1em 1em 1em;
 	clear: both;
-	color: #444444;
+	color: #444;
 }
 
 #footer a,
 #footer a:hover,
 #footer a:visited {
-	color: #444444;
+	color: #444;
 	text-decoration: underline;
 }
 
 img {
-	border: none;
+	border: 0;
 }
 
 #footer li {
@@ -306,7 +305,7 @@ hr {
 	color: #aaa;
 	background-color: #aaa;
 	border: 0;
-	margin: .2em 0 .2em 0;
+	margin: 0.2em 0 0.2em 0;
 }
 
 #contentSub {
@@ -322,7 +321,7 @@ hr {
 
 a {
 	text-decoration: none;
-	color: #003366;
+	color: #036;
 	background: none;
 }
 
@@ -339,7 +338,7 @@ a:hover {
 }
 
 a.stub {
-	color: #772233;
+	color: #723;
 }
 
 a.new {
@@ -350,11 +349,17 @@ a.new:visited {
 	color: #a55858;
 }
 
-h1, h2 {
-	border-bottom: solid 1px #003366;
+h1,
+h2 {
+	border-bottom: solid 1px #036;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
 	overflow: hidden;
 }
 
@@ -377,14 +382,14 @@ h1, h2, h3, h4, h5, h6 {
 
 #preferences {
 	margin: 0 0 0 0;
-	padding: 0em 1em 1em 1em;
-	border: solid 1px #bbbbbb;
+	padding: 0 1em 1em 1em;
+	border: solid 1px #bbb;
 	clear: left; /* Multi-line toc should not push data to horizontally */
 }
 
 #preferences fieldset {
 	margin-top: 0;
-	border: none;
+	border: 0;
 }
 
 .mainLegend {
@@ -393,7 +398,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .htmlform-tip {
 	font-size: x-small;
-	padding: .2em 2em;
+	padding: 0.2em 2em;
 	color: #666;
 }
 
@@ -402,98 +407,113 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #preftoc li.selected {
-	background-color: #bbbbbb;
+	background-color: #bbb;
 }
 
 #preftoc li a,
 #preftoc li a:hover,
 #preftoc li a:visited {
 	text-decoration: underline;
-	color: #003366;
+	color: #036;
 }
 
 #preftoc li.selected a,
 #preftoc li.selected a:hover,
 #preftoc li.selected a:visited {
 	text-decoration: none;
-	color: white;
+	color: #fff;
 }
 
 #mw_content a.external {
 	/* @embed */
-	background: url(images/external.png) center right no-repeat;
+	background: url( images/external.png ) center right no-repeat;
 	padding-right: 13px;
 }
 
-#mw_content a.external[href ^="https://"],
+#mw_content a.external[href^='https://'],
 .link-https {
 	/* @embed */
-	background: url(images/lock_icon.gif) center right no-repeat;
+	background: url( images/lock_icon.gif ) center right no-repeat;
 	padding-right: 16px;
 }
 
-#mw_content a.external[href ^="mailto:"],
+#mw_content a.external[href^='mailto:'],
 .link-mailto {
 	/* @embed */
-	background: url(images/mail_icon.gif) center right no-repeat;
+	background: url( images/mail_icon.gif ) center right no-repeat;
 	padding-right: 18px;
 }
 
-#mw_content a.external[href ^="news:"] {
+#mw_content a.external[href^='news:'] {
 	/* @embed */
-	background: url(images/news_icon.png) center right no-repeat;
+	background: url( images/news_icon.png ) center right no-repeat;
 	padding-right: 18px;
 }
 
-#mw_content a.external[href ^="ftp://"],
+#mw_content a.external[href^='ftp://'],
 .link-ftp {
 	/* @embed */
-	background: url(images/file_icon.gif) center right no-repeat;
+	background: url( images/file_icon.gif ) center right no-repeat;
 	padding-right: 18px;
 }
 
-#mw_content a.external[href ^="irc://"],
-#mw_content a.external[href ^="ircs://"],
+#mw_content a.external[href^='irc://'],
+#mw_content a.external[href^='ircs://'],
 .link-irc {
 	/* @embed */
-	background: url(images/discussionitem_icon.gif) center right no-repeat;
+	background: url( images/discussionitem_icon.gif ) center right no-repeat;
 	padding-right: 18px;
 }
 
-#mw_content a.external[href $=".ogg"], #mw_content a.external[href $=".OGG"],
-#mw_content a.external[href $=".mid"], #mw_content a.external[href $=".MID"],
-#mw_content a.external[href $=".midi"], #mw_content a.external[href $=".MIDI"],
-#mw_content a.external[href $=".mp3"], #mw_content a.external[href $=".MP3"],
-#mw_content a.external[href $=".wav"], #mw_content a.external[href $=".WAV"],
-#mw_content a.external[href $=".wma"], #mw_content a.external[href $=".WMA"],
+#mw_content a.external[href$='.ogg'],
+#mw_content a.external[href$='.OGG'],
+#mw_content a.external[href$='.mid'],
+#mw_content a.external[href$='.MID'],
+#mw_content a.external[href$='.midi'],
+#mw_content a.external[href$='.MIDI'],
+#mw_content a.external[href$='.mp3'],
+#mw_content a.external[href$='.MP3'],
+#mw_content a.external[href$='.wav'],
+#mw_content a.external[href$='.WAV'],
+#mw_content a.external[href$='.wma'],
+#mw_content a.external[href$='.WMA'],
 .link-audio {
 	/* @embed */
-	background: url(images/audio.png) center right no-repeat;
+	background: url( images/audio.png ) center right no-repeat;
 	padding-right: 13px;
 }
 
-#mw_content a.external[href $=".ogm"], #mw_content a.external[href $=".OGM"],
-#mw_content a.external[href $=".avi"], #mw_content a.external[href $=".AVI"],
-#mw_content a.external[href $=".mpeg"], #mw_content a.external[href $=".MPEG"],
-#mw_content a.external[href $=".mpg"], #mw_content a.external[href $=".MPG"],
+#mw_content a.external[href$='.ogm'],
+#mw_content a.external[href$='.OGM'],
+#mw_content a.external[href$='.avi'],
+#mw_content a.external[href$='.AVI'],
+#mw_content a.external[href$='.mpeg'],
+#mw_content a.external[href$='.MPEG'],
+#mw_content a.external[href$='.mpg'],
+#mw_content a.external[href$='.MPG'],
 .link-video {
 	/* @embed */
-	background: url(images/video.png) center right no-repeat;
+	background: url( images/video.png ) center right no-repeat;
 	padding-right: 13px;
 }
 
-#mw_content a.external[href $=".pdf"], #mw_content a.external[href $=".PDF"],
-#mw_content a.external[href *=".pdf#"], #mw_content a.external[href *=".PDF#"],
-#mw_content a.external[href *=".pdf?"], #mw_content a.external[href *=".PDF?"],
+#mw_content a.external[href$='.pdf'],
+#mw_content a.external[href$='.PDF'],
+#mw_content a.external[href*='.pdf#'],
+#mw_content a.external[href*='.PDF#'],
+#mw_content a.external[href*='.pdf?'],
+#mw_content a.external[href*='.PDF?'],
 .link-document {
 	/* @embed */
-	background: url(images/document.png) center right no-repeat;
+	background: url( images/document.png ) center right no-repeat;
 	padding-right: 12px;
 }
 
 /* images */
-/* @noflip */div.floatright, table.floatright {
-	margin: 0 0 .5em .5em;
+/* @noflip */
+div.floatright,
+table.floatright {
+	margin: 0 0 0.5em 0.5em;
 	border: 0;
 }
 
@@ -501,8 +521,10 @@ div.floatright p {
 	font-style: italic;
 }
 
-/* @noflip */div.floatleft, table.floatleft {
-	margin: 0 .5em .5em 0;
+/* @noflip */
+div.floatleft,
+table.floatleft {
+	margin: 0 0.5em 0.5em 0;
 	border: 0;
 }
 
@@ -512,7 +534,7 @@ div.floatleft p {
 
 /* thumbnails */
 div.thumb {
-	margin-bottom: .5em;
+	margin-bottom: 0.5em;
 	width: auto;
 }
 
@@ -530,7 +552,7 @@ html .thumbimage {
 }
 
 html .thumbcaption {
-	border: none;
+	border: 0;
 	text-align: left;
 	line-height: 1.4em;
 	padding: 3px !important;
@@ -539,27 +561,30 @@ html .thumbcaption {
 
 div.magnify {
 	float: right;
-	border: none !important;
+	border: 0 !important;
 	background: none !important;
 	margin-left: 3px;
 }
 
-div.magnify a, div.magnify img {
+div.magnify a,
+div.magnify img {
 	display: block;
-	border: none !important;
+	border: 0 !important;
 	background: none !important;
 }
 
-/* @noflip */div.tright {
-	margin: .5em 0 .8em 1.4em;
+/* @noflip */
+div.tright {
+	margin: 0.5em 0 0.8em 1.4em;
 }
 
-/* @noflip */div.tleft {
-	margin: .5em 1.4em .8em 0;
+/* @noflip */
+div.tleft {
+	margin: 0.5em 1.4em 0.8em 0;
 }
 
 img.thumbborder {
-	border: 1px solid #dddddd;
+	border: 1px solid #ddd;
 }
 
 .mw-warning {
@@ -575,16 +600,14 @@ img.thumbborder {
 	padding: 0 0 0 0;
 	border-spacing: 0;
 	background-color: #f0f0f0;
-	border: solid 1px #bbbbbb;
+	border: solid 1px #bbb;
 	display: -moz-inline-block;
 	display: inline-block;
 	display: table;
 
 	/* IE7 and earliers */
 	zoom: 1;
-	*display: inline;
-
-	padding: 7px;
+	*display: inline; /* stylelint-disable-line declaration-block-no-duplicate-properties */
 }
 
 /* CSS for backwards-compatibility with cached page renders and creative uses in wikitext */
@@ -599,21 +622,22 @@ table.toc td {
 	padding: 0;
 }
 
-#toc tr, #toc td {
+#toc tr,
+#toc td {
 	margin: 0 0 0 0;
 	padding: 0 0 0 0;
 }
 
 #toctitle {
 	border-bottom: solid 1px #3c78b5;
-	background-color: #dddddd;
+	background-color: #ddd;
 	margin: 0 0 0 0;
 }
 
 #toc h2,
 .toc h2 {
 	display: inline;
-	border: none;
+	border: 0;
 	padding: 0;
 	font-size: 100%;
 	font-weight: bold;
@@ -652,7 +676,7 @@ table.toc td {
 }
 
 .catlinks {
-	border: solid 1px #bbbbbb;
+	border: solid 1px #bbb;
 	background-color: #f0f0f0;
 	padding: 0.1em 0.3em 0.1em 0.3em;
 	margin: 0 0 0 0;
@@ -700,8 +724,8 @@ table.toc td {
 }
 
 .editExternally {
-	border: 1px solid gray;
-	background-color: #ffffff;
+	border: 1px solid #808080;
+	background-color: #fff;
 	padding: 3px;
 	margin-top: 0.5em;
 	float: left;
@@ -711,7 +735,7 @@ table.toc td {
 
 .editExternallyHelp {
 	font-style: italic;
-	color: gray;
+	color: #808080;
 }
 
 .toggle {
@@ -728,7 +752,8 @@ input#wpSummary {
 }
 
 /* @bug 1714 */
-input#wpSave, input#wpDiff {
+input#wpSave,
+input#wpDiff {
 	margin-right: 0.33em;
 }
 
@@ -740,7 +765,7 @@ input#wpSave, input#wpDiff {
 div.noarticletext {
 	border: 1px solid #ccc;
 	background: #fff;
-	padding: .2em 1em;
+	padding: 0.2em 1em;
 	color: #000;
 }
 
@@ -748,14 +773,14 @@ div#searchTargetContainer {
 	left: 10px;
 	top: 10px;
 	width: 90%;
-	background: white;
+	background: #fff;
 }
 
 div#searchTarget {
 	padding: 3px;
 	margin: 5px;
-	background: #F0F0F0;
-	border: solid 1px blue;
+	background: #f0f0f0;
+	border: solid 1px #00f;
 }
 
 div#searchTarget ul li {
@@ -763,26 +788,26 @@ div#searchTarget ul li {
 }
 
 div#searchTarget ul li:before {
-	color: orange;
-	content: "\00BB \0020";
+	color: #ffa500;
+	content: '\00BB \0020';
 }
 
 div#searchTargetHide {
 	float: right;
-	border: solid 1px black;
-	background: #DCDCDC;
+	border: solid 1px #000;
+	background: #dcdcdc;
 	padding: 2px;
 }
 
 div.multipageimagenavbox {
-	border: solid 1px silver;
+	border: solid 1px #c0c0c0;
 	padding: 4px;
 	margin: 1em;
 	background: #f0f0f0;
 }
 
 div.multipageimagenavbox div.thumb {
-	border: none;
+	border: 0;
 	margin-left: 2em;
 	margin-right: 2em;
 }
@@ -812,14 +837,14 @@ div.mw-lag-warn-high {
 }
 
 div.mw-lag-warn-normal {
-	border: 1px solid #FFCC66;
-	background-color: #FFFFCC;
+	border: 1px solid #fc6;
+	background-color: #ffc;
 }
 
 div.mw-lag-warn-high {
 	font-weight: bold;
-	border: 2px solid #FF0033;
-	background-color: #FFCCCC;
+	border: 2px solid #f03;
+	background-color: #fcc;
 }
 
 .MediaTransformError {
@@ -836,35 +861,35 @@ div.mw-lag-warn-high {
 ul {
 	line-height: 1.5em;
 	list-style-type: square;
-	margin: .3em 0 0 1.5em;
+	margin: 0.3em 0 0 1.5em;
 	padding: 0;
 	/* @embed */
-	list-style-image: url(images/bullet.gif);
+	list-style-image: url( images/bullet.gif );
 }
 
 ol {
 	line-height: 1.5em;
-	margin: .3em 0 0 3.2em;
+	margin: 0.3em 0 0 3.2em;
 	padding: 0;
 	list-style-image: none;
 }
 
 li {
-	margin-bottom: .1em;
+	margin-bottom: 0.1em;
 }
 
 dt {
 	font-weight: bold;
-	margin-bottom: .1em;
+	margin-bottom: 0.1em;
 }
 
 dl {
-	margin-top: .2em;
-	margin-bottom: .5em;
+	margin-top: 0.2em;
+	margin-bottom: 0.5em;
 }
 
 #p-cactions li.new a {
-	color: #cc2200;
+	color: #c20;
 }
 
 span.subpages {
@@ -872,7 +897,8 @@ span.subpages {
 	display: block;
 }
 
-pre, .mw-code {
+pre,
+.mw-code {
 	border: solid 1px #3c78b5;
 	padding: 0.4em;
 	background-color: #f0f0f0;
@@ -887,7 +913,7 @@ pre, .mw-code {
 	margin: 0 -1em 1em -1em;
 	padding: 0 0 8px 0;
 	/* @embed */
-	background: url(images/footer-grad.png) repeat-x bottom left;
+	background: url( images/footer-grad.png ) repeat-x bottom left;
 }
 
 .mw-topbox p {
@@ -896,17 +922,17 @@ pre, .mw-code {
 }
 
 .mw-topbox {
-	color: black;
+	color: #000;
 	font-weight: bold;
 	margin: 0 0 0 0;
 	padding: 0 1em 0 1em;
 	vertical-align: middle;
 	border-collapse: collapse;
-	border-bottom: solid 1px #bbbbbb;
+	border-bottom: solid 1px #bbb;
 }
 
 #siteSub {
-	background-color: #dddddd;
+	background-color: #ddd;
 }
 
 /* emulate center */
@@ -922,11 +948,11 @@ pre, .mw-code {
 
 /* table standards */
 .toccolours {
-	border: 1px solid #bbbbbb;
+	border: 1px solid #bbb;
 	background-color: #f0f0f0;
-	border-spacing: 0pt;
-	margin: 0pt;
-	padding: 0pt;
+	border-spacing: 0;
+	margin: 0;
+	padding: 0;
 }
 
 /* Tooltips are outside of the normal body code, so this helps make the size of the text sensible */

@@ -44,6 +44,11 @@ $specialPageAliases['bgn'] = array(
 	'Interwiki' => array( 'مانجین_ویکی' ),
 );
 
+/** Bengali (বাংলা) */
+$specialPageAliases['bn'] = array(
+	'Interwiki' => array( 'আন্তঃউইকি' ),
+);
+
 /** Breton (brezhoneg) */
 $specialPageAliases['br'] = array(
 	'Interwiki' => array( 'Etrewiki' ),
@@ -246,7 +251,7 @@ $specialPageAliases['tt-cyrl'] = array(
 
 /** Ukrainian (українська) */
 $specialPageAliases['uk'] = array(
-	'Interwiki' => array( 'Інтервікі' ),
+	'Interwiki' => array( 'Інтервікі', 'Интервики' ),
 );
 
 /** Urdu (اردو) */

@@ -1,12 +1,15 @@
 <?php
 
+use Wikimedia\TestingAccessWrapper;
+
 class ExtensionProcessorTest extends MediaWikiTestCase {
 
-	private $dir;
+	private $dir, $dirname;
 
 	public function setUp() {
 		parent::setUp();
 		$this->dir = __DIR__ . '/FooBar/extension.json';
+		$this->dirname = dirname( $this->dir );
 	}
 
 	/**
@@ -110,7 +113,7 @@ class ExtensionProcessorTest extends MediaWikiTestCase {
 	/**
 	 * @covers ExtensionProcessor::extractConfig1
 	 */
-	public function testExtractConfig() {
+	public function testExtractConfig1() {
 		$processor = new ExtensionProcessor;
 		$info = [
 			'config' => [
@@ -132,6 +135,35 @@ class ExtensionProcessorTest extends MediaWikiTestCase {
 		$this->assertEquals( 'somevalue', $extracted['globals']['wgBar'] );
 		$this->assertEquals( 10, $extracted['globals']['wgFoo'] );
 		$this->assertArrayNotHasKey( 'wg@IGNORED', $extracted['globals'] );
+		// Custom prefix:
+		$this->assertEquals( 'somevalue', $extracted['globals']['egBar'] );
+	}
+
+	/**
+	 * @covers ExtensionProcessor::extractConfig2
+	 */
+	public function testExtractConfig2() {
+		$processor = new ExtensionProcessor;
+		$info = [
+			'config' => [
+				'Bar' => [ 'value' => 'somevalue' ],
+				'Foo' => [ 'value' => 10 ],
+				'Path' => [ 'value' => 'foo.txt', 'path' => true ],
+			],
+		] + self::$default;
+		$info2 = [
+			'config' => [
+				'Bar' => [ 'value' => 'somevalue' ],
+			],
+			'config_prefix' => 'eg',
+			'name' => 'FooBar2',
+		];
+		$processor->extractInfo( $this->dir, $info, 2 );
+		$processor->extractInfo( $this->dir, $info2, 2 );
+		$extracted = $processor->getExtractedInfo();
+		$this->assertEquals( 'somevalue', $extracted['globals']['wgBar'] );
+		$this->assertEquals( 10, $extracted['globals']['wgFoo'] );
+		$this->assertEquals( "{$this->dirname}/foo.txt", $extracted['globals']['wgPath'] );
 		// Custom prefix:
 		$this->assertEquals( 'somevalue', $extracted['globals']['egBar'] );
 	}
@@ -415,13 +447,80 @@ class ExtensionProcessorTest extends MediaWikiTestCase {
 		];
 	}
 
+	/**
+	 * Attributes under manifest_version 2
+	 *
+	 * @covers ExtensionProcessor::extractAttributes
+	 * @covers ExtensionProcessor::getExtractedInfo
+	 */
+	public function testExtractAttributes() {
+		$processor = new ExtensionProcessor();
+		// Load FooBar extension
+		$processor->extractInfo( $this->dir, [ 'name' => 'FooBar' ], 2 );
+		$processor->extractInfo(
+			$this->dir,
+			[
+				'name' => 'Baz',
+				'attributes' => [
+					// Loaded
+					'FooBar' => [
+						'Plugins' => [
+							'ext.baz.foobar',
+						],
+					],
+					// Not loaded
+					'FizzBuzz' => [
+						'MorePlugins' => [
+							'ext.baz.fizzbuzz',
+						],
+					],
+				],
+			],
+			2
+		);
+
+		$info = $processor->getExtractedInfo();
+		$this->assertArrayHasKey( 'FooBarPlugins', $info['attributes'] );
+		$this->assertSame( [ 'ext.baz.foobar' ], $info['attributes']['FooBarPlugins'] );
+		$this->assertArrayNotHasKey( 'FizzBuzzMorePlugins', $info['attributes'] );
+	}
+
+	/**
+	 * Attributes under manifest_version 1
+	 *
+	 * @covers ExtensionProcessor::extractInfo
+	 */
+	public function testAttributes1() {
+		$processor = new ExtensionProcessor();
+		$processor->extractInfo(
+			$this->dir,
+			[
+				'name' => 'FooBar',
+				'FooBarPlugins' => [
+					'ext.baz.foobar',
+				],
+				'FizzBuzzMorePlugins' => [
+					'ext.baz.fizzbuzz',
+				],
+			],
+			1
+		);
+
+		$info = $processor->getExtractedInfo();
+		$this->assertArrayHasKey( 'FooBarPlugins', $info['attributes'] );
+		$this->assertSame( [ 'ext.baz.foobar' ], $info['attributes']['FooBarPlugins'] );
+		$this->assertArrayHasKey( 'FizzBuzzMorePlugins', $info['attributes'] );
+		$this->assertSame( [ 'ext.baz.fizzbuzz' ], $info['attributes']['FizzBuzzMorePlugins'] );
+	}
+
 	public function testGlobalSettingsDocumentedInSchema() {
 		global $IP;
 		$globalSettings = TestingAccessWrapper::newFromClass(
 			ExtensionProcessor::class )->globalSettings;
 
+		$version = ExtensionRegistry::MANIFEST_VERSION;
 		$schema = FormatJson::decode(
-			file_get_contents( "$IP/docs/extension.schema.json" ),
+			file_get_contents( "$IP/docs/extension.schema.v$version.json" ),
 			true
 		);
 		$missing = [];

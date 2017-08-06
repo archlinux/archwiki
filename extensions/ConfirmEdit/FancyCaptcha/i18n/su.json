@@ -2,12 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Irwangatot",
-			"Kandar"
+			"Kandar",
+			"Uchup19"
 		]
 	},
 	"fancycaptcha-captcha": "Pamariksaan kaamanan",
 	"fancycaptcha-accountcreate": "Pikeun ngajaga wikina tina akun jieunan otomatis, mangga asupkeun kecap anu némbongan dina kotak di handap ([[Special:Captcha/help|émbaran leuwih lengkep]]):",
-	"fancycaptcha-edit": "Éditan Anjeun ngeusikeun tumbu kaluar nu anyar. Pikeun panangtayungan ka spam otomatis, mangga asukkeun kecap di handapeun ieu ka kotak anu disadiakeun ([[Special:Captcha/help|salengkeupna]]):",
+	"fancycaptcha-edit": "Pikeun ngédit ieu kaca, mangga asupkeun kecap-kecap anu némbongan dina kotak ([[Special:Captcha/help|salengkepna]]):",
 	"fancycaptcha-imgcaptcha-ph": "Asupkeun téks anu kabaca dina gambar",
-	"fancycaptcha-reload-text": "Muat ulang"
+	"fancycaptcha-reload-text": "Segerkeun"
 }

@@ -28,5 +28,9 @@
 	"cite_error_references_missing_key": "<code>&lt;ref&gt;</code> oznaka s imenom \"$1\" definirana u <code>&lt;references&gt;</code> nije prethodno rabljena u tekstu.",
 	"cite_error_references_no_key": "<code>&lt;ref&gt;</code> oznaka definirana u <code>&lt;references&gt;</code> nema parametar \"name\" (ime).",
 	"cite_error_empty_references_define": "<code>&lt;ref&gt;</code> oznaka definirana u <code>&lt;references&gt;</code> s imenom \"$1\" nema sadržaja.",
-	"cite-tracking-category-cite-error-desc": "Stranice u ovoj kategoriji imaju pogrješno rabljene oznake izvora."
+	"cite-tracking-category-cite-error": "Stranice s pogrješkama u izvorima",
+	"cite-tracking-category-cite-error-desc": "Stranice u ovoj kategoriji imaju pogrješno rabljene oznake izvora.",
+	"cite_section_preview_references": "Pretpregled izvora",
+	"cite_warning": "Upozorenje: $1",
+	"cite_warning_sectionpreview_no_text": "oznaka <code>&lt;ref&gt;</code> pod imenom <code>$1</code> ne može biti prikazana jer je definirana izvan ovog odlomka ili uopće nije definirana."
 }

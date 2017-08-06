@@ -17,7 +17,8 @@
 			"Marwan Mohamad",
 			"Amire80",
 			"Macofe",
-			"Mirws"
+			"Mirws",
+			"Presidenvolksraad"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Buku",
@@ -36,13 +37,16 @@
 	"cite-ve-dialog-referenceslist-contextitem-description-general": "Daftar referensi umum",
 	"cite-ve-dialog-referenceslist-contextitem-description-named": "Daftar referensi untuk kelompok \"$1\"",
 	"cite-ve-dialog-referenceslist-title": "Daftar referensi",
+	"cite-ve-dialogbutton-citation-educationpopup-text": "Tingkatkan konten anda dengan menambahkan sumber informasi. Anda dapat mengutip dari buku, koran, dan situs.",
+	"cite-ve-dialogbutton-citation-educationpopup-title": "Kutipan",
 	"cite-ve-dialogbutton-reference-full-label": "Bentuk dasar",
-	"cite-ve-dialogbutton-reference-tooltip": "Dasar",
 	"cite-ve-dialogbutton-reference-title": "Referensi",
+	"cite-ve-dialogbutton-reference-tooltip": "Dasar",
 	"cite-ve-dialogbutton-referenceslist-tooltip": "Daftar referensi",
 	"cite-ve-reference-input-placeholder": "Cari dalam kutipan saat ini",
 	"cite-ve-referenceslist-isempty": "Tidak ada referensi dengan kelompok \"$1\" pada halaman ini yang dapat disertakan dalam daftar ini.",
 	"cite-ve-referenceslist-isempty-default": "Tidak ada referensi pada halaman ini yang dapat disertakan dalam daftar ini.",
 	"cite-ve-referenceslist-missingref": "Referensi ini didefinisikan dalam templat atau blok lain, dan sekarang hanya dapat disunting dalam mode \"sunting sumber\".",
-	"cite-ve-toolbar-group-label": "Kutip"
+	"cite-ve-toolbar-group-label": "Kutip",
+	"cite-ve-othergroup-item": "$1 referensi"
 }

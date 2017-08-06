@@ -16,6 +16,7 @@ use Wikimedia\Composer\Merge\PluginState;
 
 use Composer\Composer;
 use Composer\DependencyResolver\Operation\InstallOperation;
+use Composer\EventDispatcher\Event as BaseEvent;
 use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\Factory;
 use Composer\Installer;
@@ -26,7 +27,7 @@ use Composer\Installer\PackageEvents;
 use Composer\IO\IOInterface;
 use Composer\Package\RootPackageInterface;
 use Composer\Plugin\PluginInterface;
-use Composer\Script\Event;
+use Composer\Script\Event as ScriptEvent;
 use Composer\Script\ScriptEvents;
 
 /**
@@ -87,6 +88,16 @@ class MergePlugin implements PluginInterface, EventSubscriberInterface
     const PACKAGE_NAME = 'wikimedia/composer-merge-plugin';
 
     /**
+     * Name of the composer 1.1 init event.
+     */
+    const COMPAT_PLUGINEVENTS_INIT = 'init';
+
+    /**
+     * Priority that plugin uses to register callbacks.
+     */
+    const CALLBACK_PRIORITY = 50000;
+
+    /**
      * @var Composer $composer
      */
     protected $composer;
@@ -102,11 +113,18 @@ class MergePlugin implements PluginInterface, EventSubscriberInterface
     protected $logger;
 
     /**
-     * Files that have already been processed
+     * Files that have already been fully processed
      *
-     * @var string[] $loadedFiles
+     * @var string[] $loaded
      */
-    protected $loadedFiles = array();
+    protected $loaded = array();
+
+    /**
+     * Files that have already been partially processed
+     *
+     * @var string[] $loadedNoDev
+     */
+    protected $loadedNoDev = array();
 
     /**
      * {@inheritdoc}
@@ -124,14 +142,42 @@ class MergePlugin implements PluginInterface, EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-            InstallerEvents::PRE_DEPENDENCIES_SOLVING => 'onDependencySolve',
-            PackageEvents::POST_PACKAGE_INSTALL => 'onPostPackageInstall',
-            ScriptEvents::POST_INSTALL_CMD => 'onPostInstallOrUpdate',
-            ScriptEvents::POST_UPDATE_CMD => 'onPostInstallOrUpdate',
-            ScriptEvents::PRE_AUTOLOAD_DUMP => 'onInstallUpdateOrDump',
-            ScriptEvents::PRE_INSTALL_CMD => 'onInstallUpdateOrDump',
-            ScriptEvents::PRE_UPDATE_CMD => 'onInstallUpdateOrDump',
+            // Use our own constant to make this event optional. Once
+            // composer-1.1 is required, this can use PluginEvents::INIT
+            // instead.
+            self::COMPAT_PLUGINEVENTS_INIT =>
+                array('onInit', self::CALLBACK_PRIORITY),
+            InstallerEvents::PRE_DEPENDENCIES_SOLVING =>
+                array('onDependencySolve', self::CALLBACK_PRIORITY),
+            PackageEvents::POST_PACKAGE_INSTALL =>
+                array('onPostPackageInstall', self::CALLBACK_PRIORITY),
+            ScriptEvents::POST_INSTALL_CMD =>
+                array('onPostInstallOrUpdate', self::CALLBACK_PRIORITY),
+            ScriptEvents::POST_UPDATE_CMD =>
+                array('onPostInstallOrUpdate', self::CALLBACK_PRIORITY),
+            ScriptEvents::PRE_AUTOLOAD_DUMP =>
+                array('onInstallUpdateOrDump', self::CALLBACK_PRIORITY),
+            ScriptEvents::PRE_INSTALL_CMD =>
+                array('onInstallUpdateOrDump', self::CALLBACK_PRIORITY),
+            ScriptEvents::PRE_UPDATE_CMD =>
+                array('onInstallUpdateOrDump', self::CALLBACK_PRIORITY),
         );
+    }
+
+    /**
+     * Handle an event callback for initialization.
+     *
+     * @param \Composer\EventDispatcher\Event $event
+     */
+    public function onInit(BaseEvent $event)
+    {
+        $this->state->loadSettings();
+        // It is not possible to know if the user specified --dev or --no-dev
+        // so assume it is false. The dev section will be merged later when
+        // the other events fire.
+        $this->state->setDevMode(false);
+        $this->mergeFiles($this->state->getIncludes(), false);
+        $this->mergeFiles($this->state->getRequires(), true);
     }
 
     /**
@@ -139,9 +185,9 @@ class MergePlugin implements PluginInterface, EventSubscriberInterface
      * checking for "merge-plugin" in the "extra" data and merging package
      * contents if found.
      *
-     * @param Event $event
+     * @param ScriptEvent $event
      */
-    public function onInstallUpdateOrDump(Event $event)
+    public function onInstallUpdateOrDump(ScriptEvent $event)
     {
         $this->state->loadSettings();
         $this->state->setDevMode($event->isDevMode());
@@ -196,16 +242,32 @@ class MergePlugin implements PluginInterface, EventSubscriberInterface
      */
     protected function mergeFile(RootPackageInterface $root, $path)
     {
-        if (isset($this->loadedFiles[$path])) {
-            $this->logger->debug("Already merged <comment>$path</comment>");
+        if (isset($this->loaded[$path]) ||
+            (isset($this->loadedNoDev[$path]) && !$this->state->isDevMode())
+        ) {
+            $this->logger->debug(
+                "Already merged <comment>$path</comment> completely"
+            );
             return;
-        } else {
-            $this->loadedFiles[$path] = true;
         }
-        $this->logger->info("Loading <comment>{$path}</comment>...");
 
         $package = new ExtraPackage($path, $this->composer, $this->logger);
-        $package->mergeInto($root, $this->state);
+
+        if (isset($this->loadedNoDev[$path])) {
+            $this->logger->info(
+                "Loading -dev sections of <comment>{$path}</comment>..."
+            );
+            $package->mergeDevInto($root, $this->state);
+        } else {
+            $this->logger->info("Loading <comment>{$path}</comment>...");
+            $package->mergeInto($root, $this->state);
+        }
+
+        if ($this->state->isDevMode()) {
+            $this->loaded[$path] = true;
+        } else {
+            $this->loadedNoDev[$path] = true;
+        }
 
         if ($this->state->recurseIncludes()) {
             $this->mergeFiles($package->getIncludes(), false);
@@ -230,7 +292,12 @@ class MergePlugin implements PluginInterface, EventSubscriberInterface
             );
             $request->install($link->getTarget(), $link->getConstraint());
         }
-        if ($this->state->isDevMode()) {
+
+        // Issue #113: Check devMode of event rather than our global state.
+        // Composer fires the PRE_DEPENDENCIES_SOLVING event twice for
+        // `--no-dev` operations to decide which packages are dev only
+        // requirements.
+        if ($this->state->shouldMergeDev() && $event->isDevMode()) {
             foreach ($this->state->getDuplicateLinks('require-dev') as $link) {
                 $this->logger->info(
                     "Adding dev dependency <comment>{$link}</comment>"
@@ -266,9 +333,9 @@ class MergePlugin implements PluginInterface, EventSubscriberInterface
      * plugin was installed during the run then trigger an update command to
      * process any merge-patterns in the current config.
      *
-     * @param Event $event
+     * @param ScriptEvent $event
      */
-    public function onPostInstallOrUpdate(Event $event)
+    public function onPostInstallOrUpdate(ScriptEvent $event)
     {
         // @codeCoverageIgnoreStart
         if ($this->state->isFirstInstall()) {

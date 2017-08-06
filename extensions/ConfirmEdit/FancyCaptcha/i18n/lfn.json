@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Cgboeree"
+		]
+	},
+	"fancycaptcha-captcha": "Proba de securia",
+	"fancycaptcha-accountcreate": "Per proteje la wiki contra la crea automata de un conta, nos demanda ce tu entra la parolas cual apare a su en la caxa ([[Special:Captcha/help|plu informa]]):",
+	"fancycaptcha-imgcaptcha-ph": "Entra la testo cual tu vide sur la fix",
+	"fancycaptcha-reload-text": "Refresci"
+}

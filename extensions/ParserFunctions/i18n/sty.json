@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Khanmarat"
+		]
+	},
+	"pfunc_expr_unrecognised_word": "Аңнатма ҡата: танылмаған \"$1\" сүс",
+	"pfunc_expr_unexpected_operator": "Аңнатма ҡата: Көтөлмәгән $1 операторы",
+	"pfunc_expr_missing_operand": "Аңнатма ҡата: $1 операнд йетмәйте.",
+	"pfunc_expr_unrecognised_punctuation": "Аңнатма ҡата: танылмаған \"$1\" пунктуация тамғасы"
+}

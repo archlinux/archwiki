@@ -26,7 +26,7 @@
     "include-path": [
         "./"
     ],
-    "license": "PHP License",
+    "license": "PHP-3.01",
     "name": "pear/net_smtp",
     "homepage": "http://pear.github.io/Net_SMTP/",
     "support": {

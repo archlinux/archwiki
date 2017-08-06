@@ -1,7 +1,8 @@
 /*!
  * VisualEditor UserInterface MediaWiki ReferencesListCommand class.
  *
- * @copyright 2011-2016 VisualEditor Team and others; see http://ve.mit-license.org
+ * @copyright 2011-2017 Cite VisualEditor Team and others; see AUTHORS.txt
+ * @license The MIT License (MIT); see LICENSE.txt
  */
 
 /**

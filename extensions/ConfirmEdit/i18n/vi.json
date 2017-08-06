@@ -27,5 +27,10 @@
 	"captcha-addurl-whitelist": " #<!-- xin để dòng này đừng thay đổi --> <pre>\n# Cú pháp như sau:\n#   * Mọi thứ bắt đầu bằng ký tự “#” là lời chú thích\n#   * Mọi hàng không trắng là một đoạn biểu thức chính quy (regex) sẽ chỉ được so trùng với tên máy chủ trong URL\n  #</pre> <!-- xin để dòng này đừng thay đổi -->",
 	"right-skipcaptcha": "Tự động bỏ qua các hình CAPTCHA",
 	"captcha-apihelp-param-captchaword": "Lời giải đúng của CAPTCHA",
-	"captcha-apihelp-param-captchaid": "ID CAPTCHA từ yêu cầu truớc"
+	"captcha-apihelp-param-captchaid": "ID CAPTCHA từ yêu cầu truớc",
+	"confirmedit-preview-line": "Số dòng",
+	"confirmedit-preview-content": "Nội dung",
+	"confirmedit-preview-validity": "Tính hợp lệ",
+	"confirmedit-preview-valid": "hợp lệ",
+	"confirmedit-preview-invalid": "không hợp lệ"
 }

@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\QueryBuilder;
 
 use Elastica\Exception\QueryBuilderException;
@@ -60,6 +59,6 @@ class Facade
             );
         }
 
-        return call_user_func_array(array($this->_dsl, $name), $arguments);
+        return call_user_func_array([$this->_dsl, $name], $arguments);
     }
 }

@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Aggregation;
 
 use Elastica\Exception\InvalidException;
@@ -66,7 +65,7 @@ class GeoDistance extends AbstractAggregation
             throw new InvalidException('Either fromValue or toValue must be set. Both cannot be null.');
         }
 
-        $range = array();
+        $range = [];
 
         if (!is_null($fromValue)) {
             $range['from'] = $fromValue;

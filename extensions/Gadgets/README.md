@@ -21,11 +21,11 @@ Copy the Gadgets directory into the extensions folder of your
 MediaWiki installation. Then add the following lines to your
 LocalSettings.php file (near the end):
 
-	require_once "$IP/extensions/Gadgets/Gadgets.php";
+	wfLoadExtension( 'Gadgets' );
 
 Usage
 -------------
-See http://www.mediawiki.org/wiki/Extension:Gadgets#Usage
+See https://www.mediawiki.org/wiki/Extension:Gadgets#Usage
 
 Caveats
 -------------

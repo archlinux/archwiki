@@ -1,35 +1,15 @@
-OO.ui.Demo.static.pages.icons = function ( demo ) {
-	var i, len, iconSet, iconsFieldset, iconButton, selector,
+Demo.static.pages.icons = function ( demo ) {
+	var i, len, iconSet, iconsFieldset, iconWidget, selector,
 		icons = {
-			core: [
-				'add',
-				'advanced',
-				'alert',
-				'cancel',
-				'check',
-				'circle',
-				'close',
-				'collapse',
-				'comment',
-				'ellipsis',
-				'expand',
-				'help',
-				'history',
-				'info',
-				'menu',
-				'next',
-				'notice',
-				'previous',
-				'search',
-				'settings',
-				'tag',
-				'window'
-			],
 			movement: [
 				'arrowLast',
 				'arrowNext',
 				'downTriangle',
 				'upTriangle',
+				'previous',
+				'next',
+				'expand',
+				'collapse',
 				'caretLast',
 				'caretNext',
 				'caretDown',
@@ -44,19 +24,26 @@ OO.ui.Demo.static.pages.icons = function ( demo ) {
 				'articleRedirect',
 				'citeArticle',
 				'book',
+				'history',
+				'info',
 				'journal',
 				'newspaper',
 				'folderPlaceholder',
 				'die',
 				'download',
-				'upload'
+				'tag',
+				'upload',
+				'window'
 			],
 			alerts: [
+				'alert',
 				'bell',
 				'bellOn',
+				'comment',
 				'eye',
 				'eyeClosed',
 				'message',
+				'notice',
 				'signature',
 				'speechBubble',
 				'speechBubbleAdd',
@@ -64,35 +51,44 @@ OO.ui.Demo.static.pages.icons = function ( demo ) {
 				'tray'
 			],
 			interactions: [
-				'beta',
-				'betaLaunch',
+				'add',
+				'advanced',
 				'bookmark',
 				'browser',
+				'cancel',
+				'check',
 				'clear',
 				'clock',
+				'close',
+				'ellipsis',
+				'feedback',
 				'funnel',
 				'heart',
+				'help',
 				'key',
 				'keyboard',
 				'logOut',
 				'newWindow',
 				'printer',
-				'ribbonPrize',
+				'search',
+				'settings',
+				'subtract',
 				'sun',
 				'watchlist'
 			],
 			moderation: [
 				'block',
-				'blockUndo',
+				'unBlock',
 				'flag',
-				'flagUndo',
+				'unFlag',
 				'lock',
-				'ongoingConversation',
+				'unLock',
 				'star',
-				'trash',
-				'trashUndo',
+				'halfStar',
 				'unStar',
-				'unLock'
+				'trash',
+				'unTrash',
+				'ongoingConversation'
 			],
 			'editing-core': [
 				'edit',
@@ -110,6 +106,7 @@ OO.ui.Demo.static.pages.icons = function ( demo ) {
 				'subscript',
 				'superscript',
 				'bold',
+				'highlight',
 				'italic',
 				'strikethrough',
 				'underline',
@@ -141,6 +138,7 @@ OO.ui.Demo.static.pages.icons = function ( demo ) {
 				'quotes',
 				'quotesAdd',
 				'searchCaseSensitive',
+				'searchDiacritics',
 				'searchRegularExpression',
 				'specialCharacter',
 				'table',
@@ -159,7 +157,6 @@ OO.ui.Demo.static.pages.icons = function ( demo ) {
 				'imageAdd',
 				'imageLock',
 				'imageGallery',
-				'photoGallery',
 				'play',
 				'stop'
 			],
@@ -167,7 +164,7 @@ OO.ui.Demo.static.pages.icons = function ( demo ) {
 				'map',
 				'mapPin',
 				'mapPinAdd',
-				'wikitrail'
+				'mapTrail'
 			],
 			user: [
 				'userActive',
@@ -176,6 +173,7 @@ OO.ui.Demo.static.pages.icons = function ( demo ) {
 				'userTalk'
 			],
 			layout: [
+				'menu',
 				'stripeFlow',
 				'stripeSideMenu',
 				'stripeSummary',
@@ -195,6 +193,7 @@ OO.ui.Demo.static.pages.icons = function ( demo ) {
 			wikimedia: [
 				'logoCC',
 				'logoWikimediaCommons',
+				'logoWikimediaDiscovery',
 				'logoWikipedia'
 			]
 		},
@@ -209,18 +208,20 @@ OO.ui.Demo.static.pages.icons = function ( demo ) {
 			'up'
 		],
 		iconsFieldsets = [],
-		iconsButtons = [],
+		iconsWidgets = [],
 		indicatorsFieldset = new OO.ui.FieldsetLayout( { label: 'Indicators' } );
 
 	for ( i = 0, len = indicators.length; i < len; i++ ) {
 		indicatorsFieldset.addItems( [
 			new OO.ui.FieldLayout(
-				new OO.ui.ButtonWidget( {
+				new OO.ui.IndicatorWidget( {
 					indicator: indicators[ i ],
-					framed: false,
-					label: indicators[ i ]
+					title: indicators[ i ]
 				} ),
-				{ align: 'top' }
+				{
+					align: 'inline',
+					label: indicators[ i ]
+				}
 			)
 		] );
 	}
@@ -229,17 +230,16 @@ OO.ui.Demo.static.pages.icons = function ( demo ) {
 		iconsFieldsets.push( iconsFieldset );
 
 		for ( i = 0, len = icons[ iconSet ].length; i < len; i++ ) {
-			iconButton = new OO.ui.ButtonWidget( {
+			iconWidget = new OO.ui.IconWidget( {
 				icon: icons[ iconSet ][ i ],
-				framed: false,
-				label: icons[ iconSet ][ i ]
+				title: icons[ iconSet ][ i ]
 			} );
-			iconsButtons.push( iconButton );
+			iconsWidgets.push( iconWidget );
 			iconsFieldset.addItems( [
-				new OO.ui.FieldLayout(
-					iconButton,
-					{ align: 'top' }
-				)
+				new OO.ui.FieldLayout( iconWidget, {
+					label: icons[ iconSet ][ i ],
+					align: 'inline'
+				} )
 			] );
 		}
 	}
@@ -265,15 +265,6 @@ OO.ui.Demo.static.pages.icons = function ( demo ) {
 				}
 			} ),
 			new OO.ui.ButtonOptionWidget( {
-				label: 'Constructive',
-				flags: [ 'constructive' ],
-				data: {
-					progressive: false,
-					constructive: true,
-					destructive: false
-				}
-			} ),
-			new OO.ui.ButtonOptionWidget( {
 				label: 'Destructive',
 				flags: [ 'destructive' ],
 				data: {
@@ -283,10 +274,12 @@ OO.ui.Demo.static.pages.icons = function ( demo ) {
 				}
 			} )
 		]
-	} )
+	} );
+
+	selector
 		.on( 'select', function ( selected ) {
-			iconsButtons.forEach( function ( iconButton ) {
-				iconButton.setFlags( selected.getData() );
+			iconsWidgets.forEach( function ( iconWidget ) {
+				iconWidget.setFlags( selected.getData() );
 			} );
 		} )
 		.selectItemByData( {
@@ -300,10 +293,11 @@ OO.ui.Demo.static.pages.icons = function ( demo ) {
 			expanded: false,
 			framed: true
 		} ).$element
-			.addClass( 'oo-ui-demo-container oo-ui-demo-icons' )
+			.addClass( 'demo-container demo-icons' )
 			.append(
 				selector.$element,
 				indicatorsFieldset.$element,
 				iconsFieldsets.map( function ( item ) { return item.$element[ 0 ]; } )
-			) );
+			)
+	);
 };

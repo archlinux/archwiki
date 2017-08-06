@@ -8,13 +8,15 @@
 			"555",
 			"Dianakc",
 			"He7d3r",
-			"Eduardo Addad de Oliveira"
+			"Eduardo Addad de Oliveira",
+			"Felipe L. Ewald"
 		]
 	},
 	"captcha-edit": "Para editar esta página será necessário que você resolva a simples soma abaixo e entre com a resposta no respectivo campo ([[Special:Captcha/help|o que é isto?]])",
 	"captcha-edit-fail": "Código CAPTCHA incorreto ou não preenchido.",
 	"captcha-desc": "Fornece técnicas captcha para proteção contra spam e tentativas de obtenção de senhas",
 	"captcha-label": "CAPTCHA",
+	"captcha-info-help": "Descrição do CAPTCHA.",
 	"captcha-addurl": "Sua edição inclui novos links externos.\nComo prevenção contra sistemas automatizados que inserem spam, será necessário resolver a simples soma abaixo e inserir sua resposta no respectivo campo ([[Special:Captcha/help|detalhes]])",
 	"captcha-badlogin": "Como prevenção contra sistemas automatizados de pesquisa e descoberta de senhas, será necessário resolver a simples soma abaixo e inserir sua resposta no respectivo campo ([[Special:Captcha/help|detalhes]])",
 	"captcha-createaccount": "Para proteger a wiki contra sistemas automatizados de criação de contas, solicitamos que resolva a soma simples apresentada abaixo e introduza a resposta no respectivo campo  ([[Special:Captcha/help|mais informações]]):",

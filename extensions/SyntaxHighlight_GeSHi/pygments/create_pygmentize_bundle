@@ -36,7 +36,7 @@ pypi = xmlrpclib.ServerProxy('https://pypi.python.org/pypi')
 latest_version = pypi.package_releases('Pygments')[0]
 for release in pypi.release_urls('Pygments', latest_version):
     if (release['packagetype'] == 'bdist_wheel' and
-            release['python_version'].startswith('2')):
+            release['python_version'].startswith('py2')):
         url = release['url']
         md5_digest = release['md5_digest']
         break

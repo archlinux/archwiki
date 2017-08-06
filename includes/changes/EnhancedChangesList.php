@@ -33,10 +33,16 @@ class EnhancedChangesList extends ChangesList {
 	protected $rc_cache;
 
 	/**
+	 * @var TemplateParser
+	 */
+	protected $templateParser;
+
+	/**
 	 * @param IContextSource|Skin $obj
+	 * @param array $filterGroups Array of ChangesListFilterGroup objects (currently optional)
 	 * @throws MWException
 	 */
-	public function __construct( $obj ) {
+	public function __construct( $obj, array $filterGroups = [] ) {
 		if ( $obj instanceof Skin ) {
 			// @todo: deprecate constructing with Skin
 			$context = $obj->getContext();
@@ -49,7 +55,7 @@ class EnhancedChangesList extends ChangesList {
 			$context = $obj;
 		}
 
-		parent::__construct( $context );
+		parent::__construct( $context, $filterGroups );
 
 		// message is set by the parent ChangesList class
 		$this->cacheEntryFactory = new RCCacheEntryFactory(
@@ -57,6 +63,7 @@ class EnhancedChangesList extends ChangesList {
 			$this->message,
 			$this->linkRenderer
 		);
+		$this->templateParser = new TemplateParser();
 	}
 
 	/**
@@ -339,8 +346,7 @@ class EnhancedChangesList extends ChangesList {
 
 		$this->rcCacheIndex++;
 
-		$templateParser = new TemplateParser();
-		return $templateParser->processTemplate(
+		return $this->templateParser->processTemplate(
 			'EnhancedChangesListGroup',
 			$templateParams
 		);
@@ -358,16 +364,17 @@ class EnhancedChangesList extends ChangesList {
 	protected function getLineData( array $block, RCCacheEntry $rcObj, array $queryParams = [] ) {
 		$RCShowChangedSize = $this->getConfig()->get( 'RCShowChangedSize' );
 
-		$classes = [ 'mw-enhanced-rc' ];
 		$type = $rcObj->mAttribs['rc_type'];
 		$data = [];
 		$lineParams = [];
 
+		$classes = [ 'mw-enhanced-rc' ];
 		if ( $rcObj->watched
 			&& $rcObj->mAttribs['rc_timestamp'] >= $rcObj->watched
 		) {
-			$classes = [ 'mw-enhanced-watched' ];
+			$classes[] = 'mw-enhanced-watched';
 		}
+		$classes = array_merge( $classes, $this->getHTMLClassesForFilters( $rcObj ) );
 
 		$separator = ' <span class="mw-changeslist-separator">. .</span> ';
 
@@ -530,7 +537,7 @@ class EnhancedChangesList extends ChangesList {
 				$links['total-changes'] = $this->linkRenderer->makeKnownLink(
 					$block0->getTitle(),
 					new HtmlArmor( $nchanges[$n] ),
-					[],
+					[ 'class' => 'mw-changeslist-groupdiff' ],
 					$queryParams + [
 						'diff' => $currentRevision,
 						'oldid' => $last->mAttribs['rc_last_oldid'],
@@ -540,7 +547,7 @@ class EnhancedChangesList extends ChangesList {
 					$links['total-changes-since-last'] = $this->linkRenderer->makeKnownLink(
 							$block0->getTitle(),
 							new HtmlArmor( $sinceLastVisitMsg[$sinceLast] ),
-							[],
+							[ 'class' => 'mw-changeslist-groupdiff' ],
 							$queryParams + [
 								'diff' => $currentRevision,
 								'oldid' => $unvisitedOldid,
@@ -562,7 +569,7 @@ class EnhancedChangesList extends ChangesList {
 			$links['history'] = $this->linkRenderer->makeKnownLink(
 					$block0->getTitle(),
 					new HtmlArmor( $this->message['enhancedrc-history'] ),
-					[],
+					[ 'class' => 'mw-changeslist-history' ],
 					$params
 				);
 		}
@@ -717,7 +724,7 @@ class EnhancedChangesList extends ChangesList {
 					. $this->linkRenderer->makeKnownLink(
 						$pageTitle,
 						new HtmlArmor( $this->message['hist'] ),
-						[],
+						[ 'class' => 'mw-changeslist-history' ],
 						$query
 					) )->escaped();
 		return $retVal;

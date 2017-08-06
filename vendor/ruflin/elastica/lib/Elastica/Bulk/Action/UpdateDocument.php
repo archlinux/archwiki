@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Bulk\Action;
 
 use Elastica\Document;
@@ -23,7 +22,7 @@ class UpdateDocument extends IndexDocument
     {
         parent::setDocument($document);
 
-        $source = array('doc' => $document->getData());
+        $source = ['doc' => $document->getData()];
 
         if ($document->getDocAsUpsert()) {
             $source['doc_as_upsert'] = true;

@@ -14,7 +14,8 @@
 			"Wpedzich",
 			"Mareklug",
 			"Chrumps",
-			"Woytecr"
+			"Woytecr",
+			"Matma Rex"
 		]
 	},
 	"wikieditor": "Zaawansowany interfejs edycji wikitekstu",
@@ -50,9 +51,9 @@
 	"wikieditor-toolbar-tool-link": "Link",
 	"wikieditor-toolbar-tool-link-title": "Wstaw link",
 	"wikieditor-toolbar-tool-link-int": "Do strony wiki",
-	"wikieditor-toolbar-tool-link-int-target": "Strona docelowa lub pełny link",
+	"wikieditor-toolbar-tool-link-int-target": "Strona docelowa lub pełny link:",
 	"wikieditor-toolbar-tool-link-int-target-tooltip": "Tytuł lub adres URL strony",
-	"wikieditor-toolbar-tool-link-int-text": "Tekst do wyświetlenia",
+	"wikieditor-toolbar-tool-link-int-text": "Tekst do wyświetlenia:",
 	"wikieditor-toolbar-tool-link-int-text-tooltip": "Wprowadź tekst, który powinien być wyświetlany",
 	"wikieditor-toolbar-tool-link-ext": "Do zewnętrznej strony internetowej",
 	"wikieditor-toolbar-tool-link-ext-target": "Adres URL linku",

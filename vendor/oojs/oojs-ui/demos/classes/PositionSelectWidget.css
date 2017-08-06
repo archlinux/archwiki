@@ -1,0 +1,34 @@
+.demo-positionSelectWidget table {
+	border-collapse: collapse;
+}
+.demo-positionSelectWidget tr:nth-child(2) td:nth-child(2) {
+	border-top: 1px #000 solid;
+	border-left: 1px #000 solid;
+}
+.demo-positionSelectWidget tr:nth-child(2) td:nth-child(3) {
+	border-top: 1px #000 solid;
+}
+.demo-positionSelectWidget tr:nth-child(2) td:nth-child(4) {
+	border-top: 1px #000 solid;
+	border-right: 1px #000 solid;
+}
+.demo-positionSelectWidget tr:nth-child(3) td:nth-child(2) {
+	border-left: 1px #000 solid;
+}
+.demo-positionSelectWidget tr:nth-child(3) td:nth-child(4) {
+	border-right: 1px #000 solid;
+}
+.demo-positionSelectWidget tr:nth-child(4) td:nth-child(2) {
+	border-bottom: 1px #000 solid;
+	border-left: 1px #000 solid;
+}
+.demo-positionSelectWidget tr:nth-child(4) td:nth-child(3) {
+	border-bottom: 1px #000 solid;
+}
+.demo-positionSelectWidget tr:nth-child(4) td:nth-child(4) {
+	border-bottom: 1px #000 solid;
+	border-right: 1px #000 solid;
+}
+.demo-positionSelectWidget .oo-ui-radioOptionWidget.oo-ui-optionWidget-selected {
+	outline: 1px #f00 solid;
+}

@@ -60,6 +60,12 @@ abstract class SearchEngine {
 	/** @const string profile type for query independent ranking features */
 	const FT_QUERY_INDEP_PROFILE_TYPE = 'fulltextQueryIndepProfile';
 
+	/** @const int flag for legalSearchChars: includes all chars allowed in a search query */
+	const CHARS_ALL = 1;
+
+	/** @const int flag for legalSearchChars: includes all chars allowed in a search term */
+	const CHARS_NO_SYNTAX = 2;
+
 	/**
 	 * Perform a full text search query and return a result set.
 	 * If full text searches are not supported or disabled, return null.
@@ -70,6 +76,21 @@ abstract class SearchEngine {
 	 */
 	function searchText( $term ) {
 		return null;
+	}
+
+	/**
+	 * Perform a title search in the article archive.
+	 * NOTE: these results still should be filtered by
+	 * matching against PageArchive, permissions checks etc
+	 * The results returned by this methods are only sugegstions and
+	 * may not end up being shown to the user.
+	 *
+	 * @param string $term Raw search term
+	 * @return Status<Title[]>
+	 * @since 1.29
+	 */
+	function searchArchiveTitle( $term ) {
+		return Status::newGood( [] );
 	}
 
 	/**
@@ -104,10 +125,23 @@ abstract class SearchEngine {
 	 * @since 1.18
 	 * @param string $feature
 	 * @param mixed $data
-	 * @return bool
 	 */
 	public function setFeatureData( $feature, $data ) {
 		$this->features[$feature] = $data;
+	}
+
+	/**
+	 * Way to retrieve custom data set by setFeatureData
+	 * or by the engine itself.
+	 * @since 1.29
+	 * @param string $feature feature name
+	 * @return mixed the feature value or null if unset
+	 */
+	public function getFeatureData( $feature ) {
+		if ( isset ( $this->features[$feature] ) ) {
+			return $this->features[$feature];
+		}
+		return null;
 	}
 
 	/**
@@ -178,11 +212,13 @@ abstract class SearchEngine {
 	}
 
 	/**
-	 * Get chars legal for search.
+	 * Get chars legal for search
 	 * NOTE: usage as static is deprecated and preserved only as BC measure
+	 * @param int $type type of search chars (see self::CHARS_ALL
+	 * and self::CHARS_NO_SYNTAX). Defaults to CHARS_ALL
 	 * @return string
 	 */
-	public static function legalSearchChars() {
+	public static function legalSearchChars( $type = self::CHARS_ALL ) {
 		return "A-Za-z_'.0-9\\x80-\\xFF\\-";
 	}
 
@@ -707,8 +743,21 @@ abstract class SearchEngine {
 	public function getSearchIndexFields() {
 		$models = ContentHandler::getContentModels();
 		$fields = [];
+		$seenHandlers = new SplObjectStorage();
 		foreach ( $models as $model ) {
-			$handler = ContentHandler::getForModelID( $model );
+			try {
+				$handler = ContentHandler::getForModelID( $model );
+			}
+			catch ( MWUnknownContentModelException $e ) {
+				// If we can find no handler, ignore it
+				continue;
+			}
+			// Several models can have the same handler, so avoid processing it repeatedly
+			if ( $seenHandlers->contains( $handler ) ) {
+				// We already did this one
+				continue;
+			}
+			$seenHandlers->attach( $handler );
 			$handlerFields = $handler->getFieldsForSearchIndex( $this );
 			foreach ( $handlerFields as $fieldName => $fieldData ) {
 				if ( empty( $fields[$fieldName] ) ) {

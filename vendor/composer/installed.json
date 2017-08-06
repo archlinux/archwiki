@@ -1,87 +1,5 @@
 [
     {
-        "name": "cssjanus/cssjanus",
-        "version": "v1.1.2",
-        "version_normalized": "1.1.2.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/cssjanus/php-cssjanus.git",
-            "reference": "b7efe237794856acec641cb82dcd6613c1aba2b4"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/cssjanus/php-cssjanus/zipball/b7efe237794856acec641cb82dcd6613c1aba2b4",
-            "reference": "b7efe237794856acec641cb82dcd6613c1aba2b4",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.3"
-        },
-        "require-dev": {
-            "jakub-onderka/php-parallel-lint": "0.8.*",
-            "phpunit/phpunit": "3.7.*",
-            "squizlabs/php_codesniffer": "2.3.*"
-        },
-        "time": "2015-06-15 17:20:16",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "": "src/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "Apache-2.0"
-        ],
-        "description": "Convert CSS stylesheets between left-to-right and right-to-left."
-    },
-    {
-        "name": "firebase/php-jwt",
-        "version": "v3.0.0",
-        "version_normalized": "3.0.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/firebase/php-jwt.git",
-            "reference": "fa8a06e96526eb7c0eeaa47e4f39be59d21f16e1"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/firebase/php-jwt/zipball/fa8a06e96526eb7c0eeaa47e4f39be59d21f16e1",
-            "reference": "fa8a06e96526eb7c0eeaa47e4f39be59d21f16e1",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.0"
-        },
-        "time": "2015-07-22 18:31:08",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Firebase\\JWT\\": "src"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "BSD-3-Clause"
-        ],
-        "authors": [
-            {
-                "name": "Neuman Vong",
-                "email": "neuman+pear@twilio.com",
-                "role": "Developer"
-            },
-            {
-                "name": "Anant Narayanan",
-                "email": "anant@php.net",
-                "role": "Developer"
-            }
-        ],
-        "description": "A simple library to encode and decode JSON Web Tokens (JWT) in PHP. Should conform to the current spec.",
-        "homepage": "https://github.com/firebase/php-jwt"
-    },
-    {
         "name": "liuggio/statsd-php-client",
         "version": "v1.0.18",
         "version_normalized": "1.0.18.0",
@@ -106,7 +24,7 @@
         "suggest": {
             "monolog/monolog": "Monolog, in order to do generate statistic from log >=1.2.0)"
         },
-        "time": "2015-07-23 23:12:45",
+        "time": "2015-07-23T23:12:45+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -139,12 +57,12 @@
         "version_normalized": "0.1.5.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/nmred/kafka-php.git",
+            "url": "https://github.com/weiboad/kafka-php.git",
             "reference": "317ad8c208684db8b9e6d2f5bf7f471e89a8b4eb"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/nmred/kafka-php/zipball/317ad8c208684db8b9e6d2f5bf7f471e89a8b4eb",
+            "url": "https://api.github.com/repos/weiboad/kafka-php/zipball/317ad8c208684db8b9e6d2f5bf7f471e89a8b4eb",
             "reference": "317ad8c208684db8b9e6d2f5bf7f471e89a8b4eb",
             "shasum": ""
         },
@@ -156,7 +74,7 @@
             "phpunit/phpunit": "~4.0",
             "satooshi/php-coveralls": "dev-master"
         },
-        "time": "2015-12-02 12:06:23",
+        "time": "2015-12-02T12:06:23+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -199,7 +117,7 @@
             "phpunit/phpunit": "~4.5",
             "squizlabs/php_codesniffer": "2.3.0"
         },
-        "time": "2015-09-18 07:02:06",
+        "time": "2015-09-18T07:02:06+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -225,70 +143,6 @@
         "homepage": "https://www.mediawiki.org/wiki/at-ease"
     },
     {
-        "name": "oyejorge/less.php",
-        "version": "v1.7.0.10",
-        "version_normalized": "1.7.0.10",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/oyejorge/less.php.git",
-            "reference": "a1e2d3c20794b37ac4d0baeb24613e579584033b"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/oyejorge/less.php/zipball/a1e2d3c20794b37ac4d0baeb24613e579584033b",
-            "reference": "a1e2d3c20794b37ac4d0baeb24613e579584033b",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3"
-        },
-        "require-dev": {
-            "phpunit/phpunit": "~4.8.18"
-        },
-        "time": "2015-12-30 05:47:36",
-        "bin": [
-            "bin/lessc"
-        ],
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Less": "lib/"
-            },
-            "classmap": [
-                "lessc.inc.php"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "Apache-2.0"
-        ],
-        "authors": [
-            {
-                "name": "Matt Agar",
-                "homepage": "https://github.com/agar"
-            },
-            {
-                "name": "Martin Jantošovič",
-                "homepage": "https://github.com/Mordred"
-            },
-            {
-                "name": "Josh Schmidt",
-                "homepage": "https://github.com/oyejorge"
-            }
-        ],
-        "description": "PHP port of the Javascript version of LESS http://lesscss.org",
-        "homepage": "http://lessphp.gpeasy.com",
-        "keywords": [
-            "css",
-            "less",
-            "less.js",
-            "lesscss",
-            "php",
-            "stylesheet"
-        ]
-    },
-    {
         "name": "pear/pear_exception",
         "version": "v1.0.0",
         "version_normalized": "1.0.0.0",
@@ -309,7 +163,7 @@
         "require-dev": {
             "phpunit/phpunit": "*"
         },
-        "time": "2015-02-10 20:07:52",
+        "time": "2015-02-10T20:07:52+00:00",
         "type": "class",
         "extra": {
             "branch-alias": {
@@ -360,7 +214,7 @@
             "reference": "82f05cd1aa3edf34e19aa7c8ca312ce13a6a577f",
             "shasum": ""
         },
-        "time": "2015-07-20 20:28:12",
+        "time": "2015-07-20T20:28:12+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -395,52 +249,6 @@
         "description": "More info available on: http://pear.php.net/package/Console_Getopt"
     },
     {
-        "name": "pear/pear-core-minimal",
-        "version": "v1.10.1",
-        "version_normalized": "1.10.1.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/pear/pear-core-minimal.git",
-            "reference": "cae0f1ce0cb5bddb611b0a652d322905a65a5896"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/pear/pear-core-minimal/zipball/cae0f1ce0cb5bddb611b0a652d322905a65a5896",
-            "reference": "cae0f1ce0cb5bddb611b0a652d322905a65a5896",
-            "shasum": ""
-        },
-        "require": {
-            "pear/console_getopt": "~1.3",
-            "pear/pear_exception": "~1.0"
-        },
-        "replace": {
-            "rsky/pear-core-min": "self.version"
-        },
-        "time": "2015-10-17 11:41:19",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "": "src/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "include-path": [
-            "src/"
-        ],
-        "license": [
-            "BSD-3-Clause"
-        ],
-        "authors": [
-            {
-                "name": "Christian Weiske",
-                "email": "cweiske@php.net",
-                "role": "Lead"
-            }
-        ],
-        "description": "Minimal set of PEAR core files to be used as composer dependency"
-    },
-    {
         "name": "pear/mail_mime",
         "version": "1.10.0",
         "version_normalized": "1.10.0.0",
@@ -458,7 +266,7 @@
         "require": {
             "pear/pear-core-minimal": "*"
         },
-        "time": "2015-09-13 12:42:41",
+        "time": "2015-09-13T12:42:41+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -509,7 +317,7 @@
         "require-dev": {
             "phpunit/phpunit": "*"
         },
-        "time": "2014-04-15 19:29:16",
+        "time": "2014-04-15T19:29:16+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -539,123 +347,6 @@
         "description": "More info available on: http://pear.php.net/package/Mail_mimeDecode"
     },
     {
-        "name": "pear/net_socket",
-        "version": "1.0.14",
-        "version_normalized": "1.0.14.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/pear/Net_Socket.git",
-            "reference": "fcd33efd77e4b35ce85489141ab9145343579fe8"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/pear/Net_Socket/zipball/fcd33efd77e4b35ce85489141ab9145343579fe8",
-            "reference": "fcd33efd77e4b35ce85489141ab9145343579fe8",
-            "shasum": ""
-        },
-        "require": {
-            "pear/pear_exception": "*"
-        },
-        "require-dev": {
-            "phpunit/phpunit": "*"
-        },
-        "time": "2014-02-20 19:27:06",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Net": "./"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "include-path": [
-            "./"
-        ],
-        "license": [
-            "PHP License"
-        ],
-        "authors": [
-            {
-                "name": "Chuck Hagenbuch",
-                "email": "chuck@horde.org",
-                "role": "Lead"
-            },
-            {
-                "name": "Aleksander Machniak",
-                "email": "alec@php.net",
-                "role": "Lead"
-            },
-            {
-                "name": "Stig Bakken",
-                "email": "stig@php.net",
-                "role": "Lead"
-            }
-        ],
-        "description": "More info available on: http://pear.php.net/package/Net_Socket"
-    },
-    {
-        "name": "pear/net_smtp",
-        "version": "1.7.1",
-        "version_normalized": "1.7.1.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/pear/Net_SMTP.git",
-            "reference": "cf7e1bac4cdd38f3260e5c10d5ae366b7e22794c"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/pear/Net_SMTP/zipball/cf7e1bac4cdd38f3260e5c10d5ae366b7e22794c",
-            "reference": "cf7e1bac4cdd38f3260e5c10d5ae366b7e22794c",
-            "shasum": ""
-        },
-        "require": {
-            "pear/net_socket": "*",
-            "pear/pear-core-minimal": "*",
-            "php": ">=5.4.0"
-        },
-        "require-dev": {
-            "phpunit/phpunit": "*"
-        },
-        "suggest": {
-            "pear/auth_sasl": "Install optionally via your project's composer.json"
-        },
-        "time": "2015-09-07 17:04:16",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Net": "./"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "include-path": [
-            "./"
-        ],
-        "license": [
-            "PHP License"
-        ],
-        "authors": [
-            {
-                "name": "Jon Parise",
-                "email": "jon@php.net",
-                "homepage": "http://www.indelible.org",
-                "role": "Lead"
-            },
-            {
-                "name": "Chuck Hagenbuch",
-                "email": "chuck@horde.org",
-                "role": "Lead"
-            }
-        ],
-        "description": "An implementation of the SMTP protocol",
-        "homepage": "http://pear.github.io/Net_SMTP/",
-        "keywords": [
-            "email",
-            "mail",
-            "smtp"
-        ]
-    },
-    {
         "name": "wikimedia/assert",
         "version": "v0.2.2",
         "version_normalized": "0.2.2.0",
@@ -673,7 +364,7 @@
         "require-dev": {
             "phpunit/phpunit": "3.7.*"
         },
-        "time": "2015-04-29 17:23:50",
+        "time": "2015-04-29T17:23:50+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -727,7 +418,7 @@
         "suggest": {
             "ext-gmp": "Large integer support for 32-bit platforms."
         },
-        "time": "2015-09-05 18:49:27",
+        "time": "2015-09-05T18:49:27+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -794,7 +485,7 @@
             "mediawiki/mediawiki-codesniffer": "0.5.0",
             "phpunit/phpunit": "4.6.*"
         },
-        "time": "2015-10-29 22:19:02",
+        "time": "2015-10-29T22:19:02+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -842,7 +533,7 @@
             "mediawiki/mediawiki-codesniffer": "^0.3.0.0",
             "phpunit/phpunit": "^4.7.7.0"
         },
-        "time": "2015-08-28 17:03:03",
+        "time": "2015-08-28T17:03:03+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -890,7 +581,7 @@
             "mediawiki/mediawiki-codesniffer": "^0.4.0.0",
             "phpunit/phpunit": "^4.8.9.0"
         },
-        "time": "2015-09-29 21:17:03",
+        "time": "2015-09-29T21:17:03+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -934,7 +625,7 @@
             "mediawiki/mediawiki-codesniffer": "^0.5.0.0",
             "phpunit/phpunit": "4.6.*"
         },
-        "time": "2015-10-28 22:29:15",
+        "time": "2015-10-28T22:29:15+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -976,7 +667,7 @@
         "require-dev": {
             "phpunit/phpunit": "4.0.17"
         },
-        "time": "2015-11-05 07:14:57",
+        "time": "2015-11-05T07:14:57+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -1005,140 +696,6 @@
         ]
     },
     {
-        "name": "psr/log",
-        "version": "1.0.0",
-        "version_normalized": "1.0.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/php-fig/log.git",
-            "reference": "fe0936ee26643249e916849d48e3a51d5f5e278b"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/php-fig/log/zipball/fe0936ee26643249e916849d48e3a51d5f5e278b",
-            "reference": "fe0936ee26643249e916849d48e3a51d5f5e278b",
-            "shasum": ""
-        },
-        "time": "2012-12-21 11:40:51",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Psr\\Log\\": ""
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "PHP-FIG",
-                "homepage": "http://www.php-fig.org/"
-            }
-        ],
-        "description": "Common interface for logging libraries",
-        "keywords": [
-            "log",
-            "psr",
-            "psr-3"
-        ]
-    },
-    {
-        "name": "wikimedia/textcat",
-        "version": "1.1.3",
-        "version_normalized": "1.1.3.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/wikimedia/wikimedia-textcat.git",
-            "reference": "692148be3b9e955d0323a254510f26a4c6aa5a79"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/wikimedia/wikimedia-textcat/zipball/692148be3b9e955d0323a254510f26a4c6aa5a79",
-            "reference": "692148be3b9e955d0323a254510f26a4c6aa5a79",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.0"
-        },
-        "require-dev": {
-            "jakub-onderka/php-parallel-lint": "0.9",
-            "mediawiki/mediawiki-codesniffer": "0.5.0",
-            "phpunit/phpunit": "4.6.*"
-        },
-        "time": "2016-03-04 20:59:24",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "TextCat": ""
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "LGPL-2.1"
-        ],
-        "authors": [
-            {
-                "name": "Stanislav Malyshev",
-                "email": "smalyshev@wikimedia.org"
-            }
-        ],
-        "description": "PHP port of the TextCat language guesser utility, see http://odur.let.rug.nl/~vannoord/TextCat/."
-    },
-    {
-        "name": "wikimedia/composer-merge-plugin",
-        "version": "v1.3.1",
-        "version_normalized": "1.3.1.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/wikimedia/composer-merge-plugin.git",
-            "reference": "0bdf8543d445ee067c9ba7d5d4a5dde70b9785f4"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/wikimedia/composer-merge-plugin/zipball/0bdf8543d445ee067c9ba7d5d4a5dde70b9785f4",
-            "reference": "0bdf8543d445ee067c9ba7d5d4a5dde70b9785f4",
-            "shasum": ""
-        },
-        "require": {
-            "composer-plugin-api": "^1.0",
-            "php": ">=5.3.2"
-        },
-        "require-dev": {
-            "composer/composer": "1.0.*@dev",
-            "jakub-onderka/php-parallel-lint": "~0.8",
-            "phpunit/phpunit": "~4.8|~5.0",
-            "squizlabs/php_codesniffer": "~2.1.0"
-        },
-        "time": "2016-03-08 17:11:37",
-        "type": "composer-plugin",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.3.x-dev"
-            },
-            "class": "Wikimedia\\Composer\\MergePlugin"
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Wikimedia\\Composer\\": "src/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Bryan Davis",
-                "email": "bd808@wikimedia.org"
-            }
-        ],
-        "description": "Composer plugin to merge multiple composer.json files"
-    },
-    {
         "name": "pear/mail",
         "version": "1.3.0",
         "version_normalized": "1.3.0.0",
@@ -1163,7 +720,7 @@
         "suggest": {
             "pear/net_smtp": "Install optionally via your project's composer.json"
         },
-        "time": "2016-01-31 21:32:18",
+        "time": "2016-01-31T21:32:18+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -1199,137 +756,6 @@
         "homepage": "http://pear.php.net/package/Mail"
     },
     {
-        "name": "symfony/process",
-        "version": "v3.0.4",
-        "version_normalized": "3.0.4.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/symfony/process.git",
-            "reference": "e6f1f98bbd355d209a992bfff45e7edfbd4a0776"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/symfony/process/zipball/e6f1f98bbd355d209a992bfff45e7edfbd4a0776",
-            "reference": "e6f1f98bbd355d209a992bfff45e7edfbd4a0776",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.5.9"
-        },
-        "time": "2016-03-30 10:41:14",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "3.0-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Symfony\\Component\\Process\\": ""
-            },
-            "exclude-from-classmap": [
-                "/Tests/"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Fabien Potencier",
-                "email": "fabien@symfony.com"
-            },
-            {
-                "name": "Symfony Community",
-                "homepage": "https://symfony.com/contributors"
-            }
-        ],
-        "description": "Symfony Process Component",
-        "homepage": "https://symfony.com"
-    },
-    {
-        "name": "monolog/monolog",
-        "version": "1.18.2",
-        "version_normalized": "1.18.2.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/Seldaek/monolog.git",
-            "reference": "064b38c16790249488e7a8b987acf1c9d7383c09"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/Seldaek/monolog/zipball/064b38c16790249488e7a8b987acf1c9d7383c09",
-            "reference": "064b38c16790249488e7a8b987acf1c9d7383c09",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.0",
-            "psr/log": "~1.0"
-        },
-        "provide": {
-            "psr/log-implementation": "1.0.0"
-        },
-        "require-dev": {
-            "aws/aws-sdk-php": "^2.4.9",
-            "doctrine/couchdb": "~1.0@dev",
-            "graylog2/gelf-php": "~1.0",
-            "jakub-onderka/php-parallel-lint": "0.9",
-            "php-amqplib/php-amqplib": "~2.4",
-            "php-console/php-console": "^3.1.3",
-            "phpunit/phpunit": "~4.5",
-            "phpunit/phpunit-mock-objects": "2.3.0",
-            "raven/raven": "^0.13",
-            "ruflin/elastica": ">=0.90 <3.0",
-            "swiftmailer/swiftmailer": "~5.3"
-        },
-        "suggest": {
-            "aws/aws-sdk-php": "Allow sending log messages to AWS services like DynamoDB",
-            "doctrine/couchdb": "Allow sending log messages to a CouchDB server",
-            "ext-amqp": "Allow sending log messages to an AMQP server (1.0+ required)",
-            "ext-mongo": "Allow sending log messages to a MongoDB server",
-            "graylog2/gelf-php": "Allow sending log messages to a GrayLog2 server",
-            "mongodb/mongodb": "Allow sending log messages to a MongoDB server via PHP Driver",
-            "php-amqplib/php-amqplib": "Allow sending log messages to an AMQP server using php-amqplib",
-            "php-console/php-console": "Allow sending log messages to Google Chrome",
-            "raven/raven": "Allow sending log messages to a Sentry server",
-            "rollbar/rollbar": "Allow sending log messages to Rollbar",
-            "ruflin/elastica": "Allow sending log messages to an Elastic Search server"
-        },
-        "time": "2016-04-02 13:12:58",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.0.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Monolog\\": "src/Monolog"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Jordi Boggiano",
-                "email": "j.boggiano@seld.be",
-                "homepage": "http://seld.be"
-            }
-        ],
-        "description": "Sends your logs to files, sockets, inboxes, databases and various web services",
-        "homepage": "http://github.com/Seldaek/monolog",
-        "keywords": [
-            "log",
-            "logging",
-            "psr-3"
-        ]
-    },
-    {
         "name": "wikimedia/html-formatter",
         "version": "1.0.1",
         "version_normalized": "1.0.1.0",
@@ -1353,7 +779,7 @@
             "mediawiki/mediawiki-codesniffer": "0.5.1",
             "phpunit/phpunit": "4.7.2"
         },
-        "time": "2016-04-07 21:25:47",
+        "time": "2016-04-07T21:25:47+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -1375,21 +801,21 @@
     },
     {
         "name": "ruflin/elastica",
-        "version": "3.1.1",
-        "version_normalized": "3.1.1.0",
+        "version": "5.1.0",
+        "version_normalized": "5.1.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/ruflin/Elastica.git",
-            "reference": "571dd533f56057f2afc5f447759b09bbcc012a0d"
+            "reference": "tags/5.1.0"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/ruflin/Elastica/zipball/571dd533f56057f2afc5f447759b09bbcc012a0d",
-            "reference": "571dd533f56057f2afc5f447759b09bbcc012a0d",
+            "url": "https://github.com/ruflin/Elastica/archive/5.1.0.zip",
+            "reference": "tags/5.1.0",
             "shasum": ""
         },
         "require": {
-            "php": ">=5.4.0",
+            "php": ">=5.6.0",
             "psr/log": "~1.0"
         },
         "require-dev": {
@@ -1399,14 +825,14 @@
         "suggest": {
             "aws/aws-sdk-php": "Allow using IAM authentication with Amazon ElasticSearch Service",
             "egeloen/http-adapter": "Allow using httpadapter transport",
-            "guzzlehttp/guzzle": "Allow using guzzle 6 as the http transport (Requires php 5.5)",
+            "guzzlehttp/guzzle": "Allow using guzzle 6 as the http transport",
             "monolog/monolog": "Logging request"
         },
-        "time": "2016-03-18 07:56:36",
+        "time": "2017-02-15T11:19:35+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "3.1.x-dev"
+                "dev-master": "5.1.x-dev"
             }
         },
         "installation-source": "dist",
@@ -1455,7 +881,7 @@
             "mediawiki/mediawiki-codesniffer": "0.5.1",
             "phpunit/phpunit": "4.7.2"
         },
-        "time": "2016-02-12 15:19:10",
+        "time": "2016-02-12T15:19:10+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -1499,7 +925,7 @@
             "mediawiki/mediawiki-codesniffer": "0.5.0",
             "phpunit/phpunit": "4.6.*"
         },
-        "time": "2016-05-29 07:39:26",
+        "time": "2016-05-29T07:39:26+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -1554,7 +980,7 @@
             "mediawiki/mediawiki-codesniffer": "0.4.0",
             "phpunit/phpunit": "^4.7.7.0"
         },
-        "time": "2016-07-21 00:41:10",
+        "time": "2016-07-21T00:41:10+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -1598,7 +1024,7 @@
             "mediawiki/mediawiki-codesniffer": "0.7.2",
             "phpunit/phpunit": "4.8.27"
         },
-        "time": "2016-09-29 07:03:03",
+        "time": "2016-09-29T07:03:03+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -1642,7 +1068,7 @@
             "mediawiki/mediawiki-codesniffer": "0.7.2",
             "phpunit/phpunit": "4.8.24"
         },
-        "time": "2016-10-01 06:58:30",
+        "time": "2016-10-01T06:58:30+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -1685,7 +1111,7 @@
             "phpunit/phpunit": "^4.5 || ^5.0.5",
             "phpunit/phpunit-mock-objects": "2.3.0 || ^3.0"
         },
-        "time": "2016-08-30 16:08:34",
+        "time": "2016-08-30T16:08:34+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1728,36 +1154,874 @@
         ]
     },
     {
-        "name": "justinrainbow/json-schema",
-        "version": "3.0.1",
-        "version_normalized": "3.0.1.0",
+        "name": "wikimedia/php-session-serializer",
+        "version": "v1.0.4",
+        "version_normalized": "1.0.4.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/justinrainbow/json-schema.git",
-            "reference": "2128f9de8be4600c3394d94c3918faf67157b76b"
+            "url": "https://github.com/wikimedia/php-session-serializer.git",
+            "reference": "4474af7aa8f0b20aa141c33eb4ad068a1c7d5b8c"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/justinrainbow/json-schema/zipball/2128f9de8be4600c3394d94c3918faf67157b76b",
-            "reference": "2128f9de8be4600c3394d94c3918faf67157b76b",
+            "url": "https://api.github.com/repos/wikimedia/php-session-serializer/zipball/4474af7aa8f0b20aa141c33eb4ad068a1c7d5b8c",
+            "reference": "4474af7aa8f0b20aa141c33eb4ad068a1c7d5b8c",
+            "shasum": ""
+        },
+        "require": {
+            "mediawiki/at-ease": "^1.0",
+            "php": ">=5.3.3",
+            "psr/log": "^1.0"
+        },
+        "require-dev": {
+            "jakub-onderka/php-parallel-lint": "^0.9.0.0",
+            "mediawiki/mediawiki-codesniffer": "0.5.0",
+            "phpunit/phpunit": "~4.5"
+        },
+        "time": "2016-10-01T13:19:49+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "classmap": [
+                "src/"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "GPL-2.0+"
+        ],
+        "authors": [
+            {
+                "name": "Brad Jorsch",
+                "email": "bjorsch@wikimedia.org"
+            }
+        ],
+        "description": "Provides methods like PHP's session_encode and session_decode that don't mess with $_SESSION",
+        "homepage": "https://www.mediawiki.org/wiki/Php-session-serializer"
+    },
+    {
+        "name": "wikimedia/utfnormal",
+        "version": "v1.1.0",
+        "version_normalized": "1.1.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/wikimedia/utfnormal.git",
+            "reference": "32f838c175ddefd0fdbe09e15b919d166ed5b39f"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/wikimedia/utfnormal/zipball/32f838c175ddefd0fdbe09e15b919d166ed5b39f",
+            "reference": "32f838c175ddefd0fdbe09e15b919d166ed5b39f",
             "shasum": ""
         },
         "require": {
             "php": ">=5.3.3"
         },
         "require-dev": {
+            "ext-mbstring": "*",
+            "jakub-onderka/php-parallel-lint": "0.9.*",
+            "mediawiki/mediawiki-codesniffer": "0.4.0",
+            "phpunit/phpunit": "4.6.*"
+        },
+        "time": "2016-05-24T13:13:30+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "classmap": [
+                "src/"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "GPL-2.0+"
+        ],
+        "authors": [
+            {
+                "name": "Brion Vibber",
+                "email": "bvibber@wikimedia.org"
+            }
+        ],
+        "description": "Contains Unicode normalization routines, including both pure PHP implementations and automatic use of the 'intl' PHP extension when present",
+        "homepage": "https://www.mediawiki.org/wiki/utfnormal"
+    },
+    {
+        "name": "firebase/php-jwt",
+        "version": "v4.0.0",
+        "version_normalized": "4.0.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/firebase/php-jwt.git",
+            "reference": "dccf163dc8ed7ed6a00afc06c51ee5186a428d35"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/firebase/php-jwt/zipball/dccf163dc8ed7ed6a00afc06c51ee5186a428d35",
+            "reference": "dccf163dc8ed7ed6a00afc06c51ee5186a428d35",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.0"
+        },
+        "time": "2016-07-18T04:51:16+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Firebase\\JWT\\": "src"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "BSD-3-Clause"
+        ],
+        "authors": [
+            {
+                "name": "Neuman Vong",
+                "email": "neuman+pear@twilio.com",
+                "role": "Developer"
+            },
+            {
+                "name": "Anant Narayanan",
+                "email": "anant@php.net",
+                "role": "Developer"
+            }
+        ],
+        "description": "A simple library to encode and decode JSON Web Tokens (JWT) in PHP. Should conform to the current spec.",
+        "homepage": "https://github.com/firebase/php-jwt"
+    },
+    {
+        "name": "stil/gd-text",
+        "version": "v1.0.0",
+        "version_normalized": "1.0.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/stil/gd-text.git",
+            "reference": "a3e561afd5a53a6a4b0c1d64ebaf51e768348a66"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/stil/gd-text/zipball/a3e561afd5a53a6a4b0c1d64ebaf51e768348a66",
+            "reference": "a3e561afd5a53a6a4b0c1d64ebaf51e768348a66",
+            "shasum": ""
+        },
+        "require": {
+            "ext-gd": "*",
+            "php": ">=5.3"
+        },
+        "time": "2015-01-02T12:21:25+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "GDText\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "description": "A class drawing multiline and aligned text on pictures. Uses GD extension."
+    },
+    {
+        "name": "wikimedia/textcat",
+        "version": "1.2.0",
+        "version_normalized": "1.2.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/wikimedia/wikimedia-textcat.git",
+            "reference": "17818e14cf31c99f43a3c9bdd09a4d6e2914883f"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/wikimedia/wikimedia-textcat/zipball/17818e14cf31c99f43a3c9bdd09a4d6e2914883f",
+            "reference": "17818e14cf31c99f43a3c9bdd09a4d6e2914883f",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.0"
+        },
+        "require-dev": {
+            "jakub-onderka/php-parallel-lint": "0.9",
+            "mediawiki/mediawiki-codesniffer": "0.5.0",
+            "phpunit/phpunit": "4.6.*"
+        },
+        "time": "2017-01-23T16:52:10+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "TextCat": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "LGPL-2.1"
+        ],
+        "authors": [
+            {
+                "name": "Stanislav Malyshev",
+                "email": "smalyshev@wikimedia.org"
+            },
+            {
+                "name": "Trey Jones",
+                "email": "tjones@wikimedia.org"
+            }
+        ],
+        "description": "PHP port of the TextCat language guesser utility, see http://odur.let.rug.nl/~vannoord/TextCat/."
+    },
+    {
+        "name": "psr/log",
+        "version": "1.0.2",
+        "version_normalized": "1.0.2.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/php-fig/log.git",
+            "reference": "4ebe3a8bf773a19edfe0a84b6585ba3d401b724d"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/php-fig/log/zipball/4ebe3a8bf773a19edfe0a84b6585ba3d401b724d",
+            "reference": "4ebe3a8bf773a19edfe0a84b6585ba3d401b724d",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.0"
+        },
+        "time": "2016-10-10T12:19:37+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Psr\\Log\\": "Psr/Log/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "PHP-FIG",
+                "homepage": "http://www.php-fig.org/"
+            }
+        ],
+        "description": "Common interface for logging libraries",
+        "homepage": "https://github.com/php-fig/log",
+        "keywords": [
+            "log",
+            "psr",
+            "psr-3"
+        ]
+    },
+    {
+        "name": "pear/net_smtp",
+        "version": "1.7.3",
+        "version_normalized": "1.7.3.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/pear/Net_SMTP.git",
+            "reference": "e066e5ee011ae056c03db1a95d210fc09649b477"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/pear/Net_SMTP/zipball/e066e5ee011ae056c03db1a95d210fc09649b477",
+            "reference": "e066e5ee011ae056c03db1a95d210fc09649b477",
+            "shasum": ""
+        },
+        "require": {
+            "pear/net_socket": "*",
+            "pear/pear-core-minimal": "*",
+            "php": ">=5.4.0"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "*"
+        },
+        "suggest": {
+            "pear/auth_sasl": "Install optionally via your project's composer.json"
+        },
+        "time": "2017-01-14T18:19:55+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Net": "./"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "include-path": [
+            "./"
+        ],
+        "license": [
+            "PHP-3.01"
+        ],
+        "authors": [
+            {
+                "name": "Jon Parise",
+                "email": "jon@php.net",
+                "homepage": "http://www.indelible.org",
+                "role": "Lead"
+            },
+            {
+                "name": "Chuck Hagenbuch",
+                "email": "chuck@horde.org",
+                "role": "Lead"
+            }
+        ],
+        "description": "An implementation of the SMTP protocol",
+        "homepage": "http://pear.github.io/Net_SMTP/",
+        "keywords": [
+            "email",
+            "mail",
+            "smtp"
+        ]
+    },
+    {
+        "name": "pimple/pimple",
+        "version": "v3.0.2",
+        "version_normalized": "3.0.2.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/silexphp/Pimple.git",
+            "reference": "a30f7d6e57565a2e1a316e1baf2a483f788b258a"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/silexphp/Pimple/zipball/a30f7d6e57565a2e1a316e1baf2a483f788b258a",
+            "reference": "a30f7d6e57565a2e1a316e1baf2a483f788b258a",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.0"
+        },
+        "time": "2015-09-11T15:10:35+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "3.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Pimple": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Fabien Potencier",
+                "email": "fabien@symfony.com"
+            }
+        ],
+        "description": "Pimple, a simple Dependency Injection Container",
+        "homepage": "http://pimple.sensiolabs.org",
+        "keywords": [
+            "container",
+            "dependency injection"
+        ]
+    },
+    {
+        "name": "wikimedia/timestamp",
+        "version": "v1.0.0",
+        "version_normalized": "1.0.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/wikimedia/Timestamp.git",
+            "reference": "880660a2fbc6e577d381225812c255008d58e0cc"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/wikimedia/Timestamp/zipball/880660a2fbc6e577d381225812c255008d58e0cc",
+            "reference": "880660a2fbc6e577d381225812c255008d58e0cc",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.5.9"
+        },
+        "require-dev": {
+            "jakub-onderka/php-parallel-lint": "0.9.2",
+            "mediawiki/mediawiki-codesniffer": "0.7.2",
+            "phpunit/phpunit": "4.8.24"
+        },
+        "time": "2016-09-30T10:00:56+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "classmap": [
+                "src/"
+            ],
+            "files": [
+                "src/defines.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "GPL-2.0+"
+        ],
+        "authors": [
+            {
+                "name": "Tyler Romeo",
+                "email": "tylerromeo@gmail.com"
+            }
+        ],
+        "description": "Creation, parsing, and conversion of timestamps",
+        "homepage": "https://www.mediawiki.org/wiki/Timestamp"
+    },
+    {
+        "name": "wikimedia/remex-html",
+        "version": "1.0.1",
+        "version_normalized": "1.0.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/wikimedia/mediawiki-libs-RemexHtml.git",
+            "reference": "3c596e5c66557ed7f37d8a543bc233d7fa80a52f"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/wikimedia/mediawiki-libs-RemexHtml/zipball/3c596e5c66557ed7f37d8a543bc233d7fa80a52f",
+            "reference": "3c596e5c66557ed7f37d8a543bc233d7fa80a52f",
+            "shasum": ""
+        },
+        "require": {
+            "ext-mbstring": "*",
+            "wikimedia/utfnormal": "1.1.0"
+        },
+        "require-dev": {
+            "mediawiki/mediawiki-codesniffer": "0.7.2",
+            "phpunit/phpunit": "4.*"
+        },
+        "time": "2017-03-14T05:28:14+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "RemexHtml\\": "RemexHtml/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Tim Starling",
+                "email": "tstarling@wikimedia.org"
+            }
+        ],
+        "description": "Fast HTML 5 parser"
+    },
+    {
+        "name": "pear/pear-core-minimal",
+        "version": "v1.10.3",
+        "version_normalized": "1.10.3.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/pear/pear-core-minimal.git",
+            "reference": "070f0b600b2caca2501e2c9b7e553016e4b0d115"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/pear/pear-core-minimal/zipball/070f0b600b2caca2501e2c9b7e553016e4b0d115",
+            "reference": "070f0b600b2caca2501e2c9b7e553016e4b0d115",
+            "shasum": ""
+        },
+        "require": {
+            "pear/console_getopt": "~1.4",
+            "pear/pear_exception": "~1.0"
+        },
+        "replace": {
+            "rsky/pear-core-min": "self.version"
+        },
+        "time": "2017-02-28T16:46:11+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "include-path": [
+            "src/"
+        ],
+        "license": [
+            "BSD-3-Clause"
+        ],
+        "authors": [
+            {
+                "name": "Christian Weiske",
+                "email": "cweiske@php.net",
+                "role": "Lead"
+            }
+        ],
+        "description": "Minimal set of PEAR core files to be used as composer dependency"
+    },
+    {
+        "name": "pear/net_socket",
+        "version": "v1.1.0",
+        "version_normalized": "1.1.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/pear/Net_Socket.git",
+            "reference": "960599d403e5e831a4394d48d1f04da2eb2a035b"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/pear/Net_Socket/zipball/960599d403e5e831a4394d48d1f04da2eb2a035b",
+            "reference": "960599d403e5e831a4394d48d1f04da2eb2a035b",
+            "shasum": ""
+        },
+        "require": {
+            "pear/pear_exception": "@stable",
+            "php": ">=5.4.0"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "^4"
+        },
+        "time": "2017-03-08T19:28:35+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Net": "./"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "include-path": [
+            "./"
+        ],
+        "license": [
+            "PHP License"
+        ],
+        "authors": [
+            {
+                "name": "Chuck Hagenbuch",
+                "email": "chuck@horde.org",
+                "role": "Lead"
+            },
+            {
+                "name": "Aleksander Machniak",
+                "email": "alec@php.net",
+                "role": "Lead"
+            },
+            {
+                "name": "Stig Bakken",
+                "email": "stig@php.net",
+                "role": "Lead"
+            }
+        ],
+        "description": "More info available on: http://pear.php.net/package/Net_Socket"
+    },
+    {
+        "name": "monolog/monolog",
+        "version": "1.22.1",
+        "version_normalized": "1.22.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/Seldaek/monolog.git",
+            "reference": "1e044bc4b34e91743943479f1be7a1d5eb93add0"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/Seldaek/monolog/zipball/1e044bc4b34e91743943479f1be7a1d5eb93add0",
+            "reference": "1e044bc4b34e91743943479f1be7a1d5eb93add0",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.0",
+            "psr/log": "~1.0"
+        },
+        "provide": {
+            "psr/log-implementation": "1.0.0"
+        },
+        "require-dev": {
+            "aws/aws-sdk-php": "^2.4.9 || ^3.0",
+            "doctrine/couchdb": "~1.0@dev",
+            "graylog2/gelf-php": "~1.0",
+            "jakub-onderka/php-parallel-lint": "0.9",
+            "php-amqplib/php-amqplib": "~2.4",
+            "php-console/php-console": "^3.1.3",
+            "phpunit/phpunit": "~4.5",
+            "phpunit/phpunit-mock-objects": "2.3.0",
+            "ruflin/elastica": ">=0.90 <3.0",
+            "sentry/sentry": "^0.13",
+            "swiftmailer/swiftmailer": "~5.3"
+        },
+        "suggest": {
+            "aws/aws-sdk-php": "Allow sending log messages to AWS services like DynamoDB",
+            "doctrine/couchdb": "Allow sending log messages to a CouchDB server",
+            "ext-amqp": "Allow sending log messages to an AMQP server (1.0+ required)",
+            "ext-mongo": "Allow sending log messages to a MongoDB server",
+            "graylog2/gelf-php": "Allow sending log messages to a GrayLog2 server",
+            "mongodb/mongodb": "Allow sending log messages to a MongoDB server via PHP Driver",
+            "php-amqplib/php-amqplib": "Allow sending log messages to an AMQP server using php-amqplib",
+            "php-console/php-console": "Allow sending log messages to Google Chrome",
+            "rollbar/rollbar": "Allow sending log messages to Rollbar",
+            "ruflin/elastica": "Allow sending log messages to an Elastic Search server",
+            "sentry/sentry": "Allow sending log messages to a Sentry server"
+        },
+        "time": "2017-03-13T07:08:03+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Monolog\\": "src/Monolog"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Jordi Boggiano",
+                "email": "j.boggiano@seld.be",
+                "homepage": "http://seld.be"
+            }
+        ],
+        "description": "Sends your logs to files, sockets, inboxes, databases and various web services",
+        "homepage": "http://github.com/Seldaek/monolog",
+        "keywords": [
+            "log",
+            "logging",
+            "psr-3"
+        ]
+    },
+    {
+        "name": "wikimedia/composer-merge-plugin",
+        "version": "v1.4.0",
+        "version_normalized": "1.4.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/wikimedia/composer-merge-plugin.git",
+            "reference": "ca453f9f13d8b05f86f20ea10be992a782e6f78c"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/wikimedia/composer-merge-plugin/zipball/ca453f9f13d8b05f86f20ea10be992a782e6f78c",
+            "reference": "ca453f9f13d8b05f86f20ea10be992a782e6f78c",
+            "shasum": ""
+        },
+        "require": {
+            "composer-plugin-api": "^1.0",
+            "php": ">=5.3.2"
+        },
+        "require-dev": {
+            "composer/composer": "~1.0.0",
+            "jakub-onderka/php-parallel-lint": "~0.8",
+            "phpunit/phpunit": "~4.8|~5.0",
+            "squizlabs/php_codesniffer": "~2.1.0"
+        },
+        "time": "2017-03-13T16:52:55+00:00",
+        "type": "composer-plugin",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.3.x-dev"
+            },
+            "class": "Wikimedia\\Composer\\MergePlugin"
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Wikimedia\\Composer\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Bryan Davis",
+                "email": "bd808@wikimedia.org"
+            }
+        ],
+        "description": "Composer plugin to merge multiple composer.json files"
+    },
+    {
+        "name": "cssjanus/cssjanus",
+        "version": "v1.2.0",
+        "version_normalized": "1.2.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/cssjanus/php-cssjanus.git",
+            "reference": "0fd44d8a3f1f0f10bfb500b6b595240bf6415ffa"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/cssjanus/php-cssjanus/zipball/0fd44d8a3f1f0f10bfb500b6b595240bf6415ffa",
+            "reference": "0fd44d8a3f1f0f10bfb500b6b595240bf6415ffa",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.4"
+        },
+        "require-dev": {
+            "jakub-onderka/php-parallel-lint": "0.8.*",
+            "phpunit/phpunit": "4.8.*",
+            "squizlabs/php_codesniffer": "2.3.*"
+        },
+        "time": "2017-03-14T20:57:08+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "Apache-2.0"
+        ],
+        "description": "Convert CSS stylesheets between left-to-right and right-to-left."
+    },
+    {
+        "name": "oyejorge/less.php",
+        "version": "v1.7.0.14",
+        "version_normalized": "1.7.0.14",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/oyejorge/less.php.git",
+            "reference": "42925c5a01a07d67ca7e82dfc8fb31814d557bc9"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/oyejorge/less.php/zipball/42925c5a01a07d67ca7e82dfc8fb31814d557bc9",
+            "reference": "42925c5a01a07d67ca7e82dfc8fb31814d557bc9",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "~4.8.24"
+        },
+        "time": "2017-03-28T22:19:25+00:00",
+        "bin": [
+            "bin/lessc"
+        ],
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Less": "lib/"
+            },
+            "classmap": [
+                "lessc.inc.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "Apache-2.0"
+        ],
+        "authors": [
+            {
+                "name": "Matt Agar",
+                "homepage": "https://github.com/agar"
+            },
+            {
+                "name": "Martin Jantošovič",
+                "homepage": "https://github.com/Mordred"
+            },
+            {
+                "name": "Josh Schmidt",
+                "homepage": "https://github.com/oyejorge"
+            }
+        ],
+        "description": "PHP port of the Javascript version of LESS http://lesscss.org (Originally maintained by Josh Schmidt)",
+        "homepage": "http://lessphp.gpeasy.com",
+        "keywords": [
+            "css",
+            "less",
+            "less.js",
+            "lesscss",
+            "php",
+            "stylesheet"
+        ]
+    },
+    {
+        "name": "james-heinrich/getid3",
+        "version": "v1.9.14",
+        "version_normalized": "1.9.14.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/JamesHeinrich/getID3.git",
+            "reference": "30bd11473b0eef6f1b47866ef7ab0a557917fc21"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/JamesHeinrich/getID3/zipball/30bd11473b0eef6f1b47866ef7ab0a557917fc21",
+            "reference": "30bd11473b0eef6f1b47866ef7ab0a557917fc21",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.0"
+        },
+        "time": "2017-03-27T21:12:55+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "classmap": [
+                "getid3/"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "GPL"
+        ],
+        "description": "PHP script that extracts useful information from popular multimedia file formats",
+        "homepage": "http://www.getid3.org/",
+        "keywords": [
+            "codecs",
+            "php",
+            "tags"
+        ]
+    },
+    {
+        "name": "justinrainbow/json-schema",
+        "version": "5.2.0",
+        "version_normalized": "5.2.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/justinrainbow/json-schema.git",
+            "reference": "e3c9bccdc38bbd09bcac0131c00f3be58368b416"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/justinrainbow/json-schema/zipball/e3c9bccdc38bbd09bcac0131c00f3be58368b416",
+            "reference": "e3c9bccdc38bbd09bcac0131c00f3be58368b416",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.3"
+        },
+        "require-dev": {
+            "friendsofphp/php-cs-fixer": "^2.1",
             "json-schema/json-schema-test-suite": "1.2.0",
             "phpdocumentor/phpdocumentor": "~2",
             "phpunit/phpunit": "^4.8.22"
         },
-        "time": "2016-08-26 12:45:49",
+        "time": "2017-03-22T22:43:35+00:00",
         "bin": [
             "bin/validate-json"
         ],
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "3.0.x-dev"
+                "dev-master": "5.0.x-dev"
             }
         },
         "installation-source": "dist",
@@ -1796,64 +2060,69 @@
         ]
     },
     {
-        "name": "wikimedia/php-session-serializer",
-        "version": "v1.0.4",
-        "version_normalized": "1.0.4.0",
+        "name": "symfony/process",
+        "version": "v3.2.6",
+        "version_normalized": "3.2.6.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/wikimedia/php-session-serializer.git",
-            "reference": "4474af7aa8f0b20aa141c33eb4ad068a1c7d5b8c"
+            "url": "https://github.com/symfony/process.git",
+            "reference": "68bfa8c83f24c0ac04ea7193bcdcda4519f41892"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/wikimedia/php-session-serializer/zipball/4474af7aa8f0b20aa141c33eb4ad068a1c7d5b8c",
-            "reference": "4474af7aa8f0b20aa141c33eb4ad068a1c7d5b8c",
+            "url": "https://api.github.com/repos/symfony/process/zipball/68bfa8c83f24c0ac04ea7193bcdcda4519f41892",
+            "reference": "68bfa8c83f24c0ac04ea7193bcdcda4519f41892",
             "shasum": ""
         },
         "require": {
-            "mediawiki/at-ease": "^1.0",
-            "php": ">=5.3.3",
-            "psr/log": "^1.0"
+            "php": ">=5.5.9"
         },
-        "require-dev": {
-            "jakub-onderka/php-parallel-lint": "^0.9.0.0",
-            "mediawiki/mediawiki-codesniffer": "0.5.0",
-            "phpunit/phpunit": "~4.5"
-        },
-        "time": "2016-10-01 13:19:49",
+        "time": "2017-03-04T12:23:14+00:00",
         "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "3.2-dev"
+            }
+        },
         "installation-source": "dist",
         "autoload": {
-            "classmap": [
-                "src/"
+            "psr-4": {
+                "Symfony\\Component\\Process\\": ""
+            },
+            "exclude-from-classmap": [
+                "/Tests/"
             ]
         },
         "notification-url": "https://packagist.org/downloads/",
         "license": [
-            "GPL-2.0+"
+            "MIT"
         ],
         "authors": [
             {
-                "name": "Brad Jorsch",
-                "email": "bjorsch@wikimedia.org"
+                "name": "Fabien Potencier",
+                "email": "fabien@symfony.com"
+            },
+            {
+                "name": "Symfony Community",
+                "homepage": "https://symfony.com/contributors"
             }
         ],
-        "description": "Provides methods like PHP's session_encode and session_decode that don't mess with $_SESSION",
-        "homepage": "https://www.mediawiki.org/wiki/Php-session-serializer"
+        "description": "Symfony Process Component",
+        "homepage": "https://symfony.com"
     },
     {
         "name": "oojs/oojs-ui",
-        "version": "v0.17.10",
-        "version_normalized": "0.17.10.0",
+        "version": "v0.21.1",
+        "version_normalized": "0.21.1.0",
         "source": {
             "type": "git",
             "url": "https://github.com/wikimedia/oojs-ui.git",
-            "reference": "e4ba87bf92499538128363ffc0213c4055396782"
+            "reference": "59965a94e168c23d9dbb154d8a63f6a1abc7f537"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/wikimedia/oojs-ui/zipball/e4ba87bf92499538128363ffc0213c4055396782",
-            "reference": "e4ba87bf92499538128363ffc0213c4055396782",
+            "url": "https://api.github.com/repos/wikimedia/oojs-ui/zipball/59965a94e168c23d9dbb154d8a63f6a1abc7f537",
+            "reference": "59965a94e168c23d9dbb154d8a63f6a1abc7f537",
             "shasum": ""
         },
         "require": {
@@ -1865,7 +2134,7 @@
             "mediawiki/mediawiki-codesniffer": "0.6.0",
             "phpunit/phpunit": "4.8.21"
         },
-        "time": "2016-10-03 18:37:58",
+        "time": "2017-04-18T23:06:13+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -1921,136 +2190,5 @@
         ],
         "description": "Provides library of common widgets, layouts, and windows.",
         "homepage": "https://www.mediawiki.org/wiki/OOjs_UI"
-    },
-    {
-        "name": "pimple/pimple",
-        "version": "v2.1.1",
-        "version_normalized": "2.1.1.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/silexphp/Pimple.git",
-            "reference": "ea22fb2880faf7b7b0e17c9809c6fe25b071fd76"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/silexphp/Pimple/zipball/ea22fb2880faf7b7b0e17c9809c6fe25b071fd76",
-            "reference": "ea22fb2880faf7b7b0e17c9809c6fe25b071fd76",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.0"
-        },
-        "time": "2014-07-24 07:10:08",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.1.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Pimple": "src/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Fabien Potencier",
-                "email": "fabien@symfony.com"
-            }
-        ],
-        "description": "Pimple is a simple Dependency Injection Container for PHP 5.3",
-        "homepage": "http://pimple.sensiolabs.org",
-        "keywords": [
-            "container",
-            "dependency injection"
-        ]
-    },
-    {
-        "name": "wikimedia/utfnormal",
-        "version": "v1.1.0",
-        "version_normalized": "1.1.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/wikimedia/utfnormal.git",
-            "reference": "32f838c175ddefd0fdbe09e15b919d166ed5b39f"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/wikimedia/utfnormal/zipball/32f838c175ddefd0fdbe09e15b919d166ed5b39f",
-            "reference": "32f838c175ddefd0fdbe09e15b919d166ed5b39f",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.3"
-        },
-        "require-dev": {
-            "ext-mbstring": "*",
-            "jakub-onderka/php-parallel-lint": "0.9.*",
-            "mediawiki/mediawiki-codesniffer": "0.4.0",
-            "phpunit/phpunit": "4.6.*"
-        },
-        "time": "2016-05-24 13:13:30",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "classmap": [
-                "src/"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "GPL-2.0+"
-        ],
-        "authors": [
-            {
-                "name": "Brion Vibber",
-                "email": "bvibber@wikimedia.org"
-            }
-        ],
-        "description": "Contains Unicode normalization routines, including both pure PHP implementations and automatic use of the 'intl' PHP extension when present",
-        "homepage": "https://www.mediawiki.org/wiki/utfnormal"
-    },
-    {
-        "name": "james-heinrich/getid3",
-        "version": "v1.9.12",
-        "version_normalized": "1.9.12.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/JamesHeinrich/getID3.git",
-            "reference": "41c05612d532d30f07680cad3a4a6efbec7fc7f5"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/JamesHeinrich/getID3/zipball/41c05612d532d30f07680cad3a4a6efbec7fc7f5",
-            "reference": "41c05612d532d30f07680cad3a4a6efbec7fc7f5",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.0"
-        },
-        "time": "2016-03-02 13:13:30",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "classmap": [
-                "getid3/getid3.php"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "GPL"
-        ],
-        "description": "PHP script that extracts useful information from popular multimedia file formats",
-        "homepage": "http://www.getid3.org/",
-        "keywords": [
-            "codecs",
-            "php",
-            "tags"
-        ]
     }
 ]

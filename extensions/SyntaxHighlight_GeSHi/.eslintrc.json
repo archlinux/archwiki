@@ -1,0 +1,16 @@
+{
+	"extends": "wikimedia",
+	"env": {
+		"browser": true,
+		"jquery": true,
+		"qunit": true
+	},
+	"globals": {
+		"ve": true,
+		"OO": false,
+		"mw": false
+	},
+	"rules": {
+		"dot-notation": [ "error", { "allowKeywords": true } ]
+	}
+}

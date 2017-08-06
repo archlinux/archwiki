@@ -4,7 +4,8 @@
 			"Event",
 			"Nghtwlkr",
 			"Danmichaelo",
-			"Kingu"
+			"Kingu",
+			"Jon Harald Søby"
 		]
 	},
 	"nuke": "Massesletting",
@@ -19,7 +20,7 @@
 	"nuke-submit-user": "Vis",
 	"nuke-toggleinvert": "Inverter",
 	"nuke-submit-delete": "Slett valgte",
-	"right-nuke": "Slette sider <em>en masse</em>",
+	"right-nuke": "Masseslette sider",
 	"nuke-select": "Velg: $1",
 	"nuke-userorip": "Brukernavn, IP-adresse eller tomt:",
 	"nuke-maxpages": "Maksimalt antall sider:",

@@ -2,11 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"Fabsouza1",
-			"Cainamarques"
+			"Cainamarques",
+			"Felipe L. Ewald"
 		]
 	},
 	"skinname-monobook": "MonoBook",
-	"monobook-desc": "A skin clássica do MediaWiki desde 2004, assim chamada pela imagem preto e branco de um livro que é colocada no plano de fundo da página",
-	"monobook.css": "/* o código CSS colocado aqui terá efeito nos usuários do tema Monobook */",
-	"monobook.js": "/* Qualquer JavaScript aqui colocado afetará os usuários do tema MonoBook */"
+	"monobook-desc": "O tema clássico do MediaWiki desde 2004, assim chamado pela imagem preto e branco de um livro que é colocada no plano de fundo da página",
+	"monobook.css": "/* CSS colocado aqui irá afetar usuários do tema MonoBook */",
+	"monobook.js": "/* Qualquer JavaScript aqui colocado será carregado para usuários usando o tema MonoBook */"
 }

@@ -80,10 +80,10 @@ class GadgetHooks {
 			return true;
 		}
 
-		$options = array();
-		$default = array();
+		$options = [];
+		$default = [];
 		foreach ( $gadgets as $section => $thisSection ) {
-			$available = array();
+			$available = [];
 
 			/**
 			 * @var $gadget Gadget
@@ -112,26 +112,26 @@ class GadgetHooks {
 		}
 
 		$preferences['gadgets-intro'] =
-			array(
+			[
 				'type' => 'info',
 				'label' => '&#160;',
-				'default' => Xml::tags( 'tr', array(),
-					Xml::tags( 'td', array( 'colspan' => 2 ),
+				'default' => Xml::tags( 'tr', [],
+					Xml::tags( 'td', [ 'colspan' => 2 ],
 						wfMessage( 'gadgets-prefstext' )->parseAsBlock() ) ),
 				'section' => 'gadgets',
 				'raw' => 1,
 				'rawrow' => 1,
-			);
+			];
 
 		$preferences['gadgets'] =
-			array(
+			[
 				'type' => 'multiselect',
 				'options' => $options,
 				'section' => 'gadgets',
 				'label' => '&#160;',
 				'prefix' => 'gadget-',
 				'default' => $default,
-			);
+			];
 
 		return true;
 	}
@@ -146,10 +146,10 @@ class GadgetHooks {
 		$ids = $repo->getGadgetIds();
 
 		foreach ( $ids as $id ) {
-			$resourceLoader->register( Gadget::getModuleName( $id ), array(
+			$resourceLoader->register( Gadget::getModuleName( $id ), [
 				'class' => 'GadgetResourceLoaderModule',
 				'id' => $id,
-			) );
+			] );
 		}
 
 		return true;
@@ -169,8 +169,8 @@ class GadgetHooks {
 
 		$lb = new LinkBatch();
 		$lb->setCaller( __METHOD__ );
-		$enabledLegacyGadgets = array();
-		$typelessMixedGadgets = array();
+		$enabledLegacyGadgets = [];
+		$typelessMixedGadgets = [];
 
 		/**
 		 * @var $gadget Gadget
@@ -182,12 +182,31 @@ class GadgetHooks {
 			} catch ( InvalidArgumentException $e ) {
 				continue;
 			}
+			$peers = [];
+			foreach ( $gadget->getPeers() as $peerName ) {
+				try {
+					$peers[] = $repo->getGadget( $peerName );
+				} catch ( InvalidArgumentException $e ) {
+					// Ignore
+					// @todo: Emit warning for invalid peer?
+				}
+			}
 			if ( $gadget->isEnabled( $user ) && $gadget->isAllowed( $user ) ) {
 				if ( $gadget->hasModule() ) {
 					if ( $gadget->getType() === 'styles' ) {
 						$out->addModuleStyles( Gadget::getModuleName( $gadget->getName() ) );
 					} elseif ( $gadget->getType() === 'general' ) {
 						$out->addModules( Gadget::getModuleName( $gadget->getName() ) );
+						// Load peer modules
+						foreach ( $peers as $peer ) {
+							if ( $peer->getType() === 'styles' ) {
+								$out->addModuleStyles( Gadget::getModuleName( $peer->getName() ) );
+							}
+							// Else if not type=styles: Use dependencies instead.
+							// Note: No need for recursion as styles modules don't support
+							// either of 'dependencies' and 'peers'.
+							// @todo: Emit warning for non-styles peer?
+						}
 					} else {
 						$out->addModuleStyles( Gadget::getModuleName( $gadget->getName() ) );
 						$out->addModules( Gadget::getModuleName( $gadget->getName() ) );
@@ -201,7 +220,7 @@ class GadgetHooks {
 			}
 		}
 
-		$strings = array();
+		$strings = [];
 		foreach ( $enabledLegacyGadgets as $id ) {
 			$strings[] = self::makeLegacyWarning( $id );
 		}
@@ -217,18 +236,18 @@ class GadgetHooks {
 		$special = SpecialPage::getTitleFor( 'Gadgets' );
 
 		return ResourceLoader::makeInlineScript(
-			Xml::encodeJsCall( 'mw.log.warn', array(
+			Xml::encodeJsCall( 'mw.log.warn', [
 				"Gadget \"$id\" was not loaded. Please migrate it to use ResourceLoader. " .
 				'See <' . $special->getCanonicalURL() . '>.'
-			) )
+			] )
 		);
 	}
 
 	private static function makeTypelessWarning( $id ) {
-		return ResourceLoader::makeInlineScript( Xml::encodeJsCall( 'mw.log.warn', array(
+		return ResourceLoader::makeInlineScript( Xml::encodeJsCall( 'mw.log.warn', [
 			"Gadget \"$id\" styles loaded twice. Migrate to type=general. " .
-			'See <https://phabricator.wikimedia.org/T42284>.'
-		) ) );
+			'See <https://www.mediawiki.org/wiki/RL/MGU#Gadget_type>.'
+		] ) );
 	}
 
 	/**
@@ -325,7 +344,7 @@ class GadgetHooks {
 	 * @return bool
 	 */
 	public static function onwgQueryPages( &$queryPages ) {
-		$queryPages[] = array( 'SpecialGadgetUsage', 'GadgetUsage' );
+		$queryPages[] = [ 'SpecialGadgetUsage', 'GadgetUsage' ];
 		return true;
 	}
 }

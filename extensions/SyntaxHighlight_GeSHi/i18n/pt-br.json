@@ -2,8 +2,17 @@
 	"@metadata": {
 		"authors": [
 			"Helder.wiki",
-			"He7d3r"
+			"He7d3r",
+			"Felipe L. Ewald"
 		]
 	},
-	"syntaxhighlight-desc": "Providencia realce de sintaxe <code>&lt;syntaxhighlight&gt;</code> através do [http://pygments.org/ Pygments]"
+	"syntaxhighlight-desc": "Providencia realce de sintaxe <code>&lt;syntaxhighlight&gt;</code> através do [http://pygments.org/ Pygments]",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "Código",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Idioma",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "(Nenhum)",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "Mostrar números de linha",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Bloco de código",
+	"syntaxhighlight-error-pygments-invocation-failure": "Falha ao invocar Pygments",
+	"syntaxhighlight-error-unknown-language": "Linguagem \"$1\" desconhecida",
+	"syntaxhighlight-error-exceeds-size-limit": "O tamanho do código, $1 {{PLURAL:$1|bytes}}, excede o máximo permitido de $2 {{PLURAL:$2|bytes}}"
 }

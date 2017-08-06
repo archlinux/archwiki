@@ -17,7 +17,8 @@
 			"Александр Сигачёв",
 			"Amire80",
 			"Sealle",
-			"Jack who built the house"
+			"Jack who built the house",
+			"Mailman"
 		]
 	},
 	"wikieditor": "Расширенный интерфейс редактирования викитекста",
@@ -69,10 +70,10 @@
 	"wikieditor-toolbar-tool-link-int-target-status-loading": "Проверка существования страницы…",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Страницы разрешения неоднозначностей",
 	"wikieditor-toolbar-tool-link-int-invalid": "Указанное название недопустимо.",
-	"wikieditor-toolbar-tool-link-lookslikeinternal": "Указанный вами URL похож на ссылку на другую вики-страницу. Вы хотите сделать данную ссылку внутренней?",
+	"wikieditor-toolbar-tool-link-lookslikeinternal": "Указанный вами URL похож на ссылку на другую вики-страницу. Возможно, вы хотите сделать данную ссылку внутренней?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Внутренняя ссылка",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "Внешняя ссылка",
-	"wikieditor-toolbar-tool-link-empty": "Вы не указали на что ссылаться.",
+	"wikieditor-toolbar-tool-link-empty": "Вы не указали цель.",
 	"wikieditor-toolbar-tool-file": "Встроенный файл",
 	"wikieditor-toolbar-tool-file-example": "Example.jpg",
 	"wikieditor-toolbar-tool-file-title": "Вставить файл",

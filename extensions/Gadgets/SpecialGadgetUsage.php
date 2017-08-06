@@ -70,55 +70,55 @@ class SpecialGadgetUsage extends QueryPage {
 	public function getQueryInfo() {
 		$dbr = wfGetDB( DB_SLAVE );
 		if ( !$this->activeUsers ) {
-			return array(
-				'tables' => array( 'user_properties' ),
-				'fields' => array(
+			return [
+				'tables' => [ 'user_properties' ],
+				'fields' => [
 					'title' => 'up_property',
 					'value' => 'SUM( up_value )',
 					'namespace' => NS_GADGET
-				),
-				'conds' => array(
+				],
+				'conds' => [
 					'up_property' . $dbr->buildLike( 'gadget-', $dbr->anyString() )
-				),
-				'options' => array(
-					'GROUP BY' => array( 'up_property' )
-				)
-			);
+				],
+				'options' => [
+					'GROUP BY' => [ 'up_property' ]
+				]
+			];
 		} else {
-			return array(
-				'tables' => array( 'user_properties', 'user', 'querycachetwo' ),
-				'fields' => array(
+			return [
+				'tables' => [ 'user_properties', 'user', 'querycachetwo' ],
+				'fields' => [
 					'title' => 'up_property',
 					'value' => 'SUM( up_value )',
 					// Need to pick fields existing in the querycache table so that the results are cachable
 					'namespace' => 'COUNT( qcc_title )'
-				),
-				'conds' => array(
+				],
+				'conds' => [
 					'up_property' . $dbr->buildLike( 'gadget-', $dbr->anyString() )
-				),
-				'options' => array(
-					'GROUP BY' => array( 'up_property' )
-				),
-				'join_conds' => array(
-					'user' => array(
-						'LEFT JOIN', array(
+				],
+				'options' => [
+					'GROUP BY' => [ 'up_property' ]
+				],
+				'join_conds' => [
+					'user' => [
+						'LEFT JOIN', [
 							'up_user = user_id'
-						)
-					),
-					'querycachetwo' => array(
-						'LEFT JOIN', array(
+						]
+					],
+					'querycachetwo' => [
+						'LEFT JOIN', [
 							'user_name = qcc_title',
 							'qcc_type = "activeusers"',
 							'up_value = 1'
-						)
-					)
-				)
-			);
+						]
+					]
+				]
+			];
 		}
 	}
 
 	public function getOrderFields() {
-		return array( 'value' );
+		return [ 'value' ];
 	}
 
 	/**
@@ -126,17 +126,17 @@ class SpecialGadgetUsage extends QueryPage {
 	 * Including opening <table>, and first <tr> with column headers.
 	 */
 	protected function outputTableStart() {
-		$html = Html::openElement( 'table', array( 'class' => array( 'sortable', 'wikitable' ) ) );
-		$html .= Html::openElement( 'tr', array() );
-		$headers = array( 'gadgetusage-gadget', 'gadgetusage-usercount' );
+		$html = Html::openElement( 'table', [ 'class' => [ 'sortable', 'wikitable' ] ] );
+		$html .= Html::openElement( 'tr', [] );
+		$headers = [ 'gadgetusage-gadget', 'gadgetusage-usercount' ];
 		if ( $this->activeUsers ) {
 			$headers[] = 'gadgetusage-activeusers';
 		}
 		foreach( $headers as $h ) {
 			if ( $h == 'gadgetusage-gadget' ) {
-				$html .= Html::element( 'th', array(), $this->msg( $h )->text() );
+				$html .= Html::element( 'th', [], $this->msg( $h )->text() );
 			} else {
-				$html .= Html::element( 'th', array( 'data-sort-type' => 'number' ),
+				$html .= Html::element( 'th', [ 'data-sort-type' => 'number' ],
 					$this->msg( $h )->text() );
 			}
 		}
@@ -153,12 +153,12 @@ class SpecialGadgetUsage extends QueryPage {
 		$gadgetTitle = substr( $result->title, 7 );
 		$gadgetUserCount = $this->getLanguage()->formatNum( $result->value );
 		if ( $gadgetTitle ) {
-			$html = Html::openElement( 'tr', array() );
-			$html .= Html::element( 'td', array(), $gadgetTitle );
-			$html .= Html::element( 'td', array(), $gadgetUserCount );
+			$html = Html::openElement( 'tr', [] );
+			$html .= Html::element( 'td', [], $gadgetTitle );
+			$html .= Html::element( 'td', [], $gadgetUserCount );
 			if ( $this->activeUsers == true ) {
 				$activeUserCount = $this->getLanguage()->formatNum( $result->namespace );
-				$html .= Html::element( 'td', array(), $activeUserCount );
+				$html .= Html::element( 'td', [], $activeUserCount );
 			}
 			$html .= Html::closeElement( 'tr' );
 			return $html;
@@ -173,7 +173,7 @@ class SpecialGadgetUsage extends QueryPage {
 	 * @return array
 	*/
 	protected function getDefaultGadgets( $gadgetRepo, $gadgetIds ) {
-		$gadgetsList = array();
+		$gadgetsList = [];
 		foreach ( $gadgetIds as $g ) {
 			$gadget = $gadgetRepo->getGadget( $g );
 			if ( $gadget->isOnByDefault() ) {
@@ -212,11 +212,11 @@ class SpecialGadgetUsage extends QueryPage {
 			$this->outputTableStart();
 			// Append default gadgets to the table with 'default' in the total and active user fields
 			foreach ( $defaultGadgets as $default ) {
-				$html = Html::openElement( 'tr', array() );
-				$html .= Html::element( 'td', array(), $default );
-				$html .= Html::element( 'td', array(), $this->msg( 'gadgetusage-default' ) );
+				$html = Html::openElement( 'tr', [] );
+				$html .= Html::element( 'td', [], $default );
+				$html .= Html::element( 'td', [], $this->msg( 'gadgetusage-default' )->text() );
 				if ( $this->activeUsers ) {
-					$html .= Html::element( 'td', array(), $this->msg( 'gadgetusage-default' ) );
+					$html .= Html::element( 'td', [], $this->msg( 'gadgetusage-default' )->text() );
 				}
 				$html .= Html::closeElement( 'tr' );
 				$out->addHTML( $html );

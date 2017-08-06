@@ -5,7 +5,8 @@
 			"Omnipaedista",
 			"Protnet",
 			"ZaDiak",
-			"Απεργός"
+			"Απεργός",
+			"Xaris333"
 		]
 	},
 	"cite-desc": "Προσθέτει τις ετικέτες <nowiki><ref[ όνομα=αναγνωριστικό]></nowiki> και <nowiki><references/></nowiki>, για παραπομπές.",
@@ -27,5 +28,6 @@
 	"cite_error_references_no_key": "Η ετικέτα <code>&lt;ref&gt;</code> που ορίζεται μέσα στο <code>&lt;references&gt;</code> δεν έχει χαρακτηριστικό ονόματος.",
 	"cite_error_empty_references_define": "Η ετικέτα <code>&lt;ref&gt;</code> που ορίζεται μέσα στο <code>&lt;references&gt;</code> με όνομα «$1» δεν έχει καθόλου περιεχόμενο.",
 	"cite_references_link_accessibility_label": "Άλμα πάνω",
-	"cite_references_link_many_accessibility_label": "Άλμα πάνω, στο:"
+	"cite_references_link_many_accessibility_label": "Άλμα πάνω, στο:",
+	"cite_warning_sectionpreview_no_text": "↓\n<code>&lt;ref&gt;</code> Η ετικέτα με την ονομασία <code>$1</code> δεν μπορεί να προβληθεί διότι καθορίζεται έξω από το τρέχον κομμάτι ή δεν καθορίζεται καθόλου."
 }

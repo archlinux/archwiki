@@ -1,4 +1,7 @@
 <?php
+
+use Wikimedia\TestingAccessWrapper;
+
 /**
  * @group Gadgets
  */
@@ -17,7 +20,7 @@ class GadgetsTest extends MediaWikiTestCase {
 
 	private function getModule( Gadget $g ) {
 		$module = TestingAccessWrapper::newFromObject(
-			new GadgetResourceLoaderModule( array( 'id' => null ) )
+			new GadgetResourceLoaderModule( [ 'id' => null ] )
 		);
 		$module->gadget = $g;
 		return $module;
@@ -33,11 +36,11 @@ class GadgetsTest extends MediaWikiTestCase {
 		$g = $this->create( '* foo bar| foo.css|foo.js|foo.bar' );
 		$this->assertEquals( 'foo_bar', $g->getName() );
 		$this->assertEquals( 'ext.gadget.foo_bar', Gadget::getModuleName( $g->getName() ) );
-		$this->assertEquals( array( 'MediaWiki:Gadget-foo.js' ), $g->getScripts() );
-		$this->assertEquals( array( 'MediaWiki:Gadget-foo.css' ), $g->getStyles() );
-		$this->assertEquals( array( 'MediaWiki:Gadget-foo.js', 'MediaWiki:Gadget-foo.css' ),
+		$this->assertEquals( [ 'MediaWiki:Gadget-foo.js' ], $g->getScripts() );
+		$this->assertEquals( [ 'MediaWiki:Gadget-foo.css' ], $g->getStyles() );
+		$this->assertEquals( [ 'MediaWiki:Gadget-foo.js', 'MediaWiki:Gadget-foo.css' ],
 			$g->getScriptsAndStyles() );
-		$this->assertEquals( array( 'MediaWiki:Gadget-foo.js' ), $g->getLegacyScripts() );
+		$this->assertEquals( [ 'MediaWiki:Gadget-foo.js' ], $g->getLegacyScripts() );
 		$this->assertFalse( $g->supportsResourceLoader() );
 		$this->assertTrue( $g->hasModule() );
 	}
@@ -51,76 +54,74 @@ class GadgetsTest extends MediaWikiTestCase {
 
 	public function testDependencies() {
 		$g = $this->create( '* foo[ResourceLoader|dependencies=jquery.ui]|bar.js' );
-		$this->assertEquals( array( 'MediaWiki:Gadget-bar.js' ), $g->getScripts() );
+		$this->assertEquals( [ 'MediaWiki:Gadget-bar.js' ], $g->getScripts() );
 		$this->assertTrue( $g->supportsResourceLoader() );
-		$this->assertEquals( array( 'jquery.ui' ), $g->getDependencies() );
-	}
-
-	public function testPosition() {
-		$g = $this->create( '* foo[ResourceLoader]|bar.js' );
-		$this->assertEquals( 'bottom', $g->getPosition(), 'Default position' );
-
-		$g = $this->create( '* foo[ResourceLoader|top]|bar.js' );
-		$this->assertEquals( 'top', $g->getPosition(), 'Position top' );
+		$this->assertEquals( [ 'jquery.ui' ], $g->getDependencies() );
 	}
 
 	public static function provideGetType() {
-		return array(
-			array(
+		return [
+			[
 				'Default (mixed)',
 				'* foo[ResourceLoader]|bar.css|bar.js',
 				'',
 				ResourceLoaderModule::LOAD_GENERAL,
-			),
-			array(
+			],
+			[
 				'Default (styles only)',
 				'* foo[ResourceLoader]|bar.css',
 				'styles',
 				ResourceLoaderModule::LOAD_STYLES,
-			),
-			array(
+			],
+			[
 				'Default (scripts only)',
 				'* foo[ResourceLoader]|bar.js',
 				'general',
 				ResourceLoaderModule::LOAD_GENERAL,
-			),
-			array(
+			],
+			[
+				'Default (styles only with dependencies)',
+				'* foo[ResourceLoader|dependencies=jquery.ui]|bar.css',
+				'',
+				ResourceLoaderModule::LOAD_GENERAL,
+			],
+			[
 				'Styles type (mixed)',
 				'* foo[ResourceLoader|type=styles]|bar.css|bar.js',
 				'styles',
 				ResourceLoaderModule::LOAD_STYLES,
-			),
-			array(
+			],
+			[
 				'Styles type (styles only)',
 				'* foo[ResourceLoader|type=styles]|bar.css',
 				'styles',
 				ResourceLoaderModule::LOAD_STYLES,
-			),
-			array(
+			],
+			[
 				'Styles type (scripts only)',
 				'* foo[ResourceLoader|type=styles]|bar.js',
 				'styles',
 				ResourceLoaderModule::LOAD_STYLES,
-			),
-			array(
+			],
+			[
 				'General type (mixed)',
 				'* foo[ResourceLoader|type=general]|bar.css|bar.js',
 				'general',
 				ResourceLoaderModule::LOAD_GENERAL,
-			),
-			array(
+			],
+			[
 				'General type (styles only)',
 				'* foo[ResourceLoader|type=general]|bar.css',
 				'general',
 				ResourceLoaderModule::LOAD_GENERAL,
-			),
-			array(
+			],
+			[
 				'General type (scripts only)',
 				'* foo[ResourceLoader|type=general]|bar.js',
 				'general',
 				ResourceLoaderModule::LOAD_GENERAL,
-			),
-		);
+			],
+		];
 	}
 
 	/**
@@ -144,7 +145,7 @@ class GadgetsTest extends MediaWikiTestCase {
 	}
 
 	public function testPreferences() {
-		$prefs = array();
+		$prefs = [];
 		$repo = TestingAccessWrapper::newFromObject( new MediaWikiGadgetsDefinitionRepo() );
 		// Force usage of a MediaWikiGadgetsDefinitionRepo
 		GadgetRepo::setSingleton( $repo );

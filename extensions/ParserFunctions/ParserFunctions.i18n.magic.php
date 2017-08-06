@@ -635,14 +635,14 @@ $magicWords['tr'] = array(
 /** Ukrainian (українська) */
 $magicWords['uk'] = array(
 	'expr' => array( 0, 'вираз' ),
-	'if' => array( 0, 'якщо' ),
+	'if' => array( 0, 'якщо', 'если' ),
 	'ifeq' => array( 0, 'якщорівні', 'рівні' ),
 	'ifexpr' => array( 0, 'якщовираз' ),
-	'iferror' => array( 0, 'якщопомилка' ),
-	'switch' => array( 0, 'вибірка' ),
-	'default' => array( 0, '#інакше', '#за_замовчуванням' ),
+	'iferror' => array( 0, 'якщопомилка', 'еслиошибка' ),
+	'switch' => array( 0, 'вибірка', 'переключатель' ),
+	'default' => array( 0, '#інакше', '#за_замовчуванням', '#умолчание' ),
 	'ifexist' => array( 0, 'якщоіснує' ),
-	'replace' => array( 0, 'заміна' ),
+	'replace' => array( 0, 'заміна', 'замена' ),
 );
 
 /** Urdu (اردو) */

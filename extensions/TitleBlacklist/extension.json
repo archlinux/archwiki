@@ -32,6 +32,11 @@
 	"LogActionsHandlers": {
 		"titleblacklist/*": "LogFormatter"
 	},
+	"GrantPermissions": {
+		"viewrestrictedlogs": {
+			"titleblacklistlog": true
+		}
+	},
 	"APIModules": {
 		"titleblacklist": "ApiQueryTitleBlacklist"
 	},

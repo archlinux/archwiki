@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Asoxor"
+			"Asoxor",
+			"Lost Whispers"
 		]
 	},
+	"cite_error": "ھەڵەی ژێدەرەکان: $1",
 	"cite_error_ref_too_many_keys": "تاگی <code>&lt;ref&gt;</code>ی ڕێگەپێنەدراو؛\nبۆ نموونە، ناوە ھەڵەیەکان یان لە ڕادە بەدەر"
 }

@@ -1,8 +1,8 @@
 ( function ( $ ) {
 	QUnit.module( 'ext.wikiEditor.toolbar', QUnit.newMwEnvironment( {
 		setup: function () {
-			var $fixture = $( '#qunit-fixture' );
-			var $target = $( '<textarea id="wpTextBox1">' );
+			var $fixture = $( '#qunit-fixture' ),
+				$target = $( '<textarea id="wpTextBox1">' );
 			this.$target = $target;
 			$fixture.append( $target );
 			$target.wikiEditor( 'addModule', 'toolbar' );

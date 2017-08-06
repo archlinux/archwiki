@@ -21,6 +21,8 @@ class ButtonInputWidget extends InputWidget {
 	 */
 	public static $supportsSimpleLabel = false;
 
+	public static $tagName = 'span';
+
 	/* Properties */
 
 	/**

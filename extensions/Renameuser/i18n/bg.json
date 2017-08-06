@@ -6,7 +6,8 @@
 			"Spiritia",
 			"Stanqo",
 			"Turin",
-			"Vodnokon4e"
+			"Vodnokon4e",
+			"Termininja"
 		]
 	},
 	"renameuser": "Преименуване на потребител",
@@ -33,7 +34,9 @@
 	"renameuser-page-moved": "Страницата $1 беше преместена като $2.",
 	"renameuser-page-unmoved": "Страницата $1 не можа да бъде преместена като $2.",
 	"log-name-renameuser": "Дневник на преименуванията",
+	"log-description-renameuser": "Това е дневник на промените в потребителските имена.",
 	"renameuser-move-log": "Автоматично преместена страница при преименуването на потребител \"[[User:$1|$1]]\" като \"[[User:$2|$2]]\"",
+	"action-renameuser": "преименуване на потребител",
 	"right-renameuser": "преименуване на потребители",
 	"renameuser-renamed-notice": "Потребителят беше преименуван.\nЗа справка по-долу е показан Дневникът на преименуванията."
 }

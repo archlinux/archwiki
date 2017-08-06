@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Avjoska",
-			"Pikne"
+			"Pikne",
+			"Cumbril"
 		]
 	},
 	"interwiki": "Intervikiandmete vaatamine ja muutmine",
@@ -19,7 +20,7 @@
 	"interwiki_local_1_intro": "Seda interviki eesliidet kasutav HTTP-välispäring kohalikku vikisse suunatakse ümber interviki sihtaadressile (st töötab nagu link kohalikule leheküljele).",
 	"interwiki_trans": "Kasutamine mallina",
 	"interwiki-trans-label": "Kasutamine mallina:",
-	"interwiki_trans_1_intro": "Kui kasutatakse süntaksit <code>{<nowiki />{eesliide:<em>lehekülje pealkiri</em>}}</code>, võimaldatakse välisviki malli või lehekülje kasutamist mallina, eeldusel, et nii toiminine on üldiselt lubatud ([//www.mediawiki.org/wiki/Manual:$wgEnableScaryTranscluding ScaryTranscluding]).",
+	"interwiki_trans_1_intro": "Kui kasutatakse süntaksit <code>{<nowiki />{eesliide:<em>lehekülje pealkiri</em>}}</code>, võimaldatakse välisviki malli või lehekülje kasutamist mallina, eeldusel, et nii toimimine on üldiselt lubatud ([//www.mediawiki.org/wiki/Manual:$wgEnableScaryTranscluding ScaryTranscluding]).",
 	"interwiki_trans_0_intro": "Süntakiga <code>{<nowiki />{eesliide:<em>lehekülje pealkiri</em>}}</code> ei lubata välisviki malli või lehekülge mallina kasutada, vaid pöördutakse kohalikus mallinimeruumis asuva lehekülje poole.",
 	"interwiki_1": "jah",
 	"interwiki_0": "ei",

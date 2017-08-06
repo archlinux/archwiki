@@ -8,7 +8,8 @@
 			"Shirayuki",
 			"Sujiniku",
 			"2nd-player",
-			"Otokoume"
+			"Otokoume",
+			"Omotecho"
 		]
 	},
 	"apihelp-query+references-description": "指定されたページに関連付けられた脚注のデータ表現を返す",
@@ -20,8 +21,7 @@
 	"cite_error_ref_too_many_keys": "無効な <code>&lt;ref&gt;</code> タグです。\n名前 (name 属性) が無効です (数が多すぎる、など)",
 	"cite_error_ref_no_input": "無効な <code>&lt;ref&gt;</code> タグです。\n名前 (name 属性) がない場合は引用句の内容が必要です",
 	"cite_error_references_duplicate_key": "無効な <code>&lt;ref&gt;</code> タグ; name \"$1\"が異なる内容で複数回定義されています",
-	"cite_error_references_invalid_parameters": "無効な <code>&lt;references&gt;</code> タグです。\n引数は指定できません。\n<code>&lt;references /&gt;</code> を使用してください",
-	"cite_error_references_invalid_parameters_group": "無効な <code>&lt;references&gt;</code> タグです。\n使用できる引数は「group」のみです。\n<code>&lt;references /&gt;</code> または <code>&lt;references group=\"...\" /&gt;</code> を使用してください",
+	"cite_error_references_invalid_parameters": "無効な <code>&lt;references&gt;</code> タグの引数です。",
 	"cite_error_references_no_backlink_label": "カスタム バックリンク ラベルを使い果たしました。\n<nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki> メッセージでの定義を増やしてください。",
 	"cite_error_no_link_label_group": "グループ「$1」用のカスタム リンク ラベルを使い果たしました。\n<nowiki>[[MediaWiki:$2]]</nowiki> メッセージを編集してラベルの定義を増やしてください。",
 	"cite_error_references_no_text": "無効な <code>&lt;ref&gt;</code> タグです。\n「<code>$1</code>」という名前の引用句に対するテキストが指定されていません",

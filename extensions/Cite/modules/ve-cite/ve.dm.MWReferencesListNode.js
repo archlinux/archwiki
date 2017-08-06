@@ -1,7 +1,7 @@
 /*!
  * VisualEditor DataModel MWReferencesListNode class.
  *
- * @copyright 2011-2016 Cite VisualEditor Team and others; see AUTHORS.txt
+ * @copyright 2011-2017 Cite VisualEditor Team and others; see AUTHORS.txt
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
@@ -18,7 +18,7 @@
  */
 ve.dm.MWReferencesListNode = function VeDmMWReferencesListNode() {
 	// Parent constructor
-	ve.dm.BranchNode.apply( this, arguments );
+	ve.dm.MWReferencesListNode.super.apply( this, arguments );
 
 	// Mixin constructors
 	ve.dm.FocusableNode.call( this );
@@ -80,7 +80,7 @@ ve.dm.MWReferencesListNode.static.toDomElements = function ( data, doc, converte
 		attribs = dataElement.attributes,
 		contentsData = data.slice( 1, -1 );
 
-	if ( dataElement.originalDomElementsIndex ) {
+	if ( dataElement.originalDomElementsIndex !== undefined ) {
 		// If there's more than 1 element, preserve entire array, not just first element
 		els = ve.copyDomElements( converter.getStore().value( dataElement.originalDomElementsIndex ), doc );
 	} else {
@@ -121,6 +121,14 @@ ve.dm.MWReferencesListNode.static.toDomElements = function ( data, doc, converte
 	}
 
 	return els;
+};
+
+ve.dm.MWReferencesListNode.static.describeChange = function ( key ) {
+	if ( key === 'originalMw' ) {
+		return null;
+	}
+	// Parent method
+	return ve.dm.MWReferencesListNode.super.static.describeChange.apply( this, arguments );
 };
 
 /* Registration */

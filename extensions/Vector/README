@@ -1,0 +1,9 @@
+The Vector extension has been discontinued and most of its
+functionality was moved into MediaWiki core. If you see this file,
+you should remove the extension from your MediaWiki installation.
+
+It used to provide enhancements to the Vector skin, some experimental,
+some well-established. The good parts have been integrated and the
+failed experiments were removed.
+
+See: https://www.mediawiki.org/wiki/Extension:Vector

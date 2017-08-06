@@ -51,8 +51,7 @@ ve.ui.MWSyntaxHighlightInspector.prototype.initialize = function () {
 	this.$content.addClass( 've-ui-mwSyntaxHighlightInspector-content' );
 	this.form.$element.prepend(
 		this.languageField.$element,
-		this.codeField.$element,
-		this.showLinesField.$element
+		this.codeField.$element
 	);
 };
 
@@ -74,8 +73,7 @@ ve.ui.MWSyntaxHighlightInspector.prototype.getSetupProcess = function ( data ) {
 	var process = ve.ui.MWSyntaxHighlightInspector.super.prototype.getSetupProcess.call( this, data );
 	// Mixin process
 	return ve.ui.MWSyntaxHighlightWindow.prototype.getSetupProcess.call( this, data, process ).next( function () {
-		this.language.input.on( 'change', this.onChangeHandler );
-		this.showLinesCheckbox.on( 'change', this.onChangeHandler );
+		this.language.on( 'change', this.onChangeHandler );
 	}, this );
 };
 
@@ -87,8 +85,7 @@ ve.ui.MWSyntaxHighlightInspector.prototype.getTeardownProcess = function ( data 
 	var process = ve.ui.MWSyntaxHighlightInspector.super.prototype.getTeardownProcess.call( this, data );
 	// Mixin process
 	return ve.ui.MWSyntaxHighlightWindow.prototype.getTeardownProcess.call( this, data, process ).first( function () {
-		this.language.input.off( 'change', this.onChangeHandler );
-		this.showLinesCheckbox.off( 'change', this.onChangeHandler );
+		this.language.off( 'change', this.onChangeHandler );
 	}, this );
 };
 

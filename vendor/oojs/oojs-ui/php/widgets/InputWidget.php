@@ -83,24 +83,31 @@ class InputWidget extends Widget {
 	}
 
 	/**
+	 * Get input element's ID.
+	 *
+	 * If the element already has an ID then that is returned, otherwise unique ID is
+	 * generated, set on the element, and returned.
+	 *
+	 * @return {string} The ID of the element
+	 */
+	public function getInputId() {
+		$id = $this->input->getAttribute( 'id' );
+
+		if ( $id === null ) {
+			$id = Tag::generateElementId();
+			$this->input->setAttributes( [ 'id' => $id ] );
+		}
+
+		return $id;
+	}
+
+	/**
 	 * Get the value of the input.
 	 *
 	 * @return string Input value
 	 */
 	public function getValue() {
 		return $this->value;
-	}
-
-	/**
-	 * Set the directionality of the input, either RTL (right-to-left) or LTR (left-to-right).
-	 *
-	 * @deprecated since v0.13.1, use #setDir directly
-	 * @param boolean $isRTL Directionality is right-to-left
-	 * @return $this
-	 */
-	public function setRTL( $isRTL ) {
-		$this->setDir( $isRTL ? 'rtl' : 'ltr' );
-		return $this;
 	}
 
 	/**

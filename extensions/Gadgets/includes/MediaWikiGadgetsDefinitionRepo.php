@@ -5,7 +5,6 @@ use MediaWiki\MediaWikiServices;
  * Gadgets repo powered by MediaWiki:Gadgets-definition
  */
 class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
-
 	const CACHE_VERSION = 2;
 
 	private $definitionCache;
@@ -24,7 +23,7 @@ class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
 		if ( $gadgets ) {
 			return array_keys( $gadgets );
 		} else {
-			return array();
+			return [];
 		}
 	}
 
@@ -43,8 +42,8 @@ class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
 
 	/**
 	 * Loads list of gadgets and returns it as associative array of sections with gadgets
-	 * e.g. array( 'sectionnname1' => array( $gadget1, $gadget2 ),
-	 *             'sectionnname2' => array( $gadget3 ) );
+	 * e.g. [ 'sectionnname1' => [ $gadget1, $gadget2 ],
+	 *             'sectionnname2' => [ $gadget3 ] ];
 	 * @return array|bool Gadget array or false on failure
 	 */
 	protected function loadGadgets() {
@@ -85,9 +84,9 @@ class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
 					$ttl = WANObjectCache::TTL_UNCACHEABLE;
 				}
 
-				return array( 'gadgets' => $gadgets, 'time' => $now );
+				return [ 'gadgets' => $gadgets, 'time' => $now ];
 			},
-			array( 'checkKeys' => array( $key ), 'lockTSE' => 300 )
+			[ 'checkKeys' => [ $key ], 'lockTSE' => 300 ]
 		);
 
 		// Update the tier 1 cache as needed
@@ -103,18 +102,20 @@ class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
 
 	/**
 	 * Fetch list of gadgets and returns it as associative array of sections with gadgets
-	 * e.g. array( $name => $gadget1, etc. )
+	 * e.g. [ $name => $gadget1, etc. ]
 	 * @param $forceNewText String: Injected text of MediaWiki:gadgets-definition [optional]
 	 * @return array|bool
 	 */
 	public function fetchStructuredList( $forceNewText = null ) {
 		if ( $forceNewText === null ) {
-			$g = wfMessage( "gadgets-definition" )->inContentLanguage();
-			if ( !$g->exists() ) {
+			// T157210: avoid using wfMessage() to avoid staleness due to cache layering
+			$title = Title::makeTitle( NS_MEDIAWIKI, 'Gadgets-definition' );
+			$rev = Revision::newFromTitle( $title );
+			if ( !$rev || !$rev->getContent() || $rev->getContent()->isEmpty() ) {
 				return false; // don't cache
 			}
 
-			$g = $g->plain();
+			$g = $rev->getContent()->getNativeData();
 		} else {
 			$g = $forceNewText;
 		}
@@ -133,18 +134,18 @@ class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
 	/**
 	 * Generates a structured list of Gadget objects from a definition
 	 *
-	 * @param $definition
+	 * @param string $definition
 	 * @return array Array( name => Gadget )
 	 */
 	private function listFromDefinition( $definition ) {
 		$definition = preg_replace( '/<!--.*?-->/s', '', $definition );
 		$lines = preg_split( '/(\r\n|\r|\n)+/', $definition );
 
-		$gadgets = array();
+		$gadgets = [];
 		$section = '';
 
 		foreach ( $lines as $line ) {
-			$m = array();
+			$m = [];
 			if ( preg_match( '/^==+ *([^*:\s|]+?)\s*==+\s*$/', $line, $m ) ) {
 				$section = $m[1];
 			} else {
@@ -165,14 +166,18 @@ class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
 	 * @return Gadget|bool Instance of Gadget class or false if $definition is invalid
 	 */
 	public function newFromDefinition( $definition, $category ) {
-		$m = array();
-		if ( !preg_match( '/^\*+ *([a-zA-Z](?:[-_:.\w\d ]*[a-zA-Z0-9])?)(\s*\[.*?\])?\s*((\|[^|]*)+)\s*$/', $definition, $m ) ) {
+		$m = [];
+		if ( !preg_match(
+			'/^\*+ *([a-zA-Z](?:[-_:.\w\d ]*[a-zA-Z0-9])?)(\s*\[.*?\])?\s*((\|[^|]*)+)\s*$/',
+			$definition,
+			$m
+		) ) {
 			return false;
 		}
 		// NOTE: the gadget name is used as part of the name of a form field,
-		//      and must follow the rules defined in http://www.w3.org/TR/html4/types.html#type-cdata
-		//      Also, title-normalization applies.
-		$info = array( 'category' => $category );
+		// and must follow the rules defined in https://www.w3.org/TR/html4/types.html#type-cdata
+		// Also, title-normalization applies.
+		$info = [ 'category' => $category ];
 		$info['name'] = trim( str_replace( ' ', '_', $m[1] ) );
 		// If the name is too long, then RL will throw an MWException when
 		// we try to register the module
@@ -189,7 +194,7 @@ class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
 				$params = explode( ',', $arr[1] );
 				$params = array_map( 'trim', $params );
 			} else {
-				$params = array();
+				$params = [];
 			}
 
 			switch ( $option ) {
@@ -198,6 +203,9 @@ class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
 					break;
 				case 'dependencies':
 					$info['dependencies'] = $params;
+					break;
+				case 'peers':
+					$info['peers'] = $params;
 					break;
 				case 'rights':
 					$info['requiredRights'] = $params;
@@ -213,9 +221,6 @@ class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
 					break;
 				case 'targets':
 					$info['targets'] = $params;
-					break;
-				case 'top':
-					$info['position'] = 'top';
 					break;
 				case 'type':
 					// Single value, not a list
@@ -236,5 +241,4 @@ class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
 
 		return new Gadget( $info );
 	}
-
 }

@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Query;
 
 use Elastica\Query as BaseQuery;
@@ -59,6 +58,18 @@ class HasChild extends AbstractQuery
     public function setScope($scope)
     {
         return $this->setParam('_scope', $scope);
+    }
+
+    /**
+     * Set inner hits.
+     *
+     * @param InnerHits $innerHits
+     *
+     * @return $this
+     */
+    public function setInnerHits(InnerHits $innerHits)
+    {
+        return $this->setParam('inner_hits', $innerHits);
     }
 
     /**

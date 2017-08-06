@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Agilight",
-			"Kaganer"
+			"Kaganer",
+			"Көпек"
 		]
 	},
 	"wikieditor-wikitext-tab": "Викисөзүглел",
@@ -21,7 +22,7 @@
 	"wikieditor-toolbar-tool-italic-example": "Кыйгас сөзүглел",
 	"wikieditor-toolbar-tool-ilink": "Иштики арынче айтыг",
 	"wikieditor-toolbar-tool-ilink-example": "Шөлүгнүң ады",
-	"wikieditor-toolbar-tool-link": "Шөлүг",
+	"wikieditor-toolbar-tool-link": "Айтыг",
 	"wikieditor-toolbar-tool-link-cancel": "Ойталал",
 	"wikieditor-toolbar-tool-file-example": "Чижек.jpg",
 	"wikieditor-toolbar-tool-file-title": "Файл киирер",

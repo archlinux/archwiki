@@ -1,8 +1,7 @@
 <?php
-
 namespace Elastica\Query;
 
-use Elastica\Type;
+use Elastica\Type as ElasticaType;
 
 /**
  * Ids Query.
@@ -16,19 +15,12 @@ use Elastica\Type;
 class Ids extends AbstractQuery
 {
     /**
-     * Params.
-     *
-     * @var array Params
-     */
-    protected $_params = array();
-
-    /**
      * Creates filter object.
      *
      * @param string|\Elastica\Type $type Type to filter on
      * @param array                 $ids  List of ids
      */
-    public function __construct($type = null, array $ids = array())
+    public function __construct($type = null, array $ids = [])
     {
         $this->setType($type);
         $this->setIds($ids);
@@ -57,7 +49,7 @@ class Ids extends AbstractQuery
      */
     public function addType($type)
     {
-        if ($type instanceof Type) {
+        if ($type instanceof ElasticaType) {
             $type = $type->getName();
         } elseif (empty($type) && !is_numeric($type)) {
             // A type can be 0, but cannot be empty
@@ -72,20 +64,20 @@ class Ids extends AbstractQuery
     /**
      * Set type.
      *
-     * @param string|\Elastica\Type $type Type name or object
+     * @param array|string|\Elastica\Type $type Type name or object
      *
      * @return $this
      */
     public function setType($type)
     {
-        if ($type instanceof Type) {
+        if ($type instanceof ElasticaType) {
             $type = $type->getName();
         } elseif (empty($type) && !is_numeric($type)) {
             // A type can be 0, but cannot be empty
             return $this;
         }
 
-        $this->_params['type'] = $type;
+        $this->_params['type'] = (array) $type;
 
         return $this;
     }
@@ -102,7 +94,7 @@ class Ids extends AbstractQuery
         if (is_array($ids)) {
             $this->_params['values'] = $ids;
         } else {
-            $this->_params['values'] = array($ids);
+            $this->_params['values'] = [$ids];
         }
 
         return $this;
@@ -117,6 +109,6 @@ class Ids extends AbstractQuery
      */
     public function toArray()
     {
-        return array('ids' => $this->_params);
+        return ['ids' => $this->_params];
     }
 }

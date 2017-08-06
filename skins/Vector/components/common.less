@@ -9,7 +9,7 @@
  * the child selector. You can spot this by looking for the "OVERRIDDEN BY COMPLIANT BROWSERS" and
  * "IGNORED BY IE6" comments.
  */
-@import "mediawiki.mixins";
+@import 'mediawiki.mixins';
 
 /* Framework */
 html {
@@ -39,18 +39,11 @@ body {
 	color: @content-font-color;
 	direction: ltr;
 
-	.mw-editsection,
-	.mw-editsection-like {
-		font-family: @content-font-family;
-	}
-
-	p {
-		line-height: inherit;
-		margin: 0.5em 0;
-	}
-
-	h1,
-	h2 {
+	// h1's can exist outside of mw-body-content so some heading styles
+	// need to be defined in mw-body as well
+	& h1,
+	&-content h1,
+	&-content h2 {
 		font-family: @content-heading-font-family;
 		line-height: @heading-line-height;
 		margin-bottom: 0.25em;
@@ -65,13 +58,45 @@ body {
 		}
 	}
 
-	h1 {
+	& h1,
+	&-content h1 {
 		font-size: @content-heading-font-size;
 	}
-	.mw-body-content {
-		h1 {
-			margin-top: 1em;
-		}
+
+	.firstHeading {
+		/* Change the default from mediawiki.skinning CSS to let indicators float into heading area */
+		overflow: visible;
+	}
+
+	.mw-indicators {
+		float: right;
+		line-height: @content-line-height;
+		font-size: @content-font-size;
+		/* Ensure that this is displayed on top of .mw-body-content and clickable */
+		position: relative;
+		z-index: 1;
+	}
+
+	.mw-indicator {
+		display: inline-block;
+		zoom: 1;
+		*display: inline; // stylelint-disable declaration-block-no-duplicate-properties
+	}
+}
+
+.mw-body-content {
+	position: relative;
+	line-height: @content-line-height;
+	font-size: @content-font-size;
+	z-index: 0;
+
+	p {
+		line-height: inherit;
+		margin: 0.5em 0;
+	}
+
+	h1 {
+		margin-top: 1em;
 	}
 
 	h2 {
@@ -109,26 +134,12 @@ body {
 		font-size: 100%; /* (reset) */
 		font-family: @content-font-family;
 	}
+}
 
-	.firstHeading {
-		/* Change the default from mediawiki.skinning CSS to let indicators float into heading area */
-		overflow: visible;
-	}
-
-	.mw-indicators {
-		float: right;
-		line-height: @content-line-height;
-		font-size: @content-font-size;
-		/* Ensure that this is displayed on top of .mw-body-content and clickable */
-		position: relative;
-		z-index: 1;
-	}
-
-	.mw-indicator {
-		display: inline-block;
-		zoom: 1;
-		*display: inline;
-	}
+/* Allow edit sections outside of mw-body-content (T160269) */
+.mw-editsection,
+.mw-editsection-like {
+	font-family: @content-font-family;
 }
 
 /* Hide empty portlets */
@@ -157,11 +168,4 @@ pre,
 
 .redirectMsg p {
 	margin: 0;
-}
-
-.mw-body-content {
-	position: relative;
-	line-height: @content-line-height;
-	font-size: @content-font-size;
-	z-index: 0;
 }

@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Michaello",
-			"Milicevic01"
+			"Milicevic01",
+			"Сербијана"
 		]
 	},
 	"imagemap_desc": "Omogućava klijentskoj strani klikabilnu mapu korišćnjenjm oznake <code>&lt;imagemap&gt;</code>.",
@@ -15,7 +16,7 @@
 	"imagemap_unrecognised_shape": "Greška: nepoznat oblik na liniji $1, svaka linija mora početi jednom od: <code>default</code>, <code>rect</code>, <code>circle</code> ili <code>poly</code>.",
 	"imagemap_invalid_coord": "Greška: loše koordinate u liniji $1; moraju biti broj.",
 	"imagemap_invalid_desc": "Greška: loša specifikacija desc, mora biti jedno od: <code>$1</code>.",
-	"imagemap_description": "O ovoj slici",
+	"imagemap_description": "O slici",
 	"imagemap_desc_types": "gore-desno, dole-desno, dole-levo, gore-levo, nema",
 	"imagemap_poly_odd": "Greška: nađen je poligon sa neparnim brojem koordinata u liniji $1"
 }

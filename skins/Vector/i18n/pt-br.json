@@ -6,12 +6,17 @@
 			"Giro720",
 			"Helder.wiki",
 			555,
-			"He7d3r"
+			"He7d3r",
+			"!Silent",
+			"Felipe L. Ewald"
 		]
 	},
-	"vector.js": "/* Qualquer JavaScript aqui colocado afetará os usuários do skin Vector */",
+	"skinname-vector": "Vector",
+	"vector-skin-desc": "Versão moderna do MonoBook com um visual limpo e várias melhorias de usabilidade",
+	"vector.css": "/* CSS colocado aqui irá afetar usuários do tema Vector */",
+	"vector.js": "/* Qualquer JavaScript aqui colocado será carregado para usuários usando o tema Vector */",
 	"vector-action-addsection": "Adicionar tópico",
-	"vector-action-delete": "Eliminar",
+	"vector-action-delete": "Excluir",
 	"vector-action-move": "Mover",
 	"vector-action-protect": "Proteger",
 	"vector-action-undelete": "Restaurar",

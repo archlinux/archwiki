@@ -49,6 +49,11 @@ $specialPageAliases['bjn'] = array(
 	'Nuke' => array( 'Nuklir' ),
 );
 
+/** Bengali (বাংলা) */
+$specialPageAliases['bn'] = array(
+	'Nuke' => array( 'গণ_অপসারণ' ),
+);
+
 /** Chechen (нохчийн) */
 $specialPageAliases['ce'] = array(
 	'Nuke' => array( 'Дуккха_дӀаяхар' ),
@@ -276,7 +281,7 @@ $specialPageAliases['tr'] = array(
 
 /** Ukrainian (українська) */
 $specialPageAliases['uk'] = array(
-	'Nuke' => array( 'Масове_вилучення' ),
+	'Nuke' => array( 'Масове_вилучення', 'Множественное_удаление' ),
 );
 
 /** Vietnamese (Tiếng Việt) */

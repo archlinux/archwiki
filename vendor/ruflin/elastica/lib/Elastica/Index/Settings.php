@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Index;
 
 use Elastica\Exception\NotFoundException;
@@ -21,28 +20,28 @@ use Elastica\Request;
  */
 class Settings
 {
+    const DEFAULT_REFRESH_INTERVAL = '1s';
+
     /**
      * Response.
      *
      * @var \Elastica\Response Response object
      */
-    protected $_response = null;
+    protected $_response;
 
     /**
      * Stats info.
      *
      * @var array Stats info
      */
-    protected $_data = array();
+    protected $_data = [];
 
     /**
      * Index.
      *
      * @var \Elastica\Index Index object
      */
-    protected $_index = null;
-
-    const DEFAULT_REFRESH_INTERVAL = '1s';
+    protected $_index;
 
     /**
      * Construct.
@@ -114,7 +113,7 @@ class Settings
     {
         $replicas = (int) $replicas;
 
-        $data = array('number_of_replicas' => $replicas);
+        $data = ['number_of_replicas' => $replicas];
 
         return $this->set($data);
     }
@@ -128,7 +127,7 @@ class Settings
      */
     public function setReadOnly($readOnly = true)
     {
-        return $this->set(array('blocks.write' => $readOnly));
+        return $this->set(['blocks.write' => $readOnly]);
     }
 
     /**
@@ -158,7 +157,7 @@ class Settings
     {
         $state = $state ? 1 : 0;
 
-        return $this->set(array('blocks.read' => $state));
+        return $this->set(['blocks.read' => $state]);
     }
 
     /**
@@ -178,7 +177,7 @@ class Settings
     {
         $state = $state ? 1 : 0;
 
-        return $this->set(array('blocks.write' => $state));
+        return $this->set(['blocks.write' => $state]);
     }
 
     /**
@@ -194,9 +193,9 @@ class Settings
             if (strpos($e->getMessage(), 'ClusterBlockException') !== false) {
                 // hacky way to test if the metadata is blocked since bug 9203 is not fixed
                 return true;
-            } else {
-                throw $e;
             }
+
+            throw $e;
         }
     }
 
@@ -209,7 +208,7 @@ class Settings
     {
         $state = $state ? 1 : 0;
 
-        return $this->set(array('blocks.write' => $state));
+        return $this->set(['blocks.write' => $state]);
     }
 
     /**
@@ -224,7 +223,7 @@ class Settings
      */
     public function setRefreshInterval($interval)
     {
-        return $this->set(array('refresh_interval' => $interval));
+        return $this->set(['refresh_interval' => $interval]);
     }
 
     /**
@@ -246,34 +245,6 @@ class Settings
     }
 
     /**
-     * Return merge policy.
-     *
-     * @return string Merge policy type
-     */
-    public function getMergePolicyType()
-    {
-        return $this->get('merge.policy.type');
-    }
-
-    /**
-     * Sets merge policy.
-     *
-     * @param string $type Merge policy type
-     *
-     * @return \Elastica\Response Response object
-     *
-     * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/index-modules-merge.html
-     */
-    public function setMergePolicyType($type)
-    {
-        $this->getIndex()->close();
-        $response = $this->set(array('merge.policy.type' => $type));
-        $this->getIndex()->open();
-
-        return $response;
-    }
-
-    /**
      * Sets the specific merge policies.
      *
      * To have this changes made the index has to be closed and reopened
@@ -288,7 +259,7 @@ class Settings
     public function setMergePolicy($key, $value)
     {
         $this->getIndex()->close();
-        $response = $this->set(array('merge.policy.'.$key => $value));
+        $response = $this->set(['merge.policy.'.$key => $value]);
         $this->getIndex()->open();
 
         return $response;
@@ -353,12 +324,12 @@ class Settings
      *
      * @return \Elastica\Response Response object
      */
-    public function request(array $data = array(), $method = Request::GET)
+    public function request(array $data = [], $method = Request::GET)
     {
         $path = '_settings';
 
         if (!empty($data)) {
-            $data = array('index' => $data);
+            $data = ['index' => $data];
         }
 
         return $this->getIndex()->request($path, $method, $data);

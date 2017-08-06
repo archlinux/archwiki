@@ -1,4 +1,5 @@
-@import "mediawiki.mixins";
+@import 'mediawiki.mixins';
+@import 'mediawiki.ui/variables';
 
 /* Search */
 #p-search {
@@ -30,9 +31,9 @@ div#simpleSearch {
 	position: relative;
 	min-height: 1px; /* Gotta trigger hasLayout for IE7 */
 	border: solid 1px #aaa;
-	color: black;
-	background-color: white;
-	.background-image('images/search-fade.png');
+	color: #000;
+	background-color: #fff;
+	.background-image( 'images/search-fade.png' );
 	background-position: top left;
 	background-repeat: repeat-x;
 
@@ -42,7 +43,7 @@ div#simpleSearch {
 		padding: 0;
 		border: 0;
 		background-color: transparent;
-		color: black;
+		color: #000;
 	}
 
 	// The search input
@@ -53,26 +54,15 @@ div#simpleSearch {
 		direction: ltr;
 
 		&:focus {
-			outline: none;
+			outline: 0;
 		}
 
-		// These rules MAY NOT be merged because of how CSS requires browsers
-		// to parse unrecognized selectors!
-		// Note these rules ensure that placeholder text can be distinguished from
-		// standard text. In browsers which make this distinction clear these rules
-		// are not necessary.
-		// For inputs that use jquery.placeholder.js e.g. IE9-
-		&.placeholder {
-			color: #999;
-		}
-		// Distinguish placeholder text in IE10+
-		&:-ms-input-placeholder {
-			color: #999;
-		}
-		// Distinguish placeholder text in Firefox 18-
-		&:-moz-placeholder {
-			color: #999;
-		}
+		/* stylelint-disable indentation */
+		.mixin-placeholder( {
+			color: @colorGray7;
+			opacity: 1;
+		} );
+		/* stylelint-enable indentation */
 
 		// Undo the styles Webkit browsers apply to type=search fields,
 		// we provide our own

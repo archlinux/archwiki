@@ -21,8 +21,15 @@
  * @ingroup Cache
  */
 
+use Wikimedia\Rdbms\Database;
+use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\DBError;
+use Wikimedia\Rdbms\DBQueryError;
+use Wikimedia\Rdbms\DBConnectionError;
 use \MediaWiki\MediaWikiServices;
 use \Wikimedia\WaitConditionLoop;
+use \Wikimedia\Rdbms\TransactionProfiler;
+use Wikimedia\Rdbms\LoadBalancer;
 
 /**
  * Class to store objects in the database
@@ -141,7 +148,7 @@ class SqlBagOStuff extends BagOStuff {
 	protected function getSeparateMainLB() {
 		global $wgDBtype;
 
-		if ( $wgDBtype === 'mysql' && $this->usesMainDB() ) {
+		if ( $this->usesMainDB() && $wgDBtype !== 'sqlite' ) {
 			if ( !$this->separateMainLB ) {
 				// We must keep a separate connection to MySQL in order to avoid deadlocks
 				$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
@@ -149,8 +156,7 @@ class SqlBagOStuff extends BagOStuff {
 			}
 			return $this->separateMainLB;
 		} else {
-			// However, SQLite has an opposite behavior. And PostgreSQL needs to know
-			// if we are in transaction or not (@TODO: find some PostgreSQL work-around).
+			// However, SQLite has an opposite behavior due to DB-level locking
 			return null;
 		}
 	}
@@ -403,7 +409,7 @@ class SqlBagOStuff extends BagOStuff {
 				$exptime = $this->convertExpiry( $exptime );
 				$encExpiry = $db->timestamp( $exptime );
 			}
-			// (bug 24425) use a replace if the db supports it instead of
+			// (T26425) use a replace if the db supports it instead of
 			// delete/insert to avoid clashes with conflicting keynames
 			$db->update(
 				$tableName,
@@ -478,7 +484,7 @@ class SqlBagOStuff extends BagOStuff {
 				], __METHOD__, 'IGNORE' );
 
 			if ( $db->affectedRows() == 0 ) {
-				// Race condition. See bug 28611
+				// Race condition. See T30611
 				$newValue = null;
 			}
 		} catch ( DBError $e ) {

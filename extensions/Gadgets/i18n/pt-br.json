@@ -10,7 +10,9 @@
 			"He7d3r",
 			"Teles",
 			"Almondega",
-			"Eduardo Addad de Oliveira"
+			"Eduardo Addad de Oliveira",
+			"Hamilton Abreu",
+			"Felipe L. Ewald"
 		]
 	},
 	"gadgets-desc": "Permite que os usuários selecionem [[Special:Gadgets|\"gadgets\" JavaScript e CSS]] personalizados nas suas [[Special:Preferences#mw-prefsection-gadgets|preferências]]",
@@ -18,6 +20,7 @@
 	"gadgets-prefstext": "Segue-se uma lista de \"gadgets\" que podem ser ativados em sua conta.\nTais gadgets normalmente são baseados em JavaScript, o que faz com que seja necessário que o suporte a JavaScript esteja ativado em seu navegador para que eles funcionem.\nNote que os gadgets não possuem efeito nesta página (a página de preferências).\n\nRepare também que tais gadgets não são parte do software MediaWiki, geralmente sendo desenvolvidos e mantidos por usuários de seu wiki local.\nAdministradores locais podem editar os gadgets disponíveis através de [[MediaWiki:Gadgets-definition|definições]] e [[Special:Gadgets|descrições]].",
 	"gadgets": "Gadgets",
 	"gadgetusage-gadget": "Gadgets",
+	"gadgetusage-intro-noactive": "Esta tabela indica o número de usuários que ativaram cada gadget nesta wiki. Esta lista exclui estatísticas para gadgets ativados para todos por padrão e pode incluir gadgets que não estão mais disponíveis.",
 	"gadgets-title": "Gadgets",
 	"gadgets-pagetext": "Segue-se uma lista de \"gadgets\" que podem ser ativados pelos usuários através de [[Special:Preferences#mw-prefsection-gadgets|suas páginas de preferências]], definidos em [[MediaWiki:Gadgets-definition|suas definições]].\nEsta lista possibilita um acesso fácil para as mensagens de sistema que definem as descrições e códigos de cada um dos gadgets.",
 	"gadgets-uses": "Usa",

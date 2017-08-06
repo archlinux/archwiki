@@ -14,7 +14,7 @@
 	"gadgetusage-activeusers": "सकृय प्रयोगकर्ताहरू",
 	"gadgets-title": "उपकरणहरू",
 	"gadgets-pagetext": "विशेष उपकरणहरूको सूची तल दिइएकोछ प्रयोगकर्ताहरूले  [[MediaWiki:Gadgets-definition|परिभाषाहरू]]मा जनाए अनुसार आफ्नो [[Special:Preferences#mw-prefsection-gadgets|अभिरुचि पृष्ठमा]],   सक्रिय पार्न सक्नेछन्।।\nयस सिंहावलोकनले प्रणाली सन्देश पृष्ठ सजिलै प्राप्त गर्न  सकिनेछ जसले प्रत्येक उपकरणको विवरण र कोडलाई परिभाषित गरेको छ।",
-	"gadgets-uses": "प्रयोगहरु",
+	"gadgets-uses": "प्रयोगहरू",
 	"gadgets-required-rights": "{{PLURAL:$2|$1 अधिकारको|निम्न अधिकारहरूको: $1}} आवश्यकता छ ।",
 	"gadgets-default": "सबैको निम्ति सुरुदेखि नैं सक्रिय छ।",
 	"gadgets-export": "निर्यात गर्ने",

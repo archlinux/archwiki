@@ -23,6 +23,11 @@
  * Pager for Special:Contributions
  * @ingroup Pager
  */
+use MediaWiki\MediaWikiServices;
+use Wikimedia\Rdbms\ResultWrapper;
+use Wikimedia\Rdbms\FakeResultWrapper;
+use Wikimedia\Rdbms\IDatabase;
+
 class ContribsPager extends ReverseChronologicalPager {
 
 	public $mDefaultDirection = IndexPager::DIR_DESCENDING;
@@ -39,6 +44,11 @@ class ContribsPager extends ReverseChronologicalPager {
 	 * @var array
 	 */
 	protected $mParentLens;
+
+	/**
+	 * @var TemplateParser
+	 */
+	protected $templateParser;
 
 	function __construct( IContextSource $context, array $options ) {
 		parent::__construct( $context );
@@ -75,6 +85,7 @@ class ContribsPager extends ReverseChronologicalPager {
 		// queries should use a regular replica DB since the lookup pattern is not all by user.
 		$this->mDbSecondary = wfGetDB( DB_REPLICA ); // any random replica DB
 		$this->mDb = wfGetDB( DB_REPLICA, 'contributions' );
+		$this->templateParser = new TemplateParser();
 	}
 
 	function getDefaultQuery() {
@@ -158,7 +169,7 @@ class ContribsPager extends ReverseChronologicalPager {
 		$user = $this->getUser();
 		$conds = array_merge( $userCond, $this->getNamespaceCond() );
 
-		// Paranoia: avoid brute force searches (bug 17342)
+		// Paranoia: avoid brute force searches (T19342)
 		if ( !$user->isAllowed( 'deletedhistory' ) ) {
 			$conds[] = $this->mDb->bitAnd( 'rev_deleted', Revision::DELETED_USER ) . ' = 0';
 		} elseif ( !$user->isAllowedAny( 'suppressrevision', 'viewsuppressed' ) ) {
@@ -222,7 +233,9 @@ class ContribsPager extends ReverseChronologicalPager {
 				$join_conds['user_groups'] = [
 					'LEFT JOIN', [
 						'ug_user = rev_user',
-						'ug_group' => $groupsWithBotPermission
+						'ug_group' => $groupsWithBotPermission,
+						'ug_expiry IS NULL OR ug_expiry >= ' .
+							$this->mDb->addQuotes( $this->mDb->timestamp() )
 					]
 				];
 			}
@@ -349,6 +362,8 @@ class ContribsPager extends ReverseChronologicalPager {
 		$ret = '';
 		$classes = [];
 
+		$linkRenderer = MediaWikiServices::getInstance()->getLinkRenderer();
+
 		/*
 		 * There may be more than just revision rows. To make sure that we'll only be processing
 		 * revisions here, let's _try_ to build a revision out of our row (without displaying
@@ -369,9 +384,9 @@ class ContribsPager extends ReverseChronologicalPager {
 			$classes = [];
 
 			$page = Title::newFromRow( $row );
-			$link = Linker::link(
+			$link = $linkRenderer->makeLink(
 				$page,
-				htmlspecialchars( $page->getPrefixedText() ),
+				$page->getPrefixedText(),
 				[ 'class' => 'mw-contributions-title' ],
 				$page->isRedirect() ? [ 'redirect' => 'no' ] : []
 			);
@@ -391,10 +406,10 @@ class ContribsPager extends ReverseChronologicalPager {
 			}
 			# Is there a visible previous revision?
 			if ( $rev->userCan( Revision::DELETED_TEXT, $user ) && $rev->getParentId() !== 0 ) {
-				$difftext = Linker::linkKnown(
+				$difftext = $linkRenderer->makeKnownLink(
 					$page,
-					$this->messages['diff'],
-					[],
+					new HtmlArmor( $this->messages['diff'] ),
+					[ 'class' => 'mw-changeslist-diff' ],
 					[
 						'diff' => 'prev',
 						'oldid' => $row->rev_id
@@ -403,16 +418,16 @@ class ContribsPager extends ReverseChronologicalPager {
 			} else {
 				$difftext = $this->messages['diff'];
 			}
-			$histlink = Linker::linkKnown(
+			$histlink = $linkRenderer->makeKnownLink(
 				$page,
-				$this->messages['hist'],
-				[],
+				new HtmlArmor( $this->messages['hist'] ),
+				[ 'class' => 'mw-changeslist-history' ],
 				[ 'action' => 'history' ]
 			);
 
 			if ( $row->rev_parent_id === null ) {
 				// For some reason rev_parent_id isn't populated for this row.
-				// Its rumoured this is true on wikipedia for some revisions (bug 34922).
+				// Its rumoured this is true on wikipedia for some revisions (T36922).
 				// Next best thing is to have the total number of bytes.
 				$chardiff = ' <span class="mw-changeslist-separator">. .</span> ';
 				$chardiff .= Linker::formatRevisionSize( $row->rev_len );
@@ -436,9 +451,9 @@ class ContribsPager extends ReverseChronologicalPager {
 			$comment = $lang->getDirMark() . Linker::revComment( $rev, false, true );
 			$date = $lang->userTimeAndDate( $row->rev_timestamp, $user );
 			if ( $rev->userCan( Revision::DELETED_TEXT, $user ) ) {
-				$d = Linker::linkKnown(
+				$d = $linkRenderer->makeKnownLink(
 					$page,
-					htmlspecialchars( $date ),
+					$date,
 					[ 'class' => 'mw-changeslist-date' ],
 					[ 'oldid' => intval( $row->rev_id ) ]
 				);
@@ -507,8 +522,7 @@ class ContribsPager extends ReverseChronologicalPager {
 					$this->msg( 'rev-deleted-user-contribs' )->escaped();
 			}
 
-			$templateParser = new TemplateParser();
-			$ret = $templateParser->processTemplate(
+			$ret = $this->templateParser->processTemplate(
 				'SpecialContributionsLine',
 				$templateParams
 			);

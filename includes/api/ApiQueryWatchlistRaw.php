@@ -60,7 +60,7 @@ class ApiQueryWatchlistRaw extends ApiQueryGeneratorBase {
 		if ( isset( $show[WatchedItemQueryService::FILTER_CHANGED] )
 			&& isset( $show[WatchedItemQueryService::FILTER_NOT_CHANGED] )
 		) {
-			$this->dieUsageMsg( 'show' );
+			$this->dieWithError( 'apierror-show' );
 		}
 
 		$options = [];
@@ -199,6 +199,6 @@ class ApiQueryWatchlistRaw extends ApiQueryGeneratorBase {
 	}
 
 	public function getHelpUrls() {
-		return 'https://www.mediawiki.org/wiki/API:Watchlistraw';
+		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Watchlistraw';
 	}
 }

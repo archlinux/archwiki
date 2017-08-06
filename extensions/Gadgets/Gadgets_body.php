@@ -2,7 +2,7 @@
 /**
  * Gadgets extension - lets users select custom javascript gadgets
  *
- * For more info see http://mediawiki.org/wiki/Extension:Gadgets
+ * For more info see https://www.mediawiki.org/wiki/Extension:Gadgets
  *
  * @file
  * @ingroup Extensions
@@ -23,19 +23,19 @@ class Gadget {
 
 	const CACHE_TTL = 86400;
 
-	private $scripts = array(),
-			$styles = array(),
-			$dependencies = array(),
-			$messages = array(),
+	private $scripts = [],
+			$styles = [],
+			$dependencies = [],
+			$peers = [],
+			$messages = [],
 			$name,
 			$definition,
 			$resourceLoaded = false,
-			$requiredRights = array(),
-			$requiredSkins = array(),
-			$targets = array( 'desktop' ),
+			$requiredRights = [],
+			$requiredSkins = [],
+			$targets = [ 'desktop' ],
 			$onByDefault = false,
 			$hidden = false,
-			$position = 'bottom',
 			$type = '',
 			$category;
 
@@ -45,6 +45,7 @@ class Gadget {
 				case 'scripts':
 				case 'styles':
 				case 'dependencies':
+				case 'peers':
 				case 'messages':
 				case 'name':
 				case 'definition':
@@ -53,7 +54,6 @@ class Gadget {
 				case 'requiredSkins':
 				case 'targets':
 				case 'onByDefault':
-				case 'position':
 				case 'type':
 				case 'hidden':
 				case 'category':
@@ -77,7 +77,7 @@ class Gadget {
 		$prefixGadgetNs = function ( $page ) {
 			return 'Gadget:' . $page;
 		};
-		$info = array(
+		$info = [
 			'name' => $id,
 			'resourceLoaded' => true,
 			'requiredRights' => $data['settings']['rights'],
@@ -88,10 +88,10 @@ class Gadget {
 			'scripts' => array_map( $prefixGadgetNs, $data['module']['scripts'] ),
 			'styles' => array_map( $prefixGadgetNs, $data['module']['styles'] ),
 			'dependencies' => $data['module']['dependencies'],
+			'peers' => $data['module']['peers'],
 			'messages' => $data['module']['messages'],
-			'position' => $data['module']['position'],
 			'type' => $data['module']['type'],
-		);
+		];
 
 		return new self( $info );
 
@@ -104,7 +104,7 @@ class Gadget {
 	 * @return Gadget
 	 */
 	public static function newEmptyGadget( $id ) {
-		return new self( array( 'name' => $id ) );
+		return new self( [ 'name' => $id ] );
 	}
 
 	/**
@@ -246,7 +246,7 @@ class Gadget {
 	 */
 	public function getLegacyScripts() {
 		if ( $this->supportsResourceLoader() ) {
-			return array();
+			return [];
 		}
 		return $this->scripts;
 	}
@@ -257,6 +257,19 @@ class Gadget {
 	 */
 	public function getDependencies() {
 		return $this->dependencies;
+	}
+
+	/**
+	 * Get list of extra modules that should be loaded when this gadget is enabled
+	 *
+	 * Primary use case is to allow a Gadget that includes JavaScript to also load
+	 * a (usually, hidden) styles-type module to be applied to the page. Dependencies
+	 * don't work for this use case as those would not be part of page rendering.
+	 *
+	 * @return Array
+	 */
+	public function getPeers() {
+		return $this->peers;
 	}
 
 	/**
@@ -283,14 +296,6 @@ class Gadget {
 	}
 
 	/**
-	 * Returns the position of this Gadget's ResourceLoader module
-	 * @return String: 'bottom' or 'top'
-	 */
-	public function getPosition() {
-		return $this->position;
-	}
-
-	/**
 	 * Returns the load type of this Gadget's ResourceLoader module
 	 * @return string 'styles', 'general' or ''
 	 */
@@ -298,7 +303,7 @@ class Gadget {
 		if ( $this->type === 'styles' || $this->type === 'general' ) {
 			return $this->type;
 		}
-		if ( $this->styles && !$this->scripts ) {
+		if ( $this->styles && !$this->scripts && !$this->dependencies ) {
 			// Similar to ResourceLoaderWikiModule default
 			return 'styles';
 		}

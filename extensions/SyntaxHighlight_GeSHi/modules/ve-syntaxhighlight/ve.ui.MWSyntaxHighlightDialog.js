@@ -85,13 +85,15 @@ ve.ui.MWSyntaxHighlightDialog.prototype.initialize = function () {
  * @inheritdoc MWSyntaxHighlightWindow
  */
 ve.ui.MWSyntaxHighlightDialog.prototype.onLanguageInputChange = function () {
-	var dialog = this;
+	var validity, dialog = this;
 
 	// Mixin method
 	ve.ui.MWSyntaxHighlightWindow.prototype.onLanguageInputChange.call( this );
 
-	this.language.getInput().isValid().done( function ( valid ) {
-		dialog.input.setLanguage( valid ? dialog.language.getInput().getValue() : 'text' );
+	validity = this.language.getValidity();
+	validity.always( function () {
+		var language = ve.dm.MWSyntaxHighlightNode.static.convertLanguageToAce( dialog.language.getValue() );
+		dialog.input.setLanguage( validity.state() === 'resolved' ? language : 'text' );
 	} );
 };
 
@@ -139,7 +141,7 @@ ve.ui.MWSyntaxHighlightDialog.prototype.getTeardownProcess = function ( data ) {
 	var process = ve.ui.MWSyntaxHighlightDialog.super.prototype.getTeardownProcess.call( this, data );
 	// Mixin process
 	return ve.ui.MWSyntaxHighlightWindow.prototype.getTeardownProcess.call( this, data, process ).first( function () {
-		this.language.input.setValue( '' );
+		this.language.setValue( '' );
 		this.input.teardown();
 	}, this );
 };

@@ -20,7 +20,7 @@ class CaptchaPreAuthenticationProvider extends AbstractPreAuthenticationProvider
 					LoggerFactory::getInstance( 'authevents' )
 						->info( 'Captcha shown on account creation', [
 							'event' => 'captcha.display',
-							'type' => 'accountcreation',
+							'eventType' => 'accountcreation',
 						] );
 				}
 				break;
@@ -49,7 +49,7 @@ class CaptchaPreAuthenticationProvider extends AbstractPreAuthenticationProvider
 					LoggerFactory::getInstance( 'authevents' )
 						->info( 'Captcha shown on account creation', [
 							'event' => 'captcha.display',
-							'type' => 'accountcreation',
+							'eventType' => 'accountcreation',
 						] );
 					break;
 				}
@@ -76,7 +76,7 @@ class CaptchaPreAuthenticationProvider extends AbstractPreAuthenticationProvider
 			$success = $this->verifyCaptcha( $captcha, $reqs, new User() );
 			LoggerFactory::getInstance( 'authevents' )->info( 'Captcha submitted on login', [
 				'event' => 'captcha.submit',
-				'type' => 'login',
+				'eventType' => 'login',
 				'successful' => $success,
 			] );
 		}
@@ -101,7 +101,7 @@ class CaptchaPreAuthenticationProvider extends AbstractPreAuthenticationProvider
 			$success = $this->verifyCaptcha( $captcha, $reqs, $user );
 			LoggerFactory::getInstance( 'authevents' )->info( 'Captcha submitted on account creation', [
 				'event' => 'captcha.submit',
-				'type' => 'accountcreation',
+				'eventType' => 'accountcreation',
 				'successful' => $success,
 			] );
 			if ( !$success ) {

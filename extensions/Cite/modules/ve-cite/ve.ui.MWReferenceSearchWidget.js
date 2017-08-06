@@ -1,7 +1,7 @@
 /*!
  * VisualEditor UserInterface MWReferenceSearchWidget class.
  *
- * @copyright 2011-2016 Cite VisualEditor Team and others; see AUTHORS.txt
+ * @copyright 2011-2017 Cite VisualEditor Team and others; see AUTHORS.txt
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
@@ -21,7 +21,7 @@ ve.ui.MWReferenceSearchWidget = function VeUiMWReferenceSearchWidget( config ) {
 	}, config );
 
 	// Parent constructor
-	OO.ui.SearchWidget.call( this, config );
+	ve.ui.MWReferenceSearchWidget.super.call( this, config );
 
 	// Properties
 	this.index = [];
@@ -46,7 +46,7 @@ OO.inheritClass( ve.ui.MWReferenceSearchWidget, OO.ui.SearchWidget );
  */
 ve.ui.MWReferenceSearchWidget.prototype.onQueryChange = function () {
 	// Parent method
-	OO.ui.SearchWidget.prototype.onQueryChange.call( this );
+	ve.ui.MWReferenceSearchWidget.super.prototype.onQueryChange.call( this );
 
 	// Populate
 	this.addResults();
@@ -152,7 +152,7 @@ ve.ui.MWReferenceSearchWidget.prototype.buildIndex = function () {
 			n++;
 			refModel = ve.dm.MWReferenceModel.static.newFromReferenceNode( refNode );
 			view = new ve.ui.MWPreviewElement(
-				refModel.getDocument().getInternalList().getItemNode( refModel.getListIndex() )
+				this.internalList.getItemNode( refModel.getListIndex() )
 			);
 
 			refGroup = refModel.getGroup();

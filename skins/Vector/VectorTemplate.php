@@ -102,7 +102,7 @@ class VectorTemplate extends BaseTemplate {
 			<?php
 			if ( $this->data['sitenotice'] ) {
 				?>
-				<div id="siteNotice"><?php $this->html( 'sitenotice' ) ?></div>
+				<div id="siteNotice" class="mw-body-content"><?php $this->html( 'sitenotice' ) ?></div>
 			<?php
 			}
 			?>
@@ -114,7 +114,7 @@ class VectorTemplate extends BaseTemplate {
 			if ( $this->data['title'] != '' ) {
 			?>
 			<h1 id="firstHeading" class="firstHeading" lang="<?php $this->text( 'pageLanguage' ); ?>"><?php
-				 $this->html( 'title' )
+				$this->html( 'title' )
 			?></h1>
 			<?php
 			} ?>

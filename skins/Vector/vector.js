@@ -54,7 +54,7 @@ jQuery( function ( $ ) {
 	// Bind callback functions to animate our drop down menu in and out
 	// and then call the collapsibleTabs function on the menu
 	$tabContainer
-		.bind( 'beforeTabCollapse', function () {
+		.on( 'beforeTabCollapse', function () {
 			// If the dropdown was hidden, show it
 			if ( $cactions.hasClass( 'emptyPortlet' ) ) {
 				$cactions
@@ -63,7 +63,7 @@ jQuery( function ( $ ) {
 						.css( 'width', '1px' ).animate( { width: initialCactionsWidth() }, 'normal' );
 			}
 		} )
-		.bind( 'beforeTabExpand', function () {
+		.on( 'beforeTabExpand', function () {
 			// If we're removing the last child node right now, hide the dropdown
 			if ( $cactions.find( 'li' ).length === 1 ) {
 				$cactions.find( 'h3' ).animate( { width: '1px' }, 'normal', function () {

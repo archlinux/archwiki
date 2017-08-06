@@ -8,23 +8,23 @@
 class GadgetDefinitionValidator {
 	/**
 	 * Validation metadata.
-	 * 'foo.bar.baz' => array( 'type check callback', 'type name' [, 'member type check callback', 'member type name'] )
+	 * 'foo.bar.baz' => [ 'type check callback', 'type name' [, 'member type check callback', 'member type name'] ]
 	 */
-	protected static $propertyValidation = array(
-		'settings' => array( 'is_array', 'array' ),
-		'settings.rights' => array( 'is_array', 'array' , 'is_string', 'string' ),
-		'settings.default' => array( 'is_bool', 'boolean' ),
-		'settings.hidden' => array( 'is_bool', 'boolean' ),
-		'settings.skins' => array( array( __CLASS__, 'isArrayOrTrue' ), 'array or true', 'is_string', 'string' ),
-		'settings.category' => array( 'is_string', 'string' ),
-		'module' => array( 'is_array', 'array' ),
-		'module.scripts' => array( 'is_array', 'array', 'is_string', 'string' ),
-		'module.styles' => array( 'is_array', 'array', 'is_string', 'string' ),
-		'module.dependencies' => array( 'is_array', 'array', 'is_string', 'string' ),
-		'module.messages' => array( 'is_array', 'array', 'is_string', 'string' ),
-		'module.position' => array( 'is_string', 'string' ),
-		'module.type' => array( 'is_string', 'string' ),
-	);
+	protected static $propertyValidation = [
+		'settings' => [ 'is_array', 'array' ],
+		'settings.rights' => [ 'is_array', 'array' , 'is_string', 'string' ],
+		'settings.default' => [ 'is_bool', 'boolean' ],
+		'settings.hidden' => [ 'is_bool', 'boolean' ],
+		'settings.skins' => [ [ __CLASS__, 'isArrayOrTrue' ], 'array or true', 'is_string', 'string' ],
+		'settings.category' => [ 'is_string', 'string' ],
+		'module' => [ 'is_array', 'array' ],
+		'module.scripts' => [ 'is_array', 'array', 'is_string', 'string' ],
+		'module.styles' => [ 'is_array', 'array', 'is_string', 'string' ],
+		'module.dependencies' => [ 'is_array', 'array', 'is_string', 'string' ],
+		'module.peers' => [ 'is_array', 'array', 'is_string', 'string' ],
+		'module.messages' => [ 'is_array', 'array', 'is_string', 'string' ],
+		'module.type' => [ 'is_string', 'string' ],
+	];
 
 	/**
 	 * @param mixed $value

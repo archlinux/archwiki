@@ -42,4 +42,5 @@ Stephane Bisson <sbisson@wikimedia.org>
 Sucheta Ghoshal <sghoshal@wikimedia.org>
 Thalia Chan <thalia.e.chan@googlemail.com>
 Volker Eckl <veckl@wikimedia.org>
+Wei-Ko Kao <othree@gmail.com>
 Željko Filipin <zeljko.filipin@gmail.com>

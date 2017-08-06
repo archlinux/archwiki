@@ -27,6 +27,9 @@ use Liuggio\StatsdClient\Factory\StatsdDataFactory;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Wikimedia\ScopedCallback;
+use Wikimedia\Rdbms\LBFactory;
+use Wikimedia\Rdbms\DBError;
+use Wikimedia\Rdbms\DBReplicationWaitError;
 
 /**
  * Job queue runner utility methods
@@ -46,6 +49,7 @@ class JobRunner implements LoggerAwareInterface {
 	const MAX_ALLOWED_LAG = 3; // abort if more than this much DB lag is present
 	const LAG_CHECK_PERIOD = 1.0; // check replica DB lag this many seconds
 	const ERROR_BACKOFF_TTL = 1; // seconds to back off a queue due to errors
+	const READONLY_BACKOFF_TTL = 30; // seconds to back off a queue due to read-only errors
 
 	/**
 	 * @param callable $debug Optional debug output handler
@@ -190,7 +194,7 @@ class JobRunner implements LoggerAwareInterface {
 
 				// Back off of certain jobs for a while (for throttling and for errors)
 				if ( $info['status'] === false && mt_rand( 0, 49 ) == 0 ) {
-					$ttw = max( $ttw, self::ERROR_BACKOFF_TTL ); // too many errors
+					$ttw = max( $ttw, $this->getErrorBackoffTTL( $info['error'] ) );
 					$backoffDeltas[$jType] = isset( $backoffDeltas[$jType] )
 						? $backoffDeltas[$jType] + $ttw
 						: $ttw;
@@ -254,6 +258,16 @@ class JobRunner implements LoggerAwareInterface {
 	}
 
 	/**
+	 * @param string $error
+	 * @return int TTL in seconds
+	 */
+	private function getErrorBackoffTTL( $error ) {
+		return strpos( $error, 'DBReadOnlyError' ) !== false
+			? self::READONLY_BACKOFF_TTL
+			: self::ERROR_BACKOFF_TTL;
+	}
+
+	/**
 	 * @param Job $job
 	 * @param LBFactory $lbFactory
 	 * @param StatsdDataFactory $stats
@@ -275,6 +289,8 @@ class JobRunner implements LoggerAwareInterface {
 			$status = $job->run();
 			$error = $job->getLastError();
 			$this->commitMasterChanges( $lbFactory, $job, $fnameTrxOwner );
+			// Important: this must be the last deferred update added (T100085, T154425)
+			DeferredUpdates::addCallableUpdate( [ JobQueueGroup::class, 'pushLazyJobs' ] );
 			// Run any deferred update tasks; doUpdates() manages transactions itself
 			DeferredUpdates::doUpdates();
 		} catch ( Exception $e ) {
@@ -336,7 +352,7 @@ class JobRunner implements LoggerAwareInterface {
 	 */
 	private function getMaxRssKb() {
 		$info = wfGetRusage() ?: [];
-		// see http://linux.die.net/man/2/getrusage
+		// see https://linux.die.net/man/2/getrusage
 		return isset( $info['ru_maxrss'] ) ? (int)$info['ru_maxrss'] : null;
 	}
 
