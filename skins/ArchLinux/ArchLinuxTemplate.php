@@ -34,8 +34,6 @@ class ArchLinuxTemplate extends BaseTemplate {
 	 * Takes an associative array of data set from a SkinTemplate-based
 	 * class, and a wrapper for MediaWiki's localization database, and
 	 * outputs a formatted page.
-	 *
-	 * @access private
 	 */
 	public function execute() {
 		global $wgArchNavBar, $wgArchHome, $wgArchNavBarSelected, $wgArchNavBarSelectedDefault;
@@ -75,7 +73,7 @@ class ArchLinuxTemplate extends BaseTemplate {
 				<?php
 				if ( $this->data['sitenotice'] ) {
 					?>
-					<div id="siteNotice"><?php
+					<div id="siteNotice" class="mw-body-content"><?php
 					$this->html( 'sitenotice' )
 					?></div><?php
 				}
@@ -129,13 +127,13 @@ class ArchLinuxTemplate extends BaseTemplate {
 					<!-- end content -->
 					<?php
 					if ( $this->data['dataAfterContent'] ) {
-						$this->html( 'dataAfterContent'
-						);
+						$this->html( 'dataAfterContent' );
 					}
 					?>
 					<div class="visualClear"></div>
 				</div>
 			</div>
+			<?php Hooks::run( 'ArchLinuxAfterContent' ); ?>
 		</div>
 		<div id="column-one"<?php $this->html( 'userlangattributes' ) ?>>
 			<h2><?php $this->msg( 'navigation-heading' ) ?></h2>
@@ -150,8 +148,8 @@ class ArchLinuxTemplate extends BaseTemplate {
 						$personalTools = $this->getPersonalTools();
 
 						if ( array_key_exists( 'uls', $personalTools ) ) {
-							echo $this->makeListItem( 'uls', $personalTools[ 'uls' ] );
-							unset( $personalTools[ 'uls' ] );
+							echo $this->makeListItem( 'uls', $personalTools['uls'] );
+							unset( $personalTools['uls'] );
 						}
 
 						if ( !$this->getSkin()->getUser()->isLoggedIn() &&
@@ -160,7 +158,6 @@ class ArchLinuxTemplate extends BaseTemplate {
 							echo Html::rawElement( 'li', array(
 								'id' => 'pt-anonuserpage'
 							), $this->getMsg( 'notloggedin' )->escaped() );
-
 						}
 
 						foreach ( $personalTools as $key => $item ) { ?>
@@ -188,8 +185,8 @@ class ArchLinuxTemplate extends BaseTemplate {
 		</div><!-- end of the left (by default at least) column -->
 		<div class="visualClear"></div>
 		<?php
-		$validFooterIcons = $this->getFooterIcons( "icononly" );
-		$validFooterLinks = $this->getFooterLinks( "flat" ); // Additional footer links
+		$validFooterIcons = $this->getFooterIcons( 'icononly' );
+		$validFooterLinks = $this->getFooterLinks( 'flat' ); // Additional footer links
 
 		if ( count( $validFooterIcons ) + count( $validFooterLinks ) > 0 ) {
 			?>
@@ -236,7 +233,6 @@ class ArchLinuxTemplate extends BaseTemplate {
 		echo Html::closeElement( 'body' );
 		echo Html::closeElement( 'html' );
 		echo "\n";
-		wfRestoreWarnings();
 	} // end of execute() method
 
 	/*************************************************************************************************/
@@ -282,20 +278,20 @@ class ArchLinuxTemplate extends BaseTemplate {
 
 			<div id="searchBody" class="pBody">
 				<form action="<?php $this->text( 'wgScript' ) ?>" id="searchform">
-					<input type='hidden' name="title" value="<?php $this->text( 'searchtitle' ) ?>"/>
-					<?php echo $this->makeSearchInput( array( "id" => "searchInput" ) ); ?>
+					<input type="hidden" name="title" value="<?php $this->text( 'searchtitle' ) ?>"/>
+					<?php echo $this->makeSearchInput( array( 'id' => 'searchInput' ) ); ?>
 
 					<?php
 					echo $this->makeSearchButton(
-						"go",
-						array( "id" => "searchGoButton", "class" => "searchButton" )
+						'go',
+						array( 'id' => 'searchGoButton', 'class' => 'searchButton' )
 					);
 
 					if ( $this->config->get( 'UseTwoButtonsSearchForm' ) ) {
 						?>&#160;
 						<?php echo $this->makeSearchButton(
-							"fulltext",
-							array( "id" => "mw-searchButton", "class" => "searchButton" )
+							'fulltext',
+							array( 'id' => 'mw-searchButton', 'class' => 'searchButton' )
 						);
 					} else {
 						?>
@@ -314,7 +310,7 @@ class ArchLinuxTemplate extends BaseTemplate {
 	}
 
 	/**
-	 * Prints the cactions bar.
+	 * Prints the content actions (cactions) bar.
 	 * Shared between MonoBook and Modern
 	 */
 	function cactions() {
@@ -359,6 +355,7 @@ class ArchLinuxTemplate extends BaseTemplate {
 			</div>
 		</div>
 	<?php
+		Hooks::run( 'ArchLinuxAfterToolbox' );
 	}
 
 	/*************************************************************************************************/
@@ -370,8 +367,8 @@ class ArchLinuxTemplate extends BaseTemplate {
 
 				<div class="pBody">
 					<ul>
-						<?php foreach ( $this->data['language_urls'] as $key => $langlink ) { ?>
-							<?php echo $this->makeListItem( $key, $langlink ); ?>
+						<?php foreach ( $this->data['language_urls'] as $key => $langLink ) { ?>
+							<?php echo $this->makeListItem( $key, $langLink ); ?>
 
 						<?php
 }
@@ -406,7 +403,7 @@ class ArchLinuxTemplate extends BaseTemplate {
 		?>
 
 		<h3><?php echo htmlspecialchars( $msgObj->exists() ? $msgObj->text() : $bar ); ?></h3>
-		<div class='pBody'>
+		<div class="pBody">
 			<?php
 			if ( is_array( $cont ) ) {
 				?>

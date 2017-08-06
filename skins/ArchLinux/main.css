@@ -12,7 +12,7 @@
 div#column-content {
 	width: 100%;
 	float: right;
-	margin: 0 0 .6em -12.2em;
+	margin: 0 0 0.6em -12.2em;
 	padding: 0;
 }
 
@@ -21,10 +21,10 @@ div#column-content {
 	padding: 1em;
 	position: relative;
 	z-index: 2;
-	background: white;
-	color: black;
+	background: #fff;
+	color: #000;
 	border: 1px solid #aaa;
-	border-right: none;
+	border-right: 0;
 	line-height: 1.5em;
 }
 
@@ -49,8 +49,8 @@ div#column-one {
 body {
 	font: x-small sans-serif;
 	/* @embed */
-	background: #f9f9f9 url(headbg.jpg) 0 0 no-repeat;
-	color: black;
+	background: #f9f9f9 url( headbg.jpg ) 0 0 no-repeat;
+	color: #000;
 	margin: 0;
 	padding: 0;
 	direction: ltr; /* Needed for RTL flipping */
@@ -78,16 +78,17 @@ a:visited {
 
 a.new,
 #p-personal a.new {
-	color: #cc2200;
+	color: #c20;
 }
 
 ul {
 	list-style-type: square;
 	/* @embed */
-	list-style-image: url(bullet.gif);
+	list-style-image: url( bullet.gif );
 }
 
-pre, .mw-code {
+pre,
+.mw-code {
 	line-height: 1.1em;
 }
 
@@ -106,7 +107,7 @@ pre, .mw-code {
 	display: -moz-inline-block;
 	display: inline-block;
 	zoom: 1;
-	*display: inline;
+	*display: inline; /* stylelint-disable-line declaration-block-no-duplicate-properties */
 }
 
 /*
@@ -161,8 +162,8 @@ table.rimage {
 ** general portlet styles (elements in the quickbar)
 */
 .portlet {
-	border: none;
-	margin: 0 0 .5em;
+	border: 0;
+	margin: 0 0 0.5em;
 	padding: 0;
 	float: none;
 	width: 11.6em;
@@ -171,7 +172,7 @@ table.rimage {
 
 .portlet h3 {
 	background: transparent;
-	padding: 0 1em 0 .5em;
+	padding: 0 1em 0 0.5em;
 	display: inline;
 	height: 1em;
 	text-transform: lowercase;
@@ -182,11 +183,11 @@ table.rimage {
 
 .pBody {
 	font-size: 95%;
-	background-color: white;
-	color: black;
+	background-color: #fff;
+	color: #000;
 	border-collapse: collapse;
 	border: 1px solid #aaa;
-	padding: 0 .8em .3em .5em;
+	padding: 0 0.8em 0.3em 0.5em;
 }
 
 /* allows .pBody styles to wrap around content added via BaseTemplateAfterPortlet hook */
@@ -230,7 +231,7 @@ table.rimage {
 	height: 155px;
 	width: 12.2em;
 	background-repeat: no-repeat;
-	background-position: 35% 50% !important;
+	background-position: 35% 50% !important; /* stylelint-disable-line declaration-no-important */
 	text-decoration: none;
 }
 
@@ -248,8 +249,8 @@ input.searchButton {
 }
 
 #searchGoButton {
-	padding-left: .5em;
-	padding-right: .5em;
+	padding-left: 0.5em;
+	padding-right: 0.5em;
 	font-weight: bold;
 }
 
@@ -260,12 +261,12 @@ input.searchButton {
 }
 
 #p-search .pBody {
-	padding: .5em .4em .4em .4em;
+	padding: 0.5em 0.4em 0.4em 0.4em;
 	text-align: center;
 }
 
 #p-search #searchform div div {
-	margin-top: .4em;
+	margin-top: 0.4em;
 	font-size: 95%;
 }
 
@@ -277,14 +278,12 @@ input.searchButton {
 	left: 0;
 	top: 0;
 	z-index: 3;
-}
 
-#p-personal {
 	width: 100%;
 	white-space: nowrap;
 	padding: 0;
 	margin: 0;
-	border: none;
+	border: 0;
 	background: none;
 	overflow: visible;
 	line-height: 1.2em;
@@ -299,14 +298,14 @@ input.searchButton {
 	z-index: 0;
 	padding: 0;
 	margin: 0;
-	border: none;
+	border: 0;
 	overflow: visible;
 	background: none;
 }
 
 /* this is the ul contained in the portlet */
 #p-personal ul {
-	border: none;
+	border: 0;
 	line-height: 1.4em;
 	color: #2f6fab;
 	padding: 0;
@@ -320,11 +319,12 @@ input.searchButton {
 	z-index: 0;
 	background: none;
 	cursor: default;
+	text-transform: lowercase;
 }
 
 #p-personal li {
 	z-index: 0;
-	border: none;
+	border: 0;
 	padding: 0;
 	display: inline;
 	color: #2f6fab;
@@ -336,11 +336,11 @@ input.searchButton {
 #p-personal li a {
 	text-decoration: none;
 	color: #005896;
-	padding-bottom: .2em;
+	padding-bottom: 0.2em;
 }
 
 #p-personal li a:hover {
-	background-color: white;
+	background-color: #fff;
 	text-decoration: none;
 }
 
@@ -353,12 +353,8 @@ li#pt-userpage,
 li#pt-anonuserpage,
 li#pt-login {
 	/* @embed */
-	background: url(user.gif) top left no-repeat;
+	background: url( user.gif ) top left no-repeat;
 	padding-left: 20px;
-}
-
-#p-personal ul {
-	text-transform: lowercase;
 }
 
 /* Don't lowercase username */
@@ -401,11 +397,11 @@ li#pt-anonuserpage {
 #p-cactions li {
 	display: inline;
 	border: 1px solid #aaa;
-	border-bottom: none;
+	border-bottom: 0;
 	padding: 0 0 1em 0;
-	margin: 0 .3em 0 0;
+	margin: 0 0.3em 0 0;
 	overflow: visible;
-	background: white;
+	background: #fff;
 }
 
 #p-cactions li.selected {
@@ -416,17 +412,18 @@ li#pt-anonuserpage {
 #p-cactions li a {
 	background-color: #fbfbfb;
 	color: #002bb8;
-	border: none;
-	padding: 0 .8em .3em;
+	border: 0;
+	padding: 0 0.8em 0.3em;
 	position: relative;
 	z-index: 0;
 	margin: 0;
 	text-decoration: none;
+	text-transform: lowercase;
 }
 
 #p-cactions li.selected a {
 	z-index: 3;
-	background-color: white;
+	background-color: #fff;
 }
 
 #p-cactions .new a {
@@ -436,7 +433,7 @@ li#pt-anonuserpage {
 #p-cactions li a:hover {
 	z-index: 3;
 	text-decoration: none;
-	background-color: white;
+	background-color: #fff;
 }
 
 #p-cactions h3 {
@@ -448,12 +445,12 @@ li#pt-anonuserpage {
 }
 
 #p-cactions li.istalk a {
-	padding-right: .5em;
+	padding-right: 0.5em;
 }
 
 #p-cactions #ca-addsection a {
-	padding-left: .4em;
-	padding-right: .4em;
+	padding-left: 0.4em;
+	padding-right: 0.4em;
 }
 
 /* offsets to distinguish the tab groups */
@@ -477,10 +474,6 @@ li#ca-print {
 	padding: 0;
 }
 
-#p-cactions li a {
-	text-transform: lowercase;
-}
-
 #p-lang {
 	position: relative;
 	z-index: 3;
@@ -496,7 +489,8 @@ li#ca-print {
 /* TODO: #t-iscite is only used by the Cite extension, come up with some
  * system which allows extensions to add to this file on the fly
  */
-#t-ispermalink, #t-iscite {
+#t-ispermalink,
+#t-iscite {
 	color: #999;
 }
 
@@ -504,12 +498,12 @@ li#ca-print {
 ** footer
 */
 div#footer {
-	background-color: white;
+	background-color: #fff;
 	border-top: 1px solid #fabd23;
 	border-bottom: 1px solid #fabd23;
-	margin: .6em 0 1em 0;
+	margin: 0.6em 0 1em 0;
 	overflow: hidden;
-	padding: .4em 0 .3em 0;
+	padding: 0.4em 0 0.3em 0;
 	text-align: center;
 	font-size: 90%;
 }
@@ -519,7 +513,8 @@ div#footer li {
 	margin: 0 1.3em;
 }
 
-#f-poweredbyico, #f-copyrightico {
+#f-poweredbyico,
+#f-copyrightico {
 	margin: 0 8px;
 	position: relative;
 	top: -2px; /* Bump it up just a tad */
@@ -535,7 +530,8 @@ div#footer li {
 	height: 1%;
 }
 
-#userloginprompt, #languagelinks {
+#userloginprompt,
+#languagelinks {
 	font-size: 85%;
 }
 
@@ -570,8 +566,8 @@ div.patrollink {
 }
 
 .editExternally {
-	border: 1px solid gray;
-	background-color: #ffffff;
+	border: 1px solid #808080;
+	background-color: #fff;
 	padding: 3px;
 	margin-top: 0.5em;
 	float: left;
@@ -581,7 +577,7 @@ div.patrollink {
 
 .editExternallyHelp {
 	font-style: italic;
-	color: gray;
+	color: #808080;
 }
 
 .toggle {
@@ -603,7 +599,7 @@ input#wpDiff {
 div.noarticletext {
 	border: 1px solid #ccc;
 	background: #fff;
-	padding: .2em 1em;
+	padding: 0.2em 1em;
 	color: #000;
 }
 
@@ -611,14 +607,14 @@ div#searchTargetContainer {
 	left: 10px;
 	top: 10px;
 	width: 90%;
-	background: white;
+	background: #fff;
 }
 
 div#searchTarget {
 	padding: 3px;
 	margin: 5px;
-	background: #F0F0F0;
-	border: solid 1px blue;
+	background: #f0f0f0;
+	border: solid 1px #00f;
 }
 
 div#searchTarget ul li {
@@ -627,14 +623,14 @@ div#searchTarget ul li {
 }
 
 div#searchTarget ul li:before {
-	color: orange;
-	content: "\00BB \0020";
+	color: #ffa500;
+	content: '\00BB \0020';
 }
 
 div#searchTargetHide {
 	float: right;
-	border: solid 1px black;
-	background: #DCDCDC;
+	border: solid 1px #000;
+	background: #dcdcdc;
 	padding: 2px;
 }
 
@@ -643,14 +639,14 @@ div#searchTargetHide {
 }
 
 div.multipageimagenavbox {
-	border: solid 1px silver;
+	border: solid 1px #c0c0c0;
 	padding: 4px;
 	margin: 1em;
 	background: #f0f0f0;
 }
 
 div.multipageimagenavbox div.thumb {
-	border: none;
+	border: 0;
 	margin-left: 2em;
 	margin-right: 2em;
 }
@@ -680,14 +676,14 @@ div.mw-lag-warn-high {
 }
 
 div.mw-lag-warn-normal {
-	border: 1px solid #FFCC66;
-	background-color: #FFFFCC;
+	border: 1px solid #fc6;
+	background-color: #ffc;
 }
 
 div.mw-lag-warn-high {
 	font-weight: bold;
-	border: 2px solid #FF0033;
-	background-color: #FFCCCC;
+	border: 2px solid #f03;
+	background-color: #fcc;
 }
 
 .MediaTransformError {
@@ -709,9 +705,4 @@ div.mw-lag-warn-high {
 /* Tooltips are outside of the normal body code, so this helps make the size of the text sensible */
 .tipsy {
 	font-size: 127%;
-}
-
-/* mediawiki.notification */
-.skin-monobook .mw-notification {
-	box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.125);
 }
