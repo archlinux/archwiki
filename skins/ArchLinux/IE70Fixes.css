@@ -27,7 +27,9 @@ div#column-content .mw-body {
  * That's good in normal browsers, but in IE7 it needs to not be flipped for some daft reason.
  * Also clear the right margin (originally margin-left: 1em)
  */
-li#pt-userpage, li#pt-anonuserpage, li#pt-login {
+li#pt-userpage,
+li#pt-anonuserpage,
+li#pt-login {
 	padding-left: 20px;
 	margin-right: 0;
 }
@@ -45,15 +47,15 @@ li#pt-userpage, li#pt-anonuserpage, li#pt-login {
 }
 
 #p-cactions li {
-	padding-bottom: 0 !important;
-	border: none;
+	padding-bottom: 0 !important; /* stylelint-disable-line declaration-no-important */
+	border: 0;
 	background-color: transparent;
 	cursor: default;
-	float: none !important;
+	float: none !important; /* stylelint-disable-line declaration-no-important */
 }
 
 #p-cactions li a {
-	display: inline-block !important;
+	display: inline-block !important; /* stylelint-disable-line declaration-no-important */
 	vertical-align: top;
 	padding-bottom: 0;
 	border: solid #aaa;

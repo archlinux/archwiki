@@ -38,7 +38,7 @@ div#footer {
 .rtl div#footer {
 	margin-left: 0;
 	margin-right: 13.6em;
-	border-left: none;
+	border-left: 0;
 	border-right: 1px solid #fabd23;
 }
 
@@ -59,15 +59,15 @@ div#footer {
 }
 
 #p-cactions li {
-	padding-bottom: 0 !important;
-	border: none;
+	padding-bottom: 0 !important; /* stylelint-disable-line declaration-no-important */
+	border: 0;
 	background-color: transparent;
 	cursor: default;
-	float: none !important;
+	float: none !important; /* stylelint-disable-line declaration-no-important */
 }
 
 #p-cactions li a {
-	display: inline-block !important;
+	display: inline-block !important; /* stylelint-disable-line declaration-no-important */
 	vertical-align: top;
 	padding-bottom: 0;
 	border: solid #aaa;
@@ -120,6 +120,7 @@ div.tleft {
 }
 
 /* bug 12846 */
-body.rtl #preftoc a, body.rtl #preftoc a:active {
+body.rtl #preftoc a,
+body.rtl #preftoc a:active {
 	float: left;
 }
