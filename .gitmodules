@@ -1,12 +1,12 @@
 [submodule "extensions/CheckUser"]
 	path = extensions/CheckUser
 	url = https://github.com/wikimedia/mediawiki-extensions-CheckUser.git
-	branch = REL1_28
+	branch = REL1_29
 [submodule "extensions/AbuseFilter"]
 	path = extensions/AbuseFilter
 	url = https://github.com/wikimedia/mediawiki-extensions-AbuseFilter.git
-	branch = REL1_28
+	branch = REL1_29
 [submodule "extensions/MobileFrontend"]
 	path = extensions/MobileFrontend
 	url = https://github.com/wikimedia/mediawiki-extensions-MobileFrontend.git
-	branch = REL1_28
+	branch = REL1_29
