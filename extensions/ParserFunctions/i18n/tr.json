@@ -1,11 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Joseph"
+			"Joseph",
+			"Vito Genovese"
 		]
 	},
 	"pfunc_desc": "Derleyiciyi mantıksal fonksiyonlarla geliştir",
-	"pfunc_time_error": "Hata: geçersiz zaman",
+	"pfunc_time_error": "Hata: Geçersiz saat.",
 	"pfunc_time_too_long": "Hata: çok fazla #time çağrısı",
 	"pfunc_rel2abs_invalid_depth": "Hata: Yolda geçersiz derinlik: \"$1\" (kök düğümünün üstünde bir düğüme erişmeye çalıştı)",
 	"pfunc_expr_stack_exhausted": "İfade hatası: Stack bitti",

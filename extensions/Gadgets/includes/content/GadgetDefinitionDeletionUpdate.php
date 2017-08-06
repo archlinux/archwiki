@@ -39,7 +39,7 @@ class GadgetDefinitionDeletionUpdate extends DataUpdate {
 		$repo = GadgetRepo::singleton();
 		if ( $repo instanceof GadgetDefinitionNamespaceRepo ) {
 			$repo->purgeGadgetIdsList();
-			$repo->updateGadgetObjectCache( $this->id );
+			$repo->purgeGadgetEntry( $this->id );
 		}
 	}
 }

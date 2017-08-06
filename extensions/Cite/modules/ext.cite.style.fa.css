@@ -1,4 +1,8 @@
 /* Farsi Cite CSS */
+
+/* Upstream bug in stylelint makes it complain aboout the case of 'mw-Ref' */
+/* stylelint-disable value-keyword-case */
+
 /* <ref>s with a group */
 span.mw-ref a[data-mw-group]:after {
 	content: '[' attr( data-mw-group ) ' ' counter( mw-Ref, persian ) ']';

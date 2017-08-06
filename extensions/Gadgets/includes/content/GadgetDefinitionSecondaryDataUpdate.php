@@ -31,7 +31,7 @@ class GadgetDefinitionSecondaryDataUpdate extends DataUpdate {
 	public function doUpdate() {
 		$repo = GadgetRepo::singleton();
 		if ( $repo instanceof GadgetDefinitionNamespaceRepo ) {
-			$repo->updateGadgetObjectCache( $this->id );
+			$repo->purgeGadgetEntry( $this->id );
 		}
 	}
 }

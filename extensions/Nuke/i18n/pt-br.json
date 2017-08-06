@@ -7,7 +7,8 @@
 			"Giro720",
 			"MetalBrasil",
 			"555",
-			"Araceletorres"
+			"Araceletorres",
+			"Felipe L. Ewald"
 		]
 	},
 	"nuke": "Eliminar de forma massiva",
@@ -19,7 +20,7 @@
 	"nuke-defaultreason": "Eliminação em massa de páginas criadas [[Special:Contributions/$1|{{GENDER:$1|pelo usuário $1|pela usuária $1|por $1}}]]",
 	"nuke-multiplepeople": "Eliminação em massa de páginas criadas recentemente",
 	"nuke-tools": "Esta ferramenta permite que páginas criadas recentemente por um usuário ou IP específico sejam eliminadas de forma massiva.\nInsira um nome de usuário ou IP para listar páginas a eliminar; deixe em branco se deseja listar de todos os usuários.",
-	"nuke-submit-user": "Ir",
+	"nuke-submit-user": "Listar páginas",
 	"nuke-toggleinvert": "Inverter",
 	"nuke-submit-delete": "Eliminar selecionadas",
 	"right-nuke": "Eliminar páginas em massa",

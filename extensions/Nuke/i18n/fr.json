@@ -23,7 +23,7 @@
 	"nuke-defaultreason": "Suppression en masse des pages ajoutées par [[Special:Contributions/$1|{{GENDER:$1|$1}}]]",
 	"nuke-multiplepeople": "Suppression de masse de pages récemment ajoutées",
 	"nuke-tools": "Cet outil permet les suppressions en masse des pages ajoutées récemment par un utilisateur enregistré ou par une adresse IP. Indiquer l’adresse IP afin d’obtenir la liste des pages à supprimer, ou laisser blanc pour tous les utilisateurs.",
-	"nuke-submit-user": "Valider",
+	"nuke-submit-user": "Lister les pages",
 	"nuke-toggleinvert": "Inverser",
 	"nuke-submit-delete": "Supprimer la sélection",
 	"right-nuke": "Supprimer des pages en masse",

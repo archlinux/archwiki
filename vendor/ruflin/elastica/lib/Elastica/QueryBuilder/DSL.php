@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\QueryBuilder;
 
 /**
@@ -10,7 +9,6 @@ namespace Elastica\QueryBuilder;
 interface DSL
 {
     const TYPE_QUERY = 'query';
-    const TYPE_FILTER = 'filter';
     const TYPE_AGGREGATION = 'aggregation';
     const TYPE_SUGGEST = 'suggest';
 

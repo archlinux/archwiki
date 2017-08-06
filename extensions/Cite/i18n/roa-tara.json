@@ -12,7 +12,7 @@
 	"cite_error_ref_no_input": "Tag <code>&lt;ref&gt;</code> invalide;\nreferimende senza nome onne tenè 'nu condenute",
 	"cite_error_references_duplicate_key": "Tag <code>&lt;ref&gt;</code> invalide; 'u nome \"$1\" definite cchiù vote cu condenute diverse",
 	"cite_error_references_invalid_parameters": "Tag <code>&lt;references&gt;</code> invalide;\nnon ge se pò mettere nisciune parametre.\nAuse <code>&lt;references /&gt;</code>",
-	"cite_error_references_invalid_parameters_group": "Tag <code>&lt;references&gt;</code> invalide;\nsulamende 'u parametre \"group\" pò essere ausate.\nAuse <code>&lt;references /&gt;</code> o <code>&lt;references group=\"...\" /&gt;</code>",
+	"cite_error_references_invalid_parameters_group": "Parametre invalide jndr'à 'u tag <code>&lt;references&gt;</code>",
 	"cite_error_references_no_backlink_label": "Le etichette personalizzate pe le collegaminde de rrete onne spicciate.\nDefiniscene otre jndr'à 'u messàgge <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>.",
 	"cite_error_no_link_label_group": "Le etichette personalizzate de le collegaminde pu gruppe \"$1\" onne spicciate.\nDefiniscene otre jndr'à 'u messàgge <nowiki>[[MediaWiki:$2]]</nowiki>.",
 	"cite_error_references_no_text": "Tag <code>&lt;ref&gt;</code> invalide;\nnisciune teste ere previste pe le referimende nnomenate <code>$1</code>",

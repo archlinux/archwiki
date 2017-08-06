@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Query;
 
 use Elastica;
@@ -13,13 +12,6 @@ use Elastica;
  */
 class Script extends AbstractQuery
 {
-    /**
-     * Query object.
-     *
-     * @var array|AbstractQuery
-     */
-    protected $_query = null;
-
     /**
      * Construct script query.
      *

@@ -1,7 +1,7 @@
 /*!
  * VisualEditor DataModel Cite-specific example data sets.
  *
- * @copyright 2011-2016 VisualEditor Team and others; see AUTHORS.txt
+ * @copyright 2011-2017 Cite VisualEditor Team and others; see AUTHORS.txt
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
@@ -92,30 +92,30 @@ ve.dm.citeExample.domToDataCases = {
 		clipboardBody:
 			'<p>Foo' +
 				'<span typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;name&quot;:&quot;bar&quot;}}">' +
-					'<sup>[1]</sup>' +
+					'<a><span class="mw-reflink-text">[1]</span></a>' +
 				'</span>' +
 				' Baz' +
 				'<span typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;body&quot;:{&quot;html&quot;:&quot;Quux&quot;},&quot;attrs&quot;:{&quot;group&quot;:&quot;g1&quot;,&quot;name&quot;:&quot;:0&quot;}}">' +
-					'<sup>[g1 1]</sup>' +
+					'<a><span class="mw-reflink-text">[g1 1]</span></a>' +
 				'</span>' +
 				' Whee' +
 				'<span typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;body&quot;:{&quot;html&quot;:&quot;' +
 				'<a href=\\&quot;./Bar\\&quot; rel=\\&quot;mw:WikiLink\\&quot;>Bar' +
 				'</a>&quot;},&quot;attrs&quot;:{&quot;name&quot;:&quot;bar&quot;}}">' +
-					'<sup>[1]</sup>' +
+					'<a><span class="mw-reflink-text">[1]</span></a>' +
 				'</span>' +
 				' Yay' +
 				// This reference has .body.id instead of .body.html
 				'<span typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;body&quot;:{&quot;id&quot;:&quot;mw-cite-3&quot;,&quot;html&quot;:&quot;No name&quot;},&quot;attrs&quot;:{&quot;group&quot;:&quot;g1&quot;}}">' +
-					'<sup>[g1 2]</sup>' +
+					'<a><span class="mw-reflink-text">[g1 2]</span></a>' +
 				'</span>' +
 				' Quux' +
 				'<span typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;body&quot;:{&quot;html&quot;:&quot;Different content&quot;},&quot;attrs&quot;:{&quot;name&quot;:&quot;bar&quot;}}">' +
-					'<sup>[1]</sup>' +
+					'<a><span class="mw-reflink-text">[1]</span></a>' +
 				'</span>' +
 				' Foo' +
 				'<span typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;group&quot;:&quot;g1&quot;,&quot;name&quot;:&quot;foo&quot;}}">' +
-					'<sup>[g1 3]</sup>' +
+					'<a><span class="mw-reflink-text">[g1 3]</span></a>' +
 				'</span>' +
 			'</p>' +
 			// The HTML below is enriched to wrap reference contents in <span id="mw-cite-[...]">
@@ -124,7 +124,7 @@ ve.dm.citeExample.domToDataCases = {
 				'data-mw="{&quot;name&quot;:&quot;references&quot;,&quot;attrs&quot;:{&quot;group&quot;:&quot;g1&quot;},&quot;body&quot;:{' +
 				'&quot;html&quot;:&quot;<span typeof=\\&quot;mw:Extension/ref\\&quot; ' +
 				'data-mw=\\&quot;{&amp;quot;name&amp;quot;:&amp;quot;ref&amp;quot;,&amp;quot;attrs&amp;quot;:{&amp;quot;group&amp;quot;:&amp;quot;g1&amp;quot;,&amp;quot;name&amp;quot;:&amp;quot;foo&amp;quot;},&amp;quot;body&amp;quot;:{&amp;quot;html&amp;quot;:&amp;quot;Ref in refs&amp;quot;}}' +
-				'\\&quot;><sup>[g1 3]</sup></span>&quot;}}">' +
+				'\\&quot;><a><span class=\\&quot;mw-reflink-text\\&quot;>[g1 3]</span></a></span>&quot;}}">' +
 			'</div>',
 		head: '<base href="http://example.com" />',
 		data: [
@@ -322,7 +322,7 @@ ve.dm.citeExample.domToDataCases = {
 			'data-mw="{&quot;attrs&quot;:{},&quot;body&quot;:' +
 			'{&quot;html&quot;:&quot;Foo<span rel=\\&quot;ve:Comment\\&quot; data-ve-comment=\\&quot; bar \\&quot;>&amp;nbsp;</span>&quot;},&quot;name&quot;:&quot;ref&quot;}" ' +
 			'>' +
-			'<sup>[1]</sup></span></p>',
+			'<a><span class="mw-reflink-text">[1]</span></a></span></p>',
 		head: '<base href="http://example.com" />',
 		data: [
 			{ type: 'paragraph' },

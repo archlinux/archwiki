@@ -124,6 +124,62 @@ class SearchEngineTest extends MediaWikiLangTestCase {
 			"Plain search failed" );
 	}
 
+	public function testWildcardSearch() {
+		$res = $this->search->searchText( 'smith*' );
+		$this->assertEquals(
+			[ 'Smithee' ],
+			$this->fetchIds( $res ),
+			"Search with wildcards" );
+
+		$res = $this->search->searchText( 'smithson*' );
+		$this->assertEquals(
+			[],
+			$this->fetchIds( $res ),
+			"Search with wildcards must not find unrelated articles" );
+
+		$res = $this->search->searchText( 'smith* smithee' );
+		$this->assertEquals(
+			[ 'Smithee' ],
+			$this->fetchIds( $res ),
+			"Search with wildcards can be combined with simple terms" );
+
+		$res = $this->search->searchText( 'smith* "one who smiths"' );
+		$this->assertEquals(
+			[ 'Smithee' ],
+			$this->fetchIds( $res ),
+			"Search with wildcards can be combined with phrase search" );
+	}
+
+	public function testPhraseSearch() {
+		$res = $this->search->searchText( '"smithee is one who smiths"' );
+		$this->assertEquals(
+			[ 'Smithee' ],
+			$this->fetchIds( $res ),
+			"Search a phrase" );
+
+		$res = $this->search->searchText( '"smithee is who smiths"' );
+		$this->assertEquals(
+			[],
+			$this->fetchIds( $res ),
+			"Phrase search is not sloppy, search terms must be adjacent" );
+
+		$res = $this->search->searchText( '"is smithee one who smiths"' );
+		$this->assertEquals(
+			[],
+			$this->fetchIds( $res ),
+			"Phrase search is ordered" );
+	}
+
+	public function testPhraseSearchHighlight() {
+		$phrase = "smithee is one who smiths";
+		$res = $this->search->searchText( "\"$phrase\"" );
+		$match = $res->next();
+		$snippet = "A <span class='searchmatch'>" . $phrase . "</span>";
+		$this->assertStringStartsWith( $snippet,
+			$match->getTextSnippet( $res->termMatches() ),
+			"Phrase search failed to highlight" );
+	}
+
 	public function testTextPowerSearch() {
 		$this->search->setNamespaces( [ 0, 1, 4 ] );
 		$this->assertEquals(
@@ -164,7 +220,8 @@ class SearchEngineTest extends MediaWikiLangTestCase {
 		/**
 		 * @var $mockEngine SearchEngine
 		 */
-		$mockEngine = $this->getMock( 'SearchEngine', [ 'makeSearchFieldMapping' ] );
+		$mockEngine = $this->getMockBuilder( 'SearchEngine' )
+			->setMethods( [ 'makeSearchFieldMapping' ] )->getMock();
 
 		$mockFieldBuilder = function ( $name, $type ) {
 			$mockField =
@@ -230,7 +287,7 @@ class SearchEngineTest extends MediaWikiLangTestCase {
 	}
 
 	public function addAugmentors( &$setAugmentors, &$rowAugmentors ) {
-		$setAugmentor = $this->getMock( 'ResultSetAugmentor' );
+		$setAugmentor = $this->createMock( 'ResultSetAugmentor' );
 		$setAugmentor->expects( $this->once() )
 			->method( 'augmentAll' )
 			->willReturnCallback( function ( SearchResultSet $resultSet ) {
@@ -244,7 +301,7 @@ class SearchEngineTest extends MediaWikiLangTestCase {
 			} );
 		$setAugmentors['testSet'] = $setAugmentor;
 
-		$rowAugmentor = $this->getMock( 'ResultAugmentor' );
+		$rowAugmentor = $this->createMock( 'ResultAugmentor' );
 		$rowAugmentor->expects( $this->exactly( 2 ) )
 			->method( 'augment' )
 			->willReturnCallback( function ( SearchResult $result ) {

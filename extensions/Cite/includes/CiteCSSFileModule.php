@@ -4,8 +4,8 @@
  *
  * @file
  * @ingroup Extensions
- * @copyright 2011-2016 Cite VisualEditor Team and others; see AUTHORS.txt
- * @license http://www.gnu.org/copyleft/gpl.html GNU General Public License 2.0 or later
+ * @copyright 2011-2017 Cite VisualEditor Team and others; see AUTHORS.txt
+ * @license The MIT License (MIT); see LICENSE.txt
  */
 
 class CiteCSSFileModule extends ResourceLoaderFileModule {

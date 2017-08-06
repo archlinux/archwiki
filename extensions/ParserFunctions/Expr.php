@@ -1,5 +1,7 @@
 <?php
 
+use UtfNormal\Validator;
+
 if ( !defined( 'MEDIAWIKI' ) ) {
 	die( 'This file is a MediaWiki extension, it is not a valid entry point' );
 }
@@ -363,7 +365,7 @@ class ExprParser {
 				$op = EXPR_GREATER;
 				++$p;
 			} else {
-				throw new ExprError( 'unrecognised_punctuation', UtfNormal::cleanUp( $char ) );
+				throw new ExprError( 'unrecognised_punctuation', Validator::cleanUp( $char ) );
 			}
 
 			// Binary operator processing

@@ -13,7 +13,7 @@
 	"nuke-defaultreason": "Deletion in massa de paginas addite per [[Special:Contributions/$1|{{GENDER:$1|$1}}]]",
 	"nuke-multiplepeople": "Deletion in massa de paginas addite recentemente",
 	"nuke-tools": "Iste instrumento permitte le deletion in massa de paginas recentemente addite per un usator o adresse IP specific.\nEntra le nomine de usator o adresse IP pro obtener un lista de paginas a deler, o lassa vacue pro tote le usatores.",
-	"nuke-submit-user": "Va",
+	"nuke-submit-user": "Listar paginas",
 	"nuke-submit-delete": "Deler selection",
 	"right-nuke": "Deler paginas in massa",
 	"nuke-select": "Seliger: $1",

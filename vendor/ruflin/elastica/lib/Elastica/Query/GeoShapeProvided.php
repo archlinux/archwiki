@@ -1,9 +1,8 @@
 <?php
-
 namespace Elastica\Query;
 
 /**
- * geo_shape query or provided shapes.
+ * geo_shape query for provided shapes.
  *
  * Query provided shape definitions
  *
@@ -59,16 +58,16 @@ class GeoShapeProvided extends AbstractGeoShape
      */
     public function toArray()
     {
-        return array(
-            'geo_shape' => array(
-                $this->_path => array(
-                    'shape' => array(
+        return [
+            'geo_shape' => [
+                $this->_path => [
+                    'shape' => [
                         'type' => $this->_shapeType,
                         'coordinates' => $this->_coordinates,
-                        'relation' => $this->_relation,
-                    ),
-                ),
-            ),
-        );
+                    ],
+                    'relation' => $this->_relation,
+                ],
+            ],
+        ];
     }
 }

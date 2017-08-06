@@ -22,13 +22,17 @@
 			"He7d3r",
 			"Fasouzafreitas",
 			"TheEduGobi",
-			"TheGabrielZaum"
+			"TheGabrielZaum",
+			"!Silent",
+			"McDutchie"
 		]
 	},
+	"visualeditor-cite-tool-definition.json": "nulo",
 	"visualeditor-cite-tool-name-book": "Livro",
 	"visualeditor-cite-tool-name-journal": "Periódico",
 	"visualeditor-cite-tool-name-news": "Notícias",
 	"visualeditor-cite-tool-name-web": "Site",
+	"cite-tool-definition.json": "nulo",
 	"cite-ve-dialog-reference-editing-reused": "Esta referência foi usada $1 {{PLURAL:$1|vezes}} nesta página.",
 	"cite-ve-dialog-reference-options-group-label": "Usar este grupo",
 	"cite-ve-dialog-reference-options-group-placeholder": "Referências gerais",
@@ -41,15 +45,16 @@
 	"cite-ve-dialog-referenceslist-contextitem-description-general": "Lista de referências gerais",
 	"cite-ve-dialog-referenceslist-contextitem-description-named": "Lista de referências para o grupo \"$1\"",
 	"cite-ve-dialog-referenceslist-title": "Lista de referências",
-	"cite-ve-dialogbutton-citation-educationpopup-title": "Citações",
 	"cite-ve-dialogbutton-citation-educationpopup-text": "Melhora seu conteúdo adicionando fontes de informação. Você pode citar livros, jornais e sites.",
-	"cite-ve-dialogbutton-reference-full-label": "Formulário básico",
-	"cite-ve-dialogbutton-reference-tooltip": "Básica",
+	"cite-ve-dialogbutton-citation-educationpopup-title": "Citações",
+	"cite-ve-dialogbutton-reference-full-label": "Forma básica",
 	"cite-ve-dialogbutton-reference-title": "Referência",
+	"cite-ve-dialogbutton-reference-tooltip": "Básica",
 	"cite-ve-dialogbutton-referenceslist-tooltip": "Lista de referências",
 	"cite-ve-reference-input-placeholder": "Buscar dentro das citações atuais",
 	"cite-ve-referenceslist-isempty": "Não há qualquer referência com o grupo \"$1\" nesta página para incluir nesta lista.",
 	"cite-ve-referenceslist-isempty-default": "Não há qualquer referência nesta página para a incluir nesta lista.",
 	"cite-ve-referenceslist-missingref": "Esta referência está definida em uma predefinição ou em um outro bloco gerado e, por enquanto só pode ser editada no código-fonte.",
-	"cite-ve-toolbar-group-label": "Citar"
+	"cite-ve-toolbar-group-label": "Citar",
+	"cite-ve-othergroup-item": "Referência $1"
 }

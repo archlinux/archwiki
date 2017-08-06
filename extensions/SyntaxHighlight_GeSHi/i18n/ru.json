@@ -2,8 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"Александр Сигачёв",
-			"Okras"
+			"Okras",
+			"Kaganer"
 		]
 	},
-	"syntaxhighlight-desc": "Обеспечивает подсветки синтаксиса <code>&lt;syntaxhighlight&gt;</code> с помощью [http://pygments.org/ Pygments — средства подсветки синтаксиса для Python]"
+	"syntaxhighlight-desc": "Обеспечивает подсветки синтаксиса <code>&lt;syntaxhighlight&gt;</code> с помощью [http://pygments.org/ Pygments — средства подсветки синтаксиса для Python]",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "Код",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Язык",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "(ничего)",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "Показать номера строк",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Фрагмент кода"
 }

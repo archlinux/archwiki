@@ -1,10 +1,9 @@
-{{int:version-credits-summary}}
-<!--
-MediaWiki 1.28 is a collaborative project released under the
+{{int:version-credits-summary}} <!--
+MediaWiki 1.29 is a collaborative project released under the
 GNU General Public License v2. We would like to recognize the
 following names for their contribution to the product.
--->
-<!-- Please notice that the following can be found parsed under Special:Version/Credits -->
+
+The following list can be found parsed under Special:Version/Credits -->
 
 == Contributors ==
 <!-- Updates to this list made with maintenance/updateCredits.php -->
@@ -24,17 +23,18 @@ following names for their contribution to the product.
 * Adrian Heine
 * Adrian Lang
 * Ævar Arnfjörð Bjarmason
+* Aftab
 * Agbad
 * Ahmad Sherif
 * Ajayrahul P
 * Alangi Derick
 * Albert221
 * Alejandro Mery
+* Aleksey Bekh-Ivanov
 * AlephNull
 * Alex Ivanov
 * Alex Shih-Han Lin
 * Alex Z.
-* Alexander Emsenhuber
 * Alexander I. Mashin
 * Alexander Lehmann
 * Alexander Monk
@@ -44,9 +44,11 @@ following names for their contribution to the product.
 * Amalthea
 * Amir E. Aharoni
 * Amir Sarabadani
+* amritsreekumar
 * ananay
 * Anders Wegge Jakobsen
 * Andre Engels
+* Andre Klapper
 * Andrew Bogott
 * Andrew Dunbar
 * Andrew Garrett
@@ -72,6 +74,7 @@ following names for their contribution to the product.
 * Aryeh Gregor
 * Asher Feldman
 * Asier Lostalé
+* awu42
 * ayush_garg
 * Azliq7
 * Bagariavivek
@@ -88,6 +91,7 @@ following names for their contribution to the product.
 * Bill Traynor
 * Billinghurst
 * billm
+* blackspirit96
 * blotmandroid
 * Bogdan Stancescu
 * Boris Nagaev
@@ -118,9 +122,11 @@ following names for their contribution to the product.
 * Chris McMahon
 * Chris Seaton
 * Chris Steipp
+* Chrisludt
 * Christian Aistleitner
 * Christian List
 * Christian Neubauer
+* Christoph Jauera
 * Christopher Johnson
 * church of emacs
 * Cindy Cicalese
@@ -147,7 +153,9 @@ following names for their contribution to the product.
 * Darian Anthony Patrick
 * Darkdragon09
 * DaSch
+* datguy
 * David Baumgarten
+* David Causse
 * David Chan
 * David E. Narváez
 * David Lynch
@@ -163,17 +171,20 @@ following names for their contribution to the product.
 * Dévai Tamás
 * Devi Krishnan
 * Diederik van Liere
+* divadsn
 * Domas Mituzas
 * Douglas Gardner
 * DPStokesNZ
 * dr0ptp4kt
 * Ebrahim Byagowi
 * Ed Sanders
+* Eddie Greiner-Petter
 * Edward Chernenko
 * Edward Z. Yang
 * Elisabeth Bauer
 * Elliott Eggleston
 * Elvis Stansvik
+* Emad Elwany
 * Emil Podlaszewski
 * Emmanuel Engelhart
 * Emmanuel Gil Peyrot
@@ -190,6 +201,7 @@ following names for their contribution to the product.
 * Erik Moeller
 * Erwin Dokter
 * Étienne Beaulé
+* Eugene Gvozdetsky
 * Evan McIntire
 * Evan Prodromou
 * ExplosiveHippo
@@ -209,6 +221,7 @@ following names for their contribution to the product.
 * georggi
 * Gergő Tisza
 * Gero Scholz
+* Ghybu
 * gicode
 * Giftpflanze
 * Gilles Dubuc
@@ -222,6 +235,7 @@ following names for their contribution to the product.
 * Grunny
 * Guillaume Blanchard
 * Guy Van den Broeck
+* Haikal Izzuddin
 * Happy-melon
 * haritha28
 * Harry Burt
@@ -245,6 +259,7 @@ following names for their contribution to the product.
 * Jacob Block
 * Jacob Clark
 * jagori
+* Jaime Crespo
 * Jakub Vrana
 * James Earl Douglas
 * James Forrester
@@ -261,6 +276,7 @@ following names for their contribution to the product.
 * Jaska Zedlik
 * Jason Richey
 * jeblad
+* Jeff Hobson
 * Jeff Janes
 * jeff303
 * Jens Frank
@@ -277,12 +293,15 @@ following names for their contribution to the product.
 * Jidanni
 * Jimmy Collins
 * Jimmy Xu
+* jo12bar
 * joakin
 * Joan Creus
 * Joel Natividad
+* Joel Sahleen
 * Joerg
 * Johan Dahlin
 * John Du Hart
+* John Erling Blad
 * John N
 * Jon Harald Søby
 * Jon Robson
@@ -295,6 +314,7 @@ following names for their contribution to the product.
 * JuneHyeon Bae
 * Jure Kajzer
 * Justin Du
+* Kai Nissen
 * Kai_WMDE
 * kaligula
 * Kartik Mistry
@@ -331,6 +351,7 @@ following names for their contribution to the product.
 * Liam Edwards-Playne
 * liangent
 * Lisa Ridley
+* Liuxinyu970226
 * Ljudusika
 * Lojjik Braughler
 * Louperivois
@@ -340,6 +361,7 @@ following names for their contribution to the product.
 * Luigi Corsaro
 * Luis Felipe Schenone
 * Luke Faraone
+* Luke Welling
 * Lupin
 * Lupo
 * lwelling
@@ -347,6 +369,7 @@ following names for their contribution to the product.
 * Madman
 * madurangasiriwardena
 * Magnus Manske
+* mainframe98
 * Manuel Menal
 * Manuel Schneider
 * Marc Ordinas i Llopis
@@ -368,6 +391,7 @@ following names for their contribution to the product.
 * Martin Urbanec
 * Massaf
 * Matěj Grabovský
+* Matěj Suchánek
 * matejsuchanek
 * Mathias Ertl
 * mati
@@ -377,6 +401,7 @@ following names for their contribution to the product.
 * Matthew Bowker
 * Matthew Britton
 * Matthew Flaschen
+* Matthew Walker
 * Matthias Jordan
 * Matthias Mullie
 * MatthiasDD
@@ -400,6 +425,7 @@ following names for their contribution to the product.
 * Michał Roszka
 * Michał Zieliński
 * Mike Horvath
+* Mikhail Popov
 * Minh Nguyễn
 * MinuteElectron
 * Misza13
@@ -413,9 +439,11 @@ following names for their contribution to the product.
 * MrBlueSky
 * MrPete
 * Mukunda Modell
+* MusikAnimal
 * Mwalker
 * mwjames
 * mybugs.mail
+* mynk-96
 * MZMcBride
 * nadeesha
 * Nakon
@@ -428,8 +456,10 @@ following names for their contribution to the product.
 * Nicholas Pisarro, Jr
 * Nick Jenkins
 * nicoco007
+* Nicolaie Constantinescu
 * Nicolas Dumazet
 * Nicolas Weeger
+* Niharika Kohli
 * Nik
 * Nik Everett
 * Niklas Laxström
@@ -444,6 +474,7 @@ following names for their contribution to the product.
 * Nuria Ruiz
 * Nx.devnull
 * Ocean behind ears
+* Od1n
 * Olaf Lenz
 * Olivier Finlay Beaton
 * onei
@@ -465,6 +496,7 @@ following names for their contribution to the product.
 * Pavel Selitskas
 * Pcoombe
 * Perside Rosalie
+* Peter Coombe
 * Peter Gehres
 * Peter Hedenskog
 * Peter Potrowl
@@ -472,6 +504,7 @@ following names for their contribution to the product.
 * Petr Kadlec
 * Petr Onderka
 * Petr Pchelko
+* Phantom42
 * Philip Tzou
 * physikerwelt (Moritz Schubotz)
 * PieRRoMaN
@@ -480,6 +513,7 @@ following names for their contribution to the product.
 * Platonides
 * Pmlineditor
 * pmolina
+* pppery
 * prageck
 * Pranav Ravichandran
 * PranavK
@@ -502,6 +536,7 @@ following names for their contribution to the product.
 * Ricordisamoa
 * rillke
 * River Tarnell
+* rlot
 * Roan Kattouw
 * Rob Church
 * Rob Lanphier
@@ -533,7 +568,9 @@ following names for their contribution to the product.
 * Salvatore Ingala
 * Sam Reed
 * Sam Smith
+* Sam Wilson
 * Santhosh Thottingal
+* saptaks
 * Schnark
 * Scimonster
 * scnd
@@ -549,6 +586,7 @@ following names for their contribution to the product.
 * Shahyar
 * Shane Gibbons
 * Shane King
+* shanika
 * Shinjiman
 * shirayuki
 * Sidhant Gupta
@@ -571,14 +609,16 @@ following names for their contribution to the product.
 * Stephen Liang
 * Steve Sanbeg
 * Steven Roddis
+* Steven Walling
 * Str4nd
+* Subin Siby
 * Subramanya Sastry
 * Sumit Asthana
 * svip
-* Swalling
 * Szymon Świerkosz
 * T.D. Corell
 * Tarquin
+* TerraCodes
 * The Discoverer
 * The Evil IP address
 * theopolisme
@@ -608,9 +648,11 @@ following names for their contribution to the product.
 * Tomasz W. Kozlowski
 * Tomasz Wegrzanowski
 * tomek
+* Toni Hermoso Pulido
 * Tony Thomas
 * Tpt
 * Trevor Parscal
+* Trey Jones
 * TyA
 * Tychay
 * Tyler Anthony Romeo
@@ -622,6 +664,7 @@ following names for their contribution to the product.
 * utkarsh95
 * Van de Bugger
 * Viačeslav
+* Victor Barbu
 * Victor Porton
 * Victor Vasiliev
 * victorbarbu
@@ -643,10 +686,12 @@ following names for their contribution to the product.
 * Yaron Koren
 * Yaroslav Melnychuk
 * Yesid Carrillo
+* Yifei He
 * Yogesh K S
 * Yongmin Hong
 * yoonghm
 * Yuri Astrakhan
+* Yuriy Shnitkovskiy
 * Yusuke Matsubara
 * Yuvi Panda
 * Zachary Hauri
@@ -654,6 +699,7 @@ following names for their contribution to the product.
 * Željko Filipin
 * Zhaofeng Li
 * Zhengzhu Feng
+* Zhuyifei1999
 * Zppix
 * محمد شعیب
 <!-- END CONTRIBUTOR LIST -->

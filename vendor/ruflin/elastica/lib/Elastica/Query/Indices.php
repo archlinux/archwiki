@@ -1,12 +1,14 @@
 <?php
-
 namespace Elastica\Query;
 
 use Elastica\Index as ElasticaIndex;
 
+trigger_error('Elastica\Query\Indices is deprecated and will be removed in further Elastica releases. Search on the _index field instead.', E_USER_DEPRECATED);
+
 /**
  * Class Indices.
  *
+ * @deprecated Search on the _index field instead
  * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-indices-query.html
  */
 class Indices extends AbstractQuery
@@ -29,7 +31,7 @@ class Indices extends AbstractQuery
      */
     public function setIndices(array $indices)
     {
-        $this->setParam('indices', array());
+        $this->setParam('indices', []);
         foreach ($indices as $index) {
             $this->addIndex($index);
         }

@@ -13,7 +13,7 @@
 	"nuke-defaultreason": "Množično brisanje strani, ki jih je {{GENDER:$1|dodal|dodala}} [[Special:Contributions/$1|$1]]",
 	"nuke-multiplepeople": "Množični izbris nedavno dodanih strani",
 	"nuke-tools": "To orodje omogoča množični izbris strani, ki jih je nedavno ustvaril določen uporabnik ali IP.\nVnesite uporabniško ime ali IP, da pridobite seznam strani za izbris, ali pustite prazno za vse uporabnike.",
-	"nuke-submit-user": "Pojdi",
+	"nuke-submit-user": "Navedi strani",
 	"nuke-toggleinvert": "Obrni",
 	"nuke-submit-delete": "Izbriši izbrano",
 	"right-nuke": "Množično brisanje strani",

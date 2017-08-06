@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Makuba",
-			"Renan"
+			"Renan",
+			"Stavanger7"
 		]
 	},
 	"vector.css": "/* CSS colocat ci va afectar usatores de pelle Vector */",
@@ -17,5 +18,6 @@
 	"vector-view-edit": "Redacter",
 	"vector-view-history": "Historie de versiones",
 	"vector-view-view": "Leer",
-	"vector-view-viewsource": "Vider fonte"
+	"vector-view-viewsource": "Vider fonte",
+	"vector-more-actions": "Plu"
 }

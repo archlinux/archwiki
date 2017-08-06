@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Cluster\Health;
 
 /**
@@ -128,7 +127,7 @@ class Index
      */
     public function getShards()
     {
-        $shards = array();
+        $shards = [];
         foreach ($this->_data['shards'] as $shardNumber => $shard) {
             $shards[] = new Shard($shardNumber, $shard);
         }

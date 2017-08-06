@@ -47,15 +47,15 @@ class GadgetResourceLoaderModule extends ResourceLoaderWikiModule {
 	 */
 	protected function getPages( ResourceLoaderContext $context ) {
 		$gadget = $this->getGadget();
-		$pages = array();
+		$pages = [];
 
 		foreach ( $gadget->getStyles() as $style ) {
-			$pages[$style] = array( 'type' => 'style' );
+			$pages[$style] = [ 'type' => 'style' ];
 		}
 
 		if ( $gadget->supportsResourceLoader() ) {
 			foreach ( $gadget->getScripts() as $script ) {
-				$pages[$script] = array( 'type' => 'script' );
+				$pages[$script] = [ 'type' => 'script' ];
 			}
 		}
 
@@ -65,18 +65,10 @@ class GadgetResourceLoaderModule extends ResourceLoaderWikiModule {
 	/**
 	 * Overrides ResourceLoaderModule::getDependencies()
 	 * @param $context ResourceLoaderContext
-	 * @return Array: Names of resources this module depends on
+	 * @return string[] Names of resources this module depends on
 	 */
 	public function getDependencies( ResourceLoaderContext $context = null ) {
 		return $this->getGadget()->getDependencies();
-	}
-
-	/**
-	 * Overrides ResourceLoaderModule::getPosition()
-	 * @return String: 'bottom' or 'top'
-	 */
-	public function getPosition() {
-		return $this->getGadget()->getPosition();
 	}
 
 	/**

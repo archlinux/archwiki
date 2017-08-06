@@ -39,6 +39,7 @@
 	"cite-ve-dialog-referenceslist-contextitem-description-general": "فهرست منابع عمومی",
 	"cite-ve-dialog-referenceslist-contextitem-description-named": "فهرست منابع برای گروه $1",
 	"cite-ve-dialog-referenceslist-title": "فهرست منابع",
+	"cite-ve-dialogbutton-citation-educationpopup-text": "محتویات‌تان را با افزودن اطلاعاتِ منابع استفاده‌شده، بهبود ببخشید. می‌توانید از کتاب‌ها، مجله‌ها و وب‌گاه‌ها استفاده کنید.",
 	"cite-ve-dialogbutton-citation-educationpopup-title": "یادکردها",
 	"cite-ve-dialogbutton-reference-full-label": "فرم ابتدائی",
 	"cite-ve-dialogbutton-reference-title": "منبع",
@@ -48,5 +49,6 @@
 	"cite-ve-referenceslist-isempty": "ارجاعی با گروه «$1» در این صفحه برای شامل‌کردن در این فهرست وجود ندارد.",
 	"cite-ve-referenceslist-isempty-default": "ارجاعی در این صفحه برای شامل‌کردن در این فهرست وجود ندارد.",
 	"cite-ve-referenceslist-missingref": "این یادکرد درون یک الگو یا قطعهٔ تولیدی دیگر تعریف شده است و هم‌اکنون تنها می‌توان در حالت متنی آن را ویرایش کرد",
-	"cite-ve-toolbar-group-label": "یادکرد"
+	"cite-ve-toolbar-group-label": "یادکرد",
+	"cite-ve-othergroup-item": "$1 ارجاع"
 }

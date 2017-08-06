@@ -1,7 +1,7 @@
 /*
  * JavaScript for WikiEditor Toolbar
  */
-jQuery( document ).ready( function ( $ ) {
+jQuery( function ( $ ) {
 	if ( !$.wikiEditor.isSupported( $.wikiEditor.modules.toolbar ) ) {
 		$( '.wikiEditor-oldToolbar' ).show();
 		return;

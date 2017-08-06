@@ -27,6 +27,9 @@
 require_once __DIR__ . '/Maintenance.php';
 require_once __DIR__ . '/../includes/export/DumpFilter.php';
 
+use Wikimedia\Rdbms\LoadBalancer;
+use Wikimedia\Rdbms\IDatabase;
+
 /**
  * @ingroup Dump Maintenance
  */
@@ -163,7 +166,7 @@ class BackupDumper extends Maintenance {
 					$val = explode( ':', $param );
 
 					if ( count( $val ) === 1 ) {
-						$this->loadPlugin( $val[0] );
+						$this->loadPlugin( $val[0], '' );
 					} elseif ( count( $val ) === 2 ) {
 						$this->loadPlugin( $val[0], $val[1] );
 					} else {

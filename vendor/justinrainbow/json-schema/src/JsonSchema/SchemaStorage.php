@@ -8,8 +8,10 @@ use JsonSchema\Iterator\ObjectIterator;
 use JsonSchema\Uri\UriResolver;
 use JsonSchema\Uri\UriRetriever;
 
-class SchemaStorage
+class SchemaStorage implements SchemaStorageInterface
 {
+    const INTERNAL_PROVIDED_SCHEMA_URI = 'internal://provided-schema';
+
     protected $uriRetriever;
     protected $uriResolver;
     protected $schemas = array();
@@ -18,8 +20,8 @@ class SchemaStorage
         UriRetrieverInterface $uriRetriever = null,
         UriResolverInterface $uriResolver = null
     ) {
-        $this->uriRetriever = $uriRetriever ?: new UriRetriever;
-        $this->uriResolver = $uriResolver ?: new UriResolver;
+        $this->uriRetriever = $uriRetriever ?: new UriRetriever();
+        $this->uriResolver = $uriResolver ?: new UriResolver();
     }
 
     /**
@@ -39,27 +41,28 @@ class SchemaStorage
     }
 
     /**
-     * @param string $id
-     * @param object $schema
+     * {@inheritdoc}
      */
     public function addSchema($id, $schema = null)
     {
-        if (is_null($schema)) {
+        if (is_null($schema) && $id !== self::INTERNAL_PROVIDED_SCHEMA_URI) {
+            // if the schema was user-provided to Validator and is still null, then assume this is
+            // what the user intended, as there's no way for us to retrieve anything else. User-supplied
+            // schemas do not have an associated URI when passed via Validator::validate().
             $schema = $this->uriRetriever->retrieve($id);
         }
         $objectIterator = new ObjectIterator($schema);
         foreach ($objectIterator as $toResolveSchema) {
             if (property_exists($toResolveSchema, '$ref') && is_string($toResolveSchema->{'$ref'})) {
                 $jsonPointer = new JsonPointer($this->uriResolver->resolve($toResolveSchema->{'$ref'}, $id));
-                $toResolveSchema->{'$ref'} = (string)$jsonPointer;
+                $toResolveSchema->{'$ref'} = (string) $jsonPointer;
             }
         }
         $this->schemas[$id] = $schema;
     }
 
     /**
-     * @param string $id
-     * @return object
+     * {@inheritdoc}
      */
     public function getSchema($id)
     {
@@ -70,11 +73,24 @@ class SchemaStorage
         return $this->schemas[$id];
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function resolveRef($ref)
     {
         $jsonPointer = new JsonPointer($ref);
-        $refSchema = $this->getSchema($jsonPointer->getFilename());
 
+        // resolve filename for pointer
+        $fileName = $jsonPointer->getFilename();
+        if (!strlen($fileName)) {
+            throw new UnresolvableJsonPointerException(sprintf(
+                "Could not resolve fragment '%s': no file is defined",
+                $jsonPointer->getPropertyPathAsString()
+            ));
+        }
+
+        // get & process the schema
+        $refSchema = $this->getSchema($fileName);
         foreach ($jsonPointer->getPropertyPaths() as $path) {
             if (is_object($refSchema) && property_exists($refSchema, $path)) {
                 $refSchema = $this->resolveRefSchema($refSchema->{$path});
@@ -93,12 +109,11 @@ class SchemaStorage
     }
 
     /**
-     * @param $refSchema
-     * @return object
+     * {@inheritdoc}
      */
     public function resolveRefSchema($refSchema)
     {
-        if (is_object($refSchema) && property_exists($refSchema, '$ref')) {
+        if (is_object($refSchema) && property_exists($refSchema, '$ref') && is_string($refSchema->{'$ref'})) {
             $newSchema = $this->resolveRef($refSchema->{'$ref'});
             $refSchema = (object) (get_object_vars($refSchema) + get_object_vars($newSchema));
             unset($refSchema->{'$ref'});

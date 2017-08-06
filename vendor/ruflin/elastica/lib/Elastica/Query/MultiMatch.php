@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Query;
 
 /**
@@ -46,7 +45,7 @@ class MultiMatch extends AbstractQuery
      *
      * @return $this
      */
-    public function setFields($fields = array())
+    public function setFields($fields = [])
     {
         return $this->setParam('fields', $fields);
     }

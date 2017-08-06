@@ -4,11 +4,19 @@ use MediaWiki\Auth\AuthenticationRequest;
 
 class MathCaptcha extends SimpleCaptcha {
 
-	/** Validate a captcha response */
+	/**
+	 * Validate a captcha response
+	 * @param string $answer
+	 * @param array $info
+	 * @return bool
+	 */
 	function keyMatch( $answer, $info ) {
 		return (int)$answer == (int)$info['answer'];
 	}
 
+	/**
+	 * @param array $resultArr
+	 */
 	function addCaptchaAPI( &$resultArr ) {
 		list( $sum, $answer ) = $this->pickSum();
 		$html = $this->fetchMath( $sum );
@@ -18,6 +26,9 @@ class MathCaptcha extends SimpleCaptcha {
 		$resultArr['captcha']['question'] = $html;
 	}
 
+	/**
+	 * @return array
+	 */
 	public function describeCaptchaType() {
 		return [
 			'type' => 'math',
@@ -25,6 +36,10 @@ class MathCaptcha extends SimpleCaptcha {
 		];
 	}
 
+	/**
+	 * @param int $tabIndex
+	 * @return array
+	 */
 	function getFormInformation( $tabIndex = 1 ) {
 		list( $sum, $answer ) = $this->pickSum();
 		$index = $this->storeCaptcha( [ 'answer' => $answer ] );
@@ -62,22 +77,38 @@ class MathCaptcha extends SimpleCaptcha {
 		return preg_replace( '/alt=".*?"/', '', $html );
 	}
 
+	/**
+	 * @return array
+	 */
 	public function getCaptcha() {
 		list( $sum, $answer ) = $this->pickSum();
 		return [ 'question' => $sum, 'answer' => $answer ];
 	}
 
+	/**
+	 * @param array $captchaData
+	 * @param string $id
+	 * @return mixed
+	 */
 	public function getCaptchaInfo( $captchaData, $id ) {
 		$sum = $captchaData['question'];
 		return $this->fetchMath( $sum );
 	}
 
+	/**
+	 * @param array $requests
+	 * @param array $fieldInfo
+	 * @param array $formDescriptor
+	 * @param string $action
+	 */
 	public function onAuthChangeFormFields( array $requests, array $fieldInfo,
 		array &$formDescriptor, $action ) {
 		/** @var CaptchaAuthenticationRequest $req */
-		$req =
-			AuthenticationRequest::getRequestByClass( $requests,
-				CaptchaAuthenticationRequest::class, true );
+		$req = AuthenticationRequest::getRequestByClass(
+			$requests,
+			CaptchaAuthenticationRequest::class,
+				true
+		);
 		if ( !$req ) {
 			return;
 		}

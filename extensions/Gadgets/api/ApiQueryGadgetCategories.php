@@ -47,14 +47,14 @@ class ApiQueryGadgetCategories extends ApiQueryBase {
 	}
 
 	private function getList() {
-		$data = array();
+		$data = [];
 		$result = $this->getResult();
 		$gadgets = GadgetRepo::singleton()->getStructuredList();
 
 		if ( $gadgets ) {
 			foreach ( $gadgets as $category => $list ) {
 				if ( !$this->neededNames || isset( $this->neededNames[$category] ) ) {
-					$row = array();
+					$row = [];
 					if ( isset( $this->props['name'] ) ) {
 						$row['name'] = $category;
 					}
@@ -78,32 +78,32 @@ class ApiQueryGadgetCategories extends ApiQueryBase {
 	}
 
 	public function getAllowedParams() {
-		return array(
-			'prop' => array(
+		return [
+			'prop' => [
 				ApiBase::PARAM_DFLT => 'name',
 				ApiBase::PARAM_ISMULTI => true,
-				ApiBase::PARAM_TYPE => array(
+				ApiBase::PARAM_TYPE => [
 					'name',
 					'title',
 					'members',
-				),
-			),
-			'names' => array(
+				],
+			],
+			'names' => [
 				ApiBase::PARAM_TYPE => 'string',
 				ApiBase::PARAM_ISMULTI => true,
-			),
-		);
+			],
+		];
 	}
 
 	/**
 	 * @see ApiBase::getExamplesMessages()
 	 */
 	protected function getExamplesMessages() {
-		return array(
+		return [
 			'action=query&list=gadgetcategories'
 				=> 'apihelp-query+gadgetcategories-example-1',
 			'action=query&list=gadgetcategories&gcnames=foo|bar&gcprop=name|title|members'
 				=> 'apihelp-query+gadgetcategories-example-2',
-		);
+		];
 	}
 }

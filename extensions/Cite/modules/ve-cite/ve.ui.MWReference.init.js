@@ -1,3 +1,9 @@
+/*!
+ * VisualEditor MediaWiki Cite initialisation code.
+ *
+ * @copyright 2011-2017 Cite VisualEditor Team and others; see AUTHORS.txt
+ * @license The MIT License (MIT); see LICENSE.txt
+ */
 ( function () {
 	var i, j, jLen, toolGroup, toolGroups, linkIndex, target, label, group;
 
@@ -83,8 +89,6 @@
 		var i, len, item, name, data, tool, tools, dialog, contextItem,
 			limit = 5;
 
-		/*jshint loopfunc:true */
-
 		try {
 			// Must use mw.message to avoid JSON being parsed as Wikitext
 			tools = JSON.parse( mw.message( 'cite-tool-definition.json' ).plain() );
@@ -104,8 +108,8 @@
 				// Generate citation tool
 				name = 'cite-' + item.name;
 				if ( !ve.ui.toolFactory.lookup( name ) ) {
-					tool = function GeneratedMWCitationDialogTool( toolbar, config ) {
-						ve.ui.MWCitationDialogTool.call( this, toolbar, config );
+					tool = function GeneratedMWCitationDialogTool() {
+						ve.ui.MWCitationDialogTool.apply( this, arguments );
 					};
 					OO.inheritClass( tool, ve.ui.MWCitationDialogTool );
 					tool.static.group = 'cite';
@@ -131,8 +135,9 @@
 
 				// Generate citation context item
 				if ( !ve.ui.contextItemFactory.lookup( name ) ) {
-					contextItem = function GeneratedMWCitationContextItem( toolbar, config ) {
-						ve.ui.MWCitationContextItem.call( this, toolbar, config );
+					contextItem = function GeneratedMWCitationContextItem() {
+						// Parent constructor
+						ve.ui.MWCitationContextItem.apply( this, arguments );
 					};
 					OO.inheritClass( contextItem, ve.ui.MWCitationContextItem );
 					contextItem.static.name = name;
@@ -145,8 +150,8 @@
 
 				// Generate dialog
 				if ( !ve.ui.windowFactory.lookup( name ) ) {
-					dialog = function GeneratedMWCitationDialog( config ) {
-						ve.ui.MWCitationDialog.call( this, config );
+					dialog = function GeneratedMWCitationDialog() {
+						ve.ui.MWCitationDialog.apply( this, arguments );
 					};
 					OO.inheritClass( dialog, ve.ui.MWCitationDialog );
 					dialog.static.name = name;
@@ -155,6 +160,6 @@
 				}
 			}
 		}
-	} )();
+	}() );
 
 }() );

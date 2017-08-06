@@ -17,7 +17,7 @@
 	"nuke-defaultreason": "Eliminação em massa de páginas criadas por [[Special:Contributions/$1|{{GENDER:$1|$1}}]]",
 	"nuke-multiplepeople": "Eliminação em massa de páginas recentemente adicionadas",
 	"nuke-tools": "Esta ferramenta permite a eliminação em massa de páginas criadas recentemente por um utilizador ou IP específico. Forneça o nome de utilizador ou o IP para obter a lista de páginas a eliminar, ou deixe em branco para todos os utilizadores.",
-	"nuke-submit-user": "Ir",
+	"nuke-submit-user": "Listar páginas",
 	"nuke-toggleinvert": "Inverter",
 	"nuke-submit-delete": "Eliminar as selecionadas",
 	"right-nuke": "Eliminar páginas em massa",

@@ -99,7 +99,6 @@ class GeSHi {
 
 		// SQL
 		'dcl'      => 'sql',
-		'tsql'     => 'sql',
 		'plsql'    => 'sql',
 		'oracle11' => 'sql',
 		'oracle8'  => 'sql',
@@ -110,16 +109,6 @@ class GeSHi {
 
 		// xpp is basically Java
 		'xpp' => 'java',
-
-		// bibtex is basically LaTeX
-		'bibtex' => 'latex',
-
-		// 'emacs-lisp' was an alias for the Emacs Lisp lexer.
-		// It got dropped in Pygments commit 811926b, probably by accident.
-		// Declare it here until it is restored upstream.
-		// Upstream bug:
-		//   https://bitbucket.org/birkenfeld/pygments-main/issues/1207
-		'emacs-lisp' => 'elisp',
 
 		// apt
 		'apt_sources' => 'debsources',

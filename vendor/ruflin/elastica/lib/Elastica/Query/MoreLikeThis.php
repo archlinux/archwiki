@@ -1,9 +1,7 @@
 <?php
-
 namespace Elastica\Query;
 
 use Elastica\Document;
-use Elastica\Exception\DeprecatedException;
 
 /**
  * More Like This query.
@@ -27,20 +25,6 @@ class MoreLikeThis extends AbstractQuery
     }
 
     /**
-     * Set document ids for the mlt query.
-     *
-     * @param array $ids Document ids
-     *
-     * @deprecated Option "ids" deprecated as of ES 2.0.0-beta1 and will be removed in further Elastica releases. Use "like" instead.
-     
-     * @return \Elastica\Query\MoreLikeThis Current object
-     */
-    public function setIds(array $ids)
-    {
-        throw new DeprecatedException('Option "ids" deprecated as of ES 2.0.0-beta1 and will be removed in further Elastica releases. Use "like" instead.');
-    }
-
-    /**
      * Set the "like" value.
      *
      * @param string|Document $like
@@ -50,20 +34,6 @@ class MoreLikeThis extends AbstractQuery
     public function setLike($like)
     {
         return $this->setParam('like', $like);
-    }
-
-    /**
-     * Set the "like_text" value.
-     *
-     * @param string $likeText
-     *
-     * @deprecated Option "like_text" deprecated as of ES 2.0.0-beta1 and will be removed at further Elastica releases. Use "like" instead.
-     
-     * @return $this
-     */
-    public function setLikeText($likeText)
-    {
-        throw new DeprecatedException('Option "like_text" deprecated as of ES 2.0.0-beta1 and will be removed in further Elastica releases. Use "like" instead.');
     }
 
     /**
@@ -88,20 +58,6 @@ class MoreLikeThis extends AbstractQuery
     public function setMaxQueryTerms($maxQueryTerms)
     {
         return $this->setParam('max_query_terms', (int) $maxQueryTerms);
-    }
-
-    /**
-     * Set percent terms to match.
-     *
-     * @param float $percentTermsToMatch Percentage
-     *
-     * @return $this
-     *
-     * @deprecated Option "percent_terms_to_match" deprecated as of ES 1.5 and will be removed in further Elastica releases. Use "minimum_should_match" instead.
-     */
-    public function setPercentTermsToMatch($percentTermsToMatch)
-    {
-        throw new DeprecatedException('Option "percent_terms_to_match" deprecated as of ES 1.5 and will be removed in further Elastica releases. Use "minimum_should_match" instead.');
     }
 
     /**
@@ -222,7 +178,7 @@ class MoreLikeThis extends AbstractQuery
         // If _source is provided, perform MLT on a document provided as an input
         if (!empty($array['more_like_this']['like']['_id'])) {
             $doc = $array['more_like_this']['like'];
-            $doc = array_intersect_key($doc, array('_index' => 1, '_type' => 1, '_id' => 1));
+            $doc = array_intersect_key($doc, ['_index' => 1, '_type' => 1, '_id' => 1]);
             $array['more_like_this']['like'] = $doc;
         } elseif (!empty($array['more_like_this']['like']['_source'])) {
             $doc = $array['more_like_this']['like'];

@@ -16,6 +16,7 @@
 	"captcha-help": "CAPTCHA sprendimas.",
 	"captcha-info-help": "CAPTCHA aprašymas.",
 	"captcha-id-label": "CAPTCHA ID",
+	"captcha-id-help": "Ši reikšmė turėtų būti siunčiama atgal nepakeista.",
 	"captcha-addurl": "Jūsų pakeitimuose yra nauja išorinė nuoroda.\nKad apsaugotume viki nuo automatinio brukalo, mes maloniai prašome jūsų suskaičiuoti paprastą sumą, pateiktą žemiau, ir įvesti atsakymą į langelį, kad Jūsų pakeitimai būtų išsaugoti, ([[Special:Captcha/help|daugiau informacijos]]):",
 	"captcha-badlogin": "Kad apsaugotume viki nuo automatinio slaptažodžių nulaužinėjimo, mes maloniai prašome jūsų apskaičiuoti paprastą sumą, pateiktą žemiau, ir įvesti atsakymą į langelį ([[Special:Captcha/help|daugiau informacijos]]):",
 	"captcha-createaccount": "Kad apsaugotume viki nuo automatinio paskyrų kūrimo, mes maloniai prašome apskaičiuoti paprastą sumą, pateiktą žemiau, ir įvesti atsakymą į langelį ([[Special:Captcha/help|daugiau informacijos]]):",

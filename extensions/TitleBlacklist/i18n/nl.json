@@ -4,7 +4,8 @@
 			"SPQRobin",
 			"Siebrand",
 			"Southparkfan",
-			"Sjoerddebruin"
+			"Sjoerddebruin",
+			"Mainframe98"
 		]
 	},
 	"action-titleblacklistlog": "logboek zwarte lijst voor paginanamen te bekijken",
@@ -18,6 +19,7 @@
 	"titleblacklist-forbidden-new-account": "De gebruikersnaam \"$2\" kan niet aangemaakt worden omdat die voldoet aan de volgende beperking op de zwarte lijst: <code>$1</code>",
 	"titleblacklist-invalid": "De volgende {{PLURAL:$1|regel|regels}} in de zwarte lijst voor paginanamen {{PLURAL:$1|is|zijn}} ongeldig.\nVerbeter die {{PLURAL:$1|regel|regels}} voordat u de lijst opslaat:",
 	"titleblacklist-override": "Zwarte lijst negeren",
+	"titleblacklist-warning": "<strong>Waarschuwing: Deze pagina kan alleen worden bewerkt door de beheerders en andere gebruikers met het <code>tboverride</code> recht omdat het overeenkomt met de volgende vermelding op de zwarte lijst voor titels:</strong><br /><code>$1</code>",
 	"right-tboverride": "De zwarte lijst voor pagina- en gebruikersnamen omzeilen",
 	"right-tboverride-account": "Zwarte lijst voor gebruikersnamen negeren",
 	"right-titleblacklistlog": "Logboek zwarte lijst voor paginanamen bekijken",

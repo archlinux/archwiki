@@ -25,7 +25,7 @@ table.mw-interwikitable.body td.mw-interwikitable-modify {
 }
 
 table.mw-interwikitable.body td.mw-interwikitable-local-yes {
-	background: #afc;
+	background: #d5fdf4;
 }
 
 /* It's safe enough to assume that URLs are usually LTR. */

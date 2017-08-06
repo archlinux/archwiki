@@ -11,7 +11,7 @@
 	"license-name": "GPL-2.0+",
 	"type": "skin",
 	"requires": {
-		"MediaWiki": ">= 1.25.0"
+		"MediaWiki": ">= 1.29.0"
 	},
 	"ConfigRegistry": {
 		"vector": "GlobalVarConfig::newInstance"
@@ -45,11 +45,9 @@
 		"skins.vector.styles.responsive": {
 			"targets": [ "desktop", "mobile" ],
 			"position": "top",
-			"styles": {
-				"responsive.less": {
-					"media": "screen and (max-width: 768px)"
-				}
-			}
+			"styles": [
+				"responsive.less"
+			]
 		},
 		"skins.vector.js": {
 			"scripts": [

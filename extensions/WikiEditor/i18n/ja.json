@@ -13,7 +13,8 @@
 			"Rxy",
 			"Macofe",
 			"Sujiniku",
-			"Otokoume"
+			"Otokoume",
+			"おはぐろ蜻蛉"
 		]
 	},
 	"wikieditor": "高度なウィキテキスト編集インターフェイス",
@@ -85,7 +86,7 @@
 	"wikieditor-toolbar-tool-reference": "注釈",
 	"wikieditor-toolbar-tool-reference-example": "注釈文をここに入力してください",
 	"wikieditor-toolbar-tool-reference-cancel": "中止",
-	"wikieditor-toolbar-tool-reference-title": "出典を挿入",
+	"wikieditor-toolbar-tool-reference-title": "情報源を挿入",
 	"wikieditor-toolbar-tool-reference-insert": "挿入",
 	"wikieditor-toolbar-tool-reference-text": "出典情報",
 	"wikieditor-toolbar-tool-signature": "時刻印付き署名",

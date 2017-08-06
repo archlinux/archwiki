@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Bulk\Action;
 
 use Elastica\AbstractUpdateAction;
@@ -10,12 +9,12 @@ use Elastica\Script\AbstractScript;
 abstract class AbstractDocument extends Action
 {
     /**
-     * @var \Elastica\Document|\Elastica\Script\AbstractScript
+     * @var Document|AbstractScript
      */
     protected $_data;
 
     /**
-     * @param \Elastica\Document|\Elastica\Script\AbstractScript $document
+     * @param Document|AbstractScript $document
      */
     public function __construct($document)
     {
@@ -23,7 +22,7 @@ abstract class AbstractDocument extends Action
     }
 
     /**
-     * @param \Elastica\Document $document
+     * @param Document $document
      *
      * @return $this
      */
@@ -39,7 +38,7 @@ abstract class AbstractDocument extends Action
     }
 
     /**
-     * @param \Elastica\Script\AbstractScript $script
+     * @param AbstractScript $script
      *
      * @return $this
      */
@@ -58,7 +57,7 @@ abstract class AbstractDocument extends Action
     }
 
     /**
-     * @param \Elastica\Script\AbstractScript|\Elastica\Document $data
+     * @param AbstractScript|Document $data
      *
      * @throws \InvalidArgumentException
      *
@@ -80,7 +79,7 @@ abstract class AbstractDocument extends Action
     /**
      * Note: This is for backwards compatibility.
      *
-     * @return \Elastica\Document|null
+     * @return Document|null
      */
     public function getDocument()
     {
@@ -94,7 +93,7 @@ abstract class AbstractDocument extends Action
     /**
      * Note: This is for backwards compatibility.
      *
-     * @return \Elastica\Script\AbstractScript|null
+     * @return AbstractScript|null
      */
     public function getScript()
     {
@@ -106,7 +105,7 @@ abstract class AbstractDocument extends Action
     }
 
     /**
-     * @return \Elastica\Document|\Elastica\Script\AbstractScript
+     * @return Document|AbstractScript
      */
     public function getData()
     {
@@ -121,8 +120,12 @@ abstract class AbstractDocument extends Action
     abstract protected function _getMetadata(AbstractUpdateAction $source);
 
     /**
-     * @param \Elastica\Document|\Elastica\Script\AbstractScript $data
-     * @param string                                             $opType
+     * Creates a bulk action for a document or a script.
+     *
+     * The action can be index, update, create or delete based on the $opType param (by default index).
+     *
+     * @param Document|AbstractScript $data
+     * @param string                  $opType
      *
      * @return static
      */

@@ -277,6 +277,9 @@ class WikiEditorHooks {
 				],
 				$toolbar
 			);
+			// Return false to signify that the toolbar has been over-written, so
+			// the old toolbar code shouldn't be added to the page.
+			return false;
 		}
 		return true;
 	}

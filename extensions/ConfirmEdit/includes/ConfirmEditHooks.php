@@ -21,29 +21,6 @@ class ConfirmEditHooks {
 		return $wgCaptcha;
 	}
 
-	/**
-	 * Registers conditional hooks.
-	 */
-	public static function onRegistration() {
-		global $wgDisableAuthManager, $wgAuthManagerAutoConfig;
-
-		if ( class_exists( AuthManager::class ) && !$wgDisableAuthManager ) {
-			$wgAuthManagerAutoConfig['preauth'][CaptchaPreAuthenticationProvider::class] = [
-				'class' => CaptchaPreAuthenticationProvider::class,
-				'sort'=> 10, // run after preauth providers not requiring user input
-			];
-			Hooks::register( 'AuthChangeFormFields', 'ConfirmEditHooks::onAuthChangeFormFields' );
-		} else {
-			Hooks::register( 'UserCreateForm', 'ConfirmEditHooks::injectUserCreate' );
-			Hooks::register( 'AbortNewAccount', 'ConfirmEditHooks::confirmUserCreate' );
-			Hooks::register( 'LoginAuthenticateAudit', 'ConfirmEditHooks::triggerUserLogin' );
-			Hooks::register( 'UserLoginForm', 'ConfirmEditHooks::injectUserLogin' );
-			Hooks::register( 'AbortLogin', 'ConfirmEditHooks::confirmUserLogin' );
-			Hooks::register( 'AddNewAccountApiForm', 'ConfirmEditHooks::addNewAccountApiForm' );
-			Hooks::register( 'AddNewAccountApiResult', 'ConfirmEditHooks::addNewAccountApiResult' );
-		}
-	}
-
 	static function confirmEditMerged( $context, $content, $status, $summary, $user, $minorEdit ) {
 		return self::getInstance()->confirmEditMerged( $context, $content, $status, $summary,
 			$user, $minorEdit );
@@ -53,7 +30,7 @@ class ConfirmEditHooks {
 	 * PageContentSaveComplete hook handler.
 	 * Clear IP whitelist cache on page saves for [[MediaWiki:captcha-ip-whitelist]].
 	 *
-	 * @param Page     $wikiPage
+	 * @param WikiPage $wikiPage
 	 * @param User     $user
 	 * @param Content  $content
 	 * @param string   $summary
@@ -67,8 +44,8 @@ class ConfirmEditHooks {
 	 *
 	 * @return bool true
 	 */
-	static function onPageContentSaveComplete( Page $wikiPage, User $user, Content $content, $summary,
-		$isMinor, $isWatch, $section, $flags, $revision, Status $status, $baseRevId
+	static function onPageContentSaveComplete( WikiPage $wikiPage, User $user, Content $content,
+		$summary, $isMinor, $isWatch, $section, $flags, $revision, Status $status, $baseRevId
 	) {
 		$title = $wikiPage->getTitle();
 		if ( $title->getText() === 'Captcha-ip-whitelist' && $title->getNamespace() === NS_MEDIAWIKI ) {
@@ -84,35 +61,7 @@ class ConfirmEditHooks {
 	}
 
 	static function showEditFormFields( &$editPage, &$out ) {
-		return self::getInstance()->showEditFormFields( $editPage, $out );
-	}
-
-	static function addNewAccountApiForm( $apiModule, $loginForm ) {
-		return self::getInstance()->addNewAccountApiForm( $apiModule, $loginForm );
-	}
-
-	static function addNewAccountApiResult( $apiModule, $loginPage, &$result ) {
-		return self::getInstance()->addNewAccountApiResult( $apiModule, $loginPage, $result );
-	}
-
-	static function injectUserCreate( &$template ) {
-		return self::getInstance()->injectUserCreate( $template );
-	}
-
-	static function confirmUserCreate( $u, &$message, &$status = null ) {
-		return self::getInstance()->confirmUserCreate( $u, $message, $status );
-	}
-
-	static function triggerUserLogin( $user, $password, $retval ) {
-		return self::getInstance()->triggerUserLogin( $user, $password, $retval );
-	}
-
-	static function injectUserLogin( &$template ) {
-		return self::getInstance()->injectUserLogin( $template );
-	}
-
-	static function confirmUserLogin( $u, $pass, &$retval ) {
-		return self::getInstance()->confirmUserLogin( $u, $pass, $retval );
+		self::getInstance()->showEditFormFields( $editPage, $out );
 	}
 
 	static function injectEmailUser( &$form ) {
@@ -138,11 +87,23 @@ class ConfirmEditHooks {
 	 * Set up $wgWhitelistRead
 	 */
 	public static function confirmEditSetup() {
-		global $wgCaptchaTriggers, $wgWikimediaJenkinsCI;
+		// @codingStandardsIgnoreStart MediaWiki.NamingConventions.ValidGlobalName.wgPrefix
+		global $wgCaptchaTriggers, $wgWikimediaJenkinsCI, $ceAllowConfirmedEmail,
+		       $wgAllowConfirmedEmail;
+		// @codingStandardsIgnoreEnd
 
 		// There is no need to run (core) tests with enabled ConfirmEdit - bug T44145
 		if ( isset( $wgWikimediaJenkinsCI ) && $wgWikimediaJenkinsCI === true ) {
 			$wgCaptchaTriggers = array_fill_keys( array_keys( $wgCaptchaTriggers ), false );
+		}
+
+		// $ceAllowConfirmedEmail is deprecated and should be replaced by $wgAllowConfirmedEmail.
+		// For backward-compatibility, keep the value for some time. T162641
+		if ( isset( $ceAllowConfirmedEmail ) ) {
+			wfDeprecated(
+				'Using $ceAllowConfirmedEmail is deprecated, ' .
+				'please migrate to $wgAllowConfirmedEmail as a replacement.' );
+			$wgAllowConfirmedEmail = $ceAllowConfirmedEmail;
 		}
 	}
 
@@ -204,7 +165,9 @@ class ConfirmEditHooks {
 			die (
 				'You need to set $wgReCaptchaPrivateKey and $wgReCaptchaPublicKey in LocalSettings.php to ' .
 				"use the reCAPTCHA plugin. You can sign up for a key <a href='" .
-				htmlentities( recaptcha_get_signup_url( $wgServerName, "mediawiki" ) ) . "'>here</a>." );
+				htmlentities( recaptcha_get_signup_url( $wgServerName, "mediawiki" ) ) .
+				"'>here</a>."
+			);
 		}
 	}
 

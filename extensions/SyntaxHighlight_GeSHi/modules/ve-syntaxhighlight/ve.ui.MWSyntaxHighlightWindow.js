@@ -36,18 +36,18 @@ ve.ui.MWSyntaxHighlightWindow.static.dir = 'ltr';
 ve.ui.MWSyntaxHighlightWindow.prototype.initialize = function () {
 	var noneMsg = ve.msg( 'syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none' );
 
-	this.language = new OO.ui.ComboBoxWidget( {
+	this.language = new OO.ui.ComboBoxInputWidget( {
 		menu: {
 			filterFromInput: true,
 			items: $.map( ve.dm.MWSyntaxHighlightNode.static.getLanguages(), function ( lang ) {
 				return new OO.ui.MenuOptionWidget( { data: lang, label: lang || noneMsg } );
 			} )
 		},
-		input: { validate: function ( input ) {
+		validate: function ( input ) {
 			return ve.dm.MWSyntaxHighlightNode.static.isLanguageSupported( input );
-		} }
+		}
 	} );
-	this.language.getInput().connect( this, { change: 'onLanguageInputChange' } );
+	this.language.connect( this, { change: 'onLanguageInputChange' } );
 
 	this.showLinesCheckbox = new OO.ui.CheckboxInputWidget();
 
@@ -72,9 +72,10 @@ ve.ui.MWSyntaxHighlightWindow.prototype.initialize = function () {
  * @param {string} value New value
  */
 ve.ui.MWSyntaxHighlightWindow.prototype.onLanguageInputChange = function () {
-	var inspector = this;
-	this.language.getInput().isValid().done( function ( valid ) {
-		inspector.getActions().setAbilities( { done: valid } );
+	var validity, inspector = this;
+	validity = this.language.getValidity();
+	validity.always( function () {
+		inspector.getActions().setAbilities( { done: validity.state() === 'resolved' } );
 	} );
 };
 
@@ -84,8 +85,8 @@ ve.ui.MWSyntaxHighlightWindow.prototype.onLanguageInputChange = function () {
 ve.ui.MWSyntaxHighlightWindow.prototype.getReadyProcess = function ( data, process ) {
 	return process.next( function () {
 		this.language.getMenu().toggle( false );
-		if ( !this.language.getInput().getValue() ) {
-			this.language.getInput().focus();
+		if ( !this.language.getValue() ) {
+			this.language.focus();
 		} else {
 			this.input.focus();
 		}
@@ -101,7 +102,7 @@ ve.ui.MWSyntaxHighlightWindow.prototype.getSetupProcess = function ( data, proce
 			language = attrs.lang || '',
 			showLines = attrs.line !== undefined;
 
-		this.language.input.setValue( language );
+		this.language.setValue( language );
 
 		this.showLinesCheckbox.setSelected( showLines );
 	}, this );
@@ -120,7 +121,7 @@ ve.ui.MWSyntaxHighlightWindow.prototype.getTeardownProcess = function ( data, pr
 ve.ui.MWSyntaxHighlightWindow.prototype.updateMwData = function ( mwData ) {
 	var language, showLines;
 
-	language = this.language.input.getValue();
+	language = this.language.getValue();
 	showLines = this.showLinesCheckbox.isSelected();
 
 	mwData.attrs.lang = language || undefined;

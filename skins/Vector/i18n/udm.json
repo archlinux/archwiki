@@ -2,12 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Andrewboltachev",
-			"Kaganer"
+			"Kaganer",
+			"Wadorgurt"
 		]
 	},
 	"vector-action-addsection": "Выль темаез ватсано",
 	"vector-action-delete": "Быдтоно",
-	"vector-action-move": "Мукет интые выжтыны",
+	"vector-action-move": "Нимзэ воштыны",
 	"vector-action-protect": "Утьыны",
 	"vector-view-create": "Кылдытоно",
 	"vector-view-edit": "Тупатоно",

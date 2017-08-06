@@ -5,8 +5,6 @@
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
-/*global ve, OO */
-
 /**
  * MediaWiki UserInterface syntax highlight tool.
  *

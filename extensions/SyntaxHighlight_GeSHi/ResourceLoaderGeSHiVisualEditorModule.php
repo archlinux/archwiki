@@ -29,8 +29,18 @@ class ResourceLoaderGeSHiVisualEditorModule extends ResourceLoaderFileModule {
 		$scripts = parent::getScript( $context );
 
 		return $scripts . Xml::encodeJsCall(
-			've.dm.MWSyntaxHighlightNode.static.addLanguages', array(
-				$this->getLanguages()
+			've.dm.MWSyntaxHighlightNode.static.addPygmentsLanguages', array(
+				$this->getPygmentsLanguages()
+			),
+			ResourceLoader::inDebugMode()
+		) . Xml::encodeJsCall(
+			've.dm.MWSyntaxHighlightNode.static.addGeshiToPygmentsMap', array(
+				GeSHi::$compatibleLexers
+			),
+			ResourceLoader::inDebugMode()
+		) . Xml::encodeJsCall(
+			've.dm.MWSyntaxHighlightNode.static.addPygmentsToAceMap', array(
+				SyntaxHighlightAce::getPygmentsToAceMap()
 			),
 			ResourceLoader::inDebugMode()
 		);
@@ -47,9 +57,9 @@ class ResourceLoaderGeSHiVisualEditorModule extends ResourceLoaderFileModule {
 	 * Get a full list of available langauges
 	 * @return array
 	 */
-	private function getLanguages() {
+	private function getPygmentsLanguages() {
 		$lexers = require __DIR__ . '/SyntaxHighlight_GeSHi.lexers.php';
-		return array_merge( $lexers, array_keys( GeSHi::$compatibleLexers ) );
+		return $lexers;
 	}
 
 	public function enableModuleContentVersion() {

@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Cluster;
 
 use Elastica\Client;
@@ -114,11 +113,11 @@ class Settings
     public function setPersistent($key, $value)
     {
         return $this->set(
-            array(
-                'persistent' => array(
+            [
+                'persistent' => [
                     $key => $value,
-                ),
-            )
+                ],
+            ]
         );
     }
 
@@ -133,11 +132,11 @@ class Settings
     public function setTransient($key, $value)
     {
         return $this->set(
-            array(
-                'transient' => array(
+            [
+                'transient' => [
                     $key => $value,
-                ),
-            )
+                ],
+            ]
         );
     }
 
@@ -155,13 +154,9 @@ class Settings
     {
         $key = 'cluster.blocks.read_only';
 
-        if ($persistent) {
-            $response = $this->setPersistent($key, $readOnly);
-        } else {
-            $response = $this->setTransient($key, $readOnly);
-        }
-
-        return $response;
+        return $persistent
+            ? $this->setPersistent($key, $readOnly)
+            : $this->setTransient($key, $readOnly);
     }
 
     /**
@@ -194,7 +189,7 @@ class Settings
      *
      * @return \Elastica\Response Response object
      */
-    public function request(array $data = array(), $method = Request::GET)
+    public function request(array $data = [], $method = Request::GET)
     {
         $path = '_cluster/settings';
 

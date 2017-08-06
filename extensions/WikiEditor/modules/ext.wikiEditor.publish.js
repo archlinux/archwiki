@@ -1,7 +1,7 @@
 /*
  * JavaScript for WikiEditor Publish module
  */
-jQuery( document ).ready( function ( $ ) {
+jQuery( function ( $ ) {
 	// Add publish module
 	$( '#wpTextbox1' ).wikiEditor( 'addModule', 'publish' );
 } );

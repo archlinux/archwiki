@@ -24,7 +24,7 @@
 	"nuke-defaultreason": "大量删除[[Special:Contributions/$1|{{GENDER:$1|$1}}]]创建的页面",
 	"nuke-multiplepeople": "大量删除最近添加的页面",
 	"nuke-tools": "此工具允许大量删除指定用户或IP地址在最近创建的页面。输入用户名或IP地址可获取可删除页面列表，留白则检索所有用户。",
-	"nuke-submit-user": "提交",
+	"nuke-submit-user": "列举页面",
 	"nuke-toggleinvert": "反选",
 	"nuke-submit-delete": "删除所选",
 	"right-nuke": "删除大量页面",

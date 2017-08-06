@@ -1,10 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Fluence"
+			"Fluence",
+			"Akapochtli"
 		]
 	},
 	"interwiki_reasonfield": "Īxtlamatiliztli:",
 	"interwiki_delquestion": "Mopolocah \"$1\"",
-	"interwiki_addbutton": "Ticcētilīz"
+	"interwiki_addbutton": "Ticcetiliz"
 }

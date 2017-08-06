@@ -197,7 +197,9 @@ class CologneBlueTemplate extends BaseTemplate {
 			$element[] = $this->processBottomLink( 'recentchangeslinked', $toolbox['recentchangeslinked'] );
 
 			$element[] = $this->processBottomLink( 'contributions', $toolbox['contributions'] );
-			$element[] = $this->processBottomLink( 'emailuser', $toolbox['emailuser'] );
+			if ( isset( $toolbox['emailuser'] ) ) {
+				$element[] = $this->processBottomLink( 'emailuser', $toolbox['emailuser'] );
+			}
 
 			$lines[] = $this->getSkin()->getLanguage()->pipeList( array_filter( $element ) );
 
@@ -209,22 +211,29 @@ class CologneBlueTemplate extends BaseTemplate {
 				$content_nav['actions']['delete'],
 				'deletethispage'
 			);
-			$element[] = $this->processBottomLink(
-				'undelete',
-				$content_nav['actions']['undelete'],
-				'undeletethispage'
-			);
+			if ( isset( $content_nav['actions']['undelete'] ) ) {
+				$element[] = $this->processBottomLink(
+					'undelete',
+					$content_nav['actions']['undelete'],
+					'undeletethispage'
+				);
+			}
 
-			$element[] = $this->processBottomLink(
-				'protect',
-				$content_nav['actions']['protect'],
-				'protectthispage'
-			);
-			$element[] = $this->processBottomLink(
-				'unprotect',
-				$content_nav['actions']['unprotect'],
-				'unprotectthispage'
-			);
+			if ( isset( $content_nav['actions']['protect'] ) ) {
+				$element[] = $this->processBottomLink(
+					'protect',
+					$content_nav['actions']['protect'],
+					'protectthispage'
+				);
+			}
+
+			if ( isset( $content_nav['actions']['unprotect'] ) ) {
+				$element[] = $this->processBottomLink(
+					'unprotect',
+					$content_nav['actions']['unprotect'],
+					'unprotectthispage'
+				);
+			}
 
 			$element[] = $this->processBottomLink( 'move', $content_nav['actions']['move'], 'movethispage' );
 
@@ -458,7 +467,7 @@ class CologneBlueTemplate extends BaseTemplate {
 
 		$personalUrls = $this->getPersonalTools();
 		foreach ( array( 'logout', 'createaccount', 'login' ) as $key ) {
-			if ( $personalUrls[$key] ) {
+			if ( isset( $personalUrls[$key] ) ) {
 				$s[] = $this->makeListItem( $key, $personalUrls[$key], array( 'tag' => 'span' ) );
 			}
 		}
@@ -489,11 +498,12 @@ class CologneBlueTemplate extends BaseTemplate {
 		);
 		$content_navigation['actions']['watch'] = null;
 		$content_navigation['actions']['unwatch'] = null;
+		$qbEditLinks = [ 'edit' => $content_navigation['views']['edit'] ];
+		if ( isset( $content_navigation['views']['addsection'] ) ) {
+			$qbEditLinks['addsection'] = $content_navigation['views']['addsection'];
+		}
 		$qbedit = array_merge(
-			array(
-				'edit' => $content_navigation['views']['edit'],
-				'addsection' => $content_navigation['views']['addsection'],
-			),
+			$qbEditLinks,
 			$content_navigation['actions']
 		);
 

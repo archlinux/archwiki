@@ -4,7 +4,8 @@
 			"AVRS",
 			"Malafaya",
 			"Yekrats",
-			"KuboF"
+			"KuboF",
+			"Nemo bis"
 		]
 	},
 	"cite-desc": "Aldonas etikedojn <nowiki><ref[ name=id]></nowiki> kaj <nowiki><references/></nowiki> por citaĵoj",
@@ -27,5 +28,8 @@
 	"cite_error_empty_references_define": "<code>&lt;ref&gt;</code> etikedo difinita en <code>&lt;references&gt;</code> kun nomo \"$1\" ne havas enhavon.",
 	"cite-tracking-category-cite-error": "Paĝoj kun problemoj pri referencoj",
 	"cite_references_link_accessibility_label": "Salti supren",
-	"cite_references_link_many_accessibility_label": "Salti supren al:"
+	"cite_references_link_many_accessibility_label": "Salti supren al:",
+	"cite_section_preview_references": "Antaŭrigardo de  referencoj",
+	"cite_warning": "Averto pri citado:  $1",
+	"cite_warning_sectionpreview_no_text": "La marko <code>&lt;ref&gt;</code> kun la nomo <code>$1</code> ne povas esti antaŭrigardita,  ĉar ĝi estas difinita ekster la kuranta sekcio aŭ tute ne difinita."
 }

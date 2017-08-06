@@ -1,7 +1,7 @@
 /*!
  * VisualEditor ContentEditable MWReferencesListNode class.
  *
- * @copyright 2011-2016 Cite VisualEditor Team and others; see AUTHORS.txt
+ * @copyright 2011-2017 Cite VisualEditor Team and others; see AUTHORS.txt
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
@@ -16,9 +16,9 @@
  * @param {ve.dm.MWReferencesListNode} model Model to observe
  * @param {Object} [config] Configuration options
  */
-ve.ce.MWReferencesListNode = function VeCeMWReferencesListNode( model, config ) {
+ve.ce.MWReferencesListNode = function VeCeMWReferencesListNode() {
 	// Parent constructor
-	ve.ce.LeafNode.call( this, model, config );
+	ve.ce.MWReferencesListNode.super.apply( this, arguments );
 
 	// Mixin constructors
 	ve.ce.FocusableNode.call( this );
@@ -78,7 +78,7 @@ ve.ce.MWReferencesListNode.prototype.onSetup = function () {
 	this.listNode.connect( this, { update: 'onListNodeUpdate' } );
 
 	// Parent method
-	ve.ce.LeafNode.prototype.onSetup.call( this );
+	ve.ce.MWReferencesListNode.super.prototype.onSetup.call( this );
 };
 
 /**
@@ -94,7 +94,7 @@ ve.ce.MWReferencesListNode.prototype.onTeardown = function () {
 	this.listNode = null;
 
 	// Parent method
-	ve.ce.LeafNode.prototype.onTeardown.call( this );
+	ve.ce.MWReferencesListNode.super.prototype.onTeardown.call( this );
 };
 
 /**
@@ -143,7 +143,7 @@ ve.ce.MWReferencesListNode.prototype.onListNodeUpdate = function () {
  * Update the references list.
  */
 ve.ce.MWReferencesListNode.prototype.update = function () {
-	var i, j, n, iLen, jLen, index, firstNode, key, keyedNodes, modelNode, viewNode,
+	var i, j, iLen, jLen, index, firstNode, key, keyedNodes, modelNode, viewNode,
 		$li, $refSpan, $link,
 		internalList = this.model.getDocument().internalList,
 		refGroup = this.model.getAttribute( 'refGroup' ),
@@ -167,14 +167,12 @@ ve.ce.MWReferencesListNode.prototype.update = function () {
 		}
 		this.$element.append( this.$refmsg );
 	} else {
-		n = 0;
 		for ( i = 0, iLen = nodes.indexOrder.length; i < iLen; i++ ) {
 			index = nodes.indexOrder[ i ];
 			firstNode = nodes.firstNodes[ index ];
 
 			key = internalList.keys[ index ];
 			keyedNodes = nodes.keyedNodes[ key ];
-			/*jshint loopfunc:true */
 			keyedNodes = keyedNodes.filter( function ( node ) {
 				// Exclude placeholder references
 				if ( node.getAttribute( 'placeholder' ) ) {
@@ -192,8 +190,6 @@ ve.ce.MWReferencesListNode.prototype.update = function () {
 			if ( !keyedNodes.length ) {
 				continue;
 			}
-			// Only increment counter for non-empty groups
-			n++;
 
 			$li = $( '<li>' );
 

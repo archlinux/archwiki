@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kirsan"
+		]
+	},
+	"log-name-renameuser": "Zmianë pòzwów brëkòwnika",
+	"logentry-renameuser-renameuser": "$1 zmienił pòzwã brëkòwnika $4 (lëczba edicjów: $6) na $5",
+	"logentry-renameuser-renameuser-legacier": "$1 zmienił(a) pòzwã brëkòwnika $4 na $5"
+}

@@ -19,7 +19,7 @@ foreach(new DirectoryIterator($argv[1]) as $file) {
 	}
 	$ngrams = array();
 	foreach(file($file->getPathname(), FILE_IGNORE_NEW_LINES|FILE_SKIP_EMPTY_LINES) as $line) {
-		list($word, $score) = explode("\t ", $line, 2);
+		list($word, $score) = explode("\t", $line, 2);
 		$ngrams[$word] = intval($score);
 	}
 	$cat->writeLanguageFile($ngrams, $argv[2] . "/" . $file->getBasename());

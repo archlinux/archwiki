@@ -14,7 +14,8 @@
 			"Ralgis",
 			"Remember the dot",
 			"Sanbec",
-			"Macofe"
+			"Macofe",
+			"Dgstranz"
 		]
 	},
 	"nuke": "Borrado en masa",
@@ -26,7 +27,7 @@
 	"nuke-defaultreason": "Eliminación en masa de páginas añadidas por [[Special:Contributions/$1|$1]]",
 	"nuke-multiplepeople": "Eliminación masiva de páginas nuevas de múltiples usuarios",
 	"nuke-tools": "Esta herramienta permite borrados masivos de páginas creadas recientemente por un usuario o una dirección IP.\nEscribe el nombre de usuario o la dirección IP para obtener la lista de páginas que borrar, o déjalo vacío para todos los usuarios.",
-	"nuke-submit-user": "Ir",
+	"nuke-submit-user": "Mostrar páginas",
 	"nuke-toggleinvert": "Invertir",
 	"nuke-submit-delete": "Borrar lo seleccionado",
 	"right-nuke": "Borrar páginas masivamente",

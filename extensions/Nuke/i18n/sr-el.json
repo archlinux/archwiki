@@ -3,7 +3,8 @@
 		"authors": [
 			"Michaello",
 			"Milicevic01",
-			"Жељко Тодоровић"
+			"Жељко Тодоровић",
+			"Сербијана"
 		]
 	},
 	"nuke": "Masovno brisanje",
@@ -15,7 +16,7 @@
 	"nuke-multiplepeople": "Masovno brisanje nedavno dodatih stranica",
 	"nuke-tools": "Ova alatka omogućava zbirno brisanje stranica koje je nedavno dodao određeni korisnik (sa nalogom ili bez njega).\nUnesite korisničko ime ili IP adresu da biste dobili spisak stranica za brisanje, ili ostavite prazno ako želite da se navedu svi korisnici.",
 	"nuke-submit-user": "Idi",
-	"nuke-toggleinvert": "obrni",
+	"nuke-toggleinvert": "Obrni",
 	"nuke-submit-delete": "Obriši obeleženo",
 	"right-nuke": "masovno brisanje strana",
 	"nuke-select": "Izaberi: $1",

@@ -24,7 +24,7 @@
  * @since 1.7
  * @ingroup Exception
  */
-class ErrorPageError extends MWException {
+class ErrorPageError extends MWException implements ILocalizedException {
 	public $title, $msg, $params;
 
 	/**
@@ -39,23 +39,34 @@ class ErrorPageError extends MWException {
 		$this->msg = $msg;
 		$this->params = $params;
 
-		// Bug 44111: Messages in the log files should be in English and not
+		// T46111: Messages in the log files should be in English and not
 		// customized by the local wiki. So get the default English version for
 		// passing to the parent constructor. Our overridden report() below
 		// makes sure that the page shown to the user is not forced to English.
-		if ( $msg instanceof Message ) {
-			$enMsg = clone $msg;
-		} else {
-			$enMsg = wfMessage( $msg, $params );
-		}
+		$enMsg = $this->getMessageObject();
 		$enMsg->inLanguage( 'en' )->useDatabase( false );
 		parent::__construct( $enMsg->text() );
 	}
 
-	public function report() {
-		global $wgOut;
+	/**
+	 * Return a Message object for this exception
+	 * @since 1.29
+	 * @return Message
+	 */
+	public function getMessageObject() {
+		if ( $this->msg instanceof Message ) {
+			return clone $this->msg;
+		}
+		return wfMessage( $this->msg, $this->params );
+	}
 
-		$wgOut->showErrorPage( $this->title, $this->msg, $this->params );
-		$wgOut->output();
+	public function report() {
+		if ( self::isCommandLine() || defined( 'MW_API' ) ) {
+			parent::report();
+		} else {
+			global $wgOut;
+			$wgOut->showErrorPage( $this->title, $this->msg, $this->params );
+			$wgOut->output();
+		}
 	}
 }

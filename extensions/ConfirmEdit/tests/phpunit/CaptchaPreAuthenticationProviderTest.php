@@ -2,6 +2,7 @@
 
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Auth\UsernameAuthenticationRequest;
+use Wikimedia\TestingAccessWrapper;
 
 /**
  * @group Database

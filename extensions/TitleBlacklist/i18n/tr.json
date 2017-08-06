@@ -5,6 +5,7 @@
 			"Vito Genovese"
 		]
 	},
+	"log-name-titleblacklist": "Ad kara listesi günlüğü",
 	"titleblacklist-desc": "Yöneticilere, sayfaların ve kullanıcı hesaplarının oluşturulmasını yasaklamalarına bir [[MediaWiki:Titleblacklist|karaliste]] ve [[MediaWiki:Titlewhitelist|beyazliste]] ile izin verir.",
 	"titleblacklist": "# Bu bir başlık karalistesi. Buradaki düzenli ifadelerle eşleşen başlıklar ve kullanıcılar oluşturulamaz.\n# Yorumlar için \"#\" kullanın.\n# Bu varsayılan olarak büyük-küçük harf duyarsızdır",
 	"titlewhitelist": "# Bu bir başlık beyaz listesidir. Yorumlar için \"#\" kullanın.\n# Varsayılan olarak büyük-küçük harfe duyarsızdır",

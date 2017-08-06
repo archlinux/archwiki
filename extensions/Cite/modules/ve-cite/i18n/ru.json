@@ -25,7 +25,8 @@
 			"Nirovulf",
 			"Striking Blue",
 			"Дмитрий",
-			"Краснорядцева Елена"
+			"Краснорядцева Елена",
+			"Mailman"
 		]
 	},
 	"visualeditor-cite-tool-definition.json": "null",
@@ -46,7 +47,7 @@
 	"cite-ve-dialog-referenceslist-contextitem-description-general": "Список общих ссылок",
 	"cite-ve-dialog-referenceslist-contextitem-description-named": "Список примечаний для группы \"$1\"",
 	"cite-ve-dialog-referenceslist-title": "Список примечаний",
-	"cite-ve-dialogbutton-citation-educationpopup-text": "Улучшайте свой контент, добавляя туда список источников информации. Вы можете цитировать книги, газеты и веб-сайты.",
+	"cite-ve-dialogbutton-citation-educationpopup-text": "Улучшайте контент, добавляя туда источники информации. Вы можете цитировать книги, газеты и веб-сайты.",
 	"cite-ve-dialogbutton-citation-educationpopup-title": "Цитаты",
 	"cite-ve-dialogbutton-reference-full-label": "Простая форма",
 	"cite-ve-dialogbutton-reference-title": "Примечание",

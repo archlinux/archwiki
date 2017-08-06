@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Query;
 
 /**
@@ -16,7 +15,7 @@ class Type extends AbstractQuery
      *
      * @var string
      */
-    protected $_type = null;
+    protected $_type;
 
     /**
      * Construct Type Query.
@@ -53,8 +52,8 @@ class Type extends AbstractQuery
      */
     public function toArray()
     {
-        return array(
-            'type' => array('value' => $this->_type),
-        );
+        return [
+            'type' => ['value' => $this->_type],
+        ];
     }
 }

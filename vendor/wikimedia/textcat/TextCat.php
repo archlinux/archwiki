@@ -6,6 +6,17 @@
  */
 class TextCat {
 
+	const STATUSTOOSHORT = 'Input is too short.';
+	const STATUSNOMATCH = 'No match found.';
+	const STATUSAMBIGUOUS = 'Cannot determine language.';
+
+	/**
+	 * Minimum input length to be considered for
+	 * classification
+	 * @var string
+	 */
+	private $resultStatus = '';
+
 	/**
 	 * Number of ngrams to be used.
 	 * @var int
@@ -33,6 +44,58 @@ class TextCat {
 	private $langFiles = array();
 
 	/**
+	 * Minimum input length to be considered for
+	 * classification
+	 * @var int
+	 */
+	private $minInputLength = 0;
+
+	/**
+	 * Maximum ratio of the score between a given
+	 * candidate and the best candidate for the
+	 * given candidate to be considered an alternative.
+	 * @var float
+	 */
+	private $resultsRatio = 1.05;
+
+	/**
+	 * Maximum number of languages to return, within
+	 * the resultsRatio. If there are more, the result
+	 * is too ambiguous.
+	 * @var int
+	 */
+	private $maxReturnedLanguages = 10;
+
+	/**
+	 * Maximum proportion of maximum score allowed.
+	 * Compare score to worst possible score, and if
+	 * it is too close, consider it not worth reporting.
+	 * @var float
+	 */
+	private $maxProportion = 1.00;
+
+	/**
+	 * Amount to boost scores for languages
+	 * specified by $boostedLangs; typical
+	 * values are 0 to 0.15;
+	 * @var float
+	 */
+	private $langBoostScore = 0.00;
+
+	/**
+	 * List of languages to boost by $langBoostScore
+	 * @var string[]
+	 */
+	private $boostedLangs = array();
+
+	/**
+	 * @param
+	 */
+	public function getResultStatus() {
+		return $this->resultStatus;
+	}
+
+	/**
 	 * @param int $maxNgrams
 	 */
 	public function setMaxNgrams( $maxNgrams ) {
@@ -47,19 +110,74 @@ class TextCat {
 	}
 
 	/**
-	 * @param string $dir
+	 * @param int $minInputLength
 	 */
-	public function __construct( $dir = null ) {
-		if ( empty( $dir ) ) {
-			$dir = __DIR__."/LM";
+	public function setMinInputLength( $minInputLength ) {
+		$this->minInputLength = $minInputLength;
+	}
+
+	/**
+	 * @param float $resultsRatio
+	 */
+	public function setResultsRatio( $resultsRatio ) {
+		$this->resultsRatio = $resultsRatio;
+	}
+
+	/**
+	 * @param int $maxReturnedLanguages
+	 */
+	public function setMaxReturnedLanguages( $maxReturnedLanguages ) {
+		$this->maxReturnedLanguages = $maxReturnedLanguages;
+	}
+
+	/**
+	 * @param float $maxProportion
+	 */
+	public function setMaxProportion( $maxProportion ) {
+		$this->maxProportion = $maxProportion;
+	}
+
+	/**
+	 * @param float $langBoostScore
+	 */
+	public function setLangBoostScore( $langBoostScore ) {
+		$this->langBoostScore = $langBoostScore;
+	}
+
+	/**
+	 * @param float $langBoostScore
+	 */
+	public function setBoostedLangs( $boostedLangs = array() ) {
+		// flip for more efficient lookups
+		$this->boostedLangs = array_flip( $boostedLangs );
+	}
+
+	/**
+	 * @param string $wordSeparator
+	 */
+	public function setWordSeparator( $wordSeparator ) {
+		$this->wordSeparator = $wordSeparator;
+	}
+
+	/**
+	 * @param string|array $dirs
+	 */
+	public function __construct( $dirs = array() ) {
+		if ( empty( $dirs ) ) {
+			$dirs = array( __DIR__."/LM" );
 		}
-		$this->dir = $dir;
-		foreach ( new DirectoryIterator( $dir ) as $file ) {
-			if ( !$file->isFile() ) {
-				continue;
-			}
-			if ( $file->getExtension() == "lm" ) {
-				$this->langFiles[$file->getBasename( ".lm" )] = $file->getPathname();
+		if ( !is_array( $dirs ) ) {
+			$dirs = array( $dirs );
+		}
+		foreach ( $dirs as $dir ) {
+			foreach ( new DirectoryIterator( $dir ) as $file ) {
+				if ( !$file->isFile() ) {
+					continue;
+				}
+				if ( $file->getExtension() == "lm" &&
+				     !isset( $this->langFiles[$file->getBasename( ".lm" )] ) ) {
+					$this->langFiles[$file->getBasename( ".lm" )] = $file->getPathname();
+				}
 			}
 		}
 	}
@@ -150,12 +268,21 @@ class TextCat {
 	 * 				 Sorted by ascending score, with first result being the best.
 	 */
 	public function classify( $text, $candidates = null ) {
+		$results = array();
+		$this->resultStatus = '';
+
+		// strip non-word characters before checking for min length, don't assess empty strings
+		$wordLength = mb_strlen( preg_replace( "/[{$this->wordSeparator}]+/", "", $text ) );
+		if ( $wordLength < $this->minInputLength || $wordLength == 0 ) {
+			$this->resultStatus = self::STATUSTOOSHORT;
+			return $results;
+		}
+
 		$inputgrams = array_keys( $this->createLM( $text, $this->maxNgrams ) );
 		if ( $candidates ) {
 			// flip for more efficient lookups
 			$candidates = array_flip( $candidates );
 		}
-		$results = array();
 		foreach ( $this->langFiles as $language => $langFile ) {
 			if ( $candidates && !isset( $candidates[$language] ) ) {
 				continue;
@@ -169,9 +296,35 @@ class TextCat {
 					$p += $this->maxNgrams;
 				}
 			}
+			if ( isset( $this->boostedLangs[$language] ) ) {
+				$p = round( $p * ( 1 - $this->langBoostScore ) );
+			}
 			$results[$language] = $p;
 		}
+
 		asort( $results );
+
+		// ignore any item that scores higher than best * resultsRatio
+		$max = reset( $results ) * $this->resultsRatio;
+		$results = array_filter( $results, function ( $res ) use ( $max ) { return $res <= $max;
+		} );
+
+		// if more than maxReturnedLanguages remain, the result is too ambiguous, so bail
+		if ( count( $results ) > $this->maxReturnedLanguages ) {
+			$this->resultStatus = self::STATUSAMBIGUOUS;
+			return array();
+		}
+
+		// filter max proportion of max score after ambiguity check; reuse $max variable
+		$max = count( $inputgrams ) * $this->maxNgrams * $this->maxProportion;
+		$results = array_filter( $results, function ( $res ) use ( $max ) { return $res <= $max;
+		} );
+
+		if ( count( $results ) == 0 ) {
+			$this->resultStatus = self::STATUSNOMATCH;
+			return $results;
+		}
+
 		return $results;
 	}
 }

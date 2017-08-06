@@ -15,7 +15,7 @@
 	"nuke-defaultreason": "Masseläschung vu Säiten, déi vum [[Special:Contributions/$1|{{GENDER:$1|$1}}]] ugefaang goufen",
 	"nuke-multiplepeople": "Masse-Läschung vu Säiten déi rezent derbäigesat goufen",
 	"nuke-tools": "Dësen Tool erlaabt vill Säite mateneen ze läschen, déi vun engem Benotzer oder vun enger IP-Adress ugeluecht goufen.\nGitt w.e.g. d'IP-Adress respektiv de Benotzer u fir eng Lëscht vun de Säiten ze kréien déi geläscht solle ginn, oder loosst et eidel fir all Benotzer.",
-	"nuke-submit-user": "Lass",
+	"nuke-submit-user": "Säiten oplëschten",
 	"nuke-toggleinvert": "Ëmdréinen",
 	"nuke-submit-delete": "Ugewielt läschen",
 	"right-nuke": "Vill Säite matenee läschen",

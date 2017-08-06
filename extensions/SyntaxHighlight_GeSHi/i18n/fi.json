@@ -3,10 +3,12 @@
 		"authors": [
 			"Crt",
 			"Nike",
-			"Stryn"
+			"Stryn",
+			"Pyscowicz"
 		]
 	},
 	"syntaxhighlight-desc": "Mahdollistaa syntaksin korostuksen [http://pygments.org/ Pygments - Python -syntaksin korostimella]",
+	"syntaxhighlight-error-category": "Sivut, joissa on syntaksin korostusvirhe",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "Koodi",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Kieli",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "Näytä rivinumerot",

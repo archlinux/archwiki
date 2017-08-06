@@ -6,7 +6,8 @@
 			"KlaudiuMihaila",
 			"Mihai",
 			"Minisarm",
-			"Stelistcristi"
+			"Stelistcristi",
+			"Strainu"
 		]
 	},
 	"nuke": "Ștergere în masă",
@@ -18,7 +19,7 @@
 	"nuke-defaultreason": "Ștergere în masă a paginilor adăugate de [[Special:Contributions/$1|{{GENDER:$1|$1}}]]",
 	"nuke-multiplepeople": "Ștergere în masă a paginilor recent adăugate",
 	"nuke-tools": "Această unealtă permite ștergerea în masă a paginilor create recent de un anumit utilizator sau o anumită adresă IP.\nIntroduceți numele utilizatorului sau adresa IP pentru a obține o listă a paginilor de șters sau nu completați nimic pentru a lua în calcul toți utilizatorii.",
-	"nuke-submit-user": "Du-te",
+	"nuke-submit-user": "Arată paginile",
 	"nuke-submit-delete": "Șterge ce e marcat",
 	"right-nuke": "șterge pagini în masă",
 	"nuke-select": "Alegeți: $1",

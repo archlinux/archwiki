@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Query;
 
 /**
@@ -15,7 +14,7 @@ class Simple extends AbstractQuery
      *
      * @var array Query
      */
-    protected $_query = array();
+    protected $_query = [];
 
     /**
      * Constructs a query based on an array.

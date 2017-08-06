@@ -15,7 +15,12 @@ class QuestyCaptcha extends SimpleCaptcha {
 	// questycaptcha-createaccount, questycaptcha-create, questycaptcha-sendemail via getMessage()
 	protected static $messagePrefix = 'questycaptcha-';
 
-	/** Validate a captcha response */
+	/**
+	 * Validate a captcha response
+	 * @param string $answer
+	 * @param array $info
+	 * @return bool
+	 */
 	function keyMatch( $answer, $info ) {
 		if ( is_array( $info['answer'] ) ) {
 			return in_array( strtolower( $answer ), array_map( 'strtolower', $info['answer'] ) );
@@ -24,6 +29,9 @@ class QuestyCaptcha extends SimpleCaptcha {
 		}
 	}
 
+	/**
+	 * @param array $resultArr
+	 */
 	function addCaptchaAPI( &$resultArr ) {
 		$captcha = $this->getCaptcha();
 		$index = $this->storeCaptcha( $captcha );
@@ -32,6 +40,9 @@ class QuestyCaptcha extends SimpleCaptcha {
 		$resultArr['captcha']['question'] = $captcha['question'];
 	}
 
+	/**
+	 * @return array
+	 */
 	public function describeCaptchaType() {
 		return [
 			'type' => 'question',
@@ -39,6 +50,9 @@ class QuestyCaptcha extends SimpleCaptcha {
 		];
 	}
 
+	/**
+	 * @return array
+	 */
 	function getCaptcha() {
 		global $wgCaptchaQuestions;
 
@@ -52,6 +66,10 @@ class QuestyCaptcha extends SimpleCaptcha {
 		return [ 'question' => $question, 'answer' => $answer ];
 	}
 
+	/**
+	 * @param int $tabIndex
+	 * @return array
+	 */
 	function getFormInformation( $tabIndex = 1 ) {
 		$captcha = $this->getCaptcha();
 		if ( !$captcha ) {
@@ -87,10 +105,21 @@ class QuestyCaptcha extends SimpleCaptcha {
 		}
 	}
 
+	/**
+	 * @param array $captchaData
+	 * @param string $id
+	 * @return mixed
+	 */
 	public function getCaptchaInfo( $captchaData, $id ) {
 		return $captchaData['question'];
 	}
 
+	/**
+	 * @param array $requests
+	 * @param array $fieldInfo
+	 * @param array $formDescriptor
+	 * @param string $action
+	 */
 	public function onAuthChangeFormFields( array $requests, array $fieldInfo,
 		array &$formDescriptor, $action ) {
 		/** @var CaptchaAuthenticationRequest $req */

@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Query;
 
 /**
@@ -45,5 +44,17 @@ class Nested extends AbstractQuery
     public function setScoreMode($scoreMode)
     {
         return $this->setParam('score_mode', $scoreMode);
+    }
+
+    /**
+     * Set inner hits.
+     *
+     * @param InnerHits $innerHits
+     *
+     * @return $this
+     */
+    public function setInnerHits(InnerHits $innerHits)
+    {
+        return $this->setParam('inner_hits', $innerHits);
     }
 }

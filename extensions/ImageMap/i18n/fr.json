@@ -3,7 +3,8 @@
 		"authors": [
 			"Grondin",
 			"Urhixidur",
-			"Verdy p"
+			"Verdy p",
+			"Derugon"
 		]
 	},
 	"imagemap_desc": "Permet les cartes images clientes cliquables, grâce à la balise <code>&lt;imagemap&gt;</code>",
@@ -17,5 +18,6 @@
 	"imagemap_invalid_coord": "&lt;imagemap&gt; : coordonnée invalide à la ligne $1, doit être un nombre",
 	"imagemap_invalid_desc": "&lt;imagemap&gt; : paramètre « desc » invalide, les paramètres possibles sont : $1",
 	"imagemap_description": "À propos de cette image",
+	"imagemap_desc_types": "en haut à droite, en bas à droite, en bas à gauche, en haut à gauche, nulle part",
 	"imagemap_poly_odd": "Erreur : trouvé un polygone avec un nombre impair de coordonnées à la ligne $1"
 }

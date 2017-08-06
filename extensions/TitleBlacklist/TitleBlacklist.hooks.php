@@ -132,15 +132,12 @@ class TitleBlacklistHooks {
 			$blacklisted = $titleBlacklist->userCannot( $oldTitle, $user, 'edit' );
 		}
 		if ( $blacklisted instanceof TitleBlacklistEntry ) {
-			$errmsg = $blacklisted->getErrorMessage( 'move' );
-			ApiBase::$messageMap[$errmsg] = array(
-				'code' => $errmsg,
-				'info' => 'TitleBlacklist prevents this new title from being created or old title from being edited'
-			);
-			$status->fatal( $errmsg,
+			$status->fatal( ApiMessage::create( [
+				$blacklisted->getErrorMessage( 'move' ),
 				$blacklisted->getRaw(),
 				$oldTitle->getFullText(),
-				$newTitle->getFullText() );
+				$newTitle->getFullText()
+			] ) );
 			return false;
 		}
 

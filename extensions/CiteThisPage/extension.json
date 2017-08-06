@@ -39,5 +39,12 @@
 		"SpecialCiteThisPage": "SpecialCiteThisPage.php",
 		"CiteThisPageHooks": "CiteThisPage.hooks.php"
 	},
-	"manifest_version": 1
+	"config": {
+		"CiteThisPageAdditionalNamespaces": {
+			"value": {},
+			"description": "An array of namespaces where the 'Cite this page' link is also visible, additionally to the content pages.",
+			"merge_strategy": "array_plus"
+		}
+	},
+	"manifest_version": 2
 }

@@ -9,21 +9,23 @@
 			"Kumkumuk",
 			"Gırd",
 			"Velg",
-			"1917 Ekim Devrimi"
+			"1917 Ekim Devrimi",
+			"Dılmıc",
+			"Gambollar"
 		]
 	},
 	"skinname-vector": "Vektor",
 	"vector-skin-desc": "Asayışo de newe be versiyonê MonoBookiyo modern ra û weşkerdışê ke şenê bıgureniyê",
 	"vector-action-addsection": "Mewzu vıraze",
-	"vector-action-delete": "Besterne",
-	"vector-action-move": "Bıkırışê",
-	"vector-action-protect": "Bısıtarne",
+	"vector-action-delete": "Bestern",
+	"vector-action-move": "Bıkırışe",
+	"vector-action-protect": "Bısıtarn",
 	"vector-action-undelete": "Peyser biya",
 	"vector-action-unprotect": "Sıtarnayışi bıvurne",
-	"vector-view-create": "Bıvıraze",
-	"vector-view-edit": "Bıvurnê",
-	"vector-view-history": "Tariği bımucne",
-	"vector-view-view": "Bıwane",
-	"vector-view-viewsource": "Çimey bımucne",
+	"vector-view-create": "Vıraze",
+	"vector-view-edit": "Bıvırnê",
+	"vector-view-history": "Verênan bıvênê",
+	"vector-view-view": "Bıwanê",
+	"vector-view-viewsource": "Rêçi bıvin",
 	"vector-more-actions": "Tayêna"
 }

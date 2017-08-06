@@ -187,6 +187,7 @@
 	"wikieditor-toolbar-help-content-reference-description": "Atsauce",
 	"wikieditor-toolbar-help-content-reference-syntax": "Lapas teksts.&lt;ref&gt;[http://www.example.org Saites teksts], papildus teksts.&lt;/ref&gt;",
 	"wikieditor-toolbar-help-content-reference-result": "Lapas teksts.<sup><a href='#'>[1]</a></sup>",
+	"wikieditor-toolbar-help-content-named-reference-description": "Nosaukta atsauce",
 	"wikieditor-toolbar-help-content-named-reference-syntax": "Lapas teksts.&lt;ref name=\"test\"&gt;[http://www.example.org Saites teksts]&lt;/ref&gt;",
 	"wikieditor-toolbar-help-content-named-reference-result": "Lapas teksts.<sup><a href='#'>[2]</a></sup>",
 	"wikieditor-toolbar-help-content-rereference-description": "Atkārtota jau esošas atsauces izmantošana",

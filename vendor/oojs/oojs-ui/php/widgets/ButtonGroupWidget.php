@@ -10,6 +10,10 @@ namespace OOUI;
 class ButtonGroupWidget extends Widget {
 	use GroupElement;
 
+	/* Static Properties */
+
+	public static $tagName = 'span';
+
 	/**
 	 * @param array $config Configuration options
 	 * @param ButtonWidget[] $config['items'] Buttons to add

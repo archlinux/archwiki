@@ -1,9 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Malafaya"
+			"Malafaya",
+			"Joao Xavier"
 		]
 	},
 	"pfunc_time_error": "Eroro: ne-valida tempo",
+	"pfunc_expr_unrecognised_word": "Skriptal eroro: vorto \"$1\" nekonocita.",
 	"pfunc_expr_division_by_zero": "Divido per zero"
 }

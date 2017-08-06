@@ -1,6 +1,40 @@
 <?php
 
 class DeferredUpdatesTest extends MediaWikiTestCase {
+
+	/**
+	 * @covers DeferredUpdates::getPendingUpdates
+	 */
+	public function testGetPendingUpdates() {
+		# Prevent updates from running
+		$this->setMwGlobals( 'wgCommandLineMode', false );
+
+		$pre = DeferredUpdates::PRESEND;
+		$post = DeferredUpdates::POSTSEND;
+		$all = DeferredUpdates::ALL;
+
+		$update = $this->getMockBuilder( 'DeferrableUpdate' )
+			      ->getMock();
+		$update->expects( $this->never() )
+			->method( 'doUpdate' );
+
+		DeferredUpdates::addUpdate( $update, $pre );
+		$this->assertCount( 1, DeferredUpdates::getPendingUpdates( $pre ) );
+		$this->assertCount( 0, DeferredUpdates::getPendingUpdates( $post ) );
+		$this->assertCount( 1, DeferredUpdates::getPendingUpdates( $all ) );
+		$this->assertCount( 1, DeferredUpdates::getPendingUpdates() );
+		DeferredUpdates::clearPendingUpdates();
+		$this->assertCount( 0, DeferredUpdates::getPendingUpdates() );
+
+		DeferredUpdates::addUpdate( $update, $post );
+		$this->assertCount( 0, DeferredUpdates::getPendingUpdates( $pre ) );
+		$this->assertCount( 1, DeferredUpdates::getPendingUpdates( $post ) );
+		$this->assertCount( 1, DeferredUpdates::getPendingUpdates( $all ) );
+		$this->assertCount( 1, DeferredUpdates::getPendingUpdates() );
+		DeferredUpdates::clearPendingUpdates();
+		$this->assertCount( 0, DeferredUpdates::getPendingUpdates() );
+	}
+
 	public function testDoUpdatesWeb() {
 		$this->setMwGlobals( 'wgCommandLineMode', false );
 
@@ -158,5 +192,31 @@ class DeferredUpdatesTest extends MediaWikiTestCase {
 		$this->expectOutputString( implode( '', $updates ) );
 
 		DeferredUpdates::doUpdates();
+	}
+
+	public function testPresendAddOnPostsendRun() {
+		$this->setMwGlobals( 'wgCommandLineMode', true );
+
+		$x = false;
+		$y = false;
+		wfGetLBFactory()->commitMasterChanges( __METHOD__ ); // clear anything
+
+		DeferredUpdates::addCallableUpdate(
+			function () use ( &$x, &$y ) {
+				$x = true;
+				DeferredUpdates::addCallableUpdate(
+					function () use ( &$y ) {
+						$y = true;
+					},
+					DeferredUpdates::PRESEND
+				);
+			},
+			DeferredUpdates::POSTSEND
+		);
+
+		DeferredUpdates::doUpdates();
+
+		$this->assertTrue( $x, "Outer POSTSEND update ran" );
+		$this->assertTrue( $y, "Nested PRESEND update ran" );
 	}
 }

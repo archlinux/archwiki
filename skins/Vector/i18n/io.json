@@ -1,7 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Malafaya"
+			"Malafaya",
+			"Lakaoso",
+			"Joao Xavier"
 		]
 	},
 	"vector-action-addsection": "Adjuntar topiko",
@@ -9,10 +11,11 @@
 	"vector-action-move": "Movar",
 	"vector-action-protect": "Protektar",
 	"vector-action-undelete": "Rekuperar",
-	"vector-action-unprotect": "Desprotektar",
+	"vector-action-unprotect": "Chanjar protektado",
 	"vector-view-create": "Krear",
 	"vector-view-edit": "Redaktar",
 	"vector-view-history": "Vidar versionaro",
 	"vector-view-view": "Lektar",
-	"vector-view-viewsource": "Vidar fonto"
+	"vector-view-viewsource": "Vidar fonto",
+	"vector-more-actions": "Pluse"
 }

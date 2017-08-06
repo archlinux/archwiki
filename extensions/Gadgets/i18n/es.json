@@ -31,7 +31,7 @@
 	"gadgets-required-rights": "Requiere {{PLURAL:$2|el siguiente permiso|los siguientes permisos}}:\n\n$1",
 	"gadgets-required-skins": "Disponible en {{PLURAL:$2|la apariencia $1|las siguientes apariencias: $1}}.",
 	"gadgets-default": "Activado para todos de manera predeterminada.",
-	"gadgets-legacy": "Gadget no está cargado. Migra a ResourceLoader. ([https://www.mediawiki.org/wiki/ResourceLoader/Migration_guide_(users) Aprender más])",
+	"gadgets-legacy": "No se ha cargado el accesorio. Este debe migrarse a ResourceLoader. ([https://www.mediawiki.org/wiki/ResourceLoader/Migration_guide_(users) Más información])",
 	"gadgets-export": "Exportar",
 	"gadgets-export-title": "Exportación de accesorio",
 	"gadgets-not-found": "No se encontró el accesorio \"$1\".",

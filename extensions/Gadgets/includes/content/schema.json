@@ -58,15 +58,6 @@
 				"messages": {
 					"type": "array",
 					"description": "Messages this gadget depends upon"
-				},
-				"position": {
-					"type": "string",
-					"description": "Whether this module should be loaded asynchronously after the page loads (bottom) or synchronously before the page is rendered (top)",
-					"enum": [
-						"top",
-						"bottom"
-					],
-					"default": "bottom"
 				}
 			}
 		}

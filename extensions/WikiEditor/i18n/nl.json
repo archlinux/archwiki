@@ -13,7 +13,8 @@
 			"HanV",
 			"Sjoerddebruin",
 			"Servien",
-			"Dinosaur918"
+			"Dinosaur918",
+			"Mainframe98"
 		]
 	},
 	"wikieditor": "Uitgebreide tekstverwerker voor wikitekst",
@@ -171,8 +172,8 @@
 	"wikieditor-toolbar-help-content-bolditalic-syntax": "'''''Vet- en cursief gedrukte tekst'''''",
 	"wikieditor-toolbar-help-content-bolditalic-result": "<em><strong>Vet- en cursief gedrukte tekst</strong></em>",
 	"wikieditor-toolbar-help-content-ilink-description": "Interne koppeling",
-	"wikieditor-toolbar-help-content-ilink-syntax": "[[Paginanaam|Koppelingslabel]]<br />[[Paginanaam]]",
-	"wikieditor-toolbar-help-content-ilink-result": "<a href='#'>Koppelingslabel</a><br /><a href='#'>Paginanaam</a>",
+	"wikieditor-toolbar-help-content-ilink-syntax": "[[Paginanaam]]<br />[[Paginanaam|Verwijzingslabel]]",
+	"wikieditor-toolbar-help-content-ilink-result": "<a href='#'>Paginanaam</a><br /><a href='#'>Verwijzingslabel</a>",
 	"wikieditor-toolbar-help-content-xlink-description": "Externe koppeling",
 	"wikieditor-toolbar-help-content-xlink-syntax": "[http://www.example.org Koppelingslabel]<br />[http://www.example.org]<br />http://www.example.org",
 	"wikieditor-toolbar-help-content-xlink-result": "<a href='#' class='external'>Koppelingslabel</a><br /><a href='#' class='external autonumber'>[1]</a><br /><a href='#' class='external'>http://www.example.org</a>",

@@ -15,7 +15,7 @@ class CiteThisPageHooks {
 		// check whether we’re in the right namespace, the $revid has the correct type and is not empty
 		// (which would mean that the current page doesn’t exist)
 		$title = $skintemplate->getTitle();
-		if ( $title->isContentPage() && $revid !== 0 && !empty( $revid ) ) {
+		if ( self::shouldAddLink( $title ) && $revid !== 0 && !empty( $revid ) ) {
 			$nav_urls['citethispage'] = [
 				'text' => $skintemplate->msg( 'citethispage-link' )->text(),
 				'href' => SpecialPage::getTitleFor( 'CiteThisPage' )
@@ -27,6 +27,24 @@ class CiteThisPageHooks {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Checks, if the "cite this page" link should be added. By default the link is added to all
+	 * pages in the main namespace, and additionally to pages, which are in one of the namespaces
+	 * named in $wgCiteThisPageAddiotionalNamespaces.
+	 *
+	 * @param Title $title
+	 * @return bool
+	 */
+	private static function shouldAddLink( Title $title ) {
+		global $wgCiteThisPageAdditionalNamespaces;
+
+		return $title->isContentPage() ||
+			(
+				isset( $wgCiteThisPageAdditionalNamespaces[$title->getNamespace()] ) &&
+				$wgCiteThisPageAdditionalNamespaces[$title->getNamespace()]
+			);
 	}
 
 	/**

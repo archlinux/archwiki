@@ -86,7 +86,7 @@ Default behaviour (inner is pre)
 var a;
 </source>
 !! result
-<div class="mw-highlight mw-content-ltr" dir="ltr"><pre><span class="kd">var</span> <span class="nx">a</span><span class="p">;</span>
+<div class="mw-highlight mw-content-ltr" dir="ltr"><pre><span></span><span class="kd">var</span> <span class="nx">a</span><span class="p">;</span>
 </pre></div>
 
 !! end
@@ -131,7 +131,7 @@ Custom attributes
 !!input
 <source lang="javascript" id="foo" class="bar" dir="rtl" style="font-size: larger;">var a;</source>
 !! result
-<div id="foo" class="bar mw-highlight mw-content-rtl" dir="rtl" style="font-size: larger;"><pre><span class="kd">var</span> <span class="nx">a</span><span class="p">;</span>
+<div id="foo" class="bar mw-highlight mw-content-rtl" dir="rtl" style="font-size: larger;"><pre><span></span><span class="kd">var</span> <span class="nx">a</span><span class="p">;</span>
 </pre></div>
 
 !! end

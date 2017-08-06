@@ -154,7 +154,7 @@ class Element extends Tag {
 	 * @param array &$config
 	 *   An array which will be mutated to add the necessary configuration
 	 *   properties.  Unless you are implementing a subclass, you should
-	 *   always pass a new empty `array()`.
+	 *   always pass a new empty array `[]`.
 	 * @return array
 	 *   A configuration array which can be passed to this object's
 	 *   constructor to recreate it.  This is a return value to allow

@@ -29,6 +29,10 @@ class ReCaptcha extends SimpleCaptcha {
 		];
 	}
 
+	/**
+	 * @param WebRequest $request
+	 * @return array
+	 */
 	protected function getCaptchaParamsFromRequest( WebRequest $request ) {
 		// API is hardwired to return captchaId and captchaWord,
 		// so use that if the standard two are empty
@@ -68,11 +72,17 @@ class ReCaptcha extends SimpleCaptcha {
 
 	}
 
+	/**
+	 * @param array $resultArr
+	 */
 	function addCaptchaAPI( &$resultArr ) {
 		$resultArr['captcha'] = $this->describeCaptchaType();
 		$resultArr['captcha']['error'] = $this->recaptcha_error;
 	}
 
+	/**
+	 * @return array
+	 */
 	public function describeCaptchaType() {
 		global $wgReCaptchaPublicKey;
 		return [
@@ -82,6 +92,12 @@ class ReCaptcha extends SimpleCaptcha {
 		];
 	}
 
+	/**
+	 * @param ApiBase $module
+	 * @param array $params
+	 * @param int $flags
+	 * @return bool
+	 */
 	public function APIGetAllowedParams( &$module, &$params, $flags ) {
 		if ( $flags && $this->isAPICaptchaModule( $module ) ) {
 			$params['recaptcha_challenge_field'] = [
@@ -95,6 +111,9 @@ class ReCaptcha extends SimpleCaptcha {
 		return true;
 	}
 
+	/**
+	 * @return null
+	 */
 	public function getError() {
 		// do not treat failed captcha attempts as errors
 		if ( in_array( $this->recaptcha_error, [
@@ -122,14 +141,28 @@ class ReCaptcha extends SimpleCaptcha {
 		return [];
 	}
 
+	/**
+	 * @param array $captchaData
+	 * @param string $id
+	 * @return Message
+	 */
 	public function getCaptchaInfo( $captchaData, $id ) {
 		return wfMessage( 'recaptcha-info' );
 	}
 
+	/**
+	 * @return ReCaptchaAuthenticationRequest
+	 */
 	public function createAuthenticationRequest() {
 		return new ReCaptchaAuthenticationRequest();
 	}
 
+	/**
+	 * @param array $requests
+	 * @param array $fieldInfo
+	 * @param array $formDescriptor
+	 * @param string $action
+	 */
 	public function onAuthChangeFormFields(
 		array $requests, array $fieldInfo, array &$formDescriptor, $action
 	) {

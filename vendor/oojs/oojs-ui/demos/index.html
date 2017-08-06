@@ -3,17 +3,46 @@
 <head>
 	<meta charset="UTF-8">
 	<title>OOjs UI Demos</title>
-	<!-- Prevent scaling on mobile devices which cause problems with dialog sizing -->
-	<meta name="viewport" content="width=device-width, user-scalable=no">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="classes/ButtonStyleShowcaseWidget.css">
+	<link rel="stylesheet" href="classes/FloatableTest.css">
+	<link rel="stylesheet" href="classes/PositionSelectWidget.css">
 </head>
 <body>
 	<script src="node_modules/jquery/dist/jquery.js"></script>
-	<script src="node_modules/es5-shim/es5-shim.js"></script>
 	<script src="node_modules/oojs/dist/oojs.jquery.js"></script>
 	<script src="dist/oojs-ui.js"></script>
+	<script src="dist/oojs-ui-mediawiki.js"></script> <!-- Do not change this line or you'll break `grunt add-theme` -->
 	<script src="dist/oojs-ui-apex.js"></script>
-	<script src="dist/oojs-ui-mediawiki.js"></script>
 	<script src="demo.js"></script>
+	<script src="classes/ButtonStyleShowcaseWidget.js"></script>
+	<script src="classes/CapsuleNumberPopupMultiselectWidget.js"></script>
+	<script src="classes/DraggableGroupWidget.js"></script>
+	<script src="classes/DraggableItemWidget.js"></script>
+	<script src="classes/DraggableHandledItemWidget.js"></script>
+	<script src="classes/NumberLookupTextInputWidget.js"></script>
+	<script src="classes/UnsupportedSelectFileWidget.js"></script>
+	<script src="classes/BookletDialog.js"></script>
+	<script src="classes/BrokenDialog.js"></script>
+	<script src="classes/ContinuousOutlinedBookletDialog.js"></script>
+	<script src="classes/DialogWithDropdowns.js"></script>
+	<script src="classes/DialogWithPopupAndDropdown.js"></script>
+	<script src="classes/FloatableTest.js"></script>
+	<script src="classes/FloatableWidget.js"></script>
+	<script src="classes/IndexedDialog.js"></script>
+	<script src="classes/LongProcessDialog.js"></script>
+	<script src="classes/MenuDialog.js"></script>
+	<script src="classes/OutlinedBookletDialog.js"></script>
+	<script src="classes/PopupButtonWidgetTest.js"></script>
+	<script src="classes/PositionSelectWidget.js"></script>
+	<script src="classes/ProcessDialog.js"></script>
+	<script src="classes/SampleCard.js"></script>
+	<script src="classes/SamplePage.js"></script>
+	<script src="classes/SearchWidgetDialog.js"></script>
+	<script src="classes/SimpleDialog.js"></script>
+	<script src="classes/DelayedReadyProcessDialog.js"></script>
+	<script src="classes/FailedReadyProcessDialog.js"></script>
+	<script src="classes/FailedSetupProcessDialog.js"></script>
 	<script src="pages/dialogs.js"></script>
 	<script src="pages/icons.js"></script>
 	<script src="pages/widgets.js"></script>
@@ -26,7 +55,7 @@
 				if ( demo ) {
 					demo.destroy();
 				}
-				demo = new OO.ui.Demo();
+				demo = new Demo();
 				$( 'body' ).append( demo.$element );
 				demo.initialize();
 			}

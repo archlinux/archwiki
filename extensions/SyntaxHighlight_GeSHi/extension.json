@@ -13,7 +13,7 @@
 	"descriptionmsg": "syntaxhighlight-desc",
 	"license-name": "GPL-2.0+",
 	"type": "parserhook",
-	"require": {
+	"requires": {
 		"MediaWiki": ">= 1.27"
 	},
 	"MessagesDirs": {
@@ -24,6 +24,7 @@
 	"AutoloadClasses": {
 		"SyntaxHighlight_GeSHi": "SyntaxHighlight_GeSHi.class.php",
 		"GeSHi": "SyntaxHighlight_GeSHi.compat.php",
+		"SyntaxHighlightAce": "SyntaxHighlight_GeSHi.ace.php",
 		"ResourceLoaderGeSHiVisualEditorModule": "ResourceLoaderGeSHiVisualEditorModule.php"
 	},
 	"ExtensionFunctions": [

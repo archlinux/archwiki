@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Antonytse",
-			"Liuxinyu970226"
+			"Liuxinyu970226",
+			"Suzukaze-c"
 		]
 	},
 	"renameuser": "改用戶名",
@@ -25,5 +26,6 @@
 	"renameuser-page-unmoved": "$1呢一版唔能夠搬到去$2。",
 	"log-name-renameuser": "用戶改名日誌",
 	"renameuser-move-log": "當由\"[[User:$1|$1]]\"改名做\"[[User:$2|$2]]\"嗰陣已經自動搬咗用戶頁",
+	"action-renameuser": "同用戶改名",
 	"right-renameuser": "改用戶名"
 }

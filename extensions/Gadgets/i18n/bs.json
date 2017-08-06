@@ -18,5 +18,9 @@
 	"gadgets-export-title": "Izvoz dodatka",
 	"gadgets-not-found": "Dodatak \"$1\" nije pronađen.",
 	"gadgets-export-text": "Za izvoz dodatka $1, kliknite na dugme \"{{int:gadgets-export-download}}\", spremite skinutu datoteku,\nidite na Posebno:Uvoz na odredišnu wiki i postavite je. Zatim dodajte slijedeće na stranicu MediaWiki:Gadgets-definition:\n<pre>$2</pre>\nMorate imati odgovarajuća prava na odredišnoj wiki (uključujući pravo da uređujete sistemske poruke) i uvoz iz postavljenih datoteka mora biti omogućen.",
-	"gadgets-export-download": "Skidanje"
+	"gadgets-export-download": "Skidanje",
+	"right-gadgets-edit": "Uređivanje JavaScript i CSS stranica dodataka",
+	"action-gadgets-edit": "uredite JavaScript ili CSS stranicu ovog dodatka",
+	"right-gadgets-definition-edit": "Uređivanje definicija dodataka",
+	"action-gadgets-definition-edit": "uredite definiciju ovog dodatka"
 }

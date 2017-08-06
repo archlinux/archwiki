@@ -5,8 +5,7 @@ var infuseButton;
 
 // Helper function to get high resolution profiling data, where available.
 function now() {
-	/* global performance */
-	return ( typeof performance !== 'undefined' ) ? performance.now() :
+	return ( window.performance && performance.now ) ? performance.now() :
 		Date.now ? Date.now() : new Date().getTime();
 }
 
@@ -30,5 +29,5 @@ function infuseAll() {
 infuseButton = new OO.ui.ButtonWidget( { label: 'Infuse' } )
 	.on( 'click', infuseAll );
 
-OO.ui.ButtonGroupWidget.static.infuse( 'oo-ui-demo-menu-infuse' )
+OO.ui.ButtonGroupWidget.static.infuse( 'demo-menu-infuse' )
 	.addItems( [ infuseButton ] );

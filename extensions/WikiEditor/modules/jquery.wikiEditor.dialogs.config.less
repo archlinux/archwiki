@@ -1,8 +1,10 @@
-@import "mediawiki.mixins";
+@import 'mediawiki.mixins';
 
 /*
  * CSS for WikiEditor Dialogs
  */
+
+/* stylelint-disable selector-no-id */
 
 /* Replace Dialog */
 #wikieditor-toolbar-replace-search,
@@ -29,6 +31,7 @@
 	cursor: default;
 }
 
+/* stylelint-disable declaration-no-important */
 .wikiEditor-toolbar-dialog {
 	.wikieditor-toolbar-table-preview-wrapper {
 		table {
@@ -57,6 +60,7 @@
 		border-top: 1px solid #ccc !important;
 	}
 }
+/* stylelint-enable declaration-no-important */
 
 .wikieditor-toolbar-table-dimension-fields {
 	.wikieditor-toolbar-field-wrapper {
@@ -133,6 +137,18 @@
 	}
 }
 
+#wikieditor-toolbar-file-dialog + .ui-dialog-buttonpane {
+	.ui-dialog-buttonset {
+		width: 100%;
+		text-align: right;
+
+		/* Upload button */
+		.ui-button:last-child {
+			float: left;
+		}
+	}
+}
+
 /* Reference Dialog */
 #wikieditor-toolbar-reference-dialog {
 	label {
@@ -152,6 +168,7 @@ body.rtl {
 		.ui-dialog-buttonpane {
 			button {
 				float: left;
+				// stylelint-disable-next-line declaration-no-important
 				margin: 0.5em 0.4em 0.5em 0 !important;
 			}
 		}
@@ -176,7 +193,7 @@ body.rtl {
 
 	.wikiEditor-template-dialog-field-wrapper {
 		padding: 0.75em 0.33em;
-		border-bottom: 1px dashed silver;
+		border-bottom: 1px dashed #c0c0c0;
 		clear: both;
 
 		&:first-child {
@@ -184,7 +201,7 @@ body.rtl {
 		}
 
 		&:last-child {
-			border-bottom: none;
+			border-bottom: 0;
 		}
 	}
 }
@@ -195,7 +212,7 @@ body.rtl {
 	visibility: hidden;
 	display: block;
 	font-size: 0;
-	content: " ";
+	content: ' ';
 	clear: both;
 	height: 0;
 }

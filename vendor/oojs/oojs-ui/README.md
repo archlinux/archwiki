@@ -17,17 +17,17 @@ If you don't want to use npm, you can:
 
 1. Clone the repo and move into it, `$ git clone https://phabricator.wikimedia.org/diffusion/GOJU/oojs-ui.git oojs-ui && cd oojs-ui`.
 
-1. Install Grunt command-line utility:<br/>`$ npm install -g grunt-cli`
+2. Install Grunt command-line utility:<br/>`$ npm install -g grunt-cli`
 
-1. Install [composer](https://getcomposer.org/download/) and make sure running `composer` will execute it (*e.g.* add it to `$PATH` in POSIX environments).
+3. Install [composer](https://getcomposer.org/download/) and make sure running `composer` will execute it (*e.g.* add it to `$PATH` in POSIX environments).
 
-1. Install dev dependencies:<br/>`$ npm install`
+4. Install dev dependencies:<br/>`$ npm install`
 
-1. Build the library (you can alternatively use `grunt quick-build` if you don't need to rebuild the PNGs):<br/>`$ grunt build`
+5. Build the library (you can alternatively use `grunt quick-build` if you don't need to rebuild the PNGs):<br/>`$ grunt build`
 
-1. You can now copy the distribution files from the dist directory into your project.
+6. You can now copy the distribution files from the dist directory into your project.
 
-1. You can see a suite of demos in `/demos` by executing:<br/>`$ npm run-script demos`
+7. You can see a suite of demos in `/demos` by executing:<br/>`$ npm run-script demos`
 
 
 Loading the library
@@ -115,6 +115,5 @@ $ git review
 $ git remote update
 $ git checkout origin/master
 $ git tag "vX.X.X"
-$ npm run publish-build && git push --tags
-$ npm publish
+$ npm run publish-build && git push --tags && npm publish
 </pre>

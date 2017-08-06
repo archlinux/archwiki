@@ -33,9 +33,10 @@
     },
     "type": "library",
     "require": {
-        "pear/pear_exception": "*"
+        "php": ">=5.4.0",
+        "pear/pear_exception": "@stable"
     },
     "require-dev": {
-        "phpunit/phpunit": "*"
+        "phpunit/phpunit": "^4"
     }
 }

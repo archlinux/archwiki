@@ -1,4 +1,9 @@
 {
-	"@metadata": [],
-	"skinname-cologneblue": "Сіні Кёльн"
+	"@metadata": {
+		"authors": [
+			"Mechanizatar"
+		]
+	},
+	"skinname-cologneblue": "Сіні Кёльн",
+	"cologneblue-desc": "Лёгкая тэма афармлення з мінімальным фарматаваннем"
 }

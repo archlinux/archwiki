@@ -1,4 +1,4 @@
-@import "mediawiki.mixins";
+@import 'mediawiki.mixins';
 
 /**
  * CSS for WikiEditor Toolbar jQuery plugin
@@ -49,7 +49,8 @@
 			float: left;
 			line-height: 26px;
 
-			a, a:visited {
+			a,
+			a:visited {
 				.background-image-svg('images/toolbar/arrow-ltr.svg', 'images/toolbar/arrow-ltr.png');
 				background-position: left center;
 				background-repeat: no-repeat;
@@ -62,7 +63,8 @@
 				padding-right: 12px;
 			}
 
-			a.current, a.current:visited {
+			a.current,
+			a.current:visited {
 				.background-image-svg('images/toolbar/arrow-down.svg', 'images/toolbar/arrow-down.png');
 				color: #333;
 
@@ -117,13 +119,13 @@
 			margin: 2px;
 			height: 22px;
 			cursor: pointer;
-			border: 1px solid silver;
+			border: 1px solid #c0c0c0;
 			padding: 0;
 			margin-right: 0;
 			background-color: #fff;
 
 			.label {
-				.background-image-svg('images/toolbar/arrow-down.svg', 'images/toolbar/arrow-down.png');
+				.background-image-svg( 'images/toolbar/arrow-down.svg', 'images/toolbar/arrow-down.png' );
 				background-position: center right;
 				background-repeat: no-repeat;
 				padding: 0;
@@ -142,7 +144,7 @@
 					display: none;
 					margin-left: -1px;
 					margin-top: 22px;
-					border: 1px solid silver;
+					border: 1px solid #c0c0c0;
 					background-color: #fff;
 				}
 			}
@@ -152,29 +154,29 @@
 					display: block;
 					padding: 0.5em;
 					text-decoration: none;
-					color: black;
+					color: #000;
 					white-space: nowrap;
 
 					&:hover {
 						background-color: #e0eef7;
 					}
 
-					&[rel=heading-2] {
+					&[rel='heading-2'] {
 						font-size: 150%;
 						font-weight: normal;
 					}
 
-					&[rel=heading-3] {
+					&[rel='heading-3'] {
 						font-size: 132%;
 						font-weight: normal;
 					}
 
-					&[rel=heading-4] {
+					&[rel='heading-4'] {
 						font-size: 116%;
 						font-weight: normal;
 					}
 
-					&[rel=heading-5] {
+					&[rel='heading-5'] {
 						font-size: 100%;
 						font-weight: bold;
 					}
@@ -186,12 +188,12 @@
 	.group-search {
 		float: right;
 		padding: 0 0 0 6px;
-		border-right: none;
+		border-right: 0;
 		border-left: 1px solid #ddd;
 	}
 
 	.group-insert {
-		border-right: none;
+		border-right: 0;
 	}
 
 	/* Booklet */
@@ -240,7 +242,7 @@
 		}
 
 		td {
-			color: black;
+			color: #000;
 			border-top: 1px solid #eee;
 		}
 
@@ -259,7 +261,7 @@
 			}
 
 			td.cell-syntax {
-				font-family: monospace, Courier;
+				font-family: monospace, 'Courier';
 			}
 
 			td.cell-syntax,
@@ -293,22 +295,22 @@
 				height: 1em;
 				float: left;
 				display: block;
-				color: black;
+				color: #000;
 				text-decoration: none;
 				cursor: pointer;
-				font-family: monospace, Courier;
+				font-family: monospace, 'Courier';
 				font-size: 1.25em;
 				line-height: 1;
 
 				&:hover {
-					background-color: white;
+					background-color: #fff;
 					text-decoration: none;
 					border-color: #a8d7f9;
 				}
 			}
 		}
 
-		div[dir=rtl] span {
+		div[dir='rtl'] span {
 			/* @noflip */
 			direction: rtl;
 		}

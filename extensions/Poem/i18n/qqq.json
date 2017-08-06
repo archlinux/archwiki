@@ -1,8 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Raymond"
+			"Raymond",
+			"Umherirrender"
 		]
 	},
-	"poem-desc": "Extension description displayed on [[Special:Version]]"
+	"poem-desc": "{{desc|name=Poem|url=https://www.mediawiki.org/wiki/Extension:Poem}}"
 }

@@ -3,7 +3,8 @@
 		"authors": [
 			"Borislav",
 			"DCLXVI",
-			"Spiritia"
+			"Spiritia",
+			"Termininja"
 		]
 	},
 	"nuke": "Масово изтриване",
@@ -16,6 +17,7 @@
 	"nuke-submit-delete": "Изтриване на избраните",
 	"right-nuke": "Масово изтриване на страници",
 	"nuke-userorip": "Потребителско име, IP адрес или празно:",
+	"nuke-maxpages": "Максимален брой страници:",
 	"nuke-pattern": "Обща част (pattern) в заглавията:",
 	"nuke-namespace": "Ограничение по именно пространство:",
 	"nuke-linkoncontribs": "масово изтриване",

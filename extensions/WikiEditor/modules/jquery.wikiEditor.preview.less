@@ -4,7 +4,7 @@
 
 .wikiEditor-preview-loading {
 	padding: 1em;
-	background-color: white;
+	background-color: #fff;
 
 	span {
 		color: #666;
@@ -17,19 +17,21 @@
 
 .wikiEditor-preview-contents {
 	padding: 1em;
-	background-color: white;
+	background-color: #fff;
 }
 
 /* FIXME: This only works for the first wikiEditor on the page! */
+/* stylelint-disable-next-line selector-no-id */
 #wikiEditor-0-preview-dialog {
 	.wikiEditor-ui-loading {
 		overflow: hidden;
-		border: none;
+		border: 0;
 	}
 }
 
 .ui-dialog {
 	.ui-dialog-buttonpane {
+		// stylelint-disable-next-line declaration-no-important
 		margin: 0 !important;
 	}
 }

@@ -7,6 +7,7 @@
 	},
 	"apihelp-query+references-description": "Devolver una representación de datos de les referencies asociaes coles páxines indicaes.",
 	"apihelp-query+references-example-1": "Referencies asociaes con <kbd>Albert Einstein</kbd>.",
+	"apierror-citestoragedisabled": "L'almacenamientu de referencies de la estensión Cite nun ta activáu.",
 	"cite-desc": "Añade les etiquetes <nowiki><ref[ name=id]></nowiki> y <nowiki><references/></nowiki> pa les cites",
 	"cite_error": "Error de cita: $1",
 	"cite_error_ref_numeric_key": "Etiqueta <code>&lt;ref&gt;</code> non válida; el nome nun pue ser un enteru simple, usa un títulu descriptivu",

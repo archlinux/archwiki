@@ -1,7 +1,7 @@
 /*!
  * VisualEditor ContentEditable MWReferenceNode class.
  *
- * @copyright 2011-2016 Cite VisualEditor Team and others; see AUTHORS.txt
+ * @copyright 2011-2017 Cite VisualEditor Team and others; see AUTHORS.txt
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
@@ -16,9 +16,9 @@
  * @param {ve.dm.MWReferenceNode} model Model to observe
  * @param {Object} [config] Configuration options
  */
-ve.ce.MWReferenceNode = function VeCeMWReferenceNode( model, config ) {
+ve.ce.MWReferenceNode = function VeCeMWReferenceNode() {
 	// Parent constructor
-	ve.ce.LeafNode.call( this, model, config );
+	ve.ce.MWReferenceNode.super.apply( this, arguments );
 
 	// Mixin constructors
 	ve.ce.FocusableNode.call( this );

@@ -5,14 +5,15 @@
 			"Hamilton Abreu",
 			"Purodha",
 			"Shirayuki",
-			"Liuxinyu970226"
+			"Liuxinyu970226",
+			"Umherirrender"
 		]
 	},
-	"fancycaptcha-desc": "{{Optional}}\n{{desc}}",
+	"fancycaptcha-desc": "{{Optional}}\n{{desc|name=FancyCaptcha|url=https://www.mediawiki.org/wiki/Extension:ConfirmEdit}}",
 	"fancycaptcha-addurl": "{{Related|ConfirmEdit-addurl}}",
 	"fancycaptcha-badlogin": "{{Related|ConfirmEdit-badlogin}}",
 	"fancycaptcha-captcha": "Brief label for image CAPTCHA input field",
-	"fancycaptcha-accountcreate": "",
+	"fancycaptcha-accountcreate": "{{Related|ConfirmEdit-create}}",
 	"fancycaptcha-create": "{{Related|ConfirmEdit-create}}",
 	"fancycaptcha-edit": "{{Related|ConfirmEdit-edit}}",
 	"fancycaptcha-imgcaptcha-ph": "Placeholder text for image CAPTCHA input field.",

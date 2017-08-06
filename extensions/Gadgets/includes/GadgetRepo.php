@@ -29,10 +29,10 @@ abstract class GadgetRepo {
 	/**
 	 * Get a list of gadgets sorted by category
 	 *
-	 * @return array array( 'category' => array( 'name' => $gadget ) )
+	 * @return array [ 'category' => [ 'name' => $gadget ] ]
 	 */
 	public function getStructuredList() {
-		$list = array();
+		$list = [];
 		foreach ( $this->getGadgetIds() as $id ) {
 			try {
 				$gadget = $this->getGadget( $id );

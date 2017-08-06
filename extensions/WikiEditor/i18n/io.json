@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Malafaya"
+			"Malafaya",
+			"Lakaoso"
 		]
 	},
 	"wikieditor-preview-changes-tab": "Chanji",
@@ -32,7 +33,7 @@
 	"wikieditor-toolbar-tool-heading-3": "Nivelo 3",
 	"wikieditor-toolbar-tool-heading-4": "Nivelo 4",
 	"wikieditor-toolbar-tool-heading-5": "Nivelo 5",
-	"wikieditor-toolbar-group-format": "Listo",
+	"wikieditor-toolbar-group-format": "Formato",
 	"wikieditor-toolbar-tool-big": "Granda",
 	"wikieditor-toolbar-tool-big-example": "Granda texto",
 	"wikieditor-toolbar-tool-small": "Mikra",
@@ -48,7 +49,7 @@
 	"wikieditor-toolbar-tool-table-cancel": "Anular",
 	"wikieditor-toolbar-tool-replace-search": "Serchar:",
 	"wikieditor-toolbar-tool-replace-close": "Klozar",
-	"wikieditor-toolbar-tool-replace-success": "$1 remplasigo(i) facita.",
+	"wikieditor-toolbar-tool-replace-success": "$1 {{PLURAL:$1|remplasigo|remplasigi}} facita.",
 	"wikieditor-toolbar-section-help": "Helpo",
 	"wikieditor-toolbar-help-page-link": "Ligili",
 	"wikieditor-toolbar-help-page-list": "Listi",

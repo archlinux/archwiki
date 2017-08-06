@@ -1,18 +1,17 @@
 <?php
-
 namespace Elastica\Script;
-
-use Elastica\Exception\InvalidException;
 
 /**
  * Script objects, containing script internals.
  *
  * @author avasilenko <aa.vasilenko@gmail.com>
  * @author Nicolas Assing <nicolas.assing@gmail.com>
+ * @author Tobias Schultze <http://tobion.de>
+ * @author Martin Janser <martin.janser@liip.ch>
  *
  * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-scripting.html
  */
-class ScriptFile extends Script
+class ScriptFile extends AbstractScript
 {
     /**
      * @var string
@@ -20,13 +19,13 @@ class ScriptFile extends Script
     private $_scriptFile;
 
     /**
-     * @param string     $scriptFile
-     * @param array|null $params
-     * @param null       $id
+     * @param string      $scriptFile Script file name
+     * @param array|null  $params
+     * @param string|null $documentId Document ID the script action should be performed on (only relevant in update context)
      */
-    public function __construct($scriptFile, array $params = null, $id = null)
+    public function __construct($scriptFile, array $params = null, $documentId = null)
     {
-        parent::__construct(null, $params, null, $id);
+        parent::__construct($params, null, $documentId);
 
         $this->setScriptFile($scriptFile);
     }
@@ -52,65 +51,10 @@ class ScriptFile extends Script
     }
 
     /**
-     * @param string|array|\Elastica\ScriptFile $data
-     *
-     * @throws \Elastica\Exception\InvalidException
-     *
-     * @return self
+     * {@inheritdoc}
      */
-    public static function create($data)
+    protected function getScriptTypeArray()
     {
-        if ($data instanceof self) {
-            $scriptFile = $data;
-        } elseif (is_array($data)) {
-            $scriptFile = self::_createFromArray($data);
-        } elseif (is_string($data)) {
-            $scriptFile = new self($data);
-        } else {
-            throw new InvalidException('Failed to create scriptFile. Invalid data passed.');
-        }
-
-        return $scriptFile;
-    }
-
-    /**
-     * @param array $data
-     *
-     * @throws \Elastica\Exception\InvalidException
-     *
-     * @return self
-     */
-    protected static function _createFromArray(array $data)
-    {
-        if (!isset($data['script_file'])) {
-            throw new InvalidException("\$data['script_file'] is required");
-        }
-
-        $scriptFile = new self($data['script_file']);
-
-        if (isset($data['params'])) {
-            if (!is_array($data['params'])) {
-                throw new InvalidException("\$data['params'] should be array");
-            }
-            $scriptFile->setParams($data['params']);
-        }
-
-        return $scriptFile;
-    }
-
-    /**
-     * @return array
-     */
-    public function toArray()
-    {
-        $array = array(
-            'script_file' => $this->_scriptFile,
-        );
-
-        if (!empty($this->_params)) {
-            $array['params'] = $this->_params;
-        }
-
-        return $array;
+        return ['file' => $this->_scriptFile];
     }
 }

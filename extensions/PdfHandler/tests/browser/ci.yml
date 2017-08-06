@@ -1,8 +1,0 @@
-BROWSER:
-  - firefox
-
-MEDIAWIKI_ENVIRONMENT:
-  - test
-
-PLATFORM:
-  - Linux

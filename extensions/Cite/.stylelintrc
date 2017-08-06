@@ -1,3 +1,3 @@
 {
-	"extends": "stylelint-config-wikimedia"
+    "extends": "stylelint-config-wikimedia"
 }
