@@ -13,7 +13,6 @@ LocalSettings.php
 StartProfiler.php
 cscope.files
 cscope.out
-/favicon.ico
 nbproject*
 project.index
 static*
@@ -30,6 +29,7 @@ maintenance/dev/data
 maintenance/.mweval_history
 maintenance/.mwsql_history
 images/*.*
+!/images/.htaccess
 images/cache
 cache/html/*
 cache/*.lesscache
