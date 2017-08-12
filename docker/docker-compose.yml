@@ -7,14 +7,14 @@ volumes:
 
 services:
   app:
-    build: docker/php
+    build: php
     working_dir: /app
     command: php -S 0.0.0.0:${PORT:-8080} -t /app
     user: http
     ports:
       - "${PORT:-8080}:${PORT:-8080}"
     volumes:
-      - .:/app:ro
+      - ../:/app:ro
       - db-socket:/run/mysqld
       - app-images:/app/images
     tmpfs:
@@ -23,7 +23,7 @@ services:
       - db
 
   db:
-    build: docker/mariadb
+    build: mariadb
     command: mysqld
     user: mysql
     network_mode: none

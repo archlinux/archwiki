@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+pushd $(dirname $BASH_SOURCE)
+
+if [[ -n "$(docker-compose ps -q)" ]]; then
+    echo "Service already running" >&2
+    exit 1
+fi
+
+LOCAL_SETTINGS=../LocalSettings.php
+
+rm -f ${LOCAL_SETTINGS}
+docker-compose up --build -d
+docker-compose exec db mysqladmin -uroot --wait=10 ping
+docker-compose exec app php maintenance/install.php \
+    --dbserver "localhost:/run/mysqld/mysqld.sock" \
+    --dbuser "root" \
+    --dbpass "" \
+    --installdbpass "" \
+    --dbname "archwiki" \
+    --scriptpath "" \
+    --pass "adminpassword" \
+    --confpath "/app/cache" \
+    "ArchWiki" \
+    "admin"
+docker-compose exec app sed -r 's/^(\$wgDefaultSkin).*/\1 = "ArchLinux";/' /app/cache/LocalSettings.php > ${LOCAL_SETTINGS}
