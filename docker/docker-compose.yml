@@ -1,0 +1,32 @@
+version: "3.3"
+
+volumes:
+  db-socket:
+  db-data:
+  app-images:
+
+services:
+  app:
+    build: php
+    working_dir: /app
+    command: php -S 0.0.0.0:${PORT:-8080} -t /app
+    user: http
+    ports:
+      - "${PORT:-8080}:${PORT:-8080}"
+    volumes:
+      - ../:/app:ro
+      - db-socket:/run/mysqld
+      - app-images:/app/images
+    tmpfs:
+      - /app/cache
+    depends_on:
+      - db
+
+  db:
+    build: mariadb
+    command: mysqld
+    user: mysql
+    network_mode: none
+    volumes:
+      - db-data:/var/lib/mysql
+      - db-socket:/run/mysqld
