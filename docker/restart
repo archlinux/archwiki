@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+pushd $(dirname $BASH_SOURCE)
+
+./stop
+./start
