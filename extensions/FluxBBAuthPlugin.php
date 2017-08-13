@@ -2,7 +2,7 @@
 
 $wgExtensionCredits['other'][] = array(
 	'name' => 'FluxBBAuthPlugin',
-	'version' => '1.6',
+	'version' => '1.7',
 	'description' => 'Use FluxBB accounts in MediaWiki',
 	'author' => 'Pierre Schmitz',
 	'url' => 'https://pierre-schmitz.com/'
@@ -33,9 +33,9 @@ class FluxBBAuthPlugin extends AuthPlugin {
 
 		try {
 			$result = $dbr->select($FluxBBDatabase.'.users', 'id', array('username' => $username));
-			$exists = ($result->numRows() > 0 ? true : false);
+			$exists = $result->numRows() > 0;
 			$result->free();
-		} catch (DBQueryError $e) {
+		} catch (\Wikimedia\Rdbms\DBQueryError $e) {
 			$exists = false;
 		}
 
@@ -48,9 +48,9 @@ class FluxBBAuthPlugin extends AuthPlugin {
 
 		try {
 			$result = $dbr->select($FluxBBDatabase.'.users', 'id', array('username' => $username, 'password' => sha1($password)));
-			$authenticated = ($result->numRows() > 0 ? true : false);
+			$authenticated = $result->numRows() > 0;
 			$result->free();
-		} catch (DBQueryError $e) {
+		} catch (\Wikimedia\Rdbms\DBQueryError $e) {
 			$authenticated = false;
 		}
 
@@ -149,5 +149,3 @@ class FluxBBAuthPlugin extends AuthPlugin {
 $wgAuth = new FluxBBAuthPlugin();
 $wgHiddenPrefs[] = 'realname';
 $wgHooks['isValidPassword'][] = 'FluxBBAuthPlugin::isValidPassword';
-
-?>
