@@ -198,8 +198,7 @@ $wgArchNavBar = array(
 			'Download' => 'https://www.archlinux.org/download/'
 		);
 $wgArchNavBarSelectedDefault = 'Wiki';
-$wgFooterIcons = array();
-
+$wgFooterIcons = ['copyright' => ['copyright' => '']];
 
 ##
 ## Access control settings
