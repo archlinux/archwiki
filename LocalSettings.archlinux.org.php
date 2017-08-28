@@ -183,9 +183,10 @@ $wgShellLocale = "en_US.utf8";
 ## Default skin: you can change the default skin. Use the internal symbolic
 ## names, ie 'standard', 'nostalgia', 'cologneblue', 'monobook', 'vector':
 //require_once "$IP/skins/ArchLinux/ArchLinux.php";
-wfLoadSkin( 'ArchLinux' );
-$wgDefaultSkin = 'archlinux';
-$wgDefaultUserOptions['skin'] = 'archlinux';
+wfLoadSkin( 'MonoBook' );
+wfLoadExtension( 'ArchLinux' );
+$wgDefaultSkin = 'monobook';
+$wgDefaultUserOptions['skin'] = 'monobook';
 $wgArchHome = 'https://www.archlinux.org/';
 $wgArchNavBar = array(
 			'Home' => 'https://www.archlinux.org/',

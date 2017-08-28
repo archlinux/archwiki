@@ -1,0 +1,44 @@
+{
+  "name": "ArchLinux",
+  "author": [
+    "Pierre Schmitz"
+  ],
+  "url": "https://www.archlinux.org",
+  "description": "MediaWiki skin based on Vector",
+  "license-name": "GPL-2.0+",
+  "type": "skin",
+  "AutoloadClasses": {
+    "MediaWiki\\Extensions\\ArchLinux\\Hooks": "ArchLinux.hooks.php"
+  },
+  "Hooks": {
+    "SkinTemplateOutputPageBeforeExec": [
+      "MediaWiki\\Extensions\\ArchLinux\\Hooks::onSkinTemplateOutputPageBeforeExec"
+    ],
+    "BeforePageDisplay": [
+      "MediaWiki\\Extensions\\ArchLinux\\Hooks::onBeforePageDisplay"
+    ]
+  },
+  "ResourceModules": {
+    "zzz.ext.archLinux.archnavbar": {
+      "styles": [
+        "archnavbar.css"
+      ]
+    },
+    "zzz.ext.archLinux.monobook": {
+      "styles": [
+        "monobook.css"
+      ]
+    },
+    "zzz.ext.archLinux.vector": {
+      "styles": [
+        "vector.less"
+      ]
+    }
+  },
+  "ResourceFileModulePaths": {
+    "localBasePath": "modules",
+    "remoteExtPath": "ArchLinux/modules"
+  },
+  "manifest_version": 2
+}
+
