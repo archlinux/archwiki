@@ -1,12 +1,16 @@
 /*
  * ARCH GLOBAL NAVBAR
+ *
  * We're forcing all generic selectors with !important
  * to help prevent other stylesheets from interfering.
+ *
  */
 
 /* container for the entire bar */
 #archnavbar { height: 40px !important; padding: 10px 15px !important; background: #333 !important; border-bottom: 5px #08c solid !important; }
-#archnavbarlogo { float: left !important; margin: 0 !important; padding: 0 !important; height: 40px !important; width: 190px !important; background: url('archlogo.png') no-repeat !important; }
+
+#archnavbarlogo { float: left !important; margin: 0 !important; padding: 0 !important; height: 40px !important; width: 190px !important; }
+html > body #archnavbarlogo { background: url('archlogo.svg') no-repeat !important; background-size: 190px 40px !important;}
 
 /* move the heading/paragraph text offscreen */
 #archnavbarlogo p { margin: 0 !important; padding: 0 !important; text-indent: -9999px !important; }

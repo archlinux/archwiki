@@ -24,6 +24,11 @@
         "archnavbar.css"
       ]
     },
+    "zzz.ext.archLinux.responsive": {
+      "styles": [
+        "responsive.less"
+      ]
+    },
     "zzz.ext.archLinux.monobook": {
       "styles": [
         "monobook.css"

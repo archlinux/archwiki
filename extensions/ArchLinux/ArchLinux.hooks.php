@@ -7,6 +7,7 @@ class Hooks
     public static function onBeforePageDisplay(\OutputPage &$out, \Skin &$skin)
     {
         $out->addModuleStyles('zzz.ext.archLinux.archnavbar');
+        $out->addModuleStyles('zzz.ext.archLinux.responsive');
         switch ($skin->getSkinName()) {
             case 'vector':
                 $out->addModuleStyles('zzz.ext.archLinux.vector');
