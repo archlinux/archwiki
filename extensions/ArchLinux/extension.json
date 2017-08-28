@@ -39,5 +39,22 @@
     "localBasePath": "modules",
     "remoteExtPath": "ArchLinux/modules"
   },
+  "ConfigRegistry": {
+    "archlinux": "GlobalVarConfig::newInstance"
+  },
+  "config": {
+    "ArchNavBar": {
+      "value": []
+    },
+    "ArchHome": {
+      "value": ""
+    },
+    "ArchNavBarSelected": {
+      "value": []
+    },
+    "ArchNavBarSelectedDefault": {
+      "value": ""
+    }
+  },
   "manifest_version": 2
 }
