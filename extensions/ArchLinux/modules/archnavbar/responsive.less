@@ -1,9 +1,11 @@
 @media (max-width: 600px) {
-  #archnavbar {
-    padding-left: 5px !important;
-    padding-right: 5px !important;
+  #anb-home,
+  #anb-forums {
+    display: none;
   }
+}
 
+@media (max-width: 680px) {
   html > body #archnavbarlogo {
     width: 40px !important;
     margin-right: 5px !important;
@@ -24,8 +26,18 @@
   }
 }
 
-@media (max-width: 800px) {
+@media (max-width: 830px) {
+  html > body #archnavbarlogo {
+    padding-right: 15px !important;
+  }
+
+  #archnavbar {
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+  }
+
   #archnavbar ul li {
     padding-left: 5px !important;
+    padding-right: 5px !important;
   }
 }
