@@ -4,7 +4,7 @@
     "Pierre Schmitz"
   ],
   "url": "https://www.archlinux.org",
-  "description": "MediaWiki skin based on Vector",
+  "description": "Arch Linux navigation and styles",
   "license-name": "GPL-2.0+",
   "type": "skin",
   "AutoloadClasses": {
@@ -19,25 +19,20 @@
     ]
   },
   "ResourceModules": {
-    "zzz.ext.archLinux.archnavbar": {
+    "zzz.ext.archLinux.styles": {
+      "targets": [
+        "mobile",
+        "desktop"
+      ],
       "styles": [
-        "archnavbar.css"
-      ]
-    },
-    "zzz.ext.archLinux.responsive": {
-      "styles": [
-        "responsive.less"
-      ]
-    },
-    "zzz.ext.archLinux.skin.monobook": {
-      "styles": [
-        "monobook.css"
-      ]
-    },
-    "zzz.ext.archLinux.skin.vector": {
-      "styles": [
-        "vector.less"
-      ]
+        "archnavbar/archnavbar.less",
+        "archnavbar/responsive.less"
+      ],
+      "skinStyles": {
+        "vector": "skins/vector.less",
+        "monobook": "skins/monobook.less"
+      },
+      "position": "top"
     }
   },
   "ResourceFileModulePaths": {
@@ -46,4 +41,3 @@
   },
   "manifest_version": 2
 }
-

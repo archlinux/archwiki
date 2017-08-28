@@ -6,11 +6,7 @@ class Hooks
 {
     public static function onBeforePageDisplay(\OutputPage &$out, \Skin &$skin)
     {
-        $out->addModuleStyles('zzz.ext.archLinux.archnavbar');
-        $out->addModuleStyles('zzz.ext.archLinux.responsive');
-        if ($out->getResourceLoader()->isModuleRegistered('zzz.ext.archLinux.skin.' . $skin->getSkinName())) {
-            $out->addModuleStyles('zzz.ext.archLinux.skin.' . $skin->getSkinName());
-        }
+        $out->addModuleStyles('zzz.ext.archLinux.styles');
     }
 
     public static function onSkinTemplateOutputPageBeforeExec(\SkinTemplate $skinTemplate, \QuickTemplate $tpl)
