@@ -8,13 +8,8 @@ class Hooks
     {
         $out->addModuleStyles('zzz.ext.archLinux.archnavbar');
         $out->addModuleStyles('zzz.ext.archLinux.responsive');
-        switch ($skin->getSkinName()) {
-            case 'vector':
-                $out->addModuleStyles('zzz.ext.archLinux.vector');
-                break;
-            case 'monobook':
-                $out->addModuleStyles('zzz.ext.archLinux.monobook');
-                break;
+        if ($out->getResourceLoader()->isModuleRegistered('zzz.ext.archLinux.skin.' . $skin->getSkinName())) {
+            $out->addModuleStyles('zzz.ext.archLinux.skin.' . $skin->getSkinName());
         }
     }
 

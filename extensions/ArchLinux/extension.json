@@ -29,12 +29,12 @@
         "responsive.less"
       ]
     },
-    "zzz.ext.archLinux.monobook": {
+    "zzz.ext.archLinux.skin.monobook": {
       "styles": [
         "monobook.css"
       ]
     },
-    "zzz.ext.archLinux.vector": {
+    "zzz.ext.archLinux.skin.vector": {
       "styles": [
         "vector.less"
       ]
