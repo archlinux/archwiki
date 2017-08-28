@@ -1,4 +1,4 @@
-@media (max-width: 575px) {
+@media (max-width: 600px) {
   #archnavbar {
     padding-left: 5px !important;
     padding-right: 5px !important;
@@ -14,11 +14,18 @@
   #archnavbar ul {
     display: flex !important;
     justify-content: space-between;
+    flex-wrap: wrap;
     float: none !important;
   }
 
   #archnavbar ul li {
     padding: 0 !important;
     float: none !important;
+  }
+}
+
+@media (max-width: 800px) {
+  #archnavbar ul li {
+    padding-left: 5px !important;
   }
 }
