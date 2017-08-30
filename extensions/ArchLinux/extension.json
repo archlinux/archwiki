@@ -26,7 +26,8 @@
       ],
       "styles": [
         "archnavbar/archnavbar.less",
-        "archnavbar/responsive.less"
+        "archnavbar/responsive.less",
+        "arch_common.less"
       ],
       "skinStyles": {
         "vector": "skins/vector.less",

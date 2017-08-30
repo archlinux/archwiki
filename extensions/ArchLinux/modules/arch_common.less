@@ -1,0 +1,143 @@
+/* general styling */
+body {
+    background: #f6f9fc;
+}
+
+body,
+#content,
+table,
+h1,
+h2,
+h3,
+h4,
+h5,
+pre,
+code,
+tt {
+    color: #222;
+}
+
+pre,
+code,
+tt {
+    background-color: #ebf1f5;
+    font-family: monospace;
+}
+
+pre {
+    border: 1px solid #bcd;
+    overflow: auto;
+}
+
+code,
+tt {
+    /* Inline-block prevents code from wrapping when starting too close to the end of a line; it also lets select the entire code line with a triple click */
+    display: inline-block;
+    padding: 0 0.3em;
+    /* A border would be inherited by the default style sheets, but we don't want it */
+    border-width: 0;
+    border-radius: 0;
+}
+
+ul,
+.portlet ul {
+    list-style-image: none;
+}
+
+#bodyContent table {
+    border-collapse: collapse;
+    padding: 2px;
+}
+
+#bodyContent td {
+    padding: 2px;
+}
+
+/* content borders */
+div#content {
+    border: 1px solid #ccc;
+}
+
+/*
+ * Hide logos in the footer
+ * (they can be disabled in LocalSettings.php by setting $wgFooterIcons)
+ */
+#footer-icons {
+    display: none;
+}
+
+/* article Table of Contents */
+#toc,
+.toc,
+.mw-warning,
+.toccolours {
+    background-color: #f9faff;
+    border: 1px solid #d7dfe3;
+}
+
+/* Make all links coming from the rendered wiki markup bold */
+#bodyContent > div.mw-content-ltr a,
+#bodyContent > div.mw-content-rtl a,
+#wikiPreview > div.mw-content-ltr a,
+#wikiPreview > div.mw-content-rtl a {
+    font-weight: bold;
+}
+#bodyContent #toc a,
+#bodyContent .special li > a,
+#bodyContent .special li span a,
+#bodyContent #pagehistory a {
+    font-weight: normal;
+}
+
+/* Colors of links in the content, MediaWiki navigation and the footer */
+#content,
+#mw-navigation li:not(.new),  // Vector
+#mw-panel li:not(.new),       // Vector
+#column-one li:not(.new),     // MonoBook
+#footer {
+  a:not(.new) {
+    text-decoration: none;
+    color: #07b !important;
+  }
+
+  a:not(.new):hover {
+    text-decoration: underline;
+    background-color: transparent;
+    color: #999 !important;
+  }
+
+  a:active, a:focus,
+  /* a:hover overrides a:active, which we don't want' */
+  a:active:hover, a:focus:hover {
+    color: #e90 !important;
+  }
+}
+
+/* Color of visited links for content and left column
+ * (not for MediaWiki navigation elements above the page) */
+#content,
+#mw-panel li:not(.new),       // Vector
+#p-navigation li:not(.new),   // MonoBook
+#p-tb li:not(.new)            // MonoBook
+{
+  a:not(.new):visited {
+    color: #666 !important;
+  }
+}
+
+/* Color for links to inexistent pages */
+a.new,
+#mw-navigation li.new a {
+    color: #b00 !important;
+}
+
+/*
+ * Use the same icon for all external links
+ * The default MediaWiki style assigns icons only to external links and not interwiki links,
+ * so we use this to have an icon for all links pointing to external sites.
+ */
+.mw-body-content a.external,
+.mw-body-content a.extiw {
+    background: url(/resources/src/mediawiki.skinning/images/external-ltr.png) center right no-repeat;
+    padding-right: 13px;
+}

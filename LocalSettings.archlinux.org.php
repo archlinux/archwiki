@@ -55,9 +55,9 @@ $wgScriptExtension  = ".php";
 ## The relative URL path to the skins directory
 $wgStylePath        = "$wgScriptPath/skins";
 
-## The relative URL path to the logo.  Make sure you change this from the default,
-## or else you'll overwrite your logo when you upgrade!
-$wgLogo             = "$wgStylePath/ArchLinux/archlogo.png";
+## The relative URL path to the logo.
+## (commented out, it is not shown anywhere)
+#$wgLogo             = "$wgScriptPath/extensions/ArchLinux/modules/archnavbar/archlogo.svg";
 
 ## For attaching licensing metadata to pages, and displaying an
 ## appropriate copyright notice / icon. GNU Free Documentation

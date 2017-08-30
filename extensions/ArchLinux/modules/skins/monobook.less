@@ -1,112 +1,5 @@
-/* general styling */
-body {
-    background: #f6f9fc;
-}
-body,
-#content,
-table,
-h1,
-h2,
-h3,
-h4,
-h5,
-pre,
-code,
-tt {
-    color: #222;
-}
 h1 {
     font-weight: bold;
-}
-pre,
-code,
-tt {
-    background-color: #ebf1f5;
-    font-family: monospace;
-}
-pre {
-    border: 1px solid #bcd;
-    overflow: auto;
-}
-code,
-tt {
-    /* Inline-block prevents code from wrapping when starting too close to the
-    end of a line; it also lets select the entire code line with a triple
-    click */
-    display: inline-block;
-    padding: 0 0.3em;
-    /* A border would be inherited by the default style sheets, but we don't
-    want it */
-    border-width: 0;
-    border-radius: 0;
-}
-ul,
-.portlet ul {
-    list-style-image: none;
-}
-#bodyContent table {
-    border-collapse: collapse;
-    padding: 2px;
-}
-#bodyContent td {
-    padding: 2px;
-}
-
-/* links (including page tabs and personal toolbar) */
-#bodyContent > div.mw-content-ltr a,
-#bodyContent > div.mw-content-rtl a,
-#wikiPreview > div.mw-content-ltr a,
-#wikiPreview > div.mw-content-rtl a {
-    font-weight: bold;
-}
-#bodyContent #toc a,
-#bodyContent .special li > a,
-#bodyContent .special li span a,
-#bodyContent #pagehistory a {
-    font-weight: normal;
-}
-a:link,
-#toc a,
-#p-cactions li a,
-#p-personal li a,
-#p-cactions li a:visited,
-#p-personal li a:visited,
-#bodyContent a.external,
-#bodyContent a.extiw {
-    text-decoration: none;
-    outline: none;
-    color: #07b;
-}
-a:visited,
-#bodyContent a:visited.external {
-    color: #666;
-}
-a:hover,
-#p-personal li a:hover,
-#bodyContent #toc a:hover,
-#bodyContent a:hover.external {
-    text-decoration: underline;
-    background-color: transparent;
-    color: #999;
-}
-a:focus,
-a:active,
-#toc a:focus,
-#toc a:active,
-#p-cactions li a:focus,
-#p-cactions li a:active,
-#p-personal li a:focus,
-#p-personal li a:active,
-#bodyContent a:focus.external,
-#bodyContent a:active.external,
-#bodyContent a:focus.extiw,
-#bodyContent a:active.extiw {
-    color: #e90 !important;
-}
-a.new,
-#p-cactions .new a,
-#p-personal a.new {
-    color: #b00 !important;
 }
 
 /* bump down the personal toolbar (top menu) */
@@ -119,6 +12,13 @@ a.new,
     top: 27px;
 }
 
+/* use the same color for the border of all tabs */
+#p-cactions {
+    li, li.selected {
+        border-color: #ccc;
+    }
+}
+
 /* bump down the main content to make room for navbar */
 #content {
     top: 10px;
@@ -129,22 +29,6 @@ div#globalWrapper {
     width: 99%;
 }
 
-/* article Table of Contents */
-#toc,
-.toc,
-.mw-warning {
-    background-color: #f9faff;
-    border: 1px solid #d7dfe3;
-}
-
-/* sidebar menus and content borders */
-.pBody {
-    border: 1px solid #ddd;
-}
-div#content {
-    border: 1px solid #ccc;
-}
-
 /* disable default mediawiki logo and close the gap it leaves behind */
 #p-logo {
     display: none !important;
@@ -153,26 +37,16 @@ div#column-one {
     padding-top: 36px;
 }
 
-/* disable footer logos  TODO: see if this can be done in LocalSettings.php */
-#f-poweredbyico,
-#f-copyrightico {
-    display: none;
-}
-
 /* clean up the footer */
 div#footer {
-    color: #888;
+    color: #333;
     background-color: transparent;
     border-top: none;
     border-bottom: none;
-}
-
-/* bring footer text inline with content */
-#footer ul {
-    margin-left: 170px;
-}
-
-/* highlight current website in the navbar */
-#archnavbar ul li.anb-selected a {
-    color: white !important;
+    /* bring footer text inline with content */
+    margin-left: 12.2em;
+    padding: 0em 1em;
+    ul {
+        margin-left: 0;
+    }
 }
