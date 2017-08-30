@@ -23,4 +23,5 @@ docker-compose exec app php maintenance/install.php \
     --confpath "/app/cache" \
     "ArchWiki" \
     "admin"
-docker-compose exec app sed -r 's/^(\$wgDefaultSkin).*/\1 = "ArchLinux";/' /app/cache/LocalSettings.php > ${LOCAL_SETTINGS}
+docker-compose exec app cat /app/cache/LocalSettings.php > ${LOCAL_SETTINGS}
+echo -e "\$wgVectorResponsive = true;\nwfLoadExtension( 'ArchLinux' );" >> ${LOCAL_SETTINGS}

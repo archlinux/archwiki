@@ -1,0 +1,60 @@
+{
+  "name": "ArchLinux",
+  "author": [
+    "Pierre Schmitz"
+  ],
+  "url": "https://www.archlinux.org",
+  "description": "Arch Linux navigation and styles",
+  "license-name": "GPL-2.0+",
+  "type": "skin",
+  "AutoloadClasses": {
+    "MediaWiki\\Extensions\\ArchLinux\\Hooks": "ArchLinux.hooks.php"
+  },
+  "Hooks": {
+    "SkinTemplateOutputPageBeforeExec": [
+      "MediaWiki\\Extensions\\ArchLinux\\Hooks::onSkinTemplateOutputPageBeforeExec"
+    ],
+    "BeforePageDisplay": [
+      "MediaWiki\\Extensions\\ArchLinux\\Hooks::onBeforePageDisplay"
+    ]
+  },
+  "ResourceModules": {
+    "zzz.ext.archLinux.styles": {
+      "targets": [
+        "mobile",
+        "desktop"
+      ],
+      "styles": [
+        "archnavbar/archnavbar.less",
+        "archnavbar/responsive.less"
+      ],
+      "skinStyles": {
+        "vector": "skins/vector.less",
+        "monobook": "skins/monobook.less"
+      },
+      "position": "top"
+    }
+  },
+  "ResourceFileModulePaths": {
+    "localBasePath": "modules",
+    "remoteExtPath": "ArchLinux/modules"
+  },
+  "ConfigRegistry": {
+    "archlinux": "GlobalVarConfig::newInstance"
+  },
+  "config": {
+    "ArchNavBar": {
+      "value": []
+    },
+    "ArchHome": {
+      "value": ""
+    },
+    "ArchNavBarSelected": {
+      "value": []
+    },
+    "ArchNavBarSelectedDefault": {
+      "value": ""
+    }
+  },
+  "manifest_version": 2
+}
