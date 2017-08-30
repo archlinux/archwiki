@@ -1,0 +1,64 @@
+/* general styling */
+body {
+    background: #f6f9fc;
+}
+
+body,
+#content,
+table,
+h1,
+h2,
+h3,
+h4,
+h5,
+pre,
+code,
+tt {
+    color: #222;
+}
+
+pre,
+code,
+tt {
+    background-color: #ebf1f5;
+    font-family: monospace;
+}
+
+pre {
+    border: 1px solid #bcd;
+    overflow: auto;
+}
+
+code,
+tt {
+    /* Inline-block prevents code from wrapping when starting too close to the end of a line; it also lets select the entire code line with a triple click */
+    display: inline-block;
+    padding: 0 0.3em;
+    /* A border would be inherited by the default style sheets, but we don't want it */
+    border-width: 0;
+    border-radius: 0;
+}
+
+ul,
+.portlet ul {
+    list-style-image: none;
+}
+
+#bodyContent table {
+    border-collapse: collapse;
+    padding: 2px;
+}
+
+#bodyContent td {
+    padding: 2px;
+}
+
+/* article Table of Contents */
+#toc,
+.toc,
+.mw-warning,
+.toccolours {
+    background-color: #f9faff;
+    border: 1px solid #d7dfe3;
+}
+
