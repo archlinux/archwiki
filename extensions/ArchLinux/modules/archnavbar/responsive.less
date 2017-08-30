@@ -1,6 +1,5 @@
 @media (max-width: 600px) {
-  #anb-home,
-  #anb-forums {
+  #anb-wiki {
     display: none;
   }
 }
@@ -16,7 +15,8 @@
   #archnavbar ul {
     display: flex !important;
     justify-content: space-between;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    overflow: hidden;
     float: none !important;
   }
 
@@ -27,6 +27,11 @@
 }
 
 @media (max-width: 830px) {
+  #anb-home,
+  #anb-start {
+    display: none;
+  }
+
   html > body #archnavbarlogo {
     padding-right: 15px !important;
   }
