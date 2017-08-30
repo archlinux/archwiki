@@ -1,3 +1,5 @@
+@import '../arch_definitions';
+
 h1 {
     font-weight: bold;
 }
@@ -12,16 +14,16 @@ h1 {
     top: 27px;
 }
 
-/* use the same color for the border of all tabs */
-#p-cactions {
-    li, li.selected {
-        border-color: #ccc;
-    }
-}
-
 /* bump down the main content to make room for navbar */
 #content {
     top: 10px;
+}
+
+/* use the same color for the border of all tabs */
+#p-cactions {
+    li, li.selected {
+        border: @content-border-style;
+    }
 }
 
 /* shrink the content just enough to show off the borders */
@@ -39,7 +41,6 @@ div#column-one {
 
 /* clean up the footer */
 div#footer {
-    color: #333;
     background-color: transparent;
     border-top: none;
     border-bottom: none;

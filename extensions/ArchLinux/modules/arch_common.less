@@ -1,61 +1,62 @@
+@import 'arch_definitions';
+
 /* general styling */
 body {
-    background: #f6f9fc;
+    background: @body-background-color;
 }
 
-body,
-#content,
-table,
-h1,
-h2,
-h3,
-h4,
-h5,
-pre,
-code,
-tt {
-    color: #222;
-}
+#content {
+    background: @content-background-color;
+    border: @content-border-style;
 
-pre,
-code,
-tt {
-    background-color: #ebf1f5;
-    font-family: monospace;
-}
+    table,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    pre,
+    code,
+    tt {
+        color: @text-color;
+    }
 
-pre {
-    border: 1px solid #bcd;
-    overflow: auto;
-}
+    ul {
+        list-style-image: none;
+    }
 
-code,
-tt {
-    /* Inline-block prevents code from wrapping when starting too close to the end of a line; it also lets select the entire code line with a triple click */
-    display: inline-block;
-    padding: 0 0.3em;
-    /* A border would be inherited by the default style sheets, but we don't want it */
-    border-width: 0;
-    border-radius: 0;
-}
+    table {
+        border-collapse: collapse;
+        padding: 2px;
+    }
 
-ul,
-.portlet ul {
-    list-style-image: none;
-}
+    td {
+        padding: 2px;
+    }
 
-#bodyContent table {
-    border-collapse: collapse;
-    padding: 2px;
-}
+    pre {
+        border: @code-border-style;
+        overflow: auto;
+        word-break: break-all;
+        white-space: pre-wrap !important;
+    }
 
-#bodyContent td {
-    padding: 2px;
-}
+    pre,
+    code,
+    tt {
+        background-color: @code-background-color;
+        font-family: monospace;
+    }
 
-/* content borders */
-div#content {
-    border: 1px solid #ccc;
+    code,
+    tt {
+        /* Inline-block prevents code from wrapping when starting too close to the end of a line; it also lets select the entire code line with a triple click */
+        display: inline-block;
+        padding: 0 0.3em;
+        /* A border would be inherited by the default style sheets, but we don't want it */
+        border-width: 0;
+        border-radius: 0;
+    }
 }
 
 /*
@@ -66,13 +67,17 @@ div#content {
     display: none;
 }
 
+#footer {
+    color: @footer-text-color;
+}
+
 /* article Table of Contents */
 #toc,
 .toc,
 .mw-warning,
 .toccolours {
-    background-color: #f9faff;
-    border: 1px solid #d7dfe3;
+    background-color: @toc-background-color;
+    border: @toc-border-style;
 }
 
 /* Make all links coming from the rendered wiki markup bold */
@@ -97,19 +102,19 @@ div#content {
 #footer {
   a:not(.new) {
     text-decoration: none;
-    color: #07b !important;
+    color: @link-color-normal !important;
   }
 
   a:not(.new):hover {
     text-decoration: underline;
     background-color: transparent;
-    color: #999 !important;
+    color: @link-color-hover !important;
   }
 
   a:active, a:focus,
   /* a:hover overrides a:active, which we don't want' */
   a:active:hover, a:focus:hover {
-    color: #e90 !important;
+    color: @link-color-active !important;
   }
 }
 
@@ -121,14 +126,14 @@ div#content {
 #p-tb li:not(.new)            // MonoBook
 {
   a:not(.new):visited {
-    color: #666 !important;
+    color: @link-color-visited !important;
   }
 }
 
 /* Color for links to inexistent pages */
 a.new,
 #mw-navigation li.new a {
-    color: #b00 !important;
+    color: @link-color-new !important;
 }
 
 /*
