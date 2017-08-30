@@ -117,3 +117,14 @@ a.new,
 #mw-navigation li.new a {
     color: #b00 !important;
 }
+
+/*
+ * Use the same icon for all external links
+ * The default MediaWiki style assigns icons only to external links and not interwiki links,
+ * so we use this to have an icon for all links pointing to external sites.
+ */
+.mw-body-content a.external,
+.mw-body-content a.extiw {
+    background: url(/resources/src/mediawiki.skinning/images/external-ltr.png) center right no-repeat;
+    padding-right: 13px;
+}
