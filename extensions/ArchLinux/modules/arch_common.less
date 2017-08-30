@@ -132,7 +132,10 @@ body {
 
 /* Color for links to inexistent pages */
 a.new,
-#mw-navigation li.new a {
+a.new:visited,
+#mw-navigation li.new a,         // Vector
+#mw-navigation li.new a:visited  // Vector
+{
     color: @link-color-new !important;
 }
 
