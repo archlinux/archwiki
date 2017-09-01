@@ -2,9 +2,6 @@
 
 div#mw-head {
   top: 65px;
-  h3 {
-    margin-top: -2px;
-  }
 }
 
 div#mw-panel {
@@ -19,23 +16,43 @@ div#mw-panel {
   background: none;
 }
 
+/* fix vertical position of tabs */
+div.vectorTabs, div.vectorMenu {
+  margin-top: -2 * @content-border-width;
+}
+
 div.vectorTabs {
   padding-left: 0;
 
-  ul li {
+  /* remove background with color gradient */
+  ul, ul li {
     background: none;
-    border: 1px solid @body-background-color;
-    border-bottom: @content-border-style;
-    margin-top: -2px;
+  }
+
+  /* invisible border to align well with the selected tab */
+  ul li {
+    border: @content-border-width;
   }
 
   li.selected {
+    /* border around the tab matches content, at the bottom we override the
+     * content border with the background color
+     */
     border: @content-border-style;
-    border-bottom: 1px solid @content-background-color;
+    border-bottom-color: @content-background-color;
+    /* background of the selected tab should match the content */
     background-color: @content-background-color;
+    /* remove background with the vertical separator */
     span {
         background: none;
     }
+  }
+
+  /* Let the left border of the selected tab overlap with the vertical bar
+   * coming from the background image of the previous tab.
+   */
+  li:not(:first-child).selected {
+    margin-left: -2 * @content-border-width;
   }
 }
 
