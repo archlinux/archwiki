@@ -40,7 +40,13 @@ div.vectorTabs {
 }
 
 @media screen and ( max-width: @deviceWidthTablet ) {
+  /* fix position of personal navigation bar */
+  div#p-personal {
+    top: unset;
+  }
+
+  /* remove useless blank space at the bottom */
   div#mw-panel {
-    margin-top: 65px;
+    padding-top: 0;
   }
 }
