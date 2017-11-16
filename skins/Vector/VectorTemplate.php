@@ -316,7 +316,9 @@ class VectorTemplate extends BaseTemplate {
 							echo $this->makeListItem( $key, $val );
 						}
 						if ( $hook !== null ) {
-							Hooks::run( $hook, [ &$this, true ] );
+							// Avoid PHP 7.1 warning
+							$skin = $this;
+							Hooks::run( $hook, [ &$skin, true ] );
 						}
 						?>
 					</ul>

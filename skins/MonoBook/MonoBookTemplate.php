@@ -318,8 +318,11 @@ class MonoBookTemplate extends BaseTemplate {
 
 					<?php
 					}
-					Hooks::run( 'MonoBookTemplateToolboxEnd', array( &$this ) );
-					Hooks::run( 'SkinTemplateToolboxEnd', array( &$this, true ) );
+
+					// Avoid PHP 7.1 warnings
+					$skin = $this;
+					Hooks::run( 'MonoBookTemplateToolboxEnd', [ &$skin ] );
+					Hooks::run( 'SkinTemplateToolboxEnd', [ &$skin, true ] );
 					?>
 				</ul>
 				<?php $this->renderAfterPortlet( 'tb' ); ?>

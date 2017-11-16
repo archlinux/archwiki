@@ -35,7 +35,7 @@ class ResourceLoaderGeSHiVisualEditorModule extends ResourceLoaderFileModule {
 			ResourceLoader::inDebugMode()
 		) . Xml::encodeJsCall(
 			've.dm.MWSyntaxHighlightNode.static.addGeshiToPygmentsMap', array(
-				GeSHi::$compatibleLexers
+				SyntaxHighlightGeSHiCompat::getGeSHiToPygmentsMap()
 			),
 			ResourceLoader::inDebugMode()
 		) . Xml::encodeJsCall(
