@@ -73,10 +73,12 @@ class SyntaxHighlight_GeSHi {
 			return $lexer;
 		}
 
+		$geshi2pygments = SyntaxHighlightGeSHiCompat::getGeSHiToPygmentsMap();
+
 		// Check if this is a GeSHi lexer name for which there exists
 		// a compatible Pygments lexer with a different name.
-		if ( isset( GeSHi::$compatibleLexers[$lexer] ) ) {
-			$lexer = GeSHi::$compatibleLexers[$lexer];
+		if ( isset( $geshi2pygments[$lexer] ) ) {
+			$lexer = $geshi2pygments[$lexer];
 			if ( in_array( $lexer, $lexers ) ) {
 				return $lexer;
 			}

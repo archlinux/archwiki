@@ -351,7 +351,7 @@ class ImageMap {
 		// Output the result
 		// We use saveXML() not saveHTML() because then we get XHTML-compliant output.
 		// The disadvantage is that we have to strip out the DTD
-		$output = preg_replace( '/<\?xml[^?]*\?>/', '', $domDoc->saveXML() );
+		$output = preg_replace( '/<\?xml[^?]*\?>/', '', $domDoc->saveXML( null, LIBXML_NOEMPTYTAG ) );
 
 		// Register links
 		foreach ( $links as $title ) {

@@ -23,8 +23,9 @@
 	},
 	"AutoloadClasses": {
 		"SyntaxHighlight_GeSHi": "SyntaxHighlight_GeSHi.class.php",
-		"GeSHi": "SyntaxHighlight_GeSHi.compat.php",
+		"GeSHi": "SyntaxHighlight_GeSHi.GeSHi.php",
 		"SyntaxHighlightAce": "SyntaxHighlight_GeSHi.ace.php",
+		"SyntaxHighlightGeSHiCompat": "SyntaxHighlight_GeSHi.compat.php",
 		"ResourceLoaderGeSHiVisualEditorModule": "ResourceLoaderGeSHiVisualEditorModule.php"
 	},
 	"ExtensionFunctions": [
