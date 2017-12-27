@@ -3,7 +3,8 @@
 		"authors": [
 			"Arlin",
 			"Sahran",
-			"Tel'et"
+			"Tel'et",
+			"Uzdil"
 		]
 	},
 	"skinname-vector": "Vector",
@@ -16,7 +17,7 @@
 	"vector-action-undelete": "ئەسلىگە قايتۇر",
 	"vector-action-unprotect": "قوغداش ئۆزگەرت",
 	"vector-view-create": "قۇر",
-	"vector-view-edit": "تەھرىر",
+	"vector-view-edit": "تەھرىرلەش",
 	"vector-view-history": "تارىخ كۆرسەت",
 	"vector-view-view": "ئوقۇ",
 	"vector-view-viewsource": "مەنبەنى كۆرسەت",

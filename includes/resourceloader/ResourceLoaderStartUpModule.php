@@ -33,7 +33,6 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 	 * @return array
 	 */
 	protected function getConfigSettings( $context ) {
-
 		$hash = $context->getHash();
 		if ( isset( $this->configVars[$hash] ) ) {
 			return $this->configVars[$hash];
@@ -135,7 +134,6 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 		// The list of implicit dependencies won't be altered, so we can
 		// cache them without having to worry.
 		if ( !isset( $dependencyCache[$moduleName] ) ) {
-
 			if ( !isset( $registryData[$moduleName] ) ) {
 				// Dependencies may not exist
 				$dependencyCache[$moduleName] = [];
@@ -299,6 +297,17 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 	}
 
 	/**
+	 * @param ResourceLoaderContext $context
+	 * @return array
+	 */
+	public function getPreloadLinks( ResourceLoaderContext $context ) {
+		$url = self::getStartupModulesUrl( $context );
+		return [
+			$url => [ 'as' => 'script' ]
+		];
+	}
+
+	/**
 	 * Base modules required for the base environment of ResourceLoader
 	 *
 	 * @return array
@@ -361,6 +370,7 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 		}, [
 			'$VARS.wgLegacyJavaScriptGlobals' => $this->getConfig()->get( 'LegacyJavaScriptGlobals' ),
 			'$VARS.configuration' => $this->getConfigSettings( $context ),
+			// This url may be preloaded. See getPreloadLinks().
 			'$VARS.baseModulesUri' => self::getStartupModulesUrl( $context ),
 		] );
 		$pairs['$CODE.registrations()'] = str_replace(

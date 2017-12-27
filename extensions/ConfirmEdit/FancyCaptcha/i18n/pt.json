@@ -15,9 +15,10 @@
 	"fancycaptcha-accountcreate": "Para proteger esta wiki contra a criação de contas automatizada, por favor, introduza na caixa abaixo as palavras apresentadas ([[Special:Captcha/help|mais informações]]):",
 	"fancycaptcha-create": "Para criar a página, por favor, introduza na caixa abaixo as palavras apresentadas ([[Special:Captcha/help|mais informações]]):",
 	"fancycaptcha-edit": "Para editar esta página, por favor, introduza na caixa abaixo as palavras apresentadas ([[Special:Captcha/help|mais informações]]):",
-	"fancycaptcha-imgcaptcha-ph": "Digite o texto que vê na imagem",
+	"fancycaptcha-imgcaptcha-ph": "Introduza o texto que vê na imagem",
 	"fancycaptcha-sendemail": "Para proteger esta wiki contra o spam automatizado, por favor, introduza na caixa as palavras que aparecem abaixo ([[Special:Captcha/help|mais informações]]):",
 	"fancycaptcha-reload-text": "Atualizar",
 	"apihelp-fancycaptchareload-description": "Gerar novo FancyCaptcha.",
+	"apihelp-fancycaptchareload-summary": "Gerar novo FancyCaptcha.",
 	"apihelp-fancycaptchareload-example-1": "Gerar novo FancyCaptcha"
 }

@@ -24,6 +24,7 @@
  * @see http://exif.org/Exif2-2.PDF The Exif 2.2 specification
  * @file
  */
+use MediaWiki\MediaWikiServices;
 use Wikimedia\Timestamp\TimestampException;
 
 /**
@@ -1581,14 +1582,14 @@ class FormatMetadata extends ContextSource {
 	 * @since 1.23
 	 */
 	public function fetchExtendedMetadata( File $file ) {
-		$cache = ObjectCache::getMainWANInstance();
+		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
 
 		// If revision deleted, exit immediately
 		if ( $file->isDeleted( File::DELETED_FILE ) ) {
 			return [];
 		}
 
-		$cacheKey = wfMemcKey(
+		$cacheKey = $cache->makeKey(
 			'getExtendedMetadata',
 			$this->getLanguage()->getCode(),
 			(int)$this->singleLang,
@@ -1674,7 +1675,7 @@ class FormatMetadata extends ContextSource {
 	 *
 	 * @param File $file File to use
 	 * @param array $extendedMetadata
-	 * @param int $maxCacheTime Hook handlers might use this parameter to override cache time
+	 * @param int &$maxCacheTime Hook handlers might use this parameter to override cache time
 	 *
 	 * @return array [<property name> => ['value' => <value>]], or [] on error
 	 * @since 1.23
@@ -1771,7 +1772,7 @@ class FormatMetadata extends ContextSource {
 	/**
 	 * Takes an array returned by the getExtendedMetadata* functions,
 	 * and resolves multi-language values in it.
-	 * @param array $metadata
+	 * @param array &$metadata
 	 * @since 1.23
 	 */
 	protected function resolveMultilangMetadata( &$metadata ) {
@@ -1788,7 +1789,7 @@ class FormatMetadata extends ContextSource {
 	/**
 	 * Takes an array returned by the getExtendedMetadata* functions,
 	 * and turns all fields into single-valued ones by dropping extra values.
-	 * @param array $metadata
+	 * @param array &$metadata
 	 * @since 1.25
 	 */
 	protected function discardMultipleValues( &$metadata ) {
@@ -1809,7 +1810,7 @@ class FormatMetadata extends ContextSource {
 
 	/**
 	 * Makes sure the given array is a valid API response fragment
-	 * @param array $arr
+	 * @param array &$arr
 	 */
 	protected function sanitizeArrayForAPI( &$arr ) {
 		if ( !is_array( $arr ) ) {

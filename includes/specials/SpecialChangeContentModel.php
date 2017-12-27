@@ -115,7 +115,7 @@ class SpecialChangeContentModel extends FormSpecialPage {
 				'reason' => [
 					'type' => 'text',
 					'name' => 'reason',
-					'validation-callback' => function( $reason ) {
+					'validation-callback' => function ( $reason ) {
 						$match = EditPage::matchSummarySpamRegex( $reason );
 						if ( $match ) {
 							return $this->msg( 'spamprotectionmatch', $match )->parse();
@@ -154,8 +154,6 @@ class SpecialChangeContentModel extends FormSpecialPage {
 	}
 
 	public function onSubmit( array $data ) {
-		global $wgContLang;
-
 		if ( $data['pagetitle'] === '' ) {
 			// Initial form view of special page, pass
 			return false;
@@ -198,7 +196,7 @@ class SpecialChangeContentModel extends FormSpecialPage {
 			$oldContent = $this->oldRevision->getContent();
 			try {
 				$newContent = ContentHandler::makeContent(
-					$oldContent->getNativeData(), $this->title, $data['model']
+					$oldContent->serialize(), $this->title, $data['model']
 				);
 			} catch ( MWException $e ) {
 				return Status::newFatal(
@@ -240,8 +238,6 @@ class SpecialChangeContentModel extends FormSpecialPage {
 		if ( $data['reason'] !== '' ) {
 			$reason .= $this->msg( 'colon-separator' )->inContentLanguage()->text() . $data['reason'];
 		}
-		# Truncate for whole multibyte characters.
-		$reason = $wgContLang->truncate( $reason, 255 );
 
 		// Run edit filters
 		$derivativeContext = new DerivativeContext( $this->getContext() );

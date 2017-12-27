@@ -7,11 +7,14 @@ Demo.CapsuleNumberPopupMultiselectWidget = function DemoCapsuleNumberPopupMultis
 	// Parent constructor
 	Demo.CapsuleNumberPopupMultiselectWidget.parent.call( this, $.extend( {}, config, {
 		allowArbitrary: true,
-		popup: { $content: this.capsulePopupWidget.$element }
+		popup: {}
 	} ) );
 
 	// Events
 	this.capsulePopupWidget.connect( this, { enter: 'onPopupEnter' } );
+
+	// Initialization
+	this.popup.$body.append( this.capsulePopupWidget.$element );
 };
 
 OO.inheritClass( Demo.CapsuleNumberPopupMultiselectWidget, OO.ui.CapsuleMultiselectWidget );

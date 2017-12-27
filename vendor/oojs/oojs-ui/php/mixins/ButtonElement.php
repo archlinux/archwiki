@@ -26,7 +26,7 @@ trait ButtonElement {
 
 	/**
 	 * @param array $config Configuration options
-	 * @param boolean $config['framed'] Render button with a frame (default: true)
+	 * @param bool $config['framed'] Render button with a frame (default: true)
 	 */
 	public function initializeButtonElement( array $config = [] ) {
 		// Properties
@@ -48,7 +48,7 @@ trait ButtonElement {
 			] );
 		}
 
-		$this->registerConfigCallback( function( &$config ) {
+		$this->registerConfigCallback( function ( &$config ) {
 			if ( $this->framed !== true ) {
 				$config['framed'] = $this->framed;
 			}
@@ -58,7 +58,7 @@ trait ButtonElement {
 	/**
 	 * Toggle frame.
 	 *
-	 * @param boolean $framed Make button framed, omit to toggle
+	 * @param bool $framed Make button framed, omit to toggle
 	 * @return $this
 	 */
 	public function toggleFramed( $framed = null ) {
@@ -71,7 +71,7 @@ trait ButtonElement {
 	/**
 	 * Check if button has a frame.
 	 *
-	 * @return boolean Button is framed
+	 * @return bool Button is framed
 	 */
 	public function isFramed() {
 		return $this->framed;

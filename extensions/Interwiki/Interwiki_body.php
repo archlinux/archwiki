@@ -204,7 +204,7 @@ class SpecialInterwiki extends SpecialPage {
 						"mw-interwiki-{$action}reason" ) ) .
 					Html::rawElement( 'td', $input, Xml::input( 'wpInterwikiReason', 60, '',
 						[ 'tabindex' => 1, 'id' => "mw-interwiki-{$action}reason", 'maxlength' => 200 ] ) )
-				) .	Html::rawElement( 'tr', null,
+				) . Html::rawElement( 'tr', null,
 					Html::rawElement( 'td', null, '' ) .
 					Html::rawElement( 'td', [ 'class' => 'mw-submit' ],
 						Xml::submitButton( $this->msg( $button )->text(), [ 'id' => 'mw-interwiki-submit' ] ) )
@@ -362,8 +362,8 @@ class SpecialInterwiki extends SpecialPage {
 		$this->getOutput()->addWikiMsg( 'interwiki-legend' );
 
 		if ( ( !is_array( $iwPrefixes ) || count( $iwPrefixes ) === 0 ) &&
-			( !is_array( $iwGlobalPrefixes ) || count( $iwGlobalPrefixes ) === 0 ) )
-		{
+			( !is_array( $iwGlobalPrefixes ) || count( $iwGlobalPrefixes ) === 0 )
+		) {
 			// If the interwiki table(s) are empty, display an error message
 			$this->error( 'interwiki_error' );
 			return;

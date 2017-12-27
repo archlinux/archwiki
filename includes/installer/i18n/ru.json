@@ -23,7 +23,8 @@
 			"Macofe",
 			"StasR",
 			"Irus",
-			"Mailman"
+			"Mailman",
+			"Facenapalm"
 		]
 	},
 	"config-desc": "Инсталлятор MediaWiki",
@@ -98,7 +99,8 @@
 	"config-uploads-not-safe": "'''Внимание:''' директория, используемая по умолчанию для загрузок (<code>$1</code>) уязвима к выполнению произвольных скриптов.\nХотя MediaWiki проверяет все загружаемые файлы на наличие угроз, настоятельно рекомендуется [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Security#Upload_security закрыть данную уязвимость] перед включением загрузки файлов.",
 	"config-no-cli-uploads-check": "'''Предупреждение:''' каталог для загрузки по умолчанию ( <code>$1</code> ) не проверялся на уязвимости\n на выполнение произвольного сценария во время установки CLI.",
 	"config-brokenlibxml": "В вашей системе имеется сочетание версий PHP и libxml2, которое может привести к скрытым повреждениям данных в MediaWiki и других веб-приложениях.\nОбновите libxml2 до версии 2.7.3 или старше ([https://bugs.php.net/bug.php?id=45996 сведения об ошибке]).\nУстановка прервана.",
-	"config-suhosin-max-value-length": "Suhosin установлен и ограничивает параметр GET <code>length</code> до $1 байт. Компонент MediaWiki ResourceLoader будет обходить это ограничение, но это снизит производительность. Если это возможно, следует установить <code>suhosin.get.max_value_length</code> в значение 1024 или выше в <code>php.ini</code>, а также установить для <code>$wgResourceLoaderMaxQueryLength</code> такое же значение в LocalSettings.php.",
+	"config-suhosin-max-value-length": "Suhosin установлен и ограничивает параметр GET <code>length</code> до $1 {{PLURAL:$1|байт|байта|байт}}. Компонент MediaWiki ResourceLoader будет обходить это ограничение, но это снизит производительность. Если это возможно, следует установить <code>suhosin.get.max_value_length</code> в значение 1024 или выше в <code>php.ini</code>, а также установить для <code>$wgResourceLoaderMaxQueryLength</code> такое же значение в LocalSettings.php.",
+	"config-using-32bit": "<strong>Внимание:</strong> похоже, ваша система работает с 32-битными целыми числами. Это [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:32-bit не рекомендуется].",
 	"config-db-type": "Тип базы данных:",
 	"config-db-host": "Хост базы данных:",
 	"config-db-host-help": "Если сервер базы данных находится на другом сервере, введите здесь его имя хоста или IP-адрес.\n\nЕсли вы используете виртуальный хостинг, ваш провайдер должен указать правильное имя хоста в своей документации.\n\nЕсли вы устанавливаете систему на сервере под Windows и используете MySQL, имя сервера «localhost» может не работать. В этом случае попробуйте указать 127.0.0.1 локальный  IP-адрес.\n\nЕсли вы используете PostgreSQL, оставьте это поле пустым для подключения через сокет Unix.",
@@ -332,6 +334,8 @@
 	"config-help-tooltip": "нажмите, чтобы развернуть",
 	"config-nofile": "Файл \"$1\" не удается найти. Он был удален?",
 	"config-extension-link": "Знаете ли вы, что ваш вики-проект поддерживает [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Extensions расширения]?\n\nВы можете просмотреть [https://www.mediawiki.org/wiki/Special:MyLanguage/Category:Extensions_by_category расширения по категориям] или [https://www.mediawiki.org/wiki/Extension_Matrix матрицу расширений], чтобы увидеть их полный список.",
+	"config-skins-screenshots": "$1 (скриншоты: $2)",
+	"config-screenshot": "скриншот",
 	"mainpagetext": "<strong>MediaWiki успешно установлена.</strong>",
 	"mainpagedocfooter": "Информацию по работе с этой вики можно найти в [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Contents справочном руководстве].\n\n== Некоторые полезные ресурсы ==\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Configuration_settings Список возможных настроек];\n* [https://www.mediawiki.org/wiki/Manual:FAQ/ru Часто задаваемые вопросы и ответы по MediaWiki];\n* [https://lists.wikimedia.org/mailman/listinfo/mediawiki-announce Рассылка уведомлений о выходе новых версий MediaWiki].\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Localisation#Translation_resources Перевод MediaWiki на свой язык]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Combating_spam Узнайте, как бороться со спамом в вашей вики]"
 }

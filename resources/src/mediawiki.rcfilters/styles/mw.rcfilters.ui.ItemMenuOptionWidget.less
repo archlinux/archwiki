@@ -1,0 +1,71 @@
+@import 'mediawiki.mixins';
+
+.mw-rcfilters-ui-itemMenuOptionWidget {
+	min-height: 3.5em;
+	padding: 0 0.5em;
+	.box-sizing( border-box );
+
+	&:not( :last-child ) {
+		border-bottom: 1px solid #eaecf0; // Base80 AAA
+	}
+
+	&-view-namespaces {
+		border-top: 5px solid #c8ccd1;
+
+		&:first-child,
+		&.mw-rcfilters-ui-itemMenuOptionWidget-identifier-subject + &.mw-rcfilters-ui-itemMenuOptionWidget-identifier-talk {
+			border-top: 0;
+		}
+	}
+
+	&:hover {
+		background-color: #f8f9fa;
+	}
+
+	.mw-rcfilters-ui-table {
+		padding-top: 0.5em;
+	}
+
+	&.oo-ui-optionWidget-selected {
+		background-color: #eaf3ff; // Accent90 AAA
+	}
+
+	&-label {
+		&-title {
+			font-weight: bold;
+			font-size: 1.15em;
+			color: #222;
+		}
+		&-desc {
+			color: #54595d;
+			white-space: normal;
+		}
+	}
+
+	&-itemCheckbox {
+		.oo-ui-fieldLayout.oo-ui-fieldLayout-align-inline {
+			// Override margin-top and -bottom rules from FieldLayout
+			margin: 0 !important; /* stylelint-disable-line declaration-no-important */
+		}
+
+		.oo-ui-checkboxInputWidget {
+			// Workaround for IE11 rendering issues. T162098
+			display: block;
+		}
+	}
+
+	.mw-rcfilters-ui-cell {
+		vertical-align: middle;
+	}
+
+	&-excludeLabel {
+		width: 5em;
+		padding-left: 1em;
+		color: #54595d; // Base20 AAA
+	}
+
+	&-highlightButton {
+		width: 4em;
+		padding-left: 1em;
+	}
+}

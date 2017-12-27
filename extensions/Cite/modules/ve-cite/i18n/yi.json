@@ -24,11 +24,12 @@
 	"cite-ve-dialog-referenceslist-title": "רעפערענצן ליסטע",
 	"cite-ve-dialogbutton-citation-educationpopup-title": "ציטירונגען",
 	"cite-ve-dialogbutton-reference-full-label": "באזיס־פארעם",
-	"cite-ve-dialogbutton-reference-tooltip": "איינפאך",
 	"cite-ve-dialogbutton-reference-title": "רעפערענץ",
+	"cite-ve-dialogbutton-reference-tooltip": "איינפאך",
 	"cite-ve-dialogbutton-referenceslist-tooltip": "רעפערענצן ליסטע",
 	"cite-ve-reference-input-placeholder": "זוכן אינערהאלב אקטועלע ציטירונגען",
 	"cite-ve-referenceslist-isempty": "נישט פֿאראן קיין רעפערענצן מיט דער גרופע \"$1\" אויף דעם בלאט אריינצושליסן אין דער דאזיקער ליסטע.",
 	"cite-ve-referenceslist-isempty-default": "נישט פאראן קיין רעפערענצן אויף דעם בלאט אריינצושליסן אין דער ליסטע.",
-	"cite-ve-toolbar-group-label": "ציטירן"
+	"cite-ve-toolbar-group-label": "ציטירן",
+	"visualeditor-internal-list-diff-default-group-name-mwreference": "רעפערענצן"
 }

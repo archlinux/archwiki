@@ -24,6 +24,6 @@
 	"pfunc_expr_invalid_argument": "მცდარი არგუმენტი $1: < -1 ან > 1",
 	"pfunc_expr_invalid_argument_ln": "მცდარი არგუმენტი ln: <= 0",
 	"pfunc_expr_unknown_error": "ექსპრესიის შეცდომა: უცნობი შეცდომა ($1).",
-	"pfunc_expr_not_a_number": "$1: შედექში ციფრი არაა",
+	"pfunc_expr_not_a_number": "$1: შედეგში ციფრი არაა",
 	"pfunc_string_too_long": "შეცდომა: სტრიქონის ზომა აღემატება $1 სიმბოლოს ლიმიტს"
 }

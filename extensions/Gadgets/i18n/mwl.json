@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"MokaAkashiyaPT"
+		]
+	},
+	"gadgets-desc": "Premite que ls outelizadores selecionen [[Special:Gadgets|''gadgets'' an JavaScript i CSS]] personalizados nas sues [[Special:Preferences#mw-prefsection-gadgets|perfréncias]]",
+	"prefs-gadgets": "Gadgets",
+	"gadgets": "Gadgets",
+	"gadgets-title": "Gadgets",
+	"gadgets-pagetext": "Ambaixo hai ua lhista de ''gadgets'' que puoden ser atibados puls outelizadores nas sues [[Special:Preferences#mw-prefsection-gadgets|perfréncias]], cumo stablecido pulas [[MediaWiki:Gadgets-definition|defeniçones]].\nEste resumo proporciona acesso fácele a las páiginas de las mensaiges de l sistema que definen la çcriçon i l código de cada ''gadget''.",
+	"gadgets-uses": "Outeliza",
+	"gadgets-export": "Sportar"
+}

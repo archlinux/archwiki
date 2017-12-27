@@ -72,8 +72,6 @@ class LogPage {
 	private $target;
 
 	/**
-	 * Constructor
-	 *
 	 * @param string $type One of '', 'block', 'protect', 'rights', 'delete',
 	 *   'upload', 'move'
 	 * @param bool $rc Whether to update recent changes as well as the logging table
@@ -92,12 +90,10 @@ class LogPage {
 		global $wgLogRestrictions;
 
 		$dbw = wfGetDB( DB_MASTER );
-		$log_id = $dbw->nextSequenceValue( 'logging_log_id_seq' );
 
 		// @todo FIXME private/protected/public property?
 		$this->timestamp = $now = wfTimestampNow();
 		$data = [
-			'log_id' => $log_id,
 			'log_type' => $this->type,
 			'log_action' => $this->action,
 			'log_timestamp' => $dbw->timestamp( $now ),
@@ -106,11 +102,11 @@ class LogPage {
 			'log_namespace' => $this->target->getNamespace(),
 			'log_title' => $this->target->getDBkey(),
 			'log_page' => $this->target->getArticleID(),
-			'log_comment' => $this->comment,
 			'log_params' => $this->params
 		];
+		$data += CommentStore::newKey( 'log_comment' )->insert( $dbw, $this->comment );
 		$dbw->insert( 'logging', $data, __METHOD__ );
-		$newId = !is_null( $log_id ) ? $log_id : $dbw->insertId();
+		$newId = $dbw->insertId();
 
 		# And update recentchanges
 		if ( $this->updateRecentChanges ) {
@@ -207,7 +203,7 @@ class LogPage {
 	 * @return bool
 	 */
 	public static function isLogType( $type ) {
-		return in_array( $type, LogPage::validTypes() );
+		return in_array( $type, self::validTypes() );
 	}
 
 	/**
@@ -289,7 +285,7 @@ class LogPage {
 	 * @param string $type
 	 * @param Language|null $lang
 	 * @param Title $title
-	 * @param array $params
+	 * @param array &$params
 	 * @return string
 	 */
 	protected static function getTitleLink( $type, $lang, $title, &$params ) {
@@ -331,8 +327,6 @@ class LogPage {
 	 * @return int The log_id of the inserted log entry
 	 */
 	public function addEntry( $action, $target, $comment, $params = [], $doer = null ) {
-		global $wgContLang;
-
 		if ( !is_array( $params ) ) {
 			$params = [ $params ];
 		}
@@ -344,13 +338,10 @@ class LogPage {
 		# Trim spaces on user supplied text
 		$comment = trim( $comment );
 
-		# Truncate for whole multibyte characters.
-		$comment = $wgContLang->truncate( $comment, 255 );
-
 		$this->action = $action;
 		$this->target = $target;
 		$this->comment = $comment;
-		$this->params = LogPage::makeParamBlob( $params );
+		$this->params = self::makeParamBlob( $params );
 
 		if ( $doer === null ) {
 			global $wgUser;

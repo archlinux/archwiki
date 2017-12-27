@@ -6,7 +6,8 @@
 			"Xabier Armendaritz",
 			"Subi",
 			"Sator",
-			"Macofe"
+			"Macofe",
+			"Mikel Ibaiba"
 		]
 	},
 	"visualeditor-cite-tool-definition.json": "nulu",
@@ -38,5 +39,7 @@
 	"cite-ve-referenceslist-isempty-default": "Orri honetan ez dago zerrendan sartzeko erreferentziarik.",
 	"cite-ve-referenceslist-missingref": "Erreferentzia hau txantiloi batean edo sortutako beste bloke mota batean dago zehaztuta, eta oraingoz iturburu kodeko moduan baizik ezin da editatu.",
 	"cite-ve-toolbar-group-label": "Aipatu",
-	"cite-ve-othergroup-item": "$1 erreferentzia"
+	"cite-ve-othergroup-item": "$1 erreferentzia",
+	"visualeditor-internal-list-diff-default-group-name-mwreference": "Erreferentziak",
+	"visualeditor-internal-list-diff-group-name-mwreference": "Taldearen erreferentzia izena: \"$1\""
 }

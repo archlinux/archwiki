@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:xsd="http://www.w3.org/2001/XMLSchema#" xmlns:acme="http://acme.test/">
+	<rdf:Description rdf:about="http://acme.test/Bongos">
+		<acme:sounds xml:lang="de">Bom</acme:sounds>
+		<acme:sounds xml:lang="en">Bam</acme:sounds>
+		<acme:sounds xml:lang="es-419">Como estas</acme:sounds>
+		<acme:sounds>What?</acme:sounds>
+	</rdf:Description>
+</rdf:RDF>

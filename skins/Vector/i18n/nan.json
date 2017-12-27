@@ -2,13 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"Ianbu",
-			"唐吉訶德的侍從"
+			"唐吉訶德的侍從",
+			"Luuva"
 		]
 	},
 	"vector-action-addsection": "Ke chi̍t-ê toān-lo̍h",
 	"vector-action-delete": "Thâi",
 	"vector-action-move": "Sóa khì",
-	"vector-action-protect": "Pó-hō·",
+	"vector-action-protect": "Pó-hō͘",
 	"vector-action-undelete": "chhú-siau thâi tiàu",
 	"vector-action-unprotect": "kái pó-hō·",
 	"vector-view-create": "Khai-sí siá",

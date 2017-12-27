@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Kandar",
-			"Macofe"
+			"Macofe",
+			"Uchup19"
 		]
 	},
 	"wikieditor-wikitext-tab": "Wikitext",
@@ -51,6 +52,7 @@
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "Tutumbu éksternal",
 	"wikieditor-toolbar-tool-link-empty": "Anjeun teu ngasupkeun nanaon pikeun tutumbu.",
 	"wikieditor-toolbar-tool-file-example": "Conto.jpg",
+	"wikieditor-toolbar-tool-file-cancel": "Bolay",
 	"wikieditor-toolbar-tool-reference": "Rujukan",
 	"wikieditor-toolbar-tool-reference-example": "Asupkeun catetan susuku di dieu",
 	"wikieditor-toolbar-tool-reference-cancel": "Bolay",

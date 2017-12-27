@@ -2,11 +2,13 @@
 
 class Scribunto_LuaTitleBlacklistLibrary extends Scribunto_LuaLibraryBase {
 	public function register() {
-		$lib = array(
-			'test' => array( $this, 'test' ),
-		);
+		$lib = [
+			'test' => [ $this, 'test' ],
+		];
 
-		return $this->getEngine()->registerInterface( __DIR__ . '/mw.ext.TitleBlacklist.lua', $lib, array() );
+		return $this->getEngine()->registerInterface(
+			__DIR__ . '/mw.ext.TitleBlacklist.lua', $lib, []
+		);
 	}
 
 	public function test( $action = null, $title = null ) {
@@ -18,16 +20,16 @@ class Scribunto_LuaTitleBlacklistLibrary extends Scribunto_LuaLibraryBase {
 		}
 		$entry = TitleBlacklist::singleton()->isBlacklisted( $title, $action );
 		if ( $entry ) {
-			return array( array(
+			return [ [
 				'params' => $entry->getParams(),
 				'regex' => $entry->getRegex(),
 				'raw' => $entry->getRaw(),
 				'version' => $entry->getFormatVersion(),
 				'message' => $entry->getErrorMessage( $action ),
 				'custommessage' => $entry->getCustomMessage()
-			) );
+			] ];
 		}
-		return array( null );
+		return [ null ];
 	}
 
 }

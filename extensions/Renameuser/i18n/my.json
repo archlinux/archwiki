@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Ninjastrikers"
+		]
+	},
+	"log-name-renameuser": "အသုံးပြုသူ အမည်ပြောင်းလဲခြင်း မှတ်တမ်း",
+	"logentry-renameuser-renameuser-legacier": "$1 က အသုံးပြုသူ $4 ကို {{GENDER:$7|$5}} သို့ အမည်ပြောင်းလဲခဲ့သည်"
+}

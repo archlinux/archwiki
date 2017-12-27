@@ -49,6 +49,14 @@
 	"ResourceModules": {
 		"jquery.wikiEditor": {
 			"group": "ext.wikiEditor",
+			"dependencies": [
+				"jquery.wikiEditor.core",
+				"jquery.wikiEditor.toolbar",
+				"jquery.wikiEditor.dialogs"
+			]
+		},
+		"jquery.wikiEditor.core": {
+			"group": "ext.wikiEditor",
 			"scripts": "jquery.wikiEditor.js",
 			"styles": "jquery.wikiEditor.less",
 			"dependencies": [
@@ -66,7 +74,7 @@
 			"scripts": "jquery.wikiEditor.dialogs.js",
 			"styles": "jquery.wikiEditor.dialogs.less",
 			"dependencies": [
-				"jquery.wikiEditor",
+				"jquery.wikiEditor.core",
 				"jquery.wikiEditor.toolbar",
 				"jquery.ui.dialog",
 				"jquery.ui.button",
@@ -80,7 +88,7 @@
 			"scripts": "jquery.wikiEditor.dialogs.config.js",
 			"styles": "jquery.wikiEditor.dialogs.config.less",
 			"dependencies": [
-				"jquery.wikiEditor",
+				"jquery.wikiEditor.core",
 				"jquery.wikiEditor.dialogs",
 				"jquery.wikiEditor.toolbar.i18n",
 				"jquery.suggestions",
@@ -117,7 +125,7 @@
 			"scripts": "jquery.wikiEditor.preview.js",
 			"styles": "jquery.wikiEditor.preview.less",
 			"dependencies": [
-				"jquery.wikiEditor",
+				"jquery.wikiEditor.core",
 				"mediawiki.api"
 			]
 		},
@@ -125,7 +133,7 @@
 			"group": "ext.wikiEditor",
 			"scripts": "jquery.wikiEditor.publish.js",
 			"dependencies": [
-				"jquery.wikiEditor",
+				"jquery.wikiEditor.core",
 				"jquery.wikiEditor.dialogs"
 			]
 		},
@@ -134,7 +142,7 @@
 			"scripts": "jquery.wikiEditor.toolbar.js",
 			"styles": "jquery.wikiEditor.toolbar.less",
 			"dependencies": [
-				"jquery.wikiEditor",
+				"jquery.wikiEditor.core",
 				"jquery.wikiEditor.toolbar.i18n",
 				"jquery.cookie",
 				"jquery.async"
@@ -144,7 +152,7 @@
 			"group": "ext.wikiEditor",
 			"scripts": "jquery.wikiEditor.toolbar.config.js",
 			"dependencies": [
-				"jquery.wikiEditor",
+				"jquery.wikiEditor.core",
 				"jquery.wikiEditor.toolbar.i18n",
 				"jquery.wikiEditor.toolbar",
 				"mediawiki.language.specialCharacters"
@@ -328,21 +336,29 @@
 		},
 		"ext.wikiEditor": {
 			"group": "ext.wikiEditor",
-			"scripts": "ext.wikiEditor.js",
 			"dependencies": [
-				"jquery.wikiEditor",
-				"mediawiki.user"
+				"ext.wikiEditor.core",
+				"ext.wikiEditor.toolbar",
+				"ext.wikiEditor.dialogs"
 			]
 		},
 		"ext.wikiEditor.styles": {
 			"group": "ext.wikiEditor",
-			"styles": "ext.wikiEditor.less"
+			"styles": "ext.wikiEditor.toolbar.styles.less"
+		},
+		"ext.wikiEditor.core": {
+			"group": "ext.wikiEditor",
+			"scripts": "ext.wikiEditor.js",
+			"dependencies": [
+				"jquery.wikiEditor.core",
+				"mediawiki.user"
+			]
 		},
 		"ext.wikiEditor.dialogs": {
 			"group": "ext.wikiEditor",
 			"scripts": "ext.wikiEditor.dialogs.js",
 			"dependencies": [
-				"ext.wikiEditor",
+				"ext.wikiEditor.core",
 				"ext.wikiEditor.toolbar",
 				"jquery.wikiEditor.dialogs",
 				"jquery.wikiEditor.dialogs.config"
@@ -352,7 +368,7 @@
 			"group": "ext.wikiEditor",
 			"scripts": "ext.wikiEditor.preview.js",
 			"dependencies": [
-				"ext.wikiEditor",
+				"ext.wikiEditor.core",
 				"jquery.wikiEditor.preview"
 			],
 			"messages": [
@@ -365,7 +381,7 @@
 			"group": "ext.wikiEditor",
 			"scripts": "ext.wikiEditor.publish.js",
 			"dependencies": [
-				"ext.wikiEditor",
+				"ext.wikiEditor.core",
 				"jquery.wikiEditor.publish"
 			],
 			"messages": [
@@ -383,15 +399,10 @@
 			"group": "ext.wikiEditor",
 			"scripts": "ext.wikiEditor.toolbar.js",
 			"dependencies": [
-				"ext.wikiEditor",
+				"ext.wikiEditor.core",
 				"jquery.wikiEditor.toolbar",
 				"jquery.wikiEditor.toolbar.config"
 			]
-		},
-		"ext.wikiEditor.toolbar.styles": {
-			"position": "top",
-			"group": "ext.wikiEditor",
-			"styles": "ext.wikiEditor.toolbar.styles.less"
 		}
 	},
 	"ResourceFileModulePaths": {

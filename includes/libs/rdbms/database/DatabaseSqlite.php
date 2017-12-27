@@ -567,7 +567,7 @@ class DatabaseSqlite extends Database {
 
 	/**
 	 * @param array $options
-	 * @return string
+	 * @return array
 	 */
 	protected function makeUpdateOptionsArray( $options ) {
 		$options = parent::makeUpdateOptionsArray( $options );
@@ -1046,4 +1046,3 @@ class DatabaseSqlite extends Database {
 }
 
 class_alias( DatabaseSqlite::class, 'DatabaseSqlite' );
-

@@ -115,7 +115,7 @@ class Names {
 		'cho' => 'Choctaw', # Choctaw
 		'chr' => 'ᏣᎳᎩ', # Cherokee
 		'chy' => 'Tsetsêhestâhese', # Cheyenne
-		'ckb' => 'کوردیی ناوەندی', # Central Kurdish
+		'ckb' => 'کوردی', # Central Kurdish
 		'co' => 'corsu', # Corsican
 		'cps' => 'Capiceño', # Capiznon
 		'cr' => 'Nēhiyawēwin / ᓀᐦᐃᔭᐍᐏᐣ', # Cree
@@ -222,6 +222,7 @@ class Names {
 		'kab' => 'Taqbaylit', # Kabyle
 		'kbd' => 'Адыгэбзэ', # Kabardian
 		'kbd-cyrl' => 'Адыгэбзэ', # Kabardian (Cyrillic)
+		'kbp' => 'Kabɩyɛ', # Kabiyè
 		'kg' => 'Kongo', # Kongo, (FIXME!) should probaly be KiKongo or KiKoongo
 		'khw' => 'کھوار', # Khowar
 		'ki' => 'Gĩkũyũ', # Gikuyu
@@ -313,7 +314,7 @@ class Names {
 		'nl' => 'Nederlands', # Dutch
 		'nl-informal' => "Nederlands (informeel)\xE2\x80\x8E", # Dutch (informal address ("je"))
 		'nn' => 'norsk nynorsk', # Norwegian (Nynorsk)
-		'no' => 'norsk bokmål', # Norwegian (falls back to nb).
+		'no' => 'norsk', # Norwegian macro language (falls back to nb).
 		'nov' => 'Novial', # Novial
 		'nrm' => 'Nouormand', # Norman
 		'nso' => 'Sesotho sa Leboa', # Northern Sotho
@@ -382,6 +383,8 @@ class Names {
 		'si' => 'සිංහල', # Sinhalese
 		'simple' => 'Simple English', # Simple English
 		'sk' => 'slovenčina', # Slovak
+		'skr' => 'سرائیکی', # Saraiki (multiple scripts - defaults to Arabic)
+		'skr-arab' => 'سرائیکی', # Saraiki (Arabic script)
 		'sl' => 'slovenščina', # Slovenian
 		'sli' => 'Schläsch', # Lower Selisian
 		'sm' => 'Gagana Samoa', # Samoan
@@ -401,6 +404,7 @@ class Names {
 		'sw' => 'Kiswahili', # Swahili
 		'szl' => 'ślůnski', # Silesian
 		'ta' => 'தமிழ்', # Tamil
+		'tay' => 'Tayal', # Atayal
 		'tcy' => 'ತುಳು', # Tulu
 		'te' => 'తెలుగు', # Telugu
 		'tet' => 'tetun', # Tetun
@@ -414,7 +418,6 @@ class Names {
 		'tly' => 'толышә зывон', # Talysh
 		'tn' => 'Setswana', # Setswana
 		'to' => 'lea faka-Tonga', # Tonga (Tonga Islands)
-		'tokipona' => 'Toki Pona', # Toki Pona
 		'tpi' => 'Tok Pisin', # Tok Pisin
 		'tr' => 'Türkçe', # Turkish
 		'tru' => 'Ṫuroyo', # Turoyo

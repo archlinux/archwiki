@@ -199,7 +199,6 @@ class XmlDumpWriter {
 	 * @access private
 	 */
 	function writeRevision( $row ) {
-
 		$out = "    <revision>\n";
 		$out .= "      " . Xml::element( 'id', null, strval( $row->rev_id ) ) . "\n";
 		if ( isset( $row->rev_parent_id ) && $row->rev_parent_id ) {
@@ -219,8 +218,11 @@ class XmlDumpWriter {
 		}
 		if ( isset( $row->rev_deleted ) && ( $row->rev_deleted & Revision::DELETED_COMMENT ) ) {
 			$out .= "      " . Xml::element( 'comment', [ 'deleted' => 'deleted' ] ) . "\n";
-		} elseif ( $row->rev_comment != '' ) {
-			$out .= "      " . Xml::elementClean( 'comment', [], strval( $row->rev_comment ) ) . "\n";
+		} else {
+			$comment = CommentStore::newKey( 'rev_comment' )->getComment( $row )->text;
+			if ( $comment != '' ) {
+				$out .= "      " . Xml::elementClean( 'comment', [], strval( $comment ) ) . "\n";
+			}
 		}
 
 		if ( isset( $row->rev_content_model ) && !is_null( $row->rev_content_model ) ) {
@@ -287,7 +289,6 @@ class XmlDumpWriter {
 	 * @access private
 	 */
 	function writeLogItem( $row ) {
-
 		$out = "  <logitem>\n";
 		$out .= "    " . Xml::element( 'id', null, strval( $row->log_id ) ) . "\n";
 
@@ -301,8 +302,11 @@ class XmlDumpWriter {
 
 		if ( $row->log_deleted & LogPage::DELETED_COMMENT ) {
 			$out .= "    " . Xml::element( 'comment', [ 'deleted' => 'deleted' ] ) . "\n";
-		} elseif ( $row->log_comment != '' ) {
-			$out .= "    " . Xml::elementClean( 'comment', null, strval( $row->log_comment ) ) . "\n";
+		} else {
+			$comment = CommentStore::newKey( 'log_comment' )->getComment( $row )->text;
+			if ( $comment != '' ) {
+				$out .= "    " . Xml::elementClean( 'comment', null, strval( $comment ) ) . "\n";
+			}
 		}
 
 		$out .= "    " . Xml::element( 'type', null, strval( $row->log_type ) ) . "\n";
@@ -399,7 +403,7 @@ class XmlDumpWriter {
 		if ( $file->isDeleted( File::DELETED_COMMENT ) ) {
 			$comment = Xml::element( 'comment', [ 'deleted' => 'deleted' ] );
 		} else {
-			$comment = Xml::elementClean( 'comment', null, $file->getDescription() );
+			$comment = Xml::elementClean( 'comment', null, strval( $file->getDescription() ) );
 		}
 		return "    <upload>\n" .
 			$this->writeTimestamp( $file->getTimestamp() ) .

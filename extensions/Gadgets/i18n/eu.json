@@ -27,6 +27,8 @@
 	"gadgets-export-title": "Gadgeten esportazioa",
 	"gadgets-not-found": "Ez da \"$1\" gadgeta aurkitu.",
 	"gadgets-export-download": "Jaitsi",
+	"apihelp-query+gadgets-description": "Wiki honetan erabiltzen diren gadget-en zerrenda erakusten du.",
+	"action-gadgets-edit": "gadget honen JavaScript edo CSS orria aldatu",
 	"right-gadgets-definition-edit": "Gadgetaren definizioak aldatu",
 	"action-gadgets-definition-edit": "Gadget honen definizioa aldatu"
 }

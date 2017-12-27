@@ -12,6 +12,11 @@
 	"recaptcha-createaccount": "Для абароны вікі ад аўтаматычнага стварэньня рахункаў, мы просім вас увесьці словы, якія вы бачыце ў полі.",
 	"recaptcha-createaccount-fail": "Адказ reCAPTCHA няслушны ці адсутнічае.",
 	"recaptcha-create": "Для абароны вікі ад аўтаматычнага стварэньня старонак, мы просім вас увесьці словы, якія вы бачыце ў полі.",
+	"recaptcha-info": "Калі ласка, разьвяжыце заданьне ReCaptcha і вярніце заданьне і адказы ў выглядзе captchaId і captchaWord.",
 	"recaptcha-apihelp-param-recaptcha_challenge_field": "Поле зь віджэту ReCaptcha",
-	"recaptcha-apihelp-param-recaptcha_response_field": "Поле зь віджэту ReCaptcha"
+	"recaptcha-apihelp-param-recaptcha_response_field": "Поле зь віджэту ReCaptcha",
+	"recaptcha-id-label": "Заданьне ReCaptcha",
+	"recaptcha-id-help": "Значэньне заданьня ReCaptcha",
+	"recaptcha-label": "Разьвязаньне ReCaptcha",
+	"recaptcha-help": "Значэньне разьвязаньня ReCaptcha"
 }

@@ -36,7 +36,7 @@
 	"cite-ve-dialog-reference-title": "參考文獻",
 	"cite-ve-dialog-reference-useexisting-full-label": "重複使用已經存在於此頁的引用",
 	"cite-ve-dialog-reference-useexisting-label": "使用現有的參考文獻",
-	"cite-ve-dialog-reference-useexisting-tool": "重複使用",
+	"cite-ve-dialog-reference-useexisting-tool": "再利用",
 	"cite-ve-dialog-referenceslist-contextitem-description-general": "一般參考文獻清單",
 	"cite-ve-dialog-referenceslist-contextitem-description-named": "群組 \"$1\" 的參考文獻清單",
 	"cite-ve-dialog-referenceslist-title": "參考文獻清單",
@@ -51,5 +51,5 @@
 	"cite-ve-referenceslist-isempty-default": "此頁面目前無任何參考文獻可加入引用清單。",
 	"cite-ve-referenceslist-missingref": "此參考文獻已定義於模板或其他自動產生的區塊上，目前只能使用原始碼模式來編輯。",
 	"cite-ve-toolbar-group-label": "引用",
-	"cite-ve-othergroup-item": "$1參考文獻"
+	"cite-ve-othergroup-item": "$1 參考文獻"
 }

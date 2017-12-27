@@ -112,7 +112,7 @@
 				// and there is sufficient space to place them in the tab container
 				if ( $( data.collapsedContainer + ' ' + data.collapsible ).length &&
 						data.expandCondition( $.collapsibleTabs.getSettings( $( data.collapsedContainer ).children(
-								data.collapsible + ':first' ) ).expandedWidth ) ) {
+							data.collapsible + ':first' ) ).expandedWidth ) ) {
 					// move the element from the dropdown to the tab
 					$el.trigger( 'beforeTabExpand' );
 					$.collapsibleTabs
@@ -167,21 +167,21 @@
 			$moving.css( 'position', 'relative' ).css( ( isRTL ? 'right' : 'left' ), 0 ).css( 'width', '1px' );
 			$target.replaceWith(
 				$moving
-				.detach()
-				.css( 'width', '1px' )
-				.data( 'collapsibleTabsSettings', data )
-				.animate( { width: expandedWidth + 'px' }, 'normal', function () {
-					$( this ).attr( 'style', 'display: block;' );
-					rAF( function () {
-						// Update the 'expandedWidth' in case someone was brazen enough to change the tab's
-						// contents after the page load *gasp* (T71729). This doesn't prevent a tab from
-						// collapsing back and forth once, but at least it won't continue to do that forever.
-						data.expandedWidth = $moving.width();
-						$moving.data( 'collapsibleTabsSettings', data );
-						expContainerSettings.shifting = false;
-						$.collapsibleTabs.handleResize();
-					} );
-				} )
+					.detach()
+					.css( 'width', '1px' )
+					.data( 'collapsibleTabsSettings', data )
+					.animate( { width: expandedWidth + 'px' }, 'normal', function () {
+						$( this ).attr( 'style', 'display: block;' );
+						rAF( function () {
+							// Update the 'expandedWidth' in case someone was brazen enough to change the tab's
+							// contents after the page load *gasp* (T71729). This doesn't prevent a tab from
+							// collapsing back and forth once, but at least it won't continue to do that forever.
+							data.expandedWidth = $moving.width();
+							$moving.data( 'collapsibleTabsSettings', data );
+							expContainerSettings.shifting = false;
+							$.collapsibleTabs.handleResize();
+						} );
+					} )
 			);
 		},
 		/**

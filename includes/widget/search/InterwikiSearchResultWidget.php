@@ -6,7 +6,6 @@ use HtmlArmor;
 use MediaWiki\Linker\LinkRenderer;
 use SearchResult;
 use SpecialSearch;
-use Title;
 use Html;
 
 /**
@@ -17,13 +16,10 @@ class InterwikiSearchResultWidget implements SearchResultWidget {
 	protected $specialSearch;
 	/** @var LinkRenderer */
 	protected $linkRenderer;
-	/** @var $iwPrefixDisplayTypes */
-	protected $iwPrefixDisplayTypes;
 
 	public function __construct( SpecialSearch $specialSearch, LinkRenderer $linkRenderer ) {
 		$this->specialSearch = $specialSearch;
 		$this->linkRenderer = $linkRenderer;
-		$this->iwPrefixDisplayTypes = $specialSearch->getConfig()->get( 'InterwikiPrefixDisplayTypes' );
 	}
 
 	/**
@@ -33,14 +29,10 @@ class InterwikiSearchResultWidget implements SearchResultWidget {
 	 * @return string HTML
 	 */
 	public function render( SearchResult $result, $terms, $position ) {
-
 		$title = $result->getTitle();
 		$iwPrefix = $result->getTitle()->getInterwiki();
 		$titleSnippet = $result->getTitleSnippet();
 		$snippet = $result->getTextSnippet( $terms );
-		$displayType = isset( $this->iwPrefixDisplayTypes[$iwPrefix] )
-			? $this->iwPrefixDisplayTypes[$iwPrefix]
-			: "";
 
 		if ( $titleSnippet ) {
 			$titleSnippet = new HtmlArmor( $titleSnippet );
@@ -53,7 +45,6 @@ class InterwikiSearchResultWidget implements SearchResultWidget {
 		$redirectTitle = $result->getRedirectTitle();
 		$redirect = '';
 		if ( $redirectTitle !== null ) {
-
 			$redirectText = $result->getRedirectSnippet();
 
 			if ( $redirectText ) {
@@ -69,18 +60,7 @@ class InterwikiSearchResultWidget implements SearchResultWidget {
 			);
 		}
 
-		switch ( $displayType ) {
-			case 'definition':
-				return "<div class='iw-result__content'>" .
-					"<span class='iw-result__title'>{$link} {$redirect}: </span>" .
-					$snippet .
-				"</div>";
-			case 'quotation':
-				return "<div class='iw-result__content'>{$snippet}</div>" .
-					"<div class='iw-result__title'>{$link} {$redirect}</div>";
-			default:
-				return "<div class='iw-result__title'>{$link} {$redirect}</div>" .
-					"<div class='iw-result__content'>{$snippet}</div>";
-		}
+		return Html::rawElement( 'div', [ 'class' => 'iw-result__title' ], $link . ' ' . $redirect ) .
+			Html::rawElement( 'div', [ 'class' => 'iw-result__content' ], $snippet );
 	}
 }

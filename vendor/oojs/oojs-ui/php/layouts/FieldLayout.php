@@ -110,7 +110,7 @@ class FieldLayout extends Layout {
 			array_merge( $config, [ 'titled' => $this->label ] ) );
 
 		// Initialization
-		if ( $fieldWidget::$supportsSimpleLabel ) {
+		if ( $this->fieldWidget->getInputId() ) {
 			$this->label->setAttributes( [ 'for' => $this->fieldWidget->getInputId() ] );
 		}
 		$this
@@ -135,6 +135,8 @@ class FieldLayout extends Layout {
 		}
 
 		$this->setAlignment( $config['align'] );
+		// Call this again to take into account the widget's accessKey
+		$this->updateTitle();
 	}
 
 	/**
@@ -146,6 +148,7 @@ class FieldLayout extends Layout {
 		$listItem = new Tag( 'li' );
 		if ( $kind === 'error' ) {
 			$icon = new IconWidget( [ 'icon' => 'alert', 'flags' => [ 'warning' ] ] );
+			$listItem->setAttributes( [ 'role' => 'alert' ] );
 		} elseif ( $kind === 'notice' ) {
 			$icon = new IconWidget( [ 'icon' => 'info' ] );
 		} else {
@@ -220,6 +223,20 @@ class FieldLayout extends Layout {
 		}
 
 		return $this;
+	}
+
+	/**
+	 * Include information about the widget's accessKey in our title. TitledElement calls this method.
+	 * (This is a bit of a hack.)
+	 *
+	 * @param string $title Tooltip label for 'title' attribute
+	 * @return string
+	 */
+	protected function formatTitleWithAccessKey( $title ) {
+		if ( $this->fieldWidget && method_exists( $this->fieldWidget, 'formatTitleWithAccessKey' ) ) {
+			return $this->fieldWidget->formatTitleWithAccessKey( $title );
+		}
+		return $title;
 	}
 
 	public function getConfig( &$config ) {

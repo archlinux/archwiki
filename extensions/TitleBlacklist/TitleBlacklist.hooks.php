@@ -29,17 +29,18 @@ class TitleBlacklistHooks {
 			Hooks::register( 'AbortAutoAccount', 'TitleBlacklistHooks::abortAutoAccount' );
 			Hooks::register( 'UserCreateForm', 'TitleBlacklistHooks::addOverrideCheckbox' );
 			Hooks::register( 'APIGetAllowedParams', 'TitleBlacklistHooks::onAPIGetAllowedParams' );
-			Hooks::register( 'AddNewAccountApiForm', 'TitleBlacklistHooks::onAddNewAccountApiForm' );
+			Hooks::register( 'AddNewAccountApiForm',
+				'TitleBlacklistHooks::onAddNewAccountApiForm' );
 		}
 	}
 
 	/**
 	 * getUserPermissionsErrorsExpensive hook
 	 *
-	 * @param $title Title
-	 * @param $user User
-	 * @param $action
-	 * @param $result
+	 * @param Title $title
+	 * @param User $user
+	 * @param string $action
+	 * @param array &$result
 	 * @return bool
 	 */
 	public static function userCan( $title, $user, $action, &$result ) {
@@ -53,10 +54,10 @@ class TitleBlacklistHooks {
 			$blacklisted = TitleBlacklist::singleton()->userCannot( $title, $user, $action );
 			if ( $blacklisted instanceof TitleBlacklistEntry ) {
 				$errmsg = $blacklisted->getErrorMessage( 'edit' );
-				$params = array(
+				$params = [
 					$blacklisted->getRaw(),
 					$title->getFullText()
-				);
+				];
 				ApiResult::setIndexedTagName( $params, 'param' );
 				$result = ApiMessage::create(
 					wfMessage(
@@ -65,17 +66,18 @@ class TitleBlacklistHooks {
 						$title->getFullText()
 					),
 					'titleblacklist-forbidden',
-					array(
-						'message' => array(
+					[
+						'message' => [
 							'key' => $errmsg,
 							'params' => $params,
-						),
+						],
 						'line' => $blacklisted->getRaw(),
-						// As $errmsg usually represents a non-default message here, and ApiBase uses
-						// ->inLanguage( 'en' )->useDatabase( false ) for all messages, it will never result in
-						// useful 'info' text in the API. Try this, extra data seems to override the default.
+						// As $errmsg usually represents a non-default message here, and ApiBase
+						// uses ->inLanguage( 'en' )->useDatabase( false ) for all messages, it will
+						// never result in useful 'info' text in the API. Try this, extra data seems
+						// to override the default.
 						'info' => 'TitleBlacklist prevents this title from being created',
-					)
+					]
 				);
 				return false;
 			}
@@ -88,8 +90,9 @@ class TitleBlacklistHooks {
 	 * because they have tboverride.
 	 *
 	 * @param Title $title
-	 * @param integer $oldid
+	 * @param int $oldid
 	 * @param array &$notices
+	 * @return true
 	 */
 	public static function displayBlacklistOverrideNotice( Title $title, $oldid, array &$notices ) {
 		if ( !RequestContext::getMain()->getUser()->isAllowed( 'tboverride' ) ) {
@@ -121,11 +124,13 @@ class TitleBlacklistHooks {
 	 * @param Title $oldTitle
 	 * @param Title $newTitle
 	 * @param User $user
-	 * @param $reason
+	 * @param string $reason
 	 * @param Status $status
 	 * @return bool
 	 */
-	public static function onMovePageCheckPermissions( Title $oldTitle, Title $newTitle, User $user, $reason, Status $status ) {
+	public static function onMovePageCheckPermissions(
+		Title $oldTitle, Title $newTitle, User $user, $reason, Status $status
+	) {
 		$titleBlacklist = TitleBlacklist::singleton();
 		$blacklisted = $titleBlacklist->userCannot( $newTitle, $user, 'move' );
 		if ( !$blacklisted ) {
@@ -151,9 +156,16 @@ class TitleBlacklistHooks {
 	 * Used by abortNewAccount and centralAuthAutoCreate.
 	 * May also be called externally to vet alternate account names.
 	 *
+	 * @param string $userName
+	 * @param User $permissionsUser
+	 * @param string &$err
+	 * @param bool $override
+	 * @param bool $log
 	 * @return bool Acceptable
 	 */
-	public static function acceptNewUserName( $userName, $permissionsUser, &$err, $override = true, $log = false ) {
+	public static function acceptNewUserName(
+		$userName, $permissionsUser, &$err, $override = true, $log = false
+	) {
 		$sv = self::testUserName( $userName, $permissionsUser, $override, $log );
 		if ( !$sv->isGood() ) {
 			$err = Status::wrap( $sv )->getMessage()->parse();
@@ -171,7 +183,9 @@ class TitleBlacklistHooks {
 	 * @param bool $log Log blacklist hits to Special:Log
 	 * @return StatusValue
 	 */
-	public static function testUserName( $userName, User $creatingUser, $override = true, $log = false ) {
+	public static function testUserName(
+		$userName, User $creatingUser, $override = true, $log = false
+	) {
 		$title = Title::makeTitleSafe( NS_USER, $userName );
 		$blacklisted = TitleBlacklist::singleton()->userCannot( $title, $creatingUser,
 			'new-account', $override );
@@ -207,7 +221,7 @@ class TitleBlacklistHooks {
 	 *
 	 * @param User $user
 	 * @param string &$message
-	 * @param Status $status
+	 * @param Status &$status
 	 * @return bool
 	 */
 	public static function abortNewAccount( $user, &$message, &$status ) {
@@ -239,14 +253,16 @@ class TitleBlacklistHooks {
 	/**
 	 * EditFilter hook
 	 *
-	 * @param $editor EditPage
+	 * @param EditPage $editor
+	 * @param string $text
+	 * @param string $section
+	 * @param string &$error
+	 * @return true
 	 */
 	public static function validateBlacklist( $editor, $text, $section, &$error ) {
-		global $wgUser;
-		$title = $editor->mTitle;
+		$title = $editor->getTitle();
 
 		if ( $title->getNamespace() == NS_MEDIAWIKI && $title->getDBkey() == 'Titleblacklist' ) {
-
 			$blackList = TitleBlacklist::singleton();
 			$bl = $blackList->parseBlacklist( $text, 'page' );
 			$ok = $blackList->validate( $bl );
@@ -255,13 +271,15 @@ class TitleBlacklistHooks {
 			}
 
 			$errmsg = wfMessage( 'titleblacklist-invalid' )->numParams( count( $ok ) )->text();
-			$errlines = '* <code>' . implode( "</code>\n* <code>", array_map( 'wfEscapeWikiText', $ok ) ) . '</code>';
-			$error = Html::openElement( 'div', array( 'class' => 'errorbox' ) ) .
+			$errlines = '* <code>' .
+				implode( "</code>\n* <code>", array_map( 'wfEscapeWikiText', $ok ) ) .
+				'</code>';
+			$error = Html::openElement( 'div', [ 'class' => 'errorbox' ] ) .
 				$errmsg .
 				"\n" .
 				$errlines .
 				Html::closeElement( 'div' ) . "\n" .
-				Html::element( 'br', array( 'clear' => 'all' ) ) . "\n";
+				Html::element( 'br', [ 'clear' => 'all' ] ) . "\n";
 
 			// $error will be displayed by the edit class
 		}
@@ -271,11 +289,18 @@ class TitleBlacklistHooks {
 	/**
 	 * PageContentSaveComplete hook
 	 *
-	 * @param Article $article
+	 * @param Article &$article
+	 * @param User &$user
+	 * @param Content $content
+	 * @param string $summary
+	 * @param bool $isminor
+	 * @param bool $iswatch
+	 * @param string $section
+	 * @return true
 	 */
 	public static function clearBlacklist( &$article, &$user,
-		$content, $summary, $isminor, $iswatch, $section )
-	{
+		$content, $summary, $isminor, $iswatch, $section
+	) {
 		$title = $article->getTitle();
 		if ( $title->getNamespace() == NS_MEDIAWIKI && $title->getDBkey() == 'Titleblacklist' ) {
 			TitleBlacklist::singleton()->invalidate();
@@ -283,7 +308,11 @@ class TitleBlacklistHooks {
 		return true;
 	}
 
-	/** UserCreateForm hook based on the one from AntiSpoof extension */
+	/**
+	 * UserCreateForm hook based on the one from AntiSpoof extension
+	 * @param UsercreateTemplate &$template
+	 * @return true
+	 */
 	public static function addOverrideCheckbox( &$template ) {
 		global $wgRequest, $wgUser;
 
@@ -296,16 +325,16 @@ class TitleBlacklistHooks {
 	}
 
 	/**
-	 * @param ApiBase $module
-	 * @param array $params
+	 * @param ApiBase &$module
+	 * @param array &$params
 	 * @return bool
 	 */
 	public static function onAPIGetAllowedParams( ApiBase &$module, array &$params ) {
 		if ( $module instanceof ApiCreateAccount ) {
-			$params['ignoretitleblacklist'] = array(
+			$params['ignoretitleblacklist'] = [
 				ApiBase::PARAM_TYPE => 'boolean',
 				ApiBase::PARAM_DFLT => false
-			);
+			];
 		}
 
 		return true;
@@ -347,9 +376,9 @@ class TitleBlacklistHooks {
 			$logEntry = new ManualLogEntry( 'titleblacklist', 'hit-username' );
 			$logEntry->setPerformer( $user );
 			$logEntry->setTarget( $title );
-			$logEntry->setParameters( array(
+			$logEntry->setParameters( [
 				'4::entry' => $entry,
-			) );
+			] );
 			$logid = $logEntry->insert();
 			$logEntry->publish( $logid );
 		}
@@ -359,11 +388,11 @@ class TitleBlacklistHooks {
 	 * External Lua library for Scribunto
 	 *
 	 * @param string $engine
-	 * @param array $extraLibraries
+	 * @param array &$extraLibraries
 	 * @return bool
 	 */
 	public static function scribuntoExternalLibraries( $engine, array &$extraLibraries ) {
-		if( $engine == 'lua' ) {
+		if ( $engine == 'lua' ) {
 			$extraLibraries['mw.ext.TitleBlacklist'] = 'Scribunto_LuaTitleBlacklistLibrary';
 		}
 		return true;

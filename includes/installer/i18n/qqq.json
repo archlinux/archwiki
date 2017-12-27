@@ -18,7 +18,8 @@
 			"Umherirrender",
 			"Waldir",
 			"Jdforrester",
-			"Liuxinyu970226"
+			"Liuxinyu970226",
+			"Metalhead64"
 		]
 	},
 	"config-desc": "Short description of the installer.",
@@ -94,6 +95,7 @@
 	"config-no-cli-uploads-check": "CLI = [[w:Command-line interface|command-line interface]] (i.e. the installer runs as a command-line script, not using HTML interface via an internet browser)",
 	"config-brokenlibxml": "Status message in the MediaWiki installer environment checks.",
 	"config-suhosin-max-value-length": "{{doc-important|Do not translate \"length\", \"suhosin.get.max_value_length\", \"php.ini\", \"$wgResourceLoaderMaxQueryLength\" and \"LocalSettings.php\".}}\nMessage shown when PHP parameter <code>suhosin.get.max_value_length</code> is between 0 and 1023 (that max value is hard set in MediaWiki software).",
+	"config-using-32bit": "Warning message shown when installing on a 32-bit system.",
 	"config-db-type": "Field label in the MediaWiki installer followed by possible database types.",
 	"config-db-host": "Used as label.\n\nAlso used in {{msg-mw|Config-missing-db-host}}.",
 	"config-db-host-help": "{{doc-singularthey}}",
@@ -327,6 +329,9 @@
 	"config-help-tooltip": "Tooltip for the 'help' links ({{msg-mw|config-help}}), to make it clear they'll expand in place rather than open a new page",
 	"config-nofile": "Used as failure message. Parameters:\n* $1 - filename",
 	"config-extension-link": "Shown on last page of installation to inform about possible extensions.\n{{Identical|Did you know}}",
+	"config-skins-screenshots": "Radio button text, $1 is the skin name, and $2 is a list of links to screenshots of that skin",
+	"config-skins-screenshot": "Radio button text, $1 is the skin name, and $2 is a link to a screenshot of that skin, where the link text is {{msg-mw|config-screenshot}}.",
+	"config-screenshot": "Link text for the link in {{msg-mw|config-skins-screenshot}}\n{{Identical|Screenshot}}",
 	"mainpagetext": "Along with {{msg-mw|mainpagedocfooter}}, the text you will see on the Main Page when your wiki is installed.",
 	"mainpagedocfooter": "Along with {{msg-mw|mainpagetext}}, the text you will see on the Main Page when your wiki is installed.\nThis might be a good place to put information about <nowiki>{{GRAMMAR:}}</nowiki>. See [[{{NAMESPACE}}:{{BASEPAGENAME}}/fi]] for an example. For languages having grammatical distinctions and not having an appropriate <nowiki>{{GRAMMAR:}}</nowiki> software available, a suggestion to check and possibly amend the messages having <nowiki>{{SITENAME}}</nowiki> may be valuable. See [[{{NAMESPACE}}:{{BASEPAGENAME}}/ksh]] for an example."
 }

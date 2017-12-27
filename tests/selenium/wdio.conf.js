@@ -1,7 +1,6 @@
-/* eslint comma-dangle: 0 */
-/* eslint no-undef: "error" */
-/* eslint no-console: 0 */
 /* eslint-env node */
+/* eslint no-undef: "error" */
+/* eslint-disable no-console, comma-dangle */
 'use strict';
 
 const path = require( 'path' );
@@ -30,6 +29,14 @@ exports.config = {
 		'vagrant' :
 		process.env.MEDIAWIKI_PASSWORD,
 	//
+	// ======
+	// Sauce Labs
+	// ======
+	//
+	services: [ 'sauce' ],
+	user: process.env.SAUCE_USERNAME,
+	key: process.env.SAUCE_ACCESS_KEY,
+	//
 	// ==================
 	// Specify Test Files
 	// ==================
@@ -41,7 +48,8 @@ exports.config = {
 	specs: [
 		relPath( './tests/selenium/specs/**/*.js' ),
 		relPath( './extensions/*/tests/selenium/specs/**/*.js' ),
-		relPath( './extensions/VisualEditor/modules/ve-mw/tests/selenium/specs/**/*.js' )
+		relPath( './extensions/VisualEditor/modules/ve-mw/tests/selenium/specs/**/*.js' ),
+		relPath( './skins/*/tests/selenium/specs/**/*.js' ),
 	],
 	// Patterns to exclude.
 	exclude: [
@@ -106,12 +114,12 @@ exports.config = {
 	// with "/", then the base url gets prepended.
 	baseUrl: (
 		process.env.MW_SERVER === undefined ?
-		'http://127.0.0.1:8080' :
-		process.env.MW_SERVER
+			'http://127.0.0.1:8080' :
+			process.env.MW_SERVER
 	) + (
 		process.env.MW_SCRIPT_PATH === undefined ?
-		'/w' :
-		process.env.MW_SCRIPT_PATH
+			'/w' :
+			process.env.MW_SCRIPT_PATH
 	),
 	//
 	// Default timeout for all waitFor* commands.
@@ -209,8 +217,21 @@ exports.config = {
 	// },
 	//
 	// Function to be executed after a test (in Mocha/Jasmine) or a step (in Cucumber) starts.
-	// afterTest: function (test) {
-	// },
+	// from https://github.com/webdriverio/webdriverio/issues/269#issuecomment-306342170
+	afterTest: function ( test ) {
+		var filename, filePath;
+		// if test passed, ignore, else take and save screenshot
+		if ( test.passed ) {
+			return;
+		}
+		// get current test title and clean it, to use it as file name
+		filename = encodeURIComponent( test.title.replace( /\s+/g, '-' ) );
+		// build file path
+		filePath = this.screenshotPath + filename + '.png';
+		// save screenshot
+		browser.saveScreenshot( filePath );
+		console.log( '\n\tScreenshot location:', filePath, '\n' );
+	},
 	//
 	// Hook that gets executed after the suite has ended
 	// afterSuite: function (suite) {

@@ -48,15 +48,15 @@ class TextInputWidget extends InputWidget {
 	 *   - `search`: implies `icon: 'search'` and `indicator: 'clear'`; when clicked, the indicator
 	 *     empties the text field
 	 * @param string $config['placeholder'] Placeholder text
-	 * @param boolean $config['autofocus'] Ask the browser to focus this widget, using the 'autofocus'
+	 * @param bool $config['autofocus'] Ask the browser to focus this widget, using the 'autofocus'
 	 *   HTML attribute (default: false)
-	 * @param boolean $config['readOnly'] Prevent changes (default: false)
+	 * @param bool $config['readOnly'] Prevent changes (default: false)
 	 * @param number $config['maxLength'] Maximum allowed number of characters to input
-	 * @param boolean $config['multiline'] Allow multiple lines of text (default: false)
+	 * @param bool $config['multiline'] Allow multiple lines of text (default: false)
 	 * @param int $config['rows'] If multiline, number of visible lines in textarea
-	 * @param boolean $config['required'] Mark the field as required.
+	 * @param bool $config['required'] Mark the field as required.
 	 *   Implies `indicator: 'required'`. (default: false)
-	 * @param boolean $config['autocomplete'] If the field should support autocomplete
+	 * @param bool $config['autocomplete'] If the field should support autocomplete
 	 *   or not (default: true)
 	 */
 	public function __construct( array $config = [] ) {
@@ -115,7 +115,7 @@ class TextInputWidget extends InputWidget {
 	/**
 	 * Check if the widget is read-only.
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
 	public function isReadOnly() {
 		return $this->readOnly;
@@ -125,7 +125,7 @@ class TextInputWidget extends InputWidget {
 	 * Set the read-only state of the widget. This should probably change the widget's appearance and
 	 * prevent it from being used.
 	 *
-	 * @param boolean $state Make input read-only
+	 * @param bool $state Make input read-only
 	 * @return $this
 	 */
 	public function setReadOnly( $state ) {
@@ -141,7 +141,7 @@ class TextInputWidget extends InputWidget {
 	/**
 	 * Check if the widget is required.
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
 	public function isRequired() {
 		return $this->required;
@@ -150,7 +150,7 @@ class TextInputWidget extends InputWidget {
 	/**
 	 * Set the required state of the widget.
 	 *
-	 * @param boolean $state Make input required
+	 * @param bool $state Make input required
 	 * @return $this
 	 */
 	public function setRequired( $state ) {
@@ -186,7 +186,6 @@ class TextInputWidget extends InputWidget {
 		$allowedTypes = [
 			'text',
 			'password',
-			'search',
 			'email',
 			'url',
 			'number'
@@ -197,7 +196,7 @@ class TextInputWidget extends InputWidget {
 	/**
 	 * Check if input supports multiple lines.
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
 	public function isMultiline() {
 		return (bool)$this->multiline;

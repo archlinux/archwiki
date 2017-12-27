@@ -1,12 +1,12 @@
 /*!
- * OOjs UI v0.21.1
+ * OOjs UI v0.23.0
  * https://www.mediawiki.org/wiki/OOjs_UI
  *
  * Copyright 2011–2017 OOjs UI Team and other contributors.
  * Released under the MIT license
  * http://oojs.mit-license.org
  *
- * Date: 2017-04-18T23:32:54Z
+ * Date: 2017-09-05T21:24:03Z
  */
 .oo-ui-draggableElement-handle:not( .oo-ui-draggableElement-undraggable ).oo-ui-widget {
   cursor: move;
@@ -41,11 +41,12 @@
   box-sizing: border-box;
 }
 .oo-ui-bookletLayout-outlinePanel-editable > .oo-ui-outlineSelectWidget {
+  height: auto;
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  bottom: 3em;
+  bottom: 2.5em;
   overflow: auto;
 }
 .oo-ui-bookletLayout-outlinePanel > .oo-ui-outlineControlsWidget {
@@ -53,6 +54,7 @@
   bottom: 0;
   left: 0;
   right: 0;
+  height: 2.5em;
 }
 .oo-ui-bookletLayout-stackLayout > .oo-ui-panelLayout {
   padding: 1.5em;
@@ -158,24 +160,43 @@
 .oo-ui-buttonSelectWidget {
   display: inline-block;
   white-space: nowrap;
-  border-radius: 0.3em;
+  border-radius: 4px;
   margin-right: 0.5em;
+  z-index: 0;
+  position: relative;
 }
 .oo-ui-buttonSelectWidget:last-child {
   margin-right: 0;
+}
+.oo-ui-buttonSelectWidget:focus {
+  outline: 0;
 }
 .oo-ui-buttonSelectWidget .oo-ui-buttonOptionWidget .oo-ui-buttonElement-button {
   border-radius: 0;
   margin-left: -1px;
 }
 .oo-ui-buttonSelectWidget .oo-ui-buttonOptionWidget:first-child .oo-ui-buttonElement-button {
-  border-bottom-left-radius: 0.3em;
-  border-top-left-radius: 0.3em;
+  border-bottom-left-radius: 4px;
+  border-top-left-radius: 4px;
   margin-left: 0;
 }
 .oo-ui-buttonSelectWidget .oo-ui-buttonOptionWidget:last-child .oo-ui-buttonElement-button {
-  border-bottom-right-radius: 0.3em;
-  border-top-right-radius: 0.3em;
+  border-bottom-right-radius: 4px;
+  border-top-right-radius: 4px;
+}
+.oo-ui-buttonSelectWidget.oo-ui-widget-enabled:focus .oo-ui-buttonOptionWidget.oo-ui-optionWidget-selected .oo-ui-buttonElement-button {
+  border-color: #ace;
+  box-shadow: 0 0 2px 2px #ace;
+}
+.oo-ui-buttonSelectWidget.oo-ui-widget-enabled .oo-ui-buttonElement.oo-ui-widget-enabled > .oo-ui-buttonElement-button:hover,
+.oo-ui-buttonSelectWidget.oo-ui-widget-enabled .oo-ui-buttonElement.oo-ui-widget-enabled > .oo-ui-buttonElement-button:active {
+  z-index: 1;
+}
+.oo-ui-buttonSelectWidget.oo-ui-widget-enabled .oo-ui-buttonElement.oo-ui-buttonElement-active > .oo-ui-buttonElement-button {
+  z-index: 3;
+}
+.oo-ui-buttonSelectWidget.oo-ui-widget-enabled .oo-ui-buttonElement.oo-ui-widget-disabled > .oo-ui-buttonElement-button {
+  z-index: -1;
 }
 .oo-ui-buttonOptionWidget {
   display: inline-block;
@@ -244,6 +265,14 @@
 .oo-ui-toggleSwitchWidget.oo-ui-widget-enabled:hover,
 .oo-ui-toggleSwitchWidget.oo-ui-widget-enabled:hover .oo-ui-toggleSwitchWidget-grip {
   border-color: #aaa;
+}
+.oo-ui-toggleSwitchWidget.oo-ui-widget-enabled:focus {
+  outline: 0;
+  border-color: #ace;
+  box-shadow: 0 0 2px 2px #ace;
+}
+.oo-ui-toggleSwitchWidget.oo-ui-widget-enabled:focus .oo-ui-toggleSwitchWidget-grip {
+  border-color: #ace;
 }
 .oo-ui-toggleSwitchWidget-grip {
   top: 0.25em;
@@ -616,7 +645,7 @@
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
 }
 .oo-ui-outlineControlsWidget {
-  height: 3em;
+  overflow: hidden;
   background-color: #fff;
 }
 .oo-ui-outlineControlsWidget-items,
@@ -642,16 +671,15 @@
 .oo-ui-outlineControlsWidget-movers .oo-ui-buttonWidget {
   float: right;
 }
-.oo-ui-outlineControlsWidget-items,
-.oo-ui-outlineControlsWidget-movers {
-  height: 2em;
-  margin: 0.5em 0.5em 0.5em 0;
-  padding: 0;
+.oo-ui-outlineControlsWidget-items > .oo-ui-buttonWidget,
+.oo-ui-outlineControlsWidget-movers > .oo-ui-buttonWidget {
+  height: 2.5em;
+  width: 2.5em;
+  margin: 0 !important;
+  /* stylelint-disable-line declaration-no-important */
 }
 .oo-ui-outlineControlsWidget > .oo-ui-iconElement-icon {
-  width: 1.5em;
-  height: 2em;
-  margin: 0.5em 0 0.5em 0.5em;
+  height: 2.5em;
   opacity: 0.2;
 }
 .oo-ui-tabSelectWidget {
@@ -663,22 +691,21 @@
 }
 .oo-ui-tabOptionWidget {
   display: inline-block;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
   vertical-align: bottom;
-  padding: 0.5em 1em;
   margin: 0.5em 0 0 0.75em;
-  border: 1px solid transparent;
-  border-bottom: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 1px 1px 0 1px;
   border-top-left-radius: 0.5em;
   border-top-right-radius: 0.5em;
+  padding: 0.5em 1em;
 }
-.oo-ui-tabOptionWidget.oo-ui-indicatorElement .oo-ui-labelElement-label {
-  padding-right: 1.5em;
-}
-.oo-ui-tabOptionWidget.oo-ui-indicatorElement .oo-ui-indicatorElement-indicator {
-  opacity: 0.5;
-}
-.oo-ui-selectWidget-pressed .oo-ui-tabOptionWidget.oo-ui-optionWidget-pressed {
-  background-color: transparent;
+.oo-ui-tabOptionWidget.oo-ui-optionWidget-selected {
+  background-color: #fff;
+  border-color: #ddd;
 }
 .oo-ui-tabOptionWidget.oo-ui-widget-enabled:hover {
   background-color: rgba(255, 255, 255, 0.2);
@@ -688,11 +715,8 @@
   background-color: #fff;
   border-color: #ddd;
 }
-.oo-ui-selectWidget-pressed .oo-ui-tabOptionWidget.oo-ui-optionWidget-selected,
-.oo-ui-selectWidget-depressed .oo-ui-tabOptionWidget.oo-ui-optionWidget-selected,
-.oo-ui-tabOptionWidget.oo-ui-optionWidget-selected:hover {
+.oo-ui-tabOptionWidget.oo-ui-widget-enabled.oo-ui-optionWidget-selected:hover {
   background-color: #fff;
-  border-color: #ddd;
 }
 .oo-ui-tagMultiselectWidget {
   display: inline-block;
@@ -730,6 +754,9 @@
   display: inline-block;
   height: 1px;
   width: 1px;
+}
+.oo-ui-tagMultiselectWidget-focusTrap:focus {
+  outline: 0;
 }
 .oo-ui-tagMultiselectWidget-handle {
   background-color: #fff;
@@ -795,8 +822,13 @@
   right: 0;
   margin: 0 0.775em;
 }
-.oo-ui-tagMultiselectWidget:hover .oo-ui-tagMultiselectWidget-handle {
+.oo-ui-tagMultiselectWidget.oo-ui-widget-enabled.oo-ui-tagMultiselectWidget-inlined:hover .oo-ui-tagMultiselectWidget.oo-ui-widget-enabled.oo-ui-tagMultiselectWidget-inlined-handle {
   border-color: rgba(0, 0, 0, 0.2);
+}
+.oo-ui-tagMultiselectWidget.oo-ui-widget-enabled.oo-ui-tagMultiselectWidget-inlined.oo-ui-tagMultiselectWidget-focus .oo-ui-tagMultiselectWidget-handle {
+  border-color: #ace;
+  outline: 0;
+  box-shadow: 0 0 2px 2px #ace;
 }
 .oo-ui-tagMultiselectWidget.oo-ui-widget-disabled .oo-ui-tagMultiselectWidget-handle {
   color: #ccc;
@@ -847,6 +879,22 @@
   outline: 0;
   border-color: #087ecc;
 }
+.oo-ui-tagItemWidget > .oo-ui-buttonElement {
+  margin-top: -1.25em;
+  padding-left: 0.3em;
+}
+.oo-ui-tagItemWidget > .oo-ui-buttonElement > .oo-ui-buttonElement-button {
+  padding: 0;
+}
+.oo-ui-tagItemWidget > .oo-ui-buttonElement > .oo-ui-buttonElement-button .oo-ui-iconElement-icon {
+  min-width: 20px;
+  width: 1.5625em;
+  margin-right: -0.3em;
+}
+.oo-ui-tagItemWidget > .oo-ui-buttonElement > .oo-ui-buttonElement-button .oo-ui-labelElement-label,
+.oo-ui-tagItemWidget > .oo-ui-buttonElement > .oo-ui-buttonElement-button .oo-ui-indicatorElement-indicator {
+  display: none;
+}
 .oo-ui-tagItemWidget.oo-ui-widget-disabled {
   opacity: 0.5;
   -webkit-transform: translateZ(0);
@@ -855,10 +903,6 @@
   color: #333;
   background: #eee;
   border-color: #ccc;
-}
-.oo-ui-tagItemWidget > .oo-ui-buttonElement {
-  margin-top: -1.25em;
-  padding-left: 0.3em;
 }
 .oo-ui-capsuleMultiselectWidget {
   display: inline-block;
@@ -893,6 +937,9 @@
   display: inline-block;
   height: 1px;
   width: 1px;
+}
+.oo-ui-capsuleMultiselectWidget-focusTrap:focus {
+  outline: 0;
 }
 .oo-ui-capsuleMultiselectWidget-handle {
   background-color: #fff;
@@ -958,8 +1005,13 @@
   right: 0;
   margin: 0 0.775em;
 }
-.oo-ui-capsuleMultiselectWidget:hover .oo-ui-capsuleMultiselectWidget-handle {
+.oo-ui-capsuleMultiselectWidget.oo-ui-widget-enabled:hover .oo-ui-capsuleMultiselectWidget-handle {
   border-color: rgba(0, 0, 0, 0.2);
+}
+.oo-ui-capsuleMultiselectWidget.oo-ui-widget-enabled.oo-ui-capsuleMultiselectWidget-open .oo-ui-capsuleMultiselectWidget-handle {
+  border-color: #ace;
+  outline: 0;
+  box-shadow: 0 0 2px 2px #ace;
 }
 .oo-ui-capsuleMultiselectWidget.oo-ui-widget-disabled .oo-ui-capsuleMultiselectWidget-handle {
   color: #ccc;
@@ -1010,6 +1062,22 @@
   outline: 0;
   border-color: #087ecc;
 }
+.oo-ui-capsuleItemWidget > .oo-ui-buttonElement {
+  margin-top: -1.25em;
+  padding-left: 0.3em;
+}
+.oo-ui-capsuleItemWidget > .oo-ui-buttonElement > .oo-ui-buttonElement-button {
+  padding: 0;
+}
+.oo-ui-capsuleItemWidget > .oo-ui-buttonElement > .oo-ui-buttonElement-button .oo-ui-iconElement-icon {
+  min-width: 20px;
+  width: 1.5625em;
+  margin-right: -0.3em;
+}
+.oo-ui-capsuleItemWidget > .oo-ui-buttonElement > .oo-ui-buttonElement-button .oo-ui-labelElement-label,
+.oo-ui-capsuleItemWidget > .oo-ui-buttonElement > .oo-ui-buttonElement-button .oo-ui-indicatorElement-indicator {
+  display: none;
+}
 .oo-ui-capsuleItemWidget.oo-ui-widget-disabled {
   opacity: 0.5;
   -webkit-transform: translateZ(0);
@@ -1018,10 +1086,6 @@
   color: #333;
   background: #eee;
   border-color: #ccc;
-}
-.oo-ui-capsuleItemWidget > .oo-ui-buttonElement {
-  margin-top: -1.25em;
-  padding-left: 0.3em;
 }
 .oo-ui-searchWidget-query {
   position: absolute;
@@ -1059,11 +1123,8 @@
   max-width: 50em;
 }
 .oo-ui-numberInputWidget-buttoned .oo-ui-buttonWidget,
-.oo-ui-numberInputWidget-buttoned .oo-ui-textInputWidget {
+.oo-ui-numberInputWidget-buttoned .oo-ui-inputWidget-input {
   display: table-cell;
-  height: 100%;
-}
-.oo-ui-numberInputWidget-buttoned .oo-ui-textInputWidget input {
   height: 100%;
 }
 .oo-ui-numberInputWidget-field {
@@ -1074,16 +1135,20 @@
 .oo-ui-numberInputWidget-field > .oo-ui-buttonWidget {
   width: 2.25em;
 }
-.oo-ui-numberInputWidget-minusButton.oo-ui-buttonElement-framed > .oo-ui-buttonElement-button {
+.oo-ui-numberInputWidget-buttoned .oo-ui-buttonElement-button .oo-ui-iconElement-icon {
+  min-width: 20px;
+  width: 1.5625em;
+}
+.oo-ui-numberInputWidget-buttoned .oo-ui-inputWidget-input {
+  border-radius: 0;
+}
+.oo-ui-numberInputWidget-minusButton > .oo-ui-buttonElement-button {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
   border-right-width: 0;
 }
-.oo-ui-numberInputWidget-plusButton.oo-ui-buttonElement-framed > .oo-ui-buttonElement-button {
+.oo-ui-numberInputWidget-plusButton > .oo-ui-buttonElement-button {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
   border-left-width: 0;
-}
-.oo-ui-numberInputWidget-buttoned .oo-ui-textInputWidget input {
-  border-radius: 0;
 }

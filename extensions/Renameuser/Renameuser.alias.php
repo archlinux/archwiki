@@ -5,381 +5,380 @@
  * @file
  * @ingroup Extensions
  */
-// @codingStandardsIgnoreFile
 
-$specialPageAliases = array();
+$specialPageAliases = [];
 
 /** English (English) */
-$specialPageAliases['en'] = array(
-	'Renameuser' => array( 'RenameUser' ),
-);
+$specialPageAliases['en'] = [
+	'Renameuser' => [ 'RenameUser' ],
+];
 
 /** Arabic (العربية) */
-$specialPageAliases['ar'] = array(
-	'Renameuser' => array( 'إعادة_تسمية_مستخدم' ),
-);
+$specialPageAliases['ar'] = [
+	'Renameuser' => [ 'إعادة_تسمية_مستخدم' ],
+];
 
 /** Egyptian Arabic (مصرى) */
-$specialPageAliases['arz'] = array(
-	'Renameuser' => array( 'سمّى_تانى_يوزر' ),
-);
+$specialPageAliases['arz'] = [
+	'Renameuser' => [ 'سمّى_تانى_يوزر' ],
+];
 
 /** Assamese (অসমীয়া) */
-$specialPageAliases['as'] = array(
-	'Renameuser' => array( 'সদস্য_পুনৰ্নামকৰণ' ),
-);
+$specialPageAliases['as'] = [
+	'Renameuser' => [ 'সদস্য_পুনৰ্নামকৰণ' ],
+];
 
 /** Avaric (авар) */
-$specialPageAliases['av'] = array(
-	'Renameuser' => array( 'Переименовать_участника' ),
-);
+$specialPageAliases['av'] = [
+	'Renameuser' => [ 'Переименовать_участника' ],
+];
 
 /** Bashkir (башҡортса) */
-$specialPageAliases['ba'] = array(
-	'Renameuser' => array( 'RenameUser' ),
-);
+$specialPageAliases['ba'] = [
+	'Renameuser' => [ 'RenameUser' ],
+];
 
 /** Bulgarian (български) */
-$specialPageAliases['bg'] = array(
-	'Renameuser' => array( 'Преименуване' ),
-);
+$specialPageAliases['bg'] = [
+	'Renameuser' => [ 'Преименуване' ],
+];
 
 /** Western Balochi (بلوچی رخشانی) */
-$specialPageAliases['bgn'] = array(
-	'Renameuser' => array( 'کارمرزوکی_نامی_ٹگلینتین' ),
-);
+$specialPageAliases['bgn'] = [
+	'Renameuser' => [ 'کارمرزوکی_نامی_ٹگلینتین' ],
+];
 
 /** Banjar (Bahasa Banjar) */
-$specialPageAliases['bjn'] = array(
-	'Renameuser' => array( 'Ganti_ngaran_pamakai' ),
-);
+$specialPageAliases['bjn'] = [
+	'Renameuser' => [ 'Ganti_ngaran_pamakai' ],
+];
 
 /** Bengali (বাংলা) */
-$specialPageAliases['bn'] = array(
-	'Renameuser' => array( 'ব্যবহারকারী_নামান্তর', 'ব্যবহারকারী_পুনঃনামকরণ' ),
-);
+$specialPageAliases['bn'] = [
+	'Renameuser' => [ 'ব্যবহারকারী_নামান্তর', 'ব্যবহারকারী_পুনঃনামকরণ' ],
+];
 
 /** Breton (brezhoneg) */
-$specialPageAliases['br'] = array(
-	'Renameuser' => array( 'AdenevelImplijer' ),
-);
+$specialPageAliases['br'] = [
+	'Renameuser' => [ 'AdenevelImplijer' ],
+];
 
 /** Bosnian (bosanski) */
-$specialPageAliases['bs'] = array(
-	'Renameuser' => array( 'PreimenovanjeKorisnika' ),
-);
+$specialPageAliases['bs'] = [
+	'Renameuser' => [ 'PreimenovanjeKorisnika' ],
+];
 
 /** Catalan (català) */
-$specialPageAliases['ca'] = array(
-	'Renameuser' => array( 'Reanomena_usuari' ),
-);
+$specialPageAliases['ca'] = [
+	'Renameuser' => [ 'Reanomena_usuari' ],
+];
 
 /** Chechen (нохчийн) */
-$specialPageAliases['ce'] = array(
-	'Renameuser' => array( 'Декъашхочун_цӀе_хийца' ),
-);
+$specialPageAliases['ce'] = [
+	'Renameuser' => [ 'Декъашхочун_цӀе_хийца' ],
+];
 
 /** Czech (čeština) */
-$specialPageAliases['cs'] = array(
-	'Renameuser' => array( 'Přejmenovat_uživatele' ),
-);
+$specialPageAliases['cs'] = [
+	'Renameuser' => [ 'Přejmenovat_uživatele' ],
+];
 
 /** German (Deutsch) */
-$specialPageAliases['de'] = array(
-	'Renameuser' => array( 'Benutzer_umbenennen' ),
-);
+$specialPageAliases['de'] = [
+	'Renameuser' => [ 'Benutzer_umbenennen' ],
+];
 
 /** Zazaki (Zazaki) */
-$specialPageAliases['diq'] = array(
-	'Renameuser' => array( 'NamedayışéKarberi' ),
-);
+$specialPageAliases['diq'] = [
+	'Renameuser' => [ 'NamedayışéKarberi' ],
+];
 
 /** Lower Sorbian (dolnoserbski) */
-$specialPageAliases['dsb'] = array(
-	'Renameuser' => array( 'Wužywarja pśemjeniś' ),
-);
+$specialPageAliases['dsb'] = [
+	'Renameuser' => [ 'Wužywarja pśemjeniś' ],
+];
 
 /** Divehi (ދިވެހިބަސް) */
-$specialPageAliases['dv'] = array(
-	'Renameuser' => array( 'މެމްބަރުގެ_ނަން_ބަދަލު_ކުރައްވާ' ),
-);
+$specialPageAliases['dv'] = [
+	'Renameuser' => [ 'މެމްބަރުގެ_ނަން_ބަދަލު_ކުރައްވާ' ],
+];
 
 /** Greek (Ελληνικά) */
-$specialPageAliases['el'] = array(
-	'Renameuser' => array( 'ΜετονομασίαΧρήστη' ),
-);
+$specialPageAliases['el'] = [
+	'Renameuser' => [ 'ΜετονομασίαΧρήστη' ],
+];
 
 /** Esperanto (Esperanto) */
-$specialPageAliases['eo'] = array(
-	'Renameuser' => array( 'Alinomigi_uzanton' ),
-);
+$specialPageAliases['eo'] = [
+	'Renameuser' => [ 'Alinomigi_uzanton' ],
+];
 
 /** Spanish (español) */
-$specialPageAliases['es'] = array(
-	'Renameuser' => array( 'RenombrarUsuario', 'Renombrar_usuario', 'Cambiar_el_nombre_de_usuario' ),
-);
+$specialPageAliases['es'] = [
+	'Renameuser' => [ 'RenombrarUsuario', 'Renombrar_usuario', 'Cambiar_el_nombre_de_usuario' ],
+];
 
 /** Estonian (eesti) */
-$specialPageAliases['et'] = array(
-	'Renameuser' => array( 'Kasutaja_ümbernimetamine' ),
-);
+$specialPageAliases['et'] = [
+	'Renameuser' => [ 'Kasutaja_ümbernimetamine' ],
+];
 
 /** Persian (فارسی) */
-$specialPageAliases['fa'] = array(
-	'Renameuser' => array( 'تغییر_نام_کاربر' ),
-);
+$specialPageAliases['fa'] = [
+	'Renameuser' => [ 'تغییر_نام_کاربر' ],
+];
 
 /** Finnish (suomi) */
-$specialPageAliases['fi'] = array(
-	'Renameuser' => array( 'Käyttäjätunnusten_nimeäminen' ),
-);
+$specialPageAliases['fi'] = [
+	'Renameuser' => [ 'Käyttäjätunnusten_nimeäminen' ],
+];
 
 /** French (français) */
-$specialPageAliases['fr'] = array(
-	'Renameuser' => array( 'Renommer_utilisateur', 'RenommerUtilisateur' ),
-);
+$specialPageAliases['fr'] = [
+	'Renameuser' => [ 'Renommer_utilisateur', 'RenommerUtilisateur' ],
+];
 
 /** Arpitan (arpetan) */
-$specialPageAliases['frp'] = array(
-	'Renameuser' => array( 'Renomar_l\'usanciér', 'RenomarLUsanciér' ),
-);
+$specialPageAliases['frp'] = [
+	'Renameuser' => [ 'Renomar_l\'usanciér', 'RenomarLUsanciér' ],
+];
 
 /** Galician (galego) */
-$specialPageAliases['gl'] = array(
-	'Renameuser' => array( 'Renomear_o_usuario', 'Renomear_usuario', 'Renomear_a_usuaria', 'Renomear_usuaria' ),
-);
+$specialPageAliases['gl'] = [
+	'Renameuser' => [ 'Renomear_o_usuario', 'Renomear_usuario', 'Renomear_a_usuaria', 'Renomear_usuaria' ],
+];
 
 /** Swiss German (Alemannisch) */
-$specialPageAliases['gsw'] = array(
-	'Renameuser' => array( 'Benutzer_e_andre_Name_gee' ),
-);
+$specialPageAliases['gsw'] = [
+	'Renameuser' => [ 'Benutzer_e_andre_Name_gee' ],
+];
 
 /** Hebrew (עברית) */
-$specialPageAliases['he'] = array(
-	'Renameuser' => array( 'שינוי_שם_משתמש' ),
-);
+$specialPageAliases['he'] = [
+	'Renameuser' => [ 'שינוי_שם_משתמש' ],
+];
 
 /** Hindi (हिन्दी) */
-$specialPageAliases['hi'] = array(
-	'Renameuser' => array( 'सदस्यनाम_बदलें', 'सदस्य_नाम_बदलें' ),
-);
+$specialPageAliases['hi'] = [
+	'Renameuser' => [ 'सदस्यनाम_बदलें', 'सदस्य_नाम_बदलें' ],
+];
 
 /** Croatian (hrvatski) */
-$specialPageAliases['hr'] = array(
-	'Renameuser' => array( 'Preimenuj_suradnika' ),
-);
+$specialPageAliases['hr'] = [
+	'Renameuser' => [ 'Preimenuj_suradnika' ],
+];
 
 /** Upper Sorbian (hornjoserbsce) */
-$specialPageAliases['hsb'] = array(
-	'Renameuser' => array( 'Wužiwarja_přemjenować' ),
-);
+$specialPageAliases['hsb'] = [
+	'Renameuser' => [ 'Wužiwarja_přemjenować' ],
+];
 
 /** Haitian (Kreyòl ayisyen) */
-$specialPageAliases['ht'] = array(
-	'Renameuser' => array( 'RenonmenItilizatè' ),
-);
+$specialPageAliases['ht'] = [
+	'Renameuser' => [ 'RenonmenItilizatè' ],
+];
 
 /** Hungarian (magyar) */
-$specialPageAliases['hu'] = array(
-	'Renameuser' => array( 'Szerkesztő_átnevezése' ),
-);
+$specialPageAliases['hu'] = [
+	'Renameuser' => [ 'Szerkesztő_átnevezése' ],
+];
 
 /** Interlingua (interlingua) */
-$specialPageAliases['ia'] = array(
-	'Renameuser' => array( 'Renominar_usator' ),
-);
+$specialPageAliases['ia'] = [
+	'Renameuser' => [ 'Renominar_usator' ],
+];
 
 /** Indonesian (Bahasa Indonesia) */
-$specialPageAliases['id'] = array(
-	'Renameuser' => array( 'Ganti_nama_pengguna', 'GantiNamaPengguna' ),
-);
+$specialPageAliases['id'] = [
+	'Renameuser' => [ 'Ganti_nama_pengguna', 'GantiNamaPengguna' ],
+];
 
 /** Italian (italiano) */
-$specialPageAliases['it'] = array(
-	'Renameuser' => array( 'RinominaUtente' ),
-);
+$specialPageAliases['it'] = [
+	'Renameuser' => [ 'RinominaUtente' ],
+];
 
 /** Japanese (日本語) */
-$specialPageAliases['ja'] = array(
-	'Renameuser' => array( '利用者名変更', '利用者名の変更' ),
-);
+$specialPageAliases['ja'] = [
+	'Renameuser' => [ '利用者名変更', '利用者名の変更' ],
+];
 
 /** Khmer (ភាសាខ្មែរ) */
-$specialPageAliases['km'] = array(
-	'Renameuser' => array( 'ប្ដូរឈ្មោះអ្នកប្រើប្រាស់' ),
-);
+$specialPageAliases['km'] = [
+	'Renameuser' => [ 'ប្ដូរឈ្មោះអ្នកប្រើប្រាស់' ],
+];
 
 /** Korean (한국어) */
-$specialPageAliases['ko'] = array(
-	'Renameuser' => array( '이름바꾸기', '사용자이름바꾸기', '계정이름바꾸기' ),
-);
+$specialPageAliases['ko'] = [
+	'Renameuser' => [ '이름바꾸기', '사용자이름바꾸기', '계정이름바꾸기' ],
+];
 
 /** Colognian (Ripoarisch) */
-$specialPageAliases['ksh'] = array(
-	'Renameuser' => array( 'Metmaacher ömnänne', 'Medmaacher ömnänne', 'Metmaacher ömnenne', 'Medmaacher ömnenne', 'Metmaacher ömdäufe', 'Medmaacher ömdäufe' ),
-);
+$specialPageAliases['ksh'] = [
+	'Renameuser' => [ 'Metmaacher ömnänne', 'Medmaacher ömnänne', 'Metmaacher ömnenne', 'Medmaacher ömnenne', 'Metmaacher ömdäufe', 'Medmaacher ömdäufe' ],
+];
 
 /** Cornish (kernowek) */
-$specialPageAliases['kw'] = array(
-	'Renameuser' => array( 'DashenwelDevnydhyer' ),
-);
+$specialPageAliases['kw'] = [
+	'Renameuser' => [ 'DashenwelDevnydhyer' ],
+];
 
 /** Latin (Latina) */
-$specialPageAliases['la'] = array(
-	'Renameuser' => array( 'Usorem_renominare' ),
-);
+$specialPageAliases['la'] = [
+	'Renameuser' => [ 'Usorem_renominare' ],
+];
 
 /** Luxembourgish (Lëtzebuergesch) */
-$specialPageAliases['lb'] = array(
-	'Renameuser' => array( 'Benotzer_ëmbenennen' ),
-);
+$specialPageAliases['lb'] = [
+	'Renameuser' => [ 'Benotzer_ëmbenennen' ],
+];
 
 /** Macedonian (македонски) */
-$specialPageAliases['mk'] = array(
-	'Renameuser' => array( 'ПреименувајКорисник' ),
-);
+$specialPageAliases['mk'] = [
+	'Renameuser' => [ 'ПреименувајКорисник' ],
+];
 
 /** Malayalam (മലയാളം) */
-$specialPageAliases['ml'] = array(
-	'Renameuser' => array( 'ഉപയോക്തൃപുനർനാമകരണം' ),
-);
+$specialPageAliases['ml'] = [
+	'Renameuser' => [ 'ഉപയോക്തൃപുനർനാമകരണം' ],
+];
 
 /** Marathi (मराठी) */
-$specialPageAliases['mr'] = array(
-	'Renameuser' => array( 'सदस्यपुर्नामितकरा' ),
-);
+$specialPageAliases['mr'] = [
+	'Renameuser' => [ 'सदस्यपुर्नामितकरा' ],
+];
 
 /** Malay (Bahasa Melayu) */
-$specialPageAliases['ms'] = array(
-	'Renameuser' => array( 'Tukar_nama_pengguna' ),
-);
+$specialPageAliases['ms'] = [
+	'Renameuser' => [ 'Tukar_nama_pengguna' ],
+];
 
 /** Maltese (Malti) */
-$specialPageAliases['mt'] = array(
-	'Renameuser' => array( 'BiddelIsemUtent' ),
-);
+$specialPageAliases['mt'] = [
+	'Renameuser' => [ 'BiddelIsemUtent' ],
+];
 
 /** Norwegian Bokmål (norsk bokmål) */
-$specialPageAliases['nb'] = array(
-	'Renameuser' => array( 'Gi_en_bruker_nytt_navn' ),
-);
+$specialPageAliases['nb'] = [
+	'Renameuser' => [ 'Gi_en_bruker_nytt_navn' ],
+];
 
 /** Low Saxon (Netherlands) (Nedersaksies) */
-$specialPageAliases['nds-nl'] = array(
-	'Renameuser' => array( 'Gebruker_herneumen' ),
-);
+$specialPageAliases['nds-nl'] = [
+	'Renameuser' => [ 'Gebruker_herneumen' ],
+];
 
 /** Dutch (Nederlands) */
-$specialPageAliases['nl'] = array(
-	'Renameuser' => array( 'GebruikerHernoemen' ),
-);
+$specialPageAliases['nl'] = [
+	'Renameuser' => [ 'GebruikerHernoemen' ],
+];
 
 /** Norwegian Nynorsk (norsk nynorsk) */
-$specialPageAliases['nn'] = array(
-	'Renameuser' => array( 'Døyp_om_brukar' ),
-);
+$specialPageAliases['nn'] = [
+	'Renameuser' => [ 'Døyp_om_brukar' ],
+];
 
 /** Occitan (occitan) */
-$specialPageAliases['oc'] = array(
-	'Renameuser' => array( 'TornarNomenarUtilizaire', 'Tornar nomenar Utilizaire' ),
-);
+$specialPageAliases['oc'] = [
+	'Renameuser' => [ 'TornarNomenarUtilizaire', 'Tornar nomenar Utilizaire' ],
+];
 
 /** Polish (polski) */
-$specialPageAliases['pl'] = array(
-	'Renameuser' => array( 'Zmiana_nazwy_użytkownika' ),
-);
+$specialPageAliases['pl'] = [
+	'Renameuser' => [ 'Zmiana_nazwy_użytkownika' ],
+];
 
 /** Pashto (پښتو) */
-$specialPageAliases['ps'] = array(
-	'Renameuser' => array( 'دکارونکي نوم بدلون' ),
-);
+$specialPageAliases['ps'] = [
+	'Renameuser' => [ 'دکارونکي نوم بدلون' ],
+];
 
 /** Portuguese (português) */
-$specialPageAliases['pt'] = array(
-	'Renameuser' => array( 'Alterar_nome_de_utilizador' ),
-);
+$specialPageAliases['pt'] = [
+	'Renameuser' => [ 'Alterar_nome_de_utilizador' ],
+];
 
 /** Brazilian Portuguese (português do Brasil) */
-$specialPageAliases['pt-br'] = array(
-	'Renameuser' => array( 'Renomear_utilizador', 'Renomear_usuário' ),
-);
+$specialPageAliases['pt-br'] = [
+	'Renameuser' => [ 'Renomear_utilizador', 'Renomear_usuário' ],
+];
 
 /** Romanian (română) */
-$specialPageAliases['ro'] = array(
-	'Renameuser' => array( 'Redenumire_utilizator' ),
-);
+$specialPageAliases['ro'] = [
+	'Renameuser' => [ 'Redenumire_utilizator' ],
+];
 
 /** Russian (русский) */
-$specialPageAliases['ru'] = array(
-	'Renameuser' => array( 'Переименовать_участника' ),
-);
+$specialPageAliases['ru'] = [
+	'Renameuser' => [ 'Переименовать_участника' ],
+];
 
 /** Sicilian (sicilianu) */
-$specialPageAliases['scn'] = array(
-	'Renameuser' => array( 'RinominaUtente' ),
-);
+$specialPageAliases['scn'] = [
+	'Renameuser' => [ 'RinominaUtente' ],
+];
 
 /** Slovak (slovenčina) */
-$specialPageAliases['sk'] = array(
-	'Renameuser' => array( 'PremenovaťPoužívateľa' ),
-);
+$specialPageAliases['sk'] = [
+	'Renameuser' => [ 'PremenovaťPoužívateľa' ],
+];
 
 /** Albanian (shqip) */
-$specialPageAliases['sq'] = array(
-	'Renameuser' => array( 'RiemërtoPërdorues' ),
-);
+$specialPageAliases['sq'] = [
+	'Renameuser' => [ 'RiemërtoPërdorues' ],
+];
 
 /** Serbian (Cyrillic script) (српски (ћирилица)‎) */
-$specialPageAliases['sr-ec'] = array(
-	'Renameuser' => array( 'ПреименујКорисника', 'Преименуј_корисника' ),
-);
+$specialPageAliases['sr-ec'] = [
+	'Renameuser' => [ 'ПреименујКорисника', 'Преименуј_корисника' ],
+];
 
 /** Swedish (svenska) */
-$specialPageAliases['sv'] = array(
-	'Renameuser' => array( 'Användarnamnbyte' ),
-);
+$specialPageAliases['sv'] = [
+	'Renameuser' => [ 'Användarnamnbyte' ],
+];
 
 /** Swahili (Kiswahili) */
-$specialPageAliases['sw'] = array(
-	'Renameuser' => array( 'BadilishajinalaMtumiaji' ),
-);
+$specialPageAliases['sw'] = [
+	'Renameuser' => [ 'BadilishajinalaMtumiaji' ],
+];
 
 /** Thai (ไทย) */
-$specialPageAliases['th'] = array(
-	'Renameuser' => array( 'เปลี่ยนชื่อผู้ใช้' ),
-);
+$specialPageAliases['th'] = [
+	'Renameuser' => [ 'เปลี่ยนชื่อผู้ใช้' ],
+];
 
 /** Tagalog (Tagalog) */
-$specialPageAliases['tl'] = array(
-	'Renameuser' => array( 'Muling_pangalan_ang_tagagamit' ),
-);
+$specialPageAliases['tl'] = [
+	'Renameuser' => [ 'Muling_pangalan_ang_tagagamit' ],
+];
 
 /** Turkish (Türkçe) */
-$specialPageAliases['tr'] = array(
-	'Renameuser' => array( 'KullanıcıAdınıDeğiştir', 'KullanıcıİsminiDeğiştir' ),
-);
+$specialPageAliases['tr'] = [
+	'Renameuser' => [ 'KullanıcıAdınıDeğiştir', 'KullanıcıİsminiDeğiştir' ],
+];
 
 /** Ukrainian (українська) */
-$specialPageAliases['uk'] = array(
-	'Renameuser' => array( 'Перейменувати_користувача', 'Переименовать_участника' ),
-);
+$specialPageAliases['uk'] = [
+	'Renameuser' => [ 'Перейменувати_користувача', 'Переименовать_участника' ],
+];
 
 /** Vietnamese (Tiếng Việt) */
-$specialPageAliases['vi'] = array(
-	'Renameuser' => array( 'Đổi_tên_thành_viên', 'Đổi_tên_người_dùng' ),
-);
+$specialPageAliases['vi'] = [
+	'Renameuser' => [ 'Đổi_tên_thành_viên', 'Đổi_tên_người_dùng' ],
+];
 
 /** Chinese (中文) */
-$specialPageAliases['zh'] = array(
-	'Renameuser' => array( '重命名用户', '重新命名用户', '重新命名用戶', '重新命名使用者' ),
-);
+$specialPageAliases['zh'] = [
+	'Renameuser' => [ '重命名用户', '重新命名用户', '重新命名用戶', '重新命名使用者' ],
+];
 
 /** Simplified Chinese (中文（简体）‎) */
-$specialPageAliases['zh-hans'] = array(
-	'Renameuser' => array( '重命名用户' ),
-);
+$specialPageAliases['zh-hans'] = [
+	'Renameuser' => [ '重命名用户' ],
+];
 
 /** Traditional Chinese (中文（繁體）‎) */
-$specialPageAliases['zh-hant'] = array(
-	'Renameuser' => array( '重新命名使用者' ),
-);
+$specialPageAliases['zh-hant'] = [
+	'Renameuser' => [ '重新命名使用者' ],
+];

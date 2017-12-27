@@ -14,6 +14,7 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Língua",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "(Nenhum)",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "Mostrar números de linha",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-startingline": "Número de linha inicial",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Bloco de código",
 	"syntaxhighlight-error-pygments-invocation-failure": "Erro na invocação do Pygments",
 	"syntaxhighlight-error-unknown-language": "Língua \"$1\" desconhecida",

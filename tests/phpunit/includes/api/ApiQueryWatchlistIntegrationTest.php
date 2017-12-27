@@ -210,7 +210,7 @@ class ApiQueryWatchlistIntegrationTest extends ApiTestCase {
 
 		// not checking values of all keys of the actual item, so removing unwanted keys from comparison
 		$actualItemsOnlyComparedValues = array_map(
-			function( array $item ) use ( $keysUsedInValueComparison ) {
+			function ( array $item ) use ( $keysUsedInValueComparison ) {
 				return array_intersect_key( $item, array_flip( $keysUsedInValueComparison ) );
 			},
 			$actualItems
@@ -1074,6 +1074,8 @@ class ApiQueryWatchlistIntegrationTest extends ApiTestCase {
 			'rc_user' => 0,
 			'rc_user_text' => 'External User',
 			'rc_comment' => '',
+			'rc_comment_text' => '',
+			'rc_comment_data' => null,
 			'rc_this_oldid' => $title->getLatestRevID(),
 			'rc_last_oldid' => $title->getLatestRevID(),
 			'rc_bot' => 0,
@@ -1474,6 +1476,9 @@ class ApiQueryWatchlistIntegrationTest extends ApiTestCase {
 		$otherUser->saveSettings();
 
 		$this->watchPages( $otherUser, [ $target ] );
+
+		$reloadedUser = User::newFromName( $otherUser->getName() );
+		$this->assertEquals( '1234567890', $reloadedUser->getOption( 'watchlisttoken' ) );
 
 		$result = $this->doListWatchlistRequest( [
 			'wlowner' => $otherUser->getName(),

@@ -20,5 +20,6 @@
 	"fancycaptcha-sendemail": "للمساعدة في منع إنشاء حسابات بطريقة أوتوماتيكية، قم من فضلك بإدخال الكلمات التي تظهر أدناه في الصندوق ([[Special:Captcha/help|مزيد من المعلومات]]):",
 	"fancycaptcha-reload-text": "تحديث",
 	"apihelp-fancycaptchareload-description": "احصل على FancyCaptcha جديدة.",
+	"apihelp-fancycaptchareload-summary": "الحصول على FancyCaptcha جديدة.",
 	"apihelp-fancycaptchareload-example-1": "احصل على FancyCaptcha جديدة."
 }

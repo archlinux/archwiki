@@ -46,9 +46,11 @@ ve.dm.MWReferencesListNode.static.preserveHtmlAttributes = false;
 
 ve.dm.MWReferencesListNode.static.toDataElement = function ( domElements, converter ) {
 	var referencesListData, contentsDiv, contentsData,
+		isResponsiveDefault = mw.config.get( 'wgCiteResponsiveReferences' ),
 		mwDataJSON = domElements[ 0 ].getAttribute( 'data-mw' ),
 		mwData = mwDataJSON ? JSON.parse( mwDataJSON ) : {},
-		refGroup = mwData.attrs && mwData.attrs.group || '',
+		refGroup = ve.getProp( mwData, 'attrs', 'group' ) || '',
+		responsiveAttr = ve.getProp( mwData, 'attrs', 'responsive' ),
 		listGroup = 'mwReference/' + refGroup;
 
 	referencesListData = {
@@ -57,7 +59,8 @@ ve.dm.MWReferencesListNode.static.toDataElement = function ( domElements, conver
 			mw: mwData,
 			originalMw: mwDataJSON,
 			refGroup: refGroup,
-			listGroup: listGroup
+			listGroup: listGroup,
+			isResponsive: responsiveAttr !== undefined ? responsiveAttr !== '0' : isResponsiveDefault
 		}
 	};
 	if ( mwData.body && mwData.body.html ) {
@@ -74,10 +77,11 @@ ve.dm.MWReferencesListNode.static.toDataElement = function ( domElements, conver
 
 ve.dm.MWReferencesListNode.static.toDomElements = function ( data, doc, converter ) {
 	var el, els, mwData, originalMw, contentsHtml, originalHtml,
+		isResponsiveDefault = mw.config.get( 'wgCiteResponsiveReferences' ),
 		wrapper = doc.createElement( 'div' ),
 		originalHtmlWrapper = doc.createElement( 'div' ),
 		dataElement = data[ 0 ],
-		attribs = dataElement.attributes,
+		attrs = dataElement.attributes,
 		contentsData = data.slice( 1, -1 );
 
 	if ( dataElement.originalDomElementsIndex !== undefined ) {
@@ -87,14 +91,20 @@ ve.dm.MWReferencesListNode.static.toDomElements = function ( data, doc, converte
 		els = [ doc.createElement( 'div' ) ];
 	}
 
-	mwData = attribs.mw ? ve.copy( attribs.mw ) : {};
+	mwData = attrs.mw ? ve.copy( attrs.mw ) : {};
 
 	mwData.name = 'references';
 
-	if ( attribs.refGroup ) {
-		ve.setProp( mwData, 'attrs', 'group', attribs.refGroup );
+	if ( attrs.refGroup ) {
+		ve.setProp( mwData, 'attrs', 'group', attrs.refGroup );
 	} else if ( mwData.attrs ) {
 		delete mwData.attrs.refGroup;
+	}
+
+	if ( attrs.isResponsive !== isResponsiveDefault ) {
+		ve.setProp( mwData, 'attrs', 'responsive', attrs.isResponsive ? '' : '0' );
+	} else if ( mwData.attrs ) {
+		delete mwData.attrs.responsive;
 	}
 
 	el = els[ 0 ];
@@ -113,7 +123,7 @@ ve.dm.MWReferencesListNode.static.toDomElements = function ( data, doc, converte
 
 	// If mwData and originalMw are the same, use originalMw to prevent reserialization.
 	// Reserialization has the potential to reorder keys and so change the DOM unnecessarily
-	originalMw = attribs.originalMw;
+	originalMw = attrs.originalMw;
 	if ( originalMw && ve.compare( mwData, JSON.parse( originalMw ) ) ) {
 		el.setAttribute( 'data-mw', originalMw );
 	} else {
@@ -123,12 +133,22 @@ ve.dm.MWReferencesListNode.static.toDomElements = function ( data, doc, converte
 	return els;
 };
 
-ve.dm.MWReferencesListNode.static.describeChange = function ( key ) {
+ve.dm.MWReferencesListNode.static.describeChange = function ( key, change ) {
+	if ( key === 'refGroup' ) {
+		if ( change.from ) {
+			if ( change.to ) {
+				return ve.msg( 'cite-ve-changedesc-ref-group-both', change.from, change.to );
+			} else {
+				return ve.msg( 'cite-ve-changedesc-ref-group-from', change.from );
+			}
+		}
+		return ve.msg( 'cite-ve-changedesc-ref-group-to', change.to );
+	}
 	if ( key === 'originalMw' ) {
 		return null;
 	}
-	// Parent method
-	return ve.dm.MWReferencesListNode.super.static.describeChange.apply( this, arguments );
+
+	return null;
 };
 
 /* Registration */

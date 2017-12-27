@@ -19,7 +19,7 @@
 	"pfunc_expr_unexpected_operator": "Uttrykksfeil: Uventet $1-operator",
 	"pfunc_expr_missing_operand": "Uttrykksfeil: Mangler operand for $1",
 	"pfunc_expr_unexpected_closing_bracket": "Uttrykksfeil: Uventet lukkende parentes",
-	"pfunc_expr_unrecognised_punctuation": "Uttrykksfeil: Ugjenkjennelig tegn «$1»",
+	"pfunc_expr_unrecognised_punctuation": "Uttrykksfeil: Ugjenkjennelig skilletegn «$1»",
 	"pfunc_expr_unclosed_bracket": "Uttrykksfeil: Åpen parentes",
 	"pfunc_expr_division_by_zero": "Deling på null",
 	"pfunc_expr_invalid_argument": "Ugyldig argument for $1: < -1 eller > 1",

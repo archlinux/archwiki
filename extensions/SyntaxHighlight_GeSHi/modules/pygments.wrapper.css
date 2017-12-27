@@ -23,6 +23,11 @@ code code.mw-highlight {
 	padding: 0;
 }
 
+/* The nested pre already has a background. T126010 */
+div.mw-hightlight {
+	background-color: inherit;
+}
+
 /*
  * Don't show a red border around syntax errors. This behavior may be useful
  * in code editors, but it is not useful in a wiki environment, especially

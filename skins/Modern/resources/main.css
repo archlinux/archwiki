@@ -363,67 +363,6 @@ h6 {
 	overflow: hidden;
 }
 
-#preftoc {
-	width: 100%;
-	margin: 0 0 0 0;
-	padding: 0 0 0 0;
-	height: 1.5em;
-	clear: right;
-}
-
-#preftoc li {
-	margin: 0 0.5em 0 0.5em;
-	padding: 0 0.2em 0 0.2em;
-	display: block;
-	float: left;
-	height: 1.5em;
-	text-transform: lowercase;
-}
-
-#preferences {
-	margin: 0 0 0 0;
-	padding: 0 1em 1em 1em;
-	border: solid 1px #bbb;
-	clear: left; /* Multi-line toc should not push data to horizontally */
-}
-
-#preferences fieldset {
-	margin-top: 0;
-	border: 0;
-}
-
-.mainLegend {
-	display: none;
-}
-
-.htmlform-tip {
-	font-size: x-small;
-	padding: 0.2em 2em;
-	color: #666;
-}
-
-.prefsection legend {
-	font-weight: bold;
-}
-
-#preftoc li.selected {
-	background-color: #bbb;
-}
-
-#preftoc li a,
-#preftoc li a:hover,
-#preftoc li a:visited {
-	text-decoration: underline;
-	color: #036;
-}
-
-#preftoc li.selected a,
-#preftoc li.selected a:hover,
-#preftoc li.selected a:visited {
-	text-decoration: none;
-	color: #fff;
-}
-
 #mw_content a.external {
 	/* @embed */
 	background: url( images/external.png ) center right no-repeat;
@@ -697,11 +636,6 @@ table.toc td {
 	color: #36b;
 }
 
-.redirectText {
-	font-size: 150%;
-	margin: 5px;
-}
-
 .printfooter {
 	display: none;
 }
@@ -767,36 +701,6 @@ div.noarticletext {
 	background: #fff;
 	padding: 0.2em 1em;
 	color: #000;
-}
-
-div#searchTargetContainer {
-	left: 10px;
-	top: 10px;
-	width: 90%;
-	background: #fff;
-}
-
-div#searchTarget {
-	padding: 3px;
-	margin: 5px;
-	background: #f0f0f0;
-	border: solid 1px #00f;
-}
-
-div#searchTarget ul li {
-	list-style: none;
-}
-
-div#searchTarget ul li:before {
-	color: #ffa500;
-	content: '\00BB \0020';
-}
-
-div#searchTargetHide {
-	float: right;
-	border: solid 1px #000;
-	background: #dcdcdc;
-	padding: 2px;
 }
 
 div.multipageimagenavbox {

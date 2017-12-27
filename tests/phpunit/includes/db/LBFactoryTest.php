@@ -88,8 +88,8 @@ class LBFactoryTest extends MediaWikiTestCase {
 		$dbw = $lb->getConnection( DB_MASTER );
 		$this->assertTrue( $dbw->getLBInfo( 'master' ), 'master shows as master' );
 
-		$dbr = $lb->getConnection( DB_SLAVE );
-		$this->assertTrue( $dbr->getLBInfo( 'master' ), 'DB_SLAVE also gets the master' );
+		$dbr = $lb->getConnection( DB_REPLICA );
+		$this->assertTrue( $dbr->getLBInfo( 'master' ), 'DB_REPLICA also gets the master' );
 
 		$factory->shutdown();
 		$lb->closeAll();
@@ -134,7 +134,7 @@ class LBFactoryTest extends MediaWikiTestCase {
 			$dbw->getLBInfo( 'clusterMasterHost' ),
 			'cluster master set' );
 
-		$dbr = $lb->getConnection( DB_SLAVE );
+		$dbr = $lb->getConnection( DB_REPLICA );
 		$this->assertTrue( $dbr->getLBInfo( 'replica' ), 'slave shows as slave' );
 		$this->assertEquals(
 			( $wgDBserver != '' ) ? $wgDBserver : 'localhost',
@@ -175,7 +175,7 @@ class LBFactoryTest extends MediaWikiTestCase {
 		$dbw = $lb->getConnection( DB_MASTER );
 		$this->assertTrue( $dbw->getLBInfo( 'master' ), 'master shows as master' );
 
-		$dbr = $lb->getConnection( DB_SLAVE );
+		$dbr = $lb->getConnection( DB_REPLICA );
 		$this->assertTrue( $dbr->getLBInfo( 'replica' ), 'slave shows as slave' );
 
 		$factory->shutdown();
@@ -409,15 +409,26 @@ class LBFactoryTest extends MediaWikiTestCase {
 			"Correct full table name"
 		);
 
-		\MediaWiki\suppressWarnings();
-		$this->assertFalse( $db->selectDB( 'garbage-db' ) );
-		\MediaWiki\restoreWarnings();
-
 		$this->assertEquals(
 			$this->quoteTable( $db, 'garbage-db' ) . '.' . $this->quoteTable( $db, 'page' ),
 			$db->tableName( 'garbage-db.page' ),
 			"Correct full table name"
 		);
+
+		if ( $db->databasesAreIndependent() ) {
+			try {
+				$e = null;
+				$db->selectDB( 'garbage-db' );
+			} catch ( \Wikimedia\Rdbms\DBConnectionError $e ) {
+				// expected
+			}
+			$this->assertInstanceOf( '\Wikimedia\Rdbms\DBConnectionError', $e );
+			$this->assertFalse( $db->isOpen() );
+		} else {
+			\MediaWiki\suppressWarnings();
+			$this->assertFalse( $db->selectDB( 'garbage-db' ) );
+			\MediaWiki\restoreWarnings();
+		}
 
 		$factory->closeAll();
 		$factory->destroy();

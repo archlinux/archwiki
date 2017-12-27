@@ -13,6 +13,7 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "שפה",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "(אין)",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "להציג מספרי שורות",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-startingline": "מספר שורה ראשונה",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "גוש קוד",
 	"syntaxhighlight-error-pygments-invocation-failure": "הרצת Pygments לא עבדה",
 	"syntaxhighlight-error-unknown-language": "השפה \"$1\" אינה ידועה",

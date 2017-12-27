@@ -278,19 +278,27 @@ class SpecialNewpages extends IncludableSpecialPage {
 			}
 		);
 		$htmlForm->setMethod( 'get' );
-
-		$out->addHTML( Xml::fieldset( $this->msg( 'newpages' )->text() ) );
-
+		$htmlForm->setWrapperLegend( true );
+		$htmlForm->setWrapperLegendMsg( 'newpages' );
+		$htmlForm->addFooterText( Html::rawElement(
+			'div',
+			null,
+			$this->filterLinks()
+		) );
 		$htmlForm->show();
+	}
 
-		$out->addHTML(
-			Html::rawElement(
-				'div',
-				null,
-				$this->filterLinks()
-			) .
-			Xml::closeElement( 'fieldset' )
-		);
+	/**
+	 * @param stdClass $result Result row from recent changes
+	 * @return Revision|bool
+	 */
+	protected function revisionFromRcResult( stdClass $result ) {
+		return new Revision( [
+			'comment' => CommentStore::newKey( 'rc_comment' )->getComment( $result )->text,
+			'deleted' => $result->rc_deleted,
+			'user_text' => $result->rc_user_text,
+			'user' => $result->rc_user,
+		] );
 	}
 
 	/**
@@ -303,17 +311,13 @@ class SpecialNewpages extends IncludableSpecialPage {
 	public function formatRow( $result ) {
 		$title = Title::newFromRow( $result );
 
-		# Revision deletion works on revisions, so we should cast one
-		$row = [
-			'comment' => $result->rc_comment,
-			'deleted' => $result->rc_deleted,
-			'user_text' => $result->rc_user_text,
-			'user' => $result->rc_user,
-		];
-		$rev = new Revision( $row );
+		// Revision deletion works on revisions,
+		// so cast our recent change row to a revision row.
+		$rev = $this->revisionFromRcResult( $result );
 		$rev->setTitle( $title );
 
 		$classes = [];
+		$attribs = [ 'data-mw-revid' => $result->rev_id ];
 
 		$lang = $this->getLanguage();
 		$dm = $lang->getDirMark();
@@ -378,8 +382,6 @@ class SpecialNewpages extends IncludableSpecialPage {
 			$tagDisplay = '';
 		}
 
-		$css = count( $classes ) ? ' class="' . implode( ' ', $classes ) . '"' : '';
-
 		# Display the old title if the namespace/title has been changed
 		$oldTitleText = '';
 		$oldTitle = Title::makeTitle( $result->rc_namespace, $result->rc_title );
@@ -393,8 +395,18 @@ class SpecialNewpages extends IncludableSpecialPage {
 			);
 		}
 
-		return "<li{$css}>{$time} {$dm}{$plink} {$hist} {$dm}{$length} "
-			. "{$dm}{$ulink} {$comment} {$tagDisplay} {$oldTitleText}</li>\n";
+		$ret = "{$time} {$dm}{$plink} {$hist} {$dm}{$length} {$dm}{$ulink} {$comment} "
+			. "{$tagDisplay} {$oldTitleText}";
+
+		// Let extensions add data
+		Hooks::run( 'NewPagesLineEnding', [ $this, &$ret, $result, &$classes, &$attribs ] );
+		$attribs = wfArrayFilterByKey( $attribs, [ Sanitizer::class, 'isReservedDataAttribute' ] );
+
+		if ( count( $classes ) ) {
+			$attribs['class'] = implode( ' ', $classes );
+		}
+
+		return Html::rawElement( 'li', $attribs, $ret ) . "\n";
 	}
 
 	/**
@@ -478,16 +490,21 @@ class SpecialNewpages extends IncludableSpecialPage {
 
 	protected function feedItemDesc( $row ) {
 		$revision = Revision::newFromId( $row->rev_id );
-		if ( $revision ) {
-			// XXX: include content model/type in feed item?
-			return '<p>' . htmlspecialchars( $revision->getUserText() ) .
-				$this->msg( 'colon-separator' )->inContentLanguage()->escaped() .
-				htmlspecialchars( FeedItem::stripComment( $revision->getComment() ) ) .
-				"</p>\n<hr />\n<div>" .
-				nl2br( htmlspecialchars( $revision->getContent()->serialize() ) ) . "</div>";
+		if ( !$revision ) {
+			return '';
 		}
 
-		return '';
+		$content = $revision->getContent();
+		if ( $content === null ) {
+			return '';
+		}
+
+		// XXX: include content model/type in feed item?
+		return '<p>' . htmlspecialchars( $revision->getUserText() ) .
+			$this->msg( 'colon-separator' )->inContentLanguage()->escaped() .
+			htmlspecialchars( FeedItem::stripComment( $revision->getComment() ) ) .
+			"</p>\n<hr />\n<div>" .
+			nl2br( htmlspecialchars( $content->serialize() ) ) . "</div>";
 	}
 
 	protected function getGroupName() {

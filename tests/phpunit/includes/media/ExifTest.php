@@ -40,7 +40,7 @@ class ExifTest extends MediaWikiTestCase {
 		$data = $exif->getFilteredData();
 
 		$expected = [
-			'UserComment' => 'test⁔comment'
+			'UserComment' => 'test⁔comment',
 		];
 		$this->assertEquals( $expected, $data );
 	}

@@ -10,7 +10,7 @@
  */
 Demo.NumberLookupTextInputWidget = function DemoNumberLookupTextInputWidget( config ) {
 	// Parent constructor
-	OO.ui.TextInputWidget.call( this, { validate: 'integer' } );
+	OO.ui.TextInputWidget.call( this, $.extend( { validate: 'integer' }, config ) );
 	// Mixin constructors
 	OO.ui.mixin.LookupElement.call( this, config );
 };

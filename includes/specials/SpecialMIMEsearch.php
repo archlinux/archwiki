@@ -74,6 +74,7 @@ class MIMEsearchPage extends QueryPage {
 				'img_major_mime' => $this->major,
 				// This is in order to trigger using
 				// the img_media_mime index in "range" mode.
+				// @todo how is order defined? use MimeAnalyzer::getMediaTypes?
 				'img_media_type' => [
 					MEDIATYPE_BITMAP,
 					MEDIATYPE_DRAWING,
@@ -85,6 +86,7 @@ class MIMEsearchPage extends QueryPage {
 					MEDIATYPE_TEXT,
 					MEDIATYPE_EXECUTABLE,
 					MEDIATYPE_ARCHIVE,
+					MEDIATYPE_3D,
 				],
 			] + $minorType,
 		];

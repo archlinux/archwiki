@@ -75,7 +75,6 @@ class DerivativeContext extends ContextSource implements MutableContext {
 	private $timing;
 
 	/**
-	 * Constructor
 	 * @param IContextSource $context Context to inherit from
 	 */
 	public function __construct( IContextSource $context ) {
@@ -109,7 +108,7 @@ class DerivativeContext extends ContextSource implements MutableContext {
 	 *
 	 * @deprecated since 1.27 use a StatsdDataFactory from MediaWikiServices (preferably injected)
 	 *
-	 * @return StatsdDataFactory
+	 * @return IBufferingStatsdDataFactory
 	 */
 	public function getStats() {
 		return MediaWikiServices::getInstance()->getStatsdDataFactory();
@@ -324,10 +323,12 @@ class DerivativeContext extends ContextSource implements MutableContext {
 	 * it would set only the original context, and not take
 	 * into account any changes.
 	 *
+	 * @param string|string[]|MessageSpecifier $key Message key, or array of keys,
+	 *   or a MessageSpecifier.
 	 * @param mixed $args,... Arguments to wfMessage
 	 * @return Message
 	 */
-	public function msg() {
+	public function msg( $key ) {
 		$args = func_get_args();
 
 		return call_user_func_array( 'wfMessage', $args )->setContext( $this );

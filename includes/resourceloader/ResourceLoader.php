@@ -80,6 +80,15 @@ class ResourceLoader implements LoggerAwareInterface {
 	protected $errors = [];
 
 	/**
+	 * List of extra HTTP response headers provided by loaded modules.
+	 *
+	 * Populated by makeModuleResponse().
+	 *
+	 * @var array
+	 */
+	protected $extraHeaders = [];
+
+	/**
 	 * @var MessageBlobStore
 	 */
 	protected $blobStore;
@@ -178,7 +187,7 @@ class ResourceLoader implements LoggerAwareInterface {
 	 * @return string Filtered data, or a comment containing an error message
 	 */
 	public static function filter( $filter, $data, array $options = [] ) {
-		if ( strpos( $data, ResourceLoader::FILTER_NOMIN ) !== false ) {
+		if ( strpos( $data, self::FILTER_NOMIN ) !== false ) {
 			return $data;
 		}
 
@@ -253,7 +262,6 @@ class ResourceLoader implements LoggerAwareInterface {
 
 		// Register core modules
 		$this->register( include "$IP/resources/Resources.php" );
-		$this->register( include "$IP/resources/ResourcesOOUI.php" );
 		// Register extension modules
 		$this->register( $config->get( 'ResourceModules' ) );
 
@@ -541,6 +549,10 @@ class ResourceLoader implements LoggerAwareInterface {
 			if ( isset( $info['object'] ) ) {
 				// Object given in info array
 				$object = $info['object'];
+			} elseif ( isset( $info['factory'] ) ) {
+				$object = call_user_func( $info['factory'], $info );
+				$object->setConfig( $this->getConfig() );
+				$object->setLogger( $this->logger );
 			} else {
 				if ( !isset( $info['class'] ) ) {
 					$class = 'ResourceLoaderFileModule';
@@ -560,7 +572,8 @@ class ResourceLoader implements LoggerAwareInterface {
 	}
 
 	/**
-	 * Return whether the definition of a module corresponds to a simple ResourceLoaderFileModule.
+	 * Return whether the definition of a module corresponds to a simple ResourceLoaderFileModule
+	 * or one of its subclasses.
 	 *
 	 * @param string $name Module name
 	 * @return bool
@@ -570,7 +583,14 @@ class ResourceLoader implements LoggerAwareInterface {
 			return false;
 		}
 		$info = $this->moduleInfos[$name];
-		if ( isset( $info['object'] ) || isset( $info['class'] ) ) {
+		if ( isset( $info['object'] ) ) {
+			return false;
+		}
+		if (
+			isset( $info['class'] ) &&
+			$info['class'] !== 'ResourceLoaderFileModule' &&
+			!is_subclass_of( $info['class'], 'ResourceLoaderFileModule' )
+		) {
 			return false;
 		}
 		return true;
@@ -635,7 +655,7 @@ class ResourceLoader implements LoggerAwareInterface {
 	 *
 	 * @since 1.26
 	 * @param ResourceLoaderContext $context
-	 * @param string[] $modules List of known module names
+	 * @param string[] $moduleNames List of known module names
 	 * @return string Hash
 	 */
 	public function getCombinedVersion( ResourceLoaderContext $context, array $moduleNames ) {
@@ -783,7 +803,7 @@ class ResourceLoader implements LoggerAwareInterface {
 			}
 		}
 
-		$this->sendResponseHeaders( $context, $etag, (bool)$this->errors );
+		$this->sendResponseHeaders( $context, $etag, (bool)$this->errors, $this->extraHeaders );
 
 		// Remove the output buffer and output the response
 		ob_end_clean();
@@ -816,9 +836,12 @@ class ResourceLoader implements LoggerAwareInterface {
 	 * @param ResourceLoaderContext $context
 	 * @param string $etag ETag header value
 	 * @param bool $errors Whether there are errors in the response
+	 * @param string[] $extra Array of extra HTTP response headers
 	 * @return void
 	 */
-	protected function sendResponseHeaders( ResourceLoaderContext $context, $etag, $errors ) {
+	protected function sendResponseHeaders(
+		ResourceLoaderContext $context, $etag, $errors, array $extra = []
+	) {
 		\MediaWiki\HeaderCallback::warnIfHeadersSent();
 		$rlMaxage = $this->config->get( 'ResourceLoaderMaxage' );
 		// Use a short cache expiry so that updates propagate to clients quickly, if:
@@ -861,6 +884,9 @@ class ResourceLoader implements LoggerAwareInterface {
 			header( "Cache-Control: public, max-age=$maxage, s-maxage=$smaxage" );
 			$exp = min( $maxage, $smaxage );
 			header( 'Expires: ' . wfTimestamp( TS_RFC2822, $exp + time() ) );
+		}
+		foreach ( $extra as $header ) {
+			header( $header );
 		}
 	}
 
@@ -997,6 +1023,9 @@ class ResourceLoader implements LoggerAwareInterface {
 	/**
 	 * Generate code for a response.
 	 *
+	 * Calling this method also populates the `errors` and `headers` members,
+	 * later used by respond().
+	 *
 	 * @param ResourceLoaderContext $context Context in which to generate a response
 	 * @param ResourceLoaderModule[] $modules List of module objects keyed by module name
 	 * @param string[] $missing List of requested module names that are unregistered (optional)
@@ -1041,6 +1070,10 @@ MESSAGE;
 				$implementKey = $name . '@' . $module->getVersionHash( $context );
 				$strContent = '';
 
+				if ( isset( $content['headers'] ) ) {
+					$this->extraHeaders = array_merge( $this->extraHeaders, $content['headers'] );
+				}
+
 				// Append output
 				switch ( $context->getOnly() ) {
 					case 'scripts':
@@ -1068,7 +1101,7 @@ MESSAGE;
 								// mw.loader.implement will use globalEval if scripts is a string.
 								// Minify manually here, because general response minification is
 								// not effective due it being a string literal, not a function.
-								if ( !ResourceLoader::inDebugMode() ) {
+								if ( !self::inDebugMode() ) {
 									$scripts = self::filter( 'minify-js', $scripts ); // T107377
 								}
 							} else {
@@ -1089,7 +1122,12 @@ MESSAGE;
 					$strContent = self::filter( $filter, $strContent );
 				}
 
-				$out .= $strContent;
+				if ( $context->getOnly() === 'scripts' ) {
+					// Use a linebreak between module scripts (T162719)
+					$out .= $this->ensureNewline( $strContent );
+				} else {
+					$out .= $strContent;
+				}
 
 			} catch ( Exception $e ) {
 				$this->outputErrorAndLog( $e, 'Generating module package failed: {exception}' );
@@ -1117,16 +1155,30 @@ MESSAGE;
 				if ( !$context->getDebug() ) {
 					$stateScript = self::filter( 'minify-js', $stateScript );
 				}
-				$out .= $stateScript;
+				// Use a linebreak between module script and state script (T162719)
+				$out = $this->ensureNewline( $out ) . $stateScript;
 			}
 		} else {
 			if ( count( $states ) ) {
 				$this->errors[] = 'Problematic modules: ' .
-					FormatJson::encode( $states, ResourceLoader::inDebugMode() );
+					FormatJson::encode( $states, self::inDebugMode() );
 			}
 		}
 
 		return $out;
+	}
+
+	/**
+	 * Ensure the string is either empty or ends in a line break
+	 * @param string $str
+	 * @return string
+	 */
+	private function ensureNewline( $str ) {
+		$end = substr( $str, -1 );
+		if ( $end === false || $end === "\n" ) {
+			return $str;
+		}
+		return $str . "\n";
 	}
 
 	/**
@@ -1162,7 +1214,7 @@ MESSAGE;
 	 * @param array $templates Keys are name of templates and values are the source of
 	 *   the template.
 	 * @throws MWException
-	 * @return string
+	 * @return string JavaScript code
 	 */
 	protected static function makeLoaderImplementScript(
 		$name, $scripts, $styles, $messages, $templates
@@ -1184,7 +1236,7 @@ MESSAGE;
 		];
 		self::trimArray( $module );
 
-		return Xml::encodeJsCall( 'mw.loader.implement', $module, ResourceLoader::inDebugMode() );
+		return Xml::encodeJsCall( 'mw.loader.implement', $module, self::inDebugMode() );
 	}
 
 	/**
@@ -1192,13 +1244,13 @@ MESSAGE;
 	 *
 	 * @param mixed $messages Either an associative array mapping message key to value, or a
 	 *   JSON-encoded message blob containing the same data, wrapped in an XmlJsCode object.
-	 * @return string
+	 * @return string JavaScript code
 	 */
 	public static function makeMessageSetScript( $messages ) {
 		return Xml::encodeJsCall(
 			'mw.messages.set',
 			[ (object)$messages ],
-			ResourceLoader::inDebugMode()
+			self::inDebugMode()
 		);
 	}
 
@@ -1248,20 +1300,20 @@ MESSAGE;
 	 *
 	 * @param string $name
 	 * @param string $state
-	 * @return string
+	 * @return string JavaScript code
 	 */
 	public static function makeLoaderStateScript( $name, $state = null ) {
 		if ( is_array( $name ) ) {
 			return Xml::encodeJsCall(
 				'mw.loader.state',
 				[ $name ],
-				ResourceLoader::inDebugMode()
+				self::inDebugMode()
 			);
 		} else {
 			return Xml::encodeJsCall(
 				'mw.loader.state',
 				[ $name, $state ],
-				ResourceLoader::inDebugMode()
+				self::inDebugMode()
 			);
 		}
 	}
@@ -1278,7 +1330,7 @@ MESSAGE;
 	 * @param string $group Group which the module is in.
 	 * @param string $source Source of the module, or 'local' if not foreign.
 	 * @param string $script JavaScript code
-	 * @return string
+	 * @return string JavaScript code
 	 */
 	public static function makeCustomLoaderScript( $name, $version, $dependencies,
 		$group, $source, $script
@@ -1287,7 +1339,7 @@ MESSAGE;
 		return Xml::encodeJsCall(
 			"( function ( name, version, dependencies, group, source ) {\n\t$script\n} )",
 			[ $name, $version, $dependencies, $group, $source ],
-			ResourceLoader::inDebugMode()
+			self::inDebugMode()
 		);
 	}
 
@@ -1350,7 +1402,7 @@ MESSAGE;
 	 * @param string $group Group which the module is in
 	 * @param string $source Source of the module, or 'local' if not foreign
 	 * @param string $skip Script body of the skip function
-	 * @return string
+	 * @return string JavaScript code
 	 */
 	public static function makeLoaderRegisterScript( $name, $version = null,
 		$dependencies = null, $group = null, $source = null, $skip = null
@@ -1379,7 +1431,7 @@ MESSAGE;
 			return Xml::encodeJsCall(
 				'mw.loader.register',
 				[ $name ],
-				ResourceLoader::inDebugMode()
+				self::inDebugMode()
 			);
 		} else {
 			$registration = [ $name, $version, $dependencies, $group, $source, $skip ];
@@ -1387,7 +1439,7 @@ MESSAGE;
 			return Xml::encodeJsCall(
 				'mw.loader.register',
 				$registration,
-				ResourceLoader::inDebugMode()
+				self::inDebugMode()
 			);
 		}
 	}
@@ -1404,20 +1456,20 @@ MESSAGE;
 	 *
 	 * @param string $id Source ID
 	 * @param string $loadUrl load.php url
-	 * @return string
+	 * @return string JavaScript code
 	 */
 	public static function makeLoaderSourcesScript( $id, $loadUrl = null ) {
 		if ( is_array( $id ) ) {
 			return Xml::encodeJsCall(
 				'mw.loader.addSource',
 				[ $id ],
-				ResourceLoader::inDebugMode()
+				self::inDebugMode()
 			);
 		} else {
 			return Xml::encodeJsCall(
 				'mw.loader.addSource',
 				[ $id, $loadUrl ],
-				ResourceLoader::inDebugMode()
+				self::inDebugMode()
 			);
 		}
 	}
@@ -1428,7 +1480,7 @@ MESSAGE;
 	 *
 	 * @deprecated since 1.25; use makeInlineScript instead
 	 * @param string $script JavaScript code
-	 * @return string
+	 * @return string JavaScript code
 	 */
 	public static function makeLoaderConditionalScript( $script ) {
 		return '(window.RLQ=window.RLQ||[]).push(function(){' .
@@ -1458,13 +1510,13 @@ MESSAGE;
 	 * the given value.
 	 *
 	 * @param array $configuration List of configuration values keyed by variable name
-	 * @return string
+	 * @return string JavaScript code
 	 */
 	public static function makeConfigSetScript( array $configuration ) {
 		return Xml::encodeJsCall(
 			'mw.config.set',
 			[ $configuration ],
-			ResourceLoader::inDebugMode()
+			self::inDebugMode()
 		);
 	}
 

@@ -1,0 +1,104 @@
+<?php
+
+namespace Wikimedia\Purtle;
+
+/**
+ * @license GPL-2.0+
+ * @author Daniel Kinzler
+ */
+class NTriplesRdfWriter extends N3RdfWriterBase {
+
+	public function __construct(
+		$role = parent::DOCUMENT_ROLE,
+		BNodeLabeler $labeler = null,
+		N3Quoter $quoter = null
+	) {
+		parent::__construct( $role, $labeler, $quoter );
+
+		//NOTE: The RDF 1.1 spec of N-Triples allows full UTF-8, so escaping would not be required.
+		//      However, as of 2015, many consumers of N-Triples still expect non-ASCII characters
+		//      to be escaped.
+		//NOTE: if this is changed, getMimeType must be changed accordingly.
+		$this->quoter->setEscapeUnicode( true );
+
+		$this->transitionTable[self::STATE_OBJECT] = [
+				self::STATE_DOCUMENT => " .\n",
+				self::STATE_SUBJECT => " .\n",
+				self::STATE_PREDICATE => " .\n",
+				self::STATE_OBJECT => " .\n",
+		];
+	}
+
+	protected function expandSubject( &$base, &$local ) {
+		$this->expandQName( $base, $local );
+	}
+
+	protected function writeSubject( $base, $local = null ) {
+		// noop
+	}
+
+	protected function expandPredicate( &$base, &$local ) {
+		$this->expandShorthand( $base, $local ); // e.g. ( 'a', null ) => ( 'rdf', 'type' )
+		$this->expandQName( $base, $local ); // e.g. ( 'acme', 'foo' ) => ( 'http://amce.test/foo', null )
+	}
+
+	protected function writePredicate( $base, $local = null ) {
+		// noop
+	}
+
+	private function writeSubjectAndObject() {
+		$this->writeRef( $this->currentSubject[0], $this->currentSubject[1] );
+		$this->write( ' ' );
+		$this->writeRef( $this->currentPredicate[0], $this->currentPredicate[1] );
+	}
+
+	protected function expandResource( &$base, &$local ) {
+		$this->expandQName( $base, $local );
+	}
+
+	protected function expandType( &$base, &$local ) {
+		$this->expandQName( $base, $local );
+	}
+
+	protected function writeResource( $base, $local = null ) {
+		$this->writeSubjectAndObject();
+		$this->write( ' ' );
+		$this->writeRef( $base, $local );
+	}
+
+	protected function writeText( $text, $language = null ) {
+		$this->writeSubjectAndObject();
+		$this->write( ' ' );
+
+		parent::writeText( $text, $language );
+	}
+
+	protected function writeValue( $value, $typeBase = null, $typeLocal = null ) {
+		$this->writeSubjectAndObject();
+		$this->write( ' ' );
+
+		parent::writeValue( $value, $typeBase, $typeLocal );
+	}
+
+	/**
+	 * @param string $role
+	 * @param BNodeLabeler $labeler
+	 *
+	 * @return RdfWriterBase
+	 */
+	protected function newSubWriter( $role, BNodeLabeler $labeler ) {
+		$writer = new self( $role, $labeler, $this->quoter );
+
+		return $writer;
+	}
+
+	/**
+	 * @return string a MIME type
+	 */
+	public function getMimeType() {
+		//NOTE: Add charset=UTF-8 if and when the constructor configures $this->quoter
+		//      to write utf-8.
+		return 'application/n-triples';
+	}
+
+}

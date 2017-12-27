@@ -5,7 +5,8 @@
 			"Millosh",
 			"Rancher",
 			"Жељко Тодоровић",
-			"Сербијана"
+			"Сербијана",
+			"Obsuser"
 		]
 	},
 	"nuke": "Масовно брисање",
@@ -28,7 +29,7 @@
 	"nuke-not-deleted": "'''Не могу''' да обришем страницу [[:$1]].",
 	"nuke-delete-more": "[[Special:Nuke|Обриши још страница]]",
 	"nuke-pattern": "Образац за назив странице:",
-	"nuke-nopages-global": "Нема нових страница у [[Special:RecentChanges|скорашњим изменама]].",
+	"nuke-nopages-global": "Нема наслова страница који се поклапају са Вашом претрагом.",
 	"nuke-viewchanges": "прикажи измене",
 	"nuke-namespace": "Именски простор:",
 	"nuke-linkoncontribs": "масовно брисање",

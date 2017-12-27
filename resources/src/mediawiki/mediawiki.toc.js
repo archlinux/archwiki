@@ -6,9 +6,7 @@
 		$content.find( '.toc' ).addBack( '.toc' ).each( function () {
 			var hideToc,
 				$this = $( this ),
-				// .toctitle is new so may not exist in HTML caches for a few weeks,
-				// so keep checking for #toctitle for now
-				$tocTitle = $this.find( '.toctitle, #toctitle' ),
+				$tocTitle = $this.find( '.toctitle' ),
 				$tocToggleLink = $this.find( '.togglelink' ),
 				$tocList = $this.find( 'ul' ).eq( 0 );
 
@@ -47,8 +45,8 @@
 					$tocToggleLink
 						.wrap( '<span class="toctoggle"></span>' )
 						.parent()
-							.prepend( '&nbsp;[' )
-							.append( ']&nbsp;' )
+						.prepend( '&nbsp;[' )
+						.append( ']&nbsp;' )
 				);
 
 				if ( hideToc ) {

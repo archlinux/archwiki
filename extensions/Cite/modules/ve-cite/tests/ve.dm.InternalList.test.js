@@ -9,7 +9,7 @@ QUnit.module( 've.dm.InternalList (Cite)', ve.test.utils.mwEnvironment );
 
 /* Tests */
 
-QUnit.test( 'addNode/removeNode', 6, function ( assert ) {
+QUnit.test( 'addNode/removeNode', function ( assert ) {
 	var doc = ve.dm.citeExample.createExampleDocument( 'references' ),
 		newInternalList = new ve.dm.InternalList( doc ),
 		referenceNodes = [
@@ -184,7 +184,7 @@ QUnit.test( 'addNode/removeNode', 6, function ( assert ) {
 	);
 } );
 
-QUnit.test( 'getItemInsertion', 4, function ( assert ) {
+QUnit.test( 'getItemInsertion', function ( assert ) {
 	var insertion, index,
 		doc = ve.dm.citeExample.createExampleDocument( 'references' ),
 		internalList = doc.getInternalList();
@@ -215,7 +215,7 @@ QUnit.test( 'getItemInsertion', 4, function ( assert ) {
 	assert.strictEqual( insertion.transaction, null, 'Insertion with duplicate key has null transaction' );
 } );
 
-QUnit.test( 'getUniqueListKey', 7, function ( assert ) {
+QUnit.test( 'getUniqueListKey', function ( assert ) {
 	var generatedName,
 		doc = ve.dm.citeExample.createExampleDocument( 'references' ),
 		internalList = doc.getInternalList();

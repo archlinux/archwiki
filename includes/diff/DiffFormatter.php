@@ -60,7 +60,6 @@ abstract class DiffFormatter {
 	 * @return string The formatted output.
 	 */
 	public function format( $diff ) {
-
 		$xi = $yi = 1;
 		$block = false;
 		$context = [];
@@ -126,7 +125,7 @@ abstract class DiffFormatter {
 	 * @param int $xlen
 	 * @param int $ybeg
 	 * @param int $ylen
-	 * @param array $edits
+	 * @param array &$edits
 	 *
 	 * @throws MWException If the edit type is not known.
 	 */

@@ -14,6 +14,7 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "ভাষা",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "(কিছু না)",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "সারির নম্বর প্রদর্শন",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-startingline": "শুরুর লাইনের নম্বর",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "কোড ব্লক",
 	"syntaxhighlight-error-pygments-invocation-failure": "Pygments আবাহন করতে ব্যর্থ হয়েছে",
 	"syntaxhighlight-error-unknown-language": "অজানা ভাষা \"$1\"",

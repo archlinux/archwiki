@@ -7,13 +7,14 @@
 			"Pi",
 			"Xabier Armendaritz",
 			"Subi",
-			"Sator"
+			"Sator",
+			"Osoitz"
 		]
 	},
 	"captcha-edit": "Orri hau editatzeko, ebatz ezazu beheko batuketa erraz hau, eta idatz ezazu erantzuna kutxan ([[Special:Captcha/help|argibide gehiago]]):",
 	"captcha-desc": "CAPTCHA teknika erabiltzen ditu, spametik eta pasahitz-asmatzeetatik babesteko",
 	"captcha-label": "CAPTCHA",
-	"captcha-addurl": "Zure aldaketan URL lotura berriak daude; spam-a saihesteko, jarraian dagoen irudiko hitzak idaztea beharrezkoa da:<br /> ([[Special:Captcha/help|Zer da hau?]])",
+	"captcha-addurl": "Zure aldaketan kanpo loturak daude. Wikia spam automatikotik babesteko, honako eginkizun hau ebatzi behar duzu zure edizioa gorde dadin ([[Special:Captcha/help|info gehiago]]):",
 	"captcha-createaccount": "Wikian kontuen sorkuntza automatikoa saihesteko, mesedez, azpiko taulan agertzen den batura erraz hori egin eta sartu erantzuna taulatxoan ([[Special:Captcha/help|Zer da hau?]]):",
 	"captcha-createaccount-fail": "CAPTCHA kodea falta da, edo desegokia da.",
 	"captcha-create": "Orri hau sortzeko, ebatz ezazu beheko batuketa erraz hau, eta idatz ezazu erantzuna kutxan ([[Special:Captcha/help|argibide gehiago]]):",

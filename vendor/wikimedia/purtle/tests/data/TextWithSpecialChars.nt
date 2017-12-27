@@ -1,0 +1,3 @@
+<http://www.example.org/terms/Duck> <http://www.example.org/terms/says> "Duck says: \"Quack!\"" .
+<http://www.example.org/terms/Cow> <http://www.example.org/terms/says> "Cow says:\n\r 'Moo! \\Moo!'" .
+<http://www.example.org/terms/Bear> <http://www.example.org/terms/says> "Bear says: \u041F\u0440\u0435\u0432\u0435\u0434!" .

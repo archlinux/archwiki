@@ -1,9 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Kirsan"
+			"Kirsan",
+			"Kaszeba"
 		]
 	},
-	"citethispage-link": "Cytuj tã starnã",
-	"tooltip-citethispage": "Jinfòrmacjô ò tim, jak nót je cytowac tã starnã"
+	"citethispage-link": "Cytujë tã starnã",
+	"tooltip-citethispage": "Wëdowiédzô ò tim, jak nót je cytowac tã starnã"
 }

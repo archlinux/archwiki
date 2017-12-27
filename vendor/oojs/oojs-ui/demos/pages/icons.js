@@ -6,15 +6,14 @@ Demo.static.pages.icons = function ( demo ) {
 				'arrowNext',
 				'downTriangle',
 				'upTriangle',
+				'first',
 				'previous',
 				'next',
+				'last',
 				'expand',
 				'collapse',
-				'caretLast',
-				'caretNext',
-				'caretDown',
-				'caretUp',
-				'move'
+				'move',
+				'draggable'
 			],
 			content: [
 				'article',
@@ -40,11 +39,8 @@ Demo.static.pages.icons = function ( demo ) {
 				'bell',
 				'bellOn',
 				'comment',
-				'eye',
-				'eyeClosed',
 				'message',
 				'notice',
-				'signature',
 				'speechBubble',
 				'speechBubbleAdd',
 				'speechBubbles',
@@ -53,7 +49,6 @@ Demo.static.pages.icons = function ( demo ) {
 			interactions: [
 				'add',
 				'advanced',
-				'bookmark',
 				'browser',
 				'cancel',
 				'check',
@@ -79,6 +74,8 @@ Demo.static.pages.icons = function ( demo ) {
 			moderation: [
 				'block',
 				'unBlock',
+				'clip',
+				'unClip',
 				'flag',
 				'unFlag',
 				'lock',
@@ -88,6 +85,7 @@ Demo.static.pages.icons = function ( demo ) {
 				'unStar',
 				'trash',
 				'unTrash',
+				'pushPin',
 				'ongoingConversation'
 			],
 			'editing-core': [
@@ -140,6 +138,7 @@ Demo.static.pages.icons = function ( demo ) {
 				'searchCaseSensitive',
 				'searchDiacritics',
 				'searchRegularExpression',
+				'signature',
 				'specialCharacter',
 				'table',
 				'tableAddColumnAfter',
@@ -175,7 +174,6 @@ Demo.static.pages.icons = function ( demo ) {
 			layout: [
 				'menu',
 				'stripeFlow',
-				'stripeSideMenu',
 				'stripeSummary',
 				'stripeToC',
 				'viewCompact',
@@ -185,6 +183,8 @@ Demo.static.pages.icons = function ( demo ) {
 				'bright',
 				'halfBright',
 				'notBright',
+				'eye',
+				'eyeClosed',
 				'moon',
 				'largerText',
 				'smallerText',
@@ -294,6 +294,7 @@ Demo.static.pages.icons = function ( demo ) {
 			framed: true
 		} ).$element
 			.addClass( 'demo-container demo-icons' )
+			.attr( 'role', 'main' )
 			.append(
 				selector.$element,
 				indicatorsFieldset.$element,

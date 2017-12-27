@@ -34,9 +34,9 @@
 	"nuke-not-deleted": "[[:$1]] 문서를 삭제하지 '''못했습니다'''.",
 	"nuke-delete-more": "[[Special:Nuke|더 많은 문서를 삭제하기]]",
 	"nuke-pattern": "문서 이름의 패턴:",
-	"nuke-nopages-global": "[[Special:RecentChanges|최근 바뀜]]에 새 문서가 없습니다.",
+	"nuke-nopages-global": "검색과 일치하는 문서 제목이 없습니다.",
 	"nuke-viewchanges": "차이 보기",
 	"nuke-namespace": "이름공간 제한:",
 	"nuke-linkoncontribs": "문서 대량 삭제",
-	"nuke-linkoncontribs-text": "이 사용자가 유일한 기여자인 문서를 대량 삭제"
+	"nuke-linkoncontribs-text": "{{GENDER:$1|이 사용자}}가 유일한 기여자인 문서를 대량 삭제"
 }

@@ -44,7 +44,8 @@
 		],
 		"ResourceLoaderGetConfigVars": [
 			"CiteHooks::onResourceLoaderGetConfigVars"
-		]
+		],
+		"APIQuerySiteInfoGeneralInfo": "CiteHooks::onAPIQuerySiteInfoGeneralInfo"
 	},
 	"ResourceModules": {
 		"ext.cite.styles": {
@@ -53,6 +54,9 @@
 				"ext.cite.print.css": {
 					"media": "print"
 				}
+			},
+			"skinStyles": {
+				"minerva": "ext.cite.styles.minerva.less"
 			},
 			"position": "bottom",
 			"targets": [
@@ -103,11 +107,11 @@
 		"CiteDataModule": "includes/CiteDataModule.php",
 		"CiteCSSFileModule": "includes/CiteCSSFileModule.php"
 	},
-	"ParserTestFiles": [
-		"tests/parser/citeParserTests.txt"
-	],
 	"TrackingCategories": [
 		"cite-tracking-category-cite-error"
 	],
+	"CodeMirrorTagModes": {
+		"ref": "text/mediawiki"
+	},
 	"manifest_version": 1
 }

@@ -5,131 +5,130 @@
  * @file
  * @ingroup Extensions
  */
-// @codingStandardsIgnoreFile
 
-$specialPageAliases = array();
+$specialPageAliases = [];
 
 /** English (English) */
-$specialPageAliases['en'] = array(
-	'Captcha' => array( 'Captcha' ),
-);
+$specialPageAliases['en'] = [
+	'Captcha' => [ 'Captcha' ],
+];
 
 /** Arabic (العربية) */
-$specialPageAliases['ar'] = array(
-	'Captcha' => array( 'كابتشا' ),
-);
+$specialPageAliases['ar'] = [
+	'Captcha' => [ 'كابتشا' ],
+];
 
 /** Egyptian Arabic (مصرى) */
-$specialPageAliases['arz'] = array(
-	'Captcha' => array( 'كابتشا' ),
-);
+$specialPageAliases['arz'] = [
+	'Captcha' => [ 'كابتشا' ],
+];
 
 /** Western Balochi (بلوچی رخشانی) */
-$specialPageAliases['bgn'] = array(
-	'Captcha' => array( 'گپچا' ),
-);
+$specialPageAliases['bgn'] = [
+	'Captcha' => [ 'گپچا' ],
+];
 
 /** Min Dong Chinese (Mìng-dĕ̤ng-ngṳ̄) */
-$specialPageAliases['cdo'] = array(
-	'Captcha' => array( '驗證碼' ),
-);
+$specialPageAliases['cdo'] = [
+	'Captcha' => [ '驗證碼' ],
+];
 
 /** Zazaki (Zazaki) */
-$specialPageAliases['diq'] = array(
-	'Captcha' => array( 'Kodêİtımadi' ),
-);
+$specialPageAliases['diq'] = [
+	'Captcha' => [ 'Kodêİtımadi' ],
+];
 
 /** Esperanto (Esperanto) */
-$specialPageAliases['eo'] = array(
-	'Captcha' => array( 'Kontraŭspamilo' ),
-);
+$specialPageAliases['eo'] = [
+	'Captcha' => [ 'Kontraŭspamilo' ],
+];
 
 /** Estonian (eesti) */
-$specialPageAliases['et'] = array(
-	'Captcha' => array( 'Robotilõks' ),
-);
+$specialPageAliases['et'] = [
+	'Captcha' => [ 'Robotilõks' ],
+];
 
 /** Persian (فارسی) */
-$specialPageAliases['fa'] = array(
-	'Captcha' => array( 'کپچا' ),
-);
+$specialPageAliases['fa'] = [
+	'Captcha' => [ 'کپچا' ],
+];
 
 /** Finnish (suomi) */
-$specialPageAliases['fi'] = array(
-	'Captcha' => array( 'Ihmiskäyttäjävarmistus' ),
-);
+$specialPageAliases['fi'] = [
+	'Captcha' => [ 'Ihmiskäyttäjävarmistus' ],
+];
 
 /** Galician (galego) */
-$specialPageAliases['gl'] = array(
-	'Captcha' => array( 'Captcha' ),
-);
+$specialPageAliases['gl'] = [
+	'Captcha' => [ 'Captcha' ],
+];
 
 /** Hawaiian (Hawai`i) */
-$specialPageAliases['haw'] = array(
-	'Captcha' => array( 'Kapakā', 'Kapaka' ),
-);
+$specialPageAliases['haw'] = [
+	'Captcha' => [ 'Kapakā', 'Kapaka' ],
+];
 
 /** Hindi (हिन्दी) */
-$specialPageAliases['hi'] = array(
-	'Captcha' => array( 'कैप्चा', 'कैपचा' ),
-);
+$specialPageAliases['hi'] = [
+	'Captcha' => [ 'कैप्चा', 'कैपचा' ],
+];
 
 /** Japanese (日本語) */
-$specialPageAliases['ja'] = array(
-	'Captcha' => array( '画像認証' ),
-);
+$specialPageAliases['ja'] = [
+	'Captcha' => [ '画像認証' ],
+];
 
 /** Korean (한국어) */
-$specialPageAliases['ko'] = array(
-	'Captcha' => array( '캡차' ),
-);
+$specialPageAliases['ko'] = [
+	'Captcha' => [ '캡차' ],
+];
 
 /** Colognian (Ripoarisch) */
-$specialPageAliases['ksh'] = array(
-	'Captcha' => array( 'Kaptscha' ),
-);
+$specialPageAliases['ksh'] = [
+	'Captcha' => [ 'Kaptscha' ],
+];
 
 /** Cornish (kernowek) */
-$specialPageAliases['kw'] = array(
-	'Captcha' => array( 'Captcha' ),
-);
+$specialPageAliases['kw'] = [
+	'Captcha' => [ 'Captcha' ],
+];
 
 /** Northern Luri (لۊری شومالی) */
-$specialPageAliases['lrc'] = array(
-	'Captcha' => array( 'رازینە_کأپچا' ),
-);
+$specialPageAliases['lrc'] = [
+	'Captcha' => [ 'رازینە_کأپچا' ],
+];
 
 /** Macedonian (македонски) */
-$specialPageAliases['mk'] = array(
-	'Captcha' => array( 'Captcha' ),
-);
+$specialPageAliases['mk'] = [
+	'Captcha' => [ 'Captcha' ],
+];
 
 /** Malayalam (മലയാളം) */
-$specialPageAliases['ml'] = array(
-	'Captcha' => array( 'ക്യാപ്ച' ),
-);
+$specialPageAliases['ml'] = [
+	'Captcha' => [ 'ക്യാപ്ച' ],
+];
 
 /** Serbian (Cyrillic script) (српски (ћирилица)‎) */
-$specialPageAliases['sr-ec'] = array(
-	'Captcha' => array( 'ПотврдниКод', 'Потврдни_код' ),
-);
+$specialPageAliases['sr-ec'] = [
+	'Captcha' => [ 'ПотврдниКод', 'Потврдни_код' ],
+];
 
 /** Turkish (Türkçe) */
-$specialPageAliases['tr'] = array(
-	'Captcha' => array( 'GüvenlikKodu' ),
-);
+$specialPageAliases['tr'] = [
+	'Captcha' => [ 'GüvenlikKodu' ],
+];
 
 /** Cantonese (粵語) */
-$specialPageAliases['yue'] = array(
-	'Captcha' => array( '驗證碼' ),
-);
+$specialPageAliases['yue'] = [
+	'Captcha' => [ '驗證碼' ],
+];
 
 /** Simplified Chinese (中文（简体）‎) */
-$specialPageAliases['zh-hans'] = array(
-	'Captcha' => array( '验证码' ),
-);
+$specialPageAliases['zh-hans'] = [
+	'Captcha' => [ '验证码' ],
+];
 
 /** Traditional Chinese (中文（繁體）‎) */
-$specialPageAliases['zh-hant'] = array(
-	'Captcha' => array( '驗證碼', '認證碼' ),
-);
+$specialPageAliases['zh-hant'] = [
+	'Captcha' => [ '驗證碼', '認證碼' ],
+];

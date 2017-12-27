@@ -34,13 +34,15 @@
 	"cite-ve-dialog-referenceslist-contextitem-description-general": "सामान्य उद्धरणों की सूची",
 	"cite-ve-dialog-referenceslist-contextitem-description-named": "समूह \"$1\" के लिए उद्धरणों की सूची",
 	"cite-ve-dialog-referenceslist-title": "सन्दर्भ सूची",
+	"cite-ve-dialogbutton-citation-educationpopup-title": "उद्धरण",
 	"cite-ve-dialogbutton-reference-full-label": "मूलभूत रूप",
-	"cite-ve-dialogbutton-reference-tooltip": "आधारभूत",
 	"cite-ve-dialogbutton-reference-title": "सन्दर्भ",
+	"cite-ve-dialogbutton-reference-tooltip": "आधारभूत",
 	"cite-ve-dialogbutton-referenceslist-tooltip": "सन्दर्भ सूची",
 	"cite-ve-reference-input-placeholder": "वर्तमान उद्धरणों में खोजें",
 	"cite-ve-referenceslist-isempty": "इस पृष्ठ पर \"$1\" सन्दर्भ समूह में कोई सन्दर्भ नहीं हैं जो इस सूची में जोड़े जा सकें।",
 	"cite-ve-referenceslist-isempty-default": "इस पृष्ठ पर कोई सन्दर्भ नहीं हैं जो इस सूची में जोड़े जा सकें।",
 	"cite-ve-referenceslist-missingref": "ये सन्दर्भ किसी साँचे या अन्य ब्लॉक का प्रयोग करता है, और इसलिए अभी केवल स्रोत सम्पादन में सम्पादित किया जा सकता है।",
-	"cite-ve-toolbar-group-label": "उद्धृत करें"
+	"cite-ve-toolbar-group-label": "उद्धृत करें",
+	"cite-ve-othergroup-item": "$1 सन्दर्भ"
 }

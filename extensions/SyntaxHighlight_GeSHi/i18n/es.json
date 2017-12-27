@@ -6,7 +6,8 @@
 			"Remember the dot",
 			"Sanbec",
 			"Macofe",
-			"Chris TR"
+			"Chris TR",
+			"Fitoschido"
 		]
 	},
 	"syntaxhighlight-desc": "Permite resaltar el código fuente usando la etiqueta <code>&lt;syntaxhighlight&gt;</code>. Esta extensión usa [http://pygments.org/ Pygments - Resaltador de sintaxis en Python]",
@@ -16,6 +17,7 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Lenguaje",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "(Ninguno)",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "Mostrar números de línea",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-startingline": "Número de renglón inicial",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Segmento de código",
 	"syntaxhighlight-error-pygments-invocation-failure": "Error al invocar Pygments",
 	"syntaxhighlight-error-unknown-language": "Lenguaje desconocido \"$1\"",

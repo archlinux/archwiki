@@ -63,8 +63,8 @@ class IEUrlExtension {
 		// Check QUERY_STRING or REQUEST_URI
 		if ( isset( $vars['SERVER_SOFTWARE'] )
 			&& isset( $vars['REQUEST_URI'] )
-			&& self::haveUndecodedRequestUri( $vars['SERVER_SOFTWARE'] ) )
-		{
+			&& self::haveUndecodedRequestUri( $vars['SERVER_SOFTWARE'] )
+		) {
 			$urlPart = $vars['REQUEST_URI'];
 		} elseif ( isset( $vars['QUERY_STRING'] ) ) {
 			$urlPart = $vars['QUERY_STRING'];
@@ -79,8 +79,8 @@ class IEUrlExtension {
 		// Some servers have PATH_INFO but not REQUEST_URI, so we check both
 		// to be on the safe side.
 		if ( isset( $vars['PATH_INFO'] )
-			&& self::isUrlExtensionBad( $vars['PATH_INFO'], $extWhitelist ) )
-		{
+			&& self::isUrlExtensionBad( $vars['PATH_INFO'], $extWhitelist )
+		) {
 			return true;
 		}
 
@@ -133,8 +133,8 @@ class IEUrlExtension {
 	/**
 	 * Returns a variant of $url which will pass isUrlExtensionBad() but has the
 	 * same GET parameters, or false if it can't figure one out.
-	 * @param $url
-	 * @param $extWhitelist array
+	 * @param string $url
+	 * @param array $extWhitelist
 	 * @return bool|string
 	 */
 	public static function fixUrlForIE6( $url, $extWhitelist = [] ) {
@@ -223,8 +223,8 @@ class IEUrlExtension {
 				// If the extension is NOT exe, dll or cgi, return it
 				$extension = substr( $url, $pos, $nextPos - $pos );
 				if ( strcasecmp( $extension, 'exe' ) && strcasecmp( $extension, 'dll' ) &&
-					strcasecmp( $extension, 'cgi' ) )
-				{
+					strcasecmp( $extension, 'cgi' )
+				) {
 					return $extension;
 				}
 				// Else continue looking
@@ -251,7 +251,7 @@ class IEUrlExtension {
 	 * or a specification in the style of a User-Agent header, such as
 	 * "Apache/1.3.34 (Unix) mod_ssl/2.8.25 OpenSSL/0.9.8a PHP/4.4.2"
 	 *
-	 * @param $serverSoftware
+	 * @param string $serverSoftware
 	 * @return bool
 	 */
 	public static function haveUndecodedRequestUri( $serverSoftware ) {

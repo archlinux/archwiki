@@ -16,7 +16,7 @@
 			"TTO"
 		]
 	},
-	"nuke": "{{doc-special|Nuke}}\nThe Nuke extension allows for sysops to delete a large number of pages (\"Mass delete\").\nFor more information, see http://www.mediawiki.org/wiki/Extension:Nuke\n{{Identical|Mass delete}}",
+	"nuke": "{{doc-special|Nuke}}\nThe Nuke extension allows for sysops to delete a large number of pages (\"Mass delete\").\nFor more information, see https://www.mediawiki.org/wiki/Extension:Nuke\n{{Identical|Mass delete}}",
 	"action-nuke": "{{doc-action|nuke}}",
 	"nuke-desc": "{{desc|name=Nuke|url=https://www.mediawiki.org/wiki/Extension:Nuke}}\nThe Nuke extension allows for sysops to delete a large number of pages (\"Mass delete\").",
 	"nuke-nopages": "Used if there are no pages to delete and the username is not empty.\n\nParameters:\n* $1 - a username\n\nSee also:\n* {{msg-mw|Nuke-nopages-global}}",
@@ -41,5 +41,5 @@
 	"nuke-viewchanges": "Used as link text.\n\nThe link points to History page of the page.\n\nThis message follows:\n* {{msg-mw|nuke-editby}} and {{msg-mw|comma-separator}}\n* or empty string (if username is empty).\n{{Identical|View changes}}",
 	"nuke-namespace": "Label shown on [[Special:Nuke]] in front of the namespace input that allows choosing a namespace to filter the search by",
 	"nuke-linkoncontribs": "Used as link text which is used on [[Special:Contributions]] and [[Special:DeletedContributions]].\n\nOnly added if a user has rights to nuke pages.\n\nThe link has the tooltip {{msg-mw|Nuke-linkoncontribs-text}}.\n{{Identical|Mass delete}}",
-	"nuke-linkoncontribs-text": "Tooltip for the link which is labeled {{msg-mw|Nuke-linkoncontribs}}."
+	"nuke-linkoncontribs-text": "Tooltip for the link which is labeled {{msg-mw|Nuke-linkoncontribs}} Parameters:\n* $1 is the target user name used for GENDER."
 }

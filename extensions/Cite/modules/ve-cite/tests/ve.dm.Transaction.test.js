@@ -162,7 +162,7 @@ QUnit.test( 'newFromDocumentInsertion with references', function ( assert ) {
 				]
 			}
 		];
-	QUnit.expect( 3 * cases.length );
+
 	for ( i = 0; i < cases.length; i++ ) {
 		doc = ve.dm.citeExample.createExampleDocument( cases[ i ].doc );
 		if ( cases[ i ].newDocData ) {

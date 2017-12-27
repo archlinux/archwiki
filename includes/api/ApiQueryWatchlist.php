@@ -34,6 +34,9 @@ use MediaWiki\MediaWikiServices;
  */
 class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 
+	/** @var CommentStore */
+	private $commentStore;
+
 	public function __construct( ApiQuery $query, $moduleName ) {
 		parent::__construct( $query, $moduleName, 'wl' );
 	}
@@ -84,6 +87,10 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 				if ( !$user->useRCPatrol() && !$user->useNPPatrol() ) {
 					$this->dieWithError( 'apierror-permissiondenied-patrolflag', 'patrol' );
 				}
+			}
+
+			if ( $this->fld_comment || $this->fld_parsedcomment ) {
+				$this->commentStore = new CommentStore( 'rc_comment' );
 			}
 		}
 
@@ -179,7 +186,7 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 		$watchedItemQuery = MediaWikiServices::getInstance()->getWatchedItemQueryService();
 		$items = $watchedItemQuery->getWatchedItemsWithRecentChangeInfo( $wlowner, $options, $startFrom );
 
-		foreach ( $items as list ( $watchedItem, $recentChangeInfo ) ) {
+		foreach ( $items as list( $watchedItem, $recentChangeInfo ) ) {
 			/** @var WatchedItem $watchedItem */
 			if ( is_null( $resultPageSet ) ) {
 				$vals = $this->extractOutputData( $watchedItem, $recentChangeInfo );
@@ -254,10 +261,7 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 
 	private function extractOutputData( WatchedItem $watchedItem, array $recentChangeInfo ) {
 		/* Determine the title of the page that has been changed. */
-		$title = Title::makeTitle(
-			$watchedItem->getLinkTarget()->getNamespace(),
-			$watchedItem->getLinkTarget()->getDBkey()
-		);
+		$title = Title::newFromLinkTarget( $watchedItem->getLinkTarget() );
 		$user = $this->getUser();
 
 		/* Our output data. */
@@ -353,12 +357,13 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 				Revision::DELETED_COMMENT,
 				$user
 			) ) {
-				if ( $this->fld_comment && isset( $recentChangeInfo['rc_comment'] ) ) {
-					$vals['comment'] = $recentChangeInfo['rc_comment'];
+				$comment = $this->commentStore->getComment( $recentChangeInfo )->text;
+				if ( $this->fld_comment ) {
+					$vals['comment'] = $comment;
 				}
 
-				if ( $this->fld_parsedcomment && isset( $recentChangeInfo['rc_comment'] ) ) {
-					$vals['parsedcomment'] = Linker::formatComment( $recentChangeInfo['rc_comment'], $title );
+				if ( $this->fld_parsedcomment ) {
+					$vals['parsedcomment'] = Linker::formatComment( $comment, $title );
 				}
 			}
 		}

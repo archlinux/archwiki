@@ -33,6 +33,7 @@
 		<testsuite name="skins">
 			<directory>skins</directory>
 			<directory>structure</directory>
+			<file>suites/ExtensionsTestSuite.php</file>
 			<file>suites/LessTestSuite.php</file>
 		</testsuite>
 		<!-- As there is a class Maintenance, we cannot use the name "maintenance" directly -->
@@ -67,7 +68,9 @@
 			<directory suffix=".php">../../includes</directory>
 			<directory suffix=".php">../../languages</directory>
 			<directory suffix=".php">../../maintenance</directory>
-			<directory suffix=".php">../../skins</directory>
+			<exclude>
+				<directory suffix=".php">../../languages/messages</directory>
+			</exclude>
 		</whitelist>
 	</filter>
 </phpunit>

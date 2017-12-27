@@ -184,8 +184,8 @@
 		],
 		isoDateSortingSorted = [
 			[ '2009' ],
-			[ '2009-12-25T12:30:45' ],
 			[ '2009-12-25T12:30:45+01:00' ],
+			[ '2009-12-25T12:30:45' ],
 			[ '2009-12-25T12:30:45.001Z' ],
 			[ '2009-12-25T12:30:45.111' ],
 			[ '2010-01-31' ],
@@ -286,7 +286,7 @@
 	 * @param {function($table)} callback something to do with the table before we compare
 	 */
 	function tableTest( msg, header, data, expected, callback ) {
-		QUnit.test( msg, 1, function ( assert ) {
+		QUnit.test( msg, function ( assert ) {
 			var extracted,
 				$table = tableCreate( header, data );
 
@@ -310,7 +310,7 @@
 	 * @param {function($table)} callback Something to do with the table before we compare
 	 */
 	function tableTestHTML( msg, html, expected, callback ) {
-		QUnit.test( msg, 1, function ( assert ) {
+		QUnit.test( msg, function ( assert ) {
 			var extracted,
 				$table = $( html );
 

@@ -31,7 +31,7 @@ class ImageMap {
 	 * @param Parser $parser
 	 */
 	public static function onParserFirstCallInit( Parser &$parser ) {
-		$parser->setHook( 'imagemap', array( 'ImageMap', 'render' ) );
+		$parser->setHook( 'imagemap', [ 'ImageMap', 'render' ] );
 	}
 
 	/**
@@ -49,14 +49,14 @@ class ImageMap {
 		$first = true;
 		$lineNum = 0;
 		$mapHTML = '';
-		$links = array();
+		$links = [];
 
 		// Define canonical desc types to allow i18n of 'imagemap_desc_types'
 		$descTypesCanonical = 'top-right, bottom-right, bottom-left, top-left, none';
 		$descType = self::BOTTOM_RIGHT;
 		$defaultLinkAttribs = false;
 		$realmap = true;
-		$extLinks = array();
+		$extLinks = [];
 		foreach ( $lines as $line ) {
 			++$lineNum;
 			$externLink = false;
@@ -149,7 +149,7 @@ class ImageMap {
 			$title = false;
 			// Find the link
 			$link = trim( strstr( $line, '[' ) );
-			$m = array();
+			$m = [];
 			if ( preg_match( '/^ \[\[  ([^|]*+)  \|  ([^\]]*+)  \]\] \w* $ /x', $link, $m ) ) {
 				$title = Title::newFromText( $m[1] );
 				$alt = trim( $m[2] );
@@ -159,7 +159,9 @@ class ImageMap {
 					return self::error( 'imagemap_invalid_title', $lineNum );
 				}
 				$alt = $title->getFullText();
-			} elseif ( in_array( substr( $link, 1, strpos( $link, '//' ) + 1 ), $wgUrlProtocols ) || in_array( substr( $link, 1, strpos( $link, ':' ) ), $wgUrlProtocols ) ) {
+			} elseif ( in_array( substr( $link, 1, strpos( $link, '//' ) + 1 ), $wgUrlProtocols )
+				|| in_array( substr( $link, 1, strpos( $link, ':' ) ), $wgUrlProtocols )
+			) {
 				if ( preg_match( '/^ \[  ([^\s]*+)  \s  ([^\]]*+)  \] \w* $ /x', $link, $m ) ) {
 					$title = $m[1];
 					$alt = trim( $m[2] );
@@ -181,7 +183,7 @@ class ImageMap {
 			$shape = strtok( $shapeSpec, " \t" );
 			switch ( $shape ) {
 				case 'default':
-					$coords = array();
+					$coords = [];
 					break;
 				case 'rect':
 					$coords = self::tokenizeCoords( 4, $lineNum );
@@ -196,7 +198,7 @@ class ImageMap {
 					}
 					break;
 				case 'poly':
-					$coords = array();
+					$coords = [];
 					$coord = strtok( " \t" );
 					while ( $coord !== false ) {
 						$coords[] = $coord;
@@ -219,7 +221,7 @@ class ImageMap {
 			}
 
 			// Construct the area tag
-			$attribs = array();
+			$attribs = [];
 			if ( $externLink ) {
 				$attribs['href'] = $title;
 				$attribs['class'] = 'plainlinks';
@@ -379,7 +381,7 @@ class ImageMap {
 	 * @return array|string String with error (HTML), or array of coordinates
 	 */
 	static function tokenizeCoords( $count, $lineNum ) {
-		$coords = array();
+		$coords = [];
 		for ( $i = 0; $i < $count; $i++ ) {
 			$coord = strtok( " \t" );
 			if ( $coord === false ) {

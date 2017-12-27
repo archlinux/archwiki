@@ -20,5 +20,6 @@
 	"fancycaptcha-sendemail": "{{Related|ConfirmEdit-sendemail}}",
 	"fancycaptcha-reload-text": "Prompts a click to get a new FancyCaptcha image.\n{{Identical|Refresh}}",
 	"apihelp-fancycaptchareload-description": "{{doc-apihelp-description|fancycaptchareload}}",
+	"apihelp-fancycaptchareload-summary": "{{doc-apihelp-summary|fancycaptchareload}}",
 	"apihelp-fancycaptchareload-example-1": "{{doc-apihelp-example|fancycaptchareload}}"
 }

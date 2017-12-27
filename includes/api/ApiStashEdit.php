@@ -16,7 +16,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @author Aaron Schulz
  */
 
 use MediaWiki\Logger\LoggerFactory;
@@ -45,6 +44,7 @@ class ApiStashEdit extends ApiBase {
 
 	const PRESUME_FRESH_TTL_SEC = 30;
 	const MAX_CACHE_TTL = 300; // 5 minutes
+	const MAX_SIGNATURE_TTL = 60;
 
 	public function execute() {
 		$user = $this->getUser();
@@ -74,6 +74,9 @@ class ApiStashEdit extends ApiBase {
 		if ( strlen( $params['stashedtexthash'] ) ) {
 			// Load from cache since the client indicates the text is the same as last stash
 			$textHash = $params['stashedtexthash'];
+			if ( !preg_match( '/^[0-9a-f]{40}$/', $textHash ) ) {
+				$this->dieWithError( 'apierror-stashedit-missingtext', 'missingtext' );
+			}
 			$textKey = $cache->makeKey( 'stashedit', 'text', $textHash );
 			$text = $cache->get( $textKey );
 			if ( !is_string( $text ) ) {
@@ -392,6 +395,12 @@ class ApiStashEdit extends ApiBase {
 		// Put an upper limit on the TTL for sanity to avoid extreme template/file staleness.
 		$since = time() - wfTimestamp( TS_UNIX, $parserOutput->getTimestamp() );
 		$ttl = min( $parserOutput->getCacheExpiry() - $since, self::MAX_CACHE_TTL );
+
+		// Avoid extremely stale user signature timestamps (T84843)
+		if ( $parserOutput->getFlag( 'user-signature' ) ) {
+			$ttl = min( $ttl, self::MAX_SIGNATURE_TTL );
+		}
+
 		if ( $ttl <= 0 ) {
 			return [ null, 0, 'no_ttl' ];
 		}

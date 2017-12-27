@@ -27,7 +27,7 @@ if ( getenv( 'MW_INSTALL_PATH' ) ) {
 	$IP = __DIR__ . '/../../..';
 }
 
-require_once ( "$IP/maintenance/Maintenance.php" );
+require_once "$IP/maintenance/Maintenance.php";
 
 /**
  * Maintenance script to generate fancy captchas using a python script and copy them into storage.
@@ -50,6 +50,8 @@ class GenerateFancyCaptchas extends Maintenance {
 			"Whether to use captcha-old.py which doesn't have OCR fighting improvements"
 		);
 		$this->addOption( "delete", "Delete the old captches" );
+		$this->addOption( "threads", "The number of threads to use to generate the images",
+			false, true );
 		$this->mDescription = "Generate new fancy captchas and move them into storage";
 
 		$this->requireExtension( "FancyCaptcha" );
@@ -85,146 +87,164 @@ class GenerateFancyCaptchas extends Maintenance {
 			$this->error( "Could not create temp directory.\n", 1 );
 		}
 
-		$e = null; // exception
-		try {
-			$captchaScript = 'captcha.py';
+		$captchaScript = 'captcha.py';
 
-			if ( $this->hasOption( 'oldcaptcha' ) ) {
-				$captchaScript = 'captcha-old.py';
+		if ( $this->hasOption( 'oldcaptcha' ) ) {
+			$captchaScript = 'captcha-old.py';
+		}
+
+		$cmd = sprintf( "python %s --key %s --output %s --count %s --dirs %s",
+			wfEscapeShellArg( dirname( __DIR__ ) . '/' . $captchaScript ),
+			wfEscapeShellArg( $wgCaptchaSecret ),
+			wfEscapeShellArg( $tmpDir ),
+			wfEscapeShellArg( $countGen ),
+			wfEscapeShellArg( $wgCaptchaDirectoryLevels )
+		);
+		foreach (
+			[ 'wordlist', 'font', 'font-size', 'blacklist', 'verbose', 'threads' ] as $par
+		) {
+			if ( $this->hasOption( $par ) ) {
+				$cmd .= " --$par " . wfEscapeShellArg( $this->getOption( $par ) );
 			}
+		}
 
-			$cmd = sprintf( "python %s --key %s --output %s --count %s --dirs %s",
-				wfEscapeShellArg( dirname( __DIR__ ) . '/' . $captchaScript ),
-				wfEscapeShellArg( $wgCaptchaSecret ),
-				wfEscapeShellArg( $tmpDir ),
-				wfEscapeShellArg( $countGen ),
-				wfEscapeShellArg( $wgCaptchaDirectoryLevels )
-			);
-			foreach ( [ 'wordlist', 'font', 'font-size', 'blacklist', 'verbose' ] as $par ) {
-				if ( $this->hasOption( $par ) ) {
-					$cmd .= " --$par " . wfEscapeShellArg( $this->getOption( $par ) );
-				}
-			}
+		$this->output( "Generating $countGen new captchas.." );
+		$retVal = 1;
+		$captchaTime = -microtime( true );
+		wfShellExec( $cmd, $retVal, [], [ 'time' => 0 ] );
+		if ( $retVal != 0 ) {
+			wfRecursiveRemoveDir( $tmpDir );
+			$this->error( "Could not run generation script.\n", 1 );
+		}
 
-			$this->output( "Generating $countGen new captchas.." );
-			$retVal = 1;
-			$captchaTime = -microtime( true );
-			wfShellExec( $cmd, $retVal, [], [ 'time' => 0 ] );
-			if ( $retVal != 0 ) {
-				wfRecursiveRemoveDir( $tmpDir );
-				$this->error( "Could not run generation script.\n", 1 );
-			}
+		$captchaTime += microtime( true );
+		$this->output( " Done.\n" );
 
-			$captchaTime += microtime( true );
-			$this->output( " Done.\n" );
+		$this->output(
+			sprintf(
+				"\nGenerated %d captchas in %.1f seconds\n",
+				$countGen,
+				$captchaTime
+			)
+		);
 
-			$this->output(
-				sprintf(
-					"\nGenerated %d captchas in %.1f seconds\n",
-					$countGen,
-					$captchaTime
-				)
-			);
-
-			$filesToDelete = [];
-			if ( $deleteOldCaptchas ) {
-				$this->output( "Getting a list of old captchas to delete..." );
-				$path = $backend->getRootStoragePath() . '/captcha-render';
-				foreach ( $backend->getFileList( [ 'dir' => $path ] ) as $file ) {
-					$filesToDelete[] = [
-						'op' => 'delete',
-						'src' => $path . '/' . $file,
-					];
-				}
-				$this->output( " Done.\n" );
-			}
-
-			$this->output( "Copying the new captchas to storage..." );
-
-			$storeTime = -microtime( true );
-			$iter = new RecursiveIteratorIterator(
-				new RecursiveDirectoryIterator(
-					$tmpDir,
-					FilesystemIterator::SKIP_DOTS
-				),
-				RecursiveIteratorIterator::LEAVES_ONLY
-			);
-
-			$captchasGenerated = iterator_count( $iter );
-			$filesToStore = [];
-			/**
-			 * @var $fileInfo SplFileInfo
-			 */
-			foreach ( $iter as $fileInfo ) {
-				if ( !$fileInfo->isFile() ) {
-					continue;
-				}
-				list( $salt, $hash ) = $instance->hashFromImageName( $fileInfo->getBasename() );
-				$dest = $instance->imagePath( $salt, $hash );
-				$backend->prepare( [ 'dir' => dirname( $dest ) ] );
-				$filesToStore[] = [
-					'op' => 'store',
-					'src' => $fileInfo->getPathname(),
-					'dst' => $dest,
+		$filesToDelete = [];
+		if ( $deleteOldCaptchas ) {
+			$this->output( "Getting a list of old captchas to delete..." );
+			$path = $backend->getRootStoragePath() . '/captcha-render';
+			foreach ( $backend->getFileList( [ 'dir' => $path ] ) as $file ) {
+				$filesToDelete[] = [
+					'op' => 'delete',
+					'src' => $path . '/' . $file,
 				];
 			}
+			$this->output( " Done.\n" );
+		}
 
-			$ret = $backend->doQuickOperations( $filesToStore );
+		$this->output( "Copying the new captchas to storage..." );
 
-			$storeTime += microtime( true );
+		$storeTime = -microtime( true );
+		$iter = new RecursiveIteratorIterator(
+			new RecursiveDirectoryIterator(
+				$tmpDir,
+				FilesystemIterator::SKIP_DOTS
+			),
+			RecursiveIteratorIterator::LEAVES_ONLY
+		);
 
-			if ( $ret->isOK() ) {
-				$this->output( " Done.\n" );
+		$captchasGenerated = iterator_count( $iter );
+		$filesToStore = [];
+		/**
+		 * @var $fileInfo SplFileInfo
+		 */
+		foreach ( $iter as $fileInfo ) {
+			if ( !$fileInfo->isFile() ) {
+				continue;
+			}
+			list( $salt, $hash ) = $instance->hashFromImageName( $fileInfo->getBasename() );
+			$dest = $instance->imagePath( $salt, $hash );
+			$backend->prepare( [ 'dir' => dirname( $dest ) ] );
+			$filesToStore[] = [
+				'op' => 'store',
+				'src' => $fileInfo->getPathname(),
+				'dst' => $dest,
+			];
+		}
+
+		$ret = $backend->doQuickOperations( $filesToStore );
+
+		$storeTime += microtime( true );
+
+		$storeSuceeded = true;
+		if ( $ret->isOK() ) {
+			$this->output( " Done.\n" );
+			$this->output(
+				sprintf(
+					"\nCopied %d captchas to storage in %.1f seconds\n",
+					$ret->successCount,
+					$storeTime
+				)
+			);
+			if ( !$ret->isGood() ) {
 				$this->output(
-					sprintf(
-						"\nCopied %d captchas to storage in %.1f seconds\n",
-						$ret->successCount,
-						$storeTime
+					"Non fatal errors:\n" .
+					Status::wrap( $ret )->getWikiText( null, null, 'en' ) .
+					"\n"
+				);
+			}
+			if ( $ret->failCount ) {
+				$storeSuceeded = false;
+				$this->error( sprintf( "\nFailed to copy %d captchas\n", $ret->failCount ) );
+			}
+			if ( $ret->successCount + $ret->failCount !== $captchasGenerated ) {
+				$storeSuceeded = false;
+				$this->error(
+					sprintf( "Internal error: captchasGenerated: %d, successCount: %d, failCount: %d\n",
+						$captchasGenerated, $ret->successCount, $ret->failCount
 					)
 				);
-				if ( $ret->failCount ) {
-					$this->output( sprintf( "\nFailed to copy %d captchas\n", $ret->failCount ) );
-				}
-				if ( $ret->successCount + $ret->failCount !== $captchasGenerated ) {
+			}
+		} else {
+			$storeSuceeded = false;
+			$this->output( "Errored.\n" );
+			$this->error(
+				Status::wrap( $ret )->getWikiText( null, null, 'en' ) .
+				"\n"
+			);
+		}
+
+		if ( $storeSuceeded && $deleteOldCaptchas ) {
+			$numOriginalFiles = count( $filesToDelete );
+			$this->output( "Deleting {$numOriginalFiles} old captchas...\n" );
+			$deleteTime = -microtime( true );
+			$ret = $backend->doQuickOperations( $filesToDelete );
+
+			$deleteTime += microtime( true );
+			if ( $ret->isOK() ) {
+				$this->output( "Done.\n" );
+				$this->output(
+					sprintf(
+						"\nDeleted %d old captchas in %.1f seconds\n",
+						$numOriginalFiles,
+						$deleteTime
+					)
+				);
+				if ( !$ret->isGood() ) {
 					$this->output(
-						sprintf( "Internal error: captchasGenerated: %d, successCount: %d, failCount: %d\n",
-							$captchasGenerated, $ret->successCount, $ret->failCount
-						)
+						"Non fatal errors:\n" .
+						Status::wrap( $ret )->getWikiText( null, null, 'en' ) .
+						"\n"
 					);
 				}
 			} else {
 				$this->output( "Errored.\n" );
-				$this->output( implode( "\n", Status::wrap( $ret )->getWikiText( null, null, 'en' ) ) );
+				$this->error(
+					Status::wrap( $ret )->getWikiText( null, null, 'en' ) .
+					"\n"
+				);
 			}
 
-			if ( $deleteOldCaptchas ) {
-				$numOriginalFiles = count( $filesToDelete );
-				$this->output( "Deleting {$numOriginalFiles} old captchas...\n" );
-				$deleteTime = -microtime( true );
-				$ret = $backend->doQuickOperations( $filesToDelete );
-
-				$deleteTime += microtime( true );
-				if ( $ret->isOK() ) {
-
-					$this->output( "Done.\n" );
-					$this->output(
-						sprintf(
-							"\nDeleted %d old captchas in %.1f seconds\n",
-							$numOriginalFiles,
-							$deleteTime
-						)
-					);
-				} else {
-					$this->output( "Errored.\n" );
-					$this->output( implode( "\n", Status::wrap( $ret )->getWikiText( null, null, 'en' ) ) );
-				}
-
-			}
-		} catch ( Exception $e ) {
-			wfRecursiveRemoveDir( $tmpDir );
-			throw $e;
 		}
-
 		$this->output( "Removing temporary files..." );
 		wfRecursiveRemoveDir( $tmpDir );
 		$this->output( " Done.\n" );
@@ -240,4 +260,4 @@ class GenerateFancyCaptchas extends Maintenance {
 }
 
 $maintClass = "GenerateFancyCaptchas";
-require_once ( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

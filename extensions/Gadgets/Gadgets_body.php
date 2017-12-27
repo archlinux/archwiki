@@ -11,7 +11,6 @@
  * @license GNU General Public Licence 2.0 or later
  */
 
-
 /**
  * Wrapper for one gadget.
  */
@@ -94,7 +93,6 @@ class Gadget {
 		];
 
 		return new self( $info );
-
 	}
 
 	/**
@@ -114,33 +112,32 @@ class Gadget {
 	 * @return bool
 	 */
 	public static function isValidGadgetID( $id ) {
-		return strlen( $id ) > 0 && ResourceLoader::isValidModuleName( Gadget::getModuleName( $id ) );
+		return strlen( $id ) > 0 && ResourceLoader::isValidModuleName( self::getModuleName( $id ) );
 	}
 
-
 	/**
-	 * @return String: Gadget name
+	 * @return string Gadget name
 	 */
 	public function getName() {
 		return $this->name;
 	}
 
 	/**
-	 * @return String: Gadget description parsed into HTML
+	 * @return string Gadget description parsed into HTML
 	 */
 	public function getDescription() {
 		return wfMessage( "gadget-{$this->getName()}" )->parse();
 	}
 
 	/**
-	 * @return String: Wikitext of gadget description
+	 * @return string Wikitext of gadget description
 	 */
 	public function getRawDescription() {
 		return wfMessage( "gadget-{$this->getName()}" )->plain();
 	}
 
 	/**
-	 * @return String: Name of category (aka section) our gadget belongs to. Empty string if none.
+	 * @return string Name of category (aka section) our gadget belongs to. Empty string if none.
 	 */
 	public function getCategory() {
 		return $this->category;
@@ -157,8 +154,8 @@ class Gadget {
 	/**
 	 * Checks whether this gadget is enabled for given user
 	 *
-	 * @param $user User: user to check against
-	 * @return Boolean
+	 * @param User $user user to check against
+	 * @return bool
 	 */
 	public function isEnabled( $user ) {
 		return (bool)$user->getOption( "gadget-{$this->name}", $this->onByDefault );
@@ -167,16 +164,21 @@ class Gadget {
 	/**
 	 * Checks whether given user has permissions to use this gadget
 	 *
-	 * @param $user User: user to check against
-	 * @return Boolean
+	 * @param User $user user to check against
+	 * @return bool
 	 */
 	public function isAllowed( $user ) {
-		return count( array_intersect( $this->requiredRights, $user->getRights() ) ) == count( $this->requiredRights )
-			&& ( $this->requiredSkins === true || !count( $this->requiredSkins ) || in_array( $user->getOption( 'skin' ), $this->requiredSkins ) );
+		return count( array_intersect( $this->requiredRights, $user->getRights() ) ) ==
+			count( $this->requiredRights )
+			&& ( $this->requiredSkins === true
+				|| !count( $this->requiredSkins )
+				|| in_array( $user->getOption( 'skin' ), $this->requiredSkins )
+			);
 	}
 
 	/**
-	 * @return Boolean: Whether this gadget is on by default for everyone (but can be disabled in preferences)
+	 * @return bool Whether this gadget is on by default for everyone
+	 *  (but can be disabled in preferences)
 	 */
 	public function isOnByDefault() {
 		return $this->onByDefault;
@@ -190,14 +192,14 @@ class Gadget {
 	}
 
 	/**
-	 * @return Boolean: Whether all of this gadget's JS components support ResourceLoader
+	 * @return bool Whether all of this gadget's JS components support ResourceLoader
 	 */
 	public function supportsResourceLoader() {
 		return $this->resourceLoaded;
 	}
 
 	/**
-	 * @return Boolean: Whether this gadget has resources that can be loaded via ResourceLoader
+	 * @return bool Whether this gadget has resources that can be loaded via ResourceLoaderb
 	 */
 	public function hasModule() {
 		return count( $this->styles )
@@ -206,28 +208,28 @@ class Gadget {
 	}
 
 	/**
-	 * @return String: Definition for this gadget from MediaWiki:gadgets-definition
+	 * @return string Definition for this gadget from MediaWiki:gadgets-definition
 	 */
 	public function getDefinition() {
 		return $this->definition;
 	}
 
 	/**
-	 * @return Array: Array of pages with JS (including namespace)
+	 * @return array Array of pages with JS (including namespace)
 	 */
 	public function getScripts() {
 		return $this->scripts;
 	}
 
 	/**
-	 * @return Array: Array of pages with CSS (including namespace)
+	 * @return array Array of pages with CSS (including namespace)
 	 */
 	public function getStyles() {
 		return $this->styles;
 	}
 
 	/**
-	 * @return Array: Array of all of this gadget's resources
+	 * @return array Array of all of this gadget's resources
 	 */
 	public function getScriptsAndStyles() {
 		return array_merge( $this->scripts, $this->styles );
@@ -297,21 +299,17 @@ class Gadget {
 
 	/**
 	 * Returns the load type of this Gadget's ResourceLoader module
-	 * @return string 'styles', 'general' or ''
+	 * @return string 'styles' or 'general'
 	 */
 	public function getType() {
 		if ( $this->type === 'styles' || $this->type === 'general' ) {
 			return $this->type;
 		}
+		// Similar to ResourceLoaderWikiModule default
 		if ( $this->styles && !$this->scripts && !$this->dependencies ) {
-			// Similar to ResourceLoaderWikiModule default
 			return 'styles';
-		}
-		if ( !$this->styles && $this->supportsResourceLoader() && $this->scripts ) {
+		} else {
 			return 'general';
 		}
-		// Real default is in GadgetResourceLoaderModule so that beforePageDisplay
-		// can distinguish between explicit and fallback.
-		return '';
 	}
 }

@@ -1,0 +1,9 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://acme.test/> .
+
+<http://foobar.test/Bananas> a <http://foobar.test/Fruit> ;
+	:name "Banana",
+		"Banane"@de .
+
+<http://foobar.test/Apples> :name "Apple" .

@@ -5,7 +5,8 @@
 			"Kuvaly",
 			"Littledogboy",
 			"Mormegil",
-			"Macofe"
+			"Macofe",
+			"Dvorapa"
 		]
 	},
 	"wikieditor": "Vylepšené rozhraní pro editaci wikitextu",
@@ -28,7 +29,6 @@
 	"wikieditor-toolbar": "Editační panel nástrojů",
 	"wikieditor-toolbar-desc": "Editační panel nástrojů s vylepšenou použitelností",
 	"wikieditor-toolbar-preference": "Zapnout vylepšený panel nástrojů",
-	"wikieditor-toolbar-dialogs-preference": "Používat průvodce pro vkládání odkazů a tabulek i pro funkci hledání a nahrazování.",
 	"wikieditor-toolbar-loading": "Načítá se…",
 	"wikieditor-toolbar-tool-bold": "Tučně",
 	"wikieditor-toolbar-tool-bold-example": "Tučný text",
@@ -41,9 +41,9 @@
 	"wikieditor-toolbar-tool-link": "Odkaz",
 	"wikieditor-toolbar-tool-link-title": "Vložit odkaz",
 	"wikieditor-toolbar-tool-link-int": "Na wiki stránku",
-	"wikieditor-toolbar-tool-link-int-target": "Název stránky:",
+	"wikieditor-toolbar-tool-link-int-target": "Cílová stránka nebo URL:",
 	"wikieditor-toolbar-tool-link-int-target-tooltip": "Název stránky nebo URL",
-	"wikieditor-toolbar-tool-link-int-text": "Text odkazu:",
+	"wikieditor-toolbar-tool-link-int-text": "Zobrazovaný text:",
 	"wikieditor-toolbar-tool-link-int-text-tooltip": "Text, který se má zobrazit",
 	"wikieditor-toolbar-tool-link-ext": "Na externí webovou stránku",
 	"wikieditor-toolbar-tool-link-ext-target": "Cíl odkazu:",

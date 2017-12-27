@@ -64,7 +64,7 @@ class GadgetsTest extends MediaWikiTestCase {
 			[
 				'Default (mixed)',
 				'* foo[ResourceLoader]|bar.css|bar.js',
-				'',
+				'general',
 				ResourceLoaderModule::LOAD_GENERAL,
 			],
 			[
@@ -82,7 +82,7 @@ class GadgetsTest extends MediaWikiTestCase {
 			[
 				'Default (styles only with dependencies)',
 				'* foo[ResourceLoader|dependencies=jquery.ui]|bar.css',
-				'',
+				'general',
 				ResourceLoaderModule::LOAD_GENERAL,
 			],
 			[
@@ -160,12 +160,14 @@ class GadgetsTest extends MediaWikiTestCase {
 		$this->assertGreaterThanOrEqual( 2, count( $gadgets ), "Gadget list parsed" );
 
 		$repo->definitionCache = $gadgets;
-		$this->assertTrue( GadgetHooks::getPreferences( new User, $prefs ), 'GetPrefences hook should return true' );
+		$this->assertTrue( GadgetHooks::getPreferences( new User, $prefs ),
+			'GetPrefences hook should return true' );
 
 		$options = $prefs['gadgets']['options'];
-		$this->assertFalse( isset( $options['⧼gadget-section-remove-section⧽'] ), 'Must not show empty sections' );
-		$this->assertTrue( isset( $options['⧼gadget-section-keep-section1⧽'] ) );
-		$this->assertTrue( isset( $options['⧼gadget-section-keep-section2⧽'] ) );
+		$this->assertArrayNotHasKey( '⧼gadget-section-remove-section⧽', $options,
+			'Must not show empty sections' );
+		$this->assertArrayHasKey( '⧼gadget-section-keep-section1⧽', $options );
+		$this->assertArrayHasKey( '⧼gadget-section-keep-section2⧽', $options );
 	}
 
 	public function tearDown() {

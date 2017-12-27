@@ -138,7 +138,7 @@ class RequestContext implements IContextSource, MutableContext {
 	 *
 	 * @deprecated since 1.27 use a StatsdDataFactory from MediaWikiServices (preferably injected)
 	 *
-	 * @return StatsdDataFactory
+	 * @return IBufferingStatsdDataFactory
 	 */
 	public function getStats() {
 		return MediaWikiServices::getInstance()->getStatsdDataFactory();
@@ -449,10 +449,12 @@ class RequestContext implements IContextSource, MutableContext {
 	 * Get a Message object with context set
 	 * Parameters are the same as wfMessage()
 	 *
-	 * @param mixed ...
+	 * @param string|string[]|MessageSpecifier $key Message key, or array of keys,
+	 *   or a MessageSpecifier.
+	 * @param mixed $args,...
 	 * @return Message
 	 */
-	public function msg() {
+	public function msg( $key ) {
 		$args = func_get_args();
 
 		return call_user_func_array( 'wfMessage', $args )->setContext( $this );

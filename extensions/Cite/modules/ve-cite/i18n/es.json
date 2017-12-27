@@ -25,7 +25,9 @@
 			"Macofe",
 			"Themasterriot",
 			"Vikytinta",
-			"Ncontinanza"
+			"Ncontinanza",
+			"Dgstranz",
+			"Javiersanp"
 		]
 	},
 	"visualeditor-cite-tool-definition.json": "nulo",
@@ -34,6 +36,12 @@
 	"visualeditor-cite-tool-name-news": "Noticias",
 	"visualeditor-cite-tool-name-web": "Sitio web",
 	"cite-tool-definition.json": "nulo",
+	"cite-ve-changedesc-ref-group-both": "El grupo de referencia cambió de «$1» a «$2»",
+	"cite-ve-changedesc-ref-group-from": "El grupo de referencias cambió de «$1» al grupo general",
+	"cite-ve-changedesc-ref-group-to": "El grupo de referencias cambió del grupo general a «$1»",
+	"cite-ve-changedesc-reflist-group-both": "El grupo de lista de referencias cambió de «$1» a «$2»",
+	"cite-ve-changedesc-reflist-group-from": "El grupo de lista de referencias cambió de «$1» al grupo general",
+	"cite-ve-changedesc-reflist-group-to": "El grupo de listas de referencias cambió del grupo general a «$1»",
 	"cite-ve-dialog-reference-editing-reused": "Esta referencia se utiliza $1 {{PLURAL:$1|vez|veces}} en esta página.",
 	"cite-ve-dialog-reference-options-group-label": "Usar este grupo",
 	"cite-ve-dialog-reference-options-group-placeholder": "Referencias generales",
@@ -57,5 +65,7 @@
 	"cite-ve-referenceslist-isempty-default": "No hay referencias en esta página para incluir en esta lista.",
 	"cite-ve-referenceslist-missingref": "Esta referencia está definida en una plantilla u otro tipo de bloque generado, y por ahora sólo puede editarse en el editor de fuente.",
 	"cite-ve-toolbar-group-label": "Citar",
-	"cite-ve-othergroup-item": "referencia $1"
+	"cite-ve-othergroup-item": "referencia $1",
+	"visualeditor-internal-list-diff-default-group-name-mwreference": "Referencias",
+	"visualeditor-internal-list-diff-group-name-mwreference": "Nombre de grupo de referencias: «$1»"
 }

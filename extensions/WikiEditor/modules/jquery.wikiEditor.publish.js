@@ -43,29 +43,29 @@
 						previewsave: {
 							id: dialogID,
 							titleMsg: 'wikieditor-publish-dialog-title',
-							html: '\
-								<div class="wikiEditor-publish-dialog-copywarn"></div>\
-								<div class="wikiEditor-publish-dialog-editoptions">\
-									<form id="wikieditor-' + context.instance + '-publish-dialog-form">\
-										<div class="wikiEditor-publish-dialog-summary">\
-											<label for="wikiEditor-' + context.instance + '-dialog-summary"\
-												rel="wikieditor-publish-dialog-summary"></label>\
-											<br />\
-											<input type="text" id="wikiEditor-' + context.instance + '-dialog-summary"\
-												style="width: 100%;" />\
-										</div>\
-										<div class="wikiEditor-publish-dialog-options">\
-											<input type="checkbox"\
-												id="wikiEditor-' + context.instance + '-dialog-minor" />\
-											<label for="wikiEditor-' + context.instance + '-dialog-minor"\
-												rel="wikieditor-publish-dialog-minor"></label>\
-											<input type="checkbox"\
-												id="wikiEditor-' + context.instance + '-dialog-watch" />\
-											<label for="wikiEditor-' + context.instance + '-dialog-watch"\
-												rel="wikieditor-publish-dialog-watch"></label>\
-										</div>\
-									</form>\
-								</div>',
+							html:
+								'<div class="wikiEditor-publish-dialog-copywarn"></div>' +
+								'<div class="wikiEditor-publish-dialog-editoptions">' +
+									'<form id="wikieditor-' + context.instance + '-publish-dialog-form">' +
+										'<div class="wikiEditor-publish-dialog-summary">' +
+											'<label for="wikiEditor-' + context.instance + '-dialog-summary"' +
+												'rel="wikieditor-publish-dialog-summary"></label>' +
+											'<br />' +
+											'<input type="text" id="wikiEditor-' + context.instance + '-dialog-summary"' +
+												'style="width: 100%;" />' +
+										'</div>' +
+										'<div class="wikiEditor-publish-dialog-options">' +
+											'<input type="checkbox"' +
+												'id="wikiEditor-' + context.instance + '-dialog-minor" />' +
+											'<label for="wikiEditor-' + context.instance + '-dialog-minor"' +
+												'rel="wikieditor-publish-dialog-minor"></label>' +
+											'<input type="checkbox"' +
+												'id="wikiEditor-' + context.instance + '-dialog-watch" />' +
+											'<label for="wikiEditor-' + context.instance + '-dialog-watch"' +
+												'rel="wikieditor-publish-dialog-watch"></label>' +
+										'</div>' +
+									'</form>' +
+								'</div>',
 							init: function () {
 								var i, copyWarnHTML, copyWarnStatements, copyWarnStatement,
 									newCopyWarnHTML;

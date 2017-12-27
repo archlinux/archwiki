@@ -12,6 +12,7 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "Koodi",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Kieli",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "Näytä rivinumerot",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-startingline": "Alkaen riviltä",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Koodipätkä",
 	"syntaxhighlight-error-unknown-language": "Tuntematon kieli: \"$1\""
 }

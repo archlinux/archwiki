@@ -102,8 +102,6 @@ class LinksUpdate extends DataUpdate implements EnqueueableDataUpdate {
 	private $db;
 
 	/**
-	 * Constructor
-	 *
 	 * @param Title $title Title of the page we're updating
 	 * @param ParserOutput $parserOutput Output from a full parse of this page
 	 * @param bool $recursive Queue jobs for recursive updates?
@@ -194,7 +192,7 @@ class LinksUpdate extends DataUpdate implements EnqueueableDataUpdate {
 	 * Acquire a lock for performing link table updates for a page on a DB
 	 *
 	 * @param IDatabase $dbw
-	 * @param integer $pageId
+	 * @param int $pageId
 	 * @param string $why One of (job, atomicity)
 	 * @return ScopedCallback
 	 * @throws RuntimeException
@@ -364,21 +362,26 @@ class LinksUpdate extends DataUpdate implements EnqueueableDataUpdate {
 	private function updateCategoryCounts( array $added, array $deleted ) {
 		global $wgUpdateRowsPerQuery;
 
+		if ( !$added && !$deleted ) {
+			return;
+		}
+
+		$domainId = $this->getDB()->getDomainID();
 		$wp = WikiPage::factory( $this->mTitle );
-		$factory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
+		$lbf = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
+		// T163801: try to release any row locks to reduce contention
+		$lbf->commitAndWaitForReplication( __METHOD__, $this->ticket, [ 'domain' => $domainId ] );
 
 		foreach ( array_chunk( array_keys( $added ), $wgUpdateRowsPerQuery ) as $addBatch ) {
 			$wp->updateCategoryCounts( $addBatch, [], $this->mId );
-			$factory->commitAndWaitForReplication(
-				__METHOD__, $this->ticket, [ 'wiki' => $this->getDB()->getWikiID() ]
-			);
+			$lbf->commitAndWaitForReplication(
+				__METHOD__, $this->ticket, [ 'domain' => $domainId ] );
 		}
 
 		foreach ( array_chunk( array_keys( $deleted ), $wgUpdateRowsPerQuery ) as $deleteBatch ) {
 			$wp->updateCategoryCounts( [], $deleteBatch, $this->mId );
-			$factory->commitAndWaitForReplication(
-				__METHOD__, $this->ticket, [ 'wiki' => $this->getDB()->getWikiID() ]
-			);
+			$lbf->commitAndWaitForReplication(
+				__METHOD__, $this->ticket, [ 'domain' => $domainId ] );
 		}
 	}
 
@@ -399,7 +402,7 @@ class LinksUpdate extends DataUpdate implements EnqueueableDataUpdate {
 	private function incrTableUpdate( $table, $prefix, $deletions, $insertions ) {
 		$services = MediaWikiServices::getInstance();
 		$bSize = $services->getMainConfig()->get( 'UpdateRowsPerQuery' );
-		$factory = $services->getDBLoadBalancerFactory();
+		$lbf = $services->getDBLoadBalancerFactory();
 
 		if ( $table === 'page_props' ) {
 			$fromField = 'pp_page';
@@ -449,18 +452,20 @@ class LinksUpdate extends DataUpdate implements EnqueueableDataUpdate {
 			}
 		}
 
+		$domainId = $this->getDB()->getDomainID();
+
 		foreach ( $deleteWheres as $deleteWhere ) {
 			$this->getDB()->delete( $table, $deleteWhere, __METHOD__ );
-			$factory->commitAndWaitForReplication(
-				__METHOD__, $this->ticket, [ 'wiki' => $this->getDB()->getWikiID() ]
+			$lbf->commitAndWaitForReplication(
+				__METHOD__, $this->ticket, [ 'domain' => $domainId ]
 			);
 		}
 
 		$insertBatches = array_chunk( $insertions, $bSize );
 		foreach ( $insertBatches as $insertBatch ) {
 			$this->getDB()->insert( $table, $insertBatch, __METHOD__, 'IGNORE' );
-			$factory->commitAndWaitForReplication(
-				__METHOD__, $this->ticket, [ 'wiki' => $this->getDB()->getWikiID() ]
+			$lbf->commitAndWaitForReplication(
+				__METHOD__, $this->ticket, [ 'domain' => $domainId ]
 			);
 		}
 
@@ -547,7 +552,6 @@ class LinksUpdate extends DataUpdate implements EnqueueableDataUpdate {
 		foreach ( $diffs as $url => $dummy ) {
 			foreach ( wfMakeUrlIndexes( $url ) as $index ) {
 				$arr[] = [
-					'el_id' => $this->getDB()->nextSequenceValue( 'externallinks_el_id_seq' ),
 					'el_from' => $this->mId,
 					'el_to' => $url,
 					'el_index' => $index,
@@ -1143,7 +1147,7 @@ class LinksUpdate extends DataUpdate implements EnqueueableDataUpdate {
 		}
 
 		return [
-			'wiki' => $this->getDB()->getWikiID(),
+			'wiki' => WikiMap::getWikiIdFromDomain( $this->getDB()->getDomainID() ),
 			'job'  => new JobSpecification(
 				'refreshLinksPrioritized',
 				[

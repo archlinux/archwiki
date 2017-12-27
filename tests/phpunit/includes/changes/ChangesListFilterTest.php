@@ -23,7 +23,6 @@ class ChangesListFilterTest extends MediaWikiTestCase {
 				'filters' => [],
 			]
 		);
-
 	}
 
 	// @codingStandardsIgnoreStart
@@ -85,7 +84,7 @@ class ChangesListFilterTest extends MediaWikiTestCase {
 			]
 		);
 
-		$groupB =  $this->getGroup(
+		$groupB = $this->getGroup(
 			[
 				'name' => 'groupB',
 				'filters' => [

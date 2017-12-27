@@ -244,7 +244,9 @@ class ImageListPager extends TablePager {
 		$prefix = $table === 'oldimage' ? 'oi' : 'img';
 
 		$tables = [ $table ];
-		$fields = array_keys( $this->getFieldNames() );
+		$fields = $this->getFieldNames();
+		unset( $fields['img_description'] );
+		$fields = array_keys( $fields );
 
 		if ( $table === 'oldimage' ) {
 			foreach ( $fields as $id => &$field ) {
@@ -264,6 +266,13 @@ class ImageListPager extends TablePager {
 
 		$options = $join_conds = [];
 
+		# Description field
+		$commentQuery = CommentStore::newKey( $prefix . '_description' )->getJoin();
+		$tables += $commentQuery['tables'];
+		$fields += $commentQuery['fields'];
+		$join_conds += $commentQuery['joins'];
+		$fields['description_field'] = "'{$prefix}_description'";
+
 		# Depends on $wgMiserMode
 		# Will also not happen if mShowAll is true.
 		if ( isset( $this->mFieldNames['count'] ) ) {
@@ -277,14 +286,9 @@ class ImageListPager extends TablePager {
 			}
 			unset( $field );
 
-			$dbr = wfGetDB( DB_REPLICA );
-			if ( $dbr->implicitGroupby() ) {
-				$options = [ 'GROUP BY' => 'img_name' ];
-			} else {
-				$columnlist = preg_grep( '/^img/', array_keys( $this->getFieldNames() ) );
-				$options = [ 'GROUP BY' => array_merge( [ 'img_user' ], $columnlist ) ];
-			}
-			$join_conds = [ 'oldimage' => [ 'LEFT JOIN', 'oi_name = img_name' ] ];
+			$columnlist = preg_grep( '/^img/', array_keys( $this->getFieldNames() ) );
+			$options = [ 'GROUP BY' => array_merge( [ 'img_user' ], $columnlist ) ];
+			$join_conds['oldimage'] = [ 'LEFT JOIN', 'oi_name = img_name' ];
 		}
 
 		return [
@@ -497,6 +501,8 @@ class ImageListPager extends TablePager {
 			case 'img_size':
 				return htmlspecialchars( $this->getLanguage()->formatSize( $value ) );
 			case 'img_description':
+				$field = $this->mCurrentRow->description_field;
+				$value = CommentStore::newKey( $field )->getComment( $this->mCurrentRow )->text;
 				return Linker::formatComment( $value );
 			case 'count':
 				return $this->getLanguage()->formatNum( intval( $value ) + 1 );

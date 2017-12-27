@@ -45,7 +45,7 @@ abstract class GenericArrayObject extends ArrayObject {
 	/**
 	 * @see SiteList::getNewOffset()
 	 * @since 1.20
-	 * @var integer
+	 * @var int
 	 */
 	protected $indexOffset = 0;
 
@@ -56,7 +56,7 @@ abstract class GenericArrayObject extends ArrayObject {
 	 *
 	 * @since 1.20
 	 *
-	 * @return integer
+	 * @return int
 	 */
 	protected function getNewOffset() {
 		while ( $this->offsetExists( $this->indexOffset ) ) {
@@ -67,7 +67,6 @@ abstract class GenericArrayObject extends ArrayObject {
 	}
 
 	/**
-	 * Constructor.
 	 * @see ArrayObject::__construct
 	 *
 	 * @since 1.20
@@ -168,7 +167,7 @@ abstract class GenericArrayObject extends ArrayObject {
 	 *
 	 * @since 1.20
 	 *
-	 * @param integer|string $index
+	 * @param int|string $index
 	 * @param mixed $value
 	 *
 	 * @return bool

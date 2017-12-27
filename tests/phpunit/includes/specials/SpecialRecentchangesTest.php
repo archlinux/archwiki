@@ -10,14 +10,14 @@ use Wikimedia\TestingAccessWrapper;
  * @covers SpecialRecentChanges
  */
 class SpecialRecentchangesTest extends AbstractChangesListSpecialPageTestCase {
-	protected function setUp() {
-		parent::setUp();
-
-		# setup the CLSP object
-		$this->changesListSpecialPage = TestingAccessWrapper::newFromObject(
+	protected function getPage() {
+		return TestingAccessWrapper::newFromObject(
 			new SpecialRecentChanges
 		);
 	}
+
+	// Below providers should only be for features specific to
+	// RecentChanges.  Otherwise, it should go in ChangesListSpecialPageTest
 
 	public function provideParseParameters() {
 		return [
@@ -27,9 +27,26 @@ class SpecialRecentchangesTest extends AbstractChangesListSpecialPageTestCase {
 
 			[ 'days=3', [ 'days' => '3' ] ],
 
-			[ 'namespace=5', [ 'namespace' => 5 ] ],
+			[ 'days=0.25', [ 'days' => '0.25' ] ],
+
+			[ 'namespace=5', [ 'namespace' => '5' ] ],
+
+			[ 'namespace=5|3', [ 'namespace' => '5|3' ] ],
 
 			[ 'tagfilter=foo', [ 'tagfilter' => 'foo' ] ],
+
+			[ 'tagfilter=foo;bar', [ 'tagfilter' => 'foo;bar' ] ],
+		];
+	}
+
+	public function validateOptionsProvider() {
+		return [
+			[
+				// hidebots=1 is default for Special:RecentChanges
+				[ 'hideanons' => 1, 'hideliu' => 1 ],
+				true,
+				[ 'hideliu' => 1 ],
+			],
 		];
 	}
 }

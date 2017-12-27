@@ -2,17 +2,20 @@
 	/**
 	 * List displaying all filter groups
 	 *
-	 * @extends OO.ui.Widget
+	 * @class
+	 * @extends OO.ui.MenuTagMultiselectWidget
 	 * @mixins OO.ui.mixin.PendingElement
 	 *
 	 * @constructor
 	 * @param {mw.rcfilters.Controller} controller Controller
 	 * @param {mw.rcfilters.dm.FiltersViewModel} model View model
+	 * @param {mw.rcfilters.dm.SavedQueriesModel} savedQueriesModel Saved queries model
 	 * @param {Object} config Configuration object
 	 * @cfg {jQuery} [$overlay] A jQuery object serving as overlay for popups
 	 */
-	mw.rcfilters.ui.FilterTagMultiselectWidget = function MwRcfiltersUiFilterTagMultiselectWidget( controller, model, config ) {
-		var title = new OO.ui.LabelWidget( {
+	mw.rcfilters.ui.FilterTagMultiselectWidget = function MwRcfiltersUiFilterTagMultiselectWidget( controller, model, savedQueriesModel, config ) {
+		var rcFiltersRow,
+			title = new OO.ui.LabelWidget( {
 				label: mw.msg( 'rcfilters-activefilters' ),
 				classes: [ 'mw-rcfilters-ui-filterTagMultiselectWidget-wrapper-content-title' ]
 			} ),
@@ -23,7 +26,10 @@
 
 		this.controller = controller;
 		this.model = model;
+		this.queriesModel = savedQueriesModel;
 		this.$overlay = config.$overlay || this.$element;
+		this.matchingQuery = null;
+		this.currentView = this.model.getCurrentView();
 
 		// Parent
 		mw.rcfilters.ui.FilterTagMultiselectWidget.parent.call( this, $.extend( true, {
@@ -38,27 +44,65 @@
 				hideWhenOutOfView: false,
 				hideOnChoose: false,
 				width: 650,
-				$footer: $( '<div>' )
-					.append(
-						new OO.ui.ButtonWidget( {
-							framed: false,
-							icon: 'feedback',
-							flags: [ 'progressive' ],
-							label: mw.msg( 'rcfilters-filterlist-feedbacklink' ),
-							href: 'https://www.mediawiki.org/wiki/Help_talk:New_filters_for_edit_review'
-						} ).$element
-					)
+				footers: [
+					{
+						name: 'viewSelect',
+						sticky: false,
+						// View select menu, appears on default view only
+						$element: $( '<div>' )
+							.append( new mw.rcfilters.ui.ViewSwitchWidget( this.controller, this.model ).$element ),
+						views: [ 'default' ]
+					},
+					{
+						name: 'feedback',
+						// Feedback footer, appears on all views
+						$element: $( '<div>' )
+							.append(
+								new OO.ui.ButtonWidget( {
+									framed: false,
+									icon: 'feedback',
+									flags: [ 'progressive' ],
+									label: mw.msg( 'rcfilters-filterlist-feedbacklink' ),
+									href: 'https://www.mediawiki.org/wiki/Help_talk:New_filters_for_edit_review'
+								} ).$element
+							)
+					}
+				]
 			},
 			input: {
-				icon: 'search',
+				icon: 'menu',
 				placeholder: mw.msg( 'rcfilters-search-placeholder' )
 			}
 		}, config ) );
+
+		this.savedQueryTitle = new OO.ui.LabelWidget( {
+			label: '',
+			classes: [ 'mw-rcfilters-ui-filterTagMultiselectWidget-wrapper-content-savedQueryTitle' ]
+		} );
 
 		this.resetButton = new OO.ui.ButtonWidget( {
 			framed: false,
 			classes: [ 'mw-rcfilters-ui-filterTagMultiselectWidget-resetButton' ]
 		} );
+
+		if ( !mw.user.isAnon() ) {
+			this.saveQueryButton = new mw.rcfilters.ui.SaveFiltersPopupButtonWidget(
+				this.controller,
+				this.queriesModel
+			);
+
+			this.saveQueryButton.$element.on( 'mousedown', function ( e ) { e.stopPropagation(); } );
+
+			this.saveQueryButton.connect( this, {
+				click: 'onSaveQueryButtonClick',
+				saveCurrent: 'setSavedQueryVisibility'
+			} );
+			this.queriesModel.connect( this, {
+				itemUpdate: 'onSavedQueriesItemUpdate',
+				initialize: 'onSavedQueriesInitialize',
+				'default': 'reevaluateResetRestoreState'
+			} );
+		}
 
 		this.emptyFilterMessage = new OO.ui.LabelWidget( {
 			label: mw.msg( 'rcfilters-empty-filter' ),
@@ -73,43 +117,108 @@
 		this.resetButton.$element.on( 'mousedown', function ( e ) { e.stopPropagation(); } );
 		this.model.connect( this, {
 			initialize: 'onModelInitialize',
+			update: 'onModelUpdate',
 			itemUpdate: 'onModelItemUpdate',
 			highlightChange: 'onModelHighlightChange'
 		} );
-		this.menu.connect( this, { toggle: 'onMenuToggle' } );
+		this.input.connect( this, { change: 'onInputChange' } );
+
+		// The filter list and button should appear side by side regardless of how
+		// wide the button is; the button also changes its width depending
+		// on language and its state, so the safest way to present both side
+		// by side is with a table layout
+		rcFiltersRow = $( '<div>' )
+			.addClass( 'mw-rcfilters-ui-row' )
+			.append(
+				this.$content
+					.addClass( 'mw-rcfilters-ui-cell' )
+					.addClass( 'mw-rcfilters-ui-filterTagMultiselectWidget-cell-filters' )
+			);
+
+		if ( !mw.user.isAnon() ) {
+			rcFiltersRow.append(
+				$( '<div>' )
+					.addClass( 'mw-rcfilters-ui-cell' )
+					.addClass( 'mw-rcfilters-ui-filterTagMultiselectWidget-cell-save' )
+					.append( this.saveQueryButton.$element )
+			);
+		}
+
+		// Add a selector at the right of the input
+		this.viewsSelectWidget = new OO.ui.ButtonSelectWidget( {
+			classes: [ 'mw-rcfilters-ui-filterTagMultiselectWidget-views-select-widget' ],
+			items: [
+				new OO.ui.ButtonOptionWidget( {
+					framed: false,
+					data: '',
+					disabled: true,
+					classes: [ 'mw-rcfilters-ui-filterTagMultiselectWidget-views-select-widget-label' ],
+					label: mw.msg( 'rcfilters-view-advanced-filters-label' )
+				} ),
+				new OO.ui.ButtonOptionWidget( {
+					framed: false,
+					data: 'namespaces',
+					icon: 'article',
+					title: mw.msg( 'rcfilters-view-namespaces-tooltip' )
+				} ),
+				new OO.ui.ButtonOptionWidget( {
+					framed: false,
+					data: 'tags',
+					icon: 'tag',
+					title: mw.msg( 'rcfilters-view-tags-tooltip' )
+				} )
+			]
+		} );
+
+		// Rearrange the UI so the select widget is at the right of the input
+		this.$element.append(
+			$( '<div>' )
+				.addClass( 'mw-rcfilters-ui-table' )
+				.append(
+					$( '<div>' )
+						.addClass( 'mw-rcfilters-ui-row' )
+						.append(
+							$( '<div>' )
+								.addClass( 'mw-rcfilters-ui-cell' )
+								.addClass( 'mw-rcfilters-ui-filterTagMultiselectWidget-views-input' )
+								.append( this.input.$element ),
+							$( '<div>' )
+								.addClass( 'mw-rcfilters-ui-cell' )
+								.addClass( 'mw-rcfilters-ui-filterTagMultiselectWidget-views-select' )
+								.append( this.viewsSelectWidget.$element )
+						)
+				)
+		);
+
+		// Event
+		this.viewsSelectWidget.connect( this, { choose: 'onViewsSelectWidgetChoose' } );
+
+		rcFiltersRow.append(
+			$( '<div>' )
+				.addClass( 'mw-rcfilters-ui-cell' )
+				.addClass( 'mw-rcfilters-ui-filterTagMultiselectWidget-cell-reset' )
+				.append( this.resetButton.$element )
+		);
 
 		// Build the content
 		$contentWrapper.append(
 			title.$element,
+			this.savedQueryTitle.$element,
 			$( '<div>' )
 				.addClass( 'mw-rcfilters-ui-table' )
 				.append(
-					// The filter list and button should appear side by side regardless of how
-					// wide the button is; the button also changes its width depending
-					// on language and its state, so the safest way to present both side
-					// by side is with a table layout
-					$( '<div>' )
-						.addClass( 'mw-rcfilters-ui-row' )
-						.append(
-							this.$content
-								.addClass( 'mw-rcfilters-ui-cell' )
-								.addClass( 'mw-rcfilters-ui-filterTagMultiselectWidget-cell-filters' ),
-							$( '<div>' )
-								.addClass( 'mw-rcfilters-ui-cell' )
-								.addClass( 'mw-rcfilters-ui-filterTagMultiselectWidget-cell-reset' )
-								.append( this.resetButton.$element )
-						)
+					rcFiltersRow
 				)
 		);
 
 		// Initialize
 		this.$handle.append( $contentWrapper );
 		this.emptyFilterMessage.toggle( this.isEmpty() );
+		this.savedQueryTitle.toggle( false );
 
 		this.$element
 			.addClass( 'mw-rcfilters-ui-filterTagMultiselectWidget' );
 
-		this.populateFromModel();
 		this.reevaluateResetRestoreState();
 	};
 
@@ -120,13 +229,68 @@
 	/* Methods */
 
 	/**
+	 * Respond to view select widget choose event
+	 *
+	 * @param {OO.ui.ButtonOptionWidget} buttonOptionWidget Chosen widget
+	 */
+	mw.rcfilters.ui.FilterTagMultiselectWidget.prototype.onViewsSelectWidgetChoose = function ( buttonOptionWidget ) {
+		this.controller.switchView( buttonOptionWidget.getData() );
+		this.viewsSelectWidget.selectItem( null );
+		this.focus();
+	};
+
+	/**
+	 * Respond to input change event
+	 *
+	 * @param {string} value Value of the input
+	 */
+	mw.rcfilters.ui.FilterTagMultiselectWidget.prototype.onInputChange = function ( value ) {
+		var view;
+
+		value = value.trim();
+
+		view = this.model.getViewByTrigger( value.substr( 0, 1 ) );
+
+		this.controller.switchView( view );
+	};
+	/**
+	 * Respond to query button click
+	 */
+	mw.rcfilters.ui.FilterTagMultiselectWidget.prototype.onSaveQueryButtonClick = function () {
+		this.getMenu().toggle( false );
+	};
+
+	/**
+	 * Respond to save query model initialization
+	 */
+	mw.rcfilters.ui.FilterTagMultiselectWidget.prototype.onSavedQueriesInitialize = function () {
+		this.setSavedQueryVisibility();
+	};
+
+	/**
+	 * Respond to save query item change. Mainly this is done to update the label in case
+	 * a query item has been edited
+	 *
+	 * @param {mw.rcfilters.dm.SavedQueryItemModel} item Saved query item
+	 */
+	mw.rcfilters.ui.FilterTagMultiselectWidget.prototype.onSavedQueriesItemUpdate = function ( item ) {
+		if ( this.matchingQuery === item ) {
+			// This means we just edited the item that is currently matched
+			this.savedQueryTitle.setLabel( item.getLabel() );
+		}
+	};
+
+	/**
 	 * Respond to menu toggle
 	 *
 	 * @param {boolean} isVisible Menu is visible
 	 */
 	mw.rcfilters.ui.FilterTagMultiselectWidget.prototype.onMenuToggle = function ( isVisible ) {
+		// Parent
+		mw.rcfilters.ui.FilterTagMultiselectWidget.parent.prototype.onMenuToggle.call( this );
+
 		if ( isVisible ) {
-			mw.hook( 'RcFilters.popup.open' ).fire( this.getMenu().getSelectedItem() );
+			mw.hook( 'RcFilters.popup.open' ).fire();
 
 			if ( !this.getMenu().getSelectedItem() ) {
 				// If there are no selected items, scroll menu to top
@@ -136,9 +300,21 @@
 			}
 		} else {
 			// Clear selection
-			this.getMenu().selectItem( null );
 			this.selectTag( null );
+
+			// Clear input if the only thing in the input is the prefix
+			if (
+				this.input.getValue().trim() === this.model.getViewTrigger( this.model.getCurrentView() )
+			) {
+				// Clear the input
+				this.input.setValue( '' );
+			}
+
+			// Log filter grouping
+			this.controller.trackFilterGroupings( 'filtermenu' );
 		}
+
+		this.input.setIcon( isVisible ? 'search' : 'menu' );
 	};
 
 	/**
@@ -148,12 +324,26 @@
 		// Parent
 		mw.rcfilters.ui.FilterTagMultiselectWidget.parent.prototype.onInputFocus.call( this );
 
-		// Scroll to top
-		this.scrollToTop( this.$element );
+		// Only scroll to top of the viewport if:
+		// - The widget is more than 20px from the top
+		// - The widget is not above the top of the viewport (do not scroll downwards)
+		//   (This isn't represented because >20 is, anyways and always, bigger than 0)
+		this.scrollToTop( this.$element, 0, { min: 20, max: Infinity } );
 	};
 
 	/**
-	 * @inheridoc
+	 * @inheritdoc
+	 */
+	mw.rcfilters.ui.FilterTagMultiselectWidget.prototype.doInputEscape = function () {
+		// Parent
+		mw.rcfilters.ui.FilterTagMultiselectWidget.parent.prototype.doInputEscape.call( this );
+
+		// Blur the input
+		this.input.$input.blur();
+	};
+
+	/**
+	 * @inheritdoc
 	 */
 	mw.rcfilters.ui.FilterTagMultiselectWidget.prototype.onChangeTags = function () {
 		// Parent method
@@ -166,7 +356,62 @@
 	 * Respond to model initialize event
 	 */
 	mw.rcfilters.ui.FilterTagMultiselectWidget.prototype.onModelInitialize = function () {
-		this.populateFromModel();
+		this.setSavedQueryVisibility();
+	};
+
+	/**
+	 * Respond to model update event
+	 */
+	mw.rcfilters.ui.FilterTagMultiselectWidget.prototype.onModelUpdate = function () {
+		this.updateElementsForView();
+	};
+
+	/**
+	 * Update the elements in the widget to the current view
+	 */
+	mw.rcfilters.ui.FilterTagMultiselectWidget.prototype.updateElementsForView = function () {
+		var view = this.model.getCurrentView(),
+			inputValue = this.input.getValue().trim(),
+			inputView = this.model.getViewByTrigger( inputValue.substr( 0, 1 ) );
+
+		if ( inputView !== 'default' ) {
+			// We have a prefix already, remove it
+			inputValue = inputValue.substr( 1 );
+		}
+
+		if ( inputView !== view ) {
+			// Add the correct prefix
+			inputValue = this.model.getViewTrigger( view ) + inputValue;
+		}
+
+		// Update input
+		this.input.setValue( inputValue );
+
+		if ( this.currentView !== view ) {
+			this.scrollToTop( this.$element );
+			this.currentView = view;
+		}
+	};
+
+	/**
+	 * Set the visibility of the saved query button
+	 */
+	mw.rcfilters.ui.FilterTagMultiselectWidget.prototype.setSavedQueryVisibility = function () {
+		if ( mw.user.isAnon() ) {
+			return;
+		}
+
+		this.matchingQuery = this.controller.findQueryMatchingCurrentState();
+
+		this.savedQueryTitle.setLabel(
+			this.matchingQuery ? this.matchingQuery.getLabel() : ''
+		);
+		this.savedQueryTitle.toggle( !!this.matchingQuery );
+		this.saveQueryButton.toggle( !this.matchingQuery );
+
+		if ( this.matchingQuery ) {
+			this.emphasize();
+		}
 	};
 
 	/**
@@ -175,6 +420,10 @@
 	 * @param {mw.rcfilters.dm.FilterItem} item Filter item model
 	 */
 	mw.rcfilters.ui.FilterTagMultiselectWidget.prototype.onModelItemUpdate = function ( item ) {
+		if ( item.getGroupModel().isHidden() ) {
+			return;
+		}
+
 		if (
 			item.isSelected() ||
 			(
@@ -188,6 +437,8 @@
 			this.removeTagByData( item.getName() );
 		}
 
+		this.setSavedQueryVisibility();
+
 		// Re-evaluate reset state
 		this.reevaluateResetRestoreState();
 	};
@@ -197,7 +448,7 @@
 	 */
 	mw.rcfilters.ui.FilterTagMultiselectWidget.prototype.isAllowedData = function ( data ) {
 		return (
-			this.menu.getItemFromData( data ) &&
+			this.model.getItemByName( data ) &&
 			!this.isDuplicateData( data )
 		);
 	};
@@ -242,11 +493,16 @@
 	 */
 	mw.rcfilters.ui.FilterTagMultiselectWidget.prototype.onTagSelect = function ( tagItem ) {
 		var widget = this,
-			menuOption = this.menu.getItemFromData( tagItem.getData() ),
-			oldInputValue = this.input.getValue();
+			menuOption = this.menu.getItemFromModel( tagItem.getModel() ),
+			oldInputValue = this.input.getValue().trim();
+
+		this.menu.setUserSelecting( true );
 
 		// Reset input
 		this.input.setValue( '' );
+
+		// Switch view
+		this.controller.switchView( tagItem.getView() );
 
 		// Parent method
 		mw.rcfilters.ui.FilterTagMultiselectWidget.parent.prototype.onTagSelect.call( this, tagItem );
@@ -255,18 +511,23 @@
 		this.selectTag( tagItem );
 
 		// Scroll to the item
-		if ( oldInputValue ) {
+		if ( this.model.removeViewTriggers( oldInputValue ) ) {
 			// We're binding a 'once' to the itemVisibilityChange event
 			// so this happens when the menu is ready after the items
 			// are visible again, in case this is done right after the
 			// user filtered the results
 			this.getMenu().once(
 				'itemVisibilityChange',
-				function () { widget.scrollToTop( menuOption.$element ); }
+				function () {
+					widget.scrollToTop( menuOption.$element );
+					widget.menu.setUserSelecting( false );
+				}
 			);
 		} else {
 			this.scrollToTop( menuOption.$element );
+			this.menu.setUserSelecting( false );
 		}
+
 	};
 
 	/**
@@ -315,7 +576,7 @@
 	 * Reevaluate the restore state for the widget between setting to defaults and clearing all filters
 	 */
 	mw.rcfilters.ui.FilterTagMultiselectWidget.prototype.reevaluateResetRestoreState = function () {
-		var defaultsAreEmpty = this.model.areDefaultFiltersEmpty(),
+		var defaultsAreEmpty = this.controller.areDefaultsEmpty(),
 			currFiltersAreEmpty = this.model.areCurrentFiltersEmpty(),
 			hideResetButton = currFiltersAreEmpty && defaultsAreEmpty;
 
@@ -338,53 +599,13 @@
 	 * @inheritdoc
 	 */
 	mw.rcfilters.ui.FilterTagMultiselectWidget.prototype.createMenuWidget = function ( menuConfig ) {
-		return new mw.rcfilters.ui.FilterFloatingMenuSelectWidget(
+		return new mw.rcfilters.ui.MenuSelectWidget(
 			this.controller,
 			this.model,
 			$.extend( {
 				filterFromInput: true
 			}, menuConfig )
 		);
-	};
-
-	/**
-	 * Populate the menu from the model
-	 */
-	mw.rcfilters.ui.FilterTagMultiselectWidget.prototype.populateFromModel = function () {
-		var widget = this,
-			items = [];
-
-		// Reset
-		this.getMenu().clearItems();
-
-		$.each( this.model.getFilterGroups(), function ( groupName, groupModel ) {
-			items.push(
-				// Group section
-				new mw.rcfilters.ui.FilterMenuSectionOptionWidget(
-					widget.controller,
-					groupModel,
-					{
-						$overlay: widget.$overlay
-					}
-				)
-			);
-
-			// Add items
-			widget.model.getGroupFilters( groupName ).forEach( function ( filterItem ) {
-				items.push(
-					new mw.rcfilters.ui.FilterMenuOptionWidget(
-						widget.controller,
-						filterItem,
-						{
-							$overlay: widget.$overlay
-						}
-					)
-				);
-			} );
-		} );
-
-		// Add all items to the menu
-		this.getMenu().addItems( items );
 	};
 
 	/**
@@ -404,22 +625,61 @@
 		}
 	};
 
+	mw.rcfilters.ui.FilterTagMultiselectWidget.prototype.emphasize = function () {
+		if (
+			!this.$handle.hasClass( 'mw-rcfilters-ui-filterTagMultiselectWidget-animate' )
+		) {
+			this.$handle
+				.addClass( 'mw-rcfilters-ui-filterTagMultiselectWidget-emphasize' )
+				.addClass( 'mw-rcfilters-ui-filterTagMultiselectWidget-animate' );
+
+			setTimeout( function () {
+				this.$handle
+					.removeClass( 'mw-rcfilters-ui-filterTagMultiselectWidget-emphasize' );
+
+				setTimeout( function () {
+					this.$handle
+						.removeClass( 'mw-rcfilters-ui-filterTagMultiselectWidget-animate' );
+				}.bind( this ), 1000 );
+			}.bind( this ), 500 );
+
+		}
+	};
 	/**
 	 * Scroll the element to top within its container
 	 *
 	 * @private
 	 * @param {jQuery} $element Element to position
-	 * @param {number} [marginFromTop] When scrolling the entire widget to the top, leave this
+	 * @param {number} [marginFromTop=0] When scrolling the entire widget to the top, leave this
 	 *  much space (in pixels) above the widget.
+	 * @param {Object} [threshold] Minimum distance from the top of the element to scroll at all
+	 * @param {number} [threshold.min] Minimum distance above the element
+	 * @param {number} [threshold.max] Minimum distance below the element
 	 */
-	mw.rcfilters.ui.FilterTagMultiselectWidget.prototype.scrollToTop = function ( $element, marginFromTop ) {
+	mw.rcfilters.ui.FilterTagMultiselectWidget.prototype.scrollToTop = function ( $element, marginFromTop, threshold ) {
 		var container = OO.ui.Element.static.getClosestScrollableContainer( $element[ 0 ], 'y' ),
 			pos = OO.ui.Element.static.getRelativePosition( $element, $( container ) ),
-			containerScrollTop = $( container ).is( 'body, html' ) ? 0 : $( container ).scrollTop();
+			containerScrollTop = $( container ).scrollTop(),
+			effectiveScrollTop = $( container ).is( 'body, html' ) ? 0 : containerScrollTop,
+			newScrollTop = effectiveScrollTop + pos.top - ( marginFromTop || 0 );
 
 		// Scroll to item
-		$( container ).animate( {
-			scrollTop: containerScrollTop + pos.top - ( marginFromTop || 0 )
-		} );
+		if (
+			threshold === undefined ||
+			(
+				(
+					threshold.min === undefined ||
+					newScrollTop - containerScrollTop >= threshold.min
+				) &&
+				(
+					threshold.max === undefined ||
+					newScrollTop - containerScrollTop <= threshold.max
+				)
+			)
+		) {
+			$( container ).animate( {
+				scrollTop: newScrollTop
+			} );
+		}
 	};
 }( mediaWiki ) );

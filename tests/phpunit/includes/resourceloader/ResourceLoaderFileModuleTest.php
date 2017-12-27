@@ -41,6 +41,12 @@ class ResourceLoaderFileModuleTest extends ResourceLoaderTestCase {
 				]
 			],
 
+			'htmlTemplateUnknown' => $base + [
+				'templates' => [
+					'templates/notfound.html',
+				]
+			],
+
 			'aliasedHtmlTemplateModule' => $base + [
 				'templates' => [
 					'foo.html' => 'templates/template.html',
@@ -126,10 +132,30 @@ class ResourceLoaderFileModuleTest extends ResourceLoaderTestCase {
 	 */
 	public function testDeprecatedModules( $name, $expected ) {
 		$modules = self::getModules();
-		$rl = new ResourceLoaderFileModule( $modules[$name] );
-		$rl->setName( $name );
+		$module = new ResourceLoaderFileModule( $modules[$name] );
+		$module->setName( $name );
 		$ctx = $this->getResourceLoaderContext();
-		$this->assertEquals( $rl->getScript( $ctx ), $expected );
+		$this->assertEquals( $module->getScript( $ctx ), $expected );
+	}
+
+	/**
+	 * @covers ResourceLoaderFileModule::getScript
+	 */
+	public function testGetScript() {
+		$module = new ResourceLoaderFileModule( [
+			'localBasePath' => __DIR__ . '/../../data/resourceloader',
+			'scripts' => [ 'script-nosemi.js', 'script-comment.js' ],
+		] );
+		$module->setName( 'testing' );
+		$ctx = $this->getResourceLoaderContext();
+		$this->assertEquals(
+			"/* eslint-disable */\nmw.foo()\n" .
+			"\n" .
+			"/* eslint-disable */\nmw.foo()\n// mw.bar();\n" .
+			"\n",
+			$module->getScript( $ctx ),
+			'scripts are concatenated with a new-line'
+		);
 	}
 
 	/**
@@ -259,6 +285,10 @@ class ResourceLoaderFileModuleTest extends ResourceLoaderTestCase {
 					'bar.html' => "<div>goodbye</div>\n",
 				],
 			],
+			[
+				$modules['htmlTemplateUnknown'],
+				false,
+			],
 		];
 	}
 
@@ -270,9 +300,17 @@ class ResourceLoaderFileModuleTest extends ResourceLoaderTestCase {
 		$rl = new ResourceLoaderFileModule( $module );
 		$rl->setName( 'testing' );
 
-		$this->assertEquals( $rl->getTemplates(), $expected );
+		if ( $expected === false ) {
+			$this->setExpectedException( MWException::class );
+			$rl->getTemplates();
+		} else {
+			$this->assertEquals( $rl->getTemplates(), $expected );
+		}
 	}
 
+	/**
+	 * @covers ResourceLoaderFileModule::stripBom
+	 */
 	public function testBomConcatenation() {
 		$basePath = __DIR__ . '/../../data/css';
 		$testModule = new ResourceLoaderFileModule( [
@@ -291,6 +329,25 @@ class ResourceLoaderFileModuleTest extends ResourceLoaderTestCase {
 			$testModule->getStyles( $context ),
 			[ 'all' => ".efbbbf_bom_char_at_start_of_file {}\n" ],
 			'Leading BOM removed when concatenating files'
+		);
+	}
+
+	/**
+	 * @covers ResourceLoaderFileModule::getDefinitionSummary
+	 */
+	public function testGetVersionHash() {
+		$context = $this->getResourceLoaderContext();
+
+		// Less variables
+		$module = new ResourceLoaderFileTestModule();
+		$version = $module->getVersionHash( $context );
+		$module = new ResourceLoaderFileTestModule( [], [
+			'lessVars' => [ 'key' => 'value' ],
+		] );
+		$this->assertNotEquals(
+			$version,
+			$module->getVersionHash( $context ),
+			'Using less variables is significant'
 		);
 	}
 }

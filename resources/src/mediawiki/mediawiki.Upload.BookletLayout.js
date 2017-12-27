@@ -330,13 +330,26 @@
 			stateDetails = this.upload.getStateDetails(),
 			error = stateDetails.errors ? stateDetails.errors[ 0 ] : false,
 			warnings = stateDetails.upload && stateDetails.upload.warnings,
-			$ul = $( '<ul>' );
+			$ul = $( '<ul>' ),
+			errorText;
 
 		if ( state === mw.Upload.State.ERROR ) {
 			if ( !error ) {
+				if ( stateDetails.textStatus === 'timeout' ) {
+					// in case of $.ajax.fail(), there is no response json
+					errorText = mw.message( 'apierror-timeout' ).parse();
+				} else if ( stateDetails.xhr && stateDetails.xhr.status === 0 ) {
+					// failed to even connect to server
+					errorText = mw.message( 'apierror-offline' ).parse();
+				} else if ( stateDetails.textStatus ) {
+					errorText = stateDetails.textStatus;
+				} else {
+					errorText = mw.message( 'apierror-unknownerror', JSON.stringify( stateDetails ) ).parse();
+				}
+
 				// If there's an 'exception' key, this might be a timeout, or other connection problem
 				return $.Deferred().resolve( new OO.ui.Error(
-					$( '<p>' ).msg( 'apierror-unknownerror', JSON.stringify( stateDetails ) ),
+					$( '<p>' ).html( errorText ),
 					{ recoverable: false }
 				) );
 			}
@@ -518,11 +531,10 @@
 			required: true,
 			validate: /.+/
 		} );
-		this.descriptionWidget = new OO.ui.TextInputWidget( {
+		this.descriptionWidget = new OO.ui.MultilineTextInputWidget( {
 			indicator: 'required',
 			required: true,
 			validate: /\S+/,
-			multiline: true,
 			autosize: true
 		} );
 

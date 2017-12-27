@@ -1,0 +1,60 @@
+{
+	"selectorWithoutVariant": ".oo-ui-icon-{name}",
+	"selectorWithVariant": ".oo-ui-image-{variant}.oo-ui-icon-{name}",
+	"intro": "@import '../../../../src/styles/common';",
+	"variants": {
+		"invert": {
+			"color": "#fff",
+			"global": true
+		},
+		"progressive": {
+			"color": "#36c",
+			"global": true
+		},
+		"constructive": {
+			"color": "#36c"
+		},
+		"destructive": {
+			"color": "#d33"
+		},
+		"warning": {
+			"color": "#ff5d00"
+		}
+	},
+	"images": {
+		"arrowNext": { "file": {
+			"ltr": "images/icons/arrow-ltr.svg",
+			"rtl": "images/icons/arrow-rtl.svg"
+		} },
+		"arrowLast": { "file": {
+			"ltr": "images/icons/arrow-rtl.svg",
+			"rtl": "images/icons/arrow-ltr.svg"
+		} },
+		"collapse": { "file": "images/icons/collapse.svg" },
+		"downTriangle": { "file": "images/icons/downTriangle.svg" },
+		"draggable": { "file": "images/icons/draggable.svg" },
+		"expand": { "file": "images/icons/expand.svg" },
+		"move": { "file": "images/icons/move.svg" },
+		"next": { "file": {
+			"ltr": "images/icons/move-ltr.svg",
+			"rtl": "images/icons/move-rtl.svg"
+			}
+		},
+		"previous": { "file": {
+			"ltr": "images/icons/move-rtl.svg",
+			"rtl": "images/icons/move-ltr.svg"
+			}
+		},
+		"last": { "file": {
+			"ltr": "images/icons/move-end-ltr.svg",
+			"rtl": "images/icons/move-end-rtl.svg"
+			}
+		},
+		"first": { "file": {
+			"ltr": "images/icons/move-end-rtl.svg",
+			"rtl": "images/icons/move-end-ltr.svg"
+			}
+		},
+		"upTriangle": { "file": "images/icons/upTriangle.svg" }
+	}
+}

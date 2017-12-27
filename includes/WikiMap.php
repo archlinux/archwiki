@@ -20,8 +20,11 @@
  * @file
  */
 
+use MediaWiki\MediaWikiServices;
+use Wikimedia\Rdbms\DatabaseDomain;
+
 /**
- * Helper tools for dealing with other wikis.
+ * Helper tools for dealing with other locally-hosted wikis.
  */
 class WikiMap {
 
@@ -81,7 +84,7 @@ class WikiMap {
 	 * @return WikiReference|null WikiReference object or null if the wiki was not found
 	 */
 	private static function getWikiWikiReferenceFromSites( $wikiID ) {
-		$siteLookup = \MediaWiki\MediaWikiServices::getInstance()->getSiteLookup();
+		$siteLookup = MediaWikiServices::getInstance()->getSiteLookup();
 		$site = $siteLookup->getSite( $wikiID );
 
 		if ( !$site instanceof MediaWikiSite ) {
@@ -115,7 +118,7 @@ class WikiMap {
 	 * @return string|int Wiki's name or $wiki_id if the wiki was not found
 	 */
 	public static function getWikiName( $wikiID ) {
-		$wiki = WikiMap::getWiki( $wikiID );
+		$wiki = self::getWiki( $wikiID );
 
 		if ( $wiki ) {
 			return $wiki->getDisplayName();
@@ -166,7 +169,7 @@ class WikiMap {
 	 * @return string|bool URL or false if the wiki was not found
 	 */
 	public static function getForeignURL( $wikiID, $page, $fragmentId = null ) {
-		$wiki = WikiMap::getWiki( $wikiID );
+		$wiki = self::getWiki( $wikiID );
 
 		if ( $wiki ) {
 			return $wiki->getFullUrl( $page, $fragmentId );
@@ -174,107 +177,85 @@ class WikiMap {
 
 		return false;
 	}
-}
-
-/**
- * Reference to a locally-hosted wiki
- */
-class WikiReference {
-	private $mCanonicalServer; ///< canonical server URL, e.g. 'https://www.mediawiki.org'
-	private $mServer; ///< server URL, may be protocol-relative, e.g. '//www.mediawiki.org'
-	private $mPath; ///< path, '/wiki/$1'
 
 	/**
-	 * @param string $canonicalServer
-	 * @param string $path
-	 * @param null|string $server
+	 * Get canonical server info for all local wikis in the map that have one
+	 *
+	 * @return array Map of (local wiki ID => map of (url,parts))
+	 * @since 1.30
 	 */
-	public function __construct( $canonicalServer, $path, $server = null ) {
-		$this->mCanonicalServer = $canonicalServer;
-		$this->mPath = $path;
-		$this->mServer = $server === null ? $canonicalServer : $server;
+	public static function getCanonicalServerInfoForAllWikis() {
+		$cache = MediaWikiServices::getInstance()->getLocalServerObjectCache();
+
+		return $cache->getWithSetCallback(
+			$cache->makeGlobalKey( 'wikimap', 'canonical-urls' ),
+			$cache::TTL_DAY,
+			function () {
+				global $wgLocalDatabases, $wgCanonicalServer;
+
+				$infoMap = [];
+				// Make sure at least the current wiki is set, for simple configurations.
+				// This also makes it the first in the map, which is useful for common cases.
+				$infoMap[wfWikiID()] = [
+					'url' => $wgCanonicalServer,
+					'parts' => wfParseUrl( $wgCanonicalServer )
+				];
+
+				foreach ( $wgLocalDatabases as $wikiId ) {
+					$wikiReference = self::getWiki( $wikiId );
+					if ( $wikiReference ) {
+						$url = $wikiReference->getCanonicalServer();
+						$infoMap[$wikiId] = [ 'url' => $url, 'parts' => wfParseUrl( $url ) ];
+					}
+				}
+
+				return $infoMap;
+			}
+		);
 	}
 
 	/**
-	 * Get the URL in a way to be displayed to the user
-	 * More or less Wikimedia specific
-	 *
-	 * @return string
+	 * @param string $url
+	 * @return bool|string Wiki ID or false
+	 * @since 1.30
 	 */
-	public function getDisplayName() {
-		$parsed = wfParseUrl( $this->mCanonicalServer );
-		if ( $parsed ) {
-			return $parsed['host'];
-		} else {
-			// Invalid server spec.
-			// There's no sane thing to do here, so just return the canonical server name in full.
-			return $this->mCanonicalServer;
-		}
-	}
-
-	/**
-	 * Helper function for getUrl()
-	 *
-	 * @todo FIXME: This may be generalized...
-	 *
-	 * @param string $page Page name (must be normalised before calling this function!
-	 *  May contain a section part.)
-	 * @param string|null $fragmentId
-	 *
-	 * @return string relative URL, without the server part.
-	 */
-	private function getLocalUrl( $page, $fragmentId = null ) {
-		$page = wfUrlencode( str_replace( ' ', '_', $page ) );
-
-		if ( is_string( $fragmentId ) && $fragmentId !== '' ) {
-			$page .= '#' . wfUrlencode( $fragmentId );
+	public static function getWikiFromUrl( $url ) {
+		$urlPartsCheck = wfParseUrl( $url );
+		if ( $urlPartsCheck === false ) {
+			return false;
 		}
 
-		return str_replace( '$1', $page, $this->mPath );
+		$urlPartsCheck = array_intersect_key( $urlPartsCheck, [ 'host' => 1, 'port' => 1 ] );
+		foreach ( self::getCanonicalServerInfoForAllWikis() as $wikiId => $info ) {
+			$urlParts = $info['parts'];
+			if ( $urlParts === false ) {
+				continue; // sanity
+			}
+
+			$urlParts = array_intersect_key( $urlParts, [ 'host' => 1, 'port' => 1 ] );
+			if ( $urlParts == $urlPartsCheck ) {
+				return $wikiId;
+			}
+		}
+
+		return false;
 	}
 
 	/**
-	 * Get a canonical (i.e. based on $wgCanonicalServer) URL to a page on this foreign wiki
+	 * Get the wiki ID of a database domain
 	 *
-	 * @param string $page Page name (must be normalised before calling this function!)
-	 * @param string|null $fragmentId
+	 * This is like DatabaseDomain::getId() without encoding (for legacy reasons)
 	 *
-	 * @return string Url
-	 */
-	public function getCanonicalUrl( $page, $fragmentId = null ) {
-		return $this->mCanonicalServer . $this->getLocalUrl( $page, $fragmentId );
-	}
-
-	/**
-	 * Get a canonical server URL
+	 * @param string|DatabaseDomain $domain
 	 * @return string
 	 */
-	public function getCanonicalServer() {
-		return $this->mCanonicalServer;
-	}
+	public static function getWikiIdFromDomain( $domain ) {
+		if ( !( $domain instanceof DatabaseDomain ) ) {
+			$domain = DatabaseDomain::newFromId( $domain );
+		}
 
-	/**
-	 * Alias for getCanonicalUrl(), for backwards compatibility.
-	 * @param string $page
-	 * @param string|null $fragmentId
-	 *
-	 * @return string
-	 */
-	public function getUrl( $page, $fragmentId = null ) {
-		return $this->getCanonicalUrl( $page, $fragmentId );
-	}
-
-	/**
-	 * Get a URL based on $wgServer, like Title::getFullURL() would produce
-	 * when called locally on the wiki.
-	 *
-	 * @param string $page Page name (must be normalized before calling this function!)
-	 * @param string|null $fragmentId
-	 *
-	 * @return string URL
-	 */
-	public function getFullUrl( $page, $fragmentId = null ) {
-		return $this->mServer .
-			$this->getLocalUrl( $page, $fragmentId );
+		return strlen( $domain->getTablePrefix() )
+			? "{$domain->getDatabase()}-{$domain->getTablePrefix()}"
+			: $domain->getDatabase();
 	}
 }

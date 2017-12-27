@@ -321,7 +321,13 @@ Demo.static.pages.dialogs = function ( demo ) {
 			framed: true
 		} ).$element
 			.addClass( 'demo-container' )
+			.attr( 'role', 'main' )
 			.append( $fieldsets ),
 		windowManager.$element
 	);
+
+	demo.once( 'destroy', function () {
+		windowManager.destroy();
+		OO.ui.getWindowManager().closeWindow( OO.ui.getWindowManager().getCurrentWindow() );
+	} );
 };

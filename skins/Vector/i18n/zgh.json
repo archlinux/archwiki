@@ -2,12 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"Amara-Amaziɣ",
-			"ⵕⴰⵊⵉ"
+			"ⵕⴰⵊⵉ",
+			"YesIn"
 		]
 	},
-	"vector-action-addsection": "Rnu kra n usentel",
+	"vector-action-addsection": "ⵔⵏⵓ ⴰⵙⵏⵜⵍ",
+	"vector-action-delete": "ⴽⴽⵙ",
 	"vector-action-move": "ⵙⵎⵓⵜⵜⵉ",
-	"vector-view-create": "Snulfu",
+	"vector-view-create": "ⵙⵏⴼⵍⵓⵍ",
 	"vector-view-edit": "ⵙⵏⴼⵍ",
 	"vector-view-history": "ⵙⴽⵏ ⴰⵎⵣⵔⴰⵢ",
 	"vector-view-view": "ⵖⵔ",

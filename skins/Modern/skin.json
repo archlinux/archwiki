@@ -41,5 +41,11 @@
 		"SkinModern": "SkinModern.php",
 		"ModernTemplate": "SkinModern.php"
 	},
+	"ResourceModuleSkinStyles": {
+		"modern": {
+			"+mediawiki.action.view.redirectPage": "skinStyles/mediawiki.action.view.redirectPage.css",
+			"+mediawiki.special.preferences.styles": "skinStyles/mediawiki.special.preferences.styles.less"
+		}
+	},
 	"manifest_version": 1
 }

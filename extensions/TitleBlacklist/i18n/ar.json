@@ -5,7 +5,8 @@
 			"Meno25",
 			"OsamaK",
 			"Abanima",
-			"علاء"
+			"علاء",
+			"ديفيد"
 		]
 	},
 	"action-titleblacklistlog": "استعراض سجل القائمة السوداء للعناوين",
@@ -26,7 +27,8 @@
 	"right-tboverride": "تجاوز قائمتي العناوين أو أسماء المستخدمين السوداوين",
 	"right-tboverride-account": "تجاوز قائمة اسم المستخدم السوداء.",
 	"right-titleblacklistlog": "استعراض سجل القائمة السوداء للعناوين",
-	"apihelp-titleblacklist-description": "تحقق من عناون المقالة، اسم الملف، أو اسم المستخدم ضد قائمة العناوين السوداء.",
+	"apihelp-titleblacklist-description": "تحقق من صحة عنوان الصفحة، أو اسم الملف، أو اسم المستخدم ضد قائمة العناوين السوداء.",
+	"apihelp-titleblacklist-summary": "تحقق من صحة عنوان الصفحة، أو اسم الملف، أو اسم المستخدم ضد قائمة العناوين السوداء.",
 	"apihelp-titleblacklist-param-title": "سلسة الحروف للتحقق منها ضد القائمة السوداء.",
 	"apihelp-titleblacklist-param-action": "الفعل للتحقق منه.",
 	"apihelp-titleblacklist-param-nooverride": "لا تحاول تجاوز قائمة العناوين السوداء.",

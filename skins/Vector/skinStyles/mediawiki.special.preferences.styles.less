@@ -41,7 +41,7 @@
 				.background-image('../images/preferences/fade.png');
 				background-position: bottom;
 				background-repeat: repeat-x;
-				color: #333;
+				color: @colorText;
 			}
 		}
 	}
@@ -69,12 +69,12 @@
 	margin: 0;
 	margin-top: -2px;
 	clear: both;
-	border: solid 1px #ccc;
-	background-color: #fafafa;
+	border: 1px solid @colorGray12;
+	background-color: @colorGray15;
 
 	fieldset {
 		border: 0;
-		border-top: solid 1px #ccc;
+		border-top: 1px solid @colorGray12;
 	}
 
 	> fieldset {
@@ -88,7 +88,7 @@
 	}
 
 	legend {
-		color: #666;
+		color: @colorGray5;
 	}
 
 	td {
@@ -108,5 +108,5 @@
 .htmlform-tip {
 	font-size: x-small;
 	padding: 0.2em 2em;
-	color: #666;
+	color: @colorGray5;
 }

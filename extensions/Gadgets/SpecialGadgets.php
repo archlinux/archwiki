@@ -16,7 +16,7 @@ class SpecialGadgets extends SpecialPage {
 
 	/**
 	 * Main execution function
-	 * @param $par array Parameters passed to the page
+	 * @param array $par Parameters passed to the page
 	 */
 	public function execute( $par ) {
 		$parts = explode( '/', $par );
@@ -191,7 +191,7 @@ class SpecialGadgets extends SpecialPage {
 
 	/**
 	 * Exports a gadget with its dependencies in a serialized form
-	 * @param $gadget String Name of gadget to export
+	 * @param string $gadget Name of gadget to export
 	 */
 	public function showExportForm( $gadget ) {
 		global $wgScript;

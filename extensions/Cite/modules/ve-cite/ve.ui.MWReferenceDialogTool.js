@@ -80,7 +80,7 @@ ve.ui.sequenceRegistry.register(
 );
 
 ve.ui.triggerRegistry.register(
-    'reference', { mac: new ve.ui.Trigger( 'cmd+shift+k' ), pc: new ve.ui.Trigger( 'ctrl+shift+k' ) }
+	'reference', { mac: new ve.ui.Trigger( 'cmd+shift+k' ), pc: new ve.ui.Trigger( 'ctrl+shift+k' ) }
 );
 
 ve.ui.commandHelpRegistry.register( 'insert', 'ref', {

@@ -3,7 +3,8 @@
 		"authors": [
 			"Toliño",
 			"Xosé",
-			"Banjo"
+			"Banjo",
+			"Elisardojm"
 		]
 	},
 	"fancycaptcha-desc": "Xerador de imaxes CAPTCHA para Confirm Edit",
@@ -17,5 +18,6 @@
 	"fancycaptcha-sendemail": "Para protexer o wiki contra o spam automático, introduza as palabras que aparecen na caixa ([[Special:Captcha/help|máis información]]):",
 	"fancycaptcha-reload-text": "Refrescar",
 	"apihelp-fancycaptchareload-description": "Novo FancyCaptcha.",
+	"apihelp-fancycaptchareload-summary": "Obter un novo FancyCaptcha.",
 	"apihelp-fancycaptchareload-example-1": "Novo FancyCaptcha"
 }

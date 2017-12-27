@@ -15,45 +15,32 @@ module.exports = function ( grunt ) {
 	grunt.loadNpmTasks( 'grunt-stylelint' );
 	grunt.initConfig( {
 		eslint: {
-			fix: {
-				options: {
-					fix: true
-				},
-				src: '<%= eslint.main %>'
-			},
-			main: [
+			all: [
 				'**/*.js',
 				'{.jsduck,build}/**/*.js',
 				'modules/**/*.js',
-				'!node_modules/**'
+				'!node_modules/**',
+				'!vendor/**'
 			]
 		},
 		banana: conf.MessagesDirs,
 		stylelint: {
-			core: {
-				src: [
-					'**/*.css',
-					'!modules/ve-cite/**',
-					'!node_modules/**'
-				]
-			},
-			've-cite': {
-				options: {
-					configFile: 'modules/ve-cite/.stylelintrc'
-				},
-				src: [
-					'modules/ve-cite/**/*.css'
-				]
-			}
+			all: [
+				'**/*.css',
+				'**/*.less',
+				'!node_modules/**',
+				'!vendor/**'
+			]
 		},
 		jsonlint: {
 			all: [
 				'**/*.json',
-				'!node_modules/**'
+				'!node_modules/**',
+				'!vendor/**'
 			]
 		}
 	} );
 
-	grunt.registerTask( 'test', [ 'eslint:main', 'stylelint', 'jsonlint', 'banana' ] );
+	grunt.registerTask( 'test', [ 'eslint', 'stylelint', 'jsonlint', 'banana' ] );
 	grunt.registerTask( 'default', 'test' );
 };

@@ -208,13 +208,13 @@
 			},
 			// brackets, greater than
 			{
-				pattern: /[\]\}>]/g,
+				pattern: /[}\]>]/g,
 				replace: ')',
 				generalRule: true
 			},
 			// brackets, lower than
 			{
-				pattern: /[\[\{<]/g,
+				pattern: /[{[<]/g,
 				replace: '(',
 				generalRule: true
 			},
@@ -456,19 +456,7 @@
 		trimFileNameToByteLength = function ( name, extension ) {
 			// There is a special byte limit for file names and ... remember the dot
 			return trimToByteLength( name, FILENAME_MAX_BYTES - extension.length - 1 ) + '.' + extension;
-		},
-
-		// Polyfill for ES5 Object.create
-		createObject = Object.create || ( function () {
-			return function ( o ) {
-				function Title() {}
-				if ( o !== Object( o ) ) {
-					throw new Error( 'Cannot inherit from a non-object' );
-				}
-				Title.prototype = o;
-				return new Title();
-			};
-		}() );
+		};
 
 	/* Static members */
 
@@ -490,7 +478,7 @@
 			return null;
 		}
 
-		t = createObject( Title.prototype );
+		t = Object.create( Title.prototype );
 		t.namespace = parsed.namespace;
 		t.title = parsed.title;
 		t.ext = parsed.ext;
@@ -616,7 +604,7 @@
 		}
 
 		// Any remaining initial :s are illegal.
-		title = title.replace( /^\:+/, '' );
+		title = title.replace( /^:+/, '' );
 
 		return Title.newFromText( title, namespace );
 	};
@@ -654,16 +642,16 @@
 			thumbPhpRegex = /thumb\.php/,
 			regexes = [
 				// Thumbnails
-				/\/[a-f0-9]\/[a-f0-9]{2}\/([^\s\/]+)\/[^\s\/]+-[^\s\/]*$/,
+				/\/[a-f0-9]\/[a-f0-9]{2}\/([^\s/]+)\/[^\s/]+-[^\s/]*$/,
 
 				// Full size images
-				/\/[a-f0-9]\/[a-f0-9]{2}\/([^\s\/]+)$/,
+				/\/[a-f0-9]\/[a-f0-9]{2}\/([^\s/]+)$/,
 
 				// Thumbnails in non-hashed upload directories
-				/\/([^\s\/]+)\/[^\s\/]+-(?:\1|thumbnail)[^\s\/]*$/,
+				/\/([^\s/]+)\/[^\s/]+-(?:\1|thumbnail)[^\s/]*$/,
 
 				// Full-size images in non-hashed upload directories
-				/\/([^\s\/]+)$/
+				/\/([^\s/]+)$/
 			],
 
 			recount = regexes.length;
@@ -699,22 +687,21 @@
 	 */
 	Title.exists = function ( title ) {
 		var match,
-			type = $.type( title ),
 			obj = Title.exist.pages;
 
-		if ( type === 'string' ) {
+		if ( typeof title === 'string' ) {
 			match = obj[ title ];
-		} else if ( type === 'object' && title instanceof Title ) {
+		} else if ( title instanceof Title ) {
 			match = obj[ title.toString() ];
 		} else {
 			throw new Error( 'mw.Title.exists: title must be a string or an instance of Title' );
 		}
 
-		if ( typeof match === 'boolean' ) {
-			return match;
+		if ( typeof match !== 'boolean' ) {
+			return null;
 		}
 
-		return null;
+		return match;
 	};
 
 	/**

@@ -111,12 +111,11 @@
 			// Fallback to the wikiEditor browser map if no special map is provided in the module
 			var mod = module && 'browsers' in module ? module : $.wikiEditor;
 			// Check for and make use of cached value and early opportunities to bail
-			if ( typeof mod.supported !== 'undefined' ) {
-				// Cache hit
-				return mod.supported;
+			if ( typeof mod.supported === 'undefined' ) {
+				// Run a browser support test and then cache and return the result
+				mod.supported = $.client.test( mod.browsers );
 			}
-			// Run a browser support test and then cache and return the result
-			return mod.supported = $.client.test( mod.browsers );
+			return mod.supported;
 		},
 
 		/**
@@ -474,14 +473,7 @@
 				 * Related to old IE 8 issues that are no longer reproducible
 				 */
 				saveCursorAndScrollTop: function () {
-					var IHateIE8;
-					if ( profile.name === 'msie' && document.selection && document.selection.createRange ) {
-						IHateIE8 = {
-							scrollTop: context.$textarea.scrollTop(),
-							pos: context.$textarea.textSelection( 'getCaretPosition', { startAndEnd: true } )
-						};
-						context.$textarea.data( 'IHateIE8', IHateIE8 );
-					}
+					// Deprecated, do nothing
 				},
 
 				/**

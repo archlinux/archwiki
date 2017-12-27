@@ -1,6 +1,7 @@
 body {
 	color: #222;
-	margin: 1em;
+	margin: 0 1em;
+	padding: 0;
 	font-family: sans-serif;
 	font-size: 0.8em;
 }
@@ -16,7 +17,10 @@ p {
 }
 
 .demo-menu {
-	margin-bottom: 1em;
+	min-width: 320px; /* Let's not pretend it works on anything lower than that */
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
 }
 
 .demo-menu > .oo-ui-widget {
@@ -59,47 +63,86 @@ p {
 	box-sizing: border-box;
 }
 
+.demo-link-example,
 .demo-console-toggle {
 	float: right;
-	margin-top: -2em;
+	margin-top: -2.5em;
 	cursor: pointer;
-	-webkit-transition: background-color 100ms, color 100ms, transform 100ms;
-	-moz-transition: background-color 100ms, color 100ms, transform 100ms;
-	transition: background-color 100ms, color 100ms, transform 100ms;
+	-webkit-transition: background-color 100ms, color 100ms;
+	-moz-transition: background-color 100ms, color 100ms;
+	transition: background-color 100ms, color 100ms;
+}
+
+.demo-link-example {
+	position: relative;
+	top: 1px;
+	right: 2em;
+	opacity: 0;
+	-webkit-transition: opacity 100ms;
+	-moz-transition: opacity 100ms;
+	transition: opacity 100ms;
+}
+
+.oo-ui-fieldsetLayout-group > .oo-ui-fieldLayout:first-child .demo-link-example {
+	right: 7.2em;
+	opacity: 1;
 }
 
 .demo-console-expanded .demo-console-toggle {
-	margin-top: -2.5em;
+	margin-top: -3em;
+}
+
+.demo-link-example::after,
+.demo-console-toggle::after {
+	color: #36c;
+	position: relative;
+	display: inline-block;
+	margin-right: -1.2em;
+	padding: 0.703125em 0.9375em 0.625em; /* equals frameless button */
+	border-radius: 2px;
+	line-height: 1.172em;
+	font-weight: bold;
+	text-align: center;
+	-webkit-transition: color 100ms;
+	-moz-transition: color 100ms;
+	transition: color 100ms;
+}
+
+.demo-link-example::after,
+.demo-console-toggle:hover::after {
+	color: #447ff5;
+}
+
+.demo-link-example::after {
+	content: '#';
+}
+
+.demo-container > .oo-ui-fieldsetLayout:first-child .oo-ui-fieldLayout:first-child .demo-link-example::after {
+	content: 'Link to this example #';
 }
 
 .demo-console-toggle::after {
-	content: '→';
-	background-color: #f8f9fa;
-	color: #222;
-	position: relative;
-	display: inline-block;
-	width: 1.6em;
-	border-radius: 2px;
-	line-height: 1.6;
-	text-align: center;
-	-webkit-transition: background-color 100ms, color 100ms, transform 100ms;
-	-moz-transition: background-color 100ms, color 100ms, transform 100ms;
-	transition: background-color 100ms, color 100ms, transform 100ms;
-}
-
-.demo-console-toggle:hover::after,
-.demo-console-expanded .demo-console-toggle::after {
-	background: #fff;
-	color: #444;
+	content: '↓';
 }
 
 .demo-console-expanded .demo-console-toggle::after {
-	-webkit-transform: rotate( -90deg );
-	-moz-transform: rotate( -90deg );
-	-ms-transform: rotate( -90deg );
-	transform: rotate( -90deg );
+	content: '↑';
 }
 
+.oo-ui-fieldsetLayout-group > .oo-ui-fieldLayout:first-child .demo-console-toggle::after {
+	content: 'Show code ↓';
+}
+
+.oo-ui-fieldsetLayout-group > .oo-ui-fieldLayout:first-child .demo-console-expanded .demo-console-toggle::after {
+	content: 'Hide code ↑';
+}
+
+.demo-link-example:focus,
+.oo-ui-fieldLayout:hover > .demo-link-example {
+	opacity: 1;
+}
+
+.demo-console-collapsed .demo-sample-code,
 .demo-console-collapsed .demo-console-log,
 .demo-console-collapsed .demo-console-label,
 .demo-console-collapsed .demo-console-submit {
@@ -202,6 +245,12 @@ p {
 	color: #444;
 }
 
+.demo-sample-code {
+	/* Need to override Prism (syntax highlighter) styles */
+	background-color: #eaecf0;
+	margin: 0 !important; /* stylelint-disable-line declaration-no-important */
+}
+
 /* Toolbars demo */
 
 .demo-container.demo-toolbars {
@@ -252,6 +301,12 @@ p {
 	max-width: 10em;
 }
 
+.demo-overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
 /* Special cases: ActionFieldLayout top aligned,
 FieldLayout left & right aligned */
 .oo-ui-fieldLayout-align-left,
@@ -259,8 +314,11 @@ FieldLayout left & right aligned */
 	max-width: 50em;
 }
 
+.oo-ui-fieldLayout-align-top.oo-ui-actionFieldLayout .demo-link-example,
 .oo-ui-fieldLayout-align-top.oo-ui-actionFieldLayout .demo-console-toggle,
+.oo-ui-fieldLayout-align-left .demo-link-example,
 .oo-ui-fieldLayout-align-left .demo-console-toggle,
+.oo-ui-fieldLayout-align-right .demo-link-example,
 .oo-ui-fieldLayout-align-right .demo-console-toggle {
 	margin-right: -2em;
 }
@@ -278,8 +336,37 @@ FieldLayout left & right aligned */
 	padding: 1em 1em 1.5em 1em;
 }
 
+/*
+ * Support: iOS 9.2, Android 4.4.4, Op Mobile 37, Chrome/Android 57, Fx/Android 52, UC Browser 11.4, Baidu 7.12
+ * Workaround for weak ancient mobile browser support of `fixed` positioning
+ */
+@supports ( position: fixed ) {
+	.demo-menu {
+		background-color: #fff;
+		position: fixed;
+		top: 0;
+		border-bottom: 1px solid #a2a9b1;
+		padding-top: 1em;
+		box-shadow: 0 4px 4px -4px rgba( 0, 0, 0, 0.25 );
+		z-index: 5;
+	}
+
+	/* This needs extra specificity to beat PanelLayout styles */
+	.demo-container.oo-ui-panelLayout {
+		/* Apex overrides. WikimediaUI wins for now in the demo framing in this browser subset */
+		border-color: #a2a9b1;
+		border-radius: 2px;
+		box-shadow: none;
+	}
+
+	.oo-ui-windowManager-modal > .oo-ui-dialog,
+	.oo-ui-processDialog-errors {
+		z-index: 6;
+	}
+}
+
 /* Media Queries */
-@media ( max-width: 750px ) {
+@media ( min-width: 320px ) {
 	body {
 		font-size: 1em;
 	}
@@ -298,15 +385,114 @@ FieldLayout left & right aligned */
 		border-width: 1px;
 	}
 
+	.demo-console-expanded {
+		width: calc( 100% + 2.5em ); /* equals `100%` + `padding` of `.demo-container` above */
+	}
+
+	.demo-link-example,
 	.demo-console-toggle {
-		margin-right: -2em;
+		margin-right: -2.5em;
+	}
+
+	.demo-console-expanded .demo-console-toggle {
+		margin-right: 0;
+	}
+
+	.oo-ui-fieldsetLayout-group > .oo-ui-fieldLayout:first-child .demo-link-example,
+	.oo-ui-fieldsetLayout-group > .oo-ui-fieldLayout:first-child .demo-console-toggle {
+		margin-top: 0;
+	}
+
+	.oo-ui-fieldsetLayout-group > .oo-ui-fieldLayout:first-child .demo-console-expanded .demo-console-toggle {
+		margin-top: -0.5em;
+	}
+
+	@supports ( position: fixed ) {
+		.demo-menu {
+			min-height: 11.4em;
+			left: 1em;
+			right: 1em;
+		}
+
+		/* Hide “Docs“ Button on very small screens */
+		.demo-menu > .demo-button-docs {
+			display: none;
+		}
+
+		/* This needs extra specificity to beat PanelLayout styles */
+		.demo-container.oo-ui-panelLayout {
+			margin-top: 11.4em;
+		}
 	}
 }
 
-@media ( min-width: 751px ) {
+@media ( min-width: 568px ) {
+	@supports ( position: fixed ) {
+		.demo-menu {
+			min-height: 7.5em;
+		}
+
+		.demo-menu > .demo-button-docs {
+			display: inline-block;
+		}
+
+		.demo-container.oo-ui-panelLayout {
+			margin-top: 7.5em;
+		}
+
+		.demo-console-expanded .demo-console-toggle {
+			margin-right: 0.5em;
+		}
+	}
+}
+
+/* @media ( min-width: 768px ) {} */
+
+@media ( min-width: 960px ) {
+	body {
+		font-size: 0.8em;
+	}
+
 	.demo-container {
+		border-radius: 2px;
+		border-width: 1px;
 		padding: 2em;
 	}
-}
 
+	.demo-menu {
+		width: 62.5em;
+		white-space: nowrap;
+	}
+
+	.demo-console-expanded {
+		width: 100%;
+	}
+
+	.demo-link-example,
+	.demo-console-toggle,
+	.demo-console-expanded .demo-console-toggle {
+		margin-right: 0;
+	}
+
+	.oo-ui-fieldsetLayout-group > .oo-ui-fieldLayout:first-child .demo-link-example,
+	.oo-ui-fieldsetLayout-group > .oo-ui-fieldLayout:first-child .demo-console-toggle {
+		margin-top: -2.5em;
+	}
+
+	.oo-ui-fieldsetLayout-group > .oo-ui-fieldLayout:first-child .demo-console-expanded .demo-console-toggle {
+		margin-top: -3em;
+	}
+
+	@supports ( position: fixed ) {
+		.demo-menu {
+			min-height: 4.5em;
+			left: auto;
+			right: auto;
+		}
+
+		.demo-container.oo-ui-panelLayout {
+			margin-top: 4.5em;
+		}
+	}
+}
 /* stylelint-enable selector-pseudo-element-colon-notation */

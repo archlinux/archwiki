@@ -60,7 +60,9 @@ class MonoBookTemplate extends BaseTemplate {
 					$this->getSkin()->getTitle()->getPageViewLanguage()->getHtmlCode();
 				$this->text( 'pageLanguage' );
 				?>"><?php $this->html( 'title' ) ?></h1>
-				<?php } ?>
+				<?php
+				}
+				?>
 
 				<div id="bodyContent" class="mw-body-content">
 					<div id="siteSub"><?php $this->msg( 'tagline' ) ?></div>
@@ -70,7 +72,7 @@ class MonoBookTemplate extends BaseTemplate {
 					<?php if ( $this->data['undelete'] ) { ?>
 						<div id="contentSub2"><?php $this->html( 'undelete' ) ?></div>
 					<?php
-}
+					}
 					?><?php
 					if ( $this->data['newtalk'] ) {
 						?>
@@ -115,7 +117,6 @@ class MonoBookTemplate extends BaseTemplate {
 				<div class="pBody">
 					<ul<?php $this->html( 'userlangattributes' ) ?>>
 						<?php
-
 						$personalTools = $this->getPersonalTools();
 
 						if ( array_key_exists( 'uls', $personalTools ) ) {
@@ -124,29 +125,29 @@ class MonoBookTemplate extends BaseTemplate {
 						}
 
 						if ( !$this->getSkin()->getUser()->isLoggedIn() &&
-							User::groupHasPermission( '*', 'edit' ) ) {
-
-							echo Html::rawElement( 'li', array(
+							User::groupHasPermission( '*', 'edit' )
+						) {
+							echo Html::rawElement( 'li', [
 								'id' => 'pt-anonuserpage'
-							), $this->getMsg( 'notloggedin' )->escaped() );
+							], $this->getMsg( 'notloggedin' )->escaped() );
 						}
 
 						foreach ( $personalTools as $key => $item ) { ?>
 							<?php echo $this->makeListItem( $key, $item ); ?>
 
 						<?php
-}
+						}
 						?>
 					</ul>
 				</div>
 			</div>
 			<div class="portlet" id="p-logo" role="banner">
 				<?php
-				echo Html::element( 'a', array(
+				echo Html::element( 'a', [
 						'href' => $this->data['nav_urls']['mainpage']['href'],
 						'class' => 'mw-wiki-logo',
-						)
-						+ Linker::tooltipAndAccesskeyAttribs( 'p-logo' )
+					]
+					+ Linker::tooltipAndAccesskeyAttribs( 'p-logo' )
 				); ?>
 
 			</div>
@@ -157,7 +158,8 @@ class MonoBookTemplate extends BaseTemplate {
 		<div class="visualClear"></div>
 		<?php
 		$validFooterIcons = $this->getFooterIcons( 'icononly' );
-		$validFooterLinks = $this->getFooterLinks( 'flat' ); // Additional footer links
+		// Additional footer links
+		$validFooterLinks = $this->getFooterLinks( 'flat' );
 
 		if ( count( $validFooterIcons ) + count( $validFooterLinks ) > 0 ) {
 			?>
@@ -175,7 +177,7 @@ class MonoBookTemplate extends BaseTemplate {
 					<?php echo $this->getSkin()->makeFooterIcon( $icon ); ?>
 
 				<?php
-}
+				}
 				?>
 			</div>
 		<?php
@@ -204,9 +206,7 @@ class MonoBookTemplate extends BaseTemplate {
 		echo Html::closeElement( 'body' );
 		echo Html::closeElement( 'html' );
 		echo "\n";
-	} // end of execute() method
-
-	/*************************************************************************************************/
+	}
 
 	/**
 	 * @param array $sidebar
@@ -250,19 +250,19 @@ class MonoBookTemplate extends BaseTemplate {
 			<div id="searchBody" class="pBody">
 				<form action="<?php $this->text( 'wgScript' ) ?>" id="searchform">
 					<input type="hidden" name="title" value="<?php $this->text( 'searchtitle' ) ?>"/>
-					<?php echo $this->makeSearchInput( array( 'id' => 'searchInput' ) ); ?>
+					<?php echo $this->makeSearchInput( [ 'id' => 'searchInput' ] ); ?>
 
 					<?php
 					echo $this->makeSearchButton(
 						'go',
-						array( 'id' => 'searchGoButton', 'class' => 'searchButton' )
+						[ 'id' => 'searchGoButton', 'class' => 'searchButton' ]
 					);
 
 					if ( $this->config->get( 'UseTwoButtonsSearchForm' ) ) {
 						?>&#160;
 						<?php echo $this->makeSearchButton(
 							'fulltext',
-							array( 'id' => 'mw-searchButton', 'class' => 'searchButton' )
+							[ 'id' => 'mw-searchButton', 'class' => 'searchButton' ]
 						);
 					} else {
 						?>
@@ -303,7 +303,6 @@ class MonoBookTemplate extends BaseTemplate {
 	<?php
 	}
 
-	/*************************************************************************************************/
 	function toolbox() {
 		?>
 		<div class="portlet" id="p-tb" role="navigation">
@@ -318,7 +317,6 @@ class MonoBookTemplate extends BaseTemplate {
 
 					<?php
 					}
-
 					// Avoid PHP 7.1 warnings
 					$skin = $this;
 					Hooks::run( 'MonoBookTemplateToolboxEnd', [ &$skin ] );
@@ -332,7 +330,6 @@ class MonoBookTemplate extends BaseTemplate {
 		Hooks::run( 'MonoBookAfterToolbox' );
 	}
 
-	/*************************************************************************************************/
 	function languageBox() {
 		if ( $this->data['language_urls'] !== false ) {
 			?>
@@ -345,7 +342,7 @@ class MonoBookTemplate extends BaseTemplate {
 							<?php echo $this->makeListItem( $key, $langLink ); ?>
 
 						<?php
-}
+						}
 						?>
 					</ul>
 
@@ -356,17 +353,16 @@ class MonoBookTemplate extends BaseTemplate {
 		}
 	}
 
-	/*************************************************************************************************/
 	/**
 	 * @param string $bar
 	 * @param array|string $cont
 	 */
 	function customBox( $bar, $cont ) {
-		$portletAttribs = array(
+		$portletAttribs = [
 			'class' => 'generated-sidebar portlet',
 			'id' => Sanitizer::escapeId( "p-$bar" ),
 			'role' => 'navigation'
-		);
+		];
 
 		$tooltip = Linker::titleAttrib( "p-$bar" );
 		if ( $tooltip !== false ) {
@@ -403,4 +399,4 @@ class MonoBookTemplate extends BaseTemplate {
 		</div>
 	<?php
 	}
-} // end of class
+}

@@ -4,10 +4,6 @@
 	"images": {
 		"add": { "file": "images/icons/add.svg" },
 		"advanced": { "file": "images/icons/advanced.svg" },
-		"bookmark": { "file": {
-			"ltr": "images/icons/bookmark-ltr.svg",
-			"rtl": "images/icons/bookmark-rtl.svg"
-		} },
 		"browser": { "file": {
 			"ltr": "images/icons/browser-ltr.svg",
 			"rtl": "images/icons/browser-rtl.svg"
@@ -64,7 +60,9 @@
 		"sun": { "file": {
 			"ltr": "images/icons/sun-ltr.svg",
 			"rtl": "images/icons/sun-rtl.svg"
-		} },
+			},
+			"deprecated": "This will be removed in v0.24.0."
+		},
 		"watchlist": { "file": {
 			"ltr": "images/icons/watchlist-ltr.svg",
 			"rtl": "images/icons/watchlist-rtl.svg"

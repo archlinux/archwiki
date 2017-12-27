@@ -12,6 +12,7 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "语言",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "（无）",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "显示行数",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-startingline": "起始行数",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "代码块",
 	"syntaxhighlight-error-pygments-invocation-failure": "调用Pygments失败",
 	"syntaxhighlight-error-unknown-language": "未知的语言“$1”",

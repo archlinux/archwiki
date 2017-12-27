@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:xsd="http://www.w3.org/2001/XMLSchema#" xmlns:exterms="http://www.example.org/terms/" xmlns:exstaff="http://www.example.org/staffid/">
+	<rdf:Description rdf:about="http://www.example.org/staffid/85740">
+		<exterms:address rdf:nodeID="johnaddress"/>
+	</rdf:Description>
+	<rdf:Description rdf:nodeID="johnaddress">
+		<exterms:street>1501 Grant Avenue</exterms:street>
+		<exterms:city>Bedfort</exterms:city>
+		<exterms:state>Massachusetts</exterms:state>
+		<exterms:postalCode>01730</exterms:postalCode>
+	</rdf:Description>
+</rdf:RDF>

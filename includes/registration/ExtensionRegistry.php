@@ -137,7 +137,7 @@ class ExtensionRegistry {
 			$cache = new EmptyBagOStuff();
 		}
 		// See if this queue is in APC
-		$key = wfMemcKey(
+		$key = $cache->makeKey(
 			'registration',
 			md5( json_encode( $this->queued + $versions ) )
 		);
@@ -332,6 +332,12 @@ class ExtensionRegistry {
 		}
 
 		foreach ( $info['callbacks'] as $name => $cb ) {
+			if ( !is_callable( $cb ) ) {
+				if ( is_array( $cb ) ) {
+					$cb = '[ ' . implode( ', ', $cb ) . ' ]';
+				}
+				throw new UnexpectedValueException( "callback '$cb' is not callable" );
+			}
 			call_user_func( $cb, $info['credits'][$name] );
 		}
 	}
@@ -400,7 +406,7 @@ class ExtensionRegistry {
 	protected function processAutoLoader( $dir, array $info ) {
 		if ( isset( $info['AutoloadClasses'] ) ) {
 			// Make paths absolute, relative to the JSON file
-			return array_map( function( $file ) use ( $dir ) {
+			return array_map( function ( $file ) use ( $dir ) {
 				return "$dir/$file";
 			}, $info['AutoloadClasses'] );
 		} else {

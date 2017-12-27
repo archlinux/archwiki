@@ -45,9 +45,11 @@ class ApiMainTest extends ApiTestCase {
 	 * @param string|bool $error False if no error expected
 	 */
 	public function testAssert( $registered, $rights, $assert, $error ) {
-		$user = new User();
 		if ( $registered ) {
-			$user->setId( 1 );
+			$user = $this->getMutableTestUser()->getUser();
+			$user->load(); // load before setting mRights
+		} else {
+			$user = new User();
 		}
 		$user->mRights = $rights;
 		try {
@@ -57,7 +59,8 @@ class ApiMainTest extends ApiTestCase {
 			], null, null, $user );
 			$this->assertFalse( $error ); // That no error was expected
 		} catch ( ApiUsageException $e ) {
-			$this->assertTrue( self::apiExceptionHasCode( $e, $error ) );
+			$this->assertTrue( self::apiExceptionHasCode( $e, $error ),
+				"Error '{$e->getMessage()}' matched expected '$error'" );
 		}
 	}
 
@@ -497,6 +500,10 @@ class ApiMainTest extends ApiTestCase {
 			MWExceptionHandler::getRedactedTraceAsString( $dbex )
 		)->inLanguage( 'en' )->useDatabase( false )->text();
 
+		MediaWiki\suppressWarnings();
+		$usageEx = new UsageException( 'Usage exception!', 'ue', 0, [ 'foo' => 'bar' ] );
+		MediaWiki\restoreWarnings();
+
 		$apiEx1 = new ApiUsageException( null,
 			StatusValue::newFatal( new ApiRawMessage( 'An error', 'sv-error1' ) ) );
 		TestingAccessWrapper::newFromObject( $apiEx1 )->modulePath = 'foo+bar';
@@ -542,7 +549,7 @@ class ApiMainTest extends ApiTestCase {
 				]
 			],
 			[
-				new UsageException( 'Usage exception!', 'ue', 0, [ 'foo' => 'bar' ] ),
+				$usageEx,
 				[ 'existing-error', 'ue' ],
 				[
 					'warnings' => [

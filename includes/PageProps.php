@@ -55,7 +55,7 @@ class PageProps {
 		}
 		$previousValue = self::$instance;
 		self::$instance = $store;
-		return new ScopedCallback( function() use ( $previousValue ) {
+		return new ScopedCallback( function () use ( $previousValue ) {
 			self::$instance = $previousValue;
 		} );
 	}
@@ -242,6 +242,8 @@ class PageProps {
 	private function getGoodIDs( $titles ) {
 		$result = [];
 		if ( is_array( $titles ) ) {
+			( new LinkBatch( $titles ) )->execute();
+
 			foreach ( $titles as $title ) {
 				$pageID = $title->getArticleID();
 				if ( $pageID > 0 ) {

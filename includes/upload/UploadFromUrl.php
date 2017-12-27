@@ -141,7 +141,7 @@ class UploadFromUrl extends UploadBase {
 
 	/**
 	 * Entry point for SpecialUpload
-	 * @param WebRequest $request
+	 * @param WebRequest &$request
 	 */
 	public function initializeFromRequest( &$request ) {
 		$desiredDestName = $request->getText( 'wpDestFile' );
@@ -287,7 +287,7 @@ class UploadFromUrl extends UploadBase {
 
 		wfDebugLog( 'fileupload', $status );
 		if ( $status->isOK() ) {
-			wfDebugLog( 'fileupload', 'Download by URL completed successfuly.' );
+			wfDebugLog( 'fileupload', 'Download by URL completed successfully.' );
 		} else {
 			wfDebugLog(
 				'fileupload',

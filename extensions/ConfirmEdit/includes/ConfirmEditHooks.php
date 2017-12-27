@@ -28,19 +28,19 @@ class ConfirmEditHooks {
 
 	/**
 	 * PageContentSaveComplete hook handler.
-	 * Clear IP whitelist cache on page saves for [[MediaWiki:captcha-ip-whitelist]].
+	 * Clear IP whitelist cache on page saves for [[MediaWiki:Captcha-ip-whitelist]].
 	 *
 	 * @param WikiPage $wikiPage
-	 * @param User     $user
-	 * @param Content  $content
-	 * @param string   $summary
-	 * @param bool     $isMinor
-	 * @param bool     $isWatch
-	 * @param string   $section
-	 * @param int      $flags
-	 * @param int      $revision
-	 * @param Status   $status
-	 * @param int      $baseRevId
+	 * @param User $user
+	 * @param Content $content
+	 * @param string $summary
+	 * @param bool $isMinor
+	 * @param bool $isWatch
+	 * @param string $section
+	 * @param int $flags
+	 * @param int $revision
+	 * @param Status $status
+	 * @param int $baseRevId
 	 *
 	 * @return bool true
 	 */
@@ -88,8 +88,8 @@ class ConfirmEditHooks {
 	 */
 	public static function confirmEditSetup() {
 		// @codingStandardsIgnoreStart MediaWiki.NamingConventions.ValidGlobalName.wgPrefix
-		global $wgCaptchaTriggers, $wgWikimediaJenkinsCI, $ceAllowConfirmedEmail,
-		       $wgAllowConfirmedEmail;
+		global $wgCaptchaTriggers, $wgAllowConfirmedEmail,
+			$wgWikimediaJenkinsCI, $ceAllowConfirmedEmail;
 		// @codingStandardsIgnoreEnd
 
 		// There is no need to run (core) tests with enabled ConfirmEdit - bug T44145
@@ -139,7 +139,7 @@ class ConfirmEditHooks {
 	 * FIXME: This should be done in a better way, e.g. only load the libraray, if really needed.
 	 */
 	public static function onReCaptchaSetup() {
-		require_once ( __DIR__ . '/../ReCaptcha/recaptchalib.php' );
+		require_once __DIR__ . '/../ReCaptcha/recaptchalib.php';
 	}
 
 	/**
@@ -162,7 +162,7 @@ class ConfirmEditHooks {
 		}
 
 		if ( $wgReCaptchaPublicKey == '' || $wgReCaptchaPrivateKey == '' ) {
-			die (
+			die(
 				'You need to set $wgReCaptchaPrivateKey and $wgReCaptchaPublicKey in LocalSettings.php to ' .
 				"use the reCAPTCHA plugin. You can sign up for a key <a href='" .
 				htmlentities( recaptcha_get_signup_url( $wgServerName, "mediawiki" ) ) .

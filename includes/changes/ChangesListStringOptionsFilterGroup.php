@@ -61,12 +61,6 @@ class ChangesListStringOptionsFilterGroup extends ChangesListFilterGroup {
 	const NONE = '';
 
 	/**
-	 * Group name; used as form parameter.
-	 *
-	 * @var string $name
-	 */
-
-	/**
 	 * Defaul parameter value
 	 *
 	 * @var string $defaultValue
@@ -86,27 +80,35 @@ class ChangesListStringOptionsFilterGroup extends ChangesListFilterGroup {
 	 * @param array $groupDefinition Configuration of group
 	 * * $groupDefinition['name'] string Group name
 	 * * $groupDefinition['title'] string i18n key for title (optional, can be omitted
-	 * *  only if none of the filters in the group display in the structured UI)
+	 *     only if none of the filters in the group display in the structured UI)
 	 * * $groupDefinition['priority'] int Priority integer.  Higher means higher in the
-	 * *  group list.
+	 *     group list.
 	 * * $groupDefinition['filters'] array Numeric array of filter definitions, each of which
-	 * *  is an associative array to be passed to the filter constructor.  However,
-	 * *  'priority' is optional for the filters.  Any filter that has priority unset
-	 * *  will be put to the bottom, in the order given.
+	 *     is an associative array to be passed to the filter constructor.  However,
+	 *     'priority' is optional for the filters.  Any filter that has priority unset
+	 *     will be put to the bottom, in the order given.
 	 * * $groupDefinition['default'] string Default for group.
 	 * * $groupDefinition['isFullCoverage'] bool Whether the group is full coverage;
-	 * *  if true, this means that checking every item in the group means no
-	 * *  changes list entries are filtered out.
+	 *     if true, this means that checking every item in the group means no
+	 *     changes list entries are filtered out.
 	 * * $groupDefinition['queryCallable'] callable Callable accepting parameters:
-	 * *  string $specialPageClassName Class name of current special page
-	 * *  IContextSource $context Context, for e.g. user
-	 * *  IDatabase $dbr Database, for addQuotes, makeList, and similar
-	 * *  array &$tables Array of tables; see IDatabase::select $table
-	 * *  array &$fields Array of fields; see IDatabase::select $vars
-	 * *  array &$conds Array of conditions; see IDatabase::select $conds
-	 * *  array &$query_options Array of query options; see IDatabase::select $options
-	 * *  array &$join_conds Array of join conditions; see IDatabase::select $join_conds
-	 * *  array $selectedValues The allowed and requested values, lower-cased and sorted
+	 * 	* string $specialPageClassName Class name of current special page
+	 * 	* IContextSource $context Context, for e.g. user
+	 * 	* IDatabase $dbr Database, for addQuotes, makeList, and similar
+	 * 	* array &$tables Array of tables; see IDatabase::select $table
+	 * 	* array &$fields Array of fields; see IDatabase::select $vars
+	 * 	* array &$conds Array of conditions; see IDatabase::select $conds
+	 * 	* array &$query_options Array of query options; see IDatabase::select $options
+	 * 	* array &$join_conds Array of join conditions; see IDatabase::select $join_conds
+	 * 	* array $selectedValues The allowed and requested values, lower-cased and sorted
+	 * * $groupDefinition['whatsThisHeader'] string i18n key for header of "What's
+	 *     This" popup (optional).
+	 * * $groupDefinition['whatsThisBody'] string i18n key for body of "What's This"
+	 *     popup (optional).
+	 * * $groupDefinition['whatsThisUrl'] string URL for main link of "What's This"
+	 *     popup (optional).
+	 * * $groupDefinition['whatsThisLinkText'] string i18n key of text for main link of
+	 *     "What's This" popup (optional).
 	 */
 	public function __construct( array $groupDefinition ) {
 		if ( !isset( $groupDefinition['isFullCoverage'] ) ) {
@@ -127,7 +129,7 @@ class ChangesListStringOptionsFilterGroup extends ChangesListFilterGroup {
 	}
 
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	public function isPerGroupRequestParameter() {
 		return true;
@@ -152,7 +154,7 @@ class ChangesListStringOptionsFilterGroup extends ChangesListFilterGroup {
 	}
 
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	protected function createFilter( array $filterDefinition ) {
 		return new ChangesListStringOptionsFilter( $filterDefinition );
@@ -183,8 +185,8 @@ class ChangesListStringOptionsFilterGroup extends ChangesListFilterGroup {
 	 * @param string $value URL parameter value
 	 */
 	public function modifyQuery( IDatabase $dbr, ChangesListSpecialPage $specialPage,
-		&$tables, &$fields, &$conds, &$query_options, &$join_conds, $value ) {
-
+		&$tables, &$fields, &$conds, &$query_options, &$join_conds, $value
+	) {
 		$allowedFilterNames = [];
 		foreach ( $this->filters as $filter ) {
 			$allowedFilterNames[] = $filter->getName();
@@ -230,7 +232,7 @@ class ChangesListStringOptionsFilterGroup extends ChangesListFilterGroup {
 	}
 
 	/**
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	public function getJsData() {
 		$output = parent::getJsData();

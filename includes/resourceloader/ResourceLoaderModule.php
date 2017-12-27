@@ -461,7 +461,6 @@ abstract class ResourceLoaderModule implements LoggerAwareInterface {
 	 * @param array $localFileRefs List of files
 	 */
 	protected function saveFileDependencies( ResourceLoaderContext $context, $localFileRefs ) {
-
 		try {
 			// Related bugs and performance considerations:
 			// 1. Don't needlessly change the database value with the same list in a
@@ -588,6 +587,81 @@ abstract class ResourceLoaderModule implements LoggerAwareInterface {
 	}
 
 	/**
+	 * Get headers to send as part of a module web response.
+	 *
+	 * It is not supported to send headers through this method that are
+	 * required to be unique or otherwise sent once in an HTTP response
+	 * because clients may make batch requests for multiple modules (as
+	 * is the default behaviour for ResourceLoader clients).
+	 *
+	 * For exclusive or aggregated headers, see ResourceLoader::sendResponseHeaders().
+	 *
+	 * @since 1.30
+	 * @param ResourceLoaderContext $context
+	 * @return string[] Array of HTTP response headers
+	 */
+	final public function getHeaders( ResourceLoaderContext $context ) {
+		$headers = [];
+
+		$formattedLinks = [];
+		foreach ( $this->getPreloadLinks( $context ) as $url => $attribs ) {
+			$link = "<{$url}>;rel=preload";
+			foreach ( $attribs as $key => $val ) {
+				$link .= ";{$key}={$val}";
+			}
+			$formattedLinks[] = $link;
+		}
+		if ( $formattedLinks ) {
+			$headers[] = 'Link: ' . implode( ',', $formattedLinks );
+		}
+
+		return $headers;
+	}
+
+	/**
+	 * Get a list of resources that web browsers may preload.
+	 *
+	 * Behaviour of rel=preload link is specified at <https://www.w3.org/TR/preload/>.
+	 *
+	 * Use case for ResourceLoader originally part of T164299.
+	 *
+	 * @par Example
+	 * @code
+	 *     protected function getPreloadLinks() {
+	 *         return [
+	 *             'https://example.org/script.js' => [ 'as' => 'script' ],
+	 *             'https://example.org/image.png' => [ 'as' => 'image' ],
+	 *         ];
+	 *     }
+	 * @encode
+	 *
+	 * @par Example using HiDPI image variants
+	 * @code
+	 *     protected function getPreloadLinks() {
+	 *         return [
+	 *             'https://example.org/logo.png' => [
+	 *                 'as' => 'image',
+	 *                 'media' => 'not all and (min-resolution: 2dppx)',
+	 *             ],
+	 *             'https://example.org/logo@2x.png' => [
+	 *                 'as' => 'image',
+	 *                 'media' => '(min-resolution: 2dppx)',
+	 *             ],
+	 *         ];
+	 *     }
+	 * @encode
+	 *
+	 * @see ResourceLoaderModule::getHeaders
+	 * @since 1.30
+	 * @param ResourceLoaderContext $context
+	 * @return array Keyed by url, values must be an array containing
+	 *  at least an 'as' key. Optionally a 'media' key as well.
+	 */
+	protected function getPreloadLinks( ResourceLoaderContext $context ) {
+		return [];
+	}
+
+	/**
 	 * Get module-specific LESS variables, if any.
 	 *
 	 * @since 1.27
@@ -643,16 +717,18 @@ abstract class ResourceLoaderModule implements LoggerAwareInterface {
 				$scripts = $this->getScriptURLsForDebug( $context );
 			} else {
 				$scripts = $this->getScript( $context );
-				// rtrim() because there are usually a few line breaks
-				// after the last ';'. A new line at EOF, a new line
-				// added by ResourceLoaderFileModule::readScriptFiles, etc.
+				// Make the script safe to concatenate by making sure there is at least one
+				// trailing new line at the end of the content. Previously, this looked for
+				// a semi-colon instead, but that breaks concatenation if the semicolon
+				// is inside a comment like "// foo();". Instead, simply use a
+				// line break as separator which matches JavaScript native logic for implicitly
+				// ending statements even if a semi-colon is missing.
+				// Bugs: T29054, T162719.
 				if ( is_string( $scripts )
 					&& strlen( $scripts )
-					&& substr( rtrim( $scripts ), -1 ) !== ';'
+					&& substr( $scripts, -1 ) !== "\n"
 				) {
-					// Append semicolon to prevent weird bugs caused by files not
-					// terminating their statements right (T29054)
-					$scripts .= ";\n";
+					$scripts .= "\n";
 				}
 			}
 			$content['scripts'] = $scripts;
@@ -710,6 +786,11 @@ abstract class ResourceLoaderModule implements LoggerAwareInterface {
 			$content['templates'] = $templates;
 		}
 
+		$headers = $this->getHeaders( $context );
+		if ( $headers ) {
+			$content['headers'] = $headers;
+		}
+
 		$statTiming = microtime( true ) - $statStart;
 		$statName = strtr( $this->getName(), '.', '_' );
 		$stats->timing( "resourceloader_build.all", 1000 * $statTiming );
@@ -755,7 +836,6 @@ abstract class ResourceLoaderModule implements LoggerAwareInterface {
 		// (e.g. startup module) iterate more than once over all modules to get versions.
 		$contextHash = $context->getHash();
 		if ( !array_key_exists( $contextHash, $this->versionHash ) ) {
-
 			if ( $this->enableModuleContentVersion() ) {
 				// Detect changes directly
 				$str = json_encode( $this->getModuleContent( $context ) );
@@ -918,6 +998,20 @@ abstract class ResourceLoaderModule implements LoggerAwareInterface {
 		return false;
 	}
 
+	/**
+	 * Check whether this module should be embeded rather than linked
+	 *
+	 * Modules returning true here will be embedded rather than loaded by
+	 * ResourceLoaderClientHtml.
+	 *
+	 * @since 1.30
+	 * @param ResourceLoaderContext $context
+	 * @return bool
+	 */
+	public function shouldEmbedModule( ResourceLoaderContext $context ) {
+		return $this->getGroup() === 'private';
+	}
+
 	/** @var JSParser Lazy-initialized; use self::javaScriptParser() */
 	private static $jsParser;
 	private static $parseCacheVersion = 1;
@@ -931,36 +1025,33 @@ abstract class ResourceLoaderModule implements LoggerAwareInterface {
 	 * @return string JS with the original, or a replacement error
 	 */
 	protected function validateScriptFile( $fileName, $contents ) {
-		if ( $this->getConfig()->get( 'ResourceLoaderValidateJS' ) ) {
-			// Try for cache hit
-			$cache = ObjectCache::getMainWANInstance();
-			$key = $cache->makeKey(
+		if ( !$this->getConfig()->get( 'ResourceLoaderValidateJS' ) ) {
+			return $contents;
+		}
+		$cache = ObjectCache::getMainWANInstance();
+		return $cache->getWithSetCallback(
+			$cache->makeGlobalKey(
 				'resourceloader',
 				'jsparse',
 				self::$parseCacheVersion,
-				md5( $contents )
-			);
-			$cacheEntry = $cache->get( $key );
-			if ( is_string( $cacheEntry ) ) {
-				return $cacheEntry;
+				md5( $contents ),
+				$fileName
+			),
+			$cache::TTL_WEEK,
+			function () use ( $contents, $fileName ) {
+				$parser = self::javaScriptParser();
+				try {
+					$parser->parse( $contents, $fileName, 1 );
+					$result = $contents;
+				} catch ( Exception $e ) {
+					// We'll save this to cache to avoid having to re-validate broken JS
+					$err = $e->getMessage();
+					$result = "mw.log.error(" .
+						Xml::encodeJsVar( "JavaScript parse error: $err" ) . ");";
+				}
+				return $result;
 			}
-
-			$parser = self::javaScriptParser();
-			try {
-				$parser->parse( $contents, $fileName, 1 );
-				$result = $contents;
-			} catch ( Exception $e ) {
-				// We'll save this to cache to avoid having to validate broken JS over and over...
-				$err = $e->getMessage();
-				$result = "mw.log.error(" .
-					Xml::encodeJsVar( "JavaScript parse error: $err" ) . ");";
-			}
-
-			$cache->set( $key, $result );
-			return $result;
-		} else {
-			return $contents;
-		}
+		);
 	}
 
 	/**

@@ -1,0 +1,23 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix acme: <http://acme.test/> .
+
+<http://foobar.test/Bananas> acme:multi "A",
+		"B",
+		"C" ;
+	acme:type "foo"^^acme:thing,
+		"-5"^^xsd:integer,
+		"-5"^^xsd:decimal,
+		"-5"^^xsd:double,
+		"true"^^xsd:boolean,
+		"false"^^xsd:boolean ;
+	acme:autotype "-5"^^xsd:integer,
+		"3.14"^^xsd:double,
+		"true"^^xsd:boolean,
+		"false"^^xsd:boolean ;
+	acme:no-autotype "-5"^^xsd:decimal,
+		"3.14"^^xsd:string,
+		"1"^^xsd:string,
+		""^^xsd:string ;
+	acme:shorthand "foo" ;
+	acme:typed-shorthand "foo"^^acme:thing .

@@ -30,11 +30,25 @@ $namespaceNames['ast'] = [
 	NS_GADGET_DEFINITION_TALK => 'Accesoriu_definición_alderique',
 ];
 
+$namespaceNames['atj'] = [
+	NS_GADGET => 'Gadget',
+	NS_GADGET_TALK => 'Ka_ici_aimihitonaniwok_gadget',
+	NS_GADGET_DEFINITION => 'Tipatcitcikan_e_icinakok_gadget',
+	NS_GADGET_DEFINITION_TALK => 'Ka_ici_aimihitonaniwok_tipatcitcikan_gadget_otci',
+];
+
 $namespaceNames['azb'] = [
 	NS_GADGET => 'آلت',
 	NS_GADGET_TALK => 'آلت_دانیشیغی',
 	NS_GADGET_DEFINITION => 'آلت_آچیقلاماسی',
 	NS_GADGET_DEFINITION_TALK => 'آلت_آچیقلاماسی_دانیشیغی',
+];
+
+$namespaceNames['ba'] = [
+	NS_GADGET => 'Гаджет',
+	NS_GADGET_TALK => 'Гаджет_буйынса_фекерләшеү',
+	NS_GADGET_DEFINITION => 'Гаджет_билдәһе',
+	NS_GADGET_DEFINITION_TALK => 'Гаджет_билдәһе_буйынса_фекерләшеү',
 ];
 
 $namespaceNames['bgn'] = [

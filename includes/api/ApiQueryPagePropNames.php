@@ -2,7 +2,7 @@
 /**
  * Created on January 21, 2013
  *
- * Copyright © 2013 Brad Jorsch <bjorsch@wikimedia.org>
+ * Copyright © 2013 Wikimedia Foundation and contributors
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,6 @@
  *
  * @file
  * @since 1.21
- * @author Brad Jorsch
  */
 
 /**
@@ -57,7 +56,11 @@ class ApiQueryPagePropNames extends ApiQueryBase {
 		}
 
 		$limit = $params['limit'];
-		$this->addOption( 'LIMIT', $limit + 1 );
+
+		// mysql has issues with limit in loose index T115825
+		if ( $this->getDB()->getType() !== 'mysql' ) {
+			$this->addOption( 'LIMIT', $limit + 1 );
+		}
 
 		$result = $this->getResult();
 		$count = 0;

@@ -11,6 +11,7 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Ngôn ngữ",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "(Không có)",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "Đánh số dòng",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-startingline": "Số dòng đầu",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Đoạn mã",
 	"syntaxhighlight-error-pygments-invocation-failure": "Thất bại khi gọi Pygments",
 	"syntaxhighlight-error-unknown-language": "Ngôn ngữ không rõ “$1”",

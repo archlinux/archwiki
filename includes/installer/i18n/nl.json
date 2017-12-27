@@ -19,7 +19,9 @@
 			"Macofe",
 			"Hex",
 			"Mainframe98",
-			"Rcdeboer"
+			"Rcdeboer",
+			"Festina90",
+			"MarcoSwart"
 		]
 	},
 	"config-desc": "Het installatieprogramma voor MediaWiki",
@@ -63,7 +65,7 @@
 	"config-sidebar": "* [https://www.mediawiki.org MediaWiki-thuispagina]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Contents Gebruikershandleiding] (Engelstalig)\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Contents Beheerdershandleiding] (Engelstalig)\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:FAQ Veelgestelde vragen] (Engelstalig)\n----\n* <doclink href=Readme>Leesmij</doclink> (Engelstalig)\n* <doclink href=ReleaseNotes>Release notes</doclink> (Engelstalig)\n* <doclink href=Copying>Kopiëren</doclink> (Engelstalig)\n* <doclink href=UpgradeDoc>Versie bijwerken</doclink> (Engelstalig)",
 	"config-env-good": "De omgeving is gecontroleerd.\nU kunt MediaWiki installeren.",
 	"config-env-bad": "De omgeving is gecontroleerd.\nU kunt MediaWiki niet installeren.",
-	"config-env-php": "PHP $1 is op dit moment geïnstalleerd.",
+	"config-env-php": "PHP $1 is geïnstalleerd.",
 	"config-env-hhvm": "HHVM $1 is geïnstalleerd.",
 	"config-unicode-using-intl": "Voor Unicode-normalisatie wordt de [http://pecl.php.net/intl PECL-extensie intl] gebruikt.",
 	"config-unicode-pure-php-warning": "<strong>Waarschuwing:</strong> de [http://pecl.php.net/intl PECL-extensie intl] is niet beschikbaar om de Unicodenormalisatie af te handelen en daarom wordt de langzamere PHP-implementatie gebruikt.\nAls u MediaWiki voor een website met veel verkeer installeert, lees u dan in over [https://www.mediawiki.org/wiki/Special:MyLanguage/Unicode_normalization_considerations Unicodenormalisatie].",
@@ -95,6 +97,7 @@
 	"config-no-cli-uploads-check": "''Waarschuwing:'' uw standaardmap voor uploads (<code>$1</code>) wordt niet gecontroleerd op kwetsbaarheden voor het uitvoeren van willekeurige scripts gedurende de CLI-installatie.",
 	"config-brokenlibxml": "Uw systeem heeft een combinatie van PHP- en libxml2-versies geïnstalleerd die is foutgevoelig is en kan leiden tot onzichtbare beschadiging van gegevens in MediaWiki en andere webapplicaties.\nUpgrade naar libxml2 2.7.3 of hoger([https://bugs.php.net/bug.php?id=45996 bij PHP gerapporteerde fout]).\nDe installatie wordt afgebroken.",
 	"config-suhosin-max-value-length": "Suhosin is geïnstalleerd en beperkt de GET-parameter <code>length</code> tot $1 bytes.\nDe ResourceLoader van MediaWiki omzeilt deze beperking, maar dat is slecht voor de prestaties.\nAls het mogelijk is, moet u de waarde \"<code>suhosin.get.max_value_length</code>\" in <code>php.ini</code> instellen op 1024 of hoger en <code>$wgResourceLoaderMaxQueryLength</code> in LocalSettings.php op dezelfde waarde instellen.",
+	"config-using-32bit": "<strong>Pas op:</strong> uw systeem lijkt met 32-bit integers te werken. Dit is [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:32-bit anders dan aangeraden].",
 	"config-db-type": "Databasetype:",
 	"config-db-host": "Databasehost:",
 	"config-db-host-help": "Als uw databaseserver een andere server is, voer dan de hostnaam of het IP-adres hier in.\n\nAls u gebruik maakt van gedeelde webhosting, hoort uw provider u de juiste hostnaam te hebben verstrekt.\n\nAls u MediaWiki op een Windowsserver installeert en MySQL gebruikt, dan werkt \"localhost\" mogelijk niet als servernaam.\nAls het inderdaad niet werkt, probeer dan \"127.0.0.1\" te gebruiken als lokaal IP-adres.\n\nAls u PostgreSQL gebruikt, laat dit veld dan leeg om via een Unix-socket te verbinden.",
@@ -171,7 +174,7 @@
 	"config-unknown-collation": "'''Waarschuwing:''' de database gebruikt een collatie die niet wordt herkend.",
 	"config-db-web-account": "Databaseaccount voor webtoegang",
 	"config-db-web-help": "Selecteer de gebruikersnaam en het wachtwoord die de webserver gebruikt om verbinding te maken met de databaseserver na de installatie.",
-	"config-db-web-account-same": "Dezelfde account gebruiken als voor de installatie",
+	"config-db-web-account-same": "Hetzelfde account gebruiken als voor de installatie",
 	"config-db-web-create": "Maak de gebruiker aan als deze nog niet bestaat",
 	"config-db-web-no-create-privs": "De gebruiker die u hebt opgegeven voor de installatie heeft niet voldoende rechten om een gebruiker aan te maken.\nDe gebruiker die u hier opgeeft moet al bestaan.",
 	"config-mysql-engine": "Opslagmethode:",
@@ -278,9 +281,9 @@
 	"config-extensions": "Uitbreidingen",
 	"config-extensions-help": "De bovenstaande uitbreidingen zijn aangetroffen in de map <code>./extensions</code>.\n\nMogelijk moet u aanvullende instellingen maken, maar u kunt deze uitbreidingen nu inschakelen.",
 	"config-skins": "Vormgevingen",
-	"config-skins-help": "De hierboven weergegeven uiterlijken zijn aangetroffen in de map <code>./skins</code>. U moet ten minste één uiterlijk inschakelen en het standaard uiterlijk kiezen.",
+	"config-skins-help": "De hierboven weergegeven vormgevingen zijn aangetroffen in de map <code>./skins</code>. U moet ten minste één vormgeving inschakelen en de standaard vormgeving selecteren.",
 	"config-skins-use-as-default": "Als standaard vormgeving instellen",
-	"config-skins-missing": "Er zijn geen uiterlijken aangetroffen. MediaWiki gebruikt een basisuiterlijk totdat u een uiterlijk installeert.",
+	"config-skins-missing": "Er zijn geen vormgevingen aangetroffen. MediaWiki gebruikt een basisvormgeving totdat u een vormgeving installeert.",
 	"config-skins-must-enable-some": "U moet minstens één vormgeving kiezen om in te schakelen.",
 	"config-skins-must-enable-default": "De vormgeving gekozen als standaard moet ingeschakeld zijn.",
 	"config-install-alreadydone": "'''Waarschuwing:''' het lijkt alsof u MediaWiki al hebt geïnstalleerd en probeert het programma opnieuw te installeren.\nGa door naar de volgende pagina.",
@@ -328,6 +331,8 @@
 	"config-help-tooltip": "klik om uit te vouwen",
 	"config-nofile": "Het bestand \"$1\" is niet gevonden. Is het verwijderd?",
 	"config-extension-link": "Weet u dat u [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Extensions uitbreidingen] kunt gebruiken voor uw wiki?\n\nU kunt [https://www.mediawiki.org/wiki/Special:MyLanguage/Category:Extensions_by_category uitbreidingen op categorie] bekijken of ga naar de [https://www.mediawiki.org/wiki/Extension_Matrix uitbreidingenmatrix] om de volledige lijst met uitbreidingen te bekijken.",
+	"config-skins-screenshots": "$1 (schermafbeeldingen: $2)",
+	"config-screenshot": "schermafbeelding",
 	"mainpagetext": "<strong>De installatie van MediaWiki is geslaagd.</strong>",
 	"mainpagedocfooter": "Raadpleeg de [https://meta.wikimedia.org/wiki/Special:MyLanguage/Help:Contents handleiding] voor informatie over het gebruik van de wikisoftware.\n\n== Meer hulp over MediaWiki ==\n\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Configuration_settings Lijst met instellingen]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:FAQ Veelgestelde vragen (FAQ)]\n* [https://lists.wikimedia.org/mailman/listinfo/mediawiki-announce Mailinglijst voor aankondigingen van nieuwe versies]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Localisation#Translation_resources Maak MediaWiki beschikbaar in uw taal]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Combating_spam Leer hoe u spam kunt voorkomen op uw wiki]"
 }

@@ -169,7 +169,7 @@ class ApiQuery extends ApiBase {
 	 * as the first, regardless of the values of $db and $groups
 	 * @param string $name Name to assign to the database connection
 	 * @param int $db One of the DB_* constants
-	 * @param array $groups Query groups
+	 * @param string|string[] $groups Query groups
 	 * @return IDatabase
 	 */
 	public function getNamedDB( $name, $db, $groups ) {
@@ -245,7 +245,7 @@ class ApiQuery extends ApiBase {
 		$cacheMode = $this->mPageSet->getCacheMode();
 
 		// Execute all unfinished modules
-		/** @var $module ApiQueryBase */
+		/** @var ApiQueryBase $module */
 		foreach ( $modules as $module ) {
 			$params = $module->extractRequestParams();
 			$cacheMode = $this->mergeCacheMode(
@@ -381,7 +381,7 @@ class ApiQuery extends ApiBase {
 			];
 		}
 		// Report special pages
-		/** @var $title Title */
+		/** @var Title $title */
 		foreach ( $pageSet->getSpecialTitles() as $fakeId => $title ) {
 			$vals = [];
 			ApiQueryBase::addTitleInfo( $vals, $title );
@@ -434,7 +434,7 @@ class ApiQuery extends ApiBase {
 		$titles = $pageSet->getGoodTitles();
 		if ( count( $titles ) ) {
 			$user = $this->getUser();
-			/** @var $title Title */
+			/** @var Title $title */
 			foreach ( $titles as $title ) {
 				if ( $title->userCan( 'read', $user ) ) {
 					$exportTitles[] = $title;

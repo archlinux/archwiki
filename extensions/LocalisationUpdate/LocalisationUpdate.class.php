@@ -8,7 +8,7 @@ class LocalisationUpdate {
 	 * Hook: LocalisationCacheRecacheFallback
 	 */
 	public static function onRecacheFallback( LocalisationCache $lc, $code, array &$cache ) {
-		$dir = LocalisationUpdate::getDirectory();
+		$dir = self::getDirectory();
 		if ( !$dir ) {
 			return true;
 		}
@@ -26,7 +26,7 @@ class LocalisationUpdate {
 	 * Hook: LocalisationCacheRecache
 	 */
 	public static function onRecache( LocalisationCache $lc, $code, array &$cache ) {
-		$dir = LocalisationUpdate::getDirectory();
+		$dir = self::getDirectory();
 		if ( !$dir ) {
 			return true;
 		}

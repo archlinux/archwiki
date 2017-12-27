@@ -137,13 +137,11 @@ class AutoloadGenerator {
 		// format class-name : path when they get converted into json.
 		foreach ( $this->classes as $path => $contained ) {
 			foreach ( $contained as $fqcn ) {
-
 				// Using substr to remove the leading '/'
 				$json[$key][$fqcn] = substr( $path, 1 );
 			}
 		}
 		foreach ( $this->overrides as $path => $fqcn ) {
-
 			// Using substr to remove the leading '/'
 			$json[$key][$fqcn] = substr( $path, 1 );
 		}
@@ -212,7 +210,6 @@ global \${$this->variableName};
 ];
 
 EOD;
-
 	}
 
 	/**
@@ -224,7 +221,6 @@ EOD;
 	 * @return string
 	 */
 	public function getAutoload( $commandName = 'AutoloadGenerator' ) {
-
 		// We need to check whether an extenson.json or skin.json exists or not, and
 		// incase it doesn't, update the autoload.php file.
 
@@ -325,7 +321,7 @@ class ClassCollector {
 	protected $alias;
 
 	/**
-	 * @var string $code PHP code (including <?php) to detect class names from
+	 * @param string $code PHP code (including <?php) to detect class names from
 	 * @return array List of FQCN detected within the tokens
 	 */
 	public function getClasses( $code ) {
@@ -376,7 +372,7 @@ class ClassCollector {
 	/**
 	 * Accepts the next token in an expect sequence
 	 *
-	 * @param array
+	 * @param array $token
 	 */
 	protected function tryEndExpect( $token ) {
 		switch ( $this->startToken[0] ) {

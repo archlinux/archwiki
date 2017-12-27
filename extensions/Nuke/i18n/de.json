@@ -30,9 +30,9 @@
 	"nuke-not-deleted": "Seite [[:$1]] '''konnte nicht''' gelöscht werden.",
 	"nuke-delete-more": "[[Special:Nuke|Weitere Seiten löschen]]",
 	"nuke-pattern": "Muster für den Seitennamen:",
-	"nuke-nopages-global": "Es gibt keine neuen Seiten unter den [[Special:RecentChanges|letzten Änderungen]].",
+	"nuke-nopages-global": "Es gibt keine Seitentitel, die deiner Suche entsprechen.",
 	"nuke-viewchanges": "Änderungen ansehen",
 	"nuke-namespace": "Auf den folgenden Namensraum begrenzen:",
 	"nuke-linkoncontribs": "Massenlöschungen",
-	"nuke-linkoncontribs-text": "Massengelöschte Seiten, bei denen dieser Benutzer der einzige Autor ist."
+	"nuke-linkoncontribs-text": "Massengelöschte Seiten, bei denen {{GENDER:$1|dieser Benutzer der einzige Autor|diese Benutzerin die einzige Autorin}} ist."
 }

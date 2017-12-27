@@ -15,5 +15,6 @@
 	"fancycaptcha-sendemail": "Pa protexer la wiki escontra'l corréu puxarra automáticu, pidimos-y qu'escriba nel caxellu les pallabres qu'apaecen embaxo ([[Special:Captcha/help|más información]]):",
 	"fancycaptcha-reload-text": "Refrescar",
 	"apihelp-fancycaptchareload-description": "Solicitar un FancyCaptcha nuevu.",
+	"apihelp-fancycaptchareload-summary": "Solicitar un FancyCaptcha nuevu.",
 	"apihelp-fancycaptchareload-example-1": "Solicitar un FancyCaptcha nuevu"
 }

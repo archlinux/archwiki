@@ -26,10 +26,10 @@ using RFC2047 and/or RFC2231.</description>
   <email>alec@php.net</email>
   <active>yes</active>
  </lead>
- <date>2015-09-13</date>
+ <date>2017-05-21</date>
  <time>12:00:00</time>
  <version>
-  <release>1.10.0</release>
+  <release>1.10.1</release>
   <api>1.10.0</api>
  </version>
  <stability>
@@ -38,8 +38,9 @@ using RFC2047 and/or RFC2231.</description>
  </stability>
  <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD Style</license>
  <notes>
-* Add possibility to add externally created Mail_mimePart objects as attachments [alec]
-* Add possibility to set preamble text for multipart messages [alec]
+* Fix Bug 21206: explodeQuotedString() does not handle quoted strings correctly [dfukagaw28]
+* Fix Bug 21205: Invalid encoding of headers with quoted multibyte strings in non-unicode charset [dfukagaw28]
+* Fix Bug 21098: Discrepancy in handling of empty (but set) plain text part [alec]
  </notes>
  <contents>
   <dir name="/">
@@ -86,6 +87,9 @@ using RFC2047 and/or RFC2231.</description>
     <file baseinstalldir="Mail" name="test_Bug_20273.phpt" role="test" />
     <file baseinstalldir="Mail" name="test_Bug_20563.phpt" role="test" />
     <file baseinstalldir="Mail" name="test_Bug_20564.phpt" role="test" />
+    <file baseinstalldir="Mail" name="test_Bug_21098.phpt" role="test" />
+    <file baseinstalldir="Mail" name="test_Bug_21205.phpt" role="test" />
+    <file baseinstalldir="Mail" name="test_Bug_21206.phpt" role="test" />
    </dir> <!-- /tests -->
    <dir name="Mail">
      <file baseinstalldir="/" name="mime.php" role="php" />
@@ -820,6 +824,23 @@ Bugs Fixed:
 * Bug #20921: Make Mail_mimePart::encodeHeaderValue() a static method [alec]
 * Bug #20931: Really remove unset headers [alec]
 * Request #18772: Added methods for creating text/calendar messages [alec]
+   </notes>
+  </release>
+  <release>
+   <date>2015-09-13</date>
+   <time>12:00:00</time>
+   <version>
+    <release>1.10.0</release>
+    <api>1.10.0</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD Style</license>
+   <notes>
+* Add possibility to add externally created Mail_mimePart objects as attachments [alec]
+* Add possibility to set preamble text for multipart messages [alec]
    </notes>
   </release>
  </changelog>

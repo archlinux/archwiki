@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset>
+	<rule ref="./vendor/mediawiki/mediawiki-codesniffer/MediaWiki">
+		<exclude name="MediaWiki.Commenting.FunctionComment.MissingDocumentationProtected" />
+		<exclude name="MediaWiki.Commenting.FunctionComment.MissingDocumentationPublic" />
+		<exclude name="MediaWiki.Commenting.FunctionComment.MissingParamComment" />
+		<exclude name="MediaWiki.Commenting.FunctionComment.MissingParamName" />
+		<exclude name="MediaWiki.Commenting.FunctionComment.MissingParamTag" />
+		<exclude name="MediaWiki.Commenting.FunctionComment.MissingReturn" />
+		<exclude name="MediaWiki.Commenting.FunctionComment.ParamNameNoMatch" />
+		<exclude name="MediaWiki.Files.ClassMatchesFilename.NotMatch" />
+		<exclude name="MediaWiki.WhiteSpace.SpaceBeforeSingleLineComment.NewLineComment"/>
+	</rule>
+	<rule ref="MediaWiki.NamingConventions.ValidGlobalName">
+		<properties>
+			<property name="ignoreList" type="array" value="$messageMemc" />
+		</properties>
+	</rule>
+	<rule ref="MediaWiki.NamingConventions.PrefixedGlobalFunctions">
+		<properties>
+			<property name="ignoreList" type="array" value="cleanupArticle" />
+		</properties>
+	</rule>
+	<file>.</file>
+	<arg name="extensions" value="php,php5,inc"/>
+	<arg name="encoding" value="UTF-8"/>
+</ruleset>

@@ -40,11 +40,11 @@ interface ILBFactory {
 	 *
 	 * Sub-classes will extend the required keys in $conf with additional parameters
 	 *
-	 * @param $conf $params Array with keys:
+	 * @param array $conf Array with keys:
 	 *  - localDomain: A DatabaseDomain or domain ID string.
 	 *  - readOnlyReason : Reason the master DB is read-only if so [optional]
 	 *  - srvCache : BagOStuff object for server cache [optional]
-	 *  - memCache : BagOStuff object for cluster memory cache [optional]
+	 *  - memStash : BagOStuff object for cross-datacenter memory storage [optional]
 	 *  - wanCache : WANObjectCache object [optional]
 	 *  - hostname : The name of the current server [optional]
 	 *  - cliMode: Whether the execution context is a CLI script. [optional]
@@ -138,7 +138,7 @@ interface ILBFactory {
 
 	/**
 	 * Prepare all tracked load balancers for shutdown
-	 * @param integer $mode One of the class SHUTDOWN_* constants
+	 * @param int $mode One of the class SHUTDOWN_* constants
 	 * @param callable|null $workCallback Work to mask ChronologyProtector writes
 	 */
 	public function shutdown(
@@ -239,7 +239,7 @@ interface ILBFactory {
 	 *   - cluster : wait on the given external load balancer DBs
 	 *   - timeout : Max wait time. Default: ~60 seconds
 	 *   - ifWritesSince: Only wait if writes were done since this UNIX timestamp
-	 * @throws DBReplicationWaitError If a timeout or error occured waiting on a DB cluster
+	 * @throws DBReplicationWaitError If a timeout or error occurred waiting on a DB cluster
 	 */
 	public function waitForReplication( array $opts = [] );
 

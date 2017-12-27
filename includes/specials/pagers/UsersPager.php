@@ -270,71 +270,89 @@ class UsersPager extends AlphabeticPager {
 	function getPageHeader() {
 		list( $self ) = explode( '/', $this->getTitle()->getPrefixedDBkey() );
 
-		$this->getOutput()->addModules( 'mediawiki.userSuggest' );
-
-		# Form tag
-		$out = Xml::openElement(
-				'form',
-				[ 'method' => 'get', 'action' => wfScript(), 'id' => 'mw-listusers-form' ]
-			) .
-			Xml::fieldset( $this->msg( 'listusers' )->text() ) .
-			Html::hidden( 'title', $self );
-
-		# Username field (with autocompletion support)
-		$out .= Xml::label( $this->msg( 'listusersfrom' )->text(), 'offset' ) . ' ' .
-			Html::input(
-				'username',
-				$this->requestedUser,
-				'text',
-				[
-					'class' => 'mw-autocomplete-user',
-					'id' => 'offset',
-					'size' => 20,
-					'autofocus' => $this->requestedUser === ''
-				]
-			) . ' ';
-
-		# Group drop-down list
-		$sel = new XmlSelect( 'group', 'group', $this->requestedGroup );
-		$sel->addOption( $this->msg( 'group-all' )->text(), '' );
+		$groupOptions = [ $this->msg( 'group-all' )->text() => '' ];
 		foreach ( $this->getAllGroups() as $group => $groupText ) {
-			$sel->addOption( $groupText, $group );
+			$groupOptions[ $groupText ] = $group;
 		}
 
-		$out .= Xml::label( $this->msg( 'group' )->text(), 'group' ) . ' ';
-		$out .= $sel->getHTML() . '<br />';
-		$out .= Xml::checkLabel(
-			$this->msg( 'listusers-editsonly' )->text(),
-			'editsOnly',
-			'editsOnly',
-			$this->editsOnly
-		);
-		$out .= '&#160;';
-		$out .= Xml::checkLabel(
-			$this->msg( 'listusers-creationsort' )->text(),
-			'creationSort',
-			'creationSort',
-			$this->creationSort
-		);
-		$out .= '&#160;';
-		$out .= Xml::checkLabel(
-			$this->msg( 'listusers-desc' )->text(),
-			'desc',
-			'desc',
-			$this->mDefaultDirection
-		);
-		$out .= '<br />';
+		$formDescriptor = [
+			'user' => [
+				'class' => 'HTMLUserTextField',
+				'label' => $this->msg( 'listusersfrom' )->text(),
+				'name' => 'username',
+				'default' => $this->requestedUser,
+			],
+			'dropdown' => [
+				'label' => $this->msg( 'group' )->text(),
+				'name' => 'group',
+				'default' => $this->requestedGroup,
+				'class' => 'HTMLSelectField',
+				'options' => $groupOptions,
+			],
+			'editsOnly' => [
+				'type' => 'check',
+				'label' => $this->msg( 'listusers-editsonly' )->text(),
+				'name' => 'editsOnly',
+				'id' => 'editsOnly',
+				'default' => $this->editsOnly
+			],
+			'creationSort' => [
+				'type' => 'check',
+				'label' => $this->msg( 'listusers-creationsort' )->text(),
+				'name' => 'creationSort',
+				'id' => 'creationSort',
+				'default' => $this->creationSort
+			],
+			'desc' => [
+				'type' => 'check',
+				'label' => $this->msg( 'listusers-desc' )->text(),
+				'name' => 'desc',
+				'id' => 'desc',
+				'default' => $this->mDefaultDirection
+			],
+			'limithiddenfield' => [
+				'class' => 'HTMLHiddenField',
+				'name' => 'limit',
+				'default' => $this->mLimit
+			]
+		];
 
-		Hooks::run( 'SpecialListusersHeaderForm', [ $this, &$out ] );
+		$beforeSubmitButtonHookOut = '';
+		Hooks::run( 'SpecialListusersHeaderForm', [ $this, &$beforeSubmitButtonHookOut ] );
 
-		# Submit button and form bottom
-		$out .= Html::hidden( 'limit', $this->mLimit );
-		$out .= Xml::submitButton( $this->msg( 'listusers-submit' )->text() );
-		Hooks::run( 'SpecialListusersHeader', [ $this, &$out ] );
-		$out .= Xml::closeElement( 'fieldset' ) .
-			Xml::closeElement( 'form' );
+		if ( $beforeSubmitButtonHookOut !== '' ) {
+			$formDescriptior[ 'beforeSubmitButtonHookOut' ] = [
+				'class' => 'HTMLInfoField',
+				'raw' => true,
+				'default' => $beforeSubmitButtonHookOut
+			];
+		}
 
-		return $out;
+		$formDescriptor[ 'submit' ] = [
+			'class' => 'HTMLSubmitField',
+			'buttonlabel-message' => 'listusers-submit',
+		];
+
+		$beforeClosingFieldsetHookOut = '';
+		Hooks::run( 'SpecialListusersHeader', [ $this, &$beforeClosingFieldsetHookOut ] );
+
+		if ( $beforeClosingFieldsetHookOut !== '' ) {
+			$formDescriptior[ 'beforeClosingFieldsetHookOut' ] = [
+				'class' => 'HTMLInfoField',
+				'raw' => true,
+				'default' => $beforeClosingFieldsetHookOut
+			];
+		}
+
+		$htmlForm = HTMLForm::factory( 'ooui', $formDescriptor, $this->getContext() );
+		$htmlForm
+			->setMethod( 'get' )
+			->setAction( Title::newFromText( $self )->getLocalURL() )
+			->setId( 'mw-listusers-form' )
+			->setFormIdentifier( 'mw-listusers-form' )
+			->suppressDefaultSubmit()
+			->setWrapperLegendMsg( 'listusers' );
+		return $htmlForm->prepareForm()->getHTML( true );
 	}
 
 	/**

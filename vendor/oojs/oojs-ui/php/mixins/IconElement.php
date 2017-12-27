@@ -38,7 +38,7 @@ trait IconElement {
 		$this->icon->addClasses( [ 'oo-ui-iconElement-icon' ] );
 		$this->setIcon( isset( $config['icon'] ) ? $config['icon'] : null );
 
-		$this->registerConfigCallback( function( &$config ) {
+		$this->registerConfigCallback( function ( &$config ) {
 			if ( $this->iconName !== null ) {
 				$config['icon'] = $this->iconName;
 			}

@@ -2,7 +2,7 @@
 
 class ExtParserFunctions {
 	public static $mExprParser;
-	public static $mTimeCache = array();
+	public static $mTimeCache = [];
 	public static $mTimeChars = 0;
 	public static $mMaxTimeChars = 6000; # ~10 seconds
 
@@ -22,7 +22,7 @@ class ExtParserFunctions {
 	 */
 	public static function registerClearHook() {
 		static $done = false;
-		if( !$done ) {
+		if ( !$done ) {
 			global $wgHooks;
 			$wgHooks['ParserClearState'][] = __CLASS__ . '::clearState';
 			$done = true;
@@ -134,7 +134,10 @@ class ExtParserFunctions {
 	 * @return bool|string
 	 */
 	public static function iferror( $parser, $test = '', $then = '', $else = false ) {
-		if ( preg_match( '/<(?:strong|span|p|div)\s(?:[^\s>]*\s+)*?class="(?:[^"\s>]*\s+)*?error(?:\s[^">]*)?"/', $test ) ) {
+		if ( preg_match(
+			'/<(?:strong|span|p|div)\s(?:[^\s>]*\s+)*?class="(?:[^"\s>]*\s+)*?error(?:\s[^">]*)?"/',
+			$test )
+		) {
 			return $then;
 		} elseif ( $else === false ) {
 			return $test;
@@ -239,13 +242,12 @@ class ExtParserFunctions {
 	 * @return string
 	 */
 	public static function rel2abs( $parser , $to = '' , $from = '' ) {
-
 		$from = trim( $from );
 		if ( $from === '' ) {
 			$from = $parser->getTitle()->getPrefixedText();
 		}
 
-		$to = rtrim( $to , ' /' );
+		$to = rtrim( $to, ' /' );
 
 		// if we have an empty path, or just one containing a dot
 		if ( $to === '' || $to === '.' ) {
@@ -253,11 +255,11 @@ class ExtParserFunctions {
 		}
 
 		// if the path isn't relative
-		if ( substr( $to , 0 , 1 ) !== '/' &&
-		 substr( $to , 0 , 2 ) !== './' &&
-		 substr( $to , 0 , 3 ) !== '../' &&
-		 $to !== '..' )
-		{
+		if ( substr( $to, 0, 1 ) !== '/' &&
+			substr( $to, 0, 2 ) !== './' &&
+			substr( $to, 0, 3 ) !== '../' &&
+			$to !== '..'
+		) {
 			$from = '';
 		}
 		// Make a long path, containing both, enclose it in /.../
@@ -270,15 +272,16 @@ class ExtParserFunctions {
 		$fullPath = preg_replace( '!/{2,}!', '/', $fullPath );
 
 		// remove the enclosing slashes now
-		$fullPath = trim( $fullPath , '/' );
-		$exploded = explode ( '/' , $fullPath );
-		$newExploded = array();
+		$fullPath = trim( $fullPath, '/' );
+		$exploded = explode( '/', $fullPath );
+		$newExploded = [];
 
 		foreach ( $exploded as $current ) {
 			if ( $current === '..' ) { // removing one level
 				if ( !count( $newExploded ) ) {
 					// attempted to access a node above root node
-					$msg = wfMessage( 'pfunc_rel2abs_invalid_depth', $fullPath )->inContentLanguage()->escaped();
+					$msg = wfMessage( 'pfunc_rel2abs_invalid_depth', $fullPath )
+						->inContentLanguage()->escaped();
 					return '<strong class="error">' . $msg . '</strong>';
 				}
 				// remove last level from the stack
@@ -290,7 +293,7 @@ class ExtParserFunctions {
 		}
 
 		// we can now join it again
-		return implode( '/' , $newExploded );
+		return implode( '/', $newExploded );
 	}
 
 	/**
@@ -302,7 +305,9 @@ class ExtParserFunctions {
 	 *
 	 * @return string
 	 */
-	public static function ifexistCommon( $parser, $frame, $titletext = '', $then = '', $else = '' ) {
+	public static function ifexistCommon(
+		$parser, $frame, $titletext = '', $then = '', $else = ''
+	) {
 		global $wgContLang;
 		$title = Title::newFromText( $titletext );
 		$wgContLang->findVariantLink( $titletext, $title, true );
@@ -344,7 +349,7 @@ class ExtParserFunctions {
 					$parser->mOutput->addLink( $title, 0 );
 					return $else;
 				}
-				if (  !$parser->incrementExpensiveFunctionCount() ) {
+				if ( !$parser->incrementExpensiveFunctionCount() ) {
 					return $else;
 				}
 				$id = $title->getArticleID();
@@ -387,7 +392,9 @@ class ExtParserFunctions {
 	 * @param $local string|bool
 	 * @return string
 	 */
-	public static function timeCommon( $parser, $frame = null, $format = '', $date = '', $language = '', $local = false ) {
+	public static function timeCommon(
+		$parser, $frame = null, $format = '', $date = '', $language = '', $local = false
+	) {
 		global $wgLocaltimezone;
 		self::registerClearHook();
 		if ( $date === '' ) {
@@ -401,7 +408,9 @@ class ExtParserFunctions {
 		}
 		if ( isset( self::$mTimeCache[$format][$cacheKey][$language][$local] ) ) {
 			$cachedVal = self::$mTimeCache[$format][$cacheKey][$language][$local];
-			if ( $useTTL && $cachedVal[1] !== null && $frame && is_callable( array( $frame, 'setTTL' ) ) ) {
+			if ( $useTTL
+				&& $cachedVal[1] !== null && $frame && is_callable( [ $frame, 'setTTL' ] )
+			) {
 				$frame->setTTL( $cachedVal[1] );
 			}
 			return $cachedVal[0];
@@ -450,14 +459,20 @@ class ExtParserFunctions {
 		$ttl = null;
 		# format the timestamp and return the result
 		if ( $invalidTime ) {
-			$result = '<strong class="error">' . wfMessage( 'pfunc_time_error' )->inContentLanguage()->escaped() . '</strong>';
+			$result = '<strong class="error">' .
+				wfMessage( 'pfunc_time_error' )->inContentLanguage()->escaped() .
+				'</strong>';
 		} else {
 			self::$mTimeChars += strlen( $format );
 			if ( self::$mTimeChars > self::$mMaxTimeChars ) {
-				return '<strong class="error">' . wfMessage( 'pfunc_time_too_long' )->inContentLanguage()->escaped() . '</strong>';
+				return '<strong class="error">' .
+					wfMessage( 'pfunc_time_too_long' )->inContentLanguage()->escaped() .
+					'</strong>';
 			} else {
 				if ( $ts < 0 ) { // Language can't deal with BC years
-					return '<strong class="error">' . wfMessage( 'pfunc_time_too_small' )->inContentLanguage()->escaped() . '</strong>';
+					return '<strong class="error">' .
+						wfMessage( 'pfunc_time_too_small' )->inContentLanguage()->escaped() .
+						'</strong>';
 				} elseif ( $ts < 100000000000000 ) { // Language can't deal with years after 9999
 					if ( $language !== '' && Language::isValidBuiltInCode( $language ) ) {
 						// use whatever language is passed as a parameter
@@ -465,16 +480,19 @@ class ExtParserFunctions {
 					} else {
 						// use wiki's content language
 						$langObject = $parser->getFunctionLang();
-						StubObject::unstub( $langObject ); // $ttl is passed by reference, which doesn't work right on stub objects
+						// $ttl is passed by reference, which doesn't work right on stub objects
+						StubObject::unstub( $langObject );
 					}
 					$result = $langObject->sprintfDate( $format, $ts, $tz, $ttl );
 				} else {
-					return '<strong class="error">' . wfMessage( 'pfunc_time_too_big' )->inContentLanguage()->escaped() . '</strong>';
+					return '<strong class="error">' .
+						wfMessage( 'pfunc_time_too_big' )->inContentLanguage()->escaped() .
+						'</strong>';
 				}
 			}
 		}
-		self::$mTimeCache[$format][$cacheKey][$language][$local] = array( $result, $ttl );
-		if ( $useTTL && $ttl !== null && $frame && is_callable( array( $frame, 'setTTL' ) ) ) {
+		self::$mTimeCache[$format][$cacheKey][$language][$local] = [ $result, $ttl ];
+		if ( $useTTL && $ttl !== null && $frame && is_callable( [ $frame, 'setTTL' ] ) ) {
 			$frame->setTTL( $ttl );
 		}
 		return $result;
@@ -488,10 +506,11 @@ class ExtParserFunctions {
 	 * @param $local string|bool
 	 * @return string
 	 */
-	public static function time( $parser, $format = '', $date = '', $language = '', $local = false ) {
+	public static function time(
+		$parser, $format = '', $date = '', $language = '', $local = false
+	) {
 		return self::timeCommon( $parser, null, $format, $date, $language, $local );
 	}
-
 
 	/**
 	 * @param $parser Parser
@@ -548,7 +567,7 @@ class ExtParserFunctions {
 		if ( $ntitle instanceof Title ) {
 			$bits = explode( '/', $ntitle->getPrefixedText(), 25 );
 			if ( count( $bits ) <= 0 ) {
-				 return $ntitle->getPrefixedText();
+				return $ntitle->getPrefixedText();
 			} else {
 				if ( $offset > 0 ) {
 					--$offset;
@@ -592,7 +611,7 @@ class ExtParserFunctions {
 	 * @param $inStr string
 	 * @return int
 	 */
-	public static function runLen ( $parser, $inStr = '' ) {
+	public static function runLen( $parser, $inStr = '' ) {
 		$inStr = $parser->killMarkers( (string)$inStr );
 		return mb_strlen( $inStr );
 	}
@@ -610,7 +629,7 @@ class ExtParserFunctions {
 	 * @param $inOffset int
 	 * @return int|string
 	 */
-	public static function runPos ( $parser, $inStr = '', $inNeedle = '', $inOffset = 0 ) {
+	public static function runPos( $parser, $inStr = '', $inNeedle = '', $inOffset = 0 ) {
 		$inStr = $parser->killMarkers( (string)$inStr );
 		$inNeedle = $parser->killMarkers( (string)$inNeedle );
 
@@ -619,10 +638,14 @@ class ExtParserFunctions {
 			return self::tooLongError();
 		}
 
-		if ( $inNeedle === '' ) { $inNeedle = ' '; }
+		if ( $inNeedle === '' ) {
+			$inNeedle = ' ';
+		}
 
 		$pos = mb_strpos( $inStr, $inNeedle, (int)$inOffset );
-		if ( $pos === false ) { $pos = ''; }
+		if ( $pos === false ) {
+			$pos = '';
+		}
 
 		return $pos;
 	}
@@ -639,7 +662,7 @@ class ExtParserFunctions {
 	 * @param $inNeedle int|string
 	 * @return int|string
 	 */
-	public static function runRPos ( $parser, $inStr = '', $inNeedle = '' ) {
+	public static function runRPos( $parser, $inStr = '', $inNeedle = '' ) {
 		$inStr = $parser->killMarkers( (string)$inStr );
 		$inNeedle = $parser->killMarkers( (string)$inNeedle );
 
@@ -648,10 +671,14 @@ class ExtParserFunctions {
 			return self::tooLongError();
 		}
 
-		if ( $inNeedle === '' ) { $inNeedle = ' '; }
+		if ( $inNeedle === '' ) {
+			$inNeedle = ' ';
+		}
 
 		$pos = mb_strrpos( $inStr, $inNeedle );
-		if ( $pos === false ) { $pos = -1; }
+		if ( $pos === false ) {
+			$pos = -1;
+		}
 
 		return $pos;
 	}
@@ -674,7 +701,7 @@ class ExtParserFunctions {
 	 * @param $inLength int
 	 * @return string
 	 */
-	public static function runSub ( $parser, $inStr = '', $inStart = 0, $inLength = 0 ) {
+	public static function runSub( $parser, $inStr = '', $inStart = 0, $inLength = 0 ) {
 		$inStr = $parser->killMarkers( (string)$inStr );
 
 		if ( !self::checkLength( $inStr ) ) {
@@ -701,7 +728,7 @@ class ExtParserFunctions {
 	 * @param $inSubStr string
 	 * @return int|string
 	 */
-	public static function runCount ( $parser, $inStr = '', $inSubStr = '' ) {
+	public static function runCount( $parser, $inStr = '', $inSubStr = '' ) {
 		$inStr = $parser->killMarkers( (string)$inStr );
 		$inSubStr = $parser->killMarkers( (string)$inSubStr );
 
@@ -748,7 +775,9 @@ class ExtParserFunctions {
 			return self::tooLongError();
 		}
 
-		if ( $inReplaceFrom === '' ) { $inReplaceFrom = ' '; }
+		if ( $inReplaceFrom === '' ) {
+			$inReplaceFrom = ' ';
+		}
 
 		// Precompute limit to avoid generating enormous string:
 		$diff = mb_strlen( $inReplaceTo ) - mb_strlen( $inReplaceFrom );
@@ -779,7 +808,6 @@ class ExtParserFunctions {
 		return $result;
 	}
 
-
 	/**
 	 * {{#explode:string | delimiter | position | limit}}
 	 *
@@ -796,7 +824,9 @@ class ExtParserFunctions {
 	 * @param $inLim int|null
 	 * @return string
 	 */
-	public static function runExplode ( $parser, $inStr = '', $inDiv = '', $inPos = 0, $inLim = null ) {
+	public static function runExplode(
+		$parser, $inStr = '', $inDiv = '', $inPos = 0, $inLim = null
+	) {
 		$inStr = $parser->killMarkers( (string)$inStr );
 		$inDiv = $parser->killMarkers( (string)$inDiv );
 
@@ -849,7 +879,8 @@ class ExtParserFunctions {
 	 *
 	 * @param $obj PPNode|string Thing to expand
 	 * @param $frame PPFrame
-	 * @param &$trimExpanded String Expanded and trimmed version of PPNode, but with char refs intact
+	 * @param &$trimExpanded String Expanded and trimmed version of PPNode,
+	 *   but with char refs intact
 	 * @return String The trimmed, expanded and entity reference decoded version of the PPNode
 	 */
 	private static function decodeTrimExpand( $obj, $frame, &$trimExpanded = null ) {

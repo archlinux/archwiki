@@ -1,5 +1,10 @@
 --TEST--
 Bug #7561   Mail_mimePart::quotedPrintableEncode() misbehavior with mbstring overload
+--INI--
+mbstring.language=Neutral
+mbstring.func_overload=6
+mbstring.internal_encoding=UTF-8
+mbstring.http_output=UTF-8
 --SKIPIF--
 <?php
 include "PEAR.php";
@@ -10,12 +15,6 @@ if (!extension_loaded('mbstring')){
 }
 --FILE--
 <?php
-ini_set('mbstring.language',            'Neutral');
-// this isn't working because this option has PHP_INI_SYSTEM mode
-ini_set('mbstring.func_overload',       6);
-ini_set('mbstring.internal_encoding',   'UTF-8');
-ini_set('mbstring.http_output',         'UTF-8');
-
 include("Mail/mimePart.php");
 // string is UTF-8 encoded
 $input = "Micha\xC3\xABl \xC3\x89ric St\xC3\xA9phane";

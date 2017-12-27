@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:xsd="http://www.w3.org/2001/XMLSchema#" xmlns:contact="http://www.w3.org/2000/10/swap/pim/contact#">
+	<rdf:Description rdf:about="http://www.w3.org/People/EM/contact#me">
+		<rdf:type rdf:resource="http://www.w3.org/2000/10/swap/pim/contact#Person"/>
+		<contact:fullName>Eric Miller</contact:fullName>
+		<contact:mailbox rdf:resource="mailto:em@w3.org"/>
+		<contact:personalTitle>Dr.</contact:personalTitle>
+	</rdf:Description>
+</rdf:RDF>

@@ -17,7 +17,7 @@ class NullIndexField implements SearchIndexField {
 	/**
 	 * Set global flag for this field.
 	 *
-	 * @param int  $flag Bit flag to set/unset
+	 * @param int $flag Bit flag to set/unset
 	 * @param bool $unset True if flag should be unset, false by default
 	 * @return $this
 	 */
@@ -26,7 +26,7 @@ class NullIndexField implements SearchIndexField {
 
 	/**
 	 * Check if flag is set.
-	 * @param $flag
+	 * @param int $flag
 	 * @return int 0 if unset, !=0 if set
 	 */
 	public function checkFlag( $flag ) {
@@ -41,5 +41,12 @@ class NullIndexField implements SearchIndexField {
 	 */
 	public function merge( SearchIndexField $that ) {
 		return $that;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getEngineHints( SearchEngine $engine ) {
+		return [];
 	}
 }

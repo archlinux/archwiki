@@ -15,6 +15,7 @@
 		]
 	},
 	"apihelp-query+references-description": "Returnera en datarepresentation av referenser associerade med den angivna sidorna.",
+	"apihelp-query+references-summary": "Returnera en datarepresentation av referenser associerade med de angivna sidorna.",
 	"apihelp-query+references-example-1": "Referenser associerade med <kbd>Albert Einstein</kbd>.",
 	"apierror-citestoragedisabled": "Referenslagringen i Cite-tillägget är inte aktiverad.",
 	"cite-desc": "Lägger till taggarna <nowiki><ref[ name=id]></nowiki> och <nowiki><references/></nowiki> för referenser till källor",
@@ -24,8 +25,7 @@
 	"cite_error_ref_too_many_keys": "Ogiltig <code>&lt;ref&gt;</code>-tagg;\nogiltiga namn, t.ex. för många",
 	"cite_error_ref_no_input": "Ogiltig <code>&lt;ref&gt;</code>-tagg; referenser utan namn måste ha innehåll",
 	"cite_error_references_duplicate_key": "Taggen <code>&lt;ref&gt;</code> är ogiltig; namnet \"$1\" definieras flera gånger med olika innehåll",
-	"cite_error_references_invalid_parameters": "Ogiltig <code>&lt;references&gt;</code>-tagg; inga parametrar tillåts. Använd <code>&lt;references /&gt;</code>",
-	"cite_error_references_invalid_parameters_group": "Ogiltig parameter i <code>&lt;references&gt;</code>-tagg",
+	"cite_error_references_invalid_parameters": "Ogiltig parameter i <code>&lt;references&gt;</code>-tagg",
 	"cite_error_references_no_backlink_label": "De anpassade etiketterna för tillbaka-länkar har tagit slut. Definiera fler etiketter i systemmedelandet <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>",
 	"cite_error_no_link_label_group": "Anpassade länketiketter för gruppen \"$1\" tog slut.\nDefinera fler i <nowiki>[[MediaWiki:$2]]</nowiki>-meddelandet.",
 	"cite_error_references_no_text": "Ogiltig <code>&lt;ref&gt;</code>-tagg; ingen text har angivits för referensen med namnet <code>$1</code>",

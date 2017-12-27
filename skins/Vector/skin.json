@@ -25,8 +25,15 @@
 		]
 	},
 	"AutoloadClasses": {
+		"VectorHooks": "Hooks.php",
 		"SkinVector": "SkinVector.php",
-		"VectorTemplate": "VectorTemplate.php"
+		"VectorTemplate": "VectorTemplate.php",
+		"Vector\\ResourceLoaderLessModule": "ResourceLoaderLessModule.php"
+	},
+	"Hooks": {
+		"BeforePageDisplayMobile": [
+			"VectorHooks::onBeforePageDisplayMobile"
+		]
 	},
 	"@note": "When modifying skins.vector.styles definition, make sure the installer still works",
 	"ResourceModules": {
@@ -41,6 +48,14 @@
 					"media": "screen and (min-width: 982px)"
 				}
 			}
+		},
+		"skins.vector.styles.experimental.print": {
+			"class": "Vector\\ResourceLoaderLessModule",
+			"targets": [ "desktop", "mobile" ],
+			"position": "top",
+			"styles": [
+				"print.less"
+			]
 		},
 		"skins.vector.styles.responsive": {
 			"targets": [ "desktop", "mobile" ],
@@ -85,6 +100,7 @@
 			"jquery.ui.spinner": "skinStyles/jquery.ui/jquery.ui.spinner.css",
 			"jquery.ui.tabs": "skinStyles/jquery.ui/jquery.ui.tabs.css",
 			"jquery.ui.tooltips": "skinStyles/jquery.ui/jquery.ui.tooltips.css",
+			"+mediawiki.action.view.redirectPage": "skinStyles/mediawiki.action.view.redirectPage.less",
 			"+mediawiki.notification": "skinStyles/mediawiki.notification.less",
 			"+oojs-ui-core.styles": "skinStyles/ooui.less",
 			"mediawiki.special": "skinStyles/mediawiki.special.less",
@@ -94,7 +110,10 @@
 	"config": {
 		"VectorUseSimpleSearch": true,
 		"VectorUseIconWatch": true,
-		"VectorResponsive": false
+		"@VectorExperimentalPrintStyles": "Temporary config variable to feature flag new print styles (T154965)",
+		"VectorExperimentalPrintStyles": false,
+		"VectorResponsive": false,
+		"VectorPrintLogo": false
 	},
 	"manifest_version": 1
 }

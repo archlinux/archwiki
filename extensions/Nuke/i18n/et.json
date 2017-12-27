@@ -25,9 +25,9 @@
 	"nuke-not-deleted": "Lehekülge [[:$1]] '''ei saa''' kustutada.",
 	"nuke-delete-more": "[[Special:Nuke|Kustuta veel lehekülgi]]",
 	"nuke-pattern": "Lehekülje pealkirja kuju:",
-	"nuke-nopages-global": "[[Special:RecentChanges|Viimaste muudatuste]] all pole uusi lehekülgi.",
+	"nuke-nopages-global": "Sinu otsingule vastavad leheküljepealkirjad puuduvad.",
 	"nuke-viewchanges": "vaata muudatusi",
 	"nuke-namespace": "Nimeruumipiirang:",
 	"nuke-linkoncontribs": "lauskustutamine",
-	"nuke-linkoncontribs-text": "Lauskustuta leheküljed, mille ainus autor on see kasutaja"
+	"nuke-linkoncontribs-text": "Lauskustuta leheküljed, mille ainus autor on see {{GENDER:$1|kasutaja}}"
 }

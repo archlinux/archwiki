@@ -5,7 +5,13 @@
 		"mocha": true,
 		"node": true
 	},
+	"parserOptions": {
+		"ecmaVersion": 6
+	},
 	"globals": {
 		"browser": false
+	},
+	"rules":{
+		"no-console":0
 	}
 }

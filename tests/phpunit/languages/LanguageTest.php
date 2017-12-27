@@ -479,7 +479,6 @@ class LanguageTest extends LanguageClassesTestCase {
 			[ 'fr', true, 'Two letters, minor case' ],
 			[ 'EN', false, 'Two letters, upper case' ],
 			[ 'tyv', true, 'Three letters' ],
-			[ 'tokipona', true, 'long language code' ],
 			[ 'be-tarask', true, 'With dash' ],
 			[ 'be-x-old', true, 'With extension (two dashes)' ],
 			[ 'be_tarask', false, 'Reject underscores' ],
@@ -1739,9 +1738,8 @@ class LanguageTest extends LanguageClassesTestCase {
 			[ 'zh', 'zh', 'zh is defined as the parent language of zh, '
 				. 'because zh converter can convert zh-cn to zh' ],
 			[ 'zh-invalid', null, 'do not be fooled by arbitrarily composed language codes' ],
-			[ 'en-gb', null, 'en does not have converter' ],
-			[ 'en', null, 'en does not have converter. Although FakeConverter '
-					. 'handles en -> en conversion but it is useless' ],
+			[ 'de-formal', null, 'de does not have converter' ],
+			[ 'de', null, 'de does not have converter' ],
 		];
 	}
 

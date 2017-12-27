@@ -96,8 +96,7 @@
 					htmlTemplate: 'dialogInsertLink.html',
 
 					init: function () {
-						var loadingMsg,
-							api = new mw.Api();
+						var api = new mw.Api();
 
 						function isExternalLink( s ) {
 							// The following things are considered to be external links:
@@ -311,7 +310,6 @@
 						} );
 						// Add images to the page existence widget, which will be shown mutually exclusively to communicate if
 						// the page exists, does not exist or the title is invalid (like if it contains a | character)
-						loadingMsg = mw.msg( 'wikieditor-toolbar-tool-link-int-target-status-loading' );
 						$( '#wikieditor-toolbar-link-int-target-status' )
 							.append( $( '<div>' )
 								.attr( 'id', 'wikieditor-toolbar-link-int-target-status-exists' )
@@ -331,11 +329,7 @@
 							)
 							.append( $( '<div>' )
 								.attr( 'id', 'wikieditor-toolbar-link-int-target-status-loading' )
-								.append( $( '<img>' ).attr( {
-									src: $.wikiEditor.imgPath + 'dialogs/' + 'loading-small.gif',
-									alt: loadingMsg,
-									title: loadingMsg
-								} ) )
+								.attr( 'title', mw.msg( 'wikieditor-toolbar-tool-link-int-target-status-loading' ) )
 							)
 							.append( $( '<div>' )
 								.attr( 'id', 'wikieditor-toolbar-link-int-target-status-disambig' )
@@ -435,6 +429,7 @@
 									text = '';
 								}
 								if ( target === '' ) {
+									// eslint-disable-next-line no-alert
 									alert( mw.msg( 'wikieditor-toolbar-tool-link-empty' ) );
 									return;
 								}
@@ -447,6 +442,7 @@
 									// FIXME: Exactly how fragile is this?
 									if ( $( '#wikieditor-toolbar-link-int-target-status-invalid' ).is( ':visible' ) ) {
 										// Refuse to add links to invalid titles
+										// eslint-disable-next-line no-alert
 										alert( mw.msg( 'wikieditor-toolbar-tool-link-int-invalid' ) );
 										return;
 									}
@@ -515,9 +511,6 @@
 									.prop( 'checked', false );
 							},
 							'wikieditor-toolbar-tool-link-cancel': function () {
-								// Clear any saved selection state
-								var context = $( this ).data( 'context' );
-								context.fn.restoreCursorAndScrollTop();
 								$( this ).dialog( 'close' );
 							}
 						},
@@ -532,9 +525,6 @@
 							) );
 							// Pre-fill the text fields based on the current selection
 							context = $( this ).data( 'context' );
-							// Restore and immediately save selection state, needed for inserting stuff later
-							context.fn.restoreCursorAndScrollTop();
-							context.fn.saveCursorAndScrollTop();
 							selection = context.$textarea.textSelection( 'getSelection' );
 							$( '#wikieditor-toolbar-link-int-target' ).focus();
 							// Trigger the change event, so the link status indicator is up to date
@@ -659,20 +649,14 @@
 								$( '#wikieditor-toolbar-reference-text' ).val( '' );
 							},
 							'wikieditor-toolbar-tool-reference-cancel': function () {
-								// Clear any saved selection state
-								var context = $( this ).data( 'context' );
-								context.fn.restoreCursorAndScrollTop();
 								$( this ).dialog( 'close' );
 							}
 						},
 						open: function () {
 							// Pre-fill the text fields based on the current selection
-							var selection, matches, text,
-								context = $( this ).data( 'context' );
-							// Restore and immediately save selection state, needed for inserting stuff later
-							context.fn.restoreCursorAndScrollTop();
-							context.fn.saveCursorAndScrollTop();
-							selection = context.$textarea.textSelection( 'getSelection' );
+							var matches, text,
+								context = $( this ).data( 'context' ),
+								selection = context.$textarea.textSelection( 'getSelection' );
 							// set focus
 							$( '#wikieditor-toolbar-reference-text' ).focus();
 							$( '#wikieditor-toolbar-reference-dialog' )
@@ -915,15 +899,18 @@
 									cols = parseInt( colsVal, 10 ),
 									header = $( '#wikieditor-toolbar-table-dimensions-header' ).prop( 'checked' ) ? 1 : 0;
 								if ( isNaN( rows ) || isNaN( cols ) || String( rows ) !== rowsVal || String( cols ) !== colsVal || rowsVal < 0 || colsVal < 0 ) {
+									// eslint-disable-next-line no-alert
 									alert( mw.msg( 'wikieditor-toolbar-tool-table-invalidnumber' ) );
 									return;
 								}
 								if ( rows + header === 0 || cols === 0 ) {
+									// eslint-disable-next-line no-alert
 									alert( mw.msg( 'wikieditor-toolbar-tool-table-zero' ) );
 									return;
 								}
 								if ( ( rows * cols ) > 1000 ) {
 									// 1000 is in the English message. The parameter replacement is kept for BC.
+									// eslint-disable-next-line no-alert
 									alert( mw.msg( 'wikieditor-toolbar-tool-table-toomany', 1000 ) );
 									return;
 								}

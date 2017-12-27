@@ -4,7 +4,7 @@
  * @group Media
  * @covers XMPReader
  */
-class XMPTest extends PHPUnit_Framework_TestCase  {
+class XMPTest extends PHPUnit_Framework_TestCase {
 
 	protected function setUp() {
 		parent::setUp();
@@ -181,7 +181,6 @@ class XMPTest extends PHPUnit_Framework_TestCase  {
 	 * @covers XMPReader::checkParseSafety
 	 */
 	public function testCheckParseSafety() {
-
 		// Test for detection
 		$xmpPath = __DIR__ . '/../../../data/xmp/';
 		$file = fopen( $xmpPath . 'doctype-included.xmp', 'rb' );

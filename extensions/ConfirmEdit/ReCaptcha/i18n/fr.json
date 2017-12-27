@@ -11,7 +11,7 @@
 	},
 	"recaptcha-desc": "Module reCAPTCHA pour Confirm Edit",
 	"recaptcha-edit": "Afin de protéger le wiki contre les modifications automatiques des pourriels, nous vous demandons de bien vouloir écrire les mots que vous voyez dans le cadre.",
-	"recaptcha-addurl": "Votre modification contient de nouveaux liens vers des  sites externes. Pour protéger le wiki contre le spam automatisé, nous vous demandons de bien vouloir écrire les mots que vous voyez dans le cadre.",
+	"recaptcha-addurl": "Votre modification contient de nouveaux liens vers des sites externes. Pour protéger le wiki contre le pourriel automatisé, nous vous demandons de bien vouloir écrire les mots que vous voyez dans le cadre.",
 	"recaptcha-badlogin": "Pour protéger le wiki contre les essais automatiques de découverte des mots de passe, nous vous demandons de bien vouloir écrire les mots que vous voyez dans le cadre.",
 	"recaptcha-createaccount": "Pour protéger le wiki des créations automatiques de compte, nous vous demandons de bien vouloir écrire les mots visibles dans le cadre.",
 	"recaptcha-createaccount-fail": "Réponse de reCAPTCHA fausse ou manquante.",

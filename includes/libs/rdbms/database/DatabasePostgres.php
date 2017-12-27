@@ -39,8 +39,6 @@ class DatabasePostgres extends Database {
 	/** @var int The number of rows affected as an integer */
 	protected $mAffectedRows = null;
 
-	/** @var int */
-	private $mInsertId = null;
 	/** @var float|string */
 	private $numericVersion = null;
 	/** @var string Connect string to open a PostgreSQL connection */
@@ -105,7 +103,10 @@ class DatabasePostgres extends Database {
 		$this->mDBname = $dbName;
 
 		$connectVars = [
-			'dbname' => $dbName,
+			// pg_connect() user $user as the default database. Since a database is *required*,
+			// at least pick a "don't care" database that is more likely to exist. This case
+			// arrises when LoadBalancer::getConnection( $i, [], '' ) is used.
+			'dbname' => strlen( $dbName ) ? $dbName : 'postgres',
 			'user' => $user,
 			'password' => $password
 		];
@@ -165,11 +166,16 @@ class DatabasePostgres extends Database {
 		return $this->mConn;
 	}
 
+	public function databasesAreIndependent() {
+		return true;
+	}
+
 	/**
 	 * Postgres doesn't support selectDB in the same way MySQL does. So if the
 	 * DB name doesn't match the open connection, open a new one
 	 * @param string $db
 	 * @return bool
+	 * @throws DBUnexpectedError
 	 */
 	public function selectDB( $db ) {
 		if ( $this->mDBname !== $db ) {
@@ -344,14 +350,10 @@ class DatabasePostgres extends Database {
 		return pg_field_name( $res, $n );
 	}
 
-	/**
-	 * Return the result of the last call to nextSequenceValue();
-	 * This must be called after nextSequenceValue().
-	 *
-	 * @return int|null
-	 */
 	public function insertId() {
-		return $this->mInsertId;
+		$res = $this->query( "SELECT lastval()" );
+		$row = $this->fetchRow( $res );
+		return is_null( $row[0] ) ? null : (int)$row[0];
 	}
 
 	public function dataSeek( $res, $row ) {
@@ -513,6 +515,10 @@ __INDEXATTR__;
 	public function selectSQLText(
 		$table, $vars, $conds = '', $fname = __METHOD__, $options = [], $join_conds = []
 	) {
+		if ( is_string( $options ) ) {
+			$options = [ $options ];
+		}
+
 		// Change the FOR UPDATE option as necessary based on the join conditions. Then pass
 		// to the parent function to get the actual SQL text.
 		// In Postgres when using FOR UPDATE, only the main table and tables that are inner joined
@@ -524,12 +530,28 @@ __INDEXATTR__;
 			$forUpdateKey = array_search( 'FOR UPDATE', $options, true );
 			if ( $forUpdateKey !== false && $join_conds ) {
 				unset( $options[$forUpdateKey] );
+				$options['FOR UPDATE'] = [];
+
+				// All tables not in $join_conds are good
+				foreach ( $table as $alias => $name ) {
+					if ( is_numeric( $alias ) ) {
+						$alias = $name;
+					}
+					if ( !isset( $join_conds[$alias] ) ) {
+						$options['FOR UPDATE'][] = $alias;
+					}
+				}
 
 				foreach ( $join_conds as $table_cond => $join_cond ) {
 					if ( 0 === preg_match( '/^(?:LEFT|RIGHT|FULL)(?: OUTER)? JOIN$/i', $join_cond[0] ) ) {
 						$options['FOR UPDATE'][] = $table_cond;
 					}
 				}
+
+				// Quote alias names so $this->tableName() won't mangle them
+				$options['FOR UPDATE'] = array_map( function ( $name ) use ( $table ) {
+					return isset( $table[$name] ) ? $this->addIdentifierQuotes( $name ) : $name;
+				}, $options['FOR UPDATE'] );
 			}
 
 			if ( isset( $options['ORDER BY'] ) && $options['ORDER BY'] == 'NULL' ) {
@@ -676,14 +698,13 @@ __INDEXATTR__;
 	 * @param string $fname
 	 * @param array $insertOptions
 	 * @param array $selectOptions
+	 * @param array $selectJoinConds
 	 * @return bool
 	 */
 	public function nativeInsertSelect(
 		$destTable, $srcTable, $varMap, $conds, $fname = __METHOD__,
-		$insertOptions = [], $selectOptions = []
+		$insertOptions = [], $selectOptions = [], $selectJoinConds = []
 	) {
-		$destTable = $this->tableName( $destTable );
-
 		if ( !is_array( $insertOptions ) ) {
 			$insertOptions = [ $insertOptions ];
 		}
@@ -700,28 +721,9 @@ __INDEXATTR__;
 			$savepoint->savepoint();
 		}
 
-		if ( !is_array( $selectOptions ) ) {
-			$selectOptions = [ $selectOptions ];
-		}
-		list( $startOpts, $useIndex, $tailOpts, $ignoreIndex ) =
-			$this->makeSelectOptions( $selectOptions );
-		if ( is_array( $srcTable ) ) {
-			$srcTable = implode( ',', array_map( [ $this, 'tableName' ], $srcTable ) );
-		} else {
-			$srcTable = $this->tableName( $srcTable );
-		}
+		$res = parent::nativeInsertSelect( $destTable, $srcTable, $varMap, $conds, $fname,
+			$insertOptions, $selectOptions, $selectJoinConds );
 
-		$sql = "INSERT INTO $destTable (" . implode( ',', array_keys( $varMap ) ) . ')' .
-			" SELECT $startOpts " . implode( ',', $varMap ) .
-			" FROM $srcTable $useIndex $ignoreIndex ";
-
-		if ( $conds != '*' ) {
-			$sql .= ' WHERE ' . $this->makeList( $conds, LIST_AND );
-		}
-
-		$sql .= " $tailOpts";
-
-		$res = (bool)$this->query( $sql, $fname, $savepoint );
 		if ( $savepoint ) {
 			$bar = pg_result_error( $this->mLastResult );
 			if ( $bar != false ) {
@@ -768,12 +770,7 @@ __INDEXATTR__;
 	}
 
 	public function nextSequenceValue( $seqName ) {
-		$safeseq = str_replace( "'", "''", $seqName );
-		$res = $this->query( "SELECT nextval('$safeseq')" );
-		$row = $this->fetchRow( $res );
-		$this->mInsertId = $row[0];
-
-		return $this->mInsertId;
+		return new NextSequenceValue;
 	}
 
 	/**
@@ -823,7 +820,7 @@ __INDEXATTR__;
 		$oldName = $this->addIdentifierQuotes( $oldName );
 
 		return $this->query( 'CREATE ' . ( $temporary ? 'TEMPORARY ' : '' ) . " TABLE $newName " .
-			"(LIKE $oldName INCLUDING DEFAULTS)", $fname );
+			"(LIKE $oldName INCLUDING DEFAULTS INCLUDING INDEXES)", $fname );
 	}
 
 	public function listTables( $prefix = null, $fname = __METHOD__ ) {
@@ -1161,8 +1158,8 @@ SQL;
 	}
 
 	/**
-	 * @var string $table
-	 * @var string $field
+	 * @param string $table
+	 * @param string $field
 	 * @return PostgresField|null
 	 */
 	public function fieldInfo( $table, $field ) {
@@ -1216,6 +1213,8 @@ SQL;
 				$s = pg_escape_bytea( $conn, $s->fetch() );
 			}
 			return "'$s'";
+		} elseif ( $s instanceof NextSequenceValue ) {
+			return 'DEFAULT';
 		}
 
 		return "'" . pg_escape_string( $conn, (string)$s ) . "'";
@@ -1380,6 +1379,13 @@ SQL;
 		$this->queryLogger->debug( __METHOD__ . " failed to release lock\n" );
 
 		return false;
+	}
+
+	public function serverIsReadOnly() {
+		$res = $this->query( "SHOW default_transaction_read_only", __METHOD__ );
+		$row = $this->fetchObject( $res );
+
+		return $row ? ( strtolower( $row->default_transaction_read_only ) === 'on' ) : false;
 	}
 
 	/**

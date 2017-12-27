@@ -81,21 +81,60 @@ class MultiWriteBagOStuffTest extends MediaWikiTestCase {
 	 */
 	public function testSetDelayed() {
 		$key = wfRandomString();
-		$value = wfRandomString();
+		$value = (object)[ 'v' => wfRandomString() ];
+		$expectValue = clone $value;
 
 		// XXX: DeferredUpdates bound to transactions in CLI mode
 		$dbw = wfGetDB( DB_MASTER );
 		$dbw->begin();
 		$this->cache->set( $key, $value );
 
+		// Test that later changes to $value don't affect the saved value (e.g. T168040)
+		$value->v = 'bogus';
+
 		// Set in tier 1
-		$this->assertEquals( $value, $this->cache1->get( $key ), 'Written to tier 1' );
+		$this->assertEquals( $expectValue, $this->cache1->get( $key ), 'Written to tier 1' );
 		// Not yet set in tier 2
 		$this->assertEquals( false, $this->cache2->get( $key ), 'Not written to tier 2' );
 
 		$dbw->commit();
 
 		// Set in tier 2
-		$this->assertEquals( $value, $this->cache2->get( $key ), 'Written to tier 2' );
+		$this->assertEquals( $expectValue, $this->cache2->get( $key ), 'Written to tier 2' );
+	}
+
+	/**
+	 * @covers MultiWriteBagOStuff::makeKey
+	 */
+	public function testMakeKey() {
+		$cache1 = $this->getMockBuilder( HashBagOStuff::class )
+			->setMethods( [ 'makeKey' ] )->getMock();
+		$cache1->expects( $this->once() )->method( 'makeKey' )
+			->willReturn( 'special' );
+
+		$cache2 = $this->getMockBuilder( HashBagOStuff::class )
+			->setMethods( [ 'makeKey' ] )->getMock();
+		$cache2->expects( $this->never() )->method( 'makeKey' );
+
+		$cache = new MultiWriteBagOStuff( [ 'caches' => [ $cache1, $cache2 ] ] );
+		$this->assertSame( 'special', $cache->makeKey( 'a', 'b' ) );
+	}
+
+	/**
+	 * @covers MultiWriteBagOStuff::makeGlobalKey
+	 */
+	public function testMakeGlobalKey() {
+		$cache1 = $this->getMockBuilder( HashBagOStuff::class )
+			->setMethods( [ 'makeGlobalKey' ] )->getMock();
+		$cache1->expects( $this->once() )->method( 'makeGlobalKey' )
+			->willReturn( 'special' );
+
+		$cache2 = $this->getMockBuilder( HashBagOStuff::class )
+			->setMethods( [ 'makeGlobalKey' ] )->getMock();
+		$cache2->expects( $this->never() )->method( 'makeGlobalKey' );
+
+		$cache = new MultiWriteBagOStuff( [ 'caches' => [ $cache1, $cache2 ] ] );
+
+		$this->assertSame( 'special', $cache->makeGlobalKey( 'a', 'b' ) );
 	}
 }

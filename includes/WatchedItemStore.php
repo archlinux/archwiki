@@ -104,7 +104,7 @@ class WatchedItemStore implements StatsdAwareInterface {
 		}
 		$previousValue = $this->deferredUpdatesAddCallableUpdateCallback;
 		$this->deferredUpdatesAddCallableUpdateCallback = $callback;
-		return new ScopedCallback( function() use ( $previousValue ) {
+		return new ScopedCallback( function () use ( $previousValue ) {
 			$this->deferredUpdatesAddCallableUpdateCallback = $previousValue;
 		} );
 	}
@@ -127,7 +127,7 @@ class WatchedItemStore implements StatsdAwareInterface {
 		}
 		$previousValue = $this->revisionGetTimestampFromIdCallback;
 		$this->revisionGetTimestampFromIdCallback = $callback;
-		return new ScopedCallback( function() use ( $previousValue ) {
+		return new ScopedCallback( function () use ( $previousValue ) {
 			$this->revisionGetTimestampFromIdCallback = $previousValue;
 		} );
 	}
@@ -467,7 +467,7 @@ class WatchedItemStore implements StatsdAwareInterface {
 		$item = new WatchedItem(
 			$user,
 			$target,
-			$row->wl_notificationtimestamp
+			wfTimestampOrNull( TS_MW, $row->wl_notificationtimestamp )
 		);
 		$this->cache( $item );
 
@@ -581,7 +581,8 @@ class WatchedItemStore implements StatsdAwareInterface {
 		);
 
 		foreach ( $res as $row ) {
-			$timestamps[$row->wl_namespace][$row->wl_title] = $row->wl_notificationtimestamp;
+			$timestamps[$row->wl_namespace][$row->wl_title] =
+				wfTimestampOrNull( TS_MW, $row->wl_notificationtimestamp );
 		}
 
 		return $timestamps;
@@ -765,7 +766,7 @@ class WatchedItemStore implements StatsdAwareInterface {
 						);
 						if ( count( $watchersChunks ) > 1 ) {
 							$factory->commitAndWaitForReplication(
-								__METHOD__, $ticket, [ 'wiki' => $dbw->getWikiID() ]
+								__METHOD__, $ticket, [ 'domain' => $dbw->getDomainID() ]
 							);
 						}
 					}
@@ -820,7 +821,7 @@ class WatchedItemStore implements StatsdAwareInterface {
 		// Calls DeferredUpdates::addCallableUpdate in normal operation
 		call_user_func(
 			$this->deferredUpdatesAddCallableUpdateCallback,
-			function() use ( $job ) {
+			function () use ( $job ) {
 				$job->run();
 			}
 		);

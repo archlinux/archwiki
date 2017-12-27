@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2016 Brad Jorsch <bjorsch@wikimedia.org>
+ * Copyright © 2016 Wikimedia Foundation and contributors
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -229,8 +229,8 @@ class ApiAuthManagerHelper {
 
 	/**
 	 * Logs successful or failed authentication.
-	 * @param string|AuthenticationResponse $result Response or error message
 	 * @param string $event Event type (e.g. 'accountcreation')
+	 * @param string|AuthenticationResponse $result Response or error message
 	 */
 	public function logAuthenticationResult( $event, $result ) {
 		if ( is_string( $result ) ) {
@@ -345,7 +345,7 @@ class ApiAuthManagerHelper {
 	/**
 	 * Fetch the standard parameters this helper recognizes
 	 * @param string $action AuthManager action
-	 * @param string $param... Parameters to use
+	 * @param string $param,... Parameters to use
 	 * @return array
 	 */
 	public static function getStandardParams( $action, $param /* ... */ ) {

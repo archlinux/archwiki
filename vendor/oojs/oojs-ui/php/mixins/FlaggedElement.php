@@ -35,19 +35,18 @@ trait FlaggedElement {
 		// Initialization
 		$this->setFlags( isset( $config['flags'] ) ? $config['flags'] : null );
 
-		$this->registerConfigCallback( function( &$config ) {
+		$this->registerConfigCallback( function ( &$config ) {
 			if ( !empty( $this->flags ) ) {
 				$config['flags'] = $this->getFlags();
 			}
 		} );
-
 	}
 
 	/**
 	 * Check if a flag is set.
 	 *
 	 * @param string $flag Name of flag
-	 * @return boolean Has flag
+	 * @return bool Has flag
 	 */
 	public function hasFlag( $flag ) {
 		return isset( $this->flags[$flag] );

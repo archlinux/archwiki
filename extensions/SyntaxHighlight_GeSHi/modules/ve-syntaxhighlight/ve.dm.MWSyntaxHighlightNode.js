@@ -37,11 +37,9 @@ ve.dm.MWSyntaxHighlightNode.static.getMatchRdfaTypes = function () {
  */
 ve.dm.MWSyntaxHighlightNode.static.toDataElement = function ( domElements, converter ) {
 	// Parent method
-	var dataElement = ve.dm.MWExtensionNode.static.toDataElement.call( this, domElements, converter ),
-		isInline = this.isHybridInline( domElements, converter ),
-		type = isInline ? 'mwInlineSyntaxHighlight' : 'mwBlockSyntaxHighlight';
-
-	dataElement.type = type;
+	var isInline = this.isHybridInline( domElements, converter ),
+		type = isInline ? 'mwInlineSyntaxHighlight' : 'mwBlockSyntaxHighlight',
+		dataElement = ve.dm.MWExtensionNode.static.toDataElement.call( this, domElements, converter, type );
 
 	return dataElement;
 };

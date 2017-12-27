@@ -7,7 +7,8 @@
 			"Mihai",
 			"Minisarm",
 			"Stelistcristi",
-			"Strainu"
+			"Strainu",
+			"Matrafox"
 		]
 	},
 	"nuke": "Ștergere în masă",
@@ -29,5 +30,6 @@
 	"nuke-deleted": "Pagina '''$1''' a fost ștearsă.",
 	"nuke-not-deleted": "Pagina [[:$1]] '''nu a putut''' fi ștearsă.",
 	"nuke-pattern": "Model pentru numele paginii:",
+	"nuke-nopages-global": "Nu există titluri de pagină care să corespundă căutării dvs.",
 	"nuke-viewchanges": "vizualizează modificările"
 }

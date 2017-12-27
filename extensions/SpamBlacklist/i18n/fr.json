@@ -18,12 +18,13 @@
 	"spam-blacklisted-email-signup": "L'adresse de courriel fournie est actuellement sur une liste noire d'utilisation.",
 	"spam-invalid-lines": "{{PLURAL:$1|La ligne suivante|Les lignes suivantes}} de la liste noire des polluriels {{PLURAL:$1|est une expression rationnelle invalide|sont des expressions rationnelles invalides}} et doi{{PLURAL:$1||ven}}t être corrigée{{PLURAL:$1||s}} avant d’enregistrer la page :",
 	"spam-blacklist-desc": "Outil anti-pollution basé sur des expressions rationnelles permettant de mettre en liste noire des URL dans les pages et des adresses de courriel pour les utilisateurs enregistrés",
-	"log-name-spamblacklist": "Journal de liste noire des spams",
+	"log-name-spamblacklist": "Journal de liste noire des pourriels",
 	"log-description-spamblacklist": "Ces événements tracent les correspondances avec la liste noire du pollupostage.",
-	"logentry-spamblacklist-hit": "{{GENDER:$2|$1}} a provoqué une correspondance avec la liste noire des spams sur $3 en essayant d’ajouter $4.",
-	"right-spamblacklistlog": "Afficher le journal de la liste noire des spams",
+	"logentry-spamblacklist-hit": "{{GENDER:$2|$1}} a provoqué une correspondance avec la liste noire des pourriels sur $3 en essayant d’ajouter $4.",
+	"right-spamblacklistlog": "Afficher le journal de la liste noire des pourriels",
 	"action-spamblacklistlog": "afficher le journal de la liste noir des pourriels",
 	"apihelp-spamblacklist-description": "Valider une ou plus URLs d’après SpamBlacklist.",
+	"apihelp-spamblacklist-summary": "Valider une ou plusieurs URL de la Liste Noire des pourriels.",
 	"apihelp-spamblacklist-param-url": "URLs à valider d’après la liste noire.",
 	"apihelp-spamblacklist-example-1": "Vérifier deux URLs d’après la liste noire"
 }

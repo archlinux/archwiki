@@ -249,54 +249,6 @@
         "description": "More info available on: http://pear.php.net/package/Console_Getopt"
     },
     {
-        "name": "pear/mail_mime",
-        "version": "1.10.0",
-        "version_normalized": "1.10.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/pear/Mail_Mime.git",
-            "reference": "e071727cf41a4b85ecc1de210ed4fd7f4f8d1ec4"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/pear/Mail_Mime/zipball/e071727cf41a4b85ecc1de210ed4fd7f4f8d1ec4",
-            "reference": "e071727cf41a4b85ecc1de210ed4fd7f4f8d1ec4",
-            "shasum": ""
-        },
-        "require": {
-            "pear/pear-core-minimal": "*"
-        },
-        "time": "2015-09-13T12:42:41+00:00",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Mail": "./"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "include-path": [
-            "./"
-        ],
-        "license": [
-            "BSD Style"
-        ],
-        "authors": [
-            {
-                "name": "Cipriano Groenendal",
-                "email": "cipri@php.net",
-                "role": "Lead"
-            },
-            {
-                "name": "Aleksander Machniak",
-                "email": "alec@php.net",
-                "role": "Lead"
-            }
-        ],
-        "description": "Mail_Mime provides classes to create MIME messages",
-        "homepage": "http://pear.php.net/package/Mail_Mime"
-    },
-    {
         "name": "pear/mail_mime-decode",
         "version": "1.5.5.2",
         "version_normalized": "1.5.5.2",
@@ -559,50 +511,6 @@
         "homepage": "https://www.mediawiki.org/wiki/CLDRPluralRuleParser"
     },
     {
-        "name": "wikimedia/relpath",
-        "version": "1.0.3",
-        "version_normalized": "1.0.3.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/wikimedia/RelPath.git",
-            "reference": "ee38e19f3b059e5cec8863b03e35a451b8f35106"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/wikimedia/RelPath/zipball/ee38e19f3b059e5cec8863b03e35a451b8f35106",
-            "reference": "ee38e19f3b059e5cec8863b03e35a451b8f35106",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.3"
-        },
-        "require-dev": {
-            "jakub-onderka/php-parallel-lint": "^0.9.0.0",
-            "mediawiki/mediawiki-codesniffer": "^0.4.0.0",
-            "phpunit/phpunit": "^4.8.9.0"
-        },
-        "time": "2015-09-29T21:17:03+00:00",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "files": [
-                "src/RelPath.php"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Ori Livneh",
-                "email": "ori@wikimedia.org"
-            }
-        ],
-        "description": "Compute a relative filepath between two paths.",
-        "homepage": "https://www.mediawiki.org/wiki/RelPath"
-    },
-    {
         "name": "wikimedia/running-stat",
         "version": "v1.1.0",
         "version_normalized": "1.1.0.0",
@@ -696,66 +604,6 @@
         ]
     },
     {
-        "name": "pear/mail",
-        "version": "1.3.0",
-        "version_normalized": "1.3.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/pear/Mail.git",
-            "reference": "8a7305cb507b460e03e55e0ac84c67c8358c9b44"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/pear/Mail/zipball/8a7305cb507b460e03e55e0ac84c67c8358c9b44",
-            "reference": "8a7305cb507b460e03e55e0ac84c67c8358c9b44",
-            "shasum": ""
-        },
-        "require": {
-            "pear/pear-core-minimal": "*",
-            "php": ">=5.2.1"
-        },
-        "require-dev": {
-            "pear/pear": "*"
-        },
-        "suggest": {
-            "pear/net_smtp": "Install optionally via your project's composer.json"
-        },
-        "time": "2016-01-31T21:32:18+00:00",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Mail": "./"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "include-path": [
-            "./"
-        ],
-        "license": [
-            "BSD-2-Clause"
-        ],
-        "authors": [
-            {
-                "name": "Chuck Hagenbuch",
-                "email": "chuck@horde.org",
-                "role": "Lead"
-            },
-            {
-                "name": "Richard Heyes",
-                "email": "richard@phpguru.org",
-                "role": "Developer"
-            },
-            {
-                "name": "Aleksander Machniak",
-                "email": "alec@alec.pl",
-                "role": "Developer"
-            }
-        ],
-        "description": "Class that provides multiple interfaces for sending emails.",
-        "homepage": "http://pear.php.net/package/Mail"
-    },
-    {
         "name": "wikimedia/html-formatter",
         "version": "1.0.1",
         "version_normalized": "1.0.1.0",
@@ -798,65 +646,6 @@
         ],
         "description": "Performs transformations of HTML by wrapping around libxml2 and working around its countless bugs.",
         "homepage": "https://www.mediawiki.org/wiki/HtmlFormatter"
-    },
-    {
-        "name": "ruflin/elastica",
-        "version": "5.1.0",
-        "version_normalized": "5.1.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/ruflin/Elastica.git",
-            "reference": "tags/5.1.0"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://github.com/ruflin/Elastica/archive/5.1.0.zip",
-            "reference": "tags/5.1.0",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.6.0",
-            "psr/log": "~1.0"
-        },
-        "require-dev": {
-            "aws/aws-sdk-php": "~3.0",
-            "guzzlehttp/guzzle": "~6.0"
-        },
-        "suggest": {
-            "aws/aws-sdk-php": "Allow using IAM authentication with Amazon ElasticSearch Service",
-            "egeloen/http-adapter": "Allow using httpadapter transport",
-            "guzzlehttp/guzzle": "Allow using guzzle 6 as the http transport",
-            "monolog/monolog": "Logging request"
-        },
-        "time": "2017-02-15T11:19:35+00:00",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "5.1.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Elastica\\": "lib/Elastica/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Nicolas Ruflin",
-                "homepage": "http://ruflin.com/"
-            }
-        ],
-        "description": "Elasticsearch Client",
-        "homepage": "http://elastica.io/",
-        "keywords": [
-            "client",
-            "search"
-        ]
     },
     {
         "name": "wikimedia/ip-set",
@@ -1665,62 +1454,6 @@
         "description": "Minimal set of PEAR core files to be used as composer dependency"
     },
     {
-        "name": "pear/net_socket",
-        "version": "v1.1.0",
-        "version_normalized": "1.1.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/pear/Net_Socket.git",
-            "reference": "960599d403e5e831a4394d48d1f04da2eb2a035b"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/pear/Net_Socket/zipball/960599d403e5e831a4394d48d1f04da2eb2a035b",
-            "reference": "960599d403e5e831a4394d48d1f04da2eb2a035b",
-            "shasum": ""
-        },
-        "require": {
-            "pear/pear_exception": "@stable",
-            "php": ">=5.4.0"
-        },
-        "require-dev": {
-            "phpunit/phpunit": "^4"
-        },
-        "time": "2017-03-08T19:28:35+00:00",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Net": "./"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "include-path": [
-            "./"
-        ],
-        "license": [
-            "PHP License"
-        ],
-        "authors": [
-            {
-                "name": "Chuck Hagenbuch",
-                "email": "chuck@horde.org",
-                "role": "Lead"
-            },
-            {
-                "name": "Aleksander Machniak",
-                "email": "alec@php.net",
-                "role": "Lead"
-            },
-            {
-                "name": "Stig Bakken",
-                "email": "stig@php.net",
-                "role": "Lead"
-            }
-        ],
-        "description": "More info available on: http://pear.php.net/package/Net_Socket"
-    },
-    {
         "name": "monolog/monolog",
         "version": "1.22.1",
         "version_normalized": "1.22.1.0",
@@ -1799,57 +1532,6 @@
             "logging",
             "psr-3"
         ]
-    },
-    {
-        "name": "wikimedia/composer-merge-plugin",
-        "version": "v1.4.0",
-        "version_normalized": "1.4.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/wikimedia/composer-merge-plugin.git",
-            "reference": "ca453f9f13d8b05f86f20ea10be992a782e6f78c"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/wikimedia/composer-merge-plugin/zipball/ca453f9f13d8b05f86f20ea10be992a782e6f78c",
-            "reference": "ca453f9f13d8b05f86f20ea10be992a782e6f78c",
-            "shasum": ""
-        },
-        "require": {
-            "composer-plugin-api": "^1.0",
-            "php": ">=5.3.2"
-        },
-        "require-dev": {
-            "composer/composer": "~1.0.0",
-            "jakub-onderka/php-parallel-lint": "~0.8",
-            "phpunit/phpunit": "~4.8|~5.0",
-            "squizlabs/php_codesniffer": "~2.1.0"
-        },
-        "time": "2017-03-13T16:52:55+00:00",
-        "type": "composer-plugin",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.3.x-dev"
-            },
-            "class": "Wikimedia\\Composer\\MergePlugin"
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Wikimedia\\Composer\\": "src/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Bryan Davis",
-                "email": "bd808@wikimedia.org"
-            }
-        ],
-        "description": "Composer plugin to merge multiple composer.json files"
     },
     {
         "name": "cssjanus/cssjanus",
@@ -1991,75 +1673,6 @@
         ]
     },
     {
-        "name": "justinrainbow/json-schema",
-        "version": "5.2.0",
-        "version_normalized": "5.2.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/justinrainbow/json-schema.git",
-            "reference": "e3c9bccdc38bbd09bcac0131c00f3be58368b416"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/justinrainbow/json-schema/zipball/e3c9bccdc38bbd09bcac0131c00f3be58368b416",
-            "reference": "e3c9bccdc38bbd09bcac0131c00f3be58368b416",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.3"
-        },
-        "require-dev": {
-            "friendsofphp/php-cs-fixer": "^2.1",
-            "json-schema/json-schema-test-suite": "1.2.0",
-            "phpdocumentor/phpdocumentor": "~2",
-            "phpunit/phpunit": "^4.8.22"
-        },
-        "time": "2017-03-22T22:43:35+00:00",
-        "bin": [
-            "bin/validate-json"
-        ],
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "5.0.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "JsonSchema\\": "src/JsonSchema/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Bruno Prieto Reis",
-                "email": "bruno.p.reis@gmail.com"
-            },
-            {
-                "name": "Justin Rainbow",
-                "email": "justin.rainbow@gmail.com"
-            },
-            {
-                "name": "Igor Wiedler",
-                "email": "igor@wiedler.ch"
-            },
-            {
-                "name": "Robert Schönthal",
-                "email": "seroscho@googlemail.com"
-            }
-        ],
-        "description": "A library to validate a json schema.",
-        "homepage": "https://github.com/justinrainbow/json-schema",
-        "keywords": [
-            "json",
-            "schema"
-        ]
-    },
-    {
         "name": "symfony/process",
         "version": "v3.2.6",
         "version_normalized": "3.2.6.0",
@@ -2111,18 +1724,619 @@
         "homepage": "https://symfony.com"
     },
     {
-        "name": "oojs/oojs-ui",
-        "version": "v0.21.1",
-        "version_normalized": "0.21.1.0",
+        "name": "wikimedia/testing-access-wrapper",
+        "version": "1.0.0",
+        "version_normalized": "1.0.0.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/wikimedia/oojs-ui.git",
-            "reference": "59965a94e168c23d9dbb154d8a63f6a1abc7f537"
+            "url": "https://github.com/wikimedia/testing-access-wrapper.git",
+            "reference": "e18b87c86739733506bd184a70852c30cdb30699"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/wikimedia/oojs-ui/zipball/59965a94e168c23d9dbb154d8a63f6a1abc7f537",
-            "reference": "59965a94e168c23d9dbb154d8a63f6a1abc7f537",
+            "url": "https://api.github.com/repos/wikimedia/testing-access-wrapper/zipball/e18b87c86739733506bd184a70852c30cdb30699",
+            "reference": "e18b87c86739733506bd184a70852c30cdb30699",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.0"
+        },
+        "require-dev": {
+            "jakub-onderka/php-parallel-lint": "0.9.2",
+            "mediawiki/mediawiki-codesniffer": "0.7.2",
+            "phpunit/phpunit": "4.8.31"
+        },
+        "time": "2017-04-19T16:43:33+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "classmap": [
+                "src/"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "GPL-2.0+"
+        ],
+        "authors": [
+            {
+                "name": "Adam Roses Wight",
+                "email": "awight@wikimedia.org"
+            },
+            {
+                "name": "Brad Jorsch",
+                "email": "bjorsch@wikimedia.org"
+            },
+            {
+                "name": "Gergő Tisza",
+                "email": "gtisza@wikimedia.org"
+            }
+        ],
+        "description": "A simple helper class to access non-public elements of a class when testing.",
+        "homepage": "https://www.mediawiki.org/wiki/Testing-access-wrapper"
+    },
+    {
+        "name": "mustangostang/spyc",
+        "version": "0.6.2",
+        "version_normalized": "0.6.2.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/mustangostang/spyc.git",
+            "reference": "23c35ae854d835f2d7bcc3e3ad743d7e57a8c14d"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/mustangostang/spyc/zipball/23c35ae854d835f2d7bcc3e3ad743d7e57a8c14d",
+            "reference": "23c35ae854d835f2d7bcc3e3ad743d7e57a8c14d",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.1"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "4.3.*@dev"
+        },
+        "time": "2017-02-24T16:06:33+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "0.5.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "files": [
+                "Spyc.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "mustangostang",
+                "email": "vlad.andersen@gmail.com"
+            }
+        ],
+        "description": "A simple YAML loader/dumper class for PHP",
+        "homepage": "https://github.com/mustangostang/spyc/",
+        "keywords": [
+            "spyc",
+            "yaml",
+            "yml"
+        ]
+    },
+    {
+        "name": "wikimedia/css-sanitizer",
+        "version": "v1.0.2",
+        "version_normalized": "1.0.2.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/wikimedia/css-sanitizer.git",
+            "reference": "53071d588f7ac20f1467fb5952e968c1f8e2bb69"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/wikimedia/css-sanitizer/zipball/53071d588f7ac20f1467fb5952e968c1f8e2bb69",
+            "reference": "53071d588f7ac20f1467fb5952e968c1f8e2bb69",
+            "shasum": ""
+        },
+        "require": {
+            "ext-iconv": "*",
+            "ext-mbstring": "*",
+            "mediawiki/at-ease": "1.1.0",
+            "php": ">=5.5.9",
+            "wikimedia/utfnormal": "1.1.0"
+        },
+        "require-dev": {
+            "jakub-onderka/php-parallel-lint": "0.9.2",
+            "mediawiki/mediawiki-codesniffer": "0.7.2",
+            "phpunit/phpunit": "4.8.31",
+            "wikimedia/testing-access-wrapper": "1.0.0"
+        },
+        "time": "2017-06-13T15:51:12+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "classmap": [
+                "src/"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "Apache-2.0"
+        ],
+        "authors": [
+            {
+                "name": "Brad Jorsch",
+                "email": "bjorsch@wikimedia.org"
+            }
+        ],
+        "description": "Classes to parse and sanitize CSS",
+        "homepage": "https://www.mediawiki.org/wiki/Css-sanitizer"
+    },
+    {
+        "name": "wikimedia/purtle",
+        "version": "v1.0.6",
+        "version_normalized": "1.0.6.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/wikimedia/purtle.git",
+            "reference": "b34ec013657950481fd2edc5a9817b734fceb6e9"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/wikimedia/purtle/zipball/b34ec013657950481fd2edc5a9817b734fceb6e9",
+            "reference": "b34ec013657950481fd2edc5a9817b734fceb6e9",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.5.9"
+        },
+        "require-dev": {
+            "mediawiki/mediawiki-codesniffer": "0.9.0",
+            "ockcyp/covers-validator": "~0.4.0",
+            "phpmd/phpmd": "~2.3",
+            "phpunit/phpunit": "4.8.24"
+        },
+        "time": "2017-06-26T11:29:06+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Wikimedia\\Purtle\\": "src/",
+                "Wikimedia\\Purtle\\Tests\\": "tests/phpunit/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "GPL-2.0+"
+        ],
+        "authors": [
+            {
+                "name": "Daniel Kinzler"
+            },
+            {
+                "name": "Thiemo Mättig"
+            },
+            {
+                "name": "Stanislav Malyshev"
+            }
+        ],
+        "description": "Fast streaming RDF serializer",
+        "homepage": "https://mediawiki.org/wiki/Purtle",
+        "keywords": [
+            "RDF",
+            "Turtle",
+            "serializer"
+        ]
+    },
+    {
+        "name": "pear/mail",
+        "version": "v1.4.1",
+        "version_normalized": "1.4.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/pear/Mail.git",
+            "reference": "9609ed5e42ac5b221dfd9af85de005c59d418ee7"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/pear/Mail/zipball/9609ed5e42ac5b221dfd9af85de005c59d418ee7",
+            "reference": "9609ed5e42ac5b221dfd9af85de005c59d418ee7",
+            "shasum": ""
+        },
+        "require": {
+            "pear/pear-core-minimal": "~1.9",
+            "php": ">=5.2.1"
+        },
+        "require-dev": {
+            "pear/pear": "*"
+        },
+        "suggest": {
+            "pear/net_smtp": "Install optionally via your project's composer.json"
+        },
+        "time": "2017-04-11T17:27:29+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Mail": "./"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "include-path": [
+            "./"
+        ],
+        "license": [
+            "BSD-2-Clause"
+        ],
+        "authors": [
+            {
+                "name": "Chuck Hagenbuch",
+                "email": "chuck@horde.org",
+                "role": "Lead"
+            },
+            {
+                "name": "Richard Heyes",
+                "email": "richard@phpguru.org",
+                "role": "Developer"
+            },
+            {
+                "name": "Aleksander Machniak",
+                "email": "alec@alec.pl",
+                "role": "Developer"
+            }
+        ],
+        "description": "Class that provides multiple interfaces for sending emails.",
+        "homepage": "http://pear.php.net/package/Mail"
+    },
+    {
+        "name": "pear/mail_mime",
+        "version": "1.10.1",
+        "version_normalized": "1.10.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/pear/Mail_Mime.git",
+            "reference": "3d4e33a6879cbb4c71684a282750b7bb072a121e"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/pear/Mail_Mime/zipball/3d4e33a6879cbb4c71684a282750b7bb072a121e",
+            "reference": "3d4e33a6879cbb4c71684a282750b7bb072a121e",
+            "shasum": ""
+        },
+        "require": {
+            "pear/pear-core-minimal": "*"
+        },
+        "time": "2017-05-21T10:43:06+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Mail": "./"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "include-path": [
+            "./"
+        ],
+        "license": [
+            "BSD-3-clause"
+        ],
+        "authors": [
+            {
+                "name": "Cipriano Groenendal",
+                "email": "cipri@php.net",
+                "role": "Lead"
+            },
+            {
+                "name": "Aleksander Machniak",
+                "email": "alec@php.net",
+                "role": "Lead"
+            }
+        ],
+        "description": "Mail_Mime provides classes to create MIME messages",
+        "homepage": "http://pear.php.net/package/Mail_Mime"
+    },
+    {
+        "name": "pear/net_socket",
+        "version": "v1.2.1",
+        "version_normalized": "1.2.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/pear/Net_Socket.git",
+            "reference": "f31d75ac352d49908f8987bbb1496c02a409812a"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/pear/Net_Socket/zipball/f31d75ac352d49908f8987bbb1496c02a409812a",
+            "reference": "f31d75ac352d49908f8987bbb1496c02a409812a",
+            "shasum": ""
+        },
+        "require": {
+            "pear/pear_exception": "@stable",
+            "php": ">=5.4.0"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "^4"
+        },
+        "time": "2017-04-06T15:16:38+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Net": "./"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "include-path": [
+            "./"
+        ],
+        "license": [
+            "BSD-2-Clause"
+        ],
+        "authors": [
+            {
+                "name": "Chuck Hagenbuch",
+                "email": "chuck@horde.org",
+                "role": "Lead"
+            },
+            {
+                "name": "Aleksander Machniak",
+                "email": "alec@php.net",
+                "role": "Lead"
+            },
+            {
+                "name": "Stig Bakken",
+                "email": "stig@php.net",
+                "role": "Lead"
+            }
+        ],
+        "description": "More info available on: http://pear.php.net/package/Net_Socket"
+    },
+    {
+        "name": "ruflin/elastica",
+        "version": "5.1.0",
+        "version_normalized": "5.1.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/ruflin/Elastica.git",
+            "reference": "tags/5.1.0"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://github.com/ruflin/Elastica/archive/5.1.0.zip",
+            "reference": "tags/5.1.0",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.6.0",
+            "psr/log": "~1.0"
+        },
+        "require-dev": {
+            "aws/aws-sdk-php": "~3.0",
+            "guzzlehttp/guzzle": "~6.0"
+        },
+        "suggest": {
+            "aws/aws-sdk-php": "Allow using IAM authentication with Amazon ElasticSearch Service",
+            "egeloen/http-adapter": "Allow using httpadapter transport",
+            "guzzlehttp/guzzle": "Allow using guzzle 6 as the http transport",
+            "monolog/monolog": "Logging request"
+        },
+        "time": "2017-02-15T11:19:35+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "5.1.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Elastica\\": "lib/Elastica/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Nicolas Ruflin",
+                "homepage": "http://ruflin.com/"
+            }
+        ],
+        "description": "Elasticsearch Client",
+        "homepage": "http://elastica.io/",
+        "keywords": [
+            "client",
+            "search"
+        ]
+    },
+    {
+        "name": "wikimedia/composer-merge-plugin",
+        "version": "v1.4.1",
+        "version_normalized": "1.4.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/wikimedia/composer-merge-plugin.git",
+            "reference": "81c6ac72a24a67383419c7eb9aa2b3437f2ab100"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/wikimedia/composer-merge-plugin/zipball/81c6ac72a24a67383419c7eb9aa2b3437f2ab100",
+            "reference": "81c6ac72a24a67383419c7eb9aa2b3437f2ab100",
+            "shasum": ""
+        },
+        "require": {
+            "composer-plugin-api": "^1.0",
+            "php": ">=5.3.2"
+        },
+        "require-dev": {
+            "composer/composer": "~1.0.0",
+            "jakub-onderka/php-parallel-lint": "~0.8",
+            "phpunit/phpunit": "~4.8|~5.0",
+            "squizlabs/php_codesniffer": "~2.1.0"
+        },
+        "time": "2017-04-25T02:31:25+00:00",
+        "type": "composer-plugin",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.3.x-dev"
+            },
+            "class": "Wikimedia\\Composer\\MergePlugin"
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Wikimedia\\Composer\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Bryan Davis",
+                "email": "bd808@wikimedia.org"
+            }
+        ],
+        "description": "Composer plugin to merge multiple composer.json files"
+    },
+    {
+        "name": "justinrainbow/json-schema",
+        "version": "5.2.1",
+        "version_normalized": "5.2.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/justinrainbow/json-schema.git",
+            "reference": "429be236f296ca249d61c65649cdf2652f4a5e80"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/justinrainbow/json-schema/zipball/429be236f296ca249d61c65649cdf2652f4a5e80",
+            "reference": "429be236f296ca249d61c65649cdf2652f4a5e80",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.3"
+        },
+        "require-dev": {
+            "friendsofphp/php-cs-fixer": "^2.1",
+            "json-schema/json-schema-test-suite": "1.2.0",
+            "phpdocumentor/phpdocumentor": "^2.7",
+            "phpunit/phpunit": "^4.8.22"
+        },
+        "time": "2017-05-16T21:06:09+00:00",
+        "bin": [
+            "bin/validate-json"
+        ],
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "5.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "JsonSchema\\": "src/JsonSchema/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Bruno Prieto Reis",
+                "email": "bruno.p.reis@gmail.com"
+            },
+            {
+                "name": "Justin Rainbow",
+                "email": "justin.rainbow@gmail.com"
+            },
+            {
+                "name": "Igor Wiedler",
+                "email": "igor@wiedler.ch"
+            },
+            {
+                "name": "Robert Schönthal",
+                "email": "seroscho@googlemail.com"
+            }
+        ],
+        "description": "A library to validate a json schema.",
+        "homepage": "https://github.com/justinrainbow/json-schema",
+        "keywords": [
+            "json",
+            "schema"
+        ]
+    },
+    {
+        "name": "wikimedia/relpath",
+        "version": "2.0.0",
+        "version_normalized": "2.0.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/wikimedia/RelPath.git",
+            "reference": "b0eeb17d31e4cde22dea0932dfb920a71a167c33"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/wikimedia/RelPath/zipball/b0eeb17d31e4cde22dea0932dfb920a71a167c33",
+            "reference": "b0eeb17d31e4cde22dea0932dfb920a71a167c33",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.5.9"
+        },
+        "require-dev": {
+            "jakub-onderka/php-parallel-lint": "^0.9.0.0",
+            "mediawiki/mediawiki-codesniffer": "^0.4.0.0",
+            "phpunit/phpunit": "^4.8.9.0"
+        },
+        "time": "2017-07-28T21:20:05+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "files": [
+                "src/RelPath.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Ori Livneh",
+                "email": "ori@wikimedia.org"
+            }
+        ],
+        "description": "Compute a relative filepath between two paths.",
+        "homepage": "https://www.mediawiki.org/wiki/RelPath"
+    },
+    {
+        "name": "oojs/oojs-ui",
+        "version": "v0.23.0",
+        "version_normalized": "0.23.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/wikimedia/oojs-ui.git",
+            "reference": "c1309b72963f618586d7577acf6119e6f387b8af"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/wikimedia/oojs-ui/zipball/c1309b72963f618586d7577acf6119e6f387b8af",
+            "reference": "c1309b72963f618586d7577acf6119e6f387b8af",
             "shasum": ""
         },
         "require": {
@@ -2131,10 +2345,10 @@
         },
         "require-dev": {
             "jakub-onderka/php-parallel-lint": "0.9.2",
-            "mediawiki/mediawiki-codesniffer": "0.6.0",
+            "mediawiki/mediawiki-codesniffer": "0.12.0",
             "phpunit/phpunit": "4.8.21"
         },
-        "time": "2017-04-18T23:06:13+00:00",
+        "time": "2017-09-05T21:04:47+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {

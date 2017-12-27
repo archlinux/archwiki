@@ -25,7 +25,7 @@
     "include-path": [
         "./"
     ],
-    "license": "PHP License",
+    "license": "BSD-2-Clause",
     "name": "pear/net_socket",
     "support": {
         "issues": "http://pear.php.net/bugs/search.php?cmd=display&package_name[]=Net_Socket",

@@ -5,12 +5,14 @@
 			"Dnik",
 			"Ex13",
 			"Roberta F.",
-			"SpeedyGonsales"
+			"SpeedyGonsales",
+			"Bugoslav"
 		]
 	},
 	"pfunc_desc": "Mogućnost proširivanja parsera logičkim funkcijama",
 	"pfunc_time_error": "Pogrješka: oblik vremena nije valjan",
 	"pfunc_time_too_long": "Pogrješka: prevelik broj #time (vremenskih) poziva",
+	"pfunc_time_too_small": "Pogrješka: #time podržava godine samo od 0.",
 	"pfunc_rel2abs_invalid_depth": "Pogrješka: Nevaljana dubina putanje: \"$1\" (pokušaj pristupanja čvoru iznad korijenskog)",
 	"pfunc_expr_stack_exhausted": "Pogrješka u predlošku: prepunjen stog",
 	"pfunc_expr_unexpected_number": "Pogrješka u predlošku: Neočekivan broj",

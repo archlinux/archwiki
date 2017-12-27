@@ -102,7 +102,7 @@ class UserMailer {
 	 * @param MailAddress $from Sender's email
 	 * @param string $subject Email's subject.
 	 * @param string $body Email's text or Array of two strings to be the text and html bodies
-	 * @param array $options:
+	 * @param array $options Keys:
 	 *     'replyTo' MailAddress
 	 *     'contentType' string default 'text/plain; charset=UTF-8'
 	 *     'headers' array Extra headers to set
@@ -175,18 +175,18 @@ class UserMailer {
 				// first send to non-split address list, then to split addresses one by one
 				$status = Status::newGood();
 				if ( $to ) {
-					$status->merge( UserMailer::sendInternal(
+					$status->merge( self::sendInternal(
 						$to, $from, $subject, $body, $options ) );
 				}
 				foreach ( $splitTo as $newTo ) {
-					$status->merge( UserMailer::sendInternal(
+					$status->merge( self::sendInternal(
 						[ $newTo ], $from, $subject, $body, $options ) );
 				}
 				return $status;
 			}
 		}
 
-		return UserMailer::sendInternal( $to, $from, $subject, $body, $options );
+		return self::sendInternal( $to, $from, $subject, $body, $options );
 	}
 
 	/**
@@ -196,7 +196,7 @@ class UserMailer {
 	 * @param MailAddress $from Sender's email
 	 * @param string $subject Email's subject.
 	 * @param string $body Email's text or Array of two strings to be the text and html bodies
-	 * @param array $options:
+	 * @param array $options Keys:
 	 *     'replyTo' MailAddress
 	 *     'contentType' string default 'text/plain; charset=UTF-8'
 	 *     'headers' array Extra headers to set

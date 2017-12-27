@@ -21,13 +21,10 @@
 .mw-body .mw-search-nonefound {
 	margin: 0;
 }
-.mw-search-interwiki-header,
+
 .searchdidyoumean em,
 .searchmatch {
 	font-weight: bold;
-}
-.mw-search-nonefound + .mw-search-interwiki-header {
-	margin-top: 0;
 }
 
 .mw-search-results {
@@ -54,6 +51,7 @@
 	background-color: #f8f9fa;
 	margin-top: 1em;
 	border: 1px solid #c8ccd1;
+	border-radius: 2px;
 }
 .search-types {
 	float: left;
@@ -96,11 +94,13 @@
 /*==========================*/
 
 #mw-searchoptions {
-	margin: 0;
+	/* Support: Firefox, needs `clear: both` on `fieldset` when zoom level > 100%, see T176499 */
+	clear: both;
 	padding: 0.5em 0.75em 0.75em 0.75em;
 	background-color: #f8f9fa;
+	margin: -1px 0 0;
 	border: 1px solid #c8ccd1;
-	border-top-width: 0;
+	border-radius: 0 0 2px 2px;
 }
 #mw-searchoptions legend {
 	display: none;

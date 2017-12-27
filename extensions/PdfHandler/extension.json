@@ -15,11 +15,11 @@
 		"PdfOutputExtension": "jpg",
 		"PdfHandlerDpi": 150,
 		"PdfCreateThumbnailsInJobQueue": false,
-		"PdfPostProcessor": "convert",
+		"PdfPostProcessor": "/usr/bin/convert",
 		"PdfHandlerJpegQuality": 95,
-		"PdftoText": "pdftotext",
-		"PdfProcessor": "gs",
-		"PdfInfo": "pdfinfo"
+		"PdftoText": "/usr/bin/pdftotext",
+		"PdfProcessor": "/usr/bin/gs",
+		"PdfInfo": "/usr/bin/pdfinfo"
 	},
 	"MessagesDirs": {
 		"PdfHandler": [

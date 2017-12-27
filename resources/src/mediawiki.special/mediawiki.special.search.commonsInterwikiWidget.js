@@ -10,7 +10,7 @@
 		var resultOutput = '', i, result, imageCaption, imageThumbnailSrc;
 
 		for ( i = 0; i < results.length; i++ ) {
-			result = results[ i ],
+			result = results[ i ];
 			imageCaption = mw.html.element( 'span', { 'class': 'iw-result__mini-gallery__caption' }, result.title );
 			imageThumbnailSrc = ( result.thumbnail ) ? result.thumbnail.source : '';
 			resultOutput += '<div class="iw-result__mini-gallery">' +
@@ -30,7 +30,6 @@
 
 		return '<li class="iw-resultset iw-resultset--image" data-iw-resultset-pos="0">' +
 				'<div class="iw-result__header">' +
-					'<span class="iw-result__icon iw-result__icon--image"></span>' +
 					'<strong>' + imagesText.escaped() + '</strong>' +
 				'</div>' +
 				'<div class="iw-result__content">' +
@@ -57,8 +56,7 @@
 		piprop: 'thumbnail',
 		pithumbsize: 300,
 		formatversion: 2
-	} )
-	.done( function ( resp ) {
+	} ).done( function ( resp ) {
 		var results = ( resp.query && resp.query.pages ) ? resp.query.pages : false,
 			multimediaWidgetTemplate;
 
@@ -66,14 +64,14 @@
 			return;
 		}
 
-		results.sort( function( a, b ) {
+		results.sort( function ( a, b ) {
 			return a.index - b.index;
 		} );
 
 		multimediaWidgetTemplate = itemWrapperTemplate( pageUrl.query.search, itemTemplate( results ) );
 		/* we really only need to wait for document ready for DOM manipulation */
 		$( function () {
-			$( '.iw-results' ).prepend( multimediaWidgetTemplate );
+			$( '.iw-results' ).append( multimediaWidgetTemplate );
 		} );
 	} );
 

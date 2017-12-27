@@ -18,19 +18,19 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @author Antoine Musso "<hashar at free dot fr>", Aaron Schulz
+ * @author Antoine Musso "<hashar at free dot fr>"
  */
 
 use IPSet\IPSet;
 
-// Some regex definition to "play" with IP address and IP address blocks
+// Some regex definition to "play" with IP address and IP address ranges
 
 // An IPv4 address is made of 4 bytes from x00 to xFF which is d0 to d255
 define( 'RE_IP_BYTE', '(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|0?[0-9]?[0-9])' );
 define( 'RE_IP_ADD', RE_IP_BYTE . '\.' . RE_IP_BYTE . '\.' . RE_IP_BYTE . '\.' . RE_IP_BYTE );
-// An IPv4 block is an IP address and a prefix (d1 to d32)
+// An IPv4 range is an IP address and a prefix (d1 to d32)
 define( 'RE_IP_PREFIX', '(3[0-2]|[12]?\d)' );
-define( 'RE_IP_BLOCK', RE_IP_ADD . '\/' . RE_IP_PREFIX );
+define( 'RE_IP_RANGE', RE_IP_ADD . '\/' . RE_IP_PREFIX );
 
 // An IPv6 address is made up of 8 words (each x0000 to xFFFF).
 // However, the "::" abbreviation can be used on consecutive x0000 words.
@@ -47,8 +47,8 @@ define( 'RE_IPV6_ADD',
 		RE_IPV6_WORD . '(?::' . RE_IPV6_WORD . '){7}' .
 	')'
 );
-// An IPv6 block is an IP address and a prefix (d1 to d128)
-define( 'RE_IPV6_BLOCK', RE_IPV6_ADD . '\/' . RE_IPV6_PREFIX );
+// An IPv6 range is an IP address and a prefix (d1 to d128)
+define( 'RE_IPV6_RANGE', RE_IPV6_ADD . '\/' . RE_IPV6_PREFIX );
 // For IPv6 canonicalization (NOT for strict validation; these are quite lax!)
 define( 'RE_IPV6_GAP', ':(?:0+:)*(?::(?:0+:)*)?' );
 define( 'RE_IPV6_V4_PREFIX', '0*' . RE_IPV6_GAP . '(?:ffff:)?' );
@@ -64,11 +64,9 @@ define( 'IP_ADDRESS_STRING',
 
 /**
  * A collection of public static functions to play with IP address
- * and IP blocks.
+ * and IP ranges.
  */
 class IP {
-	/** @var IPSet */
-	private static $proxyIpSet = null;
 
 	/**
 	 * Determine if a string is as valid IP address or network (CIDR prefix).
@@ -118,16 +116,30 @@ class IP {
 	}
 
 	/**
-	 * Validate an IP Block (valid address WITH a valid prefix).
+	 * Validate an IP range (valid address with a valid CIDR prefix).
 	 * SIIT IPv4-translated addresses are rejected.
 	 * @note canonicalize() tries to convert translated addresses to IPv4.
 	 *
-	 * @param string $ipblock
+	 * @deprecated since 1.30. Use the equivalent IP::isValidRange().
+	 * @param string $ipRange
 	 * @return bool True if it is valid
 	 */
-	public static function isValidBlock( $ipblock ) {
-		return ( preg_match( '/^' . RE_IPV6_BLOCK . '$/', $ipblock )
-			|| preg_match( '/^' . RE_IP_BLOCK . '$/', $ipblock ) );
+	public static function isValidBlock( $ipRange ) {
+		return self::isValidRange( $ipRange );
+	}
+
+	/**
+	 * Validate an IP range (valid address with a valid CIDR prefix).
+	 * SIIT IPv4-translated addresses are rejected.
+	 * @note canonicalize() tries to convert translated addresses to IPv4.
+	 *
+	 * @param string $ipRange
+	 * @return bool True if it is valid
+	 * @since 1.30
+	 */
+	public static function isValidRange( $ipRange ) {
+		return ( preg_match( '/^' . RE_IPV6_RANGE . '$/', $ipRange )
+			|| preg_match( '/^' . RE_IP_RANGE . '$/', $ipRange ) );
 	}
 
 	/**
@@ -498,7 +510,7 @@ class IP {
 	 *     2001:0db8:85a3::7344 - 2001:0db8:85a3::7344   Explicit range
 	 *     2001:0db8:85a3::7344                          Single IP
 	 * @param string $range IP range
-	 * @return array(string, string)
+	 * @return array [ string, string ]
 	 */
 	public static function parseRange( $range ) {
 		// CIDR notation
@@ -549,7 +561,7 @@ class IP {
 	 */
 	private static function parseCIDR6( $range ) {
 		# Explode into <expanded IP,range>
-		$parts = explode( '/', IP::sanitizeIP( $range ), 2 );
+		$parts = explode( '/', self::sanitizeIP( $range ), 2 );
 		if ( count( $parts ) != 2 ) {
 			return [ false, false ];
 		}
@@ -590,7 +602,7 @@ class IP {
 	 */
 	private static function parseRange6( $range ) {
 		# Expand any IPv6 IP
-		$range = IP::sanitizeIP( $range );
+		$range = self::sanitizeIP( $range );
 		// CIDR notation...
 		if ( strpos( $range, '/' ) !== false ) {
 			list( $network, $bits ) = self::parseCIDR6( $range );
@@ -732,8 +744,8 @@ class IP {
 	public static function getSubnet( $ip ) {
 		$matches = [];
 		$subnet = false;
-		if ( IP::isIPv6( $ip ) ) {
-			$parts = IP::parseRange( "$ip/64" );
+		if ( self::isIPv6( $ip ) ) {
+			$parts = self::parseRange( "$ip/64" );
 			$subnet = $parts[0];
 		} elseif ( preg_match( '/^(\d+\.\d+\.\d+)\.\d+$/', $ip, $matches ) ) {
 			// IPv4

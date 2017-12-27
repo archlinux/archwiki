@@ -7,13 +7,20 @@
 			"Rancher",
 			"Amire80",
 			"Srdjan m",
-			"Сербијана"
+			"Сербијана",
+			"Obsuser"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Књига",
 	"visualeditor-cite-tool-name-journal": "Журнал",
 	"visualeditor-cite-tool-name-news": "Вести",
 	"visualeditor-cite-tool-name-web": "Веб-сајт",
+	"cite-ve-changedesc-ref-group-both": "Група референци је промењена из „$1” у „$2”",
+	"cite-ve-changedesc-ref-group-from": "Група референци промењена из „$1” у општу групу",
+	"cite-ve-changedesc-ref-group-to": "Група референци промењена из опште групе у „$1”",
+	"cite-ve-changedesc-reflist-group-both": "Група списка референци је промењена из „$1” у „$2”",
+	"cite-ve-changedesc-reflist-group-from": "Група списка референци промењена из „$1” у општу групу",
+	"cite-ve-changedesc-reflist-group-to": "Група списка референци је промењена из опште групе у „$1”",
 	"cite-ve-dialog-reference-options-group-label": "Користи ову групу",
 	"cite-ve-dialog-reference-options-group-placeholder": "Опште референце",
 	"cite-ve-dialog-reference-options-name-label": "Поново употреби под овим именом",
@@ -24,8 +31,8 @@
 	"cite-ve-dialog-referenceslist-title": "Списак референци",
 	"cite-ve-dialogbutton-citation-educationpopup-title": "Навођење",
 	"cite-ve-dialogbutton-reference-full-label": "Основни облик",
-	"cite-ve-dialogbutton-reference-tooltip": "Основне",
 	"cite-ve-dialogbutton-reference-title": "Референца",
+	"cite-ve-dialogbutton-reference-tooltip": "Основне",
 	"cite-ve-dialogbutton-referenceslist-tooltip": "Списак референци",
 	"cite-ve-reference-input-placeholder": "Претражите постојеће референце",
 	"cite-ve-toolbar-group-label": "Цитирај"

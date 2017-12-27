@@ -13,6 +13,7 @@
 	font-family: monospace, 'Courier';
 }
 
-.ve-ui-mwSyntaxHighlightDialog-content .ve-ui-mwSyntaxHighlightWindow-languageField {
+.ve-ui-mwSyntaxHighlightDialog-content .ve-ui-mwSyntaxHighlightWindow-languageField,
+.ve-ui-mwSyntaxHighlightDialog-content .ve-ui-mwSyntaxHighlightWindow-startLineField {
 	max-width: 30em;
 }

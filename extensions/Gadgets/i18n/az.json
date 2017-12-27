@@ -4,11 +4,13 @@
 			"Cekli829",
 			"PPerviz",
 			"Vago",
-			"Vugar 1981"
+			"Vugar 1981",
+			"Wertuose"
 		]
 	},
 	"prefs-gadgets": "Qadjetlər",
-	"gadgets": "Qadjetlər",
+	"gadgets": "Qadcetlər",
+	"gadgetusage-gadget": "Qadcet",
 	"gadgets-title": "Qadjetlər",
 	"gadgets-uses": "İstifadə",
 	"gadgets-export": "İxrac",

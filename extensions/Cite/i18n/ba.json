@@ -4,7 +4,8 @@
 			"Assele",
 			"Вильданова Гюзель",
 			"Янмурза Баки",
-			"Лилиә"
+			"Лилиә",
+			"Ләйсән"
 		]
 	},
 	"apihelp-query+references-description": "Был бит менән бәйле һылтанмаларҙың мәғлүмәттәрен сағылдыра.",
@@ -16,8 +17,7 @@
 	"cite_error_ref_too_many_keys": "<code>&lt;ref&gt;</code> билдәһе дөрөҫ түгел;\nисемдәр дөрөҫ түгел, бәлки, бигерәк күп",
 	"cite_error_ref_no_input": "<code>&lt;ref&gt;</code> билдәһе дөрөҫ түгел;\nисемһеҙ төшөрмәнең эстәлеге булырға тейеш.",
 	"cite_error_references_duplicate_key": "<code>&lt;ref&gt;</code> тег дөрөҫ түгел: «$1» исеме бер нисә тапҡыр, икенсе йөкмәткегә билдәләнгән",
-	"cite_error_references_invalid_parameters": "<code>&lt;references&gt;</code> билдәһе дөрөҫ түгел;\nпараметрҙар рөхсәт ителмәй.\n<code>&lt;references /&gt;</code> ҡулланығыҙ.",
-	"cite_error_references_invalid_parameters_group": "<code>&lt;references&gt;</code> билдәһе дөрөҫ түгел;\n\"group\" параметры ғына рөхсәт ителә.\n<code>&lt;references /&gt;</code> йәки <code>&lt;references group=\"...\" /&gt;</code> ҡулланығыҙ.",
+	"cite_error_references_invalid_parameters": "Тегта <code>&lt;references&gt;</code> рөхсәт ителмәгән күрһәткес бар",
 	"cite_error_references_no_backlink_label": "Кире ҡайтарыу һылтанмалары өсөн хәрефтәр етмәй.\n<nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki> система хәбәрен киңәйтергә кәрәк.",
 	"cite_error_no_link_label_group": "\"$1\" төркөмө өсөн ҡулланыусы һылтанмалары етмәй.\n[[MediaWiki:$2]] система хәбәрендә күберәк билдәләгеҙ.",
 	"cite_error_references_no_text": "<code>&lt;ref&gt;</code> билдәһе дөрөҫ түгел;\n<code>$1</code> төшөрмәләре өсөн текст юҡ",

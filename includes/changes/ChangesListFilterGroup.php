@@ -106,18 +106,18 @@ abstract class ChangesListFilterGroup {
 	protected $isFullCoverage;
 
 	/**
-	 * List of conflicting groups
+	 * Array of associative arrays with conflict information.  See
+	 * setUnidirectionalConflict
 	 *
-	 * @var array $conflictingGroups Array of associative arrays with conflict
-	 *   information.  See setUnidirectionalConflict
+	 * @var array $conflictingGroups
 	 */
 	protected $conflictingGroups = [];
 
 	/**
-	 * List of conflicting filters
+	 * Array of associative arrays with conflict information.  See
+	 * setUnidirectionalConflict
 	 *
-	 * @var array $conflictingFilters Array of associative arrays with conflict
-	 *   information.  See setUnidirectionalConflict
+	 * @var array $conflictingFilters
 	 */
 	protected $conflictingFilters = [];
 
@@ -131,17 +131,25 @@ abstract class ChangesListFilterGroup {
 	 * @param array $groupDefinition Configuration of group
 	 * * $groupDefinition['name'] string Group name; use camelCase with no punctuation
 	 * * $groupDefinition['title'] string i18n key for title (optional, can be omitted
-	 * *  only if none of the filters in the group display in the structured UI)
+	 *     only if none of the filters in the group display in the structured UI)
 	 * * $groupDefinition['type'] string A type constant from a subclass of this one
 	 * * $groupDefinition['priority'] int Priority integer.  Higher value means higher
-	 * *  up in the group list (optional, defaults to -100).
+	 *     up in the group list (optional, defaults to -100).
 	 * * $groupDefinition['filters'] array Numeric array of filter definitions, each of which
-	 * *  is an associative array to be passed to the filter constructor.  However,
-	 * *  'priority' is optional for the filters.  Any filter that has priority unset
-	 * *  will be put to the bottom, in the order given.
+	 *     is an associative array to be passed to the filter constructor.  However,
+	 *     'priority' is optional for the filters.  Any filter that has priority unset
+	 *     will be put to the bottom, in the order given.
 	 * * $groupDefinition['isFullCoverage'] bool Whether the group is full coverage;
-	 * *  if true, this means that checking every item in the group means no
-	 * *  changes list entries are filtered out.
+	 *     if true, this means that checking every item in the group means no
+	 *     changes list entries are filtered out.
+	 * * $groupDefinition['whatsThisHeader'] string i18n key for header of "What's
+	 *     This" popup (optional).
+	 * * $groupDefinition['whatsThisBody'] string i18n key for body of "What's This"
+	 *     popup (optional).
+	 * * $groupDefinition['whatsThisUrl'] string URL for main link of "What's This"
+	 *     popup (optional).
+	 * * $groupDefinition['whatsThisLinkText'] string i18n key of text for main link of
+	 *     "What's This" popup (optional).
 	 */
 	public function __construct( array $groupDefinition ) {
 		if ( strpos( $groupDefinition['name'], self::RESERVED_NAME_CHAR ) !== false ) {
@@ -157,7 +165,7 @@ abstract class ChangesListFilterGroup {
 			$this->title = $groupDefinition['title'];
 		}
 
-		if ( isset ( $groupDefinition['whatsThisHeader'] ) ) {
+		if ( isset( $groupDefinition['whatsThisHeader'] ) ) {
 			$this->whatsThisHeader = $groupDefinition['whatsThisHeader'];
 			$this->whatsThisBody = $groupDefinition['whatsThisBody'];
 			$this->whatsThisUrl = $groupDefinition['whatsThisUrl'];
@@ -221,12 +229,8 @@ abstract class ChangesListFilterGroup {
 	 * @param string $backwardKey i18n key for conflict message in reverse
 	 *  direction (when in UI context of $other object)
 	 */
-	public function conflictsWith( $other, $globalKey, $forwardKey,
-		$backwardKey ) {
-
-		if ( $globalKey === null || $forwardKey === null ||
-			$backwardKey === null ) {
-
+	public function conflictsWith( $other, $globalKey, $forwardKey, $backwardKey ) {
+		if ( $globalKey === null || $forwardKey === null || $backwardKey === null ) {
 			throw new MWException( 'All messages must be specified' );
 		}
 
@@ -255,9 +259,7 @@ abstract class ChangesListFilterGroup {
 	 * @param string $contextDescription i18n key for conflict message in this
 	 *  direction (when in UI context of $this object)
 	 */
-	public function setUnidirectionalConflict( $other, $globalDescription,
-		$contextDescription ) {
-
+	public function setUnidirectionalConflict( $other, $globalDescription, $contextDescription ) {
 		if ( $other instanceof ChangesListFilterGroup ) {
 			$this->conflictingGroups[] = [
 				'group' => $other->getName(),
@@ -307,7 +309,8 @@ abstract class ChangesListFilterGroup {
 	}
 
 	/**
-	 * @return array Associative array of ChangesListFilter objects, with filter name as key
+	 * @return ChangesListFilter[] Associative array of ChangesListFilter objects, with
+	 *   filter name as key
 	 */
 	public function getFilters() {
 		return $this->filters;
@@ -349,7 +352,7 @@ abstract class ChangesListFilterGroup {
 			'messageKeys' => [ $this->title ]
 		];
 
-		if ( isset ( $this->whatsThisHeader ) ) {
+		if ( isset( $this->whatsThisHeader ) ) {
 			$output['whatsThisHeader'] = $this->whatsThisHeader;
 			$output['whatsThisBody'] = $this->whatsThisBody;
 			$output['whatsThisUrl'] = $this->whatsThisUrl;
@@ -391,9 +394,9 @@ abstract class ChangesListFilterGroup {
 		);
 
 		foreach ( $conflicts as $conflictInfo ) {
-			$output['conflicts'][] = $conflictInfo;
 			unset( $conflictInfo['filterObject'] );
 			unset( $conflictInfo['groupObject'] );
+			$output['conflicts'][] = $conflictInfo;
 			array_push(
 				$output['messageKeys'],
 				$conflictInfo['globalDescription'],

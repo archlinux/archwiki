@@ -90,12 +90,42 @@ class CommandLineInstaller extends Maintenance {
 		$this->addOption( 'env-checks', "Run environment checks only, don't change anything" );
 	}
 
+	public function getDbType() {
+		if ( $this->hasOption( 'env-checks' ) ) {
+			return Maintenance::DB_NONE;
+		}
+		return parent::getDbType();
+	}
+
 	function execute() {
 		global $IP;
 
 		$siteName = $this->getArg( 0, 'MediaWiki' ); // Will not be set if used with --env-checks
 		$adminName = $this->getArg( 1 );
+		$envChecksOnly = $this->hasOption( 'env-checks' );
 
+		$this->setDbPassOption();
+		if ( !$envChecksOnly ) {
+			$this->setPassOption();
+		}
+
+		$installer = InstallerOverrides::getCliInstaller( $siteName, $adminName, $this->mOptions );
+
+		$status = $installer->doEnvironmentChecks();
+		if ( $status->isGood() ) {
+			$installer->showMessage( 'config-env-good' );
+		} else {
+			$installer->showStatusMessage( $status );
+
+			return;
+		}
+		if ( !$envChecksOnly ) {
+			$installer->execute();
+			$installer->writeConfigurationFile( $this->getOption( 'confpath', $IP ) );
+		}
+	}
+
+	private function setDbPassOption() {
 		$dbpassfile = $this->getOption( 'dbpassfile' );
 		if ( $dbpassfile !== null ) {
 			if ( $this->getOption( 'dbpass' ) !== null ) {
@@ -110,7 +140,9 @@ class CommandLineInstaller extends Maintenance {
 			}
 			$this->mOptions['dbpass'] = trim( $dbpass, "\r\n" );
 		}
+	}
 
+	private function setPassOption() {
 		$passfile = $this->getOption( 'passfile' );
 		if ( $passfile !== null ) {
 			if ( $this->getOption( 'pass' ) !== null ) {
@@ -126,21 +158,6 @@ class CommandLineInstaller extends Maintenance {
 			$this->mOptions['pass'] = trim( $pass, "\r\n" );
 		} elseif ( $this->getOption( 'pass' ) === null ) {
 			$this->error( 'You need to provide the option "pass" or "passfile"', true );
-		}
-
-		$installer = InstallerOverrides::getCliInstaller( $siteName, $adminName, $this->mOptions );
-
-		$status = $installer->doEnvironmentChecks();
-		if ( $status->isGood() ) {
-			$installer->showMessage( 'config-env-good' );
-		} else {
-			$installer->showStatusMessage( $status );
-
-			return;
-		}
-		if ( !$this->hasOption( 'env-checks' ) ) {
-			$installer->execute();
-			$installer->writeConfigurationFile( $this->getOption( 'confpath', $IP ) );
 		}
 	}
 

@@ -152,6 +152,7 @@ abstract class ApiFormatBase extends ApiBase {
 
 	/**
 	 * Overridden to honor $this->forceDefaultParams(), if applicable
+	 * @inheritDoc
 	 * @since 1.26
 	 */
 	protected function getParameterFromSettings( $paramName, $paramSettings, $parseLimit ) {
@@ -246,7 +247,14 @@ abstract class ApiFormatBase extends ApiBase {
 			if ( !$this->getIsWrappedHtml() ) {
 				// When the format without suffix 'fm' is defined, there is a non-html version
 				if ( $this->getMain()->getModuleManager()->isDefined( $lcformat, 'format' ) ) {
-					$msg = $context->msg( 'api-format-prettyprint-header' )->params( $format, $lcformat );
+					if ( !$this->getRequest()->wasPosted() ) {
+						$nonHtmlUrl = strtok( $this->getRequest()->getFullRequestURL(), '?' )
+							. '?' . $this->getRequest()->appendQueryValue( 'format', $lcformat );
+						$msg = $context->msg( 'api-format-prettyprint-header-hyperlinked' )
+							->params( $format, $lcformat, $nonHtmlUrl );
+					} else {
+						$msg = $context->msg( 'api-format-prettyprint-header' )->params( $format, $lcformat );
+					}
 				} else {
 					$msg = $context->msg( 'api-format-prettyprint-header-only-html' )->params( $format );
 				}

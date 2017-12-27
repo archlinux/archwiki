@@ -6,7 +6,8 @@
 			"Srhat",
 			"Suelnur",
 			"Tarikozket",
-			"Vito Genovese"
+			"Vito Genovese",
+			"Bulgu"
 		]
 	},
 	"nuke": "Toplu sil",
@@ -20,5 +21,6 @@
 	"right-nuke": "Sayfaları kitlesel olarak sil",
 	"nuke-select": "Seçilmiş: $1",
 	"nuke-deleted": "'''$1''' sayfası silindi.",
+	"nuke-nopages-global": "Aramanızla eşleşen bir sayfa başlığı yoktur.",
 	"nuke-linkoncontribs": "toplu sil"
 }

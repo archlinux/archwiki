@@ -12,11 +12,15 @@
 			"Iltever",
 			"NBS",
 			"Putnik",
-			"Redredsonia"
+			"Redredsonia",
+			"Alexandr Efremov",
+			"Facenapalm"
 		]
 	},
 	"apihelp-query+references-description": "Возвращает представление данных из ссылок, связанных с данной страницей.",
+	"apihelp-query+references-summary": "Возвращает представление данных из ссылок, связанных с данной страницей.",
 	"apihelp-query+references-example-1": "Ссылки, связанные с <kbd>Albert Einstein</kbd>.",
+	"apierror-citestoragedisabled": "Хранилище сносок расширения цитирования не активировано.",
 	"cite-desc": "Добавляет теги <nowiki><ref[ name=id]></nowiki> и <nowiki><references/></nowiki> для сносок",
 	"cite_error": "Ошибка цитирования $1",
 	"cite_error_ref_numeric_key": "Неправильный тег <code>&lt;ref&gt;</code>;\nимя не может быть целым числом. Используйте описательное название",
@@ -24,8 +28,7 @@
 	"cite_error_ref_too_many_keys": "Неправильный тег <code>&lt;ref&gt;</code>;\nошибочные имена, возможно, слишком много",
 	"cite_error_ref_no_input": "Неправильный тег <code>&lt;ref&gt;</code>;\nэлемент без имени должен иметь содержание",
 	"cite_error_references_duplicate_key": "Неверный тег <code>&lt;ref&gt;</code>: название «$1» определено несколько раз для различного содержимого",
-	"cite_error_references_invalid_parameters": "Неправильный тег <code>&lt;references&gt;</code>;\nпараметры не разрешены.\nИспользуйте <code>&lt;references /&gt;</code>",
-	"cite_error_references_invalid_parameters_group": "Ошибочный параметр в <code>&lt;references&gt;</code>;\nможно использовать только параметр <code>'''group'''</code>.\nИспользуйте <code>&lt;references /&gt;</code> или <code>&lt;references group=\"…\" /&gt;</code>",
+	"cite_error_references_invalid_parameters": "Недопустимый параметр в теге <code>&lt;references&gt;</code>",
 	"cite_error_references_no_backlink_label": "Не хватает символов для возвратных гиперссылок.\nСледует расширить системное сообщение <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>",
 	"cite_error_no_link_label_group": "Закончились отметки пользовательских ссылок для группы «$1».\nОпределите дополнительные в сообщении <nowiki>[[MediaWiki:$2]]</nowiki>.",
 	"cite_error_references_no_text": "Неверный тег <code>&lt;ref&gt;</code>; для сносок <code>$1</code> не указан текст",

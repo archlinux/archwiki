@@ -51,5 +51,6 @@
 	"cite-ve-referenceslist-isempty-default": "Tällä sivulla ei ole lähteitä, joita sisällyttää listassa.",
 	"cite-ve-referenceslist-missingref": "Tämä lähde on määritelty mallineessa tai automaattisesti luotu ja sitä voi muokata vain wikitekstitilassa.",
 	"cite-ve-toolbar-group-label": "Viite",
-	"cite-ve-othergroup-item": "$1 viite"
+	"cite-ve-othergroup-item": "$1 viite",
+	"visualeditor-internal-list-diff-default-group-name-mwreference": "Lähteet"
 }

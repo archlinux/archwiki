@@ -29,6 +29,10 @@ class ResourceLoaderUploadDialogModule extends ResourceLoaderModule {
 
 	protected $targets = [ 'desktop', 'mobile' ];
 
+	/**
+	 * @param ResourceLoaderContext $context
+	 * @return string JavaScript code
+	 */
 	public function getScript( ResourceLoaderContext $context ) {
 		$config = $context->getResourceLoader()->getConfig();
 		return ResourceLoader::makeConfigSetScript( [
@@ -36,6 +40,9 @@ class ResourceLoaderUploadDialogModule extends ResourceLoaderModule {
 		] );
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function enableModuleContentVersion() {
 		return true;
 	}

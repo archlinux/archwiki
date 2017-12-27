@@ -125,7 +125,7 @@ class Element extends Tag {
 	 * Check if element supports one or more methods.
 	 *
 	 * @param string|string[] $methods Method or list of methods to check
-	 * @return boolean All methods are supported
+	 * @return bool All methods are supported
 	 */
 	public function supports( $methods ) {
 		$support = 0;
@@ -142,7 +142,9 @@ class Element extends Tag {
 	}
 
 	/**
-	 * @param callable $func
+	 * Register an additional function to call when building the config. See ::getConfig().
+	 *
+	 * @param callable $func The function. Parameters and return value are the same as ::getConfig().
 	 */
 	public function registerConfigCallback( callable $func ) {
 		$this->configCallbacks[] = $func;
@@ -151,12 +153,10 @@ class Element extends Tag {
 	/**
 	 * Add the necessary properties to the given `$config` array to allow
 	 * reconstruction of this widget via its constructor.
-	 * @param array &$config
-	 *   An array which will be mutated to add the necessary configuration
+	 * @param array &$config An array which will be mutated to add the necessary configuration
 	 *   properties.  Unless you are implementing a subclass, you should
 	 *   always pass a new empty array `[]`.
-	 * @return array
-	 *   A configuration array which can be passed to this object's
+	 * @return array A configuration array which can be passed to this object's
 	 *   constructor to recreate it.  This is a return value to allow
 	 *   the safe use of copy-by-value functions like `array_merge` in
 	 *   the implementation.
@@ -181,8 +181,7 @@ class Element extends Tag {
 	 * JSON serialization by replacing `Tag` references and
 	 * `HtmlSnippet`s.
 	 *
-	 * @return array
-	 *   A serialized configuration array.
+	 * @return array A serialized configuration array.
 	 */
 	private function getSerializedConfig() {
 		// Ensure that '_' comes first in the output.
@@ -190,12 +189,12 @@ class Element extends Tag {
 		$config = $this->getConfig( $config );
 		// Post-process config array to turn Tag references into ID references
 		// and HtmlSnippet references into a { html: 'string' } JSON form.
-		$replaceElements = function( &$item ) {
+		$replaceElements = function ( &$item ) {
 			if ( $item instanceof Tag ) {
 				$item->ensureInfusableId();
 				$item = [ 'tag' => $item->getAttribute( 'id' ) ];
 			} elseif ( $item instanceof HtmlSnippet ) {
-				$item = [ 'html' => (string) $item ];
+				$item = [ 'html' => (string)$item ];
 			}
 		};
 		array_walk_recursive( $config, $replaceElements );
@@ -250,7 +249,7 @@ class Element extends Tag {
 	/**
 	 * Set the default direction of the user interface.
 	 *
-	 * @return string Text direction, either 'ltr' or 'rtl'
+	 * @param string $dir Text direction, either 'ltr' or 'rtl'
 	 */
 	public static function setDefaultDir( $dir ) {
 		self::$defaultDir = $dir === 'rtl' ? 'rtl' : 'ltr';

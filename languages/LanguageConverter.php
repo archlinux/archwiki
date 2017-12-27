@@ -38,6 +38,7 @@ class LanguageConverter {
 	 * @var array
 	 */
 	static public $languagesWithVariants = [
+		'en',
 		'gan',
 		'iu',
 		'kk',
@@ -61,11 +62,6 @@ class LanguageConverter {
 	public $mTables;
 	// 'bidirectional' 'unidirectional' 'disable' for each variant
 	public $mManualLevel;
-
-	/**
-	 * @var string Memcached key name
-	 */
-	public $mCacheKey;
 
 	public $mLangObj;
 	public $mFlags;
@@ -97,7 +93,6 @@ class LanguageConverter {
 		$this->mVariants = array_diff( $variants, $wgDisabledVariants );
 		$this->mVariantFallbacks = $variantfallbacks;
 		$this->mVariantNames = Language::fetchLanguageNames();
-		$this->mCacheKey = wfMemcKey( 'conversiontables', $maincode );
 		$defaultflags = [
 			// 'S' show converted text
 			// '+' add rules for alltext
@@ -346,7 +341,6 @@ class LanguageConverter {
 	 * @return string The converted text
 	 */
 	public function autoConvert( $text, $toVariant = false ) {
-
 		$this->loadTables();
 
 		if ( !$toVariant ) {
@@ -359,7 +353,6 @@ class LanguageConverter {
 		if ( $this->guessVariant( $text, $toVariant ) ) {
 			return $text;
 		}
-
 		/* we convert everything except:
 		   1. HTML markups (anything between < and >)
 		   2. HTML entities
@@ -395,6 +388,7 @@ class LanguageConverter {
 		// Guard against delimiter nulls in the input
 		// (should never happen: see T159174)
 		$text = str_replace( "\000", '', $text );
+		$text = str_replace( "\004", '', $text );
 
 		$markupMatches = null;
 		$elementMatches = null;
@@ -409,6 +403,13 @@ class LanguageConverter {
 					// We hit the end.
 					$elementPos = strlen( $text );
 					$element = '';
+				} elseif ( substr( $element, -1 ) === "\004" ) {
+					// This can sometimes happen if we have
+					// unclosed html tags (For example
+					// when converting a title attribute
+					// during a recursive call that contains
+					// a &lt; e.g. <div title="&lt;">.
+					$element = substr( $element, 0, -1 );
 				}
 			} else {
 				// If we hit here, then Language Converter could be tricked
@@ -418,11 +419,11 @@ class LanguageConverter {
 				$log = LoggerFactory::getInstance( 'languageconverter' );
 				$log->error( "Hit pcre.backtrack_limit in " . __METHOD__
 					. ". Disabling language conversion for this page.",
-					array(
+					[
 						"method" => __METHOD__,
 						"variant" => $toVariant,
 						"startOfText" => substr( $text, 0, 500 )
-					)
+					]
 				);
 				return $text;
 			}
@@ -436,7 +437,14 @@ class LanguageConverter {
 			if ( $element !== ''
 				&& preg_match( '/^(<[^>\s]*+)\s([^>]*+)(.*+)$/', $element, $elementMatches )
 			) {
+				// FIXME, this decodes entities, so if you have something
+				// like <div title="foo&lt;bar"> the bar won't get
+				// translated since after entity decoding it looks like
+				// unclosed html and we call this method recursively
+				// on attributes.
 				$attrs = Sanitizer::decodeTagAttributes( $elementMatches[2] );
+				// Ensure self-closing tags stay self-closing.
+				$close = substr( $elementMatches[2], -1 ) === '/' ? ' /' : '';
 				$changed = false;
 				foreach ( [ 'title', 'alt' ] as $attrName ) {
 					if ( !isset( $attrs[$attrName] ) ) {
@@ -455,7 +463,7 @@ class LanguageConverter {
 				}
 				if ( $changed ) {
 					$element = $elementMatches[1] . Html::expandAttributes( $attrs ) .
-						$elementMatches[3];
+						$close . $elementMatches[3];
 				}
 			}
 			$literalBlob .= $element . "\000";
@@ -671,7 +679,9 @@ class LanguageConverter {
 
 		$noScript = '<script.*?>.*?<\/script>(*SKIP)(*FAIL)';
 		$noStyle = '<style.*?>.*?<\/style>(*SKIP)(*FAIL)';
+		// @codingStandardsIgnoreStart Generic.Files.LineLength.TooLong
 		$noHtml = '<(?:[^>=]*+(?>[^>=]*+=\s*+(?:"[^"]*"|\'[^\']*\'|[^\'">\s]*+))*+[^>=]*+>|.*+)(*SKIP)(*FAIL)';
+		// @codingStandardsIgnoreEnd
 		while ( $startPos < $length && $continue ) {
 			$continue = preg_match(
 				// Only match -{ outside of html.
@@ -710,7 +720,7 @@ class LanguageConverter {
 	 *
 	 * @param string $text Text to be converted
 	 * @param string $variant The target variant code
-	 * @param int $startPos
+	 * @param int &$startPos
 	 * @param int $depth Depth of recursion
 	 *
 	 * @throws MWException
@@ -908,8 +918,9 @@ class LanguageConverter {
 		$this->mTablesLoaded = true;
 		$this->mTables = false;
 		$cache = ObjectCache::getInstance( $wgLanguageConverterCacheType );
+		$cacheKey = $cache->makeKey( 'conversiontables', $this->mMainLanguageCode );
 		if ( $fromCache ) {
-			$this->mTables = $cache->get( $this->mCacheKey );
+			$this->mTables = $cache->get( $cacheKey );
 		}
 		if ( !$this->mTables || !array_key_exists( self::CACHE_VERSION_KEY, $this->mTables ) ) {
 			// not in cache, or we need a fresh reload.
@@ -924,7 +935,7 @@ class LanguageConverter {
 			$this->postLoadTables();
 			$this->mTables[self::CACHE_VERSION_KEY] = true;
 
-			$cache->set( $this->mCacheKey, $this->mTables, 43200 );
+			$cache->set( $cacheKey, $this->mTables, 43200 );
 		}
 	}
 
@@ -937,9 +948,11 @@ class LanguageConverter {
 	/**
 	 * Reload the conversion tables.
 	 *
+	 * Also used by test suites which need to reset the converter state.
+	 *
 	 * @private
 	 */
-	function reloadTables() {
+	private function reloadTables() {
 		if ( $this->mTables ) {
 			unset( $this->mTables );
 		}

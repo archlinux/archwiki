@@ -76,9 +76,9 @@ class RefreshLinks extends Maintenance {
 		} elseif ( ( $category = $this->getOption( 'tracking-category', false ) ) !== false ) {
 			$this->refreshTrackingCategory( $category );
 		} elseif ( !$this->hasOption( 'dfn-only' ) ) {
-			$new = $this->getOption( 'new-only', false );
-			$redir = $this->getOption( 'redirects-only', false );
-			$oldRedir = $this->getOption( 'old-redirects-only', false );
+			$new = $this->hasOption( 'new-only' );
+			$redir = $this->hasOption( 'redirects-only' );
+			$oldRedir = $this->hasOption( 'old-redirects-only' );
 			$this->doRefreshLinks( $start, $new, $end, $redir, $oldRedir );
 			$this->deleteLinksFromNonexistent( null, null, $this->mBatchSize, $dfnChunkSize );
 		} else {
@@ -178,7 +178,6 @@ class RefreshLinks extends Maintenance {
 			$this->output( "Starting from page_id $start of $end.\n" );
 
 			for ( $id = $start; $id <= $end; $id++ ) {
-
 				if ( !( $id % self::REPORTING_INTERVAL ) ) {
 					$this->output( "$id\n" );
 					wfWaitForSlaves();
@@ -191,7 +190,6 @@ class RefreshLinks extends Maintenance {
 				$this->output( "Starting from page_id $start of $end.\n" );
 
 				for ( $id = $start; $id <= $end; $id++ ) {
-
 					if ( !( $id % self::REPORTING_INTERVAL ) ) {
 						$this->output( "$id\n" );
 						wfWaitForSlaves();
@@ -450,7 +448,7 @@ class RefreshLinks extends Maintenance {
 		do {
 			$finalConds = $conds;
 			$timestamp = $dbr->addQuotes( $timestamp );
-			$finalConds []=
+			$finalConds [] =
 				"(cl_timestamp > $timestamp OR (cl_timestamp = $timestamp AND cl_from > $lastId))";
 			$res = $dbr->select( [ 'page', 'categorylinks' ],
 				[ 'page_id', 'cl_timestamp' ],

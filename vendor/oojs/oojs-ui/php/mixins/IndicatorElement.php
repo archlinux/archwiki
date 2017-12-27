@@ -40,7 +40,7 @@ trait IndicatorElement {
 		$this->indicator->addClasses( [ 'oo-ui-indicatorElement-indicator' ] );
 		$this->setIndicator( isset( $config['indicator'] ) ? $config['indicator'] : null );
 
-		$this->registerConfigCallback( function( &$config ) {
+		$this->registerConfigCallback( function ( &$config ) {
 			if ( $this->indicatorName !== null ) {
 				$config['indicator'] = $this->indicatorName;
 			}

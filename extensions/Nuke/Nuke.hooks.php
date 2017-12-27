@@ -7,7 +7,7 @@ class NukeHooks {
 	 *
 	 * @param int $userId
 	 * @param Title $userPageTitle
-	 * @param string[] $toolLinks
+	 * @param string[] &$toolLinks
 	 * @param SpecialPage $sp
 	 */
 	public static function nukeContributionsLinks( $userId, $userPageTitle, &$toolLinks,
@@ -17,7 +17,8 @@ class NukeHooks {
 			$toolLinks['nuke'] = $sp->getLinkRenderer()->makeKnownLink(
 				SpecialPage::getTitleFor( 'Nuke' ),
 				$sp->msg( 'nuke-linkoncontribs' )->text(),
-				[ 'title' => $sp->msg( 'nuke-linkoncontribs-text' )->text() ],
+				[ 'title' => $sp->msg( 'nuke-linkoncontribs-text',
+					$userPageTitle->getText() )->text() ],
 				[ 'target' => $userPageTitle->getText() ]
 			);
 		}

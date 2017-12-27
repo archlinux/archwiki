@@ -8,7 +8,8 @@
 			"Mattho69",
 			"Dcausse",
 			"Orlodrim",
-			"Wladek92"
+			"Wladek92",
+			"Gomoko"
 		]
 	},
 	"syntaxhighlight-desc": "Fournit la mise en valeur de la syntaxe par la balise <code>&lt;syntaxhighlight&gt;</code> en utilisant [http://pygments.org/ Pygments - coloration syntaxique Python]",
@@ -18,6 +19,7 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Langage",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "(aucun)",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "Afficher les numéros de ligne",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-startingline": "Numéro de ligne de début",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Bloc de code",
 	"syntaxhighlight-error-pygments-invocation-failure": "Impossible d'appeler Pygments",
 	"syntaxhighlight-error-unknown-language": "Langue inconnue \"$1\"",

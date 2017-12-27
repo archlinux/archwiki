@@ -60,7 +60,7 @@ class RenameuserHooks {
 
 	/**
 	 * So users can just type in a username for target and it'll work
-	 * @param array $types
+	 * @param array &$types
 	 * @return bool
 	 */
 	public static function onGetLogTypesOnUser( array &$types ) {

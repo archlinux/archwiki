@@ -32,7 +32,7 @@ class ApiSpamBlacklist extends ApiBase {
 
 	public function execute() {
 		$params = $this->extractRequestParams();
-		$matches = BaseBlacklist::getInstance( 'spam' )->filter( $params['url'], NULL, true );
+		$matches = BaseBlacklist::getInstance( 'spam' )->filter( $params['url'], null, true );
 		$res = $this->getResult();
 
 		if ( $matches !== false ) {
@@ -47,25 +47,25 @@ class ApiSpamBlacklist extends ApiBase {
 	}
 
 	public function getAllowedParams() {
-		return array(
-			'url' => array(
+		return [
+			'url' => [
 				ApiBase::PARAM_REQUIRED => true,
 				ApiBase::PARAM_ISMULTI => true,
-			)
-		);
+			]
+		];
 	}
 
 	/**
 	 * @see ApiBase::getExamplesMessages()
 	 */
 	protected function getExamplesMessages() {
-		return array(
+		return [
 			'action=spamblacklist&url=http://www.example.com/|http://www.example.org/'
 				=> 'apihelp-spamblacklist-example-1',
-		);
+		];
 	}
 
 	public function getHelpUrls() {
-		return array( 'https://www.mediawiki.org/wiki/Extension:SpamBlacklist/API' );
+		return [ 'https://www.mediawiki.org/wiki/Extension:SpamBlacklist/API' ];
 	}
 }

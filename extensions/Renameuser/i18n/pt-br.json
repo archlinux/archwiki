@@ -27,7 +27,7 @@
 	"renameusererrorinvalid": "O nome de usuário \"<nowiki>$1</nowiki>\" é inválido.",
 	"renameuser-error-request": "Houve um problema ao receber este pedido.\nPor favor, retorne e tente novamente.",
 	"renameuser-error-same-user": "Não é possível renomear um usuário para o nome anterior.",
-	"renameusersuccess": "{{GENDER:$1|O usuário|A usuária|O(a) usuário(a)}} \"<nowiki>$1</nowiki>\" foi renomeado para \"<nowiki>$2</nowiki>\".",
+	"renameusersuccess": "{{GENDER:$2|O usuário|A usuária|O(a) usuário(a)}} \"<nowiki>$1</nowiki>\" foi renomeado para \"<nowiki>$2</nowiki>\".",
 	"renameuser-page-exists": "A página $1 já existe e não pode ser substituída automaticamente.",
 	"renameuser-page-moved": "A página $1 foi movida para $2.",
 	"renameuser-page-unmoved": "A página $1 não pode ser movida para $2.",

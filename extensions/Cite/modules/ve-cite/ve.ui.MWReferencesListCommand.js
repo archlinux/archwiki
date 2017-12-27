@@ -34,8 +34,7 @@ OO.inheritClass( ve.ui.MWReferencesListCommand, ve.ui.Command );
  * @inheritdoc
  */
 ve.ui.MWReferencesListCommand.prototype.execute = function ( surface ) {
-	var
-		fragment = surface.getModel().getFragment(),
+	var fragment = surface.getModel().getFragment(),
 		selectedNode = fragment.getSelectedNode(),
 		isReflistNodeSelected = selectedNode && selectedNode instanceof ve.dm.MWReferencesListNode;
 
@@ -47,7 +46,8 @@ ve.ui.MWReferencesListCommand.prototype.execute = function ( surface ) {
 				type: 'mwReferencesList',
 				attributes: {
 					listGroup: 'mwReference/',
-					refGroup: ''
+					refGroup: '',
+					isResponsive: mw.config.get( 'wgCiteResponsiveReferences' )
 				}
 			},
 			{ type: '/mwReferencesList' }

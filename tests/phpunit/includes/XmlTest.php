@@ -403,12 +403,15 @@ class XmlTest extends MediaWikiTestCase {
 	 */
 	public function testListDropDown() {
 		$this->assertEquals(
-			'<select id="test-name" name="test-name" class="test-css" tabindex="2">' . "\n" .
-				'<option value="other">other reasons</option>' .
-				'<optgroup label="Foo"><option value="Foo 1">Foo 1</option>' .
-				'<option value="Example" selected="">Example</option>' .
-				'</optgroup><optgroup label="Bar">' .
-				'<option value="Bar 1">Bar 1</option></optgroup>' . "\n" .
+			'<select name="test-name" id="test-name" class="test-css" tabindex="2">' .
+				'<option value="other">other reasons</option>' . "\n" .
+				'<optgroup label="Foo">' .
+				'<option value="Foo 1">Foo 1</option>' . "\n" .
+				'<option value="Example" selected="">Example</option>' . "\n" .
+				'</optgroup>' . "\n" .
+				'<optgroup label="Bar">' .
+				'<option value="Bar 1">Bar 1</option>' . "\n" .
+				'</optgroup>' .
 				'</select>',
 			Xml::listDropDown(
 				// name
@@ -424,6 +427,105 @@ class XmlTest extends MediaWikiTestCase {
 				// tabindex
 				2
 			)
+		);
+	}
+
+	/**
+	 * @covers Xml::listDropDownOptions
+	 */
+	public function testListDropDownOptions() {
+		$this->assertEquals(
+			[
+				'other reasons' => 'other',
+				'Foo' => [
+					'Foo 1' => 'Foo 1',
+					'Example' => 'Example',
+				],
+				'Bar' => [
+					'Bar 1' => 'Bar 1',
+				],
+			],
+			Xml::listDropDownOptions(
+				"* Foo\n** Foo 1\n** Example\n* Bar\n** Bar 1",
+				[ 'other' => 'other reasons' ]
+			)
+		);
+	}
+
+	/**
+	 * @covers Xml::listDropDownOptionsOoui
+	 */
+	public function testListDropDownOptionsOoui() {
+		$this->assertEquals(
+			[
+				[ 'data' => 'other', 'label' => 'other reasons' ],
+				[ 'optgroup' => 'Foo' ],
+				[ 'data' => 'Foo 1', 'label' => 'Foo 1' ],
+				[ 'data' => 'Example', 'label' => 'Example' ],
+				[ 'optgroup' => 'Bar' ],
+				[ 'data' => 'Bar 1', 'label' => 'Bar 1' ],
+			],
+			Xml::listDropDownOptionsOoui( [
+				'other reasons' => 'other',
+				'Foo' => [
+					'Foo 1' => 'Foo 1',
+					'Example' => 'Example',
+				],
+				'Bar' => [
+					'Bar 1' => 'Bar 1',
+				],
+			] )
+		);
+	}
+
+	/**
+	 * @covers Xml::fieldset
+	 */
+	public function testFieldset() {
+		$this->assertEquals(
+			"<fieldset>\n",
+			Xml::fieldset(),
+			'Opening tag'
+		);
+		$this->assertEquals(
+			"<fieldset>\n",
+			Xml::fieldset( false ),
+			'Opening tag (false means no legend)'
+		);
+		$this->assertEquals(
+			"<fieldset>\n",
+			Xml::fieldset( '' ),
+			'Opening tag (empty string also means no legend)'
+		);
+		$this->assertEquals(
+			"<fieldset>\n<legend>Foo</legend>\n",
+			Xml::fieldset( 'Foo' ),
+			'Opening tag with legend'
+		);
+		$this->assertEquals(
+			"<fieldset>\n<legend>Foo</legend>\nBar\n</fieldset>\n",
+			Xml::fieldset( 'Foo', 'Bar' ),
+			'Entire element with legend'
+		);
+		$this->assertEquals(
+			"<fieldset>\n<legend>Foo</legend>\n",
+			Xml::fieldset( 'Foo', false ),
+			'Opening tag with legend (false means no content and no closing tag)'
+		);
+		$this->assertEquals(
+			"<fieldset>\n<legend>Foo</legend>\n\n</fieldset>\n",
+			Xml::fieldset( 'Foo', '' ),
+			'Entire element with legend but no content (empty string generates a closing tag)'
+		);
+		$this->assertEquals(
+			"<fieldset class=\"bar\">\n<legend>Foo</legend>\nBar\n</fieldset>\n",
+			Xml::fieldset( 'Foo', 'Bar', [ 'class' => 'bar' ] ),
+			'Opening tag with legend and attributes'
+		);
+		$this->assertEquals(
+			"<fieldset class=\"bar\">\n<legend>Foo</legend>\n",
+			Xml::fieldset( 'Foo', false, [ 'class' => 'bar' ] ),
+			'Entire element with legend and attributes'
 		);
 	}
 }

@@ -102,6 +102,7 @@ abstract class WantedQueryPage extends QueryPage {
 	 * @note This will only be run if the page is cached (ie $wgMiserMode = true)
 	 *   unless forceExistenceCheck() is true.
 	 * @since 1.24
+	 * @param Title $title
 	 * @return bool
 	 */
 	protected function existenceCheck( Title $title ) {
@@ -117,8 +118,8 @@ abstract class WantedQueryPage extends QueryPage {
 	 */
 	private function makeWlhLink( $title, $result ) {
 		$wlh = SpecialPage::getTitleFor( 'Whatlinkshere', $title->getPrefixedText() );
-		$label = $this->msg( 'nlinks' )->numParams( $result->value )->escaped();
-		return Linker::link( $wlh, $label );
+		$label = $this->msg( 'nlinks' )->numParams( $result->value )->text();
+		return $this->getLinkRenderer()->makeLink( $wlh, $label );
 	}
 
 	/**

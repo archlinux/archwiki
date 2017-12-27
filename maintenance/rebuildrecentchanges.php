@@ -24,6 +24,7 @@
  */
 
 require_once __DIR__ . '/Maintenance.php';
+use MediaWiki\MediaWikiServices;
 
 /**
  * Maintenance script that rebuilds recent changes from scratch.
@@ -31,9 +32,9 @@ require_once __DIR__ . '/Maintenance.php';
  * @ingroup Maintenance
  */
 class RebuildRecentchanges extends Maintenance {
-	/** @var integer UNIX timestamp */
+	/** @var int UNIX timestamp */
 	private $cutoffFrom;
-	/** @var integer UNIX timestamp */
+	/** @var int UNIX timestamp */
 	private $cutoffTo;
 
 	public function __construct() {
@@ -79,6 +80,8 @@ class RebuildRecentchanges extends Maintenance {
 	 */
 	private function rebuildRecentChangesTablePass1() {
 		$dbw = $this->getDB( DB_MASTER );
+		$revCommentStore = new CommentStore( 'rev_comment' );
+		$rcCommentStore = new CommentStore( 'rc_comment' );
 
 		if ( $this->hasOption( 'from' ) && $this->hasOption( 'to' ) ) {
 			$this->cutoffFrom = wfTimestamp( TS_UNIX, $this->getOption( 'from' ) );
@@ -112,13 +115,14 @@ class RebuildRecentchanges extends Maintenance {
 		}
 
 		$this->output( "Loading from page and revision tables...\n" );
+
+		$commentQuery = $revCommentStore->getJoin();
 		$res = $dbw->select(
-			[ 'page', 'revision' ],
+			[ 'revision', 'page' ] + $commentQuery['tables'],
 			[
 				'rev_timestamp',
 				'rev_user',
 				'rev_user_text',
-				'rev_comment',
 				'rev_minor_edit',
 				'rev_id',
 				'rev_deleted',
@@ -126,19 +130,22 @@ class RebuildRecentchanges extends Maintenance {
 				'page_title',
 				'page_is_new',
 				'page_id'
-			],
+			] + $commentQuery['fields'],
 			[
 				'rev_timestamp > ' . $dbw->addQuotes( $dbw->timestamp( $this->cutoffFrom ) ),
-				'rev_timestamp < ' . $dbw->addQuotes( $dbw->timestamp( $this->cutoffTo ) ),
-				'rev_page=page_id'
+				'rev_timestamp < ' . $dbw->addQuotes( $dbw->timestamp( $this->cutoffTo ) )
 			],
 			__METHOD__,
-			[ 'ORDER BY' => 'rev_timestamp DESC' ]
+			[ 'ORDER BY' => 'rev_timestamp DESC' ],
+			[
+				'page' => [ 'JOIN', 'rev_page=page_id' ],
+			] + $commentQuery['joins']
 		);
 
 		$this->output( "Inserting from page and revision tables...\n" );
 		$inserted = 0;
 		foreach ( $res as $row ) {
+			$comment = $revCommentStore->getComment( $row );
 			$dbw->insert(
 				'recentchanges',
 				[
@@ -147,7 +154,6 @@ class RebuildRecentchanges extends Maintenance {
 					'rc_user_text' => $row->rev_user_text,
 					'rc_namespace' => $row->page_namespace,
 					'rc_title' => $row->page_title,
-					'rc_comment' => $row->rev_comment,
 					'rc_minor' => $row->rev_minor_edit,
 					'rc_bot' => 0,
 					'rc_new' => $row->page_is_new,
@@ -155,12 +161,9 @@ class RebuildRecentchanges extends Maintenance {
 					'rc_this_oldid' => $row->rev_id,
 					'rc_last_oldid' => 0, // is this ok?
 					'rc_type' => $row->page_is_new ? RC_NEW : RC_EDIT,
-					'rc_source' => $row->page_is_new
-						? $dbw->addQuotes( RecentChange::SRC_NEW )
-						: $dbw->addQuotes( RecentChange::SRC_EDIT )
-					,
+					'rc_source' => $row->page_is_new ? RecentChange::SRC_NEW : RecentChange::SRC_EDIT,
 					'rc_deleted' => $row->rev_deleted
-				],
+				] + $rcCommentStore->insert( $dbw, $comment ),
 				__METHOD__
 			);
 			if ( ( ++$inserted % $this->mBatchSize ) == 0 ) {
@@ -238,9 +241,7 @@ class RebuildRecentchanges extends Maintenance {
 						'rc_last_oldid' => $lastOldId,
 						'rc_new' => $new,
 						'rc_type' => $new ? RC_NEW : RC_EDIT,
-						'rc_source' => $new === 1
-							? $dbw->addQuotes( RecentChange::SRC_NEW )
-							: $dbw->addQuotes( RecentChange::SRC_EDIT ),
+						'rc_source' => $new === 1 ? RecentChange::SRC_NEW : RecentChange::SRC_EDIT,
 						'rc_old_len' => $lastSize,
 						'rc_new_len' => $size,
 					],
@@ -269,25 +270,27 @@ class RebuildRecentchanges extends Maintenance {
 		global $wgLogTypes, $wgLogRestrictions;
 
 		$dbw = $this->getDB( DB_MASTER );
+		$logCommentStore = new CommentStore( 'log_comment' );
+		$rcCommentStore = new CommentStore( 'rc_comment' );
 
 		$this->output( "Loading from user, page, and logging tables...\n" );
 
+		$commentQuery = $logCommentStore->getJoin();
 		$res = $dbw->select(
-			[ 'user', 'logging', 'page' ],
+			[ 'user', 'logging', 'page' ] + $commentQuery['tables'],
 			[
 				'log_timestamp',
 				'log_user',
 				'user_name',
 				'log_namespace',
 				'log_title',
-				'log_comment',
 				'page_id',
 				'log_type',
 				'log_action',
 				'log_id',
 				'log_params',
 				'log_deleted'
-			],
+			] + $commentQuery['fields'],
 			[
 				'log_timestamp > ' . $dbw->addQuotes( $dbw->timestamp( $this->cutoffFrom ) ),
 				'log_timestamp < ' . $dbw->addQuotes( $dbw->timestamp( $this->cutoffTo ) ),
@@ -301,13 +304,14 @@ class RebuildRecentchanges extends Maintenance {
 			[
 				'page' =>
 					[ 'LEFT JOIN', [ 'log_namespace=page_namespace', 'log_title=page_title' ] ]
-			]
+			] + $commentQuery['joins']
 		);
 
 		$field = $dbw->fieldInfo( 'recentchanges', 'rc_cur_id' );
 
 		$inserted = 0;
 		foreach ( $res as $row ) {
+			$comment = $logCommentStore->getComment( $row );
 			$dbw->insert(
 				'recentchanges',
 				[
@@ -316,7 +320,6 @@ class RebuildRecentchanges extends Maintenance {
 					'rc_user_text' => $row->user_name,
 					'rc_namespace' => $row->log_namespace,
 					'rc_title' => $row->log_title,
-					'rc_comment' => $row->log_comment,
 					'rc_minor' => 0,
 					'rc_bot' => 0,
 					'rc_patrolled' => 1,
@@ -324,7 +327,7 @@ class RebuildRecentchanges extends Maintenance {
 					'rc_this_oldid' => 0,
 					'rc_last_oldid' => 0,
 					'rc_type' => RC_LOG,
-					'rc_source' => $dbw->addQuotes( RecentChange::SRC_LOG ),
+					'rc_source' => RecentChange::SRC_LOG,
 					'rc_cur_id' => $field->isNullable()
 						? $row->page_id
 						: (int)$row->page_id, // NULL => 0,
@@ -333,7 +336,7 @@ class RebuildRecentchanges extends Maintenance {
 					'rc_logid' => $row->log_id,
 					'rc_params' => $row->log_params,
 					'rc_deleted' => $row->log_deleted
-				],
+				] + $rcCommentStore->insert( $dbw, $comment ),
 				__METHOD__
 			);
 
@@ -478,15 +481,16 @@ class RebuildRecentchanges extends Maintenance {
 	}
 
 	/**
-	 * Purge cached feeds in $messageMemc
+	 * Purge cached feeds in $wanCache
 	 */
 	private function purgeFeeds() {
-		global $wgFeedClasses, $messageMemc;
+		global $wgFeedClasses;
 
 		$this->output( "Deleting feed timestamps.\n" );
 
+		$wanCache = MediaWikiServices::getInstance()->getMainWANObjectCache();
 		foreach ( $wgFeedClasses as $feed => $className ) {
-			$messageMemc->delete( wfMemcKey( 'rcfeed', $feed, 'timestamp' ) ); # Good enough for now.
+			$wanCache->delete( $wanCache->makeKey( 'rcfeed', $feed, 'timestamp' ) ); # Good enough for now.
 		}
 	}
 }

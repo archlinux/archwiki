@@ -18,7 +18,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @author Aaron Schulz
  */
 
 /**
@@ -80,6 +79,9 @@ abstract class JobQueueAggregator {
 
 	/**
 	 * @see JobQueueAggregator::notifyQueueEmpty()
+	 * @param string $wiki
+	 * @param string $type
+	 * @return bool
 	 */
 	abstract protected function doNotifyQueueEmpty( $wiki, $type );
 
@@ -98,6 +100,9 @@ abstract class JobQueueAggregator {
 
 	/**
 	 * @see JobQueueAggregator::notifyQueueNonEmpty()
+	 * @param string $wiki
+	 * @param string $type
+	 * @return bool
 	 */
 	abstract protected function doNotifyQueueNonEmpty( $wiki, $type );
 

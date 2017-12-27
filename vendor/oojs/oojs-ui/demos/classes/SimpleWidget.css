@@ -1,0 +1,40 @@
+.demo-simpleWidget {
+	display: block;
+	position: relative;
+	padding: 0.703125em 0.9375em 0.625em;
+	line-height: 1;
+}
+
+.demo-simpleWidget.oo-ui-iconElement .oo-ui-iconElement-icon,
+.demo-simpleWidget.oo-ui-indicatorElement .oo-ui-indicatorElement-indicator {
+	top: 0;
+	height: 100%;
+}
+
+.demo-simpleWidget.oo-ui-iconElement {
+	padding-left: 2.96875em;
+}
+
+.demo-simpleWidget.oo-ui-iconElement .oo-ui-iconElement-icon {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	left: 0.9375em;
+}
+
+.demo-simpleWidget.oo-ui-labelElement-label {
+	line-height: 1.172em;
+}
+
+.demo-simpleWidget.oo-ui-indicatorElement {
+	padding-right: 2.5em;
+}
+
+.demo-simpleWidget.oo-ui-indicatorElement-indicator {
+	right: 0.9375em;
+}
+
+.demo-simpleWidget.oo-ui-widget-disabled .oo-ui-iconElement-icon,
+.demo-simpleWidget.oo-ui-widget-disabled .oo-ui-indicatorElement-indicator {
+	opacity: 0.51;
+}

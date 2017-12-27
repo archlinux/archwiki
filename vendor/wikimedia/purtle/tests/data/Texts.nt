@@ -1,0 +1,4 @@
+<http://acme.test/Bongos> <http://acme.test/sounds> "Bom"@de .
+<http://acme.test/Bongos> <http://acme.test/sounds> "Bam"@en .
+<http://acme.test/Bongos> <http://acme.test/sounds> "Como estas"@es-419 .
+<http://acme.test/Bongos> <http://acme.test/sounds> "What?" .

@@ -12,7 +12,6 @@ namespace LocalisationUpdate;
  */
 class FetcherFactory {
 	public function getFetcher( $path ) {
-
 		if ( strpos( $path, 'https://raw.github.com/' ) === 0 ) {
 			return new GitHubFetcher();
 		} elseif ( strpos( $path, 'http://' ) === 0 ) {

@@ -1,0 +1,4 @@
+<http://www.example.org/staffid/Sue> <http://www.example.org/terms/publication> _:genid1 .
+_:genid1 <http://www.example.org/terms/title> "Antology of Time" .
+<http://www.example.org/staffid/Jack> <http://www.example.org/terms/publication> _:genid2 .
+_:genid2 <http://www.example.org/terms/title> "Anthony of Time" .

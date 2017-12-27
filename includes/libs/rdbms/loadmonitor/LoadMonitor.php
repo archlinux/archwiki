@@ -25,6 +25,7 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Wikimedia\ScopedCallback;
 use BagOStuff;
+use WANObjectCache;
 
 /**
  * Basic DB load monitor with no external dependencies
@@ -37,8 +38,8 @@ class LoadMonitor implements ILoadMonitor {
 	protected $parent;
 	/** @var BagOStuff */
 	protected $srvCache;
-	/** @var BagOStuff */
-	protected $mainCache;
+	/** @var WANObjectCache */
+	protected $wanCache;
 	/** @var LoggerInterface */
 	protected $replLogger;
 
@@ -48,11 +49,11 @@ class LoadMonitor implements ILoadMonitor {
 	const VERSION = 1; // cache key version
 
 	public function __construct(
-		ILoadBalancer $lb, BagOStuff $srvCache, BagOStuff $cache, array $options = []
+		ILoadBalancer $lb, BagOStuff $srvCache, WANObjectCache $wCache, array $options = []
 	) {
 		$this->parent = $lb;
 		$this->srvCache = $srvCache;
-		$this->mainCache = $cache;
+		$this->wanCache = $wCache;
 		$this->replLogger = new NullLogger();
 
 		$this->movingAveRatio = isset( $options['movingAveRatio'] )
@@ -109,7 +110,7 @@ class LoadMonitor implements ILoadMonitor {
 		$staleValue = $value ?: false;
 
 		# (b) Check the shared cache and backfill APC
-		$value = $this->mainCache->get( $key );
+		$value = $this->wanCache->get( $key );
 		if ( $value && $value['timestamp'] > ( microtime( true ) - $ttl ) ) {
 			$this->srvCache->set( $key, $value, $staleTTL );
 			$this->replLogger->debug( __METHOD__ . ": got lag times ($key) from main cache" );
@@ -119,12 +120,12 @@ class LoadMonitor implements ILoadMonitor {
 		$staleValue = $value ?: $staleValue;
 
 		# (c) Cache key missing or expired; regenerate and backfill
-		if ( $this->mainCache->lock( $key, 0, 10 ) ) {
-			# Let this process alone update the cache value
-			$cache = $this->mainCache;
+		if ( $this->srvCache->lock( $key, 0, 10 ) ) {
+			# Let only this process update the cache value on this server
+			$sCache = $this->srvCache;
 			/** @noinspection PhpUnusedLocalVariableInspection */
-			$unlocker = new ScopedCallback( function () use ( $cache, $key ) {
-				$cache->unlock( $key );
+			$unlocker = new ScopedCallback( function () use ( $sCache, $key ) {
+				$sCache->unlock( $key );
 			} );
 		} elseif ( $staleValue ) {
 			# Could not acquire lock but an old cache exists, so use it
@@ -145,7 +146,7 @@ class LoadMonitor implements ILoadMonitor {
 			if ( $conn ) {
 				$close = false; // already open
 			} else {
-				$conn = $this->parent->openConnection( $i, $domain );
+				$conn = $this->parent->openConnection( $i, '' );
 				$close = true; // new connection
 			}
 
@@ -156,12 +157,15 @@ class LoadMonitor implements ILoadMonitor {
 			$newWeight = $movAveRatio * $coefficient + ( 1 - $movAveRatio ) * $lastWeight;
 
 			// Scale from 10% to 100% of nominal weight
-			$weightScales[$i] = max( $newWeight, .10 );
+			$weightScales[$i] = max( $newWeight, 0.10 );
 
 			if ( !$conn ) {
 				$lagTimes[$i] = false;
 				$host = $this->parent->getServerName( $i );
-				$this->replLogger->error( __METHOD__ . ": host $host is unreachable" );
+				$this->replLogger->error(
+					__METHOD__ . ": host {db_server} is unreachable",
+					[ 'db_server' => $host ]
+				);
 				continue;
 			}
 
@@ -171,7 +175,10 @@ class LoadMonitor implements ILoadMonitor {
 				$lagTimes[$i] = $conn->getLag();
 				if ( $lagTimes[$i] === false ) {
 					$host = $this->parent->getServerName( $i );
-					$this->replLogger->error( __METHOD__ . ": host $host is not replicating?" );
+					$this->replLogger->error(
+						__METHOD__ . ": host {db_server} is not replicating?",
+						[ 'db_server' => $host ]
+					);
 				}
 			}
 
@@ -190,7 +197,7 @@ class LoadMonitor implements ILoadMonitor {
 			'weightScales' => $weightScales,
 			'timestamp' => microtime( true )
 		];
-		$this->mainCache->set( $key, $value, $staleTTL );
+		$this->wanCache->set( $key, $value, $staleTTL );
 		$this->srvCache->set( $key, $value, $staleTTL );
 		$this->replLogger->info( __METHOD__ . ": re-calculated lag times ($key)" );
 
@@ -198,7 +205,7 @@ class LoadMonitor implements ILoadMonitor {
 	}
 
 	/**
-	 * @param integer $index Server index
+	 * @param int $index Server index
 	 * @param IDatabase|null $conn Connection handle or null on connection failure
 	 * @return float
 	 */

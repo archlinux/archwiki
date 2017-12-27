@@ -34,9 +34,32 @@ class SkinVector extends SkinTemplate {
 	 * @var Config
 	 */
 	private $vectorConfig;
+	private $responsiveMode = false;
 
 	public function __construct() {
-		$this->vectorConfig = ConfigFactory::getDefaultInstance()->makeConfig( 'vector' );
+		$this->vectorConfig = \MediaWiki\MediaWikiServices::getInstance()->getConfigFactory()
+			->makeConfig( 'vector' );
+	}
+
+	/** @inheritDoc */
+	public function getPageClasses( $title ) {
+		$className = parent::getPageClasses( $title );
+		if ( $this->vectorConfig->get( 'VectorExperimentalPrintStyles' ) ) {
+			$className .= ' vector-experimental-print-styles';
+		}
+		return $className;
+	}
+
+	/**
+	 * Enables the responsive mode
+	 */
+	public function enableResponsiveMode() {
+		if ( !$this->responsiveMode ) {
+			$out = $this->getOutput();
+			$out->addMeta( 'viewport', 'width=device-width, initial-scale=1' );
+			$out->addModuleStyles( 'skins.vector.styles.responsive' );
+			$this->responsiveMode = true;
+		}
 	}
 
 	/**
@@ -47,8 +70,15 @@ class SkinVector extends SkinTemplate {
 		parent::initPage( $out );
 
 		if ( $this->vectorConfig->get( 'VectorResponsive' ) ) {
-			$out->addMeta( 'viewport', 'width=device-width, initial-scale=1' );
-			$out->addModuleStyles( 'skins.vector.styles.responsive' );
+			$this->enableResponsiveMode();
+		}
+
+		// Print styles are feature flagged.
+		// This flag can be removed when T169732 is resolved.
+		if ( $this->vectorConfig->get( 'VectorExperimentalPrintStyles' ) ) {
+			// Note, when deploying (T169732) we'll want to fold the stylesheet into
+			// skins.vector.styles and remove this module altogether.
+			$out->addModuleStyles( 'skins.vector.styles.experimental.print' );
 		}
 
 		$out->addModules( 'skins.vector.js' );
@@ -68,8 +98,21 @@ class SkinVector extends SkinTemplate {
 
 	/**
 	 * Override to pass our Config instance to it
+	 * @param string $classname
+	 * @param bool|string $repository
+	 * @param bool|string $cache_dir
+	 * @return QuickTemplate
 	 */
 	public function setupTemplate( $classname, $repository = false, $cache_dir = false ) {
 		return new $classname( $this->vectorConfig );
+	}
+
+	/**
+	 * Whether the logo should be preloaded with an HTTP link header or not
+	 * @since 1.29
+	 * @return bool
+	 */
+	public function shouldPreloadLogo() {
+		return true;
 	}
 }

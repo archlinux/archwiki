@@ -22,6 +22,7 @@
 	"right-spamblacklistlog": "Ver o rexistro da lista negra de spam",
 	"action-spamblacklistlog": "ver o rexistro da lista negra de spam",
 	"apihelp-spamblacklist-description": "Validar unha o máis URLs contra a lista negra de spam.",
+	"apihelp-spamblacklist-summary": "Validar unha o máis URLs contra a lista negra de spam.",
 	"apihelp-spamblacklist-param-url": "URLs a validar contra a lista negra.",
 	"apihelp-spamblacklist-example-1": "Comprobar dúas URLs contra a lista negra."
 }

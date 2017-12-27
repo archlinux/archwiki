@@ -1,4 +1,8 @@
 {
-	"@metadata": [],
-	"skinname-monobook": "Lhibro"
+	"@metadata": {
+		"authors": [
+			"MokaAkashiyaPT"
+		]
+	},
+	"skinname-monobook": "MonoLhibro"
 }

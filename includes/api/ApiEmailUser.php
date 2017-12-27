@@ -34,7 +34,7 @@ class ApiEmailUser extends ApiBase {
 		$params = $this->extractRequestParams();
 
 		// Validate target
-		$targetUser = SpecialEmailUser::getTarget( $params['target'] );
+		$targetUser = SpecialEmailUser::getTarget( $params['target'], $this->getUser() );
 		if ( !( $targetUser instanceof User ) ) {
 			switch ( $targetUser ) {
 				case 'notarget':
@@ -71,7 +71,7 @@ class ApiEmailUser extends ApiBase {
 		}
 
 		$result = array_filter( [
-			'result' => $retval->isGood() ? 'Success' : $retval->isOk() ? 'Warnings' : 'Failure',
+			'result' => $retval->isGood() ? 'Success' : ( $retval->isOk() ? 'Warnings' : 'Failure' ),
 			'warnings' => $this->getErrorFormatter()->arrayFromStatus( $retval, 'warning' ),
 			'errors' => $this->getErrorFormatter()->arrayFromStatus( $retval, 'error' ),
 		] );

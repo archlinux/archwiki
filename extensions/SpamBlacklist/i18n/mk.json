@@ -19,6 +19,7 @@
 	"right-spamblacklistlog": "Преглед на дневникот за спам од црниот список",
 	"action-spamblacklistlog": "преглед на дневникот за спам од црниот список",
 	"apihelp-spamblacklist-description": "Провери една или повеќе URL-адреси во Црниот список на спам.",
+	"apihelp-spamblacklist-summary": "Провери една или повеќе URL-адреси во Црниот список на спам.",
 	"apihelp-spamblacklist-param-url": "URL-адреси што треба да се проверат во црниот список.",
 	"apihelp-spamblacklist-example-1": "Провери две URL-адреси во црниот список"
 }

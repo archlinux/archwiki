@@ -344,7 +344,7 @@ abstract class Maintenance {
 	 * @return mixed
 	 */
 	protected function getStdin( $len = null ) {
-		if ( $len == Maintenance::STDIN_ALL ) {
+		if ( $len == self::STDIN_ALL ) {
 			return file_get_contents( 'php://stdin' );
 		}
 		$f = fopen( 'php://stdin', 'rt' );
@@ -457,7 +457,7 @@ abstract class Maintenance {
 	 * @return int
 	 */
 	public function getDbType() {
-		return Maintenance::DB_STD;
+		return self::DB_STD;
 	}
 
 	/**
@@ -1243,9 +1243,9 @@ abstract class Maintenance {
 	 * If not set, wfGetDB() will be used.
 	 * This function has the same parameters as wfGetDB()
 	 *
-	 * @param integer $db DB index (DB_REPLICA/DB_MASTER)
-	 * @param array $groups; default: empty array
-	 * @param string|bool $wiki; default: current wiki
+	 * @param int $db DB index (DB_REPLICA/DB_MASTER)
+	 * @param array $groups default: empty array
+	 * @param string|bool $wiki default: current wiki
 	 * @return IMaintainableDatabase
 	 */
 	protected function getDB( $db, $groups = [], $wiki = false ) {

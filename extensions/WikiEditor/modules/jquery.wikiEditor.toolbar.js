@@ -59,7 +59,8 @@
 								continue;
 							}
 							$group = context.modules.toolbar.$toolbar.find(
-								'div[rel="' + data.section + '"].section ' + 'div[rel="' + data.group + '"].group'
+								'div[rel="' + data.section + '"].section ' +
+								'div[rel="' + data.group + '"].group'
 							);
 							for ( tool in data[ type ] ) {
 								// Tool
@@ -96,7 +97,8 @@
 								continue;
 							}
 							$table = context.modules.toolbar.$toolbar.find(
-								'div[rel="' + data.section + '"].section ' + 'div[rel="' + data.page + '"].page table'
+								'div[rel="' + data.section + '"].section ' +
+								'div[rel="' + data.page + '"].page table'
 							);
 							for ( i = 0; i < data.rows.length; i++ ) {
 								// Row
@@ -109,7 +111,8 @@
 								continue;
 							}
 							$characters = context.modules.toolbar.$toolbar.find(
-								'div[rel="' + data.section + '"].section ' + 'div[rel="' + data.page + '"].page div'
+								'div[rel="' + data.section + '"].section ' +
+								'div[rel="' + data.page + '"].page div'
 							);
 							actions = $characters.data( 'actions' );
 							for ( i = 0; i < data.characters.length; i++ ) {
@@ -118,7 +121,6 @@
 								.append(
 									$( $.wikiEditor.modules.toolbar.fn.buildCharacter( data.characters[ i ], actions ) )
 										.mousedown( function ( e ) {
-											context.fn.saveCursorAndScrollTop();
 											// No dragging!
 											e.preventDefault();
 											return false;
@@ -334,7 +336,7 @@
 							$button
 							.addClass( 'wikiEditor-toolbar-spritedButton' )
 							.css( 'backgroundPosition', offsetOrIcon[ 0 ] + 'px ' + offsetOrIcon[ 1 ] + 'px' );
-						} else {
+						} else if ( offsetOrIcon !== undefined ) { // Bug T172500
 							$button
 							.css( 'background-image', 'url(' + offsetOrIcon + ')' );
 						}
@@ -343,7 +345,6 @@
 								.data( 'action', tool.action )
 								.data( 'context', context )
 								.mousedown( function ( e ) {
-									context.fn.saveCursorAndScrollTop();
 									// No dragging!
 									e.preventDefault();
 									return false;
@@ -369,7 +370,6 @@
 										.data( 'action', tool.list[ option ].action )
 										.data( 'context', context )
 										.mousedown( function ( e ) {
-											context.fn.saveCursorAndScrollTop();
 											// No dragging!
 											e.preventDefault();
 											return false;
@@ -422,7 +422,6 @@
 					.attr( 'rel', id )
 					.data( 'context', context )
 					.mousedown( function ( e ) {
-						context.fn.saveCursorAndScrollTop();
 						// No dragging!
 						e.preventDefault();
 						return false;
@@ -439,7 +438,6 @@
 							$( this ).attr( 'rel' ),
 							{ expires: 30, path: '/' }
 						);
-						context.fn.restoreCursorAndScrollTop();
 						// No dragging!
 						event.preventDefault();
 						return false;
@@ -500,7 +498,6 @@
 								.html( html )
 								.children()
 								.mousedown( function ( e ) {
-									context.fn.saveCursorAndScrollTop();
 									// No dragging!
 									e.preventDefault();
 									return false;

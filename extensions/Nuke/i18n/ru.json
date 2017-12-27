@@ -35,7 +35,7 @@
 	"nuke-not-deleted": "Страница [[:$1]] '''не может''' быть удалена.",
 	"nuke-delete-more": "[[Special:Nuke|Множественное удаление страниц]]",
 	"nuke-pattern": "Шаблон для имени страницы:",
-	"nuke-nopages-global": "В [[Special:RecentChanges|недавних изменениях]] нет новых страниц.",
+	"nuke-nopages-global": "Нет названий страниц, соответствующих вашему запросу.",
 	"nuke-viewchanges": "история правок",
 	"nuke-namespace": "Ограничить пространством имён:",
 	"nuke-linkoncontribs": "множественное удаление",

@@ -48,7 +48,6 @@ ve.ui.MWSyntaxHighlightDialog.prototype.initialize = function () {
 
 	this.input = new ve.ui.MWAceEditorWidget( {
 		limit: 1,
-		multiline: true,
 		rows: 10,
 		maxRows: 25,
 		autosize: true,
@@ -61,8 +60,6 @@ ve.ui.MWSyntaxHighlightDialog.prototype.initialize = function () {
 	// Mixin method
 	ve.ui.MWSyntaxHighlightWindow.prototype.initialize.call( this );
 
-	this.showLinesCheckbox.connect( this, { change: 'onShowLinesCheckboxChange' } );
-
 	this.languageField.setAlignment( 'left' );
 
 	this.contentLayout = new OO.ui.PanelLayout( {
@@ -72,7 +69,8 @@ ve.ui.MWSyntaxHighlightDialog.prototype.initialize = function () {
 		content: [
 			this.languageField,
 			this.codeField,
-			this.showLinesField
+			this.showLinesField,
+			this.startLineField
 		]
 	} );
 
@@ -95,15 +93,6 @@ ve.ui.MWSyntaxHighlightDialog.prototype.onLanguageInputChange = function () {
 		var language = ve.dm.MWSyntaxHighlightNode.static.convertLanguageToAce( dialog.language.getValue() );
 		dialog.input.setLanguage( validity.state() === 'resolved' ? language : 'text' );
 	} );
-};
-
-/**
- * Handle change events from the show lines chechbox
- *
- * @param {boolean} value Widget value
- */
-ve.ui.MWSyntaxHighlightDialog.prototype.onShowLinesCheckboxChange = function () {
-	this.input.toggleLineNumbers( this.showLinesCheckbox.isSelected() );
 };
 
 /**

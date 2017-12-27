@@ -8,7 +8,8 @@
 			"乌拉跨氪",
 			"Cwlin0416",
 			"Bowleerin",
-			"Waihorace"
+			"Waihorace",
+			"Wbxshiori"
 		]
 	},
 	"cite-desc": "支援 <nowiki><ref[ name=id]></nowiki> 與 <nowiki><references/></nowiki> 標籤，可用來註明參考文獻",
@@ -17,8 +18,8 @@
 	"cite_error_ref_no_key": "<code>&lt;ref&gt;</code> 標籤開頭格式錯誤或名稱不正確",
 	"cite_error_ref_too_many_keys": "無效的 <code>&lt;ref&gt;</code> 標籤，無效的 name 屬性值，可能名稱過長",
 	"cite_error_ref_no_input": "無效的 <code>&lt;ref&gt;</code> 標籤，無 name 屬性則必須擁有標籤內容",
+	"cite_error_references_duplicate_key": "無效的<code>&lt;ref&gt;</code>標籤；name屬性“$1”使用不同內容定義了多次",
 	"cite_error_references_invalid_parameters": "無效的 <code>&lt;references&gt;</code> 標籤，不允許使用參數。\n請使用 <code>&lt;references /&gt;</code>",
-	"cite_error_references_invalid_parameters_group": "無效的 <code>&lt;references&gt;</code> 標籤，只允許使用 \"group\" 參數。\n請使用 <code>&lt;references /&gt;</code> 或 <code>&lt;references group=\"...\" /&gt;</code>",
 	"cite_error_references_no_backlink_label": "自訂反向連結標籤符號已用盡。\n請在 <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki> 中定義更多的標籤符號。",
 	"cite_error_no_link_label_group": "群組 \"$1\" 的自訂連結標籤符號已用盡。\n請在 <nowiki>[[MediaWiki:$2]]</nowiki> 中定義更多的標籤符號。",
 	"cite_error_references_no_text": "無效的 <code>&lt;ref&gt;</code> 標籤，\n未定義名稱為 <code>$1</code> 的參考文獻內容文字。",
@@ -34,5 +35,6 @@
 	"cite_references_link_accessibility_label": "移至",
 	"cite_references_link_many_accessibility_label": "移至：",
 	"cite_section_preview_references": "預覽參考文獻",
-	"cite_warning": "引用警告：$1"
+	"cite_warning": "引用警告：$1",
+	"cite_warning_sectionpreview_no_text": "名稱為<code>$1</code>的<code>&lt;ref&gt;</code>標籤不能預覽，因為它在當前章節以外被定義，或完全未被定義。"
 }

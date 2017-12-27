@@ -105,7 +105,7 @@ class MovePageForm extends UnlistedSpecialPage {
 		$permErrors = $this->oldTitle->getUserPermissionsErrors( 'move', $user );
 		if ( count( $permErrors ) ) {
 			// Auto-block user's IP if the account was "hard" blocked
-			DeferredUpdates::addCallableUpdate( function() use ( $user ) {
+			DeferredUpdates::addCallableUpdate( function () use ( $user ) {
 				$user->spreadAnyEditBlock();
 			} );
 			throw new PermissionsError( 'move', $permErrors );
@@ -776,6 +776,12 @@ class MovePageForm extends UnlistedSpecialPage {
 		# Deal with watches (we don't watch subpages)
 		WatchAction::doWatchOrUnwatch( $this->watch, $ot, $user );
 		WatchAction::doWatchOrUnwatch( $this->watch, $nt, $user );
+
+		/**
+		 * T163966
+		 * Increment user_editcount during page moves
+		 */
+		$user->incEditCount();
 	}
 
 	function showLogFragment( $title ) {

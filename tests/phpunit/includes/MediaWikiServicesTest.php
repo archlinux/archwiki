@@ -8,6 +8,7 @@ use MediaWiki\Services\DestructibleService;
 use MediaWiki\Services\SalvageableService;
 use MediaWiki\Services\ServiceDisabledException;
 use Wikimedia\Rdbms\LBFactory;
+use MediaWiki\Shell\CommandFactory;
 
 /**
  * @covers MediaWiki\MediaWikiServices
@@ -77,7 +78,7 @@ class MediaWikiServicesTest extends MediaWikiTestCase {
 
 		$newServices->defineService(
 			'Test',
-			function() use ( $service1 ) {
+			function () use ( $service1 ) {
 				return $service1;
 			}
 		);
@@ -121,7 +122,7 @@ class MediaWikiServicesTest extends MediaWikiTestCase {
 
 		$newServices->defineService(
 			'Test',
-			function() use ( &$instantiatorReturnValues ) {
+			function () use ( &$instantiatorReturnValues ) {
 				return array_shift( $instantiatorReturnValues );
 			}
 		);
@@ -150,7 +151,7 @@ class MediaWikiServicesTest extends MediaWikiTestCase {
 
 		$newServices->redefineService(
 			'DBLoadBalancerFactory',
-			function() use ( $lbFactory ) {
+			function () use ( $lbFactory ) {
 				return $lbFactory;
 			}
 		);
@@ -194,7 +195,7 @@ class MediaWikiServicesTest extends MediaWikiTestCase {
 
 		$newServices->defineService(
 			'Test',
-			function() use ( &$instantiatorReturnValues ) {
+			function () use ( &$instantiatorReturnValues ) {
 				return array_shift( $instantiatorReturnValues );
 			}
 		);
@@ -217,7 +218,7 @@ class MediaWikiServicesTest extends MediaWikiTestCase {
 
 		$services->defineService(
 			'Test',
-			function() use ( &$serviceCounter ) {
+			function () use ( &$serviceCounter ) {
 				$serviceCounter++;
 				$service = $this->createMock( 'MediaWiki\Services\DestructibleService' );
 				$service->expects( $this->once() )->method( 'destroy' );
@@ -247,7 +248,7 @@ class MediaWikiServicesTest extends MediaWikiTestCase {
 
 		$services->defineService(
 			'Test',
-			function() {
+			function () {
 				$service = $this->createMock( 'MediaWiki\Services\DestructibleService' );
 				$service->expects( $this->never() )->method( 'destroy' );
 				return $service;
@@ -303,7 +304,7 @@ class MediaWikiServicesTest extends MediaWikiTestCase {
 			'MainConfig' => [ 'MainConfig', Config::class ],
 			'SiteStore' => [ 'SiteStore', SiteStore::class ],
 			'SiteLookup' => [ 'SiteLookup', SiteLookup::class ],
-			'StatsdDataFactory' => [ 'StatsdDataFactory', StatsdDataFactory::class ],
+			'StatsdDataFactory' => [ 'StatsdDataFactory', IBufferingStatsdDataFactory::class ],
 			'InterwikiLookup' => [ 'InterwikiLookup', InterwikiLookup::class ],
 			'EventRelayerGroup' => [ 'EventRelayerGroup', EventRelayerGroup::class ],
 			'SearchEngineFactory' => [ 'SearchEngineFactory', SearchEngineFactory::class ],
@@ -317,6 +318,7 @@ class MediaWikiServicesTest extends MediaWikiTestCase {
 			'CryptHKDF' => [ 'CryptHKDF', CryptHKDF::class ],
 			'MediaHandlerFactory' => [ 'MediaHandlerFactory', MediaHandlerFactory::class ],
 			'Parser' => [ 'Parser', Parser::class ],
+			'ParserCache' => [ 'ParserCache', ParserCache::class ],
 			'GenderCache' => [ 'GenderCache', GenderCache::class ],
 			'LinkCache' => [ 'LinkCache', LinkCache::class ],
 			'LinkRenderer' => [ 'LinkRenderer', LinkRenderer::class ],
@@ -329,7 +331,8 @@ class MediaWikiServicesTest extends MediaWikiTestCase {
 			'MainObjectStash' => [ 'MainObjectStash', BagOStuff::class ],
 			'MainWANObjectCache' => [ 'MainWANObjectCache', WANObjectCache::class ],
 			'LocalServerObjectCache' => [ 'LocalServerObjectCache', BagOStuff::class ],
-			'VirtualRESTServiceClient' => [ 'VirtualRESTServiceClient', VirtualRESTServiceClient::class ]
+			'VirtualRESTServiceClient' => [ 'VirtualRESTServiceClient', VirtualRESTServiceClient::class ],
+			'ShellCommandFactory' => [ 'ShellCommandFactory', CommandFactory::class ],
 		];
 	}
 

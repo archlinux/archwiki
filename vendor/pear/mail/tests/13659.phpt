@@ -8,7 +8,7 @@ require_once 'PEAR.php';
 
 $address = '"Test Student" <test@mydomain.com> (test)';
 $parser = new Mail_RFC822();
-$result = $parser->parseAddressList($address, 'anydomain.com', TRUE); 
+$result = $parser->parseAddressList($address, 'anydomain.com', TRUE);
 
 if (!PEAR::isError($result) && is_array($result) && is_object($result[0]))
     if ($result[0]->personal == '"Test Student"' &&

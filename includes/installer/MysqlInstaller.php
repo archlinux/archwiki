@@ -51,7 +51,8 @@ class MysqlInstaller extends DatabaseInstaller {
 
 	public $supportedEngines = [ 'InnoDB', 'MyISAM' ];
 
-	public $minimumVersion = '5.0.3';
+	public static $minimumVersion = '5.5.8';
+	protected static $notMiniumumVerisonMessage = 'config-mysql-old';
 
 	public $webUserPrivs = [
 		'DELETE',
@@ -133,12 +134,7 @@ class MysqlInstaller extends DatabaseInstaller {
 		$conn = $status->value;
 
 		// Check version
-		$version = $conn->getServerVersion();
-		if ( version_compare( $version, $this->minimumVersion ) < 0 ) {
-			return Status::newFatal( 'config-mysql-old', $this->minimumVersion, $version );
-		}
-
-		return $status;
+		return static::meetsMinimumRequirement( $conn->getServerVersion() );
 	}
 
 	/**
@@ -223,6 +219,7 @@ class MysqlInstaller extends DatabaseInstaller {
 
 	/**
 	 * @param string $s
+	 * @param string $escapeChar
 	 * @return string
 	 */
 	protected function escapeLikeInternal( $s, $escapeChar = '`' ) {
@@ -275,7 +272,7 @@ class MysqlInstaller extends DatabaseInstaller {
 		if ( !$status->isOK() ) {
 			return false;
 		}
-		/** @var $conn Database */
+		/** @var Database $conn */
 		$conn = $status->value;
 
 		// Get current account name
@@ -342,6 +339,8 @@ class MysqlInstaller extends DatabaseInstaller {
 	/**
 	 * Convert a wildcard (as used in LIKE) to a regex
 	 * Slashes are escaped, slash terminators included
+	 * @param string $wildcard
+	 * @return string
 	 */
 	protected function likeToRegex( $wildcard ) {
 		$r = preg_quote( $wildcard, '/' );

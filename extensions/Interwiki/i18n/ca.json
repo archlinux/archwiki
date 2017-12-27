@@ -19,7 +19,7 @@
 	"interwiki_url_intro": "Plantilla per a URLs. El marcador $1 serà substituït per <em>pagename</em> del wikitext, quan s'utilitza la sintaxi de wikitext esmentats.",
 	"interwiki_local": "Hi encamina",
 	"interwiki-local-label": "Endavant:",
-	"interwiki_local_0_intro": "no honrat, generalment bloquejat per \"pàgina no trobada\",",
+	"interwiki_local_0_intro": "Les consultes HTTP externes al wiki local mitjançant aquest prefix interwiki a la URL provocaran una pàgina d'error \"{{int:badtitle}}\".",
 	"interwiki_local_1_intro": "s'ha redirigit a l'URL de destinació donada a les definicions d'enllaç d'interwiki (és a dir, tractats com a referències a pàgines locals)",
 	"interwiki_trans": "Transclusió",
 	"interwiki-trans-label": "Transclude:",

@@ -4,15 +4,16 @@
  * @copyright 2011-2017 Cite VisualEditor Team and others; see AUTHORS.txt
  * @license The MIT License (MIT); see LICENSE.txt
  */
-var MWWIKITEXT_MOCK_API = true;
+
+window.MWWIKITEXT_MOCK_API = true;
 
 QUnit.module( 've.ui.MWWikitextStringTransferHandler (Cite)', QUnit.newMwEnvironment( {
-	setup: function () {
+	beforeEach: function () {
 		// Mock XHR for mw.Api()
-		this.server = MWWIKITEXT_MOCK_API ? this.sandbox.useFakeServer() : null;
+		this.server = window.MWWIKITEXT_MOCK_API ? this.sandbox.useFakeServer() : null;
 		ve.test.utils.mwEnvironment.setup.call( this );
 	},
-	teardown: ve.test.utils.mwEnvironment.teardown
+	afterEach: ve.test.utils.mwEnvironment.teardown
 } ) );
 
 /* Tests */
@@ -85,7 +86,6 @@ QUnit.test( 'convert', function ( assert ) {
 			}
 		];
 
-	QUnit.expect( cases.length * 2 );
 	for ( i = 0; i < cases.length; i++ ) {
 		ve.test.utils.runWikitextStringHandlerTest(
 			assert, this.server, cases[ i ].pasteString, cases[ i ].pasteType, cases[ i ].parsoidResponse,

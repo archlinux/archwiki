@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:xsd="http://www.w3.org/2001/XMLSchema#" xmlns:exterms="http://www.example.org/terms/">
+	<rdf:Description rdf:about="http://www.example.org/terms/Duck">
+		<exterms:says>Duck says: &quot;Quack!&quot;</exterms:says>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://www.example.org/terms/Cow">
+		<exterms:says>Cow says:
+ &#039;Moo! \Moo!&#039;</exterms:says>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://www.example.org/terms/Bear">
+		<exterms:says>Bear says: Превед!</exterms:says>
+	</rdf:Description>

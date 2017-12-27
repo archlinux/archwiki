@@ -1,0 +1,3 @@
+<http://foobar.test/Bananas> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://foobar.test/Fruit> .
+<http://acme.test/Nuts> <http://acme.test/weight> "5.5"^^<http://www.w3.org/2001/XMLSchema#decimal> .
+<http://acme.test/Nuts> <http://acme.test/color> "brown" .

@@ -717,11 +717,12 @@ class DatabaseMssql extends Database {
 	 * @param string $fname
 	 * @param array $insertOptions
 	 * @param array $selectOptions
+	 * @param array $selectJoinConds
 	 * @return null|ResultWrapper
 	 * @throws Exception
 	 */
 	public function nativeInsertSelect( $destTable, $srcTable, $varMap, $conds, $fname = __METHOD__,
-		$insertOptions = [], $selectOptions = []
+		$insertOptions = [], $selectOptions = [], $selectJoinConds = []
 	) {
 		$this->mScrollableCursor = false;
 		try {
@@ -732,7 +733,8 @@ class DatabaseMssql extends Database {
 				$conds,
 				$fname,
 				$insertOptions,
-				$selectOptions
+				$selectOptions,
+				$selectJoinConds
 			);
 		} catch ( Exception $e ) {
 			$this->mScrollableCursor = true;
@@ -1107,6 +1109,7 @@ class DatabaseMssql extends Database {
 	 * MS SQL supports more pattern operators than other databases (ex: [,],^)
 	 *
 	 * @param string $s
+	 * @param string $escapeChar
 	 * @return string
 	 */
 	protected function escapeLikeInternal( $s, $escapeChar = '`' ) {

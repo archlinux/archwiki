@@ -3,12 +3,13 @@
 		"authors": [
 			"Wladek92",
 			"Orlodrim",
-			"Gomoko"
+			"Gomoko",
+			"Urhixidur"
 		]
 	},
-	"renocaptcha-edit": "Pour protéger le wiki contre les spams de modifications automatiques, nous vous demandons de bien vouloir résoudre le CAPTCHA suivant:",
-	"renocaptcha-addurl": "Votre édition comprend de nouveaux liens externes. Pour protéger le wiki contre les spams automatisées, nous vous demandons de bien vouloir résoudre le CAPTCHA suivant:",
-	"renocaptcha-badlogin": "Pour protéger le wiki contre les spams automatisés de craquage des mots de passe, nous vous prions de bien vouloir résoudre le CAPTCHA suivant:",
+	"renocaptcha-edit": "Pour protéger le wiki contre les pourriels de modification automatique, nous vous demandons de bien vouloir résoudre le CAPTCHA suivant :",
+	"renocaptcha-addurl": "Votre édition comprend de nouveaux liens externes. Pour protéger le wiki contre les pourriels automatisés, nous vous demandons de bien vouloir résoudre le CAPTCHA suivant :",
+	"renocaptcha-badlogin": "Pour protéger le wiki contre le craquage automatisé des mots de passe, nous vous prions de bien vouloir résoudre le CAPTCHA suivant :",
 	"renocaptcha-createaccount": "Pour protéger le wiki contre la création automatisée des pages, nous vous prions de bien vouloir résoudre le CAPTCHA suivant:",
 	"renocaptcha-createaccount-fail": "Il semble que vous n'ayiez pas résolu le CAPTCHA.",
 	"renocaptcha-create": "Pour protéger le wiki contre la création automatisée de pages, nous vous prions de bien vouloir résoudre le CAPTCHA suivant:",

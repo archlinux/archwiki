@@ -41,6 +41,9 @@ class ChangesList extends ContextSource {
 	protected $rclistOpen;
 	protected $rcMoveIndex;
 
+	/** @var callable */
+	protected $changeLinePrefixer;
+
 	/** @var BagOStuff */
 	protected $watchMsgCache;
 
@@ -102,7 +105,7 @@ class ChangesList extends ContextSource {
 	 *
 	 * @since 1.27
 	 *
-	 * @param RecentChange $rc Passed by reference
+	 * @param RecentChange &$rc Passed by reference
 	 * @param bool $watched (default false)
 	 * @param int $linenumber (default null)
 	 *
@@ -169,15 +172,19 @@ class ChangesList extends ContextSource {
 	 * @return array of classes
 	 */
 	protected function getHTMLClasses( $rc, $watched ) {
-		$classes = [];
+		$classes = [ self::CSS_CLASS_PREFIX . 'line' ];
 		$logType = $rc->mAttribs['rc_log_type'];
 
 		if ( $logType ) {
+			$classes[] = self::CSS_CLASS_PREFIX . 'log';
 			$classes[] = Sanitizer::escapeClass( self::CSS_CLASS_PREFIX . 'log-' . $logType );
 		} else {
+			$classes[] = self::CSS_CLASS_PREFIX . 'edit';
 			$classes[] = Sanitizer::escapeClass( self::CSS_CLASS_PREFIX . 'ns' .
 				$rc->mAttribs['rc_namespace'] . '-' . $rc->mAttribs['rc_title'] );
 		}
+		$classes[] = Sanitizer::escapeClass( self::CSS_CLASS_PREFIX . 'ns-' .
+			$rc->mAttribs['rc_namespace'] );
 
 		// Indicate watched status on the line to allow for more
 		// comprehensive styling.
@@ -360,7 +367,7 @@ class ChangesList extends ContextSource {
 	}
 
 	/**
-	 * @param string $s HTML to update
+	 * @param string &$s HTML to update
 	 * @param mixed $rc_timestamp
 	 */
 	public function insertDateHeader( &$s, $rc_timestamp ) {
@@ -377,7 +384,7 @@ class ChangesList extends ContextSource {
 	}
 
 	/**
-	 * @param string $s HTML to update
+	 * @param string &$s HTML to update
 	 * @param Title $title
 	 * @param string $logtype
 	 */
@@ -390,8 +397,8 @@ class ChangesList extends ContextSource {
 	}
 
 	/**
-	 * @param string $s HTML to update
-	 * @param RecentChange $rc
+	 * @param string &$s HTML to update
+	 * @param RecentChange &$rc
 	 * @param bool|null $unpatrolled Unused variable, since 1.27.
 	 */
 	public function insertDiffHist( &$s, &$rc, $unpatrolled = null ) {
@@ -440,7 +447,7 @@ class ChangesList extends ContextSource {
 	}
 
 	/**
-	 * @param string $s Article link will be appended to this string, in place.
+	 * @param string &$s Article link will be appended to this string, in place.
 	 * @param RecentChange $rc
 	 * @param bool $unpatrolled
 	 * @param bool $watched
@@ -451,7 +458,7 @@ class ChangesList extends ContextSource {
 	}
 
 	/**
-	 * @param RecentChange $rc
+	 * @param RecentChange &$rc
 	 * @param bool $unpatrolled
 	 * @param bool $watched
 	 * @return string HTML
@@ -506,7 +513,7 @@ class ChangesList extends ContextSource {
 	/**
 	 * Insert time timestamp string from $rc into $s
 	 *
-	 * @param string $s HTML to update
+	 * @param string &$s HTML to update
 	 * @param RecentChange $rc
 	 */
 	public function insertTimestamp( &$s, $rc ) {
@@ -618,8 +625,8 @@ class ChangesList extends ContextSource {
 
 	/** Inserts a rollback link
 	 *
-	 * @param string $s
-	 * @param RecentChange $rc
+	 * @param string &$s
+	 * @param RecentChange &$rc
 	 */
 	public function insertRollback( &$s, &$rc ) {
 		if ( $rc->mAttribs['rc_type'] == RC_EDIT
@@ -656,9 +663,9 @@ class ChangesList extends ContextSource {
 	}
 
 	/**
-	 * @param string $s
-	 * @param RecentChange $rc
-	 * @param array $classes
+	 * @param string &$s
+	 * @param RecentChange &$rc
+	 * @param array &$classes
 	 */
 	public function insertTags( &$s, &$rc, &$classes ) {
 		if ( empty( $rc->mAttribs['ts_tags'] ) ) {
@@ -676,7 +683,7 @@ class ChangesList extends ContextSource {
 
 	/**
 	 * @param RecentChange $rc
-	 * @param array $classes
+	 * @param array &$classes
 	 * @return string
 	 * @since 1.26
 	 */
@@ -739,4 +746,40 @@ class ChangesList extends ContextSource {
 			&& intval( $rcObj->getAttribute( 'rc_this_oldid' ) ) === 0;
 	}
 
+	/**
+	 * Get recommended data attributes for a change line.
+	 * @param RecentChange $rc
+	 * @return string[] attribute name => value
+	 */
+	protected function getDataAttributes( RecentChange $rc ) {
+		$attrs = [];
+
+		$type = $rc->getAttribute( 'rc_source' );
+		switch ( $type ) {
+			case RecentChange::SRC_EDIT:
+			case RecentChange::SRC_NEW:
+				$attrs['data-mw-revid'] = $rc->mAttribs['rc_this_oldid'];
+				break;
+			case RecentChange::SRC_LOG:
+				$attrs['data-mw-logid'] = $rc->mAttribs['rc_logid'];
+				$attrs['data-mw-logaction'] =
+					$rc->mAttribs['rc_log_type'] . '/' . $rc->mAttribs['rc_log_action'];
+				break;
+		}
+
+		$attrs[ 'data-mw-ts' ] = $rc->getAttribute( 'rc_timestamp' );
+
+		return $attrs;
+	}
+
+	/**
+	 * Sets the callable that generates a change line prefix added to the beginning of each line.
+	 *
+	 * @param callable $prefixer Callable to run that generates the change line prefix.
+	 *     Takes three parameters: a RecentChange object, a ChangesList object,
+	 *     and whether the current entry is a grouped entry.
+	 */
+	public function setChangeLinePrefixer( callable $prefixer ) {
+		$this->changeLinePrefixer = $prefixer;
+	}
 }

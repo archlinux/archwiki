@@ -2,43 +2,62 @@
  * JavaScript for Special:RecentChanges
  */
 ( function ( mw, $ ) {
-	/**
-	 * @class mw.rcfilters
-	 * @singleton
-	 */
 	var rcfilters = {
-		/** */
+		/**
+		 * @member mw.rcfilters
+		 * @private
+		 */
 		init: function () {
-			var filtersModel = new mw.rcfilters.dm.FiltersViewModel(),
+			var $topLinks,
+				rcTopSection,
+				$watchlistDetails,
+				wlTopSection,
+				savedQueriesPreferenceName = mw.config.get( 'wgStructuredChangeFiltersSavedQueriesPreferenceName' ),
+				filtersModel = new mw.rcfilters.dm.FiltersViewModel(),
 				changesListModel = new mw.rcfilters.dm.ChangesListViewModel(),
-				controller = new mw.rcfilters.Controller( filtersModel, changesListModel ),
+				savedQueriesModel = new mw.rcfilters.dm.SavedQueriesModel(),
+				controller = new mw.rcfilters.Controller(
+					filtersModel, changesListModel, savedQueriesModel,
+					{
+						savedQueriesPreferenceName: savedQueriesPreferenceName
+					}
+				),
 				$overlay = $( '<div>' )
 					.addClass( 'mw-rcfilters-ui-overlay' ),
 				filtersWidget = new mw.rcfilters.ui.FilterWrapperWidget(
-					controller, filtersModel, { $overlay: $overlay } );
+					controller, filtersModel, savedQueriesModel, changesListModel, { $overlay: $overlay } ),
+				savedLinksListWidget = new mw.rcfilters.ui.SavedLinksListWidget(
+					controller, savedQueriesModel, { $overlay: $overlay }
+				),
+				currentPage = mw.config.get( 'wgCanonicalNamespace' ) +
+					':' +
+					mw.config.get( 'wgCanonicalSpecialPageName' );
 
 			// TODO: The changesListWrapperWidget should be able to initialize
 			// after the model is ready.
 			// eslint-disable-next-line no-new
 			new mw.rcfilters.ui.ChangesListWrapperWidget(
-				filtersModel, changesListModel, $( '.mw-changeslist, .mw-changeslist-empty' ) );
+				filtersModel, changesListModel, controller, $( '.mw-changeslist, .mw-changeslist-empty' ) );
 
-			controller.initialize( mw.config.get( 'wgStructuredChangeFilters' ) );
+			// Remove the -loading class that may have been added on the server side.
+			// If we are in fact going to load a default saved query, this .initialize()
+			// call will do that and add the -loading class right back.
+			$( 'body' ).removeClass( 'mw-rcfilters-ui-loading' );
+
+			controller.initialize(
+				mw.config.get( 'wgStructuredChangeFilters' ),
+				mw.config.get( 'wgFormattedNamespaces' ),
+				mw.config.get( 'wgRCFiltersChangeTags' )
+			);
 
 			// eslint-disable-next-line no-new
 			new mw.rcfilters.ui.FormWrapperWidget(
-				filtersModel, changesListModel, controller, $( 'fieldset.rcoptions' ) );
+				filtersModel, changesListModel, controller, $( 'fieldset.cloptions' ) );
 
 			$( '.rcfilters-container' ).append( filtersWidget.$element );
-			$( 'body' ).append( $overlay );
-
-			// Set as ready
-			$( '.rcfilters-head' ).addClass( 'mw-rcfilters-ui-ready' );
-
-			window.addEventListener( 'popstate', function () {
-				controller.updateStateBasedOnUrl();
-				controller.updateChangesList();
-			} );
+			$( 'body' )
+				.append( $overlay )
+				.addClass( 'mw-rcfilters-ui-initialized' );
 
 			$( 'a.mw-helplink' ).attr(
 				'href',
@@ -46,6 +65,34 @@
 			);
 
 			controller.replaceUrl();
+
+			if ( currentPage === 'Special:Recentchanges' ||
+				currentPage === 'Special:Recentchangeslinked' ) {
+				$topLinks = $( '.mw-recentchanges-toplinks' ).detach();
+
+				rcTopSection = new mw.rcfilters.ui.RcTopSectionWidget(
+					savedLinksListWidget, $topLinks
+				);
+				filtersWidget.setTopSection( rcTopSection.$element );
+			} // end Special:RC
+
+			if ( currentPage === 'Special:Watchlist' ) {
+				$( '#contentSub, form#mw-watchlist-resetbutton' ).detach();
+				$watchlistDetails = $( '.watchlistDetails' ).detach().contents();
+
+				wlTopSection = new mw.rcfilters.ui.WatchlistTopSectionWidget(
+					controller, changesListModel, savedLinksListWidget, $watchlistDetails
+				);
+				filtersWidget.setTopSection( wlTopSection.$element );
+			} // end Special:WL
+
+			/**
+			 * Fired when initialization of the filtering interface for changes list is complete.
+			 *
+			 * @event structuredChangeFilters_ui_initialized
+			 * @member mw.hook
+			 */
+			mw.hook( 'structuredChangeFilters.ui.initialized' ).fire();
 		}
 	};
 

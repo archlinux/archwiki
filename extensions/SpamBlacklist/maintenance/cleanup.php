@@ -6,8 +6,8 @@
  * If all revisions contain spam, deletes the page
  */
 
-require_once( '../../maintenance/commandLine.inc' );
-require_once( 'SpamBlacklist_body.php' );
+require_once '../../maintenance/commandLine.inc';
+require_once 'SpamBlacklist_body.php';
 
 /**
  * Find the latest revision of the article that does not contain spam and revert to it
@@ -29,7 +29,7 @@ function cleanupArticle( Revision $rev, $regexes, $match ) {
 			break;
 		}
 		# Revision::getPrevious can't be used in this way before MW 1.6 (Revision.php 1.26)
-		#$rev = $rev->getPrevious();
+		# $rev = $rev->getPrevious();
 		$revId = $title->getPreviousRevisionID( $revId );
 		if ( $revId ) {
 			$rev = Revision::newFromTitle( $title, $revId );
@@ -57,11 +57,11 @@ function cleanupArticle( Revision $rev, $regexes, $match ) {
 	$wikiPage->doEditContent( ContentHandler::makeContent( $text, $title ), $comment );
 }
 
-//------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
 
 $username = 'Spam cleanup script';
 if ( method_exists( 'User', 'newSystemUser' ) ) {
-	$wgUser = User::newSystemUser( $username, array( 'steal' => true ) );
+	$wgUser = User::newSystemUser( $username, [ 'steal' => true ] );
 } else {
 	$wgUser = User::newFromName( $username );
 	if ( $wgUser->idForName() == 0 ) {
@@ -69,8 +69,8 @@ if ( method_exists( 'User', 'newSystemUser' ) ) {
 		$status = $wgUser->addToDatabase();
 		if ( $status === null || $status->isOK() ) {
 			$dbw = wfGetDB( DB_MASTER );
-			$dbw->update( 'user', array( 'user_password' => 'nologin' ),
-				array( 'user_name' => $username ), $username );
+			$dbw->update( 'user', [ 'user_password' => 'nologin' ],
+				[ 'user_name' => $username ], $username );
 		}
 	}
 }
@@ -127,4 +127,3 @@ for ( $id = 1; $id <= $maxID; $id++ ) {
 }
 // Just for satisfaction
 printf( "%-8d  %-5.2f%%\n", $id - 1, ( $id - 1 ) / $maxID * 100 );
-

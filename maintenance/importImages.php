@@ -185,9 +185,7 @@ class ImportImages extends Maintenance {
 		# Batch "upload" operation
 		$count = count( $files );
 		if ( $count > 0 ) {
-
 			foreach ( $files as $file ) {
-
 				if ( $sleep && ( $processed > 0 ) ) {
 					sleep( $sleep );
 				}
@@ -307,7 +305,9 @@ class ImportImages extends Maintenance {
 					$publishOptions = [];
 					$handler = MediaHandler::getHandler( $props['mime'] );
 					if ( $handler ) {
-						$publishOptions['headers'] = $handler->getStreamHeaders( $props['metadata'] );
+						$metadata = MediaWiki\quietCall( 'unserialize', $props['metadata'] );
+
+						$publishOptions['headers'] = $handler->getContentHeaders( $metadata );
 					} else {
 						$publishOptions['headers'] = [];
 					}

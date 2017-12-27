@@ -37,7 +37,7 @@ trait AccessKeyedElement {
 		$this->setAccessKey(
 			isset( $config['accessKey'] ) ? $config['accessKey'] : null
 		);
-		$this->registerConfigCallback( function( &$config ) {
+		$this->registerConfigCallback( function ( &$config ) {
 			if ( $this->accessKey !== null ) {
 				$config['accessKey'] = $this->accessKey;
 			}
@@ -60,6 +60,11 @@ trait AccessKeyedElement {
 				$this->accessKeyed->removeAttributes( [ 'accesskey' ] );
 			}
 			$this->accessKey = $accessKey;
+
+			// Only if this is a TitledElement
+			if ( method_exists( $this, 'updateTitle' ) ) {
+				$this->updateTitle();
+			}
 		}
 
 		return $this;
@@ -72,5 +77,20 @@ trait AccessKeyedElement {
 	 */
 	public function getAccessKey() {
 		return $this->accessKey;
+	}
+
+	/**
+	 * Add information about the access key to the element's tooltip label.
+	 * (This is only public for hacky usage in FieldLayout.)
+	 *
+	 * @param string $title Tooltip label for `title` attribute
+	 * @return string
+	 */
+	public function formatTitleWithAccessKey( $title ) {
+		$accessKey = $this->getAccessKey();
+		if ( $accessKey ) {
+			$title .= " [$accessKey]";
+		}
+		return $title;
 	}
 }

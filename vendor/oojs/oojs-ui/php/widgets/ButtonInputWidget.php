@@ -15,12 +15,6 @@ class ButtonInputWidget extends InputWidget {
 
 	/* Static Properties */
 
-	/**
-	 * Disable generating `<label>` elements for buttons. One would very rarely need additional label
-	 * for a button, and it's already a big clickable target, and it causes unexpected rendering.
-	 */
-	public static $supportsSimpleLabel = false;
-
 	public static $tagName = 'span';
 
 	/* Properties */
@@ -36,7 +30,7 @@ class ButtonInputWidget extends InputWidget {
 	 * @param array $config Configuration options
 	 * @param string $config['type'] HTML tag `type` attribute, may be 'button', 'submit' or 'reset'
 	 *   (default: 'button')
-	 * @param boolean $config['useInputTag'] Whether to use `<input>` rather than `<button>`. Only
+	 * @param bool $config['useInputTag'] Whether to use `<input>` rather than `<button>`. Only
 	 *   useful if you need IE 6 support in a form with multiple buttons. If you use this option,
 	 *   icons and indicators will not be displayed, it won't be possible to have a non-plaintext
 	 *   label, and it won't be possible to set a value (which will internally become identical to the
@@ -111,6 +105,12 @@ class ButtonInputWidget extends InputWidget {
 			parent::setValue( $value );
 		}
 		return $this;
+	}
+
+	public function getInputId() {
+		// Disable generating `<label>` elements for buttons. One would very rarely need additional label
+		// for a button, and it's already a big clickable target, and it causes unexpected rendering.
+		return null;
 	}
 
 	public function getConfig( &$config ) {

@@ -14,7 +14,6 @@ require_once( "$IP/extensions/WikiEditor/WikiEditor.php" );
 # To enable a preference by default but still allow users to disable it in preferences, use something like...
 
 $wgDefaultUserOptions['usebetatoolbar'] = 1;
-$wgDefaultUserOptions['usebetatoolbar-cgd'] = 1;
 
 # Release 1.21 removes the $wgWikiEditorToolbarClickTracking config variable
 # and with it support for tracking clicks on WikiEditor features via the

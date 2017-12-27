@@ -6,7 +6,6 @@ class QuestyCaptchaTest extends MediaWikiTestCase {
 	 * @dataProvider provideGetCaptcha
 	 */
 	public function testGetCaptcha( $config, $expected ) {
-
 		# setMwGlobals() requires $wgCaptchaQuestion to be set
 		if ( !isset( $GLOBALS['wgCaptchaQuestions'] ) ) {
 			$GLOBALS['wgCaptchaQuestions'] = [];

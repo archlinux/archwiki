@@ -293,7 +293,8 @@ ve.ui.MWReferenceDialog.prototype.initialize = function () {
 			includeCommands: this.constructor.static.includeCommands,
 			excludeCommands: this.constructor.static.excludeCommands.concat( citeCommands ),
 			importRules: this.constructor.static.getImportRules(),
-			inDialog: this.constructor.static.name
+			inDialog: this.constructor.static.name,
+			placeholder: ve.msg( 'cite-ve-dialog-reference-placeholder' )
 		}
 	);
 
