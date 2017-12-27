@@ -9,8 +9,7 @@ services:
   app:
     build: php
     working_dir: /app
-    command: php -S 0.0.0.0:${PORT:-8081} -t /app
-    user: http
+    command: sudo -u http -- /usr/bin/php -S 0.0.0.0:${PORT:-8081} -t /app
     ports:
       - "${PORT:-8081}:${PORT:-8081}"
     volumes:
