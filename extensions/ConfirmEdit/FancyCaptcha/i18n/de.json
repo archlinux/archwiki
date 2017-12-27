@@ -17,5 +17,6 @@
 	"fancycaptcha-sendemail": "Zum Schutz des Wikis vor automatischem Spamming bitten wir dich, die Wörter unten in das Feld einzugeben ([[Special:Captcha/help|mehr Informationen]]):",
 	"fancycaptcha-reload-text": "Aktualisieren",
 	"apihelp-fancycaptchareload-description": "Ruft ein neues FancyCaptcha ab.",
+	"apihelp-fancycaptchareload-summary": "Ruft ein neues FancyCaptcha ab.",
 	"apihelp-fancycaptchareload-example-1": "Ruft ein neues FancyCaptcha ab."
 }

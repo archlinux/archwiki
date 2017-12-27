@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Benel",
+			"Bunukwiki"
+		]
+	},
+	"captcha-label": "CAPTCHA",
+	"captcha-help": "patukil nu yincenma",
+	"captcha-id-label": "yincenma ID",
+	"captcha-id-help": "yasulyang manakanca panukas akapasumad.",
+	"captchahelp-title": "CAPTCHA buhci tu kamu",
+	"captcha-apihelp-param-captchaword": "patukil ku yincenma",
+	"confirmedit-preview-content": "lacul"
+}

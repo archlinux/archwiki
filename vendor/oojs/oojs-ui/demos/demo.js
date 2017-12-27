@@ -1,7 +1,8 @@
 /* eslint-disable no-console */
+/* globals Prism, javascriptStringify */
 /**
  * @class
- * @extends {OO.ui.Element}
+ * @extends OO.ui.Element
  *
  * @constructor
  */
@@ -11,8 +12,11 @@ window.Demo = function Demo() {
 	// Parent constructor
 	Demo.parent.call( this );
 
+	// Mixin constructors
+	OO.EventEmitter.call( this );
+
 	// Normalization
-	this.normalizeHash();
+	this.normalizeQuery();
 
 	// Properties
 	this.stylesheetLinks = this.getStylesheetLinks();
@@ -47,10 +51,7 @@ window.Demo = function Demo() {
 		new OO.ui.ButtonWidget( { label: 'JS' } ).setActive( true ),
 		new OO.ui.ButtonWidget( {
 			label: 'PHP',
-			href: 'demos.php' +
-				'?page=widgets' +
-				'&theme=' + this.mode.theme +
-				'&direction=' + this.mode.direction
+			href: 'demos.php' + this.getUrlQuery( this.getCurrentFactorValues() )
 		} )
 	] );
 	this.platformSelect = new OO.ui.ButtonSelectWidget().addItems( [
@@ -60,6 +61,7 @@ window.Demo = function Demo() {
 
 	this.documentationLink = new OO.ui.ButtonWidget( {
 		label: 'Docs',
+		classes: [ 'demo-button-docs' ],
 		icon: 'journal',
 		href: '../js/',
 		flags: [ 'progressive' ]
@@ -78,6 +80,7 @@ window.Demo = function Demo() {
 	this.platformSelect.selectItemByData( this.mode.platform );
 	this.$menu
 		.addClass( 'demo-menu' )
+		.attr( 'role', 'navigation' )
 		.append(
 			this.pageDropdown.$element,
 			this.themeSelect.$element,
@@ -101,6 +104,7 @@ window.Demo = function Demo() {
 /* Setup */
 
 OO.inheritClass( Demo, OO.ui.Element );
+OO.mixinClass( Demo, OO.EventEmitter );
 
 /* Static Properties */
 
@@ -125,7 +129,7 @@ Demo.static.pages = {};
  * @property {Object.<string,string>}
  */
 Demo.static.themes = {
-	mediawiki: 'MediaWiki', // Do not change this line or you'll break `grunt add-theme`
+	wikimediaui: 'WikimediaUI', // Do not change this line or you'll break `grunt add-theme`
 	apex: 'Apex'
 };
 
@@ -136,7 +140,7 @@ Demo.static.themes = {
  * @property {Object.<string,string[]>
  */
 Demo.static.additionalThemeImagesSuffixes = {
-	mediawiki: [
+	wikimediaui: [
 		'-icons-movement',
 		'-icons-content',
 		'-icons-alerts',
@@ -164,7 +168,9 @@ Demo.static.additionalThemeImagesSuffixes = {
 		'-icons-editing-list',
 		'-icons-editing-advanced',
 		'-icons-media',
-		'-icons-layout'
+		'-icons-user',
+		'-icons-layout',
+		'-icons-accessibility'
 	]
 };
 
@@ -206,7 +212,7 @@ Demo.static.defaultPage = 'widgets';
  * @static
  * @property {string}
  */
-Demo.static.defaultTheme = 'mediawiki';
+Demo.static.defaultTheme = 'wikimediaui';
 
 /**
  * Default page.
@@ -228,10 +234,25 @@ Demo.static.defaultDirection = 'ltr';
  */
 Demo.static.defaultPlatform = 'desktop';
 
+/* Static Methods */
+
+/**
+ * Scroll to current fragment identifier. We have to do this manually because of the fixed header.
+ */
+Demo.static.scrollToFragment = function () {
+	var elem = document.getElementById( location.hash.slice( 1 ) );
+	if ( elem ) {
+		// The additional '10' is just because it looks nicer.
+		$( window ).scrollTop( $( elem ).offset().top - $( '.demo-menu' ).outerHeight() - 10 );
+	}
+};
+
 /* Methods */
 
 /**
  * Load the demo page. Must be called after $element is attached.
+ *
+ * @return {jQuery.Promise} Resolved when demo is initialized
  */
 Demo.prototype.initialize = function () {
 	var demo = this,
@@ -245,7 +266,7 @@ Demo.prototype.initialize = function () {
 			Date.now ? Date.now() : new Date().getTime();
 	}
 
-	$.when.apply( $, promises )
+	return $.when.apply( $, promises )
 		.done( function () {
 			var start, end;
 			start = now();
@@ -269,13 +290,29 @@ Demo.prototype.onModeChange = function () {
 		direction = this.directionSelect.getSelectedItem().getData(),
 		platform = this.platformSelect.getSelectedItem().getData();
 
-	location.hash = '#' + [ page, theme, direction, platform ].join( '-' );
+	history.pushState( null, document.title, this.getUrlQuery( [ page, theme, direction, platform ] ) );
+	$( window ).triggerHandler( 'popstate' );
+};
+
+/**
+ * Get URL query for given factors describing the demo's mode.
+ *
+ * @param {string[]} factors Factors, as returned e.g. by #getCurrentFactorValues
+ * @return {string} URL query part, starting with '?'
+ */
+Demo.prototype.getUrlQuery = function ( factors ) {
+	return '?page=' + factors[ 0 ] +
+		'&theme=' + factors[ 1 ] +
+		'&direction=' + factors[ 2 ] +
+		'&platform=' + factors[ 3 ] +
+		// Preserve current URL 'fragment' part
+		location.hash;
 };
 
 /**
  * Get a list of mode factors.
  *
- * Factors are a mapping between symbolic names used in the URL hash and internal information used
+ * Factors are a mapping between symbolic names used in the URL query and internal information used
  * to act on those symbolic names.
  *
  * Factor lists are in URL order: page, theme, direction, platform. Page contains the symbolic
@@ -307,7 +344,7 @@ Demo.prototype.getFactors = function () {
  * Get a list of default factors.
  *
  * Factor defaults are in URL order: page, theme, direction, platform. Each contains a symbolic
- * factor name which should be used as a fallback when the URL hash is missing or invalid.
+ * factor name which should be used as a fallback when the URL query is missing or invalid.
  *
  * @return {Object[]} List of default factors
  */
@@ -321,18 +358,29 @@ Demo.prototype.getDefaultFactorValues = function () {
 };
 
 /**
- * Parse the current URL hash into factor values.
+ * Parse the current URL query into factor values.
  *
- * @return {string[]} Factor values in URL order: page, theme, direction
+ * @return {string[]} Factor values in URL order: page, theme, direction, platform
  */
 Demo.prototype.getCurrentFactorValues = function () {
-	return location.hash.slice( 1 ).split( '-' );
+	var i, parts, index,
+		factors = this.getDefaultFactorValues(),
+		order = [ 'page', 'theme', 'direction', 'platform' ],
+		query = location.search.slice( 1 ).split( '&' );
+	for ( i = 0; i < query.length; i++ ) {
+		parts = query[ i ].split( '=', 2 );
+		index = order.indexOf( parts[ 0 ] );
+		if ( index !== -1 ) {
+			factors[ index ] = decodeURIComponent( parts[ 1 ] );
+		}
+	}
+	return factors;
 };
 
 /**
  * Get the current mode.
  *
- * Generated from parsed URL hash values.
+ * Generated from parsed URL query values.
  *
  * @return {Object} List of factor values keyed by factor name
  */
@@ -393,21 +441,43 @@ Demo.prototype.getStylesheetLinks = function () {
 };
 
 /**
- * Normalize the URL hash.
+ * Normalize the URL query.
  */
-Demo.prototype.normalizeHash = function () {
-	var i, len, factorValues,
+Demo.prototype.normalizeQuery = function () {
+	var i, len, factorValues, match, valid, factorValue,
 		modes = [],
 		factors = this.getFactors(),
 		defaults = this.getDefaultFactorValues();
 
 	factorValues = this.getCurrentFactorValues();
 	for ( i = 0, len = factors.length; i < len; i++ ) {
-		modes[ i ] = factors[ i ][ factorValues[ i ] ] !== undefined ? factorValues[ i ] : defaults[ i ];
+		factorValue = factorValues[ i ];
+		modes[ i ] = factors[ i ][ factorValue ] !== undefined ? factorValue : defaults[ i ];
 	}
 
-	// Update hash
-	location.hash = modes.join( '-' );
+	// Backwards-compatibility with old URLs that used the 'fragment' part to link to demo sections:
+	// if a fragment is specified and it describes valid factors, turn the URL into the new style.
+	match = location.hash.match( /^#(\w+)-(\w+)-(\w+)-(\w+)$/ );
+	if ( match ) {
+		factorValues = [];
+		valid = true;
+		for ( i = 0, len = factors.length; i < len; i++ ) {
+			factorValue = match[ i + 1 ];
+			if ( factors[ i ][ factorValue ] !== undefined ) {
+				factorValues[ i ] = factorValue;
+			} else {
+				valid = false;
+				break;
+			}
+		}
+		if ( valid ) {
+			location.hash = '';
+			modes = factorValues;
+		}
+	}
+
+	// Update query
+	history.replaceState( null, document.title, this.getUrlQuery( modes ) );
 };
 
 /**
@@ -417,6 +487,7 @@ Demo.prototype.destroy = function () {
 	$( 'body' ).removeClass( 'oo-ui-ltr oo-ui-rtl' );
 	$( this.stylesheetLinks ).remove();
 	this.$element.remove();
+	this.emit( 'destroy' );
 };
 
 /**
@@ -427,8 +498,8 @@ Demo.prototype.destroy = function () {
  * @param {string} widget Variable name for layout's field widget
  * @return {jQuery} Console interface element
  */
-Demo.prototype.buildConsole = function ( item, layout, widget ) {
-	var $toggle, $log, $label, $input, $submit, $console, $form,
+Demo.prototype.buildConsole = function ( item, layout, widget, showLayoutCode ) {
+	var $toggle, $log, $label, $input, $submit, $console, $form, $pre, $code,
 		console = window.console;
 
 	function exec( str ) {
@@ -490,10 +561,115 @@ Demo.prototype.buildConsole = function ( item, layout, widget ) {
 		$log.prop( 'scrollTop', $log.prop( 'scrollHeight' ) );
 	}
 
+	function getCode( item, toplevel ) {
+		var config, defaultConfig, url, params, out, i,
+			items = [],
+			demoLinks = [],
+			docLinks = [];
+
+		function getConstructorName( item ) {
+			var isDemoWidget = item.constructor.name.indexOf( 'Demo' ) === 0;
+			return ( isDemoWidget ? 'Demo.' : 'OO.ui.' ) + item.constructor.name.slice( 4 );
+		}
+
+		// If no item was passed we shouldn't show a code block
+		if ( item === undefined ) {
+			return false;
+		}
+
+		config = item.initialConfig;
+
+		// Prevent the default config from being part of the code
+		if ( item instanceof OO.ui.ActionFieldLayout ) {
+			defaultConfig = ( new item.constructor( new OO.ui.TextInputWidget(), new OO.ui.ButtonWidget() ) ).initialConfig;
+		} else if ( item instanceof OO.ui.FieldLayout ) {
+			defaultConfig = ( new item.constructor( new OO.ui.ButtonWidget() ) ).initialConfig;
+		} else {
+			defaultConfig = ( new item.constructor() ).initialConfig;
+		}
+		Object.keys( defaultConfig ).forEach( function ( key ) {
+			if ( config[ key ] === defaultConfig[ key ] ) {
+				delete config[ key ];
+			} else if (
+				typeof config[ key ] === 'object' && typeof defaultConfig[ key ] === 'object' &&
+				OO.compare( config[ key ], defaultConfig[ key ] )
+			) {
+				delete config[ key ];
+			}
+		} );
+
+		config = javascriptStringify( config, function ( obj, indent, stringify ) {
+			if ( obj instanceof Function ) {
+				// Get function's source code, with extraneous indentation removed
+				return obj.toString().replace( /^\t\t\t\t\t\t/gm, '' );
+			} else if ( obj instanceof jQuery ) {
+				if ( $.contains( item.$element[ 0 ], obj[ 0 ] ) ) {
+					// If this element appears inside the generated widget,
+					// assume this was something like `$label: $( '<p>Text</p>' )`
+					return '$( ' + javascriptStringify( obj.prop( 'outerHTML' ) ) + ' )';
+				} else {
+					// Otherwise assume this was something like `$overlay: $( '#overlay' )`
+					return '$( ' + javascriptStringify( '#' + obj.attr( 'id' ) ) + ' )';
+				}
+			} else if ( obj instanceof OO.ui.HtmlSnippet ) {
+				return 'new OO.ui.HtmlSnippet( ' + javascriptStringify( obj.toString() ) + ' )';
+			} else if ( obj instanceof OO.ui.Element ) {
+				return getCode( obj );
+			} else {
+				return stringify( obj );
+			}
+		}, '\t' );
+
+		// The generated code needs to include different arguments, based on the object type
+		items.push( item );
+		if ( item instanceof OO.ui.ActionFieldLayout ) {
+			params = getCode( item.fieldWidget ) + ', ' + getCode( item.buttonWidget );
+			items.push( item.fieldWidget );
+			items.push( item.buttonWidget );
+		} else if ( item instanceof OO.ui.FieldLayout ) {
+			params = getCode( item.fieldWidget );
+			items.push( item.fieldWidget );
+		} else {
+			params = '';
+		}
+		if ( config !== '{}' ) {
+			params += ( params ? ', ' : '' ) + config;
+		}
+		out = 'new ' + getConstructorName( item ) + '(' +
+			( params ? ' ' : '' ) + params + ( params ? ' ' : '' ) +
+			')';
+
+		if ( toplevel ) {
+			for ( i = 0; i < items.length; i++ ) {
+				item = items[ i ];
+				// The code generated for Demo widgets cannot be copied and used
+				if ( item.constructor.name.indexOf( 'Demo' ) === 0 ) {
+					url =
+						'https://phabricator.wikimedia.org/diffusion/GOJU/browse/master/demos/classes/' +
+						item.constructor.name.slice( 4 ) + '.js';
+					demoLinks.push( url );
+				} else {
+					url = 'https://doc.wikimedia.org/oojs-ui/master/js/#!/api/' + getConstructorName( item );
+					url = '[' + url + '](' + url + ')';
+					docLinks.push( url );
+				}
+			}
+		}
+
+		return (
+			( docLinks.length ? '// See documentation at: \n// ' : '' ) +
+			docLinks.join( '\n// ' ) + ( docLinks.length ? '\n' : '' ) +
+			( demoLinks.length ? '// See source code:\n// ' : '' ) +
+			demoLinks.join( '\n// ' ) + ( demoLinks.length ? '\n' : '' ) +
+			out
+		);
+	}
+
 	$toggle = $( '<span>' )
 		.addClass( 'demo-console-toggle' )
 		.attr( 'title', 'Toggle console' )
 		.on( 'click', function ( e ) {
+			var code;
 			e.preventDefault();
 			$console.toggleClass( 'demo-console-collapsed demo-console-expanded' );
 			if ( $input.is( ':visible' ) ) {
@@ -503,6 +679,19 @@ Demo.prototype.buildConsole = function ( item, layout, widget ) {
 					window[ widget ] = item.fieldWidget;
 					console.log( '[demo]', 'Globals ' + layout + ', ' + widget + ' have been set' );
 					console.log( '[demo]', item );
+
+					if ( showLayoutCode === true ) {
+						code = getCode( item, true );
+					} else {
+						code = getCode( item.fieldWidget, true );
+					}
+
+					if ( code ) {
+						$code.text( code );
+						Prism.highlightElement( $code[ 0 ] );
+					} else {
+						$code.remove();
+					}
 				}
 			}
 		} );
@@ -527,6 +716,12 @@ Demo.prototype.buildConsole = function ( item, layout, widget ) {
 		submit();
 	} );
 
+	$code = $( '<code>' ).addClass( 'language-javascript' );
+
+	$pre = $( '<pre>' )
+		.addClass( 'demo-sample-code' )
+		.append( $code );
+
 	$console = $( '<div>' )
 		.addClass( 'demo-console demo-console-collapsed' )
 		.append(
@@ -537,8 +732,47 @@ Demo.prototype.buildConsole = function ( item, layout, widget ) {
 					$input
 				),
 				$submit
-			)
+			),
+			$pre
 		);
 
 	return $console;
+};
+
+/**
+ * Build a link to this example.
+ *
+ * @param {OO.ui.Layout} item
+ * @param {OO.ui.FieldsetLayout} parentItem
+ * @return {jQuery} Link interface element
+ */
+Demo.prototype.buildLinkExample = function ( item, parentItem ) {
+	var $linkExample, label, fragment;
+
+	if ( item.$label.text() === '' ) {
+		item = parentItem;
+	}
+	fragment = item.elementId;
+	if ( !fragment ) {
+		label = item.$label.text();
+		fragment = label.replace( /[^\w]+/g, '-' ).replace( /^-|-$/g, '' );
+		item.setElementId( fragment );
+	}
+
+	$linkExample = $( '<a>' )
+		.addClass( 'demo-link-example' )
+		.attr( 'title', 'Link to this example' )
+		.attr( 'href', '#' + fragment )
+		.on( 'click', function ( e ) {
+			// We have to handle this manually in order to call .scrollToFragment() even if it's the same
+			// fragment. Normally, the browser will scroll but not fire a 'hashchange' event in this
+			// situation, and the scroll position will be off because of our fixed header.
+			if ( e.which === OO.ui.MouseButtons.LEFT ) {
+				location.hash = $( this ).attr( 'href' );
+				Demo.static.scrollToFragment();
+				e.preventDefault();
+			}
+		} );
+
+	return $linkExample;
 };

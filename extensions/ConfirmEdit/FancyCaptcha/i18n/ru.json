@@ -5,7 +5,8 @@
 			"Lockal",
 			"Okras",
 			"Александр Сигачёв",
-			"Ole Yves"
+			"Ole Yves",
+			"Facenapalm"
 		]
 	},
 	"fancycaptcha-desc": "Необычный CAPTCHA-генератор для подтверждения редактирования",
@@ -18,6 +19,7 @@
 	"fancycaptcha-imgcaptcha-ph": "Введите текст, который вы видите на картинке",
 	"fancycaptcha-sendemail": "В целях защиты от автоматического спама просим вас ввести слова, показанные ниже в рамке ([[Special:Captcha/help|подробнее…]]):",
 	"fancycaptcha-reload-text": "Обновить",
-	"apihelp-fancycaptchareload-description": "Получить новую FancyCaptcha.",
+	"apihelp-fancycaptchareload-description": "Получение новой FancyCaptcha.",
+	"apihelp-fancycaptchareload-summary": "Получение новой FancyCaptcha.",
 	"apihelp-fancycaptchareload-example-1": "Получить новую FancyCaptcha"
 }

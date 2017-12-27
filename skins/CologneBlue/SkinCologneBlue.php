@@ -74,12 +74,12 @@ class CologneBlueTemplate extends BaseTemplate {
 	 * @return string
 	 */
 	function variantLinks() {
-		$s = array();
+		$s = [];
 
 		$variants = $this->data['content_navigation']['variants'];
 
 		foreach ( $variants as $key => $link ) {
-			$s[] = $this->makeListItem( $key, $link, array( 'tag' => 'span' ) );
+			$s[] = $this->makeListItem( $key, $link, [ 'tag' => 'span' ] );
 		}
 
 		return $this->getSkin()->getLanguage()->pipeList( $s );
@@ -96,9 +96,9 @@ class CologneBlueTemplate extends BaseTemplate {
 		// not to capitalize the language names.
 		$language_urls = $this->data['language_urls'];
 		if ( !empty( $language_urls ) ) {
-			$s = array();
+			$s = [];
 			foreach ( $language_urls as $key => $data ) {
-				$s[] = $this->makeListItem( $key, $data, array( 'tag' => 'span' ) );
+				$s[] = $this->makeListItem( $key, $data, [ 'tag' => 'span' ] );
 			}
 
 			$html = wfMessage( 'otherlanguages' )->text()
@@ -116,7 +116,7 @@ class CologneBlueTemplate extends BaseTemplate {
 	 */
 	protected function renderAfterPortlet( $name ) {
 		$content = '';
-		Hooks::run( 'BaseTemplateAfterPortlet', array( $this, $name, &$content ) );
+		Hooks::run( 'BaseTemplateAfterPortlet', [ $this, $name, &$content ] );
 
 		$html = $content !== '' ? "<div class='after-portlet after-portlet-$name'>$content</div>" : '';
 
@@ -124,7 +124,7 @@ class CologneBlueTemplate extends BaseTemplate {
 	}
 
 	function pageTitleLinks() {
-		$s = array();
+		$s = [];
 		$footlinks = $this->getFooterLinks();
 
 		foreach ( $footlinks['places'] as $item ) {
@@ -156,7 +156,7 @@ class CologneBlueTemplate extends BaseTemplate {
 		return $this->makeListItem(
 			$key,
 			$this->processNavlinkForDocument( $navlink ),
-			array( 'tag' => 'span' )
+			[ 'tag' => 'span' ]
 		);
 	}
 
@@ -164,11 +164,11 @@ class CologneBlueTemplate extends BaseTemplate {
 		$toolbox = $this->getToolbox();
 		$content_nav = $this->data['content_navigation'];
 
-		$lines = array();
+		$lines = [];
 
 		if ( $this->getSkin()->getOutput()->isArticleRelated() ) {
 			// First row. Regular actions.
-			$element = array();
+			$element = [];
 
 			$editLinkMessage = $this->getSkin()->getTitle()->exists() ? 'editthispage' : 'create-this-page';
 			$element[] = $this->processBottomLink( 'edit', $content_nav['views']['edit'], $editLinkMessage );
@@ -204,7 +204,7 @@ class CologneBlueTemplate extends BaseTemplate {
 			$lines[] = $this->getSkin()->getLanguage()->pipeList( array_filter( $element ) );
 
 			// Second row. Privileged actions.
-			$element = array();
+			$element = [];
 
 			$element[] = $this->processBottomLink(
 				'delete',
@@ -259,7 +259,7 @@ class CologneBlueTemplate extends BaseTemplate {
 
 		// TODO these messages are only be used by CologneBlue,
 		// kill and replace with something more sensibly named?
-		$nsToMessage = array(
+		$nsToMessage = [
 			NS_MAIN => 'articlepage',
 			NS_USER => 'userpage',
 			NS_PROJECT => 'projectpage',
@@ -269,7 +269,7 @@ class CologneBlueTemplate extends BaseTemplate {
 			NS_HELP => 'viewhelppage',
 			NS_CATEGORY => 'categorypage',
 			NS_FILE => 'imagepage',
-		);
+		];
 
 		// Find out the message to use for link text. Use either the array above or,
 		// for non-talk pages, a generic "discuss this" message.
@@ -407,11 +407,11 @@ class CologneBlueTemplate extends BaseTemplate {
 				echo "\n<br />";
 
 				// Footer and second searchbox
-				echo $this->getSkin()->getLanguage()->pipeList( array(
+				echo $this->getSkin()->getLanguage()->pipeList( [
 					$this->getSkin()->mainPageLink(),
 					$this->getSkin()->aboutLink(),
 					$this->searchForm( 'footer' )
-				) );
+				] );
 				?>
 			</div>
 			<div id="footer-info" role="contentinfo">
@@ -448,7 +448,7 @@ class CologneBlueTemplate extends BaseTemplate {
 	 * @return string
 	 */
 	function sysLinks() {
-		$s = array(
+		$s = [
 			$this->getSkin()->mainPageLink(),
 			Linker::linkKnown(
 				Title::newFromText( wfMessage( 'aboutpage' )->inContentLanguage()->text() ),
@@ -463,12 +463,12 @@ class CologneBlueTemplate extends BaseTemplate {
 				Title::newFromText( wfMessage( 'faqpage' )->inContentLanguage()->text() ),
 				wfMessage( 'faq' )->text()
 			),
-		);
+		];
 
 		$personalUrls = $this->getPersonalTools();
-		foreach ( array( 'logout', 'createaccount', 'login' ) as $key ) {
+		foreach ( [ 'logout', 'createaccount', 'login' ] as $key ) {
 			if ( isset( $personalUrls[$key] ) ) {
-				$s[] = $this->makeListItem( $key, $personalUrls[$key], array( 'tag' => 'span' ) );
+				$s[] = $this->makeListItem( $key, $personalUrls[$key], [ 'tag' => 'span' ] );
 			}
 		}
 
@@ -490,11 +490,11 @@ class CologneBlueTemplate extends BaseTemplate {
 		$content_navigation = $this->data['content_navigation'];
 		$qbpageoptions = array_merge(
 			$content_navigation['namespaces'],
-			array(
+			[
 				'history' => $content_navigation['views']['history'],
 				'watch' => $content_navigation['actions']['watch'],
 				'unwatch' => $content_navigation['actions']['unwatch'],
-			)
+			]
 		);
 		$content_navigation['actions']['watch'] = null;
 		$content_navigation['actions']['unwatch'] = null;
@@ -509,7 +509,7 @@ class CologneBlueTemplate extends BaseTemplate {
 
 		// Personal tools ("My pages")
 		$qbmyoptions = $this->getPersonalTools();
-		foreach ( array( 'logout', 'createaccount', 'login', ) as $key ) {
+		foreach ( [ 'logout', 'createaccount', 'login' ] as $key ) {
 			$qbmyoptions[$key] = null;
 		}
 
@@ -533,7 +533,7 @@ class CologneBlueTemplate extends BaseTemplate {
 		// * add new portlets before TOOLBOX (or at the end, if it's missing)
 		// * remove LANGUAGES (langlinks are displayed elsewhere)
 		$orig_bar = $this->data['sidebar'];
-		$bar = array();
+		$bar = [];
 		$hasToolbox = false;
 
 		// Always display search first
@@ -557,7 +557,7 @@ class CologneBlueTemplate extends BaseTemplate {
 
 		// Fill out special sidebar items with content
 		$orig_bar = $bar;
-		$bar = array();
+		$bar = [];
 		foreach ( $orig_bar as $heading => $data ) {
 			if ( $heading == 'SEARCH' ) {
 				$bar['search'] = $this->searchForm( 'sidebar' );
@@ -570,14 +570,14 @@ class CologneBlueTemplate extends BaseTemplate {
 
 		// Output the sidebar
 		// CologneBlue uses custom messages for some portlets, but we should keep the ids for consistency
-		$idToMessage = array(
+		$idToMessage = [
 			'search' => 'qbfind',
 			'navigation' => 'qbbrowse',
 			'tb' => 'toolbox',
 			'cactions' => 'qbedit',
 			'personal' => 'qbmyoptions',
 			'pageoptions' => 'qbpageoptions',
-		);
+		];
 
 		$s = "<div id='quickbar'>\n";
 
@@ -637,16 +637,16 @@ class CologneBlueTemplate extends BaseTemplate {
 			$s .= wfMessage( 'qbfind' )->text() . ": ";
 		}
 
-		$s .= $this->makeSearchInput( array(
+		$s .= $this->makeSearchInput( [
 			'class' => 'mw-searchInput',
 			'type' => 'text',
 			'size' => '14'
-		) );
+		] );
 		$s .= ( $which == 'footer' ? " " : "<br />" );
-		$s .= $this->makeSearchButton( 'go', array( 'class' => 'searchButton' ) );
+		$s .= $this->makeSearchButton( 'go', [ 'class' => 'searchButton' ] );
 
 		if ( $this->config->get( 'UseTwoButtonsSearchForm' ) ) {
-			$s .= $this->makeSearchButton( 'fulltext', array( 'class' => 'searchButton' ) );
+			$s .= $this->makeSearchButton( 'fulltext', [ 'class' => 'searchButton' ] );
 		} else {
 			$s .= '<div><a href="' . $action . '" rel="search">'
 				. wfMessage( 'powersearch-legend' )->escaped() . "</a></div>\n";

@@ -11,7 +11,7 @@ class InputBoxHooks {
 	// Initialization
 	public static function register( Parser &$parser ) {
 		// Register the hook with the parser
-		$parser->setHook( 'inputbox', array( 'InputBoxHooks', 'render' ) );
+		$parser->setHook( 'inputbox', [ 'InputBoxHooks', 'render' ] );
 
 		// Continue
 		return true;
@@ -22,9 +22,14 @@ class InputBoxHooks {
 		$request = $special->getRequest();
 		$prefix = $request->getText( 'prefix', '' );
 		$title = $request->getText( 'wpNewTitle', '' );
+		$search = $request->getText( 'search', '' );
+		$searchfilter = $request->getText( 'searchfilter', '' );
 		if ( $special->getName() == 'Movepage' && $prefix !== '' && $title !== '' ) {
 			$request->setVal( 'wpNewTitle', $prefix . $title );
 			$request->unsetVal( 'prefix' );
+		}
+		if ( $special->getName() == 'Search' && $searchfilter !== '' ) {
+			$request->setVal( 'search', $search . ' ' . $searchfilter );
 		}
 		return true;
 	}
@@ -61,12 +66,12 @@ class InputBoxHooks {
 		$request,
 		$wiki
 	) {
-		if( $wiki->getAction( $request ) !== 'edit' ){
-			# not our problem
+		if ( $wiki->getAction( $request ) !== 'edit' ) {
+			// not our problem
 			return true;
 		}
-		if( $request->getText( 'prefix', '' ) === '' ){
-			# Fine
+		if ( $request->getText( 'prefix', '' ) === '' ) {
+			// Fine
 			return true;
 		}
 

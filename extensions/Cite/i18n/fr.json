@@ -21,6 +21,7 @@
 		]
 	},
 	"apihelp-query+references-description": "Renvoyer une représentation des données des références associées avec les pages fournies.",
+	"apihelp-query+references-summary": "Renvoyer une représentation des données de référence associées aux pages fournies.",
 	"apihelp-query+references-example-1": "Références associées avec <kbd>Albert Einstein</kbd>.",
 	"apierror-citestoragedisabled": "La sauvegarde sur l'extension de référence Cite n'est pas activée.",
 	"cite-desc": "Ajoute les balises <nowiki><ref[ name=\"id\"]></nowiki> et <nowiki><references/></nowiki> pour les références et notes de bas de page.",

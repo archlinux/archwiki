@@ -1,0 +1,60 @@
+#preftoc {
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	height: 1.5em;
+	clear: right;
+
+	li {
+		margin: 0 0.5em 0 0.5em;
+		padding: 0 0.2em 0 0.2em;
+		display: block;
+		float: left;
+		height: 1.5em;
+		text-transform: lowercase;
+	}
+
+	li a,
+	li a:hover,
+	li a:visited {
+		text-decoration: underline;
+		color: #036;
+	}
+
+	li.selected {
+		background-color: #bbb;
+	}
+
+	li.selected a,
+	li.selected a:hover,
+	li.selected a:visited {
+		text-decoration: none;
+		color: #fff;
+	}
+}
+
+#preferences {
+	margin: 0;
+	padding: 0 1em 1em 1em;
+	border: solid 1px #bbb;
+	clear: left; /* Multi-line toc should not push data to horizontally */
+
+	fieldset {
+		margin-top: 0;
+		border: 0;
+	}
+}
+
+.mainLegend {
+	display: none;
+}
+
+.htmlform-tip {
+	font-size: x-small;
+	padding: 0.2em 2em;
+	color: #666;
+}
+
+.prefsection legend {
+	font-weight: bold;
+}

@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Irwangatot",
-			"Kandar"
+			"Kandar",
+			"Uchup19"
 		]
 	},
 	"renameuser": "Ganti ngaran pamaké",
@@ -11,6 +12,7 @@
 	"renameusernew": "Ngaran pamaké anyar:",
 	"renameuserreason": "Alesan ganti ngaran:",
 	"renameusermove": "Pindahkeun kaca pamaké jeung obrolanna (jeung sub-kacanna) ka ngaran anyar",
+	"renameuserconfirm": "Nya, ganti ngaran éta pamaké",
 	"renameusersubmit": "Kirim",
 	"renameusererrordoesnotexist": "Euweuh pamaké nu ngaranna \"<nowiki>$1</nowiki>\"",
 	"renameusererrorexists": "Pamaké \"<nowiki>$1</nowiki>\" geus aya",

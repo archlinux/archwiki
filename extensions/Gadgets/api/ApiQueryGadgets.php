@@ -93,7 +93,7 @@ class ApiQueryGadgets extends ApiQueryBase {
 	}
 
 	/**
-	 * @param $gadgets array
+	 * @param array $gadgets
 	 */
 	private function applyList( $gadgets ) {
 		$data = [];
@@ -125,7 +125,7 @@ class ApiQueryGadgets extends ApiQueryBase {
 	}
 
 	/**
-	 * @param $gadget Gadget
+	 * @param Gadget $gadget
 	 *
 	 * @return bool
 	 */
@@ -138,7 +138,7 @@ class ApiQueryGadgets extends ApiQueryBase {
 	}
 
 	/**
-	 * @param $g Gadget
+	 * @param Gadget $g
 	 * @return array
 	 */
 	private function fakeMetadata( Gadget $g ) {
@@ -210,6 +210,7 @@ class ApiQueryGadgets extends ApiQueryBase {
 
 	/**
 	 * @see ApiBase::getExamplesMessages()
+	 * @return array
 	 */
 	protected function getExamplesMessages() {
 		$params = $this->getAllowedParams();

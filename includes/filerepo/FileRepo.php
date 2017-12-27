@@ -776,7 +776,7 @@ class FileRepo {
 	public function getDescriptionRenderUrl( $name, $lang = null ) {
 		$query = 'action=render';
 		if ( !is_null( $lang ) ) {
-			$query .= '&uselang=' . $lang;
+			$query .= '&uselang=' . urlencode( $lang );
 		}
 		if ( isset( $this->scriptDirUrl ) ) {
 			return $this->makeUrl(
@@ -1602,8 +1602,14 @@ class FileRepo {
 		$path = $this->resolveToStoragePath( $virtualUrl );
 		$params = [ 'src' => $path, 'headers' => $headers, 'options' => $optHeaders ];
 
+		// T172851: HHVM does not flush the output properly, causing OOM
+		ob_start( null, 1048576 );
+		ob_implicit_flush( true );
+
 		$status = $this->newGood();
 		$status->merge( $this->backend->streamFile( $params ) );
+
+		ob_end_flush();
 
 		return $status;
 	}

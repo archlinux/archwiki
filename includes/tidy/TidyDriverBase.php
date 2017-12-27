@@ -14,6 +14,7 @@ abstract class TidyDriverBase {
 
 	/**
 	 * Return true if validate() can be used
+	 * @return bool
 	 */
 	public function supportsValidate() {
 		return false;
@@ -24,6 +25,7 @@ abstract class TidyDriverBase {
 	 *
 	 * @param string $text
 	 * @param string &$errorStr Return the error string
+	 * @throws \MWException
 	 * @return bool Whether the HTML is valid
 	 */
 	public function validate( $text, &$errorStr ) {

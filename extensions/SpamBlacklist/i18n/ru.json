@@ -27,6 +27,7 @@
 	"right-spamblacklistlog": "просмотр журнала спам-листа",
 	"action-spamblacklistlog": "просмотр журнала спам-листа",
 	"apihelp-spamblacklist-description": "Проверить один или несколько URL-адресов с помощью SpamBlacklist.",
+	"apihelp-spamblacklist-summary": "Проверить один или несколько URL-адресов с помощью SpamBlacklist.",
 	"apihelp-spamblacklist-param-url": "URL-адреса для проверки в чёрном списке.",
 	"apihelp-spamblacklist-example-1": "Проверить два URL-адреса по чёрному списку"
 }

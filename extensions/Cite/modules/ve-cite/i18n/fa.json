@@ -23,15 +23,25 @@
 			"فلورانس"
 		]
 	},
+	"visualeditor-cite-tool-definition.json": "تهی",
 	"visualeditor-cite-tool-name-book": "کتاب",
 	"visualeditor-cite-tool-name-journal": "مجله",
 	"visualeditor-cite-tool-name-news": "اخبار",
 	"visualeditor-cite-tool-name-web": "وب‌گاه",
+	"cite-tool-definition.json": "تهی",
+	"cite-ve-changedesc-ref-group-both": "ارجاع‌های گروهی از «$1» به «$2» تغییر یافت",
+	"cite-ve-changedesc-ref-group-from": "ارجاع‌های گروهی از «$1» به گروه‌های عمومی تغییر یافت",
+	"cite-ve-changedesc-ref-group-to": "ارجاع‌های گروهی از گروه‌های عمومی به «$1» تغییر یافت",
+	"cite-ve-changedesc-reflist-group-both": "فهرست ارجاع‌های گروهی از «$1» به «$2» تغییر یافت",
+	"cite-ve-changedesc-reflist-group-from": "فهرست ارجاع‌های گروهی از «$1» به گروه عمومی تغییر یافت",
+	"cite-ve-changedesc-reflist-group-to": "فهرست ارجاع‌های گروهی از گروه عمومی به «$1» تغییر یافت",
+	"cite-ve-changedesc-reflist-item-id": "نمایه منابع تغییریافت",
 	"cite-ve-dialog-reference-editing-reused": "این یادکرد $1 {{PLURAL:$1|times}} در این صفحه استفاده شده‌است.",
 	"cite-ve-dialog-reference-options-group-label": "استفاده از این گروه",
 	"cite-ve-dialog-reference-options-group-placeholder": "منابع عمومی",
 	"cite-ve-dialog-reference-options-name-label": "استفاده دوباره با این نام",
 	"cite-ve-dialog-reference-options-section": "گزینه‌ها",
+	"cite-ve-dialog-reference-placeholder": "ارجاعتان را اینجا قرار دهید یا بنویسید یا از الگوی یادکرد استفاده کنید.",
 	"cite-ve-dialog-reference-title": "منبع",
 	"cite-ve-dialog-reference-useexisting-full-label": "استفاده دوباره یک پانویس موجود در این صفحه",
 	"cite-ve-dialog-reference-useexisting-label": "استفاده از یک منبع موجود",
@@ -50,5 +60,7 @@
 	"cite-ve-referenceslist-isempty-default": "ارجاعی در این صفحه برای شامل‌کردن در این فهرست وجود ندارد.",
 	"cite-ve-referenceslist-missingref": "این یادکرد درون یک الگو یا قطعهٔ تولیدی دیگر تعریف شده است و هم‌اکنون تنها می‌توان در حالت متنی آن را ویرایش کرد",
 	"cite-ve-toolbar-group-label": "یادکرد",
-	"cite-ve-othergroup-item": "$1 ارجاع"
+	"cite-ve-othergroup-item": "$1 ارجاع",
+	"visualeditor-internal-list-diff-default-group-name-mwreference": "منابع",
+	"visualeditor-internal-list-diff-group-name-mwreference": "نام گروه منابع: «$1»"
 }

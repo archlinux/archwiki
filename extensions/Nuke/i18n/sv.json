@@ -31,7 +31,7 @@
 	"nuke-not-deleted": "Sidan [[:$1]] '''kunde inte''' raderas.",
 	"nuke-delete-more": "[[Special:Nuke|Radera fler sidor]]",
 	"nuke-pattern": "Mönster för sidnamn:",
-	"nuke-nopages-global": "Det finns inga nya sidor i [[Special:RecentChanges|senaste ändringar]].",
+	"nuke-nopages-global": "Det finns inga sidtitlar som matchar din sökning.",
 	"nuke-viewchanges": "visa ändringar",
 	"nuke-namespace": "Begränsa till namnrymd:",
 	"nuke-linkoncontribs": "massradering",

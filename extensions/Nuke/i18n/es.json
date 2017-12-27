@@ -22,7 +22,7 @@
 	"action-nuke": "Destruir páginas",
 	"nuke-desc": "Da a los administradores la posibilidad de [[Special:Nuke|borrar páginas de forma masiva]]",
 	"nuke-nopages": "No hay páginas nuevas creadas por [[Special:Contributions/$1|$1]] en cambios recientes.",
-	"nuke-list": "Las siguientes páginas han sido creadas recientemente por [[Special:Contributions/$1|$1]];\nañade un comentario y haz clic sobre el botón para vaciarlas.",
+	"nuke-list": "[[Special:Contributions/$1|{{GENDER:$1|$1}}]] ha creado recientemente las páginas siguientes;\nañade un comentario y pulsa sobre el botón para borrarlas.",
 	"nuke-list-multiple": "Las siguientes páginas han sido creadas recientemente; escribe un comentario y pulsa el botón para eliminarlas.",
 	"nuke-defaultreason": "Eliminación en masa de páginas añadidas por [[Special:Contributions/$1|$1]]",
 	"nuke-multiplepeople": "Eliminación masiva de páginas nuevas de múltiples usuarios",
@@ -39,9 +39,9 @@
 	"nuke-not-deleted": "La página [[:$1]] '''no se ha podido''' borrar.",
 	"nuke-delete-more": "[[Special:Nuke|Borrar más páginas]]",
 	"nuke-pattern": "Patrón del título de la página:",
-	"nuke-nopages-global": "No hay nuevas páginas en los [[Special:RecentChanges|cambios recientes]].",
+	"nuke-nopages-global": "No hay títulos de páginas que coincidan con tu búsqueda.",
 	"nuke-viewchanges": "Mostrar cambios",
 	"nuke-namespace": "Límite al espacio de nombres:",
 	"nuke-linkoncontribs": "borrado masivo",
-	"nuke-linkoncontribs-text": "Eliminar masivamente las páginas donde este usuario sea el único autor"
+	"nuke-linkoncontribs-text": "Eliminar masivamente las páginas donde {{GENDER:$1|este usuario sea el único autor|esta usuaria sea la única autora}}"
 }

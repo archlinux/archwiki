@@ -1,0 +1,4 @@
+<http://foobar.test/Bananas> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://foobar.test/Fruit> .
+<http://foobar.test/Bananas> <http://acme.test/name> "Banana" .
+<http://foobar.test/Bananas> <http://acme.test/name> "Banane"@de .
+<http://foobar.test/Apples> <http://acme.test/name> "Apple" .

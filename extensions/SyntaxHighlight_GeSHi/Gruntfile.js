@@ -39,8 +39,8 @@ module.exports = function ( grunt ) {
 		banana: conf.MessagesDirs,
 		watch: {
 			files: [
-				'.{stylelintrc,jscsrc,jshintignore,jshintrc}',
 				'<%= eslint.all %>',
+				'<%= jsonlint.all %>',
 				'<%= stylelint.all %>'
 			],
 			tasks: 'test'

@@ -288,7 +288,7 @@ class SpecialExport extends SpecialPage {
 		$formDescriptor += [
 			'wpDownload' => [
 				'type' => 'check',
-				'name' =>'wpDownload',
+				'name' => 'wpDownload',
 				'id' => 'wpDownload',
 				'default' => $request->wasPosted() ? $request->getCheck( 'wpDownload' ) : true,
 				'label-message' => 'export-download',
@@ -330,7 +330,6 @@ class SpecialExport extends SpecialPage {
 	 * @param bool $exportall Whether to export everything
 	 */
 	private function doExport( $page, $history, $list_authors, $exportall ) {
-
 		// If we are grabbing everything, enable full history and ignore the rest
 		if ( $exportall ) {
 			$history = WikiExporter::FULL;

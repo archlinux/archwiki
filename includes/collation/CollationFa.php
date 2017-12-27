@@ -21,30 +21,40 @@
 /**
  * Temporary workaround for incorrect collation of Persian language ('fa') in ICU 52 (bug T139110).
  *
- * All of the following will be considered separate letters for category headings in Persian:
+ * Replace with other letters that appear in an okish spot in the alphabet
+ *
  *  - Characters 'و' 'ا' (often appear at the beginning of words)
  *  - Characters 'ٲ' 'ٳ' (may appear at the beginning of words in loanwords)
- *  - Characters 'ء' 'ئ' (don't appear at the beginning of words, but it's easier to implement)
  *
  * @since 1.29
  */
 class CollationFa extends IcuCollation {
-	private $tertiaryCollator;
+
+	// Really hacky - replace with stuff from other blocks.
+	private $override = [
+		// U+0627 ARABIC LETTER ALEF => U+0623 ARABIC LETTER ALEF WITH HAMZA ABOVE
+		"\xd8\xa7" => "\xd8\xa3",
+		// U+0648 ARABIC LETTER WAW => U+0649 ARABIC LETTER ALEF MAKSURA
+		"\xd9\x88" => "\xd9\x89",
+		// U+0672 ARABIC LETTER ALEF WITH WAVY HAMZA ABOVE => U+F3001 (private use area)
+		"\xd9\xb2" => "\xF3\xB3\x80\x81",
+		// U+0673 ARABIC LETTER ALEF WITH WAVY HAMZA BELOW => U+F3002 (private use area)
+		"\xd9\xb3" => "\xF3\xB3\x80\x82",
+	];
 
 	public function __construct() {
 		parent::__construct( 'fa' );
-		$this->tertiaryCollator = Collator::create( 'fa' );
 	}
 
-	public function getPrimarySortKey( $string ) {
-		$primary = parent::getPrimarySortKey( $string );
-		// We have to use a tertiary sortkey for everything with the primary sortkey of 2627.
-		// Otherwise, the "Remove duplicate prefixes" logic in IcuCollation would remove them.
-		// This matches sortkeys for the following characters: ء ئ ا و ٲ ٳ
-		if ( substr( $primary, 0, 2 ) === "\x26\x27" ) {
-			wfDebug( "Using tertiary sortkey for '$string'\n" );
-			return $this->tertiaryCollator->getSortKey( $string );
+	public function getSortKey( $string ) {
+		$modified = strtr( $string, $this->override );
+		return parent::getSortKey( $modified );
+	}
+
+	public function getFirstLetter( $string ) {
+		if ( isset( $this->override[substr( $string, 0, 2 )] ) ) {
+			return substr( $string, 0, 2 );
 		}
-		return $primary;
+		return parent::getFirstLetter( $string );
 	}
 }

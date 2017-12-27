@@ -69,14 +69,17 @@ class DeletedContribsPager extends IndexPager {
 				' != ' . Revision::SUPPRESSED_USER;
 		}
 
+		$commentQuery = CommentStore::newKey( 'ar_comment' )->getJoin();
+
 		return [
-			'tables' => [ 'archive' ],
+			'tables' => [ 'archive' ] + $commentQuery['tables'],
 			'fields' => [
-				'ar_rev_id', 'ar_namespace', 'ar_title', 'ar_timestamp', 'ar_comment',
+				'ar_rev_id', 'ar_namespace', 'ar_title', 'ar_timestamp',
 				'ar_minor_edit', 'ar_user', 'ar_user_text', 'ar_deleted'
-			],
+			] + $commentQuery['fields'],
 			'conds' => $conds,
-			'options' => [ 'USE INDEX' => $index ]
+			'options' => [ 'USE INDEX' => [ 'archive' => $index ] ],
+			'join_conds' => $commentQuery['joins'],
 		];
 	}
 
@@ -195,6 +198,7 @@ class DeletedContribsPager extends IndexPager {
 	function formatRow( $row ) {
 		$ret = '';
 		$classes = [];
+		$attribs = [];
 
 		/*
 		 * There may be more than just revision rows. To make sure that we'll only be processing
@@ -213,17 +217,20 @@ class DeletedContribsPager extends IndexPager {
 		MediaWiki\restoreWarnings();
 
 		if ( $validRevision ) {
+			$attribs['data-mw-revid'] = $rev->getId();
 			$ret = $this->formatRevisionRow( $row );
 		}
 
 		// Let extensions add data
-		Hooks::run( 'DeletedContributionsLineEnding', [ $this, &$ret, $row, &$classes ] );
+		Hooks::run( 'DeletedContributionsLineEnding', [ $this, &$ret, $row, &$classes, &$attribs ] );
+		$attribs = wfArrayFilterByKey( $attribs, [ Sanitizer::class, 'isReservedDataAttribute' ] );
 
-		if ( $classes === [] && $ret === '' ) {
+		if ( $classes === [] && $attribs === [] && $ret === '' ) {
 			wfDebug( "Dropping Special:DeletedContribution row that could not be formatted\n" );
 			$ret = "<!-- Could not format Special:DeletedContribution row. -->\n";
 		} else {
-			$ret = Html::rawElement( 'li', [ 'class' => $classes ], $ret ) . "\n";
+			$attribs['class'] = $classes;
+			$ret = Html::rawElement( 'li', $attribs, $ret ) . "\n";
 		}
 
 		return $ret;
@@ -249,7 +256,7 @@ class DeletedContribsPager extends IndexPager {
 		$rev = new Revision( [
 			'title' => $page,
 			'id' => $row->ar_rev_id,
-			'comment' => $row->ar_comment,
+			'comment' => CommentStore::newKey( 'ar_comment' )->getComment( $row )->text,
 			'user' => $row->ar_user,
 			'user_text' => $row->ar_user_text,
 			'timestamp' => $row->ar_timestamp,

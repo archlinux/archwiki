@@ -45,7 +45,7 @@ The reCAPTCHA module was written by Mike Crawford and Ben Maurer.
 
 Additional maintenance work was done by Yaron Koren.
 
-### Configuations Comments
+### Configuration comments
 ```php
 /**
  * List of IP ranges to allow to skip the captcha, similar to the group setting:
@@ -128,7 +128,7 @@ $wgCaptchaBadLoginExpiration = 5 * 60;
  * Allow users who have confirmed their email addresses to post
  * URL links without being harassed by the captcha.
  */
-$ceAllowConfirmedEmail = false;
+$wgAllowConfirmedEmail = false;
 
 /**
  * Number of bad login attempts before triggering the captcha.  0 means the

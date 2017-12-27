@@ -19,7 +19,6 @@
  *
  * @file
  * @ingroup Profiler
- * @author Aaron Schulz
  */
 
 namespace Wikimedia\Rdbms;
@@ -40,7 +39,7 @@ class TransactionProfiler implements LoggerAwareInterface {
 	/** @var float Seconds */
 	protected $dbLockThreshold = 3.0;
 	/** @var float Seconds */
-	protected $eventThreshold = .25;
+	protected $eventThreshold = 0.25;
 	/** @var bool */
 	protected $silenced = false;
 
@@ -100,7 +99,7 @@ class TransactionProfiler implements LoggerAwareInterface {
 	 * With conflicting expectations, the most narrow ones will be used
 	 *
 	 * @param string $event (writes,queries,conns,mConns)
-	 * @param integer $value Maximum count of the event
+	 * @param int $value Maximum count of the event
 	 * @param string $fname Caller
 	 * @since 1.25
 	 */
@@ -119,7 +118,7 @@ class TransactionProfiler implements LoggerAwareInterface {
 	 * With conflicting expectations, the most narrow ones will be used
 	 *
 	 * @param array $expects Map of (event => limit)
-	 * @param $fname
+	 * @param string $fname
 	 * @since 1.26
 	 */
 	public function setExpectations( array $expects, $fname ) {
@@ -156,11 +155,13 @@ class TransactionProfiler implements LoggerAwareInterface {
 	 */
 	public function recordConnection( $server, $db, $isMaster ) {
 		// Report when too many connections happen...
-		if ( $this->hits['conns']++ == $this->expect['conns'] ) {
-			$this->reportExpectationViolated( 'conns', "[connect to $server ($db)]" );
+		if ( $this->hits['conns']++ >= $this->expect['conns'] ) {
+			$this->reportExpectationViolated(
+				'conns', "[connect to $server ($db)]", $this->hits['conns'] );
 		}
-		if ( $isMaster && $this->hits['masterConns']++ == $this->expect['masterConns'] ) {
-			$this->reportExpectationViolated( 'masterConns', "[connect to $server ($db)]" );
+		if ( $isMaster && $this->hits['masterConns']++ >= $this->expect['masterConns'] ) {
+			$this->reportExpectationViolated(
+				'masterConns', "[connect to $server ($db)]", $this->hits['masterConns'] );
 		}
 	}
 
@@ -198,7 +199,7 @@ class TransactionProfiler implements LoggerAwareInterface {
 	 * @param string $query Function name or generalized SQL
 	 * @param float $sTime Starting UNIX wall time
 	 * @param bool $isWrite Whether this is a write query
-	 * @param integer $n Number of affected rows
+	 * @param int $n Number of affected rows
 	 */
 	public function recordQueryCompletion( $query, $sTime, $isWrite = false, $n = 0 ) {
 		$eTime = microtime( true );
@@ -211,11 +212,11 @@ class TransactionProfiler implements LoggerAwareInterface {
 		}
 
 		// Report when too many writes/queries happen...
-		if ( $this->hits['queries']++ == $this->expect['queries'] ) {
-			$this->reportExpectationViolated( 'queries', $query );
+		if ( $this->hits['queries']++ >= $this->expect['queries'] ) {
+			$this->reportExpectationViolated( 'queries', $query, $this->hits['queries'] );
 		}
-		if ( $isWrite && $this->hits['writes']++ == $this->expect['writes'] ) {
-			$this->reportExpectationViolated( 'writes', $query );
+		if ( $isWrite && $this->hits['writes']++ >= $this->expect['writes'] ) {
+			$this->reportExpectationViolated( 'writes', $query, $this->hits['writes'] );
 		}
 		// Report slow queries...
 		if ( !$isWrite && $elapsed > $this->expect['readQueryTime'] ) {
@@ -265,8 +266,9 @@ class TransactionProfiler implements LoggerAwareInterface {
 	 * @param string $db DB name
 	 * @param string $id ID string of transaction
 	 * @param float $writeTime Time spent in write queries
+	 * @param int $affected Number of rows affected by writes
 	 */
-	public function transactionWritingOut( $server, $db, $id, $writeTime = 0.0 ) {
+	public function transactionWritingOut( $server, $db, $id, $writeTime = 0.0, $affected = 0 ) {
 		$name = "{$server} ({$db}) (TRX#$id)";
 		if ( !isset( $this->dbTrxMethodTimes[$name] ) ) {
 			$this->logger->info( "Detected no transaction for '$name' - out of sync." );
@@ -283,6 +285,14 @@ class TransactionProfiler implements LoggerAwareInterface {
 				$writeTime
 			);
 			$slow = true;
+		}
+		// Warn if too many rows were changed...
+		if ( $affected > $this->expect['maxAffected'] ) {
+			$this->reportExpectationViolated(
+				'maxAffected',
+				"[transaction $id writes to {$server} ({$db})]",
+				$affected
+			);
 		}
 		// Fill in the last non-query period...
 		$lastQuery = end( $this->dbTrxMethodTimes[$name] );
@@ -319,20 +329,23 @@ class TransactionProfiler implements LoggerAwareInterface {
 	/**
 	 * @param string $expect
 	 * @param string $query
-	 * @param string|float|int $actual [optional]
+	 * @param string|float|int $actual
 	 */
-	protected function reportExpectationViolated( $expect, $query, $actual = null ) {
+	protected function reportExpectationViolated( $expect, $query, $actual ) {
 		if ( $this->silenced ) {
 			return;
 		}
 
-		$n = $this->expect[$expect];
-		$by = $this->expectBy[$expect];
-		$actual = ( $actual !== null ) ? " (actual: $actual)" : "";
-
 		$this->logger->info(
-			"Expectation ($expect <= $n) by $by not met$actual:\n$query\n" .
-			( new RuntimeException() )->getTraceAsString()
+			"Expectation ({measure} <= {max}) by {by} not met (actual: {actual}):\n{query}\n" .
+			( new RuntimeException() )->getTraceAsString(),
+			[
+				'measure' => $expect,
+				'max' => $this->expect[$expect],
+				'by' => $this->expectBy[$expect],
+				'actual' => $actual,
+				'query' => $query
+			]
 		);
 	}
 }

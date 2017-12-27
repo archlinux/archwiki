@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Kuvaly"
+			"Kuvaly",
+			"Kaszeba"
 		]
 	},
 	"wikieditor-preview-loading": "Ladowanié...",
@@ -36,7 +37,7 @@
 	"wikieditor-toolbar-tool-table-insert": "Wstôwi",
 	"wikieditor-toolbar-tool-table-cancel": "Anulujë",
 	"wikieditor-toolbar-tool-replace-button-findnext": "Nalezë pòstãpné",
-	"wikieditor-toolbar-tool-replace-close": "Anulujë",
+	"wikieditor-toolbar-tool-replace-close": "Zamkni",
 	"wikieditor-toolbar-section-characters": "Specjalnë céchów",
 	"wikieditor-toolbar-section-help": "Pòmòc",
 	"wikieditor-toolbar-help-heading-description": "Òpis",

@@ -10,6 +10,7 @@
 	"visualeditor-cite-tool-name-journal": "Tidsskrift",
 	"visualeditor-cite-tool-name-news": "Nyhende",
 	"visualeditor-cite-tool-name-web": "Nettstad",
+	"cite-ve-dialog-reference-editing-reused": "Denne referansen er nytta {{PLURAL:$1|éin gong|$1 gonger}} på denne sida.",
 	"cite-ve-dialog-reference-options-group-label": "Bruk denne gruppa",
 	"cite-ve-dialog-reference-options-group-placeholder": "Ålmenne kjelder",
 	"cite-ve-dialog-reference-options-name-label": "Bruk på nytt med dette namnet",

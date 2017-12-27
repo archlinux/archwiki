@@ -145,7 +145,7 @@ class SimpleCaptcha {
 	 * OutputPage object.
 	 *
 	 * @param OutputPage $out The OutputPage object to which the form should be added
-	 * @param integer $tabIndex See self::getFormInformation
+	 * @param int $tabIndex See self::getFormInformation
 	 */
 	public function addFormToOutput( OutputPage $out, $tabIndex = 1 ) {
 		$this->addFormInformationToOutput( $out, $this->getFormInformation( $tabIndex ) );
@@ -234,7 +234,7 @@ class SimpleCaptcha {
 		$msg = wfMessage( $name );
 		// obtain a more tailored message, if possible, otherwise, fall back to
 		// the default for edits
-		return $msg->isDisabled() ? wfMessage( static::$messagePrefix . 'edit' )  : $msg;
+		return $msg->isDisabled() ? wfMessage( static::$messagePrefix . 'edit' ) : $msg;
 	}
 
 	/**
@@ -274,7 +274,7 @@ class SimpleCaptcha {
 	 */
 	public function increaseBadLoginCounter( $username ) {
 		global $wgCaptchaTriggers, $wgCaptchaBadLoginExpiration,
-			   $wgCaptchaBadLoginPerUserExpiration;
+			$wgCaptchaBadLoginPerUserExpiration;
 		$cache = ObjectCache::getLocalClusterInstance();
 
 		if ( $wgCaptchaTriggers['badlogin'] ) {
@@ -328,7 +328,7 @@ class SimpleCaptcha {
 	 * Is the per-user captcha triggered?
 	 *
 	 * @param $u User|String User object, or name
-	 * @return boolean|null False: no, null: no, but it will be triggered next time
+	 * @return bool|null False: no, null: no, but it will be triggered next time
 	 */
 	public function isBadLoginPerUserTriggered( $u ) {
 		global $wgCaptchaTriggers, $wgCaptchaBadLoginPerUserAttempts;
@@ -472,7 +472,7 @@ class SimpleCaptcha {
 		// Special config for this NS?
 		if ( isset( $wgCaptchaTriggersOnNamespace[$title->getNamespace()][$action] ) ) {
 			return $wgCaptchaTriggersOnNamespace[$title->getNamespace()][$action];
-	 }
+		}
 
 		return ( !empty( $wgCaptchaTriggers[$action] ) ); // Default
 	}
@@ -482,14 +482,12 @@ class SimpleCaptcha {
 	 * @param $content Content|string
 	 * @param $section string
 	 * @param IContextSource $context
-	 * @param $oldtext string The content of the revision prior to $content.  When
+	 * @param oldtext string The content of the revision prior to $content When
 	 *  null this will be loaded from the database.
 	 * @return bool true if the captcha should run
 	 */
 	function shouldCheck( WikiPage $page, $content, $section, $context, $oldtext = null ) {
-		// @codingStandardsIgnoreStart
-		global $ceAllowConfirmedEmail;
-		// @codingStandardsIgnoreEnd
+		global $wgAllowConfirmedEmail;
 
 		if ( !$context instanceof IContextSource ) {
 			$context = RequestContext::getMain();
@@ -505,7 +503,7 @@ class SimpleCaptcha {
 		} elseif ( $this->isIPWhitelisted() ) {
 			wfDebug( "ConfirmEdit: user IP is whitelisted" );
 			return false;
-		} elseif ( $ceAllowConfirmedEmail && $user->isEmailConfirmed() ) {
+		} elseif ( $wgAllowConfirmedEmail && $user->isEmailConfirmed() ) {
 			wfDebug( "ConfirmEdit: user has confirmed mail, skipping captcha\n" );
 			return false;
 		}
@@ -1059,7 +1057,7 @@ class SimpleCaptcha {
 	 * Retrieve the current version of the page or section being edited...
 	 * @param Title $title
 	 * @param string $section
-	 * @param integer $flags Flags for Revision loading methods
+	 * @param int $flags Flags for Revision loading methods
 	 * @return string
 	 * @access private
 	 */

@@ -8,6 +8,8 @@
 	"pfunc_desc": "Verrijkt de parser met logische functies",
 	"pfunc_time_error": "Fout: ongeldige tied",
 	"pfunc_time_too_long": "Fout: #time te vaok aangerope",
+	"pfunc_time_too_big": "Fout: #time óngersteunt jaore tot maximaal 9999",
+	"pfunc_time_too_small": "Fout: #time óngersteunt allein jaore vanaaf 0.",
 	"pfunc_rel2abs_invalid_depth": "Fout: ongeldige diepte in pad: \"$1\" (probeerde 'n node bove de stamnode aan te rope)",
 	"pfunc_expr_stack_exhausted": "Fout in oetdrukking: stack oetgeput",
 	"pfunc_expr_unexpected_number": "Fout in oetdrukking: onverwacht getal",

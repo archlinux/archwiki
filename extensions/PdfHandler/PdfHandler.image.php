@@ -50,11 +50,11 @@ class PdfImage {
 		$data = $this->retrieveMetadata();
 		$size = self::getPageSize( $data, 1 );
 
-		if( $size ) {
+		if ( $size ) {
 			$width = $size['width'];
 			$height = $size['height'];
-			return array( $width, $height, 'Pdf',
-				"width=\"$width\" height=\"$height\"" );
+			return [ $width, $height, 'Pdf',
+				"width=\"$width\" height=\"$height\"" ];
 		}
 		return false;
 	}
@@ -67,18 +67,18 @@ class PdfImage {
 	public static function getPageSize( $data, $page ) {
 		global $wgPdfHandlerDpi;
 
-		if( isset( $data['pages'][$page]['Page size'] ) ) {
+		if ( isset( $data['pages'][$page]['Page size'] ) ) {
 			$o = $data['pages'][$page]['Page size'];
-		} elseif( isset( $data['Page size'] ) ) {
+		} elseif ( isset( $data['Page size'] ) ) {
 			$o = $data['Page size'];
 		} else {
 			$o = false;
 		}
 
 		if ( $o ) {
-			if( isset( $data['pages'][$page]['Page rot'] ) ) {
+			if ( isset( $data['pages'][$page]['Page rot'] ) ) {
 				$r = $data['pages'][$page]['Page rot'];
-			} elseif( isset( $data['Page rot'] ) ) {
+			} elseif ( isset( $data['Page rot'] ) ) {
 				$r = $data['Page rot'];
 			} else {
 				$r = 0;
@@ -89,17 +89,17 @@ class PdfImage {
 				$width  = intval( trim( $size[0] ) / 72 * $wgPdfHandlerDpi );
 				$height = explode( ' ', trim( $size[1] ), 2 );
 				$height = intval( trim( $height[0] ) / 72 * $wgPdfHandlerDpi );
-				if ( ( $r/90 ) & 1 ) {
+				if ( ( $r / 90 ) & 1 ) {
 					// Swap width and height for landscape pages
 					$t = $width;
 					$width = $height;
 					$height = $t;
 				}
 
-				return array(
+				return [
 					'width' => $width,
 					'height' => $height
-				);
+				];
 			}
 		}
 
@@ -113,7 +113,6 @@ class PdfImage {
 		global $wgPdfInfo, $wgPdftoText;
 
 		if ( $wgPdfInfo ) {
-			wfProfileIn( 'pdfinfo' );
 			$cmd = wfEscapeShellArg( $wgPdfInfo ) .
 				" -enc UTF-8 " . # Report metadata as UTF-8 text...
 				" -l 9999999 " . # Report page sizes for all pages
@@ -122,25 +121,22 @@ class PdfImage {
 			$retval = '';
 			$dump = wfShellExec( $cmd, $retval );
 			$data = $this->convertDumpToArray( $dump );
-			wfProfileOut( 'pdfinfo' );
 		} else {
 			$data = null;
 		}
 
-		# Read text layer
+		// Read text layer
 		if ( isset( $wgPdftoText ) ) {
-			wfProfileIn( 'pdftotext' );
 			$cmd = wfEscapeShellArg( $wgPdftoText ) . ' '. wfEscapeShellArg( $this->mFilename ) . ' - ';
 			wfDebug( __METHOD__.": $cmd\n" );
 			$retval = '';
 			$txt = wfShellExec( $cmd, $retval );
-			wfProfileOut( 'pdftotext' );
-			if( $retval == 0 ) {
+			if ( $retval == 0 ) {
 				$txt = str_replace( "\r\n", "\n", $txt );
 				$pages = explode( "\f", $txt );
-				foreach( $pages as $page => $pageText ) {
-					# Get rid of invalid UTF-8, strip control characters
-					# Note we need to do this per page, as \f page feed would be stripped.
+				foreach ( $pages as $page => $pageText ) {
+					// Get rid of invalid UTF-8, strip control characters
+					// Note we need to do this per page, as \f page feed would be stripped.
 					$pages[$page] = Validator::cleanUp( $pageText );
 				}
 				$data['text'] = $pages;
@@ -159,7 +155,7 @@ class PdfImage {
 		}
 
 		$lines = explode( "\n", $dump );
-		$data = array();
+		$data = [];
 
 		// Metadata is always the last item, and spans multiple lines.
 		$inMetadata = false;
@@ -167,14 +163,14 @@ class PdfImage {
 		// Basically this loop will go through each line, splitting key value
 		// pairs on the colon, until it gets to a "Metadata:\n" at which point
 		// it will gather all remaining lines into the xmp key.
-		foreach( $lines as $line ) {
+		foreach ( $lines as $line ) {
 			if ( $inMetadata ) {
-				# Handle XMP differently due to diffence in line break
+				// Handle XMP differently due to diffence in line break
 				$data['xmp'] .= "\n$line";
 				continue;
 			}
 			$bits = explode( ':', $line, 2 );
-			if( count( $bits ) > 1 ) {
+			if ( count( $bits ) > 1 ) {
 				$key = trim( $bits[0] );
 				if ( $key === 'Metadata' ) {
 					$inMetadata = true;
@@ -182,10 +178,10 @@ class PdfImage {
 					continue;
 				}
 				$value = trim( $bits[1] );
-				$matches = array();
+				$matches = [];
 				// "Page xx rot" will be in poppler 0.20's pdfinfo output
 				// See https://bugs.freedesktop.org/show_bug.cgi?id=41867
-				if( preg_match( '/^Page +(\d+) (size|rot)$/', $key, $matches ) ) {
+				if ( preg_match( '/^Page +(\d+) (size|rot)$/', $key, $matches ) ) {
 					$data['pages'][$matches[1]][$matches[2] == 'size' ? 'Page size' : 'Page rot'] = $value;
 				} else {
 					$data[$key] = $value;
@@ -206,10 +202,9 @@ class PdfImage {
 	 * @return Array post-processed metadata
 	 */
 	protected function postProcessDump( array $data ) {
-
 		$meta = new BitmapMetadataHandler();
-		$items = array();
-		foreach( $data as $key => $val ) {
+		$items = [];
+		foreach ( $data as $key => $val ) {
 			switch ( $key ) {
 				case 'Title':
 					$items['ObjectName'] = $val;
@@ -276,10 +271,10 @@ class PdfImage {
 					// This doesn't do anything with rotation as of yet,
 					// mostly because I am unsure of what a good way to
 					// present that information to the user would be.
-					$pageSizes = array();
-					foreach( $val as $page ) {
-						if( isset( $page['Page size'] ) ) {
-							$pageSizes[ $page['Page size'] ] = true;
+					$pageSizes = [];
+					foreach ( $val as $page ) {
+						if ( isset( $page['Page size'] ) ) {
+							$pageSizes[$page['Page size']] = true;
 						}
 					}
 

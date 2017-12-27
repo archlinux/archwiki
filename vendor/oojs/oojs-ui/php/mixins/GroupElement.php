@@ -27,7 +27,7 @@ trait GroupElement {
 		// Properties
 		$this->group = isset( $config['group'] ) ? $config['group'] : new Tag( 'div' );
 
-		$this->registerConfigCallback( function( &$config ) {
+		$this->registerConfigCallback( function ( &$config ) {
 			$config['items'] = $this->items;
 		} );
 	}
@@ -35,7 +35,7 @@ trait GroupElement {
 	/**
 	 * Check if there are no items.
 	 *
-	 * @return boolean Group is empty
+	 * @return bool Group is empty
 	 */
 	public function isEmpty() {
 		return !count( $this->items );

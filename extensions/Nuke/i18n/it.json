@@ -30,9 +30,9 @@
 	"nuke-not-deleted": "La pagina [[:$1]] '''non può''' essere cancellata.",
 	"nuke-delete-more": "[[Special:Nuke|Cancella altre pagine]]",
 	"nuke-pattern": "Modello per il titolo della pagina:",
-	"nuke-nopages-global": "Non ci sono nuove pagine negli [[Special:RecentChanges|ultimi cambiamenti]].",
+	"nuke-nopages-global": "Non ci sono titoli di pagine che corrispondono alla tua ricerca.",
 	"nuke-viewchanges": "vedi modifiche",
 	"nuke-namespace": "Limita al namespace:",
 	"nuke-linkoncontribs": "cancella massivamente",
-	"nuke-linkoncontribs-text": "Cancella massivamente le pagine dove questo utente è l'unico contributore"
+	"nuke-linkoncontribs-text": "Cancella massivamente le pagine dove questo utente è {{GENDER:$1|l'unico contributore|l'unica contributrice}}"
 }

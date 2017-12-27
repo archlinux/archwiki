@@ -38,8 +38,10 @@
 		function isCssImportApplied() {
 			// Trigger reflow, repaint, redraw, whatever (cross-browser)
 			$element.css( 'height' );
+			// eslint-disable-next-line no-unused-expressions
 			el.innerHTML;
 			el.className = el.className;
+			// eslint-disable-next-line no-unused-expressions
 			document.documentElement.clientHeight;
 
 			return $element.css( prop ) === val;
@@ -88,7 +90,7 @@
 			isAwesomeDone = true;
 		};
 
-		mw.loader.implement( 'test.callback', [ QUnit.fixurl( mw.config.get( 'wgScriptPath' ) + '/tests/qunit/data/callMwLoaderTestCallback.js' ) ] );
+		mw.loader.implement( 'test.callback', [ QUnit.fixurl( mw.config.get( 'wgScriptPath' ) + '/tests/qunit/data/mwLoaderTestCallback.js' ) ] );
 
 		return mw.loader.using( 'test.callback', function () {
 			assert.strictEqual( isAwesomeDone, true, 'test.callback module should\'ve caused isAwesomeDone to be true' );
@@ -107,7 +109,7 @@
 			isAwesomeDone = true;
 		};
 
-		mw.loader.implement( 'hasOwnProperty', [ QUnit.fixurl( mw.config.get( 'wgScriptPath' ) + '/tests/qunit/data/callMwLoaderTestCallback.js' ) ], {}, {} );
+		mw.loader.implement( 'hasOwnProperty', [ QUnit.fixurl( mw.config.get( 'wgScriptPath' ) + '/tests/qunit/data/mwLoaderTestCallback.js' ) ], {}, {} );
 
 		return mw.loader.using( 'hasOwnProperty', function () {
 			assert.strictEqual( isAwesomeDone, true, 'hasOwnProperty module should\'ve caused isAwesomeDone to be true' );
@@ -126,16 +128,16 @@
 			isAwesomeDone = true;
 		};
 
-		mw.loader.implement( 'test.promise', [ QUnit.fixurl( mw.config.get( 'wgScriptPath' ) + '/tests/qunit/data/callMwLoaderTestCallback.js' ) ] );
+		mw.loader.implement( 'test.promise', [ QUnit.fixurl( mw.config.get( 'wgScriptPath' ) + '/tests/qunit/data/mwLoaderTestCallback.js' ) ] );
 
 		return mw.loader.using( 'test.promise' )
-		.done( function () {
-			assert.strictEqual( isAwesomeDone, true, 'test.promise module should\'ve caused isAwesomeDone to be true' );
-			delete mw.loader.testCallback;
-		} )
-		.fail( function () {
-			assert.ok( false, 'Error callback fired while loader.using "test.promise" module' );
-		} );
+			.done( function () {
+				assert.strictEqual( isAwesomeDone, true, 'test.promise module should\'ve caused isAwesomeDone to be true' );
+				delete mw.loader.testCallback;
+			} )
+			.fail( function () {
+				assert.ok( false, 'Error callback fired while loader.using "test.promise" module' );
+			} );
 	} );
 
 	// Covers mw.loader#sortDependencies (with native Set if available)
@@ -155,7 +157,7 @@
 				assert.ok( /Circular/.test( String( e ) ), 'Detect circular dependency' );
 			}
 		)
-		.always( done );
+			.always( done );
 	} );
 
 	// @covers mw.loader#sortDependencies (with fallback shim)
@@ -185,18 +187,34 @@
 				assert.ok( /Circular/.test( String( e ) ), 'Detect circular dependency' );
 			}
 		)
-		.always( done );
+			.always( done );
 	} );
 
 	QUnit.test( '.load() - Error: Circular dependency', function ( assert ) {
+		var capture = [];
 		mw.loader.register( [
 			[ 'test.circleA', '0', [ 'test.circleB' ] ],
 			[ 'test.circleB', '0', [ 'test.circleC' ] ],
 			[ 'test.circleC', '0', [ 'test.circleA' ] ]
 		] );
-		assert.throws( function () {
-			mw.loader.load( 'test.circleC' );
-		}, /Circular/, 'Detect circular dependency' );
+		this.sandbox.stub( mw, 'track', function ( topic, data ) {
+			capture.push( {
+				topic: topic,
+				error: data.exception && data.exception.message,
+				source: data.source
+			} );
+		} );
+
+		mw.loader.load( 'test.circleC' );
+		assert.deepEqual(
+			[ {
+				topic: 'resourceloader.exception',
+				error: 'Circular reference detected: test.circleB -> test.circleC',
+				source: 'resolve'
+			} ],
+			capture,
+			'Detect circular dependency'
+		);
 	} );
 
 	QUnit.test( '.using() - Error: Unregistered', function ( assert ) {
@@ -212,9 +230,51 @@
 		).always( done );
 	} );
 
-	QUnit.test( '.load() - Error: Unregistered (ignored)', function ( assert ) {
-		assert.expect( 0 );
-		mw.loader.load( 'test.using.unreg2' );
+	QUnit.test( '.load() - Error: Unregistered', function ( assert ) {
+		var capture = [];
+		this.sandbox.stub( mw, 'track', function ( topic, data ) {
+			capture.push( {
+				topic: topic,
+				error: data.exception && data.exception.message,
+				source: data.source
+			} );
+		} );
+
+		mw.loader.load( 'test.load.unreg' );
+		assert.deepEqual(
+			[ {
+				topic: 'resourceloader.exception',
+				error: 'Unknown dependency: test.load.unreg',
+				source: 'resolve'
+			} ],
+			capture
+		);
+	} );
+
+	// Regression test for T36853
+	QUnit.test( '.load() - Error: Missing dependency', function ( assert ) {
+		var capture = [];
+		this.sandbox.stub( mw, 'track', function ( topic, data ) {
+			capture.push( {
+				topic: topic,
+				error: data.exception && data.exception.message,
+				source: data.source
+			} );
+		} );
+
+		mw.loader.register( [
+			[ 'test.load.missingdep1', '0', [ 'test.load.missingdep2' ] ],
+			[ 'test.load.missingdep', '0', [ 'test.load.missingdep1' ] ]
+		] );
+		mw.loader.load( 'test.load.missingdep' );
+		assert.deepEqual(
+			[ {
+				topic: 'resourceloader.exception',
+				error: 'Unknown dependency: test.load.missingdep2',
+				source: 'resolve'
+			} ],
+			capture
+		);
 	} );
 
 	QUnit.test( '.implement( styles={ "css": [text, ..] } )', function ( assert ) {
@@ -636,38 +696,44 @@
 		);
 	} );
 
-	QUnit.asyncTest( '.load( "//protocol-relative" ) - T32825', function ( assert ) {
-		// This bug was actually already fixed in 1.18 and later when discovered in 1.17.
-		// Test is for regressions!
+	// This bug was actually already fixed in 1.18 and later when discovered in 1.17.
+	QUnit.test( '.load( "//protocol-relative" ) - T32825', function ( assert ) {
+		var target,
+			done = assert.async();
 
-		// Forge a URL to the test callback script
-		var target = QUnit.fixurl(
-			mw.config.get( 'wgServer' ) + mw.config.get( 'wgScriptPath' ) + '/tests/qunit/data/qunitOkCall.js'
+		// URL to the callback script
+		target = QUnit.fixurl(
+			mw.config.get( 'wgServer' ) + mw.config.get( 'wgScriptPath' ) + '/tests/qunit/data/mwLoaderTestCallback.js'
 		);
-
-		// Confirm that mw.loader.load() works with protocol-relative URLs
+		// Ensure a protocol-relative URL for this test
 		target = target.replace( /https?:/, '' );
+		assert.equal( target.slice( 0, 2 ), '//', 'URL is protocol-relative' );
 
-		assert.equal( target.slice( 0, 2 ), '//',
-			'URL must be relative to test relative URLs!'
-		);
+		mw.loader.testCallback = function () {
+			delete mw.loader.testCallback;
+			assert.ok( true, 'callback' );
+			done();
+		};
 
-		// Async!
-		// The target calls QUnit.start
+		// Go!
 		mw.loader.load( target );
 	} );
 
-	QUnit.asyncTest( '.load( "/absolute-path" )', function ( assert ) {
-		// Forge a URL to the test callback script
-		var target = QUnit.fixurl(
-			mw.config.get( 'wgScriptPath' ) + '/tests/qunit/data/qunitOkCall.js'
-		);
+	QUnit.test( '.load( "/absolute-path" )', function ( assert ) {
+		var target,
+			done = assert.async();
 
-		// Confirm that mw.loader.load() works with absolute-paths (relative to current hostname)
+		// URL to the callback script
+		target = QUnit.fixurl( mw.config.get( 'wgScriptPath' ) + '/tests/qunit/data/mwLoaderTestCallback.js' );
 		assert.equal( target.slice( 0, 1 ), '/', 'URL is relative to document root' );
 
-		// Async!
-		// The target calls QUnit.start
+		mw.loader.testCallback = function () {
+			delete mw.loader.testCallback;
+			assert.ok( true, 'callback' );
+			done();
+		};
+
+		// Go!
 		mw.loader.load( target );
 	} );
 
@@ -797,8 +863,7 @@
 				}
 			};
 		} );
-		return mw.loader.using( [ 'test.require1', 'test.require2', 'test.require3', 'test.require4' ] )
-		.then( function ( require ) {
+		return mw.loader.using( [ 'test.require1', 'test.require2', 'test.require3', 'test.require4' ] ).then( function ( require ) {
 			var module1, module2, module3, module4;
 
 			module1 = require( 'test.require1' );
@@ -839,6 +904,38 @@
 			}
 		}, function () {
 			assert.ok( false, 'Error callback fired while loader.using "test.require.callback" module' );
+		} );
+	} );
+
+	QUnit.test( 'Implicit dependencies', function ( assert ) {
+		var ranUser = false,
+			userSeesSite = false,
+			ranSite = false;
+
+		mw.loader.implement(
+			'site',
+			function () {
+				ranSite = true;
+			}
+		);
+		mw.loader.implement(
+			'user',
+			function () {
+				userSeesSite = ranSite;
+				ranUser = true;
+			}
+		);
+
+		assert.strictEqual( ranSite, false, 'verify site module not yet loaded' );
+		assert.strictEqual( ranUser, false, 'verify user module not yet loaded' );
+		return mw.loader.using( 'user', function () {
+			assert.strictEqual( ranSite, true, 'ran site module' );
+			assert.strictEqual( ranUser, true, 'ran user module' );
+			assert.strictEqual( userSeesSite, true, 'ran site before user module' );
+
+			// Reset
+			mw.loader.moduleRegistry[ 'site' ].state = 'registered';
+			mw.loader.moduleRegistry[ 'user' ].state = 'registered';
 		} );
 	} );
 

@@ -170,7 +170,6 @@ class MysqlUpdater extends DatabaseUpdater {
 			[ 'doLogUsertextPopulation' ],
 			[ 'doLogSearchPopulation' ],
 			[ 'addTable', 'l10n_cache', 'patch-l10n_cache.sql' ],
-			[ 'addIndex', 'log_search', 'ls_field_val', 'patch-log_search-rename-index.sql' ],
 			[ 'addIndex', 'change_tag', 'change_tag_rc_tag', 'patch-change_tag-indexes.sql' ],
 			[ 'addField', 'redirect', 'rd_interwiki', 'patch-rd_interwiki.sql' ],
 			[ 'doUpdateTranscacheField' ],
@@ -267,9 +266,8 @@ class MysqlUpdater extends DatabaseUpdater {
 				'patch-fa_major_mime-chemical.sql' ],
 
 			// 1.25
-			[ 'doUserNewTalkUseridUnsigned' ],
 			// note this patch covers other _comment and _description fields too
-			[ 'modifyField', 'recentchanges', 'rc_comment', 'patch-editsummary-length.sql' ],
+			[ 'doExtendCommentLengths' ],
 
 			// 1.26
 			[ 'dropTable', 'hitcounter' ],
@@ -301,6 +299,36 @@ class MysqlUpdater extends DatabaseUpdater {
 			[ 'dropIndex', 'user_groups', 'ug_user_group', 'patch-user_groups-primary-key.sql' ],
 			[ 'addField', 'user_groups', 'ug_expiry', 'patch-user_groups-ug_expiry.sql' ],
 			[ 'addIndex', 'image', 'img_user_timestamp', 'patch-image-user-index-2.sql' ],
+
+			// 1.30
+			[ 'modifyField', 'image', 'img_media_type', 'patch-add-3d.sql' ],
+			[ 'addTable', 'ip_changes', 'patch-ip_changes.sql' ],
+			[ 'renameIndex', 'categorylinks', 'cl_from', 'PRIMARY', false,
+				'patch-categorylinks-fix-pk.sql' ],
+			[ 'renameIndex', 'templatelinks', 'tl_from', 'PRIMARY', false,
+				'patch-templatelinks-fix-pk.sql' ],
+			[ 'renameIndex', 'pagelinks', 'pl_from', 'PRIMARY', false, 'patch-pagelinks-fix-pk.sql' ],
+			[ 'renameIndex', 'text', 'old_id', 'PRIMARY', false, 'patch-text-fix-pk.sql' ],
+			[ 'renameIndex', 'imagelinks', 'il_from', 'PRIMARY', false, 'patch-imagelinks-fix-pk.sql' ],
+			[ 'renameIndex', 'iwlinks', 'iwl_from', 'PRIMARY', false, 'patch-iwlinks-fix-pk.sql' ],
+			[ 'renameIndex', 'langlinks', 'll_from', 'PRIMARY', false, 'patch-langlinks-fix-pk.sql' ],
+			[ 'renameIndex', 'log_search', 'ls_field_val', 'PRIMARY', false, 'patch-log_search-fix-pk.sql' ],
+			[ 'renameIndex', 'module_deps', 'md_module_skin', 'PRIMARY', false,
+				'patch-module_deps-fix-pk.sql' ],
+			[ 'renameIndex', 'objectcache', 'keyname', 'PRIMARY', false, 'patch-objectcache-fix-pk.sql' ],
+			[ 'renameIndex', 'querycache_info', 'qci_type', 'PRIMARY', false,
+				'patch-querycache_info-fix-pk.sql' ],
+			[ 'renameIndex', 'site_stats', 'ss_row_id', 'PRIMARY', false, 'patch-site_stats-fix-pk.sql' ],
+			[ 'renameIndex', 'transcache', 'tc_url_idx', 'PRIMARY', false, 'patch-transcache-fix-pk.sql' ],
+			[ 'renameIndex', 'user_former_groups', 'ufg_user_group', 'PRIMARY', false,
+				'patch-user_former_groups-fix-pk.sql' ],
+			[ 'renameIndex', 'user_properties', 'user_properties_user_property', 'PRIMARY', false,
+				'patch-user_properties-fix-pk.sql' ],
+			[ 'addTable', 'comment', 'patch-comment-table.sql' ],
+			[ 'migrateComments' ],
+			[ 'renameIndex', 'l10n_cache', 'lc_lang_key', 'PRIMARY', false,
+				'patch-l10n_cache-primary-key.sql' ],
+			[ 'doUnsignedSyncronisation' ],
 		];
 	}
 
@@ -1095,26 +1123,42 @@ class MysqlUpdater extends DatabaseUpdater {
 		);
 	}
 
-	protected function doUserNewTalkUseridUnsigned() {
-		if ( !$this->doTable( 'user_newtalk' ) ) {
-			return true;
+	protected function doUnsignedSyncronisation() {
+		$sync = [
+			[ 'table' => 'bot_passwords', 'field' => 'bp_user' ],
+			[ 'table' => 'change_tag', 'field' => 'ct_log_id' ],
+			[ 'table' => 'change_tag', 'field' => 'ct_rev_id' ],
+			[ 'table' => 'page_restrictions', 'field' => 'pr_user' ],
+			[ 'table' => 'tag_summary', 'field' => 'ts_log_id' ],
+			[ 'table' => 'tag_summary', 'field' => 'ts_rev_id' ],
+			[ 'table' => 'user_newtalk', 'field' => 'user_id' ],
+			[ 'table' => 'user_properties', 'field' => 'up_user' ],
+		];
+
+		foreach ( $sync as $s ) {
+			if ( !$this->doTable( $s['table'] ) ) {
+				continue;
+			}
+
+			$info = $this->db->fieldInfo( $s['table'], $s['field'] );
+			if ( $info === false ) {
+				continue;
+			}
+			$fullName = "{$s['table']}.{$s['field']}";
+			if ( $info->isUnsigned() ) {
+				$this->output( "...$fullName is already unsigned int.\n" );
+
+				continue;
+			}
+
+			$this->applyPatch(
+				"patch-{$s['table']}-{$s['field']}-unsigned.sql",
+				false,
+				"Making $fullName into an unsigned int"
+			);
 		}
 
-		$info = $this->db->fieldInfo( 'user_newtalk', 'user_id' );
-		if ( $info === false ) {
-			return true;
-		}
-		if ( $info->isUnsigned() ) {
-			$this->output( "...user_id is already unsigned int.\n" );
-
-			return true;
-		}
-
-		return $this->applyPatch(
-			'patch-user-newtalk-userid-unsigned.sql',
-			false,
-			'Making user_id unsigned int'
-		);
+		return true;
 	}
 
 	protected function doRevisionPageRevIndexNonUnique() {
@@ -1135,6 +1179,22 @@ class MysqlUpdater extends DatabaseUpdater {
 			false,
 			'Making rev_page_id index non-unique'
 		);
+	}
+
+	protected function doExtendCommentLengths() {
+		$table = $this->db->tableName( 'revision' );
+		$res = $this->db->query( "SHOW COLUMNS FROM $table LIKE 'rev_comment'" );
+		$row = $this->db->fetchObject( $res );
+
+		if ( $row && ( $row->Type !== "varbinary(767)" || $row->Default !== "" ) ) {
+			$this->applyPatch(
+				'patch-editsummary-length.sql',
+				false,
+				'Extending edit summary lengths (and setting defaults)'
+			);
+		} else {
+			$this->output( '...comment fields are up to date' );
+		}
 	}
 
 	public function getSchemaVars() {

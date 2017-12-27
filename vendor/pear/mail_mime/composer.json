@@ -21,7 +21,7 @@
     "include-path": [
         "./"
     ],
-    "license": "BSD Style",
+    "license": "BSD-3-clause",
     "name": "pear/mail_mime",
     "support": {
         "issues": "http://pear.php.net/bugs/search.php?cmd=display&package_name[]=Mail_Mime",

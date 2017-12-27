@@ -37,13 +37,13 @@ class ParserFunctionsHooks {
 
 		// String Functions
 		if ( $wgPFEnableStringFunctions ) {
-			$parser->setFunctionHook( 'len',       'ExtParserFunctions::runLen'       );
-			$parser->setFunctionHook( 'pos',       'ExtParserFunctions::runPos'       );
-			$parser->setFunctionHook( 'rpos',      'ExtParserFunctions::runRPos'      );
-			$parser->setFunctionHook( 'sub',       'ExtParserFunctions::runSub'       );
-			$parser->setFunctionHook( 'count',     'ExtParserFunctions::runCount'     );
-			$parser->setFunctionHook( 'replace',   'ExtParserFunctions::runReplace'   );
-			$parser->setFunctionHook( 'explode',   'ExtParserFunctions::runExplode'   );
+			$parser->setFunctionHook( 'len',       'ExtParserFunctions::runLen' );
+			$parser->setFunctionHook( 'pos',       'ExtParserFunctions::runPos' );
+			$parser->setFunctionHook( 'rpos',      'ExtParserFunctions::runRPos' );
+			$parser->setFunctionHook( 'sub',       'ExtParserFunctions::runSub' );
+			$parser->setFunctionHook( 'count',     'ExtParserFunctions::runCount' );
+			$parser->setFunctionHook( 'replace',   'ExtParserFunctions::runReplace' );
+			$parser->setFunctionHook( 'explode',   'ExtParserFunctions::runExplode' );
 			$parser->setFunctionHook( 'urldecode', 'ExtParserFunctions::runUrlDecode' );
 		}
 

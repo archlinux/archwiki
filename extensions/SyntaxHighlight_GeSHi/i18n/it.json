@@ -13,6 +13,7 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Linguaggio",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "(nessuno)",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "Mostra i numeri di riga",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-startingline": "Numero di linea di partenza",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Blocco di codice",
 	"syntaxhighlight-error-pygments-invocation-failure": "Errore nell'invocazione di Pygments",
 	"syntaxhighlight-error-unknown-language": "Linguaggio sconosciuto \"$1\"",

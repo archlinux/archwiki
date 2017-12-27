@@ -11,7 +11,8 @@
 			"Urhixidur",
 			"Zetud",
 			"JackPotte",
-			"Yasten"
+			"Yasten",
+			"Wladek92"
 		]
 	},
 	"action-titleblacklistlog": "afficher le journal de la liste noire des titres",
@@ -32,7 +33,8 @@
 	"right-tboverride": "Remplacer la liste noire des titres ou des noms d'utilisateur",
 	"right-tboverride-account": "Ignorer la liste noire des noms d'utilisateur",
 	"right-titleblacklistlog": "Afficher le journal de la liste noire des titres",
-	"apihelp-titleblacklist-description": "Valider un titre d’article, un nom de fichier, ou un nom d’utilisateur, d’après TitleBlacklist.",
+	"apihelp-titleblacklist-description": "Valider un titre de page, un nom de fichier, ou un nom d’utilisateur, d’après TitleBlacklist.",
+	"apihelp-titleblacklist-summary": "Valider un titre de page, un nom de fichier ou un nom d’utilisateur d’après TitleBlacklist.",
 	"apihelp-titleblacklist-param-title": "La chaîne à valider d’après la liste noire.",
 	"apihelp-titleblacklist-param-action": "L’action à vérifier.",
 	"apihelp-titleblacklist-param-nooverride": "N’essayez pas d’écraser la liste noire des titres.",

@@ -1,14 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
-			"Dinkawiki"
+			"Dinkawiki",
+			"Amire80"
 		]
 	},
-	"vector-action-addsection": "mätë wɛ̈tnhom",
+	"vector-action-addsection": "Mätë wɛ̈tnhom",
 	"vector-action-move": "Laar",
 	"vector-view-create": "Cak",
 	"vector-view-edit": "Cokic",
-	"vector-view-history": "ɣoië käthɛɛr",
+	"vector-view-history": "Ɣoië käthɛɛr",
 	"vector-view-view": "Kuën",
 	"vector-more-actions": "Ajuëc"
 }

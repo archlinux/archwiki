@@ -20,5 +20,6 @@
 	"fancycaptcha-sendemail": "자동화된 스팸으로부터 위키를 보호하기 위해, 아래 상자에 나타나는 낱말을 입력해주세요 ([[Special:Captcha/help|자세한 정보]]):",
 	"fancycaptcha-reload-text": "새로 고침",
 	"apihelp-fancycaptchareload-description": "새 FancyCaptcha를 얻습니다.",
+	"apihelp-fancycaptchareload-summary": "새 FancyCaptcha를 가져옵니다.",
 	"apihelp-fancycaptchareload-example-1": "새 FancyCaptcha 얻기"
 }

@@ -4,9 +4,11 @@
 			"Dalibor Bosits",
 			"Dnik",
 			"Ex13",
-			"SpeedyGonsales"
+			"SpeedyGonsales",
+			"Bugoslav"
 		]
 	},
+	"log-name-titleblacklist": "Evidencija crne liste naslova",
 	"titleblacklist-desc": "Omogućava administratorima postavljanje zabrane kreiranja stranica ili računa s [[MediaWiki:Titleblacklist|crnim popisom]] i [[MediaWiki:Titlewhitelist|bijelim popisom]]",
 	"titleblacklist": "# Ovo je popis zabranjenih naslova. Naslovi i računi koji se podudaraju s regularnim izrazom ne mogu se kreirati.\n# Koristite \"#\" za komentare.\n# Ovo je osjetljivo na velika slova",
 	"titlewhitelist": "# Ovo je tzv. ''bijela knjiga'' ili ''whitelist'' imena članaka. Rabite \"#\" za komentar\n# Ovo je osjetljivo na velika slova",

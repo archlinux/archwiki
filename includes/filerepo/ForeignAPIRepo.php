@@ -257,7 +257,7 @@ class ForeignAPIRepo extends FileRepo {
 	 * @param string $name
 	 * @param int $width
 	 * @param int $height
-	 * @param array $result Out parameter that will be changed by the function.
+	 * @param array &$result
 	 * @param string $otherParams
 	 *
 	 * @return bool
@@ -511,7 +511,7 @@ class ForeignAPIRepo extends FileRepo {
 	 * @param string $url
 	 * @param string $timeout
 	 * @param array $options
-	 * @param integer|bool &$mtime Resulting Last-Modified UNIX timestamp if received
+	 * @param int|bool &$mtime Resulting Last-Modified UNIX timestamp if received
 	 * @return bool|string
 	 */
 	public static function httpGet(
@@ -528,7 +528,7 @@ class ForeignAPIRepo extends FileRepo {
 		}
 
 		$req = MWHttpRequest::factory( $url, $options, __METHOD__ );
-		$req->setUserAgent( ForeignAPIRepo::getUserAgent() );
+		$req->setUserAgent( self::getUserAgent() );
 		$status = $req->execute();
 
 		if ( $status->isOK() ) {

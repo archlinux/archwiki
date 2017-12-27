@@ -8,11 +8,11 @@ namespace OOUI;
 class PanelLayout extends Layout {
 	/**
 	 * @param array $config Configuration options
-	 * @param boolean $config['scrollable'] Allow vertical scrolling (default: false)
-	 * @param boolean $config['padded'] Pad the content from the edges (default: false)
-	 * @param boolean $config['expanded'] Expand size to fill the entire parent element
+	 * @param bool $config['scrollable'] Allow vertical scrolling (default: false)
+	 * @param bool $config['padded'] Pad the content from the edges (default: false)
+	 * @param bool $config['expanded'] Expand size to fill the entire parent element
 	 *   (default: true)
-	 * @param boolean $config['framed'] Wrap in a frame to visually separate from outside content
+	 * @param bool $config['framed'] Wrap in a frame to visually separate from outside content
 	 *   (default: false)
 	 */
 	public function __construct( array $config = [] ) {

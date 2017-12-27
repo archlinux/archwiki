@@ -30,7 +30,9 @@
 			"MedShot",
 			"Esketti",
 			"FabianRM",
-			"Mbch331"
+			"Mbch331",
+			"Mainframe98",
+			"Effeietsanders"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Boek",
@@ -42,6 +44,7 @@
 	"cite-ve-dialog-reference-options-group-placeholder": "Algemene verwijzingen",
 	"cite-ve-dialog-reference-options-name-label": "Hergebruiken op naam",
 	"cite-ve-dialog-reference-options-section": "Opties",
+	"cite-ve-dialog-reference-placeholder": "Schrijf of voeg hier uw referentie in, of gebruik een citeersjabloon.",
 	"cite-ve-dialog-reference-title": "Referentie",
 	"cite-ve-dialog-reference-useexisting-full-label": "Een citaat dat al bestaat op deze pagina opnieuw gebruiken",
 	"cite-ve-dialog-reference-useexisting-label": "Bestaande referentie gebruiken",
@@ -60,5 +63,6 @@
 	"cite-ve-referenceslist-isempty-default": "Er zijn op deze pagina geen referenties die in deze lijst opgenomen kunnen worden.",
 	"cite-ve-referenceslist-missingref": "Deze referentie bevindt zich in een sjabloon of een ander soort gegenereerd blok en kan voorlopig alleen in de broncodemodus bewerkt worden.",
 	"cite-ve-toolbar-group-label": "Citeren",
-	"cite-ve-othergroup-item": "$1 referentie"
+	"cite-ve-othergroup-item": "$1 referentie",
+	"visualeditor-internal-list-diff-default-group-name-mwreference": "Referenties"
 }

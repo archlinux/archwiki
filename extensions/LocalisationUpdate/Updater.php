@@ -86,7 +86,7 @@ class Updater {
 	 *
 	 * @param array $origin
 	 * @param array $remote
-	 * @param array [$blacklist] Array of message keys to ignore, keys as as array keys.
+	 * @param array $blacklist Array of message keys to ignore, keys as as array keys.
 	 * @return array
 	 */
 	public function findChangedTranslations( $origin, $remote, $blacklist = [] ) {
@@ -129,7 +129,6 @@ class Updater {
 		FetcherFactory $fetcherFactory,
 		array $repos
 	) {
-
 		$components = $finder->getComponents();
 
 		$updatedMessages = [];

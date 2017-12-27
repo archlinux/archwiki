@@ -86,7 +86,6 @@ class KkConverter extends LanguageConverter {
 	}
 
 	function loadRegs() {
-
 		$this->mCyrl2Latn = [
 			# # Punctuation
 			'/№/u' => 'No.',
@@ -283,7 +282,7 @@ class KkConverter extends LanguageConverter {
 		$ret = '';
 
 		foreach ( $matches as $m ) {
-			$ret .= substr( $text, $mstart, $m[1] -$mstart );
+			$ret .= substr( $text, $mstart, $m[1] - $mstart );
 			$ret .= $this->regsConverter( $m[0], $toVariant );
 			$mstart = $m[1] + strlen( $m[0] );
 		}
@@ -423,7 +422,6 @@ class LanguageKk extends LanguageKk_cyrl {
 	 * @return string
 	 */
 	function convertGrammar( $word, $case ) {
-
 		$variant = $this->getPreferredVariant();
 		switch ( $variant ) {
 			case 'kk-arab':

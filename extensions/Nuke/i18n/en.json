@@ -26,9 +26,9 @@
 	"nuke-not-deleted": "Page [[:$1]] '''could not''' be deleted.",
 	"nuke-delete-more": "[[Special:Nuke|Delete more pages]]",
 	"nuke-pattern": "Pattern for the page name:",
-	"nuke-nopages-global": "There are no new pages in [[Special:RecentChanges|recent changes]].",
+	"nuke-nopages-global": "There are no page titles matching your search.",
 	"nuke-viewchanges": "view changes",
 	"nuke-namespace": "Limit to namespace:",
 	"nuke-linkoncontribs": "mass delete",
-	"nuke-linkoncontribs-text": "Mass delete pages where this user is the only author"
+	"nuke-linkoncontribs-text": "Mass delete pages where {{GENDER:$1|this user}} is the only author"
 }

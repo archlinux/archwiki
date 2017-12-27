@@ -16,7 +16,8 @@ Demo.BrokenDialog.prototype.initialize = function () {
 	Demo.BrokenDialog.parent.prototype.initialize.apply( this, arguments );
 	this.content = new OO.ui.PanelLayout( { padded: true } );
 	this.fieldset = new OO.ui.FieldsetLayout( {
-		label: 'Dialog with error handling', icon: 'alert'
+		label: 'Dialog with error handling',
+		icon: 'alert'
 	} );
 	this.description = new OO.ui.LabelWidget( {
 		label: 'Deleting will fail and will not be recoverable. ' +
@@ -38,7 +39,7 @@ Demo.BrokenDialog.prototype.getActionProcess = function ( action ) {
 			return 1000;
 		}, this )
 		.next( function () {
-			var closing;
+			var state;
 
 			if ( action === 'save' ) {
 				if ( this.broken ) {
@@ -49,10 +50,11 @@ Demo.BrokenDialog.prototype.getActionProcess = function ( action ) {
 				return new OO.ui.Error( 'Permission denied', { recoverable: false } );
 			}
 
-			closing = this.close( { action: action } );
+			state = this.close( { action: action } );
 			if ( action === 'save' ) {
-				// Return a promise to remaing pending while closing
-				return closing;
+				// Return a promise that is resolved when the dialog is closed,
+				// so that it remains in "pending" state while closing
+				return state.closed;
 			}
 			return Demo.BrokenDialog.parent.prototype.getActionProcess.call( this, action );
 		}, this );

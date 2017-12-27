@@ -1,0 +1,20 @@
+{
+	"@metadata": {
+		"authors": [
+			"Benel",
+			"Bunukwiki",
+			"Tokoabibi"
+		]
+	},
+	"vector-action-addsection": "micunus sasakamuen",
+	"vector-action-delete": "misipu",
+	"vector-action-move": "milimad",
+	"vector-action-protect": "midiput",
+	"vector-action-undelete": "palawpes tu masipuay",
+	"vector-action-unprotect": "misumad tu midiputay",
+	"vector-view-create": "patizeng",
+	"vector-view-edit": "mikawaway-kalumyiti",
+	"vector-view-history": "ciwsace nazipa’an",
+	"vector-view-view": "miasip",
+	"vector-more-actions": "yadah"
+}

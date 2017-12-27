@@ -417,6 +417,7 @@ Demo.static.pages.toolbars = function ( demo ) {
 				framed: true
 			} ).$element
 				.addClass( 'demo-container demo-toolbars' )
+				.attr( 'role', 'main' )
 		);
 
 		$containers.last().append( toolbars[ i ].$element );

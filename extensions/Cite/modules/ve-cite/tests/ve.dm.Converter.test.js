@@ -11,8 +11,6 @@ QUnit.test( 'getModelFromDom', function ( assert ) {
 	var msg, caseItem,
 		cases = ve.dm.citeExample.domToDataCases;
 
-	QUnit.expect( ve.test.utils.countGetModelFromDomTests( cases ) );
-
 	for ( msg in cases ) {
 		caseItem = ve.copy( cases[ msg ] );
 		if ( caseItem.mwConfig ) {
@@ -26,8 +24,6 @@ QUnit.test( 'getModelFromDom', function ( assert ) {
 QUnit.test( 'getDomFromModel', function ( assert ) {
 	var msg, caseItem,
 		cases = ve.dm.citeExample.domToDataCases;
-
-	QUnit.expect( 3 * Object.keys( cases ).length );
 
 	for ( msg in cases ) {
 		caseItem = ve.copy( cases[ msg ] );

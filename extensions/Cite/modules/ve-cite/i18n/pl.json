@@ -24,7 +24,8 @@
 			"Devwebtel",
 			"Jdforrester",
 			"The Polish",
-			"Doctore"
+			"Doctore",
+			"InternerowyGołąb"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Książka",
@@ -54,5 +55,7 @@
 	"cite-ve-referenceslist-isempty-default": "Na tej stronie nie ma żadnych przypisów, aby uwzględnić je na tej liście.",
 	"cite-ve-referenceslist-missingref": "Ten przypis jest zdefiniowany w szablonie lub wygenerowany w inny sposób. Teraz może być edytowany wyłącznie w edytorze kodu źródłowego.",
 	"cite-ve-toolbar-group-label": "Przypis",
-	"cite-ve-othergroup-item": "Przypis $1"
+	"cite-ve-othergroup-item": "Przypis $1",
+	"visualeditor-internal-list-diff-default-group-name-mwreference": "Przypisy",
+	"visualeditor-internal-list-diff-group-name-mwreference": "Grupa przypisów: $1"
 }

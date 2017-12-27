@@ -33,7 +33,7 @@ trait LabelElement {
 		$this->label->addClasses( [ 'oo-ui-labelElement-label' ] );
 		$this->setLabel( isset( $config['label'] ) ? $config['label'] : null );
 
-		$this->registerConfigCallback( function( &$config ) {
+		$this->registerConfigCallback( function ( &$config ) {
 			if ( $this->labelValue !== null ) {
 				$config['label'] = $this->labelValue;
 			}

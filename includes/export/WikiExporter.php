@@ -91,8 +91,8 @@ class WikiExporter {
 	 * @param int $buffer One of WikiExporter::BUFFER or WikiExporter::STREAM
 	 * @param int $text One of WikiExporter::TEXT or WikiExporter::STUB
 	 */
-	function __construct( $db, $history = WikiExporter::CURRENT,
-			$buffer = WikiExporter::BUFFER, $text = WikiExporter::TEXT ) {
+	function __construct( $db, $history = self::CURRENT,
+			$buffer = self::BUFFER, $text = self::TEXT ) {
 		$this->db = $db;
 		$this->history = $history;
 		$this->buffer = $buffer;
@@ -106,7 +106,7 @@ class WikiExporter {
 	 * various row objects and XML output for filtering. Filters
 	 * can be chained or used as callbacks.
 	 *
-	 * @param DumpOutput $sink
+	 * @param DumpOutput &$sink
 	 */
 	public function setOutputSink( &$sink ) {
 		$this->sink =& $sink;
@@ -253,13 +253,14 @@ class WikiExporter {
 
 	/**
 	 * @param string $cond
+	 * @param bool $orderRevs
 	 * @throws MWException
 	 * @throws Exception
 	 */
 	protected function dumpFrom( $cond = '', $orderRevs = false ) {
 		# For logging dumps...
 		if ( $this->history & self::LOGS ) {
-			$where = [ 'user_id = log_user' ];
+			$where = [];
 			# Hide private logs
 			$hideLogs = LogEventsList::getExcludeClause( $this->db );
 			if ( $hideLogs ) {
@@ -272,19 +273,23 @@ class WikiExporter {
 			# Get logging table name for logging.* clause
 			$logging = $this->db->tableName( 'logging' );
 
-			if ( $this->buffer == WikiExporter::STREAM ) {
+			if ( $this->buffer == self::STREAM ) {
 				$prev = $this->db->bufferResults( false );
 			}
 			$result = null; // Assuring $result is not undefined, if exception occurs early
+
+			$commentQuery = CommentStore::newKey( 'log_comment' )->getJoin();
+
 			try {
-				$result = $this->db->select( [ 'logging', 'user' ],
-					[ "{$logging}.*", 'user_name' ], // grab the user name
+				$result = $this->db->select( [ 'logging', 'user' ] + $commentQuery['tables'],
+					[ "{$logging}.*", 'user_name' ] + $commentQuery['fields'], // grab the user name
 					$where,
 					__METHOD__,
-					[ 'ORDER BY' => 'log_id', 'USE INDEX' => [ 'logging' => 'PRIMARY' ] ]
+					[ 'ORDER BY' => 'log_id', 'USE INDEX' => [ 'logging' => 'PRIMARY' ] ],
+					[ 'user' => [ 'JOIN', 'user_id = log_user' ] ] + $commentQuery['joins']
 				);
 				$this->outputLogStream( $result );
-				if ( $this->buffer == WikiExporter::STREAM ) {
+				if ( $this->buffer == self::STREAM ) {
 					$this->db->bufferResults( $prev );
 				}
 			} catch ( Exception $e ) {
@@ -303,7 +308,7 @@ class WikiExporter {
 
 				// Putting database back in previous buffer mode
 				try {
-					if ( $this->buffer == WikiExporter::STREAM ) {
+					if ( $this->buffer == self::STREAM ) {
 						$this->db->bufferResults( $prev );
 					}
 				} catch ( Exception $e2 ) {
@@ -341,10 +346,10 @@ class WikiExporter {
 				if ( !empty( $this->history['limit'] ) ) {
 					$opts['LIMIT'] = intval( $this->history['limit'] );
 				}
-			} elseif ( $this->history & WikiExporter::FULL ) {
+			} elseif ( $this->history & self::FULL ) {
 				# Full history dumps...
 				# query optimization for history stub dumps
-				if ( $this->text == WikiExporter::STUB && $orderRevs ) {
+				if ( $this->text == self::STUB && $orderRevs ) {
 					$tables = [ 'revision', 'page' ];
 					$opts[] = 'STRAIGHT_JOIN';
 					$opts['ORDER BY'] = [ 'rev_page ASC', 'rev_id ASC' ];
@@ -353,13 +358,13 @@ class WikiExporter {
 				} else {
 					$join['revision'] = [ 'INNER JOIN', 'page_id=rev_page' ];
 				}
-			} elseif ( $this->history & WikiExporter::CURRENT ) {
+			} elseif ( $this->history & self::CURRENT ) {
 				# Latest revision dumps...
 				if ( $this->list_authors && $cond != '' ) { // List authors, if so desired
 					$this->do_list_authors( $cond );
 				}
 				$join['revision'] = [ 'INNER JOIN', 'page_id=rev_page AND page_latest=rev_id' ];
-			} elseif ( $this->history & WikiExporter::STABLE ) {
+			} elseif ( $this->history & self::STABLE ) {
 				# "Stable" revision dumps...
 				# Default JOIN, to be overridden...
 				$join['revision'] = [ 'INNER JOIN', 'page_id=rev_page AND page_latest=rev_id' ];
@@ -367,7 +372,7 @@ class WikiExporter {
 				if ( Hooks::run( 'WikiExporter::dumpStableQuery', [ &$tables, &$opts, &$join ] ) ) {
 					throw new MWException( __METHOD__ . " given invalid history dump type." );
 				}
-			} elseif ( $this->history & WikiExporter::RANGE ) {
+			} elseif ( $this->history & self::RANGE ) {
 				# Dump of revisions within a specified range
 				$join['revision'] = [ 'INNER JOIN', 'page_id=rev_page' ];
 				$opts['ORDER BY'] = [ 'rev_page ASC', 'rev_id ASC' ];
@@ -381,12 +386,12 @@ class WikiExporter {
 				$opts['USE INDEX']['page'] = 'PRIMARY';
 			}
 			# Build text join options
-			if ( $this->text != WikiExporter::STUB ) { // 1-pass
+			if ( $this->text != self::STUB ) { // 1-pass
 				$tables[] = 'text';
 				$join['text'] = [ 'INNER JOIN', 'rev_text_id=old_id' ];
 			}
 
-			if ( $this->buffer == WikiExporter::STREAM ) {
+			if ( $this->buffer == self::STREAM ) {
 				$prev = $this->db->bufferResults( false );
 			}
 			$result = null; // Assuring $result is not undefined, if exception occurs early
@@ -394,12 +399,21 @@ class WikiExporter {
 				Hooks::run( 'ModifyExportQuery',
 						[ $this->db, &$tables, &$cond, &$opts, &$join ] );
 
+				$commentQuery = CommentStore::newKey( 'rev_comment' )->getJoin();
+
 				# Do the query!
-				$result = $this->db->select( $tables, '*', $cond, __METHOD__, $opts, $join );
+				$result = $this->db->select(
+					$tables + $commentQuery['tables'],
+					[ '*' ] + $commentQuery['fields'],
+					$cond,
+					__METHOD__,
+					$opts,
+					$join + $commentQuery['joins']
+				);
 				# Output dump results
 				$this->outputPageStream( $result );
 
-				if ( $this->buffer == WikiExporter::STREAM ) {
+				if ( $this->buffer == self::STREAM ) {
 					$this->db->bufferResults( $prev );
 				}
 			} catch ( Exception $e ) {
@@ -418,7 +432,7 @@ class WikiExporter {
 
 				// Putting database back in previous buffer mode
 				try {
-					if ( $this->buffer == WikiExporter::STREAM ) {
+					if ( $this->buffer == self::STREAM ) {
 						$this->db->bufferResults( $prev );
 					}
 				} catch ( Exception $e2 ) {

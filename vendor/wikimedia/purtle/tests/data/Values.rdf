@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:xsd="http://www.w3.org/2001/XMLSchema#" xmlns:acme="http://acme.test/">
+	<rdf:Description rdf:about="http://foobar.test/Bananas">
+		<acme:multi>A</acme:multi>
+		<acme:multi>B</acme:multi>
+		<acme:multi>C</acme:multi>
+		<acme:type rdf:datatype="http://acme.test/thing">foo</acme:type>
+		<acme:type rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">-5</acme:type>
+		<acme:type rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">-5</acme:type>
+		<acme:type rdf:datatype="http://www.w3.org/2001/XMLSchema#double">-5</acme:type>
+		<acme:type rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</acme:type>
+		<acme:type rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</acme:type>
+		<acme:autotype rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">-5</acme:autotype>
+		<acme:autotype rdf:datatype="http://www.w3.org/2001/XMLSchema#double">3.14</acme:autotype>
+		<acme:autotype rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</acme:autotype>
+		<acme:autotype rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</acme:autotype>
+		<acme:no-autotype rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">-5</acme:no-autotype>
+		<acme:no-autotype rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3.14</acme:no-autotype>
+		<acme:no-autotype rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</acme:no-autotype>
+		<acme:no-autotype rdf:datatype="http://www.w3.org/2001/XMLSchema#string"/>
+		<acme:shorthand>foo</acme:shorthand>
+		<acme:typed-shorthand rdf:datatype="http://acme.test/thing">foo</acme:typed-shorthand>
+	</rdf:Description>
+</rdf:RDF>

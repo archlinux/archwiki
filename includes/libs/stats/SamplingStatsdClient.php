@@ -47,7 +47,7 @@ class SamplingStatsdClient extends StatsdClient {
 	 * Sets sampling rate for all items in $data.
 	 * The sample rate specified in a StatsdData entity overrides the sample rate specified here.
 	 *
-	 * {@inheritDoc}
+	 * @inheritDoc
 	 */
 	public function appendSampleRate( $data, $sampleRate = 1 ) {
 		$samplingRates = $this->samplingRates;
@@ -55,8 +55,8 @@ class SamplingStatsdClient extends StatsdClient {
 			$samplingRates = [ '*' => $sampleRate ];
 		}
 		if ( $samplingRates ) {
-			array_walk( $data, function( $item ) use ( $samplingRates ) {
-				/** @var $item StatsdData */
+			array_walk( $data, function ( $item ) use ( $samplingRates ) {
+				/** @var StatsdData $item */
 				foreach ( $samplingRates as $pattern => $rate ) {
 					if ( fnmatch( $pattern, $item->getKey(), FNM_NOESCAPE ) ) {
 						$item->setSampleRate( $item->getSampleRate() * $rate );
@@ -69,7 +69,7 @@ class SamplingStatsdClient extends StatsdClient {
 		return $data;
 	}
 
-	/*
+	/**
 	 * Send the metrics over UDP
 	 * Sample the metrics according to their sample rate and send the remaining ones.
 	 *
@@ -77,7 +77,7 @@ class SamplingStatsdClient extends StatsdClient {
 	 *        strings are not allowed here as sampleData requires a StatsdDataInterface
 	 * @param int $sampleRate
 	 *
-	 * @return integer the data sent in bytes
+	 * @return int the data sent in bytes
 	 */
 	public function send( $data, $sampleRate = 1 ) {
 		if ( !is_array( $data ) ) {
@@ -147,7 +147,7 @@ class SamplingStatsdClient extends StatsdClient {
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * @inheritDoc
 	 */
 	protected function throwException( Exception $exception ) {
 		if ( !$this->getFailSilently() ) {

@@ -102,7 +102,7 @@ ve.dm.MWReferenceNode.static.toDataElement = function ( domElements, converter )
 
 ve.dm.MWReferenceNode.static.toDomElements = function ( dataElement, doc, converter ) {
 	var itemNodeHtml, originalHtml, mwData, i, iLen, keyedNodes, setContents, contentsAlreadySet,
-		originalMw, listKeyParts, name,
+		originalMw, listKeyParts, name, group, $link,
 		isForClipboard = converter.isForClipboard(),
 		el = doc.createElement( 'span' ),
 		itemNodeWrapper = doc.createElement( 'div' ),
@@ -221,9 +221,17 @@ ve.dm.MWReferenceNode.static.toDomElements = function ( dataElement, doc, conver
 		}
 	} else {
 		el.setAttribute( 'data-mw', JSON.stringify( mwData ) );
+
 		// HTML for the external clipboard, it will be ignored by the converter
-		$( el ).append(
-			$( '<a>', doc ).append(
+		group = this.getGroup( dataElement );
+		$link = $( '<a>', doc ).css(
+			'counterReset', 'mw-Ref ' + this.getIndex( dataElement, converter.internalList )
+		);
+		if ( group ) {
+			$link.attr( 'data-mw-group', this.getGroup( dataElement ) );
+		}
+		$( el ).addClass( 'mw-ref' ).append(
+			$link.append(
 				$( '<span>', doc ).addClass( 'mw-reflink-text' ).text( this.getIndexLabel( dataElement, converter.internalList ) )
 			)
 		);
@@ -264,9 +272,16 @@ ve.dm.MWReferenceNode.static.remapInternalListKeys = function ( dataElement, int
  * @return {number} Index
  */
 ve.dm.MWReferenceNode.static.getIndex = function ( dataElement, internalList ) {
-	var listIndex = dataElement.attributes.listIndex,
-		listGroup = dataElement.attributes.listGroup,
-		position = internalList.getIndexPosition( listGroup, listIndex );
+	var listIndex, listGroup, position,
+		overrideIndex = ve.getProp( dataElement, 'internal', 'overrideIndex' );
+
+	if ( overrideIndex ) {
+		return overrideIndex;
+	}
+
+	listIndex = dataElement.attributes.listIndex;
+	listGroup = dataElement.attributes.listGroup;
+	position = internalList.getIndexPosition( listGroup, listIndex );
 
 	return position + 1;
 };
@@ -306,6 +321,25 @@ ve.dm.MWReferenceNode.static.cloneElement = function () {
 	delete clone.attributes.mw;
 	delete clone.attributes.originalMw;
 	return clone;
+};
+
+/**
+ * @inheritdoc
+ */
+ve.dm.MWReferenceNode.static.describeChange = function ( key, change ) {
+	if ( key === 'refGroup' ) {
+		if ( change.from ) {
+			if ( change.to ) {
+				return ve.msg( 'cite-ve-changedesc-reflist-group-both', change.from, change.to );
+			} else {
+				return ve.msg( 'cite-ve-changedesc-reflist-group-from', change.from );
+			}
+		}
+		return ve.msg( 'cite-ve-changedesc-reflist-group-to', change.to );
+	}
+	if ( key === 'refListItemId' ) {
+		return ve.msg( 'cite-ve-changedesc-reflist-item-id' );
+	}
 };
 
 /* Methods */

@@ -230,7 +230,7 @@ function _recaptcha_mailhide_urlbase64 ( $x ) {
 function recaptcha_mailhide_url( $pubkey, $privkey, $email ) {
 	if ( $pubkey == '' || $pubkey == null || $privkey == "" || $privkey == null ) {
 		die ( "To use reCAPTCHA Mailhide, you have to sign up for a public and private key, " .
-		     "you can do so at <a href='http://www.google.com/recaptcha/mailhide/apikey'>http://www.google.com/recaptcha/mailhide/apikey</a>" );
+			"you can do so at <a href='http://www.google.com/recaptcha/mailhide/apikey'>http://www.google.com/recaptcha/mailhide/apikey</a>" );
 	}
 
 

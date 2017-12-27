@@ -4,8 +4,10 @@
 			"Millosh",
 			"Rancher",
 			"Sasa Stefanovic",
-			"Сербијана"
+			"Сербијана",
+			"Obsuser"
 		]
 	},
-	"syntaxhighlight-desc": "Омогућава визуелно означавање синтаксе <code>&lt;syntaxhighlight&gt;</code> коришћењем [http://pygments.org/ Pygments хајлајтера]."
+	"syntaxhighlight-desc": "Омогућава визуелно означавање синтаксе <code>&lt;syntaxhighlight&gt;</code> коришћењем [http://pygments.org/ Pygments хајлајтера].",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-startingline": "Број почетне линије"
 }

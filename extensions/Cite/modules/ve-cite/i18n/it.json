@@ -40,6 +40,7 @@
 	"cite-ve-dialog-reference-options-group-placeholder": "Riferimenti generali",
 	"cite-ve-dialog-reference-options-name-label": "Riutilizza questo nome",
 	"cite-ve-dialog-reference-options-section": "Opzioni",
+	"cite-ve-dialog-reference-placeholder": "Scrivi o copia la tua nota qui, oppure inserisci un template per le citazioni.",
 	"cite-ve-dialog-reference-title": "Riferimento",
 	"cite-ve-dialog-reference-useexisting-full-label": "Riutilizza una citazione già presente nella pagina.",
 	"cite-ve-dialog-reference-useexisting-label": "Usa un riferimento esistente",
@@ -58,5 +59,7 @@
 	"cite-ve-referenceslist-isempty-default": "In questa pagina non ci sono note da elencare.",
 	"cite-ve-referenceslist-missingref": "Questa nota è definita in un template o in un altro blocco generato e per ora può essere modificata solo in modalità sorgente.",
 	"cite-ve-toolbar-group-label": "Cita",
-	"cite-ve-othergroup-item": "$1 note"
+	"cite-ve-othergroup-item": "$1 note",
+	"visualeditor-internal-list-diff-default-group-name-mwreference": "Riferimenti",
+	"visualeditor-internal-list-diff-group-name-mwreference": "Nome gruppo riferimenti: \"$1\""
 }

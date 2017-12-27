@@ -12,7 +12,7 @@
 	"inputbox-error-bad-type": "Tip ulaznog polja \"$1\" nije prepoznat. \nMolimo navedite \"create\", \"comment\", \"search\", \"search2\" ili \"fulltext\".",
 	"inputbox-tryexact": "Pokušaj naći točan pogodak",
 	"inputbox-searchfulltext": "Traži po cjelokupnom tekstu",
-	"inputbox-createarticle": "Stvori članak",
+	"inputbox-createarticle": "Stvori stranicu",
 	"inputbox-postcomment": "Novi odlomak",
 	"inputbox-postcommenttitle": "Novi odlomak"
 }

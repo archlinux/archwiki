@@ -10,18 +10,9 @@
 			"ltr": "images/icons/arrow-rtl.svg",
 			"rtl": "images/icons/arrow-ltr.svg"
 		} },
-		"caretNext": { "file": {
-			"ltr": "images/icons/caret-rtl.svg",
-			"rtl": "images/icons/caret-ltr.svg"
-		} },
-		"caretLast": { "file": {
-			"ltr": "images/icons/caret-ltr.svg",
-			"rtl": "images/icons/caret-rtl.svg"
-		} },
-		"caretDown": { "file": "images/icons/caretDown.svg" },
-		"caretUp": { "file": "images/icons/caretUp.svg" },
 		"collapse": { "file": "images/icons/collapse.svg" },
 		"downTriangle": { "file": "images/icons/downTriangle.svg" },
+		"draggable": { "file": "images/icons/draggable.svg" },
 		"expand": { "file": "images/icons/expand.svg" },
 		"move": { "file": "images/icons/move.svg" },
 		"next": { "file": {
@@ -32,6 +23,16 @@
 		"previous": { "file": {
 			"ltr": "images/icons/move-rtl.svg",
 			"rtl": "images/icons/move-ltr.svg"
+			}
+		},
+		"last": { "file": {
+			"ltr": "images/icons/move-end-ltr.svg",
+			"rtl": "images/icons/move-end-rtl.svg"
+			}
+		},
+		"first": { "file": {
+			"ltr": "images/icons/move-end-rtl.svg",
+			"rtl": "images/icons/move-end-ltr.svg"
 			}
 		},
 		"upTriangle": { "file": "images/icons/upTriangle.svg" }

@@ -293,7 +293,7 @@ class OutputPageTest extends MediaWikiTestCase {
 			[
 				[ 'test.quux', ResourceLoaderModule::TYPE_SCRIPTS ],
 				"<script>(window.RLQ=window.RLQ||[]).push(function(){"
-					. "mw.test.baz({token:123});mw.loader.state({\"test.quux\":\"ready\"});"
+					. "mw.test.baz({token:123});\nmw.loader.state({\"test.quux\":\"ready\"});"
 					. "});</script>"
 			],
 		];
@@ -342,6 +342,88 @@ class OutputPageTest extends MediaWikiTestCase {
 		$links = $method->invokeArgs( $out, $args );
 		$actualHtml = strval( $links );
 		$this->assertEquals( $expectedHtml, $actualHtml );
+	}
+
+	public static function provideBuildExemptModules() {
+		return [
+			'empty' => [
+				'exemptStyleModules' => [],
+				'<meta name="ResourceLoaderDynamicStyles" content=""/>',
+			],
+			'empty sets' => [
+				'exemptStyleModules' => [ 'site' => [], 'noscript' => [], 'private' => [], 'user' => [] ],
+				'<meta name="ResourceLoaderDynamicStyles" content=""/>',
+			],
+			// @codingStandardsIgnoreStart Generic.Files.LineLength
+			'default logged-out' => [
+				'exemptStyleModules' => [ 'site' => [ 'site.styles' ] ],
+				'<meta name="ResourceLoaderDynamicStyles" content=""/>' . "\n" .
+				'<link rel="stylesheet" href="/w/load.php?debug=false&amp;lang=en&amp;modules=site.styles&amp;only=styles&amp;skin=fallback"/>',
+			],
+			'default logged-in' => [
+				'exemptStyleModules' => [ 'site' => [ 'site.styles' ], 'user' => [ 'user.styles' ] ],
+				'<meta name="ResourceLoaderDynamicStyles" content=""/>' . "\n" .
+				'<link rel="stylesheet" href="/w/load.php?debug=false&amp;lang=en&amp;modules=site.styles&amp;only=styles&amp;skin=fallback"/>' . "\n" .
+				'<link rel="stylesheet" href="/w/load.php?debug=false&amp;lang=en&amp;modules=user.styles&amp;only=styles&amp;skin=fallback&amp;version=1e9z0ox"/>',
+			],
+			'custom modules' => [
+				'exemptStyleModules' => [
+					'site' => [ 'site.styles', 'example.site.a', 'example.site.b' ],
+					'user' => [ 'user.styles', 'example.user' ],
+				],
+				'<meta name="ResourceLoaderDynamicStyles" content=""/>' . "\n" .
+				'<link rel="stylesheet" href="/w/load.php?debug=false&amp;lang=en&amp;modules=example.site.a%2Cb&amp;only=styles&amp;skin=fallback"/>' . "\n" .
+				'<link rel="stylesheet" href="/w/load.php?debug=false&amp;lang=en&amp;modules=site.styles&amp;only=styles&amp;skin=fallback"/>' . "\n" .
+				'<link rel="stylesheet" href="/w/load.php?debug=false&amp;lang=en&amp;modules=example.user&amp;only=styles&amp;skin=fallback&amp;version=0a56zyi"/>' . "\n" .
+				'<link rel="stylesheet" href="/w/load.php?debug=false&amp;lang=en&amp;modules=user.styles&amp;only=styles&amp;skin=fallback&amp;version=1e9z0ox"/>',
+			],
+			// @codingStandardsIgnoreEnd Generic.Files.LineLength
+		];
+	}
+
+	/**
+	 * @dataProvider provideBuildExemptModules
+	 * @covers OutputPage::buildExemptModules
+	 */
+	public function testBuildExemptModules( array $exemptStyleModules, $expect ) {
+		$this->setMwGlobals( [
+			'wgResourceLoaderDebug' => false,
+			'wgLoadScript' => '/w/load.php',
+			// Stub wgCacheEpoch as it influences getVersionHash used for the
+			// urls in the expected HTML
+			'wgCacheEpoch' => '20140101000000',
+		] );
+
+		// Set up stubs
+		$ctx = new RequestContext();
+		$ctx->setSkin( SkinFactory::getDefaultInstance()->makeSkin( 'fallback' ) );
+		$ctx->setLanguage( 'en' );
+		$outputPage = $this->getMockBuilder( 'OutputPage' )
+			->setConstructorArgs( [ $ctx ] )
+			->setMethods( [ 'isUserCssPreview', 'buildCssLinksArray' ] )
+			->getMock();
+		$outputPage->expects( $this->any() )
+			->method( 'isUserCssPreview' )
+			->willReturn( false );
+		$outputPage->expects( $this->any() )
+			->method( 'buildCssLinksArray' )
+			->willReturn( [] );
+		$rl = $outputPage->getResourceLoader();
+		$rl->setMessageBlobStore( new NullMessageBlobStore() );
+
+		// Register custom modules
+		$rl->register( [
+			'example.site.a' => new ResourceLoaderTestModule( [ 'group' => 'site' ] ),
+			'example.site.b' => new ResourceLoaderTestModule( [ 'group' => 'site' ] ),
+			'example.user' => new ResourceLoaderTestModule( [ 'group' => 'user' ] ),
+		] );
+
+		$outputPage = TestingAccessWrapper::newFromObject( $outputPage );
+		$outputPage->rlExemptStyleModules = $exemptStyleModules;
+		$this->assertEquals(
+			$expect,
+			strval( $outputPage->buildExemptModules() )
+		);
 	}
 
 	/**
@@ -449,11 +531,11 @@ class OutputPageTest extends MediaWikiTestCase {
 	 */
 	public function testGetCategories() {
 		$fakeResultWrapper = new FakeResultWrapper( [
-			(object) [
+			(object)[
 				'pp_value' => 1,
 				'page_title' => 'Test'
 			],
-			(object) [
+			(object)[
 				'page_title' => 'Test2'
 			]
 		] );

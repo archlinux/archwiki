@@ -17,7 +17,6 @@
  *
  * @file
  * @ingroup Cache
- * @author Aaron Schulz
  */
 
 use Psr\Log\LoggerAwareInterface;
@@ -93,10 +92,12 @@ class WANObjectCache implements IExpiringStore, LoggerAwareInterface {
 	/** @var int ERR_* constant for the "last error" registry */
 	protected $lastRelayError = self::ERR_NONE;
 
-	/** @var integer Callback stack depth for getWithSetCallback() */
+	/** @var int Callback stack depth for getWithSetCallback() */
 	private $callbackDepth = 0;
 	/** @var mixed[] Temporary warm-up cache */
 	private $warmupCache = [];
+	/** @var int Key fetched */
+	private $warmupKeyMisses = 0;
 
 	/** Max time expected to pass between delete() and DB commit finishing */
 	const MAX_COMMIT_DELAY = 3;
@@ -147,7 +148,7 @@ class WANObjectCache implements IExpiringStore, LoggerAwareInterface {
 	const FLD_FLAGS = 4; // key to the flags bitfield
 	const FLD_HOLDOFF = 5; // key to any hold-off TTL
 
-	/** @var integer Treat this value as expired-on-arrival */
+	/** @var int Treat this value as expired-on-arrival */
 	const FLG_STALE = 1;
 
 	const ERR_NONE = 0; // no error
@@ -200,8 +201,7 @@ class WANObjectCache implements IExpiringStore, LoggerAwareInterface {
 	public static function newEmpty() {
 		return new self( [
 			'cache'   => new EmptyBagOStuff(),
-			'pool'    => 'empty',
-			'relayer' => new EventRelayerNull( [] )
+			'pool'    => 'empty'
 		] );
 	}
 
@@ -240,7 +240,7 @@ class WANObjectCache implements IExpiringStore, LoggerAwareInterface {
 	 * That method has cache slam avoiding features for hot/expensive keys.
 	 *
 	 * @param string $key Cache key
-	 * @param mixed $curTTL Approximate TTL left on the key if present/tombstoned [returned]
+	 * @param mixed &$curTTL Approximate TTL left on the key if present/tombstoned [returned]
 	 * @param array $checkKeys List of "check" keys
 	 * @param float &$asOf UNIX timestamp of cached value; null on failure [returned]
 	 * @return mixed Value of cache key or false on failure
@@ -261,11 +261,11 @@ class WANObjectCache implements IExpiringStore, LoggerAwareInterface {
 	 * @see WANObjectCache::get()
 	 *
 	 * @param array $keys List of cache keys
-	 * @param array $curTTLs Map of (key => approximate TTL left) for existing keys [returned]
+	 * @param array &$curTTLs Map of (key => approximate TTL left) for existing keys [returned]
 	 * @param array $checkKeys List of check keys to apply to all $keys. May also apply "check"
 	 *  keys to specific cache keys only by using cache keys as keys in the $checkKeys array.
 	 * @param float[] &$asOfs Map of (key =>  UNIX timestamp of cached value; null on failure)
-	 * @return array Map of (key => value) for keys that exist
+	 * @return array Map of (key => value) for keys that exist and are not tombstoned
 	 */
 	final public function getMulti(
 		array $keys, &$curTTLs = [], array $checkKeys = [], array &$asOfs = []
@@ -298,10 +298,13 @@ class WANObjectCache implements IExpiringStore, LoggerAwareInterface {
 		if ( $this->warmupCache ) {
 			$wrappedValues = array_intersect_key( $this->warmupCache, array_flip( $keysGet ) );
 			$keysGet = array_diff( $keysGet, array_keys( $wrappedValues ) ); // keys left to fetch
+			$this->warmupKeyMisses += count( $keysGet );
 		} else {
 			$wrappedValues = [];
 		}
-		$wrappedValues += $this->cache->getMulti( $keysGet );
+		if ( $keysGet ) {
+			$wrappedValues += $this->cache->getMulti( $keysGet );
+		}
 		// Time used to compare/init "check" keys (derived after getMulti() to be pessimistic)
 		$now = microtime( true );
 
@@ -401,7 +404,7 @@ class WANObjectCache implements IExpiringStore, LoggerAwareInterface {
 	 *
 	 * @param string $key Cache key
 	 * @param mixed $value
-	 * @param integer $ttl Seconds to live. Special values are:
+	 * @param int $ttl Seconds to live. Special values are:
 	 *   - WANObjectCache::TTL_INDEFINITE: Cache forever
 	 * @param array $opts Options map:
 	 *   - lag : Seconds of replica DB lag. Typically, this is either the replica DB lag
@@ -534,7 +537,7 @@ class WANObjectCache implements IExpiringStore, LoggerAwareInterface {
 	 * idempotence, the $ttl should not vary for different delete() calls on the same key.
 	 *
 	 * @param string $key Cache key
-	 * @param integer $ttl Tombstone TTL; Default: WANObjectCache::HOLDOFF_TTL
+	 * @param int $ttl Tombstone TTL; Default: WANObjectCache::HOLDOFF_TTL
 	 * @return bool True if the item was purged or not found, false on failure
 	 */
 	final public function delete( $key, $ttl = self::HOLDOFF_TTL ) {
@@ -794,7 +797,7 @@ class WANObjectCache implements IExpiringStore, LoggerAwareInterface {
 	 * @see WANObjectCache::set()
 	 *
 	 * @param string $key Cache key
-	 * @param integer $ttl Seconds to live for key updates. Special values are:
+	 * @param int $ttl Seconds to live for key updates. Special values are:
 	 *   - WANObjectCache::TTL_INDEFINITE: Cache forever
 	 *   - WANObjectCache::TTL_UNCACHEABLE: Do not cache at all
 	 * @param callable $callback Value generation function
@@ -926,7 +929,7 @@ class WANObjectCache implements IExpiringStore, LoggerAwareInterface {
 	 * @see WANObjectCache::getWithSetCallback()
 	 *
 	 * @param string $key
-	 * @param integer $ttl
+	 * @param int $ttl
 	 * @param callback $callback
 	 * @param array $opts Options map for getWithSetCallback()
 	 * @param float &$asOf Cache generation timestamp of returned value [returned]
@@ -1044,7 +1047,7 @@ class WANObjectCache implements IExpiringStore, LoggerAwareInterface {
 	}
 
 	/**
-	 * Method to fetch/regenerate multiple cache keys at once
+	 * Method to fetch multiple cache keys at once with regeneration
 	 *
 	 * This works the same as getWithSetCallback() except:
 	 *   - a) The $keys argument expects the result of WANObjectCache::makeMultiKeys()
@@ -1059,6 +1062,7 @@ class WANObjectCache implements IExpiringStore, LoggerAwareInterface {
 	 *   - c) The return value is a map of (cache key => value) in the order of $keyedIds
 	 *
 	 * @see WANObjectCache::getWithSetCallback()
+	 * @see WANObjectCache::getMultiWithUnionSetCallback()
 	 *
 	 * Example usage:
 	 * @code
@@ -1073,7 +1077,7 @@ class WANObjectCache implements IExpiringStore, LoggerAwareInterface {
 	 *         // Time-to-live (in seconds)
 	 *         $cache::TTL_DAY,
 	 *         // Function that derives the new key value
-	 *         return function ( $id, $oldValue, &$ttl, array &$setOpts ) {
+	 *         function ( $id, $oldValue, &$ttl, array &$setOpts ) {
 	 *             $dbr = wfGetDB( DB_REPLICA );
 	 *             // Account for any snapshot/replica DB lag
 	 *             $setOpts += Database::getCacheSetOptions( $dbr );
@@ -1094,7 +1098,7 @@ class WANObjectCache implements IExpiringStore, LoggerAwareInterface {
 	 * @endcode
 	 *
 	 * @param ArrayIterator $keyedIds Result of WANObjectCache::makeMultiKeys()
-	 * @param integer $ttl Seconds to live for key updates
+	 * @param int $ttl Seconds to live for key updates
 	 * @param callable $callback Callback the yields entity regeneration callbacks
 	 * @param array $opts Options map
 	 * @return array Map of (cache key => value) in the same order as $keyedIds
@@ -1103,27 +1107,145 @@ class WANObjectCache implements IExpiringStore, LoggerAwareInterface {
 	final public function getMultiWithSetCallback(
 		ArrayIterator $keyedIds, $ttl, callable $callback, array $opts = []
 	) {
-		$keysWarmUp = iterator_to_array( $keyedIds, true );
+		$valueKeys = array_keys( $keyedIds->getArrayCopy() );
 		$checkKeys = isset( $opts['checkKeys'] ) ? $opts['checkKeys'] : [];
-		foreach ( $checkKeys as $i => $checkKeyOrKeys ) {
-			if ( is_int( $i ) ) {
-				$keysWarmUp[] = $checkKeyOrKeys;
-			} else {
-				$keysWarmUp = array_merge( $keysWarmUp, $checkKeyOrKeys );
-			}
-		}
 
-		$this->warmupCache = $this->cache->getMulti( $keysWarmUp );
-		$this->warmupCache += array_fill_keys( $keysWarmUp, false );
+		// Load required keys into process cache in one go
+		$this->warmupCache = $this->getRawKeysForWarmup(
+			$this->getNonProcessCachedKeys( $valueKeys, $opts ),
+			$checkKeys
+		);
+		$this->warmupKeyMisses = 0;
 
 		// Wrap $callback to match the getWithSetCallback() format while passing $id to $callback
-		$id = null;
-		$func = function ( $oldValue, &$ttl, array $setOpts, $oldAsOf ) use ( $callback, &$id ) {
+		$id = null; // current entity ID
+		$func = function ( $oldValue, &$ttl, &$setOpts, $oldAsOf ) use ( $callback, &$id ) {
 			return $callback( $id, $oldValue, $ttl, $setOpts, $oldAsOf );
 		};
 
 		$values = [];
-		foreach ( $keyedIds as $key => $id ) {
+		foreach ( $keyedIds as $key => $id ) { // preserve order
+			$values[$key] = $this->getWithSetCallback( $key, $ttl, $func, $opts );
+		}
+
+		$this->warmupCache = [];
+
+		return $values;
+	}
+
+	/**
+	 * Method to fetch/regenerate multiple cache keys at once
+	 *
+	 * This works the same as getWithSetCallback() except:
+	 *   - a) The $keys argument expects the result of WANObjectCache::makeMultiKeys()
+	 *   - b) The $callback argument expects a callback returning a map of (ID => new value)
+	 *        for all entity IDs in $regenById and it takes the following arguments:
+	 *          - $ids: a list of entity IDs to regenerate
+	 *          - &$ttls: a reference to the (entity ID => new TTL) map
+	 *          - &$setOpts: a reference to options for set() which can be altered
+	 *   - c) The return value is a map of (cache key => value) in the order of $keyedIds
+	 *   - d) The "lockTSE" and "busyValue" options are ignored
+	 *
+	 * @see WANObjectCache::getWithSetCallback()
+	 * @see WANObjectCache::getMultiWithSetCallback()
+	 *
+	 * Example usage:
+	 * @code
+	 *     $rows = $cache->getMultiWithUnionSetCallback(
+	 *         // Map of cache keys to entity IDs
+	 *         $cache->makeMultiKeys(
+	 *             $this->fileVersionIds(),
+	 *             function ( $id, WANObjectCache $cache ) {
+	 *                 return $cache->makeKey( 'file-version', $id );
+	 *             }
+	 *         ),
+	 *         // Time-to-live (in seconds)
+	 *         $cache::TTL_DAY,
+	 *         // Function that derives the new key value
+	 *         function ( array $ids, array &$ttls, array &$setOpts ) {
+	 *             $dbr = wfGetDB( DB_REPLICA );
+	 *             // Account for any snapshot/replica DB lag
+	 *             $setOpts += Database::getCacheSetOptions( $dbr );
+	 *
+	 *             // Load the rows for these files
+	 *             $rows = [];
+	 *             $res = $dbr->select( 'file', '*', [ 'id' => $ids ], __METHOD__ );
+	 *             foreach ( $res as $row ) {
+	 *                 $rows[$row->id] = $row;
+	 *                 $mtime = wfTimestamp( TS_UNIX, $row->timestamp );
+	 *                 $ttls[$row->id] = $this->adaptiveTTL( $mtime, $ttls[$row->id] );
+	 *             }
+	 *
+	 *             return $rows;
+	 *         },
+	 *         ]
+	 *     );
+	 *     $files = array_map( [ __CLASS__, 'newFromRow' ], $rows );
+	 * @endcode
+	 *
+	 * @param ArrayIterator $keyedIds Result of WANObjectCache::makeMultiKeys()
+	 * @param int $ttl Seconds to live for key updates
+	 * @param callable $callback Callback the yields entity regeneration callbacks
+	 * @param array $opts Options map
+	 * @return array Map of (cache key => value) in the same order as $keyedIds
+	 * @since 1.30
+	 */
+	final public function getMultiWithUnionSetCallback(
+		ArrayIterator $keyedIds, $ttl, callable $callback, array $opts = []
+	) {
+		$idsByValueKey = $keyedIds->getArrayCopy();
+		$valueKeys = array_keys( $idsByValueKey );
+		$checkKeys = isset( $opts['checkKeys'] ) ? $opts['checkKeys'] : [];
+		unset( $opts['lockTSE'] ); // incompatible
+		unset( $opts['busyValue'] ); // incompatible
+
+		// Load required keys into process cache in one go
+		$keysGet = $this->getNonProcessCachedKeys( $valueKeys, $opts );
+		$this->warmupCache = $this->getRawKeysForWarmup( $keysGet, $checkKeys );
+		$this->warmupKeyMisses = 0;
+
+		// IDs of entities known to be in need of regeneration
+		$idsRegen = [];
+
+		// Find out which keys are missing/deleted/stale
+		$curTTLs = [];
+		$asOfs = [];
+		$curByKey = $this->getMulti( $keysGet, $curTTLs, $checkKeys, $asOfs );
+		foreach ( $keysGet as $key ) {
+			if ( !array_key_exists( $key, $curByKey ) || $curTTLs[$key] < 0 ) {
+				$idsRegen[] = $idsByValueKey[$key];
+			}
+		}
+
+		// Run the callback to populate the regeneration value map for all required IDs
+		$newSetOpts = [];
+		$newTTLsById = array_fill_keys( $idsRegen, $ttl );
+		$newValsById = $idsRegen ? $callback( $idsRegen, $newTTLsById, $newSetOpts ) : [];
+
+		// Wrap $callback to match the getWithSetCallback() format while passing $id to $callback
+		$id = null; // current entity ID
+		$func = function ( $oldValue, &$ttl, &$setOpts, $oldAsOf )
+			use ( $callback, &$id, $newValsById, $newTTLsById, $newSetOpts )
+		{
+			if ( array_key_exists( $id, $newValsById ) ) {
+				// Value was already regerated as expected, so use the value in $newValsById
+				$newValue = $newValsById[$id];
+				$ttl = $newTTLsById[$id];
+				$setOpts = $newSetOpts;
+			} else {
+				// Pre-emptive/popularity refresh and version mismatch cases are not detected
+				// above and thus $newValsById has no entry. Run $callback on this single entity.
+				$ttls = [ $id => $ttl ];
+				$newValue = $callback( [ $id ], $ttls, $setOpts )[$id];
+				$ttl = $ttls[$id];
+			}
+
+			return $newValue;
+		};
+
+		// Run the cache-aside logic using warmupCache instead of persistent cache queries
+		$values = [];
+		foreach ( $idsByValueKey as $key => $id ) { // preserve order
 			$values[$key] = $this->getWithSetCallback( $key, $ttl, $func, $opts );
 		}
 
@@ -1193,7 +1315,7 @@ class WANObjectCache implements IExpiringStore, LoggerAwareInterface {
 
 	/**
 	 * @see BagOStuff::makeKey()
-	 * @param string ... Key component
+	 * @param string $keys,... Key component
 	 * @return string
 	 * @since 1.27
 	 */
@@ -1203,7 +1325,7 @@ class WANObjectCache implements IExpiringStore, LoggerAwareInterface {
 
 	/**
 	 * @see BagOStuff::makeGlobalKey()
-	 * @param string ... Key component
+	 * @param string $keys,... Key component
 	 * @return string
 	 * @since 1.27
 	 */
@@ -1271,8 +1393,8 @@ class WANObjectCache implements IExpiringStore, LoggerAwareInterface {
 	}
 
 	/**
-	 * @param integer $flag ATTR_* class constant
-	 * @return integer QOS_* class constant
+	 * @param int $flag ATTR_* class constant
+	 * @return int QOS_* class constant
 	 * @since 1.28
 	 */
 	public function getQoS( $flag ) {
@@ -1295,14 +1417,14 @@ class WANObjectCache implements IExpiringStore, LoggerAwareInterface {
 	 *     $ttl = $cache->adaptiveTTL( $mtime, $cache::TTL_DAY );
 	 * @endcode
 	 *
-	 * @param integer|float $mtime UNIX timestamp
-	 * @param integer $maxTTL Maximum TTL (seconds)
-	 * @param integer $minTTL Minimum TTL (seconds); Default: 30
+	 * @param int|float $mtime UNIX timestamp
+	 * @param int $maxTTL Maximum TTL (seconds)
+	 * @param int $minTTL Minimum TTL (seconds); Default: 30
 	 * @param float $factor Value in the range (0,1); Default: .2
-	 * @return integer Adaptive TTL
+	 * @return int Adaptive TTL
 	 * @since 1.28
 	 */
-	public function adaptiveTTL( $mtime, $maxTTL, $minTTL = 30, $factor = .2 ) {
+	public function adaptiveTTL( $mtime, $maxTTL, $minTTL = 30, $factor = 0.2 ) {
 		if ( is_float( $mtime ) || ctype_digit( $mtime ) ) {
 			$mtime = (int)$mtime; // handle fractional seconds and string integers
 		}
@@ -1317,13 +1439,21 @@ class WANObjectCache implements IExpiringStore, LoggerAwareInterface {
 	}
 
 	/**
+	 * @return int Number of warmup key cache misses last round
+	 * @since 1.30
+	 */
+	public function getWarmupKeyMisses() {
+		return $this->warmupKeyMisses;
+	}
+
+	/**
 	 * Do the actual async bus purge of a key
 	 *
 	 * This must set the key to "PURGED:<UNIX timestamp>:<holdoff>"
 	 *
 	 * @param string $key Cache key
-	 * @param integer $ttl How long to keep the tombstone [seconds]
-	 * @param integer $holdoff HOLDOFF_* constant controlling how long to ignore sets for this key
+	 * @param int $ttl How long to keep the tombstone [seconds]
+	 * @param int $holdoff HOLDOFF_* constant controlling how long to ignore sets for this key
 	 * @return bool Success
 	 */
 	protected function relayPurge( $key, $ttl, $holdoff ) {
@@ -1410,8 +1540,8 @@ class WANObjectCache implements IExpiringStore, LoggerAwareInterface {
 	 * and get hits too. Similar to worthRefreshExpiring(), randomization is used.
 	 *
 	 * @param float $asOf UNIX timestamp of the value
-	 * @param integer $ageNew Age of key when this might recommend refreshing (seconds)
-	 * @param integer $timeTillRefresh Age of key when it should be refreshed if popular (seconds)
+	 * @param int $ageNew Age of key when this might recommend refreshing (seconds)
+	 * @param int $timeTillRefresh Age of key when it should be refreshed if popular (seconds)
 	 * @param float $now The current UNIX timestamp
 	 * @return bool
 	 */
@@ -1460,7 +1590,7 @@ class WANObjectCache implements IExpiringStore, LoggerAwareInterface {
 	 * Do not use this method outside WANObjectCache
 	 *
 	 * @param mixed $value
-	 * @param integer $ttl [0=forever]
+	 * @param int $ttl [0=forever]
 	 * @param float $now Unix Current timestamp just before calling set()
 	 * @return array
 	 */
@@ -1478,7 +1608,7 @@ class WANObjectCache implements IExpiringStore, LoggerAwareInterface {
 	 *
 	 * @param array|string|bool $wrapped
 	 * @param float $now Unix Current timestamp (preferrably pre-query)
-	 * @return array (mixed; false if absent/invalid, current time left)
+	 * @return array (mixed; false if absent/tombstoned/invalid, current time left)
 	 */
 	protected function unwrap( $wrapped, $now ) {
 		// Check if the value is a tombstone
@@ -1572,5 +1702,60 @@ class WANObjectCache implements IExpiringStore, LoggerAwareInterface {
 		}
 
 		return $this->processCaches[$group];
+	}
+
+	/**
+	 * @param array $keys
+	 * @param array $opts
+	 * @return array List of keys
+	 */
+	private function getNonProcessCachedKeys( array $keys, array $opts ) {
+		$keysFound = [];
+		if ( isset( $opts['pcTTL'] ) && $opts['pcTTL'] > 0 && $this->callbackDepth == 0 ) {
+			$pcGroup = isset( $opts['pcGroup'] ) ? $opts['pcGroup'] : self::PC_PRIMARY;
+			$procCache = $this->getProcessCache( $pcGroup );
+			foreach ( $keys as $key ) {
+				if ( $procCache->get( $key ) !== false ) {
+					$keysFound[] = $key;
+				}
+			}
+		}
+
+		return array_diff( $keys, $keysFound );
+	}
+
+		/**
+	 * @param array $keys
+	 * @param array $checkKeys
+	 * @return array Map of (cache key => mixed)
+	 */
+	private function getRawKeysForWarmup( array $keys, array $checkKeys ) {
+		if ( !$keys ) {
+			return [];
+		}
+
+		$keysWarmUp = [];
+		// Get all the value keys to fetch...
+		foreach ( $keys as $key ) {
+			$keysWarmUp[] = self::VALUE_KEY_PREFIX . $key;
+		}
+		// Get all the check keys to fetch...
+		foreach ( $checkKeys as $i => $checkKeyOrKeys ) {
+			if ( is_int( $i ) ) {
+				// Single check key that applies to all value keys
+				$keysWarmUp[] = self::TIME_KEY_PREFIX . $checkKeyOrKeys;
+			} else {
+				// List of check keys that apply to value key $i
+				$keysWarmUp = array_merge(
+					$keysWarmUp,
+					self::prefixCacheKeys( $checkKeyOrKeys, self::TIME_KEY_PREFIX )
+				);
+			}
+		}
+
+		$warmupCache = $this->cache->getMulti( $keysWarmUp );
+		$warmupCache += array_fill_keys( $keysWarmUp, false );
+
+		return $warmupCache;
 	}
 }

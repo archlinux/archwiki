@@ -11,7 +11,8 @@
 			"Seb35",
 			"Sherbrooke",
 			"Wyz",
-			"Zetud"
+			"Zetud",
+			"Wladek92"
 		]
 	},
 	"nuke": "Suppression en masse",
@@ -35,9 +36,9 @@
 	"nuke-not-deleted": "La page [[:$1]] '''ne peut pas''' être effacée.",
 	"nuke-delete-more": "[[Special:Nuke|Supprimer plus de pages]]",
 	"nuke-pattern": "Modèle pour le nom de page:",
-	"nuke-nopages-global": "Il n'y a pas de nouvelle page dans [[Special:RecentChanges|changements récents]].",
+	"nuke-nopages-global": "Il n'y a pas de titres de pages correspondant à votre recherche.",
 	"nuke-viewchanges": "voir les modifications",
 	"nuke-namespace": "Se limiter à l'espace de nommage:",
 	"nuke-linkoncontribs": "suppression de masse",
-	"nuke-linkoncontribs-text": "Supprimer des pages en masse quand cet utilisateur est l’unique auteur"
+	"nuke-linkoncontribs-text": "Suppression de pages en masse pour lesquelles {{GENDER:$1|cet utilisateur|cette utilisatrice}} est l’unique auteur"
 }

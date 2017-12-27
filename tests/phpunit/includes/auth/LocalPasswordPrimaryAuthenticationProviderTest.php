@@ -221,8 +221,12 @@ class LocalPasswordPrimaryAuthenticationProviderTest extends \MediaWikiTestCase 
 		$req->password = 'DoesNotExist';
 		$ret = $provider->beginPrimaryAuthentication( $reqs );
 		$this->assertEquals(
-			AuthenticationResponse::newAbstain(),
-			$provider->beginPrimaryAuthentication( $reqs )
+			AuthenticationResponse::FAIL,
+			$ret->status
+		);
+		$this->assertEquals(
+			'wrongpassword',
+			$ret->message->getKey()
 		);
 
 		// Validation failure
@@ -509,7 +513,10 @@ class LocalPasswordPrimaryAuthenticationProviderTest extends \MediaWikiTestCase 
 
 		$this->assertSame(
 			$expectExpiry,
-			$dbw->selectField( 'user', 'user_password_expires', [ 'user_name' => $cuser ] )
+			wfTimestampOrNull(
+				TS_MW,
+				$dbw->selectField( 'user', 'user_password_expires', [ 'user_name' => $cuser ] )
+			)
 		);
 	}
 
@@ -623,7 +630,7 @@ class LocalPasswordPrimaryAuthenticationProviderTest extends \MediaWikiTestCase 
 		$req->password = 'bar';
 
 		$expect = AuthenticationResponse::newPass( 'Foo' );
-		$expect->createRequest = clone( $req );
+		$expect->createRequest = clone $req;
 		$expect->createRequest->username = 'Foo';
 		$this->assertEquals( $expect, $provider->beginPrimaryAccountCreation( $user, $user, $reqs ) );
 

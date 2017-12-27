@@ -139,6 +139,9 @@ class OutputPage extends ContextSource {
 	/** @var array Array of elements in "<head>". Parser might add its own headers! */
 	protected $mHeadItems = [];
 
+	/** @var array Additional <body> classes; there are also <body> classes from other sources */
+	protected $mAdditionalBodyClasses = [];
+
 	/** @var array */
 	protected $mModules = [];
 
@@ -285,9 +288,9 @@ class OutputPage extends ContextSource {
 	private $mTarget = null;
 
 	/**
-	 * @var bool Whether parser output should contain table of contents
+	 * @var bool Whether parser output contains a table of contents
 	 */
-	private $mEnableTOC = true;
+	private $mEnableTOC = false;
 
 	/**
 	 * @var bool Whether parser output should contain section edit links
@@ -295,7 +298,7 @@ class OutputPage extends ContextSource {
 	private $mEnableSectionEditLinks = true;
 
 	/**
-	 * @var string|null The URL to send in a <link> element with rel=copyright
+	 * @var string|null The URL to send in a <link> element with rel=license
 	 */
 	private $copyrightUrl;
 
@@ -571,6 +574,7 @@ class OutputPage extends ContextSource {
 	 * @param bool $filter Whether to filter out insufficiently trustworthy modules
 	 * @param string|null $position If not null, only return modules with this position
 	 * @param string $param
+	 * @param string $type
 	 * @return array Array of module names
 	 */
 	public function getModules( $filter = false, $position = null, $param = 'mModules',
@@ -688,7 +692,7 @@ class OutputPage extends ContextSource {
 	 * Add one or more head items to the output
 	 *
 	 * @since 1.28
-	 * @param string|string[] $value Raw HTML
+	 * @param string|string[] $values Raw HTML
 	 */
 	public function addHeadItems( $values ) {
 		$this->mHeadItems = array_merge( $this->mHeadItems, (array)$values );
@@ -702,6 +706,16 @@ class OutputPage extends ContextSource {
 	 */
 	public function hasHeadItem( $name ) {
 		return isset( $this->mHeadItems[$name] );
+	}
+
+	/**
+	 * Add a class to the <body> element
+	 *
+	 * @since 1.30
+	 * @param string|string[] $classes One or more classes to add
+	 */
+	public function addBodyClasses( $classes ) {
+		$this->mAdditionalBodyClasses = array_merge( $this->mAdditionalBodyClasses, (array)$classes );
 	}
 
 	/**
@@ -1715,7 +1729,7 @@ class OutputPage extends ContextSource {
 	 * Add wikitext with a custom Title object
 	 *
 	 * @param string $text Wikitext
-	 * @param Title $title
+	 * @param Title &$title
 	 * @param bool $linestart Is this the start of a line?
 	 */
 	public function addWikiTextWithTitle( $text, &$title, $linestart = true ) {
@@ -1726,7 +1740,7 @@ class OutputPage extends ContextSource {
 	 * Add wikitext with a custom Title object and tidy enabled.
 	 *
 	 * @param string $text Wikitext
-	 * @param Title $title
+	 * @param Title &$title
 	 * @param bool $linestart Is this the start of a line?
 	 */
 	function addWikiTextTitleTidy( $text, &$title, $linestart = true ) {
@@ -1771,17 +1785,6 @@ class OutputPage extends ContextSource {
 		$popts->setTidy( $oldTidy );
 
 		$this->addParserOutput( $parserOutput );
-	}
-
-	/**
-	 * Add a ParserOutput object, but without Html.
-	 *
-	 * @deprecated since 1.24, use addParserOutputMetadata() instead.
-	 * @param ParserOutput $parserOutput
-	 */
-	public function addParserOutputNoText( $parserOutput ) {
-		wfDeprecated( __METHOD__, '1.24' );
-		$this->addParserOutputMetadata( $parserOutput );
 	}
 
 	/**
@@ -1850,6 +1853,14 @@ class OutputPage extends ContextSource {
 		$outputPage = $this;
 		Hooks::run( 'LanguageLinks', [ $this->getTitle(), &$this->mLanguageLinks, &$linkFlags ] );
 		Hooks::run( 'OutputPageParserOutput', [ &$outputPage, $parserOutput ] );
+
+		// This check must be after 'OutputPageParserOutput' runs in addParserOutputMetadata
+		// so that extensions may modify ParserOutput to toggle TOC.
+		// This cannot be moved to addParserOutputText because that is not
+		// called by EditPage for Preview.
+		if ( $parserOutput->getTOCEnabled() && $parserOutput->getTOCHTML() ) {
+			$this->mEnableTOC = true;
+		}
 	}
 
 	/**
@@ -1890,7 +1901,6 @@ class OutputPage extends ContextSource {
 	 */
 	function addParserOutput( $parserOutput ) {
 		$this->addParserOutputMetadata( $parserOutput );
-		$parserOutput->setTOCEnabled( $this->mEnableTOC );
 
 		// Touch section edit links only if not previously disabled
 		if ( $parserOutput->getEditSectionTokens() ) {
@@ -1903,7 +1913,7 @@ class OutputPage extends ContextSource {
 	/**
 	 * Add the output of a QuickTemplate to the output buffer
 	 *
-	 * @param QuickTemplate $template
+	 * @param QuickTemplate &$template
 	 */
 	public function addTemplate( &$template ) {
 		$this->addHTML( $template->getHTML() );
@@ -1967,7 +1977,7 @@ class OutputPage extends ContextSource {
 	}
 
 	/**
-	 * @param $maxage
+	 * @param int $maxage
 	 * @deprecated since 1.27 Use setCdnMaxage() instead
 	 */
 	public function setSquidMaxage( $maxage ) {
@@ -2001,10 +2011,10 @@ class OutputPage extends ContextSource {
 	 * the TTL is higher the older the $mtime timestamp is. Essentially, the
 	 * TTL is 90% of the age of the object, subject to the min and max.
 	 *
-	 * @param string|integer|float|bool|null $mtime Last-Modified timestamp
-	 * @param integer $minTTL Mimimum TTL in seconds [default: 1 minute]
-	 * @param integer $maxTTL Maximum TTL in seconds [default: $wgSquidMaxage]
-	 * @return integer TTL in seconds
+	 * @param string|int|float|bool|null $mtime Last-Modified timestamp
+	 * @param int $minTTL Mimimum TTL in seconds [default: 1 minute]
+	 * @param int $maxTTL Maximum TTL in seconds [default: $wgSquidMaxage]
+	 * @return int TTL in seconds
 	 * @since 1.28
 	 */
 	public function adaptCdnTTL( $mtime, $minTTL = 0, $maxTTL = 0 ) {
@@ -2016,7 +2026,7 @@ class OutputPage extends ContextSource {
 		}
 
 		$age = time() - wfTimestamp( TS_UNIX, $mtime );
-		$adaptiveTTL = max( .9 * $age, $minTTL );
+		$adaptiveTTL = max( 0.9 * $age, $minTTL );
 		$adaptiveTTL = min( $adaptiveTTL, $maxTTL );
 
 		$this->lowerCdnMaxage( (int)$adaptiveTTL );
@@ -2388,7 +2398,14 @@ class OutputPage extends ContextSource {
 		// jQuery etc. can work correctly.
 		$response->header( 'X-UA-Compatible: IE=Edge' );
 
-		$this->addLogoPreloadLinkHeaders();
+		if ( !$this->mArticleBodyOnly ) {
+			$sk = $this->getSkin();
+
+			if ( $sk->shouldPreloadLogo() ) {
+				$this->addLogoPreloadLinkHeaders();
+			}
+		}
+
 		$linkHeader = $this->getLinkHeader();
 		if ( $linkHeader ) {
 			$response->header( $linkHeader );
@@ -2409,26 +2426,10 @@ class OutputPage extends ContextSource {
 			}
 
 			$sk = $this->getSkin();
-			// add skin specific modules
-			$modules = $sk->getDefaultModules();
-
-			// Enforce various default modules for all pages and all skins
-			$coreModules = [
-				// Keep this list as small as possible
-				'site',
-				'mediawiki.page.startup',
-				'mediawiki.user',
-			];
-
-			// Support for high-density display images if enabled
-			if ( $config->get( 'ResponsiveImages' ) ) {
-				$coreModules[] = 'mediawiki.hidpi';
-			}
-
-			$this->addModules( $coreModules );
-			foreach ( $modules as $group ) {
+			foreach ( $sk->getDefaultModules() as $group ) {
 				$this->addModules( $group );
 			}
+
 			MWDebug::addModules( $this );
 
 			// Avoid PHP 7.1 warning of passing $this by reference
@@ -2921,9 +2922,21 @@ class OutputPage extends ContextSource {
 		$pieces[] = $this->buildExemptModules();
 		$pieces = array_merge( $pieces, array_values( $this->getHeadLinksArray() ) );
 		$pieces = array_merge( $pieces, array_values( $this->mHeadItems ) );
+
+		$min = ResourceLoader::inDebugMode() ? '' : '.min';
+		// Use an IE conditional comment to serve the script only to old IE
+		$pieces[] = '<!--[if lt IE 9]>' .
+			Html::element( 'script', [
+				'src' => self::transformResourcePath(
+					$this->getConfig(),
+					"/resources/lib/html5shiv/html5shiv{$min}.js"
+				),
+			] ) .
+			'<![endif]-->';
+
 		$pieces[] = Html::closeElement( 'head' );
 
-		$bodyClasses = [];
+		$bodyClasses = $this->mAdditionalBodyClasses;
 		$bodyClasses[] = 'mediawiki';
 
 		# Classes for LTR/RTL directionality support
@@ -3021,7 +3034,7 @@ class OutputPage extends ContextSource {
 			&& $this->userCanPreview();
 	}
 
-	private function isUserCssPreview() {
+	protected function isUserCssPreview() {
 		return $this->getConfig()->get( 'AllowUserCss' )
 			&& $this->getTitle()
 			&& $this->getTitle()->isCssSubpage()
@@ -3213,6 +3226,10 @@ class OutputPage extends ContextSource {
 		// Same test as SkinTemplate
 		$vars['wgIsProbablyEditable'] = $title->quickUserCan( 'edit', $user )
 			&& ( $title->exists() || $title->quickUserCan( 'create', $user ) );
+
+		$vars['wgRelevantPageIsProbablyEditable'] = $relevantTitle
+			&& $relevantTitle->quickUserCan( 'edit', $user )
+			&& ( $relevantTitle->exists() || $relevantTitle->quickUserCan( 'create', $user ) );
 
 		foreach ( $title->getRestrictionTypes() as $type ) {
 			$vars['wgRestriction' . ucfirst( $type )] = $title->getRestrictions( $type );
@@ -3455,7 +3472,7 @@ class OutputPage extends ContextSource {
 
 		if ( $copyright ) {
 			$tags['copyright'] = Html::element( 'link', [
-				'rel' => 'copyright',
+				'rel' => 'license',
 				'href' => $copyright ]
 			);
 		}
@@ -3551,16 +3568,6 @@ class OutputPage extends ContextSource {
 		}
 
 		return $tags;
-	}
-
-	/**
-	 * @return string HTML tag links to be put in the header.
-	 * @deprecated since 1.24 Use OutputPage::headElement or if you have to,
-	 *   OutputPage::getHeadLinksArray directly.
-	 */
-	public function getHeadLinks() {
-		wfDeprecated( __METHOD__, '1.24' );
-		return implode( "\n", $this->getHeadLinksArray() );
 	}
 
 	/**
@@ -3663,10 +3670,21 @@ class OutputPage extends ContextSource {
 			[ 'name' => 'ResourceLoaderDynamicStyles', 'content' => '' ]
 		);
 
+		$separateReq = [ 'site.styles', 'user.styles' ];
 		foreach ( $this->rlExemptStyleModules as $group => $moduleNames ) {
-			$chunks[] = $this->makeResourceLoaderLink( $moduleNames,
+			// Combinable modules
+			$chunks[] = $this->makeResourceLoaderLink(
+				array_diff( $moduleNames, $separateReq ),
 				ResourceLoaderModule::TYPE_STYLES
 			);
+
+			foreach ( array_intersect( $moduleNames, $separateReq ) as $name ) {
+				// These require their own dedicated request in order to support "@import"
+				// syntax, which is incompatible with concatenation. (T147667, T37562)
+				$chunks[] = $this->makeResourceLoaderLink( $name,
+					ResourceLoaderModule::TYPE_STYLES
+				);
+			}
 		}
 
 		return self::combineWrappedStrings( array_merge( $chunks, $append ) );
@@ -3793,7 +3811,7 @@ class OutputPage extends ContextSource {
 	 * Caller is responsible for ensuring the file exists. Emits a PHP warning otherwise.
 	 *
 	 * @since 1.27
-	 * @param string $remotePath URL path prefix that points to $localPath
+	 * @param string $remotePathPrefix URL path prefix that points to $localPath
 	 * @param string $localPath File directory exposed at $remotePath
 	 * @param string $file Path to target file relative to $localPath
 	 * @return string URL
@@ -3928,15 +3946,7 @@ class OutputPage extends ContextSource {
 	}
 
 	/**
-	 * Enables/disables TOC, doesn't override __NOTOC__
-	 * @param bool $flag
-	 * @since 1.22
-	 */
-	public function enableTOC( $flag = true ) {
-		$this->mEnableTOC = $flag;
-	}
-
-	/**
+	 * Whether the output has a table of contents
 	 * @return bool
 	 * @since 1.22
 	 */
@@ -3968,12 +3978,10 @@ class OutputPage extends ContextSource {
 	 * @param String $skinName The Skin name to determine the correct OOUI theme
 	 * @param String $dir Language direction
 	 */
-	public static function setupOOUI( $skinName = '', $dir = 'ltr' ) {
-		$themes = ExtensionRegistry::getInstance()->getAttribute( 'SkinOOUIThemes' );
-		// Make keys (skin names) lowercase for case-insensitive matching.
-		$themes = array_change_key_case( $themes, CASE_LOWER );
-		$theme = isset( $themes[$skinName] ) ? $themes[$skinName] : 'MediaWiki';
-		// For example, 'OOUI\MediaWikiTheme'.
+	public static function setupOOUI( $skinName = 'default', $dir = 'ltr' ) {
+		$themes = ResourceLoaderOOUIModule::getSkinThemeMap();
+		$theme = isset( $themes[$skinName] ) ? $themes[$skinName] : $themes['default'];
+		// For example, 'OOUI\WikimediaUITheme'.
 		$themeClass = "OOUI\\{$theme}Theme";
 		OOUI\Theme::setSingleton( new $themeClass() );
 		OOUI\Element::setDefaultDir( $dir );
@@ -3992,10 +4000,12 @@ class OutputPage extends ContextSource {
 		);
 		$this->addModuleStyles( [
 			'oojs-ui-core.styles',
-			'oojs-ui.styles.icons',
 			'oojs-ui.styles.indicators',
 			'oojs-ui.styles.textures',
 			'mediawiki.widgets.styles',
+			'oojs-ui.styles.icons-content',
+			'oojs-ui.styles.icons-alerts',
+			'oojs-ui.styles.icons-interactions',
 		] );
 	}
 

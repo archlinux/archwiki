@@ -1,5 +1,5 @@
 --TEST--
-Bug #20564   Unsetting headers
+Bug #20564  Unsetting headers
 --SKIPIF--
 --FILE--
 <?php

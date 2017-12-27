@@ -50,7 +50,7 @@ class GadgetDefinitionContent extends JsonContent {
 	 * @param int $revId
 	 * @param ParserOptions $options
 	 * @param bool $generateHtml
-	 * @param ParserOutput $output
+	 * @param ParserOutput &$output
 	 */
 	protected function fillParserOutput( Title $title, $revId,
 		ParserOptions $options, $generateHtml, ParserOutput &$output
@@ -66,7 +66,6 @@ class GadgetDefinitionContent extends JsonContent {
 			}
 		}
 	}
-
 
 	/**
 	 * @return Status

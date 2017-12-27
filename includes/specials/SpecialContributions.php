@@ -21,6 +21,8 @@
  * @ingroup SpecialPage
  */
 
+use MediaWiki\Widget\DateInputWidget;
+
 /**
  * Special:Contributions, show user contributions in a paged list
  *
@@ -40,8 +42,11 @@ class SpecialContributions extends IncludableSpecialPage {
 		$out->addModuleStyles( [
 			'mediawiki.special',
 			'mediawiki.special.changeslist',
+			'mediawiki.widgets.DateInputWidget.styles',
 		] );
+		$out->addModules( 'mediawiki.special.contributions' );
 		$this->addHelpLink( 'Help:User contributions' );
+		$out->enableOOUI();
 
 		$this->opts = [];
 		$request = $this->getRequest();
@@ -98,7 +103,12 @@ class SpecialContributions extends IncludableSpecialPage {
 				'pagetitle',
 				$this->msg( 'contributions-title', $target )->plain()
 			)->inContentLanguage() );
-			$this->getSkin()->setRelevantUser( $userObj );
+
+			# For IP ranges, we want the contributionsSub, but not the skin-dependent
+			# links under 'Tools', which may include irrelevant links like 'Logs'.
+			if ( !IP::isValidRange( $target ) ) {
+				$this->getSkin()->setRelevantUser( $userObj );
+			}
 		} else {
 			$out->addSubtitle( $this->msg( 'sp-contributions-newbies-sub' ) );
 			$out->setHTMLTitle( $this->msg(
@@ -126,13 +136,14 @@ class SpecialContributions extends IncludableSpecialPage {
 
 		$skip = $request->getText( 'offset' ) || $request->getText( 'dir' ) == 'prev';
 		# Offset overrides year/month selection
-		if ( $skip ) {
-			$this->opts['year'] = '';
-			$this->opts['month'] = '';
-		} else {
-			$this->opts['year'] = $request->getIntOrNull( 'year' );
-			$this->opts['month'] = $request->getIntOrNull( 'month' );
+		if ( !$skip ) {
+			$this->opts['year'] = $request->getVal( 'year' );
+			$this->opts['month'] = $request->getVal( 'month' );
+
+			$this->opts['start'] = $request->getVal( 'start' );
+			$this->opts['end'] = $request->getVal( 'end' );
 		}
+		$this->opts = ContribsPager::processDateFilter( $this->opts );
 
 		$feedType = $request->getVal( 'feed' );
 
@@ -190,8 +201,8 @@ class SpecialContributions extends IncludableSpecialPage {
 				'contribs' => $this->opts['contribs'],
 				'namespace' => $this->opts['namespace'],
 				'tagfilter' => $this->opts['tagfilter'],
-				'year' => $this->opts['year'],
-				'month' => $this->opts['month'],
+				'start' => $this->opts['start'],
+				'end' => $this->opts['end'],
 				'deletedOnly' => $this->opts['deletedOnly'],
 				'topOnly' => $this->opts['topOnly'],
 				'newOnly' => $this->opts['newOnly'],
@@ -200,7 +211,12 @@ class SpecialContributions extends IncludableSpecialPage {
 				'associated' => $this->opts['associated'],
 			] );
 
-			if ( !$pager->getNumRows() ) {
+			if ( IP::isValidRange( $target ) && !$pager->isQueryableRange( $target ) ) {
+				// Valid range, but outside CIDR limit.
+				$limits = $this->getConfig()->get( 'RangeContributionsCIDRLimit' );
+				$limit = $limits[ IP::isIPv4( $target ) ? 'IPv4' : 'IPv6' ];
+				$out->addWikiMsg( 'sp-contributions-outofrange', $limit );
+			} elseif ( !$pager->getNumRows() ) {
 				$out->addWikiMsg( 'nocontribs', $target );
 			} else {
 				# Show a message about replica DB lag, if applicable
@@ -217,11 +233,14 @@ class SpecialContributions extends IncludableSpecialPage {
 				}
 				$out->addHTML( $output );
 			}
+
 			$out->preventClickjacking( $pager->getPreventClickjacking() );
 
 			# Show the appropriate "footer" message - WHOIS tools, etc.
 			if ( $this->opts['contribs'] == 'newbie' ) {
 				$message = 'sp-contributions-footer-newbies';
+			} elseif ( IP::isValidRange( $target ) ) {
+				$message = 'sp-contributions-footer-anon-range';
 			} elseif ( IP::isIPAddress( $target ) ) {
 				$message = 'sp-contributions-footer-anon';
 			} elseif ( $userObj->isAnon() ) {
@@ -252,8 +271,11 @@ class SpecialContributions extends IncludableSpecialPage {
 	 */
 	protected function contributionsSub( $userObj ) {
 		if ( $userObj->isAnon() ) {
-			// Show a warning message that the user being searched for doesn't exists
-			if ( !User::isIP( $userObj->getName() ) ) {
+			// Show a warning message that the user being searched for doesn't exists.
+			// User::isIP returns true for IP address and usemod IPs like '123.123.123.xxx',
+			// but returns false for IP ranges. We don't want to suggest either of these are
+			// valid usernames which we would with the 'contributions-userdoesnotexist' message.
+			if ( !User::isIP( $userObj->getName() ) && !$userObj->isIPRange() ) {
 				$this->getOutput()->wrapWikiMsg(
 					"<div class=\"mw-userpage-userdoesnotexist error\">\n\$1\n</div>",
 					[
@@ -280,7 +302,13 @@ class SpecialContributions extends IncludableSpecialPage {
 			// Do not expose the autoblocks, since that may lead to a leak of accounts' IPs,
 			// and also this will display a totally irrelevant log entry as a current block.
 			if ( !$this->including() ) {
-				$block = Block::newFromTarget( $userObj, $userObj );
+				// For IP ranges you must give Block::newFromTarget the CIDR string and not a user object.
+				if ( $userObj->isIPRange() ) {
+					$block = Block::newFromTarget( $userObj->getName(), $userObj->getName() );
+				} else {
+					$block = Block::newFromTarget( $userObj, $userObj );
+				}
+
 				if ( !is_null( $block ) && $block->getType() != Block::TYPE_AUTO ) {
 					if ( $block->getType() == Block::TYPE_RANGE ) {
 						$nt = MWNamespace::getCanonicalName( NS_USER ) . ':' . $block->getTarget();
@@ -320,17 +348,20 @@ class SpecialContributions extends IncludableSpecialPage {
 	 * @return array
 	 */
 	public static function getUserLinks( SpecialPage $sp, User $target ) {
-
 		$id = $target->getId();
 		$username = $target->getName();
 		$userpage = $target->getUserPage();
 		$talkpage = $target->getTalkPage();
 
 		$linkRenderer = $sp->getLinkRenderer();
-		$tools['user-talk'] = $linkRenderer->makeLink(
-			$talkpage,
-			$sp->msg( 'sp-contributions-talk' )->text()
-		);
+
+		# No talk pages for IP ranges.
+		if ( !IP::isValidRange( $username ) ) {
+			$tools['user-talk'] = $linkRenderer->makeLink(
+				$talkpage,
+				$sp->msg( 'sp-contributions-talk' )->text()
+			);
+		}
 
 		if ( ( $id !== null ) || ( $id === null && IP::isIPAddress( $username ) ) ) {
 			if ( $sp->getUser()->isAllowed( 'block' ) ) { # Block / Change block / Unblock links
@@ -369,24 +400,28 @@ class SpecialContributions extends IncludableSpecialPage {
 				);
 			}
 		}
-		# Uploads
-		$tools['uploads'] = $linkRenderer->makeKnownLink(
-			SpecialPage::getTitleFor( 'Listfiles', $username ),
-			$sp->msg( 'sp-contributions-uploads' )->text()
-		);
 
-		# Other logs link
-		$tools['logs'] = $linkRenderer->makeKnownLink(
-			SpecialPage::getTitleFor( 'Log', $username ),
-			$sp->msg( 'sp-contributions-logs' )->text()
-		);
-
-		# Add link to deleted user contributions for priviledged users
-		if ( $sp->getUser()->isAllowed( 'deletedhistory' ) ) {
-			$tools['deletedcontribs'] = $linkRenderer->makeKnownLink(
-				SpecialPage::getTitleFor( 'DeletedContributions', $username ),
-				$sp->msg( 'sp-contributions-deleted', $username )->text()
+		# Don't show some links for IP ranges
+		if ( !IP::isValidRange( $username ) ) {
+			# Uploads
+			$tools['uploads'] = $linkRenderer->makeKnownLink(
+				SpecialPage::getTitleFor( 'Listfiles', $username ),
+				$sp->msg( 'sp-contributions-uploads' )->text()
 			);
+
+			# Other logs link
+			$tools['logs'] = $linkRenderer->makeKnownLink(
+				SpecialPage::getTitleFor( 'Log', $username ),
+				$sp->msg( 'sp-contributions-logs' )->text()
+			);
+
+			# Add link to deleted user contributions for priviledged users
+			if ( $sp->getUser()->isAllowed( 'deletedhistory' ) ) {
+				$tools['deletedcontribs'] = $linkRenderer->makeKnownLink(
+					SpecialPage::getTitleFor( 'DeletedContributions', $username ),
+					$sp->msg( 'sp-contributions-deleted', $username )->text()
+				);
+			}
 		}
 
 		# Add a link to change user rights for privileged users
@@ -432,12 +467,12 @@ class SpecialContributions extends IncludableSpecialPage {
 			$this->opts['contribs'] = 'user';
 		}
 
-		if ( !isset( $this->opts['year'] ) ) {
-			$this->opts['year'] = '';
+		if ( !isset( $this->opts['start'] ) ) {
+			$this->opts['start'] = '';
 		}
 
-		if ( !isset( $this->opts['month'] ) ) {
-			$this->opts['month'] = '';
+		if ( !isset( $this->opts['end'] ) ) {
+			$this->opts['end'] = '';
 		}
 
 		if ( $this->opts['contribs'] == 'newbie' ) {
@@ -478,6 +513,8 @@ class SpecialContributions extends IncludableSpecialPage {
 			'contribs',
 			'year',
 			'month',
+			'start',
+			'end',
 			'topOnly',
 			'newOnly',
 			'hideMinor',
@@ -652,15 +689,32 @@ class SpecialContributions extends IncludableSpecialPage {
 			implode( '', $filters )
 		);
 
-		$dateSelectionAndSubmit = Xml::tags( 'div', [],
-			Xml::dateMenu(
-				$this->opts['year'] === '' ? MWTimestamp::getInstance()->format( 'Y' ) : $this->opts['year'],
-				$this->opts['month']
-			) . ' ' .
-				Html::submitButton(
-					$this->msg( 'sp-contributions-submit' )->text(),
-					[ 'class' => 'mw-submit' ], [ 'mw-ui-progressive' ]
-				)
+		$dateRangeSelection = Html::rawElement(
+			'div',
+			[],
+			Xml::label( wfMessage( 'date-range-from' )->text(), 'mw-date-start' ) . ' ' .
+			new DateInputWidget( [
+				'infusable' => true,
+				'id' => 'mw-date-start',
+				'name' => 'start',
+				'value' => $this->opts['start'],
+				'longDisplayFormat' => true,
+			] ) . '<br>' .
+			Xml::label( wfMessage( 'date-range-to' )->text(), 'mw-date-end' ) . ' ' .
+			new DateInputWidget( [
+				'infusable' => true,
+				'id' => 'mw-date-end',
+				'name' => 'end',
+				'value' => $this->opts['end'],
+				'longDisplayFormat' => true,
+			] )
+		);
+
+		$submit = Xml::tags( 'div', [],
+			Html::submitButton(
+				$this->msg( 'sp-contributions-submit' )->text(),
+				[ 'class' => 'mw-submit' ], [ 'mw-ui-progressive' ]
+			)
 		);
 
 		$form .= Xml::fieldset(
@@ -669,7 +723,8 @@ class SpecialContributions extends IncludableSpecialPage {
 			$namespaceSelection .
 			$filterSelection .
 			$extraOptions .
-			$dateSelectionAndSubmit,
+			$dateRangeSelection .
+			$submit,
 			[ 'class' => 'mw-contributions-table' ]
 		);
 

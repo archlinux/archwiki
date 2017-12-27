@@ -155,7 +155,7 @@ abstract class UploadBase {
 	/**
 	 * Create a form of UploadBase depending on wpSourceType and initializes it
 	 *
-	 * @param WebRequest $request
+	 * @param WebRequest &$request
 	 * @param string|null $type
 	 * @return null|UploadBase
 	 */
@@ -241,13 +241,13 @@ abstract class UploadBase {
 	/**
 	 * Initialize from a WebRequest. Override this in a subclass.
 	 *
-	 * @param WebRequest $request
+	 * @param WebRequest &$request
 	 */
 	abstract public function initializeFromRequest( &$request );
 
 	/**
 	 * @param string $tempPath File system path to temporary file containing the upload
-	 * @param integer $fileSize
+	 * @param int $fileSize
 	 */
 	protected function setTempFile( $tempPath, $fileSize = null ) {
 		$this->mTempPath = $tempPath;
@@ -321,7 +321,6 @@ abstract class UploadBase {
 	 * @return mixed Const self::OK or else an array with error information
 	 */
 	public function verifyUpload() {
-
 		/**
 		 * If there was no filename or a zero size given, give up quick.
 		 */
@@ -641,48 +640,128 @@ abstract class UploadBase {
 	 *
 	 * This should not assume that mTempPath is set.
 	 *
-	 * @return array Array of warnings
+	 * @return mixed[] Array of warnings
 	 */
 	public function checkWarnings() {
-		global $wgLang;
-
 		$warnings = [];
 
 		$localFile = $this->getLocalFile();
 		$localFile->load( File::READ_LATEST );
 		$filename = $localFile->getName();
+		$hash = $this->getTempFileSha1Base36();
 
-		/**
-		 * Check whether the resulting filename is different from the desired one,
-		 * but ignore things like ucfirst() and spaces/underscore things
-		 */
-		$comparableName = str_replace( ' ', '_', $this->mDesiredDestName );
-		$comparableName = Title::capitalize( $comparableName, NS_FILE );
-
-		if ( $this->mDesiredDestName != $filename && $comparableName != $filename ) {
-			$warnings['badfilename'] = $filename;
+		$badFileName = $this->checkBadFileName( $filename, $this->mDesiredDestName );
+		if ( $badFileName !== null ) {
+			$warnings['badfilename'] = $badFileName;
 		}
 
-		// Check whether the file extension is on the unwanted list
-		global $wgCheckFileExtensions, $wgFileExtensions;
+		$unwantedFileExtensionDetails = $this->checkUnwantedFileExtensions( $this->mFinalExtension );
+		if ( $unwantedFileExtensionDetails !== null ) {
+			$warnings['filetype-unwanted-type'] = $unwantedFileExtensionDetails;
+		}
+
+		$fileSizeWarnings = $this->checkFileSize( $this->mFileSize );
+		if ( $fileSizeWarnings ) {
+			$warnings = array_merge( $warnings, $fileSizeWarnings );
+		}
+
+		$localFileExistsWarnings = $this->checkLocalFileExists( $localFile, $hash );
+		if ( $localFileExistsWarnings ) {
+			$warnings = array_merge( $warnings, $localFileExistsWarnings );
+		}
+
+		if ( $this->checkLocalFileWasDeleted( $localFile ) ) {
+			$warnings['was-deleted'] = $filename;
+		}
+
+		$dupes = $this->checkAgainstExistingDupes( $hash );
+		if ( $dupes ) {
+			$warnings['duplicate'] = $dupes;
+		}
+
+		$archivedDupes = $this->checkAgainstArchiveDupes( $hash );
+		if ( $archivedDupes !== null ) {
+			$warnings['duplicate-archive'] = $archivedDupes;
+		}
+
+		return $warnings;
+	}
+
+	/**
+	 * Check whether the resulting filename is different from the desired one,
+	 * but ignore things like ucfirst() and spaces/underscore things
+	 *
+	 * @param string $filename
+	 * @param string $desiredFileName
+	 *
+	 * @return string|null String that was determined to be bad or null if the filename is okay
+	 */
+	private function checkBadFileName( $filename, $desiredFileName ) {
+		$comparableName = str_replace( ' ', '_', $desiredFileName );
+		$comparableName = Title::capitalize( $comparableName, NS_FILE );
+
+		if ( $desiredFileName != $filename && $comparableName != $filename ) {
+			return $filename;
+		}
+
+		return null;
+	}
+
+	/**
+	 * @param string $fileExtension The file extension to check
+	 *
+	 * @return array|null array with the following keys:
+	 *                    0 => string The final extension being used
+	 *                    1 => string[] The extensions that are allowed
+	 *                    2 => int The number of extensions that are allowed.
+	 */
+	private function checkUnwantedFileExtensions( $fileExtension ) {
+		global $wgCheckFileExtensions, $wgFileExtensions, $wgLang;
+
 		if ( $wgCheckFileExtensions ) {
 			$extensions = array_unique( $wgFileExtensions );
-			if ( !$this->checkFileExtension( $this->mFinalExtension, $extensions ) ) {
-				$warnings['filetype-unwanted-type'] = [ $this->mFinalExtension,
-					$wgLang->commaList( $extensions ), count( $extensions ) ];
+			if ( !$this->checkFileExtension( $fileExtension, $extensions ) ) {
+				return [
+					$fileExtension,
+					$wgLang->commaList( $extensions ),
+					count( $extensions )
+				];
 			}
 		}
 
+		return null;
+	}
+
+	/**
+	 * @param int $fileSize
+	 *
+	 * @return array warnings
+	 */
+	private function checkFileSize( $fileSize ) {
 		global $wgUploadSizeWarning;
-		if ( $wgUploadSizeWarning && ( $this->mFileSize > $wgUploadSizeWarning ) ) {
-			$warnings['large-file'] = [ $wgUploadSizeWarning, $this->mFileSize ];
+
+		$warnings = [];
+
+		if ( $wgUploadSizeWarning && ( $fileSize > $wgUploadSizeWarning ) ) {
+			$warnings['large-file'] = [ $wgUploadSizeWarning, $fileSize ];
 		}
 
-		if ( $this->mFileSize == 0 ) {
+		if ( $fileSize == 0 ) {
 			$warnings['empty-file'] = true;
 		}
 
-		$hash = $this->getTempFileSha1Base36();
+		return $warnings;
+	}
+
+	/**
+	 * @param LocalFile $localFile
+	 * @param string $hash sha1 hash of the file to check
+	 *
+	 * @return array warnings
+	 */
+	private function checkLocalFileExists( LocalFile $localFile, $hash ) {
+		$warnings = [];
+
 		$exists = self::getExistsWarning( $localFile );
 		if ( $exists !== false ) {
 			$warnings['exists'] = $exists;
@@ -701,11 +780,19 @@ abstract class UploadBase {
 			}
 		}
 
-		if ( $localFile->wasDeleted() && !$localFile->exists() ) {
-			$warnings['was-deleted'] = $filename;
-		}
+		return $warnings;
+	}
 
-		// Check dupes against existing files
+	private function checkLocalFileWasDeleted( LocalFile $localFile ) {
+		return $localFile->wasDeleted() && !$localFile->exists();
+	}
+
+	/**
+	 * @param string $hash sha1 hash of the file to check
+	 *
+	 * @return File[] Duplicate files, if found.
+	 */
+	private function checkAgainstExistingDupes( $hash ) {
 		$dupes = RepoGroup::singleton()->findBySha1( $hash );
 		$title = $this->getTitle();
 		// Remove all matches against self
@@ -714,21 +801,27 @@ abstract class UploadBase {
 				unset( $dupes[$key] );
 			}
 		}
-		if ( $dupes ) {
-			$warnings['duplicate'] = $dupes;
-		}
 
-		// Check dupes against archives
+		return $dupes;
+	}
+
+	/**
+	 * @param string $hash sha1 hash of the file to check
+	 *
+	 * @return string|null Name of the dupe or empty string if discovered (depending on visibility)
+	 *                     null if the check discovered no dupes.
+	 */
+	private function checkAgainstArchiveDupes( $hash ) {
 		$archivedFile = new ArchivedFile( null, 0, '', $hash );
 		if ( $archivedFile->getID() > 0 ) {
 			if ( $archivedFile->userCan( File::DELETED_FILE ) ) {
-				$warnings['duplicate-archive'] = $archivedFile->getName();
+				return $archivedFile->getName();
 			} else {
-				$warnings['duplicate-archive'] = '';
+				return '';
 			}
 		}
 
-		return $warnings;
+		return null;
 	}
 
 	/**
@@ -1403,6 +1496,7 @@ abstract class UploadBase {
 	 * @param string $type PUBLIC or SYSTEM
 	 * @param string $publicId The well-known public identifier for the dtd
 	 * @param string $systemId The url for the external dtd
+	 * @return bool|array
 	 */
 	public static function checkSvgExternalDTD( $type, $publicId, $systemId ) {
 		// This doesn't include the XHTML+MathML+SVG doctype since we don't
@@ -1428,10 +1522,10 @@ abstract class UploadBase {
 	 * @todo Replace this with a whitelist filter!
 	 * @param string $element
 	 * @param array $attribs
+	 * @param array $data
 	 * @return bool
 	 */
 	public function checkSvgScriptCallback( $element, $attribs, $data = null ) {
-
 		list( $namespace, $strippedElement ) = $this->splitXmlNamespace( $element );
 
 		// We specifically don't include:
@@ -1666,7 +1760,6 @@ abstract class UploadBase {
 	 * @return bool true if the CSS contains an illegal string, false if otherwise
 	 */
 	private static function checkCssFragment( $value ) {
-
 		# Forbid external stylesheets, for both reliability and to protect viewer's privacy
 		if ( stripos( $value, '@import' ) !== false ) {
 			return true;
@@ -2115,9 +2208,10 @@ abstract class UploadBase {
 	 * @return Status[]|bool
 	 */
 	public static function getSessionStatus( User $user, $statusKey ) {
-		$key = wfMemcKey( 'uploadstatus', $user->getId() ?: md5( $user->getName() ), $statusKey );
+		$cache = MediaWikiServices::getInstance()->getMainObjectStash();
+		$key = $cache->makeKey( 'uploadstatus', $user->getId() ?: md5( $user->getName() ), $statusKey );
 
-		return MediaWikiServices::getInstance()->getMainObjectStash()->get( $key );
+		return $cache->get( $key );
 	}
 
 	/**
@@ -2131,9 +2225,9 @@ abstract class UploadBase {
 	 * @return void
 	 */
 	public static function setSessionStatus( User $user, $statusKey, $value ) {
-		$key = wfMemcKey( 'uploadstatus', $user->getId() ?: md5( $user->getName() ), $statusKey );
-
 		$cache = MediaWikiServices::getInstance()->getMainObjectStash();
+		$key = $cache->makeKey( 'uploadstatus', $user->getId() ?: md5( $user->getName() ), $statusKey );
+
 		if ( $value === false ) {
 			$cache->delete( $key );
 		} else {

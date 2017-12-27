@@ -36,9 +36,9 @@
 	"nuke-not-deleted": "'''无法'''删除[[:$1]]页面。",
 	"nuke-delete-more": "[[Special:Nuke|删除更多页面]]",
 	"nuke-pattern": "页面名称的模式：",
-	"nuke-nopages-global": "[[Special:RecentChanges|最近更改]]中没有新的页面。",
+	"nuke-nopages-global": "没有匹配您搜索的页面标题。",
 	"nuke-viewchanges": "查看变更",
 	"nuke-namespace": "限制名字空间为：",
 	"nuke-linkoncontribs": "大量删除",
-	"nuke-linkoncontribs-text": "大量删除仅此用户为作者的页面"
+	"nuke-linkoncontribs-text": "大量删除仅{{GENDER:$1|此用户}}为作者的页面"
 }

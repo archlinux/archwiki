@@ -58,15 +58,14 @@ class ParsoidVirtualRESTService extends VirtualRESTService {
 			'url' => 'http://localhost:8000/',
 			'prefix' => 'localhost',
 			'domain' => 'localhost',
+			'timeout' => null,
 			'forwardCookies' => false,
 			'HTTPProxy' => null,
 		], $params );
 		// Ensure that the url parameter has a trailing slash.
-		$mparams['url'] = preg_replace(
-			'#/?$#',
-			'/',
-			$mparams['url']
-		);
+		if ( substr( $mparams['url'], -1 ) !== '/' ) {
+			$mparams['url'] .= '/';
+		}
 		// Ensure the correct domain format: strip protocol, port,
 		// and trailing slash if present.  This lets us use
 		// $wgCanonicalServer as a default value, which is very convenient.
@@ -147,6 +146,10 @@ class ParsoidVirtualRESTService extends VirtualRESTService {
 	 * Visual Editor "pretends" the V1 API is like.  A previous version of
 	 * ParsoidVirtualRESTService translated these to the "real" Parsoid v1
 	 * API.  We now translate these to the "real" Parsoid v3 API.
+	 * @param array $req
+	 * @param Closure $idGeneratorFunc
+	 * @return array
+	 * @throws Exception
 	 */
 	public function onParsoid1Request( array $req, Closure $idGeneratorFunc ) {
 		$parts = explode( '/', $req['url'] );

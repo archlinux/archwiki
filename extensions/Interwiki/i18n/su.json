@@ -1,9 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Irwangatot"
+			"Irwangatot",
+			"Uchup19"
 		]
 	},
+	"interwiki_1": "nya",
 	"interwiki_reasonfield": "Alesan:",
 	"interwiki_delquestion": "Ngahapus \"$1\""
 }

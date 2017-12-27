@@ -6,13 +6,13 @@
 			"Pras"
 		]
 	},
-	"renameuser": "Ngganti jeneng panganggo",
+	"renameuser": "Ganti jeneng panganggo",
 	"renameuser-linkoncontribs": "ganti jeneng panganggo",
 	"renameuser-linkoncontribs-text": "Ganti jenengé panganggo iki",
 	"renameuser-desc": "Ngganti jeneng panganggo (perlu hak aksès ''renameuser'')",
 	"renameuserold": "Jeneng panganggo saiki:",
 	"renameusernew": "Jeneng panganggo anyar:",
-	"renameuserreason": "Alesan ganti jeneng:",
+	"renameuserreason": "Alesan:",
 	"renameusermove": "Mindhah kaca panganggo lan kaca dhiskusiné (sarta subkaca-kacané) menyang jeneng anyar",
 	"renameusersuppress": "Aja gawé pangalihan kanggo jeneng anyar",
 	"renameuserreserve": "Blokir utawa cadhangaké jeneng panganggo lawas supaya ora bisa dianggo manèh",
@@ -21,7 +21,7 @@
 	"renameusersubmit": "Kirim",
 	"renameuser-submit-blocklog": "Tuduhaké log blokir kanggo panganggo",
 	"renameusererrordoesnotexist": "Panganggo \"<nowiki>$1</nowiki>\" ora ana.",
-	"renameusererrorexists": "Panganggo \"<nowiki>$1</nowiki>\" wis ana.",
+	"renameusererrorexists": "{{GENDER:$1|Panganggo}} \"<nowiki>$1</nowiki>\" wis ana.",
 	"renameusererrorinvalid": "Jeneng panganggo \"<nowiki>$1</nowiki>\" ora absah",
 	"renameuser-error-request": "Ana masalah nalika nampa panyuwunan panjenengan.\nMangga balènana lan nyoba manèh.",
 	"renameuser-error-same-user": "Panjenengan ora bisa ngganti jeneng panganggo dadi kaya jeneng asalé.",
@@ -35,6 +35,6 @@
 	"logentry-renameuser-renameuser-legacier": "$1 ngganti jeneng panganggo $4 dadi {{GENDER:$7|$5}}",
 	"renameuser-move-log": "Otomatis ngalih kaca nalika ngganti jeneng {{GENDER:$2|panganggo}} \"[[User:$1|$1]]\" dadi \"[[User:$2|$2]]\"",
 	"action-renameuser": "ganti jeneng panganggo",
-	"right-renameuser": "Ganti jeneng panganggo-panganggo",
+	"right-renameuser": "Ganti jeneng panganggo",
 	"renameuser-renamed-notice": "Panganggo iki wis diganti jenengé.\nLog ganti jeneng cumepak ing ngisor iki kanggo rujukan."
 }

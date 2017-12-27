@@ -40,7 +40,7 @@
 		"url": {
 			"type": "string",
 			"description": "URL to the homepage for the extension.",
-			"format": "uri"
+			"format": "uri-reference"
 		},
 		"description": {
 			"type": "string",
@@ -318,7 +318,7 @@
 							}
 						},
 						{
-							"description": "An arbitrary ResourceLoaderModule definition",
+							"description": "An arbitrary ResourceLoaderModule definition by class",
 							"properties": {
 								"class": {
 									"type": "string",
@@ -326,6 +326,16 @@
 								}
 							},
 							"required": ["class"]
+						},
+						{
+							"description": "An arbitrary ResourceLoaderModule definition with instantiator",
+							"properties": {
+								"factory": {
+									"type": "string",
+									"description": "A static instantiator function for creating the ResourceLoaderModule object."
+								}
+							},
+							"required": ["factory"]
 						}
 					]
 				}
@@ -587,7 +597,7 @@
 		},
 		"JobClasses": {
 			"type": "object",
-			"description": "Job types this extension implements (mapping of job type to class name)"
+			"description": "Job types this extension implements (mapping of job type to class name or factory function)"
 		},
 		"LogTypes": {
 			"type": "array",
@@ -654,7 +664,8 @@
 			"description": "Available feeds objects"
 		},
 		"SkinOOUIThemes": {
-			"type": "object"
+			"type": "object",
+			"description": "Map of skin names to OOjs UI themes to use. Same format as ResourceLoaderOOUIModule::$builtinSkinThemeMap."
 		},
 		"PasswordPolicy": {
 			"type": "object",

@@ -975,7 +975,7 @@ class AuthManager implements LoggerAwareInterface {
 	public function checkAccountCreatePermissions( User $creator ) {
 		// Wiki is read-only?
 		if ( wfReadOnly() ) {
-			return Status::newFatal( 'readonlytext', wfReadOnlyReason() );
+			return Status::newFatal( wfMessage( 'readonlytext', wfReadOnlyReason() ) );
 		}
 
 		// This is awful, this permission check really shouldn't go through Title.
@@ -1579,7 +1579,7 @@ class AuthManager implements LoggerAwareInterface {
 			] );
 			$user->setId( 0 );
 			$user->loadFromId();
-			return Status::newFatal( 'readonlytext', wfReadOnlyReason() );
+			return Status::newFatal( wfMessage( 'readonlytext', wfReadOnlyReason() ) );
 		}
 
 		// Check the session, if we tried to create this user already there's
@@ -1660,7 +1660,7 @@ class AuthManager implements LoggerAwareInterface {
 			}
 		}
 
-		$backoffKey = wfMemcKey( 'AuthManager', 'autocreate-failed', md5( $username ) );
+		$backoffKey = $cache->makeKey( 'AuthManager', 'autocreate-failed', md5( $username ) );
 		if ( $cache->get( $backoffKey ) ) {
 			$this->logger->debug( __METHOD__ . ': {username} denied by prior creation attempt failures', [
 				'username' => $username,
@@ -2131,7 +2131,7 @@ class AuthManager implements LoggerAwareInterface {
 	 * @param AuthenticationRequest[] &$reqs
 	 * @param string $action
 	 * @param string|null $username
-	 * @param boolean $forceAction
+	 * @param bool $forceAction
 	 */
 	private function fillRequests( array &$reqs, $action, $username, $forceAction = false ) {
 		foreach ( $reqs as $req ) {

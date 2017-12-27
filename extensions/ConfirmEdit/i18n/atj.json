@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amqui"
+			"Amqui",
+			"Benoit Rochon"
 		]
 	},
-	"captcha-label": "CAPTCHA"
+	"captcha-label": "CAPTCHA",
+	"confirmedit-preview-content": "Tekaci ecinakok"
 }

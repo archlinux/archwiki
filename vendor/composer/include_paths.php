@@ -8,10 +8,10 @@ $baseDir = $vendorDir;
 return array(
     $vendorDir . '/pear/pear_exception',
     $vendorDir . '/pear/console_getopt',
-    $vendorDir . '/pear/mail_mime',
     $vendorDir . '/pear/mail_mime-decode',
-    $vendorDir . '/pear/mail',
     $vendorDir . '/pear/net_smtp',
     $vendorDir . '/pear/pear-core-minimal/src',
+    $vendorDir . '/pear/mail',
+    $vendorDir . '/pear/mail_mime',
     $vendorDir . '/pear/net_socket',
 );

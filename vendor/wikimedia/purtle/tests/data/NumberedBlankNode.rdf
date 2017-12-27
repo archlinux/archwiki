@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:xsd="http://www.w3.org/2001/XMLSchema#" xmlns:exterms="http://www.example.org/terms/" xmlns:exstaff="http://www.example.org/staffid/" xmlns:ex="http://example.org/packages/vocab#">
+	<rdf:Description rdf:about="http://www.example.org/staffid/Sue">
+		<exterms:publication rdf:nodeID="genid1"/>
+	</rdf:Description>
+	<rdf:Description rdf:nodeID="genid1">
+		<exterms:title>Antology of Time</exterms:title>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://www.example.org/staffid/Jack">
+		<exterms:publication rdf:nodeID="genid2"/>
+	</rdf:Description>
+	<rdf:Description rdf:nodeID="genid2">
+		<exterms:title>Anthony of Time</exterms:title>
+	</rdf:Description>
+</rdf:RDF>

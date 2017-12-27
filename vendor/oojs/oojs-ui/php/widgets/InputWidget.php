@@ -13,10 +13,6 @@ class InputWidget extends Widget {
 	use TitledElement;
 	use AccessKeyedElement;
 
-	/* Static Properties */
-
-	public static $supportsSimpleLabel = true;
-
 	/* Properties */
 
 	/**
@@ -38,6 +34,7 @@ class InputWidget extends Widget {
 	 * @param string $config['name'] HTML input name (default: '')
 	 * @param string $config['value'] Input value (default: '')
 	 * @param string $config['dir'] The directionality of the input (ltr/rtl)
+	 * @param string $config['inputId'] The value of the input’s HTML `id` attribute.
 	 */
 	public function __construct( array $config = [] ) {
 		// Parent constructor
@@ -70,6 +67,9 @@ class InputWidget extends Widget {
 		if ( isset( $config['dir'] ) ) {
 			$this->setDir( $config['dir'] );
 		}
+		if ( isset( $config['inputId'] ) ) {
+			$this->setInputId( $config['inputId'] );
+		}
 	}
 
 	/**
@@ -80,25 +80,6 @@ class InputWidget extends Widget {
 	 */
 	protected function getInputElement( $config ) {
 		return new Tag( 'input' );
-	}
-
-	/**
-	 * Get input element's ID.
-	 *
-	 * If the element already has an ID then that is returned, otherwise unique ID is
-	 * generated, set on the element, and returned.
-	 *
-	 * @return {string} The ID of the element
-	 */
-	public function getInputId() {
-		$id = $this->input->getAttribute( 'id' );
-
-		if ( $id === null ) {
-			$id = Tag::generateElementId();
-			$this->input->setAttributes( [ 'id' => $id ] );
-		}
-
-		return $id;
 	}
 
 	/**
@@ -161,6 +142,17 @@ class InputWidget extends Widget {
 		return $this;
 	}
 
+	/**
+	 * Set the 'id' attribute of the `<input>` element.
+	 *
+	 * @param string $id The ID of the input element
+	 * @return $this
+	 */
+	public function setInputId( $id ) {
+		$this->input->setAttributes( [ 'id' => $id ] );
+		return $this;
+	}
+
 	public function getConfig( &$config ) {
 		$name = $this->input->getAttribute( 'name' );
 		if ( $name !== null ) {
@@ -168,6 +160,10 @@ class InputWidget extends Widget {
 		}
 		if ( $this->value !== '' ) {
 			$config['value'] = $this->value;
+		}
+		$id = $this->input->getAttribute( 'id' );
+		if ( $id !== null ) {
+			$config['inputId'] = $id;
 		}
 		return parent::getConfig( $config );
 	}

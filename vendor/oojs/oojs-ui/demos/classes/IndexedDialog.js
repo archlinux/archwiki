@@ -13,14 +13,14 @@ Demo.IndexedDialog.prototype.getBodyHeight = function () {
 Demo.IndexedDialog.prototype.initialize = function () {
 	Demo.IndexedDialog.parent.prototype.initialize.apply( this, arguments );
 	this.indexLayout = new OO.ui.IndexLayout();
-	this.cards = [
-		new Demo.SampleCard( 'first', { label: 'One' } ),
-		new Demo.SampleCard( 'second', { label: 'Two' } ),
-		new Demo.SampleCard( 'third', { label: 'Three' } ),
-		new Demo.SampleCard( 'fourth', { label: 'Four' } )
+	this.tabPanels = [
+		new Demo.SampleTabPanel( 'first', { label: 'One' } ),
+		new Demo.SampleTabPanel( 'second', { label: 'Two' } ),
+		new Demo.SampleTabPanel( 'third', { label: 'Three' } ),
+		new Demo.SampleTabPanel( 'fourth', { label: 'Four' } )
 	];
 
-	this.indexLayout.addCards( this.cards );
+	this.indexLayout.addTabPanels( this.tabPanels );
 	this.$body.append( this.indexLayout.$element );
 
 	this.indexLayout.getTabs().getItemFromData( 'fourth' ).setDisabled( true );

@@ -1,0 +1,28 @@
+{
+	"@metadata": {
+		"authors": [
+			"Bunukwiki",
+			"Benel",
+			"Tokoabibi"
+		]
+	},
+	"visualeditor-cite-tool-name-book": "cudad",
+	"visualeditor-cite-tool-name-journal": "paydemiad-inasc-nasulitan",
+	"visualeditor-cite-tool-name-news": "sinbun",
+	"visualeditor-cite-tool-name-web": "calay-kakacawan(C-wangcan)",
+	"cite-ve-dialog-reference-options-group-label": "pisaungay tina luyaluy",
+	"cite-ve-dialog-reference-options-group-placeholder": "habutud miazih tu tatenga’ay nasulitan",
+	"cite-ve-dialog-reference-options-section": "mapili’ay",
+	"cite-ve-dialog-reference-useexisting-label": "pisaungay ayzaay miazih tu tatenga’ay nasulitan",
+	"cite-ve-dialog-reference-useexisting-tool": "miliyaw pisaungay",
+	"cite-ve-dialog-referenceslist-contextitem-description-general": "habutud miazih tu tatenga’ay nasulitan",
+	"cite-ve-dialog-referenceslist-title": "miazih tu tatenga’ay  nasulitan piazihan tu sulit",
+	"cite-ve-dialogbutton-citation-educationpopup-title": "nicaliwan",
+	"cite-ve-dialogbutton-reference-full-label": "palana’an aazihan a cudad",
+	"cite-ve-dialogbutton-reference-title": "miazih tu tatenga’ay  nasulitan",
+	"cite-ve-dialogbutton-reference-tooltip": "angangan",
+	"cite-ve-dialogbutton-referenceslist-tooltip": "miazih tu tatenga’ay  nasulitan piazihan tu sulit",
+	"cite-ve-toolbar-group-label": "nicaliwan",
+	"cite-ve-othergroup-item": "$1 miazih tu tatenga’ay nasulitan",
+	"visualeditor-internal-list-diff-default-group-name-mwreference": "miazih tu tatenga’ay  saangangan"
+}

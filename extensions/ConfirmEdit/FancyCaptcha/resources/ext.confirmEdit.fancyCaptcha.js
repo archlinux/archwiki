@@ -1,30 +1,18 @@
 ( function ( $, mw ) {
-	var api = new mw.Api();
 	$( document ).on( 'click', '.fancycaptcha-reload', function () {
 		var $this = $( this ),
-			$root, $captchaImage;
-
-		$root = $this.closest( '.fancycaptcha-captcha-container' );
+			$root = $this.closest( '.fancycaptcha-captcha-container' ),
+			$captchaImage = $root.find( '.fancycaptcha-image' );
 
 		$this.addClass( 'fancycaptcha-reload-loading' );
 
-		$captchaImage = $root.find( '.fancycaptcha-image' );
-
 		// AJAX request to get captcha index key
-		api.post( {
-			action: 'fancycaptchareload',
-			format: 'xml'
-		}, {
-			dataType: 'xml'
-		} )
-		.done( function ( xmldata ) {
-			var imgSrc, captchaIndex;
-
-			captchaIndex = $( xmldata ).find( 'fancycaptchareload' ).attr( 'index' );
+		new mw.Api().post( { action: 'fancycaptchareload' } ).done( function ( data ) {
+			var captchaIndex = data.fancycaptchareload.index,
+				imgSrc;
 			if ( typeof captchaIndex === 'string' ) {
 				// replace index key with a new one for captcha image
-				imgSrc = $captchaImage.attr( 'src' )
-				.replace( /(wpCaptchaId=)\w+/, '$1' + captchaIndex );
+				imgSrc = $captchaImage.attr( 'src' ).replace( /(wpCaptchaId=)\w+/, '$1' + captchaIndex );
 				$captchaImage.attr( 'src', imgSrc );
 
 				// replace index key with a new one for hidden tag

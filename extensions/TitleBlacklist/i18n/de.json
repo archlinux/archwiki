@@ -32,7 +32,7 @@
 	"right-tboverride": "Die schwarze Liste unerwünschter Seiten- oder Benutzernamen außer Kraft setzen",
 	"right-tboverride-account": "Die schwarze Liste unerwünschter Benutzernamen außer Kraft setzen",
 	"right-titleblacklistlog": "Das Titel-Blacklist-Logbuch ansehen",
-	"apihelp-titleblacklist-description": "Überprüft einen Artikel-, Datei- oder Benutzernamen gegen die Titel-Blacklist.",
+	"apihelp-titleblacklist-description": "Überprüft einen Seiten-, Datei- oder Benutzernamen gegen die Titel-Blacklist.",
 	"apihelp-titleblacklist-param-title": "Die Zeichenfolge, die gegen die Blacklist geprüft werden soll.",
 	"apihelp-titleblacklist-param-action": "Die zu überprüfende Aktion.",
 	"apihelp-titleblacklist-param-nooverride": "Nicht versuchen, die Titel-Blacklist zu überschreiben.",

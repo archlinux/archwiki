@@ -48,7 +48,7 @@ define( 'EXPR_CEIL', 34 );
 define( 'EXPR_POW', 35 );
 define( 'EXPR_PI', 36 );
 define( 'EXPR_FMOD', 37 );
-define( 'EXPR_SQRT' , 38 );
+define( 'EXPR_SQRT', 38 );
 
 class ExprError extends Exception {
 	/**
@@ -69,7 +69,7 @@ class ExprError extends Exception {
 class ExprParser {
 	public $maxStackSize = 100;
 
-	public $precedence = array(
+	public $precedence = [
 		EXPR_NEGATIVE => 10,
 		EXPR_POSITIVE => 10,
 		EXPR_EXPONENT => 10,
@@ -106,9 +106,9 @@ class ExprParser {
 		EXPR_PI => 0,
 		EXPR_OPEN => -1,
 		EXPR_CLOSE => -1,
-	);
+	];
 
-	public $names = array(
+	public $names = [
 		EXPR_NEGATIVE => '-',
 		EXPR_POSITIVE => '+',
 		EXPR_NOT => 'not',
@@ -143,9 +143,9 @@ class ExprParser {
 		EXPR_POW => '^',
 		EXPR_PI => 'pi',
 		EXPR_SQRT => 'sqrt',
-	);
+	];
 
-	public $words = array(
+	public $words = [
 		'mod' => EXPR_MOD,
 		'fmod' => EXPR_FMOD,
 		'and' => EXPR_AND,
@@ -168,7 +168,7 @@ class ExprParser {
 		'ceil' => EXPR_CEIL,
 		'pi' => EXPR_PI,
 		'sqrt' => EXPR_SQRT,
-	);
+	];
 
 	/**
 	 * Evaluate a mathematical expression
@@ -181,12 +181,12 @@ class ExprParser {
 	 * @return string
 	 */
 	public function doExpression( $expr ) {
-		$operands = array();
-		$operators = array();
+		$operands = [];
+		$operators = [];
 
 		# Unescape inequality operators
-		$expr = strtr( $expr, array( '&lt;' => '<', '&gt;' => '>',
-			'&minus;' => '-', '−' => '-' ) );
+		$expr = strtr( $expr, [ '&lt;' => '<', '&gt;' => '>',
+			'&minus;' => '-', '−' => '-' ] );
 
 		$p = 0;
 		$end = strlen( $expr );
@@ -239,7 +239,7 @@ class ExprParser {
 					throw new ExprError( 'unrecognised_word', $word );
 				}
 				$op = $this->words[$word];
-				switch( $op ) {
+				switch ( $op ) {
 				// constant
 				case EXPR_EXPONENT:
 					if ( $expecting !== 'expression' ) {
@@ -281,24 +281,22 @@ class ExprParser {
 			}
 
 			// Next the two-character operators
-
-			elseif ( $char2 === '<=' ) {
+ elseif ( $char2 === '<=' ) {
 				$name = $char2;
 				$op = EXPR_LESSEQ;
 				$p += 2;
-			} elseif ( $char2 === '>=' ) {
+	} elseif ( $char2 === '>=' ) {
 				$name = $char2;
 				$op = EXPR_GREATEREQ;
 				$p += 2;
-			} elseif ( $char2 === '<>' || $char2 === '!=' ) {
+	} elseif ( $char2 === '<>' || $char2 === '!=' ) {
 				$name = $char2;
 				$op = EXPR_NOTEQ;
 				$p += 2;
-			}
+	}
 
 			// Finally the single-character operators
-
-			elseif ( $char === '+' ) {
+ elseif ( $char === '+' ) {
 				++$p;
 				if ( $expecting === 'expression' ) {
 					// Unary plus
@@ -308,7 +306,7 @@ class ExprParser {
 					// Binary plus
 					$op = EXPR_PLUS;
 				}
-			} elseif ( $char === '-' ) {
+	} elseif ( $char === '-' ) {
 				++$p;
 				if ( $expecting === 'expression' ) {
 					// Unary minus
@@ -318,26 +316,26 @@ class ExprParser {
 					// Binary minus
 					$op = EXPR_MINUS;
 				}
-			} elseif ( $char === '*' ) {
+	} elseif ( $char === '*' ) {
 				$name = $char;
 				$op = EXPR_TIMES;
 				++$p;
-			} elseif ( $char === '/' ) {
+	} elseif ( $char === '/' ) {
 				$name = $char;
 				$op = EXPR_DIVIDE;
 				++$p;
-			} elseif ( $char === '^' ) {
+	} elseif ( $char === '^' ) {
 				$name = $char;
 				$op = EXPR_POW;
 				++$p;
-			} elseif ( $char === '(' )  {
+	} elseif ( $char === '(' ) {
 				if ( $expecting === 'operator' ) {
 					throw new ExprError( 'unexpected_operator', '(' );
 				}
 				$operators[] = EXPR_OPEN;
 				++$p;
 				continue;
-			} elseif ( $char === ')' ) {
+	} elseif ( $char === ')' ) {
 				$lastOp = end( $operators );
 				while ( $lastOp && $lastOp != EXPR_OPEN ) {
 					$this->doOperation( $lastOp, $operands );
@@ -352,21 +350,21 @@ class ExprParser {
 				$expecting = 'operator';
 				++$p;
 				continue;
-			} elseif ( $char === '=' ) {
+	} elseif ( $char === '=' ) {
 				$name = $char;
 				$op = EXPR_EQUALITY;
 				++$p;
-			} elseif ( $char === '<' ) {
+	} elseif ( $char === '<' ) {
 				$name = $char;
 				$op = EXPR_LESS;
 				++$p;
-			} elseif ( $char === '>' ) {
+	} elseif ( $char === '>' ) {
 				$name = $char;
 				$op = EXPR_GREATER;
 				++$p;
-			} else {
+	} else {
 				throw new ExprError( 'unrecognised_punctuation', Validator::cleanUp( $char ) );
-			}
+	}
 
 			// Binary operator processing
 			if ( $expecting === 'expression' ) {
@@ -385,7 +383,9 @@ class ExprParser {
 		}
 
 		// Finish off the operator array
+		// @codingStandardsIgnoreStart
 		while ( $op = array_pop( $operators ) ) {
+		// @codingStandardsIgnoreEnd
 			if ( $op == EXPR_OPEN ) {
 				throw new ExprError( 'unclosed_bracket' );
 			}
@@ -657,9 +657,11 @@ class ExprParser {
 				}
 				$right = array_pop( $stack );
 				$left = array_pop( $stack );
-				if ( false === ( $stack[] = pow( $left, $right ) ) ) {
+				$result = pow( $left, $right );
+				if ( $result === false ) {
 					throw new ExprError( 'division_by_zero', $this->names[$op] );
 				}
+				$stack[] = $result;
 				break;
 			case EXPR_SQRT:
 				if ( count( $stack ) < 1 ) {

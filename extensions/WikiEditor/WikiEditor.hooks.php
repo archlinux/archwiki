@@ -17,6 +17,8 @@ class WikiEditorHooks {
 
 		/* Toolbar Features */
 
+		// 'toolbar' is the main wikieditor feature, including toolbars and dialogs.
+		// The legacy name preserves user preferences for disabling the feature.
 		'toolbar' => [
 			'preferences' => [
 				// Ideally this key would be 'wikieditor-toolbar'
@@ -30,27 +32,10 @@ class WikiEditorHooks {
 				'usebetatoolbar' => true,
 			],
 			'modules' => [
-				'ext.wikiEditor.toolbar',
+				'ext.wikiEditor',
 			],
 			'stylemodules' => [
-				'ext.wikiEditor.toolbar.styles',
-			],
-		],
-		'dialogs' => [
-			'preferences' => [
-				// Ideally this key would be 'wikieditor-toolbar-dialogs'
-				'usebetatoolbar-cgd' => [
-					'type' => 'toggle',
-					'label-message' => 'wikieditor-toolbar-dialogs-preference',
-					'section' => 'editing/editor',
-				],
-			],
-			'requirements' => [
-				'usebetatoolbar-cgd' => true,
-				'usebetatoolbar' => true,
-			],
-			'modules' => [
-				'ext.wikiEditor.dialogs',
+				'ext.wikiEditor.styles',
 			],
 		],
 
@@ -96,7 +81,7 @@ class WikiEditorHooks {
 	 * This method is public to allow other extensions that use WikiEditor to use the
 	 * same configuration as WikiEditor itself
 	 *
-	 * @param $name string Name of the feature, should be a key of $features
+	 * @param string $name Name of the feature, should be a key of $features
 	 * @return bool
 	 */
 	public static function isEnabled( $name ) {
@@ -178,12 +163,10 @@ class WikiEditorHooks {
 	 * @param OutputPage $outputPage object.
 	 * @return bool
 	 */
-	public static function editPageShowEditFormInitial( $editPage, $outputPage ) {
+	public static function editPageShowEditFormInitial( EditPage $editPage, OutputPage $outputPage ) {
 		if ( $editPage->contentModel !== CONTENT_MODEL_WIKITEXT ) {
 			return true;
 		}
-
-		$outputPage->addModuleStyles( 'ext.wikiEditor.styles' );
 
 		// Add modules for enabled features
 		foreach ( self::$features as $name => $feature ) {
@@ -236,12 +219,12 @@ class WikiEditorHooks {
 	 * @param OutputPage $outputPage object.
 	 * @return bool
 	 */
-	public static function editPageShowEditFormFields( $editPage, $outputPage ) {
+	public static function editPageShowEditFormFields( EditPage $editPage, OutputPage $outputPage ) {
 		if ( $editPage->contentModel !== CONTENT_MODEL_WIKITEXT ) {
 			return true;
 		}
 
-		$req = $outputPage->getContext()->getRequest();
+		$req = $outputPage->getRequest();
 		$editingStatsId = $req->getVal( 'editingStatsId' );
 		if ( !$editingStatsId || !$req->wasPosted() ) {
 			$editingStatsId = self::getEditingStatsId();
@@ -266,7 +249,7 @@ class WikiEditorHooks {
 	 *
 	 * Disable the old toolbar if the new one is enabled
 	 *
-	 * @param $toolbar html
+	 * @param string &$toolbar
 	 * @return bool
 	 */
 	public static function EditPageBeforeEditToolbar( &$toolbar ) {
@@ -290,7 +273,7 @@ class WikiEditorHooks {
 	 * Adds WikiEditor-related items to the preferences
 	 *
 	 * @param User $user current user
-	 * @param array $defaultPreferences list of default user preference controls
+	 * @param array &$defaultPreferences list of default user preference controls
 	 * @return bool
 	 */
 	public static function getPreferences( $user, &$defaultPreferences ) {
@@ -315,7 +298,7 @@ class WikiEditorHooks {
 	 */
 	public static function resourceLoaderGetConfigVars( &$vars ) {
 		// expose magic words for use by the wikieditor toolbar
-		WikiEditorHooks::getMagicWords( $vars );
+		self::getMagicWords( $vars );
 
 		$vars['mw.msg.wikieditor'] = wfMessage( 'sig-text', '~~~~' )->inContentLanguage()->text();
 
@@ -398,8 +381,7 @@ class WikiEditorHooks {
 	 * This is attached to the MediaWiki 'EditPage::attemptSave' hook.
 	 *
 	 * @param EditPage $editPage
-	 * @param Status $status
-	 * @return boolean
+	 * @return bool
 	 */
 	public static function editPageAttemptSave( EditPage $editPage ) {
 		$article = $editPage->getArticle();
@@ -420,7 +402,7 @@ class WikiEditorHooks {
 	 *
 	 * @param EditPage $editPage
 	 * @param Status $status
-	 * @return boolean
+	 * @return bool
 	 */
 	public static function editPageAttemptSaveAfter( EditPage $editPage, Status $status ) {
 		$article = $editPage->getArticle();

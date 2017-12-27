@@ -37,15 +37,19 @@ div.apihelp-linktrail {
 .apihelp-flag-deprecated,
 .apihelp-flag-internal strong {
 	font-weight: bold;
-	color: #f00;
+	color: #d33;
+}
+
+.apihelp-deprecated-value {
+	text-decoration: line-through;
 }
 
 .apihelp-unknown {
-	color: #888;
+	color: #72777d;
 }
 
 .apihelp-empty {
-	color: #888;
+	color: #72777d;
 }
 
 .apihelp-help-urls ul {

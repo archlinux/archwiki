@@ -11,7 +11,7 @@
 	"cite_error_ref_too_many_keys": "אומגילטיגער <code>&lt;ref&gt;</code> טאַג;\nאומגילטיגע נעמען, צ.ב. צו פֿיל",
 	"cite_error_ref_no_input": "אומגילטיגער <code>&lt;ref&gt;</code> טאַג;\nא רעפֿערענץ אָן א נאמען דארף האבן תוכן",
 	"cite_error_references_duplicate_key": "אומגילטיקער <code>&lt;ref&gt;</code> טאג; נאמען \"$1\" דעפֿינירט מערערע מאל מיט אנדער אינהאלט",
-	"cite_error_references_invalid_parameters": "אומגילטיגער <code>&lt;references&gt;</code> טאַג;\nקיין פאראמעטערס נישט ערלויבט. ניצט <code>&lt;references /&gt;</code>",
+	"cite_error_references_invalid_parameters": "אומגילטיגער פאראמעטער אין <code>&lt;references&gt;</code> טאַג",
 	"cite_error_references_no_text": "אומגילטיגער <code>&lt;ref&gt;</code> טאַג;\nקיין טעקסט נישט געשריבן פֿאַר רעפֿערענצן מיטן נאָמען <code>$1</code>",
 	"cite_error_included_ref": "פֿעלט א שליסנדיגער <code>&lt;/ref&gt;</code> פֿאַר <code>&lt;ref&gt;</code> טאַג",
 	"cite_error_group_refs_without_references": "ס'זענען דא <code>&lt;ref&gt;</code> טאַגן פֿאַר א גרופע וואס הייסט \"$1\", אבער מ'האט נישט געטראפֿן קיין אַנטקעגענעם  <code>&lt;references group=\"$1\"/&gt;</code> טאַג, אדער א שליסנדיקער <code>&lt;/ref&gt;</code> פֿעלט.",

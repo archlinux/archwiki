@@ -18,7 +18,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @author Aaron Schulz
  */
 
 /**
@@ -36,7 +35,7 @@ class HashRing {
 	protected $liveRing;
 	/** @var Array (location => UNIX timestamp) */
 	protected $ejectionExpiries = [];
-	/** @var integer UNIX timestamp */
+	/** @var int UNIX timestamp */
 	protected $ejectionNextExpiry = INF;
 
 	const RING_SIZE = 268435456; // 2^28
@@ -94,7 +93,7 @@ class HashRing {
 	 * Get the location of an item on the ring, as well as the next locations
 	 *
 	 * @param string $item
-	 * @param integer $limit Maximum number of locations to return
+	 * @param int $limit Maximum number of locations to return
 	 * @return array List of locations
 	 */
 	public function getLocations( $item, $limit ) {
@@ -153,7 +152,7 @@ class HashRing {
 	 * Remove a location from the "live" hash ring
 	 *
 	 * @param string $location
-	 * @param integer $ttl Seconds
+	 * @param int $ttl Seconds
 	 * @return bool Whether some non-ejected locations are left
 	 */
 	public function ejectFromLiveRing( $location, $ttl ) {
@@ -179,7 +178,7 @@ class HashRing {
 		if ( $this->liveRing === null || $this->ejectionNextExpiry <= $now ) {
 			$this->ejectionExpiries = array_filter(
 				$this->ejectionExpiries,
-				function( $expiry ) use ( $now ) {
+				function ( $expiry ) use ( $now ) {
 					return ( $expiry > $now );
 				}
 			);
@@ -219,7 +218,7 @@ class HashRing {
 	 * Get the location of an item on the "live" ring, as well as the next locations
 	 *
 	 * @param string $item
-	 * @param integer $limit Maximum number of locations to return
+	 * @param int $limit Maximum number of locations to return
 	 * @return array List of locations
 	 * @throws UnexpectedValueException
 	 */

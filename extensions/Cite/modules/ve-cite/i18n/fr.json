@@ -45,7 +45,8 @@
 			"Wladek92",
 			"Harmonia Amanda",
 			"Macofe",
-			"Pols12"
+			"Pols12",
+			"Thibaut120094"
 		]
 	},
 	"visualeditor-cite-tool-definition.json": "nul",
@@ -54,11 +55,19 @@
 	"visualeditor-cite-tool-name-news": "Actualités",
 	"visualeditor-cite-tool-name-web": "Site web",
 	"cite-tool-definition.json": "nul",
+	"cite-ve-changedesc-ref-group-both": "Groupe de référence modifié de « $1 » en « $2 »",
+	"cite-ve-changedesc-ref-group-from": "Groupe de référence modifié de « $1 » vers le groupe général",
+	"cite-ve-changedesc-ref-group-to": "Groupe de référence modifié du groupe général vers « $1 »",
+	"cite-ve-changedesc-reflist-group-both": "Groupe de liste de référence modifié de « $1 » en « $2 »",
+	"cite-ve-changedesc-reflist-group-from": "Groupe de liste de référence modifié de « $1 » vers le groupe général",
+	"cite-ve-changedesc-reflist-group-to": "Groupe de liste de référence modifié du groupe général vers « $1 »",
+	"cite-ve-changedesc-reflist-item-id": "Le numéro de la source a changé",
 	"cite-ve-dialog-reference-editing-reused": "Cette référence est utilisée $1 {{PLURAL:$1|fois}} sur cette page.",
 	"cite-ve-dialog-reference-options-group-label": "Utiliser ce groupe",
 	"cite-ve-dialog-reference-options-group-placeholder": "Références générales",
 	"cite-ve-dialog-reference-options-name-label": "Réutiliser avec ce nom",
 	"cite-ve-dialog-reference-options-section": "Options",
+	"cite-ve-dialog-reference-placeholder": "Ecrire ou coller ici votre référence, ou insérer un modèle de citation.",
 	"cite-ve-dialog-reference-title": "Référence",
 	"cite-ve-dialog-reference-useexisting-full-label": "Réutiliser une référence qui existe déjà sur cette page",
 	"cite-ve-dialog-reference-useexisting-label": "Utiliser une référence existante",
@@ -77,5 +86,7 @@
 	"cite-ve-referenceslist-isempty-default": "Il n’y a aucune référence sur cette page à inclure dans cette liste.",
 	"cite-ve-referenceslist-missingref": "Cette référence est définie dans un modèle ou un autre bloc généré et ne peut pour le moment être modifiée qu’avec l’éditeur de wikicode.",
 	"cite-ve-toolbar-group-label": "Source",
-	"cite-ve-othergroup-item": "référence $1"
+	"cite-ve-othergroup-item": "référence $1",
+	"visualeditor-internal-list-diff-default-group-name-mwreference": "Références",
+	"visualeditor-internal-list-diff-group-name-mwreference": "Nom du groupe de référence : « $1 »"
 }

@@ -10,6 +10,7 @@
 		]
 	},
 	"nuke": "Eliminação em massa",
+	"action-nuke": "eliminar páginas em massa",
 	"nuke-desc": "[[Special:Nuke|Página especial]] que permite que os administradores apaguem páginas de forma massiva",
 	"nuke-nopages": "Não há novas páginas de [[Special:Contributions/$1|{{GENDER:$1|$1}}]] nas mudanças recentes.",
 	"nuke-list": "As páginas a seguir foram criadas recentemente por [[Special:Contributions/$1|{{GENDER:$1|$1}}]]; \nintroduza um comentário e pressione o botão a seguir para eliminá-las.",
@@ -28,8 +29,10 @@
 	"nuke-deleted": "A página '''$1''' foi eliminada.",
 	"nuke-not-deleted": "Não foi possível eliminar a página [[:$1]].",
 	"nuke-delete-more": "[[Special:Nuke|Eliminar mais páginas]]",
-	"nuke-nopages-global": "Não existem páginas novas nas [[Special:RecentChanges|mudanças recentes]].",
+	"nuke-pattern": "Patrão para o nome de página:",
+	"nuke-nopages-global": "Não existem títulos de página que correspondam à sua pesquisa.",
 	"nuke-viewchanges": "ver alterações",
+	"nuke-namespace": "Limitar ao espaço nominal:",
 	"nuke-linkoncontribs": "eliminação em massa",
 	"nuke-linkoncontribs-text": "Eliminar em massa páginas em que este utilizador é o único autor"
 }

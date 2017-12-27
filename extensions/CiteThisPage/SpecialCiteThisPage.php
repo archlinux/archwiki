@@ -118,7 +118,6 @@ class SpecialCiteThisPage extends FormSpecialPage {
 
 		$this->getOutput()->addModuleStyles( 'ext.citeThisPage' );
 		$this->getOutput()->addParserOutputContent( $ret );
-
 	}
 
 	/**
@@ -146,7 +145,7 @@ class SpecialCiteThisPage extends FormSpecialPage {
 			$code = $wgContLang->lc( $wgContLanguageCode );
 			if ( file_exists( "${dir}citethispage-content-$code" ) ) {
 				$msg = file_get_contents( "${dir}citethispage-content-$code" );
-			} elseif ( file_exists( "${dir}citethispage-content" ) ){
+			} elseif ( file_exists( "${dir}citethispage-content" ) ) {
 				$msg = file_get_contents( "${dir}citethispage-content" );
 			}
 		}
@@ -193,7 +192,6 @@ class SpecialCiteThisPage extends FormSpecialPage {
 		);
 
 		return $ret->getText();
-
 	}
 
 	protected function getDisplayFormat() {

@@ -35,12 +35,6 @@
 		if ( $defaultToggle === undefined ) {
 			$defaultToggle = null;
 		}
-		if ( $defaultToggle !== null && !$defaultToggle.jquery ) {
-			// is optional (may be undefined), but if defined it must be an instance of jQuery.
-			// If it's not, abort right away.
-			// After this $defaultToggle is either null or a valid jQuery instance.
-			return;
-		}
 
 		// Trigger a custom event to allow callers to hook to the collapsing/expanding,
 		// allowing the module to be testable, and making it possible to
@@ -158,12 +152,10 @@
 		if ( e ) {
 			if (
 				e.type === 'click' &&
-				options.linksPassthru &&
 				e.target.nodeName.toLowerCase() === 'a' &&
-				$( e.target ).attr( 'href' ) &&
-				$( e.target ).attr( 'href' ) !== '#'
+				$( e.target ).attr( 'href' )
 			) {
-				// Don't fire if a link with href !== '#' was clicked, if requested  (for premade togglers by default)
+				// Don't fire if a link was clicked (for premade togglers)
 				return;
 			} else if ( e.type === 'keypress' && e.which !== 13 && e.which !== 32 ) {
 				// Only handle keypresses on the "Enter" or "Space" keys
@@ -191,16 +183,15 @@
 				.toggleClass( 'mw-collapsible-toggle-expanded', wasCollapsed );
 		}
 
-		// Toggle the text ("Show"/"Hide"), if requested (for default togglers by default)
+		// Toggle the text ("Show"/"Hide") within elements tagged with mw-collapsible-text
 		if ( options.toggleText ) {
 			collapseText = options.toggleText.collapseText;
 			expandText = options.toggleText.expandText;
 
-			$textContainer = $toggle.find( '> a' );
-			if ( !$textContainer.length ) {
-				$textContainer = $toggle;
+			$textContainer = $collapsible.find( '.mw-collapsible-text' );
+			if ( $textContainer.length ) {
+				$textContainer.text( wasCollapsed ? collapseText : expandText );
 			}
-			$textContainer.text( wasCollapsed ? collapseText : expandText );
 		}
 
 		// And finally toggle the element state itself
@@ -242,7 +233,7 @@
 
 		this.each( function () {
 			var $collapsible, collapseText, expandText, $caption, $toggle, actionHandler, buildDefaultToggleLink,
-				premadeToggleHandler, $toggleLink, $firstItem, collapsibleId, $customTogglers, firstval;
+				$toggleLink, $firstItem, collapsibleId, $customTogglers, firstval;
 
 			// Ensure class "mw-collapsible" is present in case .makeCollapsible()
 			// is called on element(s) that don't have it yet.
@@ -268,26 +259,20 @@
 				opts = $.extend( defaultOpts, options, opts );
 				togglingHandler( $( this ), $collapsible, e, opts );
 			};
+
 			// Default toggle link. Only build it when needed to avoid jQuery memory leaks (event data).
 			buildDefaultToggleLink = function () {
-				return $( '<a>' )
+				return $( '<a class="mw-collapsible-text"></a>' )
+					.text( collapseText )
+					.wrap( '<span class="mw-collapsible-toggle"></span>' )
+					.parent()
 					.attr( {
 						role: 'button',
 						tabindex: 0
 					} )
-					.text( collapseText )
-					.wrap( '<span class="mw-collapsible-toggle"></span>' )
-						.parent()
-						.prepend( '<span class="mw-collapsible-bracket">[</span>' )
-						.append( '<span class="mw-collapsible-bracket">]</span>' )
-						.on( 'click.mw-collapsible keypress.mw-collapsible', actionHandler );
-			};
-
-			// Default handler for clicking on premade toggles
-			premadeToggleHandler = function ( e, opts ) {
-				var defaultOpts = { toggleClasses: true, linksPassthru: true };
-				opts = $.extend( defaultOpts, options, opts );
-				togglingHandler( $( this ), $collapsible, e, opts );
+					.prepend( '<span>[</span>' )
+					.append( '<span>]</span>' )
+					.on( 'click.mw-collapsible keypress.mw-collapsible', actionHandler );
 			};
 
 			// Check if this element has a custom position for the toggle link
@@ -331,7 +316,6 @@
 						if ( !$toggle.length ) {
 							$toggleLink = buildDefaultToggleLink().appendTo( $caption );
 						} else {
-							actionHandler = premadeToggleHandler;
 							$toggleLink = $toggle.on( 'click.mw-collapsible keypress.mw-collapsible', actionHandler )
 								.prop( 'tabIndex', 0 );
 						}
@@ -344,7 +328,6 @@
 						if ( !$toggle.length ) {
 							$toggleLink = buildDefaultToggleLink().prependTo( $firstItem.eq( -1 ) );
 						} else {
-							actionHandler = premadeToggleHandler;
 							$toggleLink = $toggle.on( 'click.mw-collapsible keypress.mw-collapsible', actionHandler )
 								.prop( 'tabIndex', 0 );
 						}
@@ -374,7 +357,6 @@
 						$toggleLink = buildDefaultToggleLink();
 						$toggleLink.wrap( '<li class="mw-collapsible-toggle-li"></li>' ).parent().prependTo( $collapsible );
 					} else {
-						actionHandler = premadeToggleHandler;
 						$toggleLink = $toggle.on( 'click.mw-collapsible keypress.mw-collapsible', actionHandler )
 							.prop( 'tabIndex', 0 );
 					}
@@ -393,7 +375,6 @@
 					if ( !$toggle.length ) {
 						$toggleLink = buildDefaultToggleLink().prependTo( $collapsible );
 					} else {
-						actionHandler = premadeToggleHandler;
 						$toggleLink = $toggle.on( 'click.mw-collapsible keypress.mw-collapsible', actionHandler )
 							.prop( 'tabIndex', 0 );
 					}

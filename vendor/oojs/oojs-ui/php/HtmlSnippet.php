@@ -19,7 +19,7 @@ class HtmlSnippet {
 	/* Methods */
 
 	/**
-	 * @param string $content
+	 * @param string $content HTML snippet
 	 */
 	public function __construct( $content ) {
 		$this->content = $content;

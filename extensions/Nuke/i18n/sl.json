@@ -25,9 +25,9 @@
 	"nuke-not-deleted": "Strani [[:$1]] '''ni bilo mogoče''' izbrisati.",
 	"nuke-delete-more": "[[Special:Nuke|Izbriši več strani]]",
 	"nuke-pattern": "Vzorec imena strani:",
-	"nuke-nopages-global": "V [[Special:RecentChanges|zadnjih spremembah]] ni novih strani.",
+	"nuke-nopages-global": "Z vašim iskanjem se ne ujema noben naslov strani.",
 	"nuke-viewchanges": "ogled sprememb",
 	"nuke-namespace": "Omeji na imenski prostor:",
 	"nuke-linkoncontribs": "množični izbris",
-	"nuke-linkoncontribs-text": "Množični izbris strani, katerih edini avtor je ta uporabnik"
+	"nuke-linkoncontribs-text": "Množični izbris strani, katerih {{GENDER:$1|edini avtor je ta uporabnik|edina avtorica je ta uporabnica}}"
 }

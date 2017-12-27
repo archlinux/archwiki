@@ -22,12 +22,12 @@
  */
 
 class PdfHandler extends ImageHandler {
-	static $messages = array(
+	public static $messages = [
 		'main' => 'pdf-file-page-warning',
 		'header' => 'pdf-file-page-warning-header',
 		'info' => 'pdf-file-page-warning-info',
 		'footer' => 'pdf-file-page-warning-footer',
-	);
+	];
 
 	/**
 	 * @return bool
@@ -66,12 +66,12 @@ class PdfHandler extends ImageHandler {
 	 * @return bool
 	 */
 	function validateParam( $name, $value ) {
-		if ( $name === 'page' && trim( $value ) !== (string) intval( $value ) ) {
+		if ( $name === 'page' && trim( $value ) !== (string)intval( $value ) ) {
 			// Extra junk on the end of page, probably actually a caption
 			// e.g. [[File:Foo.pdf|thumb|Page 3 of the document shows foo]]
 			return false;
 		}
-		if ( in_array( $name, array( 'width', 'height', 'page' ) ) ) {
+		if ( in_array( $name, [ 'width', 'height', 'page' ] ) ) {
 			return ( $value > 0 );
 		}
 		return false;
@@ -97,7 +97,7 @@ class PdfHandler extends ImageHandler {
 		$m = false;
 
 		if ( preg_match( '/^page(\d+)-(\d+)px$/', $str, $m ) ) {
-			return array( 'width' => $m[2], 'page' => $m[1] );
+			return [ 'width' => $m[2], 'page' => $m[1] ];
 		}
 
 		return false;
@@ -108,20 +108,20 @@ class PdfHandler extends ImageHandler {
 	 * @return array
 	 */
 	function getScriptParams( $params ) {
-		return array(
+		return [
 			'width' => $params['width'],
 			'page' => $params['page'],
-		);
+		];
 	}
 
 	/**
 	 * @return array
 	 */
 	function getParamMap() {
-		return array(
+		return [
 			'img_width' => 'width',
 			'img_page' => 'page',
-		);
+		];
 	}
 
 	/**
@@ -170,11 +170,11 @@ class PdfHandler extends ImageHandler {
 		// Provide a way to pool count limit the number of downloaders.
 		if ( $image->getSize() >= 1e7 ) { // 10MB
 			$work = new PoolCounterWorkViaCallback( 'GetLocalFileCopy', sha1( $image->getName() ),
-				array(
-					'doWork' => function() use ( $image ) {
+				[
+					'doWork' => function () use ( $image ) {
 						return $image->getLocalRefPath();
 					}
-				)
+				]
 			);
 			$srcPath = $work->execute();
 		} else {
@@ -260,13 +260,17 @@ class PdfHandler extends ImageHandler {
 			return false;
 		}
 
-		$work = new PoolCounterWorkViaCallback( 'PdfHandler-unserialize-metadata', $image->getName(), array(
-			'doWork' => function() use ( $image, $metadata ) {
-				wfSuppressWarnings();
-				$image->pdfMetaArray = unserialize( $metadata );
-				wfRestoreWarnings();
-			},
-		) );
+		$work = new PoolCounterWorkViaCallback(
+			'PdfHandler-unserialize-metadata',
+			$image->getName(),
+			[
+				'doWork' => function () use ( $image, $metadata ) {
+					wfSuppressWarnings();
+					$image->pdfMetaArray = unserialize( $metadata );
+					wfRestoreWarnings();
+				},
+			]
+		);
 		$work->execute();
 
 		return $image->pdfMetaArray;
@@ -295,7 +299,7 @@ class PdfHandler extends ImageHandler {
 			$magic = MimeMagic::singleton();
 			$mime = $magic->guessTypesForExtension( $wgPdfOutputExtension );
 		}
-		return array( $wgPdfOutputExtension, $mime );
+		return [ $wgPdfOutputExtension, $mime ];
 	}
 
 	/**
@@ -313,7 +317,7 @@ class PdfHandler extends ImageHandler {
 	 * @return bool
 	 */
 	function isMetadataValid( $image, $metadata ) {
-		if ( !$metadata || $metadata === serialize(array()) ) {
+		if ( !$metadata || $metadata === serialize( [] ) ) {
 			return self::METADATA_BAD;
 		} elseif ( strpos( $metadata, 'mergedMetadata' ) === false ) {
 			return self::METADATA_COMPATIBLE;
@@ -380,7 +384,7 @@ class PdfHandler extends ImageHandler {
 			$cache::TTL_INDEFINITE,
 			function () use ( $file ) {
 				$data = $this->getMetaArray( $file );
-				if ( !$data || !isset( $data['Pages'] )  ) {
+				if ( !$data || !isset( $data['Pages'] ) ) {
 					return false;
 				}
 				unset( $data['text'] ); // lower peak RAM
@@ -417,11 +421,11 @@ class PdfHandler extends ImageHandler {
 	 * @return array
 	 */
 	function getWarningConfig( $file ) {
-		return array(
+		return [
 			'messages' => self::$messages,
 			'link' => '//www.mediawiki.org/wiki/Special:MyLanguage/Help:Security/PDF_files',
 			'module' => 'pdfhandler.messages',
-		);
+		];
 	}
 
 	/**
@@ -429,8 +433,8 @@ class PdfHandler extends ImageHandler {
 	 * @param &$resourceLoader ResourceLoader
 	 */
 	static function registerWarningModule( &$resourceLoader ) {
-		$resourceLoader->register( 'pdfhandler.messages', array(
+		$resourceLoader->register( 'pdfhandler.messages', [
 			'messages' => array_values( self::$messages ),
-		) );
+		] );
 	}
 }

@@ -333,7 +333,7 @@ class IEContentAnalyzer {
 	 * @param string $chunk the first 256 bytes of the file
 	 * @param string $proposed the MIME type proposed by the server
 	 *
-	 * @return Array: map of IE version to detected MIME type
+	 * @return array map of IE version to detected MIME type
 	 */
 	public function getRealMimesFromData( $fileName, $chunk, $proposed ) {
 		$types = $this->getMimesFromData( $fileName, $chunk, $proposed );
@@ -344,7 +344,7 @@ class IEContentAnalyzer {
 	/**
 	 * Translate a MIME type from IE's idiosyncratic private types into
 	 * more commonly understood type strings
-	 * @param $type
+	 * @param string $type
 	 * @return string
 	 */
 	public function translateMimeType( $type ) {
@@ -371,7 +371,7 @@ class IEContentAnalyzer {
 	 * @param string $chunk the first 256 bytes of the file
 	 * @param string $proposed the MIME type proposed by the server
 	 *
-	 * @return Array: map of IE version to detected MIME type
+	 * @return array map of IE version to detected MIME type
 	 */
 	public function getMimesFromData( $fileName, $chunk, $proposed ) {
 		$types = [];
@@ -383,10 +383,10 @@ class IEContentAnalyzer {
 
 	/**
 	 * Get the MIME type for a given named version
-	 * @param $version
-	 * @param $fileName
-	 * @param $chunk
-	 * @param $proposed
+	 * @param string $version
+	 * @param string $fileName
+	 * @param string $chunk
+	 * @param string $proposed
 	 * @return bool|string
 	 */
 	protected function getMimeTypeForVersion( $version, $fileName, $chunk, $proposed ) {
@@ -399,8 +399,8 @@ class IEContentAnalyzer {
 		$proposedFormat = $this->getDataFormat( $version, $proposed );
 		if ( $proposedFormat == 'unknown'
 			&& $proposed != 'multipart/mixed'
-			&& $proposed != 'multipart/x-mixed-replace' )
-		{
+			&& $proposed != 'multipart/x-mixed-replace'
+		) {
 			return $proposed;
 		}
 		if ( strval( $chunk ) === '' ) {
@@ -426,15 +426,15 @@ class IEContentAnalyzer {
 			return 'image/gif';
 		}
 		if ( ( $proposed == 'image/pjpeg' || $proposed == 'image/jpeg' )
-			&& $binaryType == 'image/pjpeg' )
-		{
+			&& $binaryType == 'image/pjpeg'
+		) {
 			return $proposed;
 		}
 		// PNG check added in IE 7
 		if ( $version >= 'ie07'
 			&& ( $proposed == 'image/x-png' || $proposed == 'image/png' )
-			&& $binaryType == 'image/x-png' )
-		{
+			&& $binaryType == 'image/x-png'
+		) {
 			return $proposed;
 		}
 
@@ -450,8 +450,8 @@ class IEContentAnalyzer {
 		}
 		if ( isset( $sampleFound['rdf-tag'] )
 			&& isset( $sampleFound['rdf-url'] )
-			&& isset( $sampleFound['rdf-purl'] ) )
-		{
+			&& isset( $sampleFound['rdf-purl'] )
+		) {
 			return 'application/rss+xml';
 		}
 		if ( isset( $sampleFound['atom'] ) ) {
@@ -497,8 +497,8 @@ class IEContentAnalyzer {
 		// Freaky heuristics to determine if the data is text or binary
 		// The heuristic is of course broken for non-ASCII text
 		if ( $counters['ctrl'] != 0 && ( $counters['ff'] + $counters['low'] )
-			< ( $counters['ctrl'] + $counters['high'] ) * 16 )
-		{
+			< ( $counters['ctrl'] + $counters['high'] ) * 16
+		) {
 			$kindOfBinary = true;
 			$type = $binaryType ? $binaryType : $textType;
 			if ( $type === false ) {
@@ -553,8 +553,8 @@ class IEContentAnalyzer {
 	/**
 	 * Check for text headers at the start of the chunk
 	 * Confirmed same in 5 and 7.
-	 * @param $version
-	 * @param $chunk
+	 * @param string $version
+	 * @param string $chunk
 	 * @return bool|string
 	 */
 	private function checkTextHeaders( $version, $chunk ) {
@@ -579,8 +579,8 @@ class IEContentAnalyzer {
 	/**
 	 * Check for binary headers at the start of the chunk
 	 * Confirmed same in 5 and 7.
-	 * @param $version
-	 * @param $chunk
+	 * @param string $version
+	 * @param string $chunk
 	 * @return bool|string
 	 */
 	private function checkBinaryHeaders( $version, $chunk ) {
@@ -599,13 +599,13 @@ class IEContentAnalyzer {
 
 		if ( $chunk2 == 'BM'
 			&& substr( $chunk, 6, 2 ) == "\000\000"
-			&& substr( $chunk, 8, 2 ) == "\000\000" )
-		{
+			&& substr( $chunk, 8, 2 ) == "\000\000"
+		) {
 			return 'image/bmp'; // another non-standard MIME
 		}
 		if ( $chunk4 == 'RIFF'
-			&& substr( $chunk, 8, 4 ) == 'WAVE' )
-		{
+			&& substr( $chunk, 8, 4 ) == 'WAVE'
+		) {
 			return 'audio/wav';
 		}
 		// These were integer literals in IE
@@ -613,8 +613,8 @@ class IEContentAnalyzer {
 		if ( $chunk4 == ".sd\000"
 			|| $chunk4 == ".snd"
 			|| $chunk4 == "\000ds."
-			|| $chunk4 == "dns." )
-		{
+			|| $chunk4 == "dns."
+		) {
 			return 'audio/basic';
 		}
 		if ( $chunk3 == "MM\000" ) {
@@ -648,8 +648,8 @@ class IEContentAnalyzer {
 			return 'video/mpeg';
 		}
 		if ( $chunk4 == "\001\000\000\000"
-			&& substr( $chunk, 40, 4 ) == ' EMF' )
-		{
+			&& substr( $chunk, 40, 4 ) == ' EMF'
+		) {
 			return 'image/x-emf';
 		}
 		if ( $chunk4 == "\xd7\xcd\xc6\x9a" ) {
@@ -680,8 +680,8 @@ class IEContentAnalyzer {
 	/**
 	 * Do heuristic checks on the bulk of the data sample.
 	 * Search for HTML tags.
-	 * @param $version
-	 * @param $chunk
+	 * @param string $version
+	 * @param string $chunk
 	 * @return array
 	 */
 	protected function sampleData( $version, $chunk ) {
@@ -789,8 +789,8 @@ class IEContentAnalyzer {
 			if ( !strncasecmp( $remainder, $rdfUrl, strlen( $rdfUrl ) ) ) {
 				$found['rdf-url'] = true;
 				if ( isset( $found['rdf-tag'] )
-					&& isset( $found['rdf-purl'] ) ) // [sic]
-				{
+					&& isset( $found['rdf-purl'] ) // [sic]
+				) {
 					break;
 				}
 				continue;
@@ -798,8 +798,8 @@ class IEContentAnalyzer {
 
 			if ( !strncasecmp( $remainder, $rdfPurl, strlen( $rdfPurl ) ) ) {
 				if ( isset( $found['rdf-tag'] )
-					&& isset( $found['rdf-url'] ) ) // [sic]
-				{
+					&& isset( $found['rdf-url'] ) // [sic]
+				) {
 					break;
 				}
 				continue;
@@ -832,8 +832,8 @@ class IEContentAnalyzer {
 	}
 
 	/**
-	 * @param $version
-	 * @param $type
+	 * @param string $version
+	 * @param string|null $type
 	 * @return int|string
 	 */
 	protected function getDataFormat( $version, $type ) {

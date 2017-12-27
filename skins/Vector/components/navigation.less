@@ -60,9 +60,6 @@ div#mw-head {
 
 /* Logo */
 #p-logo {
-	position: absolute;
-	top: -160px;
-	left: 0;
 	width: 10em;
 	height: 160px;
 
@@ -80,8 +77,7 @@ div#mw-head {
 div#mw-panel {
 	font-size: @menu-main-font-size;
 	position: absolute;
-	top: 160px;
-	padding-top: 1em;
+	top: 0;
 	width: 10em;
 	left: 0;
 
@@ -96,14 +92,14 @@ div#mw-panel {
 			font-size: @menu-main-heading-font-size;
 			color: @menu-main-heading-color;
 			font-weight: normal;
-			margin: 0.5em 0 0 0;
-			padding: @menu-main-heading-padding;
+			margin: 0.5em 0 0 (@menu-main-body-margin-left/@menu-main-heading-font-size);
+			padding: 0.25em 0;
 			cursor: default;
 			border: 0;
 		}
 
 		div.body {
-			margin: @menu-main-body-margin;
+			margin-left: @menu-main-body-margin-left;
 			padding-top: 0;
 			.background-image( 'images/portal-break.png' );
 			background-repeat: no-repeat;
@@ -135,13 +131,13 @@ div#mw-panel {
 	/* First sidebar portlet. Not using :first-of-type for IE<=8 support. */
 	#p-logo + div.portal {
 		background-image: none;
-		margin-top: 0;
+		margin-top: 1em;
 		h3 {
 			display: none;
 		}
 		div.body {
 			background-image: none;
-			margin-left: 0.5em;
+			margin-left: @menu-main-body-margin-left;
 		}
 	}
 }

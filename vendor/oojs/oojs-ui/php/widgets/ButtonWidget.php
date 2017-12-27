@@ -53,10 +53,10 @@ class ButtonWidget extends Widget {
 
 	/**
 	 * @param array $config Configuration options
-	 * @param boolean $config['active'] Whether button should be shown as active (default: false)
+	 * @param bool $config['active'] Whether button should be shown as active (default: false)
 	 * @param string $config['href'] Hyperlink to visit when clicked
 	 * @param string $config['target'] Target to open hyperlink in
-	 * @param boolean $config['noFollow'] Search engine traversal hint (default: true)
+	 * @param bool $config['noFollow'] Search engine traversal hint (default: true)
 	 */
 	public function __construct( array $config = [] ) {
 		// Parent constructor
@@ -108,7 +108,7 @@ class ButtonWidget extends Widget {
 	/**
 	 * Get search engine traversal hint.
 	 *
-	 * @return boolean Whether search engines should avoid traversing this hyperlink
+	 * @return bool Whether search engines should avoid traversing this hyperlink
 	 */
 	public function getNoFollow() {
 		return $this->noFollow;
@@ -164,7 +164,7 @@ class ButtonWidget extends Widget {
 	/**
 	 * Set search engine traversal hint.
 	 *
-	 * @param boolean $noFollow True if search engines should avoid traversing this hyperlink
+	 * @param bool $noFollow True if search engines should avoid traversing this hyperlink
 	 * @return $this
 	 */
 	public function setNoFollow( $noFollow ) {
@@ -184,7 +184,7 @@ class ButtonWidget extends Widget {
 	 *
 	 * A button should be marked as active when clicking it would only refresh the page.
 	 *
-	 * @param boolean $active Make button active
+	 * @param bool $active Make button active
 	 * @return $this
 	 */
 	public function setActive( $active = null ) {
@@ -196,7 +196,7 @@ class ButtonWidget extends Widget {
 	/**
 	 * Check if button is active.
 	 *
-	 * @return boolean Button is active
+	 * @return bool Button is active
 	 */
 	public function isActive() {
 		return $this->active;

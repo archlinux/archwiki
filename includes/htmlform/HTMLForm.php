@@ -271,7 +271,7 @@ class HTMLForm extends ContextSource {
 	 * Construct a HTMLForm object for given display type. May return a HTMLForm subclass.
 	 *
 	 * @param string $displayFormat
-	 * @param mixed $arguments... Additional arguments to pass to the constructor.
+	 * @param mixed $arguments,... Additional arguments to pass to the constructor.
 	 * @return HTMLForm
 	 */
 	public static function factory( $displayFormat/*, $arguments...*/ ) {
@@ -285,7 +285,7 @@ class HTMLForm extends ContextSource {
 				return ObjectFactory::constructClassInstance( OOUIHTMLForm::class, $arguments );
 			default:
 				/** @var HTMLForm $form */
-				$form = ObjectFactory::constructClassInstance( HTMLForm::class, $arguments );
+				$form = ObjectFactory::constructClassInstance( self::class, $arguments );
 				$form->setDisplayFormat( $displayFormat );
 				return $form;
 		}
@@ -400,7 +400,13 @@ class HTMLForm extends ContextSource {
 
 		if ( !in_array( $format, $this->availableDisplayFormats, true ) ) {
 			throw new MWException( 'Display format must be one of ' .
-				print_r( $this->availableDisplayFormats, true ) );
+				print_r(
+					array_merge(
+						$this->availableDisplayFormats,
+						$this->availableSubclassDisplayFormats
+					),
+					true
+				) );
 		}
 
 		// Evil hack for mobile :(
@@ -444,7 +450,7 @@ class HTMLForm extends ContextSource {
 	 * @since 1.23
 	 *
 	 * @param string $fieldname Name of the field
-	 * @param array $descriptor Input Descriptor, as described above
+	 * @param array &$descriptor Input Descriptor, as described above
 	 *
 	 * @throws MWException
 	 * @return string Name of a HTMLFormField subclass
@@ -1686,7 +1692,7 @@ class HTMLForm extends ContextSource {
 
 					$attributes = [];
 					if ( $fieldsetIDPrefix ) {
-						$attributes['id'] = Sanitizer::escapeId( "$fieldsetIDPrefix$key" );
+						$attributes['id'] = Sanitizer::escapeIdForAttribute( "$fieldsetIDPrefix$key" );
 					}
 					$subsectionHtml .= $this->wrapFieldSetSection( $legend, $section, $attributes );
 				} else {
@@ -1735,7 +1741,7 @@ class HTMLForm extends ContextSource {
 		];
 
 		if ( $sectionName ) {
-			$attribs['id'] = Sanitizer::escapeId( $sectionName );
+			$attribs['id'] = Sanitizer::escapeIdForAttribute( $sectionName );
 		}
 
 		if ( $displayFormat === 'table' ) {
@@ -1887,7 +1893,7 @@ class HTMLForm extends ContextSource {
 	 * 'novalidate' attribute will be added on the `<form>` element. It will be removed if the user
 	 * agent has JavaScript support, in htmlform.js.
 	 *
-	 * @return boolean
+	 * @return bool
 	 * @since 1.29
 	 */
 	public function needsJSForHtml5FormValidation() {

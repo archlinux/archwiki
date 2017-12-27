@@ -7,7 +7,8 @@
 			"Михајло Анђелковић",
 			"Milicevic01",
 			"Srdjan m",
-			"Сербијана"
+			"Сербијана",
+			"Obsuser"
 		]
 	},
 	"fancycaptcha-desc": "Обогаћен стварач сликовног кода за потврду уређивања",
@@ -17,7 +18,7 @@
 	"fancycaptcha-accountcreate": "У циљу заштите од аутоматског отварања налога, унесите речи са слике у поље испод ([[Special:Captcha/help|више информација]]):",
 	"fancycaptcha-create": "Да бисте направили страницу, унесите речи са слике у поље испод ([[Special:Captcha/help|више информација]]):",
 	"fancycaptcha-edit": "Да бисте уредили ову страницу, унесите речи са слике у поље испод ([[Special:Captcha/help|више информација]]):",
-	"fancycaptcha-imgcaptcha-ph": "Унесите текст који видите на слици",
+	"fancycaptcha-imgcaptcha-ph": "Унесите текст",
 	"fancycaptcha-sendemail": "У циљу заштите од непожељних порука, унесите речи са слике у поље испод ([[Special:Captcha/help|више информација]]):",
 	"fancycaptcha-reload-text": "освежи"
 }

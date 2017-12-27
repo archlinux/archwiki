@@ -4,7 +4,8 @@
 			"Ahonc",
 			"Ата",
 			"AS",
-			"Dars"
+			"Dars",
+			"Piramidion"
 		]
 	},
 	"syntaxhighlight-desc": "Забезпечує підсвічування синтаксису <code>&lt;syntaxhighlight&gt;</code> за допомогою [http://pygments.org/ Pygments] для синтаксису Python",
@@ -14,6 +15,7 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Мова",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "(Немає)",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "Показати номери рядків",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-startingline": "Номер початкового рядка",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Блок коду",
 	"syntaxhighlight-error-pygments-invocation-failure": "Не вдалося викликати Pygments",
 	"syntaxhighlight-error-unknown-language": "Невідома мова «$1»",

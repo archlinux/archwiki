@@ -1,5 +1,5 @@
 --TEST--
-Bug #20563   isMultipart() method tests
+Bug #20563  isMultipart() method tests
 --SKIPIF--
 --FILE--
 <?php

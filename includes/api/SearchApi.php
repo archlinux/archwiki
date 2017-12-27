@@ -115,7 +115,7 @@ trait SearchApi {
 			$defaultProfile = null;
 			foreach ( $profiles as $profile ) {
 				$types[] = $profile['name'];
-				if ( isset ( $profile['desc-message'] ) ) {
+				if ( isset( $profile['desc-message'] ) ) {
 					$helpMessages[$profile['name']] = $profile['desc-message'];
 				}
 				if ( !empty( $profile['default'] ) ) {
@@ -144,7 +144,7 @@ trait SearchApi {
 	 *    one ( to support the continue parameter )
 	 *  - namespace: mandatory
 	 *  - search engine profiles defined by SearchApi::getSearchProfileParams()
-	 * @param string[]|null API request params (must be sanitized by
+	 * @param string[]|null $params API request params (must be sanitized by
 	 * ApiBase::extractRequestParams() before)
 	 * @return SearchEngine the search engine
 	 */

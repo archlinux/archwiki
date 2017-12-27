@@ -20,7 +20,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @author Aaron Schulz
  * @ingroup Maintenance
  */
 
@@ -48,41 +47,65 @@ class RefreshFileHeaders extends Maintenance {
 
 		$count = 0;
 		$dbr = $this->getDB( DB_REPLICA );
+
 		do {
 			$conds = [ "img_name > {$dbr->addQuotes( $start )}" ];
+
 			if ( strlen( $end ) ) {
 				$conds[] = "img_name <= {$dbr->addQuotes( $end )}";
 			}
+
 			$res = $dbr->select( 'image', '*', $conds,
 				__METHOD__, [ 'LIMIT' => $this->mBatchSize, 'ORDER BY' => 'img_name ASC' ] );
+
+			if ( $res->numRows() > 0 ) {
+				$row1 = $res->current();
+				$this->output( "Processing next {$res->numRows()} row(s) starting with {$row1->img_name}.\n" );
+				$res->rewind();
+			}
+
+			$backendOperations = [];
+
 			foreach ( $res as $row ) {
 				$file = $repo->newFileFromRow( $row );
-				$headers = $file->getStreamHeaders();
+				$headers = $file->getContentHeaders();
+
 				if ( count( $headers ) ) {
-					$this->updateFileHeaders( $file, $headers );
+					$backendOperations[] = [
+						'op' => 'describe', 'src' => $file->getPath(), 'headers' => $headers
+					];
 				}
+
 				// Do all of the older file versions...
 				foreach ( $file->getHistory() as $oldFile ) {
-					$headers = $oldFile->getStreamHeaders();
+					$headers = $oldFile->getContentHeaders();
 					if ( count( $headers ) ) {
-						$this->updateFileHeaders( $oldFile, $headers );
+						$backendOperations[] = [
+							'op' => 'describe', 'src' => $oldFile->getPath(), 'headers' => $headers
+						];
 					}
 				}
+
 				if ( $this->hasOption( 'verbose' ) ) {
-					$this->output( "Updated headers for file '{$row->img_name}'.\n" );
+					$this->output( "Queued headers update for file '{$row->img_name}'.\n" );
 				}
-				++$count;
+
 				$start = $row->img_name; // advance
 			}
-		} while ( $res->numRows() > 0 );
+
+			$backendOperationsCount = count( $backendOperations );
+			$count += $backendOperationsCount;
+
+			$this->output( "Updating headers for {$backendOperationsCount} file(s).\n" );
+			$this->updateFileHeaders( $repo, $backendOperations );
+		} while ( $res->numRows() === $this->mBatchSize );
 
 		$this->output( "Done. Updated headers for $count file(s).\n" );
 	}
 
-	protected function updateFileHeaders( File $file, array $headers ) {
-		$status = $file->getRepo()->getBackend()->describe( [
-			'src' => $file->getPath(), 'headers' => $headers
-		] );
+	protected function updateFileHeaders( $repo, $backendOperations ) {
+		$status = $repo->getBackend()->doQuickOperations( $backendOperations );
+
 		if ( !$status->isGood() ) {
 			$this->error( "Encountered error: " . print_r( $status, true ) );
 		}

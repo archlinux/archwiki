@@ -22,6 +22,7 @@
 	"cite-ve-dialog-reference-options-group-placeholder": "Allgemeng Referenzen",
 	"cite-ve-dialog-reference-options-name-label": "Nees benotze mat dësem Numm",
 	"cite-ve-dialog-reference-options-section": "Optiounen",
+	"cite-ve-dialog-reference-placeholder": "Schreift oder kopéiert Är Referenz heihin oder setzt eng Schabloun fir Zitater dran.",
 	"cite-ve-dialog-reference-title": "Referenz",
 	"cite-ve-dialog-reference-useexisting-full-label": "Eng Referenz nees benotzen déi et schonn op dëser Säit gëtt",
 	"cite-ve-dialog-reference-useexisting-label": "Eng Quell benotzen déi et scho gëtt",
@@ -40,5 +41,7 @@
 	"cite-ve-referenceslist-isempty-default": "Et gëtt keng Referenzen op dëser Säit fir an dës Lëscht opzehuelen.",
 	"cite-ve-referenceslist-missingref": "Dës Referenz ass an enger Schabloun oder engem anere generéierte Block definéiert a kann dowéinst just am Quelltextmodus geännert ginn.",
 	"cite-ve-toolbar-group-label": "Zitat",
-	"cite-ve-othergroup-item": "$1 Referenz"
+	"cite-ve-othergroup-item": "$1 Referenz",
+	"visualeditor-internal-list-diff-default-group-name-mwreference": "Referenzen",
+	"visualeditor-internal-list-diff-group-name-mwreference": "Numm vum Referenzgrupp: \"$1\""
 }

@@ -24,7 +24,7 @@ function unstub( &$value ) {
 	}
 }
 // Keep synchronized with tests/index.php
-$themes = [ 'ApexTheme', 'MediaWikiTheme' ];
+$themes = [ 'ApexTheme', 'WikimediaUITheme' ];
 foreach ( $themes as $theme ) {
 	OOUI\Theme::setSingleton( new_OOUI( $theme ) );
 	foreach ( $testSuite as $className => $tests ) {

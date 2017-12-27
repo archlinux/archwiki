@@ -31,8 +31,6 @@ class ChangesFeed {
 	public $format, $type, $titleMsg, $descMsg;
 
 	/**
-	 * Constructor
-	 *
 	 * @param string $format Feed's format (either 'rss' or 'atom')
 	 * @param string $type Type of feed (for cache keys)
 	 */
@@ -167,7 +165,7 @@ class ChangesFeed {
 	/**
 	 * Generate the feed items given a row from the database, printing the feed.
 	 * @param object $rows IDatabase resource with recentchanges rows
-	 * @param ChannelFeed $feed
+	 * @param ChannelFeed &$feed
 	 */
 	public static function generateFeed( $rows, &$feed ) {
 		$items = self::buildItems( $rows );

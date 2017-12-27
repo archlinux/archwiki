@@ -39,6 +39,7 @@
 	"gadgets-validate-notset": "La proprietà <code>$1</code> non è impostata.",
 	"gadgets-validate-wrongtype": "La proprietà <code>$1</code> deve essere di tipo <code>$2</code> anziché <code>$3</code>.",
 	"apihelp-query+gadgetcategories-description": "Restituisce un elenco di categorie di accessori.",
+	"apihelp-query+gadgetcategories-summary": "Restituisce un elenco di categorie di accessori.",
 	"apihelp-query+gadgetcategories-param-names": "Nomi delle categorie da recuperare.",
 	"apihelp-query+gadgetcategories-example-1": "Ottieni un elenco di categorie di accessori esistenti",
 	"apihelp-query+gadgetcategories-example-2": "Ottieni tutte le informazioni sulle categorie denominate \"foo\" e \"bar\"",

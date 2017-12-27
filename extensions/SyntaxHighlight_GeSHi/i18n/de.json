@@ -13,6 +13,7 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Sprache",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "(Keine)",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "Zeilennummern anzeigen",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-startingline": "Start-Zeilennummer",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Code-Block",
 	"syntaxhighlight-error-pygments-invocation-failure": "Fehler beim Aufrufen von Pygments",
 	"syntaxhighlight-error-unknown-language": "Unbekannte Sprache „$1“",

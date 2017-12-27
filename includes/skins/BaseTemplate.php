@@ -29,7 +29,7 @@ abstract class BaseTemplate extends QuickTemplate {
 	 * Get a Message object with its context set
 	 *
 	 * @param string $name Message name
-	 * @param ... $params Message params
+	 * @param mixed $params,... Message params
 	 * @return Message
 	 */
 	public function getMsg( $name /* ... */ ) {
@@ -201,13 +201,13 @@ abstract class BaseTemplate extends QuickTemplate {
 				];
 				break;
 			case 'LANGUAGES':
-				if ( $this->data['language_urls'] ) {
+				if ( $this->data['language_urls'] !== false ) {
 					$msgObj = $this->getMsg( 'otherlanguages' );
 					$boxes[$boxName] = [
 						'id' => 'p-lang',
 						'header' => $msgObj->exists() ? $msgObj->text() : 'otherlanguages',
 						'generated' => false,
-						'content' => $this->data['language_urls'],
+						'content' => $this->data['language_urls'] ?: [],
 					];
 				}
 				break;
@@ -523,7 +523,6 @@ abstract class BaseTemplate extends QuickTemplate {
 			'type' => 'search',
 			'name' => 'search',
 			'placeholder' => wfMessage( 'searchsuggest-search' )->text(),
-			'value' => $this->get( 'search', '' ),
 		];
 		$realAttrs = array_merge( $realAttrs, Linker::tooltipAndAccesskeyAttribs( 'search' ), $attrs );
 		return Html::element( 'input', $realAttrs );
@@ -679,7 +678,7 @@ abstract class BaseTemplate extends QuickTemplate {
 		}
 		foreach ( $validFooterIcons as $blockName => $footerIcons ) {
 			$html .= Html::openElement( 'div', [
-				'id' => 'f-' . Sanitizer::escapeId( $blockName ) . 'ico',
+				'id' => Sanitizer::escapeIdForAttribute( "f-{$blockName}ico" ),
 				'class' => 'footer-icons'
 			] );
 			foreach ( $footerIcons as $icon ) {
@@ -692,7 +691,7 @@ abstract class BaseTemplate extends QuickTemplate {
 			foreach ( $validFooterLinks as $aLink ) {
 				$html .= Html::rawElement(
 					'li',
-					[ 'id' => Sanitizer::escapeId( $aLink ) ],
+					[ 'id' => Sanitizer::escapeIdForAttribute( $aLink ) ],
 					$this->get( $aLink )
 				);
 			}
@@ -735,7 +734,7 @@ abstract class BaseTemplate extends QuickTemplate {
 			$out .= Html::rawElement(
 				'div',
 				[
-					'id' => Sanitizer::escapeId( "mw-indicator-$id" ),
+					'id' => Sanitizer::escapeIdForAttribute( "mw-indicator-$id" ),
 					'class' => 'mw-indicator',
 				],
 				$content

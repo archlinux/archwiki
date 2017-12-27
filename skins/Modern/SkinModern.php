@@ -198,5 +198,5 @@ class ModernTemplate extends MonoBookTemplate {
 	</body>
 </html>
 		<?php
-	} // end of execute() method
-} // end of class
+	}
+}

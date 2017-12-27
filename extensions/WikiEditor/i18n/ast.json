@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Xuacu",
-			"Macofe"
+			"Macofe",
+			"Fitoschido"
 		]
 	},
 	"wikieditor": "Interfaz avanzada d'edición de testu wiki",
@@ -156,9 +157,9 @@
 	"wikieditor-toolbar-help-content-bold-description": "Negrina",
 	"wikieditor-toolbar-help-content-bold-syntax": "'''Testu en negrina'''",
 	"wikieditor-toolbar-help-content-bold-result": "<strong>Testu en negrina</strong>",
-	"wikieditor-toolbar-help-content-bolditalic-description": "Negrina &amp; cursiva",
+	"wikieditor-toolbar-help-content-bolditalic-description": "Negrina y cursiva",
 	"wikieditor-toolbar-help-content-bolditalic-syntax": "'''''Testu en negrina y cursiva'''''",
-	"wikieditor-toolbar-help-content-bolditalic-result": "<strong><em>Testu en negrina &amp; cursiva</em></strong>",
+	"wikieditor-toolbar-help-content-bolditalic-result": "<strong><em>Testu en negrina y cursiva</em></strong>",
 	"wikieditor-toolbar-help-content-ilink-description": "Enllaz internu",
 	"wikieditor-toolbar-help-content-ilink-syntax": "[[Títulu de la páxina]]<br />[[Títulu de la páxina|Etiqueta del enllaz]]",
 	"wikieditor-toolbar-help-content-ilink-result": "<a href='#'>Títulu de la páxina</a><br /><a href='#'>Etiqueta del enllaz</a>",

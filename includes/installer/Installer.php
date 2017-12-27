@@ -134,6 +134,7 @@ abstract class Installer {
 		'envCheckUploadsDirectory',
 		'envCheckLibicu',
 		'envCheckSuhosinMaxValueLength',
+		'envCheck64Bit',
 	];
 
 	/**
@@ -384,7 +385,7 @@ abstract class Installer {
 
 		// make sure we use the installer config as the main config
 		$configRegistry = $baseConfig->get( 'ConfigRegistry' );
-		$configRegistry['main'] = function() use ( $installerConfig ) {
+		$configRegistry['main'] = function () use ( $installerConfig ) {
 			return $installerConfig;
 		};
 
@@ -446,6 +447,7 @@ abstract class Installer {
 		$this->parserTitle = Title::newFromText( 'Installer' );
 		$this->parserOptions = new ParserOptions( $wgUser ); // language will be wrong :(
 		$this->parserOptions->setEditSection( false );
+		$this->parserOptions->setWrapOutputClass( false );
 		// Don't try to access DB before user language is initialised
 		$this->setParserLanguage( Language::factory( 'en' ) );
 	}
@@ -545,6 +547,17 @@ abstract class Installer {
 	}
 
 	/**
+	 * Get the DatabaseInstaller class name for this type
+	 *
+	 * @param string $type database type ($wgDBtype)
+	 * @return string Class name
+	 * @since 1.30
+	 */
+	public static function getDBInstallerClass( $type ) {
+		return ucfirst( $type ) . 'Installer';
+	}
+
+	/**
 	 * Get an instance of DatabaseInstaller for the specified DB type.
 	 *
 	 * @param mixed $type DB installer for which is needed, false to use default.
@@ -559,7 +572,7 @@ abstract class Installer {
 		$type = strtolower( $type );
 
 		if ( !isset( $this->dbInstallers[$type] ) ) {
-			$class = ucfirst( $type ) . 'Installer';
+			$class = self::getDBInstallerClass( $type );
 			$this->dbInstallers[$type] = new $class( $this );
 		}
 
@@ -1016,7 +1029,7 @@ abstract class Installer {
 		}
 
 		# Try the most common ones.
-		$commonLocales = [ 'en_US.UTF-8', 'en_US.utf8', 'de_DE.UTF-8', 'de_DE.utf8' ];
+		$commonLocales = [ 'C.UTF-8', 'en_US.UTF-8', 'en_US.utf8', 'de_DE.UTF-8', 'de_DE.utf8' ];
 		foreach ( $commonLocales as $commonLocale ) {
 			if ( isset( $candidatesByLocale[$commonLocale] ) ) {
 				$this->setVar( 'wgShellLocale', $commonLocale );
@@ -1075,6 +1088,20 @@ abstract class Installer {
 		if ( $maxValueLength > 0 && $maxValueLength < 1024 ) {
 			// Only warn if the value is below the sane 1024
 			$this->showMessage( 'config-suhosin-max-value-length', $maxValueLength );
+		}
+
+		return true;
+	}
+
+	/**
+	 * Checks if we're running on 64 bit or not. 32 bit is becoming increasingly
+	 * hard to support, so let's at least warn people.
+	 *
+	 * @return bool
+	 */
+	protected function envCheck64Bit() {
+		if ( PHP_INT_SIZE == 4 ) {
+			$this->showMessage( 'config-using-32bit' );
 		}
 
 		return true;
@@ -1339,7 +1366,7 @@ abstract class Installer {
 	 * Reasonable values for $directory include 'extensions' (the default) and 'skins'.
 	 *
 	 * @param string $directory Directory to search in
-	 * @return array
+	 * @return array [ $extName => [ 'screenshots' => [ '...' ] ]
 	 */
 	public function findExtensions( $directory = 'extensions' ) {
 		if ( $this->getVar( 'IP' ) === null ) {
@@ -1352,7 +1379,7 @@ abstract class Installer {
 		}
 
 		// extensions -> extension.json, skins -> skin.json
-		$jsonFile = substr( $directory, 0, strlen( $directory ) -1 ) . '.json';
+		$jsonFile = substr( $directory, 0, strlen( $directory ) - 1 ) . '.json';
 
 		$dh = opendir( $extDir );
 		$exts = [];
@@ -1361,11 +1388,19 @@ abstract class Installer {
 				continue;
 			}
 			if ( file_exists( "$extDir/$file/$jsonFile" ) || file_exists( "$extDir/$file/$file.php" ) ) {
-				$exts[] = $file;
+				// Extension exists. Now see if there are screenshots
+				$exts[$file] = [];
+				if ( is_dir( "$extDir/$file/screenshots" ) ) {
+					$paths = glob( "$extDir/$file/screenshots/*.png" );
+					foreach ( $paths as $path ) {
+						$exts[$file]['screenshots'][] = str_replace( $extDir, "../$directory", $path );
+					}
+
+				}
 			}
 		}
 		closedir( $dh );
-		natcasesort( $exts );
+		uksort( $exts, 'strnatcasecmp' );
 
 		return $exts;
 	}

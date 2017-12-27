@@ -1,0 +1,9 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix exterms: <http://www.example.org/terms/> .
+
+exterms:Duck exterms:says "Duck says: \"Quack!\"" .
+
+exterms:Cow exterms:says "Cow says:\n\r 'Moo! \\Moo!'" .
+
+exterms:Bear exterms:says "Bear says: Превед!" .

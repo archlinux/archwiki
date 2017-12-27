@@ -1,4 +1,23 @@
 {
-	"@metadata": [],
-	"skinname-cologneblue": "Azul"
+	"@metadata": {
+		"authors": [
+			"Cecílio",
+			"MokaAkashiyaPT"
+		]
+	},
+	"skinname-cologneblue": "Azul quelonial",
+	"qbfind": "Percurar",
+	"qbbrowse": "Nabegar",
+	"qbedit": "Eiditar",
+	"qbpageoptions": "Esta páigina",
+	"qbmyoptions": "Mies páiginas",
+	"faqpage": "Project:FAQ",
+	"editthispage": "Eiditar esta páigina",
+	"create-this-page": "Criar esta páigina",
+	"deletethispage": "Apagar esta páigina",
+	"protectthispage": "Porteger esta páigina",
+	"unprotectthispage": "Çporteger esta páigina",
+	"talkpage": "Çcutir esta páigina",
+	"articlepage": "Ber páigina de cuntenido",
+	"userpage": "Ber páigina de outelizador"
 }

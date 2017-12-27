@@ -9,7 +9,7 @@
 		"Ori Livneh",
 		"Ed Sanders"
 	],
-	"url": "https://www.mediawiki.org/wiki/Extension:SyntaxHighlight_GeSHi",
+	"url": "https://www.mediawiki.org/wiki/Extension:SyntaxHighlight",
 	"descriptionmsg": "syntaxhighlight-desc",
 	"license-name": "GPL-2.0+",
 	"type": "parserhook",
@@ -22,15 +22,14 @@
 		]
 	},
 	"AutoloadClasses": {
-		"SyntaxHighlight_GeSHi": "SyntaxHighlight_GeSHi.class.php",
-		"GeSHi": "SyntaxHighlight_GeSHi.GeSHi.php",
-		"SyntaxHighlightAce": "SyntaxHighlight_GeSHi.ace.php",
-		"SyntaxHighlightGeSHiCompat": "SyntaxHighlight_GeSHi.compat.php",
-		"ResourceLoaderGeSHiVisualEditorModule": "ResourceLoaderGeSHiVisualEditorModule.php"
+		"SyntaxHighlight": "SyntaxHighlight.class.php",
+		"SyntaxHighlight_GeSHi": "SyntaxHighlight.class.php",
+		"GeSHi": "SyntaxHighlight.GeSHi.php",
+		"SyntaxHighlightAce": "SyntaxHighlight.ace.php",
+		"SyntaxHighlightGeSHiCompat": "SyntaxHighlight.GeSHi.compat.php",
+		"ResourceLoaderGeSHiVisualEditorModule": "ResourceLoaderSyntaxHighlightVisualEditorModule.php",
+		"ResourceLoaderSyntaxHighlightVisualEditorModule": "ResourceLoaderSyntaxHighlightVisualEditorModule.php"
 	},
-	"ExtensionFunctions": [
-		"SyntaxHighlight_GeSHi::onSetup"
-	],
 	"ResourceFileModulePaths": {
 		"localBasePath": "modules",
 		"remoteExtPath": "SyntaxHighlight_GeSHi/modules"
@@ -50,19 +49,16 @@
 	},
 	"Hooks": {
 		"ParserFirstCallInit": [
-			"SyntaxHighlight_GeSHi::onParserFirstCallInit"
+			"SyntaxHighlight::onParserFirstCallInit"
 		],
 		"ContentGetParserOutput": [
-			"SyntaxHighlight_GeSHi::onContentGetParserOutput"
+			"SyntaxHighlight::onContentGetParserOutput"
 		],
 		"ApiFormatHighlight": [
-			"SyntaxHighlight_GeSHi::onApiFormatHighlight"
-		],
-		"RejectParserCacheValue": [
-			"SyntaxHighlight_GeSHi::onRejectParserCacheValue"
+			"SyntaxHighlight::onApiFormatHighlight"
 		],
 		"ResourceLoaderRegisterModules": [
-			"SyntaxHighlight_GeSHi::onResourceLoaderRegisterModules"
+			"SyntaxHighlight::onResourceLoaderRegisterModules"
 		]
 	},
 	"SyntaxHighlightModels": {

@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Sahran"
+			"Sahran",
+			"Uzdil"
 		]
 	},
+	"pfunc_time_error": "خاتالىق: ئىناۋەتسىز ۋاقىت.",
 	"pfunc_expr_division_by_zero": "نۆلگە بۆلۈنگەن."
 }

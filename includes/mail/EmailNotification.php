@@ -43,7 +43,8 @@ use MediaWiki\MediaWikiServices;
  * of sending out bulk mails (bcc:user1,user2...) for all these users having the
  * same timeoffset in their preferences.
  *
- * Visit the documentation pages under http://meta.wikipedia.com/Enotif
+ * Visit the documentation pages under
+ * https://www.mediawiki.org/wiki/Help:Watching_pages
  */
 class EmailNotification {
 
@@ -342,7 +343,7 @@ class EmailNotification {
 		$keys['$PAGETITLE'] = $this->title->getPrefixedText();
 		$keys['$PAGETITLE_URL'] = $this->title->getCanonicalURL();
 		$keys['$PAGEMINOREDIT'] = $this->minorEdit ?
-			wfMessage( 'minoredit' )->inContentLanguage()->text() : '';
+			wfMessage( 'enotif_minoredit' )->inContentLanguage()->text() : '';
 		$keys['$UNWATCHURL'] = $this->title->getCanonicalURL( 'action=unwatch' );
 
 		if ( $this->editor->isAnon() ) {

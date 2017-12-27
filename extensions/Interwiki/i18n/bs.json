@@ -3,7 +3,8 @@
 		"authors": [
 			"CERminator",
 			"Kal-El",
-			"KWiki"
+			"KWiki",
+			"Srdjan m"
 		]
 	},
 	"interwiki": "Vidi i uredi međuwiki podatke",
@@ -31,16 +32,16 @@
 	"interwiki_reasonfield": "Razlog:",
 	"interwiki_delquestion": "Briše se \"$1\"",
 	"interwiki_deleting": "Brišete prefiks \"$1\".",
-	"interwiki_deleted": "Prefiks \"$1\" je uspješno uklonjen iz interwiki tabele.",
+	"interwiki_deleted": "Prefiks \"$1\" je uklonjen iz interwiki tabele.",
 	"interwiki_delfailed": "Prefiks \"$1\" nije bilo moguće ukloniti iz interwiki tabele.",
-	"interwiki_addtext": "Dodaj interwiki prefiks",
+	"interwiki_addtext": "Dodaj interwiki ili jezički prefiks",
 	"interwiki_addintro": "Dodajete novi interwiki prefiks.\nZapamtite da ne može sadržavati razmake ( ), dvotačke (:), znak and (&), ili znakove jednakosti (=).",
 	"interwiki_addbutton": "Dodaj",
-	"interwiki_added": "Prefiks \"$1\" je uspješno dodat u interwiki tabelu.",
+	"interwiki_added": "Prefiks \"$1\" je dodan u interwiki tabelu.",
 	"interwiki_addfailed": "Prefiks \"$1\" nije bilo moguće dodati u interwiki tabelu.\nMoguće je da već postoji u interwiki tabeli.",
 	"interwiki_edittext": "Uređivanje interwiki prefiksa",
 	"interwiki_editintro": "Uređujete interwiki prefiks.\nZapamtite da ovo može poremetiti postojeće linkove.",
-	"interwiki_edited": "Prefiks \"$1\" je uspješno izmijenjen u interwiki tabeli.",
+	"interwiki_edited": "Prefiks \"$1\" je izmijenjen u interwiki tabeli.",
 	"interwiki_editerror": "Prefiks \"$1\" ne može biti izmijenjen u interwiki tabeli.\nMoguće je da uopće ne postoji.",
 	"interwiki-badprefix": "Navedeni interwiki prefiks \"$1\" sadrži nevaljane znakove",
 	"interwiki-submit-empty": "Prefiks i URL ne mogu biti prazni.",

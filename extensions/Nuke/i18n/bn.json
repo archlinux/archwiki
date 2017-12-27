@@ -30,9 +30,9 @@
 	"nuke-not-deleted": "পাতা [[:$1]] অপসারণ '''করা যাবে না'''।",
 	"nuke-delete-more": "[[Special:Nuke|আরও পাতা অপসারণ করুন]]",
 	"nuke-pattern": "পাতা নামের জন্য প্যাটার্ন:",
-	"nuke-nopages-global": "[[Special:RecentChanges|সাম্প্রতিক পরিবর্তনসমূহে]] নতুন কোন পাতা নেই।",
+	"nuke-nopages-global": "আপনার অনুসন্ধানের সাথে মিলে এমন শিরোনাম যুক্ত কোন পাতা নেই।",
 	"nuke-viewchanges": "পরিবর্তনসমূহ দেখুন",
 	"nuke-namespace": "নামস্থানে সীমা:",
 	"nuke-linkoncontribs": "গণ অপসারণ",
-	"nuke-linkoncontribs-text": "পাতা গণ অপসারণ করুন যেখানে এই ব্যবহারকারী একমাত্র লেখক"
+	"nuke-linkoncontribs-text": "পাতা গণ অপসারণ করুন যেখানে {{GENDER:$1|এই ব্যবহারকারী}} একমাত্র লেখক"
 }

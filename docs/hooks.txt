@@ -74,9 +74,7 @@ Using a hook-running strategy, we can avoid having all this option-specific
 stuff in our mainline code. Using hooks, the function becomes:
 
 	function showAnArticle( $article ) {
-
 		if ( Hooks::run( 'ArticleShow', array( &$article ) ) ) {
-
 			# code to actually show the article goes here
 
 			Hooks::run( 'ArticleShowComplete', array( &$article ) );
@@ -998,13 +996,10 @@ $special: ChangesListSpecialPage instance
 'ChangesListSpecialPageQuery': Called when building SQL query on pages
 inheriting from ChangesListSpecialPage (in core: RecentChanges,
 RecentChangesLinked and Watchlist).
-
 Do not use this to implement individual filters if they are compatible with the
 ChangesListFilter and ChangesListFilterGroup structure.
-
 Instead, use sub-classes of those classes, in conjunction with the
 ChangesListSpecialPageStructuredFilters hook.
-
 This hook can be used to implement filters that do not implement that structure,
 or custom behavior that is not an individual filter.
 $name: name of the special page, e.g. 'Watchlist'
@@ -1019,11 +1014,16 @@ $opts: FormOptions for this request
 filters for pages inheriting from ChangesListSpecialPage (in core: RecentChanges,
 RecentChangesLinked, and Watchlist).  Generally, you will want to construct
 new ChangesListBooleanFilter or ChangesListStringOptionsFilter objects.
-
 When constructing them, you specify which group they belong to.  You can reuse
 existing groups (accessed through $special->getFilterGroup), or create your own
 (ChangesListBooleanFilterGroup or ChangesListStringOptionsFilterGroup).
 If you create new groups, you must register them with $special->registerFilterGroup.
+Note that this is called regardless of whether the user is currently using
+the new (structured) or old (unstructured) filter UI.  If you want your boolean
+filter to show on both the new and old UI, specify all the supported fields.
+These include showHide, label, and description.
+See the constructor of each ChangesList* class for documentation of supported
+fields.
 $special: ChangesListSpecialPage instance
 
 'ChangeTagAfterDelete': Called after a change tag has been deleted (that is,
@@ -1069,6 +1069,13 @@ $log_id: logging table id
 $params: tag params
 $rc: RecentChange being tagged when the tagging accompanies the action or null
 $user: User who performed the tagging when the tagging is subsequent to the action or null
+
+'ChangeTagsAllowedAdd': Called when checking if a user can add tags to a change.
+&$allowedTags: List of all the tags the user is allowed to add. Any tags the
+  user wants to add ($addTags) that are not in this array will cause it to fail.
+  You may add or remove tags to this array as required.
+$addTags: List of tags user intends to add.
+$user: User who is adding the tags.
 
 'ChangeUserGroups': Called before user groups are changed.
 $performer: The User who will perform the change
@@ -1148,6 +1155,9 @@ $page: SpecialPage object for contributions
 &$ret: the HTML line
 $row: the DB row for this line
 &$classes: the classes to add to the surrounding <li>
+&$attribs: associative array of other HTML attributes for the <li> element.
+  Currently only data attributes reserved to MediaWiki are allowed
+  (see Sanitizer::isReservedDataAttribute).
 
 'ContributionsToolLinks': Change tool links above Special:Contributions
 $id: User identifier
@@ -1193,6 +1203,9 @@ $page: SpecialPage object for DeletedContributions
 &$ret: the HTML line
 $row: the DB row for this line
 &$classes: the classes to add to the surrounding <li>
+&$attribs: associative array of other HTML attributes for the <li> element.
+  Currently only data attributes reserved to MediaWiki are allowed
+  (see Sanitizer::isReservedDataAttribute).
 
 'DifferenceEngineAfterLoadNewText': called in DifferenceEngine::loadNewText()
 after the new revision's content has been loaded into the class member variable
@@ -1505,6 +1518,9 @@ $changesList: EnhancedChangesList object
 $block: An array of RecentChange objects in that block
 $rc: The RecentChange object for this line
 &$classes: An array of classes to change
+&$attribs: associative array of other HTML attributes for the <tr> element.
+  Currently only data attributes reserved to MediaWiki are allowed
+  (see Sanitizer::isReservedDataAttribute).
 
 'EnhancedChangesListModifyBlockLineData': to alter data used to build
 a non-grouped recent change line in EnhancedChangesList.
@@ -1519,13 +1535,6 @@ $ip: The ip address of the user
 'ExtensionTypes': Called when generating the extensions credits, use this to
 change the tables headers.
 &$extTypes: associative array of extensions types
-
-'ExtractThumbParameters': DEPRECATED! Media handler should override
-MediaHandler::parseParamString instead.
-Called when extracting thumbnail parameters from a thumbnail file name.
-$thumbname: the base name of the thumbnail file
-&$params: the currently extracted params (has source name, temp or archived
-zone)
 
 'FetchChangesList': When fetching the ChangesList derivative for a particular
 user.
@@ -1999,6 +2008,16 @@ $file: the File object or false if broken link
 &$attribs: the attributes to be applied
 &$ret: the value to return if your hook returns false
 
+'LogEventsListLineEnding': Called before a Special:Log line is finished
+$page: the LogEventsList object
+&$ret: the HTML line
+$entry: the DatabaseLogEntry object for this row
+&$classes: the classes to add to the surrounding <li>
+&$attribs: associative array of other HTML attributes for the <li> element.
+  Currently only data attributes reserved to MediaWiki are allowed
+  (see Sanitizer::isReservedDataAttribute).
+
+
 'HtmlPageLinkRendererBegin':
 Used when generating internal and interwiki links in
 LinkRenderer, before processing starts.  Return false to skip default
@@ -2284,6 +2303,16 @@ $title: the diff page title (nullable)
 $old: the ?old= param value from the url
 $new: the ?new= param value from the url
 
+'NewPagesLineEnding': Called before a NewPages line is finished.
+$page: the SpecialNewPages object
+&$ret: the HTML line
+$row: the database row for this page (the recentchanges record and a few extras - see
+  NewPagesPager::getQueryInfo)
+&$classes: the classes to add to the surrounding <li>
+&$attribs: associative array of other HTML attributes for the <li> element.
+  Currently only data attributes reserved to MediaWiki are allowed
+  (see Sanitizer::isReservedDataAttribute).
+
 'NewRevisionFromEditComplete': Called when a revision was inserted due to an
 edit.
 $wikiPage: the WikiPage edited
@@ -2296,7 +2325,10 @@ return false to omit the line from RecentChanges and Watchlist special pages.
 &$changeslist: The OldChangesList instance.
 &$s: HTML of the form "<li>...</li>" containing one RC entry.
 $rc: The RecentChange object.
-&$classes: array of css classes for the <li> element
+&$classes: array of css classes for the <li> element.
+&$attribs: associative array of other HTML attributes for the <li> element.
+  Currently only data attributes reserved to MediaWiki are allowed
+  (see Sanitizer::isReservedDataAttribute).
 
 'OpenSearchUrls': Called when constructing the OpenSearch description XML. Hooks
 can alter or append to the array of URLs for search & suggestion formats.
@@ -2404,6 +2436,9 @@ $historyAction: the action object
 &$row: the revision row for this line
 &$s: the string representing this parsed line
 &$classes: array containing the <li> element classes
+&$attribs: associative array of other HTML attributes for the <li> element.
+  Currently only data attributes reserved to MediaWiki are allowed
+  (see Sanitizer::isReservedDataAttribute).
 
 'PageHistoryPager::doBatchLookups': Called after the pager query was run, before
 any output is generated, to allow batch lookups for prefetching information
@@ -2417,7 +2452,8 @@ constructed.
 &$pager: the pager
 &$queryInfo: the query parameters
 
-'PageRenderingHash': Alter the parser cache option hash key. A parser extension
+'PageRenderingHash': NOTE: Consider using ParserOptionsRegister instead.
+Alter the parser cache option hash key. A parser extension
 which depends on user options should install this hook and append its values to
 the key.
 &$confstr: reference to a hash key string which can be modified
@@ -2541,6 +2577,16 @@ $file: file object that will be used to create the image
 &$params: 2-D array of parameters
 $parser: Parser object that called the hook
 
+'ParserOptionsRegister': Register additional parser options. Note that if you
+change the default value for an option, all existing parser cache entries will
+be invalid. To avoid bugs, you'll need to handle that somehow (e.g. with the
+RejectParserCacheValue hook) because MediaWiki won't do it for you.
+&$defaults: Set the default value for your option here.
+&$inCacheKey: To fragment the parser cache on your option, set a truthy value here.
+&$lazyLoad: To lazy-initialize your option, set it null in $defaults and set a
+  callable here. The callable is passed the ParserOptions object and the option
+  name.
+
 'ParserSectionCreate': Called each time the parser creates a document section
 from wikitext. Use this to apply per-section modifications to HTML (like
 wrapping the section in a DIV).  Caveat: DIVs are valid wikitext, and a DIV
@@ -2613,6 +2659,7 @@ $formData: array of user submitted data
 $form: PreferencesForm object, also a ContextSource
 $user: User object with preferences to be saved set
 &$result: boolean indicating success
+$oldUserOptions: array with user old options (before save)
 
 'PreferencesGetLegend': Override the text used for the <legend> of a
 preferences section.
@@ -2671,6 +2718,11 @@ random pages.
 'RecentChange_save': Called at the end of RecentChange::save().
 &$recentChange: RecentChange object
 
+'RecentChangesPurgeRows': Called when old recentchanges rows are purged, after
+deleting those rows but within the same transaction.
+$rows: The deleted rows as an array of recentchanges row objects (with up to
+  $wgUpdateRowsPerQuery items).
+
 'RedirectSpecialArticleRedirectParams': Lets you alter the set of parameter
 names such as "oldid" that are preserved when using redirecting special pages
 such as Special:MyPage and Special:MyTalk.
@@ -2714,9 +2766,10 @@ configuration variables to JavaScript. Things that depend on the current page
 or request state must be added through MakeGlobalVariablesScript instead.
 &$vars: array( variable name => value )
 
-'ResourceLoaderGetLessVars': Called in ResourceLoader::getLessVars after
-variables from $wgResourceLoaderLESSVars are added. Can be used to add
-context-based variables.
+'ResourceLoaderGetLessVars': DEPRECATED! Called in ResourceLoader::getLessVars
+to add global LESS variables. Loaded after $wgResourceLoaderLESSVars is added.
+Global LESS variables are deprecated. Use ResourceLoaderModule::getLessVars()
+instead to expose variables only in modules that need them.
 &$lessVars: array of variables already added
 
 'ResourceLoaderJqueryMsgModuleMagicWords': Called in
@@ -3066,7 +3119,7 @@ UsersPager::formatRow().
 &$item: HTML to be returned. Will be wrapped in <li></li> after the hook finishes
 $row: Database row object
 
-'SpecialListusersHeader': Called before closing the <fieldset> in
+'SpecialListusersHeader': Called after adding the submit button in
 UsersPager::getPageHeader().
 $pager: The UsersPager instance
 &$out: The header HTML
@@ -3407,6 +3460,14 @@ $title: Title object of the page that we're about to undelete
 'UndeleteShowRevision': Called when showing a revision in Special:Undelete.
 $title: title object related to the revision
 $rev: revision (object) that will be viewed
+
+'UnitTestsAfterDatabaseSetup': Called right after MediaWiki's test infrastructure
+has finished creating/duplicating core tables for unit tests.
+$database: Database in question
+$prefix: Table prefix to be used in unit tests
+
+'UnitTestsBeforeDatabaseTeardown': Called right before MediaWiki tears down its
+database infrastructure used for unit tests.
 
 'UnitTestsList': Called when building a list of paths containing PHPUnit tests.
 Since 1.24: Paths pointing to a directory will be recursively scanned for

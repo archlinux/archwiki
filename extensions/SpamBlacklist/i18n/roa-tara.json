@@ -19,6 +19,7 @@
 	"right-spamblacklistlog": "'Ndruche l'archivije de l'elenghe gnure de le rummate",
 	"action-spamblacklistlog": "'ndruche l'archivije de l'elenghe gnure d'u rummate",
 	"apihelp-spamblacklist-description": "Valide une o cchiù URL condre 'a SpamBlackList.",
+	"apihelp-spamblacklist-summary": "Valide une o cchiù URL cu 'a SpamBlackList.",
 	"apihelp-spamblacklist-param-url": "URL da validà condre 'a lista gnore.",
 	"apihelp-spamblacklist-example-1": "Verifiche doje URL condre 'a lista gnore"
 }

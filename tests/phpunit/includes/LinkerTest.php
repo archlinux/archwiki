@@ -265,7 +265,6 @@ class LinkerTest extends MediaWikiLangTestCase {
 	 * @dataProvider provideCasesForFormatLinksInComment
 	 */
 	public function testFormatLinksInComment( $expected, $input, $wiki ) {
-
 		$conf = new SiteConfiguration();
 		$conf->settings = [
 			'wgServer' => [
@@ -305,6 +304,11 @@ class LinkerTest extends MediaWikiLangTestCase {
 			[
 				'foo bar <a class="external" rel="nofollow" href="//en.example.org/w/Special:BlankPage">Special:BlankPage</a>',
 				'foo bar [[Special:BlankPage]]',
+				'enwiki',
+			],
+			[
+				'foo bar <a class="external" rel="nofollow" href="//en.example.org/w/File:Example">Image:Example</a>',
+				'foo bar [[Image:Example]]',
 				'enwiki',
 			],
 		];
@@ -385,21 +389,21 @@ class LinkerTest extends MediaWikiLangTestCase {
 		return [
 			// Override $html
 			[
-				function( $dummy, $title, $options, &$html, &$attribs, &$ret ) {
+				function ( $dummy, $title, $options, &$html, &$attribs, &$ret ) {
 					$html = 'foobar';
 				},
 				'<a href="/wiki/Special:BlankPage" title="Special:BlankPage">foobar</a>'
 			],
 			// Modify $attribs
 			[
-				function( $dummy, $title, $options, &$html, &$attribs, &$ret ) {
+				function ( $dummy, $title, $options, &$html, &$attribs, &$ret ) {
 					$attribs['bar'] = 'baz';
 				},
 				'<a href="/wiki/Special:BlankPage" title="Special:BlankPage" bar="baz">Special:BlankPage</a>'
 			],
 			// Fully override return value and abort hook
 			[
-				function( $dummy, $title, $options, &$html, &$attribs, &$ret ) {
+				function ( $dummy, $title, $options, &$html, &$attribs, &$ret ) {
 					$ret = 'blahblahblah';
 					return false;
 				},

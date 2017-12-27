@@ -5,6 +5,8 @@
 		]
 	},
 	"action-titleblacklistlog": "'ndruche 'u titole de l'archivije de l'elenghe gnure",
+	"log-name-titleblacklist": "Archivije de le titole bloccate",
+	"log-description-titleblacklist": "Ste evende tracciane le trasute jndr'à l'elenghe gnure de le rummate.",
 	"titleblacklist-desc": "Permette a l'amministrature de vietà ccrejaziune de le pàggene e le cunde utinde pe 'na [[MediaWiki:Titleblacklist|lista gnore]] e [[MediaWiki:Titlewhitelist|lista vianghe]]",
 	"titleblacklist": "# Stu titele jè in lista gnore. Le titele e l'utinde ca se ponne comborndà cu le espressiune regolare aqquà non ge ponne essere ccrejate.\n# Ause \"#\" pe le commende.\n# Quiste jè sensibbele a le maiuscole e le minuscole de partenze",
 	"titlewhitelist": "# Stu titele jè in lista vianghe.\n# Ause \"#\" pe le commende.\n# Quiste jè sensibbele a le maiuscole e le minuscole de partenze",
@@ -15,5 +17,7 @@
 	"titleblacklist-invalid": "{{PLURAL:$1|'A seguenda linèe|Le seguende linèe}} jndr'à lista gnore de le titele {{PLURAL:$1|jè|sonde}} invalide;\npe piacere corregge {{PLURAL:$1|jedde|lore}} apprime de reggistrà:",
 	"titleblacklist-override": "No scè penzanne 'a lista gnore",
 	"right-tboverride": "Sovrascrive 'a lista gnore de le titole o de le utinde",
-	"right-tboverride-account": "Sovrasrive 'a lista gnore de le utinde"
+	"right-tboverride-account": "Sovrasrive 'a lista gnore de le utinde",
+	"right-titleblacklistlog": "'Ndruche l'archivije de le titole jndr'à l'elenghe gnure",
+	"apihelp-titleblacklist-param-action": "L'azione ha state verificate."
 }

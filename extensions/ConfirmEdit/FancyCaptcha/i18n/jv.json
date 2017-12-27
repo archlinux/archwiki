@@ -6,13 +6,15 @@
 			"NoiX180"
 		]
 	},
-	"fancycaptcha-addurl": "Suntingan panjenengan iku ngandhut pranala jaba anyar. Kanggo pangreksan marang spam otomatis, mangga lebokna tembung sing kapacak ing ngisor iki ing kothak sing wis cumepak ([[Special:Captcha/help|info jangkep]]):",
+	"fancycaptcha-addurl": "Besutané panjenengan kalebu pranala njaba anyar. \nSaperlu ngreksa wiki tumrap spam otomatis, kita aturi panjenengan ngisèkaké tembung sing katon ing ngisor nyang kothaké ([[Special:Captcha/help|katerangan liyané]]):",
 	"fancycaptcha-badlogin": "Kanggo ngreksa lawan parengkahan tembung sandhi otomatis, tulung lebokna ukara ing ngisor iki menyang sajroning kothak sing wis sumedya ([[Special:Captcha/help|info sabanjuré]]):",
 	"fancycaptcha-captcha": "Pamriksa kamanan",
-	"fancycaptcha-accountcreate": "Kanggo ngreksa wiki saka panggawé akun otomatis, tulung tembung sing katon ana ngisor iki kotulisaké ing kothak ngisor ([[Special:Captcha/help|katerangan jangkep]]):",
+	"fancycaptcha-accountcreate": "Kanggo ngreksa wiki saka panggawé akun otomatis, tulung tembung sing katon ana ngisor iki panjenengan tulisaké ing kothak ngisor iki ([[Special:Captcha/help|katerangan candhaké]]):",
 	"fancycaptcha-create": "Suntingan panjenengan ngandhut pranala jaba anyar. Kanggo nggawé kaca iki, mangga isèkna tembung-tembung sing ana ing kothak iki ([[Special:Captcha/help|info jangkep]]):",
 	"fancycaptcha-edit": "Suntingan panjenengan ngandhut pranala jaba anyar. Kanggo nyunting kaca iki, mangga isèkna tembung-tembung sing ana ing kothak iki ([[Special:Captcha/help|info jangkep]]):",
 	"fancycaptcha-imgcaptcha-ph": "Lebokaké tèks sing kokdeleng ing gambar",
 	"fancycaptcha-sendemail": "Kanggo ngreksa lawan spam otomatis, tulung lebokna ukara ing ngisor iki menyang sajroning kothak sing wis sumedya ([[Special:Captcha/help|info sabanjuré]]):",
-	"fancycaptcha-reload-text": "Anyarana"
+	"fancycaptcha-reload-text": "Anyarana",
+	"apihelp-fancycaptchareload-description": "Golèk FancyCaptcha anyar.",
+	"apihelp-fancycaptchareload-example-1": "Golèk FancyCaptcha anyar"
 }

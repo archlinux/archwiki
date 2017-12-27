@@ -5,7 +5,8 @@
 			"Siebrand",
 			"Sjoerddebruin",
 			"Wiki13",
-			"JensRiskin"
+			"JensRiskin",
+			"Mainframe98"
 		]
 	},
 	"nuke": "Massaal verwijderen",
@@ -17,7 +18,7 @@
 	"nuke-defaultreason": "Massaal verwijderen van pagina's toegevoegd door [[Special:Contributions/$1|{{GENDER:$1|$1}}]]",
 	"nuke-multiplepeople": "Massaal verwijderen van recent toegevoegde pagina's",
 	"nuke-tools": "Dit hulpmiddel maakt het mogelijk pagina's die recentelijk zijn aangemaakt door een gebruiker of IP-adres massaal te verwijderen.\nVoer de gebruikersnaam of het IP-adres in voor een lijst van te verwijderen pagina's of laat leeg voor alle gebruikers.",
-	"nuke-submit-user": "OK",
+	"nuke-submit-user": "Toon pagina's",
 	"nuke-toggleinvert": "Omkeren",
 	"nuke-submit-delete": "Geselecteerde pagina's verwijderen",
 	"right-nuke": "Massaal pagina's verwijderen",
@@ -29,9 +30,9 @@
 	"nuke-not-deleted": "Pagina [[:$1]] '''kon niet''' worden verwijderd.",
 	"nuke-delete-more": "[[Special:Nuke|Meer pagina's verwijderen]]",
 	"nuke-pattern": "Patroon voor de paginanaam:",
-	"nuke-nopages-global": "Er zijn geen nieuwe pagina's in de [[Special:RecentChanges|recente wijzigingen]].",
+	"nuke-nopages-global": "Er zijn geen pagina titels die met uw zoekterm overeenkomen.",
 	"nuke-viewchanges": "wijzigingen bekijken",
 	"nuke-namespace": "Beperk tot naamruimte:",
 	"nuke-linkoncontribs": "massaal verwijderen",
-	"nuke-linkoncontribs-text": "Pagina's waar deze gebruiker de enige auteur is massaal verwijderen"
+	"nuke-linkoncontribs-text": "Pagina's waar {{GENDER:$1|deze gebruiker}} de enige auteur is massaal verwijderen"
 }

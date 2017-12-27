@@ -56,9 +56,6 @@
 			origText = $textarea.val(),
 			submitting, onUnloadFallback;
 
-		// Initialize wikiEditor
-		$textarea.wikiEditor();
-
 		if ( $editingSessionIdInput.length ) {
 			editingSessionId = $editingSessionIdInput.val();
 			logEditEvent( 'ready', {

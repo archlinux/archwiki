@@ -19,6 +19,7 @@
 	"right-spamblacklistlog": "Vise spamfilterloggen",
 	"action-spamblacklistlog": "vise spamfilterloggen",
 	"apihelp-spamblacklist-description": "Valider én eller flere URL-er mot SpamBlacklist.",
+	"apihelp-spamblacklist-summary": "Valider én eller flere URL-er mot SpamBlacklist.",
 	"apihelp-spamblacklist-param-url": "URL-er som skal valideres mot svartelista.",
 	"apihelp-spamblacklist-example-1": "Sjekk to URL-er mot svartelista"
 }

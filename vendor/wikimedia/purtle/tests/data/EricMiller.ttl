@@ -1,0 +1,8 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix contact: <http://www.w3.org/2000/10/swap/pim/contact#> .
+
+<http://www.w3.org/People/EM/contact#me> rdf:type contact:Person ;
+	contact:fullName "Eric Miller" ;
+	contact:mailbox <mailto:em@w3.org> ;
+	contact:personalTitle "Dr." .

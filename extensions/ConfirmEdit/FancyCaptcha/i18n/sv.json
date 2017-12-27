@@ -18,5 +18,6 @@
 	"fancycaptcha-sendemail": "För att skydda wikin mot automatiserad spam ber vi dig att skriva orden som visas nedan i rutan ([[Special:Captcha/help|mer information]]):",
 	"fancycaptcha-reload-text": "Uppdatera",
 	"apihelp-fancycaptchareload-description": "Hämta en ny FancyCaptcha.",
+	"apihelp-fancycaptchareload-summary": "Hämta en ny FancyCaptcha.",
 	"apihelp-fancycaptchareload-example-1": "Hämta en ny FancyCaptcha."
 }

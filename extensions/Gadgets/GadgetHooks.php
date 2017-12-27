@@ -26,9 +26,9 @@ class GadgetHooks {
 	/**
 	 * PageContentSaveComplete hook handler.
 	 *
-	 * @param $article Article
-	 * @param $user User
-	 * @param $content Content New page content
+	 * @param Article $article
+	 * @param User $user
+	 * @param Content $content New page content
 	 * @return bool
 	 */
 	public static function onPageContentSaveComplete( $article, $user, $content ) {
@@ -45,7 +45,7 @@ class GadgetHooks {
 
 	/**
 	 * UserGetDefaultOptions hook handler
-	 * @param $defaultOptions Array of default preference keys and values
+	 * @param array &$defaultOptions Array of default preference keys and values
 	 * @return bool
 	 */
 	public static function userGetDefaultOptions( &$defaultOptions ) {
@@ -70,8 +70,8 @@ class GadgetHooks {
 
 	/**
 	 * GetPreferences hook handler.
-	 * @param $user User
-	 * @param $preferences Array: Preference descriptions
+	 * @param User $user
+	 * @param array &$preferences Preference descriptions
 	 * @return bool
 	 */
 	public static function getPreferences( $user, &$preferences ) {
@@ -103,7 +103,7 @@ class GadgetHooks {
 			if ( $section !== '' ) {
 				$section = wfMessage( "gadget-section-$section" )->parse();
 
-				if ( count ( $available ) ) {
+				if ( count( $available ) ) {
 					$options[$section] = $available;
 				}
 			} else {
@@ -121,6 +121,7 @@ class GadgetHooks {
 				'section' => 'gadgets',
 				'raw' => 1,
 				'rawrow' => 1,
+				'noglobal' => true,
 			];
 
 		$preferences['gadgets'] =
@@ -131,6 +132,7 @@ class GadgetHooks {
 				'label' => '&#160;',
 				'prefix' => 'gadget-',
 				'default' => $default,
+				'noglobal' => true,
 			];
 
 		return true;
@@ -138,7 +140,7 @@ class GadgetHooks {
 
 	/**
 	 * ResourceLoaderRegisterModules hook handler.
-	 * @param $resourceLoader ResourceLoader
+	 * @param ResourceLoader &$resourceLoader
 	 * @return bool
 	 */
 	public static function registerModules( &$resourceLoader ) {
@@ -157,7 +159,7 @@ class GadgetHooks {
 
 	/**
 	 * BeforePageDisplay hook handler.
-	 * @param $out OutputPage
+	 * @param OutputPage $out
 	 * @return bool
 	 */
 	public static function beforePageDisplay( $out ) {
@@ -170,7 +172,6 @@ class GadgetHooks {
 		$lb = new LinkBatch();
 		$lb->setCaller( __METHOD__ );
 		$enabledLegacyGadgets = [];
-		$typelessMixedGadgets = [];
 
 		/**
 		 * @var $gadget Gadget
@@ -195,22 +196,17 @@ class GadgetHooks {
 				if ( $gadget->hasModule() ) {
 					if ( $gadget->getType() === 'styles' ) {
 						$out->addModuleStyles( Gadget::getModuleName( $gadget->getName() ) );
-					} elseif ( $gadget->getType() === 'general' ) {
+					} else {
 						$out->addModules( Gadget::getModuleName( $gadget->getName() ) );
 						// Load peer modules
 						foreach ( $peers as $peer ) {
 							if ( $peer->getType() === 'styles' ) {
 								$out->addModuleStyles( Gadget::getModuleName( $peer->getName() ) );
 							}
-							// Else if not type=styles: Use dependencies instead.
+							// Else, if not type=styles: Use dependencies instead.
 							// Note: No need for recursion as styles modules don't support
 							// either of 'dependencies' and 'peers'.
-							// @todo: Emit warning for non-styles peer?
 						}
-					} else {
-						$out->addModuleStyles( Gadget::getModuleName( $gadget->getName() ) );
-						$out->addModules( Gadget::getModuleName( $gadget->getName() ) );
-						$typelessMixedGadgets[] = $id;
 					}
 				}
 
@@ -223,9 +219,6 @@ class GadgetHooks {
 		$strings = [];
 		foreach ( $enabledLegacyGadgets as $id ) {
 			$strings[] = self::makeLegacyWarning( $id );
-		}
-		foreach ( $typelessMixedGadgets as $id ) {
-			$strings[] = self::makeTypelessWarning( $id );
 		}
 		$out->addHTML( WrappedString::join( "\n", $strings ) );
 
@@ -241,13 +234,6 @@ class GadgetHooks {
 				'See <' . $special->getCanonicalURL() . '>.'
 			] )
 		);
-	}
-
-	private static function makeTypelessWarning( $id ) {
-		return ResourceLoader::makeInlineScript( Xml::encodeJsCall( 'mw.log.warn', [
-			"Gadget \"$id\" styles loaded twice. Migrate to type=general. " .
-			'See <https://www.mediawiki.org/wiki/RL/MGU#Gadget_type>.'
-		] ) );
 	}
 
 	/**
@@ -269,7 +255,9 @@ class GadgetHooks {
 
 		if ( !$content instanceof GadgetDefinitionContent ) {
 			// This should not be possible?
-			throw new Exception( "Tried to save non-GadgetDefinitionContent to {$title->getPrefixedText()}" );
+			throw new Exception(
+				"Tried to save non-GadgetDefinitionContent to {$title->getPrefixedText()}"
+			);
 		}
 
 		$status = $content->validate();
@@ -301,7 +289,7 @@ class GadgetHooks {
 	 * in the Gadget namespace based on their file extension
 	 *
 	 * @param Title $title
-	 * @param string $model
+	 * @param string &$model
 	 * @return bool
 	 */
 	public static function onContentHandlerDefaultModelFor( Title $title, &$model ) {
@@ -326,7 +314,7 @@ class GadgetHooks {
 	 * knows the language for Gadget: namespace pages.
 	 *
 	 * @param Title $title
-	 * @param string $lang
+	 * @param string &$lang
 	 * @return bool
 	 */
 	public static function onCodeEditorGetPageLanguage( Title $title, &$lang ) {

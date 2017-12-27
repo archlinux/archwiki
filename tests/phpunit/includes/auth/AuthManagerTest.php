@@ -611,7 +611,7 @@ class AuthManagerTest extends \MediaWikiTestCase {
 		$this->assertSame( 'de', $user->getOption( 'language' ) );
 		$this->assertSame( 'zh', $user->getOption( 'variant' ) );
 
-		$this->setMwGlobals( 'wgContLang', \Language::factory( 'en' ) );
+		$this->setMwGlobals( 'wgContLang', \Language::factory( 'fr' ) );
 
 		$user = \User::newFromName( self::usernameForCreation() );
 		$user->addToDatabase();
@@ -1408,7 +1408,7 @@ class AuthManagerTest extends \MediaWikiTestCase {
 		$readOnlyMode = \MediaWiki\MediaWikiServices::getInstance()->getReadOnlyMode();
 		$readOnlyMode->setReason( 'Because' );
 		$this->assertEquals(
-			\Status::newFatal( 'readonlytext', 'Because' ),
+			\Status::newFatal( wfMessage( 'readonlytext', 'Because' ) ),
 			$this->manager->checkAccountCreatePermissions( new \User )
 		);
 		$readOnlyMode->setReason( false );
@@ -2478,7 +2478,7 @@ class AuthManagerTest extends \MediaWikiTestCase {
 		$this->hook( 'LocalUserCreated', $this->never() );
 		$ret = $this->manager->autoCreateUser( $user, AuthManager::AUTOCREATE_SOURCE_SESSION, true );
 		$this->unhook( 'LocalUserCreated' );
-		$this->assertEquals( \Status::newFatal( 'readonlytext', 'Because' ), $ret );
+		$this->assertEquals( \Status::newFatal( wfMessage( 'readonlytext', 'Because' ) ), $ret );
 		$this->assertEquals( 0, $user->getId() );
 		$this->assertNotEquals( $username, $user->getName() );
 		$this->assertEquals( 0, $session->getUser()->getId() );

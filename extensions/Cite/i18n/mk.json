@@ -6,6 +6,7 @@
 		]
 	},
 	"apihelp-query+references-description": "Дај податочно претставување на наводите поврзани со дадени страници.",
+	"apihelp-query+references-summary": "Дај податочно претставување на наводите поврзани со дадени страници.",
 	"apihelp-query+references-example-1": "Наводи поврзани со <kbd>Алберт Ајнштајн</kbd>.",
 	"apierror-citestoragedisabled": "Складиштето на наводи за додатокот „Наведување“ не е овозможено.",
 	"cite-desc": "Додава ознаки <nowiki><ref[ name=id]></nowiki> и <nowiki><references/></nowiki>, за цитирања",

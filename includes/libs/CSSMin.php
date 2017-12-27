@@ -38,7 +38,7 @@ class CSSMin {
 	 * Internet Explorer data URI length limit. See encodeImageAsDataURI().
 	 */
 	const DATA_URI_SIZE_LIMIT = 32768;
-	const URL_REGEX = 'url\(\s*[\'"]?(?P<file>[^\?\)\'"]*?)(?P<query>\?[^\)\'"]*?|)[\'"]?\s*\)';
+
 	const EMBED_REGEX = '\/\*\s*\@embed\s*\*\/';
 	const COMMENT_REGEX = '\/\*.*?\*\/';
 
@@ -72,12 +72,18 @@ class CSSMin {
 		$files = [];
 
 		$rFlags = PREG_OFFSET_CAPTURE | PREG_SET_ORDER;
-		if ( preg_match_all( '/' . self::URL_REGEX . '/', $stripped, $matches, $rFlags ) ) {
+		if ( preg_match_all( '/' . self::getUrlRegex() . '/', $stripped, $matches, $rFlags ) ) {
 			foreach ( $matches as $match ) {
+				self::processUrlMatch( $match, $rFlags );
 				$url = $match['file'][0];
 
 				// Skip fully-qualified and protocol-relative URLs and data URIs
-				if ( substr( $url, 0, 2 ) === '//' || parse_url( $url, PHP_URL_SCHEME ) ) {
+				// Also skips the rare `behavior` property specifying application's default behavior
+				if (
+					substr( $url, 0, 2 ) === '//' ||
+					parse_url( $url, PHP_URL_SCHEME ) ||
+					substr( $url, 0, 9 ) === '#default#'
+				) {
 					break;
 				}
 
@@ -136,7 +142,15 @@ class CSSMin {
 		if ( preg_match( '/^[\r\n\t\x20-\x7e]+$/', $contents ) ) {
 			// Do not base64-encode non-binary files (sane SVGs).
 			// (This often produces longer URLs, but they compress better, yielding a net smaller size.)
-			$uri = 'data:' . $type . ',' . rawurlencode( $contents );
+			$encoded = rawurlencode( $contents );
+			// Unencode some things that don't need to be encoded, to make the encoding smaller
+			$encoded = strtr( $encoded, [
+				'%20' => ' ', // Unencode spaces
+				'%2F' => '/', // Unencode slashes
+				'%3A' => ':', // Unencode colons
+				'%3D' => '=', // Unencode equals signs
+			] );
+			$uri = 'data:' . $type . ',' . $encoded;
 			if ( !$ie8Compat || strlen( $uri ) < self::DATA_URI_SIZE_LIMIT ) {
 				return $uri;
 			}
@@ -182,17 +196,7 @@ class CSSMin {
 			return self::$mimeTypes[$ext];
 		}
 
-		$realpath = realpath( $file );
-		if (
-			$realpath
-			&& function_exists( 'finfo_file' )
-			&& function_exists( 'finfo_open' )
-			&& defined( 'FILEINFO_MIME_TYPE' )
-		) {
-			return finfo_file( finfo_open( FILEINFO_MIME_TYPE ), $realpath );
-		}
-
-		return false;
+		return mime_content_type( realpath( $file ) );
 	}
 
 	/**
@@ -251,7 +255,7 @@ class CSSMin {
 		// quotation marks (e.g. "foo /* bar").
 		$comments = [];
 
-		$pattern = '/(?!' . CSSMin::EMBED_REGEX . ')(' . CSSMin::COMMENT_REGEX . ')/s';
+		$pattern = '/(?!' . self::EMBED_REGEX . ')(' . self::COMMENT_REGEX . ')/s';
 
 		$source = preg_replace_callback(
 			$pattern,
@@ -266,7 +270,7 @@ class CSSMin {
 		// appears in the rule itself, e.g. in a quoted string. You are advised
 		// not to use such characters in file names. We also match start/end of
 		// the string to be consistent in edge-cases ('@import url(…)').
-		$pattern = '/(?:^|[;{])\K[^;{}]*' . CSSMin::URL_REGEX . '[^;}]*(?=[;}]|$)/';
+		$pattern = '/(?:^|[;{])\K[^;{}]*' . self::getUrlRegex() . '[^;}]*(?=[;}]|$)/';
 
 		$source = preg_replace_callback(
 			$pattern,
@@ -290,13 +294,14 @@ class CSSMin {
 
 				// Build two versions of current rule: with remapped URLs
 				// and with embedded data: URIs (where possible).
-				$pattern = '/(?P<embed>' . CSSMin::EMBED_REGEX . '\s*|)' . CSSMin::URL_REGEX . '/';
+				$pattern = '/(?P<embed>' . CSSMin::EMBED_REGEX . '\s*|)' . self::getUrlRegex() . '/';
 
 				$ruleWithRemapped = preg_replace_callback(
 					$pattern,
 					function ( $match ) use ( $local, $remote ) {
-						$remapped = CSSMin::remapOne( $match['file'], $match['query'], $local, $remote, false );
+						self::processUrlMatch( $match );
 
+						$remapped = CSSMin::remapOne( $match['file'], $match['query'], $local, $remote, false );
 						return CSSMin::buildUrlValue( $remapped );
 					},
 					$rule
@@ -309,6 +314,8 @@ class CSSMin {
 					$ruleWithEmbedded = preg_replace_callback(
 						$pattern,
 						function ( $match ) use ( $embedAll, $local, $remote, &$mimeTypes ) {
+							self::processUrlMatch( $match );
+
 							$embed = $embedAll || $match['embed'];
 							$embedded = CSSMin::remapOne(
 								$match['file'],
@@ -351,8 +358,8 @@ class CSSMin {
 			}, $source );
 
 		// Re-insert comments
-		$pattern = '/' . CSSMin::PLACEHOLDER . '(\d+)x/';
-		$source = preg_replace_callback( $pattern, function( $match ) use ( &$comments ) {
+		$pattern = '/' . self::PLACEHOLDER . '(\d+)x/';
+		$source = preg_replace_callback( $pattern, function ( $match ) use ( &$comments ) {
 			return $comments[ $match[1] ];
 		}, $source );
 
@@ -386,6 +393,72 @@ class CSSMin {
 	}
 
 	/**
+	 * @codeCoverageIgnore
+	 */
+	private static function getUrlRegex() {
+		static $urlRegex;
+		if ( $urlRegex === null ) {
+			// Match these three variants separately to avoid broken urls when
+			// e.g. a double quoted url contains a parenthesis, or when a
+			// single quoted url contains a double quote, etc.
+			// Note: PCRE doesn't support multiple capture groups with the same name by default.
+			// - PCRE 6.7 introduced the "J" modifier (PCRE_INFO_JCHANGED for PCRE_DUPNAMES).
+			//   https://secure.php.net/manual/en/reference.pcre.pattern.modifiers.php
+			//   However this isn't useful since it just ignores all but the first one.
+			//   Also, while the modifier was introduced in PCRE 6.7 (PHP 5.2+) it was
+			//   not exposed to public preg_* functions until PHP 5.6.0.
+			// - PCRE 8.36 fixed this to work as expected (e.g. merge conceptually to
+			//   only return the one matched in the part that actually matched).
+			//   However MediaWiki supports 5.5.9, which has PCRE 8.32
+			//   Per https://secure.php.net/manual/en/pcre.installation.php:
+			//   - PCRE 8.32 (PHP 5.5.0)
+			//   - PCRE 8.34 (PHP 5.5.10, PHP 5.6.0)
+			//   - PCRE 8.37 (PHP 5.5.26, PHP 5.6.9, PHP 7.0.0)
+			//   Workaround by using different groups and merge via processUrlMatch().
+			// - Using string concatenation for class constant or member assignments
+			//   is only supported in PHP 5.6. Use a getter method for now.
+			$urlRegex = '(' .
+				// Unquoted url
+				'url\(\s*(?P<file0>[^\'"][^\?\)]*?)(?P<query0>\?[^\)]*?|)\s*\)' .
+				// Single quoted url
+				'|url\(\s*\'(?P<file1>[^\?\']*?)(?P<query1>\?[^\']*?|)\'\s*\)' .
+				// Double quoted url
+				'|url\(\s*"(?P<file2>[^\?"]*?)(?P<query2>\?[^"]*?|)"\s*\)' .
+				')';
+		}
+		return $urlRegex;
+	}
+
+	private static function processUrlMatch( array &$match, $flags = 0 ) {
+		if ( $flags & PREG_SET_ORDER ) {
+			// preg_match_all with PREG_SET_ORDER will return each group in each
+			// match array, and if it didn't match, instead of the sub array
+			// being an empty array it is `[ '', -1 ]`...
+			if ( isset( $match['file0'] ) && $match['file0'][1] !== -1 ) {
+				$match['file'] = $match['file0'];
+				$match['query'] = $match['query0'];
+			} elseif ( isset( $match['file1'] ) && $match['file1'][1] !== -1 ) {
+				$match['file'] = $match['file1'];
+				$match['query'] = $match['query1'];
+			} else {
+				$match['file'] = $match['file2'];
+				$match['query'] = $match['query2'];
+			}
+		} else {
+			if ( isset( $match['file0'] ) && $match['file0'] !== '' ) {
+				$match['file'] = $match['file0'];
+				$match['query'] = $match['query0'];
+			} elseif ( isset( $match['file1'] ) && $match['file1'] !== '' ) {
+				$match['file'] = $match['file1'];
+				$match['query'] = $match['query1'];
+			} else {
+				$match['file'] = $match['file2'];
+				$match['query'] = $match['query2'];
+			}
+		}
+	}
+
+	/**
 	 * Remap or embed a CSS URL path.
 	 *
 	 * @param string $file URL to remap/embed
@@ -407,7 +480,12 @@ class CSSMin {
 
 		// Pass thru fully-qualified and protocol-relative URLs and data URIs, as well as local URLs if
 		// we can't expand them.
-		if ( self::isRemoteUrl( $url ) || self::isLocalUrl( $url ) ) {
+		// Also skips the rare `behavior` property specifying application's default behavior
+		if (
+			self::isRemoteUrl( $url ) ||
+			self::isLocalUrl( $url ) ||
+			substr( $url, 0, 9 ) === '#default#'
+		) {
 			return $url;
 		}
 

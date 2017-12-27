@@ -27,17 +27,21 @@ body {
 }
 
 /* Content */
+.mw-body,
+.parsoid-body {
+	padding: @content-padding;
+	background-color: @body-background-color;
+	color: @content-font-color;
+	direction: ltr;
+}
+
 .mw-body {
 	margin-left: 10em;
-	padding: @content-padding;
 	/* Border on top, left, and bottom side */
 	border: 1px solid @content-border-color;
 	border-right-width: 0;
 	/* Merge the border with tabs' one (in their background image) */
 	margin-top: -1px;
-	background-color: @body-background-color;
-	color: @content-font-color;
-	direction: ltr;
 
 	// h1's can exist outside of mw-body-content so some heading styles
 	// need to be defined in mw-body as well
@@ -160,12 +164,4 @@ pre,
 /* Site Notice (includes notices from CentralNotice extension) */
 #siteNotice {
 	font-size: 0.8em;
-}
-
-.redirectText {
-	font-size: 140%;
-}
-
-.redirectMsg p {
-	margin: 0;
 }

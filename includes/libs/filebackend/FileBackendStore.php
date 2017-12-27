@@ -19,7 +19,6 @@
  *
  * @file
  * @ingroup FileBackend
- * @author Aaron Schulz
  */
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
@@ -1715,7 +1714,7 @@ abstract class FileBackendStore extends FileBackend {
 			return; // invalid storage path
 		}
 		$mtime = ConvertibleTimestamp::convert( TS_UNIX, $val['mtime'] );
-		$ttl = $this->memCache->adaptiveTTL( $mtime, 7 * 86400, 300, .1 );
+		$ttl = $this->memCache->adaptiveTTL( $mtime, 7 * 86400, 300, 0.1 );
 		$key = $this->fileCacheKey( $path );
 		// Set the cache unless it is currently salted.
 		$this->memCache->set( $key, $val, $ttl );
@@ -1841,14 +1840,8 @@ abstract class FileBackendStore extends FileBackend {
 			return call_user_func_array( $this->mimeCallback, func_get_args() );
 		}
 
-		$mime = null;
-		if ( $fsPath !== null && function_exists( 'finfo_file' ) ) {
-			$finfo = finfo_open( FILEINFO_MIME_TYPE );
-			$mime = finfo_file( $finfo, $fsPath );
-			finfo_close( $finfo );
-		}
-
-		return is_string( $mime ) ? $mime : 'unknown/unknown';
+		$mime = ( $fsPath !== null ) ? mime_content_type( $fsPath ) : false;
+		return $mime ?: 'unknown/unknown';
 	}
 }
 

@@ -104,7 +104,6 @@ class DifferenceEngine extends ContextSource {
 	/**#@-*/
 
 	/**
-	 * Constructor
 	 * @param IContextSource $context Context to use, anything else will be ignored
 	 * @param int $old Old ID we want to show and diff with.
 	 * @param string|int $new Either revision ID or 'prev' or 'next'. Default: 0.
@@ -182,7 +181,11 @@ class DifferenceEngine extends ContextSource {
 	public function deletedLink( $id ) {
 		if ( $this->getUser()->isAllowed( 'deletedhistory' ) ) {
 			$dbr = wfGetDB( DB_REPLICA );
-			$row = $dbr->selectRow( 'archive', '*',
+			$row = $dbr->selectRow( 'archive',
+				array_merge(
+					Revision::selectArchiveFields(),
+					[ 'ar_namespace', 'ar_title' ]
+				),
 				[ 'ar_rev_id' => $id ],
 				__METHOD__ );
 			if ( $row ) {
@@ -376,6 +379,11 @@ class DifferenceEngine extends ContextSource {
 				$allowed = false;
 			}
 		}
+
+		$out->addJsConfigVars( [
+			'wgDiffOldId' => $this->mOldid,
+			'wgDiffNewId' => $this->mNewid,
+		] );
 
 		# Make "next revision link"
 		# Skip next link on the top revision
@@ -847,7 +855,7 @@ class DifferenceEngine extends ContextSource {
 	 * @return bool|string
 	 */
 	public function generateTextDiffBody( $otext, $ntext ) {
-		$diff = function() use ( $otext, $ntext ) {
+		$diff = function () use ( $otext, $ntext ) {
 			$time = microtime( true );
 
 			$result = $this->textDiff( $otext, $ntext );
@@ -867,7 +875,7 @@ class DifferenceEngine extends ContextSource {
 		 * @param Status $status
 		 * @throws FatalError
 		 */
-		$error = function( $status ) {
+		$error = function ( $status ) {
 			throw new FatalError( $status->getWikiText() );
 		};
 
@@ -908,10 +916,35 @@ class DifferenceEngine extends ContextSource {
 			$wgExternalDiffEngine = false;
 		}
 
+		// Better external diff engine, the 2 may some day be dropped
+		// This one does the escaping and segmenting itself
 		if ( function_exists( 'wikidiff2_do_diff' ) && $wgExternalDiffEngine === false ) {
-			# Better external diff engine, the 2 may some day be dropped
-			# This one does the escaping and segmenting itself
-			$text = wikidiff2_do_diff( $otext, $ntext, 2 );
+			$wikidiff2Version = phpversion( 'wikidiff2' );
+			if (
+				$wikidiff2Version !== false &&
+				version_compare( $wikidiff2Version, '1.5.0', '>=' )
+			) {
+				$text = wikidiff2_do_diff(
+					$otext,
+					$ntext,
+					2,
+					$this->getConfig()->get( 'WikiDiff2MovedParagraphDetectionCutoff' )
+				);
+			} else {
+				// Don't pass the 4th parameter for compatibility with older versions of wikidiff2
+				$text = wikidiff2_do_diff(
+					$otext,
+					$ntext,
+					2
+				);
+
+				// Log a warning in case the configuration value is set to not silently ignore it
+				if ( $this->getConfig()->get( 'WikiDiff2MovedParagraphDetectionCutoff' ) > 0 ) {
+					wfLogWarning( '$wgWikiDiff2MovedParagraphDetectionCutoff is set but has no
+						effect since the used version of WikiDiff2 does not support it.' );
+				}
+			}
+
 			$text .= $this->debug( 'wikidiff2' );
 
 			return $text;
@@ -1145,17 +1178,17 @@ class DifferenceEngine extends ContextSource {
 
 		if ( !$diff && !$otitle ) {
 			$header .= "
-			<tr style='vertical-align: top;' lang='{$userLang}'>
-			<td class='diff-ntitle'>{$ntitle}</td>
+			<tr style=\"vertical-align: top;\" lang=\"{$userLang}\">
+			<td class=\"diff-ntitle\">{$ntitle}</td>
 			</tr>";
 			$multiColspan = 1;
 		} else {
 			if ( $diff ) { // Safari/Chrome show broken output if cols not used
 				$header .= "
-				<col class='diff-marker' />
-				<col class='diff-content' />
-				<col class='diff-marker' />
-				<col class='diff-content' />";
+				<col class=\"diff-marker\" />
+				<col class=\"diff-content\" />
+				<col class=\"diff-marker\" />
+				<col class=\"diff-content\" />";
 				$colspan = 2;
 				$multiColspan = 4;
 			} else {
@@ -1164,20 +1197,20 @@ class DifferenceEngine extends ContextSource {
 			}
 			if ( $otitle || $ntitle ) {
 				$header .= "
-				<tr style='vertical-align: top;' lang='{$userLang}'>
-				<td colspan='$colspan' class='diff-otitle'>{$otitle}</td>
-				<td colspan='$colspan' class='diff-ntitle'>{$ntitle}</td>
+				<tr style=\"vertical-align: top;\" lang=\"{$userLang}\">
+				<td colspan=\"$colspan\" class=\"diff-otitle\">{$otitle}</td>
+				<td colspan=\"$colspan\" class=\"diff-ntitle\">{$ntitle}</td>
 				</tr>";
 			}
 		}
 
 		if ( $multi != '' ) {
-			$header .= "<tr><td colspan='{$multiColspan}' style='text-align: center;' " .
-				"class='diff-multi' lang='{$userLang}'>{$multi}</td></tr>";
+			$header .= "<tr><td colspan=\"{$multiColspan}\" style=\"text-align: center;\" " .
+				"class=\"diff-multi\" lang=\"{$userLang}\">{$multi}</td></tr>";
 		}
 		if ( $notice != '' ) {
-			$header .= "<tr><td colspan='{$multiColspan}' style='text-align: center;' " .
-				"lang='{$userLang}'>{$notice}</td></tr>";
+			$header .= "<tr><td colspan=\"{$multiColspan}\" style=\"text-align: center;\" " .
+				"lang=\"{$userLang}\">{$notice}</td></tr>";
 		}
 
 		return $header . $diff . "</table>";

@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:xsd="http://www.w3.org/2001/XMLSchema#" xmlns="http://acme.test/">
+	<rdf:Description rdf:about="http://foobar.test/Bananas">
+		<rdf:type rdf:resource="http://foobar.test/Fruit"/>
+		<name>Banana</name>
+		<name xml:lang="de">Banane</name>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://foobar.test/Apples">
+		<name>Apple</name>
+	</rdf:Description>
+</rdf:RDF>

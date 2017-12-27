@@ -26,7 +26,7 @@ if ( getenv( 'MW_INSTALL_PATH' ) ) {
 	$IP = __DIR__ . '/../../..';
 }
 
-require_once ( "$IP/maintenance/Maintenance.php" );
+require_once "$IP/maintenance/Maintenance.php";
 
 /**
  * Maintenance script that deletes old fancy captchas from storage
@@ -89,4 +89,4 @@ class DeleteOldFancyCaptchas extends Maintenance {
 }
 
 $maintClass = "DeleteOldFancyCaptchas";
-require_once ( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

@@ -166,7 +166,7 @@ class ApiQueryRevisions extends ApiQueryRevisionsBase {
 			// For each page we will request, the user must have read rights for that page
 			$user = $this->getUser();
 			$status = Status::newGood();
-			/** @var $title Title */
+			/** @var Title $title */
 			foreach ( $pageSet->getGoodTitles() as $title ) {
 				if ( !$title->userCan( 'read', $user ) ) {
 					$status->fatal( ApiMessage::create(
@@ -218,10 +218,75 @@ class ApiQueryRevisions extends ApiQueryRevisionsBase {
 				);
 			}
 
-			$this->addTimestampWhereRange( 'rev_timestamp', $params['dir'],
-				$params['start'], $params['end'] );
-			$this->addWhereRange( 'rev_id', $params['dir'],
-				$params['startid'], $params['endid'] );
+			// Convert startid/endid to timestamps (T163532)
+			$revids = [];
+			if ( $params['startid'] !== null ) {
+				$revids[] = (int)$params['startid'];
+			}
+			if ( $params['endid'] !== null ) {
+				$revids[] = (int)$params['endid'];
+			}
+			if ( $revids ) {
+				$db = $this->getDB();
+				$sql = $db->unionQueries( [
+					$db->selectSQLText(
+						'revision',
+						[ 'id' => 'rev_id', 'ts' => 'rev_timestamp' ],
+						[ 'rev_id' => $revids ],
+						__METHOD__
+					),
+					$db->selectSQLText(
+						'archive',
+						[ 'id' => 'ar_rev_id', 'ts' => 'ar_timestamp' ],
+						[ 'ar_rev_id' => $revids ],
+						__METHOD__
+					),
+				], false );
+				$res = $db->query( $sql, __METHOD__ );
+				foreach ( $res as $row ) {
+					if ( (int)$row->id === (int)$params['startid'] ) {
+						$params['start'] = $row->ts;
+					}
+					if ( (int)$row->id === (int)$params['endid'] ) {
+						$params['end'] = $row->ts;
+					}
+				}
+				if ( $params['startid'] !== null && $params['start'] === null ) {
+					$p = $this->encodeParamName( 'startid' );
+					$this->dieWithError( [ 'apierror-revisions-badid', $p ], "badid_$p" );
+				}
+				if ( $params['endid'] !== null && $params['end'] === null ) {
+					$p = $this->encodeParamName( 'endid' );
+					$this->dieWithError( [ 'apierror-revisions-badid', $p ], "badid_$p" );
+				}
+
+				if ( $params['start'] !== null ) {
+					$op = ( $params['dir'] === 'newer' ? '>' : '<' );
+					$ts = $db->addQuotes( $db->timestampOrNull( $params['start'] ) );
+					if ( $params['startid'] !== null ) {
+						$this->addWhere( "rev_timestamp $op $ts OR "
+							. "rev_timestamp = $ts AND rev_id $op= " . intval( $params['startid'] ) );
+					} else {
+						$this->addWhere( "rev_timestamp $op= $ts" );
+					}
+				}
+				if ( $params['end'] !== null ) {
+					$op = ( $params['dir'] === 'newer' ? '<' : '>' ); // Yes, opposite of the above
+					$ts = $db->addQuotes( $db->timestampOrNull( $params['end'] ) );
+					if ( $params['endid'] !== null ) {
+						$this->addWhere( "rev_timestamp $op $ts OR "
+							. "rev_timestamp = $ts AND rev_id $op= " . intval( $params['endid'] ) );
+					} else {
+						$this->addWhere( "rev_timestamp $op= $ts" );
+					}
+				}
+			} else {
+				$this->addTimestampWhereRange( 'rev_timestamp', $params['dir'],
+					$params['start'], $params['end'] );
+			}
+
+			$sort = ( $params['dir'] === 'newer' ? '' : 'DESC' );
+			$this->addOption( 'ORDER BY', [ "rev_timestamp $sort", "rev_id $sort" ] );
 
 			// There is only one ID, use it
 			$ids = array_keys( $pageSet->getGoodTitles() );

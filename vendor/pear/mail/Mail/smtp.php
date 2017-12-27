@@ -6,27 +6,29 @@
  *
  * LICENSE:
  *
- * Copyright (c) 2010, Chuck Hagenbuch
+ * Copyright (c) 2010-2017, Chuck Hagenbuch & Jon Parise
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
  *
- * o Redistributions of source code must retain the above copyright
- *   notice, this list of conditions and the following disclaimer.
- * o Redistributions in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in the
- *   documentation and/or other materials provided with the distribution.
- * o The names of the authors may not be used to endorse or promote
- *   products derived from this software without specific prior written
- *   permission.
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * 3. Neither the name of the copyright holder nor the names of its
+ *    contributors may be used to endorse or promote products derived from
+ *    this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
  * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
  * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
  * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
  * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
@@ -38,8 +40,8 @@
  * @package     HTTP_Request
  * @author      Jon Parise <jon@php.net> 
  * @author      Chuck Hagenbuch <chuck@horde.org>
- * @copyright   2010 Chuck Hagenbuch
- * @license     http://opensource.org/licenses/bsd-license.php New BSD License
+ * @copyright   2010-2017 Chuck Hagenbuch
+ * @license     http://opensource.org/licenses/BSD-3-Clause New BSD License
  * @version     CVS: $Id$
  * @link        http://pear.php.net/package/Mail/
  */
@@ -84,18 +86,21 @@ class Mail_smtp extends Mail {
     /**
      * The list of service extension parameters to pass to the Net_SMTP
      * mailFrom() command.
+     *
      * @var array
      */
     var $_extparams = array();
 
     /**
      * The SMTP host to connect to.
+     *
      * @var string
      */
     var $host = 'localhost';
 
     /**
      * The port the SMTP server is on.
+     *
      * @var integer
      */
     var $port = 25;
@@ -115,12 +120,14 @@ class Mail_smtp extends Mail {
 
     /**
      * The username to use if the SMTP server requires authentication.
+     *
      * @var string
      */
     var $username = '';
 
     /**
      * The password to use if the SMTP server requires authentication.
+     *
      * @var string
      */
     var $password = '';
@@ -159,10 +166,16 @@ class Mail_smtp extends Mail {
      * Use SMTP command pipelining (specified in RFC 2920) if the SMTP server
      * supports it. This speeds up delivery over high-latency connections. By
      * default, use the default value supplied by Net_SMTP.
-     * @var bool
+     *
+     * @var boolean
      */
     var $pipelining;
-    
+
+    /**
+     * The list of socket options
+     *
+     * @var array
+     */
     var $socket_options = array();
 
     /**
@@ -242,6 +255,18 @@ class Mail_smtp extends Mail {
      */
     public function send($recipients, $headers, $body)
     {
+        $result = $this->send_or_fail($recipients, $headers, $body);
+
+        /* If persistent connections are disabled, destroy our SMTP object. */
+        if ($this->persist === false) {
+            $this->disconnect();
+        }
+
+        return $result;
+    }
+
+    protected function send_or_fail($recipients, $headers, $body)
+    {
         /* If we don't already have an SMTP object, create one. */
         $result = $this->getSMTPObject();
         if (PEAR::isError($result)) {
@@ -303,25 +328,20 @@ class Mail_smtp extends Mail {
 
         /* Send the message's headers and the body as SMTP data. */
         $res = $this->_smtp->data($body, $textHeaders);
-		list(,$args) = $this->_smtp->getResponse();
+        list(,$args) = $this->_smtp->getResponse();
 
-		if (preg_match("/Ok: queued as (.*)/", $args, $queued)) {
-			$this->queued_as = $queued[1];
-		}
+        if (preg_match("/ queued as (.*)/", $args, $queued)) {
+            $this->queued_as = $queued[1];
+        }
 
-		/* we need the greeting; from it we can extract the authorative name of the mail server we've really connected to.
-		 * ideal if we're connecting to a round-robin of relay servers and need to track which exact one took the email */
-		$this->greeting = $this->_smtp->getGreeting();
+        /* we need the greeting; from it we can extract the authorative name of the mail server we've really connected to.
+         * ideal if we're connecting to a round-robin of relay servers and need to track which exact one took the email */
+        $this->greeting = $this->_smtp->getGreeting();
 
         if (is_a($res, 'PEAR_Error')) {
             $error = $this->_error('Failed to send data', $res);
             $this->_smtp->rset();
             return PEAR::raiseError($error, PEAR_MAIL_SMTP_ERROR_DATA);
-        }
-
-        /* If persistent connections are disabled, destroy our SMTP object. */
-        if ($this->persist === false) {
-            $this->disconnect();
         }
 
         return true;

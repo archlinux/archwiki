@@ -4,7 +4,8 @@
 			"Armando-Martin",
 			"Sanbec",
 			"Macofe",
-			"Dgstranz"
+			"Dgstranz",
+			"Fitoschido"
 		]
 	},
 	"pdf-desc": "Controlador para ver archivos PDF en modo imagen.",
@@ -13,7 +14,7 @@
 	"pdf-file-page-warning-footer": "Este problema no es específico de este archivo en particular, sino un problema general con el formato PDF.",
 	"pdf-file-page-warning-info": "Más información sobre este problema.",
 	"pdf_no_metadata": "No se pudieron obtener metadatos del PDF.",
-	"pdf_page_error": "Número de página fuera de rango",
+	"pdf_page_error": "El número de página se ubica fuera del intervalo.",
 	"exif-pdf-producer": "Programa de conversión",
 	"exif-pdf-version": "Versión del formato PDF",
 	"exif-pdf-encrypted": "Cifrado",

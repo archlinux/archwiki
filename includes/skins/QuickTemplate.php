@@ -26,6 +26,16 @@ use MediaWiki\MediaWikiServices;
  */
 abstract class QuickTemplate {
 
+	/**
+	 * @var array
+	 */
+	public $data;
+
+	/**
+	 * @var MediaWikiI18N
+	 */
+	public $translator;
+
 	/** @var Config $config */
 	protected $config;
 
@@ -52,11 +62,11 @@ abstract class QuickTemplate {
 	}
 
 	/**
-	* extends the value of data with name $name with the value $value
-	* @since 1.25
-	* @param string $name
-	* @param mixed $value
-	*/
+	 * extends the value of data with name $name with the value $value
+	 * @since 1.25
+	 * @param string $name
+	 * @param mixed $value
+	 */
 	public function extend( $name, $value ) {
 		if ( $this->haveData( $name ) ) {
 			$this->data[$name] = $this->data[$name] . $value;
@@ -82,14 +92,14 @@ abstract class QuickTemplate {
 
 	/**
 	 * @param string $name
-	 * @param mixed $value
+	 * @param mixed &$value
 	 */
 	public function setRef( $name, &$value ) {
 		$this->data[$name] =& $value;
 	}
 
 	/**
-	 * @param MediaWikiI18N $t
+	 * @param MediaWikiI18N &$t
 	 */
 	public function setTranslator( &$t ) {
 		$this->translator = &$t;

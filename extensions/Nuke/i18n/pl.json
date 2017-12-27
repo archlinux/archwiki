@@ -41,5 +41,5 @@
 	"nuke-viewchanges": "widok zmian",
 	"nuke-namespace": "Tylko w przestrzeni nazw:",
 	"nuke-linkoncontribs": "masowe usuwanie",
-	"nuke-linkoncontribs-text": "Masowe usuwanie stron, których jedynym autorem jest ten użytkownik"
+	"nuke-linkoncontribs-text": "Masowe usuwanie stron, których {{GENDER:$1|jedynym autorem jest ten użytkownik|jedyną autorką jest ta użytkowniczka}}"
 }

@@ -7,7 +7,8 @@
 			"Roberta F.",
 			"SpeedyGonsales",
 			"Tivek",
-			"MaGa"
+			"MaGa",
+			"Bugoslav"
 		]
 	},
 	"renameuser": "Preimenuj suradnika",
@@ -35,7 +36,8 @@
 	"renameuser-page-unmoved": "Stranica $1 ne može biti preimenovana u $2.",
 	"log-name-renameuser": "Evidencija preimenovanja suradnika",
 	"log-description-renameuser": "Ovo je evidencija preimenovanja suradničkih imena",
-	"logentry-renameuser-renameuser": "$1 {{GENDER:$2|je preimenovao|je preimenovala}} suradnika $4 ({{PLURAL:$6|$6 uređivanje|$6 uređivanja|$6 uređivanja}}) u $5.",
+	"logentry-renameuser-renameuser": "$1 {{GENDER:$2|preimenovao|preimenovala}} je {{GENDER:$7|suradnika|suradnicu}} $4 ({{PLURAL:$6|$6 uređivanje|$6 uređivanja}}) u {{GENDER:$7|$5}}",
+	"logentry-renameuser-renameuser-legacier": "$1 {{GENDER:$2|preimenovao|preimenovala}} je {{GENDER:$7|suradnika|suradnicu}} $4 u {{GENDER:$7|$5}}",
 	"renameuser-move-log": "Stranica suradnika je premještena prilikom preimenovanja iz \"[[User:$1|$1]]\" u \"[[User:$2|$2]]\"",
 	"right-renameuser": "Preimenovati suradnike",
 	"renameuser-renamed-notice": "Ovaj suradnik je preimenovan.\nEvidencija preimenovanja suradnika je prikazana ispod kao obavijest."

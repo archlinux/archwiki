@@ -41,9 +41,9 @@ class SpecialWatchlistTest extends SpecialPageTestBase {
 				'watchlisthidepatrolled' => 0,
 				'watchlisthidecategorization' => 1,
 				'watchlistreloadautomatically' => 0,
+				'watchlistunwatchlinks' => 0,
 			]
 		);
-
 	}
 
 	/**

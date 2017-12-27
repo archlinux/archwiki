@@ -19,8 +19,6 @@
 		mw.rcfilters.ui.FormWrapperWidget.parent.call( this, $.extend( {}, config, {
 			$element: $formRoot
 		} ) );
-		// Mixin constructors
-		OO.ui.mixin.PendingElement.call( this, config );
 
 		this.changeListModel = changeListModel;
 		this.filtersModel = filtersModel;
@@ -48,7 +46,6 @@
 	/* Initialization */
 
 	OO.inheritClass( mw.rcfilters.ui.FormWrapperWidget, OO.ui.Widget );
-	OO.mixinClass( mw.rcfilters.ui.FormWrapperWidget, OO.ui.mixin.PendingElement );
 
 	/**
 	 * Respond to link click
@@ -72,9 +69,13 @@
 
 		// Collect all data from form
 		$( e.target ).find( 'input:not([type="hidden"],[type="submit"]), select' ).each( function () {
+			var value = '';
+
 			if ( !$( this ).is( ':checkbox' ) || $( this ).is( ':checked' ) ) {
-				data[ $( this ).prop( 'name' ) ] = $( this ).val();
+				value = $( this ).val();
 			}
+
+			data[ $( this ).prop( 'name' ) ] = value;
 		} );
 
 		this.controller.updateChangesList( data );
@@ -85,7 +86,6 @@
 	 * Respond to model invalidate
 	 */
 	mw.rcfilters.ui.FormWrapperWidget.prototype.onChangesModelInvalidate = function () {
-		this.pushPending();
 		this.$submitButton.prop( 'disabled', true );
 	};
 
@@ -95,29 +95,27 @@
 	 *
 	 * @param {jQuery|string} $changesList Updated changes list
 	 * @param {jQuery} $fieldset Updated fieldset
+	 * @param {boolean} isInitialDOM Whether $changesListContent is the existing (already attached) DOM
 	 */
-	mw.rcfilters.ui.FormWrapperWidget.prototype.onChangesModelUpdate = function ( $changesList, $fieldset ) {
+	mw.rcfilters.ui.FormWrapperWidget.prototype.onChangesModelUpdate = function ( $changesList, $fieldset, isInitialDOM ) {
 		this.$submitButton.prop( 'disabled', false );
 
 		// Replace the entire fieldset
 		this.$element.empty().append( $fieldset.contents() );
-		// Make sure enhanced RC re-initializes correctly
-		mw.hook( 'wikipage.content' ).fire( this.$element );
+
+		if ( !isInitialDOM ) {
+			// Make sure enhanced RC re-initializes correctly
+			mw.hook( 'wikipage.content' ).fire( this.$element );
+		}
 
 		this.cleanUpFieldset();
-
-		this.popPending();
 	};
 
 	/**
 	 * Clean up the old-style show/hide that we have implemented in the filter list
 	 */
 	mw.rcfilters.ui.FormWrapperWidget.prototype.cleanUpFieldset = function () {
-		var $namespaceSelect = this.$element.find( '#namespace' ),
-			$namespaceCheckboxes = this.$element.find( '#nsassociated, #nsinvert' ),
-			collapseCookieName = 'changeslist-state';
-
-		this.$element.find( '.rcshowhideoption[data-feature-in-structured-ui=1]' ).each( function () {
+		this.$element.find( '.clshowhideoption[data-feature-in-structured-ui=1]' ).each( function () {
 			// HACK: Remove the text node after the span.
 			// If there isn't one, we're at the end, so remove the text node before the span.
 			// This would be unnecessary if we added separators with CSS.
@@ -130,25 +128,42 @@
 			this.parentNode.removeChild( this );
 		} );
 
-		// Bind namespace select to change event
-		// see resources/src/mediawiki.special/mediawiki.special.recentchanges.js
-		$namespaceCheckboxes.prop( 'disabled', $namespaceSelect.val() === '' );
-		$namespaceSelect.on( 'change', function () {
-			$namespaceCheckboxes.prop( 'disabled', $( this ).val() === '' );
-		} );
+		// Hide namespaces and tags
+		this.$element.find( '.namespaceForm' ).detach();
+		this.$element.find( '.mw-tagfilter-label' ).closest( 'tr' ).detach();
 
-		// Collapse legend
-		// see resources/src/mediawiki.special/mediawiki.special.changelist.legend.js
-		this.$element.find( '.mw-changeslist-legend' )
-			.makeCollapsible( {
-				collapsed: mw.cookie.get( collapseCookieName ) === 'collapsed'
-			} )
-			.on( 'beforeExpand.mw-collapsible', function () {
-				mw.cookie.set( collapseCookieName, 'expanded' );
-			} )
-			.on( 'beforeCollapse.mw-collapsible', function () {
-				mw.cookie.set( collapseCookieName, 'collapsed' );
-			} );
+		// misc: limit, days, watchlist info msg
+		this.$element.find( '.rclinks, .cldays, .wlinfo' ).detach();
 
+		if ( !this.$element.find( '.mw-recentchanges-table tr' ).length ) {
+			this.$element.find( '.mw-recentchanges-table' ).detach();
+			this.$element.find( 'hr' ).detach();
+		}
+
+		// Get rid of all <br>s, which are inside rcshowhide
+		// If we still have content in rcshowhide, the <br>s are
+		// gone. Instead, the CSS now has a rule to mark all <span>s
+		// inside .rcshowhide with display:block; to simulate newlines
+		// where they're actually needed.
+		this.$element.find( 'br' ).detach();
+		if ( !this.$element.find( '.rcshowhide' ).contents().length ) {
+			this.$element.find( '.rcshowhide' ).detach();
+		}
+
+		if ( this.$element.find( '.cloption' ).text().trim() === '' ) {
+			this.$element.find( '.cloption-submit' ).detach();
+		}
+
+		this.$element.find(
+			'.rclistfrom, .rcnotefrom, .rcoptions-listfromreset'
+		).detach();
+
+		// Get rid of the legend
+		this.$element.find( 'legend' ).detach();
+
+		// Check if the element is essentially empty, and detach it if it is
+		if ( !this.$element.text().trim().length ) {
+			this.$element.detach();
+		}
 	};
 }( mediaWiki ) );

@@ -3,7 +3,8 @@
 		"authors": [
 			"RajeshPandey",
 			"बिप्लब आनन्द",
-			"राम प्रसाद जोशी"
+			"राम प्रसाद जोशी",
+			"Nirajan pant"
 		]
 	},
 	"pfunc_time_error": "त्रुटी: गलत/वा हुदैनहुने समय",
@@ -12,5 +13,6 @@
 	"pfunc_expr_unrecognised_word": "अभिव्यक्ति त्रुटि: अज्ञात शब्द \"$1\"।",
 	"pfunc_expr_unexpected_operator": "एक्स्प्रेशन त्रुटि: अनपेक्षित $1 अपरेटर।",
 	"pfunc_expr_missing_operand": "अज्ञात त्रुटी:$1 को लागि ओपरन्ड छुटेको",
-	"pfunc_expr_unrecognised_punctuation": "अभिव्यक्ति त्रुटि: अज्ञात विराम चिन्ह चरित्र \"$1\"।"
+	"pfunc_expr_unrecognised_punctuation": "अभिव्यक्ति त्रुटि: अज्ञात विराम चिन्ह चरित्र \"$1\"।",
+	"pfunc_expr_division_by_zero": "शून्यद्वारा भाग।"
 }

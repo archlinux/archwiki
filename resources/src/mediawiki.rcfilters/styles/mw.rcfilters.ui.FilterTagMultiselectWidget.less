@@ -1,9 +1,13 @@
+@import 'mediawiki.mixins';
+
 .mw-rcfilters-ui-filterTagMultiselectWidget {
 	max-width: none;
 
 	.oo-ui-tagMultiselectWidget-input input {
 		// Make sure this uses the interface direction, not the content direction
 		direction: ltr;
+		border-bottom-right-radius: 0;
+		height: 2.5em;
 	}
 
 	&.oo-ui-widget-enabled .oo-ui-tagMultiselectWidget-handle {
@@ -11,17 +15,72 @@
 		border-bottom: 0;
 		background-color: #f8f9fa;
 		border-radius: 2px 2px 0 0;
-		padding: 0.3em 0.6em 0.6em 0.6em;
-		margin-top: 1.6em;
+		padding: 0.6em;
+		margin-top: 1em;
+		line-height: normal;
 	}
 
-	.mw-rcfilters-ui-table {
-		margin-top: 0.3em;
+	.oo-ui-tagMultiselectWidget.oo-ui-widget-enabled &-animate.oo-ui-tagMultiselectWidget-handle {
+		.transition( background-color 500ms ease-out );
 	}
 
-	&-wrapper-content-title {
-		font-weight: bold;
-		color: #54595d;
+	.oo-ui-tagMultiselectWidget.oo-ui-widget-enabled &-emphasize.oo-ui-tagMultiselectWidget-handle {
+		background-color: #eaf3ff; // Accent90
+	}
+
+	&-wrapper {
+		.mw-rcfilters-ui-table {
+			margin-top: 0.3em;
+		}
+
+		&-content {
+			&-title {
+				font-weight: bold;
+				color: #54595d;
+			}
+
+			&-savedQueryTitle {
+				color: #222; // Base10
+				font-weight: bold;
+				vertical-align: top;
+				margin-left: 1em;
+				width: ~'calc( 100% - 10em )';
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+		}
+	}
+
+	&-views {
+		&-input {
+			width: 100%;
+		}
+
+		&-select {
+			width: 1em;
+
+			&-widget.oo-ui-widget {
+				border: 1px solid #a2a9b1;
+				border-left-width: 0;
+				border-top-left-radius: 0;
+				border-top-right-radius: 0;
+				border-bottom-left-radius: 0;
+
+				display: block;
+				text-align: right;
+				height: 2.5em;
+				box-sizing: border-box;
+
+				.oo-ui-buttonElement-frameless.oo-ui-iconElement:first-child {
+					margin-left: 0;
+				}
+
+				.oo-ui-labelElement.oo-ui-optionWidget.oo-ui-buttonElement:first-child {
+					margin-left: 0;
+				}
+			}
+		}
 	}
 
 	&-emptyFilters {
@@ -30,6 +89,11 @@
 
 	&-cell-filters {
 		width: 100%;
+
+		div.oo-ui-tagMultiselectWidget-group {
+			margin-top: 0.2em;
+			display: block;
+		}
 	}
 
 	&-cell-reset {

@@ -16,14 +16,15 @@
 			"Sudachi",
 			"Otokoume",
 			"Vigorous action",
-			"おはぐろ蜻蛉"
+			"おはぐろ蜻蛉",
+			"Iwai.masaharu"
 		]
 	},
 	"visualeditor-cite-tool-definition.json": "null",
 	"visualeditor-cite-tool-name-book": "書籍",
 	"visualeditor-cite-tool-name-journal": "ジャーナル",
 	"visualeditor-cite-tool-name-news": "ニュース",
-	"visualeditor-cite-tool-name-web": "Web サイト",
+	"visualeditor-cite-tool-name-web": "ウェブサイト",
 	"cite-tool-definition.json": "null",
 	"cite-ve-dialog-reference-editing-reused": "この参照はこのページ上で$1{{PLURAL:$1|回}}使用されています。",
 	"cite-ve-dialog-reference-options-group-label": "使用するグループ",

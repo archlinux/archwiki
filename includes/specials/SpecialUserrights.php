@@ -326,8 +326,8 @@ class UserrightsPage extends SpecialPage {
 	 * @return array Tuple of added, then removed groups
 	 */
 	function doSaveUserGroups( $user, $add, $remove, $reason = '', $tags = [],
-		$groupExpiries = [] ) {
-
+		$groupExpiries = []
+	) {
 		// Validate input set...
 		$isself = $user->getName() == $this->getUser()->getName();
 		$groups = $user->getGroups();
@@ -344,7 +344,7 @@ class UserrightsPage extends SpecialPage {
 		// UNLESS the user can only add this group (not remove it) and the expiry time
 		// is being brought forward (T156784)
 		$add = array_filter( $add,
-			function( $group ) use ( $groups, $groupExpiries, $removable, $ugms ) {
+			function ( $group ) use ( $groups, $groupExpiries, $removable, $ugms ) {
 				if ( isset( $groupExpiries[$group] ) &&
 					!in_array( $group, $removable ) &&
 					isset( $ugms[$group] ) &&
@@ -433,16 +433,16 @@ class UserrightsPage extends SpecialPage {
 	 * @param array $newUGMs Associative array of (group name => UserGroupMembership)
 	 */
 	protected function addLogEntry( $user, $oldGroups, $newGroups, $reason, $tags,
-		$oldUGMs, $newUGMs ) {
-
+		$oldUGMs, $newUGMs
+	) {
 		// make sure $oldUGMs and $newUGMs are in the same order, and serialise
 		// each UGM object to a simplified array
-		$oldUGMs = array_map( function( $group ) use ( $oldUGMs ) {
+		$oldUGMs = array_map( function ( $group ) use ( $oldUGMs ) {
 			return isset( $oldUGMs[$group] ) ?
 				self::serialiseUgmForLog( $oldUGMs[$group] ) :
 				null;
 		}, $oldGroups );
-		$newUGMs = array_map( function( $group ) use ( $newUGMs ) {
+		$newUGMs = array_map( function ( $group ) use ( $newUGMs ) {
 			return isset( $newUGMs[$group] ) ?
 				self::serialiseUgmForLog( $newUGMs[$group] ) :
 				null;

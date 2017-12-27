@@ -21,7 +21,7 @@
 	"right-tboverride": "Eirata pealkirjade või kasutajanimede musta nimekirja",
 	"right-tboverride-account": "Eirata kasutajanimede musta nimekirja",
 	"right-titleblacklistlog": "Vaadata pealkirjade musta nimekirja logi",
-	"apihelp-titleblacklist-description": "Artikli pealkirja, failinime või kasutajanime valideerimine pealkirjade musta nimekirja vastu.",
+	"apihelp-titleblacklist-description": "Lehekülje pealkirja, failinime või kasutajanime valideerimine pealkirjade musta nimekirja vastu.",
 	"apihelp-titleblacklist-param-title": "Sõne, mida musta nimekirja vastu valideerida.",
 	"apihelp-titleblacklist-param-action": "Toiming, mida kontrollida.",
 	"apihelp-titleblacklist-param-nooverride": "Ära ürita pealkirjade musta nimekirja ümber kehtestada.",

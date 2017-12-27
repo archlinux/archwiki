@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Justincheng12345",
-			"Nemo bis"
+			"Nemo bis",
+			"Itsmine"
 		]
 	},
 	"skinname-vector": "動力",
@@ -19,5 +20,5 @@
 	"vector-view-history": "覽史",
 	"vector-view-view": "閱",
 	"vector-view-viewsource": "覽源",
-	"vector-more-actions": "益多"
+	"vector-more-actions": "餘"
 }

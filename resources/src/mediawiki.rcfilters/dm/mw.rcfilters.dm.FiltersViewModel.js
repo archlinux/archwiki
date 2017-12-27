@@ -16,7 +16,11 @@
 		this.defaultParams = {};
 		this.defaultFiltersEmpty = null;
 		this.highlightEnabled = false;
+		this.invertedNamespaces = false;
 		this.parameterMap = {};
+
+		this.views = {};
+		this.currentView = 'default';
 
 		// Events
 		this.aggregate( { update: 'filterItemUpdate' } );
@@ -37,6 +41,12 @@
 	 */
 
 	/**
+	 * @event update
+	 *
+	 * Model has been updated
+	 */
+
+	/**
 	 * @event itemUpdate
 	 * @param {mw.rcfilters.dm.FilterItem} item Filter item updated
 	 *
@@ -48,6 +58,13 @@
 	 * @param {boolean} Highlight feature is enabled
 	 *
 	 * Highlight feature has been toggled enabled or disabled
+	 */
+
+	/**
+	 * @event invertChange
+	 * @param {boolean} isInverted Namespace selected is inverted
+	 *
+	 * Namespace selection is inverted or straight forward
 	 */
 
 	/* Methods */
@@ -189,26 +206,45 @@
 	 * Set filters and preserve a group relationship based on
 	 * the definition given by an object
 	 *
-	 * @param {Array} filters Filter group definition
+	 * @param {Array} filterGroups Filters definition
+	 * @param {Object} [views] Extra views definition
+	 *  Expected in the following format:
+	 *  {
+	 *     namespaces: {
+	 *       label: 'namespaces', // Message key
+	 *       trigger: ':',
+	 *       groups: [
+	 *         {
+	 *            // Group info
+	 *            name: 'namespaces' // Parameter name
+	 *            title: 'namespaces' // Message key
+	 *            type: 'string_options',
+	 *            separator: ';',
+	 *            labelPrefixKey: { 'default': 'rcfilters-tag-prefix-namespace', inverted: 'rcfilters-tag-prefix-namespace-inverted' },
+	 *            fullCoverage: true
+	 *            items: []
+	 *         }
+	 *       ]
+	 *     }
+	 *  }
 	 */
-	mw.rcfilters.dm.FiltersViewModel.prototype.initializeFilters = function ( filters ) {
-		var i, filterItem, filterConflictResult, groupConflictResult, subsetNames,
+	mw.rcfilters.dm.FiltersViewModel.prototype.initializeFilters = function ( filterGroups, views ) {
+		var filterConflictResult, groupConflictResult,
+			allViews = {},
 			model = this,
 			items = [],
-			supersetMap = {},
 			groupConflictMap = {},
 			filterConflictMap = {},
-			addArrayElementsUnique = function ( arr, elements ) {
-				elements = Array.isArray( elements ) ? elements : [ elements ];
-
-				elements.forEach( function ( element ) {
-					if ( arr.indexOf( element ) === -1 ) {
-						arr.push( element );
-					}
-				} );
-
-				return arr;
-			},
+			/*!
+			 * Expand a conflict definition from group name to
+			 * the list of all included filters in that group.
+			 * We do this so that the direct relationship in the
+			 * models are consistently item->items rather than
+			 * mixing item->group with item->item.
+			 *
+			 * @param {Object} obj Conflict definition
+			 * @return {Object} Expanded conflict definition
+			 */
 			expandConflictDefinitions = function ( obj ) {
 				var result = {};
 
@@ -220,7 +256,7 @@
 						var filter;
 
 						if ( conflict.filter ) {
-							filterName = model.groups[ conflict.group ].getNamePrefix() + conflict.filter;
+							filterName = model.groups[ conflict.group ].getPrefixedName( conflict.filter );
 							filter = model.getItemByName( filterName );
 
 							// Rename
@@ -260,93 +296,81 @@
 		// Reset
 		this.clearItems();
 		this.groups = {};
+		this.views = {};
 
-		filters.forEach( function ( data ) {
-			var group = data.name;
+		// Clone
+		filterGroups = OO.copy( filterGroups );
 
-			if ( !model.groups[ group ] ) {
-				model.groups[ group ] = new mw.rcfilters.dm.FilterGroup( group, {
-					type: data.type,
-					title: mw.msg( data.title ),
-					separator: data.separator,
-					fullCoverage: !!data.fullCoverage,
-					whatsThis: {
-						body: data.whatsThisBody,
-						header: data.whatsThisHeader,
-						linkText: data.whatsThisLinkText,
-						url: data.whatsThisUrl
-					}
-				} );
-			}
+		// Normalize definition from the server
+		filterGroups.forEach( function ( data ) {
+			var i;
+			// What's this information needs to be normalized
+			data.whatsThis = {
+				body: data.whatsThisBody,
+				header: data.whatsThisHeader,
+				linkText: data.whatsThisLinkText,
+				url: data.whatsThisUrl
+			};
 
-			if ( data.conflicts ) {
-				groupConflictMap[ group ] = data.conflicts;
-			}
+			// Title is a msg-key
+			data.title = data.title ? mw.msg( data.title ) : data.name;
 
+			// Filters are given to us with msg-keys, we need
+			// to translate those before we hand them off
 			for ( i = 0; i < data.filters.length; i++ ) {
-				data.filters[ i ].subset = data.filters[ i ].subset || [];
-				data.filters[ i ].subset = data.filters[ i ].subset.map( function ( el ) {
-					return el.filter;
-				} );
-
-				filterItem = new mw.rcfilters.dm.FilterItem( data.filters[ i ].name, model.groups[ group ], {
-					group: group,
-					label: mw.msg( data.filters[ i ].label ),
-					description: mw.msg( data.filters[ i ].description ),
-					cssClass: data.filters[ i ].cssClass
-				} );
-
-				if ( data.filters[ i ].subset ) {
-					subsetNames = [];
-					data.filters[ i ].subset.forEach( function ( subsetFilterName ) { // eslint-disable-line no-loop-func
-						var subsetName = model.groups[ group ].getNamePrefix() + subsetFilterName;
-						// For convenience, we should store each filter's "supersets" -- these are
-						// the filters that have that item in their subset list. This will just
-						// make it easier to go through whether the item has any other items
-						// that affect it (and are selected) at any given time
-						supersetMap[ subsetName ] = supersetMap[ subsetName ] || [];
-						addArrayElementsUnique(
-							supersetMap[ subsetName ],
-							filterItem.getName()
-						);
-
-						// Translate subset param name to add the group name, so we
-						// get consistent naming. We know that subsets are only within
-						// the same group
-						subsetNames.push( subsetName );
-					} );
-
-					// Set translated subset
-					filterItem.setSubset( subsetNames );
-				}
-
-				// Store conflicts
-				if ( data.filters[ i ].conflicts ) {
-					filterConflictMap[ filterItem.getName() ] = data.filters[ i ].conflicts;
-				}
-
-				if ( data.type === 'send_unselected_if_any' ) {
-					// Store the default parameter state
-					// For this group type, parameter values are direct
-					model.defaultParams[ data.filters[ i ].name ] = Number( !!data.filters[ i ].default );
-				}
-
-				model.groups[ group ].addItems( filterItem );
-				items.push( filterItem );
-			}
-
-			if ( data.type === 'string_options' && data.default ) {
-				// Store the default parameter group state
-				// For this group, the parameter is group name and value is the names
-				// of selected items
-				model.defaultParams[ group ] = model.sanitizeStringOptionGroup(
-					group,
-					data.default.split( model.groups[ group ].getSeparator() )
-				).join( model.groups[ group ].getSeparator() );
+				data.filters[ i ].label = data.filters[ i ].label ? mw.msg( data.filters[ i ].label ) : data.filters[ i ].name;
+				data.filters[ i ].description = data.filters[ i ].description ? mw.msg( data.filters[ i ].description ) : '';
 			}
 		} );
 
-		// Add items to the model
+		// Collect views
+		allViews = $.extend( true, {
+			'default': {
+				title: mw.msg( 'rcfilters-filterlist-title' ),
+				groups: filterGroups
+			}
+		}, views );
+
+		// Go over all views
+		$.each( allViews, function ( viewName, viewData ) {
+			// Define the view
+			model.views[ viewName ] = {
+				name: viewData.name,
+				title: viewData.title,
+				trigger: viewData.trigger
+			};
+
+			// Go over groups
+			viewData.groups.forEach( function ( groupData ) {
+				var group = groupData.name;
+
+				if ( !model.groups[ group ] ) {
+					model.groups[ group ] = new mw.rcfilters.dm.FilterGroup(
+						group,
+						$.extend( true, {}, groupData, { view: viewName } )
+					);
+				}
+
+				model.groups[ group ].initializeFilters( groupData.filters, groupData.default );
+				items = items.concat( model.groups[ group ].getItems() );
+
+				// Prepare conflicts
+				if ( groupData.conflicts ) {
+					// Group conflicts
+					groupConflictMap[ group ] = groupData.conflicts;
+				}
+
+				groupData.filters.forEach( function ( itemData ) {
+					var filterItem = model.groups[ group ].getItemByParamName( itemData.name );
+					// Filter conflicts
+					if ( itemData.conflicts ) {
+						filterConflictMap[ filterItem.getName() ] = itemData.conflicts;
+					}
+				} );
+			} );
+		} );
+
+		// Add item references to the model, for lookup
 		this.addItems( items );
 
 		// Expand conflicts
@@ -358,29 +382,35 @@
 			model.groups[ group ].setConflicts( conflicts );
 		} );
 
-		items.forEach( function ( filterItem ) {
-			// Apply the superset map
-			filterItem.setSuperset( supersetMap[ filterItem.getName() ] );
-
-			// set conflicts for item
-			if ( filterConflictResult[ filterItem.getName() ] ) {
-				filterItem.setConflicts( filterConflictResult[ filterItem.getName() ] );
-			}
+		// Set conflicts for items
+		$.each( filterConflictResult, function ( filterName, conflicts ) {
+			var filterItem = model.getItemByName( filterName );
+			// set conflicts for items in the group
+			filterItem.setConflicts( conflicts );
 		} );
 
 		// Create a map between known parameters and their models
 		$.each( this.groups, function ( group, groupModel ) {
-			if ( groupModel.getType() === 'send_unselected_if_any' ) {
+			if (
+				groupModel.getType() === 'send_unselected_if_any' ||
+				groupModel.getType() === 'boolean'
+			) {
 				// Individual filters
 				groupModel.getItems().forEach( function ( filterItem ) {
 					model.parameterMap[ filterItem.getParamName() ] = filterItem;
 				} );
-			} else if ( groupModel.getType() === 'string_options' ) {
+			} else if (
+				groupModel.getType() === 'string_options' ||
+				groupModel.getType() === 'single_option'
+			) {
 				// Group
 				model.parameterMap[ groupModel.getName() ] = groupModel;
 			}
 		} );
 
+		this.currentView = 'default';
+
+		// Finish initialization
 		this.emit( 'initialize' );
 	};
 
@@ -402,6 +432,56 @@
 		return this.groups;
 	};
 
+	/**
+	 * Get the object that defines groups that match a certain view by their name.
+	 *
+	 * @param {string} [view] Requested view. If not given, uses current view
+	 * @return {Object} Filter groups matching a display group
+	 */
+	mw.rcfilters.dm.FiltersViewModel.prototype.getFilterGroupsByView = function ( view ) {
+		var result = {};
+
+		view = view || this.getCurrentView();
+
+		$.each( this.groups, function ( groupName, groupModel ) {
+			if ( groupModel.getView() === view ) {
+				result[ groupName ] = groupModel;
+			}
+		} );
+
+		return result;
+	};
+
+	/**
+	 * Get an array of filters matching the given display group.
+	 *
+	 * @param {string} [view] Requested view. If not given, uses current view
+	 * @return {mw.rcfilters.dm.FilterItem} Filter items matching the group
+	 */
+	mw.rcfilters.dm.FiltersViewModel.prototype.getFiltersByView = function ( view ) {
+		var groups,
+			result = [];
+
+		view = view || this.getCurrentView();
+
+		groups = this.getFilterGroupsByView( view );
+
+		$.each( groups, function ( groupName, groupModel ) {
+			result = result.concat( groupModel.getItems() );
+		} );
+
+		return result;
+	};
+
+	/**
+	 * Get the trigger for the requested view.
+	 *
+	 * @param {string} view View name
+	 * @return {string} View trigger, if exists
+	 */
+	mw.rcfilters.dm.FiltersViewModel.prototype.getViewTrigger = function ( view ) {
+		return ( this.views[ view ] && this.views[ view ].trigger ) || '';
+	};
 	/**
 	 * Get the value of a specific parameter
 	 *
@@ -451,38 +531,153 @@
 	};
 
 	/**
-	 * Get the default parameters object
+	 * Get an object representing default parameters state
 	 *
 	 * @return {Object} Default parameter values
 	 */
 	mw.rcfilters.dm.FiltersViewModel.prototype.getDefaultParams = function () {
-		return this.defaultParams;
+		var result = {};
+
+		// Get default filter state
+		$.each( this.groups, function ( name, model ) {
+			$.extend( true, result, model.getDefaultParams() );
+		} );
+
+		return result;
 	};
 
 	/**
-	 * Set all filter states to default values
+	 * Get a parameter representation of all sticky parameters
+	 *
+	 * @return {Object} Sticky parameter values
 	 */
-	mw.rcfilters.dm.FiltersViewModel.prototype.setFiltersToDefaults = function () {
-		var defaultFilterStates = this.getFiltersFromParameters( this.getDefaultParams() );
+	mw.rcfilters.dm.FiltersViewModel.prototype.getStickyParams = function () {
+		var result = {};
 
-		this.toggleFiltersSelected( defaultFilterStates );
+		$.each( this.groups, function ( name, model ) {
+			if ( model.isSticky() ) {
+				$.extend( true, result, model.getDefaultParams() );
+			}
+		} );
+
+		return result;
+	};
+
+	/**
+	 * Get a filter representation of all sticky parameters
+	 *
+	 * @return {Object} Sticky filters values
+	 */
+	mw.rcfilters.dm.FiltersViewModel.prototype.getStickyFiltersState = function () {
+		var result = {};
+
+		$.each( this.groups, function ( name, model ) {
+			if ( model.isSticky() ) {
+				$.extend( true, result, model.getSelectedState() );
+			}
+		} );
+
+		return result;
+	};
+
+	/**
+	 * Get a filter representation of all parameters that are marked
+	 * as being excluded from saved query.
+	 *
+	 * @return {Object} Excluded filters values
+	 */
+	mw.rcfilters.dm.FiltersViewModel.prototype.getExcludedFiltersState = function () {
+		var result = {};
+
+		$.each( this.groups, function ( name, model ) {
+			if ( model.isExcludedFromSavedQueries() ) {
+				$.extend( true, result, model.getSelectedState() );
+			}
+		} );
+
+		return result;
 	};
 
 	/**
 	 * Analyze the groups and their filters and output an object representing
 	 * the state of the parameters they represent.
 	 *
-	 * @param {Object} [filterGroups] An object defining the filter groups to
-	 *  translate to parameters. Its structure must follow that of this.groups
-	 *  see #getFilterGroups
+	 * @param {Object} [filterDefinition] An object defining the filter values,
+	 *  keyed by filter names.
 	 * @return {Object} Parameter state object
 	 */
-	mw.rcfilters.dm.FiltersViewModel.prototype.getParametersFromFilters = function ( filterGroups ) {
-		var result = {},
-			groupItems = filterGroups || this.getFilterGroups();
+	mw.rcfilters.dm.FiltersViewModel.prototype.getParametersFromFilters = function ( filterDefinition ) {
+		var groupItemDefinition,
+			result = {},
+			groupItems = this.getFilterGroups();
+
+		if ( filterDefinition ) {
+			groupItemDefinition = {};
+			// Filter definition is "flat", but in effect
+			// each group needs to tell us its result based
+			// on the values in it. We need to split this list
+			// back into groupings so we can "feed" it to the
+			// loop below, and we need to expand it so it includes
+			// all filters (set to false)
+			this.getItems().forEach( function ( filterItem ) {
+				groupItemDefinition[ filterItem.getGroupName() ] = groupItemDefinition[ filterItem.getGroupName() ] || {};
+				groupItemDefinition[ filterItem.getGroupName() ][ filterItem.getName() ] = !!filterDefinition[ filterItem.getName() ];
+			} );
+		}
 
 		$.each( groupItems, function ( group, model ) {
-			$.extend( result, model.getParamRepresentation() );
+			$.extend(
+				result,
+				model.getParamRepresentation(
+					groupItemDefinition ?
+						groupItemDefinition[ group ] : null
+				)
+			);
+		} );
+
+		return result;
+	};
+
+	/**
+	 * This is the opposite of the #getParametersFromFilters method; this goes over
+	 * the given parameters and translates into a selected/unselected value in the filters.
+	 *
+	 * @param {Object} params Parameters query object
+	 * @return {Object} Filter state object
+	 */
+	mw.rcfilters.dm.FiltersViewModel.prototype.getFiltersFromParameters = function ( params ) {
+		var groupMap = {},
+			model = this,
+			result = {};
+
+		// Go over the given parameters, break apart to groupings
+		// The resulting object represents the group with its parameter
+		// values. For example:
+		// {
+		//    group1: {
+		//       param1: "1",
+		//       param2: "0",
+		//       param3: "1"
+		//    },
+		//    group2: "param4|param5"
+		// }
+		$.each( params, function ( paramName, paramValue ) {
+			var groupName,
+				itemOrGroup = model.parameterMap[ paramName ];
+
+			if ( itemOrGroup ) {
+				groupName = itemOrGroup instanceof mw.rcfilters.dm.FilterItem ?
+					itemOrGroup.getGroupName() : itemOrGroup.getName();
+
+				groupMap[ groupName ] = groupMap[ groupName ] || {};
+				groupMap[ groupName ][ paramName ] = paramValue;
+			}
+		} );
+
+		// Go over all groups, so we make sure we get the complete output
+		// even if the parameters don't include a certain group
+		$.each( this.groups, function ( groupName, groupModel ) {
+			result = $.extend( true, {}, result, groupModel.getFilterRepresentation( groupMap[ groupName ] ) );
 		} );
 
 		return result;
@@ -491,15 +686,60 @@
 	/**
 	 * Get the highlight parameters based on current filter configuration
 	 *
-	 * @return {object} Object where keys are "<filter name>_color" and values
+	 * @return {Object} Object where keys are `<filter name>_color` and values
 	 *                  are the selected highlight colors.
 	 */
 	mw.rcfilters.dm.FiltersViewModel.prototype.getHighlightParameters = function () {
-		var result = { highlight: Number( this.isHighlightEnabled() ) };
+		var result = {};
 
 		this.getItems().forEach( function ( filterItem ) {
-			result[ filterItem.getName() + '_color' ] = filterItem.getHighlightColor();
+			result[ filterItem.getName() + '_color' ] = filterItem.getHighlightColor() || null;
 		} );
+		result.highlight = String( Number( this.isHighlightEnabled() ) );
+
+		return result;
+	};
+
+	/**
+	 * Extract the highlight values from given object. Since highlights are
+	 * the same for filter and parameters, it doesn't matter which one is
+	 * given; values will be returned with a full list of the highlights
+	 * with colors or null values.
+	 *
+	 * @param {Object} representation Object containing representation of
+	 *  some or all highlight values
+	 * @return {Object} Object where keys are `<filter name>_color` and values
+	 *                  are the selected highlight colors. The returned object
+	 *                  contains all available filters either with a color value
+	 *                  or with null.
+	 */
+	mw.rcfilters.dm.FiltersViewModel.prototype.extractHighlightValues = function ( representation ) {
+		var result = {};
+
+		this.getItems().forEach( function ( filterItem ) {
+			var highlightName = filterItem.getName() + '_color';
+			result[ highlightName ] = representation[ highlightName ] || null;
+		} );
+
+		return result;
+	};
+
+	/**
+	 * Get an array of currently applied highlight colors
+	 *
+	 * @return {string[]} Currently applied highlight colors
+	 */
+	mw.rcfilters.dm.FiltersViewModel.prototype.getCurrentlyUsedHighlightColors = function () {
+		var result = [];
+
+		this.getHighlightedItems().forEach( function ( filterItem ) {
+			var color = filterItem.getHighlightColor();
+
+			if ( result.indexOf( color ) === -1 ) {
+				result.push( color );
+			}
+		} );
+
 		return result;
 	};
 
@@ -513,34 +753,12 @@
 	 * @param {string[]} valueArray Array of values
 	 * @return {string[]} Array of valid values
 	 */
-	mw.rcfilters.dm.FiltersViewModel.prototype.sanitizeStringOptionGroup = function( groupName, valueArray ) {
-		var result = [],
-			validNames = this.getGroupFilters( groupName ).map( function ( filterItem ) {
-				return filterItem.getParamName();
-			} );
-
-		if ( valueArray.indexOf( 'all' ) > -1 ) {
-			// If anywhere in the values there's 'all', we
-			// treat it as if only 'all' was selected.
-			// Example: param=valid1,valid2,all
-			// Result: param=all
-			return [ 'all' ];
-		}
-
-		// Get rid of any dupe and invalid parameter, only output
-		// valid ones
-		// Example: param=valid1,valid2,invalid1,valid1
-		// Result: param=valid1,valid2
-		valueArray.forEach( function ( value ) {
-			if (
-				validNames.indexOf( value ) > -1 &&
-				result.indexOf( value ) === -1
-			) {
-				result.push( value );
-			}
+	mw.rcfilters.dm.FiltersViewModel.prototype.sanitizeStringOptionGroup = function ( groupName, valueArray ) {
+		var validNames = this.getGroupFilters( groupName ).map( function ( filterItem ) {
+			return filterItem.getParamName();
 		} );
 
-		return result;
+		return mw.rcfilters.utils.normalizeParamOptions( valueArray, validNames );
 	};
 
 	/**
@@ -552,115 +770,8 @@
 		// Check if there are either any selected items or any items
 		// that have highlight enabled
 		return !this.getItems().some( function ( filterItem ) {
-			return filterItem.isSelected() || filterItem.isHighlighted();
+			return !filterItem.getGroupModel().isHidden() && ( filterItem.isSelected() || filterItem.isHighlighted() );
 		} );
-	};
-
-	/**
-	 * Check whether the default values of the filters are all false.
-	 *
-	 * @return {boolean} Default filters are all false
-	 */
-	mw.rcfilters.dm.FiltersViewModel.prototype.areDefaultFiltersEmpty = function () {
-		var defaultFilters;
-
-		if ( this.defaultFiltersEmpty !== null ) {
-			// We only need to do this test once,
-			// because defaults are set once per session
-			defaultFilters = this.getFiltersFromParameters();
-			this.defaultFiltersEmpty = Object.keys( defaultFilters ).every( function ( filterName ) {
-				return !defaultFilters[ filterName ];
-			} );
-		}
-
-		return this.defaultFiltersEmpty;
-	};
-
-	/**
-	 * This is the opposite of the #getParametersFromFilters method; this goes over
-	 * the given parameters and translates into a selected/unselected value in the filters.
-	 *
-	 * @param {Object} params Parameters query object
-	 * @return {Object} Filter state object
-	 */
-	mw.rcfilters.dm.FiltersViewModel.prototype.getFiltersFromParameters = function ( params ) {
-		var i,
-			groupMap = {},
-			model = this,
-			base = this.getDefaultParams(),
-			result = {};
-
-		params = $.extend( {}, base, params );
-
-		// Go over the given parameters
-		$.each( params, function ( paramName, paramValue ) {
-			var itemOrGroup = model.parameterMap[ paramName ];
-
-			if ( itemOrGroup instanceof mw.rcfilters.dm.FilterItem ) {
-				// Mark the group if it has any items that are selected
-				groupMap[ itemOrGroup.getGroupName() ] = groupMap[ itemOrGroup.getGroupName() ] || {};
-				groupMap[ itemOrGroup.getGroupName() ].hasSelected = (
-					groupMap[ itemOrGroup.getGroupName() ].hasSelected ||
-					!!Number( paramValue )
-				);
-
-				// Add filters
-				groupMap[ itemOrGroup.getGroupName() ].filters = groupMap[ itemOrGroup.getGroupName() ].filters || [];
-				groupMap[ itemOrGroup.getGroupName() ].filters.push( itemOrGroup );
-			} else if ( itemOrGroup instanceof mw.rcfilters.dm.FilterGroup ) {
-				groupMap[ itemOrGroup.getName() ] = groupMap[ itemOrGroup.getName() ] || {};
-				// This parameter represents a group (values are the filters)
-				// this is equivalent to checking if the group is 'string_options'
-				groupMap[ itemOrGroup.getName() ].filters = itemOrGroup.getItems();
-			}
-		} );
-
-		// Now that we know the groups' selection states, we need to go over
-		// the filters in the groups and mark their selected states appropriately
-		$.each( groupMap, function ( group, data ) {
-			var paramValues, filterItem,
-				allItemsInGroup = data.filters;
-
-			if ( model.groups[ group ].getType() === 'send_unselected_if_any' ) {
-				for ( i = 0; i < allItemsInGroup.length; i++ ) {
-					filterItem = allItemsInGroup[ i ];
-
-					result[ filterItem.getName() ] = groupMap[ filterItem.getGroupName() ].hasSelected ?
-						// Flip the definition between the parameter
-						// state and the filter state
-						// This is what the 'toggleSelected' value of the filter is
-						!Number( params[ filterItem.getParamName() ] ) :
-						// Otherwise, there are no selected items in the
-						// group, which means the state is false
-						false;
-				}
-			} else if ( model.groups[ group ].getType() === 'string_options' ) {
-				paramValues = model.sanitizeStringOptionGroup(
-					group,
-					params[ group ].split(
-						model.groups[ group ].getSeparator()
-					)
-				);
-
-				for ( i = 0; i < allItemsInGroup.length; i++ ) {
-					filterItem = allItemsInGroup[ i ];
-
-					result[ filterItem.getName() ] = (
-							// If it is the word 'all'
-							paramValues.length === 1 && paramValues[ 0 ] === 'all' ||
-							// All values are written
-							paramValues.length === model.groups[ group ].getItemCount()
-						) ?
-						// All true (either because all values are written or the term 'all' is written)
-						// is the same as all filters set to true
-						true :
-						// Otherwise, the filter is selected only if it appears in the parameter values
-						paramValues.indexOf( filterItem.getParamName() ) > -1;
-				}
-			}
-		} );
-
-		return result;
 	};
 
 	/**
@@ -681,7 +792,9 @@
 	 */
 	mw.rcfilters.dm.FiltersViewModel.prototype.emptyAllFilters = function () {
 		this.getItems().forEach( function ( filterItem ) {
-			this.toggleFilterSelected( filterItem.getName(), false );
+			if ( !filterItem.getGroupModel().isSticky() ) {
+				this.toggleFilterSelected( filterItem.getName(), false );
+			}
 		}.bind( this ) );
 	};
 
@@ -742,18 +855,37 @@
 	 *  arranged by their group names
 	 */
 	mw.rcfilters.dm.FiltersViewModel.prototype.findMatches = function ( query, returnFlat ) {
-		var i,
+		var i, searchIsEmpty,
 			groupTitle,
 			result = {},
 			flatResult = [],
-			items = this.getItems();
+			view = this.getViewByTrigger( query.substr( 0, 1 ) ),
+			items = this.getFiltersByView( view );
 
-		// Normalize so we can search strings regardless of case
-		query = query.toLowerCase();
+		// Normalize so we can search strings regardless of case and view
+		query = query.trim().toLowerCase();
+		if ( view !== 'default' ) {
+			query = query.substr( 1 );
+		}
+		// Trim again to also intercept cases where the spaces were after the trigger
+		// eg: '#   str'
+		query = query.trim();
+
+		// Check if the search if actually empty; this can be a problem when
+		// we use prefixes to denote different views
+		searchIsEmpty = query.length === 0;
 
 		// item label starting with the query string
 		for ( i = 0; i < items.length; i++ ) {
-			if ( items[ i ].getLabel().toLowerCase().indexOf( query ) === 0 ) {
+			if (
+				searchIsEmpty ||
+				items[ i ].getLabel().toLowerCase().indexOf( query ) === 0 ||
+				(
+					// For tags, we want the parameter name to be included in the search
+					view === 'tags' &&
+					items[ i ].getParamName().toLowerCase().indexOf( query ) > -1
+				)
+			) {
 				result[ items[ i ].getGroupName() ] = result[ items[ i ].getGroupName() ] || [];
 				result[ items[ i ].getGroupName() ].push( items[ i ] );
 				flatResult.push( items[ i ] );
@@ -765,9 +897,15 @@
 			for ( i = 0; i < items.length; i++ ) {
 				groupTitle = items[ i ].getGroupModel().getTitle();
 				if (
+					searchIsEmpty ||
 					items[ i ].getLabel().toLowerCase().indexOf( query ) > -1 ||
 					items[ i ].getDescription().toLowerCase().indexOf( query ) > -1 ||
-					groupTitle.toLowerCase().indexOf( query ) > -1
+					groupTitle.toLowerCase().indexOf( query ) > -1 ||
+					(
+						// For tags, we want the parameter name to be included in the search
+						view === 'tags' &&
+						items[ i ].getParamName().toLowerCase().indexOf( query ) > -1
+					)
 				) {
 					result[ items[ i ].getGroupName() ] = result[ items[ i ].getGroupName() ] || [];
 					result[ items[ i ].getGroupName() ].push( items[ i ] );
@@ -789,6 +927,92 @@
 			return filterItem.isHighlightSupported() &&
 				filterItem.getHighlightColor();
 		} );
+	};
+
+	/**
+	 * Get items that allow highlights even if they're not currently highlighted
+	 *
+	 * @return {mw.rcfilters.dm.FilterItem[]} Items supporting highlights
+	 */
+	mw.rcfilters.dm.FiltersViewModel.prototype.getItemsSupportingHighlights = function () {
+		return this.getItems().filter( function ( filterItem ) {
+			return filterItem.isHighlightSupported();
+		} );
+	};
+
+	/**
+	 * Get all selected items
+	 *
+	 * @return {mw.rcfilters.dm.FilterItem[]} Selected items
+	 */
+	mw.rcfilters.dm.FiltersViewModel.prototype.getSelectedItems = function () {
+		var allSelected = [];
+
+		$.each( this.getFilterGroups(), function ( groupName, groupModel ) {
+			allSelected = allSelected.concat( groupModel.getSelectedItems() );
+		} );
+
+		return allSelected;
+	};
+	/**
+	 * Switch the current view
+	 *
+	 * @param {string} view View name
+	 * @fires update
+	 */
+	mw.rcfilters.dm.FiltersViewModel.prototype.switchView = function ( view ) {
+		if ( this.views[ view ] && this.currentView !== view ) {
+			this.currentView = view;
+			this.emit( 'update' );
+		}
+	};
+
+	/**
+	 * Get the current view
+	 *
+	 * @return {string} Current view
+	 */
+	mw.rcfilters.dm.FiltersViewModel.prototype.getCurrentView = function () {
+		return this.currentView;
+	};
+
+	/**
+	 * Get the label for the current view
+	 *
+	 * @param {string} viewName View name
+	 * @return {string} Label for the current view
+	 */
+	mw.rcfilters.dm.FiltersViewModel.prototype.getViewTitle = function ( viewName ) {
+		viewName = viewName || this.getCurrentView();
+
+		return this.views[ viewName ] && this.views[ viewName ].title;
+	};
+
+	/**
+	 * Get an array of all available view names
+	 *
+	 * @return {string} Available view names
+	 */
+	mw.rcfilters.dm.FiltersViewModel.prototype.getAvailableViews = function () {
+		return Object.keys( this.views );
+	};
+
+	/**
+	 * Get the view that fits the given trigger
+	 *
+	 * @param {string} trigger Trigger
+	 * @return {string} Name of view
+	 */
+	mw.rcfilters.dm.FiltersViewModel.prototype.getViewByTrigger = function ( trigger ) {
+		var result = 'default';
+
+		$.each( this.views, function ( name, data ) {
+			if ( data.trigger === trigger ) {
+				result = name;
+			}
+		} );
+
+		return result;
 	};
 
 	/**
@@ -821,6 +1045,35 @@
 	};
 
 	/**
+	 * Toggle the inverted namespaces property on and off.
+	 * Propagate the change to namespace filter items.
+	 *
+	 * @param {boolean} enable Inverted property is enabled
+	 * @fires invertChange
+	 */
+	mw.rcfilters.dm.FiltersViewModel.prototype.toggleInvertedNamespaces = function ( enable ) {
+		enable = enable === undefined ? !this.invertedNamespaces : enable;
+
+		if ( this.invertedNamespaces !== enable ) {
+			this.invertedNamespaces = enable;
+
+			this.getFiltersByView( 'namespaces' ).forEach( function ( filterItem ) {
+				filterItem.toggleInverted( this.invertedNamespaces );
+			}.bind( this ) );
+
+			this.emit( 'invertChange', this.invertedNamespaces );
+		}
+	};
+
+	/**
+	 * Check if the namespaces selection is set to be inverted
+	 * @return {boolean}
+	 */
+	mw.rcfilters.dm.FiltersViewModel.prototype.areNamespacesInverted = function () {
+		return !!this.invertedNamespaces;
+	};
+
+	/**
 	 * Set highlight color for a specific filter item
 	 *
 	 * @param {string} filterName Name of the filter item
@@ -846,5 +1099,20 @@
 		this.getItems().forEach( function ( filterItem ) {
 			filterItem.clearHighlightColor();
 		} );
+	};
+
+	/**
+	 * Return a version of the given string that is without any
+	 * view triggers.
+	 *
+	 * @param {string} str Given string
+	 * @return {string} Result
+	 */
+	mw.rcfilters.dm.FiltersViewModel.prototype.removeViewTriggers = function ( str ) {
+		if ( this.getViewByTrigger( str.substr( 0, 1 ) ) !== 'default' ) {
+			str = str.substr( 1 );
+		}
+
+		return str;
 	};
 }( mediaWiki, jQuery ) );

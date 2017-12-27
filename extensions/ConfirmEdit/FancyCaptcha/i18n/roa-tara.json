@@ -14,5 +14,6 @@
 	"fancycaptcha-sendemail": "Pe proteggere condre a spam automatece, pe piacere mitte le parole ca iessene aqquà sotte ([[Special:Captcha/help|cchiù 'mbormaziune]]):",
 	"fancycaptcha-reload-text": "Aggiorne",
 	"apihelp-fancycaptchareload-description": "Pigghie 'nu FancyCaptcha nuève.",
+	"apihelp-fancycaptchareload-summary": "Pigghie 'nu FancyCaptcha nuève.",
 	"apihelp-fancycaptchareload-example-1": "Pigghie 'nu FancyCaptcha nuève"
 }

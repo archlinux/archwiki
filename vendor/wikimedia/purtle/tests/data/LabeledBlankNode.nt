@@ -1,0 +1,5 @@
+<http://www.example.org/staffid/85740> <http://www.example.org/terms/address> _:johnaddress .
+_:johnaddress <http://www.example.org/terms/street> "1501 Grant Avenue" .
+_:johnaddress <http://www.example.org/terms/city> "Bedfort" .
+_:johnaddress <http://www.example.org/terms/state> "Massachusetts" .
+_:johnaddress <http://www.example.org/terms/postalCode> "01730" .

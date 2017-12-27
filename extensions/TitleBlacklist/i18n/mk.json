@@ -23,6 +23,7 @@
 	"right-tboverride-account": "Потиснување на црниот список на кориснички имиња",
 	"right-titleblacklistlog": "Преглед на дневникот на наслови на црниот список",
 	"apihelp-titleblacklist-description": "Провери наслов на статија, име на податотека или корисничко име во Црниот список.",
+	"apihelp-titleblacklist-summary": "Провери наслов на статија, име на податотека или корисничко име во Црниот список.",
 	"apihelp-titleblacklist-param-title": "Низата што треба да се провери во црниот список.",
 	"apihelp-titleblacklist-param-action": "Дејството што треба да се провери.",
 	"apihelp-titleblacklist-param-nooverride": "Не се обидувај да наметнеш врз titleblacklist.",

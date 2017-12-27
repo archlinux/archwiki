@@ -944,7 +944,7 @@ class Mail_mime
             break;
 
         case $html && !$attachments && !$html_images:
-            if (isset($this->txtbody)) {
+            if ($has_text) {
                 $message = $this->addAlternativePart();
                 $this->addTextPart($message);
                 $this->addHtmlPart($message);
@@ -959,7 +959,7 @@ class Mail_mime
             //    * Content-Type: multipart/related;
             //       * html
             //       * image...
-            if (isset($this->txtbody)) {
+            if ($has_text) {
                 $message = $this->addAlternativePart();
                 $this->addTextPart($message);
 
@@ -986,7 +986,7 @@ class Mail_mime
             //        * html
             //    * image...
             $message = $this->addRelatedPart();
-            if (isset($this->txtbody)) {
+            if ($has_text) {
                 $alt = $this->addAlternativePart($message);
                 $this->addTextPart($alt);
                 $this->addHtmlPart($alt);
@@ -1001,7 +1001,7 @@ class Mail_mime
 
         case $html && $attachments && !$html_images:
             $message = $this->addMixedPart($mixed_params);
-            if (isset($this->txtbody)) {
+            if ($has_text) {
                 $alt = $this->addAlternativePart($message);
                 $this->addTextPart($alt);
                 $this->addHtmlPart($alt);
@@ -1015,7 +1015,7 @@ class Mail_mime
 
         case $html && $attachments && $html_images:
             $message = $this->addMixedPart($mixed_params);
-            if (isset($this->txtbody)) {
+            if ($has_text) {
                 $alt = $this->addAlternativePart($message);
                 $this->addTextPart($alt);
                 $rel = $this->addRelatedPart($alt);
@@ -1544,23 +1544,17 @@ class Mail_mime
      */
     protected function setBody($type, $data, $isfile = false, $append = false)
     {
-        if (!$isfile) {
-            if (!$append) {
-                $this->{$type} = $data;
-            } else {
-                $this->{$type} .= $data;
+        if ($isfile) {
+            $data = $this->file2str($data);
+            if (self::isError($data)) {
+                return $data;
             }
-        } else {
-            $cont = $this->file2str($data);
-            if (self::isError($cont)) {
-                return $cont;
-            }
+        }
 
-            if (!$append) {
-                $this->{$type} = $cont;
-            } else {
-                $this->{$type} .= $cont;
-            }
+        if (!$append) {
+            $this->{$type} = $data;
+        } else {
+            $this->{$type} .= $data;
         }
 
         return true;

@@ -43,7 +43,7 @@ class WANCacheReapUpdate implements DeferrableUpdate {
 			[ $this, 'getTitleChangeEvents' ],
 			[ $this, 'getEventAffectedKeys' ],
 			[
-				'channel' => 'table:recentchanges:' . $this->db->getWikiID(),
+				'channel' => 'table:recentchanges:' . $this->db->getDomainID(),
 				'logger' => $this->logger
 			]
 		);
@@ -98,13 +98,19 @@ class WANCacheReapUpdate implements DeferrableUpdate {
 	 * @see WANObjectCacheRepear
 	 * @param WANObjectCache $cache
 	 * @param TitleValue $t
-	 * @returns string[]
+	 * @return string[]
 	 */
 	public function getEventAffectedKeys( WANObjectCache $cache, TitleValue $t ) {
 		/** @var WikiPage[]|LocalFile[]|User[] $entities */
 		$entities = [];
 
-		$entities[] = WikiPage::factory( Title::newFromTitleValue( $t ) );
+		// You can't create a WikiPage for special pages (-1) or other virtual
+		// namespaces, but special pages do appear in RC sometimes, e.g. for logs
+		// of AbuseFilter filter changes.
+		if ( $t->getNamespace() >= 0 ) {
+			$entities[] = WikiPage::factory( Title::newFromTitleValue( $t ) );
+		}
+
 		if ( $t->inNamespace( NS_FILE ) ) {
 			$entities[] = wfLocalFile( $t->getText() );
 		}

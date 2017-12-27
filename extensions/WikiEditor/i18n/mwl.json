@@ -1,0 +1,27 @@
+{
+	"@metadata": {
+		"authors": [
+			"MokaAkashiyaPT"
+		]
+	},
+	"wikieditor-preview-tab": "Antebison",
+	"wikieditor-toolbar-preference": "Atibar la barra de ferramientas d'eidiçon melhorada",
+	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Páigina de zambiguaçon",
+	"wikieditor-toolbar-tool-heading-1": "Nible 1",
+	"wikieditor-toolbar-tool-redirect-example": "Nome de la páigina de çtino",
+	"wikieditor-toolbar-tool-table-example-old": "-\n! cabeçalho 1\n! cabeçalho 2\n! cabeçalho 3\n|-\n| lhinha 1, queluna 1\n| lhinha 1, queluna 2\n| lhinha 1, queluna 3\n|-\n| lhinha 2, queluna 1\n| lhinha 2, queluna 2\n| lhinha 2, queluna 3",
+	"wikieditor-toolbar-tool-table-example-cell-text": "Testo de la célula",
+	"wikieditor-toolbar-tool-table-example-header": "Testo de l cabeçalho",
+	"wikieditor-toolbar-tool-table-title": "Poner tabela",
+	"wikieditor-toolbar-tool-table-dimensions-rows": "Lhinhas",
+	"wikieditor-toolbar-tool-table-dimensions-columns": "Quelunas",
+	"wikieditor-toolbar-tool-table-dimensions-header": "Poner lhinha de cabeçalho",
+	"wikieditor-toolbar-tool-table-wikitable": "Stilo cun marges",
+	"wikieditor-toolbar-tool-table-sortable": "Tornar la tabela ourdenable",
+	"wikieditor-toolbar-tool-table-example": "Eisemplo",
+	"wikieditor-toolbar-tool-table-insert": "Poner",
+	"wikieditor-toolbar-tool-table-cancel": "Cancelar",
+	"wikieditor-toolbar-tool-replace-nomatch": "La sue percura nun porduziu resultados.",
+	"wikieditor-toolbar-section-characters": "Caráteles speciales",
+	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='$1:Username'>Nome de outelizador(a)</a> (<a href='#' title='$2:Username'>cumbersa</a>) 15h54min de 10 de júnio de 2009 (UTC)"
+}

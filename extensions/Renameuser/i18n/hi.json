@@ -3,7 +3,8 @@
 		"authors": [
 			"Ansumang",
 			"Kaustubh",
-			"Siddhartha Ghai"
+			"Siddhartha Ghai",
+			"Sfic"
 		]
 	},
 	"renameuser": "सदस्यनाम बदलें",
@@ -32,8 +33,8 @@
 	"log-name-renameuser": "सदस्यनाम बदलाव लॉग",
 	"log-description-renameuser": "यह सदस्य नाम में बदलावों का लॉग है।",
 	"logentry-renameuser-renameuser": "$1 ने सदस्य $4 ({{PLURAL:$6|$6 सम्पादन}}) का नाम {{GENDER:$2|बदल}} कर $5 कर दिया",
-	"logentry-renameuser-renameuser-legacier": "$1 ने सदस्य $4 का नाम बदल कर $5 कर दिया",
-	"renameuser-move-log": "सदस्य \"[[User:$1|$1]]\" का नाम \"[[User:$2|$2]]\" करते समय पृष्ठ स्वचालित रूप से स्थानांतरित कर दिया गया",
+	"logentry-renameuser-renameuser-legacier": "$1 ने सदस्य $4 का नाम बदल कर {{GENDER:$7|$5}} कर दिया",
+	"renameuser-move-log": "{{GENDER:$2|सदस्य}} \"[[User:$1|$1]]\" का नाम \"[[User:$2|$2]]\" करते समय पृष्ठ स्वचालित रूप से स्थानांतरित कर दिया गया",
 	"action-renameuser": "सदस्यों के नाम बदलने",
 	"right-renameuser": "सदस्यों के नाम बदलें",
 	"renameuser-renamed-notice": "इस सदस्य का नाम बदल दिया गया है।\nसंदर्भ के लिए नीचे नाम बदलने का लॉग है।"

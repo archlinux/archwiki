@@ -54,8 +54,8 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 	const PING_TTL = 1.0;
 	const PING_QUERY = 'SELECT 1 AS ping';
 
-	const TINY_WRITE_SEC = .010;
-	const SLOW_WRITE_SEC = .500;
+	const TINY_WRITE_SEC = 0.010;
+	const SLOW_WRITE_SEC = 0.500;
 	const SMALL_WRITE_ROWS = 100;
 
 	/** @var string SQL query */
@@ -108,7 +108,7 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 	protected $mTablePrefix = '';
 	/** @var string */
 	protected $mSchema = '';
-	/** @var integer */
+	/** @var int */
 	protected $mFlags;
 	/** @var array */
 	protected $mLBInfo = [];
@@ -197,15 +197,19 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 	 */
 	private $mTrxWriteDuration = 0.0;
 	/**
-	 * @var integer Number of write queries for the current transaction
+	 * @var int Number of write queries for the current transaction
 	 */
 	private $mTrxWriteQueryCount = 0;
+	/**
+	 * @var int Number of rows affected by write queries for the current transaction
+	 */
+	private $mTrxWriteAffectedRows = 0;
 	/**
 	 * @var float Like mTrxWriteQueryCount but excludes lock-bound, easy to replicate, queries
 	 */
 	private $mTrxWriteAdjDuration = 0.0;
 	/**
-	 * @var integer Number of write queries counted in mTrxWriteAdjDuration
+	 * @var int Number of write queries counted in mTrxWriteAdjDuration
 	 */
 	private $mTrxWriteAdjQueryCount = 0;
 	/**
@@ -416,6 +420,13 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 		return $conn;
 	}
 
+	/**
+	 * Set the PSR-3 logger interface to use for query logging. (The logger
+	 * interfaces for connection logging and error logging can be set with the
+	 * constructor.)
+	 *
+	 * @param LoggerInterface $logger
+	 */
 	public function setLogger( LoggerInterface $logger ) {
 		$this->queryLogger = $logger;
 	}
@@ -576,6 +587,16 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 		return $this->mTrxLevel ? $this->mTrxWriteCallers : [];
 	}
 
+	public function pendingWriteRowsAffected() {
+		return $this->mTrxWriteAffectedRows;
+	}
+
+	/**
+	 * Get the list of method names that have pending write queries or callbacks
+	 * for this transaction
+	 *
+	 * @return array
+	 */
 	protected function pendingWriteAndCallbackCallers() {
 		if ( !$this->mTrxLevel ) {
 			return [];
@@ -664,6 +685,9 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 	 */
 	abstract function strencode( $s );
 
+	/**
+	 * Set a custom error handler for logging errors during database connection
+	 */
 	protected function installErrorHandler() {
 		$this->mPHPError = false;
 		$this->htmlErrors = ini_set( 'html_errors', '0' );
@@ -671,6 +695,8 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 	}
 
 	/**
+	 * Restore the previous error handler and return the last PHP error for this DB
+	 *
 	 * @return bool|string
 	 */
 	protected function restoreErrorHandler() {
@@ -697,6 +723,7 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 	}
 
 	/**
+	 * Error handler for logging errors during database connection
 	 * This method should not be used outside of Database classes
 	 *
 	 * @param int $errno
@@ -731,7 +758,11 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 
 			$closed = $this->closeConnection();
 			$this->mConn = false;
-		} elseif ( $this->mTrxIdleCallbacks || $this->mTrxEndCallbacks ) { // sanity
+		} elseif (
+			$this->mTrxIdleCallbacks ||
+			$this->mTrxPreCommitCallbacks ||
+			$this->mTrxEndCallbacks
+		) { // sanity
 			throw new RuntimeException( "Transaction callbacks still pending." );
 		} else {
 			$closed = true;
@@ -791,7 +822,7 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 	}
 
 	/**
-	 * @param $sql
+	 * @param string $sql
 	 * @return string|null
 	 */
 	protected function getQueryVerb( $sql ) {
@@ -817,7 +848,7 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 
 	/**
 	 * @param string $sql A SQL query
-	 * @return bool Whether $sql is SQL for creating/dropping a new TEMPORARY table
+	 * @return bool Whether $sql is SQL for TEMPORARY table operation
 	 */
 	protected function registerTempTableOperation( $sql ) {
 		if ( preg_match(
@@ -833,9 +864,16 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 			$sql,
 			$matches
 		) ) {
+			$isTemp = isset( $this->mSessionTempTables[$matches[1]] );
 			unset( $this->mSessionTempTables[$matches[1]] );
 
-			return true;
+			return $isTemp;
+		} elseif ( preg_match(
+			'/^TRUNCATE\s+(?:TEMPORARY\s+)?TABLE\s+(?:IF\s+EXISTS\s+)?[`"\']?(\w+)[`"\']?/i',
+			$sql,
+			$matches
+		) ) {
+			return isset( $this->mSessionTempTables[$matches[1]] );
 		} elseif ( preg_match(
 			'/^(?:INSERT\s+(?:\w+\s+)?INTO|UPDATE|DELETE\s+FROM)\s+[`"\']?(\w+)[`"\']?/i',
 			$sql,
@@ -851,8 +889,16 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 		$priorWritesPending = $this->writesOrCallbacksPending();
 		$this->mLastQuery = $sql;
 
-		$isWrite = $this->isWriteQuery( $sql ) && !$this->registerTempTableOperation( $sql );
+		$isWrite = $this->isWriteQuery( $sql );
 		if ( $isWrite ) {
+			$isNonTempWrite = !$this->registerTempTableOperation( $sql );
+		} else {
+			$isNonTempWrite = false;
+		}
+
+		if ( $isWrite ) {
+			# In theory, non-persistent writes are allowed in read-only mode, but due to things
+			# like https://bugs.mysql.com/bug.php?id=33669 that might not work anyway...
 			$reason = $this->getReadOnlyReason();
 			if ( $reason !== false ) {
 				throw new DBReadOnlyError( $this, "Database is read-only: $reason" );
@@ -861,8 +907,8 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 			$this->mLastWriteTime = microtime( true );
 		}
 
-		// Add trace comment to the begin of the sql string, right after the operator.
-		// Or, for one-word queries (like "BEGIN" or COMMIT") add it to the end (T44598)
+		# Add trace comment to the begin of the sql string, right after the operator.
+		# Or, for one-word queries (like "BEGIN" or COMMIT") add it to the end (T44598)
 		$commentedSql = preg_replace( '/\s|$/', " /* $fname {$this->agent} */ ", $sql, 1 );
 
 		# Start implicit transactions that wrap the request if DBO_TRX is enabled
@@ -888,7 +934,7 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 		$this->assertOpen();
 
 		# Send the query to the server
-		$ret = $this->doProfiledQuery( $sql, $commentedSql, $isWrite, $fname );
+		$ret = $this->doProfiledQuery( $sql, $commentedSql, $isNonTempWrite, $fname );
 
 		# Try reconnecting if the connection was lost
 		if ( false === $ret && $this->wasErrorReissuable() ) {
@@ -909,7 +955,7 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 					$this->reportQueryError( $lastError, $lastErrno, $sql, $fname );
 				} else {
 					# Should be safe to silently retry the query
-					$ret = $this->doProfiledQuery( $sql, $commentedSql, $isWrite, $fname );
+					$ret = $this->doProfiledQuery( $sql, $commentedSql, $isNonTempWrite, $fname );
 				}
 			} else {
 				$msg = __METHOD__ . ": lost connection to {$this->getServer()} permanently";
@@ -938,6 +984,17 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 		return $res;
 	}
 
+	/**
+	 * Helper method for query() that handles profiling and logging and sends
+	 * the query to doQuery()
+	 *
+	 * @param string $sql Original SQL query
+	 * @param string $commentedSql SQL query with debugging/trace comment
+	 * @param bool $isWrite Whether the query is a (non-temporary) write operation
+	 * @param string $fname Name of the calling function
+	 * @return bool|ResultWrapper True for a successful write query, ResultWrapper
+	 *     object for a successful read query, or false on failure
+	 */
 	private function doProfiledQuery( $sql, $commentedSql, $isWrite, $fname ) {
 		$isMaster = !is_null( $this->getLBInfo( 'master' ) );
 		# generalizeSQL() will probably cut down the query to reasonable
@@ -966,7 +1023,7 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 		if ( $ret !== false ) {
 			$this->lastPing = $startTime;
 			if ( $isWrite && $this->mTrxLevel ) {
-				$this->updateTrxWriteQueryTime( $sql, $queryRuntime );
+				$this->updateTrxWriteQueryTime( $sql, $queryRuntime, $this->affectedRows() );
 				$this->mTrxWriteCallers[] = $fname;
 			}
 		}
@@ -997,8 +1054,9 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 	 *
 	 * @param string $sql A SQL write query
 	 * @param float $runtime Total runtime, including RTT
+	 * @param int $affected Affected row count
 	 */
-	private function updateTrxWriteQueryTime( $sql, $runtime ) {
+	private function updateTrxWriteQueryTime( $sql, $runtime, $affected ) {
 		// Whether this is indicative of replica DB runtime (except for RBR or ws_repl)
 		$indicativeOfReplicaRuntime = true;
 		if ( $runtime > self::SLOW_WRITE_SEC ) {
@@ -1013,12 +1071,23 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 
 		$this->mTrxWriteDuration += $runtime;
 		$this->mTrxWriteQueryCount += 1;
+		$this->mTrxWriteAffectedRows += $affected;
 		if ( $indicativeOfReplicaRuntime ) {
 			$this->mTrxWriteAdjDuration += $runtime;
 			$this->mTrxWriteAdjQueryCount += 1;
 		}
 	}
 
+	/**
+	 * Determine whether or not it is safe to retry queries after a database
+	 * connection is lost
+	 *
+	 * @param string $sql SQL query
+	 * @param bool $priorWritesPending Whether there is a transaction open with
+	 *     possible write queries or transaction pre-commit/idle callbacks
+	 *     waiting on it to finish.
+	 * @return bool True if it is safe to retry the query, false otherwise
+	 */
 	private function canRecoverFromDisconnect( $sql, $priorWritesPending ) {
 		# Transaction dropped; this can mean lost writes, or REPEATABLE-READ snapshots.
 		# Dropped connections also mean that named locks are automatically released.
@@ -1039,6 +1108,11 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 		return true;
 	}
 
+	/**
+	 * Clean things up after transaction loss due to disconnection
+	 *
+	 * @return null|Exception
+	 */
 	private function handleSessionLoss() {
 		$this->mTrxLevel = 0;
 		$this->mTrxIdleCallbacks = []; // T67263
@@ -1080,7 +1154,7 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 	}
 
 	public function selectField(
-		$table, $var, $cond = '', $fname = __METHOD__, $options = []
+		$table, $var, $cond = '', $fname = __METHOD__, $options = [], $join_conds = []
 	) {
 		if ( $var === '*' ) { // sanity
 			throw new DBUnexpectedError( $this, "Cannot use a * field: got '$var'" );
@@ -1092,7 +1166,7 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 
 		$options['LIMIT'] = 1;
 
-		$res = $this->select( $table, $var, $cond, $fname, $options );
+		$res = $this->select( $table, $var, $cond, $fname, $options, $join_conds );
 		if ( $res === false || !$this->numRows( $res ) ) {
 			return false;
 		}
@@ -1690,6 +1764,10 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 		return $field;
 	}
 
+	public function databasesAreIndependent() {
+		return false;
+	}
+
 	public function selectDB( $db ) {
 		# Stub. Shouldn't cause serious problems if it's not overridden, but
 		# if your database engine supports a concept similar to MySQL's
@@ -1728,8 +1806,33 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 		}
 
 		# Split database and table into proper variables.
-		# We reverse the explode so that database.table and table both output
-		# the correct table.
+		list( $database, $schema, $prefix, $table ) = $this->qualifiedTableComponents( $name );
+
+		# Quote $table and apply the prefix if not quoted.
+		# $tableName might be empty if this is called from Database::replaceVars()
+		$tableName = "{$prefix}{$table}";
+		if ( $format === 'quoted'
+			&& !$this->isQuotedIdentifier( $tableName )
+			&& $tableName !== ''
+		) {
+			$tableName = $this->addIdentifierQuotes( $tableName );
+		}
+
+		# Quote $schema and $database and merge them with the table name if needed
+		$tableName = $this->prependDatabaseOrSchema( $schema, $tableName, $format );
+		$tableName = $this->prependDatabaseOrSchema( $database, $tableName, $format );
+
+		return $tableName;
+	}
+
+	/**
+	 * Get the table components needed for a query given the currently selected database
+	 *
+	 * @param string $name Table name in the form of db.schema.table, db.table, or table
+	 * @return array (DB name or "" for default, schema name, table prefix, table name)
+	 */
+	protected function qualifiedTableComponents( $name ) {
+		# We reverse the explode so that database.table and table both output the correct table.
 		$dbDetails = explode( '.', $name, 3 );
 		if ( count( $dbDetails ) == 3 ) {
 			list( $database, $schema, $table ) = $dbDetails;
@@ -1759,21 +1862,7 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 			}
 		}
 
-		# Quote $table and apply the prefix if not quoted.
-		# $tableName might be empty if this is called from Database::replaceVars()
-		$tableName = "{$prefix}{$table}";
-		if ( $format === 'quoted'
-			&& !$this->isQuotedIdentifier( $tableName )
-			&& $tableName !== ''
-		) {
-			$tableName = $this->addIdentifierQuotes( $tableName );
-		}
-
-		# Quote $schema and $database and merge them with the table name if needed
-		$tableName = $this->prependDatabaseOrSchema( $schema, $tableName, $format );
-		$tableName = $this->prependDatabaseOrSchema( $database, $tableName, $format );
-
-		return $tableName;
+		return [ $database, $schema, $prefix, $table ];
 	}
 
 	/**
@@ -1993,7 +2082,7 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 	 * Quotes an identifier using `backticks` or "double quotes" depending on the database type.
 	 * MySQL uses `backticks` while basically everything else uses double quotes.
 	 * Since MySQL is the odd one out here the double quotes are our generic
-	 * and we implement backticks in DatabaseMysql.
+	 * and we implement backticks in DatabaseMysqlBase.
 	 *
 	 * @param string $s
 	 * @return string
@@ -2017,6 +2106,7 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 
 	/**
 	 * @param string $s
+	 * @param string $escapeChar
 	 * @return string
 	 */
 	protected function escapeLikeInternal( $s, $escapeChar = '`' ) {
@@ -2282,7 +2372,7 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 
 	public function insertSelect(
 		$destTable, $srcTable, $varMap, $conds,
-		$fname = __METHOD__, $insertOptions = [], $selectOptions = []
+		$fname = __METHOD__, $insertOptions = [], $selectOptions = [], $selectJoinConds = []
 	) {
 		if ( $this->cliMode ) {
 			// For massive migrations with downtime, we don't want to select everything
@@ -2294,7 +2384,8 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 				$conds,
 				$fname,
 				$insertOptions,
-				$selectOptions
+				$selectOptions,
+				$selectJoinConds
 			);
 		}
 
@@ -2306,7 +2397,9 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 			$fields[] = $this->fieldNameWithAlias( $sourceColumnOrSql, $dstColumn );
 		}
 		$selectOptions[] = 'FOR UPDATE';
-		$res = $this->select( $srcTable, implode( ',', $fields ), $conds, $fname, $selectOptions );
+		$res = $this->select(
+			$srcTable, implode( ',', $fields ), $conds, $fname, $selectOptions, $selectJoinConds
+		);
 		if ( !$res ) {
 			return false;
 		}
@@ -2319,9 +2412,24 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 		return $this->insert( $destTable, $rows, $fname, $insertOptions );
 	}
 
+	/**
+	 * Native server-side implementation of insertSelect() for situations where
+	 * we don't want to select everything into memory
+	 *
+	 * @see IDatabase::insertSelect()
+	 * @param string $destTable
+	 * @param string|array $srcTable
+	 * @param array $varMap
+	 * @param array $conds
+	 * @param string $fname
+	 * @param array $insertOptions
+	 * @param array $selectOptions
+	 * @param array $selectJoinConds
+	 * @return bool
+	 */
 	protected function nativeInsertSelect( $destTable, $srcTable, $varMap, $conds,
 		$fname = __METHOD__,
-		$insertOptions = [], $selectOptions = []
+		$insertOptions = [], $selectOptions = [], $selectJoinConds = []
 	) {
 		$destTable = $this->tableName( $destTable );
 
@@ -2331,32 +2439,18 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 
 		$insertOptions = $this->makeInsertOptions( $insertOptions );
 
-		if ( !is_array( $selectOptions ) ) {
-			$selectOptions = [ $selectOptions ];
-		}
-
-		list( $startOpts, $useIndex, $tailOpts, $ignoreIndex ) = $this->makeSelectOptions(
-			$selectOptions );
-
-		if ( is_array( $srcTable ) ) {
-			$srcTable = implode( ',', array_map( [ $this, 'tableName' ], $srcTable ) );
-		} else {
-			$srcTable = $this->tableName( $srcTable );
-		}
+		$selectSql = $this->selectSQLText(
+			$srcTable,
+			array_values( $varMap ),
+			$conds,
+			$fname,
+			$selectOptions,
+			$selectJoinConds
+		);
 
 		$sql = "INSERT $insertOptions" .
-			" INTO $destTable (" . implode( ',', array_keys( $varMap ) ) . ')' .
-			" SELECT $startOpts " . implode( ',', $varMap ) .
-			" FROM $srcTable $useIndex $ignoreIndex ";
-
-		if ( $conds != '*' ) {
-			if ( is_array( $conds ) ) {
-				$conds = $this->makeList( $conds, self::LIST_AND );
-			}
-			$sql .= " WHERE $conds";
-		}
-
-		$sql .= " $tailOpts";
+			" INTO $destTable (" . implode( ',', array_keys( $varMap ) ) . ') ' .
+			$selectSql;
 
 		return $this->query( $sql, $fname );
 	}
@@ -2401,6 +2495,77 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 		return '(' . implode( $glue, $sqls ) . ')';
 	}
 
+	public function unionConditionPermutations(
+		$table, $vars, array $permute_conds, $extra_conds = '', $fname = __METHOD__,
+		$options = [], $join_conds = []
+	) {
+		// First, build the Cartesian product of $permute_conds
+		$conds = [ [] ];
+		foreach ( $permute_conds as $field => $values ) {
+			if ( !$values ) {
+				// Skip empty $values
+				continue;
+			}
+			$values = array_unique( $values ); // For sanity
+			$newConds = [];
+			foreach ( $conds as $cond ) {
+				foreach ( $values as $value ) {
+					$cond[$field] = $value;
+					$newConds[] = $cond; // Arrays are by-value, not by-reference, so this works
+				}
+			}
+			$conds = $newConds;
+		}
+
+		$extra_conds = $extra_conds === '' ? [] : (array)$extra_conds;
+
+		// If there's just one condition and no subordering, hand off to
+		// selectSQLText directly.
+		if ( count( $conds ) === 1 &&
+			( !isset( $options['INNER ORDER BY'] ) || !$this->unionSupportsOrderAndLimit() )
+		) {
+			return $this->selectSQLText(
+				$table, $vars, $conds[0] + $extra_conds, $fname, $options, $join_conds
+			);
+		}
+
+		// Otherwise, we need to pull out the order and limit to apply after
+		// the union. Then build the SQL queries for each set of conditions in
+		// $conds. Then union them together (using UNION ALL, because the
+		// product *should* already be distinct).
+		$orderBy = $this->makeOrderBy( $options );
+		$limit = isset( $options['LIMIT'] ) ? $options['LIMIT'] : null;
+		$offset = isset( $options['OFFSET'] ) ? $options['OFFSET'] : false;
+		$all = empty( $options['NOTALL'] ) && !in_array( 'NOTALL', $options );
+		if ( !$this->unionSupportsOrderAndLimit() ) {
+			unset( $options['ORDER BY'], $options['LIMIT'], $options['OFFSET'] );
+		} else {
+			if ( array_key_exists( 'INNER ORDER BY', $options ) ) {
+				$options['ORDER BY'] = $options['INNER ORDER BY'];
+			}
+			if ( $limit !== null && is_numeric( $offset ) && $offset != 0 ) {
+				// We need to increase the limit by the offset rather than
+				// using the offset directly, otherwise it'll skip incorrectly
+				// in the subqueries.
+				$options['LIMIT'] = $limit + $offset;
+				unset( $options['OFFSET'] );
+			}
+		}
+
+		$sqls = [];
+		foreach ( $conds as $cond ) {
+			$sqls[] = $this->selectSQLText(
+				$table, $vars, $cond + $extra_conds, $fname, $options, $join_conds
+			);
+		}
+		$sql = $this->unionQueries( $sqls, $all ) . $orderBy;
+		if ( $limit !== null ) {
+			$sql = $this->limitResult( $sql, $limit, $offset );
+		}
+
+		return $sql;
+	}
+
 	public function conditional( $cond, $trueVal, $falseVal ) {
 		if ( is_array( $cond ) ) {
 			$cond = $this->makeList( $cond, self::LIST_AND );
@@ -2436,7 +2601,7 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 	/**
 	 * Do not use this method outside of Database/DBError classes
 	 *
-	 * @param integer|string $errno
+	 * @param int|string $errno
 	 * @return bool Whether the given query error was a connection drop
 	 */
 	public function wasConnectionError( $errno ) {
@@ -2513,10 +2678,13 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 	}
 
 	final public function onTransactionPreCommitOrIdle( callable $callback, $fname = __METHOD__ ) {
-		if ( $this->mTrxLevel ) {
+		if ( $this->mTrxLevel || $this->getFlag( self::DBO_TRX ) ) {
+			// As long as DBO_TRX is set, writes will accumulate until the load balancer issues
+			// an implicit commit of all peer databases. This is true even if a transaction has
+			// not yet been triggered by writes; make sure $callback runs *after* any such writes.
 			$this->mTrxPreCommitCallbacks[] = [ $callback, $fname ];
 		} else {
-			// If no transaction is active, then make one for this callback
+			// No transaction is active nor will start implicitly, so make one for this callback
 			$this->startAtomic( __METHOD__ );
 			try {
 				call_user_func( $callback );
@@ -2553,7 +2721,7 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 	 *
 	 * This method should not be used outside of Database/LoadBalancer
 	 *
-	 * @param integer $trigger IDatabase::TRIGGER_* constant
+	 * @param int $trigger IDatabase::TRIGGER_* constant
 	 * @since 1.20
 	 * @throws Exception
 	 */
@@ -2633,7 +2801,7 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 	 *
 	 * This method should not be used outside of Database/LoadBalancer
 	 *
-	 * @param integer $trigger IDatabase::TRIGGER_* constant
+	 * @param int $trigger IDatabase::TRIGGER_* constant
 	 * @throws Exception
 	 * @since 1.20
 	 */
@@ -2735,6 +2903,7 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 		$this->mTrxShortId = sprintf( '%06x', mt_rand( 0, 0xffffff ) );
 		$this->mTrxWriteDuration = 0.0;
 		$this->mTrxWriteQueryCount = 0;
+		$this->mTrxWriteAffectedRows = 0;
 		$this->mTrxWriteAdjDuration = 0.0;
 		$this->mTrxWriteAdjQueryCount = 0;
 		$this->mTrxWriteCallers = [];
@@ -2801,7 +2970,12 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 		if ( $this->mTrxDoneWrites ) {
 			$this->mLastWriteTime = microtime( true );
 			$this->trxProfiler->transactionWritingOut(
-				$this->mServer, $this->mDBname, $this->mTrxShortId, $writeTime );
+				$this->mServer,
+				$this->mDBname,
+				$this->mTrxShortId,
+				$writeTime,
+				$this->mTrxWriteAffectedRows
+			);
 		}
 
 		$this->runOnTransactionIdleCallbacks( self::TRIGGER_COMMIT );
@@ -2846,7 +3020,10 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 		$this->mTrxAtomicLevels = [];
 		if ( $this->mTrxDoneWrites ) {
 			$this->trxProfiler->transactionWritingOut(
-				$this->mServer, $this->mDBname, $this->mTrxShortId );
+				$this->mServer,
+				$this->mDBname,
+				$this->mTrxShortId
+			);
 		}
 
 		$this->mTrxIdleCallbacks = []; // clear
@@ -2963,7 +3140,9 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 	}
 
 	/**
-	 * @return bool
+	 * Close existing database connection and open a new connection
+	 *
+	 * @return bool True if new connection is opened successfully, false if error
 	 */
 	protected function reconnect() {
 		$this->closeConnection();
@@ -3025,7 +3204,7 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 	 * @see WANObjectCache::getWithSetCallback()
 	 *
 	 * @param IDatabase $db1
-	 * @param IDatabase ...
+	 * @param IDatabase $dbs,...
 	 * @return array Map of values:
 	 *   - lag: highest lag of any of the DBs or false on error (e.g. replication stopped)
 	 *   - since: oldest UNIX timestamp of any of the DB lag estimates
@@ -3331,6 +3510,14 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 		return $this->doLockTables( $read, $write, $method );
 	}
 
+	/**
+	 * Helper function for lockTables() that handles the actual table locking
+	 *
+	 * @param array $read Array of tables to lock for read access
+	 * @param array $write Array of tables to lock for write access
+	 * @param string $method Name of caller
+	 * @return true
+	 */
 	protected function doLockTables( array $read, array $write, $method ) {
 		return true;
 	}
@@ -3345,6 +3532,12 @@ abstract class Database implements IDatabase, IMaintainableDatabase, LoggerAware
 		return $this->doUnlockTables( $method );
 	}
 
+	/**
+	 * Helper function for unlockTables() that handles the actual table unlocking
+	 *
+	 * @param string $method Name of caller
+	 * @return true
+	 */
 	protected function doUnlockTables( $method ) {
 		return true;
 	}

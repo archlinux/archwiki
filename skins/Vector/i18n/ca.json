@@ -8,7 +8,8 @@
 			"Ssola",
 			"Vriullop",
 			"Toniher",
-			"Fitoschido"
+			"Fitoschido",
+			"Abella"
 		]
 	},
 	"skinname-vector": "Vector",
@@ -22,7 +23,7 @@
 	"vector-view-create": "Crea",
 	"vector-view-edit": "Modifica",
 	"vector-view-history": "Mostra l’historial",
-	"vector-view-view": "Mostra",
+	"vector-view-view": "Llegir",
 	"vector-view-viewsource": "Mostra el codi",
 	"vector-more-actions": "Més"
 }

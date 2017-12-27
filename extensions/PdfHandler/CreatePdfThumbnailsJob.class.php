@@ -12,23 +12,23 @@ class CreatePdfThumbnailsJob extends Job {
 	 *
 	 * @param $title Title Title object
 	 * @param $params array Associative array of options:
-	 *     page:           page number for which the thumbnail will be created
-	 *     jobtype:        CreatePDFThumbnailsJob::BIG_THUMB or CreatePDFThumbnailsJob::SMALL_THUMB
-	 *                     BIG_THUMB will create a thumbnail visible for full thumbnail view,
-	 *                     SMALL_THUMB will create a thumbnail shown in "previous page"/"next page" boxes
-	 * 
+	 *     page:    page number for which the thumbnail will be created
+	 *     jobtype: CreatePDFThumbnailsJob::BIG_THUMB or CreatePDFThumbnailsJob::SMALL_THUMB
+	 *              BIG_THUMB will create a thumbnail visible for full thumbnail view,
+	 *              SMALL_THUMB will create a thumbnail shown in "previous page"/"next page" boxes
 	 */
 	public function __construct( $title, $params ) {
 		parent::__construct( 'createPdfThumbnailsJob', $title, $params );
 	}
-	
+
 	/**
 	 * Run a thumbnail job on a given PDF file.
 	 * @return bool true
 	 */
 	public function run() {
 		if ( !isset( $this->params['page'] ) ) {
-			wfDebugLog('thumbnails', 'A page for thumbnails job of ' . $this->title->getText() . ' was not specified! That should never happen!');
+			wfDebugLog( 'thumbnails', 'A page for thumbnails job of ' . $this->title->getText() .
+				' was not specified! That should never happen!' );
 			return true; // no page set? that should never happen
 		}
 
@@ -37,7 +37,7 @@ class CreatePdfThumbnailsJob extends Job {
 			return true; // Just silently fail, perhaps the file was already deleted, don't bother
 		}
 
-		switch ($this->params['jobtype']) {
+		switch ( $this->params['jobtype'] ) {
 			case self::BIG_THUMB:
 				global $wgImageLimits;
 				// Ignore user preferences, do default thumbnails
@@ -59,26 +59,27 @@ class CreatePdfThumbnailsJob extends Job {
 				$height_orig = $file->getHeight( $this->params['page'] );
 				$height = $height_orig;
 				if ( $width > $maxWidth || $height > $maxHeight ) {
-					# Calculate the thumbnail size.
-					# First case, the limiting factor is the width, not the height.
+					// Calculate the thumbnail size.
+					// First case, the limiting factor is the width, not the height.
 					if ( $width / $height >= $maxWidth / $maxHeight ) {
-						//$height = round( $height * $maxWidth / $width );
+						// $height = round( $height * $maxWidth / $width );
 						$width = $maxWidth;
-						# Note that $height <= $maxHeight now.
+						// Note that $height <= $maxHeight now.
 					} else {
 						$newwidth = floor( $width * $maxHeight / $height );
-						//$height = round( $height * $newwidth / $width );
+						// $height = round( $height * $newwidth / $width );
 						$width = $newwidth;
-						# Note that $height <= $maxHeight now, but might not be identical
-						# because of rounding.
+						// Note that $height <= $maxHeight now, but might not be identical
+						// because of rounding.
 					}
-					$transformParams = array( 'page' => $this->params['page'], 'width' => $width );
+					$transformParams = [ 'page' => $this->params['page'], 'width' => $width ];
 					$file->transform( $transformParams );
 				}
 				break;
 
 			case self::SMALL_THUMB:
-				Linker::makeThumbLinkObj( $this->title, $file, '', '', 'none', array( 'page' => $this->params['page'] ) );
+				Linker::makeThumbLinkObj( $this->title, $file, '', '', 'none',
+					[ 'page' => $this->params['page'] ] );
 				break;
 		}
 
@@ -96,14 +97,14 @@ class CreatePdfThumbnailsJob extends Job {
 		if ( !$wgPdfCreateThumbnailsInJobQueue ) {
 			return true;
 		}
-		if (!MimeMagic::singleton()->isMatchingExtension('pdf', $mime)) {
+		if ( !MimeMagic::singleton()->isMatchingExtension( 'pdf', $mime ) ) {
 			return true; // not a PDF, abort
 		}
 
 		$title = $upload->getTitle();
 		$uploadFile = $upload->getLocalFile();
 		if ( is_null( $uploadFile ) ) {
-			wfDebugLog('thumbnails', '$uploadFile seems to be null, should never happen...');
+			wfDebugLog( 'thumbnails', '$uploadFile seems to be null, should never happen...' );
 			return true; // should never happen, but it's better to be secure
 		}
 
@@ -111,15 +112,15 @@ class CreatePdfThumbnailsJob extends Job {
 		$unserialized = unserialize( $metadata );
 		$pages = intval( $unserialized['Pages'] );
 
-		$jobs = array();
+		$jobs = [];
 		for ( $i = 1; $i <= $pages; $i++ ) {
 			$jobs[] = new CreatePdfThumbnailsJob(
 				$title,
-				array( 'page' => $i, 'jobtype' => self::BIG_THUMB )
+				[ 'page' => $i, 'jobtype' => self::BIG_THUMB ]
 			);
 			$jobs[] = new CreatePdfThumbnailsJob(
 				$title,
-				array( 'page' => $i, 'jobtype' => self::SMALL_THUMB )
+				[ 'page' => $i, 'jobtype' => self::SMALL_THUMB ]
 			);
 		}
 		JobQueueGroup::singleton()->push( $jobs );

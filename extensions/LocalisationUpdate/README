@@ -8,7 +8,7 @@ For more information see:
 == Installation ==
 1. Add the following to LocalSettings.php of your MediaWiki setup:
 
- require_once "$IP/extensions/LocalisationUpdate/LocalisationUpdate.php";
+ wfLoadExtension( 'LocalisationUpdate' );
  $wgLocalisationUpdateDirectory = "$IP/cache";
 
 2. Create a cache folder in the installation directory, and be sure the server

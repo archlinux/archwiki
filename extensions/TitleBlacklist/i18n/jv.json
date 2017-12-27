@@ -14,7 +14,7 @@
 	"titleblacklist-forbidden-upload": "Jeneng berkas \"$2\" wis dilarang kanggo digawé. \nIrah-irahan iku cocog karo èntri daftar ireng iki: <code>$1</code>",
 	"titleblacklist-forbidden-new-account": "Jeneng panganggo \"$2\" wis dipenggak.\nIki cocog karo jeneng ing dhaptar-ireng: <code>$1</code>",
 	"titleblacklist-invalid": "{{PLURAL:$1|Baris|Baris-baris}} ing daftar ireng irah-irahan (judhul) {{PLURAL:$1|ing ngisor|ing ngisor}} iki ora absah; mangga dikorèksi {{PLURAL:$1|item|item-item}} iku sadurungé disimpen:",
-	"titleblacklist-override": "Bènaké daptar ireng",
+	"titleblacklist-override": "Lirwakaké pratélan ireng",
 	"right-tboverride": "''Override'' daftar ireng judhul",
-	"right-tboverride-account": "Benaké daptar ireng jeneng panganggo"
+	"right-tboverride-account": "Lirwakaké pratélan ireng bab jeneng panganggo"
 }

@@ -9,14 +9,13 @@
 			"Xaris333"
 		]
 	},
-	"cite-desc": "Προσθέτει τις ετικέτες <nowiki><ref[ όνομα=αναγνωριστικό]></nowiki> και <nowiki><references/></nowiki>, για παραπομπές.",
+	"cite-desc": "Προσθέτει τις ετικέτες <nowiki><ref[ name=αναγνωριστικό]></nowiki> και <nowiki><references/></nowiki>, για παραπομπές",
 	"cite_error": "Σφάλμα παραπομπής: $1",
 	"cite_error_ref_numeric_key": "Μη έγκυρη ετικέτα <code>&lt;ref&gt;</code>·\nτο όνομα δεν μπορεί να είναι απλός ακέραιος. Χρησιμοποιήστε έναν περιγραφικό τίτλο",
 	"cite_error_ref_no_key": "Μη έγκυρη ετικέτα <code>&lt;ref&gt;</code>·\nπαραπομπές χωρίς περιεχόμενο πρέπει να έχουν όνομα",
 	"cite_error_ref_too_many_keys": "Μη έγκυρη ετικέτα <code>&lt;ref&gt;</code>·\nμη έγκυρα ονόματα, π.χ. πάρα πολλά",
 	"cite_error_ref_no_input": "Μη έγκυρη ετικέτα <code>&lt;ref&gt;</code>·\nοι παραπομπές χωρίς όνομα πρέπει να έχουν περιεχόμενο",
 	"cite_error_references_invalid_parameters": "Μη έγκυρη ετικέτα <code>&lt;references&gt;</code>·\nδεν επιτρέπονται παράμετροι.\nΧρησιμοποιήστε <code>&lt;references /&gt;</code>",
-	"cite_error_references_invalid_parameters_group": "Μη έγκυρη ετικέτα <code>&lt;references&gt;</code>·\nμόνο η παράμετρος «group» επιτρέπεται.\nΧρησιμοποιείστε <code>&lt;references /&gt;</code>, ή <code>&lt;references group=\"...\" /&gt;</code>",
 	"cite_error_references_no_backlink_label": "Εξαντλήθηκαν οι ειδικές ετικέτες συνδέσμων προς το κείμενο.\nΚαθορισμός περισσότερων στο μήνυμα <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>.",
 	"cite_error_no_link_label_group": "Εξαντλήθηκαν οι ειδικές ετικέτες συνδέσμων για την ομάδα «$1».\nΚαθορισμός περισσότερων στο μήνυμα <nowiki>[[MediaWiki:$2]]</nowiki>.",
 	"cite_error_references_no_text": "Μη έγκυρη ετικέτα <code>&lt;ref&gt;</code>·\nδεν δίνεται κείμενο για παραπομπές με όνομα <code>$1</code>",

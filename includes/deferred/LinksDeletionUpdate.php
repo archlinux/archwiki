@@ -29,7 +29,7 @@ use Wikimedia\Rdbms\IDatabase;
 class LinksDeletionUpdate extends DataUpdate implements EnqueueableDataUpdate {
 	/** @var WikiPage */
 	protected $page;
-	/** @var integer */
+	/** @var int */
 	protected $pageId;
 	/** @var string */
 	protected $timestamp;
@@ -39,7 +39,7 @@ class LinksDeletionUpdate extends DataUpdate implements EnqueueableDataUpdate {
 
 	/**
 	 * @param WikiPage $page Page we are updating
-	 * @param integer|null $pageId ID of the page we are updating [optional]
+	 * @param int|null $pageId ID of the page we are updating [optional]
 	 * @param string|null $timestamp TS_MW timestamp of deletion
 	 * @throws MWException
 	 */
@@ -91,7 +91,7 @@ class LinksDeletionUpdate extends DataUpdate implements EnqueueableDataUpdate {
 			$this->page->updateCategoryCounts( [], $catBatch, $id );
 			if ( count( $catBatches ) > 1 ) {
 				$lbFactory->commitAndWaitForReplication(
-					__METHOD__, $this->ticket, [ 'wiki' => $dbw->getWikiID() ]
+					__METHOD__, $this->ticket, [ 'domain' => $dbw->getDomainID() ]
 				);
 			}
 		}
@@ -187,7 +187,7 @@ class LinksDeletionUpdate extends DataUpdate implements EnqueueableDataUpdate {
 			$dbw->delete( 'recentchanges', [ 'rc_id' => $rcIdBatch ], __METHOD__ );
 			if ( count( $rcIdBatches ) > 1 ) {
 				$lbFactory->commitAndWaitForReplication(
-					__METHOD__, $this->ticket, [ 'wiki' => $dbw->getWikiID() ]
+					__METHOD__, $this->ticket, [ 'domain' => $dbw->getDomainID() ]
 				);
 			}
 		}
@@ -209,7 +209,7 @@ class LinksDeletionUpdate extends DataUpdate implements EnqueueableDataUpdate {
 			if ( count( $pkDeleteConds ) >= $bSize ) {
 				$dbw->delete( $table, $dbw->makeList( $pkDeleteConds, LIST_OR ), __METHOD__ );
 				$lbFactory->commitAndWaitForReplication(
-					__METHOD__, $this->ticket, [ 'wiki' => $dbw->getWikiID() ]
+					__METHOD__, $this->ticket, [ 'domain' => $dbw->getDomainID() ]
 				);
 				$pkDeleteConds = [];
 			}
@@ -230,7 +230,7 @@ class LinksDeletionUpdate extends DataUpdate implements EnqueueableDataUpdate {
 
 	public function getAsJobSpecification() {
 		return [
-			'wiki' => $this->getDB()->getWikiID(),
+			'wiki' => WikiMap::getWikiIdFromDomain( $this->getDB()->getDomainID() ),
 			'job'  => new JobSpecification(
 				'deleteLinks',
 				[ 'pageId' => $this->pageId, 'timestamp' => $this->timestamp ],

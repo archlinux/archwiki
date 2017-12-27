@@ -8,7 +8,8 @@
 class GadgetDefinitionValidator {
 	/**
 	 * Validation metadata.
-	 * 'foo.bar.baz' => [ 'type check callback', 'type name' [, 'member type check callback', 'member type name'] ]
+	 * 'foo.bar.baz' => [ 'type check callback',
+	 *   'type name' [, 'member type check callback', 'member type name'] ]
 	 */
 	protected static $propertyValidation = [
 		'settings' => [ 'is_array', 'array' ],

@@ -83,6 +83,8 @@ abstract class DatabaseUpdater {
 		FixDefaultJsonContentPages::class,
 		CleanupEmptyCategories::class,
 		AddRFCAndPMIDInterwiki::class,
+		PopulatePPSortKey::class,
+		PopulateIpChanges::class,
 	];
 
 	/**
@@ -105,9 +107,7 @@ abstract class DatabaseUpdater {
 	protected $holdContentHandlerUseDB = true;
 
 	/**
-	 * Constructor
-	 *
-	 * @param Database $db To perform updates on
+	 * @param Database &$db To perform updates on
 	 * @param bool $shared Whether to perform updates on shared tables
 	 * @param Maintenance $maintenance Maintenance object which created us
 	 */
@@ -926,11 +926,41 @@ abstract class DatabaseUpdater {
 		} elseif ( $this->updateRowExists( $updateKey ) ) {
 			$this->output( "...$field in table $table already modified by patch $patch.\n" );
 		} else {
-			$this->insertUpdateRow( $updateKey );
+			$apply = $this->applyPatch( $patch, $fullpath, "Modifying $field field of table $table" );
+			if ( $apply ) {
+				$this->insertUpdateRow( $updateKey );
+			}
+			return $apply;
+		}
+		return true;
+	}
 
-			return $this->applyPatch( $patch, $fullpath, "Modifying $field field of table $table" );
+	/**
+	 * Modify an existing table, similar to modifyField. Intended for changes that
+	 *  touch more than one column on a table.
+	 *
+	 * @param string $table Name of the table to modify
+	 * @param string $patch Name of the patch file to apply
+	 * @param string|bool $fullpath Whether to treat $patch path as relative or not, defaults to false
+	 * @return bool False if this was skipped because of schema changes being skipped
+	 */
+	public function modifyTable( $table, $patch, $fullpath = false ) {
+		if ( !$this->doTable( $table ) ) {
+			return true;
 		}
 
+		$updateKey = "$table-$patch";
+		if ( !$this->db->tableExists( $table, __METHOD__ ) ) {
+			$this->output( "...$table table does not exist, skipping modify table patch.\n" );
+		} elseif ( $this->updateRowExists( $updateKey ) ) {
+			$this->output( "...table $table already modified by patch $patch.\n" );
+		} else {
+			$apply = $this->applyPatch( $patch, $fullpath, "Modifying table $table" );
+			if ( $apply ) {
+				$this->insertUpdateRow( $updateKey );
+			}
+			return $apply;
+		}
 		return true;
 	}
 
@@ -1161,4 +1191,25 @@ abstract class DatabaseUpdater {
 			$wgContentHandlerUseDB = $this->holdContentHandlerUseDB;
 		}
 	}
+
+	/**
+	 * Migrate comments to the new 'comment' table
+	 * @since 1.30
+	 */
+	protected function migrateComments() {
+		global $wgCommentTableSchemaMigrationStage;
+		if ( $wgCommentTableSchemaMigrationStage >= MIGRATION_WRITE_NEW &&
+			!$this->updateRowExists( 'MigrateComments' )
+		) {
+			$this->output(
+				"Migrating comments to the 'comments' table, printing progress markers. For large\n" .
+				"databases, you may want to hit Ctrl-C and do this manually with\n" .
+				"maintenance/migrateComments.php.\n"
+			);
+			$task = $this->maintenance->runChild( 'MigrateComments', 'migrateComments.php' );
+			$task->execute();
+			$this->output( "done.\n" );
+		}
+	}
+
 }

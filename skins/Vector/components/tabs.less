@@ -122,6 +122,7 @@ div.vectorMenu {
 	float: left;
 	cursor: pointer;
 	position: relative;
+	line-height: 1.125em;
 }
 
 body.rtl div.vectorMenu {
@@ -147,29 +148,16 @@ div.vectorMenu h3 span {
 	display: block;
 	font-size: 0.8em;
 	padding-left: 0.7em;
-	padding-top: 1.375em;
-	margin-right: 20px;
+	padding-top: 1.25em;
+	padding-right: 20px;
 	font-weight: normal;
 	color: @menu-main-heading-color;
-}
-
-div.vectorMenu h3 a {
-	position: absolute;
-	top: 0;
-	right: 0;
-	width: 20px;
-	height: 2.5em;
 	.background-image-svg('images/arrow-down-icon.svg', 'images/arrow-down-icon.png');
-	background-position: 100% 70%;
-	background-repeat: no-repeat;
-	.transition(background-position 250ms);
-}
-
-div.vectorMenu.menuForceShow h3 a {
 	background-position: 100% 100%;
+	background-repeat: no-repeat;
 }
 
-div.vectorMenuFocus h3 a {
+div.vectorMenuFocus h3 span {
 	.background-image-svg('images/arrow-down-focus-icon.svg', 'images/arrow-down-focus-icon.png');
 }
 
@@ -186,8 +174,8 @@ div.vectorMenu div.menu {
 	box-shadow: 0 1px 1px 0 rgba( 0, 0, 0, 0.1 );
 	text-align: left;
 	display: none;
-	// overlap indicators (which has z-index 1, too)
-	z-index: 1;
+	// Menus must overlap indicators (z-index: 1) and VisualEditor toolbar (z-index: 2)
+	z-index: 2;
 }
 
 /* Enable forcing showing of the menu for accessibility */

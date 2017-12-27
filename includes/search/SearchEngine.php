@@ -138,7 +138,7 @@ abstract class SearchEngine {
 	 * @return mixed the feature value or null if unset
 	 */
 	public function getFeatureData( $feature ) {
-		if ( isset ( $this->features[$feature] ) ) {
+		if ( isset( $this->features[$feature] ) ) {
 			return $this->features[$feature];
 		}
 		return null;
@@ -244,7 +244,7 @@ abstract class SearchEngine {
 		if ( $namespaces ) {
 			// Filter namespaces to only keep valid ones
 			$validNs = $this->searchableNamespaces();
-			$namespaces = array_filter( $namespaces, function( $ns ) use( $validNs ) {
+			$namespaces = array_filter( $namespaces, function ( $ns ) use( $validNs ) {
 				return $ns < 0 || isset( $validNs[$ns] );
 			} );
 		} else {
@@ -269,7 +269,7 @@ abstract class SearchEngine {
 	 * might support more. The default in all implementations should be 'relevance.'
 	 *
 	 * @since 1.25
-	 * @return array(string) the valid sort directions for setSort
+	 * @return string[] the valid sort directions for setSort
 	 */
 	public function getValidSorts() {
 		return [ 'relevance' ];
@@ -463,8 +463,8 @@ abstract class SearchEngine {
 			$title = Title::newFromText( $search . 'Dummy' );
 			if ( $title && $title->getText() == 'Dummy'
 					&& $title->getNamespace() != NS_MAIN
-					&& !$title->isExternal() )
-			{
+					&& !$title->isExternal()
+			) {
 				$ns = [ $title->getNamespace() ];
 				$search = '';
 			} else {
@@ -472,7 +472,7 @@ abstract class SearchEngine {
 			}
 		}
 
-		$ns = array_map( function( $space ) {
+		$ns = array_map( function ( $space ) {
 			return $space == NS_MEDIA ? NS_FILE : $space;
 		}, $ns );
 
@@ -558,7 +558,7 @@ abstract class SearchEngine {
 	 * @return Title[]
 	 */
 	public function extractTitles( SearchSuggestionSet $completionResults ) {
-		return $completionResults->map( function( SearchSuggestion $sugg ) {
+		return $completionResults->map( function ( SearchSuggestion $sugg ) {
 			return $sugg->getSuggestedTitle();
 		} );
 	}
@@ -566,20 +566,21 @@ abstract class SearchEngine {
 	/**
 	 * Process completion search results.
 	 * Resolves the titles and rescores.
+	 * @param string $search
 	 * @param SearchSuggestionSet $suggestions
 	 * @return SearchSuggestionSet
 	 */
 	protected function processCompletionResults( $search, SearchSuggestionSet $suggestions ) {
 		$search = trim( $search );
 		// preload the titles with LinkBatch
-		$titles = $suggestions->map( function( SearchSuggestion $sugg ) {
+		$titles = $suggestions->map( function ( SearchSuggestion $sugg ) {
 			return $sugg->getSuggestedTitle();
 		} );
 		$lb = new LinkBatch( $titles );
 		$lb->setCaller( __METHOD__ );
 		$lb->execute();
 
-		$results = $suggestions->map( function( SearchSuggestion $sugg ) {
+		$results = $suggestions->map( function ( SearchSuggestion $sugg ) {
 			return $sugg->getSuggestedTitle()->getPrefixedText();
 		} );
 
@@ -727,7 +728,7 @@ abstract class SearchEngine {
 	 * Create a search field definition.
 	 * Specific search engines should override this method to create search fields.
 	 * @param string $name
-	 * @param int    $type One of the types in SearchIndexField::INDEX_TYPE_*
+	 * @param int $type One of the types in SearchIndexField::INDEX_TYPE_*
 	 * @return SearchIndexField
 	 * @since 1.28
 	 */

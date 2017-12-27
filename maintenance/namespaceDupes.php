@@ -256,7 +256,6 @@ class NamespaceConflictChecker extends Maintenance {
 
 		$ok = true;
 		foreach ( $targets as $row ) {
-
 			// Find the new title and determine the action to take
 
 			$newTitle = $this->getDestinationTitle( $ns, $name,
@@ -460,10 +459,10 @@ class NamespaceConflictChecker extends Maintenance {
 
 	/**
 	 * Get the preferred destination title for a given target page.
-	 * @param integer $ns The destination namespace ID
+	 * @param int $ns The destination namespace ID
 	 * @param string $name The conflicting prefix
-	 * @param integer $sourceNs The source namespace
-	 * @param integer $sourceDbk The source DB key (i.e. page_title)
+	 * @param int $sourceNs The source namespace
+	 * @param int $sourceDbk The source DB key (i.e. page_title)
 	 * @param array $options Associative array of validated command-line options
 	 * @return Title|false
 	 */

@@ -347,7 +347,7 @@
 										action: {
 											type: 'encapsulate',
 											options: {
-												pre: '<br />\n'
+												pre: '<br>\n'
 											}
 										}
 									}

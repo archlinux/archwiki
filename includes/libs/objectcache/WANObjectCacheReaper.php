@@ -17,7 +17,6 @@
  *
  * @file
  * @ingroup Cache
- * @author Aaron Schulz
  */
 
 use Psr\Log\LoggerAwareInterface;
@@ -49,7 +48,7 @@ class WANObjectCacheReaper implements LoggerAwareInterface {
 
 	/** @var string */
 	protected $channel;
-	/** @var integer */
+	/** @var int */
 	protected $initialStartWindow;
 
 	/**

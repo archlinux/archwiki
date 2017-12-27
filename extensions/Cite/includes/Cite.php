@@ -759,7 +759,6 @@ class Cite {
 		}
 
 		if ( !$data || !$this->mParser->isValidHalfParsedText( $data ) ) {
-
 			// Live hack: parse() adds two newlines on WM, can't reproduce it locally -ævar
 			$ret = rtrim( $this->mParser->recursiveTagParse( $parserInput ), "\n" );
 
@@ -1266,13 +1265,13 @@ class Cite {
 
 		$parser->extCite = new self();
 
-		if ( !Cite::$hooksInstalled ) {
+		if ( !self::$hooksInstalled ) {
 			$wgHooks['ParserClearState'][] = [ $parser->extCite, 'clearState' ];
 			$wgHooks['ParserCloned'][] = [ $parser->extCite, 'cloneState' ];
 			$wgHooks['ParserAfterParse'][] = [ $parser->extCite, 'checkRefsNoReferences', true ];
 			$wgHooks['ParserBeforeTidy'][] = [ $parser->extCite, 'checkRefsNoReferences', false ];
 			$wgHooks['InlineEditorPartialAfterParse'][] = [ $parser->extCite, 'checkAnyCalls' ];
-			Cite::$hooksInstalled = true;
+			self::$hooksInstalled = true;
 		}
 		$parser->setHook( 'ref', [ $parser->extCite, 'ref' ] );
 		$parser->setHook( 'references', [ $parser->extCite, 'references' ] );
@@ -1384,7 +1383,7 @@ class Cite {
 			$key,
 			self::CACHE_DURATION_ONFETCH,
 			function ( $oldValue, &$ttl, array &$setOpts ) use ( $title ) {
-				$dbr = wfGetDB( DB_SLAVE );
+				$dbr = wfGetDB( DB_REPLICA );
 				$setOpts += Database::getCacheSetOptions( $dbr );
 				return self::recursiveFetchRefsFromDB( $title, $dbr );
 			},

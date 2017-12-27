@@ -6,7 +6,8 @@
 			"Dorgan",
 			"KossuthRad",
 			"Misibacsi",
-			"Tacsipacsi"
+			"Tacsipacsi",
+			"Urbalazs"
 		]
 	},
 	"nuke": "Halmozott törlés",
@@ -29,7 +30,7 @@
 	"nuke-not-deleted": "[[:$1]] oldalt ''nem sikerült''' törölni.",
 	"nuke-delete-more": "[[Special:Nuke|További oldalak törlése]]",
 	"nuke-pattern": "Lapnév minta:",
-	"nuke-nopages-global": "Nincsenek új lapok a [[Special:RecentChanges|friss változtatásokban]].",
+	"nuke-nopages-global": "Nincsenek a keresésre illeszkedő oldalcímek.",
 	"nuke-viewchanges": "változtatások megtekintése",
 	"nuke-namespace": "Csak az alábbi névtérben:"
 }

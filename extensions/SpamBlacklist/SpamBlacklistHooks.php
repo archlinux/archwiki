@@ -22,15 +22,22 @@ class SpamBlacklistHooks {
 	 * Hook function for EditFilterMergedContent
 	 *
 	 * @param IContextSource $context
-	 * @param Content        $content
-	 * @param Status         $status
-	 * @param string         $summary
-	 * @param User           $user
-	 * @param bool           $minoredit
+	 * @param Content $content
+	 * @param Status $status
+	 * @param string $summary
+	 * @param User $user
+	 * @param bool $minoredit
 	 *
 	 * @return bool
 	 */
-	static function filterMergedContent( IContextSource $context, Content $content, Status $status, $summary, User $user, $minoredit ) {
+	static function filterMergedContent(
+		IContextSource $context,
+		Content $content,
+		Status $status,
+		$summary,
+		User $user,
+		$minoredit
+	) {
 		$title = $context->getTitle();
 
 		// get the link from the not-yet-saved page content.
@@ -64,7 +71,9 @@ class SpamBlacklistHooks {
 	}
 
 	public static function onParserOutputStashForEdit(
-		WikiPage $page, Content $content, ParserOutput $output
+		WikiPage $page,
+		Content $content,
+		ParserOutput $output
 	) {
 		$links = array_keys( $output->getExternalLinks() );
 		$spamObj = BaseBlacklist::getInstance( 'spam' );
@@ -85,7 +94,7 @@ class SpamBlacklistHooks {
 			return true;
 		}
 
-		$hookErr = array( 'spam-blacklisted-email', 'spam-blacklisted-email-text', null );
+		$hookErr = [ 'spam-blacklisted-email', 'spam-blacklisted-email-text', null ];
 
 		return false;
 	}
@@ -113,21 +122,24 @@ class SpamBlacklistHooks {
 	 * Confirm that a local blacklist page being saved is valid,
 	 * and toss back a warning to the user if it isn't.
 	 *
-	 * @param $editPage EditPage
-	 * @param $text string
-	 * @param $section string
-	 * @param $hookError string
+	 * @param EditPage $editPage
+	 * @param string $text
+	 * @param string $section
+	 * @param string $hookError
 	 * @return bool
 	 */
-	static function validate( $editPage, $text, $section, &$hookError ) {
-		$thisPageName = $editPage->mTitle->getPrefixedDBkey();
+	static function validate( EditPage $editPage, $text, $section, &$hookError ) {
+		$title = $editPage->getTitle();
+		$thisPageName = $title->getPrefixedDBkey();
 
-		if( !BaseBlacklist::isLocalSource( $editPage->mTitle ) ) {
-			wfDebugLog( 'SpamBlacklist', "Spam blacklist validator: [[$thisPageName]] not a local blacklist\n" );
+		if ( !BaseBlacklist::isLocalSource( $title ) ) {
+			wfDebugLog( 'SpamBlacklist',
+				"Spam blacklist validator: [[$thisPageName]] not a local blacklist\n"
+			);
 			return true;
 		}
 
-		$type = BaseBlacklist::getTypeFromTitle( $editPage->mTitle );
+		$type = BaseBlacklist::getTypeFromTitle( $title );
 		if ( $type === false ) {
 			return true;
 		}
@@ -135,9 +147,11 @@ class SpamBlacklistHooks {
 		$lines = explode( "\n", $text );
 
 		$badLines = SpamRegexBatch::getBadLines( $lines, BaseBlacklist::getInstance( $type ) );
-		if( $badLines ) {
-			wfDebugLog( 'SpamBlacklist', "Spam blacklist validator: [[$thisPageName]] given invalid input lines: " .
-				implode( ', ', $badLines ) . "\n" );
+		if ( $badLines ) {
+			wfDebugLog( 'SpamBlacklist',
+				"Spam blacklist validator: [[$thisPageName]] given invalid input lines: " .
+					implode( ', ', $badLines ) . "\n"
+			);
 
 			$badList = "*<code>" .
 				implode( "</code>\n*<code>",
@@ -150,7 +164,9 @@ class SpamBlacklistHooks {
 					"</div>\n" .
 					"<br clear='all' />\n";
 		} else {
-			wfDebugLog( 'SpamBlacklist', "Spam blacklist validator: [[$thisPageName]] ok or empty blacklist\n" );
+			wfDebugLog( 'SpamBlacklist',
+				"Spam blacklist validator: [[$thisPageName]] ok or empty blacklist\n"
+			);
 		}
 
 		return true;
@@ -161,16 +177,16 @@ class SpamBlacklistHooks {
 	 * Clear local spam blacklist caches on page save.
 	 *
 	 * @param Page $wikiPage
-	 * @param User     $user
-	 * @param Content  $content
-	 * @param string   $summary
-	 * @param bool     $isMinor
-	 * @param bool     $isWatch
-	 * @param string   $section
-	 * @param int      $flags
+	 * @param User $user
+	 * @param Content $content
+	 * @param string $summary
+	 * @param bool $isMinor
+	 * @param bool $isWatch
+	 * @param string $section
+	 * @param int $flags
 	 * @param Revision|null $revision
-	 * @param Status   $status
-	 * @param int      $baseRevId
+	 * @param Status $status
+	 * @param int $baseRevId
 	 *
 	 * @return bool
 	 */
@@ -202,7 +218,6 @@ class SpamBlacklistHooks {
 			$blacklist->clearCache();
 		}
 
-
 		return true;
 	}
 
@@ -215,7 +230,14 @@ class SpamBlacklistHooks {
 	 * @param array|ApiMessage &$error
 	 * @return bool
 	 */
-	public static function onUploadVerifyUpload( UploadBase $upload, User $user, array $props, $comment, $pageText, &$error ) {
+	public static function onUploadVerifyUpload(
+		UploadBase $upload,
+		User $user,
+		array $props,
+		$comment,
+		$pageText,
+		&$error
+	) {
 		$title = $upload->getTitle();
 
 		// get the link from the not-yet-saved page content.
@@ -240,13 +262,13 @@ class SpamBlacklistHooks {
 			$error = new ApiMessage(
 				wfMessage( 'spamprotectiontext' ),
 				'spamblacklist',
-				array(
-					'spamblacklist' => array( 'matches' => $matches ),
-					'message' => array(
+				[
+					'spamblacklist' => [ 'matches' => $matches ],
+					'message' => [
 						'key' => 'spamprotectionmatch',
 						'params' => $matches[0],
-					),
-				)
+					],
+				]
 			);
 		}
 
@@ -280,8 +302,13 @@ class SpamBlacklistHooks {
 	 * @param Content|null $content
 	 * @param LogEntry $logEntry
 	 */
-	public static function onArticleDeleteComplete( &$page, User &$user, $reason,
-		$id, Content $content = null, LogEntry $logEntry
+	public static function onArticleDeleteComplete(
+		&$page,
+		User &$user,
+		$reason,
+		$id,
+		Content $content = null,
+		LogEntry $logEntry
 	) {
 		/** @var SpamBlacklist $spam */
 		$spam = BaseBlacklist::getInstance( 'spam' );

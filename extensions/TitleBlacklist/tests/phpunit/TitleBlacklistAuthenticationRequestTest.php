@@ -12,7 +12,7 @@ class TitleBlacklistAuthenticationRequestTest extends AuthenticationRequestTestC
 		parent::setUp();
 	}
 
-	protected function getInstance( array $args = [ ] ) {
+	protected function getInstance( array $args = [] ) {
 		return new TitleBlacklistAuthenticationRequest();
 	}
 

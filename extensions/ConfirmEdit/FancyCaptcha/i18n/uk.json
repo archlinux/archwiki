@@ -21,5 +21,6 @@
 	"fancycaptcha-sendemail": "Для захисту вікі від автоматичного спаму просимо вас ввести слова, які показані нижче в полі ([[Special:Captcha/help|more info]]):",
 	"fancycaptcha-reload-text": "Оновити",
 	"apihelp-fancycaptchareload-description": "Отримати нову FancyCaptcha.",
+	"apihelp-fancycaptchareload-summary": "Отримати нову FancyCaptcha.",
 	"apihelp-fancycaptchareload-example-1": "Отримати нову FancyCaptcha"
 }

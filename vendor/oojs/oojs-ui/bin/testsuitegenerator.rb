@@ -21,6 +21,7 @@ else
 	testable_classes = classes
 		.reject{|c| c[:abstract] } # can't test abstract classes
 		.reject{|c| !c[:parent] || c[:trait] || c[:parent] == 'Theme' } # can't test abstract
+		.reject{|c| c[:name] == 'MediaWikiTheme' } # can't test abstract
 		.reject{|c| %w[Element Widget Layout Theme].include? c[:name] } # no toplevel
 
 	make_class_instance_placeholder = lambda do |klass, config|
@@ -56,7 +57,7 @@ else
 		'method' => %w[GET POST],
 		'target' => ['_blank'],
 		'accessKey' => ['k'],
-		'tabIndex' => [-1, 0, 100],
+		'tabIndex' => [-1, 0, 100, '42'],
 		'maxLength' => [100],
 		'icon' => ['image'],
 		'indicator' => ['down'],
@@ -68,6 +69,8 @@ else
 			[ { 'data' => 'a' }, { 'data' => 'b' } ],
 			[ { 'data' => 'a', 'label' => 'A' }, { 'data' => 'b', 'label' => 'B' } ],
 		],
+		# deprecated, makes test logs spammy
+		'multiline' => [],
 		# usually makes no sense in JS
 		'autofocus' => [],
 		# too simple to test?
@@ -105,7 +108,8 @@ else
 				vals = expandos[t]
 			elsif testable_classes.find{|c| c[:name] == t }
 				# OOUI object. Test suite will instantiate one and run the test with it.
-				params = find_class.call(t)[:methods][0][:params] || []
+				constructor = find_class.call(t)[:methods].find{|m| m[:name] == '#constructor' }
+				params = constructor ? (constructor[:params] || []) : []
 				config = params.map{|config_option|
 					types = config_option[:type].split '|'
 					values = expand_types_to_values.call(types)
@@ -145,9 +149,10 @@ else
 		}
 
 		config_sources = find_config_sources.call(class_name)
-			.map{|c| find_class.call(c)[:methods][0] }
-		config = config_sources.map{|c| c[:config] }.compact.inject(:+)
-		required_config = klass[:methods][0][:params] || []
+			.map{|c| find_class.call(c)[:methods].find{|m| m[:name] == '#constructor' } }
+		config = config_sources.compact.map{|c| c[:config] }.compact.inject([], :+)
+		constructor = klass[:methods].find{|m| m[:name] == '#constructor' }
+		required_config = constructor ? (constructor[:params] || []) : []
 
 		# generate every possible configuration of configuration option sets
 		maxlength = [config.length, 2].min

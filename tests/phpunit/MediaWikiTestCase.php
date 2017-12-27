@@ -5,6 +5,8 @@ use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Logger\MonologSpi;
 use MediaWiki\MediaWikiServices;
 use Psr\Log\LoggerInterface;
+use Wikimedia\Rdbms\IMaintainableDatabase;
+use Wikimedia\Rdbms\Database;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -211,10 +213,12 @@ abstract class MediaWikiTestCase extends PHPUnit_Framework_TestCase {
 	 *
 	 * @param Config|null $bootstrapConfig The bootstrap config to use with the new
 	 *        MediaWikiServices.
+	 * @return MediaWikiServices
 	 */
 	protected static function resetGlobalServices( Config $bootstrapConfig = null ) {
 		$oldServices = MediaWikiServices::getInstance();
 		$oldConfigFactory = $oldServices->getConfigFactory();
+		$oldLoadBalancerFactory = $oldServices->getDBLoadBalancerFactory();
 
 		$testConfig = self::makeTestConfig( $bootstrapConfig );
 
@@ -223,6 +227,7 @@ abstract class MediaWikiTestCase extends PHPUnit_Framework_TestCase {
 		$serviceLocator = MediaWikiServices::getInstance();
 		self::installTestServices(
 			$oldConfigFactory,
+			$oldLoadBalancerFactory,
 			$serviceLocator
 		);
 		return $serviceLocator;
@@ -278,12 +283,14 @@ abstract class MediaWikiTestCase extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @param ConfigFactory $oldConfigFactory
+	 * @param LBFactory $oldLoadBalancerFactory
 	 * @param MediaWikiServices $newServices
 	 *
 	 * @throws MWException
 	 */
 	private static function installTestServices(
 		ConfigFactory $oldConfigFactory,
+		LBFactory $oldLoadBalancerFactory,
 		MediaWikiServices $newServices
 	) {
 		// Use bootstrap config for all configuration.
@@ -294,8 +301,15 @@ abstract class MediaWikiTestCase extends PHPUnit_Framework_TestCase {
 			'ConfigFactory',
 			self::makeTestConfigFactoryInstantiator(
 				$oldConfigFactory,
-				[ 'main' =>  $bootstrapConfig ]
+				[ 'main' => $bootstrapConfig ]
 			)
+		);
+		$newServices->resetServiceForTesting( 'DBLoadBalancerFactory' );
+		$newServices->redefineService(
+			'DBLoadBalancerFactory',
+			function ( MediaWikiServices $services ) use ( $oldLoadBalancerFactory ) {
+				return $oldLoadBalancerFactory;
+			}
 		);
 	}
 
@@ -309,7 +323,7 @@ abstract class MediaWikiTestCase extends PHPUnit_Framework_TestCase {
 		ConfigFactory $oldFactory,
 		array $configurations
 	) {
-		return function( MediaWikiServices $services ) use ( $oldFactory, $configurations ) {
+		return function ( MediaWikiServices $services ) use ( $oldFactory, $configurations ) {
 			$factory = new ConfigFactory();
 
 			// clone configurations from $oldFactory that are not overwritten by $configurations
@@ -627,8 +641,8 @@ abstract class MediaWikiTestCase extends PHPUnit_Framework_TestCase {
 	 * The key is added to the array of globals that will be reset afterwards
 	 * in the tearDown().
 	 *
-	 * @example
-	 * <code>
+	 * @par Example
+	 * @code
 	 *     protected function setUp() {
 	 *         $this->setMwGlobals( 'wgRestrictStuff', true );
 	 *     }
@@ -643,7 +657,7 @@ abstract class MediaWikiTestCase extends PHPUnit_Framework_TestCase {
 	 *     }
 	 *
 	 *     function testQuux() {}
-	 * </code>
+	 * @endcode
 	 *
 	 * @param array|string $pairs Key to the global variable, or an array
 	 *  of key/value pairs.
@@ -737,6 +751,11 @@ abstract class MediaWikiTestCase extends PHPUnit_Framework_TestCase {
 					$GLOBALS[$globalKey] instanceof FauxRequest
 				) {
 					$this->mwGlobals[$globalKey] = clone $GLOBALS[$globalKey];
+				} elseif ( $this->containsClosure( $GLOBALS[$globalKey] ) ) {
+					// Serializing Closure only gives a warning on HHVM while
+					// it throws an Exception on Zend.
+					// Workaround for https://github.com/facebook/hhvm/issues/6206
+					$this->mwGlobals[$globalKey] = $GLOBALS[$globalKey];
 				} else {
 					try {
 						$this->mwGlobals[$globalKey] = unserialize( serialize( $GLOBALS[$globalKey] ) );
@@ -746,6 +765,28 @@ abstract class MediaWikiTestCase extends PHPUnit_Framework_TestCase {
 				}
 			}
 		}
+	}
+
+	/**
+	 * @param mixed $var
+	 * @param int $maxDepth
+	 *
+	 * @return bool
+	 */
+	private function containsClosure( $var, $maxDepth = 15 ) {
+		if ( $var instanceof Closure ) {
+			return true;
+		}
+		if ( !is_array( $var ) || $maxDepth === 0 ) {
+			return false;
+		}
+
+		foreach ( $var as $value ) {
+			if ( $this->containsClosure( $value, $maxDepth - 1 ) ) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -802,6 +843,7 @@ abstract class MediaWikiTestCase extends PHPUnit_Framework_TestCase {
 
 		$oldInstance = MediaWikiServices::getInstance();
 		$oldConfigFactory = $oldInstance->getConfigFactory();
+		$oldLoadBalancerFactory = $oldInstance->getDBLoadBalancerFactory();
 
 		$testConfig = self::makeTestConfig( null, $configOverrides );
 		$newInstance = new MediaWikiServices( $testConfig );
@@ -820,6 +862,7 @@ abstract class MediaWikiTestCase extends PHPUnit_Framework_TestCase {
 
 		self::installTestServices(
 			$oldConfigFactory,
+			$oldLoadBalancerFactory,
 			$newInstance
 		);
 		MediaWikiServices::forceGlobalInstance( $newInstance );
@@ -1009,7 +1052,6 @@ abstract class MediaWikiTestCase extends PHPUnit_Framework_TestCase {
 
 	private function addCoreDBData() {
 		if ( $this->db->getType() == 'oracle' ) {
-
 			# Insert 0 user to prevent FK violations
 			# Anonymous user
 			if ( !$this->db->selectField( 'user', '1', [ 'user_id' => 0 ] ) ) {
@@ -1046,10 +1088,15 @@ abstract class MediaWikiTestCase extends PHPUnit_Framework_TestCase {
 			$page->doEditContent(
 				new WikitextContent( 'UTContent' ),
 				'UTPageSummary',
-				EDIT_NEW,
+				EDIT_NEW | EDIT_SUPPRESS_RC,
 				false,
 				$user
 			);
+			// an edit always attempt to purge backlink links such as history
+			// pages. That is unneccessary.
+			JobQueueGroup::singleton()->get( 'htmlCacheUpdate' )->delete();
+			// WikiPages::doEditUpdates randomly adds RC purges
+			JobQueueGroup::singleton()->get( 'recentChangesUpdate' )->delete();
 
 			// doEditContent() probably started the session via
 			// User::loadFromSession(). Close it now.
@@ -1073,6 +1120,8 @@ abstract class MediaWikiTestCase extends PHPUnit_Framework_TestCase {
 		if ( !self::$dbSetup ) {
 			return;
 		}
+
+		Hooks::run( 'UnitTestsBeforeDatabaseTeardown' );
 
 		foreach ( $wgJobClasses as $type => $class ) {
 			// Delete any jobs under the clone DB (or old prefix in other stores)
@@ -1176,6 +1225,8 @@ abstract class MediaWikiTestCase extends PHPUnit_Framework_TestCase {
 		if ( $db->getType() == 'oracle' ) {
 			$db->query( 'BEGIN FILL_WIKI_INFO; END;' );
 		}
+
+		Hooks::run( 'UnitTestsAfterDatabaseSetup', [ $db, $prefix ] );
 	}
 
 	/**
@@ -1204,7 +1255,6 @@ abstract class MediaWikiTestCase extends PHPUnit_Framework_TestCase {
 	 *
 	 * @return Database[] Array of Database master connections
 	 */
-
 	protected static function getExternalStoreDatabaseConnections() {
 		global $wgDefaultExternalStore;
 
@@ -1254,12 +1304,16 @@ abstract class MediaWikiTestCase extends PHPUnit_Framework_TestCase {
 	private function resetDB( $db, $tablesUsed ) {
 		if ( $db ) {
 			$userTables = [ 'user', 'user_groups', 'user_properties' ];
-			$coreDBDataTables = array_merge( $userTables, [ 'page', 'revision' ] );
+			$pageTables = [ 'page', 'revision', 'ip_changes', 'revision_comment_temp', 'comment' ];
+			$coreDBDataTables = array_merge( $userTables, $pageTables );
 
-			// If any of the user tables were marked as used, we should clear all of them.
+			// If any of the user or page tables were marked as used, we should clear all of them.
 			if ( array_intersect( $tablesUsed, $userTables ) ) {
 				$tablesUsed = array_unique( array_merge( $tablesUsed, $userTables ) );
 				TestUserRegistry::clear();
+			}
+			if ( array_intersect( $tablesUsed, $pageTables ) ) {
+				$tablesUsed = array_unique( array_merge( $tablesUsed, $pageTables ) );
 			}
 
 			$truncate = in_array( $db->getType(), [ 'oracle', 'mysql' ] );
@@ -1440,7 +1494,7 @@ abstract class MediaWikiTestCase extends PHPUnit_Framework_TestCase {
 				' method should return true. Use @group Database or $this->tablesUsed.' );
 		}
 
-		$db = wfGetDB( DB_SLAVE );
+		$db = wfGetDB( DB_REPLICA );
 
 		$res = $db->select( $table, $fields, $condition, wfGetCaller(), [ 'ORDER BY' => $fields ] );
 		$this->assertNotEmpty( $res, "query failed: " . $db->lastError() );
@@ -1538,7 +1592,7 @@ abstract class MediaWikiTestCase extends PHPUnit_Framework_TestCase {
 	 *
 	 * @since 1.20
 	 *
-	 * @param array $array
+	 * @param array &$array
 	 */
 	protected function objectAssociativeSort( array &$array ) {
 		uasort(
@@ -1556,7 +1610,7 @@ abstract class MediaWikiTestCase extends PHPUnit_Framework_TestCase {
 	 *
 	 * @since 1.20
 	 *
-	 * @param mixed $r The array to remove string keys from.
+	 * @param mixed &$r The array to remove string keys from.
 	 */
 	protected static function stripStringKeys( &$r ) {
 		if ( !is_array( $r ) ) {
@@ -1673,7 +1727,6 @@ abstract class MediaWikiTestCase extends PHPUnit_Framework_TestCase {
 			if ( !isset( $wgNamespaceContentModels[$ns] ) ||
 				$wgNamespaceContentModels[$ns] === CONTENT_MODEL_WIKITEXT
 			) {
-
 				$wikitextNS = $ns;
 
 				return $wikitextNS;
@@ -1780,6 +1833,7 @@ abstract class MediaWikiTestCase extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * Used as a marker to prevent wfResetOutputBuffers from breaking PHPUnit.
+	 * @param string $buffer
 	 * @return string
 	 */
 	public static function wfResetOutputBuffersBarrier( $buffer ) {
@@ -1797,4 +1851,29 @@ abstract class MediaWikiTestCase extends PHPUnit_Framework_TestCase {
 		$this->mergeMwGlobalArrayValue( 'wgHooks', [ $hookName => [ $handler ] ] );
 	}
 
+	/**
+	 * Check whether file contains given data.
+	 * @param string $fileName
+	 * @param string $actualData
+	 * @param bool $createIfMissing If true, and file does not exist, create it with given data
+	 *                              and skip the test.
+	 * @param string $msg
+	 * @since 1.30
+	 */
+	protected function assertFileContains(
+		$fileName,
+		$actualData,
+		$createIfMissing = true,
+		$msg = ''
+	) {
+		if ( $createIfMissing ) {
+			if ( !file_exists( $fileName ) ) {
+				file_put_contents( $fileName, $actualData );
+				$this->markTestSkipped( 'Data file $fileName does not exist' );
+			}
+		} else {
+			self::assertFileExists( $fileName );
+		}
+		self::assertEquals( file_get_contents( $fileName ), $actualData, $msg );
+	}
 }

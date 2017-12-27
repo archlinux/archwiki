@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"Benel",
+			"Bunukwiki"
+		]
+	},
+	"pfunc_time_error": "mungangaw: la’cusay a tuki",
+	"pfunc_expr_unrecognised_word": "sakamu tu nizateng sasakawawen mungangaw: la’cusay sapulitaan a sulit \"$1\".",
+	"pfunc_expr_unexpected_operator": "Expression error: Unexpected $1 operator.",
+	"pfunc_expr_missing_operand": "sakamu tu nizateng sasakawawen mungangaw：caay kataneng $1 a yunswaniyin.",
+	"pfunc_expr_unrecognised_punctuation": "sakamu tu nizateng sasakawawen mungangaw: la’cusay sapulitaan a sulit nu hahanhanan nu kamu \"$1\".",
+	"pfunc_expr_division_by_zero": "sapiwada’ nu piasip u inayi’."
+}
