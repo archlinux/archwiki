@@ -296,6 +296,9 @@ wfLoadExtension( 'ParserFunctions' );
 wfLoadExtension( 'Interwiki' );
 $wgGroupPermissions['sysop']['interwiki'] = true;
 
+# TitleKey extension
+wfLoadExtension( 'TitleKey' );
+
 ##
 ## Temporary settings for maintenance
 ##
