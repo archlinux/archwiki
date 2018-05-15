@@ -9,3 +9,6 @@
 [submodule "extensions/TitleKey"]
 	path = extensions/TitleKey
 	url = https://github.com/wikimedia/mediawiki-extensions-TitleKey.git
+[submodule "extensions/BounceHandler"]
+	path = extensions/BounceHandler
+	url = https://github.com/wikimedia/mediawiki-extensions-BounceHandler.git

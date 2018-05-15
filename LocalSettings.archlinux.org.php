@@ -299,6 +299,12 @@ $wgGroupPermissions['sysop']['interwiki'] = true;
 # TitleKey extension
 wfLoadExtension( 'TitleKey' );
 
+# BounceHandler extension
+wfLoadExtension( 'BounceHandler' );
+$wgVERPprefix = "wiki-bounce";
+$wgVERPdomainPart = "archlinux.org";
+
+
 ##
 ## Temporary settings for maintenance
 ##
