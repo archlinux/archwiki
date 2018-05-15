@@ -232,6 +232,7 @@ $wgGroupPermissions['maintainer']['unwatchedpages'] = true;
 $wgGroupPermissions['maintainer']['deletedhistory'] = true;
 $wgGroupPermissions['maintainer']['deletedtext'] = true;
 
+$wgEnableWriteAPI = true;
 # disable user account creation via API
 $wgAPIModules['createaccount'] = 'ApiDisabled';
 # remove 'writeapi' right from users
