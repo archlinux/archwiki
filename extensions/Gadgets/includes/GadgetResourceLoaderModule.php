@@ -16,8 +16,6 @@ class GadgetResourceLoaderModule extends ResourceLoaderWikiModule {
 	private $gadget;
 
 	/**
-	 * Creates an instance of this class
-	 *
 	 * @param array $options
 	 */
 	public function __construct( array $options ) {

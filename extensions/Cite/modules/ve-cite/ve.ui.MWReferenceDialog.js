@@ -1,8 +1,8 @@
 /*!
  * VisualEditor UserInterface MediaWiki MWReferenceDialog class.
  *
- * @copyright 2011-2017 Cite VisualEditor Team and others; see AUTHORS.txt
- * @license The MIT License (MIT); see LICENSE.txt
+ * @copyright 2011-2018 VisualEditor Team's Cite sub-team and others; see AUTHORS.txt
+ * @license MIT
  */
 
 /**
@@ -44,7 +44,7 @@ ve.ui.MWReferenceDialog.static.actions = [
 	{
 		action: 'insert',
 		label: OO.ui.deferMsg( 'visualeditor-dialog-action-insert' ),
-		flags: [ 'primary', 'constructive' ],
+		flags: [ 'progressive', 'primary' ],
 		modes: 'insert'
 	},
 	{
@@ -301,7 +301,7 @@ ve.ui.MWReferenceDialog.prototype.initialize = function () {
 	this.contentFieldset = new OO.ui.FieldsetLayout();
 	this.optionsFieldset = new OO.ui.FieldsetLayout( {
 		label: ve.msg( 'cite-ve-dialog-reference-options-section' ),
-		icon: 'settings'
+		icon: 'advanced'
 	} );
 	this.contentFieldset.$element.append( this.referenceTarget.$element );
 

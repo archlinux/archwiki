@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2014
  *
@@ -20,18 +21,20 @@
  * @file
  */
 
+use MediaWiki\Linker\LinkTarget;
+
 class GadgetDefinitionSecondaryDataUpdate extends DataUpdate {
 
-	private $id;
+	/**
+	 * @var LinkTarget
+	 */
+	private $target;
 
-	public function __construct( $id ) {
-		$this->id = $id;
+	public function __construct( LinkTarget $target ) {
+		$this->target = $target;
 	}
 
 	public function doUpdate() {
-		$repo = GadgetRepo::singleton();
-		if ( $repo instanceof GadgetDefinitionNamespaceRepo ) {
-			$repo->purgeGadgetEntry( $this->id );
-		}
+		GadgetRepo::singleton()->handlePageUpdate( $this->target );
 	}
 }

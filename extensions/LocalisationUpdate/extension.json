@@ -10,7 +10,7 @@
 	],
 	"url": "https://www.mediawiki.org/wiki/Extension:LocalisationUpdate",
 	"descriptionmsg": "localisationupdate-desc",
-	"license-name": "GPL-2.0+",
+	"license-name": "GPL-2.0-or-later",
 	"type": "other",
 	"MessagesDirs": {
 		"LocalisationUpdate": [
@@ -18,19 +18,19 @@
 		]
 	},
 	"AutoloadClasses": {
-		"LocalisationUpdate": "LocalisationUpdate.class.php",
-		"LocalisationUpdate\\Updater": "Updater.php",
-		"QuickArrayReader": "QuickArrayReader.php",
-		"LocalisationUpdate\\Fetcher": "fetcher/Fetcher.php",
-		"LocalisationUpdate\\FetcherFactory": "fetcher/FetcherFactory.php",
-		"LocalisationUpdate\\FileSystemFetcher": "fetcher/FileSystemFetcher.php",
-		"LocalisationUpdate\\GitHubFetcher": "fetcher/GitHubFetcher.php",
-		"LocalisationUpdate\\HttpFetcher": "fetcher/HttpFetcher.php",
-		"LocalisationUpdate\\Finder": "finder/Finder.php",
-		"LocalisationUpdate\\JSONReader": "reader/JSONReader.php",
-		"LocalisationUpdate\\PHPReader": "reader/PHPReader.php",
-		"LocalisationUpdate\\Reader": "reader/Reader.php",
-		"LocalisationUpdate\\ReaderFactory": "reader/ReaderFactory.php"
+		"LocalisationUpdate": "includes/LocalisationUpdate.php",
+		"LocalisationUpdate\\Updater": "includes/Updater.php",
+		"QuickArrayReader": "includes/QuickArrayReader.php",
+		"LocalisationUpdate\\Fetcher": "includes/fetcher/Fetcher.php",
+		"LocalisationUpdate\\FetcherFactory": "includes/fetcher/FetcherFactory.php",
+		"LocalisationUpdate\\FileSystemFetcher": "includes/fetcher/FileSystemFetcher.php",
+		"LocalisationUpdate\\GitHubFetcher": "includes/fetcher/GitHubFetcher.php",
+		"LocalisationUpdate\\HttpFetcher": "includes/fetcher/HttpFetcher.php",
+		"LocalisationUpdate\\Finder": "includes/finder/Finder.php",
+		"LocalisationUpdate\\JSONReader": "includes/reader/JSONReader.php",
+		"LocalisationUpdate\\PHPReader": "includes/reader/PHPReader.php",
+		"LocalisationUpdate\\Reader": "includes/reader/Reader.php",
+		"LocalisationUpdate\\ReaderFactory": "includes/reader/ReaderFactory.php"
 	},
 	"Hooks": {
 		"LocalisationCacheRecache": [

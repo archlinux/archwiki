@@ -1,12 +1,15 @@
 <?php
 
 namespace RemexHtml\Tokenizer;
+
 use RemexHtml\PropGuard;
 
 /**
  * A namespaced attribute, as returned by Attributes::getObjects()
  */
 class Attribute {
+	use PropGuard;
+
 	public $qualifiedName;
 	public $namespaceURI;
 	public $prefix;
@@ -19,9 +22,5 @@ class Attribute {
 		$this->prefix = $prefix;
 		$this->localName = $localName;
 		$this->value = $value;
-	}
-
-	public function __set( $name, $value ) {
-		PropGuard::set( $this, $name, $value );
 	}
 }

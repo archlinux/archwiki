@@ -5,7 +5,7 @@ Demo.BrokenDialog = function DemoBrokenDialog( config ) {
 OO.inheritClass( Demo.BrokenDialog, OO.ui.ProcessDialog );
 Demo.BrokenDialog.static.title = 'Broken dialog';
 Demo.BrokenDialog.static.actions = [
-	{ action: 'save', label: 'Save', flags: [ 'primary', 'constructive' ] },
+	{ action: 'save', label: 'Save', flags: [ 'primary', 'progressive' ] },
 	{ action: 'delete', label: 'Delete', flags: 'destructive' },
 	{ action: 'cancel', label: 'Cancel', flags: [ 'safe', 'back' ] }
 ];

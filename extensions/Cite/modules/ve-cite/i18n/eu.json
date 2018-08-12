@@ -7,7 +7,8 @@
 			"Subi",
 			"Sator",
 			"Macofe",
-			"Mikel Ibaiba"
+			"Mikel Ibaiba",
+			"Asierog"
 		]
 	},
 	"visualeditor-cite-tool-definition.json": "nulu",
@@ -16,6 +17,12 @@
 	"visualeditor-cite-tool-name-news": "Albisteak",
 	"visualeditor-cite-tool-name-web": "Webgunea",
 	"cite-tool-definition.json": "nulu",
+	"cite-ve-changedesc-ref-group-both": "Erreferentzia taldea aldatu dute \"$1\" izatetik \"$2\" izatera",
+	"cite-ve-changedesc-ref-group-from": "Erreferentzia taldea aldatu dute \"$1\" izatetik talde orokorrera",
+	"cite-ve-changedesc-ref-group-to": "Erreferentzia taldea aldatu dute talde orokorretik \"$1\" izatera",
+	"cite-ve-changedesc-reflist-group-both": "Erreferentzia zerrendaren taldea aldatu dute \"$1\" izatetik \"$2\" izatera",
+	"cite-ve-changedesc-reflist-group-from": "Erreferentzia zerrendaren taldea aldatu dute \"$1\" izatetik talde orokorrera",
+	"cite-ve-changedesc-reflist-group-to": "Erreferentzia zerrendaren taldea aldatu dute talde orokorretik \"$1\" izatera",
 	"cite-ve-dialog-reference-editing-reused": "Erreferentzia hau $1{{PLURAL:$1|aldiz}} agertzen da orri honetan",
 	"cite-ve-dialog-reference-options-group-label": "Talde hau erabili",
 	"cite-ve-dialog-reference-options-group-placeholder": "Erreferentzia orokorrak",

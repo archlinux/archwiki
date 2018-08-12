@@ -48,7 +48,8 @@
 				widget.switchTopLinks( 'collapsed' );
 			} );
 
-		this.$topLinks.find( '.mw-recentchanges-toplinks-title' ).replaceWith( toplinksTitle.$element );
+		this.$topLinks.find( '.mw-recentchanges-toplinks-title' )
+			.replaceWith( toplinksTitle.$element.removeAttr( 'tabIndex' ) );
 
 		// Create two positions for the toplinks to toggle between
 		// in the table (first cell) or up above it
@@ -62,7 +63,6 @@
 		this.$element
 			.addClass( 'mw-rcfilters-ui-rcTopSectionWidget' )
 			.append(
-				this.$top,
 				$( '<div>' )
 					.addClass( 'mw-rcfilters-ui-table' )
 					.append(
@@ -82,6 +82,9 @@
 							)
 					)
 			);
+
+		// Hack: For jumpiness reasons, this should be a sibling of -head
+		$( '.rcfilters-head' ).before( this.$top );
 
 		// Initialize top links position
 		widget.switchTopLinks( topLinksCookieValue );
@@ -105,5 +108,6 @@
 		} else {
 			this.$tableTopLinks.append( this.$topLinks );
 		}
+		this.$topLinks.toggleClass( 'mw-recentchanges-toplinks-collapsed', state === 'collapsed' );
 	};
 }( mediaWiki ) );

@@ -8,21 +8,26 @@
 	 *
 	 * @constructor
 	 * @param {mw.rcfilters.Controller} controller
-	 * @param {mw.rcfilters.dm.FilterItem} model Item model
+	 * @param {mw.rcfilters.dm.FiltersViewModel} filtersViewModel
+	 * @param {mw.rcfilters.dm.FilterItem} invertModel
+	 * @param {mw.rcfilters.dm.FilterItem} itemModel Item model
 	 * @param {Object} config Configuration object
 	 * @cfg {jQuery} [$overlay] A jQuery object serving as overlay for popups
 	 */
-	mw.rcfilters.ui.TagItemWidget = function MwRcfiltersUiTagItemWidget( controller, model, config ) {
+	mw.rcfilters.ui.TagItemWidget = function MwRcfiltersUiTagItemWidget(
+		controller, filtersViewModel, invertModel, itemModel, config
+	) {
 		// Configuration initialization
 		config = config || {};
 
 		this.controller = controller;
-		this.model = model;
+		this.invertModel = invertModel;
+		this.filtersViewModel = filtersViewModel;
+		this.itemModel = itemModel;
 		this.selected = false;
 
 		mw.rcfilters.ui.TagItemWidget.parent.call( this, $.extend( {
-			data: this.model.getName(),
-			label: $( '<div>' ).html( this.model.getPrefixedLabel() ).contents()
+			data: this.itemModel.getName()
 		}, config ) );
 
 		this.$overlay = config.$overlay || this.$element;
@@ -49,10 +54,12 @@
 			.addClass( 'mw-rcfilters-ui-tagItemWidget-highlight' );
 
 		// Add title attribute with the item label to 'x' button
-		this.closeButton.setTitle( mw.msg( 'rcfilters-tag-remove', this.model.getLabel() ) );
+		this.closeButton.setTitle( mw.msg( 'rcfilters-tag-remove', this.itemModel.getLabel() ) );
 
 		// Events
-		this.model.connect( this, { update: 'onModelUpdate' } );
+		this.filtersViewModel.connect( this, { highlightChange: 'updateUiBasedOnState' } );
+		this.invertModel.connect( this, { update: 'updateUiBasedOnState' } );
+		this.itemModel.connect( this, { update: 'updateUiBasedOnState' } );
 
 		// Initialization
 		this.$overlay.append( this.popup.$element );
@@ -63,8 +70,7 @@
 			.on( 'mouseenter', this.onMouseEnter.bind( this ) )
 			.on( 'mouseleave', this.onMouseLeave.bind( this ) );
 
-		this.setCurrentMuteState();
-		this.setHighlightColor();
+		this.updateUiBasedOnState();
 	};
 
 	/* Initialization */
@@ -77,17 +83,34 @@
 	/**
 	 * Respond to model update event
 	 */
-	mw.rcfilters.ui.TagItemWidget.prototype.onModelUpdate = function () {
-		this.setCurrentMuteState();
-
+	mw.rcfilters.ui.TagItemWidget.prototype.updateUiBasedOnState = function () {
 		// Update label if needed
-		this.setLabel( $( '<div>' ).html( this.model.getPrefixedLabel() ).contents() );
+		var labelMsg = this.itemModel.getLabelMessageKey( this.invertModel.isSelected() );
+		if ( labelMsg ) {
+			this.setLabel( $( '<div>' ).append(
+				$( '<bdi>' ).html(
+					mw.message( labelMsg, mw.html.escape( this.itemModel.getLabel() ) ).parse()
+				)
+			).contents() );
+		} else {
+			this.setLabel(
+				$( '<bdi>' ).append(
+					this.itemModel.getLabel()
+				)
+			);
+		}
 
+		this.setCurrentMuteState();
 		this.setHighlightColor();
 	};
 
+	/**
+	 * Set the current highlight color for this item
+	 */
 	mw.rcfilters.ui.TagItemWidget.prototype.setHighlightColor = function () {
-		var selectedColor = this.model.isHighlightEnabled() ? this.model.getHighlightColor() : null;
+		var selectedColor = this.filtersViewModel.isHighlightEnabled() && this.itemModel.isHighlighted ?
+			this.itemModel.getHighlightColor() :
+			null;
 
 		this.$highlight
 			.attr( 'data-color', selectedColor )
@@ -106,7 +129,7 @@
 	 * Respond to mouse enter event
 	 */
 	mw.rcfilters.ui.TagItemWidget.prototype.onMouseEnter = function () {
-		var labelText = this.model.getStateMessage();
+		var labelText = this.itemModel.getStateMessage();
 
 		if ( labelText ) {
 			this.popupLabel.setLabel( labelText );
@@ -165,7 +188,7 @@
 	 * @return {string} Filter name
 	 */
 	mw.rcfilters.ui.TagItemWidget.prototype.getName = function () {
-		return this.model.getName();
+		return this.itemModel.getName();
 	};
 
 	/**
@@ -174,7 +197,7 @@
 	 * @return {string} Filter model
 	 */
 	mw.rcfilters.ui.TagItemWidget.prototype.getModel = function () {
-		return this.model;
+		return this.itemModel;
 	};
 
 	/**
@@ -183,7 +206,7 @@
 	 * @return {string} Filter view
 	 */
 	mw.rcfilters.ui.TagItemWidget.prototype.getView = function () {
-		return this.model.getGroupModel().getView();
+		return this.itemModel.getGroupModel().getView();
 	};
 
 	/**
@@ -194,7 +217,7 @@
 		this.popup.$element.detach();
 
 		// Disconnect events
-		this.model.disconnect( this );
+		this.itemModel.disconnect( this );
 		this.closeButton.disconnect( this );
 	};
 }( mediaWiki, jQuery ) );

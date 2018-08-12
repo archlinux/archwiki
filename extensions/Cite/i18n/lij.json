@@ -14,7 +14,6 @@
 	"cite_error_ref_no_input": "Tag <code>&lt;ref&gt;</code> non vallido: i ref sença nomme no poeuan ese voeui",
 	"cite_error_references_duplicate_key": "Tag <code>&lt;ref&gt;</code> non vallido; o nomme \"$1\" o l'è stæto definio ciù votte con di contegnui despægi",
 	"cite_error_references_invalid_parameters": "Tag <code>&lt;references&gt;</code> non vallido: parametri non ammissi, adoeuvia <code>&lt;references /&gt;</code>",
-	"cite_error_references_invalid_parameters_group": "Tag <code>&lt;references&gt;</code> non vallido;\nsolo o parametro \"group\" o l'è permisso.\nAdoeuvia <code>&lt;references /&gt;</code> ò <code>&lt;references group=\"...\" /&gt;</code>",
 	"cite_error_references_no_backlink_label": "Etichette de rimando personalizæ esaorie, aomentine o nummero into messaggio <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>",
 	"cite_error_no_link_label_group": "Etichette pe inganci personalizæ do groppo \"$1\" esaorie, aomentine o nummero into messaggio <nowiki>[[MediaWiki:$2]]</nowiki>",
 	"cite_error_references_no_text": "Marcatî <code>&lt;ref&gt;</code> non vallido; no l'è stæto indicou nisciun testo pe-o marcatô <code>$1</code>",

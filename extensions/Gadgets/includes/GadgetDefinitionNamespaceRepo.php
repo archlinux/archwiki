@@ -1,6 +1,8 @@
 <?php
 
+use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MediaWikiServices;
+use Wikimedia\Rdbms\Database;
 
 /**
  * GadgetRepo implementation where each gadget has a page in
@@ -35,7 +37,7 @@ class GadgetDefinitionNamespaceRepo extends GadgetRepo {
 			$key,
 			self::CACHE_TTL,
 			function ( $oldValue, &$ttl, array &$setOpts ) {
-				$dbr = wfGetDB( DB_SLAVE );
+				$dbr = wfGetDB( DB_REPLICA );
 				$setOpts += Database::getCacheSetOptions( $dbr );
 
 				return $dbr->selectFieldValues(
@@ -51,6 +53,34 @@ class GadgetDefinitionNamespaceRepo extends GadgetRepo {
 				'lockTSE' => 30
 			]
 		);
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function handlePageUpdate( LinkTarget $target ) {
+		if ( $target->inNamespace( NS_GADGET_DEFINITION ) ) {
+			$this->purgeGadgetEntry( $target->getText() );
+		}
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function handlePageCreation( LinkTarget $target ) {
+		if ( $target->inNamespace( NS_GADGET_DEFINITION ) ) {
+			$this->purgeGadgetIdsList();
+		}
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function handlePageDeletion( LinkTarget $target ) {
+		if ( $target->inNamespace( NS_GADGET_DEFINITION ) ) {
+			$this->purgeGadgetIdsList();
+			$this->purgeGadgetEntry( $target->getText() );
+		}
 	}
 
 	/**
@@ -70,8 +100,11 @@ class GadgetDefinitionNamespaceRepo extends GadgetRepo {
 		$gadget = $this->wanCache->getWithSetCallback(
 			$key,
 			self::CACHE_TTL,
+			/**
+			 * @suppress PhanTypeMismatchArgument
+			 */
 			function ( $old, &$ttl, array &$setOpts ) use ( $id ) {
-				$setOpts += Database::getCacheSetOptions( wfGetDB( DB_SLAVE ) );
+				$setOpts += Database::getCacheSetOptions( wfGetDB( DB_REPLICA ) );
 				$title = Title::makeTitleSafe( NS_GADGET_DEFINITION, $id );
 				if ( !$title ) {
 					$ttl = WANObjectCache::TTL_UNCACHEABLE;
@@ -124,7 +157,7 @@ class GadgetDefinitionNamespaceRepo extends GadgetRepo {
 	}
 
 	/**
-	 * @param strng $id
+	 * @param string $id
 	 * @return string
 	 */
 	private function getGadgetCacheKey( $id ) {

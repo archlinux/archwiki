@@ -39,16 +39,6 @@ $demoContainer->appendContent( new OOUI\FieldsetLayout( [
 		),
 		new OOUI\FieldLayout(
 			new OOUI\ButtonWidget( [
-				'label' => 'Constructive',
-				'flags' => [ 'constructive' ]
-			] ),
-			[
-				'label' => "ButtonWidget (constructive, deprecated)\xE2\x80\x8E",
-				'align' => 'top'
-			]
-		),
-		new OOUI\FieldLayout(
-			new OOUI\ButtonWidget( [
 				'label' => 'Destructive',
 				'flags' => [ 'destructive' ]
 			] ),
@@ -69,16 +59,6 @@ $demoContainer->appendContent( new OOUI\FieldsetLayout( [
 		),
 		new OOUI\FieldLayout(
 			new OOUI\ButtonWidget( [
-				'label' => 'Primary constructive',
-				'flags' => [ 'primary', 'constructive' ]
-			] ),
-			[
-				'label' => "ButtonWidget (primary, constructive, deprecated)\xE2\x80\x8E",
-				'align' => 'top'
-			]
-		),
-		new OOUI\FieldLayout(
-			new OOUI\ButtonWidget( [
 				'label' => 'Primary destructive',
 				'flags' => [ 'primary', 'destructive' ]
 			] ),
@@ -94,17 +74,6 @@ $demoContainer->appendContent( new OOUI\FieldsetLayout( [
 			] ),
 			[
 				'label' => "ButtonWidget (disabled)\xE2\x80\x8E",
-				'align' => 'top'
-			]
-		),
-		new OOUI\FieldLayout(
-			new OOUI\ButtonWidget( [
-				'label' => 'Progressive',
-				'flags' => [ 'progressive' ],
-				'disabled' => true
-			] ),
-			[
-				'label' => "ButtonWidget (progressive, disabled)\xE2\x80\x8E",
 				'align' => 'top'
 			]
 		),
@@ -211,18 +180,6 @@ $demoContainer->appendContent( new OOUI\FieldsetLayout( [
 		new OOUI\FieldLayout(
 			new OOUI\ButtonWidget( [
 				'framed' => false,
-				'flags' => [ 'constructive' ],
-				'icon' => 'add',
-				'label' => 'Constructive'
-			] ),
-			[
-				'label' => "ButtonWidget (frameless, constructive)\xE2\x80\x8E",
-				'align' => 'top'
-			]
-		),
-		new OOUI\FieldLayout(
-			new OOUI\ButtonWidget( [
-				'framed' => false,
 				'flags' => [ 'destructive' ],
 				'label' => 'Cancel'
 			] ),
@@ -240,19 +197,6 @@ $demoContainer->appendContent( new OOUI\FieldsetLayout( [
 			] ),
 			[
 				'label' => "ButtonWidget (frameless, disabled)\xE2\x80\x8E",
-				'align' => 'top'
-			]
-		),
-		new OOUI\FieldLayout(
-			new OOUI\ButtonWidget( [
-				'framed' => false,
-				'flags' => [ 'constructive' ],
-				'icon' => 'tag',
-				'label' => 'Constructive',
-				'disabled' => true
-			] ),
-			[
-				'label' => "ButtonWidget (frameless, constructive, disabled)\xE2\x80\x8E",
 				'align' => 'top'
 			]
 		),
@@ -324,16 +268,6 @@ $demoContainer->appendContent( new OOUI\FieldsetLayout( [
 				'label' => "ButtonInputWidget (with accesskey and title)\xE2\x80\x8E",
 				'align' => 'top',
 			]
-		),
-		new OOUI\FieldLayout(
-			new OOUI\ButtonInputWidget( [
-				'label' => 'Access key: I',
-				'accessKey' => 'i'
-			] ),
-			[
-				'label' => "ButtonInputWidget (with accesskey)\xE2\x80\x8E",
-				'align' => 'top'
-			]
 		)
 	]
 ] ) );
@@ -354,7 +288,7 @@ $demoContainer->appendContent( new OOUI\FieldsetLayout( [
 						'label' => 'Two'
 					] ),
 					new OOUI\ButtonWidget( [
-						'indicator' => 'required',
+						'indicator' => 'clear',
 						'label' => 'Three'
 					] )
 				]
@@ -434,6 +368,13 @@ $demoContainer->appendContent( new OOUI\FieldsetLayout( [
 			]
 		),
 		new OOUI\FieldLayout(
+			new OOUI\SearchInputWidget(),
+			[
+				'label' => "SearchInputWidget",
+				'align' => 'top'
+			]
+		),
+		new OOUI\FieldLayout(
 			new OOUI\TextInputWidget( [
 				'value' => 'Access key: S',
 				'accessKey' => 's'
@@ -467,35 +408,32 @@ $demoContainer->appendContent( new OOUI\FieldsetLayout( [
 			]
 		),
 		new OOUI\FieldLayout(
-			new OOUI\TextInputWidget( [
-				'multiline' => true,
+			new OOUI\MultilineTextInputWidget( [
 				'value' => "Multiline\nMultiline"
 			] ),
 			[
-				'label' => "TextInputWidget (multiline)\xE2\x80\x8E",
+				'label' => "MultilineTextInputWidget \xE2\x80\x8E",
 				'align' => 'top'
 			]
 		),
 		new OOUI\FieldLayout(
-			new OOUI\TextInputWidget( [
-				'multiline' => true,
+			new OOUI\MultilineTextInputWidget( [
 				'rows' => 15,
 				'value' => "Multiline\nMultiline"
 			] ),
 			[
-				'label' => "TextInputWidget (multiline, rows=15)\xE2\x80\x8E",
+				'label' => "MultilineTextInputWidget (rows=15)\xE2\x80\x8E",
 				'align' => 'top'
 			]
 		),
 		new OOUI\FieldLayout(
-			new OOUI\TextInputWidget( [
-				'multiline' => true,
+			new OOUI\MultilineTextInputWidget( [
 				'value' => "Multiline\nMultiline",
 				'icon' => 'tag',
 				'indicator' => 'required'
 			] ),
 			[
-				'label' => "TextInputWidget (multiline, icon, indicator)\xE2\x80\x8E",
+				'label' => "MultilineTextInputWidget (icon, indicator)\xE2\x80\x8E",
 				'align' => 'top'
 			]
 		)

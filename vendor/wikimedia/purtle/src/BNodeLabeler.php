@@ -10,7 +10,7 @@ use InvalidArgumentException;
  * This serves as a holder for the bnode counter that can be shared between multiple RdfWriter
  * instances, to avoid conflicting ids.
  *
- * @license GPL-2.0+
+ * @license GPL-2.0-or-later
  * @author Daniel Kinzler
  */
 class BNodeLabeler {

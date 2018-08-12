@@ -13,7 +13,6 @@
 	"cite_error_ref_no_input": "Neplatné volanie; nebol špecifikovaný vstup",
 	"cite_error_references_duplicate_key": "Neplatná značka <code>&lt;ref&gt;</code>; názov „$1“ je použitý viackrát s rôznym obsahom",
 	"cite_error_references_invalid_parameters": "Neplatné parametre; neočakávli sa žiadne",
-	"cite_error_references_invalid_parameters_group": "Neplatná značka <code>&lt;references&gt;</code>;\nje povolený iba parameter „group“.\nPoužite <code>&lt;references /&gt;</code> alebo <code>&lt;references group=\"...\" /&gt;</code>",
 	"cite_error_references_no_backlink_label": "Minuli sa generované návestia spätných odkazov, definujte viac v správe <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>",
 	"cite_error_no_link_label_group": "Vyčerpané prispôsobené označenia odkazov pre skupinu „$1“.\nDefinujte ďalšie v správe <nowiki>[[MediaWiki:$2]]</nowiki>.",
 	"cite_error_references_no_text": "Neplatná značka <code>&lt;ref&gt;</code>; nebol zadaný text pre referencie s názvom <code>$1</code>",

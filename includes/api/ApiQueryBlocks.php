@@ -1,9 +1,5 @@
 <?php
 /**
- *
- *
- * Created on Sep 10, 2007
- *
  * Copyright © 2007 Roan Kattouw "<Firstname>.<Lastname>@gmail.com"
  *
  * This program is free software; you can redistribute it and/or modify
@@ -37,7 +33,7 @@ class ApiQueryBlocks extends ApiQueryBase {
 
 	public function execute() {
 		$db = $this->getDB();
-		$commentStore = new CommentStore( 'ipb_reason' );
+		$commentStore = CommentStore::getStore();
 		$params = $this->extractRequestParams();
 		$this->requireMaxOneParameter( $params, 'users', 'ip' );
 
@@ -59,8 +55,12 @@ class ApiQueryBlocks extends ApiQueryBase {
 		$this->addFields( [ 'ipb_auto', 'ipb_id', 'ipb_timestamp' ] );
 
 		$this->addFieldsIf( [ 'ipb_address', 'ipb_user' ], $fld_user || $fld_userid );
-		$this->addFieldsIf( 'ipb_by_text', $fld_by );
-		$this->addFieldsIf( 'ipb_by', $fld_byid );
+		if ( $fld_by || $fld_byid ) {
+			$actorQuery = ActorMigration::newMigration()->getJoin( 'ipb_by' );
+			$this->addTables( $actorQuery['tables'] );
+			$this->addFields( $actorQuery['fields'] );
+			$this->addJoinConds( $actorQuery['joins'] );
+		}
 		$this->addFieldsIf( 'ipb_expiry', $fld_expiry );
 		$this->addFieldsIf( [ 'ipb_range_start', 'ipb_range_end' ], $fld_range );
 		$this->addFieldsIf( [ 'ipb_anon_only', 'ipb_create_account', 'ipb_enable_autoblock',
@@ -68,7 +68,7 @@ class ApiQueryBlocks extends ApiQueryBase {
 			$fld_flags );
 
 		if ( $fld_reason ) {
-			$commentQuery = $commentStore->getJoin();
+			$commentQuery = $commentStore->getJoin( 'ipb_reason' );
 			$this->addTables( $commentQuery['tables'] );
 			$this->addFields( $commentQuery['fields'] );
 			$this->addJoinConds( $commentQuery['joins'] );
@@ -212,7 +212,7 @@ class ApiQueryBlocks extends ApiQueryBase {
 				$block['expiry'] = ApiResult::formatExpiry( $row->ipb_expiry );
 			}
 			if ( $fld_reason ) {
-				$block['reason'] = $commentStore->getComment( $row )->text;
+				$block['reason'] = $commentStore->getComment( 'ipb_reason', $row )->text;
 			}
 			if ( $fld_range && !$row->ipb_auto ) {
 				$block['rangestart'] = IP::formatHex( $row->ipb_range_start );

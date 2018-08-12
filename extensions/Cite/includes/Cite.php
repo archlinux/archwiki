@@ -19,8 +19,12 @@
  *
  * @author Ævar Arnfjörð Bjarmason <avarab@gmail.com>
  * @copyright Copyright © 2005, Ævar Arnfjörð Bjarmason
- * @license http://www.gnu.org/copyleft/gpl.html GNU General Public License 2.0 or later
+ * @license GPL-2.0-or-later
  */
+
+use MediaWiki\MediaWikiServices;
+use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\Database;
 
 /**
  * WARNING: MediaWiki core hardcodes this class name to check if the
@@ -269,12 +273,18 @@ class Cite {
 			if ( $group != $this->mReferencesGroup ) {
 				# <ref> and <references> have conflicting group attributes.
 				$this->mReferencesErrors[] =
-					$this->error( 'cite_error_references_group_mismatch', htmlspecialchars( $group ) );
+					$this->error(
+						'cite_error_references_group_mismatch',
+						Sanitizer::safeEncodeAttribute( $group )
+					);
 			} elseif ( $str !== '' ) {
 				if ( !$isSectionPreview && !isset( $this->mRefs[$group] ) ) {
 					# Called with group attribute not defined in text.
 					$this->mReferencesErrors[] =
-						$this->error( 'cite_error_references_missing_group', htmlspecialchars( $group ) );
+						$this->error(
+							'cite_error_references_missing_group',
+							Sanitizer::safeEncodeAttribute( $group )
+						);
 				} elseif ( $key === null || $key === '' ) {
 					# <ref> calls inside <references> must be named
 					$this->mReferencesErrors[] =
@@ -282,7 +292,7 @@ class Cite {
 				} elseif ( !$isSectionPreview && !isset( $this->mRefs[$group][$key] ) ) {
 					# Called with name attribute not defined in text.
 					$this->mReferencesErrors[] =
-						$this->error( 'cite_error_references_missing_key', $key );
+						$this->error( 'cite_error_references_missing_key', Sanitizer::safeEncodeAttribute( $key ) );
 				} else {
 					if (
 						isset( $this->mRefs[$group][$key]['text'] ) &&
@@ -301,7 +311,7 @@ class Cite {
 			} else {
 				# <ref> called in <references> has no content.
 				$this->mReferencesErrors[] =
-					$this->error( 'cite_error_empty_references_define', $key );
+					$this->error( 'cite_error_empty_references_define', Sanitizer::safeEncodeAttribute( $key ) );
 			}
 			return '';
 		}
@@ -331,7 +341,9 @@ class Cite {
 			return $this->error( 'cite_error_ref_no_key' );
 		}
 
-		if ( preg_match( '/^[0-9]+$/', $key ) || preg_match( '/^[0-9]+$/', $follow ) ) {
+		if ( is_string( $key ) && preg_match( '/^[0-9]+$/', $key ) ||
+			is_string( $follow ) && preg_match( '/^[0-9]+$/', $follow )
+		) {
 			# Numeric names mess up the resulting id's, potentially produ-
 			# cing duplicate id's in the XHTML.  The Right Thing To Do
 			# would be to mangle them, but it's not really high-priority
@@ -382,7 +394,6 @@ class Cite {
 	 *  "group" : Group to which it belongs. Needs to be passed to <references /> too.
 	 *  "follow" : If the current reference is the continuation of another, key of that reference.
 	 *
-	 *
 	 * @param string[] $argv The argument vector
 	 * @return mixed false on invalid input, a string on valid
 	 *               input and null on no input
@@ -403,13 +414,13 @@ class Cite {
 			}
 			if ( isset( $argv['name'] ) ) {
 				// Key given.
-				$key = Sanitizer::escapeId( $argv['name'], 'noninitial' );
+				$key = trim( $argv['name'] );
 				unset( $argv['name'] );
 				--$cnt;
 			}
 			if ( isset( $argv['follow'] ) ) {
 				// Follow given.
-				$follow = Sanitizer::escapeId( $argv['follow'], 'noninitial' );
+				$follow = trim( $argv['follow'] );
 				unset( $argv['follow'] );
 				--$cnt;
 			}
@@ -444,7 +455,7 @@ class Cite {
 	 * @throws Exception
 	 * @return string
 	 */
-	private function stack( $str, $key = null, $group, $follow, array $call ) {
+	private function stack( $str, $key, $group, $follow, array $call ) {
 		if ( !isset( $this->mRefs[$group] ) ) {
 			$this->mRefs[$group] = [];
 		}
@@ -746,30 +757,8 @@ class Cite {
 			"\n" . implode( "\n", $ent ) . "\n"
 		);
 
-		// Let's try to cache it.
-		global $wgCiteCacheReferences, $wgMemc;
-		$data = false;
-		if ( $wgCiteCacheReferences ) {
-			$cacheKey = wfMemcKey(
-				'citeref',
-				md5( $parserInput ),
-				$this->mParser->Title()->getArticleID()
-			);
-			$data = $wgMemc->get( $cacheKey );
-		}
-
-		if ( !$data || !$this->mParser->isValidHalfParsedText( $data ) ) {
-			// Live hack: parse() adds two newlines on WM, can't reproduce it locally -ævar
-			$ret = rtrim( $this->mParser->recursiveTagParse( $parserInput ), "\n" );
-
-			if ( $wgCiteCacheReferences ) {
-				$serData = $this->mParser->serializeHalfParsedText( $ret );
-				$wgMemc->set( $cacheKey, $serData, 86400 );
-			}
-
-		} else {
-			$ret = $this->mParser->unserializeHalfParsedText( $data );
-		}
+		// Live hack: parse() adds two newlines on WM, can't reproduce it locally -ævar
+		$ret = rtrim( $this->mParser->recursiveTagParse( $parserInput ), "\n" );
 
 		if ( $responsive ) {
 			// Use a DIV wrap because column-count on a list directly is broken in Chrome.
@@ -806,8 +795,12 @@ class Cite {
 		if ( !is_array( $val ) ) {
 			return wfMessage(
 					'cite_references_link_one',
-					self::getReferencesKey( $key ),
-					$this->refKey( $key ),
+					$this->normalizeKey(
+						self::getReferencesKey( $key )
+					),
+					$this->normalizeKey(
+						$this->refKey( $key )
+					),
 					$this->referenceText( $key, $val )
 				)->inContentLanguage()->plain();
 		}
@@ -815,14 +808,18 @@ class Cite {
 		if ( isset( $val['follow'] ) ) {
 			return wfMessage(
 					'cite_references_no_link',
-					self::getReferencesKey( $val['follow'] ),
+					$this->normalizeKey(
+						self::getReferencesKey( $val['follow'] )
+					),
 					$text
 				)->inContentLanguage()->plain();
 		}
 		if ( !isset( $val['count'] ) ) {
 			// this handles the case of section preview for list-defined references
 			return wfMessage( 'cite_references_link_many',
-					self::getReferencesKey( $key . "-" . ( isset( $val['key'] ) ? $val['key'] : '' ) ),
+					$this->normalizeKey(
+						self::getReferencesKey( $key . "-" . ( isset( $val['key'] ) ? $val['key'] : '' ) )
+					),
 					'',
 					$text
 				)->inContentLanguage()->plain();
@@ -830,9 +827,13 @@ class Cite {
 		if ( $val['count'] < 0 ) {
 			return wfMessage(
 					'cite_references_link_one',
-					self::getReferencesKey( $val['key'] ),
-					# $this->refKey( $val['key'], $val['count'] ),
-					$this->refKey( $val['key'] ),
+					$this->normalizeKey(
+						self::getReferencesKey( $val['key'] )
+					),
+					$this->normalizeKey(
+						# $this->refKey( $val['key'], $val['count'] )
+						$this->refKey( $val['key'] )
+					),
 					$text
 				)->inContentLanguage()->plain();
 			// Standalone named reference, I want to format this like an
@@ -843,9 +844,13 @@ class Cite {
 		if ( $val['count'] === 0 ) {
 			return wfMessage(
 					'cite_references_link_one',
-					self::getReferencesKey( $key . "-" . $val['key'] ),
-					# $this->refKey( $key, $val['count'] ),
-					$this->refKey( $key, $val['key'] . "-" . $val['count'] ),
+					$this->normalizeKey(
+						self::getReferencesKey( $key . "-" . $val['key'] )
+					),
+					$this->normalizeKey(
+						# $this->refKey( $key, $val['count'] ),
+						$this->refKey( $key, $val['key'] . "-" . $val['count'] )
+					),
 					$text
 				)->inContentLanguage()->plain();
 		// Named references with >1 occurrences
@@ -855,7 +860,9 @@ class Cite {
 		for ( $i = 0; $i <= $val['count']; ++$i ) {
 			$links[] = wfMessage(
 					'cite_references_link_many_format',
-					$this->refKey( $key, $val['key'] . "-$i" ),
+					$this->normalizeKey(
+						$this->refKey( $key, $val['key'] . "-$i" )
+					),
 					$this->referencesFormatEntryNumericBacklinkLabel( $val['number'], $i, $val['count'] ),
 					$this->referencesFormatEntryAlternateBacklinkLabel( $i )
 			)->inContentLanguage()->plain();
@@ -864,7 +871,9 @@ class Cite {
 		$list = $this->listToText( $links );
 
 		return wfMessage( 'cite_references_link_many',
-				self::getReferencesKey( $key . "-" . $val['key'] ),
+				$this->normalizeKey(
+					self::getReferencesKey( $key . "-" . $val['key'] )
+				),
 				$list,
 				$text
 			)->inContentLanguage()->plain();
@@ -893,8 +902,8 @@ class Cite {
 	 *
 	 * @static
 	 *
-	 * @param int $base The base
-	 * @param int $offset The offset
+	 * @param int $base
+	 * @param int $offset
 	 * @param int $max Maximum value expected.
 	 * @return string
 	 */
@@ -913,7 +922,7 @@ class Cite {
 	 * 'b', 'c', ...]. Return an error if the offset > the # of
 	 * array items
 	 *
-	 * @param int $offset The offset
+	 * @param int $offset
 	 *
 	 * @return string
 	 */
@@ -935,7 +944,7 @@ class Cite {
 	 * [ 'a', 'b', 'c', ...].
 	 * Return an error if the offset > the # of array items
 	 *
-	 * @param int $offset The offset
+	 * @param int $offset
 	 * @param string $group The group name
 	 * @param string $label The text to use if there's no message for them.
 	 *
@@ -966,7 +975,7 @@ class Cite {
 	 *
 	 * @static
 	 *
-	 * @param string $key The key
+	 * @param string $key
 	 * @param int $num The number of the key
 	 * @return string A key for use in wikitext
 	 */
@@ -988,7 +997,7 @@ class Cite {
 	 *
 	 * @static
 	 *
-	 * @param string $key The key
+	 * @param string $key
 	 * @return string A key for use in wikitext
 	 */
 	public static function getReferencesKey( $key ) {
@@ -1017,16 +1026,34 @@ class Cite {
 		global $wgContLang;
 		$label = is_null( $label ) ? ++$this->mGroupCnt[$group] : $label;
 
-		return
-			$this->mParser->recursiveTagParse(
+		return $this->mParser->recursiveTagParse(
 				wfMessage(
 					'cite_reference_link',
-					$this->refKey( $key, $count ),
-					self::getReferencesKey( $key . $subkey ),
-					$this->getLinkLabel( $label, $group,
-						( ( $group === self::DEFAULT_GROUP ) ? '' : "$group " ) . $wgContLang->formatNum( $label ) )
+					$this->normalizeKey(
+						$this->refKey( $key, $count )
+					),
+					$this->normalizeKey(
+						self::getReferencesKey( $key . $subkey )
+					),
+					Sanitizer::safeEncodeAttribute(
+						$this->getLinkLabel( $label, $group,
+							( ( $group === self::DEFAULT_GROUP ) ? '' : "$group " ) . $wgContLang->formatNum( $label ) )
+					)
 				)->inContentLanguage()->plain()
 			);
+	}
+
+	/**
+	 * Normalizes and sanitizes a reference key
+	 *
+	 * @param string $key
+	 * @return string
+	 */
+	private function normalizeKey( $key ) {
+		$key = Sanitizer::escapeIdForAttribute( $key );
+		$key = Sanitizer::safeEncodeAttribute( $key );
+
+		return $key;
 	}
 
 	/**
@@ -1088,7 +1115,7 @@ class Cite {
 	 * Gets run when Parser::clearState() gets run, since we don't
 	 * want the counts to transcend pages and other instances
 	 *
-	 * @param Parser $parser
+	 * @param Parser &$parser
 	 *
 	 * @return bool
 	 */
@@ -1146,8 +1173,8 @@ class Cite {
 	 * references tags and does not add the errors.
 	 *
 	 * @param bool $afterParse True if called from the ParserAfterParse hook
-	 * @param Parser $parser
-	 * @param string $text
+	 * @param Parser &$parser
+	 * @param string &$text
 	 *
 	 * @return bool
 	 */
@@ -1185,7 +1212,10 @@ class Cite {
 				$s .= $this->referencesFormat( $group, $wgCiteResponsiveReferences );
 			} else {
 				$s .= "\n<br />" .
-					$this->error( 'cite_error_group_refs_without_references', htmlspecialchars( $group ) );
+					$this->error(
+						'cite_error_group_refs_without_references',
+						Sanitizer::safeEncodeAttribute( $group )
+					);
 			}
 		}
 		if ( $isSectionPreview && $s !== '' ) {
@@ -1209,7 +1239,7 @@ class Cite {
 	 * This is called by each <references/> tag, and by checkRefsNoReferences
 	 * Assumes $this->mRefs[$group] is set
 	 *
-	 * @param $group
+	 * @param string $group
 	 */
 	private function saveReferencesData( $group = self::DEFAULT_GROUP ) {
 		global $wgCiteStoreReferencesData;
@@ -1243,7 +1273,7 @@ class Cite {
 	 * If any ref or reference reference tag is in the text,
 	 * the entire page should be reparsed, so we return false in that case.
 	 *
-	 * @param $output
+	 * @param string &$output
 	 *
 	 * @return bool
 	 */
@@ -1283,7 +1313,7 @@ class Cite {
 	 * Return an error message based on an error ID
 	 *
 	 * @param string $key   Message name for the error
-	 * @param string|null $param Parameter to pass to the message
+	 * @param string[]|string|null $param Parameter to pass to the message
 	 * @param string $parse Whether to parse the message ('parse') or not ('noparse')
 	 * @return string XHTML or wikitext ready for output
 	 */
@@ -1377,7 +1407,7 @@ class Cite {
 		if ( !$wgCiteStoreReferencesData ) {
 			return false;
 		}
-		$cache = ObjectCache::getMainWANInstance();
+		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
 		$key = $cache->makeKey( self::EXT_DATA_KEY, $title->getArticleID() );
 		return $cache->getWithSetCallback(
 			$key,
@@ -1400,12 +1430,12 @@ class Cite {
 	 * Returns json_decoded uncompressed string, with validation of json
 	 *
 	 * @param Title $title
-	 * @param DatabaseBase $dbr
+	 * @param IDatabase $dbr
 	 * @param string $string
 	 * @param int $i
 	 * @return array|false
 	 */
-	private static function recursiveFetchRefsFromDB( Title $title, DatabaseBase $dbr,
+	private static function recursiveFetchRefsFromDB( Title $title, IDatabase $dbr,
 		$string = '', $i = 1 ) {
 		$id = $title->getArticleID();
 		$result = $dbr->selectField(

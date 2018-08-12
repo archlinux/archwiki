@@ -55,7 +55,7 @@ class MWException extends Exception {
 		global $wgLang;
 
 		foreach ( $this->getTrace() as $frame ) {
-			if ( isset( $frame['class'] ) && $frame['class'] === 'LocalisationCache' ) {
+			if ( isset( $frame['class'] ) && $frame['class'] === LocalisationCache::class ) {
 				return false;
 			}
 		}
@@ -102,7 +102,7 @@ class MWException extends Exception {
 		} else {
 			$logId = WebRequest::getRequestId();
 			$type = static::class;
-			return "<div class=\"errorbox\">" .
+			return Html::errorBox(
 			htmlspecialchars(
 				'[' . $logId . '] ' .
 				gmdate( 'Y-m-d H:i:s' ) . ": " .
@@ -112,7 +112,7 @@ class MWException extends Exception {
 					$logId,
 					MWExceptionHandler::getURL( $this )
 				)
-			) . "</div>\n" .
+			) ) .
 			"<!-- Set \$wgShowExceptionDetails = true; " .
 			"at the bottom of LocalSettings.php to show detailed " .
 			"debugging information. -->";
@@ -189,7 +189,7 @@ class MWException extends Exception {
 		} elseif ( self::isCommandLine() ) {
 			$message = $this->getText();
 			// T17602: STDERR may not be available
-			if ( defined( 'STDERR' ) ) {
+			if ( !defined( 'MW_PHPUNIT_TEST' ) && defined( 'STDERR' ) ) {
 				fwrite( STDERR, $message );
 			} else {
 				echo $message;

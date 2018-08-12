@@ -7,7 +7,7 @@ class MailAddressTest extends MediaWikiTestCase {
 	 */
 	public function testConstructor() {
 		$ma = new MailAddress( 'foo@bar.baz', 'UserName', 'Real name' );
-		$this->assertInstanceOf( 'MailAddress', $ma );
+		$this->assertInstanceOf( MailAddress::class, $ma );
 	}
 
 	/**
@@ -17,7 +17,7 @@ class MailAddressTest extends MediaWikiTestCase {
 		if ( wfIsWindows() ) {
 			$this->markTestSkipped( 'This test only works on non-Windows platforms' );
 		}
-		$user = $this->createMock( 'User' );
+		$user = $this->createMock( User::class );
 		$user->expects( $this->any() )->method( 'getName' )->will(
 			$this->returnValue( 'UserName' )
 		);
@@ -29,11 +29,11 @@ class MailAddressTest extends MediaWikiTestCase {
 		);
 
 		$ma = MailAddress::newFromUser( $user );
-		$this->assertInstanceOf( 'MailAddress', $ma );
+		$this->assertInstanceOf( MailAddress::class, $ma );
 		$this->setMwGlobals( 'wgEnotifUseRealName', true );
-		$this->assertEquals( 'Real name <foo@bar.baz>', $ma->toString() );
+		$this->assertEquals( '"Real name" <foo@bar.baz>', $ma->toString() );
 		$this->setMwGlobals( 'wgEnotifUseRealName', false );
-		$this->assertEquals( 'UserName <foo@bar.baz>', $ma->toString() );
+		$this->assertEquals( '"UserName" <foo@bar.baz>', $ma->toString() );
 	}
 
 	/**
@@ -51,11 +51,16 @@ class MailAddressTest extends MediaWikiTestCase {
 
 	public static function provideToString() {
 		return [
-			[ true, 'foo@bar.baz', 'FooBar', 'Foo Bar', 'Foo Bar <foo@bar.baz>' ],
-			[ true, 'foo@bar.baz', 'UserName', null, 'UserName <foo@bar.baz>' ],
-			[ true, 'foo@bar.baz', 'AUser', 'My real name', 'My real name <foo@bar.baz>' ],
+			[ true, 'foo@bar.baz', 'FooBar', 'Foo Bar', '"Foo Bar" <foo@bar.baz>' ],
+			[ true, 'foo@bar.baz', 'UserName', null, '"UserName" <foo@bar.baz>' ],
+			[ true, 'foo@bar.baz', 'AUser', 'My real name', '"My real name" <foo@bar.baz>' ],
+			[ true, 'foo@bar.baz', 'AUser', 'My "real" name', '"My \"real\" name" <foo@bar.baz>' ],
+			[ true, 'foo@bar.baz', 'AUser', 'My "A/B" test', '"My \"A/B\" test" <foo@bar.baz>' ],
+			[ true, 'foo@bar.baz', 'AUser', 'E=MC2', '=?UTF-8?Q?E=3DMC2?= <foo@bar.baz>' ],
+			// A backslash (\) should be escaped (\\). In a string literal that is \\\\ (4x).
+			[ true, 'foo@bar.baz', 'AUser', 'My "B\C" test', '"My \"B\\\\C\" test" <foo@bar.baz>' ],
 			[ true, 'foo@bar.baz', 'A.user.name', 'my@real.name', '"my@real.name" <foo@bar.baz>' ],
-			[ false, 'foo@bar.baz', 'AUserName', 'Some real name', 'AUserName <foo@bar.baz>' ],
+			[ false, 'foo@bar.baz', 'AUserName', 'Some real name', '"AUserName" <foo@bar.baz>' ],
 			[ false, 'foo@bar.baz', '', '', 'foo@bar.baz' ],
 			[ true, 'foo@bar.baz', '', '', 'foo@bar.baz' ],
 			[ true, '', '', '', '' ],

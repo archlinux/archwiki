@@ -53,8 +53,8 @@ class LogFormatterTest extends MediaWikiLangTestCase {
 
 		$this->setMwGlobals( [
 			'wgLogTypes' => [ 'phpunit' ],
-			'wgLogActionsHandlers' => [ 'phpunit/test' => 'LogFormatter',
-				'phpunit/param' => 'LogFormatter' ],
+			'wgLogActionsHandlers' => [ 'phpunit/test' => LogFormatter::class,
+				'phpunit/param' => LogFormatter::class ],
 			'wgUser' => User::newFromName( 'Testuser' ),
 		] );
 
@@ -307,6 +307,10 @@ class LogFormatterTest extends MediaWikiLangTestCase {
 			[ '4:title-link:key', 'project:foo', [
 				'key_ns' => NS_PROJECT,
 				'key_title' => Title::newFromText( 'project:foo' )->getFullText(),
+			] ],
+			[ '4:title-link:key', '<invalid>', [
+				'key_ns' => NS_SPECIAL,
+				'key_title' => SpecialPage::getTitleFor( 'Badtitle', '<invalid>' )->getFullText(),
 			] ],
 			[ '4:user:key', 'foo', [ 'key' => 'Foo' ] ],
 			[ '4:user-link:key', 'foo', [ 'key' => 'Foo' ] ],

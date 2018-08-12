@@ -25,7 +25,8 @@
 			"TheGabrielZaum",
 			"!Silent",
 			"McDutchie",
-			"Felipe L. Ewald"
+			"Felipe L. Ewald",
+			"Eduardo Addad de Oliveira"
 		]
 	},
 	"visualeditor-cite-tool-definition.json": "nulo",
@@ -40,10 +41,14 @@
 	"cite-ve-changedesc-reflist-group-both": "O grupo de lista de referências mudou de \"$1\" para \"$2\"",
 	"cite-ve-changedesc-reflist-group-from": "Grupo de lista de referências alterado de \"$1\" para o grupo geral",
 	"cite-ve-changedesc-reflist-group-to": "Grupo de lista de referências alterado do grupo geral para \"$1\"",
+	"cite-ve-changedesc-reflist-responsive-set": "Lista de referências alterada para mostrar nas colunas de resposta rápida",
+	"cite-ve-changedesc-reflist-responsive-unset": "Lista de referências alterada para mostrar numa só coluna",
+	"cite-ve-changedesc-reflist-item-id": "Índice da referência alterado",
 	"cite-ve-dialog-reference-editing-reused": "Esta referência foi usada $1 {{PLURAL:$1|vezes}} nesta página.",
 	"cite-ve-dialog-reference-options-group-label": "Usar este grupo",
 	"cite-ve-dialog-reference-options-group-placeholder": "Referências gerais",
 	"cite-ve-dialog-reference-options-name-label": "Reutilizar por este nome",
+	"cite-ve-dialog-reference-options-responsive-label": "Usar disposição de resposta rápida em colunas",
 	"cite-ve-dialog-reference-options-section": "Opções",
 	"cite-ve-dialog-reference-placeholder": "Escreva ou cole sua referência aqui, ou insira um modelo de citação.",
 	"cite-ve-dialog-reference-title": "Referência",
@@ -63,6 +68,8 @@
 	"cite-ve-referenceslist-isempty": "Não há qualquer referência com o grupo \"$1\" nesta página para incluir nesta lista.",
 	"cite-ve-referenceslist-isempty-default": "Não há qualquer referência nesta página para a incluir nesta lista.",
 	"cite-ve-referenceslist-missingref": "Esta referência está definida em uma predefinição ou em um outro bloco gerado e, por enquanto só pode ser editada no código-fonte.",
+	"cite-ve-referenceslist-missingref-in-list": "Esta referência está definida numa predefinição ou outro bloco, e de momento só pode ser antevista no modo de código-fonte.",
+	"cite-ve-referenceslist-missingreflist": "Esta lista de referências é gerada por uma predefinição, e até ao momento só pode ser editada no modo de código-fonte.",
 	"cite-ve-toolbar-group-label": "Citar",
 	"cite-ve-othergroup-item": "Referência $1",
 	"visualeditor-internal-list-diff-default-group-name-mwreference": "Referências",

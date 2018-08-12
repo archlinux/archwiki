@@ -46,12 +46,12 @@ class LoadMonitorMySQL extends LoadMonitor {
 
 	protected function getWeightScale( $index, IDatabase $conn = null ) {
 		if ( !$conn ) {
-			return 0.0;
+			return parent::getWeightScale( $index, $conn );
 		}
 
 		$weight = 1.0;
 		if ( $this->warmCacheRatio > 0 ) {
-			$res = $conn->query( 'SHOW STATUS', false );
+			$res = $conn->query( 'SHOW STATUS', __METHOD__ );
 			$s = $res ? $conn->fetchObject( $res ) : false;
 			if ( $s === false ) {
 				$host = $this->parent->getServerName( $index );

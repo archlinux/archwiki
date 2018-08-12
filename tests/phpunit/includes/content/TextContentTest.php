@@ -197,22 +197,11 @@ class TextContentTest extends MediaWikiLangTestCase {
 				'any',
 				true
 			],
-			[ 'Foo',
-				null,
-				'comma',
-				false
-			],
-			[ 'Foo, bar',
-				null,
-				'comma',
-				false
-			],
 		];
 	}
 
 	/**
 	 * @dataProvider dataIsCountable
-	 * @group Database
 	 * @covers TextContent::isCountable
 	 */
 	public function testIsCountable( $text, $hasLinks, $mode, $expected ) {
@@ -455,7 +444,7 @@ class TextContentTest extends MediaWikiLangTestCase {
 		if ( $expectedNative === false ) {
 			$this->assertFalse( $converted, "conversion to $model was expected to fail!" );
 		} else {
-			$this->assertInstanceOf( 'Content', $converted );
+			$this->assertInstanceOf( Content::class, $converted );
 			$this->assertEquals( $expectedNative, $converted->getNativeData() );
 		}
 	}

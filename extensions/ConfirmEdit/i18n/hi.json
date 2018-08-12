@@ -10,7 +10,8 @@
 			"Sfic",
 			"NehalDaveND",
 			"Jayprakash12345",
-			"Anamdas"
+			"Anamdas",
+			"Innocentbunny"
 		]
 	},
 	"captcha-edit": "यह पन्ना संपादित करने के लिये नीचे दिये हुए आसान सवाल को हल करके उत्तर दिए गए बॉक्स में लिखें ([[Special:Captcha/help|अधिक जानकारी]]):",
@@ -28,6 +29,7 @@
 	"captcha-create": "यह पन्ना बनाने के लिये, नीचे दिये आसान प्रश्न का उत्तर बक्से में लिखें ([[Special:Captcha/help|अधिक जानकारी]]):",
 	"captcha-sendemail": "स्वचालित स्पैमिंग से बचाव के लिये कृपया नीचे दिये प्रश्न का उत्तर बक्से में लिखें\n([[Special:Captcha/help|अधिक जानकारी]]):",
 	"captcha-sendemail-fail": "केप्चा गलत या खाली है।",
+	"captcha-disabledinapi": "इस कार्रवाई हेतु CAPTCHA आवश्यक है, अतः एपीआई द्वारा इसे कार्यान्वित नहीं कर सकते हैं।",
 	"captcha-error": "आंतरिक त्रुटि के कारण कैप्चा सत्यापन विफल रहा: $1",
 	"captchahelp-title": "कॅप्टचा सहायता",
 	"captchahelp-cookies-needed": "यह कार्य करने के लिये आपने कूकीज (cookies) एनेबल किया होना आवश्यक हैं।",

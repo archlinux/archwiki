@@ -81,7 +81,7 @@ class FancyCaptcha extends SimpleCaptcha {
 	}
 
 	/**
-	 * @param array $resultArr
+	 * @param array &$resultArr
 	 */
 	function addCaptchaAPI( &$resultArr ) {
 		$info = $this->pickImage();
@@ -111,27 +111,22 @@ class FancyCaptcha extends SimpleCaptcha {
 	 * @return array
 	 */
 	function getFormInformation( $tabIndex = 1 ) {
-		global $wgEnableAPI;
 		$modules = [];
 
 		$title = SpecialPage::getTitleFor( 'Captcha', 'image' );
 		$info = $this->getCaptcha();
 		$index = $this->storeCaptcha( $info );
 
-		if ( $wgEnableAPI ) {
-			// Loaded only if JS is enabled
-			$modules[] = 'ext.confirmEdit.fancyCaptcha';
+		// Loaded only for clients with JS enabled
+		$modules[] = 'ext.confirmEdit.fancyCaptcha';
 
-			$captchaReload = Html::element(
-				'small',
-				[
-					'class' => 'confirmedit-captcha-reload fancycaptcha-reload'
-				],
-				wfMessage( 'fancycaptcha-reload-text' )->text()
-			);
-		} else {
-			$captchaReload = '';
-		}
+		$captchaReload = Html::element(
+			'small',
+			[
+				'class' => 'confirmedit-captcha-reload fancycaptcha-reload'
+			],
+			wfMessage( 'fancycaptcha-reload-text' )->text()
+		);
 
 		$form = Html::openElement( 'div' ) .
 			Html::element( 'label', [
@@ -198,9 +193,9 @@ class FancyCaptcha extends SimpleCaptcha {
 	}
 
 	/**
-	 * @param $directory string
-	 * @param $levels integer
-	 * @param $lockouts integer
+	 * @param string $directory
+	 * @param int $levels
+	 * @param int &$lockouts
 	 * @return array|bool
 	 */
 	protected function pickImageDir( $directory, $levels, &$lockouts ) {
@@ -251,8 +246,8 @@ class FancyCaptcha extends SimpleCaptcha {
 	}
 
 	/**
-	 * @param $directory string
-	 * @param $lockouts integer
+	 * @param string $directory
+	 * @param int &$lockouts
 	 * @return array|bool
 	 */
 	protected function pickImageFromDir( $directory, &$lockouts ) {
@@ -293,9 +288,9 @@ class FancyCaptcha extends SimpleCaptcha {
 	}
 
 	/**
-	 * @param $directory string
-	 * @param $files array
-	 * @param $lockouts integer
+	 * @param string $directory
+	 * @param array $files
+	 * @param int &$lockouts
 	 * @return array|bool
 	 */
 	protected function pickImageFromList( $directory, array $files, &$lockouts ) {
@@ -365,8 +360,8 @@ class FancyCaptcha extends SimpleCaptcha {
 	}
 
 	/**
-	 * @param $salt string
-	 * @param $hash string
+	 * @param string $salt
+	 * @param string $hash
 	 * @return string
 	 */
 	public function imagePath( $salt, $hash ) {
@@ -382,7 +377,7 @@ class FancyCaptcha extends SimpleCaptcha {
 	}
 
 	/**
-	 * @param $basename string
+	 * @param string $basename
 	 * @return array (salt, hash)
 	 * @throws Exception
 	 */
@@ -396,7 +391,7 @@ class FancyCaptcha extends SimpleCaptcha {
 
 	/**
 	 * Delete a solved captcha image, if $wgCaptchaDeleteOnSolve is true.
-	 * @inheritdoc
+	 * @inheritDoc
 	 */
 	protected function passCaptcha( $index, $word ) {
 		global $wgCaptchaDeleteOnSolve;
@@ -440,7 +435,7 @@ class FancyCaptcha extends SimpleCaptcha {
 	/**
 	 * @param array $requests
 	 * @param array $fieldInfo
-	 * @param array $formDescriptor
+	 * @param array &$formDescriptor
 	 * @param string $action
 	 */
 	public function onAuthChangeFormFields(

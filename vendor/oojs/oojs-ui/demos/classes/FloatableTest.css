@@ -1,10 +1,10 @@
 .demo-floatableTest-floatable,
 .demo-floatableTest-container {
-	border: 1px #000 solid;
+	border: 1px solid #000;
 }
 
 .demo-floatableTest-floatable {
-	border: 1px #f00 solid;
+	border: 1px solid #d33;
 	width: 200px;
 	height: 200px;
 	position: absolute;

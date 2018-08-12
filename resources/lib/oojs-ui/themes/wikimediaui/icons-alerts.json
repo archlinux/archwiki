@@ -11,9 +11,6 @@
 			"color": "#36c",
 			"global": true
 		},
-		"constructive": {
-			"color": "#36c"
-		},
 		"destructive": {
 			"color": "#d33"
 		},
@@ -24,29 +21,15 @@
 	"images": {
 		"alert": { "file": "images/icons/alert.svg", "variants": [ "warning" ] },
 		"bell": { "file": "images/icons/bell.svg" },
-		"bellOn": { "file": {
-			"ltr": "images/icons/bellOn-ltr.svg",
-			"rtl": "images/icons/bellOn-rtl.svg"
-		} },
-		"comment": { "file": "images/icons/comment.svg" },
-		"eye": {
-			"file": "images/icons/eye.svg",
-			"deprecated": "Moved since v0.23.0 to the 'accessibility' pack."
+		"comment": {
+			"file": {
+				"ltr": "images/icons/speechBubble-ltr.svg",
+				"rtl": "images/icons/speechBubble-rtl.svg"
+			},
+			"deprecated": "This will be removed in v0.28.0. Use 'speechBubble' instead."
 		},
-		"eyeClosed": {
-			"file": "images/icons/eyeClosed.svg",
-			"deprecated": "Moved since v0.23.0 to the 'accessibility' pack."
-		},
-		"message": { "file": {
-			"ltr": "images/icons/message-ltr.svg",
-			"rtl": "images/icons/message-rtl.svg"
-		} },
+		"message": { "file": "images/icons/message.svg" },
 		"notice": { "file": "images/icons/notice.svg" },
-		"signature": { "file": {
-			"ltr": "images/icons/signature-ltr.svg",
-			"rtl": "images/icons/signature-rtl.svg"
-		},
-			"deprecated": "Moved since v0.23.0 to the 'editing-advanced' pack." },
 		"speechBubble": { "file": {
 			"ltr": "images/icons/speechBubble-ltr.svg",
 			"rtl": "images/icons/speechBubble-rtl.svg"

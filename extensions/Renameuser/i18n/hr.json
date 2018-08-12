@@ -17,7 +17,7 @@
 	"renameuser-desc": "Dodaje [[Special:RenameUser|posebnu stranicu]] za preimenovanje suradnika (potrebno je ''renameuser'' pravo)",
 	"renameuserold": "Trenutačno suradničko ime:",
 	"renameusernew": "Novo suradničko ime:",
-	"renameuserreason": "Razlog za preimenovanje:",
+	"renameuserreason": "Razlog:",
 	"renameusermove": "Premjesti suradnikove stranice (glavnu, stranicu za razgovor i podstranice, ako postoje) na novo ime",
 	"renameusersuppress": "Ne kreiraj preusmjeravanja na novo ime",
 	"renameuserreserve": "Zadrži staro suradničko ime od daljnje upotrebe",

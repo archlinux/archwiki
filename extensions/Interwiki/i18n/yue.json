@@ -1,12 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"Antonytse"
+			"Antonytse",
+			"Zoranzoki21"
 		]
 	},
 	"interwiki": "去睇同編輯跨維基資料",
 	"interwiki-title-norights": "去睇跨維基資料",
-	"interwiki_intro": "睇吓[http://www.mediawiki.org/wiki/Interwiki_table MediaWiki.org]有關跨維基表嘅更多資料。",
+	"interwiki_intro": "睇吓[//www.mediawiki.org/wiki/Interwiki_table MediaWiki.org]有關跨維基表嘅更多資料。",
 	"interwiki_prefix": "前綴",
 	"interwiki-prefix-label": "前綴:",
 	"interwiki_local": "定義呢個做一個本地wiki",

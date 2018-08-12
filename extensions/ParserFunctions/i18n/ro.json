@@ -4,13 +4,15 @@
 			"KlaudiuMihaila",
 			"Minisarm",
 			"Stelistcristi",
-			"ImGelu"
+			"ImGelu",
+			"Strainu"
 		]
 	},
 	"pfunc_desc": "Îmbunătățește parserul cu funcții logice",
 	"pfunc_time_error": "Eroare: timp incorect",
 	"pfunc_time_too_long": "Eroare: prea multe apeluri #time",
 	"pfunc_time_too_big": "Eroare: #time acceptă doar ani până la 9999",
+	"pfunc_time_too_small": "Eroare: #time acceptă doar ani de la 0.",
 	"pfunc_rel2abs_invalid_depth": "Eroare: adâncime incorectă în cale: „$1” (încercat accesarea unui nod deasupra nodului rădăcină)",
 	"pfunc_expr_stack_exhausted": "Eroare de expresie: stivă epuizată",
 	"pfunc_expr_unexpected_number": "Eroare de expresie: număr neașteptat",

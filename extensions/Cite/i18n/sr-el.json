@@ -12,7 +12,6 @@
 	"cite_error_ref_too_many_keys": "Loša oznaka <code>&amp;lt;ref&amp;gt;</code>; loša imena, odnosno mnogo njih.",
 	"cite_error_ref_no_input": "Loša oznaka <code>&amp;lt;ref&amp;gt;</code>; ref-ovi bez imena moraju imati sadržaj.",
 	"cite_error_references_invalid_parameters": "Loša oznaka <code>&amp;lt;references&amp;gt;</code>; parametri nisu dozvoljeni. Koristi <code>&amp;lt;references /&amp;gt;</code>.",
-	"cite_error_references_invalid_parameters_group": "Loša oznaka <code>&amp;lt;references&amp;gt;</code>; samo je paramtera &quot;group&quot; dozvoljen. Koristi <code>&amp;lt;references /&amp;gt;</code> ili <code>&amp;lt;references group=&quot;...&quot;&amp;gt;</code>.",
 	"cite_error_references_no_backlink_label": "Nestale su posebne oznake za zadnje veze. Odredi ih više u poruci <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>.",
 	"cite_error_references_no_text": "Loša oznaka <code>&amp;lt;ref&amp;gt;</code>; nema teksta za ref-ove pod imenom <code>$1</code>.",
 	"cite_error_included_ref": "Zatvara <code>&lt;/ref&gt;</code> koji nedostaje <code>&lt;ref&gt;</code> tagu",

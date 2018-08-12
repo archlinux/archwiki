@@ -1,15 +1,18 @@
+@import 'mediawiki.ui/variables';
 @import 'mw.rcfilters.mixins';
+@import 'mw.rcfilters.variables';
 
 @keyframes fadeBlue {
 	60% {
-		border-top-color: #36c;
+		border-top-color: @colorProgressive;
 	}
 	100% {
-		border-top-color: #c8ccd1;
+		border-top-color: @colorGray12;
 	}
 }
 
 .mw-rcfilters-ui-changesListWrapperWidget {
+	position: relative;
 
 	&-newChanges {
 		min-height: 34px;
@@ -19,7 +22,7 @@
 
 	&-previousChangesIndicator {
 		margin: 10px 0;
-		border-top: 2px solid #c8ccd1;
+		border-top: 2px solid @colorGray12;
 		animation: 1s ease fadeBlue;
 	}
 
@@ -29,8 +32,9 @@
 
 		&-noresult,
 		&-conflict {
-			font-weight: bold;
 			margin-bottom: 0.5em;
+			font-weight: bold;
+			text-align: center;
 		}
 	}
 
@@ -38,18 +42,7 @@
 	// We want the expand button to appear outside the color
 	// to match the way the general highlight background appears
 	&-enhanced-grey td:not( :nth-child( -n+2 ) ) {
-		background-color: #dee0e3;
-	}
-
-	h4:first-of-type {
-		margin-top: 0;
-		padding-top: 0;
-	}
-
-	ul {
-		// Each li's margin-left should be the width of the highlights
-		// element + the margin
-		margin-left: ~'calc( ( @{result-circle-diameter} + @{result-circle-margin} ) * 5 + @{result-circle-general-margin} )';
+		background-color: @light-gray;
 	}
 
 	&-highlighted {
@@ -63,14 +56,25 @@
 	}
 
 	.mw-changeslist-legend {
-		background-color: #fff;
+		background-color: @background-color-base;
+		position: relative; // We want to keep the legend accessible when results are overlaid
+		border: 1px solid @colorGray12;
+	}
+
+	.mw-changeslist-overlay {
+		position: absolute;
+		display: none;
+		width: 100%;
+		height: 100%;
+	}
+
+	&--overlaid > .mw-changeslist-overlay {
+		display: block;
 	}
 
 	// Correction for Enhanced RC
 	// This is outside the scope of the 'highlights' wrapper
 	table.mw-enhanced-rc {
-		margin-left: ~'calc( ( @{result-circle-diameter} + @{result-circle-margin} ) * 5 + @{result-circle-general-margin} )';
-
 		td:last-child {
 			width: 100%;
 		}
@@ -153,7 +157,7 @@
 // a custom color rather than the computed tint
 // see https://phabricator.wikimedia.org/T161267
 .mw-rcfilters-highlight-color-c1.mw-rcfilters-highlight-color-c3 {
-	.highlight-changesListWrapperWidget( #ccdecc );
+	.highlight-changesListWrapperWidget( @light-green );
 }
 .highlight-color-mix( c1, c4 );
 .highlight-color-mix( c1, c5 );

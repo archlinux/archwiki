@@ -21,6 +21,7 @@ class PHPUnitMaintClass extends Maintenance {
 		'use-bagostuff' => false,
 		'use-jobqueue' => false,
 		'use-normal-tables' => false,
+		'mwdebug' => false,
 		'reuse-db' => false,
 		'wiki' => false,
 		'profiler' => false,
@@ -79,7 +80,7 @@ class PHPUnitMaintClass extends Maintenance {
 				[ '--configuration', $IP . '/tests/phpunit/suite.xml' ] );
 		}
 
-		$phpUnitClass = 'PHPUnit_TextUI_Command';
+		$phpUnitClass = PHPUnit_TextUI_Command::class;
 
 		if ( $this->hasOption( 'with-phpunitclass' ) ) {
 			$phpUnitClass = $this->getOption( 'with-phpunitclass' );
@@ -112,7 +113,7 @@ class PHPUnitMaintClass extends Maintenance {
 			}
 		}
 
-		if ( !class_exists( 'PHPUnit_Framework_TestCase' ) ) {
+		if ( !class_exists( 'PHPUnit\\Framework\\TestCase' ) ) {
 			echo "PHPUnit not found. Please install it and other dev dependencies by
 		running `composer install` in MediaWiki root directory.\n";
 			exit( 1 );

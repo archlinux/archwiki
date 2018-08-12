@@ -8,13 +8,12 @@
 	"url": "https://www.mediawiki.org/wiki/Extension:SpamBlacklist",
 	"descriptionmsg": "spam-blacklist-desc",
 	"type": "antispam",
-	"license-name": "GPL-2.0+",
-	"callback": "SpamBlacklistHooks::registerExtension",
+	"license-name": "GPL-2.0-or-later",
 	"requires": {
-		"MediaWiki": ">= 1.26.0"
+		"MediaWiki": ">= 1.31.0"
 	},
 	"GroupPermissions": {
-		"sysop": {
+		"user": {
 			"spamblacklistlog": true
 		}
 	},
@@ -44,14 +43,14 @@
 		]
 	},
 	"AutoloadClasses": {
-		"ApiSpamBlacklist": "api/ApiSpamBlacklist.php",
-		"BaseBlacklist": "BaseBlacklist.php",
-		"EmailBlacklist": "EmailBlacklist.php",
-		"SpamBlacklistHooks": "SpamBlacklistHooks.php",
-		"SpamBlacklist": "SpamBlacklist_body.php",
-		"SpamBlacklistLogFormatter": "SpamBlacklistLogFormatter.php",
-		"SpamRegexBatch": "SpamRegexBatch.php",
-		"SpamBlacklistPreAuthenticationProvider": "SpamBlacklistPreAuthenticationProvider.php"
+		"ApiSpamBlacklist": "includes/ApiSpamBlacklist.php",
+		"BaseBlacklist": "includes/BaseBlacklist.php",
+		"EmailBlacklist": "includes/EmailBlacklist.php",
+		"SpamBlacklistHooks": "includes/SpamBlacklistHooks.php",
+		"SpamBlacklist": "includes/SpamBlacklist.php",
+		"SpamBlacklistLogFormatter": "includes/SpamBlacklistLogFormatter.php",
+		"SpamRegexBatch": "includes/SpamRegexBatch.php",
+		"SpamBlacklistPreAuthenticationProvider": "includes/SpamBlacklistPreAuthenticationProvider.php"
 	},
 	"Hooks": {
 		"EditFilterMergedContent": [
@@ -84,6 +83,13 @@
 		},
 		"LogSpamBlacklistHits": false,
 		"SpamBlacklistEventLogging": false
+	},
+	"AuthManagerAutoConfig": {
+		"preauth": {
+			"SpamBlacklistPreAuthenticationProvider": {
+				"class": "SpamBlacklistPreAuthenticationProvider"
+			}
+		}
 	},
 	"manifest_version": 1
 }

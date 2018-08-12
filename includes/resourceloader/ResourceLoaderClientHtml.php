@@ -18,7 +18,7 @@
  * @file
  */
 
-use WrappedString\WrappedStringList;
+use Wikimedia\WrappedStringList;
 
 /**
  * Bootstrap a ResourceLoader client on an HTML page.
@@ -33,8 +33,8 @@ class ResourceLoaderClientHtml {
 	/** @var ResourceLoader */
 	private $resourceLoader;
 
-	/** @var string|null */
-	private $target;
+	/** @var array */
+	private $options;
 
 	/** @var array */
 	private $config = [];
@@ -56,12 +56,13 @@ class ResourceLoaderClientHtml {
 
 	/**
 	 * @param ResourceLoaderContext $context
-	 * @param string|null $target [optional] Custom 'target' parameter for the startup module
+	 * @param array $options [optional] Array of options
+	 *  - 'target': Custom parameter passed to StartupModule.
 	 */
-	public function __construct( ResourceLoaderContext $context, $target = null ) {
+	public function __construct( ResourceLoaderContext $context, array $options = [] ) {
 		$this->context = $context;
 		$this->resourceLoader = $context->getResourceLoader();
-		$this->target = $target;
+		$this->options = $options;
 	}
 
 	/**
@@ -131,9 +132,7 @@ class ResourceLoaderClientHtml {
 				// moduleName => state
 			],
 			'general' => [],
-			'styles' => [
-				// moduleName
-			],
+			'styles' => [],
 			'scripts' => [],
 			// Embedding for private modules
 			'embed' => [
@@ -146,6 +145,13 @@ class ResourceLoaderClientHtml {
 		foreach ( $this->modules as $name ) {
 			$module = $rl->getModule( $name );
 			if ( !$module ) {
+				continue;
+			}
+
+			$context = $this->getContext( $module->getGroup(), ResourceLoaderModule::TYPE_COMBINED );
+			if ( $module->isKnownEmpty( $context ) ) {
+				// Avoid needless request or embed for empty module
+				$data['states'][$name] = 'ready';
 				continue;
 			}
 
@@ -175,20 +181,17 @@ class ResourceLoaderClientHtml {
 			}
 
 			// Stylesheet doesn't trigger mw.loader callback.
-			// Set "ready" state to allow dependencies and avoid duplicate requests. (T87871)
+			// Set "ready" state to allow script modules to depend on this module  (T87871).
+			// And to avoid duplicate requests at run-time from mw.loader.
 			$data['states'][$name] = 'ready';
 
 			$group = $module->getGroup();
 			$context = $this->getContext( $group, ResourceLoaderModule::TYPE_STYLES );
-			if ( $module->isKnownEmpty( $context ) ) {
-				// Avoid needless request for empty module
-				$data['states'][$name] = 'ready';
-			} else {
+			// Avoid needless request for empty module
+			if ( !$module->isKnownEmpty( $context ) ) {
 				if ( $module->shouldEmbedModule( $this->context ) ) {
 					// Embed via style element
 					$data['embed']['styles'][] = $name;
-					// Avoid duplicate request from mw.loader
-					$data['states'][$name] = 'ready';
 				} else {
 					// Load from load.php?only=styles via <link rel=stylesheet>
 					$data['styles'][] = $name;
@@ -307,8 +310,10 @@ class ResourceLoaderClientHtml {
 		}
 
 		// Async scripts. Once the startup is loaded, inline RLQ scripts will run.
-		// Pass-through a custom target from OutputPage (T143066).
-		$startupQuery = $this->target ? [ 'target' => $this->target ] : [];
+		// Pass-through a custom 'target' from OutputPage (T143066).
+		$startupQuery = isset( $this->options['target'] )
+			? [ 'target' => (string)$this->options['target'] ]
+			: [];
 		$chunks[] = $this->getLoad(
 			'startup',
 			ResourceLoaderModule::TYPE_SCRIPTS,

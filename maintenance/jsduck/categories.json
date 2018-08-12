@@ -23,6 +23,7 @@
 					"mw.Title",
 					"mw.Uri",
 					"mw.RegExp",
+					"mw.String",
 					"mw.messagePoster.*",
 					"mw.notification",
 					"mw.Notification_",
@@ -34,7 +35,8 @@
 					"mw.cookie",
 					"mw.experiments",
 					"mw.viewport",
-					"mw.htmlform.*"
+					"mw.htmlform.*",
+					"mw.visibleTimeout"
 				]
 			},
 			{
@@ -51,12 +53,6 @@
 					"mw.language*",
 					"mw.cldr",
 					"mw.jqueryMsg"
-				]
-			},
-			{
-				"name": "Page",
-				"classes": [
-					"mw.page*"
 				]
 			},
 			{

@@ -42,6 +42,8 @@ use Wikimedia\Rdbms\IDatabase;
  *     $a = $cf->run();
  *     print implode( ',' , $a );
  * @endcode
+ *
+ * @deprecated since 1.31
  */
 class CategoryFinder {
 	/** @var int[] The original article IDs passed to the seed function */
@@ -55,6 +57,9 @@ class CategoryFinder {
 
 	/** @var array Array of article/category IDs */
 	protected $next = [];
+
+	/** @var int Max layer depth **/
+	protected $maxdepth = -1;
 
 	/** @var array Array of DBKEY category names */
 	protected $targets = [];
@@ -73,12 +78,17 @@ class CategoryFinder {
 	 * @param array $articleIds Array of article IDs
 	 * @param array $categories FIXME
 	 * @param string $mode FIXME, default 'AND'.
+	 * @param int $maxdepth Maximum layer depth. Where:
+	 * 	-1 means deep recursion (default);
+	 * 	 0 means no-parents;
+	 * 	 1 means one parent layer, etc.
 	 * @todo FIXME: $categories/$mode
 	 */
-	public function seed( $articleIds, $categories, $mode = 'AND' ) {
+	public function seed( $articleIds, $categories, $mode = 'AND', $maxdepth = -1 ) {
 		$this->articles = $articleIds;
 		$this->next = $articleIds;
 		$this->mode = $mode;
+		$this->maxdepth = $maxdepth;
 
 		# Set the list of target categories; convert them to DBKEY form first
 		$this->targets = [];
@@ -98,8 +108,17 @@ class CategoryFinder {
 	 */
 	public function run() {
 		$this->dbr = wfGetDB( DB_REPLICA );
-		while ( count( $this->next ) > 0 ) {
+
+		$i = 0;
+		$dig = true;
+		while ( count( $this->next ) && $dig ) {
 			$this->scanNextLayer();
+
+			// Is there any depth limit?
+			if ( $this->maxdepth !== -1 ) {
+				$dig = $i < $this->maxdepth;
+				$i++;
+			}
 		}
 
 		# Now check if this applies to the individual articles
@@ -190,7 +209,7 @@ class CategoryFinder {
 		$layer = [];
 		$res = $this->dbr->select(
 			/* FROM   */ 'categorylinks',
-			/* SELECT */ '*',
+			/* SELECT */ [ 'cl_to', 'cl_from' ],
 			/* WHERE  */ [ 'cl_from' => $this->next ],
 			__METHOD__ . '-1'
 		);

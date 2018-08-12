@@ -17,7 +17,8 @@
 			"Aktron",
 			"Cvanca",
 			"Kusavica",
-			"Dvorapa"
+			"Dvorapa",
+			"Ilimanaq29"
 		]
 	},
 	"visualeditor-cite-tool-definition.json": "prázdný",
@@ -32,11 +33,16 @@
 	"cite-ve-changedesc-reflist-group-both": "Skupina seznamu referencí změněna z „$1“ na „$2“",
 	"cite-ve-changedesc-reflist-group-from": "Skupina seznamu referencí změněna z „$1“ na základní",
 	"cite-ve-changedesc-reflist-group-to": "Skupina seznamu referencí změněna ze základní na „$1“",
+	"cite-ve-changedesc-reflist-responsive-set": "Seznam referencí se nyní zobrazuje v responzivních sloupcích",
+	"cite-ve-changedesc-reflist-responsive-unset": "Seznam referencí se nyní zobrazuje jenom v jednom sloupci",
+	"cite-ve-changedesc-reflist-item-id": "Změněno číslo reference",
 	"cite-ve-dialog-reference-editing-reused": "Tato reference se na této stránce používá $1{{PLURAL:$1|krát}}.",
 	"cite-ve-dialog-reference-options-group-label": "Použít tuto skupinu",
 	"cite-ve-dialog-reference-options-group-placeholder": "Obecné reference",
 	"cite-ve-dialog-reference-options-name-label": "Znovupoužívat pod tímto názvem",
+	"cite-ve-dialog-reference-options-responsive-label": "Použít responzivní vzhled sloupců",
 	"cite-ve-dialog-reference-options-section": "Možnosti",
+	"cite-ve-dialog-reference-placeholder": "Sem napište nebo vložte svou referenci nebo citační šablonu.",
 	"cite-ve-dialog-reference-title": "Reference",
 	"cite-ve-dialog-reference-useexisting-full-label": "Znovupoužít citaci, která již na stránce existuje",
 	"cite-ve-dialog-reference-useexisting-label": "Použít existující referenci",
@@ -54,6 +60,9 @@
 	"cite-ve-referenceslist-isempty": "Na této stránce nejsou žádné reference se skupinou „$1“, které by se v tomto seznamu zobrazily.",
 	"cite-ve-referenceslist-isempty-default": "Na této stránce nejsou žádné reference, které by se v tomto seznamu zobrazily.",
 	"cite-ve-referenceslist-missingref": "Tato reference je definována v šabloně nebo jiné generované části textu a zatím ji lze editovat jen v režimu zdrojového textu.",
+	"cite-ve-referenceslist-missingreflist": "Tento seznam referencí je generován šablonou a zatím ho lze editovat pouze v režimu zdrojového textu.",
 	"cite-ve-toolbar-group-label": "Citace",
-	"cite-ve-othergroup-item": "$1 reference"
+	"cite-ve-othergroup-item": "$1 reference",
+	"visualeditor-internal-list-diff-default-group-name-mwreference": "Reference",
+	"visualeditor-internal-list-diff-group-name-mwreference": "Název skupiny referencí: „$1“"
 }

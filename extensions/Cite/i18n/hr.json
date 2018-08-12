@@ -17,7 +17,6 @@
 	"cite_error_ref_no_input": "nevaljana <code>&lt;ref&gt;</code> oznaka; izvori bez imena moraju imati sadržaj",
 	"cite_error_references_duplicate_key": "nevaljala <code>&lt;ref&gt;</code> oznaka; ime \"$1\" definirano više puta s različitim sadržajem",
 	"cite_error_references_invalid_parameters": "nevaljana <code>&lt;references&gt;</code> oznaka; parametri nisu dozvoljeni, koristite <code>&lt;references /&gt;</code>",
-	"cite_error_references_invalid_parameters_group": "neispravna <code>&lt;references&gt;</code> oznaka,\ndopuštena je samo opcija \"group\".\nKoristite <code>&lt;references /&gt;</code>, ili <code>&lt;references group=\"...\" /&gt;</code>",
 	"cite_error_references_no_backlink_label": "potrošene sve posebne oznake za poveznice unatrag, definirajte više u poruci <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>",
 	"cite_error_no_link_label_group": "nedovoljan broj proizvoljnih naslova poveznica za grupu \"$1\".\nDefinirajte više putem poruke <nowiki>[[MediaWiki:$2]]</nowiki>.",
 	"cite_error_references_no_text": "nije zadan tekst za izvor <code>$1</code>",

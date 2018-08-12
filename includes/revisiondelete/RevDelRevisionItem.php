@@ -47,6 +47,10 @@ class RevDelRevisionItem extends RevDelItem {
 		return 'rev_user_text';
 	}
 
+	public function getAuthorActorField() {
+		return 'rev_actor';
+	}
+
 	public function canView() {
 		return $this->revision->userCan( Revision::DELETED_RESTRICTED, $this->list->getUser() );
 	}
@@ -79,7 +83,7 @@ class RevDelRevisionItem extends RevDelItem {
 		$dbw->update( 'recentchanges',
 			[
 				'rc_deleted' => $bits,
-				'rc_patrolled' => 1
+				'rc_patrolled' => RecentChange::PRC_PATROLLED
 			],
 			[
 				'rc_this_oldid' => $this->revision->getId(), // condition

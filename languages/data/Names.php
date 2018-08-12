@@ -148,6 +148,7 @@ class Names {
 		'en-gb' => 'British English', # British English
 		'eo' => 'Esperanto', # Esperanto
 		'es' => 'español', # Spanish
+		'es-formal' => 'español (formal)', # Spanish formal address
 		'et' => 'eesti', # Estonian
 		'eu' => 'euskara', # Basque
 		'ext' => 'estremeñu', # Extremaduran
@@ -169,6 +170,7 @@ class Names {
 		'gan' => '贛語', # Gan (multiple scripts - defaults to Traditional)
 		'gan-hans' => "赣语（简体）\xE2\x80\x8E", # Gan (Simplified Han)
 		'gan-hant' => "贛語（繁體）\xE2\x80\x8E", # Gan (Traditional Han)
+		'gcr' => 'kréyòl gwiyanè', # Guianan Creole
 		'gd' => 'Gàidhlig', # Scots Gaelic
 		'gl' => 'galego', # Galician
 		'glk' => 'گیلکی', # Gilaki
@@ -196,6 +198,7 @@ class Names {
 		'hsb' => 'hornjoserbsce', # Upper Sorbian
 		'ht' => 'Kreyòl ayisyen', # Haitian Creole French
 		'hu' => 'magyar', # Hungarian
+		'hu-formal' => 'magyar (formal)', # Hungarian formal address
 		'hy' => 'Հայերեն', # Armenian
 		'hz' => 'Otsiherero', # Herero
 		'ia' => 'interlingua', # Interlingua (IALA)
@@ -250,15 +253,16 @@ class Names {
 		'ks-arab' => 'کٲشُر', # Kashmiri (Perso-Arabic script)
 		'ks-deva' => 'कॉशुर', # Kashmiri (Devanagari script)
 		'ksh' => 'Ripoarisch', # Ripuarian
-		'ku' => 'Kurdî', # Kurdish (multiple scripts - defaults to Latin)
-		'ku-latn' => "Kurdî (latînî)\xE2\x80\x8E", # Northern Kurdish (Latin script)
+		'ku' => 'kurdî', # Kurdish (multiple scripts - defaults to Latin)
+		'ku-latn' => "kurdî (latînî)\xE2\x80\x8E", # Northern Kurdish (Latin script)
 		'ku-arab' => "كوردي (عەرەبی)\xE2\x80\x8F", # Northern Kurdish (Arabic script) (falls back to ckb)
+		'kum' => 'къумукъ', # Kumyk (Cyrillic, 'kum-latn' for Latin script)
 		'kv' => 'коми', # Komi-Zyrian (Cyrillic is common script but also written in Latin script)
 		'kw' => 'kernowek', # Cornish
 		'ky' => 'Кыргызча', # Kirghiz
 		'la' => 'Latina', # Latin
 		'lad' => 'Ladino', # Ladino
-		'lb' => 'Lëtzebuergesch', # Luxemburguish
+		'lb' => 'Lëtzebuergesch', # Luxembourgish
 		'lbe' => 'лакку', # Lak
 		'lez' => 'лезги', # Lezgi
 		'lfn' => 'Lingua Franca Nova', # Lingua Franca Nova
@@ -320,6 +324,7 @@ class Names {
 		'nso' => 'Sesotho sa Leboa', # Northern Sotho
 		'nv' => 'Diné bizaad', # Navajo
 		'ny' => 'Chi-Chewa', # Chichewa
+		'nys' => 'Nyunga', # Nyungar
 		'oc' => 'occitan', # Occitan
 		'olo' => 'Livvinkarjala', # Livvi-Karelian
 		'om' => 'Oromoo', # Oromo
@@ -370,7 +375,7 @@ class Names {
 		'sd' => 'سنڌي', # Sindhi
 		'sdc' => 'Sassaresu', # Sassarese
 		'sdh' => 'کوردی خوارگ', # Southern Kurdish
-		'se' => 'sámegiella', # Northern Sami
+		'se' => 'davvisámegiella', # Northern Sami
 		'sei' => 'Cmique Itom', # Seri
 		'ses' => 'Koyraboro Senni', # Koyraboro Senni
 		'sg' => 'Sängö', # Sango/Sangho
@@ -398,6 +403,7 @@ class Names {
 		'srn' => 'Sranantongo', # Sranan Tongo
 		'ss' => 'SiSwati', # Swati
 		'st' => 'Sesotho', # Southern Sotho
+		'sty' => 'cебертатар', # Siberian Tatar
 		'stq' => 'Seeltersk', # Saterland Frisian
 		'su' => 'Basa Sunda', # Sundanese
 		'sv' => 'svenska', # Swedish

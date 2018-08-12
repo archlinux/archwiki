@@ -13,7 +13,6 @@
 	"cite_error_ref_too_many_keys": "التاج <code>&lt;ref&gt;</code> مش صحيح؛\nأسامى مش صحيحة، يعنى مثلا: كتير قوي",
 	"cite_error_ref_no_input": "تاج <code>&lt;ref&gt;</code> مش صحيح؛\nالمراجع اللى من غير اسم لازم يكون ليها محتوى",
 	"cite_error_references_invalid_parameters": "مش صحيح <code>&lt;references&gt;</code> تاج;\nمافيش محددات مسموح بيها.\nاستخدم <code>&lt;references /&gt;</code>",
-	"cite_error_references_invalid_parameters_group": "مش صحيح <code>&lt;references&gt;</code> تاج;\nمحدد \"group\" مسموح بيه بس.\nاستخدم <code>&lt;references /&gt;</code>, or <code>&lt;references group=\"...\" /&gt;</code>",
 	"cite_error_references_no_backlink_label": "علامات الوصلات الراجعة المخصصة خلصت.\nعرف اكتر فى رسالة <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>",
 	"cite_error_references_no_text": "مش صحيح <code>&lt;ref&gt;</code> تاج;\nمافيش نص متوافر فى المراجع اللى اسمها<code>$1</code>",
 	"cite_error_included_ref": "إغلاق <code>&lt;/ref&gt;</code> مفقود لوسم <code>&lt;ref&gt;</code>",

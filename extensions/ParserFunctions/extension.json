@@ -9,7 +9,7 @@
 	],
 	"url": "https://www.mediawiki.org/wiki/Extension:ParserFunctions",
 	"descriptionmsg": "pfunc_desc",
-	"license-name": "GPL-2.0+",
+	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
 	"requires": {
 		"MediaWiki": ">= 1.25.0"
@@ -36,15 +36,11 @@
 		]
 	},
 	"AutoloadClasses": {
-		"ExtParserFunctions": "ParserFunctions_body.php",
-		"ExprParser": "Expr.php",
-		"ExprError": "Expr.php",
-		"Scribunto_LuaParserFunctionsLibrary": "ParserFunctions.library.php",
-		"ParserFunctionsHooks": "ParserFunctions.hooks.php"
+		"ExtParserFunctions": "includes/ExtParserFunctions.php",
+		"ExprParser": "includes/ExprParser.php",
+		"ExprError": "includes/ExprError.php",
+		"Scribunto_LuaParserFunctionsLibrary": "includes/Scribunto_LuaParserFunctionsLibrary.php",
+		"ParserFunctionsHooks": "includes/ParserFunctionsHooks.php"
 	},
-	"ParserTestFiles": [
-		"funcsParserTests.txt",
-		"stringFunctionTests.txt"
-	],
 	"manifest_version": 1
 }

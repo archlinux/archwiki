@@ -6,7 +6,7 @@
 	],
 	"url": "https://www.mediawiki.org/wiki/Extension:PdfHandler",
 	"descriptionmsg": "pdf-desc",
-	"license-name": "GPL-2.0+",
+	"license-name": "GPL-2.0-or-later",
 	"type": "media",
 	"requires": {
 		"MediaWiki": ">= 1.25.0"
@@ -41,9 +41,9 @@
 		"application/pdf": "PdfHandler"
 	},
 	"AutoloadClasses": {
-		"PdfImage": "PdfHandler.image.php",
-		"PdfHandler": "PdfHandler_body.php",
-		"CreatePdfThumbnailsJob": "CreatePdfThumbnailsJob.class.php"
+		"PdfImage": "includes/PdfImage.php",
+		"PdfHandler": "includes/PdfHandler.php",
+		"CreatePdfThumbnailsJob": "includes/CreatePdfThumbnailsJob.php"
 	},
 	"manifest_version": 1
 }

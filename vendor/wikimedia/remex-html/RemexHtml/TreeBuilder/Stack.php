@@ -1,7 +1,6 @@
 <?php
 
 namespace RemexHtml\TreeBuilder;
-use RemexHtml\Tokenizer\Attributes;
 
 /**
  * The parent class for the "stack of open elements".
@@ -109,7 +108,7 @@ abstract class Stack {
 	 * and $this->length() - 1 is the most recently inserted element. This will
 	 * raise a PHP notice if the index is out of range.
 	 *
-	 * @param integer $idx
+	 * @param int $idx
 	 * @return Element|null
 	 */
 	abstract public function item( $idx );

@@ -16,7 +16,7 @@
 	"fancycaptcha-edit": "Qe pel vurnayîşî, ma rica keno çekuyanê ke qutiya cor de înan binuse ([[Special:Captcha/help|enformasyonê bînî]]):",
 	"fancycaptcha-imgcaptcha-ph": "Nuşteyo ke cor aseno ey resimi ser ke.",
 	"fancycaptcha-sendemail": "Qe spamê otomayoni ra pawitîşi, ma rica keno çekuyanê ke qutiya cor de înan binuse \n([[Special:Captcha/help|enformasyonê bînî]]):",
-	"fancycaptcha-reload-text": "Anewe kı",
+	"fancycaptcha-reload-text": "Newe ke",
 	"apihelp-fancycaptchareload-description": "Şo newe FancyCaptcha.",
 	"apihelp-fancycaptchareload-example-1": "Şo newe FancyCaptcha"
 }

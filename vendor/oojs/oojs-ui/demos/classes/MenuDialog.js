@@ -11,7 +11,7 @@ Demo.MenuDialog.prototype.getBodyHeight = function () {
 	return 350;
 };
 Demo.MenuDialog.prototype.initialize = function () {
-	var menuLayout, positionField, showField, menuPanel, contentPanel;
+	var menuLayout, positionField, showField, expandField, menuPanel, contentPanel;
 	Demo.MenuDialog.parent.prototype.initialize.apply( this, arguments );
 
 	menuLayout = new OO.ui.MenuLayout();
@@ -52,6 +52,18 @@ Demo.MenuDialog.prototype.initialize = function () {
 			align: 'top'
 		}
 	);
+	expandField = new OO.ui.FieldLayout(
+		new OO.ui.ToggleSwitchWidget( { value: true } ).on( 'change', function ( value ) {
+			menuLayout.$element.toggleClass( 'oo-ui-menuLayout-expanded', value );
+			menuLayout.$element.toggleClass( 'oo-ui-menuLayout-static', !value );
+			menuPanel.$element.toggleClass( 'oo-ui-panelLayout-expanded', value );
+			contentPanel.$element.toggleClass( 'oo-ui-panelLayout-expanded', value );
+		} ),
+		{
+			label: 'Expand layout',
+			align: 'top'
+		}
+	);
 	menuPanel = new OO.ui.PanelLayout( { padded: true, expanded: true, scrollable: true } );
 	contentPanel = new OO.ui.PanelLayout( { padded: true, expanded: true, scrollable: true } );
 
@@ -61,6 +73,7 @@ Demo.MenuDialog.prototype.initialize = function () {
 	menuLayout.$content.append(
 		contentPanel.$element.append(
 			positionField.$element,
+			expandField.$element,
 			showField.$element
 		)
 	);

@@ -12,8 +12,11 @@
 	],
 	"url": "https://www.mediawiki.org/wiki/Extension:Cite",
 	"descriptionmsg": "cite-desc",
-	"license-name": "GPL-2.0+",
+	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
+	"requires": {
+		"MediaWiki": ">= 1.30.0"
+	},
 	"MessagesDirs": {
 		"cite": "i18n",
 		"ve-cite": "modules/ve-cite/i18n"
@@ -58,7 +61,6 @@
 			"skinStyles": {
 				"minerva": "ext.cite.styles.minerva.less"
 			},
-			"position": "bottom",
 			"targets": [
 				"desktop",
 				"mobile"
@@ -70,13 +72,11 @@
 			"messages": [
 				"cite_references_link_accessibility_label",
 				"cite_references_link_many_accessibility_label"
-			],
-			"position": "bottom"
+			]
 		},
 		"ext.cite.style": {
 			"class": "CiteCSSFileModule",
 			"styles": "ext.cite.style.css",
-			"position": "top",
 			"targets": [
 				"desktop",
 				"mobile"
@@ -94,7 +94,6 @@
 		"cite": "GlobalVarConfig::newInstance"
 	},
 	"config": {
-		"CiteCacheReferences": false,
 		"CiteStoreReferencesData": false,
 		"CiteCacheReferencesDataOnParse": false,
 		"CiteVisualEditorOtherGroup": false,

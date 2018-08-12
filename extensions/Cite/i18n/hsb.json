@@ -11,7 +11,6 @@
 	"cite_error_ref_too_many_keys": "Njepłaćiwe wužiwanje taflički <code>&lt;ref&gt;</code>; njepłaćiwe mjena, na př. předołho",
 	"cite_error_ref_no_input": "Njepłaćiwe wužiwanje taflički <code>&lt;ref&gt;</code>; \"ref\" bjez mjena dyrbi wobsah měć",
 	"cite_error_references_invalid_parameters": "Njepłaćiwe wužiwanje taflički <code>&lt;references&gt;</code>; žane parametry dowolene, wužij jenož <code>&lt;references /&gt;</code>",
-	"cite_error_references_invalid_parameters_group": "Njepłaćiwa taflička <code>&lt;references&gt;</code>;\njenož parameter \"group\" je dowoleny.\nWužij <code>&lt;references /&gt;</code> abo <code>&lt;references group=\"...\" /&gt;</code>",
 	"cite_error_references_no_backlink_label": "Zwučene etikety wróćowotkazow wućerpjene.\nDefinuj wjace w powěsći <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>",
 	"cite_error_no_link_label_group": "Swójske wotkazowe etikety za skupinu \"$1\" hižo njejsu.\nDefinuj dalše w zdźělence <nowiki>[[MediaWiki:$2]]</nowiki>.",
 	"cite_error_references_no_text": "Njepłaćiwa referenca formy <code>&lt;ref&gt;</code>; žadyn tekst za referency z mjenom  <code>$1</code> podaty.",

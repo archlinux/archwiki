@@ -3,6 +3,7 @@ use MediaWiki\Auth\AuthManager;
 
 /**
  * @group Database
+ * @covers TitleBlacklistPreAuthenticationProvider
  */
 class TitleBlacklistPreAuthenticationProviderTest extends MediaWikiTestCase {
 	public function setUp() {

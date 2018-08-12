@@ -3,7 +3,8 @@
 		"authors": [
 			"Harley Hartwell",
 			"Mopza",
-			"Passawuth"
+			"Passawuth",
+			"Horus"
 		]
 	},
 	"renameuser": "เปลี่ยนชื่อผู้ใช้",
@@ -11,7 +12,7 @@
 	"renameuserold": "ชื่อผู้ใช้ปัจจุบัน:",
 	"renameusernew": "ชื่อผู้ใช้ใหม่:",
 	"renameuserreason": "เหตุผลในการเปลี่ยนชื่อ:",
-	"renameusermove": "ย้ายหน้าผู้ใช้และหน้าพูดคุย (รวมถึงหน้าย่อยด้วย) ไปยังชื่อใหม่",
+	"renameusermove": "ย้ายหน้าผู้ใช้และหน้าคุย (รวมถึงหน้าย่อยด้วย) ไปชื่อใหม่",
 	"renameuserreserve": "บล็อกชื่อผู้ใช้เดิมจากการใช้งานในอนาคต",
 	"renameuserwarnings": "คำเตือน:",
 	"renameuserconfirm": "ใช่, เปลี่ยนชื่อผู้ใช้นี้",

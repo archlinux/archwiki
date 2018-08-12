@@ -21,5 +21,6 @@
 	"fancycaptcha-sendemail": "برای کمک به محافظت در برابر هرزه‌نگاری خودکار، ما با احترام از شما می‌خواهیم واژه‌هایی را که در جعبهٔ زیر نمایش داده می‌شوند وارد کنید ([[Special:Captcha/help|اطلاعات بیشتر]]):",
 	"fancycaptcha-reload-text": "تازه کردن",
 	"apihelp-fancycaptchareload-description": "یک FancyCaptcha جدید بیاور.",
+	"apihelp-fancycaptchareload-summary": "کپچای جدید دریافت کن.",
 	"apihelp-fancycaptchareload-example-1": "یک FancyCaptcha جدید بیاور."
 }

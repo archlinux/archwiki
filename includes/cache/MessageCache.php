@@ -156,22 +156,22 @@ class MessageCache {
 	}
 
 	/**
-	 * @param WANObjectCache $wanCache WAN cache instance
-	 * @param BagOStuff $clusterCache Cluster cache instance
-	 * @param BagOStuff $srvCache Server cache instance
+	 * @param WANObjectCache $wanCache
+	 * @param BagOStuff $clusterCache
+	 * @param BagOStuff $serverCache
 	 * @param bool $useDB Whether to look for message overrides (e.g. MediaWiki: pages)
 	 * @param int $expiry Lifetime for cache. @see $mExpiry.
 	 */
 	public function __construct(
 		WANObjectCache $wanCache,
 		BagOStuff $clusterCache,
-		BagOStuff $srvCache,
+		BagOStuff $serverCache,
 		$useDB,
 		$expiry
 	) {
 		$this->wanCache = $wanCache;
 		$this->clusterCache = $clusterCache;
-		$this->srvCache = $srvCache;
+		$this->srvCache = $serverCache;
 
 		$this->mDisable = !$useDB;
 		$this->mExpiry = $expiry;
@@ -191,23 +191,15 @@ class MessageCache {
 				// ParserOptions for it. And don't cache this ParserOptions
 				// either.
 				$po = ParserOptions::newFromAnon();
-				$po->setEditSection( false );
 				$po->setAllowUnsafeRawHtml( false );
-				$po->setWrapOutputClass( false );
 				return $po;
 			}
 
 			$this->mParserOptions = new ParserOptions;
-			$this->mParserOptions->setEditSection( false );
 			// Messages may take parameters that could come
 			// from malicious sources. As a precaution, disable
 			// the <html> parser tag when parsing messages.
 			$this->mParserOptions->setAllowUnsafeRawHtml( false );
-			// Wrapping messages in an extra <div> is probably not expected. If
-			// they're outside the content area they probably shouldn't be
-			// targeted by CSS that's targeting the parser output, and if
-			// they're inside they already are from the outer div.
-			$this->mParserOptions->setWrapOutputClass( false );
 		}
 
 		return $this->mParserOptions;
@@ -308,7 +300,7 @@ class MessageCache {
 		}
 
 		if ( !$success ) {
-			$cacheKey = $this->clusterCache->makeKey( 'messages', $code ); # Key in memc for messages
+			$cacheKey = $this->clusterCache->makeKey( 'messages', $code );
 			# Try the global cache. If it is empty, try to acquire a lock. If
 			# the lock can't be acquired, wait for the other thread to finish
 			# and then try the global cache a second time.
@@ -621,7 +613,7 @@ class MessageCache {
 				// load() calls do try to refresh the cache with replica DB data
 				$this->mCache[$code]['LATEST'] = time();
 				// Pre-emptively update the local datacenter cache so things like edit filter and
-				// blacklist changes are reflect immediately, as these often use MediaWiki: pages.
+				// blacklist changes are reflected immediately; these often use MediaWiki: pages.
 				// The datacenter handling replace() calls should be the same one handling edits
 				// as they require HTTP POST.
 				$this->saveToCaches( $this->mCache[$code], 'all', $code );
@@ -630,19 +622,7 @@ class MessageCache {
 
 				// Relay the purge. Touching this check key expires cache contents
 				// and local cache (APC) validation hash across all datacenters.
-				$this->wanCache->touchCheckKey( $this->wanCache->makeKey( 'messages', $code ) );
-				// Also delete cached sidebar... just in case it is affected
-				// @TODO: shouldn't this be $code === $wgLanguageCode?
-				if ( $code === 'en' ) {
-					// Purge all language sidebars, e.g. on ?action=purge to the sidebar messages
-					$codes = array_keys( Language::fetchLanguageNames() );
-				} else {
-					// Purge only the sidebar for this language
-					$codes = [ $code ];
-				}
-				foreach ( $codes as $code ) {
-					$this->wanCache->delete( $this->wanCache->makeKey( 'sidebar', $code ) );
-				}
+				$this->wanCache->touchCheckKey( $this->getCheckKey( $code ) );
 
 				// Purge the message in the message blob store
 				$resourceloader = RequestContext::getMain()->getOutput()->getResourceLoader();
@@ -709,7 +689,7 @@ class MessageCache {
 		$value = $this->wanCache->get(
 			$this->wanCache->makeKey( 'messages', $code, 'hash', 'v1' ),
 			$curTTL,
-			[ $this->wanCache->makeKey( 'messages', $code ) ]
+			[ $this->getCheckKey( $code ) ]
 		);
 
 		if ( $value ) {
@@ -914,7 +894,7 @@ class MessageCache {
 		if ( $useDB ) {
 			$uckey = $wgContLang->ucfirst( $lckey );
 
-			if ( !isset( $alreadyTried[ $langcode ] ) ) {
+			if ( !isset( $alreadyTried[$langcode] ) ) {
 				$message = $this->getMsgFromNamespace(
 					$this->getMessagePageName( $langcode, $uckey ),
 					$langcode
@@ -923,7 +903,7 @@ class MessageCache {
 				if ( $message !== false ) {
 					return $message;
 				}
-				$alreadyTried[ $langcode ] = true;
+				$alreadyTried[$langcode] = true;
 			}
 		} else {
 			$uckey = null;
@@ -940,7 +920,7 @@ class MessageCache {
 			$fallbackChain = Language::getFallbacksFor( $langcode );
 
 			foreach ( $fallbackChain as $code ) {
-				if ( isset( $alreadyTried[ $code ] ) ) {
+				if ( isset( $alreadyTried[$code] ) ) {
 					continue;
 				}
 
@@ -950,7 +930,7 @@ class MessageCache {
 				if ( $message !== false ) {
 					return $message;
 				}
-				$alreadyTried[ $code ] = true;
+				$alreadyTried[$code] = true;
 			}
 		}
 
@@ -993,13 +973,12 @@ class MessageCache {
 		if ( isset( $this->mCache[$code][$title] ) ) {
 			$entry = $this->mCache[$code][$title];
 			if ( substr( $entry, 0, 1 ) === ' ' ) {
-				// The message exists, so make sure a string is returned.
+				// The message exists and is not '!TOO BIG'
 				return (string)substr( $entry, 1 );
 			} elseif ( $entry === '!NONEXISTENT' ) {
 				return false;
-			} elseif ( $entry === '!TOO BIG' ) {
-				// Fall through and try invididual message cache below
 			}
+			// Fall through and try invididual message cache below
 		} else {
 			// XXX: This is not cached in process cache, should it?
 			$message = false;
@@ -1048,8 +1027,7 @@ class MessageCache {
 		if ( $titleObj->getLatestRevID() ) {
 			$revision = Revision::newKnownCurrent(
 				$dbr,
-				$titleObj->getArticleID(),
-				$titleObj->getLatestRevID()
+				$titleObj
 			);
 		} else {
 			$revision = false;
@@ -1086,11 +1064,11 @@ class MessageCache {
 	/**
 	 * @param string $message
 	 * @param bool $interface
-	 * @param string $language Language code
+	 * @param Language $language
 	 * @param Title $title
 	 * @return string
 	 */
-	function transform( $message, $interface = false, $language = null, $title = null ) {
+	public function transform( $message, $interface = false, $language = null, $title = null ) {
 		// Avoid creating parser if nothing to transform
 		if ( strpos( $message, '{{' ) === false ) {
 			return $message;
@@ -1119,7 +1097,7 @@ class MessageCache {
 	/**
 	 * @return Parser
 	 */
-	function getParser() {
+	public function getParser() {
 		global $wgParser, $wgParserConf;
 
 		if ( !$this->mParser && isset( $wgParser ) ) {
@@ -1127,7 +1105,7 @@ class MessageCache {
 			$wgParser->firstCallInit();
 			# Clone it and store it
 			$class = $wgParserConf['class'];
-			if ( $class == 'ParserDiffTest' ) {
+			if ( $class == ParserDiffTest::class ) {
 				# Uncloneable
 				$this->mParser = new $class( $wgParserConf );
 			} else {
@@ -1183,11 +1161,11 @@ class MessageCache {
 		return $res;
 	}
 
-	function disable() {
+	public function disable() {
 		$this->mDisable = true;
 	}
 
-	function enable() {
+	public function enable() {
 		$this->mDisable = false;
 	}
 
@@ -1208,13 +1186,14 @@ class MessageCache {
 	}
 
 	/**
-	 * Clear all stored messages. Mainly used after a mass rebuild.
+	 * Clear all stored messages in global and local cache
+	 *
+	 * Mainly used after a mass rebuild
 	 */
 	function clear() {
 		$langs = Language::fetchLanguageNames( null, 'mw' );
 		foreach ( array_keys( $langs ) as $code ) {
-			# Global and local caches
-			$this->wanCache->touchCheckKey( $this->wanCache->makeKey( 'messages', $code ) );
+			$this->wanCache->touchCheckKey( $this->getCheckKey( $code ) );
 		}
 
 		$this->mLoadedLanguages = [];
@@ -1290,6 +1269,14 @@ class MessageCache {
 		if ( $wgContLang->hasVariants() ) {
 			$wgContLang->updateConversionTable( $title );
 		}
+	}
+
+	/**
+	 * @param string $code Language code
+	 * @return string WAN cache key usable as a "check key" against language page edits
+	 */
+	public function getCheckKey( $code ) {
+		return $this->wanCache->makeKey( 'messages', $code );
 	}
 
 	/**

@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Mogoeilor"
+			"Mogoeilor",
+			"Beyronvan"
 		]
 	},
 	"vector-action-addsection": "داسون اضاف بكيد",
@@ -11,9 +12,9 @@
 	"vector-action-undelete": "حذف نبيئني",
 	"vector-action-unprotect": "حمايت آلشت بكيد",
 	"vector-view-create": "راس كردن",
-	"vector-view-edit": "ڤیرایئشت",
-	"vector-view-history": "ديئن ڤیرگار",
-	"vector-view-view": "حنن",
+	"vector-view-edit": "ڤیرایشت",
+	"vector-view-history": "دیاٛن ڤیرگار",
+	"vector-view-view": "هنن",
 	"vector-view-viewsource": "سرچشمه نه بوينيت",
 	"vector-more-actions": "بیشتر"
 }

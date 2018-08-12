@@ -76,6 +76,7 @@ class CheckBlocksSecondaryAuthenticationProviderTest extends \MediaWikiTestCase 
 		$blockOptions = [
 			'address' => 'UTBlockee',
 			'user' => $user->getID(),
+			'by' => $this->getTestSysop()->getUser()->getId(),
 			'reason' => __METHOD__,
 			'expiry' => time() + 100500,
 			'createAccount' => true,
@@ -135,12 +136,12 @@ class CheckBlocksSecondaryAuthenticationProviderTest extends \MediaWikiTestCase 
 		);
 
 		$status = $provider->testUserForCreation( $blockedUser, AuthManager::AUTOCREATE_SOURCE_SESSION );
-		$this->assertInstanceOf( 'StatusValue', $status );
+		$this->assertInstanceOf( \StatusValue::class, $status );
 		$this->assertFalse( $status->isOK() );
 		$this->assertTrue( $status->hasMessage( 'cantcreateaccount-text' ) );
 
 		$status = $provider->testUserForCreation( $blockedUser, false );
-		$this->assertInstanceOf( 'StatusValue', $status );
+		$this->assertInstanceOf( \StatusValue::class, $status );
 		$this->assertFalse( $status->isOK() );
 		$this->assertTrue( $status->hasMessage( 'cantcreateaccount-text' ) );
 	}
@@ -149,6 +150,7 @@ class CheckBlocksSecondaryAuthenticationProviderTest extends \MediaWikiTestCase 
 		$blockOptions = [
 			'address' => '127.0.0.0/24',
 			'reason' => __METHOD__,
+			'by' => $this->getTestSysop()->getUser()->getId(),
 			'expiry' => time() + 100500,
 			'createAccount' => true,
 		];
@@ -176,12 +178,12 @@ class CheckBlocksSecondaryAuthenticationProviderTest extends \MediaWikiTestCase 
 		$this->assertEquals( AuthenticationResponse::FAIL, $ret->status );
 
 		$status = $provider->testUserForCreation( $newuser, AuthManager::AUTOCREATE_SOURCE_SESSION );
-		$this->assertInstanceOf( 'StatusValue', $status );
+		$this->assertInstanceOf( \StatusValue::class, $status );
 		$this->assertFalse( $status->isOK() );
 		$this->assertTrue( $status->hasMessage( 'cantcreateaccount-range-text' ) );
 
 		$status = $provider->testUserForCreation( $newuser, false );
-		$this->assertInstanceOf( 'StatusValue', $status );
+		$this->assertInstanceOf( \StatusValue::class, $status );
 		$this->assertFalse( $status->isOK() );
 		$this->assertTrue( $status->hasMessage( 'cantcreateaccount-range-text' ) );
 	}

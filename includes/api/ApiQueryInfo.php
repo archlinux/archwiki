@@ -1,9 +1,5 @@
 <?php
 /**
- *
- *
- * Created on Sep 25, 2006
- *
  * Copyright © 2006 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
  *
  * This program is free software; you can redistribute it and/or modify
@@ -38,7 +34,7 @@ class ApiQueryInfo extends ApiQueryBase {
 		$fld_readable = false, $fld_watched = false,
 		$fld_watchers = false, $fld_visitingwatchers = false,
 		$fld_notificationtimestamp = false,
-		$fld_preload = false, $fld_displaytitle = false;
+		$fld_preload = false, $fld_displaytitle = false, $fld_varianttitles = false;
 
 	private $params;
 
@@ -53,7 +49,7 @@ class ApiQueryInfo extends ApiQueryBase {
 		$pageLatest, $pageLength;
 
 	private $protections, $restrictionTypes, $watched, $watchers, $visitingwatchers,
-		$notificationtimestamps, $talkids, $subjectids, $displaytitles;
+		$notificationtimestamps, $talkids, $subjectids, $displaytitles, $variantTitles;
 	private $showZeroWatchers = false;
 
 	private $tokenFunctions;
@@ -107,15 +103,15 @@ class ApiQueryInfo extends ApiQueryBase {
 		}
 
 		$this->tokenFunctions = [
-			'edit' => [ 'ApiQueryInfo', 'getEditToken' ],
-			'delete' => [ 'ApiQueryInfo', 'getDeleteToken' ],
-			'protect' => [ 'ApiQueryInfo', 'getProtectToken' ],
-			'move' => [ 'ApiQueryInfo', 'getMoveToken' ],
-			'block' => [ 'ApiQueryInfo', 'getBlockToken' ],
-			'unblock' => [ 'ApiQueryInfo', 'getUnblockToken' ],
-			'email' => [ 'ApiQueryInfo', 'getEmailToken' ],
-			'import' => [ 'ApiQueryInfo', 'getImportToken' ],
-			'watch' => [ 'ApiQueryInfo', 'getWatchToken' ],
+			'edit' => [ self::class, 'getEditToken' ],
+			'delete' => [ self::class, 'getDeleteToken' ],
+			'protect' => [ self::class, 'getProtectToken' ],
+			'move' => [ self::class, 'getMoveToken' ],
+			'block' => [ self::class, 'getBlockToken' ],
+			'unblock' => [ self::class, 'getUnblockToken' ],
+			'email' => [ self::class, 'getEmailToken' ],
+			'import' => [ self::class, 'getImportToken' ],
+			'watch' => [ self::class, 'getWatchToken' ],
 		];
 		Hooks::run( 'APIQueryInfoTokens', [ &$this->tokenFunctions ] );
 
@@ -310,6 +306,7 @@ class ApiQueryInfo extends ApiQueryBase {
 			$this->fld_readable = isset( $prop['readable'] );
 			$this->fld_preload = isset( $prop['preload'] );
 			$this->fld_displaytitle = isset( $prop['displaytitle'] );
+			$this->fld_varianttitles = isset( $prop['varianttitles'] );
 		}
 
 		$pageSet = $this->getPageSet();
@@ -318,7 +315,7 @@ class ApiQueryInfo extends ApiQueryBase {
 		$this->everything = $this->titles + $this->missing;
 		$result = $this->getResult();
 
-		uasort( $this->everything, [ 'Title', 'compare' ] );
+		uasort( $this->everything, [ Title::class, 'compare' ] );
 		if ( !is_null( $this->params['continue'] ) ) {
 			// Throw away any titles we're gonna skip so they don't
 			// clutter queries
@@ -370,6 +367,10 @@ class ApiQueryInfo extends ApiQueryBase {
 
 		if ( $this->fld_displaytitle ) {
 			$this->getDisplayTitle();
+		}
+
+		if ( $this->fld_varianttitles ) {
+			$this->getVariantTitles();
 		}
 
 		/** @var Title $title */
@@ -511,6 +512,12 @@ class ApiQueryInfo extends ApiQueryBase {
 				$pageInfo['displaytitle'] = $this->displaytitles[$pageid];
 			} else {
 				$pageInfo['displaytitle'] = $title->getPrefixedText();
+			}
+		}
+
+		if ( $this->fld_varianttitles ) {
+			if ( isset( $this->variantTitles[$pageid] ) ) {
+				$pageInfo['varianttitles'] = $this->variantTitles[$pageid];
 			}
 		}
 
@@ -744,6 +751,32 @@ class ApiQueryInfo extends ApiQueryBase {
 		}
 	}
 
+	private function getVariantTitles() {
+		if ( !count( $this->titles ) ) {
+			return;
+		}
+		$this->variantTitles = [];
+		foreach ( $this->titles as $pageId => $t ) {
+			$this->variantTitles[$pageId] = isset( $this->displaytitles[$pageId] )
+				? $this->getAllVariants( $this->displaytitles[$pageId] )
+				: $this->getAllVariants( $t->getText(), $t->getNamespace() );
+		}
+	}
+
+	private function getAllVariants( $text, $ns = NS_MAIN ) {
+		global $wgContLang;
+		$result = [];
+		foreach ( $wgContLang->getVariants() as $variant ) {
+			$convertTitle = $wgContLang->autoConvert( $text, $variant );
+			if ( $ns !== NS_MAIN ) {
+				$convertNs = $wgContLang->convertNamespace( $ns, $variant );
+				$convertTitle = $convertNs . ':' . $convertTitle;
+			}
+			$result[$variant] = $convertTitle;
+		}
+		return $result;
+	}
+
 	/**
 	 * Get information about watched status and put it in $this->watched
 	 * and $this->notificationtimestamps
@@ -883,6 +916,7 @@ class ApiQueryInfo extends ApiQueryBase {
 			'url',
 			'preload',
 			'displaytitle',
+			'varianttitles',
 		];
 		if ( array_diff( (array)$params['prop'], $publicProps ) ) {
 			return 'private';
@@ -916,6 +950,7 @@ class ApiQueryInfo extends ApiQueryBase {
 					'readable', # private
 					'preload',
 					'displaytitle',
+					'varianttitles',
 					// If you add more properties here, please consider whether they
 					// need to be added to getCacheMode()
 				],

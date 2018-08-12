@@ -1,3 +1,4 @@
+/* global extDependencyMap */
 ( function ( $ ) {
 	$( function () {
 		var $label, labelText;
@@ -72,21 +73,23 @@
 
 		// Hide "other" textboxes by default
 		// Should not be done in CSS for javascript disabled compatibility
-		$( '.enabledByOther' ).closest( '.config-block' ).hide();
+		if ( !$( '#config__NamespaceType_other' ).is( ':checked' ) ) {
+			$( '.enabledByOther' ).closest( '.config-block' ).hide();
+		}
 
 		// Enable/disable "other" textboxes
 		$( '.enableForOther' ).click( function () {
 			var $textbox = $( document.getElementById( $( this ).attr( 'rel' ) ) );
 			// FIXME: Ugh, this is ugly
 			if ( $( this ).val() === 'other' ) {
-				$textbox.removeProp( 'readonly' ).closest( '.config-block' ).slideDown( 'fast' );
+				$textbox.prop( 'readonly', false ).closest( '.config-block' ).slideDown( 'fast' );
 			} else {
 				$textbox.prop( 'readonly', true ).closest( '.config-block' ).slideUp( 'fast' );
 			}
 		} );
 
 		// Synchronize radio button label for sitename with textbox
-		$label = $( 'label[for=config__NamespaceType_site-name]' );
+		$label = $( 'label[for="config__NamespaceType_site-name"]' );
 		labelText = $label.text();
 		$label.text( labelText.replace( '$1', '' ) );
 		$( '#config_wgSitename' ).on( 'keyup change', syncText ).each( syncText );
@@ -99,6 +102,50 @@
 			} else {
 				$memc.hide( 'slow' );
 			}
+		} );
+
+		function areReqsSatisfied( name ) {
+			var i, ext, skin, node;
+			if ( !extDependencyMap[ name ] ) {
+				return true;
+			}
+
+			if ( extDependencyMap[ name ].extensions ) {
+				for ( i in extDependencyMap[ name ].extensions ) {
+					ext = extDependencyMap[ name ].extensions[ i ];
+					node = document.getElementById( 'config_ext-' + ext );
+					if ( !node || !node.checked ) {
+						return false;
+					}
+				}
+			}
+			if ( extDependencyMap[ name ].skins ) {
+				for ( i in extDependencyMap[ name ].skins ) {
+					skin = extDependencyMap[ name ].skins[ i ];
+					node = document.getElementById( 'config_skin-' + skin );
+					if ( !node || !node.checked ) {
+						return false;
+					}
+				}
+			}
+
+			return true;
+		}
+
+		// Disable checkboxes if the extension has dependencies
+		$( '.mw-ext-with-dependencies input' ).prop( 'disabled', true );
+		$( '.config-ext-input[data-name]' ).on( 'change', function () {
+			$( '.mw-ext-with-dependencies input' ).each( function () {
+				var name = this.getAttribute( 'data-name' );
+				if ( areReqsSatisfied( name ) ) {
+					// Re-enable it!
+					this.disabled = false;
+				} else {
+					// Uncheck and disable the checkbox
+					this.checked = false;
+					this.disabled = true;
+				}
+			} );
 		} );
 	} );
 }( jQuery ) );

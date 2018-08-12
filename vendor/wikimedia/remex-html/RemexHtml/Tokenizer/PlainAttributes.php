@@ -5,7 +5,7 @@ namespace RemexHtml\Tokenizer;
 /**
  * An Attributes implementation which is a simple array proxy.
  */
-class PlainAttributes implements Attributes  {
+class PlainAttributes implements Attributes {
 	protected $data;
 	protected $attrObjects;
 

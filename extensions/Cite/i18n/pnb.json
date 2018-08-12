@@ -11,7 +11,6 @@
 	"cite_error_ref_too_many_keys": "ناں منیا جان والا <code>&lt;ref&gt;</code> ٹیگ؛\nناں منے جان والے ناں",
 	"cite_error_ref_no_input": "ناں منیا جان والا <code>&lt;ref&gt;</code> ٹیگ؛\nاتے پتے جیدے چ کوئی شے ناں ہووے لازمی ناں ہووے۔",
 	"cite_error_references_invalid_parameters": "ناں منیا جان والا <code>&lt;references&gt;</code> ٹیگ؛\nکسے پیرامیٹر دی اجازت نئیں۔\n<code>&lt;references /&gt;</code> ورتو",
-	"cite_error_references_invalid_parameters_group": "ناں منیا جان والا <code>&lt;references&gt;</code> ٹیگ؛\nپیرامیٹر گروپ دی اجازت صرف۔\nورتو <code>&lt;references /&gt;</code>، یا <code>&lt;references group=\"...\" /&gt;</code>",
 	"cite_error_references_no_backlink_label": "کسٹم پچھلے جزڑ نئیں رۓ۔\nہور دسو <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki> سنیعے چ۔",
 	"cite_error_no_link_label_group": "\"$1\" ٹولی لئی کسٹم لیبل جوڑ مک گۓ۔\nہور دسو <nowiki>[[MediaWiki:$2]]</nowiki> سنیعے چ۔",
 	"cite_error_references_no_text": "ناں منیا جان والا <code>&lt;ref&gt;</code> ٹیگ\nکوئی لکھت نئیں دتی گئی اتے پتے <code>$1</code> لئی۔",

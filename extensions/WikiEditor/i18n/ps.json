@@ -1,28 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ahmed-Najib-Biabani-Ibrahimkhel"
+			"Ahmed-Najib-Biabani-Ibrahimkhel",
+			"Baloch Khan"
 		]
 	},
 	"wikieditor": "د پرمختللی ويکي متن د سمون ليدنمخ",
 	"wikieditor-wikitext-tab": "ويکي متن",
 	"wikieditor-loading": "رابرسېرېږي...",
-	"wikieditor-preview-preference": "څنگ په څنگ مخليدنه چارنول",
-	"wikieditor-preview-tab": "مخليدنه",
-	"wikieditor-preview-changes-tab": "بدلونونه",
-	"wikieditor-preview-loading": "رابرسېرېږي...",
-	"wikieditor-publish-preference": "گام په گام خپرېدنه چارنده کول",
-	"wikieditor-publish-button-publish": "خپرول",
-	"wikieditor-publish-button-cancel": "ناگارل",
-	"wikieditor-publish-dialog-title": "{{SITENAME}} کې خپرول",
-	"wikieditor-publish-dialog-summary": "د سمون لنډيز (په لنډه توگه د خپلو بدلونونو څرگندونه وکړۍ):",
-	"wikieditor-publish-dialog-minor": "وړوکی سمون",
-	"wikieditor-publish-dialog-watch": "همدا مخ کتل",
-	"wikieditor-publish-dialog-publish": "خپرول",
-	"wikieditor-publish-dialog-goback": "پر شا تلل",
 	"wikieditor-toolbar": "د سمون توکپټه",
 	"wikieditor-toolbar-preference": "د سمون پرمختللې اوزارپټه چارنول",
-	"wikieditor-toolbar-dialogs-preference": "د تړنو، لښتيالونو د ورټومبلو، همدا شان د پلټنې او ځايناستولو لپاره کوډگران چارنول",
 	"wikieditor-toolbar-loading": "رابرسېرېږي...",
 	"wikieditor-toolbar-tool-bold": "زغرد",
 	"wikieditor-toolbar-tool-bold-example": "زغرد متن",
@@ -82,6 +69,7 @@
 	"wikieditor-toolbar-tool-ulist-example": "د گولۍ داره لړليک توکی",
 	"wikieditor-toolbar-tool-olist": "شمېرن لړليک",
 	"wikieditor-toolbar-tool-olist-example": "د گولۍ داره لړليک توکی",
+	"wikieditor-toolbar-tool-nowiki-example": "{{Wy/ps/ښه|Pagebanner default.jpg|1000px|}} '''{{Wy/ps/BASICPAGENAME}}''' د '''0000''' هيواد 1_1_1 ده، چې د 2_2_2 هيواد په 3_3_3 سيمه کې موقعیت لري.\n==مخته ولاړ سي==\n*[[Wy/ps/777|888]]\n*[[Wy/ps/777|888]]\n*[[Wy/ps/777|888]] \n==سرچینې==\n{{Wy/ps/نابشپړ}}[[Category:Wy/ps]] \n[[Category:Wy/ps/نور کار غواړي]] [[Category:Wy/ps/ښارونه]]",
 	"wikieditor-toolbar-tool-redirect": "مخ گرځېدنه",
 	"wikieditor-toolbar-tool-redirect-example": "د هدفي مخ نوم",
 	"wikieditor-toolbar-tool-big": "لوی",

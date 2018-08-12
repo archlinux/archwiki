@@ -3,7 +3,8 @@
 		"authors": [
 			"Shirayuki",
 			"Otokoume",
-			"ネイ"
+			"ネイ",
+			"Yusuke1109"
 		]
 	},
 	"recaptcha-desc": "Confirm Edit 用 reCAPTCHA モジュール",
@@ -12,5 +13,8 @@
 	"recaptcha-badlogin": "ウィキへの自動パスワードクラック攻撃を防ぐため、お手数をおかけしますが画像に表示されている単語を入力してください。",
 	"recaptcha-createaccount": "ウィキでのアカウント自動作成を防ぐため、お手数をおかけしますが画像に表示されている単語を入力してください。",
 	"recaptcha-createaccount-fail": "文字列が正しくない、または入力されていません。",
-	"recaptcha-create": "ウィキでのページの自動作成を防ぐため、お手数をおかけしますが画像に表示されている単語を入力してください。"
+	"recaptcha-create": "ウィキでのページの自動作成を防ぐため、お手数をおかけしますが画像に表示されている単語を入力してください。",
+	"recaptcha-info": "ReCaptchaチャレンジを解決し、チャレンジとレスポンスの値をcaptchaIdとcaptchaWordとして返してください。",
+	"recaptcha-apihelp-param-recaptcha_challenge_field": "ReCaptchaウィジェットのフィールド",
+	"recaptcha-apihelp-param-recaptcha_response_field": "ReCaptchaウィジェットのフィールド"
 }

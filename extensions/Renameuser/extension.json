@@ -6,10 +6,10 @@
 	],
 	"url": "https://www.mediawiki.org/wiki/Extension:Renameuser",
 	"descriptionmsg": "renameuser-desc",
-	"license-name": "GPL-2.0+",
+	"license-name": "GPL-2.0-or-later",
 	"type": "specialpage",
 	"requires": {
-		"MediaWiki": ">= 1.25.0"
+		"MediaWiki": ">= 1.30.0"
 	},
 	"ExtensionMessagesFiles": {
 		"RenameuserAliases": "Renameuser.alias.php"
@@ -51,11 +51,11 @@
 		"Renameuser": "SpecialRenameuser"
 	},
 	"AutoloadClasses": {
-		"RenameuserHooks": "Renameuser.hooks.php",
-		"RenameUserJob": "RenameUserJob.php",
-		"RenameuserLogFormatter": "RenameuserLogFormatter.php",
-		"RenameuserSQL": "RenameuserSQL.php",
-		"SpecialRenameuser": "specials/SpecialRenameuser.php"
+		"RenameuserHooks": "includes/RenameuserHooks.php",
+		"RenameUserJob": "includes/RenameUserJob.php",
+		"RenameuserLogFormatter": "includes/RenameuserLogFormatter.php",
+		"RenameuserSQL": "includes/RenameuserSQL.php",
+		"SpecialRenameuser": "includes/SpecialRenameuser.php"
 	},
 	"manifest_version": 1
 }

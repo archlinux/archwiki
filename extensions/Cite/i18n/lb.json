@@ -6,7 +6,7 @@
 		]
 	},
 	"apihelp-query+references-example-1": "Referenzen associéiert mam <kbd>Albert Einstein</kbd>.",
-	"cite-desc": "Setzt <nowiki><ref[ name=id]></nowiki> an <nowiki><references/></nowiki> Taggen derbäi, fir Zitatiounen.",
+	"cite-desc": "Setzt <nowiki><ref[ name=id]></nowiki> an <nowiki><references/></nowiki> Tagge fir Referenzen derbäi.",
 	"cite_error": "Zitéierfeeler: $1",
 	"cite_error_ref_numeric_key": "Ongëltegen <code>&lt;ref&gt;</code> Tag;\nDen Numm ka keng einfach ganz Zuel sinn. Benotzt w.e.g. een Titel den eng Beschreiwung gëtt",
 	"cite_error_ref_no_key": "Den Ufaang <code>&lt;ref&gt;</code> Tag ass schlecht formatéiert oder huet e falschen Numm",

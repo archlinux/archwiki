@@ -29,10 +29,13 @@
  *
  * @author Daniel Kinzler
  */
-class SiteImporterTest extends PHPUnit_Framework_TestCase {
+class SiteImporterTest extends PHPUnit\Framework\TestCase {
+
+	use MediaWikiCoversValidator;
+	use PHPUnit4And6Compat;
 
 	private function newSiteImporter( array $expectedSites, $errorCount ) {
-		$store = $this->getMockBuilder( 'SiteStore' )->getMock();
+		$store = $this->getMockBuilder( SiteStore::class )->getMock();
 
 		$store->expects( $this->once() )
 			->method( 'saveSites' )
@@ -44,7 +47,7 @@ class SiteImporterTest extends PHPUnit_Framework_TestCase {
 			->method( 'getSites' )
 			->will( $this->returnValue( new SiteList() ) );
 
-		$errorHandler = $this->getMockBuilder( 'Psr\Log\LoggerInterface' )->getMock();
+		$errorHandler = $this->getMockBuilder( Psr\Log\LoggerInterface::class )->getMock();
 		$errorHandler->expects( $this->exactly( $errorCount ) )
 			->method( 'error' );
 
@@ -146,9 +149,9 @@ class SiteImporterTest extends PHPUnit_Framework_TestCase {
 	}
 
 	public function testImportFromXML_malformed() {
-		$this->setExpectedException( 'Exception' );
+		$this->setExpectedException( Exception::class );
 
-		$store = $this->getMockBuilder( 'SiteStore' )->getMock();
+		$store = $this->getMockBuilder( SiteStore::class )->getMock();
 		$importer = new SiteImporter( $store );
 		$importer->importFromXML( 'THIS IS NOT XML' );
 	}

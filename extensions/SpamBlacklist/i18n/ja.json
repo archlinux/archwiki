@@ -6,7 +6,8 @@
 			"JtFuruhata",
 			"Marine-Blue",
 			"Shirayuki",
-			"Whym"
+			"Whym",
+			"Yusuke1109"
 		]
 	},
 	"spam-blacklist": " #<!-- この行は変更しないでください --> <pre>\n# この一覧に掲載されている外部URLをページに追加すると編集をブロックします。\n# この一覧はこのウィキでのみ有効です。グローバル ブラックリストも参照してください。\n# 利用方法は https://www.mediawiki.org/wiki/Extension:SpamBlacklist/ja をご覧ください。\n#\n# 構文は以下の通りです:\n#  * 「#」以降行末まではコメントです\n#  * 空でない行は、URLに含まれるホスト名との一致を検出する正規表現です\n\n #</pre> <!-- この行は変更しないでください -->",
@@ -24,6 +25,7 @@
 	"right-spamblacklistlog": "スパムブラックリストを閲覧",
 	"action-spamblacklistlog": "スパムブラックリスト記録の閲覧",
 	"apihelp-spamblacklist-description": "1 件以上の URL についてスパムブラックリストに登録されているか検証します。",
+	"apihelp-spamblacklist-summary": "1件以上の URL についてスパムブラックリストに登録されているか検証します。",
 	"apihelp-spamblacklist-param-url": "ブラックリストに登録されているか検証する URL です。",
 	"apihelp-spamblacklist-example-1": "2 件の URL についてブラックリストに登録されているか検証"
 }

@@ -58,9 +58,24 @@
 
 		if ( $editingSessionIdInput.length ) {
 			editingSessionId = $editingSessionIdInput.val();
-			logEditEvent( 'ready', {
-				editingSessionId: editingSessionId
-			} );
+			if ( window.performance && window.performance.timing ) {
+				// We want to track from the time the user started to try to
+				// launch the editor which navigationStart approximates. All
+				// of our supported browsers *should* allow this. Rather than
+				// fall back to the timestamp when the page loaded for those
+				// that don't, we just ignore them, so as to not skew the
+				// results towards better-performance in those cases.
+				logEditEvent( 'ready', {
+					editingSessionId: editingSessionId,
+					timing: Date.now() - window.performance.timing.navigationStart
+				} );
+				$textarea.on( 'wikiEditor-toolbar-doneInitialSections', function () {
+					logEditEvent( 'loaded', {
+						editingSessionId: editingSessionId,
+						timing: Date.now() - window.performance.timing.navigationStart
+					} );
+				} );
+			}
 			$textarea.closest( 'form' ).submit( function () {
 				submitting = true;
 			} );

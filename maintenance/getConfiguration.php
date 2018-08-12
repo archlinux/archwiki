@@ -64,7 +64,7 @@ class GetConfiguration extends Maintenance {
 
 		$validFormat = in_array( $format, self::$outFormats );
 		if ( !$validFormat ) {
-			$this->error( "--format set to an unrecognized format", 0 );
+			$this->error( "--format set to an unrecognized format" );
 			$error_out = true;
 		}
 
@@ -101,7 +101,7 @@ class GetConfiguration extends Maintenance {
 			foreach ( $this->settings_list as $name ) {
 				if ( !preg_match( '/^wg[A-Z]/', $name ) ) {
 					throw new MWException( "Variable '$name' does start with 'wg'." );
-				} elseif ( !isset( $GLOBALS[$name] ) ) {
+				} elseif ( !array_key_exists( $name, $GLOBALS ) ) {
 					throw new MWException( "Variable '$name' is not set." );
 				} elseif ( !$this->isAllowedVariable( $GLOBALS[$name] ) ) {
 					throw new MWException( "Variable '$name' includes non-array, non-scalar, items." );
@@ -192,5 +192,5 @@ class GetConfiguration extends Maintenance {
 	}
 }
 
-$maintClass = "GetConfiguration";
+$maintClass = GetConfiguration::class;
 require_once RUN_MAINTENANCE_IF_MAIN;

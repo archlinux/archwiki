@@ -48,6 +48,7 @@ div.mw-hightlight {
 	-moz-user-select: none;
 	-webkit-user-select: none;
 	-ms-user-select: none;
+	user-select: none;
 }
 
 /* To interact better with the 'display: block' above, doesn't affect other uses */

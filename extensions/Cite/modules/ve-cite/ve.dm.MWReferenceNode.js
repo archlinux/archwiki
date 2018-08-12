@@ -1,8 +1,8 @@
 /*!
  * VisualEditor DataModel MWReferenceNode class.
  *
- * @copyright 2011-2017 Cite VisualEditor Team and others; see AUTHORS.txt
- * @license The MIT License (MIT); see LICENSE.txt
+ * @copyright 2011-2018 VisualEditor Team's Cite sub-team and others; see AUTHORS.txt
+ * @license MIT
  */
 
 /**
@@ -104,7 +104,7 @@ ve.dm.MWReferenceNode.static.toDomElements = function ( dataElement, doc, conver
 	var itemNodeHtml, originalHtml, mwData, i, iLen, keyedNodes, setContents, contentsAlreadySet,
 		originalMw, listKeyParts, name, group, $link,
 		isForClipboard = converter.isForClipboard(),
-		el = doc.createElement( 'span' ),
+		el = doc.createElement( 'sup' ),
 		itemNodeWrapper = doc.createElement( 'div' ),
 		originalHtmlWrapper = doc.createElement( 'div' ),
 		itemNode = converter.internalList.getItemNode( dataElement.attributes.listIndex ),
@@ -216,8 +216,8 @@ ve.dm.MWReferenceNode.static.toDomElements = function ( dataElement, doc, conver
 		el.setAttribute( 'data-mw', originalMw );
 
 		// Return the original DOM elements if possible
-		if ( dataElement.originalDomElementsIndex !== undefined ) {
-			return ve.copyDomElements( converter.getStore().value( dataElement.originalDomElementsIndex ), doc );
+		if ( dataElement.originalDomElementsHash !== undefined ) {
+			return ve.copyDomElements( converter.getStore().value( dataElement.originalDomElementsHash ), doc );
 		}
 	} else {
 		el.setAttribute( 'data-mw', JSON.stringify( mwData ) );
@@ -330,12 +330,12 @@ ve.dm.MWReferenceNode.static.describeChange = function ( key, change ) {
 	if ( key === 'refGroup' ) {
 		if ( change.from ) {
 			if ( change.to ) {
-				return ve.msg( 'cite-ve-changedesc-reflist-group-both', change.from, change.to );
+				return ve.msg( 'cite-ve-changedesc-ref-group-both', change.from, change.to );
 			} else {
-				return ve.msg( 'cite-ve-changedesc-reflist-group-from', change.from );
+				return ve.msg( 'cite-ve-changedesc-ref-group-from', change.from );
 			}
 		}
-		return ve.msg( 'cite-ve-changedesc-reflist-group-to', change.to );
+		return ve.msg( 'cite-ve-changedesc-ref-group-to', change.to );
 	}
 	if ( key === 'refListItemId' ) {
 		return ve.msg( 'cite-ve-changedesc-reflist-item-id' );

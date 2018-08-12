@@ -1,6 +1,7 @@
 <?php
 
 namespace RemexHtml\TreeBuilder;
+
 use RemexHtml\HTMLData;
 use RemexHtml\Tokenizer\Attribute;
 use RemexHtml\Tokenizer\Attributes;

@@ -1,4 +1,5 @@
 @import 'mediawiki.mixins';
+@import 'mediawiki.ui/variables';
 @import 'mw.rcfilters.variables';
 
 .animation-delay( ... ) {
@@ -8,7 +9,7 @@
 }
 
 // This is a general mixin for a color circle
-.mw-rcfilters-mixin-circle( @color: #fff, @diameter: 2em, @padding: 0.5em, @border: false, @borderColor: #54595d, @emptyBackground: false ) {
+.mw-rcfilters-mixin-circle( @color: @color-base--inverted, @diameter: 2em, @padding: 0.5em, @border: false, @borderColor: @colorGray5, @emptyBackground: false ) {
 	.box-sizing( border-box );
 	min-width: @diameter;
 	width: @diameter;
@@ -43,15 +44,20 @@
 	}
 }
 
+// A mixin for changes list containers. Applies enough margin-left to fit the 5 highlight circles.
+.result-circle-margin() {
+	margin-left: ~'calc( ( @{result-circle-diameter} + @{result-circle-margin} ) * 5 + @{result-circle-general-margin} )';
+}
+
 // A mixin just for changesListWrapperWidget page, to output the scope of the widget
 // so it is before the rest of the rule; we need the li& to be in
 // between the wrapper scope and the color-cX class, which doesn't
 // work if the rules are inside the above widget LESS scope
 .highlight-changesListWrapperWidget( @bgcolor ) {
 	.mw-rcfilters-ui-changesListWrapperWidget li&,
-		.mw-rcfilters-ui-changesListWrapperWidget & tr:first-child,
-		.mw-rcfilters-ui-changesListWrapperWidget tr&.mw-rcfilters-ui-changesListWrapperWidget-enhanced-toplevel:not(.mw-rcfilters-ui-changesListWrapperWidget-enhanced-grey) td:not( :nth-child( -n+2 ) ),
-		.mw-rcfilters-ui-changesListWrapperWidget tr&.mw-rcfilters-ui-changesListWrapperWidget-enhanced-nested:not(.mw-rcfilters-ui-changesListWrapperWidget-enhanced-grey) td:not( :nth-child( -n+3 ) ) {
+	.mw-rcfilters-ui-changesListWrapperWidget & tr:first-child,
+	.mw-rcfilters-ui-changesListWrapperWidget tr&.mw-rcfilters-ui-changesListWrapperWidget-enhanced-toplevel:not( .mw-rcfilters-ui-changesListWrapperWidget-enhanced-grey ) td:not( :nth-child( -n+2 ) ),
+	.mw-rcfilters-ui-changesListWrapperWidget tr&.mw-rcfilters-ui-changesListWrapperWidget-enhanced-nested:not( .mw-rcfilters-ui-changesListWrapperWidget-enhanced-grey ) td:not( :nth-child( -n+4 ) ) {
 		background-color: @bgcolor;
 	}
 }

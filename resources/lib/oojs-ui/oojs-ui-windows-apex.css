@@ -1,15 +1,15 @@
 /*!
- * OOjs UI v0.23.0
- * https://www.mediawiki.org/wiki/OOjs_UI
+ * OOUI v0.26.4
+ * https://www.mediawiki.org/wiki/OOUI
  *
- * Copyright 2011–2017 OOjs UI Team and other contributors.
+ * Copyright 2011–2018 OOUI Team and other contributors.
  * Released under the MIT license
  * http://oojs.mit-license.org
  *
- * Date: 2017-09-05T21:24:03Z
+ * Date: 2018-04-17T22:24:02Z
  */
 .oo-ui-actionWidget.oo-ui-pendingElement-pending {
-  background-image: /* @embed */ url(themes/apex/images/textures/pending.gif);
+  background-image: /* @embed */ url(themes/wikimediaui/images/textures/pending.gif);
 }
 .oo-ui-window {
   background-color: transparent;
@@ -172,12 +172,6 @@
 .oo-ui-messageDialog-actions .oo-ui-actionWidget.oo-ui-flaggedElement-progressive .oo-ui-labelElement-label {
   font-weight: bold;
 }
-.oo-ui-messageDialog-actions .oo-ui-actionWidget.oo-ui-flaggedElement-constructive:hover {
-  background-color: rgba(118, 171, 54, 0.05);
-}
-.oo-ui-messageDialog-actions .oo-ui-actionWidget.oo-ui-flaggedElement-constructive:active {
-  background-color: rgba(118, 171, 54, 0.1);
-}
 .oo-ui-messageDialog-actions .oo-ui-actionWidget.oo-ui-flaggedElement-destructive:hover {
   background-color: rgba(212, 83, 83, 0.05);
 }
@@ -301,14 +295,6 @@
 .oo-ui-processDialog-actions-primary .oo-ui-actionWidget.oo-ui-flaggedElement-progressive .oo-ui-labelElement-label {
   font-weight: bold;
 }
-.oo-ui-processDialog-actions-safe .oo-ui-actionWidget.oo-ui-flaggedElement-constructive:hover,
-.oo-ui-processDialog-actions-primary .oo-ui-actionWidget.oo-ui-flaggedElement-constructive:hover {
-  background-color: rgba(118, 171, 54, 0.05);
-}
-.oo-ui-processDialog-actions-safe .oo-ui-actionWidget.oo-ui-flaggedElement-constructive:active,
-.oo-ui-processDialog-actions-primary .oo-ui-actionWidget.oo-ui-flaggedElement-constructive:active {
-  background-color: rgba(118, 171, 54, 0.1);
-}
 .oo-ui-processDialog-actions-safe .oo-ui-actionWidget.oo-ui-flaggedElement-destructive:hover,
 .oo-ui-processDialog-actions-primary .oo-ui-actionWidget.oo-ui-flaggedElement-destructive:hover {
   background-color: rgba(212, 83, 83, 0.05);
@@ -365,7 +351,6 @@
   right: 0;
   left: 0;
   margin: auto;
-  overflow: hidden;
   max-width: 100%;
   max-height: 100%;
 }

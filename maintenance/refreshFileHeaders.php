@@ -37,6 +37,15 @@ class RefreshFileHeaders extends Maintenance {
 		$this->addOption( 'verbose', 'Output information about each file.', false, false, 'v' );
 		$this->addOption( 'start', 'Name of file to start with', false, true );
 		$this->addOption( 'end', 'Name of file to end with', false, true );
+		$this->addOption( 'media_type', 'Media type to filter for', false, true );
+		$this->addOption( 'major_mime', 'Major mime type to filter for', false, true );
+		$this->addOption( 'minor_mime', 'Minor mime type to filter for', false, true );
+		$this->addOption(
+			'refreshContentType',
+			'Set true to refresh file content type from mime data in db',
+			false,
+			false
+		);
 		$this->setBatchSize( 200 );
 	}
 
@@ -44,9 +53,17 @@ class RefreshFileHeaders extends Maintenance {
 		$repo = RepoGroup::singleton()->getLocalRepo();
 		$start = str_replace( ' ', '_', $this->getOption( 'start', '' ) ); // page on img_name
 		$end = str_replace( ' ', '_', $this->getOption( 'end', '' ) ); // page on img_name
+		 // filter by img_media_type
+		$media_type = str_replace( ' ', '_', $this->getOption( 'media_type', '' ) );
+		 // filter by img_major_mime
+		$major_mime = str_replace( ' ', '_', $this->getOption( 'major_mime', '' ) );
+		 // filter by img_minor_mime
+		$minor_mime = str_replace( ' ', '_', $this->getOption( 'minor_mime', '' ) );
 
 		$count = 0;
 		$dbr = $this->getDB( DB_REPLICA );
+
+		$fileQuery = LocalFile::getQueryInfo();
 
 		do {
 			$conds = [ "img_name > {$dbr->addQuotes( $start )}" ];
@@ -55,8 +72,28 @@ class RefreshFileHeaders extends Maintenance {
 				$conds[] = "img_name <= {$dbr->addQuotes( $end )}";
 			}
 
-			$res = $dbr->select( 'image', '*', $conds,
-				__METHOD__, [ 'LIMIT' => $this->mBatchSize, 'ORDER BY' => 'img_name ASC' ] );
+			if ( strlen( $media_type ) ) {
+				$conds[] = "img_media_type = {$dbr->addQuotes( $media_type )}";
+			}
+
+			if ( strlen( $major_mime ) ) {
+				$conds[] = "img_major_mime = {$dbr->addQuotes( $major_mime )}";
+			}
+
+			if ( strlen( $minor_mime ) ) {
+				$conds[] = "img_minor_mime = {$dbr->addQuotes( $minor_mime )}";
+			}
+
+			$res = $dbr->select( $fileQuery['tables'],
+				$fileQuery['fields'],
+				$conds,
+				__METHOD__,
+				[
+					'LIMIT' => $this->getBatchSize(),
+					'ORDER BY' => 'img_name ASC'
+				],
+				$fileQuery['joins']
+			);
 
 			if ( $res->numRows() > 0 ) {
 				$row1 = $res->current();
@@ -69,6 +106,9 @@ class RefreshFileHeaders extends Maintenance {
 			foreach ( $res as $row ) {
 				$file = $repo->newFileFromRow( $row );
 				$headers = $file->getContentHeaders();
+				if ( $this->getOption( 'refreshContentType', false ) ) {
+					$headers['Content-Type'] = $row->img_major_mime . '/' . $row->img_minor_mime;
+				}
 
 				if ( count( $headers ) ) {
 					$backendOperations[] = [
@@ -98,7 +138,7 @@ class RefreshFileHeaders extends Maintenance {
 
 			$this->output( "Updating headers for {$backendOperationsCount} file(s).\n" );
 			$this->updateFileHeaders( $repo, $backendOperations );
-		} while ( $res->numRows() === $this->mBatchSize );
+		} while ( $res->numRows() === $this->getBatchSize() );
 
 		$this->output( "Done. Updated headers for $count file(s).\n" );
 	}
@@ -112,5 +152,5 @@ class RefreshFileHeaders extends Maintenance {
 	}
 }
 
-$maintClass = 'RefreshFileHeaders';
+$maintClass = RefreshFileHeaders::class;
 require_once RUN_MAINTENANCE_IF_MAIN;

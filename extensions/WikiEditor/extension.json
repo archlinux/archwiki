@@ -10,8 +10,11 @@
 	],
 	"url": "https://www.mediawiki.org/wiki/Extension:WikiEditor",
 	"descriptionmsg": "wikieditor-desc",
-	"license-name": "GPL-2.0+",
-	"type": "other",
+	"license-name": "GPL-2.0-or-later",
+	"type": "editor",
+	"requires": {
+		"MediaWiki": ">= 1.28.0"
+	},
 	"MessagesDirs": {
 		"WikiEditor": [
 			"i18n"
@@ -47,70 +50,23 @@
 		]
 	},
 	"ResourceModules": {
-		"jquery.wikiEditor": {
+		"ext.wikiEditor": {
 			"group": "ext.wikiEditor",
-			"dependencies": [
-				"jquery.wikiEditor.core",
-				"jquery.wikiEditor.toolbar",
-				"jquery.wikiEditor.dialogs"
-			]
-		},
-		"jquery.wikiEditor.core": {
-			"group": "ext.wikiEditor",
-			"scripts": "jquery.wikiEditor.js",
-			"styles": "jquery.wikiEditor.less",
-			"dependencies": [
-				"jquery.client",
-				"jquery.textSelection",
-				"mediawiki.language"
+			"scripts": [
+				"jquery.wikiEditor.js",
+				"jquery.wikiEditor.toolbar.js",
+				"jquery.wikiEditor.toolbar.config.js",
+				"jquery.wikiEditor.dialogs.js",
+				"jquery.wikiEditor.dialogs.config.js",
+				"ext.wikiEditor.js",
+				"ext.wikiEditor.toolbar.js",
+				"ext.wikiEditor.dialogs.js"
 			],
-			"messages": [
-				"wikieditor-wikitext-tab",
-				"wikieditor-loading"
-			]
-		},
-		"jquery.wikiEditor.dialogs": {
-			"group": "ext.wikiEditor",
-			"scripts": "jquery.wikiEditor.dialogs.js",
-			"styles": "jquery.wikiEditor.dialogs.less",
-			"dependencies": [
-				"jquery.wikiEditor.core",
-				"jquery.wikiEditor.toolbar",
-				"jquery.ui.dialog",
-				"jquery.ui.button",
-				"jquery.ui.draggable",
-				"jquery.ui.resizable",
-				"jquery.tabIndex"
-			]
-		},
-		"jquery.wikiEditor.dialogs.config": {
-			"group": "ext.wikiEditor",
-			"scripts": "jquery.wikiEditor.dialogs.config.js",
-			"styles": "jquery.wikiEditor.dialogs.config.less",
-			"dependencies": [
-				"jquery.wikiEditor.core",
-				"jquery.wikiEditor.dialogs",
-				"jquery.wikiEditor.toolbar.i18n",
-				"jquery.suggestions",
-				"mediawiki.Upload.Dialog",
-				"mediawiki.ForeignStructuredUpload.BookletLayout",
-				"mediawiki.api",
-				"mediawiki.RegExp",
-				"mediawiki.Title",
-				"mediawiki.jqueryMsg"
-			],
-			"messages": [
-				"wikieditor-toolbar-tool-file-title",
-				"wikieditor-toolbar-file-target",
-				"wikieditor-toolbar-file-caption",
-				"wikieditor-toolbar-file-size",
-				"wikieditor-toolbar-file-float",
-				"wikieditor-toolbar-file-default",
-				"wikieditor-toolbar-file-format-none",
-				"wikieditor-toolbar-file-format",
-				"wikieditor-toolbar-tool-file-insert",
-				"wikieditor-toolbar-tool-file-cancel",
-				"wikieditor-toolbar-tool-file-upload"
+			"styles": [
+				"jquery.wikiEditor.less",
+				"jquery.wikiEditor.toolbar.less",
+				"jquery.wikiEditor.dialogs.less",
+				"jquery.wikiEditor.dialogs.config.less"
 			],
 			"templates": {
 				"dialogInsertFile.html": "templates/dialogInsertFile.html",
@@ -118,49 +74,10 @@
 				"dialogInsertReference.html": "templates/dialogInsertReference.html",
 				"dialogInsertTable.html": "templates/dialogInsertTable.html",
 				"dialogReplace.html": "templates/dialogReplace.html"
-			}
-		},
-		"jquery.wikiEditor.preview": {
-			"group": "ext.wikiEditor",
-			"scripts": "jquery.wikiEditor.preview.js",
-			"styles": "jquery.wikiEditor.preview.less",
-			"dependencies": [
-				"jquery.wikiEditor.core",
-				"mediawiki.api"
-			]
-		},
-		"jquery.wikiEditor.publish": {
-			"group": "ext.wikiEditor",
-			"scripts": "jquery.wikiEditor.publish.js",
-			"dependencies": [
-				"jquery.wikiEditor.core",
-				"jquery.wikiEditor.dialogs"
-			]
-		},
-		"jquery.wikiEditor.toolbar": {
-			"group": "ext.wikiEditor",
-			"scripts": "jquery.wikiEditor.toolbar.js",
-			"styles": "jquery.wikiEditor.toolbar.less",
-			"dependencies": [
-				"jquery.wikiEditor.core",
-				"jquery.wikiEditor.toolbar.i18n",
-				"jquery.cookie",
-				"jquery.async"
-			]
-		},
-		"jquery.wikiEditor.toolbar.config": {
-			"group": "ext.wikiEditor",
-			"scripts": "jquery.wikiEditor.toolbar.config.js",
-			"dependencies": [
-				"jquery.wikiEditor.core",
-				"jquery.wikiEditor.toolbar.i18n",
-				"jquery.wikiEditor.toolbar",
-				"mediawiki.language.specialCharacters"
-			]
-		},
-		"jquery.wikiEditor.toolbar.i18n": {
-			"group": "ext.wikiEditor",
+			},
 			"messages": [
+				"wikieditor-wikitext-tab",
+				"wikieditor-loading",
 				"wikieditor-toolbar-loading",
 				"wikieditor-toolbar-tool-bold",
 				"wikieditor-toolbar-tool-bold-example",
@@ -331,107 +248,100 @@
 				"wikieditor-toolbar-help-content-signature-result",
 				"wikieditor-toolbar-help-content-indent-description",
 				"wikieditor-toolbar-help-content-indent-syntax",
-				"wikieditor-toolbar-help-content-indent-result"
-			]
-		},
-		"ext.wikiEditor": {
-			"group": "ext.wikiEditor",
+				"wikieditor-toolbar-help-content-indent-result",
+				"wikieditor-toolbar-tool-file-title",
+				"wikieditor-toolbar-file-target",
+				"wikieditor-toolbar-file-caption",
+				"wikieditor-toolbar-file-size",
+				"wikieditor-toolbar-file-float",
+				"wikieditor-toolbar-file-default",
+				"wikieditor-toolbar-file-format-none",
+				"wikieditor-toolbar-file-format",
+				"wikieditor-toolbar-tool-file-insert",
+				"wikieditor-toolbar-tool-file-cancel",
+				"wikieditor-toolbar-tool-file-upload"
+			],
 			"dependencies": [
-				"ext.wikiEditor.core",
-				"ext.wikiEditor.toolbar",
-				"ext.wikiEditor.dialogs"
+				"jquery.async",
+				"jquery.cookie",
+				"jquery.suggestions",
+				"jquery.tabIndex",
+				"jquery.textSelection",
+				"jquery.ui.button",
+				"jquery.ui.dialog",
+				"jquery.ui.draggable",
+				"jquery.ui.resizable",
+				"mediawiki.api",
+				"mediawiki.ForeignStructuredUpload.BookletLayout",
+				"mediawiki.jqueryMsg",
+				"mediawiki.language.specialCharacters",
+				"mediawiki.language",
+				"mediawiki.RegExp",
+				"mediawiki.Title",
+				"mediawiki.Upload.Dialog",
+				"mediawiki.user",
+				"oojs-ui.styles.icons-content",
+				"oojs-ui.styles.icons-editing-advanced",
+				"oojs-ui.styles.icons-editing-core",
+				"oojs-ui.styles.icons-editing-list",
+				"oojs-ui.styles.icons-editing-styling",
+				"oojs-ui.styles.icons-media"
 			]
 		},
 		"ext.wikiEditor.styles": {
 			"group": "ext.wikiEditor",
 			"styles": "ext.wikiEditor.toolbar.styles.less"
 		},
-		"ext.wikiEditor.core": {
-			"group": "ext.wikiEditor",
-			"scripts": "ext.wikiEditor.js",
-			"dependencies": [
-				"jquery.wikiEditor.core",
-				"mediawiki.user"
-			]
+		"ext.wikiEditor.toolbar": {
+			"dependencies": "ext.wikiEditor",
+			"deprecated": "Please use 'ext.wikiEditor' instead."
 		},
 		"ext.wikiEditor.dialogs": {
-			"group": "ext.wikiEditor",
-			"scripts": "ext.wikiEditor.dialogs.js",
-			"dependencies": [
-				"ext.wikiEditor.core",
-				"ext.wikiEditor.toolbar",
-				"jquery.wikiEditor.dialogs",
-				"jquery.wikiEditor.dialogs.config"
-			]
+			"dependencies": "ext.wikiEditor",
+			"deprecated": "Please use 'ext.wikiEditor' instead."
 		},
-		"ext.wikiEditor.preview": {
-			"group": "ext.wikiEditor",
-			"scripts": "ext.wikiEditor.preview.js",
-			"dependencies": [
-				"ext.wikiEditor.core",
-				"jquery.wikiEditor.preview"
-			],
-			"messages": [
-				"wikieditor-preview-tab",
-				"wikieditor-preview-changes-tab",
-				"wikieditor-preview-loading"
-			]
+		"ext.wikiEditor.core": {
+			"dependencies": "ext.wikiEditor",
+			"deprecated": "Please use 'ext.wikiEditor' instead."
 		},
-		"ext.wikiEditor.publish": {
-			"group": "ext.wikiEditor",
-			"scripts": "ext.wikiEditor.publish.js",
-			"dependencies": [
-				"ext.wikiEditor.core",
-				"jquery.wikiEditor.publish"
-			],
-			"messages": [
-				"wikieditor-publish-button-publish",
-				"wikieditor-publish-button-cancel",
-				"wikieditor-publish-dialog-title",
-				"wikieditor-publish-dialog-summary",
-				"wikieditor-publish-dialog-minor",
-				"wikieditor-publish-dialog-watch",
-				"wikieditor-publish-dialog-publish",
-				"wikieditor-publish-dialog-goback"
-			]
+		"jquery.wikiEditor": {
+			"dependencies": "ext.wikiEditor",
+			"deprecated": "Please use 'ext.wikiEditor' instead."
 		},
-		"ext.wikiEditor.toolbar": {
-			"group": "ext.wikiEditor",
-			"scripts": "ext.wikiEditor.toolbar.js",
-			"dependencies": [
-				"ext.wikiEditor.core",
-				"jquery.wikiEditor.toolbar",
-				"jquery.wikiEditor.toolbar.config"
-			]
+		"jquery.wikiEditor.core": {
+			"dependencies": "ext.wikiEditor",
+			"deprecated": "Please use 'ext.wikiEditor' instead."
+		},
+		"jquery.wikiEditor.dialogs": {
+			"dependencies": "ext.wikiEditor",
+			"deprecated": "Please use 'ext.wikiEditor' instead."
+		},
+		"jquery.wikiEditor.dialogs.config": {
+			"dependencies": "ext.wikiEditor",
+			"deprecated": "Please use 'ext.wikiEditor' instead."
+		},
+		"jquery.wikiEditor.toolbar": {
+			"dependencies": "ext.wikiEditor",
+			"deprecated": "Please use 'ext.wikiEditor' instead."
+		},
+		"jquery.wikiEditor.toolbar.config": {
+			"dependencies": "ext.wikiEditor",
+			"deprecated": "Please use 'ext.wikiEditor' instead."
+		},
+		"jquery.wikiEditor.toolbar.i18n": {
+			"dependencies": "ext.wikiEditor",
+			"deprecated": "Please use 'ext.wikiEditor' instead."
 		}
 	},
 	"ResourceFileModulePaths": {
 		"localBasePath": "modules",
 		"remoteExtPath": "WikiEditor/modules"
 	},
-	"config": {
-		"WikiEditorFeatures": {
-			"toolbar": {
-				"global": false,
-				"user": true
-			},
-			"dialogs": {
-				"global": false,
-				"user": true
-			},
-			"preview": {
-				"global": false,
-				"user": true
-			},
-			"publish": {
-				"global": false,
-				"user": true
-			},
-			"_merge_strategy": "array_plus_2d"
-		}
+	"DefaultUserOptions": {
+		"usebetatoolbar": true
 	},
 	"AutoloadClasses": {
-		"WikiEditorHooks": "WikiEditor.hooks.php"
+		"WikiEditorHooks": "includes/WikiEditorHooks.php"
 	},
 	"manifest_version": 1
 }

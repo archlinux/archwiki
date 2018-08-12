@@ -6,7 +6,7 @@
 	],
 	"url": "https://www.mediawiki.org/wiki/Extension:Gadgets",
 	"descriptionmsg": "gadgets-desc",
-	"license-name": "GPL-2.0+",
+	"license-name": "GPL-2.0-or-later",
 	"requires": {
 		"MediaWiki": ">= 1.28.0"
 	},
@@ -62,13 +62,13 @@
 		"GadgetsNamespaces": "Gadgets.namespaces.php"
 	},
 	"AutoloadClasses": {
-		"ApiQueryGadgetCategories": "api/ApiQueryGadgetCategories.php",
-		"ApiQueryGadgets": "api/ApiQueryGadgets.php",
-		"Gadget": "Gadgets_body.php",
-		"GadgetHooks": "GadgetHooks.php",
+		"ApiQueryGadgetCategories": "includes/api/ApiQueryGadgetCategories.php",
+		"ApiQueryGadgets": "includes/api/ApiQueryGadgets.php",
+		"Gadget": "includes/Gadget.php",
+		"GadgetHooks": "includes/GadgetHooks.php",
 		"GadgetResourceLoaderModule": "includes/GadgetResourceLoaderModule.php",
-		"SpecialGadgets": "SpecialGadgets.php",
-		"SpecialGadgetUsage": "SpecialGadgetUsage.php",
+		"SpecialGadgets": "includes/SpecialGadgets.php",
+		"SpecialGadgetUsage": "includes/SpecialGadgetUsage.php",
 		"GadgetRepo": "includes/GadgetRepo.php",
 		"GadgetDefinitionNamespaceRepo": "includes/GadgetDefinitionNamespaceRepo.php",
 		"MediaWikiGadgetsDefinitionRepo": "includes/MediaWikiGadgetsDefinitionRepo.php",
@@ -108,6 +108,9 @@
 		],
 		"wgQueryPages": [
 			"GadgetHooks::onwgQueryPages"
+		],
+		"DeleteUnknownPreferences": [
+			"GadgetHooks::onDeleteUnknownPreferences"
 		]
 	},
 	"config": {

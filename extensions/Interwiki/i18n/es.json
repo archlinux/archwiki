@@ -38,7 +38,7 @@
 	"interwiki_1": "sí",
 	"interwiki_0": "no",
 	"interwiki_error": "Error: La tabla de interwikis está vacía, u otra cosa salió mal.",
-	"interwiki-cached": "Los datos de los interwikis se almacenan en la memoria caché. No es posible modificar la caché.",
+	"interwiki-cached": "Los datos de los interwikis se almacenan en la antememoria. No es posible modificar la antememoria.",
 	"interwiki_edit": "Editar",
 	"interwiki_reasonfield": "Motivo:",
 	"interwiki_delquestion": "Borrando «$1»",

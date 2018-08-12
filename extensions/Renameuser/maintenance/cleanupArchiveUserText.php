@@ -15,9 +15,16 @@ class CleanupArchiveUserText extends Maintenance {
 		parent::__construct();
 		$this->mDescription = 'Update the archive table where users were ' .
 			'previously renamed, but their archive contributions were not';
+
+		$this->requireExtension( 'Renameuser' );
 	}
 
 	public function execute() {
+		if ( RenameuserSQL::getActorMigrationStage() >= MIGRATION_NEW ) {
+			$this->output( "archive.ar_user_text is no longer used.\n" );
+			return;
+		}
+
 		$dbw = wfGetDB( DB_MASTER );
 		do {
 			$res = $dbw->select(

@@ -18,18 +18,30 @@
 			"Amire80",
 			"Macofe",
 			"Mirws",
-			"Presidenvolksraad"
+			"Presidenvolksraad",
+			"Gombang"
 		]
 	},
+	"visualeditor-cite-tool-definition.json": "null",
 	"visualeditor-cite-tool-name-book": "Buku",
 	"visualeditor-cite-tool-name-journal": "Jurnal",
 	"visualeditor-cite-tool-name-news": "Berita",
 	"visualeditor-cite-tool-name-web": "Situs web",
+	"cite-tool-definition.json": "null",
+	"cite-ve-changedesc-ref-group-both": "Kelompok referensi diubah dari \"$1\" ke \"$2\"",
+	"cite-ve-changedesc-ref-group-from": "Kelompok referensi diubah dari \"$1\" ke kelompok umum",
+	"cite-ve-changedesc-ref-group-to": "Kelompok referensi berubah dari kelompok umum ke \"$1\"",
+	"cite-ve-changedesc-reflist-group-both": "Kelompok daftar referensi diubah dari \"$1\" ke \"$2\"",
+	"cite-ve-changedesc-reflist-group-from": "Kelompok daftar referensi diubah dari \"$1\" ke kelompok umum",
+	"cite-ve-changedesc-reflist-group-to": "Kelompok daftar referensi berubah dari kelompok umum ke \"$1\"",
+	"cite-ve-changedesc-reflist-item-id": "Indeks referensi diubah",
 	"cite-ve-dialog-reference-editing-reused": "Referensi ini digunakan $1 {{PLURAL:$1|kali}} pada halaman ini.",
 	"cite-ve-dialog-reference-options-group-label": "Gunakan kelompok ini",
 	"cite-ve-dialog-reference-options-group-placeholder": "Referensi umum",
 	"cite-ve-dialog-reference-options-name-label": "Pakai ulang dengan nama ini",
+	"cite-ve-dialog-reference-options-responsive-label": "Gunakan tata letak kolom responsif",
 	"cite-ve-dialog-reference-options-section": "Opsi",
+	"cite-ve-dialog-reference-placeholder": "Tulis atau salin referensi Anda di sini, atau sisipkan templat kutipan.",
 	"cite-ve-dialog-reference-title": "Referensi",
 	"cite-ve-dialog-reference-useexisting-full-label": "Pakai ulang kutipan yang telah ada di halaman ini",
 	"cite-ve-dialog-reference-useexisting-label": "Gunakan referensi yang ada",
@@ -48,5 +60,7 @@
 	"cite-ve-referenceslist-isempty-default": "Tidak ada referensi pada halaman ini yang dapat disertakan dalam daftar ini.",
 	"cite-ve-referenceslist-missingref": "Referensi ini didefinisikan dalam templat atau blok lain, dan sekarang hanya dapat disunting dalam mode \"sunting sumber\".",
 	"cite-ve-toolbar-group-label": "Kutip",
-	"cite-ve-othergroup-item": "$1 referensi"
+	"cite-ve-othergroup-item": "$1 referensi",
+	"visualeditor-internal-list-diff-default-group-name-mwreference": "Referensi",
+	"visualeditor-internal-list-diff-group-name-mwreference": "Nama kelompok referensi: \"$1\""
 }

@@ -4,12 +4,18 @@
  *
  * Ported from /t/inc/IP.t by avar.
  *
- * @group IP
  * @todo Test methods in this call should be split into a method and a
  * dataprovider.
  */
 
-class AvroValidatorTest extends PHPUnit_Framework_TestCase {
+/**
+ * @group IP
+ * @covers AvroValidator
+ */
+class AvroValidatorTest extends PHPUnit\Framework\TestCase {
+
+	use MediaWikiCoversValidator;
+
 	public function setUp() {
 		if ( !class_exists( 'AvroSchema' ) ) {
 			$this->markTestSkipped( 'Avro is required to run the AvroValidatorTest' );

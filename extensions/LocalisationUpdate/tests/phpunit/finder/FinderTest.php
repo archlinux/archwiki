@@ -2,12 +2,15 @@
 /**
  * @file
  * @author Niklas Laxström
- * @license GPL-2.0+
+ * @license GPL-2.0-or-later
  */
 
 namespace LocalisationUpdate;
 
-class FinderTest extends \PHPUnit_Framework_TestCase {
+/**
+ * @covers \LocalisationUpdate\Finder
+ */
+class FinderTest extends \PHPUnit\Framework\TestCase {
 	public function testGetComponents() {
 		$finder = new Finder(
 			[

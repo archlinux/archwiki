@@ -14,7 +14,6 @@
 	"cite_error_ref_no_input": "Tag <code>&lt;ref&gt;</code> annilys;\nrhaid i dagiau ref heb enw iddynt gynnwys rhywbeth",
 	"cite_error_references_duplicate_key": "Tag <code>&lt;ref&gt;</code> annilys; mae'r enw \"$1\" wedi'i ddiffinio droeon gyda chynnwys gwahanol",
 	"cite_error_references_invalid_parameters": "Tag <code>&lt;references&gt;</code> annilys;\nni chaniateir paramedrau.\nDefnyddiwch <code>&lt;references /&gt;</code>",
-	"cite_error_references_invalid_parameters_group": "Tag <code>&lt;references&gt;</code> annilys;\ndim ond y paramedr \"group\" a ganiateir.\nDefnyddiwch <code>&lt;references /&gt;</code>, neu <code>&lt;references group=\"...\" /&gt;</code>",
 	"cite_error_references_no_backlink_label": "Dim rhagor o labeli ôl-gyswllt ar gael.\nDiffiniwch ragor ohonynt yn y neges <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>",
 	"cite_error_no_link_label_group": "Wedi rhedeg allan o labeli dolenni unigryw ar gyfer y grŵp \"$1\".\nGallwch ddiffinio rhagor ohonynt yn y neges <nowiki>[[MediaWiki:$2]]</nowiki>.",
 	"cite_error_references_no_text": "Tag <code>&lt;ref&gt;</code> annilys;\nni osodwyd unrhyw destun ar gyfer y 'ref' <code>$1</code>",

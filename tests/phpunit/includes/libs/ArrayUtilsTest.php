@@ -4,9 +4,9 @@
  *
  * @group Database
  */
+class ArrayUtilsTest extends PHPUnit\Framework\TestCase {
 
-class ArrayUtilsTest extends PHPUnit_Framework_TestCase {
-	private $search;
+	use MediaWikiCoversValidator;
 
 	/**
 	 * @covers ArrayUtils::findLowerBound

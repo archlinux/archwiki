@@ -14,7 +14,9 @@
 			"LNDDYL",
 			"Liuxinyu970226",
 			"Bowleerin",
-			"PhiLiP"
+			"PhiLiP",
+			"Translatealcd",
+			"Kly"
 		]
 	},
 	"gadgets-desc": "讓使用者可以於 [[Special:Preferences#mw-prefsection-gadgets|偏好設定]] 中自訂 [[Special:Gadgets|CSS 與 JavaScript 的小工具]]",
@@ -46,7 +48,7 @@
 	"apihelp-query+gadgetcategories-example-1": "取得已存在的小工具分類清單",
 	"apihelp-query+gadgetcategories-example-2": "取得所有有關分類名稱為 \"foo\" 與 \"bar\" 的資訊",
 	"apihelp-query+gadgets-description": "回傳在此 wiki 使用過的小工具清單。",
-	"apihelp-query+gadgets-param-prop": "要取得什麼小工具資訊：\n;id:內部小工具 ID。\n;metadata:小工具 metadata。\n;desc:小工具描述轉換至 HTML 格式 (可能較慢，只在需要時使用)。",
+	"apihelp-query+gadgets-param-prop": "要取得什麼小工具資訊：\n;id:內部小工具 ID。\n;metadata:小工具詮釋資料。\n;desc:小工具描述轉換至 HTML 格式 (可能較慢，只在需要時使用)。",
 	"apihelp-query+gadgets-param-categories": "自那個分類取得小工具。",
 	"apihelp-query+gadgets-param-ids": "要取得小工具的 ID。",
 	"apihelp-query+gadgets-param-allowedonly": "只列出目前使用者可使用的小工具。",
@@ -55,7 +57,7 @@
 	"apihelp-query+gadgets-example-2": "取得小工具及其所有屬性清單",
 	"apihelp-query+gadgets-example-3": "取得屬於分類 \"foo\" 的小工具清單",
 	"apihelp-query+gadgets-example-4": "取得有關小工具 \"foo\" 與 \"bar\" 的資訊",
-	"apihelp-query+gadgets-example-5": "取得由目前使用者開竹呚的小工具清單",
+	"apihelp-query+gadgets-example-5": "取得由目前使用者開啟的小工具清單",
 	"right-gadgets-edit": "編輯小工具的 JavaScript 與 CSS 頁面",
 	"action-gadgets-edit": "編輯這個小工具的 JavaScript 或 CSS 頁面",
 	"right-gadgets-definition-edit": "編輯小工具定義",

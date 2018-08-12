@@ -16,14 +16,11 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup Database
  */
 
 namespace Wikimedia\Rdbms;
 
 use MessageSpecifier;
-use ILocalizedException;
-use Message;
 
 /**
  * Base class for the more common types of database errors. These are known to occur
@@ -32,12 +29,20 @@ use Message;
  * @ingroup Database
  * @since 1.23
  */
-class DBExpectedError extends DBError implements MessageSpecifier, ILocalizedException {
+class DBExpectedError extends DBError implements MessageSpecifier {
 	/** @var string[] Message parameters */
 	protected $params;
 
-	public function __construct( IDatabase $db = null, $error, array $params = [] ) {
-		parent::__construct( $db, $error );
+	/**
+	 * @param IDatabase|null $db
+	 * @param string $error
+	 * @param array $params
+	 * @param \Exception|\Throwable|null $prev
+	 */
+	public function __construct(
+		IDatabase $db = null, $error, array $params = [], $prev = null
+	) {
+		parent::__construct( $db, $error, $prev );
 		$this->params = $params;
 	}
 
@@ -47,14 +52,6 @@ class DBExpectedError extends DBError implements MessageSpecifier, ILocalizedExc
 
 	public function getParams() {
 		return $this->params;
-	}
-
-	/**
-	 * @inheritDoc
-	 * @since 1.29
-	 */
-	public function getMessageObject() {
-		return Message::newFromSpecifier( $this );
 	}
 }
 

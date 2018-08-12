@@ -38,7 +38,6 @@ class CliInstaller extends Installer {
 		'dbpass' => 'wgDBpassword',
 		'dbprefix' => 'wgDBprefix',
 		'dbtableoptions' => 'wgDBTableOptions',
-		'dbmysql5' => 'wgDBmysql5',
 		'dbport' => 'wgDBport',
 		'dbschema' => 'wgDBmwschema',
 		'dbpath' => 'wgSQLiteDataDir',
@@ -105,6 +104,11 @@ class CliInstaller extends Installer {
 
 		if ( isset( $option['pass'] ) ) {
 			$this->setVar( '_AdminPassword', $option['pass'] );
+		}
+
+		// Detect and inject any extension found
+		if ( isset( $option['with-extensions'] ) ) {
+			$this->setVar( '_Extensions', array_keys( $this->findExtensions() ) );
 		}
 
 		// Set up the default skins

@@ -12,7 +12,8 @@
 			"Whym",
 			"Sujiniku",
 			"2nd-player",
-			"Otokoume"
+			"Otokoume",
+			"Yusuke1109"
 		]
 	},
 	"action-titleblacklistlog": "ページ名ブラックリストの記録の閲覧",
@@ -32,7 +33,9 @@
 	"right-tboverride": "ページ名/利用者名のブラックリストによる制限を受けない",
 	"right-tboverride-account": "利用者名ブラックリストを無視",
 	"right-titleblacklistlog": "ページ名ブラックリストの記録を閲覧",
-	"apihelp-titleblacklist-description": "TitleBllacklist に対して記事のページ名、ファイル名、利用者名を検証します。",
+	"apihelp-titleblacklist-description": "TitleBllacklist に対してページ名、ファイル名、利用者名を検証します。",
 	"apihelp-titleblacklist-param-action": "確認対象の操作",
+	"apihelp-titleblacklist-param-nooverride": "titleblacklistを上書きしようとしないでください。",
+	"apihelp-titleblacklist-example-1": "[[Foo]]がブラックリストに載っているかどうかを確認する",
 	"apihelp-createaccount-param-ignoretitleblacklist": "なりすましチェックを無視する (<code>tboverride</code> または <code>tboverride-account</code> の権限が必要)。"
 }

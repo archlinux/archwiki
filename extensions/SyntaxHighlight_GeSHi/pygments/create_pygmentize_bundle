@@ -1,26 +1,22 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
   Create a standalone, executable 'pygmentize' bundle.
   Author: Ori Livneh
 
 """
-import sys
-reload(sys)
-sys.setdefaultencoding('utf-8')
-
 import hashlib
 import io
 import os
 import stat
 import textwrap
-import urllib2
-import xmlrpclib
+import urllib.request
+import xmlrpc.client
 import zipfile
 
 
-PYGMENTIZE_LAUNCHER = textwrap.dedent(b'''\
-  #!/usr/bin/env python
+PYGMENTIZE_LAUNCHER = textwrap.dedent('''\
+  #!/usr/bin/env python3
 
   import sys
   import pygments.cmdline
@@ -32,7 +28,7 @@ PYGMENTIZE_LAUNCHER = textwrap.dedent(b'''\
 
 
 print('Querying PyPI for the latest Pygments release...')
-pypi = xmlrpclib.ServerProxy('https://pypi.python.org/pypi')
+pypi = xmlrpc.client.ServerProxy('https://pypi.python.org/pypi')
 latest_version = pypi.package_releases('Pygments')[0]
 for release in pypi.release_urls('Pygments', latest_version):
     if (release['packagetype'] == 'bdist_wheel' and
@@ -44,7 +40,7 @@ for release in pypi.release_urls('Pygments', latest_version):
         raise RuntimeError('No suitable package found.')
 
 print('Retrieving version %s (%s)...' % (latest_version, url))
-req = urllib2.urlopen(url)
+req = urllib.request.urlopen(url)
 buf = io.BytesIO(req.read())
 
 print('Verifying...')
@@ -58,8 +54,8 @@ with zipfile.ZipFile(buf, 'a') as zf:
 data = buf.getvalue()
 script_dir = os.path.dirname(os.path.abspath(__file__))
 file_path = os.path.join(script_dir, 'pygmentize')
-with open(file_path, 'w') as f:
-    f.write('#!/usr/bin/env python\n')
+with open(file_path, 'wb') as f:
+    f.write(b'#!/usr/bin/env python3\n')
     f.write(data)
 
 file_st = os.stat(file_path)

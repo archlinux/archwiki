@@ -1,12 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"Giromin Cangiaxo"
+			"Giromin Cangiaxo",
+			"S4b1nuz E.656"
 		]
 	},
 	"citethispage": "Çitta sta paggina",
 	"citethispage-desc": "O l'azonze 'na paggina speciale pe-e [[Special:CiteThisPage|çitaçioin]] e 'n ingancio inti strumenti",
-	"citethispage-link": "Çitta sta paggina",
+	"citethispage-link": "Çita quésta pàgina",
 	"tooltip-citethispage": "Informassioin sciu comme çitâ questa paggina",
 	"citethispage-change-submit": "Crea a çitaçion",
 	"citethispage-change-target": "Paggina:",

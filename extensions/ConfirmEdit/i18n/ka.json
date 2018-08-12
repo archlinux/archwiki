@@ -24,6 +24,7 @@
 	"right-skipcaptcha": "CAPTCHA-შემოწმების მოთხოვნილი მოქმედებების შესრულება CAPTCHA-ს გავლის გარეშე",
 	"captcha-apihelp-param-captchaword": "პასუხი CAPTCHA-ზე",
 	"captcha-apihelp-param-captchaid": "CAPTCHA-ს ID წინა მოთხოვნიდან",
+	"confirmedit-preview-line": "ხაზის ნომერი",
 	"confirmedit-preview-content": "შინაარსი",
 	"confirmedit-preview-validity": "მოქმედების ვადა",
 	"confirmedit-preview-valid": "სწორი",

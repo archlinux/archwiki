@@ -5,10 +5,11 @@
 			"Kwj2772",
 			"Yknok29",
 			"아라",
-			"Hwangjy9"
+			"Hwangjy9",
+			"Garam"
 		]
 	},
-	"imagemap_desc": "<code>&lt;imagemap&gt;</code> 태그로 클라이언트 측에서 클릭할 수 있는 이미지 맵을 사용할 수 있습니다",
+	"imagemap_desc": "<code>&lt;imagemap&gt;</code> 태그로 클라이언트 측에서 클릭할 수 있는 영상 지도를 사용할 수 있습니다",
 	"imagemap_no_image": "오류: 첫 줄에 그림이 제시되어야 합니다.",
 	"imagemap_invalid_image": "오류: 그림이 잘못되었거나 존재하지 않습니다.",
 	"imagemap_bad_image": "오류: 그림은 이 문서에서 사용이 금지되어 있습니다.",

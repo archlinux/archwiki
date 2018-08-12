@@ -30,11 +30,15 @@
 	#wpSummaryWidget {
 		display: block;
 		margin-bottom: 1em;
-		max-width: none;
 	}
 
 	#wpSummaryLabel {
 		margin: 0;
+	}
+
+	#wpSummaryWidget,
+	#wpSummaryLabel .oo-ui-fieldLayout-header {
+		max-width: none;
 	}
 
 	.editCheckboxes .oo-ui-fieldLayout {
@@ -52,5 +56,22 @@
 
 	.editOptions {
 		border-radius: 0 0 2px 2px;
+	}
+
+	.editButtons .oo-ui-buttonInputWidget,
+	.cancelLink,
+	.editHelp {
+		margin-top: 0.5em;
+	}
+
+	.cancelLink,
+	.editHelp {
+		display: inline-block;
+		vertical-align: middle;
+	}
+
+	/* T188737 */
+	.templatesUsed .mw-redirect {
+		font-style: italic;
 	}
 }

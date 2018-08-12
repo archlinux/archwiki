@@ -26,25 +26,19 @@ class HTMLFancyCaptchaField extends HTMLFormField {
 	}
 
 	public function getInputHTML( $value ) {
-		global $wgEnableAPI;
-
 		$out = $this->mParent->getOutput();
 
-		// Uses addModuleStyles so it is loaded when JS is disabled.
+		// Uses addModuleStyles so it is loaded even when JS is disabled.
 		$out->addModuleStyles( 'ext.confirmEdit.fancyCaptcha.styles' );
 
-		if ( $wgEnableAPI ) {
-			// Loaded only if JS is enabled
-			$out->addModules( 'ext.confirmEdit.fancyCaptcha' );
+		// Loaded only for clients with JS enabled
+		$out->addModules( 'ext.confirmEdit.fancyCaptcha' );
 
-			$captchaReload = Html::element(
-				'small',
-				[ 'class' => 'confirmedit-captcha-reload fancycaptcha-reload' ],
-				$this->mParent->msg( 'fancycaptcha-reload-text' )->text()
-			);
-		} else {
-			$captchaReload = '';
-		}
+		$captchaReload = Html::element(
+			'small',
+			[ 'class' => 'confirmedit-captcha-reload fancycaptcha-reload' ],
+			$this->mParent->msg( 'fancycaptcha-reload-text' )->text()
+		);
 
 		$attribs = [
 			'type' => 'text',

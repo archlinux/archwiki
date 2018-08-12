@@ -11,7 +11,6 @@
 	"cite_error_ref_too_many_keys": "Imbalido an <code>&lt;ref&gt;</code> tatak; imbalidong mga pangaran, e.g. grabe kadakol",
 	"cite_error_ref_no_input": "Imbalido an <code>&lt;ref&gt;</code> tatak; an mga toltolan na mayong pangaran dapat magkaigwa nin kalamnan",
 	"cite_error_references_invalid_parameters": "Imbalido an <code>&lt;references&gt;</code> tatak; mayong mga parametro an pinagtutugot. Maggamit nin <code>&lt;mga toltolan /&gt;</code>",
-	"cite_error_references_invalid_parameters_group": "Imbalido an <code>&lt;references&gt;</code> tatak; an parametrong \"grupo\" sana an pinagtutugot. Maggamit nin <code>&lt;mga toltolan /&gt;</code>, o <code>&lt;mga toltolang grupo=\"...\" /&gt;</code>",
 	"cite_error_references_no_backlink_label": "Naubusan nin pankostumbreng sugpon-panlikod na kamarkahan.\nPakahulugan nin dagdag tabi an <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki> mensahe.",
 	"cite_error_no_link_label_group": "Naubusan nin pankostumbreng sugpon nin mga kamarkahan para sa grupo \"$1\".\nPakahulugan nin dagdag tabi an <nowiki>[[MediaWiki:$2]]</nowiki> mensahe.",
 	"cite_error_references_no_text": "Imbalidong <code>&lt;ref&gt;</code> tatak; mayong teksto na ipinagtao para sa reperensiya na pinagngaranan na <code>$1</code>",

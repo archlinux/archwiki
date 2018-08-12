@@ -30,12 +30,12 @@ namespace Wikimedia\Purtle;
  * - no collections
  * - no automatic conversion of iris to qnames
  *
- * @license GPL-2.0+
+ * @license GPL-2.0-or-later
  * @author Daniel Kinzler
  */
 interface RdfWriter {
 
-	//TODO: split: generic RdfWriter class with shorthands, use RdfFormatters for output
+	// TODO: split: generic RdfWriter class with shorthands, use RdfFormatters for output
 
 	/**
 	 * Returns the local name of a blank node, for use with the "_" prefix.

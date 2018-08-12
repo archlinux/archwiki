@@ -32,15 +32,22 @@ require_once "$IP/maintenance/Maintenance.php";
 class RenameUserCleanup extends Maintenance {
 	public function __construct() {
 		parent::__construct();
-		$this->mDescription = 'Maintenance script to finish incomplete rename user,'
-			. ' in particular to reassign edits that were missed';
+		$this->addDescription( 'Maintenance script to finish incomplete rename user,'
+			. ' in particular to reassign edits that were missed' );
 		$this->addOption( 'olduser', 'Old user name', true, true );
 		$this->addOption( 'newuser', 'New user name', true, true );
 		$this->addOption( 'olduid', 'Old user id in revision records (DANGEROUS)', false, true );
-		$this->mBatchSize = 1000;
+		$this->setBatchSize( 1000 );
+
+		$this->requireExtension( 'Renameuser' );
 	}
 
 	public function execute() {
+		if ( RenameuserSQL::getActorMigrationStage() >= MIGRATION_NEW ) {
+			$this->output( "Core xx_user_text fields are no longer used, no updates should be needed.\n" );
+			return;
+		}
+
 		$this->output( "Rename User Cleanup starting...\n\n" );
 		$olduser = User::newFromName( $this->getOption( 'olduser' ) );
 		$newuser = User::newFromName( $this->getOption( 'newuser' ) );
@@ -87,7 +94,7 @@ class RenameUserCleanup extends Maintenance {
 	 * @param User $newuser
 	 */
 	public function checkRenameLog( $olduser, $newuser ) {
-		$dbr = wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_REPLICA );
 
 		$oldTitle = Title::makeTitle( NS_USER, $olduser->getName() );
 
@@ -103,8 +110,8 @@ class RenameUserCleanup extends Maintenance {
 		if ( !$result || !$result->numRows() ) {
 			// try the old format
 			if ( class_exists( CommentStore::class ) ) {
-				$commentStore = CommentStore::newKey( 'log_comment' );
-				$commentQuery = $commentStore->getJoin();
+				$commentStore = CommentStore::getStore();
+				$commentQuery = $commentStore->getJoin( 'log_comment' );
 			} else {
 				$commentStore = null;
 				$commentQuery = [
@@ -140,7 +147,9 @@ class RenameUserCleanup extends Maintenance {
 				}
 			} else {
 				foreach ( $result as $row ) {
-					$comment = $commentStore ? $commentStore->getComment( $row )->text : $row->log_comment;
+					$comment = $commentStore
+						? $commentStore->getComment( 'log_comment', $row )->text
+						: $row->log_comment;
 					$this->output( 'Found possible log entry of the rename, please check: ' .
 						$row->log_title . ' with comment ' . $comment .
 						" on $row->log_timestamp\n" );
@@ -170,7 +179,7 @@ class RenameUserCleanup extends Maintenance {
 	/**
 	 * @param User $olduser
 	 * @param User $newuser
-	 * @param $uid
+	 * @param int $uid
 	 */
 	public function doUpdates( $olduser, $newuser, $uid ) {
 		$this->updateTable(
@@ -231,12 +240,12 @@ class RenameUserCleanup extends Maintenance {
 
 	/**
 	 * @param string $table
-	 * @param $usernamefield
-	 * @param $useridfield
-	 * @param $timestampfield
+	 * @param string $usernamefield
+	 * @param string $useridfield
+	 * @param string $timestampfield
 	 * @param User $olduser
 	 * @param User $newuser
-	 * @param $uid
+	 * @param int $uid
 	 */
 	public function updateTable( $table, $usernamefield, $useridfield,
 		$timestampfield, $olduser, $newuser, $uid
@@ -313,7 +322,7 @@ class RenameUserCleanup extends Maintenance {
 
 			$result->seek( $result->numRows() - 1 );
 			$row = $result->fetchObject();
-			$timestamp = $row->$timestampfield;
+			$timestamp = $dbw->addQuotes( $row->$timestampfield );
 			$updateCondsWithTime = array_merge( $selectConds, [ "$timestampfield >= $timestamp" ] );
 			$success = $dbw->update(
 				$table,

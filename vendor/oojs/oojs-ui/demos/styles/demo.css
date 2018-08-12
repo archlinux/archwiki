@@ -3,7 +3,20 @@ body {
 	margin: 0 1em;
 	padding: 0;
 	font-family: sans-serif;
+}
+
+.oo-ui-theme-wikimediaui {
+	font-size: 0.875em;
+}
+
+.oo-ui-theme-apex {
 	font-size: 0.8em;
+}
+
+code {
+	/* Support: Blink, Gecko, Webkit */
+	/* Specify a valid second value to fix size, see T176636 */
+	font-family: monospace, monospace;
 }
 
 p {
@@ -13,7 +26,7 @@ p {
 /* Layout */
 .demo {
 	max-width: 62.5em;
-	margin: 0 auto;
+	margin: 0 auto 4.5em;
 }
 
 .demo-menu {
@@ -108,7 +121,7 @@ p {
 	transition: color 100ms;
 }
 
-.demo-link-example::after,
+.demo-link-example:hover::after,
 .demo-console-toggle:hover::after {
 	color: #447ff5;
 }
@@ -255,12 +268,80 @@ p {
 
 .demo-container.demo-toolbars {
 	padding: 0;
-	margin-bottom: 2em;
+}
+
+.demo-toolbar {
+	margin-top: 4em;
 }
 
 .demo-toolbars-contents {
 	padding: 2em;
 	min-height: 100px;
+}
+
+/*
+ * VisualEditor FormatTool styles.
+ *
+ * @copyright 2011-2018 VisualEditor Team and others; see http://ve.mit-license.org
+ */
+
+.oo-ui-menuToolGroup .oo-ui-tool-name-paragraph .oo-ui-tool-title {
+	font-weight: normal;
+}
+
+.oo-ui-menuToolGroup .oo-ui-tool-name-heading1 .oo-ui-tool-title {
+	font-size: 190%;
+	font-weight: normal;
+}
+
+.oo-ui-menuToolGroup .oo-ui-tool-name-heading2 .oo-ui-tool-title {
+	font-size: 150%;
+	font-weight: normal;
+}
+
+.oo-ui-menuToolGroup .oo-ui-tool-name-heading3 .oo-ui-tool-title {
+	font-size: 130%;
+	font-weight: bold;
+}
+
+.oo-ui-menuToolGroup .oo-ui-tool-name-heading4 .oo-ui-tool-title {
+	font-size: 115%;
+	font-weight: bold;
+}
+
+.oo-ui-menuToolGroup .oo-ui-tool-name-heading5 .oo-ui-tool-title {
+	font-size: 100%;
+	font-weight: bold;
+}
+
+.oo-ui-menuToolGroup .oo-ui-tool-name-heading6 .oo-ui-tool-title {
+	font-size: 80%;
+	font-weight: bold;
+}
+
+.oo-ui-theme-apex .oo-ui-menuToolGroup .oo-ui-tool-name-heading1 .oo-ui-tool-title,
+.oo-ui-theme-apex .oo-ui-menuToolGroup .oo-ui-tool-name-heading2 .oo-ui-tool-title,
+.oo-ui-theme-apex .oo-ui-menuToolGroup .oo-ui-tool-name-heading3 .oo-ui-tool-title,
+.oo-ui-theme-apex .oo-ui-menuToolGroup .oo-ui-tool-name-heading4 .oo-ui-tool-title,
+.oo-ui-theme-apex .oo-ui-menuToolGroup .oo-ui-tool-name-heading5 .oo-ui-tool-title,
+.oo-ui-theme-apex .oo-ui-menuToolGroup .oo-ui-tool-name-heading6 .oo-ui-tool-title {
+	/* Use px so padding is not changed by font size. This is normally 0.5em. */
+	padding-left: 6.4px;
+}
+
+.oo-ui-menuToolGroup .oo-ui-tool-name-preformatted .oo-ui-tool-title {
+	/* Support: Blink, Gecko, Webkit */
+	/* Specify a valid second value to fix size, see T176636 */
+	font-family: monospace, monospace;
+}
+
+.oo-ui-menuToolGroup .oo-ui-tool-name-blockquote .oo-ui-tool-title {
+	/* Indent in addition to padding */
+	text-indent: 1.5em;
+}
+
+.oo-ui-menuToolGroup .oo-ui-tool-name-tableCellHeader .oo-ui-tool-title {
+	font-weight: bold;
 }
 
 /* Icons demo */
@@ -277,21 +358,24 @@ p {
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
-.demo-icons .oo-ui-fieldLayout:nth-child( 4n ) {
-	margin-right: 0;
+.demo-icons .oo-ui-fieldsetLayout-group {
+	margin-right: -1em;
 }
-
-.demo-icons .oo-ui-fieldLayout .oo-ui-iconElement,
+/* stylelint-disable indentation */
+.demo-icons .oo-ui-fieldLayout .oo-ui-iconElement:not( .oo-ui-image-progressive ):not( .oo-ui-image-destructive ),
 .demo-icons .oo-ui-fieldLayout .oo-ui-indicatorElement {
-	opacity: 0.8; /* brings icons/indicators closer to text color */
+	opacity: 0.87; /* brings icons/indicators closer to text color */
+	/* Support Chrome by promoting layer to GPU, see T182257 */
+	-webkit-transform: translateZ( 0 );
+	transform: translateZ( 0 );
 }
-
+/* stylelint-enable indentation */
 .demo-icons .oo-ui-fieldLayout:hover .oo-ui-labelElement-label {
 	color: #000;
 }
 .demo-icons .oo-ui-fieldLayout:hover .oo-ui-iconElement,
 .demo-icons .oo-ui-fieldLayout:hover .oo-ui-indicatorElement {
-	opacity: 1;
+	opacity: 1 !important; /* stylelint-disable-line declaration-no-important */
 }
 
 /* Widgets demo */
@@ -367,7 +451,8 @@ FieldLayout left & right aligned */
 
 /* Media Queries */
 @media ( min-width: 320px ) {
-	body {
+	.oo-ui-theme-wikimediaui,
+	.oo-ui-theme-apex {
 		font-size: 1em;
 	}
 
@@ -420,8 +505,13 @@ FieldLayout left & right aligned */
 		}
 
 		/* This needs extra specificity to beat PanelLayout styles */
-		.demo-container.oo-ui-panelLayout {
+		.demo-menu + .demo-container.oo-ui-panelLayout {
 			margin-top: 11.4em;
+		}
+
+		/* Avoid `box-shadow` from menu lurkin into toolbar demo, +1.2em to be harmonious with menu */
+		.demo-menu + .demo-container.oo-ui-panelLayout.demo-toolbars {
+			margin-top: 12.6em;
 		}
 	}
 }
@@ -436,8 +526,12 @@ FieldLayout left & right aligned */
 			display: inline-block;
 		}
 
-		.demo-container.oo-ui-panelLayout {
+		.demo-menu + .demo-container.oo-ui-panelLayout {
 			margin-top: 7.5em;
+		}
+
+		.demo-menu + .demo-container.oo-ui-panelLayout.demo-toolbars {
+			margin-top: 8.7em;
 		}
 
 		.demo-console-expanded .demo-console-toggle {
@@ -449,7 +543,11 @@ FieldLayout left & right aligned */
 /* @media ( min-width: 768px ) {} */
 
 @media ( min-width: 960px ) {
-	body {
+	.oo-ui-theme-wikimediaui {
+		font-size: 0.875em;
+	}
+
+	.oo-ui-theme-apex {
 		font-size: 0.8em;
 	}
 
@@ -490,8 +588,12 @@ FieldLayout left & right aligned */
 			right: auto;
 		}
 
-		.demo-container.oo-ui-panelLayout {
+		.demo-menu + .demo-container.oo-ui-panelLayout {
 			margin-top: 4.5em;
+		}
+
+		.demo-menu + .demo-container.oo-ui-panelLayout.demo-toolbars {
+			margin-top: 5.7em;
 		}
 	}
 }

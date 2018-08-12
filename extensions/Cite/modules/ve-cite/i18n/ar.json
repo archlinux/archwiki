@@ -19,7 +19,8 @@
 			"Mervat Salman",
 			"Hiba Alshawi",
 			"فلورانس",
-			"PhiberOptik"
+			"PhiberOptik",
+			"ديفيد"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "كتاب",
@@ -32,11 +33,14 @@
 	"cite-ve-changedesc-reflist-group-both": "مجموعة قائمة المراجع تغيرت من \"$1\" إلى \"$2\"",
 	"cite-ve-changedesc-reflist-group-from": "مجموعة قائمة المراجع تغيرت من \"$1\" للمجموعة العامة",
 	"cite-ve-changedesc-reflist-group-to": "مجموعة قائمة المراجع تغيرت من المجموعة العامة إلى \"$1\"",
+	"cite-ve-changedesc-reflist-responsive-set": "قائمة المراجع تغيرت للعرض في مراجع مستجيبة",
+	"cite-ve-changedesc-reflist-responsive-unset": "قائمة المراجع تغيرت للعرض في عامود واحد فقط",
 	"cite-ve-changedesc-reflist-item-id": "فهرس المراجع تغير",
 	"cite-ve-dialog-reference-editing-reused": "هذا المرجع مستخدم {{PLURAL:$1|مرة واحدة|مرتين| $1 مرات|$1 مرة}} في هذه الصفحة.",
 	"cite-ve-dialog-reference-options-group-label": "استخدم هذه المجموعة",
 	"cite-ve-dialog-reference-options-group-placeholder": "مراجع عامة",
 	"cite-ve-dialog-reference-options-name-label": "أعد استخدامها بهذا الاسم",
+	"cite-ve-dialog-reference-options-responsive-label": "استخدم تهيئة العمود المستجيبة",
 	"cite-ve-dialog-reference-options-section": "خيارات",
 	"cite-ve-dialog-reference-placeholder": "اكتب أو انسخ مرجعك هنا، أو أدخل قالب استشهاد.",
 	"cite-ve-dialog-reference-title": "مرجع",
@@ -56,6 +60,8 @@
 	"cite-ve-referenceslist-isempty": "ما من مراجع من المجموعة \"$1\" في هذه الصفحة لتضمينها في هذه القائمة.",
 	"cite-ve-referenceslist-isempty-default": "ما من مراجع على هذه الصفحة لتضمينها في هذه القائمة.",
 	"cite-ve-referenceslist-missingref": "هذا المرجع موجود في قالب أو نحوه ولا يمكن تعديله حاليا إلا من المصدر.",
+	"cite-ve-referenceslist-missingref-in-list": "يتم تعريف هذا المرجع في قالب أو كتلة أخرى تم إنشاؤها، ويمكن الآن معاينته فقط في وضع المصدر.",
+	"cite-ve-referenceslist-missingreflist": "قائمة المراجع هذه مولدة بواسطة قالب، وحاليا يمكن تعديلها فقط في نمط المصدر.",
 	"cite-ve-toolbar-group-label": "مرجع",
 	"cite-ve-othergroup-item": "استشهاد $1",
 	"visualeditor-internal-list-diff-default-group-name-mwreference": "مراجع",

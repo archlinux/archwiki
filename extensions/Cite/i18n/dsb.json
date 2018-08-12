@@ -11,7 +11,6 @@
 	"cite_error_ref_too_many_keys": "Njepłaśiwa toflicka <code>&lt;ref&gt;</code>;\nnjepłaśiwe mjenja, na pś. pśewjele",
 	"cite_error_ref_no_input": "Njepłaśiwa toflicka <code>&lt;ref&gt;</code>;\n\"ref\" bźez mjenja musy wopśimjeśe měś",
 	"cite_error_references_invalid_parameters": "Njepłaśiwa toflicka <code>&lt;references&gt;</code>;\nžedne parametry dowólone.\nWužyj <code>&lt;references /&gt;</code>",
-	"cite_error_references_invalid_parameters_group": "Njepłaśiwa toflicka <code>&lt;references&gt;</code>;\njano parameter \"group\" jo dowólony,\nWužyj <code>&lt;references /&gt;</code> abo <code>&lt;references group=\"...\" /&gt;</code>",
 	"cite_error_references_no_backlink_label": "Swójske etikety slědkwótkazow wupócerane.\nDefiněruj dalšne w powěsći <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>",
 	"cite_error_no_link_label_group": "Žedne swójske wótkazowe etikety za \"$1\" wěcej k dispoziciji.\nDefiněruj dalšne w powěsći <nowiki>[[MediaWiki:$2]]</nowiki>.",
 	"cite_error_references_no_text": "Njepłaśiwa toflicka <code>&lt;ref&gt;</code>;\nza ref z mjenim <code>$1</code> njejo se tekst pódał",

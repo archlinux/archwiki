@@ -112,14 +112,14 @@ class BitmapHandler extends TransformationalImageHandler {
 	 */
 	protected function imageMagickSubsampling( $pixelFormat ) {
 		switch ( $pixelFormat ) {
-		case 'yuv444':
-			return [ '1x1', '1x1', '1x1' ];
-		case 'yuv422':
-			return [ '2x1', '1x1', '1x1' ];
-		case 'yuv420':
-			return [ '2x2', '1x1', '1x1' ];
-		default:
-			throw new MWException( 'Invalid pixel format for JPEG output' );
+			case 'yuv444':
+				return [ '1x1', '1x1', '1x1' ];
+			case 'yuv422':
+				return [ '2x1', '1x1', '1x1' ];
+			case 'yuv420':
+				return [ '2x2', '1x1', '1x1' ];
+			default:
+				throw new MWException( 'Invalid pixel format for JPEG output' );
 		}
 	}
 
@@ -203,9 +203,9 @@ class BitmapHandler extends TransformationalImageHandler {
 				'-layers', 'merge',
 				'-background', 'white',
 			];
-			MediaWiki\suppressWarnings();
+			Wikimedia\suppressWarnings();
 			$xcfMeta = unserialize( $image->getMetadata() );
-			MediaWiki\restoreWarnings();
+			Wikimedia\restoreWarnings();
 			if ( $xcfMeta
 				&& isset( $xcfMeta['colorType'] )
 				&& $xcfMeta['colorType'] === 'greyscale-alpha'
@@ -436,6 +436,14 @@ class BitmapHandler extends TransformationalImageHandler {
 			$err = "File seems to be missing: {$params['srcPath']}";
 			wfDebug( "$err\n" );
 			$errMsg = wfMessage( 'thumbnail_image-missing', $params['srcPath'] )->text();
+
+			return $this->getMediaTransformError( $params, $errMsg );
+		}
+
+		if ( filesize( $params['srcPath'] ) === 0 ) {
+			$err = "Image file size seems to be zero.";
+			wfDebug( "$err\n" );
+			$errMsg = wfMessage( 'thumbnail_image-size-zero', $params['srcPath'] )->text();
 
 			return $this->getMediaTransformError( $params, $errMsg );
 		}

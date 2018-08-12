@@ -5,10 +5,9 @@ use Wikimedia\Http\HttpAcceptNegotiator;
 /**
  * @covers Wikimedia\Http\HttpAcceptNegotiator
  *
- * @license GPL-2.0+
  * @author Daniel Kinzler
  */
-class HttpAcceptNegotiatorTest extends \PHPUnit_Framework_TestCase {
+class HttpAcceptNegotiatorTest extends \PHPUnit\Framework\TestCase {
 
 	public function provideGetFirstSupportedValue() {
 		return [

@@ -2,13 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"Malafaya",
-			"Smeira"
+			"Smeira",
+			"Zoranzoki21"
 		]
 	},
 	"interwiki": "Logön e bevobön nünodis vüvükik",
 	"interwiki-title-norights": "Logön nünodis vüvükik",
 	"interwiki-desc": "Läükön [[Special:Interwiki|padi patik]] ad logön e bevobön taibi vüvükik",
-	"interwiki_intro": "Logön eli [http://www.mediawiki.org/wiki/Interwiki_table MediaWiki.org] ad tuvön nünis pluik tefü taib vüvükik.",
+	"interwiki_intro": "Logön eli [//www.mediawiki.org/wiki/Interwiki_table MediaWiki.org] ad tuvön nünis pluik tefü taib vüvükik.",
 	"interwiki_prefix": "Foyümot",
 	"interwiki-prefix-label": "Foyümot:",
 	"interwiki_0": "nö",

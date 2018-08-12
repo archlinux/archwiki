@@ -37,13 +37,6 @@
  * Otherwise most part of the following expressions are taken from the Akademie.
  *
  */
-/**
- * Hints for editing
- * Avoid Ã¤ and other special codings because of legibility for those users,
- * who will take this as a basis for further ripuarian message interfaces
- * Ã¤ => ä, Ã¶ => ö, Ã¼ => ü, Ã„ => Ä, Ã– => Ö, Ãœ => Ü, ÃŸ => ß
- * â€ž => „, â€œ => “
- */
 
 $fallback = 'de';
 
@@ -102,6 +95,8 @@ $namespaceAliases = [
 ];
 
 $separatorTransformTable = [ ',' => "\xc2\xa0", '.' => ',' ];
+$minimumGroupingDigits = 2;
+
 $linkTrail = '/^([äöüėëĳßəğåůæœça-z]+)(.*)$/sDu';
 
 // Remove German aliases

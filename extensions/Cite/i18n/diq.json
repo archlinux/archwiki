@@ -21,7 +21,6 @@
 	"cite_error_ref_no_input": "Etiket <code>&lt;ref&gt;</code> ke raşt niyo;\nEka name çini yo, gani kontent biyo",
 	"cite_error_references_duplicate_key": "Nêravêrde <code>&lt;ref&gt;</code> etiket: \"$1\" name yew ra zeder zerrek de şınasiya yo.",
 	"cite_error_references_invalid_parameters": "Etiket <code>&lt;ref&gt;</code> ke raşt niyo;\nparametrayan ra destur çini yo.\n<code>&lt;references /&gt;</code> sero kar bike",
-	"cite_error_references_invalid_parameters_group": "Etiket <code>&lt;ref&gt;</code> ke raşt niyo;\nparametrayan ra destur çini yo.\n<code>&lt;references /&gt;</code> sero kar bike, ya zi  <code>&lt;references group=\"...\" /&gt;</code>",
 	"cite_error_references_no_backlink_label": "Linkanê Custom backlinkî hin çini yo.\nZerreyê mesajê <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>î de hewna tasvir bike",
 	"cite_error_no_link_label_group": "Eka etiketinê linkê şexsi ser ena grubi \"$1\" ciniyo.\nZerre mesajê <nowiki>[[MediaWiki:$2]]</nowiki> de zafyer qise bike.",
 	"cite_error_references_no_text": "Nêvêreno<code>&lt;ref&gt;</code> etiket;\nno nuşte çıme be namey <code>$1</code> rê vıraziyao.",

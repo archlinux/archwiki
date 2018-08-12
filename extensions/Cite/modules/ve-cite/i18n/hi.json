@@ -15,7 +15,8 @@
 			"Ankita-ks",
 			"Sahilrathod",
 			"Hindustanilanguage",
-			"Sfic"
+			"Sfic",
+			"Sachinkatiyar"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "पुस्तक",
@@ -43,6 +44,7 @@
 	"cite-ve-referenceslist-isempty": "इस पृष्ठ पर \"$1\" सन्दर्भ समूह में कोई सन्दर्भ नहीं हैं जो इस सूची में जोड़े जा सकें।",
 	"cite-ve-referenceslist-isempty-default": "इस पृष्ठ पर कोई सन्दर्भ नहीं हैं जो इस सूची में जोड़े जा सकें।",
 	"cite-ve-referenceslist-missingref": "ये सन्दर्भ किसी साँचे या अन्य ब्लॉक का प्रयोग करता है, और इसलिए अभी केवल स्रोत सम्पादन में सम्पादित किया जा सकता है।",
+	"cite-ve-referenceslist-missingref-in-list": "ये सन्दर्भ किसी साँचे या अन्य ब्लॉक का प्रयोग करता है, और इसलिए अभी केवल स्रोत सम्पादन में सम्पादित किया जा सकता है।",
 	"cite-ve-toolbar-group-label": "उद्धृत करें",
 	"cite-ve-othergroup-item": "$1 सन्दर्भ"
 }

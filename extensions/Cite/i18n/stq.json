@@ -11,7 +11,6 @@
 	"cite_error_ref_too_many_keys": "Uungultige <code><nowiki><ref></nowiki></code>-Ferweendenge: „name“ is uungultich of tou loang.",
 	"cite_error_ref_no_input": "Uungultige <code><nowiki><ref></nowiki></code>-Ferweendenge: „ref“ sunner Noome mout n Inhoold hääbe.",
 	"cite_error_references_invalid_parameters": "Uungultige <code><nowiki><reference></nowiki></code>-Ferweendenge: Der sunt neen bietoukuumende Parametere ferlööwed, ferweend bloot <code><nowiki><reference /></nowiki></code>.",
-	"cite_error_references_invalid_parameters_group": "Ungultige <code>&lt;references&gt;</code>-Ferweendenge: Bloot die Parameter „group“ is ferlööwed, ferweend <tt>&lt;references /&gt;</tt> of <tt>&lt;references group=\"...\" /&gt;</tt>",
 	"cite_error_references_no_backlink_label": "Ne Referenz fon ju Foarm <code><nowiki><ref name=\"...\"/></nowiki></code> wäd oafter benutsed as Bouksteeuwen deer sunt. N Administrator mout <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki> uum wiedere Bouksteeuwen/Teekene ferfulständigje.",
 	"cite_error_references_no_text": "Uungultigen <code>&lt;ref&gt;</code>-Tag; der wuude naan Text foar dät Ref mäd dän Noome <code>$1</code> anroat.",
 	"cite_error_included_ref": "Der failt n sluutend <code>&lt;/ref&gt;</code>",

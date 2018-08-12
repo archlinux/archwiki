@@ -9,7 +9,7 @@
 		]
 	},
 	"fancycaptcha-desc": "Gerador sofisticado de captcha para o Confirm Edit",
-	"fancycaptcha-addurl": "A sua edição introduziu links externos novos.\nPara proteger esta wiki contra o spam automatizado, por favor, introduza na caixa abaixo as palavras apresentadas ([[Special:Captcha/help|mais informações]]):",
+	"fancycaptcha-addurl": "A sua edição introduziu hiperligações externas novas.\nPara proteger esta wiki contra o spam automatizado, por favor, introduza na caixa abaixo as palavras apresentadas ([[Special:Captcha/help|mais informações]]):",
 	"fancycaptcha-badlogin": "Para proteger esta wiki contra os mecanismos automatizados de descoberta de palavras-passe, por favor, introduza na caixa abaixo as palavras apresentadas ([[Special:Captcha/help|mais informações]]):",
 	"fancycaptcha-captcha": "Verificação de segurança",
 	"fancycaptcha-accountcreate": "Para proteger esta wiki contra a criação de contas automatizada, por favor, introduza na caixa abaixo as palavras apresentadas ([[Special:Captcha/help|mais informações]]):",

@@ -82,7 +82,7 @@ class JpegMetadataExtractor {
 				// this is just a sanity check
 				throw new MWException( 'Too many jpeg segments. Aborting' );
 			}
-			while ( $buffer !== "\xFF" ) {
+			while ( $buffer !== "\xFF" && !feof( $fh ) ) {
 				// In theory JPEG files are not allowed to contain anything between the sections,
 				// but in practice they sometimes do. It's customary to ignore the garbage data.
 				$buffer = fread( $fh, 1 );
@@ -102,9 +102,9 @@ class JpegMetadataExtractor {
 				// turns $com to valid utf-8.
 				// thus if no change, its utf-8, otherwise its something else.
 				if ( $com !== $oldCom ) {
-					MediaWiki\suppressWarnings();
+					Wikimedia\suppressWarnings();
 					$com = $oldCom = iconv( 'windows-1252', 'UTF-8//IGNORE', $oldCom );
-					MediaWiki\restoreWarnings();
+					Wikimedia\restoreWarnings();
 				}
 				// Try it again, if its still not a valid string, then probably
 				// binary junk or some really weird encoding, so don't extract.
@@ -158,6 +158,8 @@ class JpegMetadataExtractor {
 				if ( $size['int'] < 2 ) {
 					throw new MWException( "invalid marker size in jpeg" );
 				}
+				// Note it's possible to seek beyond end of file if truncated.
+				// fseek doesn't report a failure in this case.
 				fseek( $fh, $size['int'] - 2, SEEK_CUR );
 			}
 		}

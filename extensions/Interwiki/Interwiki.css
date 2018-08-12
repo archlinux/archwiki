@@ -43,7 +43,9 @@ input#mw-interwiki-url {
 .mw-interwiki-legend .mw-collapsible-toggle {
 	font-weight: normal;
 }
-table.mw-interwiki-legend {
+
+/* Selector with higher specifity than wikitable */
+table.wikitable.mw-interwiki-legend {
 	margin-top: 2em;
 }
 

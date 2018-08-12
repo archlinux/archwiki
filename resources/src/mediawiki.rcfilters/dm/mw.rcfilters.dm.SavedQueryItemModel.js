@@ -10,7 +10,7 @@
 	 * @param {string} label Saved query label
 	 * @param {Object} data Saved query data
 	 * @param {Object} [config] Configuration options
-	 * @param {boolean} [default] This item is the default
+	 * @cfg {boolean} [default] This item is the default
 	 */
 	mw.rcfilters.dm.SavedQueryItemModel = function MwRcfiltersDmSavedQueriesModel( id, label, data, config ) {
 		config = config || {};
@@ -89,6 +89,15 @@
 	 */
 	mw.rcfilters.dm.SavedQueryItemModel.prototype.getData = function () {
 		return this.data;
+	};
+
+	/**
+	 * Get the combined data of this item as a flat object of parameters
+	 *
+	 * @return {Object} Combined parameter data
+	 */
+	mw.rcfilters.dm.SavedQueryItemModel.prototype.getCombinedData = function () {
+		return $.extend( true, {}, this.data.params, this.data.highlights );
 	};
 
 	/**

@@ -64,15 +64,14 @@ function getFilePointer( $file, $url ) {
 	return $fp;
 }
 
-
 $in = getFilePointer(
 	__DIR__ . "/data/DerivedNormalizationProps.txt",
 	'http://www.unicode.org/Public/UNIDATA/DerivedNormalizationProps.txt'
 );
 print "Initializing normalization quick check tables...\n";
-$checkNFC = array();
+$checkNFC = [];
 while ( false !== ( $line = fgets( $in ) ) ) {
-	$matches = array();
+	$matches = [];
 	if ( preg_match(
 		'/^([0-9A-F]+)(?:..([0-9A-F]+))?\s*;\s*(NFC_QC)\s*;\s*([MN])/',
 		$line,
@@ -97,7 +96,7 @@ $in = getFilePointer(
 	__DIR__ . "/data/CompositionExclusions.txt",
 	'http://www.unicode.org/Public/UNIDATA/CompositionExclusions.txt'
 );
-$exclude = array();
+$exclude = [];
 while ( false !== ( $line = fgets( $in ) ) ) {
 	if ( preg_match( '/^([0-9A-F]+)/i', $line, $matches ) ) {
 		$codepoint = $matches[1];
@@ -111,10 +110,10 @@ $in = getFilePointer(
 	__DIR__ . "/data/UnicodeData.txt",
 	'http://www.unicode.org/Public/UNIDATA/UnicodeData.txt'
 );
-$compatibilityDecomp = array();
-$canonicalDecomp = array();
-$canonicalComp = array();
-$combiningClass = array();
+$compatibilityDecomp = [];
+$canonicalDecomp = [];
+$canonicalComp = [];
+$combiningClass = [];
 $total = 0;
 $compat = 0;
 $canon = 0;
@@ -133,7 +132,9 @@ while ( false !== ( $line = fgets( $in ) ) ) {
 		$combiningClass[$source] = intval( $canonicalCombiningClass );
 	}
 
-	if ( $decompositionMapping === '' ) continue;
+	if ( $decompositionMapping === '' ) {
+		continue;
+	}
 	if ( preg_match( '/^<(.+)> (.*)$/', $decompositionMapping, $matches ) ) {
 		# Compatibility decomposition
 		$canonical = false;
@@ -168,7 +169,9 @@ while ( $changed > 0 ) {
 			'/([\xc0-\xff][\x80-\xbf]+)/',
 			'callbackCanonical',
 			$dest );
-		if ( $newDest === $dest ) continue;
+		if ( $newDest === $dest ) {
+			continue;
+		}
 		$changed++;
 		$canonicalDecomp[$source] = $newDest;
 	}
@@ -186,7 +189,9 @@ while ( $changed > 0 ) {
 			'/([\xc0-\xff][\x80-\xbf]+)/',
 			'callbackCompat',
 			$dest );
-		if ( $newDest === $dest ) continue;
+		if ( $newDest === $dest ) {
+			continue;
+		}
 		$changed++;
 		$compatibilityDecomp[$source] = $newDest;
 	}
@@ -245,8 +250,6 @@ UtfNormal\Validator::\$utfCompatibilityDecomp = unserialize( '$serCompat' );
 	print "Can't create file UtfNormalDataK.inc\n";
 	exit( -1 );
 }
-
-# ---------------
 
 function callbackCanonical( $matches ) {
 	// @codingStandardsIgnoreStart MediaWiki.NamingConventions.ValidGlobalName.wgPrefix

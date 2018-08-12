@@ -13,10 +13,11 @@
 			"Pxos",
 			"Jack Phoenix",
 			"01miki10",
-			"Alluk."
+			"Alluk.",
+			"Pahkiqaz"
 		]
 	},
-	"captcha-edit": "Ratkaise alla oleva laskutoimitus jatkaaksesi ([[Special:Captcha/help|lisätietoja]]):",
+	"captcha-edit": "Ratkaise alla oleva laskutoimitus muokataksesi tätä sivua ([[Special:Captcha/help|lisätietoja]]):",
 	"captcha-edit-fail": "Virheellinen tai puuttuva CAPTCHA.",
 	"captcha-desc": "Tarjoaa CAPTCHA-tekniikoita suojaamaan mainoslinkkejä ja salasana-arvailua vastaan.",
 	"captcha-label": "CAPTCHA",

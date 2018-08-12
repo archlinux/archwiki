@@ -16,12 +16,11 @@ else
 
 	# classes with different PHP and JS implementations.
 	# we can still compare the PHP-infuse result to JS result, though.
-	infuse_only_classes = %w[DropdownInputWidget ComboBoxInputWidget
+	infuse_only_classes = %w[ComboBoxInputWidget
 		RadioSelectInputWidget CheckboxMultiselectInputWidget]
 	testable_classes = classes
 		.reject{|c| c[:abstract] } # can't test abstract classes
 		.reject{|c| !c[:parent] || c[:trait] || c[:parent] == 'Theme' } # can't test abstract
-		.reject{|c| c[:name] == 'MediaWikiTheme' } # can't test abstract
 		.reject{|c| %w[Element Widget Layout Theme].include? c[:name] } # no toplevel
 
 	make_class_instance_placeholder = lambda do |klass, config|
@@ -61,7 +60,7 @@ else
 		'maxLength' => [100],
 		'icon' => ['image'],
 		'indicator' => ['down'],
-		'flags' => %w[constructive primary],
+		'flags' => %w[progressive primary],
 		'progress' => [0, 50, 100, false],
 		'options' => [
 			[],
@@ -69,6 +68,7 @@ else
 			[ { 'data' => 'a' }, { 'data' => 'b' } ],
 			[ { 'data' => 'a', 'label' => 'A' }, { 'data' => 'b', 'label' => 'B' } ],
 		],
+		'value' => ['', 'a', 'b', '<b>HTML?</b>'],
 		# deprecated, makes test logs spammy
 		'multiline' => [],
 		# usually makes no sense in JS
@@ -81,6 +81,11 @@ else
 		['FieldLayout', 'help'] => [],
 		['ActionFieldLayout', 'help'] => [],
 		['FieldsetLayout', 'help'] => [],
+		# the dynamic 'clear' indicator in JS messes everything up
+		['SearchInputWidget', 'value'] => [],
+		['SearchInputWidget', 'indicator'] => [],
+		['SearchInputWidget', 'required'] => [],
+		['SearchInputWidget', 'disabled'] => [],
 		# these are defined by Element and would bloat the tests
 		'classes' => [],
 		'id' => [],

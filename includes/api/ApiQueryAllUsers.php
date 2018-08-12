@@ -1,9 +1,5 @@
 <?php
 /**
- *
- *
- * Created on July 7, 2007
- *
  * Copyright © 2007 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
  *
  * This program is free software; you can redistribute it and/or modify
@@ -45,11 +41,13 @@ class ApiQueryAllUsers extends ApiQueryBase {
 	}
 
 	public function execute() {
+		global $wgActorTableSchemaMigrationStage;
+
 		$params = $this->extractRequestParams();
 		$activeUserDays = $this->getConfig()->get( 'ActiveUserDays' );
 
 		$db = $this->getDB();
-		$commentStore = new CommentStore( 'ipb_reason' );
+		$commentStore = CommentStore::getStore();
 
 		$prop = $params['prop'];
 		if ( !is_null( $prop ) ) {
@@ -182,17 +180,36 @@ class ApiQueryAllUsers extends ApiQueryBase {
 			] ] );
 
 			// Actually count the actions using a subquery (T66505 and T66507)
+			$tables = [ 'recentchanges' ];
+			$joins = [];
+			if ( $wgActorTableSchemaMigrationStage === MIGRATION_OLD ) {
+				$userCond = 'rc_user_text = user_name';
+			} else {
+				$tables[] = 'actor';
+				$joins['actor'] = [
+					$wgActorTableSchemaMigrationStage === MIGRATION_NEW ? 'JOIN' : 'LEFT JOIN',
+					'rc_actor = actor_id'
+				];
+				if ( $wgActorTableSchemaMigrationStage === MIGRATION_NEW ) {
+					$userCond = 'actor_user = user_id';
+				} else {
+					$userCond = 'actor_user = user_id OR (rc_actor = 0 AND rc_user_text = user_name)';
+				}
+			}
 			$timestamp = $db->timestamp( wfTimestamp( TS_UNIX ) - $activeUserSeconds );
 			$this->addFields( [
 				'recentactions' => '(' . $db->selectSQLText(
-					'recentchanges',
+					$tables,
 					'COUNT(*)',
 					[
-						'rc_user_text = user_name',
+						$userCond,
 						'rc_type != ' . $db->addQuotes( RC_EXTERNAL ), // no wikidata
 						'rc_log_type IS NULL OR rc_log_type != ' . $db->addQuotes( 'newusers' ),
 						'rc_timestamp >= ' . $db->addQuotes( $timestamp ),
-					]
+					],
+					__METHOD__,
+					[],
+					$joins
 				) . ')'
 			] );
 		}
@@ -264,7 +281,7 @@ class ApiQueryAllUsers extends ApiQueryBase {
 				$data['blockedby'] = $row->ipb_by_text;
 				$data['blockedbyid'] = (int)$row->ipb_by;
 				$data['blockedtimestamp'] = wfTimestamp( TS_ISO_8601, $row->ipb_timestamp );
-				$data['blockreason'] = $commentStore->getComment( $row )->text;
+				$data['blockreason'] = $commentStore->getComment( 'ipb_reason', $row )->text;
 				$data['blockexpiry'] = $row->ipb_expiry;
 			}
 			if ( $row->ipb_deleted ) {

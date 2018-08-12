@@ -15,7 +15,6 @@
 	"cite_error_ref_too_many_keys": "Malvalida etikedo <code>&lt;ref&gt;</code>;\nmalvalidaj nomoj (ekz-e: tro multaj)",
 	"cite_error_ref_no_input": "Malvalida etikedo <code>&lt;ref&gt;</code>;\nref-etikedoj sen nomo devas havi enhavojn.",
 	"cite_error_references_invalid_parameters": "Nevalida etikedo <code>&lt;references&gt;</code>; neniuj parametroj estas permesitaj, uzu <code>&lt;references /&gt;</code>",
-	"cite_error_references_invalid_parameters_group": "Malvalida etikedon <code>&lt;references&gt;</code>;\nparametro \"group\" nur estas permesita.\nUzu etikedon <code>&lt;references /&gt;</code>, aŭ <code>&lt;references group=\"...\" /&gt;</code>",
 	"cite_error_references_no_backlink_label": "Neniom plu memfaritaj retroligaj etikedoj.\nDifinu pliajn en la mesaĝo <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>.",
 	"cite_error_no_link_label_group": "Mankas proprajn ligilajn etikedojn por grupo \"$1\".\nDifinu pliajn en la <nowiki>[[MediaWiki:$2]]</nowiki> mesaĝo.",
 	"cite_error_references_no_text": "Nevalida <code>&lt;ref&gt;</code> etikedo;\nneniu teksto estis donita por ref-oj nomataj <code>$1</code>",

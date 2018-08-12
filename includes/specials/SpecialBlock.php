@@ -99,7 +99,6 @@ class SpecialBlock extends FormSpecialPage {
 	 * @param HTMLForm $form
 	 */
 	protected function alterForm( HTMLForm $form ) {
-		$form->setWrapperLegendMsg( 'blockip-legend' );
 		$form->setHeaderText( '' );
 		$form->setSubmitDestructive();
 
@@ -121,6 +120,10 @@ class SpecialBlock extends FormSpecialPage {
 		}
 	}
 
+	protected function getDisplayFormat() {
+		return 'ooui';
+	}
+
 	/**
 	 * Get the HTMLForm descriptor array for the block form
 	 * @return array
@@ -132,16 +135,20 @@ class SpecialBlock extends FormSpecialPage {
 
 		$suggestedDurations = self::getSuggestedDurations();
 
+		$conf = $this->getConfig();
+		$oldCommentSchema = $conf->get( 'CommentTableSchemaMigrationStage' ) === MIGRATION_OLD;
+
 		$a = [
 			'Target' => [
-				'type' => 'text',
+				'type' => 'user',
+				'ipallowed' => true,
+				'iprange' => true,
 				'label-message' => 'ipaddressorusername',
 				'id' => 'mw-bi-target',
 				'size' => '45',
 				'autofocus' => true,
 				'required' => true,
 				'validation-callback' => [ __CLASS__, 'validateTargetField' ],
-				'cssclass' => 'mw-autocomplete-user', // used by mediawiki.userSuggest
 			],
 			'Expiry' => [
 				'type' => !count( $suggestedDurations ) ? 'text' : 'selectorother',
@@ -153,7 +160,11 @@ class SpecialBlock extends FormSpecialPage {
 			],
 			'Reason' => [
 				'type' => 'selectandother',
-				'maxlength' => 255,
+				// HTML maxlength uses "UTF-16 code units", which means that characters outside BMP
+				// (e.g. emojis) count for two each. This limit is overridden in JS to instead count
+				// Unicode codepoints (or 255 UTF-8 bytes for old schema).
+				'maxlength' => $oldCommentSchema ? 255 : CommentStore::COMMENT_CHARACTER_LIMIT,
+				'maxlength-unit' => 'codepoints',
 				'label-message' => 'ipbreason',
 				'options-message' => 'ipbreason-dropdown',
 			],
@@ -220,6 +231,7 @@ class SpecialBlock extends FormSpecialPage {
 			'type' => 'hidden',
 			'default' => '',
 			'label-message' => 'ipb-confirm',
+			'cssclass' => 'mw-block-confirm',
 		];
 
 		$this->maybeAlterFormDefaults( $a );
@@ -323,7 +335,7 @@ class SpecialBlock extends FormSpecialPage {
 	 * @return string
 	 */
 	protected function preText() {
-		$this->getOutput()->addModules( [ 'mediawiki.special.block', 'mediawiki.userSuggest' ] );
+		$this->getOutput()->addModules( [ 'mediawiki.special.block' ] );
 
 		$blockCIDRLimit = $this->getConfig()->get( 'BlockCIDRLimit' );
 		$text = $this->msg( 'blockiptext', $blockCIDRLimit['IPv4'], $blockCIDRLimit['IPv6'] )->parse();

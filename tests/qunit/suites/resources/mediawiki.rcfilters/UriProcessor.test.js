@@ -6,24 +6,33 @@
 			title: 'Group 1',
 			type: 'send_unselected_if_any',
 			filters: [
-				{ name: 'filter1', default: true },
-				{ name: 'filter2' }
+				{ name: 'filter1', cssClass: 'filter1class', default: true },
+				{ name: 'filter2', cssClass: 'filter2class' }
 			]
 		}, {
 			name: 'group2',
 			title: 'Group 2',
 			type: 'send_unselected_if_any',
 			filters: [
-				{ name: 'filter3' },
-				{ name: 'filter4', default: true }
+				{ name: 'filter3', cssClass: 'filter3class' },
+				{ name: 'filter4', cssClass: 'filter4class', default: true }
 			]
 		}, {
 			name: 'group3',
 			title: 'Group 3',
 			type: 'string_options',
 			filters: [
-				{ name: 'filter5' },
-				{ name: 'filter6' }
+				{ name: 'filter5', cssClass: 'filter5class' },
+				{ name: 'filter6' } // Not supporting highlights
+			]
+		}, {
+			name: 'group4',
+			title: 'Group 4',
+			type: 'boolean',
+			sticky: true,
+			filters: [
+				{ name: 'stickyFilter7', cssClass: 'filter7class' },
+				{ name: 'stickyFilter8', cssClass: 'filter8class' }
 			]
 		} ],
 		minimalDefaultParams = {
@@ -49,66 +58,75 @@
 		);
 	} );
 
-	QUnit.test( 'updateModelBasedOnQuery & getUriParametersFromModel', function ( assert ) {
+	QUnit.test( 'getUpdatedUri', function ( assert ) {
 		var uriProcessor,
 			filtersModel = new mw.rcfilters.dm.FiltersViewModel(),
-			baseParams = {
-				filter1: '0',
-				filter2: '0',
-				filter3: '0',
-				filter4: '0',
-				group3: '',
-				highlight: '0',
-				invert: '0',
-				group1__filter1_color: null,
-				group1__filter2_color: null,
-				group2__filter3_color: null,
-				group2__filter4_color: null,
-				group3__filter5_color: null,
-				group3__filter6_color: null
+			makeUri = function ( queryParams ) {
+				var uri = new mw.Uri( 'http://server/wiki/Special:RC' );
+				uri.query = queryParams;
+				return uri;
 			};
+
+		filtersModel.initializeFilters( mockFilterStructure );
+		uriProcessor = new mw.rcfilters.UriProcessor( filtersModel );
+
+		assert.deepEqual(
+			( uriProcessor.getUpdatedUri( makeUri( {} ) ) ).query,
+			{ urlversion: '2' },
+			'Empty model state with empty uri state, assumes the given uri is already normalized, and adds urlversion=2'
+		);
+
+		assert.deepEqual(
+			( uriProcessor.getUpdatedUri( makeUri( { foo: 'bar' } ) ) ).query,
+			{ urlversion: '2', foo: 'bar' },
+			'Empty model state with unrecognized params retains unrecognized params'
+		);
+
+		// Update the model
+		filtersModel.toggleFiltersSelected( {
+			group1__filter1: true, // Param: filter2: '1'
+			group3__filter5: true // Param: group3: 'filter5'
+		} );
+
+		assert.deepEqual(
+			( uriProcessor.getUpdatedUri( makeUri( {} ) ) ).query,
+			{ urlversion: '2', filter2: '1', group3: 'filter5' },
+			'Model state is reflected in the updated URI'
+		);
+
+		assert.deepEqual(
+			( uriProcessor.getUpdatedUri( makeUri( { foo: 'bar' } ) ) ).query,
+			{ urlversion: '2', filter2: '1', group3: 'filter5', foo: 'bar' },
+			'Model state is reflected in the updated URI with existing uri params'
+		);
+	} );
+
+	QUnit.test( 'updateModelBasedOnQuery', function ( assert ) {
+		var uriProcessor,
+			filtersModel = new mw.rcfilters.dm.FiltersViewModel();
 
 		filtersModel.initializeFilters( mockFilterStructure );
 		uriProcessor = new mw.rcfilters.UriProcessor( filtersModel );
 
 		uriProcessor.updateModelBasedOnQuery( {} );
 		assert.deepEqual(
-			uriProcessor.getUriParametersFromModel(),
-			$.extend( true, {}, baseParams, minimalDefaultParams ),
+			filtersModel.getCurrentParameterState(),
+			minimalDefaultParams,
 			'Version 1: Empty url query sets model to defaults'
 		);
 
 		uriProcessor.updateModelBasedOnQuery( { urlversion: '2' } );
 		assert.deepEqual(
-			uriProcessor.getUriParametersFromModel(),
-			baseParams,
+			filtersModel.getCurrentParameterState(),
+			{},
 			'Version 2: Empty url query sets model to all-false'
 		);
 
 		uriProcessor.updateModelBasedOnQuery( { filter1: '1', urlversion: '2' } );
 		assert.deepEqual(
-			uriProcessor.getUriParametersFromModel(),
-			$.extend( true, {}, baseParams, { filter1: '1' } ),
+			filtersModel.getCurrentParameterState(),
+			$.extend( true, {}, { filter1: '1' } ),
 			'Parameters in Uri query set parameter value in the model'
-		);
-
-		uriProcessor.updateModelBasedOnQuery( { highlight: '1', group1__filter1_color: 'c1', urlversion: '2' } );
-		assert.deepEqual(
-			uriProcessor.getUriParametersFromModel(),
-			$.extend( true, {}, baseParams, {
-				highlight: '1',
-				group1__filter1_color: 'c1'
-			} ),
-			'Highlight parameters in Uri query set highlight state in the model'
-		);
-
-		uriProcessor.updateModelBasedOnQuery( { invert: '1', urlversion: '2' } );
-		assert.deepEqual(
-			uriProcessor.getUriParametersFromModel(),
-			$.extend( true, {}, baseParams, {
-				invert: '1'
-			} ),
-			'Invert parameter in Uri query set invert state in the model'
 		);
 	} );
 
@@ -254,6 +272,80 @@
 			assert.deepEqual(
 				uriProcessor._getNormalizedQueryParams( testCase.query ),
 				testCase.result,
+				testCase.message
+			);
+		} );
+	} );
+
+	QUnit.test( '_normalizeTargetInUri', function ( assert ) {
+		var cases = [
+			{
+				input: 'http://host/wiki/Special:RecentChangesLinked/Moai',
+				output: 'http://host/wiki/Special:RecentChangesLinked?target=Moai',
+				message: 'Target as subpage in path'
+			},
+			{
+				input: 'http://host/wiki/Special:RecentChangesLinked/Château',
+				output: 'http://host/wiki/Special:RecentChangesLinked?target=Château',
+				message: 'Target as subpage in path with special characters'
+			},
+			{
+				input: 'http://host/wiki/Special:RecentChangesLinked/Moai/Sub1',
+				output: 'http://host/wiki/Special:RecentChangesLinked?target=Moai/Sub1',
+				message: 'Target as subpage also has a subpage'
+			},
+			{
+				input: 'http://host/wiki/Special:RecentChangesLinked/Category:Foo',
+				output: 'http://host/wiki/Special:RecentChangesLinked?target=Category:Foo',
+				message: 'Target as subpage in path (with namespace)'
+			},
+			{
+				input: 'http://host/wiki/Special:RecentChangesLinked/Category:Foo/Bar',
+				output: 'http://host/wiki/Special:RecentChangesLinked?target=Category:Foo/Bar',
+				message: 'Target as subpage in path also has a subpage (with namespace)'
+			},
+			{
+				input: 'http://host/w/index.php?title=Special:RecentChangesLinked/Moai',
+				output: 'http://host/w/index.php?title=Special:RecentChangesLinked&target=Moai',
+				message: 'Target as subpage in title param'
+			},
+			{
+				input: 'http://host/w/index.php?title=Special:RecentChangesLinked/Moai/Sub1',
+				output: 'http://host/w/index.php?title=Special:RecentChangesLinked&target=Moai/Sub1',
+				message: 'Target as subpage in title param also has a subpage'
+			},
+			{
+				input: 'http://host/w/index.php?title=Special:RecentChangesLinked/Category:Foo/Bar',
+				output: 'http://host/w/index.php?title=Special:RecentChangesLinked&target=Category:Foo/Bar',
+				message: 'Target as subpage in title param also has a subpage (with namespace)'
+			},
+			{
+				input: 'http://host/wiki/Special:Watchlist',
+				output: 'http://host/wiki/Special:Watchlist',
+				message: 'No target specified'
+			},
+			{
+				normalizeTarget: false,
+				input: 'http://host/wiki/Special:RecentChanges/Foo',
+				output: 'http://host/wiki/Special:RecentChanges/Foo',
+				message: 'Do not normalize if "normalizeTarget" is false.'
+			}
+		];
+
+		cases.forEach( function ( testCase ) {
+			var uriProcessor = new mw.rcfilters.UriProcessor(
+				null,
+				{
+					normalizeTarget: testCase.normalizeTarget === undefined ?
+						true : testCase.normalizeTarget
+				}
+			);
+
+			assert.equal(
+				uriProcessor._normalizeTargetInUri(
+					new mw.Uri( testCase.input )
+				).toString(),
+				new mw.Uri( testCase.output ).toString(),
 				testCase.message
 			);
 		} );

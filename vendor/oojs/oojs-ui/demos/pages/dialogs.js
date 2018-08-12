@@ -100,7 +100,7 @@ Demo.static.pages.dialogs = function ( demo ) {
 						size: 'medium'
 					},
 					data: {
-						title: 'Sample dialog with very long title that does not fit'
+						title: 'Sample dialog with very long title that does not remotely fit into the space available and thus demonstrates what happens in that use case'
 					}
 				},
 				{
@@ -170,7 +170,7 @@ Demo.static.pages.dialogs = function ( demo ) {
 							{
 								action: 'repeat',
 								label: 'Try again',
-								flags: [ 'primary', 'constructive' ]
+								flags: [ 'primary', 'progressive' ]
 							}
 						]
 					}

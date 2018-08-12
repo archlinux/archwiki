@@ -576,7 +576,9 @@ class ChangesList extends ContextSource {
 			return '';
 		}
 		$cache = $this->watchMsgCache;
-		return $cache->getWithSetCallback( $count, $cache::TTL_INDEFINITE,
+		return $cache->getWithSetCallback(
+			$cache->makeKey( 'watching-users-msg', $count ),
+			$cache::TTL_INDEFINITE,
 			function () use ( $count ) {
 				return $this->msg( 'number_of_watching_users_RCview' )
 					->numParams( $count )->escaped();
@@ -644,6 +646,7 @@ class ChangesList extends ContextSource {
 					'id' => $rc->mAttribs['rc_this_oldid'],
 					'user' => $rc->mAttribs['rc_user'],
 					'user_text' => $rc->mAttribs['rc_user_text'],
+					'actor' => isset( $rc->mAttribs['rc_actor'] ) ? $rc->mAttribs['rc_actor'] : null,
 					'deleted' => $rc->mAttribs['rc_deleted']
 				] );
 				$s .= ' ' . Linker::generateRollback( $rev, $this->getContext() );

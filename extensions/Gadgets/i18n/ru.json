@@ -14,7 +14,8 @@
 			"Frhdkazan",
 			"Лилиә",
 			"Ping08",
-			"Mailman"
+			"Mailman",
+			"Jack who built the house"
 		]
 	},
 	"gadgets-desc": "Позволяет участникам выбирать в своих [[Special:Preferences#mw-prefsection-gadgets|настройках]] те или иные [[Special:Gadgets|CSS- и JavaScript-гаджеты]]",
@@ -39,7 +40,7 @@
 	"gadgets-export": "Экспортировать",
 	"gadgets-export-title": "Экспорт гаджета",
 	"gadgets-not-found": "Гаджет «$1» не найден.",
-	"gadgets-export-text": "Для экспорта гаджета $1, нажмите кнопку «{{int:gadgets-export-download}}», сохраните загруженный файл,\nперейдите на страницу Special:Import целевой вики и загрузите файл. Затем добавьте следующие строки на страницу MediaWiki:Gadgets-definition:\n<pre>$2</pre>\nВы должны иметь соответствующие разрешения в целевой вики (в том числе право на редактирование системных сообщений), также на сервере должна быть включена настройка импорта из файлов.",
+	"gadgets-export-text": "Для экспорта гаджета $1 нажмите кнопку «{{int:gadgets-export-download}}», сохраните загруженный файл,\nперейдите на страницу Special:Import целевой вики и загрузите файл. Затем добавьте следующие строки на страницу MediaWiki:Gadgets-definition:\n<pre>$2</pre>\nВы должны иметь соответствующие разрешения в целевой вики (в том числе право на редактирование системных сообщений), также на сервере должна быть включена настройка импорта из файлов.",
 	"gadgets-export-download": "Скачать",
 	"gadgets-validate-notset": "Свойство <code>$1</code> не установлено.",
 	"gadgets-validate-wrongtype": "Свойство <code>$1</code> должна иметь тип <code>$2</code> вместо типа <code>$3</code>.",

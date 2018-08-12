@@ -26,6 +26,7 @@ use MediaWiki\MediaWikiServices;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use Wikimedia\RelPath;
 use Wikimedia\ScopedCallback;
 
 /**
@@ -65,8 +66,6 @@ abstract class ResourceLoaderModule implements LoggerAwareInterface {
 	# pages like Special:UserLogin and Special:Preferences
 	protected $origin = self::ORIGIN_CORE_SITEWIDE;
 
-	/* Protected Members */
-
 	protected $name = null;
 	protected $targets = [ 'desktop' ];
 
@@ -94,8 +93,6 @@ abstract class ResourceLoaderModule implements LoggerAwareInterface {
 	 */
 	protected $logger;
 
-	/* Methods */
-
 	/**
 	 * Get this module's name. This is set when the module is registered
 	 * with ResourceLoader::register()
@@ -110,7 +107,7 @@ abstract class ResourceLoaderModule implements LoggerAwareInterface {
 	 * Set this module's name. This is called by ResourceLoader::register()
 	 * when registering the module. Other code should not call this.
 	 *
-	 * @param string $name Name
+	 * @param string $name
 	 */
 	public function setName( $name ) {
 		$this->name = $name;
@@ -331,16 +328,6 @@ abstract class ResourceLoaderModule implements LoggerAwareInterface {
 	}
 
 	/**
-	 * From where in the page HTML should this module be loaded?
-	 *
-	 * @deprecated since 1.29 Obsolete. All modules load async from `<head>`.
-	 * @return string
-	 */
-	public function getPosition() {
-		return 'top';
-	}
-
-	/**
 	 * Whether this module's JS expects to work without the client-side ResourceLoader module.
 	 * Returning true from this function will prevent mw.loader.state() call from being
 	 * appended to the bottom of the script.
@@ -531,7 +518,7 @@ abstract class ResourceLoaderModule implements LoggerAwareInterface {
 	public static function getRelativePaths( array $filePaths ) {
 		global $IP;
 		return array_map( function ( $path ) use ( $IP ) {
-			return RelPath\getRelativePath( $path, $IP );
+			return RelPath::getRelativePath( $path, $IP );
 		}, $filePaths );
 	}
 
@@ -545,7 +532,7 @@ abstract class ResourceLoaderModule implements LoggerAwareInterface {
 	public static function expandRelativePaths( array $filePaths ) {
 		global $IP;
 		return array_map( function ( $path ) use ( $IP ) {
-			return RelPath\joinPath( $IP, $path );
+			return RelPath::joinPath( $IP, $path );
 		}, $filePaths );
 	}
 
@@ -633,7 +620,7 @@ abstract class ResourceLoaderModule implements LoggerAwareInterface {
 	 *             'https://example.org/image.png' => [ 'as' => 'image' ],
 	 *         ];
 	 *     }
-	 * @encode
+	 * @endcode
 	 *
 	 * @par Example using HiDPI image variants
 	 * @code
@@ -649,7 +636,7 @@ abstract class ResourceLoaderModule implements LoggerAwareInterface {
 	 *             ],
 	 *         ];
 	 *     }
-	 * @encode
+	 * @endcode
 	 *
 	 * @see ResourceLoaderModule::getHeaders
 	 * @since 1.30
@@ -932,7 +919,7 @@ abstract class ResourceLoaderModule implements LoggerAwareInterface {
 	 * Get this module's last modification timestamp for a given context.
 	 *
 	 * @deprecated since 1.26 Use getDefinitionSummary() instead
-	 * @param ResourceLoaderContext $context Context object
+	 * @param ResourceLoaderContext $context
 	 * @return int|null UNIX timestamp
 	 */
 	public function getModifiedTime( ResourceLoaderContext $context ) {
@@ -948,41 +935,6 @@ abstract class ResourceLoaderModule implements LoggerAwareInterface {
 	 */
 	public function getModifiedHash( ResourceLoaderContext $context ) {
 		return null;
-	}
-
-	/**
-	 * Back-compat dummy for old subclass implementations of getModifiedTime().
-	 *
-	 * This method used to use ObjectCache to track when a hash was first seen. That principle
-	 * stems from a time that ResourceLoader could only identify module versions by timestamp.
-	 * That is no longer the case. Use getDefinitionSummary() directly.
-	 *
-	 * @deprecated since 1.26 Superseded by getVersionHash()
-	 * @param ResourceLoaderContext $context
-	 * @return int UNIX timestamp
-	 */
-	public function getHashMtime( ResourceLoaderContext $context ) {
-		if ( !is_string( $this->getModifiedHash( $context ) ) ) {
-			return 1;
-		}
-		// Dummy that is > 1
-		return 2;
-	}
-
-	/**
-	 * Back-compat dummy for old subclass implementations of getModifiedTime().
-	 *
-	 * @since 1.23
-	 * @deprecated since 1.26 Superseded by getVersionHash()
-	 * @param ResourceLoaderContext $context
-	 * @return int UNIX timestamp
-	 */
-	public function getDefinitionMtime( ResourceLoaderContext $context ) {
-		if ( $this->getDefinitionSummary( $context ) === null ) {
-			return 1;
-		}
-		// Dummy that is > 1
-		return 2;
 	}
 
 	/**
@@ -1072,9 +1024,9 @@ abstract class ResourceLoaderModule implements LoggerAwareInterface {
 	 * @return int UNIX timestamp
 	 */
 	protected static function safeFilemtime( $filePath ) {
-		MediaWiki\suppressWarnings();
+		Wikimedia\suppressWarnings();
 		$mtime = filemtime( $filePath ) ?: 1;
-		MediaWiki\restoreWarnings();
+		Wikimedia\restoreWarnings();
 		return $mtime;
 	}
 

@@ -11,7 +11,6 @@
 	"cite_error_ref_too_many_keys": "نامعتبر<code>&lt;ref&gt;</code>تگ;\nنامعتبر نامان, په داب بازین",
 	"cite_error_ref_no_input": "نامعتبر <code>&lt;ref&gt;</code> تگ;\nمراجع بی نام بایدن محتوا داشته بنت",
 	"cite_error_references_invalid_parameters": "نامعتبر <code>&lt;references&gt;</code>تگ;\nهچ پارامتری مجاز نهنت.\nاستفاده کن چه <code>&lt;references /&gt;</code>",
-	"cite_error_references_invalid_parameters_group": "نامعتبر <code>&lt;references&gt;</code>تگ;\nپارامتر \"گروه\" فقط مجازنت.\nاستفاده کن چه <code>&lt;references /&gt;</code>, یا <code>&lt;references group=\"...\" /&gt;</code>",
 	"cite_error_references_no_backlink_label": "هلگ برجسپان لینک عقب رسمی.\nگیشتر تعریف کن ته <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki> کوله",
 	"cite_error_references_no_text": "نامعتبر<code>&lt;ref&gt;</code>تگ;\nپه نام ارجاع هچ متنی دهگ نه بیته <code>$1</code>",
 	"cite_reference_link_prefix": "هل_مرج-",

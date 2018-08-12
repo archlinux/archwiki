@@ -118,6 +118,11 @@ $specialPageAliases['tr'] = [
 	'Captcha' => [ 'GüvenlikKodu' ],
 ];
 
+/** Urdu (اردو) */
+$specialPageAliases['ur'] = [
+	'Captcha' => [ 'کیپچا' ],
+];
+
 /** Cantonese (粵語) */
 $specialPageAliases['yue'] = [
 	'Captcha' => [ '驗證碼' ],

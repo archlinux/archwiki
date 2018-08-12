@@ -1,6 +1,7 @@
 <?php
 
 namespace RemexHtml\TreeBuilder;
+
 use RemexHtml\Tokenizer\Attributes;
 
 /**
@@ -15,7 +16,7 @@ class TreeMutationTracer implements TreeHandler {
 	 *
 	 * @param TreeHandler $handler The next pipeline stage
 	 * @param callable $callback The message output function
-	 * @param integer $verbosity Set to non-zero to call dump() on the handler
+	 * @param int $verbosity Set to non-zero to call dump() on the handler
 	 *   before and after each event.
 	 */
 	public function __construct( TreeHandler $handler, callable $callback, $verbosity = 0 ) {

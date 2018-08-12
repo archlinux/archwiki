@@ -62,9 +62,9 @@ class SpecialRecentChangesLinked extends SpecialRecentChanges {
 		$outputPage = $this->getOutput();
 		$title = Title::newFromText( $target );
 		if ( !$title || $title->isExternal() ) {
-			$outputPage->addHTML( '<div class="errorbox">' . $this->msg( 'allpagesbadtitle' )
-					->parse() . '</div>' );
-
+			$outputPage->addHTML(
+				Html::errorBox( $this->msg( 'allpagesbadtitle' )->parse() )
+			);
 			return false;
 		}
 
@@ -84,8 +84,10 @@ class SpecialRecentChangesLinked extends SpecialRecentChanges {
 		$ns = $title->getNamespace();
 		$dbkey = $title->getDBkey();
 
-		$tables[] = 'recentchanges';
-		$select = array_merge( RecentChange::selectFields(), $select );
+		$rcQuery = RecentChange::getQueryInfo();
+		$tables = array_merge( $tables, $rcQuery['tables'] );
+		$select = array_merge( $rcQuery['fields'], $select );
+		$join_conds = array_merge( $join_conds, $rcQuery['joins'] );
 
 		// left join with watchlist table to highlight watched rows
 		$uid = $this->getUser()->getId();
@@ -289,5 +291,24 @@ class SpecialRecentChangesLinked extends SpecialRecentChanges {
 	 */
 	public function prefixSearchSubpages( $search, $limit, $offset ) {
 		return $this->prefixSearchString( $search, $limit, $offset );
+	}
+
+	protected function outputNoResults() {
+		$targetTitle = $this->getTargetTitle();
+		if ( $targetTitle === false ) {
+			$this->getOutput()->addHTML(
+				'<div class="mw-changeslist-empty mw-changeslist-notargetpage">' .
+				$this->msg( 'recentchanges-notargetpage' )->parse() .
+				'</div>'
+			);
+		} elseif ( !$targetTitle || $targetTitle->isExternal() ) {
+			$this->getOutput()->addHTML(
+				'<div class="mw-changeslist-empty mw-changeslist-invalidtargetpage">' .
+				$this->msg( 'allpagesbadtitle' )->parse() .
+				'</div>'
+			);
+		} else {
+			parent::outputNoResults();
+		}
 	}
 }

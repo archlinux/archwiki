@@ -46,4 +46,9 @@ class FieldsetLayout extends Layout {
 			$this->addItems( $config['items'] );
 		}
 	}
+
+	public function getConfig( &$config ) {
+		$config['$overlay'] = true;
+		return parent::getConfig( $config );
+	}
 }

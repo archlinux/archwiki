@@ -15,7 +15,6 @@
 	"cite_error_ref_too_many_keys": "Etiqueta <code>&lt;ref&gt;</code> no vàlida;\nempreu l'estructura <code>&lt;ref name=\"Nom\"&gt;</code>",
 	"cite_error_ref_no_input": "Etiqueta <code>&lt;ref&gt;</code> no vàlida; \nles referències sense nom han de tenir contingut",
 	"cite_error_references_invalid_parameters": "Etiqueta <code>&lt;references&gt;</code> no vàlida; \nno es permeten paràmetres. \nUseu <code>&lt;references /&gt;</code>",
-	"cite_error_references_invalid_parameters_group": "Etiqueta <code>&lt;references&gt;</code> no vàlida;\núnicament es permet el paràmetre \"group\".\nUseu <code>&lt;references /&gt;</code>, o <code>&lt;references group=\"...\" /&gt;</code>",
 	"cite_error_references_no_backlink_label": "Hi ha massa etiquetes personalitzades.\nSe'n poden definir més a <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>",
 	"cite_error_no_link_label_group": "No hi ha etiquetes vincle personalitzat per al grup \"$1\".\nDefineix més al missatge <nowiki>[[MediaWiki:$2]]</nowiki>.",
 	"cite_error_references_no_text": "Etiqueta <code>&lt;ref&gt;</code> no vàlida;\nno s'ha proporcionat text per les refs amb l'etiqueta <code>$1</code>",

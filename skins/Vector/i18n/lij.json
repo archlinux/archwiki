@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Gastaz",
-			"Giromin Cangiaxo"
+			"Giromin Cangiaxo",
+			"S4b1nuz E.656"
 		]
 	},
 	"vector-action-addsection": "Azónzi discusción",
@@ -12,9 +13,9 @@
 	"vector-action-undelete": "Recuppera",
 	"vector-action-unprotect": "Cangia a proteçion",
 	"vector-view-create": "Crea",
-	"vector-view-edit": "Càngia",
-	"vector-view-history": "Amia a stoia",
+	"vector-view-edit": "Modìfica",
+	"vector-view-history": "Cronologîa",
 	"vector-view-view": "Lêzi",
-	"vector-view-viewsource": "Veddi a sorgénte",
-	"vector-more-actions": "De ciu"
+	"vector-view-viewsource": "Vixualizza wikitesto",
+	"vector-more-actions": "Âtro"
 }

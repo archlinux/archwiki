@@ -1,6 +1,7 @@
 <?php
 
 namespace RemexHtml\Tokenizer;
+
 use RemexHtml\HTMLData;
 use RemexHtml\PropGuard;
 
@@ -11,6 +12,8 @@ use RemexHtml\PropGuard;
  * https://www.w3.org/TR/2016/REC-html51-20161101/
  */
 class Tokenizer {
+	use PropGuard;
+
 	// States
 	const STATE_START = 1;
 	const STATE_DATA = 2;
@@ -113,10 +116,6 @@ class Tokenizer {
 		$this->skipPreprocess = !empty( $options['skipPreprocess'] );
 	}
 
-	public function __set( $name, $value ) {
-		PropGuard::set( $this, $name, $value );
-	}
-
 	public function setEnableCdataCallback( $cb ) {
 		$this->enableCdataCallback = $cb;
 	}
@@ -156,6 +155,7 @@ class Tokenizer {
 	 * Get the preprocessed input text. Source offsets in event parameters are
 	 * relative to this string. If skipPreprocess was specified, this will be
 	 * the same as the input string.
+	 * @return string
 	 */
 	public function getPreprocessedText() {
 		$this->preprocess();
@@ -166,7 +166,7 @@ class Tokenizer {
 	 * Change the state of the tokenizer during parsing. This for use by the
 	 * tree builder to switch the tokenizer into one of the raw text states.
 	 *
-	 * @param integer $state One of the STATE_* constants
+	 * @param int $state One of the STATE_* constants
 	 * @param string $appropriateEndTag The appropriate end tag
 	 */
 	public function switchState( $state, $appropriateEndTag ) {
@@ -191,7 +191,7 @@ class Tokenizer {
 		switch ( $tagName ) {
 		case 'title':
 		case 'textarea':
-			$this->state = Tokenizer::STATE_RCDATA;
+			$this->state = self::STATE_RCDATA;
 			break;
 
 		case 'style':
@@ -199,21 +199,21 @@ class Tokenizer {
 		case 'iframe':
 		case 'noembed':
 		case 'noframes':
-			$this->state = Tokenizer::STATE_RAWTEXT;
+			$this->state = self::STATE_RAWTEXT;
 			break;
 
 		case 'script':
-			$this->state = Tokenizer::STATE_SCRIPT_DATA;
+			$this->state = self::STATE_SCRIPT_DATA;
 			break;
 
 		case 'noscript':
 			if ( $this->scriptingFlag ) {
-				$this->state = Tokenizer::STATE_RAWTEXT;
+				$this->state = self::STATE_RAWTEXT;
 			}
 			break;
 
 		case 'plaintext':
-			$this->state = Tokenizer::STATE_PLAINTEXT;
+			$this->state = self::STATE_PLAINTEXT;
 			break;
 		}
 	}
@@ -348,7 +348,7 @@ class Tokenizer {
 	 *
 	 * @param bool $loop True to loop while still in the data state, false to
 	 *   process a single less-than sign.
-	 * @return integer The next state index
+	 * @return int The next state index
 	 */
 	protected function dataState( $loop ) {
 		$re = "~ <
@@ -534,7 +534,7 @@ class Tokenizer {
 					$contents = $this->handleNulls( $contents, $bogusPos );
 					$this->listener->comment( $contents, $this->pos, $endPos - $this->pos );
 				}
-			} elseif ( isset ( $m[self::MD_BOGUS_COMMENT] ) && $m[self::MD_BOGUS_COMMENT][1] >= 0 ) {
+			} elseif ( isset( $m[self::MD_BOGUS_COMMENT] ) && $m[self::MD_BOGUS_COMMENT][1] >= 0 ) {
 				// Bogus comment
 				$contents = $m[self::MD_BOGUS_COMMENT][0];
 				$bogusPos = $m[self::MD_BOGUS_COMMENT][1];
@@ -713,6 +713,10 @@ class Tokenizer {
 
 	/**
 	 * DOCTYPE helper which interprets a quoted string (or lack thereof)
+	 * @param array $m
+	 * @param int $dq
+	 * @param int $sq
+	 * @param bool &$quirks
 	 * @return string|null The quoted value, with nulls replaced.
 	 */
 	protected function interpretDoctypeQuoted( $m, $dq, $sq, &$quirks ) {
@@ -742,7 +746,7 @@ class Tokenizer {
 	 * replaced with U+FFFD with a parse error issued.
 	 *
 	 * @param string $text The text to be converted
-	 * @param integer $sourcePos The input byte offset from which $text was
+	 * @param int $sourcePos The input byte offset from which $text was
 	 *   extracted, for error position reporting.
 	 * @return string The converted text
 	 */
@@ -775,9 +779,9 @@ class Tokenizer {
 	 *
 	 * @param string $mask Mask for strcspn
 	 * @param string $text The input text
-	 * @param integer $offset The start of the range within $text to search
-	 * @param integer $length The length of the range within $text to search
-	 * @param integer $sourcePos The offset within the input text corresponding
+	 * @param int $offset The start of the range within $text to search
+	 * @param int $length The length of the range within $text to search
+	 * @param int $sourcePos The offset within the input text corresponding
 	 *   to $text, for error position reporting.
 	 */
 	protected function handleAsciiErrors( $mask, $text, $offset, $length, $sourcePos ) {
@@ -803,7 +807,7 @@ class Tokenizer {
 	/**
 	 * Expand character references in some text, and emit errors as appropriate.
 	 * @param string $text The text to expand
-	 * @param integer $sourcePos The input position of $text
+	 * @param int $sourcePos The input position of $text
 	 * @param bool $inAttr True if the text is within an attribute value
 	 * @param string $additionalAllowedChar An unused string which the spec
 	 *   inexplicably spends a lot of space telling you how to derive. It
@@ -986,8 +990,8 @@ class Tokenizer {
 	 * Emit a range of the input text as a character token, and emit related
 	 * errors, with validity rules as per the data state.
 	 *
-	 * @param integer $pos Offset within the input text
-	 * @param integer $length The length of the range
+	 * @param int $pos Offset within the input text
+	 * @param int $length The length of the range
 	 */
 	protected function emitDataRange( $pos, $length ) {
 		if ( $length === 0 ) {
@@ -1013,10 +1017,10 @@ class Tokenizer {
 	 * Emit a range of characters from the input text, with validity rules as
 	 * per the CDATA section state.
 	 *
-	 * @param $innerPos The position after the <![CDATA[
-	 * @param $innerLength The length of the string not including the terminating ]]>
-	 * @param $outerPos The position of the start of the <!CDATA[
-	 * @param $outerLength The length of the whole input region being emitted
+	 * @param int $innerPos The position after the <![CDATA[
+	 * @param int $innerLength The length of the string not including the terminating ]]>
+	 * @param int $outerPos The position of the start of the <!CDATA[
+	 * @param int $outerLength The length of the whole input region being emitted
 	 */
 	protected function emitCdataRange( $innerPos, $innerLength, $outerPos, $outerLength ) {
 		$this->listener->characters( $this->text, $innerPos, $innerLength,
@@ -1030,8 +1034,8 @@ class Tokenizer {
 	 * that as a parameter.
 	 *
 	 * @param bool $ignoreCharRefs
-	 * @param integer $pos The input position
-	 * @param integer $length The length of the range to be emitted
+	 * @param int $pos The input position
+	 * @param int $length The length of the range to be emitted
 	 */
 	protected function emitRawTextRange( $ignoreCharRefs, $pos, $length ) {
 		if ( $length === 0 ) {
@@ -1054,7 +1058,7 @@ class Tokenizer {
 	 * The entry point for the RCDATA and RAWTEXT states.
 	 * @param bool $ignoreCharRefs True to ignore character references regardless
 	 *   of configuration, false to respect the configuration.
-	 * @return integer The next state index
+	 * @return int The next state index
 	 */
 	protected function textElementState( $ignoreCharRefs ) {
 		if ( $this->appropriateEndTag === null ) {
@@ -1253,11 +1257,11 @@ class Tokenizer {
 	 * Emit the appropriate tag event, or in the case of broken attributes in
 	 * text states, emit characters.
 	 *
-	 * @param integer $state The current state
+	 * @param int $state The current state
 	 * @param string $tagName The normalized tag name
 	 * @param bool $isEndTag True if this is an end tag, false if it is a start tag
-	 * @param integer $startPos The input position of the start of the current tag.
-	 * @return integer The next state
+	 * @param int $startPos The input position of the start of the current tag.
+	 * @return int The next state
 	 */
 	protected function handleAttribsAndClose( $state, $tagName, $isEndTag, $startPos ) {
 		$attribStartPos = $this->pos;
@@ -1312,7 +1316,7 @@ class Tokenizer {
 
 	/**
 	 * Process input text in the PLAINTEXT state
-	 * @return integer The next state index
+	 * @return int The next state index
 	 */
 	protected function plaintextState() {
 		$this->emitRawTextRange( true, $this->pos, $this->length - $this->pos );
@@ -1321,7 +1325,7 @@ class Tokenizer {
 
 	/**
 	 * Process input text in the script data state
-	 * @return integer The next state index
+	 * @return int The next state index
 	 */
 	protected function scriptDataState() {
 		if ( $this->appropriateEndTag === null ) {
@@ -1413,7 +1417,7 @@ REGEX;
 	/**
 	 * Emit a parse error event.
 	 * @param string $text The error message
-	 * @param integer|null $pos The error position, or null to use the current position
+	 * @param int|null $pos The error position, or null to use the current position
 	 */
 	protected function error( $text, $pos = null ) {
 		if ( !$this->ignoreErrors ) {
@@ -1482,4 +1486,3 @@ REGEX;
 		throw new TokenizerError( __CLASS__.": $msg" );
 	}
 }
-

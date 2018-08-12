@@ -4,13 +4,12 @@
 
 /* Hide vanilla MediaWiki's "Editing help" link, as we provide it in the toolbar */
 .client-js .editButtons {
-	.editHelp,
-	.mw-editButtons-pipe-separator {
+	.editHelp {
 		display: none;
 	}
 }
 
-/* stylelint-disable selector-no-id */
+/* stylelint-disable selector-max-id */
 
 form#editform {
 	margin: 0;
@@ -22,9 +21,7 @@ form#editform {
 	resize: vertical;
 }
 
-/* Hide the old toolbar until the wikiEditor toolbar is deemed not supported,
- * hide the WikiEditor toolbar until it's css has loaded */
-.wikiEditor-oldToolbar,
+/* Hide the WikiEditor toolbar until its css has loaded */
 .wikiEditor-ui-toolbar {
 	display: none;
 }
@@ -38,7 +35,7 @@ form#editform {
 /* Set a margin on the textarea while we load, matching the height,
  * of the wikieditor toolbar to prevent reflow. After the wikieditor ui is loaded,
  * the textarea is wrapped inside wikieditor-ui div and no longer matches */
-.client-js .wikiEditor-oldToolbar + #wpTextbox1 {
+.client-js .mw-editform > #wpTextbox1 {
 	/* Toolbar height + padding + bottom border = 26 + 2*3 + 1 */
 	margin-top: 33px;
 }

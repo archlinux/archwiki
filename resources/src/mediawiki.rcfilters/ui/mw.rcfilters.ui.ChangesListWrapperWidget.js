@@ -39,16 +39,15 @@
 		} );
 		this.changesListViewModel.connect( this, {
 			invalidate: 'onModelInvalidate',
-			update: 'onModelUpdate',
-			newChangesExist: 'onNewChangesExist'
+			update: 'onModelUpdate'
 		} );
 
 		this.$element
 			.addClass( 'mw-rcfilters-ui-changesListWrapperWidget' )
 			// We handle our own display/hide of the empty results message
+			// We keep the timeout class here and remove it later, since at this
+			// stage it is still needed to identify that the timeout occurred.
 			.removeClass( 'mw-changeslist-empty' );
-
-		this.setupNewChangesButtonContainer( this.$element );
 	};
 
 	/* Initialization */
@@ -117,11 +116,12 @@
 	 *
 	 * @param {jQuery|string} $changesListContent The content of the updated changes list
 	 * @param {jQuery} $fieldset The content of the updated fieldset
+	 * @param {string} noResultsDetails Type of no result error
 	 * @param {boolean} isInitialDOM Whether $changesListContent is the existing (already attached) DOM
 	 * @param {boolean} from Timestamp of the new changes
 	 */
 	mw.rcfilters.ui.ChangesListWrapperWidget.prototype.onModelUpdate = function (
-		$changesListContent, $fieldset, isInitialDOM, from
+		$changesListContent, $fieldset, noResultsDetails, isInitialDOM, from
 	) {
 		var conflictItem,
 			$message = $( '<div>' )
@@ -155,8 +155,18 @@
 					.append(
 						$( '<div>' )
 							.addClass( 'mw-rcfilters-ui-changesListWrapperWidget-results-noresult' )
-							.text( mw.message( 'recentchanges-noresult' ).text() )
+							.text( mw.msg( this.getMsgKeyForNoResults( noResultsDetails ) ) )
 					);
+
+				// remove all classes matching mw-changeslist-*
+				this.$element.removeClass( function ( elementIndex, allClasses ) {
+					return allClasses
+						.split( ' ' )
+						.filter( function ( className ) {
+							return className.indexOf( 'mw-changeslist-' ) === 0;
+						} )
+						.join( ' ' );
+				} );
 			}
 
 			this.$element.append( $message );
@@ -177,6 +187,8 @@
 
 		}
 
+		this.$element.prepend( $( '<div>' ).addClass( 'mw-changeslist-overlay' ) );
+
 		loaderPromise.done( function () {
 			if ( !isInitialDOM && !isEmpty ) {
 				// Make sure enhanced RC re-initializes correctly
@@ -185,6 +197,32 @@
 
 			$( 'body' ).removeClass( 'mw-rcfilters-ui-loading' );
 		} );
+	};
+
+	/** Toggles overlay class on changes list
+	 *
+	 * @param {boolean} isVisible True if overlay should be visible
+	 */
+	mw.rcfilters.ui.ChangesListWrapperWidget.prototype.toggleOverlay = function ( isVisible ) {
+		this.$element.toggleClass( 'mw-rcfilters-ui-changesListWrapperWidget--overlaid', isVisible );
+	};
+
+	/**
+	 * Map a reason for having no results to its message key
+	 *
+	 * @param {string} reason One of the NO_RESULTS_* "constant" that represent
+	 * 	a reason for having no results
+	 * @return {string} Key for the message that explains why there is no results in this case
+	 */
+	mw.rcfilters.ui.ChangesListWrapperWidget.prototype.getMsgKeyForNoResults = function ( reason ) {
+		var reasonMsgKeyMap = {
+			NO_RESULTS_NORMAL: 'recentchanges-noresult',
+			NO_RESULTS_TIMEOUT: 'recentchanges-timeout',
+			NO_RESULTS_NETWORK_ERROR: 'recentchanges-network',
+			NO_RESULTS_NO_TARGET_PAGE: 'recentchanges-notargetpage',
+			NO_RESULTS_INVALID_TARGET_PAGE: 'allpagesbadtitle'
+		};
+		return reasonMsgKeyMap[ reason ];
 	};
 
 	/**
@@ -226,43 +264,6 @@
 		$newChanges
 			.hide()
 			.fadeIn( 1000 );
-	};
-
-	/**
-	 * Respond to changes list model newChangesExist
-	 *
-	 * @param {boolean} newChangesExist Whether new changes exist
-	 */
-	mw.rcfilters.ui.ChangesListWrapperWidget.prototype.onNewChangesExist = function ( newChangesExist ) {
-		this.showNewChangesLink.toggle( newChangesExist );
-	};
-
-	/**
-	 * Respond to the user clicking the 'show new changes' button
-	 */
-	mw.rcfilters.ui.ChangesListWrapperWidget.prototype.onShowNewChangesClick = function () {
-		this.controller.showNewChanges();
-	};
-
-	/**
-	 * Setup the container for the 'new changes' button.
-	 *
-	 * @param {jQuery} $content
-	 */
-	mw.rcfilters.ui.ChangesListWrapperWidget.prototype.setupNewChangesButtonContainer = function ( $content ) {
-		this.showNewChangesLink = new OO.ui.ButtonWidget( {
-			framed: false,
-			label: mw.message( 'rcfilters-show-new-changes' ).text(),
-			flags: [ 'progressive' ]
-		} );
-		this.showNewChangesLink.connect( this, { click: 'onShowNewChangesClick' } );
-		this.showNewChangesLink.toggle( false );
-
-		$content.before(
-			$( '<div>' )
-				.addClass( 'mw-rcfilters-ui-changesListWrapperWidget-newChanges' )
-				.append( this.showNewChangesLink.$element )
-		);
 	};
 
 	/**
@@ -310,14 +311,17 @@
 				);
 
 			// We are adding and changing cells in a table that, despite having nested rows,
-			// is actually all one big table. To do that right, we want to remove the 'placeholder'
-			// cell from the top row, because we're actually adding that placeholder in the children
-			// with the highlights.
-			$content.find( 'table.mw-enhanced-rc tr:first-child td.mw-changeslist-line-prefix' )
-				.detach();
+			// is actually all one big table. To prevent the highlights cell in the "nested"
+			// rows from stretching out the cell with the flags and timestamp in the top row,
+			// we give the latter colspan=2. Then to make things line up again, we add
+			// an empty <td> to the "nested" rows.
+
+			// Set colspan=2 on cell with flags and timestamp in top row
 			$content.find( 'table.mw-enhanced-rc tr:first-child td.mw-enhanced-rc' )
 				.prop( 'colspan', '2' );
-
+			// Add empty <td> to nested rows to compensate
+			$enhancedNestedPagesCell.parent().prepend( $( '<td>' ) );
+			// Add highlights cell to nested rows
 			$enhancedNestedPagesCell
 				.before(
 					$( '<td>' )
@@ -327,7 +331,7 @@
 			// We need to target the nested rows differently than the top rows so that the
 			// LESS rules applies correctly. In top rows, the rule should highlight all but
 			// the first 2 cells td:not( :nth-child( -n+2 ) and the nested rows, the rule
-			// should highlight all but the first 3 cells td:not( :nth-child( -n+3 )
+			// should highlight all but the first 4 cells td:not( :nth-child( -n+4 )
 			$enhancedNestedPagesCell
 				.closest( 'tr' )
 				.addClass( 'mw-rcfilters-ui-changesListWrapperWidget-enhanced-nested' );
@@ -352,6 +356,8 @@
 			// Regular RC
 			$content.find( 'ul.special li' )
 				.prepend( $highlights.clone() );
+
+			$content.removeClass( 'mw-rcfilters-ui-changesListWrapperWidget-enhancedView' );
 		}
 	};
 
@@ -423,30 +429,35 @@
 
 			// Add highlight class to all highlighted list items
 			$elements
-				.addClass( 'mw-rcfilters-highlight-color-' + filterItem.getHighlightColor() );
+				.addClass(
+					'mw-rcfilters-highlighted ' +
+					'mw-rcfilters-highlight-color-' + filterItem.getHighlightColor()
+				);
 
+			// Track the filters for each item in .data( 'highlightedFilters' )
 			$elements.each( function () {
-				var filterString = $( this ).attr( 'data-highlightedFilters' ) || '',
-					filters = filterString ? filterString.split( '|' ) : [];
-
+				var filters = $( this ).data( 'highlightedFilters' );
+				if ( !filters ) {
+					filters = [];
+					$( this ).data( 'highlightedFilters', filters );
+				}
 				if ( filters.indexOf( filterItem.getLabel() ) === -1 ) {
 					filters.push( filterItem.getLabel() );
 				}
-
-				$( this )
-					.attr( 'data-highlightedFilters', filters.join( '|' ) );
 			} );
 		}.bind( this ) );
-		// Apply a title for relevant filters
-		this.$element.find( '[data-highlightedFilters]' ).each( function () {
-			var filterString = $( this ).attr( 'data-highlightedFilters' ) || '',
-				filters = filterString ? filterString.split( '|' ) : [];
+		// Apply a title to each highlighted item, with a list of filters
+		this.$element.find( '.mw-rcfilters-highlighted' ).each( function () {
+			var filters = $( this ).data( 'highlightedFilters' );
 
-			if ( filterString ) {
-				$( this ).attr( 'title', mw.msg( 'rcfilters-highlighted-filters-list', filters.join( ', ' ) ) );
+			if ( filters && filters.length ) {
+				$( this ).attr( 'title', mw.msg(
+					'rcfilters-highlighted-filters-list',
+					filters.join( mw.msg( 'comma-separator' ) )
+				) );
 			}
-		} );
 
+		} );
 		if ( this.inEnhancedMode() ) {
 			this.updateEnhancedParentHighlight();
 		}
@@ -461,12 +472,15 @@
 	mw.rcfilters.ui.ChangesListWrapperWidget.prototype.clearHighlight = function () {
 		// Remove highlight classes
 		mw.rcfilters.HighlightColors.forEach( function ( color ) {
-			this.$element.find( '.mw-rcfilters-highlight-color-' + color ).removeClass( 'mw-rcfilters-highlight-color-' + color );
+			this.$element
+				.find( '.mw-rcfilters-highlight-color-' + color )
+				.removeClass( 'mw-rcfilters-highlight-color-' + color );
 		}.bind( this ) );
 
-		this.$element.find( '[data-highlightedFilters]' )
+		this.$element.find( '.mw-rcfilters-highlighted' )
 			.removeAttr( 'title' )
-			.removeAttr( 'data-highlightedFilters' );
+			.removeData( 'highlightedFilters' )
+			.removeClass( 'mw-rcfilters-highlighted' );
 
 		// Remove grey from enhanced rows
 		this.$element.find( '.mw-rcfilters-ui-changesListWrapperWidget-enhanced-grey' )

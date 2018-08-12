@@ -13,7 +13,6 @@
 	"cite_error_ref_too_many_keys": "Tag <code>&lt;ref&gt;</code> tidak sah; nama-nama tidak sah, misalnya terlalu banyak",
 	"cite_error_ref_no_input": "'Tag <code>&lt;ref&gt;</code> tidak sah; rujukan tanpa nama mestilah mempunyai kandungan",
 	"cite_error_references_invalid_parameters": "Tag <code>&lt;references&gt;</code> tidak sah; parameter tidak dibenarkan, gunakan <code>&lt;references /&gt;</code>",
-	"cite_error_references_invalid_parameters_group": "Tag <code>&lt;references&gt;</code> tidak sah; hanya parameter \"group\" dibenarkan.\nGunakan <code>&lt;references /&gt;</code> atau <code>&lt;references group=\"...\" /&gt;</code>",
 	"cite_error_references_no_backlink_label": "Kehabisan label pautan balik tempahan. Sila tambah label dalam pesanan <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>",
 	"cite_error_no_link_label_group": "Kehabisan label pautan tempahan untuk kumpulan \"$1\".\nTentukan lagi dalam mesej <nowiki>[[MediaWiki:$2]]</nowiki>.",
 	"cite_error_references_no_text": "Tag <code>&lt;ref&gt;</code> tidak sah; teks bagi rujukan <code>$1</code> tidak disediakan",

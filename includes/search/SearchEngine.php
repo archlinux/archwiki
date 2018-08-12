@@ -112,11 +112,11 @@ abstract class SearchEngine {
 	 */
 	public function supports( $feature ) {
 		switch ( $feature ) {
-		case 'search-update':
-			return true;
-		case 'title-suffix-filter':
-		default:
-			return false;
+			case 'search-update':
+				return true;
+			case 'title-suffix-filter':
+			default:
+				return false;
 		}
 	}
 
@@ -407,17 +407,6 @@ abstract class SearchEngine {
 	}
 
 	/**
-	 * Get OpenSearch suggestion template
-	 *
-	 * @deprecated since 1.25
-	 * @return string
-	 */
-	public static function getOpenSearchTemplate() {
-		wfDeprecated( __METHOD__, '1.25' );
-		return ApiOpenSearch::getOpenSearchTemplate( 'application/x-suggestions+json' );
-	}
-
-	/**
 	 * Get the raw text for updating the index from a content object
 	 * Nicer search backends could possibly do something cooler than
 	 * just returning raw text
@@ -543,7 +532,7 @@ abstract class SearchEngine {
 				$this->setLimitOffset( $fallbackLimit );
 				$fallbackSearchResult = $this->completionSearch( $fbs );
 				$results->appendAll( $fallbackSearchResult );
-				$fallbackLimit -= count( $fallbackSearchResult );
+				$fallbackLimit -= $fallbackSearchResult->getSize();
 				if ( $fallbackLimit <= 0 ) {
 					break;
 				}

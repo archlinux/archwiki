@@ -6,7 +6,8 @@
 			"Lokal Profil",
 			"M.M.S.",
 			"Najami",
-			"WikiPhoenix"
+			"WikiPhoenix",
+			"Skalman"
 		]
 	},
 	"pfunc_desc": "Lägger till logiska funktioner i parsern",
@@ -18,11 +19,11 @@
 	"pfunc_expr_stack_exhausted": "Fel i uttryck: Stackutrymmet tog slut",
 	"pfunc_expr_unexpected_number": "Fel i uttryck: Oväntat tal",
 	"pfunc_expr_preg_match_failure": "Fel i uttryck: Oväntad fel i preg_match",
-	"pfunc_expr_unrecognised_word": "Fel i uttryck: Okänt ord \"$1\"",
-	"pfunc_expr_unexpected_operator": "Fel i uttryck: Oväntad operator $1",
-	"pfunc_expr_missing_operand": "Fel i uttryck: Operand saknas för $1",
+	"pfunc_expr_unrecognised_word": "Fel i uttryck: Okänt ord \"$1\".",
+	"pfunc_expr_unexpected_operator": "Fel i uttryck: Oväntad operator $1.",
+	"pfunc_expr_missing_operand": "Fel i uttryck: Operand saknas för $1.",
 	"pfunc_expr_unexpected_closing_bracket": "Fel i uttryck: Oväntad avslutande parentes",
-	"pfunc_expr_unrecognised_punctuation": "Fel i uttryck: Okänt interpunktionstecken \"$1\"",
+	"pfunc_expr_unrecognised_punctuation": "Fel i uttryck: Okänt skiljetecken \"$1\"",
 	"pfunc_expr_unclosed_bracket": "Fel i uttryck: Oavslutad parentes",
 	"pfunc_expr_division_by_zero": "Division med noll",
 	"pfunc_expr_invalid_argument": "Ogiltigt argument för $1: < -1 eller > 1",

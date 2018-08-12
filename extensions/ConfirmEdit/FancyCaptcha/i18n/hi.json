@@ -5,7 +5,8 @@
 			"Siddhartha Ghai",
 			"Hindustanilanguage",
 			"Sfic",
-			"संजीव कुमार"
+			"संजीव कुमार",
+			"Innocentbunny"
 		]
 	},
 	"fancycaptcha-addurl": "आपके सम्पादन में नई बाहरी कड़ियाँ हैं।\nस्वचालित अनचाहे से विकि को बचाने के लिए, हम आपको नीचे के सन्दूक में दिये गये शब्द को लिखने का आग्रह कर रहे हैं ([[Special:Captcha/help|अधिक जानकारी]]):",
@@ -18,5 +19,6 @@
 	"fancycaptcha-sendemail": "अपने आप होने वाले स्पैम से बचाने के लिए हम आपसे नीचे दिये गए शब्द को भरने के लिए बोल रहे हैं। ([[Special:Captcha/help|अधिक जानकारी]]):",
 	"fancycaptcha-reload-text": "रिफ़्रेश",
 	"apihelp-fancycaptchareload-description": "नया लुभावना-कैपचा प्राप्त करें।",
+	"apihelp-fancycaptchareload-summary": "नया लुभावना-कैपचा प्राप्त करें।",
 	"apihelp-fancycaptchareload-example-1": "नया लुभावना-कैपचा प्राप्त करें।"
 }

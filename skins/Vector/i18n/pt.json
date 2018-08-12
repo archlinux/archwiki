@@ -6,7 +6,9 @@
 			"Hamilton Abreu",
 			"Malafaya",
 			"Vitorvicentevalente",
-			"Waldir"
+			"Waldir",
+			"MokaAkashiyaPT",
+			"Athena in Wonderland"
 		]
 	},
 	"skinname-vector": "Vector",
@@ -18,7 +20,7 @@
 	"vector-action-move": "Mover",
 	"vector-action-protect": "Proteger",
 	"vector-action-undelete": "Restaurar",
-	"vector-action-unprotect": "Alterar protecção",
+	"vector-action-unprotect": "Alterar proteção",
 	"vector-view-create": "Criar",
 	"vector-view-edit": "Editar",
 	"vector-view-history": "Ver histórico",

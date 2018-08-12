@@ -5,8 +5,13 @@ use Wikimedia\TestingAccessWrapper;
 /**
  * @group Gadgets
  */
+class GadgetTest extends MediaWikiTestCase {
 
-class GadgetsTest extends MediaWikiTestCase {
+	public function tearDown() {
+		GadgetRepo::setSingleton();
+		parent::tearDown();
+	}
+
 	/**
 	 * @param string $line
 	 * @return Gadget
@@ -14,7 +19,7 @@ class GadgetsTest extends MediaWikiTestCase {
 	private function create( $line ) {
 		$repo = new MediaWikiGadgetsDefinitionRepo();
 		$g = $repo->newFromDefinition( $line, 'misc' );
-		$this->assertInstanceOf( 'Gadget', $g );
+		$this->assertInstanceOf( Gadget::class, $g );
 		return $g;
 	}
 
@@ -26,12 +31,21 @@ class GadgetsTest extends MediaWikiTestCase {
 		return $module;
 	}
 
+	/**
+	 * @covers MediaWikiGadgetsDefinitionRepo::newFromDefinition
+	 */
 	public function testInvalidLines() {
 		$repo = new MediaWikiGadgetsDefinitionRepo();
 		$this->assertFalse( $repo->newFromDefinition( '', 'misc' ) );
 		$this->assertFalse( $repo->newFromDefinition( '<foo|bar>', 'misc' ) );
 	}
 
+	/**
+	 * @covers MediaWikiGadgetsDefinitionRepo::newFromDefinition
+	 * @covers Gadget::__construct
+	 * @covers Gadget::getName
+	 * @covers Gadget::getModuleName
+	 */
 	public function testSimpleCases() {
 		$g = $this->create( '* foo bar| foo.css|foo.js|foo.bar' );
 		$this->assertEquals( 'foo_bar', $g->getName() );
@@ -45,6 +59,11 @@ class GadgetsTest extends MediaWikiTestCase {
 		$this->assertTrue( $g->hasModule() );
 	}
 
+	/**
+	 * @covers MediaWikiGadgetsDefinitionRepo::newFromDefinition
+	 * @covers Gadget::supportsResourceLoader
+	 * @covers Gadget::getLegacyScripts
+	 */
 	public function testRLtag() {
 		$g = $this->create( '*foo [ResourceLoader]|foo.js|foo.css' );
 		$this->assertEquals( 'foo', $g->getName() );
@@ -52,6 +71,10 @@ class GadgetsTest extends MediaWikiTestCase {
 		$this->assertEquals( 0, count( $g->getLegacyScripts() ) );
 	}
 
+	/**
+	 * @covers MediaWikiGadgetsDefinitionRepo::newFromDefinition
+	 * @covers Gadget::getDependencies
+	 */
 	public function testDependencies() {
 		$g = $this->create( '* foo[ResourceLoader|dependencies=jquery.ui]|bar.js' );
 		$this->assertEquals( [ 'MediaWiki:Gadget-bar.js' ], $g->getScripts() );
@@ -126,6 +149,9 @@ class GadgetsTest extends MediaWikiTestCase {
 
 	/**
 	 * @dataProvider provideGetType
+	 * @covers MediaWikiGadgetsDefinitionRepo::newFromDefinition
+	 * @covers Gadget::getType
+	 * @covers GadgetResourceLoaderModule::getType
 	 */
 	public function testType( $message, $definition, $gType, $mType ) {
 		$g = $this->create( $definition );
@@ -133,6 +159,10 @@ class GadgetsTest extends MediaWikiTestCase {
 		$this->assertEquals( $mType, $this->getModule( $g )->getType(), "Module: $message" );
 	}
 
+	/**
+	 * @covers MediaWikiGadgetsDefinitionRepo::newFromDefinition
+	 * @covers Gadget::isHidden
+	 */
 	public function testIsHidden() {
 		$g = $this->create( '* foo[hidden]|bar.js' );
 		$this->assertTrue( $g->isHidden() );
@@ -144,6 +174,10 @@ class GadgetsTest extends MediaWikiTestCase {
 		$this->assertFalse( $g->isHidden() );
 	}
 
+	/**
+	 * @covers MediaWikiGadgetsDefinitionRepo::fetchStructuredList
+	 * @covers GadgetHooks::getPreferences
+	 */
 	public function testPreferences() {
 		$prefs = [];
 		$repo = TestingAccessWrapper::newFromObject( new MediaWikiGadgetsDefinitionRepo() );
@@ -168,10 +202,5 @@ class GadgetsTest extends MediaWikiTestCase {
 			'Must not show empty sections' );
 		$this->assertArrayHasKey( '⧼gadget-section-keep-section1⧽', $options );
 		$this->assertArrayHasKey( '⧼gadget-section-keep-section2⧽', $options );
-	}
-
-	public function tearDown() {
-		GadgetRepo::setSingleton();
-		parent::tearDown();
 	}
 }

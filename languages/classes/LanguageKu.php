@@ -192,7 +192,8 @@ class KuConverter extends LanguageConverter {
 		/* From Kazakh interface, maybe we need it later
 		$breaks = '[^\w\x80-\xff]';
 		// regexp for roman numbers
-		$roman = 'M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})';
+		// Lookahead assertion ensures $roman doesn't match the empty string
+		$roman = '(?=[MDCLXVI])M{0,4}(C[DM]|D?C{0,3})(X[LC]|L?X{0,3})(I[VX]|V?I{0,3})';
 		$roman = '';
 
 		$reg = '/^'.$roman.'$|^'.$roman.$breaks.'|'.$breaks.$roman.'$|'.$breaks.$roman.$breaks.'/';
@@ -227,7 +228,7 @@ class KuConverter extends LanguageConverter {
  *
  * @ingroup Language
  */
-class LanguageKu extends LanguageKu_ku {
+class LanguageKu extends Language {
 
 	function __construct() {
 		parent::__construct();

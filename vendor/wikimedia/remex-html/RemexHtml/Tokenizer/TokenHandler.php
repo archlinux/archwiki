@@ -22,7 +22,7 @@ interface TokenHandler {
 
 	/**
 	 * Called when the end of the input string is consumed
-	 * @param integer $pos The input position (past the end)
+	 * @param int $pos The input position (past the end)
 	 */
 	function endDocument( $pos );
 
@@ -33,7 +33,7 @@ interface TokenHandler {
 	 * output.
 	 *
 	 * @param string $text The error message
-	 * @param integer $pos The input position
+	 * @param int $pos The input position
 	 */
 	function error( $text, $pos );
 
@@ -44,10 +44,10 @@ interface TokenHandler {
 	 * some copying, at least if ignoreCharRefs and ignoreNulls are enabled.
 	 *
 	 * @param string $text The string which contains the emitted characters
-	 * @param integer $start The start of the range within $text to use
-	 * @param integer $length The length of the range within $text to use
-	 * @param integer $sourceStart The input position
-	 * @param integer $sourceLength The input length
+	 * @param int $start The start of the range within $text to use
+	 * @param int $length The length of the range within $text to use
+	 * @param int $sourceStart The input position
+	 * @param int $sourceLength The input length
 	 */
 	function characters( $text, $start, $length, $sourceStart, $sourceLength );
 
@@ -60,8 +60,8 @@ interface TokenHandler {
 	 * @param string $name The tag name
 	 * @param Attributes $attrs The tag attributes
 	 * @param bool $selfClose Whether there is a self-closing slash
-	 * @param integer $sourceStart The input position
-	 * @param integer $sourceLength The input length
+	 * @param int $sourceStart The input position
+	 * @param int $sourceLength The input length
 	 */
 	function startTag( $name, Attributes $attrs, $selfClose, $sourceStart, $sourceLength );
 
@@ -69,8 +69,8 @@ interface TokenHandler {
 	 * An end tag event.
 	 *
 	 * @param string $name The tag name
-	 * @param integer $sourceStart The input position
-	 * @param integer $sourceLength The input length
+	 * @param int $sourceStart The input position
+	 * @param int $sourceLength The input length
 	 */
 	function endTag( $name, $sourceStart, $sourceLength );
 
@@ -81,8 +81,8 @@ interface TokenHandler {
 	 * @param string|null $public The public identifier, or null if none was found
 	 * @param string|null $system The system identifier, or null if none was found
 	 * @param bool $quirks What the spec calls the "force-quirks flag"
-	 * @param integer $sourceStart The input position
-	 * @param integer $sourceLength The input length
+	 * @param int $sourceStart The input position
+	 * @param int $sourceLength The input length
 	 */
 	function doctype( $name, $public, $system, $quirks, $sourceStart, $sourceLength );
 
@@ -90,8 +90,8 @@ interface TokenHandler {
 	 * A comment.
 	 *
 	 * @param string $text The inner text of the comment
-	 * @param integer $sourceStart The input position
-	 * @param integer $sourceLength The input length
+	 * @param int $sourceStart The input position
+	 * @param int $sourceLength The input length
 	 */
 	function comment( $text, $sourceStart, $sourceLength );
 }

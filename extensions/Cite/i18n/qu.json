@@ -11,7 +11,6 @@
 	"cite_error_ref_too_many_keys": "<code>&lt;ref&gt;</code> unanchachaqa manam allinchu;\nsutinkunaqa manam allinchu, nisyu sutinchá",
 	"cite_error_ref_no_input": "<code>&lt;ref&gt;</code> unanchachaqa manam allinchu;\nsutinnaq pukyu willana unanchachaqa ama ch'usaqchu kachun",
 	"cite_error_references_invalid_parameters": "<code>&lt;ref&gt;</code> unanchachaqa manam allinchu;\nama kuskanachina tupuchu kachun. <code>&lt;references /&gt;</code> unanchachata llamk'achiy",
-	"cite_error_references_invalid_parameters_group": "<code>&lt;ref&gt;</code> unanchachaqa manam allinchu;\n\"group\" nisqa kuskanachina tupulla kachun. <code>&lt;references /&gt;</code> icha <code>&lt;references group=\"...\" /&gt;</code> unanchachata llamk'achiy",
 	"cite_error_references_no_backlink_label": "Manañam kanchu allichana kutimuy t'inki unanchakuna.\nAstawan sut'ichay <nowiki>[[MediaWiki:Cite references link many format backlink labels|Pukyumanta willaykuna achka allichana kutimuy t'inki unanchakunata t'inkin]]</nowiki> nisqa willaypi",
 	"cite_error_references_no_text": "<code>&lt;ref&gt;</code> unanchachaqa manam allinchu;\n<code>$1</code> nisqapaq pukyu qillqa manam kanchu",
 	"cite_error_included_ref": "Kichaq <code>&lt;ref&gt;</code> unanchachapaq wichq'aq <code>&lt;/ref&gt;</code> unanchachaqa manam kanchu",

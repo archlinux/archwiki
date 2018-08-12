@@ -1,9 +1,6 @@
 <?php
-/**
- * This file test the CSSMin library shipped with Mediawiki.
- *
- * @author Timo Tijhof
- */
+
+use Wikimedia\TestingAccessWrapper;
 
 /**
  * @group ResourceLoader
@@ -14,8 +11,8 @@ class CSSMinTest extends MediaWikiTestCase {
 	protected function setUp() {
 		parent::setUp();
 
-		$server = 'http://doc.example.org';
-
+		// For wfExpandUrl
+		$server = 'https://expand.example';
 		$this->setMwGlobals( [
 			'wgServer' => $server,
 			'wgCanonicalServer' => $server,
@@ -23,7 +20,44 @@ class CSSMinTest extends MediaWikiTestCase {
 	}
 
 	/**
-	 * @dataProvider mimeTypeProvider
+	 * @dataProvider provideSerializeStringValue
+	 * @covers CSSMin::serializeStringValue
+	 */
+	public function testSerializeStringValue( $input, $expected ) {
+		$output = CSSMin::serializeStringValue( $input );
+		$this->assertEquals(
+			$expected,
+			$output,
+			'Serialized output must be in the expected form.'
+		);
+	}
+
+	public static function provideSerializeStringValue() {
+		return [
+			[ 'Hello World!', '"Hello World!"' ],
+			[ "Null\0Null", "\"Null\\fffd Null\"" ],
+			[ '"', '"\\""' ],
+			[ "'", '"\'"' ],
+			[ "\\", '"\\\\"' ],
+			[ "Tab\tTab", '"Tab\\9 Tab"' ],
+			[ "Space  tab \t space", '"Space  tab \\9  space"' ],
+			[ "Line\nfeed", '"Line\\a feed"' ],
+			[ "Return\rreturn", '"Return\\d return"' ],
+			[ "Next\xc2\x85line", "\"Next\xc2\x85line\"" ],
+			[ "Del\x7fDel", '"Del\\7f Del"' ],
+			[ "nb\xc2\xa0sp", "\"nb\xc2\xa0sp\"" ],
+			[ "AMP&amp;AMP", "\"AMP&amp;AMP\"" ],
+			[ '!"#$%&\'()*+,-./0123456789:;<=>?', '"!\\"#$%&\'()*+,-./0123456789:;<=>?"' ],
+			[ '@[\\]^_`{|}~', '"@[\\\\]^_`{|}~"' ],
+			[ 'ä', '"ä"' ],
+			[ 'Ä', '"Ä"' ],
+			[ '€', '"€"' ],
+			[ '𝒞', '"𝒞"' ], // U+1D49E 'MATHEMATICAL SCRIPT CAPITAL C'
+		];
+	}
+
+	/**
+	 * @dataProvider provideMimeType
 	 * @covers CSSMin::getMimeType
 	 */
 	public function testGetMimeType( $fileContents, $fileExtension, $expected ) {
@@ -34,7 +68,7 @@ class CSSMinTest extends MediaWikiTestCase {
 		$this->assertSame( $expected, CSSMin::getMimeType( $fileName ) );
 	}
 
-	public function mimeTypeProvider() {
+	public static function provideMimeType() {
 		return [
 			'JPEG with short extension' => [
 				"\xFF\xD8\xFF",
@@ -149,6 +183,12 @@ class CSSMinTest extends MediaWikiTestCase {
 			[ "foo { content: '\"'; }", "foo{content:'\"'}" ],
 			// - Whitespace in string values
 			[ 'foo { content: " "; }', 'foo{content:" "}' ],
+
+			// Whitespaces after opening and before closing parentheses and brackets
+			[ 'a:not( [ href ] ) { prop: url( foobar.png ); }', 'a:not([href]){prop:url(foobar.png)}' ],
+
+			// Ensure that the invalid "url (" will not become the valid "url(" by minification
+			[ 'foo { prop: url ( foobar.png ); }', 'foo{prop:url (foobar.png)}' ],
 		];
 	}
 
@@ -171,7 +211,8 @@ class CSSMinTest extends MediaWikiTestCase {
 	 * @covers CSSMin::isRemoteUrl
 	 */
 	public function testIsRemoteUrl( $expect, $url ) {
-		$this->assertEquals( CSSMinTestable::isRemoteUrl( $url ), $expect );
+		$class = TestingAccessWrapper::newFromClass( CSSMin::class );
+		$this->assertEquals( $class->isRemoteUrl( $url ), $expect );
 	}
 
 	public static function provideIsLocalUrls() {
@@ -188,7 +229,8 @@ class CSSMinTest extends MediaWikiTestCase {
 	 * @covers CSSMin::isLocalUrl
 	 */
 	public function testIsLocalUrl( $expect, $url ) {
-		$this->assertEquals( CSSMinTestable::isLocalUrl( $url ), $expect );
+		$class = TestingAccessWrapper::newFromClass( CSSMin::class );
+		$this->assertEquals( $class->isLocalUrl( $url ), $expect );
 	}
 
 	/**
@@ -237,12 +279,42 @@ class CSSMinTest extends MediaWikiTestCase {
 			[
 				'Expand absolute paths',
 				[ 'foo { prop: url(/w/skin/images/bar.png); }', false, 'http://example.org/quux', false ],
-				'foo { prop: url(http://doc.example.org/w/skin/images/bar.png); }',
+				'foo { prop: url(https://expand.example/w/skin/images/bar.png); }',
 			],
 			[
 				"Don't barf at behavior: url(#default#behaviorName) - T162973",
 				[ 'foo { behavior: url(#default#bar); }', false, '/w/', false ],
 				'foo { behavior: url("#default#bar"); }',
+			],
+		];
+	}
+
+	/**
+	 * Cases with empty url() for CSSMin::remap.
+	 *
+	 * Regression test for T191237.
+   *
+	 * @dataProvider provideRemapEmptyUrl
+	 * @covers CSSMin
+	 */
+	public function testRemapEmptyUrl( $params, $expected ) {
+		$remapped = call_user_func_array( 'CSSMin::remap', $params );
+		$this->assertEquals( $expected, $remapped, 'Ignore empty url' );
+	}
+
+	public static function provideRemapEmptyUrl() {
+		return [
+			'Empty' => [
+				[ "background-image: url();", false, '/example', false ],
+				"background-image: url();",
+			],
+			'Single quote' => [
+				[ "background-image: url('');", false, '/example', false ],
+				"background-image: url('');",
+			],
+			'Double quote' => [
+				[ 'background-image: url("");', false, '/example', false ],
+				'background-image: url("");',
 			],
 		];
 	}
@@ -271,11 +343,12 @@ class CSSMinTest extends MediaWikiTestCase {
 		// data: URIs for red.gif, green.gif, circle.svg
 		$red   = 'data:image/gif;base64,R0lGODlhAQABAIAAAP8AADAAACwAAAAAAQABAAACAkQBADs=';
 		$green = 'data:image/gif;base64,R0lGODlhAQABAIAAAACAADAAACwAAAAAAQABAAACAkQBADs=';
-		$svg = 'data:image/svg+xml,%3C%3Fxml version=%221.0%22 encoding=%22UTF-8%22%3F%3E%0A'
-			. '%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%228%22 height='
-			. '%228%22%3E%0A%09%3Ccircle cx=%224%22 cy=%224%22 r=%222%22/%3E%0A%3C/svg%3E%0A';
+		$svg = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%228'
+			. '%22 height=%228%22 viewBox=%220 0 8 8%22%3E %3Ccircle cx=%224%22 cy=%224%22 '
+			. 'r=%222%22/%3E %3Ca xmlns:xlink=%22http://www.w3.org/1999/xlink%22 xlink:title='
+			. '%22%3F%3E%22%3Etest%3C/a%3E %3C/svg%3E';
 
-		// @codingStandardsIgnoreStart Generic.Files.LineLength
+		// phpcs:disable Generic.Files.LineLength
 		return [
 			[
 				'Regular file',
@@ -310,12 +383,12 @@ class CSSMinTest extends MediaWikiTestCase {
 			[
 				'Domain-relative URL',
 				'foo { background: url(/static/foo.png); }',
-				'foo { background: url(http://doc.example.org/static/foo.png); }',
+				'foo { background: url(https://expand.example/static/foo.png); }',
 			],
 			[
 				'Domain-relative URL with query',
 				'foo { background: url(/static/foo.png?query=yes); }',
-				'foo { background: url(http://doc.example.org/static/foo.png?query=yes); }',
+				'foo { background: url(https://expand.example/static/foo.png?query=yes); }',
 			],
 			[
 				'Remote URL (unnecessary quotes not preserved)',
@@ -419,12 +492,12 @@ class CSSMinTest extends MediaWikiTestCase {
 			[
 				'@import rule to local file (should we remap this?)',
 				'@import url(/styles.css)',
-				'@import url(http://doc.example.org/styles.css)',
+				'@import url(https://expand.example/styles.css)',
 			],
 			[
 				'@import rule to local file (should we remap this?)',
 				'@import url(/styles.css)',
-				'@import url(http://doc.example.org/styles.css)',
+				'@import url(https://expand.example/styles.css)',
 			],
 			[
 				'@import rule to URL',
@@ -442,7 +515,7 @@ class CSSMinTest extends MediaWikiTestCase {
 				'foo { background: url(//localhost/styles.css?quoted=single) }',
 			],
 			[
-				'Background URL (containing parentheses; T60473)',
+				'Background URL (double quoted, containing parentheses; T60473)',
 				'foo { background: url("//localhost/styles.css?query=(parens)") }',
 				'foo { background: url("//localhost/styles.css?query=(parens)") }',
 			],
@@ -455,6 +528,11 @@ class CSSMinTest extends MediaWikiTestCase {
 				'Background URL (single quoted, containing double quotes; T60473)',
 				'foo { background: url(\'//localhost/styles.css?quote="\') }',
 				'foo { background: url("//localhost/styles.css?quote=\"") }',
+			],
+			[
+				'Background URL (double quoted with outer spacing)',
+				'foo { background: url( "http://localhost/styles.css?quoted=double" ) }',
+				'foo { background: url(http://localhost/styles.css?quoted=double) }',
 			],
 			[
 				'Simple case with comments before url',
@@ -492,7 +570,7 @@ class CSSMinTest extends MediaWikiTestCase {
 				'.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default { border: 1px solid #d3d3d3/*{borderColorDefault}*/; background: #e6e6e6/*{bgColorDefault}*/ url(http://localhost/w/images/ui-bg_glass_75_e6e6e6_1x400.png)/*{bgImgUrlDefault}*/ 50%/*{bgDefaultXPos}*/ 50%/*{bgDefaultYPos}*/ repeat-x/*{bgDefaultRepeat}*/; font-weight: normal/*{fwDefault}*/; color: #555555/*{fcDefault}*/; }',
 			],
 		];
-		// @codingStandardsIgnoreEnd
+		// phpcs:enable
 	}
 
 	/**
@@ -558,15 +636,5 @@ class CSSMinTest extends MediaWikiTestCase {
 				'foo::after{content:"{;}";position:absolute}'
 			],
 		];
-	}
-}
-
-class CSSMinTestable extends CSSMin {
-	// Make some protected methods public
-	public static function isRemoteUrl( $maybeUrl ) {
-		return parent::isRemoteUrl( $maybeUrl );
-	}
-	public static function isLocalUrl( $maybeUrl ) {
-		return parent::isLocalUrl( $maybeUrl );
 	}
 }

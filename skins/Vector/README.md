@@ -14,6 +14,8 @@ below. Alternatively, a PNG or other type of image can be used, but
 its dimensions also need to match the corresponding variable below.
 That in turn may result in blurry images, though.
 
+The URL can be absolute or relative.
+
 Example configuration:
 
 	$wgVectorPrintLogo = [

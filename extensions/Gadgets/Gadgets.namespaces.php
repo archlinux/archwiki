@@ -149,6 +149,13 @@ $namespaceNames['he'] = [
 	NS_GADGET_DEFINITION_TALK => 'שיחת_הגדרת_גאדג\'ט',
 ];
 
+$namespaceNames['inh'] = [
+	NS_GADGET => 'Гаджет',
+	NS_GADGET_TALK => 'Гаджет_ювцар',
+	NS_GADGET_DEFINITION => 'Гаджета_къоастадар',
+	NS_GADGET_DEFINITION_TALK => 'Гаджета_къоастадар_дувцар',
+];
+
 $namespaceNames['is'] = [
 	NS_GADGET => 'Smától',
 	NS_GADGET_TALK => 'Smátólaspjall',
@@ -175,6 +182,13 @@ $namespaceNames['lrc'] = [
 	NS_GADGET_TALK => 'چأک_چئنە_گأجئت',
 	NS_GADGET_DEFINITION => 'توضییا_گأجئت',
 	NS_GADGET_DEFINITION_TALK => 'چأک_چئنە_توضییا_گأجئت',
+];
+
+$namespaceNames['mwl'] = [
+	NS_GADGET => 'Gadget',
+	NS_GADGET_TALK => 'Cumbersa_gadget',
+	NS_GADGET_DEFINITION => 'Defeniçon_gadget',
+	NS_GADGET_DEFINITION_TALK => 'Cumbersa_defeniçon_gadget',
 ];
 
 $namespaceNames['mzn'] = [
@@ -210,6 +224,13 @@ $namespaceNames['pnb'] = [
 	NS_GADGET_TALK => 'آلہ_گل_بات',
 	NS_GADGET_DEFINITION => 'آلہ_تعریف',
 	NS_GADGET_DEFINITION_TALK => 'آلہ_تعریف_گل_بات',
+];
+
+$namespaceNames['sd'] = [
+	NS_GADGET => 'گيجيٽ',
+	NS_GADGET_TALK => 'گيجيٽ_بحث',
+	NS_GADGET_DEFINITION => 'گيجيٽ_وصف',
+	NS_GADGET_DEFINITION_TALK => 'گيجيٽ_وصف_بحث',
 ];
 
 $namespaceNames['ur'] = [

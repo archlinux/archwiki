@@ -1,5 +1,6 @@
 <?php
 namespace RemexHtml\TreeBuilder;
+
 use RemexHtml\HTMLData;
 
 /**

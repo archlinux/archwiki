@@ -11,7 +11,7 @@
 	"questycaptcha-desc": "用于确认编辑的问题验证码生成器",
 	"questycaptcha-addurl": "您的编辑包含新的外部链接。为保护本wiki免受自动垃圾程序的破坏，我们恳请您回答下面显示的问题（[[Special:Captcha/help|更多信息]]）：",
 	"questycaptcha-badlogin": "为保护本wiki免受自动密码破解的破坏，我们恳请你回答下面显示的问题（[[Special:Captcha/help|更多信息]]）：",
-	"questycaptcha-createaccount": "为保护本wiki免受自动账户创建的破坏，我们恳请你回答下面显示的问题（[[Special:Captcha/help|更多信息]]）：",
+	"questycaptcha-createaccount": "为保护本wiki免受自动账户创建的破坏，我们恳请您回答下面显示的问题（[[Special:Captcha/help|更多信息]]）：",
 	"questycaptcha-create": "要创建页面，请回答下面显示的问题（[[Special:Captcha/help|更多信息]]）：",
 	"questycaptcha-edit": "要编辑该页面，请回答下面显示的问题（[[Special:Captcha/help|更多信息]]）：",
 	"questycaptcha-sendemail": "为保护本wiki免受自动垃圾程序的破坏，我们恳请您回答下面显示的问题（[[Special:Captcha/help|更多信息]]）：",

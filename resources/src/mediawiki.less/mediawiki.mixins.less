@@ -21,7 +21,6 @@
 
 .vertical-gradient( @startColor: gray, @endColor: white, @startPos: 0, @endPos: 100% ) {
 	background-color: @endColor;
-	background-image: -webkit-gradient( linear, left top, left bottom, color-stop( @startPos, @startColor ), color-stop( @endPos, @endColor ) ); // Safari 4+, Chrome 2+
 	background-image: -webkit-linear-gradient( top, @startColor @startPos, @endColor @endPos ); // Safari 5.1+, Chrome 10+
 	background-image: -moz-linear-gradient( top, @startColor @startPos, @endColor @endPos ); // Firefox 3.6+
 	background-image: linear-gradient( @startColor @startPos, @endColor @endPos ); // Standard
@@ -31,15 +30,11 @@
 // compatibility (browsers able to understand gradient syntax support also SVG).
 // http://pauginer.tumblr.com/post/36614680636/invisible-gradient-technique
 //
-// We use gzip compression, which means that it is okay to embed twice.
-//
 // We do not embed the fallback image on the assumption that the gain for old browsers
 // is not worth the harm done to modern ones.
 .background-image-svg( @svg, @fallback ) {
 	background-image: url( @fallback );
 	background-image: linear-gradient( transparent, transparent ), e( '/* @embed */' ) url( @svg );
-	// Do not serve SVG to Opera 12, bad rendering with border-radius or background-size (T87504)
-	background-image: -o-linear-gradient( transparent, transparent ), url( @fallback );
 }
 
 // Shorthand for background-image-svg. Use if your PNG and SVG have the same name
@@ -56,6 +51,25 @@
 	list-style-image: e( '/* @embed */' ) url( @svg );
 	/* Fallback to PNG bullet for IE 8 and below using CSS hack */
 	list-style-image: e( '/* @embed */' ) url( @fallback ) e( '\9' );
+}
+
+.hyphens( @value: auto ) {
+	& when ( @value = auto ){
+		// Legacy `word-wrap`; IE 6-11, Edge 12+, Firefox 3.5+, Chrome 4+, Safari 3.1+,
+		//   Opera 11.5+, iOS 3.2+, Android 2.1+
+		// `overflow-wrap` is W3 standard, but it doesn't seem as if browser vendors
+		//   will abandon `word-wrap` (it has wider support), therefore no duplication.
+		word-wrap: break-word;
+	}
+	& when ( @value = none ) {
+		word-wrap: normal;
+	}
+
+	// CSS3 hyphenation
+	-webkit-hyphens: @value; // Safari 5.1+, iOS 4.3+
+	-moz-hyphens: @value;    // Firefox 6-42
+	-ms-hyphens: @value;     // IE 10-11, Edge 12+
+	hyphens: @value;         // Firefox 43+, Chrome 55+, Android 62+, UC Browser 11.8+, Samsung 6.2+
 }
 
 .transform( @value ) {
@@ -169,10 +183,6 @@
 	}
 	// W3C Standard Selectors Level 4
 	&::placeholder {
-		@rules();
-	}
-	// For inputs that use jquery.placeholder.js e.g. IE9
-	&.placeholder {
 		@rules();
 	}
 }

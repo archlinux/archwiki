@@ -2,7 +2,7 @@ Demo.static.pages.icons = function ( demo ) {
 	var i, len, iconSet, iconsFieldset, iconWidget, selector,
 		icons = {
 			movement: [
-				'arrowLast',
+				'arrowPrevious',
 				'arrowNext',
 				'downTriangle',
 				'upTriangle',
@@ -37,7 +37,6 @@ Demo.static.pages.icons = function ( demo ) {
 			alerts: [
 				'alert',
 				'bell',
-				'bellOn',
 				'comment',
 				'message',
 				'notice',
@@ -52,6 +51,7 @@ Demo.static.pages.icons = function ( demo ) {
 				'browser',
 				'cancel',
 				'check',
+				'checkAll',
 				'clear',
 				'clock',
 				'close',
@@ -62,20 +62,20 @@ Demo.static.pages.icons = function ( demo ) {
 				'help',
 				'key',
 				'keyboard',
+				'lightbulb',
 				'logOut',
 				'newWindow',
 				'printer',
+				'reload',
 				'search',
 				'settings',
-				'subtract',
-				'sun',
-				'watchlist'
+				'subtract'
 			],
 			moderation: [
+				'bookmarkOutline',
+				'bookmark',
 				'block',
 				'unBlock',
-				'clip',
-				'unClip',
 				'flag',
 				'unFlag',
 				'lock',
@@ -119,7 +119,7 @@ Demo.static.pages.icons = function ( demo ) {
 				'outdent'
 			],
 			'editing-advanced': [
-				'alignCentre',
+				'alignCenter',
 				'alignLeft',
 				'alignRight',
 				'attachment',
@@ -134,7 +134,6 @@ Demo.static.pages.icons = function ( demo ) {
 				'outline',
 				'puzzle',
 				'quotes',
-				'quotesAdd',
 				'searchCaseSensitive',
 				'searchDiacritics',
 				'searchRegularExpression',
@@ -147,16 +146,23 @@ Demo.static.pages.icons = function ( demo ) {
 				'tableAddRowBefore',
 				'tableCaption',
 				'tableMergeCells',
+				'tableMoveColumnAfter',
+				'tableMoveColumnBefore',
+				'tableMoveRowAfter',
+				'tableMoveRowBefore',
 				'templateAdd',
 				'wikiText'
 			],
 			media: [
 				'fullScreen',
+				'exitFullscreen',
 				'image',
 				'imageAdd',
 				'imageLock',
 				'imageGallery',
+				'imageBroken',
 				'play',
+				'pause',
 				'stop'
 			],
 			location: [
@@ -166,9 +172,8 @@ Demo.static.pages.icons = function ( demo ) {
 				'mapTrail'
 			],
 			user: [
-				'userActive',
+				'userAnonymous',
 				'userAvatar',
-				'userInactive',
 				'userTalk'
 			],
 			layout: [
@@ -198,11 +203,8 @@ Demo.static.pages.icons = function ( demo ) {
 			]
 		},
 		indicators = [
-			'alert',
 			'clear',
 			'down',
-			'next',
-			'previous',
 			'required',
 			'search',
 			'up'
@@ -251,7 +253,6 @@ Demo.static.pages.icons = function ( demo ) {
 				flags: [],
 				data: {
 					progressive: false,
-					constructive: false,
 					destructive: false
 				}
 			} ),
@@ -260,7 +261,6 @@ Demo.static.pages.icons = function ( demo ) {
 				flags: [ 'progressive' ],
 				data: {
 					progressive: true,
-					constructive: false,
 					destructive: false
 				}
 			} ),
@@ -269,7 +269,6 @@ Demo.static.pages.icons = function ( demo ) {
 				flags: [ 'destructive' ],
 				data: {
 					progressive: false,
-					constructive: false,
 					destructive: true
 				}
 			} )
@@ -284,7 +283,6 @@ Demo.static.pages.icons = function ( demo ) {
 		} )
 		.selectItemByData( {
 			progressive: false,
-			constructive: false,
 			destructive: false
 		} );
 

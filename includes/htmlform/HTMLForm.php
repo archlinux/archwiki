@@ -21,6 +21,8 @@
  * @file
  */
 
+use Wikimedia\ObjectFactory;
+
 /**
  * Object handling generic submission, CSRF protection, layout and
  * other logic for UI forms. in a reusable manner.
@@ -128,44 +130,44 @@
 class HTMLForm extends ContextSource {
 	// A mapping of 'type' inputs onto standard HTMLFormField subclasses
 	public static $typeMappings = [
-		'api' => 'HTMLApiField',
-		'text' => 'HTMLTextField',
-		'textwithbutton' => 'HTMLTextFieldWithButton',
-		'textarea' => 'HTMLTextAreaField',
-		'select' => 'HTMLSelectField',
-		'combobox' => 'HTMLComboboxField',
-		'radio' => 'HTMLRadioField',
-		'multiselect' => 'HTMLMultiSelectField',
-		'limitselect' => 'HTMLSelectLimitField',
-		'check' => 'HTMLCheckField',
-		'toggle' => 'HTMLCheckField',
-		'int' => 'HTMLIntField',
-		'float' => 'HTMLFloatField',
-		'info' => 'HTMLInfoField',
-		'selectorother' => 'HTMLSelectOrOtherField',
-		'selectandother' => 'HTMLSelectAndOtherField',
-		'namespaceselect' => 'HTMLSelectNamespace',
-		'namespaceselectwithbutton' => 'HTMLSelectNamespaceWithButton',
-		'tagfilter' => 'HTMLTagFilter',
-		'sizefilter' => 'HTMLSizeFilterField',
-		'submit' => 'HTMLSubmitField',
-		'hidden' => 'HTMLHiddenField',
-		'edittools' => 'HTMLEditTools',
-		'checkmatrix' => 'HTMLCheckMatrix',
-		'cloner' => 'HTMLFormFieldCloner',
-		'autocompleteselect' => 'HTMLAutoCompleteSelectField',
-		'date' => 'HTMLDateTimeField',
-		'time' => 'HTMLDateTimeField',
-		'datetime' => 'HTMLDateTimeField',
+		'api' => HTMLApiField::class,
+		'text' => HTMLTextField::class,
+		'textwithbutton' => HTMLTextFieldWithButton::class,
+		'textarea' => HTMLTextAreaField::class,
+		'select' => HTMLSelectField::class,
+		'combobox' => HTMLComboboxField::class,
+		'radio' => HTMLRadioField::class,
+		'multiselect' => HTMLMultiSelectField::class,
+		'limitselect' => HTMLSelectLimitField::class,
+		'check' => HTMLCheckField::class,
+		'toggle' => HTMLCheckField::class,
+		'int' => HTMLIntField::class,
+		'float' => HTMLFloatField::class,
+		'info' => HTMLInfoField::class,
+		'selectorother' => HTMLSelectOrOtherField::class,
+		'selectandother' => HTMLSelectAndOtherField::class,
+		'namespaceselect' => HTMLSelectNamespace::class,
+		'namespaceselectwithbutton' => HTMLSelectNamespaceWithButton::class,
+		'tagfilter' => HTMLTagFilter::class,
+		'sizefilter' => HTMLSizeFilterField::class,
+		'submit' => HTMLSubmitField::class,
+		'hidden' => HTMLHiddenField::class,
+		'edittools' => HTMLEditTools::class,
+		'checkmatrix' => HTMLCheckMatrix::class,
+		'cloner' => HTMLFormFieldCloner::class,
+		'autocompleteselect' => HTMLAutoCompleteSelectField::class,
+		'date' => HTMLDateTimeField::class,
+		'time' => HTMLDateTimeField::class,
+		'datetime' => HTMLDateTimeField::class,
 		// HTMLTextField will output the correct type="" attribute automagically.
 		// There are about four zillion other HTML5 input types, like range, but
 		// we don't use those at the moment, so no point in adding all of them.
-		'email' => 'HTMLTextField',
-		'password' => 'HTMLTextField',
-		'url' => 'HTMLTextField',
-		'title' => 'HTMLTitleTextField',
-		'user' => 'HTMLUserTextField',
-		'usersmultiselect' => 'HTMLUsersMultiselectField',
+		'email' => HTMLTextField::class,
+		'password' => HTMLTextField::class,
+		'url' => HTMLTextField::class,
+		'title' => HTMLTitleTextField::class,
+		'user' => HTMLUserTextField::class,
+		'usersmultiselect' => HTMLUsersMultiselectField::class,
 	];
 
 	public $mFieldData;
@@ -213,11 +215,11 @@ class HTMLForm extends ContextSource {
 	protected $mAction = false;
 
 	/**
-	 * Form attribute autocomplete. false does not set the attribute
+	 * Form attribute autocomplete. A typical value is "off". null does not set the attribute
 	 * @since 1.27
-	 * @var bool|string
+	 * @var string|null
 	 */
-	protected $mAutocomplete = false;
+	protected $mAutocomplete = null;
 
 	protected $mUseMultipart = false;
 	protected $mHiddenFields = [];
@@ -429,17 +431,6 @@ class HTMLForm extends ContextSource {
 	}
 
 	/**
-	 * Test if displayFormat is 'vform'
-	 * @since 1.22
-	 * @deprecated since 1.25
-	 * @return bool
-	 */
-	public function isVForm() {
-		wfDeprecated( __METHOD__, '1.25' );
-		return false;
-	}
-
-	/**
 	 * Get the HTMLFormField subclass for this descriptor.
 	 *
 	 * The descriptor can be passed either 'class' which is the name of
@@ -502,7 +493,7 @@ class HTMLForm extends ContextSource {
 	/**
 	 * Prepare form for submission.
 	 *
-	 * @attention When doing method chaining, that should be the very last
+	 * @warning When doing method chaining, that should be the very last
 	 * method call before displayForm().
 	 *
 	 * @throws MWException
@@ -1004,7 +995,7 @@ class HTMLForm extends ContextSource {
 	 * Display the form (sending to the context's OutputPage object), with an
 	 * appropriate error message or stack of messages, and any validation errors, etc.
 	 *
-	 * @attention You should call prepareForm() before calling this function.
+	 * @warning You should call prepareForm() before calling this function.
 	 * Moreover, when doing method chaining this should be the very last method
 	 * call just after prepareForm().
 	 *
@@ -1062,7 +1053,7 @@ class HTMLForm extends ContextSource {
 		if ( $this->mId ) {
 			$attribs['id'] = $this->mId;
 		}
-		if ( $this->mAutocomplete ) {
+		if ( is_string( $this->mAutocomplete ) ) {
 			$attribs['autocomplete'] = $this->mAutocomplete;
 		}
 		if ( $this->mName ) {
@@ -1723,6 +1714,12 @@ class HTMLForm extends ContextSource {
 	 * @return string HTML
 	 */
 	protected function formatSection( array $fieldsHtml, $sectionName, $anyFieldHasLabel ) {
+		if ( !$fieldsHtml ) {
+			// Do not generate any wrappers for empty sections. Sections may be empty if they only have
+			// subsections, but no fields. A legend will still be added in wrapFieldSetSection().
+			return '';
+		}
+
 		$displayFormat = $this->getDisplayFormat();
 		$html = implode( '', $fieldsHtml );
 
@@ -1862,12 +1859,12 @@ class HTMLForm extends ContextSource {
 	}
 
 	/**
-	 * Set the value for the autocomplete attribute of the form.
-	 * When set to false (which is the default state), the attribute get not set.
+	 * Set the value for the autocomplete attribute of the form. A typical value is "off".
+	 * When set to null (which is the default state), the attribute get not set.
 	 *
 	 * @since 1.27
 	 *
-	 * @param string|bool $autocomplete
+	 * @param string|null $autocomplete
 	 *
 	 * @return HTMLForm $this for chaining calls
 	 */

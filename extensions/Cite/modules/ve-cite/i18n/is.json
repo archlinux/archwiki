@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Maxí",
-			"Snævar"
+			"Snævar",
+			"Sveinn í Felli"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Bókaheimild",
@@ -31,5 +32,7 @@
 	"cite-ve-referenceslist-isempty": "Það eru engar tilvísanir í hópnum „$1“ á þessari síðu til að taka með í þennan lista.",
 	"cite-ve-referenceslist-isempty-default": "Það eru engar tilvísanir á þessari síðu til að taka með í þennan lista.",
 	"cite-ve-referenceslist-missingref": "Þessi tilvísun er tilgreind í sniði eða öðru tilbúnu efni, og í augnablikinu er aðeins hægt að breyta henni með frumkóðaritlinum.",
-	"cite-ve-toolbar-group-label": "Tilvísun"
+	"cite-ve-toolbar-group-label": "Tilvísun",
+	"cite-ve-othergroup-item": "$1 tilvísun",
+	"visualeditor-internal-list-diff-default-group-name-mwreference": "Tilvísanir"
 }

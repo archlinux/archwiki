@@ -7,7 +7,8 @@
 			"Sp5uhe",
 			"WTM",
 			"Peter Bowman",
-			"Woytecr"
+			"Woytecr",
+			"Railfail536"
 		]
 	},
 	"spam-blacklist": " #<!-- zostaw tę linię dokładnie tak, jak jest --> <pre>\n# Dodawanie w treści stron linków zewnętrznych pasujących do tej listy będzie blokowane.\n# Lista dotyczy wyłącznie tej wiki; istnieje też globalna czarna lista.\n# Dokumentacja znajduje się na stronie https://www.mediawiki.org/wiki/Extension:SpamBlacklist\n#\n# Składnia jest następująca:\n#   * Wszystko od znaku „#” do końca linii jest komentarzem\n#   * Każda niepusta linia jest fragmentem wyrażenia regularnego, które będzie dopasowywane jedynie do hostów wewnątrz linków\n\n #</pre> <!-- zostaw tę linię dokładnie tak, jak jest -->",
@@ -25,6 +26,7 @@
 	"right-spamblacklistlog": "Podgląd rejestru czarnej listy spamu",
 	"action-spamblacklistlog": "przeglądania rejestru filtru antyspamowego",
 	"apihelp-spamblacklist-description": "Sprawdź jeden lub wiele URL pod kątem obecności na czarnej liście spamu.",
+	"apihelp-spamblacklist-summary": "Sprawdź jeden lub więcej adresów URL pod kątem obecności na liście spamu.",
 	"apihelp-spamblacklist-param-url": "URLe do sprawdzenia pod kątem obecności na czarnej liście.",
 	"apihelp-spamblacklist-example-1": "Sprawdź dwa URL pod kątem obecności na czarnej liście"
 }

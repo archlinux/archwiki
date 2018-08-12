@@ -19,7 +19,7 @@
 	"gadgetusage": "Estadístiques d'ús de ginys",
 	"gadgetusage-gadget": "Giny",
 	"gadgetusage-usercount": "Nombre d'usuaris",
-	"gadgetusage-summary": "Aquesta taula indica el nombre d'usuaris que tenen activat cada giny en aquest wiki. Pot incloure ginys que ja no estan disponibles.",
+	"gadgetusage-intro": "Aquesta taula indica el nombre d'usuaris que tenen activat cada giny en aquest wiki. Pot incloure ginys que ja no estan disponibles.",
 	"gadgets-title": "Ginys",
 	"gadgets-pagetext": "A continuació teniu una llista de ginys especials que els usuaris poden activar a la seva [[Special:Preferences#mw-prefsection-gadgets|pàgina de preferències]], segons les [[MediaWiki:Gadgets-definition|seves definicions]].\nAquesta llista permet un fàcil accés a les pàgines del sistema que defineixen la descripció i el codi de cada giny.",
 	"gadgets-uses": "Usa",

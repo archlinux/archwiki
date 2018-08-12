@@ -56,36 +56,36 @@ wbr {
 
 /* Input types that should follow user direction, like buttons */
 /* TODO: What about buttons in wikipage content ? */
-input[type='submit'],
-input[type='button'],
-input[type='reset'],
-input[type='file'] {
+input[ type='submit' ],
+input[ type='button' ],
+input[ type='reset' ],
+input[ type='file' ] {
 	direction: ltr;
 }
 
 /* Override default values */
-textarea[dir='ltr'],
-input[dir='ltr'] {
+textarea[ dir='ltr' ],
+input[ dir='ltr' ] {
 	/* @noflip */
 	direction: ltr;
 }
 
-textarea[dir='rtl'],
-input[dir='rtl'] {
+textarea[ dir='rtl' ],
+input[ dir='rtl' ] {
 	/* @noflip */
 	direction: rtl;
 }
 
 /* Default style for semantic tags */
-abbr[title],
-.explain[title] {
+abbr[ title ],
+.explain[ title ] {
 	border-bottom: 1px dotted;
 	cursor: help;
 }
 
 @supports ( text-decoration: underline dotted ) {
-	abbr[title],
-	.explain[title] {
+	abbr[ title ],
+	.explain[ title ] {
 		border-bottom: 0;
 		text-decoration: underline dotted;
 	}
@@ -108,25 +108,6 @@ span.comment {
 /* Prevent editing textarea from jumping when toolbar is loaded */
 #toolbar {
 	height: 22px;
-}
-
-/* Edit font preference */
-/* TODO: for 'default' on non-textareas we could compute the default font of textarea in the client */
-.mw-editfont-default:not( textarea ) {
-	font-family: monospace;
-}
-
-/* Keep this rule separate from the :not rule above so it still works in older browsers */
-.mw-editfont-monospace {
-	font-family: monospace;
-}
-
-.mw-editfont-sans-serif {
-	font-family: sans-serif;
-}
-
-.mw-editfont-serif {
-	font-family: serif;
 }
 
 /* Underline preference */
@@ -325,21 +306,6 @@ th.mw-revdel-checkbox {
 /* red links; see T38276 */
 a.new {
 	color: #ba0000;
-}
-
-/* self links */
-a.mw-selflink {
-	color: inherit;
-	font-weight: bold;
-	text-decoration: inherit;
-}
-a.mw-selflink:hover {
-	cursor: inherit;
-	text-decoration: inherit;
-}
-a.mw-selflink:active,
-a.mw-selflink:visited {
-	color: inherit;
 }
 
 /* Plainlinks - this can be used to switch
@@ -659,43 +625,31 @@ ol:lang( or ) li {
 	list-style-type: oriya;
 }
 
-#toc ul,
 .toc ul {
 	margin: 0.3em 0;
 }
 
 /* Correct directionality when page dir is different from site/user dir */
 /* @noflip */ .mw-content-ltr .toc ul,
-.mw-content-ltr #toc ul,
-.mw-content-rtl .mw-content-ltr .toc ul,
-.mw-content-rtl .mw-content-ltr #toc ul {
+.mw-content-rtl .mw-content-ltr .toc ul {
 	text-align: left;
 }
 
 /* @noflip */ .mw-content-rtl .toc ul,
-.mw-content-rtl #toc ul,
-.mw-content-ltr .mw-content-rtl .toc ul,
-.mw-content-ltr .mw-content-rtl #toc ul {
+.mw-content-ltr .mw-content-rtl .toc ul {
 	text-align: right;
 }
 
 /* @noflip */ .mw-content-ltr .toc ul ul,
-.mw-content-ltr #toc ul ul,
-.mw-content-rtl .mw-content-ltr .toc ul ul,
-.mw-content-rtl .mw-content-ltr #toc ul ul {
+.mw-content-rtl .mw-content-ltr .toc ul ul {
 	margin: 0 0 0 2em;
 }
 
 /* @noflip */ .mw-content-rtl .toc ul ul,
-.mw-content-rtl #toc ul ul,
-.mw-content-ltr .mw-content-rtl .toc ul ul,
-.mw-content-ltr .mw-content-rtl #toc ul ul {
+.mw-content-ltr .mw-content-rtl .toc ul ul {
 	margin: 0 2em 0 0;
 }
 
-#toc #toctitle,
-.toc #toctitle,
-#toc .toctitle,
 .toc .toctitle {
 	direction: ltr;
 }
@@ -779,11 +733,6 @@ table.floatleft {
 	vertical-align: baseline;
 	/* Reset line-height; headings tend to have it set to larger values */
 	line-height: 1em;
-	/* As .mw-editsection is a <span> (inline element), it is treated as part */
-	/* of the heading content when selecting text by multiple clicks and thus */
-	/* selected together with heading content, despite the user-select: none; */
-	/* rule set above. This enforces non-selection without changing the look. */
-	display: inline-block;
 }
 
 /* Correct directionality when page dir is different from site/user dir */

@@ -29,10 +29,16 @@ class CheckboxInputWidget extends InputWidget {
 		// Parent constructor
 		parent::__construct( $config );
 
+		// Properties
+		$this->checkIcon = new IconWidget( [
+			'icon' => 'check',
+			'classes' => [ 'oo-ui-checkboxInputWidget-checkIcon' ],
+		] );
+
 		// Initialization
 		$this->addClasses( [ 'oo-ui-checkboxInputWidget' ] );
 		// Required for pretty styling in WikimediaUI theme
-		$this->appendContent( new Tag( 'span' ) );
+		$this->appendContent( $this->checkIcon );
 		$this->setSelected( isset( $config['selected'] ) ? $config['selected'] : false );
 	}
 

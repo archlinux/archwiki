@@ -1,4 +1,8 @@
 <?php
+
+/**
+ * @covers ExprParser
+ */
 class ExpressionTest extends MediaWikiTestCase {
 
 	/**

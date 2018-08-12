@@ -6,5 +6,7 @@
 		]
 	},
 	"captcha-label": "CAPTCHA",
+	"captcha-id-label": "Yencng mima ID",
+	"captcha-apihelp-param-captchaword": "Brwaniy quw yencng ma",
 	"confirmedit-preview-content": "Tay qsahuy"
 }

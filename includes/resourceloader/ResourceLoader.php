@@ -26,8 +26,8 @@ use MediaWiki\MediaWikiServices;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use WrappedString\WrappedString;
 use Wikimedia\Rdbms\DBConnectionError;
+use Wikimedia\WrappedString;
 
 /**
  * Dynamic JavaScript and CSS resource loading system.
@@ -235,8 +235,6 @@ class ResourceLoader implements LoggerAwareInterface {
 		}
 		return $data;
 	}
-
-	/* Methods */
 
 	/**
 	 * Register core modules and runs registration hooks.
@@ -555,7 +553,7 @@ class ResourceLoader implements LoggerAwareInterface {
 				$object->setLogger( $this->logger );
 			} else {
 				if ( !isset( $info['class'] ) ) {
-					$class = 'ResourceLoaderFileModule';
+					$class = ResourceLoaderFileModule::class;
 				} else {
 					$class = $info['class'];
 				}
@@ -588,8 +586,8 @@ class ResourceLoader implements LoggerAwareInterface {
 		}
 		if (
 			isset( $info['class'] ) &&
-			$info['class'] !== 'ResourceLoaderFileModule' &&
-			!is_subclass_of( $info['class'], 'ResourceLoaderFileModule' )
+			$info['class'] !== ResourceLoaderFileModule::class &&
+			!is_subclass_of( $info['class'], ResourceLoaderFileModule::class )
 		) {
 			return false;
 		}
@@ -692,7 +690,6 @@ class ResourceLoader implements LoggerAwareInterface {
 	 *
 	 * @since 1.28
 	 * @param ResourceLoaderContext $context
-	 * @param string[] $modules List of module names
 	 * @return string Hash
 	 */
 	public function makeVersionQuery( ResourceLoaderContext $context ) {
@@ -727,6 +724,8 @@ class ResourceLoader implements LoggerAwareInterface {
 		// doesn't use ob_gzhandler.
 		// See https://bugs.php.net/bug.php?id=36514
 		ob_start();
+
+		$this->measureResponseTime( RequestContext::getMain()->getTiming() );
 
 		// Find out which modules are missing and instantiate the others
 		$modules = [];
@@ -826,6 +825,16 @@ class ResourceLoader implements LoggerAwareInterface {
 
 		$this->errors = [];
 		echo $response;
+	}
+
+	protected function measureResponseTime( Timing $timing ) {
+		DeferredUpdates::addCallableUpdate( function () use ( $timing ) {
+			$measure = $timing->measure( 'responseTime', 'requestStart', 'requestShutdown' );
+			if ( $measure !== false ) {
+				$stats = MediaWikiServices::getInstance()->getStatsdDataFactory();
+				$stats->timing( 'resourceloader.responseTime', $measure['duration'] * 1000 );
+			}
+		} );
 	}
 
 	/**
@@ -1198,8 +1207,6 @@ MESSAGE;
 		return $moduleNames;
 	}
 
-	/* Static Methods */
-
 	/**
 	 * Return JS code that calls mw.loader.implement with given module properties.
 	 *
@@ -1220,7 +1227,11 @@ MESSAGE;
 		$name, $scripts, $styles, $messages, $templates
 	) {
 		if ( $scripts instanceof XmlJsCode ) {
-			$scripts = new XmlJsCode( "function ( $, jQuery, require, module ) {\n{$scripts->value}\n}" );
+			if ( self::inDebugMode() ) {
+				$scripts = new XmlJsCode( "function ( $, jQuery, require, module ) {\n{$scripts->value}\n}" );
+			} else {
+				$scripts = new XmlJsCode( 'function($,jQuery,require,module){'. $scripts->value . '}' );
+			}
 		} elseif ( !is_string( $scripts ) && !is_array( $scripts ) ) {
 			throw new MWException( 'Invalid scripts error. Array of URLs or string of code expected.' );
 		}
@@ -1475,10 +1486,8 @@ MESSAGE;
 	}
 
 	/**
-	 * Returns JS code which runs given JS code if the client-side framework is
-	 * present.
+	 * Wraps JavaScript code to run after startup and base modules.
 	 *
-	 * @deprecated since 1.25; use makeInlineScript instead
 	 * @param string $script JavaScript code
 	 * @return string JavaScript code
 	 */
@@ -1488,10 +1497,10 @@ MESSAGE;
 	}
 
 	/**
-	 * Construct an inline script tag with given JS code.
+	 * Returns an HTML script tag that runs given JS code after startup and base modules.
 	 *
-	 * The code will be wrapped in a closure, and it will be executed by ResourceLoader
-	 * only if the client has adequate support for MediaWiki JavaScript code.
+	 * The code will be wrapped in a closure, and it will be executed by ResourceLoader's
+	 * startup module if the client has adequate support for MediaWiki JavaScript code.
 	 *
 	 * @param string $script JavaScript code
 	 * @return WrappedString HTML
@@ -1523,27 +1532,31 @@ MESSAGE;
 	/**
 	 * Convert an array of module names to a packed query string.
 	 *
-	 * For example, [ 'foo.bar', 'foo.baz', 'bar.baz', 'bar.quux' ]
-	 * becomes 'foo.bar,baz|bar.baz,quux'
+	 * For example, `[ 'foo.bar', 'foo.baz', 'bar.baz', 'bar.quux' ]`
+	 * becomes `'foo.bar,baz|bar.baz,quux'`.
+	 *
+	 * This process is reversed by ResourceLoaderContext::expandModuleNames().
+	 * See also mw.loader#buildModulesString() which is a port of this, used
+	 * on the client-side.
+	 *
 	 * @param array $modules List of module names (strings)
 	 * @return string Packed query string
 	 */
 	public static function makePackedModulesString( $modules ) {
-		$groups = []; // [ prefix => [ suffixes ] ]
+		$moduleMap = []; // [ prefix => [ suffixes ] ]
 		foreach ( $modules as $module ) {
 			$pos = strrpos( $module, '.' );
 			$prefix = $pos === false ? '' : substr( $module, 0, $pos );
 			$suffix = $pos === false ? $module : substr( $module, $pos + 1 );
-			$groups[$prefix][] = $suffix;
+			$moduleMap[$prefix][] = $suffix;
 		}
 
 		$arr = [];
-		foreach ( $groups as $prefix => $suffixes ) {
+		foreach ( $moduleMap as $prefix => $suffixes ) {
 			$p = $prefix === '' ? '' : $prefix . '.';
 			$arr[] = $p . implode( ',', $suffixes );
 		}
-		$str = implode( '|', $arr );
-		return $str;
+		return implode( '|', $arr );
 	}
 
 	/**
@@ -1710,10 +1723,8 @@ MESSAGE;
 	 * @return array Map of variable names to string CSS values.
 	 */
 	public function getLessVars() {
-		if ( !$this->lessVars ) {
-			$lessVars = $this->config->get( 'ResourceLoaderLESSVars' );
-			Hooks::run( 'ResourceLoaderGetLessVars', [ &$lessVars ] );
-			$this->lessVars = $lessVars;
+		if ( $this->lessVars === null ) {
+			$this->lessVars = $this->config->get( 'ResourceLoaderLESSVars' );
 		}
 		return $this->lessVars;
 	}

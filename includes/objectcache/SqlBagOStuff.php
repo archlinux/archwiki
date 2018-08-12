@@ -21,15 +21,15 @@
  * @ingroup Cache
  */
 
+use MediaWiki\MediaWikiServices;
 use Wikimedia\Rdbms\Database;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\DBError;
 use Wikimedia\Rdbms\DBQueryError;
 use Wikimedia\Rdbms\DBConnectionError;
-use \MediaWiki\MediaWikiServices;
-use \Wikimedia\WaitConditionLoop;
-use \Wikimedia\Rdbms\TransactionProfiler;
 use Wikimedia\Rdbms\LoadBalancer;
+use Wikimedia\Rdbms\TransactionProfiler;
+use Wikimedia\WaitConditionLoop;
 
 /**
  * Class to store objects in the database
@@ -181,7 +181,7 @@ class SqlBagOStuff extends BagOStuff {
 				$index = $this->replicaOnly ? DB_REPLICA : DB_MASTER;
 				if ( $lb->getServerType( $lb->getWriterIndex() ) !== 'sqlite' ) {
 					// Keep a separate connection to avoid contention and deadlocks
-					$db = $lb->getConnection( $index, [], false, $lb::CONN_TRX_AUTO );
+					$db = $lb->getConnection( $index, [], false, $lb::CONN_TRX_AUTOCOMMIT );
 					// @TODO: Use a blank trx profiler to ignore expections as this is a cache
 				} else {
 					// However, SQLite has the opposite behavior due to DB-level locking.
@@ -681,9 +681,9 @@ class SqlBagOStuff extends BagOStuff {
 	 */
 	protected function unserialize( $serial ) {
 		if ( function_exists( 'gzinflate' ) ) {
-			MediaWiki\suppressWarnings();
+			Wikimedia\suppressWarnings();
 			$decomp = gzinflate( $serial );
-			MediaWiki\restoreWarnings();
+			Wikimedia\restoreWarnings();
 
 			if ( false !== $decomp ) {
 				$serial = $decomp;
@@ -808,6 +808,9 @@ class SqlBagOStuff extends BagOStuff {
 
 		// Main LB is used; wait for any replica DBs to catch up
 		$masterPos = $lb->getMasterPos();
+		if ( !$masterPos ) {
+			return true; // not applicable
+		}
 
 		$loop = new WaitConditionLoop(
 			function () use ( $lb, $masterPos ) {

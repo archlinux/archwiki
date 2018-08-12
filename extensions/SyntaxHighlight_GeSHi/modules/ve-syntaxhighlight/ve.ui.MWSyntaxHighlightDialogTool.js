@@ -20,7 +20,7 @@ ve.ui.MWSyntaxHighlightDialogTool = function VeUiMWSyntaxHighlightDialogTool() {
 OO.inheritClass( ve.ui.MWSyntaxHighlightDialogTool, ve.ui.FragmentWindowTool );
 ve.ui.MWSyntaxHighlightDialogTool.static.name = 'syntaxhighlightDialog';
 ve.ui.MWSyntaxHighlightDialogTool.static.group = 'object';
-ve.ui.MWSyntaxHighlightDialogTool.static.icon = 'alienextension';
+ve.ui.MWSyntaxHighlightDialogTool.static.icon = 'markup';
 ve.ui.MWSyntaxHighlightDialogTool.static.title = OO.ui.deferMsg(
 	'syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title' );
 ve.ui.MWSyntaxHighlightDialogTool.static.modelClasses = [ ve.dm.MWBlockSyntaxHighlightNode ];

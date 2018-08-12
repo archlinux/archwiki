@@ -30,7 +30,7 @@ class QuestyCaptcha extends SimpleCaptcha {
 	}
 
 	/**
-	 * @param array $resultArr
+	 * @param array &$resultArr
 	 */
 	function addCaptchaAPI( &$resultArr ) {
 		$captcha = $this->getCaptcha();
@@ -117,7 +117,7 @@ class QuestyCaptcha extends SimpleCaptcha {
 	/**
 	 * @param array $requests
 	 * @param array $fieldInfo
-	 * @param array $formDescriptor
+	 * @param array &$formDescriptor
 	 * @param string $action
 	 */
 	public function onAuthChangeFormFields( array $requests, array $fieldInfo,

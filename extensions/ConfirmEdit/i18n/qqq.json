@@ -42,7 +42,7 @@
 	"captcha-apihelp-param-captchaid": "{{doc-apihelp-param|description=the \"captchaid\" parameter added by [[mw:Extension:ConfirmEdit]]|noseealso=1}}\nSee also {{msg-mw|captcha-apihelp-param-captchaword}}",
 	"confirmedit-preview-line": "Used as a table heading for the edit preview of [[MediaWiki:Captcha-ip-whitelist]] to indicate the line number (1, 2, 3, ...).",
 	"confirmedit-preview-content": "Used as a table heading for the edit preview of [[MediaWiki:Captcha-ip-whitelist]] to indicate the content of a line.\n{{Identical|Content}}",
-	"confirmedit-preview-validity": "Used as a table heading for the edit preview of [[MediaWiki:Captcha-ip-whitelist]] to indicate the validity of a content of a line (if it's an IP address or not).",
+	"confirmedit-preview-validity": "Used as a table heading for the edit preview of [[MediaWiki:Captcha-ip-whitelist]] to indicate the validity of a content of a line (if it's an IP address or not).\n{{Identical|Validity}}",
 	"confirmedit-preview-valid": "Used to indicate a valid IP address in the edit preview of [[MediaWiki:Captcha-ip-whitelist]].\n{{Identical|Valid}}",
 	"confirmedit-preview-invalid": "Used to indicate an invalid IP address in the edit preview of [[MediaWiki:Captcha-ip-whitelist]].\n{{Identical|Invalid}}",
 	"confirmedit-preview-description": "Explains the edit preview of [[MediaWiki:Captcha-ip-whitelist]]."

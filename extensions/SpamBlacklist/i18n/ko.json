@@ -6,7 +6,9 @@
 			"Klutzy",
 			"Kwj2772",
 			"아라",
-			"Ykhwong"
+			"Ykhwong",
+			"Nuevo Paso",
+			"Garam"
 		]
 	},
 	"spam-blacklist": " #<!-- 이 줄은 그대로 두십시오 --> <pre>\n# 이 필터에 해당하는 URL을 문서에 넣을 경우 해당 편집의 저장을 자동으로 막습니다.\n# 이 필터는 여기 위키 내에서만 적용됩니다. 광역 블랙리스트 기능이 있을 경우 해당 목록도 작동합니다.\n# 설명서에 대해서는 https://www.mediawiki.org/wiki/Extension:SpamBlacklist 문서를 참고하세요\n# \n# 문법은 다음과 같습니다:\n#   * \"\"#\" 문자에서 줄의 끝까지는 주석입니다\n#   * 각 줄은 정규 표현식으로, URL 문장을 검사하는 데에 사용됩니다\n\n #</pre> <!-- 이 줄은 그대로 두십시오 -->",
@@ -20,7 +22,9 @@
 	"spam-blacklist-desc": "정규 표현식을 사용해 문서에 있는 URL과 등록된 사용자의 이메일 주소를 블랙리스트 처리하여 스팸을 막는 도구",
 	"log-name-spamblacklist": "스팸 블랙리스트 기록",
 	"log-description-spamblacklist": "이 사건은 스팸 블랙리스트의 일치를 추적합니다.",
-	"logentry-spamblacklist-hit": "{{GENDER:$2|$1}}님이 $4을(를) 추가하려고 했을 때에 $3 문서에 대한 스팸 블랙리스트의 일치가 발생했습니다.",
+	"logentry-spamblacklist-hit": "{{GENDER:$2|$1}} 사용자가 $3 문서에 $4을(를) 추가하려 하자 스팸 블랙리스트의 일치가 일어났습니다.",
 	"right-spamblacklistlog": "스팸 블랙리스트 기록 보기",
-	"action-spamblacklistlog": "스팸 블랙리스트 기록을 볼"
+	"action-spamblacklistlog": "스팸 블랙리스트 기록을 볼",
+	"apihelp-spamblacklist-description": "SpamBlacklist에 대해 하나 이상의 URL의 유효성을 확인합니다.",
+	"apihelp-spamblacklist-summary": "SpamBlacklist에 대해 하나 이상의 URL의 유효성을 확인합니다."
 }

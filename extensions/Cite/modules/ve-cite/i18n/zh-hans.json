@@ -22,7 +22,8 @@
 			"Duolaimi",
 			"Byfserag",
 			"Linforest",
-			"Cwek"
+			"Cwek",
+			"夢蝶葬花"
 		]
 	},
 	"visualeditor-cite-tool-definition.json": "空",
@@ -37,11 +38,14 @@
 	"cite-ve-changedesc-reflist-group-both": "已将参考列表组从“$1”更改为“$2”",
 	"cite-ve-changedesc-reflist-group-from": "已将参考列表组从“$1”更改为一般组",
 	"cite-ve-changedesc-reflist-group-to": "已将参考列表组从一般组更改为“$1”",
+	"cite-ve-changedesc-reflist-responsive-set": "参考列表已更改为在响应栏中显示",
+	"cite-ve-changedesc-reflist-responsive-unset": "参考列表已更改为只在一栏中显示",
 	"cite-ve-changedesc-reflist-item-id": "参考索引已更改",
 	"cite-ve-dialog-reference-editing-reused": "这个引用在此页面使用了$1{{PLURAL:$1|次}}。",
 	"cite-ve-dialog-reference-options-group-label": "使用该组",
 	"cite-ve-dialog-reference-options-group-placeholder": "一般参考文献",
 	"cite-ve-dialog-reference-options-name-label": "以该名称重复使用",
+	"cite-ve-dialog-reference-options-responsive-label": "使用响应列布局",
 	"cite-ve-dialog-reference-options-section": "选项",
 	"cite-ve-dialog-reference-placeholder": "在此写下或粘贴您的参考资料，或插入引用模板。",
 	"cite-ve-dialog-reference-title": "参考文献",
@@ -61,6 +65,8 @@
 	"cite-ve-referenceslist-isempty": "本页面没有可包含在该列表中的组为“$1”的参考文献。",
 	"cite-ve-referenceslist-isempty-default": "本页面没有可包含在该列表中的参考文献。",
 	"cite-ve-referenceslist-missingref": "该参考文献定义在模板或其他生成块中，目前只能在源代码模式下编辑。",
+	"cite-ve-referenceslist-missingref-in-list": "该参考文献定义在模板或其他生成块中，目前只能在源代码模式下编辑。",
+	"cite-ve-referenceslist-missingreflist": "此参考资料列表由模板生成，并且目前只能在源代码模式中编辑。",
 	"cite-ve-toolbar-group-label": "引用",
 	"cite-ve-othergroup-item": "$1参考文献",
 	"visualeditor-internal-list-diff-default-group-name-mwreference": "参考文献",

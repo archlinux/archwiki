@@ -6,12 +6,12 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = $vendorDir;
 
 return array(
-    $vendorDir . '/pear/pear_exception',
     $vendorDir . '/pear/console_getopt',
-    $vendorDir . '/pear/mail_mime-decode',
-    $vendorDir . '/pear/net_smtp',
-    $vendorDir . '/pear/pear-core-minimal/src',
     $vendorDir . '/pear/mail',
     $vendorDir . '/pear/mail_mime',
+    $vendorDir . '/pear/mail_mime-decode',
+    $vendorDir . '/pear/net_smtp',
     $vendorDir . '/pear/net_socket',
+    $vendorDir . '/pear/pear-core-minimal/src',
+    $vendorDir . '/pear/pear_exception',
 );

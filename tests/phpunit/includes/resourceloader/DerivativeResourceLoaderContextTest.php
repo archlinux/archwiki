@@ -4,7 +4,9 @@
  * @group ResourceLoader
  * @covers DerivativeResourceLoaderContext
  */
-class DerivativeResourceLoaderContextTest extends PHPUnit_Framework_TestCase {
+class DerivativeResourceLoaderContextTest extends PHPUnit\Framework\TestCase {
+
+	use MediaWikiCoversValidator;
 
 	protected static function getContext() {
 		$request = new FauxRequest( [

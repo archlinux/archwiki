@@ -1,9 +1,0 @@
-{
-	"@metadata": {
-		"authors": []
-	},
-	"modern.css": "/* CSS placed here will affect users of the Modern skin */",
-	"modern.js": "/* Any JavaScript here will be loaded for users using the Modern skin */",
-	"skinname-modern": "Modern",
-	"modern-desc": "A blue/gray theme with sidebar and top bar. Derived from MonoBook"
-}

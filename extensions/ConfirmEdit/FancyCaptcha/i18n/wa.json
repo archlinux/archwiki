@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Srtxg"
+			"Srtxg",
+			"Reptilien.19831209BE1"
 		]
 	},
 	"fancycaptcha-addurl": "Dins vos candjmints i gn a des dfoûtrinnès hårdêyes (URL).\nPo mete li wiki a houte des robots di spam, nos vs dimandans d' bén vleur acertiner ki vos estoz bén ene djin, po çoula tapez les mots k' aparexhèt chal pa dzo ([[Special:Captcha/help|pus di racsegnes]]):",
@@ -10,7 +11,7 @@
 	"fancycaptcha-accountcreate": "Po mete li wiki a houte des robots k' ahivèt des contes otomaticmint, nos  vs dimandans d' bén vleur acertiner ki vos estoz bén ene djin, po çoula tapez les mots k' aparexhèt chal pa dzo ([[Special:Captcha/help|pus di racsegnes]]):",
 	"fancycaptcha-create": "Por vos poleur ahiver l' pådje, vos dvoz taper les mots k' aparexhèt e l' boesse chal pa dzo ([[Special:Captcha/help|pus di racsegnes]]):",
 	"fancycaptcha-edit": "Po candjî cisse pådje ci, vos dvoz taper les mots k' aparexhèt e l' boesse chal pa dzo ([[Special:Captcha/help|pus di racsegnes]]):",
-	"fancycaptcha-imgcaptcha-ph": "Tapez l' tecse ki vos veyoz chal å dzeur",
+	"fancycaptcha-imgcaptcha-ph": "Tapez l' tecse ki vos veyoz so l' imådje",
 	"fancycaptcha-sendemail": "Po s' mete a houte des robots di spam, nos vs dimandans d' acertiner ki vos estoz bén ene djin, po çoula tapez les mots k' aparexhèt chal pa dzo ([[Special:Captcha/help|pus di racsegnes]]):",
 	"fancycaptcha-reload-text": "Rafrister",
 	"apihelp-fancycaptchareload-description": "Vey èn ôte FancyCaptcha.",

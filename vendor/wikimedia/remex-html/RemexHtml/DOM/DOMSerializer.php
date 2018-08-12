@@ -1,6 +1,7 @@
 <?php
 
 namespace RemexHtml\DOM;
+
 use RemexHtml\Serializer\AbstractSerializer;
 use RemexHtml\Tokenizer\Attributes;
 use RemexHtml\TreeBuilder\Element;
@@ -16,8 +17,7 @@ class DOMSerializer implements AbstractSerializer {
 	private $formatter;
 
 	/**
-	 * Constructor
-	 *
+	 * @param DOMBuilder $builder
 	 * @param DOMFormatter $formatter This may be, for example, an HtmlFormatter object
 	 */
 	public function __construct( DOMBuilder $builder, DOMFormatter $formatter ) {

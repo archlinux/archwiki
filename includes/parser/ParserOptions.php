@@ -65,7 +65,6 @@ class ParserOptions {
 		'stubthreshold' => true,
 		'printable' => true,
 		'userlang' => true,
-		'wrapclass' => true,
 	];
 
 	/**
@@ -80,13 +79,6 @@ class ParserOptions {
 	 * @note Caching based on parse time is handled externally
 	 */
 	private $mTimestamp;
-
-	/**
-	 * The edit section flag is in ParserOptions for historical reasons, but
-	 * doesn't actually affect the parser output since Feb 2015.
-	 * @var bool
-	 */
-	private $mEditSection = true;
 
 	/**
 	 * Stored user object
@@ -780,12 +772,16 @@ class ParserOptions {
 	/**
 	 * CSS class to use to wrap output from Parser::parse()
 	 * @since 1.30
-	 * @param string|bool $className Set false to disable wrapping.
+	 * @param string $className Class name to use for wrapping.
+	 *   Passing false to indicate "no wrapping" was deprecated in MediaWiki 1.31.
 	 * @return string|bool Current value
 	 */
 	public function setWrapOutputClass( $className ) {
 		if ( $className === true ) { // DWIM, they probably want the default class name
 			$className = 'mw-parser-output';
+		}
+		if ( $className === false ) {
+			wfDeprecated( __METHOD__ . '( false )', '1.31' );
 		}
 		return $this->setOption( 'wrapclass', $className );
 	}
@@ -869,19 +865,23 @@ class ParserOptions {
 
 	/**
 	 * Create "edit section" links?
+	 * @deprecated since 1.31, use ParserOutput::getText() options instead.
 	 * @return bool
 	 */
 	public function getEditSection() {
-		return $this->mEditSection;
+		wfDeprecated( __METHOD__, '1.31' );
+		return true;
 	}
 
 	/**
 	 * Create "edit section" links?
+	 * @deprecated since 1.31, use ParserOutput::getText() options instead.
 	 * @param bool|null $x New value (null is no change)
 	 * @return bool Old value
 	 */
 	public function setEditSection( $x ) {
-		return wfSetVar( $this->mEditSection, $x );
+		wfDeprecated( __METHOD__, '1.31' );
+		return true;
 	}
 
 	/**
@@ -1057,18 +1057,16 @@ class ParserOptions {
 				'printable' => false,
 				'allowUnsafeRawHtml' => true,
 				'wrapclass' => 'mw-parser-output',
-				'currentRevisionCallback' => [ 'Parser', 'statelessFetchRevision' ],
-				'templateCallback' => [ 'Parser', 'statelessFetchTemplate' ],
+				'currentRevisionCallback' => [ Parser::class, 'statelessFetchRevision' ],
+				'templateCallback' => [ Parser::class, 'statelessFetchTemplate' ],
 				'speculativeRevIdCallback' => null,
 			];
 
-			// @codingStandardsIgnoreStart Squiz.WhiteSpace.OperatorSpacing.NoSpaceAfterAmp
 			Hooks::run( 'ParserOptionsRegister', [
 				&self::$defaults,
 				&self::$inCacheKey,
 				&self::$lazyOptions,
 			] );
-			// @codingStandardsIgnoreEnd
 
 			ksort( self::$inCacheKey );
 		}
@@ -1256,7 +1254,7 @@ class ParserOptions {
 		} elseif ( $value instanceof Language ) {
 			return $value->getCode();
 		} elseif ( is_array( $value ) ) {
-			return '[' . join( ',', array_map( [ $this, 'optionToString' ], $value ) ) . ']';
+			return '[' . implode( ',', array_map( [ $this, 'optionToString' ], $value ) ) . ']';
 		} else {
 			return (string)$value;
 		}
@@ -1281,18 +1279,6 @@ class ParserOptions {
 		$defaults = self::getCanonicalOverrides() + self::getDefaults();
 		$inCacheKey = self::$inCacheKey;
 
-		// Historical hack: 'editsection' hasn't been a true parser option since
-		// Feb 2015 (instead the parser outputs a constant placeholder and post-parse
-		// processing handles the option). But Wikibase forces it in $forOptions
-		// and expects the cache key to still vary on it for T85252.
-		// @deprecated since 1.30, Wikibase should use addExtraKey() or something instead.
-		if ( in_array( 'editsection', $forOptions, true ) ) {
-			$options['editsection'] = $this->mEditSection;
-			$defaults['editsection'] = true;
-			$inCacheKey['editsection'] = true;
-			ksort( $inCacheKey );
-		}
-
 		// We only include used options with non-canonical values in the key
 		// so adding a new option doesn't invalidate the entire parser cache.
 		// The drawback to this is that changing the default value of an option
@@ -1309,7 +1295,7 @@ class ParserOptions {
 			}
 		}
 
-		$confstr = $values ? join( '!', $values ) : 'canonical';
+		$confstr = $values ? implode( '!', $values ) : 'canonical';
 
 		// add in language specific options, if any
 		// @todo FIXME: This is just a way of retrieving the url/user preferred variant

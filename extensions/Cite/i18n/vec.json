@@ -11,7 +11,6 @@
 	"cite_error_ref_too_many_keys": "Eror ne l'uso del marcator <code>&lt;ref&gt;</code>: nomi mìa validi (ad es. nùmaro massa elevà)",
 	"cite_error_ref_no_input": "Eror ne l'uso del marcator <code>&lt;ref&gt;</code>: i ref che no gà un nome no i pol mìa èssar vodi",
 	"cite_error_references_invalid_parameters": "Eror ne l'uso del marcator <code>&lt;references&gt;</code>: parametri mìa consentìi, dòpara el marcator <code>&lt;references /&gt;</code>",
-	"cite_error_references_invalid_parameters_group": "Tag <code>&lt;references&gt;</code> mìa valido;\nsolo el parametro \"group\" el xe permesso.\nDòpara <code>&lt;references /&gt;</code>, o <code>&lt;references group=\"...\" /&gt;</code>",
 	"cite_error_references_no_backlink_label": "Etichete de rimando personalizàe esaurìe, auménteghen el nùmaro nel messagio <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>",
 	"cite_error_no_link_label_group": "Etichete esaurìe par colegamenti personalizà del grupo \"$1\", aumentarne el numaro nel messajo <nowiki>[[MediaWiki:$2]]</nowiki>",
 	"cite_error_references_no_text": "Marcator <code>&lt;ref&gt;</code> mìa valido; no xe stà indicà nissun testo par el marcator <code>$1</code>",

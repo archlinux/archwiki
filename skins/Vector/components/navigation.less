@@ -16,7 +16,7 @@
 	background-repeat: repeat-x;
 	/* This image is only a fallback (for IE 6-9), so we do not @embed it. */
 	background-image: url( images/page-fade.png );
-	.vertical-gradient(@body-background-color, @menu-background-color, 50%, 100%);
+	.vertical-gradient( @body-background-color, @menu-background-color, 50%, 100% );
 	background-color: @body-background-color;
 }
 
@@ -26,7 +26,7 @@
 	height: 5em;
 }
 
-div#mw-head {
+#mw-head {
 	position: absolute;
 	top: 0;
 	right: 0;
@@ -49,8 +49,6 @@ div#mw-head {
 	   is still broken, but at least the nav overlaps only the page title
 	   instead of half the content. */
 	margin-bottom: -2.5em;
-	/* IE 6 double-margin bug fix */
-	display: inline;
 }
 
 #right-navigation {
@@ -74,14 +72,14 @@ div#mw-head {
 }
 
 /* Panel */
-div#mw-panel {
+#mw-panel {
 	font-size: @menu-main-font-size;
 	position: absolute;
 	top: 0;
 	width: 10em;
 	left: 0;
 
-	div.portal {
+	.portal {
 		margin: 0 0.6em 0 0.7em;
 		padding: 0.25em 0;
 		direction: ltr;
@@ -98,30 +96,30 @@ div#mw-panel {
 			border: 0;
 		}
 
-		div.body {
+		.body {
 			margin-left: @menu-main-body-margin-left;
 			padding-top: 0;
 			.background-image( 'images/portal-break.png' );
 			background-repeat: no-repeat;
 
 			ul {
-				list-style-type: none;
-				list-style-image: none;
+				list-style: none none;
 				margin: 0;
 				padding: @menu-main-body-padding;
+			}
 
-				li {
-					line-height: 1.125em;
-					margin: 0;
-					padding: 0.25em 0;
-					font-size: @menu-main-body-font-size;
-					word-wrap: break-word;
+			li {
+				line-height: 1.125em;
+				margin: 0;
+				padding: 0.25em 0;
+				font-size: @menu-main-body-font-size;
+				word-wrap: break-word;
 
-					a {
-						color: @menu-main-body-link-color;
-						&:visited {
-							color: @menu-main-body-link-visited-color;
-						}
+				a {
+					color: @menu-main-body-link-color;
+
+					&:visited {
+						color: @menu-main-body-link-visited-color;
 					}
 				}
 			}
@@ -129,13 +127,15 @@ div#mw-panel {
 	}
 
 	/* First sidebar portlet. Not using :first-of-type for IE<=8 support. */
-	#p-logo + div.portal {
+	#p-logo + .portal {
 		background-image: none;
 		margin-top: 1em;
+
 		h3 {
 			display: none;
 		}
-		div.body {
+
+		.body {
 			background-image: none;
 			margin-left: @menu-main-body-margin-left;
 		}

@@ -310,7 +310,7 @@ class MovePage {
 			# Protect the redirect title as the title used to be...
 			$res = $dbw->select(
 				'page_restrictions',
-				'*',
+				[ 'pr_type', 'pr_level', 'pr_cascade', 'pr_user', 'pr_expiry' ],
 				[ 'pr_page' => $pageid ],
 				__METHOD__,
 				'FOR UPDATE'
@@ -415,7 +415,9 @@ class MovePage {
 			new AtomicSectionUpdate(
 				$dbw,
 				__METHOD__,
-				function () use ( $params ) {
+				// Hold onto $user to avoid HHVM bug where it no longer
+				// becomes a reference (T118683)
+				function () use ( $params, &$user ) {
 					Hooks::run( 'TitleMoveComplete', $params );
 				}
 			)
@@ -597,7 +599,12 @@ class MovePage {
 
 				$redirectArticle->doEditUpdates( $redirectRevision, $user, [ 'created' => true ] );
 
-				ChangeTags::addTags( $changeTags, null, $redirectRevId, null );
+				// make a copy because of log entry below
+				$redirectTags = $changeTags;
+				if ( in_array( 'mw-new-redirect', ChangeTags::getSoftwareTags() ) ) {
+					$redirectTags[] = 'mw-new-redirect';
+				}
+				ChangeTags::addTags( $redirectTags, null, $redirectRevId, null );
 			}
 		}
 

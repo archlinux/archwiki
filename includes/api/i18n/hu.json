@@ -10,7 +10,7 @@
 			"Dj"
 		]
 	},
-	"apihelp-main-extended-description": "<div class=\"hlist plainlinks api-main-links\">\n* [[mw:Special:MyLanguage/API:Main_page|Dokumentáció]]\n* [[mw:Special:MyLanguage/API:FAQ|GYIK]]\n* [https://lists.wikimedia.org/mailman/listinfo/mediawiki-api Levelezőlista]\n* [https://lists.wikimedia.org/mailman/listinfo/mediawiki-api-announce API-bejelentések]\n* [https://phabricator.wikimedia.org/maniphest/query/GebfyV4uCaLd/#R Hibabejelentések és kérések]\n</div>\n<strong>Státusz:</strong> Minden ezen a lapon látható funkciónak működnie kell, de az API jelenleg is aktív fejlesztés alatt áll, és bármikor változhat. Iratkozz fel a [https://lists.wikimedia.org/pipermail/mediawiki-api-announce/ mediawiki-api-announce levelezőlistára] a frissítések követéséhez.\n\n<strong>Hibás kérések:</strong> Ha az API hibás kérést kap, egy HTTP-fejlécet küld vissza „MediaWiki-API-Error” kulccsal, és a fejléc értéke és a visszaküldött hibakód ugyanarra az értékre lesz állítva. További információért lásd: [[mw:Special:MyLanguage/API:Errors_and_warnings|API: Hibák és figyelmeztetések]].\n\n<strong>Tesztelés:</strong> Az API-kérések könnyebb teszteléséhez használható az [[Special:ApiSandbox|API-homokozó]].",
+	"apihelp-main-extended-description": "<div class=\"hlist plainlinks api-main-links\">\n* [[mw:Special:MyLanguage/API:Main_page|Dokumentáció]]\n* [[mw:Special:MyLanguage/API:FAQ|GYIK]]\n* [https://lists.wikimedia.org/mailman/listinfo/mediawiki-api Levelezőlista]\n* [https://lists.wikimedia.org/mailman/listinfo/mediawiki-api-announce API-bejelentések]\n* [https://phabricator.wikimedia.org/maniphest/query/GebfyV4uCaLd/#R Hibabejelentések és kérések]\n</div>\n<strong>Státusz:</strong> Minden ezen a lapon látható funkciónak működnie kell, de az API jelenleg is aktív fejlesztés alatt áll, és bármikor változhat. Iratkozz fel a [https://lists.wikimedia.org/pipermail/mediawiki-api-announce/ mediawiki-api-announce levelezőlistára] a frissítések követéséhez.\n\n<strong>Hibás kérések:</strong> Ha az API hibás kérést kap, egy HTTP-fejlécet küld vissza „MediaWiki-API-Error” kulccsal, és a fejléc értéke és a visszaküldött hibakód ugyanarra az értékre lesz állítva. További információért lásd: [[mw:Special:MyLanguage/API:Errors_and_warnings|API: Hibák és figyelmeztetések]].\n\n<p class=\"mw-apisandbox-link\"><strong>Tesztelés:</strong> Az API-kérések könnyebb teszteléséhez használható az [[Special:ApiSandbox|API-homokozó]].</p>",
 	"apihelp-main-param-action": "Milyen műveletet hajtson végre.",
 	"apihelp-main-param-format": "A kimenet formátuma.",
 	"apihelp-main-param-smaxage": "Az <code>s-maxage</code> gyorsítótár-vezérlő HTTP-fejléc beállítása ennyi másodpercre. A hibák soha nincsenek gyorsítótárazva.",
@@ -158,8 +158,6 @@
 	"apihelp-feedrecentchanges-param-tagfilter": "Szűrés címke szerint.",
 	"apihelp-feedrecentchanges-param-target": "Csak a megadott lapról hivatkozott lapok szerkesztéseinek megjelenítése.",
 	"apihelp-feedrecentchanges-param-showlinkedto": "Inkább a megadott lap''ra'' hivatkozó lapok szerkesztéseinek megjelenítése.",
-	"apihelp-feedrecentchanges-param-categories": "Csak a megadott kategóriák mindegyikében szereplő lapok szerkesztéseinek megjelenítése.",
-	"apihelp-feedrecentchanges-param-categories_any": "Inkább a megadott kategóriák bármelyikében szereplő lapok szerkesztéseinek megjelenítése.",
 	"apihelp-feedrecentchanges-example-simple": "Friss változtatások megjelenítése.",
 	"apihelp-feedrecentchanges-example-30days": "Az elmúlt 30 nap friss változtatásainak megjelenítése.",
 	"apihelp-feedwatchlist-summary": "A figyelőlista lekérése hírcsatornaként.",
@@ -263,7 +261,7 @@
 	"apihelp-paraminfo-example-1": "Információk megjelenítése az <kbd>[[Special:ApiHelp/parse|action=parse]]</kbd>, <kbd>[[Special:ApiHelp/jsonfm|format=jsonfm]]</kbd>, <kbd>[[Special:ApiHelp/query+allpages|action=query&list=allpages]]</kbd> és <kbd>[[Special:ApiHelp/query+siteinfo|action=query&meta=siteinfo]]</kbd> lekérdezésekhez.",
 	"apihelp-paraminfo-example-2": "Információk megjelenítése az <kbd>[[Special:ApiHelp/query|action=query]]</kbd> összes almoduljához.",
 	"apihelp-parse-summary": "Tartalom feldolgozása.",
-	"apihelp-parse-extended-description": "Lásd az <kbd>[[Special:ApiHelp/query|action=query]]</kbd> számos prop-modulját a információk lekérésére a lap aktuális változatáról.\n\nTöbbféle módon megadható a feldolgozandó szöveg:\n# Egy lap vagy lapváltozat megadásával, a <var>$1page</var>, <var>$1pageid</var> vagy <var>$1oldid</var> paraméterrel.\n# Magának a tartalomnak a megadásával, a <var>$1text</var>, <var>$1title</var> és <var>$1contentmodel</var> paraméterrel.\n# Csak egy összefoglaló feldolgozása. A <var>$1prop</var> paraméternek üresnek kell lennie.",
+	"apihelp-parse-extended-description": "Lásd az <kbd>[[Special:ApiHelp/query|action=query]]</kbd> számos prop-modulját a információk lekérésére a lap aktuális változatáról.\n\nTöbbféle módon megadható a feldolgozandó szöveg:\n# Egy lap vagy lapváltozat megadásával, a <var>$1page</var>, <var>$1pageid</var> vagy <var>$1oldid</var> paraméterrel.\n# Magának a tartalomnak a megadásával, a <var>$1text</var>, <var>$1title</var>, <var>$1revid</var> és <var>$1contentmodel</var> paraméterrel.\n# Csak egy összefoglaló feldolgozása. A <var>$1prop</var> paraméternek üresnek kell lennie.",
 	"apihelp-parse-param-title": "A lapnak a címe, amihez a szöveg tartozik. Ha nincs megadva, a <var>$1contentmodel</var> paraméter kötelező, és a cím [[API]] lesz.",
 	"apihelp-parse-param-text": "A feldolgozandó szöveg. Használd a <var>$1title</var> vagy <var>$1contentmodel</var> paramétert a tartalommodell megadásához.",
 	"apihelp-parse-param-summary": "Feldolgozandó szerkesztési összefoglaló.",
@@ -638,7 +636,7 @@
 	"apihelp-query+exturlusage-param-protocol": "Az URL protokollja. Ha üres és az <var>$1query</var> paraméter meg van adva, a protokoll <kbd>http</kbd>. Hagyd ezt és az <var>$1query</var> paramétert is üresen az összes külső link listázásához.",
 	"apihelp-query+exturlusage-param-namespace": "A listázandó névtér.",
 	"apihelp-query+exturlusage-param-limit": "A visszaadandó lapok száma.",
-	"apihelp-query+exturlusage-example-simple": "A <kbd>http://www.mediawiki.org</kbd> URL-re hivatkozó lapok megjelenítése.",
+	"apihelp-query+exturlusage-example-simple": "A <kbd>https://www.mediawiki.org</kbd> URL-re hivatkozó lapok megjelenítése.",
 	"apihelp-query+filearchive-summary": "Az összes törölt fájl visszaadása.",
 	"apihelp-query+filearchive-param-from": "A fájlok listázása ettől a címtől.",
 	"apihelp-query+filearchive-param-to": "A fájlok listázása eddig a címig.",
@@ -1164,5 +1162,6 @@
 	"api-help-param-integer-max": "Az {{PLURAL:$1|1=érték nem lehet nagyobb|2=értékek nem lehetnek nagyobbak}} mint $3.",
 	"api-help-param-integer-minmax": "{{PLURAL:$1|1=Az értéknek $2 és $3 között kell lennie.|2=Az értékeknek $2 és $3 között kell lenniük.}}",
 	"api-help-param-default": "Alapértelmezett: $1",
+	"api-help-examples": "{{PLURAL:$1|Példa|Példák}}:",
 	"apierror-timeout": "A kiszolgáló nem adott választ a várt időn belül."
 }

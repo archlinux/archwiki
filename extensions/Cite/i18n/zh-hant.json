@@ -9,9 +9,14 @@
 			"Cwlin0416",
 			"Bowleerin",
 			"Waihorace",
-			"Wbxshiori"
+			"Wbxshiori",
+			"Kly"
 		]
 	},
+	"apihelp-query+references-description": "回傳與指定頁面關聯之參考文獻的資料描述。",
+	"apihelp-query+references-summary": "回傳與指定頁面關聯之參考文獻的資料描述。",
+	"apihelp-query+references-example-1": "與 <kbd>Albert Einstein</kbd> 關聯的參考文獻。",
+	"apierror-citestoragedisabled": "引用擴充參考文獻儲存未啟用。",
 	"cite-desc": "支援 <nowiki><ref[ name=id]></nowiki> 與 <nowiki><references/></nowiki> 標籤，可用來註明參考文獻",
 	"cite_error": "引用錯誤：$1",
 	"cite_error_ref_numeric_key": "無效的 <code>&lt;ref&gt;</code> 標籤，name 屬性不能使用數字，請使用可描述內容的標題",
@@ -19,7 +24,7 @@
 	"cite_error_ref_too_many_keys": "無效的 <code>&lt;ref&gt;</code> 標籤，無效的 name 屬性值，可能名稱過長",
 	"cite_error_ref_no_input": "無效的 <code>&lt;ref&gt;</code> 標籤，無 name 屬性則必須擁有標籤內容",
 	"cite_error_references_duplicate_key": "無效的<code>&lt;ref&gt;</code>標籤；name屬性“$1”使用不同內容定義了多次",
-	"cite_error_references_invalid_parameters": "無效的 <code>&lt;references&gt;</code> 標籤，不允許使用參數。\n請使用 <code>&lt;references /&gt;</code>",
+	"cite_error_references_invalid_parameters": "在 <code>&lt;references&gt;</code> 標籤裡的無效參數",
 	"cite_error_references_no_backlink_label": "自訂反向連結標籤符號已用盡。\n請在 <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki> 中定義更多的標籤符號。",
 	"cite_error_no_link_label_group": "群組 \"$1\" 的自訂連結標籤符號已用盡。\n請在 <nowiki>[[MediaWiki:$2]]</nowiki> 中定義更多的標籤符號。",
 	"cite_error_references_no_text": "無效的 <code>&lt;ref&gt;</code> 標籤，\n未定義名稱為 <code>$1</code> 的參考文獻內容文字。",

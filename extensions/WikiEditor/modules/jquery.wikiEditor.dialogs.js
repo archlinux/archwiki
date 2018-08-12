@@ -75,7 +75,7 @@
 				// Defer building of modules, unless they require immediate creation
 				for ( mod in config ) {
 					module = config[ mod ];
-					// Only create the dialog if it's supported, isn't filtered and doesn't exist yet
+					// Only create the dialog if it isn't filtered and doesn't exist yet
 					filtered = false;
 					if ( typeof module.filters !== 'undefined' ) {
 						for ( i = 0; i < module.filters.length; i++ ) {
@@ -92,7 +92,7 @@
 					}
 					// Re-select from the DOM, we might have removed the dialog just now
 					$existingDialog = $( '#' + module.id );
-					if ( !filtered && $.wikiEditor.isSupported( module ) && $existingDialog.length === 0 ) {
+					if ( !filtered && $existingDialog.length === 0 ) {
 						$.wikiEditor.modules.dialogs.modules[ mod ] = module;
 						context.$textarea.trigger( 'wikiEditor-dialogs-setup-' + mod );
 						// If this dialog requires immediate creation, create it now
@@ -130,7 +130,7 @@
 				}
 				configuration.buttons = configuration.newButtons;
 				if ( module.htmlTemplate ) {
-					$content = mw.template.get( 'jquery.wikiEditor.dialogs.config', module.htmlTemplate ).render();
+					$content = mw.template.get( 'ext.wikiEditor', module.htmlTemplate ).render();
 				} else if ( module.html instanceof jQuery ) {
 					$content = module.html;
 				} else {

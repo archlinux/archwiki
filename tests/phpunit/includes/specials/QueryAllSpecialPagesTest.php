@@ -5,10 +5,10 @@
  * Copyright © 2011, Antoine Musso
  *
  * @author Antoine Musso
- * @group Database
  */
 
 /**
+ * @group Database
  * @covers QueryPage<extended>
  */
 class QueryAllSpecialPagesTest extends MediaWikiTestCase {
@@ -20,7 +20,7 @@ class QueryAllSpecialPagesTest extends MediaWikiTestCase {
 
 	/** List query pages that can not be tested automatically */
 	protected $manualTest = [
-		'LinkSearchPage'
+		LinkSearchPage::class
 	];
 
 	/**
@@ -30,7 +30,7 @@ class QueryAllSpecialPagesTest extends MediaWikiTestCase {
 	 * https://bugs.mysql.com/bug.php?id=10327
 	 */
 	protected $reopensTempTable = [
-		'BrokenRedirects',
+		BrokenRedirects::class,
 	];
 
 	/**

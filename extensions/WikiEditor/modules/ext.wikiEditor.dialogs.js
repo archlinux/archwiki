@@ -2,10 +2,6 @@
  * JavaScript for WikiEditor Dialogs
  */
 jQuery( function ( $ ) {
-	if ( !$.wikiEditor.isSupported( $.wikiEditor.modules.dialogs ) ) {
-		return;
-	}
-
 	// Replace icons
 	$.wikiEditor.modules.dialogs.config.replaceIcons( $( '#wpTextbox1' ) );
 

@@ -2,12 +2,15 @@
 /**
  * @file
  * @author Niklas Laxström
- * @license GPL-2.0+
+ * @license GPL-2.0-or-later
  */
 
 namespace LocalisationUpdate;
 
-class ReaderFactoryTest extends \PHPUnit_Framework_TestCase {
+/**
+ * @covers \LocalisationUpdate\ReaderFactory
+ */
+class ReaderFactoryTest extends \PHPUnit\Framework\TestCase {
 	/**
 	 * @dataProvider getReaderProvider
 	 */

@@ -5,11 +5,11 @@
  *
  * @since 1.26
  *
- * @licence GNU GPL v2+
+ * @license GNU GPL v2+
  * @author Jeroen De Dauw < jeroendedauw@gmail.com >
  * @author Daniel Kinzler
  * @author Addshore
- * @author Thiemo Mättig
+ * @author Thiemo Kreuz
  */
 abstract class SpecialPageTestBase extends MediaWikiTestCase {
 

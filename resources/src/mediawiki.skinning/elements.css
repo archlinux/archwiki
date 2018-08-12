@@ -13,7 +13,7 @@ a {
 	background: none;
 }
 
-a:not( [href] ) {
+a:not( [ href ] ) {
 	cursor: pointer; /* Always cursor:pointer even without href */
 }
 
@@ -47,39 +47,54 @@ a.new,
 	color: #ba0000;
 }
 
+/* self links */
+a.mw-selflink {
+	color: inherit;
+	font-weight: bold;
+	text-decoration: inherit;
+}
+a.mw-selflink:hover {
+	cursor: inherit;
+	text-decoration: inherit;
+}
+a.mw-selflink:active,
+a.mw-selflink:visited {
+	color: inherit;
+}
+
 a.new:visited,
 #p-personal a.new:visited {
 	color: #a55858;
 }
 
 /* Interwiki Styling */
-.mw-body-content a.extiw,
-.mw-body-content a.extiw:active {
+.mw-parser-output a.extiw,
+.mw-parser-output a.extiw:active {
 	color: #36b;
 }
 
-.mw-body-content a.extiw:visited {
+.mw-parser-output a.extiw:visited {
 	color: #636;
 }
 
-.mw-body-content a.extiw:active {
+.mw-parser-output a.extiw:active {
 	color: #b63;
 }
 
 /* External links */
-.mw-body-content a.external {
+.mw-parser-output a.external {
 	color: #36b;
 }
 
-.mw-body-content a.external:visited {
+.mw-parser-output a.external:visited {
 	color: #636; /* T5112 */
 }
 
-.mw-body-content a.external:active {
+.mw-parser-output a.external:active {
 	color: #b63;
 }
 
-.mw-body-content a.external.free {
+.mw-parser-output a.external.free {
 	word-wrap: break-word;
 }
 
@@ -203,11 +218,8 @@ tt,
 kbd,
 samp,
 .mw-code {
-	/*
-	 * Some browsers will render the monospace text too small, namely Firefox, Chrome and Safari.
-	 * Specifying any valid, second value will trigger correct behavior without forcing a different font.
-	 */
-	font-family: monospace, 'Courier';
+	/* Support: Blink, Gecko, Webkit; enable unified font sizes for monospace font. T176636 */
+	font-family: monospace, monospace;
 }
 
 code {

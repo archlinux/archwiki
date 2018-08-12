@@ -2,8 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Millosh",
-			"Nikola Smolenski"
+			"Nikola Smolenski",
+			"Acamicamacaraca"
 		]
 	},
-	"poem-desc": "Додаје <code>&lt;poem&gt;</code> ознаку за форматирање песама."
+	"poem-desc": "Додаје <code>&lt;poem&gt;</code> ознаку за обликовање песама."
 }

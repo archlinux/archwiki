@@ -106,10 +106,10 @@ class DeferredUpdates {
 	 *
 	 * @param callable $callable
 	 * @param int $stage DeferredUpdates constant (PRESEND or POSTSEND) (since 1.27)
-	 * @param IDatabase|null $dbw Abort if this DB is rolled back [optional] (since 1.28)
+	 * @param IDatabase|IDatabase[]|null $dbw Abort if this DB is rolled back [optional] (since 1.28)
 	 */
 	public static function addCallableUpdate(
-		$callable, $stage = self::POSTSEND, IDatabase $dbw = null
+		$callable, $stage = self::POSTSEND, $dbw = null
 	) {
 		self::addUpdate( new MWCallableUpdate( $callable, wfGetCaller(), $dbw ), $stage );
 	}
@@ -250,6 +250,8 @@ class DeferredUpdates {
 				// Run only the job enqueue logic to complete the update later
 				$spec = $update->getAsJobSpecification();
 				JobQueueGroup::singleton( $spec['wiki'] )->push( $spec['job'] );
+			} elseif ( $update instanceof TransactionRoundDefiningUpdate ) {
+				$update->doUpdate();
 			} else {
 				// Run the bulk of the update now
 				$fnameTrxOwner = get_class( $update ) . '::doUpdate';

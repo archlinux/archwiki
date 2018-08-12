@@ -3,7 +3,6 @@
 
 /* Search */
 #p-search {
-	/* @noflip */
 	float: left;
 	margin-right: 0.5em;
 	margin-left: 0.5em;
@@ -14,12 +13,16 @@
 
 	form,
 	input {
-		margin: 0;
-		margin-top: 0.4em;
+		margin: 0.4em 0 0;
 	}
 }
 
-div#simpleSearch {
+#simpleSearch {
+	background-color: #fff;
+	.background-image( 'images/search-fade.png' );
+	background-position: top left;
+	background-repeat: repeat-x;
+	color: #000;
 	display: block;
 	width: 12.6em;
 	width: 20vw; /* responsive width */
@@ -30,20 +33,21 @@ div#simpleSearch {
 	margin-top: 0.65em;
 	position: relative;
 	min-height: 1px; /* Gotta trigger hasLayout for IE7 */
-	border: solid 1px #aaa;
-	color: #000;
-	background-color: #fff;
-	.background-image( 'images/search-fade.png' );
-	background-position: top left;
-	background-repeat: repeat-x;
+	border: 1px solid @colorGray10;
+	border-radius: @borderRadius;
+	.transition( border-color 250ms );
+
+	&:hover {
+		border-color: @colorGray7;
+	}
 
 	// Styles for both the search input and the button
 	input {
+		background-color: transparent;
+		color: #000;
 		margin: 0;
 		padding: 0;
 		border: 0;
-		background-color: transparent;
-		color: #000;
 	}
 
 	// The search input
@@ -98,7 +102,7 @@ div#simpleSearch {
 	}
 
 	#searchButton {
-		.background-image-svg('images/search-ltr.svg', 'images/search-ltr.png');
+		.background-image-svg( 'images/search-ltr.svg', 'images/search-ltr.png' );
 		background-position: center center;
 		background-repeat: no-repeat;
 	}

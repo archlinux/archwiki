@@ -6,8 +6,11 @@
 	],
 	"url": "https://www.mediawiki.org/wiki/Extension:CiteThisPage",
 	"descriptionmsg": "citethispage-desc",
-	"license-name": "GPL-2.0+",
+	"license-name": "GPL-2.0-or-later",
 	"type": "specialpage",
+	"requires": {
+		"MediaWiki": ">= 1.30.0"
+	},
 	"ExtensionMessagesFiles": {
 		"CiteThisPageAliases": "CiteThisPage.alias.php"
 	},
@@ -24,7 +27,6 @@
 	},
 	"ResourceModules": {
 		"ext.citeThisPage": {
-			"position": "top",
 			"styles": "ext.citeThisPage.css"
 		}
 	},
@@ -36,8 +38,8 @@
 		"CiteThisPage": "SpecialCiteThisPage"
 	},
 	"AutoloadClasses": {
-		"SpecialCiteThisPage": "SpecialCiteThisPage.php",
-		"CiteThisPageHooks": "CiteThisPage.hooks.php"
+		"SpecialCiteThisPage": "includes/SpecialCiteThisPage.php",
+		"CiteThisPageHooks": "includes/CiteThisPageHooks.php"
 	},
 	"config": {
 		"CiteThisPageAdditionalNamespaces": {

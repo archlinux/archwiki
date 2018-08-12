@@ -4,7 +4,9 @@
  * @group Media
  * @covers XMPReader
  */
-class XMPTest extends PHPUnit_Framework_TestCase {
+class XMPTest extends PHPUnit\Framework\TestCase {
+
+	use MediaWikiCoversValidator;
 
 	protected function setUp() {
 		parent::setUp();

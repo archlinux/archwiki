@@ -1,12 +1,12 @@
 /*!
- * OOjs UI v0.23.0
- * https://www.mediawiki.org/wiki/OOjs_UI
+ * OOUI v0.26.4
+ * https://www.mediawiki.org/wiki/OOUI
  *
- * Copyright 2011–2017 OOjs UI Team and other contributors.
+ * Copyright 2011–2018 OOUI Team and other contributors.
  * Released under the MIT license
  * http://oojs.mit-license.org
  *
- * Date: 2017-09-05T21:24:03Z
+ * Date: 2018-04-17T22:24:02Z
  */
 .oo-ui-draggableElement-handle:not( .oo-ui-draggableElement-undraggable ).oo-ui-widget {
   cursor: move;
@@ -59,40 +59,65 @@
 .oo-ui-bookletLayout-stackLayout > .oo-ui-panelLayout {
   padding: 1.5em;
 }
-.oo-ui-bookletLayout-outlinePanel {
-  border-right: 1px solid #ddd;
-}
 .oo-ui-bookletLayout-outlinePanel > .oo-ui-outlineControlsWidget {
   box-shadow: 0 0 0.25em rgba(0, 0, 0, 0.25);
 }
-.oo-ui-indexLayout > .oo-ui-menuLayout-menu {
-  height: 3em;
+.oo-ui-bookletLayout > .oo-ui-menuLayout-menu {
+  border-right: 1px solid #ddd;
 }
-.oo-ui-indexLayout > .oo-ui-menuLayout-content {
+.oo-ui-indexLayout {
+  /* Use two classes to ensure increased specificity over menuLayout */
+}
+.oo-ui-indexLayout.oo-ui-menuLayout > .oo-ui-menuLayout-menu {
+  height: auto;
+}
+.oo-ui-indexLayout.oo-ui-menuLayout-expanded.oo-ui-menuLayout > .oo-ui-menuLayout-menu {
+  height: 3em;
+  white-space: nowrap;
+}
+.oo-ui-indexLayout.oo-ui-menuLayout-expanded.oo-ui-menuLayout > .oo-ui-menuLayout-content {
   top: 3em;
 }
 .oo-ui-indexLayout-stackLayout > .oo-ui-panelLayout {
   padding: 1.5em;
 }
 .oo-ui-menuLayout {
-  position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
 }
-.oo-ui-menuLayout-menu,
-.oo-ui-menuLayout-content {
+.oo-ui-menuLayout-expanded,
+.oo-ui-menuLayout-expanded > .oo-ui-menuLayout-menu,
+.oo-ui-menuLayout-expanded > .oo-ui-menuLayout-content {
   position: absolute;
+}
+.oo-ui-menuLayout-expanded > .oo-ui-menuLayout-menu {
+  z-index: 1;
+}
+.oo-ui-menuLayout-static.oo-ui-menuLayout-after,
+.oo-ui-menuLayout-static.oo-ui-menuLayout-before {
+  display: table;
+  width: 100%;
+}
+.oo-ui-menuLayout-static.oo-ui-menuLayout-after > .oo-ui-menuLayout-menu,
+.oo-ui-menuLayout-static.oo-ui-menuLayout-before > .oo-ui-menuLayout-menu,
+.oo-ui-menuLayout-static.oo-ui-menuLayout-after > .oo-ui-menuLayout-content,
+.oo-ui-menuLayout-static.oo-ui-menuLayout-before > .oo-ui-menuLayout-content {
+  display: table-cell;
+  vertical-align: top;
+}
+.oo-ui-menuLayout > .oo-ui-menuLayout-menu,
+.oo-ui-menuLayout > .oo-ui-menuLayout-content {
   -webkit-transition: all 200ms ease;
   -moz-transition: all 200ms ease;
   transition: all 200ms ease;
 }
-.oo-ui-menuLayout-menu {
+.oo-ui-menuLayout > .oo-ui-menuLayout-menu {
   height: 18em;
   width: 18em;
 }
-.oo-ui-menuLayout-content {
+.oo-ui-menuLayout > .oo-ui-menuLayout-content {
   top: 18em;
   left: 18em;
   right: 18em;
@@ -206,16 +231,16 @@
 .oo-ui-buttonOptionWidget.oo-ui-buttonElement-active .oo-ui-buttonElement-button {
   cursor: default;
 }
+.oo-ui-buttonOptionWidget.oo-ui-optionWidget-selected,
+.oo-ui-buttonOptionWidget.oo-ui-optionWidget-pressed,
+.oo-ui-buttonOptionWidget.oo-ui-optionWidget-highlighted {
+  background-color: transparent;
+}
 .oo-ui-buttonOptionWidget.oo-ui-iconElement .oo-ui-iconElement-icon,
 .oo-ui-buttonOptionWidget.oo-ui-indicatorElement .oo-ui-indicatorElement-indicator {
   position: static;
   display: inline-block;
   vertical-align: middle;
-}
-.oo-ui-buttonOptionWidget.oo-ui-optionWidget-selected,
-.oo-ui-buttonOptionWidget.oo-ui-optionWidget-pressed,
-.oo-ui-buttonOptionWidget.oo-ui-optionWidget-highlighted {
-  background-color: transparent;
 }
 .oo-ui-toggleButtonWidget {
   margin-right: 0.5em;
@@ -370,12 +395,6 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-.oo-ui-selectFileWidget-info > .oo-ui-indicatorElement-indicator,
-.oo-ui-selectFileWidget-info > .oo-ui-iconElement-icon {
-  position: absolute;
-  top: 0;
-  height: 100%;
-}
 .oo-ui-widget-disabled .oo-ui-selectFileWidget-info {
   cursor: default;
   -webkit-touch-callout: none;
@@ -402,8 +421,7 @@
   height: 8.815em;
 }
 .oo-ui-selectFileWidget-dropTarget .oo-ui-selectFileWidget-dropLabel,
-.oo-ui-selectFileWidget-dropTarget .oo-ui-selectFileWidget-selectButton,
-.oo-ui-selectFileWidget-dropTarget .oo-ui-iconElement-icon {
+.oo-ui-selectFileWidget-dropTarget .oo-ui-selectFileWidget-selectButton {
   display: none;
 }
 .oo-ui-selectFileWidget-dropTarget .oo-ui-selectFileWidget-thumbnail {
@@ -489,6 +507,10 @@
 .oo-ui-selectFileWidget-selectButton > .oo-ui-buttonElement-button {
   border-radius: 0 0.25em 0.25em 0;
 }
+.oo-ui-selectFileWidget-selectButton > .oo-ui-buttonElement-button .oo-ui-iconElement-icon,
+.oo-ui-selectFileWidget-selectButton > .oo-ui-buttonElement-button .oo-ui-indicatorElement-indicator {
+  display: none;
+}
 .oo-ui-selectFileWidget-info {
   height: 2.4em;
   background-color: #fff;
@@ -496,13 +518,17 @@
   border-radius: 0.25em 0 0 0.25em;
   border-width: 1px 0 1px 1px;
 }
+.oo-ui-selectFileWidget-info > .oo-ui-indicatorElement-indicator,
 .oo-ui-selectFileWidget-info > .oo-ui-iconElement-icon {
-  left: 0;
-  margin-left: 0.3em;
+  position: absolute;
+  top: 0;
+  height: 100%;
+}
+.oo-ui-selectFileWidget-info > .oo-ui-iconElement-icon {
+  left: 0.3em;
 }
 .oo-ui-selectFileWidget-info > .oo-ui-indicatorElement-indicator {
-  right: 0;
-  margin-right: 0.775em;
+  right: 0.775em;
 }
 .oo-ui-selectFileWidget-label {
   -webkit-box-sizing: border-box;
@@ -519,8 +545,8 @@
 .oo-ui-selectFileWidget-clearButton {
   top: 0;
   right: 0;
-  width: 1.875em;
-  margin-right: 0;
+  height: 1.5625em;
+  margin: 0.15625em;
 }
 .oo-ui-selectFileWidget-clearButton .oo-ui-buttonElement-button > .oo-ui-iconElement-icon {
   height: 2.3em;
@@ -550,7 +576,7 @@
 .oo-ui-selectFileWidget-supported.oo-ui-widget-enabled.oo-ui-selectFileWidget-canDrop.oo-ui-selectFileWidget-dropTarget {
   background-color: #e1f3ff;
 }
-.oo-ui-selectFileWidget-notsupported .oo-ui-selectFileWidget-label {
+.oo-ui-selectFileWidget-notsupported.oo-ui-selectFileWidget-dropTarget .oo-ui-selectFileWidget-label {
   padding: 1em;
 }
 .oo-ui-selectFileWidget-dropTarget {
@@ -684,8 +710,8 @@
 }
 .oo-ui-tabSelectWidget {
   text-align: left;
-  white-space: nowrap;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
   background-color: #eee;
   box-shadow: inset 0 -0.015em 0.1em rgba(0, 0, 0, 0.1);
 }
@@ -887,8 +913,8 @@
   padding: 0;
 }
 .oo-ui-tagItemWidget > .oo-ui-buttonElement > .oo-ui-buttonElement-button .oo-ui-iconElement-icon {
-  min-width: 20px;
-  width: 1.5625em;
+  min-width: 14px;
+  width: 1.09375em;
   margin-right: -0.3em;
 }
 .oo-ui-tagItemWidget > .oo-ui-buttonElement > .oo-ui-buttonElement-button .oo-ui-labelElement-label,
@@ -914,12 +940,6 @@
   width: 100%;
   display: block;
   position: relative;
-}
-.oo-ui-capsuleMultiselectWidget-handle > .oo-ui-iconElement-icon,
-.oo-ui-capsuleMultiselectWidget-handle > .oo-ui-indicatorElement-indicator {
-  position: absolute;
-  top: 0;
-  height: 100%;
 }
 .oo-ui-capsuleMultiselectWidget-content {
   position: relative;
@@ -955,6 +975,12 @@
 }
 .oo-ui-capsuleMultiselectWidget-handle:last-child {
   margin-right: 0;
+}
+.oo-ui-capsuleMultiselectWidget-handle > .oo-ui-iconElement-icon,
+.oo-ui-capsuleMultiselectWidget-handle > .oo-ui-indicatorElement-indicator {
+  position: absolute;
+  top: 0;
+  height: 100%;
 }
 .oo-ui-capsuleMultiselectWidget-handle > .oo-ui-capsuleMultiselectWidget-content > input {
   border: 0;
@@ -1070,8 +1096,8 @@
   padding: 0;
 }
 .oo-ui-capsuleItemWidget > .oo-ui-buttonElement > .oo-ui-buttonElement-button .oo-ui-iconElement-icon {
-  min-width: 20px;
-  width: 1.5625em;
+  min-width: 14px;
+  width: 1.09375em;
   margin-right: -0.3em;
 }
 .oo-ui-capsuleItemWidget > .oo-ui-buttonElement > .oo-ui-buttonElement-button .oo-ui-labelElement-label,

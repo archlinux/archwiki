@@ -2,7 +2,11 @@
 
 use MediaWiki\Session\SessionManager;
 
-class FauxRequestTest extends PHPUnit_Framework_TestCase {
+class FauxRequestTest extends PHPUnit\Framework\TestCase {
+
+	use MediaWikiCoversValidator;
+	use PHPUnit4And6Compat;
+
 	/**
 	 * @covers FauxRequest::__construct
 	 */
@@ -39,13 +43,19 @@ class FauxRequestTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( '', $req->getText( 'z' ) );
 	}
 
-	// Integration test for parent method.
+	/**
+	 * Integration test for parent method
+	 * @covers FauxRequest::getVal
+	 */
 	public function testGetVal() {
 		$req = new FauxRequest( [ 'crlf' => "A\r\nb" ] );
 		$this->assertSame( "A\r\nb", $req->getVal( 'crlf' ), 'CRLF' );
 	}
 
-	// Integration test for parent method.
+	/**
+	 * Integration test for parent method
+	 * @covers FauxRequest::getRawVal
+	 */
 	public function testGetRawVal() {
 		$req = new FauxRequest( [
 			'x' => 'Value',

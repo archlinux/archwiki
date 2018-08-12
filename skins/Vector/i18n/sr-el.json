@@ -4,12 +4,14 @@
 			"Michaello",
 			"Milicevic01",
 			"Rancher",
-			"Жељко Тодоровић"
+			"Жељко Тодоровић",
+			"Zoranzoki21"
 		]
 	},
-	"skinname-vector": "Vektorsko",
-	"vector.css": "/* CSS postavljen ovde će uticati na sve korisnike teme „Vektorsko“ */",
-	"vector.js": "/* Javaskript postavljen ovde će se učitati za sve one koji koriste temu „Vektorsko“ */",
+	"skinname-vector": "Vektorska",
+	"vector-skin-desc": "Moderno izdanje Monobuka sa svežim izgledom i mnogo korisnih poboljšanja",
+	"vector.css": "/* CSS postavljen ovde će uticati na sve korisnike vektorske teme */",
+	"vector.js": "/* Javaskript postavljen ovde će se učitati za sve one koji koriste vektorsku temu */",
 	"vector-action-addsection": "Dodaj temu",
 	"vector-action-delete": "Obriši",
 	"vector-action-move": "Premesti",

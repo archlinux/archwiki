@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"EivindJ",
-			"Danmichaelo"
+			"Danmichaelo",
+			"Jon Harald Søby"
 		]
 	},
 	"inputbox-desc": "Tillater inkludering av forhåndsdefinerte HTML-skjemaer",

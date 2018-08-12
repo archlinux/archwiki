@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Kaszeba"
+			"Kaszeba",
+			"Kirsan"
 		]
 	},
-	"inputbox-tryexact": "Ùżëjë akùratnegò wësłowia"
+	"inputbox-tryexact": "Ùżëjë akùratnegò wësłowia",
+	"inputbox-createarticle": "Ùsadzë starnã"
 }

@@ -12,7 +12,6 @@
 	"cite_error_ref_too_many_keys": "<code>&lt;ref&gt;</code> тиэк алҕаһа (Неправильный вызов): аата сыыһа ыйыллыбыт, эбэтэр наһаа элбэх аат суруллубут",
 	"cite_error_ref_no_input": "<code>&lt;ref&gt;</code> тиэк алҕастаах (Неверный вызов): иһинээҕитэ сыыһа",
 	"cite_error_references_invalid_parameters": "Сыыһа параметрдар бэриллибиттэр; <code>&lt;references /&gt;</code> тиэккэ отой суох буолуохтаахтар",
-	"cite_error_references_invalid_parameters_group": "Сыыһалаах <code>&lt;references&gt;</code> тиэк;\n\"group\" эрэ парааматыры туһаныахха сөп.\nМаны <code>&lt;references /&gt;</code>, эбэтэр <code>&lt;references group=\"...\" /&gt;</code> туһан.",
 	"cite_error_references_no_backlink_label": "Төннөрөр сигэлэргэ бэлиэлэрэ тиийбэттэр.\n<nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki> диэн систиэмэ этиитин кэҥэтэн биэрэххэ наада",
 	"cite_error_no_link_label_group": "«$1» бөлөх кыттааччыларын сигэлэрин бэлиэлэрэ бүппүттэр.\nЭбии манна <nowiki>[[MediaWiki:$2]]</nowiki> оҥор.",
 	"cite_error_references_no_text": "Сыыһа <code>&lt;ref&gt;</code> тиэк (тег);\n<code>$1</code> диэн хос быһаарыыларга аналлаах тиэкис суох",

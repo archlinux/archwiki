@@ -1,5 +1,5 @@
 /* global isCompatible: true */
-( function ( $ ) {
+( function () {
 	var testcases = {
 		tested: [
 			/* Grade A */
@@ -21,11 +21,8 @@
 			'Mozilla/5.0 (Windows NT 6.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.95 Safari/537.36 OPR/15.0.1147.153',
 			'Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.57 Safari/537.36 OPR/16.0.1196.62',
 			'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1985.125 Safari/537.36 OPR/23.0.1522.75',
-			// Internet Explorer 10+
-			'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; WOW64; Trident/6.0)',
+			// Internet Explorer 11
 			'Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko',
-			// IE Mobile
-			'Mozilla/5.0 (compatible; MSIE 9.0; Windows Phone OS 7.5; Trident/5.0; IEMobile/9.0; NOKIA; Lumia 800)',
 			// Edge
 			'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246',
 			// Edge Mobile
@@ -107,6 +104,10 @@
 		blacklisted: [
 			/* Grade C */
 
+			// Internet Explorer 10
+			'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; WOW64; Trident/6.0)',
+			// IE Mobile 10
+			'Mozilla/5.0 (compatible; MSIE 10.0; Windows Phone 8.0; Trident/6.0; IEMobile/10.0; ARM; Touch; HTC; Windows Phone 8X by HTC)',
 			// PlayStation
 			'Mozilla/5.0 (PLAYSTATION 3; 1.10)',
 			'Mozilla/5.0 (PLAYSTATION 3; 3.55)',
@@ -146,14 +147,14 @@
 	QUnit.module( 'startup', QUnit.newMwEnvironment() );
 
 	QUnit.test( 'isCompatible( featureTestable )', function ( assert ) {
-		$.each( testcases.tested, function ( i, ua ) {
+		testcases.tested.forEach( function ( ua ) {
 			assert.strictEqual( isCompatible( ua ), true, ua );
 		} );
 	} );
 
 	QUnit.test( 'isCompatible( blacklisted )', function ( assert ) {
-		$.each( testcases.blacklisted, function ( i, ua ) {
+		testcases.blacklisted.forEach( function ( ua ) {
 			assert.strictEqual( isCompatible( ua ), false, ua );
 		} );
 	} );
-}( jQuery ) );
+}() );

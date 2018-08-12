@@ -104,10 +104,10 @@ class SideBarTest extends MediaWikiLangTestCase {
 		] );
 		$this->assertSideBar(
 			[ 'Title' => [
-				# ** http://www.mediawiki.org/| Home
+				# ** https://www.mediawiki.org/| Home
 				[
 					'text' => 'Home',
-					'href' => 'http://www.mediawiki.org/',
+					'href' => 'https://www.mediawiki.org/',
 					'id' => 'n-Home',
 					'active' => null,
 					'rel' => 'nofollow',
@@ -116,7 +116,7 @@ class SideBarTest extends MediaWikiLangTestCase {
 				# ... skipped since it is missing a pipe with a description
 			] ],
 			'* Title
-** http://www.mediawiki.org/| Home
+** https://www.mediawiki.org/| Home
 ** http://valid.no.desc.org/
 '
 		);
@@ -160,7 +160,7 @@ class SideBarTest extends MediaWikiLangTestCase {
 	private function getAttribs() {
 		# Sidebar text we will use everytime
 		$text = '* Title
-** http://www.mediawiki.org/| Home';
+** https://www.mediawiki.org/| Home';
 
 		$bar = [];
 		$this->skin->addToSidebarPlain( $bar, $text );
@@ -188,6 +188,7 @@ class SideBarTest extends MediaWikiLangTestCase {
 
 	/**
 	 * Test $wgNoFollowLinks in sidebar
+	 * @covers Skin::addToSidebarPlain
 	 */
 	public function testRespectWgnofollowlinks() {
 		$this->setMwGlobals( 'wgNoFollowLinks', false );
@@ -201,6 +202,7 @@ class SideBarTest extends MediaWikiLangTestCase {
 	/**
 	 * Test $wgExternaLinkTarget in sidebar
 	 * @dataProvider dataRespectExternallinktarget
+	 * @covers Skin::addToSidebarPlain
 	 */
 	public function testRespectExternallinktarget( $externalLinkTarget ) {
 		$this->setMwGlobals( 'wgExternalLinkTarget', $externalLinkTarget );

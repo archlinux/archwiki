@@ -3,19 +3,21 @@
 		"authors": [
 			"Albinus",
 			"Samar88",
-			"Srabony90"
+			"Srabony90",
+			"Manik Soren",
+			"Ramjit Tudu"
 		]
 	},
-	"vector-action-addsection": "Asol katha joṛaome",
-	"vector-action-delete": "Giḍi",
-	"vector-action-move": "Ocoḱ́me",
-	"vector-action-protect": "Bańcao",
+	"vector-action-addsection": "ᱥᱟᱛᱚᱢ ᱥᱮᱞᱮᱫ",
+	"vector-action-delete": "ᱜᱮᱫ ᱜᱤᱰᱤ",
+	"vector-action-move": "ᱩᱪᱟᱹᱲ",
+	"vector-action-protect": "ᱨᱩᱠᱷᱤᱭᱟᱹ",
 	"vector-action-undelete": "Bań getgiḍi",
 	"vector-action-unprotect": "Bodol rukhiyạ",
-	"vector-view-create": "Tearme",
-	"vector-view-edit": "So̠mpado̠n",
-	"vector-view-history": "Jạṛ ńelme",
-	"vector-view-view": "Paṛhaḱme",
-	"vector-view-viewsource": "Ńamoḱaḱ ńelme",
-	"vector-more-actions": "Arhõ bạṛtite"
+	"vector-view-create": "ᱛᱮᱭᱟᱨ",
+	"vector-view-edit": "ᱥᱟᱯᱲᱟᱣ",
+	"vector-view-history": "ᱱᱟᱜᱟᱢ ᱧᱮᱞᱢᱮ",
+	"vector-view-view": "ᱯᱟᱲᱦᱟᱣᱢᱮ",
+	"vector-view-viewsource": "ᱯᱷᱮᱰᱟᱛ ᱧᱮᱞᱢᱮ",
+	"vector-more-actions": "ᱵᱟᱹᱲᱛᱤ"
 }

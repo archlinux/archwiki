@@ -1,3 +1,0 @@
-<http://acme.test/Bongos> <http://acme.test/stock> "5"^^<http://www.w3.org/2001/XMLSchema#integer> .
-<http://acme.test/Bongos> <http://acme.test/stock> "7"^^<http://www.w3.org/2001/XMLSchema#integer> .
-<http://acme.test/Tablas> <http://acme.test/stock> "6"^^<http://www.w3.org/2001/XMLSchema#integer> .

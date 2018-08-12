@@ -3,7 +3,7 @@ HtmlFormatter is a library spun off MediaWiki that allows you to load HTML into 
 Usage
 -----
 
-```
+<pre lang="php">
 use HtmlFormatter\HtmlFormatter;
 // Load HTML that already has doctype and stuff
 $formatter = new HtmlFormatter( $html );
@@ -17,7 +17,7 @@ $formatter->remove( [ '.some_css_class', '#some_id', 'div.some_other_class' ] );
 // Only the above syntax is supported, not full CSS/jQuery selectors
 
 // These tags get replaced with their inner HTML,
-// e.g. <tag>foo</tag> --> foo
+// e.g. &lt;tag>foo&lt;/tag> --> foo
 // Only tag names are supported here
 $formatter->flatten( 'span' );
 $formatter->flatten( [ 'code', 'pre' ] );
@@ -30,7 +30,7 @@ $formatter->getDoc()->createElement( 'p', 'Appended paragraph' );
 
 // Get resulting HTML
 $processedHtml = $formatter->getText();
-```
+</pre>
 
 License
 -------

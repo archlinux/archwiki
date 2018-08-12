@@ -74,6 +74,7 @@ class ComboBoxInputWidget extends TextInputWidget {
 		if ( $this->forceAutocomplete ) {
 			$config['autocomplete'] = true;
 		}
+		$config['$overlay'] = true;
 		return parent::getConfig( $config );
 	}
 }

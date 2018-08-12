@@ -8,7 +8,8 @@
 			"Sovq",
 			"Sp5uhe",
 			"Peter Bowman",
-			"Woytecr"
+			"Woytecr",
+			"Railfail536"
 		]
 	},
 	"gadgets-desc": "Pozwala użytkownikom wybrać [[Special:Gadgets|gadżety CSS i JavaScript]] na [[Special:Preferences#mw-prefsection-gadgets|stronie preferencji]]",
@@ -38,11 +39,13 @@
 	"gadgets-validate-notset": "Właściwość <code>$1</code> nie jest ustawiona.",
 	"gadgets-validate-wrongtype": "Właściwość <code>$1</code> musi być typem <code>$2</code> zamiast <code>$3</code>.",
 	"apihelp-query+gadgetcategories-description": "Zwraca listę kategorii gadżetów.",
+	"apihelp-query+gadgetcategories-summary": "Zwraca listę kategorii gadżetów.",
 	"apihelp-query+gadgetcategories-param-prop": "Jakie informacje o kategorii gadżetów pobrać:\n;name:Wewnętrzna nazwa kategorii.\n;title:Tytuł kategorii.\n;members:Liczba gadżetów w kategorii.",
 	"apihelp-query+gadgetcategories-param-names": "Nazwy kategorii do pobrania.",
 	"apihelp-query+gadgetcategories-example-1": "Pobierz listę istniejących kategorii gadżetów",
 	"apihelp-query+gadgetcategories-example-2": "Pobierz wszystkie informacje na temat kategorii o nazwach „foo” i „bar”",
 	"apihelp-query+gadgets-description": "Zwraca listę gadżetów używanych na tej wiki.",
+	"apihelp-query+gadgets-summary": "Zwraca listę gadżetów używanych na tej wiki.",
 	"apihelp-query+gadgets-param-prop": "Jakie informacje o gadżetach pobrać:\n;id:Wewnętrzny ID gadżetu.\n;metadata:Metadane gadżetu.\n;desc:Opis gadżetu przekształcony na HTML (może być powolne, użyj tylko jeśli naprawdę potrzeba).",
 	"apihelp-query+gadgets-param-categories": "Z jakiej kategorii mają być pobrane informacje o gadżetach.",
 	"apihelp-query+gadgets-param-ids": "Identyfikatory gadżetów do pobrania.",

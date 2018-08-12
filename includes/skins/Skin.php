@@ -34,7 +34,11 @@ use MediaWiki\MediaWikiServices;
  * @ingroup Skins
  */
 abstract class Skin extends ContextSource {
+	/**
+	 * @var string|null
+	 */
 	protected $skinname = null;
+
 	protected $mRelevantTitle = null;
 	protected $mRelevantUser = null;
 
@@ -134,7 +138,17 @@ abstract class Skin extends ContextSource {
 	}
 
 	/**
-	 * @return string Skin name
+	 * @since 1.31
+	 * @param string|null $skinname
+	 */
+	public function __construct( $skinname = null ) {
+		if ( is_string( $skinname ) ) {
+			$this->skinname = $skinname;
+		}
+	}
+
+	/**
+	 * @return string|null Skin name
 	 */
 	public function getSkinName() {
 		return $this->skinname;
@@ -754,15 +768,6 @@ abstract class Skin extends ContextSource {
 	}
 
 	/**
-	 * @deprecated since 1.27, feature removed
-	 * @return bool Always false
-	 */
-	function showIPinHeader() {
-		wfDeprecated( __METHOD__, '1.27' );
-		return false;
-	}
-
-	/**
 	 * @return string
 	 */
 	function getSearchLink() {
@@ -897,7 +902,7 @@ abstract class Skin extends ContextSource {
 			$s = '';
 		}
 
-		if ( wfGetLB()->getLaggedReplicaMode() ) {
+		if ( MediaWikiServices::getInstance()->getDBLoadBalancer()->getLaggedReplicaMode() ) {
 			$s .= ' <strong>' . $this->msg( 'laggedslavemode' )->parse() . '</strong>';
 		}
 
@@ -1088,14 +1093,14 @@ abstract class Skin extends ContextSource {
 	/* these are used extensively in SkinTemplate, but also some other places */
 
 	/**
-	 * @param string $urlaction
+	 * @param string|string[] $urlaction
 	 * @return string
 	 */
 	static function makeMainPageUrl( $urlaction = '' ) {
 		$title = Title::newMainPage();
 		self::checkTitle( $title, '' );
 
-		return $title->getLocalURL( $urlaction );
+		return $title->getLinkURL( $urlaction );
 	}
 
 	/**
@@ -1105,7 +1110,7 @@ abstract class Skin extends ContextSource {
 	 * URL with the protocol specified.
 	 *
 	 * @param string $name Name of the Special page
-	 * @param string $urlaction Query to append
+	 * @param string|string[] $urlaction Query to append
 	 * @param string|null $proto Protocol to use or null for a local URL
 	 * @return string
 	 */
@@ -1121,7 +1126,7 @@ abstract class Skin extends ContextSource {
 	/**
 	 * @param string $name
 	 * @param string $subpage
-	 * @param string $urlaction
+	 * @param string|string[] $urlaction
 	 * @return string
 	 */
 	static function makeSpecialUrlSubpage( $name, $subpage, $urlaction = '' ) {
@@ -1131,7 +1136,7 @@ abstract class Skin extends ContextSource {
 
 	/**
 	 * @param string $name
-	 * @param string $urlaction
+	 * @param string|string[] $urlaction
 	 * @return string
 	 */
 	static function makeI18nUrl( $name, $urlaction = '' ) {
@@ -1142,7 +1147,7 @@ abstract class Skin extends ContextSource {
 
 	/**
 	 * @param string $name
-	 * @param string $urlaction
+	 * @param string|string[] $urlaction
 	 * @return string
 	 */
 	static function makeUrl( $name, $urlaction = '' ) {
@@ -1169,7 +1174,7 @@ abstract class Skin extends ContextSource {
 	/**
 	 * this can be passed the NS number as defined in Language.php
 	 * @param string $name
-	 * @param string $urlaction
+	 * @param string|string[] $urlaction
 	 * @param int $namespace
 	 * @return string
 	 */
@@ -1183,7 +1188,7 @@ abstract class Skin extends ContextSource {
 	/**
 	 * these return an array with the 'href' and boolean 'exists'
 	 * @param string $name
-	 * @param string $urlaction
+	 * @param string|string[] $urlaction
 	 * @return array
 	 */
 	static function makeUrlDetails( $name, $urlaction = '' ) {
@@ -1199,7 +1204,7 @@ abstract class Skin extends ContextSource {
 	/**
 	 * Make URL details where the article exists (or at least it's convenient to think so)
 	 * @param string $name Article name
-	 * @param string $urlaction
+	 * @param string|string[] $urlaction
 	 * @return array
 	 */
 	static function makeKnownUrlDetails( $name, $urlaction = '' ) {
@@ -1248,30 +1253,38 @@ abstract class Skin extends ContextSource {
 	 *
 	 * @return array
 	 */
-	function buildSidebar() {
+	public function buildSidebar() {
 		global $wgEnableSidebarCache, $wgSidebarCacheExpiry;
 
-		$callback = function () {
+		$callback = function ( $old = null, &$ttl = null ) {
 			$bar = [];
 			$this->addToSidebar( $bar, 'sidebar' );
 			Hooks::run( 'SkinBuildSidebar', [ $this, &$bar ] );
+			if ( MessageCache::singleton()->isDisabled() ) {
+				$ttl = WANObjectCache::TTL_UNCACHEABLE; // bug T133069
+			}
 
 			return $bar;
 		};
 
-		if ( $wgEnableSidebarCache ) {
-			$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
-			$sidebar = $cache->getWithSetCallback(
-				$cache->makeKey( 'sidebar', $this->getLanguage()->getCode() ),
-				MessageCache::singleton()->isDisabled()
-					? $cache::TTL_UNCACHEABLE // bug T133069
-					: $wgSidebarCacheExpiry,
+		$msgCache = MessageCache::singleton();
+		$wanCache = MediaWikiServices::getInstance()->getMainWANObjectCache();
+
+		$sidebar = $wgEnableSidebarCache
+			? $wanCache->getWithSetCallback(
+				$wanCache->makeKey( 'sidebar', $this->getLanguage()->getCode() ),
+				$wgSidebarCacheExpiry,
 				$callback,
-				[ 'lockTSE' => 30 ]
-			);
-		} else {
-			$sidebar = $callback();
-		}
+				[
+					'checkKeys' => [
+						// Unless there is both no exact $code override nor an i18n definition
+						// in the the software, the only MediaWiki page to check is for $code.
+						$msgCache->getCheckKey( $this->getLanguage()->getCode() )
+					],
+					'lockTSE' => 30
+				]
+			)
+			: $callback();
 
 		// Apply post-processing to the cached value
 		Hooks::run( 'SidebarBeforeOutput', [ $this, &$sidebar ] );

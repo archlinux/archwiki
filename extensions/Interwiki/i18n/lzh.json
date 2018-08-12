@@ -2,12 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Dimension",
-			"Jason924tw"
+			"Jason924tw",
+			"Zoranzoki21"
 		]
 	},
 	"interwiki": "察與修跨維表",
 	"interwiki-title-norights": "察跨維",
-	"interwiki_intro": "閱[http://www.mediawiki.org/wiki/Interwiki_table MediaWiki.org]之。",
+	"interwiki_intro": "閱[//www.mediawiki.org/wiki/Interwiki_table MediaWiki.org]之。",
 	"interwiki_prefix": "前",
 	"interwiki-prefix-label": "前:",
 	"interwiki_local": "定為本維",

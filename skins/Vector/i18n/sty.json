@@ -5,7 +5,9 @@
 		]
 	},
 	"vector-action-addsection": "Тема өстәгәле",
+	"vector-action-delete": "Йуҡ иткәле",
 	"vector-action-move": "Исемне алмаштырғалы",
+	"vector-action-protect": "Йаҡлағалы",
 	"vector-view-create": "Ҡылғалы",
 	"vector-view-edit": "Төсәткәле",
 	"vector-view-history": "Тариҡны ҡарағалы",

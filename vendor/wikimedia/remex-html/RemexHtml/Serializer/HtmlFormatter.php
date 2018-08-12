@@ -1,6 +1,7 @@
 <?php
 
 namespace RemexHtml\Serializer;
+
 use RemexHtml\HTMLData;
 use RemexHtml\DOM\DOMUtils;
 use RemexHtml\DOM\DOMFormatter;

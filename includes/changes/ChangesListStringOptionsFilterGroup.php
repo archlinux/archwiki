@@ -18,7 +18,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @license GPL 2+
  * @author Matthew Flaschen
  */
 
@@ -35,7 +34,6 @@ use Wikimedia\Rdbms\IDatabase;
  *
  * @since 1.29
  */
-
 class ChangesListStringOptionsFilterGroup extends ChangesListFilterGroup {
 	/**
 	 * Type marker, used by JavaScript
@@ -129,13 +127,6 @@ class ChangesListStringOptionsFilterGroup extends ChangesListFilterGroup {
 	}
 
 	/**
-	 * @inheritDoc
-	 */
-	public function isPerGroupRequestParameter() {
-		return true;
-	}
-
-	/**
 	 * Sets default of filter group.
 	 *
 	 * @param string $defaultValue
@@ -163,30 +154,24 @@ class ChangesListStringOptionsFilterGroup extends ChangesListFilterGroup {
 	/**
 	 * Registers a filter in this group
 	 *
-	 * @param ChangesListStringOptionsFilter $filter ChangesListStringOptionsFilter
+	 * @param ChangesListStringOptionsFilter $filter
 	 */
 	public function registerFilter( ChangesListStringOptionsFilter $filter ) {
 		$this->filters[$filter->getName()] = $filter;
 	}
 
 	/**
-	 * Modifies the query to include the filter group.
-	 *
-	 * The modification is only done if the filter group is in effect.  This means that
-	 * one or more valid and allowed filters were selected.
-	 *
-	 * @param IDatabase $dbr Database, for addQuotes, makeList, and similar
-	 * @param ChangesListSpecialPage $specialPage Current special page
-	 * @param array &$tables Array of tables; see IDatabase::select $table
-	 * @param array &$fields Array of fields; see IDatabase::select $vars
-	 * @param array &$conds Array of conditions; see IDatabase::select $conds
-	 * @param array &$query_options Array of query options; see IDatabase::select $options
-	 * @param array &$join_conds Array of join conditions; see IDatabase::select $join_conds
-	 * @param string $value URL parameter value
+	 * @inheritDoc
 	 */
 	public function modifyQuery( IDatabase $dbr, ChangesListSpecialPage $specialPage,
-		&$tables, &$fields, &$conds, &$query_options, &$join_conds, $value
+		&$tables, &$fields, &$conds, &$query_options, &$join_conds,
+		FormOptions $opts, $isStructuredFiltersEnabled
 	) {
+		if ( !$this->isActive( $isStructuredFiltersEnabled ) ) {
+			return;
+		}
+
+		$value = $opts[ $this->getName() ];
 		$allowedFilterNames = [];
 		foreach ( $this->filters as $filter ) {
 			$allowedFilterNames[] = $filter->getName();
@@ -241,5 +226,23 @@ class ChangesListStringOptionsFilterGroup extends ChangesListFilterGroup {
 		$output['default'] = $this->getDefault();
 
 		return $output;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function addOptions( FormOptions $opts, $allowDefaults, $isStructuredFiltersEnabled ) {
+		$opts->add( $this->getName(), $allowDefaults ? $this->getDefault() : '' );
+	}
+
+	/**
+	 * Check if this filter group is currently active
+	 *
+	 * @param bool $isStructuredUI Is structured filters UI current enabled
+	 * @return bool
+	 */
+	private function isActive( $isStructuredUI ) {
+		// STRING_OPTIONS filter groups are exclusively active on Structured UI
+		return $isStructuredUI;
 	}
 }

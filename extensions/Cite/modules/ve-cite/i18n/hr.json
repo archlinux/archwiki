@@ -7,11 +7,12 @@
 			"Zeljko.filipin",
 			"Milicevic01",
 			"Teoo3",
-			"Bugoslav"
+			"Bugoslav",
+			"Acamicamacaraca"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Knjiga",
-	"visualeditor-cite-tool-name-journal": "Dnevnik",
+	"visualeditor-cite-tool-name-journal": "Časopis",
 	"visualeditor-cite-tool-name-news": "Vijesti",
 	"visualeditor-cite-tool-name-web": "Web stranice",
 	"cite-ve-dialog-reference-editing-reused": "Ova je referencija rabljena $1 {{PLURAL:$1|put|puta}} na ovoj stranici.",
@@ -19,6 +20,7 @@
 	"cite-ve-dialog-reference-options-group-placeholder": "Opće referencije",
 	"cite-ve-dialog-reference-options-name-label": "Ponovno koristi pod ovim imenom",
 	"cite-ve-dialog-reference-options-section": "Mogućnosti",
+	"cite-ve-dialog-reference-placeholder": "Ovdje napišite ili kopirajte referencu ili umetnite predložak za citiranje.",
 	"cite-ve-dialog-reference-title": "Izvori",
 	"cite-ve-dialog-reference-useexisting-full-label": "Ponovna uporaba citata koji već postoji na ovoj stranici",
 	"cite-ve-dialog-reference-useexisting-label": "Koristi postojeći izvor",

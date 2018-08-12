@@ -5,7 +5,7 @@
 		]
 	},
 	"pfunc_desc": "Mèlyore lo parsor avouéc des fonccions logiques.",
-	"pfunc_time_error": "Èrror : temps envalido",
+	"pfunc_time_error": "Fôta : temps pas justo",
 	"pfunc_time_too_long": "Èrror : trop grant nombro d’apèls a #time",
 	"pfunc_rel2abs_invalid_depth": "Èrror : provondior envalida dens lo chemin « $1 » (at tâchiê d’arrevar a un nivél en-dessus du nuod racena)",
 	"pfunc_expr_stack_exhausted": "Èrror d’èxprèssion : pila èpouesiê",
@@ -17,7 +17,7 @@
 	"pfunc_expr_unexpected_closing_bracket": "Èrror d’èxprèssion : parentèsa cllosenta emprèvua",
 	"pfunc_expr_unrecognised_punctuation": "Fôta d’èxprèssion : caractèro de ponctuacion « $1 » pas recognu.",
 	"pfunc_expr_unclosed_bracket": "Èrror d’èxprèssion : parentèsa pas cllôsa",
-	"pfunc_expr_division_by_zero": "Division per zérô",
+	"pfunc_expr_division_by_zero": "Division per zérô.",
 	"pfunc_expr_invalid_argument": "Argument fôx por « $1 » : < -1 ou ben > 1",
 	"pfunc_expr_invalid_argument_ln": "Argument fôx por « ln » : ≤ 0",
 	"pfunc_expr_unknown_error": "Èrror d’èxprèssion : èrror encognua ($1)",

@@ -11,7 +11,8 @@
 			"Sarrus",
 			"McDutchie",
 			"Macofe",
-			"Ribewiki"
+			"Ribewiki",
+			"Jorn Ari"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Bog",
@@ -29,5 +30,6 @@
 	"cite-ve-reference-input-placeholder": "Søg i de aktuelle referencer",
 	"cite-ve-referenceslist-isempty": "Der er ingen referencer med gruppen \"$1\" på denne side, som kan medtages i denne liste.",
 	"cite-ve-referenceslist-isempty-default": "Der er ingen referencer på denne side som kan medtages i denne liste.",
-	"cite-ve-referenceslist-missingref": "Denne reference er defineret i en skabelon eller en anden genereret blok, og kan foreløbig kun redigeres i wikikode tilstand."
+	"cite-ve-referenceslist-missingref": "Denne reference er defineret i en skabelon eller en anden genereret blok, og kan foreløbig kun redigeres i wikikode tilstand.",
+	"cite-ve-referenceslist-missingreflist": "Denne referenceliste genereres af en skabelon, og kan nu kun redigeres i kildefunktion."
 }

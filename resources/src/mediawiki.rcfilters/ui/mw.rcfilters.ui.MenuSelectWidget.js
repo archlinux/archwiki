@@ -32,16 +32,18 @@
 		this.views = {};
 		this.userSelecting = false;
 
-		this.inputValue = '';
+		this.menuInitialized = false;
 		this.$overlay = config.$overlay || this.$element;
 		this.$body = $( '<div>' ).addClass( 'mw-rcfilters-ui-menuSelectWidget-body' );
 		this.footers = [];
 
 		// Parent
-		mw.rcfilters.ui.MenuSelectWidget.parent.call( this, $.extend( {
+		mw.rcfilters.ui.MenuSelectWidget.parent.call( this, $.extend( config, {
 			$autoCloseIgnore: this.$overlay,
-			width: 650
-		}, config ) );
+			width: 650,
+			// Our filtering is done through the model
+			filterFromInput: false
+		} ) );
 		this.setGroupElement(
 			$( '<div>' )
 				.addClass( 'mw-rcfilters-ui-menuSelectWidget-group' )
@@ -64,8 +66,8 @@
 
 		// Events
 		this.model.connect( this, {
-			update: 'onModelUpdate',
-			initialize: 'onModelInitialize'
+			initialize: 'onModelInitialize',
+			searchChange: 'onModelSearchChange'
 		} );
 
 		// Initialization
@@ -103,7 +105,7 @@
 		}.bind( this ) );
 
 		// Switch to the correct view
-		this.switchView( this.model.getCurrentView() );
+		this.updateView();
 	};
 
 	/* Initialize */
@@ -112,32 +114,35 @@
 
 	/* Events */
 
-	/**
-	 * @event itemVisibilityChange
-	 *
-	 * Item visibility has changed
-	 */
-
 	/* Methods */
-
-	/**
-	 * Respond to model update event
-	 */
-	mw.rcfilters.ui.MenuSelectWidget.prototype.onModelUpdate = function () {
-		// Change view
-		this.switchView( this.model.getCurrentView() );
+	mw.rcfilters.ui.MenuSelectWidget.prototype.onModelSearchChange = function () {
+		this.updateView();
 	};
 
 	/**
-	 * Respond to model initialize event. Populate the menu from the model
+	 * @inheritdoc
 	 */
-	mw.rcfilters.ui.MenuSelectWidget.prototype.onModelInitialize = function () {
+	mw.rcfilters.ui.MenuSelectWidget.prototype.toggle = function ( show ) {
+		this.lazyMenuCreation();
+		mw.rcfilters.ui.MenuSelectWidget.parent.prototype.toggle.call( this, show );
+		// Always open this menu downwards. FilterTagMultiselectWidget scrolls it into view.
+		this.setVerticalPosition( 'below' );
+	};
+
+	/**
+	 * lazy creation of the menu
+	 */
+	mw.rcfilters.ui.MenuSelectWidget.prototype.lazyMenuCreation = function () {
 		var widget = this,
+			items = [],
 			viewGroupCount = {},
 			groups = this.model.getFilterGroups();
 
-		// Reset
-		this.clearItems();
+		if ( this.menuInitialized ) {
+			return;
+		}
+
+		this.menuInitialized = true;
 
 		// Count groups per view
 		$.each( groups, function ( groupName, groupModel ) {
@@ -172,6 +177,8 @@
 					currentItems.push(
 						new mw.rcfilters.ui.FilterMenuOptionWidget(
 							widget.controller,
+							widget.model,
+							widget.model.getInvertModel(),
 							filterItem,
 							{
 								$overlay: widget.$overlay
@@ -184,23 +191,28 @@
 				// without rebuilding the widgets each time
 				widget.views[ view ] = widget.views[ view ] || [];
 				widget.views[ view ] = widget.views[ view ].concat( currentItems );
+				items = items.concat( currentItems );
 			}
 		} );
 
-		this.switchView( this.model.getCurrentView() );
+		this.addItems( items );
+		this.updateView();
 	};
 
 	/**
-	 * Switch view
-	 *
-	 * @param {string} [viewName] View name. If not given, default is used.
+	 * Respond to model initialize event. Populate the menu from the model
 	 */
-	mw.rcfilters.ui.MenuSelectWidget.prototype.switchView = function ( viewName ) {
-		viewName = viewName || 'default';
+	mw.rcfilters.ui.MenuSelectWidget.prototype.onModelInitialize = function () {
+		this.menuInitialized = false;
+	};
+
+	/**
+	 * Update view
+	 */
+	mw.rcfilters.ui.MenuSelectWidget.prototype.updateView = function () {
+		var viewName = this.model.getCurrentView();
 
 		if ( this.views[ viewName ] && this.currentView !== viewName ) {
-			this.clearItems();
-			this.addItems( this.views[ viewName ] );
 			this.updateFooterVisibility( viewName );
 
 			this.$element
@@ -210,8 +222,10 @@
 
 			this.currentView = viewName;
 			this.scrollToTop();
-			this.clip();
 		}
+
+		this.postProcessItems();
+		this.clip();
 	};
 
 	/**
@@ -233,24 +247,18 @@
 	};
 
 	/**
-	 * @fires itemVisibilityChange
-	 * @inheritdoc
+	 * Post-process items after the visibility changed. Make sure
+	 * that we always have an item selected, and that the no-results
+	 * widget appears if the menu is empty.
 	 */
-	mw.rcfilters.ui.MenuSelectWidget.prototype.updateItemVisibility = function () {
+	mw.rcfilters.ui.MenuSelectWidget.prototype.postProcessItems = function () {
 		var i,
 			itemWasSelected = false,
-			inputVal = this.$input.val(),
 			items = this.getItems();
 
-		// Since the method hides/shows items, we don't want to
-		// call it unless the input actually changed
-		if (
-			!this.userSelecting &&
-			this.inputValue !== inputVal
-		) {
-			// Parent method
-			mw.rcfilters.ui.MenuSelectWidget.parent.prototype.updateItemVisibility.call( this );
-
+		// If we are not already selecting an item, always make sure
+		// that the top item is selected
+		if ( !this.userSelecting ) {
 			// Select the first item in the list
 			for ( i = 0; i < items.length; i++ ) {
 				if (
@@ -266,11 +274,6 @@
 			if ( !itemWasSelected ) {
 				this.selectItem( null );
 			}
-
-			// Cache value
-			this.inputValue = inputVal;
-
-			this.emit( 'itemVisibilityChange' );
 		}
 
 		this.noResults.toggle( !this.getItems().some( function ( item ) {
@@ -285,22 +288,10 @@
 	 * @return {mw.rcfilters.ui.ItemMenuOptionWidget} Option widget
 	 */
 	mw.rcfilters.ui.MenuSelectWidget.prototype.getItemFromModel = function ( model ) {
+		this.lazyMenuCreation();
 		return this.views[ model.getGroupModel().getView() ].filter( function ( item ) {
 			return item.getName() === model.getName();
 		} )[ 0 ];
-	};
-
-	/**
-	 * Override the item matcher to use the model's match process
-	 *
-	 * @inheritdoc
-	 */
-	mw.rcfilters.ui.MenuSelectWidget.prototype.getItemMatcher = function ( s ) {
-		var results = this.model.findMatches( s, true );
-
-		return function ( item ) {
-			return results.indexOf( item.getModel() ) > -1;
-		};
 	};
 
 	/**
@@ -308,7 +299,7 @@
 	 */
 	mw.rcfilters.ui.MenuSelectWidget.prototype.onKeyDown = function ( e ) {
 		var nextItem,
-			currentItem = this.getHighlightedItem() || this.getSelectedItem();
+			currentItem = this.findHighlightedItem() || this.findSelectedItem();
 
 		// Call parent
 		mw.rcfilters.ui.MenuSelectWidget.parent.prototype.onKeyDown.call( this, e );
@@ -321,12 +312,12 @@
 				case OO.ui.Keys.UP:
 				case OO.ui.Keys.LEFT:
 					// Get the next item
-					nextItem = this.getRelativeSelectableItem( currentItem, -1 );
+					nextItem = this.findRelativeSelectableItem( currentItem, -1 );
 					break;
 				case OO.ui.Keys.DOWN:
 				case OO.ui.Keys.RIGHT:
 					// Get the next item
-					nextItem = this.getRelativeSelectableItem( currentItem, 1 );
+					nextItem = this.findRelativeSelectableItem( currentItem, 1 );
 					break;
 			}
 

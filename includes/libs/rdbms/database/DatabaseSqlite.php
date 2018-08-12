@@ -46,15 +46,18 @@ class DatabaseSqlite extends Database {
 	protected $trxMode;
 
 	/** @var int The number of rows affected as an integer */
-	protected $mAffectedRows;
+	protected $lastAffectedRowCount;
 	/** @var resource */
-	protected $mLastResult;
+	protected $lastResultHandle;
 
 	/** @var PDO */
-	protected $mConn;
+	protected $conn;
 
 	/** @var FSLockManager (hopefully on the same server as the DB) */
 	protected $lockMgr;
+
+	/** @var array List of shared database already attached to this connection */
+	private $alreadyAttached = [];
 
 	/**
 	 * Additional params include:
@@ -66,33 +69,13 @@ class DatabaseSqlite extends Database {
 	 */
 	function __construct( array $p ) {
 		if ( isset( $p['dbFilePath'] ) ) {
-			parent::__construct( $p );
-			// Standalone .sqlite file mode.
-			// Super doesn't open when $user is false, but we can work with $dbName,
-			// which is derived from the file path in this case.
-			$this->openFile( $p['dbFilePath'] );
-			$lockDomain = md5( $p['dbFilePath'] );
-		} elseif ( !isset( $p['dbDirectory'] ) ) {
-			throw new InvalidArgumentException( "Need 'dbDirectory' or 'dbFilePath' parameter." );
-		} else {
+			$this->dbPath = $p['dbFilePath'];
+			$lockDomain = md5( $this->dbPath );
+		} elseif ( isset( $p['dbDirectory'] ) ) {
 			$this->dbDir = $p['dbDirectory'];
-			$this->mDBname = $p['dbname'];
-			$lockDomain = $this->mDBname;
-			// Stock wiki mode using standard file names per DB.
-			parent::__construct( $p );
-			// Super doesn't open when $user is false, but we can work with $dbName
-			if ( $p['dbname'] && !$this->isOpen() ) {
-				if ( $this->open( $p['host'], $p['user'], $p['password'], $p['dbname'] ) ) {
-					$done = [];
-					foreach ( $this->tableAliases as $params ) {
-						if ( isset( $done[$params['dbname']] ) ) {
-							continue;
-						}
-						$this->attachDatabase( $params['dbname'] );
-						$done[$params['dbname']] = 1;
-					}
-				}
-			}
+			$lockDomain = $p['dbname'];
+		} else {
+			throw new InvalidArgumentException( "Need 'dbDirectory' or 'dbFilePath' parameter." );
 		}
 
 		$this->trxMode = isset( $p['trxMode'] ) ? strtoupper( $p['trxMode'] ) : null;
@@ -107,6 +90,12 @@ class DatabaseSqlite extends Database {
 			'domain' => $lockDomain,
 			'lockDirectory' => "{$this->dbDir}/locks"
 		] );
+
+		parent::__construct( $p );
+	}
+
+	protected static function getAttributes() {
+		return [ self::ATTR_DB_LEVEL_LOCKING => true ];
 	}
 
 	/**
@@ -126,6 +115,28 @@ class DatabaseSqlite extends Database {
 		$db = Database::factory( 'sqlite', $p );
 
 		return $db;
+	}
+
+	protected function doInitConnection() {
+		if ( $this->dbPath !== null ) {
+			// Standalone .sqlite file mode.
+			$this->openFile( $this->dbPath, $this->connectionParams['dbname'] );
+		} elseif ( $this->dbDir !== null ) {
+			// Stock wiki mode using standard file names per DB
+			if ( strlen( $this->connectionParams['dbname'] ) ) {
+				$this->open(
+					$this->connectionParams['host'],
+					$this->connectionParams['user'],
+					$this->connectionParams['password'],
+					$this->connectionParams['dbname']
+				);
+			} else {
+				// Caller will manually call open() later?
+				$this->connLogger->debug( __METHOD__ . ': no database opened.' );
+			}
+		} else {
+			throw new InvalidArgumentException( "Need 'dbDirectory' or 'dbFilePath' parameter." );
+		}
 	}
 
 	/**
@@ -148,7 +159,7 @@ class DatabaseSqlite extends Database {
 	 *  NOTE: only $dbName is used, the other parameters are irrelevant for SQLite databases
 	 *
 	 * @param string $server
-	 * @param string $user
+	 * @param string $user Unused
 	 * @param string $pass
 	 * @param string $dbName
 	 *
@@ -159,49 +170,51 @@ class DatabaseSqlite extends Database {
 		$this->close();
 		$fileName = self::generateFileName( $this->dbDir, $dbName );
 		if ( !is_readable( $fileName ) ) {
-			$this->mConn = false;
+			$this->conn = false;
 			throw new DBConnectionError( $this, "SQLite database not accessible" );
 		}
-		$this->openFile( $fileName );
+		$this->openFile( $fileName, $dbName );
 
-		return (bool)$this->mConn;
+		return (bool)$this->conn;
 	}
 
 	/**
 	 * Opens a database file
 	 *
 	 * @param string $fileName
+	 * @param string $dbName
 	 * @throws DBConnectionError
 	 * @return PDO|bool SQL connection or false if failed
 	 */
-	protected function openFile( $fileName ) {
+	protected function openFile( $fileName, $dbName ) {
 		$err = false;
 
 		$this->dbPath = $fileName;
 		try {
-			if ( $this->mFlags & self::DBO_PERSISTENT ) {
-				$this->mConn = new PDO( "sqlite:$fileName", '', '',
+			if ( $this->flags & self::DBO_PERSISTENT ) {
+				$this->conn = new PDO( "sqlite:$fileName", '', '',
 					[ PDO::ATTR_PERSISTENT => true ] );
 			} else {
-				$this->mConn = new PDO( "sqlite:$fileName", '', '' );
+				$this->conn = new PDO( "sqlite:$fileName", '', '' );
 			}
 		} catch ( PDOException $e ) {
 			$err = $e->getMessage();
 		}
 
-		if ( !$this->mConn ) {
+		if ( !$this->conn ) {
 			$this->queryLogger->debug( "DB connection error: $err\n" );
 			throw new DBConnectionError( $this, $err );
 		}
 
-		$this->mOpened = !!$this->mConn;
-		if ( $this->mOpened ) {
+		$this->opened = is_object( $this->conn );
+		if ( $this->opened ) {
+			$this->dbName = $dbName;
 			# Set error codes only, don't raise exceptions
-			$this->mConn->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_SILENT );
+			$this->conn->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_SILENT );
 			# Enforce LIKE to be case sensitive, just like MySQL
 			$this->query( 'PRAGMA case_sensitive_like = 1' );
 
-			return $this->mConn;
+			return $this->conn;
 		}
 
 		return false;
@@ -224,7 +237,7 @@ class DatabaseSqlite extends Database {
 	 * @return bool
 	 */
 	protected function closeConnection() {
-		$this->mConn = null;
+		$this->conn = null;
 
 		return true;
 	}
@@ -302,6 +315,14 @@ class DatabaseSqlite extends Database {
 		return parent::isWriteQuery( $sql ) && !preg_match( '/^(ATTACH|PRAGMA)\b/i', $sql );
 	}
 
+	protected function isTransactableQuery( $sql ) {
+		return parent::isTransactableQuery( $sql ) && !in_array(
+			$this->getQueryVerb( $sql ),
+			[ 'ATTACH', 'PRAGMA' ],
+			true
+		);
+	}
+
 	/**
 	 * SQLite doesn't allow buffered results or data seeking etc, so we'll use fetchAll as the result
 	 *
@@ -309,13 +330,13 @@ class DatabaseSqlite extends Database {
 	 * @return bool|ResultWrapper
 	 */
 	protected function doQuery( $sql ) {
-		$res = $this->mConn->query( $sql );
+		$res = $this->getBindingHandle()->query( $sql );
 		if ( $res === false ) {
 			return false;
 		}
 
 		$r = $res instanceof ResultWrapper ? $res->result : $res;
-		$this->mAffectedRows = $r->rowCount();
+		$this->lastAffectedRowCount = $r->rowCount();
 		$res = new ResultWrapper( $this, $r->fetchAll() );
 
 		return $res;
@@ -445,7 +466,7 @@ class DatabaseSqlite extends Database {
 	 */
 	function insertId() {
 		// PDO::lastInsertId yields a string :(
-		return intval( $this->mConn->lastInsertId() );
+		return intval( $this->getBindingHandle()->lastInsertId() );
 	}
 
 	/**
@@ -470,10 +491,10 @@ class DatabaseSqlite extends Database {
 	 * @return string
 	 */
 	function lastError() {
-		if ( !is_object( $this->mConn ) ) {
+		if ( !is_object( $this->conn ) ) {
 			return "Cannot return last error, no db connection";
 		}
-		$e = $this->mConn->errorInfo();
+		$e = $this->conn->errorInfo();
 
 		return isset( $e[2] ) ? $e[2] : '';
 	}
@@ -482,10 +503,10 @@ class DatabaseSqlite extends Database {
 	 * @return string
 	 */
 	function lastErrno() {
-		if ( !is_object( $this->mConn ) ) {
+		if ( !is_object( $this->conn ) ) {
 			return "Cannot return last error, no db connection";
 		} else {
-			$info = $this->mConn->errorInfo();
+			$info = $this->conn->errorInfo();
 
 			return $info[1];
 		}
@@ -494,8 +515,8 @@ class DatabaseSqlite extends Database {
 	/**
 	 * @return int
 	 */
-	function affectedRows() {
-		return $this->mAffectedRows;
+	protected function fetchAffectedRowCount() {
+		return $this->lastAffectedRowCount;
 	}
 
 	/**
@@ -696,15 +717,20 @@ class DatabaseSqlite extends Database {
 	/**
 	 * @return bool
 	 */
-	function wasErrorReissuable() {
-		return $this->lastErrno() == 17; // SQLITE_SCHEMA;
-	}
-
-	/**
-	 * @return bool
-	 */
 	function wasReadOnlyError() {
 		return $this->lastErrno() == 8; // SQLITE_READONLY;
+	}
+
+	public function wasConnectionError( $errno ) {
+		return $errno == 17; // SQLITE_SCHEMA;
+	}
+
+	protected function wasKnownStatementRollbackError() {
+		// ON CONFLICT ROLLBACK clauses make it so that SQLITE_CONSTRAINT error is
+		// ambiguous with regard to whether it implies a ROLLBACK or an ABORT happened.
+		// https://sqlite.org/lang_createtable.html#uniqueconst
+		// https://sqlite.org/lang_conflict.html
+		return false;
 	}
 
 	/**
@@ -718,7 +744,7 @@ class DatabaseSqlite extends Database {
 	 * @return string Version information from the database
 	 */
 	function getServerVersion() {
-		$ver = $this->mConn->getAttribute( PDO::ATTR_SERVER_VERSION );
+		$ver = $this->getBindingHandle()->getAttribute( PDO::ATTR_SERVER_VERSION );
 
 		return $ver;
 	}
@@ -750,7 +776,7 @@ class DatabaseSqlite extends Database {
 		} else {
 			$this->query( 'BEGIN', $fname );
 		}
-		$this->mTrxLevel = 1;
+		$this->trxLevel = 1;
 	}
 
 	/**
@@ -808,8 +834,17 @@ class DatabaseSqlite extends Database {
 			);
 			return "x'" . bin2hex( (string)$s ) . "'";
 		} else {
-			return $this->mConn->quote( (string)$s );
+			return $this->getBindingHandle()->quote( (string)$s );
 		}
+	}
+
+	public function buildSubstring( $input, $startPosition, $length = null ) {
+		$this->assertBuildSubstringParams( $startPosition, $length );
+		$params = [ $input, $startPosition ];
+		if ( $length !== null ) {
+			$params[] = $length;
+		}
+		return 'SUBSTR(' . implode( ',', $params ) . ')';
 	}
 
 	/**
@@ -1033,15 +1068,41 @@ class DatabaseSqlite extends Database {
 		return $this->query( $sql, $fName );
 	}
 
-	protected function requiresDatabaseUser() {
-		return false; // just a file
+	public function setTableAliases( array $aliases ) {
+		parent::setTableAliases( $aliases );
+		foreach ( $this->tableAliases as $params ) {
+			if ( isset( $this->alreadyAttached[$params['dbname']] ) ) {
+				continue;
+			}
+			$this->attachDatabase( $params['dbname'] );
+			$this->alreadyAttached[$params['dbname']] = true;
+		}
+	}
+
+	public function resetSequenceForTable( $table, $fname = __METHOD__ ) {
+		$encTable = $this->addIdentifierQuotes( 'sqlite_sequence' );
+		$encName = $this->addQuotes( $this->tableName( $table, 'raw' ) );
+		$this->query( "DELETE FROM $encTable WHERE name = $encName", $fname );
+	}
+
+	public function databasesAreIndependent() {
+		return true;
 	}
 
 	/**
 	 * @return string
 	 */
 	public function __toString() {
-		return 'SQLite ' . (string)$this->mConn->getAttribute( PDO::ATTR_SERVER_VERSION );
+		return is_object( $this->conn )
+			? 'SQLite ' . (string)$this->conn->getAttribute( PDO::ATTR_SERVER_VERSION )
+			: '(not connected)';
+	}
+
+	/**
+	 * @return PDO
+	 */
+	protected function getBindingHandle() {
+		return parent::getBindingHandle();
 	}
 }
 

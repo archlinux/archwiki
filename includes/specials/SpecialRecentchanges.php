@@ -22,7 +22,7 @@
  */
 
 use MediaWiki\MediaWikiServices;
-use Wikimedia\Rdbms\ResultWrapper;
+use Wikimedia\Rdbms\IResultWrapper;
 use Wikimedia\Rdbms\FakeResultWrapper;
 
 /**
@@ -33,10 +33,11 @@ use Wikimedia\Rdbms\FakeResultWrapper;
 class SpecialRecentChanges extends ChangesListSpecialPage {
 
 	protected static $savedQueriesPreferenceName = 'rcfilters-saved-queries';
+	protected static $daysPreferenceName = 'rcdays'; // Use general RecentChanges preference
+	protected static $limitPreferenceName = 'rcfilters-limit'; // Use RCFilters-specific preference
 
 	private $watchlistFilterGroupDefinition;
 
-	// @codingStandardsIgnoreStart Needed "useless" override to change parameters.
 	public function __construct( $name = 'Recentchanges', $restriction = '' ) {
 		parent::__construct( $name, $restriction );
 
@@ -132,7 +133,6 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 			}
 		];
 	}
-	// @codingStandardsIgnoreEnd
 
 	/**
 	 * Main execution point
@@ -164,10 +164,6 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 			true
 		);
 		parent::execute( $subpage );
-
-		if ( $this->isStructuredFilterUiEnabled() ) {
-			$out->addJsConfigVars( 'wgStructuredChangeFiltersLiveUpdateSupported', true );
-		}
 	}
 
 	/**
@@ -212,8 +208,12 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 		$reviewStatus = $this->getFilterGroup( 'reviewStatus' );
 		if ( $reviewStatus !== null ) {
 			// Conditional on feature being available and rights
-			$hidePatrolled = $reviewStatus->getFilter( 'hidepatrolled' );
-			$hidePatrolled->setDefault( $user->getBoolOption( 'hidepatrolled' ) );
+			if ( $user->getBoolOption( 'hidepatrolled' ) ) {
+				$reviewStatus->setDefault( 'unpatrolled' );
+				$legacyReviewStatus = $this->getFilterGroup( 'legacyReviewStatus' );
+				$legacyHidePatrolled = $legacyReviewStatus->getFilter( 'hidepatrolled' );
+				$legacyHidePatrolled->setDefault( true );
+			}
 		}
 
 		$changeType = $this->getFilterGroup( 'changeType' );
@@ -222,24 +222,6 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 			// Conditional on feature being available
 			$hideCategorization->setDefault( $user->getBoolOption( 'hidecategorization' ) );
 		}
-	}
-
-	/**
-	 * Get a FormOptions object containing the default options
-	 *
-	 * @return FormOptions
-	 */
-	public function getDefaultOptions() {
-		$opts = parent::getDefaultOptions();
-
-		$opts->add( 'days', $this->getDefaultDays(), FormOptions::FLOAT );
-		$opts->add( 'limit', $this->getDefaultLimit() );
-		$opts->add( 'from', '' );
-
-		$opts->add( 'categories', '' );
-		$opts->add( 'categories_any', false );
-
-		return $opts;
 	}
 
 	/**
@@ -287,36 +269,6 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 		}
 	}
 
-	public function validateOptions( FormOptions $opts ) {
-		$opts->validateIntBounds( 'limit', 0, 5000 );
-		$opts->validateBounds( 'days', 0, $this->getConfig()->get( 'RCMaxAge' ) / ( 3600 * 24 ) );
-		parent::validateOptions( $opts );
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	protected function buildQuery( &$tables, &$fields, &$conds,
-		&$query_options, &$join_conds, FormOptions $opts
-	) {
-		$dbr = $this->getDB();
-		parent::buildQuery( $tables, $fields, $conds,
-			$query_options, $join_conds, $opts );
-
-		// Calculate cutoff
-		$cutoff_unixtime = time() - $opts['days'] * 3600 * 24;
-		$cutoff = $dbr->timestamp( $cutoff_unixtime );
-
-		$fromValid = preg_match( '/^[0-9]{14}$/', $opts['from'] );
-		if ( $fromValid && $opts['from'] > wfTimestamp( TS_MW, $cutoff ) ) {
-			$cutoff = $dbr->timestamp( $opts['from'] );
-		} else {
-			$opts->reset( 'from' );
-		}
-
-		$conds[] = 'rc_timestamp >= ' . $dbr->addQuotes( $cutoff );
-	}
-
 	/**
 	 * @inheritDoc
 	 */
@@ -326,8 +278,10 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 		$dbr = $this->getDB();
 		$user = $this->getUser();
 
-		$tables[] = 'recentchanges';
-		$fields = array_merge( RecentChange::selectFields(), $fields );
+		$rcQuery = RecentChange::getQueryInfo();
+		$tables = array_merge( $tables, $rcQuery['tables'] );
+		$fields = array_merge( $rcQuery['fields'], $fields );
+		$join_conds = array_merge( $join_conds, $rcQuery['joins'] );
 
 		// JOIN on watchlist for users
 		if ( $user->isLoggedIn() && $user->isAllowed( 'viewmywatchlist' ) ) {
@@ -395,11 +349,6 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 			$join_conds
 		);
 
-		// Build the final data
-		if ( $this->getConfig()->get( 'AllowCategorizedRecentChanges' ) ) {
-			$this->filterByCategories( $rows, $opts );
-		}
-
 		return $rows;
 	}
 
@@ -444,7 +393,7 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 	/**
 	 * Build and output the actual changes list.
 	 *
-	 * @param ResultWrapper $rows Database rows
+	 * @param IResultWrapper $rows Database rows
 	 * @param FormOptions $opts
 	 */
 	public function outputChangesList( $rows, $opts ) {
@@ -644,7 +593,9 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 				/*interface*/false,
 				$wgContLang
 			);
-			$content = $parserOutput->getText();
+			$content = $parserOutput->getText( [
+				'enableSectionEditLinks' => false,
+			] );
 			// Add only metadata here (including the language links), text is added below
 			$this->getOutput()->addParserOutputMetadata( $parserOutput );
 
@@ -656,12 +607,26 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 			$topLinksAttributes = [ 'class' => 'mw-recentchanges-toplinks' ];
 
 			if ( $this->isStructuredFilterUiEnabled() ) {
-				$contentTitle = Html::rawElement( 'div',
-					[ 'class' => 'mw-recentchanges-toplinks-title' ],
-					$this->msg( 'rcfilters-other-review-tools' )->parse()
-				);
+				// Check whether the widget is already collapsed or expanded
+				$collapsedState = $this->getRequest()->getCookie( 'rcfilters-toplinks-collapsed-state' );
+				// Note that an empty/unset cookie means collapsed, so check for !== 'expanded'
+				$topLinksAttributes[ 'class' ] .= $collapsedState !== 'expanded' ?
+					' mw-recentchanges-toplinks-collapsed' : '';
+
+				$this->getOutput()->enableOOUI();
+				$contentTitle = new OOUI\ButtonWidget( [
+					'classes' => [ 'mw-recentchanges-toplinks-title' ],
+					'label' => new OOUI\HtmlSnippet( $this->msg( 'rcfilters-other-review-tools' )->parse() ),
+					'framed' => false,
+					'indicator' => $collapsedState !== 'expanded' ? 'down' : 'up',
+					'flags' => [ 'progressive' ],
+				] );
+
 				$contentWrapper = Html::rawElement( 'div',
-					array_merge( [ 'class' => 'mw-collapsible-content' ], $langAttributes ),
+					array_merge(
+						[ 'class' => 'mw-recentchanges-toplinks-content mw-collapsible-content' ],
+						$langAttributes
+					),
 					$content
 				);
 				$content = $contentTitle . $contentWrapper;
@@ -687,15 +652,11 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 	 */
 	function getExtraOptions( $opts ) {
 		$opts->consumeValues( [
-			'namespace', 'invert', 'associated', 'tagfilter', 'categories', 'categories_any'
+			'namespace', 'invert', 'associated', 'tagfilter'
 		] );
 
 		$extraOpts = [];
 		$extraOpts['namespace'] = $this->namespaceFilterForm( $opts );
-
-		if ( $this->getConfig()->get( 'AllowCategorizedRecentChanges' ) ) {
-			$extraOpts['category'] = $this->categoryFilterForm( $opts );
-		}
 
 		$tagFilter = ChangeTags::buildTagFilterSelector(
 			$opts['tagfilter'], false, $this->getContext() );
@@ -729,7 +690,7 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 	 */
 	public function checkLastModified() {
 		$dbr = $this->getDB();
-		$lastmod = $dbr->selectField( 'recentchanges', 'MAX(rc_timestamp)', false, __METHOD__ );
+		$lastmod = $dbr->selectField( 'recentchanges', 'MAX(rc_timestamp)', '', __METHOD__ );
 
 		return $lastmod;
 	}
@@ -761,28 +722,16 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 	}
 
 	/**
-	 * Create an input to filter changes by categories
-	 *
-	 * @param FormOptions $opts
-	 * @return array
-	 */
-	protected function categoryFilterForm( FormOptions $opts ) {
-		list( $label, $input ) = Xml::inputLabelSep( $this->msg( 'rc_categories' )->text(),
-			'categories', 'mw-categories', false, $opts['categories'] );
-
-		$input .= ' ' . Xml::checkLabel( $this->msg( 'rc_categories_any' )->text(),
-			'categories_any', 'mw-categories_any', $opts['categories_any'] );
-
-		return [ $label, $input ];
-	}
-
-	/**
 	 * Filter $rows by categories set in $opts
 	 *
-	 * @param ResultWrapper &$rows Database rows
+	 * @deprecated since 1.31
+	 *
+	 * @param IResultWrapper &$rows Database rows
 	 * @param FormOptions $opts
 	 */
 	function filterByCategories( &$rows, FormOptions $opts ) {
+		wfDeprecated( __METHOD__, '1.31' );
+
 		$categories = array_map( 'trim', explode( '|', $opts['categories'] ) );
 
 		if ( !count( $categories ) ) {
@@ -843,7 +792,7 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 	/**
 	 * Makes change an option link which carries all the other options
 	 *
-	 * @param string $title Title
+	 * @param string $title
 	 * @param array $override Options to override
 	 * @param array $options Current options
 	 * @param bool $active Whether to show the link in bold
@@ -939,40 +888,32 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 
 		$links = [];
 
-		$filterGroups = $this->getFilterGroups();
-
-		foreach ( $filterGroups as $groupName => $group ) {
-			if ( !$group->isPerGroupRequestParameter() ) {
-				foreach ( $group->getFilters() as $key => $filter ) {
-					if ( $filter->displaysOnUnstructuredUi( $this ) ) {
-						$msg = $filter->getShowHide();
-						$linkMessage = $this->msg( $msg . '-' . $showhide[1 - $options[$key]] );
-						// Extensions can define additional filters, but don't need to define the corresponding
-						// messages. If they don't exist, just fall back to 'show' and 'hide'.
-						if ( !$linkMessage->exists() ) {
-							$linkMessage = $this->msg( $showhide[1 - $options[$key]] );
-						}
-
-						$link = $this->makeOptionsLink( $linkMessage->text(),
-							[ $key => 1 - $options[$key] ], $nondefaults );
-
-						$attribs = [
-							'class' => "$msg rcshowhideoption clshowhideoption",
-							'data-filter-name' => $filter->getName(),
-						];
-
-						if ( $filter->isFeatureAvailableOnStructuredUi( $this ) ) {
-							$attribs['data-feature-in-structured-ui'] = true;
-						}
-
-						$links[] = Html::rawElement(
-							'span',
-							$attribs,
-							$this->msg( $msg )->rawParams( $link )->escaped()
-						);
-					}
-				}
+		foreach ( $this->getLegacyShowHideFilters() as $key => $filter ) {
+			$msg = $filter->getShowHide();
+			$linkMessage = $this->msg( $msg . '-' . $showhide[1 - $options[$key]] );
+			// Extensions can define additional filters, but don't need to define the corresponding
+			// messages. If they don't exist, just fall back to 'show' and 'hide'.
+			if ( !$linkMessage->exists() ) {
+				$linkMessage = $this->msg( $showhide[1 - $options[$key]] );
 			}
+
+			$link = $this->makeOptionsLink( $linkMessage->text(),
+				[ $key => 1 - $options[$key] ], $nondefaults );
+
+			$attribs = [
+				'class' => "$msg rcshowhideoption clshowhideoption",
+				'data-filter-name' => $filter->getName(),
+			];
+
+			if ( $filter->isFeatureAvailableOnStructuredUi( $this ) ) {
+				$attribs['data-feature-in-structured-ui'] = true;
+			}
+
+			$links[] = Html::rawElement(
+				'span',
+				$attribs,
+				$this->msg( $msg )->rawParams( $link )->parse()
+			);
 		}
 
 		// show from this onward link
@@ -1002,11 +943,14 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 		return 60 * 5;
 	}
 
-	function getDefaultLimit() {
-		return $this->getUser()->getIntOption( 'rclimit' );
-	}
+	public function getDefaultLimit() {
+		$systemPrefValue = $this->getUser()->getIntOption( 'rclimit' );
+		// Prefer the RCFilters-specific preference if RCFilters is enabled
+		if ( $this->isStructuredFilterUiEnabled() ) {
+			return $this->getUser()->getIntOption( static::$limitPreferenceName, $systemPrefValue );
+		}
 
-	function getDefaultDays() {
-		return floatval( $this->getUser()->getOption( 'rcdays' ) );
+		// Otherwise, use the system rclimit preference value
+		return $systemPrefValue;
 	}
 }

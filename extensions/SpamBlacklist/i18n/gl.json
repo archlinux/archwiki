@@ -17,7 +17,7 @@
 	"spam-invalid-lines": "{{PLURAL:$1|A seguinte liña|As seguintes}} da lista negra de spam {{PLURAL:$1|é unha expresión regular inválida|son expresións regulares inválidas}} e {{PLURAL:$1|haina|hainas}} que corrixir antes de gardar a páxina:",
 	"spam-blacklist-desc": "Ferramenta antispam baseada en expresións regulares que permite incluír enderezos URL e enderezos de correo electrónico nunha lista negra para os usuarios rexistrados",
 	"log-name-spamblacklist": "Rexistro da lista negra de spam",
-	"log-description-spamblacklist": "Este rexistro fai un seguimento das coincidencias coa lista negra de spam.",
+	"log-description-spamblacklist": "Este rexistro fai un seguimento das coincidencias coa lista negra de publicidade.",
 	"logentry-spamblacklist-hit": "$1 provocou a activación da lista negra de spam en \"$3\" ao intentar engadir $4.",
 	"right-spamblacklistlog": "Ver o rexistro da lista negra de spam",
 	"action-spamblacklistlog": "ver o rexistro da lista negra de spam",

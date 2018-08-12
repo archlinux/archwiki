@@ -29,7 +29,10 @@ window.Demo = function Demo() {
 				new OO.ui.MenuOptionWidget( { data: 'icons', label: 'Icons' } ),
 				new OO.ui.MenuOptionWidget( { data: 'toolbars', label: 'Toolbars' } ),
 				new OO.ui.MenuOptionWidget( { data: 'widgets', label: 'Widgets' } )
-			]
+			],
+			// Funny effect... This dropdown is considered to always be "out of viewport"
+			// due to the getViewportSpacing() override below. Don't let it disappear.
+			hideWhenOutOfView: false
 		},
 		classes: [ 'demo-pageDropdown' ]
 	} );
@@ -94,10 +97,20 @@ window.Demo = function Demo() {
 		.append( this.$menu );
 	$( 'html' ).attr( 'dir', this.mode.direction );
 	$( 'head' ).append( this.stylesheetLinks );
+	$( 'body' ).addClass( 'oo-ui-theme-' + this.mode.theme );
 	// eslint-disable-next-line new-cap
 	OO.ui.theme = new OO.ui[ this.constructor.static.themes[ this.mode.theme ] + 'Theme' ]();
 	OO.ui.isMobile = function () {
 		return demo.mode.platform === 'mobile';
+	};
+	OO.ui.getViewportSpacing = function () {
+		return {
+			// Contents of dialogs are shown on top of the fixed menu
+			top: demo.mode.page === 'dialogs' ? 0 : demo.$menu.outerHeight(),
+			right: 0,
+			bottom: 0,
+			left: 0
+		};
 	};
 };
 
@@ -168,9 +181,11 @@ Demo.static.additionalThemeImagesSuffixes = {
 		'-icons-editing-list',
 		'-icons-editing-advanced',
 		'-icons-media',
+		'-icons-location',
 		'-icons-user',
 		'-icons-layout',
-		'-icons-accessibility'
+		'-icons-accessibility',
+		'-icons-wikimedia'
 	]
 };
 
@@ -285,10 +300,10 @@ Demo.prototype.initialize = function () {
  * Will load a new page.
  */
 Demo.prototype.onModeChange = function () {
-	var page = this.pageMenu.getSelectedItem().getData(),
-		theme = this.themeSelect.getSelectedItem().getData(),
-		direction = this.directionSelect.getSelectedItem().getData(),
-		platform = this.platformSelect.getSelectedItem().getData();
+	var page = this.pageMenu.findSelectedItem().getData(),
+		theme = this.themeSelect.findSelectedItem().getData(),
+		direction = this.directionSelect.findSelectedItem().getData(),
+		platform = this.platformSelect.findSelectedItem().getData();
 
 	history.pushState( null, document.title, this.getUrlQuery( [ page, theme, direction, platform ] ) );
 	$( window ).triggerHandler( 'popstate' );
@@ -485,6 +500,7 @@ Demo.prototype.normalizeQuery = function () {
  */
 Demo.prototype.destroy = function () {
 	$( 'body' ).removeClass( 'oo-ui-ltr oo-ui-rtl' );
+	$( 'body' ).removeClass( 'oo-ui-theme-' + this.mode.theme );
 	$( this.stylesheetLinks ).remove();
 	this.$element.remove();
 	this.emit( 'destroy' );

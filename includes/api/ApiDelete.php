@@ -1,9 +1,5 @@
 <?php
 /**
- *
- *
- * Created on Jun 30, 2007
- *
  * Copyright © 2007 Roan Kattouw "<Firstname>.<Lastname>@gmail.com"
  *
  * This program is free software; you can redistribute it and/or modify
@@ -59,7 +55,7 @@ class ApiDelete extends ApiBase {
 
 		// If change tagging was requested, check that the user is allowed to tag,
 		// and the tags are valid
-		if ( count( $params['tags'] ) ) {
+		if ( $params['tags'] ) {
 			$tagStatus = ChangeTags::canAddTagsAccompanyingChange( $params['tags'], $user );
 			if ( !$tagStatus->isOK() ) {
 				$this->dieStatus( $tagStatus );
@@ -120,7 +116,8 @@ class ApiDelete extends ApiBase {
 			$hasHistory = false;
 			$reason = $page->getAutoDeleteReason( $hasHistory );
 			if ( $reason === false ) {
-				return Status::newFatal( 'cannotdelete', $title->getPrefixedText() );
+				// Should be reachable only if the page has no revisions
+				return Status::newFatal( 'cannotdelete', $title->getPrefixedText() ); // @codeCoverageIgnore
 			}
 		}
 

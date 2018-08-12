@@ -102,7 +102,7 @@ class HTMLMultiSelectField extends HTMLFormField implements HTMLNestedFilterable
 		if ( $this->mParent instanceof OOUIHTMLForm ) {
 			throw new MWException( 'HTMLMultiSelectField#getOneCheckbox() is not supported' );
 		} else {
-			$elementFunc = [ 'Html', $this->mOptionsLabelsNotFromMessage ? 'rawElement' : 'element' ];
+			$elementFunc = [ Html::class, $this->mOptionsLabelsNotFromMessage ? 'rawElement' : 'element' ];
 			$checkbox =
 				Xml::check( "{$this->mName}[]", $checked, $attribs ) .
 				'&#160;' .
@@ -125,45 +125,87 @@ class HTMLMultiSelectField extends HTMLFormField implements HTMLNestedFilterable
 	 * @return array Options for inclusion in a select or whatever.
 	 */
 	public function getOptionsOOUI() {
-		$options = parent::getOptionsOOUI();
-		foreach ( $options as &$option ) {
-			$option['disabled'] = in_array( $option['data'], $this->mParams['disabled-options'], true );
-		}
-		return $options;
+		// Sections make this difficult. See getInputOOUI().
+		throw new MWException( 'HTMLMultiSelectField#getOptionsOOUI() is not supported' );
 	}
 
 	/**
 	 * Get the OOUI version of this field.
 	 *
+	 * Returns OOUI\CheckboxMultiselectInputWidget for fields that only have one section,
+	 * string otherwise.
+	 *
 	 * @since 1.28
 	 * @param string[] $value
-	 * @return OOUI\CheckboxMultiselectInputWidget
+	 * @return string|OOUI\CheckboxMultiselectInputWidget
 	 */
 	public function getInputOOUI( $value ) {
 		$this->mParent->getOutput()->addModules( 'oojs-ui-widgets' );
 
-		$attr = [];
-		$attr['id'] = $this->mID;
-		$attr['name'] = "{$this->mName}[]";
+		$hasSections = false;
+		$optionsOouiSections = [];
+		$options = $this->getOptions();
+		// If the options are supposed to be split into sections, each section becomes a separate
+		// CheckboxMultiselectInputWidget.
+		foreach ( $options as $label => $section ) {
+			if ( is_array( $section ) ) {
+				$optionsOouiSections[ $label ] = Xml::listDropDownOptionsOoui( $section );
+				unset( $options[$label] );
+				$hasSections = true;
+			}
+		}
+		// If anything remains in the array, they are sectionless options. Put them in a separate widget
+		// at the beginning.
+		if ( $options ) {
+			$optionsOouiSections = array_merge(
+				[ '' => Xml::listDropDownOptionsOoui( $options ) ],
+				$optionsOouiSections
+			);
+		}
 
-		$attr['value'] = $value;
-		$attr['options'] = $this->getOptionsOOUI();
+		$out = [];
+		foreach ( $optionsOouiSections as $sectionLabel => $optionsOoui ) {
+			$attr = [];
+			$attr['name'] = "{$this->mName}[]";
 
-		if ( $this->mOptionsLabelsNotFromMessage ) {
+			$attr['value'] = $value;
+			$attr['options'] = $optionsOoui;
+
 			foreach ( $attr['options'] as &$option ) {
-				$option['label'] = new OOUI\HtmlSnippet( $option['label'] );
+				$option['disabled'] = in_array( $option['data'], $this->mParams['disabled-options'], true );
+			}
+			if ( $this->mOptionsLabelsNotFromMessage ) {
+				foreach ( $attr['options'] as &$option ) {
+					$option['label'] = new OOUI\HtmlSnippet( $option['label'] );
+				}
+			}
+
+			$attr += OOUI\Element::configFromHtmlAttributes(
+				$this->getAttributes( [ 'disabled', 'tabindex' ] )
+			);
+
+			if ( $this->mClass !== '' ) {
+				$attr['classes'] = [ $this->mClass ];
+			}
+
+			$widget = new OOUI\CheckboxMultiselectInputWidget( $attr );
+			if ( $sectionLabel ) {
+				$out[] = new OOUI\FieldsetLayout( [
+					'items' => [ $widget ],
+					'label' => new OOUI\HtmlSnippet( $sectionLabel ),
+				] );
+			} else {
+				$out[] = $widget;
 			}
 		}
 
-		$attr += OOUI\Element::configFromHtmlAttributes(
-			$this->getAttributes( [ 'disabled', 'tabindex' ] )
-		);
-
-		if ( $this->mClass !== '' ) {
-			$attr['classes'] = [ $this->mClass ];
+		if ( !$hasSections ) {
+			// Directly return the only OOUI\CheckboxMultiselectInputWidget.
+			// This allows it to be made infusable and later tweaked by JS code.
+			return $out[ 0 ];
 		}
 
-		return new OOUI\CheckboxMultiselectInputWidget( $attr );
+		return implode( '', $out );
 	}
 
 	/**

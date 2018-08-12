@@ -1,5 +1,6 @@
 <?php
-use Liuggio\StatsdClient\Factory\StatsdDataFactory;
+
+use Mediawiki\Http\HttpRequestFactory;
 use MediaWiki\Interwiki\InterwikiLookup;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Linker\LinkRendererFactory;
@@ -7,8 +8,12 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\Services\DestructibleService;
 use MediaWiki\Services\SalvageableService;
 use MediaWiki\Services\ServiceDisabledException;
-use Wikimedia\Rdbms\LBFactory;
 use MediaWiki\Shell\CommandFactory;
+use MediaWiki\Storage\BlobStore;
+use MediaWiki\Storage\BlobStoreFactory;
+use MediaWiki\Storage\RevisionLookup;
+use MediaWiki\Storage\RevisionStore;
+use MediaWiki\Storage\SqlBlobStore;
 
 /**
  * @covers MediaWiki\MediaWikiServices
@@ -49,14 +54,14 @@ class MediaWikiServicesTest extends MediaWikiTestCase {
 
 	public function testGetInstance() {
 		$services = MediaWikiServices::getInstance();
-		$this->assertInstanceOf( 'MediaWiki\\MediaWikiServices', $services );
+		$this->assertInstanceOf( MediaWikiServices::class, $services );
 	}
 
 	public function testForceGlobalInstance() {
 		$newServices = $this->newMediaWikiServices();
 		$oldServices = MediaWikiServices::forceGlobalInstance( $newServices );
 
-		$this->assertInstanceOf( 'MediaWiki\\MediaWikiServices', $oldServices );
+		$this->assertInstanceOf( MediaWikiServices::class, $oldServices );
 		$this->assertNotSame( $oldServices, $newServices );
 
 		$theServices = MediaWikiServices::getInstance();
@@ -145,7 +150,7 @@ class MediaWikiServicesTest extends MediaWikiTestCase {
 		$newServices = $this->newMediaWikiServices();
 		$oldServices = MediaWikiServices::forceGlobalInstance( $newServices );
 
-		$lbFactory = $this->getMockBuilder( 'LBFactorySimple' )
+		$lbFactory = $this->getMockBuilder( \Wikimedia\Rdbms\LBFactorySimple::class )
 			->disableOriginalConstructor()
 			->getMock();
 
@@ -173,6 +178,9 @@ class MediaWikiServicesTest extends MediaWikiTestCase {
 
 		MediaWikiServices::forceGlobalInstance( $oldServices );
 		$newServices->destroy();
+
+		// No exception was thrown, avoid being risky
+		$this->assertTrue( true );
 	}
 
 	public function testResetChildProcessServices() {
@@ -220,7 +228,7 @@ class MediaWikiServicesTest extends MediaWikiTestCase {
 			'Test',
 			function () use ( &$serviceCounter ) {
 				$serviceCounter++;
-				$service = $this->createMock( 'MediaWiki\Services\DestructibleService' );
+				$service = $this->createMock( MediaWiki\Services\DestructibleService::class );
 				$service->expects( $this->once() )->method( 'destroy' );
 				return $service;
 			}
@@ -249,7 +257,7 @@ class MediaWikiServicesTest extends MediaWikiTestCase {
 		$services->defineService(
 			'Test',
 			function () {
-				$service = $this->createMock( 'MediaWiki\Services\DestructibleService' );
+				$service = $this->createMock( MediaWiki\Services\DestructibleService::class );
 				$service->expects( $this->never() )->method( 'destroy' );
 				return $service;
 			}
@@ -311,7 +319,7 @@ class MediaWikiServicesTest extends MediaWikiTestCase {
 			'SearchEngineConfig' => [ 'SearchEngineConfig', SearchEngineConfig::class ],
 			'SkinFactory' => [ 'SkinFactory', SkinFactory::class ],
 			'DBLoadBalancerFactory' => [ 'DBLoadBalancerFactory', Wikimedia\Rdbms\LBFactory::class ],
-			'DBLoadBalancer' => [ 'DBLoadBalancer', 'LoadBalancer' ],
+			'DBLoadBalancer' => [ 'DBLoadBalancer', Wikimedia\Rdbms\LoadBalancer::class ],
 			'WatchedItemStore' => [ 'WatchedItemStore', WatchedItemStore::class ],
 			'WatchedItemQueryService' => [ 'WatchedItemQueryService', WatchedItemQueryService::class ],
 			'CryptRand' => [ 'CryptRand', CryptRand::class ],
@@ -333,6 +341,13 @@ class MediaWikiServicesTest extends MediaWikiTestCase {
 			'LocalServerObjectCache' => [ 'LocalServerObjectCache', BagOStuff::class ],
 			'VirtualRESTServiceClient' => [ 'VirtualRESTServiceClient', VirtualRESTServiceClient::class ],
 			'ShellCommandFactory' => [ 'ShellCommandFactory', CommandFactory::class ],
+			'BlobStoreFactory' => [ 'BlobStoreFactory', BlobStoreFactory::class ],
+			'BlobStore' => [ 'BlobStore', BlobStore::class ],
+			'_SqlBlobStore' => [ '_SqlBlobStore', SqlBlobStore::class ],
+			'RevisionStore' => [ 'RevisionStore', RevisionStore::class ],
+			'RevisionLookup' => [ 'RevisionLookup', RevisionLookup::class ],
+			'HttpRequestFactory' => [ 'HttpRequestFactory', HttpRequestFactory::class ],
+			'CommentStore' => [ 'CommentStore', CommentStore::class ],
 		];
 	}
 

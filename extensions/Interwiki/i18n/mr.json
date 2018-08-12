@@ -2,13 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"Kaustubh",
-			"V.narsikar"
+			"V.narsikar",
+			"Zoranzoki21"
 		]
 	},
 	"interwiki": "आंतरविकि डाटा पहा व संपादा",
 	"interwiki-title-norights": "आंतरविकि डाटा पहा",
 	"interwiki-desc": "आंतरविकि सारणी पाहण्यासाठी व संपादण्यासाठी एक [[Special:Interwiki|विशेष पान]] वाढविते",
-	"interwiki_intro": "हा  आंतरविकि सारणीबद्दलचा सामान्य सारांश आहे.तो विविध विकिंना व बाह्य संकेतस्थळांना तत्परतेने दुवा देण्यास आवश्यक त्या उपपदाच्या लघुपथाची व्याख्या देतो.  अधिक माहितीसाठी [http://www.mediawiki.org/wiki/Interwiki_table MediaWiki.org] पहा.याच्या वापरासाठी ते शिफारस केल्या गेले आहे",
+	"interwiki_intro": "हा  आंतरविकि सारणीबद्दलचा सामान्य सारांश आहे.तो विविध विकिंना व बाह्य संकेतस्थळांना तत्परतेने दुवा देण्यास आवश्यक त्या उपपदाच्या लघुपथाची व्याख्या देतो.  अधिक माहितीसाठी [//www.mediawiki.org/wiki/Interwiki_table MediaWiki.org] पहा.याच्या वापरासाठी ते शिफारस केल्या गेले आहे",
 	"interwiki-legend-label": "विवरण",
 	"interwiki_prefix": "उपपद (पूर्वप्रत्यय)",
 	"interwiki-prefix-label": "उपपद (पूर्वप्रत्यय):",

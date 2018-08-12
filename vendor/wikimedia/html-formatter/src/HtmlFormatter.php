@@ -25,7 +25,7 @@ namespace HtmlFormatter;
 
 class HtmlFormatter {
 	/**
-	 * @var DOMDocument
+	 * @var \DOMDocument
 	 */
 	private $doc;
 
@@ -45,7 +45,7 @@ class HtmlFormatter {
 
 	/**
 	 * Turns a chunk of HTML into a proper document
-	 * @param string $html
+	 * @param string $html HTML to wrap
 	 * @return string
 	 */
 	public static function wrapHTML( $html ) {
@@ -62,7 +62,7 @@ class HtmlFormatter {
 	}
 
 	/**
-	 * @return DOMDocument DOM to manipulate
+	 * @return \DOMDocument DOM to manipulate
 	 */
 	public function getDoc() {
 		if ( !$this->doc ) {
@@ -88,7 +88,7 @@ class HtmlFormatter {
 
 	/**
 	 * Sets whether images/videos/sounds should be removed from output
-	 * @param bool $flag
+	 * @param bool $flag Whether to remove or not
 	 */
 	public function setRemoveMedia( $flag = true ) {
 		$this->removeMedia = $flag;
@@ -182,7 +182,7 @@ class HtmlFormatter {
 		foreach ( $removals['CLASS'] as $classToRemove ) {
 			$elements = $xpath->query( '//*[contains(@class, "' . $classToRemove . '")]' );
 
-			/** @var $element DOMElement */
+			/** @var $element \DOMElement */
 			foreach ( $elements as $element ) {
 				$classes = $element->getAttribute( 'class' );
 				if ( \preg_match( "/\b$classToRemove\b/", $classes ) && $element->parentNode ) {
@@ -207,7 +207,7 @@ class HtmlFormatter {
 
 	/**
 	 * Removes a list of elelments from DOMDocument
-	 * @param array|DOMNodeList $elements
+	 * @param array|\DOMNodeList $elements
 	 * @return array Array of removed elements
 	 */
 	private function removeElements( $elements ) {
@@ -218,7 +218,7 @@ class HtmlFormatter {
 				$list[] = $element;
 			}
 		}
-		/** @var $element DOMElement */
+		/** @var $element \DOMElement */
 		foreach ( $list as $element ) {
 			if ( $element->parentNode ) {
 				$element->parentNode->removeChild( $element );
@@ -244,13 +244,9 @@ class HtmlFormatter {
 		];
 		$html = strtr( $html, $replacements );
 
-		if ( \function_exists( 'mb_convert_encoding' ) ) {
-			// Just in case the conversion in getDoc() above used named
-			// entities that aren't known to html_entity_decode().
-			$html = \mb_convert_encoding( $html, 'UTF-8', 'HTML-ENTITIES' );
-		} else {
-			$html = \html_entity_decode( $html, ENT_COMPAT, 'utf-8' );
-		}
+		// Just in case the conversion in getDoc() above used named
+		// entities that aren't known to html_entity_decode().
+		$html = \mb_convert_encoding( $html, 'UTF-8', 'HTML-ENTITIES' );
 		return $html;
 	}
 
@@ -260,12 +256,11 @@ class HtmlFormatter {
 	 * specify the $element in the method it'll change the underlying dom and you won't be able to get
 	 * it back.
 	 *
-	 * @param DOMElement|string|null $element ID of element to get HTML from or
+	 * @param \DOMElement|string|null $element ID of element to get HTML from or
 	 *   false to get it from the whole tree
 	 * @return string Processed HTML
 	 */
 	public function getText( $element = null ) {
-
 		if ( $this->doc ) {
 			if ( $element !== null && !( $element instanceof \DOMElement ) ) {
 				$element = $this->doc->getElementById( $element );
@@ -309,10 +304,10 @@ class HtmlFormatter {
 	 * values to parameters passed by reference. For example, if given '#toc' as the
 	 * $selector parameter, it will assign 'ID' as the $type and 'toc' as the $rawName.
 	 * @param string $selector CSS selector to parse
-	 * @param string $type The type of selector (ID, CLASS, TAG_CLASS, or TAG)
-	 * @param string $rawName The raw name of the selector
+	 * @param string &$type The type of selector (ID, CLASS, TAG_CLASS, or TAG)
+	 * @param string &$rawName The raw name of the selector
 	 * @return bool Whether the selector was successfully recognised
-	 * @throws MWException
+	 * @throws \Exception
 	 */
 	protected function parseSelector( $selector, &$type, &$rawName ) {
 		if ( strpos( $selector, '.' ) === 0 ) {

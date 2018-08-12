@@ -18,7 +18,7 @@
 	"gadgetusage-activeusers": "Para nganggo sing giyat",
 	"gadgetusage-default": "Baku",
 	"gadgets-title": "Géjet",
-	"gadgets-pagetext": "Ing ngisor iki daftar gadget astaméwa sing bisa diaktifaké ing [[Special:Preferences#mw-prefsection-gadgets|kaca prèferènsi]] panganggo, kayadéné didéfinisi déning [[MediaWiki:Gadgets-definition|dhéfinisi]].\nTinjoan iki mènèhi aksès sing gampang menyang kaca-kaca pesen sistem sing ngawedhar saben gadget lan kodhe.",
+	"gadgets-pagetext": "Ing ngisor iki kapacak pratélaning géjet mirunggan sing bisa diurubaké déning saben panganggo saka [[Special:Preferences#mw-prefsection-gadgets|kaca pilalané]], kaya sing diandharaké ing [[MediaWiki:Gadgets-definition|kaca dhéfinisiné]].\nKaterangan iki migunani murih gampangé panjenengan mangerti kaca layang sistem sing ngandharaké dhèskripsi lan kodhe géjet.",
 	"gadgets-uses": "Guna",
 	"gadgets-required-rights": "Mbutuhaké {{PLURAL:$2|hak}} ing ngisor iki:\n\n$1",
 	"gadgets-required-skins": "Ana ing {{PLURAL:$2|ules $1|ules iki: $1}}.",

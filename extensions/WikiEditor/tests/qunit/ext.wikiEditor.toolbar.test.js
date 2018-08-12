@@ -10,7 +10,7 @@
 		}
 	} ) );
 
-	QUnit.test( 'Toolbars', 16, function ( assert ) {
+	QUnit.test( 'Toolbars', function ( assert ) {
 		// Add toolbar section
 		var data = {
 			sections: {
@@ -141,7 +141,7 @@
 		assert.equal( this.$ui.find( '*[rel="emoticons"].section' ).length, 0, 'After removing toolbar section' );
 	} );
 
-	QUnit.test( 'Booklets', 20, function ( assert ) {
+	QUnit.test( 'Booklets', function ( assert ) {
 		// Add booklet section
 		var data = {
 			sections: {

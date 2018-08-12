@@ -51,6 +51,17 @@ class Element extends Tag {
 	 */
 	protected $configCallbacks = [];
 
+	/* Static methods */
+
+	/**
+	 * Emits a deprecation warning with provided message.
+	 *
+	 * @param string $message Message about the deprecation
+	 */
+	public static function warnDeprecation( $message = '' ) {
+		trigger_error( $message, E_USER_DEPRECATED );
+	}
+
 	/* Methods */
 
 	/**
@@ -257,12 +268,12 @@ class Element extends Tag {
 
 	/**
 	 * A helper method to massage an array of HTML attributes into a format that is more likely to
-	 * work with an OOjs UI PHP element, camel-casing attribute names and setting values of boolean
+	 * work with an OOUI PHP element, camel-casing attribute names and setting values of boolean
 	 * ones to true. Intended as a convenience to be used when refactoring legacy systems using HTML
-	 * to use OOjs UI.
+	 * to use OOUI.
 	 *
 	 * @param array $attrs HTML attributes, e.g. `[ 'disabled' => '', 'accesskey' => 'k' ]`
-	 * @return array OOjs UI PHP element config, e.g. `[ 'disabled' => true, 'accessKey' => 'k' ]`
+	 * @return array OOUI PHP element config, e.g. `[ 'disabled' => true, 'accessKey' => 'k' ]`
 	 */
 	public static function configFromHtmlAttributes( array $attrs ) {
 		$booleanAttrs = [

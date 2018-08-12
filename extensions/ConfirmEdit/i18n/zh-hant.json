@@ -10,10 +10,12 @@
 			"Cwlin0416",
 			"LNDDYL",
 			"Liuxinyu970226",
-			"Bowleerin"
+			"Bowleerin",
+			"Wbxshiori",
+			"Kly"
 		]
 	},
-	"captcha-edit": "要編輯這篇文章，請答出一個簡單的加法，然後在框內輸入  ([[Special:Captcha/help|更多資料]]) :",
+	"captcha-edit": "要編輯這篇文章，請完成以下項目，然後在框內輸入  ([[Special:Captcha/help|更多資料]]) :",
 	"captcha-edit-fail": "錯誤或未輸入 CAPTCHA",
 	"captcha-desc": "提供 CAPTCHA 技術來阻止垃圾訊息和密碼猜解",
 	"captcha-label": "CAPTCHA",
@@ -21,12 +23,12 @@
 	"captcha-info-help": "驗證碼的描述。",
 	"captcha-id-label": "驗證碼ID",
 	"captcha-id-help": "該值應該發回不變。",
-	"captcha-addurl": "你編輯的內容中含有一個新的外部連結；為了免受自動垃圾程式的侵擾，請答出一個簡單的加法，然後在框內輸入  ([[Special:Captcha/help|更多資料]]) :",
-	"captcha-badlogin": "為防止程式自動破解密碼，請答出一條簡單的加法，然後在框內輸入  ([[Special:Captcha/help|更多資料]]) :",
-	"captcha-createaccount": "為防止程式自動註冊，請答出一條簡單的加法，然後在框內輸入  ([[Special:Captcha/help|更多資料]]) :",
+	"captcha-addurl": "你編輯的內容中含有一個新的外部連結；為了免受自動垃圾程式的侵擾，請完成以下項目，然後在框內輸入  ([[Special:Captcha/help|更多資料]]) :",
+	"captcha-badlogin": "為防止程式自動破解密碼，請完成以下項目，然後在框內輸入  ([[Special:Captcha/help|更多資料]]) :",
+	"captcha-createaccount": "為防止程式自動註冊，請完成以下項目，然後在框內輸入  ([[Special:Captcha/help|更多資料]]) :",
 	"captcha-createaccount-fail": "CAPTCHA 錯誤或遺失。",
-	"captcha-create": "要建立頁面，請答出一個簡單的加法，然後在框內輸入  ([[Special:Captcha/help|更多資料]]) :",
-	"captcha-sendemail": "為防止程式進行破壞，請答出一條簡單的加法，然後在框內輸入  ([[Special:Captcha/help|更多資料]]) :",
+	"captcha-create": "要建立頁面，請完成以下項目，然後在框內輸入  ([[Special:Captcha/help|更多資料]]) :",
+	"captcha-sendemail": "為防止程式進行破壞，請完成以下項目，然後在框內輸入  ([[Special:Captcha/help|更多資料]]) :",
 	"captcha-sendemail-fail": "CAPTCHA 錯誤或遺失。",
 	"captcha-disabledinapi": "此操作需要使用 CAPTCHA 驗証，因此無法透過 API 執行。",
 	"captcha-error": "由於內部錯誤，驗證碼確認失敗：$1",
@@ -36,5 +38,11 @@
 	"captcha-addurl-whitelist": " #<!-- 請勿更動此行 --> <pre>\n# 語法格式如下：\n#   * 任何以 \"#\" 字元開頭至結尾代表註解\n#   * 任何非空白行代表部份正規表示法，會用來比對 URL 中的主機\n #</pre> <!-- 請勿更動此行 -->",
 	"right-skipcaptcha": "執行會觸發驗證碼的動作時無需經過驗證碼檢驗",
 	"captcha-apihelp-param-captchaword": "回答驗證碼",
-	"captcha-apihelp-param-captchaid": "之前請求的驗證碼ID"
+	"captcha-apihelp-param-captchaid": "之前請求的驗證碼ID",
+	"confirmedit-preview-line": "行號",
+	"confirmedit-preview-content": "內容",
+	"confirmedit-preview-validity": "有效性",
+	"confirmedit-preview-valid": "有效",
+	"confirmedit-preview-invalid": "無效",
+	"confirmedit-preview-description": "以下表格顯示出有關此頁面行數的清單，以及是否為有效的 IP 位址或 IP 位址範圍。如果某行是有效的 IP 位址或 IP 位址範圍，這會從驗證碼流程來被列入在白名單裡，若如果是無效的行則會被忽略。例如：來自於 69.208.0.0 至 69.208.255.255 網段的有效 IP 位址範圍會是 69.208.0.0/16。有關計算 IP 位址範圍更多方面訊息[https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix 可查看此]。"
 }

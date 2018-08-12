@@ -2,10 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Ianbu",
-			"Luuva"
+			"Luuva",
+			"Yoxem"
 		]
 	},
-	"pfunc_expr_unrecognised_word": "表達錯誤：認無\"$1\"這个字。",
+	"pfunc_expr_unrecognised_word": "Piáu-ta̍t chhò-ngō͘: Jīn-bô \"$1\" chit ê jī.",
 	"pfunc_expr_missing_operand": "Piáu-tat chha-chhok: Phàng-kiàn $1 ê pī-sǹg-sò͘.",
-	"pfunc_expr_unrecognised_punctuation": "表達錯誤：認無標點符號 \"$1\"。"
+	"pfunc_expr_unrecognised_punctuation": "Piáu-ta̍t chhò-ngō͘: jīn-bô piau-tiám hû-hō \"$1\"."
 }

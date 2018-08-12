@@ -117,8 +117,7 @@
 							actions = $characters.data( 'actions' );
 							for ( i = 0; i < data.characters.length; i++ ) {
 								// Character
-								$characters
-								.append(
+								$characters.append(
 									$( $.wikiEditor.modules.toolbar.fn.buildCharacter( data.characters[ i ], actions ) )
 										.mousedown( function ( e ) {
 											// No dragging!
@@ -285,7 +284,7 @@
 				if ( label ) {
 					$label = $( '<span>' )
 						.addClass( 'label' )
-						.html( label );
+						.text( label );
 					$group.append( $label );
 				}
 				empty = true;
@@ -306,7 +305,7 @@
 				return $group;
 			},
 			buildTool: function ( context, id, tool ) {
-				var i, label, $button, offsetOrIcon, $select, $options,
+				var i, label, $button, icon, $select, $options, oouiButton,
 					option, optionLabel;
 				if ( 'filters' in tool ) {
 					for ( i = 0; i < tool.filters.length; i++ ) {
@@ -318,28 +317,42 @@
 				label = $.wikiEditor.autoMsg( tool, 'label' );
 				switch ( tool.type ) {
 					case 'button':
-						offsetOrIcon = $.wikiEditor.autoIconOrOffset(
-							tool.icon,
-							tool.offset,
-							$.wikiEditor.imgPath + 'toolbar/'
-						);
-						$button = $( '<a>' )
-							.attr( {
-								href: '#',
-								title: label,
-								rel: id,
-								role: 'button',
-								'class': 'tool tool-button'
-							} )
-							.text( label );
-						if ( typeof offsetOrIcon === 'object' ) {
-							$button
-							.addClass( 'wikiEditor-toolbar-spritedButton' )
-							.css( 'backgroundPosition', offsetOrIcon[ 0 ] + 'px ' + offsetOrIcon[ 1 ] + 'px' );
-						} else if ( offsetOrIcon !== undefined ) { // Bug T172500
-							$button
-							.css( 'background-image', 'url(' + offsetOrIcon + ')' );
+						if ( tool.oouiIcon ) {
+							oouiButton = new OO.ui.ButtonWidget( {
+								framed: false,
+								classes: [ 'tool' ],
+								icon: tool.oouiIcon,
+								title: label
+							} );
+							$button = oouiButton.$element;
+							$button.attr( 'rel', id );
+							$button.data( 'ooui', oouiButton );
+						} else {
+							$button = $( '<a>' )
+								.attr( {
+									href: '#',
+									title: label,
+									rel: id,
+									role: 'button',
+									'class': 'tool tool-button'
+								} )
+								.text( label );
+							if ( tool.icon ) {
+								icon = $.wikiEditor.autoIcon(
+									tool.icon,
+									$.wikiEditor.imgPath + 'toolbar/'
+								);
+								$button.css( 'background-image', 'url(' + icon + ')' );
+							}
 						}
+						$button.data( 'setActive', function ( active ) {
+							$button.toggleClass( 'tool-active', active );
+
+							// OOUI button
+							if ( $button.data( 'ooui' ) ) {
+								$button.data( 'ooui' ).setFlags( { progressive: active } );
+							}
+						} );
 						if ( 'action' in tool ) {
 							$button
 								.data( 'action', tool.action )
@@ -395,20 +408,20 @@
 						}
 						$select.append( $( '<div>' ).addClass( 'menu' ).append( $options ) );
 						$select.append( $( '<a>' )
-								.addClass( 'label' )
-								.text( label )
-								.data( 'options', $options )
-								.attr( 'href', '#' )
-								.mousedown( function ( e ) {
-									// No dragging!
-									e.preventDefault();
-									return false;
-								} )
-								.click( function ( e ) {
-									$( this ).data( 'options' ).animate( { opacity: 'toggle' }, 'fast' );
-									e.preventDefault();
-									return false;
-								} )
+							.addClass( 'label' )
+							.text( label )
+							.data( 'options', $options )
+							.attr( 'href', '#' )
+							.mousedown( function ( e ) {
+								// No dragging!
+								e.preventDefault();
+								return false;
+							} )
+							.click( function ( e ) {
+								$( this ).data( 'options' ).animate( { opacity: 'toggle' }, 'fast' );
+								e.preventDefault();
+								return false;
+							} )
 						);
 						return $select;
 					default:

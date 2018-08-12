@@ -6,6 +6,7 @@
 			"Tokoabibi"
 		]
 	},
+	"vector-skin-desc": "ayzaay a MonoBook, izaw baluhayay a nuhekalan atu yadah pisaungayay a sakapahay.",
 	"vector-action-addsection": "micunus sasakamuen",
 	"vector-action-delete": "misipu",
 	"vector-action-move": "milimad",
@@ -16,5 +17,6 @@
 	"vector-view-edit": "mikawaway-kalumyiti",
 	"vector-view-history": "ciwsace nazipa’an",
 	"vector-view-view": "miasip",
+	"vector-view-viewsource": "ciwsace yuensma-kodo",
 	"vector-more-actions": "yadah"
 }

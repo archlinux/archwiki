@@ -21,6 +21,8 @@
  * @ingroup Maintenance
  */
 
+use Wikimedia\Rdbms\IDatabase;
+
 require_once __DIR__ . '/Maintenance.php';
 
 /**
@@ -44,9 +46,9 @@ class PopulateRevisionLength extends LoggedUpdateMaintenance {
 	public function doDBUpdates() {
 		$dbw = $this->getDB( DB_MASTER );
 		if ( !$dbw->tableExists( 'revision' ) ) {
-			$this->error( "revision table does not exist", true );
+			$this->fatalError( "revision table does not exist" );
 		} elseif ( !$dbw->tableExists( 'archive' ) ) {
-			$this->error( "archive table does not exist", true );
+			$this->fatalError( "archive table does not exist" );
 		} elseif ( !$dbw->fieldExists( 'revision', 'rev_len', __METHOD__ ) ) {
 			$this->output( "rev_len column does not exist\n\n", true );
 
@@ -54,10 +56,10 @@ class PopulateRevisionLength extends LoggedUpdateMaintenance {
 		}
 
 		$this->output( "Populating rev_len column\n" );
-		$rev = $this->doLenUpdates( 'revision', 'rev_id', 'rev', Revision::selectFields() );
+		$rev = $this->doLenUpdates( 'revision', 'rev_id', 'rev', Revision::getQueryInfo() );
 
 		$this->output( "Populating ar_len column\n" );
-		$ar = $this->doLenUpdates( 'archive', 'ar_id', 'ar', Revision::selectArchiveFields() );
+		$ar = $this->doLenUpdates( 'archive', 'ar_id', 'ar', Revision::getArchiveQueryInfo() );
 
 		$this->output( "rev_len and ar_len population complete "
 			. "[$rev revision rows, $ar archive rows].\n" );
@@ -69,14 +71,15 @@ class PopulateRevisionLength extends LoggedUpdateMaintenance {
 	 * @param string $table
 	 * @param string $idCol
 	 * @param string $prefix
-	 * @param array $fields
+	 * @param array $queryInfo
 	 * @return int
 	 */
-	protected function doLenUpdates( $table, $idCol, $prefix, $fields ) {
+	protected function doLenUpdates( $table, $idCol, $prefix, $queryInfo ) {
 		$dbr = $this->getDB( DB_REPLICA );
 		$dbw = $this->getDB( DB_MASTER );
-		$start = $dbw->selectField( $table, "MIN($idCol)", false, __METHOD__ );
-		$end = $dbw->selectField( $table, "MAX($idCol)", false, __METHOD__ );
+		$batchSize = $this->getBatchSize();
+		$start = $dbw->selectField( $table, "MIN($idCol)", '', __METHOD__ );
+		$end = $dbw->selectField( $table, "MAX($idCol)", '', __METHOD__ );
 		if ( !$start || !$end ) {
 			$this->output( "...$table table seems to be empty.\n" );
 
@@ -85,20 +88,28 @@ class PopulateRevisionLength extends LoggedUpdateMaintenance {
 
 		# Do remaining chunks
 		$blockStart = intval( $start );
-		$blockEnd = intval( $start ) + $this->mBatchSize - 1;
+		$blockEnd = intval( $start ) + $batchSize - 1;
 		$count = 0;
 
 		while ( $blockStart <= $end ) {
 			$this->output( "...doing $idCol from $blockStart to $blockEnd\n" );
 			$res = $dbr->select(
-				$table,
-				$fields,
+				$queryInfo['tables'],
+				$queryInfo['fields'],
 				[
 					"$idCol >= $blockStart",
 					"$idCol <= $blockEnd",
-					"{$prefix}_len IS NULL"
+					$dbr->makeList( [
+						"{$prefix}_len IS NULL",
+						$dbr->makeList( [
+							"{$prefix}_len = 0",
+							"{$prefix}_sha1 != " . $dbr->addQuotes( 'phoiac9h4m842xq45sp7s6u21eteeq1' ), // sha1( "" )
+						], IDatabase::LIST_AND )
+					], IDatabase::LIST_OR )
 				],
-				__METHOD__
+				__METHOD__,
+				[],
+				$queryInfo['joins']
 			);
 
 			if ( $res->numRows() > 0 ) {
@@ -112,9 +123,8 @@ class PopulateRevisionLength extends LoggedUpdateMaintenance {
 				$this->commitTransaction( $dbw, __METHOD__ );
 			}
 
-			$blockStart += $this->mBatchSize;
-			$blockEnd += $this->mBatchSize;
-			wfWaitForSlaves();
+			$blockStart += $batchSize;
+			$blockEnd += $batchSize;
 		}
 
 		return $count;
@@ -134,7 +144,7 @@ class PopulateRevisionLength extends LoggedUpdateMaintenance {
 			? Revision::newFromArchiveRow( $row )
 			: new Revision( $row );
 
-		$content = $rev->getContent();
+		$content = $rev->getContent( Revision::RAW );
 		if ( !$content ) {
 			# This should not happen, but sometimes does (T22757)
 			$id = $row->$idCol;
@@ -154,5 +164,5 @@ class PopulateRevisionLength extends LoggedUpdateMaintenance {
 	}
 }
 
-$maintClass = "PopulateRevisionLength";
+$maintClass = PopulateRevisionLength::class;
 require_once RUN_MAINTENANCE_IF_MAIN;

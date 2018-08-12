@@ -1,9 +1,5 @@
 <?php
 /**
- *
- *
- * Created on Jul 2, 2007
- *
  * Copyright © 2007 Roan Kattouw "<Firstname>.<Lastname>@gmail.com"
  *
  * This program is free software; you can redistribute it and/or modify
@@ -44,7 +40,7 @@ class ApiQueryDeletedrevs extends ApiQueryBase {
 
 		$user = $this->getUser();
 		$db = $this->getDB();
-		$commentStore = new CommentStore( 'ar_comment' );
+		$commentStore = CommentStore::getStore();
 		$params = $this->extractRequestParams( false );
 		$prop = array_flip( $params['prop'] );
 		$fld_parentid = isset( $prop['parentid'] );
@@ -114,14 +110,18 @@ class ApiQueryDeletedrevs extends ApiQueryBase {
 
 		$this->addFieldsIf( 'ar_parent_id', $fld_parentid );
 		$this->addFieldsIf( 'ar_rev_id', $fld_revid );
-		$this->addFieldsIf( 'ar_user_text', $fld_user );
-		$this->addFieldsIf( 'ar_user', $fld_userid );
+		if ( $fld_user || $fld_userid ) {
+			$actorQuery = ActorMigration::newMigration()->getJoin( 'ar_user' );
+			$this->addTables( $actorQuery['tables'] );
+			$this->addFields( $actorQuery['fields'] );
+			$this->addJoinConds( $actorQuery['joins'] );
+		}
 		$this->addFieldsIf( 'ar_minor_edit', $fld_minor );
 		$this->addFieldsIf( 'ar_len', $fld_len );
 		$this->addFieldsIf( 'ar_sha1', $fld_sha1 );
 
 		if ( $fld_comment || $fld_parsedcomment ) {
-			$commentQuery = $commentStore->getJoin();
+			$commentQuery = $commentStore->getJoin( 'ar_comment' );
 			$this->addTables( $commentQuery['tables'] );
 			$this->addFields( $commentQuery['fields'] );
 			$this->addJoinConds( $commentQuery['joins'] );
@@ -144,17 +144,11 @@ class ApiQueryDeletedrevs extends ApiQueryBase {
 		}
 
 		if ( $fld_content ) {
-			// Modern MediaWiki has the content for deleted revs in the 'text'
-			// table using fields old_text and old_flags. But revisions deleted
-			// pre-1.5 store the content in the 'archive' table directly using
-			// fields ar_text and ar_flags, and no corresponding 'text' row. So
-			// we have to LEFT JOIN and fetch all four fields, plus ar_text_id
-			// to be able to tell the difference.
 			$this->addTables( 'text' );
 			$this->addJoinConds(
 				[ 'text' => [ 'LEFT JOIN', [ 'ar_text_id=old_id' ] ] ]
 			);
-			$this->addFields( [ 'ar_text', 'ar_flags', 'ar_text_id', 'old_text', 'old_flags' ] );
+			$this->addFields( [ 'ar_text_id', 'old_text', 'old_flags' ] );
 
 			// This also means stricter restrictions
 			$this->checkUserRightsAny( [ 'deletedtext', 'undelete' ] );
@@ -203,10 +197,19 @@ class ApiQueryDeletedrevs extends ApiQueryBase {
 		}
 
 		if ( !is_null( $params['user'] ) ) {
-			$this->addWhereFld( 'ar_user_text', $params['user'] );
+			// Don't query by user ID here, it might be able to use the ar_usertext_timestamp index.
+			$actorQuery = ActorMigration::newMigration()
+				->getWhere( $db, 'ar_user', User::newFromName( $params['user'], false ), false );
+			$this->addTables( $actorQuery['tables'] );
+			$this->addJoinConds( $actorQuery['joins'] );
+			$this->addWhere( $actorQuery['conds'] );
 		} elseif ( !is_null( $params['excludeuser'] ) ) {
-			$this->addWhere( 'ar_user_text != ' .
-				$db->addQuotes( $params['excludeuser'] ) );
+			// Here there's no chance of using ar_usertext_timestamp.
+			$actorQuery = ActorMigration::newMigration()
+				->getWhere( $db, 'ar_user', User::newFromName( $params['excludeuser'], false ) );
+			$this->addTables( $actorQuery['tables'] );
+			$this->addJoinConds( $actorQuery['joins'] );
+			$this->addWhere( 'NOT(' . $actorQuery['conds'] . ')' );
 		}
 
 		if ( !is_null( $params['user'] ) || !is_null( $params['excludeuser'] ) ) {
@@ -255,10 +258,6 @@ class ApiQueryDeletedrevs extends ApiQueryBase {
 		}
 
 		$this->addOption( 'LIMIT', $limit + 1 );
-		$this->addOption(
-			'USE INDEX',
-			[ 'archive' => ( $mode == 'user' ? 'ar_usertext_timestamp' : 'name_title_timestamp' ) ]
-		);
 		if ( $mode == 'all' ) {
 			if ( $params['unique'] ) {
 				// @todo Does this work on non-MySQL?
@@ -329,7 +328,7 @@ class ApiQueryDeletedrevs extends ApiQueryBase {
 					$anyHidden = true;
 				}
 				if ( Revision::userCanBitfield( $row->ar_deleted, Revision::DELETED_COMMENT, $user ) ) {
-					$comment = $commentStore->getComment( $row )->text;
+					$comment = $commentStore->getComment( 'ar_comment', $row )->text;
 					if ( $fld_comment ) {
 						$rev['comment'] = $comment;
 					}
@@ -365,12 +364,7 @@ class ApiQueryDeletedrevs extends ApiQueryBase {
 					$anyHidden = true;
 				}
 				if ( Revision::userCanBitfield( $row->ar_deleted, Revision::DELETED_TEXT, $user ) ) {
-					if ( isset( $row->ar_text ) && !$row->ar_text_id ) {
-						// Pre-1.5 ar_text row (if condition from Revision::newFromArchiveRow)
-						ApiResult::setContentValue( $rev, 'text', Revision::getRevisionText( $row, 'ar_' ) );
-					} else {
-						ApiResult::setContentValue( $rev, 'text', Revision::getRevisionText( $row ) );
-					}
+					ApiResult::setContentValue( $rev, 'text', Revision::getRevisionText( $row ) );
 				}
 			}
 

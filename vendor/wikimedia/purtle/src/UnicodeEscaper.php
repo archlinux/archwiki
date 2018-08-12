@@ -40,10 +40,14 @@ namespace Wikimedia\Purtle;
  */
 class UnicodeEscaper {
 
-	private $escChars = []; // Character encoding cache
+	/**
+	 * @var string[] Character encoding cache
+	 */
+	private $escChars = [];
 
 	/**
 	 * @param string $str
+	 *
 	 * @return string
 	 */
 	public function escapeString( $str ) {
@@ -59,6 +63,11 @@ class UnicodeEscaper {
 		return $result;
 	}
 
+	/**
+	 * @param string $cUtf
+	 *
+	 * @return int
+	 */
 	private function unicodeCharNo( $cUtf ) {
 		$bl = strlen( $cUtf ); /* binary length */
 		$r = 0;
@@ -85,6 +94,11 @@ class UnicodeEscaper {
 		return $r;
 	}
 
+	/**
+	 * @param string $c
+	 *
+	 * @return string
+	 */
 	private function escapedChar( $c ) {
 		$no = $this->unicodeCharNo( $c );
 		/* see http://www.w3.org/TR/rdf-testcases/#ntrip_strings */

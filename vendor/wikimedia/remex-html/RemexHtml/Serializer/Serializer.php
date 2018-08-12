@@ -1,9 +1,9 @@
 <?php
 
 namespace RemexHtml\Serializer;
+
 use RemexHtml\PropGuard;
 use RemexHtml\TreeBuilder\TreeBuilder;
-use RemexHtml\TreeBuilder\TreeHandler;
 use RemexHtml\TreeBuilder\Element;
 use RemexHtml\Tokenizer\Attributes;
 use RemexHtml\Tokenizer\PlainAttributes;
@@ -14,6 +14,8 @@ use RemexHtml\Tokenizer\PlainAttributes;
  * a DOM and then serializing it, even if you use DOMDocument::saveHTML().
  */
 class Serializer implements AbstractSerializer {
+	use PropGuard;
+
 	/**
 	 * A node corresponding to the Document
 	 * @var SerializerNode
@@ -69,12 +71,9 @@ class Serializer implements AbstractSerializer {
 		$this->errorCallback = $errorCallback;
 	}
 
-	public function __set( $name, $value ) {
-		PropGuard::set( $this, $name, $value );
-	}
-
 	/**
 	 * Get the final string. This can only be called after endDocument() is received.
+	 * @return string
 	 */
 	public function getResult() {
 		return $this->result;
@@ -187,12 +186,12 @@ class Serializer implements AbstractSerializer {
 	/**
 	 * Insert an element
 	 *
-	 * @param integer $preposition
+	 * @param int $preposition
 	 * @param Element|SerializerNode|null $refElement
 	 * @param Element $element
 	 * @param bool $void
-	 * @param integer $sourceStart
-	 * @param integer $sourceLength
+	 * @param int $sourceStart
+	 * @param int $sourceLength
 	 */
 	public function insertElement( $preposition, $refElement, Element $element, $void,
 		$sourceStart, $sourceLength

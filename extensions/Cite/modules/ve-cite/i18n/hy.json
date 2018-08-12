@@ -5,7 +5,8 @@
 			"Xelgen",
 			"GeoO",
 			"Դավիթ Սարոյան",
-			"Vahe Gharakhanyan"
+			"Vahe Gharakhanyan",
+			"Aram1985"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Գիրք",
@@ -15,7 +16,7 @@
 	"cite-ve-dialog-reference-editing-reused": "Այս ծանոթագրությունն այս էջում օգտագործվել է $1 {{PLURAL:$1|անգամ}}:",
 	"cite-ve-dialog-reference-options-group-label": "Օգտագործել այս խումբը",
 	"cite-ve-dialog-reference-options-group-placeholder": "Ընդհանուր ծանոթագրություններ",
-	"cite-ve-dialog-reference-options-name-label": "Այլ տեղ օգտագործել հետևյալ անվամբ",
+	"cite-ve-dialog-reference-options-name-label": "Կրկնակի օգտագործել տվյալ անվամբ",
 	"cite-ve-dialog-reference-options-section": "Ընտրանքներ",
 	"cite-ve-dialog-reference-title": "Ծանոթագրություն",
 	"cite-ve-dialog-reference-useexisting-full-label": "Կրկին օգտագործել արդեն գոյություն ունեցող ծանոթագրությունը",

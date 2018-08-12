@@ -1,7 +1,5 @@
 <?php
 
-use \Phan\Config;
-
 // If xdebug is enabled, we need to increase the nesting level for phan
 ini_set( 'xdebug.max_nesting_level', 1000 );
 
@@ -40,10 +38,13 @@ return [
 		function_exists( 'tideways_enable' ) ? [] : [ 'tests/phan/stubs/tideways.php' ],
 		class_exists( PEAR::class ) ? [] : [ 'tests/phan/stubs/mail.php' ],
 		class_exists( Memcached::class ) ? [] : [ 'tests/phan/stubs/memcached.php' ],
+		// Per composer.json, PHPUnit 6 is used for PHP 7.0+, PHPUnit 4 otherwise.
+		// Load the interface for the version of PHPUnit that isn't installed.
+		// Phan only supports PHP 7.0+ (and not HHVM), so we only need to stub PHPUnit 4.
+		class_exists( PHPUnit_TextUI_Command::class ) ? [] : [ 'tests/phan/stubs/phpunit4.php' ],
 		[
 			'maintenance/7zip.inc',
 			'maintenance/backup.inc',
-			'maintenance/backupPrefetch.inc',
 			'maintenance/cleanupTable.inc',
 			'maintenance/CodeCleanerGlobalsPass.inc',
 			'maintenance/commandLine.inc',
@@ -297,20 +298,30 @@ return [
 	 * to this black-list to inhibit them from being reported.
 	 */
 	'suppress_issue_types' => [
+		// approximate error count: 29
+		"PhanCommentParamOnEmptyParamList",
+		// approximate error count: 33
+		"PhanCommentParamWithoutRealParam",
 		// approximate error count: 8
 		"PhanDeprecatedClass",
 		// approximate error count: 415
 		"PhanDeprecatedFunction",
 		// approximate error count: 25
 		"PhanDeprecatedProperty",
+		// approximate error count: 17
+		"PhanNonClassMethodCall",
 		// approximate error count: 11
 		"PhanParamReqAfterOpt",
 		// approximate error count: 888
 		"PhanParamSignatureMismatch",
 		// approximate error count: 7
 		"PhanParamSignatureMismatchInternal",
+		// approximate error count: 1
+		"PhanParamSignatureRealMismatchTooFewParameters",
 		// approximate error count: 125
 		"PhanParamTooMany",
+		// approximate error count: 1
+		"PhanParamTooManyCallable",
 		// approximate error count: 3
 		"PhanParamTooManyInternal",
 		// approximate error count: 1
@@ -319,12 +330,28 @@ return [
 		"PhanTraitParentReference",
 		// approximate error count: 3
 		"PhanTypeComparisonFromArray",
+		// approximate error count: 2
+		"PhanTypeComparisonToArray",
 		// approximate error count: 3
 		"PhanTypeInvalidRightOperand",
+		// approximate error count: 1
+		"PhanTypeMagicVoidWithReturn",
 		// approximate error count: 218
 		"PhanTypeMismatchArgument",
 		// approximate error count: 13
 		"PhanTypeMismatchArgumentInternal",
+		// approximate error count: 6
+		"PhanTypeMismatchDeclaredParam",
+		// approximate error count: 111
+		"PhanTypeMismatchDeclaredParamNullable",
+		// approximate error count: 1
+		"PhanTypeMismatchDefault",
+		// approximate error count: 5
+		"PhanTypeMismatchDimAssignment",
+		// approximate error count: 2
+		"PhanTypeMismatchDimEmpty",
+		// approximate error count: 1
+		"PhanTypeMismatchDimFetch",
 		// approximate error count: 14
 		"PhanTypeMismatchForeach",
 		// approximate error count: 56
@@ -335,6 +362,8 @@ return [
 		"PhanTypeMissingReturn",
 		// approximate error count: 5
 		"PhanTypeNonVarPassByRef",
+		// approximate error count: 1
+		"PhanUndeclaredClassInCallable",
 		// approximate error count: 32
 		"PhanUndeclaredConstant",
 		// approximate error count: 233
@@ -343,6 +372,12 @@ return [
 		"PhanUndeclaredProperty",
 		// approximate error count: 3
 		"PhanUndeclaredStaticMethod",
+		// approximate error count: 11
+		"PhanUndeclaredTypeReturnType",
+		// approximate error count: 27
+		"PhanUndeclaredVariable",
+		// approximate error count: 58
+		"PhanUndeclaredVariableDim",
 	],
 
 	/**

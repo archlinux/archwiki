@@ -3,7 +3,7 @@
 	"author": "Tim Starling",
 	"url": "https://www.mediawiki.org/wiki/Extension:ImageMap",
 	"descriptionmsg": "imagemap_desc",
-	"license-name": "GPL-2.0+",
+	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
 	"MessagesDirs": {
 		"ImageMap": [
@@ -16,10 +16,7 @@
 		]
 	},
 	"AutoloadClasses": {
-		"ImageMap": "ImageMap_body.php"
+		"ImageMap": "includes/ImageMap.php"
 	},
-	"ParserTestFiles": [
-		"imageMapParserTests.txt"
-	],
 	"manifest_version": 1
 }

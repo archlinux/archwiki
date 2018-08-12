@@ -1,19 +1,27 @@
-/* eslint-env node */
-/* eslint no-undef: "error" */
-/* eslint-disable no-console, comma-dangle */
 'use strict';
 
-const path = require( 'path' );
+const fs = require( 'fs' ),
+	path = require( 'path' );
+
+let logPath, password, username;
+
+// username and password will be used only if
+// MEDIAWIKI_USER or MEDIAWIKI_PASSWORD environment variables are not set
+if ( process.env.JENKINS_HOME ) {
+	logPath = '../log/';
+	password = 'testpass';
+	username = 'WikiAdmin';
+} else {
+	logPath = './log/';
+	password = 'vagrant';
+	username = 'Admin';
+}
 
 function relPath( foo ) {
 	return path.resolve( __dirname, '../..', foo );
 }
 
 exports.config = {
-
-	//
-	// ======
-	//
 	// ======
 	// Custom
 	// ======
@@ -23,10 +31,10 @@ exports.config = {
 	// Use if from tests with:
 	// browser.options.username
 	username: process.env.MEDIAWIKI_USER === undefined ?
-		'Admin' :
+		username :
 		process.env.MEDIAWIKI_USER,
 	password: process.env.MEDIAWIKI_PASSWORD === undefined ?
-		'vagrant' :
+		password :
 		process.env.MEDIAWIKI_PASSWORD,
 	//
 	// ======
@@ -49,11 +57,11 @@ exports.config = {
 		relPath( './tests/selenium/specs/**/*.js' ),
 		relPath( './extensions/*/tests/selenium/specs/**/*.js' ),
 		relPath( './extensions/VisualEditor/modules/ve-mw/tests/selenium/specs/**/*.js' ),
-		relPath( './skins/*/tests/selenium/specs/**/*.js' ),
+		relPath( './skins/*/tests/selenium/specs/**/*.js' )
 	],
 	// Patterns to exclude.
 	exclude: [
-	// 'path/to/excluded/files'
+		'./extensions/CirrusSearch/tests/selenium/specs/**/*.js'
 	],
 	//
 	// ============
@@ -85,9 +93,15 @@ exports.config = {
 		maxInstances: 1,
 		//
 		browserName: 'chrome',
-		// Since Chrome v57 https://bugs.chromium.org/p/chromedriver/issues/detail?id=1625
 		chromeOptions: {
-			args: [ '--enable-automation' ]
+			// Run headless when there is no DISPLAY
+			// --headless: since Chrome 59 https://chromium.googlesource.com/chromium/src/+/59.0.3030.0/headless/README.md
+			args: (
+				process.env.DISPLAY ? [] : [ '--headless' ]
+			).concat(
+				// Disable Chrome sandbox when running in Docker
+				fs.existsSync( '/.dockerenv' ) ? [ '--no-sandbox' ] : []
+			)
 		}
 	} ],
 	//
@@ -107,11 +121,20 @@ exports.config = {
 	// Enables colors for log output.
 	coloredLogs: true,
 	//
-	// Saves a screenshot to a given path if a command fails.
-	screenshotPath: './log/',
+	// Warns when a deprecated command is used
+	deprecationWarnings: true,
 	//
-	// Set a base URL in order to shorten url command calls. If your url parameter starts
-	// with "/", then the base url gets prepended.
+	// If you only want to run your tests until a specific amount of tests have failed use
+	// bail (default is 0 - don't bail, run all tests).
+	bail: 0,
+	//
+	// Saves a screenshot to a given path if a command fails.
+	screenshotPath: logPath,
+	//
+	// Set a base URL in order to shorten url command calls. If your `url` parameter starts
+	// with `/`, the base url gets prepended, not including the path portion of your baseUrl.
+	// If your `url` parameter starts without a scheme or `/` (like `some/path`), the base url
+	// gets prepended directly.
 	baseUrl: (
 		process.env.MW_SERVER === undefined ?
 			'http://127.0.0.1:8080' :
@@ -123,7 +146,7 @@ exports.config = {
 	),
 	//
 	// Default timeout for all waitFor* commands.
-	waitforTimeout: 20000,
+	waitforTimeout: 10000,
 	//
 	// Default timeout in milliseconds for request
 	// if Selenium Grid doesn't send response
@@ -140,14 +163,14 @@ exports.config = {
 	// WebdriverRTC: https://github.com/webdriverio/webdriverrtc
 	// Browserevent: https://github.com/webdriverio/browserevent
 	// plugins: {
-	//     webdrivercss: {
-	//         screenshotRoot: 'my-shots',
-	//         failedComparisonsRoot: 'diffs',
-	//         misMatchTolerance: 0.05,
-	//         screenWidth: [320,480,640,1024]
-	//     },
-	//     webdriverrtc: {},
-	//     browserevent: {}
+	// 	webdrivercss: {
+	// 		screenshotRoot: 'my-shots',
+	// 		failedComparisonsRoot: 'diffs',
+	// 		misMatchTolerance: 0.05,
+	// 		screenWidth: [320,480,640,1024]
+	// 	},
+	// 	webdriverrtc: {},
+	// 	browserevent: {}
 	// },
 	//
 	// Test runner services
@@ -162,11 +185,16 @@ exports.config = {
 	// Make sure you have the wdio adapter package for the specific framework installed
 	// before running any tests.
 	framework: 'mocha',
-
+	//
 	// Test reporter for stdout.
 	// The only one supported by default is 'dot'
 	// see also: http://webdriver.io/guide/testrunner/reporters.html
-	reporters: [ 'spec' ],
+	reporters: [ 'spec', 'junit' ],
+	reporterOptions: {
+		junit: {
+			outputDir: logPath
+		}
+	},
 	//
 	// Options to be passed to Mocha.
 	// See the full list at http://mochajs.org/
@@ -182,41 +210,65 @@ exports.config = {
 	// it and to build services around it. You can either apply a single function or an array of
 	// methods to it. If one of them returns with a promise, WebdriverIO will wait until that promise got
 	// resolved to continue.
-	//
-	// Gets executed once before all workers get launched.
-	// onPrepare: function ( config, capabilities ) {
-	// }
-	//
-	// Gets executed before test execution begins. At this point you can access all global
-	// variables, such as `browser`. It is the perfect place to define custom commands.
+	/**
+	* Gets executed once before all workers get launched.
+	* @param {Object} config wdio configuration object
+	* @param {Array.<Object>} capabilities list of capabilities details
+	*/
+	// onPrepare: function (config, capabilities) {
+	// },
+	/**
+	* Gets executed just before initialising the webdriver session and test framework. It allows you
+	* to manipulate configurations depending on the capability or spec.
+	* @param {Object} config wdio configuration object
+	* @param {Array.<Object>} capabilities list of capabilities details
+	* @param {Array.<String>} specs List of spec file paths that are to be run
+	*/
+	// beforeSession: function (config, capabilities, specs) {
+	// },
+	/**
+	* Gets executed before test execution begins. At this point you can access to all global
+	* variables like `browser`. It is the perfect place to define custom commands.
+	* @param {Array.<Object>} capabilities list of capabilities details
+	* @param {Array.<String>} specs List of spec file paths that are to be run
+	*/
 	// before: function (capabilities, specs) {
 	// },
-	//
-	// Hook that gets executed before the suite starts
-	// beforeSuite: function (suite) {
-	// },
-	//
-	// Hook that gets executed _before_ a hook within the suite starts (e.g. runs before calling
-	// beforeEach in Mocha)
-	// beforeHook: function () {
-	// },
-	//
-	// Hook that gets executed _after_ a hook within the suite starts (e.g. runs after calling
-	// afterEach in Mocha)
-	//
-	// Function to be executed before a test (in Mocha/Jasmine) or a step (in Cucumber) starts.
-	// beforeTest: function (test) {
-	// },
-	//
-	// Runs before a WebdriverIO command gets executed.
+	/**
+	* Runs before a WebdriverIO command gets executed.
+	* @param {String} commandName hook command name
+	* @param {Array} args arguments that command would receive
+	*/
 	// beforeCommand: function (commandName, args) {
 	// },
-	//
-	// Runs after a WebdriverIO command gets executed
-	// afterCommand: function (commandName, args, result, error) {
+	/**
+	* Hook that gets executed before the suite starts
+	* @param {Object} suite suite details
+	*/
+	// beforeSuite: function (suite) {
 	// },
-	//
-	// Function to be executed after a test (in Mocha/Jasmine) or a step (in Cucumber) starts.
+	/**
+	* Function to be executed before a test (in Mocha/Jasmine) or a step (in Cucumber) starts.
+	* @param {Object} test test details
+	*/
+	// beforeTest: function (test) {
+	// },
+	/**
+	* Hook that gets executed _before_ a hook within the suite starts (e.g. runs before calling
+	* beforeEach in Mocha)
+	*/
+	// beforeHook: function () {
+	// },
+	/**
+	* Hook that gets executed _after_ a hook within the suite ends (e.g. runs after calling
+	* afterEach in Mocha)
+	*/
+	// afterHook: function () {
+	// },
+	/**
+	* Function to be executed after a test (in Mocha/Jasmine) or a step (in Cucumber) ends.
+	* @param {Object} test test details
+	*/
 	// from https://github.com/webdriverio/webdriverio/issues/269#issuecomment-306342170
 	afterTest: function ( test ) {
 		var filename, filePath;
@@ -231,19 +283,46 @@ exports.config = {
 		// save screenshot
 		browser.saveScreenshot( filePath );
 		console.log( '\n\tScreenshot location:', filePath, '\n' );
-	},
+	}
 	//
-	// Hook that gets executed after the suite has ended
+	/**
+	* Hook that gets executed after the suite has ended
+	* @param {Object} suite suite details
+	*/
 	// afterSuite: function (suite) {
 	// },
-	//
-	// Gets executed after all tests are done. You still have access to all global variables from
-	// the test.
+	/**
+	* Runs after a WebdriverIO command gets executed
+	* @param {String} commandName hook command name
+	* @param {Array} args arguments that command would receive
+	* @param {Number} result 0 - command success, 1 - command error
+	* @param {Object} error error object if any
+	*/
+	// afterCommand: function (commandName, args, result, error) {
+	// },
+	/**
+	* Gets executed after all tests are done. You still have access to all global variables from
+	* the test.
+	* @param {Number} result 0 - test pass, 1 - test fail
+	* @param {Array.<Object>} capabilities list of capabilities details
+	* @param {Array.<String>} specs List of spec file paths that ran
+	*/
 	// after: function (result, capabilities, specs) {
 	// },
-	//
-	// Gets executed after all workers got shut down and the process is about to exit. It is not
-	// possible to defer the end of the process using a promise.
-	// onComplete: function(exitCode) {
+	/**
+	* Gets executed right after terminating the webdriver session.
+	* @param {Object} config wdio configuration object
+	* @param {Array.<Object>} capabilities list of capabilities details
+	* @param {Array.<String>} specs List of spec file paths that ran
+	*/
+	// afterSession: function (config, capabilities, specs) {
+	// },
+	/**
+	* Gets executed after all workers got shut down and the process is about to exit.
+	* @param {Object} exitCode 0 - success, 1 - fail
+	* @param {Object} config wdio configuration object
+	* @param {Array.<Object>} capabilities list of capabilities details
+	*/
+	// onComplete: function(exitCode, config, capabilities) {
 	// }
 };

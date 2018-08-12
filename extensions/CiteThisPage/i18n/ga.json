@@ -2,11 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"Alison",
-			"Tem"
+			"Tem",
+			"Nmacu"
 		]
 	},
 	"citethispage": "Luaigh",
-	"citethispage-desc": "Cuir [[Special:Cite|deismireacht]] leathanach speisíalta agus nasc bosca uirlisí",
+	"citethispage-desc": "Cuir isteach [[Special:CiteThisPage|deismireacht]] leathanach speisíalta agus nasc bosca uirlisí",
 	"citethispage-link": "Luaigh an lch seo",
 	"tooltip-citethispage": "Eolas maidir le conas an leathanach seo a lua",
 	"citethispage-change-submit": "Luaigh",

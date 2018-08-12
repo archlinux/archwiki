@@ -25,6 +25,7 @@ namespace Wikimedia\Rdbms;
 use mysqli;
 use mysqli_result;
 use IP;
+use stdClass;
 
 /**
  * Database abstraction object for PHP extension mysqli.
@@ -34,11 +35,9 @@ use IP;
  * @see Database
  */
 class DatabaseMysqli extends DatabaseMysqlBase {
-	/** @var mysqli $mConn */
-
 	/**
 	 * @param string $sql
-	 * @return resource
+	 * @return mysqli_result
 	 */
 	protected function doQuery( $sql ) {
 		$conn = $this->getBindingHandle();
@@ -86,7 +85,7 @@ class DatabaseMysqli extends DatabaseMysqlBase {
 		$mysqli = mysqli_init();
 
 		$connFlags = 0;
-		if ( $this->mFlags & self::DBO_SSL ) {
+		if ( $this->flags & self::DBO_SSL ) {
 			$connFlags |= MYSQLI_CLIENT_SSL;
 			$mysqli->ssl_set(
 				$this->sslKeyPath,
@@ -96,10 +95,10 @@ class DatabaseMysqli extends DatabaseMysqlBase {
 				$this->sslCiphers
 			);
 		}
-		if ( $this->mFlags & self::DBO_COMPRESS ) {
+		if ( $this->flags & self::DBO_COMPRESS ) {
 			$connFlags |= MYSQLI_CLIENT_COMPRESS;
 		}
-		if ( $this->mFlags & self::DBO_PERSISTENT ) {
+		if ( $this->flags & self::DBO_PERSISTENT ) {
 			$realServer = 'p:' . $realServer;
 		}
 
@@ -112,8 +111,8 @@ class DatabaseMysqli extends DatabaseMysqlBase {
 		}
 		$mysqli->options( MYSQLI_OPT_CONNECT_TIMEOUT, 3 );
 
-		if ( $mysqli->real_connect( $realServer, $this->mUser,
-			$this->mPassword, $this->mDBname, $port, $socket, $connFlags )
+		if ( $mysqli->real_connect( $realServer, $this->user,
+			$this->password, $this->dbName, $port, $socket, $connFlags )
 		) {
 			return $mysqli;
 		}
@@ -162,8 +161,8 @@ class DatabaseMysqli extends DatabaseMysqlBase {
 	 * @return int
 	 */
 	function lastErrno() {
-		if ( $this->mConn ) {
-			return $this->mConn->errno;
+		if ( $this->conn instanceof mysqli ) {
+			return $this->conn->errno;
 		} else {
 			return mysqli_connect_errno();
 		}
@@ -172,7 +171,7 @@ class DatabaseMysqli extends DatabaseMysqlBase {
 	/**
 	 * @return int
 	 */
-	function affectedRows() {
+	protected function fetchAffectedRowCount() {
 		$conn = $this->getBindingHandle();
 
 		return $conn->affected_rows;
@@ -185,7 +184,7 @@ class DatabaseMysqli extends DatabaseMysqlBase {
 	function selectDB( $db ) {
 		$conn = $this->getBindingHandle();
 
-		$this->mDBname = $db;
+		$this->dbName = $db;
 
 		return $conn->select_db( $db );
 	}
@@ -202,7 +201,7 @@ class DatabaseMysqli extends DatabaseMysqlBase {
 
 	/**
 	 * @param mysqli_result $res
-	 * @return bool
+	 * @return stdClass|bool
 	 */
 	protected function mysqlFetchObject( $res ) {
 		$object = $res->fetch_object();
@@ -235,7 +234,7 @@ class DatabaseMysqli extends DatabaseMysqlBase {
 	}
 
 	/**
-	 * @param mysqli $res
+	 * @param mysqli_result $res
 	 * @return mixed
 	 */
 	protected function mysqlNumFields( $res ) {
@@ -243,7 +242,7 @@ class DatabaseMysqli extends DatabaseMysqlBase {
 	}
 
 	/**
-	 * @param mysqli $res
+	 * @param mysqli_result $res
 	 * @param int $n
 	 * @return mixed
 	 */
@@ -266,7 +265,7 @@ class DatabaseMysqli extends DatabaseMysqlBase {
 	}
 
 	/**
-	 * @param mysqli $res
+	 * @param mysqli_result $res
 	 * @param int $n
 	 * @return mixed
 	 */
@@ -277,7 +276,7 @@ class DatabaseMysqli extends DatabaseMysqlBase {
 	}
 
 	/**
-	 * @param mysqli $res
+	 * @param mysqli_result $res
 	 * @param int $n
 	 * @return mixed
 	 */
@@ -326,12 +325,19 @@ class DatabaseMysqli extends DatabaseMysqlBase {
 	 * @return string
 	 */
 	public function __toString() {
-		if ( $this->mConn instanceof mysqli ) {
-			return (string)$this->mConn->thread_id;
+		if ( $this->conn instanceof mysqli ) {
+			return (string)$this->conn->thread_id;
 		} else {
 			// mConn might be false or something.
-			return (string)$this->mConn;
+			return (string)$this->conn;
 		}
+	}
+
+	/**
+	 * @return mysqli
+	 */
+	protected function getBindingHandle() {
+		return parent::getBindingHandle();
 	}
 }
 

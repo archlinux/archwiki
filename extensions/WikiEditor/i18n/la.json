@@ -5,12 +5,10 @@
 			"OrbiliusMagister",
 			"UV",
 			"Macofe",
-			"Laurentianus"
+			"Laurentianus",
+			"Lesgles"
 		]
 	},
-	"wikieditor-preview-tab": "Prospectus",
-	"wikieditor-preview-changes-tab": "Mutata",
-	"wikieditor-preview-loading": "Depromens...",
 	"wikieditor-toolbar-preference": "Maiorem trabem editoriam offerre",
 	"wikieditor-toolbar-loading": "Depromens…",
 	"wikieditor-toolbar-tool-bold": "Litterae pingues",
@@ -51,7 +49,7 @@
 	"wikieditor-toolbar-tool-newline": "Nova linea",
 	"wikieditor-toolbar-tool-table": "Tabula",
 	"wikieditor-toolbar-section-characters": "Characteres speciales",
-	"wikieditor-toolbar-section-help": "Adiutatum",
+	"wikieditor-toolbar-section-help": "Auxilium",
 	"wikieditor-toolbar-help-heading-description": "Descriptio",
 	"wikieditor-toolbar-help-heading-syntax": "Quod scribis",
 	"wikieditor-toolbar-help-heading-result": "Quod accipies",

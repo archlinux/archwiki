@@ -15,7 +15,6 @@
 	"cite_error_ref_no_input": "Fähler en <i lang=\"en\">cite</i>:\nE <code>&lt;ref&gt;</code> oohne Name moß ene Enhallt han.",
 	"cite_error_references_duplicate_key": "Dat es ene onjöllteje „<code lang=\"en\" xml:lang=\"en\" dir=\"ltr\">&lt;ref&gt;</code>“-Befähl, Dä Nahme „$1“ es mih wi eijmohl med enem onejahle Ennhalld belähsch.",
 	"cite_error_references_invalid_parameters": "Fähler en <i lang=\"en\">cite</i>:\nE <code>&lt;references&gt;</code> moß oohne Parrametere sin.\nNemm eifach <code>&lt;references /&gt;</code> un söns nix.",
-	"cite_error_references_invalid_parameters_group": "Fähler en <i lang=\"en\">cite</i>:\nE <code>&lt;references&gt;</code> darf nur dä Parrameeter „<code>group</code>“ han.\nNemm eifach <code>&lt;references /&gt;</code> udder <code>&lt;references group=\"...\" /&gt;</code> un söns nix.",
 	"cite_error_references_no_backlink_label": "Fähler en <i lang=\"en\">cite</i>:\nNit jenoch Name för retuur-Lengks.\nDonn mieh en dä Sigg <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki> enndrare.",
 	"cite_error_no_link_label_group": "För de Jroppe „$1“ senn_er kein Bezeichnonge för Lengks mih doh.\nDonn op <nowiki>[[MediaWiki:$2]]</nowiki> noch e paa dobei.",
 	"cite_error_references_no_text": "Fähler en <i lang=\"en\">cite</i>:\nEt wohr keine Tex aanjejovve för de\n<code>&lt;ref&gt;</code>s met dämm Name „<code>$1</code>“.",

@@ -13,7 +13,7 @@ use LogicException;
  * for the respective RDF constructs. Subclasses may override the startXXX() and finishXXX()
  * methods to generate structural output, and override expandXXX() to transform identifiers.
  *
- * @license GPL-2.0+
+ * @license GPL-2.0-or-later
  * @author Daniel Kinzler
  */
 abstract class RdfWriterBase implements RdfWriter {
@@ -52,7 +52,7 @@ abstract class RdfWriterBase implements RdfWriter {
 	/**
 	 * @var string[] a map of prefixes to base IRIs
 	 */
-	private $prefixes = [];
+	protected $prefixes = [];
 
 	/**
 	 * @var array pair to store the current subject.
@@ -258,7 +258,7 @@ abstract class RdfWriterBase implements RdfWriter {
 	protected function expandQName( &$base, &$local ) {
 		if ( $local !== null && $base !== '_' ) {
 			if ( isset( $this->prefixes[$base] ) ) {
-				$base = $this->prefixes[$base] . $local; //XXX: can we avoid this concat?
+				$base = $this->prefixes[$base] . $local; // XXX: can we avoid this concat?
 				$local = null;
 			} else {
 				throw new LogicException( 'Unknown prefix: ' . $base );
@@ -317,7 +317,7 @@ abstract class RdfWriterBase implements RdfWriter {
 		$this->drainSubs();
 		$this->flattenBuffer();
 
-		$rdf = join( '', $this->buffer );
+		$rdf = implode( '', $this->buffer );
 		$this->buffer = [];
 
 		return $rdf;
@@ -600,7 +600,7 @@ abstract class RdfWriterBase implements RdfWriter {
 	 * @note: $typeBase and $typeLocal are given as passed to value() and processed by expandType().
 	 *
 	 * @param string $value the value encoded as a string
-	 * @param string $typeBase
+	 * @param string|null $typeBase
 	 * @param string|null $typeLocal
 	 */
 	abstract protected function writeValue( $value, $typeBase, $typeLocal = null );
@@ -639,7 +639,7 @@ abstract class RdfWriterBase implements RdfWriter {
 	 * Perform any expansion (shorthand to qname, qname to IRI) desired
 	 * for type identifiers.
 	 *
-	 * @param string &$base
+	 * @param string|null &$base
 	 * @param string|null &$local
 	 */
 	protected function expandType( &$base, &$local ) {

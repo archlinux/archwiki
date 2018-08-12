@@ -10,6 +10,7 @@ class ReCaptchaNoCaptcha extends SimpleCaptcha {
 	private $error = null;
 	/**
 	 * Get the captcha form.
+	 * @param int $tabIndex
 	 * @return array
 	 */
 	function getFormInformation( $tabIndex = 1 ) {
@@ -59,7 +60,7 @@ HTML;
 	}
 
 	/**
-	 * @param $info
+	 * @param Status|array|string $info
 	 */
 	protected function logCheckError( $info ) {
 		if ( $info instanceof Status ) {
@@ -91,8 +92,8 @@ HTML;
 	 * Based on reference implementation:
 	 * https://github.com/google/recaptcha#php
 	 *
-	 * @param $_ mixed Not used (ReCaptcha v2 puts index and solution in a single string)
-	 * @param $word string captcha solution
+	 * @param mixed $_ Not used (ReCaptcha v2 puts index and solution in a single string)
+	 * @param string $word captcha solution
 	 * @return bool
 	 */
 	function passCaptcha( $_, $word ) {
@@ -131,7 +132,7 @@ HTML;
 	}
 
 	/**
-	 * @param array $resultArr
+	 * @param array &$resultArr
 	 */
 	function addCaptchaAPI( &$resultArr ) {
 		$resultArr['captcha'] = $this->describeCaptchaType();
@@ -154,7 +155,7 @@ HTML;
 	 * Show a message asking the user to enter a captcha on edit
 	 * The result will be treated as wiki text
 	 *
-	 * @param $action string Action being performed
+	 * @param string $action Action being performed
 	 * @return string Wikitext
 	 */
 	public function getMessage( $action ) {
@@ -166,8 +167,8 @@ HTML;
 	}
 
 	/**
-	 * @param ApiBase $module
-	 * @param array $params
+	 * @param ApiBase &$module
+	 * @param array &$params
 	 * @param int $flags
 	 * @return bool
 	 */
@@ -220,7 +221,7 @@ HTML;
 	/**
 	 * @param array $requests
 	 * @param array $fieldInfo
-	 * @param array $formDescriptor
+	 * @param array &$formDescriptor
 	 * @param string $action
 	 */
 	public function onAuthChangeFormFields(

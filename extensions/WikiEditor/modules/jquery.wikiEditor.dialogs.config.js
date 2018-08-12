@@ -9,11 +9,6 @@
 
 		replaceIcons: function ( $textarea ) {
 			$textarea
-				.wikiEditor( 'removeFromToolbar', { section: 'main', group: 'insert', tool: 'xlink' } )
-				.wikiEditor( 'removeFromToolbar', { section: 'main', group: 'insert', tool: 'ilink' } )
-				.wikiEditor( 'removeFromToolbar', { section: 'main', group: 'insert', tool: 'file' } )
-				.wikiEditor( 'removeFromToolbar', { section: 'main', group: 'insert', tool: 'reference' } )
-				.wikiEditor( 'removeFromToolbar', { section: 'advanced', group: 'insert', tool: 'table' } )
 				.wikiEditor( 'addToToolbar', {
 					section: 'main',
 					group: 'insert',
@@ -21,8 +16,7 @@
 						link: {
 							labelMsg: 'wikieditor-toolbar-tool-link',
 							type: 'button',
-							icon: 'insert-link.png',
-							offset: [ 2, -1654 ],
+							oouiIcon: 'link',
 							action: {
 								type: 'dialog',
 								module: 'insert-link'
@@ -31,8 +25,7 @@
 						file: {
 							labelMsg: 'wikieditor-toolbar-tool-file',
 							type: 'button',
-							icon: 'insert-file.png',
-							offset: [ 2, -1438 ],
+							oouiIcon: 'image',
 							action: {
 								type: 'dialog',
 								module: 'insert-file'
@@ -42,8 +35,7 @@
 							labelMsg: 'wikieditor-toolbar-tool-reference',
 							filters: [ 'body.ns-subject' ],
 							type: 'button',
-							icon: 'insert-reference.png',
-							offset: [ 2, -1798 ],
+							oouiIcon: 'book',
 							action: {
 								type: 'dialog',
 								module: 'insert-reference'
@@ -58,8 +50,7 @@
 						table: {
 							labelMsg: 'wikieditor-toolbar-tool-table',
 							type: 'button',
-							icon: 'insert-table.png',
-							offset: [ 2, -1942 ],
+							oouiIcon: 'table',
 							action: {
 								type: 'dialog',
 								module: 'insert-table'
@@ -75,8 +66,7 @@
 								replace: {
 									labelMsg: 'wikieditor-toolbar-tool-replace',
 									type: 'button',
-									icon: 'search-replace.png',
-									offset: [ -70, -214 ],
+									oouiIcon: 'find',
 									action: {
 										type: 'dialog',
 										module: 'search-and-replace'
@@ -115,7 +105,7 @@
 						}
 
 						// Updates the status indicator above the target link
-						function updateWidget( status ) {
+						function updateWidget( status, reason ) {
 							$( '#wikieditor-toolbar-link-int-target-status' ).children().hide();
 							$( '#wikieditor-toolbar-link-int-target' ).parent()
 								.removeClass(
@@ -129,6 +119,13 @@
 								$( '.ui-dialog:visible .ui-dialog-buttonpane button:first' )
 									.prop( 'disabled', true )
 									.addClass( 'disabled' );
+								if ( reason ) {
+									$( '#wikieditor-toolbar-link-int-target-status-invalid' ).html( reason );
+								} else {
+									$( '#wikieditor-toolbar-link-int-target-status-invalid' )
+										.text( mw.msg( 'wikieditor-toolbar-tool-link-int-target-status-invalid' ) );
+								}
+
 							} else {
 								$( '.ui-dialog:visible .ui-dialog-buttonpane button:first' )
 									.prop( 'disabled', false )
@@ -142,7 +139,8 @@
 							// Abort previous request
 							var request = $( '#wikieditor-toolbar-link-int-target-status' ).data( 'request' ),
 								target = $( '#wikieditor-toolbar-link-int-target' ).val(),
-								cache = $( '#wikieditor-toolbar-link-int-target-status' ).data( 'existencecache' );
+								cache = $( '#wikieditor-toolbar-link-int-target-status' ).data( 'existencecache' ),
+								reasoncache = $( '#wikieditor-toolbar-link-int-target-status' ).data( 'reasoncache' );
 							// ensure the internal parameter is a boolean
 							if ( internal !== true ) {
 								internal = false;
@@ -151,7 +149,7 @@
 								request.abort();
 							}
 							if ( hasOwn.call( cache, target ) ) {
-								updateWidget( cache[ target ] );
+								updateWidget( cache[ target ], reasoncache[ target ] );
 								return;
 							}
 							if ( target.replace( /^\s+$/, '' ) === '' ) {
@@ -162,12 +160,6 @@
 							// If the forced internal parameter was not true, check if the target is an external link
 							if ( !internal && isExternalLink( target ) ) {
 								updateWidget( 'external' );
-								return;
-							}
-							if ( target.indexOf( '|' ) !== -1 ) {
-								// Title contains | , which means it's invalid
-								// but confuses the API. Show invalid and bypass API
-								updateWidget( 'invalid' );
 								return;
 							}
 							// Show loading spinner while waiting for the API to respond
@@ -183,10 +175,12 @@
 									formatversion: 2,
 									action: 'query',
 									prop: 'pageprops',
-									titles: target,
-									ppprop: 'disambiguation'
+									titles: [ target ],
+									ppprop: 'disambiguation',
+									errorformat: 'html',
+									errorlang: mw.config.get( 'wgUserLanguage' )
 								} ).done( function ( data ) {
-									var status, page;
+									var status, page, reason = null;
 									if ( !data.query || !data.query.pages ) {
 										// This happens in some weird cases like interwiki links
 										status = false;
@@ -197,6 +191,7 @@
 											status = 'notexists';
 										} else if ( page.invalid ) {
 											status = 'invalid';
+											reason = page.invalidreason && page.invalidreason.html;
 										} else if ( page.pageprops ) {
 											status = 'disambig';
 										}
@@ -205,8 +200,9 @@
 									// parameter was not passed
 									if ( !internal ) {
 										cache[ target ] = status;
+										reasoncache[ target ] = reason;
 									}
-									updateWidget( status );
+									updateWidget( status, reason );
 								} )
 							);
 						}
@@ -321,7 +317,6 @@
 							)
 							.append( $( '<div>' )
 								.attr( 'id', 'wikieditor-toolbar-link-int-target-status-invalid' )
-								.text( mw.msg( 'wikieditor-toolbar-tool-link-int-target-status-invalid' ) )
 							)
 							.append( $( '<div>' )
 								.attr( 'id', 'wikieditor-toolbar-link-int-target-status-external' )
@@ -336,6 +331,7 @@
 								.text( mw.msg( 'wikieditor-toolbar-tool-link-int-target-status-disambig' ) )
 							)
 							.data( 'existencecache', {} )
+							.data( 'reasoncache', {} )
 							.children().hide();
 
 						$( '#wikieditor-toolbar-link-int-target' )
@@ -383,8 +379,7 @@
 									search: title,
 									namespace: 0,
 									suggest: ''
-								} )
-								.done( function ( data ) {
+								} ).done( function ( data ) {
 									cache[ title ] = data[ 1 ];
 									$( that ).suggestions( 'suggestions', data[ 1 ] );
 								} );
@@ -531,7 +526,7 @@
 							$( '#wikieditor-toolbar-link-int-target' ).change();
 							$( '#wikieditor-toolbar-link-dialog' ).data( 'whitespace', [ '', '' ] );
 							if ( selection !== '' ) {
-								if ( ( matches = selection.match( /^(\s*)\[\[([^\]\|]+)(\|([^\]\|]*))?\]\](\s*)$/ ) ) ) {
+								if ( ( matches = selection.match( /^(\s*)\[\[([^\]|]+)(\|([^\]|]*))?\]\](\s*)$/ ) ) ) {
 									// [[foo|bar]] or [[foo]]
 									target = matches[ 2 ];
 									text = ( matches[ 4 ] ? matches[ 4 ] : matches[ 2 ] );
@@ -663,7 +658,7 @@
 								.data( 'whitespace', [ '', '' ] )
 								.data( 'attributes', '' );
 							if ( selection !== '' ) {
-								if ( ( matches = selection.match( /^(\s*)<ref([^\>]*)>([^<]*)<\/ref\>(\s*)$/ ) ) ) {
+								if ( ( matches = selection.match( /^(\s*)<ref([^>]*)>([^<]*)<\/ref>(\s*)$/ ) ) ) {
 									text = matches[ 3 ];
 									// Preserve whitespace when replacing
 									$( '#wikieditor-toolbar-reference-dialog' )
@@ -702,24 +697,20 @@
 					init: function () {
 						var magicWordsI18N = mw.config.get( 'wgWikiEditorMagicWords' ),
 							defaultMsg = mw.msg( 'wikieditor-toolbar-file-default' );
-						$( this )
-							.find( '[data-i18n-magic]' )
-								.text( function () {
-									return magicWordsI18N[ $( this ).attr( 'data-i18n-magic' ) ];
-								} )
-								.removeAttr( 'data-i18n-magic' )
-								.end()
-							.find( '#wikieditor-toolbar-file-size' )
-								.attr( 'placeholder', defaultMsg )
-								// The message may be long in some languages
-								.attr( 'size', defaultMsg.length )
-								.end()
-							.find( '[rel]' )
-								.text( function () {
-									return mw.msg( $( this ).attr( 'rel' ) );
-								} )
-								.removeAttr( 'rel' )
-								.end();
+						$( this ).find( '[data-i18n-magic]' )
+							.text( function () {
+								return magicWordsI18N[ $( this ).attr( 'data-i18n-magic' ) ];
+							} )
+							.removeAttr( 'data-i18n-magic' );
+						$( this ).find( '#wikieditor-toolbar-file-size' )
+							.attr( 'placeholder', defaultMsg )
+							// The message may be long in some languages
+							.attr( 'size', defaultMsg.length );
+						$( this ).find( '[rel]' )
+							.text( function () {
+								return mw.msg( $( this ).attr( 'rel' ) );
+							} )
+							.removeAttr( 'rel' );
 					},
 					dialog: {
 						resizable: false,

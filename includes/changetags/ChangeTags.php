@@ -32,10 +32,45 @@ class ChangeTags {
 	 */
 	const MAX_DELETE_USES = 5000;
 
+	private static $definedSoftwareTags = [
+		'mw-contentmodelchange',
+		'mw-new-redirect',
+		'mw-removed-redirect',
+		'mw-changed-redirect-target',
+		'mw-blank',
+		'mw-replace',
+		'mw-rollback',
+		'mw-undo',
+	];
+
 	/**
-	 * @var string[]
+	 * Loads defined core tags, checks for invalid types (if not array),
+	 * and filters for supported and enabled (if $all is false) tags only.
+	 *
+	 * @param bool $all If true, return all valid defined tags. Otherwise, return only enabled ones.
+	 * @return array Array of all defined/enabled tags.
 	 */
-	private static $coreTags = [ 'mw-contentmodelchange' ];
+	public static function getSoftwareTags( $all = false ) {
+		global $wgSoftwareTags;
+		$softwareTags = [];
+
+		if ( !is_array( $wgSoftwareTags ) ) {
+			wfWarn( 'wgSoftwareTags should be associative array of enabled tags.
+			Please refer to documentation for the list of tags you can enable' );
+			return $softwareTags;
+		}
+
+		$availableSoftwareTags = !$all ?
+			array_keys( array_filter( $wgSoftwareTags ) ) :
+			array_keys( $wgSoftwareTags );
+
+		$softwareTags = array_intersect(
+			$availableSoftwareTags,
+			self::$definedSoftwareTags
+		);
+
+		return $softwareTags;
+	}
 
 	/**
 	 * Creates HTML for the given tags
@@ -100,7 +135,7 @@ class ChangeTags {
 	 * exists, provided it is not disabled. If the message is disabled,
 	 * we consider the tag hidden, and return false.
 	 *
-	 * @param string $tag Tag
+	 * @param string $tag
 	 * @param IContextSource $context
 	 * @return string|bool Tag description or false if tag is to be hidden.
 	 * @since 1.25 Returns false if tag is to be hidden.
@@ -127,7 +162,7 @@ class ChangeTags {
 	 * or if message is disabled, returns false. Otherwise, returns the message object
 	 * for the long description.
 	 *
-	 * @param string $tag Tag
+	 * @param string $tag
 	 * @param IContextSource $context
 	 * @return Message|bool Message object of the tag long description or false if
 	 *  there is no description.
@@ -144,6 +179,28 @@ class ChangeTags {
 
 		// Message exists and isn't disabled, use it.
 		return $msg;
+	}
+
+	/**
+	 * Get truncated message for the tag's long description.
+	 *
+	 * @param string $tag Tag name.
+	 * @param int $length Maximum length of truncated message, including ellipsis.
+	 * @param IContextSource $context
+	 *
+	 * @return string Truncated long tag description.
+	 */
+	public static function truncateTagDescription( $tag, $length, IContextSource $context ) {
+		$originalDesc = self::tagLongDescriptionMessage( $tag, $context );
+		// If there is no tag description, return empty string
+		if ( !$originalDesc ) {
+			return '';
+		}
+
+		$taglessDesc = Sanitizer::stripAllTags( $originalDesc->parse() );
+		$escapedDesc = Sanitizer::escapeHtmlAllowEntities( $taglessDesc );
+
+		return $context->getLanguage()->truncateForVisual( $escapedDesc, $length );
 	}
 
 	/**
@@ -373,19 +430,24 @@ class ChangeTags {
 		sort( $prevTags );
 		sort( $newTags );
 		if ( $prevTags == $newTags ) {
-			// No change.
 			return false;
 		}
 
 		if ( !$newTags ) {
-			// no tags left, so delete the row altogether
+			// No tags left, so delete the row altogether
 			$dbw->delete( 'tag_summary', $tsConds, __METHOD__ );
 		} else {
-			$dbw->replace( 'tag_summary',
-				[ 'ts_rev_id', 'ts_rc_id', 'ts_log_id' ],
-				array_filter( array_merge( $tsConds, [ 'ts_tags' => implode( ',', $newTags ) ] ) ),
-				__METHOD__
-			);
+			// Specify the non-DEFAULT value columns in the INSERT/REPLACE clause
+			$row = array_filter( [ 'ts_tags' => implode( ',', $newTags ) ] + $tsConds );
+			// Check the unique keys for conflicts, ignoring any NULL *_id values
+			$uniqueKeys = [];
+			foreach ( [ 'ts_rev_id', 'ts_rc_id', 'ts_log_id' ] as $uniqueColumn ) {
+				if ( isset( $row[$uniqueColumn] ) ) {
+					$uniqueKeys[] = [ $uniqueColumn ];
+				}
+			}
+
+			$dbw->replace( 'tag_summary', $uniqueKeys, $row, __METHOD__ );
 		}
 
 		return true;
@@ -1210,7 +1272,7 @@ class ChangeTags {
 	 */
 	public static function listSoftwareActivatedTags() {
 		// core active tags
-		$tags = self::$coreTags;
+		$tags = self::getSoftwareTags();
 		if ( !Hooks::isRegistered( 'ChangeTagsListActive' ) ) {
 			return $tags;
 		}
@@ -1234,19 +1296,8 @@ class ChangeTags {
 	}
 
 	/**
-	 * @see listSoftwareActivatedTags
-	 * @deprecated since 1.28 call listSoftwareActivatedTags directly
-	 * @return array
-	 */
-	public static function listExtensionActivatedTags() {
-		wfDeprecated( __METHOD__, '1.28' );
-		return self::listSoftwareActivatedTags();
-	}
-
-	/**
 	 * Basically lists defined tags which count even if they aren't applied to anything.
-	 * It returns a union of the results of listExplicitlyDefinedTags() and
-	 * listExtensionDefinedTags().
+	 * It returns a union of the results of listExplicitlyDefinedTags()
 	 *
 	 * @return string[] Array of strings: tags
 	 */
@@ -1301,7 +1352,7 @@ class ChangeTags {
 	 */
 	public static function listSoftwareDefinedTags() {
 		// core defined tags
-		$tags = self::$coreTags;
+		$tags = self::getSoftwareTags( true );
 		if ( !Hooks::isRegistered( 'ListDefinedTags' ) ) {
 			return $tags;
 		}
@@ -1321,18 +1372,6 @@ class ChangeTags {
 				'pcTTL' => WANObjectCache::TTL_PROC_LONG
 			]
 		);
-	}
-
-	/**
-	 * Call listSoftwareDefinedTags directly
-	 *
-	 * @see listSoftwareDefinedTags
-	 * @deprecated since 1.28
-	 * @return array
-	 */
-	public static function listExtensionDefinedTags() {
-		wfDeprecated( __METHOD__, '1.28' );
-		return self::listSoftwareDefinedTags();
 	}
 
 	/**

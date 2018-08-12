@@ -3,7 +3,9 @@
 /**
  * @covers ClassCollector
  */
-class ClassCollectorTest extends PHPUnit_Framework_TestCase {
+class ClassCollectorTest extends PHPUnit\Framework\TestCase {
+
+	use MediaWikiCoversValidator;
 
 	public static function provideCases() {
 		return [
@@ -30,6 +32,12 @@ class ClassCollectorTest extends PHPUnit_Framework_TestCase {
 			[
 				"class_alias( Foo::class, 'Bar' );",
 				[ 'Bar' ],
+			],
+			[
+				// Namespaced class is not currently supported. Must use namespace declaration
+				// earlier in the file.
+				"class_alias( Example\Foo::class, 'Bar' );",
+				[],
 			],
 			[
 				"namespace Example;\nclass Foo {}\nclass_alias( Foo::class, 'Bar' );",

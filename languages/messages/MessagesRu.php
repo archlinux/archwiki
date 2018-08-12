@@ -416,18 +416,11 @@ $bookstoreList = [
 	'Amazon.com' => 'https://www.amazon.com/exec/obidos/ISBN=$1'
 ];
 
-/**
- * Изменения сделанные в этом файле будут потеряны при обновлении MediaWiki.
- *
- * Если необходимо внести изменения в перевод отдельных строк интерфейса,
- * сделайте это посредством редактирования страниц вида «MediaWiki:*».
- * Их список можно найти на странице «Special:Allmessages».
- */
-
 $separatorTransformTable = [
 	',' => "\xc2\xa0", # nbsp
 	'.' => ','
 ];
+$minimumGroupingDigits = 2;
 
 $fallback8bitEncoding = 'windows-1251';
 $linkPrefixExtension = false;

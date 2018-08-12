@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Zygimantus",
-			"Eitvys200"
+			"Eitvys200",
+			"Hugo.arg"
 		]
 	},
 	"apihelp-main-param-action": "Kurį veiksmą atlikti.",
@@ -72,15 +73,13 @@
 	"apihelp-feedrecentchanges-param-tagfilter": "Filtruoti pagal žymę.",
 	"apihelp-feedrecentchanges-param-target": "Rodyti tik keitimus puslapiuose, pasiekiamuose iš šio puslapio.",
 	"apihelp-feedrecentchanges-param-showlinkedto": "Vietoj to, rodyti pakeitimus puslapyje, susietame su pasirinktu puslapiu.",
-	"apihelp-feedrecentchanges-param-categories": "Rodyti pakeitimus tik puslapiuose, esančiuose visuose šiuose kategorijose.",
-	"apihelp-feedrecentchanges-param-categories_any": "Vietoj to, rodyti tik pakeitimus puslapiuse, esančiuose bet kurioje iš kategorijų.",
 	"apihelp-feedrecentchanges-example-simple": "Parodyti naujausius keitimus.",
 	"apihelp-feedrecentchanges-example-30days": "Rodyti naujausius pakeitimus per 30 dienų.",
 	"apihelp-feedwatchlist-summary": "Gražina stebimųjų sąrašo srautą.",
 	"apihelp-feedwatchlist-param-feedformat": "Srauto formatas.",
 	"apihelp-feedwatchlist-example-default": "Rodyti stebimųjų sąrašo srautą.",
 	"apihelp-feedwatchlist-example-all6hrs": "Rodyti visus pakeitimus stebimuose puslapiuose per paskutines 6 valandas.",
-	"apihelp-filerevert-param-comment": "Įkėlimo komentaras.",
+	"apihelp-filerevert-param-comment": "Įkėlimo pastabos.",
 	"apihelp-help-summary": "Rodyti pagalbą pasirinktiems moduliams.",
 	"apihelp-help-example-main": "Pagalba pagrindiniam moduliui.",
 	"apihelp-help-example-recursive": "Visa pagalba viename puslapyje.",
@@ -200,7 +199,7 @@
 	"apihelp-query+exturlusage-paramvalue-prop-ids": "Prideda puslapio ID.",
 	"apihelp-query+exturlusage-paramvalue-prop-url": "Prideda URL, panaudota puslapyje.",
 	"apihelp-query+exturlusage-param-limit": "Kiek puslapių gražinti.",
-	"apihelp-query+exturlusage-example-simple": "Rodyti puslapius, nurodančius į <kbd>http://www.mediawiki.org</kbd>.",
+	"apihelp-query+exturlusage-example-simple": "Rodyti puslapius, nurodančius į <kbd>https://www.mediawiki.org</kbd>.",
 	"apihelp-query+filearchive-param-prop": "Kokią paveikslėlio informaciją gauti:",
 	"apihelp-query+filearchive-paramvalue-prop-timestamp": "Prideda laiko žymę įkeltai versijai.",
 	"apihelp-query+filearchive-paramvalue-prop-user": "Prideda vartotoją, kuris įkėlė paveikslėlio versiją.",
@@ -265,6 +264,7 @@
 	"apihelp-query+logevents-param-prop": "Kurias savybes gauti:",
 	"apihelp-query+logevents-paramvalue-prop-ids": "Prideda žurnalo įvykio ID.",
 	"apihelp-query+logevents-paramvalue-prop-type": "Prideda žurnalo įvykio tipą.",
+	"apihelp-query+search-paramvalue-prop-extensiondata": "Prideda papildomus duomenis, sugeneruotus plėtinių.",
 	"apihelp-query+transcludedin-paramvalue-prop-pageid": "Kiekvieno puslapio ID.",
 	"apihelp-query+transcludedin-paramvalue-prop-title": "Kiekvieno puslapio pavadinimas.",
 	"apihelp-query+transcludedin-param-limit": "Kiek gražinti.",

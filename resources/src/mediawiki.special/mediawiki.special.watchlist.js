@@ -59,7 +59,7 @@
 			// If a page is on the watchlist, a '×' is shown which, when clicked, removes the page from the watchlist.
 			// After unwatching a page, the '×' becomes a '+', which if clicked re-watches the page.
 			// Unwatched page entries are struck through and have lowered opacity.
-			$( '.mw-unwatch-link, .mw-watch-link' ).click( function ( event ) {
+			$( '.mw-changeslist' ).on( 'click', '.mw-unwatch-link, .mw-watch-link', function ( event ) {
 				var $unwatchLink = $( this ), // EnhancedChangesList uses <table> for each row, while OldChangesList uses <li> for each row
 					$watchlistLine = $unwatchLink.closest( 'li, table' )
 						.find( '[data-target-page]' ),
@@ -96,6 +96,9 @@
 						} );
 					} );
 				}
+
+				// Preload the notification module for mw.notify
+				mw.loader.load( 'mediawiki.notification' );
 
 				// Depending on whether we are watching or unwatching, for each entry of the page (and its associated page i.e. Talk),
 				// change the text, tooltip, and non-JS href of the (un)watch button, and update the styling of the watchlist entry.

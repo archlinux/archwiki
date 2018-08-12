@@ -29,6 +29,8 @@ class WikiTextStructure {
 	private $excludedElementSelectors = [
 		// "it looks like you don't have javascript enabled..." – do not need to index
 		'audio', 'video',
+		// CSS stylesheets aren't content
+		'style',
 		// The [1] for references
 		'sup.reference',
 		// The ↑ next to references in the references section
@@ -146,9 +148,10 @@ class WikiTextStructure {
 		if ( !is_null( $this->allText ) ) {
 			return;
 		}
-		$this->parserOutput->setEditSectionTokens( false );
-		$this->parserOutput->setTOCEnabled( false );
-		$text = $this->parserOutput->getText();
+		$text = $this->parserOutput->getText( [
+			'enableSectionEditTokens' => false,
+			'allowTOC' => false,
+		] );
 		if ( strlen( $text ) == 0 ) {
 			$this->allText = "";
 			// empty text - nothing to seek here

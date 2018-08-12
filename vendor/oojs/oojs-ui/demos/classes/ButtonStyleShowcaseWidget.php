@@ -12,16 +12,10 @@ class ButtonStyleShowcaseWidget extends OOUI\Widget {
 			'flags' => [ 'progressive' ],
 		],
 		[
-			'flags' => [ 'constructive' ],
-		],
-		[
 			'flags' => [ 'destructive' ],
 		],
 		[
 			'flags' => [ 'primary', 'progressive' ],
-		],
-		[
-			'flags' => [ 'primary', 'constructive' ],
 		],
 		[
 			'flags' => [ 'primary', 'destructive' ],

@@ -26,14 +26,14 @@
  * @since 1.22
  */
 class HashRing {
-	/** @var Array (location => weight) */
+	/** @var array (location => weight) */
 	protected $sourceMap = [];
-	/** @var Array (location => (start, end)) */
+	/** @var array (location => (start, end)) */
 	protected $ring = [];
 
 	/** @var HashRing|null */
 	protected $liveRing;
-	/** @var Array (location => UNIX timestamp) */
+	/** @var array (location => UNIX timestamp) */
 	protected $ejectionExpiries = [];
 	/** @var int UNIX timestamp */
 	protected $ejectionNextExpiry = INF;
@@ -83,7 +83,7 @@ class HashRing {
 	 * @param string $item
 	 * @return string Location
 	 */
-	public function getLocation( $item ) {
+	final public function getLocation( $item ) {
 		$locations = $this->getLocations( $item, 1 );
 
 		return $locations[0];
@@ -116,11 +116,12 @@ class HashRing {
 		// If more locations are requested, wrap-around and keep adding them
 		reset( $this->ring );
 		while ( count( $locations ) < $limit ) {
-			list( $location, ) = each( $this->ring );
+			$location = key( $this->ring );
 			if ( $location === $primaryLocation ) {
 				break; // don't go in circles
 			}
 			$locations[] = $location;
+			next( $this->ring );
 		}
 
 		return $locations;
@@ -133,19 +134,6 @@ class HashRing {
 	 */
 	public function getLocationWeights() {
 		return $this->sourceMap;
-	}
-
-	/**
-	 * Get a new hash ring with a location removed from the ring
-	 *
-	 * @param string $location
-	 * @return HashRing|bool Returns false if no non-zero weighted spots are left
-	 */
-	public function newWithoutLocation( $location ) {
-		$map = $this->sourceMap;
-		unset( $map[$location] );
-
-		return count( $map ) ? new self( $map ) : false;
 	}
 
 	/**
@@ -173,7 +161,7 @@ class HashRing {
 	 * @return HashRing
 	 * @throws UnexpectedValueException
 	 */
-	public function getLiveRing() {
+	protected function getLiveRing() {
 		$now = time();
 		if ( $this->liveRing === null || $this->ejectionNextExpiry <= $now ) {
 			$this->ejectionExpiries = array_filter(

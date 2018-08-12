@@ -18,7 +18,8 @@
 			"Dan Koehl",
 			"Rockyfelle",
 			"Warrakkk",
-			"McDutchie"
+			"McDutchie",
+			"Bengtsson96"
 		]
 	},
 	"visualeditor-cite-tool-definition.json": "null",
@@ -33,10 +34,12 @@
 	"cite-ve-changedesc-reflist-group-both": "Referenslistgrupp ändrades från \"$1\" till \"$2\"",
 	"cite-ve-changedesc-reflist-group-from": "Referenslistgrupp ändrades från \"$1\" till den allmänna gruppen",
 	"cite-ve-changedesc-reflist-group-to": "Referenslistgrupp ändrades från den allmänna gruppen till \"$1\"",
+	"cite-ve-changedesc-reflist-item-id": "Referensindex ändrades",
 	"cite-ve-dialog-reference-editing-reused": "Denna referens används $1 {{PLURAL:$1|gång|gånger}} på denna sida.",
 	"cite-ve-dialog-reference-options-group-label": "Använd den här gruppen",
 	"cite-ve-dialog-reference-options-group-placeholder": "Allmänna referenser",
 	"cite-ve-dialog-reference-options-name-label": "Använd med detta namn igen",
+	"cite-ve-dialog-reference-options-responsive-label": "Använd responsiva kolumner",
 	"cite-ve-dialog-reference-options-section": "Alternativ",
 	"cite-ve-dialog-reference-placeholder": "Skriv eller klistra in din referens här eller infoga en referensmall.",
 	"cite-ve-dialog-reference-title": "Källa",

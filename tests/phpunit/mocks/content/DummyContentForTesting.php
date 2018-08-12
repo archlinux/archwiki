@@ -2,8 +2,10 @@
 
 class DummyContentForTesting extends AbstractContent {
 
+	const MODEL_ID = "testing";
+
 	public function __construct( $data ) {
-		parent::__construct( "testing" );
+		parent::__construct( self::MODEL_ID );
 
 		$this->data = $data;
 	}
@@ -110,7 +112,7 @@ class DummyContentForTesting extends AbstractContent {
 	 *
 	 * @param Title $title Context title for parsing
 	 * @param int|null $revId Revision ID (for {{REVISIONID}})
-	 * @param ParserOptions $options Parser options
+	 * @param ParserOptions $options
 	 * @param bool $generateHtml Whether or not to generate HTML
 	 * @param ParserOutput &$output The output object to fill (reference).
 	 */

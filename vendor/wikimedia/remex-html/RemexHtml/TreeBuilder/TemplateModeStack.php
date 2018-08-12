@@ -22,7 +22,7 @@ class TemplateModeStack {
 
 	/**
 	 * Push a mode on to the stack
-	 * @param integer $mode
+	 * @param int $mode
 	 */
 	public function push( $mode ) {
 		$this->nonCurrentModes[] = $this->current;

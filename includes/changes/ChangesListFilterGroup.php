@@ -18,7 +18,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @license GPL 2+
  * @author Matthew Flaschen
  */
 
@@ -26,6 +25,8 @@
 // conflicts) between ChangesListFilter and ChangesListFilterGroup.
 // What to call it.  FilterStructure?  That would also let me make
 // setUnidirectionalConflict protected.
+
+use Wikimedia\Rdbms\IDatabase;
 
 /**
  * Represents a filter group (used on ChangesListSpecialPage and descendants)
@@ -221,8 +222,7 @@ abstract class ChangesListFilterGroup {
 	 * (not filtered out), even for the hide-based filters.  So e.g. conflicting with
 	 * 'hideanons' means there is a conflict if only anonymous users are *shown*.
 	 *
-	 * @param ChangesListFilterGroup|ChangesListFilter $other Other
-	 *  ChangesListFilterGroup or ChangesListFilter
+	 * @param ChangesListFilterGroup|ChangesListFilter $other
 	 * @param string $globalKey i18n key for top-level conflict message
 	 * @param string $forwardKey i18n key for conflict message in this
 	 *  direction (when in UI context of $this object)
@@ -253,8 +253,7 @@ abstract class ChangesListFilterGroup {
 	 *
 	 * Internal use ONLY.
 	 *
-	 * @param ChangesListFilterGroup|ChangesListFilter $other Other
-	 *  ChangesListFilterGroup or ChangesListFilter
+	 * @param ChangesListFilterGroup|ChangesListFilter $other
 	 * @param string $globalDescription i18n key for top-level conflict message
 	 * @param string $contextDescription i18n key for conflict message in this
 	 *  direction (when in UI context of $this object)
@@ -325,14 +324,6 @@ abstract class ChangesListFilterGroup {
 	public function getFilter( $name ) {
 		return isset( $this->filters[$name] ) ? $this->filters[$name] : null;
 	}
-
-	/**
-	 * Check whether the URL parameter is for the group, or for individual filters.
-	 * Defaults can also be defined on the group if and only if this is true.
-	 *
-	 * @return bool True if and only if the URL parameter is per-group
-	 */
-	abstract public function isPerGroupRequestParameter();
 
 	/**
 	 * Gets the JS data in the format required by the front-end of the structured UI
@@ -449,4 +440,34 @@ abstract class ChangesListFilterGroup {
 			}
 		) );
 	}
+
+	/**
+	 * Modifies the query to include the filter group.
+	 *
+	 * The modification is only done if the filter group is in effect.  This means that
+	 * one or more valid and allowed filters were selected.
+	 *
+	 * @param IDatabase $dbr Database, for addQuotes, makeList, and similar
+	 * @param ChangesListSpecialPage $specialPage Current special page
+	 * @param array &$tables Array of tables; see IDatabase::select $table
+	 * @param array &$fields Array of fields; see IDatabase::select $vars
+	 * @param array &$conds Array of conditions; see IDatabase::select $conds
+	 * @param array &$query_options Array of query options; see IDatabase::select $options
+	 * @param array &$join_conds Array of join conditions; see IDatabase::select $join_conds
+	 * @param FormOptions $opts Wrapper for the current request options and their defaults
+	 * @param bool $isStructuredFiltersEnabled True if the Structured UI is currently enabled
+	 */
+	abstract public function modifyQuery( IDatabase $dbr, ChangesListSpecialPage $specialPage,
+		&$tables, &$fields, &$conds, &$query_options, &$join_conds,
+		FormOptions $opts, $isStructuredFiltersEnabled );
+
+	/**
+	 * All the options represented by this filter group to $opts
+	 *
+	 * @param FormOptions $opts
+	 * @param bool $allowDefaults
+	 * @param bool $isStructuredFiltersEnabled
+	 */
+	abstract public function addOptions( FormOptions $opts, $allowDefaults,
+		$isStructuredFiltersEnabled );
 }

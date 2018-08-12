@@ -4,7 +4,8 @@
 			"Borislav",
 			"DCLXVI",
 			"Plamen",
-			"StanProg"
+			"StanProg",
+			"ShockD"
 		]
 	},
 	"fancycaptcha-addurl": "Текущата редакция включва нови външни препратки.\nКато защита на това уики от автоматизиран спам, ви молим да въведете думите, показани по-долу в текстовата кутия ([[Special:Captcha/help|повече информация]]):",
@@ -17,5 +18,6 @@
 	"fancycaptcha-sendemail": "За да защитим системата от автоматизиран спам, учтиво Ви молим да въведете думите, които виждате в текстовата кутия ([[Special:Captcha/help|повече информация]]):",
 	"fancycaptcha-reload-text": "Опресняване",
 	"apihelp-fancycaptchareload-description": "Получаване на нова FancyCaptcha.",
+	"apihelp-fancycaptchareload-summary": "Получаване на нова FancyCaptcha.",
 	"apihelp-fancycaptchareload-example-1": "Получаване на нова FancyCaptcha"
 }

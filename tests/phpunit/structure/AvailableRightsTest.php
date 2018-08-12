@@ -6,7 +6,9 @@
  *
  * @author Marius Hoch < hoo@online.de >
  */
-class AvailableRightsTest extends PHPUnit_Framework_TestCase {
+class AvailableRightsTest extends PHPUnit\Framework\TestCase {
+
+	use MediaWikiCoversValidator;
 
 	/**
 	 * Returns all rights that should be in $wgAvailableRights + all rights

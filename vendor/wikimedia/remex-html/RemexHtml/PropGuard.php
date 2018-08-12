@@ -7,15 +7,15 @@ namespace RemexHtml;
  * undeclared properties on objects. The point of it is to detect programmer
  * errors.
  */
-class PropGuard {
+trait PropGuard {
 	public static $armed = true;
 
-	public static function set( $obj, $name, $value ) {
+	public function __set( $name, $value ) {
 		if ( self::$armed ) {
-			throw new \Exception( "Property \"$name\" on object of class " . get_class( $obj ) .
+			throw new \Exception( "Property \"$name\" on object of class " . get_class( $this ) .
 				" is undeclared" );
 		} else {
-			$obj->$name = $value;
+			$this->$name = $value;
 		}
 	}
 }

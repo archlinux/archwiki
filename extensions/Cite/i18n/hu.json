@@ -16,7 +16,6 @@
 	"cite_error_ref_no_input": "Érvénytelen <code>&lt;ref&gt;</code> tag; a név (name) nélküli ref-eknek adni kell valamilyen tartalmat",
 	"cite_error_references_duplicate_key": "Érvénytelen <code>&lt;ref&gt;</code> elem, „$1” nevű forráshivatkozás többször van definiálva eltérő tartalommal",
 	"cite_error_references_invalid_parameters": "Érvénytelen <code>&lt;references&gt;</code> tag; nincsenek paraméterei, használd a <code>&lt;references /&gt;</code> formát",
-	"cite_error_references_invalid_parameters_group": "Érvénytelen <code>&lt;references&gt;</code> tag; csak a „group” attribútum használható. Használd a <code>&lt;references /&gt;</code>, vagy a <code>&lt;references group=\"...\" /&gt;</code> formát.",
 	"cite_error_references_no_backlink_label": "Elfogytak a visszahivatkozásra használt címkék, adj meg többet a <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki> üzenetben",
 	"cite_error_no_link_label_group": "Nincs több egyedi címke a következő csoport számára: „$1”.\nAdj meg többet a <nowiki>[[MediaWiki:$2]]</nowiki> lapon.",
 	"cite_error_references_no_text": "Érvénytelen <code>&lt;ref&gt;</code> tag; nincs megadva szöveg a(z) <code>$1</code> nevű ref-eknek",

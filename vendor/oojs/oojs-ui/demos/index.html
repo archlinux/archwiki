@@ -2,7 +2,7 @@
 <html lang="en" dir="ltr">
 <head>
 	<meta charset="UTF-8">
-	<title>OOjs UI Demos</title>
+	<title>OOUI Demos</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="classes/ButtonStyleShowcaseWidget.css">
 	<link rel="stylesheet" href="classes/SimpleWidget.css">
@@ -16,7 +16,11 @@
 	<script src="node_modules/prismjs/prism.js"></script>
 	<script src="node_modules/prismjs/plugins/autolinker/prism-autolinker.js"></script>
 	<script src="node_modules/javascript-stringify/javascript-stringify.js"></script>
-	<script src="dist/oojs-ui.js"></script>
+	<!-- Add the individual oojs-ui files for proper sourcemap support -->
+	<script src="dist/oojs-ui-core.js"></script>
+	<script src="dist/oojs-ui-toolbars.js"></script>
+	<script src="dist/oojs-ui-widgets.js"></script>
+	<script src="dist/oojs-ui-windows.js"></script>
 	<script src="dist/oojs-ui-wikimediaui.js"></script> <!-- Do not change this line or you'll break `grunt add-theme` -->
 	<script src="dist/oojs-ui-apex.js"></script>
 	<script src="demo.js"></script>
@@ -57,6 +61,8 @@
 	<script>
 		$( function () {
 			var demo, lastQuery = location.search;
+
+			OO.ui.isDemo = true;
 
 			function setup() {
 				var

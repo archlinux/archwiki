@@ -90,7 +90,7 @@ class MWExceptionRenderer {
 	private static function useOutputPage( $e ) {
 		// Can the extension use the Message class/wfMessage to get i18n-ed messages?
 		foreach ( $e->getTrace() as $frame ) {
-			if ( isset( $frame['class'] ) && $frame['class'] === 'LocalisationCache' ) {
+			if ( isset( $frame['class'] ) && $frame['class'] === LocalisationCache::class ) {
 				return false;
 			}
 		}
@@ -128,7 +128,7 @@ class MWExceptionRenderer {
 
 			// Show any custom GUI message before the details
 			if ( $e instanceof MessageSpecifier ) {
-				$wgOut->addHTML( Message::newFromSpecifier( $e )->escaped() );
+				$wgOut->addHTML( Html::element( 'p', [], Message::newFromSpecifier( $e )->text() ) );
 			}
 			$wgOut->addHTML( self::getHTML( $e ) );
 
@@ -177,8 +177,7 @@ class MWExceptionRenderer {
 						get_class( $e ),
 						$logId,
 						MWExceptionHandler::getURL()
-					)
-				) . "</div>\n" .
+				) ) . "</div>\n" .
 				"<!-- " . wordwrap( self::getShowBacktraceError( $e ), 50 ) . " -->";
 		}
 

@@ -6,7 +6,6 @@
  * @file
  */
 
-/** Tests for MediaWiki languages/classes/LanguageRu.php */
 class LanguageRuTest extends LanguageClassesTestCase {
 	/**
 	 * @dataProvider providePlural
@@ -101,6 +100,11 @@ class LanguageRuTest extends LanguageClassesTestCase {
 				'genitive',
 			],
 			[
+				'Викиверситета',
+				'Викиверситет',
+				'genitive',
+			],
+			[
 				'Викискладе',
 				'Викисклад',
 				'prepositional',
@@ -108,6 +112,11 @@ class LanguageRuTest extends LanguageClassesTestCase {
 			[
 				'Викиданных',
 				'Викиданные',
+				'prepositional',
+			],
+			[
+				'Викиверситете',
+				'Викиверситет',
 				'prepositional',
 			],
 			[

@@ -1,7 +1,6 @@
 <?php
 
 namespace RemexHtml\Serializer;
-use RemexHtml\Tokenizer\Attributes;
 
 /**
  * The interface for classes that help Serializer to convert nodes to strings.
@@ -27,8 +26,8 @@ interface Formatter {
 	 *
 	 * @param SerializerNode $parent The parent of the text node (at creation time)
 	 * @param string $text
-	 * @param integer $start The offset within $text
-	 * @param integer $length The number of bytes within $text
+	 * @param int $start The offset within $text
+	 * @param int $length The number of bytes within $text
 	 * @return string
 	 */
 	function characters( SerializerNode $parent, $text, $start, $length );

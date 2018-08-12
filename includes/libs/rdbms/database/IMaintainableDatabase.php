@@ -20,7 +20,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup Database
  */
 namespace Wikimedia\Rdbms;
 
@@ -63,8 +62,8 @@ interface IMaintainableDatabase extends IDatabase {
 	 * This is handy when you need to construct SQL for joins
 	 *
 	 * Example:
-	 * extract( $dbr->tableNames( 'user', 'watchlist' ) );
-	 * $sql = "SELECT wl_namespace,wl_title FROM $watchlist,$user
+	 * list( $user, $watchlist ) = $dbr->tableNames( 'user', 'watchlist' ) );
+	 * $sql = "SELECT wl_namespace, wl_title FROM $watchlist, $user
 	 *         WHERE wl_user=user_id AND wl_user=$nameWithQuotes";
 	 *
 	 * @return array
@@ -276,6 +275,37 @@ interface IMaintainableDatabase extends IDatabase {
 	 * @since 1.29
 	 */
 	public function unlockTables( $method );
+
+	/**
+	 * List all tables on the database
+	 *
+	 * @param string $prefix Only show tables with this prefix, e.g. mw_
+	 * @param string $fname Calling function name
+	 * @throws DBError
+	 * @return array
+	 */
+	public function listTables( $prefix = null, $fname = __METHOD__ );
+
+	/**
+	 * Determines if a given index is unique
+	 *
+	 * @param string $table
+	 * @param string $index
+	 *
+	 * @return bool
+	 */
+	public function indexUnique( $table, $index );
+
+	/**
+	 * mysql_fetch_field() wrapper
+	 * Returns false if the field doesn't exist
+	 *
+	 * @param string $table Table name
+	 * @param string $field Field name
+	 *
+	 * @return Field
+	 */
+	public function fieldInfo( $table, $field );
 }
 
 class_alias( IMaintainableDatabase::class, 'IMaintainableDatabase' );

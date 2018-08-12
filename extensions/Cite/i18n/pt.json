@@ -25,7 +25,7 @@
 	"cite_error_references_duplicate_key": "Código <code>&lt;ref&gt;</code> inválido; o nome \"$1\" é definido mais de uma vez com conteúdos diferentes",
 	"cite_error_references_invalid_parameters": "Parâmetro inválido na etiqueta <code>&lt;references&gt;</code>",
 	"cite_error_references_no_backlink_label": "Esgotamento das legendas personalizadas para backlinks.\nDefina mais na mensagem <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>",
-	"cite_error_no_link_label_group": "Esgotamento das legendas personalizadas para links, no grupo \"$1\".\nDefina mais na mensagem <nowiki>[[MediaWiki:$2]]</nowiki>.",
+	"cite_error_no_link_label_group": "Esgotamento das legendas personalizadas para hiperligações, no grupo \"$1\".\nDefina mais na mensagem <nowiki>[[MediaWiki:$2]]</nowiki>.",
 	"cite_error_references_no_text": "Código <code>&lt;ref&gt;</code> inválido; não foi fornecido texto para as refs de nome <code>$1</code>",
 	"cite_error_included_ref": "Elemento de fecho <code>&lt;/ref&gt;</code> em falta para o elemento <code>&lt;ref&gt;</code>",
 	"cite_error_group_refs_without_references": "Existem elementos <code>&lt;ref&gt;</code> para um grupo chamado \"$1\", mas não foi encontrado nenhum <code>&lt;references group=\"$1\"/&gt;</code> correspondente (ou falta um elemento de fecho <code>&lt;/ref&gt;</code>)",

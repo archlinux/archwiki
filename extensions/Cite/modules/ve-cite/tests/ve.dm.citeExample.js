@@ -1,8 +1,8 @@
 /*!
  * VisualEditor DataModel Cite-specific example data sets.
  *
- * @copyright 2011-2017 Cite VisualEditor Team and others; see AUTHORS.txt
- * @license The MIT License (MIT); see LICENSE.txt
+ * @copyright 2011-2018 VisualEditor Team's Cite sub-team and others; see AUTHORS.txt
+ * @license MIT
  */
 
 ve.dm.citeExample = {};
@@ -18,113 +18,127 @@ ve.dm.citeExample.domToDataCases = {
 		// <references group="g1"><ref group="g1" name="foo">Ref in refs</ref></references>
 		body:
 			'<p>Foo' +
-				'<span about="#mwt1" class="reference" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;name&quot;:&quot;bar&quot;}}" id="cite_ref-bar-1-0" rel="dc:references" typeof="mw:Extension/ref" data-parsoid="{}">' +
+				'<sup about="#mwt1" class="reference" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;name&quot;:&quot;bar&quot;}}" id="cite_ref-bar-1-0" rel="dc:references" typeof="mw:Extension/ref">' +
 					'<a href="#cite_note-bar-1">[1]</a>' +
-				'</span>' +
+				'</sup>' +
 				' Baz' +
-				'<span about="#mwt2" class="reference" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;body&quot;:{&quot;html&quot;:&quot;Quux&quot;},&quot;attrs&quot;:{&quot;group&quot;:&quot;g1&quot;,&quot;name&quot;:&quot;:0&quot;}}" id="cite_ref-quux-2-0" rel="dc:references" typeof="mw:Extension/ref" data-parsoid="{}">' +
+				'<sup about="#mwt2" class="reference" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;body&quot;:{&quot;html&quot;:&quot;Quux&quot;},&quot;attrs&quot;:{&quot;group&quot;:&quot;g1&quot;,&quot;name&quot;:&quot;:0&quot;}}" id="cite_ref-quux-2-0" rel="dc:references" typeof="mw:Extension/ref">' +
 					'<a href="#cite_note-.3A0-2">[g1 1]</a>' +
-				'</span>' +
+				'</sup>' +
 				' Whee' +
-				'<span about="#mwt3" class="reference" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;body&quot;:{&quot;html&quot;:&quot;' +
+				'<sup about="#mwt3" class="reference" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;body&quot;:{&quot;html&quot;:&quot;' +
 				'<a rel=\\&quot;mw:WikiLink\\&quot; href=\\&quot;./Bar\\&quot;>Bar' +
-				'</a>&quot;},&quot;attrs&quot;:{&quot;name&quot;:&quot;bar&quot;}}" id="cite_ref-bar-1-1" rel="dc:references" typeof="mw:Extension/ref" data-parsoid="{}">' +
+				'</a>&quot;},&quot;attrs&quot;:{&quot;name&quot;:&quot;bar&quot;}}" id="cite_ref-bar-1-1" rel="dc:references" typeof="mw:Extension/ref">' +
 					'<a href="#cite_note-bar-1">[1]</a>' +
-				'</span>' +
+				'</sup>' +
 				' Yay' +
 				// This reference has .body.id instead of .body.html
-				'<span about="#mwt4" class="reference" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;body&quot;:{&quot;id&quot;:&quot;mw-cite-3&quot;},&quot;attrs&quot;:{&quot;group&quot;:&quot;g1&quot;}}" id="cite_ref-1-0" rel="dc:references" typeof="mw:Extension/ref" data-parsoid="{}">' +
+				'<sup about="#mwt4" class="reference" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;body&quot;:{&quot;id&quot;:&quot;mw-cite-3&quot;},&quot;attrs&quot;:{&quot;group&quot;:&quot;g1&quot;}}" id="cite_ref-1-0" rel="dc:references" typeof="mw:Extension/ref">' +
 					'<a href="#cite_note-3">[g1 2]</a>' +
-				'</span>' +
+				'</sup>' +
 				' Quux' +
-				'<span about="#mwt5" class="reference" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;body&quot;:{&quot;html&quot;:&quot;Different content&quot;},&quot;attrs&quot;:{&quot;name&quot;:&quot;bar&quot;}}" id="cite_ref-bar-1-2" rel="dc:references" typeof="mw:Extension/ref" data-parsoid="{}">' +
+				'<sup about="#mwt5" class="reference" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;body&quot;:{&quot;html&quot;:&quot;Different content&quot;},&quot;attrs&quot;:{&quot;name&quot;:&quot;bar&quot;}}" id="cite_ref-bar-1-2" rel="dc:references" typeof="mw:Extension/ref">' +
 					'<a href="#cite_note-bar-1">[1]</a>' +
-				'</span>' +
+				'</sup>' +
 				' Foo' +
-				'<span about="#mwt6" class="reference" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;group&quot;:&quot;g1&quot;,&quot;name&quot;:&quot;foo&quot;}}" ' +
-					'id="cite_ref-foo-4" rel="dc:references" typeof="mw:Extension/ref" data-parsoid="{}">' +
+				'<sup about="#mwt6" class="reference" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;group&quot;:&quot;g1&quot;,&quot;name&quot;:&quot;foo&quot;}}" ' +
+					'id="cite_ref-foo-4" rel="dc:references" typeof="mw:Extension/ref">' +
 					'<a href="#cite_ref-foo-4">[g1 3]</a>' +
-				'</span>' +
+				'</sup>' +
 			'</p>' +
 			// The HTML below is enriched to wrap reference contents in <span id="mw-cite-[...]">
 			// which Parsoid doesn't do yet, but T88290 asks for
-			'<ol class="references" typeof="mw:Extension/references" about="#mwt7" data-parsoid="{}"' +
+			'<ol class="references" typeof="mw:Extension/references" about="#mwt7"' +
 				'data-mw="{&quot;name&quot;:&quot;references&quot;,&quot;body&quot;:{' +
-				'&quot;html&quot;:&quot;<span about=\\&quot;#mwt8\\&quot; class=\\&quot;reference\\&quot; ' +
+				'&quot;html&quot;:&quot;<sup about=\\&quot;#mwt8\\&quot; class=\\&quot;reference\\&quot; ' +
 				'data-mw=\\&quot;{&amp;quot;name&amp;quot;:&amp;quot;ref&amp;quot;,&amp;quot;body&amp;quot;:{&amp;quot;html&amp;quot;:&amp;quot;Ref in refs&amp;quot;},' +
 				'&amp;quot;attrs&amp;quot;:{&amp;quot;group&amp;quot;:&amp;quot;g1&amp;quot;,&amp;quot;name&amp;quot;:&amp;quot;foo&amp;quot;}}\\&quot; ' +
 				'rel=\\&quot;dc:references\\&quot; typeof=\\&quot;mw:Extension/ref\\&quot;>' +
-				'<a href=\\&quot;#cite_note-foo-3\\&quot;>[3]</a></span>&quot;},&quot;attrs&quot;:{&quot;group&quot;:&quot;g1&quot;}}">' +
+				'<a href=\\&quot;#cite_note-foo-3\\&quot;>[3]</a></sup>&quot;},&quot;attrs&quot;:{&quot;group&quot;:&quot;g1&quot;}}">' +
 				'<li about="#cite_note-.3A0-2" id="cite_note-.3A0-2"><span rel="mw:referencedBy"><a href="#cite_ref-.3A0_2-0">↑</a></span> <span id="mw-cite-:0">Quux</span></li>' +
 				'<li about="#cite_note-3" id="cite_note-3"><span rel="mw:referencedBy"><a href="#cite_ref-3">↑</a></span> <span id="mw-cite-3">No name</span></li>' +
 				'<li about="#cite_note-foo-4" id="cite_note-foo-4"><span rel="mw:referencedBy"><a href="#cite_ref-foo_4-0">↑</a></span> <span id="mw-cite-foo">Ref in refs</span></li>' +
 			'</ol>',
 		fromDataBody:
 			'<p>Foo' +
-				'<span data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;name&quot;:&quot;bar&quot;}}" typeof="mw:Extension/ref">' +
-				'</span>' +
+				'<sup data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;name&quot;:&quot;bar&quot;}}" typeof="mw:Extension/ref">' +
+				'</sup>' +
 				' Baz' +
-				'<span data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;body&quot;:{&quot;html&quot;:&quot;Quux&quot;},&quot;attrs&quot;:{&quot;group&quot;:&quot;g1&quot;,&quot;name&quot;:&quot;:0&quot;}}" typeof="mw:Extension/ref">' +
-				'</span>' +
+				'<sup data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;body&quot;:{&quot;html&quot;:&quot;Quux&quot;},&quot;attrs&quot;:{&quot;group&quot;:&quot;g1&quot;,&quot;name&quot;:&quot;:0&quot;}}" typeof="mw:Extension/ref">' +
+				'</sup>' +
 				' Whee' +
-				'<span data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;body&quot;:{&quot;html&quot;:&quot;' +
+				'<sup data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;body&quot;:{&quot;html&quot;:&quot;' +
 				'<a rel=\\&quot;mw:WikiLink\\&quot; href=\\&quot;./Bar\\&quot;>Bar' +
 				'</a>&quot;},&quot;attrs&quot;:{&quot;name&quot;:&quot;bar&quot;}}" typeof="mw:Extension/ref">' +
-				'</span>' +
+				'</sup>' +
 				' Yay' +
-				'<span data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;body&quot;:{&quot;id&quot;:&quot;mw-cite-3&quot;},&quot;attrs&quot;:{&quot;group&quot;:&quot;g1&quot;}}" typeof="mw:Extension/ref">' +
-				'</span>' +
+				'<sup data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;body&quot;:{&quot;id&quot;:&quot;mw-cite-3&quot;},&quot;attrs&quot;:{&quot;group&quot;:&quot;g1&quot;}}" typeof="mw:Extension/ref">' +
+				'</sup>' +
 				' Quux' +
-				'<span data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;body&quot;:{&quot;html&quot;:&quot;Different content&quot;},&quot;attrs&quot;:{&quot;name&quot;:&quot;bar&quot;}}" typeof="mw:Extension/ref">' +
-				'</span>' +
+				'<sup data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;body&quot;:{&quot;html&quot;:&quot;Different content&quot;},&quot;attrs&quot;:{&quot;name&quot;:&quot;bar&quot;}}" typeof="mw:Extension/ref">' +
+				'</sup>' +
 				' Foo' +
-				'<span data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;group&quot;:&quot;g1&quot;,&quot;name&quot;:&quot;foo&quot;}}" ' +
+				'<sup data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;group&quot;:&quot;g1&quot;,&quot;name&quot;:&quot;foo&quot;}}" ' +
 					'typeof="mw:Extension/ref">' +
-				'</span>' +
+				'</sup>' +
 			'</p>' +
 			'<div typeof="mw:Extension/references" ' +
 				'data-mw="{&quot;name&quot;:&quot;references&quot;,&quot;attrs&quot;:{&quot;group&quot;:&quot;g1&quot;},&quot;body&quot;:{' +
-				'&quot;html&quot;:&quot;<span typeof=\\&quot;mw:Extension/ref\\&quot; ' +
+				'&quot;html&quot;:&quot;<sup typeof=\\&quot;mw:Extension/ref\\&quot; ' +
 				'data-mw=\\&quot;{&amp;quot;name&amp;quot;:&amp;quot;ref&amp;quot;,&amp;quot;body&amp;quot;:{&amp;quot;html&amp;quot;:&amp;quot;Ref in refs&amp;quot;},' +
 				'&amp;quot;attrs&amp;quot;:{&amp;quot;group&amp;quot;:&amp;quot;g1&amp;quot;,&amp;quot;name&amp;quot;:&amp;quot;foo&amp;quot;}}\\&quot;>' +
-				'</span>&quot;}}">' +
+				'</sup>&quot;}}">' +
 			'</div>',
 		clipboardBody:
 			'<p>Foo' +
-				'<span typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;name&quot;:&quot;bar&quot;}}" class="mw-ref">' +
+				'<sup typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;name&quot;:&quot;bar&quot;}}" class="mw-ref">' +
 					'<a style="counter-reset: mw-Ref 1;"><span class="mw-reflink-text">[1]</span></a>' +
-				'</span>' +
+				'</sup>' +
 				' Baz' +
-				'<span typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;body&quot;:{&quot;html&quot;:&quot;Quux&quot;},&quot;attrs&quot;:{&quot;group&quot;:&quot;g1&quot;,&quot;name&quot;:&quot;:0&quot;}}" class="mw-ref">' +
+				'<sup typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;body&quot;:{&quot;html&quot;:&quot;Quux&quot;},&quot;attrs&quot;:{&quot;group&quot;:&quot;g1&quot;,&quot;name&quot;:&quot;:0&quot;}}" class="mw-ref">' +
 					'<a data-mw-group="g1" style="counter-reset: mw-Ref 1;"><span class="mw-reflink-text">[g1 1]</span></a>' +
-				'</span>' +
+				'</sup>' +
 				' Whee' +
-				'<span typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;body&quot;:{&quot;html&quot;:&quot;' +
+				'<sup typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;body&quot;:{&quot;html&quot;:&quot;' +
 				'<a href=\\&quot;./Bar\\&quot; rel=\\&quot;mw:WikiLink\\&quot;>Bar' +
 				'</a>&quot;},&quot;attrs&quot;:{&quot;name&quot;:&quot;bar&quot;}}" class="mw-ref">' +
 					'<a style="counter-reset: mw-Ref 1;"><span class="mw-reflink-text">[1]</span></a>' +
-				'</span>' +
+				'</sup>' +
 				' Yay' +
 				// This reference has .body.id instead of .body.html
-				'<span typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;body&quot;:{&quot;id&quot;:&quot;mw-cite-3&quot;,&quot;html&quot;:&quot;No name&quot;},&quot;attrs&quot;:{&quot;group&quot;:&quot;g1&quot;}}" class="mw-ref">' +
+				'<sup typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;body&quot;:{&quot;id&quot;:&quot;mw-cite-3&quot;,&quot;html&quot;:&quot;No name&quot;},&quot;attrs&quot;:{&quot;group&quot;:&quot;g1&quot;}}" class="mw-ref">' +
 					'<a data-mw-group="g1" style="counter-reset: mw-Ref 2;"><span class="mw-reflink-text">[g1 2]</span></a>' +
-				'</span>' +
+				'</sup>' +
 				' Quux' +
-				'<span typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;body&quot;:{&quot;html&quot;:&quot;Different content&quot;},&quot;attrs&quot;:{&quot;name&quot;:&quot;bar&quot;}}" class="mw-ref">' +
+				'<sup typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;body&quot;:{&quot;html&quot;:&quot;Different content&quot;},&quot;attrs&quot;:{&quot;name&quot;:&quot;bar&quot;}}" class="mw-ref">' +
 					'<a style="counter-reset: mw-Ref 1;"><span class="mw-reflink-text">[1]</span></a>' +
-				'</span>' +
+				'</sup>' +
 				' Foo' +
-				'<span typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;group&quot;:&quot;g1&quot;,&quot;name&quot;:&quot;foo&quot;}}" class="mw-ref">' +
+				'<sup typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;attrs&quot;:{&quot;group&quot;:&quot;g1&quot;,&quot;name&quot;:&quot;foo&quot;}}" class="mw-ref">' +
 					'<a data-mw-group="g1" style="counter-reset: mw-Ref 3;"><span class="mw-reflink-text">[g1 3]</span></a>' +
-				'</span>' +
+				'</sup>' +
 			'</p>' +
 			// The HTML below is enriched to wrap reference contents in <span id="mw-cite-[...]">
 			// which Parsoid doesn't do yet, but T88290 asks for
-			'<div typeof="mw:Extension/references"' +
+			'<div typeof="mw:Extension/references" ' +
 				'data-mw="{&quot;name&quot;:&quot;references&quot;,&quot;attrs&quot;:{&quot;group&quot;:&quot;g1&quot;},&quot;body&quot;:{' +
-				'&quot;html&quot;:&quot;<span typeof=\\&quot;mw:Extension/ref\\&quot; ' +
+				'&quot;html&quot;:&quot;<sup typeof=\\&quot;mw:Extension/ref\\&quot; ' +
 				'data-mw=\\&quot;{&amp;quot;name&amp;quot;:&amp;quot;ref&amp;quot;,&amp;quot;attrs&amp;quot;:{&amp;quot;group&amp;quot;:&amp;quot;g1&amp;quot;,&amp;quot;name&amp;quot;:&amp;quot;foo&amp;quot;},&amp;quot;body&amp;quot;:{&amp;quot;html&amp;quot;:&amp;quot;Ref in refs&amp;quot;}}' +
-				'\\&quot; class=\\&quot;mw-ref\\&quot;><a data-mw-group=\\&quot;g1\\&quot; style=\\&quot;counter-reset: mw-Ref 3;\\&quot;><span class=\\&quot;mw-reflink-text\\&quot;>[g1 3]</span></a></span>&quot;}}">' +
+				'\\&quot; class=\\&quot;mw-ref\\&quot;><a data-mw-group=\\&quot;g1\\&quot; style=\\&quot;counter-reset: mw-Ref 3;\\&quot;><span class=\\&quot;mw-reflink-text\\&quot;>[g1 3]</span></a></sup>&quot;}}">' +
+					'<ol class="mw-references references" data-mw-group="g1">' +
+						'<li>' +
+							'<a rel="mw:referencedBy" data-mw-group="g1"><span class="mw-linkback-text">↑ </span></a>' +
+							'<span class="reference-text"><span class="ve-ce-branchNode ve-ce-internalItemNode">Quux</span></span>' +
+						'</li>' +
+						'<li>' +
+							'<a rel="mw:referencedBy" data-mw-group="g1"><span class="mw-linkback-text">↑ </span></a>' +
+							'<span class="reference-text"><span class="ve-ce-branchNode ve-ce-internalItemNode">No name</span></span>' +
+						'</li>' +
+						'<li>' +
+							'<a rel="mw:referencedBy" data-mw-group="g1"><span class="mw-linkback-text">↑ </span></a>' +
+							'<span class="reference-text"><span class="ve-ce-branchNode ve-ce-internalItemNode">Ref in refs</span></span>' +
+						'</li>' +
+					'</ol>' +
 			'</div>',
 		head: '<base href="http://example.com" />',
 		data: [
@@ -222,13 +236,14 @@ ve.dm.citeExample.domToDataCases = {
 						name: 'references',
 						attrs: { group: 'g1' },
 						body: {
-							html: '<span about="#mwt8" class="reference" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;body&quot;:{&quot;html&quot;:&quot;Ref in refs&quot;},&quot;attrs&quot;:{&quot;group&quot;:&quot;g1&quot;,&quot;name&quot;:&quot;foo&quot;}}" rel="dc:references" typeof="mw:Extension/ref"><a href="#cite_note-foo-3">[3]</a></span>'
+							html: '<sup about="#mwt8" class="reference" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;body&quot;:{&quot;html&quot;:&quot;Ref in refs&quot;},&quot;attrs&quot;:{&quot;group&quot;:&quot;g1&quot;,&quot;name&quot;:&quot;foo&quot;}}" rel="dc:references" typeof="mw:Extension/ref"><a href="#cite_note-foo-3">[3]</a></sup>'
 						}
 					},
-					originalMw: '{"name":"references","body":{"html":"<span about=\\"#mwt8\\" class=\\"reference\\" data-mw=\\"{&quot;name&quot;:&quot;ref&quot;,&quot;body&quot;:{&quot;html&quot;:&quot;Ref in refs&quot;},&quot;attrs&quot;:{&quot;group&quot;:&quot;g1&quot;,&quot;name&quot;:&quot;foo&quot;}}\\" rel=\\"dc:references\\" typeof=\\"mw:Extension/ref\\"><a href=\\"#cite_note-foo-3\\">[3]</a></span>"},"attrs":{"group":"g1"}}',
+					originalMw: '{"name":"references","body":{"html":"<sup about=\\"#mwt8\\" class=\\"reference\\" data-mw=\\"{&quot;name&quot;:&quot;ref&quot;,&quot;body&quot;:{&quot;html&quot;:&quot;Ref in refs&quot;},&quot;attrs&quot;:{&quot;group&quot;:&quot;g1&quot;,&quot;name&quot;:&quot;foo&quot;}}\\" rel=\\"dc:references\\" typeof=\\"mw:Extension/ref\\"><a href=\\"#cite_note-foo-3\\">[3]</a></sup>"},"attrs":{"group":"g1"}}',
 					listGroup: 'mwReference/g1',
 					refGroup: 'g1',
-					isResponsive: true
+					isResponsive: true,
+					templateGenerated: false
 				}
 			},
 			{ type: 'paragraph', internal: { generated: 'wrapper' } },
@@ -309,21 +324,21 @@ ve.dm.citeExample.domToDataCases = {
 			{ type: '/internalList' }
 		]
 	},
-	'mw:Reference with metadata': {
-		body: '<p><span about="#mwt2" class="reference" ' +
+	'mw:Reference with comment': {
+		body: '<p><sup about="#mwt2" class="reference" ' +
 			'data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;body&quot;:' +
 			'{&quot;html&quot;:&quot;Foo<!-- bar -->&quot;},&quot;attrs&quot;:{}}" ' +
-			'id="cite_ref-1-0" rel="dc:references" typeof="mw:Extension/ref" data-parsoid="{}">' +
-			'<a href="#cite_note-bar-1" data-parsoid="{}">[1]</a></span></p>',
-		fromDataBody: '<p><span ' +
+			'id="cite_ref-1-0" rel="dc:references" typeof="mw:Extension/ref">' +
+			'<a href="#cite_note-bar-1">[1]</a></sup></p>',
+		fromDataBody: '<p><sup ' +
 			'data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;body&quot;:' +
 			'{&quot;html&quot;:&quot;Foo<!-- bar -->&quot;},&quot;attrs&quot;:{}}" ' +
-			'typeof="mw:Extension/ref"></span></p>',
-		clipboardBody: '<p><span typeof="mw:Extension/ref" ' +
+			'typeof="mw:Extension/ref"></sup></p>',
+		clipboardBody: '<p><sup typeof="mw:Extension/ref" ' +
 			'data-mw="{&quot;attrs&quot;:{},&quot;body&quot;:' +
 			'{&quot;html&quot;:&quot;Foo<span rel=\\&quot;ve:Comment\\&quot; data-ve-comment=\\&quot; bar \\&quot;>&amp;nbsp;</span>&quot;},&quot;name&quot;:&quot;ref&quot;}" ' +
 			' class="mw-ref">' +
-			'<a style="counter-reset: mw-Ref 1;"><span class="mw-reflink-text">[1]</span></a></span></p>',
+			'<a style="counter-reset: mw-Ref 1;"><span class="mw-reflink-text">[1]</span></a></sup></p>',
 		head: '<base href="http://example.com" />',
 		data: [
 			{ type: 'paragraph' },
@@ -363,6 +378,150 @@ ve.dm.citeExample.domToDataCases = {
 				}
 			},
 			{ type: '/comment' },
+			{ type: '/paragraph' },
+			{ type: '/internalItem' },
+			{ type: '/internalList' }
+		]
+	},
+	'Template generated reflist': {
+		body: '<p><sup about="#mwt2" class="mw-ref" id="cite_ref-1" rel="dc:references" typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;body&quot;:{&quot;id&quot;:&quot;mw-reference-text-cite_note-1&quot;},&quot;attrs&quot;:{&quot;group&quot;:&quot;notes&quot;}}"><a href="./Main_Page#cite_note-1" style="counter-reset: mw-Ref 1;" data-mw-group="notes"><span class="mw-reflink-text">[notes 1]</span></a></sup></p>' +
+			'<div class="mw-references-wrap" typeof="mw:Extension/references mw:Transclusion" about="#mwt4" data-mw="{&quot;parts&quot;:[{&quot;template&quot;:{&quot;target&quot;:{&quot;wt&quot;:&quot;echo&quot;,&quot;href&quot;:&quot;./Template:Echo&quot;},&quot;params&quot;:{&quot;1&quot;:{&quot;wt&quot;:&quot;<references group=\\&quot;notes\\&quot; />&quot;}},&quot;i&quot;:0}}]}">' +
+				'<ol class="mw-references references" data-mw-group="notes">' +
+					'<li about="#cite_note-1" id="cite_note-1"><a href="./Main_Page#cite_ref-1" data-mw-group="notes" rel="mw:referencedBy"><span class="mw-linkback-text">↑ </span></a> <span id="mw-reference-text-cite_note-1" class="mw-reference-text">Foo</span></li>' +
+				'</ol>' +
+			'</div>',
+		fromDataBody: '<p><sup typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;body&quot;:{&quot;id&quot;:&quot;mw-reference-text-cite_note-1&quot;},&quot;attrs&quot;:{&quot;group&quot;:&quot;notes&quot;}}"></sup></p>' +
+			'<span typeof="mw:Transclusion" data-mw="{&quot;parts&quot;:[{&quot;template&quot;:{&quot;target&quot;:{&quot;wt&quot;:&quot;echo&quot;,&quot;href&quot;:&quot;./Template:Echo&quot;},&quot;params&quot;:{&quot;1&quot;:{&quot;wt&quot;:&quot;<references group=\\&quot;notes\\&quot; />&quot;}},&quot;i&quot;:0}}]}"></span>',
+		clipboardBody: '<p><sup typeof="mw:Extension/ref" data-mw="{&quot;attrs&quot;:{&quot;group&quot;:&quot;notes&quot;},&quot;body&quot;:{&quot;id&quot;:&quot;mw-reference-text-cite_note-1&quot;,&quot;html&quot;:&quot;Foo&quot;},&quot;name&quot;:&quot;ref&quot;}" class="mw-ref"><a data-mw-group="notes" style="counter-reset: mw-Ref 1;"><span class="mw-reflink-text">[notes 1]</span></a></sup></p>' +
+			'<div typeof="mw:Extension/references" data-mw="{&quot;parts&quot;:[{&quot;template&quot;:{&quot;params&quot;:{&quot;1&quot;:{&quot;wt&quot;:&quot;<references group=\\&quot;notes\\&quot; />&quot;}},&quot;target&quot;:{&quot;wt&quot;:&quot;echo&quot;,&quot;href&quot;:&quot;./Template:Echo&quot;},&quot;i&quot;:0}}],&quot;name&quot;:&quot;references&quot;}">' +
+				// TODO: This should list should get populated on copy
+				'<ol class="mw-references references"></ol>' +
+			'</div>',
+		data: [
+			{ type: 'paragraph' },
+			{
+				type: 'mwReference',
+				attributes: {
+					contentsUsed: true,
+					listGroup: 'mwReference/notes',
+					listIndex: 0,
+					listKey: 'auto/0',
+					mw: {
+						attrs: {
+							group: 'notes'
+						},
+						body: {
+							id: 'mw-reference-text-cite_note-1'
+						},
+						name: 'ref'
+					},
+					originalMw: '{"name":"ref","body":{"id":"mw-reference-text-cite_note-1"},"attrs":{"group":"notes"}}',
+					refGroup: 'notes',
+					refListItemId: 'mw-reference-text-cite_note-1'
+				}
+			},
+			{ type: '/mwReference' },
+			{ type: '/paragraph' },
+			{
+				type: 'mwReferencesList',
+				attributes: {
+					mw: {
+						parts: [ {
+							template: {
+								params: {
+									1: { wt: '<references group="notes" />' }
+								},
+								target: { wt: 'echo', href: './Template:Echo' },
+								i: 0
+							}
+						} ]
+					},
+					originalMw: '{"parts":[{"template":{"target":{"wt":"echo","href":"./Template:Echo"},"params":{"1":{"wt":"<references group=\\"notes\\" />"}},"i":0}}]}',
+					refGroup: '',
+					listGroup: 'mwReference/',
+					isResponsive: true,
+					templateGenerated: true
+				}
+			},
+			{ type: '/mwReferencesList' },
+			{ type: 'internalList' },
+			{ type: 'internalItem', attributes: { originalHtml: 'Foo' } },
+			{
+				internal: {
+					generated: 'wrapper'
+				},
+				type: 'paragraph'
+			},
+			'F', 'o', 'o',
+			{ type: '/paragraph' },
+			{ type: '/internalItem' },
+			{ type: '/internalList' }
+		]
+	},
+	'Template generated reflist (div wrapped)': {
+		body: '<p><sup about="#mwt2" class="mw-ref" id="cite_ref-1" rel="dc:references" typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;body&quot;:{&quot;id&quot;:&quot;mw-reference-text-cite_note-1&quot;},&quot;attrs&quot;:{}}"><a href="./Main_Page#cite_note-1" style="counter-reset: mw-Ref 1;"><span class="mw-reflink-text">[1]</span></a></sup></p>' +
+			'<div about="#mwt3" typeof="mw:Transclusion" data-mw="{&quot;parts&quot;:[{&quot;template&quot;:{&quot;target&quot;:{&quot;wt&quot;:&quot;reflist&quot;,&quot;href&quot;:&quot;./Template:Reflist&quot;},&quot;params&quot;:{},&quot;i&quot;:0}}]}">' +
+				'<div typeof="mw:Extension/references" about="#mwt5" data-mw="{&quot;name&quot;:&quot;references&quot;,&quot;attrs&quot;:{}}">' +
+					'<ol class="mw-references references">' +
+						'<li about="#cite_note-1" id="cite_note-1"><a href="./Main_Page#cite_ref-1" rel="mw:referencedBy"><span class="mw-linkback-text">↑ </span></a> <span id="mw-reference-text-cite_note-1" class="mw-reference-text">Foo</span></li>' +
+					'</ol>' +
+				'</div>' +
+			'</div>',
+		fromDataBody: '<p><sup typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;,&quot;body&quot;:{&quot;id&quot;:&quot;mw-reference-text-cite_note-1&quot;},&quot;attrs&quot;:{}}"></sup></p>' +
+			'<span typeof="mw:Transclusion" data-mw="{&quot;name&quot;:&quot;references&quot;,&quot;attrs&quot;:{}}"></span>',
+		clipboardBody: '<p><sup typeof="mw:Extension/ref" data-mw="{&quot;attrs&quot;:{},&quot;body&quot;:{&quot;id&quot;:&quot;mw-reference-text-cite_note-1&quot;,&quot;html&quot;:&quot;Foo&quot;},&quot;name&quot;:&quot;ref&quot;}" class="mw-ref"><a style="counter-reset: mw-Ref 1;"><span class="mw-reflink-text">[1]</span></a></sup></p>' +
+			'<div typeof="mw:Extension/references" data-mw="{&quot;name&quot;:&quot;references&quot;,&quot;attrs&quot;:{}}">' +
+				'<ol class="mw-references references">' +
+					'<li><a rel="mw:referencedBy"><span class="mw-linkback-text">↑ </span></a><span class="reference-text"><span class="ve-ce-branchNode ve-ce-internalItemNode">Foo</span></span></li>' +
+				'</ol>' +
+			'</div>',
+		data: [
+			{ type: 'paragraph' },
+			{
+				type: 'mwReference',
+				attributes: {
+					contentsUsed: true,
+					listGroup: 'mwReference/',
+					listIndex: 0,
+					listKey: 'auto/0',
+					mw: {
+						attrs: {},
+						body: {
+							id: 'mw-reference-text-cite_note-1'
+						},
+						name: 'ref'
+					},
+					originalMw: '{"name":"ref","body":{"id":"mw-reference-text-cite_note-1"},"attrs":{}}',
+					refGroup: '',
+					refListItemId: 'mw-reference-text-cite_note-1'
+				}
+			},
+			{ type: '/mwReference' },
+			{ type: '/paragraph' },
+			{
+				type: 'mwReferencesList',
+				attributes: {
+					mw: {
+						name: 'references',
+						attrs: {}
+					},
+					originalMw: '{"name":"references","attrs":{}}',
+					refGroup: '',
+					listGroup: 'mwReference/',
+					isResponsive: true,
+					templateGenerated: true
+				}
+			},
+			{ type: '/mwReferencesList' },
+			{ type: 'internalList' },
+			{ type: 'internalItem', attributes: { originalHtml: 'Foo' } },
+			{
+				internal: {
+					generated: 'wrapper'
+				},
+				type: 'paragraph'
+			},
+			'F', 'o', 'o',
 			{ type: '/paragraph' },
 			{ type: '/internalItem' },
 			{ type: '/internalList' }
@@ -493,7 +652,8 @@ ve.dm.citeExample.references = [
 			originalMw: '{"name":"references","attrs":{"group":"g1"}"}',
 			listGroup: 'mwReference/',
 			refGroup: '',
-			isResponsive: true
+			isResponsive: true,
+			templateGenerated: false
 		}
 	},
 	{ type: '/mwReferencesList' },
@@ -528,8 +688,6 @@ ve.dm.citeExample.references = [
 
 ve.dm.citeExample.complexInternalData = [
 	// 0
-	{ type: 'alienMeta', originalDomElements: $( '<!-- before -->' ).toArray() },
-	{ type: '/alienMeta' },
 	{ type: 'paragraph' },
 	'F', [ 'o', [ ve.dm.example.bold ] ], [ 'o', [ ve.dm.example.italic ] ],
 	// 4
@@ -544,8 +702,6 @@ ve.dm.citeExample.complexInternalData = [
 	{ type: '/mwReference' },
 	// 6
 	{ type: '/paragraph' },
-	{ type: 'alienMeta', originalDomElements: $( '<!-- after -->' ).toArray() },
-	{ type: '/alienMeta' },
 	// 7
 	{ type: 'internalList' },
 	// 8
@@ -554,8 +710,6 @@ ve.dm.citeExample.complexInternalData = [
 	{ type: 'paragraph', internal: { generated: 'wrapper' } },
 	'R', [ 'e', [ ve.dm.example.bold ] ], 'f',
 	// 13
-	{ type: 'alienMeta', originalDomElements: $( '<!-- reference -->' ).toArray() },
-	{ type: '/alienMeta' },
 	'e', [ 'r', [ ve.dm.example.italic ] ], [ 'e', [ ve.dm.example.italic ] ],
 	// 16
 	{ type: 'mwReference', attributes: {
@@ -576,23 +730,15 @@ ve.dm.citeExample.complexInternalData = [
 	{ type: '/internalItem' },
 	// 23
 	{ type: 'internalItem' },
-	{ type: 'alienMeta', originalDomElements: $( '<!-- beginning -->' ).toArray() },
-	{ type: '/alienMeta' },
 	// 24
 	{ type: 'preformatted' },
-	{ type: 'alienMeta', originalDomElements: $( '<!-- inside -->' ).toArray() },
-	{ type: '/alienMeta' },
 	// 25
 	{ type: 'mwEntity', attributes: { character: '€' } },
 	// 26
 	{ type: '/mwEntity' },
 	'2', '5', '0',
-	{ type: 'alienMeta', originalDomElements: $( '<!-- inside2 -->' ).toArray() },
-	{ type: '/alienMeta' },
 	// 30
 	{ type: '/preformatted' },
-	{ type: 'alienMeta', originalDomElements: $( '<!-- end -->' ).toArray() },
-	{ type: '/alienMeta' },
 	// 31
 	{ type: '/internalItem' },
 	// 32

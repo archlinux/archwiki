@@ -14,13 +14,13 @@
 
 		this.groups = {};
 		this.defaultParams = {};
-		this.defaultFiltersEmpty = null;
 		this.highlightEnabled = false;
-		this.invertedNamespaces = false;
 		this.parameterMap = {};
+		this.emptyParameterState = null;
 
 		this.views = {};
 		this.currentView = 'default';
+		this.searchQuery = null;
 
 		// Events
 		this.aggregate( { update: 'filterItemUpdate' } );
@@ -58,13 +58,6 @@
 	 * @param {boolean} Highlight feature is enabled
 	 *
 	 * Highlight feature has been toggled enabled or disabled
-	 */
-
-	/**
-	 * @event invertChange
-	 * @param {boolean} isInverted Namespace selected is inverted
-	 *
-	 * Namespace selection is inverted or straight forward
 	 */
 
 	/* Methods */
@@ -156,7 +149,7 @@
 						groupModel.areAllSelectedInConflictWith( filterItem ) &&
 						// Every selected member of the item's own group is also
 						// in conflict with the other group
-						filterItemGroup.getSelectedItems().every( function ( otherGroupItem ) {
+						filterItemGroup.findSelectedItems().every( function ( otherGroupItem ) {
 							return groupModel.areAllSelectedInConflictWith( otherGroupItem );
 						} )
 					);
@@ -192,7 +185,7 @@
 	mw.rcfilters.dm.FiltersViewModel.prototype.getFirstConflictedItem = function () {
 		var conflictedItem;
 
-		$.each( this.getItems(), function ( index, filterItem ) {
+		this.getItems().forEach( function ( filterItem ) {
 			if ( filterItem.isSelected() && filterItem.isConflicted() ) {
 				conflictedItem = filterItem;
 				return false;
@@ -393,7 +386,8 @@
 		$.each( this.groups, function ( group, groupModel ) {
 			if (
 				groupModel.getType() === 'send_unselected_if_any' ||
-				groupModel.getType() === 'boolean'
+				groupModel.getType() === 'boolean' ||
+				groupModel.getType() === 'any_value'
 			) {
 				// Individual filters
 				groupModel.getItems().forEach( function ( filterItem ) {
@@ -408,19 +402,150 @@
 			}
 		} );
 
-		this.currentView = 'default';
+		this.setSearch( '' );
+
+		this.updateHighlightedState();
 
 		// Finish initialization
 		this.emit( 'initialize' );
 	};
 
 	/**
-	 * Get the names of all available filters
+	 * Update filter view model state based on a parameter object
 	 *
-	 * @return {string[]} An array of filter names
+	 * @param {Object} params Parameters object
 	 */
-	mw.rcfilters.dm.FiltersViewModel.prototype.getFilterNames = function () {
-		return this.getItems().map( function ( item ) { return item.getName(); } );
+	mw.rcfilters.dm.FiltersViewModel.prototype.updateStateFromParams = function ( params ) {
+		var filtersValue;
+		// For arbitrary numeric single_option values make sure the values
+		// are normalized to fit within the limits
+		$.each( this.getFilterGroups(), function ( groupName, groupModel ) {
+			params[ groupName ] = groupModel.normalizeArbitraryValue( params[ groupName ] );
+		} );
+
+		// Update filter values
+		filtersValue = this.getFiltersFromParameters( params );
+		Object.keys( filtersValue ).forEach( function ( filterName ) {
+			this.getItemByName( filterName ).setValue( filtersValue[ filterName ] );
+		}.bind( this ) );
+
+		// Update highlight state
+		this.getItemsSupportingHighlights().forEach( function ( filterItem ) {
+			var color = params[ filterItem.getName() + '_color' ];
+			if ( color ) {
+				filterItem.setHighlightColor( color );
+			} else {
+				filterItem.clearHighlightColor();
+			}
+		} );
+		this.updateHighlightedState();
+
+		// Check all filter interactions
+		this.reassessFilterInteractions();
+	};
+
+	/**
+	 * Get a representation of an empty (falsey) parameter state
+	 *
+	 * @return {Object} Empty parameter state
+	 */
+	mw.rcfilters.dm.FiltersViewModel.prototype.getEmptyParameterState = function () {
+		if ( !this.emptyParameterState ) {
+			this.emptyParameterState = $.extend(
+				true,
+				{},
+				this.getParametersFromFilters( {} ),
+				this.getEmptyHighlightParameters()
+			);
+		}
+		return this.emptyParameterState;
+	};
+
+	/**
+	 * Get a representation of only the non-falsey parameters
+	 *
+	 * @param {Object} [parameters] A given parameter state to minimize. If not given the current
+	 *  state of the system will be used.
+	 * @return {Object} Empty parameter state
+	 */
+	mw.rcfilters.dm.FiltersViewModel.prototype.getMinimizedParamRepresentation = function ( parameters ) {
+		var result = {};
+
+		parameters = parameters ? $.extend( true, {}, parameters ) : this.getCurrentParameterState();
+
+		// Params
+		$.each( this.getEmptyParameterState(), function ( param, value ) {
+			if ( parameters[ param ] !== undefined && parameters[ param ] !== value ) {
+				result[ param ] = parameters[ param ];
+			}
+		} );
+
+		// Highlights
+		Object.keys( this.getEmptyHighlightParameters() ).forEach( function ( param ) {
+			if ( parameters[ param ] ) {
+				// If a highlight parameter is not undefined and not null
+				// add it to the result
+				result[ param ] = parameters[ param ];
+			}
+		} );
+
+		return result;
+	};
+
+	/**
+	 * Get a representation of the full parameter list, including all base values
+	 *
+	 * @return {Object} Full parameter representation
+	 */
+	mw.rcfilters.dm.FiltersViewModel.prototype.getExpandedParamRepresentation = function () {
+		return $.extend(
+			true,
+			{},
+			this.getEmptyParameterState(),
+			this.getCurrentParameterState()
+		);
+	};
+
+	/**
+	 * Get a parameter representation of the current state of the model
+	 *
+	 * @param {boolean} [removeStickyParams] Remove sticky filters from final result
+	 * @return {Object} Parameter representation of the current state of the model
+	 */
+	mw.rcfilters.dm.FiltersViewModel.prototype.getCurrentParameterState = function ( removeStickyParams ) {
+		var state = this.getMinimizedParamRepresentation( $.extend(
+			true,
+			{},
+			this.getParametersFromFilters( this.getSelectedState() ),
+			this.getHighlightParameters()
+		) );
+
+		if ( removeStickyParams ) {
+			state = this.removeStickyParams( state );
+		}
+
+		return state;
+	};
+
+	/**
+	 * Delete sticky parameters from given object.
+	 *
+	 * @param {Object} paramState Parameter state
+	 * @return {Object} Parameter state without sticky parameters
+	 */
+	mw.rcfilters.dm.FiltersViewModel.prototype.removeStickyParams = function ( paramState ) {
+		this.getStickyParams().forEach( function ( paramName ) {
+			delete paramState[ paramName ];
+		} );
+
+		return paramState;
+	};
+
+	/**
+	 * Turn the highlight feature on or off
+	 */
+	mw.rcfilters.dm.FiltersViewModel.prototype.updateHighlightedState = function () {
+		this.toggleHighlight( this.getHighlightedItems().length > 0 );
 	};
 
 	/**
@@ -482,6 +607,7 @@
 	mw.rcfilters.dm.FiltersViewModel.prototype.getViewTrigger = function ( view ) {
 		return ( this.views[ view ] && this.views[ view ].trigger ) || '';
 	};
+
 	/**
 	 * Get the value of a specific parameter
 	 *
@@ -495,15 +621,18 @@
 	/**
 	 * Get the current selected state of the filters
 	 *
+	 * @param {boolean} [onlySelected] return an object containing only the filters with a value
 	 * @return {Object} Filters selected state
 	 */
-	mw.rcfilters.dm.FiltersViewModel.prototype.getSelectedState = function () {
+	mw.rcfilters.dm.FiltersViewModel.prototype.getSelectedState = function ( onlySelected ) {
 		var i,
 			items = this.getItems(),
 			result = {};
 
 		for ( i = 0; i < items.length; i++ ) {
-			result[ items[ i ].getName() ] = items[ i ].isSelected();
+			if ( !onlySelected || items[ i ].getValue() ) {
+				result[ items[ i ].getName() ] = items[ i ].getValue();
+			}
 		}
 
 		return result;
@@ -540,7 +669,9 @@
 
 		// Get default filter state
 		$.each( this.groups, function ( name, model ) {
-			$.extend( true, result, model.getDefaultParams() );
+			if ( !model.isSticky() ) {
+				$.extend( true, result, model.getDefaultParams() );
+			}
 		} );
 
 		return result;
@@ -552,11 +683,18 @@
 	 * @return {Object} Sticky parameter values
 	 */
 	mw.rcfilters.dm.FiltersViewModel.prototype.getStickyParams = function () {
-		var result = {};
+		var result = [];
 
 		$.each( this.groups, function ( name, model ) {
 			if ( model.isSticky() ) {
-				$.extend( true, result, model.getDefaultParams() );
+				if ( model.isPerGroupRequestParameter() ) {
+					result.push( name );
+				} else {
+					// Each filter is its own param
+					result = result.concat( model.getItems().map( function ( filterItem ) {
+						return filterItem.getParamName();
+					} ) );
+				}
 			}
 		} );
 
@@ -564,34 +702,16 @@
 	};
 
 	/**
-	 * Get a filter representation of all sticky parameters
+	 * Get a parameter representation of all sticky parameters
 	 *
-	 * @return {Object} Sticky filters values
+	 * @return {Object} Sticky parameter values
 	 */
-	mw.rcfilters.dm.FiltersViewModel.prototype.getStickyFiltersState = function () {
+	mw.rcfilters.dm.FiltersViewModel.prototype.getStickyParamsValues = function () {
 		var result = {};
 
 		$.each( this.groups, function ( name, model ) {
 			if ( model.isSticky() ) {
-				$.extend( true, result, model.getSelectedState() );
-			}
-		} );
-
-		return result;
-	};
-
-	/**
-	 * Get a filter representation of all parameters that are marked
-	 * as being excluded from saved query.
-	 *
-	 * @return {Object} Excluded filters values
-	 */
-	mw.rcfilters.dm.FiltersViewModel.prototype.getExcludedFiltersState = function () {
-		var result = {};
-
-		$.each( this.groups, function ( name, model ) {
-			if ( model.isExcludedFromSavedQueries() ) {
-				$.extend( true, result, model.getSelectedState() );
+				$.extend( true, result, model.getParamRepresentation() );
 			}
 		} );
 
@@ -621,7 +741,7 @@
 			// all filters (set to false)
 			this.getItems().forEach( function ( filterItem ) {
 				groupItemDefinition[ filterItem.getGroupName() ] = groupItemDefinition[ filterItem.getGroupName() ] || {};
-				groupItemDefinition[ filterItem.getGroupName() ][ filterItem.getName() ] = !!filterDefinition[ filterItem.getName() ];
+				groupItemDefinition[ filterItem.getGroupName() ][ filterItem.getName() ] = filterItem.coerceValue( filterDefinition[ filterItem.getName() ] );
 			} );
 		}
 
@@ -690,35 +810,32 @@
 	 *                  are the selected highlight colors.
 	 */
 	mw.rcfilters.dm.FiltersViewModel.prototype.getHighlightParameters = function () {
-		var result = {};
+		var highlightEnabled = this.isHighlightEnabled(),
+			result = {};
 
 		this.getItems().forEach( function ( filterItem ) {
-			result[ filterItem.getName() + '_color' ] = filterItem.getHighlightColor() || null;
+			if ( filterItem.isHighlightSupported() ) {
+				result[ filterItem.getName() + '_color' ] = highlightEnabled && filterItem.isHighlighted() ?
+					filterItem.getHighlightColor() :
+					null;
+			}
 		} );
-		result.highlight = String( Number( this.isHighlightEnabled() ) );
 
 		return result;
 	};
 
 	/**
-	 * Extract the highlight values from given object. Since highlights are
-	 * the same for filter and parameters, it doesn't matter which one is
-	 * given; values will be returned with a full list of the highlights
-	 * with colors or null values.
+	 * Get an object representing the complete empty state of highlights
 	 *
-	 * @param {Object} representation Object containing representation of
-	 *  some or all highlight values
-	 * @return {Object} Object where keys are `<filter name>_color` and values
-	 *                  are the selected highlight colors. The returned object
-	 *                  contains all available filters either with a color value
-	 *                  or with null.
+	 * @return {Object} Object containing all the highlight parameters set to their negative value
 	 */
-	mw.rcfilters.dm.FiltersViewModel.prototype.extractHighlightValues = function ( representation ) {
+	mw.rcfilters.dm.FiltersViewModel.prototype.getEmptyHighlightParameters = function () {
 		var result = {};
 
 		this.getItems().forEach( function ( filterItem ) {
-			var highlightName = filterItem.getName() + '_color';
-			result[ highlightName ] = representation[ highlightName ] || null;
+			if ( filterItem.isHighlightSupported() ) {
+				result[ filterItem.getName() + '_color' ] = null;
+			}
 		} );
 
 		return result;
@@ -732,13 +849,15 @@
 	mw.rcfilters.dm.FiltersViewModel.prototype.getCurrentlyUsedHighlightColors = function () {
 		var result = [];
 
-		this.getHighlightedItems().forEach( function ( filterItem ) {
-			var color = filterItem.getHighlightColor();
+		if ( this.isHighlightEnabled() ) {
+			this.getHighlightedItems().forEach( function ( filterItem ) {
+				var color = filterItem.getHighlightColor();
 
-			if ( result.indexOf( color ) === -1 ) {
-				result.push( color );
-			}
-		} );
+				if ( result.indexOf( color ) === -1 ) {
+					result.push( color );
+				}
+			} );
+		}
 
 		return result;
 	};
@@ -762,16 +881,38 @@
 	};
 
 	/**
-	 * Check whether the current filter state is set to all false.
+	 * Check whether no visible filter is selected.
 	 *
-	 * @return {boolean} Current filters are all empty
+	 * Filter groups that are hidden or sticky are not shown in the
+	 * active filters area and therefore not included in this check.
+	 *
+	 * @return {boolean} No visible filter is selected
 	 */
-	mw.rcfilters.dm.FiltersViewModel.prototype.areCurrentFiltersEmpty = function () {
+	mw.rcfilters.dm.FiltersViewModel.prototype.areVisibleFiltersEmpty = function () {
 		// Check if there are either any selected items or any items
 		// that have highlight enabled
 		return !this.getItems().some( function ( filterItem ) {
-			return !filterItem.getGroupModel().isHidden() && ( filterItem.isSelected() || filterItem.isHighlighted() );
+			var visible = !filterItem.getGroupModel().isSticky() && !filterItem.getGroupModel().isHidden(),
+				active = ( filterItem.isSelected() || filterItem.isHighlighted() );
+			return visible && active;
 		} );
+	};
+
+	/**
+	 * Check whether the invert state is a valid one. A valid invert state is one where
+	 * there are actual namespaces selected.
+	 *
+	 * This is done to compare states to previous ones that may have had the invert model
+	 * selected but effectively had no namespaces, so are not effectively different than
+	 * ones where invert is not selected.
+	 *
+	 * @return {boolean} Invert is effectively selected
+	 */
+	mw.rcfilters.dm.FiltersViewModel.prototype.areNamespacesEffectivelyInverted = function () {
+		return this.getInvertModel().isSelected() &&
+			this.findSelectedItems().some( function ( itemModel ) {
+				return itemModel.getGroupModel().getName() === 'namespace';
+			} );
 	};
 
 	/**
@@ -945,26 +1086,14 @@
 	 *
 	 * @return {mw.rcfilters.dm.FilterItem[]} Selected items
 	 */
-	mw.rcfilters.dm.FiltersViewModel.prototype.getSelectedItems = function () {
+	mw.rcfilters.dm.FiltersViewModel.prototype.findSelectedItems = function () {
 		var allSelected = [];
 
 		$.each( this.getFilterGroups(), function ( groupName, groupModel ) {
-			allSelected = allSelected.concat( groupModel.getSelectedItems() );
+			allSelected = allSelected.concat( groupModel.findSelectedItems() );
 		} );
 
 		return allSelected;
-	};
-	/**
-	 * Switch the current view
-	 *
-	 * @param {string} view View name
-	 * @fires update
-	 */
-	mw.rcfilters.dm.FiltersViewModel.prototype.switchView = function ( view ) {
-		if ( this.views[ view ] && this.currentView !== view ) {
-			this.currentView = view;
-			this.emit( 'update' );
-		}
 	};
 
 	/**
@@ -989,15 +1118,6 @@
 	};
 
 	/**
-	 * Get an array of all available view names
-	 *
-	 * @return {string} Available view names
-	 */
-	mw.rcfilters.dm.FiltersViewModel.prototype.getAvailableViews = function () {
-		return Object.keys( this.views );
-	};
-
-	/**
 	 * Get the view that fits the given trigger
 	 *
 	 * @param {string} trigger Trigger
@@ -1016,6 +1136,82 @@
 	};
 
 	/**
+	 * Return a version of the given string that is without any
+	 * view triggers.
+	 *
+	 * @param {string} str Given string
+	 * @return {string} Result
+	 */
+	mw.rcfilters.dm.FiltersViewModel.prototype.removeViewTriggers = function ( str ) {
+		if ( this.getViewFromString( str ) !== 'default' ) {
+			str = str.substr( 1 );
+		}
+
+		return str;
+	};
+
+	/**
+	 * Get the view from the given string by a trigger, if it exists
+	 *
+	 * @param {string} str Given string
+	 * @return {string} View name
+	 */
+	mw.rcfilters.dm.FiltersViewModel.prototype.getViewFromString = function ( str ) {
+		return this.getViewByTrigger( str.substr( 0, 1 ) );
+	};
+
+	/**
+	 * Set the current search for the system.
+	 * This also dictates what items and groups are visible according
+	 * to the search in #findMatches
+	 *
+	 * @param {string} searchQuery Search query, including triggers
+	 * @fires searchChange
+	 */
+	mw.rcfilters.dm.FiltersViewModel.prototype.setSearch = function ( searchQuery ) {
+		var visibleGroups, visibleGroupNames;
+
+		if ( this.searchQuery !== searchQuery ) {
+			// Check if the view changed
+			this.switchView( this.getViewFromString( searchQuery ) );
+
+			visibleGroups = this.findMatches( searchQuery );
+			visibleGroupNames = Object.keys( visibleGroups );
+
+			// Update visibility of items and groups
+			$.each( this.getFilterGroups(), function ( groupName, groupModel ) {
+				// Check if the group is visible at all
+				groupModel.toggleVisible( visibleGroupNames.indexOf( groupName ) !== -1 );
+				groupModel.setVisibleItems( visibleGroups[ groupName ] || [] );
+			} );
+
+			this.searchQuery = searchQuery;
+			this.emit( 'searchChange', this.searchQuery );
+		}
+	};
+
+	/**
+	 * Get the current search
+	 *
+	 * @return {string} Current search query
+	 */
+	mw.rcfilters.dm.FiltersViewModel.prototype.getSearch = function () {
+		return this.searchQuery;
+	};
+
+	/**
+	 * Switch the current view
+	 *
+	 * @private
+	 * @param {string} view View name
+	 */
+	mw.rcfilters.dm.FiltersViewModel.prototype.switchView = function ( view ) {
+		if ( this.views[ view ] && this.currentView !== view ) {
+			this.currentView = view;
+		}
+	};
+
+	/**
 	 * Toggle the highlight feature on and off.
 	 * Propagate the change to filter items.
 	 *
@@ -1027,11 +1223,6 @@
 
 		if ( this.highlightEnabled !== enable ) {
 			this.highlightEnabled = enable;
-
-			this.getItems().forEach( function ( filterItem ) {
-				filterItem.toggleHighlight( this.highlightEnabled );
-			}.bind( this ) );
-
 			this.emit( 'highlightChange', this.highlightEnabled );
 		}
 	};
@@ -1049,28 +1240,18 @@
 	 * Propagate the change to namespace filter items.
 	 *
 	 * @param {boolean} enable Inverted property is enabled
-	 * @fires invertChange
 	 */
 	mw.rcfilters.dm.FiltersViewModel.prototype.toggleInvertedNamespaces = function ( enable ) {
-		enable = enable === undefined ? !this.invertedNamespaces : enable;
-
-		if ( this.invertedNamespaces !== enable ) {
-			this.invertedNamespaces = enable;
-
-			this.getFiltersByView( 'namespaces' ).forEach( function ( filterItem ) {
-				filterItem.toggleInverted( this.invertedNamespaces );
-			}.bind( this ) );
-
-			this.emit( 'invertChange', this.invertedNamespaces );
-		}
+		this.toggleFilterSelected( this.getInvertModel().getName(), enable );
 	};
 
 	/**
-	 * Check if the namespaces selection is set to be inverted
-	 * @return {boolean}
+	 * Get the model object that represents the 'invert' filter
+	 *
+	 * @return {mw.rcfilters.dm.FilterItem}
 	 */
-	mw.rcfilters.dm.FiltersViewModel.prototype.areNamespacesInverted = function () {
-		return !!this.invertedNamespaces;
+	mw.rcfilters.dm.FiltersViewModel.prototype.getInvertModel = function () {
+		return this.getGroup( 'invertGroup' ).getItemByParamName( 'invert' );
 	};
 
 	/**
@@ -1092,27 +1273,4 @@
 		this.getItemByName( filterName ).clearHighlightColor();
 	};
 
-	/**
-	 * Clear highlight for all filter items
-	 */
-	mw.rcfilters.dm.FiltersViewModel.prototype.clearAllHighlightColors = function () {
-		this.getItems().forEach( function ( filterItem ) {
-			filterItem.clearHighlightColor();
-		} );
-	};
-
-	/**
-	 * Return a version of the given string that is without any
-	 * view triggers.
-	 *
-	 * @param {string} str Given string
-	 * @return {string} Result
-	 */
-	mw.rcfilters.dm.FiltersViewModel.prototype.removeViewTriggers = function ( str ) {
-		if ( this.getViewByTrigger( str.substr( 0, 1 ) ) !== 'default' ) {
-			str = str.substr( 1 );
-		}
-
-		return str;
-	};
 }( mediaWiki, jQuery ) );

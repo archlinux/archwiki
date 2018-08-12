@@ -16,7 +16,6 @@
 	"cite_error_ref_no_input": "Ugyldigt <code>&lt;ref&gt;</code>-tag: Et <code>&lt;ref&gt;</code>-tag uden navn skal have indhold",
 	"cite_error_references_duplicate_key": "Ugyldigt <code>&lt;ref&gt;</code> tag; navnet \"$1\" er defineret flere gange med forskelligt indhold",
 	"cite_error_references_invalid_parameters": "Ugyldigt <code>&lt;references&gt;</code>-tag: Parametre er ikke tilladt, brug i stedet <code>&lt;references /&gt;</code>",
-	"cite_error_references_invalid_parameters_group": "Ugyldigt <code>&lt;references&gt;</code>-tag; den eneste tilladte parameter er \"group\".\nBrug <code>&lt;references /&gt;</code> eller <code>&lt;references group=\"...\" /&gt;</code>",
 	"cite_error_references_no_backlink_label": "Løb tør for backlink-etiketter.\nDefiner flere i beskeden <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>.",
 	"cite_error_no_link_label_group": "Løb tør for tilpassede linketiketter til gruppen \"$1\".\nDefiner flere i beskeden <nowiki>[[MediaWiki:$2]]</nowiki>.",
 	"cite_error_references_no_text": "Ugyldigt <code>&lt;ref&gt;</code>-tag: Der er ikke specificeret nogen fodnotetekst til navnet <code>$1</code>",

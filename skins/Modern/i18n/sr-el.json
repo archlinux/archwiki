@@ -1,6 +1,0 @@
-{
-	"@metadata": [],
-	"modern.css": "/* CSS postavljen ovde će uticati na sve korisnike teme „Savremeno“ */",
-	"modern.js": "/* Javaskript postavljen ovde će se učitati za sve one koji koriste temu „Savremeno“ */",
-	"skinname-modern": "Savremeno"
-}

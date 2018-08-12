@@ -6,7 +6,7 @@
 	],
 	"url": "https://www.mediawiki.org/wiki/Extension:ConfirmEdit#FancyCaptcha",
 	"descriptionmsg": "fancycaptcha-desc",
-	"license-name": "GPL-2.0+",
+	"license-name": "GPL-2.0-or-later",
 	"type": "antispam",
 	"APIModules": {
 		"fancycaptchareload": "ApiFancyCaptchaReload"
@@ -23,7 +23,6 @@
 	},
 	"ResourceModules": {
 		"ext.confirmEdit.fancyCaptcha.styles": {
-			"position": "top",
 			"styles": "ext.confirmEdit.fancyCaptcha.css"
 		},
 		"ext.confirmEdit.fancyCaptcha": {

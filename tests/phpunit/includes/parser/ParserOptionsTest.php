@@ -3,6 +3,9 @@
 use Wikimedia\TestingAccessWrapper;
 use Wikimedia\ScopedCallback;
 
+/**
+ * @covers ParserOptions
+ */
 class ParserOptionsTest extends MediaWikiTestCase {
 
 	private static function clearCache() {
@@ -18,7 +21,6 @@ class ParserOptionsTest extends MediaWikiTestCase {
 			'stubthreshold' => true,
 			'printable' => true,
 			'userlang' => true,
-			'wrapclass' => true,
 		];
 	}
 
@@ -59,10 +61,13 @@ class ParserOptionsTest extends MediaWikiTestCase {
 			'No overrides' => [ true, [] ],
 			'In-key options are ok' => [ true, [
 				'thumbsize' => 1e100,
-				'wrapclass' => false,
+				'printable' => false,
 			] ],
 			'Non-in-key options are not ok' => [ false, [
 				'removeComments' => false,
+			] ],
+			'Non-in-key options are not ok (2)' => [ false, [
+				'wrapclass' => 'foobar',
 			] ],
 			'Canonical override, not default (1)' => [ true, [
 				'tidy' => true,
@@ -99,7 +104,7 @@ class ParserOptionsTest extends MediaWikiTestCase {
 	}
 
 	public static function provideOptionsHash() {
-		$used = [ 'wrapclass', 'printable' ];
+		$used = [ 'thumbsize', 'printable' ];
 
 		$classWrapper = TestingAccessWrapper::newFromClass( ParserOptions::class );
 		$classWrapper->getDefaults();
@@ -113,9 +118,9 @@ class ParserOptionsTest extends MediaWikiTestCase {
 			'Canonical options, used some options' => [ $used, 'canonical', [] ],
 			'Used some options, non-default values' => [
 				$used,
-				'printable=1!wrapclass=foobar',
+				'printable=1!thumbsize=200',
 				[
-					'wrapclass' => 'foobar',
+					'thumbsize' => 200,
 					'printable' => true,
 				]
 			],
@@ -134,23 +139,6 @@ class ParserOptionsTest extends MediaWikiTestCase {
 
 	public static function onPageRenderingHash( &$confstr ) {
 		$confstr .= '!onPageRenderingHash';
-	}
-
-	// Test weird historical behavior is still weird
-	public function testOptionsHashEditSection() {
-		$popt = ParserOptions::newCanonical();
-		$popt->registerWatcher( function ( $name ) {
-			$this->assertNotEquals( 'editsection', $name );
-		} );
-
-		$this->assertTrue( $popt->getEditSection() );
-		$this->assertSame( 'canonical', $popt->optionsHash( [] ) );
-		$this->assertSame( 'canonical', $popt->optionsHash( [ 'editsection' ] ) );
-
-		$popt->setEditSection( false );
-		$this->assertFalse( $popt->getEditSection() );
-		$this->assertSame( 'canonical', $popt->optionsHash( [] ) );
-		$this->assertSame( 'editsection=0', $popt->optionsHash( [ 'editsection' ] ) );
 	}
 
 	/**
@@ -210,7 +198,7 @@ class ParserOptionsTest extends MediaWikiTestCase {
 		$wgHooks['ParserOptionsRegister'] = [];
 		$this->assertSame( [
 			'dateformat', 'numberheadings', 'printable', 'stubthreshold',
-			'thumbsize', 'userlang', 'wrapclass',
+			'thumbsize', 'userlang'
 		], ParserOptions::allCacheVaryingOptions() );
 
 		self::clearCache();
@@ -228,7 +216,7 @@ class ParserOptionsTest extends MediaWikiTestCase {
 		};
 		$this->assertSame( [
 			'dateformat', 'foo', 'numberheadings', 'printable', 'stubthreshold',
-			'thumbsize', 'userlang', 'wrapclass',
+			'thumbsize', 'userlang'
 		], ParserOptions::allCacheVaryingOptions() );
 	}
 

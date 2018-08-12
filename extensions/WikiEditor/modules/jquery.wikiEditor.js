@@ -55,67 +55,23 @@
 		instances: [],
 
 		/**
-		 * For each browser name, an array of conditions that must be met are supplied in [operation, value]-form where
-		 * operation is a string containing a JavaScript compatible binary operator and value is either a number to be
-		 * compared with $.browser.versionNumber or a string to be compared with $.browser.version. If a browser is not
-		 * specifically mentioned, we just assume things will work.
-		 */
-		browsers: {
-			// Left-to-right languages
-			ltr: {
-				msie: [ [ '>=', 9 ] ],
-				firefox: [ [ '>=', 4 ] ],
-				opera: [ [ '>=', '10.5' ] ],
-				safari: [ [ '>=', 5 ] ],
-				chrome: [ [ '>=', 5 ] ],
-				netscape: [ [ '>=', 9 ] ],
-				blackberry: false,
-				ipod: [ [ '>=', 6 ] ],
-				iphone: [ [ '>=', 6 ] ]
-			},
-			// Right-to-left languages
-			rtl: {
-				msie: [ [ '>=', 9 ] ],
-				firefox: [ [ '>=', 4 ] ],
-				opera: [ [ '>=', '10.5' ] ],
-				safari: [ [ '>=', 5 ] ],
-				chrome: [ [ '>=', 5 ] ],
-				netscape: [ [ '>=', 9 ] ],
-				blackberry: false,
-				ipod: [ [ '>=', 6 ] ],
-				iphone: [ [ '>=', 6 ] ]
-			}
-		},
-
-		/**
 		 * Path to images - this is a bit messy, and it would need to change if this code (and images) gets moved into the
 		 * core - or anywhere for that matter...
 		 */
 		imgPath: mw.config.get( 'wgExtensionAssetsPath' ) + '/WikiEditor/modules/images/',
 
 		/**
-		 * Checks the current browser against the browsers object to determine if the browser has been black-listed or not.
-		 * Because these rules are often very complex, the object contains configurable operators and can check against
-		 * either the browser version number or string. This process also involves checking if the current browser is among
-		 * those which we have configured as compatible or not. If the browser was not configured as compatible we just go on
-		 * assuming things will work - the argument here is to prevent the need to update the code when a new browser comes
-		 * to market. The assumption here is that any new browser will be built on an existing engine or be otherwise so
-		 * similar to another existing browser that things actually do work as expected. The merits of this argument, which
-		 * is essentially to blacklist rather than whitelist are debatable, but at this point we've decided it's the more
-		 * "open-web" way to go.
+		 * Checks if the client supports WikiEditor.
 		 *
-		 * @param {Object} module Module object, defaults to $.wikiEditor
+		 * Since 1.31 this check is deprecated and can be skipped as all browsers
+		 * which are served JS by MediaWiki support WikiEditor.
+		 *
+		 * @deprecated since 1.31
 		 * @return {boolean}
 		 */
-		isSupported: function ( module ) {
-			// Fallback to the wikiEditor browser map if no special map is provided in the module
-			var mod = module && 'browsers' in module ? module : $.wikiEditor;
-			// Check for and make use of cached value and early opportunities to bail
-			if ( typeof mod.supported === 'undefined' ) {
-				// Run a browser support test and then cache and return the result
-				mod.supported = $.client.test( mod.browsers );
-			}
-			return mod.supported;
+		isSupported: function () {
+			mw.log.warn( '$.wikiEditor.isSupported is deprecated.' );
+			return true;
 		},
 
 		/**
@@ -199,37 +155,15 @@
 		 *
 		 * @param {Object} icon Icon object from e.g. toolbar config
 		 * @param {string} path Default icon path, defaults to $.wikiEditor.imgPath
-		 * @return {string}
-		 */
-		autoIcon: function ( icon, path ) {
-			var src = $.wikiEditor.autoLang( icon );
-			path = path || $.wikiEditor.imgPath;
-			// Prepend path if src is not absolute
-			if ( src.substr( 0, 7 ) !== 'http://' && src.substr( 0, 8 ) !== 'https://' && src[ 0 ] !== '/' ) {
-				src = path + src;
-			}
-			return src + '?' + mw.loader.getVersion( 'jquery.wikiEditor' );
-		},
-
-		/**
-		 * Get the sprite offset for a language if available, icon for a language if available, or the default offset or icon,
-		 * in that order of preference.
-		 *
-		 * @param {Object} icon Icon object, see autoIcon()
-		 * @param {Object} offset Offset object
-		 * @param {string} path Icon path, see autoIcon()
 		 * @return {Object}
 		 */
-		autoIconOrOffset: function ( icon, offset, path ) {
+		autoIcon: function ( icon, path ) {
 			var i, key, src;
 
 			path = path || $.wikiEditor.imgPath;
 
 			for ( i = 0; i < fallbackChain.length; i++ ) {
 				key = fallbackChain[ i ];
-				if ( offset && hasOwn.call( offset, key ) ) {
-					return offset[ key ];
-				}
 				if ( icon && hasOwn.call( icon, key ) ) {
 					src = icon[ key ];
 					// Prepend path if src is not absolute
@@ -239,7 +173,7 @@
 					return src + '?' + mw.loader.getVersion( 'jquery.wikiEditor' );
 				}
 			}
-			return offset || icon;
+			return icon;
 		}
 	};
 
@@ -249,16 +183,8 @@
 	 * @return {jQuery}
 	 */
 	$.fn.wikiEditor = function () {
-		var context, profile, hasFocus, cursorPos,
+		var context, hasFocus, cursorPos,
 			args, modules, module, e, call;
-
-		// Skip any further work when running in browsers that are unsupported
-		if ( !$.wikiEditor.isSupported() ) {
-			return $( this );
-		}
-
-		// Save browser profile for detailed tests.
-		profile = $.client.profile();
 
 		/* Initialization */
 
@@ -309,10 +235,8 @@
 						modules = data;
 					}
 					for ( module in modules ) {
-						// Check for the existence of an available / supported module with a matching name and a create function
-						if ( typeof module === 'string' && typeof $.wikiEditor.modules[ module ] !== 'undefined' &&
-								$.wikiEditor.isSupported( $.wikiEditor.modules[ module ] )
-						) {
+						// Check for the existence of an available module with a matching name and a create function
+						if ( typeof module === 'string' && typeof $.wikiEditor.modules[ module ] !== 'undefined' ) {
 							// Extend the context's core API with this module's own API calls
 							if ( 'api' in $.wikiEditor.modules[ module ] ) {
 								for ( call in $.wikiEditor.modules[ module ].api ) {
@@ -469,46 +393,23 @@
 				},
 
 				/**
-				 * Save scrollTop and cursor position for old IE (<=10)
-				 * Related to old IE 8 issues that are no longer reproducible
-				 */
-				saveCursorAndScrollTop: function () {
-					// Deprecated, do nothing
-				},
-
-				/**
-				 * Restore scrollTo and cursor position for IE (<=10)
-				 * Related to old IE 8 issues that are no longer reproducible
-				 */
-				restoreCursorAndScrollTop: function () {
-					var IHateIE8;
-					if ( profile.name === 'msie' && document.selection && document.selection.createRange ) {
-						IHateIE8 = context.$textarea.data( 'IHateIE8' );
-						if ( IHateIE8 ) {
-							context.$textarea.scrollTop( IHateIE8.scrollTop );
-							context.$textarea.textSelection( 'setSelection', { start: IHateIE8.pos[ 0 ], end: IHateIE8.pos[ 1 ] } );
-							context.$textarea.data( 'IHateIE8', null );
-						}
-					}
-				},
-
-				/**
-				 * Save text selection for old IE (<=10)
+				 * Save text selection
 				 */
 				saveSelection: function () {
-					if ( profile.name === 'msie' && document.selection && document.selection.createRange ) {
-						context.$textarea.focus();
-						context.savedSelection = document.selection.createRange();
-					}
+					context.$textarea.focus();
+					context.savedSelection = {
+						selectionStart: context.$textarea[ 0 ].selectionStart,
+						selectionEnd: context.$textarea[ 0 ].selectionEnd
+					};
 				},
 
 				/**
-				 * Restore text selection for old IE (<=10)
+				 * Restore text selection
 				 */
 				restoreSelection: function () {
-					if ( profile.name === 'msie' && context.savedSelection !== null ) {
+					if ( context.savedSelection ) {
 						context.$textarea.focus();
-						context.savedSelection.select();
+						context.$textarea[ 0 ].setSelectionRange( context.savedSelection.selectionStart, context.savedSelection.selectionEnd );
 						context.savedSelection = null;
 					}
 				}
@@ -594,8 +495,7 @@
 				modules[ args[ 1 ] ] = '';
 			}
 			for ( module in modules ) {
-				// Only allow modules which are supported (and thus actually being turned on) affect the decision to extend
-				if ( module in $.wikiEditor.modules && $.wikiEditor.isSupported( $.wikiEditor.modules[ module ] ) ) {
+				if ( module in $.wikiEditor.modules ) {
 					// Activate all required core extensions on context
 					for ( e in $.wikiEditor.extensions ) {
 						if (

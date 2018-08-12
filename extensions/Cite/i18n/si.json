@@ -14,7 +14,6 @@
 	"cite_error_ref_too_many_keys": "අනීතික <code>&lt;ref&gt;</code> ටැගය;\nඅනීතික නාමයන්, නිද. පමණට වැඩි",
 	"cite_error_ref_no_input": "අනීතික <code>&lt;ref&gt;</code> ටැගය;\nනාමයක් නොමැති ආශ්‍රේය සඳහා පෙළක් තිබිය යුතුය",
 	"cite_error_references_invalid_parameters": "අනීතික <code>&lt;references&gt;</code> ටැගය;\nකිසිම පරාමිතිකයකට ඉඩ නොදෙයි.\n<code>&lt;references /&gt;</code> භාවිත කරන්න",
-	"cite_error_references_invalid_parameters_group": "අනීතික <code>&lt;references&gt;</code> ටැගය;\n\"කාණ්ඩය\" පරාමිතියට පමණක් ඉඩ දෙයි.\n<code>&lt;references /&gt;</code>, හෝ <code>&lt;references group=\"...\" /&gt;</code> භාවිත කරන්න",
 	"cite_error_references_no_backlink_label": "උපයෝග්‍ය පසුසබැඳුම් ලේබල අවසාන විය.\n<nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki> පණිවුඩයෙහි තවත් ඒවා අර්ථදක්වන්න",
 	"cite_error_no_link_label_group": "\"$1\" කණ්ඩායම සඳහා අභිමත සබැඳි ලේබල අවසන් විය. \n<nowiki>[[MediaWiki:$2]]</nowiki> පණිවුඩයේ තවත් වැඩිපුර සඳහන් කරන්න.",
 	"cite_error_references_no_text": "අනීතික <code>&lt;ref&gt;</code> ටැගය;\n<code>$1</code> නමැති ආශ්‍රේයන් සඳහා කිසිදු පෙළක් සපයා නොතිබුණි",

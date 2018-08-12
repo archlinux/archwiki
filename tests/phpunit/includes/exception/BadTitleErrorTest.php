@@ -10,13 +10,15 @@ class BadTitleErrorTest extends MediaWikiTestCase {
 		try {
 			throw new BadTitleError();
 		} catch ( BadTitleError $e ) {
+			ob_start();
 			$e->report();
-			$this->assertTrue( true );
+			$text = ob_get_clean();
+			$this->assertContains( $e->getText(), $text );
 		}
 	}
 
 	private function getMockWgOut() {
-		$mock = $this->getMockBuilder( 'OutputPage' )
+		$mock = $this->getMockBuilder( OutputPage::class )
 			->disableOriginalConstructor()
 			->getMock();
 		$mock->expects( $this->once() )

@@ -26,5 +26,10 @@
 	"gadgets-export-text": "Pe esportà 'u $1 gadget, cazze sus a 'u buttone \"{{int:gadgets-export-download}}\", reggistre 'u file scarecate, veje'a pàgene Special:Import sus 'a Uicchi de destinazione e carechele. Pò aggiunge 'a seguende pàgene MediaWiki:Gadgets-definition:\n<pre>$2</pre>\nTu a ave le permesse appropriate sus 'a Uicchi de destinazione (ingludenne le deritte a cangià le messagge d'u sisteme) e 'a 'mbortazione da file carecate adda essere abbilitate.",
 	"gadgets-export-download": "Scareche",
 	"apihelp-query+gadgetcategories-description": "Tuèrne 'n'elenghe de le categorije de le accessore.",
-	"apihelp-query+gadgetcategories-summary": "Tuèrne 'n'elenghe de le categorije de le accessore."
+	"apihelp-query+gadgetcategories-summary": "Tuèrne 'n'elenghe de le categorije de le accessore.",
+	"apihelp-query+gadgetcategories-example-1": "Pigghie l'elenghe de le categorije de accessore esistende",
+	"apihelp-query+gadgetcategories-example-2": "Pigghie le 'mbormaziune sus a le categorije chiamate \"foo\" e \"bar\"",
+	"apihelp-query+gadgets-description": "Tuèrne 'n'elenghe de accessore ausate sus a sta uicchi.",
+	"apihelp-query+gadgets-summary": "Tuèrne 'n'elenghe de accessore ausate sus a sta uicchi.",
+	"action-gadgets-definition-edit": "cange 'a definizione de l'accessore"
 }

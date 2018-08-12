@@ -22,6 +22,7 @@
  * @see wfWaitForSlaves()
  */
 
+use MediaWiki\MediaWikiServices;
 use Wikimedia\Rdbms\DBConnectionError;
 
 require __DIR__ . '/../commandLine.inc';
@@ -86,25 +87,6 @@ class TrackBlobs {
 			exit( 1 );
 		}
 
-		// Scan the archive table for HistoryBlobStub objects or external flags (T24624)
-		$flags = $dbr->selectField( 'archive', 'ar_flags',
-			'ar_flags LIKE \'%external%\' OR (' .
-			'ar_flags LIKE \'%object%\' ' .
-			'AND LOWER(CONVERT(LEFT(ar_text,22) USING latin1)) = \'o:15:"historyblobstub"\' )',
-			__METHOD__
-		);
-
-		if ( strpos( $flags, 'external' ) !== false ) {
-			echo "Integrity check failed: found external storage pointers in your archive table.\n" .
-				"Run normaliseArchiveTable.php to fix this.\n";
-			exit( 1 );
-		} elseif ( $flags ) {
-			echo "Integrity check failed: found HistoryBlobStub objects in your archive table.\n" .
-				"These objects are probably already broken, continuing would make them\n" .
-				"unrecoverable. Run \"normaliseArchiveTable.php --fix-cgz-bug\" to fix this.\n";
-			exit( 1 );
-		}
-
 		echo "Integrity check OK\n";
 	}
 
@@ -153,7 +135,7 @@ class TrackBlobs {
 
 		$textClause = $this->getTextClause();
 		$startId = 0;
-		$endId = $dbr->selectField( 'revision', 'MAX(rev_id)', false, __METHOD__ );
+		$endId = $dbr->selectField( 'revision', 'MAX(rev_id)', '', __METHOD__ );
 		$batchesDone = 0;
 		$rowsInserted = 0;
 
@@ -229,7 +211,7 @@ class TrackBlobs {
 
 		$textClause = $this->getTextClause( $this->clusters );
 		$startId = 0;
-		$endId = $dbr->selectField( 'text', 'MAX(old_id)', false, __METHOD__ );
+		$endId = $dbr->selectField( 'text', 'MAX(old_id)', '', __METHOD__ );
 		$rowsInserted = 0;
 		$batchesDone = 0;
 
@@ -317,7 +299,8 @@ class TrackBlobs {
 
 		foreach ( $this->clusters as $cluster ) {
 			echo "Searching for orphan blobs in $cluster...\n";
-			$lb = wfGetLBFactory()->getExternalLB( $cluster );
+			$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
+			$lb = $lbFactory->getExternalLB( $cluster );
 			try {
 				$extDB = $lb->getConnection( DB_REPLICA );
 			} catch ( DBConnectionError $e ) {
@@ -339,7 +322,7 @@ class TrackBlobs {
 			$startId = 0;
 			$batchesDone = 0;
 			$actualBlobs = gmp_init( 0 );
-			$endId = $extDB->selectField( $table, 'MAX(blob_id)', false, __METHOD__ );
+			$endId = $extDB->selectField( $table, 'MAX(blob_id)', '', __METHOD__ );
 
 			// Build a bitmap of actual blob rows
 			while ( true ) {

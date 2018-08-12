@@ -9,7 +9,8 @@
 			"Waihorace",
 			"Cwlin0416",
 			"Liuxinyu970226",
-			"LNDDYL"
+			"LNDDYL",
+			"Hello903hello"
 		]
 	},
 	"action-titleblacklistlog": "檢視標題封鎖清單日誌",
@@ -30,7 +31,7 @@
 	"right-tboverride": "覆蓋標題或使用者名稱黑名單",
 	"right-tboverride-account": "覆蓋使用者名稱黑名單",
 	"right-titleblacklistlog": "檢視標題封鎖清單日誌",
-	"apihelp-titleblacklist-description": "使用 TitleBlacklist 檢驗文章標題、檔案名稱或使用者名稱。",
+	"apihelp-titleblacklist-description": "檢驗一個頁面標題、檔案名稱或使用者名稱有否抵觸標題黑名單。",
 	"apihelp-titleblacklist-param-title": "要用來檢驗封鎖清單的字串。",
 	"apihelp-titleblacklist-param-action": "要檢查的操作。",
 	"apihelp-titleblacklist-param-nooverride": "不要嘗試覆蓋標題封鎖清單。",

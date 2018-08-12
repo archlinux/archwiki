@@ -30,11 +30,11 @@ window.mwNow = ( function () {
  *
  * Browsers we support in our modern run-time (Grade A):
  * - Chrome 13+
- * - IE 10+
+ * - IE 11+
  * - Firefox 4+
  * - Safari 5+
- * - Opera 12.10+
- * - Mobile Safari 5.1+ (iOS 5+)
+ * - Opera 15+
+ * - Mobile Safari 6.0+ (iOS 6+)
  * - Android 4.1+
  *
  * Browsers we support in our no-javascript run-time (Grade C):
@@ -42,7 +42,7 @@ window.mwNow = ( function () {
  * - IE 6+
  * - Firefox 3+
  * - Safari 3+
- * - Opera 10+
+ * - Opera 15+
  * - Mobile Safari 5.0+ (iOS 4+)
  * - Android 2.0+
  * - WebOS < 1.5
@@ -63,30 +63,30 @@ window.mwNow = ( function () {
 window.isCompatible = function ( str ) {
 	var ua = str || navigator.userAgent;
 	return !!(
-		// http://caniuse.com/#feat=es5
-		// http://caniuse.com/#feat=use-strict
-		// http://caniuse.com/#feat=json / https://phabricator.wikimedia.org/T141344#2784065
+		// https://caniuse.com/#feat=es5
+		// https://caniuse.com/#feat=use-strict
+		// https://caniuse.com/#feat=json / https://phabricator.wikimedia.org/T141344#2784065
 		( function () {
 			'use strict';
 			return !this && !!Function.prototype.bind && !!window.JSON;
 		}() ) &&
 
-		// http://caniuse.com/#feat=queryselector
+		// https://caniuse.com/#feat=queryselector
 		'querySelector' in document &&
 
-		// http://caniuse.com/#feat=namevalue-storage
+		// https://caniuse.com/#feat=namevalue-storage
 		// https://developer.blackberry.com/html5/apis/v1_0/localstorage.html
 		// https://blog.whatwg.org/this-week-in-html-5-episode-30
 		'localStorage' in window &&
 
-		// http://caniuse.com/#feat=addeventlistener
+		// https://caniuse.com/#feat=addeventlistener
 		'addEventListener' in window &&
 
 		// Hardcoded exceptions for browsers that pass the requirement but we don't want to
 		// support in the modern run-time.
 		// Note: Please extend the regex instead of adding new ones
 		!(
-			ua.match( /webOS\/1\.[0-4]|SymbianOS|Series60|NetFront|Opera Mini|S40OviBrowser|MeeGo|Android.+Glass|^Mozilla\/5\.0 .+ Gecko\/$|googleweblight/ ) ||
+			ua.match( /MSIE 10|webOS\/1\.[0-4]|SymbianOS|Series60|NetFront|Opera Mini|S40OviBrowser|MeeGo|Android.+Glass|^Mozilla\/5\.0 .+ Gecko\/$|googleweblight/ ) ||
 			ua.match( /PlayStation/i )
 		)
 	);
@@ -155,14 +155,12 @@ window.isCompatible = function ( str ) {
 
 	script = document.createElement( 'script' );
 	script.src = $VARS.baseModulesUri;
-	script.onload = script.onreadystatechange = function () {
-		if ( !script.readyState || /loaded|complete/.test( script.readyState ) ) {
-			// Clean up
-			script.onload = script.onreadystatechange = null;
-			script = null;
-			// Callback
-			startUp();
-		}
+	script.onload = function () {
+		// Clean up
+		script.onload = null;
+		script = null;
+		// Callback
+		startUp();
 	};
-	document.getElementsByTagName( 'head' )[ 0 ].appendChild( script );
+	document.head.appendChild( script );
 }() );

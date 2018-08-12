@@ -2,12 +2,19 @@
 /**
  * @file
  * @author Niklas Laxström
- * @license GPL-2.0+
+ * @license GPL-2.0-or-later
  */
 
 namespace LocalisationUpdate;
 
-class UpdaterTest extends \PHPUnit_Framework_TestCase {
+use PHPUnit4And6Compat;
+
+/**
+ * @covers \LocalisationUpdate\Updater
+ */
+class UpdaterTest extends \PHPUnit\Framework\TestCase {
+	use PHPUnit4And6Compat;
+
 	public function testIsDirectory() {
 		$updater = new Updater();
 

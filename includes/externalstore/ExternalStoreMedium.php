@@ -32,7 +32,8 @@ abstract class ExternalStoreMedium {
 	protected $params = [];
 
 	/**
-	 * @param array $params Options
+	 * @param array $params Usage context options:
+	 *   - wiki: the domain ID of the wiki this is being used for [optional]
 	 */
 	public function __construct( array $params = [] ) {
 		$this->params = $params;
@@ -76,4 +77,15 @@ abstract class ExternalStoreMedium {
 	 * @throws MWException
 	 */
 	abstract public function store( $location, $data );
+
+	/**
+	 * Check if a given location is read-only
+	 *
+	 * @param string $location The location name
+	 * @return bool Whether this location is read-only
+	 * @since 1.31
+	 */
+	public function isReadOnly( $location ) {
+		return false;
+	}
 }

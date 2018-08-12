@@ -4,17 +4,19 @@
 	 *
 	 * @mixins OO.EventEmitter
 	 *
+	 * @param {jQuery} $initialFieldset The initial server-generated legacy form content
 	 * @constructor
 	 */
-	mw.rcfilters.dm.ChangesListViewModel = function MwRcfiltersDmChangesListViewModel() {
+	mw.rcfilters.dm.ChangesListViewModel = function MwRcfiltersDmChangesListViewModel( $initialFieldset ) {
 		// Mixin constructor
 		OO.EventEmitter.call( this );
 
 		this.valid = true;
 		this.newChangesExist = false;
-		this.nextFrom = null;
 		this.liveUpdate = false;
 		this.unseenWatchedChanges = false;
+
+		this.extractNextFrom( $initialFieldset );
 	};
 
 	/* Initialization */
@@ -33,6 +35,7 @@
 	 * @event update
 	 * @param {jQuery|string} $changesListContent List of changes
 	 * @param {jQuery} $fieldset Server-generated form
+	 * @param {string} noResultsDetails Type of no result error
 	 * @param {boolean} isInitialDOM Whether the previous dom variables are from the initial page load
 	 * @param {boolean} fromLiveUpdate These are new changes fetched via Live Update
 	 *
@@ -72,16 +75,17 @@
 	 *
 	 * @param {jQuery|string} changesListContent
 	 * @param {jQuery} $fieldset
+	 * @param {string} noResultsDetails Type of no result error
 	 * @param {boolean} [isInitialDOM] Using the initial (already attached) DOM elements
 	 * @param {boolean} [separateOldAndNew] Whether a logical separation between old and new changes is needed
 	 * @fires update
 	 */
-	mw.rcfilters.dm.ChangesListViewModel.prototype.update = function ( changesListContent, $fieldset, isInitialDOM, separateOldAndNew ) {
+	mw.rcfilters.dm.ChangesListViewModel.prototype.update = function ( changesListContent, $fieldset, noResultsDetails, isInitialDOM, separateOldAndNew ) {
 		var from = this.nextFrom;
 		this.valid = true;
 		this.extractNextFrom( $fieldset );
 		this.checkForUnseenWatchedChanges( changesListContent );
-		this.emit( 'update', changesListContent, $fieldset, isInitialDOM, separateOldAndNew ? from : null );
+		this.emit( 'update', changesListContent, $fieldset, noResultsDetails, isInitialDOM, separateOldAndNew ? from : null );
 	};
 
 	/**
@@ -110,8 +114,10 @@
 	 * @param {jQuery} $fieldset
 	 */
 	mw.rcfilters.dm.ChangesListViewModel.prototype.extractNextFrom = function ( $fieldset ) {
-		var data = $fieldset.find( '.rclistfrom > a' ).data( 'params' );
-		this.nextFrom = data ? data.from : null;
+		var data = $fieldset.find( '.rclistfrom > a, .wlinfo' ).data( 'params' );
+		if ( data && data.from ) {
+			this.nextFrom = data.from;
+		}
 	};
 
 	/**

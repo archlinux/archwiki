@@ -12,7 +12,6 @@
 	"cite_error_ref_too_many_keys": "Uugiltigi <tt>&lt;ref&gt;</tt>-Verwändig: „name“ isch uugiltig oder z lang.",
 	"cite_error_ref_no_input": "Uugiltigi <tt>&lt;ref&gt;</tt>-Verwändig: „ref“ ohni Name muess e Inhalt haa.",
 	"cite_error_references_invalid_parameters": "Uugiltigi <tt>&lt;references&gt;</tt>-Verwändig: S sin kei zuesätzligi Parameter erlaubt, verwänd usschließli <tt><nowiki><references /></nowiki></tt>.",
-	"cite_error_references_invalid_parameters_group": "Uugiltigi <tt>&lt;references&gt;</tt>-Verwändig: Nume dr Parameter „group“ isch erlaubt, verwänd <tt>&lt;references /&gt;</tt> oder <tt>&lt;references group=\"...\" /&gt;</tt>",
 	"cite_error_references_no_backlink_label": "E Referenz mit dr Form <tt>&lt;ref name=\"...\"/&gt;</tt> wird meh brucht as es Buechstabe git. E Ammann muess  <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki> go wyteri Buechstabe/Zeiche ergänze.",
 	"cite_error_no_link_label_group": "Fir d Gruppe „$1“ sin kei benutzerdefinierti Linkbezeichnige me verfiegbar.\nDefinier meh unter Systemnochricht <nowiki>[[MediaWiki:$2]]</nowiki>.",
 	"cite_error_references_no_text": "Uugiltige <tt>&lt;ref&gt;</tt>-Tag; s isch kei Täxt fir s Ref mit em Name <tt>$1</tt> aagee wore.",

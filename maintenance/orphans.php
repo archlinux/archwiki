@@ -75,23 +75,25 @@ class Orphans extends Maintenance {
 	 */
 	private function checkOrphans( $fix ) {
 		$dbw = $this->getDB( DB_MASTER );
-		$commentStore = new CommentStore( 'rev_comment' );
+		$commentStore = CommentStore::getStore();
 
 		if ( $fix ) {
 			$this->lockTables( $dbw );
 		}
 
-		$commentQuery = $commentStore->getJoin();
+		$commentQuery = $commentStore->getJoin( 'rev_comment' );
+		$actorQuery = ActorMigration::newMigration()->getJoin( 'rev_user' );
 
 		$this->output( "Checking for orphan revision table entries... "
 			. "(this may take a while on a large wiki)\n" );
 		$result = $dbw->select(
-			[ 'revision', 'page' ] + $commentQuery['tables'],
-			[ 'rev_id', 'rev_page', 'rev_timestamp', 'rev_user_text' ] + $commentQuery['fields'],
+			[ 'revision', 'page' ] + $commentQuery['tables'] + $actorQuery['tables'],
+			[ 'rev_id', 'rev_page', 'rev_timestamp' ] + $commentQuery['fields'] + $actorQuery['fields'],
 			[ 'page_id' => null ],
 			__METHOD__,
 			[],
 			[ 'page' => [ 'LEFT JOIN', [ 'rev_page=page_id' ] ] ] + $commentQuery['joins']
+				+ $actorQuery['joins']
 		);
 		$orphans = $result->numRows();
 		if ( $orphans > 0 ) {
@@ -104,7 +106,7 @@ class Orphans extends Maintenance {
 			) );
 
 			foreach ( $result as $row ) {
-				$comment = $commentStore->getComment( $row )->text;
+				$comment = $commentStore->getComment( 'rev_comment', $row )->text;
 				if ( $comment !== '' ) {
 					$comment = '(' . $wgContLang->truncate( $comment, 40 ) . ')';
 				}
@@ -202,8 +204,8 @@ class Orphans extends Maintenance {
 			$result2 = $dbw->query( "
 				SELECT MAX(rev_timestamp) as max_timestamp
 				FROM $revision
-				WHERE rev_page=$row->page_id
-			" );
+				WHERE rev_page=" . (int)( $row->page_id )
+			);
 			$row2 = $dbw->fetchObject( $result2 );
 			if ( $row2 ) {
 				if ( $row->rev_timestamp != $row2->max_timestamp ) {
@@ -252,5 +254,5 @@ class Orphans extends Maintenance {
 	}
 }
 
-$maintClass = "Orphans";
+$maintClass = Orphans::class;
 require_once RUN_MAINTENANCE_IF_MAIN;

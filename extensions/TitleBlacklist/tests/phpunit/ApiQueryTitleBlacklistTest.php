@@ -16,7 +16,8 @@ ini_set( 'include_path', ini_get( 'include_path' ) . ':' .
 
 /**
  * @group medium
- **/
+ * @covers ApiQueryTitleBlacklist
+ */
 class ApiQueryTitleBlacklistTest extends ApiTestCase {
 
 	function setUp() {

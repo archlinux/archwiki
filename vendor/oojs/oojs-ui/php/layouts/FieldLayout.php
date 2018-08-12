@@ -150,7 +150,7 @@ class FieldLayout extends Layout {
 			$icon = new IconWidget( [ 'icon' => 'alert', 'flags' => [ 'warning' ] ] );
 			$listItem->setAttributes( [ 'role' => 'alert' ] );
 		} elseif ( $kind === 'notice' ) {
-			$icon = new IconWidget( [ 'icon' => 'info' ] );
+			$icon = new IconWidget( [ 'icon' => 'notice' ] );
 		} else {
 			$icon = null;
 		}
@@ -201,10 +201,10 @@ class FieldLayout extends Layout {
 			// Reorder elements
 			$this->body->clearContent();
 			if ( $value === 'top' ) {
-				$this->header->appendContent( $this->label, $this->help );
+				$this->header->appendContent( $this->help, $this->label );
 				$this->body->appendContent( $this->header, $this->field );
 			} elseif ( $value === 'inline' ) {
-				$this->header->appendContent( $this->label, $this->help );
+				$this->header->appendContent( $this->help, $this->label );
 				$this->body->appendContent( $this->field, $this->header );
 			} else {
 				$this->header->appendContent( $this->label );
@@ -247,6 +247,7 @@ class FieldLayout extends Layout {
 		if ( $this->help !== '' ) {
 			$config['help'] = $this->help->getTitle();
 		}
+		$config['$overlay'] = true;
 		return parent::getConfig( $config );
 	}
 }

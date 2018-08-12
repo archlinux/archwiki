@@ -9,9 +9,20 @@ Demo.ProcessDialog.static.actions = [
 	{ action: 'other', label: 'Other', flags: 'other' }
 ];
 Demo.ProcessDialog.prototype.initialize = function () {
+	var $content;
 	Demo.ProcessDialog.parent.prototype.initialize.apply( this, arguments );
+
+	$content = $( '<div>' ).append(
+		$( '<p>' ).text( 'Dialog content' ),
+		$( '<a>' )
+			.text( 'Be alert!' )
+			.on( 'click', function () {
+				OO.ui.alert( 'You are alert!' );
+			} )
+	);
+
 	this.content = new OO.ui.PanelLayout( { padded: true, expanded: false } );
-	this.content.$element.append( '<p>Dialog content</p>' );
+	this.content.$element.append( $content );
 	this.$body.append( this.content.$element );
 };
 Demo.ProcessDialog.prototype.getActionProcess = function ( action ) {

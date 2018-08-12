@@ -1,8 +1,10 @@
 <?php
 
 use MediaWiki\Auth\AuthenticationRequestTestCase;
-use MediaWiki\Auth\AuthManager;
 
+/**
+ * @covers CaptchaAuthenticationRequest
+ */
 class CaptchaAuthenticationRequestTest extends AuthenticationRequestTestCase {
 	public function setUp() {
 		parent::setUp();

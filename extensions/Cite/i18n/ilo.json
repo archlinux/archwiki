@@ -12,7 +12,6 @@
 	"cite_error_ref_no_input": "Imbalido nga etiketa ti <code>&lt;ref&gt;</code> ;\ndagiti ref nga awan ti naganna ket masapul nga addaan iti linaon",
 	"cite_error_references_duplicate_key": "Imbalido nga etiketa ti <code>&lt;ref&gt;</code>; ti nagan ti \"$1\" ket naipalawag kadagiti namin adu a beses nga agraman iti sabali a linaon",
 	"cite_error_references_invalid_parameters": "Imbalido nga etiketa ti <code>&lt;references&gt;</code>;\nsaan a maipalubos dagiti parametro.\nUsaren ti <code>&lt;references /&gt;</code>",
-	"cite_error_references_invalid_parameters_group": "Imbalido nga etiketa ti <code>&lt;references&gt;</code> ;\nmaipalubos laeng ti parametro ti \"grupo\" .\nUsaren ti <code>&lt;references /&gt;</code> , wenno<code>&lt;references group=\"...\" /&gt;</code>",
 	"cite_error_references_no_backlink_label": "Naibusan kadagiti etiketa ti naisangayan a silpo ti likud.\nIpalawag pay ti adu idiay mensahe ti <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>",
 	"cite_error_no_link_label_group": "Naibusan kadagiti etiketa ti nangruna a silpo para iti grupo ti \"$1\".\nIpalawag pay ti adu idiay mensahe ti <nowiki>[[MediaWiki:$2]]</nowiki> .",
 	"cite_error_references_no_text": "Imbalido nga etiketa ti <code>&lt;ref&gt;</code> ;\nawan ti teksto a naited para kadagiti ref a nanaganan ti <code>$1</code>",

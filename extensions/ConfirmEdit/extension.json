@@ -1,7 +1,7 @@
 {
 	"@doc": "Please read README.md",
 	"name": "ConfirmEdit",
-	"version": "1.5.0",
+	"version": "1.5.1",
 	"author": [
 		"Brion Vibber",
 		"Florian Schmidt",
@@ -10,7 +10,7 @@
 	],
 	"url": "https://www.mediawiki.org/wiki/Extension:ConfirmEdit",
 	"descriptionmsg": "captcha-desc",
-	"license-name": "GPL-2.0+",
+	"license-name": "GPL-2.0-or-later",
 	"type": "antispam",
 	"requires": {
 		"MediaWiki": ">= 1.28"
@@ -52,17 +52,17 @@
 	"AutoloadClasses": {
 		"ConfirmEditHooks": "includes/ConfirmEditHooks.php",
 		"SimpleCaptcha": "SimpleCaptcha/Captcha.php",
-		"CaptchaStore": "includes/CaptchaStore.php",
-		"CaptchaSessionStore": "includes/CaptchaStore.php",
-		"CaptchaCacheStore": "includes/CaptchaStore.php",
-		"CaptchaHashStore": "includes/CaptchaStore.php",
+		"CaptchaStore": "includes/store/CaptchaStore.php",
+		"CaptchaSessionStore": "includes/store/CaptchaSessionStore.php",
+		"CaptchaCacheStore": "includes/store/CaptchaCacheStore.php",
+		"CaptchaHashStore": "includes/store/CaptchaHashStore.php",
+		"CaptchaTriggers": "includes/CaptchaTriggers.php",
 		"CaptchaSpecialPage": "includes/specials/SpecialCaptcha.php",
 		"CaptchaPreAuthenticationProvider": "includes/auth/CaptchaPreAuthenticationProvider.php",
 		"CaptchaAuthenticationRequest": "includes/auth/CaptchaAuthenticationRequest.php"
 	},
 	"ResourceModules": {
 		"ext.confirmEdit.editPreview.ipwhitelist.styles": {
-			"position": "top",
 			"styles": "ext.confirmEdit.editPreview.ipwhitelist.styles.css"
 		}
 	},
@@ -93,7 +93,6 @@
 	"config": {
 		"CaptchaWhitelistIP": false,
 		"Captcha": null,
-		"CaptchaClass": "SimpleCaptcha",
 		"CaptchaTriggers": {
 			"edit": false,
 			"create": false,

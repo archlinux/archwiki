@@ -112,7 +112,7 @@ class ApiErrorFormatter {
 	 * Add warnings and errors from a StatusValue object to the result
 	 * @param string|null $modulePath
 	 * @param StatusValue $status
-	 * @param string[] $types 'warning' and/or 'error'
+	 * @param string[]|string $types 'warning' and/or 'error'
 	 */
 	public function addMessagesFromStatus(
 		$modulePath, StatusValue $status, $types = [ 'warning', 'error' ]
@@ -159,6 +159,9 @@ class ApiErrorFormatter {
 
 		if ( $exception instanceof ILocalizedException ) {
 			$msg = $exception->getMessageObject();
+			$params = [];
+		} elseif ( $exception instanceof MessageSpecifier ) {
+			$msg = Message::newFromSpecifier( $exception );
 			$params = [];
 		} else {
 			// Extract code and data from the exception, if applicable
@@ -358,9 +361,8 @@ class ApiErrorFormatter {
  * @deprecated Only for backwards compatibility, do not use
  * @ingroup API
  */
-// @codingStandardsIgnoreStart Squiz.Classes.ValidClassName.NotCamelCaps
+// phpcs:ignore Squiz.Classes.ValidClassName.NotCamelCaps
 class ApiErrorFormatter_BackCompat extends ApiErrorFormatter {
-	// @codingStandardsIgnoreEnd
 
 	/**
 	 * @param ApiResult $result Into which data will be added

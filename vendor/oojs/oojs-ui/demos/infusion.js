@@ -1,7 +1,7 @@
 // Demonstrate JavaScript 'infusion' of PHP-generated widgets.
 // Used by widgets.php.
 
-var infuseButton;
+var infuseButton, $demoMenu;
 
 // Helper function to get high resolution profiling data, where available.
 function now() {
@@ -23,6 +23,17 @@ function infuseAll() {
 	window.console.log( 'Took ' + ( end - start ) + ' ms to infuse demo page.' );
 	infuseButton.setDisabled( true );
 }
+
+$demoMenu = $( '.demo-menu' );
+
+OO.ui.getViewportSpacing = function () {
+	return {
+		top: $demoMenu.outerHeight(),
+		right: 0,
+		bottom: 0,
+		left: 0
+	};
+};
 
 // More typical usage: we take the existing server-side
 // button group and do things to it, here adding a new button.

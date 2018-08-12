@@ -1,9 +1,9 @@
 <?php
 
 namespace RemexHtml\Serializer;
+
 use RemexHtml\Tokenizer\Attribute;
 use RemexHtml\Tokenizer\Attributes;
-use RemexHtml\Tokenizer\PlainAttributes;
 use RemexHtml\HTMLData;
 use RemexHtml\DOM\DOMFormatter;
 use RemexHtml\DOM\DOMUtils;

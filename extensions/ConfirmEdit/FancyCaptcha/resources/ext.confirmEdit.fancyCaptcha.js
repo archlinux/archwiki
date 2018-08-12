@@ -24,9 +24,9 @@
 				$root.find( '[name="wpCaptchaWord"]' ).val( '' ).focus();
 			}
 		} )
-		.always( function () {
-			$this.removeClass( 'fancycaptcha-reload-loading' );
-		} );
+			.always( function () {
+				$this.removeClass( 'fancycaptcha-reload-loading' );
+			} );
 
 		return false;
 	} );

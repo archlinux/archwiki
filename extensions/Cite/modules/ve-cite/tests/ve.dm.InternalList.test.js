@@ -1,8 +1,8 @@
 /*!
  * VisualEditor DataModel Cite-specific InternalList tests.
  *
- * @copyright 2011-2017 Cite VisualEditor Team and others; see AUTHORS.txt
- * @license The MIT License (MIT); see LICENSE.txt
+ * @copyright 2011-2018 VisualEditor Team's Cite sub-team and others; see AUTHORS.txt
+ * @license MIT
  */
 
 QUnit.module( 've.dm.InternalList (Cite)', ve.test.utils.mwEnvironment );
@@ -202,9 +202,7 @@ QUnit.test( 'getItemInsertion', function ( assert ) {
 				insert: [
 					{ type: 'internalItem' },
 					{ type: '/internalItem' }
-				],
-				insertedDataOffset: 0,
-				insertedDataLength: 2
+				]
 			},
 			{ type: 'retain', length: 1 }
 		],

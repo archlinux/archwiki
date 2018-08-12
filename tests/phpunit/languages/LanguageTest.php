@@ -209,68 +209,102 @@ class LanguageTest extends LanguageClassesTestCase {
 	}
 
 	/**
-	 * @covers Language::truncate
+	 * @covers Language::truncateForDatabase
+	 * @covers Language::truncateInternal
 	 */
-	public function testTruncate() {
+	public function testTruncateForDatabase() {
 		$this->assertEquals(
 			"XXX",
-			$this->getLang()->truncate( "1234567890", 0, 'XXX' ),
+			$this->getLang()->truncateForDatabase( "1234567890", 0, 'XXX' ),
 			'truncate prefix, len 0, small ellipsis'
 		);
 
 		$this->assertEquals(
 			"12345XXX",
-			$this->getLang()->truncate( "1234567890", 8, 'XXX' ),
+			$this->getLang()->truncateForDatabase( "1234567890", 8, 'XXX' ),
 			'truncate prefix, small ellipsis'
 		);
 
 		$this->assertEquals(
 			"123456789",
-			$this->getLang()->truncate( "123456789", 5, 'XXXXXXXXXXXXXXX' ),
+			$this->getLang()->truncateForDatabase( "123456789", 5, 'XXXXXXXXXXXXXXX' ),
 			'truncate prefix, large ellipsis'
 		);
 
 		$this->assertEquals(
 			"XXX67890",
-			$this->getLang()->truncate( "1234567890", -8, 'XXX' ),
+			$this->getLang()->truncateForDatabase( "1234567890", -8, 'XXX' ),
 			'truncate suffix, small ellipsis'
 		);
 
 		$this->assertEquals(
 			"123456789",
-			$this->getLang()->truncate( "123456789", -5, 'XXXXXXXXXXXXXXX' ),
+			$this->getLang()->truncateForDatabase( "123456789", -5, 'XXXXXXXXXXXXXXX' ),
 			'truncate suffix, large ellipsis'
 		);
 		$this->assertEquals(
 			"123XXX",
-			$this->getLang()->truncate( "123                ", 9, 'XXX' ),
+			$this->getLang()->truncateForDatabase( "123                ", 9, 'XXX' ),
 			'truncate prefix, with spaces'
 		);
 		$this->assertEquals(
 			"12345XXX",
-			$this->getLang()->truncate( "12345            8", 11, 'XXX' ),
+			$this->getLang()->truncateForDatabase( "12345            8", 11, 'XXX' ),
 			'truncate prefix, with spaces and non-space ending'
 		);
 		$this->assertEquals(
 			"XXX234",
-			$this->getLang()->truncate( "1              234", -8, 'XXX' ),
+			$this->getLang()->truncateForDatabase( "1              234", -8, 'XXX' ),
 			'truncate suffix, with spaces'
 		);
 		$this->assertEquals(
 			"12345XXX",
-			$this->getLang()->truncate( "1234567890", 5, 'XXX', false ),
+			$this->getLang()->truncateForDatabase( "1234567890", 5, 'XXX', false ),
 			'truncate without adjustment'
 		);
 		$this->assertEquals(
 			"泰乐菌...",
-			$this->getLang()->truncate( "泰乐菌素123456789", 11, '...', false ),
+			$this->getLang()->truncateForDatabase( "泰乐菌素123456789", 11, '...', false ),
 			'truncate does not chop Unicode characters in half'
 		);
 		$this->assertEquals(
 			"\n泰乐菌...",
-			$this->getLang()->truncate( "\n泰乐菌素123456789", 12, '...', false ),
+			$this->getLang()->truncateForDatabase( "\n泰乐菌素123456789", 12, '...', false ),
 			'truncate does not chop Unicode characters in half if there is a preceding newline'
 		);
+	}
+
+	/**
+	 * @dataProvider provideTruncateData
+	 * @covers Language::truncateForVisual
+	 * @covers Language::truncateInternal
+	 */
+	public function testTruncateForVisual(
+		$expected, $string, $length, $ellipsis = '...', $adjustLength = true
+	) {
+		$this->assertEquals(
+			$expected,
+			$this->getLang()->truncateForVisual( $string, $length, $ellipsis, $adjustLength )
+		);
+	}
+
+	/**
+	 * @return array Format is ($expected, $string, $length, $ellipsis, $adjustLength)
+	 */
+	public static function provideTruncateData() {
+		return [
+			[ "XXX", "тестирам да ли ради", 0, "XXX" ],
+			[ "testnXXX", "testni scenarij", 8, "XXX" ],
+			[ "حالة اختبار", "حالة اختبار", 5, "XXXXXXXXXXXXXXX" ],
+			[ "XXXедент", "прецедент", -8, "XXX" ],
+			[ "XXപിൾ", "ആപ്പിൾ", -5, "XX" ],
+			[ "神秘XXX", "神秘                ", 9, "XXX" ],
+			[ "ΔημιουργXXX", "Δημιουργία           Σύμπαντος", 11, "XXX" ],
+			[ "XXXの家です", "地球は私たちの唯               の家です", -8, "XXX" ],
+			[ "زندگیXXX", "زندگی زیباست", 6, "XXX", false ],
+			[ "ცხოვრება...", "ცხოვრება არის საოცარი", 8, "...", false ],
+			[ "\nທ່ານ...", "\nທ່ານບໍ່ຮູ້ຫນັງສື", 5, "...", false ],
+		];
 	}
 
 	/**
@@ -1326,7 +1360,7 @@ class LanguageTest extends LanguageClassesTestCase {
 	}
 
 	public static function provideCheckTitleEncodingData() {
-		// @codingStandardsIgnoreStart Ignore Generic.Files.LineLength.TooLong
+		// phpcs:disable Generic.Files.LineLength
 		return [
 			[ "" ],
 			[ "United States of America" ], // 7bit ASCII
@@ -1377,7 +1411,7 @@ class LanguageTest extends LanguageClassesTestCase {
 				)
 			]
 		];
-		// @codingStandardsIgnoreEnd
+		// phpcs:enable
 	}
 
 	/**
@@ -1630,6 +1664,34 @@ class LanguageTest extends LanguageClassesTestCase {
 	}
 
 	/**
+	 * @dataProvider provideFormatNum
+	 * @covers Language::formatNum
+	 */
+	public function testFormatNum(
+		$translateNumerals, $langCode, $number, $nocommafy, $expected
+	) {
+		$this->setMwGlobals( [ 'wgTranslateNumerals' => $translateNumerals ] );
+		$lang = Language::factory( $langCode );
+		$formattedNum = $lang->formatNum( $number, $nocommafy );
+		$this->assertType( 'string', $formattedNum );
+		$this->assertEquals( $expected, $formattedNum );
+	}
+
+	public function provideFormatNum() {
+		return [
+			[ true, 'en', 100, false, '100' ],
+			[ true, 'en', 101, true, '101' ],
+			[ false, 'en', 103, false, '103' ],
+			[ false, 'en', 104, true, '104' ],
+			[ true, 'en', '105', false, '105' ],
+			[ true, 'en', '106', true, '106' ],
+			[ false, 'en', '107', false, '107' ],
+			[ false, 'en', '108', true, '108' ],
+		];
+	}
+
+	/**
+	 * @covers Language::parseFormattedNumber
 	 * @dataProvider parseFormattedNumberProvider
 	 */
 	public function testParseFormattedNumber( $langCode, $number ) {
@@ -1768,6 +1830,9 @@ class LanguageTest extends LanguageClassesTestCase {
 		];
 	}
 
+	/**
+	 * @covers Language::equals
+	 */
 	public function testEquals() {
 		$en1 = new Language();
 		$en1->setCode( 'en' );

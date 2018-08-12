@@ -2,9 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Alison",
-			"Kscanne"
+			"Kscanne",
+			"Nmacu"
 		]
 	},
 	"cite-ve-dialog-reference-options-section": "Roghanna",
-	"cite-ve-dialog-referenceslist-title": "Liosta tagairtí"
+	"cite-ve-dialog-referenceslist-title": "Liosta tagairtí",
+	"cite-ve-toolbar-group-label": "Luaigh"
 }

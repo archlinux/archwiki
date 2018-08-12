@@ -5,7 +5,7 @@ namespace Wikimedia\Purtle;
 /**
  * Base class for RdfWriter implementations that output an N3 dialect.
  *
- * @license GPL-2.0+
+ * @license GPL-2.0-or-later
  * @author Daniel Kinzler
  */
 abstract class N3RdfWriterBase extends RdfWriterBase {
@@ -15,6 +15,11 @@ abstract class N3RdfWriterBase extends RdfWriterBase {
 	 */
 	protected $quoter;
 
+	/**
+	 * @param string $role
+	 * @param BNodeLabeler|null $labeler
+	 * @param N3Quoter|null $quoter
+	 */
 	public function __construct(
 		$role = parent::DOCUMENT_ROLE,
 		BNodeLabeler $labeler = null,
@@ -44,10 +49,6 @@ abstract class N3RdfWriterBase extends RdfWriterBase {
 		$this->write( "<$iri>" );
 	}
 
-	protected function writeQName( $base, $local ) {
-		$this->write( "$base:$local" );
-	}
-
 	protected function writeText( $text, $language = null ) {
 		$value = $this->quoter->escapeLiteral( $text );
 		$this->write( '"' . $value . '"' );
@@ -57,7 +58,12 @@ abstract class N3RdfWriterBase extends RdfWriterBase {
 		}
 	}
 
-	protected function writeValue( $value, $typeBase = null, $typeLocal = null ) {
+	/**
+	 * @param string $value
+	 * @param string|null $typeBase
+	 * @param string|null $typeLocal
+	 */
+	protected function writeValue( $value, $typeBase, $typeLocal = null ) {
 		$value = $this->quoter->escapeLiteral( $value );
 		$this->write( '"' . $value. '"' );
 

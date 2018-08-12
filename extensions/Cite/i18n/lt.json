@@ -6,19 +6,19 @@
 			"Matasg",
 			"Albertas",
 			"Zygimantus",
-			"Eitvys200"
+			"Eitvys200",
+			"Manvydasz"
 		]
 	},
 	"apihelp-query+references-example-1": "Nuorodos, susijusios su <kbd>Albert Einstein</kbd>.",
 	"cite-desc": "Prideda <nowiki><ref[ name=id]></nowiki> ir <nowiki><references/></nowiki> žymes citavimui",
-	"cite_error": "Citavimo klaida $1",
+	"cite_error": "Citavimo klaida: $1",
 	"cite_error_ref_numeric_key": "Neleistina <code>&lt;ref&gt;</code> gairė; vardas negali būti tiesiog skaičius, naudokite tekstinį pavadinimą",
 	"cite_error_ref_no_key": "Neleistina <code>&lt;ref&gt;</code> gairė; nuorodos be turinio turi turėti vardą",
 	"cite_error_ref_too_many_keys": "Neleistina <code>&lt;ref&gt;</code> gairė; neleistini vardai, pvz., per daug",
 	"cite_error_ref_no_input": "Neleistina <code>&lt;ref&gt;</code> gairė; nuorodos be vardo turi turėti turinį",
 	"cite_error_references_duplicate_key": "Netinkama <code>&lt;ref&gt;</code> žymė; vardas \"$1\" apibrėžtas keletą kartų su skirtingu turiniu",
 	"cite_error_references_invalid_parameters": "Neleistina <code>&lt;references&gt;</code> gairė; neleidžiami jokie parametrai, naudokite <code>&lt;references /&gt;</code>",
-	"cite_error_references_invalid_parameters_group": "Netinkamas parametras <code>&lt;references&gt;</code> žymėje",
 	"cite_error_references_no_backlink_label": "Baigėsi antraštės.\nNurodykite daugiau <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki> sisteminiame tekste",
 	"cite_error_no_link_label_group": "Grupei \"$1\" pasibaigė pritaikytos nuorodų žymės. Galite apibrėžti daugiau <nowiki>[[MediaWiki:$2]]</nowiki> žinutėje.",
 	"cite_error_references_no_text": "Netinkama <code>&lt;ref&gt;</code> žymė;\nnebuvo pateiktas tekstas nuorodoms su pavadinimu <code>$1</code>",

@@ -1,9 +1,5 @@
 <?php
 /**
- *
- *
- * Created on Oct 19, 2006
- *
  * Copyright © 2006 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
  *
  * This program is free software; you can redistribute it and/or modify
@@ -65,7 +61,7 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 		}
 
 		$this->tokenFunctions = [
-			'patrol' => [ 'ApiQueryRecentChanges', 'getPatrolToken' ]
+			'patrol' => [ self::class, 'getPatrolToken' ]
 		];
 		Hooks::run( 'APIQueryRecentChangesTokens', [ &$this->tokenFunctions ] );
 
@@ -196,6 +192,9 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 				|| ( isset( $show['patrolled'] ) && isset( $show['!patrolled'] ) )
 				|| ( isset( $show['patrolled'] ) && isset( $show['unpatrolled'] ) )
 				|| ( isset( $show['!patrolled'] ) && isset( $show['unpatrolled'] ) )
+				|| ( isset( $show['autopatrolled'] ) && isset( $show['!autopatrolled'] ) )
+				|| ( isset( $show['autopatrolled'] ) && isset( $show['unpatrolled'] ) )
+				|| ( isset( $show['autopatrolled'] ) && isset( $show['!patrolled'] ) )
 			) {
 				$this->dieWithError( 'apierror-show' );
 			}
@@ -204,6 +203,8 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 			if ( isset( $show['patrolled'] )
 				|| isset( $show['!patrolled'] )
 				|| isset( $show['unpatrolled'] )
+				|| isset( $show['autopatrolled'] )
+				|| isset( $show['!autopatrolled'] )
 			) {
 				if ( !$user->useRCPatrol() && !$user->useNPPatrol() ) {
 					$this->dieWithError( 'apierror-permissiondenied-patrolflag', 'permissiondenied' );
@@ -215,8 +216,18 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 			$this->addWhereIf( 'rc_minor != 0', isset( $show['minor'] ) );
 			$this->addWhereIf( 'rc_bot = 0', isset( $show['!bot'] ) );
 			$this->addWhereIf( 'rc_bot != 0', isset( $show['bot'] ) );
-			$this->addWhereIf( 'rc_user = 0', isset( $show['anon'] ) );
-			$this->addWhereIf( 'rc_user != 0', isset( $show['!anon'] ) );
+			if ( isset( $show['anon'] ) || isset( $show['!anon'] ) ) {
+				$actorMigration = ActorMigration::newMigration();
+				$actorQuery = $actorMigration->getJoin( 'rc_user' );
+				$this->addTables( $actorQuery['tables'] );
+				$this->addJoinConds( $actorQuery['joins'] );
+				$this->addWhereIf(
+					$actorMigration->isAnon( $actorQuery['fields']['rc_user'] ), isset( $show['anon'] )
+				);
+				$this->addWhereIf(
+					$actorMigration->isNotAnon( $actorQuery['fields']['rc_user'] ), isset( $show['!anon'] )
+				);
+			}
 			$this->addWhereIf( 'rc_patrolled = 0', isset( $show['!patrolled'] ) );
 			$this->addWhereIf( 'rc_patrolled != 0', isset( $show['patrolled'] ) );
 			$this->addWhereIf( 'page_is_redirect = 1', isset( $show['redirect'] ) );
@@ -224,12 +235,21 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 			if ( isset( $show['unpatrolled'] ) ) {
 				// See ChangesList::isUnpatrolled
 				if ( $user->useRCPatrol() ) {
-					$this->addWhere( 'rc_patrolled = 0' );
+					$this->addWhere( 'rc_patrolled = ' . RecentChange::PRC_UNPATROLLED );
 				} elseif ( $user->useNPPatrol() ) {
-					$this->addWhere( 'rc_patrolled = 0' );
+					$this->addWhere( 'rc_patrolled = ' . RecentChange::PRC_UNPATROLLED );
 					$this->addWhereFld( 'rc_type', RC_NEW );
 				}
 			}
+
+			$this->addWhereIf(
+				'rc_patrolled != ' . RecentChange::PRC_AUTOPATROLLED,
+				isset( $show['!autopatrolled'] )
+			);
+			$this->addWhereIf(
+				'rc_patrolled = ' . RecentChange::PRC_AUTOPATROLLED,
+				isset( $show['autopatrolled'] )
+			);
 
 			// Don't throw log entries out the window here
 			$this->addWhereIf(
@@ -241,14 +261,21 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 		$this->requireMaxOneParameter( $params, 'user', 'excludeuser' );
 
 		if ( !is_null( $params['user'] ) ) {
-			$this->addWhereFld( 'rc_user_text', $params['user'] );
+			// Don't query by user ID here, it might be able to use the rc_user_text index.
+			$actorQuery = ActorMigration::newMigration()
+				->getWhere( $this->getDB(), 'rc_user', User::newFromName( $params['user'], false ), false );
+			$this->addTables( $actorQuery['tables'] );
+			$this->addJoinConds( $actorQuery['joins'] );
+			$this->addWhere( $actorQuery['conds'] );
 		}
 
 		if ( !is_null( $params['excludeuser'] ) ) {
-			// We don't use the rc_user_text index here because
-			// * it would require us to sort by rc_user_text before rc_timestamp
-			// * the != condition doesn't throw out too many rows anyway
-			$this->addWhere( 'rc_user_text != ' . $this->getDB()->addQuotes( $params['excludeuser'] ) );
+			// Here there's no chance to use the rc_user_text index, so allow ID to be used.
+			$actorQuery = ActorMigration::newMigration()
+				->getWhere( $this->getDB(), 'rc_user', User::newFromName( $params['excludeuser'], false ) );
+			$this->addTables( $actorQuery['tables'] );
+			$this->addJoinConds( $actorQuery['joins'] );
+			$this->addWhere( 'NOT(' . $actorQuery['conds'] . ')' );
 		}
 
 		/* Add the fields we're concerned with to our query. */
@@ -276,8 +303,12 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 
 			/* Add fields to our query if they are specified as a needed parameter. */
 			$this->addFieldsIf( [ 'rc_this_oldid', 'rc_last_oldid' ], $this->fld_ids );
-			$this->addFieldsIf( 'rc_user', $this->fld_user || $this->fld_userid );
-			$this->addFieldsIf( 'rc_user_text', $this->fld_user );
+			if ( $this->fld_user || $this->fld_userid ) {
+				$actorQuery = ActorMigration::newMigration()->getJoin( 'rc_user' );
+				$this->addTables( $actorQuery['tables'] );
+				$this->addFields( $actorQuery['fields'] );
+				$this->addJoinConds( $actorQuery['joins'] );
+			}
 			$this->addFieldsIf( [ 'rc_minor', 'rc_type', 'rc_bot' ], $this->fld_flags );
 			$this->addFieldsIf( [ 'rc_old_len', 'rc_new_len' ], $this->fld_sizes );
 			$this->addFieldsIf( [ 'rc_patrolled', 'rc_log_type' ], $this->fld_patrolled );
@@ -354,8 +385,8 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 		$this->token = $params['token'];
 
 		if ( $this->fld_comment || $this->fld_parsedcomment || $this->token ) {
-			$this->commentStore = new CommentStore( 'rc_comment' );
-			$commentQuery = $this->commentStore->getJoin();
+			$this->commentStore = CommentStore::getStore();
+			$commentQuery = $this->commentStore->getJoin( 'rc_comment' );
 			$this->addTables( $commentQuery['tables'] );
 			$this->addFields( $commentQuery['fields'] );
 			$this->addJoinConds( $commentQuery['joins'] );
@@ -510,7 +541,7 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 				$anyHidden = true;
 			}
 			if ( Revision::userCanBitfield( $row->rc_deleted, Revision::DELETED_COMMENT, $user ) ) {
-				$comment = $this->commentStore->getComment( $row )->text;
+				$comment = $this->commentStore->getComment( 'rc_comment', $row )->text;
 				if ( $this->fld_comment ) {
 					$vals['comment'] = $comment;
 				}
@@ -527,8 +558,9 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 
 		/* Add the patrolled flag */
 		if ( $this->fld_patrolled ) {
-			$vals['patrolled'] = $row->rc_patrolled == 1;
+			$vals['patrolled'] = $row->rc_patrolled != RecentChange::PRC_UNPATROLLED;
 			$vals['unpatrolled'] = ChangesList::isUnpatrolled( $row, $user );
+			$vals['autopatrolled'] = $row->rc_patrolled == RecentChange::PRC_AUTOPATROLLED;
 		}
 
 		if ( $this->fld_loginfo && $row->rc_type == RC_LOG ) {
@@ -677,7 +709,9 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 					'!redirect',
 					'patrolled',
 					'!patrolled',
-					'unpatrolled'
+					'unpatrolled',
+					'autopatrolled',
+					'!autopatrolled',
 				]
 			],
 			'limit' => [

@@ -23,7 +23,7 @@
  * @ingroup Pager
  */
 use MediaWiki\MediaWikiServices;
-use Wikimedia\Rdbms\ResultWrapper;
+use Wikimedia\Rdbms\IResultWrapper;
 use Wikimedia\Rdbms\FakeResultWrapper;
 
 class ImageListPager extends TablePager {
@@ -193,9 +193,9 @@ class ImageListPager extends TablePager {
 		}
 		$sortable = [ 'img_timestamp', 'img_name', 'img_size' ];
 		/* For reference, the indicies we can use for sorting are:
-		 * On the image table: img_user_timestamp, img_usertext_timestamp,
+		 * On the image table: img_user_timestamp/img_usertext_timestamp/img_actor_timestamp,
 		 * img_size, img_timestamp
-		 * On oldimage: oi_usertext_timestamp, oi_name_timestamp
+		 * On oldimage: oi_usertext_timestamp/oi_actor_timestamp, oi_name_timestamp
 		 *
 		 * In particular that means we cannot sort by timestamp when not filtering
 		 * by user and including old images in the results. Which is sad.
@@ -246,6 +246,7 @@ class ImageListPager extends TablePager {
 		$tables = [ $table ];
 		$fields = $this->getFieldNames();
 		unset( $fields['img_description'] );
+		unset( $fields['img_user_text'] );
 		$fields = array_keys( $fields );
 
 		if ( $table === 'oldimage' ) {
@@ -261,17 +262,24 @@ class ImageListPager extends TablePager {
 				$fields[array_search( 'top', $fields )] = "'yes' AS top";
 			}
 		}
-		$fields[] = $prefix . '_user AS img_user';
 		$fields[array_search( 'thumb', $fields )] = $prefix . '_name AS thumb';
 
 		$options = $join_conds = [];
 
 		# Description field
-		$commentQuery = CommentStore::newKey( $prefix . '_description' )->getJoin();
+		$commentQuery = CommentStore::getStore()->getJoin( $prefix . '_description' );
 		$tables += $commentQuery['tables'];
 		$fields += $commentQuery['fields'];
 		$join_conds += $commentQuery['joins'];
 		$fields['description_field'] = "'{$prefix}_description'";
+
+		# User fields
+		$actorQuery = ActorMigration::newMigration()->getJoin( $prefix . '_user' );
+		$tables += $actorQuery['tables'];
+		$join_conds += $actorQuery['joins'];
+		$fields['img_user'] = $actorQuery['fields'][$prefix . '_user'];
+		$fields['img_user_text'] = $actorQuery['fields'][$prefix . '_user_text'];
+		$fields['img_actor'] = $actorQuery['fields'][$prefix . '_actor'];
 
 		# Depends on $wgMiserMode
 		# Will also not happen if mShowAll is true.
@@ -287,7 +295,7 @@ class ImageListPager extends TablePager {
 			unset( $field );
 
 			$columnlist = preg_grep( '/^img/', array_keys( $this->getFieldNames() ) );
-			$options = [ 'GROUP BY' => array_merge( [ 'img_user' ], $columnlist ) ];
+			$options = [ 'GROUP BY' => array_merge( [ $fields['img_user'] ], $columnlist ) ];
 			$join_conds['oldimage'] = [ 'LEFT JOIN', 'oi_name = img_name' ];
 		}
 
@@ -348,8 +356,8 @@ class ImageListPager extends TablePager {
 	 *
 	 * Note: This will throw away some results
 	 *
-	 * @param ResultWrapper $res1
-	 * @param ResultWrapper $res2
+	 * @param IResultWrapper $res1
+	 * @param IResultWrapper $res2
 	 * @param int $limit
 	 * @param bool $ascending See note about $asc in $this->reallyDoQuery
 	 * @return FakeResultWrapper $res1 and $res2 combined
@@ -380,16 +388,12 @@ class ImageListPager extends TablePager {
 			}
 		}
 
-		// @codingStandardsIgnoreStart Squiz.WhiteSpace.SemicolonSpacing.Incorrect
 		for ( ; $i < $limit && $topRes1; $i++ ) {
-			// @codingStandardsIgnoreEnd
 			$resultArray[] = $topRes1;
 			$topRes1 = $res1->next();
 		}
 
-		// @codingStandardsIgnoreStart Squiz.WhiteSpace.SemicolonSpacing.Incorrect
 		for ( ; $i < $limit && $topRes2; $i++ ) {
-			// @codingStandardsIgnoreEnd
 			$resultArray[] = $topRes2;
 			$topRes2 = $res2->next();
 		}
@@ -502,7 +506,7 @@ class ImageListPager extends TablePager {
 				return htmlspecialchars( $this->getLanguage()->formatSize( $value ) );
 			case 'img_description':
 				$field = $this->mCurrentRow->description_field;
-				$value = CommentStore::newKey( $field )->getComment( $this->mCurrentRow )->text;
+				$value = CommentStore::getStore()->getComment( $field, $this->mCurrentRow )->text;
 				return Linker::formatComment( $value );
 			case 'count':
 				return $this->getLanguage()->formatNum( intval( $value ) + 1 );

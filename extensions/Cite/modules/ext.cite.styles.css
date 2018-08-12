@@ -33,8 +33,7 @@ sup.reference {
 /* Highlight clicked reference in blue to help navigation */
 ol.references li:target,
 sup.reference:target {
-	background-color: #def; /* fallback */
-	background-color: rgba( 0, 127, 255, 0.133 );
+	background-color: #eaf3ff;
 }
 
 /* Make cite errors "strong" */

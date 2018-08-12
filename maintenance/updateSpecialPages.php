@@ -72,7 +72,7 @@ class UpdateSpecialPages extends Maintenance {
 				$queryPage = $specialObj;
 			} else {
 				$class = get_class( $specialObj );
-				$this->error( "$class is not an instance of QueryPage.\n", 1 );
+				$this->fatalError( "$class is not an instance of QueryPage.\n" );
 				die;
 			}
 
@@ -101,16 +101,7 @@ class UpdateSpecialPages extends Maintenance {
 						$this->output( sprintf( "%.2fs\n", $seconds ) );
 					}
 					# Reopen any connections that have closed
-					if ( !wfGetLB()->pingAll() ) {
-						$this->output( "\n" );
-						do {
-							$this->error( "Connection failed, reconnecting in 10 seconds..." );
-							sleep( 10 );
-						} while ( !wfGetLB()->pingAll() );
-						$this->output( "Reconnected\n\n" );
-					}
-					# Wait for the replica DB to catch up
-					wfWaitForSlaves();
+					$this->reopenAndWaitForReplicas();
 				} else {
 					$this->output( "cheap, skipped\n" );
 				}
@@ -119,6 +110,25 @@ class UpdateSpecialPages extends Maintenance {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Re-open any closed db connection, and wait for replicas
+	 *
+	 * Queries that take a really long time, might cause the
+	 * mysql connection to "go away"
+	 */
+	private function reopenAndWaitForReplicas() {
+		if ( !wfGetLB()->pingAll() ) {
+			$this->output( "\n" );
+			do {
+				$this->error( "Connection failed, reconnecting in 10 seconds..." );
+				sleep( 10 );
+			} while ( !wfGetLB()->pingAll() );
+			$this->output( "Reconnected\n\n" );
+		}
+		# Wait for the replica DB to catch up
+		wfWaitForSlaves();
 	}
 
 	public function doSpecialPageCacheUpdates( $dbw ) {
@@ -154,11 +164,11 @@ class UpdateSpecialPages extends Maintenance {
 				}
 				$this->output( sprintf( "%.2fs\n", $seconds ) );
 				# Wait for the replica DB to catch up
-				wfWaitForSlaves();
+				$this->reopenAndWaitForReplicas();
 			}
 		}
 	}
 }
 
-$maintClass = "UpdateSpecialPages";
+$maintClass = UpdateSpecialPages::class;
 require_once RUN_MAINTENANCE_IF_MAIN;

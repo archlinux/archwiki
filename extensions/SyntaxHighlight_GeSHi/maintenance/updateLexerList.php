@@ -22,15 +22,17 @@
  * @ingroup Maintenance
  */
 
-use Symfony\Component\Process\ProcessBuilder;
+use MediaWiki\Shell\Shell;
 
 $IP = getenv( 'MW_INSTALL_PATH' ) ?: __DIR__ . '/../../..';
 
 require_once "$IP/maintenance/Maintenance.php";
 
-class UpdateLanguageList extends Maintenance {
+class UpdateLexerList extends Maintenance {
 	public function __construct() {
 		parent::__construct();
+
+		$this->requireExtension( 'SyntaxHighlight' );
 		$this->addDescription( 'Update list of lexers supported by SyntaxHighlight_GeSHi' );
 	}
 
@@ -43,17 +45,18 @@ class UpdateLanguageList extends Maintenance {
 
 		$lexers = [];
 
-		$builder = new ProcessBuilder();
-		$builder->setPrefix( SyntaxHighlight_GeSHi::getPygmentizePath() );
+		$result = Shell::command(
+			SyntaxHighlight::getPygmentizePath(),
+			'-L', 'lexer'
+		)
+			->restrict( Shell::RESTRICT_DEFAULT | Shell::NO_NETWORK )
+			->execute();
 
-		$process = $builder->add( '-L' )->add( 'lexer' )->getProcess();
-		$process->run();
-
-		if ( !$process->isSuccessful() ) {
-			throw new \RuntimeException( $process->getErrorOutput() );
+		if ( $result->getExitCode() != 0 ) {
+			throw new \RuntimeException( $result->getStderr() );
 		}
 
-		$output = $process->getOutput();
+		$output = $result->getStdout();
 		foreach ( explode( "\n", $output ) as $line ) {
 			if ( substr( $line, 0, 1 ) === '*' ) {
 				$newLexers = explode( ', ', trim( $line, "* :\n" ) );
@@ -72,5 +75,5 @@ class UpdateLanguageList extends Maintenance {
 	}
 }
 
-$maintClass = 'UpdateLanguageList';
+$maintClass = 'UpdateLexerList';
 require_once RUN_MAINTENANCE_IF_MAIN;

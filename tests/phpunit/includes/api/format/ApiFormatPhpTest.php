@@ -20,7 +20,7 @@ class ApiFormatPhpTest extends ApiFormatTestBase {
 	}
 
 	public static function provideGeneralEncoding() {
-		// @codingStandardsIgnoreStart Generic.Files.LineLength
+		// phpcs:disable Generic.Files.LineLength
 		return array_merge(
 			self::addFormatVersion( 1, [
 				// Basic types
@@ -97,7 +97,7 @@ class ApiFormatPhpTest extends ApiFormatTestBase {
 					'a:1:{s:3:"foo";s:3:"foo";}' ],
 			] )
 		);
-		// @codingStandardsIgnoreEnd
+		// phpcs:enable
 	}
 
 	public function testCrossDomainMangling() {
@@ -110,14 +110,8 @@ class ApiFormatPhpTest extends ApiFormatTestBase {
 		$main = new ApiMain( $context );
 		$main->getResult()->addValue( null, null, '< Cross-Domain-Policy >' );
 
-		if ( !function_exists( 'wfOutputHandler' ) ) {
-			function wfOutputHandler( $s ) {
-				return $s;
-			}
-		}
-
 		$printer = $main->createPrinterByName( 'php' );
-		ob_start( 'wfOutputHandler' );
+		ob_start( 'MediaWiki\\OutputHandler::handle' );
 		$printer->initPrinter();
 		$printer->execute();
 		$printer->closePrinter();
@@ -126,7 +120,7 @@ class ApiFormatPhpTest extends ApiFormatTestBase {
 
 		$config->set( 'MangleFlashPolicy', true );
 		$printer = $main->createPrinterByName( 'php' );
-		ob_start( 'wfOutputHandler' );
+		ob_start( 'MediaWiki\\OutputHandler::handle' );
 		try {
 			$printer->initPrinter();
 			$printer->execute();

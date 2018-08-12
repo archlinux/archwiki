@@ -4,7 +4,8 @@
 			"Malafaya",
 			"Wyvernoid",
 			"Robin van der Vliet",
-			"Lakaoso"
+			"Lakaoso",
+			"Joao Xavier"
 		]
 	},
 	"renameuser": "Rinomar uzero",
@@ -20,5 +21,6 @@
 	"renameuser-page-moved": "La pagino $1 movesis a $2.",
 	"renameuser-page-unmoved": "On ne povis movar la pagino $1 a $2.",
 	"log-name-renameuser": "Registro di uzero-rinomizuri",
+	"logentry-renameuser-renameuser": "$1 {{GENDER:$2|rinomizis}} uzero $4 ({{PLURAL:$6|$6 redakto|$6 redakti}}) kom {{GENDER:$7|$5}}",
 	"right-renameuser": "Rinomar uzanti"
 }

@@ -21,7 +21,7 @@
  * @ingroup SpecialPage
  */
 
-use Wikimedia\Rdbms\ResultWrapper;
+use Wikimedia\Rdbms\IResultWrapper;
 
 /**
  * Special page allowing users with the appropriate permissions to view
@@ -306,7 +306,7 @@ class SpecialUndelete extends SpecialPage {
 	/**
 	 * Generic list of deleted pages
 	 *
-	 * @param ResultWrapper $result
+	 * @param IResultWrapper $result
 	 * @return bool
 	 */
 	private function showList( $result ) {
@@ -450,40 +450,40 @@ class SpecialUndelete extends SpecialPage {
 		if ( ( $this->mPreview || !$isText ) && $content ) {
 			// NOTE: non-text content has no source view, so always use rendered preview
 
-			// Hide [edit]s
 			$popts = $out->parserOptions();
-			$popts->setEditSection( false );
 
 			$pout = $content->getParserOutput( $this->mTargetObj, $rev->getId(), $popts, true );
-			$out->addParserOutput( $pout );
+			$out->addParserOutput( $pout, [
+				'enableSectionEditLinks' => false,
+			] );
 		}
+
+		$out->enableOOUI();
+		$buttonFields = [];
 
 		if ( $isText ) {
 			// source view for textual content
-			$sourceView = Xml::element(
-				'textarea',
-				[
-					'readonly' => 'readonly',
-					'cols' => 80,
-					'rows' => 25
-				],
-				$content->getNativeData() . "\n"
-			);
+			$sourceView = Xml::element( 'textarea', [
+				'readonly' => 'readonly',
+				'cols' => 80,
+				'rows' => 25
+			], $content->getNativeData() . "\n" );
 
-			$previewButton = Xml::element( 'input', [
+			$buttonFields[] = new OOUI\ButtonInputWidget( [
 				'type' => 'submit',
 				'name' => 'preview',
-				'value' => $this->msg( 'showpreview' )->text()
+				'label' => $this->msg( 'showpreview' )->text()
 			] );
 		} else {
 			$sourceView = '';
 			$previewButton = '';
 		}
 
-		$diffButton = Xml::element( 'input', [
+		$buttonFields[] = new OOUI\ButtonInputWidget( [
 			'name' => 'diff',
 			'type' => 'submit',
-			'value' => $this->msg( 'showdiff' )->text() ] );
+			'label' => $this->msg( 'showdiff' )->text()
+		] );
 
 		$out->addHTML(
 			$sourceView .
@@ -504,8 +504,13 @@ class SpecialUndelete extends SpecialPage {
 					'type' => 'hidden',
 					'name' => 'wpEditToken',
 					'value' => $user->getEditToken() ] ) .
-				$previewButton .
-				$diffButton .
+				new OOUI\FieldLayout(
+					new OOUI\Widget( [
+						'content' => new OOUI\HorizontalLayout( [
+							'items' => $buttonFields
+						] )
+					] )
+				) .
 				Xml::closeElement( 'form' ) .
 				Xml::closeElement( 'div' )
 		);
@@ -734,6 +739,9 @@ class SpecialUndelete extends SpecialPage {
 				'content' => new OOUI\HtmlSnippet( $this->msg( 'undeleteextrahelp' )->parseAsBlock() )
 			] );
 
+			$conf = $this->getConfig();
+			$oldCommentSchema = $conf->get( 'CommentTableSchemaMigrationStage' ) === MIGRATION_OLD;
+
 			$fields[] = new OOUI\FieldLayout(
 				new OOUI\TextInputWidget( [
 					'name' => 'wpComment',
@@ -741,6 +749,10 @@ class SpecialUndelete extends SpecialPage {
 					'infusable' => true,
 					'value' => $this->mComment,
 					'autofocus' => true,
+					// HTML maxlength uses "UTF-16 code units", which means that characters outside BMP
+					// (e.g. emojis) count for two each. This limit is overridden in JS to instead count
+					// Unicode codepoints (or 255 UTF-8 bytes for old schema).
+					'maxLength' => $oldCommentSchema ? 255 : CommentStore::COMMENT_CHARACTER_LIMIT,
 				] ),
 				[
 					'label' => $this->msg( 'undeletecomment' )->text(),
@@ -969,12 +981,12 @@ class SpecialUndelete extends SpecialPage {
 			$key = urlencode( $row->fa_storage_key );
 			$pageLink = $this->getFileLink( $file, $this->getPageTitle(), $ts, $key );
 		} else {
-			$pageLink = $this->getLanguage()->userTimeAndDate( $ts, $user );
+			$pageLink = htmlspecialchars( $this->getLanguage()->userTimeAndDate( $ts, $user ) );
 		}
 		$userLink = $this->getFileUser( $file );
 		$data = $this->msg( 'widthheight' )->numParams( $row->fa_width, $row->fa_height )->text();
 		$bytes = $this->msg( 'parentheses' )
-			->rawParams( $this->msg( 'nbytes' )->numParams( $row->fa_size )->text() )
+			->plaintextParams( $this->msg( 'nbytes' )->numParams( $row->fa_size )->text() )
 			->plain();
 		$data = htmlspecialchars( $data . ' ' . $bytes );
 		$comment = $this->getFileComment( $file );
@@ -1049,7 +1061,7 @@ class SpecialUndelete extends SpecialPage {
 		$time = $this->getLanguage()->userTimeAndDate( $ts, $user );
 
 		if ( !$file->userCan( File::DELETED_FILE, $user ) ) {
-			return '<span class="history-deleted">' . $time . '</span>';
+			return '<span class="history-deleted">' . htmlspecialchars( $time ) . '</span>';
 		}
 
 		$link = $this->getLinkRenderer()->makeKnownLink(

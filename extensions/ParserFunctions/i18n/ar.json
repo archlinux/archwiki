@@ -3,7 +3,8 @@
 		"authors": [
 			"Aiman titi",
 			"Asaifm",
-			"Meno25"
+			"Meno25",
+			"أحمد"
 		]
 	},
 	"pfunc_desc": "محلل ممدد بدوال منطقية",
@@ -17,7 +18,7 @@
 	"pfunc_expr_preg_match_failure": "خطأ في التعبير: فشل preg_match غير متوقع",
 	"pfunc_expr_unrecognised_word": "خطأ في التعبير: كلمة غير متعرف عليها \"$1\"",
 	"pfunc_expr_unexpected_operator": "خطأ في التعبير: عامل $1 غير متوقع",
-	"pfunc_expr_missing_operand": "خطأ في التعبير: operand مفقود ل$1",
+	"pfunc_expr_missing_operand": "خطأ في التعبير: معامل مفقود للعامل $1",
 	"pfunc_expr_unexpected_closing_bracket": "خطأ في التعبير: قوس إغلاق غير متوقع",
 	"pfunc_expr_unrecognised_punctuation": "خطأ في التعبير: علامة ترقيم غير متعرف عليها \"$1\"",
 	"pfunc_expr_unclosed_bracket": "خطأ في التعبير: قوس غير مغلق",

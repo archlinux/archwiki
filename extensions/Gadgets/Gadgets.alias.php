@@ -361,6 +361,12 @@ $specialPageAliases['uk'] = [
 	'Gadgets' => [ 'Додатки', 'Гаджеты' ],
 ];
 
+/** Urdu (اردو) */
+$specialPageAliases['ur'] = [
+	'Gadgets' => [ 'آلات' ],
+	'GadgetUsage' => [ 'آلات_کا_استعمال' ],
+];
+
 /** Venetian (vèneto) */
 $specialPageAliases['vec'] = [
 	'Gadgets' => [ 'Strumenti' ],

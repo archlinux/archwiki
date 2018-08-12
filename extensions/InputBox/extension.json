@@ -10,6 +10,9 @@
 	],
 	"url": "https://www.mediawiki.org/wiki/Extension:InputBox",
 	"descriptionmsg": "inputbox-desc",
+	"requires": {
+		"MediaWiki": ">= 1.30.0"
+	},
 	"license-name": "MIT",
 	"type": "parserhook",
 	"MessagesDirs": {
@@ -18,13 +21,12 @@
 		]
 	},
 	"AutoloadClasses": {
-		"InputBoxHooks": "InputBox.hooks.php",
-		"InputBox": "InputBox.classes.php"
+		"InputBoxHooks": "includes/InputBoxHooks.php",
+		"InputBox": "includes/InputBox.php"
 	},
 	"ResourceModules": {
 		"ext.inputBox.styles": {
 			"styles": "ext.inputBox.styles.css",
-			"position": "top",
 			"targets": [
 				"mobile",
 				"desktop"
@@ -56,8 +58,5 @@
 			"InputBoxHooks::onSpecialPageBeforeExecute"
 		]
 	},
-	"ParserTestFiles": [
-		"tests/inputBoxParserTests.txt"
-	],
 	"manifest_version": 1
 }

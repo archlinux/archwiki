@@ -589,9 +589,12 @@ class Html {
 	 *
 	 * @param string $contents CSS
 	 * @param string $media A media type string, like 'screen'
+	 * @param array $attribs (since 1.31) Associative array of attributes, e.g., [
+	 *   'href' => 'https://www.mediawiki.org/' ]. See expandAttributes() for
+	 *   further documentation.
 	 * @return string Raw HTML
 	 */
-	public static function inlineStyle( $contents, $media = 'all' ) {
+	public static function inlineStyle( $contents, $media = 'all', $attribs = [] ) {
 		// Don't escape '>' since that is used
 		// as direct child selector.
 		// Remember, in css, there is no "x" for hexadecimal escapes, and
@@ -609,7 +612,7 @@ class Html {
 
 		return self::rawElement( 'style', [
 			'media' => $media,
-		], $contents );
+		] + $attribs, $contents );
 	}
 
 	/**
@@ -673,6 +676,52 @@ class Html {
 		}
 
 		return self::input( $name, $value, 'checkbox', $attribs );
+	}
+
+	/**
+	 * Return the HTML for a message box.
+	 * @since 1.31
+	 * @param string $html of contents of box
+	 * @param string $className corresponding to box
+	 * @param string $heading (optional)
+	 * @return string of HTML representing a box.
+	 */
+	private static function messageBox( $html, $className, $heading = '' ) {
+		if ( $heading ) {
+			$html = self::element( 'h2', [], $heading ) . $html;
+		}
+		return self::rawElement( 'div', [ 'class' => $className ], $html );
+	}
+
+	/**
+	 * Return a warning box.
+	 * @since 1.31
+	 * @param string $html of contents of box
+	 * @return string of HTML representing a warning box.
+	 */
+	public static function warningBox( $html ) {
+		return self::messageBox( $html, 'warningbox' );
+	}
+
+	/**
+	 * Return an error box.
+	 * @since 1.31
+	 * @param string $html of contents of error box
+	 * @param string $heading (optional)
+	 * @return string of HTML representing an error box.
+	 */
+	public static function errorBox( $html, $heading = '' ) {
+		return self::messageBox( $html, 'errorbox', $heading );
+	}
+
+	/**
+	 * Return a success box.
+	 * @since 1.31
+	 * @param string $html of contents of box
+	 * @return string of HTML representing a success box.
+	 */
+	public static function successBox( $html ) {
+		return self::messageBox( $html, 'successbox' );
 	}
 
 	/**

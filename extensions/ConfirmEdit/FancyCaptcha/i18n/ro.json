@@ -4,10 +4,11 @@
 			"Firilacroco",
 			"Mihai",
 			"Minisarm",
-			"ImGelu"
+			"ImGelu",
+			"Strainu"
 		]
 	},
-	"fancycaptcha-addurl": "Modificarea dumneavoastră include legături externe noi.\nPentru a împiedica roboții de spam, vă rugăm să introduceți cuvintele care apar mai jos în căsuță ([[Special:Captcha/help|mai multe detalii]]):",
+	"fancycaptcha-addurl": "Modificarea dumneavoastră include legături externe noi.\nPentru a împiedica roboții de spam, vă rugăm să introduceți cuvintele care apar în căsuță ([[Special:Captcha/help|mai multe detalii]]):",
 	"fancycaptcha-badlogin": "Pentru a împiedica spargerea automată a parolelor, vă rugăm să introduceți cuvintele care apar mai jos în căsuță ([[Special:Captcha/help|mai multe detalii]]):",
 	"fancycaptcha-captcha": "Verificare de securitate",
 	"fancycaptcha-accountcreate": "Pentru a împiedica crearea automată de conturi, vă rugăm să introduceți cuvintele care apar mai jos în căsuță ([[Special:Captcha/help|mai multe detalii]]):",

@@ -92,12 +92,12 @@ class BagOStuffTest extends MediaWikiTestCase {
 		// merge on non-existing value
 		$merged = $this->cache->merge( $key, $callback, 0 );
 		$this->assertTrue( $merged );
-		$this->assertEquals( $this->cache->get( $key ), 'merged' );
+		$this->assertEquals( 'merged', $this->cache->get( $key ) );
 
 		// merge on existing value
 		$merged = $this->cache->merge( $key, $callback, 0 );
 		$this->assertTrue( $merged );
-		$this->assertEquals( $this->cache->get( $key ), 'mergedmerged' );
+		$this->assertEquals( 'mergedmerged', $this->cache->get( $key ) );
 
 		/*
 		 * Test concurrent merges by forking this process, if:
@@ -163,6 +163,9 @@ class BagOStuffTest extends MediaWikiTestCase {
 		$this->assertTrue( $this->cache->add( $key, 'test' ) );
 	}
 
+	/**
+	 * @covers BagOStuff::get
+	 */
 	public function testGet() {
 		$value = [ 'this' => 'is', 'a' => 'test' ];
 

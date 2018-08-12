@@ -51,7 +51,7 @@ class MWExceptionHandler {
 	 * Install handlers with PHP.
 	 */
 	public static function installHandler() {
-		set_exception_handler( 'MWExceptionHandler::handleException' );
+		set_exception_handler( 'MWExceptionHandler::handleUncaughtException' );
 		set_error_handler( 'MWExceptionHandler::handleError' );
 
 		// Reserve 16k of memory so we can report OOM fatals
@@ -112,6 +112,25 @@ class MWExceptionHandler {
 	}
 
 	/**
+	 * Callback to use with PHP's set_exception_handler.
+	 *
+	 * @since 1.31
+	 * @param Exception|Throwable $e
+	 */
+	public static function handleUncaughtException( $e ) {
+		self::handleException( $e );
+
+		// Make sure we don't claim success on exit for CLI scripts (T177414)
+		if ( wfIsCLI() ) {
+			register_shutdown_function(
+				function () {
+					exit( 255 );
+				}
+			);
+		}
+	}
+
+	/**
 	 * Exception handler which simulates the appropriate catch() handling:
 	 *
 	 *   try {
@@ -151,6 +170,8 @@ class MWExceptionHandler {
 	public static function handleError(
 		$level, $message, $file = null, $line = null
 	) {
+		global $wgPropagateErrors;
+
 		if ( in_array( $level, self::$fatalErrorTypes ) ) {
 			return call_user_func_array(
 				'MWExceptionHandler::handleFatalError', func_get_args()
@@ -194,9 +215,10 @@ class MWExceptionHandler {
 		$e = new ErrorException( "PHP $levelName: $message", 0, $level, $file, $line );
 		self::logError( $e, 'error', $severity );
 
-		// This handler is for logging only. Return false will instruct PHP
-		// to continue regular handling.
-		return false;
+		// If $wgPropagateErrors is true return false so PHP shows/logs the error normally.
+		// Ignore $wgPropagateErrors if the error should break execution, or track_errors is set
+		// (which means someone is counting on regular PHP error handling behavior).
+		return !( $wgPropagateErrors || $level == E_RECOVERABLE_ERROR || ini_get( 'track_errors' ) );
 	}
 
 	/**
@@ -254,13 +276,22 @@ class MWExceptionHandler {
 			return false;
 		}
 
-		$msg = "[{exception_id}] PHP Fatal Error: {$message}";
+		$url = WebRequest::getGlobalRequestURL();
+		$msgParts = [
+			'[{exception_id}] {exception_url}   PHP Fatal Error',
+			( $line || $file ) ? ' from' : '',
+			$line ? " line $line" : '',
+			( $line && $file ) ? ' of' : '',
+			$file ? " $file" : '',
+			": $message",
+		];
+		$msg = implode( '', $msgParts );
 
 		// Look at message to see if this is a class not found failure
 		// HHVM: Class undefined: foo
 		// PHP5: Class 'foo' not found
-		if ( preg_match( "/Class (undefined: \w+|'\w+' not found)/", $msg ) ) {
-			// @codingStandardsIgnoreStart Generic.Files.LineLength.TooLong
+		if ( preg_match( "/Class (undefined: \w+|'\w+' not found)/", $message ) ) {
+			// phpcs:disable Generic.Files.LineLength
 			$msg = <<<TXT
 {$msg}
 
@@ -268,7 +299,7 @@ MediaWiki or an installed extension requires this class but it is not embedded d
 
 Please see <a href="https://www.mediawiki.org/wiki/Download_from_Git#Fetch_external_libraries">mediawiki.org</a> for help on installing the required components.
 TXT;
-			// @codingStandardsIgnoreEnd
+			// phpcs:enable
 		}
 
 		// We can't just create an exception and log it as it is likely that
@@ -281,14 +312,15 @@ TXT;
 		$logger = LoggerFactory::getInstance( 'fatal' );
 		$logger->error( $msg, [
 			'fatal_exception' => [
-				'class' => 'ErrorException',
+				'class' => ErrorException::class,
 				'message' => "PHP Fatal Error: {$message}",
 				'code' => $level,
 				'file' => $file,
 				'line' => $line,
-				'trace' => static::redactTrace( $trace ),
+				'trace' => self::prettyPrintTrace( self::redactTrace( $trace ) ),
 			],
-			'exception_id' => wfRandomString( 8 ),
+			'exception_id' => WebRequest::getRequestId(),
+			'exception_url' => $url,
 			'caught_by' => self::CAUGHT_BY_HANDLER
 		] );
 
@@ -642,7 +674,7 @@ TXT;
 		$catcher = self::CAUGHT_BY_HANDLER;
 		// The set_error_handler callback is independent from error_reporting.
 		// Filter out unwanted errors manually (e.g. when
-		// MediaWiki\suppressWarnings is active).
+		// Wikimedia\suppressWarnings is active).
 		$suppressed = ( error_reporting() & $e->getSeverity() ) === 0;
 		if ( !$suppressed ) {
 			$logger = LoggerFactory::getInstance( $channel );

@@ -1,8 +1,8 @@
 /*!
  * VisualEditor MWReferencesListContextItem class.
  *
- * @copyright 2011-2017 Cite VisualEditor Team and others; see AUTHORS.txt
- * @license The MIT License (MIT); see LICENSE.txt
+ * @copyright 2011-2018 VisualEditor Team's Cite sub-team and others; see AUTHORS.txt
+ * @license MIT
  */
 
 /**
@@ -42,6 +42,22 @@ ve.ui.MWReferencesListContextItem.static.modelClasses = [ ve.dm.MWReferencesList
 ve.ui.MWReferencesListContextItem.static.commandName = 'referencesList';
 
 /* Methods */
+
+/**
+ * @inheritdoc
+ */
+ve.ui.MWReferencesListContextItem.prototype.renderBody = function () {
+	this.$body.append(
+		$( '<div>' ).text( this.getDescription() )
+	);
+	if ( this.model.getAttribute( 'templateGenerated' ) ) {
+		this.$body.append(
+			$( '<div>' )
+				.addClass( 've-ui-mwReferenceContextItem-muted' )
+				.text( ve.msg( 'cite-ve-referenceslist-missingreflist' ) )
+		);
+	}
+};
 
 /**
  * @inheritdoc

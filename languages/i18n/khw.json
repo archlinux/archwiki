@@ -5,7 +5,8 @@
 			"아라",
 			"Obaid Raza",
 			"Macofe",
-			"Saraiki"
+			"Saraiki",
+			"BukhariSaeed"
 		]
 	},
 	"tog-underline": "ربطو خط کشیدگی",
@@ -51,7 +52,6 @@
 	"underline-never": "کیاوت دی نو",
 	"underline-default": "براوزرو طے شدہ",
 	"editfont-style": "خانۂ تدوینو اندازِ تحریر:",
-	"editfont-default": "ڈیفالٹ براوزر",
 	"editfont-monospace": "یکفضائی نویسہ",
 	"editfont-sansserif": "بےحلیہ فونٹ",
 	"editfont-serif": "حلیہ فونٹ",
@@ -181,7 +181,7 @@
 	"talkpagelinktext": "مشقولگی",
 	"specialpage": "خصوصی صفحہ",
 	"personaltools": "ذاتی سماند",
-	"talk": "تبادلہٴ خیال",
+	"talk": "تبادلۂ خیال",
 	"views": "خیالات",
 	"toolbox": "ٹول بکس",
 	"imagepage": "ھوٹوو صفحو لوڑے",
@@ -481,7 +481,7 @@
 	"creating": "زیر تخلیق $1",
 	"editingsection": "$1 قطعو تدوین",
 	"editingcomment": "زیرترمیم $1 (تبصرہ)",
-	"editconflict": "تنازعہ ترمیم:$1",
+	"editconflict": "تنازع ترمیم:$1",
 	"yourtext": "تہ تحریر",
 	"storedversion": "ذخیرہ شدہ نظرثانی",
 	"yourdiff": "تضادات",

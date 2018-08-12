@@ -1,7 +1,5 @@
 <?php
 /**
- * Created on Sep 27, 2015
- *
  * Copyright © 2015 Wikimedia Foundation and contributors
  *
  * This program is free software; you can redistribute it and/or modify
@@ -63,20 +61,20 @@ class ApiQueryAllRevisions extends ApiQueryRevisionsBase {
 			}
 		}
 
-		$this->addTables( 'revision' );
 		if ( $resultPageSet === null ) {
 			$this->parseParameters( $params );
-			$this->addTables( 'page' );
-			$this->addJoinConds(
-				[ 'page' => [ 'INNER JOIN', [ 'rev_page = page_id' ] ] ]
+			$revQuery = Revision::getQueryInfo(
+				$this->fetchContent ? [ 'page', 'text' ] : [ 'page' ]
 			);
-			$this->addFields( Revision::selectFields() );
-			$this->addFields( Revision::selectPageFields() );
+			$this->addTables( $revQuery['tables'] );
+			$this->addFields( $revQuery['fields'] );
+			$this->addJoinConds( $revQuery['joins'] );
 
 			// Review this depeneding on the outcome of T113901
 			$this->addOption( 'STRAIGHT_JOIN' );
 		} else {
 			$this->limit = $this->getParameter( 'limit' ) ?: 10;
+			$this->addTables( 'revision' );
 			$this->addFields( [ 'rev_timestamp', 'rev_id' ] );
 			if ( $params['generatetitles'] ) {
 				$this->addFields( [ 'rev_page' ] );
@@ -105,29 +103,18 @@ class ApiQueryAllRevisions extends ApiQueryRevisionsBase {
 			$this->addFields( 'ts_tags' );
 		}
 
-		if ( $this->fetchContent ) {
-			$this->addTables( 'text' );
-			$this->addJoinConds(
-				[ 'text' => [ 'INNER JOIN', [ 'rev_text_id=old_id' ] ] ]
-			);
-			$this->addFields( 'old_id' );
-			$this->addFields( Revision::selectTextFields() );
-		}
-
 		if ( $params['user'] !== null ) {
-			$id = User::idFromName( $params['user'] );
-			if ( $id ) {
-				$this->addWhereFld( 'rev_user', $id );
-			} else {
-				$this->addWhereFld( 'rev_user_text', $params['user'] );
-			}
+			$actorQuery = ActorMigration::newMigration()
+				->getWhere( $db, 'rev_user', User::newFromName( $params['user'], false ) );
+			$this->addTables( $actorQuery['tables'] );
+			$this->addJoinConds( $actorQuery['joins'] );
+			$this->addWhere( $actorQuery['conds'] );
 		} elseif ( $params['excludeuser'] !== null ) {
-			$id = User::idFromName( $params['excludeuser'] );
-			if ( $id ) {
-				$this->addWhere( 'rev_user != ' . $id );
-			} else {
-				$this->addWhere( 'rev_user_text != ' . $db->addQuotes( $params['excludeuser'] ) );
-			}
+			$actorQuery = ActorMigration::newMigration()
+				->getWhere( $db, 'rev_user', User::newFromName( $params['excludeuser'], false ) );
+			$this->addTables( $actorQuery['tables'] );
+			$this->addJoinConds( $actorQuery['joins'] );
+			$this->addWhere( 'NOT(' . $actorQuery['conds'] . ')' );
 		}
 
 		if ( $params['user'] !== null || $params['excludeuser'] !== null ) {

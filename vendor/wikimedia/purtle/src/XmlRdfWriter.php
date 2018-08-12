@@ -7,11 +7,15 @@ use InvalidArgumentException;
 /**
  * XML/RDF implementation of RdfWriter
  *
- * @license GPL-2.0+
+ * @license GPL-2.0-or-later
  * @author Daniel Kinzler
  */
 class XmlRdfWriter extends RdfWriterBase {
 
+	/**
+	 * @param string $role
+	 * @param BNodeLabeler|null $labeler
+	 */
 	public function __construct( $role = parent::DOCUMENT_ROLE, BNodeLabeler $labeler = null ) {
 		parent::__construct( $role, $labeler );
 
@@ -29,6 +33,11 @@ class XmlRdfWriter extends RdfWriterBase {
 		};
 	}
 
+	/**
+	 * @param string $text
+	 *
+	 * @return string
+	 */
 	private function escape( $text ) {
 		return htmlspecialchars( $text, ENT_QUOTES );
 	}
@@ -49,6 +58,12 @@ class XmlRdfWriter extends RdfWriterBase {
 		$this->expandQName( $base, $local );
 	}
 
+	/**
+	 * @param string $ns
+	 * @param string $name
+	 * @param string[] $attributes
+	 * @param string|null $content
+	 */
 	private function tag( $ns, $name, $attributes = [], $content = null ) {
 		$sep = $ns === '' ? '' : ':';
 		$this->write( '<' . $ns . $sep . $name );
@@ -73,6 +88,10 @@ class XmlRdfWriter extends RdfWriterBase {
 		}
 	}
 
+	/**
+	 * @param string $ns
+	 * @param string $name
+	 */
 	private function close( $ns, $name ) {
 		$sep = $ns === '' ? '' : ':';
 		$this->write( '</' . $ns . $sep . $name . '>' );
@@ -135,6 +154,10 @@ class XmlRdfWriter extends RdfWriterBase {
 		$this->write( "\n" );
 	}
 
+	/**
+	 * @param string $base
+	 * @param string|null $local
+	 */
 	protected function writeSubject( $base, $local = null ) {
 		$attr = $this->getTargetAttributes( 'about', $base, $local );
 
@@ -161,10 +184,18 @@ class XmlRdfWriter extends RdfWriterBase {
 		$this->write( "\n" );
 	}
 
+	/**
+	 * @param string $base
+	 * @param string|null $local
+	 */
 	protected function writePredicate( $base, $local = null ) {
 		// noop
 	}
 
+	/**
+	 * @param string $base
+	 * @param string|null $local
+	 */
 	protected function writeResource( $base, $local = null ) {
 		$attr = $this->getTargetAttributes( 'resource', $base, $local );
 
@@ -173,6 +204,10 @@ class XmlRdfWriter extends RdfWriterBase {
 		$this->write( "\n" );
 	}
 
+	/**
+	 * @param string $text
+	 * @param string|null $language
+	 */
 	protected function writeText( $text, $language = null ) {
 		$attr = $this->isValidLanguageCode( $language )
 			? [ 'xml:lang' => $language ]
@@ -188,6 +223,11 @@ class XmlRdfWriter extends RdfWriterBase {
 		$this->write( "\n" );
 	}
 
+	/**
+	 * @param string $literal
+	 * @param string|null $typeBase
+	 * @param string|null $typeLocal
+	 */
 	public function writeValue( $literal, $typeBase, $typeLocal = null ) {
 		$attr = $this->getTargetAttributes( 'datatype', $typeBase, $typeLocal );
 

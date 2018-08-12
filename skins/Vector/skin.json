@@ -8,7 +8,7 @@
 	"url": "https://www.mediawiki.org/wiki/Skin:Vector",
 	"descriptionmsg": "vector-skin-desc",
 	"namemsg": "skinname-vector",
-	"license-name": "GPL-2.0+",
+	"license-name": "GPL-2.0-or-later",
 	"type": "skin",
 	"requires": {
 		"MediaWiki": ">= 1.29.0"
@@ -25,41 +25,34 @@
 		]
 	},
 	"AutoloadClasses": {
-		"VectorHooks": "Hooks.php",
-		"SkinVector": "SkinVector.php",
-		"VectorTemplate": "VectorTemplate.php",
-		"Vector\\ResourceLoaderLessModule": "ResourceLoaderLessModule.php"
+		"Vector\\Hooks": "includes/Hooks.php",
+		"SkinVector": "includes/SkinVector.php",
+		"VectorTemplate": "includes/VectorTemplate.php",
+		"Vector\\ResourceLoaderLessModule": "includes/ResourceLoaderLessModule.php"
 	},
 	"Hooks": {
 		"BeforePageDisplayMobile": [
-			"VectorHooks::onBeforePageDisplayMobile"
+			"Vector\\Hooks::onBeforePageDisplayMobile"
 		]
 	},
 	"@note": "When modifying skins.vector.styles definition, make sure the installer still works",
 	"ResourceModules": {
 		"skins.vector.styles": {
+			"class": "Vector\\ResourceLoaderLessModule",
 			"targets": [ "desktop", "mobile" ],
-			"position": "top",
 			"styles": {
 				"screen.less": {
 					"media": "screen"
 				},
 				"screen-hd.less": {
 					"media": "screen and (min-width: 982px)"
-				}
+				},
+				"print.less": {}
 			}
 		},
-		"skins.vector.styles.experimental.print": {
-			"class": "Vector\\ResourceLoaderLessModule",
-			"targets": [ "desktop", "mobile" ],
-			"position": "top",
-			"styles": [
-				"print.less"
-			]
-		},
+
 		"skins.vector.styles.responsive": {
 			"targets": [ "desktop", "mobile" ],
-			"position": "top",
 			"styles": [
 				"responsive.less"
 			]
@@ -69,7 +62,6 @@
 				"collapsibleTabs.js",
 				"vector.js"
 			],
-			"position": "top",
 			"dependencies": [
 				"jquery.throttle-debounce",
 				"jquery.tabIndex"
@@ -110,8 +102,6 @@
 	"config": {
 		"VectorUseSimpleSearch": true,
 		"VectorUseIconWatch": true,
-		"@VectorExperimentalPrintStyles": "Temporary config variable to feature flag new print styles (T154965)",
-		"VectorExperimentalPrintStyles": false,
 		"VectorResponsive": false,
 		"VectorPrintLogo": false
 	},

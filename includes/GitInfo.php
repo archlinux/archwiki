@@ -23,6 +23,8 @@
  * @file
  */
 
+use MediaWiki\Shell\Shell;
+
 class GitInfo {
 
 	/**
@@ -34,6 +36,11 @@ class GitInfo {
 	 * Location of the .git directory
 	 */
 	protected $basedir;
+
+	/**
+	 * Location of the repository
+	 */
+	protected $repoDir;
 
 	/**
 	 * Path to JSON cache file for pre-computed git information.
@@ -56,6 +63,7 @@ class GitInfo {
 	 * @see precomputeValues
 	 */
 	public function __construct( $repoDir, $usePrecomputed = true ) {
+		$this->repoDir = $repoDir;
 		$this->cacheFile = self::getCacheFilePath( $repoDir );
 		wfDebugLog( 'gitinfo',
 			"Computed cacheFile={$this->cacheFile} for {$repoDir}"
@@ -191,8 +199,14 @@ class GitInfo {
 			} else {
 				// If not a SHA1 it may be a ref:
 				$refFile = "{$this->basedir}/{$head}";
+				$packedRefs = "{$this->basedir}/packed-refs";
+				$headRegex = preg_quote( $head, '/' );
 				if ( is_readable( $refFile ) ) {
 					$sha1 = rtrim( file_get_contents( $refFile ) );
+				} elseif ( is_readable( $packedRefs ) &&
+					preg_match( "/^([0-9A-Fa-f]{40}) $headRegex$/m", file_get_contents( $packedRefs ), $matches )
+				) {
+					$sha1 = $matches[1];
 				}
 			}
 			$this->cache['headSHA1'] = $sha1;
@@ -215,13 +229,22 @@ class GitInfo {
 				is_executable( $wgGitBin ) &&
 				$this->getHead() !== false
 			) {
-				$environment = [ "GIT_DIR" => $this->basedir ];
-				$cmd = wfEscapeShellArg( $wgGitBin ) .
-					" show -s --format=format:%ct HEAD";
-				$retc = false;
-				$commitDate = wfShellExec( $cmd, $retc, $environment );
-				if ( $retc === 0 ) {
-					$date = (int)$commitDate;
+				$cmd = [
+					$wgGitBin,
+					'show',
+					'-s',
+					'--format=format:%ct',
+					'HEAD',
+				];
+				$gitDir = realpath( $this->basedir );
+				$result = Shell::command( $cmd )
+					->environment( [ 'GIT_DIR' => $gitDir ] )
+					->restrict( Shell::RESTRICT_DEFAULT | Shell::NO_NETWORK )
+					->whitelistPaths( [ $gitDir, $this->repoDir ] )
+					->execute();
+
+				if ( $result->getExitCode() === 0 ) {
+					$date = (int)$result->getStdout();
 				}
 			}
 			$this->cache['headCommitDate'] = $date;
@@ -283,9 +306,9 @@ class GitInfo {
 			$config = "{$this->basedir}/config";
 			$url = false;
 			if ( is_readable( $config ) ) {
-				MediaWiki\suppressWarnings();
+				Wikimedia\suppressWarnings();
 				$configArray = parse_ini_file( $config, true );
-				MediaWiki\restoreWarnings();
+				Wikimedia\restoreWarnings();
 				$remote = false;
 
 				// Use the "origin" remote repo if available or any other repo if not.

@@ -1,8 +1,5 @@
 <?php
 /**
- *
- * Created on Feb 6, 2013
- *
  * Copyright © 2013 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
  *
  * This program is free software; you can redistribute it and/or modify
@@ -134,7 +131,7 @@ class ApiQueryBasicTest extends ApiQueryTestBase {
 	private static $allcategories = [
 		[ 'list' => 'allcategories', 'acprefix' => 'AQBT-' ],
 		[ 'allcategories' => [
-			[ '*' => 'AQBT-Cat' ],
+			[ 'category' => 'AQBT-Cat' ],
 		] ]
 	];
 
@@ -236,9 +233,7 @@ class ApiQueryBasicTest extends ApiQueryTestBase {
 		$this->check( self::$allpages );
 		$this->check( self::$alllinks );
 		$this->check( self::$alltransclusions );
-		// This test is temporarily disabled until a sqlite bug is fixed
-		// Confirmed still broken 15-nov-2013
-		// $this->check( self::$allcategories );
+		$this->check( self::$allcategories );
 		$this->check( self::$backlinks );
 		$this->check( self::$embeddedin );
 		$this->check( self::$categorymembers );

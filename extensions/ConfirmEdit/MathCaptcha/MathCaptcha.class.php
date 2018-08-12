@@ -15,7 +15,7 @@ class MathCaptcha extends SimpleCaptcha {
 	}
 
 	/**
-	 * @param array $resultArr
+	 * @param array &$resultArr
 	 */
 	function addCaptchaAPI( &$resultArr ) {
 		list( $sum, $answer ) = $this->pickSum();
@@ -54,7 +54,10 @@ class MathCaptcha extends SimpleCaptcha {
 		return [ 'html' => $form ];
 	}
 
-	/** Pick a random sum */
+	/**
+	 * Pick a random sum
+	 * @return array
+	 */
 	function pickSum() {
 		$a = mt_rand( 0, 100 );
 		$b = mt_rand( 0, 10 );
@@ -64,7 +67,11 @@ class MathCaptcha extends SimpleCaptcha {
 		return [ $sum, $ans ];
 	}
 
-	/** Fetch the math */
+	/**
+	 * Fetch the math
+	 * @param int $sum
+	 * @return string
+	 */
 	function fetchMath( $sum ) {
 		if ( class_exists( 'MathRenderer' ) ) {
 			$math = MathRenderer::getRenderer( $sum, [], 'png' );
@@ -98,7 +105,7 @@ class MathCaptcha extends SimpleCaptcha {
 	/**
 	 * @param array $requests
 	 * @param array $fieldInfo
-	 * @param array $formDescriptor
+	 * @param array &$formDescriptor
 	 * @param string $action
 	 */
 	public function onAuthChangeFormFields( array $requests, array $fieldInfo,

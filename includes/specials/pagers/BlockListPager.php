@@ -23,7 +23,7 @@
  * @ingroup Pager
  */
 use MediaWiki\MediaWikiServices;
-use Wikimedia\Rdbms\ResultWrapper;
+use Wikimedia\Rdbms\IResultWrapper;
 
 class BlockListPager extends TablePager {
 
@@ -173,7 +173,7 @@ class BlockListPager extends TablePager {
 				break;
 
 			case 'ipb_reason':
-				$value = CommentStore::newKey( 'ipb_reason' )->getComment( $row )->text;
+				$value = CommentStore::getStore()->getComment( 'ipb_reason', $row )->text;
 				$formatted = Linker::formatComment( $value );
 				break;
 
@@ -209,16 +209,17 @@ class BlockListPager extends TablePager {
 	}
 
 	function getQueryInfo() {
-		$commentQuery = CommentStore::newKey( 'ipb_reason' )->getJoin();
+		$commentQuery = CommentStore::getStore()->getJoin( 'ipb_reason' );
+		$actorQuery = ActorMigration::newMigration()->getJoin( 'ipb_by' );
 
 		$info = [
-			'tables' => [ 'ipblocks', 'user' ] + $commentQuery['tables'],
+			'tables' => array_merge(
+				[ 'ipblocks' ], $commentQuery['tables'], $actorQuery['tables'], [ 'user' ]
+			),
 			'fields' => [
 				'ipb_id',
 				'ipb_address',
 				'ipb_user',
-				'ipb_by',
-				'ipb_by_text',
 				'by_user_name' => 'user_name',
 				'ipb_timestamp',
 				'ipb_auto',
@@ -231,9 +232,11 @@ class BlockListPager extends TablePager {
 				'ipb_deleted',
 				'ipb_block_email',
 				'ipb_allow_usertalk',
-			] + $commentQuery['fields'],
+			] + $commentQuery['fields'] + $actorQuery['fields'],
 			'conds' => $this->conds,
-			'join_conds' => [ 'user' => [ 'LEFT JOIN', 'user_id = ipb_by' ] ] + $commentQuery['joins']
+			'join_conds' => [
+				'user' => [ 'LEFT JOIN', 'user_id = ' . $actorQuery['fields']['ipb_by'] ]
+			] + $commentQuery['joins'] + $actorQuery['joins']
 		];
 
 		# Filter out any expired blocks
@@ -286,7 +289,7 @@ class BlockListPager extends TablePager {
 
 	/**
 	 * Do a LinkBatch query to minimise database load when generating all these links
-	 * @param ResultWrapper $result
+	 * @param IResultWrapper $result
 	 */
 	function preprocessResults( $result ) {
 		# Do a link batch query

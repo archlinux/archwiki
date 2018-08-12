@@ -42,19 +42,20 @@ interface ILBFactory {
 	 *
 	 * @param array $conf Array with keys:
 	 *  - localDomain: A DatabaseDomain or domain ID string.
-	 *  - readOnlyReason : Reason the master DB is read-only if so [optional]
-	 *  - srvCache : BagOStuff object for server cache [optional]
-	 *  - memStash : BagOStuff object for cross-datacenter memory storage [optional]
-	 *  - wanCache : WANObjectCache object [optional]
-	 *  - hostname : The name of the current server [optional]
+	 *  - readOnlyReason: Reason the master DB is read-only if so [optional]
+	 *  - srvCache: BagOStuff object for server cache [optional]
+	 *  - memStash: BagOStuff object for cross-datacenter memory storage [optional]
+	 *  - wanCache: WANObjectCache object [optional]
+	 *  - hostname: The name of the current server [optional]
 	 *  - cliMode: Whether the execution context is a CLI script. [optional]
-	 *  - profiler : Class name or instance with profileIn()/profileOut() methods. [optional]
+	 *  - profiler: Class name or instance with profileIn()/profileOut() methods. [optional]
 	 *  - trxProfiler: TransactionProfiler instance. [optional]
 	 *  - replLogger: PSR-3 logger instance. [optional]
 	 *  - connLogger: PSR-3 logger instance. [optional]
 	 *  - queryLogger: PSR-3 logger instance. [optional]
 	 *  - perfLogger: PSR-3 logger instance. [optional]
-	 *  - errorLogger : Callback that takes an Exception and logs it. [optional]
+	 *  - errorLogger: Callback that takes an Exception and logs it. [optional]
+	 *  - deprecationLogger: Callback to log a deprecation warning. [optional]
 	 * @throws InvalidArgumentException
 	 */
 	public function __construct( array $conf );
@@ -140,9 +141,10 @@ interface ILBFactory {
 	 * Prepare all tracked load balancers for shutdown
 	 * @param int $mode One of the class SHUTDOWN_* constants
 	 * @param callable|null $workCallback Work to mask ChronologyProtector writes
+	 * @param int|null &$cpIndex Position key write counter for ChronologyProtector
 	 */
 	public function shutdown(
-		$mode = self::SHUTDOWN_CHRONPROT_SYNC, callable $workCallback = null
+		$mode = self::SHUTDOWN_CHRONPROT_SYNC, callable $workCallback = null, &$cpIndex = null
 	);
 
 	/**
@@ -304,7 +306,7 @@ interface ILBFactory {
 	public function setAgentName( $agent );
 
 	/**
-	 * Append ?cpPosTime parameter to a URL for ChronologyProtector purposes if needed
+	 * Append ?cpPosIndex parameter to a URL for ChronologyProtector purposes if needed
 	 *
 	 * Note that unlike cookies, this works accross domains
 	 *
@@ -312,13 +314,44 @@ interface ILBFactory {
 	 * @param float $time UNIX timestamp just before shutdown() was called
 	 * @return string
 	 */
-	public function appendPreShutdownTimeAsQuery( $url, $time );
+	public function appendShutdownCPIndexAsQuery( $url, $time );
 
 	/**
 	 * @param array $info Map of fields, including:
 	 *   - IPAddress : IP address
 	 *   - UserAgent : User-Agent HTTP header
 	 *   - ChronologyProtection : cookie/header value specifying ChronologyProtector usage
+	 *   - ChronologyPositionIndex: timestamp used to get up-to-date DB positions for the agent
 	 */
 	public function setRequestInfo( array $info );
+
+	/**
+	 * Make certain table names use their own database, schema, and table prefix
+	 * when passed into SQL queries pre-escaped and without a qualified database name
+	 *
+	 * For example, "user" can be converted to "myschema.mydbname.user" for convenience.
+	 * Appearances like `user`, somedb.user, somedb.someschema.user will used literally.
+	 *
+	 * Calling this twice will completely clear any old table aliases. Also, note that
+	 * callers are responsible for making sure the schemas and databases actually exist.
+	 *
+	 * @param array[] $aliases Map of (table => (dbname, schema, prefix) map)
+	 * @since 1.31
+	 */
+	public function setTableAliases( array $aliases );
+
+	/**
+	 * Convert certain index names to alternative names before querying the DB
+	 *
+	 * Note that this applies to indexes regardless of the table they belong to.
+	 *
+	 * This can be employed when an index was renamed X => Y in code, but the new Y-named
+	 * indexes were not yet built on all DBs. After all the Y-named ones are added by the DBA,
+	 * the aliases can be removed, and then the old X-named indexes dropped.
+	 *
+	 * @param string[] $aliases
+	 * @return mixed
+	 * @since 1.31
+	 */
+	public function setIndexAliases( array $aliases );
 }

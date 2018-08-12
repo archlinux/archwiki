@@ -15,7 +15,7 @@
 	],
 	"url": "https://www.mediawiki.org/wiki/Extension:Interwiki",
 	"descriptionmsg": "interwiki-desc",
-	"license-name": "GPL-2.0+",
+	"license-name": "GPL-2.0-or-later",
 	"type": "specialpage",
 	"requires": {
 		"MediaWiki": ">= 1.26.0"
@@ -39,10 +39,7 @@
 	},
 	"ResourceModules": {
 		"ext.interwiki.specialpage": {
-			"styles": "Interwiki.css",
-			"dependencies": [
-				"jquery.makeCollapsible"
-			]
+			"styles": "Interwiki.css"
 		}
 	},
 	"ResourceFileModulePaths": {
@@ -56,9 +53,9 @@
 		"InterwikiHooks::onExtensionFunctions"
 	],
 	"AutoloadClasses": {
-		"InterwikiHooks": "Interwiki_hooks.php",
-		"SpecialInterwiki": "Interwiki_body.php",
-		"InterwikiLogFormatter": "Interwiki_body.php"
+		"InterwikiHooks": "includes/InterwikiHooks.php",
+		"SpecialInterwiki": "includes/SpecialInterwiki.php",
+		"InterwikiLogFormatter": "includes/InterwikiLogFormatter.php"
 	},
 	"manifest_version": 1
 }

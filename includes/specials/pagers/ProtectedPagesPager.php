@@ -19,12 +19,10 @@
  * @ingroup Pager
  */
 
-use \MediaWiki\Linker\LinkRenderer;
+use MediaWiki\Linker\LinkRenderer;
 
-/**
- * @todo document
- */
 class ProtectedPagesPager extends TablePager {
+
 	public $mForm, $mConds;
 	private $type, $level, $namespace, $sizetype, $size, $indefonly, $cascadeonly, $noredirect;
 
@@ -236,7 +234,7 @@ class ProtectedPagesPager extends TablePager {
 						LogPage::DELETED_COMMENT,
 						$this->getUser()
 					) ) {
-						$value = CommentStore::newKey( 'log_comment' )->getComment( $row )->text;
+						$value = CommentStore::getStore()->getComment( 'log_comment', $row )->text;
 						$formatted = Linker::formatComment( $value !== null ? $value : '' );
 					} else {
 						$formatted = $this->msg( 'rev-deleted-comment' )->escaped();
@@ -285,10 +283,14 @@ class ProtectedPagesPager extends TablePager {
 			$conds[] = 'page_namespace=' . $this->mDb->addQuotes( $this->namespace );
 		}
 
-		$commentQuery = CommentStore::newKey( 'log_comment' )->getJoin();
+		$commentQuery = CommentStore::getStore()->getJoin( 'log_comment' );
+		$actorQuery = ActorMigration::newMigration()->getJoin( 'log_user' );
 
 		return [
-			'tables' => [ 'page', 'page_restrictions', 'log_search', 'logging' ] + $commentQuery['tables'],
+			'tables' => [
+				'page', 'page_restrictions', 'log_search',
+				'logparen' => [ 'logging' ] + $commentQuery['tables'] + $actorQuery['tables'],
+			],
 			'fields' => [
 				'pr_id',
 				'page_namespace',
@@ -299,9 +301,8 @@ class ProtectedPagesPager extends TablePager {
 				'pr_expiry',
 				'pr_cascade',
 				'log_timestamp',
-				'log_user',
 				'log_deleted',
-			] + $commentQuery['fields'],
+			] + $commentQuery['fields'] + $actorQuery['fields'],
 			'conds' => $conds,
 			'join_conds' => [
 				'log_search' => [
@@ -309,12 +310,12 @@ class ProtectedPagesPager extends TablePager {
 						'ls_field' => 'pr_id', 'ls_value = ' . $this->mDb->buildStringCast( 'pr_id' )
 					]
 				],
-				'logging' => [
+				'logparen' => [
 					'LEFT JOIN', [
 						'ls_log_id = log_id'
 					]
 				]
-			] + $commentQuery['joins']
+			] + $commentQuery['joins'] + $actorQuery['joins']
 		];
 	}
 

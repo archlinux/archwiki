@@ -1,4 +1,7 @@
 ( function ( mw, $ ) {
+
+	var byteLength = require( 'mediawiki.String' ).byteLength;
+
 	/* eslint no-underscore-dangle: "off" */
 	/**
 	 * Controller for the filters in Recent Changes
@@ -10,17 +13,26 @@
 	 * @param {mw.rcfilters.dm.SavedQueriesModel} savedQueriesModel Saved queries model
 	 * @param {Object} config Additional configuration
 	 * @cfg {string} savedQueriesPreferenceName Where to save the saved queries
+	 * @cfg {string} daysPreferenceName Preference name for the days filter
+	 * @cfg {string} limitPreferenceName Preference name for the limit filter
+	 * @cfg {boolean} [normalizeTarget] Dictates whether or not to go through the
+	 *  title normalization to separate title subpage/parts into the target= url
+	 *  parameter
 	 */
 	mw.rcfilters.Controller = function MwRcfiltersController( filtersModel, changesListModel, savedQueriesModel, config ) {
 		this.filtersModel = filtersModel;
 		this.changesListModel = changesListModel;
 		this.savedQueriesModel = savedQueriesModel;
 		this.savedQueriesPreferenceName = config.savedQueriesPreferenceName;
+		this.daysPreferenceName = config.daysPreferenceName;
+		this.limitPreferenceName = config.limitPreferenceName;
+		this.normalizeTarget = !!config.normalizeTarget;
 
 		this.requestCounter = {};
 		this.baseFilterState = {};
 		this.uriProcessor = null;
 		this.initializing = false;
+		this.wereSavedQueriesSaved = false;
 
 		this.prevLoggedItems = [];
 
@@ -38,15 +50,16 @@
 	 * @param {Array} filterStructure Filter definition and structure for the model
 	 * @param {Object} [namespaceStructure] Namespace definition
 	 * @param {Object} [tagList] Tag definition
+	 * @param {Object} [conditionalViews] Conditional view definition
 	 */
-	mw.rcfilters.Controller.prototype.initialize = function ( filterStructure, namespaceStructure, tagList ) {
-		var parsedSavedQueries,
+	mw.rcfilters.Controller.prototype.initialize = function ( filterStructure, namespaceStructure, tagList, conditionalViews ) {
+		var parsedSavedQueries, pieces,
 			displayConfig = mw.config.get( 'StructuredChangeFiltersDisplayConfig' ),
+			defaultSavedQueryExists = mw.config.get( 'wgStructuredChangeFiltersDefaultSavedQueryExists' ),
 			controller = this,
-			views = {},
+			views = $.extend( true, {}, conditionalViews ),
 			items = [],
-			uri = new mw.Uri(),
-			$changesList = $( '.mw-changeslist' ).first().contents();
+			uri = new mw.Uri();
 
 		// Prepare views
 		if ( namespaceStructure ) {
@@ -78,6 +91,18 @@
 					fullCoverage: true,
 					filters: items
 				} ]
+			};
+			views.invert = {
+				groups: [
+					{
+						name: 'invertGroup',
+						type: 'boolean',
+						hidden: true,
+						filters: [ {
+							name: 'invert',
+							'default': '0'
+						} ]
+					} ]
 			};
 		}
 		if ( tagList ) {
@@ -112,13 +137,8 @@
 						max: 1000
 					},
 					sortFunc: function ( a, b ) { return Number( a.name ) - Number( b.name ); },
-					'default': displayConfig.limitDefault,
-					// Temporarily making this not sticky until we resolve the problem
-					// with the misleading preference. Note that if this is to be permanent
-					// we should remove all sticky behavior methods completely
-					// See T172156
-					// isSticky: true,
-					excludedFromSavedQueries: true,
+					'default': mw.user.options.get( this.limitPreferenceName, displayConfig.limitDefault ),
+					sticky: true,
 					filters: displayConfig.limitArray.map( function ( num ) {
 						return controller._createFilterDataFromNumber( num, num );
 					} )
@@ -140,10 +160,8 @@
 							( Number( i ) * 24 ).toFixed( 2 ) :
 							Number( i );
 					},
-					'default': displayConfig.daysDefault,
-					// Temporarily making this not sticky while limit is not sticky, see above
-					// isSticky: true,
-					excludedFromSavedQueries: true,
+					'default': mw.user.options.get( this.daysPreferenceName, displayConfig.daysDefault ),
+					sticky: true,
 					filters: [
 						// Hours (1, 2, 6, 12)
 						0.04166, 0.0833, 0.25, 0.5
@@ -167,7 +185,7 @@
 					type: 'boolean',
 					title: '', // Because it's a hidden group, this title actually appears nowhere
 					hidden: true,
-					isSticky: true,
+					sticky: true,
 					filters: [
 						{
 							name: 'enhanced',
@@ -201,10 +219,9 @@
 		// Initialize the model
 		this.filtersModel.initializeFilters( filterStructure, views );
 
-		this._buildBaseFilterState();
-
 		this.uriProcessor = new mw.rcfilters.UriProcessor(
-			this.filtersModel
+			this.filtersModel,
+			{ normalizeTarget: this.normalizeTarget }
 		);
 
 		if ( !mw.user.isAnon() ) {
@@ -214,15 +231,13 @@
 				parsedSavedQueries = {};
 			}
 
-			// The queries are saved in a minimized state, so we need
-			// to send over the base state so the saved queries model
-			// can normalize them per each query item
-			this.savedQueriesModel.initialize(
-				parsedSavedQueries,
-				this._getBaseFilterState(),
-				// This is for backwards compatibility - delete all excluded filter states
-				Object.keys( this.filtersModel.getExcludedFiltersState() )
-			);
+			// Initialize saved queries
+			this.savedQueriesModel.initialize( parsedSavedQueries );
+			if ( this.savedQueriesModel.isConverted() ) {
+				// Since we know we converted, we're going to re-save
+				// the queries so they are now migrated to the new format
+				this._saveSavedQueries();
+			}
 		}
 
 		// Check whether we need to load defaults.
@@ -234,14 +249,12 @@
 		// Defaults should only be applied on load (if necessary)
 		// or on request
 		this.initializing = true;
-		if (
-			!mw.user.isAnon() && this.savedQueriesModel.getDefault() &&
-			!this.uriProcessor.doesQueryContainRecognizedParams( uri.query )
-		) {
-			// We have defaults from a saved query.
-			// We will load them straight-forward (as if
-			// they were clicked in the menu) so we trigger
-			// a full ajax request and change of URL
+
+		if ( defaultSavedQueryExists ) {
+			// This came from the server, meaning that we have a default
+			// saved query, but the server could not load it, probably because
+			// it was pre-conversion to the new format.
+			// We need to load this query again
 			this.applySavedQuery( this.savedQueriesModel.getDefault() );
 		} else {
 			// There are either recognized parameters in the URL
@@ -251,11 +264,14 @@
 			// again
 			this.updateStateFromUrl( false );
 
+			pieces = this._extractChangesListInfo( $( '#mw-content-text' ) );
+
 			// Update the changes list with the existing data
 			// so it gets processed
 			this.changesListModel.update(
-				$changesList.length ? $changesList : 'NO_RESULTS',
-				$( 'fieldset.cloptions' ).first(),
+				pieces.changes,
+				pieces.fieldset,
+				pieces.noResultsDetails,
 				true // We're using existing DOM elements
 			);
 		}
@@ -263,7 +279,58 @@
 		this.initializing = false;
 		this.switchView( 'default' );
 
-		this._scheduleLiveUpdate();
+		this.pollingRate = mw.config.get( 'StructuredChangeFiltersLiveUpdatePollingRate' );
+		if ( this.pollingRate ) {
+			this._scheduleLiveUpdate();
+		}
+	};
+
+	/**
+	 * Extracts information from the changes list DOM
+	 *
+	 * @param {jQuery} $root Root DOM to find children from
+	 * @param {boolean} [statusCode] Server response status code
+	 * @return {Object} Information about changes list
+	 * @return {Object|string} return.changes Changes list, or 'NO_RESULTS' if there are no results
+	 *   (either normally or as an error)
+	 * @return {string} [return.noResultsDetails] 'NO_RESULTS_NORMAL' for a normal 0-result set,
+	 *   'NO_RESULTS_TIMEOUT' for no results due to a timeout, or omitted for more than 0 results
+	 * @return {jQuery} return.fieldset Fieldset
+	 */
+	mw.rcfilters.Controller.prototype._extractChangesListInfo = function ( $root, statusCode ) {
+		var info,
+			$changesListContents = $root.find( '.mw-changeslist' ).first().contents(),
+			areResults = !!$changesListContents.length,
+			checkForLogout = !areResults && statusCode === 200;
+
+		// We check if user logged out on different tab/browser or the session has expired.
+		// 205 status code returned from the server, which indicates that we need to reload the page
+		// is not usable on WL page, because we get redirected to login page, which gives 200 OK
+		// status code (if everything else goes well).
+		// Bug: T177717
+		if ( checkForLogout && !!$root.find( '#wpName1' ).length ) {
+			location.reload( false );
+			return;
+		}
+
+		info = {
+			changes: $changesListContents.length ? $changesListContents : 'NO_RESULTS',
+			fieldset: $root.find( 'fieldset.cloptions' ).first()
+		};
+
+		if ( !areResults ) {
+			if ( $root.find( '.mw-changeslist-timeout' ).length ) {
+				info.noResultsDetails = 'NO_RESULTS_TIMEOUT';
+			} else if ( $root.find( '.mw-changeslist-notargetpage' ).length ) {
+				info.noResultsDetails = 'NO_RESULTS_NO_TARGET_PAGE';
+			} else if ( $root.find( '.mw-changeslist-invalidtargetpage' ).length ) {
+				info.noResultsDetails = 'NO_RESULTS_INVALID_TARGET_PAGE';
+			} else {
+				info.noResultsDetails = 'NO_RESULTS_NORMAL';
+			}
+		}
+
+		return info;
 	};
 
 	/**
@@ -349,21 +416,16 @@
 	};
 
 	/**
-	 * Switch the view of the filters model
-	 *
-	 * @param {string} view Requested view
-	 */
-	mw.rcfilters.Controller.prototype.switchView = function ( view ) {
-		this.filtersModel.switchView( view );
-	};
-
-	/**
 	 * Reset to default filters
 	 */
 	mw.rcfilters.Controller.prototype.resetToDefaults = function () {
-		this.uriProcessor.updateModelBasedOnQuery( this._getDefaultParams() );
-
-		this.updateChangesList();
+		var params = this._getDefaultParams();
+		if ( this.applyParamChange( params ) ) {
+			// Only update the changes list if there was a change to actual filters
+			this.updateChangesList();
+		} else {
+			this.uriProcessor.updateURL( params );
+		}
 	};
 
 	/**
@@ -372,30 +434,22 @@
 	 * @return {boolean} Defaults are all false
 	 */
 	mw.rcfilters.Controller.prototype.areDefaultsEmpty = function () {
-		var defaultFilters = this.filtersModel.getFiltersFromParameters( this._getDefaultParams() );
-
-		this._deleteExcludedValuesFromFilterState( defaultFilters );
-
-		// Defaults can change in a session, so we need to do this every time
-		return Object.keys( defaultFilters ).every( function ( filterName ) {
-			return !defaultFilters[ filterName ];
-		} );
+		return $.isEmptyObject( this._getDefaultParams() );
 	};
 
 	/**
 	 * Empty all selected filters
 	 */
 	mw.rcfilters.Controller.prototype.emptyFilters = function () {
-		var highlightedFilterNames = this.filtersModel
-			.getHighlightedItems()
+		var highlightedFilterNames = this.filtersModel.getHighlightedItems()
 			.map( function ( filterItem ) { return { name: filterItem.getName() }; } );
 
-		this.filtersModel.emptyAllFilters();
-		this.filtersModel.clearAllHighlightColors();
-		// Check all filter interactions
-		this.filtersModel.reassessFilterInteractions();
-
-		this.updateChangesList();
+		if ( this.applyParamChange( {} ) ) {
+			// Only update the changes list if there was a change to actual filters
+			this.updateChangesList();
+		} else {
+			this.uriProcessor.updateURL();
+		}
 
 		if ( highlightedFilterNames ) {
 			this._trackHighlight( 'clearAll', highlightedFilterNames );
@@ -435,12 +489,20 @@
 	 */
 	mw.rcfilters.Controller.prototype.clearFilter = function ( filterName ) {
 		var filterItem = this.filtersModel.getItemByName( filterName ),
-			isHighlighted = filterItem.isHighlighted();
+			isHighlighted = filterItem.isHighlighted(),
+			isSelected = filterItem.isSelected();
 
-		if ( filterItem.isSelected() || isHighlighted ) {
+		if ( isSelected || isHighlighted ) {
 			this.filtersModel.clearHighlightColor( filterName );
 			this.filtersModel.toggleFilterSelected( filterName, false );
-			this.updateChangesList();
+
+			if ( isSelected ) {
+				// Only update the changes list if the filter changed
+				// its selection state. If it only changed its highlight
+				// then don't reload
+				this.updateChangesList();
+			}
+
 			this.filtersModel.reassessFilterInteractions( filterItem );
 
 			// Log filter grouping
@@ -457,7 +519,7 @@
 	 */
 	mw.rcfilters.Controller.prototype.toggleHighlight = function () {
 		this.filtersModel.toggleHighlight();
-		this._updateURL();
+		this.uriProcessor.updateURL();
 
 		if ( this.filtersModel.isHighlightEnabled() ) {
 			mw.hook( 'RcFilters.highlight.enable' ).fire();
@@ -469,7 +531,6 @@
 	 */
 	mw.rcfilters.Controller.prototype.toggleInvertedNamespaces = function () {
 		this.filtersModel.toggleInvertedNamespaces();
-
 		if (
 			this.filtersModel.getFiltersByView( 'namespaces' ).filter(
 				function ( filterItem ) { return filterItem.isSelected(); }
@@ -477,7 +538,36 @@
 		) {
 			// Only re-fetch results if there are namespace items that are actually selected
 			this.updateChangesList();
+		} else {
+			this.uriProcessor.updateURL();
 		}
+	};
+
+	/**
+	 * Set the value of the 'showlinkedto' parameter
+	 * @param {boolean} value
+	 */
+	mw.rcfilters.Controller.prototype.setShowLinkedTo = function ( value ) {
+		var targetItem = this.filtersModel.getGroup( 'page' ).getItemByParamName( 'target' ),
+			showLinkedToItem = this.filtersModel.getGroup( 'toOrFrom' ).getItemByParamName( 'showlinkedto' );
+
+		this.filtersModel.toggleFilterSelected( showLinkedToItem.getName(), value );
+		this.uriProcessor.updateURL();
+		// reload the results only when target is set
+		if ( targetItem.getValue() ) {
+			this.updateChangesList();
+		}
+	};
+
+	/**
+	 * Set the target page
+	 * @param {string} page
+	 */
+	mw.rcfilters.Controller.prototype.setTargetPage = function ( page ) {
+		var targetItem = this.filtersModel.getGroup( 'page' ).getItemByParamName( 'target' );
+		targetItem.setValue( page );
+		this.uriProcessor.updateURL();
+		this.updateChangesList();
 	};
 
 	/**
@@ -488,7 +578,7 @@
 	 */
 	mw.rcfilters.Controller.prototype.setHighlightColor = function ( filterName, color ) {
 		this.filtersModel.setHighlightColor( filterName, color );
-		this._updateURL();
+		this.uriProcessor.updateURL();
 		this._trackHighlight( 'set', { name: filterName, color: color } );
 	};
 
@@ -499,7 +589,7 @@
 	 */
 	mw.rcfilters.Controller.prototype.clearHighlightColor = function ( filterName ) {
 		this.filtersModel.clearHighlightColor( filterName );
-		this._updateURL();
+		this.uriProcessor.updateURL();
 		this._trackHighlight( 'clear', filterName );
 	};
 
@@ -519,7 +609,7 @@
 	 * @private
 	 */
 	mw.rcfilters.Controller.prototype._scheduleLiveUpdate = function () {
-		setTimeout( this._doLiveUpdate.bind( this ), 3000 );
+		setTimeout( this._doLiveUpdate.bind( this ), this.pollingRate * 1000 );
 	};
 
 	/**
@@ -534,10 +624,23 @@
 		}
 
 		this._checkForNewChanges()
-			.then( function ( newChanges ) {
+			.then( function ( statusCode ) {
+				// no result is 204 with the 'peek' param
+				// logged out is 205
+				var newChanges = statusCode === 200;
+
 				if ( !this._shouldCheckForNewChanges() ) {
 					// by the time the response is received,
 					// it may not be appropriate anymore
+					return;
+				}
+
+				// 205 is the status code returned from server when user's logged in/out
+				// status is not matching while fetching live update changes.
+				// This works only on Recent Changes page. For WL, look _extractChangesListInfo.
+				// Bug: T177717
+				if ( statusCode === 205 ) {
+					location.reload( false );
 					return;
 				}
 
@@ -576,12 +679,12 @@
 		var params = {
 			limit: 1,
 			peek: 1, // bypasses ChangesList specific UI
-			from: this.changesListModel.getNextFrom()
+			from: this.changesListModel.getNextFrom(),
+			isAnon: mw.user.isAnon()
 		};
 		return this._queryChangesList( 'liveUpdate', params ).then(
 			function ( data ) {
-				// no result is 204 with the 'peek' param
-				return data.status === 200;
+				return data.status;
 			}
 		);
 	};
@@ -603,35 +706,12 @@
 	 * @param {boolean} [setAsDefault=false] This query should be set as the default
 	 */
 	mw.rcfilters.Controller.prototype.saveCurrentQuery = function ( label, setAsDefault ) {
-		var queryID,
-			highlightedItems = {},
-			highlightEnabled = this.filtersModel.isHighlightEnabled(),
-			selectedState = this.filtersModel.getSelectedState();
-
-		// Prepare highlights
-		this.filtersModel.getHighlightedItems().forEach( function ( item ) {
-			highlightedItems[ item.getName() ] = highlightEnabled ?
-				item.getHighlightColor() : null;
-		} );
-		// These are filter states; highlight is stored as boolean
-		highlightedItems.highlight = this.filtersModel.isHighlightEnabled();
-
-		// Delete all excluded filters
-		this._deleteExcludedValuesFromFilterState( selectedState );
-
 		// Add item
-		queryID = this.savedQueriesModel.addNewQuery(
+		this.savedQueriesModel.addNewQuery(
 			label || mw.msg( 'rcfilters-savedqueries-defaultlabel' ),
-			{
-				filters: selectedState,
-				highlights: highlightedItems,
-				invert: this.filtersModel.areNamespacesInverted()
-			}
+			this.filtersModel.getCurrentParameterState( true ),
+			setAsDefault
 		);
-
-		if ( setAsDefault ) {
-			this.savedQueriesModel.setDefault( queryID );
-		}
 
 		// Save item
 		this._saveSavedQueries();
@@ -680,188 +760,41 @@
 	 * @param {string} queryID Query id
 	 */
 	mw.rcfilters.Controller.prototype.applySavedQuery = function ( queryID ) {
-		var data, highlights,
-			queryItem = this.savedQueriesModel.getItemByID( queryID ),
-			currentMatchingQuery = this.findQueryMatchingCurrentState();
+		var currentMatchingQuery,
+			params = this.savedQueriesModel.getItemParams( queryID );
+
+		currentMatchingQuery = this.findQueryMatchingCurrentState();
 
 		if (
-			queryItem &&
-			(
-				// If there's already a query, don't reload it
-				// if it's the same as the one that already exists
-				!currentMatchingQuery ||
-				currentMatchingQuery.getID() !== queryItem.getID()
-			)
+			currentMatchingQuery &&
+			currentMatchingQuery.getID() === queryID
 		) {
-			data = queryItem.getData();
-			highlights = data.highlights;
-
-			// Backwards compatibility; initial version mispelled 'highlight' with 'highlights'
-			highlights.highlight = highlights.highlights || highlights.highlight;
-
-			// Update model state from filters
-			this.filtersModel.toggleFiltersSelected(
-				// Merge filters with excluded values
-				$.extend( true, {}, data.filters, this.filtersModel.getExcludedFiltersState() )
-			);
-
-			// Update namespace inverted property
-			this.filtersModel.toggleInvertedNamespaces( !!Number( data.invert ) );
-
-			// Update highlight state
-			this.filtersModel.toggleHighlight( !!Number( highlights.highlight ) );
-			this.filtersModel.getItems().forEach( function ( filterItem ) {
-				var color = highlights[ filterItem.getName() ];
-				if ( color ) {
-					filterItem.setHighlightColor( color );
-				} else {
-					filterItem.clearHighlightColor();
-				}
-			} );
-
-			// Check all filter interactions
-			this.filtersModel.reassessFilterInteractions();
-
-			this.updateChangesList();
-
-			// Log filter grouping
-			this.trackFilterGroupings( 'savedfilters' );
+			// If the query we want to load is the one that is already
+			// loaded, don't reload it
+			return;
 		}
+
+		if ( this.applyParamChange( params ) ) {
+			// Update changes list only if there was a difference in filter selection
+			this.updateChangesList();
+		} else {
+			this.uriProcessor.updateURL( params );
+		}
+
+		// Log filter grouping
+		this.trackFilterGroupings( 'savedfilters' );
 	};
 
 	/**
 	 * Check whether the current filter and highlight state exists
 	 * in the saved queries model.
 	 *
-	 * @return {boolean} Query exists
+	 * @return {mw.rcfilters.dm.SavedQueryItemModel} Matching item model
 	 */
 	mw.rcfilters.Controller.prototype.findQueryMatchingCurrentState = function () {
-		var highlightedItems = {},
-			selectedState = this.filtersModel.getSelectedState();
-
-		// Prepare highlights of the current query
-		this.filtersModel.getItemsSupportingHighlights().forEach( function ( item ) {
-			highlightedItems[ item.getName() ] = item.getHighlightColor();
-		} );
-		highlightedItems.highlight = this.filtersModel.isHighlightEnabled();
-
-		// Remove anything that should be excluded from the saved query
-		// this includes sticky filters and filters marked with 'excludedFromSavedQueries'
-		this._deleteExcludedValuesFromFilterState( selectedState );
-
 		return this.savedQueriesModel.findMatchingQuery(
-			{
-				filters: selectedState,
-				highlights: highlightedItems,
-				invert: this.filtersModel.areNamespacesInverted()
-			}
+			this.filtersModel.getCurrentParameterState( true )
 		);
-	};
-
-	/**
-	 * Delete sticky filters from given object
-	 *
-	 * @param {Object} filterState Filter state
-	 */
-	mw.rcfilters.Controller.prototype._deleteExcludedValuesFromFilterState = function ( filterState ) {
-		// Remove excluded filters
-		$.each( this.filtersModel.getExcludedFiltersState(), function ( filterName ) {
-			delete filterState[ filterName ];
-		} );
-	};
-
-	/**
-	 * Get an object representing the base state of parameters
-	 * and highlights.
-	 *
-	 * This is meant to make sure that the saved queries that are
-	 * in memory are always the same structure as what we would get
-	 * by calling the current model's "getSelectedState" and by checking
-	 * highlight items.
-	 *
-	 * In cases where a user saved a query when the system had a certain
-	 * set of filters, and then a filter was added to the system, we want
-	 * to make sure that the stored queries can still be comparable to
-	 * the current state, which means that we need the base state for
-	 * two operations:
-	 *
-	 * - Saved queries are stored in "minimal" view (only changed filters
-	 *   are stored); When we initialize the system, we merge each minimal
-	 *   query with the base state (using 'getNormalizedFilters') so all
-	 *   saved queries have the exact same structure as what we would get
-	 *   by checking the getSelectedState of the filter.
-	 * - When we save the queries, we minimize the object to only represent
-	 *   whatever has actually changed, rather than store the entire
-	 *   object. To check what actually is different so we can store it,
-	 *   we need to obtain a base state to compare against, this is
-	 *   what #_getMinimalFilterList does
-	 */
-	mw.rcfilters.Controller.prototype._buildBaseFilterState = function () {
-		var defaultParams = this.filtersModel.getDefaultParams(),
-			highlightedItems = {};
-
-		// Prepare highlights
-		this.filtersModel.getItemsSupportingHighlights().forEach( function ( item ) {
-			highlightedItems[ item.getName() ] = null;
-		} );
-		highlightedItems.highlight = false;
-
-		this.baseFilterState = {
-			filters: this.filtersModel.getFiltersFromParameters( defaultParams ),
-			highlights: highlightedItems,
-			invert: false
-		};
-	};
-
-	/**
-	 * Get an object representing the base filter state of both
-	 * filters and highlights. The structure is similar to what we use
-	 * to store each query in the saved queries object:
-	 * {
-	 *    filters: {
-	 *        filterName: (bool)
-	 *    },
-	 *    highlights: {
-	 *        filterName: (string|null)
-	 *    }
-	 * }
-	 *
-	 * @return {Object} Object representing the base state of
-	 *  parameters and highlights
-	 */
-	mw.rcfilters.Controller.prototype._getBaseFilterState = function () {
-		return this.baseFilterState;
-	};
-
-	/**
-	 * Get an object that holds only the parameters and highlights that have
-	 * values different than the base default value.
-	 *
-	 * This is the reverse of the normalization we do initially on loading and
-	 * initializing the saved queries model.
-	 *
-	 * @param {Object} valuesObject Object representing the state of both
-	 *  filters and highlights in its normalized version, to be minimized.
-	 * @return {Object} Minimal filters and highlights list
-	 */
-	mw.rcfilters.Controller.prototype._getMinimalFilterList = function ( valuesObject ) {
-		var result = { filters: {}, highlights: {}, invert: valuesObject.invert },
-			baseState = this._getBaseFilterState();
-
-		// XOR results
-		$.each( valuesObject.filters, function ( name, value ) {
-			if ( baseState.filters !== undefined && baseState.filters[ name ] !== value ) {
-				result.filters[ name ] = value;
-			}
-		} );
-
-		$.each( valuesObject.highlights, function ( name, value ) {
-			if ( baseState.highlights !== undefined && baseState.highlights[ name ] !== value ) {
-				result.highlights[ name ] = value;
-			}
-		} );
-
-		return result;
 	};
 
 	/**
@@ -869,27 +802,36 @@
 	 * query item representation in the user settings.
 	 */
 	mw.rcfilters.Controller.prototype._saveSavedQueries = function () {
-		var stringified,
-			state = this.savedQueriesModel.getState(),
-			controller = this;
-
-		// Minimize before save
-		$.each( state.queries, function ( queryID, info ) {
-			state.queries[ queryID ].data = controller._getMinimalFilterList( info.data );
-		} );
+		var stringified, oldPrefValue,
+			backupPrefName = this.savedQueriesPreferenceName + '-versionbackup',
+			state = this.savedQueriesModel.getState();
 
 		// Stringify state
 		stringified = JSON.stringify( state );
 
-		if ( $.byteLength( stringified ) > 65535 ) {
+		if ( byteLength( stringified ) > 65535 ) {
 			// Sanity check, since the preference can only hold that.
 			return;
+		}
+
+		if ( !this.wereSavedQueriesSaved && this.savedQueriesModel.isConverted() ) {
+			// The queries were converted from the previous version
+			// Keep the old string in the [prefname]-versionbackup
+			oldPrefValue = mw.user.options.get( this.savedQueriesPreferenceName );
+
+			// Save the old preference in the backup preference
+			new mw.Api().saveOption( backupPrefName, oldPrefValue );
+			// Update the preference for this session
+			mw.user.options.set( backupPrefName, oldPrefValue );
 		}
 
 		// Save the preference
 		new mw.Api().saveOption( this.savedQueriesPreferenceName, stringified );
 		// Update the preference for this session
 		mw.user.options.set( this.savedQueriesPreferenceName, stringified );
+
+		// Tag as already saved so we don't do this again
+		this.wereSavedQueriesSaved = true;
 	};
 
 	/**
@@ -898,8 +840,8 @@
 	mw.rcfilters.Controller.prototype.updateStickyPreferences = function () {
 		// Update default sticky values with selected, whether they came from
 		// the initial defaults or from the URL value that is being normalized
-		this.updateDaysDefault( this.filtersModel.getGroup( 'days' ).getSelectedItems()[ 0 ].getParamName() );
-		this.updateLimitDefault( this.filtersModel.getGroup( 'limit' ).getSelectedItems()[ 0 ].getParamName() );
+		this.updateDaysDefault( this.filtersModel.getGroup( 'days' ).findSelectedItems()[ 0 ].getParamName() );
+		this.updateLimitDefault( this.filtersModel.getGroup( 'limit' ).findSelectedItems()[ 0 ].getParamName() );
 
 		// TODO: Make these automatic by having the model go over sticky
 		// items and update their default values automatically
@@ -908,72 +850,48 @@
 	/**
 	 * Update the limit default value
 	 *
-	 * param {number} newValue New value
+	 * @param {number} newValue New value
 	 */
-	mw.rcfilters.Controller.prototype.updateLimitDefault = function ( /* newValue */ ) {
-		// HACK: Temporarily remove this from being sticky
-		// See T172156
-
-		/*
-		if ( !$.isNumeric( newValue ) ) {
-			return;
-		}
-
-		newValue = Number( newValue );
-
-		if ( mw.user.options.get( 'rcfilters-rclimit' ) !== newValue ) {
-			// Save the preference
-			new mw.Api().saveOption( 'rcfilters-rclimit', newValue );
-			// Update the preference for this session
-			mw.user.options.set( 'rcfilters-rclimit', newValue );
-		}
-		*/
-		return;
+	mw.rcfilters.Controller.prototype.updateLimitDefault = function ( newValue ) {
+		this.updateNumericPreference( this.limitPreferenceName, newValue );
 	};
 
 	/**
 	 * Update the days default value
 	 *
-	 * param {number} newValue New value
+	 * @param {number} newValue New value
 	 */
-	mw.rcfilters.Controller.prototype.updateDaysDefault = function ( /* newValue */ ) {
-		// HACK: Temporarily remove this from being sticky
-		// See T172156
-
-		/*
-		if ( !$.isNumeric( newValue ) ) {
-			return;
-		}
-
-		newValue = Number( newValue );
-
-		if ( mw.user.options.get( 'rcdays' ) !== newValue ) {
-			// Save the preference
-			new mw.Api().saveOption( 'rcdays', newValue );
-			// Update the preference for this session
-			mw.user.options.set( 'rcdays', newValue );
-		}
-		*/
-		return;
+	mw.rcfilters.Controller.prototype.updateDaysDefault = function ( newValue ) {
+		this.updateNumericPreference( this.daysPreferenceName, newValue );
 	};
 
 	/**
 	 * Update the group by page default value
 	 *
-	 * @param {number} newValue New value
+	 * @param {boolean} newValue New value
 	 */
 	mw.rcfilters.Controller.prototype.updateGroupByPageDefault = function ( newValue ) {
+		this.updateNumericPreference( 'usenewrc', Number( newValue ) );
+	};
+
+	/**
+	 * Update a numeric preference with a new value
+	 *
+	 * @param {string} prefName Preference name
+	 * @param {number|string} newValue New value
+	 */
+	mw.rcfilters.Controller.prototype.updateNumericPreference = function ( prefName, newValue ) {
 		if ( !$.isNumeric( newValue ) ) {
 			return;
 		}
 
 		newValue = Number( newValue );
 
-		if ( mw.user.options.get( 'usenewrc' ) !== newValue ) {
+		if ( mw.user.options.get( prefName ) !== newValue ) {
 			// Save the preference
-			new mw.Api().saveOption( 'usenewrc', newValue );
+			new mw.Api().saveOption( prefName, newValue );
 			// Update the preference for this session
-			mw.user.options.set( 'usenewrc', newValue );
+			mw.user.options.set( prefName, newValue );
 		}
 	};
 
@@ -982,7 +900,7 @@
 	 * without adding an history entry.
 	 */
 	mw.rcfilters.Controller.prototype.replaceUrl = function () {
-		mw.rcfilters.UriProcessor.static.replaceState( this._getUpdatedUri() );
+		this.uriProcessor.updateURL();
 	};
 
 	/**
@@ -995,7 +913,7 @@
 	mw.rcfilters.Controller.prototype.updateStateFromUrl = function ( fetchChangesList ) {
 		fetchChangesList = fetchChangesList === undefined ? true : !!fetchChangesList;
 
-		this.uriProcessor.updateModelBasedOnQuery( new mw.Uri().query );
+		this.uriProcessor.updateModelBasedOnQuery();
 
 		// Update the sticky preferences, in case we received a value
 		// from the URL
@@ -1018,7 +936,7 @@
 		updateMode = updateMode === undefined ? this.FILTER_CHANGE : updateMode;
 
 		if ( updateMode === this.FILTER_CHANGE ) {
-			this._updateURL( params );
+			this.uriProcessor.updateURL( params );
 		}
 		if ( updateMode === this.FILTER_CHANGE || updateMode === this.SHOW_NEW_CHANGES ) {
 			this.changesListModel.invalidate();
@@ -1034,6 +952,7 @@
 					this.changesListModel.update(
 						$changesListContent,
 						$fieldset,
+						pieces.noResultsDetails,
 						false,
 						// separator between old and new changes
 						updateMode === this.SHOW_NEW_CHANGES || updateMode === this.LIVE_UPDATE
@@ -1053,82 +972,11 @@
 	 * @return {Object} Default parameters
 	 */
 	mw.rcfilters.Controller.prototype._getDefaultParams = function () {
-		var data, queryHighlights,
-			savedParams = {},
-			savedHighlights = {},
-			defaultSavedQueryItem = !mw.user.isAnon() && this.savedQueriesModel.getItemByID( this.savedQueriesModel.getDefault() );
-
-		if ( defaultSavedQueryItem ) {
-			data = defaultSavedQueryItem.getData();
-
-			queryHighlights = data.highlights || {};
-			savedParams = this.filtersModel.getParametersFromFilters(
-				$.extend( true, {}, data.filters, this.filtersModel.getStickyFiltersState() )
-			);
-
-			// Translate highlights to parameters
-			savedHighlights.highlight = String( Number( queryHighlights.highlight ) );
-			$.each( queryHighlights, function ( filterName, color ) {
-				if ( filterName !== 'highlights' ) {
-					savedHighlights[ filterName + '_color' ] = color;
-				}
-			} );
-
-			return $.extend( true, {}, savedParams, savedHighlights, { invert: String( Number( data.invert || 0 ) ) } );
+		if ( this.savedQueriesModel.getDefault() ) {
+			return this.savedQueriesModel.getDefaultParams();
+		} else {
+			return this.filtersModel.getDefaultParams();
 		}
-
-		return this.filtersModel.getDefaultParams();
-	};
-
-	/**
-	 * Update the URL of the page to reflect current filters
-	 *
-	 * This should not be called directly from outside the controller.
-	 * If an action requires changing the URL, it should either use the
-	 * highlighting actions below, or call #updateChangesList which does
-	 * the uri corrections already.
-	 *
-	 * @param {Object} [params] Extra parameters to add to the API call
-	 */
-	mw.rcfilters.Controller.prototype._updateURL = function ( params ) {
-		var currentUri = new mw.Uri(),
-			updatedUri = this._getUpdatedUri();
-
-		updatedUri.extend( params || {} );
-
-		if (
-			this.uriProcessor.getVersion( currentUri.query ) !== 2 ||
-			this.uriProcessor.isNewState( currentUri.query, updatedUri.query )
-		) {
-			mw.rcfilters.UriProcessor.static.replaceState( updatedUri );
-		}
-	};
-
-	/**
-	 * Get an updated mw.Uri object based on the model state
-	 *
-	 * @return {mw.Uri} Updated Uri
-	 */
-	mw.rcfilters.Controller.prototype._getUpdatedUri = function () {
-		var uri = new mw.Uri();
-
-		// Minimize url
-		uri.query = this.uriProcessor.minimizeQuery(
-			$.extend(
-				true,
-				{},
-				// We want to retain unrecognized params
-				// The uri params from model will override
-				// any recognized value in the current uri
-				// query, retain unrecognized params, and
-				// the result will then be minimized
-				uri.query,
-				this.uriProcessor.getUriParametersFromModel(),
-				{ urlversion: '2' }
-			)
-		);
-
-		return uri;
 	};
 
 	/**
@@ -1141,8 +989,8 @@
 	 * @return {jQuery.Promise} Promise object resolved with { content, status }
 	 */
 	mw.rcfilters.Controller.prototype._queryChangesList = function ( counterId, params ) {
-		var uri = this._getUpdatedUri(),
-			stickyParams = this.filtersModel.getStickyParams(),
+		var uri = this.uriProcessor.getUpdatedUri(),
+			stickyParams = this.filtersModel.getStickyParamsValues(),
 			requestId,
 			latestRequest;
 
@@ -1200,20 +1048,27 @@
 		return this._queryChangesList( 'updateChangesList' )
 			.then(
 				function ( data ) {
-					var $parsed = $( '<div>' ).append( $( $.parseHTML( data.content ) ) ),
-						pieces = {
-							// Changes list
-							changes: $parsed.find( '.mw-changeslist' ).first().contents(),
-							// Fieldset
-							fieldset: $parsed.find( 'fieldset.cloptions' ).first()
-						};
+					var $parsed;
 
-					if ( pieces.changes.length === 0 ) {
-						pieces.changes = 'NO_RESULTS';
+					// Status code 0 is not HTTP status code,
+					// but is valid value of XMLHttpRequest status.
+					// It is used for variety of network errors, for example
+					// when an AJAX call was cancelled before getting the response
+					if ( data && data.status === 0 ) {
+						return {
+							changes: 'NO_RESULTS',
+							// We need empty result set, to avoid exceptions because of undefined value
+							fieldset: $( [] ),
+							noResultsDetails: 'NO_RESULTS_NETWORK_ERROR'
+						};
 					}
 
-					return pieces;
-				}
+					$parsed = $( '<div>' ).append( $( $.parseHTML(
+						data ? data.content : ''
+					) ) );
+
+					return this._extractChangesListInfo( $parsed, data.status );
+				}.bind( this )
 			);
 	};
 
@@ -1246,7 +1101,7 @@
 			rightNow = new Date().getTime(),
 			randomIdentifier = String( mw.user.sessionId() ) + String( rightNow ) + String( Math.random() ),
 			// Get all current filters
-			filters = this.filtersModel.getSelectedItems().map( function ( item ) {
+			filters = this.filtersModel.findSelectedItems().map( function ( item ) {
 				return item.getName();
 			} );
 
@@ -1285,6 +1140,24 @@
 	};
 
 	/**
+	 * Apply a change of parameters to the model state, and check whether
+	 * the new state is different than the old state.
+	 *
+	 * @param  {Object} newParamState New parameter state to apply
+	 * @return {boolean} New applied model state is different than the previous state
+	 */
+	mw.rcfilters.Controller.prototype.applyParamChange = function ( newParamState ) {
+		var after,
+			before = this.filtersModel.getSelectedState();
+
+		this.filtersModel.updateStateFromParams( newParamState );
+
+		after = this.filtersModel.getSelectedState();
+
+		return !OO.compare( before, after );
+	};
+
+	/**
 	 * Mark all changes as seen on Watchlist
 	 */
 	mw.rcfilters.Controller.prototype.markAllChangesAsSeen = function () {
@@ -1296,5 +1169,41 @@
 		} ).then( function () {
 			this.updateChangesList( null, 'markSeen' );
 		}.bind( this ) );
+	};
+
+	/**
+	 * Set the current search for the system.
+	 *
+	 * @param {string} searchQuery Search query, including triggers
+	 */
+	mw.rcfilters.Controller.prototype.setSearch = function ( searchQuery ) {
+		this.filtersModel.setSearch( searchQuery );
+	};
+
+	/**
+	 * Switch the view by changing the search query trigger
+	 * without changing the search term
+	 *
+	 * @param  {string} view View to change to
+	 */
+	mw.rcfilters.Controller.prototype.switchView = function ( view ) {
+		this.setSearch(
+			this.filtersModel.getViewTrigger( view ) +
+			this.filtersModel.removeViewTriggers( this.filtersModel.getSearch() )
+		);
+	};
+
+	/**
+	 * Reset the search for a specific view. This means we null the search query
+	 * and replace it with the relevant trigger for the requested view
+	 *
+	 * @param  {string} [view='default'] View to change to
+	 */
+	mw.rcfilters.Controller.prototype.resetSearchForView = function ( view ) {
+		view = view || 'default';
+
+		this.setSearch(
+			this.filtersModel.getViewTrigger( view )
+		);
 	};
 }( mediaWiki, jQuery ) );

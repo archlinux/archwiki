@@ -1,9 +1,5 @@
 <?php
 /**
- *
- *
- * Created on Aug 29, 2014
- *
  * Copyright © 2014 Wikimedia Foundation and contributors
  *
  * This program is free software; you can redistribute it and/or modify
@@ -711,6 +707,15 @@ class ApiHelp extends ApiBase {
 									->parse();
 							}
 						}
+					}
+
+					if ( isset( $settings[self::PARAM_MAX_BYTES] ) ) {
+						$info[] = $context->msg( 'api-help-param-maxbytes' )
+							->numParams( $settings[self::PARAM_MAX_BYTES] );
+					}
+					if ( isset( $settings[self::PARAM_MAX_CHARS] ) ) {
+						$info[] = $context->msg( 'api-help-param-maxchars' )
+							->numParams( $settings[self::PARAM_MAX_CHARS] );
 					}
 
 					// Add default

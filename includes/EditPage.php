@@ -20,6 +20,8 @@
  * @file
  */
 
+use MediaWiki\EditPage\TextboxBuilder;
+use MediaWiki\EditPage\TextConflictHelper;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
 use Wikimedia\ScopedCallback;
@@ -236,30 +238,6 @@ class EditPage {
 	/** @var bool */
 	public $isConflict = false;
 
-	/**
-	 * @deprecated since 1.30 use Title::isCssJsSubpage()
-	 * @var bool
-	 */
-	public $isCssJsSubpage = false;
-
-	/**
-	 * @deprecated since 1.30 use Title::isCssSubpage()
-	 * @var bool
-	 */
-	public $isCssSubpage = false;
-
-	/**
-	 * @deprecated since 1.30 use Title::isJsSubpage()
-	 * @var bool
-	 */
-	public $isJsSubpage = false;
-
-	/**
-	 * @deprecated since 1.30
-	 * @var bool
-	 */
-	public $isWrongCaseCssJsPage = false;
-
 	/** @var bool New page or new section */
 	public $isNew = false;
 
@@ -323,7 +301,7 @@ class EditPage {
 	/** @var bool Has a summary been preset using GET parameter &summary= ? */
 	public $hasPresetSummary = false;
 
-	/** @var Revision|bool */
+	/** @var Revision|bool|null */
 	public $mBaseRevision = false;
 
 	/** @var bool */
@@ -447,6 +425,18 @@ class EditPage {
 	private $unicodeCheck;
 
 	/**
+	 * Factory function to create an edit conflict helper
+	 *
+	 * @var callable
+	 */
+	private $editConflictHelperFactory;
+
+	/**
+	 * @var TextConflictHelper|null
+	 */
+	private $editConflictHelper;
+
+	/**
 	 * @param Article $article
 	 */
 	public function __construct( Article $article ) {
@@ -459,6 +449,7 @@ class EditPage {
 
 		$handler = ContentHandler::getForModelID( $this->contentModel );
 		$this->contentFormat = $handler->getDefaultFormat();
+		$this->editConflictHelperFactory = [ $this, 'newTextConflictHelper' ];
 	}
 
 	/**
@@ -519,6 +510,7 @@ class EditPage {
 	 * @deprecated since 1.30
 	 */
 	public function isOouiEnabled() {
+		wfDeprecated( __METHOD__, '1.30' );
 		return true;
 	}
 
@@ -644,13 +636,6 @@ class EditPage {
 		}
 
 		$this->isConflict = false;
-		// css / js subpages of user pages get a special treatment
-		// The following member variables are deprecated since 1.30,
-		// the functions should be used instead.
-		$this->isCssJsSubpage = $this->mTitle->isCssJsSubpage();
-		$this->isCssSubpage = $this->mTitle->isCssSubpage();
-		$this->isJsSubpage = $this->mTitle->isJsSubpage();
-		$this->isWrongCaseCssJsPage = $this->isWrongCaseCssJsPage();
 
 		# Show applicable editing introductions
 		if ( $this->formtype == 'initial' || $this->firsttime ) {
@@ -764,7 +749,7 @@ class EditPage {
 
 	/**
 	 * Display a read-only View Source page
-	 * @param Content $content content object
+	 * @param Content $content
 	 * @param string $errorMessage additional wikitext error message to display
 	 */
 	protected function displayViewSourcePage( Content $content, $errorMessage = '' ) {
@@ -821,8 +806,15 @@ class EditPage {
 	 * @return bool
 	 */
 	protected function previewOnOpen() {
-		$previewOnOpenNamespaces = $this->context->getConfig()->get( 'PreviewOnOpenNamespaces' );
+		$config = $this->context->getConfig();
+		$previewOnOpenNamespaces = $config->get( 'PreviewOnOpenNamespaces' );
 		$request = $this->context->getRequest();
+		if ( $config->get( 'RawHtml' ) ) {
+			// If raw HTML is enabled, disable preview on open
+			// since it has to be posted with a token for
+			// security reasons
+			return false;
+		}
 		if ( $request->getVal( 'preview' ) == 'yes' ) {
 			// Explicit override from request
 			return true;
@@ -854,9 +846,9 @@ class EditPage {
 	 *
 	 * @return bool
 	 */
-	protected function isWrongCaseCssJsPage() {
-		if ( $this->mTitle->isCssJsSubpage() ) {
-			$name = $this->mTitle->getSkinFromCssJsSubpage();
+	protected function isWrongCaseUserConfigPage() {
+		if ( $this->mTitle->isUserConfigPage() ) {
+			$name = $this->mTitle->getSkinFromConfigSubpage();
 			$skins = array_merge(
 				array_keys( Skin::getSkinNames() ),
 				[ 'common' ]
@@ -1526,8 +1518,7 @@ class EditPage {
 			return;
 		}
 
-		$stats = MediaWikiServices::getInstance()->getStatsdDataFactory();
-		$stats->increment( 'edit.failures.conflict.resolved' );
+		$this->getEditConflictHelper()->incrementResolvedStats();
 	}
 
 	/**
@@ -1695,7 +1686,7 @@ class EditPage {
 				// being set. This is used by ConfirmEdit to display a captcha
 				// without any error message cruft.
 			} else {
-				$this->hookError = $status->getWikiText();
+				$this->hookError = $this->formatStatusErrors( $status );
 			}
 			// Use the existing $status->value if the hook set it
 			if ( !$status->value ) {
@@ -1705,13 +1696,33 @@ class EditPage {
 		} elseif ( !$status->isOK() ) {
 			# ...or the hook could be expecting us to produce an error
 			// FIXME this sucks, we should just use the Status object throughout
-			$this->hookError = $status->getWikiText();
+			$this->hookError = $this->formatStatusErrors( $status );
 			$status->fatal( 'hookaborted' );
 			$status->value = self::AS_HOOK_ERROR_EXPECTED;
 			return false;
 		}
 
 		return true;
+	}
+
+	/**
+	 * Wrap status errors in an errorbox for increased visibility
+	 *
+	 * @param Status $status
+	 * @return string Wikitext
+	 */
+	private function formatStatusErrors( Status $status ) {
+		$errmsg = $status->getWikiText(
+			'edit-error-short',
+			'edit-error-long',
+			$this->context->getLanguage()
+		);
+		return <<<ERROR
+<div class="errorbox">
+{$errmsg}
+</div>
+<br clear="all" />
+ERROR;
 	}
 
 	/**
@@ -2327,7 +2338,7 @@ class EditPage {
 	/**
 	 * @note: this method is very poorly named. If the user opened the form with ?oldid=X,
 	 *        one might think of X as the "base revision", which is NOT what this returns.
-	 * @return Revision Current version when the edit was started
+	 * @return Revision|null Current version when the edit was started
 	 */
 	public function getBaseRevision() {
 		if ( !$this->mBaseRevision ) {
@@ -2386,6 +2397,7 @@ class EditPage {
 
 		$out->addModules( 'mediawiki.action.edit' );
 		$out->addModuleStyles( 'mediawiki.action.edit.styles' );
+		$out->addModuleStyles( 'mediawiki.editfont.styles' );
 
 		$user = $this->context->getUser();
 		if ( $user->getOption( 'showtoolbar' ) ) {
@@ -2429,12 +2441,22 @@ class EditPage {
 			$displayTitle = $contextTitle->getPrefixedText();
 		}
 		$out->setPageTitle( $this->context->msg( $msg, $displayTitle ) );
+
+		$config = $this->context->getConfig();
+
 		# Transmit the name of the message to JavaScript for live preview
 		# Keep Resources.php/mediawiki.action.edit.preview in sync with the possible keys
 		$out->addJsConfigVars( [
 			'wgEditMessage' => $msg,
-			'wgAjaxEditStash' => $this->context->getConfig()->get( 'AjaxEditStash' ),
+			'wgAjaxEditStash' => $config->get( 'AjaxEditStash' ),
 		] );
+
+		// Add whether to use 'save' or 'publish' messages to JavaScript for post-edit, other
+		// editors, etc.
+		$out->addJsConfigVars(
+			'wgEditSubmitButtonLabelPublish',
+			$config->get( 'EditSubmitButtonLabelPublish' )
+		);
 	}
 
 	/**
@@ -2451,9 +2473,11 @@ class EditPage {
 		if ( $namespace == NS_MEDIAWIKI ) {
 			# Show a warning if editing an interface message
 			$out->wrapWikiMsg( "<div class='mw-editinginterface'>\n$1\n</div>", 'editinginterface' );
-			# If this is a default message (but not css or js),
+			# If this is a default message (but not css, json, or js),
 			# show a hint that it is translatable on translatewiki.net
-			if ( !$this->mTitle->hasContentModel( CONTENT_MODEL_CSS )
+			if (
+				!$this->mTitle->hasContentModel( CONTENT_MODEL_CSS )
+				&& !$this->mTitle->hasContentModel( CONTENT_MODEL_JSON )
 				&& !$this->mTitle->hasContentModel( CONTENT_MODEL_JAVASCRIPT )
 			) {
 				$defaultMessageText = $this->mTitle->getDefaultMessageText();
@@ -2745,7 +2769,8 @@ class EditPage {
 
 		if ( $this->wasDeletedSinceLastEdit() && 'save' == $this->formtype ) {
 			$username = $this->lastDelete->user_name;
-			$comment = CommentStore::newKey( 'log_comment' )->getComment( $this->lastDelete )->text;
+			$comment = CommentStore::getStore()
+				->getComment( 'log_comment', $this->lastDelete )->text;
 
 			// It is better to not parse the comment at all than to have templates expanded in the middle
 			// TODO: can the checkLabel be moved outside of the div so that wrapWikiMsg could be used?
@@ -2810,8 +2835,22 @@ class EditPage {
 		}
 
 		$out->addHTML( $this->editFormTextBeforeContent );
+		if ( $this->isConflict ) {
+			// In an edit conflict, we turn textbox2 into the user's text,
+			// and textbox1 into the stored version
+			$this->textbox2 = $this->textbox1;
 
-		if ( !$this->mTitle->isCssJsSubpage() && $showToolbar && $user->getOption( 'showtoolbar' ) ) {
+			$content = $this->getCurrentContent();
+			$this->textbox1 = $this->toEditText( $content );
+
+			$editConflictHelper = $this->getEditConflictHelper();
+			$editConflictHelper->setTextboxes( $this->textbox2, $this->textbox1 );
+			$editConflictHelper->setContentModel( $this->contentModel );
+			$editConflictHelper->setContentFormat( $this->contentFormat );
+			$out->addHTML( $editConflictHelper->getEditFormHtmlBeforeContent() );
+		}
+
+		if ( !$this->mTitle->isUserConfigPage() && $showToolbar && $user->getOption( 'showtoolbar' ) ) {
 			$out->addHTML( self::getEditToolbar( $this->mTitle ) );
 		}
 
@@ -2824,12 +2863,15 @@ class EditPage {
 			// and fallback to the raw wpTextbox1 since editconflicts can't be
 			// resolved between page source edits and custom ui edits using the
 			// custom edit ui.
-			$this->textbox2 = $this->textbox1;
+			$conflictTextBoxAttribs = [];
+			if ( $this->wasDeletedSinceLastEdit() ) {
+				$conflictTextBoxAttribs['style'] = 'display:none;';
+			} elseif ( $this->isOldRev ) {
+				$conflictTextBoxAttribs['class'] = 'mw-textarea-oldrev';
+			}
 
-			$content = $this->getCurrentContent();
-			$this->textbox1 = $this->toEditText( $content );
-
-			$this->showTextbox1();
+			$out->addHTML( $editConflictHelper->getEditConflictMainTextBox( $conflictTextBoxAttribs ) );
+			$out->addHTML( $editConflictHelper->getEditFormHtmlAfterContent() );
 		} else {
 			$this->showContentForm();
 		}
@@ -3045,29 +3087,38 @@ class EditPage {
 				);
 			}
 		} else {
-			if ( $this->mTitle->isCssJsSubpage() ) {
+			if ( $this->mTitle->isUserConfigPage() ) {
 				# Check the skin exists
-				if ( $this->isWrongCaseCssJsPage() ) {
+				if ( $this->isWrongCaseUserConfigPage() ) {
 					$out->wrapWikiMsg(
-						"<div class='error' id='mw-userinvalidcssjstitle'>\n$1\n</div>",
-						[ 'userinvalidcssjstitle', $this->mTitle->getSkinFromCssJsSubpage() ]
+						"<div class='error' id='mw-userinvalidconfigtitle'>\n$1\n</div>",
+						[ 'userinvalidconfigtitle', $this->mTitle->getSkinFromConfigSubpage() ]
 					);
 				}
 				if ( $this->getTitle()->isSubpageOf( $user->getUserPage() ) ) {
-					$isCssSubpage = $this->mTitle->isCssSubpage();
-					$out->wrapWikiMsg( '<div class="mw-usercssjspublic">$1</div>',
-						$isCssSubpage ? 'usercssispublic' : 'userjsispublic'
-					);
+					$isUserCssConfig = $this->mTitle->isUserCssConfigPage();
+					$isUserJsonConfig = $this->mTitle->isUserJsonConfigPage();
+					$isUserJsConfig = $this->mTitle->isUserJsConfigPage();
+
+					$warning = $isUserCssConfig
+						? 'usercssispublic'
+						: ( $isUserJsonConfig ? 'userjsonispublic' : 'userjsispublic' );
+
+					$out->wrapWikiMsg( '<div class="mw-userconfigpublic">$1</div>', $warning );
+
 					if ( $this->formtype !== 'preview' ) {
 						$config = $this->context->getConfig();
-						if ( $isCssSubpage && $config->get( 'AllowUserCss' ) ) {
+						if ( $isUserCssConfig && $config->get( 'AllowUserCss' ) ) {
 							$out->wrapWikiMsg(
 								"<div id='mw-usercssyoucanpreview'>\n$1\n</div>",
 								[ 'usercssyoucanpreview' ]
 							);
-						}
-
-						if ( $this->mTitle->isJsSubpage() && $config->get( 'AllowUserJs' ) ) {
+						} elseif ( $isUserJsonConfig /* No comparable 'AllowUserJson' */ ) {
+							$out->wrapWikiMsg(
+								"<div id='mw-userjsonyoucanpreview'>\n$1\n</div>",
+								[ 'userjsonyoucanpreview' ]
+							);
+						} elseif ( $isUserJsConfig && $config->get( 'AllowUserJs' ) ) {
 							$out->wrapWikiMsg(
 								"<div id='mw-userjsyoucanpreview'>\n$1\n</div>",
 								[ 'userjsyoucanpreview' ]
@@ -3094,71 +3145,19 @@ class EditPage {
 	 * @return array
 	 */
 	private function getSummaryInputAttributes( array $inputAttrs = null ) {
-		// Note: the maxlength is overridden in JS to 255 and to make it use UTF-8 bytes, not characters.
+		$conf = $this->context->getConfig();
+		$oldCommentSchema = $conf->get( 'CommentTableSchemaMigrationStage' ) === MIGRATION_OLD;
+		// HTML maxlength uses "UTF-16 code units", which means that characters outside BMP
+		// (e.g. emojis) count for two each. This limit is overridden in JS to instead count
+		// Unicode codepoints (or 255 UTF-8 bytes for old schema).
 		return ( is_array( $inputAttrs ) ? $inputAttrs : [] ) + [
 			'id' => 'wpSummary',
 			'name' => 'wpSummary',
-			'maxlength' => '200',
+			'maxlength' => $oldCommentSchema ? 200 : CommentStore::COMMENT_CHARACTER_LIMIT,
 			'tabindex' => 1,
 			'size' => 60,
 			'spellcheck' => 'true',
 		];
-	}
-
-	/**
-	 * Standard summary input and label (wgSummary), abstracted so EditPage
-	 * subclasses may reorganize the form.
-	 * Note that you do not need to worry about the label's for=, it will be
-	 * inferred by the id given to the input. You can remove them both by
-	 * passing [ 'id' => false ] to $userInputAttrs.
-	 *
-	 * @deprecated since 1.30 Use getSummaryInputWidget() instead
-	 * @param string $summary The value of the summary input
-	 * @param string $labelText The html to place inside the label
-	 * @param array $inputAttrs Array of attrs to use on the input
-	 * @param array $spanLabelAttrs Array of attrs to use on the span inside the label
-	 * @return array An array in the format [ $label, $input ]
-	 */
-	public function getSummaryInput( $summary = "", $labelText = null,
-		$inputAttrs = null, $spanLabelAttrs = null
-	) {
-		wfDeprecated( __METHOD__, '1.30' );
-		$inputAttrs = $this->getSummaryInputAttributes( $inputAttrs );
-		$inputAttrs += Linker::tooltipAndAccesskeyAttribs( 'summary' );
-
-		$spanLabelAttrs = ( is_array( $spanLabelAttrs ) ? $spanLabelAttrs : [] ) + [
-			'class' => $this->missingSummary ? 'mw-summarymissed' : 'mw-summary',
-			'id' => "wpSummaryLabel"
-		];
-
-		$label = null;
-		if ( $labelText ) {
-			$label = Xml::tags(
-				'label',
-				$inputAttrs['id'] ? [ 'for' => $inputAttrs['id'] ] : null,
-				$labelText
-			);
-			$label = Xml::tags( 'span', $spanLabelAttrs, $label );
-		}
-
-		$input = Html::input( 'wpSummary', $summary, 'text', $inputAttrs );
-
-		return [ $label, $input ];
-	}
-
-	/**
-	 * Builds a standard summary input with a label.
-	 *
-	 * @deprecated since 1.30 Use getSummaryInputWidget() instead
-	 * @param string $summary The value of the summary input
-	 * @param string $labelText The html to place inside the label
-	 * @param array $inputAttrs Array of attrs to use on the input
-	 *
-	 * @return OOUI\FieldLayout OOUI FieldLayout with Label and Input
-	 */
-	function getSummaryInputOOUI( $summary = "", $labelText = null, $inputAttrs = null ) {
-		wfDeprecated( __METHOD__, '1.30' );
-		$this->getSummaryInputWidget( $summary, $labelText, $inputAttrs );
 	}
 
 	/**
@@ -3306,22 +3305,9 @@ class EditPage {
 		if ( $this->wasDeletedSinceLastEdit() && $this->formtype == 'save' ) {
 			$attribs = [ 'style' => 'display:none;' ];
 		} else {
-			$classes = []; // Textarea CSS
-			if ( $this->mTitle->isProtected( 'edit' ) &&
-				MWNamespace::getRestrictionLevels( $this->mTitle->getNamespace() ) !== [ '' ]
-			) {
-				# Is the title semi-protected?
-				if ( $this->mTitle->isSemiProtected() ) {
-					$classes[] = 'mw-textarea-sprotected';
-				} else {
-					# Then it must be protected based on static groups (regular)
-					$classes[] = 'mw-textarea-protected';
-				}
-				# Is the title cascade-protected?
-				if ( $this->mTitle->isCascadeProtected() ) {
-					$classes[] = 'mw-textarea-cprotected';
-				}
-			}
+			$builder = new TextboxBuilder();
+			$classes = $builder->getTextboxProtectionCSSClasses( $this->getTitle() );
+
 			# Is an old revision being edited?
 			if ( $this->isOldRev ) {
 				$classes[] = 'mw-textarea-oldrev';
@@ -3333,12 +3319,7 @@ class EditPage {
 				$attribs += $customAttribs;
 			}
 
-			if ( count( $classes ) ) {
-				if ( isset( $attribs['class'] ) ) {
-					$classes[] = $attribs['class'];
-				}
-				$attribs['class'] = implode( ' ', $classes );
-			}
+			$attribs = $builder->mergeClassesIntoAttributes( $classes, $attribs );
 		}
 
 		$this->showTextbox(
@@ -3353,11 +3334,17 @@ class EditPage {
 	}
 
 	protected function showTextbox( $text, $name, $customAttribs = [] ) {
-		$wikitext = $this->addNewLineAtEnd( $text );
+		$builder = new TextboxBuilder();
+		$attribs = $builder->buildTextboxAttribs(
+			$name,
+			$customAttribs,
+			$this->context->getUser(),
+			$this->mTitle
+		);
 
-		$attribs = $this->buildTextboxAttribs( $name, $customAttribs, $this->context->getUser() );
-
-		$this->context->getOutput()->addHTML( Html::textarea( $name, $wikitext, $attribs ) );
+		$this->context->getOutput()->addHTML(
+			Html::textarea( $name, $builder->addNewLineAtEnd( $text ), $attribs )
+		);
 	}
 
 	protected function displayPreviewArea( $previewOutput, $isOnTop = false ) {
@@ -3576,6 +3563,8 @@ class EditPage {
 	 * @return string HTML
 	 */
 	public static function getPreviewLimitReport( $output ) {
+		global $wgLang;
+
 		if ( !$output || !$output->getLimitReportData() ) {
 			return '';
 		}
@@ -3604,7 +3593,9 @@ class EditPage {
 				if ( !$keyMsg->isDisabled() && !$valueMsg->isDisabled() ) {
 					$limitReport .= Html::openElement( 'tr' ) .
 						Html::rawElement( 'th', null, $keyMsg->parse() ) .
-						Html::rawElement( 'td', null, $valueMsg->params( $value )->parse() ) .
+						Html::rawElement( 'td', null,
+							$wgLang->formatNum( $valueMsg->params( $value )->parse() )
+						) .
 						Html::closeElement( 'tr' );
 				}
 			}
@@ -3639,14 +3630,9 @@ class EditPage {
 		$out->addHTML( $this->editFormTextAfterWarn );
 
 		$out->addHTML( "<div class='editButtons'>\n" );
-		$out->addHTML( implode( $this->getEditButtons( $tabindex ), "\n" ) . "\n" );
+		$out->addHTML( implode( "\n", $this->getEditButtons( $tabindex ) ) . "\n" );
 
 		$cancel = $this->getCancelLink();
-		if ( $cancel !== '' ) {
-			$cancel .= Html::element( 'span',
-				[ 'class' => 'mw-editButtons-pipe-separator' ],
-				$this->context->msg( 'pipe-separator' )->text() );
-		}
 
 		$message = $this->context->msg( 'edithelppage' )->inContentLanguage()->text();
 		$edithelpurl = Skin::makeInternalOrExternalUrl( $message );
@@ -3679,34 +3665,12 @@ class EditPage {
 		if ( Hooks::run( 'EditPageBeforeConflictDiff', [ &$editPage, &$out ] ) ) {
 			$this->incrementConflictStats();
 
-			$out->wrapWikiMsg( '<h2>$1</h2>', "yourdiff" );
-
-			$content1 = $this->toEditContent( $this->textbox1 );
-			$content2 = $this->toEditContent( $this->textbox2 );
-
-			$handler = ContentHandler::getForModelID( $this->contentModel );
-			$de = $handler->createDifferenceEngine( $this->context );
-			$de->setContent( $content2, $content1 );
-			$de->showDiff(
-				$this->context->msg( 'yourtext' )->parse(),
-				$this->context->msg( 'storedversion' )->text()
-			);
-
-			$out->wrapWikiMsg( '<h2>$1</h2>', "yourtext" );
-			$this->showTextbox2();
+			$this->getEditConflictHelper()->showEditFormTextAfterFooters();
 		}
 	}
 
 	protected function incrementConflictStats() {
-		$stats = MediaWikiServices::getInstance()->getStatsdDataFactory();
-		$stats->increment( 'edit.failures.conflict' );
-		// Only include 'standard' namespaces to avoid creating unknown numbers of statsd metrics
-		if (
-			$this->mTitle->getNamespace() >= NS_MAIN &&
-			$this->mTitle->getNamespace() <= NS_CATEGORY_TALK
-		) {
-			$stats->increment( 'edit.failures.conflict.byNamespaceId.' . $this->mTitle->getNamespace() );
-		}
+		$this->getEditConflictHelper()->incrementConflictStats();
 	}
 
 	/**
@@ -3722,7 +3686,7 @@ class EditPage {
 
 		return new OOUI\ButtonWidget( [
 			'id' => 'mw-editform-cancel',
-			'href' => $this->getContextTitle()->getLinkUrl( $cancelParams ),
+			'href' => $this->getContextTitle()->getLinkURL( $cancelParams ),
 			'label' => new OOUI\HtmlSnippet( $this->context->msg( 'cancel' )->parse() ),
 			'framed' => false,
 			'infusable' => true,
@@ -3775,31 +3739,31 @@ class EditPage {
 	 */
 	protected function getLastDelete() {
 		$dbr = wfGetDB( DB_REPLICA );
-		$commentQuery = CommentStore::newKey( 'log_comment' )->getJoin();
+		$commentQuery = CommentStore::getStore()->getJoin( 'log_comment' );
+		$actorQuery = ActorMigration::newMigration()->getJoin( 'log_user' );
 		$data = $dbr->selectRow(
-			[ 'logging', 'user' ] + $commentQuery['tables'],
+			array_merge( [ 'logging' ], $commentQuery['tables'], $actorQuery['tables'], [ 'user' ] ),
 			[
 				'log_type',
 				'log_action',
 				'log_timestamp',
-				'log_user',
 				'log_namespace',
 				'log_title',
 				'log_params',
 				'log_deleted',
 				'user_name'
-			] + $commentQuery['fields'], [
+			] + $commentQuery['fields'] + $actorQuery['fields'],
+			[
 				'log_namespace' => $this->mTitle->getNamespace(),
 				'log_title' => $this->mTitle->getDBkey(),
 				'log_type' => 'delete',
 				'log_action' => 'delete',
-				'user_id=log_user'
 			],
 			__METHOD__,
 			[ 'LIMIT' => 1, 'ORDER BY' => 'log_timestamp DESC' ],
 			[
-				'user' => [ 'JOIN', 'user_id=log_user' ],
-			] + $commentQuery['joins']
+				'user' => [ 'JOIN', 'user_id=' . $actorQuery['fields']['log_user'] ],
+			] + $commentQuery['joins'] + $actorQuery['joins']
 		);
 		// Quick paranoid permission checks...
 		if ( is_object( $data ) ) {
@@ -3877,10 +3841,10 @@ class EditPage {
 			}
 
 			# don't parse non-wikitext pages, show message about preview
-			if ( $this->mTitle->isCssJsSubpage() || $this->mTitle->isCssOrJsPage() ) {
-				if ( $this->mTitle->isCssJsSubpage() ) {
+			if ( $this->mTitle->isUserConfigPage() || $this->mTitle->isSiteConfigPage() ) {
+				if ( $this->mTitle->isUserConfigPage() ) {
 					$level = 'user';
-				} elseif ( $this->mTitle->isCssOrJsPage() ) {
+				} elseif ( $this->mTitle->isSiteConfigPage() ) {
 					$level = 'site';
 				} else {
 					$level = false;
@@ -3889,6 +3853,11 @@ class EditPage {
 				if ( $content->getModel() == CONTENT_MODEL_CSS ) {
 					$format = 'css';
 					if ( $level === 'user' && !$config->get( 'AllowUserCss' ) ) {
+						$format = false;
+					}
+				} elseif ( $content->getModel() == CONTENT_MODEL_JSON ) {
+					$format = 'json';
+					if ( $level === 'user' /* No comparable 'AllowUserJson' */ ) {
 						$format = false;
 					}
 				} elseif ( $content->getModel() == CONTENT_MODEL_JAVASCRIPT ) {
@@ -3901,7 +3870,8 @@ class EditPage {
 				}
 
 				# Used messages to make sure grep find them:
-				# Messages: usercsspreview, userjspreview, sitecsspreview, sitejspreview
+				# Messages: usercsspreview, userjsonpreview, userjspreview,
+				#   sitecsspreview, sitejsonpreview, sitejspreview
 				if ( $level && $format ) {
 					$note = "<div id='mw-{$level}{$format}preview'>" .
 						$this->context->msg( "{$level}{$format}preview" )->text() .
@@ -3992,10 +3962,12 @@ class EditPage {
 			$this->mTitle, $pstContent, $user );
 		$parserOutput = $pstContent->getParserOutput( $this->mTitle, null, $parserOptions );
 		ScopedCallback::consume( $scopedCallback );
-		$parserOutput->setEditSectionTokens( false ); // no section edit links
 		return [
 			'parserOutput' => $parserOutput,
-			'html' => $parserOutput->getText() ];
+			'html' => $parserOutput->getText( [
+				'enableSectionEditLinks' => false
+			] )
+		];
 	}
 
 	/**
@@ -4211,80 +4183,6 @@ class EditPage {
 	}
 
 	/**
-	 * Returns an array of html code of the following checkboxes old style:
-	 * minor and watch
-	 *
-	 * @deprecated since 1.30 Use getCheckboxesWidget() or getCheckboxesDefinition() instead
-	 * @param int &$tabindex Current tabindex
-	 * @param array $checked See getCheckboxesDefinition()
-	 * @return array
-	 */
-	public function getCheckboxes( &$tabindex, $checked ) {
-		global $wgUseMediaWikiUIEverywhere;
-
-		$checkboxes = [];
-		$checkboxesDef = $this->getCheckboxesDefinition( $checked );
-
-		// Backwards-compatibility for the EditPageBeforeEditChecks hook
-		if ( !$this->isNew ) {
-			$checkboxes['minor'] = '';
-		}
-		$checkboxes['watch'] = '';
-
-		foreach ( $checkboxesDef as $name => $options ) {
-			$legacyName = isset( $options['legacy-name'] ) ? $options['legacy-name'] : $name;
-			$label = $this->context->msg( $options['label-message'] )->parse();
-			$attribs = [
-				'tabindex' => ++$tabindex,
-				'id' => $options['id'],
-			];
-			$labelAttribs = [
-				'for' => $options['id'],
-			];
-			if ( isset( $options['tooltip'] ) ) {
-				$attribs['accesskey'] = $this->context->msg( "accesskey-{$options['tooltip']}" )->text();
-				$labelAttribs['title'] = Linker::titleAttrib( $options['tooltip'], 'withaccess' );
-			}
-			if ( isset( $options['title-message'] ) ) {
-				$labelAttribs['title'] = $this->context->msg( $options['title-message'] )->text();
-			}
-			if ( isset( $options['label-id'] ) ) {
-				$labelAttribs['id'] = $options['label-id'];
-			}
-			$checkboxHtml =
-				Xml::check( $name, $options['default'], $attribs ) .
-				'&#160;' .
-				Xml::tags( 'label', $labelAttribs, $label );
-
-			if ( $wgUseMediaWikiUIEverywhere ) {
-				$checkboxHtml = Html::rawElement( 'div', [ 'class' => 'mw-ui-checkbox' ], $checkboxHtml );
-			}
-
-			$checkboxes[ $legacyName ] = $checkboxHtml;
-		}
-
-		// Avoid PHP 7.1 warning of passing $this by reference
-		$editPage = $this;
-		Hooks::run( 'EditPageBeforeEditChecks', [ &$editPage, &$checkboxes, &$tabindex ], '1.29' );
-		return $checkboxes;
-	}
-
-	/**
-	 * Returns an array of checkboxes for the edit form, including 'minor' and 'watch' checkboxes and
-	 * any other added by extensions.
-	 *
-	 * @deprecated since 1.30 Use getCheckboxesWidget() or getCheckboxesDefinition() instead
-	 * @param int &$tabindex Current tabindex
-	 * @param array $checked Array of checkbox => bool, where bool indicates the checked
-	 *                 status of the checkbox
-	 *
-	 * @return array Associative array of string keys to OOUI\FieldLayout instances
-	 */
-	public function getCheckboxesOOUI( &$tabindex, $checked ) {
-		return $this->getCheckboxesWidget( $tabindex, $checked );
-	}
-
-	/**
 	 * Returns an array of checkboxes for the edit form, including 'minor' and 'watch' checkboxes and
 	 * any other added by extensions.
 	 *
@@ -4388,34 +4286,32 @@ class EditPage {
 	public function getEditButtons( &$tabindex ) {
 		$buttons = [];
 
+		$labelAsPublish =
+			$this->context->getConfig()->get( 'EditSubmitButtonLabelPublish' );
+
 		$buttonLabel = $this->context->msg( $this->getSubmitButtonLabel() )->text();
+		$buttonTooltip = $labelAsPublish ? 'publish' : 'save';
 
-		$attribs = [
-			'name' => 'wpSave',
-			'tabindex' => ++$tabindex,
-		];
-
-		$saveConfig = OOUI\Element::configFromHtmlAttributes( $attribs );
 		$buttons['save'] = new OOUI\ButtonInputWidget( [
+			'name' => 'wpSave',
+			'tabIndex' => ++$tabindex,
 			'id' => 'wpSaveWidget',
 			'inputId' => 'wpSave',
 			// Support: IE 6 – Use <input>, otherwise it can't distinguish which button was clicked
 			'useInputTag' => true,
-			'flags' => [ 'constructive', 'primary' ],
+			'flags' => [ 'progressive', 'primary' ],
 			'label' => $buttonLabel,
 			'infusable' => true,
 			'type' => 'submit',
-			'title' => Linker::titleAttrib( 'save' ),
-			'accessKey' => Linker::accesskey( 'save' ),
-		] + $saveConfig );
+			// Messages used: tooltip-save, tooltip-publish
+			'title' => Linker::titleAttrib( $buttonTooltip ),
+			// Messages used: accesskey-save, accesskey-publish
+			'accessKey' => Linker::accesskey( $buttonTooltip ),
+		] );
 
-		$attribs = [
-			'name' => 'wpPreview',
-			'tabindex' => ++$tabindex,
-		];
-
-		$previewConfig = OOUI\Element::configFromHtmlAttributes( $attribs );
 		$buttons['preview'] = new OOUI\ButtonInputWidget( [
+			'name' => 'wpPreview',
+			'tabIndex' => ++$tabindex,
 			'id' => 'wpPreviewWidget',
 			'inputId' => 'wpPreview',
 			// Support: IE 6 – Use <input>, otherwise it can't distinguish which button was clicked
@@ -4423,17 +4319,15 @@ class EditPage {
 			'label' => $this->context->msg( 'showpreview' )->text(),
 			'infusable' => true,
 			'type' => 'submit',
+			// Message used: tooltip-preview
 			'title' => Linker::titleAttrib( 'preview' ),
+			// Message used: accesskey-preview
 			'accessKey' => Linker::accesskey( 'preview' ),
-		] + $previewConfig );
+		] );
 
-		$attribs = [
-			'name' => 'wpDiff',
-			'tabindex' => ++$tabindex,
-		];
-
-		$diffConfig = OOUI\Element::configFromHtmlAttributes( $attribs );
 		$buttons['diff'] = new OOUI\ButtonInputWidget( [
+			'name' => 'wpDiff',
+			'tabIndex' => ++$tabindex,
 			'id' => 'wpDiffWidget',
 			'inputId' => 'wpDiff',
 			// Support: IE 6 – Use <input>, otherwise it can't distinguish which button was clicked
@@ -4441,9 +4335,11 @@ class EditPage {
 			'label' => $this->context->msg( 'showdiff' )->text(),
 			'infusable' => true,
 			'type' => 'submit',
+			// Message used: tooltip-diff
 			'title' => Linker::titleAttrib( 'diff' ),
+			// Message used: accesskey-diff
 			'accessKey' => Linker::accesskey( 'diff' ),
-		] + $diffConfig );
+		] );
 
 		// Avoid PHP 7.1 warning of passing $this by reference
 		$editPage = $this;
@@ -4635,9 +4531,8 @@ class EditPage {
 	 * @since 1.29
 	 */
 	protected function addExplainConflictHeader( OutputPage $out ) {
-		$out->wrapWikiMsg(
-			"<div class='mw-explainconflict'>\n$1\n</div>",
-			[ 'explainconflict', $this->context->msg( $this->getSubmitButtonLabel() )->text() ]
+		$out->addHTML(
+			$this->getEditConflictHelper()->getExplainHeader()
 		);
 	}
 
@@ -4649,38 +4544,9 @@ class EditPage {
 	 * @since 1.29
 	 */
 	protected function buildTextboxAttribs( $name, array $customAttribs, User $user ) {
-		$attribs = $customAttribs + [
-				'accesskey' => ',',
-				'id' => $name,
-				'cols' => 80,
-				'rows' => 25,
-				// Avoid PHP notices when appending preferences
-				// (appending allows customAttribs['style'] to still work).
-				'style' => ''
-			];
-
-		// The following classes can be used here:
-		// * mw-editfont-default
-		// * mw-editfont-monospace
-		// * mw-editfont-sans-serif
-		// * mw-editfont-serif
-		$class = 'mw-editfont-' . $user->getOption( 'editfont' );
-
-		if ( isset( $attribs['class'] ) ) {
-			if ( is_string( $attribs['class'] ) ) {
-				$attribs['class'] .= ' ' . $class;
-			} elseif ( is_array( $attribs['class'] ) ) {
-				$attribs['class'][] = $class;
-			}
-		} else {
-			$attribs['class'] = $class;
-		}
-
-		$pageLang = $this->mTitle->getPageLanguage();
-		$attribs['lang'] = $pageLang->getHtmlCode();
-		$attribs['dir'] = $pageLang->getDir();
-
-		return $attribs;
+		return ( new TextboxBuilder() )->buildTextboxAttribs(
+			$name, $customAttribs, $user, $this->mTitle
+		);
 	}
 
 	/**
@@ -4689,15 +4555,7 @@ class EditPage {
 	 * @since 1.29
 	 */
 	protected function addNewLineAtEnd( $wikitext ) {
-		if ( strval( $wikitext ) !== '' ) {
-			// Ensure there's a newline at the end, otherwise adding lines
-			// is awkward.
-			// But don't add a newline if the text is empty, or Firefox in XHTML
-			// mode will show an extra newline. A bit annoying.
-			$wikitext .= "\n";
-			return $wikitext;
-		}
-		return $wikitext;
+		return ( new TextboxBuilder() )->addNewLineAtEnd( $wikitext );
 	}
 
 	/**
@@ -4721,5 +4579,43 @@ class EditPage {
 		}
 		// Meanwhile, real browsers get real anchors
 		return $wgParser->guessSectionNameFromWikiText( $text );
+	}
+
+	/**
+	 * Set a factory function to create an EditConflictHelper
+	 *
+	 * @param callable $factory Factory function
+	 * @since 1.31
+	 */
+	public function setEditConflictHelperFactory( callable $factory ) {
+		$this->editConflictHelperFactory = $factory;
+		$this->editConflictHelper = null;
+	}
+
+	/**
+	 * @return TextConflictHelper
+	 */
+	private function getEditConflictHelper() {
+		if ( !$this->editConflictHelper ) {
+			$this->editConflictHelper = call_user_func(
+				$this->editConflictHelperFactory,
+				$this->getSubmitButtonLabel()
+			);
+		}
+
+		return $this->editConflictHelper;
+	}
+
+	/**
+	 * @param string $submitButtonLabel
+	 * @return TextConflictHelper
+	 */
+	private function newTextConflictHelper( $submitButtonLabel ) {
+		return new TextConflictHelper(
+			$this->getTitle(),
+			$this->getContext()->getOutput(),
+			MediaWikiServices::getInstance()->getStatsdDataFactory(),
+			$submitButtonLabel
+		);
 	}
 }

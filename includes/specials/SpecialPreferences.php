@@ -21,6 +21,8 @@
  * @ingroup SpecialPage
  */
 
+use MediaWiki\MediaWikiServices;
+
 /**
  * A special page that allows users to change their preferences
  *
@@ -82,7 +84,6 @@ class SpecialPreferences extends SpecialPage {
 		}
 
 		$htmlForm = $this->getFormObject( $user, $this->getContext() );
-		$htmlForm->setSubmitCallback( [ 'Preferences', 'tryUISubmit' ] );
 		$sectionTitles = $htmlForm->getPreferenceSections();
 
 		$prefTabs = '';
@@ -121,13 +122,15 @@ class SpecialPreferences extends SpecialPage {
 	 * Get the preferences form to use.
 	 * @param User $user The user.
 	 * @param IContextSource $context The context.
-	 * @return PreferencesForm|HtmlForm
+	 * @return PreferencesForm|HTMLForm
 	 */
 	protected function getFormObject( $user, IContextSource $context ) {
-		return Preferences::getFormObject( $user, $context );
+		$preferencesFactory = MediaWikiServices::getInstance()->getPreferencesFactory();
+		$form = $preferencesFactory->getForm( $user, $context );
+		return $form;
 	}
 
-	private function showResetForm() {
+	protected function showResetForm() {
 		if ( !$this->getUser()->isAllowed( 'editmyoptions' ) ) {
 			throw new PermissionsError( 'editmyoptions' );
 		}

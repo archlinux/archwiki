@@ -1,6 +1,7 @@
 <?php
 
 namespace RemexHtml\TreeBuilder;
+
 use RemexHtml\HTMLData;
 use RemexHtml\Tokenizer\Attributes;
 use RemexHtml\Tokenizer\TokenHandler;
@@ -132,25 +133,27 @@ class Dispatcher implements TokenHandler {
 	/**
 	 * Switch the insertion mode, and return the new handler
 	 *
-	 * @param integer $mode
+	 * @param int $mode
 	 * @return InsertionMode
 	 */
 	public function switchMode( $mode ) {
 		$this->mode = $mode;
-		return $this->handler = $this->dispatchTable[$mode];
+		$this->handler = $this->dispatchTable[$mode];
+		return $this->handler;
 	}
 
 	/**
 	 * Let the original insertion mode be the current insertion mode, and
 	 * switch the insertion mode to some new value. Return the new handler.
 	 *
-	 * @param integer $mode
+	 * @param int $mode
 	 * @return InsertionMode
 	 */
 	public function switchAndSave( $mode ) {
 		$this->originalMode = $this->mode;
 		$this->mode = $mode;
-		return $this->handler = $this->dispatchTable[$mode];
+		$this->handler = $this->dispatchTable[$mode];
+		return $this->handler;
 	}
 
 	/**
@@ -165,7 +168,8 @@ class Dispatcher implements TokenHandler {
 		}
 		$mode = $this->mode = $this->originalMode;
 		$this->originalMode = null;
-		return $this->handler = $this->dispatchTable[$mode];
+		$this->handler = $this->dispatchTable[$mode];
+		return $this->handler;
 	}
 
 	/**
@@ -209,7 +213,7 @@ class Dispatcher implements TokenHandler {
 	 * Get the insertion mode index which is switched to when we reset the
 	 * insertion mode appropriately.
 	 *
-	 * @return integer
+	 * @return int
 	 */
 	protected function getAppropriateMode() {
 		$builder = $this->builder;
@@ -295,6 +299,7 @@ class Dispatcher implements TokenHandler {
 	/**
 	 * If the stack of open elements is empty, return null, otherwise return
 	 * the adjusted current node.
+	 * @return Element|null
 	 */
 	protected function dispatcherCurrentNode() {
 		$current = $this->builder->stack->current;

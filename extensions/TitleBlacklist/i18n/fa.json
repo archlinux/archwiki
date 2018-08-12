@@ -28,5 +28,8 @@
 	"titleblacklist-warning": "<strong>هشدار: این صفحه فقط توسط مدیران سیستم و کاربرانی که مجوز <code>tboverride</code> دارند قابل ویرایش شدن است؛ چون صفحه منطبق با لیست‌سیاه زیر است: </strong><br /><code>$1</code>",
 	"right-tboverride": "نادیده گرفتن لیست سیاه عنوان یا نام کاربری",
 	"right-tboverride-account": "لغو فهرست سیاه نام کاربری",
-	"right-titleblacklistlog": "مشاهدۀ سیاهۀ لیست سیاه عنوان"
+	"right-titleblacklistlog": "مشاهدۀ سیاهۀ لیست سیاه عنوان",
+	"apihelp-titleblacklist-param-nooverride": "سعی نکن فهرست‌سیاه‌نام را بازنویسی کنی",
+	"apihelp-titleblacklist-example-1": "بررسی اینکه آیا [[Foo]] در فهرست سیاه هست یا نه",
+	"apihelp-titleblacklist-example-2": "بررسی اینکه آیا [[Bar]] در فهرست سیاه ویرایش هست یا نه"
 }

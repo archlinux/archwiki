@@ -11,19 +11,29 @@ Demo.IndexedDialog.prototype.getBodyHeight = function () {
 	return 250;
 };
 Demo.IndexedDialog.prototype.initialize = function () {
+	var loremIpsum = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, ' +
+		'sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\u200E';
 	Demo.IndexedDialog.parent.prototype.initialize.apply( this, arguments );
 	this.indexLayout = new OO.ui.IndexLayout();
 	this.tabPanels = [
-		new Demo.SampleTabPanel( 'first', { label: 'One' } ),
-		new Demo.SampleTabPanel( 'second', { label: 'Two' } ),
-		new Demo.SampleTabPanel( 'third', { label: 'Three' } ),
-		new Demo.SampleTabPanel( 'fourth', { label: 'Four' } )
+		new Demo.SampleTabPanel( 'first', { label: 'One tab' } ),
+		new Demo.SampleTabPanel( 'second', { label: 'Two tab' } ),
+		new Demo.SampleTabPanel( 'third', { label: 'Three tab' } ),
+		new Demo.SampleTabPanel( 'fourth', { label: 'Four tab' } ),
+		new Demo.SampleTabPanel( 'long', {
+			label: 'Long tab',
+			content: [
+				$( '<p>' ).text( loremIpsum ),
+				$( '<p>' ).text( loremIpsum ),
+				$( '<p>' ).text( loremIpsum )
+			]
+		} )
 	];
 
 	this.indexLayout.addTabPanels( this.tabPanels );
 	this.$body.append( this.indexLayout.$element );
 
-	this.indexLayout.getTabs().getItemFromData( 'fourth' ).setDisabled( true );
+	this.indexLayout.getTabs().findItemFromData( 'fourth' ).setDisabled( true );
 };
 Demo.IndexedDialog.prototype.getActionProcess = function ( action ) {
 	if ( action ) {

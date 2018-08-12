@@ -1105,7 +1105,7 @@ class Message implements MessageSpecifier, Serializable {
 	public static function listParam( array $list, $type = 'text' ) {
 		if ( !isset( self::$listTypeMap[$type] ) ) {
 			throw new InvalidArgumentException(
-				"Invalid type '$type'. Known types are: " . join( ', ', array_keys( self::$listTypeMap ) )
+				"Invalid type '$type'. Known types are: " . implode( ', ', array_keys( self::$listTypeMap ) )
 			);
 		}
 		return [ 'list' => $list, 'type' => $type ];
@@ -1185,11 +1185,17 @@ class Message implements MessageSpecifier, Serializable {
 			} elseif ( isset( $param['list'] ) ) {
 				return $this->formatListParam( $param['list'], $param['type'], $format );
 			} else {
-				$warning = 'Invalid parameter for message "' . $this->getKey() . '": ' .
-					htmlspecialchars( serialize( $param ) );
-				trigger_error( $warning, E_USER_WARNING );
-				$e = new Exception;
-				wfDebugLog( 'Bug58676', $warning . "\n" . $e->getTraceAsString() );
+				if ( !is_scalar( $param ) ) {
+					$param = serialize( $param );
+				}
+				\MediaWiki\Logger\LoggerFactory::getInstance( 'Bug58676' )->warning(
+					'Invalid parameter for message "{msgkey}": {param}',
+					[
+						'exception' => new Exception,
+						'msgkey' => $this->getKey(),
+						'param' => htmlspecialchars( $param ),
+					]
+				);
 
 				return [ 'before', '[INVALID]' ];
 			}
@@ -1238,7 +1244,16 @@ class Message implements MessageSpecifier, Serializable {
 			$this->getLanguage()
 		);
 
-		return $out instanceof ParserOutput ? $out->getText() : $out;
+		return $out instanceof ParserOutput
+			? $out->getText( [
+				'enableSectionEditLinks' => false,
+				// Wrapping messages in an extra <div> is probably not expected. If
+				// they're outside the content area they probably shouldn't be
+				// targeted by CSS that's targeting the parser output, and if
+				// they're inside they already are from the outer div.
+				'unwrap' => true,
+			] )
+			: $out;
 	}
 
 	/**
@@ -1300,16 +1315,15 @@ class Message implements MessageSpecifier, Serializable {
 	 */
 	protected function formatPlaintext( $plaintext, $format ) {
 		switch ( $format ) {
-		case self::FORMAT_TEXT:
-		case self::FORMAT_PLAIN:
-			return $plaintext;
+			case self::FORMAT_TEXT:
+			case self::FORMAT_PLAIN:
+				return $plaintext;
 
-		case self::FORMAT_PARSE:
-		case self::FORMAT_BLOCK_PARSE:
-		case self::FORMAT_ESCAPED:
-		default:
-			return htmlspecialchars( $plaintext, ENT_QUOTES );
-
+			case self::FORMAT_PARSE:
+			case self::FORMAT_BLOCK_PARSE:
+			case self::FORMAT_ESCAPED:
+			default:
+				return htmlspecialchars( $plaintext, ENT_QUOTES );
 		}
 	}
 

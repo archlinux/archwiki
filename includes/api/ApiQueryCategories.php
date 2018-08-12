@@ -1,9 +1,5 @@
 <?php
 /**
- *
- *
- * Created on May 13, 2007
- *
  * Copyright © 2006 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
  *
  * This program is free software; you can redistribute it and/or modify
@@ -69,7 +65,7 @@ class ApiQueryCategories extends ApiQueryGeneratorBase {
 
 		$this->addTables( 'categorylinks' );
 		$this->addWhereFld( 'cl_from', array_keys( $this->getPageSet()->getGoodTitles() ) );
-		if ( !is_null( $params['categories'] ) ) {
+		if ( $params['categories'] ) {
 			$cats = [];
 			foreach ( $params['categories'] as $cat ) {
 				$title = Title::newFromText( $cat );
@@ -78,6 +74,10 @@ class ApiQueryCategories extends ApiQueryGeneratorBase {
 				} else {
 					$cats[] = $title->getDBkey();
 				}
+			}
+			if ( !$cats ) {
+				// No titles so no results
+				return;
 			}
 			$this->addWhereFld( 'cl_to', $cats );
 		}

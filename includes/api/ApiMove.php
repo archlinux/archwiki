@@ -1,9 +1,5 @@
 <?php
 /**
- *
- *
- * Created on Oct 31, 2007
- *
  * Copyright © 2007 Roan Kattouw "<Firstname>.<Lastname>@gmail.com"
  *
  * This program is free software; you can redistribute it and/or modify
@@ -103,7 +99,6 @@ class ApiMove extends ApiBase {
 		// a redirect to the new title. This is not safe, but what we did before was
 		// even worse: we just determined whether a redirect should have been created,
 		// and reported that it was created if it should have, without any checks.
-		// Also note that isRedirect() is unreliable because of T39209.
 		$r['redirectcreated'] = $fromTitle->exists();
 
 		$r['moveoverredirect'] = $toTitleExists;
@@ -156,10 +151,6 @@ class ApiMove extends ApiBase {
 		$watch = 'preferences';
 		if ( isset( $params['watchlist'] ) ) {
 			$watch = $params['watchlist'];
-		} elseif ( $params['watch'] ) {
-			$watch = 'watch';
-		} elseif ( $params['unwatch'] ) {
-			$watch = 'unwatch';
 		}
 
 		// Watch pages
@@ -254,14 +245,6 @@ class ApiMove extends ApiBase {
 			'movetalk' => false,
 			'movesubpages' => false,
 			'noredirect' => false,
-			'watch' => [
-				ApiBase::PARAM_DFLT => false,
-				ApiBase::PARAM_DEPRECATED => true,
-			],
-			'unwatch' => [
-				ApiBase::PARAM_DFLT => false,
-				ApiBase::PARAM_DEPRECATED => true,
-			],
 			'watchlist' => [
 				ApiBase::PARAM_DFLT => 'preferences',
 				ApiBase::PARAM_TYPE => [

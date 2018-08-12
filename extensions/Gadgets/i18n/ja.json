@@ -11,7 +11,8 @@
 			"SkyDaisy9",
 			"Sujiniku",
 			"Otokoume",
-			"2nd-player"
+			"2nd-player",
+			"Yusuke1109"
 		]
 	},
 	"gadgets-desc": "利用者が [[Special:Gadgets|CSS や JavaScript のカスタム ガジェット]]を[[Special:Preferences#mw-prefsection-gadgets|{{int:preferences}}]]で選択できるようにする",
@@ -41,11 +42,13 @@
 	"gadgets-validate-notset": "プロパティ <code>$1</code> が設定されていません。",
 	"gadgets-validate-wrongtype": "プロパティ <code>$1</code> は型 <code>$3</code> ではなく <code>$2</code> でなければなりません。",
 	"apihelp-query+gadgetcategories-description": "ガジェットのカテゴリの一覧を返します。",
+	"apihelp-query+gadgetcategories-summary": "ガジェットのカテゴリの一覧を返します。",
 	"apihelp-query+gadgetcategories-param-prop": "ガジェットのカテゴリのどの情報を取得するかです:\n;name:内部カテゴリ名です。\n;title:カテゴリ名です。\n;members:カテゴリ内のガジェット数です。",
 	"apihelp-query+gadgetcategories-param-names": "取得するカテゴリの名前です。",
 	"apihelp-query+gadgetcategories-example-1": "既存のガジェットのカテゴリの一覧を取得",
 	"apihelp-query+gadgetcategories-example-2": "「foo」および「bar」という名前のカテゴリについてすべての情報を取得",
 	"apihelp-query+gadgets-description": "このウィキで使用されているガジェットの一覧を返します。",
+	"apihelp-query+gadgets-summary": "このウィキで使用されているガジェットの一覧を返します。",
 	"apihelp-query+gadgets-param-prop": "ガジェットのどの情報を取得するかです:\n;id:内部ガジェット ID です。\n;metadata:ガジェットのメタデータです。\n;desc:ガジェットの説明を HTML 形式に変換したものです (時間がかかる場合があるため、本当に必要な場合のみ使用してください)。",
 	"apihelp-query+gadgets-param-categories": "どのカテゴリからガジェットを取得するかです。",
 	"apihelp-query+gadgets-param-ids": "取得するガジェットの ID です。",

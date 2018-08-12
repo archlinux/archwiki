@@ -4,9 +4,9 @@ use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MediaWikiServices;
 
 /**
+ * @group medium
  * @group API
  * @group Database
- * @group medium
  *
  * @covers ApiQueryWatchlist
  */
@@ -23,7 +23,6 @@ class ApiQueryWatchlistIntegrationTest extends ApiTestCase {
 		parent::setUp();
 		self::$users['ApiQueryWatchlistIntegrationTestUser'] = $this->getMutableTestUser();
 		self::$users['ApiQueryWatchlistIntegrationTestUser2'] = $this->getMutableTestUser();
-		$this->doLogin( 'ApiQueryWatchlistIntegrationTestUser' );
 	}
 
 	private function getLoggedInTestUser() {
@@ -163,6 +162,9 @@ class ApiQueryWatchlistIntegrationTest extends ApiTestCase {
 	}
 
 	private function doListWatchlistRequest( array $params = [], $user = null ) {
+		if ( $user === null ) {
+			$user = $this->getLoggedInTestUser();
+		}
 		return $this->doApiRequest(
 			array_merge(
 				[ 'action' => 'query', 'list' => 'watchlist' ],
@@ -176,7 +178,7 @@ class ApiQueryWatchlistIntegrationTest extends ApiTestCase {
 			array_merge(
 				[ 'action' => 'query', 'generator' => 'watchlist' ],
 				$params
-			)
+			), null, false, $this->getLoggedInTestUser()
 		);
 	}
 
@@ -629,6 +631,7 @@ class ApiQueryWatchlistIntegrationTest extends ApiTestCase {
 					'type' => 'new',
 					'patrolled' => true,
 					'unpatrolled' => false,
+					'autopatrolled' => false,
 				]
 			],
 			$this->getItemsFromApiResponse( $result )
@@ -973,6 +976,7 @@ class ApiQueryWatchlistIntegrationTest extends ApiTestCase {
 					'type' => 'new',
 					'patrolled' => true,
 					'unpatrolled' => false,
+					'autopatrolled' => false,
 				]
 			],
 			$this->getItemsFromApiResponse( $resultPatrolled )
@@ -1072,7 +1076,7 @@ class ApiQueryWatchlistIntegrationTest extends ApiTestCase {
 			'rc_minor' => 0,
 			'rc_cur_id' => $title->getArticleID(),
 			'rc_user' => 0,
-			'rc_user_text' => 'External User',
+			'rc_user_text' => 'ext>External User',
 			'rc_comment' => '',
 			'rc_comment_text' => '',
 			'rc_comment_data' => null,

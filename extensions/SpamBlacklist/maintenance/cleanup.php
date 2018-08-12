@@ -1,129 +1,114 @@
 <?php
-
 /**
  * An aggressive spam cleanup script.
- * Searches the database for matching pages, and reverts them to the last non-spammed revision.
- * If all revisions contain spam, deletes the page
+ * Searches the database for matching pages, and reverts them to
+ * the last non-spammed revision.
+ * If all revisions contain spam, blanks the page
  */
 
-require_once '../../maintenance/commandLine.inc';
-require_once 'SpamBlacklist_body.php';
+$IP = getenv( 'MW_INSTALL_PATH' );
+if ( $IP === false ) {
+	$IP = __DIR__ . '/../../..';
+}
+require_once "$IP/maintenance/Maintenance.php";
 
-/**
- * Find the latest revision of the article that does not contain spam and revert to it
- */
-function cleanupArticle( Revision $rev, $regexes, $match ) {
-	$title = $rev->getTitle();
-	$revId = $rev->getId();
-	while ( $rev ) {
-		$matches = false;
-		foreach ( $regexes as $regex ) {
-			$matches = $matches
-				|| preg_match(
-					$regex,
-					ContentHandler::getContentText( $rev->getContent() )
-				);
-		}
-		if ( !$matches ) {
-			// Didn't find any spam
-			break;
-		}
-		# Revision::getPrevious can't be used in this way before MW 1.6 (Revision.php 1.26)
-		# $rev = $rev->getPrevious();
-		$revId = $title->getPreviousRevisionID( $revId );
-		if ( $revId ) {
-			$rev = Revision::newFromTitle( $title, $revId );
-		} else {
-			$rev = false;
-		}
+class Cleanup extends Maintenance {
+	public function __construct() {
+		parent::__construct();
+		$this->requireExtension( 'SpamBlacklist' );
+		$this->addOption( 'dry-run', 'Only do a dry run' );
 	}
-	if ( !$rev ) {
-		// Didn't find a non-spammy revision, delete the page
-		/*
-		print "All revisions are spam, deleting...\n";
-		$article = new Article( $title );
-		$article->doDeleteArticle( "All revisions matched the spam blacklist" );
-		*/
-		// Too scary, blank instead
-		print "All revisions are spam, blanking...\n";
-		$text = '';
-		$comment = "All revisions matched the spam blacklist ($match), blanking";
-	} else {
-		// Revert to this revision
-		$text = ContentHandler::getContentText( $rev->getContent() );
-		$comment = "Cleaning up links to $match";
-	}
-	$wikiPage = new WikiPage( $title );
-	$wikiPage->doEditContent( ContentHandler::makeContent( $text, $title ), $comment );
-}
 
-// ------------------------------------------------------------------------------
+	public function execute() {
+		$user = User::newSystemUser( 'Spam cleanup script', [ 'steal' => true ] );
 
-$username = 'Spam cleanup script';
-if ( method_exists( 'User', 'newSystemUser' ) ) {
-	$wgUser = User::newSystemUser( $username, [ 'steal' => true ] );
-} else {
-	$wgUser = User::newFromName( $username );
-	if ( $wgUser->idForName() == 0 ) {
-		// Create the user
-		$status = $wgUser->addToDatabase();
-		if ( $status === null || $status->isOK() ) {
-			$dbw = wfGetDB( DB_MASTER );
-			$dbw->update( 'user', [ 'user_password' => 'nologin' ],
-				[ 'user_name' => $username ], $username );
+		$sb = BaseBlacklist::getSpamBlacklist();
+		$regexes = $sb->getBlacklists();
+		if ( !$regexes ) {
+			$this->fatalError( "Invalid regex, can't clean up spam" );
 		}
-	}
-}
+		$dryRun = $this->hasOption( 'dry-run' );
 
-if ( isset( $options['n'] ) ) {
-	$dryRun = true;
-} else {
-	$dryRun = false;
-}
+		$dbr = wfGetDB( DB_REPLICA );
+		$maxID = (int)$dbr->selectField( 'page', 'MAX(page_id)' );
+		$reportingInterval = 100;
 
-$sb = new SpamBlacklist( $wgSpamBlacklistSettings );
-if ( $wgSpamBlacklistFiles ) {
-	$sb->files = $wgSpamBlacklistFiles;
-}
-$regexes = $sb->getBlacklists();
-if ( !$regexes ) {
-	print "Invalid regex, can't clean up spam\n";
-	exit( 1 );
-}
+		$this->output( "Regexes are " . implode( ', ', array_map( 'count', $regexes ) ) . " bytes\n" );
+		$this->output( "Searching for spam in $maxID pages...\n" );
+		if ( $dryRun ) {
+			$this->output( "Dry run only\n" );
+		}
 
-$dbr = wfGetDB( DB_SLAVE );
-$maxID = $dbr->selectField( 'page', 'MAX(page_id)' );
-$reportingInterval = 100;
-
-print "Regexes are " . implode( ', ', array_map( 'count', $regexes ) ) . " bytes\n";
-print "Searching for spam in $maxID pages...\n";
-if ( $dryRun ) {
-	print "Dry run only\n";
-}
-
-for ( $id = 1; $id <= $maxID; $id++ ) {
-	if ( $id % $reportingInterval == 0 ) {
-		printf( "%-8d  %-5.2f%%\r", $id, $id / $maxID * 100 );
-	}
-	$revision = Revision::loadFromPageId( $dbr, $id );
-	if ( $revision ) {
-		$text = ContentHandler::getContentText( $revision->getContent() );
-		if ( $text ) {
-			foreach ( $regexes as $regex ) {
-				if ( preg_match( $regex, $text, $matches ) ) {
-					$title = $revision->getTitle();
-					$titleText = $title->getPrefixedText();
-					if ( $dryRun ) {
-						print "\nFound spam in [[$titleText]]\n";
-					} else {
-						print "\nCleaning up links to {$matches[0]} in [[$titleText]]\n";
-						$match = str_replace( 'http://', '', $matches[0] );
-						cleanupArticle( $revision, $regexes, $match );
+		for ( $id = 1; $id <= $maxID; $id++ ) {
+			if ( $id % $reportingInterval == 0 ) {
+				printf( "%-8d  %-5.2f%%\r", $id, $id / $maxID * 100 );
+			}
+			$revision = Revision::loadFromPageId( $dbr, $id );
+			if ( $revision ) {
+				$text = ContentHandler::getContentText( $revision->getContent() );
+				if ( $text ) {
+					foreach ( $regexes as $regex ) {
+						if ( preg_match( $regex, $text, $matches ) ) {
+							$title = $revision->getTitle();
+							$titleText = $title->getPrefixedText();
+							if ( $dryRun ) {
+								$this->output( "Found spam in [[$titleText]]\n" );
+							} else {
+								$this->output( "Cleaning up links to {$matches[0]} in [[$titleText]]\n" );
+								$match = str_replace( 'http://', '', $matches[0] );
+								$this->cleanupArticle( $revision, $regexes, $match, $user );
+							}
+						}
 					}
 				}
 			}
 		}
+		// Just for satisfaction
+		printf( "%-8d  %-5.2f%%\n", $id - 1, ( $id - 1 ) / $maxID * 100 );
+	}
+
+	/**
+	 * Find the latest revision of the article that does not contain spam and revert to it
+	 * @param Revision $rev
+	 * @param array $regexes
+	 * @param array $match
+	 * @param User $user
+	 */
+	private function cleanupArticle( Revision $rev, $regexes, $match, User $user ) {
+		$title = $rev->getTitle();
+		while ( $rev ) {
+			$matches = false;
+			foreach ( $regexes as $regex ) {
+				$matches = $matches
+					|| preg_match(
+						$regex,
+						ContentHandler::getContentText( $rev->getContent() )
+					);
+			}
+			if ( !$matches ) {
+				// Didn't find any spam
+				break;
+			}
+
+			$rev = $rev->getPrevious();
+		}
+		if ( !$rev ) {
+			// Didn't find a non-spammy revision, blank the page
+			$this->output( "All revisions are spam, blanking...\n" );
+			$text = '';
+			$comment = "All revisions matched the spam blacklist ($match), blanking";
+		} else {
+			// Revert to this revision
+			$text = ContentHandler::getContentText( $rev->getContent() );
+			$comment = "Cleaning up links to $match";
+		}
+		$wikiPage = new WikiPage( $title );
+		$wikiPage->doEditContent(
+			ContentHandler::makeContent( $text, $title ), $comment,
+			0, false, $user
+		);
 	}
 }
-// Just for satisfaction
-printf( "%-8d  %-5.2f%%\n", $id - 1, ( $id - 1 ) / $maxID * 100 );
+
+$maintClass = Cleanup::class;
+require_once RUN_MAINTENANCE_IF_MAIN;

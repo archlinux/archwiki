@@ -1,5 +1,5 @@
-Copyright (c) 2011-2017 Cite VisualEditor Team and others under the terms
-of The MIT License (MIT), as follows:
+Copyright (c) 2011-2018 VisualEditor Team's Cite sub-team and others
+under the terms of The MIT License (MIT), as follows:
 
 This software consists of voluntary contributions made by many
 individuals (AUTHORS.txt) For exact contribution history, see the

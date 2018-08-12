@@ -63,11 +63,8 @@ class ArchivedFile {
 	/** @var string Upload description */
 	private $description;
 
-	/** @var int User ID of uploader */
+	/** @var User|null Uploader */
 	private $user;
-
-	/** @var string User name of uploader */
-	private $user_text;
 
 	/** @var string Time of upload */
 	private $timestamp;
@@ -116,8 +113,7 @@ class ArchivedFile {
 		$this->mime = "unknown/unknown";
 		$this->media_type = '';
 		$this->description = '';
-		$this->user = 0;
-		$this->user_text = '';
+		$this->user = null;
 		$this->timestamp = null;
 		$this->deleted = 0;
 		$this->dataLoaded = false;
@@ -178,12 +174,14 @@ class ArchivedFile {
 		if ( !$this->title || $this->title->getNamespace() == NS_FILE ) {
 			$this->dataLoaded = true; // set it here, to have also true on miss
 			$dbr = wfGetDB( DB_REPLICA );
+			$fileQuery = self::getQueryInfo();
 			$row = $dbr->selectRow(
-				'filearchive',
-				self::selectFields(),
+				$fileQuery['tables'],
+				$fileQuery['fields'],
 				$conds,
 				__METHOD__,
-				[ 'ORDER BY' => 'fa_timestamp DESC' ]
+				[ 'ORDER BY' => 'fa_timestamp DESC' ],
+				$fileQuery['joins']
 			);
 			if ( !$row ) {
 				// this revision does not exist?
@@ -215,11 +213,23 @@ class ArchivedFile {
 
 	/**
 	 * Fields in the filearchive table
-	 * @todo Deprecate this in favor of a method that returns tables and joins
-	 *  as well, and use CommentStore::getJoin().
-	 * @return array
+	 * @deprecated since 1.31, use self::getQueryInfo() instead.
+	 * @return string[]
 	 */
 	static function selectFields() {
+		global $wgActorTableSchemaMigrationStage;
+
+		if ( $wgActorTableSchemaMigrationStage > MIGRATION_WRITE_BOTH ) {
+			// If code is using this instead of self::getQueryInfo(), there's a
+			// decent chance it's going to try to directly access
+			// $row->fa_user or $row->fa_user_text and we can't give it
+			// useful values here once those aren't being written anymore.
+			throw new BadMethodCallException(
+				'Cannot use ' . __METHOD__ . ' when $wgActorTableSchemaMigrationStage > MIGRATION_WRITE_BOTH'
+			);
+		}
+
+		wfDeprecated( __METHOD__, '1.31' );
 		return [
 			'fa_id',
 			'fa_name',
@@ -236,11 +246,49 @@ class ArchivedFile {
 			'fa_minor_mime',
 			'fa_user',
 			'fa_user_text',
+			'fa_actor' => $wgActorTableSchemaMigrationStage > MIGRATION_OLD ? 'fa_actor' : null,
 			'fa_timestamp',
 			'fa_deleted',
 			'fa_deleted_timestamp', /* Used by LocalFileRestoreBatch */
 			'fa_sha1',
-		] + CommentStore::newKey( 'fa_description' )->getFields();
+		] + CommentStore::getStore()->getFields( 'fa_description' );
+	}
+
+	/**
+	 * Return the tables, fields, and join conditions to be selected to create
+	 * a new archivedfile object.
+	 * @since 1.31
+	 * @return array[] With three keys:
+	 *   - tables: (string[]) to include in the `$table` to `IDatabase->select()`
+	 *   - fields: (string[]) to include in the `$vars` to `IDatabase->select()`
+	 *   - joins: (array) to include in the `$join_conds` to `IDatabase->select()`
+	 */
+	public static function getQueryInfo() {
+		$commentQuery = CommentStore::getStore()->getJoin( 'fa_description' );
+		$actorQuery = ActorMigration::newMigration()->getJoin( 'fa_user' );
+		return [
+			'tables' => [ 'filearchive' ] + $commentQuery['tables'] + $actorQuery['tables'],
+			'fields' => [
+				'fa_id',
+				'fa_name',
+				'fa_archive_name',
+				'fa_storage_key',
+				'fa_storage_group',
+				'fa_size',
+				'fa_bits',
+				'fa_width',
+				'fa_height',
+				'fa_metadata',
+				'fa_media_type',
+				'fa_major_mime',
+				'fa_minor_mime',
+				'fa_timestamp',
+				'fa_deleted',
+				'fa_deleted_timestamp', /* Used by LocalFileRestoreBatch */
+				'fa_sha1',
+			] + $commentQuery['fields'] + $actorQuery['fields'],
+			'joins' => $commentQuery['joins'] + $actorQuery['joins'],
+		];
 	}
 
 	/**
@@ -262,11 +310,10 @@ class ArchivedFile {
 		$this->metadata = $row->fa_metadata;
 		$this->mime = "$row->fa_major_mime/$row->fa_minor_mime";
 		$this->media_type = $row->fa_media_type;
-		$this->description = CommentStore::newKey( 'fa_description' )
-			// Legacy because $row probably came from self::selectFields()
-			->getCommentLegacy( wfGetDB( DB_REPLICA ), $row )->text;
-		$this->user = $row->fa_user;
-		$this->user_text = $row->fa_user_text;
+		$this->description = CommentStore::getStore()
+			// Legacy because $row may have come from self::selectFields()
+			->getCommentLegacy( wfGetDB( DB_REPLICA ), 'fa_description', $row )->text;
+		$this->user = User::newFromAnyId( $row->fa_user, $row->fa_user_text, $row->fa_actor );
 		$this->timestamp = $row->fa_timestamp;
 		$this->deleted = $row->fa_deleted;
 		if ( isset( $row->fa_sha1 ) ) {
@@ -479,17 +526,20 @@ class ArchivedFile {
 	 * @note Prior to MediaWiki 1.23, this method always
 	 *   returned the user id, and was inconsistent with
 	 *   the rest of the file classes.
-	 * @param string $type 'text' or 'id'
-	 * @return int|string
+	 * @param string $type 'text', 'id', or 'object'
+	 * @return int|string|User|null
 	 * @throws MWException
+	 * @since 1.31 added 'object'
 	 */
 	public function getUser( $type = 'text' ) {
 		$this->load();
 
-		if ( $type == 'text' ) {
-			return $this->user_text;
-		} elseif ( $type == 'id' ) {
-			return (int)$this->user;
+		if ( $type === 'object' ) {
+			return $this->user;
+		} elseif ( $type === 'text' ) {
+			return $this->user ? $this->user->getName() : '';
+		} elseif ( $type === 'id' ) {
+			return $this->user ? $this->user->getId() : 0;
 		}
 
 		throw new MWException( "Unknown type '$type'." );
@@ -515,9 +565,7 @@ class ArchivedFile {
 	 * @return int
 	 */
 	public function getRawUser() {
-		$this->load();
-
-		return $this->user;
+		return $this->getUser( 'id' );
 	}
 
 	/**
@@ -526,9 +574,7 @@ class ArchivedFile {
 	 * @return string
 	 */
 	public function getRawUserText() {
-		$this->load();
-
-		return $this->user_text;
+		return $this->getUser( 'text' );
 	}
 
 	/**

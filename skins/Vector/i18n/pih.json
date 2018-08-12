@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"AmaryllisGardener"
+			"AmaryllisGardener",
+			"Fanjiayi"
 		]
 	},
+	"vector-view-edit": "Edet",
 	"vector-view-history": "View histrei"
 }

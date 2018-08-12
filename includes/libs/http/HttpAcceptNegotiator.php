@@ -1,5 +1,7 @@
 <?php
 
+namespace Wikimedia\Http;
+
 /**
  * Utility for negotiating a value from a set of supported values using a preference list.
  * This is intended for use with HTTP headers like Accept, Accept-Language, Accept-Encoding, etc.
@@ -8,13 +10,10 @@
  * To use this with a request header, first parse the header value into an array of weights
  * using HttpAcceptParser, then call getBestSupportedKey.
  *
- * @license GPL-2.0+
+ * @license GPL-2.0-or-later
  * @author Daniel Kinzler
- * @author Thiemo Mättig
+ * @author Thiemo Kreuz
  */
-
-namespace Wikimedia\Http;
-
 class HttpAcceptNegotiator {
 
 	/**

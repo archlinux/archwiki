@@ -12,7 +12,8 @@
 			"Shirayuki",
 			"Siebrand",
 			"The Evil IP address",
-			"Umherirrender"
+			"Umherirrender",
+			"Mar(c)"
 		]
 	},
 	"apihelp-query+references-description": "{{doc-apihelp-description|query+references}}",
@@ -26,7 +27,7 @@
 	"cite_error_ref_too_many_keys": "Cite extension. Error message shown when ref tags has parameters other than name and group. Examples that cause this error are <code><nowiki><ref name=\"name\" notname=\"value\" /></nowiki></code> or <code><nowiki><ref notname=\"value\" >input<ref></nowiki></code>",
 	"cite_error_ref_no_input": "Cite extension. Error message shown when ref tags without names have no content. An example that cause this error is <code><nowiki><ref></ref></nowiki></code>",
 	"cite_error_references_duplicate_key": "Cite extension. Error message shown when multiple refs with same name exist but with different content",
-	"cite_error_references_invalid_parameters": "Cite extension. Error message shown when parmeters are used in the references tag. An example that cause this error is <code><nowiki><references someparameter=\"value\" /></nowiki></code>",
+	"cite_error_references_invalid_parameters": "Cite extension. Error message shown when parameters are used in the references tag. An example that causes this error is <code><nowiki><references someparameter=\"value\" /></nowiki></code>.",
 	"cite_error_references_no_backlink_label": "Cite extension. Error message shown in the references tag when the same name is used for too many ref tags. Too many in this case is more than there are backlink labels defined in [[MediaWiki:Cite references link many format backlink labels]].\n\nIt is not possible to make a clickable link to this message. \"nowiki\" is mandatory around [[MediaWiki:Cite references link many format backlink labels]].",
 	"cite_error_no_link_label_group": "*'''$1''' is the name of a reference group.\n*'''$2''' is <code>cite_link_label_group-<i>groupname</i></code>.",
 	"cite_error_references_no_text": "Cite extension. This error occurs when the tag <code><nowiki><ref name=\"something\" /></nowiki></code> is used with the name-option specified and no other tag specifies a cite-text for this name.\n\nParameters:\n* $1 - key of the ref",
@@ -43,7 +44,7 @@
 	"cite_reference_link_prefix": "{{optional}}",
 	"cite_reference_link_suffix": "{{optional}}",
 	"cite_references_link_prefix": "{{optional}}",
-	"cite_references_link_suffix": "{{optional}}",
+	"cite_references_link_suffix": "{{ignored}}",
 	"cite_reference_link": "{{optional}}\nParameters:\n* $1 - ref key\n* $2 - references key\n* $3 - link label",
 	"cite_references_no_link": "{{notranslate}}\nParameters:\n* $1 - references key\n* $2 - reference text",
 	"cite_references_link_one": "{{optional}}\nParameters:\n* $1 - references key\n* $2 - ref key\n* $3 - reference text",

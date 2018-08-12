@@ -1,6 +1,7 @@
 <?php
 
 namespace RemexHtml\TreeBuilder;
+
 use RemexHtml\HTMLData;
 use RemexHtml\PropGuard;
 use RemexHtml\Tokenizer\Attributes;
@@ -21,6 +22,8 @@ use RemexHtml\Tokenizer\Tokenizer;
  * https://www.w3.org/TR/2016/REC-html51-20161101/syntax.html
  */
 class TreeBuilder {
+	use PropGuard;
+
 	// Quirks
 	const NO_QUIRKS = 0;
 	const LIMITED_QUIRKS = 1;
@@ -118,10 +121,6 @@ class TreeBuilder {
 		}
 	}
 
-	public function __set( $name, $value ) {
-		PropGuard::set( $this, $name, $value );
-	}
-
 	public function startDocument( Tokenizer $tokenizer, $namespace, $name ) {
 		$tokenizer->setEnableCdataCallback(
 			function () {
@@ -210,6 +209,9 @@ class TreeBuilder {
 	/**
 	 * Pop the current node from the stack of open elements, and notify the
 	 * handler that we are done with that node.
+	 * @param int $sourceStart
+	 * @param int $sourceLength
+	 * @return Element
 	 */
 	public function pop( $sourceStart, $sourceLength ) {
 		$element = $this->stack->pop();
@@ -250,6 +252,7 @@ class TreeBuilder {
 	 * of allowed elements. Raise an error if any are found.
 	 *
 	 * @param array $allowed An array with the HTML element names in the key
+	 * @param int $pos
 	 */
 	public function checkUnclosed( $allowed, $pos ) {
 		if ( $this->ignoreErrors ) {
@@ -273,6 +276,7 @@ class TreeBuilder {
 	/**
 	 * Reconstruct the active formatting elements.
 	 * @author C. Scott Ananian, Tim Starling
+	 * @param int $sourceStart
 	 */
 	public function reconstructAFE( $sourceStart ) {
 		$entry = $this->afe->getTail();
@@ -326,8 +330,8 @@ class TreeBuilder {
 	 * @author C. Scott Ananian, Tim Starling
 	 *
 	 * @param string $subject The subject tag name.
-	 * @param integer $sourceStart
-	 * @param integer $sourceLength
+	 * @param int $sourceStart
+	 * @param int $sourceLength
 	 */
 	public function adoptionAgency( $subject, $sourceStart, $sourceLength ) {
 		$afe = $this->afe;
@@ -403,7 +407,7 @@ class TreeBuilder {
 			$furthestBlockIndex = -1;
 			$stackLength = $stack->length();
 
-			for ( $i = $fmtEltIndex+1; $i < $stackLength; $i++ ) {
+			for ( $i = $fmtEltIndex + 1; $i < $stackLength; $i++ ) {
 				$item = $stack->item( $i );
 				if ( isset( HTMLData::$special[$item->namespace][$item->name] ) ) {
 					$furthestBlock = $item;
@@ -612,7 +616,7 @@ class TreeBuilder {
 	 * Generate implied end tags, optionally with an element to exclude.
 	 *
 	 * @param string|null $name The name to exclude
-	 * @param integer $pos The source position
+	 * @param int $pos The source position
 	 */
 	public function generateImpliedEndTags( $name, $pos ) {
 		$stack = $this->stack;
@@ -630,6 +634,7 @@ class TreeBuilder {
 	 * Generate all implied end tags thoroughly. This was introduced in
 	 * HTML 5.1 in order to expand the set of elements which can be implicitly
 	 * closed by a </template>.
+	 * @param int $pos
 	 */
 	public function generateImpliedEndTagsThoroughly( $pos ) {
 		$stack = $this->stack;
@@ -648,8 +653,8 @@ class TreeBuilder {
 	 * the list.
 	 *
 	 * @param string $name The name to exclude
-	 * @param integer $sourceStart
-	 * @param integer $sourceLength
+	 * @param int $sourceStart
+	 * @param int $sourceLength
 	 */
 	public function generateImpliedEndTagsAndPop( $name, $sourceStart, $sourceLength ) {
 		$this->generateImpliedEndTags( $name, $sourceStart );
@@ -708,7 +713,7 @@ class TreeBuilder {
 	 * not popped, and a set of names is used instead of a single name.
 	 *
 	 * @param array $names
-	 * @param integer $pos
+	 * @param int $pos
 	 */
 	public function clearStackBack( $names, $pos ) {
 		$stack = $this->stack;

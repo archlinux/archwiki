@@ -35,7 +35,7 @@
 	"cite-ve-dialogbutton-reference-title": "Referentia",
 	"cite-ve-dialogbutton-reference-tooltip": "Basic",
 	"cite-ve-dialogbutton-referenceslist-tooltip": "Lista de referentias",
-	"cite-ve-reference-input-placeholder": "A que vole tu facer referentia?",
+	"cite-ve-reference-input-placeholder": "Cercar in le referentias actual",
 	"cite-ve-referenceslist-isempty": "Il non ha referentias con le gruppo \"$1\" in iste pagina a includer in iste lista.",
 	"cite-ve-referenceslist-isempty-default": "Il non ha referentias in iste pagina a includer in iste lista.",
 	"cite-ve-referenceslist-missingref": "Iste referentia es definite in un patrono o altere bloco generate, e pro le momento pote solmente esser modificate in modo de codice fonte.",

@@ -6,7 +6,7 @@ namespace Wikimedia\Purtle;
  * Helper class for quoting literals and URIs in N3 output.
  * Optionally supports shorthand and prefix resolution.
  *
- * @license GPL-2.0+
+ * @license GPL-2.0-or-later
  * @author Daniel Kinzler
  */
 class N3Quoter {
@@ -23,8 +23,13 @@ class N3Quoter {
 		$this->escaper = $escapeUnicode ? new UnicodeEscaper() : null;
 	}
 
+	/**
+	 * @param string $iri
+	 *
+	 * @return string
+	 */
 	public function escapeIRI( $iri ) {
-		//FIXME: apply unicode escaping?!
+		// FIXME: apply unicode escaping?!
 		return strtr( $iri, [
 				' ' => '%20',
 				'"' => '%22',
@@ -39,7 +44,18 @@ class N3Quoter {
 		] );
 	}
 
+	/**
+	 * @param string $s
+	 *
+	 * @return string
+	 */
 	public function escapeLiteral( $s ) {
+		// Performance: If the entire string is just (a safe subset) of ASCII, let it through.
+		// Ok are space (31), ! (32), # (35) - [ (91) and ] (93) to ~ (126), excludes " (34) and \ (92).
+		if ( preg_match( '/^[ !#-[\]-~]*\z/', $s ) ) {
+			return $s;
+		}
+
 		// String escapes. Note that the N3 spec is more restrictive than the Turtle and TR
 		// specifications, see <https://www.w3.org/TeamSubmission/n3/#escaping>
 		// and <https://www.w3.org/TR/turtle/#string>

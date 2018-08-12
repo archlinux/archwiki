@@ -19,47 +19,7 @@
 									bold: {
 										labelMsg: 'wikieditor-toolbar-tool-bold',
 										type: 'button',
-										offset: {
-											'default': [ 2, -574 ],
-											en: [ 2, -142 ],
-											cs: [ 2, -142 ],
-											de: [ 2, -214 ],
-											fa: [ 2, -142 ],
-											fr: [ 2, -286 ],
-											gl: [ 2, -358 ],
-											es: [ 2, -358 ],
-											he: [ 2, -142 ],
-											hu: [ 2, -214 ],
-											it: [ 2, -286 ],
-											nl: [ 2, -502 ],
-											pt: [ 2, -358 ],
-											pl: [ 2, -142 ],
-											ml: [ 2, -142 ]
-										},
-										icon: {
-											'default': 'format-bold.png',
-											en: 'format-bold-B.png',
-											ce: 'format-bold-Iab.svg',
-											cs: 'format-bold-B.png',
-											de: 'format-bold-F.png',
-											fa: 'format-bold-B.png',
-											fr: 'format-bold-G.png',
-											gl: 'format-bold-N.png',
-											es: 'format-bold-N.png',
-											eu: 'format-bold-L.png',
-											he: 'format-bold-B.png',
-											hu: 'format-bold-F.png',
-											hy: 'format-bold-hy.png',
-											it: 'format-bold-G.png',
-											ka: 'format-bold-ka.png',
-											ky: 'format-bold-ru.png',
-											nl: 'format-bold-V.png',
-											os: 'format-bold-os.png',
-											pt: 'format-bold-N.png',
-											pl: 'format-bold-B.png',
-											ru: 'format-bold-ru.png',
-											ml: 'format-bold-B.png'
-										},
+										oouiIcon: 'bold',
 										action: {
 											type: 'encapsulate',
 											options: {
@@ -77,48 +37,7 @@
 										id: 'italic',
 										labelMsg: 'wikieditor-toolbar-tool-italic',
 										type: 'button',
-										offset: {
-											'default': [ 2, -718 ],
-											en: [ 2, -862 ],
-											cs: [ 2, -862 ],
-											de: [ 2, -934 ],
-											fa: [ 2, -862 ],
-											fr: [ 2, -862 ],
-											gl: [ 2, -790 ],
-											es: [ 2, -790 ],
-											he: [ 2, -862 ],
-											it: [ 2, -790 ],
-											ky: [ 2, -934 ],
-											nl: [ 2, -790 ],
-											os: [ 2, -934 ],
-											pt: [ 2, -862 ],
-											pl: [ 2, -862 ],
-											ru: [ 2, -934 ],
-											ml: [ 2, -862 ]
-										},
-										icon: {
-											'default': 'format-italic.png',
-											en: 'format-italic-I.png',
-											cs: 'format-italic-I.png',
-											de: 'format-italic-K.png',
-											fa: 'format-italic-I.png',
-											fr: 'format-italic-I.png',
-											gl: 'format-italic-C.png',
-											es: 'format-italic-C.png',
-											eu: 'format-italic-E.png',
-											he: 'format-italic-I.png',
-											hu: 'format-italic-D.png',
-											hy: 'format-italic-hy.png',
-											it: 'format-italic-C.png',
-											ka: 'format-italic-ka.png',
-											ky: 'format-italic-K.png',
-											nl: 'format-italic-C.png',
-											os: 'format-italic-K.png',
-											pt: 'format-italic-I.png',
-											pl: 'format-italic-I.png',
-											ru: 'format-italic-K.png',
-											ml: 'format-italic-I.png'
-										},
+										oouiIcon: 'italic',
 										action: {
 											type: 'encapsulate',
 											options: {
@@ -134,68 +53,10 @@
 							},
 							insert: {
 								tools: {
-									xlink: {
-										labelMsg: 'wikieditor-toolbar-tool-xlink',
-										type: 'button',
-										icon: 'insert-xlink.png',
-										offset: [ -70, 2 ],
-										action: {
-											type: 'encapsulate',
-											options: {
-												pre: '[',
-												periMsg: 'wikieditor-toolbar-tool-xlink-example',
-												post: ']'
-											}
-										}
-									},
-									ilink: {
-										labelMsg: 'wikieditor-toolbar-tool-ilink',
-										type: 'button',
-										icon: 'insert-ilink.png',
-										offset: [ 2, -1582 ],
-										action: {
-											type: 'encapsulate',
-											options: {
-												pre: '[[',
-												periMsg: 'wikieditor-toolbar-tool-ilink-example',
-												post: ']]'
-											}
-										}
-									},
-									file: {
-										labelMsg: 'wikieditor-toolbar-tool-file',
-										type: 'button',
-										icon: 'insert-file.png',
-										offset: [ 2, -1438 ],
-										action: {
-											type: 'encapsulate',
-											options: {
-												pre: '[[' + fileNamespace + ':',
-												periMsg: 'wikieditor-toolbar-tool-file-example',
-												post: '|' + mw.config.get( 'wgWikiEditorMagicWords' ).img_thumbnail + ']]'
-											}
-										}
-									},
-									reference: {
-										labelMsg: 'wikieditor-toolbar-tool-reference',
-										filters: [ 'body.ns-subject' ],
-										type: 'button',
-										offset: [ 2, -1798 ],
-										icon: 'insert-reference.png',
-										action: {
-											type: 'encapsulate',
-											options: {
-												pre: '<ref>',
-												periMsg: 'wikieditor-toolbar-tool-reference-example',
-												post: '</ref>'
-											}
-										}
-									},
 									signature: {
 										labelMsg: 'wikieditor-toolbar-tool-signature',
 										type: 'button',
-										offset: [ 2, -1870 ],
-										icon: 'insert-signature.png',
+										oouiIcon: 'signature',
 										action: {
 											type: 'encapsulate',
 											options: {
@@ -284,14 +145,7 @@
 									ulist: {
 										labelMsg: 'wikieditor-toolbar-tool-ulist',
 										type: 'button',
-										icon: {
-											'default': 'format-ulist.png',
-											'default-rtl': 'format-ulist-rtl.png'
-										},
-										offset: {
-											'default': [ 2, -1366 ],
-											'default-rtl': [ -70, -286 ]
-										},
+										oouiIcon: 'listBullet',
 										action: {
 											type: 'encapsulate',
 											options: {
@@ -306,14 +160,7 @@
 									olist: {
 										labelMsg: 'wikieditor-toolbar-tool-olist',
 										type: 'button',
-										icon: {
-											'default': 'format-olist.png',
-											'default-rtl': 'format-olist-rtl.png'
-										},
-										offset: {
-											'default': [ 2, -1078 ],
-											'default-rtl': [ -70, -358 ]
-										},
+										oouiIcon: 'listNumbered',
 										action: {
 											type: 'encapsulate',
 											options: {
@@ -328,8 +175,7 @@
 									nowiki: {
 										labelMsg: 'wikieditor-toolbar-tool-nowiki',
 										type: 'button',
-										icon: 'insert-nowiki.png',
-										offset: [ -70, -70 ],
+										oouiIcon: 'noWikiText',
 										action: {
 											type: 'encapsulate',
 											options: {
@@ -342,8 +188,7 @@
 									newline: {
 										labelMsg: 'wikieditor-toolbar-tool-newline',
 										type: 'button',
-										icon: 'insert-newline.png',
-										offset: [ 2, -1726 ],
+										oouiIcon: 'newline',
 										action: {
 											type: 'encapsulate',
 											options: {
@@ -358,8 +203,7 @@
 									big: {
 										labelMsg: 'wikieditor-toolbar-tool-big',
 										type: 'button',
-										icon: 'format-big.png',
-										offset: [ 2, 2 ],
+										oouiIcon: 'bigger',
 										action: {
 											type: 'encapsulate',
 											options: {
@@ -372,8 +216,7 @@
 									small: {
 										labelMsg: 'wikieditor-toolbar-tool-small',
 										type: 'button',
-										icon: 'format-small.png',
-										offset: [ 2, -1150 ],
+										oouiIcon: 'smaller',
 										action: {
 											type: 'encapsulate',
 											options: {
@@ -386,8 +229,7 @@
 									superscript: {
 										labelMsg: 'wikieditor-toolbar-tool-superscript',
 										type: 'button',
-										icon: 'format-superscript.png',
-										offset: [ 2, -1294 ],
+										oouiIcon: 'superscript',
 										action: {
 											type: 'encapsulate',
 											options: {
@@ -400,8 +242,7 @@
 									subscript: {
 										labelMsg: 'wikieditor-toolbar-tool-subscript',
 										type: 'button',
-										icon: 'format-subscript.png',
-										offset: [ 2, -1222 ],
+										oouiIcon: 'subscript',
 										action: {
 											type: 'encapsulate',
 											options: {
@@ -419,8 +260,7 @@
 									gallery: {
 										labelMsg: 'wikieditor-toolbar-tool-gallery',
 										type: 'button',
-										icon: 'insert-gallery.png',
-										offset: [ 2, -1510 ],
+										oouiIcon: 'imageGallery',
 										action: {
 											type: 'encapsulate',
 											options: {
@@ -434,33 +274,10 @@
 											}
 										}
 									},
-									table: {
-										labelMsg: 'wikieditor-toolbar-tool-table',
-										type: 'button',
-										icon: 'insert-table.png',
-										offset: [ 2, -1942 ],
-										filters: [ '#wpTextbox1:not(.toolbar-dialogs)' ],
-										action: {
-											type: 'encapsulate',
-											options: {
-												pre: '{| class="wikitable" border="1"\n|',
-												periMsg: 'wikieditor-toolbar-tool-table-example-old',
-												post: '\n|}',
-												ownline: true
-											}
-										}
-									},
 									redirect: {
 										labelMsg: 'wikieditor-toolbar-tool-redirect',
 										type: 'button',
-										icon: {
-											'default': 'insert-redirect.png',
-											'default-rtl': 'insert-redirect-rtl.png'
-										},
-										offset: {
-											'default': [ -70, -142 ],
-											'default-rtl': [ -70, -502 ]
-										},
+										oouiIcon: 'articleRedirect',
 										action: {
 											type: 'encapsulate',
 											options: {

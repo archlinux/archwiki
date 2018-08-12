@@ -17,7 +17,7 @@
 	"gadgetusage-gadget": "Perkakas",
 	"gadgetusage-usercount": "Jumlah pengguna",
 	"gadgetusage-noresults": "Perkakas tidak ditemukan",
-	"gadgetusage-summary": "Tabel ini menunjukkan jumlah pengguna yang telah mengaktifkan perkakas pada wiki ini. Daftar ini tidak memasukkan data perkakas yang telah diaktifkan secara baku, dan juga mungkin termasuk perkakas yang sudah tidak ada.",
+	"gadgetusage-intro": "Tabel ini menunjukkan jumlah pengguna yang telah mengaktifkan perkakas pada wiki ini. Daftar ini tidak memasukkan data perkakas yang telah diaktifkan secara baku, dan juga mungkin termasuk perkakas yang sudah tidak ada.",
 	"gadgets-title": "Perkakas",
 	"gadgets-pagetext": "Berikut adalah daftar perkakas istimewa yang dapat diaktifkan pengguna melalui [[Special:Preferences#mw-prefsection-gadgets|halaman preferensi]] mereka sebagaimana didefinisikan oleh [[MediaWiki:Gadgets-definition]]. Tinjauan berikut memberikan kemudahan akses ke dalam halaman pesan sistem yang mendefinisikan deskripsi dan kode masing-masing perkakas.",
 	"gadgets-uses": "Penggunaan",

@@ -1,8 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Crazymadlover"
+			"Crazymadlover",
+			"Fitoschido"
 		]
 	},
-	"localisationupdate-desc": "Mantiene los mensajes localizados tan actualizados como sea posible"
+	"localisationupdate-desc": "Mantiene los mensajes traducidos tan actualizados como sea posible"
 }

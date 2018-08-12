@@ -11,7 +11,8 @@
 			"Waihorace",
 			"Wrightbus",
 			"Cwlin0416",
-			"LNDDYL"
+			"LNDDYL",
+			"Hello903hello"
 		]
 	},
 	"interwiki": "檢視並編輯跨 Wiki 資料",
@@ -39,18 +40,18 @@
 	"interwiki_reasonfield": "原因：",
 	"interwiki_delquestion": "正在刪除 \"$1\"",
 	"interwiki_deleting": "您正在刪除字首 \"$1\"。",
-	"interwiki_deleted": "已成功刪除在跨 Wiki 資料表中的字首 \"$1\"。",
+	"interwiki_deleted": "已刪除在跨 Wiki 資料表中的字首「$1」。",
 	"interwiki_delfailed": "無法刪除跨 Wiki 資料表中的字首 \"$1\"。",
 	"interwiki-logtext": "檢視日誌",
 	"interwiki_addtext": "新增一個跨 Wiki 或語言字首",
 	"interwiki-addtext-local": "新增本地跨 Wiki 或語言字首",
 	"interwiki_addintro": "您正新增一個跨 Wiki 字首。\n字首不可包含空白 ( )、冒號 (:)、連字號 (&) 或等號 (=)。",
 	"interwiki_addbutton": "新增",
-	"interwiki_added": "已經成功加入字首 \"$1\" 到跨 Wiki 資料表。",
+	"interwiki_added": "已經加入字首「$1」到跨 Wiki 資料表。",
 	"interwiki_addfailed": "無法新增字首 \"$1\" 到跨 Wiki 資料表。\n可能已存在於跨 Wiki 資料表中。",
 	"interwiki_edittext": "正在編輯跨 Wiki 字首",
 	"interwiki_editintro": "您現正編輯跨 Wiki 字首。\n注意，這個動作會中斷現有的連結。",
-	"interwiki_edited": "已成功修改在 Interwiki 資料表中的字首 \"$1\"。",
+	"interwiki_edited": "已經修改在跨 Wiki 資料表中的字首「$1」。",
 	"interwiki_editerror": "無法修改跨 Wiki 資料表中的字首 \"$1\"。\n可能並不存在。",
 	"interwiki-badprefix": "指定的跨 Wiki 字首 \"$1\" 中包含了無效的字元",
 	"interwiki-submit-empty": "字首與 URL 不可空白。",
@@ -66,7 +67,7 @@
 	"interwiki-global-description": "這些字首均繼承自全域設定，且僅可於來源 Wiki 編輯。",
 	"interwiki-local-links": "本地跨 Wiki 字首",
 	"interwiki-local-description": "這些字首均存在於本地，任何與全域設定重複的部份會使用全域的設定值覆蓋。",
-	"interwiki-links": "跨 Wiki 字首",
+	"interwiki-links": "跨 wiki 字首",
 	"interwiki-language-links": "跨語言字首",
 	"interwiki-language-description": "這些字首符合已定義的語言代碼，當加入至頁面時會被用來建立 \"{{int:otherlanguages}}\" 清單。"
 }

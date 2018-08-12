@@ -47,16 +47,15 @@ class CleanupSpam extends Maintenance {
 		$username = wfMessage( 'spambot_username' )->text();
 		$wgUser = User::newSystemUser( $username );
 		if ( !$wgUser ) {
-			$this->error( "Invalid username specified in 'spambot_username' message: $username", true );
+			$this->fatalError( "Invalid username specified in 'spambot_username' message: $username" );
 		}
-		// Create the user if necessary
-		if ( !$wgUser->getId() ) {
-			$wgUser->addToDatabase();
-		}
+		// Hack: Grant bot rights so we don't flood RecentChanges
+		$wgUser->addGroup( 'bot' );
+
 		$spec = $this->getArg();
 		$like = LinkFilter::makeLikeArray( $spec );
 		if ( !$like ) {
-			$this->error( "Not a valid hostname specification: $spec", true );
+			$this->fatalError( "Not a valid hostname specification: $spec" );
 		}
 
 		if ( $this->hasOption( 'all' ) ) {
@@ -131,7 +130,7 @@ class CleanupSpam extends Maintenance {
 				$page->doEditContent(
 					$content,
 					wfMessage( 'spam_reverting', $domain )->inContentLanguage()->text(),
-					EDIT_UPDATE,
+					EDIT_UPDATE | EDIT_FORCE_BOT,
 					$rev->getId()
 				);
 			} elseif ( $this->hasOption( 'delete' ) ) {
@@ -148,7 +147,8 @@ class CleanupSpam extends Maintenance {
 				$this->output( "blanking\n" );
 				$page->doEditContent(
 					$content,
-					wfMessage( 'spam_blanking', $domain )->inContentLanguage()->text()
+					wfMessage( 'spam_blanking', $domain )->inContentLanguage()->text(),
+					EDIT_UPDATE | EDIT_FORCE_BOT
 				);
 			}
 			$this->commitTransaction( $dbw, __METHOD__ );
@@ -156,5 +156,5 @@ class CleanupSpam extends Maintenance {
 	}
 }
 
-$maintClass = "CleanupSpam";
+$maintClass = CleanupSpam::class;
 require_once RUN_MAINTENANCE_IF_MAIN;

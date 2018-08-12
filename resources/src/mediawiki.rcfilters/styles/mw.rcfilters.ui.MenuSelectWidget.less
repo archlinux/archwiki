@@ -1,4 +1,6 @@
 @import 'mediawiki.mixins';
+@import 'mediawiki.ui/variables';
+@import 'mw.rcfilters.variables';
 
 .mw-rcfilters-ui-menuSelectWidget {
 	z-index: auto;
@@ -9,13 +11,8 @@
 	}
 
 	&-noresults {
-		display: none;
-		padding: 0.5em;
-		color: #54595d;
-
-		.oo-ui-menuSelectWidget-invisible & {
-			display: inline-block;
-		}
+		color: @colorGray5;
+		padding: 12 / @font-size-system-ui / @font-size-vector;
 	}
 
 	&-body {
@@ -23,9 +20,9 @@
 	}
 
 	&-footer {
-		padding: 0.5em;
-		background-color: #f8f9fa;
-		border-top: 1px solid #c8ccd1;
+		background-color: @colorGray15;
+		border-top: 1px solid @colorGray12;
+		padding: 12 / @font-size-system-ui / @font-size-vector;
 
 		& + & {
 			border-top: 0;

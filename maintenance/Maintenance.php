@@ -25,6 +25,7 @@
 require_once __DIR__ . '/../includes/PHPVersionCheck.php';
 wfEntryPointCheck( 'cli' );
 
+use MediaWiki\Shell\Shell;
 use Wikimedia\Rdbms\DBReplicationWaitError;
 
 /**
@@ -34,6 +35,10 @@ use Wikimedia\Rdbms\DBReplicationWaitError;
 
 // Define this so scripts can easily find doMaintenance.php
 define( 'RUN_MAINTENANCE_IF_MAIN', __DIR__ . '/doMaintenance.php' );
+
+/**
+ * @deprecated since 1.31
+ */
 define( 'DO_MAINTENANCE', RUN_MAINTENANCE_IF_MAIN ); // original name, harmless
 
 $maintClass = false;
@@ -50,7 +55,6 @@ use Wikimedia\Rdbms\IMaintainableDatabase;
  * is the execute() method. See docs/maintenance.txt for more info
  * and a quick demo of how to use it.
  *
- * @author Chad Horohoe <chad@anyonecanedit.org>
  * @since 1.16
  * @ingroup Maintenance
  */
@@ -183,7 +187,7 @@ abstract class Maintenance {
 		if ( $count < 2 ) {
 			return false; // sanity
 		}
-		if ( $bt[0]['class'] !== 'Maintenance' || $bt[0]['function'] !== 'shouldExecute' ) {
+		if ( $bt[0]['class'] !== self::class || $bt[0]['function'] !== 'shouldExecute' ) {
 			return false; // last call should be to this function
 		}
 		$includeFuncs = [ 'require_once', 'require', 'include', 'include_once' ];
@@ -308,6 +312,17 @@ abstract class Maintenance {
 	}
 
 	/**
+	 * Returns batch size
+	 *
+	 * @since 1.31
+	 *
+	 * @return int|null
+	 */
+	protected function getBatchSize() {
+		return $this->mBatchSize;
+	}
+
+	/**
 	 * Set the batch size.
 	 * @param int $s The number of operations to do in a batch
 	 */
@@ -371,6 +386,15 @@ abstract class Maintenance {
 	 * @param mixed $channel Unique identifier for the channel. See function outputChanneled.
 	 */
 	protected function output( $out, $channel = null ) {
+		// This is sometimes called very early, before Setup.php is included.
+		if ( class_exists( MediaWikiServices::class ) ) {
+			// Try to periodically flush buffered metrics to avoid OOMs
+			$stats = MediaWikiServices::getInstance()->getStatsdDataFactory();
+			if ( $stats->getDataCount() > 1000 ) {
+				MediaWiki::emitBufferedStatsdData( $stats, $this->getConfig() );
+			}
+		}
+
 		if ( $this->mQuiet ) {
 			return;
 		}
@@ -387,19 +411,34 @@ abstract class Maintenance {
 	 * Throw an error to the user. Doesn't respect --quiet, so don't use
 	 * this for non-error output
 	 * @param string $err The error to display
-	 * @param int $die If > 0, go ahead and die out using this int as the code
+	 * @param int $die Deprecated since 1.31, use Maintenance::fatalError() instead
 	 */
 	protected function error( $err, $die = 0 ) {
+		if ( intval( $die ) !== 0 ) {
+			wfDeprecated( __METHOD__ . '( $err, $die )', '1.31' );
+			$this->fatalError( $err, intval( $die ) );
+		}
 		$this->outputChanneled( false );
-		if ( PHP_SAPI == 'cli' ) {
+		if (
+			( PHP_SAPI == 'cli' || PHP_SAPI == 'phpdbg' ) &&
+			!defined( 'MW_PHPUNIT_TEST' )
+		) {
 			fwrite( STDERR, $err . "\n" );
 		} else {
 			print $err;
 		}
-		$die = intval( $die );
-		if ( $die > 0 ) {
-			die( $die );
-		}
+	}
+
+	/**
+	 * Output a message and terminate the current script.
+	 *
+	 * @param string $msg Error message
+	 * @param int $exitCode PHP exit status. Should be in range 1-254.
+	 * @since 1.31
+	 */
+	protected function fatalError( $msg, $exitCode = 1 ) {
+		$this->error( $msg );
+		exit( $exitCode );
 	}
 
 	private $atLineStart = true;
@@ -474,12 +513,16 @@ abstract class Maintenance {
 		$this->addOption(
 			'memory-limit',
 			'Set a specific memory limit for the script, '
-				. '"max" for no limit or "default" to avoid changing it'
+				. '"max" for no limit or "default" to avoid changing it',
+			false,
+			true
 		);
 		$this->addOption( 'server', "The protocol and server name to use in URLs, e.g. " .
 			"http://en.wikipedia.org. This is sometimes necessary because " .
 			"server name detection may fail in command line scripts.", false, true );
 		$this->addOption( 'profiler', 'Profiler output format (usually "text")', false, true );
+		// This is named --mwdebug, because --debug would conflict in the phpunit.php CLI script.
+		$this->addOption( 'mwdebug', 'Enable built-in MediaWiki development settings', false, true );
 
 		# Save generic options to display them separately in help
 		$this->mGenericParameters = $this->mParams;
@@ -548,7 +591,7 @@ abstract class Maintenance {
 			$joined = implode( ', ', $missing );
 			$msg = "The following extensions are required to be installed "
 				. "for this script to run: $joined. Please enable them and then try again.";
-			$this->error( $msg, 1 );
+			$this->fatalError( $msg );
 		}
 	}
 
@@ -569,36 +612,41 @@ abstract class Maintenance {
 		$lbFactory->setAgentName(
 			mb_strlen( $agent ) > 15 ? mb_substr( $agent, 0, 15 ) . '...' : $agent
 		);
-		self::setLBFactoryTriggers( $lbFactory );
+		self::setLBFactoryTriggers( $lbFactory, $this->getConfig() );
 	}
 
 	/**
 	 * @param LBFactory $LBFactory
+	 * @param Config $config
 	 * @since 1.28
 	 */
-	public static function setLBFactoryTriggers( LBFactory $LBFactory ) {
+	public static function setLBFactoryTriggers( LBFactory $LBFactory, Config $config ) {
+		$services = MediaWikiServices::getInstance();
+		$stats = $services->getStatsdDataFactory();
 		// Hook into period lag checks which often happen in long-running scripts
-		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
+		$lbFactory = $services->getDBLoadBalancerFactory();
 		$lbFactory->setWaitForReplicationListener(
 			__METHOD__,
-			function () {
-				global $wgCommandLineMode;
+			function () use ( $stats, $config ) {
 				// Check config in case of JobRunner and unit tests
-				if ( $wgCommandLineMode ) {
+				if ( $config->get( 'CommandLineMode' ) ) {
 					DeferredUpdates::tryOpportunisticExecute( 'run' );
 				}
+				// Try to periodically flush buffered metrics to avoid OOMs
+				MediaWiki::emitBufferedStatsdData( $stats, $config );
 			}
 		);
 		// Check for other windows to run them. A script may read or do a few writes
 		// to the master but mostly be writing to something else, like a file store.
 		$lbFactory->getMainLB()->setTransactionListener(
 			__METHOD__,
-			function ( $trigger ) {
-				global $wgCommandLineMode;
+			function ( $trigger ) use ( $stats, $config ) {
 				// Check config in case of JobRunner and unit tests
-				if ( $wgCommandLineMode && $trigger === IDatabase::TRIGGER_COMMIT ) {
+				if ( $config->get( 'CommandLineMode' ) && $trigger === IDatabase::TRIGGER_COMMIT ) {
 					DeferredUpdates::tryOpportunisticExecute( 'run' );
 				}
+				// Try to periodically flush buffered metrics to avoid OOMs
+				MediaWiki::emitBufferedStatsdData( $stats, $config );
 			}
 		);
 	}
@@ -637,21 +685,22 @@ abstract class Maintenance {
 	 * Do some sanity checking and basic setup
 	 */
 	public function setup() {
-		global $IP, $wgCommandLineMode, $wgRequestTime;
+		global $IP, $wgCommandLineMode;
 
 		# Abort if called from a web server
-		if ( isset( $_SERVER ) && isset( $_SERVER['REQUEST_METHOD'] ) ) {
-			$this->error( 'This script must be run from the command line', true );
+		# wfIsCLI() is not available yet
+		if ( PHP_SAPI !== 'cli' && PHP_SAPI !== 'phpdbg' ) {
+			$this->fatalError( 'This script must be run from the command line' );
 		}
 
 		if ( $IP === null ) {
-			$this->error( "\$IP not set, aborting!\n" .
-				'(Did you forget to call parent::__construct() in your maintenance script?)', 1 );
+			$this->fatalError( "\$IP not set, aborting!\n" .
+				'(Did you forget to call parent::__construct() in your maintenance script?)' );
 		}
 
 		# Make sure we can handle script parameters
 		if ( !defined( 'HPHP_VERSION' ) && !ini_get( 'register_argc_argv' ) ) {
-			$this->error( 'Cannot get command line arguments, register_argc_argv is set to false', true );
+			$this->fatalError( 'Cannot get command line arguments, register_argc_argv is set to false' );
 		}
 
 		// Send PHP warnings and errors to stderr instead of stdout.
@@ -672,8 +721,6 @@ abstract class Maintenance {
 		# "When running PHP from the command line the default setting is 0."
 		# But sometimes this doesn't seem to be the case.
 		ini_set( 'max_execution_time', 0 );
-
-		$wgRequestTime = microtime( true );
 
 		# Define us as being in MediaWiki
 		define( 'MEDIAWIKI', true );
@@ -969,7 +1016,7 @@ abstract class Maintenance {
 
 		// ... append parameters ...
 		if ( $this->mParams ) {
-			$output .= " [--" . implode( array_keys( $this->mParams ), "|--" ) . "]";
+			$output .= " [--" . implode( "|--", array_keys( $this->mParams ) ) . "]";
 		}
 
 		// ... and append arguments.
@@ -1109,6 +1156,11 @@ abstract class Maintenance {
 			MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->destroy();
 		}
 
+		# Apply debug settings
+		if ( $this->hasOption( 'mwdebug' ) ) {
+			require __DIR__ . '/../includes/DevelopmentSettings.php';
+		}
+
 		// Per-script profiling; useful for debugging
 		$this->activateProfiler();
 
@@ -1116,9 +1168,9 @@ abstract class Maintenance {
 
 		$wgShowSQLErrors = true;
 
-		MediaWiki\suppressWarnings();
+		Wikimedia\suppressWarnings();
 		set_time_limit( 0 );
-		MediaWiki\restoreWarnings();
+		Wikimedia\restoreWarnings();
 
 		$this->adjustMemoryLimit();
 	}
@@ -1163,12 +1215,18 @@ abstract class Maintenance {
 			}
 			define( 'MW_DB', $bits[0] );
 			define( 'MW_PREFIX', $bits[1] );
+		} elseif ( isset( $this->mOptions['server'] ) ) {
+			// Provide the option for site admins to detect and configure
+			// multiple wikis based on server names. This offers --server
+			// as alternative to --wiki.
+			// See https://www.mediawiki.org/wiki/Manual:Wiki_family
+			$_SERVER['SERVER_NAME'] = $this->mOptions['server'];
 		}
 
 		if ( !is_readable( $settingsFile ) ) {
-			$this->error( "A copy of your installation's LocalSettings.php\n" .
+			$this->fatalError( "A copy of your installation's LocalSettings.php\n" .
 				"must exist and be readable in the source directory.\n" .
-				"Use --conf to specify it.", true );
+				"Use --conf to specify it." );
 		}
 		$wgCommandLineMode = true;
 
@@ -1244,7 +1302,7 @@ abstract class Maintenance {
 	 * This function has the same parameters as wfGetDB()
 	 *
 	 * @param int $db DB index (DB_REPLICA/DB_MASTER)
-	 * @param array $groups default: empty array
+	 * @param string|string[] $groups default: empty array
 	 * @param string|bool $wiki default: current wiki
 	 * @return IMaintainableDatabase
 	 */
@@ -1417,6 +1475,32 @@ abstract class Maintenance {
 	}
 
 	/**
+	 * Count down from $seconds to zero on the terminal, with a one-second pause
+	 * between showing each number. If the maintenance script is in quiet mode,
+	 * this function does nothing.
+	 *
+	 * @since 1.31
+	 *
+	 * @codeCoverageIgnore
+	 * @param int $seconds
+	 */
+	protected function countDown( $seconds ) {
+		if ( $this->isQuiet() ) {
+			return;
+		}
+		for ( $i = $seconds; $i >= 0; $i-- ) {
+			if ( $i != $seconds ) {
+				$this->output( str_repeat( "\x08", strlen( $i + 1 ) ) );
+			}
+			$this->output( $i );
+			if ( $i ) {
+				sleep( 1 );
+			}
+		}
+		$this->output( "\n" );
+	}
+
+	/**
 	 * Wrapper for posix_isatty()
 	 * We default as considering stdin a tty (for nice readline methods)
 	 * but treating stout as not a tty to avoid color codes
@@ -1444,13 +1528,7 @@ abstract class Maintenance {
 		}
 
 		if ( $isatty && function_exists( 'readline' ) ) {
-			$resp = readline( $prompt );
-			if ( $resp === null ) {
-				// Workaround for https://github.com/facebook/hhvm/issues/4776
-				return false;
-			} else {
-				return $resp;
-			}
+			return readline( $prompt );
 		} else {
 			if ( $isatty ) {
 				$st = self::readlineEmulation( $prompt );
@@ -1476,7 +1554,7 @@ abstract class Maintenance {
 	 * @return string
 	 */
 	private static function readlineEmulation( $prompt ) {
-		$bash = Installer::locateExecutableInDefaultPaths( [ 'bash' ] );
+		$bash = ExecutableFinder::findInDefaultPaths( 'bash' );
 		if ( !wfIsWindows() && $bash ) {
 			$retval = false;
 			$encPrompt = wfEscapeShellArg( $prompt );
@@ -1524,12 +1602,12 @@ abstract class Maintenance {
 		// something that can do the relevant syscalls. There are a few
 		// options. Linux and Mac OS X both have "stty size" which does the
 		// job directly.
-		$retval = false;
-		$size = wfShellExec( 'stty size', $retval );
-		if ( $retval !== 0 ) {
+		$result = Shell::command( 'stty', 'size' )
+			->execute();
+		if ( $result->getExitCode() !== 0 ) {
 			return $default;
 		}
-		if ( !preg_match( '/^(\d+) (\d+)$/', $size, $m ) ) {
+		if ( !preg_match( '/^(\d+) (\d+)$/', $result->getStdout(), $m ) ) {
 			return $default;
 		}
 		return [ intval( $m[2] ), intval( $m[1] ) ];

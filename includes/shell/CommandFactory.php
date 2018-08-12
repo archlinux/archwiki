@@ -20,6 +20,7 @@
 
 namespace MediaWiki\Shell;
 
+use ExecutableFinder;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
 
@@ -37,16 +38,58 @@ class CommandFactory {
 	/** @var string|bool */
 	private $cgroup;
 
+	/** @var bool */
+	private $doLogStderr = false;
+
+	/**
+	 * @var string|bool
+	 */
+	private $restrictionMethod;
+
+	/**
+	 * @var string|bool
+	 */
+	private $firejail;
+
 	/**
 	 * Constructor
 	 *
 	 * @param array $limits See {@see Command::limits()}
 	 * @param string|bool $cgroup See {@see Command::cgroup()}
+	 * @param string|bool $restrictionMethod
 	 */
-	public function __construct( array $limits, $cgroup ) {
+	public function __construct( array $limits, $cgroup, $restrictionMethod ) {
 		$this->limits = $limits;
 		$this->cgroup = $cgroup;
+		if ( $restrictionMethod === 'autodetect' ) {
+			// On Linux systems check for firejail
+			if ( PHP_OS === 'Linux' && $this->findFirejail() !== false ) {
+				$this->restrictionMethod = 'firejail';
+			} else {
+				$this->restrictionMethod = false;
+			}
+		} else {
+			$this->restrictionMethod = $restrictionMethod;
+		}
 		$this->setLogger( new NullLogger() );
+	}
+
+	private function findFirejail() {
+		if ( $this->firejail === null ) {
+			$this->firejail = ExecutableFinder::findInDefaultPaths( 'firejail' );
+		}
+
+		return $this->firejail;
+	}
+
+	/**
+	 * When enabled, text sent to stderr will be logged with a level of 'error'.
+	 *
+	 * @param bool $yesno
+	 * @see Command::logStderr
+	 */
+	public function logStderr( $yesno = true ) {
+		$this->doLogStderr = $yesno;
 	}
 
 	/**
@@ -55,11 +98,17 @@ class CommandFactory {
 	 * @return Command
 	 */
 	public function create() {
-		$command = new Command();
+		if ( $this->restrictionMethod === 'firejail' ) {
+			$command = new FirejailCommand( $this->findFirejail() );
+			$command->restrict( Shell::RESTRICT_DEFAULT );
+		} else {
+			$command = new Command();
+		}
 		$command->setLogger( $this->logger );
 
 		return $command
 			->limits( $this->limits )
-			->cgroup( $this->cgroup );
+			->cgroup( $this->cgroup )
+			->logStderr( $this->doLogStderr );
 	}
 }

@@ -11,10 +11,10 @@
 	],
 	"url": "https://www.mediawiki.org/wiki/Extension:SyntaxHighlight",
 	"descriptionmsg": "syntaxhighlight-desc",
-	"license-name": "GPL-2.0+",
+	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.27"
+		"MediaWiki": ">= 1.31"
 	},
 	"MessagesDirs": {
 		"SyntaxHighlight_GeSHi": [
@@ -22,13 +22,12 @@
 		]
 	},
 	"AutoloadClasses": {
-		"SyntaxHighlight": "SyntaxHighlight.class.php",
-		"SyntaxHighlight_GeSHi": "SyntaxHighlight.class.php",
-		"GeSHi": "SyntaxHighlight.GeSHi.php",
-		"SyntaxHighlightAce": "SyntaxHighlight.ace.php",
-		"SyntaxHighlightGeSHiCompat": "SyntaxHighlight.GeSHi.compat.php",
-		"ResourceLoaderGeSHiVisualEditorModule": "ResourceLoaderSyntaxHighlightVisualEditorModule.php",
-		"ResourceLoaderSyntaxHighlightVisualEditorModule": "ResourceLoaderSyntaxHighlightVisualEditorModule.php"
+		"SyntaxHighlight": "includes/SyntaxHighlight.php",
+		"SyntaxHighlight_GeSHi": "includes/SyntaxHighlight.php",
+		"GeSHi": "includes/GeSHi.php",
+		"SyntaxHighlightAce": "includes/SyntaxHighlightAce.php",
+		"SyntaxHighlightGeSHiCompat": "includes/SyntaxHighlightGeSHiCompat.php",
+		"ResourceLoaderSyntaxHighlightVisualEditorModule": "includes/ResourceLoaderSyntaxHighlightVisualEditorModule.php"
 	},
 	"ResourceFileModulePaths": {
 		"localBasePath": "modules",
@@ -36,7 +35,6 @@
 	},
 	"ResourceModules": {
 		"ext.pygments": {
-			"position": "top",
 			"targets": [
 				"desktop",
 				"mobile"
@@ -74,9 +72,5 @@
 	"TrackingCategories": [
 		"syntaxhighlight-error-category"
 	],
-	"ParserTestFiles": [
-		"tests/parserTests.txt"
-	],
-	"load_composer_autoloader": true,
 	"manifest_version": 1
 }

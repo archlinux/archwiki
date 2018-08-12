@@ -33,8 +33,7 @@
 			icon: 'search',
 			maxLength: undefined,
 			performSearchOnClick: true,
-			dataLocation: 'header',
-			namespace: 0
+			dataLocation: 'header'
 		}, config );
 
 		// Parent constructor
@@ -66,6 +65,10 @@
 				)
 			} );
 		}.bind( this ) );
+
+		this.connect( this, {
+			change: 'onChange'
+		} );
 
 		this.$element.addClass( 'oo-ui-textInputWidget-type-search' );
 		this.updateSearchIndicator();
@@ -117,7 +120,6 @@
 	 * @see OO.ui.SearchInputWidget#onChange
 	 */
 	mw.widgets.SearchInputWidget.prototype.onChange = function () {
-		mw.widgets.SearchInputWidget.parent.prototype.onChange.call( this );
 		this.updateSearchIndicator();
 	};
 
@@ -184,15 +186,27 @@
 	 */
 	mw.widgets.SearchInputWidget.prototype.getOptionsFromData = function ( data ) {
 		var items = [],
+			titles = data.data[ 1 ],
+			descriptions = data.data[ 2 ],
+			urls = data.data[ 3 ],
 			self = this;
 
-		// mw.widgets.TitleWidget does a lot more work here, because the TitleOptionWidgets can
-		// differ a lot, depending on the returned data from the request. With the request used here
-		// we get only the search results.
-		$.each( data.data[ 1 ], function ( i, result ) {
+		$.each( titles, function ( i, result ) {
 			items.push( new mw.widgets.TitleOptionWidget(
-				// data[ 3 ][ i ] is the link for this result
-				self.getOptionWidgetData( result, null, data.data[ 3 ][ i ] )
+				self.getOptionWidgetData(
+					result,
+					// Create a result object that looks like the one from
+					// the parent's API query.
+					{
+						data: result,
+						url: urls[ i ],
+						imageUrl: null, // The JSON 'opensearch' API doesn't have images
+						description: descriptions[ i ],
+						missing: false,
+						redirect: false,
+						disambiguation: false
+					}
+				)
 			) );
 		} );
 
@@ -205,28 +219,6 @@
 		} );
 
 		return items;
-	};
-
-	/**
-	 * @inheritdoc mw.widgets.TitleWidget
-	 *
-	 * @param {string} title
-	 * @param {Object} data
-	 * @param {string} url The Url to the result
-	 */
-	mw.widgets.SearchInputWidget.prototype.getOptionWidgetData = function ( title, data, url ) {
-		// the values used in mw.widgets-TitleWidget doesn't exist here, that's why
-		// the values are hard-coded here
-		return {
-			data: title,
-			url: url,
-			imageUrl: null,
-			description: null,
-			missing: false,
-			redirect: false,
-			disambiguation: false,
-			query: this.getQueryValue()
-		};
 	};
 
 	/**

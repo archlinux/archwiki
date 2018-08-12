@@ -40,7 +40,7 @@ abstract class ResourceLoaderTestCase extends MediaWikiTestCase {
 				'skin' => $options['skin'],
 				'target' => 'phpunit',
 		] );
-		$ctx = $this->getMockBuilder( 'ResourceLoaderContext' )
+		$ctx = $this->getMockBuilder( ResourceLoaderContext::class )
 			->setConstructorArgs( [ $resourceLoader, $request ] )
 			->setMethods( [ 'getDirection' ] )
 			->getMock();
@@ -61,7 +61,6 @@ abstract class ResourceLoaderTestCase extends MediaWikiTestCase {
 
 			// For wfScript()
 			'ScriptPath' => '/w',
-			'ScriptExtension' => '.php',
 			'Script' => '/w/index.php',
 			'LoadScript' => '/w/load.php',
 		];
@@ -87,7 +86,6 @@ class ResourceLoaderTestModule extends ResourceLoaderModule {
 	protected $dependencies = [];
 	protected $group = null;
 	protected $source = 'local';
-	protected $position = 'bottom';
 	protected $script = '';
 	protected $styles = '';
 	protected $skipFunction = null;
@@ -125,9 +123,6 @@ class ResourceLoaderTestModule extends ResourceLoaderModule {
 
 	public function getSource() {
 		return $this->source;
-	}
-	public function getPosition() {
-		return $this->position;
 	}
 
 	public function getType() {

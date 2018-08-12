@@ -1,6 +1,7 @@
 <?php
 
 namespace RemexHtml\Serializer;
+
 use RemexHtml\HTMLData;
 
 /**

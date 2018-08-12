@@ -1,24 +1,19 @@
 <?php
+
 /**
  * Resource loader module providing extra data from the server to Cite.
  *
  * Temporary hack for T93800
  *
- * @file
- * @ingroup Extensions
- * @copyright 2011-2017 Cite VisualEditor Team and others; see AUTHORS.txt
- * @license The MIT License (MIT); see MIT-LICENSE.txt
+ * @copyright 2011-2018 VisualEditor Team's Cite sub-team and others; see AUTHORS.txt
+ * @license MIT
  */
-
 class CiteDataModule extends ResourceLoaderModule {
-
-	/* Protected Members */
 
 	protected $origin = self::ORIGIN_USER_SITEWIDE;
 	protected $targets = [ 'desktop', 'mobile' ];
 
-	/* Methods */
-
+	/** @inheritDoc */
 	public function getScript( ResourceLoaderContext $context ) {
 		$citationDefinition = json_decode(
 			$context->msg( 'cite-tool-definition.json' )
@@ -45,8 +40,7 @@ class CiteDataModule extends ResourceLoaderModule {
 			}
 		}
 
-		return
-			've.init.platform.addMessages(' . FormatJson::encode(
+		return 've.init.platform.addMessages(' . FormatJson::encode(
 				[
 					'cite-tool-definition.json' => json_encode( $citationTools )
 				],
@@ -54,6 +48,7 @@ class CiteDataModule extends ResourceLoaderModule {
 			) . ');';
 	}
 
+	/** @inheritDoc */
 	public function getDependencies( ResourceLoaderContext $context = null ) {
 		return [
 			'ext.visualEditor.base',
@@ -61,6 +56,7 @@ class CiteDataModule extends ResourceLoaderModule {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getDefinitionSummary( ResourceLoaderContext $context ) {
 		$summary = parent::getDefinitionSummary( $context );
 		$summary[] = [
@@ -68,4 +64,5 @@ class CiteDataModule extends ResourceLoaderModule {
 		];
 		return $summary;
 	}
+
 }

@@ -363,6 +363,11 @@ $specialPageAliases['uk'] = [
 	'Renameuser' => [ 'Перейменувати_користувача', 'Переименовать_участника' ],
 ];
 
+/** Urdu (اردو) */
+$specialPageAliases['ur'] = [
+	'Renameuser' => [ 'تبدیلی_نام' ],
+];
+
 /** Vietnamese (Tiếng Việt) */
 $specialPageAliases['vi'] = [
 	'Renameuser' => [ 'Đổi_tên_thành_viên', 'Đổi_tên_người_dùng' ],
