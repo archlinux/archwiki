@@ -1,14 +1,16 @@
 [submodule "extensions/CheckUser"]
 	path = extensions/CheckUser
 	url = https://github.com/wikimedia/mediawiki-extensions-CheckUser.git
-	branch = REL1_29
+	branch = REL1_31
 [submodule "extensions/AbuseFilter"]
 	path = extensions/AbuseFilter
 	url = https://github.com/wikimedia/mediawiki-extensions-AbuseFilter.git
-	branch = REL1_29
+	branch = REL1_31
 [submodule "extensions/TitleKey"]
 	path = extensions/TitleKey
 	url = https://github.com/wikimedia/mediawiki-extensions-TitleKey.git
+	branch = REL1_31
 [submodule "extensions/BounceHandler"]
 	path = extensions/BounceHandler
 	url = https://github.com/wikimedia/mediawiki-extensions-BounceHandler.git
+	branch = REL1_31
