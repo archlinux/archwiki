@@ -262,10 +262,10 @@ $wgHiddenPrefs[] = "forceeditsummary";
 ## Additional extensions
 ##
 
-require_once( "$IP/extensions/Nuke/Nuke.php" );
+wfLoadExtension( 'Nuke' );
 
 # AbuseFilter extension
-require_once "$IP/extensions/AbuseFilter/AbuseFilter.php";
+wfLoadExtension( 'AbuseFilter' );
 $wgGroupPermissions['sysop']['abusefilter-modify'] = true;
 $wgGroupPermissions['*']['abusefilter-log-detail'] = true;
 $wgGroupPermissions['*']['abusefilter-view'] = true;
