@@ -118,6 +118,9 @@ class VectorTemplate extends BaseTemplate {
 						$this->get( 'newtalk' )
 					);
 				}
+				if ( $this->data['catlinks'] ) {
+					$this->html( 'catlinks' );
+				}
 				?>
 				<div id="jump-to-nav" class="mw-jump">
 					<?php $this->msg( 'jumpto' ) ?>
@@ -135,10 +138,6 @@ class VectorTemplate extends BaseTemplate {
 						<?php $this->html( 'printfooter' ); ?>
 					</div>
 				<?php
-				}
-
-				if ( $this->data['catlinks'] ) {
-					$this->html( 'catlinks' );
 				}
 
 				if ( $this->data['dataAfterContent'] ) {
