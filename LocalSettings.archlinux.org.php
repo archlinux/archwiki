@@ -86,6 +86,13 @@ $wgNamespacesWithSubpages[NS_MAIN] = true;
 $wgAllowUserJs = true;
 $wgAllowUserCss = true;
 
+# add secondary HTML5-style anchors for sections
+$wgFragmentMode = [ 'legacy', 'html5' ];
+# TODO: migrate to HTML5-style primary anchors
+# (can be done in about a week when the HTML cache is naturally renewed,
+# (at least most of the cachced pages) or we can manually purge all pages)
+//$wgFragmentMode = [ 'html5', 'legacy' ];
+
 
 ##
 ## Database settings
