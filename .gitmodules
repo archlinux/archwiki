@@ -16,5 +16,5 @@
 	branch = REL1_31
 [submodule "extensions/Nuke"]
 	path = extensions/Nuke
-	url = git@github.com:wikimedia/mediawiki-extensions-Nuke.git
+	url = https://github.com/wikimedia/mediawiki-extensions-Nuke.git
 	branch = REL1_31
