@@ -210,7 +210,23 @@ $wgArchNavBarSelectedDefault = 'Wiki';
 $wgFooterIcons = ['copyright' => ['copyright' => '']];
 
 ##
-## Access control settings
+## User roles
+##
+## User roles are groups without permissions: they only serve to clarify the
+## main function of the user in the wiki, and they must be associated to
+## specific access levels (see below) as needed.
+##
+
+$wgGroupPermissions[] = 'maintainer';
+
+
+##
+## Access levels
+##
+## These groups shouldn't be used to define the _role_ of users, but only the
+## extent of the permissions that they have in the wiki; if a user is given
+## an access level greater than 'user', their role (see above) must be
+## specified as well.
 ##
 
 # disable anonymous editing
@@ -218,7 +234,7 @@ $wgEmailConfirmToEdit = true;
 $wgDisableAnonTalk = true;
 $wgGroupPermissions['*']['edit'] = false;
 
-# extra rights for admins
+# extra rights for sysop
 $wgGroupPermissions['sysop']['deleterevision']  = true;
 
 # disable uploads by normal users
@@ -227,17 +243,17 @@ $wgGroupPermissions['user']['reupload']        = false;
 $wgGroupPermissions['user']['reupload-shared'] = false;
 $wgGroupPermissions['autoconfirmed']['upload'] = false;
 
-# maintainers' rights
-$wgGroupPermissions['maintainer']['autopatrol'] = true;
-$wgGroupPermissions['maintainer']['patrol'] = true;
-$wgGroupPermissions['maintainer']['noratelimit'] = true;
-$wgGroupPermissions['maintainer']['suppressredirect'] = true;
-$wgGroupPermissions['maintainer']['rollback'] = true;
-$wgGroupPermissions['maintainer']['browsearchive'] = true;
-$wgGroupPermissions['maintainer']['apihighlimits'] = true;
-$wgGroupPermissions['maintainer']['unwatchedpages'] = true;
-$wgGroupPermissions['maintainer']['deletedhistory'] = true;
-$wgGroupPermissions['maintainer']['deletedtext'] = true;
+# co-sysop's rights
+$wgGroupPermissions['cosysop']['autopatrol'] = true;
+$wgGroupPermissions['cosysop']['patrol'] = true;
+$wgGroupPermissions['cosysop']['noratelimit'] = true;
+$wgGroupPermissions['cosysop']['suppressredirect'] = true;
+$wgGroupPermissions['cosysop']['rollback'] = true;
+$wgGroupPermissions['cosysop']['browsearchive'] = true;
+$wgGroupPermissions['cosysop']['apihighlimits'] = true;
+$wgGroupPermissions['cosysop']['unwatchedpages'] = true;
+$wgGroupPermissions['cosysop']['deletedhistory'] = true;
+$wgGroupPermissions['cosysop']['deletedtext'] = true;
 
 $wgEnableWriteAPI = true;
 # disable user account creation via API
