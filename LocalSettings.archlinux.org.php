@@ -245,10 +245,8 @@ $wgAPIModules['createaccount'] = 'ApiDisabled';
 # remove 'writeapi' right from users
 $wgGroupPermissions['*']['writeapi'] = false;
 $wgGroupPermissions['user']['writeapi'] = false;
-# add 'writeapi' to autoconfirmed users, maintainers and admins
+# add 'writeapi' to autoconfirmed users
 $wgGroupPermissions['autoconfirmed']['writeapi'] = true;
-$wgGroupPermissions['maintainer']['writeapi'] = true;
-$wgGroupPermissions['sysop']['writeapi'] = true;
 # stricter conditions for 'autoconfirmed' promotion
 $wgAutoConfirmAge = 86400*3; // three days
 # require at least 20 normal edits before granting the 'writeapi' right
