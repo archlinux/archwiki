@@ -65,7 +65,6 @@
 		"skins.timeless.mobile": {
 			"targets": [ "desktop", "mobile" ],
 			"scripts": [
-				"resources/libraries/jquery.mobile.custom.js",
 				"resources/mobile.js"
 			]
 		}

@@ -130,7 +130,11 @@ class ApiLogin extends ApiBase {
 				$session = $status->getValue();
 				$authRes = 'Success';
 				$loginType = 'BotPassword';
-			} elseif ( !$botLoginData[2] || $status->hasMessage( 'login-throttled' ) ) {
+			} elseif ( !$botLoginData[2] ||
+				$status->hasMessage( 'login-throttled' ) ||
+				$status->hasMessage( 'botpasswords-needs-reset' ) ||
+				$status->hasMessage( 'botpasswords-locked' )
+			) {
 				$authRes = 'Failed';
 				$message = $status->getMessage();
 				LoggerFactory::getInstance( 'authentication' )->info(

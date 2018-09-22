@@ -64,8 +64,12 @@ class MonoBookTemplate extends BaseTemplate {
 					[ 'id' => 'contentSub', 'lang' => $this->get( 'userlang' ), 'dir' => $this->get( 'dir' ) ],
 					$this->get( 'subtitle' )
 				) .
-				$this->getIfExists( 'undelete', [ 'wrapper' => 'div', [ 'id' => 'contentSub2' ] ] ) .
-				$this->getIfExists( 'newtalk', [ 'wrapper' => 'div', [ 'class' => 'usermessage' ] ] ) .
+				$this->getIfExists( 'undelete', [ 'wrapper' => 'div', 'parameters' => [
+					'id' => 'contentSub2'
+				] ] ) .
+				$this->getIfExists( 'newtalk', [ 'wrapper' => 'div', 'parameters' => [
+					'class' => 'usermessage'
+				] ] ) .
 				Html::rawElement( 'div', [ 'id' => 'jump-to-nav', 'class' => 'mw-jump' ],
 					$this->getMsg( 'jumpto' )->escaped() .
 					Html::element( 'a', [ 'href' => '#column-one' ],

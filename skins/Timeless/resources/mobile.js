@@ -33,17 +33,8 @@ $( function () {
 	} );
 
 	// Close menus on click outside
-	$( document ).click( function ( e ) {
+	$( document ).on( 'click touchstart', function ( e ) {
 		if ( $( e.target ).closest( '#menus-cover' ).length > 0 ) {
-			$( '#personal-inner' ).fadeOut( toggleTime );
-			$( '.sidebar-inner' ).fadeOut( toggleTime );
-			$( '#menus-cover' ).fadeOut( toggleTime );
-		}
-	} );
-
-	// Include alternative closing method for ios
-	$( window ).on( 'swiperight', function () {
-		if ( $( window ).width() < 851 ) {
 			$( '#personal-inner' ).fadeOut( toggleTime );
 			$( '.sidebar-inner' ).fadeOut( toggleTime );
 			$( '#menus-cover' ).fadeOut( toggleTime );
