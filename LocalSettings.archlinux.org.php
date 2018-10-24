@@ -210,7 +210,27 @@ $wgArchNavBarSelectedDefault = 'Wiki';
 $wgFooterIcons = ['copyright' => ['copyright' => '']];
 
 ##
-## Access control settings
+## User roles
+##
+## User roles are groups without permissions: they only serve to clarify the
+## main function of the user in the wiki, and they must be associated to
+## specific access levels (see below) as needed.
+##
+
+$wgGroupPermissions[] = 'maintainer';
+$wgGroupPermissions[] = 'translator';
+$wgGroupPermissions[] = 'archdev';
+$wgGroupPermissions[] = 'archtu';
+$wgGroupPermissions[] = 'archstaff';
+
+
+##
+## Access levels
+##
+## These groups shouldn't be used to define the _role_ of users, but only the
+## extent of the permissions that they have in the wiki; if a user is given
+## an access level greater than 'user', their role (see above) must be
+## specified as well.
 ##
 
 # disable anonymous editing
@@ -218,7 +238,7 @@ $wgEmailConfirmToEdit = true;
 $wgDisableAnonTalk = true;
 $wgGroupPermissions['*']['edit'] = false;
 
-# extra rights for admins
+# extra rights for sysop
 $wgGroupPermissions['sysop']['deleterevision']  = true;
 
 # disable uploads by normal users
@@ -227,17 +247,22 @@ $wgGroupPermissions['user']['reupload']        = false;
 $wgGroupPermissions['user']['reupload-shared'] = false;
 $wgGroupPermissions['autoconfirmed']['upload'] = false;
 
-# maintainers' rights
-$wgGroupPermissions['maintainer']['autopatrol'] = true;
-$wgGroupPermissions['maintainer']['patrol'] = true;
-$wgGroupPermissions['maintainer']['noratelimit'] = true;
-$wgGroupPermissions['maintainer']['suppressredirect'] = true;
-$wgGroupPermissions['maintainer']['rollback'] = true;
-$wgGroupPermissions['maintainer']['browsearchive'] = true;
-$wgGroupPermissions['maintainer']['apihighlimits'] = true;
-$wgGroupPermissions['maintainer']['unwatchedpages'] = true;
-$wgGroupPermissions['maintainer']['deletedhistory'] = true;
-$wgGroupPermissions['maintainer']['deletedtext'] = true;
+# co-sysop's rights
+$wgGroupPermissions['cosysop']['autopatrol'] = true;
+$wgGroupPermissions['cosysop']['patrol'] = true;
+$wgGroupPermissions['cosysop']['noratelimit'] = true;
+$wgGroupPermissions['cosysop']['suppressredirect'] = true;
+$wgGroupPermissions['cosysop']['rollback'] = true;
+$wgGroupPermissions['cosysop']['browsearchive'] = true;
+$wgGroupPermissions['cosysop']['apihighlimits'] = true;
+$wgGroupPermissions['cosysop']['unwatchedpages'] = true;
+$wgGroupPermissions['cosysop']['deletedhistory'] = true;
+$wgGroupPermissions['cosysop']['deletedtext'] = true;
+
+# additional page-protection levels
+$wgRestrictionLevels[] = 'editprotected2';
+$wgGroupPermissions['sysop']['editprotected2'] = true;
+$wgGroupPermissions['cosysop']['editprotected2'] = true;
 
 $wgEnableWriteAPI = true;
 # disable user account creation via API
@@ -245,10 +270,8 @@ $wgAPIModules['createaccount'] = 'ApiDisabled';
 # remove 'writeapi' right from users
 $wgGroupPermissions['*']['writeapi'] = false;
 $wgGroupPermissions['user']['writeapi'] = false;
-# add 'writeapi' to autoconfirmed users, maintainers and admins
+# add 'writeapi' to autoconfirmed users
 $wgGroupPermissions['autoconfirmed']['writeapi'] = true;
-$wgGroupPermissions['maintainer']['writeapi'] = true;
-$wgGroupPermissions['sysop']['writeapi'] = true;
 # stricter conditions for 'autoconfirmed' promotion
 $wgAutoConfirmAge = 86400*3; // three days
 # require at least 20 normal edits before granting the 'writeapi' right
