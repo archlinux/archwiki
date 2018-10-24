@@ -217,11 +217,11 @@ $wgFooterIcons = ['copyright' => ['copyright' => '']];
 ## specific access levels (see below) as needed.
 ##
 
-$wgGroupPermissions[] = 'maintainer';
-$wgGroupPermissions[] = 'translator';
-$wgGroupPermissions[] = 'archdev';
-$wgGroupPermissions[] = 'archtu';
-$wgGroupPermissions[] = 'archstaff';
+$wgGroupPermissions['maintainer'] = array();
+$wgGroupPermissions['translator'] = array();
+$wgGroupPermissions['archdev'] = array();
+$wgGroupPermissions['archtu'] = array();
+$wgGroupPermissions['archstaff'] = array();
 
 
 ##
