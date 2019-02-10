@@ -1,4 +1,5 @@
 @import '../arch_definitions';
+@import 'mediawiki.ui/variables';
 
 div#mw-head {
   top: 65px;
@@ -56,7 +57,7 @@ div.vectorTabs {
   }
 }
 
-@media screen and ( max-width: @deviceWidthTablet ) {
+@media screen and ( max-width: @width-breakpoint-tablet ) {
   /* fix position of personal navigation bar */
   div#p-personal {
     top: unset;
