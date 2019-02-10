@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Mormegil"
+			"Mormegil",
+			"Dvorapa"
 		]
 	},
 	"skinname-vector": "Vektor",
@@ -19,5 +20,7 @@
 	"vector-view-history": "Zobrazit historii",
 	"vector-view-view": "Číst",
 	"vector-view-viewsource": "Zobrazit zdrojový kód",
+	"vector-jumptonavigation": "Skočit na navigaci",
+	"vector-jumptosearch": "Skočit na vyhledávání",
 	"vector-more-actions": "Další"
 }

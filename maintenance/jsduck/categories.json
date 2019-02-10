@@ -8,7 +8,6 @@
 					"mw",
 					"mw.Message",
 					"mw.loader",
-					"mw.loader.store",
 					"mw.html",
 					"mw.html.Cdata",
 					"mw.html.Raw",
@@ -38,10 +37,6 @@
 					"mw.htmlform.*",
 					"mw.visibleTimeout"
 				]
-			},
-			{
-				"name": "Actions",
-				"classes": ["mw.toolbar"]
 			},
 			{
 				"name": "API",
@@ -83,7 +78,6 @@
 				"classes": [
 					"mw.log",
 					"mw.inspect",
-					"mw.inspect.reports",
 					"mw.Debug"
 				]
 			}

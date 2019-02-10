@@ -164,16 +164,11 @@ class Gadget {
 	/**
 	 * Checks whether given user has permissions to use this gadget
 	 *
-	 * @param User $user user to check against
+	 * @param User $user The user to check against
 	 * @return bool
 	 */
-	public function isAllowed( $user ) {
-		return count( array_intersect( $this->requiredRights, $user->getRights() ) ) ==
-			count( $this->requiredRights )
-			&& ( $this->requiredSkins === true
-				|| !count( $this->requiredSkins )
-				|| in_array( $user->getOption( 'skin' ), $this->requiredSkins )
-			);
+	public function isAllowed( User $user ) {
+		return $user->isAllowedAll( ...$this->requiredRights );
 	}
 
 	/**
@@ -189,6 +184,18 @@ class Gadget {
 	 */
 	public function isHidden() {
 		return $this->hidden;
+	}
+
+	/**
+	 * Check if this gadget is compatible with a skin
+	 *
+	 * @param Skin $skin The skin to check against
+	 * @return bool
+	 */
+	public function isSkinSupported( Skin $skin ) {
+		return ( count( $this->requiredSkins ) === 0
+				|| in_array( $skin->getSkinName(), $this->requiredSkins )
+			);
 	}
 
 	/**

@@ -236,41 +236,41 @@ class ExprParser {
 				}
 				$op = $this->words[$word];
 				switch ( $op ) {
-				// constant
-				case EXPR_EXPONENT:
-					if ( $expecting !== 'expression' ) {
-						continue;
-					}
-					$operands[] = exp( 1 );
-					$expecting = 'operator';
-					continue 2;
-				case EXPR_PI:
-					if ( $expecting !== 'expression' ) {
-						throw new ExprError( 'unexpected_number' );
-					}
-					$operands[] = pi();
-					$expecting = 'operator';
-					continue 2;
-				// Unary operator
-				case EXPR_NOT:
-				case EXPR_SINE:
-				case EXPR_COSINE:
-				case EXPR_TANGENS:
-				case EXPR_ARCSINE:
-				case EXPR_ARCCOS:
-				case EXPR_ARCTAN:
-				case EXPR_EXP:
-				case EXPR_LN:
-				case EXPR_ABS:
-				case EXPR_FLOOR:
-				case EXPR_TRUNC:
-				case EXPR_CEIL:
-				case EXPR_SQRT:
-					if ( $expecting !== 'expression' ) {
-						throw new ExprError( 'unexpected_operator', $word );
-					}
-					$operators[] = $op;
-					continue 2;
+					// constant
+					case EXPR_EXPONENT:
+						if ( $expecting !== 'expression' ) {
+							break;
+						}
+						$operands[] = exp( 1 );
+						$expecting = 'operator';
+						continue 2;
+					case EXPR_PI:
+						if ( $expecting !== 'expression' ) {
+							throw new ExprError( 'unexpected_number' );
+						}
+						$operands[] = pi();
+						$expecting = 'operator';
+						continue 2;
+					// Unary operator
+					case EXPR_NOT:
+					case EXPR_SINE:
+					case EXPR_COSINE:
+					case EXPR_TANGENS:
+					case EXPR_ARCSINE:
+					case EXPR_ARCCOS:
+					case EXPR_ARCTAN:
+					case EXPR_EXP:
+					case EXPR_LN:
+					case EXPR_ABS:
+					case EXPR_FLOOR:
+					case EXPR_TRUNC:
+					case EXPR_CEIL:
+					case EXPR_SQRT:
+						if ( $expecting !== 'expression' ) {
+							throw new ExprError( 'unexpected_operator', $word );
+						}
+						$operators[] = $op;
+						continue 2;
 				}
 				// Binary operator, fall through
 				$name = $word;

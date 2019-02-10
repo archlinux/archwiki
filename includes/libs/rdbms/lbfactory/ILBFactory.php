@@ -68,6 +68,22 @@ interface ILBFactory {
 	public function destroy();
 
 	/**
+	 * Get the local (and default) database domain ID of connection handles
+	 *
+	 * @see DatabaseDomain
+	 * @return string Database domain ID; this specifies DB name, schema, and table prefix
+	 * @since 1.32
+	 */
+	public function getLocalDomainID();
+
+	/**
+	 * @param DatabaseDomain|string|bool $domain Database domain
+	 * @return string Value of $domain if provided or the local domain otherwise
+	 * @since 1.32
+	 */
+	public function resolveDomainID( $domain );
+
+	/**
 	 * Create a new load balancer object. The resulting object will be untracked,
 	 * not chronology-protected, and the caller is responsible for cleaning it up.
 	 *
@@ -142,9 +158,13 @@ interface ILBFactory {
 	 * @param int $mode One of the class SHUTDOWN_* constants
 	 * @param callable|null $workCallback Work to mask ChronologyProtector writes
 	 * @param int|null &$cpIndex Position key write counter for ChronologyProtector
+	 * @param string|null &$cpClientId Client ID hash for ChronologyProtector
 	 */
 	public function shutdown(
-		$mode = self::SHUTDOWN_CHRONPROT_SYNC, callable $workCallback = null, &$cpIndex = null
+		$mode = self::SHUTDOWN_CHRONPROT_SYNC,
+		callable $workCallback = null,
+		&$cpIndex = null,
+		&$cpClientId = null
 	);
 
 	/**
@@ -180,7 +200,7 @@ interface ILBFactory {
 	public function beginMasterChanges( $fname = __METHOD__ );
 
 	/**
-	 * Commit changes on all master connections
+	 * Commit changes and clear view snapshots on all master connections
 	 * @param string $fname Caller name
 	 * @param array $options Options map:
 	 *   - maxWriteDuration: abort if more than this much time was spent in write queries
@@ -195,11 +215,21 @@ interface ILBFactory {
 	public function rollbackMasterChanges( $fname = __METHOD__ );
 
 	/**
-	 * Check if a transaction round is active
+	 * Check if an explicit transaction round is active
 	 * @return bool
 	 * @since 1.29
 	 */
 	public function hasTransactionRound();
+
+	/**
+	 * Check if transaction rounds can be started, committed, or rolled back right now
+	 *
+	 * This can be used as a recusion guard to avoid exceptions in transaction callbacks
+	 *
+	 * @return bool
+	 * @since 1.32
+	 */
+	public function isReadyForRoundOperations();
 
 	/**
 	 * Determine if any master connection has pending changes
@@ -215,7 +245,7 @@ interface ILBFactory {
 
 	/**
 	 * Determine if any master connection has pending/written changes from this request
-	 * @param float $age How many seconds ago is "recent" [defaults to LB lag wait timeout]
+	 * @param float|null $age How many seconds ago is "recent" [defaults to LB lag wait timeout]
 	 * @return bool
 	 */
 	public function hasOrMadeRecentMasterChanges( $age = null );
@@ -239,9 +269,9 @@ interface ILBFactory {
 	 * @param array $opts Optional fields that include:
 	 *   - domain : wait on the load balancer DBs that handles the given domain ID
 	 *   - cluster : wait on the given external load balancer DBs
-	 *   - timeout : Max wait time. Default: ~60 seconds
+	 *   - timeout : Max wait time. Default: 60 seconds for CLI, 1 second for web.
 	 *   - ifWritesSince: Only wait if writes were done since this UNIX timestamp
-	 * @throws DBReplicationWaitError If a timeout or error occurred waiting on a DB cluster
+	 * @return bool True on success, false if a timeout or error occurred while waiting
 	 */
 	public function waitForReplication( array $opts = [] );
 
@@ -271,7 +301,7 @@ interface ILBFactory {
 	 * @param string $fname Caller name (e.g. __METHOD__)
 	 * @param mixed $ticket Result of getEmptyTransactionTicket()
 	 * @param array $opts Options to waitForReplication()
-	 * @throws DBReplicationWaitError
+	 * @return bool True if the wait was successful, false on timeout
 	 */
 	public function commitAndWaitForReplication( $fname, $ticket, array $opts = [] );
 
@@ -308,13 +338,13 @@ interface ILBFactory {
 	/**
 	 * Append ?cpPosIndex parameter to a URL for ChronologyProtector purposes if needed
 	 *
-	 * Note that unlike cookies, this works accross domains
+	 * Note that unlike cookies, this works across domains
 	 *
 	 * @param string $url
-	 * @param float $time UNIX timestamp just before shutdown() was called
+	 * @param int $index Write counter index
 	 * @return string
 	 */
-	public function appendShutdownCPIndexAsQuery( $url, $time );
+	public function appendShutdownCPIndexAsQuery( $url, $index );
 
 	/**
 	 * @param array $info Map of fields, including:

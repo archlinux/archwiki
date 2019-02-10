@@ -314,16 +314,19 @@ class ApiParse extends ApiBase {
 
 			$outputPage = new OutputPage( $context );
 			$outputPage->addParserOutputMetadata( $p_result );
+			if ( $this->content ) {
+				$outputPage->addContentOverride( $titleObj, $this->content );
+			}
 			$context->setOutput( $outputPage );
 
 			if ( $skin ) {
 				// Based on OutputPage::headElement()
 				$skin->setupSkinUserCss( $outputPage );
 				// Based on OutputPage::output()
-				foreach ( $skin->getDefaultModules() as $group ) {
-					$outputPage->addModules( $group );
-				}
+				$outputPage->loadSkinModules( $skin );
 			}
+
+			Hooks::run( 'ApiParseMakeOutputPage', [ $this, $outputPage ] );
 		}
 
 		if ( !is_null( $oldid ) ) {
@@ -338,7 +341,7 @@ class ApiParse extends ApiBase {
 			$result_array['text'] = $p_result->getText( [
 				'allowTOC' => !$params['disabletoc'],
 				'enableSectionEditLinks' => !$params['disableeditsection'],
-				'unwrap' => $params['wrapoutputclass'] === '',
+				'wrapperDivClass' => $params['wrapoutputclass'],
 				'deduplicateStyles' => !$params['disablestylededuplication'],
 			] );
 			$result_array[ApiResult::META_BC_SUBELEMENTS][] = 'text';
@@ -694,7 +697,7 @@ class ApiParse extends ApiBase {
 			$hiddencats[$row->page_title] = isset( $row->pp_propname );
 		}
 
-		$linkCache = LinkCache::singleton();
+		$linkCache = MediaWikiServices::getInstance()->getLinkCache();
 
 		foreach ( $links as $link => $sortkey ) {
 			$entry = [];
@@ -865,7 +868,10 @@ class ApiParse extends ApiBase {
 			],
 			'disablelimitreport' => false,
 			'disableeditsection' => false,
-			'disabletidy' => false,
+			'disabletidy' => [
+				ApiBase::PARAM_DFLT => false,
+				ApiBase::PARAM_DEPRECATED => true, // Since 1.32
+			],
 			'disablestylededuplication' => false,
 			'generatexml' => [
 				ApiBase::PARAM_DFLT => false,

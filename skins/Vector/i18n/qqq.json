@@ -8,7 +8,8 @@
 			"Umherirrender",
 			"Matma Rex",
 			"Liuxinyu970226",
-			"Raymond"
+			"Raymond",
+			"Metalhead64"
 		]
 	},
 	"skinname-vector": "{{name}}",
@@ -26,5 +27,7 @@
 	"vector-view-history": "Tab label in the Vector skin. See for example {{canonicalurl:Main_Page|useskin=vector}}\n{{Identical|View history}}",
 	"vector-view-view": "Tab label in the Vector skin (verb). See for example {{canonicalurl:Main_Page|useskin=vector}}.\n{{Identical|Read}}",
 	"vector-view-viewsource": "Tab label in the Vector skin.\n{{Identical|View source}}",
+	"vector-jumptonavigation": "Accessibility link for jumping to the navigation links. Visually hidden by default.\n\nSee also\n* {{msg-mw|Navigation}}",
+	"vector-jumptosearch": "Accessibility link for jumping to the site search. Visually hidden by default.\n\nSee also\n* {{msg-mw|Search}}",
 	"vector-more-actions": "Label in the Vector skin's menu for the less-important or rarer actions which are not shown as tabs (like moving the page, or for sysops deleting or protecting the page), as well as (for users with a narrow viewing window in their browser) the less-important tab actions which the user's browser is unable to fit in. {{Identical|More}}"
 }

@@ -13,11 +13,12 @@
 			"Sertion",
 			"Warrakkk",
 			"WikiPhoenix",
-			"Macofe"
+			"Macofe",
+			"Magol"
 		]
 	},
 	"wikieditor": "Avancerat gränssnitt för redigering av wikitext",
-	"wikieditor-desc": "Tillhandahåller ett utökat gränssnitt för redigering av wikitext och många moduler som tillhandahåller funktioner",
+	"wikieditor-desc": "Tillhandahåller ett avancerat, expanderbart gränssnitt för redigering av wikitext",
 	"wikieditor-wikitext-tab": "Wikitext",
 	"wikieditor-loading": "Laddar...",
 	"wikieditor-toolbar": "Redigeringsverktygsrad",

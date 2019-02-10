@@ -10,7 +10,8 @@
 			"Tisave",
 			"Bfpage",
 			"Macofe",
-			"Lucas"
+			"Lucas",
+			"LeGuyanaisPure"
 		]
 	},
 	"tog-underline": "Souliyen lyen yo :",
@@ -843,8 +844,8 @@
 	"whatlinkshere": "Paj ki gen lyen vè paj sa a",
 	"whatlinkshere-title": "Paj ki genyen lyen ki ap mennen nan \"$1\"",
 	"whatlinkshere-page": "Paj :",
-	"linkshere": "Paj yo ki anba ap mene nan <b>[[:$1]]</b> :",
-	"nolinkshere": "Pyès paj genyen lyen pou paj sa a <b>[[:$1]]</b>.",
+	"linkshere": "Paj yo ki anba ap mene nan <b>$2</b> :",
+	"nolinkshere": "Pyès paj genyen lyen pou paj sa a <b>$2</b>.",
 	"isredirect": "paj redireksyon",
 	"istemplate": "anndan",
 	"isimage": "lyen fichye a",

@@ -4,7 +4,7 @@
 			"Pyt"
 		]
 	},
-	"cite-desc": "Föiget foar Wällenätterwiese do <nowiki><ref[ name=id]></nowiki> un <nowiki><references/></nowiki> Tags tou",
+	"cite-desc": "Föiget foar Wällenätterwiese do <code><nowiki><ref[ name=id]></nowiki></code> un <code><nowiki><references/></nowiki></code> Tags tou",
 	"cite_error": "Referenz-Failer $1",
 	"cite_error_ref_numeric_key": "Uungultige <code><nowiki><ref></nowiki></code>-Ferweendenge: „name“ duur naan skeenen Taalenwäid weese, benutsje n beskrieuwenden Noome.",
 	"cite_error_ref_no_key": "Uungultige <code><nowiki><ref></nowiki></code>-Ferweendenge: „ref“ sunner Inhoold mout n Noome hääbe.",

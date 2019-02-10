@@ -21,6 +21,8 @@
  * @ingroup Deployment
  */
 
+use MediaWiki\MediaWikiServices;
+
 /**
  * Class for the core installer web interface.
  *
@@ -166,18 +168,7 @@ class WebInstaller extends Installer {
 		if ( ( $this->getVar( '_InstallDone' ) || $this->getVar( '_UpgradeDone' ) )
 			&& $this->request->getVal( 'localsettings' )
 		) {
-			$this->request->response()->header( 'Content-type: application/x-httpd-php' );
-			$this->request->response()->header(
-				'Content-Disposition: attachment; filename="LocalSettings.php"'
-			);
-
-			$ls = InstallerOverrides::getLocalSettingsGenerator( $this );
-			$rightsProfile = $this->rightsProfiles[$this->getVar( '_RightsProfile' )];
-			foreach ( $rightsProfile as $group => $rightsArr ) {
-				$ls->setGroupRights( $group, $rightsArr );
-			}
-			echo $ls->getText();
-
+			$this->outputLS();
 			return $this->session;
 		}
 
@@ -472,7 +463,7 @@ class WebInstaller extends Installer {
 	 * Get a session variable.
 	 *
 	 * @param string $name
-	 * @param array $default
+	 * @param array|null $default
 	 *
 	 * @return array
 	 */
@@ -511,14 +502,14 @@ class WebInstaller extends Installer {
 
 		if ( $this->getSession( 'test' ) === null && !$this->request->wasPosted() ) {
 			$wgLanguageCode = $this->getAcceptLanguage();
-			$wgLang = $wgContLang = Language::factory( $wgLanguageCode );
+			$wgLang = Language::factory( $wgLanguageCode );
 			RequestContext::getMain()->setLanguage( $wgLang );
 			$this->setVar( 'wgLanguageCode', $wgLanguageCode );
 			$this->setVar( '_UserLang', $wgLanguageCode );
 		} else {
 			$wgLanguageCode = $this->getVar( 'wgLanguageCode' );
-			$wgContLang = Language::factory( $wgLanguageCode );
 		}
+		$wgContLang = MediaWikiServices::getInstance()->getContentLanguage();
 	}
 
 	/**
@@ -529,7 +520,7 @@ class WebInstaller extends Installer {
 	public function getAcceptLanguage() {
 		global $wgLanguageCode, $wgRequest;
 
-		$mwLanguages = Language::fetchLanguageNames();
+		$mwLanguages = Language::fetchLanguageNames( null, 'mwfile' );
 		$headerLanguages = array_keys( $wgRequest->getAcceptLang() );
 
 		foreach ( $headerLanguages as $lang ) {
@@ -717,7 +708,7 @@ class WebInstaller extends Installer {
 	 */
 	public function showHelpBox( $msg /*, ... */ ) {
 		$args = func_get_args();
-		$html = call_user_func_array( [ $this, 'getHelpBox' ], $args );
+		$html = $this->getHelpBox( ...$args );
 		$this->output->addHTML( $html );
 	}
 
@@ -742,7 +733,7 @@ class WebInstaller extends Installer {
 	public function showStatusMessage( Status $status ) {
 		$errors = array_merge( $status->getErrorsArray(), $status->getWarningsArray() );
 		foreach ( $errors as $error ) {
-			call_user_func_array( [ $this, 'showMessage' ], $error );
+			$this->showMessage( ...$error );
 		}
 	}
 
@@ -758,7 +749,7 @@ class WebInstaller extends Installer {
 	 */
 	public function label( $msg, $forId, $contents, $helpData = "" ) {
 		if ( strval( $msg ) == '' ) {
-			$labelText = '&#160;';
+			$labelText = "\u{00A0}";
 		} else {
 			$labelText = wfMessage( $msg )->escaped();
 		}
@@ -1047,7 +1038,7 @@ class WebInstaller extends Installer {
 
 			$items[$value] =
 				Xml::radio( $params['controlName'], $value, $checked, $itemAttribs ) .
-				'&#160;' .
+				"\u{00A0}" .
 				Xml::tags( 'label', [ 'for' => $id ], $this->parse(
 					isset( $params['itemLabels'] ) ?
 						wfMessage( $params['itemLabels'][$value] )->plain() :
@@ -1121,13 +1112,13 @@ class WebInstaller extends Installer {
 	 * @return string
 	 */
 	protected function getDocUrl( $page ) {
-		$url = "{$_SERVER['PHP_SELF']}?page=" . urlencode( $page );
+		$query = [ 'page' => $page ];
 
 		if ( in_array( $this->currentPageName, $this->pageSequence ) ) {
-			$url .= '&lastPage=' . urlencode( $this->currentPageName );
+			$query['lastPage'] = $this->currentPageName;
 		}
 
-		return $url;
+		return $this->getUrl( $query );
 	}
 
 	/**
@@ -1142,9 +1133,7 @@ class WebInstaller extends Installer {
 	public function docLink( $linkText, $attribs, $parser ) {
 		$url = $this->getDocUrl( $attribs['href'] );
 
-		return '<a href="' . htmlspecialchars( $url ) . '">' .
-			htmlspecialchars( $linkText ) .
-			'</a>';
+		return Html::element( 'a', [ 'href' => $url ], $linkText );
 	}
 
 	/**
@@ -1231,6 +1220,25 @@ class WebInstaller extends Installer {
 	 */
 	protected function envGetDefaultServer() {
 		return WebRequest::detectServer();
+	}
+
+	/**
+	 * Actually output LocalSettings.php for download
+	 *
+	 * @suppress SecurityCheck-XSS
+	 */
+	private function outputLS() {
+		$this->request->response()->header( 'Content-type: application/x-httpd-php' );
+		$this->request->response()->header(
+			'Content-Disposition: attachment; filename="LocalSettings.php"'
+		);
+
+		$ls = InstallerOverrides::getLocalSettingsGenerator( $this );
+		$rightsProfile = $this->rightsProfiles[$this->getVar( '_RightsProfile' )];
+		foreach ( $rightsProfile as $group => $rightsArr ) {
+			$ls->setGroupRights( $group, $rightsArr );
+		}
+		echo $ls->getText();
 	}
 
 	/**

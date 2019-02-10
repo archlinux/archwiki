@@ -21,6 +21,8 @@
  * @ingroup SpecialPage
  */
 
+use MediaWiki\MediaWikiServices;
+
 /**
  * This special page lists all defined user groups and the associated rights.
  * See also @ref $wgGroupPermissions.
@@ -74,9 +76,7 @@ class SpecialListGroupRights extends SpecialPage {
 		$linkRenderer = $this->getLinkRenderer();
 
 		foreach ( $allGroups as $group ) {
-			$permissions = isset( $groupPermissions[$group] )
-				? $groupPermissions[$group]
-				: [];
+			$permissions = $groupPermissions[$group] ?? [];
 			$groupname = ( $group == '*' ) // Replace * with a more descriptive groupname
 				? 'all'
 				: $group;
@@ -114,13 +114,11 @@ class SpecialListGroupRights extends SpecialPage {
 				$grouplink = '';
 			}
 
-			$revoke = isset( $revokePermissions[$group] ) ? $revokePermissions[$group] : [];
-			$addgroups = isset( $addGroups[$group] ) ? $addGroups[$group] : [];
-			$removegroups = isset( $removeGroups[$group] ) ? $removeGroups[$group] : [];
-			$addgroupsSelf = isset( $groupsAddToSelf[$group] ) ? $groupsAddToSelf[$group] : [];
-			$removegroupsSelf = isset( $groupsRemoveFromSelf[$group] )
-				? $groupsRemoveFromSelf[$group]
-				: [];
+			$revoke = $revokePermissions[$group] ?? [];
+			$addgroups = $addGroups[$group] ?? [];
+			$removegroups = $removeGroups[$group] ?? [];
+			$addgroupsSelf = $groupsAddToSelf[$group] ?? [];
+			$removegroupsSelf = $groupsRemoveFromSelf[$group] ?? [];
 
 			$id = $group == '*' ? false : Sanitizer::escapeIdForAttribute( $group );
 			$out->addHTML( Html::rawElement( 'tr', [ 'id' => $id ], "
@@ -137,7 +135,6 @@ class SpecialListGroupRights extends SpecialPage {
 	}
 
 	private function outputNamespaceProtectionInfo() {
-		global $wgContLang;
 		$out = $this->getOutput();
 		$namespaceProtection = $this->getConfig()->get( 'NamespaceProtection' );
 
@@ -165,15 +162,17 @@ class SpecialListGroupRights extends SpecialPage {
 		);
 		$linkRenderer = $this->getLinkRenderer();
 		ksort( $namespaceProtection );
+		$validNamespaces = MWNamespace::getValidNamespaces();
+		$contLang = MediaWikiServices::getInstance()->getContentLanguage();
 		foreach ( $namespaceProtection as $namespace => $rights ) {
-			if ( !in_array( $namespace, MWNamespace::getValidNamespaces() ) ) {
+			if ( !in_array( $namespace, $validNamespaces ) ) {
 				continue;
 			}
 
 			if ( $namespace == NS_MAIN ) {
 				$namespaceText = $this->msg( 'blanknamespace' )->text();
 			} else {
-				$namespaceText = $wgContLang->convertNamespace( $namespace );
+				$namespaceText = $contLang->convertNamespace( $namespace );
 			}
 
 			$out->addHTML(

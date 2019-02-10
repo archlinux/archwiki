@@ -13,8 +13,8 @@
 		]
 	},
 	"renameuser": "Käyttäjätunnuksen vaihto",
-	"renameuser-linkoncontribs": "nimeä käyttäjä uudelleen",
-	"renameuser-linkoncontribs-text": "Nimeä tämä käyttäjä uudelleen",
+	"renameuser-linkoncontribs": "nimeä {{GENDER:$1|käyttäjä}} uudelleen",
+	"renameuser-linkoncontribs-text": "Nimeä tämä {{GENDER:$1|käyttäjä}} uudelleen",
 	"renameuser-desc": "Mahdollistaa käyttäjän uudelleennimeämisen (vaatii ''renameuser''-oikeudet).",
 	"renameuserold": "Nykyinen tunnus",
 	"renameusernew": "Uusi tunnus",

@@ -21,6 +21,8 @@
  * @ingroup SpecialPage
  */
 
+use Wikimedia\Timestamp\TimestampException;
+
 /**
  * A special page that lists log entries
  *
@@ -46,6 +48,7 @@ class SpecialLog extends SpecialPage {
 		$opts->add( 'pattern', false );
 		$opts->add( 'year', null, FormOptions::INTNULL );
 		$opts->add( 'month', null, FormOptions::INTNULL );
+		$opts->add( 'day', null, FormOptions::INTNULL );
 		$opts->add( 'tagfilter', '' );
 		$opts->add( 'offset', '' );
 		$opts->add( 'dir', '' );
@@ -57,6 +60,23 @@ class SpecialLog extends SpecialPage {
 		$opts->fetchValuesFromRequest( $this->getRequest() );
 		if ( $par !== null ) {
 			$this->parseParams( $opts, (string)$par );
+		}
+
+		// Set date values
+		$dateString = $this->getRequest()->getVal( 'wpdate' );
+		if ( !empty( $dateString ) ) {
+			try {
+				$dateStamp = MWTimestamp::getInstance( $dateString . ' 00:00:00' );
+			} catch ( TimestampException $e ) {
+				// If users provide an invalid date, silently ignore it
+				// instead of letting an exception bubble up (T201411)
+				$dateStamp = false;
+			}
+			if ( $dateStamp ) {
+				$opts->setValue( 'year', (int)$dateStamp->format( 'Y' ) );
+				$opts->setValue( 'month', (int)$dateStamp->format( 'm' ) );
+				$opts->setValue( 'day', (int)$dateStamp->format( 'd' ) );
+			}
 		}
 
 		# Don't let the user get stuck with a certain date
@@ -84,30 +104,12 @@ class SpecialLog extends SpecialPage {
 			$offenderName = $opts->getValue( 'offender' );
 			$offender = empty( $offenderName ) ? null : User::newFromName( $offenderName, false );
 			if ( $offender ) {
-				if ( $wgActorTableSchemaMigrationStage === MIGRATION_NEW ) {
+				if ( $wgActorTableSchemaMigrationStage & SCHEMA_COMPAT_READ_NEW ) {
 					$qc = [ 'ls_field' => 'target_author_actor', 'ls_value' => $offender->getActorId() ];
+				} elseif ( $offender->getId() > 0 ) {
+					$qc = [ 'ls_field' => 'target_author_id', 'ls_value' => $offender->getId() ];
 				} else {
-					if ( $offender->getId() > 0 ) {
-						$field = 'target_author_id';
-						$value = $offender->getId();
-					} else {
-						$field = 'target_author_ip';
-						$value = $offender->getName();
-					}
-					if ( !$offender->getActorId() ) {
-						$qc = [ 'ls_field' => $field, 'ls_value' => $value ];
-					} else {
-						$db = wfGetDB( DB_REPLICA );
-						$qc = [
-							'ls_field' => [ 'target_author_actor', $field ], // So LogPager::getQueryInfo() works right
-							$db->makeList( [
-								$db->makeList(
-									[ 'ls_field' => 'target_author_actor', 'ls_value' => $offender->getActorId() ], LIST_AND
-								),
-								$db->makeList( [ 'ls_field' => $field, 'ls_value' => $value ], LIST_AND ),
-							], LIST_OR ),
-						];
-					}
+					$qc = [ 'ls_field' => 'target_author_ip', 'ls_value' => $offender->getName() ];
 				}
 			}
 		} else {
@@ -164,7 +166,7 @@ class SpecialLog extends SpecialPage {
 	 * @return string[] subpages
 	 */
 	public function getSubpagesForPrefixSearch() {
-		$subpages = $this->getConfig()->get( 'LogTypes' );
+		$subpages = LogPage::validTypes();
 		$subpages[] = 'all';
 		sort( $subpages );
 		return $subpages;
@@ -186,7 +188,7 @@ class SpecialLog extends SpecialPage {
 		$parms = explode( '/', $par );
 		$symsForAll = [ '*', 'all' ];
 		if ( $parms[0] != '' &&
-			( in_array( $par, $this->getConfig()->get( 'LogTypes' ) ) || in_array( $par, $symsForAll ) )
+			( in_array( $par, LogPage::validTypes() ) || in_array( $par, $symsForAll ) )
 		) {
 			$opts->setValue( 'type', $par );
 		} elseif ( count( $parms ) == 2 ) {
@@ -214,6 +216,7 @@ class SpecialLog extends SpecialPage {
 			$extraConds,
 			$opts->getValue( 'year' ),
 			$opts->getValue( 'month' ),
+			$opts->getValue( 'day' ),
 			$opts->getValue( 'tagfilter' ),
 			$opts->getValue( 'subtype' ),
 			$opts->getValue( 'logid' )
@@ -235,6 +238,7 @@ class SpecialLog extends SpecialPage {
 			$pager->getPattern(),
 			$pager->getYear(),
 			$pager->getMonth(),
+			$pager->getDay(),
 			$pager->getFilterParams(),
 			$pager->getTagFilter(),
 			$pager->getAction()

@@ -18,7 +18,7 @@
 	"oathauth-disabledoath": "Desactivada la identificación de dos factores.",
 	"oathauth-prefs-label": "Identificación de dos factores:",
 	"oathauth-step1": "Pasu 1: Descargar un programa d'identificación en dos pasos",
-	"oathauth-step1-test": "Descarga un programa pa identificación en dos pasos. Pué ser una aplicación pa móvil (como Google Authenticator) o d'escritoriu.",
+	"oathauth-step1-test": "Descarga un programa pa identificación en dos pasos. Puede ser una aplicación pa móvil (como Google Authenticator) o d'escritoriu.",
 	"oathauth-step2": "Pasu 2: escanea'l códigu QR",
 	"oathauth-step2alt": "O escribe'l códigu secretu manualmente:",
 	"oathauth-step3": "Pasu 3: Apunta los códigos",

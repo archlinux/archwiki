@@ -9,7 +9,7 @@
 			"Bugoslav"
 		]
 	},
-	"cite-desc": "Dodaje <nowiki><ref[ name=id]></nowiki> i <nowiki><references/></nowiki> oznake, za citiranje",
+	"cite-desc": "Dodaje <code><nowiki><ref[ name=id]></nowiki></code> i <code><nowiki><references/></nowiki></code> oznake, za citiranje",
 	"cite_error": "Pogrješka u citiranju: $1",
 	"cite_error_ref_numeric_key": "nevaljana <code>&lt;ref&gt;</code> oznaka; naziv ne smije biti jednostavni broj, koristite opisni naziv",
 	"cite_error_ref_no_key": "nevaljana <code>&lt;ref&gt;</code> oznaka; izvori bez sadržaja moraju imati naziv",

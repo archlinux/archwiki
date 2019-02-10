@@ -6,9 +6,9 @@
 		]
 	},
 	"AutoloadClasses": {
-		"ReCaptchaNoCaptcha": "ReCaptchaNoCaptcha.class.php",
-		"HTMLReCaptchaNoCaptchaField": "HTMLReCaptchaNoCaptchaField.php",
-		"ReCaptchaNoCaptchaAuthenticationRequest": "ReCaptchaNoCaptchaAuthenticationRequest.php"
+		"ReCaptchaNoCaptcha": "includes/ReCaptchaNoCaptcha.php",
+		"HTMLReCaptchaNoCaptchaField": "includes/HTMLReCaptchaNoCaptchaField.php",
+		"ReCaptchaNoCaptchaAuthenticationRequest": "includes/ReCaptchaNoCaptchaAuthenticationRequest.php"
 	},
 	"config": {
 		"CaptchaClass": "ReCaptchaNoCaptcha",

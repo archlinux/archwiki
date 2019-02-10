@@ -244,11 +244,11 @@
 			calledSelect = true;
 		};
 
-		assert.ok( !embed.embedFileInfo, 'embedFileInfo not set yet.' );
+		assert.notOk( embed.embedFileInfo, 'embedFileInfo not set yet.' );
 
 		embed.set( { width: width, height: height }, embedFileInfo );
 
-		assert.ok( embed.embedFileInfo, 'embedFileInfo correctly set.' );
+		assert.ok( embed.embedFileInfo, 'embedFileInfo set.' );
 		assert.strictEqual( embed.isSizeMenuDefaultReset, false, 'Reset flag cleared.' );
 		assert.strictEqual( calledSelect, true, 'select() is called' );
 	} );
@@ -274,8 +274,8 @@
 
 		assert.strictEqual( embed.embedTextHtml.getValue(), '', 'embedTextHtml is empty.' );
 		assert.strictEqual( embed.embedTextWikitext.getValue(), '', 'embedTextWikitext is empty.' );
-		assert.ok( !embed.embedSizeSwitchHtml.getMenu().isVisible(), 'Html size menu should be hidden.' );
-		assert.ok( !embed.embedSizeSwitchWikitext.getMenu().isVisible(), 'Wikitext size menu should be hidden.' );
+		assert.strictEqual( embed.embedSizeSwitchHtml.getMenu().isVisible(), false, 'Html size menu should be hidden.' );
+		assert.strictEqual( embed.embedSizeSwitchWikitext.getMenu().isVisible(), false, 'Wikitext size menu should be hidden.' );
 	} );
 
 	QUnit.test( 'attach()/unattach():', function ( assert ) {
@@ -366,7 +366,7 @@
 		embed.handleTypeSwitch( { getData: function () { return 'html'; } } );
 
 		assert.strictEqual( embed.isSizeMenuDefaultReset, true, 'Reset flag updated correctly.' );
-		assert.ok( !embed.embedSizeSwitchWikitext.getMenu().isVisible(), 'Wikitext size menu should be hidden.' );
+		assert.strictEqual( embed.embedSizeSwitchWikitext.getMenu().isVisible(), false, 'Wikitext size menu should be hidden.' );
 
 		embed.resetCurrentSizeMenuToDefault = function () {
 			assert.ok( false, 'resetCurrentSizeMenuToDefault() should not have been called.' );
@@ -376,7 +376,7 @@
 		embed.handleTypeSwitch( { getData: function () { return 'wikitext'; } } );
 
 		assert.strictEqual( embed.isSizeMenuDefaultReset, true, 'Reset flag updated correctly.' );
-		assert.ok( !embed.embedSizeSwitchHtml.getMenu().isVisible(), 'HTML size menu should be hidden.' );
+		assert.strictEqual( embed.embedSizeSwitchHtml.getMenu().isVisible(), false, 'HTML size menu should be hidden.' );
 	} );
 
 	QUnit.test( 'Logged out', function ( assert ) {
@@ -387,10 +387,10 @@
 
 		embed = new mw.mmv.ui.reuse.Embed( $qf );
 
-		assert.ok( !embed.embedSizeSwitchWikitext.$element.hasClass( 'active' ), 'Wikitext widget should be hidden.' );
-		assert.ok( embed.embedSizeSwitchHtml.$element.hasClass( 'active' ), 'HTML widget should be visible.' );
-		assert.ok( !embed.embedTextWikitext.$element.hasClass( 'active' ), 'Wikitext input should be hidden.' );
-		assert.ok( embed.embedTextHtml.$element.hasClass( 'active' ), 'HTML input should be visible.' );
+		assert.strictEqual( embed.embedSizeSwitchWikitext.$element.hasClass( 'active' ), false, 'Wikitext widget should be hidden.' );
+		assert.strictEqual( embed.embedSizeSwitchHtml.$element.hasClass( 'active' ), true, 'HTML widget should be visible.' );
+		assert.strictEqual( embed.embedTextWikitext.$element.hasClass( 'active' ), false, 'Wikitext input should be hidden.' );
+		assert.strictEqual( embed.embedTextHtml.$element.hasClass( 'active' ), true, 'HTML input should be visible.' );
 
 		mw.user.isAnon = oldUserIsAnon;
 	} );

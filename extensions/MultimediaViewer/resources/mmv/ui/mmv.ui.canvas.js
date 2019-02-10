@@ -389,7 +389,7 @@
 					)
 				)
 			);
-		this.$imageDiv.find( '.mw-mmv-retry-link' ).click( function () {
+		this.$imageDiv.find( '.mw-mmv-retry-link' ).on( 'click', function () {
 			location.reload();
 		} );
 	};

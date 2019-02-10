@@ -14,5 +14,6 @@
 	"fancycaptcha-sendemail": "Pe' ve putè pruteggere 'a wiki annanz'a coccheruno ca facesse spam c' 'o computer, pe' piacere mettite ccà abbascio int' 'a casciulella 'e parole ccà ([[Special:Captcha/help|cchiù nfurmaziune]]):",
 	"fancycaptcha-reload-text": "Agghiuorna",
 	"apihelp-fancycaptchareload-description": "Pigliateve nu FancyCaptcha nuovo.",
+	"apihelp-fancycaptchareload-summary": "Pigliateve nu FancyCaptcha nuovo.",
 	"apihelp-fancycaptchareload-example-1": "Pigliateve nu FancyCaptcha nuovo"
 }

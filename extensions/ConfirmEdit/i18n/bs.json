@@ -9,7 +9,7 @@
 			"Srdjan m"
 		]
 	},
-	"captcha-edit": "Da biste uredili ovu stranicu, riješite sljedeći zadatak ispod i upišite odgovor u kutiju  ([[Special:Captcha/help|detaljnije]]):",
+	"captcha-edit": "Da biste izmijenili ovu stranicu, riješite sljedeći zadatak ispod i upišite odgovor u kutiju  ([[Special:Captcha/help|detaljnije]]):",
 	"captcha-desc": "Omogućava CAPTCHA tehnike za zaštitu protiv spama i probijanja šifre",
 	"captcha-label": "CAPTCHA",
 	"captcha-addurl": "Vaša izmjena sadrži nove vanjske linkove.\nU cilju zaštite wikija od automatiziranog neželjenog sadržaja, molimo Vas da riješite naredni zadatak ispod i upišete rezultat u kutiju da biste sačuvali izmjenu ([[Special:Captcha/help|detaljnije]]):",

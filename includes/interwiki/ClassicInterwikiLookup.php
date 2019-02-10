@@ -53,7 +53,7 @@ class ClassicInterwikiLookup implements InterwikiLookup {
 	/**
 	 * @var Language
 	 */
-	private $contentLanguage;
+	private $contLang;
 
 	/**
 	 * @var WANObjectCache
@@ -91,7 +91,7 @@ class ClassicInterwikiLookup implements InterwikiLookup {
 	private $thisSite = null;
 
 	/**
-	 * @param Language $contentLanguage Language object used to convert prefixes to lower case
+	 * @param Language $contLang Language object used to convert prefixes to lower case
 	 * @param WANObjectCache $objectCache Cache for interwiki info retrieved from the database
 	 * @param int $objectCacheExpiry Expiry time for $objectCache, in seconds
 	 * @param bool|array|string $cdbData The path of a CDB file, or
@@ -104,7 +104,7 @@ class ClassicInterwikiLookup implements InterwikiLookup {
 	 * @param string $fallbackSite The code to assume for the local site,
 	 */
 	function __construct(
-		Language $contentLanguage,
+		Language $contLang,
 		WANObjectCache $objectCache,
 		$objectCacheExpiry,
 		$cdbData,
@@ -113,7 +113,7 @@ class ClassicInterwikiLookup implements InterwikiLookup {
 	) {
 		$this->localCache = new MapCacheLRU( 100 );
 
-		$this->contentLanguage = $contentLanguage;
+		$this->contLang = $contLang;
 		$this->objectCache = $objectCache;
 		$this->objectCacheExpiry = $objectCacheExpiry;
 		$this->cdbData = $cdbData;
@@ -144,7 +144,7 @@ class ClassicInterwikiLookup implements InterwikiLookup {
 			return null;
 		}
 
-		$prefix = $this->contentLanguage->lc( $prefix );
+		$prefix = $this->contLang->lc( $prefix );
 		if ( $this->localCache->has( $prefix ) ) {
 			return $this->localCache->get( $prefix );
 		}
@@ -279,10 +279,11 @@ class ClassicInterwikiLookup implements InterwikiLookup {
 			}
 		}
 
+		$fname = __METHOD__;
 		$iwData = $this->objectCache->getWithSetCallback(
 			$this->objectCache->makeKey( 'interwiki', $prefix ),
 			$this->objectCacheExpiry,
-			function ( $oldValue, &$ttl, array &$setOpts ) use ( $prefix ) {
+			function ( $oldValue, &$ttl, array &$setOpts ) use ( $prefix, $fname ) {
 				$dbr = wfGetDB( DB_REPLICA ); // TODO: inject LoadBalancer
 
 				$setOpts += Database::getCacheSetOptions( $dbr );
@@ -291,7 +292,7 @@ class ClassicInterwikiLookup implements InterwikiLookup {
 					'interwiki',
 					self::selectFields(),
 					[ 'iw_prefix' => $prefix ],
-					__METHOD__
+					$fname
 				);
 
 				return $row ? (array)$row : '!NONEXISTENT';
@@ -314,10 +315,10 @@ class ClassicInterwikiLookup implements InterwikiLookup {
 	private function loadFromArray( $mc ) {
 		if ( isset( $mc['iw_url'] ) ) {
 			$url = $mc['iw_url'];
-			$local = isset( $mc['iw_local'] ) ? $mc['iw_local'] : 0;
-			$trans = isset( $mc['iw_trans'] ) ? $mc['iw_trans'] : 0;
-			$api = isset( $mc['iw_api'] ) ? $mc['iw_api'] : '';
-			$wikiId = isset( $mc['iw_wikiid'] ) ? $mc['iw_wikiid'] : '';
+			$local = $mc['iw_local'] ?? 0;
+			$trans = $mc['iw_trans'] ?? 0;
+			$api = $mc['iw_api'] ?? '';
+			$wikiId = $mc['iw_wikiid'] ?? '';
 
 			return new Interwiki( null, $url, $api, $wikiId, $local, $trans );
 		}

@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Bua333",
-			"Mucalexx"
+			"Mucalexx",
+			"Joe Watzmo"
 		]
 	},
 	"vector-action-addsection": "An Obschnitt dazua doa",
@@ -15,5 +16,6 @@
 	"vector-view-edit": "Werkln",
 	"vector-view-history": "Gschicht oschaugn",
 	"vector-view-view": "Lesn",
-	"vector-view-viewsource": "Quejtext ozoagn"
+	"vector-view-viewsource": "Quejtext ozoagn",
+	"vector-more-actions": "Meara"
 }

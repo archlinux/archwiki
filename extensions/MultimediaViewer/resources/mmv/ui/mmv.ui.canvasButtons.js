@@ -92,15 +92,15 @@
 			buttons.$nav.addClass( 'disabled' );
 		} );
 
-		this.$close.click( function () {
+		this.$close.on( 'click', function () {
 			$container.trigger( $.Event( 'mmv-close' ) );
 		} );
 
-		this.$next.click( function () {
+		this.$next.on( 'click', function () {
 			buttons.emit( 'next' );
 		} );
 
-		this.$prev.click( function () {
+		this.$prev.on( 'click', function () {
 			buttons.emit( 'prev' );
 		} );
 	}

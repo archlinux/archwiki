@@ -158,34 +158,34 @@ Demo.DialogWithDropdowns.prototype.initialize = function () {
 				}
 			} ), $spacer.clone() ]
 		} ),
-		new Demo.SamplePage( 'capsulemenu', {
-			label: 'CapsuleMultiselectWidget (menu)',
-			content: [ $spacer.clone(), new OO.ui.CapsuleMultiselectWidget( {
+		new Demo.SamplePage( 'tagmenu', {
+			label: 'TagMultiselectWidget (menu)',
+			content: [ $spacer.clone(), new OO.ui.MenuTagMultiselectWidget( {
 				$overlay: this.$overlay,
 				menu: {
 					items: this.makeItems()
 				}
 			} ), $spacer.clone() ]
 		} ),
-		new Demo.SamplePage( 'capsulemenu2', {
-			label: 'CapsuleMultiselectWidget (menu)',
+		new Demo.SamplePage( 'tagmenu2', {
+			label: 'TagMultiselectWidget (menu)',
 			icon: 'alert',
-			content: [ $spacer.clone(), new OO.ui.CapsuleMultiselectWidget( {
+			content: [ $spacer.clone(), new OO.ui.MenuTagMultiselectWidget( {
 				menu: {
 					items: this.makeItems()
 				}
 			} ), $spacer.clone() ]
 		} ),
-		new Demo.SamplePage( 'capsulepopup', {
-			label: 'CapsuleMultiselectWidget (popup)',
-			content: [ $spacer.clone(), new Demo.CapsuleNumberPopupMultiselectWidget( {
+		new Demo.SamplePage( 'tagpopup', {
+			label: 'TagMultiselectWidget (popup)',
+			content: [ $spacer.clone(), new Demo.TagNumberPopupMultiselectWidget( {
 				$overlay: this.$overlay
 			} ), $spacer.clone() ]
 		} ),
-		new Demo.SamplePage( 'capsulepopup2', {
-			label: 'CapsuleMultiselectWidget (popup)',
+		new Demo.SamplePage( 'tagpopup2', {
+			label: 'TagMultiselectWidget (popup)',
 			icon: 'alert',
-			content: [ $spacer.clone(), new Demo.CapsuleNumberPopupMultiselectWidget(), $spacer.clone() ]
+			content: [ $spacer.clone(), new Demo.TagNumberPopupMultiselectWidget(), $spacer.clone() ]
 		} )
 	];
 	this.bookletLayout.on( 'set', function ( page ) {

@@ -15,5 +15,6 @@
 	"fancycaptcha-sendemail": "Po s' mete a houte des robots di spam, nos vs dimandans d' acertiner ki vos estoz bén ene djin, po çoula tapez les mots k' aparexhèt chal pa dzo ([[Special:Captcha/help|pus di racsegnes]]):",
 	"fancycaptcha-reload-text": "Rafrister",
 	"apihelp-fancycaptchareload-description": "Vey èn ôte FancyCaptcha.",
+	"apihelp-fancycaptchareload-summary": "Vey èn ôte FancyCaptcha.",
 	"apihelp-fancycaptchareload-example-1": "Vey èn ôte FancyCaptcha"
 }

@@ -3,7 +3,8 @@
 		"authors": [
 			"Songhay",
 			"Macofe",
-			"Matma Rex"
+			"Matma Rex",
+			"Fitoschido"
 		]
 	},
 	"tog-underline": "Dobu ganda-žeeriyan:",
@@ -1418,7 +1419,7 @@
 	"statistics-files": "Tuku zijantey",
 	"statistics-edits": "Moo barmawey za {{SITENAME}}  n' ka gorandi",
 	"statistics-edits-average": "Sasawandi barmaney moo foo kul se",
-	"statistics-users": "Maa-hantumante [[Special:ListUsers|goykey]]",
+	"statistics-users": "Maa-hantumante goykey",
 	"statistics-users-active": "Goykaw kaŋ goo mee ra",
 	"statistics-users-active-desc": "Goykey kaŋ na teera foo timmandi {{PLURAL:$1|zaari $1}} koraw ra",
 	"pageswithprop": "Moɲoo kaŋ goo nda moo mayray",
@@ -1848,9 +1849,9 @@
 	"whatlinkshere": "Kaŋ ga dobu ne",
 	"whatlinkshere-title": "Moɲey kaŋ ga dobu \"$1\" ga",
 	"whatlinkshere-page": "Moo:",
-	"linkshere": "Moɲey wey ga dobu <strong>[[:$1]]</strong> ga:",
-	"nolinkshere": "Mooyaŋ kul ši dobu <strong>[[:$1]]</strong> ga.",
-	"nolinkshere-ns": "Mooyaŋ kul ši dobu <strong>[[:$1]]</strong> ga maafarru suubantaa ra.",
+	"linkshere": "Moɲey wey ga dobu <strong>$2</strong> ga:",
+	"nolinkshere": "Mooyaŋ kul ši dobu <strong>$2</strong> ga.",
+	"nolinkshere-ns": "Mooyaŋ kul ši dobu <strong>$2</strong> ga maafarru suubantaa ra.",
 	"isredirect": "moo kuubi",
 	"istemplate": "kanandiyan",
 	"isimage": "tuku dobu",
@@ -2291,7 +2292,6 @@
 	"markedaspatrollederrornotify": "Goo ma šilbay kaŋ a ga kurandi.",
 	"patrol-log-page": "Kuryan taariki",
 	"patrol-log-header": "Woo ti filla kurantey taarikoo.",
-	"log-show-hide-patrol": "kuryan taariki $1",
 	"deletedrevision": "Filla žeena tuusante $1",
 	"filedeleteerror-short": "Tuku tuusuyan firka: $1",
 	"filedeleteerror-long": "Firkayaŋ bangay tukoo tuusuyanoo waate:\n\n$1",
@@ -3003,6 +3003,7 @@
 	"fileduplicatesearch-noresults": "Tuku kul ši bara nda \"$1\" maa.  \\",
 	"specialpages": "Moo cerecerantey",
 	"specialpages-note-top": "Šilbaymaana",
+	"specialpages-note-restricted": "* Hankul cerecere moɲey.\n* <span class=\"mw-specialpagerestricted\">Fondo-kankamante cerecere moɲey.</span>",
 	"specialpages-group-maintenance": "Alhaadimay bayrandey",
 	"specialpages-group-other": "Cerecere moo taney",
 	"specialpages-group-login": "Huru / kontu tee",

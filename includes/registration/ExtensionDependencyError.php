@@ -49,6 +49,16 @@ class ExtensionDependencyError extends Exception {
 	public $incompatibleCore = false;
 
 	/**
+	 * @var bool
+	 */
+	public $incompatiblePhp = false;
+
+	/**
+	 * @var string[]
+	 */
+	public $missingPhpExtensions = [];
+
+	/**
 	 * @param array $errors Each error has a 'msg' and 'type' key at minimum
 	 */
 	public function __construct( array $errors ) {
@@ -58,6 +68,12 @@ class ExtensionDependencyError extends Exception {
 			switch ( $info['type'] ) {
 				case 'incompatible-core':
 					$this->incompatibleCore = true;
+					break;
+				case 'incompatible-php':
+					$this->incompatiblePhp = true;
+					break;
+				case 'missing-phpExtension':
+					$this->missingPhpExtensions[] = $info['missing'];
 					break;
 				case 'missing-skins':
 					$this->missingSkins[] = $info['missing'];

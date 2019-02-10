@@ -23,7 +23,18 @@ class ConfirmEditHooks {
 		return $wgCaptcha;
 	}
 
-	static function confirmEditMerged( $context, $content, $status, $summary, $user, $minorEdit ) {
+	/**
+	 * @param RequestContext $context
+	 * @param Content $content
+	 * @param Status $status
+	 * @param string $summary
+	 * @param User $user
+	 * @param bool $minorEdit
+	 * @return bool
+	 */
+	public static function confirmEditMerged( $context, $content, $status, $summary, $user,
+		$minorEdit
+	) {
 		return self::getInstance()->confirmEditMerged( $context, $content, $status, $summary,
 			$user, $minorEdit );
 	}
@@ -46,7 +57,7 @@ class ConfirmEditHooks {
 	 *
 	 * @return bool true
 	 */
-	static function onPageContentSaveComplete( WikiPage $wikiPage, User $user, Content $content,
+	public static function onPageContentSaveComplete( WikiPage $wikiPage, User $user, Content $content,
 		$summary, $isMinor, $isWatch, $section, $flags, $revision, Status $status, $baseRevId
 	) {
 		$title = $wikiPage->getTitle();
@@ -58,27 +69,59 @@ class ConfirmEditHooks {
 		return true;
 	}
 
-	static function confirmEditPage( $editpage, $buttons, $tabindex ) {
+	/**
+	 * @param EditPage $editpage
+	 */
+	public static function confirmEditPage( EditPage $editpage ) {
 		self::getInstance()->editShowCaptcha( $editpage );
 	}
 
-	static function showEditFormFields( &$editPage, &$out ) {
+	/**
+	 * @param EditPage &$editPage
+	 * @param OutputPage &$out
+	 */
+	public static function showEditFormFields( &$editPage, &$out ) {
 		self::getInstance()->showEditFormFields( $editPage, $out );
 	}
 
-	static function injectEmailUser( &$form ) {
+	/**
+	 * @param HTMLForm &$form
+	 * @return bool
+	 */
+	public static function injectEmailUser( &$form ) {
 		return self::getInstance()->injectEmailUser( $form );
 	}
 
-	static function confirmEmailUser( $from, $to, $subject, $text, &$error ) {
+	/**
+	 * @param MailAddress $from
+	 * @param MailAddress $to
+	 * @param string $subject
+	 * @param string $text
+	 * @param string &$error
+	 * @return bool
+	 */
+	public static function confirmEmailUser( $from, $to, $subject, $text, &$error ) {
 		return self::getInstance()->confirmEmailUser( $from, $to, $subject, $text, $error );
 	}
 
-	// Default $flags to 1 for backwards-compatible behavior
-	public static function APIGetAllowedParams( &$module, &$params, $flags = 1 ) {
-		return self::getInstance()->APIGetAllowedParams( $module, $params, $flags );
+	/**
+	 * APIGetAllowedParams hook handler
+	 * Default $flags to 1 for backwards-compatible behavior
+	 * @param ApiBase &$module
+	 * @param array &$params
+	 * @param int $flags
+	 * @return bool
+	 */
+	public static function onAPIGetAllowedParams( &$module, &$params, $flags = 1 ) {
+		return self::getInstance()->apiGetAllowedParams( $module, $params, $flags );
 	}
 
+	/**
+	 * @param array $requests
+	 * @param array $fieldInfo
+	 * @param array &$formDescriptor
+	 * @param string $action
+	 */
 	public static function onAuthChangeFormFields(
 		array $requests, array $fieldInfo, array &$formDescriptor, $action
 	) {
@@ -233,7 +276,7 @@ class ConfirmEditHooks {
 					[],
 					// IPv6 max length: 8 groups * 4 digits + 7 delimiter = 39
 					// + 11 chars for safety
-					$lang->truncate( $ip, 50 )
+					$lang->truncateForVisual( $ip, 50 )
 				) .
 				Html::rawElement(
 					'td',

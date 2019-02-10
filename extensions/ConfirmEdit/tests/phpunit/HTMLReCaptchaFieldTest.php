@@ -1,7 +1,5 @@
 <?php
 
-require_once __DIR__ . '/../../ReCaptcha/HTMLReCaptchaField.php';
-
 /**
  * @covers HTMLReCaptchaField
  */
@@ -14,7 +12,8 @@ class HTMLReCaptchaFieldTest extends PHPUnit\Framework\TestCase {
 				'theme' => 'x',
 			],
 		] );
-		$mockClosure = $this->getMockBuilder( 'object' )->setMethods( [ '__invoke' ] )->getMock();
+		$mockClosure = $this->getMockBuilder( stdClass::class )
+			->setMethods( [ '__invoke' ] )->getMock();
 		$mockClosure->expects( $this->once() )->method( '__invoke' )
 			->with( [] )->willReturn( true );
 

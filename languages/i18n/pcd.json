@@ -3,7 +3,8 @@
 		"authors": [
 			"Geoleplubo",
 			"Hercule",
-			"아라"
+			"아라",
+			"Cérilew"
 		]
 	},
 	"tog-underline": "Loïens soulinés:",
@@ -559,7 +560,7 @@
 	"unusedtemplates": "Modèles poin implouéyés",
 	"randompage": "Pache à l'bérlure",
 	"statistics": "Éstatistikes",
-	"statistics-users": "[[Special:ListUsers|Uzeus]] inrégistrés",
+	"statistics-users": "Uzeus inrégistreus",
 	"doubleredirects": "Doubes érdireccions",
 	"brokenredirects": "Érdireccions bérzillées",
 	"withoutinterwiki": "Paches sans loïens intar-langues",
@@ -682,9 +683,9 @@
 	"whatlinkshere": "Cha lie quoé ichi",
 	"whatlinkshere-title": "Paches qu'il ont des loïens aveuc \"$1\"",
 	"whatlinkshere-page": "Pache:",
-	"linkshere": "Chés paches-lo il sont érliées à '''[[:$1]]''':",
-	"nolinkshere": "i n'y o poin d'pache aveuc un loïen vers  '''[[:$1]]'''.",
-	"nolinkshere-ns": "i n'y o poin d'pache aveuc un loïen vers '''[[:$1]]''' dins echl'éspace d'noms coési.",
+	"linkshere": "Chés paches-lo il sont érliées à '''$2''':",
+	"nolinkshere": "i n'y o poin d'pache aveuc un loïen vers  '''$2'''.",
+	"nolinkshere-ns": "i n'y o poin d'pache aveuc un loïen vers '''$2''' dins echl'éspace d'noms coési.",
 	"isredirect": "pache érdirigée",
 	"istemplate": "transclusion",
 	"isimage": "Loïen aveuc l'fichié",
@@ -809,6 +810,7 @@
 	"version-specialpages": "Paches éspéchiales",
 	"fileduplicatesearch": "Dénicher chés doublons",
 	"specialpages": "Paches éspéchiales",
+	"specialpages-note-restricted": "* Paches éspéchiales conformes.\n* <span class=\"mw-specialpagerestricted\">Paches éspéchiales réstrintes.</span>\n* <span class=\"mw-specialpagecached\">Paches éspéchiales seulemint in muche (pétète des viuseries).</span>",
 	"specialpages-group-maintenance": "Rapports d'maintenanche",
 	"specialpages-group-other": "Eutes paches éspéchiales",
 	"specialpages-group-changes": "Darins canjemints pi gazètes",

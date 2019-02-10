@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ninjastrikers"
+			"Ninjastrikers",
+			"Dr Lotus Black"
 		]
 	},
-	"gadgetusage-activeusers": "တက်ကြွသည့် အသုံးပြုသူများ"
+	"gadgetusage-activeusers": "တက်ကြွသည့် အသုံးပြုသူများ",
+	"gadgetusage-default": "နဂိုအတိုင်း"
 }

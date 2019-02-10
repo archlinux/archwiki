@@ -23,6 +23,9 @@
  * @since 1.23
  */
 
+use MediaWiki\MediaWikiServices;
+use MediaWiki\Revision\RevisionRecord;
+
 /**
  * A query module to show contributors to a page
  *
@@ -75,14 +78,15 @@ class ApiQueryContributors extends ApiQueryBase {
 		}
 
 		$result = $this->getResult();
-		$revQuery = Revision::getQueryInfo();
+		$revQuery = MediaWikiServices::getInstance()->getRevisionStore()->getQueryInfo();
 
-		// For MIGRATION_NEW, target indexes on the revision_actor_temp table.
-		// Otherwise, revision is fine because it'll have to check all revision rows anyway.
-		$pageField = $wgActorTableSchemaMigrationStage === MIGRATION_NEW ? 'revactor_page' : 'rev_page';
-		$idField = $wgActorTableSchemaMigrationStage === MIGRATION_NEW
+		// For SCHEMA_COMPAT_READ_NEW, target indexes on the
+		// revision_actor_temp table, otherwise on the revision table.
+		$pageField = ( $wgActorTableSchemaMigrationStage & SCHEMA_COMPAT_READ_NEW )
+			? 'revactor_page' : 'rev_page';
+		$idField = ( $wgActorTableSchemaMigrationStage & SCHEMA_COMPAT_READ_NEW )
 			? 'revactor_actor' : $revQuery['fields']['rev_user'];
-		$countField = $wgActorTableSchemaMigrationStage === MIGRATION_NEW
+		$countField = ( $wgActorTableSchemaMigrationStage & SCHEMA_COMPAT_READ_NEW )
 			? 'revactor_actor' : $revQuery['fields']['rev_user_text'];
 
 		// First, count anons
@@ -94,7 +98,7 @@ class ApiQueryContributors extends ApiQueryBase {
 		] );
 		$this->addWhereFld( $pageField, $pages );
 		$this->addWhere( ActorMigration::newMigration()->isAnon( $revQuery['fields']['rev_user'] ) );
-		$this->addWhere( $db->bitAnd( 'rev_deleted', Revision::DELETED_USER ) . ' = 0' );
+		$this->addWhere( $db->bitAnd( 'rev_deleted', RevisionRecord::DELETED_USER ) . ' = 0' );
 		$this->addOption( 'GROUP BY', $pageField );
 		$res = $this->select( __METHOD__ );
 		foreach ( $res as $row ) {
@@ -106,7 +110,7 @@ class ApiQueryContributors extends ApiQueryBase {
 				// some other module used up all the space. Just set a dummy
 				// continue and hope it works next time.
 				$this->setContinueEnumParameter( 'continue',
-					$params['continue'] !== null ? $params['continue'] : '0|0'
+					$params['continue'] ?? '0|0'
 				);
 
 				return;
@@ -126,7 +130,7 @@ class ApiQueryContributors extends ApiQueryBase {
 		] );
 		$this->addWhereFld( $pageField, $pages );
 		$this->addWhere( ActorMigration::newMigration()->isNotAnon( $revQuery['fields']['rev_user'] ) );
-		$this->addWhere( $db->bitAnd( 'rev_deleted', Revision::DELETED_USER ) . ' = 0' );
+		$this->addWhere( $db->bitAnd( 'rev_deleted', RevisionRecord::DELETED_USER ) . ' = 0' );
 		$this->addOption( 'GROUP BY', [ $pageField, $idField ] );
 		$this->addOption( 'LIMIT', $params['limit'] + 1 );
 

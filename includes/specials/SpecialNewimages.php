@@ -21,6 +21,8 @@
  * @ingroup SpecialPage
  */
 
+use MediaWiki\MediaWikiServices;
+
 class SpecialNewFiles extends IncludableSpecialPage {
 	/** @var FormOptions */
 	protected $opts;
@@ -213,17 +215,18 @@ class SpecialNewFiles extends IncludableSpecialPage {
 	 * Send the text to be displayed above the options
 	 */
 	function setTopText() {
-		global $wgContLang;
-
 		$message = $this->msg( 'newimagestext' )->inContentLanguage();
 		if ( !$message->isDisabled() ) {
-			$this->getOutput()->addWikiText(
-				Html::rawElement( 'p',
-					[ 'lang' => $wgContLang->getHtmlCode(), 'dir' => $wgContLang->getDir() ],
+			$contLang = MediaWikiServices::getInstance()->getContentLanguage();
+			$this->getOutput()->addWikiTextAsContent(
+				Html::rawElement( 'div',
+					[
+
+						'lang' => $contLang->getHtmlCode(),
+						'dir' => $contLang->getDir()
+					],
 					"\n" . $message->plain() . "\n"
-				),
-				/* $lineStart */ false,
-				/* $interface */ false
+				)
 			);
 		}
 	}

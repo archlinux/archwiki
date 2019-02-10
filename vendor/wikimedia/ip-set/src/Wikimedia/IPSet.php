@@ -105,6 +105,7 @@ class IPSet {
 	 * Add a single CIDR spec to the internal matching trees
 	 *
 	 * @param string $cidr String CIDR spec, IPv[46], optional /mask (def all-1's)
+	 * @return false|null Returns null on success, false on failure
 	 */
 	private function addCidr( $cidr ) {
 		// v4 or v6 check
@@ -124,15 +125,15 @@ class IPSet {
 			list( $net, $mask ) = explode( '/', $cidr, 2 );
 			if ( !ctype_digit( $mask ) || intval( $mask ) > $defMask ) {
 				trigger_error( "IPSet: Bad mask '$mask' from '$cidr', ignored", E_USER_WARNING );
-				return;
+				return false;
 			}
 		}
 		$mask = intval( $mask ); // explicit integer convert, checked above
 
 		// convert $net to an array of integer bytes, length 4 or 16:
-		$raw = inet_pton( $net );
+		$raw = quietCall( 'inet_pton', $net );
 		if ( $raw === false ) {
-			return; // inet_pton() sends an E_WARNING for us
+			return false;
 		}
 		$rawOrd = array_map( 'ord', str_split( $raw ) );
 
@@ -198,9 +199,9 @@ class IPSet {
 	 * @return bool True is match success, false is match failure
 	 */
 	public function match( $ip ) {
-		$raw = inet_pton( $ip );
+		$raw = quietCall( 'inet_pton', $ip );
 		if ( $raw === false ) {
-			return false; // inet_pton() sends an E_WARNING for us
+			return false;
 		}
 
 		$rawOrd = array_map( 'ord', str_split( $raw ) );

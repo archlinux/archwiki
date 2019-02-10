@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"C.R."
+			"C.R.",
+			"Ruthven"
 		]
 	},
 	"captcha-edit": "Pe' putè cagnà sta paggena, pe' piacere facite sta somma semprice semprice ccà abbascio e mettite 'a risposta int' 'a casciulella 'e testo ([[Special:Captcha/help|cchiù nfurmaziune]]):",
@@ -27,7 +28,7 @@
 	"captcha-addurl-whitelist": " #<!-- leave this line exactly as it is --> <pre>\n# 'A sintasse è comme segue:\n#   * Ogneccosa 'a 'nu carattere \"#\" 'mponta a fine d' 'a linea è 'nu cummanno\n#   * Ogne linea chiena è 'nu piezzo 'e regex 'o quale s'addà sulamente cunfruntà ch' 'e host int'a l'URL\n #</pre> <!-- leave this line exactly as it is -->",
 	"right-skipcaptcha": "Facite appiccià tutto comme fosse c'avite miso 'o CAPTCHA senza avé 'e ghì pe' bbìa d' 'o CAPTCHA",
 	"captcha-apihelp-param-captchaword": "Rispunne a 'o CAPTCHA",
-	"captcha-apihelp-param-captchaid": "ID CAPTCHA d' 'o request 'e primma",
+	"captcha-apihelp-param-captchaid": "ID CAPTCHA d' 'a riquesta 'e primma",
 	"confirmedit-preview-line": "Nummero 'e riga",
 	"confirmedit-preview-content": "Cuntenute",
 	"confirmedit-preview-validity": "Validità",

@@ -1,5 +1,7 @@
 <?php
 
+use Wikimedia\TestingAccessWrapper;
+
 class LanguageTest extends LanguageClassesTestCase {
 	/**
 	 * @covers Language::convertDoubleWidth
@@ -1030,6 +1032,13 @@ class LanguageTest extends LanguageClassesTestCase {
 				'Thai year'
 			],
 			[
+				'xkY',
+				'19410101090705',
+				'2484',
+				'2484',
+				'Thai year'
+			],
+			[
 				'xoY',
 				'20120102090705',
 				'101',
@@ -1110,27 +1119,27 @@ class LanguageTest extends LanguageClassesTestCase {
 				"1 gigabyte"
 			],
 			[
-				pow( 1024, 4 ),
+				1024 ** 4,
 				"1 TB",
 				"1 terabyte"
 			],
 			[
-				pow( 1024, 5 ),
+				1024 ** 5,
 				"1 PB",
 				"1 petabyte"
 			],
 			[
-				pow( 1024, 6 ),
+				1024 ** 6,
 				"1 EB",
 				"1,024 exabyte"
 			],
 			[
-				pow( 1024, 7 ),
+				1024 ** 7,
 				"1 ZB",
 				"1 zetabyte"
 			],
 			[
-				pow( 1024, 8 ),
+				1024 ** 8,
 				"1 YB",
 				"1 yottabyte"
 			],
@@ -1173,37 +1182,37 @@ class LanguageTest extends LanguageClassesTestCase {
 				"1 megabit per second"
 			],
 			[
-				pow( 10, 9 ),
+				10 ** 9,
 				"1 Gbps",
 				"1 gigabit per second"
 			],
 			[
-				pow( 10, 12 ),
+				10 ** 12,
 				"1 Tbps",
 				"1 terabit per second"
 			],
 			[
-				pow( 10, 15 ),
+				10 ** 15,
 				"1 Pbps",
 				"1 petabit per second"
 			],
 			[
-				pow( 10, 18 ),
+				10 ** 18,
 				"1 Ebps",
 				"1 exabit per second"
 			],
 			[
-				pow( 10, 21 ),
+				10 ** 21,
 				"1 Zbps",
 				"1 zetabit per second"
 			],
 			[
-				pow( 10, 24 ),
+				10 ** 24,
 				"1 Ybps",
 				"1 yottabit per second"
 			],
 			[
-				pow( 10, 27 ),
+				10 ** 27,
 				"1,000 Ybps",
 				"1,000 yottabits per second"
 			],
@@ -1593,9 +1602,9 @@ class LanguageTest extends LanguageClassesTestCase {
 	 * @covers Language::embedBidi()
 	 */
 	public function testEmbedBidi() {
-		$lre = "\xE2\x80\xAA"; // U+202A LEFT-TO-RIGHT EMBEDDING
-		$rle = "\xE2\x80\xAB"; // U+202B RIGHT-TO-LEFT EMBEDDING
-		$pdf = "\xE2\x80\xAC"; // U+202C POP DIRECTIONAL FORMATTING
+		$lre = "\u{202A}"; // U+202A LEFT-TO-RIGHT EMBEDDING
+		$rle = "\u{202B}"; // U+202B RIGHT-TO-LEFT EMBEDDING
+		$pdf = "\u{202C}"; // U+202C POP DIRECTIONAL FORMATTING
 		$lang = $this->getLang();
 		$this->assertEquals(
 			'123',
@@ -1765,6 +1774,45 @@ class LanguageTest extends LanguageClassesTestCase {
 	}
 
 	/**
+	 * @covers Language::clearCaches
+	 */
+	public function testClearCaches() {
+		$languageClass = TestingAccessWrapper::newFromClass( Language::class );
+
+		// Populate $dataCache
+		Language::getLocalisationCache()->getItem( 'zh', 'mainpage' );
+		$oldCacheObj = Language::$dataCache;
+		$this->assertNotCount( 0,
+			TestingAccessWrapper::newFromObject( Language::$dataCache )->loadedItems );
+
+		// Populate $mLangObjCache
+		$lang = Language::factory( 'en' );
+		$this->assertNotCount( 0, Language::$mLangObjCache );
+
+		// Populate $fallbackLanguageCache
+		Language::getFallbacksIncludingSiteLanguage( 'en' );
+		$this->assertNotCount( 0, $languageClass->fallbackLanguageCache );
+
+		// Populate $grammarTransformations
+		$lang->getGrammarTransformations();
+		$this->assertNotNull( $languageClass->grammarTransformations );
+
+		// Populate $languageNameCache
+		Language::fetchLanguageNames();
+		$this->assertNotNull( $languageClass->languageNameCache );
+
+		Language::clearCaches();
+
+		$this->assertNotSame( $oldCacheObj, Language::$dataCache );
+		$this->assertCount( 0,
+			TestingAccessWrapper::newFromObject( Language::$dataCache )->loadedItems );
+		$this->assertCount( 0, Language::$mLangObjCache );
+		$this->assertCount( 0, $languageClass->fallbackLanguageCache );
+		$this->assertNull( $languageClass->grammarTransformations );
+		$this->assertNull( $languageClass->languageNameCache );
+	}
+
+	/**
 	 * @dataProvider provideIsSupportedLanguage
 	 * @covers Language::isSupportedLanguage
 	 */
@@ -1831,18 +1879,34 @@ class LanguageTest extends LanguageClassesTestCase {
 	}
 
 	/**
+	 * @covers Language::hasVariant
+	 */
+	public function testHasVariant() {
+		// See LanguageSrTest::testHasVariant() for additional tests
+		$en = Language::factory( 'en' );
+		$this->assertTrue( $en->hasVariant( 'en' ), 'base is always a variant' );
+		$this->assertFalse( $en->hasVariant( 'en-bogus' ), 'bogus en variant' );
+
+		$bogus = Language::factory( 'bogus' );
+		$this->assertTrue( $bogus->hasVariant( 'bogus' ), 'base is always a variant' );
+	}
+
+	/**
 	 * @covers Language::equals
 	 */
 	public function testEquals() {
-		$en1 = new Language();
-		$en1->setCode( 'en' );
-
+		$en1 = Language::factory( 'en' );
 		$en2 = Language::factory( 'en' );
-		$en2->setCode( 'en' );
-
-		$this->assertTrue( $en1->equals( $en2 ), 'en equals en' );
+		$en3 = new Language();
+		$this->assertTrue( $en1->equals( $en2 ), 'en1 equals en2' );
+		$this->assertTrue( $en2->equals( $en3 ), 'en2 equals en3' );
+		$this->assertTrue( $en3->equals( $en1 ), 'en3 equals en1' );
 
 		$fr = Language::factory( 'fr' );
 		$this->assertFalse( $en1->equals( $fr ), 'en not equals fr' );
+
+		$ar1 = Language::factory( 'ar' );
+		$ar2 = new LanguageAr();
+		$this->assertTrue( $ar1->equals( $ar2 ), 'ar equals ar' );
 	}
 }

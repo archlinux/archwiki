@@ -160,7 +160,7 @@ abstract class UploadBase {
 	 * @return null|UploadBase
 	 */
 	public static function createFromRequest( &$request, $type = null ) {
-		$type = $type ? $type : $request->getVal( 'wpSourceType', 'File' );
+		$type = $type ?: $request->getVal( 'wpSourceType', 'File' );
 
 		if ( !$type ) {
 			return null;
@@ -247,7 +247,7 @@ abstract class UploadBase {
 
 	/**
 	 * @param string $tempPath File system path to temporary file containing the upload
-	 * @param int $fileSize
+	 * @param int|null $fileSize
 	 */
 	protected function setTempFile( $tempPath, $fileSize = null ) {
 		$this->mTempPath = $tempPath;
@@ -854,7 +854,7 @@ abstract class UploadBase {
 			if ( !is_array( $error ) ) {
 				$error = [ $error ];
 			}
-			return call_user_func_array( 'Status::newFatal', $error );
+			return Status::newFatal( ...$error );
 		}
 
 		$status = $this->getLocalFile()->upload(
@@ -1063,7 +1063,7 @@ abstract class UploadBase {
 		if ( !$isPartial ) {
 			$error = $this->runUploadStashFileHook( $user );
 			if ( $error ) {
-				return call_user_func_array( 'Status::newFatal', $error );
+				return Status::newFatal( ...$error );
 			}
 		}
 		try {
@@ -1103,7 +1103,7 @@ abstract class UploadBase {
 	 * file again.
 	 *
 	 * @deprecated since 1.28 Use tryStashFile() instead
-	 * @param User $user
+	 * @param User|null $user
 	 * @return UploadStashFile Stashed file
 	 * @throws UploadStashBadPathException
 	 * @throws UploadStashFileException
@@ -1116,7 +1116,7 @@ abstract class UploadBase {
 	/**
 	 * Implementation for stashFile() and tryStashFile().
 	 *
-	 * @param User $user
+	 * @param User|null $user
 	 * @return UploadStashFile Stashed file
 	 */
 	protected function doStashFile( User $user = null ) {
@@ -1529,7 +1529,7 @@ abstract class UploadBase {
 	 * @todo Replace this with a whitelist filter!
 	 * @param string $element
 	 * @param array $attribs
-	 * @param array $data
+	 * @param array|null $data
 	 * @return bool
 	 */
 	public function checkSvgScriptCallback( $element, $attribs, $data = null ) {
@@ -1864,8 +1864,7 @@ abstract class UploadBase {
 		# look up scanner configuration
 		$command = $wgAntivirusSetup[$wgAntivirus]['command'];
 		$exitCodeMap = $wgAntivirusSetup[$wgAntivirus]['codemap'];
-		$msgPattern = isset( $wgAntivirusSetup[$wgAntivirus]['messagepattern'] ) ?
-			$wgAntivirusSetup[$wgAntivirus]['messagepattern'] : null;
+		$msgPattern = $wgAntivirusSetup[$wgAntivirus]['messagepattern'] ?? null;
 
 		if ( strpos( $command, "%f" ) === false ) {
 			# simple pattern: append file to scan

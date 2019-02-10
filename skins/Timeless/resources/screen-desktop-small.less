@@ -5,9 +5,11 @@
 #mw-content-block {
 	padding: 0;
 }
+
 #mw-content {
 	border-width: 0 0 1px;
 	clear: both;
+	margin-top: 5.425em;
 }
 
 .categories-bottom();
@@ -22,9 +24,15 @@
 		display: inline-block;
 	}
 }
+
 .sidebar-inner,
 #p-logo {
 	display: none !important;
+}
+
+.color-right,
+.color-middle {
+	background: @red-dark;
 }
 
 // Have these cover the fixed header color-bar using the mw-header-nav-hack (with its own color-bar at the bottom)
@@ -59,28 +67,34 @@
 	background: @background;
 	width: 100%;
 }
+
 #mw-header-nav-hack .color-bar {
 	margin-top: 2.5em; // Height of expected menu header contents
 }
 
 #mw-site-navigation {
-	float: left;
-	margin-left: 2em;
+	position: absolute;
+	top: 3.1em;
+	left: 2em;
 
 	.sidebar-chunk {
 		margin: 0 1em 0 0;
 	}
+
 	.sidebar-inner {
 		.dropdown-menu( left );
 	}
 }
+
 #mw-related-navigation {
-	float: right;
-	margin-right: 2em;
+	position: absolute;
+	top: 3.1em;
+	right: 2em;
 
 	.sidebar-chunk {
 		margin: 0 0 0 1em;
 	}
+
 	.sidebar-inner {
 		.dropdown-menu();
 		top: 2.95em !important; // to override mobile positioning
@@ -92,6 +106,7 @@
 #mw-header {
 	padding: 0 2em;
 }
+
 #p-logo-text a {
 	padding-left: 0;
 	text-align: left;
@@ -109,9 +124,11 @@
 	h2 span {
 		display: none;
 	}
+
 	h2:after {
 		margin-left: -0.65em;
 	}
+
 	.dropdown {
 		right: -1em;
 	}
@@ -120,6 +137,7 @@
 #user-tools {
 	width: 6em;
 }
+
 #p-search {
 	margin-right: 6em;
 }

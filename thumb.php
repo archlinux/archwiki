@@ -35,7 +35,7 @@ if ( defined( 'THUMB_HANDLER' ) ) {
 	wfThumbHandle404();
 } else {
 	// Called directly, use $_GET params
-	wfStreamThumb( $_GET );
+	wfStreamThumb( $wgRequest->getQueryValues() );
 }
 
 $mediawiki = new MediaWiki();
@@ -94,7 +94,7 @@ function wfStreamThumb( array $params ) {
 
 	$headers = []; // HTTP headers to send
 
-	$fileName = isset( $params['f'] ) ? $params['f'] : '';
+	$fileName = $params['f'] ?? '';
 
 	// Backwards compatibility parameters
 	if ( isset( $params['w'] ) ) {
@@ -244,7 +244,7 @@ function wfStreamThumb( array $params ) {
 		}
 	}
 
-	$rel404 = isset( $params['rel404'] ) ? $params['rel404'] : null;
+	$rel404 = $params['rel404'] ?? null;
 	unset( $params['r'] ); // ignore 'r' because we unconditionally pass File::RENDER
 	unset( $params['f'] ); // We're done with 'f' parameter.
 	unset( $params['rel404'] ); // moved to $rel404
@@ -500,7 +500,7 @@ function wfGenerateThumbnail( File $file, array $params, $thumbName, $thumbPath 
 	}
 
 	/** @noinspection PhpUnusedLocalVariableInspection */
-	$done = true; // no PHP fatal occured
+	$done = true; // no PHP fatal occurred
 
 	if ( !$thumb || $thumb->isError() ) {
 		// Randomize TTL to reduce stampedes
@@ -626,7 +626,7 @@ function wfThumbErrorText( $status, $msgText ) {
  *
  * @param int $status
  * @param string $msgHtml HTML
- * @param string $msgText Short error description, for internal logging. Defaults to $msgHtml.
+ * @param string|null $msgText Short error description, for internal logging. Defaults to $msgHtml.
  *   Only used for HTTP 500 errors.
  * @param array $context Error context, for internal logging. Only used for HTTP 500 errors.
  * @return void
@@ -648,7 +648,7 @@ function wfThumbError( $status, $msgHtml, $msgText = null, $context = [] ) {
 	if ( $wgShowHostnames ) {
 		header( 'X-MW-Thumbnail-Renderer: ' . wfHostname() );
 		$url = htmlspecialchars(
-			isset( $_SERVER['REQUEST_URI'] ) ? $_SERVER['REQUEST_URI'] : '',
+			$_SERVER['REQUEST_URI'] ?? '',
 			ENT_NOQUOTES
 		);
 		$hostname = htmlspecialchars( wfHostname(), ENT_NOQUOTES );

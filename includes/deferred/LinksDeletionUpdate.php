@@ -71,6 +71,9 @@ class LinksDeletionUpdate extends DataUpdate implements EnqueueableDataUpdate {
 			// Make sure all links update threads see the changes of each other.
 			// This handles the case when updates have to batched into several COMMITs.
 			$scopedLock = LinksUpdate::acquirePageLock( $this->getDB(), $id );
+			if ( !$scopedLock ) {
+				throw new RuntimeException( "Could not acquire lock for page ID '{$id}'." );
+			}
 		}
 
 		$title = $this->page->getTitle();
@@ -90,28 +93,20 @@ class LinksDeletionUpdate extends DataUpdate implements EnqueueableDataUpdate {
 		foreach ( $catBatches as $catBatch ) {
 			$this->page->updateCategoryCounts( [], $catBatch, $id );
 			if ( count( $catBatches ) > 1 ) {
+				// Only sacrifice atomicity if necessary due to size
 				$lbFactory->commitAndWaitForReplication(
 					__METHOD__, $this->ticket, [ 'domain' => $dbw->getDomainID() ]
 				);
 			}
 		}
 
-		// Refresh the category table entry if it seems to have no pages. Check
-		// master for the most up-to-date cat_pages count.
+		// Refresh counts on categories that should be empty now
 		if ( $title->getNamespace() === NS_CATEGORY ) {
-			$row = $dbw->selectRow(
-				'category',
-				[ 'cat_id', 'cat_title', 'cat_pages', 'cat_subcats', 'cat_files' ],
-				[ 'cat_title' => $title->getDBkey(), 'cat_pages <= 0' ],
-				__METHOD__
-			);
-			if ( $row ) {
-				$cat = Category::newFromRow( $row, $title );
-				// T166757: do the update after the main job DB commit
-				DeferredUpdates::addCallableUpdate( function () use ( $cat ) {
-					$cat->refreshCounts();
-				} );
-			}
+			// T166757: do the update after the main job DB commit
+			DeferredUpdates::addCallableUpdate( function () use ( $title ) {
+				$cat = Category::newFromName( $title->getDBkey() );
+				$cat->refreshCountsIfEmpty();
+			} );
 		}
 
 		$this->batchDeleteByPK(

@@ -154,7 +154,7 @@ ve.ce.MWReferencesListNode.prototype.onListNodeUpdate = function () {
  * Update the references list.
  */
 ve.ce.MWReferencesListNode.prototype.update = function () {
-	var i, j, iLen, jLen, index, firstNode, key, keyedNodes, modelNode, viewNode,
+	var i, j, iLen, jLen, index, firstNode, key, keyedNodes, modelNode, refPreview,
 		$li, $refSpan, $link, internalList, refGroup, listGroup, nodes,
 		model = this.getModel();
 
@@ -177,28 +177,6 @@ ve.ce.MWReferencesListNode.prototype.update = function () {
 		) );
 		this.$element.append( this.$originalRefList );
 		return;
-	}
-
-	function updateGeneratedContent( viewNode, $li ) {
-		// HACK: PHP parser doesn't wrap single lines in a paragraph
-		if (
-			viewNode.$element.children().length === 1 &&
-			viewNode.$element.children( 'p' ).length === 1
-		) {
-			// unwrap inner
-			viewNode.$element.children().replaceWith(
-				viewNode.$element.children().contents()
-			);
-		}
-		$li.append(
-			$( '<span>' )
-				.addClass( 'reference-text' )
-				.append( viewNode.$element )
-		);
-
-		// Since this is running after content generation has finished, it's
-		// safe to destroy the view.
-		viewNode.destroy();
 	}
 
 	if ( this.$originalRefList ) {
@@ -275,19 +253,12 @@ ve.ce.MWReferencesListNode.prototype.update = function () {
 			// Generate reference HTML from first item in key
 			modelNode = internalList.getItemNode( firstNode.getAttribute( 'listIndex' ) );
 			if ( modelNode && modelNode.length ) {
-				viewNode = new ve.ce.InternalItemNode( modelNode );
-
-				// Use 'done' instead of 'then' so content is updated synchronously
-				// if possible, for clipboard conversion.
-				ve.ce.GeneratedContentNode.static.awaitGeneratedContent( viewNode )
-					.done( updateGeneratedContent.bind( this, viewNode, $li ) );
-
-				// Because this update runs a number of times when using the
-				// basic dialog, disconnect the model here rather than waiting
-				// for when it's destroyed after the generated content is
-				// finished. Failing to do this causes teardown errors with
-				// basic citations.
-				modelNode.disconnect( viewNode );
+				refPreview = new ve.ui.MWPreviewElement( modelNode, { useView: true } );
+				$li.append(
+					$( '<span>' )
+						.addClass( 'reference-text' )
+						.append( refPreview.$element )
+				);
 			} else {
 				$li.append(
 					$( '<span>' )

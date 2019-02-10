@@ -7,6 +7,7 @@ body {
 	margin: 0;
 	padding: 0;
 }
+
 body {
 	font-family: @fonts;
 	color: @text;
@@ -19,12 +20,20 @@ body {
 	.box;
 	background: @background;
 	padding: 1em @content-padding 3em;
+
+	/* Set a z-index for the content to group it away from any nav stuff (extensions) - T200148 */
 	position: relative;
+	z-index: 0;
 }
+
 #mw-content-container {
 	background: @background2;
+}
+
+.mw-body {
 	word-wrap: break-word;
 }
+
 #mw-footer-container {
 	border-top: solid 1px @background-dark2;
 	box-shadow: inset 0 7px 2px -4px rgba( 0, 0, 0, 0.1 );
@@ -42,15 +51,17 @@ body {
 	text-align: center;
 	margin: auto;
 }
+
 .mw-wiki-logo {
 	display: block;
 	content: '';
 	width: 11em;
 	height: 11em;
 	background-repeat: no-repeat;
-	background-position: 50% 50%;
+	background-position: center center;
 	margin: 0.75em auto 0;
 }
+
 #p-logo-text {
 	width: @column-left-size;
 	text-align: center;
@@ -81,6 +92,7 @@ body {
 	position: relative;
 	border: solid 1px @grey;
 }
+
 #searchInput {
 	border: 0;
 	margin: 0;
@@ -91,6 +103,7 @@ body {
 	width: 100%;
 	min-height: 0;
 }
+
 #searchButton,
 #mw-searchButton {
 	position: absolute;
@@ -100,7 +113,7 @@ body {
 	height: 2.5em;
 	.icon;
 	.background-image-svg( 'images/search-ltr.svg', 'images/search-ltr.png' );
-	background-position: 50% 40%;
+	background-position: center 40%;
 	box-shadow: none;
 }
 
@@ -114,20 +127,24 @@ body {
 		border-bottom-width: @border;
 		padding: 0.75em 2em;
 	}
+
 	.suggestions-results {
 		background-color: @background;
 		border: 1px solid @grey;
 		border-bottom-width: @border;
 	}
+
 	.suggestions-result {
 		color: @text;
 		padding: 0.65em 2em 0.35em;
 	}
+
 	.suggestions-result-current {
 		background-color: @blue;
 		color: @background;
 	}
 }
+
 div.suggestions {
 	position: fixed;
 	top: 2.75em !important; // Override js-provided value to account for fixed header
@@ -147,11 +164,13 @@ div.suggestions {
 	width: 0;
 	z-index: 4;
 }
+
 .pokey {
 	top: 1.85em;
 	right: 1px;
 	display: none;
 }
+
 .pokey:after {
 	border-bottom-color: #fff;
 	right: -10px;
@@ -174,6 +193,7 @@ div.suggestions {
 		list-style: none;
 		padding: 0;
 	}
+
 	.footer-icons {
 		float: right;
 		margin: 0 0 0 1em;
@@ -182,11 +202,15 @@ div.suggestions {
 			margin: 0 0 1em 0;
 		}
 	}
+
 	.footer-places li {
 		display: inline;
 		padding-right: 1em;
 	}
-	#lastmod {
+
+	#lastmod,
+	#credits,
+	#copyright {
 		display: block;
 	}
 }
@@ -196,6 +220,7 @@ div.suggestions {
 #mw-content-container {
 	border-bottom: solid 4px @green;
 }
+
 #mw-page-header-links {
 	div,
 	ul,
@@ -205,6 +230,7 @@ div.suggestions {
 		margin: 0;
 		padding: 0;
 	}
+
 	li {
 		margin: 0.25em 0 1em;
 		border-bottom: solid 3px transparent;
@@ -212,6 +238,7 @@ div.suggestions {
 		&:hover {
 			border-bottom-color: @grey;
 		}
+
 		&.selected {
 			border-bottom-color: @blue;
 
@@ -221,6 +248,7 @@ div.suggestions {
 		}
 	}
 }
+
 #p-namespaces {
 	float: left;
 
@@ -228,7 +256,9 @@ div.suggestions {
 		margin-right: 1em;
 	}
 }
-#p-views {
+
+#p-views,
+#p-more {
 	float: right;
 
 	li {
@@ -240,6 +270,7 @@ div.suggestions {
 	.ca-icon();
 	.background-image-svg( 'images/star.svg', 'images/star.png' );
 }
+
 #ca-unwatch a {
 	.ca-icon();
 	.background-image-svg( 'images/star-filled.svg', 'images/star-filled.png' );
@@ -256,6 +287,7 @@ a {
 		color: @blue-dark;
 	}
 }
+
 a.new,
 .new a {
 	color: @red;
@@ -266,30 +298,52 @@ a.new,
 	}
 }
 
+a.mw-selflink {
+	color: inherit;
+	font-weight: bold;
+	text-decoration: inherit;
+}
+
 .mw-editsection {
 	font-family: @fonts;
 
 	a {
 		.background-image-svg( 'images/pencil-grey.svg', 'images/pencil-grey.png' );
 		background-repeat: no-repeat;
-		background-position: 0 0;
+		background-position: left bottom;
 		display: inline-block;
 		padding: 0.5em 0 0.25em 1.75em;
 	}
 }
+
 .mw-editsection-bracket {
 	display: none;
 }
+
 .visual-clear {
 	clear: both;
 }
+
 .mw-indicators {
 	float: right;
 	margin: 0.25em 0 0 1em;
 }
+
 .mw-indicator {
 	display: inline-block;
 }
+
+div.magnify a {
+	display: block;
+	text-indent: 20px;
+	white-space: nowrap;
+	overflow: hidden;
+	width: 20px;
+	height: 20px;
+	margin: 0 0 0.5em 0.5em;
+	.background-image-svg( 'images/magnify-ltr.svg', 'images/magnify-ltr.png' );
+}
+
 /* Subtitle area
  * @see https://phabricator.wikimedia.org/T173951
  */
@@ -325,7 +379,7 @@ pre,
 	white-space: pre-wrap;
 }
 
-#mw-content {
+.mw-body {
 	h1,
 	h2,
 	h3,
@@ -338,19 +392,21 @@ pre,
 		line-height: 1.25;
 		margin: 1.5em 0 0.5em;
 	}
+
 	form dt {
 		margin: 0 0.5em 0 0;
 	}
 
 	h1,
 	h2 {
-		border-bottom: solid 2px @blue;
+		border-bottom: solid 2px @grey;
 		overflow: hidden;
 	}
 
 	h1.firstHeading {
 		margin: 0.25em 0 0.5em;
-		border-bottom: solid 4px @red;
+		border-bottom: solid 4px @blue;
+		overflow: visible;
 	}
 
 	h1 {
@@ -382,6 +438,13 @@ pre,
 	}
 }
 
+#siteSub {
+	margin: -0.5em 0 0.5em 0;
+	font-style: italic;
+	font-family: @fonts-secondary;
+	display: none;
+}
+
 hr {
 	border-width: 1px;
 	border-color: @grey;
@@ -399,8 +462,12 @@ p {
 	margin: 0.9em 0 0.8em;
 }
 
-.center,
-.center * {
+ul {
+	padding: 0;
+	margin: 0.3em 0 0 1.6em;
+}
+
+.center {
 	margin: auto;
 	text-align: center;
 }
@@ -411,73 +478,102 @@ p {
 	margin: 0 0 0.5em 0.5em;
 	padding: 0 0 1em 1.5em;
 }
+
 /* @noflip */
 .tleft {
 	margin: 0 0.5em 0.5em 0;
 	padding: 0 1.5em 1em 0;
 
 }
+
 .thumbinner {
 	.box;
 	padding: 0.75em;
 }
+
 .thumbcaption {
 	font-size: 95%;
 	padding: 0.5em 1em;
 }
-.thumbinner .thumbimage {
+
+.thumbinner .thumbimage,
+.thumbborder {
 	border: solid 1px @grey-bright;
 }
-#mw-content li.gallerybox div.thumb {
+
+.mw-body li.gallerybox div.thumb {
 	.box;
 	padding: 0;
 }
 
 /* Tables of contents */
 ul#filetoc,
-#toc,
 .toc,
 .mw-warning {
-	display: inline-block;
+	display: table;
 	.box;
 	padding: 1.25em 1.75em;
-	margin: 1em 0;
+	margin-top: 1em;
+	margin-bottom: 1em;
 	min-width: 15em;
 }
+
 ul#filetoc {
 	display: block;
 	border: 0;
 }
-#toc ul,
+
 .toc ul {
 	margin: 1em 0 0;
 	list-style: none;
+	text-align: left;
 }
-#mw-content .toc h2 {
-	font-size: 1.2em;
+
+.mw-body .toc h2 {
+	font-size: 1em;
 	font-family: @fonts;
 	margin: 0;
-	display: inline-block;
+	display: inline;
 	border-bottom-color: @grey;
 }
+
 .toctoggle {
 	color: @background3;
 }
-#toc li:last-child {
+
+// Remove brackets around the show/hide button of the TOC
+body :not( :checked ) > .toctogglespan:before,
+body :not( :checked ) > .toctogglespan:after {
+	content: '';
+}
+
+.toctogglelabel {
+	padding-left: 0; // Overwrite label { padding-left: 0.5em; } from forms.less
+	margin-left: 0.5em; // Create new distance to the TOC title without increasing the focus ring
+}
+
+.toc li:last-child {
 	margin-bottom: 0.5em;
 }
+
 .toclevel-1 {
 	margin-bottom: 0.25em;
 }
+
+.tocnumber {
+	color: @grey-dark;
+}
+
 .mw-changeslist-legend,
-#mw-content .mw-search-profile-tabs,
-#mw-content fieldset#mw-searchoptions,
+.mw-body .mw-search-profile-tabs,
+.mw-body fieldset#mw-searchoptions,
 table.wikitable {
 	border: 0;
 	color: @text;
 	.box;
 }
-#mw-content .mw-search-profile-tabs {
+
+.mw-body .mw-search-profile-tabs {
 	padding: 0.5em;
 }
 
@@ -499,12 +595,14 @@ table.wikitable > * > tr > th {
 .color-bar {
 	width: 100%;
 }
+
 .color-left {
 	height: @color-height;
 	background: @red-dark;
 	width: 50%;
 	float: left;
 }
+
 .color-right {
 	display: inline-block;
 	height: @color-height;
@@ -512,11 +610,13 @@ table.wikitable > * > tr > th {
 	width: 50%;
 	float: right;
 }
+
 .color-middle-container {
 	max-width: @content-width;
 	margin: 0 auto -@color-height;
 	position: relative;
 }
+
 .color-middle {
 	height: @color-height;
 	background: @blue-dark;
@@ -525,17 +625,27 @@ table.wikitable > * > tr > th {
 }
 
 /* Portlets */
-.emptyPortlet {
+.emptyPortlet,
+#mw-page-header-links .emptyPortlet {
 	display: none;
 }
+
 #p-lang.emptyPortlet {
 	display: inherit;
+}
+
+/* Language links box should not have an unnecessary scrollbar
+ * @see https://phabricator.wikimedia.org/T181491
+ */
+#p-lang {
+	overflow: hidden;
 }
 
 /* Hidden stuff */
 
 #p-namespaces h3,
 #p-views h3,
+#p-more h3,
 #p-search h3 {
 	.hidden;
 }

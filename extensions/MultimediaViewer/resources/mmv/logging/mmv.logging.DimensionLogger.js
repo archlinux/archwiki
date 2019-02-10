@@ -61,7 +61,7 @@
 			viewportHeight: $( window ).height(),
 			canvasWidth: canvasDimensions.width,
 			canvasHeight: canvasDimensions.height,
-			devicePixelRatio: $.devicePixelRatio(),
+			devicePixelRatio: window.devicePixelRatio || 1,
 			imgWidth: imageWidths.cssWidth,
 			imageAspectRatio: imageWidths.cssWidth / imageWidths.cssHeight,
 			thumbWidth: imageWidths.real,

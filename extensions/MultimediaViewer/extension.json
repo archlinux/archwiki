@@ -23,13 +23,13 @@
 		"Christian Aistleitner",
 		"Amir E. Aharoni"
 	],
-	"url": "https://mediawiki.org/wiki/Extension:MultimediaViewer",
+	"url": "https://www.mediawiki.org/wiki/Extension:MultimediaViewer",
 	"descriptionmsg": "multimediaviewer-desc",
 	"license-name": "GPL-2.0-or-later",
 	"type": "other",
-	"ExtensionFunctions": [
-		"MultimediaViewerHooks::onExtensionFunctions"
-	],
+	"requires": {
+		"MediaWiki": ">= 1.32.0"
+	},
 	"MessagesDirs": {
 		"MultimediaViewer": [
 			"i18n"
@@ -108,7 +108,6 @@
 				"mediawiki.storage",
 				"oojs",
 				"jquery.fullscreen",
-				"jquery.hidpi",
 				"jquery.throttle-debounce",
 				"jquery.color",
 				"jquery.tipsy",
@@ -221,9 +220,9 @@
 		},
 		"mmv.ui.ondemandshareddependencies": {
 			"scripts": [
-				"mmv/model/mmv.model.EmbedFileInfo.js",
-				"mmv/mmv.EmbedFileFormatter.js",
-				"mmv/ui/mmv.ui.utils.js"
+				"mmv.ui.ondemandshareddependencies/mmv.model.EmbedFileInfo.js",
+				"mmv.ui.ondemandshareddependencies/mmv.EmbedFileFormatter.js",
+				"mmv.ui.ondemandshareddependencies/mmv.ui.utils.js"
 			],
 			"dependencies": [
 				"mmv.head",
@@ -244,10 +243,10 @@
 		},
 		"mmv.ui.download.pane": {
 			"scripts": [
-				"mmv/ui/mmv.ui.download.pane.js"
+				"mmv.ui.download.pane/mmv.ui.download.pane.js"
 			],
 			"styles": [
-				"mmv/ui/mmv.ui.download.pane.less"
+				"mmv.ui.download.pane/mmv.ui.download.pane.less"
 			],
 			"dependencies": [
 				"mediawiki.ui",
@@ -275,14 +274,14 @@
 		},
 		"mmv.ui.reuse.shareembed": {
 			"scripts": [
-				"mmv/ui/mmv.ui.reuse.tab.js",
-				"mmv/ui/mmv.ui.reuse.share.js",
-				"mmv/ui/mmv.ui.reuse.embed.js"
+				"mmv.ui.reuse.shareembed/mmv.ui.reuse.tab.js",
+				"mmv.ui.reuse.shareembed/mmv.ui.reuse.share.js",
+				"mmv.ui.reuse.shareembed/mmv.ui.reuse.embed.js"
 			],
 			"styles": [
-				"mmv/ui/mmv.ui.reuse.share.less",
-				"mmv/ui/mmv.ui.reuse.embed.less",
-				"mmv/ui/mmv.ui.reuse.shareembed.less"
+				"mmv.ui.reuse.shareembed/mmv.ui.reuse.share.less",
+				"mmv.ui.reuse.shareembed/mmv.ui.reuse.embed.less",
+				"mmv.ui.reuse.shareembed/mmv.ui.reuse.shareembed.less"
 			],
 			"dependencies": [
 				"jquery.tipsy",
@@ -318,10 +317,10 @@
 		},
 		"mmv.ui.tipsyDialog": {
 			"scripts": [
-				"mmv/ui/mmv.ui.tipsyDialog.js"
+				"mmv.ui.tipsyDialog/mmv.ui.tipsyDialog.js"
 			],
 			"styles": [
-				"mmv/ui/mmv.ui.tipsyDialog.less"
+				"mmv.ui.tipsyDialog/mmv.ui.tipsyDialog.less"
 			],
 			"dependencies": [
 				"mmv",
@@ -331,20 +330,18 @@
 		},
 		"mmv.bootstrap": {
 			"scripts": [
-				"mmv/mmv.Config.js",
-				"mmv/mmv.HtmlUtils.js",
-				"mmv/mmv.bootstrap.js",
-				"mmv/logging/mmv.logging.Logger.js",
-				"mmv/logging/mmv.logging.ActionLogger.js",
-				"mmv/logging/mmv.logging.DurationLogger.js",
-				"jquery.hashchange/jquery.hashchange.js"
+				"mmv.bootstrap/mmv.Config.js",
+				"mmv.bootstrap/mmv.HtmlUtils.js",
+				"mmv.bootstrap/mmv.bootstrap.js",
+				"mmv.bootstrap/mmv.logging.Logger.js",
+				"mmv.bootstrap/mmv.logging.ActionLogger.js",
+				"mmv.bootstrap/mmv.logging.DurationLogger.js"
 			],
 			"styles": [
-				"mmv/mmv.bootstrap.less"
+				"mmv.bootstrap/mmv.bootstrap.less"
 			],
 			"dependencies": [
 				"mediawiki.api",
-				"mediawiki.api.options",
 				"mediawiki.ui.button",
 				"mediawiki.ui.icon",
 				"mediawiki.Title",
@@ -362,7 +359,7 @@
 		},
 		"mmv.bootstrap.autostart": {
 			"scripts": [
-				"mmv/mmv.bootstrap.autostart.js"
+				"mmv.bootstrap.autostart/mmv.bootstrap.autostart.js"
 			],
 			"dependencies": [
 				"mmv.head",
@@ -371,8 +368,8 @@
 		},
 		"mmv.head": {
 			"scripts": [
-				"mmv/mmv.base.js",
-				"mmv/mmv.head.js"
+				"mmv.head/base.js",
+				"mmv.head/mmv.head.js"
 			],
 			"dependencies": [
 				"mediawiki.user",
@@ -385,10 +382,14 @@
 		"localBasePath": "resources",
 		"remoteExtPath": "MultimediaViewer/resources"
 	},
+	"EventLoggingSchemas": {
+		"MediaViewer": 10867062,
+		"MultimediaViewerNetworkPerformance": 15573630,
+		"MultimediaViewerDuration": 10427980,
+		"MultimediaViewerAttribution": 9758179,
+		"MultimediaViewerDimensions": 10014238
+	},
 	"Hooks": {
-		"EventLoggingRegisterSchemas": [
-			"MultimediaViewerHooks::onEventLoggingRegisterSchemas"
-		],
 		"UserGetDefaultOptions": [
 			"MultimediaViewerHooks::onUserGetDefaultOptions"
 		],

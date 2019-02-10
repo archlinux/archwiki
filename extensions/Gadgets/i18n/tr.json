@@ -10,7 +10,8 @@
 			"Arystanbek",
 			"Mizunee",
 			"HakanIST",
-			"Vito Genovese"
+			"Vito Genovese",
+			"TmY e12"
 		]
 	},
 	"gadgets-desc": "Kullanıcıların [[Special:Preferences#mw-prefsection-gadgets|tercihlerinde]] özel [[Special:Gadgets|CSS ve JavaScript gadgetlerini]] seçmelerine izin verir",
@@ -45,5 +46,7 @@
 	"apihelp-query+gadgets-example-2": "Mümkün olan tüm özelliklere sahip araçların bir listesini almak",
 	"apihelp-query+gadgets-example-3": "Araçlar kategoriye ait bir liste olsun \"foo\"",
 	"apihelp-query+gadgets-example-4": "Araçlar hakkında bilgi \"\" ve \"bar\"foo al",
-	"apihelp-query+gadgets-example-5": "Araçlar geçerli kullanıcı tarafından etkin bir listesini almak"
+	"apihelp-query+gadgets-example-5": "Araçlar geçerli kullanıcı tarafından etkin bir listesini almak",
+	"right-gadgets-edit": "Gadget, JavaScript ve CSS sayfalarını düzenle",
+	"right-gadgets-definition-edit": "Gadget tanımlarını düzenle"
 }

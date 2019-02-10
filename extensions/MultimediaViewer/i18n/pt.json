@@ -6,7 +6,8 @@
 			"SandroHc",
 			"Vitorvicentevalente",
 			"Macofe",
-			"Hamilton Abreu"
+			"Hamilton Abreu",
+			"Athena in Wonderland"
 		]
 	},
 	"multimediaviewer-desc": "Ampliar miniaturas para tamanho maior em ecrã cheio.",
@@ -22,7 +23,7 @@
 	"multimediaviewer-multiple-authors-combine": "$1 e $2",
 	"multimediaviewer-metadata-error": "Não foi possível carregar os dados da imagem (erro: $1)",
 	"multimediaviewer-thumbnail-error": "Desculpe, o ficheiro não pode ser apresentado",
-	"multimediaviewer-thumbnail-error-description": "Parece haver um problema técnico. Pode $1 ou $3, caso o problema continue. Erro: $2",
+	"multimediaviewer-thumbnail-error-description": "Parece haver um problema técnico. Pode $1, caso o problema continue. Erro: $2",
 	"multimediaviewer-thumbnail-error-retry": "tentar novamente",
 	"multimediaviewer-thumbnail-error-report": "comunicar o erro",
 	"multimediaviewer-license-cc-pd": "Domínio Público",
@@ -47,7 +48,7 @@
 	"multimediaviewer-restriction-trademarked": "Esta imagem contém conteúdos que podem estar sujeitos a legislação sobre marcas registadas.",
 	"multimediaviewer-restriction-default": "O uso desta imagem pode estar restringido por disposições legais fora do âmbito da legislação de direitos de autor. Veja a página de descrição do ficheiro para detalhes.",
 	"multimediaviewer-restriction-default-and-others": "O uso desta imagem pode estar restringido por disposições legais fora do âmbito da legislação de direitos de autor. Veja a página de descrição do ficheiro para detalhes.",
-	"multimediaviewer-about-mmv": "Sobre",
+	"multimediaviewer-about-mmv": "Sobre esta interface",
 	"multimediaviewer-discuss-mmv": "Discussão",
 	"multimediaviewer-help-mmv": "Ajuda",
 	"multimediaviewer-optout-mmv": "Desativar Visualizador Multimédia",

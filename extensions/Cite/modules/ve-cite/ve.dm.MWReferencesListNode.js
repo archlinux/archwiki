@@ -106,7 +106,7 @@ ve.dm.MWReferencesListNode.static.toDataElement = function ( domElements, conver
 ve.dm.MWReferencesListNode.static.toDomElements = function ( data, doc, converter ) {
 	var el, els, mwData, originalMw, contentsHtml, originalHtml, nextIndex, nextElement, modelNode, viewNode,
 		isResponsiveDefault = mw.config.get( 'wgCiteResponsiveReferences' ),
-		isForClipboard = converter.isForClipboard(),
+		isForParser = converter.isForParser(),
 		wrapper = doc.createElement( 'div' ),
 		originalHtmlWrapper = doc.createElement( 'div' ),
 		dataElement = data[ 0 ],
@@ -114,17 +114,18 @@ ve.dm.MWReferencesListNode.static.toDomElements = function ( data, doc, converte
 		contentsData = data.slice( 1, -1 );
 
 	// If we are sending a template generated ref back to Parsoid, output it as a template.
-	// This works because the dataElement already as mw, originalMw and originalDomIndex properties.
-	if ( attrs.templateGenerated && !isForClipboard ) {
+	// This works because the dataElement already has mw, originalMw and originalDomIndex properties.
+	if ( attrs.templateGenerated && isForParser ) {
 		return ve.dm.MWTransclusionNode.static.toDomElements.call( this, dataElement, doc, converter );
 	}
 
-	if ( isForClipboard ) {
+	if ( !isForParser ) {
 		// Output needs to be read so re-render
+		modelNode = ve.dm.nodeFactory.createFromElement( dataElement );
 		modelNode = new ve.dm.MWReferencesListNode( dataElement );
 		// Build from original doc's internal list to get all refs (T186407)
 		modelNode.setDocument( converter.originalDocInternalList.getDocument() );
-		viewNode = new ve.ce.MWReferencesListNode( modelNode );
+		viewNode = ve.ce.nodeFactory.createFromModel( modelNode );
 		viewNode.modified = true;
 		viewNode.update();
 		els = [ doc.createElement( 'div' ) ];
@@ -202,14 +203,13 @@ ve.dm.MWReferencesListNode.static.toDomElements = function ( data, doc, converte
 
 ve.dm.MWReferencesListNode.static.describeChange = function ( key, change ) {
 	if ( key === 'refGroup' ) {
-		if ( change.from ) {
-			if ( change.to ) {
-				return ve.msg( 'cite-ve-changedesc-reflist-group-both', change.from, change.to );
-			} else {
-				return ve.msg( 'cite-ve-changedesc-reflist-group-from', change.from );
-			}
+		if ( !change.from ) {
+			return ve.htmlMsg( 'cite-ve-changedesc-reflist-group-to', this.wrapText( 'ins', change.to ) );
+		} else if ( !change.to ) {
+			return ve.htmlMsg( 'cite-ve-changedesc-reflist-group-from', this.wrapText( 'del', change.from ) );
+		} else {
+			return ve.htmlMsg( 'cite-ve-changedesc-reflist-group-both', this.wrapText( 'del', change.from ), this.wrapText( 'ins', change.to ) );
 		}
-		return ve.msg( 'cite-ve-changedesc-reflist-group-to', change.to );
 	}
 
 	if ( key === 'isResponsive' ) {

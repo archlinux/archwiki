@@ -4,7 +4,8 @@
 			"Huuchin",
 			"ОйЛ",
 			"לערי ריינהארט",
-			"아라"
+			"아라",
+			"Fitoschido"
 		]
 	},
 	"tog-underline": "Заалһиг татасллһн:",
@@ -578,7 +579,7 @@
 	"statistics-files": "Тәвсн боомгуд",
 	"statistics-edits": "{{SITENAME}} эклсн цагас авн сольлһна то",
 	"statistics-edits-average": "Халхарн сольлһна то",
-	"statistics-users": "Бичгдлһтә [[Special:ListUsers|демнчнр]]",
+	"statistics-users": "Бичгдлһтә демнчнр",
 	"statistics-users-active": "Үүлтә демнчнр",
 	"statistics-users-active-desc": "Сүл $1 өдрт үүлдвр кесн демнчәнр",
 	"brokenredirects-edit": "ясх",
@@ -677,7 +678,7 @@
 	"whatlinkshere": "Эн һазрур заалһуд",
 	"whatlinkshere-title": "«$1» гидг нерәдлһтә халхд заалдг халхс",
 	"whatlinkshere-page": "Халх:",
-	"linkshere": "Тер халхс '''[[:$1]]''' халхд заалдг:",
+	"linkshere": "Тер халхс '''$1''' халхд заалдг:",
 	"isredirect": "авч оддг халх",
 	"istemplate": "оруллһн",
 	"isimage": "зургин  заалһ",

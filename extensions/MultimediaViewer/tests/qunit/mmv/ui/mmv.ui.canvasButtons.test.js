@@ -30,7 +30,7 @@
 			assert.ok( true, 'Switched to prev image' );
 		} );
 
-		buttons.$next.click();
-		buttons.$prev.click();
+		buttons.$next.trigger( 'click' );
+		buttons.$prev.trigger( 'click' );
 	} );
 }( mediaWiki, jQuery ) );

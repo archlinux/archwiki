@@ -152,8 +152,6 @@ class SpecialChangeEmail extends FormSpecialPage {
 	 * @return Status
 	 */
 	private function attemptChange( User $user, $newaddr ) {
-		$authManager = AuthManager::singleton();
-
 		if ( $newaddr != '' && !Sanitizer::validateEmail( $newaddr ) ) {
 			return Status::newFatal( 'invalidemailaddress' );
 		}

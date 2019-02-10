@@ -322,7 +322,7 @@ abstract class ChangesListFilterGroup {
 	 * @return ChangesListFilter|null Specified filter, or null if it is not registered
 	 */
 	public function getFilter( $name ) {
-		return isset( $this->filters[$name] ) ? $this->filters[$name] : null;
+		return $this->filters[$name] ?? null;
 	}
 
 	/**
@@ -358,7 +358,7 @@ abstract class ChangesListFilterGroup {
 		}
 
 		usort( $this->filters, function ( $a, $b ) {
-			return $b->getPriority() - $a->getPriority();
+			return $b->getPriority() <=> $a->getPriority();
 		} );
 
 		foreach ( $this->filters as $filterName => $filter ) {

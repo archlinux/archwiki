@@ -342,8 +342,8 @@ class EmailNotification {
 
 		$keys['$PAGETITLE'] = $this->title->getPrefixedText();
 		$keys['$PAGETITLE_URL'] = $this->title->getCanonicalURL();
-		$keys['$PAGEMINOREDIT'] = $this->minorEdit ?
-			wfMessage( 'enotif_minoredit' )->inContentLanguage()->text() : '';
+		$keys['$PAGEMINOREDIT'] = "\n" . ( $this->minorEdit ?
+			wfMessage( 'enotif_minoredit' )->inContentLanguage()->text() : '' );
 		$keys['$UNWATCHURL'] = $this->title->getCanonicalURL( 'action=unwatch' );
 
 		if ( $this->editor->isAnon() ) {
@@ -452,7 +452,7 @@ class EmailNotification {
 	 * @private
 	 */
 	function sendPersonalised( $watchingUser, $source ) {
-		global $wgContLang, $wgEnotifUseRealName;
+		global $wgEnotifUseRealName;
 		// From the PHP manual:
 		//   Note: The to parameter cannot be an address in the form of
 		//   "Something <someone@example.com>". The mail command will not parse
@@ -462,14 +462,15 @@ class EmailNotification {
 		# $PAGEEDITDATE is the time and date of the page change
 		# expressed in terms of individual local time of the notification
 		# recipient, i.e. watching user
+		$contLang = MediaWikiServices::getInstance()->getContentLanguage();
 		$body = str_replace(
 			[ '$WATCHINGUSERNAME',
 				'$PAGEEDITDATE',
 				'$PAGEEDITTIME' ],
 			[ $wgEnotifUseRealName && $watchingUser->getRealName() !== ''
 				? $watchingUser->getRealName() : $watchingUser->getName(),
-				$wgContLang->userDate( $this->timestamp, $watchingUser ),
-				$wgContLang->userTime( $this->timestamp, $watchingUser ) ],
+				$contLang->userDate( $this->timestamp, $watchingUser ),
+				$contLang->userTime( $this->timestamp, $watchingUser ) ],
 			$this->body );
 
 		$headers = [];
@@ -490,19 +491,18 @@ class EmailNotification {
 	 * @return Status|null
 	 */
 	function sendImpersonal( $addresses ) {
-		global $wgContLang;
-
 		if ( empty( $addresses ) ) {
 			return null;
 		}
 
+		$contLang = MediaWikiServices::getInstance()->getContentLanguage();
 		$body = str_replace(
 			[ '$WATCHINGUSERNAME',
 				'$PAGEEDITDATE',
 				'$PAGEEDITTIME' ],
 			[ wfMessage( 'enotif_impersonal_salutation' )->inContentLanguage()->text(),
-				$wgContLang->date( $this->timestamp, false, false ),
-				$wgContLang->time( $this->timestamp, false, false ) ],
+				$contLang->date( $this->timestamp, false, false ),
+				$contLang->time( $this->timestamp, false, false ) ],
 			$this->body );
 
 		return UserMailer::send( $addresses, $this->from, $this->subject, $body, [

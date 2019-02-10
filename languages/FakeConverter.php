@@ -37,7 +37,7 @@ class FakeConverter {
 	 */
 	public $mLang;
 
-	function __construct( $langobj ) {
+	function __construct( Language $langobj ) {
 		$this->mLang = $langobj;
 	}
 
@@ -116,6 +116,10 @@ class FakeConverter {
 	}
 
 	function validateVariant( $variant = null ) {
+		if ( $variant === null ) {
+			return null;
+		}
+		$variant = strtolower( $variant );
 		return $variant === $this->mLang->getCode() ? $variant : null;
 	}
 

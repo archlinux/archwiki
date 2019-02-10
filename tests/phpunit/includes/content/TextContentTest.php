@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\MediaWikiServices;
+
 /**
  * @group ContentHandler
  * @group Database
@@ -10,6 +12,10 @@ class TextContentTest extends MediaWikiLangTestCase {
 
 	protected function setUp() {
 		parent::setUp();
+
+		// trigger purging of all page related tables
+		$this->tablesUsed[] = 'page';
+		$this->tablesUsed[] = 'revision';
 
 		// Anon user
 		$user = new User();
@@ -26,7 +32,7 @@ class TextContentTest extends MediaWikiLangTestCase {
 				CONTENT_MODEL_CSS,
 				CONTENT_MODEL_JAVASCRIPT,
 			],
-			'wgUseTidy' => false,
+			'wgTidyConfig' => [ 'driver' => 'RemexHtml' ],
 			'wgCapitalLinks' => true,
 			'wgHooks' => [], // bypass hook ContentGetParserOutput that force custom rendering
 		] );
@@ -115,9 +121,8 @@ class TextContentTest extends MediaWikiLangTestCase {
 	 * @covers TextContent::preSaveTransform
 	 */
 	public function testPreSaveTransform( $text, $expected ) {
-		global $wgContLang;
-
-		$options = ParserOptions::newFromUserAndLang( $this->context->getUser(), $wgContLang );
+		$options = ParserOptions::newFromUserAndLang( $this->context->getUser(),
+			MediaWikiServices::getInstance()->getContentLanguage() );
 
 		$content = $this->newContent( $text );
 		$content = $content->preSaveTransform(
@@ -143,8 +148,8 @@ class TextContentTest extends MediaWikiLangTestCase {
 	 * @covers TextContent::preloadTransform
 	 */
 	public function testPreloadTransform( $text, $expected ) {
-		global $wgContLang;
-		$options = ParserOptions::newFromUserAndLang( $this->context->getUser(), $wgContLang );
+		$options = ParserOptions::newFromUserAndLang( $this->context->getUser(),
+			MediaWikiServices::getInstance()->getContentLanguage() );
 
 		$content = $this->newContent( $text );
 		$content = $content->preloadTransform( $this->context->getTitle(), $options );
@@ -351,11 +356,11 @@ class TextContentTest extends MediaWikiLangTestCase {
 
 	public static function dataGetDeletionUpdates() {
 		return [
-			[ "TextContentTest_testGetSecondaryDataUpdates_1",
+			[
 				CONTENT_MODEL_TEXT, "hello ''world''\n",
 				[]
 			],
-			[ "TextContentTest_testGetSecondaryDataUpdates_2",
+			[
 				CONTENT_MODEL_TEXT, "hello [[world test 21344]]\n",
 				[]
 			],
@@ -367,13 +372,11 @@ class TextContentTest extends MediaWikiLangTestCase {
 	 * @dataProvider dataGetDeletionUpdates
 	 * @covers TextContent::getDeletionUpdates
 	 */
-	public function testDeletionUpdates( $title, $model, $text, $expectedStuff ) {
-		$ns = $this->getDefaultWikitextNS();
-		$title = Title::newFromText( $title, $ns );
+	public function testDeletionUpdates( $model, $text, $expectedStuff ) {
+		$page = $this->getNonexistingTestPage( get_class( $this ) . '-' . $this->getName() );
+		$title = $page->getTitle();
 
 		$content = ContentHandler::makeContent( $text, $title, $model );
-
-		$page = WikiPage::factory( $title );
 		$page->doEditContent( $content, '' );
 
 		$updates = $content->getDeletionUpdates( $page );
@@ -382,11 +385,6 @@ class TextContentTest extends MediaWikiLangTestCase {
 		foreach ( $updates as $update ) {
 			$class = get_class( $update );
 			$updates[$class] = $update;
-		}
-
-		if ( !$expectedStuff ) {
-			$this->assertTrue( true ); // make phpunit happy
-			return;
 		}
 
 		foreach ( $expectedStuff as $class => $fieldValues ) {
@@ -400,7 +398,8 @@ class TextContentTest extends MediaWikiLangTestCase {
 			}
 		}
 
-		$page->doDeleteArticle( '' );
+		// make phpunit happy even if $expectedStuff was empty
+		$this->assertTrue( true );
 	}
 
 	public static function provideConvert() {

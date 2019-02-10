@@ -7,7 +7,8 @@
 			"Omnipaedista",
 			"Protnet",
 			"ZaDiak",
-			"Geraki"
+			"Geraki",
+			"Nikosgranturismogt"
 		]
 	},
 	"vector-skin-desc": "Σύγχρονη έκδοση του MonoBook με φρέσκια ματιά και πολλές βελτιώσεις χρηστικότητας",
@@ -24,5 +25,7 @@
 	"vector-view-history": "Προβολή ιστορικού",
 	"vector-view-view": "Ανάγνωση",
 	"vector-view-viewsource": "Προβολή κώδικα",
+	"vector-jumptonavigation": "Πήδηση στην πλοήγηση",
+	"vector-jumptosearch": "Πήδηση στην αναζήτηση",
 	"vector-more-actions": "Περισσότερα"
 }

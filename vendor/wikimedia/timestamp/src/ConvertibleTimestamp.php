@@ -45,9 +45,52 @@ class ConvertibleTimestamp {
 		TS_ISO_8601_BASIC => 'Ymd\THis\Z',
 		TS_EXIF => 'Y:m:d H:i:s', // This shouldn't ever be used, but is included for completeness
 		TS_RFC2822 => 'D, d M Y H:i:s',
-		TS_ORACLE => 'd-m-Y H:i:s.000000', // Was 'd-M-y h.i.s A' . ' +00:00' before r51500
-		TS_POSTGRES => 'Y-m-d H:i:s',
+		TS_ORACLE => 'd-m-Y H:i:s.u', // Was 'd-M-y h.i.s A' . ' +00:00' before r51500
+		TS_POSTGRES => 'Y-m-d H:i:s+00', // Formerly 'Y-m-d H:i:s' . ' GMT'
+		TS_UNIX_MICRO => 'U.u',
 	];
+
+	/**
+	 * @var callback|null
+	 * @see setFakeTime()
+	 */
+	protected static $fakeTimeCallback = null;
+
+	/**
+	 * Get the current time in the same form that PHP's built-in time() function uses.
+	 *
+	 * This is used by now() get setTimestamp( false ) instead of the built in time() function.
+	 * The output of this method can be overwritten for testing purposes by calling setFakeTime().
+	 *
+	 * @return int UNIX epoch
+	 */
+	public static function time() {
+		return static::$fakeTimeCallback ? call_user_func( static::$fakeTimeCallback ) : \time();
+	}
+
+	/**
+	 * Set a fake time value or clock callback.
+	 *
+	 * @param callable|string|false $fakeTime a fixed time string, or a callback() returning an int
+	 *        representing a UNIX epoch, or false to disable fake time and go back to real time.
+	 *
+	 * @return callable|null the previous fake time callback, if any.
+	 */
+	public static function setFakeTime( $fakeTime ) {
+		if ( is_string( $fakeTime ) ) {
+			$fakeTime = (int)static::convert( TS_UNIX, $fakeTime );
+		}
+
+		if ( is_int( $fakeTime ) ) {
+			$fakeTime = function () use ( $fakeTime ) {
+				return $fakeTime;
+			};
+		}
+
+		$old = static::$fakeTimeCallback;
+		static::$fakeTimeCallback = $fakeTime ? $fakeTime : null;
+		return $old;
+	}
 
 	/**
 	 * The actual timestamp being wrapped (DateTime object).
@@ -85,7 +128,7 @@ class ConvertibleTimestamp {
 
 		// We want to catch 0, '', null... but not date strings starting with a letter.
 		if ( !$ts || $ts === "\0\0\0\0\0\0\0\0\0\0\0\0\0\0" ) {
-			$uts = time();
+			$uts = self::time();
 			$strtime = "@$uts";
 		} elseif ( preg_match( '/^(\d{4})\-(\d\d)\-(\d\d) (\d\d):(\d\d):(\d\d)$/D', $ts, $da ) ) {
 			# TS_DB
@@ -93,9 +136,13 @@ class ConvertibleTimestamp {
 			# TS_EXIF
 		} elseif ( preg_match( '/^(\d{4})(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)$/D', $ts, $da ) ) {
 			# TS_MW
-		} elseif ( preg_match( '/^(-?\d{1,13})(\.\d+)?$/D', $ts, $m ) ) {
+		} elseif ( preg_match( '/^(-?\d{1,13})$/D', $ts, $m ) ) {
 			# TS_UNIX
 			$strtime = "@{$m[1]}"; // http://php.net/manual/en/datetime.formats.compound.php
+		} elseif ( preg_match( '/^(-?\d{1,13})(\.\d+)$/D', $ts, $m ) ) {
+			# TS_UNIX_MICRO
+			// Not supported with @, so we need a hack
+			$strtime = 'unixmicro';
 		} elseif ( preg_match( '/^\d{2}-\d{2}-\d{4} \d{2}:\d{2}:\d{2}.\d{6}$/', $ts ) ) {
 			# TS_ORACLE // session altered to DD-MM-YYYY HH24:MI:SS.FF6
 			$strtime = preg_replace( '/(\d\d)\.(\d\d)\.(\d\d)(\.(\d+))?/', "$1:$2:$3",
@@ -125,7 +172,7 @@ class ConvertibleTimestamp {
 		) ) {
 			# TS_POSTGRES
 		} elseif ( preg_match(
-		# Day of week
+			# Day of week
 			'/^[ \t\r\n]*([A-Z][a-z]{2},[ \t\r\n]*)?' .
 			# dd Mon yyyy
 			'\d\d?[ \t\r\n]*[A-Z][a-z]{2}[ \t\r\n]*\d{2}(?:\d{2})?' .
@@ -154,7 +201,11 @@ class ConvertibleTimestamp {
 		}
 
 		try {
-			$final = new DateTime( $strtime, new DateTimeZone( 'GMT' ) );
+			if ( $strtime === 'unixmicro' ) {
+				$final = DateTime::createFromFormat( 'U.u', $ts, new DateTimeZone( 'GMT' ) );
+			} else {
+				$final = new DateTime( $strtime, new DateTimeZone( 'GMT' ) );
+			}
 		} catch ( Exception $e ) {
 			throw new TimestampException( __METHOD__ . ': Invalid timestamp format.', $e->getCode(), $e );
 		}
@@ -170,7 +221,7 @@ class ConvertibleTimestamp {
 	 * Convert a timestamp string to a given format.
 	 *
 	 * @param int $style Constant Output format for timestamp
-	 * @param string|int|bool $ts Timestamp
+	 * @param string|int|float|bool $ts Timestamp
 	 * @return string|bool Formatted timestamp or false on failure
 	 */
 	public static function convert( $style = TS_UNIX, $ts ) {
@@ -209,7 +260,7 @@ class ConvertibleTimestamp {
 
 		$output = $this->timestamp->format( self::$formats[$style] );
 
-		if ( ( $style == TS_RFC2822 ) || ( $style == TS_POSTGRES ) ) {
+		if ( $style == TS_RFC2822 ) {
 			$output .= ' GMT';
 		}
 

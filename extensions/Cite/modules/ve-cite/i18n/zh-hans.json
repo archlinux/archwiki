@@ -26,12 +26,10 @@
 			"夢蝶葬花"
 		]
 	},
-	"visualeditor-cite-tool-definition.json": "空",
 	"visualeditor-cite-tool-name-book": "图书",
 	"visualeditor-cite-tool-name-journal": "期刊",
 	"visualeditor-cite-tool-name-news": "新闻",
 	"visualeditor-cite-tool-name-web": "网站",
-	"cite-tool-definition.json": "空",
 	"cite-ve-changedesc-ref-group-both": "已将参考文献组从“$1”更改为“$2”",
 	"cite-ve-changedesc-ref-group-from": "已将参考文献组从“$1”更改为一般组",
 	"cite-ve-changedesc-ref-group-to": "已将参考文献组从一般组更改为“$1”",

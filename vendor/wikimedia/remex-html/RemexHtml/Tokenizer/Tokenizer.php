@@ -820,15 +820,6 @@ class Tokenizer {
 		if ( $this->ignoreCharRefs ) {
 			return $text;
 		}
-		// Efficiently translate a few common cases.
-		// Although this doesn't translate any error cases, running this
-		// function in !$ignoreError mode would cause the string offsets to
-		// be wrong when we come to the preg_match_all.
-		//
-		// In HHVM this is way too broken to be usable. (@todo bug/PR)
-		if ( !defined( 'HHVM_VERSION' ) && $this->ignoreErrors ) {
-			$text = html_entity_decode( $text, ENT_HTML5 | ENT_QUOTES );
-		}
 
 		static $re;
 		if ( $re === null ) {
@@ -1483,6 +1474,6 @@ REGEX;
 			$msg = "PCRE unexpected error";
 		}
 
-		throw new TokenizerError( __CLASS__.": $msg" );
+		throw new TokenizerError( __CLASS__ . ": $msg" );
 	}
 }

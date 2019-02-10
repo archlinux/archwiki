@@ -44,7 +44,7 @@ class ChangesList extends ContextSource {
 	/** @var callable */
 	protected $changeLinePrefixer;
 
-	/** @var BagOStuff */
+	/** @var MapCacheLRU */
 	protected $watchMsgCache;
 
 	/**
@@ -72,7 +72,7 @@ class ChangesList extends ContextSource {
 			$this->skin = $obj;
 		}
 		$this->preCacheMessages();
-		$this->watchMsgCache = new HashBagOStuff( [ 'maxKeys' => 50 ] );
+		$this->watchMsgCache = new MapCacheLRU( 50 );
 		$this->linkRenderer = MediaWikiServices::getInstance()->getLinkRenderer();
 		$this->filterGroups = $filterGroups;
 	}
@@ -107,12 +107,37 @@ class ChangesList extends ContextSource {
 	 *
 	 * @param RecentChange &$rc Passed by reference
 	 * @param bool $watched (default false)
-	 * @param int $linenumber (default null)
+	 * @param int|null $linenumber (default null)
 	 *
 	 * @return string|bool
 	 */
 	public function recentChangesLine( &$rc, $watched = false, $linenumber = null ) {
 		throw new RuntimeException( 'recentChangesLine should be implemented' );
+	}
+
+	/**
+	 * Get the container for highlights that are used in the new StructuredFilters
+	 * system
+	 *
+	 * @return string HTML structure of the highlight container div
+	 */
+	protected function getHighlightsContainerDiv() {
+		$highlightColorDivs = '';
+		foreach ( [ 'none', 'c1', 'c2', 'c3', 'c4', 'c5' ] as $color ) {
+			$highlightColorDivs .= Html::rawElement(
+				'div',
+				[
+					'class' => 'mw-rcfilters-ui-highlights-color-' . $color,
+					'data-color' => $color
+				]
+			);
+		}
+
+		return Html::rawElement(
+			'div',
+			[ 'class' => 'mw-rcfilters-ui-highlights' ],
+			$highlightColorDivs
+		);
 	}
 
 	/**
@@ -152,7 +177,7 @@ class ChangesList extends ContextSource {
 	 * @param string $nothing To use for empty space
 	 * @return string
 	 */
-	public function recentChangesFlags( $flags, $nothing = '&#160;' ) {
+	public function recentChangesFlags( $flags, $nothing = "\u{00A0}" ) {
 		$f = '';
 		foreach ( array_keys( $this->getConfig()->get( 'RecentChangesFlags' ) ) as $flag ) {
 			$f .= isset( $flags[$flag] ) && $flags[$flag]
@@ -183,8 +208,6 @@ class ChangesList extends ContextSource {
 			$classes[] = Sanitizer::escapeClass( self::CSS_CLASS_PREFIX . 'ns' .
 				$rc->mAttribs['rc_namespace'] . '-' . $rc->mAttribs['rc_title'] );
 		}
-		$classes[] = Sanitizer::escapeClass( self::CSS_CLASS_PREFIX . 'ns-' .
-			$rc->mAttribs['rc_namespace'] );
 
 		// Indicate watched status on the line to allow for more
 		// comprehensive styling.
@@ -198,13 +221,17 @@ class ChangesList extends ContextSource {
 	}
 
 	/**
-	 * Get an array of CSS classes attributed to filters for this row
+	 * Get an array of CSS classes attributed to filters for this row. Used for highlighting
+	 * in the front-end.
 	 *
 	 * @param RecentChange $rc
 	 * @return array Array of CSS classes
 	 */
 	protected function getHTMLClassesForFilters( $rc ) {
 		$classes = [];
+
+		$classes[] = Sanitizer::escapeClass( self::CSS_CLASS_PREFIX . 'ns-' .
+			$rc->mAttribs['rc_namespace'] );
 
 		if ( $this->filterGroups !== null ) {
 			foreach ( $this->filterGroups as $filterGroup ) {
@@ -222,7 +249,7 @@ class ChangesList extends ContextSource {
 	 * bot edit, or unpatrolled edit. In English it typically contains "N", "m", "b", or "!".
 	 *
 	 * @param string $flag One key of $wgRecentChangesFlags
-	 * @param IContextSource $context
+	 * @param IContextSource|null $context
 	 * @return string HTML
 	 */
 	public static function flag( $flag, IContextSource $context = null ) {
@@ -236,7 +263,7 @@ class ChangesList extends ContextSource {
 				$flagInfos[$key]['letter'] = $value['letter'];
 				$flagInfos[$key]['title'] = $value['title'];
 				// Allow customized class name, fall back to flag name
-				$flagInfos[$key]['class'] = isset( $value['class'] ) ? $value['class'] : $key;
+				$flagInfos[$key]['class'] = $value['class'] ?? $key;
 			}
 		}
 
@@ -283,7 +310,7 @@ class ChangesList extends ContextSource {
 	 *
 	 * @param int $old Number of bytes
 	 * @param int $new Number of bytes
-	 * @param IContextSource $context
+	 * @param IContextSource|null $context
 	 * @return string
 	 */
 	public static function showCharacterDifference( $old, $new, IContextSource $context = null ) {
@@ -336,7 +363,7 @@ class ChangesList extends ContextSource {
 	 * Format the character difference of one or several changes.
 	 *
 	 * @param RecentChange $old
-	 * @param RecentChange $new Last change to use, if not provided, $old will be used
+	 * @param RecentChange|null $new Last change to use, if not provided, $old will be used
 	 * @return string HTML fragment
 	 */
 	public function formatCharacterDifference( RecentChange $old, RecentChange $new = null ) {
@@ -504,10 +531,10 @@ class ChangesList extends ContextSource {
 	public function getTimestamp( $rc ) {
 		// @todo FIXME: Hard coded ". .". Is there a message for this? Should there be?
 		return $this->message['semicolon-separator'] . '<span class="mw-changeslist-date">' .
-			$this->getLanguage()->userTime(
+			htmlspecialchars( $this->getLanguage()->userTime(
 				$rc->mAttribs['rc_timestamp'],
 				$this->getUser()
-			) . '</span> <span class="mw-changeslist-separator">. .</span> ';
+			) ) . '</span> <span class="mw-changeslist-separator">. .</span> ';
 	}
 
 	/**
@@ -575,10 +602,9 @@ class ChangesList extends ContextSource {
 		if ( $count <= 0 ) {
 			return '';
 		}
-		$cache = $this->watchMsgCache;
-		return $cache->getWithSetCallback(
-			$cache->makeKey( 'watching-users-msg', $count ),
-			$cache::TTL_INDEFINITE,
+
+		return $this->watchMsgCache->getWithSetCallback(
+			"watching-users-msg:$count",
 			function () use ( $count ) {
 				return $this->msg( 'number_of_watching_users_RCview' )
 					->numParams( $count )->escaped();
@@ -601,7 +627,7 @@ class ChangesList extends ContextSource {
 	 * field of this revision, if it's marked as deleted.
 	 * @param RCCacheEntry|RecentChange $rc
 	 * @param int $field
-	 * @param User $user User object to check, or null to use $wgUser
+	 * @param User|null $user User object to check, or null to use $wgUser
 	 * @return bool
 	 */
 	public static function userCan( $rc, $field, User $user = null ) {
@@ -625,7 +651,8 @@ class ChangesList extends ContextSource {
 		}
 	}
 
-	/** Inserts a rollback link
+	/**
+	 * Insert a rollback link
 	 *
 	 * @param string &$s
 	 * @param RecentChange &$rc
@@ -634,19 +661,18 @@ class ChangesList extends ContextSource {
 		if ( $rc->mAttribs['rc_type'] == RC_EDIT
 			&& $rc->mAttribs['rc_this_oldid']
 			&& $rc->mAttribs['rc_cur_id']
+			&& $rc->getAttribute( 'page_latest' ) == $rc->mAttribs['rc_this_oldid']
 		) {
-			$page = $rc->getTitle();
-			/** Check for rollback and edit permissions, disallow special pages, and only
+			$title = $rc->getTitle();
+			/** Check for rollback permissions, disallow special pages, and only
 			 * show a link on the top-most revision */
-			if ( $this->getUser()->isAllowed( 'rollback' )
-				&& $rc->mAttribs['page_latest'] == $rc->mAttribs['rc_this_oldid']
-			) {
+			if ( $title->quickUserCan( 'rollback', $this->getUser() ) ) {
 				$rev = new Revision( [
-					'title' => $page,
+					'title' => $title,
 					'id' => $rc->mAttribs['rc_this_oldid'],
 					'user' => $rc->mAttribs['rc_user'],
 					'user_text' => $rc->mAttribs['rc_user_text'],
-					'actor' => isset( $rc->mAttribs['rc_actor'] ) ? $rc->mAttribs['rc_actor'] : null,
+					'actor' => $rc->mAttribs['rc_actor'] ?? null,
 					'deleted' => $rc->mAttribs['rc_deleted']
 				] );
 				$s .= ' ' . Linker::generateRollback( $rev, $this->getContext() );

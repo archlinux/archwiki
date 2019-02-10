@@ -57,9 +57,12 @@
 			]
 		},
 		"skins.timeless.js": {
-			"targets": [ "desktop", "mobile" ],
+			"targets": [ "desktop" ],
 			"scripts": [
 				"resources/main.js"
+			],
+			"dependencies": [
+				"jquery.tabIndex"
 			]
 		},
 		"skins.timeless.mobile": {
@@ -82,8 +85,8 @@
 		}
 	},
 	"AutoloadClasses": {
-		"SkinTimeless": "SkinTimeless.php",
-		"TimelessTemplate": "TimelessTemplate.php"
+		"SkinTimeless": "includes/SkinTimeless.php",
+		"TimelessTemplate": "includes/TimelessTemplate.php"
 	},
 	"manifest_version": 1
 }

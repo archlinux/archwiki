@@ -1,4 +1,4 @@
-( function ( $, mw ) {
+( function () {
 	var simpleSample, U_20AC, poop, mbSample,
 		trimByteLength = require( 'mediawiki.String' ).trimByteLength;
 
@@ -40,7 +40,7 @@
 		QUnit.test( opt.description, function ( assert ) {
 			var res = trimByteLength( opt.initial, opt.sample, opt.limit, opt.fn );
 
-			assert.equal(
+			assert.strictEqual(
 				res.newVal,
 				opt.expected,
 				'New value matches the expected string'
@@ -147,4 +147,4 @@
 		expected: '\uD800'
 	} );
 
-}( jQuery, mediaWiki ) );
+}() );

@@ -313,7 +313,7 @@ class SpecialReplaceText extends SpecialPage {
 		$titles_for_move = [];
 		$unmoveable_titles = [];
 
-		$res = $this->getMatchingTitles(
+		$res = ReplaceTextSearch::getMatchingTitles(
 			$this->target,
 			$this->selected_namespaces,
 			$this->category,
@@ -329,15 +329,13 @@ class SpecialReplaceText extends SpecialPage {
 			// See if this move can happen.
 			$cur_page_name = str_replace( '_', ' ', $row->page_title );
 
-			if ( $this->use_regex ) {
-				$new_page_name =
-					preg_replace( "/" . $this->target . "/Uu", $this->replacement, $cur_page_name );
-			} else {
-				$new_page_name =
-					str_replace( $this->target, $this->replacement, $cur_page_name );
-			}
+			$new_title = ReplaceTextSearch::getReplacedTitle(
+				$title,
+				$this->target,
+				$this->replacement,
+				$this->use_regex
+			);
 
-			$new_title = Title::makeTitleSafe( $row->page_namespace, $new_page_name );
 			$err = $title->isValidMoveOperation( $new_title );
 
 			if ( $title->userCan( 'move' ) && !is_array( $err ) ) {
@@ -381,11 +379,12 @@ class SpecialReplaceText extends SpecialPage {
 					->params( "<code><nowiki>{$this->replacement}</nowiki></code>" )->text();
 			}
 		} elseif ( count( $titles_for_move ) > 0 ) {
-			$res = $this->getMatchingTitles(
+			$res = ReplaceTextSearch::getMatchingTitles(
 				$this->replacement,
 				$this->selected_namespaces,
 				$this->category,
-				$this->prefix, $this->use_regex
+				$this->prefix,
+				$this->use_regex
 			);
 			$count = $res->numRows();
 			if ( $count > 0 ) {
@@ -442,10 +441,11 @@ class SpecialReplaceText extends SpecialPage {
 		);
 		$out->addHTML( '</td></tr></table>' );
 
-		// SQLite unfortunately lacks a REGEXP function or operator by
-		// default, so disable regex(p) searches for SQLite.
+		// MSSQL/SQLServer and SQLite unfortunately lack a REGEXP
+		// function or operator by default, so disable regex(p)
+		// searches for both these DB types.
 		$dbr = wfGetDB( DB_REPLICA );
-		if ( $dbr->getType() != 'sqlite' ) {
+		if ( $dbr->getType() != 'sqlite' && $dbr->getType() != 'mssql' ) {
 			$out->addHTML( Xml::tags( 'p', null,
 					Xml::checkLabel(
 						$this->msg( 'replacetext_useregex' )->text(),
@@ -673,7 +673,7 @@ class SpecialReplaceText extends SpecialPage {
 			$out->addWikiMsg( 'replacetext_cannotmove', $wgLang->formatNum( count( $unmoveable_titles ) ) );
 			$text = "<ul>\n";
 			foreach ( $unmoveable_titles as $title ) {
-				$text .= "<li>" .  ReplaceTextUtils::link( $title ) . "<br />\n";
+				$text .= "<li>" . ReplaceTextUtils::link( $title ) . "<br />\n";
 			}
 			$text .= "</ul>\n";
 			$out->addHTML( $text );
@@ -730,9 +730,22 @@ class SpecialReplaceText extends SpecialPage {
 		$context = '';
 		foreach ( $cuts as $_ ) {
 			list( $index, $len, ) = $_;
-			$context .= $this->convertWhiteSpaceToHTML(
-				$wgLang->truncate( substr( $text, 0, $index ), - $cw, '...', false )
-			);
+			$contextBefore = substr( $text, 0, $index );
+			$contextAfter = substr( $text, $index + $len );
+			if ( !is_callable( [ $wgLang, 'truncateForDatabase' ] ) ) {
+				// Backwards compatibility code; remove once MW 1.30 is
+				// no longer supported.
+				$contextBefore =
+					$wgLang->truncate( $contextBefore, - $cw, '...', false );
+				$contextAfter =
+					$wgLang->truncate( $contextAfter, $cw, '...', false );
+			} else {
+				$contextBefore =
+					$wgLang->truncateForDatabase( $contextBefore, - $cw, '...', false );
+				$contextAfter =
+					$wgLang->truncateForDatabase( $contextAfter, $cw, '...', false );
+			}
+			$context .= $this->convertWhiteSpaceToHTML( $contextBefore );
 			$snippet = $this->convertWhiteSpaceToHTML( substr( $text, $index, $len ) );
 			if ( $use_regex ) {
 				$targetStr = "/$target/Uu";
@@ -742,9 +755,7 @@ class SpecialReplaceText extends SpecialPage {
 			}
 			$context .= preg_replace( $targetStr, '<span class="searchmatch">\0</span>', $snippet );
 
-			$context .= $this->convertWhiteSpaceToHTML(
-				$wgLang->truncate( substr( $text, $index + $len ), $cw, '...', false )
-			);
+			$context .= $this->convertWhiteSpaceToHTML( $contextAfter );
 		}
 		return $context;
 	}
@@ -756,31 +767,6 @@ class SpecialReplaceText extends SpecialPage {
 		$msg = preg_replace( '/  /', '&#160; ', $msg );
 		# $msg = str_replace( "\n", '<br />', $msg );
 		return $msg;
-	}
-
-	private function getMatchingTitles( $str, $namespaces, $category, $prefix, $use_regex = false ) {
-		$dbr = wfGetDB( DB_REPLICA );
-
-		$tables = [ 'page' ];
-		$vars = [ 'page_title', 'page_namespace' ];
-
-		$str = str_replace( ' ', '_', $str );
-		if ( $use_regex ) {
-			$comparisonCond = ReplaceTextSearch::regexCond( $dbr, 'page_title', $str );
-		} else {
-			$any = $dbr->anyString();
-			$comparisonCond = 'page_title ' . $dbr->buildLike( $any, $str, $any );
-		}
-		$conds = [
-			$comparisonCond,
-			'page_namespace' => $namespaces,
-		];
-
-		ReplaceTextSearch::categoryCondition( $category, $tables, $conds );
-		ReplaceTextSearch::prefixCondition( $prefix, $conds );
-		$sort = [ 'ORDER BY' => 'page_namespace, page_title' ];
-
-		return $dbr->select( $tables, $vars, $conds, __METHOD__, $sort );
 	}
 
 	/**

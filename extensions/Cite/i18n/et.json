@@ -5,8 +5,9 @@
 			"Cumbril"
 		]
 	},
-	"cite-desc": "Lisab viitamiseks sildid <nowiki><ref[ name=id]></nowiki> ja <nowiki><references/></nowiki>.",
+	"cite-desc": "Lisab viitamiseks sildid <code><nowiki><ref[ name=id]></nowiki></code> ja <code><nowiki><references/></nowiki></code>.",
 	"cite_error": "Viitamistõrge: $1",
+	"cite_error_ref_invalid_dir": "Vigane silt <code>&lt;ref&gt;</code>, atribuudi \"dir\" väärtus \"$1\" on tundmatu. Peab olema \"ltr\" või \"rtl\".",
 	"cite_error_ref_numeric_key": "Vigane <code>&lt;ref&gt;</code>-silt.\nNimeparameeter ei tohi olla numbriline. Kasuta kirjeldavat nime.",
 	"cite_error_ref_no_key": "Algussilt <code>&lt;ref&gt;</code> on väärdunud või selle nimi on vigane.",
 	"cite_error_ref_too_many_keys": "Vigane <code>&lt;ref&gt;</code>-silt;\n\"name\" on vigane või liiga pikk.",
@@ -27,5 +28,7 @@
 	"cite-tracking-category-cite-error-desc": "Selles kategoorias on leheküljed, kus viitamissilte on kasutatud valesti.",
 	"cite_references_link_accessibility_label": "Siirdu üles",
 	"cite_references_link_many_accessibility_label": "Siirdu üles asukohta:",
-	"cite_section_preview_references": "Viidete eelvaade"
+	"cite_section_preview_references": "Viidete eelvaade",
+	"cite_warning": "Viitamishoiatus: $1",
+	"cite_warning_sectionpreview_no_text": "Silti <code>&lt;ref&gt;</code> nimega <code>$1</code> ei saa eelvaates näidata, sest see on määratletud väljaspool seda alaosa või sellise nimega silti polegi määratletud."
 }

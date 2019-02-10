@@ -21,6 +21,7 @@
  * @ingroup SpecialPage
  */
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Preferences\MultiUsernameFilter;
 
 /**
  * A special page that allows users to send e-mails to other users
@@ -204,7 +205,7 @@ class SpecialEmailUser extends UnlistedSpecialPage {
 		$nu = User::newFromName( $target );
 		$error = self::validateTarget( $nu, $sender );
 
-		return $error ? $error : $nu;
+		return $error ?: $nu;
 	}
 
 	/**
@@ -247,8 +248,9 @@ class SpecialEmailUser extends UnlistedSpecialPage {
 		}
 
 		if ( $sender !== null ) {
-			$blacklist = $target->getOption( 'email-blacklist', [] );
+			$blacklist = $target->getOption( 'email-blacklist', '' );
 			if ( $blacklist ) {
+				$blacklist = MultiUsernameFilter::splitIds( $blacklist );
 				$lookup = CentralIdLookup::factory();
 				$senderId = $lookup->centralIdFromLocalUser( $sender );
 				if ( $senderId !== 0 && in_array( $senderId, $blacklist ) ) {
@@ -267,7 +269,7 @@ class SpecialEmailUser extends UnlistedSpecialPage {
 	 *
 	 * @param User $user
 	 * @param string $editToken Edit token
-	 * @param Config $config optional for backwards compatibility
+	 * @param Config|null $config optional for backwards compatibility
 	 * @return string|null Null on success or string on error
 	 */
 	public static function getPermissionsError( $user, $editToken, Config $config = null ) {
@@ -332,7 +334,7 @@ class SpecialEmailUser extends UnlistedSpecialPage {
 			Html::label(
 				$this->msg( 'emailusername' )->text(),
 				'emailusertarget'
-			) . '&#160;' .
+			) . "\u{00A0}" .
 			Html::input(
 				'target',
 				$name,
@@ -436,7 +438,7 @@ class SpecialEmailUser extends UnlistedSpecialPage {
 			 * SPF and bounce problems with some mailers (see below).
 			 */
 			$mailFrom = new MailAddress( $config->get( 'PasswordSender' ),
-				wfMessage( 'emailsender' )->inContentLanguage()->text() );
+				$context->msg( 'emailsender' )->inContentLanguage()->text() );
 			$replyTo = $from;
 		} else {
 			/**
@@ -480,7 +482,7 @@ class SpecialEmailUser extends UnlistedSpecialPage {
 				if ( $config->get( 'UserEmailUseReplyTo' ) ) {
 					$mailFrom = new MailAddress(
 						$config->get( 'PasswordSender' ),
-						wfMessage( 'emailsender' )->inContentLanguage()->text()
+						$context->msg( 'emailsender' )->inContentLanguage()->text()
 					);
 					$replyTo = $ccFrom;
 				} else {

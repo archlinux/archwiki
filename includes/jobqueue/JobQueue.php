@@ -58,8 +58,8 @@ abstract class JobQueue {
 	protected function __construct( array $params ) {
 		$this->wiki = $params['wiki'];
 		$this->type = $params['type'];
-		$this->claimTTL = isset( $params['claimTTL'] ) ? $params['claimTTL'] : 0;
-		$this->maxTries = isset( $params['maxTries'] ) ? $params['maxTries'] : 3;
+		$this->claimTTL = $params['claimTTL'] ?? 0;
+		$this->maxTries = $params['maxTries'] ?? 3;
 		if ( isset( $params['order'] ) && $params['order'] !== 'any' ) {
 			$this->order = $params['order'];
 		} else {
@@ -69,12 +69,8 @@ abstract class JobQueue {
 			throw new MWException( __CLASS__ . " does not support '{$this->order}' order." );
 		}
 		$this->dupCache = wfGetCache( CACHE_ANYTHING );
-		$this->aggr = isset( $params['aggregator'] )
-			? $params['aggregator']
-			: new JobQueueAggregatorNull( [] );
-		$this->readOnlyReason = isset( $params['readOnlyReason'] )
-			? $params['readOnlyReason']
-			: false;
+		$this->aggr = $params['aggregator'] ?? new JobQueueAggregatorNull( [] );
+		$this->readOnlyReason = $params['readOnlyReason'] ?? false;
 	}
 
 	/**
@@ -472,7 +468,7 @@ abstract class JobQueue {
 		$params = $job->getRootJobParams();
 
 		$key = $this->getRootJobCacheKey( $params['rootJobSignature'] );
-		// Callers should call batchInsert() and then this function so that if the insert
+		// Callers should call JobQueueGroup::push() before this method so that if the insert
 		// fails, the de-duplication registration will be aborted. Since the insert is
 		// deferred till "transaction idle", do the same here, so that the ordering is
 		// maintained. Having only the de-duplication registration succeed would cause

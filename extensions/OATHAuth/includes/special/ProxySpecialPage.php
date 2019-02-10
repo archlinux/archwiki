@@ -109,7 +109,7 @@ abstract class ProxySpecialPage extends SpecialPage {
 	}
 
 	/**
-	 * @param bool $x
+	 * @param bool|null $x
 	 * @return bool
 	 */
 	function listed( $x = null ) {
@@ -126,7 +126,7 @@ abstract class ProxySpecialPage extends SpecialPage {
 	}
 
 	/**
-	 * @param bool $x
+	 * @param bool|null $x
 	 * @return bool
 	 */
 	function including( $x = null ) {

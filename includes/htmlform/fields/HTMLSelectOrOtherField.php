@@ -12,9 +12,7 @@ class HTMLSelectOrOtherField extends HTMLTextField {
 		$this->getOptions();
 		if ( !in_array( 'other', $this->mOptions, true ) ) {
 			$msg =
-				isset( $params['other'] )
-					? $params['other']
-					: wfMessage( 'htmlform-selectorother-other' )->text();
+				$params['other'] ?? wfMessage( 'htmlform-selectorother-other' )->text();
 			// Have 'other' always as first element
 			$this->mOptions = [ $msg => 'other' ] + $this->mOptions;
 		}
@@ -127,8 +125,14 @@ class HTMLSelectOrOtherField extends HTMLTextField {
 			$textAttribs['placeholder'] = $this->mPlaceholder;
 		}
 
+		$disabled = false;
+		if ( isset( $this->mParams[ 'disabled' ] ) && $this->mParams[ 'disabled' ] ) {
+			$disabled = true;
+		}
+
 		return $this->getInputWidget( [
 			'id' => $this->mID,
+			'disabled' => $disabled,
 			'textinput' => $textAttribs,
 			'dropdowninput' => $dropdownAttribs,
 			'or' => true,

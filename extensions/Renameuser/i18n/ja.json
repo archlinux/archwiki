@@ -15,8 +15,8 @@
 		]
 	},
 	"renameuser": "利用者名の変更",
-	"renameuser-linkoncontribs": "利用者名変更",
-	"renameuser-linkoncontribs-text": "この利用者の名前を変更",
+	"renameuser-linkoncontribs": "{{GENDER:$1|利用者}}名変更",
+	"renameuser-linkoncontribs-text": "この{{GENDER:$1|利用者}}の名前を変更",
 	"renameuser-desc": "利用者名変更のための[[Special:RenameUser|特別ページ]]を追加する (「{{int:right-renameuser}}」できる権限 ''renameuser'' が必要)",
 	"renameuserold": "現在の利用者名:",
 	"renameusernew": "新しい利用者名:",

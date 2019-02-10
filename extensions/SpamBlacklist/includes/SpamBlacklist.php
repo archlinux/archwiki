@@ -41,7 +41,7 @@ class SpamBlacklist extends BaseBlacklist {
 
 	/**
 	 * @param string[] $links An array of links to check against the blacklist
-	 * @param Title $title The title of the page to which the filter shall be applied.
+	 * @param Title|null $title The title of the page to which the filter shall be applied.
 	 *               This is used to load the old links already on the page, so
 	 *               the filter is only applied to links that got added. If not given,
 	 *               the filter is applied to all $links.
@@ -72,7 +72,7 @@ class SpamBlacklist extends BaseBlacklist {
 			$this->getBlacklistType(),
 			'pass',
 			sha1( implode( "\n", $links ) ),
-			(string)$title
+			md5( (string)$title )
 		);
 		// Skip blacklist checks if nothing matched during edit stashing...
 		$knownNonMatchAsOf = $cache->get( $key );
@@ -271,11 +271,12 @@ class SpamBlacklist extends BaseBlacklist {
 	 */
 	function getCurrentLinks( Title $title ) {
 		$cache = ObjectCache::getMainWANInstance();
+		$fname = __METHOD__;
 		return $cache->getWithSetCallback(
 			// Key is warmed via warmCachesForFilter() from ApiStashEdit
 			$cache->makeKey( 'external-link-list', $title->getLatestRevID() ),
 			$cache::TTL_MINUTE,
-			function ( $oldValue, &$ttl, array &$setOpts ) use ( $title ) {
+			function ( $oldValue, &$ttl, array &$setOpts ) use ( $title, $fname ) {
 				$dbr = wfGetDB( DB_REPLICA );
 				$setOpts += Database::getCacheSetOptions( $dbr );
 
@@ -283,7 +284,7 @@ class SpamBlacklist extends BaseBlacklist {
 					'externallinks',
 					'el_to',
 					[ 'el_from' => $title->getArticleID() ], // should be zero queries
-					__METHOD__
+					$fname
 				);
 			}
 		);

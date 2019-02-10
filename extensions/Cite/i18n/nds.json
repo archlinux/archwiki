@@ -4,7 +4,7 @@
 			"Slomox"
 		]
 	},
-	"cite-desc": "Föögt <nowiki><ref[ name=id]></nowiki> un <nowiki><references/></nowiki> Tags för Zitaten to",
+	"cite-desc": "Föögt <code><nowiki><ref[ name=id]></nowiki></code> un <code><nowiki><references/></nowiki></code> Tags för Zitaten to",
 	"cite_error": "Zitat-Fehler: $1",
 	"cite_error_ref_numeric_key": "Ungülligen Tag <tt>&lt;ref&gt;</tt>: de Naam dröff keen reine Tall wesen, bruuk en Naam, de de Saak beschrifft.",
 	"cite_error_ref_no_key": "Ungülligen Tag <tt>&lt;ref&gt;</tt>: „ref“ ahn Inholt mutt en Naam hebben.",

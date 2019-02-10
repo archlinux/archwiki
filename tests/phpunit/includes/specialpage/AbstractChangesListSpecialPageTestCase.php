@@ -32,12 +32,6 @@ abstract class AbstractChangesListSpecialPageTestCase extends MediaWikiTestCase 
 			'patrol' => true,
 		];
 
-		// Deprecated
-		$this->setTemporaryHook(
-			'ChangesListSpecialPageFilters',
-			null
-		);
-
 		# setup the ChangesListSpecialPage (or subclass) object
 		$this->changesListSpecialPage = $this->getPage();
 		$context = $this->changesListSpecialPage->getContext();
@@ -91,7 +85,12 @@ abstract class AbstractChangesListSpecialPageTestCase extends MediaWikiTestCase 
 	/**
 	 * @dataProvider validateOptionsProvider
 	 */
-	public function testValidateOptions( $optionsToSet, $expectedRedirect, $expectedRedirectOptions ) {
+	public function testValidateOptions(
+		$optionsToSet,
+		$expectedRedirect,
+		$expectedRedirectOptions,
+		$rcfilters
+	) {
 		$redirectQuery = [];
 		$redirected = false;
 		$output = $this->getMockBuilder( OutputPage::class )
@@ -101,7 +100,7 @@ abstract class AbstractChangesListSpecialPageTestCase extends MediaWikiTestCase 
 		$output->method( 'redirect' )->willReturnCallback(
 			function ( $url ) use ( &$redirectQuery, &$redirected ) {
 				$urlParts = wfParseUrl( $url );
-				$query = isset( $urlParts[ 'query' ] ) ? $urlParts[ 'query' ] : '';
+				$query = $urlParts[ 'query' ] ?? '';
 				parse_str( $query, $redirectQuery );
 				$redirected = true;
 			}
@@ -110,6 +109,7 @@ abstract class AbstractChangesListSpecialPageTestCase extends MediaWikiTestCase 
 
 		// Give users patrol permissions so we can test that.
 		$user = $this->getTestSysop()->getUser();
+		$user->setOption( 'rcenhancedfilters-disable', $rcfilters ? 0 : 1 );
 		$ctx->setUser( $user );
 
 		// Disable this hook or it could break changeType

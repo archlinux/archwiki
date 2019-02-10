@@ -24,6 +24,8 @@
  * @ingroup Search
  */
 
+use MediaWiki\MediaWikiServices;
+
 /**
  * Search engine hook base class for Oracle (ConText).
  * @ingroup Search
@@ -64,7 +66,7 @@ class SearchOracle extends SearchDatabase {
 	 * @param string $term Raw search term
 	 * @return SqlSearchResultSet
 	 */
-	function searchText( $term ) {
+	protected function doSearchTextInDB( $term ) {
 		if ( $term == '' ) {
 			return new SqlSearchResultSet( false, '' );
 		}
@@ -79,7 +81,7 @@ class SearchOracle extends SearchDatabase {
 	 * @param string $term Raw search term
 	 * @return SqlSearchResultSet
 	 */
-	function searchTitle( $term ) {
+	protected function doSearchTitleInDB( $term ) {
 		if ( $term == '' ) {
 			return new SqlSearchResultSet( false, '' );
 		}
@@ -92,7 +94,7 @@ class SearchOracle extends SearchDatabase {
 	 * Return a partial WHERE clause to limit the search to the given namespaces
 	 * @return string
 	 */
-	function queryNamespaces() {
+	private function queryNamespaces() {
 		if ( is_null( $this->namespaces ) ) {
 			return '';
 		}
@@ -111,7 +113,7 @@ class SearchOracle extends SearchDatabase {
 	 *
 	 * @return string
 	 */
-	function queryLimit( $sql ) {
+	private function queryLimit( $sql ) {
 		return $this->db->limitResult( $sql, $this->limit, $this->offset );
 	}
 
@@ -134,7 +136,7 @@ class SearchOracle extends SearchDatabase {
 	 * @param bool $fulltext
 	 * @return string
 	 */
-	function getQuery( $filteredTerm, $fulltext ) {
+	private function getQuery( $filteredTerm, $fulltext ) {
 		return $this->queryLimit( $this->queryMain( $filteredTerm, $fulltext ) . ' ' .
 			$this->queryNamespaces() . ' ' .
 			$this->queryRanking( $filteredTerm, $fulltext ) . ' ' );
@@ -145,7 +147,7 @@ class SearchOracle extends SearchDatabase {
 	 * @param bool $fulltext
 	 * @return string
 	 */
-	function getIndexField( $fulltext ) {
+	private function getIndexField( $fulltext ) {
 		return $fulltext ? 'si_text' : 'si_title';
 	}
 
@@ -172,8 +174,7 @@ class SearchOracle extends SearchDatabase {
 	 * @param bool $fulltext
 	 * @return string
 	 */
-	function parseQuery( $filteredText, $fulltext ) {
-		global $wgContLang;
+	private function parseQuery( $filteredText, $fulltext ) {
 		$lc = $this->legalSearchChars( self::CHARS_NO_SYNTAX );
 		$this->searchTerms = [];
 
@@ -185,7 +186,8 @@ class SearchOracle extends SearchDatabase {
 			foreach ( $m as $terms ) {
 				// Search terms in all variant forms, only
 				// apply on wiki with LanguageConverter
-				$temp_terms = $wgContLang->autoConvertToAllVariants( $terms[2] );
+				$temp_terms = MediaWikiServices::getInstance()->getContentLanguage()->
+					autoConvertToAllVariants( $terms[2] );
 				if ( is_array( $temp_terms ) ) {
 					$temp_terms = array_unique( array_values( $temp_terms ) );
 					foreach ( $temp_terms as $t ) {
@@ -212,8 +214,7 @@ class SearchOracle extends SearchDatabase {
 	}
 
 	private function escapeTerm( $t ) {
-		global $wgContLang;
-		$t = $wgContLang->normalizeForSearch( $t );
+		$t = MediaWikiServices::getInstance()->getContentLanguage()->normalizeForSearch( $t );
 		$t = isset( $this->reservedWords[strtoupper( $t )] ) ? '{' . $t . '}' : $t;
 		$t = preg_replace( '/^"(.*)"$/', '($1)', $t );
 		$t = preg_replace( '/([-&|])/', '\\\\$1', $t );

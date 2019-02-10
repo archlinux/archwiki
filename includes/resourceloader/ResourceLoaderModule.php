@@ -129,9 +129,8 @@ abstract class ResourceLoaderModule implements LoggerAwareInterface {
 	 * @return bool
 	 */
 	public function getFlip( $context ) {
-		global $wgContLang;
-
-		return $wgContLang->getDir() !== $context->getDirection();
+		return MediaWikiServices::getInstance()->getContentLanguage()->getDir() !==
+			$context->getDirection();
 	}
 
 	/**
@@ -139,7 +138,7 @@ abstract class ResourceLoaderModule implements LoggerAwareInterface {
 	 *
 	 * @return string JavaScript code
 	 */
-	protected function getDeprecationInformation() {
+	public function getDeprecationInformation() {
 		$deprecationInfo = $this->deprecated;
 		if ( $deprecationInfo ) {
 			$name = $this->getName();
@@ -318,9 +317,9 @@ abstract class ResourceLoaderModule implements LoggerAwareInterface {
 	}
 
 	/**
-	 * Get the origin of this module. Should only be overridden for foreign modules.
+	 * Get the source of this module. Should only be overridden for foreign modules.
 	 *
-	 * @return string Origin name, 'local' for local modules
+	 * @return string Source name, 'local' for local modules
 	 */
 	public function getSource() {
 		// Stub, override expected
@@ -347,7 +346,7 @@ abstract class ResourceLoaderModule implements LoggerAwareInterface {
 	 * Note: It is expected that $context will be made non-optional in the near
 	 * future.
 	 *
-	 * @param ResourceLoaderContext $context
+	 * @param ResourceLoaderContext|null $context
 	 * @return array List of module names as strings
 	 */
 	public function getDependencies( ResourceLoaderContext $context = null ) {
@@ -417,7 +416,7 @@ abstract class ResourceLoaderModule implements LoggerAwareInterface {
 
 			if ( !is_null( $deps ) ) {
 				$this->fileDeps[$vary] = self::expandRelativePaths(
-					(array)FormatJson::decode( $deps, true )
+					(array)json_decode( $deps, true )
 				);
 			} else {
 				$this->fileDeps[$vary] = [];
@@ -477,7 +476,9 @@ abstract class ResourceLoaderModule implements LoggerAwareInterface {
 					return; // T124649; avoid write slams
 				}
 
-				$deps = FormatJson::encode( $localPaths );
+				// No needless escaping as this isn't HTML output.
+				// Only stored in the database and parsed in PHP.
+				$deps = json_encode( $localPaths, JSON_UNESCAPED_SLASHES );
 				$dbw = wfGetDB( DB_MASTER );
 				$dbw->upsert( 'module_deps',
 					[
@@ -688,79 +689,77 @@ abstract class ResourceLoaderModule implements LoggerAwareInterface {
 		$stats = MediaWikiServices::getInstance()->getStatsdDataFactory();
 		$statStart = microtime( true );
 
-		// Only include properties that are relevant to this context (e.g. only=scripts)
-		// and that are non-empty (e.g. don't include "templates" for modules without
-		// templates). This helps prevent invalidating cache for all modules when new
-		// optional properties are introduced.
+		// This MUST build both scripts and styles, regardless of whether $context->getOnly()
+		// is 'scripts' or 'styles' because the result is used by getVersionHash which
+		// must be consistent regardles of the 'only' filter on the current request.
+		// Also, when introducing new module content resources (e.g. templates, headers),
+		// these should only be included in the array when they are non-empty so that
+		// existing modules not using them do not get their cache invalidated.
 		$content = [];
 
 		// Scripts
-		if ( $context->shouldIncludeScripts() ) {
-			// If we are in debug mode, we'll want to return an array of URLs if possible
-			// However, we can't do this if the module doesn't support it
-			// We also can't do this if there is an only= parameter, because we have to give
-			// the module a way to return a load.php URL without causing an infinite loop
-			if ( $context->getDebug() && !$context->getOnly() && $this->supportsURLLoading() ) {
-				$scripts = $this->getScriptURLsForDebug( $context );
-			} else {
-				$scripts = $this->getScript( $context );
-				// Make the script safe to concatenate by making sure there is at least one
-				// trailing new line at the end of the content. Previously, this looked for
-				// a semi-colon instead, but that breaks concatenation if the semicolon
-				// is inside a comment like "// foo();". Instead, simply use a
-				// line break as separator which matches JavaScript native logic for implicitly
-				// ending statements even if a semi-colon is missing.
-				// Bugs: T29054, T162719.
-				if ( is_string( $scripts )
-					&& strlen( $scripts )
-					&& substr( $scripts, -1 ) !== "\n"
-				) {
-					$scripts .= "\n";
-				}
+		// If we are in debug mode, we'll want to return an array of URLs if possible
+		// However, we can't do this if the module doesn't support it.
+		// We also can't do this if there is an only= parameter, because we have to give
+		// the module a way to return a load.php URL without causing an infinite loop
+		if ( $context->getDebug() && !$context->getOnly() && $this->supportsURLLoading() ) {
+			$scripts = $this->getScriptURLsForDebug( $context );
+		} else {
+			$scripts = $this->getScript( $context );
+			// Make the script safe to concatenate by making sure there is at least one
+			// trailing new line at the end of the content. Previously, this looked for
+			// a semi-colon instead, but that breaks concatenation if the semicolon
+			// is inside a comment like "// foo();". Instead, simply use a
+			// line break as separator which matches JavaScript native logic for implicitly
+			// ending statements even if a semi-colon is missing.
+			// Bugs: T29054, T162719.
+			if ( is_string( $scripts )
+				&& strlen( $scripts )
+				&& substr( $scripts, -1 ) !== "\n"
+			) {
+				$scripts .= "\n";
 			}
-			$content['scripts'] = $scripts;
 		}
+		$content['scripts'] = $scripts;
 
 		// Styles
-		if ( $context->shouldIncludeStyles() ) {
-			$styles = [];
-			// Don't create empty stylesheets like [ '' => '' ] for modules
-			// that don't *have* any stylesheets (T40024).
-			$stylePairs = $this->getStyles( $context );
-			if ( count( $stylePairs ) ) {
-				// If we are in debug mode without &only= set, we'll want to return an array of URLs
-				// See comment near shouldIncludeScripts() for more details
-				if ( $context->getDebug() && !$context->getOnly() && $this->supportsURLLoading() ) {
-					$styles = [
-						'url' => $this->getStyleURLsForDebug( $context )
-					];
-				} else {
-					// Minify CSS before embedding in mw.loader.implement call
-					// (unless in debug mode)
-					if ( !$context->getDebug() ) {
-						foreach ( $stylePairs as $media => $style ) {
-							// Can be either a string or an array of strings.
-							if ( is_array( $style ) ) {
-								$stylePairs[$media] = [];
-								foreach ( $style as $cssText ) {
-									if ( is_string( $cssText ) ) {
-										$stylePairs[$media][] =
-											ResourceLoader::filter( 'minify-css', $cssText );
-									}
+		$styles = [];
+		// Don't create empty stylesheets like [ '' => '' ] for modules
+		// that don't *have* any stylesheets (T40024).
+		$stylePairs = $this->getStyles( $context );
+		if ( count( $stylePairs ) ) {
+			// If we are in debug mode without &only= set, we'll want to return an array of URLs
+			// See comment near shouldIncludeScripts() for more details
+			if ( $context->getDebug() && !$context->getOnly() && $this->supportsURLLoading() ) {
+				$styles = [
+					'url' => $this->getStyleURLsForDebug( $context )
+				];
+			} else {
+				// Minify CSS before embedding in mw.loader.implement call
+				// (unless in debug mode)
+				if ( !$context->getDebug() ) {
+					foreach ( $stylePairs as $media => $style ) {
+						// Can be either a string or an array of strings.
+						if ( is_array( $style ) ) {
+							$stylePairs[$media] = [];
+							foreach ( $style as $cssText ) {
+								if ( is_string( $cssText ) ) {
+									$stylePairs[$media][] =
+										ResourceLoader::filter( 'minify-css', $cssText );
 								}
-							} elseif ( is_string( $style ) ) {
-								$stylePairs[$media] = ResourceLoader::filter( 'minify-css', $style );
 							}
+						} elseif ( is_string( $style ) ) {
+							$stylePairs[$media] = ResourceLoader::filter( 'minify-css', $style );
 						}
 					}
-					// Wrap styles into @media groups as needed and flatten into a numerical array
-					$styles = [
-						'css' => $rl->makeCombinedStyles( $stylePairs )
-					];
 				}
+				// Wrap styles into @media groups as needed and flatten into a numerical array
+				$styles = [
+					'css' => $rl->makeCombinedStyles( $stylePairs )
+				];
 			}
-			$content['styles'] = $styles;
 		}
+		$content['styles'] = $styles;
 
 		// Messages
 		$blob = $this->getMessageBlob( $context );
@@ -799,52 +798,25 @@ abstract class ResourceLoaderModule implements LoggerAwareInterface {
 	 * This method should be quick because it is frequently run by ResourceLoaderStartUpModule to
 	 * propagate changes to the client and effectively invalidate cache.
 	 *
-	 * For backward-compatibility, the following optional data providers are automatically included:
-	 *
-	 * - getModifiedTime()
-	 * - getModifiedHash()
-	 *
 	 * @since 1.26
 	 * @param ResourceLoaderContext $context
 	 * @return string Hash (should use ResourceLoader::makeHash)
 	 */
 	public function getVersionHash( ResourceLoaderContext $context ) {
-		// The startup module produces a manifest with versions representing the entire module.
-		// Typically, the request for the startup module itself has only=scripts. That must apply
-		// only to the startup module content, and not to the module version computed here.
-		$context = new DerivativeResourceLoaderContext( $context );
-		$context->setModules( [] );
-		// Version hash must cover all resources, regardless of startup request itself.
-		$context->setOnly( null );
-		// Compute version hash based on content, not debug urls.
-		$context->setDebug( false );
-
 		// Cache this somewhat expensive operation. Especially because some classes
 		// (e.g. startup module) iterate more than once over all modules to get versions.
 		$contextHash = $context->getHash();
 		if ( !array_key_exists( $contextHash, $this->versionHash ) ) {
 			if ( $this->enableModuleContentVersion() ) {
-				// Detect changes directly
+				// Detect changes directly by hashing the module contents.
 				$str = json_encode( $this->getModuleContent( $context ) );
 			} else {
 				// Infer changes based on definition and other metrics
 				$summary = $this->getDefinitionSummary( $context );
-				if ( !isset( $summary['_cacheEpoch'] ) ) {
+				if ( !isset( $summary['_class'] ) ) {
 					throw new LogicException( 'getDefinitionSummary must call parent method' );
 				}
 				$str = json_encode( $summary );
-
-				$mtime = $this->getModifiedTime( $context );
-				if ( $mtime !== null ) {
-					// Support: MediaWiki 1.25 and earlier
-					$str .= strval( $mtime );
-				}
-
-				$mhash = $this->getModifiedHash( $context );
-				if ( $mhash !== null ) {
-					// Support: MediaWiki 1.25 and earlier
-					$str .= strval( $mhash );
-				}
 			}
 
 			$this->versionHash[$contextHash] = ResourceLoader::makeHash( $str );
@@ -911,30 +883,10 @@ abstract class ResourceLoaderModule implements LoggerAwareInterface {
 	public function getDefinitionSummary( ResourceLoaderContext $context ) {
 		return [
 			'_class' => static::class,
-			'_cacheEpoch' => $this->getConfig()->get( 'CacheEpoch' ),
+			// Make sure that when filter cache for minification is invalidated,
+			// we also change the HTTP urls and mw.loader.store keys (T176884).
+			'_cacheVersion' => ResourceLoader::CACHE_VERSION,
 		];
-	}
-
-	/**
-	 * Get this module's last modification timestamp for a given context.
-	 *
-	 * @deprecated since 1.26 Use getDefinitionSummary() instead
-	 * @param ResourceLoaderContext $context
-	 * @return int|null UNIX timestamp
-	 */
-	public function getModifiedTime( ResourceLoaderContext $context ) {
-		return null;
-	}
-
-	/**
-	 * Helper method for providing a version hash to getVersionHash().
-	 *
-	 * @deprecated since 1.26 Use getDefinitionSummary() instead
-	 * @param ResourceLoaderContext $context
-	 * @return string|null Hash
-	 */
-	public function getModifiedHash( ResourceLoaderContext $context ) {
-		return null;
 	}
 
 	/**

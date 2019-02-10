@@ -118,7 +118,7 @@
 	};
 
 	/**
-	 * True if the the original image needs to be used as a thumbnail.
+	 * True if the original image needs to be used as a thumbnail.
 	 *
 	 * @protected
 	 * @param {mw.Title} file

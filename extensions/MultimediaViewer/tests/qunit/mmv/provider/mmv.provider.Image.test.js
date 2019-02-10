@@ -154,7 +154,7 @@
 	} );
 
 	QUnit.test( 'Image load with preloading supported', function ( assert ) {
-		var url = mw.config.get( 'wgExtensionAssetsPath' ) + '/MultimediaViewer/resources/mmv/img/expand.svg',
+		var url = mw.config.get( 'wgExtensionAssetsPath' ) + '/MultimediaViewer/resources/mmv.bootstrap/img/expand.svg',
 			imageProvider = new mw.mmv.provider.Image(),
 			endsWith = function ( a, b ) { return a.indexOf( b ) === a.length - b.length; };
 

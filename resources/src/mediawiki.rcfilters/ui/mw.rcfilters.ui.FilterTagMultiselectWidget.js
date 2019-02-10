@@ -1,4 +1,4 @@
-( function ( mw ) {
+( function () {
 	/**
 	 * List displaying all filter groups
 	 *
@@ -12,6 +12,9 @@
 	 * @param {mw.rcfilters.dm.SavedQueriesModel} savedQueriesModel Saved queries model
 	 * @param {Object} config Configuration object
 	 * @cfg {jQuery} [$overlay] A jQuery object serving as overlay for popups
+	 * @cfg {jQuery} [$wrapper] A jQuery object for the wrapper of the general
+	 *  system. If not given, falls back to this widget's $element
+	 * @cfg {boolean} [collapsed] Filter area is collapsed
 	 */
 	mw.rcfilters.ui.FilterTagMultiselectWidget = function MwRcfiltersUiFilterTagMultiselectWidget( controller, model, savedQueriesModel, config ) {
 		var rcFiltersRow,
@@ -28,8 +31,10 @@
 		this.model = model;
 		this.queriesModel = savedQueriesModel;
 		this.$overlay = config.$overlay || this.$element;
+		this.$wrapper = config.$wrapper || this.$element;
 		this.matchingQuery = null;
 		this.currentView = this.model.getCurrentView();
+		this.collapsed = false;
 
 		// Parent
 		mw.rcfilters.ui.FilterTagMultiselectWidget.parent.call( this, $.extend( true, {
@@ -87,6 +92,13 @@
 			classes: [ 'mw-rcfilters-ui-filterTagMultiselectWidget-resetButton' ]
 		} );
 
+		this.hideShowButton = new OO.ui.ButtonWidget( {
+			framed: false,
+			flags: [ 'progressive' ],
+			classes: [ 'mw-rcfilters-ui-filterTagMultiselectWidget-hideshowButton' ]
+		} );
+		this.toggleCollapsed( !!config.collapsed );
+
 		if ( !mw.user.isAnon() ) {
 			this.saveQueryButton = new mw.rcfilters.ui.SaveFiltersPopupButtonWidget(
 				this.controller,
@@ -117,9 +129,11 @@
 
 		// Events
 		this.resetButton.connect( this, { click: 'onResetButtonClick' } );
+		this.hideShowButton.connect( this, { click: 'onHideShowButtonClick' } );
 		// Stop propagation for mousedown, so that the widget doesn't
 		// trigger the focus on the input and scrolls up when we click the reset button
 		this.resetButton.$element.on( 'mousedown', function ( e ) { e.stopPropagation(); } );
+		this.hideShowButton.$element.on( 'mousedown', function ( e ) { e.stopPropagation(); } );
 		this.model.connect( this, {
 			initialize: 'onModelInitialize',
 			update: 'onModelUpdate',
@@ -178,6 +192,7 @@
 				.append(
 					$( '<div>' )
 						.addClass( 'mw-rcfilters-ui-row' )
+						.addClass( 'mw-rcfilters-ui-filterTagMultiselectWidget-views' )
 						.append(
 							$( '<div>' )
 								.addClass( 'mw-rcfilters-ui-cell' )
@@ -203,13 +218,25 @@
 
 		// Build the content
 		$contentWrapper.append(
-			title.$element,
-			this.savedQueryTitle.$element,
+			$( '<div>' )
+				.addClass( 'mw-rcfilters-ui-filterTagMultiselectWidget-wrapper-top' )
+				.append(
+					$( '<div>' )
+						.addClass( 'mw-rcfilters-ui-filterTagMultiselectWidget-wrapper-top-title' )
+						.append( title.$element ),
+					$( '<div>' )
+						.addClass( 'mw-rcfilters-ui-filterTagMultiselectWidget-wrapper-top-queryName' )
+						.append( this.savedQueryTitle.$element ),
+					$( '<div>' )
+						.addClass( 'mw-rcfilters-ui-filterTagMultiselectWidget-wrapper-top-hideshow' )
+						.append(
+							this.hideShowButton.$element
+						)
+				),
 			$( '<div>' )
 				.addClass( 'mw-rcfilters-ui-table' )
-				.append(
-					rcFiltersRow
-				)
+				.addClass( 'mw-rcfilters-ui-filterTagMultiselectWidget-wrapper-filters' )
+				.append( rcFiltersRow )
 		);
 
 		// Initialize
@@ -228,6 +255,11 @@
 	OO.inheritClass( mw.rcfilters.ui.FilterTagMultiselectWidget, OO.ui.MenuTagMultiselectWidget );
 
 	/* Methods */
+
+	/**
+	 * Override parent method to avoid unnecessary resize events.
+	 */
+	mw.rcfilters.ui.FilterTagMultiselectWidget.prototype.updateIfHeightChanged = function () { };
 
 	/**
 	 * Respond to view select widget choose event
@@ -350,7 +382,7 @@
 	 * @inheritdoc
 	 */
 	mw.rcfilters.ui.FilterTagMultiselectWidget.prototype.onMouseDown = function ( e ) {
-		if ( !this.isDisabled() && e.which === OO.ui.MouseButtons.LEFT ) {
+		if ( !this.collapsed && !this.isDisabled() && e.which === OO.ui.MouseButtons.LEFT ) {
 			this.menu.toggle();
 
 			return false;
@@ -361,8 +393,10 @@
 	 * @inheritdoc
 	 */
 	mw.rcfilters.ui.FilterTagMultiselectWidget.prototype.onChangeTags = function () {
-		// Parent method
-		mw.rcfilters.ui.FilterTagMultiselectWidget.parent.prototype.onChangeTags.call( this );
+		// If initialized, call parent method.
+		if ( this.controller.isInitialized() ) {
+			mw.rcfilters.ui.FilterTagMultiselectWidget.parent.prototype.onChangeTags.call( this );
+		}
 
 		this.emptyFilterMessage.toggle( this.isEmpty() );
 	};
@@ -449,7 +483,10 @@
 			) {
 				this.addTag( item.getName(), item.getLabel() );
 			} else {
-				this.removeTagByData( item.getName() );
+				// Only attempt to remove the tag if we can find an item for it (T198140, T198231)
+				if ( this.findItemFromData( item.getName() ) !== null ) {
+					this.removeTagByData( item.getName() );
+				}
 			}
 		}
 
@@ -498,7 +535,10 @@
 			// Remove capsule widgets if they're not selected
 			highlightedItems.forEach( function ( filterItem ) {
 				if ( !filterItem.isSelected() ) {
-					this.removeTagByData( filterItem.getName() );
+					// Only attempt to remove the tag if we can find an item for it (T198140, T198231)
+					if ( this.findItemFromData( filterItem.getName() ) !== null ) {
+						this.removeTagByData( filterItem.getName() );
+					}
 				}
 			}.bind( this ) );
 		}
@@ -565,6 +605,45 @@
 			// Reset to have no filters
 			this.controller.emptyFilters();
 		}
+	};
+
+	/**
+	 * Respond to hide/show button click
+	 */
+	mw.rcfilters.ui.FilterTagMultiselectWidget.prototype.onHideShowButtonClick = function () {
+		this.toggleCollapsed();
+	};
+
+	/**
+	 * Toggle the collapsed state of the filters widget
+	 *
+	 * @param {boolean} isCollapsed Widget is collapsed
+	 */
+	mw.rcfilters.ui.FilterTagMultiselectWidget.prototype.toggleCollapsed = function ( isCollapsed ) {
+		isCollapsed = isCollapsed === undefined ? !this.collapsed : !!isCollapsed;
+
+		this.collapsed = isCollapsed;
+
+		if ( isCollapsed ) {
+			// If we are collapsing, close the menu, in case it was open
+			// We should make sure the menu closes before the rest of the elements
+			// are hidden, otherwise there is an unknown error in jQuery as ooui
+			// sets and unsets properties on the input (which is hidden at that point)
+			this.menu.toggle( false );
+		}
+		this.input.setDisabled( isCollapsed );
+		this.hideShowButton.setLabel( mw.msg(
+			isCollapsed ? 'rcfilters-activefilters-show' : 'rcfilters-activefilters-hide'
+		) );
+		this.hideShowButton.setTitle( mw.msg(
+			isCollapsed ? 'rcfilters-activefilters-show-tooltip' : 'rcfilters-activefilters-hide-tooltip'
+		) );
+
+		// Toggle the wrapper class, so we have min height values correctly throughout
+		this.$wrapper.toggleClass( 'mw-rcfilters-collapsed', isCollapsed );
+
+		// Save the state
+		this.controller.updateCollapsedState( isCollapsed );
 	};
 
 	/**
@@ -677,4 +756,4 @@
 			} );
 		}
 	};
-}( mediaWiki ) );
+}() );

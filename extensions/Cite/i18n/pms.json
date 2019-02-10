@@ -5,7 +5,7 @@
 			"Dragonòt"
 		]
 	},
-	"cite-desc": "A gionta le tichëtte <nowiki><ref[ name=id]></nowiki> e <nowiki><references/></nowiki>, për sitassion",
+	"cite-desc": "A gionta le tichëtte <code><nowiki><ref[ name=id]></nowiki></code> e <code><nowiki><references/></nowiki></code>, për sitassion",
 	"cite_error": "Eror ëd sitassion: $1",
 	"cite_error_ref_numeric_key": "Tichëtta <code>&lt;ref&gt;</code> pa bon-a;\nël nòm a peul pa esse n'antregh sempi. Deuvra un tìtol descritiv.",
 	"cite_error_ref_no_key": "Tichëtta <code>&lt;ref&gt;</code> pa bon-a;\nj'arferiment sensa contnù a devo avèj un nòm",

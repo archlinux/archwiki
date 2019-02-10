@@ -1,15 +1,14 @@
-'use strict';
-const Page = require( './page' );
+const Page = require( 'wdio-mediawiki/Page' ),
+	Api = require( 'wdio-mediawiki/Api' );
 
 class EditPage extends Page {
-
 	get content() { return browser.element( '#wpTextbox1' ); }
 	get displayedContent() { return browser.element( '#mw-content-text' ); }
 	get heading() { return browser.element( '#firstHeading' ); }
 	get save() { return browser.element( '#wpSave' ); }
 
-	openForEditing( name ) {
-		super.open( name + '&action=edit' );
+	openForEditing( title ) {
+		super.openTitle( title, { action: 'edit' } );
 	}
 
 	edit( name, content ) {
@@ -18,22 +17,10 @@ class EditPage extends Page {
 		this.save.click();
 	}
 
+	// @deprecated Use wdio-mediawiki/Api#edit() instead.
 	apiEdit( name, content ) {
-
-		const MWBot = require( 'mwbot' ), // https://github.com/Fannon/mwbot
-			Promise = require( 'bluebird' );
-		let bot = new MWBot();
-
-		return Promise.coroutine( function* () {
-			yield bot.loginGetEditToken( {
-				apiUrl: `${browser.options.baseUrl}/api.php`,
-				username: browser.options.username,
-				password: browser.options.password
-			} );
-			yield bot.edit( name, content, `Created page with "${content}"` );
-		} ).call( this );
-
+		return Api.edit( name, content );
 	}
-
 }
+
 module.exports = new EditPage();

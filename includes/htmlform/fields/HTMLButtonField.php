@@ -34,6 +34,11 @@ class HTMLButtonField extends HTMLFormField {
 
 	public function __construct( $info ) {
 		$info['nodata'] = true;
+
+		$this->setShowEmptyLabel( false );
+
+		parent::__construct( $info );
+
 		if ( isset( $info['flags'] ) ) {
 			$this->mFlags = $info['flags'];
 		}
@@ -46,19 +51,15 @@ class HTMLButtonField extends HTMLFormField {
 		if ( isset( $info['buttonlabel-message'] ) ) {
 			$this->buttonLabel = $this->getMessage( $info['buttonlabel-message'] )->parse();
 		} elseif ( isset( $info['buttonlabel'] ) ) {
-			if ( $info['buttonlabel'] === '&#160;' ) {
+			if ( $info['buttonlabel'] === '&#160;' || $info['buttonlabel'] === "\u{00A0}" ) {
 				// Apparently some things set &nbsp directly and in an odd format
-				$this->buttonLabel = '&#160;';
+				$this->buttonLabel = "\u{00A0}";
 			} else {
 				$this->buttonLabel = htmlspecialchars( $info['buttonlabel'] );
 			}
 		} elseif ( isset( $info['buttonlabel-raw'] ) ) {
 			$this->buttonLabel = $info['buttonlabel-raw'];
 		}
-
-		$this->setShowEmptyLabel( false );
-
-		parent::__construct( $info );
 	}
 
 	public function getInputHTML( $value ) {

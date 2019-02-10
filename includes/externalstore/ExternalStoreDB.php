@@ -222,6 +222,10 @@ class ExternalStoreDB extends ExternalStoreMedium {
 		static $externalBlobCache = [];
 
 		$cacheID = ( $itemID === false ) ? "$cluster/$id" : "$cluster/$id/";
+
+		$wiki = $this->params['wiki'] ?? false;
+		$cacheID = ( $wiki === false ) ? $cacheID : "$cacheID@$wiki";
+
 		if ( isset( $externalBlobCache[$cacheID] ) ) {
 			wfDebugLog( 'ExternalStoreDB-cache',
 				"ExternalStoreDB::fetchBlob cache hit on $cacheID" );
@@ -329,7 +333,7 @@ class ExternalStoreDB extends ExternalStoreMedium {
 		return [
 			$path[2], // cluster
 			$path[3], // id
-			isset( $path[4] ) ? $path[4] : false // itemID
+			$path[4] ?? false // itemID
 		];
 	}
 }

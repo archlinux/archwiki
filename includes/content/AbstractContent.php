@@ -43,7 +43,7 @@ abstract class AbstractContent implements Content {
 	protected $model_id;
 
 	/**
-	 * @param string $modelId
+	 * @param string|null $modelId
 	 *
 	 * @since 1.21
 	 */
@@ -145,7 +145,7 @@ abstract class AbstractContent implements Content {
 	/**
 	 * @since 1.21
 	 *
-	 * @param string $format
+	 * @param string|null $format
 	 *
 	 * @return string
 	 *
@@ -182,7 +182,7 @@ abstract class AbstractContent implements Content {
 	/**
 	 * @since 1.21
 	 *
-	 * @param Content $that
+	 * @param Content|null $that
 	 *
 	 * @return bool
 	 *
@@ -219,9 +219,9 @@ abstract class AbstractContent implements Content {
 	 * @since 1.21
 	 *
 	 * @param Title $title
-	 * @param Content $old
+	 * @param Content|null $old
 	 * @param bool $recursive
-	 * @param ParserOutput $parserOutput
+	 * @param ParserOutput|null $parserOutput
 	 *
 	 * @return DataUpdate[]
 	 *
@@ -501,10 +501,11 @@ abstract class AbstractContent implements Content {
 		ParserOptions $options = null, $generateHtml = true
 	) {
 		if ( $options === null ) {
-			$options = $this->getContentHandler()->makeParserOptions( 'canonical' );
+			$options = ParserOptions::newCanonical( 'canonical' );
 		}
 
 		$po = new ParserOutput();
+		$options->registerWatcher( [ $po, 'recordOption' ] );
 
 		if ( Hooks::run( 'ContentGetParserOutput',
 			[ $this, $title, $revId, $options, $generateHtml, &$po ] )
@@ -518,6 +519,7 @@ abstract class AbstractContent implements Content {
 		}
 
 		Hooks::run( 'ContentAlterParserOutput', [ $this, $title, $po ] );
+		$options->registerWatcher( null );
 
 		return $po;
 	}

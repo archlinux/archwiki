@@ -95,7 +95,8 @@ class SpecialPage implements MessageLocalizer {
 	 * @return TitleValue
 	 */
 	public static function getTitleValueFor( $name, $subpage = false, $fragment = '' ) {
-		$name = SpecialPageFactory::getLocalNameFor( $name, $subpage );
+		$name = MediaWikiServices::getInstance()->getSpecialPageFactory()->
+			getLocalNameFor( $name, $subpage );
 
 		return new TitleValue( NS_SPECIAL, $name, $fragment );
 	}
@@ -108,7 +109,8 @@ class SpecialPage implements MessageLocalizer {
 	 * @return Title|null Title object or null if the page doesn't exist
 	 */
 	public static function getSafeTitleFor( $name, $subpage = false ) {
-		$name = SpecialPageFactory::getLocalNameFor( $name, $subpage );
+		$name = MediaWikiServices::getInstance()->getSpecialPageFactory()->
+			getLocalNameFor( $name, $subpage );
 		if ( $name ) {
 			return Title::makeTitleSafe( NS_SPECIAL, $name );
 		} else {
@@ -182,7 +184,7 @@ class SpecialPage implements MessageLocalizer {
 	/**
 	 * Get or set whether this special page is listed in Special:SpecialPages
 	 * @since 1.6
-	 * @param bool $x
+	 * @param bool|null $x
 	 * @return bool
 	 */
 	function listed( $x = null ) {
@@ -220,7 +222,7 @@ class SpecialPage implements MessageLocalizer {
 
 	/**
 	 * Whether the special page is being evaluated via transclusion
-	 * @param bool $x
+	 * @param bool|null $x
 	 * @return bool
 	 */
 	function including( $x = null ) {
@@ -233,7 +235,8 @@ class SpecialPage implements MessageLocalizer {
 	 */
 	function getLocalName() {
 		if ( !isset( $this->mLocalName ) ) {
-			$this->mLocalName = SpecialPageFactory::getLocalNameFor( $this->mName );
+			$this->mLocalName = MediaWikiServices::getInstance()->getSpecialPageFactory()->
+				getLocalNameFor( $this->mName );
 		}
 
 		return $this->mLocalName;
@@ -353,6 +356,23 @@ class SpecialPage implements MessageLocalizer {
 	}
 
 	/**
+	 * Record preserved POST data after a reauthentication.
+	 *
+	 * This is called from checkLoginSecurityLevel() when returning from the
+	 * redirect for reauthentication, if the redirect had been served in
+	 * response to a POST request.
+	 *
+	 * The base SpecialPage implementation does nothing. If your subclass uses
+	 * getLoginSecurityLevel() or checkLoginSecurityLevel(), it should probably
+	 * implement this to do something with the data.
+	 *
+	 * @since 1.32
+	 * @param array $data
+	 */
+	protected function setReauthPostData( array $data ) {
+	}
+
+	/**
 	 * Verifies that the user meets the security level, possibly reauthenticating them in the process.
 	 *
 	 * This should be used when the page does something security-sensitive and needs extra defense
@@ -371,23 +391,50 @@ class SpecialPage implements MessageLocalizer {
 	 * Note that this does not in any way check that the user is authorized to use this special page
 	 * (use checkPermissions() for that).
 	 *
-	 * @param string $level A security level. Can be an arbitrary string, defaults to the page name.
+	 * @param string|null $level A security level. Can be an arbitrary string, defaults to the page
+	 *   name.
 	 * @return bool False means a redirect to the reauthentication page has been set and processing
 	 *   of the special page should be aborted.
 	 * @throws ErrorPageError If the security level cannot be met, even with reauthentication.
 	 */
 	protected function checkLoginSecurityLevel( $level = null ) {
 		$level = $level ?: $this->getName();
+		$key = 'SpecialPage:reauth:' . $this->getName();
+		$request = $this->getRequest();
+
 		$securityStatus = AuthManager::singleton()->securitySensitiveOperationStatus( $level );
 		if ( $securityStatus === AuthManager::SEC_OK ) {
+			$uniqueId = $request->getVal( 'postUniqueId' );
+			if ( $uniqueId ) {
+				$key = $key . ':' . $uniqueId;
+				$session = $request->getSession();
+				$data = $session->getSecret( $key );
+				if ( $data ) {
+					$session->remove( $key );
+					$this->setReauthPostData( $data );
+				}
+			}
 			return true;
 		} elseif ( $securityStatus === AuthManager::SEC_REAUTH ) {
-			$request = $this->getRequest();
 			$title = self::getTitleFor( 'Userlogin' );
+			$queryParams = $request->getQueryValues();
+
+			if ( $request->wasPosted() ) {
+				$data = array_diff_assoc( $request->getValues(), $request->getQueryValues() );
+				if ( $data ) {
+					// unique ID in case the same special page is open in multiple browser tabs
+					$uniqueId = MWCryptRand::generateHex( 6 );
+					$key = $key . ':' . $uniqueId;
+					$queryParams['postUniqueId'] = $uniqueId;
+					$session = $request->getSession();
+					$session->persist(); // Just in case
+					$session->setSecret( $key, $data );
+				}
+			}
+
 			$query = [
 				'returnto' => $this->getFullTitle()->getPrefixedDBkey(),
-				'returntoquery' => wfArrayToCgi( array_diff_key( $request->getQueryValues(),
-					[ 'title' => true ] ) ),
+				'returntoquery' => wfArrayToCgi( array_diff_key( $queryParams, [ 'title' => true ] ) ),
 				'force' => $level,
 			];
 			$url = $title->getFullURL( $query, false, PROTO_HTTPS );
@@ -568,7 +615,10 @@ class SpecialPage implements MessageLocalizer {
 	public function execute( $subPage ) {
 		$this->setHeaders();
 		$this->checkPermissions();
-		$this->checkLoginSecurityLevel( $this->getLoginSecurityLevel() );
+		$securityLevel = $this->getLoginSecurityLevel();
+		if ( $securityLevel !== false && !$this->checkLoginSecurityLevel( $securityLevel ) ) {
+			return;
+		}
 		$this->outputHeader();
 	}
 
@@ -581,10 +631,9 @@ class SpecialPage implements MessageLocalizer {
 	 * @param string $summaryMessageKey Message key of the summary
 	 */
 	function outputHeader( $summaryMessageKey = '' ) {
-		global $wgContLang;
-
 		if ( $summaryMessageKey == '' ) {
-			$msg = $wgContLang->lc( $this->getName() ) . '-summary';
+			$msg = MediaWikiServices::getInstance()->getContentLanguage()->lc( $this->getName() ) .
+				'-summary';
 		} else {
 			$msg = $summaryMessageKey;
 		}
@@ -745,10 +794,7 @@ class SpecialPage implements MessageLocalizer {
 	 * @see wfMessage
 	 */
 	public function msg( $key /* $args */ ) {
-		$message = call_user_func_array(
-			[ $this->getContext(), 'msg' ],
-			func_get_args()
-		);
+		$message = $this->getContext()->msg( ...func_get_args() );
 		// RequestContext passes context to wfMessage, and the language is set from
 		// the context, but setting the language for Message class removes the
 		// interface message status, which breaks for example usernameless gender
@@ -788,8 +834,9 @@ class SpecialPage implements MessageLocalizer {
 			return;
 		}
 
-		global $wgContLang;
-		$msg = $this->msg( $wgContLang->lc( $this->getName() ) . '-helppage' );
+		$msg = $this->msg(
+			MediaWikiServices::getInstance()->getContentLanguage()->lc( $this->getName() ) .
+			'-helppage' );
 
 		if ( !$msg->isDisabled() ) {
 			$helpUrl = Skin::makeUrl( $msg->plain() );

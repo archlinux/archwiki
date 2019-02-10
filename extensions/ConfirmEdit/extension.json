@@ -1,7 +1,7 @@
 {
 	"@doc": "Please read README.md",
 	"name": "ConfirmEdit",
-	"version": "1.5.1",
+	"version": "1.6.0",
 	"author": [
 		"Brion Vibber",
 		"Florian Schmidt",
@@ -13,7 +13,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "antispam",
 	"requires": {
-		"MediaWiki": ">= 1.28"
+		"MediaWiki": ">= 1.31.0"
 	},
 	"GroupPermissions": {
 		"*": {
@@ -39,7 +39,7 @@
 		"ConfirmEditHooks::confirmEditSetup"
 	],
 	"SpecialPages": {
-		"Captcha": "CaptchaSpecialPage"
+		"Captcha": "SpecialCaptcha"
 	},
 	"MessagesDirs": {
 		"ConfirmEdit": [
@@ -51,15 +51,21 @@
 	},
 	"AutoloadClasses": {
 		"ConfirmEditHooks": "includes/ConfirmEditHooks.php",
-		"SimpleCaptcha": "SimpleCaptcha/Captcha.php",
+		"HTMLFancyCaptchaField": "FancyCaptcha/includes/HTMLFancyCaptchaField.php",
+		"HTMLReCaptchaField": "ReCaptcha/includes/HTMLReCaptchaField.php",
+		"HTMLReCaptchaNoCaptchaField": "ReCaptchaNoCaptcha/includes/HTMLReCaptchaNoCaptchaField.php",
+		"HTMLSubmittedValueField": "ReCaptcha/includes/HTMLSubmittedValueField.php",
+		"SimpleCaptcha": "SimpleCaptcha/SimpleCaptcha.php",
 		"CaptchaStore": "includes/store/CaptchaStore.php",
 		"CaptchaSessionStore": "includes/store/CaptchaSessionStore.php",
 		"CaptchaCacheStore": "includes/store/CaptchaCacheStore.php",
 		"CaptchaHashStore": "includes/store/CaptchaHashStore.php",
 		"CaptchaTriggers": "includes/CaptchaTriggers.php",
-		"CaptchaSpecialPage": "includes/specials/SpecialCaptcha.php",
+		"SpecialCaptcha": "includes/specials/SpecialCaptcha.php",
 		"CaptchaPreAuthenticationProvider": "includes/auth/CaptchaPreAuthenticationProvider.php",
-		"CaptchaAuthenticationRequest": "includes/auth/CaptchaAuthenticationRequest.php"
+		"CaptchaAuthenticationRequest": "includes/auth/CaptchaAuthenticationRequest.php",
+		"ReCaptchaAuthenticationRequest": "ReCaptcha/includes/ReCaptchaAuthenticationRequest.php",
+		"ReCaptchaNoCaptchaAuthenticationRequest": "ReCaptchaNoCaptcha/includes/ReCaptchaNoCaptchaAuthenticationRequest.php"
 	},
 	"ResourceModules": {
 		"ext.confirmEdit.editPreview.ipwhitelist.styles": {
@@ -77,7 +83,7 @@
 		"PageContentSaveComplete": "ConfirmEditHooks::onPageContentSaveComplete",
 		"EditPage::showEditForm:fields": "ConfirmEditHooks::showEditFormFields",
 		"EditFilterMergedContent": "ConfirmEditHooks::confirmEditMerged",
-		"APIGetAllowedParams": "ConfirmEditHooks::APIGetAllowedParams",
+		"APIGetAllowedParams": "ConfirmEditHooks::onAPIGetAllowedParams",
 		"TitleReadWhitelist": "ConfirmEditHooks::onTitleReadWhitelist",
 		"AlternateEditPreview": "ConfirmEditHooks::onAlternateEditPreview",
 		"AuthChangeFormFields": "ConfirmEditHooks::onAuthChangeFormFields"

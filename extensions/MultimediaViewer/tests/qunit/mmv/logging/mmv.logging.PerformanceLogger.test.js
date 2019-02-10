@@ -28,7 +28,7 @@
 				setTimeout( function () {
 					xhr.readyState = 4;
 					xhr.response = response;
-					if ( $.isFunction( xhr.onreadystatechange ) ) {
+					if ( typeof xhr.onreadystatechange === 'function' ) {
 						xhr.onreadystatechange();
 					}
 				}, 0 );

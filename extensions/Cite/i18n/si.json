@@ -7,7 +7,7 @@
 			"Singhalawap"
 		]
 	},
-	"cite-desc": "උපහරණයන් සඳහා, <nowiki><ref[ name=id]></nowiki> සහ <nowiki><references/></nowiki> ටැගයන්, එකතු කරයි",
+	"cite-desc": "උපහරණයන් සඳහා, <code><nowiki><ref[ name=id]></nowiki></code> සහ <code><nowiki><references/></nowiki></code> ටැගයන්, එකතු කරයි",
 	"cite_error": "උපුටාදැක්වීම් දෝෂය: $1",
 	"cite_error_ref_numeric_key": "අනීතික <code>&lt;ref&gt;</code> ටැගය;\nනම සරල  පූර්ණාංකයක් විය නොහැක. විස්තරශීලි ශිර්ෂයක් භාවිතා කරන්න",
 	"cite_error_ref_no_key": "අනීතික <code>&lt;ref&gt;</code> ටැගය;\nපෙළ විරහිත ආශ්‍රේය සඳහා නමක් තිබිය යුතුය",
@@ -23,7 +23,5 @@
 	"cite_error_references_missing_group": "<code>&lt;references&gt;</code> හි <code>&lt;ref&gt;</code> ටැගය පෙර පෙළෙහි නොතිබූ \"$1\" නම් සමූහ ගුණාංගයක් දරයි.",
 	"cite_error_references_missing_key": "<code>&lt;references&gt;</code> හි \"$1\" නමැති <code>&lt;ref&gt;</code> ටැගය පෙර පෙළෙහි භාවිතා වූයේ නැත.",
 	"cite_error_references_no_key": "<code>&lt;references&gt;</code> හි <code>&lt;ref&gt;</code> ටැගයට නමක් ආදේශකොට නැත.",
-	"cite_error_empty_references_define": "<code>&lt;references&gt;</code> හි \"$1\" නමැති <code>&lt;ref&gt;</code> ටැගයට අන්තර්ගතයක් නැත.",
-	"cite_reference_link_prefix": "උපන්‍යාස_යොමුව-",
-	"cite_references_link_prefix": "උපන්‍යාස_සටහන-"
+	"cite_error_empty_references_define": "<code>&lt;references&gt;</code> හි \"$1\" නමැති <code>&lt;ref&gt;</code> ටැගයට අන්තර්ගතයක් නැත."
 }

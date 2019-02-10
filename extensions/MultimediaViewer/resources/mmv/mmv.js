@@ -109,6 +109,21 @@
 		 * @property {mw.mmv.logging.ViewLogger} view -
 		 */
 		this.viewLogger = new mw.mmv.logging.ViewLogger( this.config, window, mw.mmv.actionLogger );
+
+		/**
+		 * Stores whether the real image was loaded and displayed already.
+		 * This is reset when paging, so it is not necessarily accurate.
+		 * @property {boolean}
+		 */
+		this.realThumbnailShown = false;
+
+		/**
+		 * Stores whether the a blurred placeholder is being displayed in place of the real image.
+		 * When a placeholder is displayed, but it is not blurred, this is false.
+		 * This is reset when paging, so it is not necessarily accurate.
+		 * @property {boolean}
+		 */
+		this.blurredThumbnailShown = false;
 	}
 
 	MMVP = MultimediaViewer.prototype;
@@ -380,7 +395,7 @@
 	 * @param {boolean} updateHash Viewer should update the location hash when true
 	 */
 	MMVP.loadImageByTitle = function ( title, updateHash ) {
-		var viewer = this;
+		var i, thumb;
 
 		if ( !this.thumbs || !this.thumbs.length ) {
 			return;
@@ -388,12 +403,13 @@
 
 		this.comingFromHashChange = !updateHash;
 
-		$.each( this.thumbs, function ( idx, thumb ) {
+		for ( i = 0; i < this.thumbs.length; i++ ) {
+			thumb = this.thumbs[ i ];
 			if ( thumb.title.getPrefixedText() === title.getPrefixedText() ) {
-				viewer.loadImage( thumb.image, thumb.$thumb.clone()[ 0 ], true );
-				return false;
+				this.loadImage( thumb.image, thumb.$thumb.clone()[ 0 ], true );
+				return;
 			}
-		} );
+		}
 	};
 
 	/**
@@ -411,19 +427,7 @@
 	 * Resets the cross-request states needed to handle the blurred thumbnail logic.
 	 */
 	MMVP.resetBlurredThumbnailStates = function () {
-		/**
-		 * Stores whether the real image was loaded and displayed already.
-		 * This is reset when paging, so it is not necessarily accurate.
-		 * @property {boolean}
-		 */
 		this.realThumbnailShown = false;
-
-		/**
-		 * Stores whether the a blurred placeholder is being displayed in place of the real image.
-		 * When a placeholder is displayed, but it is not blurred, this is false.
-		 * This is reset when paging, so it is not necessarily accurate.
-		 * @property {boolean}
-		 */
 		this.blurredThumbnailShown = false;
 	};
 

@@ -98,6 +98,7 @@ class CurlHttpRequest extends MWHttpRequest {
 		$curlHandle = curl_init( $this->url );
 
 		if ( !curl_setopt_array( $curlHandle, $this->curlOptions ) ) {
+			$this->status->fatal( 'http-internal-error' );
 			throw new InvalidArgumentException( "Error setting curl options." );
 		}
 
@@ -147,13 +148,6 @@ class CurlHttpRequest extends MWHttpRequest {
 		if ( $curlVersionInfo['version_number'] < 0x071304 ) {
 			$this->logger->debug( "Cannot follow redirects with libcurl < 7.19.4 due to CVE-2009-0037\n" );
 			return false;
-		}
-
-		if ( version_compare( PHP_VERSION, '5.6.0', '<' ) ) {
-			if ( strval( ini_get( 'open_basedir' ) ) !== '' ) {
-				$this->logger->debug( "Cannot follow redirects when open_basedir is set\n" );
-				return false;
-			}
 		}
 
 		return true;

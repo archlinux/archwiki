@@ -522,16 +522,32 @@ class ApiQueryInfo extends ApiQueryBase {
 		}
 
 		if ( $this->params['testactions'] ) {
-			$limit = $this->getMain()->canApiHighLimits() ? self::LIMIT_SML1 : self::LIMIT_SML2;
+			$limit = $this->getMain()->canApiHighLimits() ? self::LIMIT_SML2 : self::LIMIT_SML1;
 			if ( $this->countTestedActions >= $limit ) {
 				return null; // force a continuation
+			}
+
+			$detailLevel = $this->params['testactionsdetail'];
+			$rigor = $detailLevel === 'quick' ? 'quick' : 'secure';
+			$errorFormatter = $this->getErrorFormatter();
+			if ( $errorFormatter->getFormat() === 'bc' ) {
+				// Eew, no. Use a more modern format here.
+				$errorFormatter = $errorFormatter->newWithFormat( 'plaintext' );
 			}
 
 			$user = $this->getUser();
 			$pageInfo['actions'] = [];
 			foreach ( $this->params['testactions'] as $action ) {
 				$this->countTestedActions++;
-				$pageInfo['actions'][$action] = $title->userCan( $action, $user );
+
+				if ( $detailLevel === 'boolean' ) {
+					$pageInfo['actions'][$action] = $title->userCan( $action, $user );
+				} else {
+					$pageInfo['actions'][$action] = $errorFormatter->arrayFromStatus( $this->errorArrayToStatus(
+						$title->getUserPermissionsErrors( $action, $user, $rigor ),
+						$user
+					) );
+				}
 			}
 		}
 
@@ -764,12 +780,12 @@ class ApiQueryInfo extends ApiQueryBase {
 	}
 
 	private function getAllVariants( $text, $ns = NS_MAIN ) {
-		global $wgContLang;
 		$result = [];
-		foreach ( $wgContLang->getVariants() as $variant ) {
-			$convertTitle = $wgContLang->autoConvert( $text, $variant );
+		$contLang = MediaWikiServices::getInstance()->getContentLanguage();
+		foreach ( $contLang->getVariants() as $variant ) {
+			$convertTitle = $contLang->autoConvert( $text, $variant );
 			if ( $ns !== NS_MAIN ) {
-				$convertNs = $wgContLang->convertNamespace( $ns, $variant );
+				$convertNs = $contLang->convertNamespace( $ns, $variant );
 				$convertTitle = $convertNs . ':' . $convertTitle;
 			}
 			$result[$variant] = $convertTitle;
@@ -955,10 +971,18 @@ class ApiQueryInfo extends ApiQueryBase {
 					// need to be added to getCacheMode()
 				],
 				ApiBase::PARAM_HELP_MSG_PER_VALUE => [],
+				ApiBase::PARAM_DEPRECATED_VALUES => [
+					'readable' => true, // Since 1.32
+				],
 			],
 			'testactions' => [
 				ApiBase::PARAM_TYPE => 'string',
 				ApiBase::PARAM_ISMULTI => true,
+			],
+			'testactionsdetail' => [
+				ApiBase::PARAM_TYPE => [ 'boolean', 'full', 'quick' ],
+				ApiBase::PARAM_DFLT => 'boolean',
+				ApiBase::PARAM_HELP_MSG_PER_VALUE => [],
 			],
 			'token' => [
 				ApiBase::PARAM_DEPRECATED => true,

@@ -81,9 +81,7 @@ class RedisConnectionPool implements LoggerAwareInterface {
 				__CLASS__ . ' requires a Redis client library. ' .
 				'See https://www.mediawiki.org/wiki/Redis#Setup' );
 		}
-		$this->logger = isset( $options['logger'] )
-			? $options['logger']
-			: new \Psr\Log\NullLogger();
+		$this->logger = $options['logger'] ?? new \Psr\Log\NullLogger();
 		$this->connectTimeout = $options['connectTimeout'];
 		$this->readTimeout = $options['readTimeout'];
 		$this->persistent = $options['persistent'];
@@ -170,7 +168,7 @@ class RedisConnectionPool implements LoggerAwareInterface {
 	 *
 	 * @param string $server A hostname/port combination or the absolute path of a UNIX socket.
 	 *                       If a hostname is specified but no port, port 6379 will be used.
-	 * @param LoggerInterface $logger PSR-3 logger intance. [optional]
+	 * @param LoggerInterface|null $logger PSR-3 logger intance. [optional]
 	 * @return RedisConnRef|bool Returns false on failure
 	 * @throws MWException
 	 */
@@ -384,7 +382,7 @@ class RedisConnectionPool implements LoggerAwareInterface {
 	 * Adjust or reset the connection handle read timeout value
 	 *
 	 * @param Redis $conn
-	 * @param int $timeout Optional
+	 * @param int|null $timeout Optional
 	 */
 	public function resetTimeout( Redis $conn, $timeout = null ) {
 		$conn->setOption( Redis::OPT_READ_TIMEOUT, $timeout ?: $this->readTimeout );

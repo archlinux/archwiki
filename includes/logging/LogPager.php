@@ -36,8 +36,8 @@ class LogPager extends ReverseChronologicalPager {
 	/** @var string|Title Events limited to those about Title when set */
 	private $title = '';
 
-	/** @var string */
-	private $pattern = '';
+	/** @var bool */
+	private $pattern = false;
 
 	/** @var string */
 	private $typeCGI = '';
@@ -59,17 +59,18 @@ class LogPager extends ReverseChronologicalPager {
 	 * @param string|array $types Log types to show
 	 * @param string $performer The user who made the log entries
 	 * @param string|Title $title The page title the log entries are for
-	 * @param string $pattern Do a prefix search rather than an exact title match
+	 * @param bool $pattern Do a prefix search rather than an exact title match
 	 * @param array $conds Extra conditions for the query
 	 * @param int|bool $year The year to start from. Default: false
 	 * @param int|bool $month The month to start from. Default: false
+	 * @param int|bool $day The day to start from. Default: false
 	 * @param string $tagFilter Tag
 	 * @param string $action Specific action (subtype) requested
 	 * @param int $logId Log entry ID, to limit to a single log entry.
 	 */
 	public function __construct( $list, $types = [], $performer = '', $title = '',
-		$pattern = '', $conds = [], $year = false, $month = false, $tagFilter = '',
-		$action = '', $logId = false
+		$pattern = false, $conds = [], $year = false, $month = false, $day = false,
+		$tagFilter = '', $action = '', $logId = false
 	) {
 		parent::__construct( $list->getContext() );
 		$this->mConds = $conds;
@@ -80,7 +81,7 @@ class LogPager extends ReverseChronologicalPager {
 		$this->limitPerformer( $performer );
 		$this->limitTitle( $title, $pattern );
 		$this->limitAction( $action );
-		$this->getDateCond( $year, $month );
+		$this->getDateCond( $year, $month, $day );
 		$this->mTagFilter = $tagFilter;
 		$this->limitLogId( $logId );
 
@@ -91,6 +92,7 @@ class LogPager extends ReverseChronologicalPager {
 		$query = parent::getDefaultQuery();
 		$query['type'] = $this->typeCGI; // arrays won't work here
 		$query['user'] = $this->performer;
+		$query['day'] = $this->mDay;
 		$query['month'] = $this->mMonth;
 		$query['year'] = $this->mYear;
 
@@ -104,8 +106,17 @@ class LogPager extends ReverseChronologicalPager {
 		if ( count( $this->types ) ) {
 			return $filters;
 		}
+
+		$wpfilters = $this->getRequest()->getArray( "wpfilters" );
+		$request_filters = $wpfilters === null ? [] : $wpfilters;
+
 		foreach ( $wgFilterLogTypes as $type => $default ) {
-			$hide = $this->getRequest()->getInt( "hide_{$type}_log", $default );
+			$hide = !in_array( $type, $request_filters );
+
+			// Back-compat: Check old URL params if the new param wasn't passed
+			if ( $wpfilters === null ) {
+				$hide = $this->getRequest()->getBool( "hide_{$type}_log", $default );
+			}
 
 			$filters[$type] = $hide;
 			if ( $hide ) {
@@ -194,7 +205,7 @@ class LogPager extends ReverseChronologicalPager {
 	 * (For the block and rights logs, this is a user page.)
 	 *
 	 * @param string|Title $page Title name
-	 * @param string $pattern
+	 * @param bool $pattern
 	 * @return void
 	 */
 	private function limitTitle( $page, $pattern ) {
@@ -398,6 +409,9 @@ class LogPager extends ReverseChronologicalPager {
 		return $this->title;
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function getPattern() {
 		return $this->pattern;
 	}
@@ -408,6 +422,10 @@ class LogPager extends ReverseChronologicalPager {
 
 	public function getMonth() {
 		return $this->mMonth;
+	}
+
+	public function getDay() {
+		return $this->mDay;
 	}
 
 	public function getTagFilter() {

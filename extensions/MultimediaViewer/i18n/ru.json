@@ -12,7 +12,9 @@
 			"Jack who built the house",
 			"Kareyac",
 			"Putnik",
-			"Smigles"
+			"Smigles",
+			"Ole Yves",
+			"Stjn"
 		]
 	},
 	"multimediaviewer-desc": "Раскрывает эскизы в большие изображения на весь экран.",
@@ -28,7 +30,7 @@
 	"multimediaviewer-multiple-authors-combine": "$1 и $2",
 	"multimediaviewer-metadata-error": "Не удалось загрузить данные изображения (ошибка: $1)",
 	"multimediaviewer-thumbnail-error": "Извините, файл не может быть отображён",
-	"multimediaviewer-thumbnail-error-description": "Похоже, возникла какая-то техническая проблема. Вы можете $1 или $3, если он будет повторяться. Ошибка: $2",
+	"multimediaviewer-thumbnail-error-description": "Похоже, возникла какая-то техническая проблема. Вы можете $1, если она будет повторяться. Ошибка: $2",
 	"multimediaviewer-thumbnail-error-retry": "повторить",
 	"multimediaviewer-thumbnail-error-report": "сообщить о проблеме",
 	"multimediaviewer-license-cc-pd": "Общественное достояние",
@@ -101,6 +103,7 @@
 	"multimediaviewer-download-attribution-cta-header": "Вам нужно указать автора",
 	"multimediaviewer-download-optional-attribution-cta-header": "Вам нужно указать автора",
 	"multimediaviewer-download-attribution-cta": "Показать мне, как",
+	"multimediaviewer-reuse-warning-nonfree": "У этого файла не свободная лицензия.",
 	"multimediaviewer-attr-plain": "Простой",
 	"multimediaviewer-options-tooltip": "Включение или отключение «Просмотрщика медиафайлов»",
 	"multimediaviewer-options-dialog-header": "Отключить «Просмотрщик медиафайлов»?",

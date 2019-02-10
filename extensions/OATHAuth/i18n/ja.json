@@ -3,7 +3,9 @@
 		"authors": [
 			"Shirayuki",
 			"ネイ",
-			"Yusuke1109"
+			"Yusuke1109",
+			"Ochaochaocha3",
+			"Suyama"
 		]
 	},
 	"oathauth-desc": "ワンタイムパスワードに基づいた HMAC を使用する認証機能を提供する",
@@ -18,6 +20,17 @@
 	"oathauth-failedtovalidateoath": "二要素信用情報の検証に失敗しました。",
 	"oathauth-disabledoath": "二要素認証を無効にしました。",
 	"oathauth-prefs-label": "二要素認証:",
+	"oathauth-step1": "手順1: 二要素認証プログラムをダウンロードしてください",
+	"oathauth-step1-test": "二要素認証のためのプログラムをダウンロードしてください。これはモバイルアプリケーション（Google 認証システム等）でもデスクトップアプリケーションでも構いません。",
+	"oathauth-step2": "手順2: QR コードをスキャンしてください",
+	"oathauth-step2alt": "あるいは手作業で秘密鍵を入力してください:",
+	"oathauth-step3": "手順3: スクラッチコードを書き留めてください",
+	"oathauth-step4": "手順4: 検証",
+	"oathauth-entertoken": "検証のため、あなたの認証デバイスに表示されたコードを入力してください:",
 	"right-oathauth-enable": "二要素認証を有効にする",
-	"action-oathauth-enable": "二要素認証の有効化"
+	"action-oathauth-enable": "二要素認証の有効化",
+	"oathauth-auth-token-label": "トークン",
+	"oathauth-auth-ui": "あなたの認証デバイスに表示された検証コードを入力してください",
+	"oathauth-login-failed": "検証が失敗しました。",
+	"action-oathauth-api-all": "OATH ステータスを確認"
 }

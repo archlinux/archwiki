@@ -30,6 +30,7 @@
 
 require_once __DIR__ . '/Maintenance.php';
 
+use MediaWiki\MediaWikiServices;
 use Wikimedia\Rdbms\IMaintainableDatabase;
 
 /**
@@ -97,24 +98,30 @@ class Orphans extends Maintenance {
 		);
 		$orphans = $result->numRows();
 		if ( $orphans > 0 ) {
-			global $wgContLang;
-
 			$this->output( "$orphans orphan revisions...\n" );
 			$this->output( sprintf(
 				"%10s %10s %14s %20s %s\n",
 				'rev_id', 'rev_page', 'rev_timestamp', 'rev_user_text', 'rev_comment'
 			) );
 
+			$contLang = MediaWikiServices::getInstance()->getContentLanguage();
 			foreach ( $result as $row ) {
 				$comment = $commentStore->getComment( 'rev_comment', $row )->text;
 				if ( $comment !== '' ) {
-					$comment = '(' . $wgContLang->truncate( $comment, 40 ) . ')';
+					$comment = '(' . $contLang->truncateForVisual( $comment, 40 ) . ')';
 				}
-				$this->output( sprintf( "%10d %10d %14s %20s %s\n",
+				$rev_user_text = $contLang->truncateForVisual( $row->rev_user_text, 20 );
+				# pad $rev_user_text to 20 characters.  Note that this may
+				# yield poor results if $rev_user_text contains combining
+				# or half-width characters.  Alas.
+				if ( mb_strlen( $rev_user_text ) < 20 ) {
+					$rev_user_text = str_repeat( ' ', 20 - mb_strlen( $rev_user_text ) );
+				}
+				$this->output( sprintf( "%10d %10d %14s %s %s\n",
 					$row->rev_id,
 					$row->rev_page,
 					$row->rev_timestamp,
-					$wgContLang->truncate( $row->rev_user_text, 17 ),
+					$rev_user_text,
 					$comment ) );
 				if ( $fix ) {
 					$dbw->delete( 'revision', [ 'rev_id' => $row->rev_id ] );

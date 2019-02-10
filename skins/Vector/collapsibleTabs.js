@@ -110,9 +110,15 @@
 
 				// if there are still moveable items in the dropdown menu,
 				// and there is sufficient space to place them in the tab container
-				if ( $( data.collapsedContainer + ' ' + data.collapsible ).length &&
-						data.expandCondition( $.collapsibleTabs.getSettings( $( data.collapsedContainer ).children(
-							data.collapsible + ':first' ) ).expandedWidth ) ) {
+				if (
+					$( data.collapsedContainer + ' ' + data.collapsible ).length &&
+					data.expandCondition(
+						$.collapsibleTabs.getSettings(
+							$( data.collapsedContainer ).children(
+								data.collapsible + ':first' )
+						).expandedWidth
+					)
+				) {
 					// move the element from the dropdown to the tab
 					$el.trigger( 'beforeTabExpand' );
 					$.collapsibleTabs
@@ -127,7 +133,9 @@
 			if ( !outerData ) {
 				return;
 			}
-			expContainerSettings = $.collapsibleTabs.getSettings( $( outerData.expandedContainer ) );
+			expContainerSettings = $.collapsibleTabs.getSettings(
+				$( outerData.expandedContainer )
+			);
 			if ( !expContainerSettings ) {
 				return;
 			}
@@ -173,9 +181,10 @@
 					.animate( { width: expandedWidth + 'px' }, 'normal', function () {
 						$( this ).attr( 'style', 'display: block;' );
 						rAF( function () {
-							// Update the 'expandedWidth' in case someone was brazen enough to change the tab's
-							// contents after the page load *gasp* (T71729). This doesn't prevent a tab from
-							// collapsing back and forth once, but at least it won't continue to do that forever.
+							// Update the 'expandedWidth' in case someone was brazen enough to
+							// change the tab's contents after the page load *gasp* (T71729). This
+							// doesn't prevent a tab from collapsing back and forth once, but at
+							// least it won't continue to do that forever.
 							data.expandedWidth = $moving.width();
 							$moving.data( 'collapsibleTabsSettings', data );
 							expContainerSettings.shifting = false;

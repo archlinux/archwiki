@@ -3,12 +3,13 @@
 		"authors": [
 			"Bellayet",
 			"Nasir8891",
-			"Aftabuzzaman"
+			"Aftabuzzaman",
+			"আফতাবুজ্জামান"
 		]
 	},
 	"renameuser": "ব্যবহারকারী নামান্তর করো",
-	"renameuser-linkoncontribs": "ব্যবহারকারী নামান্তর",
-	"renameuser-linkoncontribs-text": "এই ব্যবহারকারী নামান্তর করো",
+	"renameuser-linkoncontribs": "{{GENDER:$1|ব্যবহারকারী}} নামান্তর",
+	"renameuser-linkoncontribs-text": "এই {{GENDER:$1|ব্যবহারকারীকে}} নামান্তর করুন",
 	"renameuser-desc": "একজন ব্যবহারকারীকে নামান্তর করতে [[Special:RenameUser|বিশেষ পাতা]] যুক্ত করে (''ব্যবহারকারী নামান্তর'' অধিকার প্রয়োজন)",
 	"renameuserold": "বর্তমান ব্যবহারকারী নাম:",
 	"renameusernew": "নতুন ব্যবহারকারী নাম:",
@@ -35,6 +36,6 @@
 	"logentry-renameuser-renameuser-legacier": "$1 ব্যবহারকারী $4 কে {{GENDER:$7|$5}}-এ নামান্তরিত করেছেন",
 	"renameuser-move-log": "যখন {{GENDER:$2|ব্যবহারকারী}} \"[[User:$1|$1]]\" থেকে \"[[User:$2|$2]]\" তে নামান্তরিত হয় তখন স্বয়ংক্রিয়ভাবে পাতা সরিয়ে নেওয়া হয়েছে",
 	"action-renameuser": "ব্যবহারকারী নাম পরিবর্তন",
-	"right-renameuser": "ব্যবহারকারীদের পুনরায় নাম দাও",
+	"right-renameuser": "ব্যবহারকারী নামান্তর করে",
 	"renameuser-renamed-notice": "এই ব্যবহারকারীর নাম পরিবর্তন করা হয়েছে।\nসূত্র হিসাবে নিচে নাম পরিবর্তন লগ দেওয়া হল।"
 }

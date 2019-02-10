@@ -21,6 +21,7 @@
  * @ingroup SpecialPage
  */
 
+use MediaWiki\MediaWikiServices;
 use Wikimedia\Rdbms\IResultWrapper;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\DBError;
@@ -690,8 +691,6 @@ abstract class QueryPage extends SpecialPage {
 	 * @param int $offset Paging offset
 	 */
 	protected function outputResults( $out, $skin, $dbr, $res, $num, $offset ) {
-		global $wgContLang;
-
 		if ( $num > 0 ) {
 			$html = [];
 			if ( !$this->listoutput ) {
@@ -726,7 +725,7 @@ abstract class QueryPage extends SpecialPage {
 			}
 
 			$html = $this->listoutput
-				? $wgContLang->listToText( $html )
+				? MediaWikiServices::getInstance()->getContentLanguage()->listToText( $html )
 				: implode( '', $html );
 
 			$out->addHTML( $html );
@@ -806,7 +805,7 @@ abstract class QueryPage extends SpecialPage {
 		}
 		$title = Title::makeTitle( intval( $row->namespace ), $row->title );
 		if ( $title ) {
-			$date = isset( $row->timestamp ) ? $row->timestamp : '';
+			$date = $row->timestamp ?? '';
 			$comments = '';
 			if ( $title ) {
 				$talkpage = $title->getTalkPage();
@@ -830,7 +829,7 @@ abstract class QueryPage extends SpecialPage {
 	}
 
 	function feedItemAuthor( $row ) {
-		return isset( $row->user_text ) ? $row->user_text : '';
+		return $row->user_text ?? '';
 	}
 
 	function feedTitle() {
@@ -865,7 +864,7 @@ abstract class QueryPage extends SpecialPage {
 
 		$batch = new LinkBatch;
 		foreach ( $res as $row ) {
-			$batch->add( $ns !== null ? $ns : $row->namespace, $row->title );
+			$batch->add( $ns ?? $row->namespace, $row->title );
 		}
 		$batch->execute();
 

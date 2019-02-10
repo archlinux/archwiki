@@ -1,6 +1,6 @@
 <?php
 
-use Wikimedia\ObjectFactory;
+use MediaWiki\MediaWikiServices;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -26,7 +26,7 @@ class MessageTest extends MediaWikiLangTestCase {
 
 		$this->assertSame( $key, $message->getKey() );
 		$this->assertSame( $params, $message->getParams() );
-		$this->assertEquals( $expectedLang, $message->getLanguage() );
+		$this->assertSame( $expectedLang->getCode(), $message->getLanguage()->getCode() );
 
 		$messageSpecifier = $this->getMockForAbstractClass( MessageSpecifier::class );
 		$messageSpecifier->expects( $this->any() )
@@ -37,7 +37,7 @@ class MessageTest extends MediaWikiLangTestCase {
 
 		$this->assertSame( $key, $message->getKey() );
 		$this->assertSame( $params, $message->getParams() );
-		$this->assertEquals( $expectedLang, $message->getLanguage() );
+		$this->assertSame( $expectedLang->getCode(), $message->getLanguage()->getCode() );
 	}
 
 	public static function provideConstructor() {
@@ -401,14 +401,12 @@ class MessageTest extends MediaWikiLangTestCase {
 	}
 
 	public function testRawHtmlInMsg() {
-		global $wgParserConf;
 		$this->setMwGlobals( 'wgRawHtml', true );
 		// We have to reset the core hook registration.
 		// to register the html hook
 		MessageCache::destroyInstance();
 		$this->setMwGlobals( 'wgParser',
-			ObjectFactory::constructClassInstance( $wgParserConf['class'], [ $wgParserConf ] )
-		);
+			MediaWikiServices::getInstance()->getParserFactory()->create() );
 
 		$msg = new RawMessage( '<html><script>alert("xss")</script></html>' );
 		$txt = '<span class="error">&lt;html&gt; tags cannot be' .

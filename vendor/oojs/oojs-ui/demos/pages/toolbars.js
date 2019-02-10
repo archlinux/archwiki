@@ -7,14 +7,14 @@ Demo.static.pages.toolbars = function ( demo ) {
 		toolGroupFactories = [],
 		toolbars = [],
 		configs = [
-			{},
-			{ actions: true },
+			{ $overlay: true },
+			{ $overlay: true, actions: true },
 			{},
 			{ actions: true },
 			{ position: 'bottom' },
 			{ actions: true, position: 'bottom' },
-			{},
-			{ actions: true }
+			{ $overlay: true },
+			{ $overlay: true, actions: true }
 		];
 
 	// Show some random accelerator keys that don't actually work
@@ -156,15 +156,18 @@ Demo.static.pages.toolbars = function ( demo ) {
 	// Toolbar
 	toolbars[ 0 ].setup( [
 		{
+			name: 'bar',
 			type: 'bar',
 			include: [ { group: 'barTools' } ],
 			demote: [ 'toolGroupTool' ]
 		},
 		{
+			name: 'disabledBar',
 			type: 'disabledBar',
 			include: [ { group: 'disabledBarTools' } ]
 		},
 		{
+			name: 'list',
 			type: 'list',
 			label: 'List',
 			icon: 'image',
@@ -172,18 +175,21 @@ Demo.static.pages.toolbars = function ( demo ) {
 			allowCollapse: [ 'listTool1', 'listTool6' ]
 		},
 		{
+			name: 'disabledList',
 			type: 'disabledList',
 			label: 'List',
 			icon: 'image',
 			include: [ { group: 'disabledListTools' } ]
 		},
 		{
+			name: 'autoDisabledList',
 			type: 'list',
 			label: 'Auto-disabling list',
 			icon: 'image',
 			include: [ { group: 'autoDisableListTools' } ]
 		},
 		{
+			name: 'catchAll',
 			label: 'Catch-all',
 			include: '*'
 		}
@@ -191,21 +197,25 @@ Demo.static.pages.toolbars = function ( demo ) {
 	// Toolbar with action buttons
 	toolbars[ 1 ].setup( [
 		{
+			name: 'menu',
 			type: 'menu',
 			header: 'Popup-/MenuToolGroup header',
 			icon: 'image',
 			include: [ { group: 'menuTools' } ]
 		},
 		{
+			name: 'disabledMenu',
 			type: 'disabledMenu',
 			icon: 'image',
 			include: [ { group: 'disabledMenuTools' } ]
 		},
 		{
+			name: 'cite',
 			type: 'bar',
 			include: [ { group: 'cite' } ]
 		},
 		{
+			name: 'citeDisabled',
 			type: 'bar',
 			include: [ { group: 'citeDisabled' } ]
 		}
@@ -213,15 +223,18 @@ Demo.static.pages.toolbars = function ( demo ) {
 	// Action toolbar for toolbars[ 3 ] below
 	toolbars[ 2 ].setup( [
 		{
+			name: 'popup',
 			include: [ { group: 'popupTools' } ]
 		},
 		{
+			name: 'overflow',
 			type: 'list',
 			icon: 'menu',
 			indicator: '',
 			include: [ { group: 'overflowTools' } ]
 		},
 		{
+			name: 'editorSwitch',
 			type: 'list',
 			icon: 'edit',
 			include: [ { group: 'editorSwitchTools' } ]
@@ -230,42 +243,51 @@ Demo.static.pages.toolbars = function ( demo ) {
 	// Word processor toolbar
 	toolbars[ 3 ].setup( [
 		{
+			name: 'history',
 			type: 'bar',
 			include: [ { group: 'history' } ]
 		},
 		{
+			name: 'format',
 			type: 'menu',
 			include: [ { group: 'formatTools' } ]
 		},
 		{
+			name: 'textStyle',
 			type: 'list',
 			icon: 'textStyle',
 			include: [ { group: 'styleTools' } ]
 		},
 		{
+			name: 'link',
 			type: 'bar',
 			include: [ { group: 'link' } ]
 		},
 		{
+			name: 'cite',
 			type: 'bar',
 			include: [ { group: 'cite' } ]
 		},
 		{
+			name: 'citeDisabled',
 			type: 'bar',
 			include: [ { group: 'citeDisabled' } ]
 		},
 		{
+			name: 'structure',
 			type: 'list',
 			icon: 'listBullet',
 			include: [ { group: 'structureTools' } ]
 		},
 		{
+			name: 'insert',
 			type: 'list',
 			label: 'Insert',
 			include: [ { group: 'insertTools' }, { group: 'autoDisableListTools' }, { group: 'unusedStuff' } ],
 			allowCollapse: [ 'comment', 'hieroglyphs', 'score', 'signature', 'gallery', 'chem', 'math', 'syntaxHighlightDialog', 'graph', 'referencesList' ]
 		},
 		{
+			name: 'specialCharacters',
 			type: 'bar',
 			include: [ { group: 'specialCharacters' } ]
 		}
@@ -273,18 +295,22 @@ Demo.static.pages.toolbars = function ( demo ) {
 	// Action toolbar for toolbars[ 5 ] below
 	toolbars[ 4 ].setup( [
 		{
+			name: 'popup',
 			include: [ { group: 'popupTools' } ]
 		},
 		{
+			name: 'alert',
 			include: [ { group: 'alertTools' } ]
 		},
 		{
+			name: 'overflow',
 			type: 'list',
 			icon: 'menu',
 			indicator: '',
 			include: [ { group: 'overflowTools' } ]
 		},
 		{
+			name: 'editorSwitch',
 			type: 'list',
 			icon: 'edit',
 			include: [ { group: 'editorSwitchTools' } ]
@@ -293,41 +319,50 @@ Demo.static.pages.toolbars = function ( demo ) {
 	// Word processor toolbar set to `position: 'bottom'`
 	toolbars[ 5 ].setup( [
 		{
+			name: 'history',
 			type: 'bar',
 			include: [ { group: 'history' } ]
 		},
 		{
+			name: 'format',
 			type: 'menu',
 			include: [ { group: 'formatTools' } ]
 		},
 		{
+			name: 'style',
 			type: 'list',
 			icon: 'textStyle',
 			include: [ { group: 'styleTools' } ]
 		},
 		{
+			name: 'link',
 			type: 'bar',
 			include: [ { group: 'link' } ]
 		},
 		{
+			name: 'cite',
 			type: 'bar',
 			include: [ { group: 'cite' } ]
 		},
 		{
+			name: 'citeDisabled',
 			type: 'bar',
 			include: [ { group: 'citeDisabled' } ]
 		},
 		{
+			name: 'structure',
 			type: 'list',
 			icon: 'listBullet',
 			include: [ { group: 'structureTools' } ]
 		},
 		{
+			name: 'insert',
 			type: 'list',
 			label: 'Insert',
 			include: [ { group: 'insertTools' }, { group: 'autoDisableListTools' }, { group: 'unusedStuff' } ]
 		},
 		{
+			name: 'specialCharacters',
 			type: 'bar',
 			include: [ { group: 'specialCharacters' } ]
 		}
@@ -335,6 +370,7 @@ Demo.static.pages.toolbars = function ( demo ) {
 	// Action toolbar for toolbars[7]
 	toolbars[ 6 ].setup( [
 		{
+			name: 'list',
 			type: 'list',
 			indicator: 'down',
 			flags: [ 'primary', 'progressive' ],
@@ -344,11 +380,13 @@ Demo.static.pages.toolbars = function ( demo ) {
 	// Toolbar with action buttons, in a ButtonGroup
 	toolbars[ 7 ].setup( [
 		{
+			name: 'menu',
 			type: 'menu',
 			icon: 'image',
 			include: [ { group: 'menuTools' } ]
 		},
 		{
+			name: 'disabledMenu',
 			type: 'disabledMenu',
 			icon: 'image',
 			include: [ { group: 'disabledMenuTools' } ]
@@ -360,12 +398,12 @@ Demo.static.pages.toolbars = function ( demo ) {
 	toolbars[ 1 ].$actions.append( actionButton.$element, actionButtonDisabled.$element );
 
 	for ( i = 3; i <= 5; i += 2 ) {
-		publishButton = new OO.ui.ButtonWidget( { label: 'Publish changes', flags: [ 'progressive', 'primary' ] } );
+		publishButton = new OO.ui.ButtonWidget( { label: 'Publish changes…', flags: [ 'progressive', 'primary' ] } );
 		toolbars[ i ].$actions.append( toolbars[ i - 1 ].$element, publishButton.$element );
 	}
 
 	actionButtonDelete = new OO.ui.ButtonWidget( { label: 'Delete', flags: [ 'destructive' ] } );
-	publishButton = new OO.ui.ButtonWidget( { label: 'Publish changes', flags: [ 'progressive', 'primary' ] } );
+	publishButton = new OO.ui.ButtonWidget( { label: 'Publish changes…', flags: [ 'progressive', 'primary' ] } );
 	actionGroup = new OO.ui.ButtonGroupWidget( {
 		items: [ actionButtonDelete, publishButton, toolbars[ 6 ].items[ 0 ] ]
 	} );
@@ -377,6 +415,7 @@ Demo.static.pages.toolbars = function ( demo ) {
 
 	// ToolGroups definition, in alphabetical/disabledAlphabetical order
 	toolGroups = {
+		// Parameters like in createTool() function above (starting with 'name')
 		barTools: [
 			[ 'barTool', 'image', 'Basic tool in bar' ],
 			[ 'disabledBarTool', 'image', 'Basic tool in bar disabled', setDisabled ]
@@ -419,16 +458,16 @@ Demo.static.pages.toolbars = function ( demo ) {
 			[ 'media', 'image', 'First basic tool in list' ],
 			[ 'template', 'puzzle', 'Template' ],
 			[ 'table', 'table', 'Table' ],
-			[ 'comment', 'comment', 'Comment' ],
-			[ 'hieroglyphs', 'specialCharacter', 'Hieroglyphs' ],
-			[ 'score', 'specialCharacter', 'Musical notation' ],
+			[ 'comment', 'speechBubble', 'Comment' ],
+			[ 'hieroglyphs', null, 'Hieroglyphs' ],
+			[ 'score', null, 'Musical notation' ],
 			[ 'signature', 'signature', 'Your signature' ],
 			[ 'gallery', 'imageGallery', 'Gallery' ],
-			[ 'chem', 'specialCharacter', 'Chemical formula' ],
-			[ 'math', 'specialCharacter', 'Math formula' ],
+			[ 'chem', null, 'Chemical formula' ],
+			[ 'math', null, 'Math formula' ],
 			[ 'syntaxHighlightDialog', 'markup', 'Code block' ],
-			[ 'graph', 'specialCharacter', 'Graph' ],
-			[ 'referencesList', 'specialCharacter', 'References list' ]
+			[ 'graph', null, 'Graph' ],
+			[ 'referencesList', null, 'References list' ]
 		],
 
 		link: [
@@ -469,7 +508,7 @@ Demo.static.pages.toolbars = function ( demo ) {
 		overflowTools: [
 			[ 'meta', 'window', 'Options' ],
 			[ 'categories', 'image', 'Categories' ],
-			[ 'settings', 'settings', 'Page settings' ],
+			[ 'settings', 'pageSettings', 'Page settings' ],
 			[ 'advanced', 'advanced', 'Advanced settings' ],
 			[ 'textLanguage', 'language', 'Languages' ],
 			[ 'templatesUsed', 'puzzle', 'Templates used' ],

@@ -9,7 +9,8 @@
 			"Sp5uhe",
 			"WTM",
 			"Tar Lócesilion",
-			"Woytecr"
+			"Woytecr",
+			"Railfail536"
 		]
 	},
 	"action-titleblacklistlog": "przeglądania czarnej listy tytułów",
@@ -30,7 +31,8 @@
 	"right-tboverride": "Ignorowanie czarnej listy tytułów lub nazw użytkowników",
 	"right-tboverride-account": "Ignorowanie czarnej listy użytkowników",
 	"right-titleblacklistlog": "Podgląd rejestru czarnej listy tytułów",
-	"apihelp-titleblacklist-description": "Sprawdź tytuł artykułu, pliku lub nazwy użytkownika pod kątem obecności na czarnej liście tytułów.",
+	"apihelp-titleblacklist-description": "Sprawdź tytuł strony, pliku lub nazwy użytkownika pod kątem obecności na czarnej liście tytułów.",
+	"apihelp-titleblacklist-summary": "Sprawdź tytuł artykułu, pliku lub nazwy użytkownika pod kątem obecności na czarnej liście tytułów.",
 	"apihelp-titleblacklist-param-title": "Ciąg znaków, który sprawdzić pod kątem obecności na czarnej liście tytułów.",
 	"apihelp-titleblacklist-param-action": "Akcja do sprawdzenia.",
 	"apihelp-titleblacklist-param-nooverride": "Nie próbuj omijać czarnej listy tytułów.",

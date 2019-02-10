@@ -3,7 +3,8 @@
 		"authors": [
 			"Elisardojm",
 			"Toliño",
-			"Vivaelcelta"
+			"Vivaelcelta",
+			"Banjo"
 		]
 	},
 	"vector-skin-desc": "Versión moderna da aparencia MonoBook, cun aspecto actualizado e moitas melloras na usabilidade",
@@ -20,5 +21,7 @@
 	"vector-view-history": "Ver o historial",
 	"vector-view-view": "Ler",
 	"vector-view-viewsource": "Ver o código fonte",
+	"vector-jumptonavigation": "Saltar ata a navegación",
+	"vector-jumptosearch": "Saltar á procura",
 	"vector-more-actions": "Máis"
 }

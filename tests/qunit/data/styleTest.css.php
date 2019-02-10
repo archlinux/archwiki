@@ -22,6 +22,10 @@
  * @author Timo Tijhof
  * @since 1.20
  */
+
+// This file doesn't run as part of MediaWiki
+// phpcs:disable MediaWiki.Usage.SuperGlobalsUsage.SuperGlobals
+
 header( 'Content-Type: text/css; charset=utf-8' );
 
 /**
@@ -40,9 +44,9 @@ function cssfilter( $val ) {
 $params = array_map( 'cssfilter', $_GET );
 
 // Defaults
-$selector = isset( $params['selector'] ) ? $params['selector'] : '.mw-test-example';
-$property = isset( $params['prop'] ) ? $params['prop'] : 'float';
-$value = isset( $params['val'] ) ? $params['val'] : 'right';
+$selector = $params['selector'] ?? '.mw-test-example';
+$property = $params['prop'] ?? 'float';
+$value = $params['val'] ?? 'right';
 $wait = isset( $params['wait'] ) ? (int)$params['wait'] : 0; // seconds
 
 sleep( $wait );

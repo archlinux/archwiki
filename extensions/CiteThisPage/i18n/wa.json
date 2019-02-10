@@ -1,9 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Srtxg"
+			"Srtxg",
+			"Reptilien.19831209BE1"
 		]
 	},
 	"citethispage-link": "Citer l' pådje",
+	"tooltip-citethispage": "Infôrmåcion sol manire di citer cisse pådje ci",
 	"citethispage-change-target": "Pådje:"
 }

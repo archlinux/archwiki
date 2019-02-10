@@ -9,7 +9,8 @@
 			"Meelo",
 			"Sayginer",
 			"Violetanka",
-			"McAang"
+			"McAang",
+			"Hedda"
 		]
 	},
 	"multimediaviewer-desc": "Küçük resimleri daha büyük boyutlara genişleterek, tam ekran arayüzde gösterir.",
@@ -27,6 +28,7 @@
 	"multimediaviewer-license-default": "Lisansı göster",
 	"multimediaviewer-permission-title": "Lisans ayrıntıları",
 	"multimediaviewer-permission-link": "şartları görüntüle",
+	"multimediaviewer-permission-link-hide": "şartları gizle",
 	"multimediaviewer-permission-viewmore": "Daha fazla",
 	"multimediaviewer-about-mmv": "Ortam Görüntüleyici hakkında",
 	"multimediaviewer-discuss-mmv": "Bu özelliği tartış",

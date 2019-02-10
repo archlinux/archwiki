@@ -7,7 +7,7 @@
 			"Sushant savla"
 		]
 	},
-	"cite-desc": "અવતરણો માટે <nowiki><ref[ name=id]></nowiki> અને <nowiki><references/></nowiki> ટેગ ઉમેરે છે",
+	"cite-desc": "અવતરણો માટે <code><nowiki><ref[ name=id]></nowiki></code> અને <code><nowiki><references/></nowiki></code> ટેગ ઉમેરે છે",
 	"cite_error": "સંદર્ભ ત્રુટિ: $1",
 	"cite_error_ref_numeric_key": "અમાન્ય <code>&lt;ref&gt;</code> ટેગ;\nનામ માત્ર સરળ રાશિ ન હોઈ શકે, વિસ્તૃત શીર્ષક આપો",
 	"cite_error_ref_no_key": "અમાન્ય <code>&lt;ref&gt;</code> ટેગ;\nનામ વગરના refs ને કાંઈક નામ તો હોવું જ જોઈએ",

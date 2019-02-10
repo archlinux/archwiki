@@ -79,7 +79,7 @@ class SpecialImport extends SpecialPage {
 		}
 
 		# @todo Allow Title::getUserPermissionsErrors() to take an array
-		# @todo FIXME: Title::checkSpecialsAndNSPermissions() has a very wierd expectation of what
+		# @todo FIXME: Title::checkSpecialsAndNSPermissions() has a very weird expectation of what
 		# getUserPermissionsErrors() might actually be used for, hence the 'ns-specialprotected'
 		$errors = wfMergeErrorArrays(
 			$this->getPageTitle()->getUserPermissionsErrors(
@@ -179,8 +179,8 @@ class SpecialImport extends SpecialPage {
 
 		$out = $this->getOutput();
 		if ( !$source->isGood() ) {
-			$out->addWikiText( "<p class=\"error\">\n" .
-				$this->msg( 'importfailed', $source->getWikiText() )->parse() . "\n</p>" );
+			$out->addWikiText( "<div class=\"error\">\n" .
+				$this->msg( 'importfailed', $source->getWikiText() )->parse() . "\n</div>" );
 		} else {
 			$importer = new WikiImporter( $source->value, $this->getConfig() );
 			if ( !is_null( $this->namespace ) ) {
@@ -189,7 +189,7 @@ class SpecialImport extends SpecialPage {
 				$statusRootPage = $importer->setTargetRootPage( $this->rootpage );
 				if ( !$statusRootPage->isGood() ) {
 					$out->wrapWikiMsg(
-						"<p class=\"error\">\n$1\n</p>",
+						"<div class=\"error\">\n$1\n</div>",
 						[
 							'import-options-wrong',
 							$statusRootPage->getWikiText(),
@@ -224,13 +224,13 @@ class SpecialImport extends SpecialPage {
 			if ( $exception ) {
 				# No source or XML parse error
 				$out->wrapWikiMsg(
-					"<p class=\"error\">\n$1\n</p>",
+					"<div class=\"error\">\n$1\n</div>",
 					[ 'importfailed', $exception->getMessage() ]
 				);
 			} elseif ( !$result->isGood() ) {
 				# Zero revisions
 				$out->wrapWikiMsg(
-					"<p class=\"error\">\n$1\n</p>",
+					"<div class=\"error\">\n$1\n</div>",
 					[ 'importfailed', $result->getWikiText() ]
 				);
 			} else {
@@ -526,7 +526,7 @@ class SpecialImport extends SpecialPage {
 					Xml::checkLabel(
 						$this->msg( 'import-assign-known-users' )->text(),
 						'assignKnownUsers',
-						'assignKnownUsers',
+						'interwikiAssignKnownUsers',
 						$this->assignKnownUsers
 					) .
 					"</td>

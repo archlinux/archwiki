@@ -4,7 +4,7 @@
 			"Juanpabl"
 		]
 	},
-	"cite-desc": "Adibe as etiquetas <nowiki><ref[ name=id]></nowiki> y <nowiki><references/></nowiki> ta fer citas",
+	"cite-desc": "Adibe as etiquetas <code><nowiki><ref[ name=id]></nowiki></code> y <code><nowiki><references/></nowiki></code> ta fer citas",
 	"cite_error": "Error en a cita: $1",
 	"cite_error_ref_numeric_key": "Etiqueta <code>&lt;ref&gt;</code> incorreuta; o nombre d'a etiqueta no puede estar un numero entero, faiga servir un títol descriptivo",
 	"cite_error_ref_no_key": "Etiqueta <code>&lt;ref&gt;</code> incorreuta; as referencias sin de conteniu han de tener un nombre",

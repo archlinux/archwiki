@@ -75,8 +75,8 @@ class IcuCollation extends Collation {
 	 * letters (denoted by keys starting with '-').
 	 *
 	 * These are additions to (or subtractions from) the data stored in the
-	 * first-letters-root.ser file (which among others includes full basic latin,
-	 * cyrillic and greek alphabets).
+	 * first-letters-root.php data file (which among others includes full basic Latin,
+	 * Cyrillic and Greek alphabets).
 	 *
 	 * "Separate letter" is a letter that would have a separate heading/section
 	 * for it in a dictionary or a phone book in this language. This data isn't
@@ -94,7 +94,7 @@ class IcuCollation extends Collation {
 		'af' => [],
 		'am' => [],
 		'ar' => [],
-		'as' => [ "\xe0\xa6\x82", "\xe0\xa6\x81", "\xe0\xa6\x83", "\xe0\xa7\x8e", "ক্ষ " ],
+		'as' => [ "\u{0982}", "\u{0981}", "\u{0983}", "\u{09CE}", "ক্ষ " ],
 		'ast' => [ "Ch", "Ll", "Ñ" ], // not in libicu
 		'az' => [ "Ç", "Ə", "Ğ", "İ", "Ö", "Ş", "Ü" ],
 		'be' => [ "Ё" ],
@@ -124,7 +124,7 @@ class IcuCollation extends Collation {
 		'en' => [],
 		'eo' => [ "Ĉ", "Ĝ", "Ĥ", "Ĵ", "Ŝ", "Ŭ" ],
 		'es' => [ "Ñ" ],
-		'et' => [ "Š", "Ž", "Õ", "Ä", "Ö", "Ü", "W" ], // added W for CollationEt (xx-uca-et)
+		'et' => [ "Š", "Ž", "Õ", "Ä", "Ö", "Ü" ],
 		'eu' => [ "Ñ" ], // not in libicu
 		'fa' => [
 			// RTL, let's put each letter on a new line
@@ -144,11 +144,11 @@ class IcuCollation extends Collation {
 		'ga' => [],
 		'gd' => [], // not in libicu
 		'gl' => [ "Ch", "Ll", "Ñ" ],
-		'gu' => [ "\xe0\xaa\x82", "\xe0\xaa\x83", "\xe0\xaa\x81", "\xe0\xaa\xb3" ],
+		'gu' => [ "\u{0A82}", "\u{0A83}", "\u{0A81}", "\u{0AB3}" ],
 		'ha' => [ 'Ɓ', 'Ɗ', 'Ƙ', 'Sh', 'Ts', 'Ƴ' ],
 		'haw' => [ 'ʻ' ],
 		'he' => [],
-		'hi' => [ "\xe0\xa4\x82", "\xe0\xa4\x83" ],
+		'hi' => [ "\u{0902}", "\u{0903}" ],
 		'hr' => [ "Č", "Ć", "Dž", "Đ", "Lj", "Nj", "Š", "Ž" ],
 		'hsb' => [ "Č", "Dź", "Ě", "Ch", "Ł", "Ń", "Ř", "Š", "Ć", "Ž" ],
 		'hu' => [ "Cs", "Dz", "Dzs", "Gy", "Ly", "Ny", "Ö", "Sz", "Ty", "Ü", "Zs" ],
@@ -161,13 +161,13 @@ class IcuCollation extends Collation {
 		'kk' => [ "Ү", "І" ],
 		'kl' => [ "Æ", "Ø", "Å" ],
 		'km' => [
-			"រ", "ឫ", "ឬ", "ល", "ឭ", "ឮ", "\xe1\x9e\xbb\xe1\x9f\x86",
-			"\xe1\x9f\x86", "\xe1\x9e\xb6\xe1\x9f\x86", "\xe1\x9f\x87",
-			"\xe1\x9e\xb7\xe1\x9f\x87", "\xe1\x9e\xbb\xe1\x9f\x87",
-			"\xe1\x9f\x81\xe1\x9f\x87", "\xe1\x9f\x84\xe1\x9f\x87",
+			"រ", "ឫ", "ឬ", "ល", "ឭ", "ឮ", "\u{17BB}\u{17C6}",
+			"\u{17C6}", "\u{17B6}\u{17C6}", "\u{17C7}",
+			"\u{17B7}\u{17C7}", "\u{17BB}\u{17C7}",
+			"\u{17C1}\u{17C7}", "\u{17C4}\u{17C7}",
 		],
-		'kn' => [ "\xe0\xb2\x81", "\xe0\xb2\x83", "\xe0\xb3\xb1", "\xe0\xb3\xb2" ],
-		'kok' => [ "\xe0\xa4\x82", "\xe0\xa4\x83", "ळ", "क्ष" ],
+		'kn' => [ "\u{0C81}", "\u{0C83}", "\u{0CF1}", "\u{0CF2}" ],
+		'kok' => [ "\u{0902}", "\u{0903}", "ळ", "क्ष" ],
 		'ku' => [ "Ç", "Ê", "Î", "Ş", "Û" ], // not in libicu
 		'ky' => [ "Ё" ],
 		'la' => [], // not in libicu
@@ -181,7 +181,7 @@ class IcuCollation extends Collation {
 		'ml' => [],
 		'mn' => [],
 		'mo' => [ "Ă", "Â", "Î", "Ș", "Ț" ], // not in libicu
-		'mr' => [ "\xe0\xa4\x82", "\xe0\xa4\x83", "ळ", "क्ष", "ज्ञ" ],
+		'mr' => [ "\u{0902}", "\u{0903}", "ळ", "क्ष", "ज्ञ" ],
 		'ms' => [],
 		'mt' => [ "Ċ", "Ġ", "Għ", "Ħ", "Ż" ],
 		'nb' => [ "Æ", "Ø", "Å" ],
@@ -191,8 +191,8 @@ class IcuCollation extends Collation {
 		'no' => [ "Æ", "Ø", "Å" ], // not in libicu. You should probably use nb or nn instead.
 		'oc' => [], // not in libicu
 		'om' => [ 'Ch', 'Dh', 'Kh', 'Ny', 'Ph', 'Sh' ],
-		'or' => [ "\xe0\xac\x81", "\xe0\xac\x82", "\xe0\xac\x83", "କ୍ଷ" ],
-		'pa' => [ "\xe0\xa9\x8d" ],
+		'or' => [ "\u{0B01}", "\u{0B02}", "\u{0B03}", "କ୍ଷ" ],
+		'pa' => [ "\u{0A4D}" ],
 		'pl' => [ "Ą", "Ć", "Ę", "Ł", "Ń", "Ó", "Ś", "Ź", "Ż" ],
 		'pt' => [],
 		'rm' => [], // not in libicu
@@ -204,7 +204,7 @@ class IcuCollation extends Collation {
 			'Á', 'Č', 'Ʒ', 'Ǯ', 'Đ', 'Ǧ', 'Ǥ', 'Ǩ', 'Ŋ',
 			'Š', 'Ŧ', 'Ž', 'Ø', 'Æ', 'Ȧ', 'Ä', 'Ö'
 		],
-		'si' => [ "\xe0\xb6\x82", "\xe0\xb6\x83", "\xe0\xb6\xa4" ],
+		'si' => [ "\u{0D82}", "\u{0D83}", "\u{0DA4}" ],
 		'sk' => [ "Ä", "Č", "Ch", "Ô", "Š", "Ž" ],
 		'sl' => [ "Č", "Š", "Ž" ],
 		'smn' => [ "Á", "Č", "Đ", "Ŋ", "Š", "Ŧ", "Ž", "Æ", "Ø", "Å", "Ä", "Ö" ],
@@ -215,12 +215,12 @@ class IcuCollation extends Collation {
 		'sv@collation=standard' => [ "Å", "Ä", "Ö" ],
 		'sw' => [],
 		'ta' => [
-			"\xE0\xAE\x82", "ஃ", "க்ஷ", "க்", "ங்", "ச்", "ஞ்", "ட்", "ண்", "த்", "ந்",
+			"\u{0B82}", "ஃ", "க்ஷ", "க்", "ங்", "ச்", "ஞ்", "ட்", "ண்", "த்", "ந்",
 			"ப்", "ம்", "ய்", "ர்", "ல்", "வ்", "ழ்", "ள்", "ற்", "ன்", "ஜ்", "ஶ்", "ஷ்",
 			"ஸ்", "ஹ்", "க்ஷ்"
 		],
-		'te' => [ "\xe0\xb0\x81", "\xe0\xb0\x82", "\xe0\xb0\x83" ],
-		'th' => [ "ฯ", "\xe0\xb9\x86", "\xe0\xb9\x8d", "\xe0\xb8\xba" ],
+		'te' => [ "\u{0C01}", "\u{0C02}", "\u{0C03}" ],
+		'th' => [ "ฯ", "\u{0E46}", "\u{0E4D}", "\u{0E3A}" ],
 		'tk' => [ "Ç", "Ä", "Ž", "Ň", "Ö", "Ş", "Ü", "Ý" ],
 		'tl' => [ "Ñ", "Ng" ], // not in libicu
 		'to' => [ "Ng", "ʻ" ],
@@ -231,8 +231,8 @@ class IcuCollation extends Collation {
 		'vi' => [ "Ă", "Â", "Đ", "Ê", "Ô", "Ơ", "Ư" ],
 		'vo' => [ "Ä", "Ö", "Ü" ],
 		'yi' => [
-			"\xd7\x91\xd6\xbf", "\xd7\x9b\xd6\xbc", "\xd7\xa4\xd6\xbc",
-			"\xd7\xa9\xd7\x82", "\xd7\xaa\xd6\xbc"
+			"\u{05D1}\u{05BF}", "\u{05DB}\u{05BC}", "\u{05E4}\u{05BC}",
+			"\u{05E9}\u{05C2}", "\u{05EA}\u{05BC}"
 		],
 		'yo' => [ "Ẹ", "Gb", "Ọ", "Ṣ" ],
 		'zu' => [],
@@ -333,7 +333,7 @@ class IcuCollation extends Collation {
 				static::class,
 				$this->locale,
 				$this->digitTransformLanguage->getCode(),
-				self::getICUVersion(),
+				INTL_ICU_VERSION,
 				self::FIRST_LETTER_VERSION
 			);
 			$this->firstLetterData = $cache->getWithSetCallback( $cacheKey, $cache::TTL_WEEK, function () {
@@ -348,9 +348,10 @@ class IcuCollation extends Collation {
 	 * @throws MWException
 	 */
 	private function fetchFirstLetterData() {
+		global $IP;
 		// Generate data from serialized data file
 		if ( isset( self::$tailoringFirstLetters[$this->locale] ) ) {
-			$letters = wfGetPrecompiledData( 'first-letters-root.ser' );
+			$letters = require "$IP/includes/collation/data/first-letters-root.php";
 			// Append additional characters
 			$letters = array_merge( $letters, self::$tailoringFirstLetters[$this->locale] );
 			// Remove unnecessary ones, if any
@@ -364,10 +365,15 @@ class IcuCollation extends Collation {
 				$letters[] = $this->digitTransformLanguage->formatNum( $digit, true );
 			}
 		} else {
-			$letters = wfGetPrecompiledData( "first-letters-{$this->locale}.ser" );
-			if ( $letters === false ) {
-				throw new MWException( "MediaWiki does not support ICU locale " .
-					"\"{$this->locale}\"" );
+			if ( $this->locale === 'root' ) {
+				$letters = require "$IP/includes/collation/data/first-letters-root.php";
+			} else {
+				// FIXME: Is this still used?
+				$letters = wfGetPrecompiledData( "first-letters-{$this->locale}.ser" );
+				if ( $letters === false ) {
+					throw new MWException( "MediaWiki does not support ICU locale " .
+						"\"{$this->locale}\"" );
+				}
 			}
 		}
 
@@ -390,8 +396,7 @@ class IcuCollation extends Collation {
 				wfDebug( "Primary collision '$letter' '{$letterMap[$key]}' (comparison: $comp)\n" );
 				// If that also has a collision, use codepoint as a tiebreaker.
 				if ( $comp === 0 ) {
-					// TODO Use <=> operator when PHP 7 is allowed.
-					$comp = UtfNormal\Utils::utf8ToCodepoint( $letter ) -
+					$comp = UtfNormal\Utils::utf8ToCodepoint( $letter ) <=>
 						UtfNormal\Utils::utf8ToCodepoint( $letterMap[$key] );
 				}
 				if ( $comp < 0 ) {
@@ -528,18 +533,15 @@ class IcuCollation extends Collation {
 	 * can't be determined.
 	 *
 	 * The constant INTL_ICU_VERSION this function refers to isn't really
-	 * documented. It is available since PHP 5.3.7 (see PHP 54561
-	 * https://bugs.php.net/bug.php?id=54561). This function will return
-	 * false on older PHPs.
-	 *
-	 * TODO: Remove the backwards-compatibility as MediaWiki now requires
-	 * higher levels of PHP.
+	 * documented, but see https://bugs.php.net/bug.php?id=54561.
 	 *
 	 * @since 1.21
-	 * @return string|bool
+	 * @deprecated since 1.32, use INTL_ICU_VERSION directly
+	 * @return string
 	 */
 	static function getICUVersion() {
-		return defined( 'INTL_ICU_VERSION' ) ? INTL_ICU_VERSION : false;
+		wfDeprecated( __METHOD__, '1.32' );
+		return INTL_ICU_VERSION;
 	}
 
 	/**
@@ -550,7 +552,7 @@ class IcuCollation extends Collation {
 	 * @return string|bool
 	 */
 	static function getUnicodeVersionForICU() {
-		$icuVersion = self::getICUVersion();
+		$icuVersion = INTL_ICU_VERSION;
 		if ( !$icuVersion ) {
 			return false;
 		}
@@ -558,6 +560,8 @@ class IcuCollation extends Collation {
 		$versionPrefix = substr( $icuVersion, 0, 3 );
 		// Source: http://site.icu-project.org/download
 		$map = [
+			'61.' => '10.0',
+			'60.' => '10.0',
 			'59.' => '9.0',
 			'58.' => '9.0',
 			'57.' => '8.0',
@@ -579,10 +583,6 @@ class IcuCollation extends Collation {
 			'3.4' => '4.1',
 		];
 
-		if ( isset( $map[$versionPrefix] ) ) {
-			return $map[$versionPrefix];
-		} else {
-			return false;
-		}
+		return $map[$versionPrefix] ?? false;
 	}
 }

@@ -6,7 +6,7 @@
 			"Subi"
 		]
 	},
-	"cite-desc": "<nowiki><ref[ name=id]></nowiki> eta <nowiki><references/></nowiki> etiketak gehitzen ditu, aipuentzako",
+	"cite-desc": "<code><nowiki><ref[ name=id]></nowiki></code> eta <code><nowiki><references/></nowiki></code> etiketak gehitzen ditu, aipuentzako",
 	"cite_error": "Aipamen errorea: $1",
 	"cite-tracking-category-cite-error": "Erreferentziatan akatsak dituzten orrialdeak",
 	"cite_section_preview_references": "Erreferentzien aurreikuspena"

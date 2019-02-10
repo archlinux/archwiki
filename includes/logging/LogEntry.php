@@ -24,7 +24,7 @@
  *
  * @file
  * @author Niklas Laxström
- * @license http://www.gnu.org/copyleft/gpl.html GNU General Public License 2.0 or later
+ * @license GPL-2.0-or-later
  * @since 1.19
  */
 
@@ -156,7 +156,8 @@ abstract class LogEntryBase implements LogEntry {
 }
 
 /**
- * This class wraps around database result row.
+ * A value class to process existing log entries. In other words, this class caches a log
+ * entry from the database and provides an immutable object-oriented representation of it.
  *
  * @since 1.19
  */
@@ -361,6 +362,10 @@ class DatabaseLogEntry extends LogEntryBase {
 	}
 }
 
+/**
+ * A subclass of DatabaseLogEntry for objects constructed from entries in the
+ * recentchanges table (rather than the logging table).
+ */
 class RCDatabaseLogEntry extends DatabaseLogEntry {
 
 	public function getId() {
@@ -425,7 +430,7 @@ class RCDatabaseLogEntry extends DatabaseLogEntry {
 }
 
 /**
- * Class for creating log entries manually, to inject them into the database.
+ * Class for creating new log entries and inserting them into the database.
  *
  * @since 1.19
  */
@@ -620,7 +625,7 @@ class ManualLogEntry extends LogEntryBase {
 	/**
 	 * Insert the entry into the `logging` table.
 	 *
-	 * @param IDatabase $dbw
+	 * @param IDatabase|null $dbw
 	 * @return int ID of the log entry
 	 * @throws MWException
 	 */
@@ -640,7 +645,7 @@ class ManualLogEntry extends LogEntryBase {
 		$relations = $this->relations;
 
 		// Ensure actor relations are set
-		if ( $wgActorTableSchemaMigrationStage >= MIGRATION_WRITE_BOTH &&
+		if ( ( $wgActorTableSchemaMigrationStage & SCHEMA_COMPAT_WRITE_NEW ) &&
 			empty( $relations['target_author_actor'] )
 		) {
 			$actorIds = [];
@@ -659,7 +664,7 @@ class ManualLogEntry extends LogEntryBase {
 				$params['authorActors'] = $actorIds;
 			}
 		}
-		if ( $wgActorTableSchemaMigrationStage >= MIGRATION_WRITE_NEW ) {
+		if ( !( $wgActorTableSchemaMigrationStage & SCHEMA_COMPAT_WRITE_OLD ) ) {
 			unset( $relations['target_author_id'], $relations['target_author_ip'] );
 			unset( $params['authorIds'], $params['authorIPs'] );
 		}
@@ -776,7 +781,7 @@ class ManualLogEntry extends LogEntryBase {
 							$tags = [];
 						}
 						$rc->addTags( $tags );
-						$rc->save( 'pleasedontudp' );
+						$rc->save( $rc::SEND_NONE );
 					}
 
 					if ( $to === 'udp' || $to === 'rcandudp' ) {
@@ -816,7 +821,7 @@ class ManualLogEntry extends LogEntryBase {
 	}
 
 	public function getTimestamp() {
-		$ts = $this->timestamp !== null ? $this->timestamp : wfTimestampNow();
+		$ts = $this->timestamp ?? wfTimestampNow();
 
 		return wfTimestamp( TS_MW, $ts );
 	}

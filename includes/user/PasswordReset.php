@@ -46,14 +46,14 @@ class PasswordReset implements LoggerAwareInterface {
 	/**
 	 * In-process cache for isAllowed lookups, by username.
 	 * Contains a StatusValue object
-	 * @var HashBagOStuff
+	 * @var MapCacheLRU
 	 */
 	private $permissionCache;
 
 	public function __construct( Config $config, AuthManager $authManager ) {
 		$this->config = $config;
 		$this->authManager = $authManager;
-		$this->permissionCache = new HashBagOStuff( [ 'maxKeys' => 1 ] );
+		$this->permissionCache = new MapCacheLRU( 1 );
 		$this->logger = LoggerFactory::getInstance( 'authentication' );
 	}
 
@@ -122,8 +122,8 @@ class PasswordReset implements LoggerAwareInterface {
 	 *
 	 * @since 1.29 Fourth argument for displayPassword removed.
 	 * @param User $performingUser The user that does the password reset
-	 * @param string $username The user whose password is reset
-	 * @param string $email Alternative way to specify the user
+	 * @param string|null $username The user whose password is reset
+	 * @param string|null $email Alternative way to specify the user
 	 * @return StatusValue Will contain the passwords as a username => password array if the
 	 *   $displayPassword flag was set
 	 * @throws LogicException When the user is not allowed to perform the action
@@ -240,7 +240,9 @@ class PasswordReset implements LoggerAwareInterface {
 
 		$passwords = [];
 		foreach ( $reqs as $req ) {
-			$this->authManager->changeAuthenticationData( $req );
+			// This is adding a new temporary password, not intentionally changing anything
+			// (even though it might technically invalidate an old temporary password).
+			$this->authManager->changeAuthenticationData( $req, /* $isAddition */ true );
 		}
 
 		$this->logger->info(

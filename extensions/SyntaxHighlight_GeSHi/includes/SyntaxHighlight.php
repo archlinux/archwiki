@@ -58,7 +58,7 @@ class SyntaxHighlight {
 
 		$lexer = strtolower( $lang );
 
-		if ( in_array( $lexer, $lexers ) ) {
+		if ( isset( $lexers[$lexer] ) ) {
 			return $lexer;
 		}
 
@@ -97,8 +97,6 @@ class SyntaxHighlight {
 	 * @throws MWException
 	 */
 	public static function parserHook( $text, $args, $parser ) {
-		global $wgUseTidy;
-
 		// Replace strip markers (For e.g. {{#tag:syntaxhighlight|<nowiki>...}})
 		$out = $parser->mStripState->unstripNoWiki( $text );
 
@@ -120,13 +118,6 @@ class SyntaxHighlight {
 			$parser->addTrackingCategory( 'syntaxhighlight-error-category' );
 		}
 		$out = $result->getValue();
-
-		// HTML Tidy will convert tabs to spaces incorrectly (bug 30930).
-		// But the conversion from tab to space occurs while reading the input,
-		// before the conversion from &#9; to tab, so we can armor it that way.
-		if ( $wgUseTidy ) {
-			$out = str_replace( "\t", '&#9;', $out );
-		}
 
 		// Allow certain HTML attributes
 		$htmlAttribs = Sanitizer::validateAttributes( $args, [ 'style', 'class', 'id', 'dir' ] );
@@ -173,6 +164,8 @@ class SyntaxHighlight {
 		}
 
 		// Register CSS
+		// TODO: Consider moving to a separate method so that public method
+		// highlight() can be used without needing to know the module name.
 		$parser->getOutput()->addModuleStyles( 'ext.pygments' );
 
 		return $out;
@@ -210,6 +203,9 @@ class SyntaxHighlight {
 
 	/**
 	 * Highlight a code-block using a particular lexer.
+	 *
+	 * This produces raw HTML (wrapped by Status), the caller is responsible
+	 * for making sure the "ext.pygments" module is loaded in the output.
 	 *
 	 * @param string $code Code to highlight.
 	 * @param string|null $lang Language name, or null to use plain markup.
@@ -498,7 +494,7 @@ class SyntaxHighlight {
 			$attrs = Sanitizer::decodeTagAttributes( $m[1] );
 			$attrs['class'] .= ' api-pretty-content';
 			$encodedAttrs = Sanitizer::safeEncodeTagAttributes( $attrs );
-			$out = '<pre' . $encodedAttrs. '>' .  substr( $out, strlen( $m[0] ) );
+			$out = '<pre' . $encodedAttrs . '>' . substr( $out, strlen( $m[0] ) );
 		}
 		$output = $context->getOutput();
 		$output->addModuleStyles( 'ext.pygments' );
@@ -525,7 +521,11 @@ class SyntaxHighlight {
 			'remoteExtPath' => 'SyntaxHighlight_GeSHi/modules',
 			'scripts' => [
 				've-syntaxhighlight/ve.dm.MWSyntaxHighlightNode.js',
+				've-syntaxhighlight/ve.dm.MWBlockSyntaxHighlightNode.js',
+				've-syntaxhighlight/ve.dm.MWInlineSyntaxHighlightNode.js',
 				've-syntaxhighlight/ve.ce.MWSyntaxHighlightNode.js',
+				've-syntaxhighlight/ve.ce.MWBlockSyntaxHighlightNode.js',
+				've-syntaxhighlight/ve.ce.MWInlineSyntaxHighlightNode.js',
 				've-syntaxhighlight/ve.ui.MWSyntaxHighlightWindow.js',
 				've-syntaxhighlight/ve.ui.MWSyntaxHighlightDialog.js',
 				've-syntaxhighlight/ve.ui.MWSyntaxHighlightDialogTool.js',

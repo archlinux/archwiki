@@ -46,7 +46,7 @@ class UserGroupMembership {
 
 	/**
 	 * @param int $userId The ID of the user who belongs to the group
-	 * @param string $group The internal group name
+	 * @param string|null $group The internal group name
 	 * @param string|null $expiry Timestamp of expiry in TS_MW format, or null if no expiry
 	 */
 	public function __construct( $userId = 0, $group = null, $expiry = null ) {
@@ -230,9 +230,8 @@ class UserGroupMembership {
 	public function isExpired() {
 		if ( !$this->expiry ) {
 			return false;
-		} else {
-			return wfTimestampNow() > $this->expiry;
 		}
+		return wfTimestampNow() > $this->expiry;
 	}
 
 	/**
@@ -354,9 +353,8 @@ class UserGroupMembership {
 		$ugm = self::newFromRow( $row );
 		if ( !$ugm->isExpired() ) {
 			return $ugm;
-		} else {
-			return false;
 		}
+		return false;
 	}
 
 	/**
@@ -419,9 +417,8 @@ class UserGroupMembership {
 			}
 			return $context->msg( 'group-membership-link-with-expiry' )
 				->params( $groupLink, $expiryDT, $expiryD, $expiryT )->text();
-		} else {
-			return $groupLink;
 		}
+		return $groupLink;
 	}
 
 	/**

@@ -7,7 +7,8 @@
 			"Utar",
 			"Dominikmatus",
 			"Littledogboy",
-			"Macofe"
+			"Macofe",
+			"Matěj Suchánek"
 		]
 	},
 	"multimediaviewer-desc": "Zvětší náhledy obrázků do celoobrazovkového rozhraní.",
@@ -24,7 +25,7 @@
 	"multimediaviewer-multiple-authors-combine": "$1 a $2",
 	"multimediaviewer-metadata-error": "Nelze načíst podrobnosti k obrázku (chyba: $1)",
 	"multimediaviewer-thumbnail-error": "Je nám líto, soubor nelze zobrazit",
-	"multimediaviewer-thumbnail-error-description": "Vypadá to na technické potíže. Můžete to $1 nebo $3, pokud se to nezlepší. Chyba: $2",
+	"multimediaviewer-thumbnail-error-description": "Vypadá to na technické potíže. Můžete to $1, pokud se to nezlepší. Chyba: $2",
 	"multimediaviewer-thumbnail-error-retry": "zkusit znovu",
 	"multimediaviewer-thumbnail-error-report": "problém nahlásit",
 	"multimediaviewer-license-cc-pd": "Volné dílo",
@@ -49,7 +50,7 @@
 	"multimediaviewer-restriction-trademarked": "Obsah tohoto obrázku může být předmětem známkoprávní ochrany.",
 	"multimediaviewer-restriction-default": "Tento obrázek může být omezen právními předpisy mimo autorské právo. Podrobnosti najdete na stránce s popisem souboru.",
 	"multimediaviewer-restriction-default-and-others": "Tento obrázek může být dále omezen jinými právními předpisy mimo autorské právo. Podrobnosti najdete na stránce s popisem souboru.",
-	"multimediaviewer-about-mmv": "O prohlížeči",
+	"multimediaviewer-about-mmv": "O tomto rozhraní",
 	"multimediaviewer-discuss-mmv": "Diskuse",
 	"multimediaviewer-help-mmv": "Nápověda",
 	"multimediaviewer-optout-mmv": "Vypnout Prohlížeč médií",

@@ -4,7 +4,7 @@
 			"AlimanRuna"
 		]
 	},
-	"cite-desc": "Pukyumanta willanapaq <nowiki><ref[ name=id]></nowiki> , <nowiki><references/></nowiki> unanchachakunatam yapan",
+	"cite-desc": "Pukyumanta willanapaq <code><nowiki><ref[ name=id]></nowiki></code> , <code><nowiki><references/></nowiki></code> unanchachakunatam yapan",
 	"cite_error": "Pukyumanta willaypi pantasqa: $1",
 	"cite_error_ref_numeric_key": "<code>&lt;ref&gt;</code> unanchachaqa manam allinchu;\nsutinqa ama yupaylla kachunchu. Ch'uyanchaq sutinta llamk'achiy",
 	"cite_error_ref_no_key": "<code>&lt;ref&gt;</code> unanchachaqa manam allinchu;\nch'usaq pukyu willana unanchachaqa sutiyuqmi kachun",

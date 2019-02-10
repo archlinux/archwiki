@@ -8,7 +8,7 @@
 	"apihelp-query+references-summary": "Retornar un representation de datos del referentias associate al paginas indicate.",
 	"apihelp-query+references-example-1": "Referentias associate a <kbd>Albert Einstein</kbd>.",
 	"apierror-citestoragedisabled": "Le immagazinage de referentias del extension Cite non es activate.",
-	"cite-desc": "Adde etiquettas <nowiki><ref[ name=id]></nowiki> e <nowiki><references/></nowiki>, pro citationes",
+	"cite-desc": "Adde etiquettas <code><nowiki><ref[ name=id]></nowiki></code> e <code><nowiki><references/></nowiki></code>, pro citationes",
 	"cite_error": "Error de citation: $1",
 	"cite_error_ref_numeric_key": "Etiquetta <code>&lt;ref&gt;</code> invalide;\nle nomine non pote esser un numero integre. Usa un titulo descriptive",
 	"cite_error_ref_no_key": "Le etiquetta de apertura <code>&lt;ref&gt;</code> es mal formate o ha un mal nomine",

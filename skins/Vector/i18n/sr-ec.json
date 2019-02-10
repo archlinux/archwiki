@@ -6,15 +6,16 @@
 			"Жељко Тодоровић",
 			"Михајло Анђелковић",
 			"Obsuser",
-			"Acamicamacaraca"
+			"Acamicamacaraca",
+			"BadDog"
 		]
 	},
 	"skinname-vector": "Векторска",
 	"vector-skin-desc": "Модерна верзија Монобука са свежим изгледом и много корисних побољшања",
 	"vector.css": "/* CSS постављен овде ће утицати на све кориснике векторске теме */",
-	"vector.js": "/* Јаваскрипт постављен овде ће се учитати за све оне који користе векторску тему */",
+	"vector.js": "/* JavaScript постављен овде ће се учитати за све оне који користе векторску тему */",
 	"vector-action-addsection": "Додај тему",
-	"vector-action-delete": "Обриши",
+	"vector-action-delete": "Избриши",
 	"vector-action-move": "Премести",
 	"vector-action-protect": "Заштити",
 	"vector-action-undelete": "Врати",
@@ -23,6 +24,8 @@
 	"vector-view-edit": "Уреди",
 	"vector-view-history": "Историја",
 	"vector-view-view": "Читај",
-	"vector-view-viewsource": "Изворни код",
+	"vector-view-viewsource": "Извор",
+	"vector-jumptonavigation": "Иди на навигацију",
+	"vector-jumptosearch": "Иди на претрагу",
 	"vector-more-actions": "Више"
 }

@@ -6,7 +6,7 @@
 			"VIGNERON"
 		]
 	},
-	"cite-desc": "Ouzhpennañ a ra ar tikedennoù <nowiki><ref[ name=id]></nowiki> ha <nowiki><references/></nowiki>, evit an arroudoù.",
+	"cite-desc": "Ouzhpennañ a ra ar tikedennoù <code><nowiki><ref[ name=id]></nowiki></code> ha <code><nowiki><references/></nowiki></code>, evit an arroudoù.",
 	"cite_error": "Fazi arroud : $1",
 	"cite_error_ref_numeric_key": "Fazi implijout an dikedenn <code>&lt;ref&gt;</code> ;\nn'hall ket an anv bezañ un niver anterin. Grit gant un titl deskrivus",
 	"cite_error_ref_no_key": "Fazi implijout ar valizenn <code>&lt;ref&gt;</code> ;\nret eo d'an daveennoù goullo kaout un anv",

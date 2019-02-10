@@ -56,7 +56,11 @@ class LBFactorySingle extends LBFactory {
 	 * @since 1.28
 	 */
 	public static function newFromConnection( IDatabase $db, array $params = [] ) {
-		return new static( [ 'connection' => $db ] + $params );
+		return new static( array_merge(
+			[ 'localDomain' => $db->getDomainID() ],
+			$params,
+			[ 'connection' => $db ]
+		) );
 	}
 
 	/**
@@ -103,7 +107,7 @@ class LBFactorySingle extends LBFactory {
 	 */
 	public function forEachLB( $callback, array $params = [] ) {
 		if ( isset( $this->lb ) ) { // may not be set during _destruct()
-			call_user_func_array( $callback, array_merge( [ $this->lb ], $params ) );
+			$callback( $this->lb, ...$params );
 		}
 	}
 }

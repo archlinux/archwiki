@@ -3,9 +3,10 @@
 	instead of to the side of it. They also hide the logo, as there's no space
 	left for it.
 */
+@import 'mediawiki.ui/variables';
 
-@media screen and ( max-width: @deviceWidthTablet ) {
-	div#mw-head {
+@media screen and ( max-width: @width-breakpoint-tablet ) {
+	#mw-head {
 		position: static !important; /* stylelint-disable-line declaration-no-important */
 		margin-top: 0.5em;
 	}
@@ -98,7 +99,7 @@
 		width: 80vw;
 		padding: 0;
 	}
-	div.vectorMenu div.menu {
+	.vectorMenu .menu {
 		left: inherit;
 		right: -1px;
 	}

@@ -1,4 +1,4 @@
-( function ( $ ) {
+( function () {
 	var caretSample,
 		sig = {
 			pre: '--~~~~'
@@ -75,11 +75,11 @@
 
 			text = $textarea.textSelection( 'getContents' ).replace( /\r\n/g, '\n' );
 
-			assert.equal( text, opt.after.text, 'Checking full text after encapsulation' );
+			assert.strictEqual( text, opt.after.text, 'Checking full text after encapsulation' );
 
 			if ( opt.after.selected !== null ) {
 				selected = $textarea.textSelection( 'getSelection' );
-				assert.equal( selected, opt.after.selected, 'Checking selected text after encapsulation.' );
+				assert.strictEqual( selected, opt.after.selected, 'Checking selected text after encapsulation.' );
 			}
 
 		} );
@@ -224,9 +224,9 @@
 
 			function among( actual, expected, message ) {
 				if ( Array.isArray( expected ) ) {
-					assert.ok( expected.indexOf( actual ) !== -1, message + ' (got ' + actual + '; expected one of ' + expected.join( ', ' ) + ')' );
+					assert.strictEqual( expected.indexOf( actual ) !== -1, true, message + ' (got ' + actual + '; expected one of ' + expected.join( ', ' ) + ')' );
 				} else {
-					assert.equal( actual, expected, message );
+					assert.strictEqual( actual, expected, message );
 				}
 			}
 
@@ -263,4 +263,4 @@
 		end: 11,
 		mode: 'set'
 	} );
-}( jQuery ) );
+}() );

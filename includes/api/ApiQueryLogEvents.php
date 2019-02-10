@@ -20,6 +20,9 @@
  * @file
  */
 
+use MediaWiki\MediaWikiServices;
+use MediaWiki\Storage\NameTableAccessException;
+
 /**
  * Query action to List the log events, with optional filtering by various parameters.
  *
@@ -39,6 +42,8 @@ class ApiQueryLogEvents extends ApiQueryBase {
 		$fld_details = false, $fld_tags = false;
 
 	public function execute() {
+		global $wgChangeTagsSchemaMigrationStage;
+
 		$params = $this->extractRequestParams();
 		$db = $this->getDB();
 		$this->commentStore = CommentStore::getStore();
@@ -113,7 +118,17 @@ class ApiQueryLogEvents extends ApiQueryBase {
 			$this->addTables( 'change_tag' );
 			$this->addJoinConds( [ 'change_tag' => [ 'INNER JOIN',
 				[ 'log_id=ct_log_id' ] ] ] );
-			$this->addWhereFld( 'ct_tag', $params['tag'] );
+			if ( $wgChangeTagsSchemaMigrationStage > MIGRATION_WRITE_BOTH ) {
+				$changeTagDefStore = MediaWikiServices::getInstance()->getChangeTagDefStore();
+				try {
+					$this->addWhereFld( 'ct_tag_id', $changeTagDefStore->getId( $params['tag'] ) );
+				} catch ( NameTableAccessException $exception ) {
+					// Return nothing.
+					$this->addWhere( '1=0' );
+				}
+			} else {
+				$this->addWhereFld( 'ct_tag', $params['tag'] );
+			}
 		}
 
 		if ( !is_null( $params['action'] ) ) {
@@ -248,32 +263,6 @@ class ApiQueryLogEvents extends ApiQueryBase {
 		$result->addIndexedTagName( [ 'query', $this->getModuleName() ], 'item' );
 	}
 
-	/**
-	 * @deprecated since 1.25 Use LogFormatter::formatParametersForApi instead
-	 * @param ApiResult $result
-	 * @param array &$vals
-	 * @param string $params
-	 * @param string $type
-	 * @param string $action
-	 * @param string $ts
-	 * @param bool $legacy
-	 * @return array
-	 */
-	public static function addLogParams( $result, &$vals, $params, $type,
-		$action, $ts, $legacy = false
-	) {
-		wfDeprecated( __METHOD__, '1.25' );
-
-		$entry = new ManualLogEntry( $type, $action );
-		$entry->setParameters( $params );
-		$entry->setTimestamp( $ts );
-		$entry->setLegacy( $legacy );
-		$formatter = LogFormatter::newFromEntry( $entry );
-		$vals['params'] = $formatter->formatParametersForApi();
-
-		return $vals;
-	}
-
 	private function extractRowInfo( $row ) {
 		$logEntry = DatabaseLogEntry::newFromRow( $row );
 		$vals = [
@@ -321,7 +310,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 			}
 			if ( LogEventsList::userCan( $row, LogPage::DELETED_USER, $user ) ) {
 				if ( $this->fld_user ) {
-					$vals['user'] = $row->user_name === null ? $row->log_user_text : $row->user_name;
+					$vals['user'] = $row->user_name ?? $row->log_user_text;
 				}
 				if ( $this->fld_userid ) {
 					$vals['userid'] = intval( $row->log_user );
@@ -418,7 +407,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 				ApiBase::PARAM_HELP_MSG_PER_VALUE => [],
 			],
 			'type' => [
-				ApiBase::PARAM_TYPE => $config->get( 'LogTypes' )
+				ApiBase::PARAM_TYPE => LogPage::validTypes(),
 			],
 			'action' => [
 				// validation on request is done in execute()

@@ -24,12 +24,10 @@
 			"Huji"
 		]
 	},
-	"visualeditor-cite-tool-definition.json": "تهی",
 	"visualeditor-cite-tool-name-book": "کتاب",
 	"visualeditor-cite-tool-name-journal": "مجله",
 	"visualeditor-cite-tool-name-news": "اخبار",
 	"visualeditor-cite-tool-name-web": "وب‌گاه",
-	"cite-tool-definition.json": "تهی",
 	"cite-ve-changedesc-ref-group-both": "گروه منبع از «$1» به «$2» تغییر یافت",
 	"cite-ve-changedesc-ref-group-from": "گروه منبع از «$1» به گروه عمومی تغییر یافت",
 	"cite-ve-changedesc-ref-group-to": "گروه منبع از گروه عمومی به «$1» تغییر یافت",

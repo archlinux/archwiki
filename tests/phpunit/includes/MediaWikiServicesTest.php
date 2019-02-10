@@ -1,19 +1,9 @@
 <?php
 
-use Mediawiki\Http\HttpRequestFactory;
-use MediaWiki\Interwiki\InterwikiLookup;
-use MediaWiki\Linker\LinkRenderer;
-use MediaWiki\Linker\LinkRendererFactory;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Services\DestructibleService;
 use MediaWiki\Services\SalvageableService;
 use MediaWiki\Services\ServiceDisabledException;
-use MediaWiki\Shell\CommandFactory;
-use MediaWiki\Storage\BlobStore;
-use MediaWiki\Storage\BlobStoreFactory;
-use MediaWiki\Storage\RevisionLookup;
-use MediaWiki\Storage\RevisionStore;
-use MediaWiki\Storage\SqlBlobStore;
 
 /**
  * @covers MediaWiki\MediaWikiServices
@@ -303,52 +293,18 @@ class MediaWikiServicesTest extends MediaWikiTestCase {
 	}
 
 	public function provideGetService() {
-		// NOTE: This should list all service getters defined in ServiceWiring.php.
-		// NOTE: For every test case defined here there should be a corresponding
-		// test case defined in provideGetters().
-		return [
-			'BootstrapConfig' => [ 'BootstrapConfig', Config::class ],
-			'ConfigFactory' => [ 'ConfigFactory', ConfigFactory::class ],
-			'MainConfig' => [ 'MainConfig', Config::class ],
-			'SiteStore' => [ 'SiteStore', SiteStore::class ],
-			'SiteLookup' => [ 'SiteLookup', SiteLookup::class ],
-			'StatsdDataFactory' => [ 'StatsdDataFactory', IBufferingStatsdDataFactory::class ],
-			'InterwikiLookup' => [ 'InterwikiLookup', InterwikiLookup::class ],
-			'EventRelayerGroup' => [ 'EventRelayerGroup', EventRelayerGroup::class ],
-			'SearchEngineFactory' => [ 'SearchEngineFactory', SearchEngineFactory::class ],
-			'SearchEngineConfig' => [ 'SearchEngineConfig', SearchEngineConfig::class ],
-			'SkinFactory' => [ 'SkinFactory', SkinFactory::class ],
-			'DBLoadBalancerFactory' => [ 'DBLoadBalancerFactory', Wikimedia\Rdbms\LBFactory::class ],
-			'DBLoadBalancer' => [ 'DBLoadBalancer', Wikimedia\Rdbms\LoadBalancer::class ],
-			'WatchedItemStore' => [ 'WatchedItemStore', WatchedItemStore::class ],
-			'WatchedItemQueryService' => [ 'WatchedItemQueryService', WatchedItemQueryService::class ],
-			'CryptRand' => [ 'CryptRand', CryptRand::class ],
-			'CryptHKDF' => [ 'CryptHKDF', CryptHKDF::class ],
-			'MediaHandlerFactory' => [ 'MediaHandlerFactory', MediaHandlerFactory::class ],
-			'Parser' => [ 'Parser', Parser::class ],
-			'ParserCache' => [ 'ParserCache', ParserCache::class ],
-			'GenderCache' => [ 'GenderCache', GenderCache::class ],
-			'LinkCache' => [ 'LinkCache', LinkCache::class ],
-			'LinkRenderer' => [ 'LinkRenderer', LinkRenderer::class ],
-			'LinkRendererFactory' => [ 'LinkRendererFactory', LinkRendererFactory::class ],
-			'_MediaWikiTitleCodec' => [ '_MediaWikiTitleCodec', MediaWikiTitleCodec::class ],
-			'MimeAnalyzer' => [ 'MimeAnalyzer', MimeAnalyzer::class ],
-			'TitleFormatter' => [ 'TitleFormatter', TitleFormatter::class ],
-			'TitleParser' => [ 'TitleParser', TitleParser::class ],
-			'ProxyLookup' => [ 'ProxyLookup', ProxyLookup::class ],
-			'MainObjectStash' => [ 'MainObjectStash', BagOStuff::class ],
-			'MainWANObjectCache' => [ 'MainWANObjectCache', WANObjectCache::class ],
-			'LocalServerObjectCache' => [ 'LocalServerObjectCache', BagOStuff::class ],
-			'VirtualRESTServiceClient' => [ 'VirtualRESTServiceClient', VirtualRESTServiceClient::class ],
-			'ShellCommandFactory' => [ 'ShellCommandFactory', CommandFactory::class ],
-			'BlobStoreFactory' => [ 'BlobStoreFactory', BlobStoreFactory::class ],
-			'BlobStore' => [ 'BlobStore', BlobStore::class ],
-			'_SqlBlobStore' => [ '_SqlBlobStore', SqlBlobStore::class ],
-			'RevisionStore' => [ 'RevisionStore', RevisionStore::class ],
-			'RevisionLookup' => [ 'RevisionLookup', RevisionLookup::class ],
-			'HttpRequestFactory' => [ 'HttpRequestFactory', HttpRequestFactory::class ],
-			'CommentStore' => [ 'CommentStore', CommentStore::class ],
-		];
+		global $IP;
+		$serviceList = require "$IP/includes/ServiceWiring.php";
+		$ret = [];
+		foreach ( $serviceList as $name => $callback ) {
+			$fun = new ReflectionFunction( $callback );
+			if ( !$fun->hasReturnType() ) {
+				throw new MWException( 'All service callbacks must have a return type defined, ' .
+					"none found for $name" );
+			}
+			$ret[$name] = [ $name, $fun->getReturnType()->__toString() ];
+		}
+		return $ret;
 	}
 
 	/**
@@ -376,4 +332,35 @@ class MediaWikiServicesTest extends MediaWikiTestCase {
 		}
 	}
 
+	public function testDefaultServiceWiringServicesHaveTests() {
+		global $IP;
+		$testedServices = array_keys( $this->provideGetService() );
+		$allServices = array_keys( require "$IP/includes/ServiceWiring.php" );
+		$this->assertEquals(
+			[],
+			array_diff( $allServices, $testedServices ),
+			'The following services have not been added to MediaWikiServicesTest::provideGetService'
+		);
+	}
+
+	public function testGettersAreSorted() {
+		$methods = ( new ReflectionClass( MediaWikiServices::class ) )
+			->getMethods( ReflectionMethod::IS_STATIC | ReflectionMethod::IS_PUBLIC );
+
+		$names = array_map( function ( $method ) {
+			return $method->getName();
+		}, $methods );
+		$serviceNames = array_map( function ( $name ) {
+			return "get$name";
+		}, array_keys( $this->provideGetService() ) );
+		$names = array_values( array_filter( $names, function ( $name ) use ( $serviceNames ) {
+			return in_array( $name, $serviceNames );
+		} ) );
+
+		$sortedNames = $names;
+		sort( $sortedNames );
+
+		$this->assertSame( $sortedNames, $names,
+			'Please keep service getters sorted alphabetically' );
+	}
 }

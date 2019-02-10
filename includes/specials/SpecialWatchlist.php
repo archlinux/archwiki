@@ -35,6 +35,7 @@ class SpecialWatchlist extends ChangesListSpecialPage {
 	protected static $savedQueriesPreferenceName = 'rcfilters-wl-saved-queries';
 	protected static $daysPreferenceName = 'watchlistdays';
 	protected static $limitPreferenceName = 'wllimit';
+	protected static $collapsedPreferenceName = 'rcfilters-wl-collapsed';
 
 	private $maxDays;
 
@@ -60,11 +61,10 @@ class SpecialWatchlist extends ChangesListSpecialPage {
 		$output = $this->getOutput();
 		$request = $this->getRequest();
 		$this->addHelpLink( 'Help:Watching pages' );
+		$output->addModuleStyles( [ 'mediawiki.special' ] );
 		$output->addModules( [
-			'mediawiki.special.changeslist.visitedstatus',
 			'mediawiki.special.watchlist',
 		] );
-		$output->addModuleStyles( [ 'mediawiki.special.watchlist.styles' ] );
 
 		$mode = SpecialEditWatchlist::getMode( $request, $subpage );
 		if ( $mode !== false ) {
@@ -111,10 +111,7 @@ class SpecialWatchlist extends ChangesListSpecialPage {
 	}
 
 	public static function checkStructuredFilterUiEnabled( Config $config, User $user ) {
-		return (
-			$config->get( 'StructuredChangeFiltersOnWatchlist' ) &&
-			$user->getOption( 'rcenhancedfilters' )
-		);
+		return !$user->getOption( 'wlenhancedfilters-disable' );
 	}
 
 	/**
@@ -285,20 +282,6 @@ class SpecialWatchlist extends ChangesListSpecialPage {
 	}
 
 	/**
-	 * Get all custom filters
-	 *
-	 * @return array Map of filter URL param names to properties (msg/default)
-	 */
-	protected function getCustomFilters() {
-		if ( $this->customFilters === null ) {
-			$this->customFilters = parent::getCustomFilters();
-			Hooks::run( 'SpecialWatchlistFilters', [ $this, &$this->customFilters ], '1.23' );
-		}
-
-		return $this->customFilters;
-	}
-
-	/**
 	 * Fetch values for a FormOptions object from the WebRequest associated with this instance.
 	 *
 	 * Maps old pre-1.23 request parameters Watchlist used to use (different from Recentchanges' ones)
@@ -442,17 +425,6 @@ class SpecialWatchlist extends ChangesListSpecialPage {
 		);
 	}
 
-	protected function runMainQueryHook( &$tables, &$fields, &$conds, &$query_options,
-		&$join_conds, $opts
-	) {
-		return parent::runMainQueryHook( $tables, $fields, $conds, $query_options, $join_conds, $opts )
-			&& Hooks::run(
-				'SpecialWatchlistQuery',
-				[ &$conds, &$tables, &$join_conds, &$fields, $opts ],
-				'1.23'
-			);
-	}
-
 	/**
 	 * Return a IDatabase object for reading
 	 *
@@ -488,9 +460,10 @@ class SpecialWatchlist extends ChangesListSpecialPage {
 		$dbr = $this->getDB();
 		$user = $this->getUser();
 		$output = $this->getOutput();
+		$services = MediaWikiServices::getInstance();
 
 		# Show a message about replica DB lag, if applicable
-		$lag = MediaWikiServices::getInstance()->getDBLoadBalancer()->safeGetLag( $dbr );
+		$lag = $services->getDBLoadBalancer()->safeGetLag( $dbr );
 		if ( $lag > 0 ) {
 			$output->showLagWarning( $lag );
 		}
@@ -521,7 +494,7 @@ class SpecialWatchlist extends ChangesListSpecialPage {
 								$this->msg( 'watchlist-unwatch' )->text(), [
 									'class' => 'mw-unwatch-link',
 									'title' => $this->msg( 'tooltip-ca-unwatch' )->text()
-								], [ 'action' => 'unwatch' ] ) . '&#160;';
+								], [ 'action' => 'unwatch' ] ) . "\u{00A0}";
 				}
 			} );
 		}
@@ -530,7 +503,7 @@ class SpecialWatchlist extends ChangesListSpecialPage {
 		if ( $this->getConfig()->get( 'RCShowWatchingUsers' )
 			&& $user->getOption( 'shownumberswatching' )
 		) {
-			$watchedItemStore = MediaWikiServices::getInstance()->getWatchedItemStore();
+			$watchedItemStore = $services->getWatchedItemStore();
 		}
 
 		$s = $list->beginRecentChangesList();

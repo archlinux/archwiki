@@ -5,7 +5,7 @@
 			"NehalDaveND"
 		]
 	},
-	"cite-desc": "\nAdds<nowiki><ref[ name=id]></nowiki> तथा<nowiki><references/></nowiki> उद्धरणानां कृते सम्पर्कतन्तवः",
+	"cite-desc": "\nAdds<code><nowiki><ref[ name=id]></nowiki></code> तथा<code><nowiki><references/></nowiki></code> उद्धरणानां कृते सम्पर्कतन्तवः",
 	"cite_error": "उद्धरणे दोषः : $1",
 	"cite_error_ref_numeric_key": "<code>&lt;ref&gt;</code> अमान्यशृङ्खला;\nनाम पूर्णाङ्कसङ्ख्या भवितुं नार्हति । विविरणयुक्तं शिरोनाम उपयुज्यताम् ।",
 	"cite_error_ref_no_key": "<code>&lt;ref&gt;</code> दोषपूर्णा शृङ्खला; \nरिक्ताधाराः अपि सनामकः भवेत् ।",

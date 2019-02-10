@@ -6,7 +6,8 @@
 			"Runningfridgesrule",
 			"Stultiwikia",
 			"HakanIST",
-			"Sadrettin"
+			"Sadrettin",
+			"By erdo can"
 		]
 	},
 	"captcha-edit": "Bu sayfayı değiştirebilmek için lütfen aşağıdaki basit soruyu yanıtlayın ve yanıtı kutunun içine yazın ([[Special:Captcha/help|ayrıntılı bilgi]]):",
@@ -25,5 +26,10 @@
 	"captchahelp-cookies-needed": "Bunun çalışabilmesi için tarayıcınızın çerezleri etkinleştirilmelidir.",
 	"captchahelp-text": "Bu viki gibi açık katılım siteleri, pek çok siteye bağlantılar yaratan otomatik araçlarını çalıştıran spamcıların saldırılarına sıklıkla maruz kalırlar.\nBu spam nitelikli bağlantılar silinebilir, fakat bu temizlik önemli bir iş yükü oluşturmaktadır.\n\nBazen, özellikle bir başka internet sitesine bağlantı eklerken, görünümü bozulmuş ve renklendirilmiş harflerden oluşan bir resim gösterilebilir ve sizden bu harfleri kutucuğa girmenizi istenir.\nBu işlem otomatik olarak yaoılması oldukça zor bir iş olduğu için, gerçek insanlar bu işlemi yerine getirebilirken, spam yapmaya yarayan araçlar bunu yapmakta zorlanacaklardır.\n\nNe var ki bu durum, görme sorunları yaşayan kişiler ve salt metin tabanlı ya da salt ses tabanlı internet tarayıcı programları kullanan kimseler için rahatsızlık yaratmaktadır. Ne yazık ki, şu an için sesli bir alternatifimiz bulunmamaktadır.\nEğer bu, sizin geçerli gönderiler yapmanıza beklenmedik bir şekilde engel oluyorsa, lütfen destek için [[Special:ListAdmins|site yöneticileriyle]] irtibata geçin.\n\nSayfa düzenleyiciye dönmek için tarayıcınızın 'geri' tuşuna basınız.",
 	"captcha-addurl-whitelist": " #<!-- bu satırı olduğu gibi bırakın --> <pre>\n# Sözdizimi aşağıdaki gibidir:\n#  * \"#\" karakterinden satır sonuna kadar her şey yorumdur\n#  * Her boş olmayan satır, URL'ler içinde sadece host ile eşleşen regex parçalarıdır\n  #</pre> <!-- bu satırı olduğu gibi bırakın -->",
-	"right-skipcaptcha": "Güvenlik kodu ile tetiklenen hareketleri, güvenlik kodunu geçme zorunluluğu olmadan yap"
+	"right-skipcaptcha": "Güvenlik kodu ile tetiklenen hareketleri, güvenlik kodunu geçme zorunluluğu olmadan yap",
+	"confirmedit-preview-line": "Satır numarası",
+	"confirmedit-preview-content": "İçerik",
+	"confirmedit-preview-validity": "Geçerlilik",
+	"confirmedit-preview-valid": "geçerli",
+	"confirmedit-preview-invalid": "Geçersiz"
 }

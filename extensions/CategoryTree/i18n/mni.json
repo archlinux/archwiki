@@ -1,0 +1,21 @@
+{
+	"@metadata": {
+		"authors": [
+			"Awangba Mangang"
+		]
+	},
+	"categorytree-portlet": "ꯃꯆꯥꯈꯥꯏꯕꯁꯤꯡ",
+	"categorytree-category": "ꯃꯆꯥꯈꯥꯏꯕ:",
+	"categorytree-mode-all": "ꯂꯃꯥꯏꯁꯤꯡ ꯂꯣꯏꯅꯥ",
+	"categorytree-collapse": "ꯁꯨꯞꯆꯤꯟꯕ",
+	"categorytree-expand": "ꯄꯥꯛꯊꯣꯛꯄꯥ",
+	"categorytree-member-counts": "Contains {{PLURAL:$1|1 subcategory|$1 subcategories}}, {{PLURAL:$2|1 page|$2 pages}}, and {{PLURAL:$3|1 file|$3 files}}",
+	"categorytree-num-categories": "$1 C",
+	"categorytree-num-pages": "$1 P",
+	"categorytree-num-files": "$1 F",
+	"categorytree-num-empty": "ꯌꯥꯎꯗꯕ",
+	"categorytree-load": "ꯆꯤꯡꯕ/ꯎꯨꯡꯂꯤꯕ",
+	"categorytree-loading": "ꯆꯤꯡꯂꯤ/ꯎꯪꯂꯤ",
+	"categorytree-nothing-found": "ꯀꯔꯤꯝꯇꯥ ꯄꯪꯗꯦ",
+	"categorytree-no-subcategories": "ꯄꯤꯛꯊꯕ ꯃꯆꯥꯈꯥꯏꯕꯁꯤꯡ ꯂꯩꯇꯩ"
+}

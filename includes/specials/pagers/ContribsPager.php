@@ -64,12 +64,12 @@ class ContribsPager extends RangeChronologicalPager {
 			$this->messages[$msg] = $this->msg( $msg )->escaped();
 		}
 
-		$this->target = isset( $options['target'] ) ? $options['target'] : '';
-		$this->contribs = isset( $options['contribs'] ) ? $options['contribs'] : 'users';
-		$this->namespace = isset( $options['namespace'] ) ? $options['namespace'] : '';
-		$this->tagFilter = isset( $options['tagfilter'] ) ? $options['tagfilter'] : false;
-		$this->nsInvert = isset( $options['nsInvert'] ) ? $options['nsInvert'] : false;
-		$this->associated = isset( $options['associated'] ) ? $options['associated'] : false;
+		$this->target = $options['target'] ?? '';
+		$this->contribs = $options['contribs'] ?? 'users';
+		$this->namespace = $options['namespace'] ?? '';
+		$this->tagFilter = $options['tagfilter'] ?? false;
+		$this->nsInvert = $options['nsInvert'] ?? false;
+		$this->associated = $options['associated'] ?? false;
 
 		$this->deletedOnly = !empty( $options['deletedOnly'] );
 		$this->topOnly = !empty( $options['topOnly'] );
@@ -221,14 +221,12 @@ class ContribsPager extends RangeChronologicalPager {
 				$conds = ActorMigration::newMigration()->getWhere( $this->mDb, 'rev_user', $user );
 				$queryInfo['conds'][] = $conds['conds'];
 				// Force the appropriate index to avoid bad query plans (T189026)
-				if ( count( $conds['orconds'] ) === 1 ) {
-					if ( isset( $conds['orconds']['actor'] ) ) {
-						// @todo: This will need changing when revision_comment_temp goes away
-						$queryInfo['options']['USE INDEX']['temp_rev_user'] = 'actor_timestamp';
-					} else {
-						$queryInfo['options']['USE INDEX']['revision'] =
-							isset( $conds['orconds']['userid'] ) ? 'user_timestamp' : 'usertext_timestamp';
-					}
+				if ( isset( $conds['orconds']['actor'] ) ) {
+					// @todo: This will need changing when revision_comment_temp goes away
+					$queryInfo['options']['USE INDEX']['temp_rev_user'] = 'actor_timestamp';
+				} else {
+					$queryInfo['options']['USE INDEX']['revision'] =
+						isset( $conds['orconds']['userid'] ) ? 'user_timestamp' : 'usertext_timestamp';
 				}
 			}
 		}
@@ -407,6 +405,32 @@ class ContribsPager extends RangeChronologicalPager {
 	}
 
 	/**
+	 * Check whether the revision associated is valid for formatting. If has no associated revision
+	 * id then null is returned.
+	 *
+	 * @param object $row
+	 * @return Revision|null
+	 */
+	public function tryToCreateValidRevision( $row ) {
+		/*
+		 * There may be more than just revision rows. To make sure that we'll only be processing
+		 * revisions here, let's _try_ to build a revision out of our row (without displaying
+		 * notices though) and then trying to grab data from the built object. If we succeed,
+		 * we're definitely dealing with revision data and we may proceed, if not, we'll leave it
+		 * to extensions to subscribe to the hook to parse the row.
+		 */
+		Wikimedia\suppressWarnings();
+		try {
+			$rev = new Revision( $row );
+			$validRevision = (bool)$rev->getId();
+		} catch ( Exception $e ) {
+			$validRevision = false;
+		}
+		Wikimedia\restoreWarnings();
+		return $validRevision ? $rev : null;
+	}
+
+	/**
 	 * Generates each row in the contributions list.
 	 *
 	 * Contributions which are marked "top" are currently on top of the history.
@@ -425,23 +449,8 @@ class ContribsPager extends RangeChronologicalPager {
 
 		$linkRenderer = MediaWikiServices::getInstance()->getLinkRenderer();
 
-		/*
-		 * There may be more than just revision rows. To make sure that we'll only be processing
-		 * revisions here, let's _try_ to build a revision out of our row (without displaying
-		 * notices though) and then trying to grab data from the built object. If we succeed,
-		 * we're definitely dealing with revision data and we may proceed, if not, we'll leave it
-		 * to extensions to subscribe to the hook to parse the row.
-		 */
-		Wikimedia\suppressWarnings();
-		try {
-			$rev = new Revision( $row );
-			$validRevision = (bool)$rev->getId();
-		} catch ( Exception $e ) {
-			$validRevision = false;
-		}
-		Wikimedia\restoreWarnings();
-
-		if ( $validRevision ) {
+		$rev = $this->tryToCreateValidRevision( $row );
+		if ( $rev ) {
 			$attribs['data-mw-revid'] = $rev->getId();
 
 			$page = Title::newFromRow( $row );
@@ -491,22 +500,22 @@ class ContribsPager extends RangeChronologicalPager {
 				// For some reason rev_parent_id isn't populated for this row.
 				// Its rumoured this is true on wikipedia for some revisions (T36922).
 				// Next best thing is to have the total number of bytes.
-				$chardiff = ' <span class="mw-changeslist-separator">. .</span> ';
+				$chardiff = ' <span class="mw-changeslist-separator"></span> ';
 				$chardiff .= Linker::formatRevisionSize( $row->rev_len );
-				$chardiff .= ' <span class="mw-changeslist-separator">. .</span> ';
+				$chardiff .= ' <span class="mw-changeslist-separator"></span> ';
 			} else {
 				$parentLen = 0;
 				if ( isset( $this->mParentLens[$row->rev_parent_id] ) ) {
 					$parentLen = $this->mParentLens[$row->rev_parent_id];
 				}
 
-				$chardiff = ' <span class="mw-changeslist-separator">. .</span> ';
+				$chardiff = ' <span class="mw-changeslist-separator"></span> ';
 				$chardiff .= ChangesList::showCharacterDifference(
 					$parentLen,
 					$row->rev_len,
 					$this->getContext()
 				);
-				$chardiff .= ' <span class="mw-changeslist-separator">. .</span> ';
+				$chardiff .= ' <span class="mw-changeslist-separator"></span> ';
 			}
 
 			$lang = $this->getLanguage();
@@ -532,7 +541,8 @@ class ContribsPager extends RangeChronologicalPager {
 			$userlink = '';
 			if ( ( $this->contribs == 'newbie' && !$rev->isDeleted( Revision::DELETED_USER ) )
 				|| $this->isQueryableRange( $this->target ) ) {
-				$userlink = ' . . ' . $lang->getDirMark()
+				$userlink = ' <span class="mw-changeslist-separator"></span> '
+					. $lang->getDirMark()
 					. Linker::userLink( $rev->getUser(), $rev->getUserText() );
 				$userlink .= ' ' . $this->msg( 'parentheses' )->rawParams(
 					Linker::userTalkLink( $rev->getUser(), $rev->getUserText() ) )->escaped() . ' ';
@@ -593,7 +603,10 @@ class ContribsPager extends RangeChronologicalPager {
 
 		// Let extensions add data
 		Hooks::run( 'ContributionsLineEnding', [ $this, &$ret, $row, &$classes, &$attribs ] );
-		$attribs = wfArrayFilterByKey( $attribs, [ Sanitizer::class, 'isReservedDataAttribute' ] );
+		$attribs = array_filter( $attribs,
+			[ Sanitizer::class, 'isReservedDataAttribute' ],
+			ARRAY_FILTER_USE_KEY
+		);
 
 		// TODO: Handle exceptions in the catch block above.  Do any extensions rely on
 		// receiving empty rows?
@@ -640,10 +653,10 @@ class ContribsPager extends RangeChronologicalPager {
 	 * @return array Options array with processed start and end date filter options
 	 */
 	public static function processDateFilter( array $opts ) {
-		$start = isset( $opts['start'] ) ? $opts['start'] : '';
-		$end = isset( $opts['end'] ) ? $opts['end'] : '';
-		$year = isset( $opts['year'] ) ? $opts['year'] : '';
-		$month = isset( $opts['month'] ) ? $opts['month'] : '';
+		$start = $opts['start'] ?? '';
+		$end = $opts['end'] ?? '';
+		$year = $opts['year'] ?? '';
+		$month = $opts['month'] ?? '';
 
 		if ( $start !== '' && $end !== '' && $start > $end ) {
 			$temp = $start;

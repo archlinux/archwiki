@@ -11,7 +11,8 @@
 			"Tacsipacsi",
 			"Wladek92",
 			"Pikne",
-			"Jon Harald Søby"
+			"Jon Harald Søby",
+			"Matěj Suchánek"
 		]
 	},
 	"multimediaviewer-desc": "{{desc|name=Multimedia Viewer|url=https://www.mediawiki.org/wiki/Extension:MultimediaViewer}}",
@@ -28,7 +29,7 @@
 	"multimediaviewer-multiple-authors-combine": "Combines the author name and the message about other authors.\n* $1 - author name, parsed from the file page\n* $2 - {{msg-mw|multimediaviewer-multiple-authors}} wrapped in a link.\n{{Identical|And}}",
 	"multimediaviewer-metadata-error": "Text shown when the information on the metadata panel could not be loaded. Parameters:\n* $1 - the error message (not localized)\nSee also:\n* {{msg-mw|multimediaviewer-thumbnail-error}}",
 	"multimediaviewer-thumbnail-error": "Text shown when the image could not be loaded. Followed by {{msg-mw|multimediaviewer-thumbnail-error-description}}.\nSee also:\n* {{msg-mw|multimediaviewer-thumbnail-error-description}}\n* {{msg-mw|multimediaviewer-metadata-error}}",
-	"multimediaviewer-thumbnail-error-description": "Text shown when the image could not be loaded. Follows {{msg-mw|multimediaviewer-thumbnail-error}}. Parameters:\n* $1 - \"retry\" link (see {{msg-mw|multimediaviewer-thumbnail-error-retry}})\n* $2 - the error message (not localized)\n* $3 - report link (creates a Phabricator task; see {{msg-mw|multimediaviewer-thumbnail-error-report}})\nSee also:\n* {{msg-mw|multimediaviewer-thumbnail-error}}",
+	"multimediaviewer-thumbnail-error-description": "Text shown when the image could not be loaded. Follows {{msg-mw|multimediaviewer-thumbnail-error}}. Parameters:\n* $1 - \"retry\" link (see {{msg-mw|multimediaviewer-thumbnail-error-retry}})\n* $2 - the error message (not localized)\nSee also:\n* {{msg-mw|multimediaviewer-thumbnail-error}}",
 	"multimediaviewer-thumbnail-error-retry": "Used as a part of {{msg-mw|multimediaviewer-thumbnail-error-description}} (as a link text).\n{{Identical|Retry}}",
 	"multimediaviewer-thumbnail-error-report": "Used as a part of {{msg-mw|multimediaviewer-thumbnail-error-description}} (as a link text).",
 	"multimediaviewer-report-issue-url": "{{ignored}}URL to the report issue website",
@@ -68,7 +69,7 @@
 	"multimediaviewer-restriction-trademarked": "Text of the tooltip for the trademarked restriction label, that is displayed when hovered over.",
 	"multimediaviewer-restriction-default": "Text of the tooltip for the default restriction label, that is displayed when hovered over.",
 	"multimediaviewer-restriction-default-and-others": "Text of the tooltip for the default restriction label when other restriction labels are present, that is displayed when hovered over.",
-	"multimediaviewer-about-mmv": "Text for a link to a page with more information about Media Viewer software.\n{{Identical|About}}",
+	"multimediaviewer-about-mmv": "Text for a link to a page with more information about Media Viewer software.",
 	"multimediaviewer-discuss-mmv": "Text for a link to a page where the user can discuss the Media Viewer software.\n{{Identical|Discussion}}",
 	"multimediaviewer-help-mmv": "Text for a link to a page with help about Media Viewer software.\n{{Identical|Help}}",
 	"multimediaviewer-optout-mmv": "Text for the opt-out link. Clicking on the link will turn off MediaViewer.\n\nSee also:\n* {{msg-mw|Multimediaviewer-optout-pending-mmv}}\n* {{msg-mw|Multimediaviewer-optin-mmv}}",

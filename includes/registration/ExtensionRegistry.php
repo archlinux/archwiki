@@ -1,6 +1,6 @@
 <?php
 
-use MediaWiki\MediaWikiServices;
+use Composer\Semver\Semver;
 
 /**
  * ExtensionRegistry class
@@ -38,7 +38,7 @@ class ExtensionRegistry {
 	/**
 	 * Bump whenever the registration cache needs resetting
 	 */
-	const CACHE_VERSION = 6;
+	const CACHE_VERSION = 7;
 
 	/**
 	 * Special key that defines the merge strategy
@@ -142,8 +142,11 @@ class ExtensionRegistry {
 		// We use a try/catch because we don't want to fail here
 		// if $wgObjectCaches is not configured properly for APC setup
 		try {
-			$cache = MediaWikiServices::getInstance()->getLocalServerObjectCache();
-		} catch ( MWException $e ) {
+			// Don't use MediaWikiServices here to prevent instantiating it before extensions have
+			// been loaded
+			$cacheId = ObjectCache::detectLocalServerCache();
+			$cache = ObjectCache::newFromId( $cacheId );
+		} catch ( InvalidArgumentException $e ) {
 			$cache = new EmptyBagOStuff();
 		}
 		// See if this queue is in APC
@@ -210,7 +213,11 @@ class ExtensionRegistry {
 		$autoloadNamespaces = [];
 		$autoloaderPaths = [];
 		$processor = new ExtensionProcessor();
-		$versionChecker = new VersionChecker( $wgVersion );
+		$versionChecker = new VersionChecker(
+			$wgVersion,
+			PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION . '.' . PHP_RELEASE_VERSION,
+			get_loaded_extensions()
+		);
 		$extDependencies = [];
 		$incompatible = [];
 		$warnings = false;
@@ -380,10 +387,24 @@ class ExtensionRegistry {
 	/**
 	 * Whether a thing has been loaded
 	 * @param string $name
+	 * @param string $constraint The required version constraint for this dependency
+	 * @throws LogicException if a specific contraint is asked for,
+	 *                        but the extension isn't versioned
 	 * @return bool
 	 */
-	public function isLoaded( $name ) {
-		return isset( $this->loaded[$name] );
+	public function isLoaded( $name, $constraint = '*' ) {
+		$isLoaded = isset( $this->loaded[$name] );
+		if ( $constraint === '*' || !$isLoaded ) {
+			return $isLoaded;
+		}
+		// if a specific constraint is requested, but no version is set, throw an exception
+		if ( !isset( $this->loaded[$name]['version'] ) ) {
+			$msg = "{$name} does not expose its version, but an extension or a skin"
+					. " requires: {$constraint}.";
+			throw new LogicException( $msg );
+		}
+
+		return SemVer::satisfies( $this->loaded[$name]['version'], $constraint );
 	}
 
 	/**
@@ -391,11 +412,7 @@ class ExtensionRegistry {
 	 * @return array
 	 */
 	public function getAttribute( $name ) {
-		if ( isset( $this->attributes[$name] ) ) {
-			return $this->attributes[$name];
-		} else {
-			return [];
-		}
+		return $this->attributes[$name] ?? [];
 	}
 
 	/**

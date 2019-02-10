@@ -202,7 +202,7 @@
 		$( '<div>' )
 			.html( '&nbsp;' )
 			.addClass( 'mw-mmv-confirmation-close' )
-			.click( function () {
+			.on( 'click', function () {
 				dialog.closeDialog();
 			} )
 			.appendTo( $div );
@@ -276,7 +276,7 @@
 			.addClass( 'mw-mmv-options-submit-button mw-ui-button mw-ui-progressive' )
 			.text( msg )
 			.appendTo( $submitDiv )
-			.click( function () {
+			.on( 'click', function () {
 				var $buttons = $( this ).closest( '.mw-mmv-options-submit' ).find( '.mw-mmv-options-submit-button, .mw-mmv-options-cancel-button' );
 				$buttons.prop( 'disabled', true );
 
@@ -309,7 +309,7 @@
 			.addClass( 'mw-mmv-options-cancel-button mw-ui-button mw-ui-quiet' )
 			.text( mw.message( 'multimediaviewer-option-cancel-button' ).text() )
 			.appendTo( $submitDiv )
-			.click( function () {
+			.on( 'click', function () {
 				dialog.closeDialog();
 				return false;
 			} );
@@ -380,7 +380,7 @@
 			.addClass( 'mw-mmv-project-info-link' )
 			.prop( 'href', mw.config.get( 'wgMultimediaViewer' ).helpLink )
 			.text( mw.message( 'multimediaviewer-options-learn-more' ) )
-			.click( function () { mw.mmv.actionLogger.log( eventName ); } )
+			.on( 'click', function () { mw.mmv.actionLogger.log( eventName ); } )
 			.appendTo( $div.find( '.mw-mmv-options-text' ) );
 	};
 

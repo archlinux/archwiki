@@ -17,7 +17,8 @@
 			"David1010",
 			"Macofe",
 			"Nemo bis",
-			"Otogi"
+			"Otogi",
+			"Fitoschido"
 		]
 	},
 	"tog-underline": "რცხუეფიშ ათოღაზუა:",
@@ -1354,7 +1355,7 @@
 	"statistics-files": "გეხარგე ფაილეფი",
 	"statistics-edits": "გვერდის შესწორებები მას შემდეგ რაც შეიქმნა პროექტი {{SITENAME}}",
 	"statistics-edits-average": "რედაქტირების საერთო რაოდენობა გვერდზე",
-	"statistics-users": "დარეგისტრირებული [[Special:ListUsers|მომხმარებლები]]",
+	"statistics-users": "დარეგისტრირებული მომხმარებლები",
 	"statistics-users-active": "აქტიური მომხმარებლები",
 	"statistics-users-active-desc": "მომხმარებლები, რომლებმაც განახორციელეს ქმედება {{PLURAL:$1|ბოლო $1 დღის|ბოლო $1 დღის}} განმავლობაში",
 	"pageswithprop": "გვერდები განსაზღვრული თვისებით",
@@ -1612,8 +1613,8 @@
 	"whatlinkshere": "სოვრეშე რე თე ხასჷლა წურაფილი",
 	"whatlinkshere-title": "ხასჷლეფი, ნამუთ გინორცხილ რე $1-შა",
 	"whatlinkshere-page": "ხასჷლა:",
-	"linkshere": "გეჸვენჯ ხასჷლეფი გინარცხუაფუ '''[[:$1]]'''-ეფს",
-	"nolinkshere": "ნამთინ ხასილა ვა რე გინორცხილ '''[[:$1]]'''-შა.",
+	"linkshere": "გეჸვენჯ ხასჷლეფი გინარცხუაფუ '''$1'''-ეფს",
+	"nolinkshere": "ნამთინ ხასილა ვა რე გინორცხილ '''$1'''-შა.",
 	"isredirect": "გინოწურაფაშ ხასჷლა",
 	"istemplate": "ტრანსკლუზია",
 	"isimage": "ფაილიშ რცხი",
@@ -2191,6 +2192,7 @@
 	"fileduplicatesearch-submit": "გორუა",
 	"specialpages": "გჷშაკერძაფილი ხასჷლეფი",
 	"specialpages-note-top": "ლეგენდა",
+	"specialpages-note-restricted": "* ჩვეულებრივი სპეცგვერდები.\n* <span class=\"mw-specialpagerestricted\">სპეცგვერდები შეზღუდული წვდომით.</span>",
 	"specialpages-group-maintenance": "ტექნიკური მომსახურების ანგარიშები",
 	"specialpages-group-other": "სხვა სპეციალური გვერდები",
 	"specialpages-group-login": "მიშულა/ანგარიშიშ გონწყუმა",

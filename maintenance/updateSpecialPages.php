@@ -24,6 +24,8 @@
 
 require_once __DIR__ . '/Maintenance.php';
 
+use MediaWiki\MediaWikiServices;
+
 /**
  * Maintenance script to update cached special pages.
  *
@@ -48,7 +50,7 @@ class UpdateSpecialPages extends Maintenance {
 
 		foreach ( QueryPage::getPages() as $page ) {
 			list( $class, $special ) = $page;
-			$limit = isset( $page[2] ) ? $page[2] : null;
+			$limit = $page[2] ?? null;
 
 			# --list : just show the name of pages
 			if ( $this->hasOption( 'list' ) ) {
@@ -63,7 +65,8 @@ class UpdateSpecialPages extends Maintenance {
 				continue;
 			}
 
-			$specialObj = SpecialPageFactory::getPage( $special );
+			$specialObj = MediaWikiServices::getInstance()->getSpecialPageFactory()->
+				getPage( $special );
 			if ( !$specialObj ) {
 				$this->output( "No such special page: $special\n" );
 				exit;
@@ -81,7 +84,7 @@ class UpdateSpecialPages extends Maintenance {
 				if ( $queryPage->isExpensive() ) {
 					$t1 = microtime( true );
 					# Do the query
-					$num = $queryPage->recache( $limit === null ? $wgQueryCacheLimit : $limit );
+					$num = $queryPage->recache( $limit ?? $wgQueryCacheLimit );
 					$t2 = microtime( true );
 					if ( $num === false ) {
 						$this->output( "FAILED: database error\n" );
@@ -119,16 +122,18 @@ class UpdateSpecialPages extends Maintenance {
 	 * mysql connection to "go away"
 	 */
 	private function reopenAndWaitForReplicas() {
-		if ( !wfGetLB()->pingAll() ) {
+		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
+		$lb = $lbFactory->getMainLB();
+		if ( !$lb->pingAll() ) {
 			$this->output( "\n" );
 			do {
 				$this->error( "Connection failed, reconnecting in 10 seconds..." );
 				sleep( 10 );
-			} while ( !wfGetLB()->pingAll() );
+			} while ( !$lb->pingAll() );
 			$this->output( "Reconnected\n\n" );
 		}
-		# Wait for the replica DB to catch up
-		wfWaitForSlaves();
+		// Wait for the replica DB to catch up
+		$lbFactory->waitForReplication();
 	}
 
 	public function doSpecialPageCacheUpdates( $dbw ) {

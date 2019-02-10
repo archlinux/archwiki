@@ -77,6 +77,7 @@ class GadgetHooks {
 
 		$options = [];
 		$default = [];
+		$skin = RequestContext::getMain()->getSkin();
 		foreach ( $gadgets as $section => $thisSection ) {
 			$available = [];
 
@@ -84,7 +85,11 @@ class GadgetHooks {
 			 * @var $gadget Gadget
 			 */
 			foreach ( $thisSection as $gadget ) {
-				if ( !$gadget->isHidden() && $gadget->isAllowed( $user ) ) {
+				if (
+					!$gadget->isHidden()
+					&& $gadget->isAllowed( $user )
+					&& $gadget->isSkinSupported( $skin )
+				) {
 					$gname = $gadget->getName();
 					# bug 30182: dir="auto" because it's often not translated
 					$desc = '<span dir="auto">' . $gadget->getDescription() . '</span>';
@@ -109,14 +114,9 @@ class GadgetHooks {
 		$preferences['gadgets-intro'] =
 			[
 				'type' => 'info',
-				'label' => '&#160;',
-				'default' => Xml::tags( 'tr', [],
-					Xml::tags( 'td', [ 'colspan' => 2 ],
-						wfMessage( 'gadgets-prefstext' )->parseAsBlock() ) ),
+				'default' => wfMessage( 'gadgets-prefstext' )->parseAsBlock(),
 				'section' => 'gadgets',
-				'raw' => 1,
-				'rawrow' => 1,
-				'noglobal' => true,
+				'raw' => true,
 			];
 
 		$preferences['gadgets'] =
@@ -172,6 +172,7 @@ class GadgetHooks {
 		 * @var $gadget Gadget
 		 */
 		$user = $out->getUser();
+		$skin = $out->getSkin();
 		foreach ( $ids as $id ) {
 			try {
 				$gadget = $repo->getGadget( $id );
@@ -187,7 +188,10 @@ class GadgetHooks {
 					// @todo: Emit warning for invalid peer?
 				}
 			}
-			if ( $gadget->isEnabled( $user ) && $gadget->isAllowed( $user ) ) {
+			if ( $gadget->isEnabled( $user )
+				&& $gadget->isAllowed( $user )
+				&& $gadget->isSkinSupported( $skin )
+			) {
 				if ( $gadget->hasModule() ) {
 					if ( $gadget->getType() === 'styles' ) {
 						$out->addModuleStyles( Gadget::getModuleName( $gadget->getName() ) );
@@ -256,9 +260,9 @@ class GadgetHooks {
 			);
 		}
 
-		$status = $content->validate();
-		if ( !$status->isGood() ) {
-			$status->merge( $status );
+		$validateStatus = $content->validate();
+		if ( !$validateStatus->isGood() ) {
+			$status->merge( $validateStatus );
 			return false;
 		}
 

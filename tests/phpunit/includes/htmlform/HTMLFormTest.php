@@ -3,9 +3,8 @@
 /**
  * @covers HTMLForm
  *
- * @license GNU GPL v2+
+ * @license GPL-2.0-or-later
  * @author Gergő Tisza
- * @author Thiemo Mättig
  */
 class HTMLFormTest extends MediaWikiTestCase {
 
@@ -52,6 +51,13 @@ class HTMLFormTest extends MediaWikiTestCase {
 		$form = $this->newInstance();
 		$form->setAutocomplete( 'off' );
 		$this->assertContains( ' autocomplete="off"', $form->wrapForm( '' ) );
+	}
+
+	public function testGetPreText() {
+		$preText = 'TEST';
+		$form = $this->newInstance();
+		$form->setPreText( $preText );
+		$this->assertSame( $preText, $form->getPreText() );
 	}
 
 }

@@ -5,7 +5,8 @@
 			"RMizo",
 			"아라",
 			"Macofe",
-			"Stephanecbisson"
+			"Stephanecbisson",
+			"Fitoschido"
 		]
 	},
 	"tog-underline": "Zawmna hnuairinna",
@@ -904,7 +905,7 @@
 	"statistics-files": "Taksa hlankaite",
 	"statistics-edits": "{{SITENAME}} din achina phêk khawih danglam zât",
 	"statistics-edits-average": "Phêk khat zëla siamṭhat zât chawhrual",
-	"statistics-users": "[[Special:ListUsers|Hmangtu]] inziaklût zât",
+	"statistics-users": "Hmangtu inziaklût zât",
 	"statistics-users-active": "Hmangtu aktif zât",
 	"statistics-users-active-desc": "Ni {{PLURAL:$1|khat|$1}} kaltâ chhunga thiltih nei hmangtuho",
 	"doubleredirects": "Hruailuhna phír",
@@ -1161,8 +1162,8 @@
 	"whatlinkshere": "Hemi zawmpuite",
 	"whatlinkshere-title": "$1-a thlunzawm phêkte",
 	"whatlinkshere-page": "Phêk:",
-	"linkshere": "A hnuaia phêkte hian '''[[:$1]]''' hi an thlunzawm:",
-	"nolinkshere": "'''[[:$1]]'''-a zawm phek pakhat mah a awm lo.",
+	"linkshere": "A hnuaia phêkte hian '''$2''' hi an thlunzawm:",
+	"nolinkshere": "'''$2'''-a zawm phek pakhat mah a awm lo.",
 	"isredirect": "Hruailuhna phêk",
 	"istemplate": "ziahhnan",
 	"isimage": "taksa thlunzawmna",
@@ -1307,7 +1308,6 @@
 	"markedaspatrolledtext": "[[:$1]] ennawnna thlansa hi vil anga chhinchhiah a ni.",
 	"markedaspatrollederror": "Vil anga chhinchhiah theih a ni lo",
 	"patrol-log-page": "Vil chhinchhiahna",
-	"log-show-hide-patrol": "Vil chhinchhiahna $1",
 	"filedeleteerror-long": "Taksa paih tum laiin buaina a lo thleng\n\n$1",
 	"previousdiff": "←Siamţhatna hlui zâwk",
 	"nextdiff": "Siamţhatna thar zâwk→",

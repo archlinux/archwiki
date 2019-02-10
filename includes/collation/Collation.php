@@ -20,6 +20,8 @@
  * @file
  */
 
+use MediaWiki\MediaWikiServices;
+
 /**
  * @since 1.16.3
  * @author Tim Starling
@@ -46,13 +48,12 @@ abstract class Collation {
 	 * @return Collation
 	 */
 	public static function factory( $collationName ) {
-		global $wgContLang;
-
 		switch ( $collationName ) {
 			case 'uppercase':
 				return new UppercaseCollation;
 			case 'numeric':
-				return new NumericUppercaseCollation( $wgContLang );
+				return new NumericUppercaseCollation(
+					MediaWikiServices::getInstance()->getContentLanguage() );
 			case 'identity':
 				return new IdentityCollation;
 			case 'uca-default':
@@ -61,16 +62,10 @@ abstract class Collation {
 				return new IcuCollation( 'root-u-kn' );
 			case 'xx-uca-ckb':
 				return new CollationCkb;
-			case 'xx-uca-et':
-				return new CollationEt;
-			case 'xx-uca-fa':
-				return new CollationFa;
 			case 'uppercase-ab':
 				return new AbkhazUppercaseCollation;
 			case 'uppercase-ba':
 				return new BashkirUppercaseCollation;
-			case 'uppercase-se':
-				return new NorthernSamiUppercaseCollation;
 			default:
 				$match = [];
 				if ( preg_match( '/^uca-([A-Za-z@=-]+)$/', $collationName, $match ) ) {

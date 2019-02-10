@@ -254,11 +254,7 @@ class MWNamespace {
 	 */
 	public static function getCanonicalName( $index ) {
 		$nslist = self::getCanonicalNamespaces();
-		if ( isset( $nslist[$index] ) ) {
-			return $nslist[$index];
-		} else {
-			return false;
-		}
+		return $nslist[$index] ?? false;
 	}
 
 	/**
@@ -472,9 +468,7 @@ class MWNamespace {
 	 */
 	public static function getNamespaceContentModel( $index ) {
 		global $wgNamespaceContentModels;
-		return isset( $wgNamespaceContentModels[$index] )
-			? $wgNamespaceContentModels[$index]
-			: null;
+		return $wgNamespaceContentModels[$index] ?? null;
 	}
 
 	/**
@@ -483,7 +477,7 @@ class MWNamespace {
 	 *
 	 * @since 1.23
 	 * @param int $index Index to check
-	 * @param User $user User to check
+	 * @param User|null $user User to check
 	 * @return array
 	 */
 	public static function getRestrictionLevels( $index, User $user = null ) {
@@ -545,5 +539,27 @@ class MWNamespace {
 		}
 
 		return $usableLevels;
+	}
+
+	/**
+	 * Returns the link type to be used for categories.
+	 *
+	 * This determines which section of a category page titles
+	 * in the namespace will appear within.
+	 *
+	 * @since 1.32
+	 * @param int $index Namespace index
+	 * @return string One of 'subcat', 'file', 'page'
+	 */
+	public static function getCategoryLinkType( $index ) {
+		self::isMethodValidFor( $index, __METHOD__ );
+
+		if ( $index == NS_CATEGORY ) {
+			return 'subcat';
+		} elseif ( $index == NS_FILE ) {
+			return 'file';
+		} else {
+			return 'page';
+		}
 	}
 }

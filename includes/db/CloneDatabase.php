@@ -46,16 +46,19 @@ class CloneDatabase {
 	 * @param IMaintainableDatabase $db A database subclass
 	 * @param array $tablesToClone An array of tables to clone, unprefixed
 	 * @param string $newTablePrefix Prefix to assign to the tables
-	 * @param string $oldTablePrefix Prefix on current tables, if not $wgDBprefix
+	 * @param string|null $oldTablePrefix Prefix on current tables, if not $wgDBprefix
 	 * @param bool $dropCurrentTables
 	 */
 	public function __construct( IMaintainableDatabase $db, array $tablesToClone,
 		$newTablePrefix, $oldTablePrefix = null, $dropCurrentTables = true
 	) {
+		if ( !$tablesToClone ) {
+			throw new InvalidArgumentException( 'Empty list of tables to clone' );
+		}
 		$this->db = $db;
 		$this->tablesToClone = $tablesToClone;
 		$this->newTablePrefix = $newTablePrefix;
-		$this->oldTablePrefix = $oldTablePrefix !== null ? $oldTablePrefix : $this->db->tablePrefix();
+		$this->oldTablePrefix = $oldTablePrefix ?? $this->db->tablePrefix();
 		$this->dropCurrentTables = $dropCurrentTables;
 	}
 
@@ -82,10 +85,10 @@ class CloneDatabase {
 			# works correctly across DB engines, we need to change the pre-
 			# fix back and forth so tableName() works right.
 
-			self::changePrefix( $this->oldTablePrefix );
+			$this->db->tablePrefix( $this->oldTablePrefix );
 			$oldTableName = $this->db->tableName( $tbl, 'raw' );
 
-			self::changePrefix( $this->newTablePrefix );
+			$this->db->tablePrefix( $this->newTablePrefix );
 			$newTableName = $this->db->tableName( $tbl, 'raw' );
 
 			// Postgres: Temp tables are automatically deleted upon end of session
@@ -116,12 +119,12 @@ class CloneDatabase {
 	 */
 	public function destroy( $dropTables = false ) {
 		if ( $dropTables ) {
-			self::changePrefix( $this->newTablePrefix );
+			$this->db->tablePrefix( $this->newTablePrefix );
 			foreach ( $this->tablesToClone as $tbl ) {
 				$this->db->dropTable( $tbl );
 			}
 		}
-		self::changePrefix( $this->oldTablePrefix );
+		$this->db->tablePrefix( $this->oldTablePrefix );
 	}
 
 	/**

@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Awangba Mangang"
+		]
+	},
+	"fancycaptcha-captcha": "Security ꯒꯤ ꯌꯦꯡꯁꯤꯟꯕꯥ",
+	"fancycaptcha-accountcreate": "To protect the wiki against automated account creation, we kindly ask you to enter the words that appear below in the box ([[Special:Captcha/help|more info]]):",
+	"fancycaptcha-imgcaptcha-ph": "ꯃꯥꯡꯗꯥ ꯎꯔꯤꯕꯥ ꯃꯃꯤ ꯁꯤ ꯒꯤ ꯃꯇꯥꯡꯗꯥ ꯋꯥꯍꯩ ꯈꯔꯥ ꯏꯌꯨ",
+	"fancycaptcha-reload-text": "ꯇꯦꯛꯈꯠꯍꯟꯕꯥ"
+}

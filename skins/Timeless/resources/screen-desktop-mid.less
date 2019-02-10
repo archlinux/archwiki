@@ -1,20 +1,37 @@
 @import 'variables.less';
 
+#mw-content-block {
+	clear: both;
+}
+
 #mw-site-navigation,
 #mw-related-navigation {
 	.column-left();
+	display: block;
+	width: @column-left-size;
+	position: relative;
 }
 
-#mw-related-navigation {
-	margin-top: 2em;
+#mw-related-navigation > div.sidebar-chunk:first-child {
+	margin-top: 0;
 }
 
-#mw-content {
+#mw-content-wrapper {
+	float: right;
+	margin-left: -@column-left-size;
+	width: 100%;
+}
+
+#mw-content,
+#content-bottom-stuff {
 	margin-left: @column-left-size;
-	overflow: auto;
 }
 
 // Redundant content category list
 #catlinks {
 	display: none;
+}
+
+.color-right {
+	background: @blue-dark;
 }

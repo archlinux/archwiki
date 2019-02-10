@@ -4,7 +4,7 @@
 			"Michawiki"
 		]
 	},
-	"cite-desc": "Pśidawa toflicce <nowiki><ref[ name=id]></nowiki> a <nowiki><references/></nowiki> za pódaśa zrědłow",
+	"cite-desc": "Pśidawa toflicce <code><nowiki><ref[ name=id]></nowiki></code> a <code><nowiki><references/></nowiki></code> za pódaśa zrědłow",
 	"cite_error": "Referencna zmólka: $1",
 	"cite_error_ref_numeric_key": "Njepłaśiwa toflicka <code>&lt;ref&gt;</code>;\nmě njamóžo jadnora licba byś. Wužyj wugroniwy titel",
 	"cite_error_ref_no_key": "Njepłaśiwa toflicka <code>&lt;ref&gt;</code>;\n\"ref\" bźez wopśimjeśa musy mě měś",

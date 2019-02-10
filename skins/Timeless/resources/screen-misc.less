@@ -8,6 +8,7 @@
 	.ts-inner {
 		padding: 0 3em;
 	}
+
 	.color-middle {
 		margin-left: @column-left-size;
 		margin-right: @column-right-size;
@@ -19,8 +20,24 @@
 	.ts-inner {
 		padding: 0 3em;
 	}
+
 	.color-middle {
 		margin-left: @column-left-size + 3em;
 		margin-right: @column-right-size + 3em;
+	}
+}
+
+// Prevent logo text overlapping icons on small displays
+@media screen and ( max-width: 550px ) {
+	#p-logo-text {
+		position: static;
+
+		a {
+			padding-top: 0;
+		}
+
+		a.long {
+			padding-bottom: 0.2em;
+		}
 	}
 }

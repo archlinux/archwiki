@@ -1,8 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Marcell0"
+			"Marcell0",
+			"L*E*D"
 		]
 	},
+	"vector-view-edit": "Bearbeiten",
+	"vector-view-history": "Versionsgeschichte anzeigen",
+	"vector-view-view": "Lesen",
 	"vector-more-actions": "Mehr"
 }

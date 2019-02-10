@@ -2,11 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"Reza1615",
-			"Alirezaaa"
+			"Alirezaaa",
+			"Ebraminio"
 		]
 	},
+	"skinname-timeless": "تایملس",
 	"timeless-desc": "پوسته بدون زمان طراحی شده بعد از پروتوتایپ زمستان توسط براندون هریس و بسیاری از مدل‌های بنیاد ویکی‌مدیا",
-	"timeless-search-placeholder": "جستجوی {{NUMBEROFARTICLES}} صفحه",
 	"timeless-loggedin": "حساب کاربری شما",
 	"timeless-anonymous": "ناشناس",
 	"timeless-loggedinas": "ورد به سامانه به عنوان '''$1'''",

@@ -13,6 +13,7 @@ class ParserOptionsTest extends MediaWikiTestCase {
 		$wrap->defaults = null;
 		$wrap->lazyOptions = [
 			'dateformat' => [ ParserOptions::class, 'initDateFormat' ],
+			'speculativeRevId' => [ ParserOptions::class, 'initSpeculativeRevId' ],
 		];
 		$wrap->inCacheKey = [
 			'dateformat' => true,
@@ -25,22 +26,82 @@ class ParserOptionsTest extends MediaWikiTestCase {
 	}
 
 	protected function setUp() {
-		global $wgHooks;
-
 		parent::setUp();
 		self::clearCache();
 
 		$this->setMwGlobals( [
 			'wgRenderHashAppend' => '',
-			'wgHooks' => [
-				'PageRenderingHash' => [],
-			] + $wgHooks,
 		] );
+
+		// This is crazy, but registering false, null, or other falsey values
+		// as a hook callback "works".
+		$this->setTemporaryHook( 'PageRenderingHash', null );
 	}
 
 	protected function tearDown() {
 		self::clearCache();
 		parent::tearDown();
+	}
+
+	public function testNewCanonical() {
+		$wgUser = $this->getMutableTestUser()->getUser();
+		$wgLang = Language::factory( 'fr' );
+		$contLang = Language::factory( 'qqx' );
+
+		$this->setContentLang( $contLang );
+		$this->setMwGlobals( [
+			'wgUser' => $wgUser,
+			'wgLang' => $wgLang,
+		] );
+
+		$user = $this->getMutableTestUser()->getUser();
+		$lang = Language::factory( 'de' );
+		$lang2 = Language::factory( 'bug' );
+		$context = new DerivativeContext( RequestContext::getMain() );
+		$context->setUser( $user );
+		$context->setLanguage( $lang );
+
+		// No parameters picks up $wgUser and $wgLang
+		$popt = ParserOptions::newCanonical();
+		$this->assertSame( $wgUser, $popt->getUser() );
+		$this->assertSame( $wgLang, $popt->getUserLangObj() );
+
+		// Just a user uses $wgLang
+		$popt = ParserOptions::newCanonical( $user );
+		$this->assertSame( $user, $popt->getUser() );
+		$this->assertSame( $wgLang, $popt->getUserLangObj() );
+
+		// Just a language uses $wgUser
+		$popt = ParserOptions::newCanonical( null, $lang );
+		$this->assertSame( $wgUser, $popt->getUser() );
+		$this->assertSame( $lang, $popt->getUserLangObj() );
+
+		// Passing both works
+		$popt = ParserOptions::newCanonical( $user, $lang );
+		$this->assertSame( $user, $popt->getUser() );
+		$this->assertSame( $lang, $popt->getUserLangObj() );
+
+		// Passing 'canonical' uses an anon and $contLang, and ignores any passed $userLang
+		$popt = ParserOptions::newCanonical( 'canonical' );
+		$this->assertTrue( $popt->getUser()->isAnon() );
+		$this->assertSame( $contLang, $popt->getUserLangObj() );
+		$popt = ParserOptions::newCanonical( 'canonical', $lang2 );
+		$this->assertSame( $contLang, $popt->getUserLangObj() );
+
+		// Passing an IContextSource uses the user and lang from it, and ignores
+		// any passed $userLang
+		$popt = ParserOptions::newCanonical( $context );
+		$this->assertSame( $user, $popt->getUser() );
+		$this->assertSame( $lang, $popt->getUserLangObj() );
+		$popt = ParserOptions::newCanonical( $context, $lang2 );
+		$this->assertSame( $lang, $popt->getUserLangObj() );
+
+		// Passing something else raises an exception
+		try {
+			$popt = ParserOptions::newCanonical( 'bogus' );
+			$this->fail( 'Excpected exception not thrown' );
+		} catch ( InvalidArgumentException $ex ) {
+		}
 	}
 
 	/**
@@ -84,17 +145,13 @@ class ParserOptionsTest extends MediaWikiTestCase {
 	 * @param string $expect Expected value
 	 * @param array $options Options to set
 	 * @param array $globals Globals to set
+	 * @param callable|null $hookFunc PageRenderingHash hook function
 	 */
-	public function testOptionsHash( $usedOptions, $expect, $options, $globals = [] ) {
-		global $wgHooks;
-
-		$globals += [
-			'wgHooks' => [],
-		];
-		$globals['wgHooks'] += [
-			'PageRenderingHash' => [],
-		] + $wgHooks;
+	public function testOptionsHash(
+		$usedOptions, $expect, $options, $globals = [], $hookFunc = null
+	) {
 		$this->setMwGlobals( $globals );
+		$this->setTemporaryHook( 'PageRenderingHash', $hookFunc );
 
 		$popt = ParserOptions::newCanonical();
 		foreach ( $options as $name => $value ) {
@@ -129,12 +186,48 @@ class ParserOptionsTest extends MediaWikiTestCase {
 				[],
 				'canonical!wgRenderHashAppend!onPageRenderingHash',
 				[],
-				[
-					'wgRenderHashAppend' => '!wgRenderHashAppend',
-					'wgHooks' => [ 'PageRenderingHash' => [ [ __CLASS__ . '::onPageRenderingHash' ] ] ],
-				]
+				[ 'wgRenderHashAppend' => '!wgRenderHashAppend' ],
+				[ __CLASS__ . '::onPageRenderingHash' ],
 			],
 		];
+	}
+
+	public function testUsedLazyOptionsInHash() {
+		$this->setTemporaryHook( 'ParserOptionsRegister',
+			function ( &$defaults, &$inCacheKey, &$lazyOptions ) {
+				$lazyFuncs = $this->getMockBuilder( stdClass::class )
+					->setMethods( [ 'neverCalled', 'calledOnce' ] )
+					->getMock();
+				$lazyFuncs->expects( $this->never() )->method( 'neverCalled' );
+				$lazyFuncs->expects( $this->once() )->method( 'calledOnce' )->willReturn( 'value' );
+
+				$defaults += [
+					'opt1' => null,
+					'opt2' => null,
+					'opt3' => null,
+				];
+				$inCacheKey += [
+					'opt1' => true,
+					'opt2' => true,
+				];
+				$lazyOptions += [
+					'opt1' => [ $lazyFuncs, 'calledOnce' ],
+					'opt2' => [ $lazyFuncs, 'neverCalled' ],
+					'opt3' => [ $lazyFuncs, 'neverCalled' ],
+				];
+			}
+		);
+
+		self::clearCache();
+
+		$popt = ParserOptions::newCanonical();
+		$popt->registerWatcher( function () {
+			$this->fail( 'Watcher should not have been called' );
+		} );
+		$this->assertSame( 'opt1=value', $popt->optionsHash( [ 'opt1', 'opt3' ] ) );
+
+		// Second call to see that opt1 isn't resolved a second time
+		$this->assertSame( 'opt1=value', $popt->optionsHash( [ 'opt1', 'opt3' ] ) );
 	}
 
 	public static function onPageRenderingHash( &$confstr ) {
@@ -192,10 +285,7 @@ class ParserOptionsTest extends MediaWikiTestCase {
 	}
 
 	public function testAllCacheVaryingOptions() {
-		global $wgHooks;
-
-		// $wgHooks is already saved in self::setUp(), so we can modify it freely here
-		$wgHooks['ParserOptionsRegister'] = [];
+		$this->setTemporaryHook( 'ParserOptionsRegister', null );
 		$this->assertSame( [
 			'dateformat', 'numberheadings', 'printable', 'stubthreshold',
 			'thumbsize', 'userlang'
@@ -203,7 +293,7 @@ class ParserOptionsTest extends MediaWikiTestCase {
 
 		self::clearCache();
 
-		$wgHooks['ParserOptionsRegister'][] = function ( &$defaults, &$inCacheKey ) {
+		$this->setTemporaryHook( 'ParserOptionsRegister', function ( &$defaults, &$inCacheKey ) {
 			$defaults += [
 				'foo' => 'foo',
 				'bar' => 'bar',
@@ -213,11 +303,26 @@ class ParserOptionsTest extends MediaWikiTestCase {
 				'foo' => true,
 				'bar' => false,
 			];
-		};
+		} );
 		$this->assertSame( [
 			'dateformat', 'foo', 'numberheadings', 'printable', 'stubthreshold',
 			'thumbsize', 'userlang'
 		], ParserOptions::allCacheVaryingOptions() );
+	}
+
+	public function testGetSpeculativeRevid() {
+		$options = new ParserOptions();
+
+		$this->assertFalse( $options->getSpeculativeRevId() );
+
+		$counter = 0;
+		$options->setSpeculativeRevIdCallback( function () use( &$counter ) {
+			return ++$counter;
+		} );
+
+		// make sure the same value is re-used once it is determined
+		$this->assertSame( 1, $options->getSpeculativeRevId() );
+		$this->assertSame( 1, $options->getSpeculativeRevId() );
 	}
 
 }

@@ -25,7 +25,7 @@ class ReplaceTextUtils {
 	/**
 	 * Shim for compatibility
 	 * @param Title $title to link to
-	 * @param string $text to show
+	 * @param string|null $text to show
 	 * @return string HTML for link
 	 */
 	public static function link( Title $title, $text = null ) {

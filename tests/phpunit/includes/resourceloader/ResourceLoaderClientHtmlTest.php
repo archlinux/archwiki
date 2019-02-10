@@ -45,6 +45,7 @@ class ResourceLoaderClientHtmlTest extends PHPUnit\Framework\TestCase {
 			'test.private' => [ 'group' => 'private' ],
 			'test.shouldembed.empty' => [ 'shouldEmbed' => true, 'isKnownEmpty' => true ],
 			'test.shouldembed' => [ 'shouldEmbed' => true ],
+			'test.user' => [ 'group' => 'user' ],
 
 			'test.styles.pure' => [ 'type' => ResourceLoaderModule::LOAD_STYLES ],
 			'test.styles.mixed' => [],
@@ -70,6 +71,10 @@ class ResourceLoaderClientHtmlTest extends PHPUnit\Framework\TestCase {
 				'type' => ResourceLoaderModule::LOAD_STYLES,
 				'shouldEmbed' => true,
 				'styles' => '.shouldembed{}',
+			],
+			'test.styles.deprecated' => [
+				'type' => ResourceLoaderModule::LOAD_STYLES,
+				'deprecated' => 'Deprecation message.',
 			],
 
 			'test.scripts' => [],
@@ -115,6 +120,7 @@ class ResourceLoaderClientHtmlTest extends PHPUnit\Framework\TestCase {
 			'test.private',
 			'test.shouldembed.empty',
 			'test.shouldembed',
+			'test.user',
 			'test.unregistered',
 		] );
 		$client->setModuleStyles( [
@@ -123,6 +129,7 @@ class ResourceLoaderClientHtmlTest extends PHPUnit\Framework\TestCase {
 			'test.styles.private',
 			'test.styles.pure',
 			'test.styles.shouldembed',
+			'test.styles.deprecated',
 			'test.unregistered.styles',
 		] );
 		$client->setModuleScripts( [
@@ -138,10 +145,12 @@ class ResourceLoaderClientHtmlTest extends PHPUnit\Framework\TestCase {
 				'test.private' => 'loading',
 				'test.shouldembed.empty' => 'ready',
 				'test.shouldembed' => 'loading',
+				'test.user' => 'loading',
 				'test.styles.pure' => 'ready',
 				'test.styles.user.empty' => 'ready',
 				'test.styles.private' => 'ready',
 				'test.styles.shouldembed' => 'ready',
+				'test.styles.deprecated' => 'ready',
 				'test.scripts' => 'loading',
 				'test.scripts.user' => 'loading',
 				'test.scripts.user.empty' => 'ready',
@@ -152,6 +161,7 @@ class ResourceLoaderClientHtmlTest extends PHPUnit\Framework\TestCase {
 			],
 			'styles' => [
 				'test.styles.pure',
+				'test.styles.deprecated',
 			],
 			'scripts' => [
 				'test.scripts',
@@ -163,7 +173,15 @@ class ResourceLoaderClientHtmlTest extends PHPUnit\Framework\TestCase {
 				'general' => [
 					'test.private',
 					'test.shouldembed',
+					'test.user',
 				],
+			],
+			'styleDeprecations' => [
+				Xml::encodeJsCall(
+					'mw.log.warn',
+					[ 'This page is using the deprecated ResourceLoader module "test.styles.deprecated".
+Deprecation message.' ]
+				)
 			],
 		];
 
@@ -182,7 +200,9 @@ class ResourceLoaderClientHtmlTest extends PHPUnit\Framework\TestCase {
 		$context = self::makeContext();
 		$context->getResourceLoader()->register( self::makeSampleModules() );
 
-		$client = new ResourceLoaderClientHtml( $context );
+		$client = new ResourceLoaderClientHtml( $context, [
+			'nonce' => false,
+		] );
 		$client->setConfig( [ 'key' => 'value' ] );
 		$client->setModules( [
 			'test',
@@ -191,6 +211,7 @@ class ResourceLoaderClientHtmlTest extends PHPUnit\Framework\TestCase {
 		$client->setModuleStyles( [
 			'test.styles.pure',
 			'test.styles.private',
+			'test.styles.deprecated',
 		] );
 		$client->setModuleScripts( [
 			'test.scripts',
@@ -203,12 +224,12 @@ class ResourceLoaderClientHtmlTest extends PHPUnit\Framework\TestCase {
 		$expected = '<script>document.documentElement.className = document.documentElement.className.replace( /(^|\s)client-nojs(\s|$)/, "$1client-js$2" );</script>' . "\n"
 			. '<script>(window.RLQ=window.RLQ||[]).push(function(){'
 			. 'mw.config.set({"key":"value"});'
-			. 'mw.loader.state({"test.exempt":"ready","test.private":"loading","test.styles.pure":"ready","test.styles.private":"ready","test.scripts":"loading"});'
+			. 'mw.loader.state({"test.exempt":"ready","test.private":"loading","test.styles.pure":"ready","test.styles.private":"ready","test.styles.deprecated":"ready","test.scripts":"loading"});'
 			. 'mw.loader.implement("test.private@{blankVer}",function($,jQuery,require,module){},{"css":[]});'
-			. 'mw.loader.load(["test"]);'
+			. 'RLPAGEMODULES=["test"];mw.loader.load(RLPAGEMODULES);'
 			. 'mw.loader.load("/w/load.php?debug=false\u0026lang=nl\u0026modules=test.scripts\u0026only=scripts\u0026skin=fallback");'
 			. '});</script>' . "\n"
-			. '<link rel="stylesheet" href="/w/load.php?debug=false&amp;lang=nl&amp;modules=test.styles.pure&amp;only=styles&amp;skin=fallback"/>' . "\n"
+			. '<link rel="stylesheet" href="/w/load.php?debug=false&amp;lang=nl&amp;modules=test.styles.deprecated%2Cpure&amp;only=styles&amp;skin=fallback"/>' . "\n"
 			. '<style>.private{}</style>' . "\n"
 			. '<script async="" src="/w/load.php?debug=false&amp;lang=nl&amp;modules=startup&amp;only=scripts&amp;skin=fallback"></script>';
 		// phpcs:enable
@@ -231,6 +252,25 @@ class ResourceLoaderClientHtmlTest extends PHPUnit\Framework\TestCase {
 		// phpcs:disable Generic.Files.LineLength
 		$expected = '<script>document.documentElement.className = document.documentElement.className.replace( /(^|\s)client-nojs(\s|$)/, "$1client-js$2" );</script>' . "\n"
 			. '<script async="" src="/w/load.php?debug=false&amp;lang=nl&amp;modules=startup&amp;only=scripts&amp;skin=fallback&amp;target=example"></script>';
+		// phpcs:enable
+
+		$this->assertEquals( $expected, $client->getHeadHtml() );
+	}
+
+	/**
+	 * Confirm that 'safemode' is passed down to startup.
+	 *
+	 * @covers ResourceLoaderClientHtml::getHeadHtml
+	 */
+	public function testGetHeadHtmlWithSafemode() {
+		$client = new ResourceLoaderClientHtml(
+			self::makeContext(),
+			[ 'safemode' => '1' ]
+		);
+
+		// phpcs:disable Generic.Files.LineLength
+		$expected = '<script>document.documentElement.className = document.documentElement.className.replace( /(^|\s)client-nojs(\s|$)/, "$1client-js$2" );</script>' . "\n"
+			. '<script async="" src="/w/load.php?debug=false&amp;lang=nl&amp;modules=startup&amp;only=scripts&amp;safemode=1&amp;skin=fallback"></script>';
 		// phpcs:enable
 
 		$this->assertEquals( $expected, $client->getHeadHtml() );
@@ -263,18 +303,23 @@ class ResourceLoaderClientHtmlTest extends PHPUnit\Framework\TestCase {
 		$context = self::makeContext();
 		$context->getResourceLoader()->register( self::makeSampleModules() );
 
-		$client = new ResourceLoaderClientHtml( $context );
+		$client = new ResourceLoaderClientHtml( $context, [ 'nonce' => false ] );
 		$client->setConfig( [ 'key' => 'value' ] );
 		$client->setModules( [
 			'test',
 			'test.private.bottom',
 		] );
+		$client->setModuleStyles( [
+			'test.styles.deprecated',
+		] );
 		$client->setModuleScripts( [
 			'test.scripts',
 		] );
-
-		$expected = '';
-		$expected = self::expandVariables( $expected );
+		// phpcs:disable Generic.Files.LineLength
+		$expected = '<script>(window.RLQ=window.RLQ||[]).push(function(){'
+			. 'mw.log.warn("This page is using the deprecated ResourceLoader module \"test.styles.deprecated\".\nDeprecation message.");'
+			. '});</script>';
+		// phpcs:enable
 
 		$this->assertEquals( $expected, $client->getBodyHtml() );
 	}
@@ -318,6 +363,12 @@ class ResourceLoaderClientHtmlTest extends PHPUnit\Framework\TestCase {
 				'modules' => [ 'test.scripts.user' ],
 				'only' => ResourceLoaderModule::TYPE_SCRIPTS,
 				'output' => '<script>(window.RLQ=window.RLQ||[]).push(function(){mw.loader.load("/w/load.php?debug=false\u0026lang=nl\u0026modules=test.scripts.user\u0026only=scripts\u0026skin=fallback\u0026user=Example\u0026version=0a56zyi");});</script>',
+			],
+			[
+				'context' => [],
+				'modules' => [ 'test.user' ],
+				'only' => ResourceLoaderModule::TYPE_COMBINED,
+				'output' => '<script>(window.RLQ=window.RLQ||[]).push(function(){mw.loader.load("/w/load.php?debug=false\u0026lang=nl\u0026modules=test.user\u0026skin=fallback\u0026user=Example\u0026version=0a56zyi");});</script>',
 			],
 			[
 				'context' => [ 'debug' => true ],
@@ -398,7 +449,7 @@ class ResourceLoaderClientHtmlTest extends PHPUnit\Framework\TestCase {
 	public function testMakeLoad( array $extraQuery, array $modules, $type, $expected ) {
 		$context = self::makeContext( $extraQuery );
 		$context->getResourceLoader()->register( self::makeSampleModules() );
-		$actual = ResourceLoaderClientHtml::makeLoad( $context, $modules, $type, $extraQuery );
+		$actual = ResourceLoaderClientHtml::makeLoad( $context, $modules, $type, $extraQuery, false );
 		$expected = self::expandVariables( $expected );
 		$this->assertEquals( $expected, (string)$actual );
 	}

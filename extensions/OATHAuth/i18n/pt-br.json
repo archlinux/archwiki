@@ -23,7 +23,7 @@
 	"oathauth-disabledoath": "Desativar autenticação de dois fatores.",
 	"oathauth-prefs-label": "Autenticação de dois fatores:",
 	"oathauth-step1": "Passo 1: Baixe um programa de autenticação de dois fatores",
-	"oathauth-step1-test": "Baixe um programa para a autenticação de dois fatores. Pode ser um aplicativo para celular (como o Google Authenticator) ou para desktop",
+	"oathauth-step1-test": "Baixe um programa para a autenticação de dois fatores. Pode ser um aplicativo para celular (como o Google Authenticator) ou para desktop.",
 	"oathauth-step2": "Passo 2: Escaneie o código QR",
 	"oathauth-step2alt": "Ou introduza o segredo manualmente:",
 	"oathauth-step3": "Passo 3: Anote os códigos scratch",

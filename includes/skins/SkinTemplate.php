@@ -57,30 +57,6 @@ class SkinTemplate extends Skin {
 	public $userpageUrlDetails;
 
 	/**
-	 * Add specific styles for this skin
-	 *
-	 * @param OutputPage $out
-	 */
-	public function setupSkinUserCss( OutputPage $out ) {
-		$moduleStyles = [
-			'mediawiki.legacy.shared',
-			'mediawiki.legacy.commonPrint',
-			'mediawiki.sectionAnchor'
-		];
-		if ( $out->isSyndicated() ) {
-			$moduleStyles[] = 'mediawiki.feedlink';
-		}
-
-		// Deprecated since 1.26: Unconditional loading of mediawiki.ui.button
-		// on every page is deprecated. Express a dependency instead.
-		if ( strpos( $out->getHTML(), 'mw-ui-button' ) !== false ) {
-			$moduleStyles[] = 'mediawiki.ui.button';
-		}
-
-		$out->addModuleStyles( $moduleStyles );
-	}
-
-	/**
 	 * Create the template engine object; we feed it a bunch of data
 	 * and eventually it spits out some HTML. Should have interface
 	 * roughly equivalent to PHPTAL 0.7.
@@ -230,7 +206,7 @@ class SkinTemplate extends Skin {
 	/**
 	 * initialize various variables and generate the template
 	 *
-	 * @param OutputPage $out
+	 * @param OutputPage|null $out
 	 */
 	function outputPage( OutputPage $out = null ) {
 		Profiler::instance()->setTemplated( true );
@@ -292,7 +268,7 @@ class SkinTemplate extends Skin {
 	 * @return QuickTemplate The template to be executed by outputPage
 	 */
 	protected function prepareQuickTemplate() {
-		global $wgContLang, $wgScript, $wgStylePath, $wgMimeType, $wgJsMimeType,
+		global $wgScript, $wgStylePath, $wgMimeType, $wgJsMimeType,
 			$wgSitename, $wgLogo, $wgMaxCredits,
 			$wgShowCreditsIfMax, $wgArticlePath,
 			$wgScriptPath, $wgServer;
@@ -387,7 +363,11 @@ class SkinTemplate extends Skin {
 		// heading for the page title. Defaults to empty string.
 		$tpl->set( 'prebodyhtml', '' );
 
-		if ( $userLangCode !== $wgContLang->getHtmlCode() || $userLangDir !== $wgContLang->getDir() ) {
+		$contLang = MediaWikiServices::getInstance()->getContentLanguage();
+		if (
+			$userLangCode !== $contLang->getHtmlCode() ||
+			$userLangDir !== $contLang->getDir()
+		) {
 			$escUserlang = htmlspecialchars( $userLangCode );
 			$escUserdir = htmlspecialchars( $userLangDir );
 			// Attributes must be in double quotes because htmlspecialchars() doesn't
@@ -405,16 +385,20 @@ class SkinTemplate extends Skin {
 		$tpl->set( 'lastmod', false );
 		$tpl->set( 'credits', false );
 		$tpl->set( 'numberofwatchingusers', false );
-		if ( $out->isArticle() && $title->exists() ) {
-			if ( $this->isRevisionCurrent() ) {
-				if ( $wgMaxCredits != 0 ) {
-					$tpl->set( 'credits', Action::factory( 'credits', $this->getWikiPage(),
-						$this->getContext() )->getCredits( $wgMaxCredits, $wgShowCreditsIfMax ) );
-				} else {
-					$tpl->set( 'lastmod', $this->lastModified() );
+		if ( $title->exists() ) {
+			if ( $out->isArticle() ) {
+				if ( $this->isRevisionCurrent() ) {
+					if ( $wgMaxCredits != 0 ) {
+						$tpl->set( 'credits', Action::factory( 'credits', $this->getWikiPage(),
+							$this->getContext() )->getCredits( $wgMaxCredits, $wgShowCreditsIfMax ) );
+					} else {
+						$tpl->set( 'lastmod', $this->lastModified() );
+					}
 				}
 			}
-			$tpl->set( 'copyright', $this->getCopyright() );
+			if ( $out->showsCopyright() ) {
+				$tpl->set( 'copyright', $this->getCopyright() );
+			}
 		}
 
 		$tpl->set( 'copyrightico', $this->getCopyrightIcon() );
@@ -489,7 +473,7 @@ class SkinTemplate extends Skin {
 
 		$tpl->set( 'debug', '' );
 		$tpl->set( 'debughtml', $this->generateDebugHTML() );
-		$tpl->set( 'reporttime', wfReportTime() );
+		$tpl->set( 'reporttime', wfReportTime( $out->getCSPNonce() ) );
 
 		// Avoid PHP 7.1 warning of passing $this by reference
 		$skinTemplate = $this;
@@ -532,7 +516,7 @@ class SkinTemplate extends Skin {
 	 *
 	 * @since 1.31
 	 *
-	 * @param array $personalTools
+	 * @param array|null $personalTools
 	 * @param array $options
 	 * @return string
 	 */
@@ -679,7 +663,9 @@ class SkinTemplate extends Skin {
 			# so it doesn't contain the original alias-with-subpage.
 			$origTitle = Title::newFromText( $request->getText( 'title' ) );
 			if ( $origTitle instanceof Title && $origTitle->isSpecialPage() ) {
-				list( $spName, $spPar ) = SpecialPageFactory::resolveAlias( $origTitle->getText() );
+				list( $spName, $spPar ) =
+					MediaWikiServices::getInstance()->getSpecialPageFactory()->
+						resolveAlias( $origTitle->getText() );
 				$active = $spName == 'Contributions'
 					&& ( ( $spPar && $spPar == $this->username )
 						|| $request->getText( 'target' ) == $this->username );
@@ -807,9 +793,8 @@ class SkinTemplate extends Skin {
 		if ( $msg->exists() ) {
 			$text = $msg->text();
 		} else {
-			global $wgContLang;
-			$text = $wgContLang->getConverter()->convertNamespace(
-				MWNamespace::getSubject( $title->getNamespace() ) );
+			$text = MediaWikiServices::getInstance()->getContentLanguage()->getConverter()->
+				convertNamespace( MWNamespace::getSubject( $title->getNamespace() ) );
 		}
 
 		// Avoid PHP 7.1 warning of passing $this by reference
@@ -1074,13 +1059,13 @@ class SkinTemplate extends Skin {
 					}
 				} else {
 					// article doesn't exist or is deleted
-					if ( $user->isAllowed( 'deletedhistory' ) ) {
+					if ( $title->quickUserCan( 'deletedhistory', $user ) ) {
 						$n = $title->isDeleted();
 						if ( $n ) {
 							$undelTitle = SpecialPage::getTitleFor( 'Undelete', $title->getPrefixedDBkey() );
 							// If the user can't undelete but can view deleted
 							// history show them a "View .. deleted" tab instead.
-							$msgKey = $user->isAllowed( 'undelete' ) ? 'undelete' : 'viewdeleted';
+							$msgKey = $title->quickUserCan( 'undelete', $user ) ? 'undelete' : 'viewdeleted';
 							$content_navigation['actions']['undelete'] = [
 								'class' => $this->getTitle()->isSpecial( 'Undelete' ) ? 'selected' : false,
 								'text' => wfMessageFallback( "$skname-action-$msgKey", "{$msgKey}_short" )
@@ -1140,11 +1125,11 @@ class SkinTemplate extends Skin {
 
 			if ( $userCanRead && !$wgDisableLangConversion ) {
 				$pageLang = $title->getPageLanguage();
-				// Gets list of language variants
-				$variants = $pageLang->getVariants();
 				// Checks that language conversion is enabled and variants exist
 				// And if it is not in the special namespace
-				if ( count( $variants ) > 1 ) {
+				if ( $pageLang->hasVariants() ) {
+					// Gets list of language variants
+					$variants = $pageLang->getVariants();
 					// Gets preferred variant (note that user preference is
 					// only possible for wiki content language variant)
 					$preferred = $pageLang->getPreferredVariant();

@@ -468,6 +468,7 @@ $specialPageAliases = [
 	'PagesWithProp'             => [ 'PagesWithProp', 'Pageswithprop', 'PagesByProp', 'Pagesbyprop' ],
 	'PageData'                  => [ 'PageData' ],
 	'PageLanguage'              => [ 'PageLanguage' ],
+	'PasswordPolicies'          => [ 'PasswordPolicies' ],
 	'PasswordReset'             => [ 'PasswordReset' ],
 	'PermanentLink'             => [ 'PermanentLink', 'PermaLink' ],
 	'Preferences'               => [ 'Preferences' ],
@@ -529,23 +530,6 @@ $linkTrail = '/^([a-z]+)(.*)$/sD';
  * foo[[bar]]. UTF-8 characters may be used.
  */
 $linkPrefixCharset = 'a-zA-Z\\x{80}-\\x{10ffff}';
-
-/**
- * List of filenames for some ui images that can be overridden per language
- * basis if needed.
- */
-$imageFiles = [
-	'button-bold'     => 'en/button_bold.png',
-	'button-italic'   => 'en/button_italic.png',
-	'button-link'     => 'en/button_link.png',
-	'button-extlink'  => 'en/button_extlink.png',
-	'button-headline' => 'en/button_headline.png',
-	'button-image'    => 'en/button_image.png',
-	'button-media'    => 'en/button_media.png',
-	'button-nowiki'   => 'en/button_nowiki.png',
-	'button-sig'      => 'en/button_sig.png',
-	'button-hr'       => 'en/button_hr.png',
-];
 
 /**
  * A list of messages to preload for each request.

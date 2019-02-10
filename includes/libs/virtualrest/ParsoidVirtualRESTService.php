@@ -150,8 +150,10 @@ class ParsoidVirtualRESTService extends VirtualRESTService {
 	 * @param Closure $idGeneratorFunc
 	 * @return array
 	 * @throws Exception
+	 * @deprecated since 1.26, upgrade your client to issue v3 requests.
 	 */
 	public function onParsoid1Request( array $req, Closure $idGeneratorFunc ) {
+		wfDeprecated( __METHOD__, '1.26' );
 		$parts = explode( '/', $req['url'] );
 		list(
 			$targetWiki, // 'local'
@@ -179,7 +181,7 @@ class ParsoidVirtualRESTService extends VirtualRESTService {
 				unset( $req['query']['oldid'] );
 			}
 		} elseif ( $reqType === 'transform' ) {
-			$req['url'] .= 'transform/'. $parts[3] . '/to/' . $parts[5];
+			$req['url'] .= 'transform/' . $parts[3] . '/to/' . $parts[5];
 			// the title
 			if ( isset( $parts[6] ) ) {
 				$req['url'] .= '/' . $parts[6];

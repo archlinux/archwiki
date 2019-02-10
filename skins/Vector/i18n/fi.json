@@ -5,7 +5,8 @@
 			"Nedergard",
 			"Nike",
 			"Pxos",
-			"SuperPete"
+			"SuperPete",
+			"01miki10"
 		]
 	},
 	"vector-skin-desc": "Uudistettu versio MonoBookista raikkaalla ulkoasulla ja useilla käytettävyysparannuksilla",
@@ -22,5 +23,7 @@
 	"vector-view-history": "Näytä historia",
 	"vector-view-view": "Lue",
 	"vector-view-viewsource": "Näytä lähdekoodi",
+	"vector-jumptonavigation": "Siirry navigaatioon",
+	"vector-jumptosearch": "Siirry hakuun",
 	"vector-more-actions": "Muut"
 }

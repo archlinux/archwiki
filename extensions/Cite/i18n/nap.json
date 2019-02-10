@@ -1,12 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"C.R."
+			"C.R.",
+			"Ruthven"
 		]
 	},
 	"apihelp-query+references-description": "Tuorna na rappresentazione 'e date ch' 'e riferimiente ssuòccie a 'e paggene date.",
 	"apihelp-query+references-example-1": "Riferimiente suòccie a <kbd>Albert Einstein</kbd>.",
-	"cite-desc": "Azzecca 'e tag <nowiki><ref[ name=id]></nowiki> e <nowiki><references/></nowiki> p' 'e citaziune",
+	"cite-desc": "Azzecca 'e tag <code><nowiki><ref[ name=id]></nowiki></code> e <code><nowiki><references/></nowiki></code> p' 'e citaziune",
 	"cite_error": "Errore dint'a funzione Cite: $1",
 	"cite_error_ref_numeric_key": "Tag <code>&lt;ref&gt;</code> invalido;\n'o nomme nun ò essere surtanto n'intero. Ausate nu titolo descrittivo",
 	"cite_error_ref_no_key": "Ll'eticheta p'arapì <code>&lt;ref&gt;</code> nun è bbona, fosse furmata malamente o puro téne nu nomme ca nun è buono",
@@ -30,5 +31,5 @@
 	"cite_references_link_many_accessibility_label": "Zompa ncoppa nfin'a:",
 	"cite_section_preview_references": "Anteprimma 'e riferimente.",
 	"cite_warning": "Attenzione dint' 'e note: $1",
-	"cite_warning_sectionpreview_no_text": "'O tag <code>&lt;ref&gt;</code> c' 'o nomme <code>$1</code> nun se pò mmustà n'anteprimma, pecché è definito a fore d' 'a seziona 'e mò o nun definito 'e nisciuna maniera."
+	"cite_warning_sectionpreview_no_text": "'O tag <code>&lt;ref&gt;</code> c' 'o nomme <code>$1</code> nun se pò mmustrà n'anteprimma, pecché è definito a fore d' 'a seziona 'e mo o nun definito 'a nisciuna manera."
 }

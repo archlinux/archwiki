@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\MediaWikiServices;
 use Wikimedia\ScopedCallback;
 use Wikimedia\TestingAccessWrapper;
 
@@ -23,8 +24,7 @@ class CommentStoreTest extends MediaWikiLangTestCase {
 	 * @return CommentStore
 	 */
 	protected function makeStore( $stage ) {
-		global $wgContLang;
-		$store = new CommentStore( $wgContLang, $stage );
+		$store = new CommentStore( MediaWikiServices::getInstance()->getContentLanguage(), $stage );
 		return $store;
 	}
 
@@ -35,6 +35,7 @@ class CommentStoreTest extends MediaWikiLangTestCase {
 	 * @return CommentStore
 	 */
 	protected function makeStoreWithKey( $stage, $key ) {
+		$this->hideDeprecated( 'CommentStore::newKey' );
 		$store = CommentStore::newKey( $key );
 		TestingAccessWrapper::newFromObject( $store )->stage = $stage;
 		return $store;
@@ -114,15 +115,23 @@ class CommentStoreTest extends MediaWikiLangTestCase {
 			],
 			'Image, write-both' => [
 				MIGRATION_WRITE_BOTH, 'img_description',
-				[ 'img_description_old' => 'img_description', 'img_description_pk' => 'img_name' ],
+				[
+					'img_description_old' => 'img_description',
+					'img_description_id' => 'img_description_id'
+				],
 			],
 			'Image, write-new' => [
 				MIGRATION_WRITE_NEW, 'img_description',
-				[ 'img_description_old' => 'img_description', 'img_description_pk' => 'img_name' ],
+				[
+					'img_description_old' => 'img_description',
+					'img_description_id' => 'img_description_id'
+				],
 			],
 			'Image, new' => [
 				MIGRATION_NEW, 'img_description',
-				[ 'img_description_pk' => 'img_name' ],
+				[
+					'img_description_id' => 'img_description_id'
+				],
 			],
 		];
 	}
@@ -284,7 +293,6 @@ class CommentStoreTest extends MediaWikiLangTestCase {
 			'Image, write-both' => [
 				MIGRATION_WRITE_BOTH, 'img_description', [
 					'tables' => [
-						'temp_img_description' => 'image_comment_temp',
 						'comment_img_description' => 'comment',
 					],
 					'fields' => [
@@ -293,16 +301,15 @@ class CommentStoreTest extends MediaWikiLangTestCase {
 						'img_description_cid' => 'comment_img_description.comment_id',
 					],
 					'joins' => [
-						'temp_img_description' => [ 'LEFT JOIN', 'temp_img_description.imgcomment_name = img_name' ],
 						'comment_img_description' => [ 'LEFT JOIN',
-							'comment_img_description.comment_id = temp_img_description.imgcomment_description_id' ],
+							'comment_img_description.comment_id = img_description_id',
+						],
 					],
 				],
 			],
 			'Image, write-new' => [
 				MIGRATION_WRITE_NEW, 'img_description', [
 					'tables' => [
-						'temp_img_description' => 'image_comment_temp',
 						'comment_img_description' => 'comment',
 					],
 					'fields' => [
@@ -311,16 +318,15 @@ class CommentStoreTest extends MediaWikiLangTestCase {
 						'img_description_cid' => 'comment_img_description.comment_id',
 					],
 					'joins' => [
-						'temp_img_description' => [ 'LEFT JOIN', 'temp_img_description.imgcomment_name = img_name' ],
 						'comment_img_description' => [ 'LEFT JOIN',
-							'comment_img_description.comment_id = temp_img_description.imgcomment_description_id' ],
+							'comment_img_description.comment_id = img_description_id',
+						],
 					],
 				],
 			],
 			'Image, new' => [
 				MIGRATION_NEW, 'img_description', [
 					'tables' => [
-						'temp_img_description' => 'image_comment_temp',
 						'comment_img_description' => 'comment',
 					],
 					'fields' => [
@@ -329,9 +335,9 @@ class CommentStoreTest extends MediaWikiLangTestCase {
 						'img_description_cid' => 'comment_img_description.comment_id',
 					],
 					'joins' => [
-						'temp_img_description' => [ 'JOIN', 'temp_img_description.imgcomment_name = img_name' ],
 						'comment_img_description' => [ 'JOIN',
-							'comment_img_description.comment_id = temp_img_description.imgcomment_description_id' ],
+							'comment_img_description.comment_id = img_description_id',
+						],
 					],
 				],
 			],
@@ -367,13 +373,14 @@ class CommentStoreTest extends MediaWikiLangTestCase {
 		];
 
 		$stages = [
-			MIGRATION_OLD => [ MIGRATION_OLD, MIGRATION_WRITE_NEW ],
-			MIGRATION_WRITE_BOTH => [ MIGRATION_OLD, MIGRATION_NEW ],
-			MIGRATION_WRITE_NEW => [ MIGRATION_WRITE_BOTH, MIGRATION_NEW ],
-			MIGRATION_NEW => [ MIGRATION_WRITE_BOTH, MIGRATION_NEW ],
+			MIGRATION_OLD => [ MIGRATION_OLD, MIGRATION_WRITE_BOTH, MIGRATION_WRITE_NEW ],
+			MIGRATION_WRITE_BOTH => [ MIGRATION_OLD, MIGRATION_WRITE_BOTH, MIGRATION_WRITE_NEW,
+				MIGRATION_NEW ],
+			MIGRATION_WRITE_NEW => [ MIGRATION_WRITE_BOTH, MIGRATION_WRITE_NEW, MIGRATION_NEW ],
+			MIGRATION_NEW => [ MIGRATION_WRITE_BOTH, MIGRATION_WRITE_NEW, MIGRATION_NEW ],
 		];
 
-		foreach ( $stages as $writeStage => $readRange ) {
+		foreach ( $stages as $writeStage => $possibleReadStages ) {
 			if ( $key === 'ipb_reason' ) {
 				$extraFields['ipb_address'] = __CLASS__ . "#$writeStage";
 			}
@@ -406,7 +413,7 @@ class CommentStoreTest extends MediaWikiLangTestCase {
 				$callback( $id );
 			}
 
-			for ( $readStage = $readRange[0]; $readStage <= $readRange[1]; $readStage++ ) {
+			foreach ( $possibleReadStages as $readStage ) {
 				$rstore = $this->makeStore( $readStage );
 
 				$fieldRow = $this->db->selectRow(
@@ -460,13 +467,14 @@ class CommentStoreTest extends MediaWikiLangTestCase {
 		];
 
 		$stages = [
-			MIGRATION_OLD => [ MIGRATION_OLD, MIGRATION_WRITE_NEW ],
-			MIGRATION_WRITE_BOTH => [ MIGRATION_OLD, MIGRATION_NEW ],
-			MIGRATION_WRITE_NEW => [ MIGRATION_WRITE_BOTH, MIGRATION_NEW ],
-			MIGRATION_NEW => [ MIGRATION_WRITE_BOTH, MIGRATION_NEW ],
+			MIGRATION_OLD => [ MIGRATION_OLD, MIGRATION_WRITE_BOTH, MIGRATION_WRITE_NEW ],
+			MIGRATION_WRITE_BOTH => [ MIGRATION_OLD, MIGRATION_WRITE_BOTH, MIGRATION_WRITE_NEW,
+				MIGRATION_NEW ],
+			MIGRATION_WRITE_NEW => [ MIGRATION_WRITE_BOTH, MIGRATION_WRITE_NEW, MIGRATION_NEW ],
+			MIGRATION_NEW => [ MIGRATION_WRITE_BOTH, MIGRATION_WRITE_NEW, MIGRATION_NEW ],
 		];
 
-		foreach ( $stages as $writeStage => $readRange ) {
+		foreach ( $stages as $writeStage => $possibleReadStages ) {
 			if ( $key === 'ipb_reason' ) {
 				$extraFields['ipb_address'] = __CLASS__ . "#$writeStage";
 			}
@@ -499,7 +507,7 @@ class CommentStoreTest extends MediaWikiLangTestCase {
 				$callback( $id );
 			}
 
-			for ( $readStage = $readRange[0]; $readStage <= $readRange[1]; $readStage++ ) {
+			foreach ( $possibleReadStages as $readStage ) {
 				$rstore = $this->makeStoreWithKey( $readStage, $key );
 
 				$fieldRow = $this->db->selectRow(
@@ -733,11 +741,14 @@ class CommentStoreTest extends MediaWikiLangTestCase {
 	 * @param int $stage
 	 */
 	public function testInsertWithTempTableDeprecated( $stage ) {
-		$wrap = TestingAccessWrapper::newFromClass( CommentStore::class );
-		$wrap->formerTempTables += [ 'ipb_reason' => '1.30' ];
+		$store = $this->makeStore( $stage );
+		$wrap = TestingAccessWrapper::newFromObject( $store );
+		$wrap->tempTables += [ 'ipb_reason' => [
+			'stage' => MIGRATION_NEW,
+			'deprecatedIn' => '1.30',
+		] ];
 
 		$this->hideDeprecated( 'CommentStore::insertWithTempTable for ipb_reason' );
-		$store = $this->makeStore( $stage );
 		list( $fields, $callback ) = $store->insertWithTempTable( $this->db, 'ipb_reason', 'foo' );
 		$this->assertTrue( is_callable( $callback ) );
 	}
@@ -772,6 +783,7 @@ class CommentStoreTest extends MediaWikiLangTestCase {
 	}
 
 	public function testNewKey() {
+		$this->hideDeprecated( 'CommentStore::newKey' );
 		$this->assertInstanceOf( CommentStore::class, CommentStore::newKey( 'dummy' ) );
 	}
 

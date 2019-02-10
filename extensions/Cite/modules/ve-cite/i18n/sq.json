@@ -14,12 +14,10 @@
 			"Kosovastar"
 		]
 	},
-	"visualeditor-cite-tool-definition.json": "pavlerë",
 	"visualeditor-cite-tool-name-book": "Libra",
 	"visualeditor-cite-tool-name-journal": "Gazeta",
 	"visualeditor-cite-tool-name-news": "Lajme",
 	"visualeditor-cite-tool-name-web": "Faqja Web",
-	"cite-tool-definition.json": "pavlerë",
 	"cite-ve-dialog-reference-editing-reused": "Kjo referencë është përdorur $1 {{PLURAL:$1|herë}} në këtë faqe.",
 	"cite-ve-dialog-reference-options-group-label": "Përdor këtë grup",
 	"cite-ve-dialog-reference-options-group-placeholder": "Referenca të përgjithshme",

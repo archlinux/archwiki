@@ -1,7 +1,5 @@
 <?php
 
-require_once __DIR__ . '/../../ReCaptcha/HTMLSubmittedValueField.php';
-
 /**
  * @covers HTMLSubmittedValueField
  */
@@ -17,7 +15,8 @@ class HTMLSubmittedValueFieldTest extends PHPUnit\Framework\TestCase {
 			'foo' => '123',
 			'bar' => '456',
 		], true );
-		$mockClosure = $this->getMockBuilder( 'object' )->setMethods( [ '__invoke' ] )->getMock();
+		$mockClosure = $this->getMockBuilder( stdClass::class )
+			->setMethods( [ '__invoke' ] )->getMock();
 		$mockClosure->expects( $this->once() )->method( '__invoke' )
 			->with( [ 'foo' => '456' ] )->willReturn( true );
 

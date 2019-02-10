@@ -26,6 +26,10 @@ class NameTableStoreTest extends MediaWikiTestCase {
 		parent::setUp();
 	}
 
+	protected function addCoreDBData() {
+		// The default implementation causes the slot_roles to already have content. Skip that.
+	}
+
 	private function populateTable( $values ) {
 		$insertValues = [];
 		foreach ( $values as $name ) {
@@ -83,14 +87,17 @@ class NameTableStoreTest extends MediaWikiTestCase {
 		BagOStuff $cacheBag,
 		$insertCalls,
 		$selectCalls,
-		$normalizationCallback = null
+		$normalizationCallback = null,
+		$insertCallback = null
 	) {
 		return new NameTableStore(
 			$this->getMockLoadBalancer( $this->getCallCheckingDb( $insertCalls, $selectCalls ) ),
 			$this->getHashWANObjectCache( $cacheBag ),
 			new NullLogger(),
 			'slot_roles', 'role_id', 'role_name',
-			$normalizationCallback
+			$normalizationCallback,
+			false,
+			$insertCallback
 		);
 	}
 
@@ -136,6 +143,9 @@ class NameTableStoreTest extends MediaWikiTestCase {
 		$name,
 		$expectedId
 	) {
+		// Make sure the table is empty!
+		$this->truncateTable( 'slot_roles' );
+
 		$this->populateTable( $existingValues );
 		$store = $this->getNameTableSqlStore( $cacheBag, (int)$needsInsert, $selectCalls );
 
@@ -263,6 +273,21 @@ class NameTableStoreTest extends MediaWikiTestCase {
 		$this->assertSame( $expected, TestingAccessWrapper::newFromObject( $store )->tableCache );
 	}
 
+	public function testReloadMap() {
+		$this->populateTable( [ 'foo' ] );
+		$store = $this->getNameTableSqlStore( new HashBagOStuff(), 0, 2 );
+
+		// force load
+		$this->assertCount( 1, $store->getMap() );
+
+		// add more stuff to the table, so the cache gets out of sync
+		$this->populateTable( [ 'bar' ] );
+
+		$expected = [ 1 => 'foo', 2 => 'bar' ];
+		$this->assertSame( $expected, $store->reloadMap() );
+		$this->assertSame( $expected, $store->getMap() );
+	}
+
 	public function testCacheRaceCondition() {
 		$wanHashBag = new HashBagOStuff();
 		$store1 = $this->getNameTableSqlStore( $wanHashBag, 1, 1 );
@@ -293,6 +318,23 @@ class NameTableStoreTest extends MediaWikiTestCase {
 		// If a store with old cached data tries to acquire these we will get the same ids.
 		$this->assertSame( $fooId, $store3->acquireId( 'foo' ) );
 		$this->assertSame( $barId, $store3->acquireId( 'bar' ) );
+	}
+
+	public function testGetAndAcquireIdInsertCallback() {
+		// FIXME: fails under postgres
+		$this->markTestSkippedIfDbType( 'postgres' );
+
+		$store = $this->getNameTableSqlStore(
+			new EmptyBagOStuff(),
+			1,
+			1,
+			null,
+			function ( $insertFields ) {
+				$insertFields['role_id'] = 7251;
+				return $insertFields;
+			}
+		);
+		$this->assertSame( 7251, $store->acquireId( 'A' ) );
 	}
 
 }

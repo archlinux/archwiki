@@ -12,8 +12,8 @@
 		]
 	},
 	"renameuser": "Benutzer umbenennen",
-	"renameuser-linkoncontribs": "Benutzer umbenennen",
-	"renameuser-linkoncontribs-text": "Diesen Benutzer umbenennen",
+	"renameuser-linkoncontribs": "{{GENDER:$1|Benutzer|Benutzerin}} umbenennen",
+	"renameuser-linkoncontribs-text": "{{GENDER:$1|Diesen Benutzer|Diese Benutzerin}} umbenennen",
 	"renameuser-desc": "Eine [[Special:RenameUser|Spezialseite]] zum Ändern eines Benutzernamens",
 	"renameuserold": "Bisheriger Benutzername:",
 	"renameusernew": "Neuer Benutzername:",

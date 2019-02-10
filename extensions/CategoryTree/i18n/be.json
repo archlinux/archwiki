@@ -4,7 +4,8 @@
 			"Тест",
 			"Чаховіч Уладзіслаў",
 			"Mikalai Udodau",
-			"Mechanizatar"
+			"Mechanizatar",
+			"Artsiom91"
 		]
 	},
 	"categorytree": "Дрэва катэгорый",
@@ -36,7 +37,7 @@
 	"categorytree-error": "Памылка загрузкі даных.",
 	"categorytree-retry": "Калі ласка, пачакайце і паспрабуйце яшчэ раз.",
 	"apihelp-categorytree-description": "Унутраны модуль пашырэння CategoryTree.",
-	"apihelp-categorytree-param-category": "Назва ў прасторы імёнаў катэгорыяў. Прэфікс, калі будзе пададзены, будзе ігнаравацца.",
-	"apihelp-categorytree-param-options": "Налады для канструктару CategoryTree як JSON-аб’екту. Параметр глыбіні (<var>depth</var>) па змоўчанні роўны <kbd>1</kbd>.",
+	"apihelp-categorytree-param-category": "Назва ў прасторы назваў катэгорый. Прэфікс, калі будзе пададзены, будзе ігнаравацца.",
+	"apihelp-categorytree-param-options": "Настройкі для канструктара CategoryTree як JSON-аб’екта. Параметр глыбіні (<var>depth</var>) па змоўчванні роўны <kbd>1</kbd>.",
 	"apierror-categorytree-invalidjson": "Опцыі павінны быць дапушчальнымі JSON-аб’ектамі."
 }

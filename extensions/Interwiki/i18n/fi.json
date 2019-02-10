@@ -63,6 +63,7 @@
 	"interwiki-global-links": "Wikienlaajuiset wikienväliset etuliitteet",
 	"interwiki-global-description": "Nämä etuliitteet on peritty wikienlaajuisesta määrityksestä ja niitä voi muokata vain lähdewikistä käsin.",
 	"interwiki-local-links": "Paikalliset wikienväliset etuliitteet",
+	"interwiki-local-description": "Nämä etuliitteet ovat olemassa paikallisesti. Kaikki päällekkäisyydet järjestelmänlaajuisten asetusten kanssa syrjäyttävät järjestelmänlaajuiset asetukset.",
 	"interwiki-links": "Wikienväliset etuliitteet",
 	"interwiki-language-links": "Kieltenväliset etuliitteet",
 	"interwiki-language-description": "Nämä etuliitteet vastaavat määritettyjä kielitunnuksia, ja niitä käytetään luomaan luettelo \"{{int:otherlanguages}}\" lisättynä sivulle."

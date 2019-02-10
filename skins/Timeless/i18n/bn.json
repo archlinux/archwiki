@@ -3,11 +3,11 @@
 		"authors": [
 			"Bodhisattwa",
 			"আজিজ",
-			"Aftabuzzaman"
+			"Aftabuzzaman",
+			"আফতাবুজ্জামান"
 		]
 	},
 	"skinname-timeless": "টাইমলেস",
-	"timeless-search-placeholder": "{{NUMBEROFARTICLES}}টি পাতায় অনুসন্ধান করুন",
 	"timeless-loggedin": "আপনার অ্যাকাউন্ট",
 	"timeless-anonymous": "নামহীন",
 	"timeless-loggedinas": "'''$1''' হিসাবে প্রবেশ",

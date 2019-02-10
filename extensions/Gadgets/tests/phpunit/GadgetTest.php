@@ -6,6 +6,21 @@ use Wikimedia\TestingAccessWrapper;
  * @group Gadgets
  */
 class GadgetTest extends MediaWikiTestCase {
+	/**
+	 * @var User
+	 */
+	protected $user;
+
+	public function setUp() {
+		global $wgGroupPermissions;
+
+		parent::setUp();
+
+		$wgGroupPermissions['unittesters'] = [
+			'test' => true,
+		];
+		$this->user = $this->getTestUser( [ 'unittesters' ] )->getUser();
+	}
 
 	public function tearDown() {
 		GadgetRepo::setSingleton();
@@ -42,9 +57,7 @@ class GadgetTest extends MediaWikiTestCase {
 
 	/**
 	 * @covers MediaWikiGadgetsDefinitionRepo::newFromDefinition
-	 * @covers Gadget::__construct
-	 * @covers Gadget::getName
-	 * @covers Gadget::getModuleName
+	 * @covers Gadget
 	 */
 	public function testSimpleCases() {
 		$g = $this->create( '* foo bar| foo.css|foo.js|foo.bar' );
@@ -69,6 +82,33 @@ class GadgetTest extends MediaWikiTestCase {
 		$this->assertEquals( 'foo', $g->getName() );
 		$this->assertTrue( $g->supportsResourceLoader() );
 		$this->assertEquals( 0, count( $g->getLegacyScripts() ) );
+	}
+
+	/**
+	 * @covers MediaWikiGadgetsDefinitionRepo::newFromDefinition
+	 * @covers Gadget::isAllowed
+	 */
+	public function testisAllowed() {
+		$gUnset = $this->create( '*foo[ResourceLoader]|foo.js' );
+		$gAllowed = $this->create( '*bar[ResourceLoader|rights=test]|bar.js' );
+		$gNotAllowed = $this->create( '*baz[ResourceLoader|rights=nope]|baz.js' );
+		$this->assertTrue( $gUnset->isAllowed( $this->user ) );
+		$this->assertTrue( $gAllowed->isAllowed( $this->user ) );
+		$this->assertFalse( $gNotAllowed->isAllowed( $this->user ) );
+	}
+
+	/**
+	 * @covers MediaWikiGadgetsDefinitionRepo::newFromDefinition
+	 * @covers Gadget::isSkinSupported
+	 */
+	public function testSkinsTag() {
+		$gUnset = $this->create( '*foo[ResourceLoader]|foo.js' );
+		$gSkinSupported = $this->create( '*bar[ResourceLoader|skins=fallback]|bar.js' );
+		$gSkinNotSupported = $this->create( '*baz[ResourceLoader|skins=bar]|baz.js' );
+		$skin = new SkinFallback();
+		$this->assertTrue( $gUnset->isSkinSupported( $skin ) );
+		$this->assertTrue( $gSkinSupported->isSkinSupported( $skin ) );
+		$this->assertFalse( $gSkinNotSupported->isSkinSupported( $skin ) );
 	}
 
 	/**
@@ -175,8 +215,10 @@ class GadgetTest extends MediaWikiTestCase {
 	}
 
 	/**
-	 * @covers MediaWikiGadgetsDefinitionRepo::fetchStructuredList
+	 * @covers Gadget
 	 * @covers GadgetHooks::getPreferences
+	 * @covers GadgetRepo
+	 * @covers MediaWikiGadgetsDefinitionRepo
 	 */
 	public function testPreferences() {
 		$prefs = [];
@@ -190,11 +232,11 @@ class GadgetTest extends MediaWikiTestCase {
 ==remove-section==
 * baz [rights=embezzle] |baz.js
 ==keep-section2==
-* quux [rights=read] | quux.js' );
+* quux [rights=test] | quux.js' );
 		$this->assertGreaterThanOrEqual( 2, count( $gadgets ), "Gadget list parsed" );
 
 		$repo->definitionCache = $gadgets;
-		$this->assertTrue( GadgetHooks::getPreferences( new User, $prefs ),
+		$this->assertTrue( GadgetHooks::getPreferences( $this->user, $prefs ),
 			'GetPrefences hook should return true' );
 
 		$options = $prefs['gadgets']['options'];

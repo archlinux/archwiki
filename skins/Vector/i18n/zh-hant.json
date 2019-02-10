@@ -5,7 +5,8 @@
 			"Justincheng12345",
 			"Liuxinyu970226",
 			"Mark85296341",
-			"LNDDYL"
+			"LNDDYL",
+			"Kly"
 		]
 	},
 	"skinname-vector": "Vector",
@@ -23,5 +24,7 @@
 	"vector-view-history": "檢視歷史",
 	"vector-view-view": "閱讀",
 	"vector-view-viewsource": "檢視原始碼",
+	"vector-jumptonavigation": "跳至導覽",
+	"vector-jumptosearch": "跳至搜尋",
 	"vector-more-actions": "更多"
 }

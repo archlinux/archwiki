@@ -8,7 +8,7 @@
 			"Pere prlpz"
 		]
 	},
-	"cite-desc": "Afegeix les etiquetes <nowiki><ref[ name=id]></nowiki> i <nowiki><references/></nowiki>, per a cites",
+	"cite-desc": "Afegeix les etiquetes <code><nowiki><ref[ name=id]></nowiki></code> i <code><nowiki><references/></nowiki></code>, per a cites",
 	"cite_error": "Error de citació: $1",
 	"cite_error_ref_numeric_key": "Etiqueta <code>&lt;ref&gt;</code> no vàlida;\nel nom no pot ser un nombre. Empreu una paraula o un títol descriptiu",
 	"cite_error_ref_no_key": "Etiqueta <code>&lt;ref&gt;</code> no vàlida;\nles refs sense contingut han de tenir nom",

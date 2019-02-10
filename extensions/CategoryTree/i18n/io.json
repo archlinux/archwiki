@@ -18,6 +18,7 @@
 	"categorytree-num-categories": "$1 C",
 	"categorytree-num-pages": "$1 P",
 	"categorytree-num-files": "$1 P",
+	"categorytree-num-empty": "vakua",
 	"categorytree-load": "kargar",
 	"categorytree-nothing-found": "nulo trovita",
 	"categorytree-no-subcategories": "nula subkategorii",

@@ -113,4 +113,84 @@ class CaptchaTest extends MediaWikiTestCase {
 			[ 'edit', false ],
 		];
 	}
+
+	/**
+	 * @dataProvider provideCanSkipCaptchaUserright
+	 */
+	public function testCanSkipCaptchaUserright( $userIsAllowed, $expected ) {
+		$testObject = new SimpleCaptcha();
+		$user = $this->getMock( User::class );
+		$user->method( 'isAllowed' )->willReturn( $userIsAllowed );
+
+		$actual = $testObject->canSkipCaptcha( $user, RequestContext::getMain()->getConfig() );
+
+		$this->assertEquals( $expected, $actual );
+	}
+
+	public function provideCanSkipCaptchaUserright() {
+		return [
+			[ true, true ],
+			[ false, false ]
+		];
+	}
+
+	/**
+	 * @param $allowUserConfirmEmail
+	 * @param $userIsMailConfirmed
+	 * @param $expected
+	 * @throws ConfigException
+	 * @dataProvider provideCanSkipCaptchaMailconfirmed
+	 */
+	public function testCanSkipCaptchaMailconfirmed( $allowUserConfirmEmail,
+		$userIsMailConfirmed, $expected ) {
+		$testObject = new SimpleCaptcha();
+		$user = $this->getMock( User::class );
+		$user->method( 'isEmailConfirmed' )->willReturn( $userIsMailConfirmed );
+		$config = $this->getMock( Config::class );
+		$config->method( 'get' )->willReturn( $allowUserConfirmEmail );
+
+		$actual = $testObject->canSkipCaptcha( $user, $config );
+
+		$this->assertEquals( $expected, $actual );
+	}
+
+	public function provideCanSkipCaptchaMailconfirmed() {
+		return [
+			[ false, false, false ],
+			[ false, true, false ],
+			[ true, false, false ],
+			[ true, true, true ],
+		];
+	}
+
+	/**
+	 * @param $requestIP
+	 * @param $IPWhitelist
+	 * @param $expected
+	 * @throws ConfigException
+	 * @dataProvider provideCanSkipCaptchaIPWhitelisted
+	 */
+	public function testCanSkipCaptchaIPWhitelisted( $requestIP, $IPWhitelist, $expected ) {
+		$testObject = new SimpleCaptcha();
+		$config = $this->getMock( Config::class );
+		$request = $this->getMock( WebRequest::class );
+		$request->method( 'getIP' )->willReturn( $requestIP );
+
+		$this->setMwGlobals( [
+			'wgRequest' => $request,
+			'wgCaptchaWhitelistIP' => $IPWhitelist
+		] );
+
+		$actual = $testObject->canSkipCaptcha( RequestContext::getMain()->getUser(), $config );
+
+		$this->assertEquals( $expected, $actual );
+	}
+
+	public function provideCanSkipCaptchaIPWhitelisted() {
+		return ( [
+			[ '127.0.0.1', [ '127.0.0.1', '127.0.0.2' ], true ],
+			[ '127.0.0.1', [], false ]
+		]
+		);
+	}
 }

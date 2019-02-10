@@ -48,11 +48,17 @@ class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
 	 */
 	private function purgeDefinitionCache() {
 		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
-		$cache->touchCheckKey( $this->getCheckKey() );
+		$cache->touchCheckKey( $this->getDefinitionCacheKey() );
 	}
 
-	private function getCheckKey() {
-		return wfMemcKey( 'gadgets-definition', Gadget::GADGET_CLASS_VERSION, self::CACHE_VERSION );
+	private function getDefinitionCacheKey() {
+		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
+
+		return $cache->makeKey(
+			'gadgets-definition',
+			Gadget::GADGET_CLASS_VERSION,
+			self::CACHE_VERSION
+		);
 	}
 
 	/**
@@ -70,7 +76,7 @@ class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
 		$t1Cache = ObjectCache::getLocalServerInstance( 'hash' );
 		$wanCache = MediaWikiServices::getInstance()->getMainWANObjectCache();
 
-		$key = $this->getCheckKey();
+		$key = $this->getDefinitionCacheKey();
 
 		// (a) Check the tier 1 cache
 		$value = $t1Cache->get( $key );
@@ -120,7 +126,7 @@ class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
 	/**
 	 * Fetch list of gadgets and returns it as associative array of sections with gadgets
 	 * e.g. [ $name => $gadget1, etc. ]
-	 * @param string $forceNewText Injected text of MediaWiki:gadgets-definition [optional]
+	 * @param string|null $forceNewText Injected text of MediaWiki:gadgets-definition [optional]
 	 * @return array|bool
 	 */
 	public function fetchStructuredList( $forceNewText = null ) {

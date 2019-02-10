@@ -134,7 +134,14 @@ class ImageListPager extends TablePager {
 		$conds = [];
 
 		if ( !is_null( $this->mUserName ) ) {
-			$conds[$prefix . '_user_text'] = $this->mUserName;
+			// getQueryInfoReal() should have handled the tables and joins.
+			$dbr = wfGetDB( DB_REPLICA );
+			$actorWhere = ActorMigration::newMigration()->getWhere(
+				$dbr,
+				$prefix . '_user',
+				User::newFromName( $this->mUserName, false )
+			);
+			$conds[] = $actorWhere['conds'];
 		}
 
 		if ( $this->mSearch !== '' ) {
@@ -159,6 +166,9 @@ class ImageListPager extends TablePager {
 	}
 
 	/**
+	 * The array keys (but not the array values) are used in sql. Phan
+	 * gets confused by this, so mark this method as being ok for sql in general.
+	 * @return-taint onlysafefor_sql
 	 * @return array
 	 */
 	function getFieldNames() {
@@ -446,7 +456,7 @@ class ImageListPager extends TablePager {
 					if ( $thumb ) {
 						return $thumb->toHtml( [ 'desc-link' => true ] );
 					} else {
-						return wfMessage( 'thumbnail_error', '' )->escaped();
+						return $this->msg( 'thumbnail_error', '' )->escaped();
 					}
 				} else {
 					return htmlspecialchars( $value );
@@ -519,8 +529,8 @@ class ImageListPager extends TablePager {
 	}
 
 	function getForm() {
-		$fields = [];
-		$fields['limit'] = [
+		$formDescriptor = [];
+		$formDescriptor['limit'] = [
 			'type' => 'select',
 			'name' => 'limit',
 			'label-message' => 'table_pager_limit_label',
@@ -529,7 +539,7 @@ class ImageListPager extends TablePager {
 		];
 
 		if ( !$this->getConfig()->get( 'MiserMode' ) ) {
-			$fields['ilsearch'] = [
+			$formDescriptor['ilsearch'] = [
 				'type' => 'text',
 				'name' => 'ilsearch',
 				'id' => 'mw-ilsearch',
@@ -540,19 +550,17 @@ class ImageListPager extends TablePager {
 			];
 		}
 
-		$this->getOutput()->addModules( 'mediawiki.userSuggest' );
-		$fields['user'] = [
-			'type' => 'text',
+		$formDescriptor['user'] = [
+			'type' => 'user',
 			'name' => 'user',
 			'id' => 'mw-listfiles-user',
 			'label-message' => 'username',
 			'default' => $this->mUserName,
 			'size' => '40',
 			'maxlength' => '255',
-			'cssclass' => 'mw-autocomplete-user', // used by mediawiki.userSuggest
 		];
 
-		$fields['ilshowall'] = [
+		$formDescriptor['ilshowall'] = [
 			'type' => 'check',
 			'name' => 'ilshowall',
 			'id' => 'mw-listfiles-show-all',
@@ -567,17 +575,16 @@ class ImageListPager extends TablePager {
 		unset( $query['ilshowall'] );
 		unset( $query['user'] );
 
-		$form = new HTMLForm( $fields, $this->getContext() );
-
-		$form->setMethod( 'get' );
-		$form->setTitle( $this->getTitle() );
-		$form->setId( 'mw-listfiles-form' );
-		$form->setWrapperLegendMsg( 'listfiles' );
-		$form->setSubmitTextMsg( 'table_pager_limit_submit' );
-		$form->addHiddenFields( $query );
-
-		$form->prepareForm();
-		$form->displayForm( '' );
+		$htmlForm = HTMLForm::factory( 'ooui', $formDescriptor, $this->getContext() );
+		$htmlForm
+			->setMethod( 'get' )
+			->setId( 'mw-listfiles-form' )
+			->setTitle( $this->getTitle() )
+			->setSubmitTextMsg( 'table_pager_limit_submit' )
+			->setWrapperLegendMsg( 'listfiles' )
+			->addHiddenFields( $query )
+			->prepareForm()
+			->displayForm( '' );
 	}
 
 	protected function getTableClass() {

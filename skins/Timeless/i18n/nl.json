@@ -2,11 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Sjoerddebruin",
-			"Mainframe98"
+			"Mainframe98",
+			"Kippenvlees1"
 		]
 	},
 	"timeless-desc": "Een tijdloze vormgeving, ontworpen naar het Winter-prototype door Brandon Harris en andere stijlen van de Wikimedia Foundation.",
-	"timeless-search-placeholder": "Doorzoek ongeveer {{NUMBEROFARTICLES}} pagina's",
 	"timeless-loggedin": "Uw account",
 	"timeless-anonymous": "Anonieme gebruiker",
 	"timeless-loggedinas": "Aangemeld als '''$1'''",

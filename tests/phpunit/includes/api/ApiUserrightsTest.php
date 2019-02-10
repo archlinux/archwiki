@@ -8,6 +8,15 @@
  * @covers ApiUserrights
  */
 class ApiUserrightsTest extends ApiTestCase {
+
+	protected function setUp() {
+		parent::setUp();
+		$this->tablesUsed = array_merge(
+			$this->tablesUsed,
+			[ 'change_tag', 'change_tag_def', 'logging' ]
+		);
+	}
+
 	/**
 	 * Unsets $wgGroupPermissions['bureaucrat']['userrights'], and sets
 	 * $wgAddGroups['bureaucrat'] and $wgRemoveGroups['bureaucrat'] to the
@@ -17,17 +26,13 @@ class ApiUserrightsTest extends ApiTestCase {
 	 * @param array|bool $remove Groups bureaucrats should be allowed to remove, true for all
 	 */
 	protected function setPermissions( $add = [], $remove = [] ) {
-		global $wgAddGroups, $wgRemoveGroups;
-
 		$this->setGroupPermissions( 'bureaucrat', 'userrights', false );
 
 		if ( $add ) {
-			$this->stashMwGlobals( 'wgAddGroups' );
-			$wgAddGroups['bureaucrat'] = $add;
+			$this->mergeMwGlobalArrayValue( 'wgAddGroups', [ 'bureaucrat' => $add ] );
 		}
 		if ( $remove ) {
-			$this->stashMwGlobals( 'wgRemoveGroups' );
-			$wgRemoveGroups['bureaucrat'] = $remove;
+			$this->mergeMwGlobalArrayValue( 'wgRemoveGroups', [ 'bureaucrat' => $remove ] );
 		}
 	}
 
@@ -183,6 +188,7 @@ class ApiUserrightsTest extends ApiTestCase {
 	}
 
 	public function testWithTag() {
+		$this->setMwGlobals( 'wgChangeTagsSchemaMigrationStage', MIGRATION_WRITE_BOTH );
 		ChangeTags::defineTag( 'custom tag' );
 
 		$user = $this->getMutableTestUser()->getUser();
@@ -205,13 +211,35 @@ class ApiUserrightsTest extends ApiTestCase {
 		);
 	}
 
-	public function testWithoutTagPermission() {
-		global $wgGroupPermissions;
-
+	public function testWithTagNewBackend() {
+		$this->setMwGlobals( 'wgChangeTagsSchemaMigrationStage', MIGRATION_NEW );
 		ChangeTags::defineTag( 'custom tag' );
 
-		$this->stashMwGlobals( 'wgGroupPermissions' );
-		$wgGroupPermissions['user']['applychangetags'] = false;
+		$user = $this->getMutableTestUser()->getUser();
+
+		$this->doSuccessfulRightsChange( 'sysop', [ 'tags' => 'custom tag' ], $user );
+
+		$dbr = wfGetDB( DB_REPLICA );
+		$this->assertSame(
+			'custom tag',
+			$dbr->selectField(
+				[ 'change_tag', 'logging', 'change_tag_def' ],
+				'ctd_name',
+				[
+					'ct_log_id = log_id',
+					'log_namespace' => NS_USER,
+					'log_title' => strtr( $user->getName(), ' ', '_' )
+				],
+				__METHOD__,
+				[ 'change_tag_def' => [ 'INNER JOIN', 'ctd_id = ct_tag_id' ] ]
+			)
+		);
+	}
+
+	public function testWithoutTagPermission() {
+		ChangeTags::defineTag( 'custom tag' );
+
+		$this->setGroupPermissions( 'user', 'applychangetags', false );
 
 		$this->doFailedRightsChange(
 			'You do not have permission to apply change tags along with your changes.',

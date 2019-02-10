@@ -35,12 +35,35 @@ class MWExceptionHandler {
 	 * @var string $reservedMemory
 	 */
 	protected static $reservedMemory;
+
 	/**
+	 * Error types that, if unhandled, are fatal to the request.
+	 *
+	 * On PHP 7, these error types may be thrown as Error objects, which
+	 * implement Throwable (but not Exception).
+	 *
+	 * On HHVM, these invoke the set_error_handler callback, similar to how
+	 * (non-fatal) warnings and notices are reported, except that after this
+	 * handler runs for fatal error tpyes, script execution stops!
+	 *
+	 * The user will be shown an HTTP 500 Internal Server Error.
+	 * As such, these should be sent to MediaWiki's "fatal" or "exception"
+	 * channel. Normally, the error handler logs them to the "error" channel.
+	 *
 	 * @var array $fatalErrorTypes
 	 */
 	protected static $fatalErrorTypes = [
-		E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR,
-		/* HHVM's FATAL_ERROR level */ 16777217,
+		E_ERROR,
+		E_PARSE,
+		E_CORE_ERROR,
+		E_COMPILE_ERROR,
+		E_USER_ERROR,
+
+		// E.g. "Catchable fatal error: Argument X must be Y, null given"
+		E_RECOVERABLE_ERROR,
+
+		// HHVM's FATAL_ERROR constant
+		16777217,
 	];
 	/**
 	 * @var bool $handledFatalCallback
@@ -161,8 +184,8 @@ class MWExceptionHandler {
 	 *
 	 * @param int $level Error level raised
 	 * @param string $message
-	 * @param string $file
-	 * @param int $line
+	 * @param string|null $file
+	 * @param int|null $line
 	 * @return bool
 	 *
 	 * @see logError()
@@ -173,38 +196,53 @@ class MWExceptionHandler {
 		global $wgPropagateErrors;
 
 		if ( in_array( $level, self::$fatalErrorTypes ) ) {
-			return call_user_func_array(
-				'MWExceptionHandler::handleFatalError', func_get_args()
-			);
+			return self::handleFatalError( ...func_get_args() );
 		}
 
-		// Map error constant to error name (reverse-engineer PHP error
-		// reporting)
+		// Map PHP error constant to a PSR-3 severity level.
+		// Avoid use of "DEBUG" or "INFO" levels, unless the
+		// error should evade error monitoring and alerts.
+		//
+		// To decide the log level, ask yourself: "Has the
+		// program's behaviour diverged from what the written
+		// code expected?"
+		//
+		// For example, use of a deprecated method or violating a strict standard
+		// has no impact on functional behaviour (Warning). On the other hand,
+		// accessing an undefined variable makes behaviour diverge from what the
+		// author intended/expected. PHP recovers from an undefined variables by
+		// yielding null and continuing execution, but it remains a change in
+		// behaviour given the null was not part of the code and is likely not
+		// accounted for.
 		switch ( $level ) {
-			case E_RECOVERABLE_ERROR:
-				$levelName = 'Error';
-				$severity = LogLevel::ERROR;
-				break;
 			case E_WARNING:
 			case E_CORE_WARNING:
 			case E_COMPILE_WARNING:
+				$levelName = 'Warning';
+				$severity = LogLevel::ERROR;
+				break;
+			case E_NOTICE:
+				$levelName = 'Notice';
+				$severity = LogLevel::ERROR;
+				break;
+			case E_USER_NOTICE:
+				// Used by wfWarn(), MWDebug::warning()
+				$levelName = 'Notice';
+				$severity = LogLevel::WARNING;
+				break;
 			case E_USER_WARNING:
+				// Used by wfWarn(), MWDebug::warning()
 				$levelName = 'Warning';
 				$severity = LogLevel::WARNING;
 				break;
-			case E_NOTICE:
-			case E_USER_NOTICE:
-				$levelName = 'Notice';
-				$severity = LogLevel::INFO;
-				break;
 			case E_STRICT:
 				$levelName = 'Strict Standards';
-				$severity = LogLevel::DEBUG;
+				$severity = LogLevel::WARNING;
 				break;
 			case E_DEPRECATED:
 			case E_USER_DEPRECATED:
 				$levelName = 'Deprecated';
-				$severity = LogLevel::INFO;
+				$severity = LogLevel::WARNING;
 				break;
 			default:
 				$levelName = 'Unknown error';
@@ -216,9 +254,9 @@ class MWExceptionHandler {
 		self::logError( $e, 'error', $severity );
 
 		// If $wgPropagateErrors is true return false so PHP shows/logs the error normally.
-		// Ignore $wgPropagateErrors if the error should break execution, or track_errors is set
+		// Ignore $wgPropagateErrors if track_errors is set
 		// (which means someone is counting on regular PHP error handling behavior).
-		return !( $wgPropagateErrors || $level == E_RECOVERABLE_ERROR || ini_get( 'track_errors' ) );
+		return !( $wgPropagateErrors || ini_get( 'track_errors' ) );
 	}
 
 	/**
@@ -233,12 +271,12 @@ class MWExceptionHandler {
 	 *
 	 * @since 1.25
 	 *
-	 * @param int $level Error level raised
-	 * @param string $message Error message
-	 * @param string $file File that error was raised in
-	 * @param int $line Line number error was raised at
-	 * @param array $context Active symbol table point of error
-	 * @param array $trace Backtrace at point of error (undocumented HHVM
+	 * @param int|null $level Error level raised
+	 * @param string|null $message Error message
+	 * @param string|null $file File that error was raised in
+	 * @param int|null $line Line number error was raised at
+	 * @param array|null $context Active symbol table point of error
+	 * @param array|null $trace Backtrace at point of error (undocumented HHVM
 	 *     feature)
 	 * @return bool Always returns false
 	 */

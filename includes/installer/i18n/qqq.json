@@ -20,7 +20,8 @@
 			"Jdforrester",
 			"Liuxinyu970226",
 			"Metalhead64",
-			"Tacsipacsi"
+			"Tacsipacsi",
+			"Zoranzoki21"
 		]
 	},
 	"config-desc": "Short description of the installer.",
@@ -69,7 +70,7 @@
 	"config-unicode-using-intl": "Status message in the MediaWiki installer environment checks.",
 	"config-unicode-pure-php-warning": "PECL is the name of a group producing standard pieces of software for PHP, and intl is the name of their library handling some aspects of internationalization.",
 	"config-unicode-update-warning": "ICU is a body producing standard software tools for support of Unicode and other internationalization aspects. This message warns the system administrator installing MediaWiki that the server's software is not up-to-date and MediaWiki will have problems handling some characters.",
-	"config-no-db": "{{doc-important|Do not translate \"<code>./configure --with-mysqli</code>\" and \"<code>php5-mysql</code>\".}}\nParameters:\n* $1 is comma separated list of database types supported by MediaWiki.\n* $2 is the count of items in $1 - for use in plural.",
+	"config-no-db": "{{doc-important|Do not translate \"<code>./configure --with-mysqli</code>\" and \"<code>php-mysql</code>\".}}\nParameters:\n* $1 is comma separated list of database types supported by MediaWiki.\n* $2 is the count of items in $1 - for use in plural.",
 	"config-outdated-sqlite": "Used as warning. Parameters:\n* $1 - the version of SQLite that has been installed\n* $2 - minimum version",
 	"config-no-fts3": "A \"[[:wikipedia:Front and back ends|backend]]\" is a system or component that ordinary users don't interact with directly and don't need to know about, and that is responsible for a distinct task or service - for example, a storage back-end is a generic system for storing data which other applications can use. Possible alternatives for back-end are \"system\" or \"service\", or (depending on context and language) even leave it untranslated.",
 	"config-pcre-old": "Parameters:\n* $1 - minimum PCRE version number\n* $2 - the installed version of [[wikipedia:PCRE|PCRE]]\n{{Related|Config-fatal}}",
@@ -172,8 +173,8 @@
 	"config-unknown-collation": "Warning messages in the MediaWiki installer for the database type MySQL when an unrecognised collation is used.",
 	"config-db-web-account": "Fieldset legend in MediaWiki installer",
 	"config-db-web-help": "Help text in MediaWiki installer.",
-	"config-db-web-account-same": "checkbox label",
-	"config-db-web-create": "checkbox label",
+	"config-db-web-account-same": "Checkbox label about setting of database account for web access.",
+	"config-db-web-create": "Checkbox label about creating of new database account.",
 	"config-db-web-no-create-privs": "Error message in the MediaWiki installer.",
 	"config-mysql-engine": "Field label for MySQL storage engine in the MediaWiki installer.",
 	"config-mysql-innodb": "Option for the MySQL storage engine in the MediaWiki installer.",
@@ -308,7 +309,6 @@
 	"config-install-interwiki-exists": "Error notice during the installation saying that one of the database tables is already set up, so it's continuing without taking that step.",
 	"config-install-stats": "*{{msg-mw|Config-install-database}}\n*{{msg-mw|Config-install-tables}}\n*{{msg-mw|Config-install-schema}}\n*{{msg-mw|Config-install-user}}\n*{{msg-mw|Config-install-interwiki}}\n*{{msg-mw|Config-install-stats}}\n*{{msg-mw|Config-install-keys}}\n*{{msg-mw|Config-install-sysop}}\n*{{msg-mw|Config-install-mainpage}}",
 	"config-install-keys": "*{{msg-mw|Config-install-database}}\n*{{msg-mw|Config-install-tables}}\n*{{msg-mw|Config-install-schema}}\n*{{msg-mw|Config-install-user}}\n*{{msg-mw|Config-install-interwiki}}\n*{{msg-mw|Config-install-stats}}\n*{{msg-mw|Config-install-keys}}\n*{{msg-mw|Config-install-sysop}}\n*{{msg-mw|Config-install-mainpage}}",
-	"config-insecure-keys": "Parameters:\n* $1 - A list of names of the secret keys that were generated.\n* $2 - the number of items in the list $1, to be used with PLURAL.",
 	"config-install-updates": "Message indicating that the updatelog table is filled with keys of updates that won't be run when running database updates.\n\nSee also:\n*{{msg-mw|Config-install-database}}\n*{{msg-mw|Config-install-tables}}\n*{{msg-mw|Config-install-interwiki}}\n*{{msg-mw|Config-install-stats}}\n*{{msg-mw|Config-install-keys}}\n*{{msg-mw|Config-install-updates}}\n*{{msg-mw|Config-install-schema}}\n*{{msg-mw|Config-install-user}}\n*{{msg-mw|Config-install-sysop}}\n*{{msg-mw|Config-install-mainpage}}",
 	"config-install-updates-failed": "Used as error message. Parameters:\n* $1 - detailed error message",
 	"config-install-sysop": "Message indicates that the administrator user account is being created\n\nSee also:\n*{{msg-mw|Config-install-database}}\n*{{msg-mw|Config-install-tables}}\n*{{msg-mw|Config-install-schema}}\n*{{msg-mw|Config-install-user}}\n*{{msg-mw|Config-install-interwiki}}\n*{{msg-mw|Config-install-stats}}\n*{{msg-mw|Config-install-keys}}\n*{{msg-mw|Config-install-sysop}}\n*{{msg-mw|Config-install-mainpage}}",
@@ -328,8 +328,10 @@
 	"config-extension-link": "Shown on last page of installation to inform about possible extensions.\n{{Identical|Did you know}}",
 	"config-skins-screenshots": "Radio button text, $1 is the skin name, and $2 is a list of links to screenshots of that skin",
 	"config-skins-screenshot": "Radio button text, $1 is the skin name, and $2 is a link to a screenshot of that skin, where the link text is {{msg-mw|config-screenshot}}.",
-	"config-extensions-requires": "Radio button text, $1 is the extension name, and $2 are links to other extensions that this one requires.",
+	"config-extensions-requires": "Radio button text, $1 is the extension name, and $2 are links to other extensions that this one requires.\n{{Identical|Require}}",
 	"config-screenshot": "Link text for the link in {{msg-mw|config-skins-screenshot}}\n{{Identical|Screenshot}}",
+	"config-extension-not-found": "An error shown when an extension or skin named by the user could not be found.\n* $1 is the extension name",
+	"config-extension-dependency": "An error shown if an extension could not be loaded due to it depending on the wrong version of MediaWiki or an uninstallable extension.\n* $1 is the extension name\n* $2 is a more detailed explanation, in English",
 	"mainpagetext": "Along with {{msg-mw|mainpagedocfooter}}, the text you will see on the Main Page when your wiki is installed.",
 	"mainpagedocfooter": "Along with {{msg-mw|mainpagetext}}, the text you will see on the Main Page when your wiki is installed.\nThis might be a good place to put information about <nowiki>{{GRAMMAR:}}</nowiki>. See [[{{NAMESPACE}}:{{BASEPAGENAME}}/fi]] for an example. For languages having grammatical distinctions and not having an appropriate <nowiki>{{GRAMMAR:}}</nowiki> software available, a suggestion to check and possibly amend the messages having <nowiki>{{SITENAME}}</nowiki> may be valuable. See [[{{NAMESPACE}}:{{BASEPAGENAME}}/ksh]] for an example."
 }

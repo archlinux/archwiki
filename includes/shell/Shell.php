@@ -44,18 +44,6 @@ use MediaWiki\MediaWikiServices;
 class Shell {
 
 	/**
-	 * Apply a default set of restrictions for improved
-	 * security out of the box.
-	 *
-	 * Equal to NO_ROOT | SECCOMP | PRIVATE_DEV | NO_LOCALSETTINGS
-	 *
-	 * @note This value will change over time to provide increased security
-	 *       by default, and is not guaranteed to be backwards-compatible.
-	 * @since 1.31
-	 */
-	const RESTRICT_DEFAULT = 39;
-
-	/**
 	 * Disallow any root access. Any setuid binaries
 	 * will be run without elevated access.
 	 *
@@ -102,6 +90,17 @@ class Shell {
 	const NO_LOCALSETTINGS = 32;
 
 	/**
+	 * Apply a default set of restrictions for improved
+	 * security out of the box.
+	 *
+	 * @note This value will change over time to provide increased security
+	 *       by default, and is not guaranteed to be backwards-compatible.
+	 * @since 1.31
+	 */
+	const RESTRICT_DEFAULT = self::NO_ROOT | self::SECCOMP | self::PRIVATE_DEV |
+							 self::NO_LOCALSETTINGS;
+
+	/**
 	 * Don't apply any restrictions
 	 *
 	 * @since 1.31
@@ -111,23 +110,23 @@ class Shell {
 	/**
 	 * Returns a new instance of Command class
 	 *
-	 * @param string|string[] $command String or array of strings representing the command to
+	 * @note You should check Shell::isDisabled() before calling this
+	 * @param string|string[] ...$commands String or array of strings representing the command to
 	 * be executed, each value will be escaped.
 	 *   Example:   [ 'convert', '-font', 'font name' ] would produce "'convert' '-font' 'font name'"
 	 * @return Command
 	 */
-	public static function command( $command ) {
-		$args = func_get_args();
-		if ( count( $args ) === 1 && is_array( reset( $args ) ) ) {
+	public static function command( ...$commands ) {
+		if ( count( $commands ) === 1 && is_array( reset( $commands ) ) ) {
 			// If only one argument has been passed, and that argument is an array,
 			// treat it as a list of arguments
-			$args = reset( $args );
+			$commands = reset( $commands );
 		}
 		$command = MediaWikiServices::getInstance()
 			->getShellCommandFactory()
 			->create();
 
-		return $command->params( $args );
+		return $command->params( $commands );
 	}
 
 	/**
@@ -157,12 +156,11 @@ class Shell {
 	 * (https://bugs.php.net/bug.php?id=26285) and the locale problems on Linux in
 	 * PHP 5.2.6+ (bug backported to earlier distro releases of PHP).
 	 *
-	 * @param string $args,... strings to escape and glue together, or a single array of
-	 *     strings parameter. Null values are ignored.
+	 * @param string|string[] ...$args strings to escape and glue together, or a single
+	 *     array of strings parameter. Null values are ignored.
 	 * @return string
 	 */
-	public static function escape( /* ... */ ) {
-		$args = func_get_args();
+	public static function escape( ...$args ) {
 		if ( count( $args ) === 1 && is_array( reset( $args ) ) ) {
 			// If only one argument has been passed, and that argument is an array,
 			// treat it as a list of arguments
@@ -226,6 +224,7 @@ class Shell {
 	 * Note that $parameters should be a flat array and an option with an argument
 	 * should consist of two consecutive items in the array (do not use "--option value").
 	 *
+	 * @note You should check Shell::isDisabled() before calling this
 	 * @param string $script MediaWiki CLI script with full path
 	 * @param string[] $parameters Arguments and options to the script
 	 * @param array $options Associative array of options:

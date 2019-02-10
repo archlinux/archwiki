@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\MediaWikiServices;
+
 /**
  * @group Editing
  *
@@ -12,33 +14,22 @@
 class EditPageTest extends MediaWikiLangTestCase {
 
 	protected function setUp() {
-		global $wgExtraNamespaces, $wgNamespaceContentModels, $wgContentHandlers, $wgContLang;
-
 		parent::setUp();
 
+		$contLang = MediaWikiServices::getInstance()->getContentLanguage();
+		$this->setContentLang( $contLang );
+
 		$this->setMwGlobals( [
-			'wgExtraNamespaces' => $wgExtraNamespaces,
-			'wgNamespaceContentModels' => $wgNamespaceContentModels,
-			'wgContentHandlers' => $wgContentHandlers,
-			'wgContLang' => $wgContLang,
+			'wgExtraNamespaces' => [
+				12312 => 'Dummy',
+				12313 => 'Dummy_talk',
+			],
+			'wgNamespaceContentModels' => [ 12312 => 'testing' ],
 		] );
-
-		$wgExtraNamespaces[12312] = 'Dummy';
-		$wgExtraNamespaces[12313] = 'Dummy_talk';
-
-		$wgNamespaceContentModels[12312] = "testing";
-		$wgContentHandlers["testing"] = 'DummyContentHandlerForTesting';
-
-		MWNamespace::clearCaches();
-		$wgContLang->resetNamespaces(); # reset namespace cache
-	}
-
-	protected function tearDown() {
-		global $wgContLang;
-
-		MWNamespace::clearCaches();
-		$wgContLang->resetNamespaces(); # reset namespace cache
-		parent::tearDown();
+		$this->mergeMwGlobalArrayValue(
+			'wgContentHandlers',
+			[ 'testing' => 'DummyContentHandlerForTesting' ]
+		);
 	}
 
 	/**
@@ -405,7 +396,7 @@ class EditPageTest extends MediaWikiLangTestCase {
 
 		$page = $this->assertEdit( 'EditPageTest_testUpdatePage', "zero", null, $edit,
 			EditPage::AS_SUCCESS_UPDATE, $text,
-			"expected successfull update with given text" );
+			"expected successful update with given text" );
 		$this->assertGreaterThan( 0, $checkIds[0], "First event rev ID set" );
 
 		$this->forceRevisionDate( $page, '20120101000000' );
@@ -418,7 +409,7 @@ class EditPageTest extends MediaWikiLangTestCase {
 
 		$this->assertEdit( 'EditPageTest_testUpdatePage', null, null, $edit,
 			EditPage::AS_SUCCESS_UPDATE, $text,
-			"expected successfull update with given text" );
+			"expected successful update with given text" );
 		$this->assertGreaterThan( 0, $checkIds[1], "Second edit hook rev ID set" );
 		$this->assertGreaterThan( $checkIds[0], $checkIds[1], "Second event rev ID is higher" );
 	}
@@ -432,7 +423,7 @@ class EditPageTest extends MediaWikiLangTestCase {
 
 		$page = $this->assertEdit( 'EditPageTest_testTrxUpdatePage', "zero", null, $edit,
 			EditPage::AS_SUCCESS_UPDATE, $text,
-			"expected successfull update with given text" );
+			"expected successful update with given text" );
 
 		$this->forceRevisionDate( $page, '20120101000000' );
 
@@ -458,7 +449,7 @@ class EditPageTest extends MediaWikiLangTestCase {
 
 		$this->assertEdit( 'EditPageTest_testTrxUpdatePage', null, null, $edit,
 			EditPage::AS_SUCCESS_UPDATE, $text,
-			"expected successfull update with given text" );
+			"expected successful update with given text" );
 
 		$text = "three";
 		$edit = [
@@ -468,7 +459,7 @@ class EditPageTest extends MediaWikiLangTestCase {
 
 		$this->assertEdit( 'EditPageTest_testTrxUpdatePage', null, null, $edit,
 			EditPage::AS_SUCCESS_UPDATE, $text,
-			"expected successfull update with given text" );
+			"expected successful update with given text" );
 
 		wfGetDB( DB_MASTER )->commit( __METHOD__ );
 
@@ -543,7 +534,7 @@ hello
 
 		$this->assertEdit( 'EditPageTest_testSectionEdit', $base, null, $edit,
 			EditPage::AS_SUCCESS_UPDATE, $expected,
-			"expected successfull update of section" );
+			"expected successful update of section" );
 	}
 
 	public static function provideAutoMerge() {
@@ -684,7 +675,7 @@ hello
 
 		// first edit
 		$this->assertEdit( 'EditPageTest_testAutoMerge', null, 'Adam', $adamsEdit,
-			EditPage::AS_SUCCESS_UPDATE, null, "expected successfull update" );
+			EditPage::AS_SUCCESS_UPDATE, null, "expected successful update" );
 
 		// second edit
 		$this->assertEdit( 'EditPageTest_testAutoMerge', null, 'Berta', $bertasEdit,

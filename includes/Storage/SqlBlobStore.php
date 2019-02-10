@@ -94,7 +94,12 @@ class SqlBlobStore implements IDBAccessObject, BlobStore {
 
 	/**
 	 * @param LoadBalancer $dbLoadBalancer A load balancer for acquiring database connections
-	 * @param WANObjectCache $cache A cache manager for caching blobs
+	 * @param WANObjectCache $cache A cache manager for caching blobs. This can be the local
+	 *        wiki's default instance even if $wikiId refers to a different wiki, since
+	 *        makeGlobalKey() is used to constructed a key that allows cached blobs from the
+	 *        same database to be re-used between wikis. For example, enwiki and frwiki will
+	 *        use the same cache keys for blobs from the wikidatawiki database, regardless of
+	 *        the cache's default key space.
 	 * @param bool|string $wikiId The ID of the target wiki database. Use false for the local wiki.
 	 */
 	public function __construct(
@@ -244,7 +249,7 @@ class SqlBlobStore implements IDBAccessObject, BlobStore {
 
 			$textId = $dbw->insertId();
 
-			return 'tt:' . $textId;
+			return self::makeAddressFromTextId( $textId );
 		} catch ( MWException $e ) {
 			throw new BlobAccessException( $e->getMessage(), 0, $e );
 		}
@@ -267,8 +272,7 @@ class SqlBlobStore implements IDBAccessObject, BlobStore {
 
 		// No negative caching; negative hits on text rows may be due to corrupted replica DBs
 		$blob = $this->cache->getWithSetCallback(
-			// TODO: change key, since this is not necessarily revision text!
-			$this->cache->makeKey( 'revisiontext', 'textid', $blobAddress ),
+			$this->getCacheKey( $blobAddress ),
 			$this->getCacheTTL(),
 			function ( $unused, &$ttl, &$setOpts ) use ( $blobAddress, $queryFlags ) {
 				list( $index ) = DBAccessObjectUtils::getDBOptions( $queryFlags );
@@ -292,7 +296,7 @@ class SqlBlobStore implements IDBAccessObject, BlobStore {
 	 * @param string $blobAddress
 	 * @param int $queryFlags
 	 *
-	 * @throw BlobAccessException
+	 * @throws BlobAccessException
 	 * @return string|false
 	 */
 	private function fetchBlob( $blobAddress, $queryFlags ) {
@@ -349,11 +353,30 @@ class SqlBlobStore implements IDBAccessObject, BlobStore {
 		$blob = $this->expandBlob( $row->old_text, $row->old_flags, $blobAddress );
 
 		if ( $blob === false ) {
-			wfWarn( __METHOD__ . ": Bad data in text row $textId." );
+			wfLogWarning( __METHOD__ . ": Bad data in text row $textId." );
 			return false;
 		}
 
 		return $blob;
+	}
+
+	/**
+	 * Get a cache key for a given Blob address.
+	 *
+	 * The cache key is constructed in a way that allows cached blobs from the same database
+	 * to be re-used between wikis. For example, enwiki and frwiki will use the same cache keys
+	 * for blobs from the wikidatawiki database.
+	 *
+	 * @param string $blobAddress
+	 * @return string
+	 */
+	private function getCacheKey( $blobAddress ) {
+		return $this->cache->makeGlobalKey(
+			'BlobStore',
+			'address',
+			$this->dbLoadBalancer->resolveDomainID( $this->wikiId ),
+			$blobAddress
+		);
 	}
 
 	/**
@@ -370,7 +393,8 @@ class SqlBlobStore implements IDBAccessObject, BlobStore {
 	 * @param string|string[] $flags Blob flags, such as 'external' or 'gzip'.
 	 *   Note that not including 'utf-8' in $flags will cause the data to be decoded
 	 *   according to the legacy encoding specified via setLegacyEncoding.
-	 * @param string|null $cacheKey May be used for caching if given
+	 * @param string|null $cacheKey A blob address for use in the cache key. If not given,
+	 *   caching is disabled.
 	 *
 	 * @return false|string The expanded blob or false on failure
 	 */
@@ -387,25 +411,22 @@ class SqlBlobStore implements IDBAccessObject, BlobStore {
 				return false;
 			}
 
-			if ( $cacheKey && $this->wikiId === false ) {
-				// Make use of the wiki-local revision text cache.
+			if ( $cacheKey ) {
 				// The cached value should be decompressed, so handle that and return here.
-				// NOTE: we rely on $this->cache being the right cache for $this->wikiId!
 				return $this->cache->getWithSetCallback(
-					// TODO: change key, since this is not necessarily revision text!
-					$this->cache->makeKey( 'revisiontext', 'textid', $cacheKey ),
+					$this->getCacheKey( $cacheKey ),
 					$this->getCacheTTL(),
 					function () use ( $url, $flags ) {
 						// No negative caching per BlobStore::getBlob()
 						$blob = ExternalStore::fetchFromURL( $url, [ 'wiki' => $this->wikiId ] );
 
-						return $this->decompressData( $blob, $flags );
+						return $blob === false ? false : $this->decompressData( $blob, $flags );
 					},
 					[ 'pcGroup' => self::TEXT_CACHE_GROUP, 'pcTTL' => WANObjectCache::TTL_PROC_LONG ]
 				);
 			} else {
 				$blob = ExternalStore::fetchFromURL( $url, [ 'wiki' => $this->wikiId ] );
-				return $this->decompressData( $blob, $flags );
+				return $blob === false ? false : $this->decompressData( $blob, $flags );
 			}
 		} else {
 			return $this->decompressData( $raw, $flags );
@@ -461,7 +482,7 @@ class SqlBlobStore implements IDBAccessObject, BlobStore {
 	 * @note direct use is deprecated, use getBlob() or SlotRecord::getContent() instead.
 	 * @todo make this private, there should be no need to use this method outside this class.
 	 *
-	 * @param mixed $blob Reference to a text
+	 * @param string $blob Blob in compressed/encoded form.
 	 * @param array $blobFlags Compression flags, such as 'gzip'.
 	 *   Note that not including 'utf-8' in $blobFlags will cause the data to be decoded
 	 *   according to the legacy encoding specified via setLegacyEncoding.
@@ -469,10 +490,8 @@ class SqlBlobStore implements IDBAccessObject, BlobStore {
 	 * @return string|bool Decompressed text, or false on failure
 	 */
 	public function decompressData( $blob, array $blobFlags ) {
-		if ( $blob === false ) {
-			// Text failed to be fetched; nothing to do
-			return false;
-		}
+		// Revision::decompressRevisionText accepted false here, so defend against that
+		Assert::parameterType( 'string', $blob, '$blob' );
 
 		if ( in_array( 'error', $blobFlags ) ) {
 			// Error row, return false
@@ -486,7 +505,7 @@ class SqlBlobStore implements IDBAccessObject, BlobStore {
 			$blob = gzinflate( $blob );
 
 			if ( $blob === false ) {
-				wfLogWarning( __METHOD__ . ': gzinflate() failed' );
+				wfWarn( __METHOD__ . ': gzinflate() failed' );
 				return false;
 			}
 		}
@@ -542,11 +561,12 @@ class SqlBlobStore implements IDBAccessObject, BlobStore {
 	 * Currently, $address must start with 'tt:' followed by a decimal integer representing
 	 * the old_id; if $address does not start with 'tt:', null is returned. However,
 	 * the implementation may change to insert rows into the text table on the fly.
+	 * This implies that this method cannot be static.
 	 *
 	 * @note This method exists for use with the text table based storage schema.
 	 * It should not be assumed that is will function with all future kinds of content addresses.
 	 *
-	 * @deprecated since 1.31, so not assume that all blob addresses refer to a row in the text
+	 * @deprecated since 1.31, so don't assume that all blob addresses refer to a row in the text
 	 * table. This method should become private once the relevant refactoring in WikiPage is
 	 * complete.
 	 *
@@ -568,6 +588,22 @@ class SqlBlobStore implements IDBAccessObject, BlobStore {
 		}
 
 		return $textId;
+	}
+
+	/**
+	 * Returns an address referring to content stored in the text table row with the given ID.
+	 * The address schema for blobs stored in the text table is "tt:" followed by an integer
+	 * that corresponds to a value of the old_id field.
+	 *
+	 * @deprecated since 1.31. This method should become private once the relevant refactoring
+	 * in WikiPage is complete.
+	 *
+	 * @param int $id
+	 *
+	 * @return string
+	 */
+	public static function makeAddressFromTextId( $id ) {
+		return 'tt:' . $id;
 	}
 
 	/**

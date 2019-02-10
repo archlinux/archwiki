@@ -26,7 +26,7 @@ use Wikimedia\Rdbms\LoadBalancer;
  * @file
  * @ingroup Site
  *
- * @license GNU GPL v2+
+ * @license GPL-2.0-or-later
  * @author Jeroen De Dauw < jeroendedauw@gmail.com >
  * @author Daniel Kinzler
  */
@@ -45,7 +45,7 @@ class DBSiteStore implements SiteStore {
 	/**
 	 * @since 1.27
 	 *
-	 * @todo: inject some kind of connection manager that is aware of the target wiki,
+	 * @todo inject some kind of connection manager that is aware of the target wiki,
 	 * instead of injecting a LoadBalancer.
 	 *
 	 * @param LoadBalancer $dbLoadBalancer
@@ -198,7 +198,7 @@ class DBSiteStore implements SiteStore {
 				'site_type' => $site->getType(),
 				'site_group' => $site->getGroup(),
 				'site_source' => $site->getSource(),
-				'site_language' => $site->getLanguageCode() === null ? '' : $site->getLanguageCode(),
+				'site_language' => $site->getLanguageCode() ?? '',
 				'site_protocol' => $site->getProtocol(),
 				'site_domain' => strrev( $site->getDomain() ) . '.',
 				'site_data' => serialize( $site->getExtraData() ),

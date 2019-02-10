@@ -88,6 +88,7 @@
 					"mw.Title",
 					"mw.Map",
 					"mw.storage",
+					"mw.SafeStorage",
 					"mw.eventLog"
 				]
 			},

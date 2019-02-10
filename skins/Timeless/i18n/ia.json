@@ -5,7 +5,6 @@
 		]
 	},
 	"timeless-desc": "Un apparentia sin etate, concipite secundo le prototypo Winter de Braindon Harris e varie stilos del Fundation Wikimedia.",
-	"timeless-search-placeholder": "Cercar in circa {{NUMBEROFARTICLES}} paginas",
 	"timeless-loggedin": "Tu conto",
 	"timeless-anonymous": "Anonyme",
 	"timeless-loggedinas": "Usator in session: '''$1'''",
@@ -20,5 +19,6 @@
 	"timeless-pagemisc": "Plus",
 	"timeless-namespaces": "Spatios de nomines",
 	"timeless-pagetools": "Actiones de pagina",
-	"timeless-languages": "Linguas"
+	"timeless-languages": "Linguas",
+	"timeless.js": "/* Omne JavaScript hic se executara pro le usatores del apparentia Timeless */"
 }

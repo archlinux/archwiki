@@ -4,7 +4,19 @@
 			"Joao Xavier"
 		]
 	},
-	"multimediaviewer-repository-local": "Plura detali",
+	"multimediaviewer-optin-pref": "Permisar <span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About Media Viewer]</span>",
+	"multimediaviewer-repository-local": "Plusa detali",
+	"multimediaviewer-datetime-uploaded": "Sendita: $1",
+	"multimediaviewer-permission-title": "Detali pri permiso",
+	"multimediaviewer-permission-link": "Montrez kondicioni",
 	"multimediaviewer-permission-viewmore": "Montrez pluse",
-	"multimediaviewer-description-page-button-text": "Plura detali pri ca arkivo"
+	"multimediaviewer-discuss-mmv": "Diskuto",
+	"multimediaviewer-optout-mmv": "Klozar ''Media Viewer''",
+	"multimediaviewer-reuse-link": "Partigar o stekar ica arkivo",
+	"multimediaviewer-download-link": "Descharjar ica arkivo",
+	"multimediaviewer-embed-explanation": "Uzes ica kodexo por stekar l'arkivo",
+	"multimediaviewer-description-page-button-text": "Plusa detali pri ca arkivo",
+	"multimediaviewer-view-expanded": "Montrar l'imajo en Media Viewer",
+	"multimediaviewer-close-popup-text": "Klozar ica utensilo (Esc)",
+	"multimediaviewer-fullscreen-popup-text": "Montrez en plena skreno"
 }

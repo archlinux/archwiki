@@ -30,12 +30,10 @@
 			"Javiersanp"
 		]
 	},
-	"visualeditor-cite-tool-definition.json": "nulo",
 	"visualeditor-cite-tool-name-book": "Libro",
 	"visualeditor-cite-tool-name-journal": "Diario",
 	"visualeditor-cite-tool-name-news": "Noticias",
 	"visualeditor-cite-tool-name-web": "Sitio web",
-	"cite-tool-definition.json": "nulo",
 	"cite-ve-changedesc-ref-group-both": "El grupo de referencias cambió de «$1» a «$2»",
 	"cite-ve-changedesc-ref-group-from": "El grupo de referencias cambió de «$1» al grupo general",
 	"cite-ve-changedesc-ref-group-to": "El grupo de referencias cambió del grupo general a «$1»",

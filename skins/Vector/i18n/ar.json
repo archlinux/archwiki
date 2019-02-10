@@ -9,7 +9,8 @@
 			"أحمد",
 			"زكريا",
 			"Khaled",
-			"علاء"
+			"علاء",
+			"ديفيد"
 		]
 	},
 	"skinname-vector": "فكتور",
@@ -24,8 +25,10 @@
 	"vector-action-unprotect": "غير الحماية",
 	"vector-view-create": "أنشئ",
 	"vector-view-edit": "عدل",
-	"vector-view-history": "التاريخ",
+	"vector-view-history": "تاريخ",
 	"vector-view-view": "اقرأ",
 	"vector-view-viewsource": "اعرض المصدر",
+	"vector-jumptonavigation": "اذهب إلى التنقل",
+	"vector-jumptosearch": "اذهب إلى البحث",
 	"vector-more-actions": "المزيد"
 }

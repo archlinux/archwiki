@@ -88,7 +88,7 @@ class ApiQueryBacklinksprop extends ApiQueryGeneratorBase {
 	}
 
 	/**
-	 * @param ApiPageSet $resultPageSet
+	 * @param ApiPageSet|null $resultPageSet
 	 */
 	private function run( ApiPageSet $resultPageSet = null ) {
 		$settings = self::$settings[$this->getModuleName()];
@@ -127,6 +127,9 @@ class ApiQueryBacklinksprop extends ApiQueryGeneratorBase {
 		$bl_from = "{$p}_from";
 
 		if ( !$titles ) {
+			return; // nothing to do
+		}
+		if ( $params['namespace'] !== null && count( $params['namespace'] ) === 0 ) {
 			return; // nothing to do
 		}
 
@@ -419,7 +422,7 @@ class ApiQueryBacklinksprop extends ApiQueryGeneratorBase {
 		$settings = self::$settings[$this->getModuleName()];
 		$name = $this->getModuleName();
 		$path = $this->getModulePath();
-		$title = isset( $settings['exampletitle'] ) ? $settings['exampletitle'] : 'Main Page';
+		$title = $settings['exampletitle'] ?? 'Main Page';
 		$etitle = rawurlencode( $title );
 
 		return [

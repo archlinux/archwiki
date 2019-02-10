@@ -1,4 +1,4 @@
-( function ( $, mw ) {
+( function () {
 	/**
 	 * This module tests the input/output capabilities of the parsers of tablesorter.
 	 * It does not test actual sorting.
@@ -90,7 +90,7 @@
 		[ '1', false, 1, 'A super malformed IP Address' ],
 		[ 'Just text', false, -Infinity, 'A line with just text' ],
 		[ '45.238.27.109Postfix', false, 45238027109, 'An IP address with a connected postfix' ],
-		[ '45.238.27.109 postfix', false, 45238027109, 'An IP address with a seperated postfix' ]
+		[ '45.238.27.109 postfix', false, 45238027109, 'An IP address with a separated postfix' ]
 	];
 	parserTest( 'IPv4', 'IPAddress', ipv4 );
 
@@ -264,4 +264,4 @@
 
 	// TODO add numbers sorting tests for T10115 with a different language
 
-}( jQuery, mediaWiki ) );
+}() );

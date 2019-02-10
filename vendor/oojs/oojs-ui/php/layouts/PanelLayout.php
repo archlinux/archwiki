@@ -14,6 +14,7 @@ class PanelLayout extends Layout {
 	 *   (default: true)
 	 * @param bool $config['framed'] Wrap in a frame to visually separate from outside content
 	 *   (default: false)
+	 * @param-taint $config escapes_htmlnoent
 	 */
 	public function __construct( array $config = [] ) {
 		// Config initialization

@@ -55,7 +55,7 @@ function base_convert( $input, $sourceBase, $destBase, $pad = 1,
 		return false;
 	}
 
-	static $baseChars = array(
+	static $baseChars = [
 		10 => 'a', 11 => 'b', 12 => 'c', 13 => 'd', 14 => 'e', 15 => 'f',
 		16 => 'g', 17 => 'h', 18 => 'i', 19 => 'j', 20 => 'k', 21 => 'l',
 		22 => 'm', 23 => 'n', 24 => 'o', 25 => 'p', 26 => 'q', 27 => 'r',
@@ -68,7 +68,7 @@ function base_convert( $input, $sourceBase, $destBase, $pad = 1,
 		'i' => 18, 'j' => 19, 'k' => 20, 'l' => 21, 'm' => 22, 'n' => 23,
 		'o' => 24, 'p' => 25, 'q' => 26, 'r' => 27, 's' => 28, 't' => 29,
 		'u' => 30, 'v' => 31, 'w' => 32, 'x' => 33, 'y' => 34, 'z' => 35
-	);
+	];
 
 	if ( extension_loaded( 'gmp' ) && ( $engine == 'auto' || $engine == 'gmp' ) ) {
 		// Removing leading zeros works around broken base detection code in
@@ -84,13 +84,14 @@ function base_convert( $input, $sourceBase, $destBase, $pad = 1,
 
 		// @codingStandardsIgnoreStart Generic.CodeAnalysis.ForLoopWithTestFunctionCall.NotAllowed
 		for ( $result = ''; bccomp( $decimal, 0 ); $decimal = bcdiv( $decimal, $destBase, 0 ) ) {
-			$result .= $baseChars[bcmod( $decimal, $destBase )];
+			// As of PHP 7.2, bcmod can return a floating point value if bcscale is nonzero
+			$result .= $baseChars[(int)bcmod( $decimal, $destBase )];
 		}
 		// @codingStandardsIgnoreEnd
 
 		$result = strrev( $result );
 	} else {
-		$inDigits = array();
+		$inDigits = [];
 		foreach ( str_split( strtolower( $input ) ) as $char ) {
 			$inDigits[] = $baseChars[$char];
 		}
@@ -100,7 +101,7 @@ function base_convert( $input, $sourceBase, $destBase, $pad = 1,
 		$result = '';
 		while ( $inDigits ) {
 			$work = 0;
-			$workDigits = array();
+			$workDigits = [];
 
 			// Long division...
 			foreach ( $inDigits as $digit ) {

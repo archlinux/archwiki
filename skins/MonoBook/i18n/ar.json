@@ -2,11 +2,22 @@
 	"@metadata": {
 		"authors": [
 			"Meno25",
-			"Khaled"
+			"Khaled",
+			"Sonic N800",
+			"ديفيد"
 		]
 	},
 	"skinname-monobook": "مونوبوك",
 	"monobook-desc": "تصميم ميديا ويكي الكلاسيكي منذ العام 2004، سمي على اسم الصورة البيضاء والسوداء من كتاب في خلفية الصفحة",
 	"monobook.css": "/* الأنماط المتراصة CSS المعروضة هنا ستؤثر على مستخدمي واجهة مونوبوك */",
-	"monobook.js": "/* أي جافاسكريبت هنا سيتم تحميلها للمستخدمين الذين يستعملون واجهة مونوبوك */"
+	"monobook.js": "/* أي جافاسكريبت هنا سيتم تحميلها للمستخدمين الذين يستعملون واجهة مونوبوك */",
+	"monobook-jumptotop": "ارجع إلى الأعلى",
+	"monobook-jumptopersonal": "أدوات المستخدم",
+	"monobook-jumptonavigation": "اذهب إلى التنقل",
+	"monobook-jumptosearch": "اذهب الى البحث",
+	"monobook-more-actions": "مزيد",
+	"monobook-cactions-label": "أفعال الصفحة",
+	"monobook-notifications-link": "الإشعارات ($1)",
+	"monobook-notifications-link-none": "الإشعارات",
+	"monobook-responsive-label": "تمكين تصميم مونوبوك سريع الاستجابة"
 }

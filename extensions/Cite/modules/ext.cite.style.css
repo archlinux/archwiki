@@ -7,6 +7,9 @@
 	font-size: smaller;
 	/* Make sure the brackets and the numbers aren't jumbled after LTR words in RTL wikis */
 	unicode-bidi: embed;
+	/* Do not inherit bold or italic */
+	font-weight: normal;
+	font-style: normal;
 }
 
 /* Upstream bug in stylelint makes it complain aboout the case of 'mw-Ref' */

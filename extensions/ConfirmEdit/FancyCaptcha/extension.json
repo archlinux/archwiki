@@ -17,9 +17,9 @@
 		]
 	},
 	"AutoloadClasses": {
-		"FancyCaptcha": "FancyCaptcha.class.php",
-		"HTMLFancyCaptchaField": "HTMLFancyCaptchaField.php",
-		"ApiFancyCaptchaReload": "ApiFancyCaptchaReload.php"
+		"FancyCaptcha": "includes/FancyCaptcha.php",
+		"HTMLFancyCaptchaField": "includes/HTMLFancyCaptchaField.php",
+		"ApiFancyCaptchaReload": "includes/ApiFancyCaptchaReload.php"
 	},
 	"ResourceModules": {
 		"ext.confirmEdit.fancyCaptcha.styles": {

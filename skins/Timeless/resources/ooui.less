@@ -1,3 +1,22 @@
+@import 'variables.less';
+
+.skin-timeless {
+	.oo-ui-tagMultiselectWidget-handle,
+	.oo-ui-capsuleMultiselectWidget-handle {
+		// Same as for regular <input> and <textarea>, copied from form.less
+		border-color: @grey;
+		margin: 0.5em 0;
+		min-height: 0;
+
+		> .oo-ui-tagMultiselectWidget-content > input,
+		> .oo-ui-capsuleMultiselectWidget-content > input {
+			// OOUI forgets to reset these properties when making the <input> invisible
+			box-shadow: none;
+			min-height: 0;
+		}
+	}
+}
+
 .skin-timeless .oo-ui-windowManager-modal > .oo-ui-dialog,
 .skin-timeless .ve-ui-overlay-global {
 	z-index: 101;

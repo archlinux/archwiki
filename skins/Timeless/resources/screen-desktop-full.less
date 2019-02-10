@@ -1,17 +1,24 @@
 @import 'variables.less';
 
-#mw-site-navigation {
-	.column-left();
+#mw-content-block {
+	.flex-display;
+	clear: both;
 }
 
-#mw-content {
-	margin-left: @column-left-size;
-	margin-right: @column-right-size;
-	overflow: auto;
+#mw-site-navigation {
+	.column-left();
+	.flex(0, 0, @column-left-size, 1);
+}
+
+#mw-content-wrapper {
+	.flex(1, 1, auto, 2);
+	// Make word wrapping, max-width percentages, etc work with the above flex
+	min-width: 50%;
 }
 
 #mw-related-navigation {
 	.column-right();
+	.flex(0, 0, @column-right-size, 3);
 }
 
 // Redundant content category list

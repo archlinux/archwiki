@@ -64,13 +64,13 @@
 
 		buttons.setDescriptionPageButton( imageInfo, repoInfo );
 
-		assert.ok( !button.hasClass( 'mw-mmv-repo-button-commons' ), 'Button does not have commons class non-Commons files' );
+		assert.strictEqual( button.hasClass( 'mw-mmv-repo-button-commons' ), false, 'Button does not have commons class non-Commons files' );
 		assert.strictEqual( button.find( 'a' ).addBack().filter( 'a' ).attr( 'href' ), descriptionUrl, 'Description page link is correct' );
 
 		repoInfo.isCommons = function () { return true; };
 		buttons.setDescriptionPageButton( imageInfo, repoInfo );
 
-		assert.ok( button.hasClass( 'mw-mmv-repo-button-commons' ), 'Button commons class for Commons files' );
+		assert.strictEqual( button.hasClass( 'mw-mmv-repo-button-commons' ), true, 'Button commons class for Commons files' );
 	} );
 
 }( mediaWiki, jQuery ) );

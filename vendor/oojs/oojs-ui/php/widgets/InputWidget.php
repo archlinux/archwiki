@@ -35,6 +35,7 @@ class InputWidget extends Widget {
 	 * @param string $config['value'] Input value (default: '')
 	 * @param string $config['dir'] The directionality of the input (ltr/rtl)
 	 * @param string $config['inputId'] The value of the input’s HTML `id` attribute.
+	 * @param-taint $config escapes_html
 	 */
 	public function __construct( array $config = [] ) {
 		// Parent constructor
@@ -63,7 +64,7 @@ class InputWidget extends Widget {
 			->addClasses( [ 'oo-ui-inputWidget' ] )
 			->appendContent( $this->input );
 		$this->input->addClasses( [ 'oo-ui-inputWidget-input' ] );
-		$this->setValue( isset( $config['value'] ) ? $config['value'] : null );
+		$this->setValue( $config['value'] ?? null );
 		if ( isset( $config['dir'] ) ) {
 			$this->setDir( $config['dir'] );
 		}

@@ -56,8 +56,6 @@ class InterwikiTest extends MediaWikiTestCase {
 	}
 
 	public function testDatabaseStorage() {
-		$this->markTestSkipped( 'Needs I37b8e8018b3 <https://gerrit.wikimedia.org/r/#/c/270555/>' );
-
 		// NOTE: database setup is expensive, so we only do
 		//  it once and run all the tests in one go.
 		$dewiki = [
@@ -115,7 +113,7 @@ class InterwikiTest extends MediaWikiTestCase {
 		$this->assertSame( true, $interwiki->isLocal(), 'isLocal' );
 		$this->assertSame( false, $interwiki->isTranscludable(), 'isTranscludable' );
 
-		Interwiki::invalidateCache( 'de' );
+		$interwikiLookup->invalidateCache( 'de' );
 		$this->assertNotSame( $interwiki, $interwikiLookup->fetch( 'de' ), 'invalidate cache' );
 	}
 

@@ -7,14 +7,15 @@
 			"Dead3y3",
 			"Protnet",
 			"ZaDiak",
-			"SucreRouge"
+			"SucreRouge",
+			"Nikosgranturismogt"
 		]
 	},
 	"categorytree": "Δέντρο κατηγορίας",
 	"categorytree-portlet": "Κατηγορίες",
 	"categorytree-legend": "Εμφάνιση δέντρου κατηγορίας",
 	"categorytree-desc": "Πλοηγηθείτε δυναμικά στη [[Special:CategoryTree|δομή της κατηγορίας]]",
-	"categorytree-header": "Εισαγάγετε όνομα κατηγορίας για να δείτε τα περιεχόμενά της ως δεντρική δομή.\nΣημειώστε ότι αυτό απαιτεί προηγμένη λειτουργικότητα JavaScript γνωστή ως AJAX.\nΑν έχετε πολύ παλιό περιηγητή, ή αν έχετε απενεργοποιημένο το JavaScript, δεν θα δουλέψει.",
+	"categorytree-header": "Εισαγάγετε όνομα κατηγορίας για να δείτε τα περιεχόμενά της ως δεντρική δομή. (απαιτεί JavaScript).",
 	"categorytree-category": "Κατηγορία:",
 	"categorytree-go": "Εμφάνιση δέντρου",
 	"categorytree-parents": "Γονείς",
@@ -37,5 +38,10 @@
 	"categorytree-no-pages": "καμία σελίδα ή υποκατηγορία",
 	"categorytree-not-found": "Η κατηγορία <i>$1</i> δεν βρέθηκε",
 	"categorytree-error": "Πρόβλημα φόρτωσης δεδομένων.",
-	"categorytree-retry": "Παρακαλούμε περιμένετε μια στιγμή και προσπαθήστε ξανά."
+	"categorytree-retry": "Παρακαλούμε περιμένετε μια στιγμή και προσπαθήστε ξανά.",
+	"apihelp-categorytree-description": "Εσωτερικό δομοστοιχείο για την επέκταση CategoryTree.",
+	"apihelp-categorytree-summary": "Εσωτερικό δομοστοιχείο για την επέκταση CategoryTree.",
+	"apihelp-categorytree-param-category": "Τίτλος στον ονοματοχώρο κατηγορίας, το πρόθεμα θα αγνοηθεί εάν δοθεί.",
+	"apihelp-categorytree-param-options": "Επιλογές για τον κατασκευαστή CategoryTree ως αντικείμενο JSON. Η επιλογή <var>depth</var> είναι προεπιλεγμένη στο <kbd>1</kbd>.",
+	"apierror-categorytree-invalidjson": "Οι επιλογές πρέπει να είναι έγκυρο αντικείμενο JSON."
 }

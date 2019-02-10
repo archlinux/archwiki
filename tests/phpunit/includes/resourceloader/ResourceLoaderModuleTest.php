@@ -4,8 +4,6 @@ class ResourceLoaderModuleTest extends ResourceLoaderTestCase {
 
 	/**
 	 * @covers ResourceLoaderModule::getVersionHash
-	 * @covers ResourceLoaderModule::getModifiedTime
-	 * @covers ResourceLoaderModule::getModifiedHash
 	 */
 	public function testGetVersionHash() {
 		$context = $this->getResourceLoaderContext();
@@ -64,6 +62,19 @@ class ResourceLoaderModuleTest extends ResourceLoaderTestCase {
 			json_encode( $module->getVersionHash( $context ) ),
 			'Class is significant'
 		);
+	}
+
+	/**
+	 * @covers ResourceLoaderModule::getVersionHash
+	 */
+	public function testGetVersionHash_parentDefinition() {
+		$context = $this->getResourceLoaderContext();
+		$module = $this->getMockBuilder( ResourceLoaderModule::class )
+			->setMethods( [ 'getDefinitionSummary' ] )->getMock();
+		$module->method( 'getDefinitionSummary' )->willReturn( [ 'a' => 'summary' ] );
+
+		$this->setExpectedException( LogicException::class, 'must call parent' );
+		$module->getVersionHash( $context );
 	}
 
 	/**
@@ -140,8 +151,8 @@ class ResourceLoaderModuleTest extends ResourceLoaderTestCase {
 		] );
 		$this->assertEquals( $raw, $module->getScript( $context ), 'Raw script' );
 		$this->assertEquals(
-			[ 'scripts' => $build ],
-			$module->getModuleContent( $context ),
+			$build,
+			$module->getModuleContent( $context )[ 'scripts' ],
 			$message
 		);
 	}

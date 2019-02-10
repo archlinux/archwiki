@@ -50,14 +50,19 @@ use Wikimedia\ObjectFactory;
  *                             if 'class' is not specified, this is used as a map
  *                             through HTMLForm::$typeMappings to get the class name.
  *    'default'             -- default value when the form is displayed
+ *    'nodata'              -- if set (to any value, which casts to true), the data
+ *                             for this field will not be loaded from the actual request. Instead,
+ *                             always the default data is set as the value of this field.
  *    'id'                  -- HTML id attribute
  *    'cssclass'            -- CSS class
  *    'csshelpclass'        -- CSS class used to style help text
  *    'dir'                 -- Direction of the element.
- *    'options'             -- associative array mapping labels to values.
+ *    'options'             -- associative array mapping raw text labels to values.
  *                             Some field types support multi-level arrays.
+ *                             Overwrites 'options-message'.
  *    'options-messages'    -- associative array mapping message keys to values.
  *                             Some field types support multi-level arrays.
+ *                             Overwrites 'options' and 'options-message'.
  *    'options-message'     -- message key or object to be parsed to extract the list of
  *                             options (like 'ipbreason-dropdown').
  *    'label-message'       -- message key or object for a message to use as the label.
@@ -73,11 +78,12 @@ use Wikimedia\ObjectFactory;
  *    'help-messages'       -- array of message keys/objects. As above, each item can
  *                             be an array of msg key and then parameters.
  *                             Overwrites 'help'.
- *    'notice'              -- message text for a message to use as a notice in the field.
- *                             Currently used by OOUI form fields only.
- *    'notice-messages'     -- array of message keys/objects to use for notice.
- *                             Overrides 'notice'.
- *    'notice-message'      -- message key or object to use as a notice.
+ *    'help-inline'         -- Whether help text (defined using options above) will be shown
+ *                             inline after the input field, rather than in a popup.
+ *                             Defaults to true. Only used by OOUI form fields.
+ *    'notice'              -- (deprecated, use 'help' instead)
+ *    'notice-messages'     -- (deprecated, use 'help-messages' instead)
+ *    'notice-message'      -- (deprecated, use 'help-message' instead)
  *    'required'            -- passed through to the object, indicating that it
  *                             is a required field.
  *    'size'                -- the length of text fields
@@ -159,6 +165,7 @@ class HTMLForm extends ContextSource {
 		'date' => HTMLDateTimeField::class,
 		'time' => HTMLDateTimeField::class,
 		'datetime' => HTMLDateTimeField::class,
+		'expiry' => HTMLExpiryField::class,
 		// HTMLTextField will output the correct type="" attribute automagically.
 		// There are about four zillion other HTML5 input types, like range, but
 		// we don't use those at the moment, so no point in adding all of them.
@@ -297,7 +304,7 @@ class HTMLForm extends ContextSource {
 	 * Build a new HTMLForm from an array of field attributes
 	 *
 	 * @param array $descriptor Array of Field constructs, as described above
-	 * @param IContextSource $context Available since 1.18, will become compulsory in 1.18.
+	 * @param IContextSource|null $context Available since 1.18, will become compulsory in 1.18.
 	 *     Obviates the need to call $form->setTitle()
 	 * @param string $messagePrefix A prefix to go in front of default messages
 	 */
@@ -329,9 +336,7 @@ class HTMLForm extends ContextSource {
 		$this->mFlatFields = [];
 
 		foreach ( $descriptor as $fieldname => $info ) {
-			$section = isset( $info['section'] )
-				? $info['section']
-				: '';
+			$section = $info['section'] ?? '';
 
 			if ( isset( $info['type'] ) && $info['type'] === 'file' ) {
 				$this->mUseMultipart = true;
@@ -605,7 +610,7 @@ class HTMLForm extends ContextSource {
 		$hoistedErrors = Status::newGood();
 		if ( $this->mValidationErrorMessage ) {
 			foreach ( (array)$this->mValidationErrorMessage as $error ) {
-				call_user_func_array( [ $hoistedErrors, 'fatal' ], $error );
+				$hoistedErrors->fatal( ...$error );
 			}
 		} else {
 			$hoistedErrors->fatal( 'htmlform-invalid-input' );
@@ -751,6 +756,17 @@ class HTMLForm extends ContextSource {
 	}
 
 	/**
+	 * Get the introductory message HTML.
+	 *
+	 * @since 1.32
+	 *
+	 * @return string
+	 */
+	public function getPreText() {
+		return $this->mPre;
+	}
+
+	/**
 	 * Add HTML to the header, inside the form.
 	 *
 	 * @param string $msg Additional HTML to display in header
@@ -801,7 +817,7 @@ class HTMLForm extends ContextSource {
 		if ( $section === null ) {
 			return $this->mHeader;
 		} else {
-			return isset( $this->mSectionHeaders[$section] ) ? $this->mSectionHeaders[$section] : '';
+			return $this->mSectionHeaders[$section] ?? '';
 		}
 	}
 
@@ -856,7 +872,7 @@ class HTMLForm extends ContextSource {
 		if ( $section === null ) {
 			return $this->mFooter;
 		} else {
-			return isset( $this->mSectionFooters[$section] ) ? $this->mSectionFooters[$section] : '';
+			return $this->mSectionFooters[$section] ?? '';
 		}
 	}
 
@@ -955,8 +971,8 @@ class HTMLForm extends ContextSource {
 			$data = [
 				'name' => $args[0],
 				'value' => $args[1],
-				'id' => isset( $args[2] ) ? $args[2] : null,
-				'attribs' => isset( $args[3] ) ? $args[3] : null,
+				'id' => $args[2] ?? null,
+				'attribs' => $args[3] ?? null,
 			];
 		} else {
 			if ( !isset( $data['name'] ) ) {
@@ -1013,6 +1029,7 @@ class HTMLForm extends ContextSource {
 	 * @param bool|string|array|Status $submitResult Output from HTMLForm::trySubmit()
 	 *
 	 * @return string HTML
+	 * @return-taint escaped
 	 */
 	public function getHTML( $submitResult ) {
 		# For good measure (it is the default)
@@ -1336,10 +1353,13 @@ class HTMLForm extends ContextSource {
 	/**
 	 * Identify that the submit button in the form has a progressive action
 	 * @since 1.25
+	 * @deprecated since 1.32, No need to call. Submit button already
+	 * has a progressive action form.
 	 *
 	 * @return HTMLForm $this for chaining calls (since 1.28)
 	 */
 	public function setSubmitProgressive() {
+		wfDeprecated( __METHOD__, '1.32' );
 		$this->mSubmitFlags = [ 'progressive', 'primary' ];
 
 		return $this;
@@ -1600,9 +1620,10 @@ class HTMLForm extends ContextSource {
 	 * @param string $legend Legend text for the fieldset
 	 * @param string $section The section content in plain Html
 	 * @param array $attributes Additional attributes for the fieldset
+	 * @param bool $isRoot Section is at the root of the tree
 	 * @return string The fieldset's Html
 	 */
-	protected function wrapFieldSetSection( $legend, $section, $attributes ) {
+	protected function wrapFieldSetSection( $legend, $section, $attributes, $isRoot ) {
 		return Xml::fieldset( $legend, $section, $attributes ) . "\n";
 	}
 
@@ -1656,7 +1677,7 @@ class HTMLForm extends ContextSource {
 					$html[] = $retval;
 
 					$labelValue = trim( $value->getLabel() );
-					if ( $labelValue !== '&#160;' && $labelValue !== '' ) {
+					if ( $labelValue !== "\u{00A0}" && $labelValue !== '&#160;' && $labelValue !== '' ) {
 						$hasLabel = true;
 					}
 
@@ -1685,7 +1706,9 @@ class HTMLForm extends ContextSource {
 					if ( $fieldsetIDPrefix ) {
 						$attributes['id'] = Sanitizer::escapeIdForAttribute( "$fieldsetIDPrefix$key" );
 					}
-					$subsectionHtml .= $this->wrapFieldSetSection( $legend, $section, $attributes );
+					$subsectionHtml .= $this->wrapFieldSetSection(
+						$legend, $section, $attributes, $fields === $this->mFieldTree
+					);
 				} else {
 					// Just return the inputs, nothing fancy.
 					$subsectionHtml .= $section;
@@ -1810,7 +1833,7 @@ class HTMLForm extends ContextSource {
 	 *
 	 * @param string $key
 	 *
-	 * @return string
+	 * @return string Plain text (not HTML-escaped)
 	 */
 	public function getLegend( $key ) {
 		return $this->msg( "{$this->mMessagePrefix}-$key" )->text();

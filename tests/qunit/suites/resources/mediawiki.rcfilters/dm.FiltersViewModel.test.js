@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-( function ( mw, $ ) {
+( function () {
 	var filterDefinition = [ {
 			name: 'group1',
 			type: 'send_unselected_if_any',
@@ -1426,14 +1426,16 @@
 
 		model.initializeFilters( definition );
 
-		assert.ok(
-			!model.isHighlightEnabled(),
+		assert.strictEqual(
+			model.isHighlightEnabled(),
+			false,
 			'Initially, highlight is disabled.'
 		);
 
 		model.toggleHighlight( true );
-		assert.ok(
+		assert.strictEqual(
 			model.isHighlightEnabled(),
+			true,
 			'Highlight is enabled on toggle.'
 		);
 
@@ -1451,14 +1453,14 @@
 			'Highlighted items are highlighted.'
 		);
 
-		assert.equal(
+		assert.strictEqual(
 			model.getItemByName( 'group1__filter1' ).getHighlightColor(),
 			'color1',
 			'Item highlight color is set.'
 		);
 
 		model.setHighlightColor( 'group1__filter1', 'color1changed' );
-		assert.equal(
+		assert.strictEqual(
 			model.getItemByName( 'group1__filter1' ).getHighlightColor(),
 			'color1changed',
 			'Item highlight color is changed on setHighlightColor.'
@@ -1547,16 +1549,16 @@
 		model.initializeFilters( shortFilterDefinition, null );
 
 		model.emptyAllFilters();
-		assert.ok( model.areVisibleFiltersEmpty() );
+		assert.strictEqual( model.areVisibleFiltersEmpty(), true );
 
 		model.toggleFiltersSelected( {
 			group3__filter5: true // sticky
 		} );
-		assert.ok( model.areVisibleFiltersEmpty() );
+		assert.strictEqual( model.areVisibleFiltersEmpty(), true );
 
 		model.toggleFiltersSelected( {
 			group1__filter1: true
 		} );
-		assert.notOk( model.areVisibleFiltersEmpty() );
+		assert.strictEqual( model.areVisibleFiltersEmpty(), false );
 	} );
-}( mediaWiki, jQuery ) );
+}() );

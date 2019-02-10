@@ -9,7 +9,8 @@
 			"Kalyanasundar",
 			"ElangoRamanujam",
 			"Info-farmer",
-			"Dineshkumar Ponnusamy"
+			"Dineshkumar Ponnusamy",
+			"Balajijagadesh"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "நூல்",
@@ -17,6 +18,7 @@
 	"visualeditor-cite-tool-name-news": "செய்திகள்",
 	"visualeditor-cite-tool-name-web": "இணையத்தளம்",
 	"cite-ve-dialog-reference-options-group-label": "இந்தக் குழுவை பாவிக்கவும்",
+	"cite-ve-dialog-reference-options-section": "விருப்பத்தேர்வுகள்",
 	"cite-ve-dialog-reference-title": "மேற்கோள்",
 	"cite-ve-dialogbutton-reference-tooltip": "மேற்கோள்"
 }

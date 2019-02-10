@@ -75,7 +75,7 @@ SRC=&#106;&#97;&#118;&#97;&#115;&#99;&#114;&#105;&#112;&#116;&#58;&#97;&#108;&#1
 %253cscript%253ealert(document.cookie)%253c/script%253e
 </source>
 !! result
-<p><code class="mw-highlight" dir="ltr">&lt;script&gt;alert("pwnd")&lt;/script&gt; &lt;IMG SRC=`javascript:alert("RSnake says, 'XSS'")`&gt; &lt;IMG SRC=&amp;#106;&amp;#97;&amp;#118;&amp;#97;&amp;#115;&amp;#99;&amp;#114;&amp;#105;&amp;#112;&amp;#116;&amp;#58;&amp;#97;&amp;#108;&amp;#101;&amp;#114;&amp;#116;&amp;#40; &amp;#39;&amp;#88;&amp;#83;&amp;#83;&amp;#39;&amp;#41; \";alert('XSS');// &lt;/script&gt;&lt;script&gt;alert('XSS');&lt;/script&gt;&#160;%253cscript%253ealert(document.cookie)%253c/script%253e</code>
+<p><code class="mw-highlight" dir="ltr">&lt;script&gt;alert("pwnd")&lt;/script&gt; &lt;IMG SRC=`javascript:alert("RSnake says, 'XSS'")`&gt; &lt;IMG SRC=&amp;#106;&amp;#97;&amp;#118;&amp;#97;&amp;#115;&amp;#99;&amp;#114;&amp;#105;&amp;#112;&amp;#116;&amp;#58;&amp;#97;&amp;#108;&amp;#101;&amp;#114;&amp;#116;&amp;#40; &amp;#39;&amp;#88;&amp;#83;&amp;#83;&amp;#39;&amp;#41; \";alert('XSS');// &lt;/script&gt;&lt;script&gt;alert('XSS');&lt;/script&gt; %253cscript%253ealert(document.cookie)%253c/script%253e</code>
 </p>
 !! end
 
@@ -165,4 +165,21 @@ Just whitespace
 !! result
 <div class="mw-highlight mw-content-ltr" dir="ltr"></div>
 
+!! end
+
+!! test
+tabs plus tidy (T32930, T59826)
+!! input
+<syntaxhighlight lang="javascript" enclose="pre" highlight="2-3">
+function doSomething() {
+	var	foo,
+		bar;
+	if (baz) {
+</syntaxhighlight>
+!! html+tidy
+<div class="mw-highlight mw-content-ltr" dir="ltr"><pre><span></span><span class="kd">function</span> <span class="nx">doSomething</span><span class="p">()</span> <span class="p">{</span>
+<span class="hll">	<span class="kd">var</span>	<span class="nx">foo</span><span class="p">,</span>
+</span><span class="hll">		<span class="nx">bar</span><span class="p">;</span>
+</span>	<span class="k">if</span> <span class="p">(</span><span class="nx">baz</span><span class="p">)</span> <span class="p">{</span>
+</pre></div>
 !! end

@@ -22,6 +22,7 @@
  * @ingroup FileRepo
  */
 
+use MediaWiki\MediaWikiServices;
 use Wikimedia\Rdbms\ResultWrapper;
 use Wikimedia\Rdbms\Database;
 use Wikimedia\Rdbms\IDatabase;
@@ -200,7 +201,7 @@ class LocalRepo extends FileRepo {
 		}
 
 		$method = __METHOD__;
-		$redirDbKey = ObjectCache::getMainWANInstance()->getWithSetCallback(
+		$redirDbKey = MediaWikiServices::getInstance()->getMainWANObjectCache()->getWithSetCallback(
 			$memcKey,
 			$expiry,
 			function ( $oldValue, &$ttl, array &$setOpts ) use ( $method, $title ) {
@@ -277,7 +278,7 @@ class LocalRepo extends FileRepo {
 		$applyMatchingFiles = function ( ResultWrapper $res, &$searchSet, &$finalFiles )
 			use ( $fileMatchesSearch, $flags )
 		{
-			global $wgContLang;
+			$contLang = MediaWikiServices::getInstance()->getContentLanguage();
 			$info = $this->getInfo();
 			foreach ( $res as $row ) {
 				$file = $this->newFileFromRow( $row );
@@ -286,7 +287,7 @@ class LocalRepo extends FileRepo {
 				$dbKeysLook = [ strtr( $file->getName(), ' ', '_' ) ];
 				if ( !empty( $info['initialCapital'] ) ) {
 					// Search keys for "hi.png" and "Hi.png" should use the "Hi.png file"
-					$dbKeysLook[] = $wgContLang->lcfirst( $file->getName() );
+					$dbKeysLook[] = $contLang->lcfirst( $file->getName() );
 				}
 				foreach ( $dbKeysLook as $dbKey ) {
 					if ( isset( $searchSet[$dbKey] )
@@ -506,7 +507,7 @@ class LocalRepo extends FileRepo {
 	function getSharedCacheKey( /*...*/ ) {
 		$args = func_get_args();
 
-		return call_user_func_array( 'wfMemcKey', $args );
+		return wfMemcKey( ...$args );
 	}
 
 	/**
@@ -520,7 +521,7 @@ class LocalRepo extends FileRepo {
 		if ( $key ) {
 			$this->getMasterDB()->onTransactionPreCommitOrIdle(
 				function () use ( $key ) {
-					ObjectCache::getMainWANInstance()->delete( $key );
+					MediaWikiServices::getInstance()->getMainWANObjectCache()->delete( $key );
 				},
 				__METHOD__
 			);
@@ -589,7 +590,7 @@ class LocalRepo extends FileRepo {
 			wfDebug( __METHOD__ . ": skipped because storage uses sha1 paths\n" );
 			return Status::newGood();
 		} else {
-			return call_user_func_array( 'parent::' . $function, $args );
+			return parent::$function( ...$args );
 		}
 	}
 }

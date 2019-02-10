@@ -375,7 +375,12 @@ $specialPageAliases['sq'] = [
 
 /** Serbian (Cyrillic script) (српски (ћирилица)‎) */
 $specialPageAliases['sr-ec'] = [
-	'CiteThisPage' => [ 'Цитирај' ],
+	'CiteThisPage' => [ 'Цитирај', 'Цитирај_ову_страницу', 'Цитирај_ову_страну' ],
+];
+
+/** Serbian (Latin script) (srpski (latinica)‎) */
+$specialPageAliases['sr-el'] = [
+	'CiteThisPage' => [ 'Citiraj', 'Citiraj_ovu_stranicu', 'Citiraj_ovu_stranu' ],
 ];
 
 /** Swedish (svenska) */

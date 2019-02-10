@@ -21,6 +21,8 @@
  * @ingroup FileAbstraction
  */
 
+use MediaWiki\MediaWikiServices;
+
 /**
  * Class to represent a file in the oldimage table
  *
@@ -39,7 +41,7 @@ class OldLocalFile extends LocalFile {
 	/**
 	 * @param Title $title
 	 * @param FileRepo $repo
-	 * @param string|int $time
+	 * @param string|int|null $time
 	 * @return self
 	 * @throws MWException
 	 */
@@ -113,13 +115,14 @@ class OldLocalFile extends LocalFile {
 		global $wgActorTableSchemaMigrationStage;
 
 		wfDeprecated( __METHOD__, '1.31' );
-		if ( $wgActorTableSchemaMigrationStage > MIGRATION_WRITE_BOTH ) {
+		if ( $wgActorTableSchemaMigrationStage & SCHEMA_COMPAT_READ_NEW ) {
 			// If code is using this instead of self::getQueryInfo(), there's a
 			// decent chance it's going to try to directly access
 			// $row->oi_user or $row->oi_user_text and we can't give it
-			// useful values here once those aren't being written anymore.
+			// useful values here once those aren't being used anymore.
 			throw new BadMethodCallException(
-				'Cannot use ' . __METHOD__ . ' when $wgActorTableSchemaMigrationStage > MIGRATION_WRITE_BOTH'
+				'Cannot use ' . __METHOD__
+					. ' when $wgActorTableSchemaMigrationStage has SCHEMA_COMPAT_READ_NEW'
 			);
 		}
 
@@ -136,11 +139,11 @@ class OldLocalFile extends LocalFile {
 			'oi_minor_mime',
 			'oi_user',
 			'oi_user_text',
-			'oi_actor' => $wgActorTableSchemaMigrationStage > MIGRATION_OLD ? 'oi_actor' : 'NULL',
+			'oi_actor' => 'NULL',
 			'oi_timestamp',
 			'oi_deleted',
 			'oi_sha1',
-		] + CommentStore::getStore()->getFields( 'oi_description' );
+		] + MediaWikiServices::getInstance()->getCommentStore()->getFields( 'oi_description' );
 	}
 
 	/**
@@ -155,7 +158,7 @@ class OldLocalFile extends LocalFile {
 	 *   - joins: (array) to include in the `$join_conds` to `IDatabase->select()`
 	 */
 	public static function getQueryInfo( array $options = [] ) {
-		$commentQuery = CommentStore::getStore()->getJoin( 'oi_description' );
+		$commentQuery = MediaWikiServices::getInstance()->getCommentStore()->getJoin( 'oi_description' );
 		$actorQuery = ActorMigration::newMigration()->getJoin( 'oi_user' );
 		$ret = [
 			'tables' => [ 'oldimage' ] + $commentQuery['tables'] + $actorQuery['tables'],
@@ -446,7 +449,8 @@ class OldLocalFile extends LocalFile {
 			return false;
 		}
 
-		$commentFields = CommentStore::getStore()->insert( $dbw, 'oi_description', $comment );
+		$commentFields = MediaWikiServices::getInstance()->getCommentStore()
+			->insert( $dbw, 'oi_description', $comment );
 		$actorFields = ActorMigration::newMigration()->getInsertValues( $dbw, 'oi_user', $user );
 		$dbw->insert( 'oldimage',
 			[

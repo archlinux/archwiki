@@ -15,7 +15,8 @@
 			"Papapasan",
 			"Linforest",
 			"Hydra",
-			"飞舞回堂前"
+			"飞舞回堂前",
+			"WhitePhosphorus"
 		]
 	},
 	"multimediaviewer-desc": "在全屏界面中以较大尺寸显示缩略图。",
@@ -31,7 +32,7 @@
 	"multimediaviewer-multiple-authors-combine": "$1和$2",
 	"multimediaviewer-metadata-error": "无法加载图片的详细信息（错误：$1）",
 	"multimediaviewer-thumbnail-error": "抱歉，文件无法显示",
-	"multimediaviewer-thumbnail-error-description": "看起来发生了技术问题。您可以$1，或如果仍然发生，可$3。错误：$2",
+	"multimediaviewer-thumbnail-error-description": "看起来发生了技术问题。如果仍然发生，您可以$1。错误：$2",
 	"multimediaviewer-thumbnail-error-retry": "重试",
 	"multimediaviewer-thumbnail-error-report": "报告问题",
 	"multimediaviewer-license-cc-by-1.0": "CC BY 1.0",
@@ -68,7 +69,7 @@
 	"multimediaviewer-restriction-trademarked": "此图片包含受商标法管理的内容。",
 	"multimediaviewer-restriction-default": "此图片可能受版权法以外的法律法规限制。请参见文件说明页面以获取详细信息。",
 	"multimediaviewer-restriction-default-and-others": "此图片可能受版权法以外的其他法律法规的进一步限制。请参见文件说明页面以获取详细信息。",
-	"multimediaviewer-about-mmv": "关于",
+	"multimediaviewer-about-mmv": "关于此界面",
 	"multimediaviewer-discuss-mmv": "讨论",
 	"multimediaviewer-help-mmv": "帮助",
 	"multimediaviewer-optout-mmv": "停用媒体查看器",
@@ -131,7 +132,7 @@
 	"multimediaviewer-credit-popup-text-more": "显示完整的作者和来源",
 	"multimediaviewer-download-attribution-cta-header": "您需要为作者署名",
 	"multimediaviewer-download-optional-attribution-cta-header": "您可以为作者署名",
-	"multimediaviewer-download-attribution-cta": "告诉我如何",
+	"multimediaviewer-download-attribution-cta": "告诉我怎么做",
 	"multimediaviewer-download-attribution-copy": "选择并复制（如果支持）此文件的署名文本",
 	"multimediaviewer-reuse-warning-deletion": "文件被标记提删。",
 	"multimediaviewer-reuse-warning-nonfree": "文件没有自由许可协议。",

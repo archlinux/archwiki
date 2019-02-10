@@ -2,12 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Hamilton Abreu",
-			"Toliño"
+			"Toliño",
+			"Elisardojm"
 		]
 	},
 	"replacetext": "Substituír un texto",
 	"replacetext-desc": "Proporciona unha [[Special:ReplaceText|páxina especial]] para que os administradores poidan facer unha cadea global para atopar e substituír un texto no contido de todas as páxinas dun wiki",
-	"replacetext_docu": "Para substituír unha cadea de texto por outra en todas as páxinas regulares deste wiki, insira aquí as dúas pezas de texto e logo prema en \"{{int:replacetext_continue}}\".\nDespois mostraráselle unha lista das páxinas que conteñen o texto buscado e poderá elixir en cales quere substituílo.\nO seu nome aparecerá nos histotiais das páxinas como o usuario responsable de calquera cambio.",
+	"replacetext_docu": "Para substituír unha cadea de texto por outra en todas as páxinas regulares deste wiki, insira aquí as dúas pezas de texto e logo prema en \"{{int:replacetext_continue}}\".\nDespois amosaráselle unha lista das páxinas que conteñen o texto buscado e poderá elixir en cales quere substituílo.\nO seu nome aparecerá nos historiais das páxinas como o usuario responsable de calquera cambio.",
 	"replacetext_originaltext": "Texto orixinal:",
 	"replacetext_replacementtext": "Texto de substitución:",
 	"replacetext_useregex": "Usar expresións regulares",

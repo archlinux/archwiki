@@ -6,12 +6,10 @@
 			"Ильнар"
 		]
 	},
-	"visualeditor-cite-tool-definition.json": "null",
 	"visualeditor-cite-tool-name-book": "Китап",
 	"visualeditor-cite-tool-name-journal": "Мәкалә",
 	"visualeditor-cite-tool-name-news": "Яңалыклар",
 	"visualeditor-cite-tool-name-web": "Веб-сәхифә",
-	"cite-tool-definition.json": "null",
 	"cite-ve-dialog-reference-editing-reused": "Әлеге сылтамабиттә $1 тапкыр {{PLURAL:$1|кулланыла}}.",
 	"cite-ve-dialog-reference-options-group-label": "Бу төркемне кулланырга",
 	"cite-ve-dialog-reference-options-group-placeholder": "Гомуми сылтамалар",
@@ -35,5 +33,7 @@
 	"cite-ve-referenceslist-isempty-default": "Әлеге биттә исемлеккә кертер өчен сылтамалар юк.",
 	"cite-ve-referenceslist-missingref": "Әлеге сылтама калыпта гына яки аерым блокта гына билгеләнә, һәм хәзерге вакытта аны чыганак код режимында гына үзгәртеп була.",
 	"cite-ve-toolbar-group-label": "Чыганаклар",
-	"cite-ve-othergroup-item": "$1 искәрмә"
+	"cite-ve-othergroup-item": "$1 искәрмә",
+	"visualeditor-internal-list-diff-default-group-name-mwreference": "Сылтамалар",
+	"visualeditor-internal-list-diff-group-name-mwreference": "Сылтамалар төркеме исеме: «$1»"
 }

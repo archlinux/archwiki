@@ -70,6 +70,14 @@ window.Demo = function Demo() {
 		flags: [ 'progressive' ]
 	} );
 
+	this.tutorialsLink = new OO.ui.ButtonWidget( {
+		label: 'Tutorials',
+		classes: [ 'demo-button-docs' ],
+		icon: 'book',
+		href: 'tutorials/index.html',
+		flags: [ 'progressive' ]
+	} );
+
 	// Events
 	this.pageMenu.on( 'choose', OO.ui.bind( this.onModeChange, this ) );
 	this.themeSelect.on( 'choose', OO.ui.bind( this.onModeChange, this ) );
@@ -90,7 +98,8 @@ window.Demo = function Demo() {
 			this.directionSelect.$element,
 			this.jsPhpSelect.$element,
 			this.platformSelect.$element,
-			this.documentationLink.$element
+			this.documentationLink.$element,
+			this.tutorialsLink.$element
 		);
 	this.$element
 		.addClass( 'demo' )
@@ -163,6 +172,7 @@ Demo.static.additionalThemeImagesSuffixes = {
 		'-icons-editing-styling',
 		'-icons-editing-list',
 		'-icons-editing-advanced',
+		'-icons-editing-citation',
 		'-icons-media',
 		'-icons-location',
 		'-icons-user',
@@ -180,6 +190,7 @@ Demo.static.additionalThemeImagesSuffixes = {
 		'-icons-editing-styling',
 		'-icons-editing-list',
 		'-icons-editing-advanced',
+		'-icons-editing-citation',
 		'-icons-media',
 		'-icons-location',
 		'-icons-user',

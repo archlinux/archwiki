@@ -18,8 +18,8 @@
 	"oathauth-step2": "Vaihe 2: Skannaa QR-koodi",
 	"oathauth-step2alt": "Tai syötä salainen tunnus käsin:",
 	"oathauth-step4": "Vaihe 4: Vahvistus",
-	"right-oathauth-enable": "Ottaa käyttöön kaksivaiheinen tunnistautuminen",
-	"action-oathauth-enable": "ottaa käyttöön kaksivaiheista tunnistautumista",
+	"right-oathauth-enable": "Ottaa käyttöön kahden tekijän avulla suoritettu (''two-factor'') tunnistautuminen",
+	"action-oathauth-enable": "ottaa käyttöön kahden tekijän avulla suoritettua (''two-factor'') tunnistautumista",
 	"oathauth-auth-token-label": "Avain",
 	"oathauth-auth-ui": "Syötä vahvistuskoodi tunnistautumislaitteestasi",
 	"action-oathauth-api-all": "tarkistaa OATH-tilaa"

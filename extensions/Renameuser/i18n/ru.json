@@ -15,8 +15,8 @@
 		]
 	},
 	"renameuser": "Переименовать участника",
-	"renameuser-linkoncontribs": "переименовать участника",
-	"renameuser-linkoncontribs-text": "Переименовать этого участника",
+	"renameuser-linkoncontribs": "переименовать {{GENDER:$1|участника|участницу}}",
+	"renameuser-linkoncontribs-text": "Переименовать {{GENDER:$1|этого участника|эту участницу}}",
 	"renameuser-desc": "Добавляет [[Special:RenameUser|возможность]] переименования пользователей (требуется право <code>renameuser</code>)",
 	"renameuserold": "Имя в настоящий момент:",
 	"renameusernew": "Новое имя:",

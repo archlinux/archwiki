@@ -5,7 +5,11 @@
 			"Pahles"
 		]
 	},
-	"cite-desc": "Voeg <nowiki><ref[ name=id]></nowiki> en <nowiki><references/></nowiki> tags toe veur citate",
+	"apihelp-query+references-description": "Gaef gegaevesrepresentatie van rifferensies trögk die waere verbónje mit de opgegaeve pagina's.",
+	"apihelp-query+references-summary": "Gaef gegaevesrepresentatie van rifferensies trögk die waere verbónje mit de opgegaeve pagina's.",
+	"apihelp-query+references-example-1": "Rifferensies verbónje mit <kbd>Albert Einstein</kbd>.",
+	"apierror-citestoragedisabled": "Oetbreijingsrifferensieopslaag van Citeer steit neet aan.",
+	"cite-desc": "Voeg <code><nowiki><ref[ name=id]></nowiki></code> en <code><nowiki><references/></nowiki></code> tags toe veur citate",
 	"cite_error": "Citeerfout: $1",
 	"cite_error_ref_numeric_key": "Ónzjuuste tag <code>&lt;ref&gt;</code>; de naam kin gein simpele integer zeen, gebroek 'ne besjrievendje titel",
 	"cite_error_ref_no_key": "'t Äöpeningslabel <code>&lt;ref&gt;</code> is ónjuus opgemaak of haet 'ne verkieërde naam.",

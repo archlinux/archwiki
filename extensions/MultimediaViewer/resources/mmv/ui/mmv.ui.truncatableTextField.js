@@ -128,8 +128,7 @@
 	TTFP.empty = function () {
 		this.$element.empty();
 		this.$container
-			.removeClass( this.options.styles.join( ' ' ) )
-			.removeClass( 'mw-mmv-ttf-untruncated mw-mmv-ttf-truncated' )
+			.removeClass( this.options.styles.concat( [ 'mw-mmv-ttf-untruncated', 'mw-mmv-ttf-truncated' ] ) )
 			.addClass( 'empty' );
 		this.$ellipsis.hide();
 		this.setTitle( '', '' );
@@ -220,8 +219,7 @@
 			field = this;
 
 		this.$container
-			.removeClass( this.options.styles.join( ' ' ) )
-			.removeClass( 'mw-mmv-ttf-untruncated mw-mmv-ttf-truncated' )
+			.removeClass( this.options.styles.concat( [ 'mw-mmv-ttf-untruncated', 'mw-mmv-ttf-truncated' ] ) )
 			.addClass( newClass );
 		this.expanded = false;
 

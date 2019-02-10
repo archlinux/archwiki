@@ -67,8 +67,7 @@
 				e.preventDefault();
 				permission.grow();
 				permission.scroller.toggle( 'up' );
-			} )
-		;
+			} );
 
 		/**
 		 * A helper element to fade off text

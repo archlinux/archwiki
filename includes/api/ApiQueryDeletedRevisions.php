@@ -23,6 +23,10 @@
  * @file
  */
 
+use MediaWiki\MediaWikiServices;
+use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Storage\NameTableAccessException;
+
 /**
  * Query module to enumerate deleted revisions for pages.
  *
@@ -35,6 +39,8 @@ class ApiQueryDeletedRevisions extends ApiQueryRevisionsBase {
 	}
 
 	protected function run( ApiPageSet $resultPageSet = null ) {
+		global $wgChangeTagsSchemaMigrationStage;
+
 		$user = $this->getUser();
 		// Before doing anything at all, let's check permissions
 		$this->checkUserRightsAny( 'deletedhistory' );
@@ -55,12 +61,13 @@ class ApiQueryDeletedRevisions extends ApiQueryRevisionsBase {
 		$params = $this->extractRequestParams( false );
 
 		$db = $this->getDB();
+		$revisionStore = MediaWikiServices::getInstance()->getRevisionStore();
 
 		$this->requireMaxOneParameter( $params, 'user', 'excludeuser' );
 
 		if ( $resultPageSet === null ) {
 			$this->parseParameters( $params );
-			$arQuery = Revision::getArchiveQueryInfo();
+			$arQuery = $revisionStore->getArchiveQueryInfo();
 			$this->addTables( $arQuery['tables'] );
 			$this->addFields( $arQuery['fields'] );
 			$this->addJoinConds( $arQuery['joins'] );
@@ -84,7 +91,17 @@ class ApiQueryDeletedRevisions extends ApiQueryRevisionsBase {
 			$this->addJoinConds(
 				[ 'change_tag' => [ 'INNER JOIN', [ 'ar_rev_id=ct_rev_id' ] ] ]
 			);
-			$this->addWhereFld( 'ct_tag', $params['tag'] );
+			if ( $wgChangeTagsSchemaMigrationStage > MIGRATION_WRITE_BOTH ) {
+				$changeTagDefStore = MediaWikiServices::getInstance()->getChangeTagDefStore();
+				try {
+					$this->addWhereFld( 'ct_tag_id', $changeTagDefStore->getId( $params['tag'] ) );
+				} catch ( NameTableAccessException $exception ) {
+					// Return nothing.
+					$this->addWhere( '1=0' );
+				}
+			} else {
+				$this->addWhereFld( 'ct_tag', $params['tag'] );
+			}
 		}
 
 		if ( $this->fetchContent ) {
@@ -132,9 +149,9 @@ class ApiQueryDeletedRevisions extends ApiQueryRevisionsBase {
 			// (shouldn't be able to get here without 'deletedhistory', but
 			// check it again just in case)
 			if ( !$user->isAllowed( 'deletedhistory' ) ) {
-				$bitmask = Revision::DELETED_USER;
+				$bitmask = RevisionRecord::DELETED_USER;
 			} elseif ( !$user->isAllowedAny( 'suppressrevision', 'viewsuppressed' ) ) {
-				$bitmask = Revision::DELETED_USER | Revision::DELETED_RESTRICTED;
+				$bitmask = RevisionRecord::DELETED_USER | RevisionRecord::DELETED_RESTRICTED;
 			} else {
 				$bitmask = 0;
 			}
@@ -234,7 +251,7 @@ class ApiQueryDeletedRevisions extends ApiQueryRevisionsBase {
 
 				$fit = $this->addPageSubItem(
 					$pageMap[$row->ar_namespace][$row->ar_title],
-					$this->extractRevisionInfo( Revision::newFromArchiveRow( $row ), $row ),
+					$this->extractRevisionInfo( $revisionStore->newRevisionFromArchiveRow( $row ), $row ),
 					'rev'
 				);
 				if ( !$fit ) {
@@ -285,7 +302,7 @@ class ApiQueryDeletedRevisions extends ApiQueryRevisionsBase {
 	protected function getExamplesMessages() {
 		return [
 			'action=query&prop=deletedrevisions&titles=Main%20Page|Talk:Main%20Page&' .
-				'drvprop=user|comment|content'
+				'drvslots=*&drvprop=user|comment|content'
 				=> 'apihelp-query+deletedrevisions-example-titles',
 			'action=query&prop=deletedrevisions&revids=123456'
 				=> 'apihelp-query+deletedrevisions-example-revids',

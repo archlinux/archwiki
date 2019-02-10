@@ -12,16 +12,12 @@ class ApiBlockTest extends ApiTestCase {
 
 	protected function setUp() {
 		parent::setUp();
+		$this->tablesUsed = array_merge(
+			$this->tablesUsed,
+			[ 'ipblocks', 'change_tag', 'change_tag_def', 'logging' ]
+		);
 
 		$this->mUser = $this->getMutableTestUser()->getUser();
-	}
-
-	protected function tearDown() {
-		$block = Block::newFromTarget( $this->mUser->getName() );
-		if ( !is_null( $block ) ) {
-			$block->delete();
-		}
-		parent::tearDown();
 	}
 
 	protected function getTokens() {
@@ -120,18 +116,39 @@ class ApiBlockTest extends ApiTestCase {
 	}
 
 	public function testBlockWithTag() {
+		$this->setMwGlobals( 'wgChangeTagsSchemaMigrationStage', MIGRATION_WRITE_BOTH );
 		ChangeTags::defineTag( 'custom tag' );
 
 		$this->doBlock( [ 'tags' => 'custom tag' ] );
 
 		$dbw = wfGetDB( DB_MASTER );
-		$this->assertSame( 'custom tag', $dbw->selectField(
+		$this->assertSame( 1, (int)$dbw->selectField(
 			[ 'change_tag', 'logging' ],
-			'ct_tag',
-			[ 'log_type' => 'block' ],
+			'COUNT(*)',
+			[ 'log_type' => 'block', 'ct_tag' => 'custom tag' ],
 			__METHOD__,
 			[],
 			[ 'change_tag' => [ 'INNER JOIN', 'ct_log_id = log_id' ] ]
+		) );
+	}
+
+	public function testBlockWithTagNewBackend() {
+		$this->setMwGlobals( 'wgChangeTagsSchemaMigrationStage', MIGRATION_NEW );
+		ChangeTags::defineTag( 'custom tag' );
+
+		$this->doBlock( [ 'tags' => 'custom tag' ] );
+
+		$dbw = wfGetDB( DB_MASTER );
+		$this->assertSame( 1, (int)$dbw->selectField(
+			[ 'change_tag', 'logging', 'change_tag_def' ],
+			'COUNT(*)',
+			[ 'log_type' => 'block', 'ctd_name' => 'custom tag' ],
+			__METHOD__,
+			[],
+			[
+				'change_tag' => [ 'INNER JOIN', 'ct_log_id = log_id' ],
+				'change_tag_def' => [ 'INNER JOIN', 'ctd_id = ct_tag_id' ],
+			]
 		) );
 	}
 

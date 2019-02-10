@@ -47,7 +47,7 @@ class ApiCSPReport extends ApiBase {
 
 		$this->verifyPostBodyOk();
 		$report = $this->getReport();
-		$flags = $this->getFlags( $report );
+		$flags = $this->getFlags( $report, $userAgent );
 
 		$warningText = $this->generateLogLine( $flags, $report );
 		$this->logReport( $flags, $warningText, [
@@ -81,9 +81,10 @@ class ApiCSPReport extends ApiBase {
 	 * Get extra notes about the report.
 	 *
 	 * @param array $report The CSP report
+	 * @param string $userAgent
 	 * @return array
 	 */
-	private function getFlags( $report ) {
+	private function getFlags( $report, $userAgent ) {
 		$reportOnly = $this->getParameter( 'reportonly' );
 		$source = $this->getParameter( 'source' );
 		$falsePositives = $this->getConfig()->get( 'CSPFalsePositiveUrls' );
@@ -97,12 +98,22 @@ class ApiCSPReport extends ApiBase {
 		}
 
 		if (
-			( isset( $report['blocked-uri'] ) &&
-			isset( $falsePositives[$report['blocked-uri']] ) )
-			|| ( isset( $report['source-file'] ) &&
-			isset( $falsePositives[$report['source-file']] ) )
+			(
+				ContentSecurityPolicy::falsePositiveBrowser( $userAgent ) &&
+				$report['blocked-uri'] === "self"
+			) ||
+			(
+				isset( $report['blocked-uri'] ) &&
+				isset( $falsePositives[$report['blocked-uri']] )
+			) ||
+			(
+				isset( $report['source-file'] ) &&
+				isset( $falsePositives[$report['source-file']] )
+			)
 		) {
-			// Report caused by Ad-Ware
+			// False positive due to:
+			// https://bugzilla.mozilla.org/show_bug.cgi?id=1026520
+
 			$flags[] = 'false-positive';
 		}
 		return $flags;
@@ -127,7 +138,7 @@ class ApiCSPReport extends ApiBase {
 	/**
 	 * Get the report from post body and turn into associative array.
 	 *
-	 * @return Array
+	 * @return array
 	 */
 	private function getReport() {
 		$postBody = $this->getRequest()->getRawInput();
@@ -165,8 +176,8 @@ class ApiCSPReport extends ApiBase {
 			$flagText = '[' . implode( ', ', $flags ) . ']';
 		}
 
-		$blockedFile = isset( $report['blocked-uri'] ) ? $report['blocked-uri'] : 'n/a';
-		$page = isset( $report['document-uri'] ) ? $report['document-uri'] : 'n/a';
+		$blockedFile = $report['blocked-uri'] ?? 'n/a';
+		$page = $report['document-uri'] ?? 'n/a';
 		$line = isset( $report['line-number'] ) ? ':' . $report['line-number'] : '';
 		$warningText = $flagText .
 			' Received CSP report: <' . $blockedFile .

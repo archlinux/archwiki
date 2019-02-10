@@ -9,6 +9,7 @@
 		]
 	},
 	"syntaxhighlight-desc": "Осигурява синтактично осветяване на <code>&lt;syntaxhighlight&gt;</code> чрез [http://pygments.org/ Pygments]",
+	"syntaxhighlight-error-category": "Страници с грешки в оцветяването на синтаксиса",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Език",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Блок с код",
 	"syntaxhighlight-error-unknown-language": "Непознат език „$1“"

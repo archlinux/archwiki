@@ -4,7 +4,7 @@
 			"Cedric31"
 		]
 	},
-	"cite-desc": "Apond las balisas <nowiki><ref[ name=id]></nowiki> e <nowiki><references/></nowiki>, per las citacions.",
+	"cite-desc": "Apond las balisas <code><nowiki><ref[ name=id]></nowiki></code> e <code><nowiki><references/></nowiki></code>, per las citacions.",
 	"cite_error": "Error de citacion : $1",
 	"cite_error_ref_numeric_key": "Ampèl invalid ; clau non-integrala esperada",
 	"cite_error_ref_no_key": "La balisa dobrenta <code>&lt;ref&gt;</code> es malformada o a un marrit nom.",

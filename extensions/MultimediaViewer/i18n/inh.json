@@ -2,8 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Умар",
-			"ElizaMag"
+			"ElizaMag",
+			"Adam-Yourist"
 		]
 	},
-	"multimediaviewer-help-mmv": "Новкъoстал"
+	"multimediaviewer-optin-pref": "Хьалотае <span class=\"plainlinks\">«[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About Медиафайлашка хьожарг]</span>»",
+	"multimediaviewer-help-mmv": "Новкъoстал",
+	"multimediaviewer-optin-mmv": "Хьалотае «Медиафайлашка хьожарг»",
+	"multimediaviewer-enable-dialog-header": "Хьалотае «Медиафайлашка хьожарг»?",
+	"multimediaviewer-enable-submit-button": "Хьалотае «Медиафайлашка хьожарг»"
 }

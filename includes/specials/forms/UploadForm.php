@@ -55,19 +55,16 @@ class UploadForm extends HTMLForm {
 
 		$this->mWatch = !empty( $options['watch'] );
 		$this->mForReUpload = !empty( $options['forreupload'] );
-		$this->mSessionKey = isset( $options['sessionkey'] ) ? $options['sessionkey'] : '';
+		$this->mSessionKey = $options['sessionkey'] ?? '';
 		$this->mHideIgnoreWarning = !empty( $options['hideignorewarning'] );
 		$this->mDestWarningAck = !empty( $options['destwarningack'] );
-		$this->mDestFile = isset( $options['destfile'] ) ? $options['destfile'] : '';
+		$this->mDestFile = $options['destfile'] ?? '';
 
-		$this->mComment = isset( $options['description'] ) ?
-			$options['description'] : '';
+		$this->mComment = $options['description'] ?? '';
 
-		$this->mTextTop = isset( $options['texttop'] )
-			? $options['texttop'] : '';
+		$this->mTextTop = $options['texttop'] ?? '';
 
-		$this->mTextAfterSummary = isset( $options['textaftersummary'] )
-			? $options['textaftersummary'] : '';
+		$this->mTextAfterSummary = $options['textaftersummary'] ?? '';
 
 		$sourceDescriptor = $this->getSourceSection();
 		$descriptor = $sourceDescriptor
@@ -79,7 +76,7 @@ class UploadForm extends HTMLForm {
 
 		# Add a link to edit MediaWiki:Licenses
 		if ( $this->getUser()->isAllowed( 'editinterface' ) ) {
-			$this->getOutput()->addModuleStyles( 'mediawiki.special.upload.styles' );
+			$this->getOutput()->addModuleStyles( 'mediawiki.special' );
 			$licensesLink = $linkRenderer->makeKnownLink(
 				$this->msg( 'licenses' )->inContentLanguage()->getTitle(),
 				$this->msg( 'licenses-edit' )->text(),
@@ -263,12 +260,11 @@ class UploadForm extends HTMLForm {
 				$file = null;
 			}
 			if ( $file ) {
-				global $wgContLang;
-
 				$mto = $file->transform( [ 'width' => 120 ] );
 				if ( $mto ) {
 					$this->addHeaderText(
-						'<div class="thumb t' . $wgContLang->alignEnd() . '">' .
+						'<div class="thumb t' .
+						MediaWikiServices::getInstance()->getContentLanguage()->alignEnd() . '">' .
 						Html::element( 'img', [
 							'src' => $mto->getUrl(),
 							'class' => 'thumbimage',
@@ -406,14 +402,11 @@ class UploadForm extends HTMLForm {
 	protected function addUploadJS() {
 		$config = $this->getConfig();
 
-		$useAjaxDestCheck = $config->get( 'UseAjax' ) && $config->get( 'AjaxUploadDestCheck' );
-		$useAjaxLicensePreview = $config->get( 'UseAjax' ) &&
-			$config->get( 'AjaxLicensePreview' ) && $config->get( 'EnableAPI' );
 		$this->mMaxUploadSize['*'] = UploadBase::getMaxUploadSize();
 
 		$scriptVars = [
-			'wgAjaxUploadDestCheck' => $useAjaxDestCheck,
-			'wgAjaxLicensePreview' => $useAjaxLicensePreview,
+			'wgAjaxUploadDestCheck' => $config->get( 'AjaxUploadDestCheck' ),
+			'wgAjaxLicensePreview' => $config->get( 'AjaxLicensePreview' ),
 			'wgUploadAutoFill' => !$this->mForReUpload &&
 				// If we received mDestFile from the request, don't autofill
 				// the wpDestFile textbox

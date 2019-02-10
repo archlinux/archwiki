@@ -87,7 +87,7 @@ class TitleBlacklistEntry {
 	 *
 	 * @param string $title Title to check
 	 * @param string $action Action to check
-	 * @return bool TRUE if the the regex matches the title, and is not overridden
+	 * @return bool TRUE if the regex matches the title, and is not overridden
 	 * else false if it doesn't match (or was overridden)
 	 */
 	public function matches( $title, $action ) {

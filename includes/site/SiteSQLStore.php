@@ -23,7 +23,7 @@
  * @file
  * @ingroup Site
  *
- * @license GNU GPL v2+
+ * @license GPL-2.0-or-later
  * @author Daniel Kinzler
  */
 class SiteSQLStore {
@@ -39,7 +39,7 @@ class SiteSQLStore {
 	 *             or MediaWikiServices::getSiteLookup() instead.
 	 *
 	 * @param null $sitesTable IGNORED
-	 * @param null $cache IGNORED
+	 * @param BagOStuff|null $cache IGNORED
 	 *
 	 * @return SiteStore
 	 */

@@ -76,7 +76,7 @@ class SpecialEditTags extends UnlistedSpecialPage {
 		$this->outputHeader();
 
 		$this->getOutput()->addModules( [ 'mediawiki.special.edittags',
-			'mediawiki.special.edittags.styles' ] );
+			'mediawiki.special' ] );
 
 		$this->submitClicked = $request->wasPosted() && $request->getBool( 'wpSubmit' );
 
@@ -166,7 +166,7 @@ class SpecialEditTags extends UnlistedSpecialPage {
 				[],
 				[
 					'page' => $this->targetObj->getPrefixedText(),
-					'hide_tag_log' => '0',
+					'wpfilters' => [ 'tag' ],
 				]
 			);
 			if ( !$this->targetObj->isSpecialPage() ) {

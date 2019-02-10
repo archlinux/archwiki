@@ -5,7 +5,7 @@
 			"Masterches"
 		]
 	},
-	"cite-desc": "Ajoute baliz sa yo <nowiki><ref[ name=id]></nowiki> epi <nowiki><referans/></nowiki>, pou sitasyon yo.",
+	"cite-desc": "Ajoute baliz sa yo <code><nowiki><ref[ name=id]></nowiki></code> epi <code><nowiki><references/></nowiki></code>, pou sitasyon yo.",
 	"cite_error": "Erè nan sitasyon : $1",
 	"cite_error_ref_numeric_key": "Etikèt <code>&lt;ref&gt;</code> pa valab;\nnon pa kapab yon nimewo.  Itilize yon tit ki dekri bagay la.",
 	"cite_error_ref_no_key": "Etikèt <code>&lt;ref&gt;</code> pa valab;\nreferans ki pa genyen anyen ladan l dwe gen yon non",

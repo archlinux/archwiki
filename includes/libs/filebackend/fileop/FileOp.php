@@ -115,7 +115,7 @@ abstract class FileOp {
 		if ( FileBackend::isStoragePath( $path ) ) {
 			$res = FileBackend::normalizeStoragePath( $path );
 
-			return ( $res !== null ) ? $res : $path;
+			return $res ?? $path;
 		}
 
 		return $path;
@@ -137,7 +137,7 @@ abstract class FileOp {
 	 * @return mixed Returns null if the parameter is not set
 	 */
 	final public function getParam( $name ) {
-		return isset( $this->params[$name] ) ? $this->params[$name] : null;
+		return $this->params[$name] ?? null;
 	}
 
 	/**

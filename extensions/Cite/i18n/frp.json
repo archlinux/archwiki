@@ -4,7 +4,7 @@
 			"ChrisPtDe"
 		]
 	},
-	"cite-desc": "Apond les balises <nowiki><ref[ name=id]></nowiki> et <nowiki><references/></nowiki>, por les citacions.",
+	"cite-desc": "Apond les balises <code><nowiki><ref[ name=id]></nowiki></code> et <code><nowiki><references/></nowiki></code>, por les citacions.",
 	"cite_error": "Fôta de rèference : $1",
 	"cite_error_ref_numeric_key": "Apèl envalido ; cllâf pas entègrâla atendua.",
 	"cite_error_ref_no_key": "Balisa <code>&lt;ref&gt;</code> fôssa ;\nles refèrences sen contegnu dêvont avêr un nom.",
@@ -21,6 +21,5 @@
 	"cite_error_references_missing_key": "La balisa <code>&lt;ref&gt;</code> avouéc lo nom « $1 » dèfenia dens <code>&lt;references&gt;</code> est pas utilisâ dens cél tèxto.",
 	"cite_error_references_no_key": "La balisa <code>&lt;ref&gt;</code> dèfenia dens <code>&lt;references&gt;</code> at gins d’atribut de nom.",
 	"cite_error_empty_references_define": "La balisa <code>&lt;ref&gt;</code> dèfenia dens <code>&lt;references&gt;</code> avouéc lo nom « $1 » at gins de contegnu.",
-	"cite_references_link_many_sep": ",&#32;",
 	"cite_references_link_many_and": "&#32;et&#32;"
 }

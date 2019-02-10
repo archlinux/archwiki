@@ -6,7 +6,8 @@
 			"SPQRobin",
 			"Siebrand",
 			"Troefkaart",
-			"Sjoerddebruin"
+			"Sjoerddebruin",
+			"Mainframe98"
 		]
 	},
 	"skinname-vector": "Vector",
@@ -24,5 +25,7 @@
 	"vector-view-history": "Geschiedenis weergeven",
 	"vector-view-view": "Lezen",
 	"vector-view-viewsource": "Brontekst bekijken",
+	"vector-jumptonavigation": "Naar navigatie springen",
+	"vector-jumptosearch": "Naar zoeken springen",
 	"vector-more-actions": "Meer"
 }

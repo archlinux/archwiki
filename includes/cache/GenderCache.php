@@ -85,7 +85,7 @@ class GenderCache {
 		/* Undefined if there is a valid username which for some reason doesn't
 		 * exist in the database.
 		 */
-		return isset( $this->cache[$username] ) ? $this->cache[$username] : $this->getDefault();
+		return $this->cache[$username] ?? $this->getDefault();
 	}
 
 	/**
@@ -171,7 +171,7 @@ class GenderCache {
 		$res = $dbr->select( $table, $fields, $conds, $comment, [], $joins );
 
 		foreach ( $res as $row ) {
-			$this->cache[$row->user_name] = $row->up_value ? $row->up_value : $default;
+			$this->cache[$row->user_name] = $row->up_value ?: $default;
 		}
 	}
 

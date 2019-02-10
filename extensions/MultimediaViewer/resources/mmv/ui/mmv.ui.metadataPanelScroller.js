@@ -26,14 +26,14 @@
 	 * @constructor
 	 * @param {jQuery} $container The container for the panel (.mw-mmv-post-image).
 	 * @param {jQuery} $aboveFold The control bar element (.mw-mmv-above-fold).
-	 * @param {mw.storage} localStorage the localStorage object, for dependency injection
+	 * @param {mw.SafeStorage} localStorage the localStorage object, for dependency injection
 	 */
 	function MetadataPanelScroller( $container, $aboveFold, localStorage ) {
 		mw.mmv.ui.Element.call( this, $container );
 
 		this.$aboveFold = $aboveFold;
 
-		/** @property {mw.storage} localStorage */
+		/** @property {mw.SafeStorage} localStorage */
 		this.localStorage = localStorage;
 
 		/** @property {boolean} panelWasOpen state flag which will be used to detect open <-> closed transitions */

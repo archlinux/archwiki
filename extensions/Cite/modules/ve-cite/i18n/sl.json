@@ -7,12 +7,10 @@
 			"Yerpo"
 		]
 	},
-	"visualeditor-cite-tool-definition.json": "null",
 	"visualeditor-cite-tool-name-book": "Knjiga",
 	"visualeditor-cite-tool-name-journal": "Revija",
 	"visualeditor-cite-tool-name-news": "Novice",
 	"visualeditor-cite-tool-name-web": "Spletna stran",
-	"cite-tool-definition.json": "null",
 	"cite-ve-dialog-reference-editing-reused": "Sklic je na strani uporabljen $1-{{PLURAL:$1|krat}}.",
 	"cite-ve-dialog-reference-options-group-label": "Uporabi to skupino",
 	"cite-ve-dialog-reference-options-group-placeholder": "Splošni sklici",

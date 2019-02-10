@@ -26,6 +26,8 @@
  * @file
  */
 
+use MediaWiki\Logger\LoggerFactory;
+
 /**
  * A simple method to retrieve the plain source of an article,
  * using "action=raw" in the GET request string.
@@ -45,6 +47,9 @@ class RawAction extends FormlessAction {
 		return false;
 	}
 
+	/**
+	 * @suppress SecurityCheck-XSS Non html mime type
+	 */
 	function onView() {
 		$this->getOutput()->disable();
 		$request = $this->getRequest();
@@ -85,7 +90,6 @@ class RawAction extends FormlessAction {
 			$response->header( $this->getOutput()->getKeyHeader() );
 		}
 
-		$response->header( 'Content-type: ' . $contentType . '; charset=UTF-8' );
 		// Output may contain user-specific data;
 		// vary generated content for open sessions on private wikis
 		$privateCache = !User::isEveryoneAllowed( 'read' ) &&
@@ -96,6 +100,60 @@ class RawAction extends FormlessAction {
 		$response->header(
 			'Cache-Control: ' . $mode . ', s-maxage=' . $smaxage . ', max-age=' . $maxage
 		);
+
+		// In the event of user JS, don't allow loading a user JS/CSS/Json
+		// subpage that has no registered user associated with, as
+		// someone could register the account and take control of the
+		// JS/CSS/Json page.
+		$title = $this->getTitle();
+		if ( $title->isUserConfigPage() && $contentType !== 'text/x-wiki' ) {
+			// not using getRootText() as we want this to work
+			// even if subpages are disabled.
+			$rootPage = strtok( $title->getText(), '/' );
+			$userFromTitle = User::newFromName( $rootPage, 'usable' );
+			if ( !$userFromTitle || $userFromTitle->getId() === 0 ) {
+				$elevated = $this->getUser()->isAllowed( 'editinterface' );
+				$elevatedText = $elevated ? 'by elevated ' : '';
+				$log = LoggerFactory::getInstance( "security" );
+				$log->warning(
+					"Unsafe JS/CSS/Json $elevatedText" . "load - {user} loaded {title} with {ctype}",
+					[
+						'user' => $this->getUser()->getName(),
+						'title' => $title->getPrefixedDBKey(),
+						'ctype' => $contentType,
+						'elevated' => $elevated
+					]
+				);
+				$msg = wfMessage( 'unregistered-user-config' );
+				throw new HttpError( 403, $msg );
+			}
+		}
+
+		// Don't allow loading non-protected pages as javascript.
+		// In future we may further restrict this to only CONTENT_MODEL_JAVASCRIPT
+		// in NS_MEDIAWIKI or NS_USER, as well as including other config types,
+		// but for now be more permissive. Allowing protected pages outside of
+		// NS_USER and NS_MEDIAWIKI in particular should be considered a temporary
+		// allowance.
+		if (
+			$contentType === 'text/javascript' &&
+			!$title->isUserJsConfigPage() &&
+			!$title->inNamespace( NS_MEDIAWIKI ) &&
+			!in_array( 'sysop', $title->getRestrictions( 'edit' ) ) &&
+			!in_array( 'editprotected', $title->getRestrictions( 'edit' ) )
+		) {
+
+			$log = LoggerFactory::getInstance( "security" );
+			$log->info( "Blocked loading unprotected JS {title} for {user}",
+				[
+					'user' => $this->getUser()->getName(),
+					'title' => $title->getPrefixedDBKey(),
+				]
+			);
+			throw new HttpError( 403, wfMessage( 'unprotected-js' ) );
+		}
+
+		$response->header( 'Content-type: ' . $contentType . '; charset=UTF-8' );
 
 		$text = $this->getRawText();
 
@@ -129,47 +187,35 @@ class RawAction extends FormlessAction {
 		$title = $this->getTitle();
 		$request = $this->getRequest();
 
-		// If it's a MediaWiki message we can just hit the message cache
-		if ( $request->getBool( 'usemsgcache' ) && $title->getNamespace() == NS_MEDIAWIKI ) {
-			// The first "true" is to use the database, the second is to use
-			// the content langue and the last one is to specify the message
-			// key already contains the language in it ("/de", etc.).
-			$text = MessageCache::singleton()->get( $title->getDBkey(), true, true, true );
-			// If the message doesn't exist, return a blank
-			if ( $text === false ) {
-				$text = '';
-			}
-		} else {
-			// Get it from the DB
-			$rev = Revision::newFromTitle( $title, $this->getOldId() );
-			if ( $rev ) {
-				$lastmod = wfTimestamp( TS_RFC2822, $rev->getTimestamp() );
-				$request->response()->header( "Last-modified: $lastmod" );
+		// Get it from the DB
+		$rev = Revision::newFromTitle( $title, $this->getOldId() );
+		if ( $rev ) {
+			$lastmod = wfTimestamp( TS_RFC2822, $rev->getTimestamp() );
+			$request->response()->header( "Last-modified: $lastmod" );
 
-				// Public-only due to cache headers
-				$content = $rev->getContent();
+			// Public-only due to cache headers
+			$content = $rev->getContent();
 
-				if ( $content === null ) {
-					// revision not found (or suppressed)
+			if ( $content === null ) {
+				// revision not found (or suppressed)
+				$text = false;
+			} elseif ( !$content instanceof TextContent ) {
+				// non-text content
+				wfHttpError( 415, "Unsupported Media Type", "The requested page uses the content model `"
+					. $content->getModel() . "` which is not supported via this interface." );
+				die();
+			} else {
+				// want a section?
+				$section = $request->getIntOrNull( 'section' );
+				if ( $section !== null ) {
+					$content = $content->getSection( $section );
+				}
+
+				if ( $content === null || $content === false ) {
+					// section not found (or section not supported, e.g. for JS, JSON, and CSS)
 					$text = false;
-				} elseif ( !$content instanceof TextContent ) {
-					// non-text content
-					wfHttpError( 415, "Unsupported Media Type", "The requested page uses the content model `"
-						. $content->getModel() . "` which is not supported via this interface." );
-					die();
 				} else {
-					// want a section?
-					$section = $request->getIntOrNull( 'section' );
-					if ( $section !== null ) {
-						$content = $content->getSection( $section );
-					}
-
-					if ( $content === null || $content === false ) {
-						// section not found (or section not supported, e.g. for JS, JSON, and CSS)
-						$text = false;
-					} else {
-						$text = $content->getNativeData();
-					}
+					$text = $content->getNativeData();
 				}
 			}
 		}

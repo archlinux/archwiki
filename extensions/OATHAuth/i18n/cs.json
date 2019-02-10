@@ -17,6 +17,7 @@
 	"oathauth-token": "Kód",
 	"oathauth-disable": "Vypnutí dvoufaktorové autentizace",
 	"oathauth-validatedoath": "Dvoufaktorové přihlášení ověřeno. Odteď bude vynucována dvoufaktorová autentizace.",
+	"oathauth-noscratchforvalidation": "Pro potvrzení dvoufaktorové autentizace nemůžete použít provizorní kódy. Provizorní kódy slouží jen jako záloha a pro výjimečné účely. Použijte prosím ověřovací kód z vašeho generátoru kódů.",
 	"oathauth-failedtovalidateoath": "Nepodařilo se ověřit dvoufaktorové přihlášení.",
 	"oathauth-disabledoath": "Dvoufaktorová autentizace vypnuta.",
 	"oathauth-prefs-label": "Dvoufaktorová autentizace:",

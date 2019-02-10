@@ -105,7 +105,7 @@ class RandomImageGenerator {
 	 *
 	 * @param int $number Number of filenames to write
 	 * @param string $format Optional, must be understood by ImageMagick, such as 'jpg' or 'gif'
-	 * @param string $dir Directory, optional (will default to current working directory)
+	 * @param string|null $dir Directory, optional (will default to current working directory)
 	 * @return array Filenames we just wrote
 	 */
 	function writeImages( $number, $format = 'jpg', $dir = null ) {
@@ -187,7 +187,7 @@ class RandomImageGenerator {
 		$spec['height'] = mt_rand( $this->minHeight, $this->maxHeight );
 		$spec['fill'] = $this->getRandomColor();
 
-		$diagonalLength = sqrt( pow( $spec['width'], 2 ) + pow( $spec['height'], 2 ) );
+		$diagonalLength = sqrt( $spec['width'] ** 2 + $spec['height'] ** 2 );
 
 		$draws = [];
 		for ( $i = 0; $i <= $this->shapesToDraw; $i++ ) {

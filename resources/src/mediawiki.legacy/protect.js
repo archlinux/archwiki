@@ -1,4 +1,5 @@
-( function ( mw, $ ) {
+/* eslint-disable no-restricted-properties */
+( function () {
 	var ProtectionForm,
 		reasonCodePointLimit = mw.config.get( 'wgCommentCodePointLimit' ),
 		reasonByteLimit = mw.config.get( 'wgCommentByteLimit' );
@@ -81,7 +82,13 @@
 		 * @return {boolean}
 		 */
 		isCascadeableLevel: function ( level ) {
-			return $.inArray( level, mw.config.get( 'wgCascadeableLevels' ) ) !== -1;
+			var cascadeableLevels = mw.config.get( 'wgCascadeableLevels' );
+
+			if ( !Array.isArray( cascadeableLevels ) ) {
+				return false;
+			}
+
+			return cascadeableLevels.indexOf( level ) !== -1;
 		},
 
 		/**
@@ -250,4 +257,4 @@
 
 	$( ProtectionForm.init.bind( ProtectionForm ) );
 
-}( mediaWiki, jQuery ) );
+}() );

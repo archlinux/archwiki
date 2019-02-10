@@ -9,10 +9,10 @@ class VersionCheckerTest extends PHPUnit\Framework\TestCase {
 	use PHPUnit4And6Compat;
 
 	/**
-	 * @dataProvider provideCheck
+	 * @dataProvider provideMediaWikiCheck
 	 */
-	public function testCheck( $coreVersion, $constraint, $expected ) {
-		$checker = new VersionChecker( $coreVersion );
+	public function testMediaWikiCheck( $coreVersion, $constraint, $expected ) {
+		$checker = new VersionChecker( $coreVersion, '7.0.0', [] );
 		$this->assertEquals( $expected, !(bool)$checker->checkArray( [
 			'FakeExtension' => [
 				'MediaWiki' => $constraint,
@@ -20,7 +20,7 @@ class VersionCheckerTest extends PHPUnit\Framework\TestCase {
 		] ) );
 	}
 
-	public static function provideCheck() {
+	public static function provideMediaWikiCheck() {
 		return [
 			// [ $wgVersion, constraint, expected ]
 			[ '1.25alpha', '>= 1.26', false ],
@@ -45,10 +45,63 @@ class VersionCheckerTest extends PHPUnit\Framework\TestCase {
 	}
 
 	/**
+	 * @dataProvider providePhpValidCheck
+	 */
+	public function testPhpValidCheck( $phpVersion, $constraint, $expected ) {
+		$checker = new VersionChecker( '1.0.0', $phpVersion, [] );
+		$this->assertEquals( $expected, !(bool)$checker->checkArray( [
+			'FakeExtension' => [
+				'platform' => [
+					'php' => $constraint,
+				],
+			],
+		] ) );
+	}
+
+	public static function providePhpValidCheck() {
+		return [
+			// [ phpVersion, constraint, expected ]
+			[ '7.0.23', '>= 7.0.0', true ],
+			[ '7.0.23', '^7.1.0', false ],
+			[ '7.0.23', '7.0.23', true ],
+		];
+	}
+
+	/**
+	 * @expectedException UnexpectedValueException
+	 */
+	public function testPhpInvalidConstraint() {
+		$checker = new VersionChecker( '1.0.0', '7.0.0', [] );
+		$checker->checkArray( [
+			'FakeExtension' => [
+				'platform' => [
+					'php' => 'totallyinvalid',
+				],
+			],
+		] );
+	}
+
+	/**
+	 * @dataProvider providePhpInvalidVersion
+	 * @expectedException UnexpectedValueException
+	 */
+	public function testPhpInvalidVersion( $phpVersion ) {
+		 $checker = new VersionChecker( '1.0.0', $phpVersion, [] );
+	}
+
+	public static function providePhpInvalidVersion() {
+		return [
+			// [ phpVersion ]
+			[ '7.abc' ],
+			[ '5.a.x' ],
+		];
+	}
+
+	/**
 	 * @dataProvider provideType
 	 */
 	public function testType( $given, $expected ) {
-		$checker = new VersionChecker( '1.0.0' );
+		$checker = new VersionChecker( '1.0.0', '7.0.0', [ 'phpLoadedExtension' ] );
 		$checker->setLoadedExtensionsAndSkins( [
 				'FakeDependency' => [
 					'version' => '1.0.0',
@@ -142,6 +195,29 @@ class VersionCheckerTest extends PHPUnit\Framework\TestCase {
 					],
 				],
 			],
+			[
+				[
+					'platform' => [
+						'ext-phpLoadedExtension' => '*',
+					],
+				],
+				[],
+			],
+			[
+				[
+					'platform' => [
+						'ext-phpMissingExtension' => '*',
+					],
+				],
+				[
+					[
+						'missing' => 'phpMissingExtension',
+						'type' => 'missing-phpExtension',
+						// phpcs:ignore Generic.Files.LineLength.TooLong
+						'msg' => 'FakeExtension requires phpMissingExtension PHP extension to be installed.',
+					],
+				],
+			],
 		];
 	}
 
@@ -150,7 +226,7 @@ class VersionCheckerTest extends PHPUnit\Framework\TestCase {
 	 * returns any error message.
 	 */
 	public function testInvalidConstraint() {
-		$checker = new VersionChecker( '1.0.0' );
+		$checker = new VersionChecker( '1.0.0', '7.0.0', [] );
 		$checker->setLoadedExtensionsAndSkins( [
 				'FakeDependency' => [
 					'version' => 'not really valid',
@@ -169,7 +245,7 @@ class VersionCheckerTest extends PHPUnit\Framework\TestCase {
 			],
 		] ) );
 
-		$checker = new VersionChecker( '1.0.0' );
+		$checker = new VersionChecker( '1.0.0', '7.0.0', [] );
 		$checker->setLoadedExtensionsAndSkins( [
 				'FakeDependency' => [
 					'version' => '1.24.3',
@@ -184,24 +260,74 @@ class VersionCheckerTest extends PHPUnit\Framework\TestCase {
 		] );
 	}
 
-	/**
-	 * T197478
-	 */
-	public function testInvalidDependency() {
-		$checker = new VersionChecker( '1.0.0' );
-		$this->setExpectedException( UnexpectedValueException::class,
-			'Dependency type skin unknown in FakeExtension' );
-		$this->assertEquals( [
+	public function provideInvalidDependency() {
+		return [
 			[
-				'type' => 'invalid-version',
-				'msg' => 'FakeDependency does not have a valid version string.',
+				[
+					'FakeExtension' => [
+						'platform' => [
+							'undefinedPlatformDependency' => '*',
+						],
+					],
+				],
+				'undefinedPlatformDependency',
 			],
-		], $checker->checkArray( [
+			[
+				[
+					'FakeExtension' => [
+						'platform' => [
+							'phpLoadedExtension' => '*',
+						],
+					],
+				],
+				'phpLoadedExtension',
+			],
+			[
+				[
+					'FakeExtension' => [
+						'undefinedDependencyType' => '*',
+					],
+				],
+				'undefinedDependencyType',
+			],
+			// T197478
+			[
+				[
+					'FakeExtension' => [
+						'skin' => [
+							'FakeSkin' => '*',
+						],
+					],
+				],
+				'skin',
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider provideInvalidDependency
+	 */
+	public function testInvalidDependency( $depencency, $type ) {
+		$checker = new VersionChecker( '1.0.0', '7.0.0', [ 'phpLoadedExtension' ] );
+		$this->setExpectedException(
+			UnexpectedValueException::class,
+			"Dependency type $type unknown in FakeExtension"
+		);
+		$checker->checkArray( $depencency );
+	}
+
+	public function testInvalidPhpExtensionConstraint() {
+		$checker = new VersionChecker( '1.0.0', '7.0.0', [ 'phpLoadedExtension' ] );
+		$this->setExpectedException(
+			UnexpectedValueException::class,
+			'Version constraints for PHP extensions are not supported in FakeExtension'
+		);
+		$checker->checkArray( [
 			'FakeExtension' => [
-				'skin' => [
-					'FakeSkin' => '*',
+				'platform' => [
+					'ext-phpLoadedExtension' => '1.0.0',
 				],
 			],
-		] ) );
+		] );
 	}
 }

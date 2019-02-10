@@ -113,6 +113,7 @@ $specialPageAliases['eo'] = [
 /** Spanish (español) */
 $specialPageAliases['es'] = [
 	'Gadgets' => [ 'Accesorios', 'Artilugios' ],
+	'GadgetUsage' => [ 'Uso_de_accesorios', 'Uso_de_artilugios' ],
 ];
 
 /** Estonian (eesti) */
@@ -306,9 +307,21 @@ $specialPageAliases['sa'] = [
 	'Gadgets' => [ 'सुविधा_(गॅजेट)' ],
 ];
 
+/** Santali (ᱥᱟᱱᱛᱟᱲᱤ) */
+$specialPageAliases['sat'] = [
+	'Gadgets' => [ 'ᱥᱟᱢᱟᱱᱚᱢᱠᱚ' ],
+	'GadgetUsage' => [ 'ᱥᱟᱢᱟᱱᱚᱢ_ᱵᱮᱵᱷᱟᱨᱟᱠᱟᱱ' ],
+];
+
 /** Sicilian (sicilianu) */
 $specialPageAliases['scn'] = [
 	'Gadgets' => [ 'Accessori' ],
+];
+
+/** Shan (ၵႂၢမ်းတႆးလူင်) */
+$specialPageAliases['shn'] = [
+	'Gadgets' => [ 'ၶိုင်ႈပိတ်းပွတ်း' ],
+	'GadgetUsage' => [ 'လွင်ႈၸႂ်ႉတိုဝ်းၶိူင်ႈပိတ်းပွတ်း' ],
 ];
 
 /** Sinhala (සිංහල) */

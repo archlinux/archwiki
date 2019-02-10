@@ -15,12 +15,10 @@
 			"Manvydasz"
 		]
 	},
-	"visualeditor-cite-tool-definition.json": "nieko",
 	"visualeditor-cite-tool-name-book": "Knyga",
 	"visualeditor-cite-tool-name-journal": "Žurnalas",
 	"visualeditor-cite-tool-name-news": "Naujienos",
 	"visualeditor-cite-tool-name-web": "Tinklapis",
-	"cite-tool-definition.json": "nieko",
 	"cite-ve-changedesc-reflist-item-id": "Pakeistas išnašos indeksas",
 	"cite-ve-dialog-reference-editing-reused": "Ši nuoroda naudojama $1 {{PLURAL:$1|kartų}} šiame puslapyje.",
 	"cite-ve-dialog-reference-options-group-label": "Naudoti šią grupę",

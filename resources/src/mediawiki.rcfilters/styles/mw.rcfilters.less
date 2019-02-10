@@ -5,7 +5,9 @@
 @rcfilters-spinner-size: 12px;
 @rcfilters-head-min-height: 210px;
 @rcfilters-head-margin-bottom: 20px;
-@rcfilters-wl-head-min-height: 300px;
+@rcfilters-wl-head-min-height: 295px;
+@rcfilters-head-min-height-collapsed: 130px;
+@rcfilters-wl-head-min-height-collapsed: 220px;
 
 // Corrections for the standard special page
 .client-js {
@@ -22,6 +24,18 @@
 	// On the watchlist, reserve a bit more
 	.mw-special-Watchlist .rcfilters-head {
 		min-height: @rcfilters-wl-head-min-height;
+
+	}
+
+	.mw-rcfilters-collapsed {
+		.rcfilters-head {
+			min-height: @rcfilters-head-min-height-collapsed;
+		}
+
+		// On the watchlist, reserve a bit more
+		&.mw-special-Watchlist .rcfilters-head {
+			min-height: @rcfilters-wl-head-min-height-collapsed;
+		}
 	}
 
 	.mw-recentchanges-toplinks {
@@ -69,6 +83,10 @@
 		}
 	}
 
+	.mw-rcfilters-ui-highlights {
+		display: none;
+	}
+
 	.mw-changeslist {
 		// Reserve space for the highlight circles
 		ul,
@@ -96,39 +114,40 @@
 		left: 50%;
 		// Make sure the middle of the spinner is centered, rather than its left edge
 		margin-left: -3 * @rcfilters-spinner-size / 2;
-
-		opacity: 0.8;
 		white-space: nowrap;
 
 		& .rcfilters-spinner-bounce,
 		&:before,
 		&:after {
 			content: '';
-			display: inline-block;
+			background-color: @colorGray7;
+			display: block;
+			float: left;
 			width: @rcfilters-spinner-size;
 			height: @rcfilters-spinner-size;
-			background-color: @colorGray12;
 			border-radius: 100%;
-			.animation( rcfiltersBouncedelay 1.5s ease-in-out -0.16s infinite both );
+			.animation( rcfiltersBouncedelay 1600ms ease-in-out -160ms infinite both );
 		}
 
 		&:before {
-			.animation-delay( -0.33s );
+			margin-right: 4px;
+			.animation-delay( -330ms );
 		}
 
 		&:after {
+			margin-left: 4px;
 			.animation-delay( 0s );
 		}
 	}
 	body:not( .mw-rcfilters-ui-initialized ) .rcfilters-spinner {
 		display: block;
 		// When initializing, display the spinner on top of the area where the UI will appear
-		margin-top: -( @rcfilters-head-min-height + @rcfilters-head-margin-bottom ) / 2;
+		margin-top: -( @rcfilters-head-min-height + @rcfilters-head-margin-bottom ) / 1.5;
 	}
 	body.mw-rcfilters-ui-loading .rcfilters-spinner {
 		display: block;
 		// When loading new results, display the spinner on top of the results area
-		margin-top: 2em;
+		margin-top: -( @rcfilters-head-min-height + @rcfilters-head-margin-bottom ) / 8;
 	}
 
 	#contentSub,
@@ -136,6 +155,8 @@
 		display: none;
 	}
 
+	// Why does rcfilters have a copy of this?
+	// TODO: Remove per T195256.
 	#jump-to-nav {
 		margin-top: -0.5em;
 		margin-bottom: 0.5em;
@@ -145,6 +166,10 @@
 	// space. This makes the min-height trick work better.
 	.watchlistDetails {
 		float: left;
+		// The 20em should match the min-width we are setting up
+		// for the .mw-rcfilters-ui-watchlistTopSectionWidget-editWatchlistButton
+		// in mw.rcfilters.ui.WatchlistTopSectionWidget.less
+		width: ~'calc( 100% - 20em )';
 	}
 }
 
@@ -154,40 +179,36 @@
 
 @-webkit-keyframes rcfiltersBouncedelay {
 	0%,
-	80%,
+	50%, // equals 800ms
 	100% {
-		-webkit-transform: scale( 0.7 );
-		transform: scale( 0.7 );
+		-webkit-transform: scale( 0.625 );
 	}
-	40% {
-		background-color: @colorGray10;
+	20% { // equals 320ms
+		opacity: 0.87;
 		-webkit-transform: scale( 1 );
-		transform: scale( 1 );
 	}
 }
 
 @-moz-keyframes rcfiltersBouncedelay {
 	0%,
-	80%,
+	50%,
 	100% {
-		-moz-transform: scale( 0.7 );
-		transform: scale( 0.7 );
+		-moz-transform: scale( 0.625 );
 	}
-	40% {
-		background-color: @colorGray10;
-		-moz-transform: scale( 0.7 );
-		transform: scale( 1 );
+	20% {
+		opacity: 0.87;
+		-moz-transform: scale( 1 );
 	}
 }
 
 @keyframes rcfiltersBouncedelay {
 	0%,
-	80%,
+	50%,
 	100% {
-		transform: scale( 0.7 );
+		transform: scale( 0.625 );
 	}
-	40% {
-		background-color: @colorGray10;
+	20% { // equals 320ms
+		opacity: 0.87;
 		transform: scale( 1 );
 	}
 }

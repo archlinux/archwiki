@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\MediaWikiServices;
+
 /**
  * @group Database
  * @group Title
@@ -447,7 +449,7 @@ class TitleTest extends MediaWikiTestCase {
 		# Format:
 		# - expected
 		# - Title name
-		# - wgContLang (expected in most case)
+		# - content language (expected in most cases)
 		# - wgLang (on some specific pages)
 		# - wgDefaultLanguageVariant
 		# - Optional message
@@ -674,7 +676,7 @@ class TitleTest extends MediaWikiTestCase {
 	 */
 	public function testExists() {
 		$title = Title::makeTitle( NS_PROJECT, 'New page' );
-		$linkCache = LinkCache::singleton();
+		$linkCache = MediaWikiServices::getInstance()->getLinkCache();
 
 		$article = new Article( $title );
 		$page = $article->getPage();
@@ -963,6 +965,34 @@ class TitleTest extends MediaWikiTestCase {
 			[ 'Foo#ümlåût', '#ümlåût' ],
 			[ 'de:Foo#Bå®', '#Bå®' ],
 			[ 'zz:Foo#тест', '#.D1.82.D0.B5.D1.81.D1.82' ],
+		];
+	}
+
+	/**
+	 * @covers Title::isRawHtmlMessage
+	 * @dataProvider provideIsRawHtmlMessage
+	 */
+	public function testIsRawHtmlMessage( $textForm, $expected ) {
+		$this->setMwGlobals( 'wgRawHtmlMessages', [
+			'foobar',
+			'foo_bar',
+			'foo-bar',
+		] );
+
+		$title = Title::newFromText( $textForm );
+		$this->assertSame( $expected, $title->isRawHtmlMessage() );
+	}
+
+	public function provideIsRawHtmlMessage() {
+		return [
+			[ 'MediaWiki:Foobar', true ],
+			[ 'MediaWiki:Foo bar', true ],
+			[ 'MediaWiki:Foo-bar', true ],
+			[ 'MediaWiki:foo bar', true ],
+			[ 'MediaWiki:foo-bar', true ],
+			[ 'MediaWiki:foobar', true ],
+			[ 'MediaWiki:some-other-message', false ],
+			[ 'Main Page', false ],
 		];
 	}
 }

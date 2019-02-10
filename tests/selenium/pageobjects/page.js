@@ -1,8 +1,12 @@
-// From http://webdriver.io/guide/testrunner/pageobjects.html
-'use strict';
-class Page {
+const Page = require( 'wdio-mediawiki/Page' );
+
+/**
+ * @deprecated Use wdio-mediawiki/Page and openTitle() instead.
+ */
+class LegacyPage extends Page {
 	open( path ) {
 		browser.url( browser.options.baseUrl + '/index.php?title=' + path );
 	}
 }
-module.exports = Page;
+
+module.exports = LegacyPage;

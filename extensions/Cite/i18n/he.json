@@ -5,15 +5,17 @@
 			"Rotem Liss",
 			"Rotemliss",
 			"YaronSh",
-			"IKhitron"
+			"IKhitron",
+			"Guycn2"
 		]
 	},
-	"apihelp-query+references-description": "החזרת ייצוג נתונים של ציטוטים שמשויכים לדפים הנתונים.",
-	"apihelp-query+references-summary": "החזרת ייצוג נתונים של מקורות שמשויכים לדפים שניתנו.",
-	"apihelp-query+references-example-1": "ציטוטים שמשויכים ל־<kbd>Albert Einstein</kbd>.",
+	"apihelp-query+references-description": "החזרת ייצוג נתונים של הערות שוליים שמשויכות לדפים הנתונים.",
+	"apihelp-query+references-summary": "החזרת ייצוג נתונים של הערות שוליים שמשויכות לדפים הנתונים.",
+	"apihelp-query+references-example-1": "הערות שוליים שמשויכות ל־<kbd>Albert Einstein</kbd>.",
 	"apierror-citestoragedisabled": "אחסון הערות של ההרחבה Cite אינו מופעל.",
-	"cite-desc": "הוספת תגי <span dir=\"ltr\"><nowiki><ref[ name=id]></nowiki></span> ו־<span dir=\"ltr\"><nowiki><references/></nowiki></span> עבור הערות שוליים",
+	"cite-desc": "הוספת תגי <span dir=\"ltr\"><code><nowiki><ref[ name=id]></nowiki></code></span> ו־<span dir=\"ltr\"><code><nowiki><references/></nowiki></code></span> עבור הערות שוליים",
 	"cite_error": "שגיאת ציטוט: $1",
+	"cite_error_ref_invalid_dir": "תג <code>&lt;ref&gt;</code> בלתי־תקין; מאפיין ה־dir&rlm; \"$1\" אינו ידוע. עליו להיות ltr או rtl",
 	"cite_error_ref_numeric_key": "תג <code>&lt;ref&gt;</code> לא תקין;\nשם (name) לא יכול להיות מספר שלם פשוט. יש להשתמש בכותרת תיאורית",
 	"cite_error_ref_no_key": "תג ה־<code>&lt;ref&gt;</code> הפותח בלתי־תקין או בעל שם שגוי.",
 	"cite_error_ref_too_many_keys": "תג <code>&lt;ref&gt;</code> לא תקין;\nשמות שגויים, למשל, רבים מדי",

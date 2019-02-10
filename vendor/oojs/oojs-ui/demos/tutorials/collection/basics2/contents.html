@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+	<meta charset="UTF-8">
+	<title>OOUI ToDo App Tutorial - Part 2</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../../../dist/oojs-ui-wikimediaui-icons-editing-citation.css">
+	<link rel="stylesheet" href="../../../dist/oojs-ui-wikimediaui-icons-content.css">
+	<link rel="stylesheet" href="../../../dist/oojs-ui-wikimediaui.css">
+	<link rel="stylesheet" href="../../../node_modules/prismjs/themes/prism.css">
+	<script src="../../../node_modules/prismjs/prism.js"></script>
+	<link rel="stylesheet" href="../../assets/tutorials_demos.css">
+	<link rel="stylesheet" href="../../tutorials.css">
+</head>
+<body>
+	<a href="#" title="Back to top" class="scroll"><span></span></a>
+	<div class="container">
+		<nav></nav>
+		<div class="intro">
+			<h1 class="header">OOUI Basics: Part 2</h1>
+			<h2>Custom Widgets for a ToDo List App</h2>
+			<p>
+				In the <a href="../basics1/contents.html">previous part of this tutorial</a>,
+				we walked through how to make a very basic version of a ToDo app using Wikimedia’s
+				OOUI library. Now it’s time to add a way to store and display information from our items.
+			</p>
+		</div>
+		<div>
+			<a id="displaying-info" href="#displaying-info">
+				<h2 class="section">
+					Displaying Info
+				</h2>
+			</a>
+			<hr>
+			<p>
+				Let’s first create a way to view the information we have about our items.
+				We’ll start by adding a simple label to our page:
+			</p>
+<pre class="line-numbers"><code class="language-javascript">$( document ).ready( function () {
+	var input = new OO.ui.TextInputWidget( {
+			placeholder: 'Add a ToDo item'
+		} ),
+		list = new OO.ui.SelectWidget( {
+			classes: [ 'todo-list' ]
+		} ),
+		info = new OO.ui.LabelWidget( {
+			label: 'Information',
+			classes: [ 'todo-info' ]
+		} );
+
+	// ... code ...
+
+	// Append the app widgets
+	$( '.wrapper' ).append(
+		input.$element,
+		list.$element,
+		info.$element
+	);
+} );</code></pre>
+			<p>
+				Once again, we’re adding a widget, and appending its <code class="inline-code">
+				$element</code> to the DOM. Now we can use it to display the information stored
+				in our widget. The ToDo items all live inside an <code class="inline-code">
+				OO.ui.SelectWidget</code> which emits a ‘choose’ event when an element is clicked
+				or chosen, with the reference to the chosen item as the parameter. We’ll attach
+				a listener to this event.
+			</p>
+<pre class="line-numbers"><code class="language-javascript">$( document ).ready( function () {
+	// ... code ...
+	list.on( 'choose', function ( item ) {
+		info.setLabel( item.getData() );
+	} );
+	// ... code ...
+} );</code></pre>
+			<p>Now we have a very simple way of presenting the data stored in our item.</p>
+			<div class="embed-app embed-app1"></div>
+			<p> This is a good start, but it doesn’t yet seem to be all that helpful,
+				because the data stored in each of our items is the same as its label,
+				and doesn’t quite give us any useful information. Let’s change that now.
+			</p>
+			<a id="creating-custom-item-widget" href="#creating-custom-item-widget">
+				<h2 class="section">
+					Creating a Custom Item Widget
+				</h2>
+			</a>
+			<hr>
+			<p>
+				In order to expand the functionality of the <code class="inline-code">
+				OO.ui.OptionWidget</code> so we can store more information, we need to
+				extend it and create our own class.
+			</p>
+			<p>
+				Create a new file in your <code class="inline-code">assets/</code> directory,
+				called <code class="inline-code">ToDoItemWidget.js</code>. Reopen your
+				<code class="inline-code">index.html</code> and add it in.
+			</p>
+				<pre class="line-numbers language-markup"><code>&lt;script src="assets/ToDoItemWidget.js"&gt;</code></pre>
+			<p>
+				Back to <code class="inline-code">ToDoItemWidget.js</code>. I this new file,
+				we'll create our new class:
+			</p>
+<pre class="line-numbers"><code class="language-javascript">var ToDoItemWidget = function ( config ) {
+	// Configuration object is optional
+	config = config || {};
+
+	// Call parent constructor
+	ToDoItemWidget.parent.call( this, config );
+};
+// Inheritance
+OO.inheritClass( ToDoItemWidget, OO.ui.OptionWidget );</code></pre>
+			<p>
+				Our new function extends <code class="inline-code">OO.ui.OptionWidget</code>,
+				by declaring <code class="inline-code">OO.inheritClass( ToDoItemWidget,
+				OO.ui.OptionWidget );</code> and by calling the parent constructor in the
+				new class’ constructor.
+			</p>
+			<p>
+				Now, change the code to use the new <code class="inline-code">
+				ToDoItemWidget</code> class:
+			</p>
+<pre class="line-numbers"><code class="language-javascript">$( document ).ready( function () {
+	// ... code ...
+
+	// Respond to 'enter' keypress
+	input.on( 'enter', function () {
+		// ... code ...
+
+		// Add the item
+		list.addItems( [
+			new ToDoItemWidget( {
+				data: input.getValue(),
+				label: input.getValue()
+			} )
+		] );
+	} );
+
+	// ... code ...
+} );</code></pre>
+			<p>
+				You can try out your app again, but nothing should be different just yet.
+				We can now start developing our new class to add the functionality we
+				want it to have.
+			</p>
+			<a id="adding-functionality" href="#adding-functionality">
+				<h2 class="section">
+					Adding Functionality
+				</h2>
+			</a>
+			<hr>
+			<p>Let’s add a property that stores the creation time of our todo item.</p>
+<pre class="line-numbers"><code class="language-javascript">var ToDoItemWidget = function ( config ) {
+	config = config || {};
+
+	// Call parent constructor
+	ToDoItemWidget.parent.call( this, config );
+
+	this.creationTime = config.creationTime;
+};
+
+OO.inheritClass( ToDoItemWidget, OO.ui.OptionWidget );
+
+ToDoItemWidget.prototype.getCreationTime = function () {
+	return this.creationTime;
+};</code></pre>
+			<p>
+				There are a many different ways to format time in JavaScript. For the purpose of
+				learning how to extend a class with our own methods, we will write our own time
+				formatting method.
+			</p>
+			<p>
+				Still in the same file, namely <code class="inline-code">ToDoItemWidget.js</code>, just after the <code class="inline-code">getCreationTime()</code>
+				method, define a new method, <code class="inline-code">getPrettyCreationTime()</code>.
+				We'll use this method to make the ToDo item's creation time look just the way we want.
+			</p>
+<pre class="line-numbers"><code class="language-javascript">ToDoItemWidget.prototype.getPrettyCreationTime = function () {
+	var time = new Date( this.creationTime ),
+		hour = time.getHours(),
+		minute = time.getMinutes(),
+		second = time.getSeconds(),
+		temp = String( ( hour > 12 ) ? hour - 12 : hour ),
+		monthNames = [
+			'Jan',
+			'Feb',
+			'Mar',
+			'Apr',
+			'May',
+			'Jun',
+			'Jul',
+			'Aug',
+			'Sep',
+			'Oct',
+			'Nov',
+			'Dec'
+		];
+
+	if ( hour === 0 ) {
+		temp = '12';
+	}
+	temp += ( ( minute &lt; 10 ) ? ':0' : ':' ) + minute;
+	temp += ( ( second &lt; 10 ) ? ':0' : ':' ) + second;
+	temp += ( hour >= 12 ) ? ' P.M.' : ' A.M.';
+	return [
+		time.getDate(),
+		monthNames[ time.getMonth() ],
+		time.getFullYear() + ', ',
+		temp
+	].join( ' ' );
+};</code></pre>
+			<p>
+				Now we can set this when we instantiate the object in our initialization script,
+				and change the info label to display this new property.
+			</p>
+<pre class="line-numbers"><code class="language-javascript">$( document ).ready( function () {
+	// ... code ...
+
+	input.on( 'enter', function () {
+		// ... code ...
+
+		// Add the item
+		list.addItems( [
+			new ToDoItemWidget( {
+				data: input.getValue(),
+				label: input.getValue(),
+				creationTime: Date.now()
+			} )
+		] );
+	} );
+
+	// ... code ...
+
+	list.on( 'choose', function ( item ) {
+		info.setLabel( item.getData() + ' (' +
+			item.getPrettyCreationTime() + ')' );
+	} );
+
+	// ... code ...
+} );</code></pre>
+
+			<p>Try it out:</p>
+			<div class="embed-app embed-app2"></div>
+			<p>It's working!</p>
+			<p>But we’re not done.</p>
+			<p>We’ve already enhanced the items, so let’s add some real functionality in there.</p>
+			<a id="add-delete-button" href="#add-delete-button">
+				<h2 class="section">
+					Adding a ‘Delete’ Button to Items
+				</h2>
+			</a>
+			<hr>
+			<p>
+				Another of OOUI’s concepts is componentization—the ability to create
+				bigger widgets from smaller ones. This can be pretty powerful and allow
+				for advanced functionality.
+			</p>
+			<p>
+				We’re going to start small. Let’s add a ‘delete’ button to our list of items.
+				You can read about what <code class="inline-code">OO.ui.ButtonWidget</code>
+				expects in its configuration options in the
+				<a href="https://doc.wikimedia.org/oojs-ui/master/js/#!/api/OO.ui.ButtonWidget">
+				documentation</a>.
+			</p>
+			<p>In our <code class="inline-code">ToDoItemWidget.js</code> we’ll add a button:</p>
+<pre class="line-numbers"><code class="language-javascript">var ToDoItemWidget = function ( config ) {
+	// ... code ...
+
+	this.deleteButton = new OO.ui.ButtonWidget( {
+		label: 'Delete'
+	} );
+
+	this.$element.append( this.deleteButton.$element );
+};</code></pre>
+			<p>
+				Just like any other widget in OOUI, <code class="inline-code">OO.ui.ButtonWidget</code>
+				has the <code class="inline-code">$element</code> property that contains its jQuery
+				object. We’re attaching that to our own widget.
+			</p>
+			<div class="embed-app embed-app3"></div>
+			<p>
+				If you look at your app now, though, you’ll see that the button appears under the
+				label. That’s because we need to add styles. Since we’re building our own widget,
+				let’s do things properly and add a standalone style for it that we can then add
+				and tweak in our CSS rules.
+			</p>
+<pre class="line-numbers"><code class="language-javascript">var ToDoItemWidget = function ( config ) {
+	// ... code ...
+
+	this.deleteButton = new OO.ui.ButtonWidget( {
+		label: 'Delete'
+	} );
+
+	this.$element
+		.addClass( 'todo-itemWidget' )
+		.append( this.deleteButton.$element );
+};</code></pre>
+			<p>And the CSS rules:</p>
+<pre class="line-numbers"><code class="language-css">.todo-itemWidget {
+	display: inline-table;
+}
+
+.todo-itemWidget.oo-ui-optionWidget.oo-ui-labelElement >
+.oo-ui-labelElement-label {
+	display: table-cell;
+	width: 100%;
+	padding: 0.5em;
+}
+
+.todo-itemWidget .oo-ui-buttonWidget {
+	display: table-cell;
+}</code></pre>
+			<p>There, that looks better.</p>
+			<div class="embed-app embed-app4 basics2-button-rules"></div>
+			<p>Now, let’s add functionality to this button.</p>
+			<a id="aggregating-events" href="#aggregating-events">
+				<h2 class="section">
+					Aggregating Events
+				</h2>
+			</a>
+			<hr>
+			<p>
+				One of the best things about using an <code class="inline-code">OO.ui.SelectWidget</code>
+				for our list, is that it uses the <code class="inline-code">OO.ui.mixin.GroupElement</code>
+				that allows for really cool operations on a group of items.
+			</p>
+			<p>
+				One of those operations is an aggregation of events.
+			</p>
+			<p>
+				In effect, we can have each of our items emit a certain event, and have our list aggregate all of those
+				events and respond whenever any of its items have emitted it. This means our logic can live “up” in the
+				parent widget, consolidating our work with our items.
+			</p>
+			<p>
+				This means, however, that we will need to enhance our list object. We are going to do exactly what we did
+				for our items (by creating the ToDo<span class="red">Item</span>Widget class) but with a new
+				ToDo<span class="red">List</span>Widget class that extends <code class="inline-code">OO.ui.SelectWidget</code>.
+			</p>
+			<a id="create-todolistwidget" href="#create-todolistwidget">
+				<h2 class="section">
+					Creating a ToDoListWidget
+				</h2>
+			</a>
+			<hr>
+			<p>
+				The new file <code class="inline-code">ToDoListWidget.js</code>:
+			</p>
+<pre class="line-numbers"><code class="language-javascript">var ToDoListWidget = function ToDoListWidget( config ) {
+	config = config || {};
+
+	// Call parent constructor
+	ToDoListWidget.parent.call( this, config );
+};
+
+OO.inheritClass( ToDoListWidget, OO.ui.SelectWidget );</code></pre>
+			<p>Attach it to <code class="inline-code">index.html</code> and change the initialization code:</p>
+<pre class="line-numbers language-markup"><code>&lt;!-- ... --&gt;
+&lt;!-- ToDo app --&gt;
+&lt;link rel="stylesheet" href="todo.css"&gt;
+&lt;script src="assets/ToDoItemWidget.js"&gt;&lt;/script&gt;
+&lt;script src="assets/ToDoListWidget.js"&gt;&lt;/script&gt;</code></pre>
+
+<pre class="line-numbers"><code class="language-javascript">$( document ).ready( function () {
+	// ... code ...
+		list = new ToDoListWidget( {
+			classes: [ 'todo-list' ]
+		} ),
+	// ... code ...
+} );</code></pre>
+			<a id="respond-to-aggregation" href="#respond-to-aggregation">
+				<h2 class="section">
+					Responding to aggregation of events
+				</h2>
+			</a>
+			<hr>
+			<p>Now that we have our <code class="inline-code">ToDoListWidget</code>we can aggregate its item events.</p>
+			<p>So how is it actually done? First, let’s have our button emit a “delete” event for our item:</p>
+<pre class="line-numbers"><code class="language-javascript">var ToDoItemWidget = function ( config ) {
+	// ... code ...
+
+	this.deleteButton.connect( this, { click: 'onDeleteButtonClick' } );
+
+	// ... code ...
+};
+
+// ... code ...
+
+ToDoItemWidget.prototype.onDeleteButtonClick = function () {
+	this.emit( 'delete' );
+};</code></pre>
+			<p>
+				Notice that this time, we didn’t use <code class="inline-code">.on( ... )</code> but rather
+				<code class="inline-code">.connect( this, { ... } )</code>. This is because we are now connecting
+				the object we are currently “in” the context of, to the event. I’ve used “on” before when we were
+				in the general initialization script, and had no context to give the event emitter.
+			</p>
+			<p>
+				The string ‘onDeleteButtonClick’ refers to the method of the same name. When ‘click’ is emitted
+				from that button, that method is invoked. It, in turn, will emit “delete” event.
+			</p>
+			<p>
+				Now, we need to make sure that the list is listening to this event from all of its sub-items.
+				We will first aggregate the event and then listen to the aggregated event and respond to it:
+			</p>
+<pre class="line-numbers"><code class="language-javascript">var ToDoListWidget = function ToDoListWidget( config ) {
+	// ... code ...
+
+	this.aggregate( {
+		delete: 'itemDelete'
+	} );
+
+	this.connect( this, { itemDelete: 'onItemDelete' } );
+};
+
+OO.inheritClass( ToDoListWidget, OO.ui.SelectWidget );
+
+ToDoListWidget.prototype.onItemDelete = function ( itemWidget ) {
+	this.removeItems( [ itemWidget ] );
+};</code></pre>
+
+			<p>
+				We’ve used <code class="inline-code">this.aggregate()</code> to tell the group which events to
+				listen to in its items, and we’ve used <code class="inline-code">this.connect( this, { ... } );</code>
+				to connect our own object to the event we aggregated.
+			</p>
+			<p>
+				Then, the responding method (<code class="inline-code">onItemDelete</code>) removes the item from the list.
+			</p>
+			<p>
+				You can now add and remove items from your ToDo app, yay!
+			</p>
+			<div class="embed-app embed-app5 basics2-button-rules"></div>
+			<p>
+				Now that the app has basic operations, we can call this tutorial over. We hope that you got a good taste
+				as to what OOjs UI is like, and the potential it holds in quickly – but efficiently – developing JavaScript apps.
+			</p>
+			<a id="the-complete-code" href="#the-complete-code">
+				<h2 class="section">
+					The complete code
+				</h2>
+			</a>
+			<hr>
+			<p>1. Full code for <code class="inline-code">index.html</code></p>
+<pre class="line-numbers language-markup"><code>&lt;!doctype html>
+&lt;html&gt;
+	&lt;head&gt;
+		&lt;meta charset="UTF-8"&gt;
+		&lt;title&gt;ToDo OOUI&lt;/title&gt;
+		&lt;meta name="description" content="A demo ToDo app made with OOUI"&gt;
+		&lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+
+		&lt;!-- jQuery --&gt;
+		&lt;script src="node_modules/jquery/dist/jquery.min.js"&gt;&lt;/script&gt;
+		&lt;!-- OOjs --&gt;
+		&lt;script src="node_modules/oojs/dist/oojs.jquery.min.js"&gt;&lt;/script&gt;
+		&lt;!-- OOUI --&gt;
+		&lt;script src="node_modules/oojs-ui/dist/oojs-ui.min.js"&gt;&lt;/script&gt;
+		&lt;!-- OOUI theme --&gt;
+		&lt;script src="node_modules/oojs-ui/dist/oojs-ui-wikimediaui.min.js"&gt;&lt;/script&gt;
+		&lt;link rel="stylesheet" href="node_modules/oojs-ui/dist/oojs-ui-wikimediaui.min.css"&gt;
+
+		&lt;!-- ToDo app custom --&gt;
+		&lt;link rel="stylesheet" href="todo.css"&gt;
+		&lt;script src="assets/ToDoItemWidget.js"&gt;&lt;/script&gt;
+		&lt;script src="assets/ToDoListWidget.js"&gt;&lt;/script&gt;
+		&lt;script src="assets/init.js"&gt;&lt;/script&gt;
+	&lt;/head&gt;
+	&lt;body&gt;
+		&lt;div class="wrapper"&gt;
+			&lt;h1&gt;Demo ToDo app with OOUI&lt;/h1&gt;
+		&lt;/div&gt;
+	&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+			<p>2. Full code for <code class="inline-code">init.js</code></p>
+<pre class="line-numbers"><code class="language-javascript">$( document ).ready( function () {
+	var input = new OO.ui.TextInputWidget( {
+			placeholder: 'Add a ToDo item'
+		} ),
+		list = new ToDoListWidget( {
+			classes: [ 'todo-list' ]
+		} ),
+		info = new OO.ui.LabelWidget( {
+			label: 'Information',
+			classes: [ 'todo-info' ]
+		} );
+
+	// Respond to 'enter' keypress
+	input.on( 'enter', function () {
+		// Check for duplicates and prevent empty input
+		if ( list.findItemFromData( input.getValue() ) ||
+				input.getValue() === '' ) {
+			input.$element.addClass( 'todo-error' );
+			return;
+		}
+		input.$element.removeClass( 'todo-error' );
+
+		list.on( 'choose', function ( item ) {
+			info.setLabel( item.getData() + ' (' +
+				item.getPrettyCreationTime() + ')' );
+		} );
+
+		// Add the item
+		list.addItems( [
+			new ToDoItemWidget( {
+				data: input.getValue(),
+				label: input.getValue(),
+				creationTime: Date.now()
+			} )
+		] );
+		input.setValue( '' );
+	} );
+
+	// Append the app widgets
+	$( '.wrapper' ).append(
+		input.$element,
+		list.$element,
+		info.$element
+	);
+} );</code></pre>
+
+			<p>3. Full code for <code class="inline-code">ToDoItemWidget.js</code></p>
+<pre class="line-numbers"><code class="language-javascript">var ToDoItemWidget = function ( config ) {
+	config = config || {};
+	ToDoItemWidget.parent.call( this, config );
+
+	this.creationTime = config.creationTime;
+
+	this.deleteButton = new OO.ui.ButtonWidget( {
+		label: 'Delete'
+	} );
+
+	this.$element
+		.addClass( 'todo-itemWidget' )
+		.append( this.deleteButton.$element );
+
+	this.deleteButton.connect( this, { click: 'onDeleteButtonClick' } );
+};
+
+OO.inheritClass( ToDoItemWidget, OO.ui.OptionWidget );
+
+ToDoItemWidget.prototype.getCreationTime = function () {
+	return this.creationTime;
+};
+
+ToDoItemWidget.prototype.getPrettyCreationTime = function () {
+	var time = new Date( this.creationTime ),
+		hour = time.getHours(),
+		minute = time.getMinutes(),
+		second = time.getSeconds(),
+		temp = String( ( hour > 12 ) ? hour - 12 : hour ),
+		monthNames = [
+			'Jan',
+			'Feb',
+			'Mar',
+			'Apr',
+			'May',
+			'Jun',
+			'Jul',
+			'Aug',
+			'Sep',
+			'Oct',
+			'Nov',
+			'Dec'
+		];
+
+	if ( hour === 0 ) {
+		temp = '12';
+	}
+	temp += ( ( minute &lt; 10 ) ? ':0' : ':' ) + minute;
+	temp += ( ( second &lt; 10 ) ? ':0' : ':' ) + second;
+	temp += ( hour >= 12 ) ? ' P.M.' : ' A.M.';
+	return [
+		time.getDate(),
+		monthNames[ time.getMonth() ],
+		time.getFullYear() + ', ',
+		temp
+	].join( ' ' );
+};
+
+ToDoItemWidget.prototype.onDeleteButtonClick = function () {
+	this.emit( 'delete' );
+};</code></pre>
+
+			<p>4. Full code for <code class="inline-code">ToDoListWidget.js</code></p>
+<pre class="line-numbers"><code class="language-javascript">var ToDoListWidget = function ToDoListWidget( config ) {
+	config = config || {};
+
+	// Call parent constructor
+	ToDoListWidget.parent.call( this, config );
+
+	this.aggregate( {
+		delete: 'itemDelete'
+	} );
+
+	this.connect( this, { itemDelete: 'onItemDelete' } );
+};
+
+OO.inheritClass( ToDoListWidget, OO.ui.SelectWidget );
+
+ToDoListWidget.prototype.onItemDelete = function ( itemWidget ) {
+	this.removeItems( [ itemWidget ] );
+};</code></pre>
+
+			<p>5. Full code for <code class="inline-code">todo.css</code></p>
+<pre class="line-numbers"><code class="language-css">.todo-error input {
+	background-color: #ff9696;
+}
+
+.wrapper {
+	width: 60%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.todo-list .oo-ui-optionWidget {
+	border-bottom: 1px solid #666;
+}
+
+.oo-ui-selectWidget-depressed .oo-ui-optionWidget-selected {
+	background-color: #80ccff;
+}
+
+.oo-ui-optionWidget-highlighted {
+	background-color: #b9e3ff;
+}
+
+.oo-ui-inputWidget {
+	margin-bottom: 0.5em;
+}
+
+.todo-list .oo-ui-labelElement-label {
+	margin-left: 0.25em;
+}
+
+.oo-ui-labelElement .oo-ui-optionWidget {
+	padding: 0.25em;
+}
+
+.todo-itemWidget {
+	display: inline-table;
+}
+
+.todo-itemWidget.oo-ui-optionWidget.oo-ui-labelElement >
+.oo-ui-labelElement-label {
+	display: table-cell;
+	width: 100%;
+	padding: 0.5em;
+}
+
+.todo-itemWidget .oo-ui-buttonWidget {
+	display: table-cell;
+}</code></pre>
+
+		</div>
+	</div>
+	<footer class="tutorials-footer">
+		<div class="tutorials-footer-top">
+			<h1>Learn more about OOUI</h1>
+		</div>
+		<div class="tutorials-footer-content">
+			<div class="box-container">
+				<div class="box box-wide">
+					<h3>Tutorials</h3>
+					<a href="../../index.html">Tutorial Index</a>
+					<a href="../basics1/contents.html">Basics: ToDo App - Part 1</a>
+				</div>
+				<div class="box-wide">
+					<h3>Documentation</h3>
+					<a href="https://doc.wikimedia.org/oojs-ui/master/js/">API Documentation</a>
+					<a href="https://www.mediawiki.org/wiki/OOUI">MediaWiki Docs</a>
+				</div>
+				<div class="box">
+					<h3>Demos</h3>
+					<a href="https://doc.wikimedia.org/oojs-ui/master/demos/?page=widgets&theme=wikimediaui">Widgets</a>
+					<a href="https://doc.wikimedia.org/oojs-ui/master/demos/?page=icons&theme=wikimediaui">Icons</a>
+					<a href="https://doc.wikimedia.org/oojs-ui/master/demos/?page=dialogs&theme=wikimediaui">Dialogs</a>
+					<a href="https://doc.wikimedia.org/oojs-ui/master/demos/?page=toolbars&theme=wikimediaui">Toolbars</a>
+				</div>
+			</div>
+		</div>
+	</footer>
+
+	<script src="../../../node_modules/jquery/dist/jquery.js"></script>
+	<script src="../../../node_modules/oojs/dist/oojs.jquery.js"></script>
+	<script src="../../../node_modules/javascript-stringify/javascript-stringify.js"></script>
+	<!-- Add the individual oojs-ui files for proper sourcemap support -->
+	<script src="../../../dist/oojs-ui-core.js"></script>
+	<script src="../../../dist/oojs-ui-toolbars.js"></script>
+	<script src="../../../dist/oojs-ui-widgets.js"></script>
+	<script src="../../../dist/oojs-ui-windows.js"></script>
+	<script src="../../../dist/oojs-ui-wikimediaui.js"></script>
+	<script src="../../../dist/oojs-ui-apex.js"></script>
+	<!-- Tutorial scripts -->
+	<script src="../../widgets/toolbar.js"></script>
+	<script src="../../assets/init.js"></script>
+	<script src="snippets/app1.js"></script>
+	<script src="snippets/app2-todo-item.js"></script>
+	<script src="snippets/app2-init.js"></script>
+	<script src="snippets/app3-todo-item.js"></script>
+	<script src="snippets/app3-init.js"></script>
+	<script src="snippets/app4-init.js"></script>
+	<script src="snippets/app5-todo-item.js"></script>
+	<script src="snippets/app5-todo-list.js"></script>
+	<script src="snippets/app5-init.js"></script>
+	<script>
+		$( function () {
+			var toolbar = new Tutorials.Toolbar();
+
+			$( 'nav' ).append(
+				toolbar.$element
+			);
+
+			$( '.line-numbers.language-javascript' ).each( function () {
+				Prism.highlightElement( this );
+			} );
+
+		} )
+	</script>
+</body>
+</html>

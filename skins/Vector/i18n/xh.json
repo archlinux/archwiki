@@ -1,4 +1,9 @@
 {
-	"@metadata": [],
-	"vector-view-edit": "Tshintsha"
+	"@metadata": {
+		"authors": [
+			"Nomden"
+		]
+	},
+	"vector-view-edit": "Tshintsha",
+	"vector-view-history": "Khawujonge imbali yeli phepha"
 }

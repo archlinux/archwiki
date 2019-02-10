@@ -566,6 +566,8 @@ class Preprocessor_DOM extends Preprocessor {
 			} elseif ( $found == 'line-end' ) {
 				$piece = $stack->top;
 				// A heading must be open, otherwise \n wouldn't have been in the search list
+				// FIXME: Don't use assert()
+				// phpcs:ignore MediaWiki.Usage.ForbiddenFunctions.assert
 				assert( $piece->open === "\n" );
 				$part = $piece->getCurrentPart();
 				// Search back through the input to see if it has a proper close.
@@ -1545,7 +1547,7 @@ class PPFrame_DOM implements PPFrame {
 		if ( $level === false ) {
 			return $this->title->getPrefixedDBkey();
 		} else {
-			return isset( $this->titleCache[$level] ) ? $this->titleCache[$level] : false;
+			return $this->titleCache[$level] ?? false;
 		}
 	}
 

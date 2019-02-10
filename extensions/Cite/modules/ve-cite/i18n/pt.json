@@ -22,12 +22,10 @@
 			"Athena in Wonderland"
 		]
 	},
-	"visualeditor-cite-tool-definition.json": "nulo",
 	"visualeditor-cite-tool-name-book": "Livro",
 	"visualeditor-cite-tool-name-journal": "Periódico",
 	"visualeditor-cite-tool-name-news": "Notícias",
-	"visualeditor-cite-tool-name-web": "Sítio web",
-	"cite-tool-definition.json": "nulo",
+	"visualeditor-cite-tool-name-web": "Sítio na Internet",
 	"cite-ve-changedesc-ref-group-both": "Grupo da referência alterado de \"$1\" para \"$2\"",
 	"cite-ve-changedesc-ref-group-from": "Grupo da referência alterado de \"$1\" para o grupo geral",
 	"cite-ve-changedesc-ref-group-to": "Grupo da referência alterado do grupo geral para \"$1\"",

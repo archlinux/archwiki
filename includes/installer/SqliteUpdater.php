@@ -54,9 +54,8 @@ class SqliteUpdater extends DatabaseUpdater {
 			[ 'doLogUsertextPopulation' ],
 			[ 'doLogSearchPopulation' ],
 			[ 'addTable', 'l10n_cache', 'patch-l10n_cache.sql' ],
-			[ 'addIndex', 'change_tag', 'change_tag_rc_tag', 'patch-change_tag-indexes.sql' ],
+			[ 'addIndex', 'tag_summary', 'tag_summary_rc_id', 'patch-change_tag-indexes.sql' ],
 			[ 'addField', 'redirect', 'rd_interwiki', 'patch-rd_interwiki.sql' ],
-			[ 'doUpdateTranscacheField' ],
 			[ 'sqliteSetupSearchindex' ],
 
 			// 1.17
@@ -68,7 +67,8 @@ class SqliteUpdater extends DatabaseUpdater {
 			[ 'addField', 'categorylinks', 'cl_collation', 'patch-categorylinks-better-collation.sql' ],
 			[ 'addTable', 'module_deps', 'patch-module_deps.sql' ],
 			[ 'dropIndex', 'archive', 'ar_page_revid', 'patch-archive_kill_ar_page_revid.sql' ],
-			[ 'addIndex', 'archive', 'ar_revid', 'patch-archive_ar_revid.sql' ],
+			[ 'addIndexIfNoneExist',
+				'archive', [ 'ar_revid', 'ar_revid_uniq' ], 'patch-archive_ar_revid.sql' ],
 
 			// 1.18
 			[ 'addIndex', 'user', 'user_email', 'patch-user_email_index.sql' ],
@@ -76,7 +76,6 @@ class SqliteUpdater extends DatabaseUpdater {
 			[ 'addTable', 'user_former_groups', 'patch-user_former_groups.sql' ],
 
 			// 1.19
-			[ 'addIndex', 'logging', 'type_action', 'patch-logging-type-action-index.sql' ],
 			[ 'doMigrateUserOptions' ],
 			[ 'dropField', 'user', 'user_options', 'patch-drop-user_options.sql' ],
 			[ 'addField', 'revision', 'rev_sha1', 'patch-rev_sha1.sql' ],
@@ -184,7 +183,6 @@ class SqliteUpdater extends DatabaseUpdater {
 			[ 'renameIndex', 'querycache_info', 'qci_type', 'PRIMARY', false,
 				'patch-querycache_info-fix-pk.sql' ],
 			[ 'renameIndex', 'site_stats', 'ss_row_id', 'PRIMARY', false, 'patch-site_stats-fix-pk.sql' ],
-			[ 'renameIndex', 'transcache', 'tc_url_idx', 'PRIMARY', false, 'patch-transcache-fix-pk.sql' ],
 			[ 'renameIndex', 'user_former_groups', 'ufg_user_group', 'PRIMARY', false,
 				'patch-user_former_groups-fix-pk.sql' ],
 			[ 'renameIndex', 'user_properties', 'user_properties_user_property', 'PRIMARY', false,
@@ -212,6 +210,33 @@ class SqliteUpdater extends DatabaseUpdater {
 			[ 'populateArchiveRevId' ],
 			[ 'addIndex', 'recentchanges', 'rc_namespace_title_timestamp',
 				'patch-recentchanges-nttindex.sql' ],
+
+			// 1.32
+			[ 'addTable', 'change_tag_def', 'patch-change_tag_def.sql' ],
+			[ 'populateExternallinksIndex60' ],
+			[ 'modifyfield', 'externallinks', 'el_index_60',
+				'patch-externallinks-el_index_60-drop-default.sql' ],
+			[ 'runMaintenance', DeduplicateArchiveRevId::class, 'maintenance/deduplicateArchiveRevId.php' ],
+			[ 'addField', 'change_tag', 'ct_tag_id', 'patch-change_tag-tag_id.sql' ],
+			[ 'addIndex', 'archive', 'ar_revid_uniq', 'patch-archive-ar_rev_id-unique.sql' ],
+			[ 'populateContentTables' ],
+			[ 'addIndex', 'logging', 'log_type_action', 'patch-logging-log-type-action-index.sql' ],
+			[ 'dropIndex', 'logging', 'type_action', 'patch-logging-drop-type-action-index.sql' ],
+			[ 'renameIndex', 'interwiki', 'iw_prefix', 'PRIMARY', false, 'patch-interwiki-fix-pk.sql' ],
+						[ 'renameIndex', 'page_props', 'pp_page_propname', 'PRIMARY', false,
+				'patch-page_props-fix-pk.sql' ],
+			[ 'renameIndex', 'protected_titles', 'pt_namespace_title', 'PRIMARY', false,
+				'patch-protected_titles-fix-pk.sql' ],
+			[ 'renameIndex', 'site_identifiers', 'site_ids_type', 'PRIMARY', false,
+				'patch-site_identifiers-fix-pk.sql' ],
+			[ 'addIndex', 'recentchanges', 'rc_this_oldid', 'patch-recentchanges-rc_this_oldid-index.sql' ],
+			[ 'dropTable', 'transcache' ],
+			[ 'runMaintenance', PopulateChangeTagDef::class, 'maintenance/populateChangeTagDef.php' ],
+			[ 'addIndex', 'change_tag', 'change_tag_rc_tag_id',
+				'patch-change_tag-change_tag_rc_tag_id.sql' ],
+			[ 'addField', 'ipblocks', 'ipb_sitewide', 'patch-ipb_sitewide.sql' ],
+			[ 'addTable', 'ipblocks_restrictions', 'patch-ipblocks_restrictions-table.sql' ],
+			[ 'migrateImageCommentTemp' ],
 		];
 	}
 

@@ -120,7 +120,7 @@
 				if ( typeof configuration.modal === 'undefined' ) {
 					configuration.modal = true;
 				}
-				configuration.title = $.wikiEditor.autoMsg( module, 'title' );
+				configuration.title = $.wikiEditor.autoSafeMsg( module, 'title' );
 				// Transform messages in keys
 				// Stupid JS won't let us do stuff like
 				// foo = { mw.msg( 'bar' ): baz }

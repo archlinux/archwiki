@@ -3,9 +3,9 @@
 use Wikimedia\Rdbms\IDatabase;
 use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
 use MediaWiki\Linker\LinkTarget;
-use MediaWiki\MediaWikiServices;
 use Wikimedia\Assert\Assert;
 use Wikimedia\ScopedCallback;
+use Wikimedia\Rdbms\ILBFactory;
 use Wikimedia\Rdbms\LoadBalancer;
 
 /**
@@ -17,6 +17,11 @@ use Wikimedia\Rdbms\LoadBalancer;
  * @since 1.27
  */
 class WatchedItemStore implements WatchedItemStoreInterface, StatsdAwareInterface {
+
+	/**
+	 * @var ILBFactory
+	 */
+	private $lbFactory;
 
 	/**
 	 * @var LoadBalancer
@@ -62,18 +67,19 @@ class WatchedItemStore implements WatchedItemStoreInterface, StatsdAwareInterfac
 	private $stats;
 
 	/**
-	 * @param LoadBalancer $loadBalancer
+	 * @param ILBFactory $lbFactory
 	 * @param HashBagOStuff $cache
 	 * @param ReadOnlyMode $readOnlyMode
 	 * @param int $updateRowsPerQuery
 	 */
 	public function __construct(
-		LoadBalancer $loadBalancer,
+		ILBFactory $lbFactory,
 		HashBagOStuff $cache,
 		ReadOnlyMode $readOnlyMode,
 		$updateRowsPerQuery
 	) {
-		$this->loadBalancer = $loadBalancer;
+		$this->lbFactory = $lbFactory;
+		$this->loadBalancer = $lbFactory->getMainLB();
 		$this->cache = $cache;
 		$this->readOnlyMode = $readOnlyMode;
 		$this->stats = new NullStatsdDataFactory();
@@ -407,6 +413,11 @@ class WatchedItemStore implements WatchedItemStoreInterface, StatsdAwareInterfac
 		array $targetsWithVisitThresholds,
 		$minimumWatchers = null
 	) {
+		if ( $targetsWithVisitThresholds === [] ) {
+			// No titles requested => no results returned
+			return [];
+		}
+
 		$dbr = $this->getConnectionRef( DB_REPLICA );
 
 		$conds = $this->getVisitingWatchersCondition( $dbr, $targetsWithVisitThresholds );
@@ -814,13 +825,10 @@ class WatchedItemStore implements WatchedItemStoreInterface, StatsdAwareInterfac
 			$fname = __METHOD__;
 			DeferredUpdates::addCallableUpdate(
 				function () use ( $timestamp, $watchers, $target, $fname ) {
-					global $wgUpdateRowsPerQuery;
-
 					$dbw = $this->getConnectionRef( DB_MASTER );
-					$factory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
-					$ticket = $factory->getEmptyTransactionTicket( __METHOD__ );
+					$ticket = $this->lbFactory->getEmptyTransactionTicket( $fname );
 
-					$watchersChunks = array_chunk( $watchers, $wgUpdateRowsPerQuery );
+					$watchersChunks = array_chunk( $watchers, $this->updateRowsPerQuery );
 					foreach ( $watchersChunks as $watchersChunk ) {
 						$dbw->update( 'watchlist',
 							[ /* SET */
@@ -832,8 +840,8 @@ class WatchedItemStore implements WatchedItemStoreInterface, StatsdAwareInterfac
 							], $fname
 						);
 						if ( count( $watchersChunks ) > 1 ) {
-							$factory->commitAndWaitForReplication(
-								__METHOD__, $ticket, [ 'domain' => $dbw->getDomainID() ]
+							$this->lbFactory->commitAndWaitForReplication(
+								$fname, $ticket, [ 'domain' => $dbw->getDomainID() ]
 							);
 						}
 					}

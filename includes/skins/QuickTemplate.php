@@ -31,20 +31,14 @@ abstract class QuickTemplate {
 	 */
 	public $data;
 
-	/**
-	 * @var MediaWikiI18N
-	 */
-	public $translator;
-
 	/** @var Config $config */
 	protected $config;
 
 	/**
-	 * @param Config $config
+	 * @param Config|null $config
 	 */
 	function __construct( Config $config = null ) {
 		$this->data = [];
-		$this->translator = new MediaWikiI18N();
 		if ( $config === null ) {
 			wfDebug( __METHOD__ . ' was called with no Config instance passed to it' );
 			$config = MediaWikiServices::getInstance()->getMainConfig();
@@ -79,15 +73,12 @@ abstract class QuickTemplate {
 	 * Gets the template data requested
 	 * @since 1.22
 	 * @param string $name Key for the data
-	 * @param mixed $default Optional default (or null)
+	 * @param mixed|null $default Optional default (or null)
 	 * @return mixed The value of the data requested or the deafult
+	 * @return-taint onlysafefor_htmlnoent
 	 */
 	public function get( $name, $default = null ) {
-		if ( isset( $this->data[$name] ) ) {
-			return $this->data[$name];
-		} else {
-			return $default;
-		}
+		return $this->data[$name] ?? $default;
 	}
 
 	/**
@@ -103,16 +94,6 @@ abstract class QuickTemplate {
 	}
 
 	/**
-	 * @param MediaWikiI18N &$t
-	 * @deprecate since 1.31 Use BaseTemplate::msg() or Skin::msg() instead for setting
-	 *  message parameters.
-	 */
-	public function setTranslator( &$t ) {
-		wfDeprecated( __METHOD__, '1.31' );
-		$this->translator = &$t;
-	}
-
-	/**
 	 * Main function, used by classes that subclass QuickTemplate
 	 * to show the actual HTML output
 	 */
@@ -121,6 +102,7 @@ abstract class QuickTemplate {
 	/**
 	 * @private
 	 * @param string $str
+	 * @suppress SecurityCheck-DoubleEscaped $this->data can be either
 	 */
 	function text( $str ) {
 		echo htmlspecialchars( $this->data[$str] );
@@ -129,6 +111,7 @@ abstract class QuickTemplate {
 	/**
 	 * @private
 	 * @param string $str
+	 * @suppress SecurityCheck-XSS phan-taint-check cannot tell if $str is pre-escaped
 	 */
 	function html( $str ) {
 		echo $this->data[$str];
@@ -145,8 +128,13 @@ abstract class QuickTemplate {
 	/**
 	 * @private
 	 * @param string $msgKey
+	 * @warning You should never use this method. I18n messages should be escaped
+	 * @deprecated 1.32 Use ->msg() or ->msgWiki() instead.
+	 * @suppress SecurityCheck-XSS
+	 * @return-taint exec_html
 	 */
 	function msgHtml( $msgKey ) {
+		wfDeprecated( __METHOD__, '1.32' );
 		echo wfMessage( $msgKey )->text();
 	}
 

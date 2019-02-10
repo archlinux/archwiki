@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Awangba Mangang"
+		]
+	},
+	"pfunc_time_error": "ꯑꯁꯣꯏꯕ: ꯃꯇꯝ ꯎꯨꯠꯇꯕ ‌‌",
+	"pfunc_expr_unrecognised_word": "Expression error:$1 masak khangdaba wahei",
+	"pfunc_expr_unexpected_operator": "Expression error: Unexpected $1 operator.",
+	"pfunc_expr_missing_operand": "ꯑꯔꯥꯟꯕꯥ ꯐꯣꯡꯗꯣꯛꯄꯥ:$1 ꯒꯤ ꯃꯥꯡꯈꯤꯕꯥ operand",
+	"pfunc_expr_unrecognised_punctuation": "Expression error: ꯁꯛꯈꯪꯗꯕꯥ ꯃꯆꯠꯀꯤ ꯈꯨꯗꯝ \"$1\".",
+	"pfunc_expr_division_by_zero": "ꯐꯨꯟ ꯅ ꯌꯦꯟꯕ"
+}

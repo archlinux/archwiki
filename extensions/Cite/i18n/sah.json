@@ -5,7 +5,7 @@
 			"София"
 		]
 	},
-	"cite-desc": "Хос быһаарыы <nowiki><ref[ name=id]></nowiki> уонна <nowiki><references/></nowiki> тиэктэрин эбэр",
+	"cite-desc": "Хос быһаарыы <code><nowiki><ref[ name=id]></nowiki></code> уонна <code><nowiki><references/></nowiki></code> тиэктэрин эбэр",
 	"cite_error": "Цитата сыыһата: $1",
 	"cite_error_ref_numeric_key": "Неправильный вызов: ожидался нечисловой ключ",
 	"cite_error_ref_no_key": "<code>&lt;ref&gt;</code> тиэк алҕаһа: аата (күлүүһэ) ыйыллыбатах",

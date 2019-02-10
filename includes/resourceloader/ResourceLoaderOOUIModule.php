@@ -33,6 +33,7 @@ trait ResourceLoaderOOUIModule {
 		'icons-alerts',
 		'icons-content',
 		'icons-editing-advanced',
+		'icons-editing-citation',
 		'icons-editing-core',
 		'icons-editing-list',
 		'icons-editing-styling',
@@ -54,14 +55,14 @@ trait ResourceLoaderOOUIModule {
 	// Note that keys must be TitleCase.
 	protected static $builtinThemePaths = [
 		'WikimediaUI' => [
-			'scripts' => 'resources/lib/oojs-ui/oojs-ui-wikimediaui.js',
-			'styles' => 'resources/lib/oojs-ui/oojs-ui-{module}-wikimediaui.css',
-			'images' => 'resources/lib/oojs-ui/themes/wikimediaui/{module}.json',
+			'scripts' => 'resources/lib/ooui/oojs-ui-wikimediaui.js',
+			'styles' => 'resources/lib/ooui/oojs-ui-{module}-wikimediaui.css',
+			'images' => 'resources/lib/ooui/themes/wikimediaui/{module}.json',
 		],
 		'Apex' => [
-			'scripts' => 'resources/lib/oojs-ui/oojs-ui-apex.js',
-			'styles' => 'resources/lib/oojs-ui/oojs-ui-{module}-apex.css',
-			'images' => 'resources/lib/oojs-ui/themes/apex/{module}.json',
+			'scripts' => 'resources/lib/ooui/oojs-ui-apex.js',
+			'styles' => 'resources/lib/ooui/oojs-ui-{module}-apex.css',
+			'images' => 'resources/lib/ooui/themes/apex/{module}.json',
 		],
 	];
 

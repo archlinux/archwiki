@@ -15,6 +15,15 @@ class ResourceLoaderWikiModuleTest extends ResourceLoaderTestCase {
 		$this->assertInstanceOf( ResourceLoaderWikiModule::class, $module );
 	}
 
+	private function prepareTitleInfo( array $mockInfo ) {
+		$module = TestingAccessWrapper::newFromClass( ResourceLoaderWikiModule::class );
+		$info = [];
+		foreach ( $mockInfo as $key => $val ) {
+			$info[ $module->makeTitleKey( Title::newFromText( $key ) ) ] = $val;
+		}
+		return $info;
+	}
+
 	public static function provideConstructor() {
 		return [
 			// Nothing
@@ -96,16 +105,19 @@ class ResourceLoaderWikiModuleTest extends ResourceLoaderTestCase {
 	 * @covers ResourceLoaderWikiModule::isKnownEmpty
 	 * @dataProvider provideIsKnownEmpty
 	 */
-	public function testIsKnownEmpty( $titleInfo, $group, $expected ) {
+	public function testIsKnownEmpty( $titleInfo, $group, $dependencies, $expected ) {
 		$module = $this->getMockBuilder( ResourceLoaderWikiModule::class )
-			->setMethods( [ 'getTitleInfo', 'getGroup' ] )
+			->setMethods( [ 'getTitleInfo', 'getGroup', 'getDependencies' ] )
 			->getMock();
 		$module->expects( $this->any() )
 			->method( 'getTitleInfo' )
-			->will( $this->returnValue( $titleInfo ) );
+			->will( $this->returnValue( $this->prepareTitleInfo( $titleInfo ) ) );
 		$module->expects( $this->any() )
 			->method( 'getGroup' )
 			->will( $this->returnValue( $group ) );
+		$module->expects( $this->any() )
+			->method( 'getDependencies' )
+			->will( $this->returnValue( $dependencies ) );
 		$context = $this->getMockBuilder( ResourceLoaderContext::class )
 			->disableOriginalConstructor()
 			->getMock();
@@ -115,29 +127,47 @@ class ResourceLoaderWikiModuleTest extends ResourceLoaderTestCase {
 	public static function provideIsKnownEmpty() {
 		return [
 			// No valid pages
-			[ [], 'test1', true ],
+			[ [], 'test1', [], true ],
 			// 'site' module with a non-empty page
 			[
 				[ 'MediaWiki:Common.js' => [ 'page_len' => 1234 ] ],
 				'site',
+				[],
+				false,
+			],
+			// 'site' module without existing pages but dependencies
+			[
+				[],
+				'site',
+				[ 'mobile.css' ],
+				false,
+			],
+			// 'site' module which is empty but has dependencies
+			[
+				[ 'MediaWiki:Common.js' => [ 'page_len' => 0 ] ],
+				'site',
+				[ 'mobile.css' ],
 				false,
 			],
 			// 'site' module with an empty page
 			[
 				[ 'MediaWiki:Foo.js' => [ 'page_len' => 0 ] ],
 				'site',
+				[],
 				false,
 			],
 			// 'user' module with a non-empty page
 			[
 				[ 'User:Example/common.js' => [ 'page_len' => 25 ] ],
 				'user',
+				[],
 				false,
 			],
 			// 'user' module with an empty page
 			[
 				[ 'User:Example/foo.js' => [ 'page_len' => 0 ] ],
 				'user',
+				[],
 				true,
 			],
 		];
@@ -151,10 +181,10 @@ class ResourceLoaderWikiModuleTest extends ResourceLoaderTestCase {
 			'MediaWiki:Common.css' => [ 'type' => 'styles' ],
 			'mediawiki: fallback.css' => [ 'type' => 'styles' ],
 		];
-		$titleInfo = [
+		$titleInfo = $this->prepareTitleInfo( [
 			'MediaWiki:Common.css' => [ 'page_len' => 1234 ],
 			'MediaWiki:Fallback.css' => [ 'page_len' => 0 ],
-		];
+		] );
 		$expected = $titleInfo;
 
 		$module = $this->getMockBuilder( TestResourceLoaderWikiModule::class )
@@ -186,10 +216,10 @@ class ResourceLoaderWikiModuleTest extends ResourceLoaderTestCase {
 			// doing an intersect on the canonical result, producing an empty array.
 			'mediawiki: fallback.css' => [ 'type' => 'styles' ],
 		];
-		$titleInfo = [
+		$titleInfo = $this->prepareTitleInfo( [
 			'MediaWiki:Common.css' => [ 'page_len' => 1234 ],
 			'MediaWiki:Fallback.css' => [ 'page_len' => 0 ],
-		];
+		] );
 		$expected = $titleInfo;
 
 		$module = $this->getMockBuilder( TestResourceLoaderWikiModule::class )
@@ -232,7 +262,7 @@ class ResourceLoaderWikiModuleTest extends ResourceLoaderTestCase {
 
 		// Set up objects
 		$module = $this->getMockBuilder( TestResourceLoaderWikiModule::class )
-			->setMethods( [ 'getPages' ] ) ->getMock();
+			->setMethods( [ 'getPages' ] )->getMock();
 		$module->method( 'getPages' )->willReturn( $pages );
 		$module::$returnFetchTitleInfo = $titleInfo;
 		$rl = new EmptyResourceLoader();
@@ -300,7 +330,7 @@ class ResourceLoaderWikiModuleTest extends ResourceLoaderTestCase {
 	public function testGetContent( $expected, $title ) {
 		$context = $this->getResourceLoaderContext( [], new EmptyResourceLoader );
 		$module = $this->getMockBuilder( ResourceLoaderWikiModule::class )
-			->setMethods( [ 'getContentObj' ] ) ->getMock();
+			->setMethods( [ 'getContentObj' ] )->getMock();
 		$module->expects( $this->any() )
 			->method( 'getContentObj' )->willReturn( null );
 
@@ -321,38 +351,82 @@ class ResourceLoaderWikiModuleTest extends ResourceLoaderTestCase {
 		$module = TestingAccessWrapper::newFromObject( $module );
 		$this->assertEquals(
 			$expected,
-			$module->getContent( $titleText )
+			$module->getContent( $titleText, $context )
 		);
 	}
 
 	/**
 	 * @covers ResourceLoaderWikiModule::getContent
+	 * @covers ResourceLoaderWikiModule::getContentObj
+	 * @covers ResourceLoaderWikiModule::shouldEmbedModule
+	 */
+	public function testContentOverrides() {
+		$pages = [
+			'MediaWiki:Common.css' => [ 'type' => 'style' ],
+		];
+
+		$module = $this->getMockBuilder( TestResourceLoaderWikiModule::class )
+			->setMethods( [ 'getPages' ] )
+			->getMock();
+		$module->method( 'getPages' )->willReturn( $pages );
+
+		$rl = new EmptyResourceLoader();
+		$rl->register( 'testmodule', $module );
+		$context = new DerivativeResourceLoaderContext(
+			new ResourceLoaderContext( $rl, new FauxRequest() )
+		);
+		$context->setContentOverrideCallback( function ( Title $t ) {
+			if ( $t->getPrefixedText() === 'MediaWiki:Common.css' ) {
+				return new CssContent( '.override{}' );
+			}
+			return null;
+		} );
+
+		$this->assertTrue( $module->shouldEmbedModule( $context ) );
+		$this->assertEquals( [
+			'all' => [
+				"/*\nMediaWiki:Common.css\n*/\n.override{}"
+			]
+		], $module->getStyles( $context ) );
+
+		$context->setContentOverrideCallback( function ( Title $t ) {
+			if ( $t->getPrefixedText() === 'MediaWiki:Skin.css' ) {
+				return new CssContent( '.override{}' );
+			}
+			return null;
+		} );
+		$this->assertFalse( $module->shouldEmbedModule( $context ) );
+	}
+
+	/**
+	 * @covers ResourceLoaderWikiModule::getContent
+	 * @covers ResourceLoaderWikiModule::getContentObj
 	 */
 	public function testGetContentForRedirects() {
 		// Set up context and module object
-		$context = $this->getResourceLoaderContext( [], new EmptyResourceLoader );
+		$context = new DerivativeResourceLoaderContext(
+			$this->getResourceLoaderContext( [], new EmptyResourceLoader )
+		);
 		$module = $this->getMockBuilder( ResourceLoaderWikiModule::class )
-			->setMethods( [ 'getPages', 'getContentObj' ] )
+			->setMethods( [ 'getPages' ] )
 			->getMock();
 		$module->expects( $this->any() )
 			->method( 'getPages' )
 			->will( $this->returnValue( [
 				'MediaWiki:Redirect.js' => [ 'type' => 'script' ]
 			] ) );
-		$module->expects( $this->any() )
-			->method( 'getContentObj' )
-			->will( $this->returnCallback( function ( Title $title ) {
-				if ( $title->getPrefixedText() === 'MediaWiki:Redirect.js' ) {
-					$handler = new JavaScriptContentHandler();
-					return $handler->makeRedirectContent(
-						Title::makeTitle( NS_MEDIAWIKI, 'Target.js' )
-					);
-				} elseif ( $title->getPrefixedText() === 'MediaWiki:Target.js' ) {
-					return new JavaScriptContent( 'target;' );
-				} else {
-					return null;
-				}
-			} ) );
+		$context->setContentOverrideCallback( function ( Title $title ) {
+			if ( $title->getPrefixedText() === 'MediaWiki:Redirect.js' ) {
+				$handler = new JavaScriptContentHandler();
+				return $handler->makeRedirectContent(
+					Title::makeTitle( NS_MEDIAWIKI, 'Target.js' )
+				);
+			} elseif ( $title->getPrefixedText() === 'MediaWiki:Target.js' ) {
+				return new JavaScriptContent( 'target;' );
+			} else {
+				return null;
+			}
+		} );
 
 		// Mock away Title's db queries with LinkCache
 		MediaWikiServices::getInstance()->getLinkCache()->addGoodLinkObj(

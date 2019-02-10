@@ -173,6 +173,7 @@
 	"wikieditor-toolbar-help-content-olist-result": "<ol><li>Saraksta elements</li><li>Saraksta elements</li></ol>",
 	"wikieditor-toolbar-help-content-file-description": "Iekļauts fails",
 	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Example.png|$2|$3]]",
+	"wikieditor-toolbar-help-content-file-caption": "Paraksta teksts",
 	"wikieditor-toolbar-help-content-reference-description": "Atsauce",
 	"wikieditor-toolbar-help-content-reference-syntax": "Lapas teksts.&lt;ref&gt;[http://www.example.org Saites teksts], papildus teksts.&lt;/ref&gt;",
 	"wikieditor-toolbar-help-content-reference-result": "Lapas teksts.<sup><a href='#'>[1]</a></sup>",

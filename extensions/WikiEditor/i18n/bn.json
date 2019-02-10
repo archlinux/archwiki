@@ -7,12 +7,13 @@
 			"Nasir8891",
 			"Wikitanvir",
 			"Aftabuzzaman",
-			"Macofe"
+			"Macofe",
+			"আফতাবুজ্জামান"
 		]
 	},
-	"wikieditor": "উন্নত উইকিটেক্সট সম্পাদনা ইন্টারফেস",
+	"wikieditor": "উন্নত উইকিপাঠ্য সম্পাদনার ইন্টারফেস",
 	"wikieditor-desc": "একটি সম্প্রসারণযোগ্য উইকিটেক্সট সম্পাদনা ইন্টারফেস প্রদান করে এবং এবং বহু বৈশিষ্ট্য মডিউল প্রদান করে",
-	"wikieditor-wikitext-tab": "উইকিটেক্সট",
+	"wikieditor-wikitext-tab": "উইকিপাঠ্য",
 	"wikieditor-loading": "লোড হচ্ছে...",
 	"wikieditor-toolbar": "সম্পাদনা সরঞ্জামদণ্ড",
 	"wikieditor-toolbar-desc": "বেশি ব্যবহারযোগ্য সম্পাদনা পাতার সরঞ্জামদণ্ড",

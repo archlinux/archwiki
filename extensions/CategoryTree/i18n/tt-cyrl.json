@@ -8,7 +8,7 @@
 			"Don Alessandro"
 		]
 	},
-	"categorytree": "Төркемнәр \"агачы\".",
+	"categorytree": "Төркемнәр шәҗәрәсе",
 	"categorytree-portlet": "Төркемнәр",
 	"categorytree-legend": "Төркемнәрнең шәҗәрәсен ачарга",
 	"categorytree-desc": "[[Special:CategoryTree|Төркемнәрнең асылы]]н аңлату өчен төзелгән AJAX-бит",
@@ -37,6 +37,7 @@
 	"categorytree-error": "Хата",
 	"categorytree-retry": "Зинһар бераз көтеп торыгыз һәм тагын бер кат йөкләүне башкарып карагыз.",
 	"apihelp-categorytree-description": "CategoryTree кушымтасы өчен эчке модуль.",
+	"apihelp-categorytree-summary": "CategoryTree кушымтасы өчен эчке модуль.",
 	"apihelp-categorytree-param-category": "Төркемнәр мәйданы исемлеге, куелган очракта префикс кулланылмый.",
 	"apihelp-categorytree-param-options": "JSON-җисемнәр сыман CategoryTree төзүчесе төрләре. <var>depth</var> (тирәнлек) параметры <kbd>1</kbd> итеп куелган.",
 	"apierror-categorytree-invalidjson": "Юрамалар JSON-җисемнәре белән валид булырга тиеш."

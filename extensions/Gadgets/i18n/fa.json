@@ -48,6 +48,8 @@
 	"apihelp-query+gadgets-param-ids": "شماره گجت‌ها برای دریافت",
 	"apihelp-query+gadgets-param-allowedonly": "فقط فهرست کردن ابزارهایی که کاربر کنونی می‌تواند استفاده کند",
 	"apihelp-query+gadgets-param-enabledonly": "فهرست کردن گجت‌هایی که توسط کاربر کنونی فعال شده‌است.",
+	"apihelp-query+gadgets-example-3": "گرفتن فهرست‌های گجت‌هایی که در دسته \"foo\" قرار دارند",
+	"apihelp-query+gadgets-example-4": "گرفتن اطلاعات در مورد گجت‌های \"foo\" و \"bar\"",
 	"apihelp-query+gadgets-example-5": "دریافت فهرستی از ابزارهای فعال‌شدهٔ کاربر جاری",
 	"right-gadgets-edit": "ویرایش صفحه‌های جاوااسکریپت و سی‌اس‌اس ابزار",
 	"action-gadgets-edit": "ویرایش صفحهٔ جاوااسکریپت و سی‌اس‌اس این ابزار",

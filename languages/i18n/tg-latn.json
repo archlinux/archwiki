@@ -4,7 +4,8 @@
 			"Kaganer",
 			"Liangent",
 			"아라",
-			"Macofe"
+			"Macofe",
+			"Fitoschido"
 		]
 	},
 	"tog-underline": "Zerpajvandho xat kaşida şavand:",
@@ -796,7 +797,7 @@
 	"statistics-articles": "Sahifahoi mūhtavo",
 	"statistics-pages": "Sahifaho",
 	"statistics-files": "Parvandahoi borşuda",
-	"statistics-users": "[[Special:ListUsers|Korbaroni]] sabtinomşuda",
+	"statistics-users": "Korbaroni sabtinomşuda",
 	"statistics-users-active": "Korbaroni fa'ol",
 	"doubleredirects": "Taƣjiri masirhoi dutoī",
 	"double-redirect-fixer": "Ta'mirkori taƣjirmasirho",
@@ -1049,9 +1050,9 @@
 	"whatlinkshere": "Pajvandhoi dar in saxifa",
 	"whatlinkshere-title": "Sahifahoe ki ba $1 pajvand dorand",
 	"whatlinkshere-page": "Sahifa:",
-	"linkshere": "Sahifahoi zerin ba '''[[:$1]]''' pajvandand:",
-	"nolinkshere": "Jagon sahifa ba '''[[:$1]]''' pajvand nest.",
-	"nolinkshere-ns": "Heç sahifa az fazoinomi intixobşuda ba '''[[:$1]]''' pajvand nadorad.",
+	"linkshere": "Sahifahoi zerin ba '''$1''' pajvandand:",
+	"nolinkshere": "Jagon sahifa ba '''$2''' pajvand nest.",
+	"nolinkshere-ns": "Heç sahifa az fazoinomi intixobşuda ba '''$2''' pajvand nadorad.",
 	"isredirect": "sahifai taƣjiri masir",
 	"istemplate": "istifodaşuda dar sahifa",
 	"isimage": "pajvandi aks",

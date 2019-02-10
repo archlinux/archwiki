@@ -1,7 +1,7 @@
 {
 	"name": "MathCaptcha",
 	"AutoloadClasses": {
-		"MathCaptcha": "MathCaptcha.class.php"
+		"MathCaptcha": "includes/MathCaptcha.php"
 	},
 	"config": {
 		"CaptchaClass": "MathCaptcha"

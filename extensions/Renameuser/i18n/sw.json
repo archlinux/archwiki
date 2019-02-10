@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Kwisha",
-			"Stephenwanjau"
+			"Stephenwanjau",
+			"Rance"
 		]
 	},
 	"renameuser": "Badili jina la mtumiaji",
@@ -17,5 +18,5 @@
 	"renameuser-page-moved": "Ukurasa wa $1 umehamishwa hadi $2.",
 	"renameuser-page-unmoved": "Ukurasa $1 haungesongezwa hadi $2.",
 	"action-renameuser": "badili jina la mtumiaji",
-	"right-renameuser": "Badili jina la watumiaji"
+	"right-renameuser": "Badili majina ya watumiaji"
 }

@@ -18,6 +18,8 @@
  * @file
  */
 
+use MediaWiki\MediaWikiServices;
+
 /**
  * This class represents the result of the API operations.
  * It simply wraps a nested array structure, adding some functions to simplify
@@ -61,7 +63,7 @@ class ApiResult implements ApiSerializable {
 	 * probably wrong.
 	 * @since 1.25
 	 */
-	const NO_VALIDATE = 12;
+	const NO_VALIDATE = self::NO_SIZE_CHECK | 8;
 
 	/**
 	 * Key for the 'indexed tag name' metadata item. Value is string.
@@ -330,8 +332,6 @@ class ApiResult implements ApiSerializable {
 	 * @return array|mixed|string
 	 */
 	private static function validateValue( $value ) {
-		global $wgContLang;
-
 		if ( is_object( $value ) ) {
 			// Note we use is_callable() here instead of instanceof because
 			// ApiSerializable is an informal protocol (see docs there for details).
@@ -374,7 +374,7 @@ class ApiResult implements ApiSerializable {
 		} elseif ( is_float( $value ) && !is_finite( $value ) ) {
 			throw new InvalidArgumentException( 'Cannot add non-finite floats to ApiResult' );
 		} elseif ( is_string( $value ) ) {
-			$value = $wgContLang->normalize( $value );
+			$value = MediaWikiServices::getInstance()->getContentLanguage()->normalize( $value );
 		} elseif ( $value !== null && !is_scalar( $value ) ) {
 			$type = gettype( $value );
 			if ( is_resource( $value ) ) {
@@ -723,7 +723,7 @@ class ApiResult implements ApiSerializable {
 	 * @since 1.25
 	 * @param array &$arr
 	 * @param string $type See ApiResult::META_TYPE
-	 * @param string $kvpKeyName See ApiResult::META_KVP_KEY_NAME
+	 * @param string|null $kvpKeyName See ApiResult::META_KVP_KEY_NAME
 	 */
 	public static function setArrayType( array &$arr, $type, $kvpKeyName = null ) {
 		if ( !in_array( $type, [
@@ -742,7 +742,7 @@ class ApiResult implements ApiSerializable {
 	 * @since 1.25
 	 * @param array|string|null $path See ApiResult::addValue()
 	 * @param string $tag See ApiResult::META_TYPE
-	 * @param string $kvpKeyName See ApiResult::META_KVP_KEY_NAME
+	 * @param string|null $kvpKeyName See ApiResult::META_KVP_KEY_NAME
 	 */
 	public function addArrayType( $path, $tag, $kvpKeyName = null ) {
 		$arr = &$this->path( $path );
@@ -754,7 +754,7 @@ class ApiResult implements ApiSerializable {
 	 * @since 1.25
 	 * @param array &$arr
 	 * @param string $type See ApiResult::META_TYPE
-	 * @param string $kvpKeyName See ApiResult::META_KVP_KEY_NAME
+	 * @param string|null $kvpKeyName See ApiResult::META_KVP_KEY_NAME
 	 */
 	public static function setArrayTypeRecursive( array &$arr, $type, $kvpKeyName = null ) {
 		self::setArrayType( $arr, $type, $kvpKeyName );
@@ -770,7 +770,7 @@ class ApiResult implements ApiSerializable {
 	 * @since 1.25
 	 * @param array|string|null $path See ApiResult::addValue()
 	 * @param string $tag See ApiResult::META_TYPE
-	 * @param string $kvpKeyName See ApiResult::META_KVP_KEY_NAME
+	 * @param string|null $kvpKeyName See ApiResult::META_KVP_KEY_NAME
 	 */
 	public function addArrayTypeRecursive( $path, $tag, $kvpKeyName = null ) {
 		$arr = &$this->path( $path );
@@ -804,11 +804,11 @@ class ApiResult implements ApiSerializable {
 	 * @return array|object
 	 */
 	protected static function applyTransformations( array $dataIn, array $transforms ) {
-		$strip = isset( $transforms['Strip'] ) ? $transforms['Strip'] : 'none';
+		$strip = $transforms['Strip'] ?? 'none';
 		if ( $strip === 'base' ) {
 			$transforms['Strip'] = 'none';
 		}
-		$transformTypes = isset( $transforms['Types'] ) ? $transforms['Types'] : null;
+		$transformTypes = $transforms['Types'] ?? null;
 		if ( $transformTypes !== null && !is_array( $transformTypes ) ) {
 			throw new InvalidArgumentException( __METHOD__ . ':Value for "Types" must be an array' );
 		}
@@ -954,9 +954,7 @@ class ApiResult implements ApiSerializable {
 
 				case 'kvp':
 				case 'BCkvp':
-					$key = isset( $metadata[self::META_KVP_KEY_NAME] )
-						? $metadata[self::META_KVP_KEY_NAME]
-						: $transformTypes['ArmorKVP'];
+					$key = $metadata[self::META_KVP_KEY_NAME] ?? $transformTypes['ArmorKVP'];
 					$valKey = isset( $transforms['BC'] ) ? '*' : 'value';
 					$assocAsObject = !empty( $transformTypes['AssocAsObject'] );
 					$merge = !empty( $metadata[self::META_KVP_MERGE] );
@@ -1052,7 +1050,7 @@ class ApiResult implements ApiSerializable {
 	 *
 	 * @since 1.25
 	 * @param array|object $data
-	 * @param array &$metadata Store metadata here, if provided
+	 * @param array|null &$metadata Store metadata here, if provided
 	 * @return array|object
 	 */
 	public static function stripMetadataNonRecursive( $data, &$metadata = null ) {

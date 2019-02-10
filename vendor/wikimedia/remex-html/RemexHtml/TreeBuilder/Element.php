@@ -83,6 +83,17 @@ class Element implements FormattingElement {
 	public $userData;
 
 	/**
+	 * A unique ID which identifies the element
+	 * @var int
+	 */
+	public $uid;
+
+	/**
+	 * The next unique ID to be used
+	 */
+	private static $nextUid = 1;
+
+	/**
 	 * The element types in the MathML namespace which are MathML text
 	 * integration points.
 	 * @var string[bool]
@@ -126,6 +137,7 @@ class Element implements FormattingElement {
 			$this->htmlName = "$namespace $name";
 		}
 		$this->attrs = $attrs;
+		$this->uid = self::$nextUid++;
 	}
 
 	/**
@@ -176,6 +188,6 @@ class Element implements FormattingElement {
 	 * @return string
 	 */
 	public function getDebugTag() {
-		return $this->htmlName . '#' . substr( md5( spl_object_hash( $this ) ), 0, 8 );
+		return $this->htmlName . '#' . $this->uid;
 	}
 }

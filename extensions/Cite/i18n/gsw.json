@@ -5,7 +5,7 @@
 			"The Evil IP address"
 		]
 	},
-	"cite-desc": "Ergänzt d <nowiki><ref[ name=id]></nowiki> un d <nowiki><references /></nowiki>-Tag fir Quällenochwyys",
+	"cite-desc": "Ergänzt d <code><nowiki><ref[ name=id]></nowiki></code> un d <nowiki><references /></nowiki>-Tag fir Quällenochwyys",
 	"cite_error": "Referänz-Fähler: $1",
 	"cite_error_ref_numeric_key": "Uugiltigi <tt>&lt;ref&gt;</tt>-Verwändig: „name“ derf kei reine Zahlewärt syy, verwänd e Name wu bschrybt.",
 	"cite_error_ref_no_key": "Uugiltigi <tt>&lt;ref&gt;</tt>-Verwändig: „ref“ ohni Inhalt muess e Name haa.",

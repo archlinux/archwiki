@@ -63,7 +63,7 @@ class TitleBlacklist {
 
 		$cache = ObjectCache::getMainWANInstance();
 		// Try to find something in the cache
-		$cachedBlacklist = $cache->get( wfMemcKey( "title_blacklist_entries" ) );
+		$cachedBlacklist = $cache->get( $cache->makeKey( 'title_blacklist_entries' ) );
 		if ( is_array( $cachedBlacklist ) && count( $cachedBlacklist ) > 0
 			&& ( $cachedBlacklist[0]->getFormatVersion() == self::VERSION )
 		) {
@@ -80,9 +80,9 @@ class TitleBlacklist {
 				$this->parseBlacklist( $this->getBlacklistText( $source ), $sourceName )
 			);
 		}
-		$cache->set( wfMemcKey( "title_blacklist_entries" ),
+		$cache->set( $cache->makeKey( 'title_blacklist_entries' ),
 			$this->mBlacklist, $wgTitleBlacklistCaching['expiry'] );
-		wfDebugLog( 'TitleBlacklist-cache', 'Updated ' . wfMemcKey( "title_blacklist_entries" )
+		wfDebugLog( 'TitleBlacklist-cache', 'Updated ' . $cache->makeKey( 'title_blacklist_entries' )
 			. ' with ' . count( $this->mBlacklist ) . ' entries.' );
 	}
 
@@ -93,7 +93,7 @@ class TitleBlacklist {
 		global $wgTitleBlacklistCaching;
 
 		$cache = ObjectCache::getMainWANInstance();
-		$cachedWhitelist = $cache->get( wfMemcKey( "title_whitelist_entries" ) );
+		$cachedWhitelist = $cache->get( $cache->makeKey( 'title_whitelist_entries' ) );
 		if ( is_array( $cachedWhitelist ) && count( $cachedWhitelist ) > 0
 			&& ( $cachedWhitelist[0]->getFormatVersion() != self::VERSION )
 		) {
@@ -102,7 +102,7 @@ class TitleBlacklist {
 		}
 		$this->mWhitelist = $this->parseBlacklist( wfMessage( 'titlewhitelist' )
 				->inContentLanguage()->text(), 'whitelist' );
-		$cache->set( wfMemcKey( "title_whitelist_entries" ),
+		$cache->set( $cache->makeKey( 'title_whitelist_entries' ),
 			$this->mWhitelist, $wgTitleBlacklistCaching['expiry'] );
 	}
 
@@ -286,10 +286,12 @@ class TitleBlacklist {
 	 */
 	private static function getHttp( $url ) {
 		global $messageMemc, $wgTitleBlacklistCaching;
-		$key = "title_blacklist_source:" . md5( $url ); // Global shared
-		$warnkey = wfMemcKey( "titleblacklistwarning", md5( $url ) );
+
+		$key = 'title_blacklist_source:' . md5( $url ); // Global shared
+		$warnkey = $messageMemc->makeKey( 'titleblacklistwarning', md5( $url ) );
 		$result = $messageMemc->get( $key );
 		$warn = $messageMemc->get( $warnkey );
+
 		if ( !is_string( $result )
 			|| ( !$warn && !mt_rand( 0, $wgTitleBlacklistCaching['warningchance'] ) )
 		) {
@@ -297,6 +299,7 @@ class TitleBlacklist {
 			$messageMemc->set( $warnkey, 1, $wgTitleBlacklistCaching['warningexpiry'] );
 			$messageMemc->set( $key, $result, $wgTitleBlacklistCaching['expiry'] );
 		}
+
 		return $result;
 	}
 
@@ -305,7 +308,7 @@ class TitleBlacklist {
 	 */
 	public function invalidate() {
 		$cache = ObjectCache::getMainWANInstance();
-		$cache->delete( wfMemcKey( "title_blacklist_entries" ) );
+		$cache->delete( $cache->makeKey( 'title_blacklist_entries' ) );
 	}
 
 	/**

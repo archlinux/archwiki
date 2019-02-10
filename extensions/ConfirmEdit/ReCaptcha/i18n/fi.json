@@ -2,13 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"Nedergard",
-			"VezonThunder"
+			"VezonThunder",
+			"01miki10"
 		]
 	},
-	"recaptcha-edit": "Suojana automaattisia roskamuokkauksia vastaan sinun on syötettävä kaksi näkemääsi sanaa laatikkoon alla:",
-	"recaptcha-addurl": "Muokkauksesi sisältää uusia ulkoisia linkkejä. Suojana automaattista roskapostia vastaan sinun on syötettävä kaksi näkemääsi sanaa laatikkoon alla:",
-	"recaptcha-badlogin": "Suojana automaattisia salasanamurtoja vastaan sinun on syötettävä kaksi näkemääsi sanaa laatikkoon alla:",
-	"recaptcha-createaccount": "Suojana automaattista tunnusten luontia vastaan sinun on syötettävä kaksi näkemääsi sanaa laatikkoon alla:",
+	"recaptcha-edit": "Suojataksemme wikiä automaattisia roskamuokkauksia vastaan pyydämme sinua syöttämään näkemäsi saat laatikkoon.",
+	"recaptcha-addurl": "Muokkauksesi sisältää uusia ulkoisia linkkejä. Suojataksemme wikiä automaattista roskapostia vastaan pyydämme sinua syöttämään näkemäsi sanat laatikkoon.",
+	"recaptcha-badlogin": "Suojataksemme wikiä automaattisia salasanamurtoja vastaan pyydämme sinua syöttämään näkemäsi santa laatikkoon.",
+	"recaptcha-createaccount": "Suojataksemme wikiä automaattista tunnusten luontia vastaan pyydämme sinua syöttämään näkemäsi sanat laatikkoon.",
 	"recaptcha-createaccount-fail": "Väärä tai puuttuva reCAPTCHA-vastaus.",
-	"recaptcha-create": "Suojana automaattista sivujen luontia vastaan sinun on syötettävä kaksi näkemääsi sanaa laatikkoon alla:"
+	"recaptcha-create": "Suojataksemme wikiä automaattista sivujen luontia vastaan pyydämme sinua syöttämään näkemäsi sanat laatikkoon."
 }

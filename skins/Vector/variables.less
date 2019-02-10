@@ -1,6 +1,7 @@
 @import 'mediawiki.ui/variables';
 
 @html-font-size: 100%;
+@font-size-browser: 16; // Assumed browser default of `16px`
 
 @font-family-serif: 'Linux Libertine', 'Georgia', 'Times', serif;
 @font-family-sans-serif: sans-serif;
@@ -41,3 +42,4 @@
 
 // Personal menu
 @menu-personal-font-size: 0.75em;
+@line-height-menu-personal: 14 / @font-size-browser / @menu-personal-font-size; // equals `1.667em`≈`14px`

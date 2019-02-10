@@ -35,7 +35,7 @@ class TraditionalImageGallery extends ImageGalleryBase {
 	function toHTML() {
 		if ( $this->mPerRow > 0 ) {
 			$maxwidth = $this->mPerRow * ( $this->mWidths + $this->getAllPadding() );
-			$oldStyle = isset( $this->mAttribs['style'] ) ? $this->mAttribs['style'] : '';
+			$oldStyle = $this->mAttribs['style'] ?? '';
 			# _width is ignored by any sane browser. IE6 doesn't know max-width
 			# so it uses _width instead
 			$this->mAttribs['style'] = "max-width: {$maxwidth}px;_width: {$maxwidth}px;" .
@@ -170,8 +170,8 @@ class TraditionalImageGallery extends ImageGalleryBase {
 			}
 
 			// @todo Code is incomplete.
-			// $linkTarget = Title::newFromText( $wgContLang->getNsText( MWNamespace::getUser() ) .
-			// ":{$ut}" );
+			// $linkTarget = Title::newFromText( MediaWikiServices::getInstance()->
+			// getContentLanguage()->getNsText( MWNamespace::getUser() ) . ":{$ut}" );
 			// $ul = Linker::link( $linkTarget, $ut );
 
 			$meta = [];
@@ -191,19 +191,7 @@ class TraditionalImageGallery extends ImageGalleryBase {
 			}
 
 			$textlink = $this->mShowFilename ?
-				// Preloaded into LinkCache above
-				Linker::linkKnown(
-					$nt,
-					htmlspecialchars(
-						is_int( $this->getCaptionLength() ) ?
-							$lang->truncate( $nt->getText(), $this->getCaptionLength() ) :
-							$nt->getText()
-					),
-					[
-						'class' => 'galleryfilename' .
-							( $this->getCaptionLength() === true ? ' galleryfilename-truncate' : '' )
-					]
-				) . "\n" :
+				$this->getCaptionHtml( $nt, $lang ) :
 				'';
 
 			$galleryText = $textlink . $text . $meta;
@@ -225,6 +213,27 @@ class TraditionalImageGallery extends ImageGalleryBase {
 		$output .= "\n</ul>";
 
 		return $output;
+	}
+
+	/**
+	 * @param Title $nt
+	 * @param Language $lang
+	 * @return string HTML
+	 */
+	protected function getCaptionHtml( Title $nt, Language $lang ) {
+		// Preloaded into LinkCache in toHTML
+		return Linker::linkKnown(
+			$nt,
+			htmlspecialchars(
+				is_int( $this->getCaptionLength() ) ?
+					$lang->truncateForVisual( $nt->getText(), $this->getCaptionLength() ) :
+					$nt->getText()
+			),
+			[
+				'class' => 'galleryfilename' .
+					( $this->getCaptionLength() === true ? ' galleryfilename-truncate' : '' )
+			]
+		) . "\n";
 	}
 
 	/**
@@ -277,7 +286,7 @@ class TraditionalImageGallery extends ImageGalleryBase {
 	}
 
 	/**
-	 * Length to truncate filename to in caption when using "showfilename" (if int).
+	 * Length (in characters) to truncate filename to in caption when using "showfilename" (if int).
 	 * A value of 'true' will truncate the filename to one line using CSS, while
 	 * 'false' will disable truncating.
 	 *

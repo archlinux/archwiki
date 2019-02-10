@@ -30,3 +30,21 @@ some unescaped string
 </p>
 !! end
 
+!! test
+#pos
+!! input
+{{#pos:Žmržlina|žlina}}
+{{#pos:stringstring|str|4}}
+!! result
+<p>3
+6
+</p>
+!! end
+
+!! test
+#pos with too large offset (T209600)
+!! input
+{{#pos:FooBar|Foo|32}}
+!! result
+
+!! end

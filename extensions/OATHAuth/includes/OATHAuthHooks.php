@@ -115,23 +115,24 @@ class OATHAuthHooks {
 		$oathUser = self::getOATHUserRepository()->findByUser( $user );
 
 		// If there is no existing key, and the user is not allowed to enable it,
-		// we have nothing to show. (
+		// we have nothing to show.
 		if ( $oathUser->getKey() === null && !$user->isAllowed( 'oathauth-enable' ) ) {
 			return true;
 		}
 
-		$title = SpecialPage::getTitleFor( 'OATH' );
 		$msg = $oathUser->getKey() !== null ? 'oathauth-disable' : 'oathauth-enable';
+
+		$control = new \OOUI\ButtonWidget( [
+			'href' => SpecialPage::getTitleFor( 'OATH' )->getLinkURL( [
+				'returnto' => SpecialPage::getTitleFor( 'Preferences' )->getPrefixedText()
+			] ),
+			'label' => wfMessage( $msg )->text(),
+		] );
 
 		$preferences[$msg] = [
 			'type' => 'info',
-			'raw' => 'true',
-			'default' => Linker::link(
-				$title,
-				wfMessage( $msg )->escaped(),
-				[],
-				[ 'returnto' => SpecialPage::getTitleFor( 'Preferences' )->getPrefixedText() ]
-			),
+			'raw' => true,
+			'default' => (string)$control,
 			'label-message' => 'oathauth-prefs-label',
 			'section' => 'personal/info', ];
 

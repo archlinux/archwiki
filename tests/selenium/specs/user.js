@@ -1,11 +1,11 @@
-'use strict';
 const assert = require( 'assert' ),
 	CreateAccountPage = require( '../pageobjects/createaccount.page' ),
 	PreferencesPage = require( '../pageobjects/preferences.page' ),
-	UserLoginPage = require( '../pageobjects/userlogin.page' );
+	UserLoginPage = require( 'wdio-mediawiki/LoginPage' ),
+	Api = require( 'wdio-mediawiki/Api' ),
+	Util = require( 'wdio-mediawiki/Util' );
 
 describe( 'User', function () {
-
 	var password,
 		username;
 
@@ -17,42 +17,38 @@ describe( 'User', function () {
 
 	beforeEach( function () {
 		browser.deleteCookie();
-		username = `User-${Math.random().toString()}`;
-		password = Math.random().toString();
+		username = Util.getTestString( 'User-' );
+		password = Util.getTestString();
 	} );
 
 	it( 'should be able to create account', function () {
-
 		// create
 		CreateAccountPage.createAccount( username, password );
 
 		// check
-		assert.equal( CreateAccountPage.heading.getText(), `Welcome, ${username}!` );
-
+		assert.strictEqual( CreateAccountPage.heading.getText(), `Welcome, ${username}!` );
 	} );
 
-	it( 'should be able to log in', function () {
-
+	it( 'should be able to log in @daily', function () {
 		// create
 		browser.call( function () {
-			return CreateAccountPage.apiCreateAccount( username, password );
+			return Api.createAccount( username, password );
 		} );
 
 		// log in
 		UserLoginPage.login( username, password );
 
 		// check
-		assert.equal( UserLoginPage.userPage.getText(), username );
-
+		assert.strictEqual( UserLoginPage.userPage.getText(), username );
 	} );
 
-	it( 'should be able to change preferences', function () {
-
-		var realName = Math.random().toString();
+	// Disabled due to flakiness (T199446)
+	it.skip( 'should be able to change preferences', function () {
+		var realName = Util.getTestString();
 
 		// create
 		browser.call( function () {
-			return CreateAccountPage.apiCreateAccount( username, password );
+			return Api.createAccount( username, password );
 		} );
 
 		// log in
@@ -62,8 +58,6 @@ describe( 'User', function () {
 		PreferencesPage.changeRealName( realName );
 
 		// check
-		assert.equal( PreferencesPage.realName.getValue(), realName );
-
+		assert.strictEqual( PreferencesPage.realName.getValue(), realName );
 	} );
-
 } );

@@ -24,8 +24,7 @@
 /**
  * @ingroup Search
  */
-class SearchResultSet {
-
+class SearchResultSet implements Countable, IteratorAggregate {
 	/**
 	 * Types of interwiki results
 	 */
@@ -54,7 +53,7 @@ class SearchResultSet {
 	 * as an array.
 	 * @var SearchResult[]
 	 */
-	private $results;
+	protected $results;
 
 	/**
 	 * Set of result's extra data, indexed per result id
@@ -65,8 +64,31 @@ class SearchResultSet {
 	 */
 	protected $extraData = [];
 
-	public function __construct( $containedSyntax = false ) {
+	/**
+	 * @var boolean True when there are more pages of search results available.
+	 */
+	private $hasMoreResults;
+
+	/**
+	 * @var ArrayIterator|null Iterator supporting BC iteration methods
+	 */
+	private $bcIterator;
+
+	/**
+	 * @param bool $containedSyntax True when query is not requesting a simple
+	 *  term match
+	 * @param bool $hasMoreResults True when there are more pages of search
+	 *  results available.
+	 */
+	public function __construct( $containedSyntax = false, $hasMoreResults = false ) {
+		if ( static::class === self::class ) {
+			// This class will eventually be abstract. SearchEngine implementations
+			// already have to extend this class anyways to provide the actual
+			// search results.
+			wfDeprecated( __METHOD__, 1.32 );
+		}
 		$this->containedSyntax = $containedSyntax;
+		$this->hasMoreResults = $hasMoreResults;
 	}
 
 	/**
@@ -81,7 +103,11 @@ class SearchResultSet {
 	}
 
 	function numRows() {
-		return 0;
+		return $this->count();
+	}
+
+	final public function count() {
+		return count( $this->extractResults() );
 	}
 
 	/**
@@ -101,7 +127,7 @@ class SearchResultSet {
 	/**
 	 * Some search modes will run an alternative query that it thinks gives
 	 * a better result than the provided search. Returns true if this has
-	 * occured.
+	 * occurred.
 	 *
 	 * @return bool
 	 */
@@ -171,18 +197,39 @@ class SearchResultSet {
 
 	/**
 	 * Fetches next search result, or false.
-	 * STUB
-	 * FIXME: refactor as iterator, so we could use nicer interfaces.
+	 * @deprecated since 1.32; Use self::extractResults() or foreach
 	 * @return SearchResult|false
 	 */
-	function next() {
-		return false;
+	public function next() {
+		wfDeprecated( __METHOD__, '1.32' );
+		$it = $this->bcIterator();
+		$searchResult = $it->current();
+		$it->next();
+		return $searchResult ?? false;
 	}
 
 	/**
 	 * Rewind result set back to beginning
+	 * @deprecated since 1.32; Use self::extractResults() or foreach
 	 */
-	function rewind() {
+	public function rewind() {
+		wfDeprecated( __METHOD__, '1.32' );
+		$this->bcIterator()->rewind();
+	}
+
+	private function bcIterator() {
+		if ( $this->bcIterator === null ) {
+			$this->bcIterator = 'RECURSION';
+			$this->bcIterator = $this->getIterator();
+		} elseif ( $this->bcIterator === 'RECURSION' ) {
+			// Either next/rewind or extractResults must be implemented.  This
+			// class was potentially instantiated directly. It should be
+			// abstract with abstract methods to enforce this but that's a
+			// breaking change...
+			wfDeprecated( static::class . ' without implementing extractResults', '1.32' );
+			$this->bcIterator = new ArrayIterator( [] );
+		}
+		return $this->bcIterator;
 	}
 
 	/**
@@ -200,6 +247,34 @@ class SearchResultSet {
 	 */
 	public function searchContainedSyntax() {
 		return $this->containedSyntax;
+	}
+
+	/**
+	 * @return bool True when there are more pages of search results available.
+	 */
+	public function hasMoreResults() {
+		return $this->hasMoreResults;
+	}
+
+	/**
+	 * @param int $limit Shrink result set to $limit and flag
+	 *  if more results are available.
+	 */
+	public function shrink( $limit ) {
+		if ( $this->count() > $limit ) {
+			$this->hasMoreResults = true;
+			// shrinking result set for implementations that
+			// have not implemented extractResults and use
+			// the default cache location. Other implementations
+			// must override this as well.
+			if ( is_array( $this->results ) ) {
+				$this->results = array_slice( $this->results, 0, $limit );
+			} else {
+				throw new \UnexpectedValueException(
+					"When overriding result store extending classes must "
+					. " also override " . __METHOD__ );
+			}
+		}
 	}
 
 	/**
@@ -256,15 +331,15 @@ class SearchResultSet {
 	/**
 	 * Returns extra data for specific result and store it in SearchResult object.
 	 * @param SearchResult $result
-	 * @return array|null List of data as name => value or null if none present.
 	 */
 	public function augmentResult( SearchResult $result ) {
 		$id = $result->getTitle()->getArticleID();
-		if ( !$id || !isset( $this->extraData[$id] ) ) {
-			return null;
+		if ( $id === -1 ) {
+			return;
 		}
-		$result->setExtensionData( $this->extraData[$id] );
-		return $this->extraData[$id];
+		$result->setExtensionData( function () use ( $id ) {
+			return $this->extraData[$id] ?? [];
+		} );
 	}
 
 	/**
@@ -275,5 +350,9 @@ class SearchResultSet {
 	 */
 	public function getOffset() {
 		return null;
+	}
+
+	final public function getIterator() {
+		return new ArrayIterator( $this->extractResults() );
 	}
 }

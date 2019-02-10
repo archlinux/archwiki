@@ -20,6 +20,6 @@
 	"fancycaptcha-imgcaptcha-ph": "上の画像に表示されている文字列を入力",
 	"fancycaptcha-sendemail": "ウィキへの自動スパム攻撃を防ぐため、お手数をおかけしますが下記の確認用の文字列を欄に入力してください ([[Special:Captcha/help|詳細]]):",
 	"fancycaptcha-reload-text": "更新",
-	"apihelp-fancycaptchareload-description": "新しい FancyCaptcha を取得",
+	"apihelp-fancycaptchareload-description": "新しい FancyCaptcha を取得します。",
 	"apihelp-fancycaptchareload-example-1": "新しい FancyCaptcha を取得"
 }

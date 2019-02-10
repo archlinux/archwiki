@@ -54,10 +54,8 @@ class DatabasePostgres extends Database {
 	 *   - keywordTableMap : Map of reserved table names to alternative table names to use
 	 */
 	public function __construct( array $params ) {
-		$this->port = isset( $params['port'] ) ? $params['port'] : false;
-		$this->keywordTableMap = isset( $params['keywordTableMap'] )
-			? $params['keywordTableMap']
-			: [];
+		$this->port = $params['port'] ?? false;
+		$this->keywordTableMap = $params['keywordTableMap'] ?? [];
 
 		parent::__construct( $params );
 	}
@@ -88,7 +86,7 @@ class DatabasePostgres extends Database {
 		return false;
 	}
 
-	public function open( $server, $user, $password, $dbName ) {
+	protected function open( $server, $user, $password, $dbName, $schema, $tablePrefix ) {
 		# Test for Postgres support, to avoid suppressed fatal error
 		if ( !function_exists( 'pg_connect' ) ) {
 			throw new DBConnectionError(
@@ -102,7 +100,6 @@ class DatabasePostgres extends Database {
 		$this->server = $server;
 		$this->user = $user;
 		$this->password = $password;
-		$this->dbName = $dbName;
 
 		$connectVars = [
 			// pg_connect() user $user as the default database. Since a database is *required*,
@@ -159,30 +156,42 @@ class DatabasePostgres extends Database {
 		$this->query( "SET standard_conforming_strings = on", __METHOD__ );
 		$this->query( "SET bytea_output = 'escape'", __METHOD__ ); // PHP bug 53127
 
-		$this->determineCoreSchema( $this->schema );
-		// The schema to be used is now in the search path; no need for explicit qualification
-		$this->schema = '';
+		$this->determineCoreSchema( $schema );
+		$this->currentDomain = new DatabaseDomain( $dbName, $schema, $tablePrefix );
 
-		return $this->conn;
+		return (bool)$this->conn;
+	}
+
+	protected function relationSchemaQualifier() {
+		if ( $this->coreSchema === $this->currentDomain->getSchema() ) {
+			// The schema to be used is now in the search path; no need for explicit qualification
+			return '';
+		}
+
+		return parent::relationSchemaQualifier();
 	}
 
 	public function databasesAreIndependent() {
 		return true;
 	}
 
-	/**
-	 * Postgres doesn't support selectDB in the same way MySQL does. So if the
-	 * DB name doesn't match the open connection, open a new one
-	 * @param string $db
-	 * @return bool
-	 * @throws DBUnexpectedError
-	 */
-	public function selectDB( $db ) {
-		if ( $this->dbName !== $db ) {
-			return (bool)$this->open( $this->server, $this->user, $this->password, $db );
+	public function doSelectDomain( DatabaseDomain $domain ) {
+		if ( $this->getDBname() !== $domain->getDatabase() ) {
+			// Postgres doesn't support selectDB in the same way MySQL does.
+			// So if the DB name doesn't match the open connection, open a new one
+			$this->open(
+				$this->server,
+				$this->user,
+				$this->password,
+				$domain->getDatabase(),
+				$domain->getSchema(),
+				$domain->getTablePrefix()
+			);
 		} else {
-			return true;
+			$this->currentDomain = $domain;
 		}
+
+		return true;
 	}
 
 	/**
@@ -301,6 +310,10 @@ class DatabasePostgres extends Database {
 	}
 
 	public function numRows( $res ) {
+		if ( $res === false ) {
+			return 0;
+		}
+
 		if ( $res instanceof ResultWrapper ) {
 			$res = $res->result;
 		}
@@ -647,7 +660,7 @@ __INDEXATTR__;
 	 * be quoted with Database::addQuotes()
 	 * $conds may be "*" to copy the whole table
 	 * srcTable may be an array of tables.
-	 * @todo FIXME: Implement this a little better (seperate select/insert)?
+	 * @todo FIXME: Implement this a little better (separate select/insert)?
 	 *
 	 * @param string $destTable
 	 * @param array|string $srcTable
@@ -710,7 +723,7 @@ __INDEXATTR__;
 	 * @return string Value of $name or remapped name if $name is a reserved keyword
 	 */
 	public function remappedTableName( $name ) {
-		return isset( $this->keywordTableMap[$name] ) ? $this->keywordTableMap[$name] : $name;
+		return $this->keywordTableMap[$name] ?? $name;
 	}
 
 	/**
@@ -859,6 +872,9 @@ __INDEXATTR__;
 		return false;
 	}
 
+	/**
+	 * @suppress SecurityCheck-SQLInjection array_map not recognized T204911
+	 */
 	public function listTables( $prefix = null, $fname = __METHOD__ ) {
 		$eschemas = implode( ',', array_map( [ $this, 'addQuotes' ], $this->getCoreSchemas() ) );
 		$result = $this->query(
@@ -1315,10 +1331,6 @@ SQL;
 		return [ $startOpts, $useIndex, $preLimitTail, $postLimitTail, $ignoreIndex ];
 	}
 
-	public function getDBname() {
-		return $this->dbName;
-	}
-
 	public function getServer() {
 		return $this->server;
 	}
@@ -1444,4 +1456,7 @@ SQL;
 	}
 }
 
+/**
+ * @deprecated since 1.29
+ */
 class_alias( DatabasePostgres::class, 'DatabasePostgres' );

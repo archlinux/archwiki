@@ -23,12 +23,10 @@
 			"Kly"
 		]
 	},
-	"visualeditor-cite-tool-definition.json": "空",
 	"visualeditor-cite-tool-name-book": "書籍",
 	"visualeditor-cite-tool-name-journal": "期刊",
 	"visualeditor-cite-tool-name-news": "新聞",
 	"visualeditor-cite-tool-name-web": "網站",
-	"cite-tool-definition.json": "空",
 	"cite-ve-changedesc-ref-group-both": "參考文獻群組已從「$1」更改為「$2」",
 	"cite-ve-changedesc-ref-group-from": "參考文獻群組已從「$1」更改一般群組",
 	"cite-ve-changedesc-ref-group-to": "參考文獻群組已從一般群組更改為「$1」",
@@ -37,7 +35,7 @@
 	"cite-ve-changedesc-reflist-group-to": "參考文獻清單群組已從一般群組更改為「$1」",
 	"cite-ve-changedesc-reflist-responsive-set": "僅在回應欄位裡顯示參考文獻清單的更改",
 	"cite-ve-changedesc-reflist-responsive-unset": "僅在一欄裡顯示參考文獻清單的更改",
-	"cite-ve-changedesc-reflist-item-id": "參考文獻索引已更改",
+	"cite-ve-changedesc-reflist-item-id": "參考文獻索引已變更",
 	"cite-ve-dialog-reference-editing-reused": "此頁面已使用此參考文獻 $1 {{PLURAL:$1|次}}。",
 	"cite-ve-dialog-reference-options-group-label": "使用此群組",
 	"cite-ve-dialog-reference-options-group-placeholder": "一般參考文獻",

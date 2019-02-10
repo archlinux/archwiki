@@ -16,7 +16,7 @@
 	"apihelp-query+references-description": "指定されたページに関連付けられた脚注のデータ表現を返す",
 	"apihelp-query+references-summary": "指定されたページに関連付けられた脚注のデータ表現を返す",
 	"apihelp-query+references-example-1": "<kbd>Albert Einstein</kbd> に関連付けられた脚注。",
-	"cite-desc": "引用のためのタグ <nowiki><ref[ name=id]></nowiki> および <nowiki><references/></nowiki> を追加する",
+	"cite-desc": "引用のためのタグ <code><nowiki><ref[ name=id]></nowiki></code> および <code><nowiki><references/></nowiki></code> を追加する",
 	"cite_error": "引用エラー: $1",
 	"cite_error_ref_numeric_key": "無効な <code>&lt;ref&gt;</code> タグです。\n名前 (name 属性) に単なる整数は使用できません。説明的なものにしてください",
 	"cite_error_ref_no_key": "冒頭の <code>&lt;ref&gt;</code> タグは正しくない形式であるか、不適切な名前です",

@@ -86,8 +86,11 @@ interface ILoadBalancer {
 
 	/** @var int DB handle should have DBO_TRX disabled and the caller will leave it as such */
 	const CONN_TRX_AUTOCOMMIT = 1;
-	/** @var int Alias for CONN_TRX_AUTOCOMMIT for b/c; deprecated since 1.31 */
-	const CONN_TRX_AUTO = 1;
+
+	/** @var string Manager of ILoadBalancer instances is running post-commit callbacks */
+	const STAGE_POSTCOMMIT_CALLBACKS = 'stage-postcommit-callbacks';
+	/** @var string Manager of ILoadBalancer instances is running post-rollback callbacks */
+	const STAGE_POSTROLLBACK_CALLBACKS = 'stage-postrollback-callbacks';
 
 	/**
 	 * Construct a manager of IDatabase connection objects
@@ -112,9 +115,26 @@ interface ILoadBalancer {
 	 *  - perfLogger: PSR-3 logger instance. [optional]
 	 *  - errorLogger : Callback that takes an Exception and logs it. [optional]
 	 *  - deprecationLogger: Callback to log a deprecation warning. [optional]
+	 *  - roundStage: STAGE_POSTCOMMIT_* class constant; for internal use [optional]
 	 * @throws InvalidArgumentException
 	 */
 	public function __construct( array $params );
+
+	/**
+	 * Get the local (and default) database domain ID of connection handles
+	 *
+	 * @see DatabaseDomain
+	 * @return string Database domain ID; this specifies DB name, schema, and table prefix
+	 * @since 1.31
+	 */
+	public function getLocalDomainID();
+
+	/**
+	 * @param DatabaseDomain|string|bool $domain Database domain
+	 * @return string Value of $domain if provided or the local domain otherwise
+	 * @since 1.32
+	 */
+	public function resolveDomainID( $domain );
 
 	/**
 	 * Get the index of the reader connection, which may be a replica DB
@@ -150,7 +170,7 @@ interface ILoadBalancer {
 	 * This can be used a faster proxy for waitForAll()
 	 *
 	 * @param DBMasterPos|bool $pos Master position or false
-	 * @param int $timeout Max seconds to wait; default is mWaitTimeout
+	 * @param int|null $timeout Max seconds to wait; default is mWaitTimeout
 	 * @return bool Success (able to connect and no timeouts reached)
 	 */
 	public function waitForOne( $pos, $timeout = null );
@@ -159,7 +179,7 @@ interface ILoadBalancer {
 	 * Set the master wait position and wait for ALL replica DBs to catch up to it
 	 *
 	 * @param DBMasterPos|bool $pos Master position or false
-	 * @param int $timeout Max seconds to wait; default is mWaitTimeout
+	 * @param int|null $timeout Max seconds to wait; default is mWaitTimeout
 	 * @return bool Success (able to connect and no timeouts reached)
 	 */
 	public function waitForAll( $pos, $timeout = null );
@@ -167,7 +187,8 @@ interface ILoadBalancer {
 	/**
 	 * Get any open connection to a given server index, local or foreign
 	 *
-	 * Use CONN_TRX_AUTOCOMMIT to only look for connections opened with that flag
+	 * Use CONN_TRX_AUTOCOMMIT to only look for connections opened with that flag.
+	 * Avoid the use of begin() or startAtomic() on any such connections.
 	 *
 	 * @param int $i Server index or DB_MASTER/DB_REPLICA
 	 * @param int $flags Bitfield of CONN_* class constants
@@ -182,9 +203,10 @@ interface ILoadBalancer {
 	 * (e.g. sqlite) in order to avoid deadlocks. ILoadBalancer::getServerAttributes()
 	 * can be used to check such flags beforehand.
 	 *
-	 * If the caller uses $domain or sets CONN_TRX_AUTOCOMMIT in $flags, then it must also
-	 * call ILoadBalancer::reuseConnection() on the handle when finished using it.
+	 * If the caller uses $domain or sets CONN_TRX_AUTOCOMMIT in $flags, then it must
+	 * also call ILoadBalancer::reuseConnection() on the handle when finished using it.
 	 * In all other cases, this is not necessary, though not harmful either.
+	 * Avoid the use of begin() or startAtomic() on any such connections.
 	 *
 	 * @param int $i Server index (overrides $groups) or DB_MASTER/DB_REPLICA
 	 * @param array|string|bool $groups Query group(s), or false for the generic reader
@@ -216,7 +238,8 @@ interface ILoadBalancer {
 	 *
 	 * The CONN_TRX_AUTOCOMMIT flag is ignored for databases with ATTR_DB_LEVEL_LOCKING
 	 * (e.g. sqlite) in order to avoid deadlocks. ILoadBalancer::getServerAttributes()
-	 * can be used to check such flags beforehand.
+	 * can be used to check such flags beforehand. Avoid the use of begin() or startAtomic()
+	 * on any CONN_TRX_AUTOCOMMIT connections.
 	 *
 	 * @see ILoadBalancer::getConnection() for parameter information
 	 *
@@ -235,7 +258,8 @@ interface ILoadBalancer {
 	 *
 	 * The CONN_TRX_AUTOCOMMIT flag is ignored for databases with ATTR_DB_LEVEL_LOCKING
 	 * (e.g. sqlite) in order to avoid deadlocks. ILoadBalancer::getServerAttributes()
-	 * can be used to check such flags beforehand.
+	 * can be used to check such flags beforehand. Avoid the use of begin() or startAtomic()
+	 * on any CONN_TRX_AUTOCOMMIT connections.
 	 *
 	 * @see ILoadBalancer::getConnection() for parameter information
 	 *
@@ -254,7 +278,8 @@ interface ILoadBalancer {
 	 *
 	 * The CONN_TRX_AUTOCOMMIT flag is ignored for databases with ATTR_DB_LEVEL_LOCKING
 	 * (e.g. sqlite) in order to avoid deadlocks. ILoadBalancer::getServerAttributes()
-	 * can be used to check such flags beforehand.
+	 * can be used to check such flags beforehand. Avoid the use of begin() or startAtomic()
+	 * on any CONN_TRX_AUTOCOMMIT connections.
 	 *
 	 * @see ILoadBalancer::getConnection() for parameter information
 	 *
@@ -272,13 +297,14 @@ interface ILoadBalancer {
 	 * The index must be an actual index into the array. If a connection to the server is
 	 * already open and not considered an "in use" foreign connection, this simply returns it.
 	 *
-	 * Avoid using CONN_TRX_AUTOCOMMIT for databases with ATTR_DB_LEVEL_LOCKING (e.g. sqlite) in
-	 * order to avoid deadlocks. ILoadBalancer::getServerAttributes() can be used to check
+	 * Avoid using CONN_TRX_AUTOCOMMIT for databases with ATTR_DB_LEVEL_LOCKING (e.g. sqlite)
+	 * in order to avoid deadlocks. ILoadBalancer::getServerAttributes() can be used to check
 	 * such flags beforehand.
 	 *
-	 * If the caller uses $domain or sets CONN_TRX_AUTOCOMMIT in $flags, then it must also
-	 * call ILoadBalancer::reuseConnection() on the handle when finished using it.
+	 * If the caller uses $domain or sets CONN_TRX_AUTOCOMMIT in $flags, then it must
+	 * also call ILoadBalancer::reuseConnection() on the handle when finished using it.
 	 * In all other cases, this is not necessary, though not harmful either.
+	 * Avoid the use of begin() or startAtomic() on any such connections.
 	 *
 	 * @note This method throws DBAccessError if ILoadBalancer::disable() was called
 	 *
@@ -327,6 +353,14 @@ interface ILoadBalancer {
 	public function getServerName( $i );
 
 	/**
+	 * Return the server info structure for a given index, or false if the index is invalid.
+	 * @param int $i
+	 * @return array|bool
+	 * @since 1.31
+	 */
+	public function getServerInfo( $i );
+
+	/**
 	 * Get DB type of the server with the specified index
 	 *
 	 * @param int $i
@@ -334,14 +368,6 @@ interface ILoadBalancer {
 	 * @since 1.30
 	 */
 	public function getServerType( $i );
-
-	/**
-	 * Return the server info structure for a given index, or false if the index is invalid.
-	 * @param int $i
-	 * @return array|bool
-	 * @since 1.31
-	 */
-	public function getServerInfo( $i );
 
 	/**
 	 * @param int $i Server index
@@ -385,10 +411,11 @@ interface ILoadBalancer {
 	public function commitAll( $fname = __METHOD__ );
 
 	/**
-	 * Perform all pre-commit callbacks that remain part of the atomic transactions
-	 * and disable any post-commit callbacks until runMasterPostTrxCallbacks()
+	 * Run pre-commit callbacks and defer execution of post-commit callbacks
 	 *
 	 * Use this only for mutli-database commits
+	 *
+	 * @return int Number of pre-commit callbacks run (since 1.32)
 	 */
 	public function finalizeMasterChanges();
 
@@ -418,21 +445,25 @@ interface ILoadBalancer {
 	public function beginMasterChanges( $fname = __METHOD__ );
 
 	/**
-	 * Issue COMMIT on all master connections where writes where done
+	 * Issue COMMIT on all open master connections to flush changes and view snapshots
 	 * @param string $fname Caller name
 	 * @throws DBExpectedError
 	 */
 	public function commitMasterChanges( $fname = __METHOD__ );
 
 	/**
-	 * Issue all pending post-COMMIT/ROLLBACK callbacks
+	 * Consume and run all pending post-COMMIT/ROLLBACK callbacks and commit dangling transactions
 	 *
-	 * Use this only for mutli-database commits
-	 *
-	 * @param int $type IDatabase::TRIGGER_* constant
 	 * @return Exception|null The first exception or null if there were none
 	 */
-	public function runMasterPostTrxCallbacks( $type );
+	public function runMasterTransactionIdleCallbacks();
+
+	/**
+	 * Run all recurring post-COMMIT/ROLLBACK listener callbacks
+	 *
+	 * @return Exception|null The first exception or null if there were none
+	 */
+	public function runMasterTransactionListenerCallbacks();
 
 	/**
 	 * Issue ROLLBACK only on master, only if queries were done on connection
@@ -442,20 +473,20 @@ interface ILoadBalancer {
 	public function rollbackMasterChanges( $fname = __METHOD__ );
 
 	/**
-	 * Suppress all pending post-COMMIT/ROLLBACK callbacks
-	 *
-	 * Use this only for mutli-database commits
-	 *
-	 * @return Exception|null The first exception or null if there were none
-	 */
-	public function suppressTransactionEndCallbacks();
-
-	/**
-	 * Commit all replica DB transactions so as to flush any REPEATABLE-READ or SSI snapshot
+	 * Commit all replica DB transactions so as to flush any REPEATABLE-READ or SSI snapshots
 	 *
 	 * @param string $fname Caller name
 	 */
 	public function flushReplicaSnapshots( $fname = __METHOD__ );
+
+	/**
+	 * Commit all master DB transactions so as to flush any REPEATABLE-READ or SSI snapshots
+	 *
+	 * An error will be thrown if a connection has pending writes or callbacks
+	 *
+	 * @param string $fname Caller name
+	 */
+	public function flushMasterSnapshots( $fname = __METHOD__ );
 
 	/**
 	 * @return bool Whether a master connection is already open
@@ -463,7 +494,7 @@ interface ILoadBalancer {
 	public function hasMasterConnection();
 
 	/**
-	 * Determine if there are pending changes in a transaction by this thread
+	 * Whether there are pending changes or callbacks in a transaction by this thread
 	 * @return bool
 	 */
 	public function hasMasterChanges();
@@ -478,7 +509,7 @@ interface ILoadBalancer {
 	 * Check if this load balancer object had any recent or still
 	 * pending writes issued against it by this PHP thread
 	 *
-	 * @param float $age How many seconds ago is "recent" [defaults to mWaitTimeout]
+	 * @param float|null $age How many seconds ago is "recent" [defaults to mWaitTimeout]
 	 * @return bool
 	 */
 	public function hasOrMadeRecentMasterChanges( $age = null );

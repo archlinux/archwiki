@@ -334,8 +334,7 @@
 	 * @return {boolean}
 	 */
 	IP.hasCoords = function () {
-		return this.hasOwnProperty( 'latitude' ) && this.hasOwnProperty( 'longitude' ) &&
-			this.latitude !== undefined && this.latitude !== null &&
+		return this.latitude !== undefined && this.latitude !== null &&
 			this.longitude !== undefined && this.longitude !== null;
 	};
 

@@ -4,7 +4,7 @@
 			"Gazeb"
 		]
 	},
-	"cite-desc": "Придасть таґы <nowiki><ref[ name=\"id\"]></nowiki> і&nbsp;<nowiki><references /></nowiki> на означіня цітацій",
+	"cite-desc": "Придасть таґы <code><nowiki><ref[ name=id]></nowiki></code> і&nbsp;<nowiki><references /></nowiki> на означіня цітацій",
 	"cite_error": "Хыбна цітація: $1",
 	"cite_error_ref_numeric_key": "Хыба в таґу <code>&lt;ref&gt;</code>; назвов не сміє быти просте чісло, хоснуйте пописове означіня",
 	"cite_error_ref_no_key": "Хыба в таґу <code>&lt;ref&gt;</code>; порожнї едітації мусять обсяговати назву",

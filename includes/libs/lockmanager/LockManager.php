@@ -80,7 +80,7 @@ abstract class LockManager {
 	 *               This only applies if locks are not tied to a connection/process.
 	 */
 	public function __construct( array $config ) {
-		$this->domain = isset( $config['domain'] ) ? $config['domain'] : 'global';
+		$this->domain = $config['domain'] ?? 'global';
 		if ( isset( $config['lockTTL'] ) ) {
 			$this->lockTTL = max( 5, $config['lockTTL'] );
 		} elseif ( PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg' ) {
@@ -101,7 +101,7 @@ abstract class LockManager {
 		}
 		$this->session = md5( implode( '-', $random ) );
 
-		$this->logger = isset( $config['logger'] ) ? $config['logger'] : new \Psr\Log\NullLogger();
+		$this->logger = $config['logger'] ?? new \Psr\Log\NullLogger();
 	}
 
 	/**
@@ -201,6 +201,11 @@ abstract class LockManager {
 	final protected function normalizePathsByType( array $pathsByType ) {
 		$res = [];
 		foreach ( $pathsByType as $type => $paths ) {
+			foreach ( $paths as $path ) {
+				if ( (string)$path === '' ) {
+					throw new InvalidArgumentException( __METHOD__ . ": got empty path." );
+				}
+			}
 			$res[$this->lockTypeMap[$type]] = array_unique( $paths );
 		}
 

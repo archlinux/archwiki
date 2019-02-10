@@ -182,7 +182,7 @@ class MediaStatisticsPage extends QueryPage {
 			[],
 			$linkRenderer->makeLink( $mimeSearch, $mime )
 		);
-		$row .= Html::element(
+		$row .= Html::rawElement(
 			'td',
 			[],
 			$this->getExtensionList( $mime )
@@ -245,7 +245,7 @@ class MediaStatisticsPage extends QueryPage {
 		$extArray = explode( ' ', $exts );
 		$extArray = array_unique( $extArray );
 		foreach ( $extArray as &$ext ) {
-			$ext = '.' . $ext;
+			$ext = htmlspecialchars( '.' . $ext );
 		}
 
 		return $this->getLanguage()->commaList( $extArray );
@@ -363,8 +363,8 @@ class MediaStatisticsPage extends QueryPage {
 		$this->totalCount = $this->totalBytes = 0;
 		foreach ( $res as $row ) {
 			$mediaStats = $this->splitFakeTitle( $row->title );
-			$this->totalCount += isset( $mediaStats[2] ) ? $mediaStats[2] : 0;
-			$this->totalBytes += isset( $mediaStats[3] ) ? $mediaStats[3] : 0;
+			$this->totalCount += $mediaStats[2] ?? 0;
+			$this->totalBytes += $mediaStats[3] ?? 0;
 		}
 		$res->seek( 0 );
 	}

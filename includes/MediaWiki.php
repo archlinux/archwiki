@@ -66,8 +66,6 @@ class MediaWiki {
 	 * @return Title Title object to be $wgTitle
 	 */
 	private function parseTitle() {
-		global $wgContLang;
-
 		$request = $this->context->getRequest();
 		$curid = $request->getInt( 'curid' );
 		$title = $request->getVal( 'title' );
@@ -88,12 +86,13 @@ class MediaWiki {
 			if ( !is_null( $ret ) && $ret->getNamespace() == NS_MEDIA ) {
 				$ret = Title::makeTitle( NS_FILE, $ret->getDBkey() );
 			}
+			$contLang = MediaWikiServices::getInstance()->getContentLanguage();
 			// Check variant links so that interwiki links don't have to worry
 			// about the possible different language variants
-			if ( count( $wgContLang->getVariants() ) > 1
-				&& !is_null( $ret ) && $ret->getArticleID() == 0
+			if (
+				$contLang->hasVariants() && !is_null( $ret ) && $ret->getArticleID() == 0
 			) {
-				$wgContLang->findVariantLink( $title, $ret );
+				$contLang->findVariantLink( $title, $ret );
 			}
 		}
 
@@ -104,7 +103,7 @@ class MediaWiki {
 		if ( $ret === null || !$ret->isSpecialPage() ) {
 			// We can have urls with just ?diff=,?oldid= or even just ?diff=
 			$oldid = $request->getInt( 'oldid' );
-			$oldid = $oldid ? $oldid : $request->getInt( 'diff' );
+			$oldid = $oldid ?: $request->getInt( 'diff' );
 			// Allow oldid to override a changed or missing title
 			if ( $oldid ) {
 				$rev = Revision::newFromId( $oldid );
@@ -251,14 +250,15 @@ class MediaWiki {
 		// Redirect loops, titleless URL, $wgUsePathInfo URLs, and URLs with a variant
 		} elseif ( !$this->tryNormaliseRedirect( $title ) ) {
 			// Prevent information leak via Special:MyPage et al (T109724)
+			$spFactory = MediaWikiServices::getInstance()->getSpecialPageFactory();
 			if ( $title->isSpecialPage() ) {
-				$specialPage = SpecialPageFactory::getPage( $title->getDBkey() );
+				$specialPage = $spFactory->getPage( $title->getDBkey() );
 				if ( $specialPage instanceof RedirectSpecialPage ) {
 					$specialPage->setContext( $this->context );
 					if ( $this->config->get( 'HideIdentifiableRedirects' )
 						&& $specialPage->personallyIdentifiableTarget()
 					) {
-						list( , $subpage ) = SpecialPageFactory::resolveAlias( $title->getDBkey() );
+						list( , $subpage ) = $spFactory->resolveAlias( $title->getDBkey() );
 						$target = $specialPage->getRedirect( $subpage );
 						// target can also be true. We let that case fall through to normal processing.
 						if ( $target instanceof Title ) {
@@ -285,7 +285,7 @@ class MediaWiki {
 			// Special pages ($title may have changed since if statement above)
 			if ( $title->isSpecialPage() ) {
 				// Actions that need to be made when we have a special pages
-				SpecialPageFactory::executePath( $title, $this->context );
+				$spFactory->executePath( $title, $this->context );
 			} else {
 				// ...otherwise treat it as an article view. The article
 				// may still be a wikipage redirect to another article or URL.
@@ -339,7 +339,8 @@ class MediaWiki {
 		}
 
 		if ( $title->isSpecialPage() ) {
-			list( $name, $subpage ) = SpecialPageFactory::resolveAlias( $title->getDBkey() );
+			list( $name, $subpage ) = MediaWikiServices::getInstance()->getSpecialPageFactory()->
+				resolveAlias( $title->getDBkey() );
 			if ( $name ) {
 				$title = SpecialPage::getTitleFor( $name, $subpage );
 			}
@@ -426,7 +427,7 @@ class MediaWiki {
 			// If $target is set, then a hook wanted to redirect.
 			if ( !$ignoreRedirect && ( $target || $page->isRedirect() ) ) {
 				// Is the target already set by an extension?
-				$target = $target ? $target : $page->followRedirect();
+				$target = $target ?: $page->followRedirect();
 				if ( is_string( $target ) ) {
 					if ( !$this->config->get( 'DisableHardRedirects' ) ) {
 						// we'll need to redirect
@@ -500,18 +501,10 @@ class MediaWiki {
 			$action->show();
 			return;
 		}
-		// NOTE: deprecated hook. Add to $wgActions instead
-		if ( Hooks::run(
-			'UnknownAction',
-			[
-				$request->getVal( 'action', 'view' ),
-				$page
-			],
-			'1.19'
-		) ) {
-			$output->setStatusCode( 404 );
-			$output->showErrorPage( 'nosuchaction', 'nosuchactiontext' );
-		}
+
+		// If we've not found out which action it is by now, it's unknown
+		$output->setStatusCode( 404 );
+		$output->showErrorPage( 'nosuchaction', 'nosuchactiontext' );
 	}
 
 	/**
@@ -568,7 +561,7 @@ class MediaWiki {
 
 	/**
 	 * @see MediaWiki::preOutputCommit()
-	 * @param callable $postCommitWork [default: null]
+	 * @param callable|null $postCommitWork [default: null]
 	 * @since 1.26
 	 */
 	public function doPreOutputCommit( callable $postCommitWork = null ) {
@@ -580,7 +573,7 @@ class MediaWiki {
 	 * the user can receive a response (in case commit fails)
 	 *
 	 * @param IContextSource $context
-	 * @param callable $postCommitWork [default: null]
+	 * @param callable|null $postCommitWork [default: null]
 	 * @since 1.27
 	 */
 	public static function preOutputCommit(
@@ -631,14 +624,17 @@ class MediaWiki {
 
 		// Record ChronologyProtector positions for DBs affected in this request at this point
 		$cpIndex = null;
-		$lbFactory->shutdown( $flags, $postCommitWork, $cpIndex );
+		$cpClientId = null;
+		$lbFactory->shutdown( $flags, $postCommitWork, $cpIndex, $cpClientId );
 		wfDebug( __METHOD__ . ': LBFactory shutdown completed' );
 
 		if ( $cpIndex > 0 ) {
 			if ( $allowHeaders ) {
-				$expires = time() + ChronologyProtector::POSITION_TTL;
+				$now = time();
+				$expires = $now + ChronologyProtector::POSITION_COOKIE_TTL;
 				$options = [ 'prefix' => '' ];
-				$request->response()->setCookie( 'cpPosIndex', $cpIndex, $expires, $options );
+				$value = LBFactory::makeCookieValueFromCPIndex( $cpIndex, $now, $cpClientId );
+				$request->response()->setCookie( 'cpPosIndex', $value, $expires, $options );
 			}
 
 			if ( $strategy === 'cookie+url' ) {
@@ -720,6 +716,9 @@ class MediaWiki {
 			MWExceptionHandler::rollbackMasterChangesAndLog( $e );
 		}
 
+		// Disable WebResponse setters for post-send processing (T191537).
+		WebResponse::disableForPostSend();
+
 		$blocksHttpClient = true;
 		// Defer everything else if possible...
 		$callback = function () use ( $mode, &$blocksHttpClient ) {
@@ -758,7 +757,7 @@ class MediaWiki {
 		$request = $this->context->getRequest();
 
 		// Send Ajax requests to the Ajax dispatcher.
-		if ( $this->config->get( 'UseAjax' ) && $request->getVal( 'action' ) === 'ajax' ) {
+		if ( $request->getVal( 'action' ) === 'ajax' ) {
 			// Set a dummy title, because $wgTitle == null might break things
 			$title = Title::makeTitle( NS_SPECIAL, 'Badtitle/performing an AJAX call in '
 				. __METHOD__
@@ -861,7 +860,7 @@ class MediaWiki {
 		$this->performRequest();
 
 		// GUI-ify and stash the page output in MediaWiki::doPreOutputCommit() while
-		// ChronologyProtector synchronizes DB positions or replicas accross all datacenters.
+		// ChronologyProtector synchronizes DB positions or replicas across all datacenters.
 		$buffer = null;
 		$outputWork = function () use ( $output, &$buffer ) {
 			if ( $buffer === null ) {
@@ -900,9 +899,6 @@ class MediaWiki {
 			__METHOD__
 		);
 
-		// Important: this must be the last deferred update added (T100085, T154425)
-		DeferredUpdates::addCallableUpdate( [ JobQueueGroup::class, 'pushLazyJobs' ] );
-
 		// Do any deferred jobs; preferring to run them now if a client will not wait on them
 		DeferredUpdates::doUpdates( $blocksHttpClient ? 'enqueue' : 'run' );
 
@@ -937,7 +933,7 @@ class MediaWiki {
 			try {
 				$statsdServer = explode( ':', $config->get( 'StatsdServer' ) );
 				$statsdHost = $statsdServer[0];
-				$statsdPort = isset( $statsdServer[1] ) ? $statsdServer[1] : 8125;
+				$statsdPort = $statsdServer[1] ?? 8125;
 				$statsdSender = new SocketSender( $statsdHost, $statsdPort );
 				$statsdClient = new SamplingStatsdClient( $statsdSender, true, false );
 				$statsdClient->setSamplingRates( $config->get( 'StatsdSamplingRates' ) );
@@ -998,8 +994,14 @@ class MediaWiki {
 	 * @param LoggerInterface $runJobsLogger
 	 */
 	private function triggerSyncJobs( $n, LoggerInterface $runJobsLogger ) {
-		$runner = new JobRunner( $runJobsLogger );
-		$runner->run( [ 'maxJobs' => $n ] );
+		$trxProfiler = Profiler::instance()->getTransactionProfiler();
+		$old = $trxProfiler->setSilenced( true );
+		try {
+			$runner = new JobRunner( $runJobsLogger );
+			$runner->run( [ 'maxJobs' => $n ] );
+		} finally {
+			$trxProfiler->setSilenced( $old );
+		}
 	}
 
 	/**
@@ -1044,7 +1046,8 @@ class MediaWiki {
 
 		$invokedWithSuccess = true;
 		if ( $sock ) {
-			$special = SpecialPageFactory::getPage( 'RunJobs' );
+			$special = MediaWikiServices::getInstance()->getSpecialPageFactory()->
+				getPage( 'RunJobs' );
 			$url = $special->getPageTitle()->getCanonicalURL( $query );
 			$req = (
 				"POST $url HTTP/1.1\r\n" .

@@ -137,7 +137,7 @@ class CategoryTreeHooks {
 	 * This loads CategoryTreeFunctions.php and calls CategoryTree::getTag()
 	 * @param string $cat
 	 * @param array $argv
-	 * @param Parser $parser
+	 * @param Parser|null $parser
 	 * @param bool $allowMissing
 	 * @return bool|string
 	 */

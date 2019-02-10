@@ -86,26 +86,26 @@ Demo.FloatableTest.prototype.centerView = function () {
 		this.$body[ 0 ].scrollLeft = -offset;
 	}
 };
-Demo.FloatableTest.prototype.getReadyProcess = function () {
-	return new OO.ui.Process( function () {
+Demo.FloatableTest.prototype.getSetupProcess = function () {
+	return Demo.FloatableTest.parent.prototype.getSetupProcess.call( this ).next( function () {
 		var offset, side;
 		offset = ( this.outerSize - this.innerSize ) / 2;
 		side = this.getDir() === 'rtl' ? 'right' : 'left';
 		this.$floatableContainer.css( 'top', offset );
 		this.$floatableContainer.css( side, offset );
 
-		this.centerView();
 		this.selectWidget.selectItemByData( {
 			horizontalPosition: 'start',
 			verticalPosition: 'below'
 		} );
-
-		// Wait until the opening animation is over
-		setTimeout( function () {
-			this.floatable.toggle( true );
-			this.floatable.togglePositioning( true );
-			this.floatable.toggleClipping( this.toggleClippingWidget.getValue() );
-		}.bind( this ), OO.ui.theme.getDialogTransitionDuration() );
+	}, this );
+};
+Demo.FloatableTest.prototype.getReadyProcess = function () {
+	return new OO.ui.Process( function () {
+		this.centerView();
+		this.floatable.toggle( true );
+		this.floatable.togglePositioning( true );
+		this.floatable.toggleClipping( this.toggleClippingWidget.getValue() );
 	}, this );
 };
 Demo.FloatableTest.prototype.getHoldProcess = function () {

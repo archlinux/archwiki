@@ -77,16 +77,7 @@ class DatabaseMssql extends Database {
 		parent::__construct( $params );
 	}
 
-	/**
-	 * Usually aborts on failure
-	 * @param string $server
-	 * @param string $user
-	 * @param string $password
-	 * @param string $dbName
-	 * @throws DBConnectionError
-	 * @return bool|resource|null
-	 */
-	public function open( $server, $user, $password, $dbName ) {
+	protected function open( $server, $user, $password, $dbName, $schema, $tablePrefix ) {
 		# Test for driver support, to avoid suppressed fatal error
 		if ( !function_exists( 'sqlsrv_connect' ) ) {
 			throw new DBConnectionError(
@@ -105,11 +96,10 @@ class DatabaseMssql extends Database {
 		$this->server = $server;
 		$this->user = $user;
 		$this->password = $password;
-		$this->dbName = $dbName;
 
 		$connectionInfo = [];
 
-		if ( $dbName ) {
+		if ( $dbName != '' ) {
 			$connectionInfo['Database'] = $dbName;
 		}
 
@@ -129,8 +119,13 @@ class DatabaseMssql extends Database {
 		}
 
 		$this->opened = true;
+		$this->currentDomain = new DatabaseDomain(
+			( $dbName != '' ) ? $dbName : null,
+			null,
+			$tablePrefix
+		);
 
-		return $this->conn;
+		return (bool)$this->conn;
 	}
 
 	/**
@@ -243,7 +238,7 @@ class DatabaseMssql extends Database {
 	}
 
 	/**
-	 * @param MssqlResultWrapper $res
+	 * @param IResultWrapper $res
 	 * @return stdClass
 	 */
 	public function fetchObject( $res ) {
@@ -252,7 +247,7 @@ class DatabaseMssql extends Database {
 	}
 
 	/**
-	 * @param MssqlResultWrapper $res
+	 * @param IResultWrapper $res
 	 * @return array
 	 */
 	public function fetchRow( $res ) {
@@ -1015,7 +1010,7 @@ class DatabaseMssql extends Database {
 		}
 
 		if ( $schema === false ) {
-			$schema = $this->schema;
+			$schema = $this->dbSchema();
 		}
 
 		$res = $this->query( "SELECT 1 FROM INFORMATION_SCHEMA.TABLES
@@ -1176,18 +1171,13 @@ class DatabaseMssql extends Database {
 			$s );
 	}
 
-	/**
-	 * @param string $db
-	 * @return bool
-	 */
-	public function selectDB( $db ) {
-		try {
-			$this->dbName = $db;
-			$this->query( "USE $db" );
-			return true;
-		} catch ( Exception $e ) {
-			return false;
-		}
+	protected function doSelectDomain( DatabaseDomain $domain ) {
+		$encDatabase = $this->addIdentifierQuotes( $domain->getDatabase() );
+		$this->query( "USE $encDatabase" );
+		// Update that domain fields on success (no exception thrown)
+		$this->currentDomain = $domain;
+
+		return true;
 	}
 
 	/**
@@ -1294,9 +1284,7 @@ class DatabaseMssql extends Database {
 			$this->populateColumnCaches();
 		}
 
-		return isset( $this->binaryColumnCache[$tableRaw] )
-			? $this->binaryColumnCache[$tableRaw]
-			: [];
+		return $this->binaryColumnCache[$tableRaw] ?? [];
 	}
 
 	/**
@@ -1311,16 +1299,14 @@ class DatabaseMssql extends Database {
 			$this->populateColumnCaches();
 		}
 
-		return isset( $this->bitColumnCache[$tableRaw] )
-			? $this->bitColumnCache[$tableRaw]
-			: [];
+		return $this->bitColumnCache[$tableRaw] ?? [];
 	}
 
 	private function populateColumnCaches() {
 		$res = $this->select( 'INFORMATION_SCHEMA.COLUMNS', '*',
 			[
-				'TABLE_CATALOG' => $this->dbName,
-				'TABLE_SCHEMA' => $this->schema,
+				'TABLE_CATALOG' => $this->getDBname(),
+				'TABLE_SCHEMA' => $this->dbSchema(),
 				'DATA_TYPE' => [ 'varbinary', 'binary', 'image', 'bit' ]
 			] );
 
@@ -1418,4 +1404,7 @@ class DatabaseMssql extends Database {
 	}
 }
 
+/**
+ * @deprecated since 1.29
+ */
 class_alias( DatabaseMssql::class, 'DatabaseMssql' );

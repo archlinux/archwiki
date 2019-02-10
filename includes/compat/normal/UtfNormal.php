@@ -40,7 +40,7 @@ use UtfNormal\Validator;
  *
  * All functions can be called static.
  *
- * See description of forms at http://www.unicode.org/reports/tr15/
+ * See description of forms at https://www.unicode.org/reports/tr15/
  *
  * @deprecated since 1.25, use UtfNormal\Validator directly
  * @ingroup UtfNormal
@@ -57,6 +57,7 @@ class UtfNormal {
 	 * @return string a clean, shiny, normalized UTF-8 string
 	 */
 	static function cleanUp( $string ) {
+		wfDeprecated( __METHOD__, '1.25' );
 		return Validator::cleanUp( $string );
 	}
 
@@ -69,6 +70,7 @@ class UtfNormal {
 	 * @return string a UTF-8 string in normal form C
 	 */
 	static function toNFC( $string ) {
+		wfDeprecated( __METHOD__, '1.25' );
 		return Validator::toNFC( $string );
 	}
 
@@ -80,6 +82,7 @@ class UtfNormal {
 	 * @return string a UTF-8 string in normal form D
 	 */
 	static function toNFD( $string ) {
+		wfDeprecated( __METHOD__, '1.25' );
 		return Validator::toNFD( $string );
 	}
 
@@ -92,6 +95,7 @@ class UtfNormal {
 	 * @return string a UTF-8 string in normal form KC
 	 */
 	static function toNFKC( $string ) {
+		wfDeprecated( __METHOD__, '1.25' );
 		return Validator::toNFKC( $string );
 	}
 
@@ -104,6 +108,7 @@ class UtfNormal {
 	 * @return string a UTF-8 string in normal form KD
 	 */
 	static function toNFKD( $string ) {
+		wfDeprecated( __METHOD__, '1.25' );
 		return Validator::toNFKD( $string );
 	}
 
@@ -114,6 +119,7 @@ class UtfNormal {
 	 * @return bool
 	 */
 	static function quickIsNFC( $string ) {
+		wfDeprecated( __METHOD__, '1.25' );
 		return Validator::quickIsNFC( $string );
 	}
 
@@ -124,6 +130,7 @@ class UtfNormal {
 	 * @return bool
 	 */
 	static function quickIsNFCVerify( &$string ) {
+		wfDeprecated( __METHOD__, '1.25' );
 		return Validator::quickIsNFCVerify( $string );
 	}
 }

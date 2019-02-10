@@ -93,9 +93,9 @@ class MWTimestamp extends ConvertibleTimestamp {
 			if ( $tz ) {
 				$this->timestamp->setTimezone( $tz );
 				return new DateInterval( 'P0Y' );
-			} else {
-				$data[0] = 'Offset';
 			}
+
+			$data[0] = 'Offset';
 		}
 
 		$diff = 0;
@@ -138,9 +138,9 @@ class MWTimestamp extends ConvertibleTimestamp {
 	 * Generate a purely relative timestamp, i.e., represent the time elapsed between
 	 * the given base timestamp and this object.
 	 *
-	 * @param MWTimestamp $relativeTo Relative base timestamp (defaults to now)
-	 * @param User $user Use to use offset for
-	 * @param Language $lang Language to use
+	 * @param MWTimestamp|null $relativeTo Relative base timestamp (defaults to now)
+	 * @param User|null $user Use to use offset for
+	 * @param Language|null $lang Language to use
 	 * @param array $chosenIntervals Intervals to use to represent it
 	 * @return string Relative timestamp
 	 */
@@ -189,9 +189,9 @@ class MWTimestamp extends ConvertibleTimestamp {
 		$msg = wfMessage( $key );
 		if ( $msg->exists() ) {
 			return $msg;
-		} else {
-			return new RawMessage( $tzMsg );
 		}
+
+		return new RawMessage( $tzMsg );
 	}
 
 	/**

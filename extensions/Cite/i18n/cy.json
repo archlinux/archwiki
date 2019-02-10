@@ -6,7 +6,7 @@
 			"Robin Owain"
 		]
 	},
-	"cite-desc": "Yn ychwanegu tagiau <nowiki><ref[ name=id]></nowiki> a <nowiki><references/></nowiki>, ar gyfer cyfeiriadau",
+	"cite-desc": "Yn ychwanegu tagiau <code><nowiki><ref[ name=id]></nowiki></code> a <code><nowiki><references/></nowiki></code>, ar gyfer cyfeiriadau",
 	"cite_error": "Gwall cyfeirio: $1",
 	"cite_error_ref_numeric_key": "Tag <code>&lt;ref&gt;</code> annilys;\nni all enw fod yn rif yn unig. Defnyddiwch deitl disgrifiadol.",
 	"cite_error_ref_no_key": "Mae'r <code>&lt;ref&gt;</code> tag yn annilys neu rhoddwyd iddo enw annilys",

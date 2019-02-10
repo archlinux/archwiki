@@ -7,7 +7,8 @@
 			"Shirayuki",
 			"Sujiniku",
 			"Runequest77",
-			"Rxy"
+			"Rxy",
+			"Kkairri"
 		]
 	},
 	"syntaxhighlight-desc": "[http://pygments.org/ Pygments - Python 構文ハイライト機能] を利用したタグ <code>&lt;syntaxhighlight&gt;</code> を提供する",
@@ -16,5 +17,6 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "言語",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "(なし)",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "行番号を表示",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-startingline": "行番号の始まりを変更",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "コード"
 }

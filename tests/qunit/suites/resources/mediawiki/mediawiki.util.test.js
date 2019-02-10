@@ -1,4 +1,4 @@
-( function ( mw, $ ) {
+( function () {
 	var util = require( 'mediawiki.util' ),
 		// Based on IPTest.php > testisIPv4
 		IPV4_CASES = [
@@ -89,32 +89,7 @@
 	} ) );
 
 	QUnit.test( 'rawurlencode', function ( assert ) {
-		assert.equal( util.rawurlencode( 'Test:A & B/Here' ), 'Test%3AA%20%26%20B%2FHere' );
-	} );
-
-	QUnit.test( 'escapeId', function ( assert ) {
-		mw.config.set( 'wgFragmentMode', [ 'legacy' ] );
-		$.each( {
-			'+': '.2B',
-			'&': '.26',
-			'=': '.3D',
-			':': ':',
-			';': '.3B',
-			'@': '.40',
-			$: '.24',
-			'-_.': '-_.',
-			'!': '.21',
-			'*': '.2A',
-			'/': '.2F',
-			'[]': '.5B.5D',
-			'<>': '.3C.3E',
-			'\'': '.27',
-			'§': '.C2.A7',
-			'Test:A & B/Here': 'Test:A_.26_B.2FHere',
-			'A&B&amp;C&amp;amp;D&amp;amp;amp;E': 'A.26B.26amp.3BC.26amp.3Bamp.3BD.26amp.3Bamp.3Bamp.3BE'
-		}, function ( input, output ) {
-			assert.equal( util.escapeId( input ), output );
-		} );
+		assert.strictEqual( util.rawurlencode( 'Test:A & B/Here' ), 'Test%3AA%20%26%20B%2FHere' );
 	} );
 
 	QUnit.test( 'escapeIdForAttribute', function ( assert ) {
@@ -122,14 +97,11 @@
 		var text = 'foo тест_#%!\'()[]:<>',
 			legacyEncoded = 'foo_.D1.82.D0.B5.D1.81.D1.82_.23.25.21.27.28.29.5B.5D:.3C.3E',
 			html5Encoded = 'foo_тест_#%!\'()[]:<>',
-			html5Experimental = 'foo_тест_!_()[]:<>',
 			// Settings: this is $wgFragmentMode
 			legacy = [ 'legacy' ],
 			legacyNew = [ 'legacy', 'html5' ],
 			newLegacy = [ 'html5', 'legacy' ],
-			allNew = [ 'html5' ],
-			experimentalLegacy = [ 'html5-legacy', 'legacy' ],
-			newExperimental = [ 'html5', 'html5-legacy' ];
+			allNew = [ 'html5' ];
 
 		// Test cases are kept in sync with SanitizerTest.php
 		[
@@ -140,15 +112,11 @@
 			// New world: HTML5 links, legacy fallbacks
 			[ newLegacy, text, html5Encoded ],
 			// Distant future: no legacy fallbacks
-			[ allNew, text, html5Encoded ],
-			// Someone flipped $wgExperimentalHtmlIds on
-			[ experimentalLegacy, text, html5Experimental ],
-			// Migration from $wgExperimentalHtmlIds to modern HTML5
-			[ newExperimental, text, html5Encoded ]
+			[ allNew, text, html5Encoded ]
 		].forEach( function ( testCase ) {
 			mw.config.set( 'wgFragmentMode', testCase[ 0 ] );
 
-			assert.equal( util.escapeIdForAttribute( testCase[ 1 ] ), testCase[ 2 ] );
+			assert.strictEqual( util.escapeIdForAttribute( testCase[ 1 ] ), testCase[ 2 ] );
 		} );
 	} );
 
@@ -157,14 +125,11 @@
 		var text = 'foo тест_#%!\'()[]:<>',
 			legacyEncoded = 'foo_.D1.82.D0.B5.D1.81.D1.82_.23.25.21.27.28.29.5B.5D:.3C.3E',
 			html5Encoded = 'foo_тест_#%!\'()[]:<>',
-			html5Experimental = 'foo_тест_!_()[]:<>',
 			// Settings: this is wgFragmentMode
 			legacy = [ 'legacy' ],
 			legacyNew = [ 'legacy', 'html5' ],
 			newLegacy = [ 'html5', 'legacy' ],
-			allNew = [ 'html5' ],
-			experimentalLegacy = [ 'html5-legacy', 'legacy' ],
-			newExperimental = [ 'html5', 'html5-legacy' ];
+			allNew = [ 'html5' ];
 
 		[
 			// Pure legacy: how MW worked before 2017
@@ -174,21 +139,18 @@
 			// New world: HTML5 links, legacy fallbacks
 			[ newLegacy, text, html5Encoded ],
 			// Distant future: no legacy fallbacks
-			[ allNew, text, html5Encoded ],
-			// Someone flipped wgExperimentalHtmlIds on
-			[ experimentalLegacy, text, html5Experimental ],
-			// Migration from wgExperimentalHtmlIds to modern HTML5
-			[ newExperimental, text, html5Encoded ]
+			[ allNew, text, html5Encoded ]
 		].forEach( function ( testCase ) {
 			mw.config.set( 'wgFragmentMode', testCase[ 0 ] );
 
-			assert.equal( util.escapeIdForLink( testCase[ 1 ] ), testCase[ 2 ] );
+			assert.strictEqual( util.escapeIdForLink( testCase[ 1 ] ), testCase[ 2 ] );
 		} );
 	} );
 
 	QUnit.test( 'wikiUrlencode', function ( assert ) {
-		assert.equal( util.wikiUrlencode( 'Test:A & B/Here' ), 'Test:A_%26_B/Here' );
+		assert.strictEqual( util.wikiUrlencode( 'Test:A & B/Here' ), 'Test:A_%26_B/Here' );
 		// See also wfUrlencodeTest.php#provideURLS
+		// eslint-disable-next-line no-restricted-properties
 		$.each( {
 			'+': '%2B',
 			'&': '%26',
@@ -201,7 +163,7 @@
 			'<>': '%3C%3E',
 			'\'': '%27'
 		}, function ( input, output ) {
-			assert.equal( util.wikiUrlencode( input ), output );
+			assert.strictEqual( util.wikiUrlencode( input ), output );
 		} );
 	} );
 
@@ -214,58 +176,58 @@
 		} );
 
 		href = util.getUrl( 'Sandbox' );
-		assert.equal( href, '/wiki/Sandbox', 'simple title' );
+		assert.strictEqual( href, '/wiki/Sandbox', 'simple title' );
 
 		href = util.getUrl( 'Foo:Sandbox? 5+5=10! (test)/sub ' );
-		assert.equal( href, '/wiki/Foo:Sandbox%3F_5%2B5%3D10!_(test)/sub_', 'complex title' );
+		assert.strictEqual( href, '/wiki/Foo:Sandbox%3F_5%2B5%3D10!_(test)/sub_', 'complex title' );
 
 		// T149767
 		href = util.getUrl( 'My$$test$$$$$title' );
-		assert.equal( href, '/wiki/My$$test$$$$$title', 'title with multiple consecutive dollar signs' );
+		assert.strictEqual( href, '/wiki/My$$test$$$$$title', 'title with multiple consecutive dollar signs' );
 
 		href = util.getUrl();
-		assert.equal( href, '/wiki/Foobar', 'default title' );
+		assert.strictEqual( href, '/wiki/Foobar', 'default title' );
 
 		href = util.getUrl( null, { action: 'edit' } );
-		assert.equal( href, '/w/index.php?title=Foobar&action=edit', 'default title with query string' );
+		assert.strictEqual( href, '/w/index.php?title=Foobar&action=edit', 'default title with query string' );
 
 		href = util.getUrl( 'Sandbox', { action: 'edit' } );
-		assert.equal( href, '/w/index.php?title=Sandbox&action=edit', 'simple title with query string' );
+		assert.strictEqual( href, '/w/index.php?title=Sandbox&action=edit', 'simple title with query string' );
 
 		// Test fragments
 		href = util.getUrl( 'Foo:Sandbox#Fragment', { action: 'edit' } );
-		assert.equal( href, '/w/index.php?title=Foo:Sandbox&action=edit#Fragment', 'namespaced title with query string and fragment' );
+		assert.strictEqual( href, '/w/index.php?title=Foo:Sandbox&action=edit#Fragment', 'namespaced title with query string and fragment' );
 
 		href = util.getUrl( 'Sandbox#', { action: 'edit' } );
-		assert.equal( href, '/w/index.php?title=Sandbox&action=edit', 'title with query string and empty fragment' );
+		assert.strictEqual( href, '/w/index.php?title=Sandbox&action=edit', 'title with query string and empty fragment' );
 
 		href = util.getUrl( 'Sandbox', {} );
-		assert.equal( href, '/wiki/Sandbox', 'title with empty query string' );
+		assert.strictEqual( href, '/wiki/Sandbox', 'title with empty query string' );
 
 		href = util.getUrl( '#Fragment' );
-		assert.equal( href, '/wiki/#Fragment', 'empty title with fragment' );
+		assert.strictEqual( href, '/wiki/#Fragment', 'empty title with fragment' );
 
 		href = util.getUrl( '#Fragment', { action: 'edit' } );
-		assert.equal( href, '/w/index.php?action=edit#Fragment', 'empty title with query string and fragment' );
+		assert.strictEqual( href, '/w/index.php?action=edit#Fragment', 'empty title with query string and fragment' );
 
 		mw.config.set( 'wgFragmentMode', [ 'legacy' ] );
 		href = util.getUrl( 'Foo:Sandbox \xC4#Fragment \xC4', { action: 'edit' } );
-		assert.equal( href, '/w/index.php?title=Foo:Sandbox_%C3%84&action=edit#Fragment_.C3.84', 'title with query string, fragment, and special characters' );
+		assert.strictEqual( href, '/w/index.php?title=Foo:Sandbox_%C3%84&action=edit#Fragment_.C3.84', 'title with query string, fragment, and special characters' );
 
 		mw.config.set( 'wgFragmentMode', [ 'html5' ] );
 		href = util.getUrl( 'Foo:Sandbox \xC4#Fragment \xC4', { action: 'edit' } );
-		assert.equal( href, '/w/index.php?title=Foo:Sandbox_%C3%84&action=edit#Fragment_Ä', 'title with query string, fragment, and special characters' );
+		assert.strictEqual( href, '/w/index.php?title=Foo:Sandbox_%C3%84&action=edit#Fragment_Ä', 'title with query string, fragment, and special characters' );
 
 		href = util.getUrl( 'Foo:%23#Fragment', { action: 'edit' } );
-		assert.equal( href, '/w/index.php?title=Foo:%2523&action=edit#Fragment', 'title containing %23 (#), fragment, and a query string' );
+		assert.strictEqual( href, '/w/index.php?title=Foo:%2523&action=edit#Fragment', 'title containing %23 (#), fragment, and a query string' );
 
 		mw.config.set( 'wgFragmentMode', [ 'legacy' ] );
 		href = util.getUrl( '#+&=:;@$-_.!*/[]<>\'§', { action: 'edit' } );
-		assert.equal( href, '/w/index.php?action=edit#.2B.26.3D:.3B.40.24-_..21.2A.2F.5B.5D.3C.3E.27.C2.A7', 'fragment with various characters' );
+		assert.strictEqual( href, '/w/index.php?action=edit#.2B.26.3D:.3B.40.24-_..21.2A.2F.5B.5D.3C.3E.27.C2.A7', 'fragment with various characters' );
 
 		mw.config.set( 'wgFragmentMode', [ 'html5' ] );
 		href = util.getUrl( '#+&=:;@$-_.!*/[]<>\'§', { action: 'edit' } );
-		assert.equal( href, '/w/index.php?action=edit#+&=:;@$-_.!*/[]<>\'§', 'fragment with various characters' );
+		assert.strictEqual( href, '/w/index.php?action=edit#+&=:;@$-_.!*/[]<>\'§', 'fragment with various characters' );
 	} );
 
 	QUnit.test( 'wikiScript', function ( assert ) {
@@ -277,16 +239,16 @@
 			wgScriptPath: '/w'
 		} );
 
-		assert.equal( util.wikiScript(), mw.config.get( 'wgScript' ),
+		assert.strictEqual( util.wikiScript(), mw.config.get( 'wgScript' ),
 			'wikiScript() returns wgScript'
 		);
-		assert.equal( util.wikiScript( 'index' ), mw.config.get( 'wgScript' ),
+		assert.strictEqual( util.wikiScript( 'index' ), mw.config.get( 'wgScript' ),
 			'wikiScript( index ) returns wgScript'
 		);
-		assert.equal( util.wikiScript( 'load' ), mw.config.get( 'wgLoadScript' ),
+		assert.strictEqual( util.wikiScript( 'load' ), mw.config.get( 'wgLoadScript' ),
 			'wikiScript( load ) returns wgLoadScript'
 		);
-		assert.equal( util.wikiScript( 'api' ), '/w/api.php', 'API path' );
+		assert.strictEqual( util.wikiScript( 'api' ), '/w/api.php', 'API path' );
 	} );
 
 	QUnit.test( 'addCSS', function ( assert ) {
@@ -294,10 +256,10 @@
 		$el = $( '<div>' ).attr( 'id', 'mw-addcsstest' ).appendTo( '#qunit-fixture' );
 
 		style = util.addCSS( '#mw-addcsstest { visibility: hidden; }' );
-		assert.equal( typeof style, 'object', 'addCSS returned an object' );
+		assert.strictEqual( typeof style, 'object', 'addCSS returned an object' );
 		assert.strictEqual( style.disabled, false, 'property "disabled" is available and set to false' );
 
-		assert.equal( $el.css( 'visibility' ), 'hidden', 'Added style properties are in effect' );
+		assert.strictEqual( $el.css( 'visibility' ), 'hidden', 'Added style properties are in effect' );
 
 		// Clean up
 		$( style.ownerNode ).remove();
@@ -307,7 +269,7 @@
 		var url;
 
 		url = 'http://example.org/?foo=wrong&foo=right#&foo=bad';
-		assert.equal( util.getParamValue( 'foo', url ), 'right', 'Use latest one, ignore hash' );
+		assert.strictEqual( util.getParamValue( 'foo', url ), 'right', 'Use latest one, ignore hash' );
 		assert.strictEqual( util.getParamValue( 'bar', url ), null, 'Return null when not found' );
 
 		url = 'http://example.org/#&foo=bad';
@@ -321,7 +283,7 @@
 	} );
 
 	QUnit.test( '$content', function ( assert ) {
-		assert.ok( util.$content instanceof jQuery, 'mw.util.$content instance of jQuery' );
+		assert.ok( util.$content instanceof $, 'mw.util.$content instance of jQuery' );
 		assert.strictEqual( util.$content.length, 1, 'mw.util.$content must have length of 1' );
 	} );
 
@@ -332,15 +294,14 @@
 	 * one element can have a given id.
 	 */
 	QUnit.test( 'addPortletLink', function ( assert ) {
-		var pTestTb, pCustom, vectorTabs, tbRL, cuQuux, $cuQuux, tbMW, $tbMW, tbRLDM, caFoo,
+		var tbRL, cuQuux, $cuQuux, tbMW, $tbMW, tbRLDM, caFoo,
 			addedAfter, tbRLDMnonexistentid, tbRLDMemptyjquery;
 
-		pTestTb =
+		$( '#qunit-fixture' ).append(
 			'<div class="portlet" id="p-test-tb">' +
 				'<h3>Toolbox</h3>' +
 				'<ul class="body"></ul>' +
-			'</div>';
-		pCustom =
+			'</div>' +
 			'<div class="portlet" id="p-test-custom">' +
 				'<h3>Views</h3>' +
 				'<ul class="body">' +
@@ -351,81 +312,92 @@
 						'</ul>' +
 					'</li>' +
 				'</ul>' +
-			'</div>';
-		vectorTabs =
+			'</div>' +
 			'<div id="p-test-views" class="vectorTabs">' +
 				'<h3>Views</h3>' +
 				'<ul></ul>' +
-			'</div>';
-
-		$( '#qunit-fixture' ).append( pTestTb, pCustom, vectorTabs );
-
-		tbRL = util.addPortletLink( 'p-test-tb', '//mediawiki.org/wiki/ResourceLoader',
-			'ResourceLoader', 't-rl', 'More info about ResourceLoader on MediaWiki.org ', 'l'
+			'</div>'
 		);
 
-		assert.ok( tbRL && tbRL.nodeType, 'addPortletLink returns a DOM Node' );
+		tbRL = util.addPortletLink( 'p-test-tb', 'https://example.org/next',
+			'Next', 't-rl', 'More info about Example Next ', 'l'
+		);
+		assert.strictEqual( tbRL.nodeType, 1, 'returns a DOM Node' );
+		assert.strictEqual( tbRL.nodeName, 'LI', 'returns a list item element' );
 
-		tbMW = util.addPortletLink( 'p-test-tb', '//mediawiki.org/',
-			'MediaWiki.org', 't-mworg', 'Go to MediaWiki.org', 'm', tbRL );
+		tbMW = util.addPortletLink( 'p-test-tb', '//example.org/',
+			'Example.org', 't-xmp', 'Go to Example', 'x', tbRL );
 		$tbMW = $( tbMW );
-
 		assert.propEqual(
 			$tbMW.getAttrs(),
 			{
-				id: 't-mworg'
+				id: 't-xmp'
 			},
-			'Validate attributes of created element'
+			'List item attributes'
 		);
-
 		assert.propEqual(
 			$tbMW.find( 'a' ).getAttrs(),
 			{
-				href: '//mediawiki.org/',
-				title: 'Go to MediaWiki.org [test-m]',
-				accesskey: 'm'
+				href: '//example.org/',
+				title: 'Go to Example [test-x]',
+				accesskey: 'x'
 			},
-			'Validate attributes of anchor tag in created element'
+			'Anchor link attributes'
 		);
-
-		assert.equal( $tbMW.closest( '.portlet' ).attr( 'id' ), 'p-test-tb', 'Link was inserted within correct portlet' );
-		assert.strictEqual( $tbMW.next()[ 0 ], tbRL, 'Link is in the correct position (nextnode as Node object)' );
+		assert.strictEqual(
+			$tbMW.closest( '.portlet' ).attr( 'id' ),
+			'p-test-tb',
+			'Parent portlet ID'
+		);
+		assert.strictEqual(
+			$tbMW.next()[ 0 ],
+			tbRL,
+			'Next node (set as Node object)'
+		);
+		assert.strictEqual(
+			$tbMW.find( 'span' ).length,
+			0,
+			'No <span> wrap for porlets without vectorTabs class'
+		);
 
 		cuQuux = util.addPortletLink( 'p-test-custom', '#', 'Quux', null, 'Example [shift-x]', 'q' );
 		$cuQuux = $( cuQuux );
-
-		assert.equal( $cuQuux.find( 'a' ).attr( 'title' ), 'Example [test-q]', 'Existing accesskey is stripped and updated' );
-
-		assert.equal(
+		assert.strictEqual(
+			$cuQuux.find( 'a' ).attr( 'title' ),
+			'Example [test-q]',
+			'Title has new accesskey and label'
+		);
+		assert.strictEqual(
 			$( '#p-test-custom #c-barmenu ul li' ).length,
 			1,
-			'addPortletLink did not add the item to all <ul> elements in the portlet (T37082)'
+			'No items added to unrelated <ul> elsewhere in the portlet (T37082)'
 		);
 
 		tbRLDM = util.addPortletLink( 'p-test-tb', '//mediawiki.org/wiki/RL/DM',
 			'Default modules', 't-rldm', 'List of all default modules ', 'd', '#t-rl' );
-
-		assert.strictEqual( $( tbRLDM ).next()[ 0 ], tbRL, 'Link is in the correct position (CSS selector as nextnode)' );
+		assert.strictEqual( $( tbRLDM ).next()[ 0 ], tbRL, 'Next node (set as CSS selector)' );
 
 		caFoo = util.addPortletLink( 'p-test-views', '#', 'Foo' );
-
-		assert.strictEqual( $tbMW.find( 'span' ).length, 0, 'No <span> element should be added for porlets without vectorTabs class.' );
-		assert.strictEqual( $( caFoo ).find( 'span' ).length, 1, 'A <span> element should be added for porlets with vectorTabs class.' );
+		assert.strictEqual( $( caFoo ).find( 'span' ).length, 1, 'Added <span> element for porlet with vectorTabs class' );
 
 		addedAfter = util.addPortletLink( 'p-test-tb', '#', 'After foo', 'post-foo', 'After foo', null, $( tbRL ) );
-		assert.strictEqual( $( addedAfter ).next()[ 0 ], tbRL, 'Link is in the correct position (jQuery object as nextnode)' );
+		assert.strictEqual( $( addedAfter ).next()[ 0 ], tbRL, 'Next node (set as jQuery object)' );
 
-		// test case - nonexistent id as next node
 		tbRLDMnonexistentid = util.addPortletLink( 'p-test-tb', '//mediawiki.org/wiki/RL/DM',
 			'Default modules', 't-rldm-nonexistent', 'List of all default modules ', 'd', '#t-rl-nonexistent' );
+		assert.strictEqual(
+			tbRLDMnonexistentid,
+			$( '#p-test-tb li:last' )[ 0 ],
+			'Next node as non-matching CSS selector falls back to appending'
+		);
 
-		assert.equal( tbRLDMnonexistentid, $( '#p-test-tb li:last' )[ 0 ], 'Fallback to adding at the end (nextnode non-matching CSS selector)' );
-
-		// test case - empty jquery object as next node
 		tbRLDMemptyjquery = util.addPortletLink( 'p-test-tb', '//mediawiki.org/wiki/RL/DM',
 			'Default modules', 't-rldm-empty-jquery', 'List of all default modules ', 'd', $( '#t-rl-nonexistent' ) );
-
-		assert.equal( tbRLDMemptyjquery, $( '#p-test-tb li:last' )[ 0 ], 'Fallback to adding at the end (nextnode as empty jQuery object)' );
+		assert.strictEqual(
+			tbRLDMemptyjquery,
+			$( '#p-test-tb li:last' )[ 0 ],
+			'Next node as empty jQuery object falls back to appending'
+		);
 	} );
 
 	QUnit.test( 'validateEmail', function ( assert ) {
@@ -462,4 +434,4 @@
 			assert.strictEqual( util.isIPv6Address( ipCase[ 1 ] ), ipCase[ 0 ], ipCase[ 2 ] );
 		} );
 	} );
-}( mediaWiki, jQuery ) );
+}() );

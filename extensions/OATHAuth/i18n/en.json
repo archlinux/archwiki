@@ -20,7 +20,7 @@
 	"oathauth-disabledoath": "Disabled two-factor authentication.",
 	"oathauth-prefs-label": "Two-factor authentication:",
 	"oathauth-step1": "Step 1: Download a two-factor authentication program",
-	"oathauth-step1-test": "Download a program for two-factor authentication. That can be a mobile application (such as Google Authenticator) or a desktop application",
+	"oathauth-step1-test": "Download a program for two-factor authentication. That can be a mobile application (such as Google Authenticator) or a desktop application.",
 	"oathauth-step2": "Step 2: Scan the QR code",
 	"oathauth-step2alt": "Or enter the secret manually:",
 	"oathauth-step3": "Step 3: Write down the scratch codes",

@@ -39,7 +39,7 @@
 	"apihelp-query+gadgetcategories-example-2": "Algamar tola información sobro les categoríes llamaes «foo» y «bar»",
 	"apihelp-query+gadgets-description": "Devuelve la llista d'accesorios que s'usen nesta wiki.",
 	"apihelp-query+gadgets-summary": "Devuelve la llista d'accesorios que s'usen nesta wiki.",
-	"apihelp-query+gadgets-param-prop": "Qué información d'accesoriu llograr:\n;id:Identificador internu del accesoriu.\n;metadata:Metadatos del accesoriu.\n;desc:Descripción del accesoriu tresformada en HTML (pué ser lento, usar sólo si realmente ye necesario).",
+	"apihelp-query+gadgets-param-prop": "Qué información d'accesoriu llograr:\n;id:Identificador internu del accesoriu.\n;metadata:Metadatos del accesoriu.\n;desc:Descripción del accesoriu tresformada en HTML (puede ser lento, usar sólo si realmente se necesita).",
 	"apihelp-query+gadgets-param-categories": "De que categoríes recuperar los accesorios.",
 	"apihelp-query+gadgets-param-ids": "Identificadores de los accesorios a recuperar.",
 	"apihelp-query+gadgets-param-allowedonly": "Ver la llista sólo de los accesorios permitíos pal usuariu actual.",

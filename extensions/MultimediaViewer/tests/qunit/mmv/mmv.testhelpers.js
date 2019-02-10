@@ -33,7 +33,7 @@
 	 * Creates an mw.storage-like object.
 	 *
 	 * @param {Object} storage localStorage stub with getItem, setItem, removeItem methods
-	 * @return {mw.storage} Local storage-like object
+	 * @return {mw.SafeStorage} Local storage-like object
 	 */
 	MTH.createLocalStorage = function ( storage ) {
 		return new ( Object.getPrototypeOf( mw.storage ) ).constructor( storage );
@@ -42,7 +42,7 @@
 	/**
 	 * Returns an mw.storage that mimicks lack of localStorage support.
 	 *
-	 * @return {mw.storage} Local storage-like object
+	 * @return {mw.SafeStorage} Local storage-like object
 	 */
 	MTH.getUnsupportedLocalStorage = function () {
 		return this.createLocalStorage( undefined );
@@ -51,7 +51,7 @@
 	/**
 	 * Returns an mw.storage that mimicks localStorage being disabled in browser.
 	 *
-	 * @return {mw.storage} Local storage-like object
+	 * @return {mw.SafeStorage} Local storage-like object
 	 */
 	MTH.getDisabledLocalStorage = function () {
 		var e = function () {
@@ -69,7 +69,7 @@
 	 * Returns a fake local storage which is not saved between reloads.
 	 *
 	 * @param {Object} [initialData]
-	 * @return {mw.storage} Local storage-like object
+	 * @return {mw.SafeStorage} Local storage-like object
 	 */
 	MTH.getFakeLocalStorage = function ( initialData ) {
 		var bag = new mw.Map();

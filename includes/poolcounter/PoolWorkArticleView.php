@@ -17,7 +17,13 @@
  *
  * @file
  */
+
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Revision\MutableRevisionRecord;
+use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Revision\RevisionRenderer;
+use MediaWiki\Revision\RevisionStore;
+use MediaWiki\Revision\SlotRecord;
 
 class PoolWorkArticleView extends PoolCounterWork {
 	/** @var WikiPage */
@@ -35,8 +41,17 @@ class PoolWorkArticleView extends PoolCounterWork {
 	/** @var ParserOptions */
 	private $parserOptions;
 
-	/** @var Content|null */
-	private $content = null;
+	/** @var RevisionRecord|null */
+	private $revision = null;
+
+	/** @var int */
+	private $audience;
+
+	/** @var RevisionStore */
+	private $revisionStore = null;
+
+	/** @var RevisionRenderer */
+	private $renderer = null;
 
 	/** @var ParserOutput|bool */
 	private $parserOutput = false;
@@ -53,26 +68,54 @@ class PoolWorkArticleView extends PoolCounterWork {
 	 * @param int $revid ID of the revision being parsed.
 	 * @param bool $useParserCache Whether to use the parser cache.
 	 *   operation.
-	 * @param Content|string $content Content to parse or null to load it; may
-	 *   also be given as a wikitext string, for BC.
+	 * @param RevisionRecord|Content|string|null $revision Revision to render, or null to load it;
+	 *        may also be given as a wikitext string, or a Content object, for BC.
+	 * @param int $audience One of the RevisionRecord audience constants
 	 */
 	public function __construct( WikiPage $page, ParserOptions $parserOptions,
-		$revid, $useParserCache, $content = null
+		$revid, $useParserCache, $revision = null, $audience = RevisionRecord::FOR_PUBLIC
 	) {
-		if ( is_string( $content ) ) { // BC: old style call
+		if ( is_string( $revision ) ) { // BC: very old style call
 			$modelId = $page->getRevision()->getContentModel();
 			$format = $page->getRevision()->getContentFormat();
-			$content = ContentHandler::makeContent( $content, $page->getTitle(), $modelId, $format );
+			$revision = ContentHandler::makeContent( $revision, $page->getTitle(), $modelId, $format );
 		}
+
+		if ( $revision instanceof Content ) { // BC: old style call
+			$content = $revision;
+			$revision = new MutableRevisionRecord( $page->getTitle() );
+			$revision->setId( $revid );
+			$revision->setPageId( $page->getId() );
+			$revision->setContent( SlotRecord::MAIN, $content );
+		}
+
+		if ( $revision ) {
+			// Check that the RevisionRecord matches $revid and $page, but still allow
+			// fake RevisionRecords coming from errors or hooks in Article to be rendered.
+			if ( $revision->getId() && $revision->getId() !== $revid ) {
+				throw new InvalidArgumentException( '$revid parameter mismatches $revision parameter' );
+			}
+			if ( $revision->getPageId()
+				&& $revision->getPageId() !== $page->getTitle()->getArticleID()
+			) {
+				throw new InvalidArgumentException( '$page parameter mismatches $revision parameter' );
+			}
+		}
+
+		// TODO: DI: inject services
+		$this->renderer = MediaWikiServices::getInstance()->getRevisionRenderer();
+		$this->revisionStore = MediaWikiServices::getInstance()->getRevisionStore();
+		$this->parserCache = MediaWikiServices::getInstance()->getParserCache();
 
 		$this->page = $page;
 		$this->revid = $revid;
 		$this->cacheable = $useParserCache;
 		$this->parserOptions = $parserOptions;
-		$this->content = $content;
-		$this->parserCache = MediaWikiServices::getInstance()->getParserCache();
+		$this->revision = $revision;
+		$this->audience = $audience;
 		$this->cacheKey = $this->parserCache->getKey( $page, $parserOptions );
 		$keyPrefix = $this->cacheKey ?: wfMemcKey( 'articleview', 'missingcachekey' );
+
 		parent::__construct( 'ArticleView', $keyPrefix . ':revid:' . $revid );
 	}
 
@@ -114,23 +157,33 @@ class PoolWorkArticleView extends PoolCounterWork {
 
 		$isCurrent = $this->revid === $this->page->getLatest();
 
-		if ( $this->content !== null ) {
-			$content = $this->content;
-		} elseif ( $isCurrent ) {
-			// XXX: why use RAW audience here, and PUBLIC (default) below?
-			$content = $this->page->getContent( Revision::RAW );
-		} else {
-			$rev = Revision::newFromTitle( $this->page->getTitle(), $this->revid );
+		// The current revision cannot be hidden so we can skip some checks.
+		$audience = $isCurrent ? RevisionRecord::RAW : $this->audience;
 
-			if ( $rev === null ) {
-				$content = null;
-			} else {
-				// XXX: why use PUBLIC audience here (default), and RAW above?
-				$content = $rev->getContent();
-			}
+		if ( $this->revision !== null ) {
+			$rev = $this->revision;
+		} elseif ( $isCurrent ) {
+			$rev = $this->page->getRevision()
+				? $this->page->getRevision()->getRevisionRecord()
+				: null;
+		} else {
+			$rev = $this->revisionStore->getRevisionByTitle( $this->page->getTitle(), $this->revid );
 		}
 
-		if ( $content === null ) {
+		if ( !$rev ) {
+			// couldn't load
+			return false;
+		}
+
+		$renderedRevision = $this->renderer->getRenderedRevision(
+			$rev,
+			$this->parserOptions,
+			null,
+			[ 'audience' => $audience ]
+		);
+
+		if ( !$renderedRevision ) {
+			// audience check failed
 			return false;
 		}
 
@@ -138,11 +191,7 @@ class PoolWorkArticleView extends PoolCounterWork {
 		$cacheTime = wfTimestampNow();
 
 		$time = - microtime( true );
-		$this->parserOutput = $content->getParserOutput(
-			$this->page->getTitle(),
-			$this->revid,
-			$this->parserOptions
-		);
+		$this->parserOutput = $renderedRevision->getRevisionParserOutput();
 		$time += microtime( true );
 
 		// Timing hack

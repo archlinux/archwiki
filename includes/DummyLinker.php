@@ -5,14 +5,6 @@
  */
 class DummyLinker {
 
-	/**
-	 * @deprecated since 1.28, use LinkRenderer::getLinkClasses() instead
-	 */
-	public function getLinkColour( $t, $threshold ) {
-		wfDeprecated( __METHOD__, '1.28' );
-		return Linker::getLinkColour( $t, $threshold );
-	}
-
 	public function link(
 		$target,
 		$html = null,
@@ -107,7 +99,7 @@ class DummyLinker {
 		Title $title,
 		$file,
 		$label = '',
-		$alt,
+		$alt = '',
 		$align = 'right',
 		$params = [],
 		$framed = false,

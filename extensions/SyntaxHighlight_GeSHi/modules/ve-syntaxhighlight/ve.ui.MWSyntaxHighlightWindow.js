@@ -36,6 +36,8 @@ ve.ui.MWSyntaxHighlightWindow.static.dir = 'ltr';
 ve.ui.MWSyntaxHighlightWindow.prototype.initialize = function () {
 	var noneMsg = ve.msg( 'syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none' );
 
+	this.languageValid = null;
+
 	this.language = new OO.ui.ComboBoxInputWidget( {
 		$overlay: this.$overlay,
 		menu: {
@@ -90,7 +92,8 @@ ve.ui.MWSyntaxHighlightWindow.prototype.onLanguageInputChange = function () {
 	var validity, inspector = this;
 	validity = this.language.getValidity();
 	validity.always( function () {
-		inspector.getActions().setAbilities( { done: validity.state() === 'resolved' } );
+		inspector.languageValid = validity.state() === 'resolved';
+		inspector.updateActions();
 	} );
 };
 
@@ -103,6 +106,7 @@ ve.ui.MWSyntaxHighlightWindow.prototype.onShowLinesCheckboxChange = function () 
 	var showLines = this.showLinesCheckbox.isSelected();
 	this.input.toggleLineNumbers( showLines );
 	this.startLineNumber.setDisabled( !showLines );
+	this.updateActions();
 };
 
 /**
@@ -111,10 +115,13 @@ ve.ui.MWSyntaxHighlightWindow.prototype.onShowLinesCheckboxChange = function () 
  * @param {string} value Widget value
  */
 ve.ui.MWSyntaxHighlightWindow.prototype.onStartLineNumberChange = function ( value ) {
-	var input = this.input;
+	var inspector = this,
+		input = this.input;
 
 	input.loadingPromise.done( function () {
 		input.editor.setOption( 'firstLineNumber', value !== '' ? +value : 1 );
+	} ).always( function () {
+		inspector.updateActions();
 	} );
 };
 
@@ -154,6 +161,13 @@ ve.ui.MWSyntaxHighlightWindow.prototype.getSetupProcess = function ( data, proce
  */
 ve.ui.MWSyntaxHighlightWindow.prototype.getTeardownProcess = function ( data, process ) {
 	return process;
+};
+
+/**
+ * @inheritdoc ve.ui.MWExtensionWindow
+ */
+ve.ui.MWSyntaxHighlightWindow.prototype.updateActions = function () {
+	this.getActions().setAbilities( { done: this.languageValid && this.isModified() } );
 };
 
 /**

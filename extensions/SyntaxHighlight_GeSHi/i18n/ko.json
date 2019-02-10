@@ -4,7 +4,8 @@
 			"Kwj2772",
 			"ToePeu",
 			"아라",
-			"Revi"
+			"Revi",
+			"Ykhwong"
 		]
 	},
 	"syntaxhighlight-desc": "[http://pygments.org/ Pygments - Python 구문 강조 기능]을 사용해 <code>&lt;syntaxhighlight&gt;</code>로 구문 강조를 제공합니다",
@@ -12,6 +13,7 @@
 	"syntaxhighlight-error-category-desc": "문서에 포함된 코드를 강조하기 위해 시도하는 중에 오류가 발생했습니다.",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "코드",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "언어",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "(없음)",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "줄 번호 보이기",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "코드 상자",
 	"syntaxhighlight-error-pygments-invocation-failure": "Pygments 호출 실패",

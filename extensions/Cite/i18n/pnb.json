@@ -4,7 +4,7 @@
 			"Khalid Mahmood"
 		]
 	},
-	"cite-desc": "جوڑو <nowiki><ref[ name=id]></nowiki> تے <nowiki><references/></nowiki> ٹیگ اتے پتے لئی۔",
+	"cite-desc": "جوڑو <code><nowiki><ref[ name=id]></nowiki></code> تے <code><nowiki><references/></nowiki></code> ٹیگ اتے پتے لئی۔",
 	"cite_error": "سائیٹ غلطی:$1",
 	"cite_error_ref_numeric_key": "ناں منیا جان والا <code>&lt;ref&gt;</code> ٹیگ؛\nناں اک سادہ انٹیجر نئیں ہوسکدا۔ کوئی ہور دسن والا سرناواں دسو۔",
 	"cite_error_ref_no_key": "ناں منیا جان والا <code>&lt;ref&gt;</code> ٹیگ؛\nاتے پتے جیدے چ کوئی شے ناں ہووے لازمی ناں ہووے۔",

@@ -33,13 +33,13 @@ trait ButtonElement {
 		if ( ! $this instanceof Element ) {
 			throw new Exception( "ButtonElement trait can only be used on Element instances" );
 		}
-		$target = isset( $config['button'] ) ? $config['button'] : new Tag( 'a' );
+		$target = $config['button'] ?? new Tag( 'a' );
 		$this->button = $target;
 
 		// Initialization
 		$this->addClasses( [ 'oo-ui-buttonElement' ] );
 		$this->button->addClasses( [ 'oo-ui-buttonElement-button' ] );
-		$this->toggleFramed( isset( $config['framed'] ) ? $config['framed'] : true );
+		$this->toggleFramed( $config['framed'] ?? true );
 
 		// Add `role="button"` on `<a>` elements, where it's needed
 		if ( strtolower( $this->button->getTag() ) === 'a' ) {
@@ -58,7 +58,7 @@ trait ButtonElement {
 	/**
 	 * Toggle frame.
 	 *
-	 * @param bool $framed Make button framed, omit to toggle
+	 * @param bool|null $framed Make button framed, omit to toggle
 	 * @return $this
 	 */
 	public function toggleFramed( $framed = null ) {

@@ -17,6 +17,7 @@ class IndicatorWidget extends Widget {
 
 	/**
 	 * @param array $config Configuration options
+	 * @param-taint $config escapes_html
 	 */
 	public function __construct( array $config = [] ) {
 		// Parent constructor

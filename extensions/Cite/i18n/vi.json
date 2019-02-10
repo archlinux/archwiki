@@ -5,7 +5,7 @@
 			"Vinhtantran"
 		]
 	},
-	"cite-desc": "Thêm các thẻ <nowiki><ref[ name=id]></nowiki> và <nowiki><references/></nowiki> để ghi chú thích hoặc nguồn tham khảo",
+	"cite-desc": "Thêm các thẻ <code><nowiki><ref[ name=id]></nowiki></code> và <code><nowiki><references/></nowiki></code> để ghi chú thích hoặc nguồn tham khảo",
 	"cite_error": "Lỗi chú thích: $1",
 	"cite_error_ref_numeric_key": "Thẻ <code>&lt;ref&gt;</code> sai; tên không thể chỉ là số nguyên, hãy dùng tựa đề có tính miêu tả",
 	"cite_error_ref_no_key": "Thẻ mở <code>&lt;ref&gt;</code> bị hỏng hoặc có tên sai",

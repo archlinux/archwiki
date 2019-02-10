@@ -305,16 +305,25 @@ class ApiParamInfo extends ApiBase {
 		}
 
 		$ret['parameters'] = [];
+		$ret['templatedparameters'] = [];
 		$params = $module->getFinalParams( ApiBase::GET_VALUES_FOR_HELP );
 		$paramDesc = $module->getFinalParamDescription();
+		$index = 0;
 		foreach ( $params as $name => $settings ) {
 			if ( !is_array( $settings ) ) {
 				$settings = [ ApiBase::PARAM_DFLT => $settings ];
 			}
 
 			$item = [
-				'name' => $name
+				'index' => ++$index,
+				'name' => $name,
 			];
+
+			if ( !empty( $settings[ApiBase::PARAM_TEMPLATE_VARS] ) ) {
+				$item['templatevars'] = $settings[ApiBase::PARAM_TEMPLATE_VARS];
+				ApiResult::setIndexedTagName( $item['templatevars'], 'var' );
+			}
+
 			if ( isset( $paramDesc[$name] ) ) {
 				$this->formatHelpMessages( $item, 'description', $paramDesc[$name], true );
 			}
@@ -330,9 +339,7 @@ class ApiParamInfo extends ApiBase {
 			}
 
 			if ( !isset( $settings[ApiBase::PARAM_TYPE] ) ) {
-				$dflt = isset( $settings[ApiBase::PARAM_DFLT] )
-					? $settings[ApiBase::PARAM_DFLT]
-					: null;
+				$dflt = $settings[ApiBase::PARAM_DFLT] ?? null;
 				if ( is_bool( $dflt ) ) {
 					$settings[ApiBase::PARAM_TYPE] = 'boolean';
 				} elseif ( is_string( $dflt ) || is_null( $dflt ) ) {
@@ -436,9 +443,7 @@ class ApiParamInfo extends ApiBase {
 					$allowAll = true;
 					$allSpecifier = ApiBase::ALL_DEFAULT_STRING;
 				} else {
-					$allowAll = isset( $settings[ApiBase::PARAM_ALL] )
-						? $settings[ApiBase::PARAM_ALL]
-						: false;
+					$allowAll = $settings[ApiBase::PARAM_ALL] ?? false;
 					$allSpecifier = ( is_string( $allowAll ) ? $allowAll : ApiBase::ALL_DEFAULT_STRING );
 				}
 				if ( $allowAll && $item['multi'] &&
@@ -507,9 +512,11 @@ class ApiParamInfo extends ApiBase {
 				ApiResult::setIndexedTagName( $item['info'], 'i' );
 			}
 
-			$ret['parameters'][] = $item;
+			$key = empty( $settings[ApiBase::PARAM_TEMPLATE_VARS] ) ? 'parameters' : 'templatedparameters';
+			$ret[$key][] = $item;
 		}
 		ApiResult::setIndexedTagName( $ret['parameters'], 'param' );
+		ApiResult::setIndexedTagName( $ret['templatedparameters'], 'param' );
 
 		$dynamicParams = $module->dynamicParameterDocumentation();
 		if ( $dynamicParams !== null ) {

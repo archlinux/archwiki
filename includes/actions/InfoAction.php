@@ -132,13 +132,18 @@ class InfoAction extends FormlessAction {
 				"mw-pageinfo-${header}"
 			) . "\n";
 			$table = "\n";
+			$below = "";
 			foreach ( $infoTable as $infoRow ) {
+				if ( $infoRow[0] == "below" ) {
+					$below = $infoRow[1] . "\n";
+					continue;
+				}
 				$name = ( $infoRow[0] instanceof Message ) ? $infoRow[0]->escaped() : $infoRow[0];
 				$value = ( $infoRow[1] instanceof Message ) ? $infoRow[1]->escaped() : $infoRow[1];
 				$id = ( $infoRow[0] instanceof Message ) ? $infoRow[0]->getKey() : null;
 				$table = $this->addRow( $table, $name, $value, $id ) . "\n";
 			}
-			$content = $this->addTable( $content, $table ) . "\n";
+			$content = $this->addTable( $content, $table ) . "\n" . $below;
 		}
 
 		// Page footer
@@ -195,52 +200,52 @@ class InfoAction extends FormlessAction {
 	}
 
 	/**
-	 * Returns page information in an easily-manipulated format. Array keys are used so extensions
-	 * may add additional information in arbitrary positions. Array values are arrays with one
-	 * element to be rendered as a header, arrays with two elements to be rendered as a table row.
+	 * Returns an array of info groups (will be rendered as tables), keyed by group ID.
+	 * Group IDs are arbitrary and used so that extensions may add additional information in
+	 * arbitrary positions (and as message keys for section headers for the tables, prefixed
+	 * with 'pageinfo-').
+	 * Each info group is a non-associative array of info items (rendered as table rows).
+	 * Each info item is an array with two elements: the first describes the type of
+	 * information, the second the value for the current page. Both can be strings (will be
+	 * interpreted as raw HTML) or messages (will be interpreted as plain text and escaped).
 	 *
 	 * @return array
 	 */
 	protected function pageInfo() {
-		global $wgContLang;
+		$services = MediaWikiServices::getInstance();
 
 		$user = $this->getUser();
 		$lang = $this->getLanguage();
 		$title = $this->getTitle();
 		$id = $title->getArticleID();
 		$config = $this->context->getConfig();
-		$linkRenderer = MediaWikiServices::getInstance()->getLinkRenderer();
+		$linkRenderer = $services->getLinkRenderer();
 
 		$pageCounts = $this->pageCounts( $this->page );
 
-		$pageProperties = [];
 		$props = PageProps::getInstance()->getAllProperties( $title );
-		if ( isset( $props[$id] ) ) {
-			$pageProperties = $props[$id];
-		}
+		$pageProperties = $props[$id] ?? [];
 
 		// Basic information
 		$pageInfo = [];
 		$pageInfo['header-basic'] = [];
 
 		// Display title
-		$displayTitle = $title->getPrefixedText();
-		if ( isset( $pageProperties['displaytitle'] ) ) {
-			$displayTitle = $pageProperties['displaytitle'];
-		}
+		$displayTitle = $pageProperties['displaytitle'] ?? $title->getPrefixedText();
 
 		$pageInfo['header-basic'][] = [
 			$this->msg( 'pageinfo-display-title' ), $displayTitle
 		];
 
 		// Is it a redirect? If so, where to?
-		if ( $title->isRedirect() ) {
+		$redirectTarget = $this->page->getRedirectTarget();
+		if ( $redirectTarget !== null ) {
 			$pageInfo['header-basic'][] = [
 				$this->msg( 'pageinfo-redirectsto' ),
-				$linkRenderer->makeLink( $this->page->getRedirectTarget() ) .
+				$linkRenderer->makeLink( $redirectTarget ) .
 				$this->msg( 'word-separator' )->escaped() .
 				$this->msg( 'parentheses' )->rawParams( $linkRenderer->makeLink(
-					$this->page->getRedirectTarget(),
+					$redirectTarget,
 					$this->msg( 'pageinfo-redirectsto-info' )->text(),
 					[],
 					[ 'action' => 'info' ]
@@ -249,10 +254,7 @@ class InfoAction extends FormlessAction {
 		}
 
 		// Default sort key
-		$sortKey = $title->getCategorySortkey();
-		if ( isset( $pageProperties['defaultsort'] ) ) {
-			$sortKey = $pageProperties['defaultsort'];
-		}
+		$sortKey = $pageProperties['defaultsort'] ?? $title->getCategorySortkey();
 
 		$sortKey = htmlspecialchars( $sortKey );
 		$pageInfo['header-basic'][] = [ $this->msg( 'pageinfo-default-sort' ), $sortKey ];
@@ -507,6 +509,16 @@ class InfoAction extends FormlessAction {
 				$this->msg( "restriction-$restrictionType" ), $message
 			];
 		}
+		$protectLog = SpecialPage::getTitleFor( 'Log' );
+		$pageInfo['header-restrictions'][] = [
+			'below',
+			$linkRenderer->makeKnownLink(
+				$protectLog,
+				$this->msg( 'pageinfo-view-protect-log' )->text(),
+				[],
+				[ 'type' => 'protect', 'page' => $title->getPrefixedText() ]
+			),
+		];
 
 		if ( !$this->page->exists() ) {
 			return $pageInfo;
@@ -603,13 +615,13 @@ class InfoAction extends FormlessAction {
 		];
 
 		// Array of MagicWord objects
-		$magicWords = MagicWord::getDoubleUnderscoreArray();
+		$magicWords = $services->getMagicWordFactory()->getDoubleUnderscoreArray();
 
 		// Array of magic word IDs
 		$wordIDs = $magicWords->names;
 
 		// Array of IDs => localized magic words
-		$localizedWords = $wgContLang->getMagicWords();
+		$localizedWords = $services->getContentLanguage()->getMagicWords();
 
 		$listItems = [];
 		foreach ( $pageProperties as $property => $value ) {
@@ -727,27 +739,18 @@ class InfoAction extends FormlessAction {
 				$dbrWatchlist = wfGetDB( DB_REPLICA, 'watchlist' );
 				$setOpts += Database::getCacheSetOptions( $dbr, $dbrWatchlist );
 
-				if ( $wgActorTableSchemaMigrationStage === MIGRATION_NEW ) {
+				if ( $wgActorTableSchemaMigrationStage & SCHEMA_COMPAT_READ_NEW ) {
 					$tables = [ 'revision_actor_temp' ];
 					$field = 'revactor_actor';
 					$pageField = 'revactor_page';
 					$tsField = 'revactor_timestamp';
 					$joins = [];
-				} elseif ( $wgActorTableSchemaMigrationStage === MIGRATION_OLD ) {
+				} else {
 					$tables = [ 'revision' ];
 					$field = 'rev_user_text';
 					$pageField = 'rev_page';
 					$tsField = 'rev_timestamp';
 					$joins = [];
-				} else {
-					$tables = [ 'revision', 'revision_actor_temp', 'actor' ];
-					$field = 'COALESCE( actor_name, rev_user_text)';
-					$pageField = 'rev_page';
-					$tsField = 'rev_timestamp';
-					$joins = [
-						'revision_actor_temp' => [ 'LEFT JOIN', 'revactor_rev = rev_id' ],
-						'actor' => [ 'LEFT JOIN', 'revactor_actor = actor_id' ],
-					];
 				}
 
 				$watchedItemStore = MediaWikiServices::getInstance()->getWatchedItemStore();

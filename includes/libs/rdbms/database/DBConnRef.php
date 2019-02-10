@@ -33,7 +33,7 @@ class DBConnRef implements IDatabase {
 		$this->lb = $lb;
 		if ( $conn instanceof Database ) {
 			$this->conn = $conn; // live handle
-		} elseif ( count( $conn ) >= 4 && $conn[self::FLD_DOMAIN] !== false ) {
+		} elseif ( is_array( $conn ) && count( $conn ) >= 4 && $conn[self::FLD_DOMAIN] !== false ) {
 			$this->params = $conn;
 		} else {
 			throw new InvalidArgumentException( "Missing lazy connection arguments." );
@@ -46,7 +46,7 @@ class DBConnRef implements IDatabase {
 			$this->conn = $this->lb->getConnection( $db, $groups, $wiki, $flags );
 		}
 
-		return call_user_func_array( [ $this->conn, $name ], $arguments );
+		return $this->conn->$name( ...$arguments );
 	}
 
 	public function getServerInfo() {
@@ -66,6 +66,10 @@ class DBConnRef implements IDatabase {
 	}
 
 	public function explicitTrxActive() {
+		return $this->__call( __FUNCTION__, func_get_args() );
+	}
+
+	public function assertNoOpenTransactions() {
 		return $this->__call( __FUNCTION__, func_get_args() );
 	}
 
@@ -110,6 +114,10 @@ class DBConnRef implements IDatabase {
 	}
 
 	public function writesPending() {
+		return $this->__call( __FUNCTION__, func_get_args() );
+	}
+
+	public function preCommitCallbacksPending() {
 		return $this->__call( __FUNCTION__, func_get_args() );
 	}
 
@@ -163,15 +171,14 @@ class DBConnRef implements IDatabase {
 		return $this->__call( __FUNCTION__, func_get_args() );
 	}
 
+	/**
+	 * @codeCoverageIgnore
+	 */
 	public function getWikiID() {
 		return $this->getDomainID();
 	}
 
 	public function getType() {
-		return $this->__call( __FUNCTION__, func_get_args() );
-	}
-
-	public function open( $server, $user, $password, $dbName ) {
 		return $this->__call( __FUNCTION__, func_get_args() );
 	}
 
@@ -280,6 +287,12 @@ class DBConnRef implements IDatabase {
 		return $this->__call( __FUNCTION__, func_get_args() );
 	}
 
+	public function lockForUpdate(
+		$table, $conds = '', $fname = __METHOD__, $options = [], $join_conds = []
+	) {
+		return $this->__call( __FUNCTION__, func_get_args() );
+	}
+
 	public function fieldExists( $table, $field, $fname = __METHOD__ ) {
 		return $this->__call( __FUNCTION__, func_get_args() );
 	}
@@ -358,7 +371,13 @@ class DBConnRef implements IDatabase {
 	}
 
 	public function selectDB( $db ) {
-		return $this->__call( __FUNCTION__, func_get_args() );
+		// Disallow things that might confuse the LoadBalancer tracking
+		throw new DBUnexpectedError( $this, "Database selection is disallowed to enable reuse." );
+	}
+
+	public function selectDomain( $domain ) {
+		// Disallow things that might confuse the LoadBalancer tracking
+		throw new DBUnexpectedError( $this, "Database selection is disallowed to enable reuse." );
 	}
 
 	public function getDBname() {
@@ -480,6 +499,10 @@ class DBConnRef implements IDatabase {
 	}
 
 	public function onTransactionResolution( callable $callback, $fname = __METHOD__ ) {
+		return $this->__call( __FUNCTION__, func_get_args() );
+	}
+
+	public function onTransactionCommitOrIdle( callable $callback, $fname = __METHOD__ ) {
 		return $this->__call( __FUNCTION__, func_get_args() );
 	}
 
@@ -631,4 +654,8 @@ class DBConnRef implements IDatabase {
 	}
 }
 
+/**
+ * @since 1.22
+ * @deprecated since 1.29
+ */
 class_alias( DBConnRef::class, 'DBConnRef' );

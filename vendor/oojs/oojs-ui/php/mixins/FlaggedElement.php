@@ -30,10 +30,10 @@ trait FlaggedElement {
 	 */
 	public function initializeFlaggedElement( array $config = [] ) {
 		// Properties
-		$this->flagged = isset( $config['flagged'] ) ? $config['flagged'] : $this;
+		$this->flagged = $config['flagged'] ?? $this;
 
 		// Initialization
-		$this->setFlags( isset( $config['flags'] ) ? $config['flags'] : null );
+		$this->setFlags( $config['flags'] ?? null );
 
 		$this->registerConfigCallback( function ( &$config ) {
 			if ( !empty( $this->flags ) ) {

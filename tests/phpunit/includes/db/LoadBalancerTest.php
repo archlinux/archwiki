@@ -48,6 +48,10 @@ class LoadBalancerTest extends MediaWikiTestCase {
 		];
 	}
 
+	/**
+	 * @covers LoadBalancer::getLocalDomainID()
+	 * @covers LoadBalancer::resolveDomainID()
+	 */
 	public function testWithoutReplica() {
 		global $wgDBname;
 
@@ -64,6 +68,9 @@ class LoadBalancerTest extends MediaWikiTestCase {
 		$ld = DatabaseDomain::newFromId( $lb->getLocalDomainID() );
 		$this->assertEquals( $wgDBname, $ld->getDatabase(), 'local domain DB set' );
 		$this->assertEquals( $this->dbPrefix(), $ld->getTablePrefix(), 'local domain prefix set' );
+		$this->assertSame( 'my_test_wiki', $lb->resolveDomainID( 'my_test_wiki' ) );
+		$this->assertSame( $ld->getId(), $lb->resolveDomainID( false ) );
+		$this->assertSame( $ld->getId(), $lb->resolveDomainID( $ld ) );
 
 		$this->assertFalse( $called );
 		$dbw = $lb->getConnection( DB_MASTER );
@@ -190,32 +197,38 @@ class LoadBalancerTest extends MediaWikiTestCase {
 
 	private function assertWriteAllowed( Database $db ) {
 		$table = $db->tableName( 'some_table' );
+		// Trigger a transaction so that rollback() will remove all the tables.
+		// Don't do this for MySQL/Oracle as they auto-commit transactions for DDL
+		// statements such as CREATE TABLE.
+		$useAtomicSection = in_array( $db->getType(), [ 'sqlite', 'postgres', 'mssql' ], true );
 		try {
 			$db->dropTable( 'some_table' ); // clear for sanity
+			$this->assertNotEquals( $db::STATUS_TRX_ERROR, $db->trxStatus() );
 
-			// Trigger DBO_TRX to create a transaction so the flush below will
-			// roll everything here back in sqlite. But don't actually do the
-			// code below inside an atomic section becaue MySQL and Oracle
-			// auto-commit transactions for DDL statements like CREATE TABLE.
-			$db->startAtomic( __METHOD__ );
-			$db->endAtomic( __METHOD__ );
-
+			if ( $useAtomicSection ) {
+				$db->startAtomic( __METHOD__ );
+			}
 			// Use only basic SQL and trivial types for these queries for compatibility
 			$this->assertNotSame(
 				false,
 				$db->query( "CREATE TABLE $table (id INT, time INT)", __METHOD__ ),
 				"table created"
 			);
+			$this->assertNotEquals( $db::STATUS_TRX_ERROR, $db->trxStatus() );
 			$this->assertNotSame(
 				false,
 				$db->query( "DELETE FROM $table WHERE id=57634126", __METHOD__ ),
 				"delete query"
 			);
+			$this->assertNotEquals( $db::STATUS_TRX_ERROR, $db->trxStatus() );
 		} finally {
-			// Drop the table to clean up, ignoring any error.
-			$db->query( "DROP TABLE $table", __METHOD__, true );
-			// Rollback the DBO_TRX transaction for sqlite's benefit.
+			if ( !$useAtomicSection ) {
+				// Drop the table to clean up, ignoring any error.
+				$db->dropTable( 'some_table' );
+			}
+			// Rollback the atomic section for sqlite's benefit.
 			$db->rollback( __METHOD__, 'flush' );
+			$this->assertNotEquals( $db::STATUS_TRX_ERROR, $db->trxStatus() );
 		}
 	}
 
@@ -298,8 +311,109 @@ class LoadBalancerTest extends MediaWikiTestCase {
 				$lb->getAnyOpenConnection( $i, $lb::CONN_TRX_AUTOCOMMIT ) );
 			$this->assertEquals( $conn2,
 				$lb->getConnection( $i, [], false, $lb::CONN_TRX_AUTOCOMMIT ) );
+
+			$conn2->startAtomic( __METHOD__ );
+			try {
+				$lb->getConnection( $i, [], false, $lb::CONN_TRX_AUTOCOMMIT );
+				$conn2->endAtomic( __METHOD__ );
+				$this->fail( "No exception thrown." );
+			} catch ( DBUnexpectedError $e ) {
+				$this->assertEquals(
+					'Wikimedia\Rdbms\LoadBalancer::openConnection: ' .
+					'CONN_TRX_AUTOCOMMIT handle has a transaction.',
+					$e->getMessage()
+				);
+			}
+			$conn2->endAtomic( __METHOD__ );
 		}
 
 		$lb->closeAll();
+	}
+
+	public function testTransactionCallbackChains() {
+		global $wgDBserver, $wgDBname, $wgDBuser, $wgDBpassword, $wgDBtype, $wgSQLiteDataDir;
+
+		$servers = [
+			[
+				'host' => $wgDBserver,
+				'dbname' => $wgDBname,
+				'tablePrefix' => $this->dbPrefix(),
+				'user' => $wgDBuser,
+				'password' => $wgDBpassword,
+				'type' => $wgDBtype,
+				'dbDirectory' => $wgSQLiteDataDir,
+				'load' => 0,
+				'flags' => DBO_TRX // REPEATABLE-READ for consistency
+			],
+		];
+
+		$lb = new LoadBalancer( [
+			'servers' => $servers,
+			'localDomain' => new DatabaseDomain( $wgDBname, null, $this->dbPrefix() )
+		] );
+
+		$conn1 = $lb->openConnection( $lb->getWriterIndex(), false );
+		$conn2 = $lb->openConnection( $lb->getWriterIndex(), '' );
+
+		$count = 0;
+		$lb->forEachOpenMasterConnection( function () use ( &$count ) {
+			++$count;
+		} );
+		$this->assertEquals( 2, $count, 'Connection handle count' );
+
+		$tlCalls = 0;
+		$lb->setTransactionListener( 'test-listener', function () use ( &$tlCalls ) {
+			++$tlCalls;
+		} );
+
+		$lb->beginMasterChanges( __METHOD__ );
+		$bc = array_fill_keys( [ 'a', 'b', 'c', 'd' ], 0 );
+		$conn1->onTransactionPreCommitOrIdle( function () use ( &$bc, $conn1, $conn2 ) {
+			$bc['a'] = 1;
+			$conn2->onTransactionPreCommitOrIdle( function () use ( &$bc, $conn1, $conn2 ) {
+				$bc['b'] = 1;
+				$conn1->onTransactionPreCommitOrIdle( function () use ( &$bc, $conn1, $conn2 ) {
+					$bc['c'] = 1;
+					$conn1->onTransactionPreCommitOrIdle( function () use ( &$bc, $conn1, $conn2 ) {
+						$bc['d'] = 1;
+					} );
+				} );
+			} );
+		} );
+		$lb->finalizeMasterChanges();
+		$lb->approveMasterChanges( [] );
+		$lb->commitMasterChanges( __METHOD__ );
+		$lb->runMasterTransactionIdleCallbacks();
+		$lb->runMasterTransactionListenerCallbacks();
+
+		$this->assertEquals( array_fill_keys( [ 'a', 'b', 'c', 'd' ], 1 ), $bc );
+		$this->assertEquals( 2, $tlCalls );
+
+		$tlCalls = 0;
+		$lb->beginMasterChanges( __METHOD__ );
+		$ac = array_fill_keys( [ 'a', 'b', 'c', 'd' ], 0 );
+		$conn1->onTransactionCommitOrIdle( function () use ( &$ac, $conn1, $conn2 ) {
+			$ac['a'] = 1;
+			$conn2->onTransactionCommitOrIdle( function () use ( &$ac, $conn1, $conn2 ) {
+				$ac['b'] = 1;
+				$conn1->onTransactionCommitOrIdle( function () use ( &$ac, $conn1, $conn2 ) {
+					$ac['c'] = 1;
+					$conn1->onTransactionCommitOrIdle( function () use ( &$ac, $conn1, $conn2 ) {
+						$ac['d'] = 1;
+					} );
+				} );
+			} );
+		} );
+		$lb->finalizeMasterChanges();
+		$lb->approveMasterChanges( [] );
+		$lb->commitMasterChanges( __METHOD__ );
+		$lb->runMasterTransactionIdleCallbacks();
+		$lb->runMasterTransactionListenerCallbacks();
+
+		$this->assertEquals( array_fill_keys( [ 'a', 'b', 'c', 'd' ], 1 ), $ac );
+		$this->assertEquals( 2, $tlCalls );
+
+		$conn1->close();
+		$conn2->close();
 	}
 }

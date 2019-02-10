@@ -12,12 +12,10 @@
 			"Vodnokon4e"
 		]
 	},
-	"visualeditor-cite-tool-definition.json": "null",
 	"visualeditor-cite-tool-name-book": "Книга",
 	"visualeditor-cite-tool-name-journal": "Списание",
 	"visualeditor-cite-tool-name-news": "Новини",
 	"visualeditor-cite-tool-name-web": "Уебсайт",
-	"cite-tool-definition.json": "null",
 	"cite-ve-dialog-reference-editing-reused": "Тази препратка се използва на страницата $1 {{PLURAL:$1|пъти}}.",
 	"cite-ve-dialog-reference-options-group-label": "Използвайте тази група",
 	"cite-ve-dialog-reference-options-group-placeholder": "Общи препратки",

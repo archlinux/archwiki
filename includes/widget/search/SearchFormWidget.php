@@ -4,6 +4,7 @@ namespace MediaWiki\Widget\Search;
 
 use Hooks;
 use Html;
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Widget\SearchInputWidget;
 use MWNamespace;
 use SearchEngineConfig;
@@ -50,7 +51,8 @@ class SearchFormWidget {
 		$offset,
 		$isPowerSearch
 	) {
-		return Xml::openElement(
+		return '<div class="mw-search-form-wrapper">' .
+			Xml::openElement(
 				'form',
 				[
 					'id' => $isPowerSearch ? 'powersearch' : 'search',
@@ -67,7 +69,8 @@ class SearchFormWidget {
 					"<div style='clear:both'></div>" .
 				"</div>" .
 				$this->optionsHtml( $term, $isPowerSearch, $profile ) .
-			'</form>';
+			'</form>' .
+		'</div>';
 	}
 
 	/**
@@ -99,6 +102,10 @@ class SearchFormWidget {
 		] );
 
 		$html .= $layout;
+
+		if ( $this->specialSearch->getPrefix() !== '' ) {
+			$html .= Html::hidden( 'prefix', $this->specialSearch->getPrefix() );
+		}
 
 		if ( $totalResults > 0 && $offset < $totalResults ) {
 			$html .= Xml::tags(
@@ -165,11 +172,10 @@ class SearchFormWidget {
 	 * @return bool
 	 */
 	protected function startsWithImage( $term ) {
-		global $wgContLang;
-
 		$parts = explode( ':', $term );
 		return count( $parts ) > 1
-			? $wgContLang->getNsIndex( $parts[0] ) === NS_FILE
+			? MediaWikiServices::getInstance()->getContentLanguage()->getNsIndex( $parts[0] ) ===
+				NS_FILE
 			: false;
 	}
 
@@ -230,17 +236,16 @@ class SearchFormWidget {
 	 * @return string HTML
 	 */
 	protected function powerSearchBox( $term, array $opts ) {
-		global $wgContLang;
-
 		$rows = [];
 		$activeNamespaces = $this->specialSearch->getNamespaces();
+		$langConverter = MediaWikiServices::getInstance()->getContentLanguage()->getConverter();
 		foreach ( $this->searchConfig->searchableNamespaces() as $namespace => $name ) {
 			$subject = MWNamespace::getSubject( $namespace );
 			if ( !isset( $rows[$subject] ) ) {
 				$rows[$subject] = "";
 			}
 
-			$name = $wgContLang->getConverter()->convertNamespace( $namespace );
+			$name = $langConverter->convertNamespace( $namespace );
 			if ( $name === '' ) {
 				$name = $this->specialSearch->msg( 'blanknamespace' )->text();
 			}
@@ -270,7 +275,7 @@ class SearchFormWidget {
 		$showSections = [
 			'namespaceTables' => "<table>" . implode( '</table><table>', $namespaceTables ) . '</table>',
 		];
-		Hooks::run( 'SpecialSearchPowerBox', [ &$showSections, $term, $opts ] );
+		Hooks::run( 'SpecialSearchPowerBox', [ &$showSections, $term, &$opts ] );
 
 		$hidden = '';
 		foreach ( $opts as $key => $value ) {

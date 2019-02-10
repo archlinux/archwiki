@@ -9,7 +9,8 @@
 			"He7d3r",
 			"!Silent",
 			"Felipe L. Ewald",
-			"Opraco"
+			"Opraco",
+			"Eduardo Addad de Oliveira"
 		]
 	},
 	"skinname-vector": "Vector",
@@ -27,5 +28,7 @@
 	"vector-view-history": "Ver histórico",
 	"vector-view-view": "Ler",
 	"vector-view-viewsource": "Ver código-fonte",
+	"vector-jumptonavigation": "Ir para navegação",
+	"vector-jumptosearch": "Ir para pesquisar",
 	"vector-more-actions": "Mais"
 }

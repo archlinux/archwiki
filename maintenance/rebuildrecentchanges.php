@@ -221,7 +221,7 @@ class RebuildRecentchanges extends Maintenance {
 				} else {
 					# No previous edit
 					$lastOldId = 0;
-					$lastSize = null;
+					$lastSize = 0;
 					$new = 1; // probably true
 				}
 			}
@@ -269,22 +269,25 @@ class RebuildRecentchanges extends Maintenance {
 	 * Rebuild pass 3: Insert `recentchanges` entries for action logs.
 	 */
 	private function rebuildRecentChangesTablePass3( ILBFactory $lbFactory ) {
-		global $wgLogTypes, $wgLogRestrictions;
+		global $wgLogRestrictions, $wgFilterLogTypes;
 
 		$dbw = $this->getDB( DB_MASTER );
 		$commentStore = CommentStore::getStore();
+		$nonRCLogs = array_merge( array_keys( $wgLogRestrictions ),
+			array_keys( $wgFilterLogTypes ),
+			[ 'create' ] );
 
-		$this->output( "Loading from user, page, and logging tables...\n" );
+		$this->output( "Loading from user and logging tables...\n" );
 
 		$commentQuery = $commentStore->getJoin( 'log_comment' );
 		$actorQuery = ActorMigration::newMigration()->getJoin( 'log_user' );
 		$res = $dbw->select(
-			[ 'logging', 'page' ] + $commentQuery['tables'] + $actorQuery['tables'],
+			[ 'logging' ] + $commentQuery['tables'] + $actorQuery['tables'],
 			[
 				'log_timestamp',
 				'log_namespace',
 				'log_title',
-				'page_id',
+				'log_page',
 				'log_type',
 				'log_action',
 				'log_id',
@@ -294,16 +297,12 @@ class RebuildRecentchanges extends Maintenance {
 			[
 				'log_timestamp > ' . $dbw->addQuotes( $dbw->timestamp( $this->cutoffFrom ) ),
 				'log_timestamp < ' . $dbw->addQuotes( $dbw->timestamp( $this->cutoffTo ) ),
-				// Some logs don't go in RC since they are private.
-				// @FIXME: core/extensions also have spammy logs that don't go in RC.
-				'log_type' => array_diff( $wgLogTypes, array_keys( $wgLogRestrictions ) ),
+				// Some logs don't go in RC since they are private, or are included in the filterable log types.
+				'log_type' => array_diff( LogPage::validTypes(), $nonRCLogs ),
 			],
 			__METHOD__,
 			[ 'ORDER BY' => 'log_timestamp DESC' ],
-			[
-				'page' =>
-					[ 'LEFT JOIN', [ 'log_namespace=page_namespace', 'log_title=page_title' ] ]
-			] + $commentQuery['joins'] + $actorQuery['joins']
+			$commentQuery['joins'] + $actorQuery['joins']
 		);
 
 		$field = $dbw->fieldInfo( 'recentchanges', 'rc_cur_id' );
@@ -328,8 +327,8 @@ class RebuildRecentchanges extends Maintenance {
 					'rc_type' => RC_LOG,
 					'rc_source' => RecentChange::SRC_LOG,
 					'rc_cur_id' => $field->isNullable()
-						? $row->page_id
-						: (int)$row->page_id, // NULL => 0,
+						? $row->log_page
+						: (int)$row->log_page, // NULL => 0,
 					'rc_log_type' => $row->log_type,
 					'rc_log_action' => $row->log_action,
 					'rc_logid' => $row->log_id,

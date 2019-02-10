@@ -1,10 +1,21 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ninjastrikers"
+			"Ninjastrikers",
+			"Dr Lotus Black"
 		]
 	},
 	"multimediaviewer-repository-local": "နောက်ထပ် အချက်အလက်များ",
+	"multimediaviewer-discuss-mmv": "ဆွေးနွေးချက်",
 	"multimediaviewer-help-mmv": "အကူအညီ",
-	"multimediaviewer-description-page-popup-text": "$1 ရှိ ဤဖိုင်အကြောင်း နောက်ထပ် အချက်အလက်များ"
+	"multimediaviewer-geoloc-north": "N",
+	"multimediaviewer-geoloc-east": "E",
+	"multimediaviewer-geoloc-south": "S",
+	"multimediaviewer-geoloc-west": "W",
+	"multimediaviewer-geoloc-coord": "$1° $2′ $3″ $4",
+	"multimediaviewer-geoloc-coords": "$1၊ $2",
+	"multimediaviewer-geolocation": "တည်နေရာ: $1",
+	"multimediaviewer-description-page-popup-text": "$1 ရှိ ဤဖိုင်အကြောင်း နောက်ထပ် အချက်အလက်များ",
+	"multimediaviewer-title-popup-text": "ဖော်ပြချက်",
+	"multimediaviewer-option-cancel-button": "မလုပ်တော့ပါ"
 }

@@ -14,41 +14,29 @@
 class ApiEditPageTest extends ApiTestCase {
 
 	protected function setUp() {
-		global $wgExtraNamespaces, $wgNamespaceContentModels, $wgContentHandlers, $wgContLang;
-
 		parent::setUp();
 
 		$this->setMwGlobals( [
-			'wgExtraNamespaces' => $wgExtraNamespaces,
-			'wgNamespaceContentModels' => $wgNamespaceContentModels,
-			'wgContentHandlers' => $wgContentHandlers,
-			'wgContLang' => $wgContLang,
+			'wgExtraNamespaces' => [
+				12312 => 'Dummy',
+				12313 => 'Dummy_talk',
+				12314 => 'DummyNonText',
+				12315 => 'DummyNonText_talk',
+			],
+			'wgNamespaceContentModels' => [
+				12312 => 'testing',
+				12314 => 'testing-nontext',
+			],
 		] );
-
-		$wgExtraNamespaces[12312] = 'Dummy';
-		$wgExtraNamespaces[12313] = 'Dummy_talk';
-		$wgExtraNamespaces[12314] = 'DummyNonText';
-		$wgExtraNamespaces[12315] = 'DummyNonText_talk';
-
-		$wgNamespaceContentModels[12312] = "testing";
-		$wgNamespaceContentModels[12314] = "testing-nontext";
-
-		$wgContentHandlers["testing"] = 'DummyContentHandlerForTesting';
-		$wgContentHandlers["testing-nontext"] = 'DummyNonTextContentHandler';
-		$wgContentHandlers["testing-serialize-error"] =
-			'DummySerializeErrorContentHandler';
-
-		MWNamespace::clearCaches();
-		$wgContLang->resetNamespaces(); # reset namespace cache
-	}
-
-	protected function tearDown() {
-		global $wgContLang;
-
-		MWNamespace::clearCaches();
-		$wgContLang->resetNamespaces(); # reset namespace cache
-
-		parent::tearDown();
+		$this->mergeMwGlobalArrayValue( 'wgContentHandlers', [
+			'testing' => 'DummyContentHandlerForTesting',
+			'testing-nontext' => 'DummyNonTextContentHandler',
+			'testing-serialize-error' => 'DummySerializeErrorContentHandler',
+		] );
+		$this->tablesUsed = array_merge(
+			$this->tablesUsed,
+			[ 'change_tag', 'change_tag_def', 'logging' ]
+		);
 	}
 
 	public function testEdit() {
@@ -415,7 +403,7 @@ class ApiEditPageTest extends ApiTestCase {
 			"no edit conflict expected here" );
 	}
 
-	public function testEditConflict_bug41990() {
+	public function testEditConflict_T43990() {
 		static $count = 0;
 		$count++;
 
@@ -426,11 +414,11 @@ class ApiEditPageTest extends ApiTestCase {
 		*/
 
 		// assume NS_HELP defaults to wikitext
-		$name = "Help:ApiEditPageTest_testEditConflict_redirect_bug41990_$count";
+		$name = "Help:ApiEditPageTest_testEditConflict_redirect_T43990_$count";
 		$title = Title::newFromText( $name );
 		$page = WikiPage::factory( $title );
 
-		$rname = "Help:ApiEditPageTest_testEditConflict_redirect_bug41990_r$count";
+		$rname = "Help:ApiEditPageTest_testEditConflict_redirect_T43990_r$count";
 		$rtitle = Title::newFromText( $rname );
 		$rpage = WikiPage::factory( $rtitle );
 
@@ -733,7 +721,7 @@ class ApiEditPageTest extends ApiTestCase {
 		$dbw = wfGetDB( DB_MASTER );
 		$dbw->update(
 			'revision',
-			[ 'rev_timestamp' => wfTimestamp( TS_MW, time() - 86400 ) ],
+			[ 'rev_timestamp' => $dbw->timestamp( time() - 86400 ) ],
 			[ 'rev_id' => $revId1 ],
 			__METHOD__
 		);
@@ -1344,6 +1332,7 @@ class ApiEditPageTest extends ApiTestCase {
 	}
 
 	public function testEditWithTag() {
+		$this->setMwGlobals( 'wgChangeTagsSchemaMigrationStage', MIGRATION_WRITE_BOTH );
 		$name = 'Help:' . ucfirst( __FUNCTION__ );
 
 		ChangeTags::defineTag( 'custom tag' );
@@ -1358,6 +1347,30 @@ class ApiEditPageTest extends ApiTestCase {
 		$dbw = wfGetDB( DB_MASTER );
 		$this->assertSame( 'custom tag', $dbw->selectField(
 			'change_tag', 'ct_tag', [ 'ct_rev_id' => $revId ], __METHOD__ ) );
+	}
+
+	public function testEditWithTagNewBackend() {
+		$this->setMwGlobals( 'wgChangeTagsSchemaMigrationStage', MIGRATION_NEW );
+		$name = 'Help:' . ucfirst( __FUNCTION__ );
+
+		ChangeTags::defineTag( 'custom tag' );
+
+		$revId = $this->doApiRequestWithToken( [
+			'action' => 'edit',
+			'title' => $name,
+			'text' => 'Some text',
+			'tags' => 'custom tag',
+		] )[0]['edit']['newrevid'];
+
+		$dbw = wfGetDB( DB_MASTER );
+		$this->assertSame( 'custom tag', $dbw->selectField(
+			[ 'change_tag', 'change_tag_def' ],
+			'ctd_name',
+			[ 'ct_rev_id' => $revId ],
+			__METHOD__,
+			[ 'change_tag_def' => [ 'INNER JOIN', 'ctd_id = ct_tag_id' ] ]
+			)
+		);
 	}
 
 	public function testEditWithoutTagPermission() {
