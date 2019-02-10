@@ -5,7 +5,7 @@
 			"Shijualex"
 		]
 	},
-	"cite-desc": "അവലംബം ചേർക്കുവാൻ ഉപയോഗിക്കാനുള്ള <nowiki><ref[ name=id]></nowiki>, <nowiki><references/></nowiki> എന്നീ ടാഗുകൾ ചേർക്കുന്നു",
+	"cite-desc": "അവലംബം ചേർക്കുവാൻ ഉപയോഗിക്കാനുള്ള <code><nowiki><ref[ name=id]></nowiki></code>, <code><nowiki><references/></nowiki></code> എന്നീ ടാഗുകൾ ചേർക്കുന്നു",
 	"cite_error": "ഉദ്ധരിച്ചതിൽ പിഴവ്: $1",
 	"cite_error_ref_numeric_key": "അസാധുവായ <code>&lt;ref&gt;</code> ടാഗ്;\nനാമത്തിൽ സംഖ്യ മാത്രമായി അനുവദനീയമല്ല. എന്തെങ്കിലും ലഘുവിവരണം ഉപയോഗിക്കുക.",
 	"cite_error_ref_no_key": "തുറക്കാനുള്ള <code>&lt;ref&gt;</code> ടാഗിൽ പിഴവുണ്ട് അല്ലെങ്കിൽ പേരിൽ കുഴപ്പമുണ്ട്",
@@ -25,8 +25,6 @@
 	"cite_error_empty_references_define": " <code>&lt;references&gt;</code> ആവശ്യത്തിനായി \"$1\" എന്ന പേരിൽ നിർ‌വചിക്കപ്പെട്ട <code>&lt;ref&gt;</code> റ്റാഗിന് ഉള്ളടക്കമൊന്നുമില്ല.",
 	"cite-tracking-category-cite-error": "അവലംബത്തിൽ പിഴവുകളുള്ള താളുകൾ",
 	"cite-tracking-category-cite-error-desc": "അവലംബം ടാഗുകൾ ഉപയോഗിച്ചതിൽ പിഴവുകളുള്ള താളുകളാണ് ഈ വർഗ്ഗത്തിൽ ഉള്ളത്.",
-	"cite_reference_link_prefix": "ഉദ്ധരിണി_അവലംബം-",
-	"cite_references_link_prefix": "ഉദ്ധരിണി_കുറിപ്പ്-",
 	"cite_references_link_accessibility_label": "മുകളിലേയ്ക്ക്",
 	"cite_references_link_many_accessibility_label": "മുകളിൽ ഇവിടേയ്ക്ക്:",
 	"cite_section_preview_references": "അവലംബങ്ങൾ എങ്ങനെയുണ്ടെന്ന് കാണുക",

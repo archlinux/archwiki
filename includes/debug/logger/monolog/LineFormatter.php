@@ -42,8 +42,8 @@ use MWExceptionHandler;
 class LineFormatter extends MonologLineFormatter {
 
 	/**
-	 * @param string $format The format of the message
-	 * @param string $dateFormat The format of the timestamp: one supported by DateTime::format
+	 * @param string|null $format The format of the message
+	 * @param string|null $dateFormat The format of the timestamp: one supported by DateTime::format
 	 * @param bool $allowInlineLineBreaks Whether to allow inline line breaks in log entries
 	 * @param bool $ignoreEmptyContextAndExtra
 	 * @param bool $includeStacktraces
@@ -164,7 +164,7 @@ class LineFormatter extends MonologLineFormatter {
 						);
 				}
 
-				$prev = isset( $prev['previous'] ) ? $prev['previous'] : null;
+				$prev = $prev['previous'] ?? null;
 			}
 		}
 		return $str;

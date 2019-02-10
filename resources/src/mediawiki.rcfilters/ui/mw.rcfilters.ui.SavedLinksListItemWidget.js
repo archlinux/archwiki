@@ -1,4 +1,4 @@
-( function ( mw ) {
+( function () {
 	/**
 	 * Quick links menu option widget
 	 *
@@ -56,7 +56,7 @@
 				} ),
 				new OO.ui.MenuOptionWidget( {
 					data: 'delete',
-					icon: 'close',
+					icon: 'trash',
 					label: mw.msg( 'rcfilters-savedqueries-remove' )
 				} ),
 				new OO.ui.MenuOptionWidget( {
@@ -326,4 +326,4 @@
 		return this.model.getID();
 	};
 
-}( mediaWiki ) );
+}() );

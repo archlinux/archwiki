@@ -35,6 +35,7 @@ class ButtonInputWidget extends InputWidget {
 	 *   icons and indicators will not be displayed, it won't be possible to have a non-plaintext
 	 *   label, and it won't be possible to set a value (which will internally become identical to the
 	 *   label). (default: false)
+	 * @param-taint $config escapes_html
 	 */
 	public function __construct( array $config = [] ) {
 		// Configuration initialization

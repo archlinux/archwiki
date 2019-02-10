@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Malafaya",
+			"Lakaoso",
+			"Joao Xavier"
+		]
+	},
+	"nuke": "Masiva efaco",
+	"nuke-list": "La sequanta pagini recente kreesis da [[Special:Contributions/$1|{{GENDER:$1|$1}}]];\nskribez komento e kliktez la butono por efacar li.",
+	"nuke-defaultreason": "Masiva efaco di pagini kreita da [[Special:Contributions/$1|{{GENDER:$1|$1}}]]",
+	"nuke-submit-user": "Montrar listo di pagini",
+	"nuke-submit-delete": "Efacez selektiti",
+	"nuke-select": "Selektez: $1",
+	"nuke-linkoncontribs": "Masiva efaco"
+}

@@ -230,7 +230,7 @@ class SpecialOATHEnable extends FormSpecialPage {
 	}
 
 	/**
-	 * Formats a key or scratch token by creating groups of 4 seperated by space characters
+	 * Formats a key or scratch token by creating groups of 4 separated by space characters
 	 *
 	 * @param string $token Token to format
 	 * @return string The token formatted for display

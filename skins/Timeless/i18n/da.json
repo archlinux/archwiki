@@ -2,11 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Sarrus",
-			"Joedalton"
+			"Joedalton",
+			"Saederup92"
 		]
 	},
 	"timeless-desc": "Et tidsløst tema designet efter Winterprototypen af Brando Harris, og diverse stil af Wikimedia Foundation.",
-	"timeless-search-placeholder": "Søgning i cirka {{NUMBEROFARTICLES}} sider",
 	"timeless-loggedin": "Din konto",
 	"timeless-anonymous": "Anonym",
 	"timeless-loggedinas": "Logget på »$1«",
@@ -21,5 +21,6 @@
 	"timeless-pagemisc": "Mere",
 	"timeless-namespaces": "Navnerum",
 	"timeless-pagetools": "Sidehandlinger",
-	"timeless-languages": "Sprog"
+	"timeless-languages": "Sprog",
+	"timeless.js": "/* Enhver JavaScript her vil blive indlæst for brugere der bruger Timeless udseendet */"
 }

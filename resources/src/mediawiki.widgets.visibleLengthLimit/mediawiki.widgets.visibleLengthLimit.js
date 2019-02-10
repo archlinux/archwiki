@@ -1,4 +1,4 @@
-( function ( mw ) {
+( function () {
 
 	var byteLength = require( 'mediawiki.String' ).byteLength,
 		codePointLength = require( 'mediawiki.String' ).codePointLength;
@@ -19,7 +19,13 @@
 		limit = limit || +textInputWidget.$input.attr( 'maxlength' );
 
 		function updateCount() {
-			textInputWidget.setLabel( ( limit - byteLength( textInputWidget.getValue() ) ).toString() );
+			var remaining = limit - byteLength( textInputWidget.getValue() );
+			if ( remaining > 99 ) {
+				remaining = '';
+			} else {
+				remaining = mw.language.convertNumber( remaining );
+			}
+			textInputWidget.setLabel( remaining );
 		}
 		textInputWidget.on( 'change', updateCount );
 		// Initialise value
@@ -41,7 +47,13 @@
 		limit = limit || +textInputWidget.$input.attr( 'maxlength' );
 
 		function updateCount() {
-			textInputWidget.setLabel( ( limit - codePointLength( textInputWidget.getValue() ) ).toString() );
+			var remaining = limit - codePointLength( textInputWidget.getValue() );
+			if ( remaining > 99 ) {
+				remaining = '';
+			} else {
+				remaining = mw.language.convertNumber( remaining );
+			}
+			textInputWidget.setLabel( remaining );
 		}
 		textInputWidget.on( 'change', updateCount );
 		// Initialise value
@@ -51,4 +63,4 @@
 		textInputWidget.$input.codePointLimit( limit );
 	};
 
-}( mediaWiki ) );
+}() );

@@ -8,14 +8,15 @@
 			"Runningfridgesrule",
 			"Stultiwikia",
 			"Vito Genovese",
-			"Superyetkin"
+			"Superyetkin",
+			"Hedda"
 		]
 	},
 	"categorytree": "Kategori hiyerarşisi",
 	"categorytree-portlet": "Kategoriler",
 	"categorytree-legend": "Kategori ağacını göster",
 	"categorytree-desc": "[[Special:CategoryTree|Kategori yapısını]] dinamik olarak idare et",
-	"categorytree-header": "Kategori ismini girip, içeriğini hiyerarşik şekilde görebilirsiniz. Bu özellik AJAX adıyla bilinen gelişmiş JavaScript ile çalışabilir. Eğer tarayıcınız eski ise ya da JavaScript kullanımı kapalı ise, çalışmaz.",
+	"categorytree-header": "İçeriği bir ağaç yapısı olarak görmek için bir kategori adı girin. (JavaScript gerektirir.)",
 	"categorytree-category": "Kategori",
 	"categorytree-go": "Ağacı göster",
 	"categorytree-parents": "Üst kategoriler",
@@ -38,5 +39,10 @@
 	"categorytree-no-pages": "alt kategori veya madde yok.",
 	"categorytree-not-found": "<i>\"$1\"</i> isimli kategori bulunamadı",
 	"categorytree-error": "Bilgi yüklenmesi ile bir problem var.",
-	"categorytree-retry": "Lütfen kısa süre için bekleyin, sonra bir kere daha deneyin."
+	"categorytree-retry": "Lütfen kısa süre için bekleyin, sonra bir kere daha deneyin.",
+	"apihelp-categorytree-description": "CategoryTree uzantısı için iç modül.",
+	"apihelp-categorytree-summary": "CategoryTree uzantısı için iç modül.",
+	"apihelp-categorytree-param-category": "Kategori ad alanındaki başlık, verilen varsa önek dikkate alınmaz.",
+	"apihelp-categorytree-param-options": "JSON nesnesi olarak CategoryTree yapıcısı için seçenekler. <var>Derinlik</var> seçeneği varsayılan <kbd>1</kbd>",
+	"apierror-categorytree-invalidjson": "Seçenekler bir JSON nesnesi için geçerli olmalıdır."
 }

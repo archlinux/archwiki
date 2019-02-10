@@ -1,5 +1,6 @@
 {
 	"name": "Cite",
+	"version": "1.0.0",
 	"author": [
 		"Ævar Arnfjörð Bjarmason",
 		"Andrew Garrett",
@@ -15,11 +16,13 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.30.0"
+		"MediaWiki": ">= 1.32.0"
 	},
 	"MessagesDirs": {
-		"cite": "i18n",
-		"ve-cite": "modules/ve-cite/i18n"
+		"Cite": [
+			"i18n",
+			"modules/ve-cite/i18n"
+		]
 	},
 	"APIPropModules": {
 		"references": {

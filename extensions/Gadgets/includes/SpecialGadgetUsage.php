@@ -125,10 +125,12 @@ class SpecialGadgetUsage extends QueryPage {
 
 	/**
 	 * Output the start of the table
-	 * Including opening <table>, and first <tr> with column headers.
+	 * Including opening <table>, the thead element with column headers
+	 * and the opening <tbody>.
 	 */
 	protected function outputTableStart() {
 		$html = Html::openElement( 'table', [ 'class' => [ 'sortable', 'wikitable' ] ] );
+		$html .= Html::openElement( 'thead', [] );
 		$html .= Html::openElement( 'tr', [] );
 		$headers = [ 'gadgetusage-gadget', 'gadgetusage-usercount' ];
 		if ( $this->activeUsers ) {
@@ -143,7 +145,20 @@ class SpecialGadgetUsage extends QueryPage {
 			}
 		}
 		$html .= Html::closeElement( 'tr' );
+		$html .= Html::closeElement( 'thead' );
+		$html .= Html::openElement( 'tbody', [] );
 		$this->getOutput()->addHTML( $html );
+	}
+
+	/**
+	 * Output the end of the table
+	 * </tbody></table>
+	 */
+	protected function outputTableEnd() {
+		$this->getOutput()->addHTML(
+			Html::closeElement( 'tbody' ) .
+			Html::closeElement( 'table' )
+		);
 	}
 
 	/**
@@ -238,7 +253,7 @@ class SpecialGadgetUsage extends QueryPage {
 				}
 			}
 			// Close table element
-			$out->addHtml( Html::closeElement( 'table' ) );
+			$this->outputTableEnd();
 		} else {
 			$out->addHtml(
 				$this->msg( 'gadgetusage-noresults' )->parseAsBlock()

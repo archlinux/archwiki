@@ -320,7 +320,7 @@
 				delayIn: tooltipDelay,
 				gravity: this.correctEW( 'ne' )
 			} )
-			.click( function () {
+			.on( 'click', function () {
 				if ( ui.isFullscreen ) {
 					ui.$main.trigger( $.Event( 'jq-fullscreen-change.lip' ) );
 				}
@@ -335,7 +335,7 @@
 				delayIn: tooltipDelay,
 				gravity: this.correctEW( 'ne' )
 			} )
-			.click( function ( e ) {
+			.on( 'click', function ( e ) {
 				if ( ui.isFullscreen ) {
 					ui.exitFullscreen();
 

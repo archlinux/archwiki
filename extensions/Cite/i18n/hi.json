@@ -14,7 +14,7 @@
 	"apihelp-query+references-description": "दिए गए पृष्ठों से संबंधित संदर्भों का एक डेटा प्रस्तुत करें।",
 	"apihelp-query+references-example-1": "<kbd> अल्बर्ट आइंस्टीन </kbd> से संबंधित संदर्भ।",
 	"apierror-citestoragedisabled": "उद्धरण विस्तार संदर्भ संग्रहण सक्षम नहीं है।",
-	"cite-desc": "उद्धरणों के लिये <nowiki><ref[ name=id]></nowiki> और <nowiki><references/></nowiki> टैग जोड़ता है।",
+	"cite-desc": "उद्धरणों के लिये <code><nowiki><ref[ name=id]></nowiki></code> और <code><nowiki><references/></nowiki></code> टैग जोड़ता है।",
 	"cite_error": "सन्दर्भ त्रुटि: $1",
 	"cite_error_ref_numeric_key": "अमान्य <code>&lt;ref&gt;</code> टैग;\nनाम साधारण संख्या (integer) नहीं हो सकता, कृपया विस्तृत शीर्षक दें।",
 	"cite_error_ref_no_key": "उद्घाटन <code>&lt;ref&gt;</code> टैग खराब है या उसका नाम खराब है.",

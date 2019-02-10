@@ -55,12 +55,30 @@
 		},
 		"requires": {
 			"type": "object",
-			"description": "Indicates what versions of MediaWiki core or extensions are required. This syntax may be extended in the future, for example to check dependencies between other services.",
+			"description": "Indicates what versions of PHP, MediaWiki core or extensions are required. This syntax may be extended in the future, for example to check dependencies between other services.",
 			"additionalProperties": false,
 			"properties": {
 				"MediaWiki": {
 					"type": "string",
 					"description": "Version constraint string against MediaWiki core."
+				},
+				"platform": {
+					"type": "object",
+					"description": "Indicates version constraints against platform services.",
+					"additionalProperties": false,
+					"properties": {
+						"php": {
+							"type": "string",
+							"description": "Version constraint string against PHP."
+						}
+					},
+					"patternProprties": {
+						"^ext-": {
+							"type": "string",
+							"description": "Required PHP extension.",
+							"const": "*"
+						}
+					}
 				},
 				"extensions": {
 					"type": "object",
@@ -285,6 +303,9 @@
 								"class": {
 									"enum": ["ResourceLoaderImageModule"]
 								},
+								"defaultColor": {
+									"type": "string"
+								},
 								"data": {
 									"type": "string"
 								},
@@ -299,6 +320,9 @@
 								},
 								"selectorWithVariant": {
 									"type": "string"
+								},
+								"useDataURI": {
+									"type": "boolean"
 								},
 								"variants": {
 									"type": "object"
@@ -335,10 +359,6 @@
 		"ResourceLoaderSources": {
 			"type": "object",
 			"description": "ResourceLoader sources to register"
-		},
-		"ResourceLoaderLESSVars": {
-			"type": "object",
-			"description": "ResourceLoader LESS variables"
 		},
 		"ConfigRegistry": {
 			"type": "object",
@@ -569,7 +589,13 @@
 		},
 		"AutoloadNamespaces": {
 			"type": "object",
-			"description": "Mapping of PSR-4 compliant namespace to directory for autoloading"
+			"description": "Mapping of PSR-4 compliant namespace to directory for autoloading",
+			"patternProperties": {
+				"^[A-Za-z0-9\\\\]+\\\\$": {
+					"type": "string"
+				}
+			},
+			"additionalProperties": false
 		},
 		"AutoloadClasses": {
 			"type": "object"
@@ -656,6 +682,13 @@
 		"FileExtensions": {
 			"type": "array",
 			"description": "Preferred file extensions for uploading",
+			"items": {
+				"type": "string"
+			}
+		},
+		"RawHtmlMessages": {
+			"type": "array",
+			"description": "Messages which are rendered as raw HTML",
 			"items": {
 				"type": "string"
 			}

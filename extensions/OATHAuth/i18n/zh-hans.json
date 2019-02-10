@@ -4,7 +4,8 @@
 			"Hzy980512",
 			"Liuxinyu970226",
 			"Xiaomingyan",
-			"Yfdyh000"
+			"Yfdyh000",
+			"Hanyanbo98"
 		]
 	},
 	"oathauth-desc": "提供使用基于HMAC的一次性密码的身份验证支持",
@@ -21,7 +22,7 @@
 	"oathauth-disabledoath": "已禁用双因素验证。",
 	"oathauth-prefs-label": "双因素验证：",
 	"oathauth-step1": "第1步：下载双因素验证程序",
-	"oathauth-step1-test": "下载用于双因素验证的程序。这可以是移动应用（例如Google Authenticator）或桌面端应用",
+	"oathauth-step1-test": "下载用于双因素验证的程序。这可以是移动应用（例如Google Authenticator）或桌面端应用。",
 	"oathauth-step2": "第2步：扫描二维码",
 	"oathauth-step2alt": "或手动输入密钥：",
 	"oathauth-step3": "第3步：记下即时性代码",

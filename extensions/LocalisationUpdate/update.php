@@ -52,13 +52,18 @@ class Update extends Maintenance {
 		}
 		$repos = $wgLocalisationUpdateRepositories[$repoid];
 
+		// output and error methods are protected, hence we add logInfo and logError
+		// public methods, that hopefully won't conflict in the future with the base class.
+		$logger = $this;
+
 		// Do it ;)
 		$updater = new LocalisationUpdate\Updater();
 		$updatedMessages = $updater->execute(
 			$finder,
 			$readerFactory,
 			$fetcherFactory,
-			$repos
+			$repos,
+			$logger
 		);
 
 		// Store it ;)
@@ -73,6 +78,14 @@ class Update extends Maintenance {
 			file_put_contents( $filename, FormatJson::encode( $messages, true ) );
 		}
 		$this->output( "Saved $count new translations\n" );
+	}
+
+	public function logInfo( $msg ) {
+		$this->output( $msg . "\n" );
+	}
+
+	public function logError( $msg ) {
+		$this->error( $msg );
 	}
 }
 

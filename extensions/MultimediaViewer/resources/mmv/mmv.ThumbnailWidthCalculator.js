@@ -77,7 +77,7 @@
 		],
 
 		// screen pixel per CSS pixel
-		devicePixelRatio: $.devicePixelRatio()
+		devicePixelRatio: window.devicePixelRatio || 1
 	};
 
 	/**

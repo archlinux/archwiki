@@ -9,7 +9,8 @@
 			"MarcoAurelio",
 			"Macofe",
 			"Lemondoge",
-			"Dgstranz"
+			"Dgstranz",
+			"Jelou"
 		]
 	},
 	"action-titleblacklistlog": "ver el registro de la lista negra de títulos",
@@ -28,7 +29,7 @@
 	"right-tboverride": "Ignorar la lista negra de títulos o de nombres de usuario",
 	"right-tboverride-account": "Ignorar la lista negra de los nombres de usuario",
 	"right-titleblacklistlog": "Ver el registro de la lista negra de títulos",
-	"apihelp-titleblacklist-description": "Validar el nombre de un artículo, archivo o usuario contra la TitleBlacklist (lista negra de títulos).",
+	"apihelp-titleblacklist-description": "Validar el título de una página, nombre de archivo o nombre de usuario contra la TitleBlacklist (lista negra de títulos).",
 	"apihelp-titleblacklist-param-title": "La cadena que se validará contra la lista negra.",
 	"apihelp-titleblacklist-param-action": "La acción que verificar.",
 	"apihelp-titleblacklist-param-nooverride": "No intentar pisar la lista negra de títulos.",

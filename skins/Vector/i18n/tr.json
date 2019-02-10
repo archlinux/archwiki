@@ -22,5 +22,7 @@
 	"vector-view-history": "Geçmişi gör",
 	"vector-view-view": "Oku",
 	"vector-view-viewsource": "Kaynağı gör",
-	"vector-more-actions": "Diğer"
+	"vector-jumptonavigation": "Gezinti kısmına atla",
+	"vector-jumptosearch": "Arama kısmına atla",
+	"vector-more-actions": "Daha fazla"
 }

@@ -43,16 +43,16 @@
  * ($wgProfiler['exclude']) containing an array of function names.
  * Shell-style patterns are also accepted.
  *
- * It is also possible to use the Tideways PHP extension, which is mostly
- * a drop-in replacement for Xhprof. Just change the XHPROF_FLAGS_* constants
- * to TIDEWAYS_FLAGS_*.
+ * This also supports Tideways-XHProf PHP extension, which is mostly a drop-in
+ * replacement for Xhprof (replace XHPROF_FLAGS_* with XHPROF_TIDEWAYS_FLAGS_*),
+ * as well as the older (discontinued) Tideways extension (TIDEWAYS_FLAGS_*).
  *
  * @copyright © 2014 Wikimedia Foundation and contributors
  * @ingroup Profiler
  * @see Xhprof
  * @see https://php.net/xhprof
  * @see https://github.com/facebook/hhvm/blob/master/hphp/doc/profiling.md
- * @see https://github.com/tideways/php-profiler-extension
+ * @see https://github.com/tideways/php-xhprof-extension
  */
 class ProfilerXhprof extends Profiler {
 	/**
@@ -73,7 +73,7 @@ class ProfilerXhprof extends Profiler {
 	public function __construct( array $params = [] ) {
 		parent::__construct( $params );
 
-		$flags = isset( $params['flags'] ) ? $params['flags'] : 0;
+		$flags = $params['flags'] ?? 0;
 		$options = isset( $params['exclude'] )
 			? [ 'ignored_functions' => $params['exclude'] ] : [];
 		Xhprof::enable( $flags, $options );
@@ -201,10 +201,7 @@ class ProfilerXhprof extends Profiler {
 	protected function getFunctionReport() {
 		$data = $this->getFunctionStats();
 		usort( $data, function ( $a, $b ) {
-			if ( $a['real'] === $b['real'] ) {
-				return 0;
-			}
-			return ( $a['real'] > $b['real'] ) ? -1 : 1; // descending
+			return $b['real'] <=> $a['real']; // descending
 		} );
 
 		$width = 140;

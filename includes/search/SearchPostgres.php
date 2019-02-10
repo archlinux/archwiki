@@ -37,7 +37,7 @@ class SearchPostgres extends SearchDatabase {
 	 * @param string $term Raw search term
 	 * @return SqlSearchResultSet
 	 */
-	function searchTitle( $term ) {
+	protected function doSearchTitleInDB( $term ) {
 		$q = $this->searchQuery( $term, 'titlevector', 'page_title' );
 		$olderror = error_reporting( E_ERROR );
 		$resultSet = $this->db->query( $q, 'SearchPostgres', true );
@@ -45,7 +45,7 @@ class SearchPostgres extends SearchDatabase {
 		return new SqlSearchResultSet( $resultSet, $this->searchTerms );
 	}
 
-	function searchText( $term ) {
+	protected function doSearchTextInDB( $term ) {
 		$q = $this->searchQuery( $term, 'textvector', 'old_text' );
 		$olderror = error_reporting( E_ERROR );
 		$resultSet = $this->db->query( $q, 'SearchPostgres', true );
@@ -61,7 +61,7 @@ class SearchPostgres extends SearchDatabase {
 	 *
 	 * @return string
 	 */
-	function parseQuery( $term ) {
+	private function parseQuery( $term ) {
 		wfDebug( "parseQuery received: $term \n" );
 
 		# # No backslashes allowed
@@ -123,7 +123,7 @@ class SearchPostgres extends SearchDatabase {
 	 * @param string $colname
 	 * @return string
 	 */
-	function searchQuery( $term, $fulltext, $colname ) {
+	private function searchQuery( $term, $fulltext, $colname ) {
 		# Get the SQL fragment for the given term
 		$searchstring = $this->parseQuery( $term );
 

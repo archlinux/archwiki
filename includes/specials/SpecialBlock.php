@@ -151,11 +151,10 @@ class SpecialBlock extends FormSpecialPage {
 				'validation-callback' => [ __CLASS__, 'validateTargetField' ],
 			],
 			'Expiry' => [
-				'type' => !count( $suggestedDurations ) ? 'text' : 'selectorother',
+				'type' => 'expiry',
 				'label-message' => 'ipbexpiry',
 				'required' => true,
 				'options' => $suggestedDurations,
-				'other' => $this->msg( 'ipbother' )->text(),
 				'default' => $this->msg( 'ipb-default-expiry' )->inContentLanguage()->text(),
 			],
 			'Reason' => [
@@ -495,7 +494,7 @@ class SpecialBlock extends FormSpecialPage {
 	 * @todo Should be in Block.php?
 	 * @param string $par Subpage parameter passed to setup, or data value from
 	 *     the HTMLForm
-	 * @param WebRequest $request Optionally try and get data from a request too
+	 * @param WebRequest|null $request Optionally try and get data from a request too
 	 * @return array [ User|string|null, Block::TYPE_ constant|null ]
 	 */
 	public static function getTargetAndType( $par, WebRequest $request = null ) {
@@ -554,7 +553,7 @@ class SpecialBlock extends FormSpecialPage {
 		if ( !$status->isOK() ) {
 			$errors = $status->getErrorsArray();
 
-			return call_user_func_array( [ $form, 'msg' ], $errors[0] );
+			return $form->msg( ...$errors[0] );
 		} else {
 			return true;
 		}
@@ -855,9 +854,11 @@ class SpecialBlock extends FormSpecialPage {
 	 *     to the standard "**<duration>|<displayname>" format?
 	 * @param Language|null $lang The language to get the durations in, or null to use
 	 *     the wiki's content language
+	 * @param bool $includeOther Whether to include the 'other' option in the list of
+	 *     suggestions
 	 * @return array
 	 */
-	public static function getSuggestedDurations( $lang = null ) {
+	public static function getSuggestedDurations( Language $lang = null, $includeOther = true ) {
 		$a = [];
 		$msg = $lang === null
 			? wfMessage( 'ipboptions' )->inContentLanguage()->text()
@@ -876,29 +877,38 @@ class SpecialBlock extends FormSpecialPage {
 			$a[$show] = $value;
 		}
 
+		if ( $a && $includeOther ) {
+			// if options exist, add other to the end instead of the begining (which
+			// is what happens by default).
+			$a[ wfMessage( 'ipbother' )->text() ] = 'other';
+		}
+
 		return $a;
 	}
 
 	/**
 	 * Convert a submitted expiry time, which may be relative ("2 weeks", etc) or absolute
 	 * ("24 May 2034", etc), into an absolute timestamp we can put into the database.
+	 *
+	 * @todo strtotime() only accepts English strings. This means the expiry input
+	 *       can only be specified in English.
+	 * @see https://secure.php.net/manual/en/function.strtotime.php
+	 *
 	 * @param string $expiry Whatever was typed into the form
-	 * @return string Timestamp or 'infinity'
+	 * @return string|bool Timestamp or 'infinity' or false on error.
 	 */
 	public static function parseExpiryInput( $expiry ) {
 		if ( wfIsInfinity( $expiry ) ) {
-			$expiry = 'infinity';
-		} else {
-			$expiry = strtotime( $expiry );
-
-			if ( $expiry < 0 || $expiry === false ) {
-				return false;
-			}
-
-			$expiry = wfTimestamp( TS_MW, $expiry );
+			return 'infinity';
 		}
 
-		return $expiry;
+		$expiry = strtotime( $expiry );
+
+		if ( $expiry < 0 || $expiry === false ) {
+			return false;
+		}
+
+		return wfTimestamp( TS_MW, $expiry );
 	}
 
 	/**
@@ -997,7 +1007,7 @@ class SpecialBlock extends FormSpecialPage {
 	/**
 	 * Process the form on POST submission.
 	 * @param array $data
-	 * @param HTMLForm $form
+	 * @param HTMLForm|null $form
 	 * @return bool|array True for success, false for didn't-try, array of errors on failure
 	 */
 	public function onSubmit( array $data, HTMLForm $form = null ) {

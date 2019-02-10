@@ -6,12 +6,10 @@
 			"Iwan Novirion"
 		]
 	},
-	"visualeditor-cite-tool-definition.json": "ништо",
 	"visualeditor-cite-tool-name-book": "Книга",
 	"visualeditor-cite-tool-name-journal": "Списание",
 	"visualeditor-cite-tool-name-news": "Новости",
 	"visualeditor-cite-tool-name-web": "Мреж. место",
-	"cite-tool-definition.json": "ништо",
 	"cite-ve-changedesc-ref-group-both": "Групата наводи е сменета од „$1“ во „$2“",
 	"cite-ve-changedesc-ref-group-from": "Групата наводи е сменета од „$1“ во општата група",
 	"cite-ve-changedesc-ref-group-to": "Групата наводи е сменета од општата група на „$1“",

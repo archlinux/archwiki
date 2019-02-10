@@ -28,16 +28,16 @@
 	QUnit.test( 'isMediaViewerHash()', function ( assert ) {
 		var router = new mw.mmv.routing.Router();
 
-		assert.ok( router.isMediaViewerHash( 'mediaviewer/foo' ), 'Legacy hash' );
-		assert.ok( router.isMediaViewerHash( '#mediaviewer/foo' ), 'Legacy hash with #' );
-		assert.ok( router.isMediaViewerHash( 'mediaviewer' ), 'Bare legacy hash' );
-		assert.ok( router.isMediaViewerHash( '#mediaviewer' ), 'Bare legacy hash with #' );
-		assert.ok( router.isMediaViewerHash( '/media/foo' ), 'Normal hash' );
-		assert.ok( router.isMediaViewerHash( '#/media/foo' ), 'Normal hash with #' );
-		assert.ok( router.isMediaViewerHash( '/media' ), 'Bare hash' );
-		assert.ok( router.isMediaViewerHash( '#/media' ), 'Bare hash with #' );
-		assert.ok( !router.isMediaViewerHash( 'foo/media' ), 'Foreign hash' );
-		assert.ok( !router.isMediaViewerHash( '' ), 'Empty hash' );
+		assert.strictEqual( router.isMediaViewerHash( 'mediaviewer/foo' ), true, 'Legacy hash' );
+		assert.strictEqual( router.isMediaViewerHash( '#mediaviewer/foo' ), true, 'Legacy hash with #' );
+		assert.strictEqual( router.isMediaViewerHash( 'mediaviewer' ), true, 'Bare legacy hash' );
+		assert.strictEqual( router.isMediaViewerHash( '#mediaviewer' ), true, 'Bare legacy hash with #' );
+		assert.strictEqual( router.isMediaViewerHash( '/media/foo' ), true, 'Normal hash' );
+		assert.strictEqual( router.isMediaViewerHash( '#/media/foo' ), true, 'Normal hash with #' );
+		assert.strictEqual( router.isMediaViewerHash( '/media' ), true, 'Bare hash' );
+		assert.strictEqual( router.isMediaViewerHash( '#/media' ), true, 'Bare hash with #' );
+		assert.strictEqual( router.isMediaViewerHash( 'foo/media' ), false, 'Foreign hash' );
+		assert.strictEqual( router.isMediaViewerHash( '' ), false, 'Empty hash' );
 	} );
 
 	QUnit.test( 'createHash()/parseHash()', function ( assert ) {
@@ -79,7 +79,7 @@
 		parsedRoute = router.parseHash( hash );
 		assert.strictEqual( parsedRoute.fileTitle.getPrefixedDb(),
 			title.getPrefixedDb(), 'Filename with /' );
-		assert.ok( !hash.match( 'Foo/bar' ), '/ is encoded' );
+		assert.notOk( hash.match( 'Foo/bar' ), '/ is encoded' );
 
 		title = new mw.Title( 'File:Foo bar.png' );
 		route = new mw.mmv.routing.ThumbnailRoute( title );
@@ -87,7 +87,7 @@
 		parsedRoute = router.parseHash( hash );
 		assert.strictEqual( parsedRoute.fileTitle.getPrefixedDb(),
 			title.getPrefixedDb(), 'Filename with space' );
-		assert.ok( !hash.match( 'Foo bar' ), 'space is replaced...' );
+		assert.notOk( hash.match( 'Foo bar' ), 'space is replaced...' );
 		assert.ok( hash.match( 'Foo_bar' ), '...with underscore' );
 
 		title = new mw.Title( 'File:看門狗 (遊戲).jpg' );
@@ -126,10 +126,10 @@
 	QUnit.test( 'parseHash() with invalid hashes', function ( assert ) {
 		var router = new mw.mmv.routing.Router();
 
-		assert.ok( !router.parseHash( 'foo' ), 'Non-MMV hash is rejected.' );
-		assert.ok( !router.parseHash( '#foo' ), 'Non-MMV hash is rejected (with #).' );
-		assert.ok( !router.parseHash( '/media/foo/bar' ), 'Invalid MMV hash is rejected.' );
-		assert.ok( !router.parseHash( '#/media/foo/bar' ), 'Invalid MMV hash is rejected (with #).' );
+		assert.notOk( router.parseHash( 'foo' ), 'Non-MMV hash is rejected.' );
+		assert.notOk( router.parseHash( '#foo' ), 'Non-MMV hash is rejected (with #).' );
+		assert.notOk( router.parseHash( '/media/foo/bar' ), 'Invalid MMV hash is rejected.' );
+		assert.notOk( router.parseHash( '#/media/foo/bar' ), 'Invalid MMV hash is rejected (with #).' );
 	} );
 
 	QUnit.test( 'parseHash() backwards compatibility', function ( assert ) {
@@ -171,7 +171,7 @@
 
 		location = { href: 'http://example.com/foo' };
 		route = router.parseLocation( location );
-		assert.ok( !route, 'Reading location without fragment part works' );
+		assert.notOk( route, 'Reading location without fragment part works' );
 	} );
 
 	QUnit.test( 'parseLocation() with real location', function ( assert ) {

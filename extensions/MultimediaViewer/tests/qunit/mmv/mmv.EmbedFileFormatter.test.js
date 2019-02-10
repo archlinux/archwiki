@@ -71,8 +71,8 @@
 			siteUrl = repoInfo.getSiteLink(),
 			siteLink = formatter.getSiteLink( info );
 
-		assert.ok( siteLink.match( 'Wikipedia' ), 'Site name is present in site link' );
-		assert.ok( siteLink.indexOf( siteUrl ) !== -1, 'Site URL is present in site link' );
+		assert.strictEqual( siteLink.indexOf( 'Wikipedia' ) !== -1, true, 'Site name is present in site link' );
+		assert.strictEqual( siteLink.indexOf( siteUrl ) !== -1, true, 'Site URL is present in site link' );
 	} );
 
 	QUnit.test( 'getThumbnailHtml():', function ( assert ) {
@@ -123,7 +123,7 @@
 		assert.ok( generatedHtml.match( titleText ), 'Title appears in generated HTML.' );
 		assert.ok( generatedHtml.match( filePageUrl ), 'Page url appears in generated HTML.' );
 		assert.ok( generatedHtml.match( thumbUrl ), 'Thumbnail url appears in generated HTML' );
-		assert.ok( !generatedHtml.match( 'Public License' ), 'License should not appear in generated HTML' );
+		assert.notOk( generatedHtml.match( 'Public License' ), 'License should not appear in generated HTML' );
 		assert.ok( generatedHtml.match( 'Homer' ), 'Author appears in generated HTML' );
 		assert.ok( generatedHtml.match( 'Iliad' ), 'Source appears in generated HTML' );
 		assert.ok( generatedHtml.match( width ), 'Width appears in generated HTML' );
@@ -141,8 +141,8 @@
 		assert.ok( generatedHtml.match( filePageUrl ), 'Page url appears in generated HTML.' );
 		assert.ok( generatedHtml.match( thumbUrl ), 'Thumbnail url appears in generated HTML' );
 		assert.ok( generatedHtml.match( 'Public License' ), 'License appears in generated HTML' );
-		assert.ok( !generatedHtml.match( 'Homer' ), 'Author should not appear in generated HTML' );
-		assert.ok( !generatedHtml.match( 'Iliad' ), 'Source should not appear in generated HTML' );
+		assert.notOk( generatedHtml.match( 'Homer' ), 'Author should not appear in generated HTML' );
+		assert.notOk( generatedHtml.match( 'Iliad' ), 'Source should not appear in generated HTML' );
 		assert.ok( generatedHtml.match( width ), 'Width appears in generated HTML' );
 		assert.ok( generatedHtml.match( height ), 'Height appears in generated HTML' );
 		assert.ok( generatedHtml.includes( filePageShortUrl ), 'Short URL appears in generated HTML' );
@@ -155,9 +155,9 @@
 		assert.ok( generatedHtml.match( titleText ), 'Title appears in generated HTML.' );
 		assert.ok( generatedHtml.match( filePageUrl ), 'Page url appears in generated HTML.' );
 		assert.ok( generatedHtml.match( thumbUrl ), 'Thumbnail url appears in generated HTML' );
-		assert.ok( !generatedHtml.match( 'Public License' ), 'License should not appear in generated HTML' );
-		assert.ok( !generatedHtml.match( 'Homer' ), 'Author should not appear in generated HTML' );
-		assert.ok( !generatedHtml.match( 'Iliad' ), 'Source should not appear in generated HTML' );
+		assert.notOk( generatedHtml.match( 'Public License' ), 'License should not appear in generated HTML' );
+		assert.notOk( generatedHtml.match( 'Homer' ), 'Author should not appear in generated HTML' );
+		assert.notOk( generatedHtml.match( 'Iliad' ), 'Source should not appear in generated HTML' );
 		assert.ok( generatedHtml.match( width ), 'Width appears in generated HTML' );
 		assert.ok( generatedHtml.match( height ), 'Height appears in generated HTML' );
 		assert.ok( generatedHtml.includes( filePageShortUrl ), 'Short URL appears in generated HTML' );

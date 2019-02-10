@@ -20,6 +20,30 @@ class CSSMinTest extends MediaWikiTestCase {
 	}
 
 	/**
+	 * @dataProvider providesReferencedFiles
+	 * @covers CSSMin::getLocalFileReferences
+	 */
+	public function testGetLocalFileReferences( $input, $expected ) {
+		$output = CSSMin::getLocalFileReferences( $input, '/' );
+		$this->assertEquals(
+			$expected,
+			$output,
+			'getLocalFileReferences() must find the local file properly'
+		);
+	}
+
+	public static function providesReferencedFiles() {
+		// input, array of expected local file names
+		return [
+			[ 'url("//example.org")', [] ],
+			[ 'url("https://example.org")', [] ],
+			[ 'url("#default#")', [] ],
+			[ 'url("WikiFont-Glyphs.svg#wikiglyph")', [ '/WikiFont-Glyphs.svg' ] ],
+			[ 'url("#some-anchor")', [] ],
+		];
+	}
+
+	/**
 	 * @dataProvider provideSerializeStringValue
 	 * @covers CSSMin::serializeStringValue
 	 */
@@ -35,7 +59,7 @@ class CSSMinTest extends MediaWikiTestCase {
 	public static function provideSerializeStringValue() {
 		return [
 			[ 'Hello World!', '"Hello World!"' ],
-			[ "Null\0Null", "\"Null\\fffd Null\"" ],
+			[ "Null\0Null", "\"Null\u{FFFD}Null\"" ],
 			[ '"', '"\\""' ],
 			[ "'", '"\'"' ],
 			[ "\\", '"\\\\"' ],
@@ -43,9 +67,9 @@ class CSSMinTest extends MediaWikiTestCase {
 			[ "Space  tab \t space", '"Space  tab \\9  space"' ],
 			[ "Line\nfeed", '"Line\\a feed"' ],
 			[ "Return\rreturn", '"Return\\d return"' ],
-			[ "Next\xc2\x85line", "\"Next\xc2\x85line\"" ],
+			[ "Next\u{0085}line", "\"Next\u{0085}line\"" ],
 			[ "Del\x7fDel", '"Del\\7f Del"' ],
-			[ "nb\xc2\xa0sp", "\"nb\xc2\xa0sp\"" ],
+			[ "nb\u{00A0}sp", "\"nb\u{00A0}sp\"" ],
 			[ "AMP&amp;AMP", "\"AMP&amp;AMP\"" ],
 			[ '!"#$%&\'()*+,-./0123456789:;<=>?', '"!\\"#$%&\'()*+,-./0123456789:;<=>?"' ],
 			[ '@[\\]^_`{|}~', '"@[\\\\]^_`{|}~"' ],
@@ -199,6 +223,9 @@ class CSSMinTest extends MediaWikiTestCase {
 			[ true, '//example.org/x.y.z/image.png' ],
 			[ true, '//localhost/styles.css?query=yes' ],
 			[ true, 'data:image/gif;base64,R0lGODlhAQABAIAAAP8AADAAACwAAAAAAQABAAACAkQBADs=' ],
+			[ false, '' ],
+			[ false, '/' ],
+			[ true, '//' ],
 			[ false, 'x.gif' ],
 			[ false, '/x.gif' ],
 			[ false, './x.gif' ],
@@ -217,6 +244,9 @@ class CSSMinTest extends MediaWikiTestCase {
 
 	public static function provideIsLocalUrls() {
 		return [
+			[ false, '' ],
+			[ false, '/' ],
+			[ false, '//' ],
 			[ false, 'x.gif' ],
 			[ true, '/x.gif' ],
 			[ false, './x.gif' ],
@@ -286,6 +316,16 @@ class CSSMinTest extends MediaWikiTestCase {
 				[ 'foo { behavior: url(#default#bar); }', false, '/w/', false ],
 				'foo { behavior: url("#default#bar"); }',
 			],
+			[
+				'Keeps anchors',
+				[ 'url(#other)', false, '/', false ],
+				'url("#other")'
+			],
+			[
+				'Keeps anchors after a path',
+				[ 'url(images/file.svg#id)', false, '/', false ],
+				'url("/images/file.svg#id")'
+			],
 		];
 	}
 
@@ -315,6 +355,10 @@ class CSSMinTest extends MediaWikiTestCase {
 			'Double quote' => [
 				[ 'background-image: url("");', false, '/example', false ],
 				'background-image: url("");',
+			],
+			'Single quote with outer spacing' => [
+				[ "background-image: url( '' );", false, '/example', false ],
+				"background-image: url( '' );",
 			],
 		];
 	}
@@ -389,6 +433,11 @@ class CSSMinTest extends MediaWikiTestCase {
 				'Domain-relative URL with query',
 				'foo { background: url(/static/foo.png?query=yes); }',
 				'foo { background: url(https://expand.example/static/foo.png?query=yes); }',
+			],
+			[
+				'Path-relative URL with query',
+				"foo { background: url(?query=yes); }",
+				'foo { background: url(http://localhost/w/?query=yes); }',
 			],
 			[
 				'Remote URL (unnecessary quotes not preserved)',
@@ -535,6 +584,11 @@ class CSSMinTest extends MediaWikiTestCase {
 				'foo { background: url(http://localhost/styles.css?quoted=double) }',
 			],
 			[
+				'Background URL (single quoted, containing spaces, with outer spacing)',
+				"foo { background: url( ' red.gif ' ); }",
+				'foo { background: url("http://localhost/w/ red.gif "); }',
+			],
+			[
 				'Simple case with comments before url',
 				'foo { prop: /* some {funny;} comment */ url(bar.png); }',
 				'foo { prop: /* some {funny;} comment */ url(http://localhost/w/bar.png); }',
@@ -613,7 +667,7 @@ class CSSMinTest extends MediaWikiTestCase {
 	}
 
 	/**
-	 * Seperated because they are currently broken (T37492)
+	 * Separated because they are currently broken (T37492)
 	 *
 	 * @group Broken
 	 * @dataProvider provideStringCases

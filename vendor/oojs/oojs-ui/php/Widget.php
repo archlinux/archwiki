@@ -23,6 +23,7 @@ class Widget extends Element {
 	/**
 	 * @param array $config Configuration options
 	 * @param bool $config['disabled'] Disable (default: false)
+	 * @param-taint $config escapes_html
 	 */
 	public function __construct( array $config = [] ) {
 		// Initialize config

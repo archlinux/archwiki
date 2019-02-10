@@ -18,15 +18,15 @@
 			"Cvanca",
 			"Kusavica",
 			"Dvorapa",
-			"Ilimanaq29"
+			"Ilimanaq29",
+			"Evica",
+			"Martin Urbanec"
 		]
 	},
-	"visualeditor-cite-tool-definition.json": "prázdný",
 	"visualeditor-cite-tool-name-book": "Kniha",
 	"visualeditor-cite-tool-name-journal": "Časopis",
 	"visualeditor-cite-tool-name-news": "Časopis / noviny",
 	"visualeditor-cite-tool-name-web": "Webová stránka",
-	"cite-tool-definition.json": "prázdný",
 	"cite-ve-changedesc-ref-group-both": "Skupina reference změněna z „$1“ na „$2“",
 	"cite-ve-changedesc-ref-group-from": "Skupina reference změněna z „$1“ na základní",
 	"cite-ve-changedesc-ref-group-to": "Skupina reference změněna ze základní na „$1“",
@@ -60,6 +60,7 @@
 	"cite-ve-referenceslist-isempty": "Na této stránce nejsou žádné reference se skupinou „$1“, které by se v tomto seznamu zobrazily.",
 	"cite-ve-referenceslist-isempty-default": "Na této stránce nejsou žádné reference, které by se v tomto seznamu zobrazily.",
 	"cite-ve-referenceslist-missingref": "Tato reference je definována v šabloně nebo jiné generované části textu a zatím ji lze editovat jen v režimu zdrojového textu.",
+	"cite-ve-referenceslist-missingref-in-list": "Tato reference je definována v šabloně nebo jiné generované části textu a její náhled si zatím lze zobrazit jen v režimu zdrojového textu.",
 	"cite-ve-referenceslist-missingreflist": "Tento seznam referencí je generován šablonou a zatím ho lze editovat pouze v režimu zdrojového textu.",
 	"cite-ve-toolbar-group-label": "Citace",
 	"cite-ve-othergroup-item": "$1 reference",

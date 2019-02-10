@@ -15,7 +15,6 @@ class CiteHooks {
 	 *
 	 * @param Title $title
 	 * @param string &$model
-	 * @return bool
 	 */
 	public static function onContentHandlerDefaultModelFor( Title $title, &$model ) {
 		if (
@@ -27,8 +26,6 @@ class CiteHooks {
 		) {
 			$model = CONTENT_MODEL_JSON;
 		}
-
-		return true;
 	}
 
 	/**
@@ -36,12 +33,11 @@ class CiteHooks {
 	 * only if that module is loaded
 	 *
 	 * @param array &$testModules The array of registered test modules
-	 * @param ResourceLoader &$resourceLoader The reference to the resource loader
-	 * @return true
+	 * @param ResourceLoader $resourceLoader
 	 */
 	public static function onResourceLoaderTestModules(
 		array &$testModules,
-		ResourceLoader &$resourceLoader
+		ResourceLoader $resourceLoader
 	) {
 		$resourceModules = $resourceLoader->getConfig()->get( 'ResourceModules' );
 
@@ -66,20 +62,17 @@ class CiteHooks {
 				'remoteExtPath' => 'Cite',
 			];
 		}
-
-		return true;
 	}
 
 	/**
 	 * Conditionally register resource loader modules that depends on the
 	 * VisualEditor MediaWiki extension.
 	 *
-	 * @param ResourceLoader &$resourceLoader
-	 * @return true
+	 * @param ResourceLoader $resourceLoader
 	 */
-	public static function onResourceLoaderRegisterModules( &$resourceLoader ) {
+	public static function onResourceLoaderRegisterModules( ResourceLoader $resourceLoader ) {
 		if ( ! class_exists( 'VisualEditorHooks' ) ) {
-			return true;
+			return;
 		}
 
 		$dir = dirname( __DIR__ ) . DIRECTORY_SEPARATOR;
@@ -198,6 +191,7 @@ class CiteHooks {
 			],
 			"dependencies" => [
 				"oojs-ui.styles.icons-alerts",
+				"oojs-ui.styles.icons-editing-citation",
 				"oojs-ui.styles.icons-interactions",
 				"ext.cite.visualEditor.core",
 				"ext.cite.visualEditor.data",
@@ -246,7 +240,6 @@ class CiteHooks {
 				"mobile"
 			]
 		] );
-		return true;
 	}
 
 	/**
@@ -254,9 +247,9 @@ class CiteHooks {
 	 * Post-output processing of references property, for proper db storage
 	 * Deferred to avoid performance overhead when outputting the page
 	 *
-	 * @param LinksUpdate &$linksUpdate
+	 * @param LinksUpdate $linksUpdate
 	 */
-	public static function onLinksUpdate( LinksUpdate &$linksUpdate ) {
+	public static function onLinksUpdate( LinksUpdate $linksUpdate ) {
 		global $wgCiteStoreReferencesData, $wgCiteCacheRawReferencesOnParse;
 		if ( !$wgCiteStoreReferencesData ) {
 			return;
@@ -290,9 +283,9 @@ class CiteHooks {
 	 * If $wgCiteCacheRawReferencesOnParse is set to false, purges the cache
 	 * when references are modified
 	 *
-	 * @param LinksUpdate &$linksUpdate
+	 * @param LinksUpdate $linksUpdate
 	 */
-	public static function onLinksUpdateComplete( LinksUpdate &$linksUpdate ) {
+	public static function onLinksUpdateComplete( LinksUpdate $linksUpdate ) {
 		global $wgCiteStoreReferencesData, $wgCiteCacheRawReferencesOnParse;
 		if ( !$wgCiteStoreReferencesData || $wgCiteCacheRawReferencesOnParse ) {
 			return;
@@ -319,13 +312,11 @@ class CiteHooks {
 	/**
 	 * Adds extra variables to the global config
 	 * @param array &$vars
-	 * @return true
 	 */
 	public static function onResourceLoaderGetConfigVars( array &$vars ) {
 		$config = MediaWikiServices::getInstance()->getConfigFactory()->makeConfig( 'cite' );
 		$vars['wgCiteVisualEditorOtherGroup'] = $config->get( 'CiteVisualEditorOtherGroup' );
 		$vars['wgCiteResponsiveReferences'] = $config->get( 'CiteResponsiveReferences' );
-		return true;
 	}
 
 	/**

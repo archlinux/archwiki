@@ -1,6 +1,6 @@
 <?php
 /**
- * Create serialized/commonpasswords.cdb
+ * Generate includes/password/commonpasswords.cdb
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,11 +31,11 @@ require_once __DIR__ . '/Maintenance.php';
  * For example:
  * https://github.com/danielmiessler/SecLists/blob/fe2b40dd84/Passwords/rockyou.txt?raw=true
  *
- * @see serialized/commonpasswords.cdb and PasswordPolicyChecks::checkPopularPasswordBlacklist
+ * @see PasswordPolicyChecks::checkPopularPasswordBlacklist
  * @since 1.27
  * @ingroup Maintenance
  */
-class GenerateCommonPassword extends Maintenance {
+class CreateCommonPasswordCdb extends Maintenance {
 	public function __construct() {
 		global $IP;
 		parent::__construct();
@@ -44,7 +44,7 @@ class GenerateCommonPassword extends Maintenance {
 		$this->addArg( 'inputfile', 'List of passwords (one per line) to use or - for stdin', true );
 		$this->addArg(
 			'output',
-			"Location to write CDB file to (Try $IP/serialized/commonpasswords.cdb)",
+			"Location to write CDB file to (Try $IP/includes/password/commonpasswords.cdb)",
 			true
 		);
 	}
@@ -94,7 +94,7 @@ class GenerateCommonPassword extends Maintenance {
 					continue;
 				}
 				if ( isset( $alreadyWritten[$line] ) ) {
-					$this->output( "Password '$line' already written (line " . ( $i + 1 ) .")\n" );
+					$this->output( "Password '$line' already written (line " . ( $i + 1 ) . ")\n" );
 					$skipped++;
 					continue;
 				}
@@ -114,5 +114,5 @@ class GenerateCommonPassword extends Maintenance {
 	}
 }
 
-$maintClass = GenerateCommonPassword::class;
+$maintClass = CreateCommonPasswordCdb::class;
 require_once RUN_MAINTENANCE_IF_MAIN;

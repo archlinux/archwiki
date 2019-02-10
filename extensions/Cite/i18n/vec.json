@@ -4,7 +4,7 @@
 			"Candalua"
 		]
 	},
-	"cite-desc": "Zonta i tag <nowiki><ref[ name=id]></nowiki> e <nowiki><references/></nowiki> par gestir le citazion",
+	"cite-desc": "Zonta i tag <code><nowiki><ref[ name=id]></nowiki></code> e <code><nowiki><references/></nowiki></code> par gestir le citazion",
 	"cite_error": "Eror ne la funsion Cite $1",
 	"cite_error_ref_numeric_key": "Eror ne l'uso del marcator <code>&lt;ref&gt;</code>: el nome no'l pode mìa èssar un nùmaro intiero. Dòpara un titolo esteso",
 	"cite_error_ref_no_key": "Eror ne l'uso del marcator <code>&lt;ref&gt;</code>: i ref vodi no i pol no verghe un nome",

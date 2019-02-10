@@ -236,7 +236,7 @@ abstract class MediaTransformOutput {
 	}
 
 	/**
-	 * @param string $title
+	 * @param string|null $title
 	 * @param string|array $params Query parameters to add
 	 * @return array
 	 */
@@ -360,9 +360,9 @@ class ThumbnailImage extends MediaTransformOutput {
 			throw new MWException( __METHOD__ . ' called in the old style' );
 		}
 
-		$alt = isset( $options['alt'] ) ? $options['alt'] : '';
+		$alt = $options['alt'] ?? '';
 
-		$query = isset( $options['desc-query'] ) ? $options['desc-query'] : '';
+		$query = $options['desc-query'] ?? '';
 
 		$attribs = [
 			'alt' => $alt,
@@ -487,8 +487,8 @@ class MediaTransformError extends MediaTransformOutput {
 class TransformParameterError extends MediaTransformError {
 	function __construct( $params ) {
 		parent::__construct( 'thumbnail_error',
-			max( isset( $params['width'] ) ? $params['width'] : 0, 120 ),
-			max( isset( $params['height'] ) ? $params['height'] : 0, 120 ),
+			max( $params['width'] ?? 0, 120 ),
+			max( $params['height'] ?? 0, 120 ),
 			wfMessage( 'thumbnail_invalid_params' )
 		);
 	}
@@ -507,13 +507,13 @@ class TransformParameterError extends MediaTransformError {
 class TransformTooBigImageAreaError extends MediaTransformError {
 	function __construct( $params, $maxImageArea ) {
 		$msg = wfMessage( 'thumbnail_toobigimagearea' );
-		$msg->rawParams(
+		$msg->params(
 			$msg->getLanguage()->formatComputingNumbers( $maxImageArea, 1000, "size-$1pixel" )
 		);
 
 		parent::__construct( 'thumbnail_error',
-			max( isset( $params['width'] ) ? $params['width'] : 0, 120 ),
-			max( isset( $params['height'] ) ? $params['height'] : 0, 120 ),
+			max( $params['width'] ?? 0, 120 ),
+			max( $params['height'] ?? 0, 120 ),
 			$msg
 		);
 	}

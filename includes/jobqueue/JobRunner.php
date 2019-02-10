@@ -29,7 +29,6 @@ use Psr\Log\LoggerInterface;
 use Wikimedia\ScopedCallback;
 use Wikimedia\Rdbms\LBFactory;
 use Wikimedia\Rdbms\DBError;
-use Wikimedia\Rdbms\DBReplicationWaitError;
 
 /**
  * Job queue runner utility methods
@@ -69,7 +68,7 @@ class JobRunner implements LoggerAwareInterface {
 	}
 
 	/**
-	 * @param LoggerInterface $logger
+	 * @param LoggerInterface|null $logger
 	 */
 	public function __construct( LoggerInterface $logger = null ) {
 		if ( $logger === null ) {
@@ -109,9 +108,9 @@ class JobRunner implements LoggerAwareInterface {
 
 		$response = [ 'jobs' => [], 'reached' => 'none-ready' ];
 
-		$type = isset( $options['type'] ) ? $options['type'] : false;
-		$maxJobs = isset( $options['maxJobs'] ) ? $options['maxJobs'] : false;
-		$maxTime = isset( $options['maxTime'] ) ? $options['maxTime'] : false;
+		$type = $options['type'] ?? false;
+		$maxJobs = $options['maxJobs'] ?? false;
+		$maxTime = $options['maxTime'] ?? false;
 		$noThrottle = isset( $options['throttle'] ) && !$options['throttle'];
 
 		// Bail if job type is invalid
@@ -132,7 +131,7 @@ class JobRunner implements LoggerAwareInterface {
 		}
 		// Bail out if there is too much DB lag.
 		// This check should not block as we want to try other wiki queues.
-		list( , $maxLag ) = $lbFactory->getMainLB( wfWikiID() )->getMaxLag();
+		list( , $maxLag ) = $lbFactory->getMainLB()->getMaxLag();
 		if ( $maxLag >= self::MAX_ALLOWED_LAG ) {
 			$response['reached'] = 'replica-lag-limit';
 			return $response;
@@ -225,20 +224,15 @@ class JobRunner implements LoggerAwareInterface {
 				// other wikis in the farm (on different masters) get a chance.
 				$timePassed = microtime( true ) - $lastCheckTime;
 				if ( $timePassed >= self::LAG_CHECK_PERIOD || $timePassed < 0 ) {
-					try {
-						$lbFactory->waitForReplication( [
-							'ifWritesSince' => $lastCheckTime,
-							'timeout' => self::MAX_ALLOWED_LAG
-						] );
-					} catch ( DBReplicationWaitError $e ) {
+					$success = $lbFactory->waitForReplication( [
+						'ifWritesSince' => $lastCheckTime,
+						'timeout' => self::MAX_ALLOWED_LAG,
+					] );
+					if ( !$success ) {
 						$response['reached'] = 'replica-lag-limit';
 						break;
 					}
 					$lastCheckTime = microtime( true );
-				}
-				// Don't let any queue replica DBs/backups fall behind
-				if ( $jobsPopped > 0 && ( $jobsPopped % 100 ) == 0 ) {
-					$group->waitForBackups();
 				}
 
 				// Bail if near-OOM instead of in a job
@@ -296,8 +290,6 @@ class JobRunner implements LoggerAwareInterface {
 			$status = $job->run();
 			$error = $job->getLastError();
 			$this->commitMasterChanges( $lbFactory, $job, $fnameTrxOwner );
-			// Important: this must be the last deferred update added (T100085, T154425)
-			DeferredUpdates::addCallableUpdate( [ JobQueueGroup::class, 'pushLazyJobs' ] );
 			// Run any deferred update tasks; doUpdates() manages transactions itself
 			DeferredUpdates::doUpdates();
 		} catch ( Exception $e ) {
@@ -542,7 +534,7 @@ class JobRunner implements LoggerAwareInterface {
 		$syncThreshold = $this->config->get( 'JobSerialCommitThreshold' );
 
 		$time = false;
-		$lb = $lbFactory->getMainLB( wfWikiID() );
+		$lb = $lbFactory->getMainLB();
 		if ( $syncThreshold !== false && $lb->getServerCount() > 1 ) {
 			// Generally, there is one master connection to the local DB
 			$dbwSerial = $lb->getAnyOpenConnection( $lb->getWriterIndex() );
@@ -582,12 +574,12 @@ class JobRunner implements LoggerAwareInterface {
 		$this->debugCallback( $msg );
 
 		// Wait for an exclusive lock to commit
-		if ( !$dbwSerial->lock( 'jobrunner-serial-commit', __METHOD__, 30 ) ) {
+		if ( !$dbwSerial->lock( 'jobrunner-serial-commit', $fnameTrxOwner, 30 ) ) {
 			// This will trigger a rollback in the main loop
 			throw new DBError( $dbwSerial, "Timed out waiting on commit queue." );
 		}
-		$unlocker = new ScopedCallback( function () use ( $dbwSerial ) {
-			$dbwSerial->unlock( 'jobrunner-serial-commit', __METHOD__ );
+		$unlocker = new ScopedCallback( function () use ( $dbwSerial, $fnameTrxOwner ) {
+			$dbwSerial->unlock( 'jobrunner-serial-commit', $fnameTrxOwner );
 		} );
 
 		// Wait for the replica DBs to catch up

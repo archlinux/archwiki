@@ -4,7 +4,9 @@
 			"ITurtle",
 			"Kwj2772",
 			"아라",
-			"Revi"
+			"Revi",
+			"Ykhwong",
+			"Jay94ks"
 		]
 	},
 	"skinname-vector": "벡터",
@@ -22,5 +24,7 @@
 	"vector-view-history": "역사 보기",
 	"vector-view-view": "읽기",
 	"vector-view-viewsource": "원본 보기",
+	"vector-jumptonavigation": "둘러보기로 가기",
+	"vector-jumptosearch": "검색하러 가기",
 	"vector-more-actions": "더 보기"
 }

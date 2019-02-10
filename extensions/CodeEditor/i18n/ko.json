@@ -13,6 +13,7 @@
 	"codeeditor-toolbar-toggle": "코드 편집기 전환",
 	"codeeditor-save-with-errors": "문서에 오류가 들어 있습니다. 저장하겠습니까?",
 	"codeeditor-gotoline": "...줄로 넘어가기",
+	"codeeditor-gotoline-placeholder": "행[:열]",
 	"codeeditor-gotoline-prompt": "줄 번호를 입력하십시오",
 	"codeeditor-indent": "들여쓰기",
 	"codeeditor-outdent": "내어쓰기",

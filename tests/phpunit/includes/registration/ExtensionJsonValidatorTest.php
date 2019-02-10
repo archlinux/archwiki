@@ -53,6 +53,10 @@ class ExtensionJsonValidatorTest extends MediaWikiTestCase {
 				'notjson.txt is not valid JSON'
 			],
 			[
+				'duplicate_keys.json',
+				'Duplicate key: name'
+			],
+			[
 				'no_manifest_version.json',
 				'no_manifest_version.json does not have manifest_version set.'
 			],
@@ -78,6 +82,15 @@ class ExtensionJsonValidatorTest extends MediaWikiTestCase {
 				'good.json',
 				true
 			],
+			[
+				'bad_url.json', 'bad_url.json did not pass validation.
+[url] Should use HTTPS for www.mediawiki.org URLs'
+			],
+			[
+				'bad_url2.json', 'bad_url2.json did not pass validation.
+[url] Should use www.mediawiki.org domain
+[url] Should use HTTPS for www.mediawiki.org URLs'
+			]
 		];
 	}
 

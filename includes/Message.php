@@ -20,6 +20,7 @@
  * @file
  * @author Niklas Laxström
  */
+use MediaWiki\MediaWikiServices;
 
 /**
  * The Message class provides methods which fulfil two basic services:
@@ -242,7 +243,7 @@ class Message implements MessageSpecifier, Serializable {
 	 * message keys to try and use the first non-empty message for, or a
 	 * MessageSpecifier to copy from.
 	 * @param array $params Message parameters.
-	 * @param Language $language [optional] Language to use (defaults to current user language).
+	 * @param Language|null $language [optional] Language to use (defaults to current user language).
 	 * @throws InvalidArgumentException
 	 */
 	public function __construct( $key, $params = [], Language $language = null ) {
@@ -469,18 +470,20 @@ class Message implements MessageSpecifier, Serializable {
 	 * @since 1.26
 	 */
 	public function getTitle() {
-		global $wgContLang, $wgForceUIMsgAsContentMsg;
+		global $wgForceUIMsgAsContentMsg;
 
+		$contLang = MediaWikiServices::getInstance()->getContentLanguage();
+		$lang = $this->getLanguage();
 		$title = $this->key;
 		if (
-			!$this->language->equals( $wgContLang )
+			!$lang->equals( $contLang )
 			&& in_array( $this->key, (array)$wgForceUIMsgAsContentMsg )
 		) {
-			$code = $this->language->getCode();
-			$title .= '/' . $code;
+			$title .= '/' . $lang->getCode();
 		}
 
-		return Title::makeTitle( NS_MEDIAWIKI, $wgContLang->ucfirst( strtr( $title, ' ', '_' ) ) );
+		return Title::makeTitle(
+			NS_MEDIAWIKI, $contLang->ucfirst( strtr( $title, ' ', '_' ) ) );
 	}
 
 	/**
@@ -726,6 +729,8 @@ class Message implements MessageSpecifier, Serializable {
 	 * @throws MWException
 	 */
 	public function inLanguage( $lang ) {
+		$previousLanguage = $this->language;
+
 		if ( $lang instanceof Language ) {
 			$this->language = $lang;
 		} elseif ( is_string( $lang ) ) {
@@ -740,7 +745,11 @@ class Message implements MessageSpecifier, Serializable {
 				. "passed a String or Language object; $type given"
 			);
 		}
-		$this->message = null;
+
+		if ( $this->language !== $previousLanguage ) {
+			// The language has changed. Clear the message cache.
+			$this->message = null;
+		}
 		$this->interface = false;
 		return $this;
 	}
@@ -760,8 +769,7 @@ class Message implements MessageSpecifier, Serializable {
 			return $this;
 		}
 
-		global $wgContLang;
-		$this->inLanguage( $wgContLang );
+		$this->inLanguage( MediaWikiServices::getInstance()->getContentLanguage() );
 		return $this;
 	}
 
@@ -831,6 +839,7 @@ class Message implements MessageSpecifier, Serializable {
 	 *   the last time (this is for B/C and should be avoided).
 	 *
 	 * @return string HTML
+	 * @suppress SecurityCheck-DoubleEscaped phan false positive
 	 */
 	public function toString( $format = null ) {
 		if ( $format === null ) {
@@ -1122,7 +1131,7 @@ class Message implements MessageSpecifier, Serializable {
 	 *
 	 * @return string
 	 */
-	protected function replaceParameters( $message, $type = 'before', $format ) {
+	protected function replaceParameters( $message, $type, $format ) {
 		// A temporary marker for $1 parameters that is only valid
 		// in non-attribute contexts. However if the entire message is escaped
 		// then we don't want to use it because it will be mangled in all contexts

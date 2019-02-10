@@ -246,7 +246,7 @@ class CachingStack extends Stack {
 	public function pop() {
 		$n = count( $this->elements );
 		if ( !$n ) {
-			throw new TreeBuilderError( __METHOD__.': stack empty' );
+			throw new TreeBuilderError( __METHOD__ . ': stack empty' );
 		}
 		// Update the stack store, index cache and current node
 		$elt = array_pop( $this->elements );
@@ -277,7 +277,7 @@ class CachingStack extends Stack {
 		// simplifies the scope cache update, and eliminates the template count
 		// update
 		if ( $oldElt->name !== $elt->name || $oldElt->namespace !== $elt->namespace ) {
-			throw new TreeBuilderError( __METHOD__.' can only be called for elements of the same name' );
+			throw new TreeBuilderError( __METHOD__ . ' can only be called for elements of the same name' );
 		}
 		$ns = $elt->namespace;
 		$name = $elt->name;
@@ -302,7 +302,7 @@ class CachingStack extends Stack {
 					$nextElt = $scopeElt->nextEltInScope;
 				}
 				if ( !$nextElt ) {
-					throw new TreeBuilderError( __METHOD__.': cannot find old element in scope cache' );
+					throw new TreeBuilderError( __METHOD__ . ': cannot find old element in scope cache' );
 				}
 			}
 		}

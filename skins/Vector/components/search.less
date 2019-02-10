@@ -54,7 +54,7 @@
 	#searchInput {
 		width: 100%;
 		padding: 0.2em 0 0.2em 0.2em;
-		font-size: 13px;
+		font-size: 0.8125em; // equals `13px` at browser default of `16px`
 		direction: ltr;
 
 		&:focus {
@@ -92,8 +92,6 @@
 		cursor: pointer;
 		/* Hide button text and replace it with the image. */
 		text-indent: -99999px;
-		/* Needed to make IE6 respect the text-indent. */
-		line-height: 1;
 		/* Opera 12 on RTL flips the text in a funny way without this. */
 		/* @noflip */
 		direction: ltr;

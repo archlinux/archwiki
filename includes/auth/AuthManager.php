@@ -240,7 +240,7 @@ class AuthManager implements LoggerAwareInterface {
 		global $wgAuth;
 
 		if ( $wgAuth && !$wgAuth instanceof AuthManagerAuthPlugin ) {
-			return call_user_func_array( [ $wgAuth, $method ], $params );
+			return $wgAuth->$method( ...$params );
 		} else {
 			return $return;
 		}
@@ -681,8 +681,9 @@ class AuthManager implements LoggerAwareInterface {
 			// Step 4: Authentication complete! Set the user in the session and
 			// clean up.
 
-			$this->logger->info( 'Login for {user} succeeded', [
+			$this->logger->info( 'Login for {user} succeeded from {clientip}', [
 				'user' => $user->getName(),
+				'clientip' => $this->request->getIP(),
 			] );
 			/** @var RememberMeAuthenticationRequest $req */
 			$req = AuthenticationRequest::getRequestByClass(
@@ -771,7 +772,12 @@ class AuthManager implements LoggerAwareInterface {
 			$status = self::SEC_FAIL;
 		}
 
-		$this->logger->info( __METHOD__ . ": $operation is $status" );
+		$this->logger->info( __METHOD__ . ": $operation is $status for '{user}'",
+			[
+				'user' => $session->getUser()->getName(),
+				'clientip' => $this->getRequest()->getIP(),
+			]
+		);
 
 		return $status;
 	}
@@ -881,8 +887,11 @@ class AuthManager implements LoggerAwareInterface {
 	 * returned success.
 	 *
 	 * @param AuthenticationRequest $req
+	 * @param bool $isAddition Set true if this represents an addition of
+	 *  credentials rather than a change. The main difference is that additions
+	 *  should not invalidate BotPasswords. If you're not sure, leave it false.
 	 */
-	public function changeAuthenticationData( AuthenticationRequest $req ) {
+	public function changeAuthenticationData( AuthenticationRequest $req, $isAddition = false ) {
 		$this->logger->info( 'Changing authentication data for {user} class {what}', [
 			'user' => is_string( $req->username ) ? $req->username : '<no name>',
 			'what' => get_class( $req ),
@@ -892,7 +901,9 @@ class AuthManager implements LoggerAwareInterface {
 
 		// When the main account's authentication data is changed, invalidate
 		// all BotPasswords too.
-		\BotPassword::invalidateAllPasswordsForUser( $req->username );
+		if ( !$isAddition ) {
+			\BotPassword::invalidateAllPasswordsForUser( $req->username );
+		}
 	}
 
 	/**@}*/
@@ -985,7 +996,7 @@ class AuthManager implements LoggerAwareInterface {
 		if ( $permErrors ) {
 			$status = Status::newGood();
 			foreach ( $permErrors as $args ) {
-				call_user_func_array( [ $status, 'fatal' ], $args );
+				$status->fatal( ...$args );
 			}
 			return $status;
 		}
@@ -1675,7 +1686,7 @@ class AuthManager implements LoggerAwareInterface {
 		}
 
 		// Checks passed, create the user...
-		$from = isset( $_SERVER['REQUEST_URI'] ) ? $_SERVER['REQUEST_URI'] : 'CLI';
+		$from = $_SERVER['REQUEST_URI'] ?? 'CLI';
 		$this->logger->info( __METHOD__ . ': creating new user ({username}) - from: {from}', [
 			'username' => $username,
 			'from' => $from,
@@ -2244,7 +2255,7 @@ class AuthManager implements LoggerAwareInterface {
 	 * Fetch authentication data from the current session
 	 * @protected For use by AuthenticationProviders
 	 * @param string $key
-	 * @param mixed $default
+	 * @param mixed|null $default
 	 * @return mixed
 	 */
 	public function getAuthenticationSessionData( $key, $default = null ) {
@@ -2286,9 +2297,10 @@ class AuthManager implements LoggerAwareInterface {
 			$spec = [ 'sort2' => $i++ ] + $spec + [ 'sort' => 0 ];
 		}
 		unset( $spec );
+		// Sort according to the 'sort' field, and if they are equal, according to 'sort2'
 		usort( $specs, function ( $a, $b ) {
-			return ( (int)$a['sort'] ) - ( (int)$b['sort'] )
-				?: $a['sort2'] - $b['sort2'];
+			return $a['sort'] <=> $b['sort']
+				?: $a['sort2'] <=> $b['sort2'];
 		} );
 
 		$ret = [];
@@ -2397,15 +2409,15 @@ class AuthManager implements LoggerAwareInterface {
 	 * @param bool $useContextLang Use 'uselang' to set the user's language
 	 */
 	private function setDefaultUserOptions( User $user, $useContextLang ) {
-		global $wgContLang;
-
 		$user->setToken();
 
-		$lang = $useContextLang ? \RequestContext::getMain()->getLanguage() : $wgContLang;
+		$contLang = MediaWikiServices::getInstance()->getContentLanguage();
+
+		$lang = $useContextLang ? \RequestContext::getMain()->getLanguage() : $contLang;
 		$user->setOption( 'language', $lang->getPreferredVariant() );
 
-		if ( $wgContLang->hasVariants() ) {
-			$user->setOption( 'variant', $wgContLang->getPreferredVariant() );
+		if ( $contLang->hasVariants() ) {
+			$user->setOption( 'variant', $contLang->getPreferredVariant() );
 		}
 	}
 
@@ -2426,7 +2438,7 @@ class AuthManager implements LoggerAwareInterface {
 			$providers += $this->getSecondaryAuthenticationProviders();
 		}
 		foreach ( $providers as $provider ) {
-			call_user_func_array( [ $provider, $method ], $args );
+			$provider->$method( ...$args );
 		}
 	}
 

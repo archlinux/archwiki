@@ -14,16 +14,6 @@ class SpecialWatchlistTest extends SpecialPageTestBase {
 		parent::setUp();
 
 		$this->setTemporaryHook(
-			'ChangesListSpecialPageFilters',
-			null
-		);
-
-		$this->setTemporaryHook(
-			'SpecialWatchlistQuery',
-			null
-		);
-
-		$this->setTemporaryHook(
 			'ChangesListSpecialPageQuery',
 			null
 		);
@@ -105,11 +95,6 @@ class SpecialWatchlistTest extends SpecialPageTestBase {
 
 		$page = TestingAccessWrapper::newFromObject(
 			$this->newSpecialPage()
-		);
-
-		$this->setTemporaryHook(
-			'ChangesListSpecialPageFilters',
-			null
 		);
 
 		$page->registerFilters();

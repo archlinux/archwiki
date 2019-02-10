@@ -8,19 +8,19 @@ class CaptchaSessionStore extends CaptchaStore {
 		SessionManager::getGlobalSession()->persist();
 	}
 
-	function store( $index, $info ) {
+	public function store( $index, $info ) {
 		SessionManager::getGlobalSession()->set( 'captcha' . $index, $info );
 	}
 
-	function retrieve( $index ) {
+	public function retrieve( $index ) {
 		return SessionManager::getGlobalSession()->get( 'captcha' . $index, false );
 	}
 
-	function clear( $index ) {
+	public function clear( $index ) {
 		SessionManager::getGlobalSession()->remove( 'captcha' . $index );
 	}
 
-	function cookiesNeeded() {
+	public function cookiesNeeded() {
 		return true;
 	}
 }

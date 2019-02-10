@@ -1,11 +1,13 @@
 <?php
 
-require __DIR__ . '/../Maintenance.php';
+use MediaWiki\MediaWikiServices;
 
-class BenchmarkTidy extends Maintenance {
+require __DIR__ . '/Benchmarker.php';
+
+class BenchmarkTidy extends Benchmarker {
 	public function __construct() {
 		parent::__construct();
-		$this->addOption( 'file', 'A filename which contains the input text', true, true );
+		$this->addOption( 'file', 'Path to file containing the input text', false, true );
 		$this->addOption( 'driver', 'The Tidy driver name, or false to use the configured instance',
 			false,  true );
 		$this->addOption( 'tidy-config', 'JSON encoded value for the tidy configuration array',
@@ -13,7 +15,8 @@ class BenchmarkTidy extends Maintenance {
 	}
 
 	public function execute() {
-		$html = file_get_contents( $this->getOption( 'file' ) );
+		$file = $this->getOption( 'file', __DIR__ . '/tidy/australia-untidy.html.gz' );
+		$html = $this->loadFile( $file );
 		if ( $html === false ) {
 			$this->fatalError( "Unable to open input file" );
 		}
@@ -35,8 +38,7 @@ class BenchmarkTidy extends Maintenance {
 	}
 
 	private function benchmark( $driver, $html ) {
-		global $wgContLang;
-
+		$contLang = MediaWikiServices::getInstance()->getContentLanguage();
 		$times = [];
 		$innerCount = 10;
 		$outerCount = 10;
@@ -44,7 +46,7 @@ class BenchmarkTidy extends Maintenance {
 			$t = microtime( true );
 			for ( $i = 0; $i < $innerCount; $i++ ) {
 				$driver->tidy( $html );
-				print $wgContLang->formatSize( memory_get_usage( true ) ) . "\n";
+				print $contLang->formatSize( memory_get_usage( true ) ) . "\n";
 			}
 			$t = ( ( microtime( true ) - $t ) / $innerCount ) * 1000;
 			$times[] = $t;
@@ -67,10 +69,9 @@ class BenchmarkTidy extends Maintenance {
 		print "Median: $median ms\n";
 		print "Mean: $mean ms\n";
 		print "Maximum: $max ms\n";
-		print "Memory usage: " .
-			$wgContLang->formatSize( memory_get_usage( true ) ) . "\n";
+		print "Memory usage: " . $contLang->formatSize( memory_get_usage( true ) ) . "\n";
 		print "Peak memory usage: " .
-			$wgContLang->formatSize( memory_get_peak_usage( true ) ) . "\n";
+			$contLang->formatSize( memory_get_peak_usage( true ) ) . "\n";
 	}
 }
 

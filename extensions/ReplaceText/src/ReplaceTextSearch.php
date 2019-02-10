@@ -108,4 +108,74 @@ class ReplaceTextSearch {
 		}
 		return "$column $op " . $dbr->addQuotes( $regex );
 	}
+
+	/**
+	 * @param string $str
+	 * @param array $namespaces
+	 * @param string $category
+	 * @param string $prefix
+	 * @param bool $use_regex
+	 * @return IResultWrapper Resulting rows
+	 */
+	public static function getMatchingTitles(
+		$str,
+		$namespaces,
+		$category,
+		$prefix,
+		$use_regex = false
+	) {
+		$dbr = wfGetDB( DB_REPLICA );
+
+		$tables = [ 'page' ];
+		$vars = [ 'page_title', 'page_namespace' ];
+
+		$str = str_replace( ' ', '_', $str );
+		if ( $use_regex ) {
+			$comparisonCond = self::regexCond( $dbr, 'page_title', $str );
+		} else {
+			$any = $dbr->anyString();
+			$comparisonCond = 'page_title ' . $dbr->buildLike( $any, $str, $any );
+		}
+		$conds = [
+			$comparisonCond,
+			'page_namespace' => $namespaces,
+		];
+
+		self::categoryCondition( $category, $tables, $conds );
+		self::prefixCondition( $prefix, $conds );
+		$sort = [ 'ORDER BY' => 'page_namespace, page_title' ];
+
+		return $dbr->select( $tables, $vars, $conds, __METHOD__, $sort );
+	}
+
+	/**
+	 * Do a replacement on a string.
+	 * @param string $text
+	 * @param string $search
+	 * @param string $replacement
+	 * @param bool $regex
+	 * @return string
+	 */
+	public static function getReplacedText( $text, $search, $replacement, $regex ) {
+		if ( $regex ) {
+			$escapedSearch = addcslashes( $search, '/' );
+			return preg_replace( "/$escapedSearch/Uu", $replacement, $text );
+		} else {
+			return str_replace( $search, $replacement, $text );
+		}
+	}
+
+	/**
+	 * Do a replacement on a title.
+	 * @param Title $title
+	 * @param string $search
+	 * @param string $replacement
+	 * @param bool $regex
+	 * @return Title|null
+	 */
+	public static function getReplacedTitle( Title $title, $search, $replacement, $regex ) {
+		$oldTitleText = $title->getText();
+		$newTitleText = self::getReplacedText( $oldTitleText, $search, $replacement, $regex );
+		return Title::makeTitleSafe( $title->getNamespace(), $newTitleText );
+	}
 }

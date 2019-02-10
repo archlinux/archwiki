@@ -1,4 +1,5 @@
 <?php
+
 use Wikimedia\ScopedCallback;
 
 /**
@@ -17,6 +18,8 @@ class ParserTestTopLevelSuite extends PHPUnit_Framework_TestSuite {
 	/** @var ScopedCallback */
 	private $ptTeardownScope;
 
+	private $oldTablePrefix = '';
+
 	/**
 	 * @defgroup filtering_constants Filtering constants
 	 *
@@ -29,7 +32,7 @@ class ParserTestTopLevelSuite extends PHPUnit_Framework_TestSuite {
 	/** Include non core files as set in $wgParserTestFiles */
 	const NO_CORE = 2;
 	/** Include anything set via $wgParserTestFiles */
-	const WITH_ALL = 3; # CORE_ONLY | NO_CORE
+	const WITH_ALL = self::CORE_ONLY | self::NO_CORE;
 
 	/** @} */
 
@@ -133,12 +136,24 @@ class ParserTestTopLevelSuite extends PHPUnit_Framework_TestSuite {
 
 	public function setUp() {
 		wfDebug( __METHOD__ );
+
 		$db = wfGetDB( DB_MASTER );
 		$type = $db->getType();
 		$prefix = $type === 'oracle' ?
 			MediaWikiTestCase::ORA_DB_PREFIX : MediaWikiTestCase::DB_PREFIX;
+		$this->oldTablePrefix = $db->tablePrefix();
 		MediaWikiTestCase::setupTestDB( $db, $prefix );
-		$teardown = $this->ptRunner->setDatabase( $db );
+		CloneDatabase::changePrefix( $prefix );
+
+		$this->ptRunner->setDatabase( $db );
+
+		MediaWikiTestCase::resetNonServiceCaches();
+
+		MediaWikiTestCase::installMockMwServices();
+		$teardown = new ScopedCallback( function () {
+			MediaWikiTestCase::restoreMwServices();
+		} );
+
 		$teardown = $this->ptRunner->setupUploads( $teardown );
 		$this->ptTeardownScope = $teardown;
 	}
@@ -148,6 +163,7 @@ class ParserTestTopLevelSuite extends PHPUnit_Framework_TestSuite {
 		if ( $this->ptTeardownScope ) {
 			ScopedCallback::consume( $this->ptTeardownScope );
 		}
+		CloneDatabase::changePrefix( $this->oldTablePrefix );
 	}
 
 	/**

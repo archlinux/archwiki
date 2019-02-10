@@ -9,14 +9,7 @@ return [
 	'test.sinonjs' => [
 		'scripts' => [
 			'tests/qunit/suites/resources/test.sinonjs/index.js',
-			'resources/lib/sinonjs/sinon-1.17.3.js',
-			// We want tests to work in IE, but can't include this as it
-			// will break the placeholders in Sinon because the hack it uses
-			// to hijack IE globals relies on running in the global scope
-			// and in ResourceLoader this won't be running in the global scope.
-			// Including it results (among other things) in sandboxed timers
-			// being broken due to Date inheritance being undefined.
-			// 'resources/lib/sinonjs/sinon-ie-1.15.4.js',
+			'resources/lib/sinonjs/sinon.js',
 		],
 		'targets' => [ 'desktop', 'mobile' ],
 	],
@@ -70,6 +63,7 @@ return [
 			'tests/qunit/suites/resources/mediawiki/mediawiki.template.test.js',
 			'tests/qunit/suites/resources/mediawiki/mediawiki.template.mustache.test.js',
 			'tests/qunit/suites/resources/mediawiki/mediawiki.test.js',
+			'tests/qunit/suites/resources/mediawiki/mediawiki.base.test.js',
 			'tests/qunit/suites/resources/mediawiki/mediawiki.loader.test.js',
 			'tests/qunit/suites/resources/mediawiki/mediawiki.html.test.js',
 			'tests/qunit/suites/resources/mediawiki/mediawiki.inspect.test.js',
@@ -95,6 +89,8 @@ return [
 			'tests/qunit/suites/resources/mediawiki.rcfilters/dm.SavedQueryItemModel.test.js',
 			'tests/qunit/suites/resources/mediawiki.rcfilters/dm.SavedQueriesModel.test.js',
 			'tests/qunit/suites/resources/mediawiki.rcfilters/UriProcessor.test.js',
+			'tests/qunit/suites/resources/mediawiki.widgets/' .
+				'MediaSearch/mediawiki.widgets.APIResultsQueue.test.js',
 			'tests/qunit/suites/resources/mediawiki/mediawiki.language.test.js',
 			'tests/qunit/suites/resources/mediawiki/mediawiki.cldr.test.js',
 			'tests/qunit/suites/resources/mediawiki/mediawiki.cookie.test.js',
@@ -115,12 +111,6 @@ return [
 			'jquery.tablesorter',
 			'jquery.textSelection',
 			'mediawiki.api',
-			'mediawiki.api.category',
-			'mediawiki.api.messages',
-			'mediawiki.api.options',
-			'mediawiki.api.parse',
-			'mediawiki.api.upload',
-			'mediawiki.api.watch',
 			'mediawiki.ForeignApi.core',
 			'mediawiki.jqueryMsg',
 			'mediawiki.messagePoster',
@@ -143,6 +133,7 @@ return [
 			'mediawiki.experiments',
 			'mediawiki.inspect',
 			'mediawiki.visibleTimeout',
+			'mediawiki.widgets.MediaSearch',
 			'test.mediawiki.qunit.testrunner',
 		],
 	]

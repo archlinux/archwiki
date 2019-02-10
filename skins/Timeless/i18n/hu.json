@@ -7,16 +7,19 @@
 			"Tacsipacsi"
 		]
 	},
-	"timeless-search-placeholder": "Mintegy {{NUMBEROFARTICLES}} lap keresése",
 	"timeless-loggedin": "Fiókod",
 	"timeless-anonymous": "Névtelen",
 	"timeless-loggedinas": "Bejelentkezve '''$1''' néven",
 	"timeless-notloggedin": "Nem vagy bejelentkezve",
+	"timeless-userpage": "{{GENDER:$1|Felhasználói}} lap",
+	"timeless-talkpage": "{{GENDER:$1|Felhasználói}} vitalap",
 	"timeless-more": "Több",
 	"timeless-sitetools": "Wikieszközök",
+	"timeless-pageactions": "Eszközök",
 	"timeless-userpagetools": "Szerkesztőlapi eszközök",
 	"timeless-pagemisc": "Több",
 	"timeless-namespaces": "Névterek",
 	"timeless-pagetools": "Lapműveletek",
-	"timeless-languages": "Nyelvek"
+	"timeless-languages": "Nyelvek",
+	"timeless.js": "/* A Timeless felület használói számára betöltendő JavaScriptek */"
 }

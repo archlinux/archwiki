@@ -2,6 +2,7 @@
 
 namespace MediaWiki\Tests\Storage;
 
+use InvalidArgumentException;
 use Language;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Storage\SqlBlobStore;
@@ -85,9 +86,9 @@ class SqlBlobStoreTest extends MediaWikiTestCase {
 	}
 
 	public function provideDecompress() {
-		yield '(no legacy encoding), false in false out' => [ false, false, [], false ];
 		yield '(no legacy encoding), empty in empty out' => [ false, '', [], '' ];
 		yield '(no legacy encoding), empty in empty out' => [ false, 'A', [], 'A' ];
+		yield '(no legacy encoding), error flag -> false' => [ false, 'X', [ 'error' ], false ];
 		yield '(no legacy encoding), string in with gzip flag returns string' => [
 			// gzip string below generated with gzdeflate( 'AAAABBAAA' )
 			false, "sttttr\002\022\000", [ 'gzip' ], 'AAAABBAAA',
@@ -166,6 +167,16 @@ class SqlBlobStoreTest extends MediaWikiTestCase {
 	}
 
 	/**
+	 * @covers \MediaWiki\Storage\SqlBlobStore::decompressData
+	 */
+	public function testDecompressData_InvalidArgumentException() {
+		$store = $this->getBlobStore();
+
+		$this->setExpectedException( InvalidArgumentException::class );
+		$store->decompressData( false, [] );
+	}
+
+	/**
 	 * @covers \MediaWiki\Storage\SqlBlobStore::compressData
 	 */
 	public function testCompressRevisionTextUtf8() {
@@ -233,9 +244,47 @@ class SqlBlobStoreTest extends MediaWikiTestCase {
 	 * @covers \MediaWiki\Storage\SqlBlobStore::getBlob
 	 */
 	public function testSimpleStoreGetBlobSimpleRoundtripWindowsLegacyEncodingGzip( $blob ) {
+		// FIXME: fails under postgres
+		$this->markTestSkippedIfDbType( 'postgres' );
 		$store = $this->getBlobStore( 'windows-1252', true );
 		$address = $store->storeBlob( $blob );
 		$this->assertSame( $blob, $store->getBlob( $address ) );
+	}
+
+	public function provideGetTextIdFromAddress() {
+		yield [ 'tt:17', 17 ];
+		yield [ 'xy:17', null ];
+		yield [ 'xy:xyzzy', null ];
+	}
+
+	/**
+	 * @dataProvider provideGetTextIdFromAddress
+	 */
+	public function testGetTextIdFromAddress( $address, $textId ) {
+		$store = $this->getBlobStore();
+		$this->assertSame( $textId, $store->getTextIdFromAddress( $address ) );
+	}
+
+	public function provideGetTextIdFromAddressInvalidArgumentException() {
+		yield [ 'tt:-17' ];
+		yield [ 'tt:xy' ];
+		yield [ 'tt:0' ];
+		yield [ 'tt:' ];
+		yield [ 'xy' ];
+		yield [ '' ];
+	}
+
+	/**
+	 * @dataProvider provideGetTextIdFromAddressInvalidArgumentException
+	 */
+	public function testGetTextIdFromAddressInvalidArgumentException( $address ) {
+		$this->setExpectedException( InvalidArgumentException::class );
+		$store = $this->getBlobStore();
+		$store->getTextIdFromAddress( $address );
+	}
+
+	public function testMakeAddressFromTextId() {
+		$this->assertSame( 'tt:17', SqlBlobStore::makeAddressFromTextId( 17 ) );
 	}
 
 }

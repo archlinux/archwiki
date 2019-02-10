@@ -39,29 +39,6 @@ class Linker {
 	const TOOL_LINKS_EMAIL = 2;
 
 	/**
-	 * Return the CSS colour of a known link
-	 *
-	 * @deprecated since 1.28, use LinkRenderer::getLinkClasses() instead
-	 *
-	 * @since 1.16.3
-	 * @param LinkTarget $t
-	 * @param int $threshold User defined threshold
-	 * @return string CSS class
-	 */
-	public static function getLinkColour( LinkTarget $t, $threshold ) {
-		wfDeprecated( __METHOD__, '1.28' );
-		$services = MediaWikiServices::getInstance();
-		$linkRenderer = $services->getLinkRenderer();
-		if ( $threshold !== $linkRenderer->getStubThreshold() ) {
-			// Need to create a new instance with the right stub threshold...
-			$linkRenderer = $services->getLinkRendererFactory()->create();
-			$linkRenderer->setStubThreshold( $threshold );
-		}
-
-		return $linkRenderer->getLinkClasses( $t );
-	}
-
-	/**
 	 * This function returns an HTML link to the given target.  It serves a few
 	 * purposes:
 	 *   1) If $target is a Title, the correct URL to link to will be figured
@@ -207,14 +184,13 @@ class Linker {
 	 * @return string
 	 */
 	public static function getInvalidTitleDescription( IContextSource $context, $namespace, $title ) {
-		global $wgContLang;
-
 		// First we check whether the namespace exists or not.
 		if ( MWNamespace::exists( $namespace ) ) {
 			if ( $namespace == NS_MAIN ) {
 				$name = $context->msg( 'blanknamespace' )->text();
 			} else {
-				$name = $wgContLang->getFormattedNsText( $namespace );
+				$name = MediaWikiServices::getInstance()->getContentLanguage()->
+					getFormattedNsText( $namespace );
 			}
 			return $context->msg( 'invalidtitle-knownnamespace', $namespace, $name, $title )->text();
 		} else {
@@ -229,7 +205,8 @@ class Linker {
 	 */
 	public static function normaliseSpecialPage( LinkTarget $target ) {
 		if ( $target->getNamespace() == NS_SPECIAL && !$target->isExternal() ) {
-			list( $name, $subpage ) = SpecialPageFactory::resolveAlias( $target->getDBkey() );
+			list( $name, $subpage ) = MediaWikiServices::getInstance()->getSpecialPageFactory()->
+				resolveAlias( $target->getDBkey() );
 			if ( !$name ) {
 				return $target;
 			}
@@ -328,7 +305,9 @@ class Linker {
 		$res = null;
 		$dummy = new DummyLinker;
 		if ( !Hooks::run( 'ImageBeforeProduceHTML', [ &$dummy, &$title,
-			&$file, &$frameParams, &$handlerParams, &$time, &$res ] ) ) {
+			&$file, &$frameParams, &$handlerParams, &$time, &$res,
+			$parser, &$query, &$widthOption
+		] ) ) {
 			return $res;
 		}
 
@@ -338,7 +317,7 @@ class Linker {
 		}
 
 		// Clean up parameters
-		$page = isset( $handlerParams['page'] ) ? $handlerParams['page'] : false;
+		$page = $handlerParams['page'] ?? false;
 		if ( !isset( $frameParams['align'] ) ) {
 			$frameParams['align'] = '';
 		}
@@ -442,7 +421,7 @@ class Linker {
 			$params = [
 				'alt' => $frameParams['alt'],
 				'title' => $frameParams['title'],
-				'valign' => isset( $frameParams['valign'] ) ? $frameParams['valign'] : false,
+				'valign' => $frameParams['valign'] ?? false,
 				'img-class' => $frameParams['class'] ];
 			if ( isset( $frameParams['border'] ) ) {
 				$params['img-class'] .= ( $params['img-class'] !== '' ? ' ' : '' ) . 'thumbborder';
@@ -452,7 +431,11 @@ class Linker {
 			$s = $thumb->toHtml( $params );
 		}
 		if ( $frameParams['align'] != '' ) {
-			$s = "<div class=\"float{$frameParams['align']}\">{$s}</div>";
+			$s = Html::rawElement(
+				'div',
+				[ 'class' => 'float' . $frameParams['align'] ],
+				$s
+			);
 		}
 		return str_replace( "\n", ' ', $prefix . $s . $postfix );
 	}
@@ -504,7 +487,7 @@ class Linker {
 	 * @param string $manualthumb
 	 * @return string
 	 */
-	public static function makeThumbLinkObj( Title $title, $file, $label = '', $alt,
+	public static function makeThumbLinkObj( Title $title, $file, $label = '', $alt = '',
 		$align = 'right', $params = [], $framed = false, $manualthumb = ""
 	) {
 		$frameParams = [
@@ -535,7 +518,7 @@ class Linker {
 	) {
 		$exists = $file && $file->exists();
 
-		$page = isset( $handlerParams['page'] ) ? $handlerParams['page'] : false;
+		$page = $handlerParams['page'] ?? false;
 		if ( !isset( $frameParams['align'] ) ) {
 			$frameParams['align'] = 'right';
 		}
@@ -826,7 +809,7 @@ class Linker {
 			$key = strtolower( $name );
 		}
 
-		return self::linkKnown( SpecialPage::getTitleFor( $name ), wfMessage( $key )->text() );
+		return self::linkKnown( SpecialPage::getTitleFor( $name ), wfMessage( $key )->escaped() );
 	}
 
 	/**
@@ -925,7 +908,7 @@ class Linker {
 	 *   red if the user has no edits?
 	 * @param int $flags Customisation flags (e.g. Linker::TOOL_LINKS_NOBLOCK
 	 *   and Linker::TOOL_LINKS_EMAIL).
-	 * @param int $edits User edit count (optional, for performance)
+	 * @param int|null $edits User edit count (optional, for performance)
 	 * @return string HTML fragment
 	 */
 	public static function userToolLinks(
@@ -987,7 +970,7 @@ class Linker {
 	 * @since 1.16.3
 	 * @param int $userId User identifier
 	 * @param string $userText User name or IP address
-	 * @param int $edits User edit count (optional, for performance)
+	 * @param int|null $edits User edit count (optional, for performance)
 	 * @return string
 	 */
 	public static function userToolLinksRedContribs( $userId, $userText, $edits = null ) {
@@ -1093,10 +1076,6 @@ class Linker {
 	 * @author Erik Moeller <moeller@scireview.de>
 	 * @since 1.16.3. $wikiId added in 1.26
 	 *
-	 * Note: there's not always a title to pass to this function.
-	 * Since you can't set a default parameter for a reference, I've turned it
-	 * temporarily to a value pass. Should be adjusted further. --brion
-	 *
 	 * @param string $comment
 	 * @param Title|null $title Title object (to generate link to the section in autocomment)
 	 *  or null
@@ -1104,7 +1083,7 @@ class Linker {
 	 * @param string|null $wikiId Id (as used by WikiMap) of the wiki to generate links to.
 	 *  For use with external changes.
 	 *
-	 * @return mixed|string
+	 * @return string HTML
 	 */
 	public static function formatComment(
 		$comment, $title = null, $local = false, $wikiId = null
@@ -1221,15 +1200,16 @@ class Linker {
 	 * @todo FIXME: Doesn't handle sub-links as in image thumb texts like the main parser
 	 *
 	 * @param string $comment Text to format links in. WARNING! Since the output of this
-	 *	function is html, $comment must be sanitized for use as html. You probably want
-	 *	to pass $comment through Sanitizer::escapeHtmlAllowEntities() before calling
-	 *	this function.
+	 * 	function is html, $comment must be sanitized for use as html. You probably want
+	 * 	to pass $comment through Sanitizer::escapeHtmlAllowEntities() before calling
+	 * 	this function.
 	 * @param Title|null $title An optional title object used to links to sections
 	 * @param bool $local Whether section links should refer to local page
 	 * @param string|null $wikiId Id of the wiki to link to (if not the local wiki),
 	 *  as used by WikiMap.
 	 *
-	 * @return string
+	 * @return string HTML
+	 * @return-taint onlysafefor_html
 	 */
 	public static function formatLinksInComment(
 		$comment, $title = null, $local = false, $wikiId = null
@@ -1237,6 +1217,7 @@ class Linker {
 		return preg_replace_callback(
 			'/
 				\[\[
+				\s*+ # ignore leading whitespace, the *+ quantifier disallows backtracking
 				:? # ignore optional leading colon
 				([^\]|]+) # 1. link target; page names cannot include ] or |
 				(?:\|
@@ -1248,10 +1229,11 @@ class Linker {
 				([^[]*) # 3. link trail (the text up until the next link)
 			/x',
 			function ( $match ) use ( $title, $local, $wikiId ) {
-				global $wgContLang;
-
 				$medians = '(?:' . preg_quote( MWNamespace::getCanonicalName( NS_MEDIA ), '/' ) . '|';
-				$medians .= preg_quote( $wgContLang->getNsText( NS_MEDIA ), '/' ) . '):';
+				$medians .= preg_quote(
+					MediaWikiServices::getInstance()->getContentLanguage()->getNsText( NS_MEDIA ),
+					'/'
+				) . '):';
 
 				$comment = $match[0];
 
@@ -1285,7 +1267,11 @@ class Linker {
 						$match[1] = substr( $match[1], 1 );
 					}
 					if ( $match[1] !== false && $match[1] !== '' ) {
-						if ( preg_match( $wgContLang->linkTrail(), $match[3], $submatch ) ) {
+						if ( preg_match(
+							MediaWikiServices::getInstance()->getContentLanguage()->linkTrail(),
+							$match[3],
+							$submatch
+						) ) {
 							$trail = $submatch[1];
 						} else {
 							$trail = "";
@@ -1517,7 +1503,7 @@ class Linker {
 	 * @return string
 	 */
 	public static function tocIndent() {
-		return "\n<ul>";
+		return "\n<ul>\n";
 	}
 
 	/**
@@ -1548,9 +1534,9 @@ class Linker {
 			$classes .= " tocsection-$sectionIndex";
 		}
 
-		// \n<li class="$classes"><a href="#$anchor"><span class="tocnumber">
+		// <li class="$classes"><a href="#$anchor"><span class="tocnumber">
 		// $tocnumber</span> <span class="toctext">$tocline</span></a>
-		return "\n" . Html::openElement( 'li', [ 'class' => $classes ] )
+		return Html::openElement( 'li', [ 'class' => $classes ] )
 			. Html::rawElement( 'a',
 				[ 'href' => "#$anchor" ],
 				Html::element( 'span', [ 'class' => 'tocnumber' ], $tocnumber )
@@ -1583,12 +1569,25 @@ class Linker {
 		$title = wfMessage( 'toc' )->inLanguage( $lang )->escaped();
 
 		return '<div id="toc" class="toc">'
+			. Html::element( 'input', [
+				'type' => 'checkbox',
+				'role' => 'button',
+				'id' => 'toctogglecheckbox',
+				'class' => 'toctogglecheckbox',
+				'style' => 'display:none',
+			] )
 			. Html::openElement( 'div', [
 				'class' => 'toctitle',
 				'lang' => $lang->getHtmlCode(),
 				'dir' => $lang->getDir(),
 			] )
-			. '<h2>' . $title . "</h2></div>\n"
+			. "<h2>$title</h2>"
+			. '<span class="toctogglespan">'
+			. Html::label( '', 'toctogglecheckbox', [
+				'class' => 'toctogglelabel',
+			] )
+			. '</span>'
+			. "</div>\n"
 			. $toc
 			. "</ul>\n</div>\n";
 	}
@@ -1663,8 +1662,7 @@ class Linker {
 	 * @return array
 	 */
 	static function splitTrail( $trail ) {
-		global $wgContLang;
-		$regex = $wgContLang->linkTrail();
+		$regex = MediaWikiServices::getInstance()->getContentLanguage()->linkTrail();
 		$inside = '';
 		if ( $trail !== '' ) {
 			$m = [];
@@ -1699,7 +1697,7 @@ class Linker {
 	 * @since 1.16.3. $context added in 1.20. $options added in 1.21
 	 *
 	 * @param Revision $rev
-	 * @param IContextSource $context Context to use or null for the main context.
+	 * @param IContextSource|null $context Context to use or null for the main context.
 	 * @param array $options
 	 * @return string
 	 */

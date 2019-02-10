@@ -21,7 +21,8 @@
 			"SeoMac",
 			"Macofe",
 			"Tem",
-			"Nmacu"
+			"Nmacu",
+			"ديفيد"
 		]
 	},
 	"tog-underline": "Folínte faoi naisc:",
@@ -948,7 +949,6 @@
 	"pager-newer-n": "{{PLURAL:$1|1 níos nuaí|$1 níos nuaí}}",
 	"pager-older-n": "{{PLURAL:$1|1 níos sine|$1 níos sine}}",
 	"apisandbox": "API: bosca gainimh",
-	"apisandbox-unfullscreen": "Taispeáin lch.",
 	"booksources": "Leabharfhoinsí",
 	"booksources-search-legend": "Cuardaigh le foinsí leabhar",
 	"booksources-search": "Cuardaigh",
@@ -1142,9 +1142,9 @@
 	"whatlinkshere": "Naisc leis an lch seo",
 	"whatlinkshere-title": "Naisc le $1",
 	"whatlinkshere-page": "Leathanach:",
-	"linkshere": "Tá nasc chuig '''[[:$1]]''' ar na leathanaigh seo a leanas:",
-	"nolinkshere": "Níl leathanach ar bith ann a bhfuil nasc chuig '''[[:$1]]''' air.",
-	"nolinkshere-ns": "Níl leathanach ar bith ann san ainmspás roghnaithe a bhfuil nasc chuig '''[[:$1]]''' air.",
+	"linkshere": "Tá nasc chuig '''$2''' ar na leathanaigh seo a leanas:",
+	"nolinkshere": "Níl leathanach ar bith ann a bhfuil nasc chuig '''$2''' air.",
+	"nolinkshere-ns": "Níl leathanach ar bith ann san ainmspás roghnaithe a bhfuil nasc chuig '''$2''' air.",
 	"isredirect": "Leathanach athsheolaidh",
 	"istemplate": "iniamh",
 	"isimage": "nasc comhad",
@@ -1348,7 +1348,6 @@
 	"rcpatroldisabled": "Mhíchumasaíodh Patról na n-Athruithe is Déanaí",
 	"rcpatroldisabledtext": "Tá an tréith Patról na n-Athruithe is Déanaí míchumasaithe faoi láthair.",
 	"patrol-log-page": "Log phatról",
-	"log-show-hide-patrol": "$1 log phatról",
 	"deletedrevision": "Scriosadh an seanleagan $1",
 	"filedeleteerror-short": "Earráid comhad a scriosadh: $1",
 	"previousdiff": "← Gabh chuig an difear roimhe seo",

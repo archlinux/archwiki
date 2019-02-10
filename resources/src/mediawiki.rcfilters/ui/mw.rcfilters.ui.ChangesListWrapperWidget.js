@@ -1,4 +1,4 @@
-( function ( mw ) {
+( function () {
 	/**
 	 * List of changes
 	 *
@@ -29,13 +29,11 @@
 		this.changesListViewModel = changesListViewModel;
 		this.controller = controller;
 		this.highlightClasses = null;
-		this.filtersModelInitialized = false;
 
 		// Events
 		this.filtersViewModel.connect( this, {
 			itemUpdate: 'onItemUpdate',
-			highlightChange: 'onHighlightChange',
-			initialize: 'onFiltersModelInitialize'
+			highlightChange: 'onHighlightChange'
 		} );
 		this.changesListViewModel.connect( this, {
 			invalidate: 'onModelInvalidate',
@@ -53,17 +51,6 @@
 	/* Initialization */
 
 	OO.inheritClass( mw.rcfilters.ui.ChangesListWrapperWidget, OO.ui.Widget );
-
-	/**
-	 * Respond to filters model initialize event
-	 */
-	mw.rcfilters.ui.ChangesListWrapperWidget.prototype.onFiltersModelInitialize = function () {
-		this.filtersModelInitialized = true;
-		// Set up highlight containers. We need to wait for the filters model
-		// to be initialized, so we can make sure we have all the css class definitions
-		// we get from the server with our filters
-		this.setupHighlightContainers( this.$element );
-	};
 
 	/**
 	 * Get all available highlight classes
@@ -98,7 +85,9 @@
 	 * Respond to a filter item model update
 	 */
 	mw.rcfilters.ui.ChangesListWrapperWidget.prototype.onItemUpdate = function () {
-		if ( this.filtersModelInitialized && this.filtersViewModel.isHighlightEnabled() ) {
+		if ( this.controller.isInitialized() && this.filtersViewModel.isHighlightEnabled() ) {
+			// this.controller.isInitialized() is still false during page load,
+			// we don't want to clear/apply highlights at this stage.
 			this.clearHighlight();
 			this.applyHighlight();
 		}
@@ -178,9 +167,6 @@
 					this.emphasizeNewChanges( from );
 				}
 			}
-
-			// Set up highlight containers
-			this.setupHighlightContainers( this.$element );
 
 			// Apply highlight
 			this.applyHighlight();
@@ -264,101 +250,6 @@
 		$newChanges
 			.hide()
 			.fadeIn( 1000 );
-	};
-
-	/**
-	 * Set up the highlight containers with all color circle indicators.
-	 *
-	 * @param {jQuery|string} $content The content of the updated changes list
-	 */
-	mw.rcfilters.ui.ChangesListWrapperWidget.prototype.setupHighlightContainers = function ( $content ) {
-		var $enhancedTopPageCell, $enhancedNestedPagesCell,
-			widget = this,
-			highlightClass = 'mw-rcfilters-ui-changesListWrapperWidget-highlights',
-			$highlights = $( '<div>' )
-				.addClass( highlightClass )
-				.append(
-					$( '<div>' )
-						.addClass( 'mw-rcfilters-ui-changesListWrapperWidget-highlights-circle' )
-						.addClass( 'mw-rcfilters-ui-changesListWrapperWidget-highlights-color-none' )
-						.prop( 'data-color', 'none' )
-				);
-
-		if ( $( '.mw-rcfilters-ui-changesListWrapperWidget-highlights' ).length ) {
-			// Already set up
-			return;
-		}
-
-		mw.rcfilters.HighlightColors.forEach( function ( color ) {
-			$highlights.append(
-				$( '<div>' )
-					.addClass( 'mw-rcfilters-ui-changesListWrapperWidget-highlights-color-' + color )
-					.addClass( 'mw-rcfilters-ui-changesListWrapperWidget-highlights-circle' )
-					.prop( 'data-color', color )
-			);
-		} );
-
-		if ( this.inEnhancedMode() ) {
-			$enhancedTopPageCell = $content.find( 'table.mw-enhanced-rc.mw-collapsible' );
-			$enhancedNestedPagesCell = $content.find( 'td.mw-enhanced-rc-nested' );
-
-			// Enhanced RC highlight containers
-			$content.find( 'table.mw-enhanced-rc tr:first-child' )
-				.addClass( 'mw-rcfilters-ui-changesListWrapperWidget-enhanced-toplevel' )
-				.prepend(
-					$( '<td>' )
-						.append( $highlights.clone() )
-				);
-
-			// We are adding and changing cells in a table that, despite having nested rows,
-			// is actually all one big table. To prevent the highlights cell in the "nested"
-			// rows from stretching out the cell with the flags and timestamp in the top row,
-			// we give the latter colspan=2. Then to make things line up again, we add
-			// an empty <td> to the "nested" rows.
-
-			// Set colspan=2 on cell with flags and timestamp in top row
-			$content.find( 'table.mw-enhanced-rc tr:first-child td.mw-enhanced-rc' )
-				.prop( 'colspan', '2' );
-			// Add empty <td> to nested rows to compensate
-			$enhancedNestedPagesCell.parent().prepend( $( '<td>' ) );
-			// Add highlights cell to nested rows
-			$enhancedNestedPagesCell
-				.before(
-					$( '<td>' )
-						.append( $highlights.clone().addClass( 'mw-enhanced-rc-nested' ) )
-				);
-
-			// We need to target the nested rows differently than the top rows so that the
-			// LESS rules applies correctly. In top rows, the rule should highlight all but
-			// the first 2 cells td:not( :nth-child( -n+2 ) and the nested rows, the rule
-			// should highlight all but the first 4 cells td:not( :nth-child( -n+4 )
-			$enhancedNestedPagesCell
-				.closest( 'tr' )
-				.addClass( 'mw-rcfilters-ui-changesListWrapperWidget-enhanced-nested' );
-
-			// Go over pages that have sub results
-			// HACK: We really only can collect those by targetting the collapsible class
-			$enhancedTopPageCell.each( function () {
-				var collectedClasses,
-					$table = $( this );
-
-				// Go over <tr>s and pick up all recognized classes
-				collectedClasses = widget.getHighlightClasses().filter( function ( className ) {
-					return $table.find( 'tr' ).hasClass( className );
-				} );
-
-				$table.find( 'tr:first-child' )
-					.addClass( collectedClasses.join( ' ' ) );
-			} );
-
-			$content.addClass( 'mw-rcfilters-ui-changesListWrapperWidget-enhancedView' );
-		} else {
-			// Regular RC
-			$content.find( 'ul.special li' )
-				.prepend( $highlights.clone() );
-
-			$content.removeClass( 'mw-rcfilters-ui-changesListWrapperWidget-enhancedView' );
-		}
 	};
 
 	/**
@@ -489,4 +380,4 @@
 		// Turn off highlights
 		this.$element.removeClass( 'mw-rcfilters-ui-changesListWrapperWidget-highlighted' );
 	};
-}( mediaWiki ) );
+}() );

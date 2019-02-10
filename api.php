@@ -2,13 +2,10 @@
 /**
  * This file is the entry point for all API queries.
  *
- * It begins by checking whether the API is enabled on this wiki; if not,
- * it informs the user that s/he should set $wgEnableAPI to true and exits.
- * Otherwise, it constructs a new ApiMain using the parameter passed to it
- * as an argument in the URL ('?action=') and with write-enabled set to the
- * value of $wgEnableWriteAPI as specified in LocalSettings.php.
- * It then invokes "execute()" on the ApiMain object instance, which
- * produces output in the format specified in the URL.
+ * It begins by constructing a new ApiMain using the parameter passed to it
+ * as an argument in the URL ('?action='). It then invokes "execute()" on the
+ * ApiMain object instance, which produces output in the format specified in
+ * the URL.
  *
  * Copyright © 2006 Yuri Astrakhan <Firstname><Lastname>@gmail.com
  *
@@ -44,7 +41,7 @@ if ( !$wgRequest->checkUrlExtension() ) {
 	return;
 }
 
-// Pathinfo can be used for stupid things. We don't support it for api.php at
+// PATH_INFO can be used for stupid things. We don't support it for api.php at
 // all, so error out if it's present.
 if ( isset( $_SERVER['PATH_INFO'] ) && $_SERVER['PATH_INFO'] != '' ) {
 	$correctUrl = wfAppendQuery( wfScript( 'api' ), $wgRequest->getQueryValues() );
@@ -52,14 +49,6 @@ if ( isset( $_SERVER['PATH_INFO'] ) && $_SERVER['PATH_INFO'] != '' ) {
 	header( "Location: $correctUrl", true, 301 );
 	echo 'This endpoint does not support "path info", i.e. extra text between "api.php"'
 		. 'and the "?". Remove any such text and try again.';
-	die( 1 );
-}
-
-// Verify that the API has not been disabled
-if ( !$wgEnableAPI ) {
-	header( $_SERVER['SERVER_PROTOCOL'] . ' 500 MediaWiki configuration Error', true, 500 );
-	echo 'MediaWiki API is not enabled for this site. Add the following line to your LocalSettings.php'
-		. '<pre><b>$wgEnableAPI=true;</b></pre>';
 	die( 1 );
 }
 
@@ -76,14 +65,18 @@ try {
 	 * is some form of an ApiMain, possibly even one that produces an error message,
 	 * but we don't care here, as that is handled by the constructor.
 	 */
-	$processor = new ApiMain( RequestContext::getMain(), $wgEnableWriteAPI );
+	$processor = new ApiMain( RequestContext::getMain(), true );
 
 	// Last chance hook before executing the API
 	Hooks::run( 'ApiBeforeMain', [ &$processor ] );
 	if ( !$processor instanceof ApiMain ) {
 		throw new MWException( 'ApiBeforeMain hook set $processor to a non-ApiMain class' );
 	}
-} catch ( Exception $e ) {
+} catch ( Exception $e ) { // @todo Remove this block when HHVM is no longer supported
+	// Crap. Try to report the exception in API format to be friendly to clients.
+	ApiMain::handleApiBeforeMainException( $e );
+	$processor = false;
+} catch ( Throwable $e ) {
 	// Crap. Try to report the exception in API format to be friendly to clients.
 	ApiMain::handleApiBeforeMainException( $e );
 	$processor = false;
@@ -110,7 +103,9 @@ if ( $wgAPIRequestLog ) {
 		try {
 			$manager = $processor->getModuleManager();
 			$module = $manager->getModule( $wgRequest->getVal( 'action' ), 'action' );
-		} catch ( Exception $ex ) {
+		} catch ( Exception $ex ) { // @todo Remove this block when HHVM is no longer supported
+			$module = null;
+		} catch ( Throwable $ex ) {
 			$module = null;
 		}
 		if ( !$module || $module->mustBePosted() ) {

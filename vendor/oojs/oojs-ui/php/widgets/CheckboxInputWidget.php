@@ -24,6 +24,7 @@ class CheckboxInputWidget extends InputWidget {
 	 * @param array $config Configuration options
 	 * @param bool $config['selected'] Whether the checkbox is initially selected
 	 *   (default: false)
+	 * @param-taint $config escapes_html
 	 */
 	public function __construct( array $config = [] ) {
 		// Parent constructor
@@ -39,7 +40,7 @@ class CheckboxInputWidget extends InputWidget {
 		$this->addClasses( [ 'oo-ui-checkboxInputWidget' ] );
 		// Required for pretty styling in WikimediaUI theme
 		$this->appendContent( $this->checkIcon );
-		$this->setSelected( isset( $config['selected'] ) ? $config['selected'] : false );
+		$this->setSelected( $config['selected'] ?? false );
 	}
 
 	protected function getInputElement( $config ) {

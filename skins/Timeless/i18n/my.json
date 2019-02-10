@@ -1,8 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ninjastrikers"
+			"Ninjastrikers",
+			"Dr Lotus Black"
 		]
 	},
-	"timeless-userpage": "{{GENDER:$1|အသုံးပြု}} စာမျက်နှာ"
+	"timeless-notloggedin": "အကောင့် မဝင်ထားပါ",
+	"timeless-userpage": "{{GENDER:$1|အသုံးပြု}} စာမျက်နှာ",
+	"timeless-namespaces": "အမည်ညွှန်းများ"
 }

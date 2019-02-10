@@ -72,7 +72,7 @@ class PageDataRequestHandler {
 	 *        - oldid|revision: the revision ID
 	 * @param OutputPage $output
 	 *
-	 * @note: Instead of an output page, a WebResponse could be sufficient, but
+	 * @note Instead of an output page, a WebResponse could be sufficient, but
 	 *        redirect logic is currently implemented in OutputPage.
 	 *
 	 * @throws HttpError
@@ -132,10 +132,10 @@ class PageDataRequestHandler {
 		$contentHandler = ContentHandler::getForTitle( $title );
 		$mimeTypes = $contentHandler->getSupportedFormats();
 
-		$headers = $request->getAllHeaders();
-		if ( isset( $headers['ACCEPT'] ) ) {
+		$acceptHeader = $request->getHeader( 'Accept' );
+		if ( $acceptHeader !== false ) {
 			$parser = new HttpAcceptParser();
-			$accept = $parser->parseWeights( $headers['ACCEPT'] );
+			$accept = $parser->parseWeights( $acceptHeader );
 		} else {
 			// anything goes
 			$accept = [

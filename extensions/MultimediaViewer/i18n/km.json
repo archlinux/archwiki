@@ -1,8 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"វ័ណថារិទ្ធ"
+			"វ័ណថារិទ្ធ",
+			"គីមស៊្រុន"
 		]
 	},
-	"multimediaviewer-repository-local": "ស្វែងយល់បន្ថែម"
+	"multimediaviewer-pref": "ឧបករណ៍មើលមេឌា",
+	"multimediaviewer-optin-pref": "បើកប្រើ <span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About Media Viewer]</span>",
+	"multimediaviewer-repository-local": "ព័ត៌មានលម្អិត",
+	"multimediaviewer-datetime-created": "បង្កើតឡើងដោយ៖ $1",
+	"multimediaviewer-datetime-uploaded": "ផ្ទុកឡើងដោយ៖ $1"
 }

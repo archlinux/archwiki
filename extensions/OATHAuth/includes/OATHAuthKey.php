@@ -49,7 +49,7 @@ class OATHAuthKey {
 	 */
 	public static function newFromRandom() {
 		$object = new self(
-			Base32::encode( MWCryptRand::generate( 10, true ) ),
+			Base32::encode( random_bytes( 10 ) ),
 			[]
 		);
 
@@ -168,7 +168,7 @@ class OATHAuthKey {
 	public function regenerateScratchTokens() {
 		$scratchTokens = [];
 		for ( $i = 0; $i < 5; $i++ ) {
-			array_push( $scratchTokens, Base32::encode( MWCryptRand::generate( 10, true ) ) );
+			$scratchTokens[] = Base32::encode( random_bytes( 10 ) );
 		}
 		$this->scratchTokens = $scratchTokens;
 	}

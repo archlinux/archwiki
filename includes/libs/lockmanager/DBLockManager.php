@@ -82,7 +82,7 @@ abstract class DBLockManager extends QuorumLockManager {
 			$this->lockExpiry = $config['lockExpiry'];
 		} else {
 			$met = ini_get( 'max_execution_time' );
-			$this->lockExpiry = $met ? $met : 60; // use some sane amount if 0
+			$this->lockExpiry = $met ?: 60; // use some sane amount if 0
 		}
 		$this->safeDelay = ( $this->lockExpiry <= 0 )
 			? 60 // pick a safe-ish number to match DB timeout default
@@ -90,13 +90,11 @@ abstract class DBLockManager extends QuorumLockManager {
 
 		// Tracks peers that couldn't be queried recently to avoid lengthy
 		// connection timeouts. This is useless if each bucket has one peer.
-		$this->statusCache = isset( $config['srvCache'] )
-			? $config['srvCache']
-			: new HashBagOStuff();
+		$this->statusCache = $config['srvCache'] ?? new HashBagOStuff();
 	}
 
 	/**
-	 * @TODO change this code to work in one batch
+	 * @todo change this code to work in one batch
 	 * @param string $lockSrv
 	 * @param array $pathsByType
 	 * @return StatusValue

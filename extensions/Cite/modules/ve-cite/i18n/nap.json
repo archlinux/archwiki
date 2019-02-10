@@ -5,7 +5,8 @@
 			"Chrisportelli",
 			"PiRSquared17",
 			"C.R.",
-			"Candalua"
+			"Candalua",
+			"Ruthven"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Libbro",
@@ -30,7 +31,7 @@
 	"cite-ve-dialogbutton-reference-title": "Riferimiento",
 	"cite-ve-dialogbutton-reference-tooltip": "Base",
 	"cite-ve-dialogbutton-referenceslist-tooltip": "Elenco riferimiente",
-	"cite-ve-reference-input-placeholder": "Cirche cu 'e citaziune 'e mò",
+	"cite-ve-reference-input-placeholder": "Ascìa cu 'e citaziune 'e mo",
 	"cite-ve-referenceslist-isempty": "Nun ce stanno riferimente int'o gruppo \"$1\" ncopp'a sta paggena pe' ll'azzeccà dint'a sta lista.",
 	"cite-ve-referenceslist-isempty-default": "Nun ce stanno riferimente ncopp'a sta paggena pe' ll'azzeccà dint'a sta lista.",
 	"cite-ve-referenceslist-missingref": "Chista nota è definita int'a nu modello o dint'a n'atu blocco generato e p' 'o mumento se può cagnà sulamente cagnanno direttamente 'o codece.",

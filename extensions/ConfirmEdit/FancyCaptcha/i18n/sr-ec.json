@@ -8,17 +8,18 @@
 			"Milicevic01",
 			"Srdjan m",
 			"Сербијана",
-			"Obsuser"
+			"Obsuser",
+			"BadDog"
 		]
 	},
 	"fancycaptcha-desc": "Обогаћен стварач сликовног кода за потврду уређивања",
 	"fancycaptcha-addurl": "Ваша измена садржи нове спољашње везе.\nУ циљу заштите од непожељних порука, унесите речи са слике у поље испод ([[Special:Captcha/help|више информација]]):",
 	"fancycaptcha-badlogin": "Ради заштите од аутоматизованог разбијања шифри, унесите речи са слике у поље испод ([[Special:Captcha/help|више информација]]):",
-	"fancycaptcha-captcha": "Сигурносна провера",
-	"fancycaptcha-accountcreate": "У циљу заштите од аутоматског отварања налога, унесите речи са слике у поље испод ([[Special:Captcha/help|више информација]]):",
+	"fancycaptcha-captcha": "Безбедносна провера",
+	"fancycaptcha-accountcreate": "Како би заштитили вики од аутоматизованог отварања налога, љубазно вас молимо да унесите речи које ће се појавити у доленаведеном оквиру ([[Special:Captcha/help|више информација]]):",
 	"fancycaptcha-create": "Да бисте направили страницу, унесите речи са слике у поље испод ([[Special:Captcha/help|више информација]]):",
 	"fancycaptcha-edit": "Да бисте уредили ову страницу, унесите речи са слике у поље испод ([[Special:Captcha/help|више информација]]):",
-	"fancycaptcha-imgcaptcha-ph": "Унесите текст",
+	"fancycaptcha-imgcaptcha-ph": "Унесите текст који видите на слици",
 	"fancycaptcha-sendemail": "У циљу заштите од непожељних порука, унесите речи са слике у поље испод ([[Special:Captcha/help|више информација]]):",
 	"fancycaptcha-reload-text": "освежи"
 }

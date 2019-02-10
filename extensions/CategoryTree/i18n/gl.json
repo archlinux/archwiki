@@ -10,7 +10,7 @@
 	},
 	"categorytree": "Árbore de categorías",
 	"categorytree-portlet": "Categorías",
-	"categorytree-legend": "Mostrar a árbore de categorías",
+	"categorytree-legend": "Amosar a árbore de categorías",
 	"categorytree-desc": "Navegación dinámica a través da [[Special:CategoryTree|estrutura de categorías]]",
 	"categorytree-header": "Introduza o nome dunha categoría para ver o seu contido nunha estrutura de árbore. (Require JavaScript.)",
 	"categorytree-category": "Categoría:",

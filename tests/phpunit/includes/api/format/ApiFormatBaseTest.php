@@ -10,6 +10,13 @@ class ApiFormatBaseTest extends ApiFormatTestBase {
 
 	protected $printerName = 'mockbase';
 
+	protected function setUp() {
+		parent::setUp();
+		$this->setMwGlobals( [
+			'wgServer' => 'http://example.org'
+		] );
+	}
+
 	public function getMockFormatter( ApiMain $main = null, $format, $methods = [] ) {
 		if ( $main === null ) {
 			$context = new RequestContext;
@@ -59,7 +66,7 @@ class ApiFormatBaseTest extends ApiFormatTestBase {
 		if ( $options['name'] !== 'mockfm' ) {
 			$ct = 'text/x-mock';
 			$file = 'api-result.mock';
-			$status = isset( $options['status'] ) ? $options['status'] : null;
+			$status = $options['status'] ?? null;
 		} elseif ( isset( $params['wrappedhtml'] ) ) {
 			$ct = 'text/mediawiki-api-prettyprint-wrapped';
 			$file = 'api-result-wrapped.json';
@@ -352,7 +359,7 @@ class ApiFormatBaseTest extends ApiFormatTestBase {
 	public function testHtmlHeader( $post, $registerNonHtml, $expect ) {
 		$context = new RequestContext;
 		$request = new FauxRequest( [ 'a' => 1, 'b' => 2 ], $post );
-		$request->setRequestURL( 'http://example.org/wx/api.php' );
+		$request->setRequestURL( '/wx/api.php' );
 		$context->setRequest( $request );
 		$context->setLanguage( 'qqx' );
 		$main = new ApiMain( $context );

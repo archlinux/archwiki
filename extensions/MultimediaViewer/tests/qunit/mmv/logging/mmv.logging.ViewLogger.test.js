@@ -25,21 +25,21 @@
 
 		viewLogger.unview();
 
-		assert.ok( !logger.log.called, 'action logger not called' );
+		assert.strictEqual( logger.log.called, false, 'action logger not called' );
 
 		viewLogger.setLastViewLogged( false );
 		viewLogger.unview();
 
-		assert.ok( !logger.log.called, 'action logger not called' );
+		assert.strictEqual( logger.log.called, false, 'action logger not called' );
 
 		viewLogger.setLastViewLogged( true );
 		viewLogger.unview();
 
-		assert.ok( logger.log.calledOnce, 'action logger called' );
+		assert.strictEqual( logger.log.calledOnce, true, 'action logger called' );
 
 		viewLogger.unview();
 
-		assert.ok( logger.log.calledOnce, 'action logger not called again' );
+		assert.strictEqual( logger.log.calledOnce, true, 'action logger not called again' );
 	} );
 
 	QUnit.test( 'focus and blur', function ( assert ) {

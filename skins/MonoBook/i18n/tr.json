@@ -1,8 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"Dbl2010"
+			"Dbl2010",
+			"Rapsar"
 		]
 	},
-	"monobook.css": "/* Buraya konulacak CSS kodu tüm Monobook teması kullanan tüm kullanıcılarda etkin olur */"
+	"monobook.css": "/* Buraya konulacak CSS kodu tüm Monobook teması kullanan tüm kullanıcılarda etkin olur */",
+	"monobook-jumptonavigation": "Gezinti kısmına atla",
+	"monobook-jumptosearch": "Arama kısmına atla",
+	"monobook-cactions-label": "Sayfa işlemleri",
+	"monobook-notifications-link": "Bildirimler ($1)"
 }

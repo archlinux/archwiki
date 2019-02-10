@@ -18,7 +18,7 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @license GNU GPL v2 or later
+ * @license GPL-2.0-or-later
  * @author Jeroen De Dauw < jeroendedauw@gmail.com >
  */
 
@@ -294,7 +294,7 @@ class CacheHelper implements ICacheHelper {
 				$args = [ $args ];
 			}
 
-			$value = call_user_func_array( $computeFunction, $args );
+			$value = $computeFunction( ...$args );
 
 			if ( $this->cacheEnabled ) {
 				if ( is_null( $key ) ) {
@@ -350,7 +350,7 @@ class CacheHelper implements ICacheHelper {
 			throw new MWException( 'No cache key set, so cannot obtain or save the CacheHelper values.' );
 		}
 
-		return call_user_func_array( 'wfMemcKey', $this->cacheKey );
+		return wfMemcKey( ...array_values( $this->cacheKey ) );
 	}
 
 	/**

@@ -119,7 +119,7 @@ abstract class TablePager extends IndexPager {
 		// Make table header
 		foreach ( $fields as $field => $name ) {
 			if ( strval( $name ) == '' ) {
-				$s .= Html::rawElement( 'th', [], '&#160;' ) . "\n";
+				$s .= Html::rawElement( 'th', [], "\u{00A0}" ) . "\n";
 			} elseif ( $this->isFieldSortable( $field ) ) {
 				$query = [ 'sort' => $field, 'limit' => $this->mLimit ];
 				$linkType = null;
@@ -188,11 +188,11 @@ abstract class TablePager extends IndexPager {
 		$fieldNames = $this->getFieldNames();
 
 		foreach ( $fieldNames as $field => $name ) {
-			$value = isset( $row->$field ) ? $row->$field : null;
+			$value = $row->$field ?? null;
 			$formatted = strval( $this->formatValue( $field, $value ) );
 
 			if ( $formatted == '' ) {
-				$formatted = '&#160;';
+				$formatted = "\u{00A0}";
 			}
 
 			$s .= Html::rawElement( 'td', $this->getCellAttrs( $field, $value ), $formatted ) . "\n";
@@ -298,7 +298,6 @@ abstract class TablePager extends IndexPager {
 		$types = [ 'first', 'prev', 'next', 'last' ];
 
 		$queries = $this->getPagingQueries();
-		$links = [];
 
 		$buttons = [];
 

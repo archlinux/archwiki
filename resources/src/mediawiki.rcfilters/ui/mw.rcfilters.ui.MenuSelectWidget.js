@@ -1,4 +1,4 @@
-( function ( mw ) {
+( function () {
 	/**
 	 * A floating menu widget for the filter list
 	 *
@@ -144,7 +144,12 @@
 
 		this.menuInitialized = true;
 
+		// Create shared popup for highlight buttons
+		this.highlightPopup = new mw.rcfilters.ui.HighlightPopupWidget( this.controller );
+		this.$overlay.append( this.highlightPopup.$element );
+
 		// Count groups per view
+		// eslint-disable-next-line no-restricted-properties
 		$.each( groups, function ( groupName, groupModel ) {
 			if ( !groupModel.isHidden() ) {
 				viewGroupCount[ groupModel.getView() ] = viewGroupCount[ groupModel.getView() ] || 0;
@@ -152,6 +157,7 @@
 			}
 		} );
 
+		// eslint-disable-next-line no-restricted-properties
 		$.each( groups, function ( groupName, groupModel ) {
 			var currentItems = [],
 				view = groupModel.getView();
@@ -180,6 +186,7 @@
 							widget.model,
 							widget.model.getInvertModel(),
 							filterItem,
+							widget.highlightPopup,
 							{
 								$overlay: widget.$overlay
 							}
@@ -204,6 +211,8 @@
 	 */
 	mw.rcfilters.ui.MenuSelectWidget.prototype.onModelInitialize = function () {
 		this.menuInitialized = false;
+		// Set timeout for the menu to lazy build.
+		setTimeout( this.lazyMenuCreation.bind( this ) );
 	};
 
 	/**
@@ -297,12 +306,12 @@
 	/**
 	 * @inheritdoc
 	 */
-	mw.rcfilters.ui.MenuSelectWidget.prototype.onKeyDown = function ( e ) {
+	mw.rcfilters.ui.MenuSelectWidget.prototype.onDocumentKeyDown = function ( e ) {
 		var nextItem,
 			currentItem = this.findHighlightedItem() || this.findSelectedItem();
 
 		// Call parent
-		mw.rcfilters.ui.MenuSelectWidget.parent.prototype.onKeyDown.call( this, e );
+		mw.rcfilters.ui.MenuSelectWidget.parent.prototype.onDocumentKeyDown.call( this, e );
 
 		// We want to select the item on arrow movement
 		// rather than just highlight it, like the menu
@@ -347,4 +356,4 @@
 	mw.rcfilters.ui.MenuSelectWidget.prototype.setUserSelecting = function ( isSelecting ) {
 		this.userSelecting = !!isSelecting;
 	};
-}( mediaWiki ) );
+}() );

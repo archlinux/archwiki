@@ -61,8 +61,8 @@ INSERT INTO /*_*/mwuser (user_name) VALUES ('##Anonymous##');
 -- can refer to the user table directly.
 --
 CREATE TABLE /*_*/actor (
-  actor_id bigint unsigned NOT NULL CONSTRAINT PK_actor PRIMARY KEY IDENTITY(0,1),
-  actor_user int unsigned,
+  actor_id bigint NOT NULL CONSTRAINT PK_actor PRIMARY KEY IDENTITY(0,1),
+  actor_user int,
   actor_name nvarchar(255) NOT NULL
 );
 CREATE UNIQUE INDEX /*i*/actor_user ON /*_*/actor (actor_user);
@@ -144,7 +144,7 @@ CREATE TABLE /*_*/bot_passwords (
 -- the same comment_text and comment_data.
 --
 CREATE TABLE /*_*/comment (
-  comment_id bigint unsigned NOT NULL PRIMARY KEY IDENTITY(0,1),
+  comment_id bigint NOT NULL PRIMARY KEY IDENTITY(0,1),
   comment_hash INT NOT NULL,
   comment_text nvarchar(max) NOT NULL,
   comment_data nvarchar(max)
@@ -225,16 +225,16 @@ ALTER TABLE /*_*/page ADD CONSTRAINT FK_page_latest_page_id FOREIGN KEY (page_la
 --
 CREATE TABLE /*_*/revision_comment_temp (
   revcomment_rev INT NOT NULL CONSTRAINT FK_revcomment_rev FOREIGN KEY REFERENCES /*_*/revision(rev_id) ON DELETE CASCADE,
-  revcomment_comment_id bigint unsigned NOT NULL CONSTRAINT FK_revcomment_comment_id FOREIGN KEY REFERENCES /*_*/comment(comment_id),
+  revcomment_comment_id bigint NOT NULL CONSTRAINT FK_revcomment_comment_id FOREIGN KEY REFERENCES /*_*/comment(comment_id),
   CONSTRAINT PK_revision_comment_temp PRIMARY KEY (revcomment_rev, revcomment_comment_id)
 );
 CREATE UNIQUE INDEX /*i*/revcomment_rev ON /*_*/revision_comment_temp (revcomment_rev);
 
 CREATE TABLE /*_*/revision_actor_temp (
-  revactor_rev int unsigned NOT NULL CONSTRAINT FK_revactor_rev FOREIGN KEY REFERENCES /*_*/revision(rev_id) ON DELETE CASCADE,
-  revactor_actor bigint unsigned NOT NULL,
+  revactor_rev int NOT NULL CONSTRAINT FK_revactor_rev FOREIGN KEY REFERENCES /*_*/revision(rev_id) ON DELETE CASCADE,
+  revactor_actor bigint NOT NULL,
   revactor_timestamp varchar(14) NOT NULL CONSTRAINT DF_revactor_timestamp DEFAULT '',
-  revactor_page int unsigned NOT NULL,
+  revactor_page int NOT NULL,
   CONSTRAINT PK_revision_actor_temp PRIMARY KEY (revactor_rev, revactor_actor)
 );
 CREATE UNIQUE INDEX /*i*/revactor_rev ON /*_*/revision_actor_temp (revactor_rev);
@@ -271,10 +271,10 @@ CREATE TABLE /*_*/archive (
    ar_namespace SMALLINT NOT NULL DEFAULT 0,
    ar_title NVARCHAR(255) NOT NULL DEFAULT '',
    ar_comment NVARCHAR(255) NOT NULL CONSTRAINT DF_ar_comment DEFAULT '',
-   ar_comment_id bigint unsigned NOT NULL CONSTRAINT DF_ar_comment_id DEFAULT 0 CONSTRAINT FK_ar_comment_id FOREIGN KEY REFERENCES /*_*/comment(comment_id),
+   ar_comment_id bigint NOT NULL CONSTRAINT DF_ar_comment_id DEFAULT 0 CONSTRAINT FK_ar_comment_id FOREIGN KEY REFERENCES /*_*/comment(comment_id),
    ar_user INT CONSTRAINT ar_user__user_id__fk FOREIGN KEY REFERENCES /*_*/mwuser(user_id),
    ar_user_text NVARCHAR(255) NOT NULL CONSTRAINT DF_ar_user_text DEFAULT '',
-   ar_actor bigint unsigned NOT NULL CONSTRAINT DF_ar_actor DEFAULT 0,
+   ar_actor bigint NOT NULL CONSTRAINT DF_ar_actor DEFAULT 0,
    ar_timestamp varchar(14) NOT NULL default '',
    ar_minor_edit BIT NOT NULL DEFAULT 0,
    ar_rev_id INT NOT NULL, -- NOT a FK, the row gets deleted from revision and moved here
@@ -290,56 +290,8 @@ CREATE TABLE /*_*/archive (
 CREATE INDEX /*i*/name_title_timestamp ON /*_*/archive (ar_namespace,ar_title,ar_timestamp);
 CREATE INDEX /*i*/ar_usertext_timestamp ON /*_*/archive (ar_user_text,ar_timestamp);
 CREATE INDEX /*i*/ar_actor_timestamp ON /*_*/archive (ar_actor,ar_timestamp);
-CREATE INDEX /*i*/ar_revid ON /*_*/archive (ar_rev_id);
+CREATE UNIQUE INDEX /*i*/ar_revid_uniq ON /*_*/archive (ar_rev_id);
 
-
---
--- Slots represent an n:m relation between revisions and content objects.
--- A content object can have a specific "role" in one or more revisions.
--- Each revision can have multiple content objects, each having a different role.
---
-CREATE TABLE /*_*/slots (
-
-  -- reference to rev_id
-  slot_revision_id bigint unsigned NOT NULL,
-
-  -- reference to role_id
-  slot_role_id smallint unsigned NOT NULL CONSTRAINT FK_slots_slot_role FOREIGN KEY REFERENCES slot_roles(role_id),
-
-  -- reference to content_id
-  slot_content_id bigint unsigned NOT NULL CONSTRAINT FK_slots_content_id FOREIGN KEY REFERENCES content(content_id),
-
-  -- The revision ID of the revision that originated the slot's content.
-  -- To find revisions that changed slots, look for slot_origin = slot_revision_id.
-  slot_origin bigint NOT NULL,
-
-  CONSTRAINT PK_slots PRIMARY KEY (slot_revision_id, slot_role_id)
-);
-
--- Index for finding revisions that modified a specific slot
-CREATE INDEX /*i*/slot_revision_origin_role ON /*_*/slots (slot_revision_id, slot_origin, slot_role_id);
-
---
--- The content table represents content objects. It's primary purpose is to provide the necessary
--- meta-data for loading and interpreting a serialized data blob to create a content object.
---
-CREATE TABLE /*_*/content (
-
-  -- ID of the content object
-  content_id bigint unsigned NOT NULL CONSTRAINT PK_content PRIMARY KEY IDENTITY,
-
-  -- Nominal size of the content object (not necessarily of the serialized blob)
-  content_size int unsigned NOT NULL,
-
-  -- Nominal hash of the content object (not necessarily of the serialized blob)
-  content_sha1 varchar(32) NOT NULL,
-
-  -- reference to model_id
-  content_model smallint unsigned NOT NULL CONSTRAINT FK_content_content_models FOREIGN KEY REFERENCES /*_*/content_models(model_id),
-
-  -- URL-like address of the content blob
-  content_address nvarchar(255) NOT NULL
-);
 
 --
 -- Normalization table for role names
@@ -362,6 +314,54 @@ CREATE TABLE /*_*/content_models (
 
 -- Index for looking of the internal ID of for a name
 CREATE UNIQUE INDEX /*i*/model_name ON /*_*/content_models (model_name);
+
+--
+-- The content table represents content objects. It's primary purpose is to provide the necessary
+-- meta-data for loading and interpreting a serialized data blob to create a content object.
+--
+CREATE TABLE /*_*/content (
+
+  -- ID of the content object
+  content_id bigint NOT NULL CONSTRAINT PK_content PRIMARY KEY IDENTITY,
+
+  -- Nominal size of the content object (not necessarily of the serialized blob)
+  content_size int NOT NULL,
+
+  -- Nominal hash of the content object (not necessarily of the serialized blob)
+  content_sha1 varchar(32) NOT NULL,
+
+  -- reference to model_id
+  content_model smallint NOT NULL CONSTRAINT FK_content_content_models FOREIGN KEY REFERENCES /*_*/content_models(model_id),
+
+  -- URL-like address of the content blob
+  content_address nvarchar(255) NOT NULL
+);
+
+--
+-- Slots represent an n:m relation between revisions and content objects.
+-- A content object can have a specific "role" in one or more revisions.
+-- Each revision can have multiple content objects, each having a different role.
+--
+CREATE TABLE /*_*/slots (
+
+  -- reference to rev_id
+  slot_revision_id bigint NOT NULL,
+
+  -- reference to role_id
+  slot_role_id smallint NOT NULL CONSTRAINT FK_slots_slot_role FOREIGN KEY REFERENCES slot_roles(role_id),
+
+  -- reference to content_id
+  slot_content_id bigint NOT NULL CONSTRAINT FK_slots_content_id FOREIGN KEY REFERENCES content(content_id),
+
+  -- The revision ID of the revision that originated the slot's content.
+  -- To find revisions that changed slots, look for slot_origin = slot_revision_id.
+  slot_origin bigint NOT NULL,
+
+  CONSTRAINT PK_slots PRIMARY KEY (slot_revision_id, slot_role_id)
+);
+
+-- Index for finding revisions that modified a specific slot
+CREATE INDEX /*i*/slot_revision_origin_role ON /*_*/slots (slot_revision_id, slot_origin, slot_role_id);
 
 
 --
@@ -504,6 +504,24 @@ CREATE INDEX /*i*/cat_pages ON /*_*/category (cat_pages);
 
 
 --
+-- Table defining tag names for IDs. Also stores hit counts to avoid expensive queries on change_tag
+--
+CREATE TABLE /*_*/change_tag_def (
+    -- Numerical ID of the tag (ct_tag_id refers to this)
+    ctd_id int NOT NULL CONSTRAINT PK_change_tag_def PRIMARY KEY IDENTITY,
+    -- Symbolic name of the tag (what would previously be put in ct_tag)
+    ctd_name nvarchar(255) NOT NULL,
+    -- Whether this tag was defined manually by a privileged user using Special:Tags
+    ctd_user_defined tinyint NOT NULL CONSTRAINT DF_ctd_user_defined DEFAULT 0,
+    -- Number of times this tag was used
+    ctd_count int NOT NULL CONSTRAINT DF_ctd_count DEFAULT 0
+) /*$wgDBTableOptions*/;
+
+CREATE UNIQUE INDEX /*i*/ctd_name ON /*_*/change_tag_def (ctd_name);
+CREATE INDEX /*i*/ctd_count ON /*_*/change_tag_def (ctd_count);
+CREATE INDEX /*i*/ctd_user_defined ON /*_*/change_tag_def (ctd_user_defined);
+
+--
 -- Track links to external URLs
 --
 CREATE TABLE /*_*/externallinks (
@@ -531,8 +549,7 @@ CREATE TABLE /*_*/externallinks (
 
   -- This is el_index truncated to 60 bytes to allow for sortable queries that
   -- aren't supported by a partial index.
-  -- @todo Drop the default once this is deployed everywhere and code is populating it.
-  el_index_60 varbinary(60) NOT NULL default ''
+  el_index_60 varbinary(60) NOT NULL
 );
 
 CREATE INDEX /*i*/el_from ON /*_*/externallinks (el_from);
@@ -626,7 +643,7 @@ CREATE TABLE /*_*/ipblocks (
   ipb_by int REFERENCES /*_*/mwuser(user_id) ON DELETE CASCADE,
 
   -- Actor ID who made the block.
-  ipb_by_actor bigint unsigned NOT NULL CONSTRAINT DF_ipb_by_actor DEFAULT 0,
+  ipb_by_actor bigint NOT NULL CONSTRAINT DF_ipb_by_actor DEFAULT 0,
 
   -- User name of blocker
   ipb_by_text nvarchar(255) NOT NULL default '',
@@ -636,7 +653,7 @@ CREATE TABLE /*_*/ipblocks (
 
   -- Key to comment_id. Text comment made by blocker.
   -- ("DEFAULT 0" is temporary, signaling that ipb_reason should be used)
-  ipb_reason_id bigint unsigned NOT NULL CONSTRAINT DF_ipb_reason_id DEFAULT 0 CONSTRAINT FK_ipb_reason_id FOREIGN KEY REFERENCES /*_*/comment(comment_id),
+  ipb_reason_id bigint NOT NULL CONSTRAINT DF_ipb_reason_id DEFAULT 0 CONSTRAINT FK_ipb_reason_id FOREIGN KEY REFERENCES /*_*/comment(comment_id),
 
   -- Creation (or refresh) date in standard YMDHMS form.
   -- IP blocks expire automatically.
@@ -681,8 +698,11 @@ CREATE TABLE /*_*/ipblocks (
   -- Autoblocks set this to the original block
   -- so that the original block being deleted also
   -- deletes the autoblocks
-  ipb_parent_block_id int default NULL REFERENCES /*_*/ipblocks(ipb_id)
+  ipb_parent_block_id int default NULL REFERENCES /*_*/ipblocks(ipb_id),
 
+  -- Block user from editing any page on the site (other than their own user
+  -- talk page).
+  ipb_sitewide bit NOT NULL CONSTRAINT DF_ipb_sitewide DEFAULT 1
 );
 
 -- Unique index to support "user already blocked" messages
@@ -695,6 +715,26 @@ CREATE INDEX /*i*/ipb_timestamp ON /*_*/ipblocks (ipb_timestamp);
 CREATE INDEX /*i*/ipb_expiry ON /*_*/ipblocks (ipb_expiry);
 CREATE INDEX /*i*/ipb_parent_block_id ON /*_*/ipblocks (ipb_parent_block_id);
 
+--
+-- Partial Block Restrictions
+--
+CREATE TABLE /*_*/ipblocks_restrictions (
+
+  -- The ipb_id from ipblocks
+  ir_ipb_id int NOT NULL CONSTRAINT FK_ir_ipb_id FOREIGN KEY REFERENCES /*_*/ipblocks(ipb_id) ON DELETE CASCADE,
+
+  -- The restriction type id.
+  ir_type tinyint NOT NULL,
+
+  -- The restriction id that corrposponds to the type. Typically a Page ID or a
+  -- Namespace ID.
+  ir_value int NOT NULL,
+
+  CONSTRAINT PK_ipblocks_restrictions PRIMARY KEY (ir_ipb_id, ir_type, ir_value)
+) /*$wgDBTableOptions*/;
+
+-- Index to query restrictions by the page or namespace.
+CREATE INDEX /*i*/ir_type_value ON /*_*/ipblocks_restrictions (ir_type, ir_value);
 
 --
 -- Uploaded images and other files.
@@ -739,7 +779,7 @@ CREATE TABLE /*_*/image (
   -- user_id and user_name of uploader.
   img_user int REFERENCES /*_*/mwuser(user_id) ON DELETE SET NULL,
   img_user_text nvarchar(255) NOT NULL CONSTRAINT DF_img_user_text DEFAULT '',
-  img_actor bigint unsigned NOT NULL CONSTRAINT DF_img_actor DEFAULT 0,
+  img_actor bigint NOT NULL CONSTRAINT DF_img_actor DEFAULT 0,
 
   -- Time of the upload.
   img_timestamp nvarchar(14) NOT NULL default '',
@@ -762,20 +802,6 @@ CREATE INDEX /*i*/img_sha1 ON /*_*/image (img_sha1);
 -- Used to get media of one type
 CREATE INDEX /*i*/img_media_mime ON /*_*/image (img_media_type,img_major_mime,img_minor_mime);
 
---
--- Temporary table to avoid blocking on an alter of image.
---
--- On large wikis like Wikimedia Commons, altering the image table is a
--- months-long process. This table is being created to avoid such an alter, and
--- will be merged back into image in the future.
---
-CREATE TABLE /*_*/image_comment_temp (
-  imgcomment_name nvarchar(255) NOT NULL CONSTRAINT FK_imgcomment_name FOREIGN KEY REFERENCES /*_*/image(imgcomment_name) ON DELETE CASCADE,
-  imgcomment_description_id bigint unsigned NOT NULL CONSTRAINT FK_imgcomment_description_id FOREIGN KEY REFERENCES /*_*/comment(comment_id),
-  CONSTRAINT PK_image_comment_temp PRIMARY KEY (imgcomment_name, imgcomment_description_id)
-);
-CREATE UNIQUE INDEX /*i*/imgcomment_name ON /*_*/image_comment_temp (imgcomment_name);
-
 
 --
 -- Previous revisions of uploaded files.
@@ -797,10 +823,10 @@ CREATE TABLE /*_*/oldimage (
   oi_height int NOT NULL default 0,
   oi_bits int NOT NULL default 0,
   oi_description nvarchar(255) NOT NULL CONSTRAINT DF_oi_description DEFAULT '',
-  oi_description_id bigint unsigned NOT NULL CONSTRAINT DF_oi_description_id DEFAULT 0 CONSTRAINT FK_oi_description_id FOREIGN KEY REFERENCES /*_*/comment(comment_id),
+  oi_description_id bigint NOT NULL CONSTRAINT DF_oi_description_id DEFAULT 0 CONSTRAINT FK_oi_description_id FOREIGN KEY REFERENCES /*_*/comment(comment_id),
   oi_user int REFERENCES /*_*/mwuser(user_id),
   oi_user_text nvarchar(255) NOT NULL CONSTRAINT DF_oi_user_text DEFAULT '',
-  oi_actor bigint unsigned NOT NULL CONSTRAINT DF_oi_actor DEFAULT 0,
+  oi_actor bigint NOT NULL CONSTRAINT DF_oi_actor DEFAULT 0,
   oi_timestamp varchar(14) NOT NULL default '',
 
   oi_metadata varbinary(max) NOT NULL,
@@ -849,7 +875,7 @@ CREATE TABLE /*_*/filearchive (
   fa_deleted_user int,
   fa_deleted_timestamp varchar(14) default '',
   fa_deleted_reason nvarchar(max) CONSTRAINT DF_fa_deleted_reason DEFAULT '',
-  fa_deleted_reason_id bigint unsigned NOT NULL CONSTRAINT DF_fa_deleted_reason_id DEFAULT 0 CONSTRAINT FK_fa_deleted_reason_id FOREIGN KEY REFERENCES /*_*/comment(comment_id),
+  fa_deleted_reason_id bigint NOT NULL CONSTRAINT DF_fa_deleted_reason_id DEFAULT 0 CONSTRAINT FK_fa_deleted_reason_id FOREIGN KEY REFERENCES /*_*/comment(comment_id),
 
   -- Duped fields from image
   fa_size int default 0,
@@ -861,10 +887,10 @@ CREATE TABLE /*_*/filearchive (
   fa_major_mime varchar(16) not null default 'unknown',
   fa_minor_mime nvarchar(100) default 'unknown',
   fa_description nvarchar(255) CONSTRAINT DF_fa_description DEFAULT '',
-  fa_description_id bigint unsigned NOT NULL CONSTRAINT DF_fa_description DEFAULT 0 CONSTRAINT FK_fa_description FOREIGN KEY REFERENCES /*_*/comment(comment_id),
+  fa_description_id bigint NOT NULL CONSTRAINT DF_fa_description_id DEFAULT 0 CONSTRAINT FK_fa_description_id FOREIGN KEY REFERENCES /*_*/comment(comment_id),
   fa_user int default 0 REFERENCES /*_*/mwuser(user_id) ON DELETE SET NULL,
   fa_user_text nvarchar(255) CONSTRAINT DF_fa_user_text DEFAULT '',
-  fa_actor bigint unsigned NOT NULL CONSTRAINT DF_fa_actor DEFAULT 0,
+  fa_actor bigint NOT NULL CONSTRAINT DF_fa_actor DEFAULT 0,
   fa_timestamp varchar(14) default '',
 
   -- Visibility of deleted revisions, bitfield
@@ -959,7 +985,7 @@ CREATE TABLE /*_*/recentchanges (
   -- As in revision
   rc_user int NOT NULL default 0 CONSTRAINT rc_user__user_id__fk FOREIGN KEY REFERENCES /*_*/mwuser(user_id),
   rc_user_text nvarchar(255) NOT NULL CONSTRAINT DF_rc_user_text DEFAULT '',
-  rc_actor bigint unsigned NOT NULL CONSTRAINT DF_rc_actor DEFAULT 0,
+  rc_actor bigint NOT NULL CONSTRAINT DF_rc_actor DEFAULT 0,
 
   -- When pages are renamed, their RC entries do _not_ change.
   rc_namespace int NOT NULL default 0,
@@ -967,7 +993,7 @@ CREATE TABLE /*_*/recentchanges (
 
   -- as in revision...
   rc_comment nvarchar(255) NOT NULL default '',
-  rc_comment_id bigint unsigned NOT NULL CONSTRAINT DF_rc_comment_id DEFAULT 0 CONSTRAINT FK_rc_comment_id FOREIGN KEY REFERENCES /*_*/comment(comment_id),
+  rc_comment_id bigint NOT NULL CONSTRAINT DF_rc_comment_id DEFAULT 0 CONSTRAINT FK_rc_comment_id FOREIGN KEY REFERENCES /*_*/comment(comment_id),
   rc_minor bit NOT NULL default 0,
 
   -- Edits by user accounts with the 'bot' rights key are
@@ -1001,7 +1027,7 @@ CREATE TABLE /*_*/recentchanges (
   -- remove a warning flag on the RC list.
   -- A value of 1 indicates the page has been reviewed manually.
   -- A value of 2 indicates the page has been automatically reviewed.
-  rc_patrolled tinyint NOT NULL CONSTRAINT DF_rc_patrolled DEFAULT 0
+  rc_patrolled tinyint NOT NULL CONSTRAINT DF_rc_patrolled DEFAULT 0,
 
   -- Recorded IP address the edit was made from, if the
   -- $wgPutIPinRC option is enabled.
@@ -1035,6 +1061,7 @@ CREATE INDEX /*i*/rc_user_text ON /*_*/recentchanges (rc_user_text, rc_timestamp
 CREATE INDEX /*i*/rc_ns_actor ON /*_*/recentchanges (rc_namespace, rc_actor);
 CREATE INDEX /*i*/rc_actor ON /*_*/recentchanges (rc_actor, rc_timestamp);
 CREATE INDEX /*i*/rc_name_type_patrolled_timestamp ON /*_*/recentchanges (rc_namespace, rc_type, rc_patrolled, rc_timestamp);
+CREATE INDEX /*i*/rc_this_oldid ON /*_*/recentchanges (rc_this_oldid);
 
 
 CREATE TABLE /*_*/watchlist (
@@ -1081,7 +1108,7 @@ CREATE UNIQUE INDEX /*i*/si_page ON /*_*/searchindex (si_page);
 --
 CREATE TABLE /*_*/interwiki (
   -- The interwiki prefix, (e.g. "Meatball", or the language prefix "de")
-  iw_prefix nvarchar(32) NOT NULL,
+  iw_prefix nvarchar(32) NOT NULL CONSTRAINT PK_interwiki PRIMARY KEY,
 
   -- The URL of the wiki, with "$1" as a placeholder for an article name.
   -- Any spaces in the name will be transformed to underscores before
@@ -1091,7 +1118,7 @@ CREATE TABLE /*_*/interwiki (
   -- The URL of the file api.php
   iw_api nvarchar(max) NOT NULL,
 
-  -- The name of the database (for a connection to be established with wfGetLB( 'wikiid' ))
+  -- The name of the database (for a connection to be established with LBFactory::getMainLB( 'wikiid' ))
   iw_wikiid nvarchar(64) NOT NULL,
 
   -- A boolean value indicating whether the wiki is in this project
@@ -1101,9 +1128,6 @@ CREATE TABLE /*_*/interwiki (
   -- Boolean value indicating whether interwiki transclusions are allowed.
   iw_trans bit NOT NULL default 0
 );
-
-CREATE UNIQUE INDEX /*i*/iw_prefix ON /*_*/interwiki (iw_prefix);
-
 
 --
 -- Used for caching expensive grouped queries
@@ -1134,18 +1158,6 @@ CREATE TABLE /*_*/objectcache (
 CREATE INDEX /*i*/exptime ON /*_*/objectcache (exptime);
 
 
---
--- Cache of interwiki transclusion
---
-CREATE TABLE /*_*/transcache (
-  tc_url nvarchar(255) NOT NULL,
-  tc_contents nvarchar(max),
-  tc_time varchar(14) NOT NULL
-);
-
-CREATE UNIQUE INDEX /*i*/tc_url_idx ON /*_*/transcache (tc_url);
-
-
 CREATE TABLE /*_*/logging (
   -- Log ID, for referring to this specific log entry, probably for deletion and such.
   log_id int NOT NULL PRIMARY KEY IDENTITY(0,1),
@@ -1166,7 +1178,7 @@ CREATE TABLE /*_*/logging (
   log_user_text nvarchar(255) NOT NULL default '',
 
   -- The actor who performed this action
-  log_actor bigint unsigned NOT NULL CONSTRAINT DF_log_actor DEFAULT 0,
+  log_actor bigint NOT NULL CONSTRAINT DF_log_actor DEFAULT 0,
 
   -- Key to the page affected. Where a user is the target,
   -- this will point to the user page.
@@ -1179,7 +1191,7 @@ CREATE TABLE /*_*/logging (
 
   -- Key to comment_id. Comment summarizing the change.
   -- ("DEFAULT 0" is temporary, signaling that log_comment should be used)
-  log_comment_id bigint unsigned NOT NULL CONSTRAINT DF_log_comment_id DEFAULT 0 CONSTRAINT FK_log_comment_id FOREIGN KEY REFERENCES /*_*/comment(comment_id),
+  log_comment_id bigint NOT NULL CONSTRAINT DF_log_comment_id DEFAULT 0 CONSTRAINT FK_log_comment_id FOREIGN KEY REFERENCES /*_*/comment(comment_id),
 
   -- miscellaneous parameters:
   -- LF separated list (old system) or serialized PHP array (new system)
@@ -1195,7 +1207,7 @@ CREATE INDEX /*i*/page_time ON /*_*/logging (log_namespace, log_title, log_times
 CREATE INDEX /*i*/times ON /*_*/logging (log_timestamp);
 CREATE INDEX /*i*/log_user_type_time ON /*_*/logging (log_user, log_type, log_timestamp);
 CREATE INDEX /*i*/log_page_id_time ON /*_*/logging (log_page,log_timestamp);
-CREATE INDEX /*i*/type_action ON /*_*/logging (log_type, log_action, log_timestamp);
+CREATE INDEX /*i*/log_type_action ON /*_*/logging (log_type, log_action, log_timestamp);
 CREATE INDEX /*i*/log_user_text_type_time ON /*_*/logging (log_user_text, log_type, log_timestamp);
 CREATE INDEX /*i*/log_user_text_time ON /*_*/logging (log_user_text, log_timestamp);
 CREATE INDEX /*i*/actor_time ON /*_*/logging (log_actor, log_timestamp);
@@ -1344,13 +1356,13 @@ CREATE TABLE /*_*/protected_titles (
   pt_title nvarchar(255) NOT NULL,
   pt_user int REFERENCES /*_*/mwuser(user_id) ON DELETE SET NULL,
   pt_reason nvarchar(255) CONSTRAINT DF_pt_reason DEFAULT '',
-  pt_reason_id bigint unsigned NOT NULL CONSTRAINT DF_pt_reason_id DEFAULT 0 CONSTRAINT FK_pt_reason_id FOREIGN KEY REFERENCES /*_*/comment(comment_id),
+  pt_reason_id bigint NOT NULL CONSTRAINT DF_pt_reason_id DEFAULT 0 CONSTRAINT FK_pt_reason_id FOREIGN KEY REFERENCES /*_*/comment(comment_id),
   pt_timestamp varchar(14) NOT NULL,
   pt_expiry varchar(14) NOT NULL,
-  pt_create_perm nvarchar(60) NOT NULL
+  pt_create_perm nvarchar(60) NOT NULL,
+  CONSTRAINT PK_protected_titles PRIMARY KEY(pt_namespace,pt_title)
 );
 
-CREATE UNIQUE INDEX /*i*/pt_namespace_title ON /*_*/protected_titles (pt_namespace,pt_title);
 CREATE INDEX /*i*/pt_timestamp ON /*_*/protected_titles (pt_timestamp);
 
 
@@ -1359,10 +1371,10 @@ CREATE TABLE /*_*/page_props (
   pp_page int NOT NULL REFERENCES /*_*/page(page_id) ON DELETE CASCADE,
   pp_propname nvarchar(60) NOT NULL,
   pp_value nvarchar(max) NOT NULL,
-  pp_sortkey float DEFAULT NULL
+  pp_sortkey float DEFAULT NULL,
+  CONSTRAINT PK_page_props PRIMARY KEY(pp_page,pp_propname)
 );
 
-CREATE UNIQUE INDEX /*i*/pp_page_propname ON /*_*/page_props (pp_page,pp_propname);
 CREATE UNIQUE INDEX /*i*/pp_propname_page ON /*_*/page_props (pp_propname,pp_page);
 CREATE UNIQUE INDEX /*i*/pp_propname_sortkey_page ON /*_*/page_props (pp_propname,pp_sortkey,pp_page);
 
@@ -1384,17 +1396,24 @@ CREATE TABLE /*_*/change_tag (
   -- REVID for the change
   ct_rev_id int NULL REFERENCES /*_*/revision(rev_id),
   -- Tag applied
-  ct_tag nvarchar(255) NOT NULL,
+  ct_tag nvarchar(255) NOT NULL default '',
   -- Parameters for the tag, presently unused
-  ct_params nvarchar(max) NULL
+  ct_params nvarchar(max) NULL,
+  -- Foreign key to change_tag_def row
+  ct_tag_id int NULL CONSTRAINT ctd_tag_id__fk FOREIGN KEY REFERENCES /*_*/change_tag_def(ctd_id)
 );
 
-CREATE UNIQUE INDEX /*i*/change_tag_rc_tag ON /*_*/change_tag (ct_rc_id,ct_tag);
-CREATE UNIQUE INDEX /*i*/change_tag_log_tag ON /*_*/change_tag (ct_log_id,ct_tag);
-CREATE UNIQUE INDEX /*i*/change_tag_rev_tag ON /*_*/change_tag (ct_rev_id,ct_tag);
+CREATE INDEX /*i*/change_tag_rc_tag_nonuniq ON /*_*/change_tag (ct_rc_id,ct_tag);
+CREATE INDEX /*i*/change_tag_log_tag_nonuniq ON /*_*/change_tag (ct_log_id,ct_tag);
+CREATE INDEX /*i*/change_tag_rev_tag_nonuniq ON /*_*/change_tag (ct_rev_id,ct_tag);
+
+CREATE UNIQUE INDEX /*i*/change_tag_rc_tag_id ON /*_*/change_tag (ct_rc_id,ct_tag_id);
+CREATE UNIQUE INDEX /*i*/change_tag_log_tag_id ON /*_*/change_tag (ct_log_id,ct_tag_id);
+CREATE UNIQUE INDEX /*i*/change_tag_rev_tag_id ON /*_*/change_tag (ct_rev_id,ct_tag_id);
+
 -- Covering index, so we can pull all the info only out of the index.
 CREATE INDEX /*i*/change_tag_tag_id ON /*_*/change_tag (ct_tag,ct_rc_id,ct_rev_id,ct_log_id);
-
+CREATE INDEX /*i*/change_tag_tag_id_id ON /*_*/change_tag (ct_tag_id,ct_rc_id,ct_rev_id,ct_log_id);
 
 -- Rollup table to pull a LIST of tags simply without ugly GROUP_CONCAT
 -- that only works on MySQL 4.1+
@@ -1501,9 +1520,10 @@ CREATE TABLE /*_*/site_identifiers (
   si_type                    nvarchar(32)       NOT NULL,
 
   -- local key value, ie 'en' or 'wiktionary'
-  si_key                     nvarchar(32)       NOT NULL
+  si_key                     nvarchar(32)       NOT NULL,
+
+  CONSTRAINT PK_site_identifiers PRIMARY KEY(si_type, si_key)
 );
 
-CREATE UNIQUE INDEX /*i*/site_ids_type ON /*_*/site_identifiers (si_type, si_key);
 CREATE INDEX /*i*/site_ids_site ON /*_*/site_identifiers (si_site);
 CREATE INDEX /*i*/site_ids_key ON /*_*/site_identifiers (si_key);

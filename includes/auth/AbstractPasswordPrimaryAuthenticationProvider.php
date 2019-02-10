@@ -53,8 +53,10 @@ abstract class AbstractPasswordPrimaryAuthenticationProvider
 	 */
 	protected function getPasswordFactory() {
 		if ( $this->passwordFactory === null ) {
-			$this->passwordFactory = new PasswordFactory();
-			$this->passwordFactory->init( $this->config );
+			$this->passwordFactory = new PasswordFactory(
+				$this->config->get( 'PasswordConfig' ),
+				$this->config->get( 'PasswordDefault' )
+			);
 		}
 		return $this->passwordFactory;
 	}
@@ -113,7 +115,7 @@ abstract class AbstractPasswordPrimaryAuthenticationProvider
 	 *
 	 * @param string $username
 	 * @param Status $status From $this->checkPasswordValidity()
-	 * @param mixed $data Passed through to $this->getPasswordResetData()
+	 * @param mixed|null $data Passed through to $this->getPasswordResetData()
 	 */
 	protected function setPasswordResetFlag( $username, Status $status, $data = null ) {
 		$reset = $this->getPasswordResetData( $username, $data );

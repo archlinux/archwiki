@@ -5,7 +5,8 @@
 			"Christian List",
 			"Froztbyte",
 			"Hylle",
-			"Peter Alberti"
+			"Peter Alberti",
+			"Saederup92"
 		]
 	},
 	"renameuser": "Omdøb bruger",
@@ -37,6 +38,6 @@
 	"logentry-renameuser-renameuser-legacier": "$1 omdøbte bruger $4 til $5",
 	"renameuser-move-log": "Side automatisk flyttet ved omdøbning af bruger \"[[User:$1|$1]]\" til \"[[User:$2|$2]]\"",
 	"action-renameuser": "omdøb brugere",
-	"right-renameuser": "Omdøbe brugere",
+	"right-renameuser": "Omdøb brugere",
 	"renameuser-renamed-notice": "Denne bruger er blevet omdøbt.\nTil information er omdøbningsloggen vist nedenfor."
 }

@@ -45,10 +45,10 @@ class ExtensionProcessor implements Processor {
 		'MediaHandlers',
 		'PasswordPolicy',
 		'RateLimits',
+		'RawHtmlMessages',
 		'RecentChangesFlags',
 		'RemoveCredentialsBlacklist',
 		'RemoveGroups',
-		'ResourceLoaderLESSVars',
 		'ResourceLoaderSources',
 		'RevokePermissions',
 		'SessionProviders',
@@ -161,6 +161,11 @@ class ExtensionProcessor implements Processor {
 	 * @var array
 	 */
 	protected $credits = [];
+
+	/**
+	 * @var array
+	 */
+	protected $config = [];
 
 	/**
 	 * Any thing else in the $info that hasn't
@@ -290,6 +295,7 @@ class ExtensionProcessor implements Processor {
 
 		return [
 			'globals' => $this->globals,
+			'config' => $this->config,
 			'defines' => $this->defines,
 			'callbacks' => $this->callbacks,
 			'credits' => $this->credits,
@@ -298,7 +304,7 @@ class ExtensionProcessor implements Processor {
 	}
 
 	public function getRequirements( array $info ) {
-		return isset( $info['requires'] ) ? $info['requires'] : [];
+		return $info['requires'] ?? [];
 	}
 
 	protected function extractHooks( array $info ) {
@@ -359,9 +365,7 @@ class ExtensionProcessor implements Processor {
 	}
 
 	protected function extractResourceLoaderModules( $dir, array $info ) {
-		$defaultPaths = isset( $info['ResourceFileModulePaths'] )
-			? $info['ResourceFileModulePaths']
-			: false;
+		$defaultPaths = $info['ResourceFileModulePaths'] ?? false;
 		if ( isset( $defaultPaths['localBasePath'] ) ) {
 			if ( $defaultPaths['localBasePath'] === '' ) {
 				// Avoid double slashes (e.g. /extensions/Example//path)
@@ -426,7 +430,7 @@ class ExtensionProcessor implements Processor {
 	protected function extractCredits( $path, array $info ) {
 		$credits = [
 			'path' => $path,
-			'type' => isset( $info['type'] ) ? $info['type'] : 'other',
+			'type' => $info['type'] ?? 'other',
 		];
 		foreach ( self::$creditsAttributes as $attr ) {
 			if ( isset( $info[$attr] ) ) {
@@ -495,6 +499,11 @@ class ExtensionProcessor implements Processor {
 					$value = "$dir/$value";
 				}
 				$this->addConfigGlobal( "$prefix$key", $value, $info['name'] );
+				$data['providedby'] = $info['name'];
+				if ( isset( $info['ConfigRegistry'][0] ) ) {
+					$data['configregistry'] = array_keys( $info['ConfigRegistry'] )[0];
+				}
+				$this->config[$key] = $data;
 			}
 		}
 	}

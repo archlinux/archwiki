@@ -51,6 +51,56 @@ class ExtensionRegistryTest extends MediaWikiTestCase {
 		$registry->loadFromQueue();
 	}
 
+	public function testLoadFromQueue() {
+		$registry = new ExtensionRegistry();
+		$registry->queue( "{$this->dataDir}/good.json" );
+		$registry->loadFromQueue();
+		$this->assertArrayHasKey( 'FooBar', $registry->getAllThings() );
+		$this->assertTrue( $registry->isLoaded( 'FooBar' ) );
+		$this->assertTrue( $registry->isLoaded( 'FooBar', '*' ) );
+		$this->assertSame( [ 'test' ], $registry->getAttribute( 'FooBarAttr' ) );
+		$this->assertSame( [], $registry->getAttribute( 'NotLoadedAttr' ) );
+	}
+
+	public function testLoadFromQueueWithConstraintWithVersion() {
+		$registry = new ExtensionRegistry();
+		$registry->queue( "{$this->dataDir}/good_with_version.json" );
+		$registry->loadFromQueue();
+		$this->assertTrue( $registry->isLoaded( 'FooBar', '>= 1.2.0' ) );
+		$this->assertFalse( $registry->isLoaded( 'FooBar', '^1.3.0' ) );
+	}
+
+	/**
+	 * @expectedException LogicException
+	 */
+	public function testLoadFromQueueWithConstraintWithoutVersion() {
+		$registry = new ExtensionRegistry();
+		$registry->queue( "{$this->dataDir}/good.json" );
+		$registry->loadFromQueue();
+		$registry->isLoaded( 'FooBar', '>= 1.2.0' );
+	}
+
+	/**
+	 * @expectedException PHPUnit_Framework_Error
+	 */
+	public function testReadFromQueue_nonexistent() {
+		$registry = new ExtensionRegistry();
+		$registry->readFromQueue( [
+			__DIR__ . '/doesnotexist.json' => 1
+		] );
+	}
+
+	public function testReadFromQueueInitializeAutoloaderWithPsr4Namespaces() {
+		$registry = new ExtensionRegistry();
+		$registry->readFromQueue( [
+			"{$this->dataDir}/autoload_namespaces.json" => 1
+		] );
+		$this->assertTrue(
+			class_exists( 'Test\\MediaWiki\\AutoLoader\\TestFooBar' ),
+			"Registry initializes Autoloader from AutoloadNamespaces"
+		);
+	}
+
 	/**
 	 * @dataProvider provideExportExtractedDataGlobals
 	 */

@@ -22,6 +22,7 @@
  */
 
 use MediaWiki\Logger\LoggerFactory;
+use Wikimedia\XMPReader\Reader as XMPReader;
 
 /**
  * Class to deal with reconciling and extracting metadata from bitmap images.
@@ -122,7 +123,7 @@ class BitmapMetadataHandler {
 	 */
 	function getMetadataArray() {
 		// this seems a bit ugly... This is all so its merged in right order
-		// based on the MWG recomendation.
+		// based on the MWG recommendation.
 		$temp = [];
 		krsort( $this->metaPriority );
 		foreach ( $this->metaPriority as $pri ) {
@@ -184,7 +185,7 @@ class BitmapMetadataHandler {
 			}
 		}
 
-		$meta->getExif( $filename, isset( $seg['byteOrder'] ) ? $seg['byteOrder'] : 'BE' );
+		$meta->getExif( $filename, $seg['byteOrder'] ?? 'BE' );
 
 		return $meta->getMetadataArray();
 	}

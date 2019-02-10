@@ -6,7 +6,7 @@
 			"Ramsis II"
 		]
 	},
-	"cite-desc": "بيضيف التاجز <nowiki><ref[ name=id]></nowiki> و <nowiki><references/></nowiki> ، للاستشهاد",
+	"cite-desc": "بيضيف التاجز <code><nowiki><ref[ name=id]></nowiki></code> و <code><nowiki><references/></nowiki></code> ، للاستشهاد",
 	"cite_error": "المرجع غلط: $1",
 	"cite_error_ref_numeric_key": "التاج <code>&lt;ref&gt;</code> مش صحيح؛\nالاسم ماينفعش يكون عدد صحيح بسيط. استخدم عنوان بيوصف",
 	"cite_error_ref_no_key": "التاج <code>&lt;ref&gt;</code> مش صحيح؛\nالمراجع اللى من غير محتوى لازميكون ليها اسم",

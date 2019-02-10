@@ -1,5 +1,9 @@
 <?php
 
+use MediaWiki\MediaWikiServices;
+use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Revision\SlotRenderingProvider;
+
 /**
  * @group ContentHandler
  */
@@ -78,10 +82,9 @@ class WikitextContentHandlerTest extends MediaWikiLangTestCase {
 	 * @covers WikitextContentHandler::makeRedirectContent
 	 */
 	public function testMakeRedirectContent( $title, $expected ) {
-		global $wgContLang;
-		$wgContLang->resetNamespaces();
+		MediaWikiServices::getInstance()->getContentLanguage()->resetNamespaces();
 
-		MagicWord::clearCache();
+		MediaWikiServices::getInstance()->resetServiceForTesting( 'MagicWordFactory' );
 
 		if ( is_string( $title ) ) {
 			$title = Title::newFromText( $title );
@@ -362,4 +365,30 @@ class WikitextContentHandlerTest extends MediaWikiLangTestCase {
 		$this->assertArrayHasKey( 'file_text', $data );
 		$this->assertEquals( 'This is file content', $data['file_text'] );
 	}
+
+	public function testGetSecondaryDataUpdates() {
+		$title = Title::newFromText( 'Somefile.jpg', NS_FILE );
+		$content = new WikitextContent( '' );
+
+		/** @var SlotRenderingProvider $srp */
+		$srp = $this->getMock( SlotRenderingProvider::class );
+
+		$handler = new WikitextContentHandler();
+		$updates = $handler->getSecondaryDataUpdates( $title, $content, SlotRecord::MAIN, $srp );
+
+		$this->assertEquals( [], $updates );
+	}
+
+	public function testGetDeletionUpdates() {
+		$title = Title::newFromText( 'Somefile.jpg', NS_FILE );
+		$content = new WikitextContent( '' );
+
+		$srp = $this->getMock( SlotRenderingProvider::class );
+
+		$handler = new WikitextContentHandler();
+		$updates = $handler->getDeletionUpdates( $title, SlotRecord::MAIN );
+
+		$this->assertEquals( [], $updates );
+	}
+
 }

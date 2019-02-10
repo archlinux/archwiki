@@ -10,12 +10,10 @@
 			"Tow"
 		]
 	},
-	"visualeditor-cite-tool-definition.json": "null",
 	"visualeditor-cite-tool-name-book": "ਕਿਤਾਬ",
 	"visualeditor-cite-tool-name-journal": "ਰਸਾਲਾ",
 	"visualeditor-cite-tool-name-news": "ਖ਼ਬਰਾਂ",
 	"visualeditor-cite-tool-name-web": "ਵੈੱਬਸਾਈਟ",
-	"cite-tool-definition.json": "null",
 	"cite-ve-dialog-reference-editing-reused": "ਇਹ ਹਵਾਲਾ ਇਸ ਸਫ਼ੇ ਉੱਤੇ $1 {{PLURAL:$1|ਵਾਰੀ}} ਵਰਤਿਆ ਜਾਂਦਾ ਹੈ।",
 	"cite-ve-dialog-reference-options-group-label": "ਇਹ ਸਮੂਹ ਵਰਤੋ",
 	"cite-ve-dialog-reference-options-group-placeholder": "ਆਮ ਹਵਾਲੇ",

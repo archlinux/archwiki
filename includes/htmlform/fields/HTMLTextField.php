@@ -38,11 +38,11 @@ class HTMLTextField extends HTMLFormField {
 	}
 
 	public function getSize() {
-		return isset( $this->mParams['size'] ) ? $this->mParams['size'] : 45;
+		return $this->mParams['size'] ?? 45;
 	}
 
 	public function getSpellCheck() {
-		$val = isset( $this->mParams['spellcheck'] ) ? $this->mParams['spellcheck'] : null;
+		$val = $this->mParams['spellcheck'] ?? null;
 		if ( is_bool( $val ) ) {
 			// "spellcheck" attribute literally requires "true" or "false" to work.
 			return $val === true ? 'true' : 'false';
@@ -85,18 +85,19 @@ class HTMLTextField extends HTMLFormField {
 			'type',
 			'min',
 			'max',
-			'pattern',
-			'title',
 			'step',
-			'list',
+			'title',
 			'maxlength',
 			'tabindex',
 			'disabled',
 			'required',
 			'autofocus',
-			'multiple',
 			'readonly',
 			'autocomplete',
+			// Only used in HTML mode:
+			'pattern',
+			'list',
+			'multiple',
 		];
 
 		$attribs += $this->getAttributes( $allowedParams );
@@ -107,7 +108,7 @@ class HTMLTextField extends HTMLFormField {
 	}
 
 	protected function getType( &$attribs ) {
-		$type = isset( $attribs['type'] ) ? $attribs['type'] : 'text';
+		$type = $attribs['type'] ?? 'text';
 		unset( $attribs['type'] );
 
 		# Implement tiny differences between some field variants
@@ -117,6 +118,7 @@ class HTMLTextField extends HTMLFormField {
 			switch ( $this->mParams['type'] ) {
 				case 'int':
 					$type = 'number';
+					$attribs['step'] = 1;
 					break;
 				case 'float':
 					$type = 'number';
@@ -152,17 +154,22 @@ class HTMLTextField extends HTMLFormField {
 		# @todo Enforce pattern, step, required, readonly on the server side as
 		# well
 		$allowedParams = [
-			'autofocus',
-			'autosize',
+			'type',
+			'min',
+			'max',
+			'step',
+			'title',
+			'maxlength',
+			'tabindex',
 			'disabled',
+			'required',
+			'autofocus',
+			'readonly',
+			'autocomplete',
+			// Only used in OOUI mode:
+			'autosize',
 			'flags',
 			'indicator',
-			'maxlength',
-			'readonly',
-			'required',
-			'tabindex',
-			'type',
-			'autocomplete',
 		];
 
 		$attribs += OOUI\Element::configFromHtmlAttributes(
@@ -181,6 +188,9 @@ class HTMLTextField extends HTMLFormField {
 		}
 
 		$type = $this->getType( $attribs );
+		if ( isset( $attribs['step'] ) && $attribs['step'] === 'any' ) {
+			$attribs['step'] = null;
+		}
 
 		return $this->getInputWidget( [
 			'id' => $this->mID,

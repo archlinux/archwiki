@@ -17,13 +17,14 @@ class DropdownInputWidget extends InputWidget {
 	 * @param array $config Configuration options
 	 * @param array[] $config['options'] Array of menu options in the format
 	 *   `[ 'data' => …, 'label' => … ]`
+	 * @param-taint $config escapes_html
 	 */
 	public function __construct( array $config = [] ) {
 		// Parent constructor
 		parent::__construct( $config );
 
 		// Initialization
-		$this->setOptions( isset( $config['options'] ) ? $config['options'] : [] );
+		$this->setOptions( $config['options'] ?? [] );
 		$this->addClasses( [ 'oo-ui-dropdownInputWidget', 'oo-ui-dropdownInputWidget-php' ] );
 		$this->input->addClasses( [ 'oo-ui-indicator-down' ] );
 	}
@@ -64,7 +65,7 @@ class DropdownInputWidget extends InputWidget {
 				$optValue = $this->cleanUpValue( $opt['data'] );
 				$option = ( new Tag( 'option' ) )
 					->setAttributes( [ 'value' => $optValue ] )
-					->appendContent( isset( $opt['label'] ) ? $opt['label'] : $optValue );
+					->appendContent( $opt['label'] ?? $optValue );
 
 				if ( $value === $optValue ) {
 					$isValueAvailable = true;
@@ -107,7 +108,7 @@ class DropdownInputWidget extends InputWidget {
 			}
 		}
 		$config['options'] = $o;
-		$config['dropdown']['$overlay'] = true;
+		$config['$overlay'] = true;
 		return parent::getConfig( $config );
 	}
 }

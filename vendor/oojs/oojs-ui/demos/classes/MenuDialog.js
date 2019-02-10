@@ -14,7 +14,6 @@ Demo.MenuDialog.prototype.initialize = function () {
 	var menuLayout, positionField, showField, expandField, menuPanel, contentPanel;
 	Demo.MenuDialog.parent.prototype.initialize.apply( this, arguments );
 
-	menuLayout = new OO.ui.MenuLayout();
 	positionField = new OO.ui.FieldLayout(
 		new OO.ui.ButtonSelectWidget( {
 			items: [
@@ -65,18 +64,17 @@ Demo.MenuDialog.prototype.initialize = function () {
 		}
 	);
 	menuPanel = new OO.ui.PanelLayout( { padded: true, expanded: true, scrollable: true } );
+	menuPanel.$element.append( 'Menu panel' );
 	contentPanel = new OO.ui.PanelLayout( { padded: true, expanded: true, scrollable: true } );
-
-	menuLayout.$menu.append(
-		menuPanel.$element.append( 'Menu panel' )
+	contentPanel.$element.append(
+		positionField.$element,
+		expandField.$element,
+		showField.$element
 	);
-	menuLayout.$content.append(
-		contentPanel.$element.append(
-			positionField.$element,
-			expandField.$element,
-			showField.$element
-		)
-	);
+	menuLayout = new OO.ui.MenuLayout( {
+		menuPanel: menuPanel,
+		contentPanel: contentPanel
+	} );
 
 	this.$body.append( menuLayout.$element );
 };

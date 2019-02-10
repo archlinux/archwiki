@@ -22,11 +22,13 @@
 			"Liflon",
 			"LNDDYL",
 			"Macofe",
-			"Black9869184"
+			"Black9869184",
+			"Shangkuanlc",
+			"Kly"
 		]
 	},
 	"wikieditor": "進階 wikitext 編輯介面",
-	"wikieditor-desc": "提供 Wiki 文字編輯介面擴充功能及相關模組",
+	"wikieditor-desc": "提供高級、可擴充的 Wiki 文字編輯介面",
 	"wikieditor-wikitext-tab": "Wikitext",
 	"wikieditor-loading": "讀取中...",
 	"wikieditor-toolbar": "編輯工具列",
@@ -204,7 +206,7 @@
 	"wikieditor-toolbar-help-content-showreferences-description": "顯示參考來源",
 	"wikieditor-toolbar-help-content-showreferences-result": "<ol class='references'><li id='cite_note-test-0'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.example.org' class='external text' href='#'>連結文字</a>，附加文字。</li><li id='cite_note-test-1'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.example.org' class='external text' href='#'>連結文字</a></li></ol>",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "簽名與時間",
-	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='$1:Username'>使用者名稱</a>  (<a href='#' title='$2:Username'>對話</a>)  15:54, 10 June 2009 (UTC)",
+	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='$1:Username'>使用者名稱</a>  (<a href='#' title='$2:Username'>對話</a>)  2009年6月10日 15:54 (UTC)",
 	"wikieditor-toolbar-help-content-signature-description": "簽名",
 	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>使用者名稱</a> (<a href='#' title='$2:Username'>對話</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "縮排",

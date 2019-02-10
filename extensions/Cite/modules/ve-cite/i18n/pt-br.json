@@ -29,12 +29,10 @@
 			"Eduardo Addad de Oliveira"
 		]
 	},
-	"visualeditor-cite-tool-definition.json": "nulo",
 	"visualeditor-cite-tool-name-book": "Livro",
 	"visualeditor-cite-tool-name-journal": "Periódico",
 	"visualeditor-cite-tool-name-news": "Notícias",
 	"visualeditor-cite-tool-name-web": "Site",
-	"cite-tool-definition.json": "nulo",
 	"cite-ve-changedesc-ref-group-both": "O grupo de referência mudou de \"$1\" para \"$2\"",
 	"cite-ve-changedesc-ref-group-from": "O grupo de referência mudou de \"$1\" para o grupo geral",
 	"cite-ve-changedesc-ref-group-to": "O grupo de referência mudou do grupo geral para \"$1\"",

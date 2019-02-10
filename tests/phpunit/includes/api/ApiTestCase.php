@@ -42,43 +42,6 @@ abstract class ApiTestCase extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * Edits or creates a page/revision
-	 * @param string $pageName Page title
-	 * @param string $text Content of the page
-	 * @param string $summary Optional summary string for the revision
-	 * @param int $defaultNs Optional namespace id
-	 * @return array Array as returned by WikiPage::doEditContent()
-	 */
-	protected function editPage( $pageName, $text, $summary = '', $defaultNs = NS_MAIN ) {
-		$title = Title::newFromText( $pageName, $defaultNs );
-		$page = WikiPage::factory( $title );
-
-		return $page->doEditContent( ContentHandler::makeContent( $text, $title ), $summary );
-	}
-
-	/**
-	 * Revision-deletes a revision.
-	 *
-	 * @param Revision|int $rev Revision to delete
-	 * @param array $value Keys are Revision::DELETED_* flags.  Values are 1 to set the bit, 0 to
-	 *   clear, -1 to leave alone.  (All other values also clear the bit.)
-	 * @param string $comment Deletion comment
-	 */
-	protected function revisionDelete(
-		$rev, array $value = [ Revision::DELETED_TEXT => 1 ], $comment = ''
-	) {
-		if ( is_int( $rev ) ) {
-			$rev = Revision::newFromId( $rev );
-		}
-		RevisionDeleter::createList(
-			'revision', RequestContext::getMain(), $rev->getTitle(), [ $rev->getId() ]
-		)->setVisibility( [
-			'value' => $value,
-			'comment' => $comment,
-		] );
-	}
-
-	/**
 	 * Does the API request and returns the result.
 	 *
 	 * The returned value is an array containing
@@ -243,5 +206,18 @@ abstract class ApiTestCase extends MediaWikiLangTestCase {
 		$this->assertThat( $groups, $constraint,
 			'ApiTestCase::setUp can be slow, tests must be "medium" or "large"'
 		);
+	}
+
+	/**
+	 * Expect an ApiUsageException to be thrown with the given parameters, which are the same as
+	 * ApiUsageException::newWithMessage()'s parameters.  This allows checking for an exception
+	 * whose text is given by a message key instead of text, so as not to hard-code the message's
+	 * text into test code.
+	 */
+	protected function setExpectedApiException(
+		$msg, $code = null, array $data = null, $httpCode = 0
+	) {
+		$expected = ApiUsageException::newWithMessage( null, $msg, $code, $data, $httpCode );
+		$this->setExpectedException( ApiUsageException::class, $expected->getMessage() );
 	}
 }

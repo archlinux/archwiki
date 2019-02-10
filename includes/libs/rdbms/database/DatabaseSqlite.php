@@ -71,6 +71,10 @@ class DatabaseSqlite extends Database {
 		if ( isset( $p['dbFilePath'] ) ) {
 			$this->dbPath = $p['dbFilePath'];
 			$lockDomain = md5( $this->dbPath );
+			// Use "X" for things like X.sqlite and ":memory:" for RAM-only DBs
+			if ( !isset( $p['dbname'] ) || !strlen( $p['dbname'] ) ) {
+				$p['dbname'] = preg_replace( '/\.sqlite\d?$/', '', basename( $this->dbPath ) );
+			}
 		} elseif ( isset( $p['dbDirectory'] ) ) {
 			$this->dbDir = $p['dbDirectory'];
 			$lockDomain = $p['dbname'];
@@ -109,7 +113,7 @@ class DatabaseSqlite extends Database {
 	 */
 	public static function newStandaloneInstance( $filename, array $p = [] ) {
 		$p['dbFilePath'] = $filename;
-		$p['schema'] = false;
+		$p['schema'] = null;
 		$p['tablePrefix'] = '';
 		/** @var DatabaseSqlite $db */
 		$db = Database::factory( 'sqlite', $p );
@@ -120,7 +124,11 @@ class DatabaseSqlite extends Database {
 	protected function doInitConnection() {
 		if ( $this->dbPath !== null ) {
 			// Standalone .sqlite file mode.
-			$this->openFile( $this->dbPath, $this->connectionParams['dbname'] );
+			$this->openFile(
+				$this->dbPath,
+				$this->connectionParams['dbname'],
+				$this->connectionParams['tablePrefix']
+			);
 		} elseif ( $this->dbDir !== null ) {
 			// Stock wiki mode using standard file names per DB
 			if ( strlen( $this->connectionParams['dbname'] ) ) {
@@ -128,7 +136,9 @@ class DatabaseSqlite extends Database {
 					$this->connectionParams['host'],
 					$this->connectionParams['user'],
 					$this->connectionParams['password'],
-					$this->connectionParams['dbname']
+					$this->connectionParams['dbname'],
+					$this->connectionParams['schema'],
+					$this->connectionParams['tablePrefix']
 				);
 			} else {
 				// Caller will manually call open() later?
@@ -155,25 +165,15 @@ class DatabaseSqlite extends Database {
 		return false;
 	}
 
-	/** Open an SQLite database and return a resource handle to it
-	 *  NOTE: only $dbName is used, the other parameters are irrelevant for SQLite databases
-	 *
-	 * @param string $server
-	 * @param string $user Unused
-	 * @param string $pass
-	 * @param string $dbName
-	 *
-	 * @throws DBConnectionError
-	 * @return bool
-	 */
-	function open( $server, $user, $pass, $dbName ) {
+	protected function open( $server, $user, $pass, $dbName, $schema, $tablePrefix ) {
 		$this->close();
 		$fileName = self::generateFileName( $this->dbDir, $dbName );
 		if ( !is_readable( $fileName ) ) {
 			$this->conn = false;
 			throw new DBConnectionError( $this, "SQLite database not accessible" );
 		}
-		$this->openFile( $fileName, $dbName );
+		// Only $dbName is used, the other parameters are irrelevant for SQLite databases
+		$this->openFile( $fileName, $dbName, $tablePrefix );
 
 		return (bool)$this->conn;
 	}
@@ -183,10 +183,11 @@ class DatabaseSqlite extends Database {
 	 *
 	 * @param string $fileName
 	 * @param string $dbName
+	 * @param string $tablePrefix
 	 * @throws DBConnectionError
 	 * @return PDO|bool SQL connection or false if failed
 	 */
-	protected function openFile( $fileName, $dbName ) {
+	protected function openFile( $fileName, $dbName, $tablePrefix ) {
 		$err = false;
 
 		$this->dbPath = $fileName;
@@ -208,7 +209,7 @@ class DatabaseSqlite extends Database {
 
 		$this->opened = is_object( $this->conn );
 		if ( $this->opened ) {
-			$this->dbName = $dbName;
+			$this->currentDomain = new DatabaseDomain( $dbName, null, $tablePrefix );
 			# Set error codes only, don't raise exceptions
 			$this->conn->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_SILENT );
 			# Enforce LIKE to be case sensitive, just like MySQL
@@ -307,7 +308,7 @@ class DatabaseSqlite extends Database {
 		return $this->query( "ATTACH DATABASE $file AS $name", $fname );
 	}
 
-	function isWriteQuery( $sql ) {
+	protected function isWriteQuery( $sql ) {
 		return parent::isWriteQuery( $sql ) && !preg_match( '/^(ATTACH|PRAGMA)\b/i', $sql );
 	}
 
@@ -399,13 +400,14 @@ class DatabaseSqlite extends Database {
 	/**
 	 * The PDO::Statement class implements the array interface so count() will work
 	 *
-	 * @param ResultWrapper|array $res
+	 * @param ResultWrapper|array|false $res
 	 * @return int
 	 */
 	function numRows( $res ) {
+		// false does not implement Countable
 		$r = $res instanceof ResultWrapper ? $res->result : $res;
 
-		return count( $r );
+		return is_array( $r ) ? count( $r ) : 0;
 	}
 
 	/**
@@ -415,7 +417,7 @@ class DatabaseSqlite extends Database {
 	function numFields( $res ) {
 		$r = $res instanceof ResultWrapper ? $res->result : $res;
 		if ( is_array( $r ) && count( $r ) > 0 ) {
-			// The size of the result array is twice the number of fields. (Bug: 65578)
+			// The size of the result array is twice the number of fields. (T67578)
 			return count( $r[0] ) / 2;
 		} else {
 			// If the result is empty return 0
@@ -492,7 +494,7 @@ class DatabaseSqlite extends Database {
 		}
 		$e = $this->conn->errorInfo();
 
-		return isset( $e[2] ) ? $e[2] : '';
+		return $e[2] ?? '';
 	}
 
 	/**
@@ -513,6 +515,19 @@ class DatabaseSqlite extends Database {
 	 */
 	protected function fetchAffectedRowCount() {
 		return $this->lastAffectedRowCount;
+	}
+
+	function tableExists( $table, $fname = __METHOD__ ) {
+		$tableRaw = $this->tableName( $table, 'raw' );
+		if ( isset( $this->sessionTempTables[$tableRaw] ) ) {
+			return true; // already known to exist
+		}
+
+		$encTable = $this->addQuotes( $tableRaw );
+		$res = $this->query(
+			"SELECT 1 FROM sqlite_master WHERE type='table' AND name=$encTable" );
+
+		return $res->numRows() ? true : false;
 	}
 
 	/**
@@ -861,7 +876,7 @@ class DatabaseSqlite extends Database {
 		$args = func_get_args();
 		$function = array_shift( $args );
 
-		return call_user_func_array( $function, $args );
+		return $function( ...$args );
 	}
 
 	/**
@@ -970,7 +985,9 @@ class DatabaseSqlite extends Database {
 		}
 		$sql = $obj->sql;
 		$sql = preg_replace(
-			'/(?<=\W)"?' . preg_quote( trim( $this->addIdentifierQuotes( $oldName ), '"' ) ) . '"?(?=\W)/',
+			'/(?<=\W)"?' .
+				preg_quote( trim( $this->addIdentifierQuotes( $oldName ), '"' ), '/' ) .
+				'"?(?=\W)/',
 			$this->addIdentifierQuotes( $newName ),
 			$sql,
 			1
@@ -1019,7 +1036,7 @@ class DatabaseSqlite extends Database {
 	/**
 	 * List all tables on the database
 	 *
-	 * @param string $prefix Only show tables with this prefix, e.g. mw_
+	 * @param string|null $prefix Only show tables with this prefix, e.g. mw_
 	 * @param string $fname Calling function name
 	 *
 	 * @return array
@@ -1102,4 +1119,7 @@ class DatabaseSqlite extends Database {
 	}
 }
 
+/**
+ * @deprecated since 1.29
+ */
 class_alias( DatabaseSqlite::class, 'DatabaseSqlite' );

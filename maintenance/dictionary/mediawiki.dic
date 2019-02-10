@@ -3697,7 +3697,6 @@ showredirs
 showreviewed
 showsizediff
 showtoc
-showtoolbar
 showunreviewed
 shtml
 si
@@ -4322,7 +4321,6 @@ useemail
 uselang
 uselivepreview
 usemod
-usemsgcache
 usenewrc
 user
 useragent

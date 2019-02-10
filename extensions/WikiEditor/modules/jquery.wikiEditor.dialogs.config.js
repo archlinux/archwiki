@@ -35,7 +35,7 @@
 							labelMsg: 'wikieditor-toolbar-tool-reference',
 							filters: [ 'body.ns-subject' ],
 							type: 'button',
-							oouiIcon: 'book',
+							oouiIcon: 'reference',
 							action: {
 								type: 'dialog',
 								module: 'insert-reference'
@@ -66,7 +66,7 @@
 								replace: {
 									labelMsg: 'wikieditor-toolbar-tool-replace',
 									type: 'button',
-									oouiIcon: 'find',
+									oouiIcon: 'articleSearch',
 									action: {
 										type: 'dialog',
 										module: 'search-and-replace'
@@ -266,7 +266,7 @@
 
 						// Automatically copy the value of the internal link page title field to the link text field unless the
 						// user has changed the link text field - this is a convenience thing since most link texts are going to
-						// be the the same as the page title - Also change the internal/external radio button accordingly
+						// be the same as the page title - Also change the internal/external radio button accordingly
 						$( '#wikieditor-toolbar-link-int-target' ).on( 'change keydown paste cut', function () {
 							// $( this ).val() is the old value, before the keypress - Defer this until $( this ).val() has
 							// been updated

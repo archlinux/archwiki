@@ -1,4 +1,4 @@
-( function ( mw ) {
+( function () {
 	/**
 	 * Widget defining the button controlling the popup for the number of results
 	 *
@@ -73,7 +73,7 @@
 				mw.language.convertNumber( this.limitGroupModel.getDefaultParamValue() );
 
 			this.button = new OO.ui.PopupButtonWidget( {
-				icon: 'advanced',
+				icon: 'settings',
 				indicator: 'down',
 				label: mw.msg( 'rcfilters-limit-and-date-label', currentValue ),
 				$overlay: this.$overlay,
@@ -165,4 +165,4 @@
 		}
 	};
 
-}( mediaWiki ) );
+}() );

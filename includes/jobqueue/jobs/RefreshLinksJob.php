@@ -21,7 +21,7 @@
  * @ingroup JobQueue
  */
 use MediaWiki\MediaWikiServices;
-use Wikimedia\Rdbms\DBReplicationWaitError;
+use MediaWiki\Revision\RevisionRecord;
 
 /**
  * Job to update link tables for pages
@@ -89,13 +89,11 @@ class RefreshLinksJob extends Job {
 			// From then on, we know that any template changes at the time the base job was
 			// enqueued will be reflected in backlink page parses when the leaf jobs run.
 			if ( !isset( $this->params['range'] ) ) {
-				try {
-					$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
-					$lbFactory->waitForReplication( [
-						'wiki'    => wfWikiID(),
+				$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
+				if ( !$lbFactory->waitForReplication( [
+						'domain'  => $lbFactory->getLocalDomainID(),
 						'timeout' => self::LAG_WAIT_TIMEOUT
-					] );
-				} catch ( DBReplicationWaitError $e ) { // only try so hard
+				] ) ) { // only try so hard
 					$stats = MediaWikiServices::getInstance()->getStatsdDataFactory();
 					$stats->increment( 'refreshlinks.lag_wait_failed' );
 				}
@@ -137,6 +135,8 @@ class RefreshLinksJob extends Job {
 		$services = MediaWikiServices::getInstance();
 		$stats = $services->getStatsdDataFactory();
 		$lbFactory = $services->getDBLoadBalancerFactory();
+		$revisionStore = $services->getRevisionStore();
+		$renderer = $services->getRevisionRenderer();
 		$ticket = $lbFactory->getEmptyTransactionTicket( __METHOD__ );
 
 		$page = WikiPage::factory( $title );
@@ -146,6 +146,11 @@ class RefreshLinksJob extends Job {
 		$dbw = $lbFactory->getMainLB()->getConnection( DB_MASTER );
 		/** @noinspection PhpUnusedLocalVariableInspection */
 		$scopedLock = LinksUpdate::acquirePageLock( $dbw, $page->getId(), 'job' );
+		if ( $scopedLock === null ) {
+			// Another job is already updating the page, likely for an older revision (T170596).
+			$this->setLastError( 'LinksUpdate already running for this page, try again later.' );
+			return false;
+		}
 		// Get the latest ID *after* acquirePageLock() flushed the transaction.
 		// This is used to detect edits/moves after loadPageData() but before the scope lock.
 		// The works around the chicken/egg problem of determining the scope lock key.
@@ -154,20 +159,20 @@ class RefreshLinksJob extends Job {
 		if ( !empty( $this->params['triggeringRevisionId'] ) ) {
 			// Fetch the specified revision; lockAndGetLatest() below detects if the page
 			// was edited since and aborts in order to avoid corrupting the link tables
-			$revision = Revision::newFromId(
-				$this->params['triggeringRevisionId'],
+			$revision = $revisionStore->getRevisionById(
+				(int)$this->params['triggeringRevisionId'],
 				Revision::READ_LATEST
 			);
 		} else {
 			// Fetch current revision; READ_LATEST reduces lockAndGetLatest() check failures
-			$revision = Revision::newFromTitle( $title, false, Revision::READ_LATEST );
+			$revision = $revisionStore->getRevisionByTitle( $title, 0, Revision::READ_LATEST );
 		}
 
 		if ( !$revision ) {
 			$stats->increment( 'refreshlinks.rev_not_found' );
 			$this->setLastError( "Revision not found for {$title->getPrefixedDBkey()}" );
 			return false; // just deleted?
-		} elseif ( $revision->getId() != $latest || $revision->getPage() !== $page->getId() ) {
+		} elseif ( $revision->getId() != $latest || $revision->getPageId() !== $page->getId() ) {
 			// Do not clobber over newer updates with older ones. If all jobs where FIFO and
 			// serialized, it would be OK to update links based on older revisions since it
 			// would eventually get to the latest. Since that is not the case (by design),
@@ -175,12 +180,6 @@ class RefreshLinksJob extends Job {
 			$stats->increment( 'refreshlinks.rev_not_current' );
 			$this->setLastError( "Revision {$revision->getId()} is not current" );
 			return false;
-		}
-
-		$content = $revision->getContent( Revision::RAW );
-		if ( !$content ) {
-			// If there is no content, pretend the content is empty
-			$content = $revision->getContentHandler()->makeEmptyContent();
 		}
 
 		$parserOutput = false;
@@ -226,17 +225,34 @@ class RefreshLinksJob extends Job {
 			$stats->increment( 'refreshlinks.parser_cached' );
 		} else {
 			$start = microtime( true );
+
+			$checkCache = $page->shouldCheckParserCache( $parserOptions, $revision->getId() );
+
 			// Revision ID must be passed to the parser output to get revision variables correct
-			$parserOutput = $content->getParserOutput(
-				$title, $revision->getId(), $parserOptions, false );
-			$elapsed = microtime( true ) - $start;
+			$renderedRevision = $renderer->getRenderedRevision(
+				$revision,
+				$parserOptions,
+				null,
+				[
+					// use master, for consistency with the getRevisionByTitle call above.
+					'use-master' => true,
+					// bypass audience checks, since we know that this is the current revision.
+					'audience' => RevisionRecord::RAW
+				]
+			);
+			$parserOutput = $renderedRevision->getRevisionParserOutput(
+				// HTML is only needed if the output is to be placed in the parser cache
+				[ 'generate-html' => $checkCache ]
+			);
+
 			// If it took a long time to render, then save this back to the cache to avoid
 			// wasted CPU by other apaches or job runners. We don't want to always save to
 			// cache as this can cause high cache I/O and LRU churn when a template changes.
-			if ( $elapsed >= self::PARSE_THRESHOLD_SEC
-				&& $page->shouldCheckParserCache( $parserOptions, $revision->getId() )
-				&& $parserOutput->isCacheable()
-			) {
+			$elapsed = microtime( true ) - $start;
+
+			$parseThreshold = $this->params['parseThreshold'] ?? self::PARSE_THRESHOLD_SEC;
+
+			if ( $checkCache && $elapsed >= $parseThreshold && $parserOutput->isCacheable() ) {
 				$ctime = wfTimestamp( TS_MW, (int)$start ); // cache time
 				$services->getParserCache()->save(
 					$parserOutput, $page, $parserOptions, $ctime, $revision->getId()
@@ -245,43 +261,24 @@ class RefreshLinksJob extends Job {
 			$stats->increment( 'refreshlinks.parser_uncached' );
 		}
 
-		$updates = $content->getSecondaryDataUpdates(
-			$title,
-			null,
-			!empty( $this->params['useRecursiveLinksUpdate'] ),
-			$parserOutput
-		);
-
-		// For legacy hook handlers doing updates via LinksUpdateConstructed, make sure
-		// any pending writes they made get flushed before the doUpdate() calls below.
-		// This avoids snapshot-clearing errors in LinksUpdate::acquirePageLock().
-		$lbFactory->commitAndWaitForReplication( __METHOD__, $ticket );
-
-		foreach ( $updates as $update ) {
-			// Carry over cause in case so the update can do extra logging
-			$update->setCause( $this->params['causeAction'], $this->params['causeAgent'] );
-			// FIXME: This code probably shouldn't be here?
-			// Needed by things like Echo notifications which need
-			// to know which user caused the links update
-			if ( $update instanceof LinksUpdate ) {
-				$update->setRevision( $revision );
-				if ( !empty( $this->params['triggeringUser'] ) ) {
-					$userInfo = $this->params['triggeringUser'];
-					if ( $userInfo['userId'] ) {
-						$user = User::newFromId( $userInfo['userId'] );
-					} else {
-						// Anonymous, use the username
-						$user = User::newFromName( $userInfo['userName'], false );
-					}
-					$update->setTriggeringUser( $user );
-				}
+		$options = [
+			'recursive' => !empty( $this->params['useRecursiveLinksUpdate'] ),
+			// Carry over cause so the update can do extra logging
+			'causeAction' => $this->params['causeAction'],
+			'causeAgent' => $this->params['causeAgent'],
+			'defer' => false,
+			'transactionTicket' => $ticket,
+		];
+		if ( !empty( $this->params['triggeringUser'] ) ) {
+			$userInfo = $this->params['triggeringUser'];
+			if ( $userInfo['userId'] ) {
+				$options['triggeringUser'] = User::newFromId( $userInfo['userId'] );
+			} else {
+				// Anonymous, use the username
+				$options['triggeringUser'] = User::newFromName( $userInfo['userName'], false );
 			}
 		}
-
-		foreach ( $updates as $update ) {
-			$update->setTransactionTicket( $ticket );
-			$update->doUpdate();
-		}
+		$page->doSecondaryDataUpdates( $options );
 
 		InfoAction::invalidateCache( $title );
 

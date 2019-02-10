@@ -95,7 +95,7 @@ class OATHAuthUtils {
 	 * @return string $hmac.$iv.$ciphertext, each component b64 encoded
 	 */
 	private static function seal( $data, $encKey, $hmacKey ) {
-		$iv = MWCryptRand::generate( 16, true );
+		$iv = random_bytes( 16 );
 		$ciphertext = openssl_encrypt(
 			$data,
 			'aes-256-ctr',

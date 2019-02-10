@@ -5,7 +5,8 @@
 			"Siebrand",
 			"Romaine",
 			"Sjoerddebruin",
-			"Southparkfan"
+			"Southparkfan",
+			"Kippenvlees1"
 		]
 	},
 	"oathauth-desc": "Biedt ondersteuning voor authenticatie via op HMAC-gebaseerde eenmalige wachtwoorden",
@@ -21,6 +22,8 @@
 	"oathauth-disabledoath": "Tweetrapsauthenticatie is uitgeschakeld.",
 	"oathauth-prefs-label": "Tweetrapsauthenticatie:",
 	"oathauth-entertoken": "Vul een code van uw  authenticatie-apparaat in om te bevestigen:",
+	"right-oathauth-enable": "Tweetrapsauthenticatie inschakelen",
+	"action-oathauth-enable": "tweetrapsauthenticatie in te schakelen",
 	"oathauth-auth-token-label": "Verificatiecode",
 	"oathauth-auth-ui": "Gelieve een verificatiecode van uw authenticatie-apparaat invullen",
 	"grant-group-authentication": "OAuth gebruiken voor authenticatie"

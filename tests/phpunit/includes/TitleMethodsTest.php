@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\MediaWikiServices;
+
 /**
  * @group ContentHandler
  * @group Database
@@ -10,8 +12,6 @@
 class TitleMethodsTest extends MediaWikiLangTestCase {
 
 	protected function setUp() {
-		global $wgContLang;
-
 		parent::setUp();
 
 		$this->mergeMwGlobalArrayValue(
@@ -28,18 +28,6 @@ class TitleMethodsTest extends MediaWikiLangTestCase {
 				12302 => CONTENT_MODEL_JAVASCRIPT,
 			]
 		);
-
-		MWNamespace::clearCaches();
-		$wgContLang->resetNamespaces(); # reset namespace cache
-	}
-
-	protected function tearDown() {
-		global $wgContLang;
-
-		parent::tearDown();
-
-		MWNamespace::clearCaches();
-		$wgContLang->resetNamespaces(); # reset namespace cache
 	}
 
 	public static function provideEquals() {
@@ -353,7 +341,7 @@ class TitleMethodsTest extends MediaWikiLangTestCase {
 	 * @covers Title::clearCaches
 	 */
 	public function testClearCaches() {
-		$linkCache = LinkCache::singleton();
+		$linkCache = MediaWikiServices::getInstance()->getLinkCache();
 
 		$title1 = Title::newFromText( 'Foo' );
 		$linkCache->addGoodLinkObj( 23, $title1 );

@@ -8,7 +8,8 @@
 			"OsamaK",
 			"محمد أحمد عبد الفتاح",
 			"Maroen1990",
-			"ديفيد"
+			"ديفيد",
+			"Meno25"
 		]
 	},
 	"multimediaviewer-desc": "زيادة حجم الصور المصغرة في واجهة ملء الشاشة.",
@@ -24,7 +25,7 @@
 	"multimediaviewer-multiple-authors-combine": "$1 و$2",
 	"multimediaviewer-metadata-error": "خطأ: تعذر تحميل بيانات الصورة(خطا: $1)",
 	"multimediaviewer-thumbnail-error": "خطأ: تعذر تحميل الملف معطل",
-	"multimediaviewer-thumbnail-error-description": "يبدو أن هناك مشكلة فنية، يمكنك $1 أو $3 إذا استمرت، الخطأ: $2",
+	"multimediaviewer-thumbnail-error-description": "يبدو أن هناك مشكلة فنية، يمكنك $1 إذا استمرت، الخطأ: $2",
 	"multimediaviewer-thumbnail-error-retry": "أعد المحاولة",
 	"multimediaviewer-thumbnail-error-report": "أبلغ عن المشكلة",
 	"multimediaviewer-license-cc-pd": "ملكية عامة",
@@ -34,6 +35,7 @@
 	"multimediaviewer-permission-link": "راجع الشروط",
 	"multimediaviewer-permission-link-hide": "أخف الشروط",
 	"multimediaviewer-permission-viewmore": "عرض المزيد",
+	"multimediaviewer-restriction-2257": "هذه الصورة تحتوي على محتوى صريح جنسيا ربما يكون خاضعا لقانون حماية الطفل في الولايات المتحدة.",
 	"multimediaviewer-restriction-aus-reserve": "تم تصوير هذه الصورة في محمية كومنولث الأسترالية ولا يمكن استخدامها لتحقيق مكاسب تجارية دون تصريح.",
 	"multimediaviewer-restriction-communist": "تحتوي هذه الصورة على شارات شيوعية يمكن حظرها في بعض الدول.",
 	"multimediaviewer-restriction-costume": "تعرض هذه الصورة إلباسا وقد تخضع لقيود قانونية.",
@@ -48,7 +50,7 @@
 	"multimediaviewer-restriction-trademarked": "هذه الصورة تتضمن محتوى قد يخضع لقوانين العلامات التجارية.",
 	"multimediaviewer-restriction-default": "قد تكون هذه الصورة مقيدة بأحكام قانونية خارج قانون حقوق النشر، انظر صفحة وصف الملف للتفاصيل.",
 	"multimediaviewer-restriction-default-and-others": "يمكن تقييد هذه الصورة بمقتضى أحكام قانونية أخرى خارج قانون حقوق النشر، انظر صفحة وصف الملف للتفاصيل.",
-	"multimediaviewer-about-mmv": "حول",
+	"multimediaviewer-about-mmv": "حول هذه الواجهة",
 	"multimediaviewer-discuss-mmv": "نقاش",
 	"multimediaviewer-help-mmv": "مساعدة",
 	"multimediaviewer-optout-mmv": "تعطيل عارض الوسائط",

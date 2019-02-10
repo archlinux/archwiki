@@ -4,7 +4,8 @@
 			"Beta16",
 			"Darth Kule",
 			"Gianfranco",
-			"McDutchie"
+			"McDutchie",
+			"Ruthven"
 		]
 	},
 	"oathauth-desc": "Fornisce supporto per l'autenticazione utilizzando password a uso singolo basate su HMAC",
@@ -23,7 +24,7 @@
 	"oathauth-step1-test": "Scarica un programma per l'autenticazione a due fattori. Può essere un'applicazione mobile (come Google Authenticator) o per desktop.",
 	"oathauth-step2": "Passo 2: scansiona il codice QR",
 	"oathauth-step2alt": "O inserisci il codice segreto manualmente:",
-	"oathauth-step3": "Passo 3: scrivi il codice 'graffiato'",
+	"oathauth-step3": "Passo 3: scrivi i codici usa e getta",
 	"oathauth-step4": "Passo 4: verifica",
 	"oathauth-entertoken": "Inserisci un codice dal tuo dispositivo di autenticazione per verificare:",
 	"right-oathauth-enable": "Abilita autenticazione a due fattori",

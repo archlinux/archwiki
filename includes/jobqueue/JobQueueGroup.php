@@ -43,9 +43,6 @@ class JobQueueGroup {
 	/** @var array Map of (bucket => (queue => JobQueue, types => list of types) */
 	protected $coalescedQueues;
 
-	/** @var Job[] */
-	protected $bufferedJobs = [];
-
 	const TYPE_DEFAULT = 1; // integer; jobs popped by default
 	const TYPE_ANY = 2; // integer; any job
 
@@ -62,7 +59,7 @@ class JobQueueGroup {
 	protected function __construct( $wiki, $readOnlyReason ) {
 		$this->wiki = $wiki;
 		$this->readOnlyReason = $readOnlyReason;
-		$this->cache = new ProcessCacheLRU( 10 );
+		$this->cache = new MapCacheLRU( 10 );
 	}
 
 	/**
@@ -111,7 +108,7 @@ class JobQueueGroup {
 			$conf = $conf + $wgJobTypeConf['default'];
 		}
 		$conf['aggregator'] = JobQueueAggregator::singleton();
-		if ( $this->readOnlyReason !== false ) {
+		if ( !isset( $conf['readOnlyReason'] ) ) {
 			$conf['readOnlyReason'] = $this->readOnlyReason;
 		}
 
@@ -154,8 +151,8 @@ class JobQueueGroup {
 			$this->get( $type )->push( $jobs );
 		}
 
-		if ( $this->cache->has( 'queues-ready', 'list' ) ) {
-			$list = $this->cache->get( 'queues-ready', 'list' );
+		if ( $this->cache->hasField( 'queues-ready', 'list' ) ) {
+			$list = $this->cache->getField( 'queues-ready', 'list' );
 			if ( count( array_diff( array_keys( $jobsByType ), $list ) ) ) {
 				$this->cache->clear( 'queues-ready' );
 			}
@@ -203,7 +200,7 @@ class JobQueueGroup {
 		// Throw errors now instead of on push(), when other jobs may be buffered
 		$this->assertValidJobs( $jobs );
 
-		$this->bufferedJobs = array_merge( $this->bufferedJobs, $jobs );
+		DeferredUpdates::addUpdate( new JobQueueEnqueueUpdate( $this->wiki, $jobs ) );
 	}
 
 	/**
@@ -211,17 +208,10 @@ class JobQueueGroup {
 	 *
 	 * @return void
 	 * @since 1.26
+	 * @deprecated Since 1.33 Not needed anymore
 	 */
 	public static function pushLazyJobs() {
-		foreach ( self::$instances as $group ) {
-			try {
-				$group->push( $group->bufferedJobs );
-				$group->bufferedJobs = [];
-			} catch ( Exception $e ) {
-				// Get in as many jobs as possible and let other post-send updates happen
-				MWExceptionHandler::logException( $e );
-			}
-		}
+		wfDeprecated( __METHOD__, '1.33' );
 	}
 
 	/**
@@ -244,10 +234,10 @@ class JobQueueGroup {
 			}
 		} else { // any job in the "default" jobs types
 			if ( $flags & self::USE_CACHE ) {
-				if ( !$this->cache->has( 'queues-ready', 'list', self::PROC_CACHE_TTL ) ) {
-					$this->cache->set( 'queues-ready', 'list', $this->getQueuesWithJobs() );
+				if ( !$this->cache->hasField( 'queues-ready', 'list', self::PROC_CACHE_TTL ) ) {
+					$this->cache->setField( 'queues-ready', 'list', $this->getQueuesWithJobs() );
 				}
-				$types = $this->cache->get( 'queues-ready', 'list' );
+				$types = $this->cache->getField( 'queues-ready', 'list' );
 			} else {
 				$types = $this->getQueuesWithJobs();
 			}
@@ -462,14 +452,6 @@ class JobQueueGroup {
 			if ( !( $job instanceof IJobSpecification ) ) {
 				throw new InvalidArgumentException( "Expected IJobSpecification objects" );
 			}
-		}
-	}
-
-	function __destruct() {
-		$n = count( $this->bufferedJobs );
-		if ( $n > 0 ) {
-			$type = implode( ', ', array_unique( array_map( 'get_class', $this->bufferedJobs ) ) );
-			trigger_error( __METHOD__ . ": $n buffered job(s) of type(s) $type never inserted." );
 		}
 	}
 }

@@ -70,15 +70,12 @@ class MonoBookTemplate extends BaseTemplate {
 				$this->getIfExists( 'newtalk', [ 'wrapper' => 'div', 'parameters' => [
 					'class' => 'usermessage'
 				] ] ) .
-				Html::rawElement( 'div', [ 'id' => 'jump-to-nav', 'class' => 'mw-jump' ],
-					$this->getMsg( 'jumpto' )->escaped() .
-					Html::element( 'a', [ 'href' => '#column-one' ],
-						$this->getMsg( 'jumptonavigation' )->text()
-					) .
-					$this->getMsg( 'comma-separator' )->escaped() .
-					Html::element( 'a', [ 'href' => '#searchInput' ],
-						$this->getMsg( 'jumptosearch' )->text()
-					)
+				Html::element( 'div', [ 'id' => 'jump-to-nav' ] ) .
+				Html::element( 'a', [ 'href' => '#column-one', 'class' => 'mw-jump-link' ],
+					$this->getMsg( 'monobook-jumptonavigation' )->text()
+				) .
+				Html::element( 'a', [ 'href' => '#searchInput', 'class' => 'mw-jump-link' ],
+					$this->getMsg( 'monobook-jumptosearch' )->text()
 				) .
 				'<!-- start content -->' .
 
@@ -100,7 +97,7 @@ class MonoBookTemplate extends BaseTemplate {
 				'dir' => $this->get( 'dir' )
 			],
 			Html::element( 'h2', [], $this->getMsg( 'navigation-heading' )->text() ) .
-			$this->getBox( 'cactions', $this->data['content_actions'], 'views' ) .
+			$this->getCactions() .
 			$this->getBox( 'personal', $this->getPersonalTools(), 'personaltools' ) .
 			Html::rawElement( 'div', [ 'class' => 'portlet', 'id' => 'p-logo', 'role' => 'banner' ],
 				Html::element( 'a',
@@ -111,7 +108,19 @@ class MonoBookTemplate extends BaseTemplate {
 					+ Linker::tooltipAndAccesskeyAttribs( 'p-logo' )
 				)
 			) .
-			$this->getRenderedSidebar()
+			Html::rawElement( 'div', [ 'id' => 'sidebar' ], $this->getRenderedSidebar() ) .
+			$this->getMobileNavigationIcon(
+				'sidebar',
+				$this->getMsg( 'jumptonavigation' )->text()
+			) .
+			$this->getMobileNavigationIcon(
+				'p-personal',
+				$this->getMsg( 'monobook-jumptopersonal' )->text()
+			) .
+			$this->getMobileNavigationIcon(
+				'globalWrapper',
+				$this->getMsg( 'monobook-jumptotop' )->text()
+			)
 		);
 		$html .= '<!-- end of the left (by default at least) column -->';
 
@@ -126,6 +135,80 @@ class MonoBookTemplate extends BaseTemplate {
 
 		// The unholy echo
 		echo $html;
+	}
+
+	/**
+	 * Create a wrapped link to create a mobile toggle/jump icon
+	 * Needs to be an on-page link (as opposed to drawing something on the fly for an
+	 * onclick event) for no-js support.
+	 *
+	 * @param string $target link target
+	 * @param string $title icon title
+	 *
+	 * @return string html empty link block
+	 */
+	protected function getMobileNavigationIcon( $target, $title ) {
+		return Html::element( 'a', [
+			'href' => "#$target",
+			'title' => $title,
+			'class' => 'menu-toggle',
+			'id' => "$target-toggle"
+		] );
+	}
+
+	/**
+	 * Generate the cactions (content actions) tabs, as well as a second set of spoof tabs for mobile
+	 *
+	 * @return string html
+	 */
+	protected function getCactions() {
+		$html = '';
+		$allTabs = $this->data['content_actions'];
+		$tabCount = count( $allTabs );
+
+		// Normal cactions
+		if ( $tabCount > 2 ) {
+			$html .= $this->getBox( 'cactions', $allTabs, 'monobook-cactions-label' );
+		} else {
+			// Is redundant with spoof, hide normal cactions entirely in mobile
+			$html .= $this->getBox( 'cactions', $allTabs, 'monobook-cactions-label',
+				[ 'extra-classes' => 'nomobile' ]
+			);
+		}
+
+		// Mobile cactions tabs
+		$tabs = $this->data['content_navigation']['namespaces'];
+		foreach ( $tabs as $tab => $attribs ) {
+			$tabs[$tab]['id'] = $attribs['id'] . '-mobile';
+			$tabs[$tab]['title'] = $attribs['text'];
+		}
+
+		if ( $tabCount !== 1 ) {
+			// Is not special page or stuff, append a 'more'
+			$tabs['more'] = [
+				'text' => $this->getMsg( 'monobook-more-actions' )->text(),
+				'href' => '#p-cactions',
+				'id' => 'ca-more'
+			];
+		}
+		$tabs['toolbox'] = [
+			'text' => $this->getMsg( 'toolbox' )->text(),
+			'href' => '#p-tb',
+			'id' => 'ca-tools',
+			'title' => $this->getMsg( 'toolbox' )->text()
+		];
+		if ( $this->data['language_urls'] !== false ) {
+			$tabs['languages'] = [
+				'text' => $this->getMsg( 'otherlanguages' )->text(),
+				'href' => '#p-lang',
+				'id' => 'ca-languages',
+				'title' => $this->getMsg( 'otherlanguages' )->text()
+			];
+		}
+
+		$html .= $this->getBox( 'cactions-mobile', $tabs, 'monobook-cactions-label' );
+
+		return $html;
 	}
 
 	/**

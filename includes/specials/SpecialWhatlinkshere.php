@@ -208,8 +208,19 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 					if ( $hidelinks || $hidetrans || $hideredirs || $hideimages ) {
 						$out->addHTML( $this->getFilterPanel() );
 					}
-					$errMsg = is_int( $namespace ) ? 'nolinkshere-ns' : 'nolinkshere';
-					$out->addWikiMsg( $errMsg, $this->target->getPrefixedText() );
+					$msgKey = is_int( $namespace ) ? 'nolinkshere-ns' : 'nolinkshere';
+					$link = $this->getLinkRenderer()->makeLink(
+						$this->target,
+						null,
+						[],
+						$this->target->isRedirect() ? [ 'redirect' => 'no' ] : []
+					);
+
+					$errMsg = $this->msg( $msgKey )
+						->params( $this->target->getPrefixedText() )
+						->rawParams( $link )
+						->parseAsBlock();
+					$out->addHTML( $errMsg );
 					$out->setStatusCode( 404 );
 				}
 			}
@@ -273,7 +284,19 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 			if ( !$this->including() ) {
 				$out->addHTML( $this->whatlinkshereForm() );
 				$out->addHTML( $this->getFilterPanel() );
-				$out->addWikiMsg( 'linkshere', $this->target->getPrefixedText() );
+
+				$link = $this->getLinkRenderer()->makeLink(
+					$this->target,
+					null,
+					[],
+					$this->target->isRedirect() ? [ 'redirect' => 'no' ] : []
+				);
+
+				$msg = $this->msg( 'linkshere' )
+					->params( $this->target->getPrefixedText() )
+					->rawParams( $link )
+					->parseAsBlock();
+				$out->addHTML( $msg );
 
 				$prevnext = $this->getPrevNext( $prevId, $nextId );
 				$out->addHTML( $prevnext );
@@ -500,7 +523,7 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 			]
 		);
 
-		$f .= '&#160;' .
+		$f .= "\u{00A0}" .
 			Xml::checkLabel(
 				$this->msg( 'invert' )->text(),
 				'invert',

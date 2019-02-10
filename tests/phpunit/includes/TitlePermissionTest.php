@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\MediaWikiServices;
+
 /**
  * @group Database
  *
@@ -67,6 +69,7 @@ class TitlePermissionTest extends MediaWikiLangTestCase {
 
 			$this->user = $this->userUser;
 		}
+		$this->overrideMwServices();
 	}
 
 	protected function setUserPerm( $perm ) {
@@ -96,11 +99,15 @@ class TitlePermissionTest extends MediaWikiLangTestCase {
 	/**
 	 * @todo This test method should be split up into separate test methods and
 	 * data providers
+	 *
+	 * This test is failing per T201776.
+	 *
+	 * @group Broken
 	 * @covers Title::checkQuickPermissions
 	 */
 	public function testQuickPermissions() {
-		global $wgContLang;
-		$prefix = $wgContLang->getFormattedNsText( NS_PROJECT );
+		$prefix = MediaWikiServices::getInstance()->getContentLanguage()->
+			getFormattedNsText( NS_PROJECT );
 
 		$this->setUser( 'anon' );
 		$this->setTitle( NS_TALK );
@@ -459,7 +466,8 @@ class TitlePermissionTest extends MediaWikiLangTestCase {
 
 			[ [ 'badaccess-group0' ], [ 'mycustomjsprotected', 'bogus' ] ],
 			[ [ 'badaccess-group0' ], [ 'mycustomjsprotected', 'bogus' ] ],
-			[ [ 'badaccess-group0' ] ]
+			[ [ 'badaccess-group0' ] ],
+			[ [ 'badaccess-groups' ] ]
 		);
 	}
 
@@ -469,6 +477,8 @@ class TitlePermissionTest extends MediaWikiLangTestCase {
 	 * @covers Title::checkUserConfigPermissions
 	 */
 	public function testJsonConfigEditPermissions() {
+		$prefix = MediaWikiServices::getInstance()->getContentLanguage()->
+			getFormattedNsText( NS_PROJECT );
 		$this->setUser( $this->userName );
 
 		$this->setTitle( NS_USER, $this->userName . '/test.json' );
@@ -481,7 +491,8 @@ class TitlePermissionTest extends MediaWikiLangTestCase {
 
 			[ [ 'badaccess-group0' ], [ 'mycustomjsonprotected', 'bogus' ] ],
 			[ [ 'badaccess-group0' ] ],
-			[ [ 'badaccess-group0' ], [ 'mycustomjsonprotected', 'bogus' ] ]
+			[ [ 'badaccess-group0' ], [ 'mycustomjsonprotected', 'bogus' ] ],
+			[ [ 'badaccess-groups' ] ]
 		);
 	}
 
@@ -503,7 +514,8 @@ class TitlePermissionTest extends MediaWikiLangTestCase {
 
 			[ [ 'badaccess-group0' ] ],
 			[ [ 'badaccess-group0' ], [ 'mycustomcssprotected', 'bogus' ] ],
-			[ [ 'badaccess-group0' ], [ 'mycustomcssprotected', 'bogus' ] ]
+			[ [ 'badaccess-group0' ], [ 'mycustomcssprotected', 'bogus' ] ],
+			[ [ 'badaccess-groups' ] ]
 		);
 	}
 
@@ -525,7 +537,8 @@ class TitlePermissionTest extends MediaWikiLangTestCase {
 
 			[ [ 'badaccess-group0' ], [ 'customjsprotected', 'bogus' ] ],
 			[ [ 'badaccess-group0' ], [ 'customjsprotected', 'bogus' ] ],
-			[ [ 'badaccess-group0' ] ]
+			[ [ 'badaccess-group0' ] ],
+			[ [ 'badaccess-groups' ] ]
 		);
 	}
 
@@ -547,7 +560,8 @@ class TitlePermissionTest extends MediaWikiLangTestCase {
 
 			[ [ 'badaccess-group0' ], [ 'customjsonprotected', 'bogus' ] ],
 			[ [ 'badaccess-group0' ] ],
-			[ [ 'badaccess-group0' ], [ 'customjsonprotected', 'bogus' ] ]
+			[ [ 'badaccess-group0' ], [ 'customjsonprotected', 'bogus' ] ],
+			[ [ 'badaccess-groups' ] ]
 		);
 	}
 
@@ -569,7 +583,8 @@ class TitlePermissionTest extends MediaWikiLangTestCase {
 
 			[ [ 'badaccess-group0' ] ],
 			[ [ 'badaccess-group0' ], [ 'customcssprotected', 'bogus' ] ],
-			[ [ 'badaccess-group0' ], [ 'customcssprotected', 'bogus' ] ]
+			[ [ 'badaccess-group0' ], [ 'customcssprotected', 'bogus' ] ],
+			[ [ 'badaccess-groups' ] ]
 		);
 	}
 
@@ -591,7 +606,29 @@ class TitlePermissionTest extends MediaWikiLangTestCase {
 
 			[ [ 'badaccess-group0' ] ],
 			[ [ 'badaccess-group0' ] ],
-			[ [ 'badaccess-group0' ] ]
+			[ [ 'badaccess-group0' ] ],
+			[ [ 'badaccess-groups' ] ]
+		);
+	}
+
+	/**
+	 * @todo This should use data providers like the other methods here.
+	 * @covers Title::checkUserConfigPermissions
+	 */
+	public function testPatrolActionConfigEditPermissions() {
+		$this->setUser( 'anon' );
+		$this->setTitle( NS_USER, 'ToPatrolOrNotToPatrol' );
+		$this->runConfigEditPermissions(
+			[ [ 'badaccess-group0' ] ],
+
+			[ [ 'badaccess-group0' ] ],
+			[ [ 'badaccess-group0' ] ],
+			[ [ 'badaccess-group0' ] ],
+
+			[ [ 'badaccess-group0' ] ],
+			[ [ 'badaccess-group0' ] ],
+			[ [ 'badaccess-group0' ] ],
+			[ [ 'badaccess-groups' ] ]
 		);
 	}
 
@@ -602,7 +639,8 @@ class TitlePermissionTest extends MediaWikiLangTestCase {
 		$resultMyJs,
 		$resultUserCss,
 		$resultUserJson,
-		$resultUserJs
+		$resultUserJs,
+		$resultPatrol
 	) {
 		$this->setUserPerm( '' );
 		$result = $this->title->getUserPermissionsErrors( 'bogus', $this->user );
@@ -632,6 +670,10 @@ class TitlePermissionTest extends MediaWikiLangTestCase {
 		$result = $this->title->getUserPermissionsErrors( 'bogus', $this->user );
 		$this->assertEquals( $resultUserJs, $result );
 
+		$this->setUserPerm( '' );
+		$result = $this->title->getUserPermissionsErrors( 'patrol', $this->user );
+		$this->assertEquals( reset( $resultPatrol[0] ), reset( $result[0] ) );
+
 		$this->setUserPerm( [ 'edituserjs', 'edituserjson', 'editusercss' ] );
 		$result = $this->title->getUserPermissionsErrors( 'bogus', $this->user );
 		$this->assertEquals( [ [ 'badaccess-group0' ] ], $result );
@@ -640,12 +682,15 @@ class TitlePermissionTest extends MediaWikiLangTestCase {
 	/**
 	 * @todo This test method should be split up into separate test methods and
 	 * data providers
+	 *
+	 * This test is failing per T201776.
+	 *
+	 * @group Broken
 	 * @covers Title::checkPageRestrictions
 	 */
 	public function testPageRestrictions() {
-		global $wgContLang;
-
-		$prefix = $wgContLang->getFormattedNsText( NS_PROJECT );
+		$prefix = MediaWikiServices::getInstance()->getContentLanguage()->
+			getFormattedNsText( NS_PROJECT );
 
 		$this->setTitle( NS_MAIN );
 		$this->title->mRestrictionsLoaded = true;

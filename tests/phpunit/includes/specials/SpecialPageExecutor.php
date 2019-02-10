@@ -73,6 +73,9 @@ class SpecialPageExecutor {
 
 		$this->setEditTokenFromUser( $context );
 
+		// Make sure the skin context is correctly set https://phabricator.wikimedia.org/T200771
+		$context->getSkin()->setContext( $context );
+
 		return $context;
 	}
 
@@ -114,14 +117,9 @@ class SpecialPageExecutor {
 			} else {
 				$html = $output->getHTML();
 			}
-		} catch ( Exception $ex ) {
+		} finally {
 			ob_end_clean();
-
-			// Re-throw exception after "finally" handling because PHP 5.3 doesn't have "finally".
-			throw $ex;
 		}
-
-		ob_end_clean();
 
 		return $html;
 	}

@@ -7,7 +7,8 @@
 			"Reedy",
 			"Meisam",
 			"아라",
-			"Stephanecbisson"
+			"Stephanecbisson",
+			"Fitoschido"
 		]
 	},
 	"tog-underline": "Baalantıların altını çiz",
@@ -460,7 +461,7 @@
 	"statistics-files": "Üklenmiş dosyeler",
 	"statistics-edits": "{{SITENAME}} kurulmaa beeri yapmaa sayfa diişmäkleri",
 	"statistics-edits-average": "Her yapraktaki diişmäklerin sayısı",
-	"statistics-users": "Registratlı [[Special:ListUsers|kullanıcılar]]",
+	"statistics-users": "Registratlı kullanıcılar",
 	"statistics-users-active": "Aktivli kullanıcılar",
 	"statistics-users-active-desc": "Bitki {{PLURAL:$1|gün|$1 günde}} çalışmaa yapmaa kullanıcılar",
 	"doubleredirects": "İki kerä yönnendirmeler",
@@ -582,8 +583,8 @@
 	"whatlinkshere": "Baalantılar sayfaa",
 	"whatlinkshere-title": "$1 baalantısı olan sayfalar",
 	"whatlinkshere-page": "Yaprak:",
-	"linkshere": "Buraya baalantısı var olan sayfalar '''[[:$1]]''':",
-	"nolinkshere": "Yok buraya baalanan sayfa '''[[:$1]]'''.",
+	"linkshere": "Buraya baalantısı var olan sayfalar '''$2''':",
+	"nolinkshere": "Yok buraya baalanan sayfa '''$2'''.",
 	"isredirect": "yönnendirmäk sayfası",
 	"istemplate": "eklemää",
 	"isimage": "fayl baalantısı",

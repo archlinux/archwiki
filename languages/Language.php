@@ -34,6 +34,25 @@ use CLDRPluralRuleParser\Evaluator;
  */
 class Language {
 	/**
+	 * Return autonyms in fetchLanguageName(s).
+	 * @since 1.32
+	 */
+	const AS_AUTONYMS = null;
+
+	/**
+	 * Return all known languages in fetchLanguageName(s).
+	 * @since 1.32
+	 */
+	const ALL = 'all';
+
+	/**
+	 * Return in fetchLanguageName(s) only the languages for which we have at
+	 * least some localisation.
+	 * @since 1.32
+	 */
+	const SUPPORTED = 'mwfile';
+
+	/**
 	 * @var LanguageConverter
 	 */
 	public $mConverter;
@@ -60,6 +79,18 @@ class Language {
 	static public $dataCache;
 
 	static public $mLangObjCache = [];
+
+	/**
+	 * Return a fallback chain for messages in getFallbacksFor
+	 * @since 1.32
+	 */
+	const MESSAGES_FALLBACKS = 0;
+
+	/**
+	 * Return a strict fallback chain in getFallbacksFor
+	 * @since 1.32
+	 */
+	const STRICT_FALLBACKS = 1;
 
 	static public $mWeekdayMsgs = [
 		'sunday', 'monday', 'tuesday', 'wednesday', 'thursday',
@@ -154,9 +185,9 @@ class Language {
 	/**
 	 * Unicode directional formatting characters, for embedBidi()
 	 */
-	static private $lre = "\xE2\x80\xAA"; // U+202A LEFT-TO-RIGHT EMBEDDING
-	static private $rle = "\xE2\x80\xAB"; // U+202B RIGHT-TO-LEFT EMBEDDING
-	static private $pdf = "\xE2\x80\xAC"; // U+202C POP DIRECTIONAL FORMATTING
+	static private $lre = "\u{202A}"; // U+202A LEFT-TO-RIGHT EMBEDDING
+	static private $rle = "\u{202B}"; // U+202B RIGHT-TO-LEFT EMBEDDING
+	static private $pdf = "\u{202C}"; // U+202C POP DIRECTIONAL FORMATTING
 
 	/**
 	 * Directionality test regex for embedBidi(). Matches the first strong directionality codepoint:
@@ -188,9 +219,7 @@ class Language {
 		}
 
 		// get the language object to process
-		$langObj = isset( self::$mLangObjCache[$code] )
-			? self::$mLangObjCache[$code]
-			: self::newFromCode( $code );
+		$langObj = self::$mLangObjCache[$code] ?? self::newFromCode( $code );
 
 		// merge the language object in to get it up front in the cache
 		self::$mLangObjCache = array_merge( [ $code => $langObj ], self::$mLangObjCache );
@@ -222,7 +251,8 @@ class Language {
 
 		// Check if there is a language class for the code
 		$class = self::classFromCode( $code, $fallback );
-		if ( class_exists( $class ) ) {
+		// LanguageCode does not inherit Language
+		if ( class_exists( $class ) && is_a( $class, 'Language', true ) ) {
 			$lang = new $class;
 			return $lang;
 		}
@@ -243,6 +273,24 @@ class Language {
 		}
 
 		throw new MWException( "Invalid fallback sequence for language '$code'" );
+	}
+
+	/**
+	 * Intended for tests that may change configuration in a way that invalidates caches.
+	 *
+	 * @since 1.32
+	 */
+	public static function clearCaches() {
+		if ( !defined( 'MW_PHPUNIT_TEST' ) ) {
+			throw new MWException( __METHOD__ . ' must not be used outside tests' );
+		}
+		self::$dataCache = null;
+		// Reinitialize $dataCache, since it's expected to always be available
+		self::getLocalisationCache();
+		self::$mLangObjCache = [];
+		self::$fallbackLanguageCache = [];
+		self::$grammarTransformations = null;
+		self::$languageNameCache = null;
 	}
 
 	/**
@@ -273,7 +321,7 @@ class Language {
 	 * language, script or variant codes actually exist in the repositories.
 	 *
 	 * Based on regexes by Mark Davis of the Unicode Consortium:
-	 * http://unicode.org/repos/cldr/trunk/tools/java/org/unicode/cldr/util/data/langtagRegex.txt
+	 * https://www.unicode.org/repos/cldr/trunk/tools/java/org/unicode/cldr/util/data/langtagRegex.txt
 	 *
 	 * @param string $code
 	 * @param bool $lenient Whether to allow '_' as separator. The default is only '-'.
@@ -533,7 +581,7 @@ class Language {
 	 * Get a namespace value by key
 	 *
 	 * <code>
-	 * $mw_ns = $wgContLang->getNsText( NS_MEDIAWIKI );
+	 * $mw_ns = $lang->getNsText( NS_MEDIAWIKI );
 	 * echo $mw_ns; // prints 'MediaWiki'
 	 * </code>
 	 *
@@ -542,7 +590,7 @@ class Language {
 	 */
 	public function getNsText( $index ) {
 		$ns = $this->getNamespaces();
-		return isset( $ns[$index] ) ? $ns[$index] : false;
+		return $ns[$index] ?? false;
 	}
 
 	/**
@@ -551,7 +599,7 @@ class Language {
 	 * producing output.
 	 *
 	 * <code>
-	 * $mw_ns = $wgContLang->getFormattedNsText( NS_MEDIAWIKI_TALK );
+	 * $mw_ns = $lang->getFormattedNsText( NS_MEDIAWIKI_TALK );
 	 * echo $mw_ns; // prints 'MediaWiki talk'
 	 * </code>
 	 *
@@ -577,7 +625,7 @@ class Language {
 		$ns = $wgExtraGenderNamespaces +
 			(array)self::$dataCache->getItem( $this->mCode, 'namespaceGenderAliases' );
 
-		return isset( $ns[$index][$gender] ) ? $ns[$index][$gender] : $this->getNsText( $index );
+		return $ns[$index][$gender] ?? $this->getNsText( $index );
 	}
 
 	/**
@@ -613,7 +661,7 @@ class Language {
 	function getLocalNsIndex( $text ) {
 		$lctext = $this->lc( $text );
 		$ids = $this->getNamespaceIds();
-		return isset( $ids[$lctext] ) ? $ids[$lctext] : false;
+		return $ids[$lctext] ?? false;
 	}
 
 	/**
@@ -655,6 +703,14 @@ class Language {
 			}
 
 			$this->namespaceAliases = $aliases + $convertedNames;
+
+			# Filter out aliases to namespaces that don't exist, e.g. from extensions
+			# that aren't loaded here but are included in the l10n cache.
+			# (array_intersect preserves keys from its first argument)
+			$this->namespaceAliases = array_intersect(
+				$this->namespaceAliases,
+				array_keys( $this->getNamespaces() )
+			);
 		}
 
 		return $this->namespaceAliases;
@@ -700,7 +756,7 @@ class Language {
 			return $ns;
 		}
 		$ids = $this->getNamespaceIds();
-		return isset( $ids[$lctext] ) ? $ids[$lctext] : false;
+		return $ids[$lctext] ?? false;
 	}
 
 	/**
@@ -759,22 +815,6 @@ class Language {
 	}
 
 	/**
-	 * @param string $image
-	 * @return array|null
-	 */
-	function getImageFile( $image ) {
-		return self::$dataCache->getSubitem( $this->mCode, 'imageFiles', $image );
-	}
-
-	/**
-	 * @return array
-	 * @since 1.24
-	 */
-	public function getImageFiles() {
-		return self::$dataCache->getItem( $this->mCode, 'imageFiles' );
-	}
-
-	/**
 	 * @return array
 	 */
 	public function getExtraUserToggles() {
@@ -792,16 +832,16 @@ class Language {
 	/**
 	 * Get an array of language names, indexed by code.
 	 * @param null|string $inLanguage Code of language in which to return the names
-	 *		Use null for autonyms (native names)
+	 * 		Use self::AS_AUTONYMS for autonyms (native names)
 	 * @param string $include One of:
-	 *		'all' all available languages
-	 *		'mw' only if the language is defined in MediaWiki or wgExtraLanguageNames (default)
-	 *		'mwfile' only if the language is in 'mw' *and* has a message file
-	 * @return array Language code => language name
+	 * 		self::ALL all available languages
+	 * 		'mw' only if the language is defined in MediaWiki or wgExtraLanguageNames (default)
+	 * 		self::SUPPORTED only if the language is in 'mw' *and* has a message file
+	 * @return array Language code => language name (sorted by key)
 	 * @since 1.20
 	 */
-	public static function fetchLanguageNames( $inLanguage = null, $include = 'mw' ) {
-		$cacheKey = $inLanguage === null ? 'null' : $inLanguage;
+	public static function fetchLanguageNames( $inLanguage = self::AS_AUTONYMS, $include = 'mw' ) {
+		$cacheKey = $inLanguage === self::AS_AUTONYMS ? 'null' : $inLanguage;
 		$cacheKey .= ":$include";
 		if ( self::$languageNameCache === null ) {
 			self::$languageNameCache = new HashBagOStuff( [ 'maxKeys' => 20 ] );
@@ -818,18 +858,21 @@ class Language {
 	/**
 	 * Uncached helper for fetchLanguageNames
 	 * @param null|string $inLanguage Code of language in which to return the names
-	 *		Use null for autonyms (native names)
+	 *		Use self::AS_AUTONYMS for autonyms (native names)
 	 * @param string $include One of:
-	 *		'all' all available languages
+	 *		self::ALL all available languages
 	 *		'mw' only if the language is defined in MediaWiki or wgExtraLanguageNames (default)
-	 *		'mwfile' only if the language is in 'mw' *and* has a message file
-	 * @return array Language code => language name
+	 *		self::SUPPORTED only if the language is in 'mw' *and* has a message file
+	 * @return array Language code => language name (sorted by key)
 	 */
-	private static function fetchLanguageNamesUncached( $inLanguage = null, $include = 'mw' ) {
+	private static function fetchLanguageNamesUncached(
+		$inLanguage = self::AS_AUTONYMS,
+		$include = 'mw'
+	) {
 		global $wgExtraLanguageNames, $wgUsePigLatinVariant;
 
 		// If passed an invalid language code to use, fallback to en
-		if ( $inLanguage !== null && !self::isValidCode( $inLanguage ) ) {
+		if ( $inLanguage !== self::AS_AUTONYMS && !self::isValidCode( $inLanguage ) ) {
 			$inLanguage = 'en';
 		}
 
@@ -854,7 +897,7 @@ class Language {
 			}
 		}
 
-		if ( $include === 'all' ) {
+		if ( $include === self::ALL ) {
 			ksort( $names );
 			return $names;
 		}
@@ -865,7 +908,7 @@ class Language {
 			$returnMw[$coreCode] = $names[$coreCode];
 		}
 
-		if ( $include === 'mwfile' ) {
+		if ( $include === self::SUPPORTED ) {
 			$namesMwFile = [];
 			# We do this using a foreach over the codes instead of a directory
 			# loop so that messages files in extensions will work correctly.
@@ -888,12 +931,17 @@ class Language {
 
 	/**
 	 * @param string $code The code of the language for which to get the name
-	 * @param null|string $inLanguage Code of language in which to return the name (null for autonyms)
-	 * @param string $include 'all', 'mw' or 'mwfile'; see fetchLanguageNames()
+	 * @param null|string $inLanguage Code of language in which to return the name
+	 *   (SELF::AS_AUTONYMS for autonyms)
+	 * @param string $include See fetchLanguageNames()
 	 * @return string Language name or empty
 	 * @since 1.20
 	 */
-	public static function fetchLanguageName( $code, $inLanguage = null, $include = 'all' ) {
+	public static function fetchLanguageName(
+		$code,
+		$inLanguage = self::AS_AUTONYMS,
+		$include = self::ALL
+	) {
 		$code = strtolower( $code );
 		$array = self::fetchLanguageNames( $inLanguage, $include );
 		return !array_key_exists( $code, $array ) ? '' : $array[$code];
@@ -1091,7 +1139,7 @@ class Language {
 	 * @param string $ts 14-character timestamp
 	 *      YYYYMMDDHHMMSS
 	 *      01234567890123
-	 * @param DateTimeZone $zone Timezone of $ts
+	 * @param DateTimeZone|null $zone Timezone of $ts
 	 * @param int &$ttl The amount of time (in seconds) the output may be cached for.
 	 * Only makes sense if $ts is the current time.
 	 * @todo handling of "o" format character for Iranian, Hebrew, Hijri & Thai?
@@ -1884,6 +1932,14 @@ class Language {
 			# Add 543 years to the Gregorian calendar
 			# Months and days are identical
 			$gy_offset = $gy + 543;
+			# fix for dates between 1912 and 1941
+			# https://en.wikipedia.org/?oldid=836596673#New_year
+			if ( $gy >= 1912 && $gy <= 1940 ) {
+				if ( $gm <= 3 ) {
+					$gy_offset--;
+				}
+				$gm = ( $gm - 3 ) % 12;
+			}
 		} elseif ( ( !strcmp( $cName, 'minguo' ) ) || !strcmp( $cName, 'juche' ) ) {
 			# Minguo dates
 			# Deduct 1911 years from the Gregorian calendar
@@ -1951,8 +2007,8 @@ class Language {
 	 * Gets directionality of the first strongly directional codepoint, for embedBidi()
 	 *
 	 * This is the rule the BIDI algorithm uses to determine the directionality of
-	 * paragraphs ( http://unicode.org/reports/tr9/#The_Paragraph_Level ) and
-	 * FSI isolates ( http://unicode.org/reports/tr9/#Explicit_Directional_Isolates ).
+	 * paragraphs ( https://www.unicode.org/reports/tr9/#The_Paragraph_Level ) and
+	 * FSI isolates ( https://www.unicode.org/reports/tr9/#Explicit_Directional_Isolates ).
 	 *
 	 * TODO: Does not handle BIDI control characters inside the text.
 	 * TODO: Does not handle unallocated characters.
@@ -2917,33 +2973,33 @@ class Language {
 			if ( $code < 0xac00 || 0xd7a4 <= $code ) {
 				return $matches[1];
 			} elseif ( $code < 0xb098 ) {
-				return "\xe3\x84\xb1";
+				return "\u{3131}";
 			} elseif ( $code < 0xb2e4 ) {
-				return "\xe3\x84\xb4";
+				return "\u{3134}";
 			} elseif ( $code < 0xb77c ) {
-				return "\xe3\x84\xb7";
+				return "\u{3137}";
 			} elseif ( $code < 0xb9c8 ) {
-				return "\xe3\x84\xb9";
+				return "\u{3139}";
 			} elseif ( $code < 0xbc14 ) {
-				return "\xe3\x85\x81";
+				return "\u{3141}";
 			} elseif ( $code < 0xc0ac ) {
-				return "\xe3\x85\x82";
+				return "\u{3142}";
 			} elseif ( $code < 0xc544 ) {
-				return "\xe3\x85\x85";
+				return "\u{3145}";
 			} elseif ( $code < 0xc790 ) {
-				return "\xe3\x85\x87";
+				return "\u{3147}";
 			} elseif ( $code < 0xcc28 ) {
-				return "\xe3\x85\x88";
+				return "\u{3148}";
 			} elseif ( $code < 0xce74 ) {
-				return "\xe3\x85\x8a";
+				return "\u{314A}";
 			} elseif ( $code < 0xd0c0 ) {
-				return "\xe3\x85\x8b";
+				return "\u{314B}";
 			} elseif ( $code < 0xd30c ) {
-				return "\xe3\x85\x8c";
+				return "\u{314C}";
 			} elseif ( $code < 0xd558 ) {
-				return "\xe3\x85\x8d";
+				return "\u{314D}";
 			} else {
-				return "\xe3\x85\x8e";
+				return "\u{314E}";
 			}
 		} else {
 			return '';
@@ -2954,6 +3010,7 @@ class Language {
 	 * @deprecated No-op since 1.28
 	 */
 	function initEncoding() {
+		wfDeprecated( __METHOD__, '1.28' );
 		// No-op.
 	}
 
@@ -2963,6 +3020,7 @@ class Language {
 	 * @deprecated No-op since 1.28
 	 */
 	function recodeForEdit( $s ) {
+		wfDeprecated( __METHOD__, '1.28' );
 		return $s;
 	}
 
@@ -2972,6 +3030,7 @@ class Language {
 	 * @deprecated No-op since 1.28
 	 */
 	function recodeInput( $s ) {
+		wfDeprecated( __METHOD__, '1.28' );
 		return $s;
 	}
 
@@ -2986,12 +3045,12 @@ class Language {
 	 *
 	 * @return string
 	 */
-	function normalize( $s ) {
+	public function normalize( $s ) {
 		global $wgAllUnicodeFixes;
 		$s = UtfNormal\Validator::cleanUp( $s );
 		if ( $wgAllUnicodeFixes ) {
-			$s = $this->transformUsingPairFile( 'normalize-ar.ser', $s );
-			$s = $this->transformUsingPairFile( 'normalize-ml.ser', $s );
+			$s = $this->transformUsingPairFile( 'normalize-ar.php', $s );
+			$s = $this->transformUsingPairFile( 'normalize-ml.php', $s );
 		}
 
 		return $s;
@@ -3011,12 +3070,10 @@ class Language {
 	 * @throws MWException
 	 * @return string
 	 */
-	function transformUsingPairFile( $file, $string ) {
+	protected function transformUsingPairFile( $file, $string ) {
 		if ( !isset( $this->transformData[$file] ) ) {
-			$data = wfGetPrecompiledData( $file );
-			if ( $data === false ) {
-				throw new MWException( __METHOD__ . ": The transformation file $file is missing" );
-			}
+			global $IP;
+			$data = require "$IP/languages/data/{$file}";
 			$this->transformData[$file] = new ReplacementArray( $data );
 		}
 		return $this->transformData[$file]->replace( $string );
@@ -3092,8 +3149,8 @@ class Language {
 	 * @return string
 	 */
 	function getDirMark( $opposite = false ) {
-		$lrm = "\xE2\x80\x8E"; # LEFT-TO-RIGHT MARK, commonly abbreviated LRM
-		$rlm = "\xE2\x80\x8F"; # RIGHT-TO-LEFT MARK, commonly abbreviated RLM
+		$lrm = "\u{200E}"; # LEFT-TO-RIGHT MARK, commonly abbreviated LRM
+		$rlm = "\u{200F}"; # RIGHT-TO-LEFT MARK, commonly abbreviated RLM
 		if ( $opposite ) {
 			return $this->isRTL() ? $lrm : $rlm;
 		}
@@ -3156,7 +3213,7 @@ class Language {
 			return;
 		}
 		$this->mMagicHookDone = true;
-		Hooks::run( 'LanguageGetMagic', [ &$this->mMagicExtensions, $this->getCode() ] );
+		Hooks::run( 'LanguageGetMagic', [ &$this->mMagicExtensions, $this->getCode() ], '1.16' );
 	}
 
 	/**
@@ -3212,7 +3269,7 @@ class Language {
 			$this->mExtendedSpecialPageAliases =
 				self::$dataCache->getItem( $this->mCode, 'specialPageAliases' );
 			Hooks::run( 'LanguageGetSpecialPageAliases',
-				[ &$this->mExtendedSpecialPageAliases, $this->getCode() ] );
+				[ &$this->mExtendedSpecialPageAliases, $this->getCode() ], '1.16' );
 		}
 
 		return $this->mExtendedSpecialPageAliases;
@@ -3405,32 +3462,26 @@ class Language {
 	 * Take a list of strings and build a locale-friendly comma-separated
 	 * list, using the local comma-separator message.
 	 * The last two strings are chained with an "and".
-	 * NOTE: This function will only work with standard numeric array keys (0, 1, 2…)
 	 *
-	 * @param string[] $l
+	 * @param string[] $list
 	 * @return string
 	 */
-	function listToText( array $l ) {
-		$m = count( $l ) - 1;
-		if ( $m < 0 ) {
+	public function listToText( array $list ) {
+		$itemCount = count( $list );
+		if ( $itemCount < 1 ) {
 			return '';
 		}
-		if ( $m > 0 ) {
+		$text = array_pop( $list );
+		if ( $itemCount > 1 ) {
 			$and = $this->msg( 'and' )->escaped();
 			$space = $this->msg( 'word-separator' )->escaped();
-			if ( $m > 1 ) {
+			$comma = '';
+			if ( $itemCount > 2 ) {
 				$comma = $this->msg( 'comma-separator' )->escaped();
 			}
+			$text = implode( $comma, $list ) . $and . $space . $text;
 		}
-		$s = $l[$m];
-		for ( $i = $m - 1; $i >= 0; $i-- ) {
-			if ( $i == $m - 1 ) {
-				$s = $l[$i] . $and . $space . $s;
-			} else {
-				$s = $l[$i] . $comma . $s;
-			}
-		}
-		return $s;
+		return $text;
 	}
 
 	/**
@@ -3485,10 +3536,11 @@ class Language {
 	 * @param int $length Maximum length (including ellipsis)
 	 * @param string $ellipsis String to append to the truncated text
 	 * @param bool $adjustLength Subtract length of ellipsis from $length.
-	 *	$adjustLength was introduced in 1.18, before that behaved as if false.
+	 * 	$adjustLength was introduced in 1.18, before that behaved as if false.
 	 * @return string
 	 */
 	function truncate( $string, $length, $ellipsis = '...', $adjustLength = true ) {
+		wfDeprecated( __METHOD__, '1.31' );
 		return $this->truncateForDatabase( $string, $length, $ellipsis, $adjustLength );
 	}
 
@@ -3558,7 +3610,7 @@ class Language {
 	 * @return string
 	 */
 	private function truncateInternal(
-		$string, $length, $ellipsis = '...', $adjustLength = true, $measureLength, $getSubstring
+		$string, $length, $ellipsis, $adjustLength, $measureLength, $getSubstring
 	) {
 		if ( !is_callable( $measureLength ) || !is_callable( $getSubstring ) ) {
 			throw new InvalidArgumentException( 'Invalid callback provided' );
@@ -3962,7 +4014,7 @@ class Language {
 		if ( $gender === 'female' ) {
 			return $forms[1];
 		}
-		return isset( $forms[2] ) ? $forms[2] : $forms[0];
+		return $forms[2] ?? $forms[0];
 	}
 
 	/**
@@ -4076,7 +4128,7 @@ class Language {
 	 * match up with it.
 	 *
 	 * @param string $str The validated block duration in English
-	 * @param User $user User object to use timezone from or null for $wgUser
+	 * @param User|null $user User object to use timezone from or null for $wgUser
 	 * @param int $now Current timestamp, for formatting relative block durations
 	 * @return string Somehow translated block duration
 	 * @see LanguageFi.php for example implementation
@@ -4173,8 +4225,13 @@ class Language {
 	/**
 	 * convert text to different variants of a language.
 	 *
-	 * @param string $text
-	 * @return string
+	 * @warning Glossary state is maintained between calls. This means
+	 *  if you pass unescaped text to this method it can cause an XSS
+	 *  in later calls to this method, even if the later calls have properly
+	 *  escaped the input. Never feed this method user controlled text that
+	 *  is not properly escaped!
+	 * @param string $text Content that has been already escaped for use in HTML
+	 * @return string HTML
 	 */
 	public function convert( $text ) {
 		return $this->mConverter->convert( $text );
@@ -4212,14 +4269,17 @@ class Language {
 	}
 
 	/**
-	 * Check if the language has the specific variant
+	 * Strict check if the language has the specific variant.
+	 *
+	 * Compare to LanguageConverter::validateVariant() which does a more
+	 * lenient check and attempts to coerce the given code to a valid one.
 	 *
 	 * @since 1.19
 	 * @param string $variant
 	 * @return bool
 	 */
 	public function hasVariant( $variant ) {
-		return (bool)$this->mConverter->validateVariant( $variant );
+		return $variant && ( $variant === $this->mConverter->validateVariant( $variant ) );
 	}
 
 	/**
@@ -4325,13 +4385,18 @@ class Language {
 	 * the "raw" tag (-{R| }-) to prevent conversion.
 	 *
 	 * This function is called "markNoConversion" for historical
-	 * reasons.
+	 * reasons *BUT DIFFERS SIGNIFICANTLY* from
+	 * LanguageConverter::markNoConversion(), with which it is easily
+	 * confused.
 	 *
 	 * @param string $text Text to be used for external link
 	 * @param bool $noParse Wrap it without confirming it's a real URL first
 	 * @return string The tagged text
+	 * @deprecated since 1.32, use LanguageConverter::markNoConversion()
+	 *  instead.
 	 */
 	public function markNoConversion( $text, $noParse = false ) {
+		wfDeprecated( __METHOD__, '1.32' );
 		// Excluding protocal-relative URLs may avoid many false positives.
 		if ( $noParse || preg_match( '/^(?:' . wfUrlProtocolsWithoutProtRel() . ')/', $text ) ) {
 			return $this->mConverter->markNoConversion( $text );
@@ -4395,7 +4460,7 @@ class Language {
 	 * @return bool
 	 */
 	public function equals( Language $lang ) {
-		return $lang->getCode() === $this->mCode;
+		return $lang === $this || $lang->getCode() === $this->mCode;
 	}
 
 	/**
@@ -4429,6 +4494,7 @@ class Language {
 
 	/**
 	 * @param string $code
+	 * @deprecated since 1.32, use Language::factory to create a new object instead.
 	 */
 	public function setCode( $code ) {
 		$this->mCode = $code;
@@ -4475,7 +4541,7 @@ class Language {
 	 * @throws MWException
 	 * @return string $prefix . $mangledCode . $suffix
 	 */
-	public static function getFileName( $prefix = 'Language', $code, $suffix = '.php' ) {
+	public static function getFileName( $prefix, $code, $suffix = '.php' ) {
 		if ( !self::isValidBuiltInCode( $code ) ) {
 			throw new MWException( "Invalid language code \"$code\"" );
 		}
@@ -4530,15 +4596,29 @@ class Language {
 	 *
 	 * @since 1.19
 	 * @param string $code Language code
-	 * @return array Non-empty array, ending in "en"
+	 * @param int $mode Fallback mode, either MESSAGES_FALLBACKS (which always falls back to 'en'),
+	 * or STRICT_FALLBACKS (whic honly falls back to 'en' when explicitly defined)
+	 * @throws MWException
+	 * @return array List of language codes
 	 */
-	public static function getFallbacksFor( $code ) {
+	public static function getFallbacksFor( $code, $mode = self::MESSAGES_FALLBACKS ) {
 		if ( $code === 'en' || !self::isValidBuiltInCode( $code ) ) {
 			return [];
 		}
-		// For unknown languages, fallbackSequence returns an empty array,
-		// hardcode fallback to 'en' in that case.
-		return self::getLocalisationCache()->getItem( $code, 'fallbackSequence' ) ?: [ 'en' ];
+		switch ( $mode ) {
+			case self::MESSAGES_FALLBACKS:
+				// For unknown languages, fallbackSequence returns an empty array,
+				// hardcode fallback to 'en' in that case as English messages are
+				// always defined.
+				return self::getLocalisationCache()->getItem( $code, 'fallbackSequence' ) ?: [ 'en' ];
+			case self::STRICT_FALLBACKS:
+				// Use this mode when you don't want to fallback to English unless
+				// explicitly defined, for example when you have language-variant icons
+				// and an international language-independent fallback.
+				return self::getLocalisationCache()->getItem( $code, 'originalFallbackSequence' );
+			default:
+				throw new MWException( "Invalid fallback mode \"$mode\"" );
+		}
 	}
 
 	/**

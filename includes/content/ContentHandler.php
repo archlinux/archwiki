@@ -1,7 +1,4 @@
 <?php
-
-use MediaWiki\Search\ParserOutputSearchDataExtractor;
-
 /**
  * Base class for content handling.
  *
@@ -27,6 +24,13 @@ use MediaWiki\Search\ParserOutputSearchDataExtractor;
  *
  * @author Daniel Kinzler
  */
+
+use Wikimedia\Assert\Assert;
+use MediaWiki\Logger\LoggerFactory;
+use MediaWiki\MediaWikiServices;
+use MediaWiki\Revision\SlotRenderingProvider;
+use MediaWiki\Search\ParserOutputSearchDataExtractor;
+
 /**
  * A content handler knows how do deal with a specific type of content on a wiki
  * page. Content is stored in the database in a serialized form (using a
@@ -70,7 +74,7 @@ abstract class ContentHandler {
 	 *
 	 * @since 1.21
 	 *
-	 * @param Content $content
+	 * @param Content|null $content
 	 *
 	 * @throws MWException If the content is not an instance of TextContent and
 	 * wgContentHandlerTextFallback was set to 'fail'.
@@ -115,11 +119,11 @@ abstract class ContentHandler {
 	 *
 	 * @param string $text The textual representation, will be
 	 *    unserialized to create the Content object
-	 * @param Title $title The title of the page this text belongs to.
+	 * @param Title|null $title The title of the page this text belongs to.
 	 *    Required if $modelId is not provided.
-	 * @param string $modelId The model to deserialize to. If not provided,
+	 * @param string|null $modelId The model to deserialize to. If not provided,
 	 *    $title->getContentModel() is used.
-	 * @param string $format The format to use for deserialization. If not
+	 * @param string|null $format The format to use for deserialization. If not
 	 *    given, the model's default format is used.
 	 *
 	 * @throws MWException If model ID or format is not supported or if the text can not be
@@ -420,7 +424,7 @@ abstract class ContentHandler {
 	 * @since 1.21
 	 *
 	 * @param Content $content The Content object to serialize
-	 * @param string $format The desired serialization format
+	 * @param string|null $format The desired serialization format
 	 *
 	 * @return string Serialized form of the content
 	 */
@@ -446,7 +450,7 @@ abstract class ContentHandler {
 	 * @since 1.21
 	 *
 	 * @param string $blob Serialized form of the content
-	 * @param string $format The format used for serialization
+	 * @param string|null $format The format used for serialization
 	 *
 	 * @return Content The Content object created by deserializing $blob
 	 */
@@ -612,6 +616,19 @@ abstract class ContentHandler {
 
 	/**
 	 * Factory for creating an appropriate DifferenceEngine for this content model.
+	 * Since 1.32, this is only used for page-level diffs; to diff two content objects,
+	 * use getSlotDiffRenderer.
+	 *
+	 * The DifferenceEngine subclass to use is selected in getDiffEngineClass(). The
+	 * GetDifferenceEngine hook will receive the DifferenceEngine object and can replace or
+	 * wrap it.
+	 * (Note that in older versions of MediaWiki the hook documentation instructed extensions
+	 * to return false from the hook; you should not rely on always being able to decorate
+	 * the DifferenceEngine instance from the hook. If the owner of the content type wants to
+	 * decorare the instance, overriding this method is a safer approach.)
+	 *
+	 * @todo This is page-level functionality so it should not belong to ContentHandler.
+	 *   Move it to a better place once one exists (e.g. PageTypeHandler).
 	 *
 	 * @since 1.21
 	 *
@@ -628,21 +645,71 @@ abstract class ContentHandler {
 		$rcid = 0, // FIXME: Deprecated, no longer used
 		$refreshCache = false, $unhide = false
 	) {
-		// hook: get difference engine
-		$differenceEngine = null;
-		if ( !Hooks::run( 'GetDifferenceEngine',
-			[ $context, $old, $new, $refreshCache, $unhide, &$differenceEngine ]
-		) ) {
-			return $differenceEngine;
-		}
 		$diffEngineClass = $this->getDiffEngineClass();
-		return new $diffEngineClass( $context, $old, $new, $rcid, $refreshCache, $unhide );
+		$differenceEngine = new $diffEngineClass( $context, $old, $new, $rcid, $refreshCache, $unhide );
+		Hooks::run( 'GetDifferenceEngine', [ $context, $old, $new, $refreshCache, $unhide,
+			&$differenceEngine ] );
+		return $differenceEngine;
+	}
+
+	/**
+	 * Get an appropriate SlotDiffRenderer for this content model.
+	 * @since 1.32
+	 * @param IContextSource $context
+	 * @return SlotDiffRenderer
+	 */
+	final public function getSlotDiffRenderer( IContextSource $context ) {
+		$slotDiffRenderer = $this->getSlotDiffRendererInternal( $context );
+		if ( get_class( $slotDiffRenderer ) === TextSlotDiffRenderer::class ) {
+			//  To keep B/C, when SlotDiffRenderer is not overridden for a given content type
+			// but DifferenceEngine is, use that instead.
+			$differenceEngine = $this->createDifferenceEngine( $context );
+			if ( get_class( $differenceEngine ) !== DifferenceEngine::class ) {
+				// TODO turn this into a deprecation warning in a later release
+				LoggerFactory::getInstance( 'diff' )->info(
+					'Falling back to DifferenceEngineSlotDiffRenderer', [
+						'modelID' => $this->getModelID(),
+						'DifferenceEngine' => get_class( $differenceEngine ),
+					] );
+				$slotDiffRenderer = new DifferenceEngineSlotDiffRenderer( $differenceEngine );
+			}
+		}
+		Hooks::run( 'GetSlotDiffRenderer', [ $this, &$slotDiffRenderer, $context ] );
+		return $slotDiffRenderer;
+	}
+
+	/**
+	 * Return the SlotDiffRenderer appropriate for this content handler.
+	 * @param IContextSource $context
+	 * @return SlotDiffRenderer
+	 */
+	protected function getSlotDiffRendererInternal( IContextSource $context ) {
+		$contentLanguage = MediaWikiServices::getInstance()->getContentLanguage();
+		$statsdDataFactory = MediaWikiServices::getInstance()->getStatsdDataFactory();
+		$slotDiffRenderer = new TextSlotDiffRenderer();
+		$slotDiffRenderer->setStatsdDataFactory( $statsdDataFactory );
+		// XXX using the page language would be better, but it's unclear how that should be injected
+		$slotDiffRenderer->setLanguage( $contentLanguage );
+		$slotDiffRenderer->setWikiDiff2MovedParagraphDetectionCutoff(
+			$context->getConfig()->get( 'WikiDiff2MovedParagraphDetectionCutoff' )
+		);
+
+		$engine = DifferenceEngine::getEngine();
+		if ( $engine === false ) {
+			$slotDiffRenderer->setEngine( TextSlotDiffRenderer::ENGINE_PHP );
+		} elseif ( $engine === 'wikidiff2' ) {
+			$slotDiffRenderer->setEngine( TextSlotDiffRenderer::ENGINE_WIKIDIFF2 );
+		} else {
+			$slotDiffRenderer->setEngine( TextSlotDiffRenderer::ENGINE_EXTERNAL, $engine );
+		}
+
+		return $slotDiffRenderer;
 	}
 
 	/**
 	 * Get the language in which the content of the given page is written.
 	 *
-	 * This default implementation just returns $wgContLang (except for pages
+	 * This default implementation just returns the content language (except for pages
 	 * in the MediaWiki namespace)
 	 *
 	 * Note that the pages language is not cacheable, since it may in some
@@ -654,13 +721,13 @@ abstract class ContentHandler {
 	 * @since 1.21
 	 *
 	 * @param Title $title The page to determine the language for.
-	 * @param Content $content The page's content, if you have it handy, to avoid reloading it.
+	 * @param Content|null $content The page's content, if you have it handy, to avoid reloading it.
 	 *
 	 * @return Language The page's language
 	 */
 	public function getPageLanguage( Title $title, Content $content = null ) {
-		global $wgContLang, $wgLang;
-		$pageLang = $wgContLang;
+		global $wgLang;
+		$pageLang = MediaWikiServices::getInstance()->getContentLanguage();
 
 		if ( $title->getNamespace() == NS_MEDIAWIKI ) {
 			// Parse mediawiki messages with correct target language
@@ -689,7 +756,7 @@ abstract class ContentHandler {
 	 * @since 1.21
 	 *
 	 * @param Title $title The page to determine the language for.
-	 * @param Content $content The page's content, if you have it handy, to avoid reloading it.
+	 * @param Content|null $content The page's content, if you have it handy, to avoid reloading it.
 	 *
 	 * @return Language The page's language for viewing
 	 */
@@ -1064,31 +1131,52 @@ abstract class ContentHandler {
 	 * must exist and must not be deleted.
 	 *
 	 * @since 1.21
+	 * @since 1.32 accepts Content objects for all parameters instead of Revision objects.
+	 *  Passing Revision objects is deprecated.
 	 *
-	 * @param Revision $current The current text
-	 * @param Revision $undo The revision to undo
-	 * @param Revision $undoafter Must be an earlier revision than $undo
+	 * @param Revision|Content $current The current text
+	 * @param Revision|Content $undo The content of the revision to undo
+	 * @param Revision|Content $undoafter Must be from an earlier revision than $undo
+	 * @param bool $undoIsLatest Set true if $undo is from the current revision (since 1.32)
 	 *
-	 * @return mixed String on success, false on failure
+	 * @return mixed Content on success, false on failure
 	 */
-	public function getUndoContent( Revision $current, Revision $undo, Revision $undoafter ) {
-		$cur_content = $current->getContent();
+	public function getUndoContent( $current, $undo, $undoafter, $undoIsLatest = false ) {
+		Assert::parameterType( Revision::class . '|' . Content::class, $current, '$current' );
+		if ( $current instanceof Content ) {
+			Assert::parameter( $undo instanceof Content, '$undo',
+				'Must be Content when $current is Content' );
+			Assert::parameter( $undoafter instanceof Content, '$undoafter',
+				'Must be Content when $current is Content' );
+			$cur_content = $current;
+			$undo_content = $undo;
+			$undoafter_content = $undoafter;
+		} else {
+			Assert::parameter( $undo instanceof Revision, '$undo',
+				'Must be Revision when $current is Revision' );
+			Assert::parameter( $undoafter instanceof Revision, '$undoafter',
+				'Must be Revision when $current is Revision' );
 
-		if ( empty( $cur_content ) ) {
-			return false; // no page
-		}
+			$cur_content = $current->getContent();
 
-		$undo_content = $undo->getContent();
-		$undoafter_content = $undoafter->getContent();
+			if ( empty( $cur_content ) ) {
+				return false; // no page
+			}
 
-		if ( !$undo_content || !$undoafter_content ) {
-			return false; // no content to undo
+			$undo_content = $undo->getContent();
+			$undoafter_content = $undoafter->getContent();
+
+			if ( !$undo_content || !$undoafter_content ) {
+				return false; // no content to undo
+			}
+
+			$undoIsLatest = $current->getId() === $undo->getId();
 		}
 
 		try {
 			$this->checkModelID( $cur_content->getModel() );
 			$this->checkModelID( $undo_content->getModel() );
-			if ( $current->getId() !== $undo->getId() ) {
+			if ( !$undoIsLatest ) {
 				// If we are undoing the most recent revision,
 				// its ok to revert content model changes. However
 				// if we are undoing a revision in the middle, then
@@ -1114,6 +1202,8 @@ abstract class ContentHandler {
 	/**
 	 * Get parser options suitable for rendering and caching the article
 	 *
+	 * @deprecated since 1.32, use WikiPage::makeParserOptions() or
+	 *  ParserOptions::newCanonical() instead.
 	 * @param IContextSource|User|string $context One of the following:
 	 *        - IContextSource: Use the User and the Language of the provided
 	 *                                            context
@@ -1126,22 +1216,8 @@ abstract class ContentHandler {
 	 * @return ParserOptions
 	 */
 	public function makeParserOptions( $context ) {
-		global $wgContLang;
-
-		if ( $context instanceof IContextSource ) {
-			$user = $context->getUser();
-			$lang = $context->getLanguage();
-		} elseif ( $context instanceof User ) { // settings per user (even anons)
-			$user = $context;
-			$lang = null;
-		} elseif ( $context === 'canonical' ) { // canonical settings
-			$user = new User;
-			$lang = $wgContLang;
-		} else {
-			throw new MWException( "Bad context for parser options: $context" );
-		}
-
-		return ParserOptions::newCanonical( $user, $lang );
+		wfDeprecated( __METHOD__, '1.32' );
+		return ParserOptions::newCanonical( $context );
 	}
 
 	/**
@@ -1310,23 +1386,100 @@ abstract class ContentHandler {
 	 * Specific content handlers may override it if they need different content handling.
 	 *
 	 * @param WikiPage $page
-	 * @param ParserCache $cache
+	 * @param ParserCache|null $cache
 	 * @return ParserOutput
 	 */
 	public function getParserOutputForIndexing( WikiPage $page, ParserCache $cache = null ) {
+		// TODO: MCR: ContentHandler should be called per slot, not for the whole page.
+		// See T190066.
 		$parserOptions = $page->makeParserOptions( 'canonical' );
-		$revId = $page->getRevision()->getId();
 		if ( $cache ) {
 			$parserOutput = $cache->get( $page, $parserOptions );
 		}
+
 		if ( empty( $parserOutput ) ) {
+			$renderer = MediaWikiServices::getInstance()->getRevisionRenderer();
 			$parserOutput =
-				$page->getContent()->getParserOutput( $page->getTitle(), $revId, $parserOptions );
+				$renderer->getRenderedRevision(
+					$page->getRevision()->getRevisionRecord(),
+					$parserOptions
+				)->getRevisionParserOutput();
 			if ( $cache ) {
 				$cache->save( $parserOutput, $page, $parserOptions );
 			}
 		}
 		return $parserOutput;
+	}
+
+	/**
+	 * Returns a list of DeferrableUpdate objects for recording information about the
+	 * given Content in some secondary data store.
+	 *
+	 * Application logic should not call this method directly. Instead, it should call
+	 * DerivedPageDataUpdater::getSecondaryDataUpdates().
+	 *
+	 * @note Implementations must not return a LinksUpdate instance. Instead, a LinksUpdate
+	 * is created by the calling code in DerivedPageDataUpdater, on the combined ParserOutput
+	 * of all slots, not for each slot individually. This is in contrast to the old
+	 * getSecondaryDataUpdates method defined by AbstractContent, which returned a LinksUpdate.
+	 *
+	 * @note Implementations should not call $content->getParserOutput, they should call
+	 * $slotOutput->getSlotRendering( $role, false ) instead if they need to access a ParserOutput
+	 * of $content. This allows existing ParserOutput objects to be re-used, while avoiding
+	 * creating a ParserOutput when none is needed.
+	 *
+	 * @param Title $title The title of the page to supply the updates for
+	 * @param Content $content The content to generate data updates for.
+	 * @param string $role The role (slot) in which the content is being used. Which updates
+	 *        are performed should generally not depend on the role the content has, but the
+	 *        DeferrableUpdates themselves may need to know the role, to track to which slot the
+	 *        data refers, and to avoid overwriting data of the same kind from another slot.
+	 * @param SlotRenderingProvider $slotOutput A provider that can be used to gain access to
+	 *        a ParserOutput of $content by calling $slotOutput->getSlotParserOutput( $role, false ).
+	 * @return DeferrableUpdate[] A list of DeferrableUpdate objects for putting information
+	 *        about this content object somewhere. The default implementation returns an empty
+	 *        array.
+	 * @since 1.32
+	 */
+	public function getSecondaryDataUpdates(
+		Title $title,
+		Content $content,
+		$role,
+		SlotRenderingProvider $slotOutput
+	) {
+		return [];
+	}
+
+	/**
+	 * Returns a list of DeferrableUpdate objects for removing information about content
+	 * in some secondary data store. This is used when a page is deleted, and also when
+	 * a slot is removed from a page.
+	 *
+	 * Application logic should not call this method directly. Instead, it should call
+	 * WikiPage::getSecondaryDataUpdates().
+	 *
+	 * @note Implementations must not return a LinksDeletionUpdate instance. Instead, a
+	 * LinksDeletionUpdate is created by the calling code in WikiPage.
+	 * This is in contrast to the old getDeletionUpdates method defined by AbstractContent,
+	 * which returned a LinksUpdate.
+	 *
+	 * @note Implementations should not rely on the page's current content, but rather the current
+	 * state of the secondary data store.
+	 *
+	 * @param Title $title The title of the page to supply the updates for
+	 * @param string $role The role (slot) in which the content is being used. Which updates
+	 *        are performed should generally not depend on the role the content has, but the
+	 *        DeferrableUpdates themselves may need to know the role, to track to which slot the
+	 *        data refers, and to avoid overwriting data of the same kind from another slot.
+	 *
+	 * @return DeferrableUpdate[] A list of DeferrableUpdate objects for putting information
+	 *        about this content object somewhere. The default implementation returns an empty
+	 *        array.
+	 *
+	 * @since 1.32
+	 */
+	public function getDeletionUpdates( Title $title, $role ) {
+		return [];
 	}
 
 }

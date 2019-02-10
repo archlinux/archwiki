@@ -8,7 +8,8 @@
 			"McMonster",
 			"Sp5uhe",
 			"Yarl",
-			"Woytecr"
+			"Woytecr",
+			"Railfail536"
 		]
 	},
 	"interwiki": "Podgląd i edycja danych interwiki",
@@ -58,7 +59,7 @@
 	"logentry-interwiki-iw_delete": "$1 {{GENDER:$2|usunął|usunęła}} przedrostek \"$4\" z tabeli interwiki",
 	"log-description-interwiki": "Poniżej znajduje się rejestr zmian wykonanych w [[Special:Interwiki|tablicy interwiki]].",
 	"right-interwiki": "Edycja danych interwiki",
-	"action-interwiki": "zmień ten wpis interwiki",
+	"action-interwiki": "modyfikowania wpisów tablicy interwiki",
 	"interwiki-global-links": "Globalne prefiksy interwiki",
 	"interwiki-global-description": "Te prefiksy są dziedziczone z globalnej konfiguracji i mogą być edytowane tylko na źródłowej wiki.",
 	"interwiki-local-links": "Lokalne przedrostki interwiki",

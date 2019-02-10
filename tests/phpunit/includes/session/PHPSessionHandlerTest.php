@@ -15,15 +15,6 @@ class PHPSessionHandlerTest extends MediaWikiTestCase {
 	private function getResetter( &$rProp = null ) {
 		$reset = [];
 
-		// Ignore "headers already sent" warnings during this test
-		set_error_handler( function ( $errno, $errstr ) use ( &$warnings ) {
-			if ( preg_match( '/headers already sent/', $errstr ) ) {
-				return true;
-			}
-			return false;
-		} );
-		$reset[] = new \Wikimedia\ScopedCallback( 'restore_error_handler' );
-
 		$rProp = new \ReflectionProperty( PHPSessionHandler::class, 'instance' );
 		$rProp->setAccessible( true );
 		if ( $rProp->getValue() ) {
@@ -126,7 +117,7 @@ class PHPSessionHandlerTest extends MediaWikiTestCase {
 		$wrap = TestingAccessWrapper::newFromObject( $rProp->getValue() );
 		$reset[] = new \Wikimedia\ScopedCallback(
 			[ $wrap, 'setEnableFlags' ],
-			[ $wrap->enable ? $wrap->warn ? 'warn' : 'enable' : 'disable' ]
+			[ $wrap->enable ? ( $wrap->warn ? 'warn' : 'enable' ) : 'disable' ]
 		);
 		$wrap->setEnableFlags( 'warn' );
 

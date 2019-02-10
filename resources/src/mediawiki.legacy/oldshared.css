@@ -67,11 +67,6 @@ div.floatleft {
 	margin: 0.3em 0.5em 0.5em 0;
 }
 
-/* @noflip */
-div.floatleft p {
-	font-style: italic;
-}
-
 /* table standards */
 table.rimage {
 	float: right;
@@ -215,6 +210,7 @@ table.toc td {
 }
 
 /* preference page with js-genrated toc */
+/* TODO: Delete #preftoc when Special:Preferences's non-OOUI mode is disabled */
 #preftoc {
 	float: left;
 	margin: 1em 1em 1em 1em;

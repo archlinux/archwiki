@@ -1,7 +1,7 @@
 /*!
  * JavaScript for Special:RecentChanges
  */
-( function ( mw, $ ) {
+( function () {
 	var rcfilters = {
 		/**
 		 * @member mw.rcfilters
@@ -15,6 +15,8 @@
 				savedQueriesPreferenceName = mw.config.get( 'wgStructuredChangeFiltersSavedQueriesPreferenceName' ),
 				daysPreferenceName = mw.config.get( 'wgStructuredChangeFiltersDaysPreferenceName' ),
 				limitPreferenceName = mw.config.get( 'wgStructuredChangeFiltersLimitPreferenceName' ),
+				activeFiltersCollapsedName = mw.config.get( 'wgStructuredChangeFiltersCollapsedPreferenceName' ),
+				initialCollapsedState = mw.config.get( 'wgStructuredChangeFiltersCollapsedState' ),
 				filtersModel = new mw.rcfilters.dm.FiltersViewModel(),
 				changesListModel = new mw.rcfilters.dm.ChangesListViewModel( $initialFieldset ),
 				savedQueriesModel = new mw.rcfilters.dm.SavedQueriesModel( filtersModel ),
@@ -25,6 +27,7 @@
 						savedQueriesPreferenceName: savedQueriesPreferenceName,
 						daysPreferenceName: daysPreferenceName,
 						limitPreferenceName: limitPreferenceName,
+						collapsedPreferenceName: activeFiltersCollapsedName,
 						normalizeTarget: specialPage === 'Recentchangeslinked'
 					}
 				);
@@ -76,10 +79,12 @@
 				savedQueriesModel,
 				changesListModel,
 				{
+					$wrapper: $( 'body' ),
 					$topSection: $topSection,
 					$filtersContainer: $( '.rcfilters-container' ),
 					$changesListContainer: $( '.mw-changeslist, .mw-changeslist-empty' ),
-					$formContainer: $initialFieldset
+					$formContainer: $initialFieldset,
+					collapsed: initialCollapsedState
 				}
 			);
 
@@ -140,6 +145,9 @@
 		}
 	};
 
+	// Import i18n messages from config
+	mw.messages.set( mw.config.get( 'wgStructuredChangeFiltersMessages' ) );
+
 	// Early execute of init
 	if ( document.readyState === 'interactive' || document.readyState === 'complete' ) {
 		rcfilters.init();
@@ -149,4 +157,4 @@
 
 	module.exports = rcfilters;
 
-}( mediaWiki, jQuery ) );
+}() );

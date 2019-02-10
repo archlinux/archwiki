@@ -6,7 +6,7 @@
 			"Fwolff"
 		]
 	},
-	"cite-desc": "Maak <nowiki><ref[ name=id]></nowiki> en <nowiki><references/></nowiki> etikette beskikbaar vir sitasie.",
+	"cite-desc": "Maak <code><nowiki><ref[ name=id]></nowiki></code> en <code><nowiki><references/></nowiki></code> etikette beskikbaar vir sitasie.",
 	"cite_error": "Verwysingfout: $1",
 	"cite_error_ref_numeric_key": "Ongeldige etiket <code>&lt;ref&gt;</code>;\ndie naam kan nie 'n eenvoudige heelgetal wees nie.\nGebruik 'n beskrywende titel",
 	"cite_error_ref_no_key": "Ongeldige etiket <code>&lt;ref&gt;</code>;\n\"refs\" sonder inhoud moet 'n naam hê",

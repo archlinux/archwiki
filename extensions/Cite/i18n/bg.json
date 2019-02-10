@@ -8,7 +8,7 @@
 			"StanProg"
 		]
 	},
-	"cite-desc": "Добавя етикетите <nowiki><ref[ name=id]></nowiki> и <nowiki><references/></nowiki>, подходящи за цитиране",
+	"cite-desc": "Добавя етикетите <code><nowiki><ref[ name=id]></nowiki></code> и <code><nowiki><references/></nowiki></code>, подходящи за цитиране",
 	"cite_error": "Грешка при цитиране: $1",
 	"cite_error_ref_numeric_key": "Грешка в етикет <code>&lt;ref&gt;</code>;\nимето не може да бъде число. Използвайте описателно име",
 	"cite_error_ref_no_key": "Отварящият таг <code>&lt;ref&gt;</code> е неправилен или съдържа некоректно име.",

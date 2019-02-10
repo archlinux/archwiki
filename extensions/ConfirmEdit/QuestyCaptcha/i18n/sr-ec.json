@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Rancher",
-			"Milicevic01"
+			"Milicevic01",
+			"BadDog"
 		]
 	},
 	"questycaptcha-desc": "Стварач сликовног кода за потврду уређивања",

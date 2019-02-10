@@ -7,12 +7,10 @@
 			"McDutchie"
 		]
 	},
-	"visualeditor-cite-tool-definition.json": "nulu",
 	"visualeditor-cite-tool-name-book": "Llibru",
 	"visualeditor-cite-tool-name-journal": "Revista",
 	"visualeditor-cite-tool-name-news": "Noticies",
 	"visualeditor-cite-tool-name-web": "Sitiu web",
-	"cite-tool-definition.json": "nulu",
 	"cite-ve-changedesc-ref-group-both": "Grupu de referencia cambiáu de «$1» a «$2»",
 	"cite-ve-changedesc-ref-group-from": "Grupu de referencia cambiáu de «$1» al grupu xeneral",
 	"cite-ve-changedesc-ref-group-to": "Grupu de referencia cambiáu del grupu xeneral a «$1»",

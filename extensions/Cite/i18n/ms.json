@@ -6,7 +6,7 @@
 			"Izzudin"
 		]
 	},
-	"cite-desc": "Menambah tag <nowiki><ref[ name=id]></nowiki> dan <nowiki><references/></nowiki> untuk pemetikan",
+	"cite-desc": "Menambah tag <code><nowiki><ref[ name=id]></nowiki></code> dan <code><nowiki><references/></nowiki></code> untuk pemetikan",
 	"cite_error": "Ralat petik: $1",
 	"cite_error_ref_numeric_key": "Tag <code>&lt;ref&gt;</code> tidak sah; nombor ringkas tidak dibenarkan, sila masukkan tajuk yang lebih terperinci",
 	"cite_error_ref_no_key": "Tag <code>&lt;ref&gt;</code> tidak sah; rujukan tanpa kandungan mestilah mempunyai nama",

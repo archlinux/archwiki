@@ -8,7 +8,7 @@
 			"Srdjan m"
 		]
 	},
-	"cite-desc": "Dodaje oznake <nowiki><ref[ name=id]></nowiki> i <nowiki><references/></nowiki> za citiranje",
+	"cite-desc": "Dodaje oznake <code><nowiki><ref[ name=id]></nowiki></code> i <code><nowiki><references/></nowiki></code> za citiranje",
 	"cite_error": "Greška kod citiranja: $1",
 	"cite_error_ref_numeric_key": "Nevaljana oznaka <code>&lt;ref&gt;</code>;\nnaslov ne može biti jednostavni cijeli broj. Koristite opisni naslov",
 	"cite_error_ref_no_key": "Početna oznaka <code>&lt;ref&gt;</code> nije ispravno oblikovana ili sadrži neispravan naziv",

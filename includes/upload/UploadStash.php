@@ -52,7 +52,7 @@
  */
 class UploadStash {
 	// Format of the key for files -- has to be suitable as a filename itself (e.g. ab12cd34ef.jpg)
-	const KEY_FORMAT_REGEX = '/^[\w-\.]+\.\w*$/';
+	const KEY_FORMAT_REGEX = '/^[\w\-\.]+\.\w*$/';
 	const MAX_US_PROPS_SIZE = 65535;
 
 	/**
@@ -81,7 +81,7 @@ class UploadStash {
 	 * (should replace it eventually).
 	 *
 	 * @param FileRepo $repo
-	 * @param User $user (default null)
+	 * @param User|null $user
 	 */
 	public function __construct( FileRepo $repo, $user = null ) {
 		// this might change based on wiki's configuration.
@@ -202,7 +202,7 @@ class UploadStash {
 	 * database, along with other metadata.
 	 *
 	 * @param string $path Path to file you want stashed
-	 * @param string $sourceType The type of upload that generated this file
+	 * @param string|null $sourceType The type of upload that generated this file
 	 *   (currently, I believe, 'file' or null)
 	 * @throws UploadStashBadPathException
 	 * @throws UploadStashFileException
@@ -325,7 +325,7 @@ class UploadStash {
 		);
 
 		// store the insertid in the class variable so immediate retrieval
-		// (possibly laggy) isn't necesary.
+		// (possibly laggy) isn't necessary.
 		$this->fileMetadata[$key]['us_id'] = $dbw->insertId();
 
 		# create the UploadStashFile object for this file.
@@ -777,7 +777,8 @@ class UploadStashException extends MWException implements ILocalizedException {
 	/**
 	 * @param string|array|MessageSpecifier $messageSpec See Message::newFromSpecifier
 	 * @param int $code Exception code
-	 * @param Exception|Throwable $previous The previous exception used for the exception chaining.
+	 * @param Exception|Throwable|null $previous The previous exception used for the exception
+	 *  chaining.
 	 */
 	public function __construct( $messageSpec, $code = 0, $previous = null ) {
 		$this->messageSpec = $messageSpec;

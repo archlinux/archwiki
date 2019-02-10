@@ -21,6 +21,7 @@
  * @ingroup SpecialPage
  */
 
+use MediaWiki\MediaWikiServices;
 use Wikimedia\Rdbms\IResultWrapper;
 use Wikimedia\Rdbms\IDatabase;
 
@@ -50,13 +51,12 @@ abstract class PageQueryPage extends QueryPage {
 	 * @return string
 	 */
 	public function formatResult( $skin, $row ) {
-		global $wgContLang;
-
 		$title = Title::makeTitleSafe( $row->namespace, $row->title );
 
 		if ( $title instanceof Title ) {
-			$text = $wgContLang->convert( $title->getPrefixedText() );
-			return $this->getLinkRenderer()->makeLink( $title, $text );
+			$text = MediaWikiServices::getInstance()->getContentLanguage()->
+				convert( htmlspecialchars( $title->getPrefixedText() ) );
+			return $this->getLinkRenderer()->makeLink( $title, new HtmlArmor( $text ) );
 		} else {
 			return Html::element( 'span', [ 'class' => 'mw-invalidtitle' ],
 				Linker::getInvalidTitleDescription( $this->getContext(), $row->namespace, $row->title ) );

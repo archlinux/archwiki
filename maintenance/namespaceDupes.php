@@ -37,7 +37,7 @@ use Wikimedia\Rdbms\IMaintainableDatabase;
  *
  * @ingroup Maintenance
  */
-class NamespaceConflictChecker extends Maintenance {
+class NamespaceDupes extends Maintenance {
 
 	/**
 	 * @var IMaintainableDatabase
@@ -104,14 +104,15 @@ class NamespaceConflictChecker extends Maintenance {
 	 * @return bool
 	 */
 	private function checkAll( $options ) {
-		global $wgContLang, $wgNamespaceAliases, $wgCapitalLinks;
+		global $wgNamespaceAliases, $wgCapitalLinks;
 
+		$contLang = MediaWikiServices::getInstance()->getContentLanguage();
 		$spaces = [];
 
 		// List interwikis first, so they'll be overridden
 		// by any conflicting local namespaces.
 		foreach ( $this->getInterwikiList() as $prefix ) {
-			$name = $wgContLang->ucfirst( $prefix );
+			$name = $contLang->ucfirst( $prefix );
 			$spaces[$name] = 0;
 		}
 
@@ -122,7 +123,7 @@ class NamespaceConflictChecker extends Maintenance {
 				$spaces[$name] = $ns;
 			}
 		}
-		foreach ( $wgContLang->getNamespaces() as $ns => $name ) {
+		foreach ( $contLang->getNamespaces() as $ns => $name ) {
 			if ( $name !== '' ) {
 				$spaces[$name] = $ns;
 			}
@@ -130,7 +131,7 @@ class NamespaceConflictChecker extends Maintenance {
 		foreach ( $wgNamespaceAliases as $name => $ns ) {
 			$spaces[$name] = $ns;
 		}
-		foreach ( $wgContLang->getNamespaceAliases() as $name => $ns ) {
+		foreach ( $contLang->getNamespaceAliases() as $name => $ns ) {
 			$spaces[$name] = $ns;
 		}
 
@@ -138,17 +139,17 @@ class NamespaceConflictChecker extends Maintenance {
 		// since we're doing case-sensitive searches in the db.
 		foreach ( $spaces as $name => $ns ) {
 			$moreNames = [];
-			$moreNames[] = $wgContLang->uc( $name );
-			$moreNames[] = $wgContLang->ucfirst( $wgContLang->lc( $name ) );
-			$moreNames[] = $wgContLang->ucwords( $name );
-			$moreNames[] = $wgContLang->ucwords( $wgContLang->lc( $name ) );
-			$moreNames[] = $wgContLang->ucwordbreaks( $name );
-			$moreNames[] = $wgContLang->ucwordbreaks( $wgContLang->lc( $name ) );
+			$moreNames[] = $contLang->uc( $name );
+			$moreNames[] = $contLang->ucfirst( $contLang->lc( $name ) );
+			$moreNames[] = $contLang->ucwords( $name );
+			$moreNames[] = $contLang->ucwords( $contLang->lc( $name ) );
+			$moreNames[] = $contLang->ucwordbreaks( $name );
+			$moreNames[] = $contLang->ucwordbreaks( $contLang->lc( $name ) );
 			if ( !$wgCapitalLinks ) {
 				foreach ( $moreNames as $altName ) {
-					$moreNames[] = $wgContLang->lcfirst( $altName );
+					$moreNames[] = $contLang->lcfirst( $altName );
 				}
-				$moreNames[] = $wgContLang->lcfirst( $name );
+				$moreNames[] = $contLang->lcfirst( $name );
 			}
 			foreach ( array_unique( $moreNames ) as $altName ) {
 				if ( $altName !== $name ) {
@@ -161,17 +162,8 @@ class NamespaceConflictChecker extends Maintenance {
 		// break the tie by sorting by name
 		$origSpaces = $spaces;
 		uksort( $spaces, function ( $a, $b ) use ( $origSpaces ) {
-			if ( $origSpaces[$a] < $origSpaces[$b] ) {
-				return -1;
-			} elseif ( $origSpaces[$a] > $origSpaces[$b] ) {
-				return 1;
-			} elseif ( $a < $b ) {
-				return -1;
-			} elseif ( $a > $b ) {
-				return 1;
-			} else {
-				return 0;
-			}
+			return $origSpaces[$a] <=> $origSpaces[$b]
+				?: $a <=> $b;
 		} );
 
 		$ok = true;
@@ -616,5 +608,5 @@ class NamespaceConflictChecker extends Maintenance {
 	}
 }
 
-$maintClass = NamespaceConflictChecker::class;
+$maintClass = NamespaceDupes::class;
 require_once RUN_MAINTENANCE_IF_MAIN;

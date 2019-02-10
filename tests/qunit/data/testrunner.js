@@ -1,5 +1,5 @@
 /* global sinon */
-( function ( $, mw, QUnit ) {
+( function () {
 	'use strict';
 
 	var addons, nested;
@@ -40,7 +40,7 @@
 	 * Configuration
 	 */
 
-	// For each test() that is asynchronous, allow this time to pass before
+	// For each test that is asynchronous, allow this time to pass before
 	// killing the test and assuming timeout failure.
 	QUnit.config.testTimeout = 60 * 1000;
 
@@ -138,7 +138,7 @@
 	}() );
 
 	/**
-	 * Reset mw.config and others to a fresh copy of the live config for each test(),
+	 * Reset mw.config and others to a fresh copy of the live config for each test,
 	 * and restore it back to the live one afterwards.
 	 *
 	 * @param {Object} [localEnv]
@@ -258,6 +258,7 @@
 				// Check for incomplete animations/requests/etc and throw if there are any.
 				if ( $.timers && $.timers.length !== 0 ) {
 					timers = $.timers.length;
+					// eslint-disable-next-line no-restricted-properties
 					$.each( $.timers, function ( i, timer ) {
 						var node = timer.elem;
 						mw.log.warn( 'Unfinished animation #' + i + ' in ' + timer.queue + ' queue on ' +
@@ -305,6 +306,8 @@
 	QUnit.whenPromisesComplete = function () {
 		var altPromises = [];
 
+		// When we have ES6 support we'll be able to use Array.from here
+		// eslint-disable-next-line no-restricted-properties
 		$.each( arguments, function ( i, arg ) {
 			var alt = $.Deferred();
 			altPromises.push( alt );
@@ -491,17 +494,17 @@
 	} ) );
 
 	QUnit.test( 'Setup', function ( assert ) {
-		assert.equal( mw.html.escape( 'foo' ), 'mocked', 'setup() callback was ran.' );
-		assert.equal( mw.config.get( 'testVar' ), 'foo', 'config object applied' );
-		assert.equal( mw.messages.get( 'testMsg' ), 'Foo.', 'messages object applied' );
+		assert.strictEqual( mw.html.escape( 'foo' ), 'mocked', 'setup() callback was ran.' );
+		assert.strictEqual( mw.config.get( 'testVar' ), 'foo', 'config object applied' );
+		assert.strictEqual( mw.messages.get( 'testMsg' ), 'Foo.', 'messages object applied' );
 
 		mw.config.set( 'testVar', 'bar' );
 		mw.messages.set( 'testMsg', 'Bar.' );
 	} );
 
 	QUnit.test( 'Teardown', function ( assert ) {
-		assert.equal( mw.config.get( 'testVar' ), 'foo', 'config object restored and re-applied after test()' );
-		assert.equal( mw.messages.get( 'testMsg' ), 'Foo.', 'messages object restored and re-applied after test()' );
+		assert.strictEqual( mw.config.get( 'testVar' ), 'foo', 'config object restored and re-applied after test()' );
+		assert.strictEqual( mw.messages.get( 'testMsg' ), 'Foo.', 'messages object restored and re-applied after test()' );
 	} );
 
 	QUnit.test( 'Loader status', function ( assert ) {
@@ -575,9 +578,9 @@
 	QUnit.module( 'testrunner-after', QUnit.newMwEnvironment() );
 
 	QUnit.test( 'Teardown', function ( assert ) {
-		assert.equal( mw.html.escape( '<' ), '&lt;', 'teardown() callback was ran.' );
-		assert.equal( mw.config.get( 'testVar' ), null, 'config object restored to live in next module()' );
-		assert.equal( mw.messages.get( 'testMsg' ), null, 'messages object restored to live in next module()' );
+		assert.strictEqual( mw.html.escape( '<' ), '&lt;', 'teardown() callback was ran.' );
+		assert.strictEqual( mw.config.get( 'testVar' ), null, 'config object restored to live in next module()' );
+		assert.strictEqual( mw.messages.get( 'testMsg' ), null, 'messages object restored to live in next module()' );
 	} );
 
 	QUnit.module( 'testrunner-each', {
@@ -593,13 +596,15 @@
 		mw.html = null;
 	} );
 	QUnit.test( 'afterEach', function ( assert ) {
-		assert.equal( mw.html.escape( '<' ), '&lt;', 'afterEach() ran' );
+		assert.strictEqual( mw.html.escape( '<' ), '&lt;', 'afterEach() ran' );
 	} );
 
 	QUnit.module( 'testrunner-each-compat', {
+		// eslint-disable-next-line qunit/no-setup-teardown
 		setup: function () {
 			this.mwHtmlLive = mw.html;
 		},
+		// eslint-disable-next-line qunit/no-setup-teardown
 		teardown: function () {
 			mw.html = this.mwHtmlLive;
 		}
@@ -609,7 +614,7 @@
 		mw.html = null;
 	} );
 	QUnit.test( 'teardown', function ( assert ) {
-		assert.equal( mw.html.escape( '<' ), '&lt;', 'teardown() ran' );
+		assert.strictEqual( mw.html.escape( '<' ), '&lt;', 'teardown() ran' );
 	} );
 
 	// Regression test for 'this.sandbox undefined' error, fixed by
@@ -649,4 +654,4 @@
 		} );
 	} );
 
-}( jQuery, mediaWiki, QUnit ) );
+}() );

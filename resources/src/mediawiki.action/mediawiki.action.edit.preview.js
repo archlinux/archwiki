@@ -1,7 +1,7 @@
 /*!
  * Live edit preview.
  */
-( function ( mw, $ ) {
+( function () {
 
 	/**
 	 * @ignore
@@ -149,6 +149,7 @@
 				}
 
 				newList = [];
+				// eslint-disable-next-line no-restricted-properties
 				$.each( response.parse.indicators, function ( name, indicator ) {
 					newList.push(
 						$( '<div>' )
@@ -328,4 +329,4 @@
 		$( document.body ).on( 'click', '#wpPreview, #wpDiff', doLivePreview );
 	} );
 
-}( mediaWiki, jQuery ) );
+}() );

@@ -1,22 +1,29 @@
 <?php
 
+use MediaWiki\MediaWikiServices;
+
 class InterwikiHooks {
 	public static function onExtensionFunctions() {
 		global $wgInterwikiViewOnly;
 
-		if ( $wgInterwikiViewOnly === false ) {
-			global $wgAvailableRights, $wgLogTypes, $wgLogActionsHandlers;
-
-			// New user right, required to modify the interwiki table through Special:Interwiki
-			$wgAvailableRights[] = 'interwiki';
+		if ( !$wgInterwikiViewOnly ) {
+			global $wgLogTypes;
 
 			// Set up the new log type - interwiki actions are logged to this new log
+			// TODO: Move this out of an extension function once T200385 is implemented.
 			$wgLogTypes[] = 'interwiki';
-			// interwiki, iw_add, iw_delete, iw_edit
-			$wgLogActionsHandlers['interwiki/*'] = 'InterwikiLogFormatter';
 		}
+	}
 
-		return true;
+	/**
+	 * @param array &$rights
+	 */
+	public static function onUserGetAllRights( array &$rights ) {
+		global $wgInterwikiViewOnly;
+		if ( !$wgInterwikiViewOnly ) {
+			// New user right, required to modify the interwiki table through Special:Interwiki
+			$rights[] = 'interwiki';
+		}
 	}
 
 	public static function onInterwikiLoadPrefix( $prefix, &$iwData ) {
@@ -28,7 +35,8 @@ class InterwikiHooks {
 		}
 		if ( !Language::fetchLanguageName( $prefix ) ) {
 			// Check if prefix exists locally and skip
-			foreach ( Interwiki::getAllPrefixes( null ) as $id => $localPrefixInfo ) {
+			$lookup = MediaWikiServices::getInstance()->getInterwikiLookup();
+			foreach ( $lookup->getAllPrefixes( null ) as $id => $localPrefixInfo ) {
 				if ( $prefix === $localPrefixInfo['iw_prefix'] ) {
 					return true;
 				}

@@ -1,9 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Helix84"
+			"Helix84",
+			"Teslaton"
 		]
 	},
+	"log-name-titleblacklist": "Záznam čiernej listiny názvov",
+	"log-description-titleblacklist": "Položky tohoto záznamu evidujú zásahy čiernej listiny názvov.",
 	"titleblacklist-desc": "Umožňuje zakázať tvorbu stránok a používateľských účtov s určenými názvami na základe [[MediaWiki:Titleblacklist|čiernej listiny názvov]] a [[MediaWiki:Titlewhitelist|bielej listiny názvov]]",
 	"titleblacklist": "# Toto je čierna listina názvov stránok. Názvy stránok a účtov, ktoré zodpovedajú tu uvedenému regulárnemu výrazu nebude možné vytvoriť.\n# Komentáre začínajú znakom „#“.\n# Štandardne nezáleží na veľkosti písmen",
 	"titlewhitelist": "# Toto je biela listina názvov stránok. Riadky komentárov začínajú znakom „#“\n# Štandardne nezáleží na veľkosti písmen",

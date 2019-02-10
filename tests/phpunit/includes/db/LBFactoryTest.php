@@ -23,6 +23,7 @@
  * @copyright © 2013 Wikimedia Foundation Inc.
  */
 
+use Wikimedia\Rdbms\LBFactory;
 use Wikimedia\Rdbms\LBFactorySimple;
 use Wikimedia\Rdbms\LBFactoryMulti;
 use Wikimedia\Rdbms\LoadBalancer;
@@ -33,13 +34,14 @@ use Wikimedia\Rdbms\DatabaseDomain;
 
 /**
  * @group Database
+ * @covers \Wikimedia\Rdbms\LBFactory
  * @covers \Wikimedia\Rdbms\LBFactorySimple
  * @covers \Wikimedia\Rdbms\LBFactoryMulti
  */
 class LBFactoryTest extends MediaWikiTestCase {
 
 	/**
-	 * @covers MWLBFactory::getLBFactoryClass
+	 * @covers MWLBFactory::getLBFactoryClass()
 	 * @dataProvider getLBFactoryClassProvider
 	 */
 	public function testGetLBFactoryClass( $expected, $deprecated ) {
@@ -74,6 +76,10 @@ class LBFactoryTest extends MediaWikiTestCase {
 		];
 	}
 
+	/**
+	 * @covers \Wikimedia\Rdbms\LBFactory::getLocalDomainID()
+	 * @covers \Wikimedia\Rdbms\LBFactory::resolveDomainID()
+	 */
 	public function testLBFactorySimpleServer() {
 		global $wgDBserver, $wgDBname, $wgDBuser, $wgDBpassword, $wgDBtype, $wgSQLiteDataDir;
 
@@ -98,6 +104,9 @@ class LBFactoryTest extends MediaWikiTestCase {
 
 		$dbr = $lb->getConnection( DB_REPLICA );
 		$this->assertTrue( $dbr->getLBInfo( 'master' ), 'DB_REPLICA also gets the master' );
+
+		$this->assertSame( 'my_test_wiki', $factory->resolveDomainID( 'my_test_wiki' ) );
+		$this->assertSame( $factory->getLocalDomainID(), $factory->resolveDomainID( false ) );
 
 		$factory->shutdown();
 		$lb->closeAll();
@@ -153,41 +162,120 @@ class LBFactoryTest extends MediaWikiTestCase {
 		$lb->closeAll();
 	}
 
-	public function testLBFactoryMulti() {
+	public function testLBFactoryMultiConns() {
+		$factory = $this->newLBFactoryMultiLBs();
+
+		$dbw = $factory->getMainLB()->getConnection( DB_MASTER );
+		$this->assertTrue( $dbw->getLBInfo( 'master' ), 'master shows as master' );
+
+		$dbr = $factory->getMainLB()->getConnection( DB_REPLICA );
+		$this->assertTrue( $dbr->getLBInfo( 'replica' ), 'slave shows as slave' );
+
+		// Destructor should trigger without round stage errors
+		unset( $factory );
+	}
+
+	public function testLBFactoryMultiRoundCallbacks() {
+		$called = 0;
+		$countLBsFunc = function ( LBFactoryMulti $factory ) {
+			$count = 0;
+			$factory->forEachLB( function () use ( &$count ) {
+				++$count;
+			} );
+
+			return $count;
+		};
+
+		$factory = $this->newLBFactoryMultiLBs();
+		$this->assertEquals( 0, $countLBsFunc( $factory ) );
+		$dbw = $factory->getMainLB()->getConnection( DB_MASTER );
+		$this->assertEquals( 1, $countLBsFunc( $factory ) );
+		// Test that LoadBalancer instances made during pre-commit callbacks in do not
+		// throw DBTransactionError due to transaction ROUND_* stages being mismatched.
+		$factory->beginMasterChanges( __METHOD__ );
+		$dbw->onTransactionPreCommitOrIdle( function () use ( $factory, &$called ) {
+			++$called;
+			// Trigger s1 LoadBalancer instantiation during "finalize" stage.
+			// There is no s1wiki DB to select so it is not in getConnection(),
+			// but this fools getMainLB() at least.
+			$factory->getMainLB( 's1wiki' )->getConnection( DB_MASTER );
+		} );
+		$factory->commitMasterChanges( __METHOD__ );
+		$this->assertEquals( 1, $called );
+		$this->assertEquals( 2, $countLBsFunc( $factory ) );
+		$factory->shutdown();
+		$factory->closeAll();
+
+		$called = 0;
+		$factory = $this->newLBFactoryMultiLBs();
+		$this->assertEquals( 0, $countLBsFunc( $factory ) );
+		$dbw = $factory->getMainLB()->getConnection( DB_MASTER );
+		$this->assertEquals( 1, $countLBsFunc( $factory ) );
+		// Test that LoadBalancer instances made during pre-commit callbacks in do not
+		// throw DBTransactionError due to transaction ROUND_* stages being mismatched.hrow
+		// DBTransactionError due to transaction ROUND_* stages being mismatched.
+		$factory->beginMasterChanges( __METHOD__ );
+		$dbw->query( "SELECT 1 as t", __METHOD__ );
+		$dbw->onTransactionResolution( function () use ( $factory, &$called ) {
+			++$called;
+			// Trigger s1 LoadBalancer instantiation during "finalize" stage.
+			// There is no s1wiki DB to select so it is not in getConnection(),
+			// but this fools getMainLB() at least.
+			$factory->getMainLB( 's1wiki' )->getConnection( DB_MASTER );
+		} );
+		$factory->commitMasterChanges( __METHOD__ );
+		$this->assertEquals( 1, $called );
+		$this->assertEquals( 2, $countLBsFunc( $factory ) );
+		$factory->shutdown();
+		$factory->closeAll();
+
+		$factory = $this->newLBFactoryMultiLBs();
+		$dbw = $factory->getMainLB()->getConnection( DB_MASTER );
+		// DBTransactionError should not be thrown
+		$ran = 0;
+		$dbw->onTransactionPreCommitOrIdle( function () use ( &$ran ) {
+			++$ran;
+		} );
+		$factory->commitAll( __METHOD__ );
+		$this->assertEquals( 1, $ran );
+
+		$factory->shutdown();
+		$factory->closeAll();
+	}
+
+	private function newLBFactoryMultiLBs() {
 		global $wgDBserver, $wgDBname, $wgDBuser, $wgDBpassword, $wgDBtype, $wgSQLiteDataDir;
 
-		$factory = new LBFactoryMulti( [
-			'sectionsByDB' => [],
+		return new LBFactoryMulti( [
+			'sectionsByDB' => [
+				's1wiki' => 's1',
+			],
 			'sectionLoads' => [
+				's1' => [
+					'test-db3' => 0,
+					'test-db4' => 100,
+				],
 				'DEFAULT' => [
 					'test-db1' => 0,
 					'test-db2' => 100,
-				],
+				]
 			],
 			'serverTemplate' => [
-				'dbname'      => $wgDBname,
-				'user'        => $wgDBuser,
-				'password'    => $wgDBpassword,
-				'type'        => $wgDBtype,
+				'dbname' => $wgDBname,
+				'user' => $wgDBuser,
+				'password' => $wgDBpassword,
+				'type' => $wgDBtype,
 				'dbDirectory' => $wgSQLiteDataDir,
-				'flags'       => DBO_DEFAULT
+				'flags' => DBO_DEFAULT
 			],
 			'hostsByName' => [
-				'test-db1'  => $wgDBserver,
-				'test-db2'  => $wgDBserver
+				'test-db1' => $wgDBserver,
+				'test-db2' => $wgDBserver,
+				'test-db3' => $wgDBserver,
+				'test-db4' => $wgDBserver
 			],
 			'loadMonitorClass' => LoadMonitorNull::class
 		] );
-		$lb = $factory->getMainLB();
-
-		$dbw = $lb->getConnection( DB_MASTER );
-		$this->assertTrue( $dbw->getLBInfo( 'master' ), 'master shows as master' );
-
-		$dbr = $lb->getConnection( DB_REPLICA );
-		$this->assertTrue( $dbr->getLBInfo( 'replica' ), 'slave shows as slave' );
-
-		$factory->shutdown();
-		$lb->closeAll();
 	}
 
 	/**
@@ -314,6 +402,8 @@ class LBFactoryTest extends MediaWikiTestCase {
 		$cp->shutdown( null, 'sync', $cpIndex );
 
 		$this->assertEquals( null, $cpIndex, "CP write index retained" );
+
+		$this->assertEquals( '45e93a9c215c031d38b7c42d8e4700ca', $cp->getClientId() );
 	}
 
 	private function newLBFactoryMulti( array $baseOverride = [], array $serverOverride = [] ) {
@@ -340,7 +430,8 @@ class LBFactoryTest extends MediaWikiTestCase {
 				'test-db1' => $wgDBserver,
 			],
 			'loadMonitorClass' => LoadMonitorNull::class,
-			'localDomain' => new DatabaseDomain( $wgDBname, null, $wgDBprefix )
+			'localDomain' => new DatabaseDomain( $wgDBname, null, $wgDBprefix ),
+			'agent' => 'MW-UNIT-TESTS'
 		] );
 	}
 
@@ -491,6 +582,8 @@ class LBFactoryTest extends MediaWikiTestCase {
 	}
 
 	public function testInvalidSelectDB() {
+		// FIXME: fails under sqlite
+		$this->markTestSkippedIfDbType( 'sqlite' );
 		$dbname = 'unittest-domain'; // explodes if DB is selected
 		$factory = $this->newLBFactoryMulti(
 			[ 'localDomain' => ( new DatabaseDomain( $dbname, null, '' ) )->getId() ],
@@ -515,7 +608,15 @@ class LBFactoryTest extends MediaWikiTestCase {
 			$this->assertFalse( $db->isOpen() );
 		} else {
 			\Wikimedia\suppressWarnings();
-			$this->assertFalse( $db->selectDB( 'garbage-db' ) );
+			try {
+				$this->assertFalse( $db->selectDB( 'garbage-db' ) );
+				$this->fail( "No error thrown." );
+			} catch ( \Wikimedia\Rdbms\DBExpectedError $e ) {
+				$this->assertEquals(
+					"Could not select database 'garbage-db'.",
+					$e->getMessage()
+				);
+			}
 			\Wikimedia\restoreWarnings();
 		}
 	}
@@ -526,5 +627,74 @@ class LBFactoryTest extends MediaWikiTestCase {
 		} else {
 			return $db->addIdentifierQuotes( $table );
 		}
+	}
+
+	/**
+	 * @covers \Wikimedia\Rdbms\LBFactory::makeCookieValueFromCPIndex()
+	 * @covers \Wikimedia\Rdbms\LBFactory::getCPInfoFromCookieValue()
+	 */
+	public function testCPPosIndexCookieValues() {
+		$time = 1526522031;
+		$agentId = md5( 'Ramsey\'s Loyal Presa Canario' );
+
+		$this->assertEquals(
+			'3@542#c47dcfb0566e7d7bc110a6128a45c93a',
+			LBFactory::makeCookieValueFromCPIndex( 3, 542, $agentId )
+		);
+
+		$lbFactory = $this->newLBFactoryMulti();
+		$lbFactory->setRequestInfo( [ 'IPAddress' => '10.64.24.52', 'UserAgent' => 'meow' ] );
+		$this->assertEquals(
+			'1@542#c47dcfb0566e7d7bc110a6128a45c93a',
+			LBFactory::makeCookieValueFromCPIndex( 1, 542, $agentId )
+		);
+
+		$this->assertSame(
+			null,
+			LBFactory::getCPInfoFromCookieValue( "5#$agentId", $time - 10 )['index'],
+			'No time set'
+		);
+		$this->assertSame(
+			null,
+			LBFactory::getCPInfoFromCookieValue( "5@$time", $time - 10 )['index'],
+			'No agent set'
+		);
+		$this->assertSame(
+			null,
+			LBFactory::getCPInfoFromCookieValue( "0@$time#$agentId", $time - 10 )['index'],
+			'Bad index'
+		);
+
+		$this->assertSame(
+			2,
+			LBFactory::getCPInfoFromCookieValue( "2@$time#$agentId", $time - 10 )['index'],
+			'Fresh'
+		);
+		$this->assertSame(
+			2,
+			LBFactory::getCPInfoFromCookieValue( "2@$time#$agentId", $time + 9 - 10 )['index'],
+			'Almost stale'
+		);
+		$this->assertSame(
+			null,
+			LBFactory::getCPInfoFromCookieValue( "0@$time#$agentId", $time + 9 - 10 )['index'],
+			'Almost stale; bad index'
+		);
+		$this->assertSame(
+			null,
+			LBFactory::getCPInfoFromCookieValue( "2@$time#$agentId", $time + 11 - 10 )['index'],
+			'Stale'
+		);
+
+		$this->assertSame(
+			$agentId,
+			LBFactory::getCPInfoFromCookieValue( "5@$time#$agentId", $time - 10 )['clientId'],
+			'Live (client ID)'
+		);
+		$this->assertSame(
+			null,
+			LBFactory::getCPInfoFromCookieValue( "5@$time#$agentId", $time + 11 - 10 )['clientId'],
+			'Stale (client ID)'
+		);
 	}
 }

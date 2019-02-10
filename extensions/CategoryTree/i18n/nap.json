@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Chelin",
-			"C.R."
+			"C.R.",
+			"Ruthven"
 		]
 	},
 	"categorytree": "Arvero d' 'e categurìe",
@@ -16,7 +17,7 @@
 	"categorytree-mode-label": "Modalità:",
 	"categorytree-mode-categories": "mostra solo 'e categurìe",
 	"categorytree-mode-pages": "tutte 'e paggene accettuanno l'immaggene",
-	"categorytree-mode-all": "Tutte 'e paggene",
+	"categorytree-mode-all": "Tutte 'e ppaggene",
 	"categorytree-collapse": "annascunne",
 	"categorytree-expand": "fa vede",
 	"categorytree-member-counts": "Cuntene {{PLURAL:$1|1 sottocategurìa|$1 sottocategurìe}}, {{PLURAL:$2|1 paggena|$2 paggene}} e {{PLURAL:$3|1 file|$3 file}}",
@@ -34,6 +35,8 @@
 	"categorytree-error": "Probblema c' 'o caricamento d' 'e date.",
 	"categorytree-retry": "Aspetta nu mumento e prova n'ata vota.",
 	"apihelp-categorytree-description": "Modulo nterno pe' ne ffà n'estensione CategoryTree",
+	"apihelp-categorytree-summary": "Modulo nterno pe' ne ffà n'estensione CategoryTree",
 	"apihelp-categorytree-param-category": "Titolo dint' 'o namespace categurìa, 'o prefisso sarrà gnurato si dato.",
-	"apihelp-categorytree-param-options": "Opziune p' 'o costruttore comm'a n'uggetto JSON.\nL'opziona <var>depth</var> è determinata a <kbd>1</kbd>."
+	"apihelp-categorytree-param-options": "Opziune p' 'o costruttore comm'a n'uggetto JSON.\nL'opziona <var>depth</var> è determinata a <kbd>1</kbd>.",
+	"apierror-categorytree-invalidjson": "L'opziune hann'a essere valide pe' n'oggetto JSON."
 }

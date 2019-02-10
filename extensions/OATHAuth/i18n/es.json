@@ -16,7 +16,7 @@
 	"oathauth-enable": "Activar la autenticación en dos pasos",
 	"oathauth-scratchtokens": "La lista siguiente es una lista de claves de un solo uso. Estas claves solo pueden utilizarse una vez y son para uso de emergencia. Por favor, anótalas y mantenlas en un lugar seguro. Si pierdes el teléfono, estas claves son la única manera de recuperar tu cuenta. Estas claves nunca se mostrarán una segunda vez.",
 	"oathauth-token": "Clave",
-	"oathauth-disable": "Deshabilitar la autenticación de dos factores",
+	"oathauth-disable": "Desactivar la autenticación en dos etapas",
 	"oathauth-validatedoath": "Se han validado las credenciales de dos factores. Ahora se aplicará la autenticación de dos factores.",
 	"oathauth-noscratchforvalidation": "No puedes utilizar códigos predefinidos para confirmar la autenticación de dos pasos. Tales códigos solo sirven como respaldo y para uso ocasional accesorio. Utiliza un código de verificación proveniente de un generador de códigos.",
 	"oathauth-failedtovalidateoath": "Error al validar las credenciales de dos factores",

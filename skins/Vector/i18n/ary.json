@@ -2,7 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Enzoreg",
-			"Zanatos"
+			"Zanatos",
+			"Abdeaitali",
+			"Reda Benkhadra"
 		]
 	},
 	"vector-action-addsection": "Zid topic",
@@ -14,6 +16,7 @@
 	"vector-view-create": "Ĥṫareĝ",
 	"vector-view-edit": "Ĝedel",
 	"vector-view-history": "Ṫariĥ l-fiċyé",
-	"vector-view-view": "Qra",
-	"vector-view-viewsource": "Ċof l-masdar"
+	"vector-view-view": "قرا",
+	"vector-view-viewsource": "Ċof l-masdar",
+	"vector-more-actions": "زيد"
 }

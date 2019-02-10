@@ -10,7 +10,7 @@ class QuestyCaptchaTest extends MediaWikiTestCase {
 
 		$this->mergeMwGlobalArrayValue(
 			'wgAutoloadClasses',
-			[ 'QuestyCaptcha' => __DIR__ . '/../../QuestyCaptcha/QuestyCaptcha.class.php' ]
+			[ 'QuestyCaptcha' => __DIR__ . '/../../QuestyCaptcha/includes/QuestyCaptcha.php' ]
 		);
 	}
 

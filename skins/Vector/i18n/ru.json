@@ -6,7 +6,9 @@
 			"Kaganer",
 			"Nemo bis",
 			"Okras",
-			"Александр Сигачёв"
+			"Александр Сигачёв",
+			"Ole Yves",
+			"Stjn"
 		]
 	},
 	"skinname-vector": "Векторное",
@@ -24,5 +26,7 @@
 	"vector-view-history": "История",
 	"vector-view-view": "Читать",
 	"vector-view-viewsource": "Просмотр кода",
+	"vector-jumptonavigation": "Перейти к навигации",
+	"vector-jumptosearch": "Перейти к поиску",
 	"vector-more-actions": "Ещё"
 }

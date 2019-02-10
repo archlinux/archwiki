@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Snævar",
-			"Sveinn í Felli"
+			"Sveinn í Felli",
+			"Sveinki"
 		]
 	},
 	"multimediaviewer-file-page": "Fara á samsvarandi skráarsíðu",
@@ -31,7 +32,7 @@
 	"multimediaviewer-license-default": "Skoða leyfi",
 	"multimediaviewer-permission-link": "skoða skilmála",
 	"multimediaviewer-permission-viewmore": "sýna meira",
-	"multimediaviewer-about-mmv": "Um",
+	"multimediaviewer-about-mmv": "Um þetta viðmót",
 	"multimediaviewer-discuss-mmv": "Umræða",
 	"multimediaviewer-help-mmv": "Hjálp",
 	"multimediaviewer-geoloc-north": "N",

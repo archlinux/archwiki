@@ -32,7 +32,7 @@ use stdClass;
 /**
  * Basic database interface for live and lazy-loaded relation database handles
  *
- * @note: IDatabase and DBConnRef should be updated to reflect any changes
+ * @note IDatabase and DBConnRef should be updated to reflect any changes
  * @ingroup Database
  */
 interface IDatabase {
@@ -58,7 +58,7 @@ interface IDatabase {
 	/** @var string Commit/rollback is from the connection manager for the IDatabase handle */
 	const FLUSHING_ALL_PEERS = 'flush';
 	/** @var string Commit/rollback is from the IDatabase handle internally */
-	const FLUSHING_INTERNAL = 'flush';
+	const FLUSHING_INTERNAL = 'flush-internal';
 
 	/** @var string Do not remember the prior flags */
 	const REMEMBER_NOTHING = '';
@@ -165,16 +165,24 @@ interface IDatabase {
 	public function explicitTrxActive();
 
 	/**
+	 * Assert that all explicit transactions or atomic sections have been closed.
+	 * @throws DBTransactionError
+	 * @since 1.32
+	 */
+	public function assertNoOpenTransactions();
+
+	/**
 	 * Get/set the table prefix.
-	 * @param string $prefix The table prefix to set, or omitted to leave it unchanged.
-	 * @return string The previous table prefix.
+	 * @param string|null $prefix The table prefix to set, or omitted to leave it unchanged.
+	 * @return string The previous table prefix
+	 * @throws DBUnexpectedError
 	 */
 	public function tablePrefix( $prefix = null );
 
 	/**
 	 * Get/set the db schema.
-	 * @param string $schema The database schema to set, or omitted to leave it unchanged.
-	 * @return string The previous db schema.
+	 * @param string|null $schema The database schema to set, or omitted to leave it unchanged.
+	 * @return string The previous db schema
 	 */
 	public function dbSchema( $schema = null );
 
@@ -182,7 +190,7 @@ interface IDatabase {
 	 * Get properties passed down from the server info array of the load
 	 * balancer.
 	 *
-	 * @param string $name The entry of the info array to get, or null to get the
+	 * @param string|null $name The entry of the info array to get, or null to get the
 	 *   whole array
 	 *
 	 * @return array|mixed|null
@@ -195,7 +203,7 @@ interface IDatabase {
 	 * parameters, the member with the given name is set to the given value.
 	 *
 	 * @param string $name
-	 * @param array $value
+	 * @param array|null $value
 	 */
 	public function setLBInfo( $name, $value = null );
 
@@ -254,8 +262,15 @@ interface IDatabase {
 	public function writesPending();
 
 	/**
-	 * Returns true if there is a transaction/round open with possible write
-	 * queries or transaction pre-commit/idle callbacks waiting on it to finish.
+	 * @return bool Whether there is a transaction open with pre-commit callbacks pending
+	 * @since 1.32
+	 */
+	public function preCommitCallbacksPending();
+
+	/**
+	 * Whether there is a transaction open with either possible write queries
+	 * or unresolved pre-commit/commit/resolution callbacks pending
+	 *
 	 * This does *not* count recurring callbacks, e.g. from setTransactionListener().
 	 *
 	 * @return bool
@@ -344,6 +359,10 @@ interface IDatabase {
 	public function getFlag( $flag );
 
 	/**
+	 * Return the currently selected domain ID
+	 *
+	 * Null components (database/schema) might change once a connection is established
+	 *
 	 * @return string
 	 */
 	public function getDomainID();
@@ -362,18 +381,6 @@ interface IDatabase {
 	 * @return string
 	 */
 	public function getType();
-
-	/**
-	 * Open a new connection to the database (closing any existing one)
-	 *
-	 * @param string $server Database server host
-	 * @param string $user Database user name
-	 * @param string $password Database user password
-	 * @param string $dbName Database name
-	 * @return bool
-	 * @throws DBConnectionError
-	 */
-	public function open( $server, $user, $password, $dbName );
 
 	/**
 	 * Fetch the next row from the given result object, in object form.
@@ -399,7 +406,8 @@ interface IDatabase {
 	public function fetchRow( $res );
 
 	/**
-	 * Get the number of rows in a result object
+	 * Get the number of rows in a query result. If the query did not return
+	 * any rows (for example, if it was a write query), this returns zero.
 	 *
 	 * @param mixed $res A SQL result
 	 * @return int
@@ -491,8 +499,8 @@ interface IDatabase {
 	 * Close the database connection
 	 *
 	 * This should only be called after any transactions have been resolved,
-	 * aside from read-only transactions (assuming no callbacks are registered).
-	 * If a transaction is still open anyway, it will be committed if possible.
+	 * aside from read-only automatic transactions (assuming no callbacks are registered).
+	 * If a transaction is still open anyway, it will be rolled back.
 	 *
 	 * @throws DBError
 	 * @return bool Operation success. true if already closed.
@@ -675,6 +683,8 @@ interface IDatabase {
 	 * Escaping of untrusted input used in values of numeric keys should be done via
 	 * IDatabase::addQuotes()
 	 *
+	 * Use an empty array, string, or '*' to update all rows.
+	 *
 	 * @param string|array $options
 	 *
 	 * Optional: Array of query options. Boolean options are specified by
@@ -839,6 +849,21 @@ interface IDatabase {
 	 */
 	public function selectRowCount(
 		$tables, $var = '*', $conds = '', $fname = __METHOD__, $options = [], $join_conds = []
+	);
+
+	/**
+	 * Lock all rows meeting the given conditions/options FOR UPDATE
+	 *
+	 * @param array|string $table Table names
+	 * @param array|string $conds Filters on the table
+	 * @param string $fname Function name for profiling
+	 * @param array $options Options for select ("FOR UPDATE" is added automatically)
+	 * @param array $join_conds Join conditions
+	 * @return int Number of matching rows found (and locked)
+	 * @since 1.32
+	 */
+	public function lockForUpdate(
+		$table, $conds = '', $fname = __METHOD__, $options = [], $join_conds = []
 	);
 
 	/**
@@ -1095,14 +1120,27 @@ interface IDatabase {
 	 * Change the current database
 	 *
 	 * @param string $db
-	 * @return bool Success or failure
+	 * @return bool True unless an exception was thrown
 	 * @throws DBConnectionError If databasesAreIndependent() is true and an error occurs
+	 * @throws DBError
+	 * @deprecated Since 1.32
 	 */
 	public function selectDB( $db );
 
 	/**
+	 * Set the current domain (database, schema, and table prefix)
+	 *
+	 * This will throw an error for some database types if the database unspecified
+	 *
+	 * @param string|DatabaseDomain $domain
+	 * @since 1.32
+	 * @throws DBConnectionError
+	 */
+	public function selectDomain( $domain );
+
+	/**
 	 * Get the current DB name
-	 * @return string
+	 * @return string|null
 	 */
 	public function getDBname();
 
@@ -1186,10 +1224,10 @@ interface IDatabase {
 	 * errors which wouldn't have occurred in MySQL.
 	 *
 	 * @param string $table The table to replace the row(s) in.
-	 * @param array $uniqueIndexes Is an array of indexes. Each element may be either
-	 *    a field name or an array of field names
+	 * @param array $uniqueIndexes Either a list of fields that define a unique index or
+	 *   an array of such lists if there are multiple unique indexes defined in the schema
 	 * @param array $rows Can be either a single row to insert, or multiple rows,
-	 *    in the same format as for IDatabase::insert()
+	 *   in the same format as for IDatabase::insert()
 	 * @param string $fname Calling function name (use __METHOD__) for logs/profiling
 	 * @throws DBError
 	 */
@@ -1221,7 +1259,8 @@ interface IDatabase {
 	 *
 	 * @param string $table Table name. This will be passed through Database::tableName().
 	 * @param array $rows A single row or list of rows to insert
-	 * @param array $uniqueIndexes List of single field names or field name tuples
+	 * @param array $uniqueIndexes Either a list of fields that define a unique index or
+	 *   an array of such lists if there are multiple unique indexes defined in the schema
 	 * @param array $set An array of values to SET. For each array element, the
 	 *   key gives the field name, and the value gives the data to set that
 	 *   field to. The data will be quoted by IDatabase::addQuotes().
@@ -1478,10 +1517,11 @@ interface IDatabase {
 	 *
 	 * This is useful for combining cooperative locks and DB transactions.
 	 *
-	 * @note: do not assume that *other* IDatabase instances will be AUTOCOMMIT mode
+	 * @note do not assume that *other* IDatabase instances will be AUTOCOMMIT mode
 	 *
-	 * The callback takes one argument:
+	 * The callback takes the following arguments:
 	 *   - How the transaction ended (IDatabase::TRIGGER_COMMIT or IDatabase::TRIGGER_ROLLBACK)
+	 *   - This IDatabase instance (since 1.32)
 	 *
 	 * @param callable $callback
 	 * @param string $fname Caller name
@@ -1507,16 +1547,31 @@ interface IDatabase {
 	 * It can also be used for updates that easily suffer from lock timeouts and deadlocks,
 	 * but where atomicity is not essential.
 	 *
+	 * Avoid using IDatabase instances aside from this one in the callback, unless such instances
+	 * never have IDatabase::DBO_TRX set. This keeps callbacks from interfering with one another.
+	 *
 	 * Updates will execute in the order they were enqueued.
 	 *
-	 * @note: do not assume that *other* IDatabase instances will be AUTOCOMMIT mode
+	 * @note do not assume that *other* IDatabase instances will be AUTOCOMMIT mode
 	 *
-	 * The callback takes one argument:
+	 * The callback takes the following arguments:
 	 *   - How the transaction ended (IDatabase::TRIGGER_COMMIT or IDatabase::TRIGGER_IDLE)
+	 *   - This IDatabase instance (since 1.32)
 	 *
 	 * @param callable $callback
 	 * @param string $fname Caller name
+	 * @since 1.32
+	 */
+	public function onTransactionCommitOrIdle( callable $callback, $fname = __METHOD__ );
+
+	/**
+	 * Alias for onTransactionCommitOrIdle() for backwards-compatibility
+	 *
+	 * @param callable $callback
+	 * @param string $fname
+	 * @return mixed
 	 * @since 1.20
+	 * @deprecated Since 1.32
 	 */
 	public function onTransactionIdle( callable $callback, $fname = __METHOD__ );
 
@@ -1536,6 +1591,9 @@ interface IDatabase {
 	 *
 	 * Updates will execute in the order they were enqueued.
 	 *
+	 * The callback takes the one argument:
+	 *   - This IDatabase instance (since 1.32)
+	 *
 	 * @param callable $callback
 	 * @param string $fname Caller name
 	 * @since 1.22
@@ -1543,14 +1601,17 @@ interface IDatabase {
 	public function onTransactionPreCommitOrIdle( callable $callback, $fname = __METHOD__ );
 
 	/**
-	 * Run a callback each time any transaction commits or rolls back
+	 * Run a callback after each time any transaction commits or rolls back
 	 *
 	 * The callback takes two arguments:
 	 *   - IDatabase::TRIGGER_COMMIT or IDatabase::TRIGGER_ROLLBACK
 	 *   - This IDatabase object
 	 * Callbacks must commit any transactions that they begin.
 	 *
-	 * Registering a callback here will not affect writesOrCallbacks() pending
+	 * Registering a callback here will not affect writesOrCallbacks() pending.
+	 *
+	 * Since callbacks from this or onTransactionCommitOrIdle() can start and end transactions,
+	 * a single call to IDatabase::commit might trigger multiple runs of the listener callbacks.
 	 *
 	 * @param string $name Callback name
 	 * @param callable|null $callback Use null to unset a listener
@@ -1579,7 +1640,7 @@ interface IDatabase {
 	 *   - The failures are from contention solvable via onTransactionPreCommitOrIdle()
 	 *   - The failures are deadlocks; the RDBMs usually discard the whole transaction
 	 *
-	 * @note: callers must use additional measures for situations involving two or more
+	 * @note callers must use additional measures for situations involving two or more
 	 *   (peer) transactions (e.g. updating two database servers at once). The transaction
 	 *   and savepoint logic of this method only applies to this specific IDatabase instance.
 	 *
@@ -1658,7 +1719,7 @@ interface IDatabase {
 	 * corresponding startAtomic() implicitly started a transaction, that
 	 * transaction is rolled back.
 	 *
-	 * @note: callers must use additional measures for situations involving two or more
+	 * @note callers must use additional measures for situations involving two or more
 	 *   (peer) transactions (e.g. updating two database servers at once). The transaction
 	 *   and savepoint logic of startAtomic() are bound to specific IDatabase instances.
 	 *
@@ -1669,7 +1730,7 @@ interface IDatabase {
 	 * @since 1.31
 	 * @see IDatabase::startAtomic
 	 * @param string $fname
-	 * @param AtomicSectionIdentifier $sectionId Section ID from startAtomic();
+	 * @param AtomicSectionIdentifier|null $sectionId Section ID from startAtomic();
 	 *   passing this enables cancellation of unclosed nested sections [optional]
 	 * @throws DBError
 	 */
@@ -1853,7 +1914,7 @@ interface IDatabase {
 	 * The result is unquoted, and needs to be passed through addQuotes()
 	 * before it can be included in raw SQL.
 	 *
-	 * @param string|int $ts
+	 * @param string|int|null $ts
 	 *
 	 * @return string
 	 */
@@ -2088,4 +2149,7 @@ interface IDatabase {
 	public function setIndexAliases( array $aliases );
 }
 
+/**
+ * @deprecated since 1.29
+ */
 class_alias( IDatabase::class, 'IDatabase' );

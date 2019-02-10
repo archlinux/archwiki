@@ -11,12 +11,10 @@
 			"McDutchie"
 		]
 	},
-	"visualeditor-cite-tool-definition.json": "null",
 	"visualeditor-cite-tool-name-book": "Buch",
 	"visualeditor-cite-tool-name-journal": "Journal",
 	"visualeditor-cite-tool-name-news": "Neiegkeeten",
 	"visualeditor-cite-tool-name-web": "Internetsite",
-	"cite-tool-definition.json": "null",
 	"cite-ve-changedesc-reflist-responsive-unset": "D'Lëscht vun de Referenzen gouf esou geännert datt se an enger Spalt gewise gëtt",
 	"cite-ve-dialog-reference-editing-reused": "Dës Referenz gëtt {{PLURAL:$1|eemol|$1 Mol}} op dëser Säit benotzt.",
 	"cite-ve-dialog-reference-options-group-label": "Dëse Grupp benotzen",

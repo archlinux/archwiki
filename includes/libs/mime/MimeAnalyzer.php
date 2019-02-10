@@ -195,21 +195,11 @@ EOT;
 		$this->typeFile = $params['typeFile'];
 		$this->infoFile = $params['infoFile'];
 		$this->xmlTypes = $params['xmlTypes'];
-		$this->initCallback = isset( $params['initCallback'] )
-			? $params['initCallback']
-			: null;
-		$this->detectCallback = isset( $params['detectCallback'] )
-			? $params['detectCallback']
-			: null;
-		$this->guessCallback = isset( $params['guessCallback'] )
-			? $params['guessCallback']
-			: null;
-		$this->extCallback = isset( $params['extCallback'] )
-			? $params['extCallback']
-			: null;
-		$this->logger = isset( $params['logger'] )
-			? $params['logger']
-			: new \Psr\Log\NullLogger();
+		$this->initCallback = $params['initCallback'] ?? null;
+		$this->detectCallback = $params['detectCallback'] ?? null;
+		$this->guessCallback = $params['guessCallback'] ?? null;
+		$this->extCallback = $params['extCallback'] ?? null;
+		$this->logger = $params['logger'] ?? new \Psr\Log\NullLogger();
 
 		$this->loadFiles();
 	}
@@ -437,7 +427,7 @@ EOT;
 	public function getTypesForExtension( $ext ) {
 		$ext = strtolower( $ext );
 
-		$r = isset( $this->mExtToMime[$ext] ) ? $this->mExtToMime[$ext] : null;
+		$r = $this->mExtToMime[$ext] ?? null;
 		return $r;
 	}
 
@@ -1039,9 +1029,9 @@ EOT;
 	 * @todo analyse file if need be
 	 * @todo look at multiple extension, separately and together.
 	 *
-	 * @param string $path Full path to the image file, in case we have to look at the contents
+	 * @param string|null $path Full path to the image file, in case we have to look at the contents
 	 *        (if null, only the MIME type is used to determine the media type code).
-	 * @param string $mime MIME type. If null it will be guessed using guessMimeType.
+	 * @param string|null $mime MIME type. If null it will be guessed using guessMimeType.
 	 *
 	 * @return string A value to be used with the MEDIATYPE_xxx constants.
 	 */

@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\MediaWikiServices;
+
 class ExtParserFunctions {
 	public static $mExprParser;
 	public static $mTimeCache = [];
@@ -179,7 +181,11 @@ class ExtParserFunctions {
 		$default = null;
 		$lastItemHadNoEquals = false;
 		$lastItem = '';
-		$mwDefault =& MagicWord::get( 'default' );
+		if ( class_exists( MagicWordFactory::class ) ) {
+			$mwDefault = $parser->getMagicWordFactory()->get( 'default' );
+		} else {
+			$mwDefault = MagicWord::get( 'default' );
+		}
 		foreach ( $args as $arg ) {
 			$bits = $arg->splitArg();
 			$nameNode = $bits['name'];
@@ -241,7 +247,7 @@ class ExtParserFunctions {
 	 *
 	 * @return string
 	 */
-	public static function rel2abs( $parser , $to = '' , $from = '' ) {
+	public static function rel2abs( $parser, $to = '', $from = '' ) {
 		$from = trim( $from );
 		if ( $from === '' ) {
 			$from = $parser->getTitle()->getPrefixedText();
@@ -263,7 +269,7 @@ class ExtParserFunctions {
 			$from = '';
 		}
 		// Make a long path, containing both, enclose it in /.../
-		$fullPath = '/' . $from . '/' .  $to . '/';
+		$fullPath = '/' . $from . '/' . $to . '/';
 
 		// remove redundant current path dots
 		$fullPath = preg_replace( '!/(\./)+!', '/', $fullPath );
@@ -326,12 +332,13 @@ class ExtParserFunctions {
 				$parser->mOutput->addImage(
 					$file->getName(), $file->getTimestamp(), $file->getSha1() );
 				return $file->exists() ? $then : $else;
-			} elseif ( $title->getNamespace() === NS_SPECIAL ) {
+			} elseif ( $title->isSpecialPage() ) {
 				/* Don't bother with the count for special pages,
 				 * since their existence can be checked without
 				 * accessing the database.
 				 */
-				return SpecialPageFactory::exists( $title->getDBkey() ) ? $then : $else;
+				return MediaWikiServices::getInstance()->getSpecialPageFactory()
+					->exists( $title->getDBkey() ) ? $then : $else;
 			} elseif ( $title->isExternal() ) {
 				/* Can't check the existence of pages on other sites,
 				 * so just return $else.  Makes a sort of sense, since
@@ -385,7 +392,7 @@ class ExtParserFunctions {
 
 	/**
 	 * @param Parser $parser
-	 * @param PPFrame $frame
+	 * @param PPFrame|null $frame
 	 * @param string $format
 	 * @param string $date
 	 * @param string $language
@@ -431,7 +438,7 @@ class ExtParserFunctions {
 
 			# Correct for DateTime interpreting 'XXXX' as XX:XX o'clock
 			if ( preg_match( '/^[0-9]{4}$/', $date ) ) {
-				$date = '00:00 '.$date;
+				$date = '00:00 ' . $date;
 			}
 
 			# Parse date
@@ -642,7 +649,7 @@ class ExtParserFunctions {
 			$inNeedle = ' ';
 		}
 
-		$pos = mb_strpos( $inStr, $inNeedle, (int)$inOffset );
+		$pos = mb_strpos( $inStr, $inNeedle, min( (int)$inOffset, mb_strlen( $inStr ) ) );
 		if ( $pos === false ) {
 			$pos = '';
 		}

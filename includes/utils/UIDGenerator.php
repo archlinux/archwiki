@@ -30,17 +30,22 @@ use MediaWiki\MediaWikiServices;
 class UIDGenerator {
 	/** @var UIDGenerator */
 	protected static $instance = null;
+	/** @var string Local file path */
+	protected $nodeIdFile;
+	/** @var string Node ID in binary (32 bits) */
+	protected $nodeId32;
+	/** @var string Node ID in binary (48 bits) */
+	protected $nodeId48;
 
-	protected $nodeIdFile; // string; local file path
-	protected $nodeId32; // string; node ID in binary (32 bits)
-	protected $nodeId48; // string; node ID in binary (48 bits)
+	/** @var string Local file path */
+	protected $lockFile88;
+	/** @var string Local file path */
+	protected $lockFile128;
+	/** @var string Local file path */
+	protected $lockFileUUID;
 
-	protected $lockFile88; // string; local file path
-	protected $lockFile128; // string; local file path
-	protected $lockFileUUID; // string; local file path
-
-	/** @var array */
-	protected $fileHandles = []; // cache file handles
+	/** @var array Cached file handles */
+	protected $fileHandles = []; // cached file handles
 
 	const QUICK_RAND = 1; // get randomness from fast and insecure sources
 	const QUICK_VOLATILE = 2; // use an APC like in-memory counter if available
@@ -84,7 +89,7 @@ class UIDGenerator {
 	}
 
 	/**
-	 * @todo: move to MW-specific factory class and inject temp dir
+	 * @todo move to MW-specific factory class and inject temp dir
 	 * @return UIDGenerator
 	 */
 	protected static function singleton() {
@@ -122,8 +127,8 @@ class UIDGenerator {
 	}
 
 	/**
-	 * @param array $info The result of UIDGenerator::getTimeAndDelay() or
-	 *  a plain (UIDGenerator::millitime(), counter, clock sequence) array.
+	 * @param array $info result of UIDGenerator::getTimeAndDelay(), or
+	 *  for sub classes, a seqencial array like (time, offsetCounter).
 	 * @return string 88 bits
 	 * @throws RuntimeException
 	 */
@@ -176,8 +181,8 @@ class UIDGenerator {
 	}
 
 	/**
-	 * @param array $info The result of UIDGenerator::getTimeAndDelay() or
-	 *  a plain (UIDGenerator::millitime(), counter, clock sequence) array.
+	 * @param array $info The result of UIDGenerator::getTimeAndDelay(),
+	 *  for sub classes, a seqencial array like (time, offsetCounter, clkSeq).
 	 * @return string 128 bits
 	 * @throws RuntimeException
 	 */
@@ -358,14 +363,15 @@ class UIDGenerator {
 	protected function getSequentialPerNodeIDs( $bucket, $bits, $count, $flags ) {
 		if ( $count <= 0 ) {
 			return []; // nothing to do
-		} elseif ( $bits < 16 || $bits > 48 ) {
+		}
+		if ( $bits < 16 || $bits > 48 ) {
 			throw new RuntimeException( "Requested bit size ($bits) is out of range." );
 		}
 
 		$counter = null; // post-increment persistent counter value
 
 		// Use APC/etc if requested, available, and not in CLI mode;
-		// Counter values would not survive accross script instances in CLI mode.
+		// Counter values would not survive across script instances in CLI mode.
 		$cache = null;
 		if ( ( $flags & self::QUICK_VOLATILE ) && !wfIsCLI() ) {
 			$cache = MediaWikiServices::getInstance()->getLocalServerObjectCache();
@@ -390,7 +396,8 @@ class UIDGenerator {
 			// Acquire the UID lock file
 			if ( $handle === false ) {
 				throw new RuntimeException( "Could not open '{$path}'." );
-			} elseif ( !flock( $handle, LOCK_EX ) ) {
+			}
+			if ( !flock( $handle, LOCK_EX ) ) {
 				fclose( $handle );
 				throw new RuntimeException( "Could not acquire '{$path}'." );
 			}
@@ -400,14 +407,14 @@ class UIDGenerator {
 			// Write back the new counter value
 			ftruncate( $handle, 0 );
 			rewind( $handle );
-			fwrite( $handle, fmod( $counter, pow( 2, 48 ) ) ); // warp-around as needed
+			fwrite( $handle, fmod( $counter, 2 ** 48 ) ); // warp-around as needed
 			fflush( $handle );
 			// Release the UID lock file
 			flock( $handle, LOCK_UN );
 		}
 
 		$ids = [];
-		$divisor = pow( 2, $bits );
+		$divisor = 2 ** $bits;
 		$currentId = floor( $counter - $count ); // pre-increment counter value
 		for ( $i = 0; $i < $count; ++$i ) {
 			$ids[] = fmod( ++$currentId, $divisor );
@@ -425,7 +432,12 @@ class UIDGenerator {
 	 * @param int $clockSeqSize The number of possible clock sequence values
 	 * @param int $counterSize The number of possible counter values
 	 * @param int $offsetSize The number of possible offset values
-	 * @return array (result of UIDGenerator::millitime(), counter, clock sequence)
+	 * @return array Array with the following keys:
+	 *  - array 'time': array of seconds int and milliseconds int.
+	 *  - int 'counter'.
+	 *  - int 'clkSeq'.
+	 *  - int 'offset': .
+	 *  - int 'offsetCounter'.
 	 * @throws RuntimeException
 	 */
 	protected function getTimeAndDelay( $lockFile, $clockSeqSize, $counterSize, $offsetSize ) {
@@ -439,70 +451,118 @@ class UIDGenerator {
 		// Acquire the UID lock file
 		if ( $handle === false ) {
 			throw new RuntimeException( "Could not open '{$this->$lockFile}'." );
-		} elseif ( !flock( $handle, LOCK_EX ) ) {
+		}
+		if ( !flock( $handle, LOCK_EX ) ) {
 			fclose( $handle );
 			throw new RuntimeException( "Could not acquire '{$this->$lockFile}'." );
 		}
-		// Get the current timestamp, clock sequence number, last time, and counter
+
+		// The formatters that use this method expect a timestamp with millisecond
+		// precision and a counter upto a certain size. When more IDs than the counter
+		// size are generated during the same timestamp, an exception is thrown as we
+		// cannot increment further, because the formatted ID would not have enough
+		// bits to fit the counter.
+		//
+		// To orchestrate this between independant PHP processes on the same hosts,
+		// we must have a common sense of time so that we only have to maintain
+		// a single counter in a single lock file.
+		//
+		// Given that:
+		// * The system clock can be observed via time(), without milliseconds.
+		// * Some other clock can be observed via microtime(), which also offers
+		//   millisecond precision.
+		// * microtime() drifts in-process further and further away from the system
+		//   clock the longer the longer the process runs for.
+		//   For example, on 2018-10-03 an HHVM 3.18 JobQueue process at WMF,
+		//   that ran for 9 min 55 sec, drifted 7 seconds.
+		//   The drift is immediate for processes running while the system clock changes.
+		//   time() does not have this problem. See https://bugs.php.net/bug.php?id=42659.
+		//
+		// We have two choices:
+		//
+		// 1. Use microtime() with the following caveats:
+		//    - The last stored time may be in the future, or our current time
+		//    may be in the past, in which case we'll frequently enter the slow
+		//    timeWaitUntil() method to try and "sync" the current process with
+		//    the previous process. We mustn't block for long though, max 10ms?
+		//    - For any drift above 10ms, we pretend that the clock went backwards,
+		//    and treat it the same way as after an NTP sync, by incrementing clock
+		//    sequence instead. Given this rolls over automatically and silently
+		//    and is meant to be rare, this is essentially sacrifices a reasonable
+		//    guarantee of uniqueness.
+		//    - For long running processes (e.g. longer than a few seconds) the drift
+		//    can easily be more than 2 seconds. Because we only have a single lock
+		//    file and don't want to keep too many counters and deal with clearing
+		//    those, we fatal the user and refuse to make an ID. (T94522)
+		// 2. Use time() and expand the counter by 1000x and use the first digits
+		//    as if they are the millisecond fraction of the timestamp.
+		//    Known caveats or perf impact: None.
+		//
+		// We choose the latter.
+		$msecCounterSize = $counterSize * 1000;
+
 		rewind( $handle );
-		$data = explode( ' ', fgets( $handle ) ); // "<clk seq> <sec> <msec> <counter> <offset>"
-		$clockChanged = false; // clock set back significantly?
-		if ( count( $data ) == 5 ) { // last UID info already initialized
+		// Format of lock file contents:
+		// "<clk seq> <sec> <msec counter> <rand offset>"
+		$data = explode( ' ', fgets( $handle ) );
+
+		if ( count( $data ) === 4 ) {
+			// The UID lock file was already initialized
 			$clkSeq = (int)$data[0] % $clockSeqSize;
-			$prevTime = [ (int)$data[1], (int)$data[2] ];
-			$offset = (int)$data[4] % $counterSize; // random counter offset
-			$counter = 0; // counter for UIDs with the same timestamp
-			// Delay until the clock reaches the time of the last ID.
-			// This detects any microtime() drift among processes.
-			$time = $this->timeWaitUntil( $prevTime );
-			if ( !$time ) { // too long to delay?
-				$clockChanged = true; // bump clock sequence number
-				$time = self::millitime();
-			} elseif ( $time == $prevTime ) {
-				// Bump the counter if there are timestamp collisions
-				$counter = (int)$data[3] % $counterSize;
-				if ( ++$counter >= $counterSize ) { // sanity (starts at 0)
-					flock( $handle, LOCK_UN ); // abort
+			$prevSec = (int)$data[1];
+			// Counter for UIDs with the same timestamp,
+			$msecCounter = 0;
+			$randOffset = (int)$data[3] % $counterSize;
+
+			// If the system clock moved backwards by an NTP sync,
+			// or if the last writer process had its clock drift ahead,
+			// Try to catch up if the gap is small, so that we can keep a single
+			// monotonic logic file.
+			$sec = $this->timeWaitUntil( $prevSec );
+			if ( $sec === false ) {
+				// Gap is too big. Looks like the clock got moved back significantly.
+				// Start a new clock sequence, and re-randomize the extra offset,
+				// which is useful for UIDs that do not include the clock sequence number.
+				$clkSeq = ( $clkSeq + 1 ) % $clockSeqSize;
+				$sec = time();
+				$randOffset = mt_rand( 0, $offsetSize - 1 );
+				trigger_error( "Clock was set back; sequence number incremented." );
+			} elseif ( $sec === $prevSec ) {
+				// Sanity check, only keep remainder if a previous writer wrote
+				// something here that we don't accept.
+				$msecCounter = (int)$data[2] % $msecCounterSize;
+				// Bump the counter if the time has not changed yet
+				if ( ++$msecCounter >= $msecCounterSize ) {
+					// More IDs generated with the same time than counterSize can accomodate
+					flock( $handle, LOCK_UN );
 					throw new RuntimeException( "Counter overflow for timestamp value." );
 				}
 			}
-		} else { // last UID info not initialized
+		} else {
+			// Initialize UID lock file information
 			$clkSeq = mt_rand( 0, $clockSeqSize - 1 );
-			$counter = 0;
-			$offset = mt_rand( 0, $offsetSize - 1 );
-			$time = self::millitime();
+			$sec = time();
+			$msecCounter = 0;
+			$randOffset = mt_rand( 0, $offsetSize - 1 );
 		}
-		// microtime() and gettimeofday() can drift from time() at least on Windows.
-		// The drift is immediate for processes running while the system clock changes.
-		// time() does not have this problem. See https://bugs.php.net/bug.php?id=42659.
-		if ( abs( time() - $time[0] ) >= 2 ) {
-			// We don't want processes using too high or low timestamps to avoid duplicate
-			// UIDs and clock sequence number churn. This process should just be restarted.
-			flock( $handle, LOCK_UN ); // abort
-			throw new RuntimeException( "Process clock is outdated or drifted." );
-		}
-		// If microtime() is synced and a clock change was detected, then the clock went back
-		if ( $clockChanged ) {
-			// Bump the clock sequence number and also randomize the counter offset,
-			// which is useful for UIDs that do not include the clock sequence number.
-			$clkSeq = ( $clkSeq + 1 ) % $clockSeqSize;
-			$offset = mt_rand( 0, $offsetSize - 1 );
-			trigger_error( "Clock was set back; sequence number incremented." );
-		}
-		// Update the (clock sequence number, timestamp, counter)
+
+		// Update and release the UID lock file
 		ftruncate( $handle, 0 );
 		rewind( $handle );
-		fwrite( $handle, "{$clkSeq} {$time[0]} {$time[1]} {$counter} {$offset}" );
+		fwrite( $handle, "{$clkSeq} {$sec} {$msecCounter} {$randOffset}" );
 		fflush( $handle );
-		// Release the UID lock file
 		flock( $handle, LOCK_UN );
 
+		// Split msecCounter back into msec and counter
+		$msec = (int)( $msecCounter / 1000 );
+		$counter = $msecCounter % 1000;
+
 		return [
-			'time'          => $time,
+			'time'          => [ $sec, $msec ],
 			'counter'       => $counter,
 			'clkSeq'        => $clkSeq,
-			'offset'        => $offset,
-			'offsetCounter' => $counter + $offset
+			'offset'        => $randOffset,
+			'offsetCounter' => $counter + $randOffset,
 		];
 	}
 
@@ -510,29 +570,32 @@ class UIDGenerator {
 	 * Wait till the current timestamp reaches $time and return the current
 	 * timestamp. This returns false if it would have to wait more than 10ms.
 	 *
-	 * @param array $time Result of UIDGenerator::millitime()
-	 * @return array|bool UIDGenerator::millitime() result or false
+	 * @param int $time Result of time()
+	 * @return int|bool Timestamp or false
 	 */
-	protected function timeWaitUntil( array $time ) {
+	protected function timeWaitUntil( $time ) {
+		$start = microtime( true );
 		do {
-			$ct = self::millitime();
-			if ( $ct >= $time ) { // https://secure.php.net/manual/en/language.operators.comparison.php
-				return $ct; // current timestamp is higher than $time
+			$ct = time();
+			// https://secure.php.net/manual/en/language.operators.comparison.php
+			if ( $ct >= $time ) {
+				// current time is higher than or equal to than $time
+				return $ct;
 			}
-		} while ( ( ( $time[0] - $ct[0] ) * 1000 + ( $time[1] - $ct[1] ) ) <= 10 );
+		} while ( ( microtime( true ) - $start ) <= 0.010 ); // upto 10ms
 
 		return false;
 	}
 
 	/**
-	 * @param array $time Result of UIDGenerator::millitime()
+	 * @param array $time Array of second and millisecond integers
 	 * @return string 46 LSBs of "milliseconds since epoch" in binary (rolls over in 4201)
 	 * @throws RuntimeException
 	 */
 	protected function millisecondsSinceEpochBinary( array $time ) {
 		list( $sec, $msec ) = $time;
 		$ts = 1000 * $sec + $msec;
-		if ( $ts > pow( 2, 52 ) ) {
+		if ( $ts > 2 ** 52 ) {
 			throw new RuntimeException( __METHOD__ .
 				': sorry, this function doesn\'t work after the year 144680' );
 		}
@@ -541,7 +604,7 @@ class UIDGenerator {
 	}
 
 	/**
-	 * @param array $time Result of UIDGenerator::millitime()
+	 * @param array $time Array of second and millisecond integers
 	 * @param int $delta Number of intervals to add on to the timestamp
 	 * @return string 60 bits of "100ns intervals since 15 October 1582" (rolls over in 3400)
 	 * @throws RuntimeException
@@ -551,7 +614,7 @@ class UIDGenerator {
 		$offset = '122192928000000000';
 		if ( PHP_INT_SIZE >= 8 ) { // 64 bit integers
 			$ts = ( 1000 * $sec + $msec ) * 10000 + (int)$offset + $delta;
-			$id_bin = str_pad( decbin( $ts % pow( 2, 60 ) ), 60, '0', STR_PAD_LEFT );
+			$id_bin = str_pad( decbin( $ts % ( 2 ** 60 ) ), 60, '0', STR_PAD_LEFT );
 		} elseif ( extension_loaded( 'gmp' ) ) {
 			$ts = gmp_add( gmp_mul( (string)$sec, '1000' ), (string)$msec ); // ms
 			$ts = gmp_add( gmp_mul( $ts, '10000' ), $offset ); // 100ns intervals
@@ -571,15 +634,6 @@ class UIDGenerator {
 	}
 
 	/**
-	 * @return array (current time in seconds, milliseconds since then)
-	 */
-	protected static function millitime() {
-		list( $msec, $sec ) = explode( ' ', microtime() );
-
-		return [ (int)$sec, (int)( $msec * 1000 ) ];
-	}
-
-	/**
 	 * Delete all cache files that have been created.
 	 *
 	 * This is a cleanup method primarily meant to be used from unit tests to
@@ -589,9 +643,10 @@ class UIDGenerator {
 	 *
 	 * @see unitTestTearDown
 	 * @since 1.23
+	 * @codeCoverageIgnore
 	 */
-	protected function deleteCacheFiles() {
-		// Bug: 44850
+	private function deleteCacheFiles() {
+		// T46850
 		foreach ( $this->fileHandles as $path => $handle ) {
 			if ( $handle !== null ) {
 				fclose( $handle );
@@ -614,11 +669,13 @@ class UIDGenerator {
 	 * environment it should be used with caution as it may destroy state saved
 	 * in the files.
 	 *
+	 * @internal For use by unit tests
 	 * @see deleteCacheFiles
 	 * @since 1.23
+	 * @codeCoverageIgnore
 	 */
 	public static function unitTestTearDown() {
-		// Bug: 44850
+		// T46850
 		$gen = self::singleton();
 		$gen->deleteCacheFiles();
 	}

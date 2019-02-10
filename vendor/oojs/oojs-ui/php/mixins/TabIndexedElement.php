@@ -27,10 +27,10 @@ trait TabIndexedElement {
 	 */
 	public function initializeTabIndexedElement( array $config = [] ) {
 		// Properties
-		$this->tabIndexed = isset( $config['tabIndexed'] ) ? $config['tabIndexed'] : $this;
+		$this->tabIndexed = $config['tabIndexed'] ?? $this;
 
 		// Initialization
-		$this->setTabIndex( isset( $config['tabIndex'] ) ? $config['tabIndex'] : 0 );
+		$this->setTabIndex( $config['tabIndex'] ?? 0 );
 
 		$this->registerConfigCallback( function ( &$config ) {
 			if ( $this->tabIndex !== 0 ) {

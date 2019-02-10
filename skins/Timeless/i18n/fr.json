@@ -11,7 +11,6 @@
 		]
 	},
 	"timeless-desc": "Un habillage intemporel conçu d’après le prototype Winter par Brandon Harris, et divers styles de la Fondation Wikimédia",
-	"timeless-search-placeholder": "Rechercher dans {{PLURAL:{{NUMBEROFARTICLES}}|le|les}} {{NUMBEROFARTICLES}} {{PLURAL:{{NUMBEROFARTICLES}}|page|pages}}",
 	"timeless-loggedin": "Votre compte",
 	"timeless-anonymous": "Anonyme",
 	"timeless-loggedinas": "Connecté{{GENDER:$1||e}} en tant que <strong>$1</strong>",

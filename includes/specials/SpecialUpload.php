@@ -33,7 +33,7 @@ use MediaWiki\MediaWikiServices;
 class SpecialUpload extends SpecialPage {
 	/**
 	 * Get data POSTed through the form and assign them to the object
-	 * @param WebRequest $request Data posted.
+	 * @param WebRequest|null $request Data posted.
 	 */
 	public function __construct( $request = null ) {
 		parent::__construct( 'Upload', 'upload' );
@@ -116,7 +116,7 @@ class SpecialUpload extends SpecialPage {
 		$this->mForReUpload = $request->getBool( 'wpForReUpload' ); // updating a file
 
 		$commentDefault = '';
-		$commentMsg = wfMessage( 'upload-default-description' )->inContentLanguage();
+		$commentMsg = $this->msg( 'upload-default-description' )->inContentLanguage();
 		if ( !$this->mForReUpload && !$commentMsg->isDisabled() ) {
 			$commentDefault = $commentMsg->plain();
 		}
@@ -387,7 +387,7 @@ class SpecialUpload extends SpecialPage {
 		}
 
 		// Add styles for the warning, reused from the live preview
-		$this->getOutput()->addModuleStyles( 'mediawiki.special.upload.styles' );
+		$this->getOutput()->addModuleStyles( 'mediawiki.special' );
 
 		$linkRenderer = $this->getLinkRenderer();
 		$warningHtml = '<h2>' . $this->msg( 'uploadwarning' )->escaped() . "</h2>\n"
@@ -401,12 +401,12 @@ class SpecialUpload extends SpecialPage {
 			} elseif ( $warning == 'no-change' ) {
 				$file = $args;
 				$filename = $file->getTitle()->getPrefixedText();
-				$msg = "\t<li>" . wfMessage( 'fileexists-no-change', $filename )->parse() . "</li>\n";
+				$msg = "\t<li>" . $this->msg( 'fileexists-no-change', $filename )->parse() . "</li>\n";
 			} elseif ( $warning == 'duplicate-version' ) {
 				$file = $args[0];
 				$count = count( $args );
 				$filename = $file->getTitle()->getPrefixedText();
-				$message = wfMessage( 'fileexists-duplicate-version' )
+				$message = $this->msg( 'fileexists-duplicate-version' )
 					->params( $filename )
 					->numParams( $count );
 				$msg = "\t<li>" . $message->parse() . "</li>\n";
@@ -415,14 +415,14 @@ class SpecialUpload extends SpecialPage {
 				$ltitle = SpecialPage::getTitleFor( 'Log' );
 				$llink = $linkRenderer->makeKnownLink(
 					$ltitle,
-					wfMessage( 'deletionlog' )->text(),
+					$this->msg( 'deletionlog' )->text(),
 					[],
 					[
 						'type' => 'delete',
 						'page' => Title::makeTitle( NS_FILE, $args )->getPrefixedText(),
 					]
 				);
-				$msg = "\t<li>" . wfMessage( 'filewasdeleted' )->rawParams( $llink )->parse() . "</li>\n";
+				$msg = "\t<li>" . $this->msg( 'filewasdeleted' )->rawParams( $llink )->parse() . "</li>\n";
 			} elseif ( $warning == 'duplicate' ) {
 				$msg = $this->getDupeWarning( $args );
 			} elseif ( $warning == 'duplicate-archive' ) {
@@ -587,7 +587,7 @@ class SpecialUpload extends SpecialPage {
 	 * @param string $license
 	 * @param string $copyStatus
 	 * @param string $source
-	 * @param Config $config Configuration object to load data from
+	 * @param Config|null $config Configuration object to load data from
 	 * @return string
 	 */
 	public static function getInitialPageText( $comment = '', $license = '',
@@ -761,7 +761,11 @@ class SpecialUpload extends SpecialPage {
 		}
 		$success = $this->mUpload->unsaveUploadedFile();
 		if ( !$success ) {
-			$this->getOutput()->showFileDeleteError( $this->mUpload->getTempPath() );
+			$this->getOutput()->showFatalError(
+				$this->msg( 'filedeleteerror' )
+					->params( $this->mUpload->getTempPath() )
+					->escaped()
+			);
 
 			return false;
 		} else {

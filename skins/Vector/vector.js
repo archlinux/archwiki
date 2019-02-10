@@ -48,16 +48,16 @@ jQuery( function ( $ ) {
 		} )
 		.collapsibleTabs( {
 			expandCondition: function ( eleWidth ) {
-				// (This looks a bit awkward because we're doing expensive queries as late as possible.)
-
+				// This looks a bit awkward because we're doing expensive queries as late
+				// as possible.
 				var distance = $.collapsibleTabs.calculateTabDistance();
 				// If there are at least eleWidth + 1 pixels of free space, expand.
 				// We add 1 because .width() will truncate fractional values but .offset() will not.
 				if ( distance >= eleWidth + 1 ) {
 					return true;
 				} else {
-					// Maybe we can still expand? Account for the width of the "Actions" dropdown if the
-					// expansion would hide it.
+					// Maybe we can still expand? Account for the width of the "Actions" dropdown
+					// if the expansion would hide it.
 					if ( $cactions.find( 'li' ).length === 1 ) {
 						return distance >= eleWidth + 1 - initialCactionsWidth();
 					} else {
@@ -68,9 +68,10 @@ jQuery( function ( $ ) {
 			collapseCondition: function () {
 				var collapsibleWidth = 0;
 
-				// (This looks a bit awkward because we're doing expensive queries as late as possible.)
-				// TODO The dropdown itself should probably "fold" to just the down-arrow (hiding the text)
-				// if it can't fit on the line?
+				// This looks a bit awkward because we're doing expensive queries as late
+				// as possible.
+				// TODO: The dropdown itself should probably "fold" to just the down-arrow
+				// (hiding the text) if it can't fit on the line?
 
 				// Never collapse if there is no overlap.
 				if ( $.collapsibleTabs.calculateTabDistance() >= 0 ) {

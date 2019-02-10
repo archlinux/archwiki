@@ -23,6 +23,7 @@
  */
 
 use MediaWiki\Logger\LoggerFactory;
+use MediaWiki\MediaWikiServices;
 
 /**
  * Class for handling an array of magic words
@@ -31,6 +32,9 @@ use MediaWiki\Logger\LoggerFactory;
 class MagicWordArray {
 	/** @var array */
 	public $names = [];
+
+	/** @var MagicWordFactory */
+	private $factory;
 
 	/** @var array */
 	private $hash;
@@ -41,9 +45,14 @@ class MagicWordArray {
 
 	/**
 	 * @param array $names
+	 * @param MagicWordFactory|null $factory
 	 */
-	public function __construct( $names = [] ) {
+	public function __construct( $names = [], MagicWordFactory $factory = null ) {
 		$this->names = $names;
+		$this->factory = $factory;
+		if ( !$factory ) {
+			$this->factory = MediaWikiServices::getInstance()->getMagicWordFactory();
+		}
 	}
 
 	/**
@@ -72,14 +81,13 @@ class MagicWordArray {
 	 */
 	public function getHash() {
 		if ( is_null( $this->hash ) ) {
-			global $wgContLang;
 			$this->hash = [ 0 => [], 1 => [] ];
 			foreach ( $this->names as $name ) {
-				$magic = MagicWord::get( $name );
+				$magic = $this->factory->get( $name );
 				$case = intval( $magic->isCaseSensitive() );
 				foreach ( $magic->getSynonyms() as $syn ) {
 					if ( !$case ) {
-						$syn = $wgContLang->lc( $syn );
+						$syn = $this->factory->getContentLanguage()->lc( $syn );
 					}
 					$this->hash[$case][$syn] = $name;
 				}
@@ -97,7 +105,7 @@ class MagicWordArray {
 			$this->baseRegex = [ 0 => '', 1 => '' ];
 			$allGroups = [];
 			foreach ( $this->names as $name ) {
-				$magic = MagicWord::get( $name );
+				$magic = $this->factory->get( $name );
 				$case = intval( $magic->isCaseSensitive() );
 				foreach ( $magic->getSynonyms() as $i => $syn ) {
 					// Group name must start with a non-digit in PCRE 8.34+
@@ -259,8 +267,7 @@ class MagicWordArray {
 		if ( isset( $hash[1][$text] ) ) {
 			return $hash[1][$text];
 		}
-		global $wgContLang;
-		$lc = $wgContLang->lc( $text );
+		$lc = $this->factory->getContentLanguage()->lc( $text );
 		if ( isset( $hash[0][$lc] ) ) {
 			return $hash[0][$lc];
 		}

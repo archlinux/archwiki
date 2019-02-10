@@ -62,12 +62,25 @@ class HistoryAction extends FormlessAction {
 
 	protected function getDescription() {
 		// Creation of a subtitle link pointing to [[Special:Log]]
-		return MediaWikiServices::getInstance()->getLinkRenderer()->makeKnownLink(
+		$linkRenderer = MediaWikiServices::getInstance()->getLinkRenderer();
+		$subtitle = $linkRenderer->makeKnownLink(
 			SpecialPage::getTitleFor( 'Log' ),
 			$this->msg( 'viewpagelogs' )->text(),
 			[],
 			[ 'page' => $this->getTitle()->getPrefixedText() ]
 		);
+
+		$links = [];
+		// Allow extensions to add more links
+		Hooks::run( 'HistoryPageToolLinks', [ $this->getContext(), $linkRenderer, &$links ] );
+		if ( $links ) {
+			$subtitle .= ''
+				. $this->msg( 'word-separator' )->escaped()
+				. $this->msg( 'parentheses' )
+					->rawParams( $this->getLanguage()->pipeList( $links ) )
+					->escaped();
+		}
+		return $subtitle;
 	}
 
 	/**
@@ -197,8 +210,8 @@ class HistoryAction extends FormlessAction {
 		$content .= Xml::dateMenu(
 			( $year == null ? MWTimestamp::getLocalInstance()->format( 'Y' ) : $year ),
 			$month
-		) . '&#160;';
-		$content .= $tagSelector ? ( implode( '&#160;', $tagSelector ) . '&#160;' ) : '';
+		) . "\u{00A0}";
+		$content .= $tagSelector ? ( implode( "\u{00A0}", $tagSelector ) . "\u{00A0}" ) : '';
 		$content .= $checkDeleted . Html::submitButton(
 			$this->msg( 'historyaction-submit' )->text(),
 			[],
@@ -345,12 +358,13 @@ class HistoryAction extends FormlessAction {
 			$rev->getComment()
 		);
 		if ( $rev->getComment() == '' ) {
-			global $wgContLang;
+			$contLang = MediaWikiServices::getInstance()->getContentLanguage();
 			$title = $this->msg( 'history-feed-item-nocomment',
 				$rev->getUserText(),
-				$wgContLang->timeanddate( $rev->getTimestamp() ),
-				$wgContLang->date( $rev->getTimestamp() ),
-				$wgContLang->time( $rev->getTimestamp() ) )->inContentLanguage()->text();
+				$contLang->timeanddate( $rev->getTimestamp() ),
+				$contLang->date( $rev->getTimestamp() ),
+				$contLang->time( $rev->getTimestamp() )
+			)->inContentLanguage()->text();
 		} else {
 			$title = $rev->getUserText() .
 				$this->msg( 'colon-separator' )->inContentLanguage()->text() .
@@ -557,7 +571,7 @@ class HistoryPager extends ReverseChronologicalPager {
 
 	private function getRevisionButton( $name, $msg ) {
 		$this->preventClickjacking();
-		# Note bug #20966, <button> is non-standard in IE<8
+		# Note T22966, <button> is non-standard in IE<8
 		$element = Html::element(
 			'button',
 			[
@@ -711,9 +725,7 @@ class HistoryPager extends ReverseChronologicalPager {
 		# Sometimes rev_len isn't populated
 		if ( $rev->getSize() !== null ) {
 			# Size is always public data
-			$prevSize = isset( $this->parentLens[$row->rev_parent_id] )
-				? $this->parentLens[$row->rev_parent_id]
-				: 0;
+			$prevSize = $this->parentLens[$row->rev_parent_id] ?? 0;
 			$sDiff = ChangesList::showCharacterDifference( $prevSize, $rev->getSize() );
 			$fSize = Linker::formatRevisionSize( $rev->getSize() );
 			$s .= ' <span class="mw-changeslist-separator">. .</span> ' . "$fSize $sDiff";
@@ -790,7 +802,10 @@ class HistoryPager extends ReverseChronologicalPager {
 		$attribs = [ 'data-mw-revid' => $rev->getId() ];
 
 		Hooks::run( 'PageHistoryLineEnding', [ $this, &$row, &$s, &$classes, &$attribs ] );
-		$attribs = wfArrayFilterByKey( $attribs, [ Sanitizer::class, 'isReservedDataAttribute' ] );
+		$attribs = array_filter( $attribs,
+			[ Sanitizer::class, 'isReservedDataAttribute' ],
+			ARRAY_FILTER_USE_KEY
+		);
 
 		if ( $classes ) {
 			$attribs['class'] = implode( ' ', $classes );
@@ -838,7 +853,7 @@ class HistoryPager extends ReverseChronologicalPager {
 		} else {
 			return MediaWikiServices::getInstance()->getLinkRenderer()->makeKnownLink(
 				$this->getTitle(),
-				$cur,
+				new HtmlArmor( $cur ),
 				[],
 				[
 					'diff' => $this->getWikiPage()->getLatest(),
@@ -870,7 +885,7 @@ class HistoryPager extends ReverseChronologicalPager {
 			# Next row probably exists but is unknown, use an oldid=prev link
 			return $linkRenderer->makeKnownLink(
 				$this->getTitle(),
-				$last,
+				new HtmlArmor( $last ),
 				[],
 				[
 					'diff' => $prevRev->getId(),
@@ -889,7 +904,7 @@ class HistoryPager extends ReverseChronologicalPager {
 
 		return $linkRenderer->makeKnownLink(
 			$this->getTitle(),
-			$last,
+			new HtmlArmor( $last ),
 			[],
 			[
 				'diff' => $prevRev->getId(),

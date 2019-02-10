@@ -2,12 +2,6 @@
  * Any rules which should not be flipped automatically in right-to-left situations should be
  * prepended with @noflip in a comment block.
  *
- * This stylesheet employs a few CSS trick to accomplish compatibility with a wide range of web
- * browsers. The most common trick is to use some styles in IE6 only. This is accomplished by using
- * a rule that makes things work in IE6, and then following it with a rule that begins with
- * "html > body" or use a child selector ">", which is ignored by IE6 because it does not support
- * the child selector. You can spot this by looking for the "OVERRIDDEN BY COMPLIANT BROWSERS" and
- * "IGNORED BY IE6" comments.
  */
 @import 'mediawiki.mixins';
 
@@ -60,6 +54,12 @@ body {
 		&:lang( ko ) { /* See T65827 */
 			font-family: @content-heading-font-family-generic;
 		}
+
+		/* Burmese (Myanmar) language headlines would be cropped with set `line-height` */
+		/* See T193270 */
+		&:lang( my ) {
+			line-height: normal;
+		}
 	}
 
 	& h1,
@@ -84,6 +84,7 @@ body {
 	.mw-indicator {
 		display: inline-block;
 		zoom: 1;
+		// Support: IE7
 		*display: inline; // stylelint-disable declaration-block-no-duplicate-properties
 	}
 }

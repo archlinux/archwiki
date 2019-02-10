@@ -6,7 +6,7 @@
 		]
 	},
 	"AutoloadClasses": {
-		"QuestyCaptcha": "QuestyCaptcha.class.php"
+		"QuestyCaptcha": "includes/QuestyCaptcha.php"
 	},
 	"config": {
 		"CaptchaClass": "QuestyCaptcha",

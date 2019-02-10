@@ -18,27 +18,28 @@
 	}
 
 	li {
-		line-height: 1.125em;
 		float: left;
 		margin-left: 0.75em;
 		margin-top: 0.5em;
 		font-size: @menu-personal-font-size;
+		line-height: @line-height-menu-personal;
 		white-space: nowrap;
 	}
 }
 
 /* Icon for Usernames */
-#pt-userpage,
+#pt-userpage a,
 #pt-anonuserpage {
+	// SVG support using a transparent gradient to guarantee cross-browser
+	// compatibility (browsers able to understand gradient syntax support also SVG)
+	.background-image-svg( 'images/user-avatar.svg', 'images/user-avatar.png' );
 	background-position: left top;
 	background-repeat: no-repeat;
-	/* SVG support using a transparent gradient to guarantee cross-browser
-	 * compatibility (browsers able to understand gradient syntax support also SVG) */
-	.background-image-svg('images/user-icon.svg', 'images/user-icon.png');
-	padding-left: 15px !important; // stylelint-disable-line declaration-no-important
+	background-size: @line-height-menu-personal @line-height-menu-personal;
+	padding-left: 16px !important; // stylelint-disable-line declaration-no-important
 }
 
 /* Show "Not logged in" text in gray */
 #pt-anonuserpage {
-	color: #707070;
+	color: #54595d;
 }

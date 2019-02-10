@@ -19,6 +19,7 @@
  * @ingroup Pager
  */
 
+use MediaWiki\MediaWikiServices;
 use Wikimedia\Rdbms\FakeResultWrapper;
 
 /**
@@ -27,8 +28,6 @@ use Wikimedia\Rdbms\FakeResultWrapper;
  *
  * @ingroup Pager
  */
-use MediaWiki\MediaWikiServices;
-
 class AllMessagesTablePager extends TablePager {
 
 	protected $filter, $prefix, $langcode, $displayPrefix;
@@ -45,7 +44,7 @@ class AllMessagesTablePager extends TablePager {
 	 */
 	public $custom;
 
-	function __construct( $page, $conds, $langObj = null ) {
+	function __construct( $page, $conds, Language $langObj = null ) {
 		parent::__construct( $page->getContext() );
 		$this->mIndexField = 'am_title';
 		$this->mPage = $page;
@@ -54,13 +53,12 @@ class AllMessagesTablePager extends TablePager {
 		$this->mDefaultDirection = IndexPager::DIR_DESCENDING;
 		$this->mLimitsShown = [ 20, 50, 100, 250, 500, 5000 ];
 
-		global $wgContLang;
-
 		$this->talk = $this->msg( 'talkpagelinktext' )->escaped();
 
-		$this->lang = ( $langObj ? $langObj : $wgContLang );
+		$contLang = MediaWikiServices::getInstance()->getContentLanguage();
+		$this->lang = $langObj ?? $contLang;
 		$this->langcode = $this->lang->getCode();
-		$this->foreign = !$this->lang->equals( $wgContLang );
+		$this->foreign = !$this->lang->equals( $contLang );
 
 		$request = $this->getRequest();
 
@@ -357,7 +355,7 @@ class AllMessagesTablePager extends TablePager {
 			$formatted = strval( $this->formatValue( 'am_actual', $row->am_actual ) );
 
 			if ( $formatted === '' ) {
-				$formatted = '&#160;';
+				$formatted = "\u{00A0}";
 			}
 
 			$s .= Xml::tags( 'td', $this->getCellAttrs( 'am_actual', $row->am_actual ), $formatted )

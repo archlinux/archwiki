@@ -519,7 +519,7 @@ class CookieSessionProviderTest extends MediaWikiTestCase {
 
 		$normalExpiry = $config->get( 'CookieExpiration' );
 		$extendedExpiry = $config->get( 'ExtendedLoginCookieExpiration' );
-		$extendedExpiry = (int)( $extendedExpiry === null ? 0 : $extendedExpiry );
+		$extendedExpiry = (int)( $extendedExpiry ?? 0 );
 		$expect = [
 			'MySessionName' => [
 				'value' => (string)$sessionId,
@@ -540,7 +540,7 @@ class CookieSessionProviderTest extends MediaWikiTestCase {
 			'forceHTTPS' => [
 				'value' => $secure ? 'true' : '',
 				'secure' => false,
-				'expire' => $secure ? $remember ? $defaults['expire'] : 0 : -31536000,
+				'expire' => $secure ? ( $remember ? $defaults['expire'] : 0 ) : -31536000,
 			] + $defaults,
 		];
 		foreach ( $expect as $key => $value ) {

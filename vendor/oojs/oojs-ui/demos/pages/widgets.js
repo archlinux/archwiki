@@ -9,14 +9,14 @@ Demo.static.pages.widgets = function ( demo ) {
 		verticalHandledDragItems = [],
 		$overlay = $( '<div>' ).addClass( 'demo-overlay' ).attr( 'id', 'demo-overlay' ),
 		$demo = demo.$element,
-		disabledItemsTagMultiselectWidget = new OO.ui.TagMultiselectWidget( {
+		fixedItemsTagMultiselectWidget = new OO.ui.TagMultiselectWidget( {
 			placeholder: 'Add tags',
 			allowArbitrary: true
 		} );
 
-	disabledItemsTagMultiselectWidget.addTag( 'item1', 'Item 1 (optional)' );
-	disabledItemsTagMultiselectWidget.addTag( 'item2', 'Item 2 (mandatory)' );
-	disabledItemsTagMultiselectWidget.findItemFromData( 'item2' ).setDisabled( true );
+	fixedItemsTagMultiselectWidget.addTag( 'item1', 'Item 1 (optional)' );
+	fixedItemsTagMultiselectWidget.addTag( 'item2', 'Item 2 (mandatory)' );
+	fixedItemsTagMultiselectWidget.findItemFromData( 'item2' ).setFixed( true );
 
 	for ( i = 0; i <= 12; i++ ) {
 		horizontalDragItems.push(
@@ -903,16 +903,16 @@ Demo.static.pages.widgets = function ( demo ) {
 					}
 				),
 				new OO.ui.FieldLayout(
-					new OO.ui.NumberInputWidget( { min: 1, max: 5, isInteger: true } ),
+					new OO.ui.NumberInputWidget( { min: 1, max: 5, step: 1 } ),
 					{
 						label: 'NumberInputWidget (1–5, ints only)',
 						align: 'top'
 					}
 				),
 				new OO.ui.FieldLayout(
-					new OO.ui.NumberInputWidget( { min: 0, max: 1, step: 0.1, pageStep: 0.25 } ),
+					new OO.ui.NumberInputWidget( { min: -1, max: 1, step: 0.1, pageStep: 0.5 } ),
 					{
-						label: 'NumberInputWidget (0–1, step by .1, page by .25)',
+						label: 'NumberInputWidget (-1–1, step by .1, page by .5)',
 						align: 'top'
 					}
 				),
@@ -1200,7 +1200,7 @@ Demo.static.pages.widgets = function ( demo ) {
 								} ),
 								new OO.ui.MenuOptionWidget( {
 									data: 'c',
-									label: 'The fourth option has a long label'
+									label: 'The fourth option has an overly long label'
 								} ),
 								new OO.ui.MenuOptionWidget( {
 									icon: 'feedback',
@@ -1237,7 +1237,7 @@ Demo.static.pages.widgets = function ( demo ) {
 								} ),
 								new OO.ui.MenuOptionWidget( {
 									data: 'd',
-									label: 'Disabled fourth option with long label',
+									label: 'Disabled fourth option with an overly long label',
 									disabled: true
 								} ),
 								new OO.ui.MenuOptionWidget( {
@@ -1717,7 +1717,7 @@ Demo.static.pages.widgets = function ( demo ) {
 		} ),
 		new OO.ui.FieldsetLayout( {
 			id: 'demo-section-tagMultiselect',
-			label: 'TagMultiselect, MenuTagMultiselect, CapsuleMultiselect',
+			label: 'TagMultiselect, MenuTagMultiselect',
 			items: [
 				new OO.ui.FieldLayout(
 					new OO.ui.TagMultiselectWidget( {
@@ -1730,9 +1730,19 @@ Demo.static.pages.widgets = function ( demo ) {
 					}
 				),
 				new OO.ui.FieldLayout(
-					disabledItemsTagMultiselectWidget,
+					new OO.ui.TagMultiselectWidget( {
+						selected: [ loremIpsum ],
+						allowArbitrary: true
+					} ),
 					{
-						label: 'TagMultiselectWidget with disabled items',
+						label: 'TagMultiselectWidget (very long item)',
+						align: 'top'
+					}
+				),
+				new OO.ui.FieldLayout(
+					fixedItemsTagMultiselectWidget,
+					{
+						label: 'TagMultiselectWidget with fixed items',
 						align: 'top'
 					}
 				),
@@ -1798,7 +1808,7 @@ Demo.static.pages.widgets = function ( demo ) {
 							{ data: 'bar', label: 'Label for bar' }
 						],
 						options: [
-							{ data: 'foo', label: 'Label for foo' },
+							{ data: 'foo', label: 'Label for foo', icon: 'tag' },
 							{ data: 'bar', label: 'Label for bar' },
 							{ data: 'baz', label: 'Label for baz' }
 						]
@@ -1834,6 +1844,25 @@ Demo.static.pages.widgets = function ( demo ) {
 				),
 				new OO.ui.FieldLayout(
 					new OO.ui.MenuTagMultiselectWidget( {
+						allowArbitrary: false,
+						menu: {
+							highlightOnFilter: true
+						},
+						options: [
+							{ data: 'abc', label: 'abc item' },
+							{ data: 'asd', label: 'asd item' },
+							{ data: 'jkl', label: 'jkl item' },
+							{ data: 'jkl2', label: 'jkl second item' },
+							{ data: 'jkl3', label: 'jkl third item' }
+						]
+					} ),
+					{
+						label: 'MenuTagMultiselectWidget (allowArbitrary:false, menu:{highlightOnFilter:true})',
+						align: 'top'
+					}
+				),
+				new OO.ui.FieldLayout(
+					new OO.ui.MenuTagMultiselectWidget( {
 						inputPosition: 'outline',
 						allowArbitrary: false,
 						options: [
@@ -1848,140 +1877,17 @@ Demo.static.pages.widgets = function ( demo ) {
 					}
 				),
 				new OO.ui.FieldLayout(
-					new OO.ui.CapsuleMultiselectWidget( {
-						menu: {
-							items: [
-								new OO.ui.MenuOptionWidget( { data: 'abc', label: 'Label for abc' } ),
-								new OO.ui.MenuOptionWidget( { data: 'asd', label: 'Label for asd' } ),
-								new OO.ui.MenuOptionWidget( { data: 'jkl', label: 'Label for jkl' } ),
-								new OO.ui.MenuOptionWidget( { data: 'jjj', label: 'Label for jjj' } ),
-								new OO.ui.MenuOptionWidget( { data: 'zxc', label: 'Label for zxc' } ),
-								new OO.ui.MenuOptionWidget( { data: 'vbn', label: 'Label for vbn' } )
-							]
-						}
-					} ),
-					{
-						label: 'CapsuleMultiselectWidget',
-						align: 'top'
-					}
-				),
-				new OO.ui.FieldLayout(
-					new OO.ui.CapsuleMultiselectWidget( {
-						placeholder: 'Type like a cat…',
-						menu: {
-							items: [
-								new OO.ui.MenuOptionWidget( { data: 'abc', label: 'Label for abc' } ),
-								new OO.ui.MenuOptionWidget( { data: 'asd', label: 'Label for asd' } ),
-								new OO.ui.MenuOptionWidget( { data: 'jkl', label: 'Label for jkl' } ),
-								new OO.ui.MenuOptionWidget( { data: 'jjj', label: 'Label for jjj' } ),
-								new OO.ui.MenuOptionWidget( { data: 'zxc', label: 'Label for zxc' } ),
-								new OO.ui.MenuOptionWidget( { data: 'vbn', label: 'Label for vbn' } )
-							]
-						}
-					} ),
-					{
-						label: 'CapsuleMultiselectWidget (with placeholder)',
-						align: 'top'
-					}
-				),
-				new OO.ui.FieldLayout(
-					new OO.ui.CapsuleMultiselectWidget( {
-						allowArbitrary: true,
-						icon: 'tag',
-						indicator: 'clear',
-						menu: {
-							items: [
-								new OO.ui.MenuOptionWidget( { data: 'abc', label: 'Label for abc' } ),
-								new OO.ui.MenuOptionWidget( { data: 'asd', label: 'Label for asd' } ),
-								new OO.ui.MenuOptionWidget( { data: 'jkl', label: 'Label for jkl' } ),
-								new OO.ui.MenuOptionWidget( { data: 'jjj', label: 'Label for jjj' } ),
-								new OO.ui.MenuOptionWidget( { data: 'zxc', label: 'Label for zxc' } ),
-								new OO.ui.MenuOptionWidget( { data: 'vbn', label: 'Label for vbn' } )
-							]
-						}
-					} ),
-					{
-						label: 'CapsuleMultiselectWidget (icon, indicator, arbitrary values allowed)',
-						align: 'top'
-					}
-				),
-				new OO.ui.FieldLayout(
-					new OO.ui.CapsuleMultiselectWidget( {
+					new OO.ui.MenuTagMultiselectWidget( {
+						inputPosition: 'inline',
 						disabled: true,
-						icon: 'tag',
-						indicator: 'clear',
-						menu: {
-							items: [
-								new OO.ui.MenuOptionWidget( { data: 'abc', label: 'Label for abc' } ),
-								new OO.ui.MenuOptionWidget( { data: 'asd', label: 'Label for asd' } ),
-								new OO.ui.MenuOptionWidget( { data: 'jkl', label: 'Label for jkl' } ),
-								new OO.ui.MenuOptionWidget( { data: 'jjj', label: 'Label for jjj' } ),
-								new OO.ui.MenuOptionWidget( { data: 'zxc', label: 'Label for zxc' } ),
-								new OO.ui.MenuOptionWidget( { data: 'vbn', label: 'Label for vbn' } )
-							]
-						}
+						options: [
+							{ data: 'abc', label: 'Label for abc' },
+							{ data: 'asd', label: 'Label for asd' },
+							{ data: 'jkl', label: 'Label for jkl' }
+						]
 					} ),
 					{
-						label: 'CapsuleMultiselectWidget (disabled)\u200E',
-						align: 'top'
-					}
-				),
-				new OO.ui.FieldLayout(
-					new OO.ui.CapsuleMultiselectWidget( {
-						disabled: true,
-						menu: {
-							items: [
-								new OO.ui.MenuOptionWidget( { data: 'abc', label: 'Label for abc' } ),
-								new OO.ui.MenuOptionWidget( { data: 'asd', label: 'Label for asd' } ),
-								new OO.ui.MenuOptionWidget( { data: 'jkl', label: 'Label for jkl' } )
-							]
-						}
-					} ).addItemsFromData( [ 'abc', 'asd' ] ),
-					{
-						label: 'CapsuleMultiselectWidget (disabled, initially selected)\u200E',
-						align: 'top'
-					}
-				),
-				new OO.ui.FieldLayout(
-					new OO.ui.CapsuleMultiselectWidget( {
-						menu: {
-							items: [
-								new OO.ui.MenuOptionWidget( { data: 'abc', label: 'Label for abc' } ),
-								new OO.ui.MenuOptionWidget( { data: 'asd', label: 'Label for asd' } ),
-								new OO.ui.MenuOptionWidget( { data: 'jkl', label: 'Label for jkl' } )
-							]
-						}
-					} ).addItemsFromData( [ 'abc', 'asd' ] ),
-					{
-						label: 'CapsuleMultiselectWidget (initially selected)\u200E',
-						align: 'top'
-					}
-				),
-				new OO.ui.FieldLayout(
-					new OO.ui.CapsuleMultiselectWidget( {
-						menu: {
-							items: [
-								new OO.ui.MenuOptionWidget( { data: 'abc', label: 'Label for abc' } ),
-								new OO.ui.MenuSectionOptionWidget( { label: 'Foo' } ),
-								new OO.ui.MenuOptionWidget( { data: 'asd', label: 'Label for asd' } ),
-								new OO.ui.MenuOptionWidget( { data: 'jkl', label: 'Label for jkl' } ),
-								new OO.ui.MenuSectionOptionWidget( { label: 'Bar' } ),
-								new OO.ui.MenuOptionWidget( { data: 'jjj', label: 'Label for jjj' } ),
-								new OO.ui.MenuOptionWidget( { data: 'zxc', label: 'Label for zxc' } ),
-								new OO.ui.MenuSectionOptionWidget( { label: 'Baz' } ),
-								new OO.ui.MenuOptionWidget( { data: 'vbn', label: 'Label for vbn' } )
-							]
-						}
-					} ),
-					{
-						label: 'CapsuleMultiselectWidget (sectioned by MenuSectionOptionWidget)',
-						align: 'top'
-					}
-				),
-				new OO.ui.FieldLayout(
-					new Demo.CapsuleNumberPopupMultiselectWidget(),
-					{
-						label: 'CapsuleMultiselectWidget with NumberInputWidget popup\u200E',
+						label: 'MenuTagMultiselectWidget (disabled)',
 						align: 'top'
 					}
 				)
@@ -2463,8 +2369,30 @@ Demo.static.pages.widgets = function ( demo ) {
 						label: 'Button'
 					} ),
 					{
-						label: 'FieldLayout with HTML help',
+						label: 'FieldLayout with inlined help',
+						help: 'This is some inlined help. Assistive (optional) text, that isn\'t needed to understand the widget\'s purpose.',
+						helpInline: true,
+						align: 'top'
+					}
+				),
+				new OO.ui.FieldLayout(
+					new OO.ui.ButtonWidget( {
+						label: 'Button'
+					} ),
+					{
+						label: 'FieldLayout with rich text help',
 						help: new OO.ui.HtmlSnippet( '<b>Bold text</b> is helpful!' ),
+						align: 'top'
+					}
+				),
+				new OO.ui.FieldLayout(
+					new OO.ui.ButtonWidget( {
+						label: 'Button'
+					} ),
+					{
+						label: 'FieldLayout with inlined rich text help',
+						help: new OO.ui.HtmlSnippet( '<b>Strong text</b> is helpful! It should only contain assistive (optional) text.' ),
+						helpInline: true,
 						align: 'top'
 					}
 				),
@@ -2502,6 +2430,15 @@ Demo.static.pages.widgets = function ( demo ) {
 					{
 						label: 'FieldLayout aligned top with help',
 						help: loremIpsum,
+						align: 'top'
+					}
+				),
+				new OO.ui.FieldLayout(
+					new OO.ui.TextInputWidget(),
+					{
+						label: 'FieldLayout aligned top with inlined help',
+						help: 'This is some inlined help. Assistive (optional) text, that isn\'t needed to understand the widget\'s purpose.',
+						helpInline: true,
 						align: 'top'
 					}
 				),
@@ -2563,6 +2500,15 @@ Demo.static.pages.widgets = function ( demo ) {
 						align: 'left'
 					}
 				),
+				new OO.ui.FieldLayout(
+					new OO.ui.TextInputWidget(),
+					{
+						label: 'FieldLayout aligned left with inline help',
+						help: 'This is some inlined help',
+						helpInline: true,
+						align: 'left'
+					}
+				),
 				new OO.ui.ActionFieldLayout(
 					new OO.ui.TextInputWidget(),
 					new OO.ui.ButtonWidget( {
@@ -2592,6 +2538,15 @@ Demo.static.pages.widgets = function ( demo ) {
 						align: 'right'
 					}
 				),
+				new OO.ui.FieldLayout(
+					new OO.ui.TextInputWidget(),
+					{
+						label: 'FieldLayout aligned right with inlined help',
+						help: 'This is some inlined help',
+						helpInline: true,
+						align: 'right'
+					}
+				),
 				new OO.ui.ActionFieldLayout(
 					new OO.ui.TextInputWidget(),
 					new OO.ui.ButtonWidget( {
@@ -2606,7 +2561,7 @@ Demo.static.pages.widgets = function ( demo ) {
 				new OO.ui.FieldLayout(
 					new OO.ui.TextInputWidget(),
 					{
-						label: 'FieldLayout aligned top with very long label. ' + loremIpsum,
+						label: 'FieldLayout aligned top with a very long label. ' + loremIpsum,
 						help: loremIpsum,
 						align: 'top'
 					}
@@ -2614,7 +2569,7 @@ Demo.static.pages.widgets = function ( demo ) {
 				new OO.ui.FieldLayout(
 					new OO.ui.CheckboxInputWidget( { selected: true } ),
 					{
-						label: 'FieldLayout aligned inline with very long label. ' + loremIpsum,
+						label: 'FieldLayout aligned inline with a very long label. ' + loremIpsum,
 						help: loremIpsum,
 						align: 'inline'
 					}
@@ -2622,7 +2577,7 @@ Demo.static.pages.widgets = function ( demo ) {
 				new OO.ui.FieldLayout(
 					new OO.ui.TextInputWidget(),
 					{
-						label: 'FieldLayout aligned left with very long label. ' + loremIpsum,
+						label: 'FieldLayout aligned left with a very long label. ' + loremIpsum,
 						help: loremIpsum,
 						align: 'left'
 					}
@@ -2630,8 +2585,17 @@ Demo.static.pages.widgets = function ( demo ) {
 				new OO.ui.FieldLayout(
 					new OO.ui.TextInputWidget(),
 					{
-						label: 'FieldLayout aligned right with very long label. ' + loremIpsum,
+						label: 'FieldLayout aligned right with a very long label. ' + loremIpsum,
 						help: loremIpsum,
+						align: 'right'
+					}
+				),
+				new OO.ui.FieldLayout(
+					new OO.ui.TextInputWidget(),
+					{
+						label: 'FieldLayout aligned right with a very long label and inline help. ' + loremIpsum,
+						help: 'This is some inlined help',
+						helpInline: true,
 						align: 'right'
 					}
 				),
@@ -2651,7 +2615,7 @@ Demo.static.pages.widgets = function ( demo ) {
 					} ),
 					{
 						label: 'FieldLayout with error message',
-						errors: [ 'The value must be a number.' ],
+						errors: [ 'The value must be a number. It is more than necessary. You can\'t go on without putting a number into this input field.' ],
 						align: 'top'
 					}
 				),
@@ -2860,17 +2824,21 @@ Demo.static.pages.widgets = function ( demo ) {
 							}
 						),
 						new OO.ui.FieldLayout(
-							new OO.ui.CapsuleMultiselectWidget( {
+							new OO.ui.MenuTagMultiselectWidget( {
 								menu: {
 									items: [
 										new OO.ui.MenuOptionWidget( { data: 'abc', label: 'Abc Label' } ),
 										new OO.ui.MenuOptionWidget( { data: 'def', label: 'Def Label' } ),
 										new OO.ui.MenuOptionWidget( { data: 'ghi', label: 'Ghi Label' } )
 									]
-								}
-							} ).addItemsFromData( [ 'abc', 'def' ] ),
+								},
+								selected: [
+									{ data: 'abc', label: 'Abc Label' },
+									{ data: 'def', label: 'Def Label' }
+								]
+							} ),
 							{
-								label: 'Select from multiple CapsuleMultiselectWidget items\u200E',
+								label: 'Select from multiple TagMultiselectWidget items\u200E',
 								align: 'top'
 							}
 						),

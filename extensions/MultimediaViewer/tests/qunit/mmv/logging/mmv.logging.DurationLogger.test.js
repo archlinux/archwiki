@@ -26,7 +26,7 @@
 		} catch ( e ) {
 			assert.ok( true, 'Exception raised when calling start() without parameters' );
 		}
-		assert.ok( $.isEmptyObject( durationLogger.starts ), 'No events saved by DurationLogger' );
+		assert.strictEqual( $.isEmptyObject( durationLogger.starts ), true, 'No events saved by DurationLogger' );
 
 		durationLogger.start( 'foo' );
 		assert.strictEqual( durationLogger.starts.foo, 0, 'Event start saved' );
@@ -96,7 +96,7 @@
 		durationLogger.stop( 'bar' );
 		durationLogger.record( 'bar' );
 
-		assert.ok( !fakeEventLog.logEvent.called, 'Event queued if dependencies not loaded' );
+		assert.strictEqual( fakeEventLog.logEvent.called, false, 'Event queued if dependencies not loaded' );
 
 		// Queue a second item
 
@@ -105,7 +105,7 @@
 		durationLogger.stop( 'bob' );
 		durationLogger.record( 'bob' );
 
-		assert.ok( !fakeEventLog.logEvent.called, 'Event queued if dependencies not loaded' );
+		assert.strictEqual( fakeEventLog.logEvent.called, false, 'Event queued if dependencies not loaded' );
 
 		dependenciesDeferred.resolve();
 		this.clock.tick( 10 );

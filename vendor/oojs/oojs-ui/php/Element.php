@@ -73,6 +73,7 @@ class Element extends Tag {
 	 *   or Element objects. Strings will be HTML-escaped for output, use an
 	 *   HtmlSnippet instance to prevent that.
 	 * @param mixed $config['data'] Element data
+	 * @param-taint $config escapes_html
 	 */
 	public function __construct( array $config = [] ) {
 		// Parent constructor

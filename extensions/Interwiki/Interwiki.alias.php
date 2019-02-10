@@ -223,6 +223,16 @@ $specialPageAliases['sa'] = [
 	'Interwiki' => [ 'आंन्तरविकि' ],
 ];
 
+/** Serbian (Cyrillic script) (српски (ћирилица)‎) */
+$specialPageAliases['sr-ec'] = [
+	'Interwiki' => [ 'Међувики' ],
+];
+
+/** Serbian (Latin script) (srpski (latinica)‎) */
+$specialPageAliases['sr-el'] = [
+	'Interwiki' => [ 'Međuviki' ],
+];
+
 /** Swahili (Kiswahili) */
 $specialPageAliases['sw'] = [
 	'Interwiki' => [ 'Viungovyawiki' ],

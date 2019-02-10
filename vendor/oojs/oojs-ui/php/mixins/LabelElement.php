@@ -27,11 +27,11 @@ trait LabelElement {
 	public function initializeLabelElement( array $config = [] ) {
 		// Properties
 		// FIXME 'labelElement' is a very stupid way to call '$label'
-		$this->label = isset( $config['labelElement'] ) ? $config['labelElement'] : new Tag( 'span' );
+		$this->label = $config['labelElement'] ?? new Tag( 'span' );
 
 		// Initialization
 		$this->label->addClasses( [ 'oo-ui-labelElement-label' ] );
-		$this->setLabel( isset( $config['label'] ) ? $config['label'] : null );
+		$this->setLabel( $config['label'] ?? null );
 
 		$this->registerConfigCallback( function ( &$config ) {
 			if ( $this->labelValue !== null ) {

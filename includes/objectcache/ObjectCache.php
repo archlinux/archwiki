@@ -182,13 +182,9 @@ class ObjectCache {
 		} elseif ( isset( $params['class'] ) ) {
 			$class = $params['class'];
 			// Automatically set the 'async' update handler
-			$params['asyncHandler'] = isset( $params['asyncHandler'] )
-				? $params['asyncHandler']
-				: 'DeferredUpdates::addCallableUpdate';
+			$params['asyncHandler'] = $params['asyncHandler'] ?? 'DeferredUpdates::addCallableUpdate';
 			// Enable reportDupes by default
-			$params['reportDupes'] = isset( $params['reportDupes'] )
-				? $params['reportDupes']
-				: true;
+			$params['reportDupes'] = $params['reportDupes'] ?? true;
 			// Do b/c logic for SqlBagOStuff
 			if ( is_a( $class, SqlBagOStuff::class, true ) ) {
 				if ( isset( $params['server'] ) && !isset( $params['servers'] ) ) {
@@ -289,7 +285,7 @@ class ObjectCache {
 		$cache = MediaWikiServices::getInstance()->getLocalServerObjectCache();
 		if ( $cache instanceof EmptyBagOStuff ) {
 			if ( is_array( $fallback ) ) {
-				$fallback = isset( $fallback['fallback'] ) ? $fallback['fallback'] : CACHE_NONE;
+				$fallback = $fallback['fallback'] ?? CACHE_NONE;
 			}
 			$cache = self::getInstance( $fallback );
 		}
@@ -337,9 +333,11 @@ class ObjectCache {
 		$services = MediaWikiServices::getInstance();
 
 		$erGroup = $services->getEventRelayerGroup();
-		foreach ( $params['channels'] as $action => $channel ) {
-			$params['relayers'][$action] = $erGroup->getRelayer( $channel );
-			$params['channels'][$action] = $channel;
+		if ( isset( $params['channels'] ) ) {
+			foreach ( $params['channels'] as $action => $channel ) {
+				$params['relayers'][$action] = $erGroup->getRelayer( $channel );
+				$params['channels'][$action] = $channel;
+			}
 		}
 		$params['cache'] = self::newFromParams( $params['store'] );
 		if ( isset( $params['loggroup'] ) ) {
@@ -410,5 +408,22 @@ class ObjectCache {
 	public static function clear() {
 		self::$instances = [];
 		self::$wanInstances = [];
+	}
+
+	/**
+	 * Detects which local server cache library is present and returns a configuration for it
+	 * @since 1.32
+	 *
+	 * @return int|string Index to cache in $wgObjectCaches
+	 */
+	public static function detectLocalServerCache() {
+		if ( function_exists( 'apc_fetch' ) ) {
+			return 'apc';
+		} elseif ( function_exists( 'apcu_fetch' ) ) {
+			return 'apcu';
+		} elseif ( function_exists( 'wincache_ucache_get' ) ) {
+			return 'wincache';
+		}
+		return CACHE_NONE;
 	}
 }

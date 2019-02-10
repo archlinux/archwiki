@@ -29,12 +29,10 @@ trait TitledElement {
 	 */
 	public function initializeTitledElement( array $config = [] ) {
 		// Properties
-		$this->titled = isset( $config['titled'] ) ? $config['titled'] : $this;
+		$this->titled = $config['titled'] ?? $this;
 
 		// Initialization
-		$this->setTitle(
-			isset( $config['title'] ) ? $config['title'] : null
-		);
+		$this->setTitle( $config['title'] ?? null );
 
 		$this->registerConfigCallback( function ( &$config ) {
 			if ( $this->title !== null ) {

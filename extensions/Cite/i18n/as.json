@@ -7,7 +7,7 @@
 			"Dibya Dutta"
 		]
 	},
-	"cite-desc": "উদ্ধৃতিৰ বাবে <nowiki><ref[ name=id]></nowiki> আৰু <nowiki><references/></nowiki> টেগ্‌সমূহ যোগ কৰে",
+	"cite-desc": "উদ্ধৃতিৰ বাবে <code><nowiki><ref[ name=id]></nowiki></code> আৰু <code><nowiki><references/></nowiki></code> টেগ্‌সমূহ যোগ কৰে",
 	"cite_error": "উদ্ধৃতি ত্ৰুটি: $1",
 	"cite_error_ref_numeric_key": "অবৈধ <code>&lt;ref&gt;</code> টেগ;\nনাম কোনো সৰল পূৰ্ণসংখ্যা হ'ব নোৱাৰে। এটা বৰ্ণনামূলক শিৰোনাম ব্যৱহাৰ কৰক।",
 	"cite_error_ref_no_key": "অবৈধ <code>&lt;ref&gt;</code> টেগ;\nসমলবিহীন refসমূহৰ অৱশ্যেই এটা নাম থাকিব লাগিব।",

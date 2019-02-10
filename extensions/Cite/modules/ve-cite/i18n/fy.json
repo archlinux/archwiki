@@ -2,11 +2,20 @@
 	"@metadata": {
 		"authors": [
 			"Kening Aldgilles",
-			"Robin0van0der0vliet"
+			"Robin0van0der0vliet",
+			"Jdforrester"
 		]
 	},
+	"visualeditor-cite-tool-name-book": "Boek",
+	"visualeditor-cite-tool-name-news": "Nijs",
+	"visualeditor-cite-tool-name-web": "Webside",
 	"cite-ve-dialog-reference-options-section": "Opsjes",
+	"cite-ve-dialog-reference-title": "Referinsje",
 	"cite-ve-dialog-referenceslist-title": "List mei referinsjes",
+	"cite-ve-dialogbutton-citation-educationpopup-title": "Sitaaten",
+	"cite-ve-dialogbutton-reference-title": "Referinsje",
 	"cite-ve-dialogbutton-reference-tooltip": "Basis",
-	"cite-ve-dialogbutton-referenceslist-tooltip": "List mei referinsjes"
+	"cite-ve-dialogbutton-referenceslist-tooltip": "List mei referinsjes",
+	"cite-ve-toolbar-group-label": "Sitearje",
+	"visualeditor-internal-list-diff-default-group-name-mwreference": "Referinsjes"
 }

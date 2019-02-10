@@ -53,10 +53,11 @@ class DatabaseMysqli extends DatabaseMysqlBase {
 
 	/**
 	 * @param string $realServer
+	 * @param string|null $dbName
 	 * @return bool|mysqli
 	 * @throws DBConnectionError
 	 */
-	protected function mysqlConnect( $realServer ) {
+	protected function mysqlConnect( $realServer, $dbName ) {
 		# Avoid suppressed fatal error, which is very hard to track down
 		if ( !function_exists( 'mysqli_init' ) ) {
 			throw new DBConnectionError( $this, "MySQLi functions missing,"
@@ -77,7 +78,7 @@ class DatabaseMysqli extends DatabaseMysqlBase {
 		} elseif ( substr_count( $realServer, ':' ) == 1 ) {
 			// If we have a colon and something that's not a port number
 			// inside the hostname, assume it's the socket location
-			$hostAndSocket = explode( ':', $realServer );
+			$hostAndSocket = explode( ':', $realServer, 2 );
 			$realServer = $hostAndSocket[0];
 			$socket = $hostAndSocket[1];
 		}
@@ -111,9 +112,15 @@ class DatabaseMysqli extends DatabaseMysqlBase {
 		}
 		$mysqli->options( MYSQLI_OPT_CONNECT_TIMEOUT, 3 );
 
-		if ( $mysqli->real_connect( $realServer, $this->user,
-			$this->password, $this->dbName, $port, $socket, $connFlags )
-		) {
+		if ( $mysqli->real_connect(
+			$realServer,
+			$this->user,
+			$this->password,
+			$dbName,
+			$port,
+			$socket,
+			$connFlags
+		) ) {
 			return $mysqli;
 		}
 
@@ -177,16 +184,22 @@ class DatabaseMysqli extends DatabaseMysqlBase {
 		return $conn->affected_rows;
 	}
 
-	/**
-	 * @param string $db
-	 * @return bool
-	 */
-	function selectDB( $db ) {
+	function doSelectDomain( DatabaseDomain $domain ) {
 		$conn = $this->getBindingHandle();
 
-		$this->dbName = $db;
+		if ( $domain->getSchema() !== null ) {
+			throw new DBExpectedError( $this, __CLASS__ . ": domain schemas are not supported." );
+		}
 
-		return $conn->select_db( $db );
+		$database = $domain->getDatabase();
+		if ( !$conn->select_db( $database ) ) {
+			throw new DBExpectedError( $this, "Could not select database '$database'." );
+		}
+
+		// Update that domain fields on success (no exception thrown)
+		$this->currentDomain = $domain;
+
+		return true;
 	}
 
 	/**
@@ -296,7 +309,7 @@ class DatabaseMysqli extends DatabaseMysqlBase {
 	}
 
 	/**
-	 * @param mysqli $conn Optional connection object
+	 * @param mysqli|null $conn Optional connection object
 	 * @return string
 	 */
 	protected function mysqlError( $conn = null ) {
@@ -341,4 +354,7 @@ class DatabaseMysqli extends DatabaseMysqlBase {
 	}
 }
 
+/**
+ * @deprecated since 1.29
+ */
 class_alias( DatabaseMysqli::class, 'DatabaseMysqli' );

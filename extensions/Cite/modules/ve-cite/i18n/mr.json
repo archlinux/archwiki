@@ -13,12 +13,10 @@
 			"Susheelkasab"
 		]
 	},
-	"visualeditor-cite-tool-definition.json": "काहीही नाही",
 	"visualeditor-cite-tool-name-book": "पुस्तक",
 	"visualeditor-cite-tool-name-journal": "पत्रिका",
 	"visualeditor-cite-tool-name-news": "बातम्या",
 	"visualeditor-cite-tool-name-web": "संकेतस्थळ",
-	"cite-tool-definition.json": "काहीही नाही",
 	"cite-ve-changedesc-ref-group-both": "संदर्भगट \"$1\" वरून \"$2\" कडे बदलला गेला आहे",
 	"cite-ve-changedesc-ref-group-from": "संदर्भ गट \"$1\" कडून आता सामान्य गटाकडे नेण्यात आलेला आहे",
 	"cite-ve-changedesc-ref-group-to": "संदर्भ गट सामान्य गटाकडून आता \"$1\" कडे नेण्यात आलेला आहे",

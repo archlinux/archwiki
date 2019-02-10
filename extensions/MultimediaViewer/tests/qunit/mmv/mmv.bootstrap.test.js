@@ -92,7 +92,7 @@
 		} );
 
 		return mw.mmv.testHelpers.waitForAsync().then( function () {
-			assert.ok( callCount === 1, 'Viewer should be loaded once' );
+			assert.strictEqual( callCount, 1, 'Viewer should be loaded once' );
 			bootstrap.cleanupEventHandlers();
 			window.location.hash = '';
 		} );
@@ -112,8 +112,8 @@
 		this.sandbox.stub( bootstrap, 'cleanupOverlay' );
 
 		bootstrap.loadViewer( true ).fail( function ( message ) {
-			assert.ok( bootstrap.setupOverlay.called, 'Overlay was set up' );
-			assert.ok( bootstrap.cleanupOverlay.called, 'Overlay was cleaned up' );
+			assert.strictEqual( bootstrap.setupOverlay.called, true, 'Overlay was set up' );
+			assert.strictEqual( bootstrap.cleanupOverlay.called, true, 'Overlay was cleaned up' );
 			assert.strictEqual( message, errorMessage, 'promise is rejected with the error message when loading fails' );
 			done();
 		} );
@@ -132,7 +132,7 @@
 		// trigger first click, which will cause MMV to be loaded (which we've
 		// set up to fail)
 		event = new $.Event( 'click', { button: 0, which: 1 } );
-		returnValue = bootstrap.click( {}, event, 'foo' );
+		returnValue = bootstrap.click( {}, event, mw.Title.newFromText( 'Foo' ) );
 		clock.tick( 10 );
 		assert.ok( event.isDefaultPrevented(), 'First click is caught' );
 		assert.strictEqual( returnValue, false, 'First click is caught' );
@@ -140,16 +140,16 @@
 		// wait until MMW is loaded (or failed to load, in this case) before we
 		// trigger another click - which should then not be caught
 		event = new $.Event( 'click', { button: 0, which: 1 } );
-		returnValue = bootstrap.click( {}, event, 'foo' );
+		returnValue = bootstrap.click( {}, event, mw.Title.newFromText( 'Foo' ) );
 		clock.tick( 10 );
-		assert.ok( !event.isDefaultPrevented(), 'Click after loading failure is not caught' );
+		assert.strictEqual( event.isDefaultPrevented(), false, 'Click after loading failure is not caught' );
 		assert.notStrictEqual( returnValue, false, 'Click after loading failure is not caught' );
 
 		clock.restore();
 	} );
 
-	/* FIXME: Tests suspended as they do not pass in QUnit 2.x+ – T192932
-	QUnit.test( 'Check viewer invoked when clicking on valid image links', function ( assert ) {
+	// FIXME: Tests suspended as they do not pass in QUnit 2.x+ – T192932
+	QUnit.skip( 'Check viewer invoked when clicking on valid image links', function ( assert ) {
 		// TODO: Is <div class="gallery"><span class="image"><img/></span></div> valid ???
 		var div, link, link2, link3, link4, link5, bootstrap,
 			viewer = { initWithThumbs: $.noop, loadImageByTitle: this.sandbox.stub() },
@@ -239,7 +239,6 @@
 
 		clock.restore();
 	} );
-	*/
 
 	QUnit.test( 'Skip images with invalid extensions', function ( assert ) {
 		var div, link,
@@ -257,13 +256,13 @@
 		link.trigger( { type: 'click', which: 1 } );
 		clock.tick( 10 );
 
-		assert.ok( !viewer.loadImageByTitle.called, 'Image should not be loaded' );
+		assert.strictEqual( viewer.loadImageByTitle.called, false, 'Image should not be loaded' );
 
 		clock.restore();
 	} );
 
-	/* FIXME: Tests suspended as they do not pass in QUnit 2.x+ – T192932
-	QUnit.test( 'Accept only left clicks without modifier keys, skip the rest', function ( assert ) {
+	// FIXME: Tests suspended as they do not pass in QUnit 2.x+ – T192932
+	QUnit.skip( 'Accept only left clicks without modifier keys, skip the rest', function ( assert ) {
 		var $div, $link, bootstrap,
 			viewer = { initWithThumbs: $.noop, loadImageByTitle: this.sandbox.stub() },
 			clock = this.sandbox.useFakeTimers();
@@ -301,7 +300,6 @@
 
 		clock.restore();
 	} );
-	*/
 
 	QUnit.test( 'Ensure that the correct title is loaded when clicking', function ( assert ) {
 		var bootstrap,
@@ -322,8 +320,8 @@
 		clock.restore();
 	} );
 
-	/* FIXME: Tests suspended as they do not pass in QUnit 2.x+ – T192932
-	QUnit.test( 'Validate new LightboxImage object has sane constructor parameters', function ( assert ) {
+	// FIXME: Tests suspended as they do not pass in QUnit 2.x+ – T192932
+	QUnit.skip( 'Validate new LightboxImage object has sane constructor parameters', function ( assert ) {
 		var bootstrap,
 			$div,
 			$link,
@@ -361,7 +359,6 @@
 
 		clock.reset();
 	} );
-	*/
 
 	QUnit.test( 'Only load the viewer on a valid hash (modern browsers)', function ( assert ) {
 		var bootstrap;
@@ -430,7 +427,7 @@
 
 		bootstrap.hash();
 
-		assert.ok( !bootstrap.setupOverlay.called, 'Overlay is not set up' );
+		assert.strictEqual( bootstrap.setupOverlay.called, false, 'Overlay is not set up' );
 	} );
 
 	QUnit.test( 'internalHashChange', function ( assert ) {
@@ -451,7 +448,7 @@
 		bootstrap.internalHashChange( { hash: hash } );
 		clock.tick( 10 );
 
-		assert.ok( callCount === 0, 'Viewer should not be loaded' );
+		assert.strictEqual( callCount, 0, 'Viewer should not be loaded' );
 		assert.strictEqual( window.location.hash, hash, 'Window\'s hash has been updated correctly' );
 
 		bootstrap.cleanupEventHandlers();
@@ -477,7 +474,7 @@
 		bootstrap.internalHashChange( { hash: hash } );
 		clock.tick( 10 );
 
-		assert.ok( callCount === 0, 'Viewer should not be loaded' );
+		assert.strictEqual( callCount, 0, 'Viewer should not be loaded' );
 		assert.strictEqual( window.location.hash, hash, 'Window\'s hash has been updated correctly' );
 
 		bootstrap.cleanupEventHandlers();
@@ -528,17 +525,17 @@
 
 		this.sandbox.stub( mw.loader, 'load' );
 
-		$div.mouseenter();
+		$div.trigger( 'mouseenter' );
 		clock.tick( bootstrap.hoverWaitDuration - 50 );
-		$div.mouseleave();
+		$div.trigger( 'mouseleave' );
 
-		assert.ok( !mw.loader.load.called, 'Dependencies should not be preloaded if the thumb is not hovered long enough' );
+		assert.strictEqual( mw.loader.load.called, false, 'Dependencies should not be preloaded if the thumb is not hovered long enough' );
 
-		$div.mouseenter();
+		$div.trigger( 'mouseenter' );
 		clock.tick( bootstrap.hoverWaitDuration + 50 );
-		$div.mouseleave();
+		$div.trigger( 'mouseleave' );
 
-		assert.ok( mw.loader.load.called, 'Dependencies should be preloaded if the thumb is hovered long enough' );
+		assert.strictEqual( mw.loader.load.called, true, 'Dependencies should be preloaded if the thumb is hovered long enough' );
 
 		clock.restore();
 	} );
@@ -548,7 +545,7 @@
 			$thumb = $( '<img>' ).appendTo( $container ),
 			bootstrap = createBootstrap();
 
-		assert.ok( bootstrap.isAllowedThumb( $thumb ), 'Normal image in a div is allowed.' );
+		assert.strictEqual( bootstrap.isAllowedThumb( $thumb ), true, 'Normal image in a div is allowed.' );
 
 		$container.addClass( 'metadata' );
 		assert.strictEqual( bootstrap.isAllowedThumb( $thumb ), false, 'Image in a metadata container is disallowed.' );

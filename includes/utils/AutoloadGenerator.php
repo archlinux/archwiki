@@ -50,6 +50,13 @@ class AutoloadGenerator {
 	protected $excludePaths = [];
 
 	/**
+	 * Configured PSR4 namespaces
+	 *
+	 * @var string[] namespace => path
+	 */
+	protected $psr4Namespaces = [];
+
+	/**
 	 * @param string $basepath Root path of the project being scanned for classes
 	 * @param array|string $flags
 	 *
@@ -76,6 +83,22 @@ class AutoloadGenerator {
 	public function setExcludePaths( array $paths ) {
 		foreach ( $paths as $path ) {
 			$this->excludePaths[] = self::normalizePathSeparator( $path );
+		}
+	}
+
+	/**
+	 * Set PSR4 namespaces
+	 *
+	 * Unlike self::setExcludePaths(), this will only skip outputting the
+	 * autoloader entry when the namespace matches the path.
+	 *
+	 * @since 1.32
+	 * @param string[] $namespaces Associative array mapping namespace to path
+	 */
+	public function setPsr4Namespaces( array $namespaces ) {
+		foreach ( $namespaces as $ns => $path ) {
+			$ns = rtrim( $ns, '\\' ) . '\\';
+			$this->psr4Namespaces[$ns] = rtrim( self::normalizePathSeparator( $path ), '/' );
 		}
 	}
 
@@ -135,6 +158,25 @@ class AutoloadGenerator {
 		$result = $this->collector->getClasses(
 			file_get_contents( $inputPath )
 		);
+
+		// Filter out classes that will be found by PSR4
+		$result = array_filter( $result, function ( $class ) use ( $inputPath ) {
+			$parts = explode( '\\', $class );
+			for ( $i = count( $parts ) - 1; $i > 0; $i-- ) {
+				$ns = implode( '\\', array_slice( $parts, 0, $i ) ) . '\\';
+				if ( isset( $this->psr4Namespaces[$ns] ) ) {
+					$expectedPath = $this->psr4Namespaces[$ns] . '/'
+						. implode( '/', array_slice( $parts, $i ) )
+						. '.php';
+					if ( $inputPath === $expectedPath ) {
+						return false;
+					}
+				}
+			}
+
+			return true;
+		} );
+
 		if ( $result ) {
 			$shortpath = substr( $inputPath, $len );
 			$this->classes[$shortpath] = $result;
@@ -258,7 +300,7 @@ EOD;
 	 * @return string
 	 */
 	public function getAutoload( $commandName = 'AutoloadGenerator' ) {
-		// We need to check whether an extenson.json or skin.json exists or not, and
+		// We need to check whether an extension.json or skin.json exists or not, and
 		// incase it doesn't, update the autoload.php file.
 
 		$fileinfo = $this->getTargetFileinfo();
@@ -389,13 +431,14 @@ class ClassCollector {
 			return;
 		}
 		// Note: When changing class name discovery logic,
-		// AutoLoaderTest.php may also need to be updated.
+		// AutoLoaderStructureTest.php may also need to be updated.
 		switch ( $token[0] ) {
 			case T_NAMESPACE:
 			case T_CLASS:
 			case T_INTERFACE:
 			case T_TRAIT:
 			case T_DOUBLE_COLON:
+			case T_NEW:
 				$this->startToken = $token;
 				break;
 			case T_STRING:
@@ -417,6 +460,12 @@ class ClassCollector {
 				// Skip over T_CLASS after T_DOUBLE_COLON because this is something like
 				// "self::static" which accesses the class name. It doens't define a new class.
 				$this->startToken = null;
+				break;
+			case T_NEW:
+				// Skip over T_CLASS after T_NEW because this is a PHP 7 anonymous class.
+				if ( !is_array( $token ) || $token[0] !== T_WHITESPACE ) {
+					$this->startToken = null;
+				}
 				break;
 			case T_NAMESPACE:
 				if ( $token === ';' || $token === '{' ) {

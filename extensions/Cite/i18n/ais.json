@@ -6,7 +6,7 @@
 			"Tokoabibi"
 		]
 	},
-	"cite-desc": "midama <nowiki><ref[ name=id]></nowiki> atu <nowiki><references/></nowiki> aazihen-paya, kapah pabacuen miazih tu tatenga’ay nasulitan",
+	"cite-desc": "midama <code><nowiki><ref[ name=id]></nowiki></code> atu <code><nowiki><references/></nowiki></code> aazihen-paya, kapah pabacuen miazih tu tatenga’ay nasulitan",
 	"cite_error": "nicaliwan mungangaw: $1",
 	"cite_error_ref_numeric_key": "la’cus <code>&lt;ref&gt;</code> aazihen-paya, kya susin amama pisaungay asip-bacu, pisaungay taneng misapuelac lacul a satangahan",
 	"cite_error_ref_no_key": "<code>&lt;ref&gt;</code> aazihen-paya angangan a kese mungangaw saca kalungangan caay kalucek.",

@@ -19,6 +19,7 @@
  */
 
 // phpcs:disable Generic.Arrays.DisallowLongArraySyntax,PSR2.Classes.PropertyDeclaration,MediaWiki.Usage.DirUsage
+// phpcs:disable Squiz.Scope.MemberVarScope.Missing,Squiz.Scope.MethodScope.Missing
 /**
  * Check PHP Version, as well as for composer dependencies in entry points,
  * and display something vaguely comprehensible in the event of a totally
@@ -27,7 +28,7 @@
  */
 class PHPVersionCheck {
 	/* @var string The number of the MediaWiki version used */
-	var $mwVersion = '1.31';
+	var $mwVersion = '1.32';
 	var $functionsExtensionsMapping = array(
 		'mb_substr'   => 'mbstring',
 		'xml_parser_create' => 'xml',
@@ -71,7 +72,7 @@ class PHPVersionCheck {
 	 *  - 'implementation': The name of the implementation used
 	 *  - 'vendor': The development group, vendor or developer of the implementation.
 	 *  - 'upstreamSupported': The minimum version of the implementation supported by the named vendor.
-	 *  - 'minSupported': The minimum version supported by MediWiki
+	 *  - 'minSupported': The minimum version supported by MediaWiki
 	 *  - 'upgradeURL': The URL to the website of the implementation that contains
 	 *  upgrade/installation instructions.
 	 */

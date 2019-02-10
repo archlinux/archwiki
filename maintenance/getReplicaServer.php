@@ -23,12 +23,14 @@
 
 require_once __DIR__ . '/Maintenance.php';
 
+use MediaWiki\MediaWikiServices;
+
 /**
  * Maintenance script that reports the hostname of a replica DB server.
  *
  * @ingroup Maintenance
  */
-class GetSlaveServer extends Maintenance {
+class GetReplicaServer extends Maintenance {
 	public function __construct() {
 		parent::__construct();
 		$this->addOption( "group", "Query group to check specifically" );
@@ -43,7 +45,7 @@ class GetSlaveServer extends Maintenance {
 			$db = $this->getDB( DB_REPLICA, $this->getOption( 'group' ) );
 			$host = $db->getServer();
 		} else {
-			$lb = wfGetLB();
+			$lb = MediaWikiServices::getInstance()->getDBLoadBalancer();
 			$i = $lb->getReaderIndex();
 			$host = $lb->getServerName( $i );
 		}
@@ -51,5 +53,5 @@ class GetSlaveServer extends Maintenance {
 	}
 }
 
-$maintClass = GetSlaveServer::class;
+$maintClass = GetReplicaServer::class;
 require_once RUN_MAINTENANCE_IF_MAIN;

@@ -95,7 +95,7 @@ class Tag {
 	 * Toggle CSS classes.
 	 *
 	 * @param array $classes List of classes to add
-	 * @param bool $toggle Add classes
+	 * @param bool|null $toggle Add classes
 	 * @return $this
 	 */
 	public function toggleClasses( array $classes, $toggle = null ) {
@@ -123,7 +123,7 @@ class Tag {
 	 * @return string|null
 	 */
 	public function getAttribute( $key ) {
-		return isset( $this->attributes[$key] ) ? $this->attributes[$key] : null;
+		return $this->attributes[$key] ?? null;
 	}
 
 	/**
@@ -180,16 +180,15 @@ class Tag {
 	 * This, however, is not acceptable
 	 * * $tag->appendContent( [ $element1, $element2 ], $element3 );
 	 *
-	 * @param string|Tag|HtmlSnippet $content Content to append. Strings will be HTML-escaped
+	 * @param string|Tag|HtmlSnippet ...$content Content to append. Strings will be HTML-escaped
 	 *   for output, use a HtmlSnippet instance to prevent that.
 	 * @return $this
 	 */
-	public function appendContent( /* $content... */ ) {
-		$contents = func_get_args();
-		if ( is_array( $contents[ 0 ] ) ) {
-			$this->content = array_merge( $this->content, $contents[ 0 ] );
+	public function appendContent( ...$content ) {
+		if ( is_array( $content[ 0 ] ) ) {
+			$this->content = array_merge( $this->content, $content[ 0 ] );
 		} else {
-			$this->content = array_merge( $this->content, $contents );
+			$this->content = array_merge( $this->content, $content );
 		}
 		return $this;
 	}
@@ -206,16 +205,15 @@ class Tag {
 	 * This, however, is not acceptable
 	 * * $tag->prependContent( [ $element1, $element2 ], $element3 );
 	 *
-	 * @param string|Tag|HtmlSnippet $content Content to prepend. Strings will be HTML-escaped
+	 * @param string|Tag|HtmlSnippet ...$content Content to prepend. Strings will be HTML-escaped
 	 *   for output, use a HtmlSnippet instance to prevent that.
 	 * @return $this
 	 */
-	public function prependContent( /* $content... */ ) {
-		$contents = func_get_args();
-		if ( is_array( $contents[ 0 ] ) ) {
-			array_splice( $this->content, 0, 0, $contents[ 0 ] );
+	public function prependContent( ...$content ) {
+		if ( is_array( $content[ 0 ] ) ) {
+			array_splice( $this->content, 0, 0, $content[ 0 ] );
 		} else {
-			array_splice( $this->content, 0, 0, $contents );
+			array_splice( $this->content, 0, 0, $content );
 		}
 		return $this;
 	}

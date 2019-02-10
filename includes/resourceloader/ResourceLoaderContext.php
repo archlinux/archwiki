@@ -226,7 +226,7 @@ class ResourceLoaderContext implements MessageLocalizer {
 	 * @return Message
 	 */
 	public function msg( $key ) {
-		return call_user_func_array( 'wfMessage', func_get_args() )
+		return wfMessage( ...func_get_args() )
 			->inLanguage( $this->getLanguage() )
 			// Use a dummy title because there is no real title
 			// for this endpoint, and the cache won't vary on it
@@ -339,6 +339,22 @@ class ResourceLoaderContext implements MessageLocalizer {
 		}
 
 		return $this->imageObj;
+	}
+
+	/**
+	 * Return the replaced-content mapping callback
+	 *
+	 * When editing a page that's used to generate the scripts or styles of a
+	 * ResourceLoaderWikiModule, a preview should use the to-be-saved version of
+	 * the page rather than the current version in the database. A context
+	 * supporting such previews should return a callback to return these
+	 * mappings here.
+	 *
+	 * @since 1.32
+	 * @return callable|null Signature is `Content|null func( Title $t )`
+	 */
+	public function getContentOverrideCallback() {
+		return null;
 	}
 
 	/**

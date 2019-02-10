@@ -19,88 +19,13 @@
  */
 
 /**
- * This exception will be thrown when dieUsage is called to stop module execution.
- *
- * @ingroup API
- * @deprecated since 1.29, use ApiUsageException instead
- */
-class UsageException extends MWException {
-
-	private $mCodestr;
-
-	/**
-	 * @var null|array
-	 */
-	private $mExtraData;
-
-	/**
-	 * @param string $message
-	 * @param string $codestr
-	 * @param int $code
-	 * @param array|null $extradata
-	 */
-	public function __construct( $message, $codestr, $code = 0, $extradata = null ) {
-		parent::__construct( $message, $code );
-		$this->mCodestr = $codestr;
-		$this->mExtraData = $extradata;
-
-		if ( !$this instanceof ApiUsageException ) {
-			wfDeprecated( __METHOD__, '1.29' );
-		}
-
-		// This should never happen, so throw an exception about it that will
-		// hopefully get logged with a backtrace (T138585)
-		if ( !is_string( $codestr ) || $codestr === '' ) {
-			throw new InvalidArgumentException( 'Invalid $codestr, was ' .
-				( $codestr === '' ? 'empty string' : gettype( $codestr ) )
-			);
-		}
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getCodeString() {
-		wfDeprecated( __METHOD__, '1.29' );
-		return $this->mCodestr;
-	}
-
-	/**
-	 * @return array
-	 */
-	public function getMessageArray() {
-		wfDeprecated( __METHOD__, '1.29' );
-		$result = [
-			'code' => $this->mCodestr,
-			'info' => $this->getMessage()
-		];
-		if ( is_array( $this->mExtraData ) ) {
-			$result = array_merge( $result, $this->mExtraData );
-		}
-
-		return $result;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function __toString() {
-		return "{$this->getCodeString()}: {$this->getMessage()}";
-	}
-}
-
-/**
  * Exception used to abort API execution with an error
  *
  * If possible, use ApiBase::dieWithError() instead of throwing this directly.
  *
  * @ingroup API
- * @note This currently extends UsageException for backwards compatibility, so
- *  all the existing code that catches UsageException won't break when stuff
- *  starts throwing ApiUsageException. Eventually UsageException will go away
- *  and this will (probably) extend MWException directly.
  */
-class ApiUsageException extends UsageException implements ILocalizedException {
+class ApiUsageException extends MWException implements ILocalizedException {
 
 	protected $modulePath;
 	protected $status;
@@ -124,12 +49,7 @@ class ApiUsageException extends UsageException implements ILocalizedException {
 		// customized by the local wiki.
 		$enMsg = clone $this->getApiMessage();
 		$enMsg->inLanguage( 'en' )->useDatabase( false );
-		parent::__construct(
-			ApiErrorFormatter::stripMarkup( $enMsg->text() ),
-			$enMsg->getApiCode(),
-			$httpCode,
-			$enMsg->getApiData()
-		);
+		parent::__construct( ApiErrorFormatter::stripMarkup( $enMsg->text() ), $httpCode );
 	}
 
 	/**
@@ -180,32 +100,6 @@ class ApiUsageException extends UsageException implements ILocalizedException {
 	 */
 	public function getStatusValue() {
 		return $this->status;
-	}
-
-	/**
-	 * @deprecated Do not use. This only exists here because UsageException is in
-	 *  the inheritance chain for backwards compatibility.
-	 * @inheritDoc
-	 */
-	public function getCodeString() {
-		wfDeprecated( __METHOD__, '1.29' );
-		return $this->getApiMessage()->getApiCode();
-	}
-
-	/**
-	 * @deprecated Do not use. This only exists here because UsageException is in
-	 *  the inheritance chain for backwards compatibility.
-	 * @inheritDoc
-	 */
-	public function getMessageArray() {
-		wfDeprecated( __METHOD__, '1.29' );
-		$enMsg = clone $this->getApiMessage();
-		$enMsg->inLanguage( 'en' )->useDatabase( false );
-
-		return [
-			'code' => $enMsg->getApiCode(),
-			'info' => ApiErrorFormatter::stripMarkup( $enMsg->text() ),
-		] + $enMsg->getApiData();
 	}
 
 	/**

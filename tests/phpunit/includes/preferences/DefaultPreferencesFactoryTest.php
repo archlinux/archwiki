@@ -3,7 +3,6 @@
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Preferences\DefaultPreferencesFactory;
-use Wikimedia\ObjectFactory;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -38,13 +37,13 @@ class DefaultPreferencesFactoryTest extends MediaWikiTestCase {
 
 	public function setUp() {
 		parent::setUp();
-		global $wgParserConf;
 		$this->context = new RequestContext();
 		$this->context->setTitle( Title::newFromText( self::class ) );
-		$this->setMwGlobals( 'wgParser',
-			ObjectFactory::constructClassInstance( $wgParserConf['class'], [ $wgParserConf ] )
-		);
-		$this->config = MediaWikiServices::getInstance()->getMainConfig();
+
+		$services = MediaWikiServices::getInstance();
+
+		$this->setMwGlobals( 'wgParser', $services->getParserFactory()->create() );
+		$this->config = $services->getMainConfig();
 	}
 
 	/**
@@ -64,9 +63,11 @@ class DefaultPreferencesFactoryTest extends MediaWikiTestCase {
 	 * @covers MediaWiki\Preferences\DefaultPreferencesFactory::getForm()
 	 */
 	public function testGetForm() {
+		$this->setTemporaryHook( 'GetPreferences', null );
+
 		$testUser = $this->getTestUser();
 		$form = $this->getPreferencesFactory()->getForm( $testUser->getUser(), $this->context );
-		$this->assertInstanceOf( PreferencesForm::class, $form );
+		$this->assertInstanceOf( PreferencesFormLegacy::class, $form );
 		$this->assertCount( 5, $form->getPreferenceSections() );
 	}
 
@@ -117,7 +118,7 @@ class DefaultPreferencesFactoryTest extends MediaWikiTestCase {
 		$configMock = new HashConfig( [
 			'HiddenPrefs' => []
 		] );
-		$form = $this->getMockBuilder( PreferencesForm::class )
+		$form = $this->getMockBuilder( PreferencesFormLegacy::class )
 			->disableOriginalConstructor()
 			->getMock();
 
@@ -164,12 +165,15 @@ class DefaultPreferencesFactoryTest extends MediaWikiTestCase {
 			}
 		);
 
+		/** @var DefaultPreferencesFactory $factory */
 		$factory = TestingAccessWrapper::newFromObject( $this->getPreferencesFactory() );
-		$factory->saveFormData( $newOptions, $form );
+		$factory->saveFormData( $newOptions, $form, [] );
 	}
 
 	/**
 	 * The rclimit preference should accept non-integer input and filter it to become an integer.
+	 *
+	 * @covers \MediaWiki\Preferences\DefaultPreferencesFactory::saveFormData
 	 */
 	public function testIntvalFilter() {
 		// Test a string with leading zeros (i.e. not octal) and spaces.

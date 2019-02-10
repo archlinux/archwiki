@@ -6,7 +6,7 @@
 			"Huji"
 		]
 	},
-	"cite-desc": "برچسب‌های <nowiki><ref[ name=id]></nowiki> و <nowiki><references/></nowiki> را برای یادکرد اضافه می‌کند",
+	"cite-desc": "برچسب‌های <code><nowiki><ref[ name=id]></nowiki></code> و <code><nowiki><references/></nowiki></code> را برای یادکرد اضافه می‌کند",
 	"cite_error": "خطای یادکرد: $1",
 	"cite_error_ref_numeric_key": "برچسب <code><ref></code> نامجاز؛ نام نمی‌تواند یک عدد باشد. عنوان واضح‌تری را برگزینید",
 	"cite_error_ref_no_key": "برچسب <code><ref></code> نامجاز؛ یادکردهای بدون نۆم جِک(محتوا)باید نام داشته باشند",

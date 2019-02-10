@@ -28,6 +28,9 @@ use MediaWiki\Session\Session;
 use MediaWiki\Session\SessionId;
 use MediaWiki\Session\SessionManager;
 
+// The point of this class is to be a wrapper around super globals
+// phpcs:disable MediaWiki.Usage.SuperGlobalsUsage.SuperGlobals
+
 /**
  * The WebRequest class encapsulates getting at data passed in the
  * URL or via a POSTed form stripping illegal input characters and
@@ -126,7 +129,7 @@ class WebRequest {
 			$a = parse_url( $url );
 			Wikimedia\restoreWarnings();
 			if ( $a ) {
-				$path = isset( $a['path'] ) ? $a['path'] : '';
+				$path = $a['path'] ?? '';
 
 				global $wgScript;
 				if ( $path == $wgScript && $want !== 'all' ) {
@@ -159,11 +162,12 @@ class WebRequest {
 					$router->add( $wgActionPaths, [ 'action' => '$key' ] );
 				}
 
-				global $wgVariantArticlePath, $wgContLang;
+				global $wgVariantArticlePath;
 				if ( $wgVariantArticlePath ) {
 					$router->add( $wgVariantArticlePath,
 						[ 'variant' => '$2' ],
-						[ '$2' => $wgContLang->getVariants() ]
+						[ '$2' => MediaWikiServices::getInstance()->getContentLanguage()->
+						getVariants() ]
 					);
 				}
 
@@ -272,8 +276,7 @@ class WebRequest {
 		// This method is called from various error handlers and should be kept simple.
 
 		if ( !self::$reqId ) {
-			self::$reqId = isset( $_SERVER['UNIQUE_ID'] )
-				? $_SERVER['UNIQUE_ID'] : wfRandomString( 24 );
+			self::$reqId = $_SERVER['UNIQUE_ID'] ?? wfRandomString( 24 );
 		}
 
 		return self::$reqId;
@@ -304,7 +307,7 @@ class WebRequest {
 	/**
 	 * Check for title, action, and/or variant data in the URL
 	 * and interpolate it into the GET variables.
-	 * This should only be run after $wgContLang is available,
+	 * This should only be run after the content language is available,
 	 * as we may need the list of language variants to determine
 	 * available variant URLs.
 	 */
@@ -362,9 +365,8 @@ class WebRequest {
 				$data[$key] = $this->normalizeUnicode( $val );
 			}
 		} else {
-			global $wgContLang;
-			$data = isset( $wgContLang ) ?
-				$wgContLang->normalize( $data ) :
+			$contLang = MediaWikiServices::getInstance()->getContentLanguage();
+			$data = $contLang ? $contLang->normalize( $data ) :
 				UtfNormal\Validator::cleanUp( $data );
 		}
 		return $data;
@@ -384,12 +386,12 @@ class WebRequest {
 		# Work around PHP *feature* to avoid *bugs* elsewhere.
 		$name = strtr( $name, '.', '_' );
 		if ( isset( $arr[$name] ) ) {
-			global $wgContLang;
 			$data = $arr[$name];
 			if ( isset( $_GET[$name] ) && !is_array( $data ) ) {
 				# Check for alternate/legacy character encoding.
-				if ( isset( $wgContLang ) ) {
-					$data = $wgContLang->checkTitleEncoding( $data );
+				$contLang = MediaWikiServices::getInstance()->getContentLanguage();
+				if ( $contLang ) {
+					$data = $contLang->checkTitleEncoding( $data );
 				}
 			}
 			$data = $this->normalizeUnicode( $data );
@@ -455,7 +457,7 @@ class WebRequest {
 	 * @return mixed Old value if one was present, null otherwise
 	 */
 	public function setVal( $key, $value ) {
-		$ret = isset( $this->data[$key] ) ? $this->data[$key] : null;
+		$ret = $this->data[$key] ?? null;
 		$this->data[$key] = $value;
 		return $ret;
 	}
@@ -482,7 +484,7 @@ class WebRequest {
 	 * If no source and no default, returns null.
 	 *
 	 * @param string $name
-	 * @param array $default Optional default (or null)
+	 * @param array|null $default Optional default (or null)
 	 * @return array|null
 	 */
 	public function getArray( $name, $default = null ) {
@@ -501,7 +503,7 @@ class WebRequest {
 	 * If an array is returned, contents are guaranteed to be integers.
 	 *
 	 * @param string $name
-	 * @param array $default Option default (or null)
+	 * @param array|null $default Option default (or null)
 	 * @return array Array of ints
 	 */
 	public function getIntArray( $name, $default = null ) {
@@ -655,6 +657,18 @@ class WebRequest {
 	}
 
 	/**
+	 * Get the values passed via POST.
+	 * No transformation is performed on the values.
+	 *
+	 * @since 1.32
+	 * @codeCoverageIgnore
+	 * @return array
+	 */
+	public function getPostValues() {
+		return $_POST;
+	}
+
+	/**
 	 * Return the contents of the Query with no decoding. Use when you need to
 	 * know exactly what was sent, e.g. for an OAuth signature over the elements.
 	 *
@@ -699,7 +713,7 @@ class WebRequest {
 	 * @return string
 	 */
 	public function getMethod() {
-		return isset( $_SERVER['REQUEST_METHOD'] ) ? $_SERVER['REQUEST_METHOD'] : 'GET';
+		return $_SERVER['REQUEST_METHOD'] ?? 'GET';
 	}
 
 	/**
@@ -762,8 +776,8 @@ class WebRequest {
 	 * Get a cookie from the $_COOKIE jar
 	 *
 	 * @param string $key The name of the cookie
-	 * @param string $prefix A prefix to use for the cookie name, if not $wgCookiePrefix
-	 * @param mixed $default What to return if the value isn't found
+	 * @param string|null $prefix A prefix to use for the cookie name, if not $wgCookiePrefix
+	 * @param mixed|null $default What to return if the value isn't found
 	 * @return mixed Cookie value or $default if the cookie not set
 	 */
 	public function getCookie( $key, $prefix = null, $default = null ) {
@@ -842,7 +856,7 @@ class WebRequest {
 	 * @return string
 	 */
 	public function getFullRequestURL() {
-		return wfExpandUrl( $this->getRequestURL(), PROTO_CURRENT );
+		return wfGetServerUrl( PROTO_CURRENT ) . $this->getRequestURL();
 	}
 
 	/**

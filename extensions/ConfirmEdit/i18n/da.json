@@ -6,7 +6,8 @@
 			"Christian List",
 			"Hylle",
 			"Kaare",
-			"Peter Alberti"
+			"Peter Alberti",
+			"Saederup92"
 		]
 	},
 	"captcha-edit": "For at redigere denne side, skal du give svaret på regnestykket nedenfor, og angive resultatet i feltet under det. ([[Special:Captcha/help|mere information]]):",
@@ -24,5 +25,10 @@
 	"captchahelp-cookies-needed": "Din browser skal have cookies slået til, før dette kan virke.",
 	"captchahelp-text": "Websites der accepterer indhold fra offentligheden, bliver ofte udsat for angreb fra spammere. Disse angreb sker med automatiske værktøjer, der anbringer de samme links på et stort antal websites på kort tid. Selvom disse links kan fjernes, er de en vedligeholdelsesmæssig byrde.\n\nI visse tilfælde, specielt når der tilføjes nye links til denne wiki, vil softwaren vise dig et billede af et stykke forvredet og sløret tekst. Du skal indtaste det ord, der vises, før du kan gennemføre handlingen. Formålet er at skelne mellem mennesker og automatiserede værktøjer, da de sidste har meget svært ved at genkende ordene.\n\nDesværre kan dette medføre problemer for svagtseende brugere, og brugere der bruger software der oplæser indholdet af siden. For øjeblikket findes der ikke et lydbaseret alternativ. Kontakt venligst en [[Special:ListAdmins|administrator]] med henblik på at få hjælp, hvis dette forhindrer tilføjelsen af godartet materiale.\n\nTryk på 'tilbage'-knappen i din browser for at returnere til redigeringssiden.",
 	"captcha-addurl-whitelist": " #<!-- Undlad at rette denne linie --> <pre>\n# Vejledning:\n#   * Alt fra et \"#\"-tegn til slutningen af en linie er en kommentar\n#   * Alle ikke-blanke linier benyttes som regulært udtryk, der anvendes på hostnavne i URLer\n #</pre> <!-- Undlad at rette denne linie -->",
-	"right-skipcaptcha": "Udføre handlinger som normalt kræver \"captcha\"-bekræftelse uden at bruge \"captcha\""
+	"right-skipcaptcha": "Udføre handlinger som normalt kræver \"captcha\"-bekræftelse uden at bruge \"captcha\"",
+	"confirmedit-preview-line": "Linjenumre",
+	"confirmedit-preview-content": "Indhold",
+	"confirmedit-preview-validity": "Gyldighed",
+	"confirmedit-preview-valid": "gyldig",
+	"confirmedit-preview-invalid": "ugyldig"
 }

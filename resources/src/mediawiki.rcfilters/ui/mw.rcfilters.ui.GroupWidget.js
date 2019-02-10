@@ -1,4 +1,4 @@
-( function ( mw ) {
+( function () {
 	/**
 	 * A group widget to allow for aggregation of events
 	 *
@@ -22,6 +22,7 @@
 
 		if ( config.events ) {
 			// Aggregate events
+			// eslint-disable-next-line no-restricted-properties
 			$.each( config.events, function ( eventName, eventEmit ) {
 				aggregate[ eventName ] = eventEmit;
 			} );
@@ -38,4 +39,4 @@
 
 	OO.inheritClass( mw.rcfilters.ui.GroupWidget, OO.ui.Widget );
 	OO.mixinClass( mw.rcfilters.ui.GroupWidget, OO.ui.mixin.GroupWidget );
-}( mediaWiki ) );
+}() );

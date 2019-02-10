@@ -4,7 +4,7 @@
 			"Geopoet"
 		]
 	},
-	"cite-desc": "Minadugang nin <nowiki><ref[ name=id]></nowiki> asin <nowiki><references/></nowiki> na mga tatak, para sa mga toltolan",
+	"cite-desc": "Minadugang nin <code><nowiki><ref[ name=id]></nowiki></code> asin <code><nowiki><references/></nowiki></code> na mga tatak, para sa mga toltolan",
 	"cite_error": "Sambiton an kasalaan: $1",
 	"cite_error_ref_numeric_key": "Imbalido an <code>&lt;ref&gt;</code> tatak; an pangaran dae puwede na magin sarong simplehon na bilog na numero. Maggamit nin sarong deskriptibong titulo",
 	"cite_error_ref_no_key": "Imbalido an <code>&lt;ref&gt;</code> tatak; an mga toltolan na mayong kalamnan dapat magkaigwa nin pangaran",

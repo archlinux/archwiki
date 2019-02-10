@@ -21,6 +21,9 @@
  * @ingroup SpecialPage
  */
 
+use MediaWiki\Logger\LoggerFactory;
+use MediaWiki\MediaWikiServices;
+
 /**
  * Let users manage bot passwords
  *
@@ -40,8 +43,12 @@ class SpecialBotPasswords extends FormSpecialPage {
 	/** @var string New password set, for communication between onSubmit() and onSuccess() */
 	private $password = null;
 
+	/** @var Psr\Log\LoggerInterface */
+	private $logger = null;
+
 	public function __construct() {
 		parent::__construct( 'BotPasswords', 'editmyprivateinfo' );
+		$this->logger = LoggerFactory::getInstance( 'authentication' );
 	}
 
 	/**
@@ -160,8 +167,7 @@ class SpecialBotPasswords extends FormSpecialPage {
 
 		} else {
 			$linkRenderer = $this->getLinkRenderer();
-			$passwordFactory = new PasswordFactory();
-			$passwordFactory->init( $this->getConfig() );
+			$passwordFactory = MediaWikiServices::getInstance()->getPasswordFactory();
 
 			$dbr = BotPassword::getDB( DB_REPLICA );
 			$res = $dbr->select(
@@ -281,6 +287,16 @@ class SpecialBotPasswords extends FormSpecialPage {
 				$bp = BotPassword::newFromCentralId( $this->userId, $this->par );
 				if ( $bp ) {
 					$bp->delete();
+					$this->logger->info(
+						"Bot password {op} for {user}@{app_id}",
+						[
+							'app_id' => $this->par,
+							'user' => $this->getUser()->getName(),
+							'centralId' => $this->userId,
+							'op' => 'delete',
+							'client_ip' => $this->getRequest()->getIP()
+						]
+					);
 				}
 				return Status::newGood();
 
@@ -305,14 +321,25 @@ class SpecialBotPasswords extends FormSpecialPage {
 
 		if ( $this->operation === 'insert' || !empty( $data['resetPassword'] ) ) {
 			$this->password = BotPassword::generatePassword( $this->getConfig() );
-			$passwordFactory = new PasswordFactory();
-			$passwordFactory->init( RequestContext::getMain()->getConfig() );
+			$passwordFactory = MediaWikiServices::getInstance()->getPasswordFactory();
 			$password = $passwordFactory->newFromPlaintext( $this->password );
 		} else {
 			$password = null;
 		}
 
 		if ( $bp->save( $this->operation, $password ) ) {
+			$this->logger->info(
+				"Bot password {op} for {user}@{app_id}",
+				[
+					'op' => $this->operation,
+					'user' => $this->getUser()->getName(),
+					'app_id' => $this->par,
+					'centralId' => $this->userId,
+					'restrictions' => $data['restrictions'],
+					'grants' => $bp->getGrants(),
+					'client_ip' => $this->getRequest()->getIP()
+				]
+			);
 			return Status::newGood();
 		} else {
 			// Messages: botpasswords-insert-failed, botpasswords-update-failed

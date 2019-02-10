@@ -435,6 +435,35 @@ class ApiMainTest extends ApiTestCase {
 	}
 
 	/**
+	 * Test that 'assert' is processed before module errors
+	 */
+	public function testAssertBeforeModule() {
+		// Sanity check that the query without assert throws too-many-titles
+		try {
+			$this->doApiRequest( [
+				'action' => 'query',
+				'titles' => implode( '|', range( 1, ApiBase::LIMIT_SML1 + 1 ) ),
+			], null, null, new User );
+			$this->fail( 'Expected exception not thrown' );
+		} catch ( ApiUsageException $e ) {
+			$this->assertTrue( self::apiExceptionHasCode( $e, 'too-many-titles' ), 'sanity check' );
+		}
+
+		// Now test that the assert happens first
+		try {
+			$this->doApiRequest( [
+				'action' => 'query',
+				'titles' => implode( '|', range( 1, ApiBase::LIMIT_SML1 + 1 ) ),
+				'assert' => 'user',
+			], null, null, new User );
+			$this->fail( 'Expected exception not thrown' );
+		} catch ( ApiUsageException $e ) {
+			$this->assertTrue( self::apiExceptionHasCode( $e, 'assertuserfailed' ),
+				"Error '{$e->getMessage()}' matched expected 'assertuserfailed'" );
+		}
+	}
+
+	/**
 	 * Test if all classes in the main module manager exists
 	 */
 	public function testClassNamesInModuleManager() {
@@ -491,7 +520,7 @@ class ApiMainTest extends ApiTestCase {
 		$module->expects( $this->any() )
 			->method( 'getConditionalRequestData' )
 			->will( $this->returnCallback( function ( $condition ) use ( $conditions ) {
-				return isset( $conditions[$condition] ) ? $conditions[$condition] : null;
+				return $conditions[$condition] ?? null;
 			} ) );
 
 		$ret = $priv->checkConditionalRequestHeaders( $module );
@@ -622,7 +651,7 @@ class ApiMainTest extends ApiTestCase {
 		$module->expects( $this->any() )
 			->method( 'getConditionalRequestData' )
 			->will( $this->returnCallback( function ( $condition ) use ( $conditions ) {
-				return isset( $conditions[$condition] ) ? $conditions[$condition] : null;
+				return $conditions[$condition] ?? null;
 			} ) );
 		$priv->mModule = $module;
 
@@ -630,7 +659,7 @@ class ApiMainTest extends ApiTestCase {
 
 		foreach ( [ 'Last-Modified', 'ETag' ] as $header ) {
 			$this->assertEquals(
-				isset( $headers[$header] ) ? $headers[$header] : null,
+				$headers[$header] ?? null,
 				$response->getHeader( $header ),
 				$header
 			);
@@ -938,8 +967,7 @@ class ApiMainTest extends ApiTestCase {
 		$context->setLanguage( 'en' );
 		$context->setConfig( new MultiConfig( [
 			new HashConfig( [
-				'ShowHostnames' => true, 'ShowSQLErrors' => false,
-				'ShowExceptionDetails' => true, 'ShowDBErrorBacktrace' => true,
+				'ShowHostnames' => true, 'ShowExceptionDetails' => true,
 			] ),
 			$context->getConfig()
 		] ) );
@@ -982,10 +1010,6 @@ class ApiMainTest extends ApiTestCase {
 			MWExceptionHandler::getRedactedTraceAsString( $dbex )
 		)->inLanguage( 'en' )->useDatabase( false )->text();
 
-		Wikimedia\suppressWarnings();
-		$usageEx = new UsageException( 'Usage exception!', 'ue', 0, [ 'foo' => 'bar' ] );
-		Wikimedia\restoreWarnings();
-
 		$apiEx1 = new ApiUsageException( null,
 			StatusValue::newFatal( new ApiRawMessage( 'An error', 'sv-error1' ) ) );
 		TestingAccessWrapper::newFromObject( $apiEx1 )->modulePath = 'foo+bar';
@@ -1023,27 +1047,11 @@ class ApiMainTest extends ApiTestCase {
 						[ 'code' => 'existing-error', 'text' => 'existing error', 'module' => 'main' ],
 						[
 							'code' => 'internal_api_error_DBQueryError',
-							'text' => "[$reqId] Database query error.",
+							'text' => "[$reqId] Exception caught: A database query error has occurred. " .
+								"This may indicate a bug in the software.",
 						]
 					],
 					'trace' => $dbtrace,
-					'servedby' => wfHostname(),
-				]
-			],
-			[
-				$usageEx,
-				[ 'existing-error', 'ue' ],
-				[
-					'warnings' => [
-						[ 'code' => 'existing-warning', 'text' => 'existing warning', 'module' => 'main' ],
-					],
-					'errors' => [
-						[ 'code' => 'existing-error', 'text' => 'existing error', 'module' => 'main' ],
-						[ 'code' => 'ue', 'text' => "Usage exception!", 'data' => [ 'foo' => 'bar' ] ]
-					],
-					'docref' => "See $doclink for API usage. Subscribe to the mediawiki-api-announce mailing " .
-						"list at &lt;https://lists.wikimedia.org/mailman/listinfo/mediawiki-api-announce&gt; " .
-						"for notice of API deprecations and breaking changes.",
 					'servedby' => wfHostname(),
 				]
 			],
@@ -1068,5 +1076,22 @@ class ApiMainTest extends ApiTestCase {
 				]
 			],
 		];
+	}
+
+	public function testPrinterParameterValidationError() {
+		$api = $this->getNonInternalApiMain( [
+			'action' => 'query', 'meta' => 'siteinfo', 'format' => 'json', 'formatversion' => 'bogus',
+		] );
+
+		ob_start();
+		$api->execute();
+		$txt = ob_get_clean();
+
+		// Test that the actual output is valid JSON, not just the format of the ApiResult.
+		$data = FormatJson::decode( $txt, true );
+		$this->assertInternalType( 'array', $data );
+		$this->assertArrayHasKey( 'error', $data );
+		$this->assertArrayHasKey( 'code', $data['error'] );
+		$this->assertSame( 'unknown_formatversion', $data['error']['code'] );
 	}
 }

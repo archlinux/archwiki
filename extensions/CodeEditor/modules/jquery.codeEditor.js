@@ -216,7 +216,7 @@
 							tools: {
 								codeEditor: {
 									labelMsg: 'codeeditor-toolbar-toggle',
-									type: 'button',
+									type: 'toggle',
 									oouiIcon: 'markup',
 									action: {
 										type: 'callback',
@@ -252,7 +252,7 @@
 							tools: {
 								invisibleChars: {
 									labelMsg: 'codeeditor-invisibleChars-toggle',
-									type: 'button',
+									type: 'toggle',
 									oouiIcon: 'pilcrow',
 									action: {
 										type: 'callback',
@@ -261,7 +261,7 @@
 								},
 								lineWrapping: {
 									labelMsg: 'codeeditor-lineWrapping-toggle',
-									type: 'button',
+									type: 'toggle',
 									oouiIcon: 'wrapping',
 									action: {
 										type: 'callback',
@@ -279,7 +279,7 @@
 								},
 								toggleSearchReplace: {
 									labelMsg: 'codeeditor-searchReplace-toggle',
-									type: 'button',
+									type: 'toggle',
 									oouiIcon: 'articleSearch',
 									action: {
 										type: 'callback',

@@ -421,19 +421,6 @@ class ApiPageSet extends ApiBase {
 	/**
 	 * Titles that were deemed invalid by Title::newFromText()
 	 * The array's index will be unique and negative for each item
-	 * @deprecated since 1.26, use self::getInvalidTitlesAndReasons()
-	 * @return string[] Array of strings (not Title objects)
-	 */
-	public function getInvalidTitles() {
-		wfDeprecated( __METHOD__, '1.26' );
-		return array_map( function ( $t ) {
-			return $t['title'];
-		}, $this->mInvalidTitles );
-	}
-
-	/**
-	 * Titles that were deemed invalid by Title::newFromText()
-	 * The array's index will be unique and negative for each item
 	 * @return array[] Array of arrays with 'title' and 'invalidreason' properties
 	 */
 	public function getInvalidTitlesAndReasons() {
@@ -460,7 +447,7 @@ class ApiPageSet extends ApiBase {
 	/**
 	 * Get a list of redirect resolutions - maps a title to its redirect
 	 * target. Includes generator data for redirect source when available.
-	 * @param ApiResult $result
+	 * @param ApiResult|null $result
 	 * @return array Array of prefixed_title (string) => Title object
 	 * @since 1.21
 	 */
@@ -507,16 +494,15 @@ class ApiPageSet extends ApiBase {
 	/**
 	 * Get a list of title normalizations - maps a title to its normalized
 	 * version in the form of result array.
-	 * @param ApiResult $result
+	 * @param ApiResult|null $result
 	 * @return array Array of raw_prefixed_title (string) => prefixed_title (string)
 	 * @since 1.21
 	 */
 	public function getNormalizedTitlesAsResult( $result = null ) {
-		global $wgContLang;
-
 		$values = [];
+		$contLang = MediaWikiServices::getInstance()->getContentLanguage();
 		foreach ( $this->getNormalizedTitles() as $rawTitleStr => $titleStr ) {
-			$encode = ( $wgContLang->normalize( $rawTitleStr ) !== $rawTitleStr );
+			$encode = $contLang->normalize( $rawTitleStr ) !== $rawTitleStr;
 			$values[] = [
 				'fromencoded' => $encode,
 				'from' => $encode ? rawurlencode( $rawTitleStr ) : $rawTitleStr,
@@ -542,7 +528,7 @@ class ApiPageSet extends ApiBase {
 	/**
 	 * Get a list of title conversions - maps a title to its converted
 	 * version as a result array.
-	 * @param ApiResult $result
+	 * @param ApiResult|null $result
 	 * @return array Array of (from, to) strings
 	 * @since 1.21
 	 */
@@ -573,7 +559,7 @@ class ApiPageSet extends ApiBase {
 	/**
 	 * Get a list of interwiki titles - maps a title to its interwiki
 	 * prefix as result.
-	 * @param ApiResult $result
+	 * @param ApiResult|null $result
 	 * @param bool $iwUrl
 	 * @return array Array of raw_prefixed_title (string) => interwiki_prefix (string)
 	 * @since 1.21
@@ -692,7 +678,7 @@ class ApiPageSet extends ApiBase {
 
 	/**
 	 * Revision IDs that were not found in the database as result array.
-	 * @param ApiResult $result
+	 * @param ApiResult|null $result
 	 * @return array Array of revision IDs
 	 * @since 1.21
 	 */
@@ -771,7 +757,8 @@ class ApiPageSet extends ApiBase {
 		// Store Title object in various data structures
 		$title = Title::newFromRow( $row );
 
-		LinkCache::singleton()->addGoodLinkObjFromRow( $title, $row );
+		$linkCache = MediaWikiServices::getInstance()->getLinkCache();
+		$linkCache->addGoodLinkObjFromRow( $title, $row );
 
 		$pageId = intval( $row->page_id );
 		$this->mAllPages[$row->page_namespace][$row->page_title] = $pageId;
@@ -904,7 +891,7 @@ class ApiPageSet extends ApiBase {
 			// Any items left in the $remaining list are added as missing
 			if ( $processTitles ) {
 				// The remaining titles in $remaining are non-existent pages
-				$linkCache = LinkCache::singleton();
+				$linkCache = MediaWikiServices::getInstance()->getLinkCache();
 				foreach ( $remaining as $ns => $dbkeys ) {
 					foreach ( array_keys( $dbkeys ) as $dbkey ) {
 						$title = Title::makeTitle( $ns, $dbkey );
@@ -1170,6 +1157,8 @@ class ApiPageSet extends ApiBase {
 	private function processTitlesArray( $titles ) {
 		$usernames = [];
 		$linkBatch = new LinkBatch();
+		$services = MediaWikiServices::getInstance();
+		$contLang = $services->getContentLanguage();
 
 		foreach ( $titles as $title ) {
 			if ( is_string( $title ) ) {
@@ -1197,15 +1186,13 @@ class ApiPageSet extends ApiBase {
 				$this->mInterwikiTitles[$unconvertedTitle] = $titleObj->getInterwiki();
 			} else {
 				// Variants checking
-				global $wgContLang;
-				if ( $this->mConvertTitles &&
-					count( $wgContLang->getVariants() ) > 1 &&
-					!$titleObj->exists()
+				if (
+					$this->mConvertTitles && $contLang->hasVariants() && !$titleObj->exists()
 				) {
 					// Language::findVariantLink will modify titleText and titleObj into
 					// the canonical variant if possible
 					$titleText = is_string( $title ) ? $title : $titleObj->getPrefixedText();
-					$wgContLang->findVariantLink( $titleText, $titleObj );
+					$contLang->findVariantLink( $titleText, $titleObj );
 					$titleWasConverted = $unconvertedTitle !== $titleObj->getPrefixedText();
 				}
 
@@ -1218,7 +1205,8 @@ class ApiPageSet extends ApiBase {
 						$this->mAllSpecials[$ns][$dbkey] = $this->mFakePageId;
 						$target = null;
 						if ( $ns === NS_SPECIAL && $this->mResolveRedirects ) {
-							$special = SpecialPageFactory::getPage( $dbkey );
+							$spFactory = $services->getSpecialPageFactory();
+							$special = $spFactory->getPage( $dbkey );
 							if ( $special instanceof RedirectSpecialArticle ) {
 								// Only RedirectSpecialArticle is intended to redirect to an article, other kinds of
 								// RedirectSpecialPage are probably applying weird URL parameters we don't want to handle.
@@ -1226,7 +1214,7 @@ class ApiPageSet extends ApiBase {
 								$context->setTitle( $titleObj );
 								$context->setRequest( new FauxRequest );
 								$special->setContext( $context );
-								list( /* $alias */, $subpage ) = SpecialPageFactory::resolveAlias( $dbkey );
+								list( /* $alias */, $subpage ) = $spFactory->resolveAlias( $dbkey );
 								$target = $special->getRedirect( $subpage );
 							}
 						}
@@ -1264,7 +1252,7 @@ class ApiPageSet extends ApiBase {
 			}
 		}
 		// Get gender information
-		$genderCache = MediaWikiServices::getInstance()->getGenderCache();
+		$genderCache = $services->getGenderCache();
 		$genderCache->doQuery( $usernames, __METHOD__ );
 
 		return $linkBatch;
@@ -1401,7 +1389,7 @@ class ApiPageSet extends ApiBase {
 				if ( isset( $data[$toPageId] ) &&
 					isset( $this->mGeneratorData[$fromNs][$fromDBkey] )
 				) {
-					// It is necesary to set both $data and add to $result, if an ApiResult,
+					// It is necessary to set both $data and add to $result, if an ApiResult,
 					// to ensure multiple redirects to the same destination are all merged.
 					$data[$toPageId] = call_user_func(
 						$this->mRedirectMergePolicy,

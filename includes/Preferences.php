@@ -35,12 +35,13 @@ class Preferences {
 	 * @return DefaultPreferencesFactory
 	 */
 	protected static function getDefaultPreferencesFactory() {
-		global $wgContLang;
+		$services = MediaWikiServices::getInstance();
 		$authManager = AuthManager::singleton();
-		$linkRenderer = MediaWikiServices::getInstance()->getLinkRenderer();
-		$config = MediaWikiServices::getInstance()->getMainConfig();
+		$linkRenderer = $services->getLinkRenderer();
+		$config = $services->getMainConfig();
 		$preferencesFactory = new DefaultPreferencesFactory(
-			$config, $wgContLang, $authManager, $linkRenderer
+			$config, $services->getContentLanguage(), $authManager,
+			$linkRenderer
 		);
 		return $preferencesFactory;
 	}
@@ -201,6 +202,7 @@ class Preferences {
 	 * @param array &$defaultPreferences
 	 */
 	public static function miscPreferences( $user, IContextSource $context, &$defaultPreferences ) {
+		wfDeprecated( __METHOD__, '1.31' );
 	}
 
 	/**
@@ -262,12 +264,12 @@ class Preferences {
 	 * @param IContextSource $context
 	 * @param string $formClass
 	 * @param array $remove Array of items to remove
-	 * @return PreferencesForm|HTMLForm
+	 * @return PreferencesFormLegacy|HTMLForm
 	 */
 	public static function getFormObject(
 		$user,
 		IContextSource $context,
-		$formClass = PreferencesForm::class,
+		$formClass = PreferencesFormLegacy::class,
 		array $remove = []
 	) {
 		$preferencesFactory = self::getDefaultPreferencesFactory();
@@ -298,30 +300,6 @@ class Preferences {
 	 */
 	public static function filterTimezoneInput( $tz, $alldata ) {
 		throw new Exception( __METHOD__ . '() is deprecated and does nothing' );
-	}
-
-	/**
-	 * Handle the form submission if everything validated properly
-	 *
-	 * @deprecated since 1.31, use PreferencesFactory
-	 *
-	 * @param array $formData
-	 * @param PreferencesForm $form
-	 * @return bool|Status|string
-	 */
-	public static function tryFormSubmit( $formData, $form ) {
-		$preferencesFactory = self::getDefaultPreferencesFactory();
-		return $preferencesFactory->legacySaveFormData( $formData, $form );
-	}
-
-	/**
-	 * @param array $formData
-	 * @param PreferencesForm $form
-	 * @return Status
-	 */
-	public static function tryUISubmit( $formData, $form ) {
-		$preferencesFactory = self::getDefaultPreferencesFactory();
-		return $preferencesFactory->legacySubmitForm( $formData, $form );
 	}
 
 	/**

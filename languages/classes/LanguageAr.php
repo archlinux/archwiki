@@ -40,11 +40,11 @@ class LanguageAr extends Language {
 	 *
 	 * @return string
 	 */
-	function normalize( $s ) {
+	public function normalize( $s ) {
 		global $wgFixArabicUnicode;
 		$s = parent::normalize( $s );
 		if ( $wgFixArabicUnicode ) {
-			$s = $this->transformUsingPairFile( 'normalize-ar.ser', $s );
+			$s = $this->transformUsingPairFile( 'normalize-ar.php', $s );
 		}
 		return $s;
 	}

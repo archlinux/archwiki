@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Matma Rex",
-			"Sp5uhe"
+			"Sp5uhe",
+			"Chrumps"
 		]
 	},
 	"skinname-vector": "Wektor",
@@ -20,5 +21,7 @@
 	"vector-view-history": "Wyświetl historię",
 	"vector-view-view": "Czytaj",
 	"vector-view-viewsource": "Tekst źródłowy",
+	"vector-jumptonavigation": "Przejdź do nawigacji",
+	"vector-jumptosearch": "Przejdź do wyszukiwania",
 	"vector-more-actions": "Więcej"
 }

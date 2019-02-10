@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"Asenoner"
+		]
+	},
+	"pfunc_expr_unrecognised_word": "Fal te la esprescion: parola \"$1\" nia recunesciuda.",
+	"pfunc_expr_missing_operand": "Fal de esprescion: L mancia n operand per $1.",
+	"pfunc_expr_unrecognised_punctuation": "Fal de esprescion: L carater de nterpunzion $1 ne ie nia stat recunesciù."
+}

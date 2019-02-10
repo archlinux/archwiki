@@ -1,4 +1,5 @@
-( function ( mw, $ ) {
+/* eslint-disable no-restricted-properties */
+( function () {
 	/**
 	 * View model for the filters selection and display
 	 *
@@ -1273,4 +1274,4 @@
 		this.getItemByName( filterName ).clearHighlightColor();
 	};
 
-}( mediaWiki, jQuery ) );
+}() );

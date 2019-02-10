@@ -305,7 +305,7 @@
 				return $group;
 			},
 			buildTool: function ( context, id, tool ) {
-				var i, label, $button, icon, $select, $options, oouiButton,
+				var i, label, $button, config, icon, $select, $options, oouiButton,
 					option, optionLabel;
 				if ( 'filters' in tool ) {
 					for ( i = 0; i < tool.filters.length; i++ ) {
@@ -314,16 +314,22 @@
 						}
 					}
 				}
-				label = $.wikiEditor.autoMsg( tool, 'label' );
+				label = $.wikiEditor.autoSafeMsg( tool, 'label' );
 				switch ( tool.type ) {
 					case 'button':
+					case 'toggle':
 						if ( tool.oouiIcon ) {
-							oouiButton = new OO.ui.ButtonWidget( {
+							config = {
 								framed: false,
 								classes: [ 'tool' ],
 								icon: tool.oouiIcon,
 								title: label
-							} );
+							};
+							if ( tool.type === 'button' ) {
+								oouiButton = new OO.ui.ButtonWidget( config );
+							} else if ( tool.type === 'toggle' ) {
+								oouiButton = new OO.ui.ToggleButtonWidget( config );
+							}
 							$button = oouiButton.$element;
 							$button.attr( 'rel', id );
 							$button.data( 'ooui', oouiButton );
@@ -349,8 +355,8 @@
 							$button.toggleClass( 'tool-active', active );
 
 							// OOUI button
-							if ( $button.data( 'ooui' ) ) {
-								$button.data( 'ooui' ).setFlags( { progressive: active } );
+							if ( $button.data( 'ooui' ) && tool.type === 'toggle' ) {
+								$button.data( 'ooui' ).setValue( active );
 							}
 						} );
 						if ( 'action' in tool ) {
@@ -361,14 +367,22 @@
 									// No dragging!
 									e.preventDefault();
 									return false;
-								} )
-								.click( function ( e ) {
+								} );
+							if ( $button.data( 'ooui' ) ) {
+								$button.data( 'ooui' ).on( 'click', function () {
 									$.wikiEditor.modules.toolbar.fn.doAction(
-										$( this ).data( 'context' ), $( this ).data( 'action' ), $( this )
+										context, tool.action
+									);
+								} );
+							} else {
+								$button.on( 'click', function ( e ) {
+									$.wikiEditor.modules.toolbar.fn.doAction(
+										context, tool.action
 									);
 									e.preventDefault();
 									return false;
 								} );
+							}
 						}
 						return $button;
 					case 'select':
@@ -532,7 +546,7 @@
 			buildHeading: function ( context, headings ) {
 				var i, html = '<tr>';
 				for ( i = 0; i < headings.length; i++ ) {
-					html += '<th>' + $.wikiEditor.autoMsg( headings[ i ], [ 'html', 'text' ] ) + '</th>';
+					html += '<th>' + $.wikiEditor.autoSafeMsg( headings[ i ], [ 'html', 'text' ] ) + '</th>';
 				}
 				return html + '</tr>';
 			},
@@ -540,6 +554,8 @@
 				var cell,
 					html = '<tr>';
 				for ( cell in row ) {
+					// FIXME: This currently needs to use the "unsafe" .text() message because it embeds raw HTML
+					// in the messages (as used exclusively by the 'help' toolbar panel).
 					html += '<td class="cell cell-' + cell + '"><span>' +
 						$.wikiEditor.autoMsg( row[ cell ], [ 'html', 'text' ] ) + '</span></td>';
 				}

@@ -96,12 +96,8 @@ abstract class DatabaseMysqlBase extends Database {
 	 * @param array $params
 	 */
 	function __construct( array $params ) {
-		$this->lagDetectionMethod = isset( $params['lagDetectionMethod'] )
-			? $params['lagDetectionMethod']
-			: 'Seconds_Behind_Master';
-		$this->lagDetectionOptions = isset( $params['lagDetectionOptions'] )
-			? $params['lagDetectionOptions']
-			: [];
+		$this->lagDetectionMethod = $params['lagDetectionMethod'] ?? 'Seconds_Behind_Master';
+		$this->lagDetectionOptions = $params['lagDetectionOptions'] ?? [];
 		$this->useGTIDs = !empty( $params['useGTIDs' ] );
 		foreach ( [ 'KeyPath', 'CertPath', 'CAFile', 'CAPath', 'Ciphers' ] as $name ) {
 			$var = "ssl{$name}";
@@ -109,7 +105,7 @@ abstract class DatabaseMysqlBase extends Database {
 				$this->$var = $params[$var];
 			}
 		}
-		$this->sqlMode = isset( $params['sqlMode'] ) ? $params['sqlMode'] : '';
+		$this->sqlMode = $params['sqlMode'] ?? '';
 		$this->utf8Mode = !empty( $params['utf8Mode'] );
 		$this->insertSelectIsSafe = isset( $params['insertSelectIsSafe'] )
 			? (bool)$params['insertSelectIsSafe'] : null;
@@ -124,26 +120,17 @@ abstract class DatabaseMysqlBase extends Database {
 		return 'mysql';
 	}
 
-	/**
-	 * @param string $server
-	 * @param string $user
-	 * @param string $password
-	 * @param string $dbName
-	 * @throws Exception|DBConnectionError
-	 * @return bool
-	 */
-	public function open( $server, $user, $password, $dbName ) {
+	protected function open( $server, $user, $password, $dbName, $schema, $tablePrefix ) {
 		# Close/unset connection handle
 		$this->close();
 
 		$this->server = $server;
 		$this->user = $user;
 		$this->password = $password;
-		$this->dbName = $dbName;
 
 		$this->installErrorHandler();
 		try {
-			$this->conn = $this->mysqlConnect( $this->server );
+			$this->conn = $this->mysqlConnect( $this->server, $dbName );
 		} catch ( Exception $ex ) {
 			$this->restoreErrorHandler();
 			throw $ex;
@@ -152,9 +139,7 @@ abstract class DatabaseMysqlBase extends Database {
 
 		# Always log connection errors
 		if ( !$this->conn ) {
-			if ( !$error ) {
-				$error = $this->lastError();
-			}
+			$error = $error ?: $this->lastError();
 			$this->connLogger->error(
 				"Error connecting to {db_server}: {error}",
 				$this->getLogContext( [
@@ -166,30 +151,26 @@ abstract class DatabaseMysqlBase extends Database {
 				"Server: $server, User: $user, Password: " .
 				substr( $password, 0, 3 ) . "..., error: " . $error . "\n" );
 
-			$this->reportConnectionError( $error );
+			throw new DBConnectionError( $this, $error );
 		}
 
 		if ( strlen( $dbName ) ) {
-			Wikimedia\suppressWarnings();
-			$success = $this->selectDB( $dbName );
-			Wikimedia\restoreWarnings();
-			if ( !$success ) {
-				$this->queryLogger->error(
-					"Error selecting database {db_name} on server {db_server}",
-					$this->getLogContext( [
-						'method' => __METHOD__,
-					] )
-				);
-				$this->queryLogger->debug(
-					"Error selecting database $dbName on server {$this->server}" );
-
-				$this->reportConnectionError( "Error selecting database $dbName" );
-			}
+			$this->selectDomain( new DatabaseDomain( $dbName, null, $tablePrefix ) );
+		} else {
+			$this->currentDomain = new DatabaseDomain( null, null, $tablePrefix );
 		}
 
 		// Tell the server what we're communicating with
 		if ( !$this->connectInitCharset() ) {
-			$this->reportConnectionError( "Error setting character set" );
+			$error = $this->lastError();
+			$this->queryLogger->error(
+				"Error setting character set: {error}",
+				$this->getLogContext( [
+					'method' => __METHOD__,
+					'error' => $this->lastError(),
+				] )
+			);
+			throw new DBConnectionError( $this, "Error setting character set: $error" );
 		}
 
 		// Abstract over any insane MySQL defaults
@@ -212,14 +193,15 @@ abstract class DatabaseMysqlBase extends Database {
 			// Use doQuery() to avoid opening implicit transactions (DBO_TRX)
 			$success = $this->doQuery( 'SET ' . implode( ', ', $set ) );
 			if ( !$success ) {
+				$error = $this->lastError();
 				$this->queryLogger->error(
-					'Error setting MySQL variables on server {db_server} (check $wgSQLMode)',
+					'Error setting MySQL variables on server {db_server}: {error}',
 					$this->getLogContext( [
 						'method' => __METHOD__,
+						'error' => $error,
 					] )
 				);
-				$this->reportConnectionError(
-					'Error setting MySQL variables on server {db_server} (check $wgSQLMode)' );
+				throw new DBConnectionError( $this, "Error setting MySQL variables: $error" );
 			}
 		}
 
@@ -246,10 +228,11 @@ abstract class DatabaseMysqlBase extends Database {
 	 * Open a connection to a MySQL server
 	 *
 	 * @param string $realServer
+	 * @param string|null $dbName
 	 * @return mixed Raw connection
 	 * @throws DBConnectionError
 	 */
-	abstract protected function mysqlConnect( $realServer );
+	abstract protected function mysqlConnect( $realServer, $dbName );
 
 	/**
 	 * Set the character set of the MySQL link
@@ -365,12 +348,12 @@ abstract class DatabaseMysqlBase extends Database {
 			$res = $res->result;
 		}
 		Wikimedia\suppressWarnings();
-		$n = $this->mysqlNumRows( $res );
+		$n = !is_bool( $res ) ? $this->mysqlNumRows( $res ) : 0;
 		Wikimedia\restoreWarnings();
 
 		// Unfortunately, mysql_num_rows does not reset the last errno.
 		// We are not checking for any errors here, since
-		// these are no errors mysql_num_rows can cause.
+		// there are no errors mysql_num_rows can cause.
 		// See https://dev.mysql.com/doc/refman/5.0/en/mysql-fetch-row.html.
 		// See https://phabricator.wikimedia.org/T44430
 		return $n;
@@ -496,7 +479,7 @@ abstract class DatabaseMysqlBase extends Database {
 	/**
 	 * Returns the text of the error message from previous MySQL operation
 	 *
-	 * @param resource $conn Raw connection
+	 * @param resource|null $conn Raw connection
 	 * @return string
 	 */
 	abstract protected function mysqlError( $conn = null );
@@ -830,11 +813,12 @@ abstract class DatabaseMysqlBase extends Database {
 			// Using one key for all cluster replica DBs is preferable
 			$this->getLBInfo( 'clusterMasterHost' ) ?: $this->getServer()
 		);
+		$fname = __METHOD__;
 
 		return $cache->getWithSetCallback(
 			$key,
 			$cache::TTL_INDEFINITE,
-			function () use ( $cache, $key ) {
+			function () use ( $cache, $key, $fname ) {
 				// Get and leave a lock key in place for a short period
 				if ( !$cache->lock( $key, 0, 10 ) ) {
 					return false; // avoid master connection spike slams
@@ -847,7 +831,7 @@ abstract class DatabaseMysqlBase extends Database {
 
 				// Connect to and query the master; catch errors to avoid outages
 				try {
-					$res = $conn->query( 'SELECT @@server_id AS id', __METHOD__ );
+					$res = $conn->query( 'SELECT @@server_id AS id', $fname );
 					$row = $res ? $res->fetchObject() : false;
 					$id = $row ? (int)$row->id : 0;
 				} catch ( DBError $e ) {
@@ -1049,11 +1033,12 @@ abstract class DatabaseMysqlBase extends Database {
 	 * @throws DBQueryError If the variable doesn't exist for some reason
 	 */
 	protected function getServerId() {
+		$fname = __METHOD__;
 		return $this->srvCache->getWithSetCallback(
 			$this->srvCache->makeGlobalKey( 'mysql-server-id', $this->getServer() ),
 			self::SERVER_ID_CACHE_TTL,
-			function () {
-				$res = $this->query( "SELECT @@server_id AS id", __METHOD__ );
+			function () use ( $fname ) {
+				$res = $this->query( "SELECT @@server_id AS id", $fname );
 				return intval( $this->fetchObject( $res )->id );
 			}
 		);
@@ -1455,7 +1440,7 @@ abstract class DatabaseMysqlBase extends Database {
 	/**
 	 * List all tables on the database
 	 *
-	 * @param string $prefix Only show tables with this prefix, e.g. mw_
+	 * @param string|null $prefix Only show tables with this prefix, e.g. mw_
 	 * @param string $fname Calling function name
 	 * @return array
 	 */
@@ -1509,7 +1494,7 @@ abstract class DatabaseMysqlBase extends Database {
 	/**
 	 * Lists VIEWs in the database
 	 *
-	 * @param string $prefix Only show VIEWs with this prefix, eg.
+	 * @param string|null $prefix Only show VIEWs with this prefix, eg.
 	 * unit_test_, or $wgDBprefix. Default: null, would return all views.
 	 * @param string $fname Name of calling function
 	 * @return array
@@ -1517,7 +1502,7 @@ abstract class DatabaseMysqlBase extends Database {
 	 */
 	public function listViews( $prefix = null, $fname = __METHOD__ ) {
 		// The name of the column containing the name of the VIEW
-		$propertyName = 'Tables_in_' . $this->dbName;
+		$propertyName = 'Tables_in_' . $this->getDBname();
 
 		// Query for the VIEWS
 		$res = $this->query( 'SHOW FULL TABLES WHERE TABLE_TYPE = "VIEW"' );
@@ -1545,7 +1530,7 @@ abstract class DatabaseMysqlBase extends Database {
 	 * Differentiates between a TABLE and a VIEW.
 	 *
 	 * @param string $name Name of the TABLE/VIEW to test
-	 * @param string $prefix
+	 * @param string|null $prefix
 	 * @return bool
 	 * @since 1.22
 	 */
@@ -1574,4 +1559,7 @@ abstract class DatabaseMysqlBase extends Database {
 	}
 }
 
+/**
+ * @deprecated since 1.29
+ */
 class_alias( DatabaseMysqlBase::class, 'DatabaseMysqlBase' );

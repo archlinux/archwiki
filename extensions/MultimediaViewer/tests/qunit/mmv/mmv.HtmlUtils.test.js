@@ -80,13 +80,13 @@
 		utils.filterInvisible( $invisibleChildWithVisibleSiblings );
 
 		assert.ok( $visibleChild.has( 'span' ).length, 'visible child is not filtered' );
-		assert.ok( !$invisibleChild.has( 'span' ).length, 'invisible child is filtered' );
+		assert.notOk( $invisibleChild.has( 'span' ).length, 'invisible child is filtered' );
 		assert.ok( $invisibleChildInVisibleChild.has( 'span' ).length, 'visible child is not filtered...' );
-		assert.ok( !$invisibleChildInVisibleChild.has( 'abbr' ).length, '... but its invisible child is' );
-		assert.ok( !$visibleChildInInvisibleChild.has( 'span' ).length, 'invisible child is filtered...' );
-		assert.ok( !$visibleChildInInvisibleChild.has( 'abbr' ).length, '...and its children too' );
+		assert.notOk( $invisibleChildInVisibleChild.has( 'abbr' ).length, '... but its invisible child is' );
+		assert.notOk( $visibleChildInInvisibleChild.has( 'span' ).length, 'invisible child is filtered...' );
+		assert.notOk( $visibleChildInInvisibleChild.has( 'abbr' ).length, '...and its children too' );
 		assert.ok( $visibleChild.has( 'span' ).length, 'visible child is not filtered' );
-		assert.ok( !$invisibleChildWithVisibleSiblings.has( 'abbr' ).length, 'invisible sibling is filtered...' );
+		assert.notOk( $invisibleChildWithVisibleSiblings.has( 'abbr' ).length, 'invisible sibling is filtered...' );
 		assert.ok( $invisibleChildWithVisibleSiblings.has( 'span' ).length, '...but its visible siblings are not' );
 		assert.ok( $invisibleChildWithVisibleSiblings.has( 'b' ).length, '...but its visible siblings are not' );
 	} );
@@ -106,12 +106,12 @@
 		utils.whitelistHtml( $siblings, 'a' );
 
 		assert.ok( $whitelisted.has( 'a' ).length, 'Whitelisted elements are kept.' );
-		assert.ok( !$nonWhitelisted.has( 'span' ).length, 'Non-whitelisted elements are removed.' );
+		assert.notOk( $nonWhitelisted.has( 'span' ).length, 'Non-whitelisted elements are removed.' );
 		assert.ok( $nonWhitelistedInWhitelisted.has( 'a' ).length, 'Whitelisted parents are kept.' );
-		assert.ok( !$nonWhitelistedInWhitelisted.has( 'span' ).length, 'Non-whitelisted children are removed.' );
-		assert.ok( !$whitelistedInNonWhitelisted.has( 'span' ).length, 'Non-whitelisted parents are removed.' );
+		assert.notOk( $nonWhitelistedInWhitelisted.has( 'span' ).length, 'Non-whitelisted children are removed.' );
+		assert.notOk( $whitelistedInNonWhitelisted.has( 'span' ).length, 'Non-whitelisted parents are removed.' );
 		assert.ok( $whitelistedInNonWhitelisted.has( 'a' ).length, 'Whitelisted children are kept.' );
-		assert.ok( !$siblings.has( 'span' ).length, 'Non-whitelisted siblings are removed.' );
+		assert.notOk( $siblings.has( 'span' ).length, 'Non-whitelisted siblings are removed.' );
 		assert.ok( $siblings.has( 'a' ).length, 'Whitelisted siblings are kept.' );
 	} );
 
@@ -176,9 +176,9 @@
 	QUnit.test( 'isJQueryOrHTMLElement()', function ( assert ) {
 		var utils = new mw.mmv.HtmlUtils();
 
-		assert.ok( utils.isJQueryOrHTMLElement( $( '<span>' ) ), 'Recognizes jQuery objects correctly' );
-		assert.ok( utils.isJQueryOrHTMLElement( $( '<span>' ).get( 0 ) ), 'Recognizes HTMLElements correctly' );
-		assert.ok( !utils.isJQueryOrHTMLElement( '<span></span>' ), 'Recognizes jQuery objects correctly' );
+		assert.strictEqual( utils.isJQueryOrHTMLElement( $( '<span>' ) ), true, 'Recognizes jQuery objects correctly' );
+		assert.strictEqual( utils.isJQueryOrHTMLElement( $( '<span>' ).get( 0 ) ), true, 'Recognizes HTMLElements correctly' );
+		assert.strictEqual( utils.isJQueryOrHTMLElement( '<span></span>' ), false, 'Doesn\'t recognize HTML string' );
 	} );
 
 	QUnit.test( 'makeLinkText()', function ( assert ) {

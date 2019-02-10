@@ -7,14 +7,15 @@
 			"Mjbmr",
 			"ZxxZxxZ",
 			"Alirezaaa",
-			"Rtemis"
+			"Rtemis",
+			"Fatemi127"
 		]
 	},
 	"categorytree": "درخت رده",
 	"categorytree-portlet": "رده‌ها",
 	"categorytree-legend": "نمایش درخت رده",
 	"categorytree-desc": "ناوبری فعال [[Special:CategoryTree|ساختار رده‌ای]]",
-	"categorytree-header": "نام رده‌ای را وارد کنید تا محتویات آن به صورت درختی نمایش یابد. (نیازمندم جاوااسکریپت)",
+	"categorytree-header": "نام رده‌ای را وارد کنید تا محتویات آن به صورت درختی نمایش یابد. (نیازمند جاوااسکریپت)",
 	"categorytree-category": "رده:",
 	"categorytree-go": "نمایش درخت",
 	"categorytree-parents": "والدین",

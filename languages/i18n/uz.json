@@ -13,7 +13,9 @@
 			"6ahodir",
 			"Таржимон",
 			"Ximik1991",
-			"Bmansurov"
+			"Bmansurov",
+			"Fitoschido",
+			"ديفيد"
 		]
 	},
 	"tog-underline": "Havolaning tagiga chizish:",
@@ -888,7 +890,7 @@
 	"statistics-files": "Yuklangan fayllar",
 	"statistics-edits": "{{SITENAME}}dagi tahrirlarning umumiy soni",
 	"statistics-edits-average": "Oʻrtacha tahrirlar soni (sahifa boshiga)",
-	"statistics-users": "Qayd etilgan [[Special:ListUsers|foydalanuvchilar]]",
+	"statistics-users": "Qayd etilgan foydalanuvchilar",
 	"statistics-users-active": "Faol foydalanuvchilar",
 	"statistics-users-active-desc": "Oxirgi $1 kun ichida kamida bitta amal qilgan foydalanuvchilar",
 	"pageswithprop-prop": "Xossa nomi:",
@@ -1131,9 +1133,9 @@
 	"whatlinkshere": "Bogʻliq sahifalar",
 	"whatlinkshere-title": "„$1“ga bogʻlangan sahifalar",
 	"whatlinkshere-page": "Sahifa:",
-	"linkshere": "Quyidagi sahifalar '''[[:$1]]''' sahifasiga bogʻlangan:",
-	"nolinkshere": "'''[[:$1]]''' sahifasiga hech qaysi sahifa bog‘lanmagan.",
-	"nolinkshere-ns": "Tanlangan nomfazoda '''[[:$1]]'''ga bog‘langan sahifalar mavjud emas.",
+	"linkshere": "Quyidagi sahifalar '''$1''' sahifasiga bogʻlangan:",
+	"nolinkshere": "'''$1''' sahifasiga hech qaysi sahifa bog‘lanmagan.",
+	"nolinkshere-ns": "Tanlangan nomfazoda '''$2'''ga bog‘langan sahifalar mavjud emas.",
 	"isredirect": "yoʻnaltiruvchi sahifa",
 	"istemplate": "qoʻshimcha",
 	"isimage": "faylli havola",

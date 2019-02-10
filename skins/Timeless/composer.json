@@ -1,9 +1,10 @@
 {
 	"require-dev": {
 		"jakub-onderka/php-parallel-lint": "1.0.0",
-		"mediawiki/mediawiki-codesniffer": "18.0.0",
+		"mediawiki/mediawiki-codesniffer": "22.0.0",
 		"jakub-onderka/php-console-highlighter": "0.3.2",
-		"mediawiki/minus-x": "0.3.1"
+		"mediawiki/minus-x": "0.3.1",
+		"mediawiki/mediawiki-phan-config": "0.3.0"
 	},
 	"scripts": {
 		"fix": [
@@ -15,5 +16,8 @@
 			"phpcs -p -s",
 			"minus-x check ."
 		]
+	},
+	"extra": {
+		"phan-taint-check-plugin": "1.5.0"
 	}
 }

@@ -4,13 +4,14 @@
 			"Millosh",
 			"Rancher",
 			"Михајло Анђелковић",
-			"Milicevic01"
+			"Milicevic01",
+			"BadDog"
 		]
 	},
 	"inputbox-desc": "Омогући укључивање претходно дефинисаних HTML форми.",
 	"inputbox-error-no-type": "Нисте одредили тип кутије за унос коју правите.",
 	"inputbox-error-bad-type": "Тип „$1“ кутијице за унос података је непознат.\nМолимо вас да га промените на „create“, „comment“, „search“, „search2“ или „fulltext“.",
-	"inputbox-tryexact": "Покушај тачно",
+	"inputbox-tryexact": "Покушај да нађеш тачан упит",
 	"inputbox-searchfulltext": "Претражи цео текст",
 	"inputbox-createarticle": "Направи страницу",
 	"inputbox-postcomment": "Нови одељак",

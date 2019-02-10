@@ -26,7 +26,6 @@ require_once __DIR__ . '/../includes/PHPVersionCheck.php';
 wfEntryPointCheck( 'cli' );
 
 use MediaWiki\Shell\Shell;
-use Wikimedia\Rdbms\DBReplicationWaitError;
 
 /**
  * @defgroup MaintenanceArchive Maintenance archives
@@ -84,6 +83,9 @@ abstract class Maintenance {
 
 	// This is the list of arguments that were actually passed
 	protected $mArgs = [];
+
+	// Allow arbitrary options to be passed, or only specified ones?
+	protected $mAllowUnregisteredOptions = false;
 
 	// Name of the script currently running
 	protected $mSelf;
@@ -202,8 +204,23 @@ abstract class Maintenance {
 
 	/**
 	 * Do the actual work. All child classes will need to implement this
+	 *
+	 * @return bool|null|void True for success, false for failure. Not returning
+	 *   a value, or returning null, is also interpreted as success. Returning
+	 *   false for failure will cause doMaintenance.php to exit the process
+	 *   with a non-zero exit status.
 	 */
 	abstract public function execute();
+
+	/**
+	 * Checks to see if a particular option in supported.  Normally this means it
+	 * has been registered by the script via addOption.
+	 * @param string $name The name of the option
+	 * @return bool true if the option exists, false otherwise
+	 */
+	protected function supportsOption( $name ) {
+		return isset( $this->mParams[$name] );
+	}
 
 	/**
 	 * Add a parameter to the script. Will be displayed on --help
@@ -233,8 +250,8 @@ abstract class Maintenance {
 	}
 
 	/**
-	 * Checks to see if a particular param exists.
-	 * @param string $name The name of the param
+	 * Checks to see if a particular option exists.
+	 * @param string $name The name of the option
 	 * @return bool
 	 */
 	protected function hasOption( $name ) {
@@ -248,7 +265,7 @@ abstract class Maintenance {
 	 * this will return an array.
 	 *
 	 * @param string $name The name of the param
-	 * @param mixed $default Anything you want, default null
+	 * @param mixed|null $default Anything you want, default null
 	 * @return mixed
 	 */
 	protected function getOption( $name, $default = null ) {
@@ -285,6 +302,15 @@ abstract class Maintenance {
 	}
 
 	/**
+	 * Sets whether to allow unregistered options, which are options passed to
+	 * a script that do not match an expected parameter.
+	 * @param bool $allow Should we allow?
+	 */
+	protected function setAllowUnregisteredOptions( $allow ) {
+		$this->mAllowUnregisteredOptions = $allow;
+	}
+
+	/**
 	 * Set the description text.
 	 * @param string $text The text of the description
 	 */
@@ -304,7 +330,7 @@ abstract class Maintenance {
 	/**
 	 * Get an argument.
 	 * @param int $argId The integer value (from zero) for the arg
-	 * @param mixed $default The default if it doesn't exist
+	 * @param mixed|null $default The default if it doesn't exist
 	 * @return mixed
 	 */
 	protected function getArg( $argId = 0, $default = null ) {
@@ -354,7 +380,7 @@ abstract class Maintenance {
 
 	/**
 	 * Return input from stdin.
-	 * @param int $len The number of bytes to read. If null, just return the handle.
+	 * @param int|null $len The number of bytes to read. If null, just return the handle.
 	 *   Maintenance::STDIN_ALL returns the full length
 	 * @return mixed
 	 */
@@ -383,7 +409,7 @@ abstract class Maintenance {
 	 * Throw some output to the user. Scripts can call this with no fears,
 	 * as we handle all --quiet stuff here
 	 * @param string $out The text to show to the user
-	 * @param mixed $channel Unique identifier for the channel. See function outputChanneled.
+	 * @param mixed|null $channel Unique identifier for the channel. See function outputChanneled.
 	 */
 	protected function output( $out, $channel = null ) {
 		// This is sometimes called very early, before Setup.php is included.
@@ -459,7 +485,7 @@ abstract class Maintenance {
 	 * same channel are concatenated, but any intervening messages in another
 	 * channel start a new line.
 	 * @param string $msg The message without trailing newline
-	 * @param string $channel Channel identifier or null for no
+	 * @param string|null $channel Channel identifier or null for no
 	 *     channel. Channel comparison uses ===.
 	 */
 	public function outputChanneled( $msg, $channel = null ) {
@@ -506,7 +532,7 @@ abstract class Maintenance {
 		# Generic (non script dependant) options:
 
 		$this->addOption( 'help', 'Display this help message', false, false, 'h' );
-		$this->addOption( 'quiet', 'Whether to supress non-error output', false, false, 'q' );
+		$this->addOption( 'quiet', 'Whether to suppress non-error output', false, false, 'q' );
 		$this->addOption( 'conf', 'Location of LocalSettings.php, if not default', false, true );
 		$this->addOption( 'wiki', 'For specifying the wiki ID', false, true );
 		$this->addOption( 'globals', 'Output globals at the end of processing for debugging' );
@@ -533,6 +559,7 @@ abstract class Maintenance {
 		if ( $this->getDbType() > 0 ) {
 			$this->addOption( 'dbuser', 'The DB user to use for this script', false, true );
 			$this->addOption( 'dbpass', 'The password to use for this script', false, true );
+			$this->addOption( 'dbgroupdefault', 'The default DB group to use.', false, true );
 		}
 
 		# Save additional script dependant options to display
@@ -655,7 +682,7 @@ abstract class Maintenance {
 	 * Run a child maintenance script. Pass all of the current arguments
 	 * to it.
 	 * @param string $maintClass A name of a child maintenance class
-	 * @param string $classFile Full path of where the child is
+	 * @param string|null $classFile Full path of where the child is
 	 * @return Maintenance
 	 */
 	public function runChild( $maintClass, $classFile = null ) {
@@ -916,9 +943,9 @@ abstract class Maintenance {
 	 * $mOptions becomes an array with keys set to the option names
 	 * $mArgs becomes a zero-based array containing the non-option arguments
 	 *
-	 * @param string $self The name of the script, if any
-	 * @param array $opts An array of options, in form of key=>value
-	 * @param array $args An array of command line arguments
+	 * @param string|null $self The name of the script, if any
+	 * @param array|null $opts An array of options, in form of key=>value
+	 * @param array|null $args An array of command line arguments
 	 */
 	public function loadParamsAndArgs( $self = null, $opts = null, $args = null ) {
 		# If we were given opts or args, set those and return early
@@ -966,6 +993,15 @@ abstract class Maintenance {
 			if ( $info['require'] && !$this->hasArg( $k ) ) {
 				$this->error( 'Argument <' . $info['name'] . '> required!' );
 				$die = true;
+			}
+		}
+		if ( !$this->mAllowUnregisteredOptions ) {
+			# Check for unexpected options
+			foreach ( $this->mOptions as $opt => $val ) {
+				if ( !$this->supportsOption( $opt ) ) {
+					$this->error( "Unexpected option $opt!" );
+					$die = true;
+				}
 			}
 		}
 
@@ -1112,8 +1148,8 @@ abstract class Maintenance {
 	 * Handle some last-minute setup here.
 	 */
 	public function finalSetup() {
-		global $wgCommandLineMode, $wgShowSQLErrors, $wgServer;
-		global $wgDBadminuser, $wgDBadminpassword;
+		global $wgCommandLineMode, $wgServer, $wgShowExceptionDetails, $wgShowHostnames;
+		global $wgDBadminuser, $wgDBadminpassword, $wgDBDefaultGroup;
 		global $wgDBuser, $wgDBpassword, $wgDBservers, $wgLBFactoryConf;
 
 		# Turn off output buffering again, it might have been turned on in the settings files
@@ -1134,6 +1170,11 @@ abstract class Maintenance {
 		}
 		if ( $this->mDbPass ) {
 			$wgDBadminpassword = $this->mDbPass;
+		}
+		if ( $this->hasOption( 'dbgroupdefault' ) ) {
+			$wgDBDefaultGroup = $this->getOption( 'dbgroupdefault', null );
+
+			MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->destroy();
 		}
 
 		if ( $this->getDbType() == self::DB_ADMIN && isset( $wgDBadminuser ) ) {
@@ -1166,7 +1207,8 @@ abstract class Maintenance {
 
 		$this->afterFinalSetup();
 
-		$wgShowSQLErrors = true;
+		$wgShowExceptionDetails = true;
+		$wgShowHostnames = true;
 
 		Wikimedia\suppressWarnings();
 		set_time_limit( 0 );
@@ -1350,17 +1392,12 @@ abstract class Maintenance {
 	 */
 	protected function commitTransaction( IDatabase $dbw, $fname ) {
 		$dbw->commit( $fname );
-		try {
-			$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
-			$lbFactory->waitForReplication(
-				[ 'timeout' => 30, 'ifWritesSince' => $this->lastReplicationWait ]
-			);
-			$this->lastReplicationWait = microtime( true );
-
-			return true;
-		} catch ( DBReplicationWaitError $e ) {
-			return false;
-		}
+		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
+		$waitSucceeded = $lbFactory->waitForReplication(
+			[ 'timeout' => 30, 'ifWritesSince' => $this->lastReplicationWait ]
+		);
+		$this->lastReplicationWait = microtime( true );
+		return $waitSucceeded;
 	}
 
 	/**
@@ -1595,6 +1632,9 @@ abstract class Maintenance {
 		if ( wfIsWindows() ) {
 			return $default;
 		}
+		if ( Shell::isDisabled() ) {
+			return $default;
+		}
 		// It's possible to get the screen size with VT-100 terminal escapes,
 		// but reading the responses is not possible without setting raw mode
 		// (unless you want to require the user to press enter), and that
@@ -1629,7 +1669,6 @@ class FakeMaintenance extends Maintenance {
 	protected $mSelf = "FakeMaintenanceScript";
 
 	public function execute() {
-		return;
 	}
 }
 

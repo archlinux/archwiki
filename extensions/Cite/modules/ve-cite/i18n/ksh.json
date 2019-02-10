@@ -4,12 +4,10 @@
 			"Purodha"
 		]
 	},
-	"visualeditor-cite-tool-definition.json": "noll",
 	"visualeditor-cite-tool-name-book": "Bohch",
 	"visualeditor-cite-tool-name-journal": "Zeijschreff",
 	"visualeditor-cite-tool-name-news": "Neujeschkeijte",
 	"visualeditor-cite-tool-name-web": "Wäbßaijt",
-	"cite-tool-definition.json": "noll",
 	"cite-ve-dialog-reference-editing-reused": "Heh dä Bezoch es $1 {{PLURAL:$1|mohl}} op heh dä Sigg ze fenge.",
 	"cite-ve-dialog-reference-options-group-label": "Nemm heh di Jropp",
 	"cite-ve-dialog-reference-options-section": "Ußwahle",

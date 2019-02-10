@@ -39,6 +39,8 @@ class ResourceLoaderImageModule extends ResourceLoaderModule {
 	protected $origin = self::ORIGIN_CORE_SITEWIDE;
 
 	protected $images = [];
+	protected $defaultColor = null;
+	protected $useDataURI = true;
 	protected $variants = [];
 	protected $prefix = null;
 	protected $selectorWithoutVariant = '.{prefix}-{name}';
@@ -50,7 +52,7 @@ class ResourceLoaderImageModule extends ResourceLoaderModule {
 	 *
 	 * @param array $options List of options; if not given or empty, an empty module will be
 	 *     constructed
-	 * @param string $localBasePath Base path to prepend to all local paths in $options. Defaults
+	 * @param string|null $localBasePath Base path to prepend to all local paths in $options. Defaults
 	 *     to $IP
 	 *
 	 * Below is a description for the $options array:
@@ -182,6 +184,10 @@ class ResourceLoaderImageModule extends ResourceLoaderModule {
 					$this->{$member} = $option;
 					break;
 
+				case 'useDataURI':
+					$this->{$member} = (bool)$option;
+					break;
+				case 'defaultColor':
 				case 'prefix':
 				case 'selectorWithoutVariant':
 				case 'selectorWithVariant':
@@ -224,7 +230,7 @@ class ResourceLoaderImageModule extends ResourceLoaderModule {
 	public function getImage( $name, ResourceLoaderContext $context ) {
 		$this->loadFromDefinition();
 		$images = $this->getImages( $context );
-		return isset( $images[$name] ) ? $images[$name] : null;
+		return $images[$name] ?? null;
 	}
 
 	/**
@@ -241,9 +247,7 @@ class ResourceLoaderImageModule extends ResourceLoaderModule {
 		if ( !isset( $this->imageObjects[$skin] ) ) {
 			$this->imageObjects[$skin] = [];
 			if ( !isset( $this->images[$skin] ) ) {
-				$this->images[$skin] = isset( $this->images['default'] ) ?
-					$this->images['default'] :
-					[];
+				$this->images[$skin] = $this->images['default'] ?? [];
 			}
 			foreach ( $this->images[$skin] as $name => $options ) {
 				$fileDescriptor = is_string( $options ) ? $options : $options['file'];
@@ -266,7 +270,8 @@ class ResourceLoaderImageModule extends ResourceLoaderModule {
 					$this->getName(),
 					$fileDescriptor,
 					$this->localBasePath,
-					$variantConfig
+					$variantConfig,
+					$this->defaultColor
 				);
 				$this->imageObjects[$skin][$image->getName()] = $image;
 			}
@@ -290,9 +295,7 @@ class ResourceLoaderImageModule extends ResourceLoaderModule {
 		if ( !isset( $this->globalVariants[$skin] ) ) {
 			$this->globalVariants[$skin] = [];
 			if ( !isset( $this->variants[$skin] ) ) {
-				$this->variants[$skin] = isset( $this->variants['default'] ) ?
-					$this->variants['default'] :
-					[];
+				$this->variants[$skin] = $this->variants['default'] ?? [];
 			}
 			foreach ( $this->variants[$skin] as $name => $config ) {
 				if ( isset( $config['global'] ) && $config['global'] ) {
@@ -359,7 +362,7 @@ class ResourceLoaderImageModule extends ResourceLoaderModule {
 		$script,
 		$variant = null
 	) {
-		$imageDataUri = $image->getDataUri( $context, $variant, 'original' );
+		$imageDataUri = $this->useDataURI ? $image->getDataUri( $context, $variant, 'original' ) : false;
 		$primaryUrl = $imageDataUri ?: $image->getUrl( $context, $script, $variant, 'original' );
 		$declarations = $this->getCssDeclarations(
 			$primaryUrl,
@@ -430,7 +433,7 @@ class ResourceLoaderImageModule extends ResourceLoaderModule {
 	 * @param ResourceLoaderContext $context
 	 * @return array
 	 */
-	protected function getFileHashes( ResourceLoaderContext $context ) {
+	private function getFileHashes( ResourceLoaderContext $context ) {
 		$this->loadFromDefinition();
 		$files = [];
 		foreach ( $this->getImages( $context ) as $name => $image ) {
@@ -444,7 +447,7 @@ class ResourceLoaderImageModule extends ResourceLoaderModule {
 	 * Extract a local base path from module definition information.
 	 *
 	 * @param array $options Module definition
-	 * @param string $localBasePath Path to use if not provided in module definition. Defaults
+	 * @param string|null $localBasePath Path to use if not provided in module definition. Defaults
 	 *     to $IP
 	 * @return string Local base path
 	 */

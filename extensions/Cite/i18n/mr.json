@@ -13,7 +13,7 @@
 	"apihelp-query+references-summary": "दिलेल्या पानांच्या संदर्भांची सांख्यीकी दाखवा",
 	"apihelp-query+references-example-1": "<kbd>अॅल्बर्ट आइन्स्टाइन</kbd> ला दिलेले संदर्भ",
 	"apierror-citestoragedisabled": "अवतरण जोडणी संदर्भ साठवून ठेवणे चालू केलेले नाही",
-	"cite-desc": "<nowiki><ref[ name=id]></nowiki> व <nowiki><references/></nowiki> येथे संदर्भ देण्यासाठी वापरण्यात येणाऱ्या टॅग्ज जोडल्या जातील.",
+	"cite-desc": "<code><nowiki><ref[ name=id]></nowiki></code> व <code><nowiki><references/></nowiki></code> येथे संदर्भ देण्यासाठी वापरण्यात येणाऱ्या टॅग्ज जोडल्या जातील.",
 	"cite_error": "चुका उधृत करा: $1",
 	"cite_error_ref_numeric_key": "<code>&lt;ref&gt;</code> चुकीचा कोड; नाव हे पूर्णांकी संख्या असू शकत नाही, कृपया वर्णनात्मक शीर्षक द्या",
 	"cite_error_ref_no_key": "<code>&lt;ref&gt;</code> चुकीचा कोड; रिकाम्या संदर्भांना नाव असणे गरजेचे आहे",

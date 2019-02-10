@@ -46,6 +46,7 @@
 	"cite-ve-referenceslist-isempty": "Rühma \"$1\" viited, mida selles loendis näidata, puuduvad sellel leheküljel.",
 	"cite-ve-referenceslist-isempty-default": "Viited, mida selles loendis näidata, puuduvad sellel leheküljel.",
 	"cite-ve-referenceslist-missingref": "Selle viite kirjeldus on mallis või muul moel genereeritud plokis ning praegu saab seda redigeerida vaid lähteteksti režiimis.",
+	"cite-ve-referenceslist-missingref-in-list": "See viide on määratletud mallis või muus genereeritud plokis ning praegu saab seda eelvaadelda ainult lähteteksti režiimis.",
 	"cite-ve-referenceslist-missingreflist": "Selle viiteloendi tekitab mall ja praegu saab seda redigeerida ainult lähteteksti režiimis.",
 	"cite-ve-toolbar-group-label": "Viide",
 	"cite-ve-othergroup-item": "Viide: {{lc:$1}}",

@@ -31,6 +31,11 @@
  */
 
 /**
+ * @class mw.SafeStorage
+ * <https://doc.wikimedia.org/mediawiki-core/master/js/#!/api/mw.SafeStorage>
+ */
+
+/**
  * @class HTMLElement
  * An HTML element.
  */

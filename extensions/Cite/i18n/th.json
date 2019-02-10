@@ -5,7 +5,7 @@
 			"Passawuth"
 		]
 	},
-	"cite-desc": "เพิ่มป้ายระบุ <nowiki><ref[ name=id]></nowiki> และ <nowiki><references /></nowiki> สำหรับการอ้างอิง",
+	"cite-desc": "เพิ่มป้ายระบุ <code><nowiki><ref[ name=id]></nowiki></code> และ <nowiki><references /></nowiki> สำหรับการอ้างอิง",
 	"cite_error": "อ้างอิงผิดพลาด: $1",
 	"cite_error_ref_numeric_key": "ป้ายระบุ <code>&lt;ref&gt;</code> ไม่ถูกต้อง\nชื่อไม่สามารถเป็นจำนวนเต็มอย่างง่าย ใช้ชื่อเรื่องพรรณนา",
 	"cite_error_ref_no_key": "ป้ายระบุ <code>&lt;ref&gt;</code> ไม่ถูกต้อง\nอ้างอิงที่ไม่มีเนื้อหาต้องมีชื่อ",

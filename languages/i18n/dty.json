@@ -7,7 +7,8 @@
 			"राम प्रसाद जोशी",
 			"Macofe",
 			"Matma Rex",
-			"Nirajan pant"
+			"Nirajan pant",
+			"Fitoschido"
 		]
 	},
 	"tog-underline": "सम्बन्ध निम्न रेखाङ्कन:",
@@ -1083,7 +1084,7 @@
 	"statistics-header-pages": "पानानको तथ्याङ्क",
 	"statistics-header-edits": "सम्पादनहरूको तथ्याङ्क",
 	"statistics-files": "अपलोड गर्याका फाइलहरू",
-	"statistics-users": "दर्ता भयाका [[Special:ListUsers|प्रयोगकर्ताहरू]]",
+	"statistics-users": "दर्ता भयाऽ प्रयोगकर्ताअन",
 	"statistics-users-active": "सक्रिय प्रयोगकर्ताहरू",
 	"statistics-users-active-desc": "प्रयोगकर्ताहरू जो {{PLURAL:$1|बितेको एक दिन|बितेका $1 दिनहरू}} बठे सक्रिय छन्",
 	"nbytes": "$1 {{PLURAL:$1|बाइट|बाइटहरू}}",
@@ -1192,8 +1193,8 @@
 	"whatlinkshere": "याँखाइ कि जोणीन्छ",
 	"whatlinkshere-title": "$1 सित जोडियाऽ पन्नाअन",
 	"whatlinkshere-page": "पानो",
-	"linkshere": "निम्न पानाहरू '''[[:$1]]''' मी जुडन्छ :",
-	"nolinkshere-ns": "चुनियाको नामस्थानमी '''[[:$1]]''' सित जुड्न्या पानाहरू नाइथिन्।",
+	"linkshere": "निम्न पानाहरू '''$2''' मी जुडन्छ :",
+	"nolinkshere-ns": "चुनियाको नामस्थानमी '''$2''' सित जुड्न्या पानाहरू नाइथिन्।",
 	"isredirect": "अनुप्रेषित पानो",
 	"istemplate": "पारदर्शिता",
 	"isimage": "फाइल लिङ्क",
@@ -1396,6 +1397,7 @@
 	"redirect-revision": "पन्ना संशोधन",
 	"redirect-file": "फाइलनाउँ",
 	"specialpages": "खास पन्नाअन",
+	"specialpages-note-restricted": "* साधारण खास पानाहरू।\n* <span class=\"mw-specialpagerestricted\">निषेधित खास पानाहरू।</span>",
 	"specialpages-group-changes": "अल्लैका परिवर्तन लगहरू",
 	"tags": "मान्य परिवर्तन ट्यागहरू",
 	"tag-filter": "[[Special:Tags|पुछड]] छानिन्या",

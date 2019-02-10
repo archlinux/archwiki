@@ -1,8 +1,13 @@
 @import '../variables.less';
 
-/* Handle and position Echo icons */
-
 @media screen {
+	.mw-echo-alert {
+		display: block;
+		padding: 0.25em 1em;
+		margin: 0 -1em;
+	}
+
+	/* Handle and position Echo icons */
 
 	#personal h2,
 	#personal-extra,
@@ -10,6 +15,7 @@
 	#personal-extra li {
 		display: inline-block;
 	}
+
 	#personal-extra {
 		// Position and keep it from randomly overflowing massively for no apparent reason
 		margin: 0.7em 0 -2em 0;
@@ -20,6 +26,7 @@
 			margin: 0 -1em 0 0;
 			padding: 0;
 		}
+
 		li {
 			margin: 0 0.75em 0 0;
 			float: left;
@@ -27,10 +34,18 @@
 	}
 
 	@media ( min-width: @desktop-small-floor ) {
+		// Prevent echo badge labels from overflowing over this
+		// since they're just color:transparent and still right there
+		#personal {
+			position: relative;
+			z-index: 5;
+		}
+
 		#personal-extra {
 			float: left;
 			margin-left: -4.5em;
 		}
+
 		.extension-icons {
 			#p-search {
 				margin-right: 21em;
@@ -48,6 +63,7 @@
 		.extension-icons #p-search {
 			margin-right: 11em;
 		}
+
 		#personal-extra {
 			margin-left: -2.5em;
 		}
@@ -58,6 +74,7 @@
 			#user-tools {
 				width: auto;
 			}
+
 			.color-middle {
 				margin-right: @column-left-size + 2 * @content-padding + 4em;
 			}
@@ -68,6 +85,7 @@
 		.mw-echo-ui-notificationBadgeButtonPopupWidget {
 			z-index: 2;
 		}
+
 		#personal-extra {
 			position: absolute;
 			top: 0.9em;
@@ -75,6 +93,32 @@
 
 			li {
 				margin-right: 1.25em;
+			}
+		}
+
+		/* Temporary hack:
+		 * Make notifications visible. !important is for overriding echo's inline styles.
+		 * Remove all of this once the underlying OOUI issue is fixed in general for mobile displays.
+		 */
+		.mw-echo-ui-overlay {
+			margin: 0 10px;
+
+			.oo-ui-popupWidget-anchored > .oo-ui-popupWidget-anchor {
+				display: none;
+			}
+
+			.mw-echo-ui-notificationBadgeButtonPopupWidget-popup {
+				left: 0 !important;
+				width: 100%;
+
+				.oo-ui-popupWidget-popup {
+					width: initial !important;
+					max-width: 500px;
+
+					.oo-ui-clippableElement-clippable {
+						width: 100% !important;
+					}
+				}
 			}
 		}
 	}

@@ -7,12 +7,10 @@
 			"Prevodim"
 		]
 	},
-	"visualeditor-cite-tool-definition.json": "bez vrednosti",
 	"visualeditor-cite-tool-name-book": "Knjiga",
 	"visualeditor-cite-tool-name-journal": "Žurnal",
 	"visualeditor-cite-tool-name-news": "Novine",
 	"visualeditor-cite-tool-name-web": "Veb-sajt",
-	"cite-tool-definition.json": "bez vrednosti",
 	"cite-ve-changedesc-ref-group-both": "Grupa referenci promenjena sa grupe „$1” na grupu „$2”.",
 	"cite-ve-changedesc-ref-group-from": "Grupa referenci promenjena sa grupe „$1” na opštu grupu",
 	"cite-ve-changedesc-ref-group-to": "Grupa referenci promenjana sa opšte grupe na grupu „$1”",

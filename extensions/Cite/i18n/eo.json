@@ -8,7 +8,7 @@
 			"Nemo bis"
 		]
 	},
-	"cite-desc": "Aldonas etikedojn <nowiki><ref[ name=id]></nowiki> kaj <nowiki><references/></nowiki> por citaĵoj",
+	"cite-desc": "Aldonas etikedojn <code><nowiki><ref[ name=id]></nowiki></code> kaj <code><nowiki><references/></nowiki></code> por citaĵoj",
 	"cite_error": "Citaĵa eraro: $1",
 	"cite_error_ref_numeric_key": "Malvalida etikedo <code>&lt;ref&gt;</code>;\nnomo ne povas esti simpla entjero. Uzu priskriban titolon.",
 	"cite_error_ref_no_key": "Malvalida etikedo <code>&lt;ref&gt;</code>;\n''ref'' kun nenia enhava nomo devas havi nomon",

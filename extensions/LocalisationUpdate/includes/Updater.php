@@ -127,15 +127,24 @@ class Updater {
 		Finder $finder,
 		ReaderFactory $readerFactory,
 		FetcherFactory $fetcherFactory,
-		array $repos
+		array $repos,
+		$logger
 	) {
 		$components = $finder->getComponents();
 
 		$updatedMessages = [];
 
 		foreach ( $components as $key => $info ) {
+			$logger->logInfo( "Updating component $key" );
+
 			$originFiles = $this->fetchFiles( $fetcherFactory, $info['orig'] );
-			$remoteFiles = $this->fetchFiles( $fetcherFactory, $this->expandRemotePath( $info, $repos ) );
+			$remotePath = $this->expandRemotePath( $info, $repos );
+			try {
+				$remoteFiles = $this->fetchFiles( $fetcherFactory, $remotePath );
+			} catch ( \Exception $e ) {
+				$logger->logError( __METHOD__ . ": Unable to fetch messages from $remotePath" );
+				continue;
+			}
 
 			if ( $remoteFiles === [] ) {
 				// Small optimization: if nothing to compare with, skip

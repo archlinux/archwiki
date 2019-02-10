@@ -4,7 +4,7 @@
 			"Liangent"
 		]
 	},
-	"cite-desc": "Barcasbhoi <nowiki><ref[ name=id]></nowiki> va <nowiki><references/></nowiki>  baroi jod kardan, izofa mekunad",
+	"cite-desc": "Barcasbhoi <code><nowiki><ref[ name=id]></nowiki></code> va <code><nowiki><references/></nowiki></code>  baroi jod kardan, izofa mekunad",
 	"cite_error": "Xatoi jodkard: $1",
 	"cite_error_ref_numeric_key": "Barcasbi <code>&lt;ref&gt;</code> ƣajrimiçoz; nom nametavonad jak adad boşad, unvoni vozehtarero istifoda kuned",
 	"cite_error_ref_no_key": "Barcasbi <code>&lt;ref&gt;</code> ƣajrimiçoz; jodkardho biduni mūhtavo bojad nom doşta boşand",

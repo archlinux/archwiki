@@ -1,8 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"Mehtab ahmed"
+			"Mehtab ahmed",
+			"Tweety"
 		]
 	},
-	"gadgetusage-usercount": "واپرائيندڙن جي تعداد"
+	"prefs-gadgets": "اوزار",
+	"gadgets": "اوزار",
+	"gadgetusage-gadget": "اوزار",
+	"gadgetusage-usercount": "واپرائيندڙن جي تعداد",
+	"gadgets-title": "اوزار"
 }

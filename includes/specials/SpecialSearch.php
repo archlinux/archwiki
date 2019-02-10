@@ -77,6 +77,11 @@ class SpecialSearch extends SpecialPage {
 	protected $fulltext;
 
 	/**
+	 * @var string
+	 */
+	protected $sort;
+
+	/**
 	 * @var bool
 	 */
 	protected $runSuggestion = true;
@@ -194,6 +199,14 @@ class SpecialSearch extends SpecialPage {
 		$request = $this->getRequest();
 		list( $this->limit, $this->offset ) = $request->getLimitOffset( 20, '' );
 		$this->mPrefix = $request->getVal( 'prefix', '' );
+		if ( $this->mPrefix !== '' ) {
+			$this->setExtraParam( 'prefix', $this->mPrefix );
+		}
+
+		$this->sort = $request->getVal( 'sort', SearchEngine::DEFAULT_SORT );
+		if ( $this->sort !== SearchEngine::DEFAULT_SORT ) {
+			$this->setExtraParam( 'sort', $this->sort );
+		}
 
 		$user = $this->getUser();
 
@@ -259,15 +272,13 @@ class SpecialSearch extends SpecialPage {
 			return null;
 		}
 
-		return $url === null ? $title->getFullUrlForRedirect() : $url;
+		return $url ?? $title->getFullUrlForRedirect();
 	}
 
 	/**
 	 * @param string $term
 	 */
 	public function showResults( $term ) {
-		global $wgContLang;
-
 		if ( $this->searchEngineType !== null ) {
 			$this->setExtraParam( 'srbackend', $this->searchEngineType );
 		}
@@ -278,7 +289,8 @@ class SpecialSearch extends SpecialPage {
 			$this->searchConfig,
 			$this->getSearchProfiles()
 		);
-		$filePrefix = $wgContLang->getFormattedNsText( NS_FILE ) . ':';
+		$filePrefix = MediaWikiServices::getInstance()->getContentLanguage()->
+			getFormattedNsText( NS_FILE ) . ':';
 		if ( trim( $term ) === '' || $filePrefix === trim( $term ) ) {
 			// Empty query -- straight view of search form
 			if ( !Hooks::run( 'SpecialSearchResultsPrepend', [ $this, $out, $term ] ) ) {
@@ -299,8 +311,8 @@ class SpecialSearch extends SpecialPage {
 		$search->setFeatureData( 'rewrite', $this->runSuggestion );
 		$search->setLimitOffset( $this->limit, $this->offset );
 		$search->setNamespaces( $this->namespaces );
+		$search->setSort( $this->sort );
 		$search->prefix = $this->mPrefix;
-		$term = $search->transformSearchTerm( $term );
 
 		Hooks::run( 'SpecialSearchSetupEngine', [ $this, $this->profile, $search ] );
 		if ( !Hooks::run( 'SpecialSearchResultsPrepend', [ $this, $out, $term ] ) ) {
@@ -312,9 +324,20 @@ class SpecialSearch extends SpecialPage {
 		$showSuggestion = $title === null || !$title->isKnown();
 		$search->setShowSuggestion( $showSuggestion );
 
-		// fetch search results
-		$rewritten = $search->replacePrefixes( $term );
+		$rewritten = $search->transformSearchTerm( $term );
+		if ( $rewritten !== $term ) {
+			$term = $rewritten;
+			wfDeprecated( 'SearchEngine::transformSearchTerm() (overridden by ' .
+				get_class( $search ) . ')', '1.32' );
+		}
 
+		$rewritten = $search->replacePrefixes( $term );
+		if ( $rewritten !== $term ) {
+			wfDeprecated( 'SearchEngine::replacePrefixes() (overridden by ' .
+						  get_class( $search ) . ')', '1.32' );
+		}
+
+		// fetch search results
 		$titleMatches = $search->searchTitle( $rewritten );
 		$textMatches = $search->searchText( $rewritten );
 
@@ -531,6 +554,28 @@ class SpecialSearch extends SpecialPage {
 			);
 		}
 
+		if ( $this->mPrefix !== '' ) {
+			$subtitle = $this->msg( 'search-filter-title-prefix' )->plaintextParams( $this->mPrefix );
+			$params = $this->powerSearchOptions();
+			unset( $params['prefix'] );
+			$params += [
+				'search' => $term,
+				'fulltext' => 1,
+			];
+
+			$subtitle .= ' (';
+			$subtitle .= Xml::element(
+				'a',
+				[
+					'href' => $this->getPageTitle()->getLocalURL( $params ),
+					'title' => $this->msg( 'search-filter-title-prefix-reset' )->text(),
+				],
+				$this->msg( 'search-filter-title-prefix-reset' )->text()
+			);
+			$subtitle .= ')';
+			$out->setSubtitle( $subtitle );
+		}
+
 		$out->addJsConfigVars( [ 'searchTerm' => $term ] );
 		$out->addModules( 'mediawiki.special.search' );
 		$out->addModuleStyles( [
@@ -675,9 +720,10 @@ class SpecialSearch extends SpecialPage {
 	 */
 	public function getSearchEngine() {
 		if ( $this->searchEngine === null ) {
+			$services = MediaWikiServices::getInstance();
 			$this->searchEngine = $this->searchEngineType ?
-				MediaWikiServices::getInstance()->getSearchEngineFactory()->create( $this->searchEngineType ) :
-				MediaWikiServices::getInstance()->newSearchEngine();
+				$services->getSearchEngineFactory()->create( $this->searchEngineType ) :
+				$services->newSearchEngine();
 		}
 
 		return $this->searchEngine;
@@ -710,6 +756,18 @@ class SpecialSearch extends SpecialPage {
 	 */
 	public function setExtraParam( $key, $value ) {
 		$this->extraParams[$key] = $value;
+	}
+
+	/**
+	 * The prefix value send to Special:Search using the 'prefix' URI param
+	 * It means that the user is willing to search for pages whose titles start with
+	 * this prefix value.
+	 * (Used by the InputBox extension)
+	 *
+	 * @return string
+	 */
+	public function getPrefix() {
+		return $this->mPrefix;
 	}
 
 	protected function getGroupName() {

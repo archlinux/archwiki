@@ -12,7 +12,7 @@
 	"apihelp-query+references-description": "Întoarce o reprezentare a referințelor asociate cu paginile date.",
 	"apihelp-query+references-summary": "Întoarce o reprezentare a referințelor asociate cu paginile date.",
 	"apihelp-query+references-example-1": "Referințe asociate cu <kbd>Albert Einstein</kbd>.",
-	"cite-desc": "Adaugă etichete <nowiki><ref[ name=id]></nowiki> și <nowiki><references/></nowiki>, pentru citări",
+	"cite-desc": "Adaugă etichete <code><nowiki><ref[ name=id]></nowiki></code> și <code><nowiki><references/></nowiki></code>, pentru citări",
 	"cite_error": "Eroare la citare: $1",
 	"cite_error_ref_numeric_key": "Etichetă <code>&lt;ref&gt;</code> invalidă;\nnumele nu poate fi un număr. Folosește un titlu descriptiv",
 	"cite_error_ref_no_key": "Eticheta de început <code>&lt;ref&gt;</code> este malformată sau are un nume greșit",

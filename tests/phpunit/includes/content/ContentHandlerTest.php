@@ -1,5 +1,6 @@
 <?php
 use MediaWiki\MediaWikiServices;
+use Wikimedia\TestingAccessWrapper;
 
 /**
  * @group ContentHandler
@@ -8,7 +9,6 @@ use MediaWiki\MediaWikiServices;
 class ContentHandlerTest extends MediaWikiTestCase {
 
 	protected function setUp() {
-		global $wgContLang;
 		parent::setUp();
 
 		$this->setMwGlobals( [
@@ -34,20 +34,12 @@ class ContentHandlerTest extends MediaWikiTestCase {
 			],
 		] );
 
-		// Reset namespace cache
-		MWNamespace::clearCaches();
-		$wgContLang->resetNamespaces();
-		// And LinkCache
+		// Reset LinkCache
 		MediaWikiServices::getInstance()->resetServiceForTesting( 'LinkCache' );
 	}
 
 	protected function tearDown() {
-		global $wgContLang;
-
-		// Reset namespace cache
-		MWNamespace::clearCaches();
-		$wgContLang->resetNamespaces();
-		// And LinkCache
+		// Reset LinkCache
 		MediaWikiServices::getInstance()->resetServiceForTesting( 'LinkCache' );
 
 		parent::tearDown();
@@ -101,7 +93,7 @@ class ContentHandlerTest extends MediaWikiTestCase {
 	 */
 	public function testGetForTitle( $title, $expectedContentModel ) {
 		$title = Title::newFromText( $title );
-		LinkCache::singleton()->addBadLinkObj( $title );
+		MediaWikiServices::getInstance()->getLinkCache()->addBadLinkObj( $title );
 		$handler = ContentHandler::getForTitle( $title );
 		$this->assertEquals( $expectedContentModel, $handler->getModelID() );
 	}
@@ -158,7 +150,7 @@ class ContentHandlerTest extends MediaWikiTestCase {
 	public function testGetPageLanguage( $title, $expected ) {
 		if ( is_string( $title ) ) {
 			$title = Title::newFromText( $title );
-			LinkCache::singleton()->addBadLinkObj( $title );
+			MediaWikiServices::getInstance()->getLinkCache()->addBadLinkObj( $title );
 		}
 
 		$expected = wfGetLangObj( $expected );
@@ -308,7 +300,7 @@ class ContentHandlerTest extends MediaWikiTestCase {
 		$expectedModelId, $expectedNativeData, $shouldFail
 	) {
 		$title = Title::newFromText( $title );
-		LinkCache::singleton()->addBadLinkObj( $title );
+		MediaWikiServices::getInstance()->getLinkCache()->addBadLinkObj( $title );
 		try {
 			$content = ContentHandler::makeContent( $data, $title, $modelId, $format );
 
@@ -335,7 +327,7 @@ class ContentHandlerTest extends MediaWikiTestCase {
 	 * page.
 	 */
 	public function testGetAutosummary() {
-		$this->setMwGlobals( 'wgContLang', Language::factory( 'en' ) );
+		$this->setContentLang( 'en' );
 
 		$content = new DummyContentHandlerForTesting( CONTENT_MODEL_WIKITEXT );
 		$title = Title::newFromText( 'Help:Test' );
@@ -494,4 +486,129 @@ class ContentHandlerTest extends MediaWikiTestCase {
 		} );
 		$this->assertContains( 'Ferrari', ContentHandler::getContentModels() );
 	}
+
+	/**
+	 * @covers ContentHandler::getSlotDiffRenderer
+	 */
+	public function testGetSlotDiffRenderer_default() {
+		$this->mergeMwGlobalArrayValue( 'wgHooks', [
+			'GetSlotDiffRenderer' => [],
+		] );
+
+		// test default renderer
+		$contentHandler = new WikitextContentHandler( CONTENT_MODEL_WIKITEXT );
+		$slotDiffRenderer = $contentHandler->getSlotDiffRenderer( RequestContext::getMain() );
+		$this->assertInstanceOf( TextSlotDiffRenderer::class, $slotDiffRenderer );
+	}
+
+	/**
+	 * @covers ContentHandler::getSlotDiffRenderer
+	 */
+	public function testGetSlotDiffRenderer_bc() {
+		$this->mergeMwGlobalArrayValue( 'wgHooks', [
+			'GetSlotDiffRenderer' => [],
+		] );
+
+		// test B/C renderer
+		$customDifferenceEngine = $this->getMockBuilder( DifferenceEngine::class )
+			->disableOriginalConstructor()
+			->getMock();
+		// hack to track object identity across cloning
+		$customDifferenceEngine->objectId = 12345;
+		$customContentHandler = $this->getMockBuilder( ContentHandler::class )
+			->setConstructorArgs( [ 'foo', [] ] )
+			->setMethods( [ 'createDifferenceEngine' ] )
+			->getMockForAbstractClass();
+		$customContentHandler->expects( $this->any() )
+			->method( 'createDifferenceEngine' )
+			->willReturn( $customDifferenceEngine );
+		/** @var $customContentHandler ContentHandler */
+		$slotDiffRenderer = $customContentHandler->getSlotDiffRenderer( RequestContext::getMain() );
+		$this->assertInstanceOf( DifferenceEngineSlotDiffRenderer::class, $slotDiffRenderer );
+		$this->assertSame(
+			$customDifferenceEngine->objectId,
+			TestingAccessWrapper::newFromObject( $slotDiffRenderer )->differenceEngine->objectId
+		);
+	}
+
+	/**
+	 * @covers ContentHandler::getSlotDiffRenderer
+	 */
+	public function testGetSlotDiffRenderer_nobc() {
+		$this->mergeMwGlobalArrayValue( 'wgHooks', [
+			'GetSlotDiffRenderer' => [],
+		] );
+
+		// test that B/C renderer does not get used when getSlotDiffRendererInternal is overridden
+		$customDifferenceEngine = $this->getMockBuilder( DifferenceEngine::class )
+			->disableOriginalConstructor()
+			->getMock();
+		$customSlotDiffRenderer = $this->getMockBuilder( SlotDiffRenderer::class )
+			->disableOriginalConstructor()
+			->getMockForAbstractClass();
+		$customContentHandler2 = $this->getMockBuilder( ContentHandler::class )
+			->setConstructorArgs( [ 'bar', [] ] )
+			->setMethods( [ 'createDifferenceEngine', 'getSlotDiffRendererInternal' ] )
+			->getMockForAbstractClass();
+		$customContentHandler2->expects( $this->any() )
+			->method( 'createDifferenceEngine' )
+			->willReturn( $customDifferenceEngine );
+		$customContentHandler2->expects( $this->any() )
+			->method( 'getSlotDiffRendererInternal' )
+			->willReturn( $customSlotDiffRenderer );
+		/** @var $customContentHandler2 ContentHandler */
+		$slotDiffRenderer = $customContentHandler2->getSlotDiffRenderer( RequestContext::getMain() );
+		$this->assertSame( $customSlotDiffRenderer, $slotDiffRenderer );
+	}
+
+	/**
+	 * @covers ContentHandler::getSlotDiffRenderer
+	 */
+	public function testGetSlotDiffRenderer_hook() {
+		$this->mergeMwGlobalArrayValue( 'wgHooks', [
+			'GetSlotDiffRenderer' => [],
+		] );
+
+		// test that the hook handler takes precedence
+		$customDifferenceEngine = $this->getMockBuilder( DifferenceEngine::class )
+			->disableOriginalConstructor()
+			->getMock();
+		$customContentHandler = $this->getMockBuilder( ContentHandler::class )
+			->setConstructorArgs( [ 'foo', [] ] )
+			->setMethods( [ 'createDifferenceEngine' ] )
+			->getMockForAbstractClass();
+		$customContentHandler->expects( $this->any() )
+			->method( 'createDifferenceEngine' )
+			->willReturn( $customDifferenceEngine );
+		/** @var $customContentHandler ContentHandler */
+
+		$customSlotDiffRenderer = $this->getMockBuilder( SlotDiffRenderer::class )
+			->disableOriginalConstructor()
+			->getMockForAbstractClass();
+		$customContentHandler2 = $this->getMockBuilder( ContentHandler::class )
+			->setConstructorArgs( [ 'bar', [] ] )
+			->setMethods( [ 'createDifferenceEngine', 'getSlotDiffRendererInternal' ] )
+			->getMockForAbstractClass();
+		$customContentHandler2->expects( $this->any() )
+			->method( 'createDifferenceEngine' )
+			->willReturn( $customDifferenceEngine );
+		$customContentHandler2->expects( $this->any() )
+			->method( 'getSlotDiffRendererInternal' )
+			->willReturn( $customSlotDiffRenderer );
+		/** @var $customContentHandler2 ContentHandler */
+
+		$customSlotDiffRenderer2 = $this->getMockBuilder( SlotDiffRenderer::class )
+			->disableOriginalConstructor()
+			->getMockForAbstractClass();
+		$this->setTemporaryHook( 'GetSlotDiffRenderer',
+			function ( $handler, &$slotDiffRenderer ) use ( $customSlotDiffRenderer2 ) {
+				$slotDiffRenderer = $customSlotDiffRenderer2;
+			} );
+
+		$slotDiffRenderer = $customContentHandler->getSlotDiffRenderer( RequestContext::getMain() );
+		$this->assertSame( $customSlotDiffRenderer2, $slotDiffRenderer );
+		$slotDiffRenderer = $customContentHandler2->getSlotDiffRenderer( RequestContext::getMain() );
+		$this->assertSame( $customSlotDiffRenderer2, $slotDiffRenderer );
+	}
+
 }

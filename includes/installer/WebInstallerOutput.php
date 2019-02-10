@@ -89,8 +89,18 @@ class WebInstallerOutput {
 
 	/**
 	 * @param string $text
+	 * @deprecated since 1.32; use addWikiTextAsInterface instead
 	 */
 	public function addWikiText( $text ) {
+		wfDeprecated( __METHOD__, '1.32' );
+		$this->addWikiTextAsInterface( $text );
+	}
+
+	/**
+	 * @param string $text
+	 * @since 1.32
+	 */
+	public function addWikiTextAsInterface( $text ) {
 		$this->addHTML( $this->parent->parse( $text ) );
 	}
 
@@ -130,9 +140,9 @@ class WebInstallerOutput {
 		global $wgStyleDirectory;
 
 		$moduleNames = [
-			// See SkinTemplate::setupSkinUserCss
+			// Based on Skin::getDefaultModules
 			'mediawiki.legacy.shared',
-			// See Vector::setupSkinUserCss
+			// Based on Vector::setupSkinUserCss
 			'mediawiki.skinning.interface',
 		];
 

@@ -28,7 +28,7 @@ class PackedImageGallery extends TraditionalImageGallery {
 	}
 
 	/**
-	 * We artificially have 1.5 the resolution neccessary so that
+	 * We artificially have 1.5 the resolution necessary so that
 	 * we can scale it up by that much on the client side, without
 	 * worrying about requesting a new image.
 	 */
@@ -107,6 +107,5 @@ class PackedImageGallery extends TraditionalImageGallery {
 	 * @param int $num
 	 */
 	public function setPerRow( $num ) {
-		return;
 	}
 }

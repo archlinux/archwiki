@@ -5,7 +5,8 @@
 			"Li-sung",
 			"Mormegil",
 			"LordMsz",
-			"Matěj Suchánek"
+			"Matěj Suchánek",
+			"Ilimanaq29"
 		]
 	},
 	"categorytree": "Strom kategorií",
@@ -36,5 +37,6 @@
 	"categorytree-not-found": "Kategorie <em>$1</em> nenalezena",
 	"categorytree-error": "Chyba při načítání dat.",
 	"categorytree-retry": "Počkejte chvilku a zkuste to znova.",
-	"apihelp-categorytree-description": "Interní modul pro rozšíření CategoryTree."
+	"apihelp-categorytree-description": "Interní modul pro rozšíření CategoryTree.",
+	"apierror-categorytree-invalidjson": "Nastavení musí být platný objekt JSON."
 }

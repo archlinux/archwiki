@@ -11,9 +11,8 @@
 		display: block;
 		width: 28px;
 		/* This hides the text but shows the background image */
-		padding-top: 3.1em;
-		/* Only applied in IE6 */
-		_margin-top: -0.8em;
+		/* Must not exceed parent's height, otherwise the background disappears on Chrome (T196610) */
+		padding-top: 2.5em / 0.8125;
 		height: 0;
 		overflow: hidden;
 		background-position: 5px 60%;

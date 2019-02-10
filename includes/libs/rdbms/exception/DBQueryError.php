@@ -40,12 +40,12 @@ class DBQueryError extends DBExpectedError {
 	 * @param int|string $errno
 	 * @param string $sql
 	 * @param string $fname
-	 * @param string $message Optional message, intended for subclases (optional)
+	 * @param string|null $message Optional message, intended for subclases (optional)
 	 */
 	public function __construct( IDatabase $db, $error, $errno, $sql, $fname, $message = null ) {
 		if ( $message === null ) {
 			if ( $db instanceof Database && $db->wasConnectionError( $errno ) ) {
-				$message = "A connection error occured. \n" .
+				$message = "A connection error occurred. \n" .
 					 "Query: $sql\n" .
 					 "Function: $fname\n" .
 					 "Error: $errno $error\n";
@@ -67,4 +67,7 @@ class DBQueryError extends DBExpectedError {
 	}
 }
 
+/**
+ * @deprecated since 1.29
+ */
 class_alias( DBQueryError::class, 'DBQueryError' );

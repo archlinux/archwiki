@@ -21,6 +21,8 @@
  * @ingroup FileAbstraction
  */
 
+use MediaWiki\MediaWikiServices;
+
 /**
  * Foreign file accessible through api.php requests.
  * Very hacky and inefficient, do not use :D
@@ -33,7 +35,7 @@ class ForeignAPIFile extends File {
 	/** @var array */
 	private $mInfo = [];
 
-	protected $repoClass = ForeignApiRepo::class;
+	protected $repoClass = ForeignAPIRepo::class;
 
 	/**
 	 * @param Title|string|bool $title
@@ -126,8 +128,8 @@ class ForeignAPIFile extends File {
 		// Note, the this->canRender() check above implies
 		// that we have a handler, and it can do makeParamString.
 		$otherParams = $this->handler->makeParamString( $params );
-		$width = isset( $params['width'] ) ? $params['width'] : -1;
-		$height = isset( $params['height'] ) ? $params['height'] : -1;
+		$width = $params['width'] ?? -1;
+		$height = $params['height'] ?? -1;
 
 		$thumbUrl = $this->repo->getThumbUrlFromCache(
 			$this->getName(),
@@ -309,9 +311,7 @@ class ForeignAPIFile extends File {
 	 * @return bool|string
 	 */
 	function getDescriptionUrl() {
-		return isset( $this->mInfo['descriptionurl'] )
-			? $this->mInfo['descriptionurl']
-			: false;
+		return $this->mInfo['descriptionurl'] ?? false;
 	}
 
 	/**
@@ -355,12 +355,12 @@ class ForeignAPIFile extends File {
 	}
 
 	function purgeDescriptionPage() {
-		global $wgContLang;
-
-		$url = $this->repo->getDescriptionRenderUrl( $this->getName(), $wgContLang->getCode() );
+		$services = MediaWikiServices::getInstance();
+		$url = $this->repo->getDescriptionRenderUrl(
+			$this->getName(), $services->getContentLanguage()->getCode() );
 		$key = $this->repo->getLocalCacheKey( 'RemoteFileDescription', 'url', md5( $url ) );
 
-		ObjectCache::getMainWANInstance()->delete( $key );
+		$services->getMainWANObjectCache()->delete( $key );
 	}
 
 	/**
@@ -368,7 +368,7 @@ class ForeignAPIFile extends File {
 	 */
 	function purgeThumbnails( $options = [] ) {
 		$key = $this->repo->getLocalCacheKey( 'ForeignAPIRepo', 'ThumbUrl', $this->getName() );
-		ObjectCache::getMainWANInstance()->delete( $key );
+		MediaWikiServices::getInstance()->getMainWANObjectCache()->delete( $key );
 
 		$files = $this->getThumbnails();
 		// Give media handler a chance to filter the purge list

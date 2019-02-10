@@ -28,4 +28,12 @@ class SerializerNode {
 		$this->attrs = $attrs;
 		$this->void = $void;
 	}
+
+	/**
+	 * Get a string identifying the node, for use in debugging.
+	 * @return string
+	 */
+	public function getDebugTag() {
+		return $this->name . '#' . $this->id;
+	}
 }

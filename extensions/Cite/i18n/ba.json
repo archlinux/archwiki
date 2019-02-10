@@ -10,7 +10,7 @@
 	},
 	"apihelp-query+references-description": "Был бит менән бәйле һылтанмаларҙың мәғлүмәттәрен сағылдыра.",
 	"apihelp-query+references-example-1": "<kbd>Albert Einstein</kbd> менән бәйле һылтанмалар.",
-	"cite-desc": "Төшөрмәләр өсөн <nowiki><ref[ name=id]></nowiki> һәм <nowiki><references/></nowiki> билдәләрен өҫтәй",
+	"cite-desc": "Төшөрмәләр өсөн <code><nowiki><ref[ name=id]></nowiki></code> һәм <code><nowiki><references/></nowiki></code> билдәләрен өҫтәй",
 	"cite_error": "Өҙөмтә хатаһы: $1",
 	"cite_error_ref_numeric_key": "<code>&lt;ref&gt;</code> билдәһе дөрөҫ түгел;\nисем бөтөн һан була алмай. Тасуирларлыҡ исем ҡулланығыҙ.",
 	"cite_error_ref_no_key": "Асыусы тег <code>&lt;ref&gt;</code> билдәһе-  дөрөҫ түгел йәки мәғәнәһеҙ исем йөрөтә.",

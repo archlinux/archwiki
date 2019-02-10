@@ -6,7 +6,7 @@
 	},
 	"apihelp-query+references-description": "O restitoisce una rapresentaçion di dæti de referençe associæ co-e paggine indicæ.",
 	"apihelp-query+references-example-1": "Referençe associæ con <kbd>Albert Einstein</kbd>.",
-	"cite-desc": "O l'azonze i tag <nowiki><ref[ name=id]></nowiki> e <nowiki><references/></nowiki> pe gestî e çitaçioin",
+	"cite-desc": "O l'azonze i tag <code><nowiki><ref[ name=id]></nowiki></code> e <code><nowiki><references/></nowiki></code> pe gestî e çitaçioin",
 	"cite_error": "Errô inte notte: $1",
 	"cite_error_ref_numeric_key": "Errô inte l'uso do marcatô <code>&lt;ref&gt;</code>: o nomme o no poeu ese un nummero intrego. Adoeuvia un tittolo esteiso",
 	"cite_error_ref_no_key": "L'avertua de l'etichetta <code>&lt;ref&gt;</code> a no l'è corretta ò a g'ha un nomme errou.",

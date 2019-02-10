@@ -38,15 +38,15 @@ class TitleCleanup extends TableCleanup {
 	public function __construct() {
 		parent::__construct();
 		$this->addDescription( 'Script to clean up broken, unparseable titles' );
+		$this->batchSize = 1000;
 	}
 
 	/**
 	 * @param object $row
 	 */
 	protected function processRow( $row ) {
-		global $wgContLang;
 		$display = Title::makeName( $row->page_namespace, $row->page_title );
-		$verified = $wgContLang->normalize( $display );
+		$verified = MediaWikiServices::getInstance()->getContentLanguage()->normalize( $display );
 		$title = Title::newFromText( $verified );
 
 		if ( !is_null( $title )

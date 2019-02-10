@@ -98,7 +98,7 @@ class RepoGroup {
 	function __construct( $localInfo, $foreignInfo ) {
 		$this->localInfo = $localInfo;
 		$this->foreignInfo = $foreignInfo;
-		$this->cache = new ProcessCacheLRU( self::MAX_CACHE_SIZE );
+		$this->cache = new MapCacheLRU( self::MAX_CACHE_SIZE );
 	}
 
 	/**
@@ -125,10 +125,12 @@ class RepoGroup {
 		if ( isset( $options['bypassCache'] ) ) {
 			$options['latest'] = $options['bypassCache']; // b/c
 		}
+		$options += [ 'time' => false ];
 
 		if ( !$this->reposInitialised ) {
 			$this->initialiseRepos();
 		}
+
 		$title = File::normalizeTitle( $title );
 		if ( !$title ) {
 			return false;
@@ -136,17 +138,16 @@ class RepoGroup {
 
 		# Check the cache
 		$dbkey = $title->getDBkey();
+		$timeKey = is_string( $options['time'] ) ? $options['time'] : '';
 		if ( empty( $options['ignoreRedirect'] )
 			&& empty( $options['private'] )
 			&& empty( $options['latest'] )
 		) {
-			$time = isset( $options['time'] ) ? $options['time'] : '';
-			if ( $this->cache->has( $dbkey, $time, 60 ) ) {
-				return $this->cache->get( $dbkey, $time );
+			if ( $this->cache->hasField( $dbkey, $timeKey, 60 ) ) {
+				return $this->cache->getField( $dbkey, $timeKey );
 			}
 			$useCache = true;
 		} else {
-			$time = false;
 			$useCache = false;
 		}
 
@@ -163,10 +164,10 @@ class RepoGroup {
 			}
 		}
 
-		$image = $image ? $image : false; // type sanity
+		$image = $image ?: false; // type sanity
 		# Cache file existence or non-existence
 		if ( $useCache && ( !$image || $image->isCacheable() ) ) {
-			$this->cache->set( $dbkey, $time, $image );
+			$this->cache->setField( $dbkey, $timeKey, $image );
 		}
 
 		return $image;
@@ -324,11 +325,8 @@ class RepoGroup {
 		}
 		if ( $index === 'local' ) {
 			return $this->localRepo;
-		} elseif ( isset( $this->foreignRepos[$index] ) ) {
-			return $this->foreignRepos[$index];
-		} else {
-			return false;
 		}
+		return $this->foreignRepos[$index] ?? false;
 	}
 
 	/**
@@ -372,8 +370,7 @@ class RepoGroup {
 			$this->initialiseRepos();
 		}
 		foreach ( $this->foreignRepos as $repo ) {
-			$args = array_merge( [ $repo ], $params );
-			if ( call_user_func_array( $callback, $args ) ) {
+			if ( $callback( $repo, ...$params ) ) {
 				return true;
 			}
 		}

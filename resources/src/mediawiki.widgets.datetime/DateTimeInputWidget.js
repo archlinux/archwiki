@@ -1,4 +1,4 @@
-( function ( $, mw ) {
+( function () {
 
 	/**
 	 * DateTimeInputWidgets can be used to input a date, a time, or a date and
@@ -353,7 +353,7 @@
 				sz = ( spec.size * 1.15 ) + 'ch';
 			} else {
 				// Add a little for padding
-				sz = ( spec.size * 1.15 ) + 'ch';
+				sz = ( spec.size * 1.25 ) + 'ch';
 			}
 			if ( spec.editable && spec.type !== 'static' ) {
 				if ( spec.type === 'boolean' || spec.type === 'toggleLocal' ) {
@@ -373,6 +373,7 @@
 				} else {
 					maxlength = spec.size;
 					if ( spec.intercalarySize ) {
+						// eslint-disable-next-line no-restricted-properties
 						$.each( spec.intercalarySize, reduceFunc );
 					}
 					$field = $( '<input>' ).attr( 'type', 'text' )
@@ -834,4 +835,4 @@
 		this.focus();
 	};
 
-}( jQuery, mediaWiki ) );
+}() );

@@ -1,7 +1,7 @@
 /**
  * Main JavaScript for the Cite extension. The main purpose of this file
  * is to add accessibility attributes to the citation links as that can
- * hardly be done server side (bug 38141).
+ * hardly be done server side (T40141).
  *
  * @author Marius Hoch <hoo@online.de>
  */

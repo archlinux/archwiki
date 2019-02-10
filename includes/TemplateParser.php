@@ -41,17 +41,19 @@ class TemplateParser {
 	/**
 	 * @var int Compilation flags passed to LightnCandy
 	 */
-	// Do not add more flags here without discussion.
-	// If you do add more flags, be sure to update unit tests as well.
-	protected $compileFlags = LightnCandy::FLAG_ERROR_EXCEPTION;
+	protected $compileFlags;
 
 	/**
-	 * @param string $templateDir
+	 * @param string|null $templateDir
 	 * @param bool $forceRecompile
 	 */
 	public function __construct( $templateDir = null, $forceRecompile = false ) {
 		$this->templateDir = $templateDir ?: __DIR__ . '/templates';
 		$this->forceRecompile = $forceRecompile;
+
+		// Do not add more flags here without discussion.
+		// If you do add more flags, be sure to update unit tests as well.
+		$this->compileFlags = LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_MUSTACHELOOKUP;
 	}
 
 	/**
@@ -67,7 +69,7 @@ class TemplateParser {
 	}
 
 	/**
-	 * Constructs the location of the the source Mustache template
+	 * Constructs the location of the source Mustache template
 	 * @param string $templateName The name of the template
 	 * @return string
 	 * @throws UnexpectedValueException If $templateName attempts upwards directory traversal
@@ -209,8 +211,11 @@ class TemplateParser {
 	 *     );
 	 * @endcode
 	 * @param string $templateName The name of the template
+	 * @param-taint $templateName exec_misc
 	 * @param mixed $args
+	 * @param-taint $args none
 	 * @param array $scopes
+	 * @param-taint $scopes none
 	 * @return string
 	 */
 	public function processTemplate( $templateName, $args, array $scopes = [] ) {

@@ -24,7 +24,7 @@
 		clock.tick( 10 );
 
 		assert.strictEqual( mw.log.lastCall.args[ 0 ], unknownAction, 'Log message defaults to unknown key' );
-		assert.ok( fakeEventLog.logEvent.called, 'event log has been recorded' );
+		assert.strictEqual( fakeEventLog.logEvent.called, true, 'event log has been recorded' );
 
 		mw.log.reset();
 		fakeEventLog.logEvent.reset();
@@ -32,7 +32,7 @@
 		clock.tick( 10 );
 
 		assert.strictEqual( mw.log.lastCall.args[ 0 ], action1value, 'Log message is translated to its text' );
-		assert.ok( fakeEventLog.logEvent.called, 'event log has been recorded' );
+		assert.strictEqual( fakeEventLog.logEvent.called, true, 'event log has been recorded' );
 
 		mw.log.reset();
 		fakeEventLog.logEvent.reset();
@@ -40,8 +40,8 @@
 		logger.log( action1key, true );
 		clock.tick( 10 );
 
-		assert.ok( !mw.log.called, 'No logging when disabled' );
-		assert.ok( fakeEventLog.logEvent.called, 'event log has been recorded' );
+		assert.strictEqual( mw.log.called, false, 'No logging when disabled' );
+		assert.strictEqual( fakeEventLog.logEvent.called, true, 'event log has been recorded' );
 
 		clock.restore();
 	} );

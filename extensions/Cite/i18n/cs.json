@@ -10,8 +10,9 @@
 			"Matěj Suchánek"
 		]
 	},
-	"cite-desc": "Přidává značky <nowiki><ref[ name=\"id\"]></nowiki> a&nbsp;<nowiki><references /></nowiki> na označení citací",
+	"cite-desc": "Přidává značky <code><nowiki><ref[ name=id]></nowiki></code> a&nbsp;<code><nowiki><references/></nowiki></code> na označení citací",
 	"cite_error": "Chybná citace: $1",
+	"cite_error_ref_invalid_dir": "Chyba v tagu <code>&lt;ref&gt;</code>; hodnota atributu dir „$1“ není známa. Musí být „ltr“ nebo „rtl“.",
 	"cite_error_ref_numeric_key": "Chyba v tagu <code>&lt;ref&gt;</code>; názvem nesmí být prosté číslo, použijte popisné označení",
 	"cite_error_ref_no_key": "Otvírací značka <code>&lt;ref&gt;</code> je chybná nebo má špatný název",
 	"cite_error_ref_too_many_keys": "Chyba v tagu <code>&lt;ref&gt;</code>; chybné názvy, např. je jich příliš mnoho",

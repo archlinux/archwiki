@@ -4,7 +4,7 @@
 			"Умар"
 		]
 	},
-	"cite-desc": "<nowiki><ref[ name=id]></nowiki> а <nowiki><references/></nowiki> тегаш тӀетовжарийн тӀетуху",
+	"cite-desc": "<code><nowiki><ref[ name=id]></nowiki></code> а <code><nowiki><references/></nowiki></code> тегаш тӀетовжарийн тӀетуху",
 	"cite_error": "ГӀалат дешнаш далорна $1",
 	"cite_error_ref_numeric_key": "Нийса йоцу тег <code>&lt;ref&gt;</code>;\nцӀе дуьззина терахь хилийла дац. Лелае йозанан цӀе",
 	"cite_error_ref_no_key": "Нийса йоцу тег <code>&lt;ref&gt;</code>;\nчулацам боцу элементан цӀе хийла еза.",

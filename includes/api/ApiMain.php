@@ -24,8 +24,6 @@
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
 use Wikimedia\Timestamp\TimestampException;
-use Wikimedia\Rdbms\DBQueryError;
-use Wikimedia\Rdbms\DBError;
 
 /**
  * This is the main API class, used for both external and internal processing.
@@ -165,7 +163,7 @@ class ApiMain extends ApiBase {
 	/**
 	 * Constructs an instance of ApiMain that utilizes the module and format specified by $request.
 	 *
-	 * @param IContextSource|WebRequest $context If this is an instance of
+	 * @param IContextSource|WebRequest|null $context If this is an instance of
 	 *    FauxRequest, errors are thrown and no printing occurs
 	 * @param bool $enableWrite Should be set to true if the api may modify data
 	 */
@@ -246,8 +244,7 @@ class ApiMain extends ApiBase {
 			// for uselang=user (see T85635).
 		} else {
 			if ( $uselang === 'content' ) {
-				global $wgContLang;
-				$uselang = $wgContLang->getCode();
+				$uselang = MediaWikiServices::getInstance()->getContentLanguage()->getCode();
 			}
 			$code = RequestContext::sanitizeLangCode( $uselang );
 			$this->getContext()->setLanguage( $code );
@@ -267,8 +264,7 @@ class ApiMain extends ApiBase {
 			if ( $errorLangCode === 'uselang' ) {
 				$errorLang = $this->getLanguage();
 			} elseif ( $errorLangCode === 'content' ) {
-				global $wgContLang;
-				$errorLang = $wgContLang;
+				$errorLang = MediaWikiServices::getInstance()->getContentLanguage();
 			} else {
 				$errorLangCode = RequestContext::sanitizeLangCode( $errorLangCode );
 				$errorLang = Language::factory( $errorLangCode );
@@ -486,7 +482,7 @@ class ApiMain extends ApiBase {
 	 * @return ApiFormatBase
 	 */
 	public function createPrinterByName( $format ) {
-		$printer = $this->mModuleMgr->getModule( $format, 'format' );
+		$printer = $this->mModuleMgr->getModule( $format, 'format', /* $ignoreCache */ true );
 		if ( $printer === null ) {
 			$this->dieWithError(
 				[ 'apierror-unknownformat', wfEscapeWikiText( $format ) ], 'unknown_format'
@@ -535,12 +531,14 @@ class ApiMain extends ApiBase {
 			$this->executeAction();
 			$runTime = microtime( true ) - $t;
 			$this->logRequest( $runTime );
-			if ( $this->mModule->isWriteMode() && $this->getRequest()->wasPosted() ) {
-				MediaWikiServices::getInstance()->getStatsdDataFactory()->timing(
-					'api.' . $this->mModule->getModuleName() . '.executeTiming', 1000 * $runTime
-				);
-			}
-		} catch ( Exception $e ) {
+			MediaWikiServices::getInstance()->getStatsdDataFactory()->timing(
+				'api.' . $this->mModule->getModuleName() . '.executeTiming', 1000 * $runTime
+			);
+		} catch ( Exception $e ) { // @todo Remove this block when HHVM is no longer supported
+			$this->handleException( $e );
+			$this->logRequest( microtime( true ) - $t, $e );
+			$isError = true;
+		} catch ( Throwable $e ) {
 			$this->handleException( $e );
 			$this->logRequest( microtime( true ) - $t, $e );
 			$isError = true;
@@ -564,12 +562,12 @@ class ApiMain extends ApiBase {
 	 * Handle an exception as an API response
 	 *
 	 * @since 1.23
-	 * @param Exception $e
+	 * @param Exception|Throwable $e
 	 */
-	protected function handleException( Exception $e ) {
+	protected function handleException( $e ) {
 		// T65145: Rollback any open database transactions
-		if ( !( $e instanceof ApiUsageException || $e instanceof UsageException ) ) {
-			// UsageExceptions are intentional, so don't rollback if that's the case
+		if ( !$e instanceof ApiUsageException ) {
+			// ApiUsageExceptions are intentional, so don't rollback if that's the case
 			MWExceptionHandler::rollbackMasterChangesAndLog( $e );
 		}
 
@@ -606,18 +604,14 @@ class ApiMain extends ApiBase {
 			foreach ( $ex->getStatusValue()->getErrors() as $error ) {
 				try {
 					$this->mPrinter->addWarning( $error );
-				} catch ( Exception $ex2 ) {
+				} catch ( Exception $ex2 ) { // @todo Remove this block when HHVM is no longer supported
+					// WTF?
+					$this->addWarning( $error );
+				} catch ( Throwable $ex2 ) {
 					// WTF?
 					$this->addWarning( $error );
 				}
 			}
-		} catch ( UsageException $ex ) {
-			// The error printer itself is failing. Try suppressing its request
-			// parameters and redo.
-			$failed = true;
-			$this->addWarning(
-				[ 'apiwarn-errorprinterfailed-ex', $ex->getMessage() ], 'errorprinterfailed'
-			);
 		}
 		if ( $failed ) {
 			$this->mPrinter = null;
@@ -637,17 +631,20 @@ class ApiMain extends ApiBase {
 	 * friendly to clients. If it fails, it will rethrow the exception.
 	 *
 	 * @since 1.23
-	 * @param Exception $e
-	 * @throws Exception
+	 * @param Exception|Throwable $e
+	 * @throws Exception|Throwable
 	 */
-	public static function handleApiBeforeMainException( Exception $e ) {
+	public static function handleApiBeforeMainException( $e ) {
 		ob_start();
 
 		try {
 			$main = new self( RequestContext::getMain(), false );
 			$main->handleException( $e );
 			$main->logRequest( 0, $e );
-		} catch ( Exception $e2 ) {
+		} catch ( Exception $e2 ) { // @todo Remove this block when HHVM is no longer supported
+			// Nope, even that didn't work. Punt.
+			throw $e;
+		} catch ( Throwable $e2 ) {
 			// Nope, even that didn't work. Punt.
 			throw $e;
 		}
@@ -813,7 +810,7 @@ class ApiMain extends ApiBase {
 	 * Attempt to validate the value of Access-Control-Request-Headers against a list
 	 * of headers that we allow the follow up request to send.
 	 *
-	 * @param string $requestedHeaders Comma seperated list of HTTP headers
+	 * @param string $requestedHeaders Comma separated list of HTTP headers
 	 * @return bool True if all requested headers are in the list of allowed headers
 	 */
 	protected static function matchRequestedHeaders( $requestedHeaders ) {
@@ -1008,14 +1005,11 @@ class ApiMain extends ApiBase {
 	 * If an ApiUsageException, errors/warnings will be extracted from the
 	 * embedded StatusValue.
 	 *
-	 * If a base UsageException, the getMessageArray() method will be used to
-	 * extract the code and English message for a single error (no warnings).
-	 *
 	 * Any other exception will be returned with a generic code and wrapper
 	 * text around the exception's (presumably English) message as a single
 	 * error (no warnings).
 	 *
-	 * @param Exception $e
+	 * @param Exception|Throwable $e
 	 * @param string $type 'error' or 'warning'
 	 * @return ApiMessage[]
 	 * @since 1.27
@@ -1028,21 +1022,12 @@ class ApiMain extends ApiBase {
 			}
 		} elseif ( $type !== 'error' ) {
 			// None of the rest have any messages for non-error types
-		} elseif ( $e instanceof UsageException ) {
-			// User entered incorrect parameters - generate error response
-			$data = Wikimedia\quietCall( [ $e, 'getMessageArray' ] );
-			$code = $data['code'];
-			$info = $data['info'];
-			unset( $data['code'], $data['info'] );
-			$messages[] = new ApiRawMessage( [ '$1', $info ], $code, $data );
 		} else {
 			// Something is seriously wrong
 			$config = $this->getConfig();
 			$class = preg_replace( '#^Wikimedia\\\Rdbms\\\#', '', get_class( $e ) );
 			$code = 'internal_api_error_' . $class;
-			if ( ( $e instanceof DBQueryError ) && !$config->get( 'ShowSQLErrors' ) ) {
-				$params = [ 'apierror-databaseerror', WebRequest::getRequestId() ];
-			} else {
+			if ( $config->get( 'ShowExceptionDetails' ) ) {
 				if ( $e instanceof ILocalizedException ) {
 					$msg = $e->getMessageObject();
 				} elseif ( $e instanceof MessageSpecifier ) {
@@ -1051,7 +1036,10 @@ class ApiMain extends ApiBase {
 					$msg = wfEscapeWikiText( $e->getMessage() );
 				}
 				$params = [ 'apierror-exceptioncaught', WebRequest::getRequestId(), $msg ];
+			} else {
+				$params = [ 'apierror-exceptioncaughttype', WebRequest::getRequestId(), get_class( $e ) ];
 			}
+
 			$messages[] = ApiMessage::create( $params, $code );
 		}
 		return $messages;
@@ -1059,7 +1047,7 @@ class ApiMain extends ApiBase {
 
 	/**
 	 * Replace the result data with the information about an exception.
-	 * @param Exception $e
+	 * @param Exception|Throwable $e
 	 * @return string[] Error codes
 	 */
 	protected function substituteResultWithError( $e ) {
@@ -1103,7 +1091,7 @@ class ApiMain extends ApiBase {
 		} else {
 			$path = null;
 		}
-		if ( $e instanceof ApiUsageException || $e instanceof UsageException ) {
+		if ( $e instanceof ApiUsageException ) {
 			$link = wfExpandUrl( wfScript( 'api' ) );
 			$result->addContentValue(
 				$path,
@@ -1115,9 +1103,7 @@ class ApiMain extends ApiBase {
 				)
 			);
 		} else {
-			if ( $config->get( 'ShowExceptionDetails' ) &&
-				( !$e instanceof DBError || $config->get( 'ShowDBErrorBacktrace' ) )
-			) {
+			if ( $config->get( 'ShowExceptionDetails' ) ) {
 				$result->addContentValue(
 					$path,
 					'trace',
@@ -1257,6 +1243,8 @@ class ApiMain extends ApiBase {
 				];
 			}
 		}
+
+		Hooks::runWithoutAbort( 'ApiMaxLagInfo', [ &$lagInfo ] );
 
 		return $lagInfo;
 	}
@@ -1552,6 +1540,11 @@ class ApiMain extends ApiBase {
 	 */
 	protected function executeAction() {
 		$params = $this->setupExecuteAction();
+
+		// Check asserts early so e.g. errors in parsing a module's parameters due to being
+		// logged out don't override the client's intended "am I logged in?" check.
+		$this->checkAsserts( $params );
+
 		$module = $this->setupModule();
 		$this->mModule = $module;
 
@@ -1572,8 +1565,6 @@ class ApiMain extends ApiBase {
 		if ( !$this->mInternalMode ) {
 			$this->setupExternalResponse( $module, $params );
 		}
-
-		$this->checkAsserts( $params );
 
 		// Execute
 		$module->execute();
@@ -1611,7 +1602,7 @@ class ApiMain extends ApiBase {
 	/**
 	 * Log the preceding request
 	 * @param float $time Time in seconds
-	 * @param Exception $e Exception caught while processing the request
+	 * @param Exception|Throwable|null $e Exception caught while processing the request
 	 */
 	protected function logRequest( $time, $e = null ) {
 		$request = $this->getRequest();
@@ -1888,6 +1879,7 @@ class ApiMain extends ApiBase {
 			$help[$k] = $v;
 		}
 		$help['datatypes'] = '';
+		$help['templatedparams'] = '';
 		$help['credits'] = '';
 
 		// Fill 'permissions'
@@ -1920,7 +1912,7 @@ class ApiMain extends ApiBase {
 		$help['permissions'] .= Html::closeElement( 'dl' );
 		$help['permissions'] .= Html::closeElement( 'div' );
 
-		// Fill 'datatypes' and 'credits', if applicable
+		// Fill 'datatypes', 'templatedparams', and 'credits', if applicable
 		if ( empty( $options['nolead'] ) ) {
 			$level = $options['headerlevel'];
 			$tocnumber = &$options['tocnumber'];
@@ -1948,6 +1940,35 @@ class ApiMain extends ApiBase {
 					'toclevel' => count( $tocnumber ),
 					'level' => $level,
 					'anchor' => 'main/datatypes',
+					'line' => $header,
+					'number' => implode( '.', $tocnumber ),
+					'index' => false,
+				];
+			}
+
+			$header = $this->msg( 'api-help-templatedparams-header' )->parse();
+
+			$id = Sanitizer::escapeIdForAttribute( 'main/templatedparams', Sanitizer::ID_PRIMARY );
+			$idFallback = Sanitizer::escapeIdForAttribute( 'main/templatedparams', Sanitizer::ID_FALLBACK );
+			$headline = Linker::makeHeadline( min( 6, $level ),
+				' class="apihelp-header">',
+				$id,
+				$header,
+				'',
+				$idFallback
+			);
+			// Ensure we have a sane anchor
+			if ( $id !== 'main/templatedparams' && $idFallback !== 'main/templatedparams' ) {
+				$headline = '<div id="main/templatedparams"></div>' . $headline;
+			}
+			$help['templatedparams'] .= $headline;
+			$help['templatedparams'] .= $this->msg( 'api-help-templatedparams' )->parseAsBlock();
+			if ( !isset( $tocData['main/templatedparams'] ) ) {
+				$tocnumber[$level]++;
+				$tocData['main/templatedparams'] = [
+					'toclevel' => count( $tocnumber ),
+					'level' => $level,
+					'anchor' => 'main/templatedparams',
 					'line' => $header,
 					'number' => implode( '.', $tocnumber ),
 					'index' => false,

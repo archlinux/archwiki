@@ -8,7 +8,8 @@
 			"Vago",
 			"Vugar 1981",
 			"Wertuose",
-			"Macofe"
+			"Macofe",
+			"Serkanland"
 		]
 	},
 	"wikieditor-wikitext-tab": "Vikimətn",
@@ -70,6 +71,7 @@
 	"wikieditor-toolbar-tool-replace-title": "Axtar və dəyiş",
 	"wikieditor-toolbar-tool-replace-search": "Axtar:",
 	"wikieditor-toolbar-tool-replace-replace": "Bununla dəyiş:",
+	"wikieditor-toolbar-tool-replace-regex": "Axtarış çubuğunu daimi ifadə kimi istifadə et",
 	"wikieditor-toolbar-tool-replace-button-findnext": "Növbətini axtar",
 	"wikieditor-toolbar-tool-replace-button-replaceall": "Hamısını dəyiş",
 	"wikieditor-toolbar-tool-replace-close": "Bağla",

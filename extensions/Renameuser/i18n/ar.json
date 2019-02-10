@@ -11,8 +11,8 @@
 		]
 	},
 	"renameuser": "إعادة تسمية مستخدم",
-	"renameuser-linkoncontribs": "أعد تسمية المستخدم",
-	"renameuser-linkoncontribs-text": "أعد تسمية هذا المستخدم",
+	"renameuser-linkoncontribs": "أعد تسمية {{GENDER:$1|المستخدم|المستخدمة}}",
+	"renameuser-linkoncontribs-text": "أعد تسمية {{GENDER:$1|هذا المستخدم|هذه المستخدمة}}",
 	"renameuser-desc": "يضيف [[Special:RenameUser|صفحة خاصة]] لإعادة تسمية مستخدم (يحتاج إلى صلاحية ''renameuser'')",
 	"renameuserold": "اسم المستخدم الحالي:",
 	"renameusernew": "الاسم الجديد:",

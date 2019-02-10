@@ -2,8 +2,6 @@
 
 use MediaWiki\Auth\AuthenticationRequestTestCase;
 
-require_once __DIR__ . '/../../ReCaptcha/ReCaptchaAuthenticationRequest.php';
-
 /**
  * @covers ReCaptchaAuthenticationRequest
  */

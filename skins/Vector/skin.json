@@ -45,7 +45,7 @@
 					"media": "screen"
 				},
 				"screen-hd.less": {
-					"media": "screen and (min-width: 982px)"
+					"media": "screen and ( min-width: 982px )"
 				},
 				"print.less": {}
 			}

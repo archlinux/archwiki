@@ -46,8 +46,8 @@ class RenameuserHooks {
 		if ( $id && $sp->getUser()->isAllowed( 'renameuser' ) ) {
 			$tools['renameuser'] = $sp->getLinkRenderer()->makeKnownLink(
 				SpecialPage::getTitleFor( 'Renameuser' ),
-				$sp->msg( 'renameuser-linkoncontribs' )->text(),
-				[ 'title' => $sp->msg( 'renameuser-linkoncontribs-text' )->parse() ],
+				$sp->msg( 'renameuser-linkoncontribs', $nt->getText() )->text(),
+				[ 'title' => $sp->msg( 'renameuser-linkoncontribs-text', $nt->getText() )->parse() ],
 				[ 'oldusername' => $nt->getText() ]
 			);
 		}

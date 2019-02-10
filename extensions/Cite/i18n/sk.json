@@ -5,7 +5,7 @@
 			"Teslaton"
 		]
 	},
-	"cite-desc": "Pridáva značky <nowiki><ref[ name=id]></nowiki> a <nowiki><references/></nowiki> pre citácie",
+	"cite-desc": "Pridáva značky <code><nowiki><ref[ name=id]></nowiki></code> a <code><nowiki><references/></nowiki></code> pre citácie",
 	"cite_error": "Chyba citácie $1",
 	"cite_error_ref_numeric_key": "Neplatné volanie; očakáva sa neceločíselný typ kľúča",
 	"cite_error_ref_no_key": "Neplatné volanie; nebol špecifikovaný kľúč",

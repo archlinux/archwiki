@@ -4,7 +4,7 @@
 			"Psubhashish"
 		]
 	},
-	"cite-desc": "ଆଧାର ନିମନ୍ତେ <nowiki><ref[ name=id]></nowiki> ଓ <nowiki><references/></nowiki> ଟ୍ୟାଗସବୁ ଏଠାରେ ଯୋଡ଼ିଥାଏ ।",
+	"cite-desc": "ଆଧାର ନିମନ୍ତେ <code><nowiki><ref[ name=id]></nowiki></code> ଓ <code><nowiki><references/></nowiki></code> ଟ୍ୟାଗସବୁ ଏଠାରେ ଯୋଡ଼ିଥାଏ ।",
 	"cite_error": "ଆଧାର ଭୁଲ: $1",
 	"cite_error_ref_numeric_key": "ଅବୈଧ <code>&lt;ref&gt;</code> ଟ୍ୟାଗ;\nନାମଟି କେବେ ହେଲେ ଏକ ପୂର୍ଣ୍ଣସଂଖ୍ୟା ହୋଇପାରିବ ନାହିଁ । ଏକ ବର୍ଣ୍ଣନାମୂଳକ ନାମ ଦିଅନ୍ତୁ ।",
 	"cite_error_ref_no_key": "ଅବୈଧ <code>&lt;ref&gt;</code> ଟ୍ୟାଗ;\nକୌଣସି ମଧ୍ୟ ବିଷୟବସ୍ତୁ ନଥିବା ଆଧାରର ଏକ ନାମ ଥିବା ଲୋଡ଼ା",

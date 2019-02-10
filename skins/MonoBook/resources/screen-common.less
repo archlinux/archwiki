@@ -113,6 +113,10 @@ pre,
 	*display: inline; /* stylelint-disable-line declaration-block-no-duplicate-properties */
 }
 
+.mw-jump-link:not( :focus ) {
+	.mixin-screen-reader-text;
+}
+
 /*
 ** the main content area
 */
@@ -162,9 +166,7 @@ table.rimage {
 		background: transparent;
 		display: inline;
 		height: 1em;
-		text-transform: lowercase;
 		font-size: 91%;
-		font-weight: normal;
 		white-space: nowrap;
 	}
 
@@ -211,46 +213,9 @@ table.rimage {
 /*
 ** the personal toolbar
 */
-
-#p-personal h3 {
-	.hidden();
-
-	li {
-		color: #2f6fab;
-
-		a {
-			color: #005896;
-		}
-
-		&.active {
-			font-weight: bold;
-		}
-	}
-}
-
-/* Don't lowercase username */
-li#pt-userpage {
-	text-transform: none;
-}
-
 /* "Not logged in" text in gray */
 li#pt-anonuserpage {
 	color: @text-grey;
-}
-
-/*
-** the page-related actions- page/talk, edit etc
-*/
-
-#p-cactions h3 {
-	.hidden()
-}
-
-/* Override text-transform on languages where capitalization is significant */
-.capitalize-all-nouns .portlet h3,
-.capitalize-all-nouns #p-personal ul,
-.capitalize-all-nouns #p-cactions ul li a {
-	text-transform: none;
 }
 
 /*
@@ -355,6 +320,7 @@ div.multipageimagenavbox {
 		margin-left: 2em;
 		margin-right: 2em;
 	}
+
 	hr {
 		margin: 6px;
 	}
@@ -400,11 +366,6 @@ div.mw-lag-warn-high {
 		vertical-align: middle;
 		font-size: 90%;
 	}
-}
-
-/* Sometimes people don't want personal tools to be lowercase! */
-.no-text-transform {
-	text-transform: none;
 }
 
 /* Tooltips are outside of the normal body code, so this helps make the size of the text sensible */

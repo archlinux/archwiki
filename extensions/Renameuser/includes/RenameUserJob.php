@@ -51,7 +51,7 @@ class RenameUserJob extends Job {
 
 		// Skip core tables that were migrated to the actor table, even if the
 		// field still exists in the database.
-		if ( in_array( "$table.$column", self::$actorMigratedColumns[$table], false ) ) {
+		if ( in_array( "$table.$column", self::$actorMigratedColumns, true ) ) {
 			// We still run the job for MIGRATION_WRITE_NEW because reads might
 			// still be falling back.
 			$stage = RenameuserSQL::getActorMigrationStage();

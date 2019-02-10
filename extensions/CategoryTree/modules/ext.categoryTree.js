@@ -132,7 +132,7 @@
 
 		$link.data( 'ct-loaded', true );
 
-		$children.append(
+		$children.empty().append(
 			$( '<i class="CategoryTreeNotice"></i>' )
 				.text( mw.msg( 'categorytree-loading' ) )
 		);
@@ -141,7 +141,7 @@
 
 		// Element may not have a .CategoryTreeTag parent, fallback to defauls
 		// Probably a CategoryPage (@todo: based on what?)
-		ctTitle = $link.data( 'ct-title' );
+		ctTitle = $link.attr( 'data-ct-title' );
 		ctMode = $linkParentCTTag.data( 'ct-mode' );
 		ctMode = typeof ctMode === 'number' ? ctMode : undefined;
 		ctOptions = $linkParentCTTag.attr( 'data-ct-options' );
@@ -151,7 +151,7 @@
 
 		// Mode and options have defaults or fallbacks, title does not.
 		// Don't make a request if there is no title.
-		if ( typeof ctTitle !== 'string' ) {
+		if ( !ctTitle ) {
 			error();
 			return;
 		}
@@ -163,6 +163,8 @@
 			uselang: mw.config.get( 'wgUserLanguage' ),
 			formatversion: 2
 		} ).done( function ( data ) {
+			var $data;
+
 			data = data.categorytree.html;
 
 			if ( data === '' ) {
@@ -184,12 +186,13 @@
 						data = mw.msg( 'categorytree-nothing-found' );
 				}
 
-				data = $( '<i class="CategoryTreeNotice"></i>' ).text( data );
+				$data = $( '<i class="CategoryTreeNotice"></i>' ).text( data );
+			} else {
+				$data = $( $.parseHTML( data ) );
+				attachHandler( $data );
 			}
 
-			$children.html( data );
-			attachHandler( $children );
-
+			$children.empty().append( $data );
 		} )
 			.fail( error );
 	};

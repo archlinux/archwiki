@@ -3,12 +3,17 @@
 		"authors": [
 			"Ebraminio",
 			"Huji",
-			"Reza1615"
+			"Reza1615",
+			"Ladsgroup"
 		]
 	},
 	"syntaxhighlight-desc": "امکان رنگین کردن دستورات <code>&lt;syntaxhighlight&gt;</code> با استفاده از [http://pygments.org/ Pygments] را فراهم می‌آورد",
 	"syntaxhighlight-error-category": "صفحه‌های دارای خطای سینتکس‌های‌لایت",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "کد",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "زبان",
-	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "نشان‌دادن شماره خطوط"
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "(هیچ)",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "نشان‌دادن شماره خطوط",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-startingline": "شروع شماره از خط",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "بلاک کد",
+	"syntaxhighlight-error-unknown-language": "زبان ناشناخته «$1»"
 }

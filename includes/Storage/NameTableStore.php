@@ -26,7 +26,7 @@ use WANObjectCache;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Rdbms\Database;
 use Wikimedia\Rdbms\IDatabase;
-use Wikimedia\Rdbms\LoadBalancer;
+use Wikimedia\Rdbms\ILoadBalancer;
 
 /**
  * @author Addshore
@@ -34,7 +34,7 @@ use Wikimedia\Rdbms\LoadBalancer;
  */
 class NameTableStore {
 
-	/** @var LoadBalancer */
+	/** @var ILoadBalancer */
 	private $loadBalancer;
 
 	/** @var WANObjectCache */
@@ -60,27 +60,37 @@ class NameTableStore {
 	private $nameField;
 	/** @var null|callable */
 	private $normalizationCallback = null;
+	/** @var null|callable */
+	private $insertCallback = null;
 
 	/**
-	 * @param LoadBalancer $dbLoadBalancer A load balancer for acquiring database connections
-	 * @param WANObjectCache $cache A cache manager for caching data
+	 * @param ILoadBalancer $dbLoadBalancer A load balancer for acquiring database connections
+	 * @param WANObjectCache $cache A cache manager for caching data. This can be the local
+	 *        wiki's default instance even if $wikiId refers to a different wiki, since
+	 *        makeGlobalKey() is used to constructed a key that allows cached names from
+	 *        the same database to be re-used between wikis. For example, enwiki and frwiki will
+	 *        use the same cache keys for names from the wikidatawiki database, regardless
+	 *        of the cache's default key space.
 	 * @param LoggerInterface $logger
 	 * @param string $table
 	 * @param string $idField
 	 * @param string $nameField
-	 * @param callable $normalizationCallback Normalization to be applied to names before being
+	 * @param callable|null $normalizationCallback Normalization to be applied to names before being
 	 * saved or queried. This should be a callback that accepts and returns a single string.
 	 * @param bool|string $wikiId The ID of the target wiki database. Use false for the local wiki.
+	 * @param callable|null $insertCallback Callback to change insert fields accordingly.
+	 * This parameter was introduced in 1.32
 	 */
 	public function __construct(
-		LoadBalancer $dbLoadBalancer,
+		ILoadBalancer $dbLoadBalancer,
 		WANObjectCache $cache,
 		LoggerInterface $logger,
 		$table,
 		$idField,
 		$nameField,
 		callable $normalizationCallback = null,
-		$wikiId = false
+		$wikiId = false,
+		callable $insertCallback = null
 	) {
 		$this->loadBalancer = $dbLoadBalancer;
 		$this->cache = $cache;
@@ -91,6 +101,7 @@ class NameTableStore {
 		$this->normalizationCallback = $normalizationCallback;
 		$this->wikiId = $wikiId;
 		$this->cacheTTL = IExpiringStore::TTL_MONTH;
+		$this->insertCallback = $insertCallback;
 	}
 
 	/**
@@ -103,8 +114,20 @@ class NameTableStore {
 		return $this->loadBalancer->getConnection( $index, [], $this->wikiId, $flags );
 	}
 
+	/**
+	 * Gets the cache key for names.
+	 *
+	 * The cache key is constructed based on the wiki ID passed to the constructor, and allows
+	 * sharing of name tables cached for a specific database between wikis.
+	 *
+	 * @return string
+	 */
 	private function getCacheKey() {
-		return $this->cache->makeKey( 'NameTableSqlStore', $this->table, $this->wikiId );
+		return $this->cache->makeGlobalKey(
+			'NameTableSqlStore',
+			$this->table,
+			$this->loadBalancer->resolveDomainID( $this->wikiId )
+		);
 	}
 
 	/**
@@ -135,11 +158,13 @@ class NameTableStore {
 		if ( $searchResult === false ) {
 			$id = $this->store( $name );
 			if ( $id === null ) {
-				// RACE: $name was already in the db, probably just inserted, so load from master
-				// Use DBO_TRX to avoid missing inserts due to other threads or REPEATABLE-READs
-				$table = $this->loadTable(
-					$this->getDBConnection( DB_MASTER, LoadBalancer::CONN_TRX_AUTOCOMMIT )
-				);
+				// RACE: $name was already in the db, probably just inserted, so load from master.
+				// Use DBO_TRX to avoid missing inserts due to other threads or REPEATABLE-READs.
+				// ...but not during unit tests, because we need the fake DB tables of the default
+				// connection.
+				$connFlags = defined( 'MW_PHPUNIT_TEST' ) ? 0 : ILoadBalancer::CONN_TRX_AUTOCOMMIT;
+				$table = $this->reloadMap( $connFlags );
+
 				$searchResult = array_search( $name, $table, true );
 				if ( $searchResult === false ) {
 					// Insert failed due to IGNORE flag, but DB_MASTER didn't give us the data
@@ -148,14 +173,15 @@ class NameTableStore {
 					$this->logger->error( $m );
 					throw new NameTableAccessException( $m );
 				}
-				$this->purgeWANCache(
-					function () {
-						$this->cache->reap( $this->getCacheKey(), INF );
-					}
-				);
+			} elseif ( isset( $table[$id] ) ) {
+				throw new NameTableAccessException(
+					"Expected unused ID from database insert for '$name' "
+					. " into '{$this->table}', but ID $id is already associated with"
+					. " the name '{$table[$id]}'! This may indicate database corruption!" );
 			} else {
 				$table[$id] = $name;
 				$searchResult = $id;
+
 				// As store returned an ID we know we inserted so delete from WAN cache
 				$this->purgeWANCache(
 					function () {
@@ -167,6 +193,31 @@ class NameTableStore {
 		}
 
 		return $searchResult;
+	}
+
+	/**
+	 * Reloads the name table from the master database, and purges the WAN cache entry.
+	 *
+	 * @note This should only be called in situations where the local cache has been detected
+	 * to be out of sync with the database. There should be no reason to call this method
+	 * from outside the NameTabelStore during normal operation. This method may however be
+	 * useful in unit tests.
+	 *
+	 * @param int $connFlags ILoadBalancer::CONN_XXX flags. Optional.
+	 *
+	 * @return \string[] The freshly reloaded name map
+	 */
+	public function reloadMap( $connFlags = 0 ) {
+		$this->tableCache = $this->loadTable(
+			$this->getDBConnection( DB_MASTER, $connFlags )
+		);
+		$this->purgeWANCache(
+			function () {
+				$this->cache->reap( $this->getCacheKey(), INF );
+			}
+		);
+
+		return $this->tableCache;
 	}
 
 	/**
@@ -211,11 +262,12 @@ class NameTableStore {
 		if ( array_key_exists( $id, $table ) ) {
 			return $table[$id];
 		}
+		$fname = __METHOD__;
 
 		$table = $this->cache->getWithSetCallback(
 			$this->getCacheKey(),
 			$this->cacheTTL,
-			function ( $oldValue, &$ttl, &$setOpts ) use ( $id ) {
+			function ( $oldValue, &$ttl, &$setOpts ) use ( $id, $fname ) {
 				// Check if cached value is up-to-date enough to have $id
 				if ( is_array( $oldValue ) && array_key_exists( $id, $oldValue ) ) {
 					// Completely leave the cache key alone
@@ -228,7 +280,7 @@ class NameTableStore {
 					// Log a fallback to master
 					if ( $source === DB_MASTER ) {
 						$this->logger->info(
-							__METHOD__ . 'falling back to master select from ' .
+							$fname . ' falling back to master select from ' .
 							$this->table . ' with id ' . $id
 						);
 					}
@@ -348,7 +400,7 @@ class NameTableStore {
 
 		$dbw->insert(
 			$this->table,
-			[ $this->nameField => $name ],
+			$this->getFieldsToStore( $name ),
 			__METHOD__,
 			[ 'IGNORE' ]
 		);
@@ -361,6 +413,18 @@ class NameTableStore {
 		}
 
 		return $dbw->insertId();
+	}
+
+	/**
+	 * @param string $name
+	 * @return array
+	 */
+	private function getFieldsToStore( $name ) {
+		$fields = [ $this->nameField => $name ];
+		if ( $this->insertCallback !== null ) {
+			$fields = call_user_func( $this->insertCallback, $fields );
+		}
+		return $fields;
 	}
 
 }

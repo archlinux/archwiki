@@ -144,7 +144,7 @@ class ApiFeedWatchlist extends ApiBase {
 				' [' . $this->getConfig()->get( 'LanguageCode' ) . ']';
 			$feedUrl = SpecialPage::getTitleFor( 'Watchlist' )->getFullURL();
 
-			$feedFormat = isset( $params['feedformat'] ) ? $params['feedformat'] : 'rss';
+			$feedFormat = $params['feedformat'] ?? 'rss';
 			$msg = wfMessage( 'watchlist' )->inContentLanguage()->escaped();
 			$feed = new $feedClasses[$feedFormat] ( $feedTitle, $msg, $feedUrl );
 
@@ -157,12 +157,8 @@ class ApiFeedWatchlist extends ApiBase {
 					$feedItems[] = new FeedItem( $errorTitle, $errorText, '', '', '' );
 				}
 			} else {
-				if ( $e instanceof UsageException ) {
-					$errorCode = $e->getCodeString();
-				} else {
-					// Something is seriously wrong
-					$errorCode = 'internal_api_error';
-				}
+				// Something is seriously wrong
+				$errorCode = 'internal_api_error';
 				$errorTitle = $this->msg( 'api-feed-error-title', $errorCode );
 				$errorText = $e->getMessage();
 				$feedItems[] = new FeedItem( $errorTitle, $errorText, '', '', '' );
@@ -201,7 +197,7 @@ class ApiFeedWatchlist extends ApiBase {
 		} else {
 			$titleUrl = $title->getFullURL( $curidParam );
 		}
-		$comment = isset( $info['comment'] ) ? $info['comment'] : null;
+		$comment = $info['comment'] ?? null;
 
 		// Create an anchor to section.
 		// The anchor won't work for sections that have dupes on page

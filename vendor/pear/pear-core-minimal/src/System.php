@@ -527,8 +527,14 @@ class System
         foreach ($exe_suffixes as $suff) {
             foreach ($path_elements as $dir) {
                 $file = $dir . DIRECTORY_SEPARATOR . $program . $suff;
-                if (is_executable($file)) {
+                // It's possible to run a .bat on Windows that is_executable
+                // would return false for. The is_executable check is meaningless...
+                if (OS_WINDOWS) {
                     return $file;
+                } else {
+                    if (is_executable($file)) {
+                        return $file;
+                    }
                 }
             }
         }

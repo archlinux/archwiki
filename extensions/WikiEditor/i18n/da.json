@@ -8,7 +8,8 @@
 			"Peter Alberti",
 			"Sarrus",
 			"Sir48",
-			"Macofe"
+			"Macofe",
+			"Saederup92"
 		]
 	},
 	"wikieditor": "Avanceret interface til redigering af wikitekst",
@@ -62,6 +63,7 @@
 	"wikieditor-toolbar-file-format-none": "ingen",
 	"wikieditor-toolbar-tool-file-insert": "Indsæt",
 	"wikieditor-toolbar-tool-file-cancel": "Annullér",
+	"wikieditor-toolbar-tool-file-upload": "Overfør",
 	"wikieditor-toolbar-tool-reference": "Fodnote",
 	"wikieditor-toolbar-tool-reference-example": "Indsæt fodnotetekst her",
 	"wikieditor-toolbar-tool-reference-cancel": "Annullér",

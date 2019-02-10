@@ -24,7 +24,7 @@
  * @ingroup Maintenance
  */
 
-require_once __DIR__ . '/backup.inc';
+require_once __DIR__ . '/includes/BackupDumper.php';
 require_once __DIR__ . '/7zip.inc';
 require_once __DIR__ . '/../includes/export/WikiExporter.php';
 
@@ -100,7 +100,7 @@ class TextPassDumper extends BackupDumper {
 	protected $db;
 
 	/**
-	 * @param array $args For backward compatibility
+	 * @param array|null $args For backward compatibility
 	 */
 	function __construct( $args = null ) {
 		parent::__construct();
@@ -127,6 +127,7 @@ TEXT
 			'first pageid written for the first %s (required) and the last pageid written for the ' .
 			'second %s if it exists.', false, true, false, true ); // This can be specified multiple times
 		$this->addOption( 'quiet', 'Don\'t dump status reports to stderr.' );
+		$this->addOption( 'full', 'Dump all revisions of every page' );
 		$this->addOption( 'current', 'Base ETA on number of pages in database instead of all revisions' );
 		$this->addOption( 'spawn', 'Spawn a subprocess for loading text records' );
 		$this->addOption( 'buffersize', 'Buffer size in bytes to use for reading the stub. ' .
@@ -705,7 +706,6 @@ TEXT
 	 * @throws MWException
 	 */
 	private function getTextDb( $id ) {
-		global $wgContLang;
 		if ( !isset( $this->db ) ) {
 			throw new MWException( __METHOD__ . "No database available" );
 		}
@@ -718,7 +718,8 @@ TEXT
 			return false;
 		}
 		$stripped = str_replace( "\r", "", $text );
-		$normalized = $wgContLang->normalize( $stripped );
+		$normalized = MediaWikiServices::getInstance()->getContentLanguage()->
+			normalize( $stripped );
 
 		return $normalized;
 	}
@@ -797,8 +798,6 @@ TEXT
 	}
 
 	private function getTextSpawnedOnce( $id ) {
-		global $wgContLang;
-
 		$ok = fwrite( $this->spawnWrite, "$id\n" );
 		// $this->progress( ">> $id" );
 		if ( !$ok ) {
@@ -853,7 +852,8 @@ TEXT
 
 		// Do normalization in the dump thread...
 		$stripped = str_replace( "\r", "", $text );
-		$normalized = $wgContLang->normalize( $stripped );
+		$normalized = MediaWikiServices::getInstance()->getContentLanguage()->
+			normalize( $stripped );
 
 		return $normalized;
 	}

@@ -49,12 +49,10 @@
 			"Thibaut120094"
 		]
 	},
-	"visualeditor-cite-tool-definition.json": "nul",
 	"visualeditor-cite-tool-name-book": "Livre",
 	"visualeditor-cite-tool-name-journal": "Journal",
 	"visualeditor-cite-tool-name-news": "Actualités",
 	"visualeditor-cite-tool-name-web": "Site web",
-	"cite-tool-definition.json": "nul",
 	"cite-ve-changedesc-ref-group-both": "Groupe de référence modifié de « $1 » en « $2 »",
 	"cite-ve-changedesc-ref-group-from": "Groupe de référence modifié de « $1 » vers le groupe général",
 	"cite-ve-changedesc-ref-group-to": "Groupe de référence modifié du groupe général vers « $1 »",

@@ -33,7 +33,7 @@ class QuickArrayReader {
 			switch ( $tokens[$i][0] ) {
 				case T_OPEN_TAG:
 					$i++;
-					continue;
+					break;
 				case T_VARIABLE:
 					// '$messages' -> 'messages'
 					$varname = trim( substr( $tokens[$i][1], 1 ) );

@@ -8,7 +8,7 @@ def bad_input file, text
 end
 
 def parse_dir dirname
-	Dir.entries(dirname).map{|filename|
+	Dir.entries(dirname).sort.map{|filename|
 		if filename == '.' || filename == '..'
 			nil
 		else
@@ -81,7 +81,7 @@ def parse_file filename
 			next if comment_line.strip == '/**'
 			comment_line.sub!(/^[ \t]*\*[ \t]?/, '') # strip leading '*' and whitespace
 
-			m = comment_line.match(/^@(\w+)[ \t]*(.*)/)
+			m = comment_line.match(/^@([\w-]+)(?:[ \t]+(.+))?/)
 			if !m
 				# this is a continuation of previous item's description
 				previous_item[:description] << comment_line + "\n"
@@ -129,12 +129,14 @@ def parse_file filename
 			when 'param'
 				case filetype
 				when :js
-					type, name, default, description = content.match(/^\{(.+?)\} \[?([\w.$]+?)(?:=(.+?))?\]?( .+)?$/).captures
+					type, name, default, description =
+						content.match(/^\{(?:\.\.\.)?(.+?)\} \[?([\w.$]+?)(?:=(.+?))?\]?( .+)?$/).captures
 					next if type == 'Object' && name == 'config'
 					data[:params] << {name: name, type: cleanup_class_name(type), description: description || '', default: default}
 					previous_item = data[:params][-1]
 				when :php
-					type, name, config, description = content.match(/^(\S+) \&?\$(\w+)(?:\['(\w+)'\])?( .+)?$/).captures
+					type, name, config, description =
+						content.match(/^(\S+) \&?(?:\.\.\.)?\$(\w+)(?:\['(\w+)'\])?( .+)?$/).captures
 					next if type == 'array' && name == 'config' && !config
 					if config && name == 'config'
 						data[:config] << {name: config, type: cleanup_class_name(type), description: description || ''}
@@ -182,7 +184,7 @@ def parse_file filename
 				ignore = true
 			when 'inheritable', 'deprecated', 'singleton', 'throws',
 				 'chainable', 'fires', 'localdoc', 'member',
-				 'see', 'uses'
+				 'see', 'uses', 'param-taint'
 				# skip
 			else
 				bad_input filename, comment_line

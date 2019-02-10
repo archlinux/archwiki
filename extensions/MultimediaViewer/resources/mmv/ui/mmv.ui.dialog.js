@@ -77,7 +77,7 @@
 		this.$warning = $( '<div>' )
 			.addClass( 'mw-mmv-dialog-warning' )
 			.hide()
-			.click( function ( e ) {
+			.on( 'click', function ( e ) {
 				// prevent other click handlers such as the download CTA from intercepting clicks at the warning
 				e.stopPropagation();
 			} )

@@ -1,4 +1,4 @@
-( function ( mw, $ ) {
+( function () {
 	/**
 	 * Menu header for the RCFilters filters menu
 	 *
@@ -37,7 +37,7 @@
 
 		// Help icon for Tagged edits
 		this.helpIcon = new OO.ui.ButtonWidget( {
-			icon: 'help',
+			icon: 'helpNotice',
 			framed: false,
 			title: mw.msg( 'rcfilters-view-tags-help-icon-tooltip' ),
 			classes: [ 'mw-rcfilters-ui-filterMenuHeaderWidget-helpIcon' ],
@@ -179,4 +179,4 @@
 	mw.rcfilters.ui.FilterMenuHeaderWidget.prototype.onInvertNamespacesButtonClick = function () {
 		this.controller.toggleInvertedNamespaces();
 	};
-}( mediaWiki, jQuery ) );
+}() );

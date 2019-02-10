@@ -7,12 +7,10 @@
 			"Aefgh39622"
 		]
 	},
-	"visualeditor-cite-tool-definition.json": "ไม่ได้กำหนด",
 	"visualeditor-cite-tool-name-book": "หนังสือ",
 	"visualeditor-cite-tool-name-journal": "วารสาร",
 	"visualeditor-cite-tool-name-news": "ข่าว",
 	"visualeditor-cite-tool-name-web": "เว็บไซต์",
-	"cite-tool-definition.json": "ไม่ได้กำหนด",
 	"cite-ve-changedesc-ref-group-both": "เปลี่ยนกลุ่มอ้างอิงจาก \"$1\" เป็น \"$2\"",
 	"cite-ve-changedesc-ref-group-from": "เปลี่ยนกลุ่มอ้างอิงจาก \"$1\" เป็นกลุ่มทั่วไป",
 	"cite-ve-changedesc-ref-group-to": "เปลี่ยนกลุ่มอ้างอิงจากกลุ่มทั่วไปเป็น \"$1\"",

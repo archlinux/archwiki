@@ -16,11 +16,11 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-use Wikimedia\Rdbms\LoadBalancer;
+use Wikimedia\Rdbms\ILoadBalancer;
 use Wikimedia\Rdbms\DBConnRef;
 
 class OATHUserRepository {
-	/** @var LoadBalancer */
+	/** @var ILoadBalancer */
 	protected $lb;
 
 	/** @var BagOStuff */
@@ -28,10 +28,10 @@ class OATHUserRepository {
 
 	/**
 	 * OATHUserRepository constructor.
-	 * @param LoadBalancer $lb
+	 * @param ILoadBalancer $lb
 	 * @param BagOStuff $cache
 	 */
-	public function __construct( LoadBalancer $lb, BagOStuff $cache ) {
+	public function __construct( ILoadBalancer $lb, BagOStuff $cache ) {
 		$this->lb = $lb;
 		$this->cache = $cache;
 	}

@@ -10,7 +10,7 @@
 			"Nikosgranturismogt"
 		]
 	},
-	"cite-desc": "Προσθέτει τις ετικέτες <nowiki><ref[ name=αναγνωριστικό]></nowiki> και <nowiki><references/></nowiki>, για παραπομπές",
+	"cite-desc": "Προσθέτει τις ετικέτες <code><nowiki><ref[ name=id]></nowiki></code> και <code><nowiki><references/></nowiki></code>, για παραπομπές",
 	"cite_error": "Σφάλμα παραπομπής: $1",
 	"cite_error_ref_numeric_key": "Μη έγκυρη ετικέτα <code>&lt;ref&gt;</code>·\nτο όνομα δεν μπορεί να είναι απλός ακέραιος. Χρησιμοποιήστε έναν περιγραφικό τίτλο",
 	"cite_error_ref_no_key": "Μη έγκυρη ετικέτα <code>&lt;ref&gt;</code>·\nπαραπομπές χωρίς περιεχόμενο πρέπει να έχουν όνομα",

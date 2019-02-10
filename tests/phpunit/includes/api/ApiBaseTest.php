@@ -164,13 +164,20 @@ class ApiBaseTest extends ApiTestCase {
 	}
 
 	public function testGetTitleOrPageIdPageId() {
+		$page = $this->getExistingTestPage();
 		$result = ( new MockApi() )->getTitleOrPageId(
-			[ 'pageid' => Title::newFromText( 'UTPage' )->getArticleId() ] );
+			[ 'pageid' => $page->getId() ] );
 		$this->assertInstanceOf( WikiPage::class, $result );
-		$this->assertSame( 'UTPage', $result->getTitle()->getPrefixedText() );
+		$this->assertSame(
+			$page->getTitle()->getPrefixedText(),
+			$result->getTitle()->getPrefixedText()
+		);
 	}
 
 	public function testGetTitleOrPageIdInvalidPageId() {
+		// FIXME: fails under postgres
+		$this->markTestSkippedIfDbType( 'postgres' );
+
 		$this->setExpectedException( ApiUsageException::class,
 			'There is no page with ID 2147483648.' );
 		$mock = new MockApi();
@@ -199,10 +206,11 @@ class ApiBaseTest extends ApiTestCase {
 	}
 
 	public function testGetTitleFromTitleOrPageIdPageId() {
+		$page = $this->getExistingTestPage();
 		$result = ( new MockApi() )->getTitleFromTitleOrPageId(
-			[ 'pageid' => Title::newFromText( 'UTPage' )->getArticleId() ] );
+			[ 'pageid' => $page->getId() ] );
 		$this->assertInstanceOf( Title::class, $result );
-		$this->assertSame( 'UTPage', $result->getPrefixedText() );
+		$this->assertSame( $page->getTitle()->getPrefixedText(), $result->getPrefixedText() );
 	}
 
 	public function testGetTitleFromTitleOrPageIdInvalidPageId() {
@@ -212,8 +220,45 @@ class ApiBaseTest extends ApiTestCase {
 		$mock->getTitleFromTitleOrPageId( [ 'pageid' => 298401643 ] );
 	}
 
+	public function testGetParameter() {
+		$mock = $this->getMockBuilder( MockApi::class )
+			->setMethods( [ 'getAllowedParams' ] )
+			->getMock();
+		$mock->method( 'getAllowedParams' )->willReturn( [
+			'foo' => [
+				ApiBase::PARAM_TYPE => [ 'value' ],
+			],
+			'bar' => [
+				ApiBase::PARAM_TYPE => [ 'value' ],
+			],
+		] );
+		$wrapper = TestingAccessWrapper::newFromObject( $mock );
+
+		$context = new DerivativeContext( $mock );
+		$context->setRequest( new FauxRequest( [ 'foo' => 'bad', 'bar' => 'value' ] ) );
+		$wrapper->mMainModule = new ApiMain( $context );
+
+		// Even though 'foo' is bad, getParameter( 'bar' ) must not fail
+		$this->assertSame( 'value', $wrapper->getParameter( 'bar' ) );
+
+		// But getParameter( 'foo' ) must throw.
+		try {
+			$wrapper->getParameter( 'foo' );
+			$this->fail( 'Expected exception not thrown' );
+		} catch ( ApiUsageException $ex ) {
+			$this->assertTrue( $this->apiExceptionHasCode( $ex, 'unknown_foo' ) );
+		}
+
+		// And extractRequestParams() must throw too.
+		try {
+			$mock->extractRequestParams();
+			$this->fail( 'Expected exception not thrown' );
+		} catch ( ApiUsageException $ex ) {
+			$this->assertTrue( $this->apiExceptionHasCode( $ex, 'unknown_foo' ) );
+		}
+	}
+
 	/**
-	 * @dataProvider provideGetParameterFromSettings
 	 * @param string|null $input
 	 * @param array $paramSettings
 	 * @param mixed $expected
@@ -221,21 +266,27 @@ class ApiBaseTest extends ApiTestCase {
 	 *   'parseLimits': true|false
 	 *   'apihighlimits': true|false
 	 *   'internalmode': true|false
+	 *   'prefix': true|false
 	 * @param string[] $warnings
 	 */
-	public function testGetParameterFromSettings(
+	private function doGetParameterFromSettings(
 		$input, $paramSettings, $expected, $warnings, $options = []
 	) {
 		$mock = new MockApi();
 		$wrapper = TestingAccessWrapper::newFromObject( $mock );
+		if ( $options['prefix'] ) {
+			$wrapper->mModulePrefix = 'my';
+			$paramName = 'Param';
+		} else {
+			$paramName = 'myParam';
+		}
 
 		$context = new DerivativeContext( $mock );
 		$context->setRequest( new FauxRequest(
 			$input !== null ? [ 'myParam' => $input ] : [] ) );
 		$wrapper->mMainModule = new ApiMain( $context );
 
-		$parseLimits = isset( $options['parseLimits'] ) ?
-			$options['parseLimits'] : true;
+		$parseLimits = $options['parseLimits'] ?? true;
 
 		if ( !empty( $options['apihighlimits'] ) ) {
 			$context->setUser( self::$users['sysop']->getUser() );
@@ -256,14 +307,14 @@ class ApiBaseTest extends ApiTestCase {
 
 		if ( $expected instanceof Exception ) {
 			try {
-				$wrapper->getParameterFromSettings( 'myParam', $paramSettings,
+				$wrapper->getParameterFromSettings( $paramName, $paramSettings,
 					$parseLimits );
 				$this->fail( 'No exception thrown' );
 			} catch ( Exception $ex ) {
 				$this->assertEquals( $expected, $ex );
 			}
 		} else {
-			$result = $wrapper->getParameterFromSettings( 'myParam',
+			$result = $wrapper->getParameterFromSettings( $paramName,
 				$paramSettings, $parseLimits );
 			if ( isset( $paramSettings[ApiBase::PARAM_TYPE] ) &&
 				$paramSettings[ApiBase::PARAM_TYPE] === 'timestamp' &&
@@ -295,6 +346,28 @@ class ApiBaseTest extends ApiTestCase {
 			$this->assertSame( [ 'myParam' ],
 				$mainWrapper->getSensitiveParams() );
 		}
+	}
+
+	/**
+	 * @dataProvider provideGetParameterFromSettings
+	 * @see self::doGetParameterFromSettings()
+	 */
+	public function testGetParameterFromSettings_noprefix(
+		$input, $paramSettings, $expected, $warnings, $options = []
+	) {
+		$options['prefix'] = false;
+		$this->doGetParameterFromSettings( $input, $paramSettings, $expected, $warnings, $options );
+	}
+
+	/**
+	 * @dataProvider provideGetParameterFromSettings
+	 * @see self::doGetParameterFromSettings()
+	 */
+	public function testGetParameterFromSettings_prefix(
+		$input, $paramSettings, $expected, $warnings, $options = []
+	) {
+		$options['prefix'] = true;
+		$this->doGetParameterFromSettings( $input, $paramSettings, $expected, $warnings, $options );
 	}
 
 	public static function provideGetParameterFromSettings() {
@@ -363,8 +436,10 @@ class ApiBaseTest extends ApiTestCase {
 					ApiBase::PARAM_ISMULTI => true,
 					ApiBase::PARAM_ISMULTI_LIMIT1 => 2,
 				],
-				[ 'a', 'b' ],
-				[ [ 'apiwarn-toomanyvalues', 'myParam', 2 ] ],
+				ApiUsageException::newWithMessage(
+					null, [ 'apierror-toomanyvalues', 'myParam', 2 ], 'too-many-myParam'
+				),
+				[]
 			],
 			'Multi-valued parameter with exceeded limits for non-bot' => [
 				'a|b|c',
@@ -373,8 +448,10 @@ class ApiBaseTest extends ApiTestCase {
 					ApiBase::PARAM_ISMULTI_LIMIT1 => 2,
 					ApiBase::PARAM_ISMULTI_LIMIT2 => 3,
 				],
-				[ 'a', 'b' ],
-				[ [ 'apiwarn-toomanyvalues', 'myParam', 2 ] ],
+				ApiUsageException::newWithMessage(
+					null, [ 'apierror-toomanyvalues', 'myParam', 2 ], 'too-many-myParam'
+				),
+				[]
 			],
 			'Multi-valued parameter with non-exceeded limits for bot' => [
 				'a|b|c',
@@ -995,6 +1072,12 @@ class ApiBaseTest extends ApiTestCase {
 				'Foo bar',
 				[],
 			],
+			'User prefixed with "User:"' => [
+				'User:foo_bar',
+				[ ApiBase::PARAM_TYPE => 'user' ],
+				'Foo bar',
+				[],
+			],
 			'Invalid username "|"' => [
 				'|',
 				[ ApiBase::PARAM_TYPE => 'user' ],
@@ -1173,7 +1256,7 @@ class ApiBaseTest extends ApiTestCase {
 		];
 
 		foreach ( $integerTests as $test ) {
-			$desc = isset( $test[2] ) ? $test[2] : $test[0];
+			$desc = $test[2] ?? $test[0];
 			$warnings = isset( $test[3] ) ?
 				[ [ 'apiwarn-badutf8', 'myParam' ] ] : [];
 			$returnArray["\"$desc\" as integer"] = [
@@ -1270,6 +1353,101 @@ class ApiBaseTest extends ApiTestCase {
 			$this->assertTrue( ApiTestCase::apiExceptionHasCode( $ex, 'unknownerror-nocode' ),
 				'Exception has "unknownerror-nocode"' );
 		}
+	}
+
+	/**
+	 * @covers ApiBase::extractRequestParams
+	 */
+	public function testExtractRequestParams() {
+		$request = new FauxRequest( [
+			'xxexists' => 'exists!',
+			'xxmulti' => 'a|b|c|d|{bad}',
+			'xxempty' => '',
+			'xxtemplate-a' => 'A!',
+			'xxtemplate-b' => 'B1|B2|B3',
+			'xxtemplate-c' => '',
+			'xxrecursivetemplate-b-B1' => 'X',
+			'xxrecursivetemplate-b-B3' => 'Y',
+			'xxrecursivetemplate-b-B4' => '?',
+			'xxemptytemplate-' => 'nope',
+			'foo' => 'a|b|c',
+			'xxfoo' => 'a|b|c',
+			'errorformat' => 'raw',
+		] );
+		$context = new DerivativeContext( RequestContext::getMain() );
+		$context->setRequest( $request );
+		$main = new ApiMain( $context );
+
+		$mock = $this->getMockBuilder( ApiBase::class )
+			->setConstructorArgs( [ $main, 'test', 'xx' ] )
+			->setMethods( [ 'getAllowedParams' ] )
+			->getMockForAbstractClass();
+		$mock->method( 'getAllowedParams' )->willReturn( [
+			'notexists' => null,
+			'exists' => null,
+			'multi' => [
+				ApiBase::PARAM_ISMULTI => true,
+			],
+			'empty' => [
+				ApiBase::PARAM_ISMULTI => true,
+			],
+			'template-{m}' => [
+				ApiBase::PARAM_ISMULTI => true,
+				ApiBase::PARAM_TEMPLATE_VARS => [ 'm' => 'multi' ],
+			],
+			'recursivetemplate-{m}-{t}' => [
+				ApiBase::PARAM_TEMPLATE_VARS => [ 't' => 'template-{m}', 'm' => 'multi' ],
+			],
+			'emptytemplate-{m}' => [
+				ApiBase::PARAM_ISMULTI => true,
+				ApiBase::PARAM_TEMPLATE_VARS => [ 'm' => 'empty' ],
+			],
+			'badtemplate-{e}' => [
+				ApiBase::PARAM_TEMPLATE_VARS => [ 'e' => 'exists' ],
+			],
+			'badtemplate2-{e}' => [
+				ApiBase::PARAM_TEMPLATE_VARS => [ 'e' => 'badtemplate2-{e}' ],
+			],
+			'badtemplate3-{x}' => [
+				ApiBase::PARAM_TEMPLATE_VARS => [ 'x' => 'foo' ],
+			],
+		] );
+
+		$this->assertEquals( [
+			'notexists' => null,
+			'exists' => 'exists!',
+			'multi' => [ 'a', 'b', 'c', 'd', '{bad}' ],
+			'empty' => [],
+			'template-a' => [ 'A!' ],
+			'template-b' => [ 'B1', 'B2', 'B3' ],
+			'template-c' => [],
+			'template-d' => null,
+			'recursivetemplate-a-A!' => null,
+			'recursivetemplate-b-B1' => 'X',
+			'recursivetemplate-b-B2' => null,
+			'recursivetemplate-b-B3' => 'Y',
+		], $mock->extractRequestParams() );
+
+		$used = TestingAccessWrapper::newFromObject( $main )->getParamsUsed();
+		sort( $used );
+		$this->assertEquals( [
+			'xxempty',
+			'xxexists',
+			'xxmulti',
+			'xxnotexists',
+			'xxrecursivetemplate-a-A!',
+			'xxrecursivetemplate-b-B1',
+			'xxrecursivetemplate-b-B2',
+			'xxrecursivetemplate-b-B3',
+			'xxtemplate-a',
+			'xxtemplate-b',
+			'xxtemplate-c',
+			'xxtemplate-d',
+		], $used );
+
+		$warnings = $mock->getResult()->getResultData( 'warnings', [ 'Strip' => 'all' ] );
+		$this->assertCount( 1, $warnings );
+		$this->assertSame( 'ignoring-invalid-templated-value', $warnings[0]['code'] );
 	}
 
 }

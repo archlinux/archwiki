@@ -2,10 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Crt",
-			"Nike"
+			"Nike",
+			"01miki10"
 		]
 	},
-	"questycaptcha-addurl": "Muokkauksesi sisältää uusia ulkoisia linkkejä.\nAutomatisoitujen roskamuokkausten välttämiseksi vastaa alla olevaan kysymykseen ([[Special:Captcha/help|lisätietoja]]):",
+	"questycaptcha-addurl": "Muokkauksesi sisältää uusia ulkoisia linkkejä.\nSuojataksemme wikiä automaattisia roskamuokkauksia vastaan pyydämme sinua vastaamaan alla olevaan kysymykseen ([[Special:Captcha/help|lisätietoja]]):",
 	"questycaptcha-badlogin": "Automatisoidun salasanan murtamisen estämiseksi vastaa alla olevaan kysymykseen ([[Special:Captcha/help|lisätietoja]]):",
 	"questycaptcha-createaccount": "Automaattisen käyttäjätunnusten luonnin estämiseksi vastaa alla olevaan kysymykseen ([[Special:Captcha/help|lisätietoja]]):",
 	"questycaptcha-create": "Luodaksesi sivun vastaa alla olevaan kysymykseen ([[Special:Captcha/help|lisätietoja]]):",

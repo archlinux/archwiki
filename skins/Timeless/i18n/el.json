@@ -19,5 +19,6 @@
 	"timeless-pagemisc": "Περισσότερα",
 	"timeless-namespaces": "Ονοματοχώροι",
 	"timeless-pagetools": "Ενέργειες σελίδας",
-	"timeless-languages": "Γλώσσες"
+	"timeless-languages": "Γλώσσες",
+	"timeless.js": "/* Οποιοσδήποτε κώδικας JavaScript εδώ θα φορτωθεί για χρήστες που χρησιμοποιούν το Timeless skin */"
 }

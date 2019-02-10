@@ -57,6 +57,7 @@ class ButtonWidget extends Widget {
 	 * @param string $config['href'] Hyperlink to visit when clicked
 	 * @param string $config['target'] Target to open hyperlink in
 	 * @param bool $config['noFollow'] Search engine traversal hint (default: true)
+	 * @param-taint $config escapes_html
 	 */
 	public function __construct( array $config = [] ) {
 		// Parent constructor
@@ -81,10 +82,10 @@ class ButtonWidget extends Widget {
 			->addClasses( [ 'oo-ui-buttonWidget' ] )
 			->appendContent( $this->button );
 
-		$this->setActive( isset( $config['active'] ) ? $config['active'] : false );
-		$this->setHref( isset( $config['href'] ) ? $config['href'] : null );
-		$this->setTarget( isset( $config['target'] ) ? $config['target'] : null );
-		$this->setNoFollow( isset( $config['noFollow'] ) ? $config['noFollow'] : true );
+		$this->setActive( $config['active'] ?? false );
+		$this->setHref( $config['href'] ?? null );
+		$this->setTarget( $config['target'] ?? null );
+		$this->setNoFollow( $config['noFollow'] ?? true );
 	}
 
 	/**
@@ -184,7 +185,7 @@ class ButtonWidget extends Widget {
 	 *
 	 * A button should be marked as active when clicking it would only refresh the page.
 	 *
-	 * @param bool $active Make button active
+	 * @param bool|null $active Make button active
 	 * @return $this
 	 */
 	public function setActive( $active = null ) {

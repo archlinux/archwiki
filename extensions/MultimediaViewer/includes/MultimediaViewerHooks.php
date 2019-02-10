@@ -44,26 +44,6 @@ class MultimediaViewerHooks {
 		return true;
 	}
 
-	public static function onExtensionFunctions() {
-		global $wgResourceModules;
-
-		if ( isset( $wgResourceModules['ext.eventLogging'] ) ) {
-			$wgResourceModules['mmv.lightboxinterface']['dependencies'][] = 'ext.eventLogging';
-			$wgResourceModules['mmv']['dependencies'][] = 'ext.eventLogging';
-			$wgResourceModules['mmv.bootstrap.autostart']['dependencies'][] = 'ext.eventLogging';
-		}
-	}
-
-	public static function onEventLoggingRegisterSchemas( array &$schemas ) {
-		 $schemas += [
-			'MediaViewer' => 10867062,
-			'MultimediaViewerNetworkPerformance' => 15573630,
-			'MultimediaViewerDuration' => 10427980,
-			'MultimediaViewerAttribution' => 9758179,
-			'MultimediaViewerDimensions' => 10014238,
-		];
-	}
-
 	/**
 	 * Checks the context for whether to load the viewer.
 	 * @param User $user

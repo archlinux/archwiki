@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Session\SessionManager;
 use Wikimedia\ScopedCallback;
 use Wikimedia\TestingAccessWrapper;
@@ -59,8 +60,7 @@ class BotPasswordTest extends MediaWikiTestCase {
 	}
 
 	public function addDBData() {
-		$passwordFactory = new \PasswordFactory();
-		$passwordFactory->init( \RequestContext::getMain()->getConfig() );
+		$passwordFactory = MediaWikiServices::getInstance()->getPasswordFactory();
 		$passwordHash = $passwordFactory->newFromPlaintext( 'foobaz' );
 
 		$dbw = wfGetDB( DB_MASTER );
@@ -248,13 +248,13 @@ class BotPasswordTest extends MediaWikiTestCase {
 			[ 'user', 'abc@def', false ],
 			[ 'legacy@user', 'pass', false ],
 			[ 'user@bot', '12345678901234567890123456789012',
-				[ 'user@bot', '12345678901234567890123456789012', true ] ],
+				[ 'user@bot', '12345678901234567890123456789012' ] ],
 			[ 'user', 'bot@12345678901234567890123456789012',
-				[ 'user@bot', '12345678901234567890123456789012', true ] ],
+				[ 'user@bot', '12345678901234567890123456789012' ] ],
 			[ 'user', 'bot@12345678901234567890123456789012345',
-				[ 'user@bot', '12345678901234567890123456789012345', true ] ],
+				[ 'user@bot', '12345678901234567890123456789012345' ] ],
 			[ 'user', 'bot@x@12345678901234567890123456789012',
-				[ 'user@bot@x', '12345678901234567890123456789012', true ] ],
+				[ 'user@bot@x', '12345678901234567890123456789012' ] ],
 		];
 	}
 
@@ -350,8 +350,7 @@ class BotPasswordTest extends MediaWikiTestCase {
 	 * @param string|null $password
 	 */
 	public function testSave( $password ) {
-		$passwordFactory = new \PasswordFactory();
-		$passwordFactory->init( \RequestContext::getMain()->getConfig() );
+		$passwordFactory = MediaWikiServices::getInstance()->getPasswordFactory();
 
 		$bp = BotPassword::newUnsaved( [
 			'centralId' => 42,

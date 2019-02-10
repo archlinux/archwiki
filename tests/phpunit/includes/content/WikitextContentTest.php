@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\MediaWikiServices;
+
 /**
  * @group ContentHandler
  *
@@ -303,7 +305,7 @@ just a test"
 	 * @covers WikitextContent::matchMagicWord
 	 */
 	public function testMatchMagicWord() {
-		$mw = MagicWord::get( "staticredirect" );
+		$mw = MediaWikiServices::getInstance()->getMagicWordFactory()->get( "staticredirect" );
 
 		$content = $this->newContent( "#REDIRECT [[FOO]]\n__STATICREDIRECT__" );
 		$this->assertTrue( $content->matchMagicWord( $mw ), "should have matched magic word" );
@@ -377,7 +379,7 @@ just a test"
 		$wikitext = false;
 		$redirectTarget = false;
 		$content = $this->newContent( 'hello world.' );
-		$options = $content->getContentHandler()->makeParserOptions( 'canonical' );
+		$options = ParserOptions::newCanonical( 'canonical' );
 		$options->setRedirectTarget( $title );
 		$content->getParserOutput( $title, null, $options );
 		$this->assertEquals( 'hello world.', $wikitext,
@@ -394,7 +396,7 @@ just a test"
 		$content = $this->newContent(
 			"#REDIRECT [[TestRedirectParserOption/redir]]\nhello redirect."
 		);
-		$options = $content->getContentHandler()->makeParserOptions( 'canonical' );
+		$options = ParserOptions::newCanonical( 'canonical' );
 		$content->getParserOutput( $title, null, $options );
 		$this->assertEquals(
 			'hello redirect.',
@@ -429,15 +431,30 @@ just a test"
 
 	public static function dataGetDeletionUpdates() {
 		return [
-			[ "WikitextContentTest_testGetSecondaryDataUpdates_1",
+			[
 				CONTENT_MODEL_WIKITEXT, "hello ''world''\n",
 				[ LinksDeletionUpdate::class => [] ]
 			],
-			[ "WikitextContentTest_testGetSecondaryDataUpdates_2",
+			[
 				CONTENT_MODEL_WIKITEXT, "hello [[world test 21344]]\n",
 				[ LinksDeletionUpdate::class => [] ]
 			],
 			// @todo more...?
 		];
+	}
+
+	/**
+	 * @covers WikitextContent::preSaveTransform
+	 * @covers WikitextContent::fillParserOutput
+	 */
+	public function testHadSignature() {
+		$titleObj = Title::newFromText( __CLASS__ );
+
+		$content = new WikitextContent( '~~~~' );
+		$pstContent = $content->preSaveTransform(
+			$titleObj, $this->getTestUser()->getUser(), new ParserOptions()
+		);
+
+		$this->assertTrue( $pstContent->getParserOutput( $titleObj )->getFlag( 'user-signature' ) );
 	}
 }

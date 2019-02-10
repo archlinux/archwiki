@@ -4,6 +4,19 @@ class JavaScriptMinifierTest extends PHPUnit\Framework\TestCase {
 
 	use MediaWikiCoversValidator;
 
+	protected function tearDown() {
+		parent::tearDown();
+		// Reset
+		$this->setMaxLineLength( 1000 );
+	}
+
+	private function setMaxLineLength( $val ) {
+		$classReflect = new ReflectionClass( JavaScriptMinifier::class );
+		$propertyReflect = $classReflect->getProperty( 'maxLineLength' );
+		$propertyReflect->setAccessible( true );
+		$propertyReflect->setValue( JavaScriptMinifier::class, $val );
+	}
+
 	public static function provideCases() {
 		return [
 
@@ -152,9 +165,6 @@ class JavaScriptMinifierTest extends PHPUnit\Framework\TestCase {
 			],
 			[ "if(1)/a /g.exec('Pa ss');", "if(1)/a /g.exec('Pa ss');" ],
 
-			// newline insertion after 1000 chars: break after the "++", not before
-			[ str_repeat( ';', 996 ) . "if(x++);", str_repeat( ';', 996 ) . "if(x++\n);" ],
-
 			// Unicode letter characters should pass through ok in identifiers (T33187)
 			[ "var KaŝSkatolVal = {}", 'var KaŝSkatolVal={}' ],
 
@@ -203,40 +213,155 @@ class JavaScriptMinifierTest extends PHPUnit\Framework\TestCase {
 		);
 	}
 
-	public static function provideExponentLineBreaking() {
+	public static function provideLineBreaker() {
 		return [
 			[
-				// This one gets interpreted all together by the prior code;
-				// no break at the 'E' happens.
-				'1.23456789E55',
+				// Regression tests for T34548.
+				// Must not break between 'E' and '+'.
+				'var name = 1.23456789E55;',
+				[
+					'var',
+					'name',
+					'=',
+					'1.23456789E55',
+					';',
+				],
 			],
 			[
-				// This one breaks under the bad code; splits between 'E' and '+'
-				'1.23456789E+5',
+				'var name = 1.23456789E+5;',
+				[
+					'var',
+					'name',
+					'=',
+					'1.23456789E+5',
+					';',
+				],
 			],
 			[
-				// This one breaks under the bad code; splits between 'E' and '-'
-				'1.23456789E-5',
+				'var name = 1.23456789E-5;',
+				[
+					'var',
+					'name',
+					'=',
+					'1.23456789E-5',
+					';',
+				],
+			],
+			[
+				// Must not break before '++'
+				'if(x++);',
+				[
+					'if',
+					'(',
+					'x++',
+					')',
+					';',
+				],
+			],
+			[
+				// Regression test for T201606.
+				// Must not break between 'return' and Expression.
+				// Was caused by bad state after '{}' in property value.
+				<<<JAVASCRIPT
+			call( function () {
+				try {
+				} catch (e) {
+					obj = {
+						key: 1 ? 0 : {}
+					};
+				}
+				return name === 'input';
+			} );
+JAVASCRIPT
+				,
+				[
+					'call',
+					'(',
+					'function',
+					'(',
+					')',
+					'{',
+					'try',
+					'{',
+					'}',
+					'catch',
+					'(',
+					'e',
+					')',
+					'{',
+					'obj',
+					'=',
+					'{',
+					'key',
+					':',
+					'1',
+					'?',
+					'0',
+					':',
+					'{',
+					'}',
+					'}',
+					';',
+					'}',
+					// The return Statement:
+					//     return [no LineTerminator here] Expression
+					'return name',
+					'===',
+					"'input'",
+					';',
+					'}',
+					')',
+					';',
+				]
+			],
+			[
+				// Regression test for T201606.
+				// Must not break between 'return' and Expression.
+				// Was caused by bad state after a ternary in the expression value
+				// for a key in an object literal.
+				<<<JAVASCRIPT
+call( {
+	key: 1 ? 0 : function () {
+		return this;
+	}
+} );
+JAVASCRIPT
+				,
+				[
+					'call',
+					'(',
+					'{',
+					'key',
+					':',
+					'1',
+					'?',
+					'0',
+					':',
+					'function',
+					'(',
+					')',
+					'{',
+					'return this',
+					';',
+					'}',
+					'}',
+					')',
+					';',
+				]
 			],
 		];
 	}
 
 	/**
-	 * @dataProvider provideExponentLineBreaking
+	 * @dataProvider provideLineBreaker
 	 * @covers JavaScriptMinifier::minify
 	 */
-	public function testExponentLineBreaking( $num ) {
-		// Long line breaking was being incorrectly done between the base and
-		// exponent part of a number, causing a syntax error. The line should
-		// instead break at the start of the number. (T34548)
-		$prefix = 'var longVarName' . str_repeat( '_', 973 ) . '=';
-		$suffix = ',shortVarName=0;';
-
-		$input = $prefix . $num . $suffix;
-		$expected = $prefix . "\n" . $num . $suffix;
-
-		$minified = JavaScriptMinifier::minify( $input );
-
-		$this->assertEquals( $expected, $minified, "Line breaks must not occur in middle of exponent" );
+	public function testLineBreaker( $code, array $expectedLines ) {
+		$this->setMaxLineLength( 1 );
+		$actual = JavaScriptMinifier::minify( $code );
+		$this->assertEquals(
+			array_merge( [ '' ], $expectedLines ),
+			explode( "\n", $actual )
+		);
 	}
 }

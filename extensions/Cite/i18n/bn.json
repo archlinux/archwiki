@@ -5,10 +5,11 @@
 			"Bellayet",
 			"Nasir8891",
 			"Zaheen",
-			"Aftabuzzaman"
+			"Aftabuzzaman",
+			"আফতাবুজ্জামান"
 		]
 	},
-	"cite-desc": "উদ্ধৃতির জন্য, <nowiki><ref[ name=id]></nowiki> এবং <nowiki><references/></nowiki> ট্যাগসমূহ যোগ করুন",
+	"cite-desc": "উদ্ধৃতির জন্য, <code><nowiki><ref[ name=id]></nowiki></code> এবং <code><nowiki><references/></nowiki></code> ট্যাগসমূহ যোগ করুন",
 	"cite_error": "উদ্ধৃতি ত্রুটি: $1",
 	"cite_error_ref_numeric_key": "অবৈধ <code>&lt;ref&gt;</code> ট্যাগ; নাম কোন সরল পূর্ণসংখ্যা হতে পারবে না। একটি বিবরণমূলক শিরোনাম ব্যবহার করুন",
 	"cite_error_ref_no_key": "শুরুর <code>&lt;ref&gt;</code> ট্যাগ সঠিক নয় বা ভুল নামে রয়েছে",

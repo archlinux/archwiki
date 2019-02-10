@@ -32,11 +32,20 @@ class ApiCategoryTree extends ApiBase {
 			}
 			$options = get_object_vars( $options );
 		}
+
+		$title = CategoryTree::makeTitle( $params['category'] );
+		if ( !$title || $title->isExternal() ) {
+			if ( is_callable( [ $this, 'dieWithError' ] ) ) {
+				$this->dieWithError( [ 'apierror-invalidtitle', wfEscapeWikiText( $params['category'] ) ] );
+			} else {
+				$this->dieUsageMsg( [ 'invalidtitle', wfEscapeWikiText( $params['category'] ) ] );
+			}
+		}
+
 		$depth = isset( $options['depth'] ) ? (int)$options['depth'] : 1;
 
 		$ct = new CategoryTree( $options );
 		$depth = CategoryTree::capDepth( $ct->getOption( 'mode' ), $depth );
-		$title = CategoryTree::makeTitle( $params['category'] );
 		$config = $this->getConfig();
 		$ctConfig = ConfigFactory::getDefaultInstance()->makeConfig( 'categorytree' );
 		$html = $this->getHTML( $ct, $title, $depth, $ctConfig );

@@ -24,6 +24,9 @@
  */
 use MediaWiki\Diff\ComplexityException;
 
+// FIXME: Don't use assert() in this file
+// phpcs:disable MediaWiki.Usage.ForbiddenFunctions.assert
+
 /**
  * This diff implementation is mainly lifted from the LCS algorithm of the Eclipse project which
  * in turn is based on Myers' "An O(ND) difference algorithm and its variations"
@@ -348,7 +351,7 @@ class DiffEngine {
 			$this->maxDifferences = ceil( ( $this->m + $this->n ) / 2.0 );
 			if ( $this->m * $this->n > $this->tooLong ) {
 				// limit complexity to D^POW_LIMIT for long sequences
-				$this->maxDifferences = floor( pow( $this->maxDifferences, $this->powLimit - 1.0 ) );
+				$this->maxDifferences = floor( $this->maxDifferences ** ( $this->powLimit - 1.0 ) );
 				wfDebug( "Limiting max number of differences to $this->maxDifferences\n" );
 			}
 

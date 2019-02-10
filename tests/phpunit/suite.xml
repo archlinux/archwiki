@@ -20,8 +20,6 @@
 	<testsuites>
 		<testsuite name="includes">
 			<directory>includes</directory>
-			<!-- Parser tests must be invoked via their suite -->
-			<exclude>includes/parser/ParserIntegrationTest.php</exclude>
 		</testsuite>
 		<testsuite name="languages">
 			<directory>languages</directory>
@@ -55,6 +53,9 @@
 			<file>suites/ExtensionsParserTestSuite.php</file>
 			<file>suites/LessTestSuite.php</file>
 		</testsuite>
+		<testsuite name="documentation">
+			<directory>documentation</directory>
+		</testsuite>
 	</testsuites>
 	<groups>
 		<exclude>
@@ -70,6 +71,8 @@
 			<directory suffix=".php">../../maintenance</directory>
 			<exclude>
 				<directory suffix=".php">../../languages/messages</directory>
+				<file>../../languages/data/normalize-ar.php</file>
+				<file>../../languages/data/normalize-ml.php</file>
 			</exclude>
 		</whitelist>
 	</filter>

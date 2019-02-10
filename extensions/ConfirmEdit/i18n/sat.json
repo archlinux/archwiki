@@ -1,9 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ramjit Tudu"
+			"Ramjit Tudu",
+			"Fagunkoyel Hansdah"
 		]
 	},
 	"captcha-label": "CAPTCHA",
+	"captcha-id-label": "ᱠᱟᱯᱪᱟ ID",
+	"captchahelp-title": "ᱠᱟᱯᱪᱟ ᱜᱚᱲᱚ",
 	"confirmedit-preview-line": "ᱫᱷᱟᱹᱲ ᱮᱞ"
 }

@@ -22,12 +22,10 @@
 			"Pyscowicz"
 		]
 	},
-	"visualeditor-cite-tool-definition.json": "null",
 	"visualeditor-cite-tool-name-book": "Kirja",
 	"visualeditor-cite-tool-name-journal": "Lehtiartikkeli",
 	"visualeditor-cite-tool-name-news": "Uutinen",
 	"visualeditor-cite-tool-name-web": "Verkkosivusto",
-	"cite-tool-definition.json": "null",
 	"cite-ve-dialog-reference-editing-reused": "Tätä lähdettä käytetään $1 {{PLURAL:$1|kertaa}} tällä sivulla.",
 	"cite-ve-dialog-reference-options-group-label": "Käytä tätä ryhmää",
 	"cite-ve-dialog-reference-options-group-placeholder": "Yleiset lähteet",

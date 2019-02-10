@@ -6,11 +6,13 @@
 			"Romaine",
 			"Siebrand",
 			"Dinosaur918",
-			"Mar(c)"
+			"Mar(c)",
+			"Mainframe98"
 		]
 	},
-	"cite-desc": "Voegt <nowiki><ref[ name=id]></nowiki>- en <nowiki><references/></nowiki>-labels toe voor citaten",
+	"cite-desc": "Voegt <code><nowiki><ref[ name=id]></nowiki></code>- en <code><nowiki><references/></nowiki></code>-labels toe voor citaten",
 	"cite_error": "Citefout: $1",
+	"cite_error_ref_invalid_dir": "Ongeldig <code>&lt;ref&gt;</code> element; dir attribuut \"$1\" is onbekend. Dit moet ltr of rtl zijn.",
 	"cite_error_ref_numeric_key": "Onjuist label <code>&lt;ref&gt;</code>;\nde naam kan geen eenvoudige integer zijn.\nGebruik een beschrijvende titel",
 	"cite_error_ref_no_key": "Het openingslabel <code>&lt;ref&gt;</code> is onjuist opgemaakt of heeft een verkeerde naam.",
 	"cite_error_ref_too_many_keys": "Onjuist label <code>&lt;ref&gt;</code>;\nonjuiste namen, bijvoorbeeld te veel",
@@ -28,6 +30,7 @@
 	"cite_error_references_no_key": "Het label <code>&lt;ref&gt;</code> die is gedefinieerd in <code>&lt;references&gt;</code> heeft geen eigenschapsnaam.",
 	"cite_error_empty_references_define": "Het label <code>&lt;ref&gt;</code> die is gedefinieerd in <code>&lt;references&gt;</code> met de naam \"$1\" heeft geen inhoud.",
 	"cite-tracking-category-cite-error": "Pagina's met referentiefouten",
+	"cite-tracking-category-cite-error-desc": "Pagina's in deze categorie hebben fouten in het gebruik van references tags.",
 	"cite_references_link_accessibility_label": "Omhoog",
 	"cite_references_link_many_accessibility_label": "Omhoog naar:",
 	"cite_section_preview_references": "Voorbeeldweergave van de referenties",

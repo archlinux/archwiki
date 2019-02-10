@@ -77,6 +77,89 @@ class ResourceLoaderSkinModule extends ResourceLoaderFileModule {
 	}
 
 	/**
+	 * @param ResourceLoaderContext $context
+	 * @return array
+	 */
+	public function getPreloadLinks( ResourceLoaderContext $context ) {
+		return $this->getLogoPreloadlinks();
+	}
+
+	/**
+	 * Helper method for getPreloadLinks()
+	 * @return array
+	 */
+	private function getLogoPreloadlinks() {
+		$logo = $this->getLogoData( $this->getConfig() );
+
+		$tags = [];
+		$logosPerDppx = [];
+		$logos = [];
+
+		$preloadLinks = [];
+
+		if ( !is_array( $logo ) ) {
+			// No media queries required if we only have one variant
+			$preloadLinks[ $logo ] = [ 'as' => 'image' ];
+			return $preloadLinks;
+		}
+
+		if ( isset( $logo['svg'] ) ) {
+			// No media queries required if we only have a 1x and svg variant
+			// because all preload-capable browsers support SVGs
+			$preloadLinks [ $logo['svg'] ] = [ 'as' => 'image' ];
+			return $preloadLinks;
+		}
+
+		foreach ( $logo as $dppx => $src ) {
+			// Keys are in this format: "1.5x"
+			$dppx = substr( $dppx, 0, -1 );
+			$logosPerDppx[$dppx] = $src;
+		}
+
+		// Because PHP can't have floats as array keys
+		uksort( $logosPerDppx, function ( $a, $b ) {
+			$a = floatval( $a );
+			$b = floatval( $b );
+			// Sort from smallest to largest (e.g. 1x, 1.5x, 2x)
+			return $a <=> $b;
+		} );
+
+		foreach ( $logosPerDppx as $dppx => $src ) {
+			$logos[] = [ 'dppx' => $dppx, 'src' => $src ];
+		}
+
+		$logosCount = count( $logos );
+		// Logic must match ResourceLoaderSkinModule:
+		// - 1x applies to resolution < 1.5dppx
+		// - 1.5x applies to resolution >= 1.5dppx && < 2dppx
+		// - 2x applies to resolution >= 2dppx
+		// Note that min-resolution and max-resolution are both inclusive.
+		for ( $i = 0; $i < $logosCount; $i++ ) {
+			if ( $i === 0 ) {
+				// Smallest dppx
+				// min-resolution is ">=" (larger than or equal to)
+				// "not min-resolution" is essentially "<"
+				$media_query = 'not all and (min-resolution: ' . $logos[ 1 ]['dppx'] . 'dppx)';
+			} elseif ( $i !== $logosCount - 1 ) {
+				// In between
+				// Media query expressions can only apply "not" to the entire expression
+				// (e.g. can't express ">= 1.5 and not >= 2).
+				// Workaround: Use <= 1.9999 in place of < 2.
+				$upper_bound = floatval( $logos[ $i + 1 ]['dppx'] ) - 0.000001;
+				$media_query = '(min-resolution: ' . $logos[ $i ]['dppx'] .
+					'dppx) and (max-resolution: ' . $upper_bound . 'dppx)';
+			} else {
+				// Largest dppx
+				$media_query = '(min-resolution: ' . $logos[ $i ]['dppx'] . 'dppx)';
+			}
+
+			$preloadLinks[ $logos[$i]['src'] ] = [ 'as' => 'image', 'media' => $media_query ];
+		}
+
+		return $preloadLinks;
+	}
+
+	/**
 	 * Ensure all media keys use array values.
 	 *
 	 * Normalises arrays returned by the ResourceLoaderFileModule::getStyles() method.
@@ -95,20 +178,12 @@ class ResourceLoaderSkinModule extends ResourceLoaderFileModule {
 	/**
 	 * @since 1.31
 	 * @param Config $conf
-	 * @return string|array
-	 */
-	protected function getLogoData( Config $conf ) {
-		return static::getLogo( $conf );
-	}
-
-	/**
-	 * @param Config $conf
 	 * @return string|array Single url if no variants are defined,
 	 *  or an array of logo urls keyed by dppx in form "<float>x".
 	 *  Key "1x" is always defined. Key "svg" may also be defined,
 	 *  in which case variants other than "1x" are omitted.
 	 */
-	public static function getLogo( Config $conf ) {
+	protected function getLogoData( Config $conf ) {
 		$logo = $conf->get( 'Logo' );
 		$logoHD = $conf->get( 'LogoHD' );
 

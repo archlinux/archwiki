@@ -57,14 +57,17 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 	 */
 	protected static $limitPreferenceName;
 
+	/**
+	 * Preference name for collapsing the active filter display. Subclasses should override this.
+	 * @var string
+	 */
+	protected static $collapsedPreferenceName;
+
 	/** @var string */
 	protected $rcSubpage;
 
 	/** @var FormOptions */
 	protected $rcOptions;
-
-	/** @var array */
-	protected $customFilters;
 
 	// Order of both groups and filters is significant; first is top-most priority,
 	// descending from there.
@@ -78,8 +81,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 	 *
 	 * Groups are displayed to the user in the structured UI.  However, if necessary,
 	 * all of the filters in a group can be configured to only display on the
-	 * unstuctured UI, in which case you don't need a group title.  This is done in
-	 * getFilterGroupDefinitionFromLegacyCustomFilters, for example.
+	 * unstuctured UI, in which case you don't need a group title.
 	 *
 	 * @var array $filterGroupDefinitions
 	 */
@@ -704,9 +706,8 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 			return;
 		}
 
-		$knownParams = call_user_func_array(
-			[ $this->getRequest(), 'getValues' ],
-			array_keys( $this->getOptions()->getAllValues() )
+		$knownParams = $this->getRequest()->getValues(
+			...array_keys( $this->getOptions()->getAllValues() )
 		);
 
 		// HACK: Temporarily until we can properly define "sticky" filters and parameters,
@@ -775,21 +776,21 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 		$out = $this->getOutput();
 		if ( $this->isStructuredFilterUiEnabled() && !$this->including() ) {
 			$jsData = $this->getStructuredFilterJsData();
-
 			$messages = [];
 			foreach ( $jsData['messageKeys'] as $key ) {
 				$messages[$key] = $this->msg( $key )->plain();
 			}
 
 			$out->addBodyClasses( 'mw-rcfilters-enabled' );
+			$collapsed = $this->getUser()->getBoolOption( static::$collapsedPreferenceName );
+			if ( $collapsed ) {
+				$out->addBodyClasses( 'mw-rcfilters-collapsed' );
+			}
 
-			$out->addHTML(
-				ResourceLoader::makeInlineScript(
-					ResourceLoader::makeMessageSetScript( $messages )
-				)
-			);
-
+			// These config and message exports should be moved into a ResourceLoader data module (T201574)
 			$out->addJsConfigVars( 'wgStructuredChangeFilters', $jsData['groups'] );
+			$out->addJsConfigVars( 'wgStructuredChangeFiltersMessages', $messages );
+			$out->addJsConfigVars( 'wgStructuredChangeFiltersCollapsedState', $collapsed );
 
 			$out->addJsConfigVars(
 				'wgRCFiltersChangeTags',
@@ -817,6 +818,10 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 			$out->addJsConfigVars(
 				'wgStructuredChangeFiltersDaysPreferenceName',
 				static::$daysPreferenceName
+			);
+			$out->addJsConfigVars(
+				'wgStructuredChangeFiltersCollapsedPreferenceName',
+				static::$collapsedPreferenceName
 			);
 
 			$out->addJsConfigVars(
@@ -978,11 +983,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 
 		Hooks::run( 'ChangesListSpecialPageStructuredFilters', [ $this ] );
 
-		$unstructuredGroupDefinition =
-			$this->getFilterGroupDefinitionFromLegacyCustomFilters(
-				$this->getCustomFilters()
-			);
-		$this->registerFiltersFromDefinitions( [ $unstructuredGroupDefinition ] );
+		$this->registerFiltersFromDefinitions( [] );
 
 		$userExperienceLevel = $this->getFilterGroup( 'userExpLevel' );
 		$registered = $userExperienceLevel->getFilter( 'registered' );
@@ -1063,32 +1064,6 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 
 			$this->registerFilterGroup( new $className( $groupDefinition ) );
 		}
-	}
-
-	/**
-	 * Get filter group definition from legacy custom filters
-	 *
-	 * @param array $customFilters Custom filters from legacy hooks
-	 * @return array Group definition
-	 */
-	protected function getFilterGroupDefinitionFromLegacyCustomFilters( array $customFilters ) {
-		// Special internal unstructured group
-		$unstructuredGroupDefinition = [
-			'name' => 'unstructured',
-			'class' => ChangesListBooleanFilterGroup::class,
-			'priority' => -1, // Won't display in structured
-			'filters' => [],
-		];
-
-		foreach ( $customFilters as $name => $params ) {
-			$unstructuredGroupDefinition['filters'][] = [
-				'name' => $name,
-				'showHide' => $params['msg'],
-				'default' => $params['default'],
-			];
-		}
-
-		return $unstructuredGroupDefinition;
 	}
 
 	/**
@@ -1195,9 +1170,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 	 * @return ChangesListFilterGroup|null Group, or null if not registered
 	 */
 	public function getFilterGroup( $groupName ) {
-		return isset( $this->filterGroups[$groupName] ) ?
-			$this->filterGroups[$groupName] :
-			null;
+		return $this->filterGroups[$groupName] ?? null;
 	}
 
 	// Currently, this intentionally only includes filters that display
@@ -1219,7 +1192,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 		];
 
 		usort( $this->filterGroups, function ( $a, $b ) {
-			return $b->getPriority() - $a->getPriority();
+			return $b->getPriority() <=> $a->getPriority();
 		} );
 
 		foreach ( $this->filterGroups as $groupName => $group ) {
@@ -1236,21 +1209,6 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 		}
 
 		return $output;
-	}
-
-	/**
-	 * Get custom show/hide filters using deprecated ChangesListSpecialPageFilters
-	 * hook.
-	 *
-	 * @return array Map of filter URL param names to properties (msg/default)
-	 */
-	protected function getCustomFilters() {
-		if ( $this->customFilters === null ) {
-			$this->customFilters = [];
-			Hooks::run( 'ChangesListSpecialPageFilters', [ $this, &$this->customFilters ], '1.29' );
-		}
-
-		return $this->customFilters;
 	}
 
 	/**
@@ -1437,7 +1395,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 	/**
 	 * Convert parameters values from true/false to 1/0
 	 * so they are not omitted by wfArrayToCgi()
-	 * Bug 36524
+	 * T38524
 	 *
 	 * @param array $params
 	 * @return array
@@ -1681,9 +1639,9 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 			unset( $legendItems['unpatrolled'] );
 		}
 		foreach ( $legendItems as $key => $item ) { # generate items of the legend
-			$label = isset( $item['legend'] ) ? $item['legend'] : $item['title'];
+			$label = $item['legend'] ?? $item['title'];
 			$letter = $item['letter'];
-			$cssClass = isset( $item['class'] ) ? $item['class'] : $key;
+			$cssClass = $item['class'] ?? $key;
 
 			$legend .= Html::element( 'dt',
 				[ 'class' => $cssClass ], $context->msg( $letter )->text()
@@ -1882,20 +1840,6 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 	}
 
 	/**
-	 * Check whether the structured filter UI is enabled by default (regardless of
-	 * this particular user's setting)
-	 *
-	 * @return bool
-	 */
-	public function isStructuredFilterUiEnabledByDefault() {
-		if ( $this->getConfig()->get( 'StructuredChangeFiltersShowPreference' ) ) {
-			return !$this->getUser()->getDefaultOption( 'rcenhancedfilters-disable' );
-		} else {
-			return $this->getUser()->getDefaultOption( 'rcenhancedfilters' );
-		}
-	}
-
-	/**
 	 * Static method to check whether StructuredFilter UI is enabled for the given user
 	 *
 	 * @since 1.31
@@ -1904,11 +1848,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 	 * @return bool
 	 */
 	public static function checkStructuredFilterUiEnabled( Config $config, User $user ) {
-		if ( $config->get( 'StructuredChangeFiltersShowPreference' ) ) {
-			return !$user->getOption( 'rcenhancedfilters-disable' );
-		} else {
-			return $user->getOption( 'rcenhancedfilters' );
-		}
+		return !$user->getOption( 'rcenhancedfilters-disable' );
 	}
 
 	/**

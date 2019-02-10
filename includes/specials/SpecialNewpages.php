@@ -189,6 +189,13 @@ class SpecialNewpages extends IncludableSpecialPage {
 		$changed = $this->opts->getChangedValues();
 		unset( $changed['offset'] ); // Reset offset if query type changes
 
+		// wfArrayToCgi(), called from LinkRenderer/Title, will not output null and false values
+		// to the URL, which would omit some options (T158504). Fix it by explicitly setting them
+		// to 0 or 1.
+		$changed = array_map( function ( $value ) {
+			return $value ? '1' : '0';
+		}, $changed );
+
 		$self = $this->getPageTitle();
 		$linkRenderer = $this->getLinkRenderer();
 		foreach ( $filters as $key => $msg ) {
@@ -207,7 +214,6 @@ class SpecialNewpages extends IncludableSpecialPage {
 
 	protected function form() {
 		$out = $this->getOutput();
-		$out->addModules( 'mediawiki.userSuggest' );
 
 		// Consume values
 		$this->opts->consumeValue( 'offset' ); // don't carry offset, DWIW
@@ -223,14 +229,7 @@ class SpecialNewpages extends IncludableSpecialPage {
 		$ut = Title::makeTitleSafe( NS_USER, $username );
 		$userText = $ut ? $ut->getText() : '';
 
-		// Store query values in hidden fields so that form submission doesn't lose them
-		$hidden = [];
-		foreach ( $this->opts->getUnconsumedValues() as $key => $value ) {
-			$hidden[] = Html::hidden( $key, $value );
-		}
-		$hidden = implode( "\n", $hidden );
-
-		$form = [
+		$formDescriptor = [
 			'namespace' => [
 				'type' => 'namespaceselect',
 				'name' => 'namespace',
@@ -251,13 +250,12 @@ class SpecialNewpages extends IncludableSpecialPage {
 				'default' => $tagFilterVal,
 			],
 			'username' => [
-				'type' => 'text',
+				'type' => 'user',
 				'name' => 'username',
 				'label-message' => 'newpages-username',
 				'default' => $userText,
 				'id' => 'mw-np-username',
 				'size' => 30,
-				'cssclass' => 'mw-autocomplete-user', // used by mediawiki.userSuggest
 			],
 			'size' => [
 				'type' => 'sizefilter',
@@ -266,26 +264,32 @@ class SpecialNewpages extends IncludableSpecialPage {
 			],
 		];
 
-		$htmlForm = new HTMLForm( $form, $this->getContext() );
+		$htmlForm = HTMLForm::factory( 'ooui', $formDescriptor, $this->getContext() );
 
-		$htmlForm->setSubmitText( $this->msg( 'newpages-submit' )->text() );
-		$htmlForm->setSubmitProgressive();
-		// The form should be visible on each request (inclusive requests with submitted forms), so
-		// return always false here.
-		$htmlForm->setSubmitCallback(
-			function () {
-				return false;
-			}
-		);
-		$htmlForm->setMethod( 'get' );
-		$htmlForm->setWrapperLegend( true );
-		$htmlForm->setWrapperLegendMsg( 'newpages' );
-		$htmlForm->addFooterText( Html::rawElement(
-			'div',
-			null,
-			$this->filterLinks()
-		) );
-		$htmlForm->show();
+		// Store query values in hidden fields so that form submission doesn't lose them
+		foreach ( $this->opts->getUnconsumedValues() as $key => $value ) {
+			$htmlForm->addHiddenField( $key, $value );
+		}
+
+		$htmlForm
+			->setMethod( 'get' )
+			->setFormIdentifier( 'newpagesform' )
+			// The form should be visible on each request (inclusive requests with submitted forms), so
+			// return always false here.
+			->setSubmitCallback(
+				function () {
+					return false;
+				}
+			)
+			->setSubmitText( $this->msg( 'newpages-submit' )->text() )
+			->setWrapperLegend( $this->msg( 'newpages' )->text() )
+			->addFooterText( Html::rawElement(
+				'div',
+				null,
+				$this->filterLinks()
+			) )
+			->show();
+		$out->addModuleStyles( 'mediawiki.special' );
 	}
 
 	/**
@@ -401,7 +405,10 @@ class SpecialNewpages extends IncludableSpecialPage {
 
 		// Let extensions add data
 		Hooks::run( 'NewPagesLineEnding', [ $this, &$ret, $result, &$classes, &$attribs ] );
-		$attribs = wfArrayFilterByKey( $attribs, [ Sanitizer::class, 'isReservedDataAttribute' ] );
+		$attribs = array_filter( $attribs,
+			[ Sanitizer::class, 'isReservedDataAttribute' ],
+			ARRAY_FILTER_USE_KEY
+		);
 
 		if ( count( $classes ) ) {
 			$attribs['class'] = implode( ' ', $classes );
@@ -486,7 +493,7 @@ class SpecialNewpages extends IncludableSpecialPage {
 	}
 
 	protected function feedItemAuthor( $row ) {
-		return isset( $row->rc_user_text ) ? $row->rc_user_text : '';
+		return $row->rc_user_text ?? '';
 	}
 
 	protected function feedItemDesc( $row ) {

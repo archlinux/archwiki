@@ -14,7 +14,7 @@ class SpamRegexBatch {
 	 *                       if 0, will produce one regex per line
 	 * @return array
 	 */
-	static function buildRegexes( $lines, BaseBlacklist $blacklist, $batchSize=4096 ) {
+	static function buildRegexes( $lines, BaseBlacklist $blacklist, $batchSize = 4096 ) {
 		# Make regex
 		# It's faster using the S modifier even though it will usually only be run once
 		// $regex = 'https?://+[a-z0-9_\-.]*(' . implode( '|', $lines ) . ')';
@@ -92,7 +92,7 @@ class SpamRegexBatch {
 	 * @param bool|string $fileName optional for debug reporting
 	 * @return array of regexes
 	 */
-	static function buildSafeRegexes( $lines, BaseBlacklist $blacklist, $fileName=false ) {
+	static function buildSafeRegexes( $lines, BaseBlacklist $blacklist, $fileName = false ) {
 		$lines = self::stripLines( $lines );
 		$regexes = self::buildRegexes( $lines, $blacklist );
 		if ( self::validateRegexes( $regexes ) ) {
@@ -151,7 +151,7 @@ class SpamRegexBatch {
 	 * @param bool|string $fileName optional, for reporting of bad files
 	 * @return array of regular expressions, potentially empty
 	 */
-	static function regexesFromText( $source, BaseBlacklist $blacklist, $fileName=false ) {
+	static function regexesFromText( $source, BaseBlacklist $blacklist, $fileName = false ) {
 		$lines = explode( "\n", $source );
 		return self::buildSafeRegexes( $lines, $blacklist, $fileName );
 	}

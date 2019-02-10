@@ -210,7 +210,7 @@ class SpamBlacklistHooks {
 
 		// get the link from the not-yet-saved page content.
 		$content = ContentHandler::makeContent( $pageText, $title );
-		$parserOptions = $content->getContentHandler()->makeParserOptions( 'canonical' );
+		$parserOptions = ParserOptions::newCanonical( 'canonical' );
 		$output = $content->getParserOutput( $title, null, $parserOptions );
 		$links = array_keys( $output->getExternalLinks() );
 

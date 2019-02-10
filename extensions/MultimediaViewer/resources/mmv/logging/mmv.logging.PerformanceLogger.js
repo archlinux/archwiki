@@ -437,7 +437,7 @@
 			data.type === 'image' &&
 			data.imageWidth > 0 &&
 			data.total > 20 &&
-			$.inArray( data.imageWidth, trackedWidths ) !== -1
+			trackedWidths.indexOf( data.imageWidth ) !== -1
 		) {
 			mw.track( 'timing.media.thumbnail.client.' + data.imageWidth, data.total );
 		}

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b6df5ccfeb84d609d1c6bb1b5314e056",
+    "content-hash": "8a80d340f24d85df42619ff16e06d59a",
     "packages": [
         {
             "name": "composer/semver",
@@ -155,25 +155,25 @@
         },
         {
             "name": "oojs/oojs-ui",
-            "version": "v0.26.4",
+            "version": "v0.29.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wikimedia/oojs-ui.git",
-                "reference": "4d769d5f01ed41411fd0a1248d6185bf80f71c9c"
+                "reference": "1efc1e5e8676093cb00f65b38607d60a9d649f87"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wikimedia/oojs-ui/zipball/4d769d5f01ed41411fd0a1248d6185bf80f71c9c",
-                "reference": "4d769d5f01ed41411fd0a1248d6185bf80f71c9c",
+                "url": "https://api.github.com/repos/wikimedia/oojs-ui/zipball/1efc1e5e8676093cb00f65b38607d60a9d649f87",
+                "reference": "1efc1e5e8676093cb00f65b38607d60a9d649f87",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.5.9"
+                "php": ">=5.6.99"
             },
             "require-dev": {
                 "jakub-onderka/php-console-highlighter": "0.3.2",
                 "jakub-onderka/php-parallel-lint": "1.0.0",
-                "mediawiki/mediawiki-codesniffer": "18.0.0",
+                "mediawiki/mediawiki-codesniffer": "22.0.0",
                 "mediawiki/minus-x": "0.3.1",
                 "phpunit/phpunit": "4.8.36 || ^6.5"
             },
@@ -231,69 +231,7 @@
             ],
             "description": "Provides library of common widgets, layouts, and windows.",
             "homepage": "https://www.mediawiki.org/wiki/OOUI",
-            "time": "2018-04-17T21:24:45+00:00"
-        },
-        {
-            "name": "oyejorge/less.php",
-            "version": "v1.7.0.14",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/oyejorge/less.php.git",
-                "reference": "42925c5a01a07d67ca7e82dfc8fb31814d557bc9"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/oyejorge/less.php/zipball/42925c5a01a07d67ca7e82dfc8fb31814d557bc9",
-                "reference": "42925c5a01a07d67ca7e82dfc8fb31814d557bc9",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "~4.8.24"
-            },
-            "bin": [
-                "bin/lessc"
-            ],
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "Less": "lib/"
-                },
-                "classmap": [
-                    "lessc.inc.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "Matt Agar",
-                    "homepage": "https://github.com/agar"
-                },
-                {
-                    "name": "Martin Jantošovič",
-                    "homepage": "https://github.com/Mordred"
-                },
-                {
-                    "name": "Josh Schmidt",
-                    "homepage": "https://github.com/oyejorge"
-                }
-            ],
-            "description": "PHP port of the Javascript version of LESS http://lesscss.org (Originally maintained by Josh Schmidt)",
-            "homepage": "http://lessphp.gpeasy.com",
-            "keywords": [
-                "css",
-                "less",
-                "less.js",
-                "lesscss",
-                "php",
-                "stylesheet"
-            ],
-            "time": "2017-03-28T22:19:25+00:00"
+            "time": "2018-10-08T19:52:17+00:00"
         },
         {
             "name": "pear/console_getopt",
@@ -447,65 +385,17 @@
             "time": "2017-11-17T09:21:45+00:00"
         },
         {
-            "name": "pear/mail_mime-decode",
-            "version": "1.5.5.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/dreamfactorysoftware/Mail_mimeDecode.git",
-                "reference": "a53c1ce051b212e23f7f67ea8d31015640de1129"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/dreamfactorysoftware/Mail_mimeDecode/zipball/a53c1ce051b212e23f7f67ea8d31015640de1129",
-                "reference": "a53c1ce051b212e23f7f67ea8d31015640de1129",
-                "shasum": ""
-            },
-            "require": {
-                "pear/pear_exception": "*"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "*"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "Mail_mimeDecode": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "include-path": [
-                "./"
-            ],
-            "license": [
-                "BSD-2-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Cipriano Groenendal",
-                    "email": "cipri@php.net",
-                    "role": "Lead"
-                },
-                {
-                    "name": "Aleksander Machniak",
-                    "email": "alec@php.net",
-                    "role": "Lead"
-                }
-            ],
-            "description": "More info available on: http://pear.php.net/package/Mail_mimeDecode",
-            "time": "2014-04-15T19:29:16+00:00"
-        },
-        {
             "name": "pear/net_smtp",
-            "version": "1.7.3",
+            "version": "1.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pear/Net_SMTP.git",
-                "reference": "e066e5ee011ae056c03db1a95d210fc09649b477"
+                "reference": "75e85a480b93a8959f3cb856a38fd693e04b216c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pear/Net_SMTP/zipball/e066e5ee011ae056c03db1a95d210fc09649b477",
-                "reference": "e066e5ee011ae056c03db1a95d210fc09649b477",
+                "url": "https://api.github.com/repos/pear/Net_SMTP/zipball/75e85a480b93a8959f3cb856a38fd693e04b216c",
+                "reference": "75e85a480b93a8959f3cb856a38fd693e04b216c",
                 "shasum": ""
             },
             "require": {
@@ -530,7 +420,7 @@
                 "./"
             ],
             "license": [
-                "PHP-3.01"
+                "BSD-2-Clause"
             ],
             "authors": [
                 {
@@ -552,7 +442,7 @@
                 "mail",
                 "smtp"
             ],
-            "time": "2017-01-14T18:19:55+00:00"
+            "time": "2017-04-06T18:11:29+00:00"
         },
         {
             "name": "pear/net_socket",
@@ -610,20 +500,20 @@
         },
         {
             "name": "pear/pear-core-minimal",
-            "version": "v1.10.3",
+            "version": "v1.10.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pear/pear-core-minimal.git",
-                "reference": "070f0b600b2caca2501e2c9b7e553016e4b0d115"
+                "reference": "052868b244d31f822796e7e9981f62557eb256d4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pear/pear-core-minimal/zipball/070f0b600b2caca2501e2c9b7e553016e4b0d115",
-                "reference": "070f0b600b2caca2501e2c9b7e553016e4b0d115",
+                "url": "https://api.github.com/repos/pear/pear-core-minimal/zipball/052868b244d31f822796e7e9981f62557eb256d4",
+                "reference": "052868b244d31f822796e7e9981f62557eb256d4",
                 "shasum": ""
             },
             "require": {
-                "pear/console_getopt": "~1.4",
+                "pear/console_getopt": "~1.3",
                 "pear/pear_exception": "~1.0"
             },
             "replace": {
@@ -650,7 +540,7 @@
                 }
             ],
             "description": "Minimal set of PEAR core files to be used as composer dependency",
-            "time": "2017-02-28T16:46:11+00:00"
+            "time": "2018-08-22T19:28:09+00:00"
         },
         {
             "name": "pear/pear_exception",
@@ -848,25 +738,28 @@
         },
         {
             "name": "wikimedia/base-convert",
-            "version": "v1.0.1",
+            "version": "v2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wikimedia/base-convert.git",
-                "reference": "2948df323875fb4ef952cda49ac03a6b39708997"
+                "reference": "b1116d1b251e51a44ef76c3a7c79561b2e058e59"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wikimedia/base-convert/zipball/2948df323875fb4ef952cda49ac03a6b39708997",
-                "reference": "2948df323875fb4ef952cda49ac03a6b39708997",
+                "url": "https://api.github.com/repos/wikimedia/base-convert/zipball/b1116d1b251e51a44ef76c3a7c79561b2e058e59",
+                "reference": "b1116d1b251e51a44ef76c3a7c79561b2e058e59",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.3"
+                "php": ">=5.6.99"
             },
             "require-dev": {
-                "jakub-onderka/php-parallel-lint": "0.9.0",
-                "mediawiki/mediawiki-codesniffer": "0.5.0",
-                "phpunit/phpunit": "4.6.*"
+                "jakub-onderka/php-console-highlighter": "0.3.2",
+                "jakub-onderka/php-parallel-lint": "1.0.0",
+                "mediawiki/mediawiki-codesniffer": "22.0.0",
+                "mediawiki/minus-x": "0.3.1",
+                "ockcyp/covers-validator": "0.5.1 || 0.6.1",
+                "phpunit/phpunit": "4.8.36 || ^6.5"
             },
             "type": "library",
             "autoload": {
@@ -876,7 +769,7 @@
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "GPL-2.0+"
+                "GPL-2.0-or-later"
             ],
             "authors": [
                 {
@@ -890,7 +783,7 @@
             ],
             "description": "Convert an arbitrarily-long string from one numeric base to another, optionally zero-padding to a minimum column width.",
             "homepage": "https://www.mediawiki.org/wiki/base_convert",
-            "time": "2015-10-29T22:19:02+00:00"
+            "time": "2018-10-21T05:06:11+00:00"
         },
         {
             "name": "wikimedia/cdb",
@@ -1086,25 +979,28 @@
         },
         {
             "name": "wikimedia/ip-set",
-            "version": "1.2.0",
+            "version": "1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wikimedia/IPSet.git",
-                "reference": "cabb679f440c87fd4053e4ea5e0120e769c9447f"
+                "reference": "1a369860e368bcd0fff778a1b541c0773e64217e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wikimedia/IPSet/zipball/cabb679f440c87fd4053e4ea5e0120e769c9447f",
-                "reference": "cabb679f440c87fd4053e4ea5e0120e769c9447f",
+                "url": "https://api.github.com/repos/wikimedia/IPSet/zipball/1a369860e368bcd0fff778a1b541c0773e64217e",
+                "reference": "1a369860e368bcd0fff778a1b541c0773e64217e",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.5.9"
+                "php": ">=5.5.9",
+                "wikimedia/at-ease": "1.2.0"
             },
             "require-dev": {
-                "jakub-onderka/php-parallel-lint": "0.9.2",
-                "mediawiki/mediawiki-codesniffer": "15.0.0",
-                "phpunit/phpunit": "^4.8"
+                "jakub-onderka/php-console-highlighter": "0.3.2",
+                "jakub-onderka/php-parallel-lint": "1.0.0",
+                "mediawiki/mediawiki-codesniffer": "19.1.0",
+                "mediawiki/minus-x": "0.3.1",
+                "phpunit/phpunit": "4.8.36 || ^6.5"
             },
             "type": "library",
             "autoload": {
@@ -1114,7 +1010,7 @@
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "GPL-2.0+"
+                "GPL-2.0-or-later"
             ],
             "authors": [
                 {
@@ -1124,7 +1020,68 @@
             ],
             "description": "Efficiently match IP addresses against a set of CIDR specifications.",
             "homepage": "https://github.com/wikimedia/IPSet",
-            "time": "2017-12-30T10:52:03+00:00"
+            "time": "2018-12-18T03:49:40+00:00"
+        },
+        {
+            "name": "wikimedia/less.php",
+            "version": "v1.8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/wikimedia/less.php.git",
+                "reference": "eb783ddc912266f2106fee4684b24f178d7d4d06"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/wikimedia/less.php/zipball/eb783ddc912266f2106fee4684b24f178d7d4d06",
+                "reference": "eb783ddc912266f2106fee4684b24f178d7d4d06",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.8.24"
+            },
+            "bin": [
+                "bin/lessc"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Less": "lib/"
+                },
+                "classmap": [
+                    "lessc.inc.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Matt Agar",
+                    "homepage": "https://github.com/agar"
+                },
+                {
+                    "name": "Martin Jantošovič",
+                    "homepage": "https://github.com/Mordred"
+                },
+                {
+                    "name": "Josh Schmidt",
+                    "homepage": "https://github.com/oyejorge"
+                }
+            ],
+            "description": "PHP port of the Javascript version of LESS http://lesscss.org (Originally maintained by Josh Schmidt)",
+            "keywords": [
+                "css",
+                "less",
+                "less.js",
+                "lesscss",
+                "php",
+                "stylesheet"
+            ],
+            "time": "2018-10-16T05:21:24+00:00"
         },
         {
             "name": "wikimedia/object-factory",
@@ -1327,28 +1284,29 @@
         },
         {
             "name": "wikimedia/remex-html",
-            "version": "1.0.3",
+            "version": "2.0.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/wikimedia/mediawiki-libs-RemexHtml.git",
-                "reference": "6a54224d8926ac46ba96689ca584cde0d8a74fea"
+                "url": "https://github.com/wikimedia/remex-html.git",
+                "reference": "2ecb8ff12ce81b4040f739d4eb30469486027c2b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wikimedia/mediawiki-libs-RemexHtml/zipball/6a54224d8926ac46ba96689ca584cde0d8a74fea",
-                "reference": "6a54224d8926ac46ba96689ca584cde0d8a74fea",
+                "url": "https://api.github.com/repos/wikimedia/remex-html/zipball/2ecb8ff12ce81b4040f739d4eb30469486027c2b",
+                "reference": "2ecb8ff12ce81b4040f739d4eb30469486027c2b",
                 "shasum": ""
             },
             "require": {
                 "ext-mbstring": "*",
-                "php": ">=5.5.9",
+                "php": ">=5.6.99",
                 "wikimedia/utfnormal": "1.1.0 || 2.0.0"
             },
             "require-dev": {
                 "jakub-onderka/php-console-highlighter": "0.3.2",
-                "jakub-onderka/php-parallel-lint": "0.9.2",
-                "mediawiki/mediawiki-codesniffer": "16.0.1",
+                "jakub-onderka/php-parallel-lint": "1.0.0",
+                "mediawiki/mediawiki-codesniffer": "22.0.0",
                 "mediawiki/minus-x": "0.3.1",
+                "ockcyp/covers-validator": "0.5.1 || 0.6.1",
                 "phpunit/phpunit": "4.8.36 || ^6.5"
             },
             "type": "library",
@@ -1368,7 +1326,8 @@
                 }
             ],
             "description": "Fast HTML 5 parser",
-            "time": "2018-02-28T08:24:36+00:00"
+            "homepage": "https://www.mediawiki.org/wiki/RemexHtml",
+            "time": "2018-10-15T20:31:28+00:00"
         },
         {
             "name": "wikimedia/running-stat",
@@ -1414,35 +1373,38 @@
         },
         {
             "name": "wikimedia/scoped-callback",
-            "version": "v1.0.0",
+            "version": "v2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wikimedia/ScopedCallback.git",
-                "reference": "73985f15be3edb7b823db31f367b780769378d2b"
+                "reference": "bdbefd13d162a8cbae37dee19f863adaf10022a0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wikimedia/ScopedCallback/zipball/73985f15be3edb7b823db31f367b780769378d2b",
-                "reference": "73985f15be3edb7b823db31f367b780769378d2b",
+                "url": "https://api.github.com/repos/wikimedia/ScopedCallback/zipball/bdbefd13d162a8cbae37dee19f863adaf10022a0",
+                "reference": "bdbefd13d162a8cbae37dee19f863adaf10022a0",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.5.9"
             },
             "require-dev": {
-                "jakub-onderka/php-parallel-lint": "0.9.2",
-                "mediawiki/mediawiki-codesniffer": "0.7.2",
-                "phpunit/phpunit": "4.8.27"
+                "jakub-onderka/php-console-highlighter": "0.3.2",
+                "jakub-onderka/php-parallel-lint": "1.0.0",
+                "mediawiki/mediawiki-codesniffer": "18.0.0",
+                "mediawiki/minus-x": "0.3.1",
+                "ockcyp/covers-validator": "0.5.1 || 0.6.1",
+                "phpunit/phpunit": "4.8.36 || ^6.5"
             },
             "type": "library",
             "autoload": {
-                "classmap": [
-                    "src/"
-                ]
+                "psr-4": {
+                    "Wikimedia\\": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "GPL-2.0+"
+                "GPL-2.0-or-later"
             ],
             "authors": [
                 {
@@ -1452,92 +1414,45 @@
             ],
             "description": "Class for asserting that a callback happens when a dummy object leaves scope",
             "homepage": "https://www.mediawiki.org/wiki/ScopedCallback",
-            "time": "2016-09-29T07:03:03+00:00"
-        },
-        {
-            "name": "wikimedia/testing-access-wrapper",
-            "version": "1.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/wikimedia/testing-access-wrapper.git",
-                "reference": "e18b87c86739733506bd184a70852c30cdb30699"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/wikimedia/testing-access-wrapper/zipball/e18b87c86739733506bd184a70852c30cdb30699",
-                "reference": "e18b87c86739733506bd184a70852c30cdb30699",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0"
-            },
-            "require-dev": {
-                "jakub-onderka/php-parallel-lint": "0.9.2",
-                "mediawiki/mediawiki-codesniffer": "0.7.2",
-                "phpunit/phpunit": "4.8.31"
-            },
-            "type": "library",
-            "autoload": {
-                "classmap": [
-                    "src/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPL-2.0+"
-            ],
-            "authors": [
-                {
-                    "name": "Adam Roses Wight",
-                    "email": "awight@wikimedia.org"
-                },
-                {
-                    "name": "Brad Jorsch",
-                    "email": "bjorsch@wikimedia.org"
-                },
-                {
-                    "name": "Gergő Tisza",
-                    "email": "gtisza@wikimedia.org"
-                }
-            ],
-            "description": "A simple helper class to access non-public elements of a class when testing.",
-            "homepage": "https://www.mediawiki.org/wiki/Testing-access-wrapper",
-            "time": "2017-04-19T16:43:33+00:00"
+            "time": "2018-05-09T06:30:27+00:00"
         },
         {
             "name": "wikimedia/timestamp",
-            "version": "v1.0.0",
+            "version": "v2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wikimedia/Timestamp.git",
-                "reference": "880660a2fbc6e577d381225812c255008d58e0cc"
+                "reference": "ef8072a355d6f53386e36c0263df588a8d998966"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wikimedia/Timestamp/zipball/880660a2fbc6e577d381225812c255008d58e0cc",
-                "reference": "880660a2fbc6e577d381225812c255008d58e0cc",
+                "url": "https://api.github.com/repos/wikimedia/Timestamp/zipball/ef8072a355d6f53386e36c0263df588a8d998966",
+                "reference": "ef8072a355d6f53386e36c0263df588a8d998966",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.5.9"
+                "php": ">=5.6.99"
             },
             "require-dev": {
-                "jakub-onderka/php-parallel-lint": "0.9.2",
-                "mediawiki/mediawiki-codesniffer": "0.7.2",
-                "phpunit/phpunit": "4.8.24"
+                "jakub-onderka/php-console-highlighter": "0.3.2",
+                "jakub-onderka/php-parallel-lint": "1.0.0",
+                "mediawiki/mediawiki-codesniffer": "22.0.0",
+                "mediawiki/minus-x": "0.3.1",
+                "ockcyp/covers-validator": "0.5.1 || 0.6.1",
+                "phpunit/phpunit": "4.8.36 || ^6.5"
             },
             "type": "library",
             "autoload": {
-                "classmap": [
-                    "src/"
-                ],
                 "files": [
                     "src/defines.php"
-                ]
+                ],
+                "psr-4": {
+                    "Wikimedia\\Timestamp\\": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "GPL-2.0+"
+                "GPL-2.0-or-later"
             ],
             "authors": [
                 {
@@ -1547,7 +1462,7 @@
             ],
             "description": "Creation, parsing, and conversion of timestamps",
             "homepage": "https://www.mediawiki.org/wiki/Timestamp",
-            "time": "2016-09-30T10:00:56+00:00"
+            "time": "2018-09-21T12:02:28+00:00"
         },
         {
             "name": "wikimedia/utfnormal",
@@ -1638,31 +1553,33 @@
         },
         {
             "name": "wikimedia/wrappedstring",
-            "version": "v2.3.0",
+            "version": "v3.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wikimedia/WrappedString.git",
-                "reference": "7e94b5d61551cfa95f9c0d070c9018b08ac24979"
+                "reference": "3c383334de7ff623a81aebc3c59f5603917ca5e8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wikimedia/WrappedString/zipball/7e94b5d61551cfa95f9c0d070c9018b08ac24979",
-                "reference": "7e94b5d61551cfa95f9c0d070c9018b08ac24979",
+                "url": "https://api.github.com/repos/wikimedia/WrappedString/zipball/3c383334de7ff623a81aebc3c59f5603917ca5e8",
+                "reference": "3c383334de7ff623a81aebc3c59f5603917ca5e8",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.5.9"
             },
             "require-dev": {
-                "jakub-onderka/php-parallel-lint": "^0.9.0.0",
-                "mediawiki/mediawiki-codesniffer": "15.0.0",
-                "phpunit/phpunit": "^4.8"
+                "jakub-onderka/php-console-highlighter": "0.3.2",
+                "jakub-onderka/php-parallel-lint": "1.0.0",
+                "mediawiki/mediawiki-codesniffer": "20.0.0",
+                "mediawiki/minus-x": "0.3.1",
+                "ockcyp/covers-validator": "0.5.1 || 0.6.1",
+                "phpunit/phpunit": "4.8.36 || ^6.5"
             },
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "Wikimedia\\": "src/Wikimedia",
-                    "WrappedString\\": "src/WrappedString"
+                    "Wikimedia\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -1677,7 +1594,58 @@
             ],
             "description": "Automatically compact sequentially-outputted strings that share a common prefix / suffix pair.",
             "homepage": "https://www.mediawiki.org/wiki/WrappedString",
-            "time": "2017-12-30T10:52:27+00:00"
+            "time": "2018-06-05T20:33:36+00:00"
+        },
+        {
+            "name": "wikimedia/xmp-reader",
+            "version": "0.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/wikimedia/XMPReader.git",
+                "reference": "cbc4587b189ecb46564a1400b39f440d4e0ec906"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/wikimedia/XMPReader/zipball/cbc4587b189ecb46564a1400b39f440d4e0ec906",
+                "reference": "cbc4587b189ecb46564a1400b39f440d4e0ec906",
+                "shasum": ""
+            },
+            "require": {
+                "ext-xml": "*",
+                "php": ">=5.6.99",
+                "psr/log": "^1.0",
+                "wikimedia/at-ease": "^1.2",
+                "wikimedia/scoped-callback": "^1.0 || ^2.0",
+                "wikimedia/timestamp": "^1.0 || ^2.0"
+            },
+            "require-dev": {
+                "ext-exif": "*",
+                "jakub-onderka/php-console-highlighter": "0.3.2",
+                "jakub-onderka/php-parallel-lint": "1.0.0",
+                "mediawiki/mediawiki-codesniffer": "21.0.0",
+                "mediawiki/minus-x": "0.3.1",
+                "ockcyp/covers-validator": "0.5.1 || 0.6.1",
+                "phpunit/phpunit": "4.8.36 || ^6.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Wikimedia\\XMPReader\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Brian Wolff",
+                    "email": "bawolff+wn@gmail.com"
+                }
+            ],
+            "description": "Reader for XMP data containing properties relevant to images",
+            "homepage": "https://www.mediawiki.org/wiki/XMPReader",
+            "time": "2018-08-11T06:31:00+00:00"
         },
         {
             "name": "zordius/lightncandy",
@@ -1728,93 +1696,6 @@
         }
     ],
     "packages-dev": [
-        {
-            "name": "jakub-onderka/php-console-color",
-            "version": "0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/JakubOnderka/PHP-Console-Color.git",
-                "reference": "e0b393dacf7703fc36a4efc3df1435485197e6c1"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/JakubOnderka/PHP-Console-Color/zipball/e0b393dacf7703fc36a4efc3df1435485197e6c1",
-                "reference": "e0b393dacf7703fc36a4efc3df1435485197e6c1",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.2"
-            },
-            "require-dev": {
-                "jakub-onderka/php-code-style": "1.0",
-                "jakub-onderka/php-parallel-lint": "0.*",
-                "jakub-onderka/php-var-dump-check": "0.*",
-                "phpunit/phpunit": "3.7.*",
-                "squizlabs/php_codesniffer": "1.*"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "JakubOnderka\\PhpConsoleColor": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-2-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Jakub Onderka",
-                    "email": "jakub.onderka@gmail.com",
-                    "homepage": "http://www.acci.cz"
-                }
-            ],
-            "time": "2014-04-08T15:00:19+00:00"
-        },
-        {
-            "name": "jakub-onderka/php-console-highlighter",
-            "version": "v0.3.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/JakubOnderka/PHP-Console-Highlighter.git",
-                "reference": "7daa75df45242c8d5b75a22c00a201e7954e4fb5"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/JakubOnderka/PHP-Console-Highlighter/zipball/7daa75df45242c8d5b75a22c00a201e7954e4fb5",
-                "reference": "7daa75df45242c8d5b75a22c00a201e7954e4fb5",
-                "shasum": ""
-            },
-            "require": {
-                "jakub-onderka/php-console-color": "~0.1",
-                "php": ">=5.3.0"
-            },
-            "require-dev": {
-                "jakub-onderka/php-code-style": "~1.0",
-                "jakub-onderka/php-parallel-lint": "~0.5",
-                "jakub-onderka/php-var-dump-check": "~0.1",
-                "phpunit/phpunit": "~4.0",
-                "squizlabs/php_codesniffer": "~1.5"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "JakubOnderka\\PhpConsoleHighlighter": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jakub Onderka",
-                    "email": "acci@acci.cz",
-                    "homepage": "http://www.acci.cz/"
-                }
-            ],
-            "time": "2015-04-20T18:58:01+00:00"
-        },
         {
             "name": "jakub-onderka/php-parallel-lint",
             "version": "v0.9.2",

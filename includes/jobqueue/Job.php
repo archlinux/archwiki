@@ -23,8 +23,7 @@
 
 /**
  * Class to both describe a background job and handle jobs.
- * The queue aspects of this class are now deprecated.
- * Using the class to push jobs onto queues is deprecated (use JobSpecification).
+ * To push jobs onto queues, use JobQueueGroup::singleton()->push();
  *
  * @ingroup JobQueue
  */
@@ -124,23 +123,6 @@ abstract class Job implements IJobSpecification {
 	}
 
 	/**
-	 * Batch-insert a group of jobs into the queue.
-	 * This will be wrapped in a transaction with a forced commit.
-	 *
-	 * This may add duplicate at insert time, but they will be
-	 * removed later on, when the first one is popped.
-	 *
-	 * @param Job[] $jobs Array of Job objects
-	 * @return bool
-	 * @deprecated since 1.21
-	 */
-	public static function batchInsert( $jobs ) {
-		wfDeprecated( __METHOD__, '1.21' );
-		JobQueueGroup::singleton()->push( $jobs );
-		return true;
-	}
-
-	/**
 	 * @return string
 	 */
 	public function getType() {
@@ -188,9 +170,7 @@ abstract class Job implements IJobSpecification {
 	 * @since 1.27
 	 */
 	public function getRequestId() {
-		return isset( $this->params['requestId'] )
-			? $this->params['requestId']
-			: null;
+		return $this->params['requestId'] ?? null;
 	}
 
 	/**
@@ -298,12 +278,8 @@ abstract class Job implements IJobSpecification {
 	 */
 	public function getRootJobParams() {
 		return [
-			'rootJobSignature' => isset( $this->params['rootJobSignature'] )
-				? $this->params['rootJobSignature']
-				: null,
-			'rootJobTimestamp' => isset( $this->params['rootJobTimestamp'] )
-				? $this->params['rootJobTimestamp']
-				: null
+			'rootJobSignature' => $this->params['rootJobSignature'] ?? null,
+			'rootJobTimestamp' => $this->params['rootJobTimestamp'] ?? null
 		];
 	}
 
@@ -344,17 +320,6 @@ abstract class Job implements IJobSpecification {
 		foreach ( $this->teardownCallbacks as $callback ) {
 			call_user_func( $callback, $status );
 		}
-	}
-
-	/**
-	 * Insert a single job into the queue.
-	 * @return bool True on success
-	 * @deprecated since 1.21
-	 */
-	public function insert() {
-		wfDeprecated( __METHOD__, '1.21' );
-		JobQueueGroup::singleton()->push( $this );
-		return true;
 	}
 
 	/**

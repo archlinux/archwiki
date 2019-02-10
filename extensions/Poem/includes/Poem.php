@@ -35,9 +35,10 @@ class Poem {
 		$text = preg_replace_callback( '/^(:+)(.+)$/m', [ self::class, 'indentVerse' ], $in );
 
 		// replace newlines with <br /> tags unless they are at the beginning or end
-		// of the poem
+		// of the poem, or would directly follow exactly 4 dashes. See Parser::internalParse() for
+		// the exact syntax for horizontal rules.
 		$text = preg_replace(
-			[ "/^\n/", "/\n$/D", "/\n/" ],
+			[ '/^\n/', '/\n$/D', '/(?<!^----)\n/m' ],
 			[ "", "", "$tag\n" ],
 			$text
 		);
@@ -46,6 +47,10 @@ class Poem {
 		$text = preg_replace_callback( '/^( +)/m', [ self::class, 'replaceSpaces' ], $text );
 
 		$text = $parser->recursiveTagParse( $text, $frame );
+
+		// Because of limitations of the regular expression above, horizontal rules with more than 4
+		// dashes still need special handling.
+		$text = str_replace( '<hr />' . $tag, '<hr />', $text );
 
 		$attribs = Sanitizer::validateTagAttributes( $param, 'div' );
 
