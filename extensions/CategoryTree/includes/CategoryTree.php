@@ -657,7 +657,15 @@ class CategoryTree {
 		}
 		$s .= Xml::tags( 'span', $attr, $bullet ) . ' ';
 
-		$s .= Xml::element( 'a', [ 'class' => $labelClass, 'href' => $wikiLink ], $label );
+		$s .= Xml::element(
+			'a',
+			[
+				'class' => $labelClass,
+				'href' => $wikiLink,
+				'title' => $title->getPrefixedText()
+			],
+			$label
+		);
 
 		if ( $count !== false && $this->getOption( 'showcount' ) ) {
 			$s .= self::createCountString( RequestContext::getMain(), $cat, $count );

@@ -328,7 +328,7 @@ class LoadBalancer implements ILoadBalancer {
 						": server {host} is not replicating?", [ 'host' => $host ] );
 					unset( $loads[$i] );
 				} elseif ( $lag > $maxServerLag ) {
-					$this->replLogger->info(
+					$this->replLogger->debug(
 						__METHOD__ .
 						": server {host} has {lag} seconds of lag (>= {maxlag})",
 						[ 'host' => $host, 'lag' => $lag, 'maxlag' => $maxServerLag ]
@@ -1953,6 +1953,12 @@ class LoadBalancer implements ILoadBalancer {
 				$db->tablePrefix( $prefix );
 			}
 		} );
+	}
+
+	public function redefineLocalDomain( $domain ) {
+		$this->closeAll();
+
+		$this->setLocalDomain( DatabaseDomain::newFromId( $domain ) );
 	}
 
 	/**
