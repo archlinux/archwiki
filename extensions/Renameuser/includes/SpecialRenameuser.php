@@ -17,6 +17,7 @@ class SpecialRenameuser extends SpecialPage {
 	 * Show the special page
 	 *
 	 * @param mixed $par Parameter passed to the page
+	 * @suppress SecurityCheck-XSS T211471
 	 * @throws PermissionsError
 	 * @throws ReadOnlyError
 	 * @throws UserBlockedError

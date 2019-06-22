@@ -198,7 +198,7 @@ class SimpleCaptcha {
 
 		if ( $this->action !== 'edit' ) {
 			unset( $page->ConfirmEdit_ActivateCaptcha );
-			$out->addWikiMsg( $this->getMessage( $this->action )->getKey() );
+			$out->addHTML( $this->getMessage( $this->action )->parseAsBlock() );
 			$this->addFormToOutput( $out );
 		}
 	}
@@ -214,7 +214,7 @@ class SimpleCaptcha {
 		if ( isset( $page->ConfirmEdit_ActivateCaptcha ) ||
 			$this->shouldCheck( $page, '', '', $context )
 		) {
-			$out->addWikiMsg( $this->getMessage( $this->action )->getKey() );
+			$out->addHTML( $this->getMessage( $this->action )->parseAsBlock() );
 			$this->addFormToOutput( $out );
 		}
 		unset( $page->ConfirmEdit_ActivateCaptcha );

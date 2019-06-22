@@ -35,7 +35,7 @@ class CSSJanus {
 	private static $patterns = array(
 		'tmpToken' => '`TMP`',
 		'nonAscii' => '[\200-\377]',
-		'unicode' => '(?:(?:\\[0-9a-f]{1,6})(?:\r\n|\s)?)',
+		'unicode' => '(?:(?:\\\\[0-9a-f]{1,6})(?:\r\n|\s)?)',
 		'num' => '(?:[0-9]*\.[0-9]+|[0-9]+)',
 		'unit' => '(?:em|ex|px|cm|mm|in|pt|pc|deg|rad|grad|ms|s|hz|khz|%)',
 		'body_selector' => 'body\s*{\s*',
@@ -92,17 +92,19 @@ class CSSJanus {
 
 		// @codingStandardsIgnoreStart Generic.Files.LineLength.TooLong
 		$patterns =& self::$patterns;
-		$patterns['escape'] = "(?:{$patterns['unicode']}|\\[^\r\n\f0-9a-f])";
+		$patterns['escape'] = "(?:{$patterns['unicode']}|\\\\[^\\r\\n\\f0-9a-f])";
 		$patterns['nmstart'] = "(?:[_a-z]|{$patterns['nonAscii']}|{$patterns['escape']})";
 		$patterns['nmchar'] = "(?:[_a-z0-9-]|{$patterns['nonAscii']}|{$patterns['escape']})";
 		$patterns['ident'] = "-?{$patterns['nmstart']}{$patterns['nmchar']}*";
 		$patterns['quantity'] = "{$patterns['num']}(?:\s*{$patterns['unit']}|{$patterns['ident']})?";
 		$patterns['possibly_negative_quantity'] = "((?:-?{$patterns['quantity']})|(?:inherit|auto))";
 		$patterns['color'] = "(#?{$patterns['nmchar']}+|(?:rgba?|hsla?)\([ \d.,%-]+\))";
-		$patterns['url_chars'] = "(?:{$patterns['url_special_chars']}|{$patterns['nonAscii']}|{$patterns['escape']})*";
-		$patterns['lookahead_not_open_brace'] = "(?!({$patterns['nmchar']}|\r?\n|\s|#|\:|\.|\,|\+|>|\(|\)|\[|\]|=|\*=|~=|\^=|'[^']*'])*?{)";
-		$patterns['lookahead_not_closing_paren'] = "(?!{$patterns['url_chars']}?{$patterns['valid_after_uri_chars']}\))";
-		$patterns['lookahead_for_closing_paren'] = "(?={$patterns['url_chars']}?{$patterns['valid_after_uri_chars']}\))";
+		// Use "*+" instead of "*?" to avoid reaching the backtracking limit.
+		// <https://github.com/cssjanus/php-cssjanus/issues/14>, <https://phabricator.wikimedia.org/T215746#4944830>.
+		$patterns['url_chars'] = "(?:{$patterns['url_special_chars']}|{$patterns['nonAscii']}|{$patterns['escape']})*+";
+		$patterns['lookahead_not_open_brace'] = "(?!({$patterns['nmchar']}|\\r?\\n|\s|#|\:|\.|\,|\+|>|\(|\)|\[|\]|=|\*=|~=|\^=|'[^']*'])*+{)";
+		$patterns['lookahead_not_closing_paren'] = "(?!{$patterns['url_chars']}{$patterns['valid_after_uri_chars']}\))";
+		$patterns['lookahead_for_closing_paren'] = "(?={$patterns['url_chars']}{$patterns['valid_after_uri_chars']}\))";
 		$patterns['noflip_single'] = "/({$patterns['noflip_annotation']}{$patterns['lookahead_not_open_brace']}[^;}]+;?)/i";
 		$patterns['noflip_class'] = "/({$patterns['noflip_annotation']}{$patterns['chars_within_selector']}})/i";
 		$patterns['direction_ltr'] = "/({$patterns['direction']})ltr/i";
@@ -129,10 +131,9 @@ class CSSJanus {
 		$patterns['text_shadow3'] = "/(text-shadow\s*:\s*){$patterns['possibly_negative_quantity']}/i";
 		$patterns['bg_horizontal_percentage'] = "/(background(?:-position)?\s*:\s*(?:[^:;}\s]+\s+)*?)({$patterns['quantity']})/i";
 		$patterns['bg_horizontal_percentage_x'] = "/(background-position-x\s*:\s*)(-?{$patterns['num']}%)/i";
-		$patterns['translate_x'] = "/(transform\s*:[^;]*)(translateX\s*\(\s*){$patterns['possibly_negative_quantity']}(\s*\))/i";
-		$patterns['translate'] = "/(transform\s*:[^;]*)(translate\s*\(\s*){$patterns['possibly_negative_quantity']}((?:\s*,\s*{$patterns['possibly_negative_quantity']}){0,2}\s*\))/i";
+		$patterns['translate_x'] = "/(transform\s*:[^;}]*)(translateX\s*\(\s*){$patterns['possibly_negative_quantity']}(\s*\))/i";
+		$patterns['translate'] = "/(transform\s*:[^;}]*)(translate\s*\(\s*){$patterns['possibly_negative_quantity']}((?:\s*,\s*{$patterns['possibly_negative_quantity']}){0,2}\s*\))/i";
 		// @codingStandardsIgnoreEnd
-
 	}
 
 	/**
