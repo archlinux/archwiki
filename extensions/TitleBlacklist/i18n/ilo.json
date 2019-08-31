@@ -20,5 +20,6 @@
 	"titleblacklist-warning": "<strong>Ballaag: Daytoy a panid ket maurnos laeng babaen dagiti administrador ken dagiti sabali nga agar-aramat nga addaan iti karbengan ti <code>tboverride</code> gapu ta maipada iti sumaganad a naikabil a title blacklist:</strong><br /><code>$1</code>",
 	"right-tboverride": "Patuonan ti titulo wenno ti blacklist ti nagan ti agar-aramat",
 	"right-tboverride-account": "Patuonan ti blacklist ti nagan ti agar-aramat",
-	"right-titleblacklistlog": "Kitaen ti listaan ti title blacklist"
+	"right-titleblacklistlog": "Kitaen ti listaan ti title blacklist",
+	"visualeditor-saveerror-titleblacklist": "Biddut ti panagidulin ti panid: Naiparit ti titulo ti panid"
 }

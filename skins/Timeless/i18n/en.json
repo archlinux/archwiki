@@ -19,7 +19,7 @@
 	"timeless-namespaces": "Namespaces",
 	"timeless-pagetools": "Page actions",
 	"timeless-languages": "Languages",
-	"timeless-sitetitle": "{{MediaWiki:Sitetitle}}",
+	"timeless-sitetitle": "{{int:Sitetitle}}",
 	"timeless.css": "/* CSS placed here will affect users of the Timeless skin */",
 	"timeless.js": "/* Any JavaScript here will be loaded for users using the Timeless skin */"
 }

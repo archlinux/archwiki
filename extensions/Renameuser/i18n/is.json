@@ -11,8 +11,8 @@
 		]
 	},
 	"renameuser": "Breyta notandanafni",
-	"renameuser-linkoncontribs": "breyta notendanafni",
-	"renameuser-linkoncontribs-text": "breyta notendanafni notandans",
+	"renameuser-linkoncontribs": "endurnefna {{GENDER:$1|notanda}}",
+	"renameuser-linkoncontribs-text": "Endurnefna þennan {{GENDER:$1|notanda}}",
 	"renameuser-desc": "Bætir við [[Special:RenameUser|kerfissíðu]] til að breyta notendanafni (þarfnast ''renameuser'' réttinda)",
 	"renameuserold": "Núverandi notandanafn:",
 	"renameusernew": "Nýja notandanafnið:",

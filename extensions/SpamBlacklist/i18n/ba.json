@@ -18,7 +18,5 @@
 	"log-description-spamblacklist": "Был спам-бит сығыуын күҙәтеүсе журнал.",
 	"logentry-spamblacklist-hit": "$4 өҫтәргә маташыу сәбәбендә $3 биттә {{GENDER:$2|$1}} спам-лист сыға.",
 	"right-spamblacklistlog": "Спам-лист журналын ҡарау.",
-	"action-spamblacklistlog": "Спам-лист журналын ҡарау.",
-	"apihelp-spamblacklist-description": "SpamBlacklist ярҙамында бер йәки бер-нисә URL-адрестарҙы тикшерергә",
-	"apihelp-spamblacklist-param-url": "Ҡара исемлектә тикшерә торған URL-адрестар."
+	"action-spamblacklistlog": "Спам-лист журналын ҡарау."
 }

@@ -1,13 +1,14 @@
 /**
  * Configuration of Toolbar module for wikiEditor
  */
-( function ( $, mw ) {
+( function () {
 
 	$.wikiEditor.modules.toolbar.config = {
 
 		getDefaultConfig: function () {
 			var result,
-				fileNamespace = mw.config.get( 'wgFormattedNamespaces' )[ 6 ];
+				fileNamespace = mw.config.get( 'wgFormattedNamespaces' )[ 6 ],
+				specialCharacterGroups = require( 'mediawiki.language.specialCharacters' );
 			result = {
 				toolbar: {
 					// Main section
@@ -23,10 +24,8 @@
 										action: {
 											type: 'encapsulate',
 											options: {
-												// eslint-disable-next-line quotes
 												pre: "'''",
 												periMsg: 'wikieditor-toolbar-tool-bold-example',
-												// eslint-disable-next-line quotes
 												post: "'''"
 											}
 										}
@@ -41,10 +40,8 @@
 										action: {
 											type: 'encapsulate',
 											options: {
-												// eslint-disable-next-line quotes
 												pre: "''",
 												periMsg: 'wikieditor-toolbar-tool-italic-example',
-												// eslint-disable-next-line quotes
 												post: "''"
 											}
 										}
@@ -300,38 +297,38 @@
 							latin: {
 								labelMsg: 'special-characters-group-latin',
 								layout: 'characters',
-								characters: mw.language.specialCharacters.latin
+								characters: specialCharacterGroups.latin
 							},
 							latinextended: {
 								labelMsg: 'special-characters-group-latinextended',
 								layout: 'characters',
-								characters: mw.language.specialCharacters.latinextended
+								characters: specialCharacterGroups.latinextended
 							},
 							ipa: {
 								labelMsg: 'special-characters-group-ipa',
 								layout: 'characters',
-								characters: mw.language.specialCharacters.ipa
+								characters: specialCharacterGroups.ipa
 							},
 							symbols: {
 								labelMsg: 'special-characters-group-symbols',
 								layout: 'characters',
-								characters: mw.language.specialCharacters.symbols
+								characters: specialCharacterGroups.symbols
 							},
 							greek: {
 								labelMsg: 'special-characters-group-greek',
 								layout: 'characters',
 								language: 'el',
-								characters: mw.language.specialCharacters.greek
+								characters: specialCharacterGroups.greek
 							},
 							greekextended: {
 								labelMsg: 'special-characters-group-greekextended',
 								layout: 'characters',
-								characters: mw.language.specialCharacters.greekextended
+								characters: specialCharacterGroups.greekextended
 							},
 							cyrillic: {
 								labelMsg: 'special-characters-group-cyrillic',
 								layout: 'characters',
-								characters: mw.language.specialCharacters.cyrillic
+								characters: specialCharacterGroups.cyrillic
 							},
 							// The core 28-letter alphabet, special letters for the Arabic language,
 							// vowels, punctuation, digits.
@@ -341,7 +338,7 @@
 								layout: 'characters',
 								language: 'ar',
 								direction: 'rtl',
-								characters: mw.language.specialCharacters.arabic
+								characters: specialCharacterGroups.arabic
 							},
 							// Characters for languages other than Arabic.
 							arabicextended: {
@@ -349,72 +346,72 @@
 								layout: 'characters',
 								language: 'ar',
 								direction: 'rtl',
-								characters: mw.language.specialCharacters.arabicextended
+								characters: specialCharacterGroups.arabicextended
 							},
 							hebrew: {
 								labelMsg: 'special-characters-group-hebrew',
 								layout: 'characters',
 								direction: 'rtl',
-								characters: mw.language.specialCharacters.hebrew
+								characters: specialCharacterGroups.hebrew
 							},
 							bangla: {
 								labelMsg: 'special-characters-group-bangla',
 								language: 'bn',
 								layout: 'characters',
-								characters: mw.language.specialCharacters.bangla
+								characters: specialCharacterGroups.bangla
 							},
 							tamil: {
 								labelMsg: 'special-characters-group-tamil',
 								language: 'ta',
 								layout: 'characters',
-								characters: mw.language.specialCharacters.tamil
+								characters: specialCharacterGroups.tamil
 							},
 							telugu: {
 								labelMsg: 'special-characters-group-telugu',
 								language: 'te',
 								layout: 'characters',
-								characters: mw.language.specialCharacters.telugu
+								characters: specialCharacterGroups.telugu
 							},
 							sinhala: {
 								labelMsg: 'special-characters-group-sinhala',
 								language: 'si',
 								layout: 'characters',
-								characters: mw.language.specialCharacters.sinhala
+								characters: specialCharacterGroups.sinhala
 							},
 							devanagari: {
 								labelMsg: 'special-characters-group-devanagari',
 								layout: 'characters',
-								characters: mw.language.specialCharacters.devanagari
+								characters: specialCharacterGroups.devanagari
 							},
 							gujarati: {
 								labelMsg: 'special-characters-group-gujarati',
 								language: 'gu',
 								layout: 'characters',
-								characters: mw.language.specialCharacters.gujarati
+								characters: specialCharacterGroups.gujarati
 							},
 							thai: {
 								labelMsg: 'special-characters-group-thai',
 								language: 'th',
 								layout: 'characters',
-								characters: mw.language.specialCharacters.thai
+								characters: specialCharacterGroups.thai
 							},
 							lao: {
 								labelMsg: 'special-characters-group-lao',
 								language: 'lo',
 								layout: 'characters',
-								characters: mw.language.specialCharacters.lao
+								characters: specialCharacterGroups.lao
 							},
 							khmer: {
 								labelMsg: 'special-characters-group-khmer',
 								language: 'km',
 								layout: 'characters',
-								characters: mw.language.specialCharacters.khmer
+								characters: specialCharacterGroups.khmer
 							},
 							canadianaboriginal: {
 								labelMsg: 'special-characters-group-canadianaboriginal',
 								language: 'cr',
 								layout: 'characters',
-								characters: mw.language.specialCharacters.canadianaboriginal
+								characters: specialCharacterGroups.canadianaboriginal
 							}
 						}
 					},
@@ -622,11 +619,8 @@
 				}
 			};
 
-			// If this page is not a talk page and not in a namespaces listed in
-			// wgExtraSignatureNamespaces, remove the signature button
-			if ( mw.config.get( 'wgNamespaceNumber' ) % 2 === 0 &&
-				$.inArray( mw.config.get( 'wgNamespaceNumber' ), mw.config.get( 'wgExtraSignatureNamespaces' ) ) === -1
-			) {
+			// Remove the signature button on non-signature namespaces
+			if ( !mw.Title.wantSignaturesNamespace( mw.config.get( 'wgNamespaceNumber' ) ) ) {
 				delete result.toolbar.main.groups.insert.tools.signature;
 			}
 
@@ -635,4 +629,4 @@
 
 	};
 
-}( jQuery, mediaWiki ) );
+}() );

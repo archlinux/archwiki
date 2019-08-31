@@ -66,13 +66,12 @@ class Element extends Tag {
 
 	/**
 	 * @param array $config Configuration options
-	 * @param string[] $config['classes'] CSS class names to add
-	 * @param string $config['id'] HTML id attribute
-	 * @param string $config['text'] Text to insert
-	 * @param array $config['content'] Content to append (after text), strings
-	 *   or Element objects. Strings will be HTML-escaped for output, use an
-	 *   HtmlSnippet instance to prevent that.
-	 * @param mixed $config['data'] Element data
+	 *      - string[] $config['classes'] CSS class names to add
+	 *      - string $config['id'] HTML id attribute
+	 *      - string $config['text'] Text to insert
+	 *      - string[]|HtmlSnippet[]|Element[] $config['content'] Content to append (after text).
+	 *          Strings will be HTML-escaped for output, use an HtmlSnippet instance to prevent that.
+	 *      - mixed $config['data'] Element data
 	 * @param-taint $config escapes_html
 	 */
 	public function __construct( array $config = [] ) {

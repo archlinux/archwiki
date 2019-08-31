@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"IvanLanin",
-			"Rex"
+			"Rex",
+			"Kenrick95"
 		]
 	},
 	"titleblacklist-desc": "Mengizinkan pencegahan pembuatan halaman dengan judul tertentu: [[MediaWiki:Titleblacklist]] dan [[MediaWiki:Titlewhitelist]]",
@@ -15,5 +16,6 @@
 	"titleblacklist-invalid": "{{PLURAL:$1|Baris|Baris-baris}} dalam daftar hitam judul {{PLURAL:$1|berikut|berikut}} tak valid; silakan koreksi {{PLURAL:$1|item|item-item}} tersebut sebelum disimpan:",
 	"titleblacklist-override": "Abaikan daftar hitam",
 	"right-tboverride": "Mengabaikan daftar hitam judul",
-	"right-tboverride-account": "Mengabaikan daftar hitam nama pengguna"
+	"right-tboverride-account": "Mengabaikan daftar hitam nama pengguna",
+	"visualeditor-saveerror-titleblacklist": "Galat dalam menyimpan halaman: Judul halaman ini terdapat dalam daftar hitam."
 }

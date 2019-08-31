@@ -5,6 +5,9 @@
 		]
 	},
 	"multimediaviewer-optin-pref": "Abbilite 'u <span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About Media Viewer]</span>",
+	"multimediaviewer-datetime-created": "Ccrejate: $1",
+	"multimediaviewer-datetime-uploaded": "Carecate: $1",
+	"multimediaviewer-credit-fallback": "'Ndruche le 'mbormaziune de l'autore",
 	"multimediaviewer-thumbnail-error-retry": "pruève arrete",
 	"multimediaviewer-license-pd": "Dominie pubbleche",
 	"multimediaviewer-geolocation": "Posizione: $1"

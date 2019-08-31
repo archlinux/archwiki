@@ -24,7 +24,5 @@
 	"log-description-spamblacklist": "이 사건은 스팸 블랙리스트의 일치를 추적합니다.",
 	"logentry-spamblacklist-hit": "{{GENDER:$2|$1}} 사용자가 $3 문서에 $4을(를) 추가하려 하자 스팸 블랙리스트의 일치가 일어났습니다.",
 	"right-spamblacklistlog": "스팸 블랙리스트 기록 보기",
-	"action-spamblacklistlog": "스팸 블랙리스트 기록을 볼",
-	"apihelp-spamblacklist-description": "SpamBlacklist에 대해 하나 이상의 URL의 유효성을 확인합니다.",
-	"apihelp-spamblacklist-summary": "SpamBlacklist에 대해 하나 이상의 URL의 유효성을 확인합니다."
+	"action-spamblacklistlog": "스팸 블랙리스트 기록을 볼"
 }

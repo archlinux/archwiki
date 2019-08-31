@@ -13,13 +13,16 @@
 		]
 	},
 	"fancycaptcha-desc": "Обогаћен стварач сликовног кода за потврду уређивања",
-	"fancycaptcha-addurl": "Ваша измена садржи нове спољашње везе.\nУ циљу заштите од непожељних порука, унесите речи са слике у поље испод ([[Special:Captcha/help|више информација]]):",
-	"fancycaptcha-badlogin": "Ради заштите од аутоматизованог разбијања шифри, унесите речи са слике у поље испод ([[Special:Captcha/help|више информација]]):",
-	"fancycaptcha-captcha": "Безбедносна провера",
-	"fancycaptcha-accountcreate": "Како би заштитили вики од аутоматизованог отварања налога, љубазно вас молимо да унесите речи које ће се појавити у доленаведеном оквиру ([[Special:Captcha/help|више информација]]):",
-	"fancycaptcha-create": "Да бисте направили страницу, унесите речи са слике у поље испод ([[Special:Captcha/help|више информација]]):",
-	"fancycaptcha-edit": "Да бисте уредили ову страницу, унесите речи са слике у поље испод ([[Special:Captcha/help|више информација]]):",
+	"fancycaptcha-addurl": "Ваша измена садржи нове спољашње везе.\nУ циљу заштите викија од аутоматизованог непожељног садржаја, унесите речи, које се појављују испод, у поље ([[Special:Captcha/help|више информација]]):",
+	"fancycaptcha-badlogin": "У циљу заштите викија од аутоматизованог пробијања лозинки, унесите речи, које се појављују испод, у поље ([[Special:Captcha/help|више информација]]):",
+	"fancycaptcha-captcha": "безбедносна провера",
+	"fancycaptcha-accountcreate": "У циљу заштите викија од аутоматизованог отварања налога, унесите речи, које се појављују испод, у поље ([[Special:Captcha/help|више информација]]):",
+	"fancycaptcha-create": "Да бисте направили страницу, унесите речи, које се појављују испод, у поље ([[Special:Captcha/help|више информација]]):",
+	"fancycaptcha-edit": "Да бисте уредили ову страницу, унесите речи, које се појављују испод, у поље ([[Special:Captcha/help|више информација]]):",
 	"fancycaptcha-imgcaptcha-ph": "Унесите текст који видите на слици",
-	"fancycaptcha-sendemail": "У циљу заштите од непожељних порука, унесите речи са слике у поље испод ([[Special:Captcha/help|више информација]]):",
-	"fancycaptcha-reload-text": "освежи"
+	"fancycaptcha-sendemail": "У циљу заштите викија од аутоматизованог слања непожељних порука, унесите речи, које се појављују испод, у поље ([[Special:Captcha/help|више информација]]):",
+	"fancycaptcha-reload-text": "Освежи",
+	"apihelp-fancycaptchareload-description": "Набавка нове FancyCaptcha-е",
+	"apihelp-fancycaptchareload-summary": "Набавка нове FancyCaptcha-е.",
+	"apihelp-fancycaptchareload-example-1": "Набавка нове FancyCaptcha-е"
 }

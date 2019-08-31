@@ -43,6 +43,15 @@ class PopulateArchiveRevId extends LoggedUpdateMaintenance {
 		$this->setBatchSize( 100 );
 	}
 
+	/**
+	 * @param IDatabase $dbw
+	 * @return bool
+	 */
+	public static function isNewInstall( IDatabase $dbw ) {
+		return $dbw->selectRowCount( 'archive' ) === 0 &&
+			$dbw->selectRowCount( 'revision' ) === 1;
+	}
+
 	protected function getUpdateKey() {
 		return __CLASS__;
 	}
@@ -198,7 +207,7 @@ class PopulateArchiveRevId extends LoggedUpdateMaintenance {
 		$rev = null;
 
 		$mainPage = Title::newMainPage();
-		$pageId = $mainPage ? $mainPage->getArticleId() : null;
+		$pageId = $mainPage ? $mainPage->getArticleID() : null;
 		if ( $pageId ) {
 			$rev = $dbw->selectRow(
 				'revision',

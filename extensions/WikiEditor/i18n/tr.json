@@ -13,7 +13,8 @@
 			"Vito Genovese",
 			"Macofe",
 			"McAang",
-			"Mizunee"
+			"Mizunee",
+			"Hedda"
 		]
 	},
 	"wikieditor": "Gelişmiş viki metni düzenleme arayüzü",
@@ -22,7 +23,8 @@
 	"wikieditor-loading": "Yükleniyor...",
 	"wikieditor-toolbar": "Araç çubuğu düzenleme",
 	"wikieditor-toolbar-desc": "Gelişmiş kullanılabilirlik ile sayfa araç çubuğunu düzenle",
-	"wikieditor-toolbar-preference": "Gelişmiş düzenleme araç çubuğunu etkinleştir",
+	"wikieditor-toolbar-preference": "Düzenleme araç çubuğunu etkinleştir",
+	"wikieditor-toolbar-preference-help": "Bu, bazen '2010 vikimetin editörü' olarak adlandırılır.",
 	"wikieditor-toolbar-loading": "Yükleniyor...",
 	"wikieditor-toolbar-tool-bold": "Kalın",
 	"wikieditor-toolbar-tool-bold-example": "Kalın metin",

@@ -9,7 +9,8 @@
 			"M.M.S.",
 			"Sannab",
 			"WikiPhoenix",
-			"Jopparn"
+			"Jopparn",
+			"Sturban"
 		]
 	},
 	"categorytree": "Kategoriträd",
@@ -25,7 +26,7 @@
 	"categorytree-mode-pages": "sidor utom filer",
 	"categorytree-mode-all": "alla sidor",
 	"categorytree-collapse": "göm",
-	"categorytree-expand": "expandera",
+	"categorytree-expand": "visa",
 	"categorytree-member-counts": "Innehåller {{PLURAL:$1|1 underkategori|$1 underkategorier}}, {{PLURAL:$2|1 sida|$2 sidor}}, och {{PLURAL:$3|1 fil|$3 filer}}",
 	"categorytree-num-categories": "$1 K",
 	"categorytree-num-pages": "$1 S",

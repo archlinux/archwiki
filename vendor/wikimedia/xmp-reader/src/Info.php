@@ -62,7 +62,7 @@ class Info {
 	 *
 	 * Currently this just has a bunch of EXIF values as this class is only half-done.
 	 */
-	static private $items = [
+	private static $items = [
 		'http://ns.adobe.com/exif/1.0/' => [
 			'ApertureValue' => [
 				'map_group' => 'exif',

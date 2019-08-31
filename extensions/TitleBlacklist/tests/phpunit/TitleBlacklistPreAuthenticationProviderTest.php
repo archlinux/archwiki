@@ -6,15 +6,6 @@ use MediaWiki\Auth\AuthManager;
  * @covers TitleBlacklistPreAuthenticationProvider
  */
 class TitleBlacklistPreAuthenticationProviderTest extends MediaWikiTestCase {
-	public function setUp() {
-		global $wgDisableAuthManager;
-		if ( !class_exists( AuthManager::class ) || $wgDisableAuthManager ) {
-			$this->markTestSkipped( 'AuthManager is disabled' );
-		}
-
-		parent::setUp();
-	}
-
 	/**
 	 * @dataProvider provideGetAuthenticationRequests
 	 */

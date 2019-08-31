@@ -18,5 +18,6 @@
 	"fancycaptcha-sendemail": "Qe spamê otomayoni ra pawitîşi, ma rica keno çekuyanê ke qutiya cor de înan binuse \n([[Special:Captcha/help|enformasyonê bînî]]):",
 	"fancycaptcha-reload-text": "Newe ke",
 	"apihelp-fancycaptchareload-description": "Şo newe FancyCaptcha.",
+	"apihelp-fancycaptchareload-summary": "Yew FancyCaptchayo newe ano.",
 	"apihelp-fancycaptchareload-example-1": "Şo newe FancyCaptcha"
 }

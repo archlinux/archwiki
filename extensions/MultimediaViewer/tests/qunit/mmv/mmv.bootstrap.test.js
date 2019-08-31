@@ -1,4 +1,4 @@
-( function ( mw, $ ) {
+( function () {
 	QUnit.module( 'mmv.bootstrap', QUnit.newMwEnvironment( {
 		setup: function () {
 			mw.config.set( 'wgMediaViewer', true );
@@ -56,10 +56,10 @@
 
 		// MultimediaViewerBootstrap.ensureEventHandlersAreSetUp() is a weird workaround for gadget bugs.
 		// MediaViewer should work without it, and so should the tests.
-		bootstrap.ensureEventHandlersAreSetUp = $.noop;
+		bootstrap.ensureEventHandlersAreSetUp = function () {};
 
 		bootstrap.getViewer = function () {
-			return viewer || { initWithThumbs: $.noop, hash: $.noop };
+			return viewer || { initWithThumbs: function () {}, hash: function () {} };
 		};
 
 		return bootstrap;
@@ -127,7 +127,7 @@
 		this.sandbox.stub( mw.loader, 'using' )
 			.callsArgWith( 2, new Error( 'loading failed', [ 'mmv' ] ) )
 			.withArgs( 'mediawiki.notification' ).returns( $.Deferred().reject() ); // needed for mw.notify
-		bootstrap.ensureEventHandlersAreSetUp = $.noop;
+		bootstrap.ensureEventHandlersAreSetUp = function () {};
 
 		// trigger first click, which will cause MMV to be loaded (which we've
 		// set up to fail)
@@ -152,7 +152,7 @@
 	QUnit.skip( 'Check viewer invoked when clicking on valid image links', function ( assert ) {
 		// TODO: Is <div class="gallery"><span class="image"><img/></span></div> valid ???
 		var div, link, link2, link3, link4, link5, bootstrap,
-			viewer = { initWithThumbs: $.noop, loadImageByTitle: this.sandbox.stub() },
+			viewer = { initWithThumbs: function () {}, loadImageByTitle: this.sandbox.stub() },
 			clock = this.sandbox.useFakeTimers();
 
 		// Create gallery with valid link image
@@ -242,7 +242,7 @@
 
 	QUnit.test( 'Skip images with invalid extensions', function ( assert ) {
 		var div, link,
-			viewer = { initWithThumbs: $.noop, loadImageByTitle: this.sandbox.stub() },
+			viewer = { initWithThumbs: function () {}, loadImageByTitle: this.sandbox.stub() },
 			clock = this.sandbox.useFakeTimers();
 
 		// Create gallery with image that has invalid name extension
@@ -264,7 +264,7 @@
 	// FIXME: Tests suspended as they do not pass in QUnit 2.x+ – T192932
 	QUnit.skip( 'Accept only left clicks without modifier keys, skip the rest', function ( assert ) {
 		var $div, $link, bootstrap,
-			viewer = { initWithThumbs: $.noop, loadImageByTitle: this.sandbox.stub() },
+			viewer = { initWithThumbs: function () {}, loadImageByTitle: this.sandbox.stub() },
 			clock = this.sandbox.useFakeTimers();
 
 		// Create gallery with image that has valid name extension
@@ -303,7 +303,7 @@
 
 	QUnit.test( 'Ensure that the correct title is loaded when clicking', function ( assert ) {
 		var bootstrap,
-			viewer = { initWithThumbs: $.noop, loadImageByTitle: this.sandbox.stub() },
+			viewer = { initWithThumbs: function () {}, loadImageByTitle: this.sandbox.stub() },
 			$div = createGallery( 'foo.jpg' ),
 			$link = $div.find( 'a.image' ),
 			clock = this.sandbox.useFakeTimers();
@@ -338,7 +338,7 @@
 		bootstrap = createBootstrap( viewer );
 		this.sandbox.stub( bootstrap, 'setupOverlay' );
 		this.sandbox.stub( viewer, 'createNewImage' );
-		viewer.loadImage = $.noop;
+		viewer.loadImage = function () {};
 		viewer.createNewImage = function ( fileLink, filePageLink, fileTitle, index, thumb, caption, alt ) {
 			var html = thumb.outerHTML;
 
@@ -515,7 +515,7 @@
 	QUnit.test( 'Preload JS/CSS dependencies on thumb hover', function ( assert ) {
 		var $div, bootstrap,
 			clock = this.sandbox.useFakeTimers(),
-			viewer = { initWithThumbs: $.noop };
+			viewer = { initWithThumbs: function () {} };
 
 		// Create gallery with image that has valid name extension
 		$div = createThumb();
@@ -576,4 +576,4 @@
 		assert.strictEqual( bootstrap.findCaption( $(), link ), 'Foobar', 'The caption is found even if the image is not a thumbnail.' );
 		assert.strictEqual( bootstrap.findCaption( multiple, multiple.find( 'img[src="bar.jpg"]' ).closest( 'a' ) ), 'Image #2', 'The caption is found in {{Multiple image}}.' );
 	} );
-}( mediaWiki, jQuery ) );
+}() );

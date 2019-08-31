@@ -16,5 +16,6 @@
 	"titleblacklist-invalid": "{{PLURAL:$1|Baris|Baris-baris}} ing daftar ireng irah-irahan (judhul) {{PLURAL:$1|ing ngisor|ing ngisor}} iki ora absah; mangga dikorèksi {{PLURAL:$1|item|item-item}} iku sadurungé disimpen:",
 	"titleblacklist-override": "Lirwakaké pratélan ireng",
 	"right-tboverride": "''Override'' daftar ireng judhul",
-	"right-tboverride-account": "Lirwakaké pratélan ireng bab jeneng panganggo"
+	"right-tboverride-account": "Lirwakaké pratélan ireng bab jeneng panganggo",
+	"visualeditor-saveerror-titleblacklist": "Masalah nalika nyimpen kaca: Sesirah kaca iki kalebu ing pratélan ireng"
 }

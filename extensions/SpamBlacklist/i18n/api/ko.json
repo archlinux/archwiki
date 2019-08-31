@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Ykhwong"
+		]
+	},
+	"apihelp-spamblacklist-description": "SpamBlacklist에 대해 하나 이상의 URL의 유효성을 확인합니다.",
+	"apihelp-spamblacklist-summary": "SpamBlacklist에 대해 하나 이상의 URL의 유효성을 확인합니다."
+}

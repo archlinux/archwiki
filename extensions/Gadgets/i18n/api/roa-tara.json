@@ -1,0 +1,17 @@
+{
+	"@metadata": {
+		"authors": [
+			"Joetaras"
+		]
+	},
+	"apihelp-query+gadgetcategories-description": "Tuèrne 'n'elenghe de le categorije de le accessore.",
+	"apihelp-query+gadgetcategories-summary": "Tuèrne 'n'elenghe de le categorije de le accessore.",
+	"apihelp-query+gadgetcategories-param-names": "Nome de le categorije da recuperà.",
+	"apihelp-query+gadgetcategories-example-1": "Pigghie l'elenghe de le categorije de accessore esistende",
+	"apihelp-query+gadgetcategories-example-2": "Pigghie le 'mbormaziune sus a le categorije chiamate \"foo\" e \"bar\"",
+	"apihelp-query+gadgets-description": "Tuèrne 'n'elenghe de accessore ausate sus a sta uicchi.",
+	"apihelp-query+gadgets-summary": "Tuèrne 'n'elenghe de accessore ausate sus a sta uicchi.",
+	"apihelp-query+gadgets-param-ids": "ID de le gadget da recuperà.",
+	"apihelp-query+gadgets-param-allowedonly": "Elenghe sulamende le accessorie conzendite a stu utende.",
+	"apihelp-query+gadgets-param-enabledonly": "Elenghe sulamende le accessorie conzendite a stu utende."
+}

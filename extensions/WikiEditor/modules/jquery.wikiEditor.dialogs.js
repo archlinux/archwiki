@@ -1,31 +1,9 @@
 /**
  * Dialog Module for wikiEditor
  */
-( function ( $, mw ) {
+( function () {
 
 	$.wikiEditor.modules.dialogs = {
-
-		/**
-		 * Compatibility map
-		 */
-		browsers: {
-			// Left-to-right languages
-			ltr: {
-				msie: [ [ '>=', 9 ] ],
-				firefox: [ [ '>=', 4 ] ],
-				opera: [ [ '>=', '10.5' ] ],
-				safari: [ [ '>=', 5 ] ],
-				chrome: [ [ '>=', 5 ] ]
-			},
-			// Right-to-left languages
-			rtl: {
-				msie: [ [ '>=', 9 ] ],
-				firefox: [ [ '>=', 4 ] ],
-				opera: [ [ '>=', '10.5' ] ],
-				safari: [ [ '>=', 5 ] ],
-				chrome: [ [ '>=', 5 ] ]
-			}
-		},
 
 		/**
 		 * API accessible functions
@@ -131,7 +109,7 @@
 				configuration.buttons = configuration.newButtons;
 				if ( module.htmlTemplate ) {
 					$content = mw.template.get( 'ext.wikiEditor', module.htmlTemplate ).render();
-				} else if ( module.html instanceof jQuery ) {
+				} else if ( module.html instanceof $ ) {
 					$content = module.html;
 				} else {
 					$content = $( $.parseHTML( module.html ) );
@@ -234,4 +212,4 @@
 
 	};
 
-}( jQuery, mediaWiki ) );
+}() );

@@ -9,7 +9,7 @@
 			"Otogi"
 		]
 	},
-	"cite-desc": "ამატებს <code><nowiki><ref[ name=id]></nowiki></code> და <code><nowiki><references/></nowiki></code> ტეგებს სქოლიოსთვის",
+	"cite-desc": "ამატებს <code>&lt;ref[ name=id]&gt;</code> და <code>&lt;references/&gt;</code> ტეგებს სქოლიოსთვის",
 	"cite_error": "ციტირების შეცდომა $1",
 	"cite_error_ref_numeric_key": "არასწორი <code>&lt;ref&gt;</code> ტეგი;\nსახელი არ უნდა შეიცავდეს ციფრებს. გამოიყენეთ აღწერილობითი სახელწოდება.",
 	"cite_error_ref_no_key": "არასწორი ტეგი <code>&lt;ref&gt;</code>;\nელემენტი უნდა შეიცავდეს სახელს.",

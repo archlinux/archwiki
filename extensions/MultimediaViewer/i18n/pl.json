@@ -12,7 +12,8 @@
 			"Matma Rex",
 			"Darellur",
 			"Macofe",
-			"Railfail536"
+			"Railfail536",
+			"CiaPan"
 		]
 	},
 	"multimediaviewer-desc": "Powiększ miniatury ilustracji do wielkości ekranu.",
@@ -115,5 +116,5 @@
 	"multimediaviewer-enable-confirmation-text": "Kiedy następnym razem klikniesz na miniaturkę na {{GRAMMAR:MS.lp|$1}}, wyświetli się Media Viewer.",
 	"multimediaviewer-enable-alert": "Media Viewer jest wyłączony",
 	"multimediaviewer-disable-info-title": "Wyłączyłeś Media Viewer",
-	"multimediaviewer-disable-info": "Wciąż możesz oglądać pojedyncze pliki za pomocą Media Viewera"
+	"multimediaviewer-disable-info": "Wciąż możesz oglądać poszczególne pliki za pomocą Media Viewera"
 }

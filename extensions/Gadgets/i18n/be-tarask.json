@@ -31,7 +31,6 @@
 	"gadgets-not-found": "Гаджэт «$1» ня знойдзены.",
 	"gadgets-export-text": "Каб экспартаваць гаджэт $1, націсьніце кнопку «{{int:gadgets-export-download}}», захавайце загружаны файл, зайдзіце на Special:Import у мэтавай вікі і загрузіце файл туды. Затым дадайце наступны зьмест на старонку MediaWiki:Gadgets-definition:\n<pre>$2</pre>\nВы павінны мець адпаведныя правы ў мэтавай вікі (у тым ліку і правы на рэдагаваньне сыстэмных паведамленьняў), а ў вікі мусіць быць уключаная магчымасьць імпарту з файлаў.",
 	"gadgets-export-download": "Загрузіць",
-	"apihelp-query+gadgetcategories-description": "Вяртае сьпіс катэгорыяў гаджэтаў.",
 	"right-gadgets-edit": "рэдагаваньне JavaScript і CSS-старонак гаджэту",
 	"right-gadgets-definition-edit": "рэдагаваньне вызначэньняў гаджэтаў",
 	"action-gadgets-definition-edit": "рэдагаваць апісаньне гэтага гаджэту"

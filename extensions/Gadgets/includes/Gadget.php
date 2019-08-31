@@ -206,7 +206,7 @@ class Gadget {
 	}
 
 	/**
-	 * @return bool Whether this gadget has resources that can be loaded via ResourceLoaderb
+	 * @return bool Whether this gadget has resources that can be loaded via ResourceLoader
 	 */
 	public function hasModule() {
 		return count( $this->styles )

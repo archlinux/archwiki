@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"Iyuqciyang"
+		]
+	},
+	"pfunc_time_error": "mqnuqu：jiyax ungat brih.",
+	"pfunc_expr_unrecognised_word": "pgkla mqnuqu ：ungat klaan mkla ka patas \"$1\".",
+	"pfunc_expr_unexpected_operator": "pnqtaan mqnuqu ：ida mksaw kiya ka $1 patas pnskraya smpug.\n(sspug：dmuuy kska kari elug eudabitaqpnskraya patas sspug. Kiya o+ - * / > < = )",
+	"pfunc_expr_missing_operand": "pgkla mqnuqu ：msula $1 ka patas smpung yeyn.\n(smpung yeyn：kska euda patas sspug nii o wada jiyun sspug ddpatas, ga muda smpung jiyun kska elug kari patas nii：+ - * / tmaga pnskrya)",
+	"pfunc_expr_unrecognised_punctuation": "pgkla mqnuqu ：ungat klaan pgkla ka pnskraya \"$1\"."
+}

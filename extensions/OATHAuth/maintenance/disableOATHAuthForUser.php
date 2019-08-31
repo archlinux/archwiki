@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\Session\SessionManager;
+
 if ( getenv( 'MW_INSTALL_PATH' ) ) {
 	$IP = getenv( 'MW_INSTALL_PATH' );
 } else {
@@ -8,7 +10,7 @@ if ( getenv( 'MW_INSTALL_PATH' ) ) {
 require_once "$IP/maintenance/Maintenance.php";
 
 class DisableOATHAuthForUser extends Maintenance {
-	function __construct() {
+	public function __construct() {
 		parent::__construct();
 		$this->mDescription = 'Remove OATHAuth from a specific user';
 		$this->addArg( 'user', 'The username to remove OATHAuth from.' );
@@ -31,10 +33,15 @@ class DisableOATHAuthForUser extends Maintenance {
 			$this->error( "User $username doesn't have OATHAuth enabled!", 1 );
 		}
 
-		$repo->remove( $oathUser );
+		$repo->remove( $oathUser, 'Maintenance script' );
+		// Kill all existing sessions. If this disable was social-engineered by an attacker,
+		// the legitimate user will hopefully login again and notice that the second factor
+		// is missing or different, and alert the operators.
+		SessionManager::singleton()->invalidateSessionsForUser( $user );
+
 		$this->output( "OATHAuth disabled for $username.\n" );
 	}
 }
 
-$maintClass = "DisableOATHAuthForUser";
+$maintClass = DisableOATHAuthForUser::class;
 require_once RUN_MAINTENANCE_IF_MAIN;

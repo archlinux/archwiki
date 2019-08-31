@@ -7,7 +7,8 @@
 			"Xoser",
 			"Kumkumuk",
 			"1917 Ekim Devrimi",
-			"Gırd"
+			"Gırd",
+			"Orbot707"
 		]
 	},
 	"categorytree": "Dara Kategoriya",
@@ -22,8 +23,8 @@
 	"categorytree-mode-categories": "tenya kategoriy",
 	"categorytree-mode-pages": "Teyna pelan, dosyayan hesab meke",
 	"categorytree-mode-all": "peley pêro",
-	"categorytree-collapse": "teng kı",
-	"categorytree-expand": "Hera ke",
+	"categorytree-collapse": "teng ke",
+	"categorytree-expand": "hera kerê",
 	"categorytree-member-counts": "Tede {{PLURAL:$1|1 bınkategoriye|$1 bınkategoriy}}, {{PLURAL:$2|1 pele|$2 peli}} û {{PLURAL:$3|1 dosya|$3 dosyey}} estê",
 	"categorytree-num-categories": "$1 K",
 	"categorytree-num-pages": "$1 P",
@@ -39,6 +40,7 @@
 	"categorytree-error": "Barkerdış de malumati dı problem esta.",
 	"categorytree-retry": "Şıma ra reca tenekê pıpawê, bahdo fına bıcerbnê.",
 	"apihelp-categorytree-description": "Derganiya zerre de Module Categorytree.",
+	"apihelp-categorytree-summary": "Seba derganiya CategoryTree rê modulê miyani",
 	"apihelp-categorytree-param-category": "Serekê canameya kategori,  verole grotış do nê gêriyeno",
 	"apihelp-categorytree-param-options": "İnşaya weçeneganê Categorytree JSON objeyan vıraziya.\nHesıbyaye xoriyeya weçena <kbd>1</kbd> a.",
 	"apierror-categorytree-invalidjson": "Weçenegê objeyê JSON'i ravêreno"

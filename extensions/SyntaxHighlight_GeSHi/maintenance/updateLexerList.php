@@ -75,5 +75,5 @@ class UpdateLexerList extends Maintenance {
 	}
 }
 
-$maintClass = 'UpdateLexerList';
+$maintClass = UpdateLexerList::class;
 require_once RUN_MAINTENANCE_IF_MAIN;

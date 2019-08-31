@@ -161,17 +161,20 @@ class Net_SMTP
      *   $smtp = new Net_SMTP('ssl://mail.host.com', 465);
      *   $smtp->connect();
      *
-     * @param string  $host           The server to connect to.
-     * @param integer $port           The port to connect to.
-     * @param string  $localhost      The value to give when sending EHLO or HELO.
-     * @param boolean $pipelining     Use SMTP command pipelining
-     * @param integer $timeout        Socket I/O timeout in seconds.
-     * @param array   $socket_options Socket stream_context_create() options.
+     * @param string  $host             The server to connect to.
+     * @param integer $port             The port to connect to.
+     * @param string  $localhost        The value to give when sending EHLO or HELO.
+     * @param boolean $pipelining       Use SMTP command pipelining
+     * @param integer $timeout          Socket I/O timeout in seconds.
+     * @param array   $socket_options   Socket stream_context_create() options.
+     * @param string  $gssapi_principal GSSAPI service principal name
+     * @param string  $gssapi_cname     GSSAPI credentials cache
      *
      * @since 1.0
      */
     public function __construct($host = null, $port = null, $localhost = null,
-        $pipelining = false, $timeout = 0, $socket_options = null
+        $pipelining = false, $timeout = 0, $socket_options = null,
+        $gssapi_principal=null, $gssapi_cname=null
     ) {
         if (isset($host)) {
             $this->host = $host;
@@ -183,10 +186,17 @@ class Net_SMTP
             $this->localhost = $localhost;
         }
 
-        $this->pipelining      = $pipelining;
-        $this->socket         = new Net_Socket();
-        $this->socket_options = $socket_options;
-        $this->timeout        = $timeout;
+        $this->pipelining       = $pipelining;
+        $this->socket           = new Net_Socket();
+        $this->socket_options   = $socket_options;
+        $this->timeout          = $timeout;
+        $this->gssapi_principal = $gssapi_principal;
+        $this->gssapi_cname     = $gssapi_cname;
+
+        /* If PHP krb5 extension is loaded, we enable GSSAPI method. */
+        if (extension_loaded('krb5')) {
+            $this->setAuthMethod('GSSAPI', array($this, 'authGSSAPI'));
+        }
 
         /* Include the Auth_SASL package.  If the package is available, we
          * enable the authentication methods that depend upon it. */
@@ -871,6 +881,90 @@ class Net_SMTP
         return true;
     }
 
+     /**
+     * Authenticates the user using the GSSAPI method.
+     *
+     * PHP krb5 extension is required,
+     * service principal and credentials cache must be set.
+     *
+     * @param string $uid   The userid to authenticate as.
+     * @param string $pwd   The password to authenticate with.
+     * @param string $authz The optional authorization proxy identifier.
+     *
+     * @return mixed Returns a PEAR_Error with an error message on any
+     *               kind of failure, or true on success.
+     */
+    protected function authGSSAPI($uid, $pwd, $authz = '')
+    {
+        if (PEAR::isError($error = $this->put('AUTH', 'GSSAPI'))) {
+            return $error;
+        }
+        /* 334: Continue authentication request */
+        if (PEAR::isError($error = $this->parseResponse(334))) {
+            /* 503: Error: already authenticated */
+            if ($this->code === 503) {
+                return true;
+            }
+            return $error;
+        }
+
+        if (!$this->gssapi_principal) {
+            return PEAR::raiseError('No Kerberos service principal set', 2);
+        }
+
+        if (!empty($this->gssapi_cname)) {
+            putenv('KRB5CCNAME=' . $this->gssapi_cname);
+        }
+
+        try {
+            $ccache = new KRB5CCache();
+            if (!empty($this->gssapi_cname)) {
+                $ccache->open($this->gssapi_cname);
+            }
+            
+            $gssapicontext = new GSSAPIContext();
+            $gssapicontext->acquireCredentials($ccache);
+
+            $token   = '';
+            $success = $gssapicontext->initSecContext($this->gssapi_principal, null, null, null, $token);
+            $token   = base64_encode($token);
+        }
+        catch (Exception $e) {
+            return PEAR::raiseError('GSSAPI authentication failed: ' . $e->getMessage());
+        }
+
+        if (PEAR::isError($error = $this->put($token))) {
+            return $error;
+        }
+
+        /* 334: Continue authentication request */
+        if (PEAR::isError($error = $this->parseResponse(334))) {
+            return $error;
+        }
+
+        $response = $this->arguments[0];
+
+        try {
+            $challenge = base64_decode($response);
+            $gssapicontext->unwrap($challenge, $challenge);
+            $gssapicontext->wrap($challenge, $challenge, true);
+        }
+        catch (Exception $e) {
+            return PEAR::raiseError('GSSAPI authentication failed: ' . $e->getMessage());
+        }
+
+        if (PEAR::isError($error = $this->put(base64_encode($challenge)))) {
+            return $error;
+        }
+
+        /* 235: Authentication successful */
+        if (PEAR::isError($error = $this->parseResponse(235))) {
+            return $error;
+        }
+
+        return true;
+    }
+
     /**
      * Send the HELO command.
      *
@@ -1037,7 +1131,6 @@ class Net_SMTP
          * about the server's fixed maximum message size". */
         $limit = (isset($this->esmtp['SIZE'])) ? $this->esmtp['SIZE'] : 0;
         if ($limit > 0 && $size >= $limit) {
-            $this->disconnect();
             return PEAR::raiseError('Message size exceeds server limit');
         }
 

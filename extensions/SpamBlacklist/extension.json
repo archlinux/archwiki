@@ -39,7 +39,8 @@
 	},
 	"MessagesDirs": {
 		"SpamBlackList": [
-			"i18n"
+			"i18n",
+			"i18n/api"
 		]
 	},
 	"AutoloadClasses": {
@@ -51,6 +52,19 @@
 		"SpamBlacklistLogFormatter": "includes/SpamBlacklistLogFormatter.php",
 		"SpamRegexBatch": "includes/SpamRegexBatch.php",
 		"SpamBlacklistPreAuthenticationProvider": "includes/SpamBlacklistPreAuthenticationProvider.php"
+	},
+	"ResourceModules": {
+		"ext.spamBlacklist.visualEditor": {
+			"scripts": "ve-spamblacklist/ve.init.mw.SpamBlacklistSaveErrorHandler.js",
+			"targets": [ "desktop", "mobile" ]
+		}
+	},
+	"VisualEditorPluginModules": [
+		"ext.spamBlacklist.visualEditor"
+	],
+	"ResourceFileModulePaths": {
+		"localBasePath": "modules",
+		"remoteExtPath": "SpamBlacklist/modules"
 	},
 	"Hooks": {
 		"EditFilterMergedContent": [

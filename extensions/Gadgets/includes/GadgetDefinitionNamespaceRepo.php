@@ -101,9 +101,6 @@ class GadgetDefinitionNamespaceRepo extends GadgetRepo {
 		$gadget = $this->wanCache->getWithSetCallback(
 			$key,
 			self::CACHE_TTL,
-			/**
-			 * @suppress PhanTypeMismatchArgument
-			 */
 			function ( $old, &$ttl, array &$setOpts ) use ( $id ) {
 				$setOpts += Database::getCacheSetOptions( wfGetDB( DB_REPLICA ) );
 				$title = Title::makeTitleSafe( NS_GADGET_DEFINITION, $id );

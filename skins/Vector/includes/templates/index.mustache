@@ -1,0 +1,36 @@
+{{{html-headelement}}}
+<div id="mw-page-base" class="noprint"></div>
+<div id="mw-head-base" class="noprint"></div>
+<div id="content" class="mw-body" role="main">
+	<a id="top"></a>
+	{{#html-sitenotice}}<div id="siteNotice" class="mw-body-content">{{{html-sitenotice}}}</div>{{/html-sitenotice}}
+	{{{html-indicators}}}
+	<h1 id="firstHeading" class="firstHeading" lang="{{page-langcode}}">{{{html-title}}}</h1>
+	{{{html-prebodyhtml}}}
+	<div id="bodyContent" class="mw-body-content">
+		{{#page-isarticle}}<div id="siteSub" class="noprint">{{msg-tagline}}</div>{{/page-isarticle}}
+		<div id="contentSub"{{{html-userlangattributes}}}>{{{html-subtitle}}}</div>
+		{{#html-undelete}}<div id="contentSub2">{{{html-undelete}}}</div>{{/html-undelete}}
+		{{#html-newtalk}}<div class="usermessage">{{{html-newtalk}}}</div>{{/html-newtalk}}
+		{{!
+		Keep this empty `div` for compatibility with gadgets and user scripts
+		using this place to insert extra elements before.
+		}}
+		<div id="jump-to-nav"></div>
+		<a class="mw-jump-link" href="#mw-head">{{msg-jumptonavigation}}</a>
+		<a class="mw-jump-link" href="#p-search">{{msg-jumptosearch}}</a>
+		{{{html-bodycontent}}}
+		{{#html-printfooter}}
+		<div class="printfooter">{{{html-printfooter}}}</div>
+		{{/html-printfooter}}
+		{{{html-catlinks}}}
+		{{{html-dataAfterContent}}}
+		<div class="visualClear"></div>
+		{{{html-debuglog}}}
+	</div>
+</div>
+{{! html-unported outputs <div id="mw-navigation"> and <div id="footer"> }}
+{{{html-unported}}}
+{{{html-printtail}}}
+</body>
+</html>

@@ -15,7 +15,7 @@
  * along with MultimediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-( function ( mw, $ ) {
+( function () {
 	QUnit.module( 'mmv.ui.download.pane', QUnit.newMwEnvironment() );
 
 	QUnit.test( 'Sanity test, object creation and UI construction', function ( assert ) {
@@ -161,4 +161,4 @@
 		assert.strictEqual( download.$previewLink.attr( 'href' ), imageUrl, 'Preview link is set correctly.' );
 		assert.strictEqual( download.$downloadButton.hasClass( 'disabledLink' ), false, 'Download link is enabled.' );
 	} );
-}( mediaWiki, jQuery ) );
+}() );

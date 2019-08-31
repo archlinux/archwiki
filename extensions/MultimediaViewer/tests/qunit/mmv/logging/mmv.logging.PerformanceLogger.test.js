@@ -15,13 +15,13 @@
  * along with MultimediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-( function ( mw, $ ) {
+( function () {
 	QUnit.module( 'mmv.logging.PerformanceLogger', QUnit.newMwEnvironment() );
 
 	function createFakeXHR( response ) {
 		return {
 			readyState: 0,
-			open: $.noop,
+			open: function () {},
 			send: function () {
 				var xhr = this;
 
@@ -338,4 +338,4 @@
 		mw.mmv.logging.PerformanceLogger.prototype.recordJQueryEntryDelayed = oldRecord;
 		mw.Api.prototype.ajax = oldAjax;
 	} );
-}( mediaWiki, jQuery ) );
+}() );

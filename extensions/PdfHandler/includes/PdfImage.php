@@ -39,7 +39,7 @@ class PdfImage {
 	/**
 	 * @param string $filename
 	 */
-	function __construct( $filename ) {
+	public function __construct( $filename ) {
 		$this->mFilename = $filename;
 	}
 
@@ -189,6 +189,7 @@ class PdfImage {
 		foreach ( $lines as $line ) {
 			if ( $inMetadata ) {
 				// Handle XMP differently due to diffence in line break
+				// @phan-suppress-next-line PhanTypeInvalidDimOffset weird loop
 				$data['xmp'] .= "\n$line";
 				continue;
 			}

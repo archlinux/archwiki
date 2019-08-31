@@ -31,7 +31,7 @@ class SpecialGadgets extends SpecialPage {
 	}
 
 	private function makeAnchor( $gadgetName ) {
-		return 'gadget-' . Sanitizer::escapeId( $gadgetName, [ 'noninitial' ] );
+		return 'gadget-' . Sanitizer::escapeIdForAttribute( $gadgetName );
 	}
 
 	/**

@@ -1,4 +1,4 @@
-( function ( mw, $ ) {
+( function () {
 	QUnit.module( 'mmv.logging.ActionLogger', QUnit.newMwEnvironment() );
 
 	QUnit.test( 'log()', function ( assert ) {
@@ -14,7 +14,7 @@
 		this.sandbox.stub( logger, 'loadDependencies' ).returns( $.Deferred().resolve() );
 		this.sandbox.stub( mw, 'log' );
 
-		logger.samplingFactorMap = { 'default': 1 };
+		logger.samplingFactorMap = { default: 1 };
 		logger.setEventLog( fakeEventLog );
 		logger.logActions = {};
 		logger.logActions[ action1key ] = action1value;
@@ -36,7 +36,7 @@
 
 		mw.log.reset();
 		fakeEventLog.logEvent.reset();
-		logger.samplingFactorMap = { 'default': 0 };
+		logger.samplingFactorMap = { default: 0 };
 		logger.log( action1key, true );
 		clock.tick( 10 );
 
@@ -45,4 +45,4 @@
 
 		clock.restore();
 	} );
-}( mediaWiki, jQuery ) );
+}() );

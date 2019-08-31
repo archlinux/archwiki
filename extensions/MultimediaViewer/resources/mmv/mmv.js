@@ -15,7 +15,7 @@
  * along with MultimediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-( function ( mw, $ ) {
+( function () {
 	var MMVP,
 		comingFromHashChange = false;
 
@@ -288,7 +288,7 @@
 		imageWidths = this.ui.canvas.getCurrentImageWidths();
 		canvasDimensions = this.ui.canvas.getDimensions();
 
-		start = $.now();
+		start = ( new Date() ).getTime();
 
 		mw.mmv.dimensionLogger.logDimensions( imageWidths, canvasDimensions, 'show' );
 
@@ -331,7 +331,7 @@
 					$( document ).trigger( $.Event( 'mmv-metadata', { viewer: viewer, image: image, imageInfo: metadata[ 0 ] } ) );
 				} );
 
-				viewer.displayRealThumbnail( thumbnail, imageElement, imageWidths, $.now() - start );
+				viewer.displayRealThumbnail( thumbnail, imageElement, imageWidths, ( new Date() ).getTime() - start );
 
 				return $.Deferred().resolve( thumbnail, imageElement );
 			},
@@ -792,9 +792,8 @@
 			thumbnailPromise,
 			imagePromise;
 
-		if ( originalWidth && width > originalWidth ) {
+		if ( fileTitle.ext.toLowerCase() !== 'svg' && originalWidth && width > originalWidth ) {
 			// Do not request images larger than the original image
-			// This would be possible (but still unwanted) for SVG images
 			width = originalWidth;
 		}
 
@@ -1032,4 +1031,4 @@
 	};
 
 	mw.mmv.MultimediaViewer = MultimediaViewer;
-}( mediaWiki, jQuery ) );
+}() );

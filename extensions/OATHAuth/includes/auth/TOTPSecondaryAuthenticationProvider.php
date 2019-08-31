@@ -80,7 +80,7 @@ class TOTPSecondaryAuthenticationProvider extends AbstractSecondaryAuthenticatio
 		}
 
 		$oathuser = OATHAuthHooks::getOATHUserRepository()->findByUser( $user );
-		/** @suppress PhanUndeclaredProperty */
+		// @phan-suppress-next-line PhanUndeclaredProperty
 		$token = $request->OATHToken;
 
 		if ( $oathuser->getKey() === null ) {

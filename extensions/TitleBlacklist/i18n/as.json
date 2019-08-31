@@ -3,7 +3,8 @@
 		"authors": [
 			"Bishnu Saikia",
 			"Gitartha.bordoloi",
-			"Nilamdyuti"
+			"Nilamdyuti",
+			"Dibya Dutta"
 		]
 	},
 	"titleblacklist-desc": "[[MediaWiki:Titleblacklist|ব্লেকলিষ্ট]] আৰু [[MediaWiki:Titlewhitelist|হোৱাইটলিষ্ট]]ৰ মতে প্ৰশাসকক পৃষ্ঠা আৰু সদস্য একাউণ্টৰ সৃষ্টি অৱৰোধৰ অনুমতি দিয়ে",
@@ -16,5 +17,6 @@
 	"titleblacklist-invalid": "শীৰ্ষক ব্লেকলিষ্টত নিম্নলিখিত {{PLURAL:$1|শাৰী|শাৰীসমূহ}} অবৈধ; \nঅনুগ্ৰহ কৰি সংৰক্ষণ কৰাৰ আগত {{PLURAL:$1|ইয়াক|এইবোৰ}} শুদ্ধ কৰক:",
 	"titleblacklist-override": "ব্লেকলিষ্ট উপেক্ষা কৰক",
 	"right-tboverride": "শিৰোনাম বা সদস্যনাম ব্লেকলিষ্ট অৱজ্ঞা কৰক",
-	"right-tboverride-account": "সদস্যনাম ব্লেকলিষ্ট অৱজ্ঞা কৰক"
+	"right-tboverride-account": "সদস্যনাম ব্লেকলিষ্ট অৱজ্ঞা কৰক",
+	"visualeditor-saveerror-titleblacklist": "পৃষ্ঠা সংৰক্ষণৰ ত্ৰুটি: এই পৃষ্ঠাৰ শিৰোনাম ক'লাতালিকাভুক্ত"
 }

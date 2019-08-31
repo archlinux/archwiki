@@ -160,7 +160,8 @@ class SpecialOATHEnable extends FormSpecialPage {
 			'returntoquery' => [
 				'type' => 'hidden',
 				'default' => $this->getRequest()->getVal( 'returntoquery' ),
-				'name' => 'returntoquery', ]
+				'name' => 'returntoquery',
+			]
 		];
 	}
 
@@ -175,15 +176,27 @@ class SpecialOATHEnable extends FormSpecialPage {
 
 		if ( $key->isScratchToken( $formData['token'] ) ) {
 			// A scratch token is not allowed for enrollement
+			\MediaWiki\Logger\LoggerFactory::getInstance( 'authentication' )->info(
+				'OATHAuth {user} attempted to enable 2FA using a scratch token from {clientip}', [
+					'user' => $this->getUser()->getName(),
+					'clientip' => $this->getRequest()->getIP(),
+				]
+			);
 			return [ 'oathauth-noscratchforvalidation' ];
 		}
 		if ( !$key->verifyToken( $formData['token'], $this->OATHUser ) ) {
+			\MediaWiki\Logger\LoggerFactory::getInstance( 'authentication' )->info(
+				'OATHAuth {user} failed to provide a correct token while enabling 2FA from {clientip}', [
+					'user' => $this->getUser()->getName(),
+					'clientip' => $this->getRequest()->getIP(),
+				]
+			);
 			return [ 'oathauth-failedtovalidateoath' ];
 		}
 
 		$this->getRequest()->setSessionData( 'oathauth_key', null );
 		$this->OATHUser->setKey( $key );
-		$this->OATHRepository->persist( $this->OATHUser );
+		$this->OATHRepository->persist( $this->OATHUser, $this->getRequest()->getIP() );
 
 		return true;
 	}

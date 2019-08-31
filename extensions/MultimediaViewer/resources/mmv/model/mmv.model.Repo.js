@@ -17,7 +17,7 @@
 
 /* eslint-disable no-use-before-define */
 
-( function ( mw, oo ) {
+( function () {
 	/**
 	 * Represents information about a single image repository
 	 *
@@ -143,7 +143,7 @@
 		this.absoluteArticlePath = server + articlePath;
 	}
 
-	oo.inheritClass( ForeignApiRepo, Repo );
+	OO.inheritClass( ForeignApiRepo, Repo );
 
 	/**
 	* @override
@@ -185,7 +185,7 @@
 		this.descBaseUrl = descBaseUrl;
 	}
 
-	oo.inheritClass( ForeignDbRepo, Repo );
+	OO.inheritClass( ForeignDbRepo, Repo );
 
 	/**
 	* @override
@@ -206,4 +206,4 @@
 	mw.mmv.model.Repo = Repo;
 	mw.mmv.model.ForeignApiRepo = ForeignApiRepo;
 	mw.mmv.model.ForeignDbRepo = ForeignDbRepo;
-}( mediaWiki, OO ) );
+}() );

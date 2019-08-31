@@ -15,7 +15,9 @@
  * along with MediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-( function ( mw, $ ) {
+( function () {
+	/* eslint-disable no-jquery/no-parse-html-literal */
+
 	QUnit.module( 'mmv.HtmlUtils', QUnit.newMwEnvironment() );
 
 	QUnit.test( 'wrapAndJquerify() for single node', function ( assert ) {
@@ -69,18 +71,21 @@
 		var utils = new mw.mmv.HtmlUtils(),
 			$visibleChild = $( '<div><span></span></div>' ),
 			$invisibleChild = $( '<div><span style="display: none"></span></div>' ),
+			$styleChild = $( '<div><style></style></div>' ),
 			$invisibleChildInVisibleChild = $( '<div><span><abbr style="display: none"></abbr></span></div>' ),
 			$visibleChildInInvisibleChild = $( '<div><span style="display: none"><abbr></abbr></span></div>' ),
 			$invisibleChildWithVisibleSiblings = $( '<div><span></span><abbr style="display: none"></abbr><b></b></div>' );
 
 		utils.filterInvisible( $visibleChild );
 		utils.filterInvisible( $invisibleChild );
+		utils.filterInvisible( $styleChild );
 		utils.filterInvisible( $invisibleChildInVisibleChild );
 		utils.filterInvisible( $visibleChildInInvisibleChild );
 		utils.filterInvisible( $invisibleChildWithVisibleSiblings );
 
 		assert.ok( $visibleChild.has( 'span' ).length, 'visible child is not filtered' );
 		assert.notOk( $invisibleChild.has( 'span' ).length, 'invisible child is filtered' );
+		assert.notOk( $styleChild.has( 'style' ).length, '<style> child is filtered' );
 		assert.ok( $invisibleChildInVisibleChild.has( 'span' ).length, 'visible child is not filtered...' );
 		assert.notOk( $invisibleChildInVisibleChild.has( 'abbr' ).length, '... but its invisible child is' );
 		assert.notOk( $visibleChildInInvisibleChild.has( 'span' ).length, 'invisible child is filtered...' );
@@ -189,4 +194,6 @@
 			title: 'h<b>t</b><i>m</i>l'
 		} ), '<a href="http://example.com" title="html">foo</a>', 'works' );
 	} );
-}( mediaWiki, jQuery ) );
+
+	/* eslint-enable no-jquery/no-parse-html-literal */
+}() );

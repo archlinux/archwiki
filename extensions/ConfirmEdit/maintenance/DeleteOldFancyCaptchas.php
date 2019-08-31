@@ -88,5 +88,5 @@ class DeleteOldFancyCaptchas extends Maintenance {
 	}
 }
 
-$maintClass = "DeleteOldFancyCaptchas";
+$maintClass = DeleteOldFancyCaptchas::class;
 require_once RUN_MAINTENANCE_IF_MAIN;

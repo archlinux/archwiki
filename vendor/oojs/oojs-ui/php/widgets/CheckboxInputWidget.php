@@ -22,8 +22,10 @@ class CheckboxInputWidget extends InputWidget {
 
 	/**
 	 * @param array $config Configuration options
-	 * @param bool $config['selected'] Whether the checkbox is initially selected
-	 *   (default: false)
+	 *      - bool $config['selected'] Whether the checkbox is initially selected
+	 *          (default: false)
+	 *      - bool $config['indeterminate'] Whether the checkbox is in the indeterminate state.
+	 *          (default: false)
 	 * @param-taint $config escapes_html
 	 */
 	public function __construct( array $config = [] ) {
@@ -41,6 +43,7 @@ class CheckboxInputWidget extends InputWidget {
 		// Required for pretty styling in WikimediaUI theme
 		$this->appendContent( $this->checkIcon );
 		$this->setSelected( $config['selected'] ?? false );
+		$this->setIndeterminate( $config['indeterminate'] ?? false );
 	}
 
 	protected function getInputElement( $config ) {
@@ -72,9 +75,35 @@ class CheckboxInputWidget extends InputWidget {
 		return $this->selected;
 	}
 
+	/**
+	 * Set indeterminate state of this checkbox.
+	 *
+	 * @param bool $state Whether the checkbox is indeterminate
+	 * @return $this
+	 */
+	public function setIndeterminate( $state ) {
+		$this->indeterminate = (bool)$state;
+		// NB: A checkbox can't be made indeterminate through HTML,
+		// there is no indeterminate attribute. We can only store
+		// the state for infusion.
+		return $this;
+	}
+
+	/**
+	 * Check if this checkbox is indeterminate.
+	 *
+	 * @return bool Checkbox is indeterminate
+	 */
+	public function isIndeterminate() {
+		return $this->indeterminate;
+	}
+
 	public function getConfig( &$config ) {
 		if ( $this->selected ) {
 			$config['selected'] = $this->selected;
+		}
+		if ( $this->indeterminate ) {
+			$config['indeterminate'] = $this->indeterminate;
 		}
 		return parent::getConfig( $config );
 	}

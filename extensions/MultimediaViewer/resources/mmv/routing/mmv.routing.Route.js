@@ -15,7 +15,7 @@
  * along with MediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-( function ( mw ) {
+( function () {
 	/**
 	 * The base class for routes. Route classes don't really do anything, they are just simple
 	 * containers which specify a certain way of referencing images.
@@ -25,4 +25,4 @@
 	 */
 	function Route() {}
 	mw.mmv.routing.Route = Route;
-}( mediaWiki ) );
+}() );

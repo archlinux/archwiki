@@ -18,7 +18,6 @@
 		float: left;
 		width: 100%;
 		clear: both;
-		height: 0;
 
 		.section {
 			float: left;
@@ -85,7 +84,7 @@
 	/* Groups */
 	.group {
 		float: left;
-		height: 26px;
+		min-height: 26px;
 		padding-right: 6px;
 		border-right: 1px solid #c8ccd1;
 		margin: 3px;
@@ -145,6 +144,11 @@
 					border: 1px solid #c8ccd1;
 					background-color: #fff;
 				}
+			}
+
+			&:hover .options,
+			.menu .options-shown {
+				display: block;
 			}
 
 			.options {
@@ -283,6 +287,7 @@
 	/* Characters Pages */
 	.page-characters {
 		padding-bottom: 5px;
+
 		div {
 			span {
 				border: 1px solid #c8ccd1;
@@ -331,20 +336,28 @@
 /* OOUI buttons */
 .tool.oo-ui-buttonElement-frameless.oo-ui-iconElement {
 	margin: 0;
-	padding: 3px;
+
 	> .oo-ui-buttonElement-button {
-		padding: 0;
+		padding: 3px;
 		border: 0;
+		.box-sizing( content-box );
+
 		> .oo-ui-iconElement-icon {
 			margin: 0;
 			width: 20px;
 			height: 20px;
 			min-width: 20px;
 			min-height: 20px;
-			left: 0;
+			left: 3px;
+			top: 3px;
 			// Reduce opacity like Apex theme
 			opacity: 0.7;
 		}
+	}
+
+	&:hover {
+		background-color: #ecf4f9;
+		outline: 1px solid #dae5ec;
 	}
 }
 
@@ -364,6 +377,7 @@
 		td.wikieditor-toolbar-table-preview-wrapper {
 			background: #eaecf0;
 			padding: 10px;
+
 			span {
 				padding: 4px 6px 0;
 				display: block;

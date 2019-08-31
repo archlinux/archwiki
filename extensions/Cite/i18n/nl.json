@@ -7,10 +7,11 @@
 			"Siebrand",
 			"Dinosaur918",
 			"Mar(c)",
-			"Mainframe98"
+			"Mainframe98",
+			"Elroy"
 		]
 	},
-	"cite-desc": "Voegt <code><nowiki><ref[ name=id]></nowiki></code>- en <code><nowiki><references/></nowiki></code>-labels toe voor citaten",
+	"cite-desc": "Voegt <code>&lt;ref[ name=id]&gt;</code>- en <code>&lt;references/&gt;</code>-labels toe voor citaten",
 	"cite_error": "Citefout: $1",
 	"cite_error_ref_invalid_dir": "Ongeldig <code>&lt;ref&gt;</code> element; dir attribuut \"$1\" is onbekend. Dit moet ltr of rtl zijn.",
 	"cite_error_ref_numeric_key": "Onjuist label <code>&lt;ref&gt;</code>;\nde naam kan geen eenvoudige integer zijn.\nGebruik een beschrijvende titel",
@@ -18,7 +19,7 @@
 	"cite_error_ref_too_many_keys": "Onjuist label <code>&lt;ref&gt;</code>;\nonjuiste namen, bijvoorbeeld te veel",
 	"cite_error_ref_no_input": "Onjuist label <code>&lt;ref&gt;</code>;\nrefs zonder naam moeten inhoud hebben",
 	"cite_error_references_duplicate_key": "Ongeldig label <code>&lt;ref&gt;</code>; de naam \"$1\" wordt meerdere keren met andere inhoud gedefinieerd.",
-	"cite_error_references_invalid_parameters": "Onjuiste <code>&lt;references&gt;</code>-tag",
+	"cite_error_references_invalid_parameters": "Onjuiste parameter in <code>&lt;references&gt;</code>-tag",
 	"cite_error_references_no_backlink_label": "Het aantal beschikbare backlinklabels is opgebruikt.\nGeef meer labels op in het bericht <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>",
 	"cite_error_no_link_label_group": "Het aantal aangepaste koppelinglabels voor de group \"$1\" is uitgeput.\nU kunt er meer instellen in het systeembericht <nowiki>[[MediaWiki:$2]]</nowiki>.",
 	"cite_error_references_no_text": "Onjuist label <code>&lt;ref&gt;</code>;\ner is geen tekst opgegeven voor referenties met de naam <code>$1</code>",
@@ -33,6 +34,7 @@
 	"cite-tracking-category-cite-error-desc": "Pagina's in deze categorie hebben fouten in het gebruik van references tags.",
 	"cite_references_link_accessibility_label": "Omhoog",
 	"cite_references_link_many_accessibility_label": "Omhoog naar:",
+	"cite_references_link_accessibility_back_label": "Springreservekopie",
 	"cite_section_preview_references": "Voorbeeldweergave van de referenties",
 	"cite_warning": "Referentiewaarschuwing: $1",
 	"cite_warning_sectionpreview_no_text": "Van <code>&lt;ref&gt;</code> met de naam <code>$1</code> kan geen voorvertoning gegeven worden, daar deze niet in de huidige sectie of in zijn geheel niet gedefinieerd wordt."

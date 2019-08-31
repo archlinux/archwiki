@@ -2,10 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"علاء",
-			"Csisc"
+			"Csisc",
+			"Meno25"
 		]
 	},
-	"vector-action-addsection": "أضف موضوعاً",
+	"vector-action-addsection": "أضف موضوعا",
 	"vector-action-delete": "احذف",
 	"vector-action-move": "حوّل",
 	"vector-action-protect": "احم",

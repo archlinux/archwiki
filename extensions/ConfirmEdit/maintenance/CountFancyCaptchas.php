@@ -51,5 +51,5 @@ class CountFancyCaptchas extends Maintenance {
 	}
 }
 
-$maintClass = "CountFancyCaptchas";
+$maintClass = CountFancyCaptchas::class;
 require_once RUN_MAINTENANCE_IF_MAIN;

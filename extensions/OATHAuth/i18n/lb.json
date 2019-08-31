@@ -13,6 +13,7 @@
 	"oathauth-step1": "Schrëtt 1: Den Zwee-Facteur-Authentifikatiounsprogramm eroflueden",
 	"oathauth-step2": "Schrëtt 2: De QR-Code scannen",
 	"oathauth-step4": "Schrëtt 4: Verificatioun",
+	"oathauth-enteruser": "Benotzernumm:",
 	"grant-group-authentication": "Authentifikatiouns-Aktioune fir sech selwer a fir Anerer maachen",
 	"action-oathauth-api-all": "OATH-Status nokucken",
 	"apihelp-query+oath-param-user": "Benotzer vun deem d'Informatioun gefrot gëtt. Standard ass et den aktuelle Benotzer.",

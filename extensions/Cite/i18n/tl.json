@@ -4,7 +4,7 @@
 			"AnakngAraw"
 		]
 	},
-	"cite-desc": "Nagdaragdag ng mga tatak na <code><nowiki><ref[ name=id]></nowiki></code> at <code><nowiki><references/></nowiki></code>, para sa mga pagtukoy",
+	"cite-desc": "Nagdaragdag ng mga tatak na <code>&lt;ref[ name=id]&gt;</code> at <code>&lt;references/&gt;</code>, para sa mga pagtukoy",
 	"cite_error": "Kamalian sa pagtukoy: $1",
 	"cite_error_ref_numeric_key": "Hindi tanggap ang tatak na <code>&lt;ref&gt;</code>;\nhindi maaaring isang payak na buumbilang (''integer'') ang pangalan.  Gumamit ng isang mapaglarawang pamagat",
 	"cite_error_ref_no_key": "Hindi tanggap ang tatak na <code>&lt;ref&gt;</code>;\nkinakailangan may isang pangalan ang mga sangguniang (''ref'') walang nilalaman",

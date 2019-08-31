@@ -45,8 +45,6 @@
 	"cite-ve-dialog-reference-options-section": "Seçenekler",
 	"cite-ve-dialog-reference-placeholder": "Kaynağını buraya yaz ya da kopyala veya bir kaynak şablonu girin.",
 	"cite-ve-dialog-reference-title": "Kaynak",
-	"cite-ve-dialog-reference-useexisting-full-label": "Yeniden kullanım zaten bu sayfa üzerinde var olan bir alıntı",
-	"cite-ve-dialog-reference-useexisting-label": "Mevcut bir kaynak kullanın",
 	"cite-ve-dialog-reference-useexisting-tool": "Tekrar kullan",
 	"cite-ve-dialog-referenceslist-contextitem-description-general": "Genel referans listesi",
 	"cite-ve-dialog-referenceslist-contextitem-description-named": "Başvuru listesi için Grup \"$1\"",

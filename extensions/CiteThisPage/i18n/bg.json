@@ -4,7 +4,8 @@
 			"DCLXVI",
 			"Turin",
 			"Vodnokon4e",
-			"StanProg"
+			"StanProg",
+			"Vlad5250"
 		]
 	},
 	"citethispage": "Цитиране",
@@ -12,5 +13,6 @@
 	"citethispage-link": "Цитиране на страницата",
 	"tooltip-citethispage": "Информация за начините за цитиране на тази страница",
 	"citethispage-change-submit": "Цитиране",
-	"citethispage-change-target": "Страница:"
+	"citethispage-change-target": "Страница:",
+	"citethispage-badrevision": "Грешка: не беше открита версия с идентификация $2 за страницата „$1“."
 }

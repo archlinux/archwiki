@@ -4,6 +4,6 @@
 			"Kandar"
 		]
 	},
-	"cite-desc": "Nambahkeun tag <code><nowiki><ref[ name=id]></nowiki></code> jeung <code><nowiki><references/></nowiki></code>, pikeun cutatan",
+	"cite-desc": "Nambahkeun tag <code>&lt;ref[ name=id]&gt;</code> jeung <code>&lt;references/&gt;</code>, pikeun cutatan",
 	"cite_error": "Salah ngutip: $1"
 }

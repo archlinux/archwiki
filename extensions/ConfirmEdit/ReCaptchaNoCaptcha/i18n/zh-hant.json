@@ -5,6 +5,7 @@
 			"Kly"
 		]
 	},
+	"renocaptcha-desc": "用於確認編輯的 reCAPTCHA NoCAPTCHA 模組",
 	"renocaptcha-edit": "為保護 wiki 防止自動化垃圾內容編輯程式，我們希望您輸入下面的驗證碼：",
 	"renocaptcha-addurl": "您的編輯使用了新的外部連結。為了防止自動化垃圾內容編輯程式，我們要麻煩您輸入在下面方塊中顯示的單字。",
 	"renocaptcha-badlogin": "為保護wiki免遭自動化的密碼破解，我們希望您輸入下面的驗證碼：",

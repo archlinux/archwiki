@@ -79,5 +79,6 @@
 	"multimediaviewer-close-popup-text": "Tanca aquesta eina (Esc)",
 	"multimediaviewer-fullscreen-popup-text": "Mostra a pantalla completa",
 	"multimediaviewer-defullscreen-popup-text": "Surt del mode de pantalla completa",
-	"multimediaviewer-title-popup-text": "Descripció"
+	"multimediaviewer-title-popup-text": "Descripció",
+	"multimediaviewer-options-learn-more": "Més informació"
 }

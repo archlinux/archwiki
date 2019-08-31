@@ -15,7 +15,7 @@
  * along with MediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-( function ( mw, $, oo ) {
+( function () {
 	var TP;
 
 	/**
@@ -36,7 +36,7 @@
 		this.$pane = $( '<div>' ).addClass( 'mw-mmv-reuse-pane' );
 
 	}
-	oo.inheritClass( Tab, mw.mmv.ui.Element );
+	OO.inheritClass( Tab, mw.mmv.ui.Element );
 	TP = Tab.prototype;
 
 	/**
@@ -54,4 +54,4 @@
 	};
 
 	mw.mmv.ui.reuse.Tab = Tab;
-}( mediaWiki, jQuery, OO ) );
+}() );

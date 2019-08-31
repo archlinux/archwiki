@@ -1,9 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Kolega2357"
+			"Kolega2357",
+			"OC Ripper"
 		]
 	},
 	"right-tboverride": "Zaobilaženje spiska zabranjenih naslova",
-	"right-tboverride-account": "Zaobilaženje spiska zabranjenih korisničkih imena"
+	"right-tboverride-account": "Zaobilaženje spiska zabranjenih korisničkih imena",
+	"visualeditor-saveerror-titleblacklist": "Pogreška pri snimanju stranice: Naslov ove stranice je na crnoj listi"
 }

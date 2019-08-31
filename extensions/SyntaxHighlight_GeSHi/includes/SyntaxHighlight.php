@@ -111,7 +111,7 @@ class SyntaxHighlight {
 			unset( $args['enclose'] );
 		}
 
-		$lexer = isset( $args['lang'] ) ? $args['lang'] : '';
+		$lexer = $args['lang'] ?? '';
 
 		$result = self::highlight( $out, $lexer, $args );
 		if ( !$result->isGood() ) {

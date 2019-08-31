@@ -14,6 +14,7 @@
 	"wikieditor-toolbar": "തിരുത്തൽ പണിപ്പെട്ടി",
 	"wikieditor-toolbar-desc": "തിരുത്താനുള്ള താളിൽ മെച്ചപ്പെട്ട ഉപയോഗത്തിനായുള്ള പണിപ്പെട്ടി",
 	"wikieditor-toolbar-preference": "തിരുത്തുവാനുള്ള വിശദ പണിപ്പെട്ടി ഉപയോഗപ്പെടുത്തുക",
+	"wikieditor-toolbar-preference-help": "ഇതിനെ '2010 വിക്കിഎഴുത്ത് തിരുത്ത് ഉപകരണം' എന്ന് വിളിക്കാറുണ്ട്.",
 	"wikieditor-toolbar-loading": "ശേഖരിക്കുന്നു...",
 	"wikieditor-toolbar-tool-bold": "കടുപ്പിക്കുക",
 	"wikieditor-toolbar-tool-bold-example": "കട്ടികൂട്ടിയ എഴുത്ത്",

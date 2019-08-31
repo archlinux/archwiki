@@ -16,7 +16,6 @@
 	"nuke-submit-user": "Idi",
 	"nuke-submit-delete": "Obriši izabrano",
 	"right-nuke": "masovno brisanje stranica",
-	"nuke-select": "Izaberi: $1",
 	"nuke-userorip": "Korisničko ime, IP adresa ili prazno:",
 	"nuke-maxpages": "Najveći broj stranica:",
 	"nuke-editby": "Napravio [[Special:Contributions/$1|$1]]",

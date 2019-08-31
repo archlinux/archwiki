@@ -30,9 +30,11 @@
 	&.mw-mmv-ttf-normal {
 		font-size: 20px;
 	}
+
 	&.mw-mmv-title-small {
 		font-size: 18px;
 	}
+
 	&.mw-mmv-title-smaller {
 		@vertical-padding: 6px;
 		@height: @metadatabar-above-fold-inner-height - 2 * @vertical-padding;
@@ -109,6 +111,7 @@
 		height: @metadatabar-below-fold-pushup-height - @fold-separator-border-width - @space-above-credit;
 		overflow: hidden;
 	}
+
 	.jq-fullscreened .mw-mmv-untruncated & {
 		height: auto;
 	}
@@ -277,7 +280,6 @@
 		width: 33.5%;
 		text-align: left;
 	}
-
 }
 
 .mw-mmv-restrictions {
@@ -286,14 +288,14 @@
 }
 
 .mw-mmv-restriction-label {
+	cursor: default;
+	display: inline-block;
+	height: 16px;
+
 	&,
 	&:hover {
 		background-color: #fc6;
 	}
-
-	cursor: default;
-	display: inline-block;
-	height: 16px;
 }
 
 .mw-mmv-restriction-label-inner {
@@ -303,6 +305,7 @@
 	text-indent: -9999px;
 	text-align: left;
 	background-size: contain;
+
 	&:after {
 		float: right;
 		text-indent: 0;

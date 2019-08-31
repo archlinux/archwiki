@@ -3,7 +3,8 @@
 		"authors": [
 			"Milicevic01",
 			"Obsuser",
-			"BadDog"
+			"BadDog",
+			"Zoranzoki21"
 		]
 	},
 	"oath": "OATHAuth",
@@ -19,16 +20,25 @@
 	"oathauth-disabledoath": "Онемогућена двофакторска потврда идентитета",
 	"oathauth-prefs-label": "Двофакторска потврда идентитета:",
 	"oathauth-step1": "1. корак: преузмите програм за двофакторску потврду идентитета",
-	"oathauth-step2": "2. корак: скенирајте КуР код",
+	"oathauth-step2": "2. корак: скенирајте QR код",
 	"oathauth-step2alt": "Или ручно унесите тајну:",
 	"oathauth-step3": "3. корак: запишите скреч кодове",
 	"oathauth-step4": "4. корак: верификација",
 	"oathauth-entertoken": "Унесите код за проверу са вашег уређаја за потврду идентитета:",
+	"oathauth-disable-for-user": "Онемогућавање двофакторске потврде идентитета корисника/це",
+	"right-oathauth-disable-for-user": "онемогућавање двофакторске потврде идентитета корисника/це",
+	"oathauth-disable-intro": "Са великом моћи долази и велика одговорност",
+	"oathauth-enteruser": "Корисничко име:",
+	"oathauth-user-not-does-not-have-oath-enabled": "Корисник/ца нема омогућену двофакторску потврду идентитета, тако да нема ничега за онемогућавање.",
 	"right-oathauth-enable": "омогућивање двофакторске потврде идентитета",
 	"action-oathauth-enable": "омогућите двофакторску потврду идентитета",
 	"oathauth-auth-token-label": "Токен",
 	"oathauth-auth-ui": "Унесите верификациони код са вашег уређаја за потврду идентитета.",
 	"oathauth-throttled": "Превише покушаја верификације! Сачекајте $1.",
 	"oathauth-login-failed": "Верификација није успела.",
-	"oathauth-describe-provider": "Двофакторска потврда идентитета (OATH)."
+	"oathauth-describe-provider": "Двофакторска потврда идентитета (OATH).",
+	"action-oathauth-api-all": "проверава OATH статус",
+	"apihelp-query+oath-param-user": "Корисник за којег је потребно добити информацију. Подразумеван је тренутни корисник.",
+	"apihelp-query+oath-example-1": "Добија информације о тренутном кориснику",
+	"apihelp-query+oath-example-2": "Добија информације о кориснику <kbd>Пример</kbd>"
 }

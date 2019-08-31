@@ -6,7 +6,8 @@
 			"Romaine",
 			"Sjoerddebruin",
 			"Southparkfan",
-			"Kippenvlees1"
+			"Kippenvlees1",
+			"Mainframe98"
 		]
 	},
 	"oathauth-desc": "Biedt ondersteuning voor authenticatie via op HMAC-gebaseerde eenmalige wachtwoorden",
@@ -22,6 +23,7 @@
 	"oathauth-disabledoath": "Tweetrapsauthenticatie is uitgeschakeld.",
 	"oathauth-prefs-label": "Tweetrapsauthenticatie:",
 	"oathauth-entertoken": "Vul een code van uw  authenticatie-apparaat in om te bevestigen:",
+	"oathauth-enteruser": "Gebruikersnaam:",
 	"right-oathauth-enable": "Tweetrapsauthenticatie inschakelen",
 	"action-oathauth-enable": "tweetrapsauthenticatie in te schakelen",
 	"oathauth-auth-token-label": "Verificatiecode",

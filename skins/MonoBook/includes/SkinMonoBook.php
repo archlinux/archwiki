@@ -37,7 +37,7 @@ class SkinMonoBook extends SkinTemplate {
 	/**
 	 * @param OutputPage $out
 	 */
-	function setupSkinUserCss( OutputPage $out ) {
+	public function setupSkinUserCss( OutputPage $out ) {
 		parent::setupSkinUserCss( $out );
 
 		if ( $out->getUser()->getOption( 'monobook-responsive' ) ) {
@@ -94,7 +94,7 @@ class SkinMonoBook extends SkinTemplate {
 	 *
 	 * @param ResourceLoader $resourceLoader
 	 */
-	static function registerMobileExtensionStyles( ResourceLoader $resourceLoader ) {
+	public static function registerMobileExtensionStyles( ResourceLoader $resourceLoader ) {
 		if ( ExtensionRegistry::getInstance()->isLoaded( 'Echo' ) ) {
 			$resourceLoader->register( 'skins.monobook.mobile.echohack', [
 				'localBasePath' => __DIR__ . '/..',
@@ -115,7 +115,7 @@ class SkinMonoBook extends SkinTemplate {
 				'localBasePath' => __DIR__ . '/..',
 				'remoteSkinPath' => 'MonoBook',
 
-				'targets' => [ 'desktop', 'mobile' ],
+				'targets' => [ 'desktop' ],
 				'scripts' => [ 'resources/mobile-uls.js' ],
 				'dependencies' => [ 'ext.uls.interface' ],
 			] );

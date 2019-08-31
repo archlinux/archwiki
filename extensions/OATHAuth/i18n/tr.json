@@ -6,7 +6,8 @@
 			"Sayginer",
 			"HakanIST",
 			"TmY e12",
-			"Vito Genovese"
+			"Vito Genovese",
+			"Hedda"
 		]
 	},
 	"oathauth-desc": "HMAC tabanlı tek kullanımlık parolalar kullanarak kimlik doğrulama desteği sağlar",
@@ -28,7 +29,13 @@
 	"oathauth-step3": "3. Adım: Yedek kodlarını kaybetmeyeceğiniz bir yere not edin",
 	"oathauth-step4": "4. Adım: Doğrulama",
 	"oathauth-entertoken": "Doğrulamak için kimlik doğrulama uygulamasından özel kodu elle gir:",
+	"oathauth-disable-for-user": "Bir kullanıcı için iki faktörlü kimlik doğrulamasını devre dışı bırak",
+	"right-oathauth-disable-for-user": "Bir kullanıcı için iki faktörlü kimlik doğrulamasını devre dışı bırak",
+	"oathauth-disable-intro": "Büyük güç, beraberinde büyük sorumluluklar getirir",
+	"oathauth-enteruser": "Kullanıcı adı:",
+	"oathauth-user-not-does-not-have-oath-enabled": "Kullanıcının iki faktörlü kimlik doğrulaması etkin değil, bu nedenle devre dışı bırakılacak bir şey yok",
 	"right-oathauth-enable": "İki aşamalı doğrulamayı etkinleştir",
 	"action-oathauth-enable": "iki aşamalı doğrulamayı etkinleştir",
+	"oathauth-auth-ui": "Lütfen iki aşamalı doğrulama uygulamasından aldığınız kodu girin",
 	"grant-group-authentication": "Kimlik doğrulama işlemlerini kendin ve diğerleri için uygula"
 }

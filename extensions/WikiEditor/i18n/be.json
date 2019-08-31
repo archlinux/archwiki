@@ -4,7 +4,8 @@
 			"Maksim L.",
 			"Yury Tarasievich",
 			"Mikalai Udodau",
-			"Macofe"
+			"Macofe",
+			"Artsiom91"
 		]
 	},
 	"wikieditor": "Палепшаны інтэрфейс праўкі вікітэкста",
@@ -14,6 +15,7 @@
 	"wikieditor-toolbar": "Панэль інструментаў",
 	"wikieditor-toolbar-desc": "Панэль інструментаў з палепшанымі магчымасцямі",
 	"wikieditor-toolbar-preference": "Уключыць панэль інструментаў з палепшанымі магчымасцямі",
+	"wikieditor-toolbar-preference-help": "Часам яна называецца «рэдактар вікітэксту 2010».",
 	"wikieditor-toolbar-loading": "Загрузка…",
 	"wikieditor-toolbar-tool-bold": "Цёмны",
 	"wikieditor-toolbar-tool-bold-example": "Цёмны тэкст",
@@ -78,11 +80,11 @@
 	"wikieditor-toolbar-tool-olist-example": "Элемент нумараванага пераліку",
 	"wikieditor-toolbar-tool-nowiki": "Без вікі-фарматавання",
 	"wikieditor-toolbar-tool-nowiki-example": "Устаўце сюды нефарматаваны тэкст",
-	"wikieditor-toolbar-tool-redirect": "Redirect",
+	"wikieditor-toolbar-tool-redirect": "Перасылка",
 	"wikieditor-toolbar-tool-redirect-example": "Назва мэтавай старонкі",
 	"wikieditor-toolbar-tool-big": "Буйны",
 	"wikieditor-toolbar-tool-big-example": "Буйны тэкст",
-	"wikieditor-toolbar-tool-small": "Драбней",
+	"wikieditor-toolbar-tool-small": "Дробны",
 	"wikieditor-toolbar-tool-small-example": "Дробны тэкст",
 	"wikieditor-toolbar-tool-superscript": "Верхні індэкс",
 	"wikieditor-toolbar-tool-superscript-example": "Надрадковы тэкст",

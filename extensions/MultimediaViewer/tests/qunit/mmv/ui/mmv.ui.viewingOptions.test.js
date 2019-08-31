@@ -1,8 +1,8 @@
-( function ( mw, $ ) {
+( function () {
 	function makeDialog( initialise ) {
 		var $qf = $( '#qunit-fixture' ),
 			$button = $( '<div>' ).appendTo( $qf ),
-			dialog = new mw.mmv.ui.OptionsDialog( $qf, $button, { setMediaViewerEnabledOnClick: $.noop } );
+			dialog = new mw.mmv.ui.OptionsDialog( $qf, $button, { setMediaViewerEnabledOnClick: function () {} } );
 
 		if ( initialise ) {
 			dialog.initPanel();
@@ -136,4 +136,4 @@
 		assert.strictEqual( dialog.$enableConfirmation.hasClass( 'mw-mmv-shown' ), true, 'Enable confirmation shown' );
 		assert.strictEqual( dialog.$dialog.hasClass( 'mw-mmv-enable-confirmation-shown' ), true, 'Enable confirmation shown' );
 	} );
-}( mediaWiki, jQuery ) );
+}() );

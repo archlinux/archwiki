@@ -45,6 +45,13 @@ class RenameuserLogFormatter extends LogFormatter {
 		return $params;
 	}
 
+	/**
+	 * @param Title|null $title
+	 * @param string $text
+	 * @param array $query
+	 * @return string
+	 * @suppress PhanParamReqAfterOpt
+	 */
 	protected function myPageLink( Title $title = null, $text, $query = [] ) {
 		if ( !$this->plaintext ) {
 			if ( !$title instanceof Title ) {

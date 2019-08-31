@@ -19,7 +19,7 @@
 	"multimediaviewer-multiple-authors": "$1 további szerző",
 	"multimediaviewer-multiple-authors-combine": "$1 és $2",
 	"multimediaviewer-metadata-error": "Nem sikerült betölteni a kép adatait (hibaüzenet: $1)",
-	"multimediaviewer-thumbnail-error": "Bocsánat, a fájl nem jeleníthető meg",
+	"multimediaviewer-thumbnail-error": "Sajnáljuk, a fájl nem jeleníthető meg",
 	"multimediaviewer-thumbnail-error-description": "Úgy tűnik, technikai hiba lépett fel. $1 vagy $3, ha nem szűnik meg. Hibaüzenet: $2",
 	"multimediaviewer-thumbnail-error-retry": "Újrapróbálkozhatsz",
 	"multimediaviewer-thumbnail-error-report": "jelentheted a hibát",

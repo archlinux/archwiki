@@ -5,7 +5,7 @@
 			"Sveinn í Felli"
 		]
 	},
-	"cite-desc": "Bætir <code><nowiki><ref[ name=id]></nowiki></code> og <code><nowiki><references/></nowiki></code> tögum við fyrir heimildir",
+	"cite-desc": "Bætir <code>&lt;ref[ name=id]&gt;</code> og <code>&lt;references/&gt;</code> tögum við fyrir heimildir",
 	"cite_error": "Tilvísunar villa: $1",
 	"cite_error_ref_numeric_key": "Villa í <code>&lt;ref&gt;</code> tag;\nnafn tilvísunar má ekki vera heil tala. Notaðu lýsandi titil",
 	"cite_error_ref_no_key": "Opna <code>&lt;ref&gt;</code> merkið er gallað eða hefur ógilt nafn",

@@ -18,8 +18,5 @@
 	"log-description-spamblacklist": "Bu olaylar, spam kara liste, hit parça.",
 	"logentry-spamblacklist-hit": "{{CİNSİYET:$2|$1}} neden bir spam kara liste, vurmak $3 tarafından eklemeye $4.",
 	"right-spamblacklistlog": "Reklam kara listesini gör",
-	"action-spamblacklistlog": "reklam kara listesi günlüğünü gör",
-	"apihelp-spamblacklist-description": "Bu SpamBlacklist karşı bir veya daha fazla URL doğrulamak.",
-	"apihelp-spamblacklist-param-url": "Kara liste URL lerine yönelik doğrulama",
-	"apihelp-spamblacklist-example-1": "Kara liste URL lerini iki defa kontrol ediniz"
+	"action-spamblacklistlog": "reklam kara listesi günlüğünü gör"
 }

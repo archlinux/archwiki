@@ -25,8 +25,8 @@ trait FlaggedElement {
 
 	/**
 	 * @param array $config Configuration options
-	 * @param string|string[] $config['flags'] Flags describing importance and functionality, e.g.
-	 *   'primary', 'safe', 'progressive', or 'destructive'.
+	 *      - string|string[] $config['flags'] Flags describing importance and functionality, e.g.
+	 *          'primary', 'safe', 'progressive', or 'destructive'.
 	 */
 	public function initializeFlaggedElement( array $config = [] ) {
 		// Properties

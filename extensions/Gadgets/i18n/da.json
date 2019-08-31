@@ -10,6 +10,7 @@
 	"prefs-gadgets": "Gadgets",
 	"gadgets-prefstext": "Nedenstående er en liste over de gadgets som du kan aktivere for din brugerkonto.\nDa disse gadgets hovedsageligt er baseret på JavaScript skal du slå JavaScript til i din browser for at få dem til at virke.\nBemærk at disse gadgets ikke vil have nogen effekt på denne side (indstillinger).\n\nBemærk også at disse specielle gadgets ikke er en del af MediaWiki-softwaren og at de typisk bliver vedligeholdt af brugere på din lokale wiki.\nLokale administratorer kan redigere tilgængelige gadgets med [[MediaWiki:Gadgets-definition|definitioner]] og [[Special:Gadgets|beskrivelser]].",
 	"gadgets": "Gadgets",
+	"gadgetusage": "Statistik for brug af gadget",
 	"gadgetusage-gadget": "Gadget",
 	"gadgetusage-usercount": "Antal af brugere",
 	"gadgetusage-noresults": "Ingen gadgets blev fundet.",

@@ -22,7 +22,5 @@
 	"right-tboverride": " Атамалар йәки ҡатнашыусыларҙың ҡара исемлеге битенә ихтибар итмәҫкә.",
 	"right-tboverride-account": "Ҡатнашыусы исемдәре ҡара исемлеген иғтибарға алмау",
 	"right-titleblacklistlog": "Тыйылған исемдәр журналын ҡарау",
-	"apihelp-titleblacklist-param-action": "Тикшерерлергә тейеш эшмәкәрлек.",
-	"apihelp-titleblacklist-example-1": "Мәҡәлә [[Foo]] ҡара исемлекә индерелгәненлеген тикшерергә.",
-	"apihelp-titleblacklist-example-2": "Мәҡәлә[[Bar]] мөхәррирләү өсөн ҡара исемлеккә ингәнлеген тикшерергә."
+	"visualeditor-saveerror-titleblacklist": "Битте һаҡлауҙа хата: был биттең атамһы ҡара исемлектә"
 }

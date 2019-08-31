@@ -10,14 +10,15 @@
 			"乌拉跨氪",
 			"Mywood",
 			"Impersonator 1",
-			"Liuxinyu970226"
+			"Liuxinyu970226",
+			"A Chinese Wikipedian"
 		]
 	},
 	"apihelp-query+references-description": "返回与指定页面相关联的参考文献的数据表示法。",
 	"apihelp-query+references-summary": "返回与指定页面相关联的参考文献的数据表示法。",
 	"apihelp-query+references-example-1": "与<kbd>Albert Einstein</kbd>相关联的参考文献。",
 	"apierror-citestoragedisabled": "引用扩展参考存储未启用。",
-	"cite-desc": "增加用于引用的<code><nowiki><ref[ name=id]></nowiki></code>和<code><nowiki><references/></nowiki></code>标签",
+	"cite-desc": "增加用于引用的<code>&lt;ref[ name=id]&gt;</code>和<code>&lt;references/&gt;</code>标签",
 	"cite_error": "引用错误：$1",
 	"cite_error_ref_invalid_dir": "无效的<code>&lt;ref&gt;</code>标签，dir参数“$1”未知。必须为ltr或rtl",
 	"cite_error_ref_numeric_key": "无效<code>&lt;ref&gt;</code>标签；name属性不能是单一的数字，请使用可辨识的标题",
@@ -40,6 +41,7 @@
 	"cite-tracking-category-cite-error-desc": "此分类中的页面在参考文献标签的用法上有错误。",
 	"cite_references_link_accessibility_label": "跳转",
 	"cite_references_link_many_accessibility_label": "跳转至：",
+	"cite_references_link_accessibility_back_label": "跳回",
 	"cite_section_preview_references": "参考文献预览",
 	"cite_warning": "引用警告：$1",
 	"cite_warning_sectionpreview_no_text": "带名称<code>$1</code>的<code>&lt;ref&gt;</code>标签不能预览，因为它在当前章节以外定义，或完全未定义。"

@@ -71,7 +71,7 @@ class Cleanup extends Maintenance {
 	 * Find the latest revision of the article that does not contain spam and revert to it
 	 * @param Revision $rev
 	 * @param array $regexes
-	 * @param array $match
+	 * @param string $match
 	 * @param User $user
 	 */
 	private function cleanupArticle( Revision $rev, $regexes, $match, User $user ) {

@@ -614,7 +614,9 @@ class TimelessTemplate extends BaseTemplate {
 		if ( $namespace >= 0 ) {
 			$pileOfTools['pagelog'] = [
 				'text' => $this->getMsg( 'timeless-pagelog' )->text(),
-				'href' => SpecialPage::getTitleFor( 'Log', $title->getPrefixedText() )->getLocalURL(),
+				'href' => SpecialPage::getTitleFor( 'Log' )->getLocalURL(
+					[ 'page' => $title->getPrefixedText() ]
+				),
 				'id' => 't-pagelog'
 			];
 		}

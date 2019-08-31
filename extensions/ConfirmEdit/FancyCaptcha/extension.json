@@ -23,7 +23,11 @@
 	},
 	"ResourceModules": {
 		"ext.confirmEdit.fancyCaptcha.styles": {
-			"styles": "ext.confirmEdit.fancyCaptcha.css"
+			"styles": "ext.confirmEdit.fancyCaptcha.less",
+			"targets": [
+				"mobile",
+				"desktop"
+			]
 		},
 		"ext.confirmEdit.fancyCaptcha": {
 			"scripts": "ext.confirmEdit.fancyCaptcha.js",

@@ -42,6 +42,7 @@ body {
 	a {
 		color: @text-inverse;
 	}
+
 	ul {
 		margin: 0;
 	}
@@ -68,16 +69,16 @@ body {
 	line-height: 1;
 
 	a {
-		padding: 0.2em 1em;
+		padding: 0.1em 1em 0.2em;
 		color: @text;
 		font-family: @fonts-secondary;
 		font-variant: small-caps;
-		font-size: 1.75em;
+		font-size: 1.85em;
 		display: block;
 
 		/* 13+ character names */
 		&.long {
-			font-size: 1.45em;
+			font-size: 1.5em;
 			padding: 0 0.75em 0 0;
 			line-height: 0.8;
 		}
@@ -276,6 +277,22 @@ div.suggestions {
 	.background-image-svg( 'images/star-filled.svg', 'images/star-filled.png' );
 }
 
+#siteNotice {
+	font-size: 95%;
+	margin: 0.5em auto 1.5em;
+}
+
+#localNotice {
+	.box();
+	padding: 0;
+	text-align: center;
+
+	p {
+		margin-left: 1em;
+		margin-right: 1em;
+	}
+}
+
 /* Misc */
 
 a {
@@ -326,7 +343,7 @@ a.mw-selflink {
 
 .mw-indicators {
 	float: right;
-	margin: 0.25em 0 0 1em;
+	margin: 1em 0 0 1em;
 }
 
 .mw-indicator {
@@ -393,6 +410,19 @@ pre,
 		margin: 1.5em 0 0.5em;
 	}
 
+	dt {
+		font-weight: bold;
+		font-family: @fonts-secondary;
+		line-height: 1.25;
+		margin: 1.5em 0 0.5em;
+		margin-bottom: 0.1em;
+	}
+
+	dl {
+		margin-top: 0.2em;
+		margin-bottom: 0.5em;
+	}
+
 	form dt {
 		margin: 0 0.5em 0 0;
 	}
@@ -410,29 +440,41 @@ pre,
 	}
 
 	h1 {
+		font-size: 2.25em;
+	}
+
+	h2 {
 		font-size: 2em;
 	}
-	h2 {
-		font-size: 1.7em;
-	}
+
 	h3 {
+		font-size: 1.75em;
+	}
+
+	h4 {
 		font-size: 1.5em;
 	}
-	h4 {
+
+	h5 {
 		font-size: 1.35em;
 	}
-	h5 {
-		font-size: 1.25em;
-	}
+
 	h6 {
 		font-size: 1.2em;
 	}
+
 	dt {
 		margin-top: 1em;
 	}
+
 	dd {
 		margin-bottom: 1em;
 	}
+
+	.mw-changeslist-legend dt {
+		margin: 0 0.5em 0 0;
+	}
+
 	.mw-changeslist-legend dd {
 		margin-bottom: 0;
 	}
@@ -455,7 +497,6 @@ hr {
 pre {
 	overflow: auto;
 	white-space: pre-wrap;
-	font-family: @fonts-monospace;
 }
 
 p {
@@ -483,12 +524,14 @@ ul {
 .tleft {
 	margin: 0 0.5em 0.5em 0;
 	padding: 0 1.5em 1em 0;
-
 }
 
 .thumbinner {
 	.box;
 	padding: 0.75em;
+	/* Properly center framed thumbnail images (T219717) */
+	margin-left: auto;
+	margin-right: auto;
 }
 
 .thumbcaption {
@@ -537,19 +580,8 @@ ul#filetoc {
 	border-bottom-color: @grey;
 }
 
-.toctoggle {
-	color: @background3;
-}
-
-// Remove brackets around the show/hide button of the TOC
-body :not( :checked ) > .toctogglespan:before,
-body :not( :checked ) > .toctogglespan:after {
-	content: '';
-}
-
-.toctogglelabel {
-	padding-left: 0; // Overwrite label { padding-left: 0.5em; } from forms.less
-	margin-left: 0.5em; // Create new distance to the TOC title without increasing the focus ring
+.toctogglespan {
+	float: right;
 }
 
 .toc li:last-child {
@@ -564,11 +596,16 @@ body :not( :checked ) > .toctogglespan:after {
 	color: @grey-dark;
 }
 
+.skin-timeless .mw-body .oo-ui-tagMultiselectWidget-handle,
+.skin-timeless .mw-body .oo-ui-capsuleMultiselectWidget-handle {
+	margin: 0; // wat
+}
+
+.mw-body .mw-rcfilters-ui-changesListWrapperWidget .mw-changeslist-legend, // wat
 .mw-changeslist-legend,
 .mw-body .mw-search-profile-tabs,
 .mw-body fieldset#mw-searchoptions,
-table.wikitable {
-	border: 0;
+.wikitable {
 	color: @text;
 	.box;
 }
@@ -577,16 +614,16 @@ table.wikitable {
 	padding: 0.5em;
 }
 
-table.wikitable > tr > th,
-table.wikitable > tr > td,
-table.wikitable > * > tr > th,
-table.wikitable > * > tr > td {
+.wikitable > tr > th,
+.wikitable > tr > td,
+.wikitable > * > tr > th,
+.wikitable > * > tr > td {
 	border: 1px solid @grey-bright;
 	padding: 0.5em;
 }
 
-table.wikitable > tr > th,
-table.wikitable > * > tr > th {
+.wikitable > tr > th,
+.wikitable > * > tr > th {
 	border: 0;
 }
 

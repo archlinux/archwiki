@@ -21,9 +21,5 @@
 	"right-tboverride": "തലക്കെട്ടിന്റെ അല്ലെങ്കിൽ ഉപയോക്തൃനാമത്തിന്റെ കരിമ്പട്ടികയെ അതിലംഘിക്കുക",
 	"right-tboverride-account": "ഉപയോക്തൃനാമ കരിമ്പട്ടികയെ അതിലംഘിക്കുക",
 	"right-titleblacklistlog": "തലക്കെട്ട് കരിമ്പട്ടികയുടെ രേഖ കാണുക",
-	"apihelp-titleblacklist-description": "ലേഖനത്തിന്റെ തലക്കെട്ട്, പ്രമാണത്തിന്റെ പേര് അല്ലെങ്കിൽ ഉപയോക്തൃനാമം തലക്കെട്ട്‌കരിമ്പട്ടികയിൽ പരിശോധിക്കുക.",
-	"apihelp-titleblacklist-param-title": "കരിമ്പട്ടികയിൽ പരിശോധിക്കേണ്ട പദം.",
-	"apihelp-titleblacklist-param-action": "പരിശോധിക്കേണ്ട പ്രവൃത്തി.",
-	"apihelp-titleblacklist-example-1": "[[Foo]] കരിമ്പട്ടികയിൽ ഉൾപ്പെട്ടിട്ടുണ്ടോയെന്ന് പരിശോധിക്കുക",
-	"apihelp-titleblacklist-example-2": "[[Bar]] തിരുത്തുന്ന കരിമ്പട്ടികയിൽ ഉണ്ടോയെന്ന് പരിശോധിക്കുക"
+	"visualeditor-saveerror-titleblacklist": "താൾ സേവ് ചെയ്യുന്നതിൽ പിഴവുണ്ടായി: ഈ താളിന്റെ തലക്കെട്ട് കരിമ്പട്ടികയിൽ ഉൾപ്പെട്ടിരിക്കുന്നു"
 }

@@ -24,9 +24,5 @@
 	"log-description-spamblacklist": "此頁記錄了觸發垃圾連結黑名單的事件。",
 	"logentry-spamblacklist-hit": "{{GENDER:$2|$1}} 於 $3 嘗試加入的 $4 符合垃圾連結黑名單中的項目。",
 	"right-spamblacklistlog": "檢視垃圾連結黑名單日誌",
-	"action-spamblacklistlog": "檢視垃圾連結黑名單日誌",
-	"apihelp-spamblacklist-description": "驗證一個或多個URL是否觸發垃圾連結黑名單。",
-	"apihelp-spamblacklist-summary": "驗證一個或多個URL是否觸發垃圾連結黑名單。",
-	"apihelp-spamblacklist-param-url": "要驗證是否觸發黑名單的URL。",
-	"apihelp-spamblacklist-example-1": "檢查兩個URL是否觸發黑名單"
+	"action-spamblacklistlog": "檢視垃圾連結黑名單日誌"
 }

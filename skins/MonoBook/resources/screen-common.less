@@ -43,14 +43,15 @@ div#column-content {
 ** More at http://www.w3.org/2003/07/30-font-size
 ** http://style.cleverchimp.com/font_size_intervals/altintervals.html
 */
-
 body {
 	font: x-small sans-serif;
-	background-color: @background;
-	// don't bother with a fallback; the jpg book won't work with these anyway
-	.background-image( 'images/headbg-gradient.svg' );
-	background-position: 0 0;
-	background-repeat: repeat-x;
+	background: @background url( images/headbg.jpg ) 0 0 no-repeat;
+	// stylelint-disable value-list-comma-newline-after
+	/* @embed */
+	background: linear-gradient( transparent, transparent ),
+		url( images/headbg.svg ) 0 0 no-repeat,
+		@background url( images/headbg-gradient.svg ) 0 0 repeat-x;
+	// stylelint-enable value-list-comma-newline-after
 	color: @text-color;
 	margin: 0;
 	padding: 0;
@@ -61,9 +62,6 @@ body {
 /* scale back up to a sane default */
 div#globalWrapper {
 	font-size: 127%;
-	.background-image-svg( 'images/headbg.svg', 'images/headbg.jpg' );
-	background-position: 0 0;
-	background-repeat: no-repeat;
 	width: 100%;
 	margin: 0;
 	padding: 0;
@@ -87,7 +85,7 @@ a.new,
 
 ul {
 	list-style-type: square;
-	.list-style-image-svg( 'images/bullet.svg', 'images/bullet.gif' );
+	.list-style-image( 'images/bullet.svg' );
 }
 
 pre,

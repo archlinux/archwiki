@@ -15,7 +15,7 @@
  * along with MediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-( function ( mw ) {
+( function () {
 	QUnit.module( 'mmv.routing.Router', QUnit.newMwEnvironment() );
 
 	QUnit.test( 'Constructor sanity checks', function ( assert ) {
@@ -229,4 +229,4 @@
 		assert.deepEqual( router.tokenizeHash( 'legacy/bar/baz' ), [ 'legacy', 'bar', 'baz' ], 'Legacy prefix, with 2 elements without #' );
 
 	} );
-}( mediaWiki ) );
+}() );

@@ -15,7 +15,8 @@
 			"Servien",
 			"Dinosaur918",
 			"Mainframe98",
-			"Mar(c)"
+			"Mar(c)",
+			"Bdijkstra"
 		]
 	},
 	"wikieditor": "Uitgebreide tekstverwerker voor wikitekst",
@@ -25,6 +26,7 @@
 	"wikieditor-toolbar": "Bewerkingswerkbalk",
 	"wikieditor-toolbar-desc": "Bewerkingsbalk die eenvoudiger te gebruiken is",
 	"wikieditor-toolbar-preference": "Uitgebreide bewerkingsbalk inschakelen",
+	"wikieditor-toolbar-preference-help": "Dit wordt soms de '2010 wikitext editor' genoemd.",
 	"wikieditor-toolbar-loading": "Bezig met laden…",
 	"wikieditor-toolbar-tool-bold": "Vet",
 	"wikieditor-toolbar-tool-bold-example": "Vetgedrukte tekst",

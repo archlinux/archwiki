@@ -16,6 +16,9 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
+use Psr\Log\LoggerInterface;
+use \MediaWiki\Logger\LoggerFactory;
+
 /**
  * Class representing a two-factor key
  *
@@ -119,12 +122,21 @@ class OATHAuthKey {
 		// or trimmeable whitespace
 		$token = preg_replace( '/\s+/', '', $token );
 
+		$clientIP = $user->getUser()->getRequest()->getIP();
+
+		$logger = $this->getLogger();
+
 		// Check to see if the user's given token is in the list of tokens generated
 		// for the time window.
 		foreach ( $results as $window => $result ) {
 			if ( $window > $lastWindow && $result->toHOTP( 6 ) === $token ) {
 				$lastWindow = $window;
 				$retval = self::MAIN_TOKEN;
+
+				$logger->info( 'OATHAuth user {user} entered a valid OTP from {clientip}', [
+					'user' => $user->getAccount(),
+					'clientip' => $clientIP,
+				] );
 				break;
 			}
 		}
@@ -133,16 +145,22 @@ class OATHAuthKey {
 		if ( !$retval ) {
 			$length = count( $this->scratchTokens );
 			// Detect condition where all scratch tokens have been used
-			if ( $length == 1 && "" === $this->scratchTokens[0] ) {
+			if ( $length === 1 && $this->scratchTokens[0] === "" ) {
 				$retval = false;
 			} else {
 				for ( $i = 0; $i < $length; $i++ ) {
 					if ( $token === $this->scratchTokens[$i] ) {
 						// If there is a scratch token, remove it from the scratch token list
 						unset( $this->scratchTokens[$i] );
+
+						$logger->info( 'OATHAuth user {user} used a scratch token from {clientip}', [
+							'user' => $user->getAccount(),
+							'clientip' => $clientIP,
+						] );
+
 						$oathrepo = OATHAuthHooks::getOATHUserRepository();
 						$user->setKey( $this );
-						$oathrepo->persist( $user );
+						$oathrepo->persist( $user, $clientIP );
 						// Only return true if we removed it from the database
 						$retval = self::SCRATCH_TOKEN;
 						break;
@@ -158,6 +176,12 @@ class OATHAuthKey {
 				$this->secret['period'] * ( 1 + 2 * $wgOATHAuthWindowRadius )
 			);
 		} else {
+
+			$logger->info( 'OATHAuth user {user} failed OTP/scratch token from {clientip}', [
+				'user' => $user->getAccount(),
+				'clientip' => $clientIP,
+			] );
+
 			// Increase rate limit counter for failed request
 			$user->getUser()->pingLimiter( 'badoath' );
 		}
@@ -167,7 +191,7 @@ class OATHAuthKey {
 
 	public function regenerateScratchTokens() {
 		$scratchTokens = [];
-		for ( $i = 0; $i < 5; $i++ ) {
+		for ( $i = 0; $i < 10; $i++ ) {
 			$scratchTokens[] = Base32::encode( random_bytes( 10 ) );
 		}
 		$this->scratchTokens = $scratchTokens;
@@ -183,5 +207,12 @@ class OATHAuthKey {
 	public function isScratchToken( $token ) {
 		$token = preg_replace( '/\s+/', '', $token );
 		return in_array( $token, $this->scratchTokens, true );
+	}
+
+	/**
+	 * @return LoggerInterface
+	 */
+	private function getLogger() {
+		return LoggerFactory::getInstance( 'authentication' );
 	}
 }

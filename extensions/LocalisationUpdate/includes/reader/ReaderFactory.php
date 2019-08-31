@@ -15,7 +15,7 @@ class ReaderFactory {
 	 * Constructs a suitable reader for a given path.
 	 * @param string $filename Usually a relative path to the file name.
 	 * @return Reader
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	public function getReader( $filename ) {
 		if ( preg_match( '/i18n\.php$/', $filename ) ) {

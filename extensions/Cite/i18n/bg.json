@@ -5,10 +5,11 @@
 			"DCLXVI",
 			"Spiritia",
 			"Termininja",
-			"StanProg"
+			"StanProg",
+			"Ted Masters"
 		]
 	},
-	"cite-desc": "Добавя етикетите <code><nowiki><ref[ name=id]></nowiki></code> и <code><nowiki><references/></nowiki></code>, подходящи за цитиране",
+	"cite-desc": "Добавя етикетите <code>&lt;ref[ name=id]&gt;</code> и <code>&lt;references/&gt;</code>, подходящи за цитиране",
 	"cite_error": "Грешка при цитиране: $1",
 	"cite_error_ref_numeric_key": "Грешка в етикет <code>&lt;ref&gt;</code>;\nимето не може да бъде число. Използвайте описателно име",
 	"cite_error_ref_no_key": "Отварящият таг <code>&lt;ref&gt;</code> е неправилен или съдържа некоректно име.",
@@ -20,5 +21,6 @@
 	"cite_error_included_ref": "Липсва затварящ етикет <code>&lt;/ref&gt;</code> след отварящия етикет <code>&lt;ref&gt;</code>",
 	"cite_error_group_refs_without_references": "Тагове <code>&lt;ref&gt;</code> съществуват за група „$1“, но липсва таг <code>&lt;references group=\"$1\"/&gt;</code> или затварящ таг <code>&lt;/ref&gt;</code>",
 	"cite-tracking-category-cite-error": "Страници с грешка в източник",
+	"cite-tracking-category-cite-error-desc": "Страниците в тази категория имат грешки при използването на таговете за източници.",
 	"cite_section_preview_references": "Преглед на бележките"
 }

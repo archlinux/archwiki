@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Macofe",
-			"Vriullop"
+			"Vriullop",
+			"Toniher"
 		]
 	},
 	"timeless-desc": "Una aparença atemporal dissenyada a partir del prototip Winter de Brandon Harris i diversos estils de la Fundació Wikimedia",
@@ -20,5 +21,6 @@
 	"timeless-pagemisc": "Més",
 	"timeless-namespaces": "Espais de noms",
 	"timeless-pagetools": "Accions de pàgina",
-	"timeless-languages": "Llengües"
+	"timeless-languages": "Llengües",
+	"timeless.js": "/* Qualsevol codi JavaScript afegit aquí es carregarà per als usuaris que utilitzin l'aprença Timeless */"
 }

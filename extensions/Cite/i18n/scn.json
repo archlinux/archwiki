@@ -8,7 +8,7 @@
 			"Sarvaturi"
 		]
 	},
-	"cite-desc": "Agghiunci l'etichetti <code><nowiki><ref[ name=id]></nowiki></code> e <code><nowiki><references/></nowiki></code>, pi citazzioni",
+	"cite-desc": "Agghiunci l'etichetti <code>&lt;ref[ name=id]&gt;</code> e <code>&lt;references/&gt;</code>, pi citazzioni",
 	"cite_error": "Erruri ntâ citazzioni: $1",
 	"cite_error_ref_numeric_key": "Etichetta <code>&lt;ref&gt;</code> nun bona;\nlu nomu nun pò èssiri nu nùmmiru sanu. Adupirari nu tìtulu discrittivu",
 	"cite_error_ref_no_key": "Etichetta <code>&lt;ref&gt;</code> nun bona: li ref vacanti hannu a aviri un nomu",

@@ -1,7 +1,7 @@
 /*
  * JavaScript for WikiEditor Dialogs
  */
-jQuery( function ( $ ) {
+$( function () {
 	// Replace icons
 	$.wikiEditor.modules.dialogs.config.replaceIcons( $( '#wpTextbox1' ) );
 

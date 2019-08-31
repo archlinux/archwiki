@@ -9,16 +9,19 @@
 			"Sarrus",
 			"Sir48",
 			"Macofe",
-			"Saederup92"
+			"Saederup92",
+			"Weblars",
+			"Kranix"
 		]
 	},
 	"wikieditor": "Avanceret interface til redigering af wikitekst",
-	"wikieditor-desc": "Giver et udvidet interface til redigering af wikitekst og mange moduler med hjælpefunktioner",
+	"wikieditor-desc": "Giver et avanceret interface til redigering af wikitekst, som kan udvides",
 	"wikieditor-wikitext-tab": "Wikitekst",
 	"wikieditor-loading": "Indlæser...",
 	"wikieditor-toolbar": "Værktøjslinje til redigering",
 	"wikieditor-toolbar-desc": "Værktøjslinje til redigering med udvidet brugervenlighed",
-	"wikieditor-toolbar-preference": "Aktiver forbedret værktøjslinje til redigering",
+	"wikieditor-toolbar-preference": "Aktiver værktøjslinjen til redigering",
+	"wikieditor-toolbar-preference-help": "Dette kaldes af og til for \"2010-redigeringsprogrammet for wikikode\".",
 	"wikieditor-toolbar-loading": "Indlæser ...",
 	"wikieditor-toolbar-tool-bold": "Fed",
 	"wikieditor-toolbar-tool-bold-example": "Fed tekst",

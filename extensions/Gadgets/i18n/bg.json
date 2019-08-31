@@ -7,7 +7,8 @@
 			"Turin",
 			"Vodnokon4e",
 			"StanProg",
-			"ShockD"
+			"ShockD",
+			"Vlad5250"
 		]
 	},
 	"gadgets-desc": "Позволява на потребителите да избират и активират [[Special:Gadgets|CSS и JavaScript джаджи]] от своите [[Special:Preferences#mw-prefsection-gadgets|настройки]]",
@@ -34,9 +35,6 @@
 	"gadgets-not-found": "Джаджа „$1“ не беше намерена.",
 	"gadgets-export-text": "За да експортирате джаджата $1, щракнете на бутона \"{{int:gadgets-export-download/bg}}\", запазете файла на диска си, отидете на страницата Special:Import в целевото уики и го качете там. След това добавете към страницата MediaWiki:Gadgets-definition:\n<pre>$2</pre>\nВ целевото уики трябва да се ползвате от съответните права (в това число правото да редактирате системни съобщения) и трябва да са разрешени локалните файлови качвания.",
 	"gadgets-export-download": "Изтегляне",
-	"apihelp-query+gadgets-description": "Връща списък от джаджите, използвани в това уики.",
-	"apihelp-query+gadgets-param-allowedonly": "Списък само на джаджите, до които потребителят има достъп.",
-	"apihelp-query+gadgets-param-enabledonly": "Списък само на джаджите, които потребителят е активирал в профила си.",
 	"right-gadgets-edit": "Редактиране на JavaScript и CSS страниците на джаджите",
 	"right-gadgets-definition-edit": "Редактиране на дефинициите на джаджите",
 	"action-gadgets-definition-edit": "редактиране на дефиницията на тази джаджа"

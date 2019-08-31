@@ -21,5 +21,5 @@
 	"right-tboverride": "نادیده گرفتن لیست سیاه عنوان یا نام کاربری",
 	"right-tboverride-account": "لغو فهرست سیاه نام کاربری",
 	"right-titleblacklistlog": "مشاهدۀ سیاهۀ لیست سیاه عنوان",
-	"apihelp-titleblacklist-param-action": "کنش وارسی بیه."
+	"visualeditor-saveerror-titleblacklist": "خطا در ذخیرهٔ صفحه: نام این صفحه در فهرست سیاه است"
 }

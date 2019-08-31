@@ -1,11 +1,8 @@
+@import 'mediawiki.mixins';
+
 /**
  * Styling for namespace tabs (page, discussion) and views (read, edit, view history, watch and other actions)
  */
-
-/* Navigation Labels */
-.vectorTabs h3 {
-	display: none;
-}
 
 /* Namespaces and Views */
 .vectorTabs {
@@ -16,32 +13,34 @@
 	background-repeat: no-repeat;
 	padding-left: 1px;
 
+	/* Navigation Labels */
+	h3 {
+		display: none;
+	}
+
 	ul {
 		float: left;
 		height: 100%;
-		list-style-type: none;
-		list-style-image: none;
+		list-style: none none;
 		margin: 0;
 		padding: 0;
 		.background-image('images/tab-break.png');
 		background-position: right bottom;
 		background-repeat: no-repeat;
-
-		li {
-			float: left;
-			line-height: 1.125em;
-			display: block;
-			height: 100%;
-			margin: 0;
-			padding: 0;
-			.background-image('images/tab-normal-fade.png');
-			background-position: bottom left;
-			background-repeat: repeat-x;
-			white-space: nowrap;
-		}
 	}
 
 	li {
+		float: left;
+		line-height: 1.125em;
+		display: block;
+		height: 100%;
+		margin: 0;
+		padding: 0;
+		.background-image('images/tab-normal-fade.png');
+		background-position: bottom left;
+		background-repeat: repeat-x;
+		white-space: nowrap;
+
 		&.new {
 			a,
 			a:visited {
@@ -51,6 +50,7 @@
 
 		&.selected {
 			.background-image('images/tab-current-fade.png');
+
 			a,
 			a:visited {
 				color: #222;
@@ -68,11 +68,11 @@
 		a {
 			display: block;
 			height: 1.9em;
-			padding-left: 0.615em; // equals `8px` at computed `font-size` of `13px` below
+			padding-left: 0.615em; // Equals `8px` at computed `font-size` of `13px` below
 			padding-right: 0.615em;
 			color: @menu-link-color;
 			cursor: pointer;
-			font-size: 0.8125em; // equals `13px` at browser default of `16px`
+			font-size: 0.8125em; // Equals `13px` at browser default of `16px`
 		}
 	}
 
@@ -99,6 +99,106 @@
 	cursor: pointer;
 	position: relative;
 	line-height: 1.125em;
+
+	h3 {
+		span {
+			position: relative;
+			display: block;
+			font-size: 0.8125em;
+			padding-left: 0.615em;
+			padding-top: 1.25em;
+			padding-right: 16px;
+			font-weight: normal;
+			color: #444;
+
+			&:after {
+				content: '';
+				position: absolute;
+				top: 1.25em;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				.background-image-svg('images/arrow-down.svg', 'images/arrow-down.png');
+				background-position: 100% 50%;
+				background-repeat: no-repeat;
+				// Modify the color of the image from the default #222 to approx. #444 to match the text.
+				opacity: 0.85;
+			}
+		}
+
+		&:hover span,
+		&:focus span {
+			color: @content-font-color;
+
+			&:after {
+				opacity: 1;
+			}
+		}
+	}
+
+	.menu {
+		list-style: none none;
+		background-color: @body-background-color;
+		clear: both;
+		// Match the width of the dropdown "heading" (the tab)
+		min-width: 100%;
+		position: absolute;
+		top: 2.5em;
+		left: -1px;
+		margin: 0;
+		border: 1px solid #a2a9b1;
+		border-top-width: 0;
+		padding: 0;
+		box-shadow: 0 1px 1px 0 rgba( 0, 0, 0, 0.1 );
+		text-align: left;
+		opacity: 0;
+		visibility: hidden;
+		.transition( opacity 100ms );
+		// Menus must overlap indicators (z-index: 1) and VisualEditor toolbar (z-index: 2)
+		z-index: 2;
+	}
+
+	&:hover .menu {
+		opacity: 1;
+		visibility: visible;
+	}
+
+	// This is in a separate block, so that browsers supporting :hover but not :checked still apply the rule above
+	// Support: IE8
+	.vectorMenuCheckbox:checked ~ .menu {
+		opacity: 1;
+		visibility: visible;
+	}
+
+	// FIXME: `.vectorMenu ul` can be removed with purged HTML cache
+	ul {
+		list-style: none none;
+		padding: 0;
+		margin: 0;
+		text-align: left;
+	}
+
+	li {
+		padding: 0;
+		margin: 0;
+		text-align: left;
+		line-height: 1em;
+
+		a {
+			display: block;
+			padding: 0.625em;
+			white-space: nowrap;
+			color: @menu-link-color;
+			cursor: pointer;
+			font-size: 0.8125em;
+		}
+
+		&.selected a,
+		&.selected a:visited {
+			color: #222;
+			text-decoration: none;
+		}
+	}
 }
 
 #mw-head .vectorMenu h3 {
@@ -116,108 +216,6 @@
 	margin: 0 -1px 0 0;
 }
 
-.vectorMenu h3 {
-	span {
-		position: relative;
-		display: block;
-		font-size: 0.8125em;
-		padding-left: 0.615em;
-		padding-top: 1.25em;
-		padding-right: 16px;
-		font-weight: normal;
-		color: #444;
-
-		&:after {
-			content: '';
-			position: absolute;
-			top: 1.25em;
-			right: 0;
-			bottom: 0;
-			left: 0;
-			.background-image-svg('images/arrow-down.svg', 'images/arrow-down.png');
-			background-position: 100% 50%;
-			background-repeat: no-repeat;
-			// Modify the color of the image from the default #222 to approx. #444 to match the text.
-			opacity: 0.85;
-		}
-	}
-
-	&:hover span,
-	&:focus span {
-		color: @content-font-color;
-
-		&:after {
-			opacity: 1;
-		}
-	}
-}
-
-.vectorMenu .vectorMenuCheckbox:checked + h3 span:after {
-	transform: scaleY( -1 );
-}
-
-.vectorMenu .vectorMenuCheckbox:focus + h3 {
-	// Simulate browser focus ring
-	outline: dotted 1px; // Firefox style
-	outline: auto -webkit-focus-ring-color; // Webkit style
-}
-
-.vectorMenu .menu {
-	// Match the width of the dropdown "heading" (the tab)
-	min-width: 100%;
-	position: absolute;
-	top: 2.5em;
-	left: -1px;
-	background-color: @body-background-color;
-	border: 1px solid #a2a9b1;
-	border-top-width: 0;
-	clear: both;
-	box-shadow: 0 1px 1px 0 rgba( 0, 0, 0, 0.1 );
-	text-align: left;
-	display: none;
-	// Menus must overlap indicators (z-index: 1) and VisualEditor toolbar (z-index: 2)
-	z-index: 2;
-}
-
-.vectorMenu:hover .menu {
-	display: block;
-}
-// This is in a separate block, so that browsers supporting :hover but not :checked still apply the rule above
-// Support: IE8
-.vectorMenu .vectorMenuCheckbox:checked ~ .menu {
-	display: block;
-}
-
-.vectorMenu ul {
-	list-style-type: none;
-	list-style-image: none;
-	padding: 0;
-	margin: 0;
-	text-align: left;
-}
-
-.vectorMenu li {
-	padding: 0;
-	margin: 0;
-	text-align: left;
-	line-height: 1em;
-}
-
-.vectorMenu li a {
-	display: block;
-	padding: 0.625em;
-	white-space: nowrap;
-	color: @menu-link-color;
-	cursor: pointer;
-	font-size: 0.8125em;
-}
-
-.vectorMenu li.selected a,
-.vectorMenu li.selected a:visited {
-	color: #222;
-	text-decoration: none;
-}
-
 // Invisible checkbox covering the dropdown menu handle
 .vectorMenuCheckbox {
 	cursor: pointer;
@@ -232,11 +230,21 @@
 	padding: 0;
 	// Hide the checkbox completely in browsers that don't support :checked
 	display: none;
-}
 
-:not( :checked ) > .vectorMenuCheckbox {
-	// When the browser supports :checked, display it
-	display: block;
+	:not( :checked ) > & {
+		// When the browser supports :checked, display it
+		display: block;
+	}
+
+	&:checked + h3 span:after {
+		transform: scaleY( -1 );
+	}
+
+	&:focus + h3 {
+		// Simulate browser focus ring
+		outline: dotted 1px; // Firefox style
+		outline: auto -webkit-focus-ring-color; // Webkit style
+	}
 }
 
 @import 'watchstar.less';

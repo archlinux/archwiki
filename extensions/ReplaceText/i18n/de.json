@@ -42,7 +42,7 @@
 	"replacetext_warning": "'''Warnung:''' $1 {{PLURAL:$1|Seite enthält|Seiten enthalten}} bereits den zu ersetzenden Textteil „$2“.\nSofern du nun die {{PLURAL:$1|Ersetzung|Ersetzungen}} durchführst, ist eine spätere Unterscheidung zwischen den nunmehr zu ersetzenden und den bereits vorhandenen Textteilen nicht mehr möglich.",
 	"replacetext_blankwarning": "'''Warnung:''' Da der zu ersetzende Textteil leer ist, kann die Operation nicht rückgängig gemacht werden. Möchtest du dennoch fortfahren?",
 	"replacetext_continue": "Fortfahren",
-	"replacetext_announce": "Diese Bearbeitungen über $1 und Beobachtungslisten ankündigen",
+	"replacetext_announce": "Diese Bearbeitungen auch auf „$1“ und in den Beobachtungslisten anzeigen",
 	"replacetext_editsummary": "Textersetzung - „$1“ durch „$2“",
 	"right-replacetext": "Textersetzung für das gesamte Wiki durchführen",
 	"action-replacetext": "im gesamten Wiki Zeichenfolgeersetzungen durchzuführen",

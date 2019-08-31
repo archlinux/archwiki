@@ -15,7 +15,7 @@
  * along with MediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-( function ( mw, $ ) {
+( function () {
 	QUnit.module( 'mmv.ui.Canvas', QUnit.newMwEnvironment() );
 
 	QUnit.test( 'Constructor sanity check', function ( assert ) {
@@ -245,22 +245,19 @@
 		assert.strictEqual( blurredThumbnailShown, false, 'Placeholder state is correct' );
 	} );
 
-	QUnit.test( 'Unblur', function ( assert ) {
+	QUnit.test( 'unblurWithAnimation', function ( assert ) {
 		var $qf = $( '#qunit-fixture' ),
 			canvas = new mw.mmv.ui.Canvas( $qf ),
 			oldAnimate = $.fn.animate;
 
 		$.fn.animate = function ( target, options ) {
-			var self = this,
-				lastValue;
-
-			$.each( target, function ( key, value ) {
-				lastValue = self.key = value;
-			} );
+			var key;
 
 			if ( options ) {
 				if ( options.step ) {
-					options.step.call( this, lastValue );
+					for ( key in target ) {
+						options.step.call( this, target[ key ] /* , tween object */ );
+					}
 				}
 
 				if ( options.complete ) {
@@ -284,4 +281,4 @@
 		$.fn.animate = oldAnimate;
 	} );
 
-}( mediaWiki, jQuery ) );
+}() );

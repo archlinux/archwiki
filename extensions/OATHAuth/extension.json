@@ -23,6 +23,7 @@
 		"SpecialOATH": "includes/special/SpecialOATH.php",
 		"SpecialOATHEnable": "includes/special/SpecialOATHEnable.php",
 		"SpecialOATHDisable": "includes/special/SpecialOATHDisable.php",
+		"SpecialDisableOATHForUser": "includes/special/SpecialDisableOATHForUser.php",
 		"ProxySpecialPage": "includes/special/ProxySpecialPage.php",
 		"TOTPAuthenticationRequest": "includes/auth/TOTPAuthenticationRequest.php",
 		"TOTPSecondaryAuthenticationProvider": "includes/auth/TOTPSecondaryAuthenticationProvider.php"
@@ -82,15 +83,21 @@
 		"remoteExtPath": "OATHAuth"
 	},
 	"SpecialPages": {
-		"OATH": "SpecialOATH"
+		"OATH": "SpecialOATH",
+		"DisableOATHForUser": "SpecialDisableOATHForUser"
 	},
 	"AvailableRights": [
 		"oathauth-enable",
-		"oathauth-api-all"
+		"oathauth-api-all",
+		"oathauth-disable-for-user"
 	],
 	"GroupPermissions": {
 		"*": {
-			"oathauth-enable": true
+			"oathauth-enable": true,
+			"oathauth-disable-for-user": false
+		},
+		"sysop": {
+			"oathauth-disable-for-user": true
 		}
 	},
 	"GrantPermissions": {

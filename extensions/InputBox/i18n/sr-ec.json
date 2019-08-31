@@ -8,7 +8,7 @@
 			"BadDog"
 		]
 	},
-	"inputbox-desc": "Омогући укључивање претходно дефинисаних HTML форми.",
+	"inputbox-desc": "Омогућава укључивање унапред дефинисаних HTML образаца.",
 	"inputbox-error-no-type": "Нисте одредили тип кутије за унос коју правите.",
 	"inputbox-error-bad-type": "Тип „$1“ кутијице за унос података је непознат.\nМолимо вас да га промените на „create“, „comment“, „search“, „search2“ или „fulltext“.",
 	"inputbox-tryexact": "Покушај да нађеш тачан упит",

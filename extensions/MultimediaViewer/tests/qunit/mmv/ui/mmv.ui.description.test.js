@@ -1,4 +1,4 @@
-( function ( mw, $ ) {
+( function () {
 	QUnit.module( 'mmv.ui.description', QUnit.newMwEnvironment() );
 
 	QUnit.test( 'Sanity test, object creation and UI construction', function ( assert ) {
@@ -39,4 +39,4 @@
 		assert.strictEqual( description.$imageDescDiv.hasClass( 'empty' ), true, 'Image description div is marked empty when emptied' );
 		assert.strictEqual( description.$imageDesc.text(), '', 'Image description text is emptied correctly' );
 	} );
-}( mediaWiki, jQuery ) );
+}() );

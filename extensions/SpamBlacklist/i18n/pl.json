@@ -24,9 +24,5 @@
 	"log-description-spamblacklist": "Te zdarzenia służą do śledzenia trafień czarnej listy spamu.",
 	"logentry-spamblacklist-hit": "$1 {{GENDER:$2|uruchomił|uruchomiła}} filtr antyspamowy na stronie $3, próbując dodać $4.",
 	"right-spamblacklistlog": "Podgląd rejestru czarnej listy spamu",
-	"action-spamblacklistlog": "przeglądania rejestru filtru antyspamowego",
-	"apihelp-spamblacklist-description": "Sprawdź jeden lub wiele URL pod kątem obecności na czarnej liście spamu.",
-	"apihelp-spamblacklist-summary": "Sprawdź jeden lub więcej adresów URL pod kątem obecności na liście spamu.",
-	"apihelp-spamblacklist-param-url": "URLe do sprawdzenia pod kątem obecności na czarnej liście.",
-	"apihelp-spamblacklist-example-1": "Sprawdź dwa URL pod kątem obecności na czarnej liście"
+	"action-spamblacklistlog": "przeglądania rejestru filtru antyspamowego"
 }

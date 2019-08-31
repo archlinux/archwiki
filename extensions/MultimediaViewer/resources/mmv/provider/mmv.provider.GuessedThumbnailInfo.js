@@ -15,7 +15,7 @@
  * along with MediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-( function ( mw, $ ) {
+( function () {
 	/**
 	 * This provider is similar to mw.mmv.provider.ThumbnailInfo, but instead of making an API call
 	 * to get the thumbnail URL, it tries to guess it. There are two failure modes:
@@ -304,4 +304,4 @@
 	};
 
 	mw.mmv.provider.GuessedThumbnailInfo = GuessedThumbnailInfo;
-}( mediaWiki, jQuery ) );
+}() );

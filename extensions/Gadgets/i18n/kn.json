@@ -1,9 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"VASANTH S.N."
+			"VASANTH S.N.",
+			"Anoop rao"
 		]
 	},
+	"gadgets-title": "ಗ್ಯಾಜೆಟ್ಗಳ ಶೀರ್ಷಿಕೆ",
 	"gadgets-uses": "ಉಪಯೋಗಗಳು",
 	"gadgets-export": "ರಫ್ತು ಮಾಡು",
 	"gadgets-export-download": "ನಕಲಿಳಿಸಿ"

@@ -17,7 +17,7 @@ class SpamBlacklistHooks {
 	 *
 	 * @return bool
 	 */
-	static function filterMergedContent(
+	public static function filterMergedContent(
 		IContextSource $context,
 		Content $content,
 		Status $status,
@@ -96,7 +96,7 @@ class SpamBlacklistHooks {
 	 * @param string &$hookError
 	 * @return bool
 	 */
-	static function validate( EditPage $editPage, $text, $section, &$hookError ) {
+	public static function validate( EditPage $editPage, $text, $section, &$hookError ) {
 		$title = $editPage->getTitle();
 		$thisPageName = $title->getPrefixedDBkey();
 
@@ -158,7 +158,7 @@ class SpamBlacklistHooks {
 	 *
 	 * @return bool
 	 */
-	static function pageSaveContent(
+	public static function pageSaveContent(
 		WikiPage $wikiPage,
 		User $user,
 		Content $content,
@@ -268,6 +268,7 @@ class SpamBlacklistHooks {
 	 * @param int $id
 	 * @param Content|null $content
 	 * @param LogEntry $logEntry
+	 * @suppress PhanParamReqAfterOpt
 	 */
 	public static function onArticleDeleteComplete(
 		&$page,

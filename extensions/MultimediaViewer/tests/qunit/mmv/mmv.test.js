@@ -1,4 +1,4 @@
-( function ( mw, $ ) {
+( function () {
 	QUnit.module( 'mmv', QUnit.newMwEnvironment() );
 
 	QUnit.test( 'eachPrealoadableLightboxIndex()', function ( assert ) {
@@ -76,7 +76,7 @@
 		// Verify that mmv doesn't reset a foreign hash
 		assert.strictEqual( window.location.hash, '#Bar', 'Foreign hash remains intact' );
 
-		viewer.ui = { images: [ image ], disconnect: $.noop };
+		viewer.ui = { images: [ image ], disconnect: function () {} };
 
 		$( '#qunit-fixture' ).append( '<a class="image"><img src="' + imageSrc + '"></a>' );
 
@@ -122,31 +122,31 @@
 			clock = this.sandbox.useFakeTimers();
 
 		viewer.thumbs = [];
-		viewer.displayPlaceholderThumbnail = $.noop;
-		viewer.setImage = $.noop;
-		viewer.scroll = $.noop;
-		viewer.preloadFullscreenThumbnail = $.noop;
+		viewer.displayPlaceholderThumbnail = function () {};
+		viewer.setImage = function () {};
+		viewer.scroll = function () {};
+		viewer.preloadFullscreenThumbnail = function () {};
 		viewer.fetchSizeIndependentLightboxInfo = function () { return $.Deferred().resolve( {} ); };
 		viewer.ui = {
-			setFileReuseData: $.noop,
-			setupForLoad: $.noop,
-			canvas: { set: $.noop,
-				unblurWithAnimation: $.noop,
-				unblur: $.noop,
+			setFileReuseData: function () {},
+			setupForLoad: function () {},
+			canvas: { set: function () {},
+				unblurWithAnimation: function () {},
+				unblur: function () {},
 				getCurrentImageWidths: function () { return { real: 0 }; },
 				getDimensions: function () { return {}; }
 			},
 			panel: {
-				setImageInfo: $.noop,
+				setImageInfo: function () {},
 				scroller: {
-					animateMetadataOnce: $.noop
+					animateMetadataOnce: function () {}
 				},
 				progressBar: {
 					animateTo: this.sandbox.stub(),
 					jumpTo: this.sandbox.stub()
 				}
 			},
-			open: $.noop };
+			open: function () {} };
 
 		viewer.imageProvider.get = function () { return imageDeferred.promise(); };
 		viewer.imageInfoProvider.get = function () { return $.Deferred().resolve( {} ); };
@@ -197,26 +197,26 @@
 		this.sandbox.stub( $.fn, 'animate' ).returnsThis();
 
 		viewer.thumbs = [];
-		viewer.displayPlaceholderThumbnail = $.noop;
-		viewer.setImage = $.noop;
-		viewer.scroll = $.noop;
-		viewer.preloadFullscreenThumbnail = $.noop;
-		viewer.preloadImagesMetadata = $.noop;
-		viewer.preloadThumbnails = $.noop;
+		viewer.displayPlaceholderThumbnail = function () {};
+		viewer.setImage = function () {};
+		viewer.scroll = function () {};
+		viewer.preloadFullscreenThumbnail = function () {};
+		viewer.preloadImagesMetadata = function () {};
+		viewer.preloadThumbnails = function () {};
 		viewer.fetchSizeIndependentLightboxInfo = function () { return $.Deferred().resolve( {} ); };
 		viewer.ui = {
-			setFileReuseData: $.noop,
-			setupForLoad: $.noop,
-			canvas: { set: $.noop,
-				unblurWithAnimation: $.noop,
-				unblur: $.noop,
+			setFileReuseData: function () {},
+			setupForLoad: function () {},
+			canvas: { set: function () {},
+				unblurWithAnimation: function () {},
+				unblur: function () {},
 				getCurrentImageWidths: function () { return { real: 0 }; },
 				getDimensions: function () { return {}; }
 			},
 			panel: {
-				setImageInfo: $.noop,
+				setImageInfo: function () {},
 				scroller: {
-					animateMetadataOnce: $.noop
+					animateMetadataOnce: function () {}
 				},
 				progressBar: {
 					hide: this.sandbox.stub(),
@@ -224,8 +224,8 @@
 					jumpTo: this.sandbox.stub()
 				}
 			},
-			open: $.noop,
-			empty: $.noop };
+			open: function () {},
+			empty: function () {} };
 
 		viewer.imageInfoProvider.get = function () { return $.Deferred().resolve( {} ); };
 		viewer.thumbnailInfoProvider.get = function () { return $.Deferred().resolve( {} ); };
@@ -317,10 +317,10 @@
 	QUnit.test( 'Placeholder first, then real thumbnail', function ( assert ) {
 		var viewer = mw.mmv.testHelpers.getMultimediaViewer();
 
-		viewer.setImage = $.noop;
+		viewer.setImage = function () {};
 		viewer.ui = { canvas: {
-			unblurWithAnimation: $.noop,
-			unblur: $.noop,
+			unblurWithAnimation: function () {},
+			unblur: function () {},
 			maybeDisplayPlaceholder: function () { return true; }
 		} };
 		viewer.imageInfoProvider.get = this.sandbox.stub();
@@ -340,10 +340,10 @@
 		var viewer = mw.mmv.testHelpers.getMultimediaViewer();
 
 		viewer.currentIndex = 1;
-		viewer.setImage = $.noop;
+		viewer.setImage = function () {};
 		viewer.ui = { canvas: {
-			unblurWithAnimation: $.noop,
-			unblur: $.noop,
+			unblurWithAnimation: function () {},
+			unblur: function () {},
 			maybeDisplayPlaceholder: function () { return true; }
 		} };
 		viewer.imageInfoProvider.get = this.sandbox.stub().returns( $.Deferred().resolve( { width: 100, height: 100 } ) );
@@ -362,12 +362,12 @@
 	QUnit.test( 'Real thumbnail first, then placeholder', function ( assert ) {
 		var viewer = mw.mmv.testHelpers.getMultimediaViewer();
 
-		viewer.setImage = $.noop;
+		viewer.setImage = function () {};
 		viewer.ui = {
-			showImage: $.noop,
+			showImage: function () {},
 			canvas: {
-				unblurWithAnimation: $.noop,
-				unblur: $.noop
+				unblurWithAnimation: function () {},
+				unblur: function () {}
 			} };
 
 		viewer.displayRealThumbnail( { url: undefined } );
@@ -384,10 +384,10 @@
 	QUnit.test( 'displayRealThumbnail', function ( assert ) {
 		var viewer = mw.mmv.testHelpers.getMultimediaViewer();
 
-		viewer.setImage = $.noop;
+		viewer.setImage = function () {};
 		viewer.ui = { canvas: {
 			unblurWithAnimation: this.sandbox.stub(),
-			unblur: $.noop
+			unblur: function () {}
 		} };
 		viewer.blurredThumbnailShown = true;
 
@@ -419,31 +419,31 @@
 			// custom clock ensures progress handlers execute in correct sequence
 			clock = this.sandbox.useFakeTimers();
 
-		viewer.preloadFullscreenThumbnail = $.noop;
+		viewer.preloadFullscreenThumbnail = function () {};
 		viewer.fetchSizeIndependentLightboxInfo = this.sandbox.stub();
 		viewer.ui = {
-			setFileReuseData: $.noop,
-			setupForLoad: $.noop,
+			setFileReuseData: function () {},
+			setupForLoad: function () {},
 			canvas: {
-				set: $.noop,
+				set: function () {},
 				getCurrentImageWidths: function () { return { real: 0 }; },
 				getDimensions: function () { return {}; }
 			},
 			panel: {
 				setImageInfo: this.sandbox.stub(),
 				scroller: {
-					animateMetadataOnce: $.noop
+					animateMetadataOnce: function () {}
 				},
 				progressBar: {
 					animateTo: this.sandbox.stub(),
 					jumpTo: this.sandbox.stub()
 				},
-				empty: $.noop
+				empty: function () {}
 			},
-			open: $.noop,
-			empty: $.noop };
+			open: function () {},
+			empty: function () {} };
 		viewer.displayRealThumbnail = this.sandbox.stub();
-		viewer.eachPrealoadableLightboxIndex = $.noop;
+		viewer.eachPrealoadableLightboxIndex = function () {};
 		viewer.animateMetadataDivOnce = this.sandbox.stub().returns( $.Deferred().reject() );
 		viewer.imageProvider.get = this.sandbox.stub();
 		viewer.imageInfoProvider.get = function () { return $.Deferred().reject(); };
@@ -496,7 +496,7 @@
 		// animation would keep running, conflict with other tests
 		this.sandbox.stub( $.fn, 'animate' ).returnsThis();
 
-		$.scrollTo = function () { return { scrollTop: $.noop, on: $.noop, off: $.noop }; };
+		$.scrollTo = function () { return { scrollTop: function () {}, on: function () {}, off: function () {} }; };
 
 		viewer.setupEventHandlers();
 
@@ -505,7 +505,7 @@
 		viewer.thumbnailInfoProvider.get = function () { return $.Deferred().reject(); };
 		viewer.fileRepoInfoProvider.get = function () { return $.Deferred().reject(); };
 
-		viewer.preloadFullscreenThumbnail = $.noop;
+		viewer.preloadFullscreenThumbnail = function () {};
 		viewer.initWithThumbs( [] );
 
 		viewer.loadImage(
@@ -562,16 +562,25 @@
 	} );
 
 	QUnit.test( 'Refuse to load too-big thumbnails', function ( assert ) {
-		var viewer = mw.mmv.testHelpers.getMultimediaViewer(),
-			intendedWidth = 50,
-			title = mw.Title.newFromText( 'File:Foobar.svg' );
+		var title, expectedWidth,
+			reuestedWidth = 1000,
+			originalWidth = 50,
+			viewer = mw.mmv.testHelpers.getMultimediaViewer();
 
 		viewer.thumbnailInfoProvider.get = function ( fileTitle, width ) {
-			assert.strictEqual( width, intendedWidth );
+			assert.strictEqual( width, expectedWidth );
 			return $.Deferred().reject();
 		};
 
-		viewer.fetchThumbnail( title, 1000, null, intendedWidth, 60 );
+		// non-vector should be capped to original size
+		title = mw.Title.newFromText( 'File:Foobar.png' );
+		expectedWidth = originalWidth;
+		viewer.fetchThumbnail( title, reuestedWidth, null, originalWidth, 60 );
+
+		// vector images can be aritrarily large
+		title = mw.Title.newFromText( 'File:Foobar.svg' );
+		expectedWidth = reuestedWidth;
+		viewer.fetchThumbnail( title, reuestedWidth, null, originalWidth, 60 );
 	} );
 
 	QUnit.test( 'fetchThumbnail()', function ( assert ) {
@@ -580,7 +589,7 @@
 			imageStub,
 			promise,
 			useThumbnailGuessing,
-			viewer = new mw.mmv.MultimediaViewer( { imageQueryParameter: $.noop, language: $.noop, recordVirtualViewBeaconURI: $.noop, extensions: function () { return { jpg: 'default' }; }, useThumbnailGuessing: function () { return useThumbnailGuessing; } } ),
+			viewer = new mw.mmv.MultimediaViewer( { imageQueryParameter: function () {}, language: function () {}, recordVirtualViewBeaconURI: function () {}, extensions: function () { return { jpg: 'default' }; }, useThumbnailGuessing: function () { return useThumbnailGuessing; } } ),
 			sandbox = this.sandbox,
 			file = new mw.Title( 'File:Copyleft.svg' ),
 			sampleURL = 'http://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Copyleft.svg/300px-Copyleft.svg.png',
@@ -703,4 +712,4 @@
 
 		assert.strictEqual( document.title, oldDocumentTitle, 'Original title restored after viewer is closed' );
 	} );
-}( mediaWiki, jQuery ) );
+}() );

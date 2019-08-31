@@ -1,6 +1,7 @@
 /* Ace syntax-highlighting code editor extension for wikiEditor */
 /* global ace */
-( function ( $, mw, OO ) {
+/* eslint-disable no-jquery/no-global-selector */
+( function () {
 	$.wikiEditor.modules.codeEditor = {
 		/**
 		 * Core Requirements
@@ -358,6 +359,7 @@
 					// Ace doesn't like replacing a textarea directly.
 					// We'll stub this out to sit on top of it...
 					// line-height is needed to compensate for oddity in WikiEditor extension, which zeroes the line-height on a parent container
+					// eslint-disable-next-line no-jquery/no-parse-html-literal
 					container = context.$codeEditorContainer = $( '<div style="position: relative"><div class="editor" style="line-height: 1.5em; top: 0; left: 0; right: 0; bottom: 0; position: absolute;"></div></div>' ).insertAfter( box );
 					editdiv = container.find( '.editor' );
 
@@ -506,9 +508,9 @@
 					delayedUpdate,
 					editor = context.codeEditor,
 					lang = ace.require( 'ace/lib/lang' ),
-					$errors = $( '<span class="codeEditor-status-worker-cell ace_gutter-cell ace_error">0</span>' ),
-					$warnings = $( '<span class="codeEditor-status-worker-cell ace_gutter-cell ace_warning">0</span>' ),
-					$infos = $( '<span class="codeEditor-status-worker-cell ace_gutter-cell ace_info">0</span>' ),
+					$errors = $( '<span>' ).addClass( 'codeEditor-status-worker-cell ace_gutter-cell ace_error' ).text( '0' ),
+					$warnings = $( '<span>' ).addClass( 'codeEditor-status-worker-cell ace_gutter-cell ace_warning' ).text( '0' ),
+					$infos = $( '<span>' ).addClass( 'codeEditor-status-worker-cell ace_gutter-cell ace_info' ).text( '0' ),
 					$message = $( '<div>' ).addClass( 'codeEditor-status-message' ),
 					$lineAndMode = $( '<div>' ).addClass( 'codeEditor-status-line' ),
 					$workerStatus = $( '<div>' )
@@ -683,6 +685,7 @@
 		 * @param {Object} extended
 		 */
 		saveAndExtend = function ( base, extended ) {
+			// eslint-disable-next-line no-jquery/no-map-util
 			$.map( extended, function ( func, name ) {
 				var orig;
 				if ( name in base ) {
@@ -848,4 +851,4 @@
 		}
 
 	};
-}( jQuery, mediaWiki, OO ) );
+}() );

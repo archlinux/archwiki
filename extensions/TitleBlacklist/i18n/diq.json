@@ -3,7 +3,9 @@
 		"authors": [
 			"Aspar",
 			"Erdemaslancan",
-			"Marmase"
+			"Marmase",
+			"Kumkumuk",
+			"Mirzali"
 		]
 	},
 	"titleblacklist-desc": "serkaran re desturê vıraştışê pel u hesabê karberan dano, qey qedexekerdışi re yew [[MediaWiki:Titleblacklist|listeya risiyayan]] u [[MediaWiki:Titlewhitelist|listeya risıpiyan]] dano.",
@@ -15,6 +17,7 @@
 	"titleblacklist-forbidden-new-account": "vıraştışê nameyê karberê\"$2\" i qedexe bı.\nmalumatê ey na listeyasiya de zêpê ya: <code>$1</code>",
 	"titleblacklist-invalid": "Na  ğırab lista dı {{PLURAL:$1|en asatır|ené satıri}}  néravérené;\nVerdé qeyd kerdışi  timar keré:",
 	"titleblacklist-override": "Tenilisti mehesebne",
-	"right-tboverride": "Siya listeya sernuşti nêravêrde ke",
-	"right-tboverride-account": "Tenilisteya naman dê karberan mehesebnê"
+	"right-tboverride": "Sernuşteyi ya zi lista nameyê karberiyê siyayi nêverde ke",
+	"right-tboverride-account": "Tenilisteya naman dê karberan mehesebnê",
+	"visualeditor-saveerror-titleblacklist": "Xetay qeyd kerdışi:ena per çebya ya lista da siya miyan."
 }

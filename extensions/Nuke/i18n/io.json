@@ -11,6 +11,5 @@
 	"nuke-defaultreason": "Masiva efaco di pagini kreita da [[Special:Contributions/$1|{{GENDER:$1|$1}}]]",
 	"nuke-submit-user": "Montrar listo di pagini",
 	"nuke-submit-delete": "Efacez selektiti",
-	"nuke-select": "Selektez: $1",
 	"nuke-linkoncontribs": "Masiva efaco"
 }

@@ -17,7 +17,7 @@
 
 // This file is used to do the global initialization that we want on the real pages,
 // but do not want in the tests.
-( function ( mw, $ ) {
+( function () {
 	var bootstrap;
 
 	if ( !mw.mmv.isBrowserSupported() ) {
@@ -31,4 +31,4 @@
 	} );
 
 	mw.mmv.bootstrap = bootstrap;
-}( mediaWiki, jQuery ) );
+}() );

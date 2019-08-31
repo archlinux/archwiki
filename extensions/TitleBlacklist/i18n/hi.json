@@ -5,7 +5,8 @@
 			"Kaustubh",
 			"Shyam",
 			"आलोक",
-			"Sfic"
+			"Sfic",
+			"Ankita-ks"
 		]
 	},
 	"action-titleblacklistlog": "शीर्षक कालीसूची लॉग देखें",
@@ -19,5 +20,6 @@
 	"titleblacklist-invalid": "ब्लैकलिस्ट नामपद में निम्नांकित {{PLURAL:$1|पंक्ति|पंक्तियाँ}} अमान्य {{PLURAL:$1|है|हैं}};\nकृपया {{PLURAL:$1|इसे|इन्हें}} जमा करने से पहले ठीक करें:",
 	"titleblacklist-override": "ब्लाकलिस्ट उपेक्षा करें",
 	"right-tboverride": "शीर्षक ब्लॅकलिस्ट को नजर अंदाज करें",
-	"right-titleblacklistlog": "शीर्षक कालीसूची लॉग देखें"
+	"right-titleblacklistlog": "शीर्षक कालीसूची लॉग देखें",
+	"visualeditor-saveerror-titleblacklist": "पृष्ठ सहेजने में त्रुटि: इस पृष्ठ का शीर्षक काली सूची में है"
 }

@@ -47,8 +47,6 @@
 	"cite-ve-dialog-reference-options-section": "选项",
 	"cite-ve-dialog-reference-placeholder": "在此写下或粘贴您的参考资料，或插入引用模板。",
 	"cite-ve-dialog-reference-title": "参考文献",
-	"cite-ve-dialog-reference-useexisting-full-label": "再次使用已存在于此页面的引用",
-	"cite-ve-dialog-reference-useexisting-label": "使用已有的参考文献",
 	"cite-ve-dialog-reference-useexisting-tool": "复用",
 	"cite-ve-dialog-referenceslist-contextitem-description-general": "一般参考文献列表",
 	"cite-ve-dialog-referenceslist-contextitem-description-named": "用于组“$1”的参考文献列表",

@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Dbc334"
+			"Dbc334",
+			"Pinky sl"
 		]
 	},
 	"titleblacklist-desc": "Omogoča administratorjem preprečiti ustvarjanje strani in uporabniških računov glede na [[MediaWiki:Titleblacklist|črni seznam]] in [[MediaWiki:Titlewhitelist|beli seznam]]",
@@ -14,5 +15,6 @@
 	"titleblacklist-invalid": "{{PLURAL:$1|Naslednja vrstica|Naslednji vrstici|Naslednje vrstice}} v črnem seznamu naslovov {{PLURAL:$1|je neveljavna|sta neveljavni|so neveljavne}};\nprosimo, popravite {{PLURAL:$1|jo|ju|jih}} pred shranjevanjem:",
 	"titleblacklist-override": "Prezri črni seznam",
 	"right-tboverride": "Prepisovanje črnega seznama naslovov ali uporabniških imen",
-	"right-tboverride-account": "Prepis črnega seznama uporabniških imen"
+	"right-tboverride-account": "Prepis črnega seznama uporabniških imen",
+	"visualeditor-saveerror-titleblacklist": "Napaka shranjevanja strani: Naslov te strani je na črnem seznamu"
 }

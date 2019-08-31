@@ -16,7 +16,6 @@
 	"nuke-submit-user": "వెళ్ళు",
 	"nuke-submit-delete": "ఎంచుకున్నవి తొలగించు",
 	"right-nuke": "పేజీలను సామూహికంగా తొలగించడం",
-	"nuke-select": "ఎంచుకోండి: $1",
 	"nuke-maxpages": "గరిష్ఠ పుటల సంఖ్య:",
 	"nuke-deleted": "'''$1''' పేజీని తొలగించారు.",
 	"nuke-delete-more": "[[Special:Nuke|మరిన్ని పేజీలను తొలగించండి]]",

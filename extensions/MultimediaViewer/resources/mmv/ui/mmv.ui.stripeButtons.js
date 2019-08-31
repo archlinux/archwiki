@@ -15,7 +15,7 @@
  * along with MediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-( function ( mw, $, oo ) {
+( function () {
 	var SBP;
 
 	/**
@@ -43,7 +43,7 @@
 
 		this.initDescriptionPageButton();
 	}
-	oo.inheritClass( StripeButtons, mw.mmv.ui.Element );
+	OO.inheritClass( StripeButtons, mw.mmv.ui.Element );
 	SBP = StripeButtons.prototype;
 
 	/**
@@ -133,4 +133,4 @@
 	};
 
 	mw.mmv.ui.StripeButtons = StripeButtons;
-}( mediaWiki, jQuery, OO ) );
+}() );

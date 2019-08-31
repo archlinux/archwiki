@@ -3,7 +3,8 @@
 		"authors": [
 			"Kening Aldgilles",
 			"Robin0van0der0vliet",
-			"Robin van der Vliet"
+			"Robin van der Vliet",
+			"PiefPafPier"
 		]
 	},
 	"wikieditor-toolbar": "Bewurkingsbalke",
@@ -13,8 +14,8 @@
 	"wikieditor-toolbar-tool-link-insert": "Keppeling ynfoegje",
 	"wikieditor-toolbar-tool-link-cancel": "Annulearje",
 	"wikieditor-toolbar-tool-file-example": "Foarbyld.jpg",
-	"wikieditor-toolbar-tool-file-title": "Triem ynfoegje",
-	"wikieditor-toolbar-file-target": "Triemnamme:",
+	"wikieditor-toolbar-tool-file-title": "Bestân ynfoegje",
+	"wikieditor-toolbar-file-target": "Bestânsnamme:",
 	"wikieditor-toolbar-file-size": "Grutte:",
 	"wikieditor-toolbar-file-default": "(standert)",
 	"wikieditor-toolbar-file-format-none": "gjin",

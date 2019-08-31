@@ -315,7 +315,7 @@ class System
      * 2) System::cat('sample.txt test.txt > final.txt');
      * 3) System::cat('sample.txt test.txt >> final.txt');
      *
-     * Note: as the class use fopen, urls should work also (test that)
+     * Note: as the class use fopen, urls should work also
      *
      * @param    string  $args   the arguments
      * @return   boolean true on success

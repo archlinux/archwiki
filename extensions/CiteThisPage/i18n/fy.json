@@ -4,12 +4,14 @@
 			"SK-luuut",
 			"Snakesteuben",
 			"Robin0van0der0vliet",
-			"Robin van der Vliet"
+			"Robin van der Vliet",
+			"PiefPafPier"
 		]
 	},
 	"citethispage": "Sitearje",
 	"citethispage-desc": "Foeget in [[Special:CiteThisPage|spesjale side]] om te sitearjen, lykas in ferwizing nei de helpmiddels, ta.",
 	"citethispage-link": "Sitearje dizze side",
+	"tooltip-citethispage": "Op hokker wize dizze side sitearre wurde kin",
 	"citethispage-change-submit": "Sitearje",
 	"citethispage-change-target": "Side:"
 }

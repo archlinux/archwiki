@@ -8,7 +8,9 @@
 			"Raimond Spekking",
 			"SVG",
 			"MGChecker",
-			"Umherirrender"
+			"Umherirrender",
+			"Hwboehm",
+			"Sushi"
 		]
 	},
 	"categorytree": "Kategorienbaum",
@@ -36,7 +38,7 @@
 	"categorytree-no-subcategories": "Keine Unterkategorien",
 	"categorytree-no-parent-categories": "Keine Oberkategorien",
 	"categorytree-no-pages": "Keine Seiten oder Unterkategorien",
-	"categorytree-not-found": "Kategorie „$1“ wurde nicht nicht gefunden",
+	"categorytree-not-found": "Kategorie <i>$1</i> wurde nicht gefunden",
 	"categorytree-error": "Beim Laden der Daten ist ein Problem aufgetreten.",
 	"categorytree-retry": "Bitte warte einen Moment und versuche es dann erneut.",
 	"apihelp-categorytree-description": "Internes Modul für die Erweiterung „CategoryTree“.",

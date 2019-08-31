@@ -7,7 +7,7 @@
 			"Singhalawap"
 		]
 	},
-	"cite-desc": "උපහරණයන් සඳහා, <code><nowiki><ref[ name=id]></nowiki></code> සහ <code><nowiki><references/></nowiki></code> ටැගයන්, එකතු කරයි",
+	"cite-desc": "උපහරණයන් සඳහා, <code>&lt;ref[ name=id]&gt;</code> සහ <code>&lt;references/&gt;</code> ටැගයන්, එකතු කරයි",
 	"cite_error": "උපුටාදැක්වීම් දෝෂය: $1",
 	"cite_error_ref_numeric_key": "අනීතික <code>&lt;ref&gt;</code> ටැගය;\nනම සරල  පූර්ණාංකයක් විය නොහැක. විස්තරශීලි ශිර්ෂයක් භාවිතා කරන්න",
 	"cite_error_ref_no_key": "අනීතික <code>&lt;ref&gt;</code> ටැගය;\nපෙළ විරහිත ආශ්‍රේය සඳහා නමක් තිබිය යුතුය",

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with MediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
-( function ( mw, $, oo ) {
+( function () {
 	var TDP;
 
 	/**
@@ -48,10 +48,10 @@
 
 		/** @property {Function} closeProxy Proxied close function to be used as an event handler, so it can be
 		 * identified for removal. */
-		this.closeProxy = $.proxy( this.maybeCloseOnClick, this );
+		this.closeProxy = this.maybeCloseOnClick.bind( this );
 	}
 
-	oo.inheritClass( TipsyDialog, mw.mmv.ui.Element );
+	OO.inheritClass( TipsyDialog, mw.mmv.ui.Element );
 	TDP = TipsyDialog.prototype;
 
 	/**
@@ -199,4 +199,4 @@
 	};
 
 	mw.mmv.ui.TipsyDialog = TipsyDialog;
-}( mediaWiki, jQuery, OO ) );
+}() );

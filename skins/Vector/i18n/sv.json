@@ -5,7 +5,8 @@
 			"Najami",
 			"Skalman",
 			"WikiPhoenix",
-			"Lokal Profil"
+			"Lokal Profil",
+			"Sturban"
 		]
 	},
 	"skinname-vector": "Vector",
@@ -21,7 +22,7 @@
 	"vector-view-create": "Skapa",
 	"vector-view-edit": "Redigera",
 	"vector-view-history": "Visa historik",
-	"vector-view-view": "Visa",
+	"vector-view-view": "Läs",
 	"vector-view-viewsource": "Visa källa",
 	"vector-jumptonavigation": "Hoppa till navigering",
 	"vector-jumptosearch": "Hoppa till sök",

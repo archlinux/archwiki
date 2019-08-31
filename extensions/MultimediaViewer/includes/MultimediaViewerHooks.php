@@ -53,7 +53,7 @@ class MultimediaViewerHooks {
 		global $wgMediaViewerIsInBeta, $wgMediaViewerEnableByDefaultForAnonymous,
 			$wgMediaViewerEnableByDefault;
 
-		if ( $wgMediaViewerIsInBeta && class_exists( 'BetaFeatures' ) ) {
+		if ( $wgMediaViewerIsInBeta && ExtensionRegistry::getInstance()->isLoaded( 'BetaFeatures' ) ) {
 			return BetaFeatures::isFeatureEnabled( $user, 'multimedia-viewer' );
 		}
 
@@ -93,12 +93,16 @@ class MultimediaViewerHooks {
 	public static function getModulesForArticle( &$out, &$skin ) {
 		$pageHasThumbnails = count( $out->getFileSearchOptions() ) > 0;
 		$pageIsFilePage = $out->getTitle()->inNamespace( NS_FILE );
+		// TODO: Have Flow work out if there are any images on the page
+		$pageIsFlowPage = ExtensionRegistry::getInstance()->isLoaded( 'Flow' ) &&
+			// CONTENT_MODEL_FLOW_BOARD
+			$out->getTitle()->getContentModel() === 'flow-board';
 		$fileRelatedSpecialPages = [ 'NewFiles', 'ListFiles', 'MostLinkedFiles',
 			'MostGloballyLinkedFiles', 'UncategorizedFiles', 'UnusedFiles', 'Search' ];
 		$pageIsFileRelatedSpecialPage = $out->getTitle()->inNamespace( NS_SPECIAL )
 			&& in_array( $out->getTitle()->getText(), $fileRelatedSpecialPages );
 
-		if ( $pageHasThumbnails || $pageIsFilePage || $pageIsFileRelatedSpecialPage ) {
+		if ( $pageHasThumbnails || $pageIsFilePage || $pageIsFileRelatedSpecialPage || $pageIsFlowPage ) {
 			return self::getModules( $out );
 		}
 
@@ -220,82 +224,6 @@ class MultimediaViewerHooks {
 		// needed because of bug 69942; could be different for anon and logged-in
 		$vars['wgMediaViewerEnabledByDefault'] =
 			!empty( $defaultUserOptions['multimediaviewer-enable'] );
-	}
-
-	/**
-	 * Get modules for testing our JavaScript
-	 * @param array &$testModules
-	 * @param ResourceLoader &$resourceLoader
-	 * @return bool
-	 */
-	public static function getTestModules( array &$testModules, ResourceLoader &$resourceLoader ) {
-		$testModules['qunit']['mmv.tests'] = [
-			'scripts' => [
-				'tests/qunit/mmv/mmv.bootstrap.test.js',
-				'tests/qunit/mmv/mmv.test.js',
-				'tests/qunit/mmv/mmv.lightboxinterface.test.js',
-				'tests/qunit/mmv/mmv.lightboximage.test.js',
-				'tests/qunit/mmv/mmv.ThumbnailWidthCalculator.test.js',
-				'tests/qunit/mmv/mmv.EmbedFileFormatter.test.js',
-				'tests/qunit/mmv/mmv.Config.test.js',
-				'tests/qunit/mmv/mmv.HtmlUtils.test.js',
-				'tests/qunit/mmv/logging/mmv.logging.DurationLogger.test.js',
-				'tests/qunit/mmv/logging/mmv.logging.PerformanceLogger.test.js',
-				'tests/qunit/mmv/logging/mmv.logging.ActionLogger.test.js',
-				'tests/qunit/mmv/logging/mmv.logging.AttributionLogger.test.js',
-				'tests/qunit/mmv/logging/mmv.logging.DimensionLogger.test.js',
-				'tests/qunit/mmv/logging/mmv.logging.ViewLogger.test.js',
-				'tests/qunit/mmv/model/mmv.model.test.js',
-				'tests/qunit/mmv/model/mmv.model.IwTitle.test.js',
-				'tests/qunit/mmv/model/mmv.model.TaskQueue.test.js',
-				'tests/qunit/mmv/model/mmv.model.License.test.js',
-				'tests/qunit/mmv/model/mmv.model.Image.test.js',
-				'tests/qunit/mmv/model/mmv.model.Repo.test.js',
-				'tests/qunit/mmv/model/mmv.model.EmbedFileInfo.test.js',
-				'tests/qunit/mmv/provider/mmv.provider.Api.test.js',
-				'tests/qunit/mmv/provider/mmv.provider.ImageInfo.test.js',
-				'tests/qunit/mmv/provider/mmv.provider.FileRepoInfo.test.js',
-				'tests/qunit/mmv/provider/mmv.provider.ThumbnailInfo.test.js',
-				'tests/qunit/mmv/provider/mmv.provider.GuessedThumbnailInfo.test.js',
-				'tests/qunit/mmv/provider/mmv.provider.Image.test.js',
-				'tests/qunit/mmv/routing/mmv.routing.MainFileRoute.test.js',
-				'tests/qunit/mmv/routing/mmv.routing.ThumbnailRoute.test.js',
-				'tests/qunit/mmv/routing/mmv.routing.Router.test.js',
-				'tests/qunit/mmv/ui/mmv.ui.test.js',
-				'tests/qunit/mmv/ui/mmv.ui.canvas.test.js',
-				'tests/qunit/mmv/ui/mmv.ui.canvasButtons.test.js',
-				'tests/qunit/mmv/ui/mmv.ui.description.test.js',
-				'tests/qunit/mmv/ui/mmv.ui.download.pane.test.js',
-				'tests/qunit/mmv/ui/mmv.ui.metadataPanel.test.js',
-				'tests/qunit/mmv/ui/mmv.ui.metadataPanelScroller.test.js',
-				'tests/qunit/mmv/ui/mmv.ui.progressBar.test.js',
-				'tests/qunit/mmv/ui/mmv.ui.permission.test.js',
-				'tests/qunit/mmv/ui/mmv.ui.stripeButtons.test.js',
-				'tests/qunit/mmv/ui/mmv.ui.reuse.dialog.test.js',
-				'tests/qunit/mmv/ui/mmv.ui.reuse.embed.test.js',
-				'tests/qunit/mmv/ui/mmv.ui.reuse.share.test.js',
-				'tests/qunit/mmv/ui/mmv.ui.reuse.tab.test.js',
-				'tests/qunit/mmv/ui/mmv.ui.reuse.utils.test.js',
-				'tests/qunit/mmv/ui/mmv.ui.tipsyDialog.test.js',
-				'tests/qunit/mmv/ui/mmv.ui.truncatableTextField.test.js',
-				'tests/qunit/mmv/ui/mmv.ui.viewingOptions.test.js',
-				'tests/qunit/mmv/mmv.testhelpers.js',
-			],
-			'dependencies' => [
-				'mmv.head',
-				'mmv.bootstrap',
-				'mmv',
-				'mmv.ui.ondemandshareddependencies',
-				'mmv.ui.reuse.shareembed',
-				'mmv.ui.download.pane',
-				'mmv.ui.tipsyDialog',
-				'moment',
-			],
-			'localBasePath' => dirname( __DIR__ ),
-			'remoteExtPath' => 'MultimediaViewer',
-		];
-
-		return true;
 	}
 
 	/**

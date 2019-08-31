@@ -16,7 +16,7 @@
  */
 
 // Included on every page which has images so keep it lightweight.
-( function ( mw ) {
+( function () {
 	mw.mmv = {
 		/**
 		 * Feature-detects SVG support. MuyltimediaViewer uses SVG icons extensively and is
@@ -31,4 +31,4 @@
 			return !!document.createElementNS && !!document.createElementNS( ns.svg, 'svg' ).createSVGRect;
 		}
 	};
-}( mediaWiki ) );
+}() );

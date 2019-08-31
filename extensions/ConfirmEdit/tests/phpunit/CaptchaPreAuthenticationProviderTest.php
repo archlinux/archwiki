@@ -31,7 +31,7 @@ class CaptchaPreAuthenticationProviderTest extends MediaWikiTestCase {
 	public function tearDown() {
 		parent::tearDown();
 		// make sure $wgCaptcha resets between tests
-		TestingAccessWrapper::newFromClass( 'ConfirmEditHooks' )->instanceCreated = false;
+		TestingAccessWrapper::newFromClass( ConfirmEditHooks::class )->instanceCreated = false;
 	}
 
 	/**
@@ -114,7 +114,7 @@ class CaptchaPreAuthenticationProviderTest extends MediaWikiTestCase {
 		$captcha->expects( $this->any() )->method( 'isBadLoginPerUserTriggered' )
 			->willReturn( $isBadLoginPerUserTriggered );
 		$this->setMwGlobals( 'wgCaptcha', $captcha );
-		TestingAccessWrapper::newFromClass( 'ConfirmEditHooks' )->instanceCreated = true;
+		TestingAccessWrapper::newFromClass( ConfirmEditHooks::class )->instanceCreated = true;
 		$provider = new CaptchaPreAuthenticationProvider();
 		$provider->setManager( AuthManager::singleton() );
 

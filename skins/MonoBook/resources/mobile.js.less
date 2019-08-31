@@ -9,13 +9,6 @@
 	display: none;
 }
 
-// don't actually remove these, just hide, as their duplicates don't have access keys on them
-*[ id^='ca-nstab-' ],
-#ca-talk,
-#ca-edit {
-	.hidden();
-}
-
 // popouts
 #p-cactions,
 #p-personal,
@@ -39,6 +32,13 @@
 	border-left: 0;
 	padding: 2em 2em 0 1.5em;
 	font-size: 125%;
+
+	// hide originals but don't remove, as their duplicates don't have access keys on them
+	*[ id^='ca-nstab-' ],
+	#ca-talk,
+	#ca-edit {
+		.hidden();
+	}
 
 	ul {
 		padding-top: 1em;
@@ -86,11 +86,13 @@
 		display: block;
 	}
 }
+
 #menus-cover {
 	position: fixed;
 	opacity: 0.45;
 	background-color: @content-background;
 }
+
 #menus-cover-background {
 	position: absolute;
 	background-color: @background;

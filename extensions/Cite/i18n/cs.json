@@ -10,7 +10,7 @@
 			"Matěj Suchánek"
 		]
 	},
-	"cite-desc": "Přidává značky <code><nowiki><ref[ name=id]></nowiki></code> a&nbsp;<code><nowiki><references/></nowiki></code> na označení citací",
+	"cite-desc": "Přidává značky <code>&lt;ref[ name=id]&gt;</code> a&nbsp;<code>&lt;references/&gt;</code> na označení citací",
 	"cite_error": "Chybná citace: $1",
 	"cite_error_ref_invalid_dir": "Chyba v tagu <code>&lt;ref&gt;</code>; hodnota atributu dir „$1“ není známa. Musí být „ltr“ nebo „rtl“.",
 	"cite_error_ref_numeric_key": "Chyba v tagu <code>&lt;ref&gt;</code>; názvem nesmí být prosté číslo, použijte popisné označení",
@@ -33,6 +33,7 @@
 	"cite-tracking-category-cite-error-desc": "Stránky v této kategorii obsahují chyby v použití značek pro reference.",
 	"cite_references_link_accessibility_label": "Skočit nahoru",
 	"cite_references_link_many_accessibility_label": "Skočit nahoru k:",
+	"cite_references_link_accessibility_back_label": "Skočit zpátky nahoru",
 	"cite_section_preview_references": "Náhled referencí",
 	"cite_warning": "Upozornění k citaci: $1",
 	"cite_warning_sectionpreview_no_text": "Nelze zobrazit náhled značky <code>&lt;ref&gt;</code> se jménem <code>$1</code>, protože je definována mimo aktuální sekci nebo není definována vůbec."

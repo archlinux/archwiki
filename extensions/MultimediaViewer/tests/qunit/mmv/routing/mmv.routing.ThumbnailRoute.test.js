@@ -15,7 +15,7 @@
  * along with MediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-( function ( mw ) {
+( function () {
 	QUnit.module( 'mmv.routing.ThumbnailRoute', QUnit.newMwEnvironment() );
 
 	QUnit.test( 'Constructor sanity checks', function ( assert ) {
@@ -29,4 +29,4 @@
 			return new mw.mmv.routing.ThumbnailRoute();
 		} ), 'Exception is thrown when ThumbnailRoute is created without arguments' );
 	} );
-}( mediaWiki ) );
+}() );

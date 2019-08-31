@@ -11,6 +11,7 @@ $specialPageAliases = [];
 /** English (English) */
 $specialPageAliases['en'] = [
 	'OATH' => [ 'Two-factor authentication', 'OATH', 'OATHAuth' ],
+	'DisableOATHForUser' => [ 'DisableOATHForUser' ],
 ];
 
 /** Arabic (العربية) */
@@ -31,6 +32,16 @@ $specialPageAliases['cs'] = [
 /** Northern Luri (لۊری شومالی) */
 $specialPageAliases['lrc'] = [
 	'OATH' => [ 'قأسأم' ],
+];
+
+/** Serbian Cyrillic (српски (ћирилица)) */
+$specialPageAliases['sr-ec'] = [
+	'OATH' => [ 'Двофакторска_потврда_идентитета' ],
+];
+
+/** Serbian Latin (srpski (latinica)) */
+$specialPageAliases['sr-el'] = [
+	'OATH' => [ 'Dvofaktorska_potvrda_identiteta' ],
 ];
 
 /** Urdu (اردو) */

@@ -4,7 +4,7 @@
 			"ChrisPtDe"
 		]
 	},
-	"cite-desc": "Apond les balises <code><nowiki><ref[ name=id]></nowiki></code> et <code><nowiki><references/></nowiki></code>, por les citacions.",
+	"cite-desc": "Apond les balises <code>&lt;ref[ name=id]&gt;</code> et <code>&lt;references/&gt;</code>, por les citacions.",
 	"cite_error": "Fôta de rèference : $1",
 	"cite_error_ref_numeric_key": "Apèl envalido ; cllâf pas entègrâla atendua.",
 	"cite_error_ref_no_key": "Balisa <code>&lt;ref&gt;</code> fôssa ;\nles refèrences sen contegnu dêvont avêr un nom.",

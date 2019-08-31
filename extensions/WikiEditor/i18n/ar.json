@@ -14,7 +14,9 @@
 			"Macofe",
 			"Shbib Al-Subaie",
 			"Maroen1990",
-			"محمد أحمد عبد الفتاح"
+			"محمد أحمد عبد الفتاح",
+			"ديفيد",
+			"علاء"
 		]
 	},
 	"wikieditor": "الواجهة المتقدمة لتعديل نص ويكي",
@@ -23,7 +25,8 @@
 	"wikieditor-loading": "تحميل...",
 	"wikieditor-toolbar": "شريط أدوات التحرير",
 	"wikieditor-toolbar-desc": "شريط تحرير الصفحات مع تحسين الاستخدامية",
-	"wikieditor-toolbar-preference": "تفعيل شريط أدوات التحرير المحسن",
+	"wikieditor-toolbar-preference": "تفعيل شريط أدوات التحرير",
+	"wikieditor-toolbar-preference-help": "هذا يطلق عليه أحيانا 'محرر نص الويكي 2010'.",
 	"wikieditor-toolbar-loading": "تحميل...",
 	"wikieditor-toolbar-tool-bold": "غليظ",
 	"wikieditor-toolbar-tool-bold-example": "نص غليظ",
@@ -40,7 +43,7 @@
 	"wikieditor-toolbar-tool-link-int-target-tooltip": "عنوان الصفحة أو المسار",
 	"wikieditor-toolbar-tool-link-int-text": "نص الوصلة:",
 	"wikieditor-toolbar-tool-link-int-text-tooltip": "أدخل النص الذي ينبغي إظهاره",
-	"wikieditor-toolbar-tool-link-ext": "لصفحة وب خارجية",
+	"wikieditor-toolbar-tool-link-ext": "لصفحة ويب خارجية",
 	"wikieditor-toolbar-tool-link-ext-target": "مسار الوصلة:",
 	"wikieditor-toolbar-tool-link-ext-text": "نص الوصلة:",
 	"wikieditor-toolbar-tool-link-insert": "أدرج الوصلة",

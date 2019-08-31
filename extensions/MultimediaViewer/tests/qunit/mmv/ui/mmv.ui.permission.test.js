@@ -15,7 +15,7 @@
  * along with MediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-( function ( mw, $ ) {
+( function () {
 	QUnit.module( 'mw.mmv.ui.Permission', QUnit.newMwEnvironment( {
 		setup: function () {
 			// animation would keep running, conflict with other tests
@@ -109,4 +109,4 @@
 		permission.shrink();
 		assert.strictEqual( permission.isFullSize(), false, 'permission is not full-size again' );
 	} );
-}( mediaWiki, jQuery ) );
+}() );

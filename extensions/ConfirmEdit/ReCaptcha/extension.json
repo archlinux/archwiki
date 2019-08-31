@@ -1,5 +1,12 @@
 {
 	"name": "ReCaptcha",
+	"author": [
+		"..."
+	],
+	"url": "https://www.mediawiki.org/wiki/Extension:ConfirmEdit#ReCaptcha",
+	"descriptionmsg": "recaptcha-desc",
+	"license-name": "GPL-2.0-or-later",
+	"type": "antispam",
 	"ExtensionFunctions": [
 		"ConfirmEditHooks::efReCaptcha"
 	],

@@ -9,7 +9,7 @@ class CaptchaAuthenticationRequestTest extends AuthenticationRequestTestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->setMwGlobals( [
-			'wgCaptchaClass' => 'SimpleCaptcha',
+			'wgCaptchaClass' => SimpleCaptcha::class,
 			'wgCaptchaStorageClass' => CaptchaHashStore::class,
 		] );
 		CaptchaStore::unsetInstanceForTests();

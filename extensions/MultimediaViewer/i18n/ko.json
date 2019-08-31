@@ -11,7 +11,8 @@
 			"IRTC1015",
 			"Hwangjy9",
 			"Ykhwong",
-			"Jerrykim306"
+			"Jerrykim306",
+			"Comjun04"
 		]
 	},
 	"multimediaviewer-desc": "섬네일을 전체 화면 인터페이스에서 더 큰 크기로 확장합니다.",
@@ -39,6 +40,8 @@
 	"multimediaviewer-help-mmv": "도움말",
 	"multimediaviewer-optout-mmv": "미디어 뷰어 사용 안 함",
 	"multimediaviewer-optin-mmv": "미디어 뷰어 사용",
+	"multimediaviewer-optout-pending-mmv": "미디어 뷰어를 비활성화하는 중",
+	"multimediaviewer-optin-pending-mmv": "미디어 뷰어를 활성화하는 중",
 	"multimediaviewer-geoloc-north": "북",
 	"multimediaviewer-geoloc-east": "동",
 	"multimediaviewer-geoloc-south": "남",
@@ -80,10 +83,20 @@
 	"multimediaviewer-next-image-alt-text": "다음 사진 보이기",
 	"multimediaviewer-prev-image-alt-text": "이전 사진 보이기",
 	"multimediaviewer-title-popup-text": "설명",
+	"multimediaviewer-title-popup-text-more": "전체 설명 보기",
 	"multimediaviewer-reuse-warning-deletion": "이 파일은 삭제를 고려하고 있습니다.",
 	"multimediaviewer-reuse-warning-nonfree": "이 파일은 자유 라이선스가 아닙니다.",
 	"multimediaviewer-reuse-warning-noattribution": "이 파일에 속성 정보가 없습니다.",
 	"multimediaviewer-reuse-warning-generic": "사용하기 전에 [$1 상세 내용]을 확인하십시오.",
+	"multimediaviewer-options-tooltip": "미디어 뷰어를 활성화하거나 비활성화하기",
+	"multimediaviewer-options-dialog-header": "미디어 뷰어를 비활성화할까요?",
 	"multimediaviewer-options-learn-more": "더 알아보기",
-	"multimediaviewer-option-cancel-button": "취소"
+	"multimediaviewer-option-submit-button": "미디어 뷰어 비활성화",
+	"multimediaviewer-option-cancel-button": "취소",
+	"multimediaviewer-disable-confirmation-header": "미디어 뷰어를 비활성화했습니다",
+	"multimediaviewer-disable-confirmation-text": "다음에 $1의 섬네일을 클릭하면, 바로 모든 파일의 속성을 볼 수 있습니다.",
+	"multimediaviewer-enable-dialog-header": "미디어 뷰어를 활성화할까요?",
+	"multimediaviewer-enable-submit-button": "미디어 뷰어 활성화",
+	"multimediaviewer-enable-alert": "미디어 뷰어가 지금 비활성화되어 있습니다",
+	"multimediaviewer-disable-info-title": "미디어 뷰어를 비활성화시켰습니다"
 }

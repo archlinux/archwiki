@@ -1,5 +1,12 @@
 {
 	"name": "ReCaptchaNoCaptcha",
+	"author": [
+		"..."
+	],
+	"url": "https://www.mediawiki.org/wiki/Extension:ConfirmEdit#ReCaptcha_(NoCaptcha)",
+	"descriptionmsg": "renocaptcha-desc",
+	"license-name": "GPL-2.0-or-later",
+	"type": "antispam",
 	"MessagesDirs": {
 		"ReCaptchaNoCaptcha": [
 			"i18n"
@@ -7,6 +14,7 @@
 	},
 	"AutoloadClasses": {
 		"ReCaptchaNoCaptcha": "includes/ReCaptchaNoCaptcha.php",
+		"ReCaptchaNoCaptchaHooks": "includes/ReCaptchaNoCaptchaHooks.php",
 		"HTMLReCaptchaNoCaptchaField": "includes/HTMLReCaptchaNoCaptchaField.php",
 		"ReCaptchaNoCaptchaAuthenticationRequest": "includes/ReCaptchaNoCaptchaAuthenticationRequest.php"
 	},
@@ -16,5 +24,21 @@
 		"ReCaptchaSecretKey": "",
 		"ReCaptchaSendRemoteIP": false
 	},
+	"ResourceFileModulePaths": {
+		"localBasePath": "resources",
+		"remoteExtPath": "ConfirmEdit/ReCaptchaNoCaptcha/resources"
+	},
+	"ResourceModules": {
+		"ext.confirmEdit.reCaptchaNoCaptcha.visualEditor": {
+			"scripts": "ve-confirmedit-reCaptchaNoCaptcha/ve.init.mw.NoCaptchaReCaptchaSaveErrorHandler.js",
+			"targets": [ "desktop", "mobile" ]
+		}
+	},
+	"Hooks": {
+		"ResourceLoaderGetConfigVars": "ReCaptchaNoCaptchaHooks::onResourceLoaderGetConfigVars"
+	},
+	"VisualEditorPluginModules": [
+		"ext.confirmEdit.reCaptchaNoCaptcha.visualEditor"
+	],
 	"manifest_version": 1
 }

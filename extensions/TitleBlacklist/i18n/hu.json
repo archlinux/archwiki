@@ -23,5 +23,6 @@
 	"titleblacklist-override": "Feketelista figyelmen kívül hagyása",
 	"right-tboverride": "címek és felhasználónevek feketelistájának felülírása",
 	"right-tboverride-account": "Felhasználónév-feketelista felülbírálása",
-	"right-titleblacklistlog": "címek feketelista-naplójának megtekintése"
+	"right-titleblacklistlog": "címek feketelista-naplójának megtekintése",
+	"visualeditor-saveerror-titleblacklist": "Hiba a lap mentésekor: A lap címe feketelistán van"
 }

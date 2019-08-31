@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Iyuqciyang"
+		]
+	},
+	"categorytree-portlet": "keelgan",
+	"categorytree-category": "keelgan:",
+	"categorytree-mode-all": "kana ruwahan patas",
+	"categorytree-expand": "muda",
+	"categorytree-member-counts": "supu kana $1 keelgan spiq kngkingal, $2 pnseupu ruwahan patas kngkingal ni $3 patas pusu kngkingal",
+	"categorytree-num-categories": "$1 keelgan",
+	"categorytree-num-pages": "$1 ruwahan patas",
+	"categorytree-num-files": "$1 pusu patas"
+}

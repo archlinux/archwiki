@@ -37,15 +37,13 @@
 
 // Fonts are chosen for consistent metrics, not necessarily overall prettiness.
 // This will NEED fixes for different languages.
-@fonts: 'Helvetica Neue', 'Nimbus Sans', 'Helvetica', 'Arial', sans-serif;
+@fonts: sans-serif;
 @fonts-secondary: 'Linux Libertine', 'Times New Roman', serif;
-// Based on information on https://wiki.archlinux.org/index.php/Metric-compatible_fonts
-@fonts-monospace: 'Consolas', 'Courier', 'Nimbus Mono', 'Liberation Mono', 'Courier New', monospace;
 
 @border: 0.2em;
 @radius: 0.2em;
 
-@font-size: 0.95em;
+@font-size: 0.9em;
 
 // Widths
 
@@ -60,7 +58,7 @@
 @desktop-large-floor: 1340px;
 
 // The max-width for the content
-@content-width: 100em;
+@content-width: 110em;
 
 @content-padding: 2em;
 
@@ -95,6 +93,13 @@
 	box-shadow: 0 1px 2px 1px rgba( 0, 0, 0, 0.02 );
 }
 
+.unbox() {
+	background: transparent;
+	border: 0;
+	padding: 0;
+	box-shadow: none;
+}
+
 // Icons for the page actions menus
 .ca-icon() {
 	.icon;
@@ -113,6 +118,7 @@
 	margin: 1em 0;
 	line-height: 1.1;
 	word-wrap: break-word;
+	font-size: 95%;
 
 	ul,
 	li {
@@ -134,7 +140,7 @@
 	}
 
 	li {
-		margin: 0 0 0.35em;
+		padding: 0.25em 0;
 	}
 }
 

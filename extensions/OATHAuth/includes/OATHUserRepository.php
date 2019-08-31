@@ -16,6 +16,7 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
+use Psr\Log\LoggerInterface;
 use Wikimedia\Rdbms\ILoadBalancer;
 use Wikimedia\Rdbms\DBConnRef;
 
@@ -26,6 +27,9 @@ class OATHUserRepository {
 	/** @var BagOStuff */
 	protected $cache;
 
+	/** @var LoggerInterface */
+	private $logger;
+
 	/**
 	 * OATHUserRepository constructor.
 	 * @param ILoadBalancer $lb
@@ -34,6 +38,15 @@ class OATHUserRepository {
 	public function __construct( ILoadBalancer $lb, BagOStuff $cache ) {
 		$this->lb = $lb;
 		$this->cache = $cache;
+
+		$this->setLogger( \MediaWiki\Logger\LoggerFactory::getInstance( 'authentication' ) );
+	}
+
+	/**
+	 * @param LoggerInterface $logger
+	 */
+	public function setLogger( LoggerInterface $logger ) {
+		$this->logger = $logger;
 	}
 
 	/**
@@ -64,8 +77,11 @@ class OATHUserRepository {
 
 	/**
 	 * @param OATHUser $user
+	 * @param string $clientInfo
 	 */
-	public function persist( OATHUser $user ) {
+	public function persist( OATHUser $user, $clientInfo ) {
+		$prevUser = $this->findByUser( $user->getUser() );
+
 		$this->getDB( DB_MASTER )->replace(
 			'oathauth_users',
 			[ 'id' ],
@@ -76,23 +92,46 @@ class OATHUserRepository {
 			],
 			__METHOD__
 		);
-		$this->cache->set( $user->getUser()->getName(), $user );
+
+		$userName = $user->getUser()->getName();
+		$this->cache->set( $userName, $user );
+
+		if ( $prevUser !== false ) {
+			$this->logger->info( 'OATHAuth updated for {user} from {clientip}', [
+				'user' => $userName,
+				'clientip' => $clientInfo,
+			] );
+		} else {
+			// If findByUser() has returned false, there was no user row or cache entry
+			$this->logger->info( 'OATHAuth enabled for {user} from {clientip}', [
+				'user' => $userName,
+				'clientip' => $clientInfo,
+			] );
+		}
 	}
 
 	/**
 	 * @param OATHUser $user
+	 * @param string $clientInfo
 	 */
-	public function remove( OATHUser $user ) {
+	public function remove( OATHUser $user, $clientInfo ) {
 		$this->getDB( DB_MASTER )->delete(
 			'oathauth_users',
 			[ 'id' => CentralIdLookup::factory()->centralIdFromLocalUser( $user->getUser() ) ],
 			__METHOD__
 		);
-		$this->cache->delete( $user->getUser()->getName() );
+
+		$userName = $user->getUser()->getName();
+		$this->cache->delete( $userName );
+
+		$this->logger->info( 'OATHAuth disabled for {user} from {clientip}', [
+			'user' => $userName,
+			'clientip' => $clientInfo,
+		] );
 	}
 
 	/**
-	 * @param integer $index DB_MASTER/DB_REPLICA
+	 * @param int $index DB_MASTER/DB_REPLICA
 	 * @return DBConnRef
 	 */
 	private function getDB( $index ) {
