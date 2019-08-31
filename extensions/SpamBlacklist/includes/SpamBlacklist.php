@@ -52,7 +52,7 @@ class SpamBlacklist extends BaseBlacklist {
 	 *
 	 * @return string[]|bool Matched text(s) if the edit should not be allowed; false otherwise
 	 */
-	function filter( array $links, Title $title = null, $preventLog = false, $mode = 'check' ) {
+	public function filter( array $links, Title $title = null, $preventLog = false, $mode = 'check' ) {
 		$statsd = MediaWikiServices::getInstance()->getStatsdDataFactory();
 		$cache = ObjectCache::getLocalClusterInstance();
 
@@ -121,9 +121,9 @@ class SpamBlacklist extends BaseBlacklist {
 				wfDebugLog( 'SpamBlacklist', "Excluding whitelisted URLs from " . count( $whitelists ) .
 					" regexes: " . implode( ', ', $whitelists ) . "\n" );
 				foreach ( $whitelists as $regex ) {
-					wfSuppressWarnings();
+					Wikimedia\suppressWarnings();
 					$newLinks = preg_replace( $regex, '', $links );
-					wfRestoreWarnings();
+					Wikimedia\restoreWarnings();
 					if ( is_string( $newLinks ) ) {
 						// If there wasn't a regex error, strip the matching URLs
 						$links = $newLinks;
@@ -136,10 +136,10 @@ class SpamBlacklist extends BaseBlacklist {
 				" regexes: " . implode( ', ', $blacklists ) . "\n" );
 			$retVal = false;
 			foreach ( $blacklists as $regex ) {
-				wfSuppressWarnings();
+				Wikimedia\suppressWarnings();
 				$matches = [];
 				$check = ( preg_match_all( $regex, $links, $matches ) > 0 );
-				wfRestoreWarnings();
+				Wikimedia\restoreWarnings();
 				if ( $check ) {
 					wfDebugLog( 'SpamBlacklist', "Match!\n" );
 					global $wgRequest;
@@ -178,7 +178,8 @@ class SpamBlacklist extends BaseBlacklist {
 
 	public function isLoggingEnabled() {
 		global $wgSpamBlacklistEventLogging;
-		return $wgSpamBlacklistEventLogging && class_exists( 'EventLogging' );
+		return $wgSpamBlacklistEventLogging &&
+			ExtensionRegistry::getInstance()->isLoaded( 'EventLogging' );
 	}
 
 	/**
@@ -253,9 +254,9 @@ class SpamBlacklist extends BaseBlacklist {
 			'action' => $action,
 			'protocol' => $parsed['scheme'],
 			'domain' => $parsed['host'],
-			'path' => isset( $parsed['path'] ) ? $parsed['path'] : '',
-			'query' => isset( $parsed['query'] ) ? $parsed['query'] : '',
-			'fragment' => isset( $parsed['fragment'] ) ? $parsed['fragment'] : '',
+			'path' => $parsed['path'] ?? '',
+			'query' => $parsed['query'] ?? '',
+			'fragment' => $parsed['fragment'] ?? '',
 		];
 
 		$this->urlChangeLog[] = $info;
@@ -269,7 +270,7 @@ class SpamBlacklist extends BaseBlacklist {
 	 * @param Title $title
 	 * @return array
 	 */
-	function getCurrentLinks( Title $title ) {
+	public function getCurrentLinks( Title $title ) {
 		$cache = ObjectCache::getMainWANInstance();
 		$fname = __METHOD__;
 		return $cache->getWithSetCallback(
@@ -334,7 +335,7 @@ class SpamBlacklist extends BaseBlacklist {
 				// Make sure checkusers can see this action if the log is restricted
 				// (which is the default)
 				if ( ExtensionRegistry::getInstance()->isLoaded( 'CheckUser' )
-					&& class_exists( 'CheckUserHooks' )
+					&& class_exists( CheckUserHooks::class )
 				) {
 					$rc = $logEntry->getRecentChange( $logid );
 					CheckUserHooks::updateCheckUserData( $rc );

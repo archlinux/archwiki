@@ -19,7 +19,7 @@
 	"multimediaviewer-multiple-authors-combine": "$1 ഒപ്പം $2",
 	"multimediaviewer-metadata-error": "ചിത്രത്തിന്റെ വിവരങ്ങൾ എടുക്കാൻ കഴിഞ്ഞില്ല (പിഴവ്: $1)",
 	"multimediaviewer-thumbnail-error": "ക്ഷമിക്കണം, പ്രമാണം പ്രദർശിപ്പിക്കാനാവില്ല",
-	"multimediaviewer-thumbnail-error-description": "എന്തോ ഒരു സാങ്കേതിക പ്രശ്നമുണ്ടെന്ന് തോന്നുന്നു. താങ്കൾ ഒന്നെങ്കിൽ $1 അല്ലെങ്കിൽ ഇത് സ്ഥിരമായിട്ട് ഉണ്ടെങ്കിൽ $3.\nപിഴവ്: $2",
+	"multimediaviewer-thumbnail-error-description": "എന്തോ ഒരു സാങ്കേതിക പ്രശ്നമുണ്ടെന്ന് തോന്നുന്നു. ഇത് സ്ഥിരമായിട്ട് ഉണ്ടെങ്കിൽ താങ്കൾ $1. പിഴവ്: $2",
 	"multimediaviewer-thumbnail-error-retry": "വീണ്ടും ശ്രമിക്കുക",
 	"multimediaviewer-thumbnail-error-report": "പ്രശ്നമാണെന്ന് അറിയിക്കുക",
 	"multimediaviewer-license-cc-by-1.0": "സി.സി. ബൈ 1.0",
@@ -58,7 +58,7 @@
 	"multimediaviewer-restriction-trademarked": "ഈ ചിത്രത്തിൽ വ്യാപാരമുദ്രാ നിയമങ്ങൾ ബാധകമായ ഉള്ളടക്കം ഉണ്ടായേക്കാം.",
 	"multimediaviewer-restriction-default": "പകർപ്പവകാശനിയമത്തിൽ ഉൾപ്പെടാത്ത നിയമവ്യവസ്ഥകളാൽ ഈ ചിത്രം നിയന്ത്രിക്കപ്പെട്ടിട്ടുണ്ടാകാം. കൂടുതൽ വിവരങ്ങൾക്ക് പ്രമാണത്തിന്റെ വിവരണം കാണുക.",
 	"multimediaviewer-restriction-default-and-others": "പകർപ്പവകാശനിയമത്തിൽ ഉൾപ്പെടാത്ത നിയമവ്യവസ്ഥകളാൽ ഈ ചിത്രം കൂടുതൽ നിയന്ത്രിക്കപ്പെട്ടിട്ടുണ്ടാകാം. കൂടുതൽ വിവരങ്ങൾക്ക് പ്രമാണത്തിന്റെ വിവരണം കാണുക.",
-	"multimediaviewer-about-mmv": "വിവരണം",
+	"multimediaviewer-about-mmv": "സമ്പർക്കമുഖത്തിന്റെ വിവരണം",
 	"multimediaviewer-discuss-mmv": "സംവാദം",
 	"multimediaviewer-help-mmv": "സഹായം",
 	"multimediaviewer-optout-mmv": "മീഡിയ ദർശനോപാധി ഒഴിവാക്കുക",
@@ -144,5 +144,6 @@
 	"multimediaviewer-enable-confirmation-text": "അടുത്ത പ്രാവശ്യം $1 സംരംഭത്തിൽ ലഘുചിത്രത്തിൽ താങ്കൾ ഞെക്കുമ്പോൾ, മീഡിയ ദർശനോപാധി ഉപയോഗിക്കപ്പെടുന്നതാണ്.",
 	"multimediaviewer-enable-alert": "മീഡിയ ദർശനോപാധി ഇപ്പോൾ പ്രവർത്തനരഹിതമാണ്",
 	"multimediaviewer-disable-info-title": "താങ്കൾ മീഡിയ ദർശനോപാധി പ്രവർത്തനരഹിതമാക്കി",
-	"multimediaviewer-disable-info": "താങ്കൾക്ക് ഇപ്പോഴും ഒറ്റയൊറ്റ പ്രമാണങ്ങൾ മീഡിയ ദർശനോപാധി ഉപയോഗിച്ച് കാണാവുന്നതാണ്."
+	"multimediaviewer-disable-info": "താങ്കൾക്ക് ഇപ്പോഴും ഒറ്റയൊറ്റ പ്രമാണങ്ങൾ മീഡിയ ദർശനോപാധി ഉപയോഗിച്ച് കാണാവുന്നതാണ്.",
+	"multimediaviewer-errorreport-privacywarning": "പിഴവിന്റെ വിശദാംശങ്ങൾ റിപ്പോർട്ടിലേക്ക് ചേർത്തു, ഇത് പരസ്യമായി കാണാവുന്നതായിരിക്കും. അത് അനുയോജ്യമായി താങ്കൾക്ക് അനുഭവപ്പെടുന്നില്ലെങ്കിൽ, റിപ്പോർട്ട് താഴെ തിരുത്താവുന്നതും, താങ്കൾ പങ്ക് വെയ്ക്കാൻ ആഗ്രഹിക്കാത്ത വിവരങ്ങൾ നീക്കം ചെയ്യാവുന്നതും ആണ്."
 }

@@ -15,7 +15,7 @@
  * along with MediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-( function ( mw, $ ) {
+( function () {
 	QUnit.module( 'mmv.ui.ProgressBar', QUnit.newMwEnvironment() );
 
 	QUnit.test( 'Constructor sanity check', function ( assert ) {
@@ -74,4 +74,4 @@
 		assert.strictEqual( progress.$progress.hasClass( 'empty' ), true, 'Progress bar is hidden' );
 		assert.strictEqual( progress.$percent.width(), 0, 'Progress bar\'s indicator is at 0' );
 	} );
-}( mediaWiki, jQuery ) );
+}() );

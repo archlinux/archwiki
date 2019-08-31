@@ -3,10 +3,11 @@
 		"authors": [
 			"Chaduvari",
 			"Ravichandra",
-			"Veeven"
+			"Veeven",
+			"Pavan santhosh.s"
 		]
 	},
-	"cite-desc": "ఉదహరింపులకు <code><nowiki><ref[ name=id]></nowiki></code> మరియు <code><nowiki><references/></nowiki></code> టాగులను చేర్చుతుంది",
+	"cite-desc": "ఉదహరింపులకు <code>&lt;ref[ name=id]&gt;</code>, <code>&lt;references/&gt;</code> టాగులను చేర్చుతుంది",
 	"cite_error": "ఉదహరింపు పొరపాటు: $1",
 	"cite_error_ref_numeric_key": "తప్పుడు <code>&lt;ref&gt;</code> టాగు; పేరు సరళ సంఖ్య అయివుండకూడదు, వివరమైన శీర్షిక వాడండి",
 	"cite_error_ref_no_key": "సరైన <code>&lt;ref&gt;</code> ట్యాగు కాదు; విషయం లేని ref లకు తప్పనిసరిగా పేరొకటుండాలి",

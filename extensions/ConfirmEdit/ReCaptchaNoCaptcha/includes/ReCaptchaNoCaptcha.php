@@ -20,7 +20,7 @@ class ReCaptchaNoCaptcha extends SimpleCaptcha {
 		$output = Html::element( 'div', [
 			'class' => [
 				'g-recaptcha',
-				'mw-confirmedit-captcha-fail' => !!$this->error,
+				'mw-confirmedit-captcha-fail' => (bool)$this->error,
 			],
 			'data-sitekey' => $wgReCaptchaSiteKey
 		] );
@@ -82,8 +82,12 @@ HTML;
 	protected function getCaptchaParamsFromRequest( WebRequest $request ) {
 		// ReCaptchaNoCaptcha combines captcha ID + solution into a single value
 		// API is hardwired to return captchaWord, so use that if the standard isempty
+		// "captchaWord" is sent as "captchaword" by visual editor
 		$index = 'not used';
-		$response = $request->getVal( 'g-recaptcha-response', $request->getVal( 'captchaWord' ) );
+		$response = $request->getVal( 'g-recaptcha-response',
+						$request->getVal( 'captchaWord',
+							$request->getVal( 'captchaword' )
+						) );
 		return [ $index, $response ];
 	}
 

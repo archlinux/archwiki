@@ -3,7 +3,8 @@
 		"authors": [
 			"Joseph",
 			"Vito Genovese",
-			"TmY e12"
+			"TmY e12",
+			"Arystanbek"
 		]
 	},
 	"log-name-titleblacklist": "Ad kara listesi günlüğü",
@@ -18,5 +19,6 @@
 	"titleblacklist-override": "Karalisteyi yoksay",
 	"right-tboverride": "Başlık karalistesini geçersiz kıl",
 	"right-tboverride-account": "Kullanıcı adı karalistesini geçersiz kıl",
-	"right-titleblacklistlog": "Karaliste günlüğünü gör"
+	"right-titleblacklistlog": "Karaliste günlüğünü gör",
+	"visualeditor-saveerror-titleblacklist": "Kaydetme hatası sayfa: Bu sayfanın adı kara listeye alındı"
 }

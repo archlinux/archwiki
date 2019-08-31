@@ -212,6 +212,13 @@ $namespaceNames['mzn'] = [
 	NS_GADGET_DEFINITION_TALK => 'گجت_توضیحات_گپ',
 ];
 
+$namespaceNames['nap'] = [
+	NS_GADGET => 'Pazziella',
+	NS_GADGET_TALK => 'Pazziella_chiàcchiera',
+	NS_GADGET_DEFINITION => 'Pazziella_definizzione',
+	NS_GADGET_DEFINITION_TALK => 'Pazziella_definizzione_chiàcchiera',
+];
+
 $namespaceNames['nl'] = [
 	NS_GADGET => 'Uitbreiding',
 	NS_GADGET_TALK => 'Overleg_uitbreiding',
@@ -238,6 +245,13 @@ $namespaceNames['pnb'] = [
 	NS_GADGET_TALK => 'آلہ_گل_بات',
 	NS_GADGET_DEFINITION => 'آلہ_تعریف',
 	NS_GADGET_DEFINITION_TALK => 'آلہ_تعریف_گل_بات',
+];
+
+$namespaceNames['ru'] = [
+	NS_GADGET => 'Гаджет',
+	NS_GADGET_TALK => 'Обсуждение_гаджета',
+	NS_GADGET_DEFINITION => 'Определение_гаджета',
+	NS_GADGET_DEFINITION_TALK => 'Обсуждение_определения_гаджета',
 ];
 
 $namespaceNames['sat'] = [

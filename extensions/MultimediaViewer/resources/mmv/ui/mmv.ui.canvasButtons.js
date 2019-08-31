@@ -15,7 +15,7 @@
  * along with MultimediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-( function ( mw, $, oo ) {
+( function () {
 	var CBP;
 
 	/**
@@ -104,7 +104,7 @@
 			buttons.emit( 'prev' );
 		} );
 	}
-	oo.inheritClass( CanvasButtons, mw.mmv.ui.Element );
+	OO.inheritClass( CanvasButtons, mw.mmv.ui.Element );
 	CBP = CanvasButtons.prototype;
 
 	/**
@@ -149,6 +149,8 @@
 
 		// We don't use animation chaining because delay() can't be stop()ed
 		this.buttonsFadeTimeout = setTimeout( function () {
+			// FIXME: Use CSS transition
+			// eslint-disable-next-line no-jquery/no-animate
 			buttons.$buttons.not( '.disabled' ).animate( { opacity: 0 }, 1000, 'swing',
 				function () {
 					buttons.$buttons.addClass( 'hidden' );
@@ -282,4 +284,4 @@
 	};
 
 	mw.mmv.ui.CanvasButtons = CanvasButtons;
-}( mediaWiki, jQuery, OO ) );
+}() );

@@ -32,7 +32,7 @@ if ( getenv( 'MW_INSTALL_PATH' ) ) {
 require_once "$IP/maintenance/Maintenance.php";
 
 class UpdateScratchTokenFormat extends Maintenance {
-	function __construct() {
+	public function __construct() {
 		parent::__construct();
 		$this->mDescription = 'Script to update scratch_token column format';
 		$this->requireExtension( 'OATHAuth' );
@@ -47,5 +47,5 @@ class UpdateScratchTokenFormat extends Maintenance {
 	}
 }
 
-$maintClass = "UpdateScratchTokenFormat";
+$maintClass = UpdateScratchTokenFormat::class;
 require_once RUN_MAINTENANCE_IF_MAIN;

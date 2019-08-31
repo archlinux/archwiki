@@ -15,7 +15,7 @@
  * along with MultimediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-( function ( mw, $, oo ) {
+( function () {
 	var RUP;
 
 	/**
@@ -44,14 +44,14 @@
 			items = [],
 			choices = {};
 
-		dropdown = new oo.ui.DropdownWidget( {
+		dropdown = new OO.ui.DropdownWidget( {
 			classes: classes
 		} );
 
 		for ( i = 0; i < options.length; i++ ) {
 			option = options[ i ];
 
-			choices[ option ] = new oo.ui.MenuOptionWidget( {
+			choices[ option ] = new OO.ui.MenuOptionWidget( {
 				data: {
 					name: option,
 					height: null,
@@ -207,4 +207,4 @@
 	};
 
 	mw.mmv.ui.Utils = Utils;
-}( mediaWiki, jQuery, OO ) );
+}() );

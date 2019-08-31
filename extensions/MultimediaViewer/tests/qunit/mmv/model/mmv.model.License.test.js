@@ -15,7 +15,7 @@
  * along with MediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-( function ( mw, $ ) {
+( function () {
 
 	QUnit.module( 'mmv.model.License', QUnit.newMwEnvironment() );
 
@@ -158,4 +158,4 @@
 			'Public Domain for lack of originality', false );
 		assert.strictEqual( license.needsAttribution(), false, 'Attribution required flag handled correctly' );
 	} );
-}( mediaWiki, jQuery ) );
+}() );

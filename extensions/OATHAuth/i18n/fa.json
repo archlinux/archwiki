@@ -6,7 +6,8 @@
 			"Alirezaaa",
 			"Huji",
 			"Reza1615",
-			"Ladsgroup"
+			"Ladsgroup",
+			"درفش کاویانی"
 		]
 	},
 	"oathauth-desc": "پشتیبانی از اعتبارسنجی با استفاده از گذرواژه‌های یکبار مصرف مبتنی بر اچ‌ام‌ای‌سی",
@@ -28,6 +29,7 @@
 	"oathauth-step3": "قدم ۳: کدهای دورانداختنی را یادداشت کنید",
 	"oathauth-step4": "قدم ۴: تأیید",
 	"oathauth-entertoken": "کدی که در برنامهٔ روی دستگاه‌تان نمایش داده شده وارد کنید تا تأیید شوید:",
+	"oathauth-enteruser": "نام کاربری:",
 	"right-oathauth-enable": "فعال‌سازی اعتبارسنجی دومرحله‌ای",
 	"action-oathauth-enable": "فعال‌سازی اعتبارسنجی دومرحله‌ای",
 	"oathauth-auth-token-label": "بلیط",

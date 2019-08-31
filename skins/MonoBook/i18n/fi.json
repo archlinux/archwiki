@@ -19,5 +19,6 @@
 	"monobook-more-actions": "Lisää",
 	"monobook-cactions-label": "Sivun toiminnot",
 	"monobook-notifications-link": "Ilmoitukset ($1)",
-	"monobook-notifications-link-none": "Ilmoitukset"
+	"monobook-notifications-link-none": "Ilmoitukset",
+	"monobook-responsive-label": "Ota käyttöön responsiivinen MonoBook"
 }

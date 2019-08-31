@@ -15,7 +15,7 @@
  * along with MediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-( function ( mw ) {
+( function () {
 	var LP;
 
 	/**
@@ -141,4 +141,4 @@
 	};
 
 	mw.mmv.model.License = License;
-}( mediaWiki ) );
+}() );

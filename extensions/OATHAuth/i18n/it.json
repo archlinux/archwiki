@@ -5,7 +5,8 @@
 			"Darth Kule",
 			"Gianfranco",
 			"McDutchie",
-			"Ruthven"
+			"Ruthven",
+			"Sakretsu"
 		]
 	},
 	"oathauth-desc": "Fornisce supporto per l'autenticazione utilizzando password a uso singolo basate su HMAC",
@@ -27,6 +28,10 @@
 	"oathauth-step3": "Passo 3: scrivi i codici usa e getta",
 	"oathauth-step4": "Passo 4: verifica",
 	"oathauth-entertoken": "Inserisci un codice dal tuo dispositivo di autenticazione per verificare:",
+	"oathauth-disable-for-user": "Disabilita autenticazione a due fattori per un utente",
+	"right-oathauth-disable-for-user": "Disabilita l'autenticazione a due fattori per un utente",
+	"oathauth-enteruser": "Nome utente:",
+	"oathauth-user-not-does-not-have-oath-enabled": "L'utente non ha l'autenticazione a due fattori abilitata, quindi non c'è nulla da disabilitare",
 	"right-oathauth-enable": "Abilita autenticazione a due fattori",
 	"action-oathauth-enable": "abilitare l'autenticazione a due fattori",
 	"oathauth-auth-token-label": "Token",
@@ -35,6 +40,7 @@
 	"oathauth-throttled": "Troppi tentativi di verifica! Attendi $1.",
 	"oathauth-login-failed": "Verifica non riuscita.",
 	"oathauth-describe-provider": "Autenticazione a due fattori (OATH).",
+	"grant-oath": "Accede a informazioni sull'autenticazione a due fattori (OATH) proprie e di altri",
 	"apihelp-query+oath-example-1": "Ottieni informazioni sull'utente attuale",
 	"apihelp-query+oath-example-2": "Ottieni informazioni sull'utente <kbd>Example</kbd>",
 	"apihelp-oathvalidate-description": "Convalida un token di autenticazione a due fattori (OATH).",

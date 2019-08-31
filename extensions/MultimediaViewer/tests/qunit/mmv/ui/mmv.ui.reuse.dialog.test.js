@@ -15,7 +15,7 @@
  * along with MultimediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-( function ( mw, $ ) {
+( function () {
 	function makeReuseDialog( sandbox ) {
 		var $fixture = $( '#qunit-fixture' ),
 			config = { getFromLocalStorage: sandbox.stub(), setInLocalStorage: sandbox.stub() };
@@ -189,7 +189,11 @@
 				width: 100,
 				height: 80
 			},
-			embedFileInfo = new mw.mmv.model.EmbedFileInfo( title, src, url );
+			embedFileInfo = {
+				imageInfo: title,
+				repoInfo: src,
+				caption: url
+			};
 
 		reuseDialog.set( image, embedFileInfo );
 		reuseDialog.empty();
@@ -247,4 +251,4 @@
 		assert.strictEqual( reuseDialog.getImageWarnings( imageDeleted ).length, 1, 'Deletion detected' );
 	} );
 
-}( mediaWiki, jQuery ) );
+}() );

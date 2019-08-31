@@ -5,7 +5,8 @@
 			"Hugo.arg",
 			"Albertas",
 			"Tomasdd",
-			"Manvydasz"
+			"Manvydasz",
+			"Vogone"
 		]
 	},
 	"fancycaptcha-addurl": "Jūsų pakeitimuose yra nauja išorinė nuoroda.\nKad apsaugotume šį viki nuo automatizuoto brukalo, maloniai prašome jūsų įvesti žemiau nurodytus žodžius į langelį ([[Special:Captcha/help|daugiau informacijos]]):",
@@ -18,5 +19,6 @@
 	"fancycaptcha-sendemail": "Kad apsaugotumėme viki nuo automatizuoto brukalo, maloniai prašome jūsų įvesti žemiau nurodytus žodžius į langelį ([[Special:Captcha/help|daugiau informacijos]]):",
 	"fancycaptcha-reload-text": "Rodyti kitą",
 	"apihelp-fancycaptchareload-description": "Gauti naują FancyCaptcha.",
+	"apihelp-fancycaptchareload-summary": "Gauti naują FancyCaptcha.",
 	"apihelp-fancycaptchareload-example-1": "Gauti naują FancyCaptcha"
 }

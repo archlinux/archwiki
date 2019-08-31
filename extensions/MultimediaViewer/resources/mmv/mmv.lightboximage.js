@@ -15,7 +15,7 @@
  * along with MultimediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-( function ( mw ) {
+( function () {
 
 	/**
 	 * Represents an image on the page.
@@ -60,4 +60,4 @@
 	}
 
 	mw.mmv.LightboxImage = LightboxImage;
-}( mediaWiki, jQuery ) );
+}() );

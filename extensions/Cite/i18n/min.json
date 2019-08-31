@@ -4,7 +4,7 @@
 			"Iwan Novirion"
 		]
 	},
-	"cite-desc": "Manambahkan tag <code><nowiki><ref[ name=id]></nowiki></code> jo <code><nowiki><references/></nowiki></code> untuak kutipan",
+	"cite-desc": "Manambahkan tag <code>&lt;ref[ name=id]&gt;</code> jo <code>&lt;references/&gt;</code> untuak kutipan",
 	"cite_error": "Kutipan rusak: $1",
 	"cite_error_ref_numeric_key": "Tag <code>&lt;ref&gt;</code> indak sah;\nparameter indak buliah angko atau/hurup sadarano.\nGunoan namo nan deskriptif",
 	"cite_error_ref_no_key": "Tag <code>&lt;ref&gt;</code> indak sah;\nrujuakan kosong harus ado namo",

@@ -9,7 +9,7 @@
 	"categorytree-mode-all": "ꯂꯃꯥꯏꯁꯤꯡ ꯂꯣꯏꯅꯥ",
 	"categorytree-collapse": "ꯁꯨꯞꯆꯤꯟꯕ",
 	"categorytree-expand": "ꯄꯥꯛꯊꯣꯛꯄꯥ",
-	"categorytree-member-counts": "Contains {{PLURAL:$1|1 subcategory|$1 subcategories}}, {{PLURAL:$2|1 page|$2 pages}}, and {{PLURAL:$3|1 file|$3 files}}",
+	"categorytree-member-counts": "ꯌꯥꯎ ꯏ {{PLURAL:$1|1 ꯄꯤꯛꯊꯕ ꯃꯆꯥꯈꯥꯏꯕ|$1 ꯄꯤꯛꯊꯕ ꯃꯆꯥꯈꯕꯁꯤꯡ}}, {{PLURAL:$2|1 ꯂꯃꯥꯏ|$2 ꯂꯃꯥꯏꯁꯤꯡ}}, ꯑꯃꯁꯨꯡ {{PLURAL:$3|1 ꯐꯥꯏꯜ|$3 ꯐꯥꯏꯜꯁꯤꯡ}}",
 	"categorytree-num-categories": "$1 C",
 	"categorytree-num-pages": "$1 P",
 	"categorytree-num-files": "$1 F",

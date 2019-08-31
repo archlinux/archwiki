@@ -111,7 +111,6 @@ Preserve tags in #switch default value
 {{#switch:a|b|<div>c</div>}}
 !! result
 <div>c</div>
-
 !! end
 
 !! test
@@ -213,7 +212,6 @@ yes
 no
 </p>
 <ul><li>no</li></ul>
-
 !! end
 
 

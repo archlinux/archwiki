@@ -4,5 +4,23 @@
 			"Épine"
 		]
 	},
-	"specialpages-group-oath": "دڵنیاکەرەوەی جووت-فاکتەر"
+	"specialpages-group-oath": "دڵنیاکەرەوەی جووت-فاکتەر",
+	"oathauth-account": "ناوی هەژمار",
+	"oathauth-secret": "کلیلی نهێنی دڵنیاکەرەوەی جووت-فاکتەر:",
+	"oathauth-enable": "کاراکردنی دڵنیاکەرەوەی جووت-فاکتەر",
+	"oathauth-disable": "لەکارخستنی دڵنیاکەرەوەی جووت-فاکتەر",
+	"oathauth-disabledoath": "دڵنیاکەرەوەی جووت-فاکتەر لەکارخرا",
+	"oathauth-prefs-label": "دڵنیاکەرەوەی جووت-فاکتەر",
+	"oathauth-step1": "هەنگاوی ١: پرۆگرامێکی دڵنیاکەرەوەی جووت-فاکتەر دابگرە",
+	"oathauth-step1-test": "پرۆگرامێکی دڵنیاکەرەوەی جووت-فاکتەر، وەک Google Authenticator دابگرە.",
+	"oathauth-step2": "هەنگاوی ٢: کۆدی کیو-ئاڕەکە سکان بکە",
+	"oathauth-step2alt": "یان کلیلەکە بە دەست بنووسە:",
+	"oathauth-step3": "هەنگاوی ٣: کۆدی حاڵەتی بەپەلە لای خۆت بنووسە",
+	"oathauth-step4": "هەنگاوی ٤: دڵنیابوونەوە",
+	"oathauth-entertoken": "کۆدی بەرنامەی دڵنیاکەرەوەکەت لێرە بنووسە بۆ دڵنیابوونەوە لە دروست کارکردنی:",
+	"oathauth-disable-for-user": "لەکارخستنی دڵنیاکەرەوەی جووت-فاکتەر بۆ بەکارهێنەرێک",
+	"oathauth-enteruser": "ناوی بەکارھێنەر:",
+	"right-oathauth-enable": "کاراکردنی دڵنیاکەرەوەی جووت-فاکتەر",
+	"action-oathauth-enable": "کاراکردنی دڵنیاکەرەوەی جووت-فاکتەر",
+	"oathauth-login-failed": "دڵنیابوونەوە شکستی هێنا."
 }

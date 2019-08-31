@@ -1,4 +1,4 @@
-( function ( mw ) {
+( function () {
 	QUnit.module( 'mmv.EmbedFileFormatter', QUnit.newMwEnvironment() );
 
 	function createEmbedFileInfo( options ) {
@@ -28,7 +28,11 @@
 			repoInfo = { displayName: options.siteName, getSiteLink:
 				function () { return options.siteUrl; } };
 
-		return new mw.mmv.model.EmbedFileInfo( imageInfo, repoInfo, options.caption );
+		return {
+			imageInfo: imageInfo,
+			repoInfo: repoInfo,
+			caption: options.caption
+		};
 	}
 
 	QUnit.test( 'EmbedFileFormatter constructor sanity check', function ( assert ) {
@@ -66,7 +70,7 @@
 
 	QUnit.test( 'getSiteLink():', function ( assert ) {
 		var repoInfo = new mw.mmv.model.Repo( 'Wikipedia', '//wikipedia.org/favicon.ico', true ),
-			info = new mw.mmv.model.EmbedFileInfo( {}, repoInfo ),
+			info = { imageInfo: {}, repoInfo: repoInfo },
 			formatter = new mw.mmv.EmbedFileFormatter(),
 			siteUrl = repoInfo.getSiteLink(),
 			siteLink = formatter.getSiteLink( info );
@@ -112,6 +116,7 @@
 		assert.ok( generatedHtml.match( width ), 'Width appears in generated HTML' );
 		assert.ok( generatedHtml.match( height ), 'Height appears in generated HTML' );
 		// .includes() for checking the short url since it contains a ? (bad for regex). Could escape instead.
+		// eslint-disable-next-line no-restricted-syntax
 		assert.ok( generatedHtml.includes( filePageShortUrl ), 'Short URL appears in generated HTML' );
 
 		// Bylines, no license and site
@@ -128,6 +133,7 @@
 		assert.ok( generatedHtml.match( 'Iliad' ), 'Source appears in generated HTML' );
 		assert.ok( generatedHtml.match( width ), 'Width appears in generated HTML' );
 		assert.ok( generatedHtml.match( height ), 'Height appears in generated HTML' );
+		// eslint-disable-next-line no-restricted-syntax
 		assert.ok( generatedHtml.includes( filePageShortUrl ), 'Short URL appears in generated HTML' );
 
 		// No bylines, license and site
@@ -145,6 +151,7 @@
 		assert.notOk( generatedHtml.match( 'Iliad' ), 'Source should not appear in generated HTML' );
 		assert.ok( generatedHtml.match( width ), 'Width appears in generated HTML' );
 		assert.ok( generatedHtml.match( height ), 'Height appears in generated HTML' );
+		// eslint-disable-next-line no-restricted-syntax
 		assert.ok( generatedHtml.includes( filePageShortUrl ), 'Short URL appears in generated HTML' );
 
 		// No bylines, no license and site
@@ -160,6 +167,7 @@
 		assert.notOk( generatedHtml.match( 'Iliad' ), 'Source should not appear in generated HTML' );
 		assert.ok( generatedHtml.match( width ), 'Width appears in generated HTML' );
 		assert.ok( generatedHtml.match( height ), 'Height appears in generated HTML' );
+		// eslint-disable-next-line no-restricted-syntax
 		assert.ok( generatedHtml.includes( filePageShortUrl ), 'Short URL appears in generated HTML' );
 
 	} );
@@ -290,4 +298,4 @@
 
 		assert.strictEqual( html, 'By Author - Source, <a href="http://www.wtfpl.net/">WTFPL v2</a>, <a href="some link">Link</a>', 'Sanity check' );
 	} );
-}( mediaWiki ) );
+}() );

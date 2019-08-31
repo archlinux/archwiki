@@ -1,31 +1,24 @@
 <?php
 
+use MediaWiki\Extensions\ParserFunctions\ExprParser;
+
 /**
- * @covers ExprParser
+ * @covers \MediaWiki\Extensions\ParserFunctions\ExprParser
  */
 class ExpressionTest extends MediaWikiTestCase {
 
 	/**
-	 * @var ExprParser
-	 */
-	protected $parser;
-
-	protected function setUp() {
-		parent::setUp();
-		$this->parser = new ExprParser();
-	}
-
-	/**
 	 * @dataProvider provideExpressions
 	 */
-	function testExpression( $input, $expected ) {
+	public function testExpression( $input, $expected ) {
+		$parser = new ExprParser();
 		$this->assertEquals(
 			$expected,
-			$this->parser->doExpression( $input )
+			$parser->doExpression( $input )
 		);
 	}
 
-	function provideExpressions() {
+	public function provideExpressions() {
 		return [
 			[ '1 or 0', '1' ],
 			[ 'not (1 and 0)', '1' ],

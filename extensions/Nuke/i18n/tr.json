@@ -20,7 +20,6 @@
 	"nuke-submit-user": "Git",
 	"nuke-submit-delete": "Seçileni sil",
 	"right-nuke": "Sayfaları kitlesel olarak sil",
-	"nuke-select": "Seçilmiş: $1",
 	"nuke-userorip": "Kullanıcı adı, IP adresi veya boş:",
 	"nuke-maxpages": "Maksimum sayfa sayısı:",
 	"nuke-deleted": "'''$1''' sayfası silindi.",

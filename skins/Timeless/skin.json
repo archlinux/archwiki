@@ -7,6 +7,9 @@
 	"namemsg": "skinname-timeless",
 	"license-name": "GPL-2.0-or-later",
 	"type": "skin",
+	"requires": {
+		"MediaWiki": ">= 1.31.0"
+	},
 	"ValidSkinNames": {
 		"timeless": "Timeless"
 	},
@@ -81,7 +84,8 @@
 			"+oojs-ui-core.styles": "resources/ooui.less",
 			"+ext.echo.styles.badge": "resources/extensions/Echo.less",
 			"+ext.visualEditor.core": "resources/extensions/VisualEditor.core.less",
-			"+ext.visualEditor.desktopArticleTarget.noscript": "resources/extensions/VisualEditor.article.less"
+			"+ext.visualEditor.desktopArticleTarget.noscript": "resources/extensions/VisualEditor.article.less",
+			"+ext.dismissableSiteNotice.styles": "resources/extensions/DismissableSiteNotice.less"
 		}
 	},
 	"AutoloadClasses": {

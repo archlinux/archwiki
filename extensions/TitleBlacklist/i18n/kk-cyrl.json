@@ -19,6 +19,5 @@
 	"right-tboverride": "Атаулардың немесе қатысушы атаулары қара тізіміне енетін жазбалардың үстінен жазу",
 	"right-tboverride-account": "Қатысушы атауларының қара тізіміне енетін жазбалардың үстінен жазу",
 	"right-titleblacklistlog": "Атаулардың қара тізімі журналын қарау",
-	"apihelp-titleblacklist-param-action": "Әрекет терксерілді.",
-	"apihelp-titleblacklist-param-nooverride": "Атаулардың қара тізімінің үстінен жазбаңыз."
+	"visualeditor-saveerror-titleblacklist": "Бетті сақтаудағы қате: Бұл бет атауы қара тізімге енген"
 }

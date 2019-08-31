@@ -3,7 +3,12 @@
 		"authors": [
 			"Mogoeilor",
 			"Bonevarluri",
-			"Macofe"
+			"Macofe",
+			"Lorestani"
 		]
-	}
+	},
+	"visualeditor-cite-tool-name-book": "كتاو",
+	"visualeditor-cite-tool-name-journal": "ژۊرنال",
+	"visualeditor-cite-tool-name-web": "دؽارگٱ",
+	"cite-ve-dialogbutton-reference-tooltip": "ٱساسی"
 }

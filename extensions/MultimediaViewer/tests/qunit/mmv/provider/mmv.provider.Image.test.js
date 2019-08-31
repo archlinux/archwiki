@@ -15,7 +15,7 @@
  * along with MultimediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-( function ( mw, $ ) {
+( function () {
 	QUnit.module( 'mmv.provider.Image', QUnit.newMwEnvironment() );
 
 	QUnit.test( 'Image constructor sanity check', function ( assert ) {
@@ -31,7 +31,7 @@
 			imageProvider = new mw.mmv.provider.Image();
 
 		imageProvider.imagePreloadingSupported = function () { return false; };
-		imageProvider.performance.recordEntry = $.noop;
+		imageProvider.performance.recordEntry = function () {};
 
 		return imageProvider.get( url ).then( function ( image ) {
 			assert.ok( image instanceof HTMLImageElement,
@@ -49,7 +49,7 @@
 			imageProvider = new mw.mmv.provider.Image();
 
 		imageProvider.imagePreloadingSupported = function () { return false; };
-		imageProvider.performance.recordEntry = $.noop;
+		imageProvider.performance.recordEntry = function () {};
 
 		return QUnit.whenPromisesComplete(
 			imageProvider.get( url ).then( function ( image ) {
@@ -98,7 +98,7 @@
 					} );
 				},
 
-				open: $.noop };
+				open: function () {} };
 		};
 
 		imageProvider.performance.recordEntry = function ( type, total, url ) {
@@ -142,7 +142,7 @@
 			mwLogCalled = false;
 
 		imageProvider.imagePreloadingSupported = function () { return false; };
-		imageProvider.performance.recordEntry = $.noop;
+		imageProvider.performance.recordEntry = function () {};
 		mw.log = function () { mwLogCalled = true; };
 
 		imageProvider.get( 'doesntexist.png' ).fail( function () {
@@ -197,4 +197,4 @@
 
 		imageProvider.get( 'http://www.wikipedia.org/' );
 	} );
-}( mediaWiki, jQuery ) );
+}() );

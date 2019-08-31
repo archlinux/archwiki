@@ -6,7 +6,8 @@
 			"Giro720",
 			"Luckas",
 			"555",
-			"Felipe L. Ewald"
+			"Felipe L. Ewald",
+			"TheGabrielZaum"
 		]
 	},
 	"action-titleblacklistlog": "ver os registros da lista negra de título",
@@ -27,12 +28,5 @@
 	"right-tboverride": "Contornar a lista negra de títulos e nomes de usuário",
 	"right-tboverride-account": "Contornar a lista negra de nomes de usuários",
 	"right-titleblacklistlog": "Ver o registro da lista negra de títulos",
-	"apihelp-titleblacklist-description": "Valide um título de página, nome de arquivo ou nome de usuário no TitleBlacklist.",
-	"apihelp-titleblacklist-summary": "Valide um título de página, nome de arquivo ou nome de usuário no TitleBlacklist.",
-	"apihelp-titleblacklist-param-title": "A string para validar contra a lista negra.",
-	"apihelp-titleblacklist-param-action": "A ação a ser verificada.",
-	"apihelp-titleblacklist-param-nooverride": "Não tente substituir a lista negra de títulos.",
-	"apihelp-titleblacklist-example-1": "Verifique se [[Foo]] está na lista negra",
-	"apihelp-titleblacklist-example-2": "Verificar se [[Bar]] está na lista negra para edição",
-	"apihelp-createaccount-param-ignoretitleblacklist": "Ignorar verificações de falsificação (requer um dos seguintes direitos: <code>tboverride</code>, <code>tboverride-account</code>)."
+	"visualeditor-saveerror-titleblacklist": "Erro ao salvar página: O título desta página está na lista negra"
 }

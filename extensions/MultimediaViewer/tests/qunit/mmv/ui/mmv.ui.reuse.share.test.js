@@ -15,7 +15,7 @@
  * along with MultimediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-( function ( mw, $ ) {
+( function () {
 	function makeShare() {
 		return new mw.mmv.ui.reuse.Share( $( '#qunit-fixture' ) );
 	}
@@ -92,4 +92,4 @@
 		share.pageInput.$element.find( 'input' ).triggerHandler( 'focus' );
 	} );
 
-}( mediaWiki, jQuery ) );
+}() );

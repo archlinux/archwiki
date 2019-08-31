@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"PiefPafPier"
+		]
+	},
+	"pfunc_expr_unrecognised_word": "Flater yn útdrukking: Net-werkend wurd \"$1\".",
+	"pfunc_expr_unrecognised_punctuation": "Flater yn útdrukking: Net-werkend lêsteken \"$1\"."
+}

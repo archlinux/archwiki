@@ -1,4 +1,4 @@
-( function ( mw, $ ) {
+( function () {
 	QUnit.module( 'mmv.ui', QUnit.newMwEnvironment( {
 		setup: function () {
 			this.clock = this.sandbox.useFakeTimers();
@@ -21,7 +21,7 @@
 
 	QUnit.test( 'setInlineStyle()', function ( assert ) {
 		var element = new mw.mmv.ui.Element( $( '<div>' ) ),
-			$testDiv = $( '<div id="mmv-testdiv">!!!</div>' ).appendTo( '#qunit-fixture' );
+			$testDiv = $( '<div>' ).attr( 'id', 'mmv-testdiv' ).text( '!!!' ).appendTo( '#qunit-fixture' );
 
 		assert.ok( $testDiv.is( ':visible' ), 'Test div is visible' );
 
@@ -106,4 +106,4 @@
 
 		assert.strictEqual( element.correctEW( 'e' ), 'e', 'no flipping in LTR documents' );
 	} );
-}( mediaWiki, jQuery ) );
+}() );

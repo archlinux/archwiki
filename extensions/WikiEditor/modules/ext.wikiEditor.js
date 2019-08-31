@@ -2,51 +2,70 @@
  * JavaScript for WikiEditor
  */
 
-( function ( $, mw ) {
-	var editingSessionId;
+( function () {
+	var editingSessionId,
+		actionPrefixMap = {
+			saveIntent: 'save_intent',
+			saveAttempt: 'save_attempt',
+			saveSuccess: 'save_success',
+			saveFailure: 'save_failure'
+		};
 
 	function logEditEvent( action, data ) {
-		if ( mw.loader.getState( 'schema.Edit' ) === null ) {
+		if ( mw.loader.getState( 'schema.EditAttemptStep' ) === null ) {
 			return;
 		}
 
-		// Sample 6.25% (via hex digit)
-		// We have to do this on the client too because the unload handler
-		// can cause an editingSessionId to be generated on the client
-		if ( editingSessionId.charAt( 0 ) > '0' ) {
-			return;
-		}
+		mw.loader.using( [ 'schema.EditAttemptStep', 'ext.eventLogging.subscriber' ] ).done( function () {
+			// Sampling
+			// We have to do this on the client too because the unload handler
+			// can cause an editingSessionId to be generated on the client
+			// Not using mw.eventLog.inSample() because we need to be able to pass our own editingSessionId
+			var inSample = mw.eventLog.randomTokenMatch(
+					1 / mw.config.get( 'wgWMESchemaEditAttemptStepSamplingRate' ),
+					editingSessionId
+				),
+				actionPrefix = actionPrefixMap[ action ] || action;
 
-		mw.loader.using( 'schema.Edit' ).done( function () {
+			if ( !inSample && !mw.config.get( 'wgWMESchemaEditAttemptStepOversample' ) ) {
+				return;
+			}
+
+			/* eslint-disable camelcase */
 			data = $.extend( {
 				version: 1,
 				action: action,
-				editor: 'wikitext',
+				is_oversample: !inSample,
+				editing_session_id: editingSessionId,
+				page_token: mw.user.getPageviewToken(),
+				session_token: mw.user.sessionId(),
+				editor_interface: 'wikitext',
 				platform: 'desktop', // FIXME
 				integration: 'page',
-				'page.id': mw.config.get( 'wgArticleId' ),
-				'page.title': mw.config.get( 'wgPageName' ),
-				'page.ns': mw.config.get( 'wgNamespaceNumber' ),
-				'page.revid': mw.config.get( 'wgRevisionId' ),
-				'user.id': mw.user.getId(),
-				'user.editCount': mw.config.get( 'wgUserEditCount', 0 ),
-				'mediawiki.version': mw.config.get( 'wgVersion' )
+				page_id: mw.config.get( 'wgArticleId' ),
+				page_title: mw.config.get( 'wgPageName' ),
+				page_ns: mw.config.get( 'wgNamespaceNumber' ),
+				revision_id: mw.config.get( 'wgRevisionId' ),
+				user_id: mw.user.getId(),
+				user_editcount: mw.config.get( 'wgUserEditCount', 0 ),
+				mw_version: mw.config.get( 'wgVersion' )
 			}, data );
 
 			if ( mw.user.isAnon() ) {
-				data[ 'user.class' ] = 'IP';
+				data.user_class = 'IP';
 			}
 
-			data[ 'action.' + action + '.type' ] = data.type;
-			data[ 'action.' + action + '.mechanism' ] = data.mechanism;
-			data[ 'action.' + action + '.timing' ] = data.timing === undefined ?
-				0 : Math.floor( data.timing );
+			data[ actionPrefix + '_type' ] = data.type;
+			data[ actionPrefix + '_mechanism' ] = data.mechanism;
+			data[ actionPrefix + '_timing' ] = data.timing === undefined ? 0 : Math.floor( data.timing );
+			/* eslint-enable camelcase */
+
 			// Remove renamed properties
 			delete data.type;
 			delete data.mechanism;
 			delete data.timing;
 
-			mw.eventLog.logEvent( 'Edit', data );
+			mw.eventLog.logEvent( 'EditAttemptStep', data );
 		} );
 	}
 
@@ -66,17 +85,15 @@
 				// that don't, we just ignore them, so as to not skew the
 				// results towards better-performance in those cases.
 				logEditEvent( 'ready', {
-					editingSessionId: editingSessionId,
 					timing: Date.now() - window.performance.timing.navigationStart
 				} );
 				$textarea.on( 'wikiEditor-toolbar-doneInitialSections', function () {
 					logEditEvent( 'loaded', {
-						editingSessionId: editingSessionId,
 						timing: Date.now() - window.performance.timing.navigationStart
 					} );
 				} );
 			}
-			$textarea.closest( 'form' ).submit( function () {
+			$textarea.closest( 'form' ).on( 'submit', function () {
 				submitting = true;
 			} );
 			onUnloadFallback = window.onunload;
@@ -105,7 +122,6 @@
 
 				if ( !submitting ) {
 					logEditEvent( 'abort', {
-						editingSessionId: editingSessionId,
 						type: abortType
 					} );
 				}
@@ -123,4 +139,4 @@
 			};
 		}
 	} );
-}( jQuery, mediaWiki ) );
+}() );

@@ -7,7 +7,7 @@
 	},
 	"apihelp-query+references-description": "Tuorna na rappresentazione 'e date ch' 'e riferimiente ssuòccie a 'e paggene date.",
 	"apihelp-query+references-example-1": "Riferimiente suòccie a <kbd>Albert Einstein</kbd>.",
-	"cite-desc": "Azzecca 'e tag <code><nowiki><ref[ name=id]></nowiki></code> e <code><nowiki><references/></nowiki></code> p' 'e citaziune",
+	"cite-desc": "Azzecca 'e tag <code>&lt;ref[ name=id]&gt;</code> e <code>&lt;references/&gt;</code> p' 'e citaziune",
 	"cite_error": "Errore dint'a funzione Cite: $1",
 	"cite_error_ref_numeric_key": "Tag <code>&lt;ref&gt;</code> invalido;\n'o nomme nun ò essere surtanto n'intero. Ausate nu titolo descrittivo",
 	"cite_error_ref_no_key": "Ll'eticheta p'arapì <code>&lt;ref&gt;</code> nun è bbona, fosse furmata malamente o puro téne nu nomme ca nun è buono",

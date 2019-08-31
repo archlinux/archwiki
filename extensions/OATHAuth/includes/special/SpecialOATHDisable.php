@@ -116,15 +116,27 @@ class SpecialOATHDisable extends FormSpecialPage {
 		// Don't increase pingLimiter, just check for limit exceeded.
 		if ( $this->OATHUser->getUser()->pingLimiter( 'badoath', 0 ) ) {
 			// Arbitrary duration given here
+			\MediaWiki\Logger\LoggerFactory::getInstance( 'authentication' )->info(
+				'OATHAuth {user} rate limited while disabling 2FA from {clientip}', [
+					'user' => $this->getUser()->getName(),
+					'clientip' => $this->getRequest()->getIP(),
+				]
+			);
 			return [ 'oathauth-throttled', Message::durationParam( 60 ) ];
 		}
 
 		if ( !$this->OATHUser->getKey()->verifyToken( $formData['token'], $this->OATHUser ) ) {
+			\MediaWiki\Logger\LoggerFactory::getInstance( 'authentication' )->info(
+				'OATHAuth {user} failed to provide a correct token while disabling 2FA from {clientip}', [
+					'user' => $this->getUser()->getName(),
+					'clientip' => $this->getRequest()->getIP(),
+				]
+			);
 			return [ 'oathauth-failedtovalidateoath' ];
 		}
 
 		$this->OATHUser->setKey( null );
-		$this->OATHRepository->remove( $this->OATHUser );
+		$this->OATHRepository->remove( $this->OATHUser, $this->getRequest()->getIP() );
 
 		return true;
 	}

@@ -53,10 +53,10 @@ class ButtonWidget extends Widget {
 
 	/**
 	 * @param array $config Configuration options
-	 * @param bool $config['active'] Whether button should be shown as active (default: false)
-	 * @param string $config['href'] Hyperlink to visit when clicked
-	 * @param string $config['target'] Target to open hyperlink in
-	 * @param bool $config['noFollow'] Search engine traversal hint (default: true)
+	 *      - bool $config['active'] Whether button should be shown as active (default: false)
+	 *      - string $config['href'] Hyperlink to visit when clicked
+	 *      - string $config['target'] Target to open hyperlink in
+	 *      - bool $config['noFollow'] Search engine traversal hint (default: true)
 	 * @param-taint $config escapes_html
 	 */
 	public function __construct( array $config = [] ) {
@@ -69,12 +69,15 @@ class ButtonWidget extends Widget {
 		$this->initializeIndicatorElement( $config );
 		$this->initializeLabelElement( $config );
 		$this->initializeTitledElement(
-			array_merge( $config, [ 'titled' => $this->button ] ) );
+			array_merge( [ 'titled' => $this->button ], $config )
+		);
 		$this->initializeFlaggedElement( $config );
 		$this->initializeTabIndexedElement(
-			array_merge( $config, [ 'tabIndexed' => $this->button ] ) );
+			array_merge( [ 'tabIndexed' => $this->button ], $config )
+		);
 		$this->initializeAccessKeyedElement(
-			array_merge( $config, [ 'accessKeyed' => $this->button ] ) );
+			array_merge( [ 'accessKeyed' => $this->button ], $config )
+		);
 
 		// Initialization
 		$this->button->appendContent( $this->icon, $this->label, $this->indicator );
@@ -189,7 +192,7 @@ class ButtonWidget extends Widget {
 	 * @return $this
 	 */
 	public function setActive( $active = null ) {
-		$this->active = !!$active;
+		$this->active = (bool)$active;
 		$this->toggleClasses( [ 'oo-ui-buttonElement-active' ], $this->active );
 		return $this;
 	}

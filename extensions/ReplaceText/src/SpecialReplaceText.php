@@ -152,7 +152,7 @@ class SpecialReplaceText extends SpecialPage {
 				$this->showForm( 'replacetext_nonamespace' );
 				return;
 			}
-			if ( ! $this->edit_pages && ! $this->move_pages ) {
+			if ( !$this->edit_pages && !$this->move_pages ) {
 				$this->showForm( 'replacetext_editormove' );
 				return;
 			}
@@ -205,7 +205,7 @@ class SpecialReplaceText extends SpecialPage {
 				);
 			} else {
 				$warning_msg = $this->getAnyWarningMessageBeforeReplace( $titles_for_edit, $titles_for_move );
-				if ( ! is_null( $warning_msg ) ) {
+				if ( !is_null( $warning_msg ) ) {
 					$out->addWikiText( "<div class=\"errorbox\">$warning_msg</div><br clear=\"both\" />" );
 				}
 
@@ -513,8 +513,7 @@ class SpecialReplaceText extends SpecialPage {
 			Xml::submitButton( $this->msg( 'replacetext_continue' )->text() ) .
 			Xml::closeElement( 'form' )
 		);
-		// Add Javascript specific to Special:Search
-		$out->addModules( 'mediawiki.special.search' );
+		$out->addModules( 'ext.ReplaceText' );
 	}
 
 	/**

@@ -7,7 +7,8 @@
 			"Shirayuki",
 			"Whym",
 			"青子守歌",
-			"Takot"
+			"Takot",
+			"Otokoume"
 		]
 	},
 	"skinname-vector": "ベクター",
@@ -25,5 +26,7 @@
 	"vector-view-history": "履歴表示",
 	"vector-view-view": "閲覧",
 	"vector-view-viewsource": "ソースを閲覧",
+	"vector-jumptonavigation": "ナビゲーションに移動",
+	"vector-jumptosearch": "検索に移動",
 	"vector-more-actions": "その他"
 }

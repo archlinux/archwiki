@@ -3,7 +3,8 @@
 		"authors": [
 			"Andriykopanytsia",
 			"Piramidion",
-			"Ата"
+			"Ата",
+			"Vlad5250"
 		]
 	},
 	"oathauth-desc": "Забезпечує підтримку автентифікації за допомогою HMAC на основі одноразових паролів",
@@ -26,6 +27,11 @@
 	"oathauth-step3": "Крок 3: Запишіть скретч-коди",
 	"oathauth-step4": "Крок 4: Перевірка",
 	"oathauth-entertoken": "Введіть код зі свого пристрою автентифікації для перевірки:",
+	"oathauth-disable-for-user": "Вимкнути двофакторну авторизацію для користувача",
+	"right-oathauth-disable-for-user": "Вимкнути двофакторну авторизацію для користувача",
+	"oathauth-disable-intro": "З великою силою приходить велика відповідальність",
+	"oathauth-enteruser": "Ім'я користувача:",
+	"oathauth-user-not-does-not-have-oath-enabled": "Користувач не увімкнув двофакторну автентифікацію, тож нічого вимикати",
 	"right-oathauth-enable": "вмикання двофакторної авторизації",
 	"action-oathauth-enable": "вмикання двофакторної авторизації",
 	"oathauth-auth-token-label": "Токен",

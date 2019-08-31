@@ -2,17 +2,19 @@
 	"@metadata": {
 		"authors": [
 			"DCLXVI",
-			"StanProg"
+			"StanProg",
+			"Vlad5250"
 		]
 	},
 	"interwiki": "Преглед и управление на междууикитата",
 	"interwiki-title-norights": "Преглед на данните за междууикита",
 	"interwiki-desc": "Добавя [[Special:Interwiki|специална страница]] за преглед и управление на таблицата с междууикита",
 	"interwiki_intro": "Това е общ преглед на таблицата с междууикита.",
-	"interwiki_prefix": "Представка:",
+	"interwiki-legend-label": "Легенда",
+	"interwiki_prefix": "Представка",
 	"interwiki-prefix-label": "Представка:",
 	"interwiki_local": "Препращане",
-	"interwiki-local-label": "Препращане:",
+	"interwiki-local-label": "Препращане",
 	"interwiki_1": "да",
 	"interwiki_0": "не",
 	"interwiki_error": "ГРЕШКА: Таблицата с междууикита е празна или е възникнала друга грешка.",
@@ -22,7 +24,9 @@
 	"interwiki_deleting": "Изтриване на представката „$1“.",
 	"interwiki_deleted": "Представка „$1“ беше успешно премахната от таблицата с междууикита.",
 	"interwiki_delfailed": "„$1“ не може да бъде премахнато от таблицата с междууикита.",
+	"interwiki-logtext": "Преглед на дневника",
 	"interwiki_addtext": "Добавяне на междуики или езикова представка",
+	"interwiki-addtext-local": "Добавяне на локална междууики или езикова представка",
 	"interwiki_addintro": "''Забележка:'' Междууикитата не могат да съдържат интервали ( ), двуеточия (:), амперсанд (&) или знак за равенство (=).",
 	"interwiki_addbutton": "Добавяне",
 	"interwiki_added": "Представката „$1“ беше успешно добавена в таблицата с междууикита.",

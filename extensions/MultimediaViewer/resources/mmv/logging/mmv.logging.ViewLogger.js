@@ -15,7 +15,7 @@
  * along with MultimediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-( function ( mw, $ ) {
+( function () {
 	var VL;
 
 	/**
@@ -90,7 +90,7 @@
 	 * Starts recording a viewing window for the current image
 	 */
 	VL.startViewDuration = function () {
-		this.viewStartTime = $.now();
+		this.viewStartTime = ( new Date() ).getTime();
 	};
 
 	/**
@@ -98,7 +98,7 @@
 	 */
 	VL.stopViewDuration = function () {
 		if ( this.viewStartTime ) {
-			this.viewDuration += $.now() - this.viewStartTime;
+			this.viewDuration += ( new Date() ).getTime() - this.viewStartTime;
 			this.viewStartTime = 0;
 		}
 	};
@@ -175,4 +175,4 @@
 	};
 
 	mw.mmv.logging.ViewLogger = ViewLogger;
-}( mediaWiki, jQuery ) );
+}() );

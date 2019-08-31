@@ -22,12 +22,5 @@
 	"right-tboverride": "Занемарување на црниот список на наслови или корисници",
 	"right-tboverride-account": "Потиснување на црниот список на кориснички имиња",
 	"right-titleblacklistlog": "Преглед на дневникот на наслови на црниот список",
-	"apihelp-titleblacklist-description": "Провери наслов на статија, име на податотека или корисничко име во Црниот список.",
-	"apihelp-titleblacklist-summary": "Провери наслов на статија, име на податотека или корисничко име во Црниот список.",
-	"apihelp-titleblacklist-param-title": "Низата што треба да се провери во црниот список.",
-	"apihelp-titleblacklist-param-action": "Дејството што треба да се провери.",
-	"apihelp-titleblacklist-param-nooverride": "Не се обидувај да наметнеш врз titleblacklist.",
-	"apihelp-titleblacklist-example-1": "Провери дали [[Foo]] е на црниот список",
-	"apihelp-titleblacklist-example-2": "Провери дали [[Bar]] е на црниот список за уредување",
-	"apihelp-createaccount-param-ignoretitleblacklist": "Занемари ги проверките за слични имиња (бара едно од следниве права: <code>tboverride</code>, <code>tboverride-account</code>)."
+	"visualeditor-saveerror-titleblacklist": "Грешка при зачувувањето на страницата: Насловот е на црниот список."
 }

@@ -6,10 +6,11 @@
 			"Emilkris33",
 			"Morten LJ",
 			"Peter Alberti",
-			"Jhertel"
+			"Jhertel",
+			"Saederup92"
 		]
 	},
-	"cite-desc": "Tilføjer <code><nowiki><ref[ name=id]></nowiki></code> og <code><nowiki><references/></nowiki></code>-elementer til referencer.",
+	"cite-desc": "Tilføjer <code>&lt;ref[ name=id]&gt;</code> og <code>&lt;references/&gt;</code>-elementer til referencer.",
 	"cite_error": "Fodnotefejl: $1",
 	"cite_error_ref_numeric_key": "Ugyldigt <code>&lt;ref&gt;</code>-tag; \"name\" kan ikke være et simpelt heltal, brug en beskrivende titel",
 	"cite_error_ref_no_key": "Det indledende <code>&lt;ref&gt;</code>-tag har en forkert form eller har et ugyldigt navn",
@@ -31,6 +32,7 @@
 	"cite-tracking-category-cite-error-desc": "Sider i denne kategori har fejl i brugen af reference-tags.",
 	"cite_references_link_accessibility_label": "Hop op",
 	"cite_references_link_many_accessibility_label": "Hop op til:",
+	"cite_references_link_accessibility_back_label": "Spring tilbage op",
 	"cite_section_preview_references": "Forhåndsvisning af referencer",
 	"cite_warning": "Referenceadvarsel: $1",
 	"cite_warning_sectionpreview_no_text": "<code>&lt;ref&gt;</code>-tag med navnet <code>$1</code> kan ikke forhåndsvises, fordi det er defineret uden for det aktuelle afsnit eller ikke defineret overhovedet."

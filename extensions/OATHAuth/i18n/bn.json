@@ -25,6 +25,7 @@
 	"oathauth-step3": "ধাপ ৩: স্ক্র্যাচ কোড লিখুন",
 	"oathauth-step4": "ধাপ ৪: নিশ্চিতকরণ",
 	"oathauth-entertoken": "যাচাই করতে আপনার প্রমাণীকরণ ডিভাইস থেকে একটি কোড লিখুন:",
+	"oathauth-enteruser": "ব্যবহারকারী নাম:",
 	"right-oathauth-enable": "দুই-ধাপের প্রমাণীকরণ সক্রিয় করে",
 	"action-oathauth-enable": "দুই-ধাপের প্রমাণীকরণ সক্রিয় করার",
 	"oathauth-auth-token-label": "টোকেন",
@@ -34,5 +35,6 @@
 	"oathauth-login-failed": "যাচাইকরণ ব্যর্থ হয়েছে।",
 	"oathauth-describe-provider": "দুই-ধাপের প্রমাণীকরণ (OATH)।",
 	"action-oathauth-api-all": "OATH অবস্থা পরীক্ষা করার",
+	"oathauth-user-not-found": "এই নামে কোন ব্যবহারকারী অ্যাকাউন্ট পাওয়া যায় নি",
 	"apihelp-oathvalidate-example-1": "বর্তমান ব্যবহারকারীর জন্য একটি টোকেন যাচাই করুন"
 }

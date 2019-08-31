@@ -4,7 +4,8 @@
 			"Harley Hartwell",
 			"Mopza",
 			"Passawuth",
-			"Horus"
+			"Horus",
+			"Geonuch"
 		]
 	},
 	"renameuser": "เปลี่ยนชื่อผู้ใช้",
@@ -27,7 +28,8 @@
 	"renameuser-page-moved": "หน้า $1 ถูกย้ายไปยัง $2",
 	"renameuser-page-unmoved": "ไม่สามารถย้ายหน้า $1 ไปยัง $2 ได้",
 	"log-name-renameuser": "ปูมการเปลี่ยนชื่อผู้ใช้",
-	"renameuser-move-log": "ย้ายโดยอัตโนมัติ ขณะเปลี่ยนชื่อผู้ใช้จาก \"[[User:$1|$1]]\" เป็น \"[[User:$2|$2]]\"",
+	"logentry-renameuser-renameuser-legacier": "$1 เปลี่ยนชื่อผู้ใช้ $4 ไปยัง {{GENDER:$7|$5}}",
+	"renameuser-move-log": "ย้ายหน้าอัตโนมัติขณะเปลี่ยนชื่อ{{GENDER:$2|ผู้ใช้}} \"[[User:$1|$1]]\" เป็น \"[[User:$2|$2]]\"",
 	"right-renameuser": "เปลี่ยนชื่อผู้ใช้",
 	"renameuser-renamed-notice": "ผู้ใช้นี้ได้ถูกเปลี่ยนชื่อ บันทึกการเปลี่ยนชื่อแสดงอยู่ด้านล่างสำหรับการอ้างอิง"
 }

@@ -24,7 +24,7 @@ class Poem {
 	 * @param PPFrame $frame
 	 * @return string
 	 */
-	public static function renderPoem( $in, array $param = [], Parser $parser, PPFrame $frame ) {
+	public static function renderPoem( $in, array $param, Parser $parser, PPFrame $frame ) {
 		// using newlines in the text will cause the parser to add <p> tags,
 		// which may not be desired in some cases
 		$newline = isset( $param['compact'] ) ? '' : "\n";

@@ -16,7 +16,8 @@
 			"Ping08",
 			"Mailman",
 			"Jack who built the house",
-			"Adam-Yourist"
+			"Adam-Yourist",
+			"Vlad5250"
 		]
 	},
 	"gadgets-desc": "Позволяет участникам выбирать в своих [[Special:Preferences#mw-prefsection-gadgets|настройках]] те или иные [[Special:Gadgets|CSS- и JavaScript-гаджеты]]",
@@ -45,24 +46,8 @@
 	"gadgets-export-download": "Скачать",
 	"gadgets-validate-notset": "Свойство <code>$1</code> не установлено.",
 	"gadgets-validate-wrongtype": "Свойство <code>$1</code> должна иметь тип <code>$2</code> вместо типа <code>$3</code>.",
-	"apihelp-query+gadgetcategories-description": "Возвращает список категорий гаджетов.",
-	"apihelp-query+gadgetcategories-summary": "Возвращает список категорий гаджетов.",
-	"apihelp-query+gadgetcategories-param-names": "Названия возвращаемых категорий.",
-	"apihelp-query+gadgetcategories-example-1": "Получить список существующих категорий гаджетов",
-	"apihelp-query+gadgetcategories-example-2": "Получить всю информацию о категориях с названиями «Foo» и «Bar»",
-	"apihelp-query+gadgets-description": "Возвращает список гаджетов, используемых в этой вики.",
-	"apihelp-query+gadgets-summary": "Возвращает список гаджетов, используемых в этой вики.",
-	"apihelp-query+gadgets-param-categories": "Гаджеты из каких категорий получать.",
-	"apihelp-query+gadgets-param-ids": "Идентификаторы гаджетов для получения.",
-	"apihelp-query+gadgets-param-allowedonly": "Перечислить только гаджеты, разрешённые текущему участнику.",
-	"apihelp-query+gadgets-param-enabledonly": "Перечислить только гаджеты, включенные у текущего участника.",
-	"apihelp-query+gadgets-example-1": "Получить список гаджетов вместе с их описаниями",
-	"apihelp-query+gadgets-example-2": "Получить список гаджетов со всеми их возможными свойствами",
-	"apihelp-query+gadgets-example-3": "Получить список гаджетов в категории «foo»",
-	"apihelp-query+gadgets-example-4": "Получить информацию о гаджетах «foo» и «bar»",
-	"apihelp-query+gadgets-example-5": "Получить список гаджетов, включённых у данного участника",
-	"right-gadgets-edit": "правка JavaScript и CSS-страниц гаджетов",
+	"right-gadgets-edit": "Правка JavaScript и CSS-страниц гаджетов",
 	"action-gadgets-edit": "редактирование JavaScript или CSS-страницы этого гаджета",
-	"right-gadgets-definition-edit": "правка описаний гаджетов",
+	"right-gadgets-definition-edit": "Правка описаний гаджетов",
 	"action-gadgets-definition-edit": "редактирование определения этого гаджета"
 }

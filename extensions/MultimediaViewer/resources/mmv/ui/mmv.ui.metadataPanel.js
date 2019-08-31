@@ -15,7 +15,7 @@
  * along with MultimediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-( function ( mw, $, oo ) {
+( function () {
 	// Shortcut for prototype later
 	var MPP;
 
@@ -47,7 +47,7 @@
 		this.initializeImageMetadata();
 		this.initializeAboutLinks();
 	}
-	oo.inheritClass( MetadataPanel, mw.mmv.ui.Element );
+	OO.inheritClass( MetadataPanel, mw.mmv.ui.Element );
 	MPP = MetadataPanel.prototype;
 
 	/**
@@ -630,7 +630,7 @@
 			showDefault = false,
 			validRestrictions = 0;
 
-		$.each( restrictions, function ( index, value ) {
+		restrictions.forEach( function ( value, index ) {
 			if ( !mw.message( 'multimediaviewer-restriction-' + value ).exists() || value === 'default' || index + 1 > MetadataPanel.MAX_RESTRICT ) {
 				showDefault = true; // If the restriction isn't defined or there are more than MAX_RESTRICT of them, show a generic symbol at the end
 				return;
@@ -877,4 +877,4 @@
 	};
 
 	mw.mmv.ui.MetadataPanel = MetadataPanel;
-}( mediaWiki, jQuery, OO ) );
+}() );

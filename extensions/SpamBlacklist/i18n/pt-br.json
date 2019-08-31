@@ -23,9 +23,5 @@
 	"log-description-spamblacklist": "Esses eventos rastreiam hits na lista negra de spam.",
 	"logentry-spamblacklist-hit": "{{GENDER:$2|$1}} causou uma correspondência na lista negra de spam em $3, tentando adicionar $4.",
 	"right-spamblacklistlog": "Ver os registros da lista negra de spam",
-	"action-spamblacklistlog": "ver os registros da lista negra de spam",
-	"apihelp-spamblacklist-description": "Valide um ou mais URLs contra o SpamBlacklist.",
-	"apihelp-spamblacklist-summary": "Valide um ou mais URLs contra o SpamBlacklist.",
-	"apihelp-spamblacklist-param-url": "URLs para validar contra a lista negra.",
-	"apihelp-spamblacklist-example-1": "Verifique dois URLs contra a lista negra"
+	"action-spamblacklistlog": "ver os registros da lista negra de spam"
 }

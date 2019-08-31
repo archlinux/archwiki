@@ -16,7 +16,10 @@
 	"multimediaviewer-download-link": "Descharjar ica arkivo",
 	"multimediaviewer-embed-explanation": "Uzes ica kodexo por stekar l'arkivo",
 	"multimediaviewer-description-page-button-text": "Plusa detali pri ca arkivo",
+	"multimediaviewer-description-page-popup-text": "Plusa detali pri ica arkivo en $1",
 	"multimediaviewer-view-expanded": "Montrar l'imajo en Media Viewer",
 	"multimediaviewer-close-popup-text": "Klozar ica utensilo (Esc)",
-	"multimediaviewer-fullscreen-popup-text": "Montrez en plena skreno"
+	"multimediaviewer-fullscreen-popup-text": "Montrez en plena skreno",
+	"multimediaviewer-title-popup-text": "Deskripto",
+	"multimediaviewer-attr-plain": "simpla texto"
 }

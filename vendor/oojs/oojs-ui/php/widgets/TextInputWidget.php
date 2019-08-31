@@ -8,6 +8,7 @@ namespace OOUI;
 class TextInputWidget extends InputWidget {
 	use IconElement;
 	use IndicatorElement;
+	use FlaggedElement;
 
 	/* Properties */
 
@@ -34,24 +35,23 @@ class TextInputWidget extends InputWidget {
 
 	/**
 	 * @param array $config Configuration options
-	 * @param string $config['type'] HTML tag `type` attribute: 'text', 'password', 'email',
-	 *   'url' or 'number'. (default: 'text')
-	 * @param string $config['placeholder'] Placeholder text
-	 * @param bool $config['autofocus'] Ask the browser to focus this widget, using the 'autofocus'
-	 *   HTML attribute (default: false)
-	 * @param bool $config['readOnly'] Prevent changes (default: false)
-	 * @param number $config['maxLength'] Maximum allowed number of characters to input
-	 *
-	 *   For unfortunate historical reasons, this counts the number of UTF-16 code units rather than
-	 *   Unicode codepoints, which means that codepoints outside the Basic Multilingual Plane (e.g.
-	 *   many emojis) count as 2 characters each.
-	 * @param bool $config['required'] Mark the field as required.
-	 *   Implies `indicator: 'required'`. Note that `false` & setting `indicator: 'required'
-	 *   will result in no indicator shown. (default: false)
-	 * @param bool $config['autocomplete'] If the field should support autocomplete
-	 *   or not (default: true)
-	 * @param bool $config['spellcheck'] If the field should support spellcheck
-	 *   or not (default: browser-dependent)
+	 *      - string $config['type'] HTML tag `type` attribute: 'text', 'password', 'email',
+	 *          'url' or 'number'. (default: 'text')
+	 *      - string $config['placeholder'] Placeholder text
+	 *      - bool $config['autofocus'] Ask the browser to focus this widget, using the 'autofocus'
+	 *          HTML attribute (default: false)
+	 *      - bool $config['readOnly'] Prevent changes (default: false)
+	 *      - int $config['maxLength'] Maximum allowed number of characters to input
+	 *          For unfortunate historical reasons, this counts the number of UTF-16 code units rather
+	 *          than Unicode codepoints, which means that codepoints outside the Basic Multilingual
+	 *          Plane (e.g. many emojis) count as 2 characters each.
+	 *      - bool $config['required'] Mark the field as required.
+	 *          Implies `indicator: 'required'`. Note that `false` & setting `indicator: 'required'
+	 *          will result in no indicator shown. (default: false)
+	 *      - bool $config['autocomplete'] If the field should support autocomplete
+	 *          or not (default: true)
+	 *      - bool $config['spellcheck'] If the field should support spellcheck
+	 *          or not (default: browser-dependent)
 	 * @param-taint $config escapes_html
 	 */
 	public function __construct( array $config = [] ) {
@@ -73,6 +73,9 @@ class TextInputWidget extends InputWidget {
 		// Traits
 		$this->initializeIconElement( $config );
 		$this->initializeIndicatorElement( $config );
+		$this->initializeFlaggedElement(
+			array_merge( [ 'flagged' => $this ], $config )
+		);
 
 		// Initialization
 		$this

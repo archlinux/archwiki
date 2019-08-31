@@ -4,7 +4,7 @@
 			"Mostafadaneshvar"
 		]
 	},
-	"cite-desc": "اضفافه کنت<code><nowiki><ref[ name=id]></nowiki></code> و <code><nowiki><references/></nowiki></code> تگ, په ارجاع دهگ",
+	"cite-desc": "اضفافه کنت<code>&lt;ref[ name=id]&gt;</code> و <code>&lt;references/&gt;</code> تگ, په ارجاع دهگ",
 	"cite_error": "حطا ارجاع: $1",
 	"cite_error_ref_numeric_key": "نامعتبر <code>&lt;ref&gt;</code>تگ;\nنام یک سادگین هوری نه نه بیت. یک توضیحی عنوانی استفاده کنیت",
 	"cite_error_ref_no_key": "نامعتبر<code>&lt;ref&gt;</code>تگ;\nمراجع بی محتوا بایدن نامی داشته بنت",

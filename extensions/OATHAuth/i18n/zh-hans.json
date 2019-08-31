@@ -5,7 +5,9 @@
 			"Liuxinyu970226",
 			"Xiaomingyan",
 			"Yfdyh000",
-			"Hanyanbo98"
+			"Hanyanbo98",
+			"WQL",
+			"A Chinese Wikipedian"
 		]
 	},
 	"oathauth-desc": "提供使用基于HMAC的一次性密码的身份验证支持",
@@ -16,7 +18,7 @@
 	"oathauth-scratchtokens": "下面的列表是一次性使用的即时令牌列表。这些令牌只能使用一次，并应用于紧急用途。请将它们记下来，并保存在一个安全的位置。如果您遗失了手机，唯一能够找回您账户的方法就是这些令牌。'''这些令牌不会再显示'''。",
 	"oathauth-token": "令牌",
 	"oathauth-disable": "禁用双因素验证",
-	"oathauth-validatedoath": "已验证双因素证书。双因素验证现将实施生效。",
+	"oathauth-validatedoath": "已验证双因素证书。双因素验证现将实时生效。",
 	"oathauth-noscratchforvalidation": "您不能使用乱码确认双因素验证。乱码只用于备份及附带使用。请使用来自您的代码生成器的确认代码。",
 	"oathauth-failedtovalidateoath": "验证双因素凭据失败",
 	"oathauth-disabledoath": "已禁用双因素验证。",
@@ -28,6 +30,9 @@
 	"oathauth-step3": "第3步：记下即时性代码",
 	"oathauth-step4": "第4步：验证",
 	"oathauth-entertoken": "输入来自您的验证设备的代码进行验证：",
+	"oathauth-disable-intro": "权力大，责任重大",
+	"oathauth-enteruser": "用户名：",
+	"oathauth-user-not-does-not-have-oath-enabled": "用户没有启用双因素身份验证，因此无需禁用",
 	"right-oathauth-enable": "启用双因素验证",
 	"action-oathauth-enable": "启用双因素验证",
 	"oathauth-auth-token-label": "令牌",

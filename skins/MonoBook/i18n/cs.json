@@ -4,13 +4,14 @@
 			"Danny B.",
 			"Li-sung",
 			"Mormegil",
-			"Matěj Suchánek"
+			"Matěj Suchánek",
+			"Dvorapa"
 		]
 	},
 	"skinname-monobook": "MonoBook",
 	"monobook-desc": "Klasický vzhled MediaWiki od roku 2004, pojmenovaný po černobílé fotografii knihy v pozadí stránky",
-	"monobook.css": "/* Zde uvedené CSS bude ovlivňovat pouze styl „Monobook“ */",
-	"monobook.js": "/* JavaScript pro uživatele používající vzhled MonoBook */",
+	"monobook.css": "/* Zde uvedené CSS bude ovlivňovat pouze vzhled „MonoBook“ */",
+	"monobook.js": "/* Zde uvedený JavaScript bude použit pouze pro uživatele vzhledu „MonoBook“ */",
 	"monobook-jumptotop": "zpět na začátek",
 	"monobook-jumptopersonal": "uživatelské nástroje",
 	"monobook-jumptonavigation": "Skočit na navigaci",

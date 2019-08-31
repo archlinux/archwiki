@@ -3,7 +3,8 @@
 		"authors": [
 			"Bjankuloski06",
 			"Brest",
-			"Iwan Novirion"
+			"Iwan Novirion",
+			"Vlad5250"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Книга",
@@ -19,7 +20,8 @@
 	"cite-ve-changedesc-reflist-responsive-set": "Списокот на наводи е изменет за приказ во одѕивни столбови",
 	"cite-ve-changedesc-reflist-responsive-unset": "Списокот на наводи е изменет за приказ во само еден столб",
 	"cite-ve-changedesc-reflist-item-id": "Индексот на наводи е изменет",
-	"cite-ve-dialog-reference-editing-reused": "Овој навод се користи {{PLURAL:$1|еднаш|$1 пати}} во страницава.",
+	"cite-ve-dialog-reference-editing-reused": "Овој навод се користи {{PLURAL:$1|еднаш|2=двапати|$1 пати}} во страницава.",
+	"cite-ve-dialog-reference-editing-reused-long": "Овој навод се користи {{PLURAL:$1|еднаш|2=двапати|$1 пати}} на страницава. Тука направените промени ќе ги засегнат сите места на неговата употреба.",
 	"cite-ve-dialog-reference-options-group-label": "Употреби ја групава",
 	"cite-ve-dialog-reference-options-group-placeholder": "Општи наводи",
 	"cite-ve-dialog-reference-options-name-label": "Преупотреби под ова име",
@@ -27,8 +29,6 @@
 	"cite-ve-dialog-reference-options-section": "Нагодувања",
 	"cite-ve-dialog-reference-placeholder": "Тука напишете или прекопирајте го наводот, или пак вметнете шаблон за навод.",
 	"cite-ve-dialog-reference-title": "Навод",
-	"cite-ve-dialog-reference-useexisting-full-label": "Употреби постоечки навод на страницата",
-	"cite-ve-dialog-reference-useexisting-label": "Искористи постоечки навод",
 	"cite-ve-dialog-reference-useexisting-tool": "Постоечки",
 	"cite-ve-dialog-referenceslist-contextitem-description-general": "Список на општи наводи",
 	"cite-ve-dialog-referenceslist-contextitem-description-named": "Список на наводи за групата „$1“",

@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"Gomoko",
+			"Wladek92"
+		]
+	},
+	"apihelp-spamblacklist-description": "Valider une ou plus URLs d’après SpamBlacklist.",
+	"apihelp-spamblacklist-example-1": "Vérifier deux URLs d’après la liste noire",
+	"apihelp-spamblacklist-param-url": "URLs à valider d’après la liste noire.",
+	"apihelp-spamblacklist-summary": "Valider une ou plusieurs URL de la Liste Noire des pourriels."
+}

@@ -6,7 +6,7 @@
 			"Zoranzoki21"
 		]
 	},
-	"cite-desc": "Dodaje <code><nowiki><ref[ name=id]></nowiki></code> i <code><nowiki><references/></nowiki></code> oznake za citiranje.",
+	"cite-desc": "Dodaje <code>&lt;ref[ name=id]&gt;</code> i <code>&lt;references/&gt;</code> oznake za citiranje.",
 	"cite_error": "Greška kod citiranja: $1",
 	"cite_error_ref_numeric_key": "Loša oznaka <code>&amp;lt;ref&amp;gt;</code>; ime ne može biti jednostavni intedžer. Koristi opisni naslov.",
 	"cite_error_ref_no_key": "Loša oznaka <code>&amp;lt;ref&amp;gt;</code>; ref-ovi bez sadržaja moraju imati ime.",

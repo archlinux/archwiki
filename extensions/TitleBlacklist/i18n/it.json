@@ -7,7 +7,8 @@
 			"Melos",
 			"Nemo bis",
 			"Lucas2",
-			"Matteocng"
+			"Matteocng",
+			"Fringio"
 		]
 	},
 	"action-titleblacklistlog": "vedere il registro dei titoli bloccati",
@@ -27,5 +28,6 @@
 	"titleblacklist-warning": "<strong>Attenzione: questa pagina può essere modificata solo dagli amministratori o dagli utenti con il diritto <code>tboverride</code> poiché corrisponde alla seguente voce della lista dei titoli bloccati:</strong><br /><code>$1</code>",
 	"right-tboverride": "Ignora la blacklist dei titoli o dei nome utente",
 	"right-tboverride-account": "Ignora la blacklist dei nome utente",
-	"right-titleblacklistlog": "Visualizza registro dei titoli bloccati"
+	"right-titleblacklistlog": "Visualizza registro dei titoli bloccati",
+	"visualeditor-saveerror-titleblacklist": "Errore nel salvataggio della pagina: il titolo della pagina è stato inserito in una lista nera"
 }

@@ -1,4 +1,4 @@
-( function ( mw, $ ) {
+( function () {
 	var thingsShouldBeEmptied = [
 			'$license',
 			'$title',
@@ -202,4 +202,4 @@
 		assert.strictEqual( $qf.find( '.mw-mmv-help-link' ).length, 1, 'Help link is created.' );
 		mw.config.set( 'wgMediaViewerIsInBeta', oldWgMediaViewerIsInBeta );
 	} );
-}( mediaWiki, jQuery ) );
+}() );

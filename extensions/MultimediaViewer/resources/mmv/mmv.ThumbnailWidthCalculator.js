@@ -15,7 +15,7 @@
  * along with MultimediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-( function ( mw, $ ) {
+( function () {
 	var TWCP;
 
 	/**
@@ -169,4 +169,4 @@
 	};
 
 	mw.mmv.ThumbnailWidthCalculator = ThumbnailWidthCalculator;
-}( mediaWiki, jQuery ) );
+}() );

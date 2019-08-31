@@ -118,9 +118,3 @@ div.tright,
 div.tleft {
 	position: relative;
 }
-
-/* bug 12846 */
-body.rtl #preftoc a,
-body.rtl #preftoc a:active {
-	float: left;
-}

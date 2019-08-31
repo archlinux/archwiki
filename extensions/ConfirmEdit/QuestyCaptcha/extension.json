@@ -1,5 +1,12 @@
 {
 	"name": "QuestyCaptcha",
+	"author": [
+		"..."
+	],
+	"url": "https://www.mediawiki.org/wiki/Extension:ConfirmEdit#QuestyCaptcha",
+	"descriptionmsg": "questycaptcha-desc",
+	"license-name": "GPL-2.0-or-later",
+	"type": "antispam",
 	"MessagesDirs": {
 		"QuestyCaptcha": [
 			"i18n"

@@ -10,7 +10,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "antispam",
 	"requires": {
-		"MediaWiki": ">= 1.29.0"
+		"MediaWiki": ">= 1.31.0"
 	},
 	"GroupPermissions": {
 		"sysop": {
@@ -42,7 +42,8 @@
 	},
 	"MessagesDirs": {
 		"TitleBlacklist": [
-			"i18n"
+			"i18n",
+			"i18n/api"
 		]
 	},
 	"AutoloadClasses": {
@@ -61,8 +62,18 @@
 				"mediawiki.api"
 			],
 			"targets": [ "desktop", "mobile" ]
+		},
+		"ext.titleblacklist.visualEditor": {
+			"scripts": "ve-titleblacklist/ve.init.mw.TitleBlacklistSaveErrorHandler.js",
+			"messages": [
+				"visualeditor-saveerror-titleblacklist"
+			],
+			"targets": [ "desktop", "mobile" ]
 		}
 	},
+	"VisualEditorPluginModules": [
+		"ext.titleblacklist.visualEditor"
+	],
 	"ResourceFileModulePaths": {
 		"localBasePath": "modules",
 		"remoteExtPath": "TitleBlacklist/modules"

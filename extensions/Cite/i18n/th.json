@@ -2,10 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Horus",
-			"Passawuth"
+			"Passawuth",
+			"Aefgh39622"
 		]
 	},
-	"cite-desc": "เพิ่มป้ายระบุ <code><nowiki><ref[ name=id]></nowiki></code> และ <nowiki><references /></nowiki> สำหรับการอ้างอิง",
+	"cite-desc": "เพิ่มป้ายระบุ <code>&lt;ref[ name=id]&gt;</code> และ &lt;references /&gt; สำหรับการอ้างอิง",
 	"cite_error": "อ้างอิงผิดพลาด: $1",
 	"cite_error_ref_numeric_key": "ป้ายระบุ <code>&lt;ref&gt;</code> ไม่ถูกต้อง\nชื่อไม่สามารถเป็นจำนวนเต็มอย่างง่าย ใช้ชื่อเรื่องพรรณนา",
 	"cite_error_ref_no_key": "ป้ายระบุ <code>&lt;ref&gt;</code> ไม่ถูกต้อง\nอ้างอิงที่ไม่มีเนื้อหาต้องมีชื่อ",
@@ -24,5 +25,8 @@
 	"cite-tracking-category-cite-error": "หน้าที่มีข้อผิดพลาดการอ้างอิง",
 	"cite-tracking-category-cite-error-desc": "หน้าในหมวดหมู่นี้มีข้อผิดพลาดในการใช้ป้ายระบุอ้างอิง",
 	"cite_references_link_accessibility_label": "กระโดดขึ้น",
-	"cite_references_link_many_accessibility_label": "กระโดดขึ้นไป:"
+	"cite_references_link_many_accessibility_label": "กระโดดขึ้นไป:",
+	"cite_references_link_accessibility_back_label": "กระโดดกลับขึ้น",
+	"cite_section_preview_references": "ตัวอย่างการอ้างอิง",
+	"cite_warning": "คำเตือนการอ้างอิง: $1"
 }

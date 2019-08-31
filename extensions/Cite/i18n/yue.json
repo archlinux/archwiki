@@ -6,7 +6,7 @@
 			"Hello903hello"
 		]
 	},
-	"cite-desc": "加 <code><nowiki><ref[ name=id]></nowiki></code> 同 <code><nowiki><references/></nowiki></code> 標籤用響引用度",
+	"cite-desc": "加 <code>&lt;ref[ name=id]&gt;</code> 同 <code>&lt;references/&gt;</code> 標籤用響引用度",
 	"cite_error": "引用錯誤 $1",
 	"cite_error_ref_numeric_key": "無效嘅呼叫; 需要一個非整數嘅匙",
 	"cite_error_ref_no_key": "<code>&lt;ref&gt;</code>標籤開頭格式有錯或者個名唔啱",

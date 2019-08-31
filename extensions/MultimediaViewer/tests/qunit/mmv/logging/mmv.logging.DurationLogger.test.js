@@ -1,4 +1,4 @@
-( function ( mw, $ ) {
+( function () {
 	QUnit.module( 'mmv.logging.DurationLogger', QUnit.newMwEnvironment( {
 		setup: function () {
 			this.clock = this.sandbox.useFakeTimers();
@@ -149,7 +149,7 @@
 		assert.strictEqual( durationLogger.starts.bar, undefined, 'Start value deleted after record' );
 		assert.strictEqual( durationLogger.stops.bar, undefined, 'Stop value deleted after record' );
 
-		durationLogger.stop( 'fooz', $.now() - 9000 );
+		durationLogger.stop( 'fooz', ( new Date() ).getTime() - 9000 );
 		durationLogger.record( 'fooz' );
 		this.clock.tick( 10 );
 
@@ -215,4 +215,4 @@
 
 		assert.strictEqual( promise.state(), 'resolved', 'Promise is resolved' );
 	} );
-}( mediaWiki, jQuery ) );
+}() );

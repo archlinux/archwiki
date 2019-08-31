@@ -10,7 +10,8 @@
 			"555",
 			"Vitorvicentevalente",
 			"Fúlvio",
-			"Athena in Wonderland"
+			"Athena in Wonderland",
+			"CaiusSPQR"
 		]
 	},
 	"interwiki": "Ver e manipular dados de interwikis",
@@ -23,11 +24,11 @@
 	"interwiki_prefix_intro": "Prefixo da hiperligação interwikis, para ser usado na sintaxe de texto wiki <code>[<nowiki />[prefixo:<em>nome da página</em>]]</code>.",
 	"interwiki_url_intro": "Valor predefinido para o URL. Nele, o espaço reservado $1 será substituído pelo <em>nome da página</em> em <code>[<nowiki />[prefixo:<em>nome da página</em>]]</code>.",
 	"interwiki_local": "Encaminhar",
-	"interwiki-local-label": "Encaminhar:",
+	"interwiki-local-label": "Encaminhar",
 	"interwiki_local_0_intro": "Pedidos HTTP externos, feitos à wiki local usando este prefixo interwikis no URL, resultam numa página de erro \"{{int:badtitle}}\".",
 	"interwiki_local_1_intro": "Pedidos HTTP externos, feitos à wiki local usando este prefixo interwikis, serão redirecionados para o URL de destino (ou seja, serão tratados como hiperligações para páginas locais).",
 	"interwiki_trans": "Transcluir",
-	"interwiki-trans-label": "Transcluir:",
+	"interwiki-trans-label": "Transcluir",
 	"interwiki_trans_1_intro": "Se for usada a notação <code>{<nowiki />{prefixo:<em>nome da página</em>}}</code>, permitir a transclusão de predefinições e páginas da wiki externa se transclusões interwikis forem permitidas de forma geral nesta wiki ([//www.mediawiki.org/wiki/Manual:$wgEnableScaryTranscluding transclusão interwikis]).",
 	"interwiki_trans_0_intro": "Não permitir que <code>{<nowiki />{prefixo:<em>nome da página</em>}}</code> transclua predefinições e páginas externas, mas antes procurar uma página local no espaço nominal das predefinições.",
 	"interwiki_1": "sim",

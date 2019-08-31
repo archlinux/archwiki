@@ -51,7 +51,7 @@ class SpecialRenameuser extends SpecialPage {
 		$usernames = explode( '/', $par, 2 ); // this works as "/" is not valid in usernames
 		$oldnamePar = trim( str_replace( '_', ' ', $request->getText( 'oldusername', $usernames[0] ) ) );
 		$oldusername = Title::makeTitle( NS_USER, $oldnamePar );
-		$newnamePar = isset( $usernames[1] ) ? $usernames[1] : null;
+		$newnamePar = $usernames[1] ?? null;
 		$newnamePar = trim( str_replace( '_', ' ', $request->getText( 'newusername', $newnamePar ) ) );
 		// Force uppercase of newusername, otherwise wikis
 		// with wgCapitalLinks=false can create lc usernames
@@ -309,7 +309,7 @@ class SpecialRenameuser extends SpecialPage {
 			return;
 		}
 
-		// If this user is renaming his/herself, make sure that Title::moveTo()
+		// If this user is renaming his/herself, make sure that MovePage::move()
 		// doesn't make a bunch of null move edits under the old name!
 		if ( $user->getId() === $uid ) {
 			$user->setName( $newusername->getText() );
@@ -344,8 +344,12 @@ class SpecialRenameuser extends SpecialPage {
 				$oldPage = Title::makeTitleSafe( $row->page_namespace, $row->page_title );
 				$newPage = Title::makeTitleSafe( $row->page_namespace,
 					preg_replace( '!^[^/]+!', $newusername->getDBkey(), $row->page_title ) );
+
+				$movePage = new MovePage( $oldPage, $newPage );
+				$validMoveStatus = $movePage->isValidMove();
+
 				# Do not autodelete or anything, title must not exist
-				if ( $newPage->exists() && !$oldPage->isValidMoveTarget( $newPage ) ) {
+				if ( $newPage->exists() && !$validMoveStatus->isOK() ) {
 					$link = $linkRenderer->makeKnownLink( $newPage );
 					$output .= Html::rawElement(
 						'li',
@@ -353,16 +357,13 @@ class SpecialRenameuser extends SpecialPage {
 						$this->msg( 'renameuser-page-exists' )->rawParams( $link )->escaped()
 					);
 				} else {
-					$success = $oldPage->moveTo(
-						$newPage,
-						false,
-						$this->msg(
-							'renameuser-move-log',
-							$oldusername->getText(),
-							$newusername->getText() )->inContentLanguage()->text(),
-						!$suppressRedirect
-					);
-					if ( $success === true ) {
+					$logReason = $this->msg(
+						'renameuser-move-log', $oldusername->getText(), $newusername->getText()
+					)->inContentLanguage()->text();
+
+					$moveStatus = $movePage->move( $user, $logReason, !$suppressRedirect );
+
+					if ( $moveStatus->isOK() ) {
 						# oldPage is not known in case of redirect suppression
 						$oldLink = $linkRenderer->makeLink( $oldPage, null, [], [ 'redirect' => 'no' ] );
 
@@ -415,9 +416,6 @@ class SpecialRenameuser extends SpecialPage {
 	 * @return string[] Matching subpages
 	 */
 	public function prefixSearchSubpages( $search, $limit, $offset ) {
-		if ( !class_exists( 'UserNamePrefixSearch' ) ) { // check for version 1.27
-			return [];
-		}
 		$user = User::newFromName( $search );
 		if ( !$user ) {
 			// No prefix suggestion for invalid user

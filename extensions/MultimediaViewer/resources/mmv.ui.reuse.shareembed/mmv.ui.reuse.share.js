@@ -15,7 +15,7 @@
  * along with MultimediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-( function ( mw, $, oo ) {
+( function () {
 	// Shortcut for prototype later
 	var SP;
 
@@ -36,7 +36,7 @@
 
 		this.init();
 	}
-	oo.inheritClass( Share, mw.mmv.ui.reuse.Tab );
+	OO.inheritClass( Share, mw.mmv.ui.reuse.Tab );
 	SP = Share.prototype;
 
 	SP.init = function () {
@@ -45,7 +45,7 @@
 		this.$pane.addClass( 'mw-mmv-share-pane' )
 			.appendTo( this.$container );
 
-		this.pageInput = new oo.ui.TextInputWidget( {
+		this.pageInput = new OO.ui.TextInputWidget( {
 			classes: [ 'mw-mmv-share-page' ],
 			readOnly: true
 		} );
@@ -163,4 +163,4 @@
 	};
 
 	mw.mmv.ui.reuse.Share = Share;
-}( mediaWiki, jQuery, OO ) );
+}() );

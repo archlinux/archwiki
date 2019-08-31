@@ -15,7 +15,7 @@
  * along with MediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-( function ( mw, $ ) {
+( function () {
 	var CP;
 
 	/**
@@ -269,4 +269,4 @@
 	};
 
 	mw.mmv.Config = Config;
-}( mediaWiki, jQuery ) );
+}() );

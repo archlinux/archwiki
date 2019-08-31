@@ -15,7 +15,8 @@
 			"Vituzzu",
 			"Toadino2",
 			"Statix64",
-			"Macofe"
+			"Macofe",
+			"Sakretsu"
 		]
 	},
 	"wikieditor": "Interfaccia avanzata di modifica del wikitesto",
@@ -24,7 +25,8 @@
 	"wikieditor-loading": "Caricamento",
 	"wikieditor-toolbar": "Barra degli strumenti di modifica",
 	"wikieditor-toolbar-desc": "Barra degli strumenti di modifica della pagina con migliorata usabilità",
-	"wikieditor-toolbar-preference": "Abilita la barra degli strumenti di modifica avanzata",
+	"wikieditor-toolbar-preference": "Abilita la barra degli strumenti di modifica",
+	"wikieditor-toolbar-preference-help": "Anche nota come 'editor di wikitesto 2010'.",
 	"wikieditor-toolbar-loading": "Caricamento in corso...",
 	"wikieditor-toolbar-tool-bold": "Grassetto",
 	"wikieditor-toolbar-tool-bold-example": "Testo in grassetto",

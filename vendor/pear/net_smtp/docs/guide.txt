@@ -67,12 +67,29 @@ methods, in order of preference:
 
 .. _RFC-2554: http://www.ietf.org/rfc/rfc2554.txt
 
+GSSAPI
+------
+
+The GSSAPI authentication method uses Kerberos 5 protocol (RFC-4120_).
+Does not use user/password.
+Requires Service Principal ``gssapi_principal`` parameter and
+has an optional Credentials Cache ``gssapi_cname`` parameter.
+Requires DNS and Key Distribution Center (KDC) setup.
+It is considered the most secure method of SMTP authentication.
+
+**Note:** The GSSAPI authentication method is only supported
+if the krb5_ php extension is available.
+
+.. _RFC-4120: https://tools.ietf.org/html/rfc4120
+.. _krb5: https://pecl.php.net/package/krb5
+
 DIGEST-MD5
 ----------
 
 The DIGEST-MD5 authentication method uses `RSA Data Security Inc.`_'s MD5
-Message Digest algorithm.  It is considered the most secure method of SMTP
-authentication.
+Message Digest algorithm.  It is considered a more secure method of SMTP
+authentication than PLAIN or LOGIN, while still vulnerable to MitM attacks
+without TLS/SSL.
 
 **Note:** The DIGEST-MD5 authentication method is only supported if the
 AUTH_SASL_ package is available.

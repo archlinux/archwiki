@@ -9,12 +9,13 @@
 			"Microcell",
 			"Prima klasy4na",
 			"Тест",
-			"Piramidion"
+			"Piramidion",
+			"Vlad5250"
 		]
 	},
 	"renameuser": "Перейменувати користувача",
-	"renameuser-linkoncontribs": "перейменувати користувача",
-	"renameuser-linkoncontribs-text": "Перейменувати цього користувача",
+	"renameuser-linkoncontribs": "перейменувати {{GENDER:$1|користувача|користувачку}}",
+	"renameuser-linkoncontribs-text": "Перейменувати {{GENDER:$1|цього користувача|цю користувачку}}",
 	"renameuser-desc": "Перейменування користувача (потрібні права ''renameuser'')",
 	"renameuserold": "Поточне ім'я:",
 	"renameusernew": "Нове ім'я:",

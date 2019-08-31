@@ -21,7 +21,6 @@
 	"nuke-submit-user": "Liste over sider",
 	"nuke-submit-delete": "Slet valgte",
 	"right-nuke": "masseslette sider",
-	"nuke-select": "Vælg: $1",
 	"nuke-userorip": "Brugernavn, IP-adresse eller tom:",
 	"nuke-maxpages": "Maksimalt antal sider:",
 	"nuke-editby": "Oprettet af [[Special:Contributions/$1|{{GENDER:$1|$1}}]]",

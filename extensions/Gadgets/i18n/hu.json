@@ -34,8 +34,6 @@
 	"gadgets-not-found": "A(z) „$1“ segédeszköz nem található.",
 	"gadgets-export-text": "A(z) $1 segédeszköz exportálásához kattints a „{{int:gadgets-export-download}}“ gombra, mentsd el a fájlt, majd a célwikiben a Special:Import lapon töltsd fel. Ezután a MediaWiki:Gadgets-definition laphoz add hozzá a következőket:\n<pre>$2</pre>\nA célwikiben rendelkezned kell a megfelelő jogokkal (beleértve a rendszerüzenetek szerkesztését) és engedélyezve kell lennie a fájlimportálásnak.",
 	"gadgets-export-download": "Letöltés",
-	"apihelp-query+gadgetcategories-description": "A segédeszköz-kategóriák listáját adja vissza.",
-	"apihelp-query+gadgetcategories-param-prop": "Milyen információkat szeretnél a segédeszköz-kategóriáról:\n;name:Belső kategórianév.\n;title:Kategória címe.\n;members:A kategóriában található segédeszközök száma.",
 	"right-gadgets-edit": "segédeszközök JavaScript- és CSS-lapjainak szerkesztése",
 	"action-gadgets-edit": "ennek a segédeszköz-JavaScriptnek vagy -CSS-nek a szerkesztése",
 	"right-gadgets-definition-edit": "segédeszköz-definíciók szerkesztése",

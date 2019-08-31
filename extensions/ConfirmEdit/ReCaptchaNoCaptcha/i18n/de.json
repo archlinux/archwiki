@@ -4,6 +4,7 @@
 			"Metalhead64"
 		]
 	},
+	"renocaptcha-desc": "reCAPTCHA-NoCAPTCHA-Modul für Confirm Edit",
 	"renocaptcha-edit": "Um das Wiki vor automatisiertem Bearbeitungsspam zu schützen, bitten wir dich, das folgende CAPTCHA zu lösen:",
 	"renocaptcha-addurl": "Deine Bearbeitung enthält neue Weblinks. Um das Wiki vor automatisiertem Spam zu schützen, bitten wir dich, das folgende CAPTCHA zu lösen:",
 	"renocaptcha-badlogin": "Um das Wiki vor automatisiertem Knacken des Passwortes zu schützen, bitten wir dich, das folgende CAPTCHA zu lösen:",

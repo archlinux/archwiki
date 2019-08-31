@@ -78,7 +78,6 @@
 	"ResourceModuleSkinStyles": {
 		"monobook": {
 			"+mediawiki.action.view.redirectPage": "resources/skinStyles/mediawiki.action.view.redirectPage.css",
-			"+mediawiki.special.preferences.styles": "resources/skinStyles/mediawiki.special.preferences.styles.less",
 			"+mediawiki.notification": "resources/skinStyles/mediawiki.notification.less",
 			"+oojs-ui-core.styles": "resources/skinStyles/ooui.less",
 			"+ext.uls.interface": "resources/skinStyles/ext.uls.interface.less"

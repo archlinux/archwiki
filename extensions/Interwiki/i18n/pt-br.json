@@ -8,7 +8,9 @@
 			"Luckas Blade",
 			"555",
 			"Dianakc",
-			"Felipe L. Ewald"
+			"Felipe L. Ewald",
+			"Jaideraf",
+			"Eduardo Addad de Oliveira"
 		]
 	},
 	"interwiki": "Ver e editar dados de interwikis",
@@ -23,13 +25,13 @@
 	"interwiki-url-label": "URL:",
 	"interwiki_url_intro": "Modelo para URL. O marcador $1 será substituído pelo <em>pagename</em> em <code>[<nowiki />[prefix:<em>pagename</em>]]</code>.",
 	"interwiki_local": "Encaminhar",
-	"interwiki-local-label": "Encaminhar:",
+	"interwiki-local-label": "Encaminhar",
 	"interwiki_local_0_intro": "As solicitações HTTP externas para a wiki local usando este prefixo interwiki no URL resultarão em uma página de erro \"{{int: badtitle}}\".",
 	"interwiki_local_1_intro": "As solicitações HTTP externas para a wiki local usando este prefixo interwiki serão redirecionadas para o URL alvo do interwiki (ou seja, tratados como links para páginas locais).",
 	"interwiki_trans": "Transcluir",
-	"interwiki-trans-label": "Transcluir:",
+	"interwiki-trans-label": "Transcluir",
 	"interwiki_trans_1_intro": "Se a sintaxe wikitext <code>{<nowiki />{prefix:<em>pagename</em>}}</code> for usada, permite a transclusão da predefinição/página da wiki estrangeira se as transclusões interwiki estiverem habilitadas em geral ([//www.mediawiki.org/wiki/Manual:$wgEnableScaryTranscluding scary transclusion]).",
-	"interwiki_trans_0_intro": "Não permita que <code>{<nowiki />{prefix:<em>pagename</em>}}</code> transclua predefinições/páginas estrangeiras, antes procure uma página local no templete namespace.",
+	"interwiki_trans_0_intro": "Não permita que <code>{<nowiki />{prefix:<em>pagename</em>}}</code> transclua predefinições/páginas estrangeiras, antes procure pela página local no namespace de predefinição.",
 	"interwiki_1": "sim",
 	"interwiki_0": "não",
 	"interwiki_error": "ERRO: A tabela de interwikis está vazia, ou alguma outra coisa não correu bem.",

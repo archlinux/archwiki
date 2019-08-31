@@ -35,10 +35,10 @@
 		font-family: @font-family-serif;
 	}
 
-	.printfooter,
-	#footer,
 	// Tables, thumbs and lists are sans-serif in print mode (unlike screen mode) because these will render
 	// more legibly on print media in a smaller font sizes
+	.printfooter,
+	#footer,
 	.thumb,
 	table,
 	ol,
@@ -58,7 +58,7 @@
 	// 		src="https://wikimedia.org/api/rest_v1/media/math/render/svg/d03b01348b751e6f4eaff085b3effa9542e2935d"
 	// 		class="mwe-math-fallback-image-inline"
 	// 		aria-hidden="true"
-	// 		style="vertical-align: -2.171ex; width:11.418ex; height:5.676ex;"
+	// 		style="vertical-align: -2.171ex; width: 11.418ex; height: 5.676ex;"
 	// 		alt="r_{s}={\frac {2GM}{c^{2}}}">
 	img {
 		font-family: @font-family-serif;
@@ -139,8 +139,8 @@
 		// between the surrounding elements, making the reading experience less
 		// enjoyable. If there is not enough space the following code will push
 		// the paragraph contents until after the floating element(s).
-		@paragraphMinWidth: 120pt;
 		&:before {
+			@paragraphMinWidth: 120pt;
 			content: '';
 			display: block;
 			overflow: hidden;
@@ -183,7 +183,6 @@
 		}
 
 		> ul {
-
 			> li {
 				margin-bottom: 4px;
 				font-weight: bold;

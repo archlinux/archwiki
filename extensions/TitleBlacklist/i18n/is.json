@@ -13,5 +13,6 @@
 	"titleblacklist-invalid": "Eftirfarandi {{PLURAL:$1|færsla|færslur}} í bannlista yfir síðutitla {{PLURAL:$1|er|eru}} ógildar og leiðrétta þarf {{PLURAL:$1|hana|þær}} áður en síðan er vistuð:",
 	"titleblacklist-override": "Hunsa bannlistann",
 	"right-tboverride": "Hunsa bannlista fyrir síðutitla og notendanöfn.",
-	"right-tboverride-account": "Hunsa bannlista yfir notendanöfn"
+	"right-tboverride-account": "Hunsa bannlista yfir notendanöfn",
+	"visualeditor-saveerror-titleblacklist": "Villa við vistun síðu: Titill síðunnar er á svörtum lista"
 }

@@ -11,7 +11,8 @@
 			"Nemo bis",
 			"Lucas2",
 			"FRacco",
-			"Nemo ter"
+			"Nemo ter",
+			"Ruthven"
 		]
 	},
 	"categorytree": "Albero delle categorie",
@@ -28,7 +29,7 @@
 	"categorytree-mode-all": "tutte le pagine",
 	"categorytree-collapse": "comprimi",
 	"categorytree-expand": "espandi",
-	"categorytree-member-counts": "contiene {{PLURAL:$1|1 sottocategoria|$1 sottocategorie}}, {{PLURAL:$2|1 pagina|$2 pagine}} e {{PLURAL:$3|1 file|$3 file}}",
+	"categorytree-member-counts": "Contiene {{PLURAL:$1|1 sottocategoria|$1 sottocategorie}}, {{PLURAL:$2|1 pagina|$2 pagine}} e {{PLURAL:$3|1 file|$3 file}}",
 	"categorytree-num-categories": "$1 C",
 	"categorytree-num-pages": "$1 P",
 	"categorytree-num-files": "$1 F",

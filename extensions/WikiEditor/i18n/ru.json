@@ -19,7 +19,9 @@
 			"Sealle",
 			"Jack who built the house",
 			"Mailman",
-			"Smigles"
+			"Smigles",
+			"Vlad5250",
+			"Stjn"
 		]
 	},
 	"wikieditor": "Расширенный интерфейс редактирования викитекста",
@@ -28,7 +30,8 @@
 	"wikieditor-loading": "Загрузка",
 	"wikieditor-toolbar": "Панель редактирования",
 	"wikieditor-toolbar-desc": "Панель редактирования, более удобная в использовании",
-	"wikieditor-toolbar-preference": "Включить улучшенную панель редактирования",
+	"wikieditor-toolbar-preference": "Включить панель редактирования",
+	"wikieditor-toolbar-preference-help": "Иногда называется «редактором вики-кода — 2010».",
 	"wikieditor-toolbar-loading": "Загрузка…",
 	"wikieditor-toolbar-tool-bold": "Полужирный",
 	"wikieditor-toolbar-tool-bold-example": "Полужирное начертание",
@@ -51,7 +54,7 @@
 	"wikieditor-toolbar-tool-link-insert": "Вставить ссылку",
 	"wikieditor-toolbar-tool-link-cancel": "Отмена",
 	"wikieditor-toolbar-tool-link-int-target-status-exists": "Страница существует",
-	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Страницы не существует",
+	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Страница не существует",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Недопустимое название",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Внешняя ссылка",
 	"wikieditor-toolbar-tool-link-int-target-status-loading": "Проверка существования страницы…",

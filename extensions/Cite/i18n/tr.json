@@ -10,7 +10,7 @@
 			"Vito Genovese"
 		]
 	},
-	"cite-desc": "Alıntılar için, <code><nowiki><ref[ name=id]></nowiki></code> ve <code><nowiki><references/></nowiki></code> etiketlerini ekler",
+	"cite-desc": "Alıntılar için, <code>&lt;ref[ name=id]&gt;</code> ve <code>&lt;references/&gt;</code> etiketlerini ekler",
 	"cite_error": "Kaynak hatası $1",
 	"cite_error_ref_numeric_key": "Geçersiz <code>&lt;ref&gt;</code> etiketi;\nisim basit bir tamsayı olamaz. Tanımlayıcı bir başlık kullanın",
 	"cite_error_ref_no_key": "Geçersiz <code>&lt;ref&gt;</code> etiketi;\niçeriksiz reflerin bir ismi olmalı",

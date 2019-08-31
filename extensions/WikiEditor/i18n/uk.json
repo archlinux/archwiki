@@ -13,7 +13,9 @@
 			"Prima klasy4na",
 			"Тест",
 			"Macofe",
-			"Ата"
+			"Ата",
+			"Vlad5250",
+			"Piramidion"
 		]
 	},
 	"wikieditor": "Розширений інтерфейс редагування вікітексту",
@@ -22,7 +24,8 @@
 	"wikieditor-loading": "Завантаження…",
 	"wikieditor-toolbar": "Панель засобів редагування",
 	"wikieditor-toolbar-desc": "Панель засобів редагування з покращеною ужитковістю",
-	"wikieditor-toolbar-preference": "Увімкнути покращену панель засобів редагування",
+	"wikieditor-toolbar-preference": "Увімкнути панель редагування",
+	"wikieditor-toolbar-preference-help": "Іноді його ще називають «редактором вікірозмітки 2010».",
 	"wikieditor-toolbar-loading": "Завантаження…",
 	"wikieditor-toolbar-tool-bold": "Жирний",
 	"wikieditor-toolbar-tool-bold-example": "Жирний текст",

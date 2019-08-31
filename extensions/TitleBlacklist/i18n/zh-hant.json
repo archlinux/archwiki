@@ -32,12 +32,5 @@
 	"right-tboverride": "覆蓋標題或使用者名稱黑名單",
 	"right-tboverride-account": "覆蓋使用者名稱黑名單",
 	"right-titleblacklistlog": "檢視標題黑名單日誌",
-	"apihelp-titleblacklist-description": "檢驗一個頁面標題、檔案名稱或使用者名稱是否觸發標題黑名單。",
-	"apihelp-titleblacklist-summary": "檢驗一個頁面的標題、檔案名稱或使用者名稱是否觸發標題黑名單。",
-	"apihelp-titleblacklist-param-title": "要用來檢驗黑名單的字串。",
-	"apihelp-titleblacklist-param-action": "要檢查的操作。",
-	"apihelp-titleblacklist-param-nooverride": "不要嘗試覆蓋標題黑名單。",
-	"apihelp-titleblacklist-example-1": "檢查[[Foo]]是否已被列入黑名單",
-	"apihelp-titleblacklist-example-2": "檢查[[Bar]]是否已被列入禁止編輯的黑名單",
-	"apihelp-createaccount-param-ignoretitleblacklist": "略過欺騙檢查（需要下列權限之一：<code>tboverride</code>、<code>tboverride-account</code>）"
+	"visualeditor-saveerror-titleblacklist": "儲存頁面錯誤：此頁面標題已被列入封鎖清單。"
 }

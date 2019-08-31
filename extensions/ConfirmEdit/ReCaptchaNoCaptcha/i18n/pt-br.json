@@ -4,6 +4,7 @@
 			"Eduardo Addad de Oliveira"
 		]
 	},
+	"renocaptcha-desc": "Módulo reCAPTCHA NoCAPTCHA para o Confirm Edit",
 	"renocaptcha-edit": "Para proteger a wiki contra a edição automatizada de spam, pedimos gentilmente que resolva o seguinte código CAPTCHA:",
 	"renocaptcha-addurl": "A sua edição inclui novas ligações externas. Para proteger a wiki contra o spam automático, pedimos gentilmente que resolva o seguinte código CAPTCHA:",
 	"renocaptcha-badlogin": "Para proteger a wiki da quebra de senha automatizada, pedimos que resolva o seguinte CAPTCHA:",

@@ -15,7 +15,7 @@
  * along with MultimediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-( function ( mw, $ ) {
+( function () {
 	var $fixture = $( '#qunit-fixture' );
 
 	function makeReuseTab() {
@@ -40,4 +40,4 @@
 
 		assert.strictEqual( reuseTab.$pane.hasClass( 'active' ), false, 'Tab is not active.' );
 	} );
-}( mediaWiki, jQuery ) );
+}() );

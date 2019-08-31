@@ -4,14 +4,17 @@
 			"Bombola",
 			"Ceas08",
 			"Erdemaslancan",
-			"Velg"
+			"Velg",
+			"Cem Rize"
 		]
 	},
+	"vector-action-addsection": "Konu ekle",
 	"vector-action-delete": "Jili",
 	"vector-action-move": "Tori",
 	"vector-action-protect": "İçvi",
 	"vector-view-create": "dokʼidi",
 	"vector-view-edit": "Doktiri",
 	"vector-view-history": "Dosyaşi tarixi",
-	"vector-view-view": "İǩitxi"
+	"vector-view-view": "İǩitxi",
+	"vector-more-actions": "Daha fazla"
 }

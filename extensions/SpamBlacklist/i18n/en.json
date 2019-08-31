@@ -15,9 +15,5 @@
 	"log-description-spamblacklist": "These events track spam blacklist hits.",
 	"logentry-spamblacklist-hit": "{{GENDER:$2|$1}} caused a spam blacklist hit on $3 by attempting to add $4.",
 	"right-spamblacklistlog": "View the spam blacklist log",
-	"action-spamblacklistlog": "view the spam blacklist log",
-	"apihelp-spamblacklist-description": "Validate one or more URLs against the SpamBlacklist.",
-	"apihelp-spamblacklist-summary": "Validate one or more URLs against the SpamBlacklist.",
-	"apihelp-spamblacklist-param-url": "URLs to validate against the blacklist.",
-	"apihelp-spamblacklist-example-1": "Check two URLs against the blacklist"
+	"action-spamblacklistlog": "view the spam blacklist log"
 }

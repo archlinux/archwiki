@@ -15,7 +15,7 @@
  * along with MediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-( function ( mw, $ ) {
+( function () {
 	QUnit.module( 'mmv.ui.StripeButtons', QUnit.newMwEnvironment() );
 
 	function createStripeButtons() {
@@ -73,4 +73,4 @@
 		assert.strictEqual( button.hasClass( 'mw-mmv-repo-button-commons' ), true, 'Button commons class for Commons files' );
 	} );
 
-}( mediaWiki, jQuery ) );
+}() );

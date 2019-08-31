@@ -23,6 +23,5 @@
 	"right-tboverride": "De zwarte lijst voor pagina- en gebruikersnamen omzeilen",
 	"right-tboverride-account": "Zwarte lijst voor gebruikersnamen negeren",
 	"right-titleblacklistlog": "Logboek zwarte lijst voor paginanamen bekijken",
-	"apihelp-titleblacklist-param-action": "De handeling om te controleren.",
-	"apihelp-titleblacklist-example-1": "Controleer of [[Foo]] op de zwarte lijst staat."
+	"visualeditor-saveerror-titleblacklist": "Fout tijdens het opslaan van de pagina: deze pagina staat op de zwarte lijst"
 }

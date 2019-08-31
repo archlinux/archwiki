@@ -165,6 +165,7 @@ class SpecialCiteThisPage extends FormSpecialPage {
 	private function getParserOptions() {
 		$parserOptions = ParserOptions::newFromUser( $this->getUser() );
 		$parserOptions->setDateFormat( 'default' );
+		$parserOptions->setInterfaceMessage( true );
 
 		// Having tidy on causes whitespace and <pre> tags to
 		// be generated around the output of the CiteThisPageOutput

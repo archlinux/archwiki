@@ -10,7 +10,6 @@ foobar
 </source>
 !! result
 <div class="mw-highlight mw-content-ltr" dir="ltr"><pre>foobar</pre></div>
-
 !! end
 
 !! test
@@ -21,7 +20,6 @@ foo
 </source>
 !! html
 <div class="mw-highlight mw-content-ltr" dir="ltr"><pre>foo</pre></div>
-
 !! end
 
 !! test
@@ -33,7 +31,6 @@ bar
 </source>
 !! html
 <div class="mw-highlight mw-content-ltr" dir="ltr"><pre>bar</pre></div>
-
 !! end
 
 !! test
@@ -58,7 +55,6 @@ SRC=&amp;#106;&amp;#97;&amp;#118;&amp;#97;&amp;#115;&amp;#99;&amp;#114;&amp;#105
 \";alert('XSS');//
 &lt;/script>&lt;script>alert('XSS');&lt;/script>
 %253cscript%253ealert(document.cookie)%253c/script%253e</pre></div>
-
 !! end
 
 !! test
@@ -88,7 +84,6 @@ var a;
 !! result
 <div class="mw-highlight mw-content-ltr" dir="ltr"><pre><span></span><span class="kd">var</span> <span class="nx">a</span><span class="p">;</span>
 </pre></div>
-
 !! end
 
 !! test
@@ -104,7 +99,6 @@ b</source>
 b</pre></div></li></ul>
 <ul><li>foo <div class="mw-highlight mw-content-ltr" dir="ltr"><pre>a
 b</pre></div></li></ul>
-
 !! html+tidy
 <ul><li><div class="mw-highlight mw-content-ltr" dir="ltr"><pre>a
 b</pre></div></li></ul>
@@ -119,7 +113,6 @@ Custom attributes
 !! result
 <div id="foo" class="bar mw-highlight mw-content-rtl" dir="rtl" style="font-size: larger;"><pre><span></span><span class="kd">var</span> <span class="nx">a</span><span class="p">;</span>
 </pre></div>
-
 !! end
 
 !! test
@@ -155,7 +148,6 @@ No code
 <source lang="CSharp"></source>
 !! result
 <div class="mw-highlight mw-content-ltr" dir="ltr"></div>
-
 !! end
 
 !! test
@@ -164,7 +156,6 @@ Just whitespace
 <source lang="CSharp"> </source>
 !! result
 <div class="mw-highlight mw-content-ltr" dir="ltr"></div>
-
 !! end
 
 !! test

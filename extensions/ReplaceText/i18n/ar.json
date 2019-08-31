@@ -28,7 +28,7 @@
 	"replacetext_choosepagesformove": "استبدل النصّ \"$1\" بالنصّ \"$2\" في {{PLURAL:$3||عنوان الصفحة التالية|عنواني الصفحتين التاليتين|عناوين الصفحات التالية}}:",
 	"replacetext_cannotmove": "لا يمكن نقل {{PLURAL:$1||الصفحة التالية|الصفحتين التاليتين|الصفحات التالية}}:",
 	"replacetext_formovedpages": "للصفحات المنقولة:",
-	"replacetext_savemovedpages": "احفظ العناوين القديمة كتحويلات إلى العناوين الجديدة",
+	"replacetext_savemovedpages": "حفظ العناوين القديمة كتحويلات إلى العناوين الجديدة",
 	"replacetext_watchmovedpages": "راقب هذه الصفحات",
 	"replacetext_invertselections": "اعكس الاختيارات",
 	"replacetext_replace": "استبدل",

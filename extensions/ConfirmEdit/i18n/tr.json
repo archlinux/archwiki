@@ -7,7 +7,8 @@
 			"Stultiwikia",
 			"HakanIST",
 			"Sadrettin",
-			"By erdo can"
+			"By erdo can",
+			"Sayginer"
 		]
 	},
 	"captcha-edit": "Bu sayfayı değiştirebilmek için lütfen aşağıdaki basit soruyu yanıtlayın ve yanıtı kutunun içine yazın ([[Special:Captcha/help|ayrıntılı bilgi]]):",
@@ -16,7 +17,7 @@
 	"captcha-label": "CAPTCHA",
 	"captcha-addurl": "Değişikliğiniz yeni dış bağlantılar içeriyor.\nVikiyi otomatik spamdan korumak ve değişikliğinizi kaydetmek için, aşağıdaki basit toplamı çözmenizi ve yanıtı kutunun içine yazmanızı rica ediyoruz ([[Special:Captcha/help|ayrıntılı bilgi]]):",
 	"captcha-badlogin": "Vikiyi otomatik parola çözülmesine karşı korumak için, aşağıdaki basit toplamı çözmenizi ve yanıtı kutunun içine yazmanızı rica ediyoruz ([[Special:Captcha/help|ayrıntılı bilgi]]):",
-	"captcha-createaccount": "Vikiyi otomatik hesap oluşturmaya karşı korumak için, aşağıdaki basit toplamı çözmenizi ve yanıtı kutunun içine yazmanızı rica ediyoruz ([[Special:Captcha/help|ayrıntılı bilgi]]):",
+	"captcha-createaccount": "Vikiyi otomatik hesap oluşturmaya karşı korumak için, aşağıdaki problemi çözmenizi ve yanıtı kutunun içine yazmanızı rica ediyoruz ([[Special:Captcha/help|ayrıntılı bilgi]]):",
 	"captcha-createaccount-fail": "Hatalı ya da eksik CAPTCHA.",
 	"captcha-create": "Bu sayfayı oluşturmak için, lütfen aşağıdaki basit soruyu yanıtlayın ve kutunun içinde yanıtı yazın ([[Special:Captcha/help|ayrıntılı bilgi]]):",
 	"captcha-sendemail": "Vikiyi otomatik spamlara karşı korumaya yardımcı olmak için, aşağıdaki basit toplamı çözmenizi ve yanıtı kutunun içine yazmanızı rica ediyoruz ([[Special:Captcha/help|ayrıntılı bilgi]]):",

@@ -15,7 +15,7 @@
  * along with MultimediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-( function ( mw, $ ) {
+( function () {
 	var MMVB;
 
 	/**
@@ -631,4 +631,4 @@
 	};
 
 	mw.mmv.MultimediaViewerBootstrap = MultimediaViewerBootstrap;
-}( mediaWiki, jQuery ) );
+}() );

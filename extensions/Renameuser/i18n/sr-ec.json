@@ -14,8 +14,8 @@
 		]
 	},
 	"renameuser": "Преименуј корисника",
-	"renameuser-linkoncontribs": "преименуј корисника",
-	"renameuser-linkoncontribs-text": "Преименуј овог корисника",
+	"renameuser-linkoncontribs": "преименуј {{GENDER:$1|корисника|корисницу}}",
+	"renameuser-linkoncontribs-text": "Преименујте овог {{GENDER:$1|корисника|корисницу}}",
 	"renameuser-desc": "Додаје [[Special:RenameUser|посебну страницу]] за преименовање корисника (потребно право ''renameuser'')",
 	"renameuserold": "Актуелно корисничко име:",
 	"renameusernew": "Ново корисничко име:",

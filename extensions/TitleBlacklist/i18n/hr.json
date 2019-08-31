@@ -5,7 +5,8 @@
 			"Dnik",
 			"Ex13",
 			"SpeedyGonsales",
-			"Bugoslav"
+			"Bugoslav",
+			"MaGa"
 		]
 	},
 	"log-name-titleblacklist": "Evidencija crne liste naslova",
@@ -19,5 +20,6 @@
 	"titleblacklist-invalid": "Sljedeći {{PLURAL:$1|redak|redci}} u popisu zabranjenih naslova {{PLURAL:$1|je|su}} nedozvoljeni; molimo ispravite {{PLURAL:$1|ga|ih}} prije spremanja:",
 	"titleblacklist-override": "Zanemari crnu listu",
 	"right-tboverride": "Premošćivanje naslova ili suradničkog imena na crnom popisu",
-	"right-tboverride-account": "Zaobilaženje popisa zabranjenih suradničkih imena"
+	"right-tboverride-account": "Zaobilaženje popisa zabranjenih suradničkih imena",
+	"visualeditor-saveerror-titleblacklist": "Pogrješka prilikom zapisivanja stranice: naslov stranice se nalazi na crnom popisu"
 }

@@ -16,6 +16,8 @@
  *
  */
 
+namespace MediaWiki\Extensions\ParserFunctions;
+
 use UtfNormal\Validator;
 
 // Character classes
@@ -202,10 +204,12 @@ class ExprParser {
 
 			// First the unlimited length classes
 
+			// @phan-suppress-next-line PhanParamSuspiciousOrder false positive
 			if ( false !== strpos( EXPR_WHITE_CLASS, $char ) ) {
 				// Whitespace
 				$p += strspn( $expr, EXPR_WHITE_CLASS, $p );
 				continue;
+				// @phan-suppress-next-line PhanParamSuspiciousOrder false positive
 			} elseif ( false !== strpos( EXPR_NUMBER_CLASS, $char ) ) {
 				// Number
 				if ( $expecting !== 'expression' ) {

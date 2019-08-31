@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ukabia"
+			"Ukabia",
+			"Uzoma Ozurumba"
 		]
 	},
 	"vector-action-addsection": "Tinyé Okwu",
@@ -14,5 +15,6 @@
 	"vector-view-edit": "Mèzi",
 	"vector-view-history": "Lèe ị̀ta",
 	"vector-view-view": "Gụ̀ọ",
-	"vector-view-viewsource": "Zi mkpurụ"
+	"vector-view-viewsource": "Zi mkpurụ",
+	"vector-more-actions": "Ọzọ kwa"
 }

@@ -1,9 +1,9 @@
-( function ( mw, $ ) {
+( function () {
 	var oldScrollTo;
 
 	function stubScrollTo() {
 		oldScrollTo = $.scrollTo;
-		$.scrollTo = function () { return { scrollTop: $.noop, on: $.noop, off: $.noop }; };
+		$.scrollTo = function () { return { scrollTop: function () {}, on: function () {}, off: function () {} }; };
 	}
 
 	function restoreScrollTo() {
@@ -91,7 +91,7 @@
 
 		stubScrollTo();
 
-		lightbox.buttons.fadeOut = $.noop;
+		lightbox.buttons.fadeOut = function () {};
 
 		// Attach lightbox to testing fixture to avoid interference with other tests.
 		lightbox.attach( '#qunit-fixture' );
@@ -182,7 +182,7 @@
 		// Enter fullscreen
 		lightbox.buttons.$fullscreen.trigger( 'click' );
 
-		lightbox.buttons.fadeOut = $.noop;
+		lightbox.buttons.fadeOut = function () {};
 		assert.ok( lightbox.isFullscreen, 'Lightbox knows that it\'s in fullscreen mode' );
 
 		oldRevealButtonsAndFadeIfNeeded = lightbox.buttons.revealAndFade;
@@ -196,7 +196,7 @@
 		// Pretend that the mouse cursor moved to the top-left corner
 		lightbox.mousemove( { pageX: 0, pageY: 0 } );
 
-		lightbox.buttons.revealAndFadeIfNeeded = $.noop;
+		lightbox.buttons.revealAndFadeIfNeeded = function () {};
 
 		panelBottom = $( '.mw-mmv-post-image' ).position().top + $( '.mw-mmv-post-image' ).height();
 
@@ -232,12 +232,12 @@
 		// Attach lightbox to testing fixture to avoid interference with other tests.
 		lightbox.attach( '#qunit-fixture' );
 
-		$.each( lightbox.buttons.$buttons, function ( idx, e ) {
-			var $e = $( e ),
-				offset = $e.show().offset(),
-				width = $e.width(),
-				height = $e.height(),
-				disabled = $e.hasClass( 'disabled' );
+		lightbox.buttons.$buttons.each( function () {
+			var $button = $( this ),
+				offset = $button.show().offset(),
+				width = $button.width(),
+				height = $button.height(),
+				disabled = $button.hasClass( 'disabled' );
 
 			assert.strictEqual( lightbox.buttons.isAnyActiveButtonHovered( offset.left, offset.top ),
 				!disabled,
@@ -303,4 +303,4 @@
 
 		viewer.cleanupEventHandlers();
 	} );
-}( mediaWiki, jQuery ) );
+}() );

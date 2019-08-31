@@ -5,7 +5,7 @@
 			"Cumbril"
 		]
 	},
-	"cite-desc": "Lisab viitamiseks sildid <code><nowiki><ref[ name=id]></nowiki></code> ja <code><nowiki><references/></nowiki></code>.",
+	"cite-desc": "Lisab viitamiseks sildid <code>&lt;ref[ name=id]&gt;</code> ja <code>&lt;references/&gt;</code>.",
 	"cite_error": "Viitamistõrge: $1",
 	"cite_error_ref_invalid_dir": "Vigane silt <code>&lt;ref&gt;</code>, atribuudi \"dir\" väärtus \"$1\" on tundmatu. Peab olema \"ltr\" või \"rtl\".",
 	"cite_error_ref_numeric_key": "Vigane <code>&lt;ref&gt;</code>-silt.\nNimeparameeter ei tohi olla numbriline. Kasuta kirjeldavat nime.",

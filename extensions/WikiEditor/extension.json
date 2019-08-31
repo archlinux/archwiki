@@ -13,7 +13,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "editor",
 	"requires": {
-		"MediaWiki": ">= 1.32.0"
+		"MediaWiki": ">= 1.33.0"
 	},
 	"MessagesDirs": {
 		"WikiEditor": [
@@ -29,12 +29,6 @@
 		],
 		"ResourceLoaderGetConfigVars": [
 			"WikiEditorHooks::resourceLoaderGetConfigVars"
-		],
-		"ResourceLoaderTestModules": [
-			"WikiEditorHooks::resourceLoaderTestModules"
-		],
-		"MakeGlobalVariablesScript": [
-			"WikiEditorHooks::makeGlobalVariablesScript"
 		],
 		"EditPageBeforeEditToolbar": [
 			"WikiEditorHooks::EditPageBeforeEditToolbar"
@@ -262,8 +256,8 @@
 				"wikieditor-toolbar-tool-file-upload"
 			],
 			"dependencies": [
-				"jquery.async",
 				"jquery.cookie",
+				"jquery.throttle-debounce",
 				"jquery.suggestions",
 				"jquery.tabIndex",
 				"jquery.textSelection",
@@ -292,51 +286,17 @@
 		"ext.wikiEditor.styles": {
 			"group": "ext.wikiEditor",
 			"styles": "ext.wikiEditor.toolbar.styles.less"
-		},
-		"ext.wikiEditor.toolbar": {
-			"dependencies": "ext.wikiEditor",
-			"deprecated": "Please use 'ext.wikiEditor' instead."
-		},
-		"ext.wikiEditor.dialogs": {
-			"dependencies": "ext.wikiEditor",
-			"deprecated": "Please use 'ext.wikiEditor' instead."
-		},
-		"ext.wikiEditor.core": {
-			"dependencies": "ext.wikiEditor",
-			"deprecated": "Please use 'ext.wikiEditor' instead."
-		},
-		"jquery.wikiEditor": {
-			"dependencies": "ext.wikiEditor",
-			"deprecated": "Please use 'ext.wikiEditor' instead."
-		},
-		"jquery.wikiEditor.core": {
-			"dependencies": "ext.wikiEditor",
-			"deprecated": "Please use 'ext.wikiEditor' instead."
-		},
-		"jquery.wikiEditor.dialogs": {
-			"dependencies": "ext.wikiEditor",
-			"deprecated": "Please use 'ext.wikiEditor' instead."
-		},
-		"jquery.wikiEditor.dialogs.config": {
-			"dependencies": "ext.wikiEditor",
-			"deprecated": "Please use 'ext.wikiEditor' instead."
-		},
-		"jquery.wikiEditor.toolbar": {
-			"dependencies": "ext.wikiEditor",
-			"deprecated": "Please use 'ext.wikiEditor' instead."
-		},
-		"jquery.wikiEditor.toolbar.config": {
-			"dependencies": "ext.wikiEditor",
-			"deprecated": "Please use 'ext.wikiEditor' instead."
-		},
-		"jquery.wikiEditor.toolbar.i18n": {
-			"dependencies": "ext.wikiEditor",
-			"deprecated": "Please use 'ext.wikiEditor' instead."
 		}
 	},
 	"ResourceFileModulePaths": {
 		"localBasePath": "modules",
 		"remoteExtPath": "WikiEditor/modules"
+	},
+	"QUnitTestModule": {
+		"localBasePath": "",
+		"remoteExtPath": "WikiEditor",
+		"scripts": "tests/qunit/ext.wikiEditor.toolbar.test.js",
+		"dependencies": [ "ext.wikiEditor" ]
 	},
 	"DefaultUserOptions": {
 		"usebetatoolbar": true

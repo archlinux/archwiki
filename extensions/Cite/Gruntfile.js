@@ -17,10 +17,15 @@ module.exports = function ( grunt ) {
 
 	grunt.initConfig( {
 		eslint: {
+			options: {
+				reportUnusedDisableDirectives: true,
+				cache: true
+			},
 			all: [
 				'**/*.js',
 				'{.jsduck,build}/**/*.js',
 				'modules/**/*.js',
+				'tests/**/*.js',
 				'!node_modules/**',
 				'!vendor/**'
 			]

@@ -2,12 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"Christian List",
-			"Saederup92"
+			"Saederup92",
+			"Weblars"
 		]
 	},
 	"multimediaviewer-desc": "Udvid miniaturebilleder i en større størrelse på en fuld skærm.",
 	"multimediaviewer-pref": "Medieviser",
 	"multimediaviewer-pref-desc": "Med dette nye værktøj kan du forbedre din multimedieoplevelse. Det viser billeder i større størrelse på sider, der har miniaturer. Billederne er vist i et pænere fuldskærmsformat, og kan også ses i fuld størrelse.",
+	"multimediaviewer-optin-pref": "Aktiver <span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About Media Viewer]</span>",
 	"multimediaviewer-file-page": "Gå til tilsvarende filside",
 	"multimediaviewer-repository-local": "Flere detaljer",
 	"multimediaviewer-datetime-created": "Oprettet: $1",
@@ -27,7 +29,10 @@
 	"multimediaviewer-reuse-link": "Brug eller indlejre denne fil",
 	"multimediaviewer-reuse-loading-placeholder": "Indlæser...",
 	"multimediaviewer-share-tab": "Del",
+	"multimediaviewer-download-link": "Hent denne fil",
 	"multimediaviewer-download-preview-link-title": "Se i browser",
+	"multimediaviewer-embed-wt": "Wikitekst",
+	"multimediaviewer-embed-html": "HTML",
 	"multimediaviewer-text-embed-credit-text-bl": "Af $1, $2, $3",
 	"multimediaviewer-text-embed-credit-text-b": "Af $1, $2",
 	"multimediaviewer-html-embed-credit-text-bl": "Af $1, $2, $3",

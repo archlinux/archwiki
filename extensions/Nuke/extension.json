@@ -26,14 +26,12 @@
 		]
 	},
 	"ResourceModules": {
-		"ext.nuke": {
-			"scripts": [
-				"ext.nuke.js"
-			]
-		},
 		"ext.nuke.confirm": {
 			"scripts": [
 				"ext.nuke.confirm.js"
+			],
+			"dependencies": [
+				"mediawiki.jqueryMsg"
 			],
 			"messages": [
 				"nuke-confirm"

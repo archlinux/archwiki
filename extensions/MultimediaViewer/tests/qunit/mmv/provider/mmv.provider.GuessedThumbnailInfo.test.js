@@ -15,7 +15,7 @@
  * along with MediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-( function ( mw ) {
+( function () {
 	QUnit.module( 'mmv.provider.GuessedThumbnailInfo', QUnit.newMwEnvironment() );
 
 	QUnit.test( 'Constructor sanity check', function ( assert ) {
@@ -279,4 +279,4 @@
 
 		assert.strictEqual( result, undefined, 'guessFullUrl bails out when URL encoding is not as expected' );
 	} );
-}( mediaWiki ) );
+}() );

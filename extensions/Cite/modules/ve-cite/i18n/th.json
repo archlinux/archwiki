@@ -26,8 +26,6 @@
 	"cite-ve-dialog-reference-options-section": "ตัวเลือก",
 	"cite-ve-dialog-reference-placeholder": "เขียนหรือวางแหล่งอ้างอิงของคุณที่นี่ หรือแทรกแม่แบบอ้างอิงที่มา",
 	"cite-ve-dialog-reference-title": "อ้างอิง",
-	"cite-ve-dialog-reference-useexisting-full-label": "ใช้แหล่งอ้างอิงที่มีอยู่แล้วบนหน้านี้ซ้ำ",
-	"cite-ve-dialog-reference-useexisting-label": "ใช้การอ้างอิงที่มีอยู่แล้ว",
 	"cite-ve-dialog-reference-useexisting-tool": "ใช้ซ้ำ",
 	"cite-ve-dialog-referenceslist-contextitem-description-general": "รายชื่อแหล่งอ้างอิงทั่วไป",
 	"cite-ve-dialog-referenceslist-contextitem-description-named": "รายชื่อแหล่งอ้างอิงสำหรับกลุ่ม \"$1\"",

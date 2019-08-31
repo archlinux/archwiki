@@ -50,7 +50,7 @@ class ScopedCallback {
 	 * Trigger a scoped callback and destroy it.
 	 * This is the same as just setting it to null.
 	 *
-	 * @param ScopedCallback &$sc
+	 * @param ScopedCallback|null &$sc
 	 */
 	public static function consume( ScopedCallback &$sc = null ) {
 		$sc = null;
@@ -59,13 +59,33 @@ class ScopedCallback {
 	/**
 	 * Destroy a scoped callback without triggering it.
 	 *
-	 * @param ScopedCallback &$sc
+	 * @param ScopedCallback|null &$sc
 	 */
 	public static function cancel( ScopedCallback &$sc = null ) {
 		if ( $sc ) {
 			$sc->callback = null;
 		}
 		$sc = null;
+	}
+
+	/**
+	 * Make PHP ignore user aborts/disconnects until the returned
+	 * value leaves scope. This returns null and does nothing in CLI mode.
+	 *
+	 * @since 3.0.0
+	 * @return ScopedCallback|null
+	 */
+	public static function newScopedIgnoreUserAbort() {
+		// https://bugs.php.net/bug.php?id=47540
+		if ( PHP_SAPI != 'cli' ) {
+			// avoid half-finished operations
+			$old = ignore_user_abort( true );
+			return new ScopedCallback( function () use ( $old ) {
+				ignore_user_abort( $old );
+			} );
+		}
+
+		return null;
 	}
 
 	/**

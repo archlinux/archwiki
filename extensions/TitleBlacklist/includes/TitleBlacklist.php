@@ -321,12 +321,12 @@ class TitleBlacklist {
 	public function validate( $blacklist ) {
 		$badEntries = [];
 		foreach ( $blacklist as $e ) {
-			wfSuppressWarnings();
+			Wikimedia\suppressWarnings();
 			$regex = $e->getRegex();
 			if ( preg_match( "/{$regex}/u", '' ) === false ) {
 				$badEntries[] = $e->getRaw();
 			}
-			wfRestoreWarnings();
+			Wikimedia\restoreWarnings();
 		}
 		return $badEntries;
 	}

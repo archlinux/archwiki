@@ -1,9 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"ⲁϩⲙⲉⲧ"
+			"ⲁϩⲙⲉⲧ",
+			"Bloomaround"
 		]
 	},
+	"vector-action-addsection": "ⲧⲟⲩϩⲟ ⲟⲩⲑⲉⲙⲁ",
 	"vector-view-create": "ⲑⲁⲙⲓⲟ",
 	"vector-view-edit": "ϫⲓⲛⲫⲱⲛϩ",
 	"vector-view-history": "ⲁⲛⲁⲩ ⲉϯϩⲓⲥⲧⲟⲣⲓⲁ",

@@ -70,8 +70,18 @@
 	"ResourceModules": {
 		"ext.confirmEdit.editPreview.ipwhitelist.styles": {
 			"styles": "ext.confirmEdit.editPreview.ipwhitelist.styles.css"
+		},
+		"ext.confirmEdit.visualEditor": {
+			"scripts": "ve-confirmedit/ve.init.mw.CaptchaSaveErrorHandler.js",
+			"targets": [ "desktop", "mobile" ]
+		},
+		"ext.confirmEdit.simpleCaptcha": {
+			"styles": "../SimpleCaptcha/resources/ext.confirmEdit.simpleCaptcha.css"
 		}
 	},
+	"VisualEditorPluginModules": [
+		"ext.confirmEdit.visualEditor"
+	],
 	"ResourceFileModulePaths": {
 		"localBasePath": "resources",
 		"remoteExtPath": "ConfirmEdit/resources"

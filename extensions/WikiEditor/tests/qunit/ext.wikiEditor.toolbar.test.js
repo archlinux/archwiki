@@ -1,8 +1,8 @@
-( function ( $ ) {
+( function () {
 	QUnit.module( 'ext.wikiEditor.toolbar', QUnit.newMwEnvironment( {
 		setup: function () {
 			var $fixture = $( '#qunit-fixture' ),
-				$target = $( '<textarea id="wpTextBox1">' );
+				$target = $( '<textarea>' ).attr( 'id', 'wpTextBox1' );
 			this.$target = $target;
 			$fixture.append( $target );
 			$target.wikiEditor( 'addModule', 'toolbar' );
@@ -271,4 +271,4 @@
 		assert.strictEqual( this.$ui.find( '*[rel="info"].section' ).length, 0, 'After removing booklet section' );
 	} );
 
-}( jQuery ) );
+}() );

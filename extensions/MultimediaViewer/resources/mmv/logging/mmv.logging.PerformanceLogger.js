@@ -15,7 +15,7 @@
  * along with MultimediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-( function ( mw, $, oo ) {
+( function () {
 	var PL;
 
 	/**
@@ -28,7 +28,7 @@
 	 */
 	function PerformanceLogger() {}
 
-	oo.inheritClass( PerformanceLogger, mw.mmv.logging.Logger );
+	OO.inheritClass( PerformanceLogger, mw.mmv.logging.Logger );
 
 	PL = PerformanceLogger.prototype;
 
@@ -87,7 +87,7 @@
 			};
 
 			request.onreadystatechange = function () {
-				var total = $.now() - start;
+				var total = ( new Date() ).getTime() - start;
 
 				if ( request.readyState === 4 ) {
 					deferred.notify( request.response, 100 );
@@ -96,7 +96,7 @@
 				}
 			};
 
-			start = $.now();
+			start = ( new Date() ).getTime();
 			request.open( 'GET', url, true );
 			request.send();
 		} catch ( e ) {
@@ -206,6 +206,7 @@
 			stats.XCache = xcache;
 			varnishXCache = this.parseVarnishXCacheHeader( xcache );
 
+			// eslint-disable-next-line no-jquery/no-each-util
 			$.each( varnishXCache, function ( key, value ) {
 				stats[ key ] = value;
 			} );
@@ -452,4 +453,4 @@
 
 	mw.mmv.logging.PerformanceLogger = PerformanceLogger;
 
-}( mediaWiki, jQuery, OO ) );
+}() );

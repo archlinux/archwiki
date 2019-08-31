@@ -17,7 +17,7 @@
 	"apihelp-query+references-summary": "回傳與指定頁面關聯之參考文獻的資料描述。",
 	"apihelp-query+references-example-1": "與 <kbd>Albert Einstein</kbd> 關聯的參考文獻。",
 	"apierror-citestoragedisabled": "引用擴充參考文獻儲存未啟用。",
-	"cite-desc": "支援 <code><nowiki><ref[ name=id]></nowiki></code> 與 <code><nowiki><references/></nowiki></code> 標籤，可用來註明參考文獻",
+	"cite-desc": "支援 <code>&lt;ref[ name=id]&gt;</code> 與 <code>&lt;references/&gt;</code> 標籤，可用來註明參考文獻",
 	"cite_error": "引用錯誤：$1",
 	"cite_error_ref_invalid_dir": "無效的 <code>&lt;ref&gt;</code> 標籤，dir 屬性\"$1\"不明。必須是 ltr 或 rtl",
 	"cite_error_ref_numeric_key": "無效的 <code>&lt;ref&gt;</code> 標籤，name 屬性不能使用數字，請使用可描述內容的標題",
@@ -40,6 +40,7 @@
 	"cite-tracking-category-cite-error-desc": "在此分類內的頁面在參考來源的使用上有錯誤。",
 	"cite_references_link_accessibility_label": "移至",
 	"cite_references_link_many_accessibility_label": "移至：",
+	"cite_references_link_accessibility_back_label": "跳回",
 	"cite_section_preview_references": "預覽參考文獻",
 	"cite_warning": "引用警告：$1",
 	"cite_warning_sectionpreview_no_text": "名稱為<code>$1</code>的<code>&lt;ref&gt;</code>標籤不能預覽，因為它在當前章節以外被定義，或完全未被定義。"

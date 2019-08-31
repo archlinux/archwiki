@@ -56,7 +56,7 @@ trait GroupElement {
 	 * Adding an existing item will move it.
 	 *
 	 * @param Element[] $items Items
-	 * @param number|null $index Index to insert items at
+	 * @param int|null $index Index to insert items at
 	 * @return $this
 	 */
 	public function addItems( array $items, $index = null ) {

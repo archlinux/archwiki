@@ -1,7 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ahmed-Najib-Biabani-Ibrahimkhel"
+			"Ahmed-Najib-Biabani-Ibrahimkhel",
+			"Baloch Khan",
+			"Amjad Khan"
 		]
 	},
 	"multimediaviewer-pref": "رسنۍ ښکاره کوونکی",
@@ -13,6 +15,8 @@
 	"multimediaviewer-license-cc-pd": "ټولگړی شپول",
 	"multimediaviewer-license-default": "د منښتليک مالومات",
 	"multimediaviewer-permission-title": "د اجازې تفصيل",
+	"multimediaviewer-permission-link": "شرطونه وګورئ",
+	"multimediaviewer-permission-link-hide": "شرطونه پټ کړئ",
 	"multimediaviewer-about-mmv": "په اړه",
 	"multimediaviewer-discuss-mmv": "خبرې اترې",
 	"multimediaviewer-optout-mmv": "رسنۍ کتونکی ناچارنول",

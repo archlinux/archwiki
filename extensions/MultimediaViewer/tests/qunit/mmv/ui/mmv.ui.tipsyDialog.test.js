@@ -15,7 +15,7 @@
  * along with MediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-( function ( mw, $ ) {
+( function () {
 	QUnit.module( 'mmv.ui.tipsyDialog', QUnit.newMwEnvironment( {
 		setup: function () {
 			// remove tipsy elements left behind by other tests so these tests don't find them by accident
@@ -65,4 +65,4 @@
 		$qf.trigger( 'click' );
 		assert.notOk( $( '.mw-mmv-tipsy-dialog' ).length, 'dialog is hidden when clicked outside' );
 	} );
-}( mediaWiki, jQuery ) );
+}() );

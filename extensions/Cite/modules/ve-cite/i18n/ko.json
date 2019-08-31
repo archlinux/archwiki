@@ -45,8 +45,6 @@
 	"cite-ve-dialog-reference-options-section": "선택 사항",
 	"cite-ve-dialog-reference-placeholder": "각주를 여기에 입력하거나 붙여넣거나, 인용 틀을 추가하십시오.",
 	"cite-ve-dialog-reference-title": "각주",
-	"cite-ve-dialog-reference-useexisting-full-label": "이 문서에 이미 존재하는 인용을 재사용",
-	"cite-ve-dialog-reference-useexisting-label": "기존 각주 사용",
 	"cite-ve-dialog-reference-useexisting-tool": "재사용",
 	"cite-ve-dialog-referenceslist-contextitem-description-general": "일반 각주 목록",
 	"cite-ve-dialog-referenceslist-contextitem-description-named": "\"$1\" 그룹에 대한 각주 목록",

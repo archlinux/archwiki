@@ -5,10 +5,12 @@
 			"Urbanecm",
 			"Dvorapa",
 			"Martin Urbanec",
-			"Matěj Suchánek"
+			"Matěj Suchánek",
+			"Patriccck"
 		]
 	},
 	"oathauth-desc": "Poskytuje podporu pro autentizaci pomocí jednorázových hesel založených na HMAC",
+	"oath": "Dvoufaktorová autentizace",
 	"specialpages-group-oath": "Dvoufaktorová autentizace",
 	"oathauth-account": "Název účtu:",
 	"oathauth-secret": "Tajný klíč pro dvoufaktorovou autentizaci:",
@@ -28,6 +30,7 @@
 	"oathauth-step3": "Krok 3: Zapište si jednorázové kódy",
 	"oathauth-step4": "Krok 4: Ověření",
 	"oathauth-entertoken": "Pro ověření zadejte kód z vašeho autentizačního zařízení:",
+	"oathauth-enteruser": "Uživatelské jméno:",
 	"right-oathauth-enable": "Zapnutí dvoufaktorové autentizace",
 	"action-oathauth-enable": "zapnout dvoufaktorovou autentizaci",
 	"oathauth-auth-token-label": "Kód",
