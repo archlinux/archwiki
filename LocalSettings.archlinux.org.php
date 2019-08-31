@@ -24,9 +24,6 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 #$wgDBpassword = "XXX";
 #$wgSecretKey  = "XXX";
 #$wgUpgradeKey = "XXX";
-#require_once( "$IP/extensions/FunnyQuestion/FunnyQuestion.php" );
-#$wgFunnyQuestionHash = "XXX";
-#$wgFunnyQuestions = array();
 
 
 ##
@@ -331,6 +328,10 @@ wfLoadExtension( 'BounceHandler' );
 $wgVERPprefix = "wiki-bounce";
 $wgVERPdomainPart = "archlinux.org";
 
+# CAPTCHA
+# The dynamic $wgCaptchaQuestions is defined in the infrastructure repository
+wfLoadExtensions([ 'ConfirmEdit', 'ConfirmEdit/QuestyCaptcha' ]);
+$wgCaptchaTriggers = ['createaccount' => true];
 
 ##
 ## Temporary settings for maintenance
