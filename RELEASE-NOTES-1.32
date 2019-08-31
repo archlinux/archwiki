@@ -1,3 +1,13 @@
+== MediaWiki 1.32.3 ==
+
+This is a maintenance release of the MediaWiki 1.32 branch.
+
+=== Changes since MediaWiki 1.32.2 ===
+* (T225558) Update installer link to PHP intl.
+* (T225496) Detect APC for MainCacheType in CLI installer.
+* (T226766) Remove jetbrains/phpstorm-stubs from composer dev dependancies.
+* (T202211) Fix SQLite patch-(image|page|template)links-fix-pk.sql column order.
+
 == MediaWiki 1.32.2 ==
 
 This is a security and maintenance release of the MediaWiki 1.32 branch.

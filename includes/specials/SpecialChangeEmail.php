@@ -61,9 +61,9 @@ class SpecialChangeEmail extends FormSpecialPage {
 		parent::execute( $par );
 	}
 
-        protected function getLoginSecurityLevel() {
-                return $this->getName();
-        }
+	protected function getLoginSecurityLevel() {
+		return $this->getName();
+	}
 
 	protected function checkExecutePermissions( User $user ) {
 		if ( !AuthManager::singleton()->allowsPropertyChange( 'emailaddress' ) ) {
