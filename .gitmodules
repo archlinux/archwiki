@@ -14,3 +14,7 @@
 	path = extensions/BounceHandler
 	url = https://github.com/wikimedia/mediawiki-extensions-BounceHandler.git
 	branch = REL1_33
+[submodule "extensions/Lockdown"]
+	path = extensions/Lockdown
+	url = https://github.com/wikimedia/mediawiki-extensions-Lockdown.git
+	branch = REL1_33

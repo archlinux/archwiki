@@ -333,6 +333,11 @@ $wgVERPdomainPart = "archlinux.org";
 wfLoadExtensions([ 'ConfirmEdit', 'ConfirmEdit/QuestyCaptcha' ]);
 $wgCaptchaTriggers = ['createaccount' => true];
 
+# Restrict expensive actions to logged in users
+wfLoadExtension( 'Lockdown' );
+$wgSpecialPageLockdown['Recentchanges'] = [ 'user' ];
+$wgActionLockdown['history'] = ['user'];
+
 ##
 ## Temporary settings for maintenance
 ##
