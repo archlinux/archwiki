@@ -53,8 +53,8 @@ $wgScriptExtension  = ".php";
 $wgStylePath        = "$wgScriptPath/skins";
 
 ## The relative URL path to the logo.
-## (commented out, it is not shown anywhere)
-#$wgLogo             = "$wgScriptPath/extensions/ArchLinux/modules/archnavbar/archlogo.svg";
+## Set to an empty string so no logo is loaded by default.
+$wgLogo             = "";
 
 ## For attaching licensing metadata to pages, and displaying an
 ## appropriate copyright notice / icon. GNU Free Documentation
