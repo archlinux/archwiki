@@ -331,7 +331,11 @@ $wgVERPdomainPart = "archlinux.org";
 # CAPTCHA
 # The dynamic $wgCaptchaQuestions is defined in the infrastructure repository
 wfLoadExtensions([ 'ConfirmEdit', 'ConfirmEdit/QuestyCaptcha' ]);
-$wgCaptchaTriggers = ['createaccount' => true];
+$wgCaptchaTriggers['edit'] = false;
+$wgCaptchaTriggers['create'] = false;
+$wgCaptchaTriggers['addurl'] = false;
+$wgCaptchaTriggers['createaccount'] = true;
+$wgCaptchaTriggers['badlogin'] = true;
 
 # Restrict expensive actions to logged in users
 wfLoadExtension( 'Lockdown' );
