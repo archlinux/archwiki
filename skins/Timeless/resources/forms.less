@@ -1,5 +1,29 @@
 @import 'variables.less';
 
+input {
+	margin: 0.5em 0;
+	padding: 0.34em;
+	font-family: @fonts;
+}
+
+.mw-input-with-label {
+	display: block; // wat (this is probably an awful idea but aaaaaah whatever)
+}
+
+// Fix for half-arsed date input conversion on special:contributions and anywhere else
+// that's not actually ooui: add just enough margin to keep multiple widgets from fondling
+// each other
+.mw-widget-dateInputWidget {
+	margin: 0 0 0.2em 0;
+}
+
+// More fondling, because we've removed the default margins in normalise
+input[ type='radio' ],
+input[ type='checkbox' ] {
+	margin: 0.35em 0.2em 0.25em 0.35em;
+	box-sizing: border-box;
+}
+
 textarea,
 #searchInput {
 	box-sizing: border-box;
@@ -33,4 +57,11 @@ div.editOptions {
 
 #wpTemplateSandboxPreview {
 	margin-left: 0.5em;
+}
+
+/* fixes for non-JavaScript filtering on Special:Watchlist
+ * @see https://phabricator.wikimedia.org/T225412
+ */
+.mw-special-Watchlist .mw-input-with-label {
+	display: inline-block;
 }

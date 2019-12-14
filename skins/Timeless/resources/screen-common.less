@@ -103,12 +103,15 @@ body {
 	background: transparent;
 	width: 100%;
 	min-height: 0;
+	font-family: inherit;
 }
 
 #searchButton,
 #mw-searchButton {
 	position: absolute;
 	top: 0;
+	margin: 0;
+	padding: 0;
 	right: 1.5em;
 	width: 2.5em;
 	height: 2.5em;
@@ -406,14 +409,14 @@ pre,
 	dt {
 		font-weight: normal;
 		font-family: @fonts-secondary;
-		line-height: 1.25;
+		line-height: 1.125;
 		margin: 1.5em 0 0.5em;
 	}
 
 	dt {
 		font-weight: bold;
 		font-family: @fonts-secondary;
-		line-height: 1.25;
+		line-height: 1.125;
 		margin: 1.5em 0 0.5em;
 		margin-bottom: 0.1em;
 	}
@@ -427,12 +430,6 @@ pre,
 		margin: 0 0.5em 0 0;
 	}
 
-	h1,
-	h2 {
-		border-bottom: solid 2px @grey;
-		overflow: hidden;
-	}
-
 	h1.firstHeading {
 		margin: 0.25em 0 0.5em;
 		border-bottom: solid 4px @blue;
@@ -440,23 +437,27 @@ pre,
 	}
 
 	h1 {
-		font-size: 2.25em;
+		font-size: 2em;
+		border-bottom: solid 3px @grey;
+		overflow: hidden;
 	}
 
 	h2 {
-		font-size: 2em;
+		font-size: 1.8em;
+		border-bottom: solid 2px @grey;
+		overflow: hidden;
 	}
 
 	h3 {
-		font-size: 1.75em;
+		font-size: 1.6em;
 	}
 
 	h4 {
-		font-size: 1.5em;
+		font-size: 1.4em;
 	}
 
 	h5 {
-		font-size: 1.35em;
+		font-size: 1.25em;
 	}
 
 	h6 {

@@ -99,6 +99,12 @@ class MessageCache {
 	protected $contLang;
 
 	/**
+	 * Track which languages have been loaded by load().
+	 * @var array
+	 */
+	private $loadedLanguages = [];
+
+	/**
 	 * Singleton instance
 	 *
 	 * @var MessageCache $instance
@@ -217,7 +223,7 @@ class MessageCache {
 	/**
 	 * Try to load the cache from APC.
 	 *
-	 * @param string $code Optional language code, see documenation of load().
+	 * @param string $code Optional language code, see documentation of load().
 	 * @return array|bool The cache array, or false if not in cache.
 	 */
 	protected function getLocalCache( $code ) {
@@ -264,22 +270,11 @@ class MessageCache {
 		}
 
 		# Don't do double loading...
-		if ( $this->cache->has( $code ) && $mode != self::FOR_UPDATE ) {
+		if ( isset( $this->loadedLanguages[$code] ) && $mode != self::FOR_UPDATE ) {
 			return true;
 		}
 
 		$this->overridable = array_flip( Language::getMessageKeysFor( $code ) );
-
-		// T208897 array_flip can fail and return null
-		if ( is_null( $this->overridable ) ) {
-			LoggerFactory::getInstance( 'MessageCache' )->error(
-				__METHOD__ . ': $this->overridable is null',
-				[
-					'message_keys' => Language::getMessageKeysFor( $code ),
-					'code' => $code
-				]
-			);
-		}
 
 		# 8 lines of code just to say (once) that message cache is disabled
 		if ( $this->mDisable ) {
@@ -342,7 +337,7 @@ class MessageCache {
 					} elseif ( $hashVolatile ) {
 						# DB results are replica DB lag prone until the holdoff TTL passes.
 						# By then, updates should be reflected in loadFromDBWithLock().
-						# One thread renerates the cache while others use old values.
+						# One thread regenerates the cache while others use old values.
 						$where[] = 'global cache is expired/volatile';
 						$staleCache = $cache;
 					} else {
@@ -379,7 +374,7 @@ class MessageCache {
 					break;
 				} elseif ( $loadStatus === 'cantacquire' ) {
 					# Wait for the other thread to finish, then retry. Normally,
-					# the memcached get() will then yeild the other thread's result.
+					# the memcached get() will then yield the other thread's result.
 					$where[] = 'waited for other thread to complete';
 					$this->getReentrantScopedLock( $cacheKey );
 				} else {
@@ -396,6 +391,9 @@ class MessageCache {
 			wfDebugLog( 'MessageCacheError', __METHOD__ . ": Failed to load $code\n" );
 			# This used to throw an exception, but that led to nasty side effects like
 			# the whole wiki being instantly down if the memcached server died
+		} else {
+			# All good, just record the success
+			$this->loadedLanguages[$code] = true;
 		}
 
 		if ( !$this->cache->has( $code ) ) { // sanity
@@ -525,9 +523,8 @@ class MessageCache {
 			__METHOD__ . "($code)-big"
 		);
 		foreach ( $res as $row ) {
-			$name = $this->contLang->lcfirst( $row->page_title );
 			// Include entries/stubs for all keys in $mostused in adaptive mode
-			if ( $wgAdaptiveMessageCache || $this->isMainCacheable( $name, $overridable ) ) {
+			if ( $wgAdaptiveMessageCache || $this->isMainCacheable( $row->page_title, $overridable ) ) {
 				$cache[$row->page_title] = '!TOO BIG';
 			}
 			// At least include revision ID so page changes are reflected in the hash
@@ -549,9 +546,8 @@ class MessageCache {
 			$revQuery['joins']
 		);
 		foreach ( $res as $row ) {
-			$name = $this->contLang->lcfirst( $row->page_title );
 			// Include entries/stubs for all keys in $mostused in adaptive mode
-			if ( $wgAdaptiveMessageCache || $this->isMainCacheable( $name, $overridable ) ) {
+			if ( $wgAdaptiveMessageCache || $this->isMainCacheable( $row->page_title, $overridable ) ) {
 				try {
 					$rev = $revisionStore->newRevisionFromRow( $row );
 					$content = $rev->getContent( MediaWiki\Revision\SlotRecord::MAIN );
@@ -592,14 +588,17 @@ class MessageCache {
 	}
 
 	/**
-	 * @param string $name Message name with lowercase first letter
+	 * @param string $name Message name (possibly with /code suffix)
 	 * @param array $overridable Map of (key => unused) for software-defined messages
 	 * @return bool
 	 */
 	private function isMainCacheable( $name, array $overridable ) {
+		// Convert first letter to lowercase, and strip /code suffix
+		$name = $this->contLang->lcfirst( $name );
+		$msg = preg_replace( '/\/[a-z0-9-]{2,}$/', '', $name );
 		// Include common conversion table pages. This also avoids problems with
 		// Installer::parse() bailing out due to disallowed DB queries (T207979).
-		return ( isset( $overridable[$name] ) || strpos( $name, 'conversiontable/' ) === 0 );
+		return ( isset( $overridable[$msg] ) || strpos( $name, 'conversiontable/' ) === 0 );
 	}
 
 	/**
@@ -1070,8 +1069,7 @@ class MessageCache {
 			);
 		} else {
 			// Message page either does not exist or does not override a software message
-			$name = $this->contLang->lcfirst( $title );
-			if ( !$this->isMainCacheable( $name, $this->overridable ) ) {
+			if ( !$this->isMainCacheable( $title, $this->overridable ) ) {
 				// Message page does not override any software-defined message. A custom
 				// message might be defined to have content or settings specific to the wiki.
 				// Load the message page, utilizing the individual message cache as needed.
@@ -1301,6 +1299,7 @@ class MessageCache {
 			$this->wanCache->touchCheckKey( $this->getCheckKey( $code ) );
 		}
 		$this->cache->clear();
+		$this->loadedLanguages = [];
 	}
 
 	/**

@@ -21,6 +21,8 @@
  * @ingroup SpecialPage
  */
 
+use MediaWiki\MediaWikiServices;
+
 /**
  * A special page that redirects to: the user for a numeric user id,
  * the file for a given filename, or the page for a given revision id.
@@ -81,9 +83,16 @@ class SpecialRedirect extends FormSpecialPage {
 			// Message: redirect-not-exists
 			return Status::newFatal( $this->getMessagePrefix() . '-not-exists' );
 		}
+		if ( $user->isHidden() && !MediaWikiServices::getInstance()->getPermissionManager()
+			->userHasRight( $this->getUser(), 'hideuser' )
+		) {
+			throw new PermissionsError( null, [ 'badaccess-group0' ] );
+		}
 		$userpage = Title::makeTitle( NS_USER, $username );
 
-		return Status::newGood( $userpage->getFullURL( '', false, PROTO_CURRENT ) );
+		return Status::newGood( [
+			$userpage->getFullURL( '', false, PROTO_CURRENT ), 302
+		] );
 	}
 
 	/**
