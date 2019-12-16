@@ -252,10 +252,16 @@ $wgGroupPermissions['cosysop']['unwatchedpages'] = true;
 $wgGroupPermissions['cosysop']['deletedhistory'] = true;
 $wgGroupPermissions['cosysop']['deletedtext'] = true;
 
+# privileged's rights
+$wgGroupPermissions['privileged']['patrolmarks'] = true;
+$wgGroupPermissions['privileged']['noratelimit'] = true;
+$wgGroupPermissions['privileged']['suppressredirect'] = true;
+
 # additional page-protection levels
 $wgRestrictionLevels[] = 'editprotected2';
 $wgGroupPermissions['sysop']['editprotected2'] = true;
 $wgGroupPermissions['cosysop']['editprotected2'] = true;
+$wgGroupPermissions['privileged']['editprotected2'] = true;
 
 $wgEnableWriteAPI = true;
 # disable user account creation via API
