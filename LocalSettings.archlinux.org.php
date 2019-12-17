@@ -282,6 +282,22 @@ $wgHiddenPrefs[] = "forceeditsummary";
 
 
 ##
+## Additional namespaces
+##
+
+# DeveloperWiki
+define("NS_DEVELOPERWIKI", 3000);
+define("NS_DEVELOPERWIKI_TALK", 3001);
+$wgExtraNamespaces[NS_DEVELOPERWIKI] = "DeveloperWiki";
+$wgExtraNamespaces[NS_DEVELOPERWIKI_TALK] = "DeveloperWiki_talk";
+$wgNamespacesWithSubpages[NS_DEVELOPERWIKI] = true;
+$wgNamespacesWithSubpages[NS_DEVELOPERWIKI_TALK] = true;
+$wgContentNamespaces[] = NS_DEVELOPERWIKI;
+$wgNamespacesToBeSearchedDefault[NS_DEVELOPERWIKI] = true;
+$wgNamespaceProtection[NS_DEVELOPERWIKI] = array( 'editprotected2' );
+
+
+##
 ## Additional extensions
 ##
 
