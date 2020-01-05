@@ -233,6 +233,12 @@ $wgGroupPermissions['*']['edit'] = false;
 
 # extra rights for sysop
 $wgGroupPermissions['sysop']['deleterevision']  = true;
+if ( isset( $wgGroupPermissions['interface-admin'] ) ) {
+    $wgGroupPermissions['sysop'] += $wgGroupPermissions['interface-admin'];
+}
+if ( isset( $wgGroupPermissions['suppress'] ) ) {
+    $wgGroupPermissions['sysop'] += $wgGroupPermissions['suppress'];
+}
 
 # disable uploads by normal users
 $wgGroupPermissions['user']['upload']          = false;
