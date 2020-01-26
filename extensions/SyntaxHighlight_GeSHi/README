@@ -6,8 +6,8 @@ for updated informations:
 
 == Requirements ==
 
-This version of the extension has been tested with Pygments 1.6, 2.0.2 and
-MediaWiki 1.25 as of 2015-06-19. To get releases of this extension compatible
+This version of the extension has been tested with Pygments 2.2.0 and
+MediaWiki 1.32. To get releases of this extension compatible
 with earlier versions of MediaWiki, visit:
 
     https://www.mediawiki.org/wiki/Special:ExtensionDistributor/SyntaxHighlight_GeSHi
@@ -18,7 +18,7 @@ Add this line to your LocalSettings.php:
 
     wfLoadExtension( 'SyntaxHighlight_GeSHi' );
 
-By default, this extension will use a bundled copy of Pygments 2.0.2. If you
+By default, this extension will use a bundled copy of Pygments 2.2.0. If you
 would like to use a different copy of the library, you can set
 $wgPygmentizePath to point to the path to the 'pygmentize' binary.
 
