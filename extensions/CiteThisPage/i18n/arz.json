@@ -2,11 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"Ghaly",
-			"Ramsis II"
+			"Ramsis II",
+			"Meno25"
 		]
 	},
 	"citethispage": "مرجع",
-	"citethispage-desc": "بيضيف [[Special:Cite|مرجع]] صفحة مخصوصة ولينك لصندوء أدوات",
+	"citethispage-desc": "بيضيف [[Special:CiteThisPage|مرجع]] صفحة مخصوصة ولينك لصندوء أدوات",
 	"citethispage-link": "استشهد بالصفحة دى",
 	"citethispage-change-submit": "مرجع",
 	"citethispage-change-target": "الصفحه:",

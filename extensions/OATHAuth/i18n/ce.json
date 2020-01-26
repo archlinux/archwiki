@@ -29,5 +29,13 @@
 	"oathauth-login-failed": "Хьажа цаделий",
 	"oathauth-describe-provider": "Шина-факторан аутентификаци (OATH).",
 	"grant-oath": "Шина-факторан аутентификаци (OAUTH) тӀекхачар",
-	"action-oathauth-api-all": "Хьажа OATH статус"
+	"action-oathauth-api-all": "Хьажа OATH статус",
+	"oauthauth-ui-no-module": "Латина яц",
+	"oathauth-ui-manage": "Урхалладар",
+	"oathmanage": "Шина-факторан аутентификацина урхалладар",
+	"oathauth-enable-generic": "Латае",
+	"oathauth-disable-generic": "ДӀаяйа",
+	"oathauth-disable-page-title": "ДӀаяйа $1",
+	"oathauth-enable-page-title": "Латае $1",
+	"oathauth-ui-available-modules": "ТӀекхочу методаш"
 }

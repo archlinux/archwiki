@@ -1,6 +1,6 @@
 {
 	"name": "Interwiki",
-	"version": "3.1 20160307",
+	"version": "3.2",
 	"author": [
 		"Stephanie Amanda Stevens",
 		"Alexandre Emsenhuber",
@@ -25,6 +25,7 @@
 	},
 	"config": {
 		"InterwikiCentralDB": null,
+		"InterwikiCentralInterlanguageDB": null,
 		"InterwikiViewOnly": false
 	},
 	"MessagesDirs": {

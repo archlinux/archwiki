@@ -7,7 +7,7 @@ This extension provides various CAPTCHA tools for MediaWiki, to allow
 for protection against spambots and other automated tools.
 
 For more information, see the extension homepage at:
-http://www.mediawiki.org/wiki/Extension:ConfirmEdit
+https://www.mediawiki.org/wiki/Extension:ConfirmEdit
 
 ### Overview
 
@@ -20,11 +20,6 @@ an image
 in a stylized way
 * QuestyCaptcha - users have to answer a question, out of a series of
 questions defined by the administrator(s)
-* ReCaptcha - users have to identify a series of characters, either
-visually or audially, from a widget provided by the reCAPTCHA service. This
-plugin is depreacted since MediaWiki 1.28! Please switch to the new
-ReCaptchaNoCaptcha version of ReCaptcha (which is supported by Google and
-ConfirmEdit).
 * ReCaptchaNoCaptcha - users have to solve different types of visually or
 audially tasks.
 
@@ -40,8 +35,6 @@ written by Brion Vibber.
 The MathCaptcha module was written by Rob Church.
 
 The QuestyCaptcha module was written by Benjamin Lees.
-
-The reCAPTCHA module was written by Mike Crawford and Ben Maurer.
 
 Additional maintenance work was done by Yaron Koren.
 

@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\Block\Restriction\PageRestriction;
 use MediaWiki\Block\Restriction\NamespaceRestriction;
 
@@ -60,7 +61,7 @@ class ApiBlockTest extends ApiTestCase {
 		$ret = $this->doApiRequest( array_merge( $params, $extraParams ), null,
 			false, $blocker );
 
-		$block = Block::newFromTarget( $this->mUser->getName() );
+		$block = DatabaseBlock::newFromTarget( $this->mUser->getName() );
 
 		$this->assertTrue( !is_null( $block ), 'Block is valid' );
 
@@ -92,7 +93,7 @@ class ApiBlockTest extends ApiTestCase {
 			'You cannot block or unblock other users because you are yourself blocked.' );
 
 		$blocked = $this->getMutableTestUser( [ 'sysop' ] )->getUser();
-		$block = new Block( [
+		$block = new DatabaseBlock( [
 			'address' => $blocked->getName(),
 			'by' => self::$users['sysop']->getUser()->getId(),
 			'reason' => 'Capriciousness',
@@ -178,6 +179,11 @@ class ApiBlockTest extends ApiTestCase {
 	}
 
 	public function testBlockWithEmailBlock() {
+		$this->setMwGlobals( [
+			'wgEnableEmail' => true,
+			'wgEnableUserEmail' => true,
+		] );
+
 		$res = $this->doBlock( [ 'noemail' => '' ] );
 
 		$dbw = wfGetDB( DB_MASTER );
@@ -190,6 +196,11 @@ class ApiBlockTest extends ApiTestCase {
 	}
 
 	public function testBlockWithProhibitedEmailBlock() {
+		$this->setMwGlobals( [
+			'wgEnableEmail' => true,
+			'wgEnableUserEmail' => true,
+		] );
+
 		$this->setExpectedException( ApiUsageException::class,
 			"You don't have permission to block users from sending email through the wiki." );
 
@@ -228,7 +239,7 @@ class ApiBlockTest extends ApiTestCase {
 
 		$this->doBlock();
 
-		$block = Block::newFromTarget( $this->mUser->getName() );
+		$block = DatabaseBlock::newFromTarget( $this->mUser->getName() );
 
 		$this->assertTrue( $block->isSitewide() );
 		$this->assertCount( 0, $block->getRestrictions() );
@@ -247,9 +258,10 @@ class ApiBlockTest extends ApiTestCase {
 			'partial' => true,
 			'pagerestrictions' => $title,
 			'namespacerestrictions' => $namespace,
+			'allowusertalk' => true,
 		] );
 
-		$block = Block::newFromTarget( $this->mUser->getName() );
+		$block = DatabaseBlock::newFromTarget( $this->mUser->getName() );
 
 		$this->assertFalse( $block->isSitewide() );
 		$this->assertCount( 2, $block->getRestrictions() );
@@ -269,6 +281,53 @@ class ApiBlockTest extends ApiTestCase {
 				'action' => 'block',
 				'user' => $this->mUser->getName(),
 				'reason' => 'Some reason',
+			],
+			null,
+			false,
+			self::$users['sysop']->getUser()
+		);
+	}
+
+	/**
+	 * @expectedException ApiUsageException
+	 * @expectedExceptionMessage Invalid value "127.0.0.1/64" for user parameter "user".
+	 */
+	public function testBlockWithLargeRange() {
+		$tokens = $this->getTokens();
+
+		$this->doApiRequest(
+			[
+				'action' => 'block',
+				'user' => '127.0.0.1/64',
+				'reason' => 'Some reason',
+				'token' => $tokens['blocktoken'],
+			],
+			null,
+			false,
+			self::$users['sysop']->getUser()
+		);
+	}
+
+	/**
+	 * @expectedException ApiUsageException
+	 * @expectedExceptionMessage Too many values supplied for parameter "pagerestrictions". The
+	 * limit is 10.
+	 */
+	public function testBlockingTooManyPageRestrictions() {
+		$this->setMwGlobals( [
+			'wgEnablePartialBlocks' => true,
+		] );
+
+		$tokens = $this->getTokens();
+
+		$this->doApiRequest(
+			[
+				'action' => 'block',
+				'user' => $this->mUser->getName(),
+				'reason' => 'Some reason',
+				'partial' => true,
+				'pagerestrictions' => 'One|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten|Eleven',
+				'token' => $tokens['blocktoken'],
 			],
 			null,
 			false,

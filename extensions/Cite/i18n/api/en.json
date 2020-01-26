@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"jdlrobson",
+			"Brad Jorsch"
+		]
+	},
+	"apihelp-query+references-description": "Return a data representation of references associated with the given pages.",
+	"apihelp-query+references-summary": "Return a data representation of references associated with the given pages.",
+	"apihelp-query+references-example-1": "References associated with <kbd>Albert Einstein</kbd>.",
+	"apierror-citestoragedisabled": "Cite extension reference storage is not enabled."
+}

@@ -24,14 +24,9 @@ class ReaderFactoryTest extends \PHPUnit\Framework\TestCase {
 	public function getReaderProvider() {
 		return [
 			[
-				'languages/messages/MessagesFi.php',
-				'LocalisationUpdate\PHPReader',
-				'core php file',
-			],
-			[
-				'extensions/Translate/Translate.i18n.php',
-				'LocalisationUpdate\PHPReader',
-				'extension php file',
+				'languages/i18n/fi.json',
+				'LocalisationUpdate\JSONReader',
+				'core json file',
 			],
 			[
 				'extension/Translate/i18n/core/de.json',

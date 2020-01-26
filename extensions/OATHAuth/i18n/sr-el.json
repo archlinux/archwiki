@@ -2,9 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Milicevic01",
-			"Vlad5250"
+			"Vlad5250",
+			"Zoranzoki21"
 		]
 	},
 	"oathauth-token": "Žeton",
-	"right-oathauth-enable": "omogućivanje dvofaktorske potvrde identiteta"
+	"right-oathauth-enable": "omogućivanje dvofaktorske potvrde identiteta",
+	"oauthauth-ui-no-module": "Nijedan nije omogućen"
 }

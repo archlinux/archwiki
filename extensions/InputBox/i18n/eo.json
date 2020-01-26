@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Michawiki",
-			"Yekrats"
+			"Yekrats",
+			"Mirin"
 		]
 	},
 	"inputbox-desc": "Permesi enhavon de antaŭdifinitaj HTML-kamparoj",
@@ -11,6 +12,8 @@
 	"inputbox-tryexact": "Provu ekzaktan trafon",
 	"inputbox-searchfulltext": "Serĉi plentekste",
 	"inputbox-createarticle": "Krei artikolon",
+	"inputbox-movearticle": "Movi paĝon",
+	"inputbox-postcomment": "Nova paragrafo",
 	"inputbox-postcommenttitle": "Nova sekcio",
 	"inputbox-ns-main": "Ĉefa"
 }

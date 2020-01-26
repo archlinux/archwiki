@@ -3,7 +3,7 @@
  */
 ( function () {
 
-	$.wikiEditor.modules.toolbar = {
+	var toolbarModule = {
 
 		/**
 		 * API accessible functions
@@ -23,7 +23,7 @@
 								if ( section === 'main' ) {
 									// Section
 									context.modules.toolbar.$toolbar.prepend(
-										$.wikiEditor.modules.toolbar.fn.buildSection(
+										toolbarModule.fn.buildSection(
 											context, section, data[ type ][ section ]
 										)
 									);
@@ -31,11 +31,11 @@
 								}
 								// Section
 								$sections.append(
-									$.wikiEditor.modules.toolbar.fn.buildSection( context, section, data[ type ][ section ] )
+									toolbarModule.fn.buildSection( context, section, data[ type ][ section ] )
 								);
 								// Tab
 								$tabs.append(
-									$.wikiEditor.modules.toolbar.fn.buildTab( context, section, data[ type ][ section ] )
+									toolbarModule.fn.buildTab( context, section, data[ type ][ section ] )
 								);
 							}
 							break;
@@ -47,7 +47,7 @@
 							for ( group in data[ type ] ) {
 								// Group
 								$section.append(
-									$.wikiEditor.modules.toolbar.fn.buildGroup( context, group, data[ type ][ group ] )
+									toolbarModule.fn.buildGroup( context, group, data[ type ][ group ] )
 								);
 							}
 							break;
@@ -61,7 +61,7 @@
 							);
 							for ( tool in data[ type ] ) {
 								// Tool
-								$group.append( $.wikiEditor.modules.toolbar.fn.buildTool( context, tool, data[ type ][ tool ] ) );
+								$group.append( toolbarModule.fn.buildTool( context, tool, data[ type ][ tool ] ) );
 							}
 							if ( $group.children().length ) {
 								$group.removeClass( 'empty' );
@@ -79,13 +79,13 @@
 							);
 							for ( page in data[ type ] ) {
 								// Page
-								$pages.append( $.wikiEditor.modules.toolbar.fn.buildPage( context, page, data[ type ][ page ] ) );
+								$pages.append( toolbarModule.fn.buildPage( context, page, data[ type ][ page ] ) );
 								// Index
 								$index.append(
-									$.wikiEditor.modules.toolbar.fn.buildBookmark( context, page, data[ type ][ page ] )
+									toolbarModule.fn.buildBookmark( context, page, data[ type ][ page ] )
 								);
 							}
-							$.wikiEditor.modules.toolbar.fn.updateBookletSelection( context, data.section, $pages, $index );
+							toolbarModule.fn.updateBookletSelection( context, data.section, $pages, $index );
 							break;
 						case 'rows':
 							if ( !( 'section' in data && 'page' in data ) ) {
@@ -97,7 +97,7 @@
 							);
 							for ( i = 0; i < data.rows.length; i++ ) {
 								// Row
-								$table.append( $.wikiEditor.modules.toolbar.fn.buildRow( context, data.rows[ i ] ) );
+								$table.append( toolbarModule.fn.buildRow( context, data.rows[ i ] ) );
 							}
 							break;
 						case 'characters':
@@ -112,14 +112,14 @@
 							for ( i = 0; i < data.characters.length; i++ ) {
 								// Character
 								$characters.append(
-									$( $.wikiEditor.modules.toolbar.fn.buildCharacter( data.characters[ i ], actions ) )
+									$( toolbarModule.fn.buildCharacter( data.characters[ i ], actions ) )
 										.on( 'mousedown', function ( e ) {
 											// No dragging!
 											e.preventDefault();
 											return false;
 										} )
 										.on( 'click', function ( e ) {
-											$.wikiEditor.modules.toolbar.fn.doAction( $( this ).parent().data( 'context' ),
+											toolbarModule.fn.doAction( $( this ).parent().data( 'context' ),
 												$( this ).parent().data( 'actions' )[ $( this ).attr( 'rel' ) ] );
 											e.preventDefault();
 											return false;
@@ -160,7 +160,7 @@
 						} else {
 							// Just a page, remove the index too!
 							context.modules.toolbar.$toolbar.find( index ).remove();
-							$.wikiEditor.modules.toolbar.fn.updateBookletSelection(
+							toolbarModule.fn.updateBookletSelection(
 								context,
 								data.section,
 								context.modules.toolbar.$toolbar.find( target ),
@@ -200,7 +200,7 @@
 				context.modules.toolbar.$toolbar = $( '<div>' )
 					.addClass( 'wikiEditor-ui-toolbar' )
 					.attr( 'id', 'wikiEditor-ui-toolbar' );
-				$.wikiEditor.modules.toolbar.fn.build( context, config );
+				toolbarModule.fn.build( context, config );
 				context.$ui.find( '.wikiEditor-ui-top' ).append( context.modules.toolbar.$toolbar );
 			},
 			/**
@@ -262,7 +262,7 @@
 				empty = true;
 				if ( 'tools' in group ) {
 					for ( tool in group.tools ) {
-						tool = $.wikiEditor.modules.toolbar.fn.buildTool( context, tool, group.tools[ tool ] );
+						tool = toolbarModule.fn.buildTool( context, tool, group.tools[ tool ] );
 						if ( tool ) {
 							// Consider a group with only hidden tools empty as well
 							// .is( ':visible' ) always returns false because tool is not attached to the DOM yet
@@ -342,13 +342,13 @@
 								} );
 							if ( $button.data( 'ooui' ) ) {
 								$button.data( 'ooui' ).on( 'click', function () {
-									$.wikiEditor.modules.toolbar.fn.doAction(
+									toolbarModule.fn.doAction(
 										context, tool.action
 									);
 								} );
 							} else {
 								$button.on( 'click', function ( e ) {
-									$.wikiEditor.modules.toolbar.fn.doAction(
+									toolbarModule.fn.doAction(
 										context, tool.action
 									);
 									e.preventDefault();
@@ -374,11 +374,11 @@
 											return false;
 										} )
 										.on( 'click', function ( e ) {
-											$.wikiEditor.modules.toolbar.fn.doAction(
+											toolbarModule.fn.doAction(
 												$( this ).data( 'context' ), $( this ).data( 'action' ), $( this )
 											);
 											// Hide the dropdown
-											$( this ).parent().removeClass( 'options-shown' );
+											$( this ).closest( '.tool-select' ).removeClass( 'options-shown' );
 											e.preventDefault();
 											return false;
 										} )
@@ -399,7 +399,7 @@
 								return false;
 							} )
 							.on( 'click', function ( e ) {
-								$( this ).data( 'options' ).toggleClass( 'options-shown' );
+								$( this ).data( 'options' ).closest( '.tool-select' ).toggleClass( 'options-shown' );
 								e.preventDefault();
 								return false;
 							} )
@@ -445,10 +445,10 @@
 				} );
 				if ( deferLoad ) {
 					$page.one( 'loadPage', function () {
-						$.wikiEditor.modules.toolbar.fn.reallyBuildPage( context, id, page, $page );
+						toolbarModule.fn.reallyBuildPage( context, id, page, $page );
 					} );
 				} else {
-					$.wikiEditor.modules.toolbar.fn.reallyBuildPage( context, id, page, $page );
+					toolbarModule.fn.reallyBuildPage( context, id, page, $page );
 				}
 				return $page;
 			},
@@ -460,11 +460,11 @@
 						html =
 							'<table class="table-' + id + '">';
 						if ( 'headings' in page ) {
-							html += $.wikiEditor.modules.toolbar.fn.buildHeading( context, page.headings );
+							html += toolbarModule.fn.buildHeading( context, page.headings );
 						}
 						if ( 'rows' in page ) {
 							for ( i = 0; i < page.rows.length; i++ ) {
-								html += $.wikiEditor.modules.toolbar.fn.buildRow( context, page.rows[ i ] );
+								html += toolbarModule.fn.buildRow( context, page.rows[ i ] );
 							}
 						}
 						$page.html( html + '</table>' );
@@ -487,7 +487,7 @@
 						if ( 'characters' in page ) {
 							html = '';
 							for ( i = 0; i < page.characters.length; i++ ) {
-								html += $.wikiEditor.modules.toolbar.fn.buildCharacter( page.characters[ i ], actions );
+								html += toolbarModule.fn.buildCharacter( page.characters[ i ], actions );
 							}
 							$characters
 								.html( html )
@@ -498,7 +498,7 @@
 									return false;
 								} )
 								.on( 'click', function ( e ) {
-									$.wikiEditor.modules.toolbar.fn.doAction(
+									toolbarModule.fn.doAction(
 										$( this ).parent().data( 'context' ),
 										$( this ).parent().data( 'actions' )[ $( this ).attr( 'rel' ) ],
 										$( this )
@@ -650,7 +650,7 @@
 				selected = $.cookie( 'wikiEditor-' + context.instance + '-toolbar-section' );
 				show = selected === id;
 
-				$.wikiEditor.modules.toolbar.fn.reallyBuildSection( context, id, section, $section, section.deferLoad );
+				toolbarModule.fn.reallyBuildSection( context, id, section, $section, section.deferLoad );
 
 				// Show or hide section
 				if ( id !== 'main' ) {
@@ -672,7 +672,7 @@
 						if ( 'groups' in section ) {
 							for ( group in section.groups ) {
 								$section.append(
-									$.wikiEditor.modules.toolbar.fn.buildGroup( context, group, section.groups[ group ] )
+									toolbarModule.fn.buildGroup( context, group, section.groups[ group ] )
 								);
 							}
 						}
@@ -683,15 +683,15 @@
 						if ( 'pages' in section ) {
 							for ( page in section.pages ) {
 								$pages.append(
-									$.wikiEditor.modules.toolbar.fn.buildPage( context, page, section.pages[ page ], deferLoad )
+									toolbarModule.fn.buildPage( context, page, section.pages[ page ], deferLoad )
 								);
 								$index.append(
-									$.wikiEditor.modules.toolbar.fn.buildBookmark( context, page, section.pages[ page ] )
+									toolbarModule.fn.buildBookmark( context, page, section.pages[ page ] )
 								);
 							}
 						}
 						$section.append( $index ).append( $pages );
-						$.wikiEditor.modules.toolbar.fn.updateBookletSelection( context, id, $pages, $index );
+						toolbarModule.fn.updateBookletSelection( context, id, $pages, $index );
 						break;
 				}
 			},
@@ -721,11 +721,11 @@
 				for ( section in config ) {
 					if ( section === 'main' ) {
 						context.modules.toolbar.$toolbar.prepend(
-							$.wikiEditor.modules.toolbar.fn.buildSection( context, section, config[ section ] )
+							toolbarModule.fn.buildSection( context, section, config[ section ] )
 						);
 					} else {
-						$sections.append( $.wikiEditor.modules.toolbar.fn.buildSection( context, section, config[ section ] ) );
-						$tabs.append( $.wikiEditor.modules.toolbar.fn.buildTab( context, section, config[ section ] ) );
+						$sections.append( toolbarModule.fn.buildSection( context, section, config[ section ] ) );
+						$tabs.append( toolbarModule.fn.buildTab( context, section, config[ section ] ) );
 					}
 				}
 				setTimeout( function () {
@@ -735,5 +735,7 @@
 		}
 
 	};
+
+	module.exports = toolbarModule;
 
 }() );

@@ -1,0 +1,56 @@
+/* Personal */
+#p-personal {
+	position: absolute;
+	top: 0.33em;
+	right: 0.75em;
+	/* Display on top of page tabs - bugs 37158, 48078 */
+	z-index: 100;
+
+	h3 {
+		display: none;
+	}
+
+	ul {
+		list-style: none none;
+		margin: 0;
+		padding-left: 10em; /* Keep from overlapping logo */
+	}
+
+	li {
+		float: left;
+		margin-left: 0.75em;
+		// `padding-top` instead of `margin-top` necessary for
+		// anonymous user icon position below
+		padding-top: 0.5em;
+		font-size: @font-size-nav-personal;
+		line-height: @line-height-nav-personal;
+		white-space: nowrap;
+	}
+}
+
+/* Icon for registered user names & anonymous message */
+#pt-anonuserpage,
+#pt-userpage a {
+	// SVG support using a transparent gradient to guarantee cross-browser
+	// compatibility (browsers able to understand gradient syntax support also SVG)
+	.background-image-svg( 'images/user-avatar.svg', 'images/user-avatar.png' );
+	background-position: @background-position-nav-personal-icon;
+	background-repeat: no-repeat;
+	background-size: @background-size-nav-personal-icon @background-size-nav-personal-icon;
+	// Same as `#p-personal li` above
+	padding-top: 0.5em !important; // stylelint-disable-line declaration-no-important
+	padding-left: 16px !important; // stylelint-disable-line declaration-no-important
+}
+
+#pt-userpage {
+	padding-top: 0 !important; // stylelint-disable-line declaration-no-important
+
+	a {
+		display: inline-block;
+	}
+}
+
+/* Show anonymous "Not logged in" text in gray */
+#pt-anonuserpage {
+	color: #54595d;
+}

@@ -147,6 +147,7 @@
 	"wikieditor-toolbar-tool-replace-success": "已完成 $1 筆取代。",
 	"wikieditor-toolbar-tool-replace-emptysearch": "您沒有輸入要搜尋的內容。",
 	"wikieditor-toolbar-tool-replace-invalidregex": "您輸入的正規表式法無效：$1",
+	"wikieditor-toolbar-tool-replace-word": "符合整個字詞",
 	"wikieditor-toolbar-section-characters": "特殊文字",
 	"wikieditor-toolbar-section-help": "說明",
 	"wikieditor-toolbar-help-heading-description": "描述",

@@ -113,57 +113,6 @@ class CiteHooks {
 		$resourceLoader->register( "ext.cite.visualEditor.data",
 			[ "class" => "CiteDataModule" ] );
 
-		$resourceLoader->register( "ext.cite.visualEditor.icons", [
-			'localBasePath' => $dir . 'modules',
-			'remoteExtPath' => 'Cite/modules',
-			"class" => "ResourceLoaderImageModule",
-			"selectorWithoutVariant" => ".oo-ui-icon-{name}",
-			"selectorWithVariant" => ".oo-ui-image-{variant}.oo-ui-icon-{name}",
-			"variants" => [
-				"progressive" => [
-					"color" => "#36c"
-				]
-			],
-			"images" => [
-				"ref-cite-book" => [
-					"file" => "ve-cite/icons/ref-cite-book.svg"
-				],
-				"ref-cite-journal" => [
-					"file" => [
-						"ltr" => "ve-cite/icons/ref-cite-journal-ltr.svg",
-						"rtl" => "ve-cite/icons/ref-cite-journal-rtl.svg"
-					]
-				],
-				"ref-cite-news" => [
-					"file" => [
-						"ltr" => "ve-cite/icons/ref-cite-news-ltr.svg",
-						"rtl" => "ve-cite/icons/ref-cite-news-rtl.svg"
-					]
-				],
-				"ref-cite-web" => [
-					"file" => "ve-cite/icons/ref-cite-web.svg"
-				],
-				"reference" => [
-					"file" => [
-						"ltr" => "ve-cite/icons/reference-ltr.svg",
-						"rtl" => "ve-cite/icons/reference-rtl.svg"
-					]
-				],
-				"reference-existing" => [
-					"file" => [
-						"ltr" => "ve-cite/icons/reference-existing-ltr.svg",
-						"rtl" => "ve-cite/icons/reference-existing-rtl.svg"
-					]
-				],
-				"references" => [
-					"file" => [
-						"ltr" => "ve-cite/icons/references-ltr.svg",
-						"rtl" => "ve-cite/icons/references-rtl.svg"
-					]
-				],
-			]
-		] );
-
 		$resourceLoader->register( "ext.cite.visualEditor", [
 			'localBasePath' => $dir . 'modules',
 			'remoteExtPath' => 'Cite/modules',
@@ -181,7 +130,8 @@ class CiteHooks {
 				"ve-cite/ve.ui.MWReferencesListContextItem.js",
 				"ve-cite/ve.ui.MWCitationContextItem.js",
 				"ve-cite/ve.ui.MWCitationAction.js",
-				"ve-cite/ve.ui.MWReference.init.js"
+				"ve-cite/ve.ui.MWReference.init.js",
+				"ve-cite/ve.ui.MWCitationNeededContextItem.js",
 			],
 			"styles" => [
 				"ve-cite/ve.ui.MWReferenceDialog.css",
@@ -196,7 +146,6 @@ class CiteHooks {
 				"oojs-ui.styles.icons-interactions",
 				"ext.cite.visualEditor.core",
 				"ext.cite.visualEditor.data",
-				"ext.cite.visualEditor.icons",
 				"ext.cite.style",
 				"ext.cite.styles",
 				"ext.visualEditor.mwtransclusion",
@@ -212,6 +161,9 @@ class CiteHooks {
 				"cite-ve-changedesc-reflist-item-id",
 				"cite-ve-changedesc-reflist-responsive-set",
 				"cite-ve-changedesc-reflist-responsive-unset",
+				"cite-ve-citationneeded-button",
+				"cite-ve-citationneeded-description",
+				"cite-ve-citationneeded-title",
 				"cite-ve-dialog-reference-editing-reused",
 				"cite-ve-dialog-reference-editing-reused-long",
 				"cite-ve-dialog-reference-options-group-label",

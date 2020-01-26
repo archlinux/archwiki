@@ -1,7 +1,5 @@
 <?php
 /**
- * Context for ResourceLoader modules.
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -26,10 +24,16 @@ use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
 
 /**
- * Object passed around to modules which contains information about the state
- * of a specific loader request.
+ * Context object that contains information about the state of a specific
+ * ResourceLoader web request. Passed around to ResourceLoaderModule methods.
+ *
+ * @ingroup ResourceLoader
+ * @since 1.17
  */
 class ResourceLoaderContext implements MessageLocalizer {
+	const DEFAULT_LANG = 'qqx';
+	const DEFAULT_SKIN = 'fallback';
+
 	protected $resourceLoader;
 	protected $request;
 	protected $logger;
@@ -52,6 +56,7 @@ class ResourceLoaderContext implements MessageLocalizer {
 	protected $direction;
 	protected $hash;
 	protected $userObj;
+	/** @var ResourceLoaderImage|false */
 	protected $imageObj;
 
 	/**
@@ -63,8 +68,8 @@ class ResourceLoaderContext implements MessageLocalizer {
 		$this->request = $request;
 		$this->logger = $resourceLoader->getLogger();
 
-		// Future developers: Use WebRequest::getRawVal() instead of getVal().
-		// The getVal() method performs slow Language+UTF logic. (f303bb9360)
+		// Optimisation: Use WebRequest::getRawVal() instead of getVal(). We don't
+		// need the slow Language+UTF logic meant for user input here. (f303bb9360)
 
 		// List of modules
 		$modules = $request->getRawVal( 'modules' );
@@ -73,8 +78,8 @@ class ResourceLoaderContext implements MessageLocalizer {
 		// Various parameters
 		$this->user = $request->getRawVal( 'user' );
 		$this->debug = $request->getRawVal( 'debug' ) === 'true';
-		$this->only = $request->getRawVal( 'only', null );
-		$this->version = $request->getRawVal( 'version', null );
+		$this->only = $request->getRawVal( 'only' );
+		$this->version = $request->getRawVal( 'version' );
 		$this->raw = $request->getFuzzyBool( 'raw' );
 
 		// Image requests
@@ -84,23 +89,12 @@ class ResourceLoaderContext implements MessageLocalizer {
 
 		$this->skin = $request->getRawVal( 'skin' );
 		$skinnames = Skin::getSkinNames();
-		// If no skin is specified, or we don't recognize the skin, use the default skin
 		if ( !$this->skin || !isset( $skinnames[$this->skin] ) ) {
-			$this->skin = $this->getConfig()->get( 'DefaultSkin' );
+			// The 'skin' parameter is required. (Not yet enforced.)
+			// For requests without a known skin specified,
+			// use MediaWiki's 'fallback' skin for skin-specific decisions.
+			$this->skin = self::DEFAULT_SKIN;
 		}
-	}
-
-	/**
-	 * Reverse the process done by ResourceLoader::makePackedModulesString().
-	 *
-	 * @deprecated since 1.33 Use ResourceLoader::expandModuleNames instead.
-	 * @param string $modules Packed module name list
-	 * @return array Array of module names
-	 * @codeCoverageIgnore
-	 */
-	public static function expandModuleNames( $modules ) {
-		wfDeprecated( __METHOD__, '1.33' );
-		return ResourceLoader::expandModuleNames( $modules );
 	}
 
 	/**
@@ -132,9 +126,13 @@ class ResourceLoaderContext implements MessageLocalizer {
 	}
 
 	/**
+	 * @deprecated since 1.34 Use ResourceLoaderModule::getConfig instead
+	 * inside module methods. Use ResourceLoader::getConfig elsewhere.
 	 * @return Config
+	 * @codeCoverageIgnore
 	 */
 	public function getConfig() {
+		wfDeprecated( __METHOD__, '1.34' );
 		return $this->getResourceLoader()->getConfig();
 	}
 
@@ -146,6 +144,8 @@ class ResourceLoaderContext implements MessageLocalizer {
 	}
 
 	/**
+	 * @deprecated since 1.34 Use ResourceLoaderModule::getLogger instead
+	 * inside module methods. Use ResourceLoader::getLogger elsewhere.
 	 * @since 1.27
 	 * @return \Psr\Log\LoggerInterface
 	 */
@@ -170,7 +170,9 @@ class ResourceLoaderContext implements MessageLocalizer {
 			$lang = $this->getRequest()->getRawVal( 'lang', '' );
 			// Stricter version of RequestContext::sanitizeLangCode()
 			if ( !Language::isValidBuiltInCode( $lang ) ) {
-				$lang = $this->getConfig()->get( 'LanguageCode' );
+				// The 'lang' parameter is required. (Not yet enforced.)
+				// If omitted, localise with the dummy language code.
+				$lang = self::DEFAULT_LANG;
 			}
 			$this->language = $lang;
 		}
@@ -182,8 +184,10 @@ class ResourceLoaderContext implements MessageLocalizer {
 	 */
 	public function getDirection() {
 		if ( $this->direction === null ) {
-			$this->direction = $this->getRequest()->getRawVal( 'dir' );
-			if ( !$this->direction ) {
+			$direction = $this->getRequest()->getRawVal( 'dir' );
+			if ( $direction === 'ltr' || $direction === 'rtl' ) {
+				$this->direction = $direction;
+			} else {
 				// Determine directionality based on user language (T8100)
 				$this->direction = Language::factory( $this->getLanguage() )->getDir();
 			}
@@ -211,11 +215,11 @@ class ResourceLoaderContext implements MessageLocalizer {
 	 * @since 1.27
 	 * @param string|string[]|MessageSpecifier $key Message key, or array of keys,
 	 *   or a MessageSpecifier.
-	 * @param mixed $args,...
+	 * @param mixed ...$params
 	 * @return Message
 	 */
-	public function msg( $key ) {
-		return wfMessage( ...func_get_args() )
+	public function msg( $key, ...$params ) {
+		return wfMessage( $key, ...$params )
 			->inLanguage( $this->getLanguage() )
 			// Use a dummy title because there is no real title
 			// for this endpoint, and the cache won't vary on it
@@ -396,5 +400,53 @@ class ResourceLoaderContext implements MessageLocalizer {
 			] );
 		}
 		return $this->hash;
+	}
+
+	/**
+	 * Get the request base parameters, omitting any defaults.
+	 *
+	 * @internal For use by ResourceLoaderStartUpModule only
+	 * @return array
+	 */
+	public function getReqBase() {
+		$reqBase = [];
+		if ( $this->getLanguage() !== self::DEFAULT_LANG ) {
+			$reqBase['lang'] = $this->getLanguage();
+		}
+		if ( $this->getSkin() !== self::DEFAULT_SKIN ) {
+			$reqBase['skin'] = $this->getSkin();
+		}
+		if ( $this->getDebug() ) {
+			$reqBase['debug'] = 'true';
+		}
+		return $reqBase;
+	}
+
+	/**
+	 * Wrapper around json_encode that avoids needless escapes,
+	 * and pretty-prints in debug mode.
+	 *
+	 * @internal
+	 * @param mixed $data
+	 * @return string|false JSON string, false on error
+	 */
+	public function encodeJson( $data ) {
+		// Keep output as small as possible by disabling needless escape modes
+		// that PHP uses by default.
+		// However, while most module scripts are only served on HTTP responses
+		// for JavaScript, some modules can also be embedded in the HTML as inline
+		// scripts. This, and the fact that we sometimes need to export strings
+		// containing user-generated content and labels that may genuinely contain
+		// a sequences like "</script>", we need to encode either '/' or '<'.
+		// By default PHP escapes '/'. Let's escape '<' instead which is less common
+		// and allows URLs to mostly remain readable.
+		$jsonFlags = JSON_UNESCAPED_SLASHES |
+			JSON_UNESCAPED_UNICODE |
+			JSON_HEX_TAG |
+			JSON_HEX_AMP;
+		if ( $this->getDebug() ) {
+			$jsonFlags |= JSON_PRETTY_PRINT;
+		}
+		return json_encode( $data, $jsonFlags );
 	}
 }

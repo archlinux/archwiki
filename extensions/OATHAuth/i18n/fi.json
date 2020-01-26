@@ -5,7 +5,8 @@
 			"Stryn",
 			"Pxos",
 			"Nike",
-			"Pyscowicz"
+			"Pyscowicz",
+			"Silvonen"
 		]
 	},
 	"disableoathforuser": "Poista käytöstä käyttäjän kaksivaiheinen tunnistautuminen",
@@ -25,5 +26,6 @@
 	"action-oathauth-enable": "ottaa käyttöön kahden tekijän avulla suoritettua (''two-factor'') tunnistautumista",
 	"oathauth-auth-token-label": "Avain",
 	"oathauth-auth-ui": "Syötä vahvistuskoodi tunnistautumislaitteestasi",
-	"action-oathauth-api-all": "tarkistaa OATH-tilaa"
+	"action-oathauth-api-all": "tarkistaa OATH-tilaa",
+	"oathauth-disable-method-warning-button-label": "Vahvista ja jatka"
 }

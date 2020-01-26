@@ -13,10 +13,6 @@ class NumberInputWidget extends TextInputWidget {
 
 	/**
 	 * @param array $config Configuration options
-	 *      - int $config['placeholder'] Placeholder number
-	 *      - bool $config['autofocus'] Ask the browser to focus this widget, using the 'autofocus'
-	 *          HTML attribute (default: false)
-	 *      - bool $config['readOnly'] Prevent changes (default: false)
 	 *      - float $config['min'] Minimum input allowed
 	 *      - float $config['max'] Maximum input allowed
 	 *      - float|null $config['step'] If specified, the field only accepts values that are
@@ -26,8 +22,6 @@ class NumberInputWidget extends TextInputWidget {
 	 *      - float $config['pageStep'] Delta when using the Page-up/Page-down keys.
 	 *          Defaults to 10 times `buttonStep`.
 	 *      - bool $config['showButtons'] Show increment and decrement buttons (default: true)
-	 *      - bool $config['required'] Mark the field as required.
-	 *          Implies `indicator: 'required'`. Note that `false` & setting `indicator: 'required'
 	 * @param-taint $config escapes_html
 	 */
 	public function __construct( array $config = [] ) {

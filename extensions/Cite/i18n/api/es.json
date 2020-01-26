@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Fitoschido",
+			"Macofe",
+			"Tiberius1701"
+		]
+	},
+	"apihelp-query+references-description": "Devolver una representación de datos de referencias asociadas con las páginas especificadas.",
+	"apihelp-query+references-summary": "Devuelve una representación de datos de las referencias asociadas con las páginas dadas.",
+	"apihelp-query+references-example-1": "Referencias asociadas con <kbd>Albert Einstein</kbd>.",
+	"apierror-citestoragedisabled": "El almacenamiento de referencias de la extensión de citas no está activado."
+}

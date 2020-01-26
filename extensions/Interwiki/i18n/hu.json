@@ -34,7 +34,6 @@
 	"interwiki-cached": "Az interwiki adatok gyorsítótárazva vannak. A gyorsítótár módosítása nem lehetséges.",
 	"interwiki_edit": "Szerkesztés",
 	"interwiki_reasonfield": "Indoklás:",
-	"interwiki_delquestion": "„$1” törlése",
 	"interwiki_deleting": "A(z) „$1” előtag törlésére készülsz.",
 	"interwiki_deleted": "A(z) „$1” előtag eltávolítva a wikiközi hivatkozások táblájából.",
 	"interwiki_delfailed": "A(z) „$1” előtagot nem sikerült eltávolítanom a wikiközi hivatkozások táblájából.",

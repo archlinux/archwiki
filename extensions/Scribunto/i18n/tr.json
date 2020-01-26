@@ -1,0 +1,24 @@
+{
+	"@metadata": {
+		"authors": [
+			"Sadrettin",
+			"Violetanka",
+			"Incelemeelemani",
+			"McDutchie",
+			"Vito Genovese"
+		]
+	},
+	"scribunto-parser-dialog-title": "Betik hatası",
+	"scribunto-error-short": "Betik hatası: $1",
+	"scribunto-error-long": "Betik hataları:\n$1",
+	"scribunto-doc-page-name": "Module:$1/belge",
+	"scribunto-doc-page-does-not-exist": "Bu modül için bir belgeleme oluşturabilirsiniz: [[$1]]",
+	"scribunto-doc-page-header": "Bu belgeleme sayfası için [[$1]]",
+	"scribunto-console-clear": "Temizle",
+	"scribunto-common-no-details": "Daha fazla bilgi mevcut değildir.",
+	"scribunto-lua-error": "Lua hatası: $2",
+	"scribunto-module-with-errors-category-desc": "Modülde bir hata bulunuyor.",
+	"scribunto-limitreport-timeusage": "Lua zaman kullanımı",
+	"scribunto-limitreport-timeusage-value": "$1/$2 saniye",
+	"scribunto-limitreport-memusage": "Lua bellek kullanımı"
+}

@@ -21,6 +21,8 @@
  * @ingroup SpecialPage
  */
 
+use MediaWiki\MediaWikiServices;
+
 /**
  * A special page that list newly created pages
  *
@@ -56,6 +58,7 @@ class SpecialNewpages extends IncludableSpecialPage {
 		$opts->add( 'feed', '' );
 		$opts->add( 'tagfilter', '' );
 		$opts->add( 'invert', false );
+		$opts->add( 'associated', false );
 		$opts->add( 'size-mode', 'max' );
 		$opts->add( 'size', 0 );
 
@@ -160,7 +163,7 @@ class SpecialNewpages extends IncludableSpecialPage {
 				$navigation = $pager->getNavigationBar();
 			}
 			$out->addHTML( $navigation . $pager->getBody() . $navigation );
-			// add styles for change tags
+			// Add styles for change tags
 			$out->addModuleStyles( 'mediawiki.interface.helpers.styles' );
 		} else {
 			$out->addWikiMsg( 'specialpage-empty' );
@@ -183,7 +186,9 @@ class SpecialNewpages extends IncludableSpecialPage {
 		}
 
 		// Disable some if needed
-		if ( !User::groupHasPermission( '*', 'createpage' ) ) {
+		if ( !MediaWikiServices::getInstance()->getPermissionManager()
+				->groupHasPermission( '*', 'createpage' )
+		) {
 			unset( $filters['hideliu'] );
 		}
 		if ( !$this->getUser()->useNPPatrol() ) {
@@ -229,6 +234,7 @@ class SpecialNewpages extends IncludableSpecialPage {
 		$username = $this->opts->consumeValue( 'username' );
 		$tagFilterVal = $this->opts->consumeValue( 'tagfilter' );
 		$nsinvert = $this->opts->consumeValue( 'invert' );
+		$nsassociated = $this->opts->consumeValue( 'associated' );
 
 		$size = $this->opts->consumeValue( 'size' );
 		$max = $this->opts->consumeValue( 'size-mode' ) === 'max';
@@ -250,6 +256,13 @@ class SpecialNewpages extends IncludableSpecialPage {
 				'label-message' => 'invert',
 				'default' => $nsinvert,
 				'tooltip' => 'invert',
+			],
+			'nsassociated' => [
+				'type' => 'check',
+				'name' => 'associated',
+				'label-message' => 'namespace_association',
+				'default' => $nsassociated,
+				'tooltip' => 'namespace_association',
 			],
 			'tagFilter' => [
 				'type' => 'tagfilter',

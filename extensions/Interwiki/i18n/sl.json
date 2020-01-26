@@ -24,7 +24,6 @@
 	"interwiki-cached": "Podatki interwiki so predpomnjeni. Spreminjanje predpomnilnika ni mogoče.",
 	"interwiki_edit": "Uredi",
 	"interwiki_reasonfield": "Razlog:",
-	"interwiki_delquestion": "Brisanje »$1«",
 	"interwiki_deleting": "Brišete predpono »$1«.",
 	"interwiki_deleted": "Predpono »$1« smo odstranili iz tabele interwiki.",
 	"interwiki_delfailed": "Predpone »$1« ni bilo mogoče odstraniti iz tabele interwiki.",

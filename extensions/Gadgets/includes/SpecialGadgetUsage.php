@@ -40,6 +40,14 @@ class SpecialGadgetUsage extends QueryPage {
 	}
 
 	/**
+	 * @inheritDoc
+	 */
+	public function execute( $par ) {
+		parent::execute( $par );
+		$this->addHelpLink( 'Extension:Gadgets' );
+	}
+
+	/**
 	 * Flag for holding the value of config variable SpecialGadgetUsageActiveUsers
 	 *
 	 * @var bool $activeUsers
@@ -148,6 +156,8 @@ class SpecialGadgetUsage extends QueryPage {
 		$html .= Html::closeElement( 'thead' );
 		$html .= Html::openElement( 'tbody', [] );
 		$this->getOutput()->addHTML( $html );
+		$this->getOutput()->addModuleStyles( 'jquery.tablesorter.styles' );
+		$this->getOutput()->addModules( 'jquery.tablesorter' );
 	}
 
 	/**

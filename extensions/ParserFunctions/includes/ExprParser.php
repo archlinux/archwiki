@@ -20,6 +20,8 @@ namespace MediaWiki\Extensions\ParserFunctions;
 
 use UtfNormal\Validator;
 
+// @codeCoverageIgnoreStart
+
 // Character classes
 define( 'EXPR_WHITE_CLASS', " \t\r\n" );
 define( 'EXPR_NUMBER_CLASS', '0123456789.' );
@@ -63,6 +65,8 @@ define( 'EXPR_POW', 35 );
 define( 'EXPR_PI', 36 );
 define( 'EXPR_FMOD', 37 );
 define( 'EXPR_SQRT', 38 );
+
+// @codeCoverageIgnoreEnd
 
 class ExprParser {
 	public $maxStackSize = 100;
@@ -671,7 +675,9 @@ class ExprParser {
 				break;
 			default:
 				// Should be impossible to reach here.
+				// @codeCoverageIgnoreStart
 				throw new ExprError( 'unknown_error' );
+				// @codeCoverageIgnoreEnd
 		}
 	}
 }

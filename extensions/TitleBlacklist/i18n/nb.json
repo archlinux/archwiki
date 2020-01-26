@@ -7,6 +7,8 @@
 			"Jon Harald Søby"
 		]
 	},
+	"action-tboverride": "overstyre svartelistene for titler eller brukernavn",
+	"action-tboverride-account": "overstyre svartelista for brukernavn",
 	"action-titleblacklistlog": "se tittelsvartelisteloggen",
 	"log-name-titleblacklist": "Tittelsvartelistelogg",
 	"log-description-titleblacklist": "Disse hendelsene sporer treff på tittelsvartelista.",
@@ -19,11 +21,10 @@
 	"titleblacklist-forbidden-upload": "Filnavnet «$2» er blokkert for oppretting. Den tilsvarer følgende svartelisteelement: <code>$1</code>",
 	"titleblacklist-forbidden-new-account": "Brukernavnet «$2» kan ikke opprettes.\nDet tilsvarer følgende svartelisteelement: <code>$1</code>",
 	"titleblacklist-invalid": "Følgende {{PLURAL:$1|linje|linjer}} i tittelsvartelista er {{PLURAL:$1|ugyldig|ugyldige}}; vennligst korriger {{PLURAL:$1|den|dem}} før du lagrer:",
-	"titleblacklist-override": "Ignorer svartelista.",
+	"titleblacklist-override": "Overstyr tittelsvarteliste hvis det er treff",
 	"titleblacklist-override-help": "Brukere med tilstrekkelige rettigheter kan sette denne for å ignorere sjekker mot tittelsvartelista.",
 	"titleblacklist-warning": "<strong>Advarsel: Denne siden kan kun redigeres av administratorer og andre brukere med <code>tboverride</code>-rettigheter fordi den matcher følgende oppslag i tittelsvartelista:</strong><br /><code>$1</code>",
 	"right-tboverride": "Overkjøre svartelista for titler eller brukernavn",
 	"right-tboverride-account": "Overstyr svartelista for brukernavn",
-	"right-titleblacklistlog": "Vise tittelsvartelisteloggen",
-	"visualeditor-saveerror-titleblacklist": "Kunne ikke lagre siden: Denne sidens tittel er svartelistet"
+	"right-titleblacklistlog": "Vise tittelsvartelisteloggen"
 }

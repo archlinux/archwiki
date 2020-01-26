@@ -21,6 +21,8 @@
  * @ingroup Extensions
  * @author Daniel Kinzler, brightbyte.de
  */
+use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\MediaWikiServices;
 
 /**
  * Core functions for the CategoryTree extension, an AJAX based gadget
@@ -30,11 +32,17 @@ class CategoryTree {
 	public $mOptions = [];
 
 	/**
+	 * @var LinkRenderer
+	 */
+	private $linkRenderer;
+
+	/**
 	 * @suppress PhanTypeInvalidDimOffset
 	 * @param array $options
 	 */
 	public function __construct( array $options ) {
 		global $wgCategoryTreeDefaultOptions;
+		$this->linkRenderer = MediaWikiServices::getInstance()->getLinkRenderer();
 
 		// ensure default values and order of options.
 		// Order may become important, it may influence the cache key!
@@ -90,8 +98,6 @@ class CategoryTree {
 	 * @return array|bool
 	 */
 	private static function decodeNamespaces( $nn ) {
-		global $wgContLang;
-
 		if ( $nn === false || is_null( $nn ) ) {
 			return false;
 		}
@@ -101,7 +107,7 @@ class CategoryTree {
 		}
 
 		$namespaces = [];
-
+		$contLang = MediaWikiServices::getInstance()->getContentLanguage();
 		foreach ( $nn as $n ) {
 			if ( is_int( $n ) ) {
 				$ns = $n;
@@ -118,7 +124,7 @@ class CategoryTree {
 				} elseif ( $n == '-' || $n == '_' || $n == '*' || $lower == 'main' ) {
 					$ns = NS_MAIN;
 				} else {
-					$ns = $wgContLang->getNsIndex( $n );
+					$ns = $contLang->getNsIndex( $n );
 				}
 			}
 
@@ -312,13 +318,6 @@ class CategoryTree {
 	}
 
 	/**
-	 * @return string
-	 */
-	private function getOptionsAsUrlParameters() {
-		return http_build_query( $this->mOptions );
-	}
-
-	/**
 	 * Custom tag implementation. This is called by CategoryTreeHooks::parserHook, which is used to
 	 * load CategoryTreeFunctions.php on demand.
 	 * @suppress PhanParamReqAfterOpt $parser is not optional but nullable
@@ -342,7 +341,7 @@ class CategoryTree {
 
 		if ( $parser ) {
 			if ( $wgCategoryTreeDisableCache === true ) {
-				$parser->disableCache();
+				$parser->getOutput()->updateCacheExpiry( 0 );
 			} elseif ( is_int( $wgCategoryTreeDisableCache ) ) {
 				$parser->getOutput()->updateCacheExpiry( $wgCategoryTreeDisableCache );
 			}
@@ -499,10 +498,7 @@ class CategoryTree {
 
 		$res = $dbr->select(
 			'categorylinks',
-			[
-				'page_namespace' => NS_CATEGORY,
-				'page_title' => 'cl_to',
-			],
+			[ 'cl_to' ],
 			[ 'cl_from' => $title->getArticleID() ],
 			__METHOD__,
 			[
@@ -516,19 +512,19 @@ class CategoryTree {
 		$s = '';
 
 		foreach ( $res as $row ) {
-			$t = Title::newFromRow( $row );
-
-			$label = $t->getText();
-
-			$wikiLink = $special->getLocalURL( 'target=' . $t->getPartialURL() .
-				'&' . $this->getOptionsAsUrlParameters() );
+			$t = Title::makeTitle( NS_CATEGORY, $row->cl_to );
 
 			if ( $s !== '' ) {
 				$s .= wfMessage( 'pipe-separator' )->escaped();
 			}
 
 			$s .= Xml::openElement( 'span', [ 'class' => 'CategoryTreeItem' ] );
-			$s .= Xml::element( 'a', [ 'class' => 'CategoryTreeLabel', 'href' => $wikiLink ], $label );
+			$s .= $this->linkRenderer->makeLink(
+				$special,
+				$t->getText(),
+				[ 'class' => 'CategoryTreeLabel' ],
+				[ 'target' => $t->getPartialURL() ] + $this->mOptions
+			);
 			$s .= Xml::closeElement( 'span' );
 		}
 
@@ -590,24 +586,7 @@ class CategoryTree {
 			$label = $title->getPrefixedText();
 		}
 
-		$labelClass = 'CategoryTreeLabel ' . ' CategoryTreeLabelNs' . $ns;
-
-		if ( !$title->getArticleID() ) {
-			$labelClass .= ' new';
-			$wikiLink = $title->getLocalURL( 'action=edit&redlink=1' );
-		} else {
-			$wikiLink = $title->getLocalURL();
-		}
-
-		if ( $ns == NS_CATEGORY ) {
-			$labelClass .= ' CategoryTreeLabelCategory';
-		} else {
-			$labelClass .= ' CategoryTreeLabelPage';
-		}
-
-		if ( ( $ns % 2 ) > 0 ) {
-			$labelClass .= ' CategoryTreeLabelTalk';
-		}
+		$link = $this->linkRenderer->makeLink( $title, $label );
 
 		$count = false;
 		$s = '';
@@ -659,15 +638,7 @@ class CategoryTree {
 		}
 		$s .= Xml::tags( 'span', $attr, $bullet ) . ' ';
 
-		$s .= Xml::element(
-			'a',
-			[
-				'class' => $labelClass,
-				'href' => $wikiLink,
-				'title' => $title->getPrefixedText()
-			],
-			$label
-		);
+		$s .= $link;
 
 		if ( $count !== false && $this->getOption( 'showcount' ) ) {
 			$s .= self::createCountString( RequestContext::getMain(), $cat, $count );
@@ -718,8 +689,6 @@ class CategoryTree {
 	public static function createCountString( IContextSource $context, Category $cat = null,
 		$countMode
 	) {
-		global $wgContLang;
-
 		# Get counts, with conversion to integer so === works
 		# Note: $allCount is the total number of cat members,
 		# not the count of how many members are normal pages.
@@ -734,8 +703,8 @@ class CategoryTree {
 			# numbers and commas get messed up in a mixed dir env
 			'dir' => $context->getLanguage()->getDir()
 		];
-
-		$s = $wgContLang->getDirMark() . ' ';
+		$contLang = MediaWikiServices::getInstance()->getContentLanguage();
+		$s = $contLang->getDirMark() . ' ';
 
 		# Create a list of category members with only non-zero member counts
 		$memberNums = [];

@@ -38,7 +38,8 @@
 		this.$close = $closeButton;
 		this.$fullscreen = $fullscreenButton;
 
-		this.$reuse = $( '<button>' )
+		this.$reuse = $( '<a>' )
+			.attr( 'role', 'button' )
 			.addClass( 'mw-mmv-reuse-button' )
 			.html( '&nbsp;' )
 			.prop( 'title', mw.message( 'multimediaviewer-reuse-link' ).text() )
@@ -56,7 +57,8 @@
 				gravity: this.correctEW( 'se' )
 			} );
 
-		this.$download = $( '<button>' )
+		this.$download = $( '<a>' )
+			.attr( 'role', 'button' )
 			.addClass( 'mw-mmv-download-button' )
 			.html( '&nbsp;' )
 			.prop( 'title', mw.message( 'multimediaviewer-download-link' ).text() )
@@ -223,7 +225,7 @@
 
 		this.$reuse.on( 'click.mmv-canvasButtons', function ( e ) {
 			$( document ).trigger( 'mmv-reuse-open', e );
-			e.stopPropagation(); // the dialog would take it as an outside click and close
+			return false;
 		} );
 		this.handleEvent( 'mmv-reuse-opened', function () {
 			buttons.$reuse.addClass( 'open' );
@@ -234,7 +236,7 @@
 
 		this.$download.on( 'click.mmv-canvasButtons', function ( e ) {
 			$( document ).trigger( 'mmv-download-open', e );
-			e.stopPropagation();
+			return false;
 		} );
 		this.handleEvent( 'mmv-download-opened', function () {
 			buttons.$download.addClass( 'open' );
@@ -268,6 +270,8 @@
 	 * Removes all UI things from the DOM, or hides them
 	 */
 	CBP.unattach = function () {
+		mw.mmv.ui.Element.prototype.unattach.call( this );
+
 		this.$download
 			.add( this.$reuse )
 			.add( this.$options )
@@ -279,8 +283,20 @@
 			} );
 	};
 
+	/**
+	 * @param {mw.mmv.model.Image} image
+	 */
+	CBP.set = function ( image ) {
+		this.$reuse.prop( 'href', image.descriptionUrl );
+		this.$download.prop( 'href', image.url );
+	};
+
 	CBP.empty = function () {
-		this.$reuse.removeClass( 'open' );
+		this.$reuse
+			.removeClass( 'open' )
+			.prop( 'href', null );
+		this.$download
+			.prop( 'href', null );
 	};
 
 	mw.mmv.ui.CanvasButtons = CanvasButtons;

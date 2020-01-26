@@ -16,7 +16,5 @@
 	"fancycaptcha-edit": "Để sửa trang này, xin hãy nhập những từ xuất hiện ở dưới vào ô ([[Special:Captcha/help|thông tin thêm]]):",
 	"fancycaptcha-imgcaptcha-ph": "Nhập dòng chữ bạn thấy ở trong hình",
 	"fancycaptcha-sendemail": "Để giúp chúng tôi chống lại spam tự động, xin vui lòng nhập những từ xuất hiện ở dưới vào ô ([[Special:Captcha/help|thông tin thêm]]):",
-	"fancycaptcha-reload-text": "Làm tươi",
-	"apihelp-fancycaptchareload-description": "Lấy FancyCaptcha mới.",
-	"apihelp-fancycaptchareload-example-1": "Lấy FancyCaptcha mới."
+	"fancycaptcha-reload-text": "Làm tươi"
 }

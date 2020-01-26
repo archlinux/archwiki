@@ -36,7 +36,5 @@
 	"categorytree-no-pages": "jokių puslapių ar subkategorijų",
 	"categorytree-not-found": "Kategorija <i>$1</i> nerasta",
 	"categorytree-error": "Duomenų įkėlimo problema.",
-	"categorytree-retry": "Palaukite šiek tiek ir bandykite iš naujo.",
-	"apihelp-categorytree-description": "CategoryTree plėtinio vidinis modulis.",
-	"apihelp-categorytree-param-options": "Nustatymai skirti CategoryTree konstruktoriui, kaip JSON objektui. Nustatymo <var>depth</var> numatytoji reikšmė yra <kbd>1</kbd>."
+	"categorytree-retry": "Palaukite šiek tiek ir bandykite iš naujo."
 }

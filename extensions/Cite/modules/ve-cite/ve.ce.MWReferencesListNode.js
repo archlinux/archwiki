@@ -212,11 +212,12 @@ ve.ce.MWReferencesListNode.prototype.update = function () {
 					return false;
 				}
 				// Exclude references defined inside the references list node
-				while ( ( node = node.parent ) && node !== null ) {
+				do {
+					node = node.parent;
 					if ( node instanceof ve.dm.MWReferencesListNode ) {
 						return false;
 					}
-				}
+				} while ( node );
 				return true;
 			} );
 

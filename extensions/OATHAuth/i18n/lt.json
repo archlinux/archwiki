@@ -5,5 +5,6 @@
 		]
 	},
 	"oathauth-account": "Paskyros vardas:",
+	"oathauth-auth-ui": "Prašome įvesti patvirtinimo kodą iš jūsų identifikacijos įrenginio.",
 	"action-oathauth-api-all": "patikrinti OATH būseną"
 }

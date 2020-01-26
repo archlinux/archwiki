@@ -135,23 +135,18 @@
 				color: #222;
 			}
 
-			.menu {
-				.options {
-					position: absolute;
-					display: none;
-					margin-left: -1px;
-					margin-top: 22px;
-					border: 1px solid #c8ccd1;
-					background-color: #fff;
-				}
-			}
-
-			&:hover .options,
-			.menu .options-shown {
-				display: block;
+			&.options-shown .label {
+				.background-image-svg( 'images/toolbar/arrow-up.svg', 'images/toolbar/arrow-up.png' );
 			}
 
 			.options {
+				position: absolute;
+				display: none;
+				margin-left: -1px;
+				margin-top: 22px;
+				border: 1px solid #c8ccd1;
+				background-color: #fff;
+
 				.option {
 					display: block;
 					padding: 0.5em;
@@ -183,6 +178,11 @@
 						font-weight: bold;
 					}
 				}
+			}
+
+			&:hover .options,
+			&.options-shown .options {
+				display: block;
 			}
 		}
 

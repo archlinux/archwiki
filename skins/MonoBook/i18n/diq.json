@@ -2,9 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"Erdemaslancan",
-			"Kumkumuk"
+			"Kumkumuk",
+			"Orbot707"
 		]
 	},
 	"skinname-monobook": "MonoBook",
-	"monobook-desc": "Klasik ciktê MediaWiki 2004ra yok esto, namey cı veri black-and-white bı beznê pela dı kıtabê fıtratan bı"
+	"monobook-desc": "Klasik ciktê MediaWiki 2004ra yok esto, namey cı veri black-and-white bı beznê pela dı kıtabê fıtratan bı",
+	"monobook-more-actions": "Zêde",
+	"monobook-cactions-label": "Hereketê pele",
+	"monobook-notifications-link": "Tebliğê ($1)",
+	"monobook-notifications-link-none": "Tebliği"
 }

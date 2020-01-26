@@ -15,7 +15,8 @@
 			"Sujiniku",
 			"Otokoume",
 			"おはぐろ蜻蛉",
-			"Omotecho"
+			"Omotecho",
+			"Aefgh39622"
 		]
 	},
 	"wikieditor": "高度なウィキテキスト編集インターフェイス",
@@ -138,6 +139,7 @@
 	"wikieditor-toolbar-tool-replace-success": "$1 {{PLURAL:$1|回置換}}されました。",
 	"wikieditor-toolbar-tool-replace-emptysearch": "検索するものを何も入力していません。",
 	"wikieditor-toolbar-tool-replace-invalidregex": "入力された正規表現に誤りがあります: $1",
+	"wikieditor-toolbar-tool-replace-word": "単語単位で探す",
 	"wikieditor-toolbar-section-characters": "特殊文字",
 	"wikieditor-toolbar-section-help": "ヘルプ",
 	"wikieditor-toolbar-help-heading-description": "解説",

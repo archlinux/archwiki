@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"McDutchie"
+			"McDutchie",
+			"Fitoschido"
 		]
 	},
 	"oathauth-desc": "Forni supporto de authentication usante contrasignos a uso unic a base de HMAC",
@@ -25,7 +26,7 @@
 	"action-oathauth-enable": "activar le authentication bifactorial",
 	"oathauth-auth-token-label": "Indicio",
 	"oathauth-auth-token-help": "Le contrasigno a uso singule usate como secunde factor pro le authentication bifactorial.",
-	"oathauth-auth-ui": "Scribe le codice de verification ab tu dispositivo de authentication",
+	"oathauth-auth-ui": "Scribe le codice de verification ab tu dispositivo de authentication.",
 	"oathauth-throttled": "Troppo de tentativas de verification! Per favor attende $1.",
 	"oathauth-login-failed": "Verification fallite.",
 	"oathauth-describe-provider": "Authentication bifactorial (OATH).",

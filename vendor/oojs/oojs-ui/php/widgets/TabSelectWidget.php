@@ -10,6 +10,7 @@ class TabSelectWidget extends SelectWidget {
 
 	/**
 	 * @param array $config Configuration options
+	 *      - bool $config['framed'] Use framed tabs (default: true)
 	 * @param-taint $config escapes_html
 	 */
 	public function __construct( array $config = [] ) {
@@ -18,8 +19,38 @@ class TabSelectWidget extends SelectWidget {
 		$this->initializeTabIndexedElement( array_merge( $config, [ 'tabIndexed' => $this ] ) );
 
 		$this->addClasses( [ 'oo-ui-tabSelectWidget' ] );
+		$this->toggleFramed( $config[ 'framed' ] ?? true );
 		$this->setAttributes( [
 			'role' => 'tablist'
 		] );
+	}
+
+	/**
+	 * Check if tabs are framed.
+	 *
+	 * @return bool Tabs are framed
+	 */
+	public function isFramed() {
+		return $this->framed;
+	}
+
+	/**
+	 * Render the tabs with or without frames.
+	 *
+	 * @param bool|null $framed Make tabs framed, omit to toggle
+	 * @return $this
+	 */
+	public function toggleFramed( $framed = null ) {
+		$this->framed = $framed !== null ? (bool)$framed : !$this->framed;
+		$this->toggleClasses( [ 'oo-ui-tabSelectWidget-framed' ], $this->framed );
+		$this->toggleClasses( [ 'oo-ui-tabSelectWidget-frameless' ], !$this->framed );
+		return $this;
+	}
+
+	public function getConfig( &$config ) {
+		if ( $this->framed !== true ) {
+			$config['framed'] = $this->framed;
+		}
+		return parent::getConfig( $config );
 	}
 }

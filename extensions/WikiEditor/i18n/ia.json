@@ -123,6 +123,7 @@
 	"wikieditor-toolbar-tool-replace-success": "$1 {{PLURAL:$1|reimplaciamento|reimplaciamentos}} facite.",
 	"wikieditor-toolbar-tool-replace-emptysearch": "Tu non entrava texto a cercar.",
 	"wikieditor-toolbar-tool-replace-invalidregex": "Le expression regular que tu entrava es invalide: $1",
+	"wikieditor-toolbar-tool-replace-word": "Cercar parolas integre",
 	"wikieditor-toolbar-section-characters": "Characteres special",
 	"wikieditor-toolbar-section-help": "Adjuta",
 	"wikieditor-toolbar-help-heading-description": "Description",

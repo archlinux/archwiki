@@ -7,7 +7,7 @@ for updated informations:
 == Requirements ==
 
 This version of the extension has been tested with Pygments 2.2.0 and
-MediaWiki 1.32. To get releases of this extension compatible
+MediaWiki 1.33. To get releases of this extension compatible
 with earlier versions of MediaWiki, visit:
 
     https://www.mediawiki.org/wiki/Special:ExtensionDistributor/SyntaxHighlight_GeSHi

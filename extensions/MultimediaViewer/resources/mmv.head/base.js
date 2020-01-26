@@ -19,16 +19,29 @@
 ( function () {
 	mw.mmv = {
 		/**
-		 * Feature-detects SVG support. MuyltimediaViewer uses SVG icons extensively and is
-		 * unusable without them.
-		 *
-		 * @member mw.mmv.MultimediaViewer
-		 * @return {boolean}
+		 * The media route prefix
+		 * @member mw.mmv
 		 */
-		isBrowserSupported: function () {
-			// From modernizr 2.6.1
-			var ns = { svg: 'http://www.w3.org/2000/svg' };
-			return !!document.createElementNS && !!document.createElementNS( ns.svg, 'svg' ).createSVGRect;
+		ROUTE: 'media',
+		/**
+		 * RegExp representing the media route
+		 * @member mw.mmv
+		 */
+		ROUTE_REGEXP: /^\/media\/(.+)$/,
+		/**
+		 * @property
+		 * RegExp representing the legacy media route
+		 * @member mw.mmv
+		 */
+		LEGACY_ROUTE_REGEXP: /^mediaviewer\/(.+)$/,
+		/**
+		 * Returns the location hash (route string) for the given file title.
+		 * @param {string} imageFileTitle the file title
+		 * @return {string} the location hash
+		 * @member mw.mmv
+		 */
+		getMediaHash: function ( imageFileTitle ) {
+			return '#/' + mw.mmv.ROUTE + '/' + imageFileTitle;
 		}
 	};
 }() );

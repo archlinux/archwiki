@@ -29,14 +29,14 @@ class Hooks {
 
 		// These functions accept DOM-style arguments
 		$class = ParserFunctions::class;
-		$parser->setFunctionHook( 'if', "$class::ifObj", Parser::SFH_OBJECT_ARGS );
-		$parser->setFunctionHook( 'ifeq', "$class::ifeqObj", Parser::SFH_OBJECT_ARGS );
-		$parser->setFunctionHook( 'switch', "$class::switchObj", Parser::SFH_OBJECT_ARGS );
-		$parser->setFunctionHook( 'ifexist', "$class::ifexistObj", Parser::SFH_OBJECT_ARGS );
-		$parser->setFunctionHook( 'ifexpr', "$class::ifexprObj", Parser::SFH_OBJECT_ARGS );
-		$parser->setFunctionHook( 'iferror', "$class::iferrorObj", Parser::SFH_OBJECT_ARGS );
-		$parser->setFunctionHook( 'time', "$class::timeObj", Parser::SFH_OBJECT_ARGS );
-		$parser->setFunctionHook( 'timel', "$class::localTimeObj", Parser::SFH_OBJECT_ARGS );
+		$parser->setFunctionHook( 'if', "$class::if", Parser::SFH_OBJECT_ARGS );
+		$parser->setFunctionHook( 'ifeq', "$class::ifeq", Parser::SFH_OBJECT_ARGS );
+		$parser->setFunctionHook( 'switch', "$class::switch", Parser::SFH_OBJECT_ARGS );
+		$parser->setFunctionHook( 'ifexist', "$class::ifexist", Parser::SFH_OBJECT_ARGS );
+		$parser->setFunctionHook( 'ifexpr', "$class::ifexpr", Parser::SFH_OBJECT_ARGS );
+		$parser->setFunctionHook( 'iferror', "$class::iferror", Parser::SFH_OBJECT_ARGS );
+		$parser->setFunctionHook( 'time', "$class::time", Parser::SFH_OBJECT_ARGS );
+		$parser->setFunctionHook( 'timel', "$class::localTime", Parser::SFH_OBJECT_ARGS );
 
 		$parser->setFunctionHook( 'expr', "$class::expr" );
 		$parser->setFunctionHook( 'rel2abs', "$class::rel2abs" );

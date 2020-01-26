@@ -36,6 +36,7 @@
 	"cite-ve-changedesc-reflist-responsive-unset": "Referenslistan ändrades till att visas i en kolumn",
 	"cite-ve-changedesc-reflist-item-id": "Referensindex ändrades",
 	"cite-ve-dialog-reference-editing-reused": "Denna referens används {{PLURAL:$1|en gång|2=två gånger|$1 gånger}} på denna sida.",
+	"cite-ve-dialog-reference-editing-reused-long": "Denna referens används {{PLURAL:$1|en gång|2=två gånger|$1 gånger}} på denna sida. Ändringar här kommer att tillämpas på alla ställen som denna referens återanvänds.",
 	"cite-ve-dialog-reference-options-group-label": "Använd den här gruppen",
 	"cite-ve-dialog-reference-options-group-placeholder": "Allmänna referenser",
 	"cite-ve-dialog-reference-options-name-label": "Använd med detta namn igen",

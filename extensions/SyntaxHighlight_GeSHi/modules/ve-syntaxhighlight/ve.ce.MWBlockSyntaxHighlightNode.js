@@ -28,6 +28,10 @@ ve.ce.MWBlockSyntaxHighlightNode.static.name = 'mwBlockSyntaxHighlight';
 
 ve.ce.MWBlockSyntaxHighlightNode.static.primaryCommandName = 'syntaxhighlightDialog';
 
+ve.ce.MWBlockSyntaxHighlightNode.static.getDescription = function ( model ) {
+	return ve.getProp( model.getAttribute( 'mw' ), 'attrs', 'lang' );
+};
+
 /* Registration */
 
 ve.ce.nodeFactory.register( ve.ce.MWBlockSyntaxHighlightNode );

@@ -9,6 +9,7 @@ has been generated. You can use this to inject items (such as ads or a hit
 counter, for example) from an extension.
 This is the MonoBook couterpart to the VectorAfterToolbox hook in the Vector
 skin.
+$template: the MonoBookTemplate class instance
 
 'MonoBookTemplateToolboxEnd': DEPRECATED. Called by Monobook skin after toolbox
 links have been rendered (useful for adding more). Note: this is only run for

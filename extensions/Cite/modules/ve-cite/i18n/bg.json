@@ -14,10 +14,10 @@
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Книга",
-	"visualeditor-cite-tool-name-journal": "Списание",
-	"visualeditor-cite-tool-name-news": "Новини",
+	"visualeditor-cite-tool-name-journal": "Статия",
+	"visualeditor-cite-tool-name-news": "Новина",
 	"visualeditor-cite-tool-name-web": "Уебсайт",
-	"cite-ve-dialog-reference-editing-reused": "Тази препратка се използва на страницата $1 {{PLURAL:$1|пъти}}.",
+	"cite-ve-dialog-reference-editing-reused": "Тази препратка се използва на страницата {{PLURAL:$1|само веднъж|$1 пъти}}.",
 	"cite-ve-dialog-reference-options-group-label": "Използвайте тази група",
 	"cite-ve-dialog-reference-options-group-placeholder": "Общи препратки",
 	"cite-ve-dialog-reference-options-name-label": "Повторно използване с това име",
@@ -30,10 +30,13 @@
 	"cite-ve-dialog-referenceslist-title": "Списък с източници",
 	"cite-ve-dialogbutton-citation-educationpopup-text": "Подобрява съдържанието, добавяйки списък с източници на информация. Може да цитирате книги, вестници и уебсайтове.",
 	"cite-ve-dialogbutton-citation-educationpopup-title": "Цитати",
-	"cite-ve-dialogbutton-reference-full-label": "Основна форма",
+	"cite-ve-dialogbutton-reference-full-label": "Опростен формуляр",
 	"cite-ve-dialogbutton-reference-title": "Източник",
-	"cite-ve-dialogbutton-reference-tooltip": "Основен",
+	"cite-ve-dialogbutton-reference-tooltip": "Базово",
 	"cite-ve-dialogbutton-referenceslist-tooltip": "Списък с източници",
 	"cite-ve-reference-input-placeholder": "Търсене в текущите цитирания",
-	"cite-ve-toolbar-group-label": "Цитиране"
+	"cite-ve-toolbar-group-label": "Цитиране",
+	"cite-ve-othergroup-item": "$1 източник",
+	"visualeditor-internal-list-diff-default-group-name-mwreference": "Източници",
+	"visualeditor-internal-list-diff-group-name-mwreference": "Име на групата източници: „$1“"
 }

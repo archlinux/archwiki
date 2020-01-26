@@ -20,6 +20,11 @@
  * @file
  */
 
+use MediaWiki\Block\AbstractBlock;
+use MediaWiki\Block\DatabaseBlock;
+use MediaWiki\Linker\LinkTarget;
+use MediaWiki\MediaWikiServices;
+use MediaWiki\Permissions\PermissionManager;
 use Wikimedia\Rdbms\IDatabase;
 
 /**
@@ -35,6 +40,8 @@ use Wikimedia\Rdbms\IDatabase;
  * @ingroup API
  */
 abstract class ApiBase extends ContextSource {
+
+	use ApiBlockInfoTrait;
 
 	/**
 	 * @name Constants for ::getAllowedParams() arrays
@@ -244,7 +251,7 @@ abstract class ApiBase extends ContextSource {
 	 */
 	const PARAM_TEMPLATE_VARS = 25;
 
-	/**@}*/
+	/** @} */
 
 	const ALL_DEFAULT_STRING = '*';
 
@@ -267,15 +274,16 @@ abstract class ApiBase extends ContextSource {
 	/** @var array Maps extension paths to info arrays */
 	private static $extensionInfo = null;
 
-	/** @var int[][][] Cache for self::filterIDs() */
+	/** @var stdClass[][] Cache for self::filterIDs() */
 	private static $filterIDsCache = [];
 
 	/** $var array Map of web UI block messages to corresponding API messages and codes */
 	private static $blockMsgMap = [
 		'blockedtext' => [ 'apierror-blocked', 'blocked' ],
-		'blockedtext-partial' => [ 'apierror-blocked', 'blocked' ],
+		'blockedtext-partial' => [ 'apierror-blocked-partial', 'blocked' ],
 		'autoblockedtext' => [ 'apierror-autoblocked', 'autoblocked' ],
 		'systemblockedtext' => [ 'apierror-systemblocked', 'blocked' ],
+		'blockedtext-composite' => [ 'apierror-blocked', 'blocked' ],
 	];
 
 	/** @var ApiMain */
@@ -498,7 +506,7 @@ abstract class ApiBase extends ContextSource {
 		return null;
 	}
 
-	/**@}*/
+	/** @} */
 
 	/************************************************************************//**
 	 * @name   Data access methods
@@ -693,7 +701,17 @@ abstract class ApiBase extends ContextSource {
 		$this->getMain()->setContinuationManager( $manager );
 	}
 
-	/**@}*/
+	/**
+	 * Obtain a PermissionManager instance that subclasses may use in their authorization checks.
+	 *
+	 * @since 1.34
+	 * @return PermissionManager
+	 */
+	protected function getPermissionManager(): PermissionManager {
+		return MediaWikiServices::getInstance()->getPermissionManager();
+	}
+
+	/** @} */
 
 	/************************************************************************//**
 	 * @name   Parameter handling
@@ -974,7 +992,7 @@ abstract class ApiBase extends ContextSource {
 			return;
 		}
 
-		$queryValues = $this->getRequest()->getQueryValues();
+		$queryValues = $this->getRequest()->getQueryValuesOnly();
 		$badParams = [];
 		foreach ( $params as $param ) {
 			if ( $prefix !== 'noprefix' ) {
@@ -1196,7 +1214,8 @@ abstract class ApiBase extends ContextSource {
 			$provided = $this->getMain()->getCheck( $encParamName );
 
 			if ( isset( $value ) && $type == 'namespace' ) {
-				$type = MWNamespace::getValidNamespaces();
+				$type = MediaWikiServices::getInstance()->getNamespaceInfo()->
+					getValidNamespaces();
 				if ( isset( $paramSettings[self::PARAM_EXTRA_NAMESPACES] ) &&
 					is_array( $paramSettings[self::PARAM_EXTRA_NAMESPACES] )
 				) {
@@ -1289,8 +1308,15 @@ abstract class ApiBase extends ContextSource {
 						}
 						break;
 					case 'limit':
+						// Must be a number or 'max'
+						if ( $value !== 'max' ) {
+							$value = (int)$value;
+						}
+						if ( $multi ) {
+							self::dieDebug( __METHOD__, "Multi-values not supported for $encParamName" );
+						}
 						if ( !$parseLimit ) {
-							// Don't do any validation whatsoever
+							// Don't do min/max validation and don't parse 'max'
 							break;
 						}
 						if ( !isset( $paramSettings[self::PARAM_MAX] )
@@ -1301,21 +1327,16 @@ abstract class ApiBase extends ContextSource {
 								"MAX1 or MAX2 are not defined for the limit $encParamName"
 							);
 						}
-						if ( $multi ) {
-							self::dieDebug( __METHOD__, "Multi-values not supported for $encParamName" );
-						}
-						$min = $paramSettings[self::PARAM_MIN] ?? 0;
-						if ( $value == 'max' ) {
+						if ( $value === 'max' ) {
 							$value = $this->getMain()->canApiHighLimits()
 								? $paramSettings[self::PARAM_MAX2]
 								: $paramSettings[self::PARAM_MAX];
 							$this->getResult()->addParsedLimit( $this->getModuleName(), $value );
 						} else {
-							$value = (int)$value;
 							$this->validateLimit(
 								$paramName,
 								$value,
-								$min,
+								$paramSettings[self::PARAM_MIN] ?? 0,
 								$paramSettings[self::PARAM_MAX],
 								$paramSettings[self::PARAM_MAX2]
 							);
@@ -1564,6 +1585,7 @@ abstract class ApiBase extends ContextSource {
 				'integeroutofrange',
 				[ 'min' => $min, 'max' => $max, 'botMax' => $botMax ?: $max ]
 			);
+			// @phan-suppress-next-line PhanTypeMismatchArgument
 			$this->warnOrDie( $msg, $enforceLimits );
 			$value = $min;
 		}
@@ -1585,6 +1607,7 @@ abstract class ApiBase extends ContextSource {
 						'integeroutofrange',
 						[ 'min' => $min, 'max' => $max, 'botMax' => $botMax ?: $max ]
 					);
+					// @phan-suppress-next-line PhanTypeMismatchArgument
 					$this->warnOrDie( $msg, $enforceLimits );
 					$value = $botMax;
 				}
@@ -1595,6 +1618,7 @@ abstract class ApiBase extends ContextSource {
 					'integeroutofrange',
 					[ 'min' => $min, 'max' => $max, 'botMax' => $botMax ?: $max ]
 				);
+				// @phan-suppress-next-line PhanTypeMismatchArgument
 				$this->warnOrDie( $msg, $enforceLimits );
 				$value = $max;
 			}
@@ -1710,7 +1734,7 @@ abstract class ApiBase extends ContextSource {
 		);
 	}
 
-	/**@}*/
+	/** @} */
 
 	/************************************************************************//**
 	 * @name   Utility methods
@@ -1811,7 +1835,7 @@ abstract class ApiBase extends ContextSource {
 			if ( is_string( $error[0] ) && isset( self::$blockMsgMap[$error[0]] ) && $user->getBlock() ) {
 				list( $msg, $code ) = self::$blockMsgMap[$error[0]];
 				$status->fatal( ApiMessage::create( $msg, $code,
-					[ 'blockinfo' => ApiQueryUserInfo::getBlockInfo( $user->getBlock() ) ]
+					[ 'blockinfo' => $this->getBlockDetails( $user->getBlock() ) ]
 				) );
 			} else {
 				$status->fatal( ...$error );
@@ -1834,7 +1858,7 @@ abstract class ApiBase extends ContextSource {
 		foreach ( self::$blockMsgMap as $msg => list( $apiMsg, $code ) ) {
 			if ( $status->hasMessage( $msg ) && $user->getBlock() ) {
 				$status->replaceMessage( $msg, ApiMessage::create( $apiMsg, $code,
-					[ 'blockinfo' => ApiQueryUserInfo::getBlockInfo( $user->getBlock() ) ]
+					[ 'blockinfo' => $this->getBlockDetails( $user->getBlock() ) ]
 				) );
 			}
 		}
@@ -1885,7 +1909,7 @@ abstract class ApiBase extends ContextSource {
 		} );
 	}
 
-	/**@}*/
+	/** @} */
 
 	/************************************************************************//**
 	 * @name   Warning and error reporting
@@ -2001,6 +2025,7 @@ abstract class ApiBase extends ContextSource {
 	 */
 	public function dieWithException( $exception, array $options = [] ) {
 		$this->dieWithError(
+			// @phan-suppress-next-line PhanTypeMismatchArgument
 			$this->getErrorFormatter()->getMessageFromException( $exception, $options )
 		);
 	}
@@ -2024,28 +2049,28 @@ abstract class ApiBase extends ContextSource {
 	 * error handler and die with an error message including block info.
 	 *
 	 * @since 1.27
-	 * @param Block $block The block used to generate the ApiUsageException
+	 * @param AbstractBlock $block The block used to generate the ApiUsageException
 	 * @throws ApiUsageException always
 	 */
-	public function dieBlocked( Block $block ) {
+	public function dieBlocked( AbstractBlock $block ) {
 		// Die using the appropriate message depending on block type
-		if ( $block->getType() == Block::TYPE_AUTO ) {
+		if ( $block->getType() == DatabaseBlock::TYPE_AUTO ) {
 			$this->dieWithError(
 				'apierror-autoblocked',
 				'autoblocked',
-				[ 'blockinfo' => ApiQueryUserInfo::getBlockInfo( $block ) ]
+				[ 'blockinfo' => $this->getBlockDetails( $block ) ]
 			);
 		} elseif ( !$block->isSitewide() ) {
 			$this->dieWithError(
 				'apierror-blocked-partial',
 				'blocked',
-				[ 'blockinfo' => ApiQueryUserInfo::getBlockInfo( $block ) ]
+				[ 'blockinfo' => $this->getBlockDetails( $block ) ]
 			);
 		} else {
 			$this->dieWithError(
 				'apierror-blocked',
 				'blocked',
-				[ 'blockinfo' => ApiQueryUserInfo::getBlockInfo( $block ) ]
+				[ 'blockinfo' => $this->getBlockDetails( $block ) ]
 			);
 		}
 	}
@@ -2107,24 +2132,28 @@ abstract class ApiBase extends ContextSource {
 			$user = $this->getUser();
 		}
 		$rights = (array)$rights;
-		if ( !$user->isAllowedAny( ...$rights ) ) {
+		if ( !$this->getPermissionManager()
+				->userHasAnyRight( $user, ...$rights )
+		) {
 			$this->dieWithError( [ 'apierror-permissiondenied', $this->msg( "action-{$rights[0]}" ) ] );
 		}
 	}
 
 	/**
 	 * Helper function for permission-denied errors
-	 * @since 1.29
-	 * @since 1.33 Changed the third parameter from $user to $options.
-	 * @param Title $title
+	 *
+	 * @param LinkTarget $linkTarget
 	 * @param string|string[] $actions
 	 * @param array $options Additional options
 	 *   - user: (User) User to use rather than $this->getUser()
 	 *   - autoblock: (bool, default false) Whether to spread autoblocks
 	 *  For compatibility, passing a User object is treated as the value for the 'user' option.
 	 * @throws ApiUsageException if the user doesn't have all of the rights.
+	 *
+	 * @since 1.29
+	 * @since 1.33 Changed the third parameter from $user to $options.
 	 */
-	public function checkTitleUserPermissions( Title $title, $actions, $options = [] ) {
+	public function checkTitleUserPermissions( LinkTarget $linkTarget, $actions, $options = [] ) {
 		if ( !is_array( $options ) ) {
 			wfDeprecated( '$user as the third parameter to ' . __METHOD__, '1.33' );
 			$options = [ 'user' => $options ];
@@ -2133,7 +2162,10 @@ abstract class ApiBase extends ContextSource {
 
 		$errors = [];
 		foreach ( (array)$actions as $action ) {
-			$errors = array_merge( $errors, $title->getUserPermissionsErrors( $action, $user ) );
+			$errors = array_merge(
+				$errors,
+				$this->getPermissionManager()->getPermissionErrors( $action, $user, $linkTarget )
+			);
 		}
 
 		if ( $errors ) {
@@ -2225,7 +2257,7 @@ abstract class ApiBase extends ContextSource {
 		wfDebugLog( 'api-feature-usage', $s, 'private', $ctx );
 	}
 
-	/**@}*/
+	/** @} */
 
 	/************************************************************************//**
 	 * @name   Help message generation
@@ -2436,6 +2468,7 @@ abstract class ApiBase extends ContextSource {
 					if ( $m ) {
 						$m = new ApiHelpParamValueMessage(
 							$value,
+							// @phan-suppress-next-line PhanTypeMismatchArgument
 							[ $m->getKey(), 'api-help-param-no-description' ],
 							$m->getParams(),
 							isset( $deprecatedValues[$value] )
@@ -2605,100 +2638,7 @@ abstract class ApiBase extends ContextSource {
 	public function modifyHelp( array &$help, array $options, array &$tocData ) {
 	}
 
-	/**@}*/
-
-	/************************************************************************//**
-	 * @name   Deprecated
-	 * @{
-	 */
-
-	/**
-	 * Returns the description string for this module
-	 *
-	 * Ignored if an i18n message exists for
-	 * "apihelp-{$this->getModulePath()}-description".
-	 *
-	 * @deprecated since 1.25
-	 * @return Message|string|array|false
-	 */
-	protected function getDescription() {
-		wfDeprecated( __METHOD__, '1.25' );
-		return false;
-	}
-
-	/**
-	 * Returns an array of parameter descriptions.
-	 *
-	 * For each parameter, ignored if an i18n message exists for the parameter.
-	 * By default that message is
-	 * "apihelp-{$this->getModulePath()}-param-{$param}", but it may be
-	 * overridden using ApiBase::PARAM_HELP_MSG in the data returned by
-	 * self::getFinalParams().
-	 *
-	 * @deprecated since 1.25
-	 * @return array|bool False on no parameter descriptions
-	 */
-	protected function getParamDescription() {
-		wfDeprecated( __METHOD__, '1.25' );
-		return [];
-	}
-
-	/**
-	 * Returns usage examples for this module.
-	 *
-	 * Return value as an array is either:
-	 *  - numeric keys with partial URLs ("api.php?" plus a query string) as
-	 *    values
-	 *  - sequential numeric keys with even-numbered keys being display-text
-	 *    and odd-numbered keys being partial urls
-	 *  - partial URLs as keys with display-text (string or array-to-be-joined)
-	 *    as values
-	 * Return value as a string is the same as an array with a numeric key and
-	 * that value, and boolean false means "no examples".
-	 *
-	 * @deprecated since 1.25, use getExamplesMessages() instead
-	 * @return bool|string|array
-	 */
-	protected function getExamples() {
-		wfDeprecated( __METHOD__, '1.25' );
-		return false;
-	}
-
-	/**
-	 * Return the description message.
-	 *
-	 * This is additional text to display on the help page after the summary.
-	 *
-	 * @deprecated since 1.30
-	 * @return string|array|Message
-	 */
-	protected function getDescriptionMessage() {
-		wfDeprecated( __METHOD__, '1.30' );
-		return [ [
-			"apihelp-{$this->getModulePath()}-description",
-			"apihelp-{$this->getModulePath()}-summary",
-		] ];
-	}
-
-	/**
-	 * Truncate an array to a certain length.
-	 * @deprecated since 1.32, no replacement
-	 * @param array &$arr Array to truncate
-	 * @param int $limit Maximum length
-	 * @return bool True if the array was truncated, false otherwise
-	 */
-	public static function truncateArray( &$arr, $limit ) {
-		wfDeprecated( __METHOD__, '1.32' );
-		$modified = false;
-		while ( count( $arr ) > $limit ) {
-			array_pop( $arr );
-			$modified = true;
-		}
-
-		return $modified;
-	}
-
-	/**@}*/
+	/** @} */
 }
 
 /**

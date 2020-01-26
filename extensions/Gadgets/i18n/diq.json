@@ -9,7 +9,8 @@
 			"Xoser",
 			"Kumkumuk",
 			"1917 Ekim Devrimi",
-			"Gırd"
+			"Gırd",
+			"Orbot707"
 		]
 	},
 	"gadgets-desc": "Karberan ré destur bidek [[Special:Preferences#mw-prefsection-gadgets|hesıbyayan]]'ra [[Special:Gadgets|Hacetanê CSS u JavaScriptî]] bışé weçiné",
@@ -29,7 +30,7 @@
 	"gadgets-export": "Teberdayış",
 	"gadgets-export-title": "Teberdayışê gadgeti",
 	"gadgets-not-found": "Gadget \"$1\" nêvineya.",
-	"gadgets-export-text": "Qande gadgeto $1 teber rê rusnayış ,\"{{int:gadgets-export-download}}\" rê hengnayış kerên,u dosya ke download biyo,star kerên.Wikiyê hedef de şo pela Special:Import rê and download kerên.Bahdo nuşteyê ke cerên de dero pela MediaWiki:Gadgets-definition rê bınuse:\n<pre>$2</pre>\nWikiyê ke hedefo de desturê lazımo (vurnayışê mesacanê sistemi daxilo) u dosya ra zerê rê rusnayışi enabled lazımo.",
+	"gadgets-export-text": "Qande gadgeto $1 teber rusnayış rê,\"{{int:gadgets-export-download}}\" rê hengnayış kerên,u dosya kı download biyo,star kerên.Wikiyê hedef de şo pela Special:Import rê and download kerên.Bahdo nuşteyê ke cerên de de yo pela MediaWiki:Gadgets-definition rê bınuse:<pre>$2</pre>\nWikiyê ke hedefo de desturê lazımo (vurnayışê mesacanê sistemi daxilo) u dosya ra zerê rê rusnayışi mısade lazımo.",
 	"gadgets-export-download": "Biya war",
 	"right-gadgets-definition-edit": "Hacet weçine bıvurne",
 	"action-gadgets-definition-edit": "Ena Hacet weçine bıvurne"

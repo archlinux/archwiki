@@ -10,6 +10,8 @@
 			"محمد أحمد عبد الفتاح"
 		]
 	},
+	"action-tboverride": "تجاوز قائمتي العناوين أو أسماء المستخدمين السوداوين",
+	"action-tboverride-account": "تجاوز قائمة اسم المستخدم السوداء.",
 	"action-titleblacklistlog": "استعراض سجل القائمة السوداء للعناوين",
 	"log-name-titleblacklist": "القائمة السوداء للعناوين",
 	"log-description-titleblacklist": "يتتبع هذا السجل ضربات العناوين التي طابقت القائمة السوداء.",
@@ -22,11 +24,10 @@
 	"titleblacklist-forbidden-upload": "إنشاء اسم الملف \"$2\" ممنوع.\nهو يطابق المدخلة التالية في القائمة السوداء: <code>$1</code>",
 	"titleblacklist-forbidden-new-account": "إنشاء اسم المستخدم \"$2\" ممنوع.\nهو يطابق مدخلة القائمة السوداء التالية: <code>$1</code>",
 	"titleblacklist-invalid": "{{PLURAL:$1||السطر التالي|السطران التاليان|السطور التالية}} في قائمة العناوين السوداء {{PLURAL:$1||غير صحيح|غير صحيحان|غير صحيحة}}؛ من فضلك {{PLURAL:$1||صححه|صححهما|صححهم}} قبل الحفظ:",
-	"titleblacklist-override": "تجاهل القائمة السوداء",
+	"titleblacklist-override": "تجاوز القائمة السوداء للعناوين إذا كانت تطابق",
 	"titleblacklist-override-help": "المستخدمون بالصلاحيات الكافية يمكنهم ضبط هذا لتجاهل التحقق من قائمة العناوين السوداء.",
 	"titleblacklist-warning": "<strong>ملاحظة:</strong> لا يمكن تحرير هذه الصفحة إلا للإداريين والمستخدمين الآخرين الذين لديهم صلاحية <code>tboverride</code> لأنها تطابق مدخلة القائمة السوداء التالية:<br /><code>$1</code>",
 	"right-tboverride": "تجاوز قائمتي العناوين أو أسماء المستخدمين السوداوين",
 	"right-tboverride-account": "تجاوز قائمة اسم المستخدم السوداء.",
-	"right-titleblacklistlog": "استعراض سجل القائمة السوداء للعناوين",
-	"visualeditor-saveerror-titleblacklist": "خطأ في حفظ الصفحة: عنوان هذه الصفحة مدرج في القائمة السوداء"
+	"right-titleblacklistlog": "استعراض سجل القائمة السوداء للعناوين"
 }

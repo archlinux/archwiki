@@ -7,6 +7,8 @@
  * @file
  */
 
+use MediaWiki\MediaWikiServices;
+
 /**
  * @ingroup Extensions
  */
@@ -46,11 +48,10 @@ class TitleBlacklistEntry {
 	private $mSource;
 
 	/**
-	 * Construct a new TitleBlacklistEntry.
-	 *
 	 * @param string $regex Regular expression to match
 	 * @param array $params Parameters for this entry
 	 * @param string $raw Raw contents of this line
+	 * @param string $source
 	 */
 	private function __construct( $regex, $params, $raw, $source ) {
 		$this->mRaw = $raw;
@@ -104,7 +105,7 @@ class TitleBlacklistEntry {
 		) {
 			if ( $action === 'edit' ) {
 				// Use process cache for frequently edited pages
-				$cache = ObjectCache::getMainWANInstance();
+				$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
 				list( $ok, $norm ) = $cache->getWithSetCallback(
 					$cache->makeKey( 'titleblacklist', 'normalized-unicode', md5( $title ) ),
 					$cache::TTL_MONTH,
@@ -118,7 +119,7 @@ class TitleBlacklistEntry {
 			}
 
 			if ( $ok === "OK" ) {
-				list( $ver, $title ) = explode( ':', $norm, 2 );
+				list( , $title ) = explode( ':', $norm, 2 );
 			} else {
 				wfDebugLog( 'TitleBlacklist', 'AntiSpoof could not normalize "' . $title . '".' );
 			}

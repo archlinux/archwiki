@@ -8,13 +8,13 @@ namespace RemexHtml\Tokenizer;
 interface Attributes extends \ArrayAccess, \IteratorAggregate {
 	/**
 	 * Get the attributes as a key/value array
-	 * @return string[string]
+	 * @return string[]
 	 */
 	function getValues();
 
 	/**
 	 * Get the attributes as an array of Attribute objects
-	 * @return Attribute[string]
+	 * @return Attribute[]
 	 */
 	function getObjects();
 

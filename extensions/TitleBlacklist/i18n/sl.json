@@ -13,8 +13,7 @@
 	"titleblacklist-forbidden-upload": "Ime datoteke »$2« je bilo preprečeno pred ustvarjanjem.\nUstreza naslednjemu vnosu na črnem seznamu: <code>$1</code>",
 	"titleblacklist-forbidden-new-account": "Uporabniško ime »$2« je bilo preprečeno pred ustvarjanjem.\nUstreza naslednjemu vnosu na črnem seznamu: <code>$1</code>",
 	"titleblacklist-invalid": "{{PLURAL:$1|Naslednja vrstica|Naslednji vrstici|Naslednje vrstice}} v črnem seznamu naslovov {{PLURAL:$1|je neveljavna|sta neveljavni|so neveljavne}};\nprosimo, popravite {{PLURAL:$1|jo|ju|jih}} pred shranjevanjem:",
-	"titleblacklist-override": "Prezri črni seznam",
+	"titleblacklist-override": "Prepiši črni seznam naslova, če se ujema",
 	"right-tboverride": "Prepisovanje črnega seznama naslovov ali uporabniških imen",
-	"right-tboverride-account": "Prepis črnega seznama uporabniških imen",
-	"visualeditor-saveerror-titleblacklist": "Napaka shranjevanja strani: Naslov te strani je na črnem seznamu"
+	"right-tboverride-account": "Prepis črnega seznama uporabniških imen"
 }

@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"McDutchie"
+		]
+	},
+	"apihelp-query+references-description": "Retornar un representation de datos del referentias associate al paginas indicate.",
+	"apihelp-query+references-summary": "Retornar un representation de datos del referentias associate al paginas indicate.",
+	"apihelp-query+references-example-1": "Referentias associate a <kbd>Albert Einstein</kbd>.",
+	"apierror-citestoragedisabled": "Le immagazinage de referentias del extension Cite non es activate."
+}

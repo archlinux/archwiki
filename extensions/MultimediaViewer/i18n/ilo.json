@@ -5,8 +5,6 @@
 		]
 	},
 	"multimediaviewer-desc": "Palawaen dagiti bassit a ladawan iti dakdakkel iti napno a pangbuyaan ti interface.",
-	"multimediaviewer-pref": "Media Viewer",
-	"multimediaviewer-pref-desc": "Pasayaatem ti panagsanay a panagbuya ti nadumaduma a midia iti daytoy baro a ramit. Daytoy ket agiparang kadagiti dakdakkel a ladawan kadagiti panid nga addaan kadagiti bassit a ladawan. Dagiti ladawan ket maiparang iti nasaysayaat a tuon iti napno a pangbuyaan ti interface, ken mabalin pay a makita iti napno a kadakkel.",
 	"multimediaviewer-optin-pref": "Pakabaelan ti <span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About Media Viewer]</span>",
 	"multimediaviewer-file-page": "Mapan iti maitutop a panid ti papeles",
 	"multimediaviewer-repository-local": "Adu pay a salsalaysay",

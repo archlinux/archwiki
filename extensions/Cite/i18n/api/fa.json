@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Huji"
+		]
+	},
+	"apihelp-query+references-description": "یک بازنمودِ دادگانی از ارجاع‌هایی که با صفحه‌های داده شده مرتبط هستند برمی‌گرداند.",
+	"apihelp-query+references-summary": "یک بازنمودِ دادگانی از ارجاع‌هایی که با صفحه‌های داده شده مرتبط هستند برمی‌گرداند.",
+	"apihelp-query+references-example-1": "ارجاع‌های مرتبط با <kbd>Albert Einstein</kbd>.",
+	"apierror-citestoragedisabled": "ذخیره‌سازی ارجاع‌ها برای افزونهٔ یادکرد فعال نشده‌است."
+}

@@ -2,6 +2,8 @@
 	"@metadata": {
 		"authors": []
 	},
+	"action-tboverride": "override the title or username blacklist",
+	"action-tboverride-account": "override the username blacklist",
 	"action-titleblacklistlog": "view the title blacklist log",
 	"log-name-titleblacklist": "Title blacklist log",
 	"log-description-titleblacklist": "These events track title blacklist hits.",
@@ -14,11 +16,10 @@
 	"titleblacklist-forbidden-upload": "The filename \"$2\" has been banned from creation.\nIt matches the following blacklist entry: <code>$1</code>",
 	"titleblacklist-forbidden-new-account": "The user name \"$2\" has been banned from creation.\nIt matches the following blacklist entry: <code>$1</code>",
 	"titleblacklist-invalid": "The following {{PLURAL:$1|line|lines}} in the title blacklist {{PLURAL:$1|is|are}} invalid;\nplease correct {{PLURAL:$1|it|them}} before saving:",
-	"titleblacklist-override": "Ignore the blacklist",
+	"titleblacklist-override": "Over-ride the title blacklist if it matches",
 	"titleblacklist-override-help": "Users with sufficient privileges can set this to ignore the title blacklist checks.",
 	"titleblacklist-warning": "<strong>Warning: This page can only be edited by administrators and other users with the <code>tboverride</code> right because it matches the following title blacklist entry:</strong><br /><code>$1</code>",
 	"right-tboverride": "Override the title or username blacklist",
 	"right-tboverride-account": "Override the username blacklist",
-	"right-titleblacklistlog": "View title blacklist log",
-	"visualeditor-saveerror-titleblacklist": "Error saving page: This page's title is blacklisted"
+	"right-titleblacklistlog": "View title blacklist log"
 }

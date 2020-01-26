@@ -1,5 +1,11 @@
 @import 'variables.less';
 
+// T181484 (firefox and chrome; doesn't fix anything else as yet)
+body,
+html {
+	scroll-padding-top: @fixed-header-height + 0.5em;
+}
+
 // Override menu display from mobile
 // This also requires !importants where they hover and stuff
 .dropdown,
@@ -9,17 +15,20 @@
 
 .ts-inner {
 	max-width: @content-width;
+	box-sizing: border-box;
 	padding: 0 1em;
 	margin: auto;
 }
 
-#mw-content-container {
-	.background-image-svg( 'images/cat-grey.svg', 'images/cat-grey.png' );
-	background-repeat: no-repeat;
-	background-position: center 15em;
+div.mw-notification-area {
+	top: @fixed-header-height + 0.25em;
 }
 
 /* Header */
+
+#mw-header {
+	.flex-display;
+}
 
 #mw-header-container {
 	/* Stupid IE10+ bug requires defining the height property for this to work
@@ -40,18 +49,29 @@
 }
 
 #p-logo-text {
-	width: @column-left-size;
-	float: left;
+	.flex(0, 0, auto, 1);
 }
 
 #p-search {
-	margin-left: @column-left-size;
-	margin-right: @column-right-size;
+	.flex(1, 1, auto, 2);
 }
 
 #user-tools {
-	width: @column-right-size;
-	float: right;
+	.flex(0, 1, auto, 3);
+	display: inline-block;
+
+	h2 span {
+		display: inline-block;
+		max-width: 300px;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	// Because the overflow:hidden above messes up the alignment...
+	#personal h2:after {
+		height: 18px;
+	}
 }
 
 #mw-header-nav-hack,
@@ -66,10 +86,6 @@
 	display: none;
 }
 
-.dropdown {
-	display: none !important;
-}
-
 #personal {
 	display: inline-block;
 	position: relative;
@@ -77,8 +93,10 @@
 	line-height: 1;
 
 	.dropdown {
-		.dropdown-menu();
 		top: 3.15em;
+		display: none !important;
+		.dropdown-menu();
+		.dropdown-pokey();
 	}
 
 	.pokey {
@@ -100,19 +118,80 @@
 		span {
 			display: inline-block;
 			height: 1em;
-			overflow: hidden;
 			word-wrap: break-word;
-		}
-	}
-
-	&:hover {
-		.pokey,
-		.dropdown {
-			display: block !important;
 		}
 	}
 }
 
+.client-nojs #personal:hover {
+	.pokey,
+	.dropdown {
+		display: block !important;
+	}
+}
+
+#mw-wrapper .dropdown-active {
+	.pokey,
+	.dropdown,
+	.sidebar-inner {
+		display: block !important;
+	}
+}
+
+#p-variants-desktop {
+	float: right;
+	margin: 0.25em 0 1em 1em;
+	position: relative;
+
+	h3 {
+		.dropdown-header();
+		.ca-icon( 'images/languages-grey' );
+		font-size: 1em;
+		font-family: @fonts;
+		border-bottom: transparent;
+		margin: 0 0 -1em;
+		line-height: 1.5;
+		padding-bottom: 1em;
+	}
+
+	.dropdown {
+		display: none !important;
+		.dropdown-menu();
+		.dropdown-pokey();
+		// Override the mobile thing
+		top: 2.25em !important;
+		padding-bottom: 2em;
+		margin-right: 2px;
+
+		.selected a {
+			color: @text;
+		}
+	}
+}
+
+.client-nojs #p-variants-desktop:hover .dropdown {
+	display: block !important;
+}
+
+.mw-wiki-logo {
+	display: block;
+	margin: 0.75em auto 0;
+
+	&.fallback {
+		content: '';
+		width: 11em;
+		height: 11em;
+		background-repeat: no-repeat;
+		background-position: center center;
+	}
+
+	&.timeless-logo {
+		background-image: none;
+	}
+}
+
+#p-variants,
+#other-languages.variants-only,
 #mw-page-header-links #p-more,
 .sidebar-chunk h2 {
 	display: none;
@@ -121,6 +200,6 @@
 /* Content */
 
 #mw-content-container {
-	margin-top: @fixed-header-height;
+	margin-top: @fixed-header-height + @color-height;
 	padding-bottom: 1em;
 }

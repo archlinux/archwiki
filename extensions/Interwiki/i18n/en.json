@@ -33,13 +33,14 @@
 	"interwiki-cached": "The interwiki data is cached. Modifying the cache is not possible.",
 	"interwiki_edit": "Edit",
 	"interwiki_reasonfield": "Reason:",
-	"interwiki_delquestion": "Deleting \"$1\"",
 	"interwiki_deleting": "You are deleting prefix \"$1\".",
 	"interwiki_deleted": "Prefix \"$1\" was removed from the interwiki table.",
 	"interwiki_delfailed": "Prefix \"$1\" could not be removed from the interwiki table.",
 	"interwiki-logtext": "View log",
 	"interwiki_addtext": "Add an interwiki or language prefix",
 	"interwiki-addtext-local": "Add a local interwiki or language prefix",
+	"interwiki-addtext-nolang": "Add an interwiki prefix",
+	"interwiki-addtext-local-nolang": "Add a local interwiki prefix",
 	"interwiki_addintro": "You are adding a new interwiki prefix.\nRemember that it cannot contain spaces ( ), colons (:), ampersands (&), or equal signs (=).",
 	"interwiki_addbutton": "Add",
 	"interwiki_added": "Prefix \"$1\" was added to the interwiki table.",
@@ -50,6 +51,7 @@
 	"interwiki_edited": "Prefix \"$1\" was modified in the interwiki table.",
 	"interwiki_editerror": "Prefix \"$1\" could not be modified in the interwiki table.\nPossibly it does not exist.",
 	"interwiki-badprefix": "Specified interwiki prefix \"$1\" contains invalid characters",
+	"interwiki-cannotaddlocallanguage": "Prefix \"$1\" matches a known language code. Adding local interlanguage prefixes is disabled when using a global interlanguage database.",
 	"interwiki-submit-empty": "The prefix and URL cannot be empty.",
 	"interwiki-submit-invalidurl": "The protocol of the URL is invalid.",
 	"log-name-interwiki": "Interwiki table log",
@@ -67,5 +69,7 @@
 	"interwiki-links": "Interwiki prefixes",
 	"interwiki-description": "",
 	"interwiki-language-links": "Interlanguage prefixes",
-	"interwiki-language-description": "These prefixes match defined language codes, and will be used to create the \"{{int:otherlanguages}}\" listing when added to a page."
+	"interwiki-language-description": "These prefixes match defined language codes, and will be used to create the \"{{int:otherlanguages}}\" listing when added to a page.",
+	"interwiki-global-language-links": "Global interlanguage prefixes",
+	"interwiki-global-language-description": "These prefixes match defined language codes, and will be used to create the \"{{int:otherlanguages}}\" listing when added to a page. As they are inherited from a global configuration, they can only be edited on the source wiki. Global interlanguage definitions cannot be overridden locally."
 }

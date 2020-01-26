@@ -1,5 +1,8 @@
 <?php
 
+use MediaWiki\MediaWikiServices;
+use MediaWiki\Storage\SlotRecord;
+
 /**
  * Base class for different kinds of blacklists
  */
@@ -148,7 +151,7 @@ abstract class BaseBlacklist {
 	public static function isLocalSource( Title $title ) {
 		global $wgDBname, $wgBlacklistSettings;
 
-		if ( $title->getNamespace() == NS_MEDIAWIKI ) {
+		if ( $title->inNamespace( NS_MEDIAWIKI ) ) {
 			$sources = [];
 			foreach ( self::$blacklistTypes as $type => $class ) {
 				$type = ucfirst( $type );
@@ -177,8 +180,8 @@ abstract class BaseBlacklist {
 		foreach ( $files as $fileName ) {
 			$matches = [];
 			if ( preg_match( '/^DB: (\w*) (.*)$/', $fileName, $matches ) ) {
-				if ( $wgDBname == $matches[1] ) {
-					if ( $matches[2] == $title->getPrefixedDbKey() ) {
+				if ( $wgDBname === $matches[1] ) {
+					if ( $matches[2] === $title->getPrefixedDbKey() ) {
 						// Local DB fetch of this page...
 						return true;
 					}
@@ -200,9 +203,9 @@ abstract class BaseBlacklist {
 	 * @return bool|string
 	 */
 	public static function getTypeFromTitle( Title $title ) {
-		global $wgContLang;
+		$contLang = MediaWikiServices::getInstance()->getContentLanguage();
 
-		$types = array_map( [ $wgContLang, 'ucfirst' ], array_keys( self::$blacklistTypes ) );
+		$types = array_map( [ $contLang, 'ucfirst' ], array_keys( self::$blacklistTypes ) );
 		$regex = '/(' . implode( '|', $types ) . ')-(?:blacklist|whitelist)/';
 
 		if ( preg_match( $regex, $title->getDBkey(), $m ) ) {
@@ -221,7 +224,8 @@ abstract class BaseBlacklist {
 		if ( $this->regexes === false ) {
 			$this->regexes = array_merge(
 				$this->getLocalBlacklists(),
-				$this->getSharedBlacklists() );
+				$this->getSharedBlacklists()
+			);
 		}
 		return $this->regexes;
 	}
@@ -234,7 +238,7 @@ abstract class BaseBlacklist {
 	public function getLocalBlacklists() {
 		$that = $this;
 		$type = $this->getBlacklistType();
-		$cache = ObjectCache::getMainWANInstance();
+		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
 
 		return $cache->getWithSetCallback(
 			$cache->makeKey( 'spamblacklist', $type, 'blacklist-regex' ),
@@ -253,7 +257,7 @@ abstract class BaseBlacklist {
 	public function getWhitelists() {
 		$that = $this;
 		$type = $this->getBlacklistType();
-		$cache = ObjectCache::getMainWANInstance();
+		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
 
 		return $cache->getWithSetCallback(
 			$cache->makeKey( 'spamblacklist', $type, 'whitelist-regex' ),
@@ -273,7 +277,7 @@ abstract class BaseBlacklist {
 
 		wfDebugLog( 'SpamBlacklist', "Loading $listType regex..." );
 
-		if ( count( $this->files ) == 0 ) {
+		if ( !$this->files ) {
 			# No lists
 			wfDebugLog( 'SpamBlacklist', "no files specified\n" );
 			return [];
@@ -282,7 +286,7 @@ abstract class BaseBlacklist {
 		$miss = false;
 
 		$that = $this;
-		$cache = ObjectCache::getMainWANInstance();
+		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
 		$regexes = $cache->getWithSetCallback(
 			// This used to be cached per-site, but that could be bad on a shared
 			// server where not all wikis have the same configuration.
@@ -303,13 +307,11 @@ abstract class BaseBlacklist {
 
 	/**
 	 * Clear all primary blacklist cache keys
-	 *
-	 * @note this method is unused atm
 	 */
 	public function clearCache() {
 		$listType = $this->getBlacklistType();
 
-		$cache = ObjectCache::getMainWANInstance();
+		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
 		$cache->delete( $cache->makeKey( 'spamblacklist', $listType, 'shared-blacklist-regex' ) );
 		$cache->delete( $cache->makeKey( 'spamblacklist', $listType, 'blacklist-regex' ) );
 		$cache->delete( $cache->makeKey( 'spamblacklist', $listType, 'whitelist-regex' ) );
@@ -338,8 +340,10 @@ abstract class BaseBlacklist {
 			// out of combining multiple sources in one regex, if
 			// there's a bad line in one of them we'll gain more
 			// from only having to break that set into smaller pieces.
-			$regexes = array_merge( $regexes,
-				SpamRegexBatch::regexesFromText( $text, $this, $fileName ) );
+			$regexes = array_merge(
+				$regexes,
+				SpamRegexBatch::regexesFromText( $text, $this, $fileName )
+			);
 		}
 
 		return $regexes;
@@ -377,50 +381,29 @@ abstract class BaseBlacklist {
 
 	/**
 	 * Fetch an article from this or another local MediaWiki database.
-	 * This is probably *very* fragile, and shouldn't be used perhaps.
 	 *
 	 * @param string $wiki
-	 * @param string $article
-	 * @return string
+	 * @param string $pagename
+	 * @return bool|string|null
 	 */
-	private function getArticleText( $wiki, $article ) {
+	private function getArticleText( $wiki, $pagename ) {
 		wfDebugLog( 'SpamBlacklist',
-			"Fetching {$this->getBlacklistType()} blacklist from '$article' on '$wiki'...\n" );
+			"Fetching {$this->getBlacklistType()} blacklist from '$pagename' on '$wiki'...\n" );
 
-		$title = Title::newFromText( $article );
-		// Load all the relevant tables from the correct DB.
-		// This assumes that old_text is the actual text or
-		// that the external store system is at least unified.
-		if ( is_callable( [ Revision::class, 'getQueryInfo' ] ) ) {
-			$revQuery = Revision::getQueryInfo( [ 'page', 'text' ] );
-		} else {
-			$revQuery = [
-				'tables' => [ 'revision', 'page', 'text' ],
-				'fields' => array_merge(
-					Revision::selectFields(),
-					Revision::selectPageFields(),
-					Revision::selectTextFields()
-				),
-				'joins' => [
-					'text' => [ 'JOIN', 'old_id=rev_text_id' ]
-				],
-			];
+		$services = MediaWikiServices::getInstance();
+
+		// XXX: We do not know about custom namespaces on the target wiki here!
+		$title = $services->getTitleParser()->parseTitle( $pagename );
+		$store = $services->getRevisionStoreFactory()->getRevisionStore( $wiki );
+		$rev = $store->getRevisionByTitle( $title );
+
+		$content = $rev ? $rev->getContent( SlotRecord::MAIN ) : null;
+
+		if ( !( $content instanceof TextContent ) ) {
+			return false;
 		}
-		$row = wfGetDB( DB_REPLICA, [], $wiki )->selectRow(
-			$revQuery['tables'],
-			$revQuery['fields'],
-			[
-				'page_namespace' => $title->getNamespace(), // assume NS IDs match
-				'page_title' => $title->getDBkey(), // assume same case rules
-			],
-			__METHOD__,
-			[],
-			[ 'page' => [ 'JOIN', 'rev_id=page_latest' ] ] + $revQuery['joins']
-		);
 
-		return $row
-			? ContentHandler::getContentText( Revision::newFromRow( $row )->getContent() )
-			: false;
+		return $content->getText();
 	}
 
 	/**

@@ -15,7 +15,7 @@
 	"visualeditor-cite-tool-name-journal": "Časopis",
 	"visualeditor-cite-tool-name-news": "Vijesti",
 	"visualeditor-cite-tool-name-web": "Web stranice",
-	"cite-ve-dialog-reference-editing-reused": "Ova je referencija rabljena $1 {{PLURAL:$1|put|puta}} na ovoj stranici.",
+	"cite-ve-dialog-reference-editing-reused": "Ova je referencija rabljena {{PLURAL:$1|jednom|2=dvaput|$1 puta}} na ovoj stranici.",
 	"cite-ve-dialog-reference-options-group-label": "Koristi ovu grupu",
 	"cite-ve-dialog-reference-options-group-placeholder": "Opće referencije",
 	"cite-ve-dialog-reference-options-name-label": "Ponovno koristi pod ovim imenom",
@@ -37,5 +37,7 @@
 	"cite-ve-referenceslist-isempty": "Nema referenci u grupi \"$1\" na ovoj stranici koje bi mogle biti uključene u ovaj popis.",
 	"cite-ve-referenceslist-isempty-default": "Nema referenci na ovoj stranici koje bi mogle biti uključene u ovaj popis.",
 	"cite-ve-referenceslist-missingref": "Ova reference je definirana u predlošku ili drugom generiranom dijelu, i za sad može biti uređivana samo u prikazu za uređivanje izvornog koda.",
-	"cite-ve-toolbar-group-label": "Citiraj"
+	"cite-ve-referenceslist-missingreflist": "Ovaj je popis izvora generirao predložak i za sada ga je moguće uređivati jedino uređivanjem kôda.",
+	"cite-ve-toolbar-group-label": "Citiraj",
+	"visualeditor-internal-list-diff-default-group-name-mwreference": "Referencije"
 }

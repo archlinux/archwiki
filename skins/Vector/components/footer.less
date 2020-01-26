@@ -9,39 +9,37 @@
 		list-style: none none;
 		margin: 0;
 		padding: 0;
-
-		li {
-			color: #222;
-			margin: 0;
-			padding: 0;
-			padding-top: 0.5em;
-			padding-bottom: 0.5em;
-			font-size: 0.7em;
-		}
 	}
 
-	#footer-icons {
-		float: right;
-
-		li {
-			float: left;
-			margin-left: 0.5em;
-			line-height: 2em;
-			text-align: right;
-		}
+	li {
+		color: @color-base;
+		margin: 0;
+		padding: 0.5em 0;
+		font-size: @font-size-footer;
 	}
+}
 
-	#footer-info {
-		li {
-			line-height: 1.4em;
-		}
+#footer-icons {
+	float: right;
+
+	li {
+		float: left;
+		margin-left: 0.5em;
+		line-height: @line-height-footer-buttons;
+		text-align: right;
 	}
+}
 
-	#footer-places {
-		li {
-			float: left;
-			margin-right: 1em;
-			line-height: 2em;
-		}
+#footer-info {
+	li {
+		line-height: @line-height-footer-info;
+	}
+}
+
+#footer-places {
+	li {
+		float: left;
+		margin-right: 1em;
+		line-height: @line-height-footer-buttons;
 	}
 }

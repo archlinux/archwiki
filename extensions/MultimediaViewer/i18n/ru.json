@@ -20,8 +20,6 @@
 		]
 	},
 	"multimediaviewer-desc": "Раскрывает эскизы в большие изображения на весь экран.",
-	"multimediaviewer-pref": "Просмотрщик медиафайлов",
-	"multimediaviewer-pref-desc": "Улучшает просмотр мультимедиа-файлов новым инструментом. На странице с эскизами изображений он раскрывает эскизы в большие изображения. Изображения показываются в более красивом полноэкранном интерфейсе, а также могут быть открыты в оригинальном разрешении.",
 	"multimediaviewer-optin-pref": "Включить <span class=\"plainlinks\">«[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About Просмотрщик медиафайлов]</span>»",
 	"multimediaviewer-file-page": "Перейти на страницу соответствующего файла",
 	"multimediaviewer-repository-local": "Подробнее",

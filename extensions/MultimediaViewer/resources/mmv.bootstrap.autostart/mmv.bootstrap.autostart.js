@@ -20,10 +20,6 @@
 ( function () {
 	var bootstrap;
 
-	if ( !mw.mmv.isBrowserSupported() ) {
-		return;
-	}
-
 	bootstrap = new mw.mmv.MultimediaViewerBootstrap();
 
 	$( function () {

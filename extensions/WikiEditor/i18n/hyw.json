@@ -1,14 +1,16 @@
 {
 	"@metadata": {
 		"authors": [
-			"Azniv Stepanian"
+			"Azniv Stepanian",
+			"Kareyac",
+			"Դավիթ Սարոյան"
 		]
 	},
 	"wikieditor-wikitext-tab": "Ուիքիգրութիւն",
 	"wikieditor-loading": "Բեռնաւորութիւն...",
 	"wikieditor-toolbar-loading": "Բեռնաւորութիւն...",
-	"wikieditor-toolbar-tool-bold": "Շեշտուած",
-	"wikieditor-toolbar-tool-bold-example": "Շեշտուած տառերով գրութիւն",
+	"wikieditor-toolbar-tool-bold": "Թաւատառ",
+	"wikieditor-toolbar-tool-bold-example": "Թաւատառ գրութիւն",
 	"wikieditor-toolbar-tool-italic": "Շեղագիր",
 	"wikieditor-toolbar-tool-italic-example": "Շեղատառ գրութիւն",
 	"wikieditor-toolbar-tool-ilink": "Ներքին յղում",
@@ -19,6 +21,8 @@
 	"wikieditor-toolbar-tool-link-title": "Մուտքագրեցէ՛ք յղումը",
 	"wikieditor-toolbar-tool-link-int": "Ուիքիի էջին",
 	"wikieditor-toolbar-tool-link-int-target-tooltip": "էջի վերնագիր կամ URL",
+	"wikieditor-toolbar-tool-link-int-text": "Յղման գրութիւն․",
+	"wikieditor-toolbar-tool-link-int-text-tooltip": "Ներմուծեցէ՛ք գրութիւնը, որ պէտք է ցուցադրուի",
 	"wikieditor-toolbar-tool-link-ext-target": "Յղում URL․",
 	"wikieditor-toolbar-tool-link-ext-text": "Յղման գրութիւն",
 	"wikieditor-toolbar-tool-link-insert": "Մուտքագրեցէ՛ք յղումը",
@@ -35,7 +39,8 @@
 	"wikieditor-toolbar-tool-file-title": "Մուտքագրեցէ՛ք նիշքը",
 	"wikieditor-toolbar-file-target": "Նիշքի անունը․",
 	"wikieditor-toolbar-file-size": "Չափ․",
-	"wikieditor-toolbar-file-format": "Տեսք․",
+	"wikieditor-toolbar-file-default": "(լռելեան)",
+	"wikieditor-toolbar-file-format": "Ձեւաւորել",
 	"wikieditor-toolbar-file-format-none": "Ոչ մէկ",
 	"wikieditor-toolbar-tool-file-insert": "Մուտքագրեցէ՛ք",
 	"wikieditor-toolbar-tool-file-cancel": "Չեղարկել",
@@ -63,6 +68,7 @@
 	"wikieditor-toolbar-tool-small": "Փոքր",
 	"wikieditor-toolbar-tool-small-example": "Փոքր գրութիւն",
 	"wikieditor-toolbar-group-insert": "Մուտքագրեցէ՛ք",
+	"wikieditor-toolbar-tool-gallery": "Նկարներու ցուցասրահ",
 	"wikieditor-toolbar-tool-newline": "Նոր տող",
 	"wikieditor-toolbar-tool-table": "Սեղան",
 	"wikieditor-toolbar-tool-table-example-header": "Վերնագրի գրութիւն",
@@ -79,5 +85,7 @@
 	"wikieditor-toolbar-tool-replace-button-findnext": "Յաջորդը գտնել",
 	"wikieditor-toolbar-tool-replace-button-replace": "Փոխարինել",
 	"wikieditor-toolbar-tool-replace-button-replaceall": "Փոխարինել բոլորը",
-	"wikieditor-toolbar-tool-replace-close": "Գոցել"
+	"wikieditor-toolbar-tool-replace-close": "Գոցել",
+	"wikieditor-toolbar-section-characters": "Յատուկ նշաններ",
+	"wikieditor-toolbar-section-help": "Օգնութիւն"
 }

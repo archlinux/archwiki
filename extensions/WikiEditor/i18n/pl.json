@@ -16,7 +16,8 @@
 			"Chrumps",
 			"Woytecr",
 			"Matma Rex",
-			"Railfail536"
+			"Railfail536",
+			"Rail"
 		]
 	},
 	"wikieditor": "Zaawansowany interfejs edycji wikitekstu",
@@ -139,6 +140,7 @@
 	"wikieditor-toolbar-tool-replace-success": "Wykonano $1 {{PLURAL:$1|zamianę|zamiany|zamian}}.",
 	"wikieditor-toolbar-tool-replace-emptysearch": "Nie określiłeś niczego do wyszukania.",
 	"wikieditor-toolbar-tool-replace-invalidregex": "Nieprawidłowe wyrażenie regularne – $1",
+	"wikieditor-toolbar-tool-replace-word": "Wyszukuj tylko całe wyrazy",
 	"wikieditor-toolbar-section-characters": "Znaki specjalne",
 	"wikieditor-toolbar-section-help": "Pomoc",
 	"wikieditor-toolbar-help-heading-description": "Opis",

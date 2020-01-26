@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"Amire80",
+			"Guycn2"
+		]
+	},
+	"apihelp-query+references-description": "החזרת ייצוג נתונים של הערות שוליים שמשויכות לדפים הנתונים.",
+	"apihelp-query+references-summary": "החזרת ייצוג נתונים של הערות שוליים שמשויכות לדפים הנתונים.",
+	"apihelp-query+references-example-1": "הערות שוליים שמשויכות ל־<kbd>Albert Einstein</kbd>.",
+	"apierror-citestoragedisabled": "אחסון הערות של ההרחבה Cite אינו מופעל."
+}

@@ -3,22 +3,22 @@
  */
 ( function () {
 
-	$.wikiEditor.modules.dialogs = {
+	var dialogsModule = {
 
 		/**
 		 * API accessible functions
 		 */
 		api: {
 			addDialog: function ( context, data ) {
-				$.wikiEditor.modules.dialogs.fn.create( context, data );
+				dialogsModule.fn.create( context, data );
 			},
 			openDialog: function ( context, module ) {
 				var mod, $dialog;
-				if ( module in $.wikiEditor.modules.dialogs.modules ) {
-					mod = $.wikiEditor.modules.dialogs.modules[ module ];
+				if ( module in dialogsModule.modules ) {
+					mod = dialogsModule.modules[ module ];
 					$dialog = $( '#' + mod.id );
 					if ( $dialog.length === 0 ) {
-						$.wikiEditor.modules.dialogs.fn.reallyCreate( context, mod, module );
+						dialogsModule.fn.reallyCreate( context, mod, module );
 						$dialog = $( '#' + mod.id );
 					}
 
@@ -31,8 +31,8 @@
 				}
 			},
 			closeDialog: function ( context, module ) {
-				if ( module in $.wikiEditor.modules.dialogs.modules ) {
-					$( '#' + $.wikiEditor.modules.dialogs.modules[ module ].id ).dialog( 'close' );
+				if ( module in dialogsModule.modules ) {
+					$( '#' + dialogsModule.modules[ module ].id ).dialog( 'close' );
 				}
 			}
 		},
@@ -71,11 +71,11 @@
 					// Re-select from the DOM, we might have removed the dialog just now
 					$existingDialog = $( '#' + module.id );
 					if ( !filtered && $existingDialog.length === 0 ) {
-						$.wikiEditor.modules.dialogs.modules[ mod ] = module;
+						dialogsModule.modules[ mod ] = module;
 						context.$textarea.trigger( 'wikiEditor-dialogs-setup-' + mod );
 						// If this dialog requires immediate creation, create it now
 						if ( typeof module.immediateCreate !== 'undefined' && module.immediateCreate ) {
-							$.wikiEditor.modules.dialogs.fn.reallyCreate( context, module, mod );
+							dialogsModule.fn.reallyCreate( context, module, mod );
 						}
 					}
 				}
@@ -86,7 +86,7 @@
 			 *
 			 * @param {Object} context Context object of editor dialog belongs to
 			 * @param {Object} module Dialog module object
-			 * @param {string} name Dialog name (key in $.wikiEditor.modules.dialogs.modules)
+			 * @param {string} name Dialog name (key in dialogsModule.modules)
 			 */
 			reallyCreate: function ( context, module, name ) {
 				var msg, $dialogDiv, $content,
@@ -123,14 +123,14 @@
 					.each( module.init )
 					.dialog( configuration );
 				// Set tabindexes on buttons added by .dialog()
-				$.wikiEditor.modules.dialogs.fn.setTabindexes( $dialogDiv.closest( '.ui-dialog' )
+				dialogsModule.fn.setTabindexes( $dialogDiv.closest( '.ui-dialog' )
 					.find( 'button' ).not( '[tabindex]' ) );
 				if ( !( 'resizeme' in module ) || module.resizeme ) {
 					$dialogDiv
-						.on( 'dialogopen', $.wikiEditor.modules.dialogs.fn.resize )
+						.on( 'dialogopen', dialogsModule.fn.resize )
 						.find( '.ui-tabs' ).on( 'tabsshow', function () {
 							$( this ).closest( '.ui-dialog-content' ).each(
-								$.wikiEditor.modules.dialogs.fn.resize );
+								dialogsModule.fn.resize );
 						} );
 				}
 				$dialogDiv.on( 'dialogclose', function () {
@@ -211,5 +211,7 @@
 		}
 
 	};
+
+	module.exports = dialogsModule;
 
 }() );

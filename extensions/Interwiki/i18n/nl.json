@@ -35,7 +35,6 @@
 	"interwiki-cached": "De interwikigegevens staan in de cache. De cache wijzigen is niet mogelijk.",
 	"interwiki_edit": "Bewerken",
 	"interwiki_reasonfield": "Reden:",
-	"interwiki_delquestion": "\"$1\" aan het verwijderen",
 	"interwiki_deleting": "U bent voorvoegsel \"$1\" aan het verwijderen.",
 	"interwiki_deleted": "Voorvoegsel \"$1\" is verwijderd uit de interwikitabel.",
 	"interwiki_delfailed": "Voorvoegsel \"$1\" kon niet worden verwijderd uit de interwikitabel.",

@@ -29,6 +29,10 @@ ve.ce.MWInlineSyntaxHighlightNode.static.name = 'mwInlineSyntaxHighlight';
 
 ve.ce.MWInlineSyntaxHighlightNode.static.primaryCommandName = 'syntaxhighlightInspector';
 
+ve.ce.MWInlineSyntaxHighlightNode.static.getDescription = function ( model ) {
+	return ve.getProp( model.getAttribute( 'mw' ), 'attrs', 'lang' );
+};
+
 /* Registration */
 
 ve.ce.nodeFactory.register( ve.ce.MWInlineSyntaxHighlightNode );

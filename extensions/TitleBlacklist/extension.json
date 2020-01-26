@@ -65,9 +65,6 @@
 		},
 		"ext.titleblacklist.visualEditor": {
 			"scripts": "ve-titleblacklist/ve.init.mw.TitleBlacklistSaveErrorHandler.js",
-			"messages": [
-				"visualeditor-saveerror-titleblacklist"
-			],
 			"targets": [ "desktop", "mobile" ]
 		}
 	},
@@ -80,22 +77,22 @@
 	},
 	"Hooks": {
 		"getUserPermissionsErrorsExpensive": [
-			"TitleBlacklistHooks::userCan"
+			"TitleBlacklistHooks::onUserCan"
 		],
 		"TitleGetEditNotices": [
-			"TitleBlacklistHooks::displayBlacklistOverrideNotice"
+			"TitleBlacklistHooks::onDisplayBlacklistOverrideNotice"
 		],
 		"MovePageCheckPermissions": [
 			"TitleBlacklistHooks::onMovePageCheckPermissions"
 		],
 		"EditFilter": [
-			"TitleBlacklistHooks::validateBlacklist"
+			"TitleBlacklistHooks::onValidateBlacklist"
 		],
 		"PageContentSaveComplete": [
-			"TitleBlacklistHooks::clearBlacklist"
+			"TitleBlacklistHooks::onClearBlacklist"
 		],
 		"ScribuntoExternalLibraries": [
-			"TitleBlacklistHooks::scribuntoExternalLibraries"
+			"TitleBlacklistHooks::onScribuntoExternalLibraries"
 		]
 	},
 	"config": {

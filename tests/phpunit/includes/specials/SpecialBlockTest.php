@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Block\BlockRestrictionStore;
+use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\Block\Restriction\PageRestriction;
 use MediaWiki\Block\Restriction\NamespaceRestriction;
 use Wikimedia\TestingAccessWrapper;
@@ -79,7 +80,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 		$block = $this->insertBlock();
 
 		// Refresh the block from the database.
-		$block = Block::newFromTarget( $block->getTarget() );
+		$block = DatabaseBlock::newFromTarget( $block->getTarget() );
 
 		$page = $this->newSpecialPage();
 
@@ -109,7 +110,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 		$pageSaturn = $this->getExistingTestPage( 'Saturn' );
 		$pageMars = $this->getExistingTestPage( 'Mars' );
 
-		$block = new \Block( [
+		$block = new DatabaseBlock( [
 			'address' => $badActor->getName(),
 			'user' => $badActor->getId(),
 			'by' => $sysop->getId(),
@@ -129,7 +130,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 		$block->insert();
 
 		// Refresh the block from the database.
-		$block = Block::newFromTarget( $block->getTarget() );
+		$block = DatabaseBlock::newFromTarget( $block->getTarget() );
 
 		$page = $this->newSpecialPage();
 
@@ -179,7 +180,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 
 		$this->assertTrue( $result );
 
-		$block = Block::newFromTarget( $badActor );
+		$block = DatabaseBlock::newFromTarget( $badActor );
 		$this->assertSame( $reason, $block->getReason() );
 		$this->assertSame( $expiry, $block->getExpiry() );
 	}
@@ -196,7 +197,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 		$context = RequestContext::getMain();
 
 		// Create a block that will be updated.
-		$block = new \Block( [
+		$block = new DatabaseBlock( [
 			'address' => $badActor->getName(),
 			'user' => $badActor->getId(),
 			'by' => $sysop->getId(),
@@ -228,7 +229,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 
 		$this->assertTrue( $result );
 
-		$block = Block::newFromTarget( $badActor );
+		$block = DatabaseBlock::newFromTarget( $badActor );
 		$this->assertSame( $reason, $block->getReason() );
 		$this->assertSame( $expiry, $block->getExpiry() );
 		$this->assertSame( '1', $block->isAutoblocking() );
@@ -277,7 +278,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 
 		$this->assertTrue( $result );
 
-		$block = Block::newFromTarget( $badActor );
+		$block = DatabaseBlock::newFromTarget( $badActor );
 		$this->assertSame( $reason, $block->getReason() );
 		$this->assertSame( $expiry, $block->getExpiry() );
 		$this->assertCount( 2, $block->getRestrictions() );
@@ -331,7 +332,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 
 		$this->assertTrue( $result );
 
-		$block = Block::newFromTarget( $badActor );
+		$block = DatabaseBlock::newFromTarget( $badActor );
 		$this->assertSame( $reason, $block->getReason() );
 		$this->assertSame( $expiry, $block->getExpiry() );
 		$this->assertFalse( $block->isSitewide() );
@@ -347,7 +348,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 
 		$this->assertTrue( $result );
 
-		$block = Block::newFromTarget( $badActor );
+		$block = DatabaseBlock::newFromTarget( $badActor );
 		$this->assertSame( $reason, $block->getReason() );
 		$this->assertSame( $expiry, $block->getExpiry() );
 		$this->assertFalse( $block->isSitewide() );
@@ -362,7 +363,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 
 		$this->assertTrue( $result );
 
-		$block = Block::newFromTarget( $badActor );
+		$block = DatabaseBlock::newFromTarget( $badActor );
 		$this->assertSame( $reason, $block->getReason() );
 		$this->assertSame( $expiry, $block->getExpiry() );
 		$this->assertFalse( $block->isSitewide() );
@@ -374,7 +375,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 
 		$this->assertTrue( $result );
 
-		$block = Block::newFromTarget( $badActor );
+		$block = DatabaseBlock::newFromTarget( $badActor );
 		$this->assertSame( $reason, $block->getReason() );
 		$this->assertSame( $expiry, $block->getExpiry() );
 		$this->assertTrue( $block->isSitewide() );
@@ -388,6 +389,78 @@ class SpecialBlockTest extends SpecialPageTestBase {
 			__METHOD__
 		);
 		$this->assertSame( 0, $count );
+	}
+
+	/**
+	 * @dataProvider provideProcessFormErrors
+	 * @covers ::processForm()
+	 */
+	public function testProcessFormErrors( $data, $expected, $config = [] ) {
+		$defaultConfig = [
+			'wgEnablePartialBlocks' => true,
+			'wgBlockAllowsUTEdit' => true,
+		];
+
+		$this->setMwGlobals( array_merge( $defaultConfig, $config ) );
+
+		$defaultData = [
+			'Target' => '1.2.3.4',
+			'Expiry' => 'infinity',
+			'Reason' => [ 'bad reason' ],
+			'Confirm' => false,
+			'PageRestrictions' => '',
+			'NamespaceRestrictions' => '',
+		];
+
+		$context = RequestContext::getMain();
+		$page = $this->newSpecialPage();
+		$result = $page->processForm( array_merge( $defaultData, $data ), $context );
+
+		$this->assertEquals( $result[0], $expected );
+	}
+
+	public function provideProcessFormErrors() {
+		return [
+			'Invalid expiry' => [
+				[
+					'Expiry' => 'invalid',
+				],
+				'ipb_expiry_invalid',
+			],
+			'Expiry is in the past' => [
+				[
+					'Expiry' => 'yesterday',
+				],
+				'ipb_expiry_old',
+			],
+			'HideUser with wrong permissions' => [
+				[
+					'HideUser' => 1,
+				],
+				'badaccess-group0',
+			],
+			'Bad ip address' => [
+				[
+					'Target' => '1.2.3.4/1234',
+				],
+				'badipaddress',
+			],
+			'Edit user talk page invalid with no restrictions' => [
+				[
+					'EditingRestriction' => 'partial',
+					'DisableUTEdit' => 1,
+				],
+				'ipb-prevent-user-talk-edit',
+			],
+			'Edit user talk page invalid with namespace restriction != NS_USER_TALK ' => [
+				[
+					'EditingRestriction' => 'partial',
+					'DisableUTEdit' => 1,
+					'NamespaceRestrictions' => NS_USER
+				],
+				'ipb-prevent-user-talk-edit',
+			],
+		];
 	}
 
 	/**
@@ -420,7 +493,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 			$$var = $users[$$var];
 		}
 
-		$block = new \Block( [
+		$block = new DatabaseBlock( [
 			'address' => $blockedUser->getName(),
 			'user' => $blockedUser->getId(),
 			'by' => $blockPerformer->getId(),
@@ -454,7 +527,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 		$badActor = $this->getTestUser()->getUser();
 		$sysop = $this->getTestSysop()->getUser();
 
-		$block = new \Block( [
+		$block = new DatabaseBlock( [
 			'address' => $badActor->getName(),
 			'user' => $badActor->getId(),
 			'by' => $sysop->getId(),

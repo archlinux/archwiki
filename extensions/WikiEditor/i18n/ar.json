@@ -16,7 +16,8 @@
 			"Maroen1990",
 			"محمد أحمد عبد الفتاح",
 			"ديفيد",
-			"علاء"
+			"علاء",
+			"Kassem7899"
 		]
 	},
 	"wikieditor": "الواجهة المتقدمة لتعديل نص ويكي",
@@ -139,6 +140,7 @@
 	"wikieditor-toolbar-tool-replace-success": "أجري {{PLURAL:$1|استبدال|استبدال واحد|استبدالان|$1 استبدالات|$1 استبدالا|$1 استبدال}}.",
 	"wikieditor-toolbar-tool-replace-emptysearch": "لم تكتب شيئا لتبحث عنه.",
 	"wikieditor-toolbar-tool-replace-invalidregex": "التعبير النمطي الذي أدخلته غير صالح: $1",
+	"wikieditor-toolbar-tool-replace-word": "قم بمطابقة الكلمة كلها",
 	"wikieditor-toolbar-section-characters": "أحرف خاصة",
 	"wikieditor-toolbar-section-help": "مساعدة",
 	"wikieditor-toolbar-help-heading-description": "وصف",

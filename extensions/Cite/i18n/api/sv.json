@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"Lokal Profil",
+			"WikiPhoenix"
+		]
+	},
+	"apihelp-query+references-description": "Returnera en datarepresentation av referenser associerade med den angivna sidorna.",
+	"apihelp-query+references-summary": "Returnera en datarepresentation av referenser associerade med de angivna sidorna.",
+	"apihelp-query+references-example-1": "Referenser associerade med <kbd>Albert Einstein</kbd>.",
+	"apierror-citestoragedisabled": "Referenslagringen i Cite-tillägget är inte aktiverad."
+}

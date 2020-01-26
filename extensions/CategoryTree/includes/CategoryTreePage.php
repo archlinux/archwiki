@@ -62,6 +62,7 @@ class CategoryTreePage extends SpecialPage {
 		global $wgCategoryTreeDefaultOptions, $wgCategoryTreeSpecialPageOptions;
 
 		$this->setHeaders();
+		$this->addHelpLink( 'Extension:CategoryTree' );
 		$request = $this->getRequest();
 		if ( $par ) {
 			$this->target = $par;

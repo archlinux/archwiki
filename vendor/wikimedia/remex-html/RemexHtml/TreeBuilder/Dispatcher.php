@@ -80,44 +80,62 @@ class Dispatcher implements TokenHandler {
 	];
 
 	// Public shortcuts for "using the rules for" actions
+
+	/** @var InHead */
 	public $inHead;
+	/** @var InBody */
 	public $inBody;
+	/** @var InTable */
 	public $inTable;
+	/** @var InSelect */
 	public $inSelect;
+	/** @var InTemplate */
 	public $inTemplate;
+	/** @var InForeignContent */
 	public $inForeign;
 
-	/// @var TreeBuilder
+	/** @var TreeBuilder */
 	protected $builder;
 
 	/**
 	 * The InsertionMode object for the current insertion mode in HTML content
+	 *
+	 * @var InsertionMode
 	 */
 	protected $handler;
 
 	/**
 	 * An array mapping insertion mode indexes to InsertionMode objects
+	 *
+	 * @var InsertionMode[]
 	 */
 	protected $dispatchTable;
 
 	/**
 	 * The insertion mode index
+	 *
+	 * @var int
 	 */
 	protected $mode;
 
 	/**
 	 * The "original insertion mode" index
+	 *
+	 * @var int
 	 */
 	protected $originalMode;
 
 	/**
 	 * The insertion mode sets this to true to acknowledge the tag's
 	 * self-closing flag.
+	 *
+	 * @var bool|null
 	 */
 	public $ack;
 
 	/**
 	 * The stack of template insertion modes
+	 *
 	 * @var TemplateModeStack
 	 */
 	public $templateModeStack;
@@ -219,7 +237,6 @@ class Dispatcher implements TokenHandler {
 		$builder = $this->builder;
 		$stack = $builder->stack;
 		$last = false;
-		$node = $stack->current;
 		for ( $idx = $stack->length() - 1; $idx >= 0; $idx-- ) {
 			$node = $stack->item( $idx );
 			if ( $idx === 0 ) {

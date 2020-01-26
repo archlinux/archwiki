@@ -39,10 +39,5 @@
 	"categorytree-no-pages": "alt kategori veya madde yok.",
 	"categorytree-not-found": "<i>\"$1\"</i> isimli kategori bulunamadı",
 	"categorytree-error": "Bilgi yüklenmesi ile bir problem var.",
-	"categorytree-retry": "Lütfen kısa süre için bekleyin, sonra bir kere daha deneyin.",
-	"apihelp-categorytree-description": "CategoryTree uzantısı için iç modül.",
-	"apihelp-categorytree-summary": "CategoryTree uzantısı için iç modül.",
-	"apihelp-categorytree-param-category": "Kategori ad alanındaki başlık, verilen varsa önek dikkate alınmaz.",
-	"apihelp-categorytree-param-options": "JSON nesnesi olarak CategoryTree yapıcısı için seçenekler. <var>Derinlik</var> seçeneği varsayılan <kbd>1</kbd>",
-	"apierror-categorytree-invalidjson": "Seçenekler bir JSON nesnesi için geçerli olmalıdır."
+	"categorytree-retry": "Lütfen kısa süre için bekleyin, sonra bir kere daha deneyin."
 }

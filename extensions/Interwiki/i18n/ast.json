@@ -27,7 +27,6 @@
 	"interwiki-cached": "Los datos d'interwiki tan guardaos na caché. Nun ye posible camudar la caché.",
 	"interwiki_edit": "Editar",
 	"interwiki_reasonfield": "Motivu:",
-	"interwiki_delquestion": "Desaniciando «$1»",
 	"interwiki_deleting": "Tas desaniciando'l prefixu «$1».",
 	"interwiki_deleted": "El prefixu «$1» desanicióse de la tabla d'interwikis.",
 	"interwiki_delfailed": "El prefixu «$1» nun se pudo desaniciar de la tabla d'interwiki.",

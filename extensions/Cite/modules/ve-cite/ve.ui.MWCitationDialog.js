@@ -85,6 +85,8 @@ ve.ui.MWCitationDialog.prototype.initialize = function ( data ) {
 
 	// HACK: Use the same styling as single-mode transclusion dialog - this should be generalized
 	this.$content.addClass( 've-ui-mwTransclusionDialog-single' );
+
+	this.$content.on( 'change', this.onInputChange.bind( this ) );
 };
 
 /**
@@ -97,6 +99,8 @@ ve.ui.MWCitationDialog.prototype.getSetupProcess = function ( data ) {
 			this.inDialog = data.inDialog;
 			this.citationTemplate = data.template;
 			this.citationTitle = data.title;
+
+			this.trackedCitationInputChange = false;
 		}, this )
 		.next( function () {
 			this.updateTitle();
@@ -243,6 +247,18 @@ ve.ui.MWCitationDialog.prototype.getTeardownProcess = function ( data ) {
 			this.referenceModel = null;
 			this.referenceNode = null;
 		}, this );
+};
+
+/**
+ * Handle change events on the transclusion inputs
+ *
+ * @param {jQuery.Event} ev The browser event
+ */
+ve.ui.MWCitationDialog.prototype.onInputChange = function () {
+	if ( !this.trackedCitationInputChange ) {
+		ve.track( 'activity.' + this.constructor.static.name, { action: 'manual-template-input' } );
+		this.trackedCitationInputChange = true;
+	}
 };
 
 /* Registration */

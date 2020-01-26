@@ -174,7 +174,7 @@
 			assert.strictEqual( fakeEventLog.logEvent.getCall( 0 ).args[ 1 ].XCache, xcache, 'XCache is correct' );
 			assert.strictEqual( fakeEventLog.logEvent.getCall( 0 ).args[ 1 ].age, parseInt( age, 10 ), 'age is correct' );
 			assert.strictEqual( fakeEventLog.logEvent.getCall( 0 ).args[ 1 ].contentLength, parseInt( contentLength, 10 ), 'contentLength is correct' );
-			assert.strictEqual( fakeEventLog.logEvent.getCall( 0 ).args[ 1 ].contentHost, window.location.host, 'contentHost is correct' );
+			assert.strictEqual( fakeEventLog.logEvent.getCall( 0 ).args[ 1 ].contentHost, location.host, 'contentHost is correct' );
 			assert.strictEqual( fakeEventLog.logEvent.getCall( 0 ).args[ 1 ].urlHost, urlHost, 'urlHost is correct' );
 			assert.strictEqual( fakeEventLog.logEvent.getCall( 0 ).args[ 1 ].timestamp, timestamp, 'timestamp is correct' );
 			assert.strictEqual( fakeEventLog.logEvent.getCall( 0 ).args[ 1 ].total, perfData.duration, 'total is correct' );

@@ -10,7 +10,7 @@
 	"categorytree-portlet": "Kategoriak",
 	"categorytree-legend": "Erakutsi kategoria zuhaitza",
 	"categorytree-desc": "Dinamikoki nabigatu [[Special:CategoryTree|kategoria zuhaitza]]",
-	"categorytree-header": "Idatzi kategoria baten izena bere edukia zuhaitz eran ikusteko. Kontuan izan horrek AJAX bezala ezagutzen diren JavaScript funtzio aurreratuen beharra duela. Nabigatzaile zahar bat erabiltzen baduzu, edo JavaScript ezgaituta badaukazu, ez du funtzionatuko.",
+	"categorytree-header": "Idatzi kategoria baten izena bere edukia zuhaitz eran ikusteko. (JavaScript beharrezkoa da.)",
 	"categorytree-category": "Kategoria",
 	"categorytree-go": "Zuhaitza erakutsi",
 	"categorytree-parents": "Gurasoak",

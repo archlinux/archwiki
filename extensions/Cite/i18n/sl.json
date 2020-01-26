@@ -5,8 +5,6 @@
 			"Yerpo"
 		]
 	},
-	"apihelp-query+references-description": "Vrne predstavitev podatkov sklicev, povezano z danimi stranmi.",
-	"apihelp-query+references-example-1": "Sklici, povezani z <kbd>Albertom Einsteinom</kbd>.",
 	"cite-desc": "Doda etiketi <code>&lt;ref[ name=id]&gt;</code> in <code>&lt;references/&gt;</code> za navajanje",
 	"cite_error": "Napaka pri navajanju: $1",
 	"cite_error_ref_numeric_key": "Neveljavna oznaka <code>&lt;ref&gt;</code>;\nime ne more biti samo število. Uporabite opisni naslov",

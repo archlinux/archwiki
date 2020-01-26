@@ -11,7 +11,8 @@
 			"Nemo bis",
 			"KuboF",
 			"Macofe",
-			"Robin van der Vliet"
+			"Robin van der Vliet",
+			"Mirin"
 		]
 	},
 	"wikieditor": "Progresa redaktilo por vikiteksto",
@@ -20,7 +21,8 @@
 	"wikieditor-loading": "Ŝargante",
 	"wikieditor-toolbar": "Ilobreto por redaktoj",
 	"wikieditor-toolbar-desc": "Ilobreto por redaktoj, kun plibonigita uzebleco",
-	"wikieditor-toolbar-preference": "Enŝalti plibonigitan ilobreton por redaktoj",
+	"wikieditor-toolbar-preference": "Ŝalti redaktan ilobreton",
+	"wikieditor-toolbar-preference-help": "Tiu kelkfoje nomiĝas la 'vikiteksta redaktilo de 2010'.",
 	"wikieditor-toolbar-loading": "Ŝarĝante...",
 	"wikieditor-toolbar-tool-bold": "Diklitera",
 	"wikieditor-toolbar-tool-bold-example": "Diklitera teksto",

@@ -2,11 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"Krol111",
-			"Przem(1)s"
+			"Przem(1)s",
+			"Uostofchuodnego"
 		]
 	},
-	"fancycaptcha-captcha": "Zicherkontrola",
-	"fancycaptcha-accountcreate": "Coby chrōnić Wikipedyjõ ôd automatycznygo tworzyniŏ kōnt proszymy , wkludź tekst kery widzisz niżyj we tekstowy plac ([[Special:Captcha/help|wiyncyj informacyji]])",
-	"fancycaptcha-imgcaptcha-ph": "Wszkryflej tekst, kery widoć powyżyj",
-	"fancycaptcha-reload-text": "Uodśwjyż"
+	"fancycaptcha-captcha": "Kōntrola bezpieczyństwa",
+	"fancycaptcha-accountcreate": "Coby chrōnić Wikipedyjõ ôd automatycznygo tworzyniŏ kōnt proszymy, wkludź do pola słowa, co sōm pokŏzane niżyj ([[Special:Captcha/help|wiyncyj informacyji]]):",
+	"fancycaptcha-imgcaptcha-ph": "Wkludź tekst, co go widzisz na ôbrŏzku",
+	"fancycaptcha-reload-text": "Ôdświyż"
 }

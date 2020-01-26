@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Red Winged Duck"
+		]
+	},
+	"apihelp-query+references-description": "Вяртае прадстаўленьне зьвестак крыніц, злучаных з пададзенымі старонкамі.",
+	"apihelp-query+references-summary": "Вяртае прадстаўленьне зьвестак крыніц, злучаных з пададзенымі старонкамі.",
+	"apihelp-query+references-example-1": "Крыніцы, зьвязаныя з старонкай <kbd>Albert Einstein</kbd>.",
+	"apierror-citestoragedisabled": "Сховішча зносак пашырэньня цытаваньня ня ўключанае."
+}

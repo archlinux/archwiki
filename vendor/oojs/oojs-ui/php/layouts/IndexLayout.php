@@ -40,6 +40,7 @@ class IndexLayout extends MenuLayout {
 	 *      - bool $config['continuous'] Focus on the first focusable element when a new tab panel is
 	 *        displayed. Disabled on mobile. (default: false)
 	 *      - bool $config['autoFocus'] (default: true)
+	 *      - bool $config['framed'] (default: true)
 	 * @param-taint $config escapes_htmlnoent
 	 */
 	public function __construct( array $config = [] ) {
@@ -60,7 +61,9 @@ class IndexLayout extends MenuLayout {
 		$this->setContentPanel( $this->stackLayout );
 		$this->autoFocus = $config['autoFocus'] ?? true;
 
-		$this->tabSelectWidget = new TabSelectWidget();
+		$this->tabSelectWidget = new TabSelectWidget( [
+			'framed' => $config['framed'] ?? true
+		] );
 		$this->tabPanel = $this->menuPanel ?? new PanelLayout( [
 			'expanded' => $this->expanded,
 			'preserveContent' => false

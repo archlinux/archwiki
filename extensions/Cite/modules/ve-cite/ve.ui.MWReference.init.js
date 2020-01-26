@@ -34,7 +34,7 @@
 					};
 					label = OO.ui.deferMsg( 'cite-ve-toolbar-group-label' );
 					// Treat mobile targets differently
-					if ( ve.init.mw.MobileArticleTarget && target.prototype instanceof ve.init.mw.MobileArticleTarget ) {
+					if ( target === ve.init.mw.MobileArticleTarget ) {
 						group.header = label;
 						group.title = label;
 						group.icon = 'reference';
@@ -68,12 +68,25 @@
 	 * messages are pre-defined for tool names such as `web`, `book`, `news` and `journal`.
 	 *
 	 * Example:
-	 * [ { "name": "web", "icon": "ref-cite-web", "template": "Cite web" }, ... ]
+	 * [ { "name": "web", "icon": "browser", "template": "Cite web" }, ... ]
 	 *
 	 */
 	( function () {
 		var tools,
-			limit = 5;
+			limit = 5,
+			deprecatedIcons = {
+				'ref-cite-book': 'book',
+				'ref-cite-journal': 'journal',
+				'ref-cite-news': 'newspaper',
+				'ref-cite-web': 'browser',
+				'reference-existing': 'referenceExisting'
+			},
+			defaultIcons = {
+				book: 'book',
+				journal: 'journal',
+				news: 'newspaper',
+				web: 'browser'
+			};
 
 		try {
 			// Must use mw.message to avoid JSON being parsed as Wikitext
@@ -91,7 +104,16 @@
 
 		ve.ui.mwCitationTools.forEach( function ( item ) {
 			var name, tool, contextItem,
+				hasOwn = Object.prototype.hasOwnProperty,
 				data = { template: item.template, title: item.title };
+
+			if ( !item.icon && hasOwn.call( defaultIcons, item.name ) ) {
+				item.icon = defaultIcons[ item.name ];
+			}
+
+			if ( hasOwn.call( deprecatedIcons, item.icon ) ) {
+				item.icon = deprecatedIcons[ item.icon ];
+			}
 
 			// Generate citation tool
 			name = 'cite-' + item.name;

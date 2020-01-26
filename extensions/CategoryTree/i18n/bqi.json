@@ -31,8 +31,5 @@
 	"categorytree-no-pages": "هیژ بٱلگاْ یا زیردٱسداْیی ناراْ.",
 	"categorytree-not-found": "دٱسداْ <i>$1</i> دیاری نکرد",
 	"categorytree-error": "موشگل میٛن سوڤارکرد داڌاْیٱل",
-	"categorytree-retry": "لوتف کونین یٱ گوری ڤاستین و ز نۉ تلاش کونین.",
-	"apihelp-categorytree-description": "ماجۊل داخلی سی دیندادیس دار دٱسداْ.",
-	"apihelp-categorytree-summary": "ماجۊل داخلی سی دیندادیس دار دٱسداْ.",
-	"apierror-categorytree-invalidjson": "گوزیناْیٱل ڤا یٱ چی JSON جادیار بوݩ."
+	"categorytree-retry": "لوتف کونین یٱ گوری ڤاستین و ز نۉ تلاش کونین."
 }

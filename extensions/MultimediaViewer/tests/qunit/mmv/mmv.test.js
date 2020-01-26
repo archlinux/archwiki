@@ -1,7 +1,7 @@
 ( function () {
 	QUnit.module( 'mmv', QUnit.newMwEnvironment() );
 
-	QUnit.test( 'eachPrealoadableLightboxIndex()', function ( assert ) {
+	QUnit.test( 'eachPreloadableLightboxIndex()', function ( assert ) {
 		var viewer = mw.mmv.testHelpers.getMultimediaViewer(),
 			expectedIndices,
 			i;
@@ -17,14 +17,14 @@
 		viewer.currentIndex = 2;
 		i = 0;
 		expectedIndices = [ 2, 3, 1, 4, 0, 5 ];
-		viewer.eachPrealoadableLightboxIndex( function ( index ) {
+		viewer.eachPreloadableLightboxIndex( function ( index ) {
 			assert.strictEqual( index, expectedIndices[ i++ ], 'preload on left edge' );
 		} );
 
 		viewer.currentIndex = 9;
 		i = 0;
 		expectedIndices = [ 9, 10, 8, 7, 6 ];
-		viewer.eachPrealoadableLightboxIndex( function ( index ) {
+		viewer.eachPreloadableLightboxIndex( function ( index ) {
 			assert.strictEqual( index, expectedIndices[ i++ ], 'preload on right edge' );
 		} );
 	} );
@@ -39,7 +39,7 @@
 		// animation would keep running, conflict with other tests
 		this.sandbox.stub( $.fn, 'animate' ).returnsThis();
 
-		window.location.hash = '';
+		location.hash = '';
 
 		viewer.setupEventHandlers();
 		oldUnattach = ui.unattach;
@@ -54,14 +54,13 @@
 
 		assert.strictEqual( viewer.isOpen, false, 'Viewer is closed' );
 
-		viewer.isOpen = true;
+		viewer.loadImageByTitle( image.filePageTitle );
 
 		// Verify that passing an invalid mmv hash when the mmv is open triggers unattach()
-		window.location.hash = 'Foo';
-		viewer.hash();
+		location.hash = 'Foo';
 
 		// Verify that mmv doesn't reset a foreign hash
-		assert.strictEqual( window.location.hash, '#Foo', 'Foreign hash remains intact' );
+		assert.strictEqual( location.hash, '#Foo', 'Foreign hash remains intact' );
 		assert.strictEqual( viewer.isOpen, false, 'Viewer is closed' );
 
 		ui.unattach = function () {
@@ -70,11 +69,10 @@
 		};
 
 		// Verify that passing an invalid mmv hash when the mmv is closed doesn't trigger unattach()
-		window.location.hash = 'Bar';
-		viewer.hash();
+		location.hash = 'Bar';
 
 		// Verify that mmv doesn't reset a foreign hash
-		assert.strictEqual( window.location.hash, '#Bar', 'Foreign hash remains intact' );
+		assert.strictEqual( location.hash, '#Bar', 'Foreign hash remains intact' );
 
 		viewer.ui = { images: [ image ], disconnect: function () {} };
 
@@ -86,29 +84,24 @@
 
 		// Open a valid mmv hash link and check that the right image is requested.
 		// imageSrc contains a space without any encoding on purpose
-		window.location.hash = '/media/File:' + imageSrc;
-		viewer.hash();
+		location.hash = '/media/File:' + imageSrc;
 
 		// Reset the hash, because for some browsers switching from the non-URI-encoded to
 		// the non-URI-encoded version of the same text with a space will not trigger a hash change
-		window.location.hash = '';
-		viewer.hash();
+		location.hash = '';
 
 		// Try again with an URI-encoded imageSrc containing a space
-		window.location.hash = '/media/File:' + encodeURIComponent( imageSrc );
-		viewer.hash();
+		location.hash = '/media/File:' + encodeURIComponent( imageSrc );
 
 		// Reset the hash
-		window.location.hash = '';
-		viewer.hash();
+		location.hash = '';
 
 		// Try again with a legacy hash
-		window.location.hash = 'mediaviewer/File:' + imageSrc;
-		viewer.hash();
+		location.hash = 'mediaviewer/File:' + imageSrc;
 
 		viewer.cleanupEventHandlers();
 
-		window.location.hash = '';
+		location.hash = '';
 	} );
 
 	QUnit.test( 'Progress', function ( assert ) {
@@ -443,7 +436,7 @@
 			open: function () {},
 			empty: function () {} };
 		viewer.displayRealThumbnail = this.sandbox.stub();
-		viewer.eachPrealoadableLightboxIndex = function () {};
+		viewer.eachPreloadableLightboxIndex = function () {};
 		viewer.animateMetadataDivOnce = this.sandbox.stub().returns( $.Deferred().reject() );
 		viewer.imageProvider.get = this.sandbox.stub();
 		viewer.imageInfoProvider.get = function () { return $.Deferred().reject(); };
@@ -703,7 +696,7 @@
 
 		viewer.currentImageFileTitle = title;
 		bootstrap.setupEventHandlers();
-		viewer.setHash();
+		viewer.setMediaHash();
 
 		assert.ok( document.title.match( title.getNameText() ), 'File name is visible in title' );
 

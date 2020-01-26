@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kly"
+		]
+	},
+	"apihelp-query+references-description": "回傳與指定頁面關聯之參考文獻的資料描述。",
+	"apihelp-query+references-summary": "回傳與指定頁面關聯之參考文獻的資料描述。",
+	"apihelp-query+references-example-1": "與 <kbd>Albert Einstein</kbd> 關聯的參考文獻。",
+	"apierror-citestoragedisabled": "引用擴充參考文獻儲存未啟用。"
+}

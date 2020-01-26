@@ -35,7 +35,6 @@
 	"interwiki-cached": "Die Interwikidaten wurden gecached. Die Daten im Cache zu ändern ist nicht möglich.",
 	"interwiki_edit": "Bearbeiten",
 	"interwiki_reasonfield": "Grund:",
-	"interwiki_delquestion": "Löschung des Präfix „$1“",
 	"interwiki_deleting": "Du bist gerade dabei das Präfix „$1“ zu löschen.",
 	"interwiki_deleted": "Das Präfix „$1“ wurde aus der Interwikitabelle entfernt.",
 	"interwiki_delfailed": "Das „$1“ konnte nicht aus der Interwikitabelle gelöscht werden.",

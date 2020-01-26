@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Fryed-peach",
+			"Yusuke1109"
+		]
+	},
+	"apihelp-query+references-description": "指定されたページに関連付けられた脚注のデータ表現を返す",
+	"apihelp-query+references-summary": "指定されたページに関連付けられた脚注のデータ表現を返す",
+	"apihelp-query+references-example-1": "<kbd>Albert Einstein</kbd> に関連付けられた脚注。"
+}

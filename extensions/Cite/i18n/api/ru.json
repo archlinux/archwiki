@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"Facenapalm",
+			"Putnik"
+		]
+	},
+	"apihelp-query+references-description": "Возвращает представление данных из ссылок, связанных с данной страницей.",
+	"apihelp-query+references-summary": "Возвращает представление данных из ссылок, связанных с данной страницей.",
+	"apihelp-query+references-example-1": "Ссылки, связанные с <kbd>Albert Einstein</kbd>.",
+	"apierror-citestoragedisabled": "Хранилище сносок расширения цитирования не активировано."
+}

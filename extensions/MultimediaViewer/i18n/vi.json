@@ -9,8 +9,6 @@
 		]
 	},
 	"multimediaviewer-desc": "Mở các hình nhỏ lớn hơn trong giao diện toàn màn hình.",
-	"multimediaviewer-pref": "Cửa sổ phương tiện",
-	"multimediaviewer-pref-desc": "Cải thiện trải nghiệm xem phương tiện của bạn với công cụ mới này. Nó mở rộng các hình nhỏ để phủ lên toàn cửa sổ. Các hình ảnh được hiển thị trong giao diện toàn màn hình đẹp đẽ và cũng có thể xem kích thước gốc.",
 	"multimediaviewer-optin-pref": "Bật <span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About cửa sổ phương tiện]</span>",
 	"multimediaviewer-file-page": "Mở trang ứng với tập tin",
 	"multimediaviewer-repository-local": "Thêm chi tiết",

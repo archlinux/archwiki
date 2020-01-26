@@ -20,7 +20,5 @@
 	"fancycaptcha-edit": "Muokkauksesi sisältää uusia linkkejä muille sivuille. Kirjoita kuvan sisältämät sanat alla olevaan tekstikenttään ([[Special:Captcha/help|lisätietoja]]):",
 	"fancycaptcha-imgcaptcha-ph": "Kirjoita kuvassa oleva teksti",
 	"fancycaptcha-sendemail": "Automatisoidun roskapostin lähettämisen vaikeuttamiseksi kirjoita kuvan sisältämät sanat alla olevaan tekstikenttään \n([[Special:Captcha/help|lisätietoja]]):",
-	"fancycaptcha-reload-text": "Vaihda",
-	"apihelp-fancycaptchareload-description": "Hae uusi FancyCaptcha.",
-	"apihelp-fancycaptchareload-example-1": "Hae uusi FancyCaptcha"
+	"fancycaptcha-reload-text": "Vaihda"
 }

@@ -4,7 +4,8 @@
 			"Lejonel",
 			"Lokal Profil",
 			"Skalman",
-			"WikiPhoenix"
+			"WikiPhoenix",
+			"Mjälten"
 		]
 	},
 	"skinname-monobook": "MonoBook",
@@ -19,5 +20,5 @@
 	"monobook-cactions-label": "Sidåtgärder",
 	"monobook-notifications-link": "Aviseringar ($1)",
 	"monobook-notifications-link-none": "Aviseringar",
-	"monobook-responsive-label": "Aktivera responsiv MonoBook-design"
+	"monobook-responsive-label": "Aktivera responsiv MonoBook-utseende"
 }

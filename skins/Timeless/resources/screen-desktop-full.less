@@ -1,8 +1,14 @@
 @import 'variables.less';
 
+// Three-column layout
+
 #mw-content-block {
 	.flex-display;
 	clear: both;
+}
+
+#p-logo-text {
+	min-width: @column-left-size;
 }
 
 #mw-site-navigation {
@@ -24,4 +30,9 @@
 // Redundant content category list
 #catlinks {
 	display: none;
+}
+
+// For the more responsive username support
+#user-tools {
+	min-width: @column-right-size;
 }

@@ -11,6 +11,5 @@
 	"renocaptcha-createaccount-fail": "Det ser ut til at du ikke løste CAPTCHA-en.",
 	"renocaptcha-create": "For å beskytte wikien mot automatisk sideoppretting ber vi deg løse følgende CAPTCHA:",
 	"renocaptcha-noscript": "Du har dessverre slått av JavaScript, så vi kan ikke automatisk oppdage om du er et menneske eller ikke. Løs CAPTCHA-en ovenfor og kopier den resulterende teksten i følgende tekstboks:",
-	"renocaptcha-help": "Løs en ReCaptcha NoCaptcha-oppgave og returner svarverdien som captchaWord.",
-	"renocaptcha-apihelp-param-g-recaptcha-response": "Felt fra ReCaptcha-widgeten."
+	"renocaptcha-help": "Løs en ReCaptcha NoCaptcha-oppgave og returner svarverdien som captchaWord."
 }

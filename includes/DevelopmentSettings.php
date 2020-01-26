@@ -14,7 +14,7 @@
  */
 
 /**
- * Debugging: PHP
+ * Debugging for PHP
  */
 
 // Enable showing of errors
@@ -22,11 +22,12 @@ error_reporting( -1 );
 ini_set( 'display_errors', 1 );
 
 /**
- * Debugging: MediaWiki
+ * Debugging for MediaWiki
  */
+
 global $wgDevelopmentWarnings, $wgShowExceptionDetails, $wgShowHostnames,
-	$wgDebugRawPage, $wgDebugComments, $wgDebugDumpSql, $wgDebugTimestamps,
-	$wgCommandLineMode, $wgDebugLogFile, $wgDBerrorLog, $wgDebugLogGroups;
+	$wgDebugRawPage, $wgCommandLineMode, $wgDebugLogFile,
+	$wgDBerrorLog, $wgDebugLogGroups, $wgLocalisationCacheConf;
 
 // Use of wfWarn() should cause tests to fail
 $wgDevelopmentWarnings = true;
@@ -35,9 +36,6 @@ $wgDevelopmentWarnings = true;
 $wgShowExceptionDetails = true;
 $wgShowHostnames = true;
 $wgDebugRawPage = true; // T49960
-
-// Enable MariaDB/MySQL strict mode
-$wgSQLMode = 'TRADITIONAL';
 
 // Enable log files
 $logDir = getenv( 'MW_LOG_DIR' );
@@ -54,5 +52,28 @@ if ( $logDir ) {
 }
 unset( $logDir );
 
-// Disable rate-limiting
+/**
+ * Make testing possible (or easier)
+ */
+
+global $wgRateLimits;
+
+// Disable rate-limiting to allow integration tests to run unthrottled
+// in CI and for devs locally (T225796)
 $wgRateLimits = [];
+
+/**
+ * Experimental changes that may later become the default.
+ * (Must reference a Phabricator ticket)
+ */
+
+global $wgSQLMode, $wgLegacyJavaScriptGlobals;
+
+// Enable MariaDB/MySQL strict mode (T108255)
+$wgSQLMode = 'TRADITIONAL';
+
+// Disable legacy javascript globals in CI and for devs (T72470)
+$wgLegacyJavaScriptGlobals = false;
+
+// Localisation Cache to StaticArray (T218207)
+$wgLocalisationCacheConf['store'] = 'array';

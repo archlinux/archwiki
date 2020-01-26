@@ -13,7 +13,8 @@
 			"Okras",
 			"Striking Blue",
 			"Mailman",
-			"Vlad5250"
+			"Vlad5250",
+			"Movses"
 		]
 	},
 	"interwiki": "Просмотр и изменение настроек интервики",
@@ -32,14 +33,13 @@
 	"interwiki_trans": "Включение",
 	"interwiki-trans-label": "Включение:",
 	"interwiki_trans_1_intro": "Если используется синтаксис <code>{<nowiki />{prefix:<em>pagename</em>}}</code>, разрешается встраивание шаблонов/страниц из других вики, если интервики-включения разрешены в ([//www.mediawiki.org/wiki/Manual:$wgEnableScaryTranscluding страшных включениях]).",
-	"interwiki_trans_0_intro": "Не позволяет <code>{<nowiki />{приставка:<em>название страницы</em>}}</code> включать сторонние шаблоны/страницы, при этом ищет локальную страницу в пространстве имён шаблонов.",
+	"interwiki_trans_0_intro": "Не позволяет <code>{<nowiki />{prefix:<em>pagename</em>}}</code> включать сторонние шаблоны/страницы. При этом ищет локальную страницу в пространстве имён шаблонов.",
 	"interwiki_1": "да",
 	"interwiki_0": "нет",
 	"interwiki_error": "ОШИБКА: таблица интервики пуста или что-то другое работает ошибочно.",
 	"interwiki-cached": "Сведения об интервики взяты из кэша. Измененить кэш не представляется возможным.",
 	"interwiki_edit": "Править",
 	"interwiki_reasonfield": "Причина:",
-	"interwiki_delquestion": "Удаление «$1»",
 	"interwiki_deleting": "Вы удаляете приставку «$1».",
 	"interwiki_deleted": "Префикс «$1» удалён из таблицы интервики.",
 	"interwiki_delfailed": "Префикс «$1» не может быть удалён из таблицы интервики.",

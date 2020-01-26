@@ -9,6 +9,8 @@
 			"Vitorvicentevalente"
 		]
 	},
+	"action-tboverride": "contornar a lista negra de títulos e nomes de utilizador",
+	"action-tboverride-account": "contornar a lista negra de nomes de utilizador",
 	"action-titleblacklistlog": "ver o registo da lista negra de títulos",
 	"log-name-titleblacklist": "Registo da lista negra de títulos",
 	"log-description-titleblacklist": "Estes eventos registam as correspondências com a lista negra de títulos.",
@@ -21,11 +23,10 @@
 	"titleblacklist-forbidden-upload": "Foi bloqueada a criação de ficheiros com o nome \"$2\".\nO nome corresponde à seguinte entrada da lista negra: <code>$1</code>",
 	"titleblacklist-forbidden-new-account": "Foi bloqueada a criação de utilizadores com o nome \"$2\".\nO nome corresponde à seguinte entrada da lista negra: <code>$1</code>",
 	"titleblacklist-invalid": "{{PLURAL:$1|A seguinte linha|As seguintes linhas}} da lista negra {{PLURAL:$1|é inválida|são inválidas}}. Por favor, {{PLURAL:$1|corrija-a|corrija-as}} antes de gravar:",
-	"titleblacklist-override": "Ignorar a lista negra",
+	"titleblacklist-override": "Ignorar a lista negra de títulos se houver coincidência",
 	"titleblacklist-override-help": "Os utilizadores com privilégios suficientes podem configurar isto para ignorar as verificações contra a lista negra de títulos.",
 	"titleblacklist-warning": "<strong>Aviso: Esta página só pode ser editada por administradores e outros utilizadores com o privilégio <code>tboverride</code>, pois o título corresponde com a seguinte entrada da lista negra de títulos:</strong><br /><code>$1</code>",
 	"right-tboverride": "Contornar a lista negra de títulos e nomes de utilizador",
 	"right-tboverride-account": "Contornar a lista negra de nomes de utilizador",
-	"right-titleblacklistlog": "Ver o registo da lista negra de títulos",
-	"visualeditor-saveerror-titleblacklist": "Erro ao gravar a página: o título desta página está na lista negra"
+	"right-titleblacklistlog": "Ver o registo da lista negra de títulos"
 }

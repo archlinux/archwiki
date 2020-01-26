@@ -39,7 +39,10 @@
 		 * module name. The existence of a module in this object only indicates the module is available. To check if a
 		 * module is in use by a specific context check the context.modules object.
 		 */
-		modules: {},
+		modules: {
+			toolbar: require( './jquery.wikiEditor.toolbar.js' ),
+			dialogs: require( './jquery.wikiEditor.dialogs.js' )
+		},
 
 		/**
 		 * A context can be extended, such as adding iframe support, on a per-wikiEditor instance basis.
@@ -193,6 +196,12 @@
 				key = fallbackChain[ i ];
 				if ( icon && hasOwn.call( icon, key ) ) {
 					src = icon[ key ];
+
+					// Return a data URL immediately
+					if ( src.substr( 0, 5 ) === 'data:' ) {
+						return src;
+					}
+
 					// Prepend path if src is not absolute
 					if ( src.substr( 0, 7 ) !== 'http://' && src.substr( 0, 8 ) !== 'https://' && src[ 0 ] !== '/' ) {
 						src = path + src;

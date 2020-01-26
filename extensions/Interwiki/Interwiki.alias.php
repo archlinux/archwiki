@@ -73,6 +73,11 @@ $specialPageAliases['ckb'] = [
 	'Interwiki' => [ 'نێوانویکی' ],
 ];
 
+/** Czech (čeština) */
+$specialPageAliases['cs'] = [
+	'Interwiki' => [ 'Mezijazykové_odkazy' ],
+];
+
 /** German (Deutsch) */
 $specialPageAliases['de'] = [
 	'Interwiki' => [ 'Interwikitabelle', 'Interwiki-Tabelle' ],

@@ -14,7 +14,8 @@
 			"WTM",
 			"Woytecr",
 			"Peter Bowman",
-			"Railfail536"
+			"Railfail536",
+			"Rail"
 		]
 	},
 	"nuke": "Masowe usuwanie",
@@ -35,7 +36,7 @@
 	"nuke-deleted": "Strona '''$1''' została usunięta.",
 	"nuke-not-deleted": "Strony [[:$1]] '''nie można''' usunąć.",
 	"nuke-delete-more": "[[Special:Nuke|Usuń więcej stron]]",
-	"nuke-pattern": "Wzór nazwy strony:",
+	"nuke-pattern": "Wzór SQL LIKE (np. %) nazwy strony:",
 	"nuke-nopages-global": "Nie odnaleziono stron pasujących do Twojego wyszukiwania.",
 	"nuke-viewchanges": "widok zmian",
 	"nuke-namespace": "Tylko w przestrzeni nazw:",

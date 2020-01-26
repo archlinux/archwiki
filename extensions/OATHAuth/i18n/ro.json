@@ -4,7 +4,8 @@
 			"Firilacroco",
 			"Stelistcristi",
 			"Narlotep1",
-			"Strainu"
+			"Strainu",
+			"Fitoschido"
 		]
 	},
 	"specialpages-group-oath": "Autentificare pe două niveluri",
@@ -12,5 +13,5 @@
 	"oathauth-token": "Jeton",
 	"oathauth-prefs-label": "Autentificare pe două niveluri:",
 	"oathauth-step4": "Pasul 4: Verificare",
-	"oathauth-auth-ui": "Va rugam introduceti codul de autentificare de pe dispozitivul dumneavoastra"
+	"oathauth-auth-ui": "Va rugam introduceti codul de autentificare de pe dispozitivul dumneavoastra."
 }

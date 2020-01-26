@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"Danmichaelo",
+			"Jon Harald Søby"
+		]
+	},
+	"apihelp-query+references-description": "Returnerer en datarepresentasjon av referanser assosiert med de gitte sidene.",
+	"apihelp-query+references-summary": "Returner en datarepresentasjon av referanser assosiert med de gitte sidene.",
+	"apihelp-query+references-example-1": "Referanser forbundet med <kbd>Albert Einstein</kbd>.",
+	"apierror-citestoragedisabled": "Referanselagring i Cite-utvidelsen er ikke slått på."
+}

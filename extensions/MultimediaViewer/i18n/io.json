@@ -14,12 +14,16 @@
 	"multimediaviewer-optout-mmv": "Klozar ''Media Viewer''",
 	"multimediaviewer-reuse-link": "Partigar o stekar ica arkivo",
 	"multimediaviewer-download-link": "Descharjar ica arkivo",
+	"multimediaviewer-download-xl-button-name": "Descharjar imajo extra larja",
+	"multimediaviewer-link-to-page": "Ligilo a deskripto-pagino",
 	"multimediaviewer-embed-explanation": "Uzes ica kodexo por stekar l'arkivo",
+	"multimediaviewer-xl-embed-dimensions": "Extra larja imajo $1",
 	"multimediaviewer-description-page-button-text": "Plusa detali pri ca arkivo",
 	"multimediaviewer-description-page-popup-text": "Plusa detali pri ica arkivo en $1",
 	"multimediaviewer-view-expanded": "Montrar l'imajo en Media Viewer",
 	"multimediaviewer-close-popup-text": "Klozar ica utensilo (Esc)",
 	"multimediaviewer-fullscreen-popup-text": "Montrez en plena skreno",
 	"multimediaviewer-title-popup-text": "Deskripto",
-	"multimediaviewer-attr-plain": "simpla texto"
+	"multimediaviewer-attr-plain": "simpla texto",
+	"multimediaviewer-options-text-header": "Omisar ca formo pri vidado por omna arkivi."
 }

@@ -10,7 +10,8 @@
 			"Umherirrender",
 			"✓",
 			"Tiin",
-			"FriedhelmW"
+			"FriedhelmW",
+			"Lucas Werkmeister"
 		]
 	},
 	"gadgets-desc": "Ermöglicht es Benutzern, in ihren [[Special:Preferences#mw-prefsection-gadgets|persönlichen Einstellungen]] vordefinierte [[Special:Gadgets|CSS- und JavaScript-Helferlein]] zu aktivieren",
@@ -21,12 +22,12 @@
 	"gadgetusage-gadget": "Helferlein",
 	"gadgetusage-usercount": "Anzahl der Benutzer",
 	"gadgetusage-noresults": "Keine Helferlein gefunden.",
-	"gadgetusage-intro": "Diese Tabelle zeigt für jedes Helferlein auf diesem Wiki die Anzahl der Benutzer an, die es aktiviert haben. Als aktiver Benutzer wird jemand gezählt, der eine Bearbeitung während {{PLURAL:$1|des letzten Tages|der letzten $1 Tage}} durchgeführt hat. Diese Liste schließt Statistiken für Helferlein aus, die standardmäßig für jeden aktiviert sind und könnte Helferlein enthalten, die nicht mehr verfügbar sind.",
-	"gadgetusage-intro-noactive": "Diese Tabelle zeigt die Anzahl der Benutzer an, die jedes Helferlein auf diesem Wiki aktiviert haben. Diese Liste schließt Statistiken für Helferlein aus, die standardmäßig für jeden aktiviert sind und kann Helferlein beinhalten, die nicht mehr verfügbar sind.",
+	"gadgetusage-intro": "Diese Tabelle zeigt für jedes Helferlein auf diesem Wiki die Anzahl der Benutzer an, die es aktiviert haben. Als aktiv gelten Benutzer, die eine Bearbeitung während {{PLURAL:$1|des letzten Tages|der letzten $1 Tage}} durchgeführt haben. Diese Liste schließt Statistiken für Helferlein aus, die standardmäßig für alle aktiviert sind und könnte Helferlein enthalten, die nicht mehr verfügbar sind.",
+	"gadgetusage-intro-noactive": "Diese Tabelle zeigt die Anzahl der Benutzer an, die jedes Helferlein auf diesem Wiki aktiviert haben. Diese Liste schließt Statistiken für Helferlein aus, die standardmäßig für alle aktiviert sind und kann Helferlein beinhalten, die nicht mehr verfügbar sind.",
 	"gadgetusage-activeusers": "Aktive Benutzer",
 	"gadgetusage-default": "Standard",
 	"gadgets-title": "Helferlein",
-	"gadgets-pagetext": "Liste besonderer, in [[MediaWiki:Gadgets-definition]] festgelegter Helferlein, die für jeden Benutzer in seinen [[Special:Preferences#mw-prefsection-gadgets|persönlichen Einstellungen]] verfügbar sind.\nDiese Übersicht bietet direkten Zugang zu den MediaWiki-Systemnachrichten, welche die Beschreibung sowie den Programmcode jedes Helferlein enthalten.",
+	"gadgets-pagetext": "Liste besonderer, in [[MediaWiki:Gadgets-definition]] festgelegter Helferlein, die für alle Benutzer in den [[Special:Preferences#mw-prefsection-gadgets|persönlichen Einstellungen]] verfügbar sind.\nDiese Übersicht bietet direkten Zugang zu den MediaWiki-Systemnachrichten, welche die Beschreibung sowie den Programmcode jedes Helferlein enthalten.",
 	"gadgets-uses": "Benutzt",
 	"gadgets-required-rights": "Erfordert die {{PLURAL:$2|folgende Berechtigung|folgenden Berechtigungen}}:\n\n$1",
 	"gadgets-required-skins": "Verfügbar bei {{PLURAL:$2|der folgenden Benutzeroberfläche|den folgenden Benutzeroberflächen}}: $1.",

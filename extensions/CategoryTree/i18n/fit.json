@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Mestos"
+			"Mestos",
+			"Pyscowicz"
 		]
 	},
 	"categorytree": "Luokkapuu",
@@ -17,6 +18,8 @@
 	"categorytree-collapse": "piilota",
 	"categorytree-expand": "näytä",
 	"categorytree-member-counts": "sisältää {{PLURAL:$1|1 alaluokan|$1 alaluokkaa}}, {{PLURAL:$2|1 sivun|$2 sivua}} ja {{PLURAL:$3|1 tieoston|$3 tieostoa}}",
+	"categorytree-num-categories": "$1 K",
+	"categorytree-num-pages": "$1 S",
 	"categorytree-load": "näytä",
 	"categorytree-loading": "haethaan",
 	"categorytree-nothing-found": "ei mithään löyetty",

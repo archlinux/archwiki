@@ -4,14 +4,14 @@ abstract class CaptchaStore {
 	/**
 	 * Store the correct answer for a given captcha
 	 * @param string $index
-	 * @param string $info the captcha result
+	 * @param array $info the captcha result
 	 */
 	abstract public function store( $index, $info );
 
 	/**
 	 * Retrieve the answer for a given captcha
 	 * @param string $index
-	 * @return string|false
+	 * @return array|false
 	 */
 	abstract public function retrieve( $index );
 

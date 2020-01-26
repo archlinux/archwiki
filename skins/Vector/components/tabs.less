@@ -6,12 +6,11 @@
 
 /* Namespaces and Views */
 .vectorTabs {
+	// Tab separator: Outer start border (left in LTR) of tab row.
+	background-position: left bottom;
 	float: left;
 	height: 2.5em;
-	.background-image('images/tab-break.png');
-	background-position: bottom left;
-	background-repeat: no-repeat;
-	padding-left: 1px;
+	padding-left: @border-width-base;
 
 	/* Navigation Labels */
 	h3 {
@@ -24,63 +23,64 @@
 		list-style: none none;
 		margin: 0;
 		padding: 0;
-		.background-image('images/tab-break.png');
-		background-position: right bottom;
-		background-repeat: no-repeat;
 	}
 
 	li {
+		// Tab fade background: Fade inside from light grey to white.
+		background-image: url( images/tab-normal-fade.png ); // Support: IE 8 & 9, Fx 3.6-15, Safari 5.1-6, Chrome 10-25
+		background-image: linear-gradient( to top, @border-color-content--tabs-inactive 0, #e8f2f8 1px, #fff 100% ); // Support: Standard (Firefox 16+, IE 10+, Safari 6.1+, Chrome 26+)
+		background-position: left bottom;
+		background-repeat: repeat-x;
 		float: left;
-		line-height: 1.125em;
 		display: block;
 		height: 100%;
 		margin: 0;
 		padding: 0;
-		.background-image('images/tab-normal-fade.png');
-		background-position: bottom left;
-		background-repeat: repeat-x;
+		line-height: @line-height-nav;
 		white-space: nowrap;
 
-		&.new {
-			a,
-			a:visited {
-				color: #a55858;
-			}
-		}
-
-		&.selected {
-			.background-image('images/tab-current-fade.png');
-
-			a,
-			a:visited {
-				color: #222;
-				text-decoration: none;
-			}
-		}
-
-		&.icon {
-			a {
-				background-position: bottom right;
-				background-repeat: no-repeat;
-			}
-		}
-
 		a {
+			color: @color-link;
 			display: block;
 			height: 1.9em;
 			padding-left: 0.615em; // Equals `8px` at computed `font-size` of `13px` below
 			padding-right: 0.615em;
-			color: @menu-link-color;
 			cursor: pointer;
-			font-size: 0.8125em; // Equals `13px` at browser default of `16px`
+			font-size: @font-size-tabs;
 		}
 	}
 
+	.new {
+		a,
+		a:visited {
+			color: @color-link-new;
+		}
+	}
+
+	.selected {
+		// Replace tab fade with flat color (matching top of would-be fade).
+		background-image: url( images/tab-current-fade.png );
+		// Overwrite above in browsers that support `rgba()`.
+		background: rgba( 255, 255, 255, 1 ); // stylelint-disable-line declaration-block-no-shorthand-property-overrides
+
+		a,
+		a:visited {
+			color: @color-link-selected;
+			text-decoration: none;
+		}
+	}
+
+	.icon {
+		a {
+			background-position: right bottom;
+			background-repeat: no-repeat;
+		}
+	}
+
+	// Tab separator: Border between tabs and outer right border.
 	span {
+		background-position: right bottom;
 		display: inline-block;
-		.background-image('images/tab-break.png');
-		background-position: bottom right;
-		background-repeat: no-repeat;
 		height: 100%;
 
 		a {
@@ -102,14 +102,14 @@
 
 	h3 {
 		span {
+			color: @color-nav-subtle;
 			position: relative;
 			display: block;
-			font-size: 0.8125em;
 			padding-left: 0.615em;
 			padding-top: 1.25em;
 			padding-right: 16px;
+			font-size: @font-size-tabs;
 			font-weight: normal;
-			color: #444;
 
 			&:after {
 				content: '';
@@ -128,7 +128,7 @@
 
 		&:hover span,
 		&:focus span {
-			color: @content-font-color;
+			color: @color-base;
 
 			&:after {
 				opacity: 1;
@@ -138,15 +138,15 @@
 
 	.menu {
 		list-style: none none;
-		background-color: @body-background-color;
+		background-color: @background-color-base;
 		clear: both;
 		// Match the width of the dropdown "heading" (the tab)
 		min-width: 100%;
 		position: absolute;
 		top: 2.5em;
-		left: -1px;
+		left: -@border-width-base;
 		margin: 0;
-		border: 1px solid #a2a9b1;
+		border: @border-width-base @border-style-base @border-color-base;
 		border-top-width: 0;
 		padding: 0;
 		box-shadow: 0 1px 1px 0 rgba( 0, 0, 0, 0.1 );
@@ -170,14 +170,6 @@
 		visibility: visible;
 	}
 
-	// FIXME: `.vectorMenu ul` can be removed with purged HTML cache
-	ul {
-		list-style: none none;
-		padding: 0;
-		margin: 0;
-		text-align: left;
-	}
-
 	li {
 		padding: 0;
 		margin: 0;
@@ -185,35 +177,48 @@
 		line-height: 1em;
 
 		a {
+			color: @color-link;
 			display: block;
 			padding: 0.625em;
 			white-space: nowrap;
-			color: @menu-link-color;
 			cursor: pointer;
-			font-size: 0.8125em;
+			font-size: @font-size-tabs;
 		}
+	}
 
-		&.selected a,
-		&.selected a:visited {
-			color: #222;
-			text-decoration: none;
-		}
+	.selected a,
+	.selected a:visited {
+		color: @color-link-selected;
+		text-decoration: none;
 	}
 }
 
 #mw-head .vectorMenu h3 {
+	// Tab separator: Outer end (right in LTR) border of "Actions" menu.
+	background-position: right bottom;
 	float: left;
-	.background-image('images/tab-break.png');
-	background-repeat: no-repeat;
-	background-position: bottom right;
-	font-size: 1em;
+	font-size: @font-size-reset;
 	height: 2.5em;
+	margin: 0 -@border-width-base 0 0;
 	// `padding-right` >= `1px` effectively moves the "background border" outside of the element to
 	// act like a real border. It is necessary for `.vectorMenu .menu` dropdown to align well.
 	// 0.5em equals `8px` at computed `font-size` of `14px` as visually harmonically with
 	// `padding-left` in `.vectorMenu h3 span`
 	padding: 0 0.5em 0 0;
-	margin: 0 -1px 0 0;
+}
+
+// Tab Separators
+// `.vectorTabs`: Outer start border (left in LTR) of tab row.
+// `.vectorTabs span`: Border between tabs and outer end (right in LTR) border.
+// `#mw-head .vectorMenu h3`: // Outer end (right in LTR) border of "Actions" menu.
+.vectorTabs,
+.vectorTabs span,
+#mw-head .vectorMenu h3 {
+	background-image: url( images/tab-separator.png );
+	background-image: linear-gradient( to bottom, rgba( 167, 215, 249, 0 ) 0, @border-color-content 100% );
+	background-repeat: no-repeat;
+	// Contain gradient to 1px × 100% size and draw from top to bottom-left or -right corner.
+	background-size: @border-width-base 100%;
 }
 
 // Invisible checkbox covering the dropdown menu handle

@@ -8,6 +8,7 @@ class ReCaptchaNoCaptcha extends SimpleCaptcha {
 	protected static $messagePrefix = 'renocaptcha-';
 
 	private $error = null;
+
 	/**
 	 * Get the captcha form.
 	 * @param int $tabIndex
@@ -161,7 +162,7 @@ HTML;
 	 * The result will be treated as wiki text
 	 *
 	 * @param string $action Action being performed
-	 * @return string Wikitext
+	 * @return Message
 	 */
 	public function getMessage( $action ) {
 		$msg = parent::getMessage( $action );

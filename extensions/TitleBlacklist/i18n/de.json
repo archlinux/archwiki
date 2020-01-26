@@ -15,6 +15,8 @@
 			"Debenben"
 		]
 	},
+	"action-tboverride": "die schwarze Liste unerwünschter Seiten- oder Benutzernamen außer Kraft zu setzen",
+	"action-tboverride-account": "die schwarze Liste unerwünschter Benutzernamen außer Kraft zu setzen",
 	"action-titleblacklistlog": "das Titel-Blacklist-Logbuch anzusehen",
 	"log-name-titleblacklist": "Titel-Blacklist-Logbuch",
 	"log-description-titleblacklist": "Dies ist ein Logbuch der Titel-Blacklist-Treffer.",
@@ -27,11 +29,10 @@
 	"titleblacklist-forbidden-upload": "'''Eine Datei mit dem Namen „$2“ kann nicht hochgeladen werden.'''<br />Der Titel kollidiert mit diesem Sperrbegriff: '''''$1'''''",
 	"titleblacklist-forbidden-new-account": "Die Registrierung des Benutzernamens „$2“ ist nicht erwünscht.\nFolgender Eintrag aus der Liste unerwünschter Benutzernamen führte zur Ablehnung: <code>$1</code>",
 	"titleblacklist-invalid": "Die {{PLURAL:$1|folgende Zeile|folgenden Zeilen}} in der Sperrliste {{PLURAL:$1|ist|sind}} ungültig; bitte korrigiere diese vor dem Speichern:",
-	"titleblacklist-override": "Blacklist ignorieren",
+	"titleblacklist-override": "Die Titel-Blacklist bei Treffern umgehen",
 	"titleblacklist-override-help": "Benutzer mit ausreichenden Rechten können dies setzen, um die Titel-Blacklist-Prüfungen zu ignorieren.",
 	"titleblacklist-warning": "<strong>Warnung: Diese Seite kann nur von Administratoren und anderen Benutzern mit dem <code>tboverride</code>-Recht bearbeitet werden, da sie mit dem folgenden Titel-Blacklist-Eintrag übereinstimmt:</strong><br /><code>$1</code>",
 	"right-tboverride": "Die schwarze Liste unerwünschter Seiten- oder Benutzernamen außer Kraft setzen",
 	"right-tboverride-account": "Die schwarze Liste unerwünschter Benutzernamen außer Kraft setzen",
-	"right-titleblacklistlog": "Das Titel-Blacklist-Logbuch ansehen",
-	"visualeditor-saveerror-titleblacklist": "Fehler beim Speichern der Seite: Der Seitentitel ist auf der schwarzen Liste."
+	"right-titleblacklistlog": "Das Titel-Blacklist-Logbuch ansehen"
 }

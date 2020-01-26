@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"Strainu"
+		]
+	},
+	"apihelp-query+references-description": "Întoarce o reprezentare a referințelor asociate cu paginile date.",
+	"apihelp-query+references-summary": "Întoarce o reprezentare a referințelor asociate cu paginile date.",
+	"apihelp-query+references-example-1": "Referințe asociate cu <kbd>Albert Einstein</kbd>."
+}

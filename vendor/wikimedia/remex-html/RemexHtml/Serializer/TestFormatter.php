@@ -3,7 +3,6 @@
 namespace RemexHtml\Serializer;
 
 use RemexHtml\Tokenizer\Attribute;
-use RemexHtml\Tokenizer\Attributes;
 use RemexHtml\HTMLData;
 use RemexHtml\DOM\DOMFormatter;
 use RemexHtml\DOM\DOMUtils;
@@ -107,6 +106,7 @@ class TestFormatter implements Formatter, DOMFormatter {
 
 		switch ( $node->nodeType ) {
 		case XML_ELEMENT_NODE:
+			/** @var \DOMElement $node */
 			return $this->formatDOMElement( $node, $contents );
 
 		case XML_DOCUMENT_NODE:
@@ -115,12 +115,15 @@ class TestFormatter implements Formatter, DOMFormatter {
 
 		case XML_TEXT_NODE:
 		case XML_CDATA_SECTION_NODE:
+			/** @var \DOMCharacterData $node */
 			return $this->formatCharacters( $node->data );
 
 		case XML_COMMENT_NODE:
+			/** @var \DOMComment $node */
 			return $this->formatComment( $node->data );
 
 		case XML_DOCUMENT_TYPE_NODE:
+			/** @var \DOMDocumentType $node */
 			return $this->doctype( $node->name, $node->publicId, $node->systemId );
 
 		case XML_PI_NODE:

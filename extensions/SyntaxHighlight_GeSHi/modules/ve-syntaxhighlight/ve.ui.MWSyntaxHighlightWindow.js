@@ -53,7 +53,8 @@ ve.ui.MWSyntaxHighlightWindow.prototype.initialize = function () {
 
 	this.startLineNumber = new OO.ui.NumberInputWidget( {
 		min: 0,
-		isInteger: true
+		isInteger: true,
+		showButtons: false
 	} );
 
 	// Events
@@ -145,12 +146,13 @@ ve.ui.MWSyntaxHighlightWindow.prototype.getSetupProcess = function ( data, proce
 		var attrs = this.selectedNode ? this.selectedNode.getAttribute( 'mw' ).attrs : {},
 			language = attrs.lang ? attrs.lang.toLowerCase() : '',
 			showLines = attrs.line !== undefined,
-			startLine = attrs.start;
+			startLine = attrs.start,
+			isReadOnly = this.isReadOnly();
 
-		this.language.setValue( language );
+		this.language.setValue( language ).setReadOnly( isReadOnly );
 
-		this.showLinesCheckbox.setSelected( showLines );
-		this.startLineNumber.setValue( startLine );
+		this.showLinesCheckbox.setSelected( showLines ).setDisabled( isReadOnly );
+		this.startLineNumber.setValue( startLine ).setReadOnly( isReadOnly );
 	}, this );
 };
 

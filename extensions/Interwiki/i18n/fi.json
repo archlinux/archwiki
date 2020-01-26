@@ -37,7 +37,6 @@
 	"interwiki-cached": "Wikienvälinen data on välimuistissa. Välimuistin muuttaminen ei ole mahdollista.",
 	"interwiki_edit": "Muokkaa",
 	"interwiki_reasonfield": "Syy:",
-	"interwiki_delquestion": "Poistetaan ”$1”",
 	"interwiki_deleting": "Olet poistamassa etuliitettä ”$1”.",
 	"interwiki_deleted": "Etuliite ”$1” poistettiin interwiki-taulusta.",
 	"interwiki_delfailed": "Etuliitteen ”$1” poistaminen interwiki-taulusta epäonnistui.",

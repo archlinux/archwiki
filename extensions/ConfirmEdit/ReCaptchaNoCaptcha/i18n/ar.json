@@ -13,6 +13,5 @@
 	"renocaptcha-createaccount-fail": "يبدو أنك لم تحل اختبار كابتشا.",
 	"renocaptcha-create": "لحماية الويكي من إنشاء الصفحة تلقائيًا; نطلب منك حل اختبار كابتشا التالي:",
 	"renocaptcha-noscript": "للأسف، قمت بتعطيل جافاسكريبت; لذا لا يمكننا التعرف تلقائيا، إذا كنت إنسانا أم لا; الرجاء حل اختبار كابتشا أعلاه ونسخ النص الناتج في النص التالي:",
-	"renocaptcha-help": "يُرجَى حل تحدي ReCaptcha NoCaptcha وإرجاع قيمة الاستجابة كـcaptchaWord.",
-	"renocaptcha-apihelp-param-g-recaptcha-response": "حقل من الودجة ReCaptcha"
+	"renocaptcha-help": "يُرجَى حل تحدي ReCaptcha NoCaptcha وإرجاع قيمة الاستجابة كـcaptchaWord."
 }

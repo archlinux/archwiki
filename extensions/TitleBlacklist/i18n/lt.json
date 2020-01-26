@@ -23,6 +23,5 @@
 	"titleblacklist-warning": "<strong>Įspėjimas: Šį puslapį gali redaguoti tik administratoriai ir kiti naudotojai, turinys  <code>tboverride</code> teisę, nes jis atitinka šį pavadinimų juodojo sąrašo įrašą:</strong><br /><code>$1</code>",
 	"right-tboverride": "Nepaisyti pavadinimų arba naudotojų juodojo sąrašo",
 	"right-tboverride-account": "Nepaisyti naudotojų juodojo sąrašo",
-	"right-titleblacklistlog": "Peržiūrėti pavadinimų juodojo sąrašo žurnalą",
-	"visualeditor-saveerror-titleblacklist": "Klaida išsaugant puslapį: Šio puslapio pavadinimas yra juodajame sąraše"
+	"right-titleblacklistlog": "Peržiūrėti pavadinimų juodojo sąrašo žurnalą"
 }

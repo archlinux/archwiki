@@ -5,11 +5,12 @@
 			"LTM3",
 			"Dvorapa",
 			"Mormegil",
-			"Matěj Suchánek"
+			"Matěj Suchánek",
+			"Patriccck"
 		]
 	},
+	"skinname-timeless": "Nadčasový",
 	"timeless-desc": "Nadčasový vzhled navržený podle prototypu Winter, vytvořeného Brandonem Harrisem, a dalších vzhledů vytvořených nadací Wikimedia",
-	"timeless-loggedin": "Váš účet",
 	"timeless-anonymous": "Anonym",
 	"timeless-loggedinas": "{{GENDER:$1|Přihlášen|Přihlášena}} jako '''$1'''",
 	"timeless-notloggedin": "Nepřihlášen(a)",
@@ -20,10 +21,13 @@
 	"timeless-sitetools": "Wiki nástroje",
 	"timeless-pageactions": "Nástroje ke stránkám",
 	"timeless-userpagetools": "Uživatelské nástroje",
+	"timeless-action-addsection": "Nové téma",
+	"timeless-view-view": "Číst",
 	"timeless-pagemisc": "Více",
 	"timeless-namespaces": "Jmenné prostory",
 	"timeless-pagetools": "Možnosti stránky",
 	"timeless-languages": "Jazyky",
-	"timeless.css": "/* Zde uvedené CSS bude ovlivňovat pouze vzhled „Timeless“ */",
-	"timeless.js": "/* Zde uvedený JavaScript bude použit pouze pro uživatele vzhledu „Timeless“ */"
+	"timeless-projects": "Na jiných projektech",
+	"timeless.css": "/* Zde uvedené CSS bude ovlivňovat pouze „Nadčasový“ vzhled */",
+	"timeless.js": "/* Zde uvedený JavaScript bude použit pouze pro uživatele „Nadčasového“ vzhledu */"
 }

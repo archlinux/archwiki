@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"Beta16"
+		]
+	},
+	"apihelp-query+references-description": "Restituisce una rappresentazione dati dei riferimenti associati con le pagine indicate.",
+	"apihelp-query+references-summary": "Restituisce una rappresentazione dati dei riferimenti associati con le pagine indicate.",
+	"apihelp-query+references-example-1": "Riferimenti associati con <kbd>Albert Einstein</kbd>."
+}

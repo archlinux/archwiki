@@ -13,12 +13,11 @@
 			"Darellur",
 			"Macofe",
 			"Railfail536",
-			"CiaPan"
+			"CiaPan",
+			"Rail"
 		]
 	},
 	"multimediaviewer-desc": "Powiększ miniatury ilustracji do wielkości ekranu.",
-	"multimediaviewer-pref": "Przeglądarka multimediów",
-	"multimediaviewer-pref-desc": "Popraw sposób oglądania ilustracji używając tego nowego narzędzia. Wyświetla ono ilustracje w większym rozmiarze bezpośrednio na stronach, które mają miniatury. Ilustracje te wyświetlane są w ładniejszym pełnoekranowym interfejsie, a nawet mogą być oglądane w pełnym rozmiarze.",
 	"multimediaviewer-optin-pref": "Aktywuj <span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About przeglądarkę multimediów]</span>",
 	"multimediaviewer-file-page": "Przejdź na stronę opisu pliku",
 	"multimediaviewer-repository-local": "Więcej szczegółów",
@@ -63,6 +62,7 @@
 	"multimediaviewer-download-small-button-name": "Pobierz w małym rozmiarze",
 	"multimediaviewer-download-medium-button-name": "Pobierz w średnim rozmiarze",
 	"multimediaviewer-download-large-button-name": "Pobierz w dużym rozmiarze",
+	"multimediaviewer-download-xl-button-name": "Pobierz w bardzo dużym rozmiarze",
 	"multimediaviewer-link-to-page": "Link do strony opisu pliku",
 	"multimediaviewer-link-to-file": "Link do oryginalnego pliku",
 	"multimediaviewer-share-explanation": "Skopiuj i swobodnie dziel się linkiem",
@@ -75,6 +75,7 @@
 	"multimediaviewer-embed-via": "Na podstawie $1",
 	"multimediaviewer-default-embed-dimensions": "Domyślny rozmiar miniatury",
 	"multimediaviewer-original-embed-dimensions": "Oryginalny plik $1",
+	"multimediaviewer-xl-embed-dimensions": "Bardzo duży $1",
 	"multimediaviewer-large-embed-dimensions": "Duży rozmiar $1",
 	"multimediaviewer-medium-embed-dimensions": "Średni rozmiar $1",
 	"multimediaviewer-small-embed-dimensions": "Mały rozmiar $1",
@@ -95,6 +96,7 @@
 	"multimediaviewer-download-attribution-cta-header": "Powinieneś oznaczyć autora",
 	"multimediaviewer-download-optional-attribution-cta-header": "Możesz oznaczyć autora",
 	"multimediaviewer-download-attribution-cta": "Pokaż jak",
+	"multimediaviewer-download-attribution-copy": "Zaznacz o skopiuj (jeżeli wspierane) tekst autorstwa tego pliku",
 	"multimediaviewer-reuse-warning-deletion": "Ten plik jest rozważany do usunięcia.",
 	"multimediaviewer-reuse-warning-nonfree": "Ten plik nie posiada wolnej licencji.",
 	"multimediaviewer-reuse-warning-noattribution": "Ten plik nie posiada żadnych informacji dotyczących autorstwa.",

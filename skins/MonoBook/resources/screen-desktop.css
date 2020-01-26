@@ -16,6 +16,10 @@ div#column-content {
 	border-right: 0;
 }
 
+#mw-data-after-content {
+	margin-left: 12.2em;
+}
+
 div#column-one {
 	padding-top: 160px;
 }
@@ -168,13 +172,15 @@ input.searchButton {
 	/* Avoid overlap with the logo. */
 	padding-left: 14em;
 	margin: 0;
-	text-align: right;
+	float: right;
 	list-style-type: none;
 	list-style-image: none;
 	z-index: 0;
 	background: none;
 	cursor: default;
 	text-transform: lowercase;
+	box-sizing: border-box;
+	max-width: 100%;
 }
 
 #p-personal li {

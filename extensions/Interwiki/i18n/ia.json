@@ -27,7 +27,6 @@
 	"interwiki-cached": "Le datos interwiki es in cache. Non es possibile modificar le cache.",
 	"interwiki_edit": "Modificar",
 	"interwiki_reasonfield": "Motivo:",
-	"interwiki_delquestion": "Deletion de \"$1\"",
 	"interwiki_deleting": "Tu sta super le puncto de deler le prefixo \"$1\".",
 	"interwiki_deleted": "Le prefixo \"$1\" ha essite removite del tabella interwiki.",
 	"interwiki_delfailed": "Le prefixo \"$1\" non poteva esser removite del tabella interwiki.",

@@ -757,19 +757,9 @@
 		mw.mmv.attributionLogger.logAttribution( imageData );
 
 		if ( imageData.creationDateTime ) {
-			// Use the raw date until moment can try to interpret it
-			panel.setDateTime( imageData.creationDateTime );
-
-			this.formatDate( imageData.creationDateTime ).then( function ( formattedDate ) {
-				panel.setDateTime( formattedDate, true );
-			} );
+			panel.setDateTime( this.formatDate( imageData.creationDateTime ), true );
 		} else if ( imageData.uploadDateTime ) {
-			// Use the raw date until moment can try to interpret it
-			panel.setDateTime( imageData.uploadDateTime );
-
-			this.formatDate( imageData.uploadDateTime ).then( function ( formattedDate ) {
-				panel.setDateTime( formattedDate );
-			} );
+			panel.setDateTime( this.formatDate( imageData.uploadDateTime ) );
 		}
 
 		this.buttons.set( imageData, repoData );
@@ -814,29 +804,24 @@
 	 * Unrecognized strings are returned unchanged.
 	 *
 	 * @param {string} dateString
-	 * @return {jQuery.Deferred}
+	 * @return {string} formatted date
 	 */
 	MPP.formatDate = function ( dateString ) {
-		var deferred = $.Deferred(),
-			date;
-
-		mw.loader.using( 'moment', function () {
-			/* global moment */
-			date = moment( dateString );
-
-			if ( date.isValid() ) {
-				deferred.resolve( date.format( 'LL' ) );
-			} else {
-				deferred.resolve( dateString );
+		var date,
+			lang = mw.config.get( 'wgUserLanguage' );
+		if ( lang === 'en' ) { lang = 'en-GB'; } // for D MMMM YYYY format
+		date = new Date( dateString );
+		try {
+			if ( date instanceof Date && !isNaN( date ) ) {
+				return date.toLocaleString( lang, {
+					day: 'numeric',
+					month: 'long',
+					year: 'numeric'
+				} );
 			}
-		}, function ( error ) {
-			deferred.reject( error );
-			if ( window.console && window.console.error ) {
-				window.console.error( 'mw.loader.using error when trying to load moment', error );
-			}
-		} );
-
-		return deferred.promise();
+		} catch ( ignore ) {}
+		// fallback to original date string
+		return dateString;
 	};
 
 	/**

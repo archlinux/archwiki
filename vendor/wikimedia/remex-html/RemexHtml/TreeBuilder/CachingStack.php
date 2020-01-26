@@ -50,7 +50,7 @@ class CachingStack extends Stack {
 	 * involves pulling an item out of the AFE list and checking if it is in
 	 * scope.
 	 */
-	static private $predicateMap = [
+	private static $predicateMap = [
 		'a' => self::SCOPE_DEFAULT,
 		'address' => self::SCOPE_DEFAULT,
 		'applet' => self::SCOPE_DEFAULT,
@@ -168,6 +168,10 @@ class CachingStack extends Stack {
 	 * For a given namespace and element name, get the list of scopes
 	 * for which a new scope should be created and the old one needs to
 	 * be pushed onto the scope stack.
+	 *
+	 * @param string $ns
+	 * @param string $name
+	 * @return int[]
 	 */
 	private function getScopeTypesToStack( $ns, $name ) {
 		if ( $ns === HTMLData::NS_HTML ) {
@@ -416,6 +420,8 @@ class CachingStack extends Stack {
 	private function scopeDump( $type, $scopeName ) {
 		if ( count( $this->scopes[$type] ) ) {
 			return "$scopeName: " . implode( ', ', array_keys( $this->scopes[$type] ) ) . "\n";
+		} else {
+			return '';
 		}
 	}
 }

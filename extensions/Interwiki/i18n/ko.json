@@ -36,7 +36,6 @@
 	"interwiki-cached": "인터위키 데이터는 캐시됩니다. 캐시를 수정하는 것은 불가능합니다.",
 	"interwiki_edit": "편집",
 	"interwiki_reasonfield": "이유:",
-	"interwiki_delquestion": "\"$1\" 지우기",
 	"interwiki_deleting": "\"$1\" 접두어를 지웁니다.",
 	"interwiki_deleted": "\"$1\" 접두어가 인터위키 테이블에서 제거되었습니다.",
 	"interwiki_delfailed": "\"$1\" 접두어를 인터위키 테이블에서 제거할 수 없습니다.",

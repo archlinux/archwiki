@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"jdlrobson",
+			"Brad Jorsch"
+		]
+	},
+	"apihelp-query+references-description": "{{doc-apihelp-description|query+references}}",
+	"apihelp-query+references-summary": "{{doc-apihelp-summary|query+references}}",
+	"apihelp-query+references-example-1": "{{doc-apihelp-example|query+references}}",
+	"apierror-citestoragedisabled": "{{doc-apierror}}"
+}

@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Tacsipacsi"
+		]
+	},
+	"apihelp-query+references-description": "A megadott lapokhoz kapcsolódó lábjegyzetek adatreprezentációjának lekérése.",
+	"apihelp-query+references-summary": "A megadott lapokhoz kapcsolódó lábjegyzetek adatreprezentációjának lekérése.",
+	"apihelp-query+references-example-1": "Az <kbd>Albert Einstein</kbd> szócikkhez kapcsolódó lábjegyzetek.",
+	"apierror-citestoragedisabled": "A Cite kiterjesztés lábjegyzettárolása nincs engedélyezve."
+}

@@ -281,20 +281,23 @@ class OOUIHTMLForm extends HTMLForm {
 
 	public function wrapForm( $html ) {
 		if ( is_string( $this->mWrapperLegend ) ) {
-			$content = new OOUI\FieldsetLayout( [
+			$phpClass = $this->mCollapsible ? CollapsibleFieldsetLayout::class : OOUI\FieldsetLayout::class;
+			$content = new $phpClass( [
 				'label' => $this->mWrapperLegend,
+				'collapsed' => $this->mCollapsed,
 				'items' => [
 					new OOUI\Widget( [
 						'content' => new OOUI\HtmlSnippet( $html )
 					] ),
 				],
-			] );
+			] + OOUI\Element::configFromHtmlAttributes( $this->mWrapperAttributes ) );
 		} else {
 			$content = new OOUI\HtmlSnippet( $html );
 		}
 
+		$classes = [ 'mw-htmlform', 'mw-htmlform-ooui' ];
 		$form = new OOUI\FormLayout( $this->getFormAttributes() + [
-			'classes' => [ 'mw-htmlform', 'mw-htmlform-ooui' ],
+			'classes' => $classes,
 			'content' => $content,
 		] );
 

@@ -12,6 +12,5 @@
 	"renocaptcha-createaccount-fail": "Падобна, у вас не атрымалася разьвязаць CAPTCHA.",
 	"renocaptcha-create": "Для абароны вікі ад аўтаматычнага стварэньня старонак, мы просім вас разьвязаць наступную CAPTCHA:",
 	"renocaptcha-noscript": "На жаль, вы адключылі JavaScript, таму мы ня можам аўтаматычна вызначыць, ці чалавек вы. Калі ласка, разьвяжыце CAPTCHA вышэй і скапіюйце тэкст у наступнае поле:",
-	"renocaptcha-help": "Калі ласка, разьвяжыце заданьне ReCaptcha NoCaptcha і ўвядзіце значэньне ў адказ як captchaWord.",
-	"renocaptcha-apihelp-param-g-recaptcha-response": "Поле зь віджэту ReCaptcha."
+	"renocaptcha-help": "Калі ласка, разьвяжыце заданьне ReCaptcha NoCaptcha і ўвядзіце значэньне ў адказ як captchaWord."
 }

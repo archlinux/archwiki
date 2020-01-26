@@ -136,6 +136,7 @@
 	"wikieditor-toolbar-tool-replace-success": "$1번 {{PLURAL:$1|바꿨습니다}}.",
 	"wikieditor-toolbar-tool-replace-emptysearch": "찾을 문자열을 입력하지 않았습니다.",
 	"wikieditor-toolbar-tool-replace-invalidregex": "입력한 정규 표현식이 잘못되었습니다: $1",
+	"wikieditor-toolbar-tool-replace-word": "모든 단어 일치",
 	"wikieditor-toolbar-section-characters": "특수 문자",
 	"wikieditor-toolbar-section-help": "도움말",
 	"wikieditor-toolbar-help-heading-description": "설명",

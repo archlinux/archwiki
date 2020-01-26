@@ -30,6 +30,10 @@ class ReplaceTextHooks {
 	 */
 	public static function addToAdminLinks( ALTree &$adminLinksTree ) {
 		$generalSection = $adminLinksTree->getSection( wfMessage( 'adminlinks_general' )->text() );
+
+		if ( !$generalSection ) {
+			return true;
+		}
 		$extensionsRow = $generalSection->getRow( 'extensions' );
 
 		if ( is_null( $extensionsRow ) ) {

@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"Bellatrix10"
+		]
+	},
+	"fancycaptcha-captcha": "Sigurnosna provjera",
+	"fancycaptcha-imgcaptcha-ph": "Ukucajte tekst koji vidite na slici",
+	"fancycaptcha-reload-text": "Osvježi"
+}

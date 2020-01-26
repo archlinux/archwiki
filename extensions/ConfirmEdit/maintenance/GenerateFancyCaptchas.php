@@ -52,7 +52,7 @@ class GenerateFancyCaptchas extends Maintenance {
 		$this->addOption( "delete", "Delete the old captches" );
 		$this->addOption( "threads", "The number of threads to use to generate the images",
 			false, true );
-		$this->mDescription = "Generate new fancy captchas and move them into storage";
+		$this->addDescription( "Generate new fancy captchas and move them into storage" );
 
 		$this->requireExtension( "FancyCaptcha" );
 	}

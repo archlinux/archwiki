@@ -85,7 +85,7 @@
 	/**
 	 * Returns a viewer object with all the appropriate placeholder functions.
 	 *
-	 * @return {mv.mmv.MultiMediaViewer} [description]
+	 * @return {mw.mmv.MultimediaViewer}
 	 */
 	MTH.getMultimediaViewer = function () {
 		return new mw.mmv.MultimediaViewer( {

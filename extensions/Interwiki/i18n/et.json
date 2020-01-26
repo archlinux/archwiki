@@ -29,7 +29,6 @@
 	"interwiki-cached": "Intervikiandmed on puhvris. Puhvris olevate andmete muutmine pole võimalik.",
 	"interwiki_edit": "Muutmine",
 	"interwiki_reasonfield": "Põhjus:",
-	"interwiki_delquestion": "Eesliite \"$1\" kustutamine",
 	"interwiki_deleting": "Kustutad eesliidet \"$1\".",
 	"interwiki_deleted": "Eesliide \"$1\" eemaldati intervikitabelist.",
 	"interwiki_delfailed": "Eesliidet \"$1\" ei saa intervikitabelist eemaldada.",

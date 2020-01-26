@@ -9,6 +9,7 @@
 	"spam-blacklisted-email": "Blacklisted email address",
 	"spam-blacklisted-email-text": "Your email address is currently blacklisted from sending emails to other users.",
 	"spam-blacklisted-email-signup": "The given email address is currently blacklisted from use.",
+	"spam-blacklisted-link": "{{int:spamprotectiontext}}\n{{int:spamprotectionmatch|$1}}",
 	"spam-invalid-lines": "The following spam blacklist {{PLURAL:$1|line is an|lines are}} invalid regular {{PLURAL:$1|expression|expressions}} and {{PLURAL:$1|needs|need}} to be corrected before saving the page:",
 	"spam-blacklist-desc": "Regex-based anti-spam tool allowing to blacklist URLs in pages and email addresses for registered users",
 	"log-name-spamblacklist": "Spam blacklist log",

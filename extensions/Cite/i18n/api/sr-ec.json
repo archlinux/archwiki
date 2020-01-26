@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"BadDog"
+		]
+	},
+	"apihelp-query+references-example-1": "Референца је повезана с <kbd>Albert Einstein</kbd>.",
+	"apierror-citestoragedisabled": "Складиште за референце додатка Cite није омогућено."
+}

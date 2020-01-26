@@ -4,7 +4,6 @@
 			"Robby"
 		]
 	},
-	"multimediaviewer-pref": "Media Viewer",
 	"multimediaviewer-optin-pref": "De <span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About Media Viewer]</span> aktivéieren",
 	"multimediaviewer-repository-local": "Méi Detailer",
 	"multimediaviewer-datetime-uploaded": "Eropgelueden: $1",
@@ -60,6 +59,7 @@
 	"multimediaviewer-embed-license": "Lizenzéiert ënner $1.",
 	"multimediaviewer-embed-via": "Iwwer $1.",
 	"multimediaviewer-original-embed-dimensions": "Originalfichier $1",
+	"multimediaviewer-xl-embed-dimensions": "Extra breet $1",
 	"multimediaviewer-large-embed-dimensions": "Grouss $1",
 	"multimediaviewer-medium-embed-dimensions": "Mëttel $1",
 	"multimediaviewer-small-embed-dimensions": "Kleng $1",

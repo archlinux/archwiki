@@ -21,7 +21,8 @@ class SpecialInterwiki extends SpecialPage {
 	/**
 	 * Different description will be shown on Special:SpecialPage depending on
 	 * whether the user can modify the data.
-	 * @return String
+	 *
+	 * @return string
 	 */
 	public function getDescription() {
 		return $this->msg( $this->canModify() ?
@@ -49,7 +50,6 @@ class SpecialInterwiki extends SpecialPage {
 
 		$action = $par ?: $request->getVal( 'action', $par );
 
-		$action = $par ?: $request->getVal( 'action', $par );
 		if ( !in_array( $action, [ 'add', 'edit', 'delete' ] ) || !$this->canModify( $out ) ) {
 			$this->showList();
 		} else {
@@ -169,13 +169,7 @@ class SpecialInterwiki extends SpecialPage {
 			'default' => $prefix,
 		];
 
-		if ( $action === 'delete' ) {
-			$topmessage = $this->msg( 'interwiki_delquestion', $prefix )->text();
-			$intromessage = $this->msg( 'interwiki_deleting', $prefix )->escaped();
-			$wpPrefix = Html::hidden( 'wpInterwikiPrefix', $prefix );
-			$button = 'delete';
-			$formContent = '';
-		} elseif ( $action === 'edit' ) {
+		if ( $action === 'edit' ) {
 			$dbr = wfGetDB( DB_REPLICA );
 			$row = $dbr->selectRow( 'interwiki', '*', [ 'iw_prefix' => $prefix ], __METHOD__ );
 
@@ -220,7 +214,7 @@ class SpecialInterwiki extends SpecialPage {
 	}
 
 	public function onSubmit( array $data ) {
-		global $wgContLang;
+		global $wgInterwikiCentralInterlanguageDB;
 
 		$status = Status::newGood();
 		$request = $this->getRequest();
@@ -234,6 +228,15 @@ class SpecialInterwiki extends SpecialPage {
 		$validPrefixChars = preg_replace( '/[ :&=]/', '', $wgLegalTitleChars );
 		if ( $do === 'add' && preg_match( "/\s|[^$validPrefixChars]/", $prefix ) ) {
 			$status->fatal( 'interwiki-badprefix', htmlspecialchars( $prefix ) );
+			return $status;
+		}
+		// Disallow adding local interlanguage definitions if using global
+		if (
+			$do === 'add' && Language::fetchLanguageName( $prefix )
+			&& $wgInterwikiCentralInterlanguageDB !== wfWikiID()
+			&& $wgInterwikiCentralInterlanguageDB !== null
+		) {
+			$status->fatal( 'interwiki-cannotaddlocallanguage', htmlspecialchars( $prefix ) );
 			return $status;
 		}
 		$reason = $data['reason'];
@@ -255,7 +258,8 @@ class SpecialInterwiki extends SpecialPage {
 			break;
 		/** @noinspection PhpMissingBreakStatementInspection */
 		case 'add':
-			$prefix = $wgContLang->lc( $prefix );
+			$contLang = MediaWikiServices::getInstance()->getContentLanguage();
+			$prefix = $contLang->lc( $prefix );
 		case 'edit':
 			$theurl = $data['url'];
 			$local = $data['local'] ? 1 : 0;
@@ -302,13 +306,15 @@ class SpecialInterwiki extends SpecialPage {
 	}
 
 	protected function showList() {
-		global $wgInterwikiCentralDB, $wgInterwikiViewOnly;
+		global $wgInterwikiCentralDB, $wgInterwikiCentralInterlanguageDB, $wgInterwikiViewOnly;
+
 		$canModify = $this->canModify();
 
 		// Build lists
 		$lookup = MediaWikiServices::getInstance()->getInterwikiLookup();
 		$iwPrefixes = $lookup->getAllPrefixes( null );
 		$iwGlobalPrefixes = [];
+		$iwGlobalLanguagePrefixes = [];
 		if ( $wgInterwikiCentralDB !== null && $wgInterwikiCentralDB !== wfWikiID() ) {
 			// Fetch list from global table
 			$dbrCentralDB = wfGetDB( DB_REPLICA, [], $wgInterwikiCentralDB );
@@ -323,6 +329,27 @@ class SpecialInterwiki extends SpecialPage {
 			$iwGlobalPrefixes = $retval;
 		}
 
+		// Almost the same loop as above, but for global inter*language* links, whereas the above is for
+		// global inter*wiki* links
+		$usingGlobalInterlangLinks = ( $wgInterwikiCentralInterlanguageDB !== null );
+		$isGlobalInterlanguageDB = ( $wgInterwikiCentralInterlanguageDB === wfWikiID() );
+		$usingGlobalLanguages = $usingGlobalInterlangLinks && !$isGlobalInterlanguageDB;
+		if ( $usingGlobalLanguages ) {
+			// Fetch list from global table
+			$dbrCentralLangDB = wfGetDB( DB_REPLICA, [], $wgInterwikiCentralInterlanguageDB );
+			$res = $dbrCentralLangDB->select( 'interwiki', '*', false, __METHOD__ );
+			$retval2 = [];
+			foreach ( $res as $row ) {
+				$row = (array)$row;
+				// Note that the above DB query explicitly *excludes* interlang ones
+				// (which makes sense), whereas here we _only_ care about interlang ones!
+				if ( Language::fetchLanguageName( $row['iw_prefix'] ) ) {
+					$retval2[] = $row;
+				}
+			}
+			$iwGlobalLanguagePrefixes = $retval2;
+		}
+
 		// Split out language links
 		$iwLocalPrefixes = [];
 		$iwLanguagePrefixes = [];
@@ -332,6 +359,13 @@ class SpecialInterwiki extends SpecialPage {
 			} else {
 				$iwLocalPrefixes[] = $iwPrefix;
 			}
+		}
+
+		// If using global interlanguage links, just ditch the data coming from the
+		// local table and overwrite it with the global data
+		if ( $usingGlobalInterlangLinks ) {
+			unset( $iwLanguagePrefixes );
+			$iwLanguagePrefixes = $iwGlobalLanguagePrefixes;
 		}
 
 		// Page intro content
@@ -349,10 +383,19 @@ class SpecialInterwiki extends SpecialPage {
 		// Add 'add' link
 		if ( $canModify ) {
 			if ( count( $iwGlobalPrefixes ) !== 0 ) {
-				$addtext = $this->msg( 'interwiki-addtext-local' )->text();
+				if ( $usingGlobalLanguages ) {
+					$addtext = 'interwiki-addtext-local-nolang';
+				} else {
+					$addtext = 'interwiki-addtext-local';
+				}
 			} else {
-				$addtext = $this->msg( 'interwiki_addtext' )->text();
+				if ( $usingGlobalLanguages ) {
+					$addtext = 'interwiki-addtext-nolang';
+				} else {
+					$addtext = 'interwiki_addtext';
+				}
 			}
+			$addtext = $this->msg( $addtext )->text();
 			$addlink = $this->getLinkRenderer()->makeKnownLink(
 				$this->getPageTitle( 'add' ), $addtext );
 			$this->getOutput()->addHTML(
@@ -404,13 +447,24 @@ class SpecialInterwiki extends SpecialPage {
 
 		// Add the language table
 		if ( count( $iwLanguagePrefixes ) !== 0 ) {
+			if ( $usingGlobalLanguages ) {
+				$header = 'interwiki-global-language-links';
+				$description = 'interwiki-global-language-description';
+			} else {
+				$header = 'interwiki-language-links';
+				$description = 'interwiki-language-description';
+			}
+
 			$this->getOutput()->addHTML(
 				'<h2 id="interwikitable-language">' .
-				$this->msg( 'interwiki-language-links' )->parse() .
+				$this->msg( $header )->parse() .
 				'</h2>'
 			);
-			$this->getOutput()->addWikiMsg( 'interwiki-language-description' );
+			$this->getOutput()->addWikiMsg( $description );
 
+			// When using global interlanguage links, don't allow them to be modified
+			// except on the source wiki
+			$canModify = ( $usingGlobalLanguages ? false : $canModify );
 			$this->makeTable( $canModify, $iwLanguagePrefixes );
 		}
 	}
@@ -482,7 +536,7 @@ class SpecialInterwiki extends SpecialPage {
 						[],
 						[ 'action' => 'edit', 'prefix' => $iwPrefix['iw_prefix'] ]
 					) .
-					$this->msg( 'comma-separator' ) .
+					$this->msg( 'comma-separator' )->escaped() .
 					$this->getLinkRenderer()->makeKnownLink(
 						$selfTitle,
 						$this->msg( 'delete' )->text(),
@@ -497,6 +551,8 @@ class SpecialInterwiki extends SpecialPage {
 			Html::closeElement( 'table' );
 
 		$this->getOutput()->addHTML( $out );
+		$this->getOutput()->addModuleStyles( 'jquery.tablesorter.styles' );
+		$this->getOutput()->addModules( 'jquery.tablesorter' );
 	}
 
 	/**

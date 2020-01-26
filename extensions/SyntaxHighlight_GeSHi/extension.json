@@ -14,7 +14,10 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.32"
+		"MediaWiki": ">= 1.33",
+		"platform": {
+			"ability-shell": true
+		}
 	},
 	"MessagesDirs": {
 		"SyntaxHighlight_GeSHi": [

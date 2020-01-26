@@ -213,32 +213,6 @@
 	};
 
 	/**
-	 * Makes the entire input/textarea selected when focused.
-	 * Invoked with that input/textarea as context.
-	 */
-	EP.selectAllOnEvent = function () {
-		try {
-			this.select();
-		} catch ( e ) {
-			// IE doesn't like when select() is called during the onfocus handler
-		}
-	};
-
-	/**
-	 * Reduces the action of clicks to solely focusing the input/textarea.
-	 * Essentialy disables clicking inside the text to select a portion of it.
-	 * Invoked with that input/textarea as context.
-	 *
-	 * @param {jQuery.Event} e
-	 * @return {boolean} False to prevent default event
-	 */
-	EP.onlyFocus = function ( e ) {
-		this.focus();
-		e.preventDefault();
-		return false;
-	};
-
-	/**
 	 * Flips E (east) and W (west) directions in RTL documents.
 	 *
 	 * @param {string} keyword a keyword where the first 'e' or 'w' character means a direction (such as a

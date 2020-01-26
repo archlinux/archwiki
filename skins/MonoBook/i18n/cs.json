@@ -5,13 +5,14 @@
 			"Li-sung",
 			"Mormegil",
 			"Matěj Suchánek",
-			"Dvorapa"
+			"Dvorapa",
+			"Patriccck"
 		]
 	},
-	"skinname-monobook": "MonoBook",
+	"skinname-monobook": "Kniha",
 	"monobook-desc": "Klasický vzhled MediaWiki od roku 2004, pojmenovaný po černobílé fotografii knihy v pozadí stránky",
-	"monobook.css": "/* Zde uvedené CSS bude ovlivňovat pouze vzhled „MonoBook“ */",
-	"monobook.js": "/* Zde uvedený JavaScript bude použit pouze pro uživatele vzhledu „MonoBook“ */",
+	"monobook.css": "/* Zde uvedené CSS bude ovlivňovat pouze vzhled „Kniha“ */",
+	"monobook.js": "/* Zde uvedený JavaScript bude použit pouze pro uživatele vzhledu „Kniha“ */",
 	"monobook-jumptotop": "zpět na začátek",
 	"monobook-jumptopersonal": "uživatelské nástroje",
 	"monobook-jumptonavigation": "Skočit na navigaci",
@@ -20,5 +21,5 @@
 	"monobook-cactions-label": "Možnosti stránky",
 	"monobook-notifications-link": "Upozornění ($1)",
 	"monobook-notifications-link-none": "Upozornění",
-	"monobook-responsive-label": "Zapnout responsivní design MonoBooku"
+	"monobook-responsive-label": "Zapnout responsivní design Kniha"
 }

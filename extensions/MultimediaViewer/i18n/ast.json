@@ -5,8 +5,6 @@
 		]
 	},
 	"multimediaviewer-desc": "Espande les miniatures a mayor tamañu nuna interfaz a pantalla completa.",
-	"multimediaviewer-pref": "Visor de medios",
-	"multimediaviewer-pref-desc": "Ameyore la esperiencia al ver multimedia con esta nueva ferramienta. Amuesa les imaxes a mayor tamañu nes páxines que tienen miniatures. Les imaxes vense nuna guapa capa a pantalla completa, y puen vese tamién a tamañu completu.",
 	"multimediaviewer-optin-pref": "Activar el <span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About visor de multimedia]</span>",
 	"multimediaviewer-file-page": "Dir a la páxina del ficheru correspondiente",
 	"multimediaviewer-repository-local": "Más detalles",

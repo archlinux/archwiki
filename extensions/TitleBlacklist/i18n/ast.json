@@ -22,6 +22,5 @@
 	"titleblacklist-warning": "<strong>Atención: Esta páxina sólo puen editala alministradores y otros usuarios col permisu <code>tboverride</code> porque casa cola siguiente entrada de la llista prieta de títulos:</strong><br /><code>$1</code>",
 	"right-tboverride": "Sobrescribir la llista prieta de títulos o nomes d'usuariu",
 	"right-tboverride-account": "Saltar la llista prieta d'usuarios",
-	"right-titleblacklistlog": "Ver el rexistru de llista prieta de títulos",
-	"visualeditor-saveerror-titleblacklist": "Error al guardar la páxina: El títulu d'esta páxina ta na llista prieta"
+	"right-titleblacklistlog": "Ver el rexistru de llista prieta de títulos"
 }

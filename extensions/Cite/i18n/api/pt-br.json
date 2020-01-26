@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Felipe L. Ewald"
+		]
+	},
+	"apihelp-query+references-description": "Retornar uma representação de dados de referências associadas às páginas fornecidas.",
+	"apihelp-query+references-summary": "Retornar uma representação de dados de referências associadas às páginas fornecidas.",
+	"apihelp-query+references-example-1": "Referências associadas a <kbd>Albert Einstein</kbd>.",
+	"apierror-citestoragedisabled": "O armazenamento de referência da extensão Cite não está habilitado."
+}

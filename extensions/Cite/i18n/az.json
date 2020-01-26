@@ -3,10 +3,14 @@
 		"authors": [
 			"Vago",
 			"Wertuose",
-			"Serkanland"
+			"Serkanland",
+			"Toghrul Rahimli",
+			"Neriman2003"
 		]
 	},
 	"cite_error": "Sitat səhvi: $1",
+	"cite_error_references_duplicate_key": "Xətalı <code>&lt;ref&gt;</code> etiketi; \"$1\" adı bir neçə dəfə müxtəlif məzmunla verilib",
+	"cite_error_references_missing_key": "<references> daxilindəki \"$1\" adlı <ref> teqi əvvəlki mətndə istifadə olunmur",
 	"cite-tracking-category-cite-error": "İstinad xətası olan səhifələr",
 	"cite_section_preview_references": "İstinadların sınaq göstərişi"
 }

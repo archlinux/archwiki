@@ -112,6 +112,8 @@
 	MPSP.freezeHeight = function () {
 		var scrollTop, scrollTopWhenOpen;
 
+		// TODO: Store visibility in model
+		// eslint-disable-next-line no-jquery/no-sizzle
 		if ( !this.$container.is( ':visible' ) ) {
 			return;
 		}
@@ -124,6 +126,8 @@
 	};
 
 	MPSP.unfreezeHeight = function () {
+		// TODO: Store visibility in model
+		// eslint-disable-next-line no-jquery/no-sizzle
 		if ( !this.$container.is( ':visible' ) ) {
 			return;
 		}

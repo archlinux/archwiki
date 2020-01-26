@@ -125,6 +125,7 @@
 	"wikieditor-toolbar-tool-replace-success": "{{PLURAL:$1|Направена е $1 замена.|Направени се $1 замени.}}",
 	"wikieditor-toolbar-tool-replace-emptysearch": "Не внесовте зборови за пребарување.",
 	"wikieditor-toolbar-tool-replace-invalidregex": "Регуларниот израз кој го внесовте е неважечки: $1",
+	"wikieditor-toolbar-tool-replace-word": "Целиот збор",
 	"wikieditor-toolbar-section-characters": "Посебни знаци",
 	"wikieditor-toolbar-section-help": "Помош",
 	"wikieditor-toolbar-help-heading-description": "Опис",

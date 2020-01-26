@@ -17,8 +17,7 @@ class SpecialGadgets extends SpecialPage {
 	}
 
 	/**
-	 * Main execution function
-	 * @param string $par Parameters passed to the page
+	 * @param string|null $par Parameters passed to the page
 	 */
 	public function execute( $par ) {
 		$parts = explode( '/', $par );
@@ -40,6 +39,7 @@ class SpecialGadgets extends SpecialPage {
 	public function showMainForm() {
 		$output = $this->getOutput();
 		$this->setHeaders();
+		$this->addHelpLink( 'Extension:Gadgets' );
 		$output->setPageTitle( $this->msg( 'gadgets-title' ) );
 		$output->addWikiMsg( 'gadgets-pagetext' );
 
@@ -228,6 +228,7 @@ class SpecialGadgets extends SpecialPage {
 	public function showExportForm( $gadget ) {
 		global $wgScript;
 
+		$this->addHelpLink( 'Extension:Gadgets' );
 		$output = $this->getOutput();
 		try {
 			$g = GadgetRepo::singleton()->getGadget( $gadget );

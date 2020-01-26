@@ -5,6 +5,7 @@
 			{
 				"name": "Base",
 				"classes": [
+					"mw.mmv",
 					"mw.mmv.Config",
 					"mw.mmv.EmbedFileFormatter",
 					"mw.mmv.HtmlUtils",
@@ -31,12 +32,6 @@
 				"name": "Providers",
 				"classes": [
 					"mw.mmv.provider.*"
-				]
-			},
-			{
-				"name": "Routers",
-				"classes": [
-					"mw.mmv.routing.*"
 				]
 			},
 			{
@@ -75,6 +70,12 @@
 				]
 			},
 			{
+				"name": "OOjs Router",
+				"classes": [
+					"OO.Router"
+				]
+			},
+			{
 				"name": "OOUI",
 				"classes": [
 					"OO.ui.*"
@@ -89,7 +90,8 @@
 					"mw.Map",
 					"mw.storage",
 					"mw.SafeStorage",
-					"mw.eventLog"
+					"mw.eventLog",
+					"mw.widgets.CopyTextLayout"
 				]
 			},
 			{

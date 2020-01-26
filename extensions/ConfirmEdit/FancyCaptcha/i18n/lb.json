@@ -13,7 +13,5 @@
 	"fancycaptcha-edit": "Fir dës Säit z'änneren, gitt w.e.g. déi Wierder an, déi an der Këscht ënnendrënner stinn ([[Special:Captcha/help|méi Informatiounen]]):",
 	"fancycaptcha-imgcaptcha-ph": "Gitt den Text an deen Dir um Bild gesitt",
 	"fancycaptcha-sendemail": "Fir eis géint automatescht Spammen ze schützen, froe mir Iech fir d'Wierder déi an der Këscht ënnendrënner stinn anzeginn ([[Special:Captcha/help|méi Informatiounen]]):",
-	"fancycaptcha-reload-text": "Aktualiséieren",
-	"apihelp-fancycaptchareload-description": "En neie FancyCaptcha kréien,",
-	"apihelp-fancycaptchareload-example-1": "En neie FancyCaptcha kréien"
+	"fancycaptcha-reload-text": "Aktualiséieren"
 }

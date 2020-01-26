@@ -14,7 +14,8 @@
 			"Warrakkk",
 			"WikiPhoenix",
 			"Macofe",
-			"Magol"
+			"Magol",
+			"Mjälten"
 		]
 	},
 	"wikieditor": "Avancerat gränssnitt för redigering av wikitext",
@@ -24,6 +25,7 @@
 	"wikieditor-toolbar": "Redigeringsverktygsrad",
 	"wikieditor-toolbar-desc": "Redigeringsverktygsrad med utökad användbarhet",
 	"wikieditor-toolbar-preference": "Aktivera redigeringsverktygsraden",
+	"wikieditor-toolbar-preference-help": "Detta kallas av och till för \"#2010-redigering programmet för wikikode\".",
 	"wikieditor-toolbar-loading": "Laddar...",
 	"wikieditor-toolbar-tool-bold": "Fet",
 	"wikieditor-toolbar-tool-bold-example": "Fet text",
@@ -136,6 +138,7 @@
 	"wikieditor-toolbar-tool-replace-success": "$1 {{PLURAL:$1|ersättning|ersättningar}} gjordes.",
 	"wikieditor-toolbar-tool-replace-emptysearch": "Du matade inte in något att söka efter.",
 	"wikieditor-toolbar-tool-replace-invalidregex": "Det reguljära uttryck du angav är ogiltigt: $1",
+	"wikieditor-toolbar-tool-replace-word": "Match #hel ord",
 	"wikieditor-toolbar-section-characters": "Specialtecken",
 	"wikieditor-toolbar-section-help": "Hjälp",
 	"wikieditor-toolbar-help-heading-description": "Beskrivning",

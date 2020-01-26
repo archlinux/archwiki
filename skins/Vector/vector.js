@@ -1,17 +1,19 @@
 /**
- * Vector-specific scripts
+ * Collapsible tabs for Vector
  */
 /* eslint-disable no-jquery/no-global-selector */
 $( function () {
 
-	/**
-	 * Collapsible tabs
-	 */
 	var $cactions = $( '#p-cactions' ),
 		$tabContainer = $( '#p-views ul' ),
-		rAF = window.requestAnimationFrame || setTimeout,
-		// Avoid forced style calculation during page load
 		initialCactionsWidth = function () {
+			// HACK: This depends on a discouraged feature of jQuery width().
+			// The #p-cactions element is generally hidden by default, but
+			// the consumers of this function need to know the width that the
+			// "More" menu would consume if it were visible. This means it
+			// must not return 0 if hidden, but rather virtually render it
+			// and compute its width, then hide it again. jQuery width() does
+			// all that for us.
 			var width = $cactions.width();
 			initialCactionsWidth = function () {
 				return width;
@@ -19,24 +21,23 @@ $( function () {
 			return width;
 		};
 
-	rAF( initialCactionsWidth );
-
-	/**
-	 * Focus search input at the very end
-	 */
-	$( '#searchInput' ).attr( 'tabindex', $( document ).lastTabIndex() + 1 );
-
 	// Bind callback functions to animate our drop down menu in and out
 	// and then call the collapsibleTabs function on the menu
 	$tabContainer
 		.on( 'beforeTabCollapse', function () {
+			var expandedWidth;
 			// If the dropdown was hidden, show it
 			if ( $cactions.hasClass( 'emptyPortlet' ) ) {
 				$cactions.removeClass( 'emptyPortlet' );
+				// Now that it is visible, force-render it virtually
+				// to get its expanded width, then shrink it 1px before we
+				// yield from JS (which means the expansion won't be visible).
+				// Then animate from the 1px to the expanded width.
+				expandedWidth = $cactions.width();
 				// eslint-disable-next-line no-jquery/no-animate
 				$cactions.find( 'h3' )
 					.css( 'width', '1px' )
-					.animate( { width: initialCactionsWidth() }, 'normal' );
+					.animate( { width: expandedWidth }, 'normal' );
 			}
 		} )
 		.on( 'beforeTabExpand', function () {
@@ -69,7 +70,8 @@ $( function () {
 				}
 			},
 			collapseCondition: function () {
-				var collapsibleWidth = 0;
+				var collapsibleWidth = 0,
+					doCollapse = false;
 
 				// This looks a bit awkward because we're doing expensive queries as late
 				// as possible.
@@ -86,12 +88,26 @@ $( function () {
 					return true;
 				}
 
+				// If we reach here, this means:
+				// 1. #p-cactions is currently empty and invisible (e.g. when logged out),
+				// 2. and, there is at least one li.collapsible link in #p-views, as asserted
+				//    by handleResize() before calling here. Such link exists e.g. as
+				//    "View history" on articles, but generally not on special pages.
+				// 3. and, the left-navigation and right-navigation are overlapping
+				//    each other, e.g. when making the window very narrow, or if a gadget
+				//    added a lot of tabs.
 				$tabContainer.children( 'li.collapsible' ).each( function ( index, element ) {
 					collapsibleWidth += $( element ).width();
-					// Stop this possibly expensive loop the moment the condition is met.
-					return !( collapsibleWidth > initialCactionsWidth() );
+					if ( collapsibleWidth > initialCactionsWidth() ) {
+						// We've found one or more collapsible links that are wider
+						// than the "More" menu would be if it were made visible,
+						// which means it is worth doing a collapsing.
+						doCollapse = true;
+						// Stop this possibly expensive loop the moment the condition is met once.
+						return false;
+					}
 				} );
-				return collapsibleWidth > initialCactionsWidth();
+				return doCollapse;
 			}
 		} );
 } );

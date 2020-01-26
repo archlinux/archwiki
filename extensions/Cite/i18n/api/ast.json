@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Xuacu"
+		]
+	},
+	"apihelp-query+references-description": "Devolver una representación de datos de les referencies asociaes coles páxines indicaes.",
+	"apihelp-query+references-summary": "Devolver una representación de datos de les referencies asociaes coles páxines indicaes.",
+	"apihelp-query+references-example-1": "Referencies asociaes con <kbd>Albert Einstein</kbd>.",
+	"apierror-citestoragedisabled": "L'almacenamientu de referencies de la estensión Cite nun ta activáu."
+}

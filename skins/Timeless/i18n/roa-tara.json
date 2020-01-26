@@ -5,7 +5,6 @@
 		]
 	},
 	"timeless-desc": "'Nu skin senze tiembe proggettate apprisse 'u prototipe Winter da Brandon Harris e diverse stile d'a Wikimedia Foundation",
-	"timeless-loggedin": "'U cunde tune",
 	"timeless-anonymous": "Anonime",
 	"timeless-loggedinas": "Trasute cumme \"$1\"",
 	"timeless-notloggedin": "Non ge sì collegate",
@@ -16,9 +15,12 @@
 	"timeless-sitetools": "Struminde de uicchi",
 	"timeless-pageactions": "Pàgene de le struminde",
 	"timeless-userpagetools": "Struminde d'a pàgene utende",
+	"timeless-action-addsection": "Argomende nuève",
+	"timeless-view-view": "Ligge",
 	"timeless-pagemisc": "De cchiù",
 	"timeless-namespaces": "Namespace",
 	"timeless-pagetools": "Aziune sus 'a pàgene",
 	"timeless-languages": "Lènghe",
+	"timeless-projects": "Otre pruggette",
 	"timeless.js": "/* Ogne JavaScript aqquà avène carecate pe le utinde ca ausane 'a masckere Timeless */"
 }

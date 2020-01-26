@@ -21,6 +21,5 @@
 	"titleblacklist-override": "Zanemari crnu listu",
 	"right-tboverride": "Zaobilaženje spiska zabranjenih naslova ili korisničkih imena",
 	"right-tboverride-account": "Zaobilaženje spiska zabranjenih korisničkih imena",
-	"right-titleblacklistlog": "Pregledanje zapisnika crne liste naslova",
-	"visualeditor-saveerror-titleblacklist": "Ne mogu sačuvati stranicu: Naslov se nalazi na crnoj listi"
+	"right-titleblacklistlog": "Pregledanje zapisnika crne liste naslova"
 }

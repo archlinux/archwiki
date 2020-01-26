@@ -4,7 +4,8 @@
 			"Kghbln",
 			"Metalhead64",
 			"Sushi",
-			"Hwboehm"
+			"Hwboehm",
+			"Luke081515"
 		]
 	},
 	"oathauth-desc": "Ermöglicht die Authentifizierung mit HMAC-gestützten Einmalpasswörtern",
@@ -30,8 +31,12 @@
 	"oathauth-entertoken": "Gib zur Verifizierung einen Code von deinem Authentifizierungsgerät ein:",
 	"oathauth-disable-for-user": "Zwei-Faktor-Authentifizierung für einen Benutzer deaktivieren",
 	"right-oathauth-disable-for-user": "Zwei-Faktor-Authentifizierung für einen Benutzer deaktivieren",
+	"action-oathauth-disable-for-user": "die Zwei-Faktor-Authentifizierung für einen Benutzer zu deaktivieren",
+	"right-oathauth-view-log": "Auf das Logbuch der Änderungen zur Zwei-Faktor-Authentifizierung zugreifen",
+	"action-oathauth-view-log": "auf das Logbuch der Änderungen zur Zwei-Faktor-Authentifizierung zuzugreifen",
 	"oathauth-disable-intro": "Mit großer Macht kommt auch große Verantwortung",
 	"oathauth-enteruser": "Benutzername:",
+	"oathauth-enterreason": "Grund für die Deaktivierung:",
 	"oathauth-user-not-does-not-have-oath-enabled": "Der Benutzer hat die Zwei-Faktor-Authentifizierung nicht aktiviert. Es kann deshalb nichts deaktiviert werden.",
 	"right-oathauth-enable": "Zwei-Faktor-Authentifizierung aktivieren",
 	"action-oathauth-enable": "die Zwei-Faktor-Authentifizierung zu aktivieren",
@@ -46,15 +51,9 @@
 	"right-oathauth-api-all": "Zwei-Faktor-Authentifizierungsinformationen für sich selbst und andere abfragen und validieren",
 	"action-oathauth-api-all": "den Zwei-Faktor-Authentifizierungsstatus zu überprüfen",
 	"oathauth-user-not-found": "Mit diesem Namen wurde kein Benutzerkonto gefunden",
-	"apihelp-query+oath-description": "Überprüft, ob für einen Benutzer die Zwei-Faktor-Authentifizierung (OATH) aktiviert ist.",
-	"apihelp-query+oath-summary": "Überprüft, ob für einen Benutzer die Zwei-Faktor-Authentifizierung (OATH) aktiviert ist.",
-	"apihelp-query+oath-param-user": "Benutzer, über den Informationen erhalten werden soll. Standardmäßig ist der aktuelle Benutzer voreingestellt.",
-	"apihelp-query+oath-example-1": "Ruft Informationen über den aktuellen Benutzer ab",
-	"apihelp-query+oath-example-2": "Ruft Informationen über den Benutzer <kbd>Beispiel</kbd> ab",
-	"apihelp-oathvalidate-description": "Validiert einen Token der Zwei-Faktor-Authentifizierung (OATH).",
-	"apihelp-oathvalidate-summary": "Überprüft einen Token zur Zwei-Faktor-Authentifizierung (OATH).",
-	"apihelp-oathvalidate-param-user": "Benutzer, für den der Token validiert werden soll. Standard ist der aktuelle Benutzer.",
-	"apihelp-oathvalidate-param-totp": "Token der Zwei-Faktor-Authentifizierung (OATH).",
-	"apihelp-oathvalidate-example-1": "Validiert einen Token für den aktuellen Benutzer",
-	"apihelp-oathvalidate-example-2": "Validiert einen Token für den Benutzer <kbd>Beispiel</kbd>"
+	"oath-log-name": "Zwei-Faktor-Authentifizierungs-Logbuch",
+	"oath-log-header": "Diese Ereignisse verfolgen Änderungen des Zwei-Faktor-Authentifizierungs-Status von Benutzern",
+	"logentry-oath-disable-other": "$1 {{GENDER:$2|deaktivierte}} die Zwei-Faktor-Authentifizierung von $3",
+	"oathauth-disable-page-title": "Deaktiviere $1",
+	"oathauth-enable-page-title": "Aktiviere $1"
 }

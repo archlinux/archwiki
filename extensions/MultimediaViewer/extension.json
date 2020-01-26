@@ -46,11 +46,6 @@
 				"mmv/logging/mmv.logging.DimensionLogger.js",
 				"mmv/logging/mmv.logging.ViewLogger.js",
 				"mmv/logging/mmv.logging.PerformanceLogger.js",
-				"mmv/routing/mmv.routing.js",
-				"mmv/routing/mmv.routing.Route.js",
-				"mmv/routing/mmv.routing.ThumbnailRoute.js",
-				"mmv/routing/mmv.routing.MainFileRoute.js",
-				"mmv/routing/mmv.routing.Router.js",
 				"mmv/model/mmv.model.js",
 				"mmv/model/mmv.model.IwTitle.js",
 				"mmv/model/mmv.model.License.js",
@@ -109,6 +104,7 @@
 				"mediawiki.user",
 				"mediawiki.util",
 				"oojs",
+				"oojs-router",
 				"jquery.fullscreen",
 				"jquery.throttle-debounce",
 				"jquery.color",
@@ -252,6 +248,7 @@
 			"dependencies": [
 				"mediawiki.ui",
 				"mediawiki.ui.button",
+				"mediawiki.widgets",
 				"mmv",
 				"mmv.ui.ondemandshareddependencies",
 				"oojs",
@@ -263,6 +260,7 @@
 				"multimediaviewer-download-small-button-name",
 				"multimediaviewer-download-medium-button-name",
 				"multimediaviewer-download-large-button-name",
+				"multimediaviewer-download-xl-button-name",
 				"multimediaviewer-embed-dimensions",
 				"multimediaviewer-embed-dimensions-with-file-format",
 				"multimediaviewer-download-attribution-cta-header",
@@ -281,14 +279,14 @@
 			],
 			"styles": [
 				"mmv.ui.reuse.shareembed/mmv.ui.reuse.share.less",
-				"mmv.ui.reuse.shareembed/mmv.ui.reuse.embed.less",
-				"mmv.ui.reuse.shareembed/mmv.ui.reuse.shareembed.less"
+				"mmv.ui.reuse.shareembed/mmv.ui.reuse.embed.less"
 			],
 			"dependencies": [
 				"jquery.tipsy",
 				"oojs",
 				"oojs-ui",
 				"mediawiki.user",
+				"mediawiki.widgets",
 				"mmv.ui.ondemandshareddependencies"
 			],
 			"messages": [
@@ -309,6 +307,7 @@
 				"multimediaviewer-embed-via",
 				"multimediaviewer-default-embed-dimensions",
 				"multimediaviewer-original-embed-dimensions",
+				"multimediaviewer-xl-embed-dimensions",
 				"multimediaviewer-large-embed-dimensions",
 				"multimediaviewer-medium-embed-dimensions",
 				"multimediaviewer-small-embed-dimensions",
@@ -350,7 +349,8 @@
 				"mediawiki.notify",
 				"mediawiki.storage",
 				"mmv.head",
-				"oojs"
+				"oojs",
+				"oojs-router"
 			],
 			"messages": [
 				"multimediaviewer-view-expanded",
@@ -376,8 +376,7 @@
 			"dependencies": [
 				"mediawiki.user",
 				"mediawiki.storage"
-			],
-			"position": "top"
+			]
 		}
 	},
 	"ResourceFileModulePaths": {
@@ -414,9 +413,6 @@
 			"tests/qunit/mmv/provider/mmv.provider.ThumbnailInfo.test.js",
 			"tests/qunit/mmv/provider/mmv.provider.GuessedThumbnailInfo.test.js",
 			"tests/qunit/mmv/provider/mmv.provider.Image.test.js",
-			"tests/qunit/mmv/routing/mmv.routing.MainFileRoute.test.js",
-			"tests/qunit/mmv/routing/mmv.routing.ThumbnailRoute.test.js",
-			"tests/qunit/mmv/routing/mmv.routing.Router.test.js",
 			"tests/qunit/mmv/ui/mmv.ui.test.js",
 			"tests/qunit/mmv/ui/mmv.ui.canvas.test.js",
 			"tests/qunit/mmv/ui/mmv.ui.canvasButtons.test.js",
@@ -444,8 +440,7 @@
 			"mmv.ui.ondemandshareddependencies",
 			"mmv.ui.reuse.shareembed",
 			"mmv.ui.download.pane",
-			"mmv.ui.tipsyDialog",
-			"moment"
+			"mmv.ui.tipsyDialog"
 		]
 	},
 	"EventLoggingSchemas": {
@@ -460,25 +455,22 @@
 			"MultimediaViewerHooks::onUserGetDefaultOptions"
 		],
 		"GetPreferences": [
-			"MultimediaViewerHooks::getPreferences"
-		],
-		"GetBetaFeaturePreferences": [
-			"MultimediaViewerHooks::getBetaPreferences"
+			"MultimediaViewerHooks::onGetPreferences"
 		],
 		"BeforePageDisplay": [
-			"MultimediaViewerHooks::getModulesForArticle"
+			"MultimediaViewerHooks::onBeforePageDisplay"
 		],
 		"CategoryPageView": [
-			"MultimediaViewerHooks::getModulesForCategory"
+			"MultimediaViewerHooks::onCategoryPageView"
 		],
 		"ResourceLoaderGetConfigVars": [
-			"MultimediaViewerHooks::resourceLoaderGetConfigVars"
+			"MultimediaViewerHooks::onResourceLoaderGetConfigVars"
 		],
 		"MakeGlobalVariablesScript": [
-			"MultimediaViewerHooks::makeGlobalVariablesScript"
+			"MultimediaViewerHooks::onMakeGlobalVariablesScript"
 		],
 		"ThumbnailBeforeProduceHTML": [
-			"MultimediaViewerHooks::thumbnailBeforeProduceHTML"
+			"MultimediaViewerHooks::onThumbnailBeforeProduceHTML"
 		]
 	},
 	"config": {
@@ -497,7 +489,6 @@
 		"MediaViewerAttributionLoggingSamplingFactor": false,
 		"MediaViewerDimensionLoggingSamplingFactor": false,
 		"MediaViewerActionLoggingSamplingFactorMap": false,
-		"MediaViewerIsInBeta": false,
 		"MediaViewerUseThumbnailGuessing": false,
 		"MediaViewerEnableByDefault": true,
 		"MediaViewerEnableByDefaultForAnonymous": null,

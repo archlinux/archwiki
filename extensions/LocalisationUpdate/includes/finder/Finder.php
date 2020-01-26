@@ -12,12 +12,6 @@ namespace LocalisationUpdate;
  * included for l10n updates.
  */
 class Finder {
-
-	/**
-	 * @var array
-	 */
-	private $php;
-
 	/**
 	 * @var array
 	 */
@@ -27,13 +21,12 @@ class Finder {
 	 * @var string
 	 */
 	private $core;
+
 	/**
-	 * @param array $php See $wgExtensionMessagesFiles
 	 * @param array $json See $wgMessagesDirs
 	 * @param string $core Absolute path to MediaWiki core
 	 */
-	public function __construct( $php, $json, $core ) {
-		$this->php = $php;
+	public function __construct( $json, $core ) {
 		$this->json = $json;
 		$this->core = $core;
 	}
@@ -44,19 +37,7 @@ class Finder {
 	public function getComponents() {
 		$components = [];
 
-		// For older versions of Mediawiki, pull json updates even though its still using php
-		if ( !isset( $this->json['core'] ) ) {
-			$components['core'] = [
-				'repo' => 'mediawiki',
-				'orig' => "file://{$this->core}/languages/messages/Messages*.php",
-				'path' => 'languages/messages/i18n/*.json',
-			];
-		}
-
 		foreach ( $this->json as $key => $value ) {
-			// Json should take priority if both exist
-			unset( $this->php[$key] );
-
 			foreach ( (array)$value as $subkey => $subvalue ) {
 				// Mediawiki core files
 				$matches = [];
@@ -83,21 +64,6 @@ class Finder {
 					continue;
 				}
 			}
-		}
-
-		foreach ( $this->php as $key => $value ) {
-			$matches = [];
-			$ok = preg_match( '~/extensions/(?P<name>[^/]+)/(?P<path>.*\.i18n\.php)$~', $value, $matches );
-			if ( !$ok ) {
-				continue;
-			}
-
-			$components[$key] = [
-				'repo' => 'extension',
-				'name' => $matches['name'],
-				'orig' => "file://$value",
-				'path' => $matches['path'],
-			];
 		}
 
 		return $components;

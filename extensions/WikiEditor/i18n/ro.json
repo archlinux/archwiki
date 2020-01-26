@@ -8,7 +8,8 @@
 			"Stelistcristi",
 			"Macofe",
 			"Wintereu",
-			"Strainu"
+			"Strainu",
+			"Andrei Stroe"
 		]
 	},
 	"wikieditor": "Interfață de modificare wikitext avansată",
@@ -17,7 +18,7 @@
 	"wikieditor-loading": "Se încarcă...",
 	"wikieditor-toolbar": "Modificarea barei de instrumente",
 	"wikieditor-toolbar-desc": "Modificarea barei de instrumente cu utilizare ridicată",
-	"wikieditor-toolbar-preference": "Activează varianta îmbunătățită a barei de unelte",
+	"wikieditor-toolbar-preference": "Activează bara de unelte de editare",
 	"wikieditor-toolbar-loading": "Se încarcă...",
 	"wikieditor-toolbar-tool-bold": "Aldin",
 	"wikieditor-toolbar-tool-bold-example": "Text aldin",

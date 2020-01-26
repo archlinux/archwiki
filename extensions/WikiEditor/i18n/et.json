@@ -127,6 +127,7 @@
 	"wikieditor-toolbar-tool-replace-success": "{{PLURAL:$1|Üks asendus|$1 asendust}} tehtud.",
 	"wikieditor-toolbar-tool-replace-emptysearch": "Otsitav on sisestamata.",
 	"wikieditor-toolbar-tool-replace-invalidregex": "Sisestatud regulaaravaldis on vigane: $1",
+	"wikieditor-toolbar-tool-replace-word": "Vastab tervele sõnale",
 	"wikieditor-toolbar-section-characters": "Erimärgid",
 	"wikieditor-toolbar-section-help": "Abi",
 	"wikieditor-toolbar-help-heading-description": "Kirjeldus",

@@ -8,6 +8,8 @@
 	"monobook.css": "/* Чуйиллина йолу кхузе CSS хир ю лелош масхьа Monobook чохь */",
 	"monobook.js": "/* Кхузе чу язийна йолу JavaScript код, чу ера ю, массо MonoBook хатl лелош болу декъашхошна */",
 	"monobook-jumptotop": "юхугӀо ирх",
+	"monobook-jumptonavigation": "Навигацин тӀегӀо",
+	"monobook-jumptosearch": "Лахарна тӀегӀо",
 	"monobook-more-actions": "Кхин а",
 	"monobook-cactions-label": "АгӀонгахь дийриш",
 	"monobook-notifications-link": "Хаам ($1)",

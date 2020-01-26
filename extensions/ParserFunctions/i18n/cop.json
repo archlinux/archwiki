@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Bloomaround"
+		]
+	},
+	"pfunc_expr_unrecognised_word": "ⲥⲱⲣⲉⲙ ⲙ̀ⲫⲣⲁⲥⲓⲥ: ⲥⲁϫⲓ ⲛ̀ⲁⲧⲥⲱⲟⲩⲛ \"$1\"",
+	"pfunc_expr_unrecognised_punctuation": "ⲥⲱⲣⲉⲙ ⲙ̀ⲫⲣⲁⲥⲓⲥ: ⲟⲩⲥⲩⲙⲃⲟⲗⲏ ⲙ̀ⲙⲉⲧⲥⲟⲩⲥⲟⲩ ⲛ̀ⲁⲧⲥⲱⲟⲩⲛ \"$1\""
+}

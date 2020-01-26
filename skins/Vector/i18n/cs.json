@@ -2,11 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"Mormegil",
-			"Dvorapa"
+			"Dvorapa",
+			"Patriccck"
 		]
 	},
 	"skinname-vector": "Vektor",
-	"vector-skin-desc": "Moderní verze MonoBooku s novějším vzhledem a vylepšenou použitelností",
+	"vector-skin-desc": "Moderní verze vzhledu Kniha s novějším vzhledem a vylepšenou použitelností",
 	"vector.css": "/* Zde uvedené CSS bude ovlivňovat pouze vzhled „Vektor“ */",
 	"vector.js": "/* Zde uvedený JavaScript bude použit pouze pro uživatele vzhledu „Vektor“ */",
 	"vector-action-addsection": "Přidat téma",

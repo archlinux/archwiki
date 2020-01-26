@@ -4,7 +4,8 @@
 			"Djiboun",
 			"Gomoko",
 			"Lucky",
-			"Windes"
+			"Windes",
+			"Thibaut120094"
 		]
 	},
 	"apihelp-query+gadgetcategories-description": "Renvoie une liste de catégories de gadget.",
@@ -22,7 +23,7 @@
 	"apihelp-query+gadgets-param-enabledonly": "Lister uniquement les gadgets activés par l’utilisateur actuel.",
 	"apihelp-query+gadgets-example-1": "Obtenir une liste de gadgets ainsi que leurs descriptions",
 	"apihelp-query+gadgets-example-2": "Obtenir une liste de gadgets avec toutes les propriétés possibles",
-	"apihelp-query+gadgets-example-3": "Obtenir une liste des gadgets appartenant à la catégorie « foo »",
-	"apihelp-query+gadgets-example-4": "Obtenir l’information sur les gadgets « foo » et « bar »",
+	"apihelp-query+gadgets-example-3": "Obtenir une liste des gadgets appartenant à la catégorie « foo »",
+	"apihelp-query+gadgets-example-4": "Obtenir l’information sur les gadgets « foo » et « bar »",
 	"apihelp-query+gadgets-example-5": "Obtenir une liste des gadgets activés par l’utilisateur actuel"
 }

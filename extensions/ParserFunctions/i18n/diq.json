@@ -6,7 +6,8 @@
 			"Gorizon",
 			"Gırd",
 			"1917 Ekim Devrimi",
-			"Mirzali"
+			"Mirzali",
+			"Orbot707"
 		]
 	},
 	"pfunc_desc": "Peserkerden fonksiyanane mantıxin weş kere",
@@ -19,7 +20,7 @@
 	"pfunc_expr_unexpected_number": "Xetaya ifadeyi: Amaro bêtexmin.",
 	"pfunc_expr_preg_match_failure": "Xetay ifadeyi: Arızaya preg_matchiya bêtexmine.",
 	"pfunc_expr_unrecognised_word": "Xetaya ifadeyi: Çekuya \"$1\" ke nêşınasiyena.",
-	"pfunc_expr_unexpected_operator": "Xetaya ifadeyi: Operatorê $1iyo bêtexmin.",
+	"pfunc_expr_unexpected_operator": "Xetay ifadey: Operatorê $1'iyo nêpawıyaye.",
 	"pfunc_expr_missing_operand": "Xetaya ifadeyi: Qandê $1 rê terimo kemi.",
 	"pfunc_expr_unexpected_closing_bracket": "Xetaya ifadeyi: Parantezo gırewteyo bêtexmin.",
 	"pfunc_expr_unrecognised_punctuation": "Xetaya ifadeyi: Karakterê noxtakerdışê \"$1\"iyo ke nêşınasiyeno.",

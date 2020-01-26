@@ -22,6 +22,8 @@
  */
 namespace Wikimedia;
 
+use Wikimedia\AtEase\AtEase;
+
 /**
  * Matches IP addresses against a set of CIDR specifications
  *
@@ -131,7 +133,7 @@ class IPSet {
 		$mask = intval( $mask ); // explicit integer convert, checked above
 
 		// convert $net to an array of integer bytes, length 4 or 16:
-		$raw = quietCall( 'inet_pton', $net );
+		$raw = AtEase::quietCall( 'inet_pton', $net );
 		if ( $raw === false ) {
 			return false;
 		}
@@ -199,7 +201,7 @@ class IPSet {
 	 * @return bool True is match success, false is match failure
 	 */
 	public function match( $ip ) {
-		$raw = quietCall( 'inet_pton', $ip );
+		$raw = AtEase::quietCall( 'inet_pton', $ip );
 		if ( $raw === false ) {
 			return false;
 		}

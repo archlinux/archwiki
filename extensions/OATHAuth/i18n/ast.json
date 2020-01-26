@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Xuacu"
+			"Xuacu",
+			"Fitoschido"
 		]
 	},
 	"oathauth-desc": "Ufre soporte d'identificación utilizando contraseñes pa una sola vez basaes en HMAC",
@@ -28,23 +29,12 @@
 	"action-oathauth-enable": "activar la identificación de dos factores",
 	"oathauth-auth-token-label": "Pase",
 	"oathauth-auth-token-help": "La contraseña d'un usu emplegada como segundu factor na autenticación de dos pasos.",
-	"oathauth-auth-ui": "Escribe un códigu de comprobación dende'l preséu d'identificación",
+	"oathauth-auth-ui": "Escribe un códigu de comprobación dende'l preséu d'identificación.",
 	"oathauth-throttled": "Demasiaos intentos de comprobación. Espera $1.",
 	"oathauth-login-failed": "Falló la comprobación.",
 	"oathauth-describe-provider": "Identificación de dos factores (OATH).",
 	"grant-group-authentication": "Facer les aiciones d'autenticación propies y pa otros",
 	"grant-oath": "Acceder a la información d'autenticación en dos factores (OAuth) propies y pa otros",
 	"right-oathauth-api-all": "Consultar y validar la información OATH propia y d'otros",
-	"action-oathauth-api-all": "comprobar l'estatus OATH",
-	"apihelp-query+oath-description": "Comprobar si la identificación de dos factores (OATH) ta activada pa un usuariu.",
-	"apihelp-query+oath-summary": "Comprobar si la identificación de dos factores (OATH) tá activada pa un usuariu.",
-	"apihelp-query+oath-param-user": "Usuariu del qu'algamar la información. De mou predetermináu, ye l'usuariu actual.",
-	"apihelp-query+oath-example-1": "Recibir información sobro l'usuariu actual.",
-	"apihelp-query+oath-example-2": "Recibir información sobro l'usuariu <kbd>Example</kbd>",
-	"apihelp-oathvalidate-description": "Validar un pase d'identificación de dos factores (OATH)",
-	"apihelp-oathvalidate-summary": "Validar un pase d'identificación de dos factores (OATH)",
-	"apihelp-oathvalidate-param-user": "Usuariu pal que validar el pase. De mou predetermináu, l'usuariu actual.",
-	"apihelp-oathvalidate-param-totp": "Pase d'identificación de dos factores (OATH).",
-	"apihelp-oathvalidate-example-1": "Validar un pase pal usuariu actual",
-	"apihelp-oathvalidate-example-2": "Validar un pase pal usuariu <kbd>Example</kbd>"
+	"action-oathauth-api-all": "comprobar l'estatus OATH"
 }

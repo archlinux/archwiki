@@ -17,9 +17,7 @@ class OptionWidget extends Widget {
 
 	/**
 	 * @param array $config Configuration options
-	 *      - string|HtmlSnippet $config['label'] Label text
-	 *      - bool $config['invisibleLabel'] Whether the label should be visually hidden (but still
-	 *        accessible to screen-readers). (default: false)
+	 *      - bool $config['selected'] Whether to mark the option as selected
 	 * @param-taint $config escapes_html
 	 */
 	public function __construct( array $config = [] ) {
@@ -30,7 +28,6 @@ class OptionWidget extends Widget {
 		$this->initializeAccessKeyedElement( array_merge( [ 'accessKeyed' => $this ], $config ) );
 		$this->initializeLabelElement( $config );
 
-		$this->setLabel( $config['label'] ?? '' );
 		$this->appendContent( $this->label );
 
 		$selected = $config['selected'] ?? false;

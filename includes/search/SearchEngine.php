@@ -46,7 +46,10 @@ abstract class SearchEngine {
 	/** @var int */
 	protected $offset = 0;
 
-	/** @var array|string */
+	/**
+	 * @var string[]
+	 * @deprecated since 1.34
+	 */
 	protected $searchTerms = [];
 
 	/** @var bool */
@@ -56,16 +59,16 @@ abstract class SearchEngine {
 	/** @var array Feature values */
 	protected $features = [];
 
-	/** @const string profile type for completionSearch */
+	/** Profile type for completionSearch */
 	const COMPLETION_PROFILE_TYPE = 'completionSearchProfile';
 
-	/** @const string profile type for query independent ranking features */
+	/** Profile type for query independent ranking features */
 	const FT_QUERY_INDEP_PROFILE_TYPE = 'fulltextQueryIndepProfile';
 
-	/** @const int flag for legalSearchChars: includes all chars allowed in a search query */
+	/** Integer flag for legalSearchChars: includes all chars allowed in a search query */
 	const CHARS_ALL = 1;
 
-	/** @const int flag for legalSearchChars: includes all chars allowed in a search term */
+	/** Integer flag for legalSearchChars: includes all chars allowed in a search term */
 	const CHARS_NO_SYNTAX = 2;
 
 	/**
@@ -76,7 +79,7 @@ abstract class SearchEngine {
 	 * be converted to final in 1.34. Override self::doSearchText().
 	 *
 	 * @param string $term Raw search term
-	 * @return SearchResultSet|Status|null
+	 * @return ISearchResultSet|Status|null
 	 */
 	public function searchText( $term ) {
 		return $this->maybePaginate( function () use ( $term ) {
@@ -88,7 +91,7 @@ abstract class SearchEngine {
 	 * Perform a full text search query and return a result set.
 	 *
 	 * @param string $term Raw search term
-	 * @return SearchResultSet|Status|null
+	 * @return ISearchResultSet|Status|null
 	 * @since 1.32
 	 */
 	protected function doSearchText( $term ) {
@@ -106,7 +109,7 @@ abstract class SearchEngine {
 	 * be converted to final in 1.34. Override self::doSearchArchiveTitle().
 	 *
 	 * @param string $term Raw search term
-	 * @return Status<Title[]>
+	 * @return Status
 	 * @since 1.29
 	 */
 	public function searchArchiveTitle( $term ) {
@@ -117,7 +120,7 @@ abstract class SearchEngine {
 	 * Perform a title search in the article archive.
 	 *
 	 * @param string $term Raw search term
-	 * @return Status<Title[]>
+	 * @return Status
 	 * @since 1.32
 	 */
 	protected function doSearchArchiveTitle( $term ) {
@@ -133,7 +136,7 @@ abstract class SearchEngine {
 	 * be converted to final in 1.34. Override self::doSearchTitle().
 	 *
 	 * @param string $term Raw search term
-	 * @return SearchResultSet|null
+	 * @return ISearchResultSet|null
 	 */
 	public function searchTitle( $term ) {
 		return $this->maybePaginate( function () use ( $term ) {
@@ -145,7 +148,7 @@ abstract class SearchEngine {
 	 * Perform a title-only search query and return a result set.
 	 *
 	 * @param string $term Raw search term
-	 * @return SearchResultSet|null
+	 * @return ISearchResultSet|null
 	 * @since 1.32
 	 */
 	protected function doSearchTitle( $term ) {
@@ -158,7 +161,7 @@ abstract class SearchEngine {
 	 * explicitly implement their own pagination.
 	 *
 	 * @param Closure $fn Takes no arguments
-	 * @return SearchResultSet|Status<SearchResultSet>|null Result of calling $fn
+	 * @return ISearchResultSet|Status<ISearchResultSet>|null Result of calling $fn
 	 */
 	private function maybePaginate( Closure $fn ) {
 		if ( $this instanceof PaginatingSearchEngine ) {
@@ -172,10 +175,10 @@ abstract class SearchEngine {
 		}
 
 		$resultSet = null;
-		if ( $resultSetOrStatus instanceof SearchResultSet ) {
+		if ( $resultSetOrStatus instanceof ISearchResultSet ) {
 			$resultSet = $resultSetOrStatus;
 		} elseif ( $resultSetOrStatus instanceof Status &&
-			$resultSetOrStatus->getValue() instanceof SearchResultSet
+			$resultSetOrStatus->getValue() instanceof ISearchResultSet
 		) {
 			$resultSet = $resultSetOrStatus->getValue();
 		}
@@ -236,19 +239,6 @@ abstract class SearchEngine {
 	}
 
 	/**
-	 * Transform search term in cases when parts of the query came as different
-	 * GET params (when supported), e.g. for prefix queries:
-	 * search=test&prefix=Main_Page/Archive -> test prefix:Main Page/Archive
-	 * @param string $term
-	 * @return string
-	 * @deprecated since 1.32 this should now be handled internally by the
-	 * search engine
-	 */
-	public function transformSearchTerm( $term ) {
-		return $term;
-	}
-
-	/**
 	 * Get service class to finding near matches.
 	 * @param Config $config Configuration to use for the matcher.
 	 * @return SearchNearMatcher
@@ -269,26 +259,12 @@ abstract class SearchEngine {
 	}
 
 	/**
-	 * If an exact title match can be found, or a very slightly close match,
-	 * return the title. If no match, returns NULL.
-	 * @deprecated since 1.27; Use SearchEngine::getNearMatcher()
-	 * @param string $searchterm
-	 * @return Title
-	 */
-	public static function getNearMatch( $searchterm ) {
-		wfDeprecated( __METHOD__, '1.27' );
-
-		return static::defaultNearMatcher()->getNearMatch( $searchterm );
-	}
-
-	/**
 	 * Get chars legal for search
-	 * NOTE: usage as static is deprecated and preserved only as BC measure
 	 * @param int $type type of search chars (see self::CHARS_ALL
 	 * and self::CHARS_NO_SYNTAX). Defaults to CHARS_ALL
 	 * @return string
 	 */
-	public static function legalSearchChars( $type = self::CHARS_ALL ) {
+	public function legalSearchChars( $type = self::CHARS_ALL ) {
 		return "A-Za-z_'.0-9\\x80-\\xFF\\-";
 	}
 
@@ -457,10 +433,13 @@ abstract class SearchEngine {
 	/**
 	 * Find snippet highlight settings for all users
 	 * @return array Contextlines, contextchars
+	 * @deprecated in 1.34 use the SearchHighlighter constants directly
+	 * @see SearchHighlighter::DEFAULT_CONTEXT_CHARS
+	 * @see SearchHighlighter::DEFAULT_CONTEXT_LINES
 	 */
 	public static function userHighlightPrefs() {
-		$contextlines = 2; // Hardcode this. Old defaults sucked. :)
-		$contextchars = 75; // same as above.... :P
+		$contextlines = SearchHighlighter::DEFAULT_CONTEXT_LINES;
+		$contextchars = SearchHighlighter::DEFAULT_CONTEXT_CHARS;
 		return [ $contextlines, $contextchars ];
 	}
 
@@ -510,6 +489,7 @@ abstract class SearchEngine {
 	 * @param Title $t Title we're indexing
 	 * @param Content|null $c Content of the page to index
 	 * @return string
+	 * @deprecated since 1.34 use Content::getTextForSearchIndex directly
 	 */
 	public function getTextFromContent( Title $t, Content $c = null ) {
 		return $c ? $c->getTextForSearchIndex() : '';
@@ -521,6 +501,7 @@ abstract class SearchEngine {
 	 * rather silly handling, it should return true here instead.
 	 *
 	 * @return bool
+	 * @deprecated since 1.34 no longer needed since getTextFromContent is being deprecated
 	 */
 	public function textAlreadyUpdatedForIndex() {
 		return false;
@@ -733,79 +714,6 @@ abstract class SearchEngine {
 	}
 
 	/**
-	 * Make a list of searchable namespaces and their canonical names.
-	 * @deprecated since 1.27; use SearchEngineConfig::searchableNamespaces()
-	 * @return array
-	 */
-	public static function searchableNamespaces() {
-		wfDeprecated( __METHOD__, '1.27' );
-
-		return MediaWikiServices::getInstance()->getSearchEngineConfig()->searchableNamespaces();
-	}
-
-	/**
-	 * Extract default namespaces to search from the given user's
-	 * settings, returning a list of index numbers.
-	 * @deprecated since 1.27; use SearchEngineConfig::userNamespaces()
-	 * @param user $user
-	 * @return array
-	 */
-	public static function userNamespaces( $user ) {
-		wfDeprecated( __METHOD__, '1.27' );
-
-		return MediaWikiServices::getInstance()->getSearchEngineConfig()->userNamespaces( $user );
-	}
-
-	/**
-	 * An array of namespaces indexes to be searched by default
-	 * @deprecated since 1.27; use SearchEngineConfig::defaultNamespaces()
-	 * @return array
-	 */
-	public static function defaultNamespaces() {
-		wfDeprecated( __METHOD__, '1.27' );
-
-		return MediaWikiServices::getInstance()->getSearchEngineConfig()->defaultNamespaces();
-	}
-
-	/**
-	 * Get a list of namespace names useful for showing in tooltips
-	 * and preferences
-	 * @deprecated since 1.27; use SearchEngineConfig::namespacesAsText()
-	 * @param array $namespaces
-	 * @return array
-	 */
-	public static function namespacesAsText( $namespaces ) {
-		wfDeprecated( __METHOD__, '1.27' );
-
-		return MediaWikiServices::getInstance()->getSearchEngineConfig()->namespacesAsText( $namespaces );
-	}
-
-	/**
-	 * Load up the appropriate search engine class for the currently
-	 * active database backend, and return a configured instance.
-	 * @deprecated since 1.27; Use SearchEngineFactory::create
-	 * @param string $type Type of search backend, if not the default
-	 * @return SearchEngine
-	 */
-	public static function create( $type = null ) {
-		wfDeprecated( __METHOD__, '1.27' );
-
-		return MediaWikiServices::getInstance()->getSearchEngineFactory()->create( $type );
-	}
-
-	/**
-	 * Return the search engines we support. If only $wgSearchType
-	 * is set, it'll be an array of just that one item.
-	 * @deprecated since 1.27; use SearchEngineConfig::getSearchTypes()
-	 * @return array
-	 */
-	public static function getSearchTypes() {
-		wfDeprecated( __METHOD__, '1.27' );
-
-		return MediaWikiServices::getInstance()->getSearchEngineConfig()->getSearchTypes();
-	}
-
-	/**
 	 * Get a list of supported profiles.
 	 * Some search engine implementations may expose specific profiles to fine-tune
 	 * its behaviors.
@@ -819,6 +727,7 @@ abstract class SearchEngine {
 	 * @param string $profileType the type of profiles
 	 * @param User|null $user the user requesting the list of profiles
 	 * @return array|null the list of profiles or null if none available
+	 * @phan-return null|array{name:string,desc-message:string,default?:bool}
 	 */
 	public function getProfiles( $profileType, User $user = null ) {
 		return null;
@@ -828,7 +737,7 @@ abstract class SearchEngine {
 	 * Create a search field definition.
 	 * Specific search engines should override this method to create search fields.
 	 * @param string $name
-	 * @param int $type One of the types in SearchIndexField::INDEX_TYPE_*
+	 * @param string $type One of the types in SearchIndexField::INDEX_TYPE_*
 	 * @return SearchIndexField
 	 * @since 1.28
 	 */
@@ -881,9 +790,9 @@ abstract class SearchEngine {
 	/**
 	 * Augment search results with extra data.
 	 *
-	 * @param SearchResultSet $resultSet
+	 * @param ISearchResultSet $resultSet
 	 */
-	public function augmentSearchResults( SearchResultSet $resultSet ) {
+	public function augmentSearchResults( ISearchResultSet $resultSet ) {
 		$setAugmentors = [];
 		$rowAugmentors = [];
 		Hooks::run( "SearchResultsAugment", [ &$setAugmentors, &$rowAugmentors ] );
@@ -900,6 +809,10 @@ abstract class SearchEngine {
 			$setAugmentors[$name] = new PerRowAugmentor( $row );
 		}
 
+		/**
+		 * @var string $name
+		 * @var ResultSetAugmentor $augmentor
+		 */
 		foreach ( $setAugmentors as $name => $augmentor ) {
 			$data = $augmentor->augmentAll( $resultSet );
 			if ( $data ) {

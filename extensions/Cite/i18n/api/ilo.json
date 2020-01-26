@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Lam-ang"
+		]
+	},
+	"apihelp-query+references-description": "Mangisubli iti representasion ti datos kadagiti nagibasaran a mainaig kadagiti naited a panid.",
+	"apihelp-query+references-summary": "Mangisubli iti representasion ti datos kadagiti nagibasaran a mainaig kadagiti naited a panid.",
+	"apihelp-query+references-example-1": "Dagiti nagibasaran a mainaig kenni <kbd>Albert Einstein</kbd>.",
+	"apierror-citestoragedisabled": "Saan a napakabaelan ti pagipenpenan ti nagibasaran ti pagpaatiddog ti Cite."
+}

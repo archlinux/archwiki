@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\MediaWikiServices;
+
 /**
  * Special page that allows authorised users to rename
  * user accounts
@@ -23,7 +25,8 @@ class SpecialRenameuser extends SpecialPage {
 	 * @throws UserBlockedError
 	 */
 	public function execute( $par ) {
-		global $wgContLang, $wgCapitalLinks;
+		global $wgCapitalLinks;
+		$contLang = MediaWikiServices::getInstance()->getContentLanguage();
 
 		$this->setHeaders();
 		$this->addHelpLink( 'Help:Renameuser' );
@@ -55,7 +58,7 @@ class SpecialRenameuser extends SpecialPage {
 		$newnamePar = trim( str_replace( '_', ' ', $request->getText( 'newusername', $newnamePar ) ) );
 		// Force uppercase of newusername, otherwise wikis
 		// with wgCapitalLinks=false can create lc usernames
-		$newusername = Title::makeTitleSafe( NS_USER, $wgContLang->ucfirst( $newnamePar ) );
+		$newusername = Title::makeTitleSafe( NS_USER, $contLang->ucfirst( $newnamePar ) );
 		$oun = is_object( $oldusername ) ? $oldusername->getText() : '';
 		$nun = is_object( $newusername ) ? $newusername->getText() : '';
 		$token = $user->getEditToken();
@@ -255,7 +258,7 @@ class SpecialRenameuser extends SpecialPage {
 
 		// Check for the existence of lowercase oldusername in database.
 		// Until r19631 it was possible to rename a user to a name with first character as lowercase
-		if ( $oldusername->getText() !== $wgContLang->ucfirst( $oldusername->getText() ) ) {
+		if ( $oldusername->getText() !== $contLang->ucfirst( $oldusername->getText() ) ) {
 			// oldusername was entered as lowercase -> check for existence in table 'user'
 			$dbr = wfGetDB( DB_REPLICA );
 			$uid = $dbr->selectField( 'user', 'user_id',

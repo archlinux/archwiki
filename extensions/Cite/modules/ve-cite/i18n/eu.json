@@ -25,7 +25,7 @@
 	"cite-ve-changedesc-reflist-responsive-set": "Erreferentzia zerrenda zutabe moldagarrietan bistaratzeko aldatu da",
 	"cite-ve-changedesc-reflist-responsive-unset": "Erreferentzia zerrenda zutabe bakarrean bistaratzeko aldatu da",
 	"cite-ve-changedesc-reflist-item-id": "Erreferentzia indizea aldatu da",
-	"cite-ve-dialog-reference-editing-reused": "Erreferentzia hau $1{{PLURAL:$1|aldiz}} agertzen da orri honetan",
+	"cite-ve-dialog-reference-editing-reused": "Erreferentzia hau {{PLURAL:$1|behin|2=birritan|$1 aldiz}} agertzen da orri honetan.",
 	"cite-ve-dialog-reference-options-group-label": "Talde hau erabili",
 	"cite-ve-dialog-reference-options-group-placeholder": "Erreferentzia orokorrak",
 	"cite-ve-dialog-reference-options-name-label": "Berrerabili izen honekin",

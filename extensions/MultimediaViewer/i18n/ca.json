@@ -11,8 +11,6 @@
 		]
 	},
 	"multimediaviewer-desc": "Amplia les miniatures en una interfície a pantalla completa.",
-	"multimediaviewer-pref": "Visualitzador multimèdia",
-	"multimediaviewer-pref-desc": "Milloreu la vostra experiència de visualització multimèdia amb aquesta nova eina. Mostra imatges a mida més gran en les pàgines que tenen miniatures. Les imatges es mostren en una pantalla completa més agradable, i també es poden veure a mida completa.",
 	"multimediaviewer-optin-pref": "Activa el <span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About visor multimèdia]</span>",
 	"multimediaviewer-file-page": "Vés a la pàgina corresponent del fitxer",
 	"multimediaviewer-repository-local": "Més informació",

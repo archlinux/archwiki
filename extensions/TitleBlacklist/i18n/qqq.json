@@ -11,6 +11,8 @@
 			"Nemo bis"
 		]
 	},
+	"action-tboverride": "{{doc-action|tboverride}}",
+	"action-tboverride-account": "{{doc-action|tboverride-account}}",
 	"action-titleblacklistlog": "{{doc-action|titleblacklistlog}}",
 	"log-name-titleblacklist": "Name of log that appears on [[Special:Log]].",
 	"log-description-titleblacklist": "Description of title blacklist log",
@@ -28,6 +30,5 @@
 	"titleblacklist-warning": "Displayed when a user is editing a page that only administrators (or custom user groups with the tboverride right) can edit due to the title blacklist. Parameters:\n* $1 - blacklist entry",
 	"right-tboverride": "{{doc-right|tboverride}}",
 	"right-tboverride-account": "{{doc-right|tboverride-account}}",
-	"right-titleblacklistlog": "{{doc-right|titleblacklistlog}}",
-	"visualeditor-saveerror-titleblacklist": "Text shown when the editor fails to save properly due to the TitleBlacklist extension."
+	"right-titleblacklistlog": "{{doc-right|titleblacklistlog}}"
 }

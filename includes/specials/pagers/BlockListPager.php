@@ -22,6 +22,7 @@
 /**
  * @ingroup Pager
  */
+use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\Block\Restriction\Restriction;
 use MediaWiki\Block\Restriction\PageRestriction;
 use MediaWiki\Block\Restriction\NamespaceRestriction;
@@ -44,9 +45,9 @@ class BlockListPager extends TablePager {
 	 * @param array $conds
 	 */
 	public function __construct( $page, $conds ) {
+		parent::__construct( $page->getContext(), $page->getLinkRenderer() );
 		$this->conds = $conds;
 		$this->mDefaultDirection = IndexPager::DIR_DESCENDING;
-		parent::__construct( $page->getContext() );
 	}
 
 	function getFieldNames() {
@@ -69,6 +70,12 @@ class BlockListPager extends TablePager {
 		return $headers;
 	}
 
+	/**
+	 * @param string $name
+	 * @param string $value
+	 * @return string
+	 * @suppress PhanTypeArraySuspicious
+	 */
 	function formatValue( $name, $value ) {
 		static $msg = null;
 		if ( $msg === null ) {
@@ -96,7 +103,7 @@ class BlockListPager extends TablePager {
 
 		$formatted = '';
 
-		$linkRenderer = MediaWikiServices::getInstance()->getLinkRenderer();
+		$linkRenderer = $this->getLinkRenderer();
 
 		switch ( $name ) {
 			case 'ipb_timestamp':
@@ -107,10 +114,10 @@ class BlockListPager extends TablePager {
 				if ( $row->ipb_auto ) {
 					$formatted = $this->msg( 'autoblockid', $row->ipb_id )->parse();
 				} else {
-					list( $target, $type ) = Block::parseTarget( $row->ipb_address );
+					list( $target, $type ) = DatabaseBlock::parseTarget( $row->ipb_address );
 					switch ( $type ) {
-						case Block::TYPE_USER:
-						case Block::TYPE_IP:
+						case DatabaseBlock::TYPE_USER:
+						case DatabaseBlock::TYPE_IP:
 							$formatted = Linker::userLink( $target->getId(), $target );
 							$formatted .= Linker::userToolLinks(
 								$target->getId(),
@@ -119,7 +126,7 @@ class BlockListPager extends TablePager {
 								Linker::TOOL_LINKS_NOBLOCK
 							);
 							break;
-						case Block::TYPE_RANGE:
+						case DatabaseBlock::TYPE_RANGE:
 							$formatted = htmlspecialchars( $target );
 					}
 				}
@@ -130,7 +137,11 @@ class BlockListPager extends TablePager {
 					$value,
 					/* User preference timezone */true
 				) );
-				if ( $this->getUser()->isAllowed( 'block' ) ) {
+				if ( MediaWikiServices::getInstance()
+						->getPermissionManager()
+						->userHasRight( $this->getUser(), 'block' )
+				) {
+					$links = [];
 					if ( $row->ipb_auto ) {
 						$links[] = $linkRenderer->makeKnownLink(
 							SpecialPage::getTitleFor( 'Unblock' ),
@@ -249,6 +260,7 @@ class BlockListPager extends TablePager {
 	 */
 	private function getRestrictionListHTML( stdClass $row ) {
 		$items = [];
+		$linkRenderer = $this->getLinkRenderer();
 
 		foreach ( $this->restrictions as $restriction ) {
 			if ( $restriction->getBlockId() !== (int)$row->ipb_id ) {
@@ -257,24 +269,25 @@ class BlockListPager extends TablePager {
 
 			switch ( $restriction->getType() ) {
 				case PageRestriction::TYPE:
+					'@phan-var PageRestriction $restriction';
 					if ( $restriction->getTitle() ) {
 						$items[$restriction->getType()][] = Html::rawElement(
 							'li',
 							[],
-							Linker::link( $restriction->getTitle() )
+							$linkRenderer->makeLink( $restriction->getTitle() )
 						);
 					}
 					break;
 				case NamespaceRestriction::TYPE:
 					$text = $restriction->getValue() === NS_MAIN
-						? $this->msg( 'blanknamespace' )
+						? $this->msg( 'blanknamespace' )->text()
 						: $this->getLanguage()->getFormattedNsText(
 							$restriction->getValue()
 						);
 					$items[$restriction->getType()][] = Html::rawElement(
 						'li',
 						[],
-						Linker::link(
+						$linkRenderer->makeLink(
 							SpecialPage::getTitleValueFor( 'Allpages' ),
 							$text,
 							[],
@@ -348,7 +361,10 @@ class BlockListPager extends TablePager {
 		$info['conds'][] = 'ipb_expiry > ' . $db->addQuotes( $db->timestamp() );
 
 		# Is the user allowed to see hidden blocks?
-		if ( !$this->getUser()->isAllowed( 'hideuser' ) ) {
+		if ( !MediaWikiServices::getInstance()
+				->getPermissionManager()
+				->userHasRight( $this->getUser(), 'hideuser' )
+		) {
 			$info['conds']['ipb_deleted'] = 0;
 		}
 
@@ -363,7 +379,7 @@ class BlockListPager extends TablePager {
 	function getTotalAutoblocks() {
 		$dbr = $this->getDatabase();
 		$res = $dbr->selectField( 'ipblocks',
-			[ 'COUNT(*) AS totalautoblocks' ],
+			'COUNT(*)',
 			[
 				'ipb_auto' => '1',
 				'ipb_expiry >= ' . $dbr->addQuotes( $dbr->timestamp() ),

@@ -5,7 +5,8 @@
 			"Dnik",
 			"MaGa",
 			"Roberta F.",
-			"SpeedyGonsales"
+			"SpeedyGonsales",
+			"Hmxhmx"
 		]
 	},
 	"nuke": "Skupno brisanje",
@@ -17,7 +18,10 @@
 	"nuke-submit-user": "Kreni",
 	"nuke-submit-delete": "Obriši označeno",
 	"right-nuke": "Skupno brisanje stranica",
+	"nuke-userorip": "Suradničko ime, IP adresa ili prazno:",
+	"nuke-maxpages": "Maksimalan broj stranica:",
 	"nuke-viewchanges": "prikaži promjene",
+	"nuke-namespace": "Ograniči na imenski prostor:",
 	"nuke-linkoncontribs": "skupno brisanje",
 	"nuke-linkoncontribs-text": "Skupno brisanje stranica kojima je ovaj suradnik jedini autor"
 }

@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Fitoschido"
+		]
+	},
+	"oathauth-auth-ui": "Introduïu un codi de verificació provinent del vostre dispositiu d’autenticació.",
+	"oathauth-module-totp-label": "TOTP (testimoni d’un sol ús)",
+	"oathauth-ui-manage": "Gestiona",
+	"oathauth-ui-available-modules": "Mètodes disponibles"
+}

@@ -7,7 +7,7 @@
 
 /* Framework */
 html {
-	font-size: @html-font-size;
+	font-size: @font-size-root;
 }
 
 html,
@@ -15,46 +15,50 @@ body {
 	height: 100%;
 	margin: 0;
 	padding: 0;
-	font-family: @content-font-family;
+	font-family: @font-family-sans;
 }
 
 body {
-	background-color: @menu-background-color;
+	background-color: @background-color-secondary;
 }
 
 /* Content */
 .mw-body,
 .parsoid-body {
-	padding: @content-padding;
-	background-color: @body-background-color;
-	color: @content-font-color;
+	background-color: @background-color-base;
+	color: @color-base;
+	padding: @padding-content;
 	direction: ltr;
 }
 
-.mw-body {
+.mw-body,
+#mw-data-after-content {
 	margin-left: 10em;
+}
+
+.mw-body {
 	/* Border on top, left, and bottom side */
-	border: 1px solid @content-border-color;
+	border: @border-width-base @border-style-base @border-color-content;
 	border-right-width: 0;
 	/* Merge the border with tabs' one (in their background image) */
-	margin-top: -1px;
+	margin-top: -@border-width-base;
 
 	// h1's can exist outside of mw-body-content so some heading styles
 	// need to be defined in mw-body as well
 	& h1,
 	&-content h1,
 	&-content h2 {
-		font-family: @content-heading-font-family;
-		line-height: @heading-line-height;
 		margin-bottom: 0.25em;
 		padding: 0;
+		font-family: @font-family-serif;
+		line-height: @line-height-heading;
 
-		/* Fallback heading font for scripts which render poorly in @content-heading-font-family. */
-		/* See T73240 */
+		// Fallback heading font for scripts which render poorly in `@font-family-serif`.
+		// See T73240
 		&:lang( ja ), /* See T65817 */
 		&:lang( he ), /* See T65843 and T65844 */
 		&:lang( ko ) { /* See T65827 */
-			font-family: @content-heading-font-family-generic;
+			font-family: @font-family-sans--fallback;
 		}
 
 		/* Burmese (Myanmar) language headlines would be cropped with set `line-height` */
@@ -66,7 +70,7 @@ body {
 
 	& h1,
 	&-content h1 {
-		font-size: @content-heading-font-size;
+		font-size: @font-size-heading-1;
 	}
 
 	.firstHeading {
@@ -76,8 +80,8 @@ body {
 
 	.mw-indicators {
 		float: right;
-		line-height: @content-line-height;
-		font-size: @content-font-size;
+		font-size: @font-size-base;
+		line-height: @line-height-base;
 		/* Ensure that this is displayed on top of .mw-body-content and clickable */
 		position: relative;
 		z-index: 1;
@@ -93,12 +97,11 @@ body {
 
 .mw-body-content {
 	position: relative;
-	line-height: @content-line-height;
-	font-size: @content-font-size;
+	font-size: @font-size-base;
+	line-height: @line-height-base;
 	z-index: 0;
 
 	p {
-		line-height: inherit;
 		margin: 0.5em 0;
 	}
 
@@ -107,22 +110,22 @@ body {
 	}
 
 	h2 {
-		font-size: 1.5em;
 		margin-top: 1em;
+		font-size: @font-size-heading-2;
 	}
 
 	h3,
 	h4,
 	h5,
 	h6 {
-		line-height: @content-line-height;
 		margin-top: 0.3em;
 		margin-bottom: 0;
 		padding-bottom: 0;
+		line-height: @line-height-base;
 	}
 
 	h3 {
-		font-size: 1.2em;
+		font-size: @font-size-heading-3;
 	}
 
 	h3,
@@ -133,19 +136,19 @@ body {
 	h4,
 	h5,
 	h6 {
-		font-size: 100%; /* (reset) */
+		font-size: @font-size-reset; // Reset.
 	}
 
 	.toc h2 {
-		font-size: 100%; /* (reset) */
-		font-family: @content-font-family;
+		font-family: @font-family-sans;
+		font-size: @font-size-reset; // Reset.
 	}
 }
 
 /* Allow edit sections outside of mw-body-content (T160269) */
 .mw-editsection,
 .mw-editsection-like {
-	font-family: @content-font-family;
+	font-family: @font-family-sans;
 }
 
 /* Hide empty portlets */
@@ -154,15 +157,16 @@ div.emptyPortlet {
 }
 
 ul {
+	// No need for PNG fallback. Fallback is browser default (a smaller, also black, circle).
 	.list-style-image( 'images/bullet-icon.svg' );
 }
 
 pre,
 .mw-code {
-	line-height: 1.3em;
+	line-height: @line-height-code;
 }
 
 /* Site Notice (includes notices from CentralNotice extension) */
 #siteNotice {
-	font-size: 0.8em;
+	font-size: @font-size-site-notice;
 }

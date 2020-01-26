@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"Fúlvio",
+			"Hamilton Abreu"
+		]
+	},
+	"apihelp-query+references-description": "Devolver uma representação de dados, das referências associadas com as páginas especificadas.",
+	"apihelp-query+references-summary": "Devolver uma representação de dados, das referências associadas com as páginas especificadas.",
+	"apihelp-query+references-example-1": "Referências associadas com <kbd>Albert Einstein</kbd>.",
+	"apierror-citestoragedisabled": "O armazenamento de referências da extensão de citação não está ativado."
+}

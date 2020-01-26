@@ -19,7 +19,8 @@ class LuaLibrary extends Scribunto_LuaLibraryBase {
 	public function expr( $expression = null ) {
 		$this->checkType( 'mw.ext.ParserFunctions.expr', 1, $expression, 'string' );
 		try {
-			return [ ParserFunctions::getExprParser()->doExpression( $expression ) ];
+			$exprParser = new ExprParser();
+			return [ $exprParser->doExpression( $expression ) ];
 		} catch ( ExprError $e ) {
 			throw new Scribunto_LuaError( $e->getMessage() );
 		}

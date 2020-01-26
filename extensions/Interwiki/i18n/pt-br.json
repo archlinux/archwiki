@@ -38,13 +38,14 @@
 	"interwiki-cached": "Os dados dos interwikis são armazenados no cache. Não é possível modificar o cache.",
 	"interwiki_edit": "Editar",
 	"interwiki_reasonfield": "Motivo:",
-	"interwiki_delquestion": "Apagando \"$1\"",
 	"interwiki_deleting": "Você está apagando o prefixo \"$1\".",
 	"interwiki_deleted": "O prefixo \"$1\" foi removido da tabelas de interwikis.",
 	"interwiki_delfailed": "O prefixo \"$1\" não pôde ser removido da tabela de interwikis.",
 	"interwiki-logtext": "Visualizar o registo",
 	"interwiki_addtext": "Adicione um prefixo de interwiki ou idioma",
 	"interwiki-addtext-local": "Adicione um interwiki local ou prefixo de idioma",
+	"interwiki-addtext-nolang": "Adicionar um prefixo interwiki",
+	"interwiki-addtext-local-nolang": "Adicionar um prefixo interwiki local",
 	"interwiki_addintro": "Você se encontra prestes a adicionar um novo prefixo de interwiki. Lembre-se de que ele não pode conter espaços ( ), dois-pontos (:), conjunções (&) ou sinais de igualdade (=).",
 	"interwiki_addbutton": "Adicionar",
 	"interwiki_added": "O prefixo \"$1\" foi adicionado à tabela de interwikis.",
@@ -54,6 +55,7 @@
 	"interwiki_edited": "O prefixo \"$1\" foi modificado na tabela de interwikis.",
 	"interwiki_editerror": "O prefixo \"$1\" não pode ser modificado na tabela de interwikis. Possivelmente, não existe.",
 	"interwiki-badprefix": "O prefixo interwiki \"$1\" contém caracteres inválidos",
+	"interwiki-cannotaddlocallanguage": "O prefixo \"$1\" corresponde a um código de idioma conhecido. A adição de prefixos de interlínguas locais é desativada ao usar um banco de dados global entre idiomas.",
 	"interwiki-submit-empty": "O prefixo e o URL não podem estar vazios.",
 	"interwiki-submit-invalidurl": "O protocolo do URL é inválido.",
 	"log-name-interwiki": "Registro da tabela de interwikis",
@@ -69,5 +71,7 @@
 	"interwiki-local-description": "Esses prefixos existem localmente. Qualquer duplicado com a configuração global irá substituir a definição global.",
 	"interwiki-links": "Prefixos interwiki",
 	"interwiki-language-links": "Prefixos interlínguas",
-	"interwiki-language-description": "Esses prefixos combinam códigos de idioma definidos e serão usados ​​para criar a listagem  \"{{int:otherlanguages}}\" quando adicionada a uma página."
+	"interwiki-language-description": "Esses prefixos combinam códigos de idioma definidos e serão usados ​​para criar a listagem  \"{{int:otherlanguages}}\" quando adicionada a uma página.",
+	"interwiki-global-language-links": "Prefixos de interlínguas globais",
+	"interwiki-global-language-description": "Esses prefixos correspondem aos códigos de idioma definidos e serão usados para criar listagem em \"{{int:otherlanguages}}\" quando adicionado a uma página. Como eles são herdados de uma configuração global, eles só podem ser editados no wiki de origem. As definições globais de interlanguage não podem ser substituídas localmente."
 }

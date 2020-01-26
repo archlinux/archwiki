@@ -16,6 +16,7 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Shell\Shell;
 
 class SyntaxHighlight {
@@ -297,7 +298,7 @@ class SyntaxHighlight {
 			$options['nowrap'] = 1;
 		}
 
-		$cache = ObjectCache::getMainWANInstance();
+		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
 		$error = null;
 		$output = $cache->getWithSetCallback(
 			$cache->makeGlobalKey( 'highlight', self::makeCacheKeyHash( $code, $lexer, $options ) ),

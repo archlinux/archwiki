@@ -31,7 +31,6 @@
 	"interwiki-cached": "D'Interwiki-Informatioune kommen aus dem Tëschespäicher. Et ass net méiglech den Tëschespäicher z'änneren.",
 	"interwiki_edit": "Änneren",
 	"interwiki_reasonfield": "Grond:",
-	"interwiki_delquestion": "Läscht \"$1\"",
 	"interwiki_deleting": "Dir läscht de Prefix \"$1\".",
 	"interwiki_deleted": "De Prefix \"$1\" gouf aus der Interwiki-Tabell erausgeholl.",
 	"interwiki_delfailed": "Prefix \"$1\" konnt net aus der Interwiki-Tabell erausgeholl ginn.",

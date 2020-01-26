@@ -566,26 +566,6 @@ no text was provided for refs named <code>void</code></span></li>
 !! end
 
 !! test
-<ref>s with the follow parameter
-!! wikitext
-Page one.<ref name="beginning">First page footnote text.</ref>
-
-Page two.<ref follow="beginning">Second page footnote text.</ref>
-
-== References ==
-<references />
-!! html
-<p>Page one.<sup id="cite_ref-beginning_1-0" class="reference"><a href="#cite_note-beginning-1">&#91;1&#93;</a></sup>
-</p><p>Page two.
-</p>
-<h2><span class="mw-headline" id="References">References</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=1" title="Edit section: References">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<div class="mw-references-wrap"><ol class="references">
-<li id="cite_note-beginning-1"><span class="mw-cite-backlink"><a href="#cite_ref-beginning_1-0">↑</a></span> <span class="reference-text">First page footnote text. Second page footnote text.</span>
-</li>
-</ol></div>
-!! end
-
-!! test
 <ref> with both name and follow parameters - invalid
 !! wikitext
 Page one.<ref name="the-name" follow="the-name">This ref is invalid.</ref>
@@ -1690,4 +1670,42 @@ Similarly named refs with identical bodies
 <p>1 <sup about="#mwt7" class="mw-ref" id="cite_ref-1_1-0" rel="dc:references" typeof="mw:Extension/ref" data-mw='{"name":"ref","attrs":{"name":"1"},"body":{"id":"mw-reference-text-cite_note-1-1"}}'><a href="./Parser_test#cite_note-1-1" style="counter-reset: mw-Ref 1;"><span class="mw-reflink-text">[1]</span></a></sup> 2 <sup about="#mwt9" class="mw-ref" id="cite_ref-1_1-1" rel="dc:references" typeof="mw:Extension/ref" data-mw='{"name":"ref","attrs":{"name":"1"},"body":{"id":"mw-reference-text-cite_note-1-1"}}'><a href="./Parser_test#cite_note-1-1" style="counter-reset: mw-Ref 1;"><span class="mw-reflink-text">[1]</span></a></sup></p>
 
 <ol class="mw-references references" typeof="mw:Extension/references" about="#mwt5" data-mw='{"name":"references","attrs":{}}'><li about="#cite_note-1-1" id="cite_note-1-1"><span rel="mw:referencedBy"><a href="./Parser_test#cite_ref-1_1-0"><span class="mw-linkback-text">1 </span></a><a href="./Parser_test#cite_ref-1_1-1"><span class="mw-linkback-text">2 </span></a></span> <span id="mw-reference-text-cite_note-1-1" class="mw-reference-text" data-parsoid="{}">1</span></li></ol>
+!! end
+
+!! test
+T220196 - Reference names with high-bit characters, html5 mode
+!! config
+wgFragmentMode=['html5']
+!! wikitext
+<ref name="füllen">[bar]</ref>
+<references />
+!! html/php
+<p><sup id="cite_ref-füllen_1-0" class="reference"><a href="#cite_note-füllen-1">&#91;1&#93;</a></sup>
+</p>
+<div class="mw-references-wrap"><ol class="references">
+<li id="cite_note-füllen-1"><span class="mw-cite-backlink"><a href="#cite_ref-füllen_1-0">↑</a></span> <span class="reference-text">[bar]</span>
+</li>
+</ol></div>
+!! html/parsoid
+<p><sup about="#mwt2" class="mw-ref" id="cite_ref-füllen_1-0" rel="dc:references" typeof="mw:Extension/ref" data-mw='{"name":"ref","attrs":{"name":"füllen"},"body":{"id":"mw-reference-text-cite_note-füllen-1"}}'><a href="./Parser_test#cite_note-füllen_1-1" style="counter-reset: mw-Ref 1;"><span class="mw-reflink-text">[1]</span></a></sup></p>
+<ol class="mw-references references" typeof="mw:Extension/references" about="#mwt3" data-mw='{"name":"references","attrs":{}}'><li about="#cite_note-füllen-1" id="cite_note-füllen-1"><a href="./Parser_test#cite_ref-füllen-0" rel="mw:referencedBy"><span class="mw-linkback-text">↑ </span></a> <span id="mw-reference-text-cite_note-füllen-1" class="mw-reference-text" data-parsoid="{}">[bar]</span></li></ol>
+!! end
+
+!! test
+T220196 - Reference names with high-bit characters, legacy mode
+!! config
+wgFragmentMode=['legacy']
+!! wikitext
+<ref name="füllen">[bar]</ref>
+<references />
+!! html/php
+<p><sup id="cite_ref-f.C3.BCllen_1-0" class="reference"><a href="#cite_note-f.C3.BCllen-1">&#91;1&#93;</a></sup>
+</p>
+<div class="mw-references-wrap"><ol class="references">
+<li id="cite_note-f.C3.BCllen-1"><span class="mw-cite-backlink"><a href="#cite_ref-f.C3.BCllen_1-0">↑</a></span> <span class="reference-text">[bar]</span>
+</li>
+</ol></div>
+!! html/parsoid
+<p><sup about="#mwt2" class="mw-ref" id="cite_ref-füllen_1-0" rel="dc:references" typeof="mw:Extension/ref" data-mw='{"name":"ref","attrs":{"name":"füllen"},"body":{"id":"mw-reference-text-cite_note-füllen-1"}}'><a href="./Parser_test#cite_note-füllen_1-1" style="counter-reset: mw-Ref 1;"><span class="mw-reflink-text">[1]</span></a></sup></p>
+<ol class="mw-references references" typeof="mw:Extension/references" about="#mwt3" data-mw='{"name":"references","attrs":{}}'><li about="#cite_note-füllen-1" id="cite_note-füllen-1"><a href="./Parser_test#cite_ref-füllen-0" rel="mw:referencedBy"><span class="mw-linkback-text">↑ </span></a> <span id="mw-reference-text-cite_note-füllen-1" class="mw-reference-text" data-parsoid="{}">[bar]</span></li></ol>
 !! end

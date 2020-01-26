@@ -6,22 +6,26 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = $vendorDir;
 
 return array(
+    'jakobo\\HOTP\\' => array($vendorDir . '/jakobo/hotp-php/src'),
     'Wikimedia\\XMPReader\\' => array($vendorDir . '/wikimedia/xmp-reader/src'),
     'Wikimedia\\Timestamp\\' => array($vendorDir . '/wikimedia/timestamp/src'),
     'Wikimedia\\Purtle\\Tests\\' => array($vendorDir . '/wikimedia/purtle/tests/phpunit'),
     'Wikimedia\\Purtle\\' => array($vendorDir . '/wikimedia/purtle/src'),
     'Wikimedia\\PasswordBlacklist\\' => array($vendorDir . '/wikimedia/password-blacklist/src'),
     'Wikimedia\\Composer\\' => array($vendorDir . '/wikimedia/composer-merge-plugin/src'),
+    'Wikimedia\\AtEase\\' => array($vendorDir . '/wikimedia/at-ease/src/Wikimedia/AtEase'),
     'Wikimedia\\Assert\\Test\\' => array($vendorDir . '/wikimedia/assert/tests/phpunit'),
     'Wikimedia\\Assert\\' => array($vendorDir . '/wikimedia/assert/src'),
-    'Wikimedia\\' => array($vendorDir . '/wikimedia/ip-set/src', $vendorDir . '/wikimedia/object-factory/src', $vendorDir . '/wikimedia/scoped-callback/src', $vendorDir . '/wikimedia/wrappedstring/src'),
+    'Wikimedia\\' => array($vendorDir . '/wikimedia/ip-set/src', $vendorDir . '/wikimedia/ip-utils/src', $vendorDir . '/wikimedia/object-factory/src', $vendorDir . '/wikimedia/scoped-callback/src', $vendorDir . '/wikimedia/wrappedstring/src'),
     'RemexHtml\\' => array($vendorDir . '/wikimedia/remex-html/RemexHtml'),
     'Psr\\Log\\' => array($vendorDir . '/psr/log/Psr/Log'),
     'Psr\\Http\\Message\\' => array($vendorDir . '/psr/http-message/src'),
+    'Psr\\Container\\' => array($vendorDir . '/psr/container/src'),
     'Pleo\\BloomFilter\\' => array($vendorDir . '/pleonasm/bloom-filter/src'),
     'GuzzleHttp\\Psr7\\' => array($vendorDir . '/guzzlehttp/psr7/src'),
     'GuzzleHttp\\Promise\\' => array($vendorDir . '/guzzlehttp/promises/src'),
     'GuzzleHttp\\' => array($vendorDir . '/guzzlehttp/guzzle/src'),
     'Composer\\Semver\\' => array($vendorDir . '/composer/semver/src'),
     'CLDRPluralRuleParser\\' => array($vendorDir . '/wikimedia/cldr-plural-rule-parser/src'),
+    'Base32\\' => array($vendorDir . '/christian-riesen/base32/src'),
 );

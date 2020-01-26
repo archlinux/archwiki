@@ -3,12 +3,9 @@
 namespace RemexHtml\TreeBuilder;
 
 use RemexHtml\Serializer\SerializerNode;
+use RemexHtml\Tokenizer\Attributes;
 
 class TraceFormatter {
-	public function __construct( $prefix ) {
-		$this->prefix = $prefix;
-	}
-
 	/**
 	 * Get a debug tag for an element or null
 	 *

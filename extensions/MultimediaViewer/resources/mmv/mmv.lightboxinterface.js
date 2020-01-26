@@ -119,6 +119,7 @@
 	 * @param {string} alt
 	 */
 	LIP.setFileReuseData = function ( image, repo, caption, alt ) {
+		this.buttons.set( image );
 		this.fileReuse.set( image, repo, caption, alt );
 		this.downloadDialog.set( image, repo );
 	};

@@ -96,7 +96,7 @@ class Element implements FormattingElement {
 	/**
 	 * The element types in the MathML namespace which are MathML text
 	 * integration points.
-	 * @var string[bool]
+	 * @var bool[string]
 	 */
 	private static $mathmlIntegration = [
 		'mi' => true,
@@ -109,7 +109,7 @@ class Element implements FormattingElement {
 	/**
 	 * The element types in the SVG namespace which are SVG text integration
 	 * points.
-	 * @var string[bool]
+	 * @var bool[string]
 	 */
 	private static $svgHtmlIntegration = [
 		'foreignObject' => true,

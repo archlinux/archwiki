@@ -17,7 +17,7 @@
 	},
 	"nuke": "大量刪除",
 	"action-nuke": "大量刪除頁面",
-	"nuke-desc": "提供管理員可執行 [[Special:Nuke|大量刪除]] 的頁面",
+	"nuke-desc": "提供管理員可執行[[Special:Nuke|大量刪除]]的頁面",
 	"nuke-nopages": "沒有任何最近由 [[Special:Contributions/$1|{{GENDER:$1|$1}}]] 所變更的頁面。",
 	"nuke-list": "下列頁面最近由[[Special:Contributions/$1|{{GENDER:$1|$1}}]]所建立，請填寫原因並且點選按鈕刪除。",
 	"nuke-list-multiple": "下列為最近建立的頁面，\n請填寫評論並且點選按鈕刪除。",

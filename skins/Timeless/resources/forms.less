@@ -1,9 +1,13 @@
 @import 'variables.less';
 
 input {
+	font-family: @fonts;
+}
+
+// Because weird special cases that get broken by this usually aren't forms?
+form input {
 	margin: 0.5em 0;
 	padding: 0.34em;
-	font-family: @fonts;
 }
 
 .mw-input-with-label {
@@ -35,14 +39,14 @@ textarea {
 	resize: vertical;
 	box-sizing: border-box;
 	line-height: 1.3em;
-	border: solid 1px @grey;
+	border: solid 1px @base70;
 }
 
 div.editOptions {
 	padding: 1.25em 1.75em;
-	border: solid @grey;
+	border: solid @base70;
 	border-width: 0 1px @border;
-	background: @background2;
+	background: @base80;
 
 	// For Extension:TemplateSandbox and the like
 	fieldset {

@@ -4,7 +4,9 @@
 			"Joseph",
 			"Vito Genovese",
 			"TmY e12",
-			"Arystanbek"
+			"Arystanbek",
+			"Mirzali",
+			"ToprakM"
 		]
 	},
 	"log-name-titleblacklist": "Ad kara listesi günlüğü",
@@ -16,9 +18,8 @@
 	"titleblacklist-forbidden-upload": "\"$2\" dosya adının oluşturulması engellendi.\nŞu karaliste girdisiyle eşleşiyor: <code>$1</code>",
 	"titleblacklist-forbidden-new-account": "\"$2\" kullanıcı adının oluşturulması engellendi.\nŞu karaliste girdisiyle eşleşiyor: <code>$1</code>",
 	"titleblacklist-invalid": "Karalistedeki şu {{PLURAL:$1|satır|satırlar}} geçersiz;\nlütfen kaydetmeden önce düzeltin:",
-	"titleblacklist-override": "Karalisteyi yoksay",
+	"titleblacklist-override": "Eşleşirse başlık kara listesini geçersiz kıl",
 	"right-tboverride": "Başlık karalistesini geçersiz kıl",
 	"right-tboverride-account": "Kullanıcı adı karalistesini geçersiz kıl",
-	"right-titleblacklistlog": "Karaliste günlüğünü gör",
-	"visualeditor-saveerror-titleblacklist": "Kaydetme hatası sayfa: Bu sayfanın adı kara listeye alındı"
+	"right-titleblacklistlog": "Karaliste günlüğünü gör"
 }

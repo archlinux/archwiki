@@ -25,7 +25,9 @@
 			"Jdforrester",
 			"The Polish",
 			"Doctore",
-			"InternerowyGołąb"
+			"InternerowyGołąb",
+			"Railfail536",
+			"Rail"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Książka",
@@ -41,7 +43,11 @@
 	"cite-ve-changedesc-reflist-responsive-set": "Ustawiono wyświetlanie listy przypisów w kolumnach dopasowujących się do rozmiaru ekranu",
 	"cite-ve-changedesc-reflist-responsive-unset": "Ustawiono wyświetlanie listy przypisów tylko w jednej kolumnie",
 	"cite-ve-changedesc-reflist-item-id": "Zmienił się numer przypisu",
+	"cite-ve-citationneeded-button": "Dodaj przypis",
+	"cite-ve-citationneeded-description": "Edytor wykrył, że to stwierdzenie wymaga przypisu do wiarygodnego źródła.",
+	"cite-ve-citationneeded-title": "Potrzebny przypis",
 	"cite-ve-dialog-reference-editing-reused": "Ten przypis jest używany {{PLURAL:$1|raz|2=dwa razy|$1 razy}} na tej stronie.",
+	"cite-ve-dialog-reference-editing-reused-long": "Ten przypis jest używany {{PLURAL:$1|raz|$1 razy}} na tej stronie. Zmiany tutaj wprowadzone zostaną zastosowane we wszystkich miejscach gdzie ten przypis jest używany.",
 	"cite-ve-dialog-reference-options-group-label": "Użyj grupy",
 	"cite-ve-dialog-reference-options-group-placeholder": "Zwykłe przypisy",
 	"cite-ve-dialog-reference-options-name-label": "Wielokrotne użycie pod taką nazwą",

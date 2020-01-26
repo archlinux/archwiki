@@ -8,7 +8,6 @@
 		]
 	},
 	"skinname-timeless": "টাইমলেস",
-	"timeless-loggedin": "আপনার অ্যাকাউন্ট",
 	"timeless-anonymous": "নামহীন",
 	"timeless-loggedinas": "'''$1''' হিসাবে প্রবেশ",
 	"timeless-notloggedin": "প্রবেশ করেন নি",
@@ -19,6 +18,7 @@
 	"timeless-sitetools": "উইকি সরঞ্জামসমূহ",
 	"timeless-pageactions": "পাতার সরঞ্জামসমূহ",
 	"timeless-userpagetools": "ব্যবহারকারীর পাতার সরঞ্জামসমূহ",
+	"timeless-view-view": "পড়ুন",
 	"timeless-pagemisc": "আরও",
 	"timeless-namespaces": "নামস্থানসমূহ",
 	"timeless-pagetools": "পৃষ্ঠার ক্রিয়া",

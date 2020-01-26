@@ -5,7 +5,8 @@
 			"Zahidulla",
 			"Ильнар",
 			"Рашат Якупов",
-			"Macofe"
+			"Macofe",
+			"Ерней"
 		]
 	},
 	"wikieditor": "Викитекстны үзгәртү буенча киңәйтелгән интерфейс",
@@ -52,7 +53,7 @@
 	"wikieditor-toolbar-tool-file-title": "Файл өстәү",
 	"wikieditor-toolbar-file-target": "Файл исеме:",
 	"wikieditor-toolbar-file-caption": "Имза:",
-	"wikieditor-toolbar-file-size": "Үлчәм:",
+	"wikieditor-toolbar-file-size": "Зурлык:",
 	"wikieditor-toolbar-file-float": "Тигезләү:",
 	"wikieditor-toolbar-file-default": "(килешү буенча)",
 	"wikieditor-toolbar-file-format": "Формат:",

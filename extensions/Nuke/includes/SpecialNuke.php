@@ -18,6 +18,7 @@ class SpecialNuke extends SpecialPage {
 		$this->checkPermissions();
 		$this->checkReadOnly();
 		$this->outputHeader();
+		$this->addHelpLink( 'Extension:Nuke' );
 
 		$currentUser = $this->getUser();
 		if ( $currentUser->isBlocked() ) {

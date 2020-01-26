@@ -26,7 +26,7 @@ use MediaWiki\Storage\NameTableStore;
 use MediaWiki\Storage\SqlBlobStore;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Rdbms\IDatabase;
-use Wikimedia\Rdbms\ResultWrapper;
+use Wikimedia\Rdbms\IResultWrapper;
 
 require_once __DIR__ . '/Maintenance.php';
 
@@ -41,6 +41,9 @@ class PopulateContentTables extends Maintenance {
 
 	/** @var NameTableStore */
 	private $contentModelStore;
+
+	/** @var NameTableStore */
+	private $slotRoleStore;
 
 	/** @var BlobStore */
 	private $blobStore;
@@ -71,17 +74,23 @@ class PopulateContentTables extends Maintenance {
 	private function initServices() {
 		$this->dbw = $this->getDB( DB_MASTER );
 		$this->contentModelStore = MediaWikiServices::getInstance()->getContentModelStore();
+		$this->slotRoleStore = MediaWikiServices::getInstance()->getSlotRoleStore();
 		$this->blobStore = MediaWikiServices::getInstance()->getBlobStore();
-		$this->mainRoleId = MediaWikiServices::getInstance()->getSlotRoleStore()
-			->acquireId( SlotRecord::MAIN );
+
+		// Don't trust the cache for the NameTableStores, in case something went
+		// wrong during a previous run (see T224949#5325895).
+		$this->contentModelStore->reloadMap();
+		$this->slotRoleStore->reloadMap();
+		$this->mainRoleId = $this->slotRoleStore->acquireId( SlotRecord::MAIN );
 	}
 
 	public function execute() {
-		global $wgMultiContentRevisionSchemaMigrationStage;
+		$multiContentRevisionSchemaMigrationStage =
+			$this->getConfig()->get( 'MultiContentRevisionSchemaMigrationStage' );
 
 		$t0 = microtime( true );
 
-		if ( ( $wgMultiContentRevisionSchemaMigrationStage & SCHEMA_COMPAT_WRITE_NEW ) === 0 ) {
+		if ( ( $multiContentRevisionSchemaMigrationStage & SCHEMA_COMPAT_WRITE_NEW ) === 0 ) {
 			$this->writeln(
 				'...cannot update while \$wgMultiContentRevisionSchemaMigrationStage '
 				. 'does not have the SCHEMA_COMPAT_WRITE_NEW bit set.'
@@ -244,12 +253,12 @@ class PopulateContentTables extends Maintenance {
 	}
 
 	/**
-	 * @param ResultWrapper $rows
+	 * @param IResultWrapper $rows
 	 * @param int $startId
 	 * @param string $table
 	 * @return int|null
 	 */
-	private function populateContentTablesForRowBatch( ResultWrapper $rows, $startId, $table ) {
+	private function populateContentTablesForRowBatch( IResultWrapper $rows, $startId, $table ) {
 		$this->beginTransaction( $this->dbw, __METHOD__ );
 
 		if ( $this->contentRowMap === null ) {

@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Anoop rao",
+			"Jayprakash12345",
+			"Prong$31"
+		]
+	},
+	"apihelp-query+references-description": "दिए गए पृष्ठों से संबंधित संदर्भों का एक डेटा प्रस्तुत करें।",
+	"apihelp-query+references-summary": "Return a data representation of references associated with the given pages.",
+	"apihelp-query+references-example-1": "<kbd> अल्बर्ट आइंस्टीन </kbd> से संबंधित संदर्भ।",
+	"apierror-citestoragedisabled": "उद्धरण विस्तार संदर्भ संग्रहण सक्षम नहीं है।"
+}

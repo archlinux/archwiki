@@ -5,8 +5,6 @@
 			"The Evil IP address"
 		]
 	},
-	"apihelp-query+references-description": "Jidd en Dahschtällong vun dä Qälle un Fohßnuhte als Dahte uß, di met dä aanjejovve Sigge verknop sin.",
-	"apihelp-query+references-example-1": "Bezösche em Zesammehang mem <kbd lang=\"de\" xml:lang=\"de\" dir=\"ltr\">Albert Einstein</kbd>.",
 	"cite-desc": "Erlaub Quelle un Referenze met <code>&lt;ref[ name=id]&gt;</code> un <code>&lt;references/&gt;</code> aanzejevve.",
 	"cite_error": "Fähler in <i lang=\"en\">cite</i> met Referenze: $1",
 	"cite_error_ref_numeric_key": "Fähler en <i lang=\"en\">cite</i>:\nEne <code>&lt;ref&gt;</code>-Name kann kei Zahl sin.\nNemm en Övverschreff , di jät säht.",

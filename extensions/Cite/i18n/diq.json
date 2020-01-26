@@ -12,10 +12,6 @@
 			"Mirzali"
 		]
 	},
-	"apihelp-query+references-description": "Eleqe referansa deyaye peran de temsilandataya çerx keno",
-	"apihelp-query+references-summary": "Eleqe referansa deyaye peran de temsilandataya çerx keno",
-	"apihelp-query+references-example-1": "<kbd>Albert Einstein</kbd>'i ya eleqeyın referanso",
-	"apierror-citestoragedisabled": "Nımıtışê referansê cıkerdışê qalkerdışi a niyo.",
 	"cite-desc": "Qe çime mucnayîşî, etiketanê <code>&lt;ref[ name=id]&gt;</code> u <code>&lt;references/&gt;</code> de keno",
 	"cite_error": "Çımeyo ğelet: $1",
 	"cite_error_ref_invalid_dir": "Etiketo <code>&lt;ref&gt;</code> nêravêrde; xısusiyetê diri \"$1\" nêzaniyeno. Gani \"ltr\" ya zi \"rtl\" bo",

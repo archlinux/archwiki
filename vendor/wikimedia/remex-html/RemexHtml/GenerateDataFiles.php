@@ -2,10 +2,17 @@
 
 namespace RemexHtml;
 
+use RemexHtml\Tokenizer\Tokenizer;
+
 /**
  * Generate HTMLData.php. This can be executed e.g. with
  *
  * echo 'RemexHtml\GenerateDataFiles::run()' | hhvm bin/test.php
+ *
+ * or, using the psysh shell from the project root directory:
+ *
+ * >>> require('vendor/autoload.php');
+ * >>> RemexHtml\GenerateDataFiles::run()
  */
 class GenerateDataFiles {
 	const NS_HTML = 'http://www.w3.org/1999/xhtml';
@@ -231,7 +238,9 @@ EOT;
 	}
 
 	private function execute() {
-		$entitiesJson = file_get_contents( __DIR__ . '/entities.json' );
+		$filename = __DIR__ . '/entities.json';
+		$entitiesJson = file_exists( $filename ) ?
+			file_get_contents( $filename ) : false;
 
 		if ( $entitiesJson === false ) {
 			throw new \Exception( "Please download entities.json from " .
@@ -257,6 +266,9 @@ EOT;
 		} );
 
 		$entityRegex = $this->makeRegexAlternation( array_keys( $entities ) );
+		$charRefRegex = str_replace(
+			'{{NAMED_ENTITY_REGEX}}', $entityRegex, Tokenizer::CHARREF_REGEX
+		);
 
 		$matches = [];
 		preg_match_all( '/^0x([0-9A-F]+)\s+U\+([0-9A-F]+)/m',
@@ -278,6 +290,7 @@ EOT;
 			[ 'NameStartChar' => self::$nameStartChar ] );
 
 		$encEntityRegex = var_export( $entityRegex, true );
+		$encCharRefRegex = var_export( $charRefRegex, true );
 		$encTranslations = var_export( $entityTranslations, true );
 		$encLegacy = var_export( $legacyNumericEntities, true );
 		$encQuirkyRegex = var_export( $quirkyRegex, true );
@@ -311,6 +324,7 @@ class HTMLData {
 
 	static public \$special = $encSpecial;
 	static public \$namedEntityRegex = $encEntityRegex;
+	static public \$charRefRegex = $encCharRefRegex;
 	static public \$namedEntityTranslations = $encTranslations;
 	static public \$legacyNumericEntities = $encLegacy;
 	static public \$quirkyPrefixRegex = $encQuirkyRegex;

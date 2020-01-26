@@ -1,9 +1,16 @@
 @import 'variables.less';
 
-// Redundant sidebar category list and stuff
+// Single-column layout with dropdown menus
 
 #mw-content-block {
 	padding: 0;
+	position: relative;
+	// In case of high resolution usage
+	max-width: @content-width - @column-left-size - @column-right-size;
+}
+
+.ts-inner {
+	max-width: @content-width - @column-left-size - @column-right-size;
 }
 
 #mw-content {
@@ -12,7 +19,15 @@
 	margin-top: 5.425em;
 }
 
+#mw-content-container {
+	padding-bottom: 0;
+}
+
 .categories-bottom();
+
+#mw-data-after-content {
+	padding: 0 @content-padding;
+}
 
 // Header navigation
 
@@ -53,15 +68,14 @@
 	}
 }
 
-.sidebar-chunk:hover {
-	.pokey,
+.client-nojs .sidebar-chunk:hover {
 	.sidebar-inner {
 		display: block !important;
 	}
 }
 
 #mw-header-nav-hack {
-	border-top: solid 2px @grey-bright;
+	border-top: solid 2px @base80;
 	display: block;
 	position: absolute;
 	z-index: 98;
@@ -75,7 +89,7 @@
 
 #mw-site-navigation {
 	position: absolute;
-	top: 3.1em;
+	top: -2.35em;
 	left: 2em;
 
 	.sidebar-chunk {
@@ -87,9 +101,37 @@
 	}
 }
 
+#mw-site-navigation .sidebar-chunk h2 span {
+	.dropdown-pokey();
+
+	&:before,
+	&:after {
+		right: 1px;
+		display: none;
+	}
+
+	&:before {
+		top: 34px;
+	}
+
+	&:after {
+		top: 36px;
+	}
+}
+
+#mw-site-navigation .dropdown-active,
+.client-nojs #mw-site-navigation .sidebar-chunk:hover {
+	h2 span {
+		&:before,
+		&:after {
+			display: block;
+		}
+	}
+}
+
 #mw-related-navigation {
 	position: absolute;
-	top: 3.1em;
+	top: -2.35em;
 	right: 2em;
 
 	.sidebar-chunk {
@@ -98,6 +140,7 @@
 
 	.sidebar-inner {
 		.dropdown-menu();
+		.dropdown-pokey();
 		top: 2.95em !important; // to override mobile positioning
 	}
 }
@@ -110,7 +153,7 @@
 
 #p-logo-text a {
 	padding-left: 0;
-	text-align: left;
+	padding-right: 0.5em;
 }
 
 #mw-footer {
@@ -123,22 +166,10 @@
 	float: right;
 
 	h2 span {
-		display: none;
-	}
-
-	h2:after {
-		margin-left: -0.65em;
+		max-width: 130px;
 	}
 
 	.dropdown {
 		right: -1em;
 	}
-}
-
-#user-tools {
-	width: 6em;
-}
-
-#p-search {
-	margin-right: 6em;
 }

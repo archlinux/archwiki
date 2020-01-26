@@ -2,15 +2,34 @@
 	"@metadata": {
 		"authors": [
 			"Saederup92",
-			"Weblars"
+			"Weblars",
+			"Tinamalmgren"
 		]
 	},
+	"disableoathforuser": "Deaktivere brugeres tofaktorgodkendelse",
+	"specialpages-group-oath": "Tofaktorgodkendelse",
 	"oathauth-account": "Kontonavn:",
+	"oathauth-enable": "Aktiver tofaktorgodkendelse",
 	"oathauth-token": "Nøgle",
+	"oathauth-disable": "Deaktiver tofaktorgodkendelse",
+	"oathauth-validatedoath": "Validerede oplysninger for login med tofaktorgodkendelse, der nu er slået til.",
+	"oathauth-failedtovalidateoath": "Det mislykkedes at validere koden for tofaktorgodkendelse",
+	"oathauth-prefs-label": "Tofaktorgodkendelse:",
+	"oathauth-entertoken": "For at bekræfte, skriv en kode fra din enhed for autentifikation:",
+	"oathauth-disable-for-user": "Deaktiver tofaktorgodkendelse for en bruger",
+	"action-oathauth-disable-for-user": "deaktivere tofaktorgodkendelse for en bruger",
 	"oathauth-enteruser": "Brugernavn:",
+	"oathauth-enterreason": "Begrundelse for deaktivering:",
+	"action-oathauth-enable": "aktivere tofaktorgodkendelse",
 	"oathauth-auth-token-label": "Nøgle",
-	"oathauth-auth-ui": "Angiv verificeringskoden fra din autentificeringsenhed",
+	"oathauth-auth-ui": "Angiv en bekræftelseskode fra din enhed for autentifikation",
+	"oathauth-throttled": "For mange verificeringsforsøg! Vent i $1.",
 	"oathauth-login-failed": "Verificering mislykkedes",
 	"oathauth-user-not-found": "Der blev ikke fundet nogen brugerkonto med det navn",
-	"apihelp-query+oath-example-1": "Få information om den aktuelle bruger"
+	"oathauth-ui-manage": "Administrér",
+	"oathauth-enable-generic": "Aktiver",
+	"oathauth-disable-generic": "Deaktiver",
+	"oathauth-disable-page-title": "Deaktivér $1",
+	"oathauth-enable-page-title": "Aktivér $1",
+	"oathauth-ui-available-modules": "Tilgængelige metoder"
 }

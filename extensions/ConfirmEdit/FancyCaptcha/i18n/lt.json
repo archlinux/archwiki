@@ -17,8 +17,5 @@
 	"fancycaptcha-edit": "Kad atliktumėte šio puslapio pakeitimą, prašome įvesti žemiau nurodytus žodžius į langelį ([[Special:Captcha/help|daugiau informacijos]]):",
 	"fancycaptcha-imgcaptcha-ph": "Įveskite tekstą, kurį matote paveikslėlyje",
 	"fancycaptcha-sendemail": "Kad apsaugotumėme viki nuo automatizuoto brukalo, maloniai prašome jūsų įvesti žemiau nurodytus žodžius į langelį ([[Special:Captcha/help|daugiau informacijos]]):",
-	"fancycaptcha-reload-text": "Rodyti kitą",
-	"apihelp-fancycaptchareload-description": "Gauti naują FancyCaptcha.",
-	"apihelp-fancycaptchareload-summary": "Gauti naują FancyCaptcha.",
-	"apihelp-fancycaptchareload-example-1": "Gauti naują FancyCaptcha"
+	"fancycaptcha-reload-text": "Rodyti kitą"
 }

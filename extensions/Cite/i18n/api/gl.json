@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"Banjo",
+			"Elisardojm"
+		]
+	},
+	"apihelp-query+references-description": "Devolve unha representación de datos das referencias asociadas coas páxinas indicadas.",
+	"apihelp-query+references-summary": "Devolve unha representación de datos das referencias asociadas coas páxinas indicadas.",
+	"apihelp-query+references-example-1": "Referencias asociadas con <kbd>Albert Einstein</kbd>.",
+	"apierror-citestoragedisabled": "O almacenamento de referencias da extensión Cite non está habilitado."
+}

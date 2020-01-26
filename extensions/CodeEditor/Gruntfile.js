@@ -14,19 +14,18 @@ module.exports = function ( grunt ) {
 	grunt.loadNpmTasks( 'grunt-eslint' );
 	grunt.loadNpmTasks( 'grunt-exec' );
 	grunt.loadNpmTasks( 'grunt-stylelint' );
-	grunt.loadNpmTasks( 'grunt-jsonlint' );
 
 	grunt.initConfig( {
 		eslint: {
 			options: {
 				reportUnusedDisableDirectives: true,
+				extensions: [ '.js', '.json' ],
 				cache: true
 			},
 			all: [
-				'**/*.js',
-				'!node_modules/**',
+				'**/*.js{,on}',
 				'!modules/ace/**',
-				'!vendor/**'
+				'!{vendor,node_modules}/**'
 			]
 		},
 		stylelint: {
@@ -39,13 +38,6 @@ module.exports = function ( grunt ) {
 			]
 		},
 		banana: conf.MessagesDirs,
-		jsonlint: {
-			all: [
-				'**/*.json',
-				'!node_modules/**',
-				'!vendor/**'
-			]
-		},
 		exec: {
 			'npm-update-ace': {
 				cmd: 'npm update ace-builds',
@@ -81,6 +73,6 @@ module.exports = function ( grunt ) {
 	} );
 
 	grunt.registerTask( 'update-ace', [ 'exec:npm-update-ace', 'clean:ace', 'copy:ace', 'copy:ace-license' ] );
-	grunt.registerTask( 'test', [ 'eslint', 'stylelint', 'jsonlint', 'banana' ] );
+	grunt.registerTask( 'test', [ 'eslint', 'stylelint', 'banana' ] );
 	grunt.registerTask( 'default', 'test' );
 };

@@ -8,8 +8,6 @@
 		]
 	},
 	"multimediaviewer-desc": "A teljes képernyőre kinagyíthatóvá teszi a beágyazott képeket",
-	"multimediaviewer-pref": "Képnézegető",
-	"multimediaviewer-pref-desc": "A multimédiás tartalmak megnézését könnyebbé tevő eszköz. Az oldalak szövegébe beágyazott bélyegképeket kattintásra nagyobb méretben jeleníti meg, és számos egyéb adatot is mutat róluk.",
 	"multimediaviewer-optin-pref": "<span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About Képnézegető]</span> engedélyezése",
 	"multimediaviewer-file-page": "Ugrás a fájl saját lapjára",
 	"multimediaviewer-repository-local": "További részletek",

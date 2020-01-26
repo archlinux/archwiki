@@ -9,9 +9,9 @@
 			"Ted Masters"
 		]
 	},
-	"syntaxhighlight-desc": "Осигурява синтактично осветяване на <code>&lt;syntaxhighlight&gt;</code> чрез [http://pygments.org/ Pygments]",
+	"syntaxhighlight-desc": "Осигурява синтактично оцветяване на <code>&lt;syntaxhighlight&gt;</code> чрез [http://pygments.org/ Pygments]",
 	"syntaxhighlight-error-category": "Страници с грешки в оцветяването на синтаксиса",
-	"syntaxhighlight-error-category-desc": "Грешка при опит за осветяване на кода в страницата.",
+	"syntaxhighlight-error-category-desc": "Грешка при опит за оцветяване на кода в страницата.",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "Код",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Език",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "Показване номерата на редовете",

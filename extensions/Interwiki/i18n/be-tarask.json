@@ -30,7 +30,6 @@
 	"interwiki-cached": "Зьвесткі пра інтэрвікі знаходзяцца ў кэшы. Зьмяніць кэш немагчыма.",
 	"interwiki_edit": "Рэдагаваць",
 	"interwiki_reasonfield": "Прычына:",
-	"interwiki_delquestion": "Выдаленьне «$1»",
 	"interwiki_deleting": "Вы выдаляеце прэфікс «$1».",
 	"interwiki_deleted": "Прэфікс «$1» быў выдалены з табліцы інтэрвікі.",
 	"interwiki_delfailed": "Прэфікс «$1» ня можа быць выдалены з табліцы інтэрвікі.",

@@ -21,6 +21,7 @@
 	"MessagesDirs": {
 		"Cite": [
 			"i18n",
+			"i18n/api",
 			"modules/ve-cite/i18n"
 		]
 	},

@@ -83,6 +83,7 @@ $specialPageAliases['ckb'] = [
 /** Czech (čeština) */
 $specialPageAliases['cs'] = [
 	'Gadgets' => [ 'Udělátka' ],
+	'GadgetUsage' => [ 'Využití_udělátek' ],
 ];
 
 /** German (Deutsch) */
@@ -348,8 +349,14 @@ $specialPageAliases['sl'] = [
 
 /** Serbian (Cyrillic script) (српски (ћирилица)‎) */
 $specialPageAliases['sr-ec'] = [
-	'Gadgets' => [ 'Гаџети', 'Геџети' ],
-	'GadgetUsage' => [ 'УпотребаГаџета', 'УпотребаГеџета' ],
+	'Gadgets' => [ 'Справице', 'Гаџети', 'Геџети' ],
+	'GadgetUsage' => [ 'УпотребаСправица', 'УпотребаГаџета', 'УпотребаГеџета' ],
+];
+
+/** Serbian (Latin script) (srpski (latinica)‎) */
+$specialPageAliases['sr-el'] = [
+	'Gadgets' => [ 'Spravice', 'Gadžeti', 'Gedžeti' ],
+	'GadgetUsage' => [ 'UpotrebaSpravica', 'UpotrebaGadžeta', 'UpotrebaGedžeta' ],
 ];
 
 /** Swedish (svenska) */

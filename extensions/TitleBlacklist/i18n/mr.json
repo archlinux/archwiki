@@ -18,6 +18,5 @@
 	"titleblacklist-invalid": "शीर्षक ब्लॉक यादीतील खालील {{PLURAL:$1|ओळ चुकीची आहे|ओळी चुकीच्या आहेत}}; कृपया जतन करण्यापूर्वी {{PLURAL:$1|ती|त्या}} दुरुस्त करा:",
 	"titleblacklist-override": "काळ्या यादीकडे दुर्लक्ष करा",
 	"right-tboverride": "शीर्षक किंवा सदस्यनावांची काळी-यादी टाळा",
-	"right-tboverride-account": "खते काळ्या यादीकडे  दुर्लक्ष करा",
-	"visualeditor-saveerror-titleblacklist": "पान जतन करतांना त्रुटी:या पानाचे शीर्षक काळ्या यादीत आहे"
+	"right-tboverride-account": "खते काळ्या यादीकडे  दुर्लक्ष करा"
 }

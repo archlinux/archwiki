@@ -25,6 +25,5 @@
 	"titleblacklist-warning": "<strong>Varning: Denna sida kan endast redigeras av administratörer och andra användare med <code>tboverride</code>-rättigheten eftersom den matchar följande post i svartlistan över titlar:</strong><br /><code>$1</code>",
 	"right-tboverride": "Åsidosätt svartlistan med titlar och användarnamn",
 	"right-tboverride-account": "Kör över svartlistan för användarnamn",
-	"right-titleblacklistlog": "Visa svartlistningslogg för titlar",
-	"visualeditor-saveerror-titleblacklist": "Fel vid sparande av sidan: Denna sidtitel är svartlistad"
+	"right-titleblacklistlog": "Visa svartlistningslogg för titlar"
 }

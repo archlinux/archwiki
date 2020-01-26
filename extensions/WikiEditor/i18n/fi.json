@@ -17,7 +17,8 @@
 			"Syreeni",
 			"Macofe",
 			"01miki10",
-			"Pyscowicz"
+			"Pyscowicz",
+			"Antsa"
 		]
 	},
 	"wikieditor": "Edistynyt wikitekstin muokkauskäyttöliittymä",
@@ -140,6 +141,7 @@
 	"wikieditor-toolbar-tool-replace-success": "$1 {{PLURAL:$1|korvaus|korvausta}} tehty.",
 	"wikieditor-toolbar-tool-replace-emptysearch": "Et antanut mitään haettavaa.",
 	"wikieditor-toolbar-tool-replace-invalidregex": "Syöttämäsi säännöllinen lauseke ei ole kelvollinen: $1",
+	"wikieditor-toolbar-tool-replace-word": "Sovita koko sana",
 	"wikieditor-toolbar-section-characters": "Erikoismerkit",
 	"wikieditor-toolbar-section-help": "Ohje",
 	"wikieditor-toolbar-help-heading-description": "Kuvaus",

@@ -3,7 +3,8 @@
 		"authors": [
 			"Mirzali",
 			"Asmen",
-			"1917 Ekim Devrimi"
+			"1917 Ekim Devrimi",
+			"Orbot707"
 		]
 	},
 	"multimediaviewer-datetime-created": "Tarixê vıraştışi: $1",
@@ -14,6 +15,7 @@
 	"multimediaviewer-help-mmv": "Peşti",
 	"multimediaviewer-share-tab": "Vıla ke",
 	"multimediaviewer-download-link": "Na dosya biya war",
+	"multimediaviewer-original-embed-dimensions": "Dosyaya oricinale $1",
 	"multimediaviewer-small-embed-dimensions": "Werdi $1",
 	"multimediaviewer-title-popup-text": "Şınasnayış",
 	"multimediaviewer-option-cancel-button": "Bıtexelne"

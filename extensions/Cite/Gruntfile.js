@@ -11,7 +11,6 @@ module.exports = function ( grunt ) {
 
 	grunt.loadNpmTasks( 'grunt-banana-checker' );
 	grunt.loadNpmTasks( 'grunt-eslint' );
-	grunt.loadNpmTasks( 'grunt-jsonlint' );
 	grunt.loadNpmTasks( 'grunt-stylelint' );
 	grunt.loadNpmTasks( 'grunt-svgmin' );
 
@@ -19,15 +18,12 @@ module.exports = function ( grunt ) {
 		eslint: {
 			options: {
 				reportUnusedDisableDirectives: true,
+				extensions: [ '.js', '.json' ],
 				cache: true
 			},
 			all: [
-				'**/*.js',
-				'{.jsduck,build}/**/*.js',
-				'modules/**/*.js',
-				'tests/**/*.js',
-				'!node_modules/**',
-				'!vendor/**'
+				'**/*.js{,on}',
+				'!{vendor,node_modules}/**'
 			]
 		},
 		banana: conf.MessagesDirs,
@@ -35,13 +31,6 @@ module.exports = function ( grunt ) {
 			all: [
 				'**/*.css',
 				'**/*.less',
-				'!node_modules/**',
-				'!vendor/**'
-			]
-		},
-		jsonlint: {
-			all: [
-				'**/*.json',
 				'!node_modules/**',
 				'!vendor/**'
 			]
@@ -83,6 +72,6 @@ module.exports = function ( grunt ) {
 		}
 	} );
 
-	grunt.registerTask( 'test', [ 'eslint', 'stylelint', 'jsonlint', 'banana', 'svgmin' ] );
+	grunt.registerTask( 'test', [ 'eslint', 'stylelint', 'banana', 'svgmin' ] );
 	grunt.registerTask( 'default', 'test' );
 };

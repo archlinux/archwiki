@@ -11,23 +11,21 @@ body {
 body {
 	font-family: @fonts;
 	color: @text;
-	background: @background-dark;
+	background: @base30;
 	font-size: @font-size;
-	line-height: 1.4;
+	line-height: 1.5;
 }
 
 #mw-content {
 	.box;
 	background: @background;
 	padding: 1em @content-padding 3em;
+}
 
+#bodyContentOuter {
 	/* Set a z-index for the content to group it away from any nav stuff (extensions) - T200148 */
 	position: relative;
 	z-index: 0;
-}
-
-#mw-content-container {
-	background: @background2;
 }
 
 .mw-body {
@@ -35,12 +33,17 @@ body {
 }
 
 #mw-footer-container {
-	border-top: solid 1px @background-dark2;
+	border-top: solid 1px @base20;
 	box-shadow: inset 0 7px 2px -4px rgba( 0, 0, 0, 0.1 );
-	color: @text-inverse;
+	color: @base100;
 
 	a {
-		color: @text-inverse;
+		color: @blue-bright;
+
+		&:hover,
+		&:visited {
+			color: @base90;
+		}
 	}
 
 	ul {
@@ -53,18 +56,8 @@ body {
 	margin: auto;
 }
 
-.mw-wiki-logo {
-	display: block;
-	content: '';
-	width: 11em;
-	height: 11em;
-	background-repeat: no-repeat;
-	background-position: center center;
-	margin: 0.75em auto 0;
-}
-
 #p-logo-text {
-	width: @column-left-size;
+	max-width: @column-left-size;
 	text-align: center;
 	line-height: 1;
 
@@ -82,6 +75,11 @@ body {
 			padding: 0 0.75em 0 0;
 			line-height: 0.8;
 		}
+
+		/* images */
+		&.wordmark {
+			padding: 0 0.5em 0 0;
+		}
 	}
 }
 
@@ -91,7 +89,7 @@ body {
 	box-shadow: inset 0 2px 4px 0 rgba( 0, 0, 0, 0.05 );
 	background: @background;
 	position: relative;
-	border: solid 1px @grey;
+	border: solid 1px @base70;
 }
 
 #searchInput {
@@ -117,6 +115,7 @@ body {
 	height: 2.5em;
 	.icon;
 	.background-image-svg( 'images/search-ltr.svg', 'images/search-ltr.png' );
+	/* @noflip */
 	background-position: center 40%;
 	box-shadow: none;
 }
@@ -127,14 +126,14 @@ body {
 
 	.suggestions-special {
 		background-color: @background;
-		border: 1px solid @grey;
+		border: 1px solid @base70;
 		border-bottom-width: @border;
 		padding: 0.75em 2em;
 	}
 
 	.suggestions-results {
 		background-color: @background;
-		border: 1px solid @grey;
+		border: 1px solid @base70;
 		border-bottom-width: @border;
 	}
 
@@ -147,38 +146,6 @@ body {
 		background-color: @blue;
 		color: @background;
 	}
-}
-
-div.suggestions {
-	position: fixed;
-	top: 2.75em !important; // Override js-provided value to account for fixed header
-}
-
-/* Dropdown stuff */
-
-.pokey,
-.pokey:after {
-	border-bottom: 10px solid @grey-bright;
-	border-left: 10px solid transparent;
-	border-right: 10px solid transparent;
-	content: '';
-	height: 0;
-	position: absolute;
-	transform: rotate( 360deg ); // to force some smoothing in annoying browsers
-	width: 0;
-	z-index: 4;
-}
-
-.pokey {
-	top: 1.85em;
-	right: 1px;
-	display: none;
-}
-
-.pokey:after {
-	border-bottom-color: #fff;
-	right: -10px;
-	top: 2px;
 }
 
 .dropdown-toggle {
@@ -222,10 +189,17 @@ div.suggestions {
 /* Content */
 
 #mw-content-container {
+	background: @base80;
 	border-bottom: solid 4px @green;
+
+	// Background image (default cat)
+	background-image: @backdrop-image;
+	background-repeat: no-repeat;
+	background-position: center 10em;
 }
 
-#mw-page-header-links {
+.tools-inline,
+.tools-inline & {
 	div,
 	ul,
 	li {
@@ -234,22 +208,26 @@ div.suggestions {
 		margin: 0;
 		padding: 0;
 	}
+}
 
-	li {
-		margin: 0.25em 0 1em;
-		border-bottom: solid 3px transparent;
+.tools-inline li {
+	margin: 0.25em 0 1em;
+	border-bottom: solid 3px transparent;
 
-		&:hover {
-			border-bottom-color: @grey;
+	&:hover {
+		border-bottom-color: @base70;
+	}
+
+	&.selected {
+		border-bottom-color: @blue;
+
+		a {
+			color: @text;
 		}
+	}
 
-		&.selected {
-			border-bottom-color: @blue;
-
-			a {
-				color: @text;
-			}
-		}
+	a {
+		.ca-icon( 'images/page-misc-grey' );
 	}
 }
 
@@ -271,13 +249,50 @@ div.suggestions {
 }
 
 #ca-watch a {
-	.ca-icon();
-	.background-image-svg( 'images/star.svg', 'images/star.png' );
+	.ca-icon( 'images/star' );
+	.ca-icon-only();
 }
 
 #ca-unwatch a {
-	.ca-icon();
-	.background-image-svg( 'images/star-filled.svg', 'images/star-filled.png' );
+	.ca-icon( 'images/star-filled' );
+	.ca-icon-only();
+}
+
+#ca-edit a {
+	.ca-icon( 'images/pencil-grey' );
+}
+
+#ca-history a {
+	.ca-icon( 'images/clock-grey' );
+}
+
+#ca-talk a {
+	.ca-icon( 'images/talk-grey' );
+}
+
+#t-contributions a {
+	.ca-icon( 'images/puzzle-grey' );
+}
+
+#ca-addsection a {
+	.ca-icon( 'images/plus-grey' );
+}
+
+#ca-viewsource a {
+	.ca-icon( 'images/brackets-grey' );
+}
+
+#ca-view {
+	.hidden();
+
+	// Let's give anyone who forcibly brings it back a creepy eyeball
+	a {
+		.ca-icon( 'images/eyeball-grey' );
+	}
+}
+
+.tools-inline li[ id^='ca-nstab-' ] a {
+	.ca-icon( 'images/page-grey' );
 }
 
 #siteNotice {
@@ -300,21 +315,21 @@ div.suggestions {
 
 a {
 	text-decoration: none;
-	color: @blue;
+	color: @link;
 
 	&:hover,
 	&:visited {
-		color: @blue-dark;
+		color: @link-visited;
 	}
 }
 
 a.new,
 .new a {
-	color: @red;
+	color: @link-red;
 
 	&:hover,
 	&:visited {
-		color: @red-dark;
+		color: @link-red-visited;
 	}
 }
 
@@ -326,13 +341,22 @@ a.mw-selflink {
 
 .mw-editsection {
 	font-family: @fonts;
+	.background-image-svg( 'images/pencil-grey.svg', 'images/pencil-grey.png' );
+	background-repeat: no-repeat;
+	background-position: left bottom;
+	padding-left: 20px;
+	padding-top: 0.5em;
 
 	a {
-		.background-image-svg( 'images/pencil-grey.svg', 'images/pencil-grey.png' );
-		background-repeat: no-repeat;
-		background-position: left bottom;
 		display: inline-block;
-		padding: 0.5em 0 0.25em 1.75em;
+		padding: 0.5em 0 0.25em;
+		margin-right: 1em;
+
+		&:first-of-type {
+			// make the icon part of the first link
+			padding-left: 20px;
+			margin-left: -20px;
+		}
 	}
 }
 
@@ -346,7 +370,7 @@ a.mw-selflink {
 
 .mw-indicators {
 	float: right;
-	margin: 1em 0 0 1em;
+	margin: 0.75em 0 0 1em;
 }
 
 .mw-indicator {
@@ -369,7 +393,7 @@ div.magnify a {
  */
 #contentSub {
 	font-size: 84%;
-	color: @grey-dark;
+	color: @base20;
 
 	/* This forces "redirect page" (on a redirect page) etc. on a new line */
 	.subpages {
@@ -381,19 +405,30 @@ div.magnify a {
  * /resources/src/mediawiki.skinning/elements.css and modified a bit
  * @see https://phabricator.wikimedia.org/T177142
  */
-code {
+
+.screenplay,
+code,
+tt,
+kbd,
+pre,
+samp {
+	font-family: @fonts-mono;
+}
+
+code,
+pre,
+.mw-code {
 	color: #000;
-	background-color: @grey-bright;
-	border: 1px solid @grey-dark;
-	border-radius: 2px;
+	background-color: @base90;
+	border: 1px solid @base70;
+}
+
+code {
 	padding: 1px 4px;
 }
 
 pre,
 .mw-code {
-	color: #000;
-	background-color: @grey-bright;
-	border: 1px solid @grey-dark;
 	padding: 1em;
 	/* Wrap lines in overflow. T2260, T103780 */
 	white-space: pre-wrap;
@@ -410,7 +445,7 @@ pre,
 		font-weight: normal;
 		font-family: @fonts-secondary;
 		line-height: 1.125;
-		margin: 1.5em 0 0.5em;
+		margin: 1.25em 0 0.5em;
 	}
 
 	dt {
@@ -433,19 +468,16 @@ pre,
 	h1.firstHeading {
 		margin: 0.25em 0 0.5em;
 		border-bottom: solid 4px @blue;
-		overflow: visible;
 	}
 
 	h1 {
 		font-size: 2em;
-		border-bottom: solid 3px @grey;
-		overflow: hidden;
+		border-bottom: solid 3px @base70;
 	}
 
 	h2 {
 		font-size: 1.8em;
-		border-bottom: solid 2px @grey;
-		overflow: hidden;
+		border-bottom: solid 2px @base70;
 	}
 
 	h3 {
@@ -479,6 +511,27 @@ pre,
 	.mw-changeslist-legend dd {
 		margin-bottom: 0;
 	}
+
+	// overflow:hidden on the header itself breaks tall scripts, but we need to hide
+	// overflow on the border itself in output for proper thumb handling. Too weird to
+	// change this everywhere, so we'll just do it for parser output for now.
+	.mw-parser-output {
+		h1,
+		h2 {
+			border-bottom: 0;
+
+			&:after {
+				content: '';
+				display: block;
+				border-bottom: solid 2px @base70;
+				overflow: hidden;
+			}
+		}
+
+		h1:after {
+			border-bottom-width: 3px;
+		}
+	}
 }
 
 #siteSub {
@@ -490,7 +543,7 @@ pre,
 
 hr {
 	border-width: 1px;
-	border-color: @grey;
+	border-color: @base70;
 	border-style: solid none solid none;
 	margin: 0.5em 0;
 }
@@ -501,12 +554,16 @@ pre {
 }
 
 p {
-	margin: 0.9em 0 0.8em;
+	margin: 1em 0;
 }
 
 ul {
 	padding: 0;
 	margin: 0.3em 0 0 1.6em;
+}
+
+.mw-empty-elt {
+	display: none;
 }
 
 .center {
@@ -516,12 +573,14 @@ ul {
 
 /* Thumbnails */
 /* @noflip */
+.floatright,
 .tright {
 	margin: 0 0 0.5em 0.5em;
 	padding: 0 0 1em 1.5em;
 }
 
 /* @noflip */
+.floatleft,
 .tleft {
 	margin: 0 0.5em 0.5em 0;
 	padding: 0 1.5em 1em 0;
@@ -533,16 +592,19 @@ ul {
 	/* Properly center framed thumbnail images (T219717) */
 	margin-left: auto;
 	margin-right: auto;
+	overflow: hidden;
 }
 
 .thumbcaption {
 	font-size: 95%;
-	padding: 0.5em 1em;
+	padding: 0.5em 0 0;
+	// For the magnify link on empty captions
+	min-height: 1em;
 }
 
 .thumbinner .thumbimage,
 .thumbborder {
-	border: solid 1px @grey-bright;
+	border: solid 1px @base80;
 }
 
 .mw-body li.gallerybox div.thumb {
@@ -562,31 +624,58 @@ ul#filetoc,
 	min-width: 15em;
 }
 
+.toc {
+	line-height: 1.2;
+
+	ul {
+		margin: 1em 0 0;
+		list-style: none;
+		text-align: left;
+	}
+
+	li {
+		margin: 0.3em 0;
+
+		&:last-child {
+			margin-bottom: 0.5em;
+		}
+	}
+}
+
 ul#filetoc {
 	display: block;
-	border: 0;
+	margin-bottom: 2em;
 }
 
-.toc ul {
-	margin: 1em 0 0;
-	list-style: none;
-	text-align: left;
-}
+.mw-body .toctitle {
+	border-bottom: solid 2px @base70;
 
-.mw-body .toc h2 {
-	font-size: 1em;
-	font-family: @fonts;
-	margin: 0;
-	display: inline;
-	border-bottom-color: @grey;
+	h2 {
+		font-size: 1em;
+		font-family: @fonts;
+		margin: 0;
+		display: inline;
+
+		&:after {
+			display: none;
+		}
+	}
 }
 
 .toctogglespan {
 	float: right;
 }
 
-.toc li:last-child {
-	margin-bottom: 0.5em;
+// Remove brackets around the show/hide button of the TOC
+// The selectors have a higher specifity than in core
+body :not( :checked ) > .toctogglespan:before,
+body :not( :checked ) > .toctogglespan:after {
+	content: '';
+}
+
+.toctogglelabel {
+	padding-left: 0; // Overwrite label { padding-left: 0.5em; } from forms.less
+	margin-left: 0.5em; // Create new distance to the TOC title without increasing the focus ring
 }
 
 .toclevel-1 {
@@ -594,7 +683,7 @@ ul#filetoc {
 }
 
 .tocnumber {
-	color: @grey-dark;
+	color: @base20;
 }
 
 .skin-timeless .mw-body .oo-ui-tagMultiselectWidget-handle,
@@ -606,7 +695,8 @@ ul#filetoc {
 .mw-changeslist-legend,
 .mw-body .mw-search-profile-tabs,
 .mw-body fieldset#mw-searchoptions,
-.wikitable {
+.wikitable,
+.mw-datatable {
 	color: @text;
 	.box;
 }
@@ -615,17 +705,35 @@ ul#filetoc {
 	padding: 0.5em;
 }
 
-.wikitable > tr > th,
-.wikitable > tr > td,
-.wikitable > * > tr > th,
-.wikitable > * > tr > td {
-	border: 1px solid @grey-bright;
-	padding: 0.5em;
+.mw-datatable,
+.wikitable {
+	border-color: @base70;
+
+	> tr > th,
+	> tr > td,
+	> * > tr > th,
+	> * > tr > td {
+		border: 1px solid @base70;
+		padding: 0.4em 0.5em;
+	}
+
+	> tr > th,
+	> * > tr > th {
+		border-bottom-width: 2px;
+	}
+
+	> tr > td,
+	> * > tr > td {
+		background: @base90;
+	}
 }
 
-.wikitable > tr > th,
-.wikitable > * > tr > th {
-	border: 0;
+.mw-datatable th {
+	background: @blue-bright;
+}
+
+.wikitable th {
+	background: @base80;
 }
 
 /* Color bars */
@@ -670,13 +778,6 @@ ul#filetoc {
 
 #p-lang.emptyPortlet {
 	display: inherit;
-}
-
-/* Language links box should not have an unnecessary scrollbar
- * @see https://phabricator.wikimedia.org/T181491
- */
-#p-lang {
-	overflow: hidden;
 }
 
 /* Hidden stuff */

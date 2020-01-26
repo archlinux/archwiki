@@ -21,7 +21,8 @@
 			"Mailman",
 			"Smigles",
 			"Vlad5250",
-			"Stjn"
+			"Stjn",
+			"Movses"
 		]
 	},
 	"wikieditor": "Расширенный интерфейс редактирования викитекста",
@@ -145,6 +146,7 @@
 	"wikieditor-toolbar-tool-replace-success": "$1 {{PLURAL:$1|замена произведена|замены произведены|замен произведено}}.",
 	"wikieditor-toolbar-tool-replace-emptysearch": "Вы не указали, что следует искать.",
 	"wikieditor-toolbar-tool-replace-invalidregex": "Введённое вами регулярное выражение ошибочно:  $1",
+	"wikieditor-toolbar-tool-replace-word": "Только целые слова",
 	"wikieditor-toolbar-section-characters": "Спецсимволы",
 	"wikieditor-toolbar-section-help": "Справка",
 	"wikieditor-toolbar-help-heading-description": "Описание",

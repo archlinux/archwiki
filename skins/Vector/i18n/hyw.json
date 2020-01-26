@@ -3,13 +3,14 @@
 		"authors": [
 			"Azniv Stepanian",
 			"ArmenBakkalian",
-			"Rajemian"
+			"Rajemian",
+			"Դավիթ Սարոյան"
 		]
 	},
 	"vector-action-addsection": "Աւելցնել քննարկում",
 	"vector-action-delete": "Ջնջել",
 	"vector-action-move": "Տեղափոխել այս էջը",
-	"vector-action-protect": "Պահպանել",
+	"vector-action-protect": "Պահել",
 	"vector-view-create": "Ստեղծել",
 	"vector-view-edit": "Խմբագրել",
 	"vector-view-history": "Տեսնել պատմութիւնը",

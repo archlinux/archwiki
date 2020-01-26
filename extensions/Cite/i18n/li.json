@@ -5,10 +5,6 @@
 			"Pahles"
 		]
 	},
-	"apihelp-query+references-description": "Gaef gegaevesrepresentatie van rifferensies trögk die waere verbónje mit de opgegaeve pagina's.",
-	"apihelp-query+references-summary": "Gaef gegaevesrepresentatie van rifferensies trögk die waere verbónje mit de opgegaeve pagina's.",
-	"apihelp-query+references-example-1": "Rifferensies verbónje mit <kbd>Albert Einstein</kbd>.",
-	"apierror-citestoragedisabled": "Oetbreijingsrifferensieopslaag van Citeer steit neet aan.",
 	"cite-desc": "Voeg <code>&lt;ref[ name=id]&gt;</code> en <code>&lt;references/&gt;</code> tags toe veur citate",
 	"cite_error": "Citeerfout: $1",
 	"cite_error_ref_numeric_key": "Ónzjuuste tag <code>&lt;ref&gt;</code>; de naam kin gein simpele integer zeen, gebroek 'ne besjrievendje titel",

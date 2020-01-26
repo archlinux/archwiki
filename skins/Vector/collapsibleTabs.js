@@ -4,8 +4,8 @@
  * @class jQuery.plugin.collapsibleTabs
  */
 ( function () {
-	var isRTL = document.documentElement.dir === 'rtl',
-		boundEvent = false,
+	var boundEvent,
+		isRTL = document.documentElement.dir === 'rtl',
 		rAF = window.requestAnimationFrame || setTimeout;
 
 	/**
@@ -50,7 +50,7 @@
 		// if we haven't already bound our resize handler, bind it now
 		if ( !boundEvent ) {
 			boundEvent = true;
-			$( window ).on( 'resize', $.debounce( 100, function () {
+			$( window ).on( 'resize', mw.util.debounce( 10, function () {
 				rAF( $.collapsibleTabs.handleResize );
 			} ) );
 		}
@@ -96,7 +96,9 @@
 		},
 		handleResize: function () {
 			$.collapsibleTabs.instances.forEach( function ( $el ) {
-				var data = $.collapsibleTabs.getSettings( $el );
+				var $tab,
+					data = $.collapsibleTabs.getSettings( $el );
+
 				if ( data.shifting ) {
 					return;
 				}
@@ -105,24 +107,21 @@
 				if ( $el.children( data.collapsible ).length && data.collapseCondition() ) {
 					$el.trigger( 'beforeTabCollapse' );
 					// move the element to the dropdown menu
-					$.collapsibleTabs.moveToCollapsed( $el.children( data.collapsible + ':last' ) );
+					$.collapsibleTabs.moveToCollapsed( $el.children( data.collapsible ).last() );
 				}
 
+				$tab = $( data.collapsedContainer ).children( data.collapsible ).first();
 				// if there are still moveable items in the dropdown menu,
 				// and there is sufficient space to place them in the tab container
 				if (
 					$( data.collapsedContainer + ' ' + data.collapsible ).length &&
 					data.expandCondition(
-						$.collapsibleTabs.getSettings(
-							$( data.collapsedContainer ).children(
-								data.collapsible + ':first' )
-						).expandedWidth
+						$.collapsibleTabs.getSettings( $tab ).expandedWidth
 					)
 				) {
 					// move the element from the dropdown to the tab
 					$el.trigger( 'beforeTabExpand' );
-					$.collapsibleTabs
-						.moveToExpanded( data.collapsedContainer + ' ' + data.collapsible + ':first' );
+					$.collapsibleTabs.moveToExpanded( $tab );
 				}
 			} );
 		},
@@ -156,9 +155,8 @@
 					rAF( $.collapsibleTabs.handleResize );
 				} );
 		},
-		moveToExpanded: function ( ele ) {
-			var data, expContainerSettings, $target, expandedWidth,
-				$moving = $( ele );
+		moveToExpanded: function ( $moving ) {
+			var data, expContainerSettings, $target, expandedWidth;
 
 			data = $.collapsibleTabs.getSettings( $moving );
 			if ( !data ) {
@@ -171,7 +169,7 @@
 			expContainerSettings.shifting = true;
 
 			// grab the next appearing placeholder so we can use it for replacing
-			$target = $( data.expandedContainer ).find( 'span.placeholder:first' );
+			$target = $( data.expandedContainer ).find( 'span.placeholder' ).first();
 			expandedWidth = data.expandedWidth;
 			$moving.css( 'position', 'relative' ).css( ( isRTL ? 'right' : 'left' ), 0 ).css( 'width', '1px' );
 			$target.replaceWith(

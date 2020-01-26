@@ -84,9 +84,7 @@
 		],
 		"UploadVerifyUpload": [
 			"SpamBlacklistHooks::onUploadVerifyUpload"
-		],
-		"ArticleDelete": "SpamBlacklistHooks::onArticleDelete",
-		"ArticleDeleteComplete": "SpamBlacklistHooks::onArticleDeleteComplete"
+		]
 	},
 	"config": {
 		"BlacklistSettings": {
@@ -95,8 +93,7 @@
 			},
 			"_merge_strategy": "array_plus_2d"
 		},
-		"LogSpamBlacklistHits": false,
-		"SpamBlacklistEventLogging": false
+		"LogSpamBlacklistHits": false
 	},
 	"AuthManagerAutoConfig": {
 		"preauth": {

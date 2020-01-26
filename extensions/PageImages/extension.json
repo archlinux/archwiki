@@ -1,0 +1,100 @@
+{
+	"name": "PageImages",
+	"author": "Max Semenik",
+	"url": "https://www.mediawiki.org/wiki/Extension:PageImages",
+	"descriptionmsg": "pageimages-desc",
+	"license-name": "WTFPL",
+	"type": "api",
+	"requires": {
+		"MediaWiki": ">= 1.29.0"
+	},
+	"APIPropModules": {
+		"pageimages": "ApiQueryPageImages"
+	},
+	"MessagesDirs": {
+		"PageImages": [
+			"i18n",
+			"i18n/api"
+		]
+	},
+	"AutoloadClasses": {
+		"ApiQueryPageImages": "includes/ApiQueryPageImages.php",
+		"PageImages": "includes/PageImages.php",
+		"PageImages\\Hooks\\LinksUpdateHookHandler": "includes/LinksUpdateHookHandler.php",
+		"PageImages\\Hooks\\ParserFileProcessingHookHandlers": "includes/ParserFileProcessingHookHandlers.php",
+		"PageImages\\Job\\InitImageDataJob": "includes/Job/InitImageDataJob.php"
+	},
+	"Hooks": {
+		"AfterParserFetchFileAndTitle": "PageImages\\Hooks\\ParserFileProcessingHookHandlers::onAfterParserFetchFileAndTitle",
+		"ApiOpenSearchSuggest": "PageImages::onApiOpenSearchSuggest",
+		"BeforePageDisplay": "PageImages::onBeforePageDisplay",
+		"InfoAction": "PageImages::onInfoAction",
+		"LinksUpdate": "PageImages\\Hooks\\LinksUpdateHookHandler::onLinksUpdate",
+		"OpenSearchXml": "PageImages::onApiOpenSearchSuggest",
+		"ParserMakeImageParams": "PageImages\\Hooks\\ParserFileProcessingHookHandlers::onParserMakeImageParams",
+		"SpecialMobileEditWatchlist::images": "PageImages::onSpecialMobileEditWatchlistImages"
+	},
+	"JobClasses": {
+		"InitImageDataJob": "PageImages\\Job\\InitImageDataJob"
+	},
+	"config": {
+		"PageImagesScores": {
+			"@doc": "Images <120px are usually from maintenace or stub templates; >600px are panoramas, less suitable.",
+			"value": {
+				"position": [
+					8,
+					6,
+					4,
+					3
+				],
+				"width": {
+					"119": -100,
+					"400": 10,
+					"600": 5,
+					"601": 0
+				},
+				"galleryImageWidth": {
+					"99": -100,
+					"100": 0
+				},
+				"ratio": {
+					"3": -100,
+					"5": 0,
+					"20": 5,
+					"30": 0,
+					"31": -100
+				}
+			}
+		},
+		"PageImagesBlacklist": {
+			"value": [
+				{
+					"type": "db",
+					"page": "MediaWiki:Pageimages-blacklist",
+					"db": false
+				}
+			]
+		},
+		"PageImagesBlacklistExpiry": {
+			"value": 900
+		},
+		"PageImagesExpandOpenSearchXml": {
+			"value": false
+		},
+		"PageImagesNamespaces": {
+			"value": [
+				0
+			]
+		},
+		"PageImagesLeadSectionOnly": {
+			"@doc": "Temporary feature flag - Whether page images should be restricted to those in section id 0.",
+			"@fixme": "Please remove a month after it has defaulted to true on the cluster (T152115)",
+			"value": true
+		},
+		"PageImagesAPIDefaultLicense": {
+			"@doc": "Get images with either a 'free' license or 'any' (including free and non-free) license by default, via 'pilicense' option, in pageprops query api. The value of this setting should be either 'free' or 'any'.",
+			"value": "free"
+		}
+	},
+	"manifest_version": 2
+}

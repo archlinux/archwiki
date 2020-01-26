@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Dbc334"
+		]
+	},
+	"apihelp-query+references-description": "Vrne predstavitev podatkov sklicev, povezano z danimi stranmi.",
+	"apihelp-query+references-example-1": "Sklici, povezani z <kbd>Albertom Einsteinom</kbd>."
+}

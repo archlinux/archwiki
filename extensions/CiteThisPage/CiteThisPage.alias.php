@@ -125,7 +125,7 @@ $specialPageAliases['es'] = [
 
 /** Estonian (eesti) */
 $specialPageAliases['et'] = [
-	'CiteThisPage' => [ 'Tsiteerimine' ],
+	'CiteThisPage' => [ 'Sellele_leheküljele_viitamine', 'Tsiteerimine' ],
 ];
 
 /** Persian (فارسی) */
@@ -358,6 +358,11 @@ $specialPageAliases['scn'] = [
 	'CiteThisPage' => [ 'Cita' ],
 ];
 
+/** Serbo-Croatian (srpsko-hrvatski) */
+$specialPageAliases['sh'] = [
+	'CiteThisPage' => [ 'Citiraj', 'Citiraj_ovu_stranicu', 'Citiraj_ovu_stranu' ],
+];
+
 /** Slovak (slovenčina) */
 $specialPageAliases['sk'] = [
 	'CiteThisPage' => [ 'Citovať' ],
@@ -373,12 +378,12 @@ $specialPageAliases['sq'] = [
 	'CiteThisPage' => [ 'Citim' ],
 ];
 
-/** Serbian (Cyrillic script) (српски (ћирилица)‎) */
+/** Serbian (Cyrillic script) (српски (ћирилица)) */
 $specialPageAliases['sr-ec'] = [
 	'CiteThisPage' => [ 'Цитирај', 'Цитирај_ову_страницу', 'Цитирај_ову_страну' ],
 ];
 
-/** Serbian (Latin script) (srpski (latinica)‎) */
+/** Serbian (Latin script) (srpski (latinica)) */
 $specialPageAliases['sr-el'] = [
 	'CiteThisPage' => [ 'Citiraj', 'Citiraj_ovu_stranicu', 'Citiraj_ovu_stranu' ],
 ];

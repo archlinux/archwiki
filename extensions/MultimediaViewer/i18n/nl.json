@@ -16,8 +16,6 @@
 		]
 	},
 	"multimediaviewer-desc": "Miniatuurafbeeldingen schermvullend weergeven.",
-	"multimediaviewer-pref": "MediaViewer",
-	"multimediaviewer-pref-desc": "Verbeter uw kijkervaring met deze nieuwe tool. Afbeeldingen worden groter weergegeven op pagina's met thumbnails. Afbeeldingen worden op een prettigere manier schermvullend weergegeven en kunnen ook op ware grootte worden bekeken.",
 	"multimediaviewer-optin-pref": "<span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About MediaViewer]</span> inschakelen",
 	"multimediaviewer-file-page": "Naar de bestandspagina gaan",
 	"multimediaviewer-repository-local": "Meer informatie",
@@ -102,6 +100,7 @@
 	"multimediaviewer-option-cancel-button": "Annuleren",
 	"multimediaviewer-disable-confirmation-header": "U hebt de MediaViewer uitgeschakeld",
 	"multimediaviewer-enable-dialog-header": "MediaViewer inschakelen?",
+	"multimediaviewer-enable-text-header": "Schakel deze mediaweergavefunctie standaard in voor alle bestanden.",
 	"multimediaviewer-enable-submit-button": "MediaViewer inschakelen",
 	"multimediaviewer-enable-alert": "MediaViewer is nu uitgeschakeld",
 	"multimediaviewer-disable-info-title": "U hebt de MediaViewer uitgeschakeld",

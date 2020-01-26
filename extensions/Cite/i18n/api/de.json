@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"Debenben",
+			"Metalhead64"
+		]
+	},
+	"apihelp-query+references-description": "Gibt eine Datendarstellung von Referenzen zurück, die mit den angegebenen Seiten verbunden sind.",
+	"apihelp-query+references-summary": "Gibt eine Datendarstellung der Referenzen zurück, die mit den angegebenen Seiten verbunden sind.",
+	"apihelp-query+references-example-1": "Referenzen, die mit <kbd>Albert Einstein</kbd> verbunden sind.",
+	"apierror-citestoragedisabled": "Der Referenzspeicher der Erweiterung „Cite“ ist nicht aktiviert."
+}

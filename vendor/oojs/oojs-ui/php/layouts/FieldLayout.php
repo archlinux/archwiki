@@ -76,7 +76,7 @@ class FieldLayout extends Layout {
 	 *      - string[]|HtmlSnippet[] $config['errors'] Error messages about the widget.
 	 *      - string[]|HtmlSnippet[] $config['warnings'] Warning messages about the widget.
 	 *      - string[]|HtmlSnippet[] $config['notices'] Notices about the widget.
-	 *      - string|HtmlSnippet $config['help'] Explanatory text shown as a '?' icon.
+	 *      - string|HtmlSnippet $config['help'] Explanatory text shown as a '?' icon, or inline.
 	 *      - bool $config['helpInline'] Whether or not the help should be inline,
 	 *          or shown when the "help" icon is clicked. (default: false)
 	 * @param-taint $config escapes_htmlnoent
@@ -107,7 +107,7 @@ class FieldLayout extends Layout {
 		$this->successMessages = $config['successMessages'] ?? [];
 		$this->notices = $config['notices'] ?? [];
 		$this->field = $this->isFieldInline() ? new Tag( 'span' ) : new Tag( 'div' );
-		$this->messages = new Tag( 'ul' );
+		$this->messages = new Tag( 'div' );
 		$this->header = new Tag( 'span' );
 		$this->body = new Tag( 'div' );
 		$this->helpText = $config['help'] ?? '';
@@ -172,25 +172,11 @@ class FieldLayout extends Layout {
 	 * @return Tag
 	 */
 	private function makeMessage( $kind, $text ) {
-		$listItem = new Tag( 'li' );
-		if ( $kind === 'error' ) {
-			$icon = new IconWidget( [ 'icon' => 'alert', 'flags' => [ 'error' ] ] );
-			$listItem->setAttributes( [ 'role' => 'alert' ] );
-		} elseif ( $kind === 'warning' ) {
-			$icon = new IconWidget( [ 'icon' => 'alert', 'flags' => [ 'warning' ] ] );
-			$listItem->setAttributes( [ 'role' => 'alert' ] );
-		} elseif ( $kind === 'success' ) {
-			$icon = new IconWidget( [ 'icon' => 'check', 'flags' => [ 'success' ] ] );
-		} elseif ( $kind === 'notice' ) {
-			$icon = new IconWidget( [ 'icon' => 'notice' ] );
-		} else {
-			$icon = null;
-		}
-		$message = new LabelWidget( [ 'label' => $text ] );
-		$listItem
-			->appendContent( $icon, $message )
-			->addClasses( [ "oo-ui-fieldLayout-messages-$kind" ] );
-		return $listItem;
+		return new MessageWidget( [
+			'type' => $kind,
+			'inline' => true,
+			'label' => $text,
+		] );
 	}
 
 	/**
@@ -287,13 +273,27 @@ class FieldLayout extends Layout {
 
 	public function getConfig( &$config ) {
 		$config['fieldWidget'] = $this->fieldWidget;
-		$config['align'] = $this->align;
-		$config['errors'] = $this->errors;
-		$config['warnings'] = $this->warnings;
-		$config['successMessages'] = $this->successMessages;
-		$config['notices'] = $this->notices;
-		$config['help'] = $this->helpText;
-		$config['helpInline'] = $this->helpInline;
+		if ( $this->align !== 'left' ) {
+			$config['align'] = $this->align;
+		}
+		if ( count( $this->errors ) ) {
+			$config['errors'] = $this->errors;
+		}
+		if ( count( $this->warnings ) ) {
+			$config['warnings'] = $this->warnings;
+		}
+		if ( count( $this->successMessages ) ) {
+			$config['successMessages'] = $this->successMessages;
+		}
+		if ( count( $this->notices ) ) {
+			$config['notices'] = $this->notices;
+		}
+		if ( $this->helpText !== '' ) {
+			$config['help'] = $this->helpText;
+		}
+		if ( $this->helpInline ) {
+			$config['helpInline'] = $this->helpInline;
+		}
 		$config['$overlay'] = true;
 		return parent::getConfig( $config );
 	}

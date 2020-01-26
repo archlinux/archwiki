@@ -27,7 +27,9 @@
 			"Robby",
 			"Quiddity",
 			"Alifakoor",
-			"Acamicamacaraca"
+			"Acamicamacaraca",
+			"Wowes",
+			"Obsuser"
 		]
 	},
 	"wikieditor": "An extension to provide an advanced, extensible wikitext editing interface.\nhttps://www.mediawiki.org/wiki/Extension:WikiEditor",
@@ -151,6 +153,7 @@
 	"wikieditor-toolbar-tool-replace-success": "Parameter:\n* $1 - the number of replacements",
 	"wikieditor-toolbar-tool-replace-emptysearch": "Used in the \"search and replace\" dialog of the toolbar as hint after clicking the button",
 	"wikieditor-toolbar-tool-replace-invalidregex": "Parameters:\n* $1 - a browser-supplied error message, probably in English, possibly in the browser language.\n\nA \"regular expression\" is a syntax to find strings based on patterns, for more see [[wikipedia:Regular expression|the Wikipedia article]].\n\nRegular expressions are mostly a programmer tool, which is sometimes exposed to normal users too.\n\nIt's almost as a programming language, but it is used to describe different kinds of strings (sometimes also called patterns and pattern matching), and is often used to change (parts of) the strings too.",
+	"wikieditor-toolbar-tool-replace-word": "Used in \"search and replace\" dialog of the toolbar as a label for a search mode where there will be no search result if the search term is part of another word",
 	"wikieditor-toolbar-section-characters": "This will be a toolbar for special characters, like emoticons.\nFor more information, see https://www.mediawiki.org/wiki/Extension:WikiEditor/Toolbar_customization\n{{Identical|Special character}}",
 	"wikieditor-toolbar-section-help": "{{Identical|Help}}",
 	"wikieditor-toolbar-help-heading-description": "Header for the description column used in the help section of the toolbar\n{{Identical|Description}}",

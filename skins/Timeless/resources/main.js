@@ -1,7 +1,7 @@
-/**
- * Timeless-specific scripts
- */
 $( function () {
+	// sidebar-chunk only applies to desktop-small, but the toggles are hidden at
+	// other resolutions regardless and the css overrides any visible effects.
+	var $dropdowns = $( '#personal, #p-variants-desktop, .sidebar-chunk' );
 
 	/**
 	 * Focus on search box when 'Tab' key is pressed once
@@ -9,23 +9,41 @@ $( function () {
 	$( '#searchInput' ).attr( 'tabindex', $( document ).lastTabIndex() + 1 );
 
 	/**
-	 * Add offset for # links to work around fixed header on desktop
-	 * Apparently can't use CSS solutions due to highlighting of Cite links and similar. (T162649)
+	 * Desktop menu click-toggling
 	 *
-	 * Based on https://stackoverflow.com/questions/10732690/#answer-29853395
+	 * We're not even checking if it's desktop because the classes in play have no effect
+	 * on mobile regardless... this may break things at some point, though.
 	 */
-	function adjustAnchor() {
-		var mobileCutoffWidth = 850,
-			$anchor = $( ':target' ),
-			fixedElementHeight = $( '#mw-header-container' ).outerHeight() + 15;
 
-		if ( $( window ).width() > mobileCutoffWidth && $anchor.length > 0 ) {
-			$( 'html, body' ).stop();
-			window.scrollTo( 0, $anchor.offset().top - fixedElementHeight );
-		}
+	/**
+	 * Close all dropdowns
+	 */
+	function closeOpen() {
+		$dropdowns.removeClass( 'dropdown-active' );
 	}
 
-	$( window ).on( 'hashchange load', function () {
-		adjustAnchor();
+	/**
+	 * Click behaviour
+	 */
+	$dropdowns.on( 'click', function ( e ) {
+		// Check if it's already open so we don't open it again
+		if ( $( this ).hasClass( 'dropdown-active' ) ) {
+			if ( $( e.target ).closest( $( 'h2, #p-variants-desktop h3' ) ).length > 0 ) {
+				// treat reclick on the header as a toggle
+				closeOpen();
+			}
+			// Clicked inside an open menu; don't do anything
+		} else {
+			closeOpen();
+			e.stopPropagation(); // stop hiding it!
+			$( this ).addClass( 'dropdown-active' );
+		}
+	} );
+	$( document ).on( 'click', function ( e ) {
+		if ( $( e.target ).closest( $dropdowns ).length > 0 ) {
+			// Clicked inside an open menu; don't close anything
+		} else {
+			closeOpen();
+		}
 	} );
 } );

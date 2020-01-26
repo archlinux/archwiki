@@ -8,7 +8,6 @@
 			"ShockD"
 		]
 	},
-	"multimediaviewer-pref": "Media Viewer",
 	"multimediaviewer-optin-pref": "Включване на <span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About Media Viewer]</span>",
 	"multimediaviewer-datetime-created": "Създадено: $1",
 	"multimediaviewer-permission-title": "Данни за разрешението",

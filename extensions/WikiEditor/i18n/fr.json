@@ -143,6 +143,7 @@
 	"wikieditor-toolbar-tool-replace-success": "$1 {{PLURAL:$1|remplacement fait|remplacements faits}}.",
 	"wikieditor-toolbar-tool-replace-emptysearch": "Vous n’avez pas indiqué de texte à rechercher.",
 	"wikieditor-toolbar-tool-replace-invalidregex": "L’expression rationnelle entrée est invalide : $1",
+	"wikieditor-toolbar-tool-replace-word": "Correspond à tout mot complet",
 	"wikieditor-toolbar-section-characters": "Caractères spéciaux",
 	"wikieditor-toolbar-section-help": "Aide",
 	"wikieditor-toolbar-help-heading-description": "Description",

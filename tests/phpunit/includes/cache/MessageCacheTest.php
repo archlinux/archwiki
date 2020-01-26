@@ -13,7 +13,6 @@ class MessageCacheTest extends MediaWikiLangTestCase {
 	protected function setUp() {
 		parent::setUp();
 		$this->configureLanguages();
-		MessageCache::destroyInstance();
 		MessageCache::singleton()->enable();
 	}
 
@@ -125,7 +124,7 @@ class MessageCacheTest extends MediaWikiLangTestCase {
 		$this->makePage( 'Go', 'de', 'Race!' );
 		$dbw->endAtomic( __METHOD__ );
 
-		$this->assertEquals( 0,
+		$this->assertSame( 0,
 			DeferredUpdates::pendingUpdatesCount(),
 			'Post-commit deferred update triggers a run of all updates' );
 
@@ -150,15 +149,13 @@ class MessageCacheTest extends MediaWikiLangTestCase {
 				]
 			]
 		] );
-		$this->overrideMwServices();
 
-		MessageCache::destroyInstance();
 		$messageCache = MessageCache::singleton();
 		$messageCache->enable();
 
 		// Populate one key
 		$this->makePage( 'Key1', 'de', 'Value1' );
-		$this->assertEquals( 0,
+		$this->assertSame( 0,
 			DeferredUpdates::pendingUpdatesCount(),
 			'Post-commit deferred update triggers a run of all updates' );
 		$this->assertEquals( 'Value1', $messageCache->get( 'Key1' ), 'Key1 was successfully edited' );
@@ -171,7 +168,7 @@ class MessageCacheTest extends MediaWikiLangTestCase {
 
 		// Populate the second key
 		$this->makePage( 'Key2', 'de', 'Value2' );
-		$this->assertEquals( 0,
+		$this->assertSame( 0,
 			DeferredUpdates::pendingUpdatesCount(),
 			'Post-commit deferred update triggers a run of all updates' );
 		$this->assertEquals( 'Value2', $messageCache->get( 'Key2' ), 'Key2 was successfully edited' );
@@ -211,14 +208,14 @@ class MessageCacheTest extends MediaWikiLangTestCase {
 
 		MessageCache::singleton()->getMsgFromNamespace( 'allpages', $wgContLanguageCode );
 
-		$this->assertEquals( 0, $dbr->trxLevel() );
+		$this->assertSame( 0, $dbr->trxLevel() );
 		$dbr->setFlag( DBO_TRX, $dbr::REMEMBER_PRIOR ); // make queries trigger TRX
 
 		MessageCache::singleton()->getMsgFromNamespace( 'go', $wgContLanguageCode );
 
 		$dbr->restoreFlags();
 
-		$this->assertEquals( 0, $dbr->trxLevel(), "No DB read queries (content language)" );
+		$this->assertSame( 0, $dbr->trxLevel(), "No DB read queries (content language)" );
 	}
 
 	public function testNoDBAccessNonContentLanguage() {
@@ -226,14 +223,14 @@ class MessageCacheTest extends MediaWikiLangTestCase {
 
 		MessageCache::singleton()->getMsgFromNamespace( 'allpages/nl', 'nl' );
 
-		$this->assertEquals( 0, $dbr->trxLevel() );
+		$this->assertSame( 0, $dbr->trxLevel() );
 		$dbr->setFlag( DBO_TRX, $dbr::REMEMBER_PRIOR ); // make queries trigger TRX
 
 		MessageCache::singleton()->getMsgFromNamespace( 'go/nl', 'nl' );
 
 		$dbr->restoreFlags();
 
-		$this->assertEquals( 0, $dbr->trxLevel(), "No DB read queries (non-content language)" );
+		$this->assertSame( 0, $dbr->trxLevel(), "No DB read queries (non-content language)" );
 	}
 
 	/**
@@ -260,7 +257,6 @@ class MessageCacheTest extends MediaWikiLangTestCase {
 		$importer->import( $importRevision );
 
 		// Now, load the message from the wiki page
-		MessageCache::destroyInstance();
 		$messageCache = MessageCache::singleton();
 		$messageCache->enable();
 		$messageCache = TestingAccessWrapper::newFromObject( $messageCache );

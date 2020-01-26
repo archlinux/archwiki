@@ -21,11 +21,9 @@
  * @file
  */
 
-use Wikimedia\ObjectFactory;
-
 /**
  * Object handling generic submission, CSRF protection, layout and
- * other logic for UI forms. in a reusable manner.
+ * other logic for UI forms in a reusable manner.
  *
  * In order to generate the form, the HTMLForm object takes an array
  * structure detailing the form fields available. Each element of the
@@ -182,11 +180,11 @@ class HTMLForm extends ContextSource {
 	protected $mMessagePrefix;
 
 	/** @var HTMLFormField[] */
-	protected $mFlatFields;
-
-	protected $mFieldTree;
+	protected $mFlatFields = [];
+	protected $mFieldTree = [];
 	protected $mShowReset = false;
 	protected $mShowSubmit = true;
+	/** @var string[] */
 	protected $mSubmitFlags = [ 'primary', 'progressive' ];
 	protected $mShowCancel = false;
 	protected $mCancelTarget;
@@ -222,6 +220,20 @@ class HTMLForm extends ContextSource {
 	protected $mAction = false;
 
 	/**
+	 * Whether the form can be collapsed
+	 * @since 1.34
+	 * @var bool
+	 */
+	protected $mCollapsible = false;
+
+	/**
+	 * Whether the form is collapsed by default
+	 * @since 1.34
+	 * @var bool
+	 */
+	protected $mCollapsed = false;
+
+	/**
 	 * Form attribute autocomplete. A typical value is "off". null does not set the attribute
 	 * @since 1.27
 	 * @var string|null
@@ -230,9 +242,14 @@ class HTMLForm extends ContextSource {
 
 	protected $mUseMultipart = false;
 	protected $mHiddenFields = [];
+	/**
+	 * @var array[]
+	 * @phan-var array<array{name:string,value:string,label-message?:string,label?:string,label-raw?:string,id?:string,attribs?:array,flags?:string|string[],framed?:bool}>
+	 */
 	protected $mButtons = [];
 
 	protected $mWrapperLegend = false;
+	protected $mWrapperAttributes = [];
 
 	/**
 	 * Salt for the edit token.
@@ -280,21 +297,17 @@ class HTMLForm extends ContextSource {
 	 * Construct a HTMLForm object for given display type. May return a HTMLForm subclass.
 	 *
 	 * @param string $displayFormat
-	 * @param mixed $arguments,... Additional arguments to pass to the constructor.
+	 * @param mixed ...$arguments Additional arguments to pass to the constructor.
 	 * @return HTMLForm
 	 */
-	public static function factory( $displayFormat/*, $arguments...*/ ) {
-		$arguments = func_get_args();
-		array_shift( $arguments );
-
+	public static function factory( $displayFormat, ...$arguments ) {
 		switch ( $displayFormat ) {
 			case 'vform':
-				return ObjectFactory::constructClassInstance( VFormHTMLForm::class, $arguments );
+				return new VFormHTMLForm( ...$arguments );
 			case 'ooui':
-				return ObjectFactory::constructClassInstance( OOUIHTMLForm::class, $arguments );
+				return new OOUIHTMLForm( ...$arguments );
 			default:
-				/** @var HTMLForm $form */
-				$form = ObjectFactory::constructClassInstance( self::class, $arguments );
+				$form = new self( ...$arguments );
 				$form->setDisplayFormat( $displayFormat );
 				return $form;
 		}
@@ -303,7 +316,8 @@ class HTMLForm extends ContextSource {
 	/**
 	 * Build a new HTMLForm from an array of field attributes
 	 *
-	 * @param array $descriptor Array of Field constructs, as described above
+	 * @param array $descriptor Array of Field constructs, as described
+	 * 	in the class documentation
 	 * @param IContextSource|null $context Available since 1.18, will become compulsory in 1.18.
 	 *     Obviates the need to call $form->setTitle()
 	 * @param string $messagePrefix A prefix to go in front of default messages
@@ -331,11 +345,23 @@ class HTMLForm extends ContextSource {
 			$this->displayFormat = 'div';
 		}
 
-		// Expand out into a tree.
+		$this->addFields( $descriptor );
+	}
+
+	/**
+	 * Add fields to the form
+	 *
+	 * @since 1.34
+	 *
+	 * @param array $descriptor Array of Field constructs, as described
+	 * 	in the class documentation
+	 * @return HTMLForm
+	 */
+	public function addFields( $descriptor ) {
 		$loadedDescriptor = [];
-		$this->mFlatFields = [];
 
 		foreach ( $descriptor as $fieldname => $info ) {
+
 			$section = $info['section'] ?? '';
 
 			if ( isset( $info['type'] ) && $info['type'] === 'file' ) {
@@ -359,7 +385,9 @@ class HTMLForm extends ContextSource {
 			$this->mFlatFields[$fieldname] = $field;
 		}
 
-		$this->mFieldTree = $loadedDescriptor;
+		$this->mFieldTree = array_merge( $this->mFieldTree, $loadedDescriptor );
+
+		return $this;
 	}
 
 	/**
@@ -442,7 +470,8 @@ class HTMLForm extends ContextSource {
 	 * @since 1.23
 	 *
 	 * @param string $fieldname Name of the field
-	 * @param array &$descriptor Input Descriptor, as described above
+	 * @param array &$descriptor Input Descriptor, as described
+	 * 	in the class documentation
 	 *
 	 * @throws MWException
 	 * @return string Name of a HTMLFormField subclass
@@ -469,7 +498,8 @@ class HTMLForm extends ContextSource {
 	 * Initialise a new Object for the field
 	 *
 	 * @param string $fieldname Name of the field
-	 * @param array $descriptor Input Descriptor, as described above
+	 * @param array $descriptor Input Descriptor, as described
+	 * 	in the class documentation
 	 * @param HTMLForm|null $parent Parent instance of HTMLForm
 	 *
 	 * @throws MWException
@@ -953,6 +983,9 @@ class HTMLForm extends ContextSource {
 	 *  - attribs: (array, optional) Additional HTML attributes.
 	 *  - flags: (string|string[], optional) OOUI flags.
 	 *  - framed: (boolean=true, optional) OOUI framed attribute.
+	 * @codingStandardsIgnoreStart
+	 * @phan-param array{name:string,value:string,label-message?:string,label?:string,label-raw?:string,id?:string,attribs?:array,flags?:string|string[],framed?:bool} $data
+	 * @codingStandardsIgnoreEnd
 	 * @return HTMLForm $this for chaining calls (since 1.20)
 	 */
 	public function addButton( $data ) {
@@ -1047,6 +1080,19 @@ class HTMLForm extends ContextSource {
 	}
 
 	/**
+	 * Enable collapsible mode, and set whether the form is collapsed by default.
+	 *
+	 * @since 1.34
+	 * @param bool $collapsedByDefault Whether the form is collapsed by default (optional).
+	 * @return HTMLForm $this for chaining calls
+	 */
+	public function setCollapsibleOptions( $collapsedByDefault = false ) {
+		$this->mCollapsible = true;
+		$this->mCollapsed = $collapsedByDefault;
+		return $this;
+	}
+
+	/**
 	 * Get HTML attributes for the `<form>` tag.
 	 * @return array
 	 */
@@ -1088,7 +1134,7 @@ class HTMLForm extends ContextSource {
 		# Include a <fieldset> wrapper for style, if requested.
 		if ( $this->mWrapperLegend !== false ) {
 			$legend = is_string( $this->mWrapperLegend ) ? $this->mWrapperLegend : false;
-			$html = Xml::fieldset( $legend, $html );
+			$html = Xml::fieldset( $legend, $html, $this->mWrapperAttributes );
 		}
 
 		return Html::rawElement(
@@ -1250,20 +1296,6 @@ class HTMLForm extends ContextSource {
 	}
 
 	/**
-	 * Format and display an error message stack.
-	 *
-	 * @param string|array|Status $errors
-	 *
-	 * @deprecated since 1.28, use getErrorsOrWarnings() instead
-	 *
-	 * @return string
-	 */
-	public function getErrors( $errors ) {
-		wfDeprecated( __METHOD__ );
-		return $this->getErrorsOrWarnings( $errors, 'error' );
-	}
-
-	/**
 	 * Returns a formatted list of errors or warnings from the given elements.
 	 *
 	 * @param string|array|Status $elements The set of errors/warnings to process.
@@ -1293,7 +1325,7 @@ class HTMLForm extends ContextSource {
 		}
 
 		return $elementstr
-			? Html::rawElement( 'div', [ 'class' => $elementsType ], $elementstr )
+			? Html::rawElement( 'div', [ 'class' => $elementsType . 'box' ], $elementstr )
 			: '';
 	}
 
@@ -1341,21 +1373,6 @@ class HTMLForm extends ContextSource {
 	 */
 	public function setSubmitDestructive() {
 		$this->mSubmitFlags = [ 'destructive', 'primary' ];
-
-		return $this;
-	}
-
-	/**
-	 * Identify that the submit button in the form has a progressive action
-	 * @since 1.25
-	 * @deprecated since 1.32, No need to call. Submit button already
-	 * has a progressive action form.
-	 *
-	 * @return HTMLForm $this for chaining calls (since 1.28)
-	 */
-	public function setSubmitProgressive() {
-		wfDeprecated( __METHOD__, '1.32' );
-		$this->mSubmitFlags = [ 'progressive', 'primary' ];
 
 		return $this;
 	}
@@ -1529,6 +1546,19 @@ class HTMLForm extends ContextSource {
 	 */
 	public function setWrapperLegend( $legend ) {
 		$this->mWrapperLegend = $legend;
+
+		return $this;
+	}
+
+	/**
+	 * For internal use only. Use is discouraged, and should only be used where
+	 * support for gadgets/user scripts is warranted.
+	 * @param array $attributes
+	 * @internal
+	 * @return HTMLForm $this for chaining calls
+	 */
+	public function setWrapperAttributes( $attributes ) {
+		$this->mWrapperAttributes = $attributes;
 
 		return $this;
 	}

@@ -1,5 +1,10 @@
 @import 'variables.less';
-@footerColor: #eee;
+@wmui-color-base0: #000;
+
+@color-base: @wmui-color-base0;
+
+@border-color-base: @wmui-color-base0;
+@border-color-footer: #eee;
 
 // We have to render the wordmark image before the print dialog is invoked, otherwise the image
 // won't render in the printed file. Use a little hack to render the image outside the viewport
@@ -48,7 +53,7 @@
 	h4,
 	h5,
 	h6 {
-		font-family: @font-family-sans-serif;
+		font-family: @font-family-sans;
 	}
 
 	// Images, such as formulas, render best in serif. Math fallback images, for example, have an
@@ -89,7 +94,7 @@
 	h2 {
 		// To avoid the bottom border of section headings with floated elements
 		overflow: hidden;
-		border-bottom: 2px solid @pureBlack;
+		border-bottom: 2px solid @border-color-base;
 	}
 
 	h3,
@@ -140,16 +145,15 @@
 		// enjoyable. If there is not enough space the following code will push
 		// the paragraph contents until after the floating element(s).
 		&:before {
-			@paragraphMinWidth: 120pt;
 			content: '';
 			display: block;
+			width: 120pt;
 			overflow: hidden;
-			width: @paragraphMinWidth;
 		}
 	}
 
 	blockquote {
-		border-left: 2px solid @pureBlack;
+		border-left: 2px solid @border-color-base;
 		padding-left: 20px;
 	}
 
@@ -213,7 +217,7 @@
 
 	.printfooter {
 		margin-top: 10px;
-		border-top: 3px solid @pureBlack;
+		border-top: 3px solid @border-color-base;
 		padding-top: 10px;
 		font-size: 10pt;
 		clear: both;
@@ -221,7 +225,7 @@
 
 	#footer {
 		margin-top: 12px;
-		border-top: 1px solid @footerColor;
+		border-top: 1px solid @border-color-footer;
 		padding-top: 5px;
 	}
 
@@ -245,7 +249,7 @@
 
 	// Last updated as primary info.
 	#footer-info-lastmod {
-		color: @pureBlack;
+		color: @color-base;
 		font-size: 12pt;
 		font-weight: bold;
 	}

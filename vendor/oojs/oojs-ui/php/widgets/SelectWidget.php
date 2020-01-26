@@ -26,7 +26,6 @@ class SelectWidget extends Widget {
 
 		$this->addClasses( [
 			'oo-ui-selectWidget',
-			'oo-ui-selectWidget-depressed',
 			'oo-ui-selectWidget-unpressed',
 		] );
 		$this->setAttributes( [

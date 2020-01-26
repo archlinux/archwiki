@@ -5,8 +5,8 @@
 			"Pyscowicz"
 		]
 	},
+	"skinname-timeless": "Ajaton",
 	"timeless-desc": "Ajaton ulkoasu, joka on suunniteltu Brandon Harrisin Winter-prototyypin sekä useiden Wikimedia Foundationin tyylien mukaisesti",
-	"timeless-loggedin": "Käyttäjätunnuksesi",
 	"timeless-anonymous": "Anonyymi",
 	"timeless-loggedinas": "Kirjautunut käyttäjällä '''$1'''",
 	"timeless-notloggedin": "Et ole kirjautunut",
@@ -17,9 +17,13 @@
 	"timeless-sitetools": "Wiki-työkalut",
 	"timeless-pageactions": "Sivutyökalut",
 	"timeless-userpagetools": "Käyttäjäsivun työkalut",
+	"timeless-action-addsection": "Uusi aihe",
+	"timeless-view-view": "Lue",
 	"timeless-pagemisc": "Lisää",
 	"timeless-namespaces": "Nimiavaruudet",
 	"timeless-pagetools": "Sivun toiminnot",
 	"timeless-languages": "Kielet",
-	"timeless.js": "/* Tämän sivun JavaScript-koodi liitetään Timeless-tyyliin */"
+	"timeless-projects": "Muut projektit",
+	"timeless.css": "/* Tämä sivu sisältää Ajaton-ulkoasua muuttavia tyylejä. */",
+	"timeless.js": "/* Tämän sivun JavaScript-koodi liitetään Ajaton-tyyliin */"
 }

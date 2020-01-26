@@ -35,6 +35,8 @@ class TreeMutationTracer implements TreeHandler {
 
 	/**
 	 * Send a message
+	 *
+	 * @param string $msg
 	 */
 	private function trace( $msg ) {
 		call_user_func( $this->callback, "[Tree] $msg" );
@@ -42,6 +44,9 @@ class TreeMutationTracer implements TreeHandler {
 
 	/**
 	 * Send a message for an event
+	 *
+	 * @param string $funcName
+	 * @param array $args
 	 */
 	private function traceEvent( $funcName, $args ) {
 		$this->trace( call_user_func_array( [ TraceFormatter::class, $funcName ], $args ) );

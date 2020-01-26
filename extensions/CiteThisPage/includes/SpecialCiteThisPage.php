@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\MediaWikiServices;
+
 class SpecialCiteThisPage extends FormSpecialPage {
 
 	/**
@@ -21,6 +23,7 @@ class SpecialCiteThisPage extends FormSpecialPage {
 	 */
 	public function execute( $par ) {
 		$this->setHeaders();
+		$this->addHelpLink( 'Extension:CiteThisPage' );
 		parent::execute( $par );
 		if ( $this->title instanceof Title ) {
 			$id = $this->getRequest()->getInt( 'id' );
@@ -144,9 +147,10 @@ class SpecialCiteThisPage extends FormSpecialPage {
 			# and the text moved into SpecialCite.i18n.php
 			# This code is kept for b/c in case an installation has its own file "citethispage-content-xx"
 			# for a previously not supported language.
-			global $wgContLang, $wgContLanguageCode;
+			global $wgContLanguageCode;
 			$dir = __DIR__ . '/../';
-			$code = $wgContLang->lc( $wgContLanguageCode );
+			$code = MediaWikiServices::getInstance()->getContentLanguage()
+				->lc( $wgContLanguageCode );
 			if ( file_exists( "${dir}citethispage-content-$code" ) ) {
 				$msg = file_get_contents( "${dir}citethispage-content-$code" );
 			} elseif ( file_exists( "${dir}citethispage-content" ) ) {

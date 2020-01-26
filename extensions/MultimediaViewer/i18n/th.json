@@ -9,8 +9,6 @@
 		]
 	},
 	"multimediaviewer-desc": "ขยายรูปขนาดย่อให้มีขนาดใหญ่ขึ้นในอินเทอร์เฟซเต็มหน้าจอ",
-	"multimediaviewer-pref": "ตัวแสดงสื่อ",
-	"multimediaviewer-pref-desc": "ด้วยเครื่องมือใหม่นี้ คุณสามารถดูสื่อได้ดีไปกว่าเดิม เครื่องมือจะแสดงภาพขนาดใหญ่ขึ้นบนหน้าที่มีรูปขนาดย่อ คุณยังสามารถดูภาพแบบในอินเทอร์เฟซเต็มหน้าจอและดูภาพในขนาดเต็มได้ด้วย",
 	"multimediaviewer-optin-pref": "เปิดใช้งาน<span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About ตัวแสดงสื่อ]</span>",
 	"multimediaviewer-file-page": "ไปยังหน้าไฟล์ที่ตรงกัน",
 	"multimediaviewer-repository-local": "ดูรายละเอียดเพิ่มเติม",

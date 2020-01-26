@@ -8,8 +8,6 @@
 		]
 	},
 	"multimediaviewer-desc": "Razširitev sličic v večji velikosti v celozaslonskem vmesniku.",
-	"multimediaviewer-pref": "Predstavnostni pregledovalnik",
-	"multimediaviewer-pref-desc": "S tem orodjem lahko izboljšate svojo izkušnjo pri ogledovanju večpredstavnostnih vsebin. Orodje prikazuje slike na straneh s sličicami v večji velikosti in v lepšem okvirčku celozaslonskega vmesnika, mogoč pa je tudi celozaslonski prikaz.",
 	"multimediaviewer-file-page": "Pojdi na pripadajočo opisno stran datoteke.",
 	"multimediaviewer-repository-local": "Več podrobnosti",
 	"multimediaviewer-datetime-created": "Ustvarjeno: $1",

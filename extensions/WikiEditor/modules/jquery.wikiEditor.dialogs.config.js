@@ -3,9 +3,11 @@
  */
 ( function () {
 
-	var hasOwn = Object.prototype.hasOwnProperty;
+	var hasOwn = Object.prototype.hasOwnProperty,
+		toolbarModule = require( './jquery.wikiEditor.toolbar.js' ),
+		configData = require( './data.json' );
 
-	$.wikiEditor.modules.dialogs.config = {
+	module.exports = {
 
 		replaceIcons: function ( $textarea ) {
 			$textarea
@@ -428,7 +430,7 @@
 									insertText = whitespace[ 0 ] + insertText + whitespace[ 1 ];
 								}
 								$( this ).dialog( 'close' );
-								$.wikiEditor.modules.toolbar.fn.doAction( $( this ).data( 'context' ), {
+								toolbarModule.fn.doAction( $( this ).data( 'context' ), {
 									type: 'replace',
 									options: {
 										pre: insertText
@@ -450,7 +452,7 @@
 								serverName = mw.config.get( 'wgServer' ).replace( /^(https?:)?\/\//, '' );
 							// Cache the articlepath regex
 							$( this ).data( 'articlePathRegex', new RegExp(
-								'^https?://' + mw.RegExp.escape( serverName + mw.config.get( 'wgArticlePath' ) )
+								'^https?://' + mw.util.escapeRegExp( serverName + mw.config.get( 'wgArticlePath' ) )
 									.replace( /\\\$1/g, '(.*)' ) + '$'
 							) );
 							// Pre-fill the text fields based on the current selection
@@ -539,7 +541,7 @@
 					id: 'wikieditor-toolbar-file-dialog',
 					htmlTemplate: 'dialogInsertFile.html',
 					init: function () {
-						var magicWordsI18N = mw.config.get( 'wgWikiEditorMagicWords' ),
+						var magicWordsI18N = configData.magicWords,
 							defaultMsg = mw.msg( 'wikieditor-toolbar-file-default' );
 						$( this ).find( '[data-i18n-magic]' )
 							.text( function () {
@@ -562,15 +564,16 @@
 						width: 590,
 						buttons: {
 							'wikieditor-toolbar-tool-file-insert': function () {
-								var fileName, caption, fileFloat, fileFormat, fileSize, fileTitle,
-									options, fileUse,
+								var fileName, caption, fileFloat, fileFormat, fileSize, whitespace,
+									fileTitle, options, fileUse,
 									hasPxRgx = /.+px$/,
-									magicWordsI18N = mw.config.get( 'wgWikiEditorMagicWords' );
+									magicWordsI18N = configData.magicWords;
 								fileName = $( '#wikieditor-toolbar-file-target' ).val();
 								caption = $( '#wikieditor-toolbar-file-caption' ).val();
 								fileFloat = $( '#wikieditor-toolbar-file-float' ).val();
 								fileFormat = $( '#wikieditor-toolbar-file-format' ).val();
 								fileSize = $( '#wikieditor-toolbar-file-size' ).val();
+								whitespace = $( '#wikieditor-toolbar-file-dialog' ).data( 'whitespace' );
 								// Append px to end to size if not already contains it
 								if ( fileSize !== '' && !hasPxRgx.test( fileSize ) ) {
 									fileSize += 'px';
@@ -593,14 +596,14 @@
 								}
 								fileUse = options.length === 0 ? fileName : ( fileName + '|' + options.join( '|' ) );
 								$( this ).dialog( 'close' );
-								$.wikiEditor.modules.toolbar.fn.doAction(
+								toolbarModule.fn.doAction(
 									$( this ).data( 'context' ),
 									{
 										type: 'replace',
 										options: {
-											pre: '[[',
+											pre: whitespace[ 0 ] + '[[',
 											peri: fileUse,
-											post: ']]',
+											post: ']]' + whitespace[ 1 ],
 											ownline: true
 										}
 									},
@@ -639,7 +642,94 @@
 							}
 						},
 						open: function () {
+							var context, selection, parseFileSyntax,
+								magicWordsI18N = configData.magicWords,
+								fileData = {
+									pre: '',
+									post: '',
+									fileName: '',
+									caption: '',
+									fileSize: '',
+									fileFloat: 'default',
+									fileFormat: magicWordsI18N.img_thumbnail
+								};
+
+							parseFileSyntax = function ( wikitext ) {
+								var escapedPipe = '\u0001',
+									result = {},
+									match, params, file, i, param;
+								if ( wikitext.indexOf( escapedPipe ) !== -1 ) {
+									return false;
+								}
+								match = /^(\s*)\[\[(.*)\]\](\s*)$/.exec( wikitext );
+								if ( !match ) {
+									return false;
+								}
+								result.pre = match[ 1 ];
+								result.post = match[ 3 ];
+								// Escape pipes inside links and templates,
+								// then split the parameters at the remaining pipes
+								params = match[ 2 ].replace( /\[\[[^[\]]*\]\]|\{\{[^{}]\}\}/g, function ( link ) {
+									return link.replace( /\|/g, escapedPipe );
+								} ).split( '|' );
+								file = new mw.Title( params[ 0 ] );
+								if ( file.getNamespaceId() !== 6 ) {
+									return false;
+								}
+								result.fileName = file.getMainText();
+								for ( i = 1; i < params.length; i++ ) {
+									param = params[ i ].toLowerCase();
+									if ( param === 'right' || param === magicWordsI18N.img_right ) {
+										result.fileFloat = magicWordsI18N.img_right;
+									} else if ( param === 'left' || param === magicWordsI18N.img_left ) {
+										result.fileFloat = magicWordsI18N.img_left;
+									} else if ( param === 'none' || param === magicWordsI18N.img_none ) {
+										result.fileFloat = magicWordsI18N.img_none;
+									} else if ( param === 'center' || param === 'centre' || param === magicWordsI18N.img_center ) {
+										result.fileFloat = magicWordsI18N.img_center;
+									} else if ( param === 'thumbnail' || param === 'thumb' || param === magicWordsI18N.img_thumbnail ) {
+										result.fileFormat = magicWordsI18N.img_thumbnail;
+									} else if ( param === 'framed' || param === 'enframed' || param === 'frame' || param === magicWordsI18N.img_framed ) {
+										result.fileFormat = magicWordsI18N.img_framed;
+									} else if ( param === 'frameless' || param === magicWordsI18N.img_frameless ) {
+										result.fileFormat = magicWordsI18N.img_frameless;
+									} else if ( /.+px$/.test( param ) ) {
+										result.fileSize = param.replace( /px$/, '' );
+									} else if ( param === '' ) {
+										continue;
+									} else if ( i === params.length - 1 ) { // Last param -> caption
+										result.caption = param.replace( new RegExp( mw.util.escapeRegExp( escapedPipe ), 'g' ), '|' );
+									} else { // Unknown param
+										return false;
+									}
+								}
+								if ( !result.fileFormat ) {
+									result.fileFormat = 'default';
+								}
+								return result;
+							};
+
+							// Retrieve the current selection
+							context = $( this ).data( 'context' );
+							selection = context.$textarea.textSelection( 'getSelection' );
+
+							// Pre-fill the text fields based on the current selection
+							if ( selection !== '' ) {
+								fileData = $.extend( fileData, parseFileSyntax( selection ) );
+							}
+
+							// Initialize the form fields
+							$( '#wikieditor-toolbar-file-dialog' )
+								.data( 'whitespace', [ fileData.pre, fileData.post ] );
+							$( '#wikieditor-toolbar-file-target' ).val( fileData.fileName );
+							$( '#wikieditor-toolbar-file-caption' ).val( fileData.caption );
+							$( '#wikieditor-toolbar-file-float' ).val( fileData.fileFloat );
+							$( '#wikieditor-toolbar-file-format' ).val( fileData.fileFormat );
+							$( '#wikieditor-toolbar-file-size' ).val( fileData.fileSize );
+
+							// Set focus
 							$( '#wikieditor-toolbar-file-target' ).trigger( 'focus' );
+
 							if ( !( $( this ).data( 'dialogkeypressset' ) ) ) {
 								$( this ).data( 'dialogkeypressset', true );
 								// Execute the action associated with the first button
@@ -775,7 +865,7 @@
 								}
 								classStr = classes.length > 0 ? ' class="' + classes.join( ' ' ) + '"' : '';
 								$( this ).dialog( 'close' );
-								$.wikiEditor.modules.toolbar.fn.doAction(
+								toolbarModule.fn.doAction(
 									$( this ).data( 'context' ),
 									{
 										type: 'replace',
@@ -846,7 +936,7 @@
 						// TODO: Find a cleaner way to share this function
 						$( this ).data( 'replaceCallback', function ( mode ) {
 							var offset, textRemainder, regex,
-								searchStr, replaceStr, flags, matchCase, isRegex,
+								searchStr, replaceStr, flags, matchCase, matchWord, isRegex,
 								$textarea, text, match,
 								actualReplacement,
 								start, end;
@@ -871,7 +961,11 @@
 							}
 							isRegex = $( '#wikieditor-toolbar-replace-regex' ).is( ':checked' );
 							if ( !isRegex ) {
-								searchStr = mw.RegExp.escape( searchStr );
+								searchStr = mw.util.escapeRegExp( searchStr );
+							}
+							matchWord = $( '#wikieditor-toolbar-replace-word' ).is( ':checked' );
+							if ( matchWord ) {
+								searchStr = '\\b(?:' + searchStr + ')\\b';
 							}
 							if ( mode === 'replaceAll' ) {
 								flags += 'g';

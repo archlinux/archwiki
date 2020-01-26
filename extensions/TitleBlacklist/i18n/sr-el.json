@@ -19,6 +19,5 @@
 	"titleblacklist-warning": "<strong>Upozorenje: ovu stranicu mogu samo da uređuju administratori i korisnici sa sledećim pravom <code>tboverride</code>, zato što se poklapa sa unosom u crnom spisku:</strong><br /><code>$1</code>",
 	"right-tboverride": "zaobilaženje crnog spiska naslova ili korisničkih imena",
 	"right-tboverride-account": "zaobilaženje crnog spiska korisničkih imena",
-	"right-titleblacklistlog": "pregledanje crnog spiska naslova",
-	"visualeditor-saveerror-titleblacklist": "Greška pri čuvanju stranice: Naslov ove stranice se nalazi na crnoj listi"
+	"right-titleblacklistlog": "pregledanje crnog spiska naslova"
 }

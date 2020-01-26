@@ -164,6 +164,7 @@ class HtmlFormatter implements Formatter, DOMFormatter {
 
 		switch ( $node->nodeType ) {
 		case XML_ELEMENT_NODE:
+			/** @var \DOMElement $node */
 			return $this->formatDOMElement( $node, $contents );
 
 		case XML_DOCUMENT_NODE:
@@ -177,6 +178,7 @@ class HtmlFormatter implements Formatter, DOMFormatter {
 			return $contents;
 
 		case XML_TEXT_NODE:
+			/** @var \DOMCharacterData $node */
 			$text = $node->data;
 			$parent = $node->parentNode;
 			if ( $parent->namespaceURI !== HTMLData::NS_HTML
@@ -187,6 +189,7 @@ class HtmlFormatter implements Formatter, DOMFormatter {
 			return $text;
 
 		case XML_CDATA_SECTION_NODE:
+			/** @var \DOMCdataSection $node */
 			$parent = $node->parentNode;
 			if ( $parent->namespaceURI === HTMLData::NS_HTML ) {
 				// CDATA is not allowed in HTML nodes
@@ -196,12 +199,15 @@ class HtmlFormatter implements Formatter, DOMFormatter {
 			}
 
 		case XML_PI_NODE:
+			/** @var \DOMProcessingInstruction $node */
 			return "<?{$node->target} {$node->data}>";
 
 		case XML_COMMENT_NODE:
+			/** @var \DOMComment $node */
 			return "<!--{$node->data}-->";
 
 		case XML_DOCUMENT_TYPE_NODE:
+			/** @var \DOMDocumentType $node */
 			if ( $this->useSourceDoctype ) {
 				return "<!DOCTYPE {$node->name}>";
 			} else {

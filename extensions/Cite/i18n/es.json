@@ -20,13 +20,10 @@
 			"Macofe",
 			"Joaquin1001",
 			"Peter Bowman",
-			"Tiberius1701"
+			"Tiberius1701",
+			"Dgstranz"
 		]
 	},
-	"apihelp-query+references-description": "Devolver una representación de datos de referencias asociadas con las páginas especificadas.",
-	"apihelp-query+references-summary": "Devuelve una representación de datos de las referencias asociadas con las páginas dadas.",
-	"apihelp-query+references-example-1": "Referencias asociadas con <kbd>Albert Einstein</kbd>.",
-	"apierror-citestoragedisabled": "El almacenamiento de referencias de la extensión de citas no está activado.",
 	"cite-desc": "Añade las etiquetas <code>&lt;ref[ name=id]&gt;</code> y <code>&lt;references/&gt;</code> para citas.",
 	"cite_error": "Error en la cita: $1",
 	"cite_error_ref_invalid_dir": "La etiqueta <code>&lt;ref&gt;</code> no es válida; se desconoce el atributo de dirección «$1». Debe ser «ltr» o «rtl»",
@@ -50,6 +47,7 @@
 	"cite-tracking-category-cite-error-desc": "Las páginas en esta categoría tienen errores en el uso de las etiquetas de referencias.",
 	"cite_references_link_accessibility_label": "Volver arriba",
 	"cite_references_link_many_accessibility_label": "Saltar a:",
+	"cite_references_link_accessibility_back_label": "Volver arriba",
 	"cite_section_preview_references": "Previsualización de referencias",
 	"cite_warning": "Advertencia de cita: $1",
 	"cite_warning_sectionpreview_no_text": "La etiqueta <code>&lt;ref&gt;</code> con nombre <code>$1</code> no puede previsualizarse porque está definida fuera de la sección actual o no está definida en absoluto."

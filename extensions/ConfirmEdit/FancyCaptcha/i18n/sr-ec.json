@@ -21,8 +21,5 @@
 	"fancycaptcha-edit": "Да бисте уредили ову страницу, унесите речи, које се појављују испод, у поље ([[Special:Captcha/help|више информација]]):",
 	"fancycaptcha-imgcaptcha-ph": "Унесите текст који видите на слици",
 	"fancycaptcha-sendemail": "У циљу заштите викија од аутоматизованог слања непожељних порука, унесите речи, које се појављују испод, у поље ([[Special:Captcha/help|више информација]]):",
-	"fancycaptcha-reload-text": "Освежи",
-	"apihelp-fancycaptchareload-description": "Набавка нове FancyCaptcha-е",
-	"apihelp-fancycaptchareload-summary": "Набавка нове FancyCaptcha-е.",
-	"apihelp-fancycaptchareload-example-1": "Набавка нове FancyCaptcha-е"
+	"fancycaptcha-reload-text": "Освежи"
 }

@@ -128,6 +128,7 @@
 	"wikieditor-toolbar-tool-replace-success": "$1 {{PLURAL:$1|تبدیلی کی گئی|تبدیلیاں کی گئیں}}۔",
 	"wikieditor-toolbar-tool-replace-emptysearch": "آپ نے تلاش کیلئے کچھ دیا نہیں۔",
 	"wikieditor-toolbar-tool-replace-invalidregex": "آپ کا درج کردہ ریجیکس درست نہیں ہے: $1",
+	"wikieditor-toolbar-tool-replace-word": "پورا لفظ تلاش کریں",
 	"wikieditor-toolbar-section-characters": "خصوصی حروف",
 	"wikieditor-toolbar-section-help": "معاونت",
 	"wikieditor-toolbar-help-heading-description": "تفصیل",

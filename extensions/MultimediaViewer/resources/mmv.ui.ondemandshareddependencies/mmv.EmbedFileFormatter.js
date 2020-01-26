@@ -27,11 +27,6 @@
 	function EmbedFileFormatter() {
 		/** @property {mw.mmv.HtmlUtils} htmlUtils - */
 		this.htmlUtils = new mw.mmv.HtmlUtils();
-
-		/**
-		 * @property {mw.mmv.routing.Router} router -
-		 */
-		this.router = new mw.mmv.routing.Router();
 	}
 	EFFP = EmbedFileFormatter.prototype;
 
@@ -251,8 +246,7 @@
 	 * @return {string} URL
 	 */
 	EFFP.getLinkUrl = function ( info ) {
-		var route = new mw.mmv.routing.ThumbnailRoute( info.imageInfo.title );
-		return this.router.createHashedUrl( route, info.imageInfo.descriptionUrl );
+		return info.imageInfo.descriptionUrl + mw.mmv.getMediaHash( info.imageInfo.title );
 	};
 
 	mw.mmv.EmbedFileFormatter = EmbedFileFormatter;

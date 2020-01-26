@@ -54,20 +54,15 @@
 
 		this.createSnippetTextAreas( this.$pane );
 
-		this.$explanation = $( '<div>' )
-			.addClass( 'mw-mmv-shareembed-explanation mw-mmv-embed-explanation' )
-			.text( mw.message( 'multimediaviewer-embed-explanation' ).text() )
-			.appendTo( this.$pane );
-
 		this.createSnippetSelectionButtons( this.$pane );
 		this.createSizePulldownMenus( this.$pane );
 
 		/**
 		 * Currently selected embed snippet.
 		 *
-		 * @property {jQuery}
+		 * @property {mw.widgets.CopyTextLayout}
 		 */
-		this.$currentMainEmbedText = mw.user.isAnon() ? this.embedTextHtml.$element : this.embedTextWikitext.$element;
+		this.currentMainEmbedText = mw.user.isAnon() ? this.embedTextHtml : this.embedTextWikitext;
 
 		/**
 		 * Default item for the html size menu.
@@ -112,66 +107,49 @@
 	 * @param {jQuery} $container
 	 */
 	EP.createSnippetTextAreas = function ( $container ) {
-		var wikitextClasses = [ 'mw-mmv-embed-text-wikitext' ],
-			htmlClasses = [ 'mw-mmv-embed-text-html' ];
-
-		( mw.user.isAnon() ? htmlClasses : wikitextClasses ).push( 'active' );
-
-		this.embedTextHtml = new OO.ui.MultilineTextInputWidget( {
-			classes: htmlClasses,
-			readOnly: true
+		this.embedTextHtml = new mw.widgets.CopyTextLayout( {
+			help: mw.message( 'multimediaviewer-embed-explanation' ).text(),
+			helpInline: true,
+			align: 'top',
+			multiline: true,
+			textInput: {
+				placeholder: mw.message( 'multimediaviewer-reuse-loading-placeholder' ).text(),
+				autosize: true,
+				maxRows: 5
+			},
+			button: {
+				title: mw.msg( 'multimediaviewer-reuse-copy-embed' )
+			}
 		} );
 
-		this.embedTextHtml.$element.find( 'textarea' )
-			.prop( 'placeholder', mw.message( 'multimediaviewer-reuse-loading-placeholder' ).text() );
-
-		this.embedTextHtml.$input.on( 'copy', function () {
+		this.embedTextHtml.on( 'copy', function () {
 			mw.mmv.actionLogger.log( 'embed-html-copied' );
 		} );
 
-		this.embedTextWikitext = new OO.ui.MultilineTextInputWidget( {
-			classes: wikitextClasses,
-			readOnly: true
+		this.embedTextWikitext = new mw.widgets.CopyTextLayout( {
+			help: mw.message( 'multimediaviewer-embed-explanation' ).text(),
+			helpInline: true,
+			align: 'top',
+			multiline: true,
+			textInput: {
+				classes: [ 'mw-editfont-' + mw.user.options.get( 'editfont' ) ],
+				placeholder: mw.message( 'multimediaviewer-reuse-loading-placeholder' ).text(),
+				autosize: true,
+				maxRows: 5
+			},
+			button: {
+				title: mw.msg( 'multimediaviewer-reuse-copy-embed' )
+			}
 		} );
 
-		this.embedTextWikitext.$element.find( 'textarea' )
-			.prop( 'placeholder', mw.message( 'multimediaviewer-reuse-loading-placeholder' ).text() );
-
-		this.embedTextWikitext.$input.on( 'copy', function () {
+		this.embedTextWikitext.on( 'copy', function () {
 			mw.mmv.actionLogger.log( 'embed-wikitext-copied' );
 		} );
 
-		this.$copyButton = $( '<button>' )
-			.addClass( 'mw-mmv-button mw-mmv-dialog-copy' )
-			.on( 'click', function () {
-				// Select the text, and then try to copy the text.
-				// If the copy fails or is not supported, continue as if nothing had happened.
-				$( this ).parent().find( '.active > textarea' ).select();
-				try {
-					if ( document.queryCommandSupported &&
-						document.queryCommandSupported( 'copy' ) ) {
-						document.execCommand( 'copy' );
-					}
-				} catch ( e ) {
-					// queryCommandSupported in Firefox pre-41 can throw errors when used with
-					// clipboard commands. We catch and ignore these and other copy-command-related
-					// errors here.
-				}
-			} )
-			.prop( 'title', mw.msg( 'multimediaviewer-reuse-copy-embed' ) )
-			.text( mw.msg( 'multimediaviewer-reuse-copy-embed' ) )
-			.tipsy( {
-				delayIn: mw.config.get( 'wgMultimediaViewer' ).tooltipDelay,
-				gravity: this.correctEW( 'se' )
-			} );
-
-		$( '<p>' )
-			.append(
-				this.embedTextHtml.$element,
-				this.embedTextWikitext.$element,
-				this.$copyButton
-			)
-			.appendTo( $container );
+		$container.append(
+			this.embedTextHtml.$element,
+			this.embedTextWikitext.$element
+		);
 	};
 
 	/**
@@ -215,15 +193,10 @@
 	 * @param {jQuery} $container
 	 */
 	EP.createSizePulldownMenus = function ( $container ) {
-		var wikitextClasses = [ 'mw-mmv-embed-size' ],
-			htmlClasses = [ 'mw-mmv-embed-size' ];
-
-		( mw.user.isAnon() ? htmlClasses : wikitextClasses ).push( 'active' );
-
 		// Wikitext sizes pulldown menu
 		this.embedSizeSwitchWikitext = this.utils.createPulldownMenu(
 			[ 'default', 'small', 'medium', 'large' ],
-			wikitextClasses,
+			[],
 			'default'
 		);
 
@@ -234,7 +207,7 @@
 		// Html sizes pulldown menu
 		this.embedSizeSwitchHtml = this.utils.createPulldownMenu(
 			[ 'small', 'medium', 'large', 'original' ],
-			htmlClasses,
+			[],
 			'original'
 		);
 
@@ -242,48 +215,35 @@
 			mw.mmv.actionLogger.log( 'embed-select-menu-html-' + item.data.name );
 		} );
 
-		$( '<p>' )
-			.append(
-				this.embedSizeSwitchHtml.$element,
-				this.embedSizeSwitchWikitext.$element
-			)
-			.appendTo( $container );
+		this.embedSizeSwitchHtmlLayout = new OO.ui.FieldLayout( this.embedSizeSwitchHtml, { align: 'top' } );
+		this.embedSizeSwitchWikitextLayout = new OO.ui.FieldLayout( this.embedSizeSwitchWikitext, { align: 'top' } );
+
+		$container.append(
+			this.embedSizeSwitchHtmlLayout.$element,
+			this.embedSizeSwitchWikitextLayout.$element
+		);
 	};
 
 	/**
 	 * Registers listeners.
 	 */
 	EP.attach = function () {
-		var embed = this,
-			$htmlTextarea = this.embedTextHtml.$element.find( 'textarea' ),
-			$wikitextTextarea = this.embedTextWikitext.$element.find( 'textarea' );
-
-		// Select all text once element gets focus
-		$htmlTextarea.on( 'focus', this.selectAllOnEvent );
-		$wikitextTextarea.on( 'focus', this.selectAllOnEvent );
-		// Disable partial text selection inside the textboxes
-		$htmlTextarea.on( 'mousedown click', this.onlyFocus );
-		$wikitextTextarea.on( 'mousedown click', this.onlyFocus );
-
 		// Register handler for switching between wikitext/html snippets
-		this.embedSwitch.on( 'select', $.proxy( embed.handleTypeSwitch, embed ) );
+		this.embedSwitch.on( 'select', this.handleTypeSwitch.bind( this ) );
+
+		this.handleTypeSwitch( this.embedSwitch.findSelectedItem() );
 
 		// Register handlers for switching between file sizes
-		this.embedSizeSwitchHtml.getMenu().on( 'choose', $.proxy( this.handleSizeSwitch, this ) );
-		this.embedSizeSwitchWikitext.getMenu().on( 'choose', $.proxy( this.handleSizeSwitch, this ) );
+		this.embedSizeSwitchHtml.getMenu().on( 'choose', this.handleSizeSwitch.bind( this ) );
+		this.embedSizeSwitchWikitext.getMenu().on( 'choose', this.handleSizeSwitch.bind( this ) );
 	};
 
 	/**
 	 * Clears listeners.
 	 */
 	EP.unattach = function () {
-		var $htmlTextarea = this.embedTextHtml.$element.find( 'textarea' ),
-			$wikitextTextarea = this.embedTextWikitext.$element.find( 'textarea' );
-
 		mw.mmv.ui.reuse.Tab.prototype.unattach.call( this );
 
-		$htmlTextarea.off( 'focus mousedown click' );
-		$wikitextTextarea.off( 'focus mousedown click' );
 		this.embedSwitch.off( 'select' );
 		this.embedSizeSwitchHtml.getMenu().off( 'choose' );
 		this.embedSizeSwitchWikitext.getMenu().off( 'choose' );
@@ -311,26 +271,24 @@
 		mw.mmv.actionLogger.log( 'embed-switched-to-' + value );
 
 		if ( value === 'html' ) {
-			this.$currentMainEmbedText = this.embedTextHtml.$element;
+			this.currentMainEmbedText = this.embedTextHtml;
 			this.embedSizeSwitchWikitext.getMenu().toggle( false );
 
 			this.currentSizeMenu = this.embedSizeSwitchHtml.getMenu();
 			this.currentDefaultItem = this.defaultHtmlItem;
 		} else if ( value === 'wikitext' ) {
-			this.$currentMainEmbedText = this.embedTextWikitext.$element;
+			this.currentMainEmbedText = this.embedTextWikitext;
 			this.embedSizeSwitchHtml.getMenu().toggle( false );
 
 			this.currentSizeMenu = this.embedSizeSwitchWikitext.getMenu();
 			this.currentDefaultItem = this.defaultWikitextItem;
 		}
 
-		this.embedTextHtml.$element
-			.add( this.embedSizeSwitchHtml.$element )
-			.toggleClass( 'active', value === 'html' );
+		this.embedTextHtml.toggle( value === 'html' );
+		this.embedSizeSwitchHtmlLayout.toggle( value === 'html' );
 
-		this.embedTextWikitext.$element
-			.add( this.embedSizeSwitchWikitext.$element )
-			.toggleClass( 'active', value === 'wikitext' );
+		this.embedTextWikitext.toggle( value === 'wikitext' );
+		this.embedSizeSwitchWikitextLayout.toggle( value === 'wikitext' );
 
 		// Reset current selection to default when switching the first time
 		if ( !this.isSizeMenuDefaultReset ) {
@@ -401,8 +359,9 @@
 			src = this.embedFileInfo.imageInfo.url;
 		}
 
-		this.embedTextHtml.setValue(
-			this.formatter.getThumbnailHtml( this.embedFileInfo, src, width, height ) );
+		this.embedTextHtml.textInput.setValue(
+			this.formatter.getThumbnailHtml( this.embedFileInfo, src, width, height )
+		);
 	};
 
 	/**
@@ -417,7 +376,7 @@
 			return;
 		}
 
-		this.embedTextWikitext.setValue(
+		this.embedTextWikitext.textInput.setValue(
 			this.formatter.getThumbnailWikitextFromEmbedFileInfo( this.embedFileInfo, width )
 		);
 	};
@@ -427,6 +386,12 @@
 	 */
 	EP.show = function () {
 		mw.mmv.ui.reuse.Tab.prototype.show.call( this );
+
+		// Force update size on multiline inputs, as they may have be
+		// calculated while not visible.
+		this.currentMainEmbedText.textInput.valCache = null;
+		this.currentMainEmbedText.textInput.adjustSize();
+
 		this.select();
 	};
 
@@ -486,8 +451,8 @@
 	 * @inheritdoc
 	 */
 	EP.empty = function () {
-		this.embedTextHtml.setValue( '' );
-		this.embedTextWikitext.setValue( '' );
+		this.embedTextHtml.textInput.setValue( '' );
+		this.embedTextWikitext.textInput.setValue( '' );
 
 		this.embedSizeSwitchHtml.getMenu().toggle( false );
 		this.embedSizeSwitchWikitext.getMenu().toggle( false );
@@ -497,7 +462,7 @@
 	 * Selects the text in the current textbox by triggering a focus event.
 	 */
 	EP.select = function () {
-		this.$currentMainEmbedText.focus();
+		this.currentMainEmbedText.selectText();
 	};
 
 	/**

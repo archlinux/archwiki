@@ -13,6 +13,5 @@
 	"categorytree-num-categories": "$1 C",
 	"categorytree-num-pages": "$1 P",
 	"categorytree-num-files": "$1 F",
-	"categorytree-not-found": "ပိူင်ထၢၼ်ႈ <i>$1</i> ၼႆႉ ဢမ်ႇႁႃႁၼ်",
-	"apihelp-categorytree-description": "မေႃႇၵျူးၽၢႆႇၼႂ်း တွၼ်ႈတႃႇ သၢႆလင် ၵိင်ႇပိူင်ထၢၼ်ႈ။"
+	"categorytree-not-found": "ပိူင်ထၢၼ်ႈ <i>$1</i> ၼႆႉ ဢမ်ႇႁႃႁၼ်"
 }

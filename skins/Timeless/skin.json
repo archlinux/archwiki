@@ -1,6 +1,6 @@
 {
 	"name": "Timeless",
-	"version": "0.8.1",
+	"version": "0.8.9",
 	"author": "Isarra Yos",
 	"url": "https://www.mediawiki.org/wiki/Skin:Timeless",
 	"descriptionmsg": "timeless-desc",
@@ -8,7 +8,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "skin",
 	"requires": {
-		"MediaWiki": ">= 1.31.0"
+		"MediaWiki": ">= 1.34.0"
 	},
 	"ValidSkinNames": {
 		"timeless": "Timeless"
@@ -18,10 +18,15 @@
 			"i18n"
 		]
 	},
+	"config": {
+		"TimelessBackdropImage": "cat.svg",
+		"TimelessLogo": null,
+		"TimelessWordmark": null
+	},
 	"ResourceModules": {
 		"skins.timeless": {
 			"targets": [ "desktop", "mobile" ],
-			"class": "ResourceLoaderSkinModule",
+			"class": "TimelessVariablesModule",
 			"styles": {
 				"resources/libraries/normalise.css": {
 					"media": "screen"
@@ -47,17 +52,12 @@
 				"resources/screen-mobile.less": {
 					"media": "screen and (max-width: 850px)"
 				},
+				"0": "resources/screen-misc.less",
 				"resources/print.css": {
 					"media": "print"
 				}
 			},
 			"@NOTE": "Remember to also update variables.less if you change the width cutoffs here. screen-misc.less and mobile.js may also need updating."
-		},
-		"skins.timeless.misc": {
-			"targets": [ "desktop", "mobile" ],
-			"styles": [
-				"resources/screen-misc.less"
-			]
 		},
 		"skins.timeless.js": {
 			"targets": [ "desktop" ],
@@ -85,12 +85,17 @@
 			"+ext.echo.styles.badge": "resources/extensions/Echo.less",
 			"+ext.visualEditor.core": "resources/extensions/VisualEditor.core.less",
 			"+ext.visualEditor.desktopArticleTarget.noscript": "resources/extensions/VisualEditor.article.less",
-			"+ext.dismissableSiteNotice.styles": "resources/extensions/DismissableSiteNotice.less"
+			"+ext.CodeMirror.visualEditor.init": "resources/extensions/VisualEditor.CodeMirror.less",
+			"+ext.dismissableSiteNotice.styles": "resources/extensions/DismissableSiteNotice.less",
+			"+ext.MWOAuth.AuthorizeForm": "resources/extensions/MWOAuth.AuthorizeForm.less",
+			"+ext.wikiLove.icon": "resources/extensions/WikiLove.icon.less",
+			"+ext.proofreadpage.page.navigation": "resources/extensions/Proofreadpage.page.navigation.less"
 		}
 	},
 	"AutoloadClasses": {
 		"SkinTimeless": "includes/SkinTimeless.php",
-		"TimelessTemplate": "includes/TimelessTemplate.php"
+		"TimelessTemplate": "includes/TimelessTemplate.php",
+		"TimelessVariablesModule": "includes/TimelessVariablesModule.php"
 	},
 	"manifest_version": 1
 }

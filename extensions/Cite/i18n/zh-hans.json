@@ -14,10 +14,6 @@
 			"A Chinese Wikipedian"
 		]
 	},
-	"apihelp-query+references-description": "返回与指定页面相关联的参考文献的数据表示法。",
-	"apihelp-query+references-summary": "返回与指定页面相关联的参考文献的数据表示法。",
-	"apihelp-query+references-example-1": "与<kbd>Albert Einstein</kbd>相关联的参考文献。",
-	"apierror-citestoragedisabled": "引用扩展参考存储未启用。",
 	"cite-desc": "增加用于引用的<code>&lt;ref[ name=id]&gt;</code>和<code>&lt;references/&gt;</code>标签",
 	"cite_error": "引用错误：$1",
 	"cite_error_ref_invalid_dir": "无效的<code>&lt;ref&gt;</code>标签，dir参数“$1”未知。必须为ltr或rtl",

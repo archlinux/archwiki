@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Liuxinyu970226"
+		]
+	},
+	"apihelp-query+references-description": "返回与指定页面相关联的参考文献的数据表示法。",
+	"apihelp-query+references-summary": "返回与指定页面相关联的参考文献的数据表示法。",
+	"apihelp-query+references-example-1": "与<kbd>Albert Einstein</kbd>相关联的参考文献。",
+	"apierror-citestoragedisabled": "引用扩展参考存储未启用。"
+}

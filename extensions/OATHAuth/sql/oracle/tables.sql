@@ -5,11 +5,11 @@ CREATE TABLE &mw_prefix.oathauth_users (
 	-- User ID
 	id NUMBER NOT NULL,
 
-	-- Secret key
-	secret VARCHAR2(255) NULL,
+	-- Module selected by user
+	module VARCHAR2(255) NULL,
 
-	-- Scratch tokens
-	scratch_tokens varbinary(511) NULL
+	-- Module data
+	data BLOB NULL
 
 );
 ALTER TABLE &mw_prefix.oathauth_users ADD CONSTRAINT &mw_prefix.oathauth_users_pk PRIMARY KEY (id);

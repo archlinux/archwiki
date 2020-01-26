@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Joetaras"
+		]
+	},
+	"apihelp-query+references-description": "Dèje 'na rappresendazione de le date de le refereminde associate cu le pàggene indicate.",
+	"apihelp-query+references-summary": "Dèje 'na rappresendazione de le date de le refereminde associate cu le pàggene indicate.",
+	"apihelp-query+references-example-1": "Refereminde associate cu <kbd>Albert Einstein</kbd>.",
+	"apierror-citestoragedisabled": "'A reggistrazzione d'u referimende de l'estenzione Cite non g'ha state abbilitate."
+}

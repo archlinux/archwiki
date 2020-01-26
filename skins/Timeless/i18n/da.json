@@ -7,7 +7,6 @@
 		]
 	},
 	"timeless-desc": "Et tidsløst tema designet efter Winterprototypen af Brando Harris, og diverse stil af Wikimedia Foundation.",
-	"timeless-loggedin": "Din konto",
 	"timeless-anonymous": "Anonym",
 	"timeless-loggedinas": "Logget på »$1«",
 	"timeless-notloggedin": "Ikke logget på",
@@ -18,9 +17,11 @@
 	"timeless-sitetools": "Wikiværktøjer",
 	"timeless-pageactions": "Sideværktøjer",
 	"timeless-userpagetools": "Brugersideværktøjer",
+	"timeless-action-addsection": "Nyt emne",
 	"timeless-pagemisc": "Mere",
 	"timeless-namespaces": "Navnerum",
 	"timeless-pagetools": "Sidehandlinger",
 	"timeless-languages": "Sprog",
+	"timeless-projects": "Andre projekter",
 	"timeless.js": "/* Enhver JavaScript her vil blive indlæst for brugere der bruger Timeless udseendet */"
 }

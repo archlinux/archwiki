@@ -18,7 +18,8 @@
 			"Vigorous action",
 			"おはぐろ蜻蛉",
 			"Iwai.masaharu",
-			"Delim"
+			"Delim",
+			"Kkairri"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "書籍",
@@ -33,6 +34,7 @@
 	"cite-ve-changedesc-reflist-group-to": "脚注リストのグループが一般のグループから「$1」に変更されました",
 	"cite-ve-changedesc-reflist-item-id": "注釈のインデックスが変更されました",
 	"cite-ve-dialog-reference-editing-reused": "この脚注はこのページ上で$1{{PLURAL:$1|回}}使用されています。",
+	"cite-ve-dialog-reference-editing-reused-long": "この脚注は、このページで$1回使われています。ここでの変更は、この脚注が使われているすべての場所に適用されます。",
 	"cite-ve-dialog-reference-options-group-label": "使用するグループ",
 	"cite-ve-dialog-reference-options-group-placeholder": "汎用の脚注",
 	"cite-ve-dialog-reference-options-name-label": "この名前で再使用",

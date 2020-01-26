@@ -9,8 +9,6 @@
 		]
 	},
 	"multimediaviewer-desc": "একটি পূর্ণস্ক্রিন ইন্টারফেসের মধ্যে একটি বড় মাপের থাম্বনেল প্রসারিত করে।",
-	"multimediaviewer-pref": "মিডিয়া ভিউয়ার",
-	"multimediaviewer-pref-desc": "এই নতুন সরঞ্জামটি দিয়ে মাল্টিমিডিয়া দেখার নতুন অভিজ্ঞতা নিন। এটা থাম্বনেল আছে এমন পাতায় বড় মাপের চিত্র প্রদর্শন করে। চিত্র পর্দা জুড়ে প্রদর্শন ইন্টারফেস বাক্সে প্রদর্শিত হয়, এছাড়াও পূর্ণ মাপ দেখা যাবে।",
 	"multimediaviewer-optin-pref": "<span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About মিডিয়া ভিউয়ার]</span> সক্রিয় করো",
 	"multimediaviewer-file-page": "সংশ্লিষ্ট ফাইল পৃষ্ঠাতে যান",
 	"multimediaviewer-repository-local": "আরো বিস্তারিত",

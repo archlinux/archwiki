@@ -83,11 +83,11 @@ class MonoBookTemplate extends BaseTemplate {
 				$this->getIfExists( 'catlinks' ) .
 
 				'<!-- end content -->' .
-				$this->getIfExists( 'dataAfterContent' ) .
 				$this->getClear()
 			)
 		);
 		$html .= $this->deprecatedHookHack( 'MonoBookAfterContent' );
+		$html .= $this->getIfExists( 'dataAfterContent' ) . $this->getClear();
 		$html .= Html::closeElement( 'div' );
 
 		$html .= Html::rawElement( 'div',
@@ -304,15 +304,15 @@ class MonoBookTemplate extends BaseTemplate {
 	 */
 	protected function getToolboxBox() {
 		$html = '';
-		$skin = $this;
+		$template = $this;
 
 		$html .= $this->getBox( 'tb', $this->getToolbox(), 'toolbox', [ 'hooks' => [
 			// Deprecated hooks
-			'MonoBookTemplateToolboxEnd' => [ &$skin ],
-			'SkinTemplateToolboxEnd' => [ &$skin, true ]
+			'MonoBookTemplateToolboxEnd' => [ &$template ],
+			'SkinTemplateToolboxEnd' => [ &$template, true ]
 		] ] );
 
-		$html .= $this->deprecatedHookHack( 'MonoBookAfterToolbox' );
+		$html .= $this->deprecatedHookHack( 'MonoBookAfterToolbox', [ $template ] );
 
 		return $html;
 	}
@@ -337,20 +337,18 @@ class MonoBookTemplate extends BaseTemplate {
 	 *
 	 * @param string $name
 	 * @param array|string $contents
+	 * @param-taint $contents escapes_htmlnoent
 	 * @param null|string|array|bool $msg
 	 * @param array $setOptions
 	 *
 	 * @return string html
 	 */
 	protected function getBox( $name, $contents, $msg = null, $setOptions = [] ) {
-		$options = [
+		$options = array_merge( [
 			'class' => 'portlet',
 			'body-class' => 'pBody',
 			'text-wrapper' => ''
-		];
-		foreach ( $setOptions as $key => $value ) {
-			$options[$key] = $value;
-		}
+		], $setOptions );
 
 		// Do some special stuff for the personal menu
 		if ( $name == 'personal' ) {
@@ -388,7 +386,7 @@ class MonoBookTemplate extends BaseTemplate {
 	 */
 	protected function getPortlet( $name, $content, $msg = null, $setOptions = [] ) {
 		// random stuff to override with any provided options
-		$options = [
+		$options = array_merge( [
 			// handle role=search a little differently
 			'role' => 'navigation',
 			'search-input-id' => 'searchInput',
@@ -405,11 +403,7 @@ class MonoBookTemplate extends BaseTemplate {
 			'hooks' => '',
 			// option to stick arbitrary stuff at the beginning of the ul
 			'list-prepend' => ''
-		];
-		// set options based on input
-		foreach ( $setOptions as $key => $value ) {
-			$options[$key] = $value;
-		}
+		], $setOptions );
 
 		// Handle the different $msg possibilities
 		if ( $msg === null ) {
@@ -452,7 +446,6 @@ class MonoBookTemplate extends BaseTemplate {
 			}
 			// Compatibility with extensions still using SkinTemplateToolboxEnd or similar
 			if ( is_array( $options['hooks'] ) ) {
-				// @phan-suppress-next-line PhanTypeMismatchForeach T218843
 				foreach ( $options['hooks'] as $hook => $hookOptions ) {
 					$contentText .= $this->deprecatedHookHack( $hook, $hookOptions );
 				}
@@ -527,7 +520,7 @@ class MonoBookTemplate extends BaseTemplate {
 	 * We no longer do things that way.
 	 *
 	 * @param string $hook event
-	 * @param array $hookOptions args
+	 * @param mixed $hookOptions args
 	 *
 	 * @return string html
 	 */

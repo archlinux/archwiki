@@ -5,7 +5,8 @@
 			"Jkjk",
 			"McDutchie",
 			"Teslaton",
-			"Macofe"
+			"Macofe",
+			"Robert Važan"
 		]
 	},
 	"wikieditor": "Pokročilé rozhranie na úpravu wikitextu",
@@ -15,8 +16,9 @@
 	"wikieditor-toolbar": "Panel nástrojov na úpravy",
 	"wikieditor-toolbar-desc": "Panel nástrojov na úpravy stránky s rozšírenou použiteľnosťou",
 	"wikieditor-toolbar-preference": "Zapnúť rozšírený panel nástrojov na úpravy",
+	"wikieditor-toolbar-preference-help": "Toto sa niekedy nazýva „editor wikitextu 2010“.",
 	"wikieditor-toolbar-loading": "Načítava sa...",
-	"wikieditor-toolbar-tool-bold": "Hrubý",
+	"wikieditor-toolbar-tool-bold": "Tučné písmo",
 	"wikieditor-toolbar-tool-bold-example": "Hrubý text",
 	"wikieditor-toolbar-tool-italic": "Kurzíva",
 	"wikieditor-toolbar-tool-italic-example": "Text kurzívou",
@@ -73,9 +75,9 @@
 	"wikieditor-toolbar-tool-nowiki-example": "Sem vložte neformátovaný text",
 	"wikieditor-toolbar-tool-redirect": "Presmerovanie",
 	"wikieditor-toolbar-tool-redirect-example": "Cieľový názov stránky",
-	"wikieditor-toolbar-tool-big": "Veľká",
+	"wikieditor-toolbar-tool-big": "Veľké",
 	"wikieditor-toolbar-tool-big-example": "Veľký text",
-	"wikieditor-toolbar-tool-small": "Malá",
+	"wikieditor-toolbar-tool-small": "Malé",
 	"wikieditor-toolbar-tool-small-example": "Malý text",
 	"wikieditor-toolbar-tool-superscript": "Horný index",
 	"wikieditor-toolbar-tool-superscript-example": "Horný index",

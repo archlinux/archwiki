@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"Okras",
+			"Movses"
+		]
+	},
+	"pageimages-desc": "Собирает информацию об изображениях, используемых на странице",
+	"pageimages-info-label": "Изображение страницы"
+}

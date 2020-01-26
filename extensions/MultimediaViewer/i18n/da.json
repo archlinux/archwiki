@@ -7,8 +7,6 @@
 		]
 	},
 	"multimediaviewer-desc": "Udvid miniaturebilleder i en større størrelse på en fuld skærm.",
-	"multimediaviewer-pref": "Medieviser",
-	"multimediaviewer-pref-desc": "Med dette nye værktøj kan du forbedre din multimedieoplevelse. Det viser billeder i større størrelse på sider, der har miniaturer. Billederne er vist i et pænere fuldskærmsformat, og kan også ses i fuld størrelse.",
 	"multimediaviewer-optin-pref": "Aktiver <span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About Media Viewer]</span>",
 	"multimediaviewer-file-page": "Gå til tilsvarende filside",
 	"multimediaviewer-repository-local": "Flere detaljer",

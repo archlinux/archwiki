@@ -113,15 +113,7 @@
 				getArticlePath: function () { return 'Foo'; },
 				isCommons: function () { return false; }
 			},
-			oldMoment = window.moment,
-			// custom clock will give MPP.formatDate some time to load moment.js
 			clock = this.sandbox.useFakeTimers();
-
-		/* window.moment = function ( date ) {
-			// This has no effect for now, since writing this test revealed that our moment.js
-			// doesn't have any language configuration
-			return oldMoment( date ).lang( 'fr' );
-		};*/
 
 		panel.setImageInfo( image, imageData, repoData );
 
@@ -164,7 +156,6 @@
 
 		assert.ok( panel.$datetime.text().indexOf( '25 August 2013' ) > 0, 'Correct date is displayed' );
 
-		window.moment = oldMoment;
 		clock.restore();
 	} );
 
@@ -181,25 +172,20 @@
 		var $qf = $( '#qunit-fixture' ),
 			panel = new mw.mmv.ui.MetadataPanel( $qf, $( '<div>' ).appendTo( $qf ), mw.storage, new mw.mmv.Config( {}, mw.config, mw.user, new mw.Api(), mw.storage ) ),
 			date1 = 'Garbage',
-			promise = panel.formatDate( date1 );
+			result = panel.formatDate( date1 );
 
-		return promise.then( function ( result ) {
-			assert.strictEqual( result, date1, 'Invalid date is correctly ignored' );
-		} );
+		assert.strictEqual( result, date1, 'Invalid date is correctly ignored' );
 	} );
 
 	QUnit.test( 'About links', function ( assert ) {
-		var $qf = $( '#qunit-fixture' ),
-			oldWgMediaViewerIsInBeta = mw.config.get( 'wgMediaViewerIsInBeta' );
+		var $qf = $( '#qunit-fixture' );
 
 		this.sandbox.stub( mw.user, 'isAnon' );
-		mw.config.set( 'wgMediaViewerIsInBeta', false );
 		// eslint-disable-next-line no-new
 		new mw.mmv.ui.MetadataPanel( $qf.empty(), $( '<div>' ).appendTo( $qf ), mw.storage, new mw.mmv.Config( {}, mw.config, mw.user, new mw.Api(), mw.storage ) );
 
 		assert.strictEqual( $qf.find( '.mw-mmv-about-link' ).length, 1, 'About link is created.' );
 		assert.strictEqual( $qf.find( '.mw-mmv-discuss-link' ).length, 1, 'Discuss link is created.' );
 		assert.strictEqual( $qf.find( '.mw-mmv-help-link' ).length, 1, 'Help link is created.' );
-		mw.config.set( 'wgMediaViewerIsInBeta', oldWgMediaViewerIsInBeta );
 	} );
 }() );

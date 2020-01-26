@@ -542,7 +542,7 @@ class PEAR
             count($object->_expected_errors) > 0 &&
             count($exp = end($object->_expected_errors))
         ) {
-            if ($exp[0] == "*" ||
+            if ($exp[0] === "*" ||
                 (is_int(reset($exp)) && in_array($code, $exp)) ||
                 (is_string(reset($exp)) && in_array($message, $exp))
             ) {

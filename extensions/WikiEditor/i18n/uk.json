@@ -139,6 +139,7 @@
 	"wikieditor-toolbar-tool-replace-success": "$1 {{PLURAL:$1|1=заміну|заміни|замін}} зроблено.",
 	"wikieditor-toolbar-tool-replace-emptysearch": "Ви не зазначили, що треба шукати.",
 	"wikieditor-toolbar-tool-replace-invalidregex": "Введений вами регулярний вираз помилковий: $1",
+	"wikieditor-toolbar-tool-replace-word": "Тільки цілі слова",
 	"wikieditor-toolbar-section-characters": "Спеціальні символи",
 	"wikieditor-toolbar-section-help": "Довідка",
 	"wikieditor-toolbar-help-heading-description": "Опис",

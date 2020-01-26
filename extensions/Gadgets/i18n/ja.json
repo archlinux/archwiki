@@ -41,8 +41,8 @@
 	"gadgets-export-download": "ダウンロード",
 	"gadgets-validate-notset": "プロパティ <code>$1</code> が設定されていません。",
 	"gadgets-validate-wrongtype": "プロパティ <code>$1</code> は型 <code>$3</code> ではなく <code>$2</code> でなければなりません。",
-	"right-gadgets-edit": "ガジェットの JavaScript および CSS ページの編集",
-	"action-gadgets-edit": "このガジェットの JavaScript または CSS ページを編集",
-	"right-gadgets-definition-edit": "ガジェット定義の編集",
-	"action-gadgets-definition-edit": "このガジェット定義を編集"
+	"right-gadgets-edit": "ガジェットの JavaScript および CSS ページを編集",
+	"action-gadgets-edit": "このガジェットの JavaScript または CSS ページの編集",
+	"right-gadgets-definition-edit": "ガジェット定義を編集",
+	"action-gadgets-definition-edit": "このガジェット定義の編集"
 }

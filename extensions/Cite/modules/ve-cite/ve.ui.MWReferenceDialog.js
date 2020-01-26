@@ -49,7 +49,7 @@ ve.ui.MWReferenceDialog.static.actions = [
 	},
 	{
 		label: OO.ui.deferMsg( 'visualeditor-dialog-action-cancel' ),
-		flags: [ 'safe', 'back' ],
+		flags: [ 'safe', 'close' ],
 		modes: [ 'readonly', 'insert', 'edit', 'insert-select' ]
 	}
 ];
@@ -86,7 +86,7 @@ ve.ui.MWReferenceDialog.static.excludeCommands = [
 	// References
 	'reference',
 	'reference/existing',
-	'citefromid',
+	'citoid',
 	'referencesList'
 ];
 
@@ -168,6 +168,11 @@ ve.ui.MWReferenceDialog.prototype.onTargetChange = function () {
 		done: this.isModified(),
 		insert: hasContent
 	} );
+
+	if ( !this.trackedInputChange ) {
+		ve.track( 'activity.' + this.constructor.static.name, { action: 'input' } );
+		this.trackedInputChange = true;
+	}
 };
 
 /**
@@ -177,6 +182,11 @@ ve.ui.MWReferenceDialog.prototype.onReferenceGroupInputChange = function () {
 	this.actions.setAbilities( {
 		done: this.isModified()
 	} );
+
+	if ( !this.trackedInputChange ) {
+		ve.track( 'activity.' + this.constructor.static.name, { action: 'input' } );
+		this.trackedInputChange = true;
+	}
 };
 
 /**
@@ -193,6 +203,8 @@ ve.ui.MWReferenceDialog.prototype.onSearchResultsChoose = function ( item ) {
 	}
 	this.useReference( ref );
 	this.executeAction( 'insert' );
+
+	ve.track( 'activity.' + this.constructor.static.name, { action: 'reuse-choose' } );
 };
 
 /**
@@ -405,6 +417,8 @@ ve.ui.MWReferenceDialog.prototype.getSetupProcess = function ( data ) {
 			} );
 
 			this.referenceGroupInput.populateMenu( this.getFragment().getDocument().getInternalList() );
+
+			this.trackedInputChange = false;
 		}, this );
 };
 

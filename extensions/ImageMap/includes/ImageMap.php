@@ -207,7 +207,7 @@ class ImageMap {
 					$coords = [];
 					$coord = strtok( " \t" );
 					while ( $coord !== false ) {
-						if ( !is_numeric( $coord ) || $coord > 1e9 || $coord < 0 ) {
+						if ( !is_numeric( $coord ) || $coord > 1e9 ) {
 							return self::error( 'imagemap_invalid_coord', $lineNum );
 						}
 						$coords[] = $coord;
@@ -279,9 +279,11 @@ class ImageMap {
 
 		if ( $realmap ) {
 			// Construct the map
-			// Add random number to avoid breaking cached HTML fragments that are
-			// later joined together on the one page (bug 16471)
-			$mapName = "ImageMap_" . ++self::$id . '_' . mt_rand( 0, 0x7fffffff );
+			// Add a hash of the map HTML to avoid breaking cached HTML fragments that are
+			// later joined together on the one page (T18471).
+			// The only way these hashes can clash is if the map is identical, in which
+			// case it wouldn't matter that the "wrong" map was used.
+			$mapName = 'ImageMap_' . substr( md5( $mapHTML ), 0, 16 );
 			$mapHTML = "<map name=\"$mapName\">\n$mapHTML</map>\n";
 
 			// Alter the image tag

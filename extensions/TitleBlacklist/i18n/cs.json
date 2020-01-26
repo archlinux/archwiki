@@ -24,6 +24,5 @@
 	"titleblacklist-warning": "<strong>Upozornění: Tuto stránku mohou editovat jen správci a další uživatelé s oprávněním <code>tboverride</code>, protože odpovídá následujícímu záznamu černé listiny názvů:</strong><br /><code>$1</code>",
 	"right-tboverride": "Překonání zakázaných názvů stránek nebo uživatelských jmen",
 	"right-tboverride-account": "Překonání černé listiny uživatelských jmen",
-	"right-titleblacklistlog": "Prohlížení knihy černé listiny názvů",
-	"visualeditor-saveerror-titleblacklist": "Chyba při uložení stránky: Název stránky je na černé listině"
+	"right-titleblacklistlog": "Prohlížení knihy černé listiny názvů"
 }

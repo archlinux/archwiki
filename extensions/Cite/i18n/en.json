@@ -15,10 +15,6 @@
 			"Ævar Arnfjörð Bjarmason"
 		]
 	},
-	"apihelp-query+references-description": "Return a data representation of references associated with the given pages.",
-	"apihelp-query+references-summary": "Return a data representation of references associated with the given pages.",
-	"apihelp-query+references-example-1": "References associated with <kbd>Albert Einstein</kbd>.",
-	"apierror-citestoragedisabled": "Cite extension reference storage is not enabled.",
 	"cite-desc": "Adds <code>&lt;ref[ name=id]&gt;</code> and <code>&lt;references/&gt;</code> tags, for citations",
 	"cite_error": "Cite error: $1",
 	"cite_error_ref_invalid_dir": "Invalid <code>&lt;ref&gt;</code> tag; dir attribute \"$1\" is unknown. Must be ltr or rtl",

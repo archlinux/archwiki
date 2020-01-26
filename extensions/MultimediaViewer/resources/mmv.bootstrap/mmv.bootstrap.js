@@ -57,9 +57,7 @@
 		// find and setup all thumbs on this page
 		// this will run initially and then every time the content changes,
 		// e.g. via a VE edit or pagination in a multipage file
-		mw.hook( 'wikipage.content' ).add( $.proxy( this, 'processThumbs' ) );
-
-		this.browserHistory = window.history;
+		mw.hook( 'wikipage.content' ).add( this.processThumbs.bind( this ) );
 	}
 
 	MMVB = MultimediaViewerBootstrap.prototype;
@@ -265,6 +263,7 @@
 
 		// remove the buttons (and the clearing element) if they are already there
 		// this should not happen (at least until we support paged media) but just in case
+		// eslint-disable-next-line no-jquery/no-global-selector
 		$( '.mw-mmv-filepage-buttons' ).next().addBack().remove();
 
 		$link = $( '<a>' )
@@ -283,6 +282,7 @@
 			.addClass( 'mw-ui-button-group mw-mmv-filepage-buttons' )
 			.append( $link, $configLink );
 
+		// eslint-disable-next-line no-jquery/no-global-selector
 		$( '.fullMedia' ).append(
 			$filepageButtons,
 			$( '<div>' )
@@ -328,6 +328,7 @@
 
 		mw.loader.using( 'mmv.ui.tipsyDialog' ).done( function () {
 			/** @property {mw.mmv.ui.TipsyDialog} statusInfoDialog popup on the file page explaining how to re-enable */
+			// eslint-disable-next-line no-jquery/no-global-selector
 			bs.statusInfoDialog = new mw.mmv.ui.TipsyDialog( $( '.mw-mmv-view-expanded' ), { gravity: 'sw' } );
 			bs.statusInfoDialog.setContent(
 				mw.message( 'multimediaviewer-disable-info-title' ).plain(),
@@ -335,7 +336,7 @@
 			);
 			// tipsy mispositions the tooltip, probably because it does the positioning before the buttons are
 			// displayed and the page is reflown. Adding some delay seems to help.
-			window.setTimeout( function () {
+			setTimeout( function () {
 				bs.statusInfoDialog.open();
 			}, 1000 );
 		} );
@@ -360,6 +361,7 @@
 			$thumbCaption = $potentialCaptions.eq( 0 );
 		} else {
 			// Template:Multiple_image or some such; try to find closest caption to the image
+			// eslint-disable-next-line no-jquery/no-sizzle
 			$thumbCaption = $link.closest( ':has(> .thumbcaption)', $thumbContain )
 				.find( '> .thumbcaption' );
 		}
@@ -414,7 +416,7 @@
 		this.ensureEventHandlersAreSetUp();
 
 		return this.loadViewer( true ).then( function ( viewer ) {
-			viewer.loadImageByTitle( title, true );
+			viewer.loadImageByTitle( title, false );
 		} );
 	};
 
@@ -458,8 +460,8 @@
 	 * @private
 	 */
 	MMVB.isViewerHash = function () {
-		return window.location.hash.indexOf( '#mediaviewer/' ) === 0 ||
-			window.location.hash.indexOf( '#/media/' ) === 0;
+		var path = OO.Router.prototype.getPath();
+		return path.match( mw.mmv.ROUTE_REGEXP ) || path.match( mw.mmv.LEGACY_ROUTE_REGEXP );
 	};
 
 	/**
@@ -476,13 +478,8 @@
 			return;
 		}
 
-		if ( this.skipNextHashHandling ) {
-			this.skipNextHashHandling = false;
-			return;
-		}
-
 		this.loadViewer( this.isViewerHash() ).then( function ( viewer ) {
-			viewer.hash();
+			viewer.router.checkRoute();
 			// this is an ugly temporary fix to avoid a black screen of death when
 			// the page is loaded with an invalid MMV url
 			if ( !viewer.isOpen ) {
@@ -493,35 +490,6 @@
 				mw.mmv.actionLogger.log( 'history-navigation' );
 			}
 		} );
-	};
-
-	/**
-	 * Handles hash change requests coming from mmv
-	 *
-	 * @param {jQuery.Event} e Custom mmv-hash event
-	 */
-	MMVB.internalHashChange = function ( e ) {
-		var hash = e.hash,
-			title = e.title;
-
-		// The advantage of using pushState when it's available is that it has to ability to truly
-		// clear the hash, not leaving "#" in the history
-		// An entry with "#" in the history has the side-effect of resetting the scroll position when navigating the history
-		if ( this.browserHistory && this.browserHistory.pushState ) {
-			// In order to truly clear the hash, we need to reconstruct the hash-free URL
-			if ( hash === '#' ) {
-				hash = window.location.href.replace( /#.*$/, '' );
-			}
-
-			window.history.pushState( null, title, hash );
-		} else {
-			// Since we voluntarily changed the hash, we don't want MMVB.hash (which will trigger on hashchange event) to treat it
-			this.skipNextHashHandling = true;
-
-			window.location.hash = hash;
-		}
-
-		document.title = title;
 	};
 
 	/**
@@ -548,15 +516,11 @@
 		/** @property {boolean} eventHandlersHaveBeenSetUp tracks domready event handler state */
 		this.eventHandlersHaveBeenSetUp = true;
 
-		$( window ).on( this.browserHistory && this.browserHistory.pushState ? 'popstate.mmvb' : 'hashchange', function () {
-			self.hash();
-		} );
-
 		// Interpret any hash that might already be in the url
 		self.hash( true );
 
-		$( document ).on( 'mmv-hash', function ( e ) {
-			self.internalHashChange( e );
+		$( document ).on( 'mmv-setup-overlay', function () {
+			self.setupOverlay();
 		} ).on( 'mmv-cleanup-overlay', function () {
 			self.cleanupOverlay();
 		} );
@@ -566,8 +530,7 @@
 	 * Cleans up event handlers, used for tests
 	 */
 	MMVB.cleanupEventHandlers = function () {
-		$( window ).off( 'hashchange popstate.mmvb' );
-		$( document ).off( 'mmv-hash' );
+		$( document ).off( 'mmv-setup-overlay mmv-cleanup-overlay' );
 		this.eventHandlersHaveBeenSetUp = false;
 	};
 

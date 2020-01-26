@@ -143,6 +143,7 @@
 	"wikieditor-toolbar-tool-replace-success": "$1 {{PLURAL:$1|substituição realizada|substituições realizadas}}.",
 	"wikieditor-toolbar-tool-replace-emptysearch": "Você não introduziu nada para buscar.",
 	"wikieditor-toolbar-tool-replace-invalidregex": "A expressão regular (''regex'') introduzida é inválida: $1",
+	"wikieditor-toolbar-tool-replace-word": "Corresponder palavra inteira",
 	"wikieditor-toolbar-section-characters": "Caracteres especiais",
 	"wikieditor-toolbar-section-help": "Ajuda",
 	"wikieditor-toolbar-help-heading-description": "Descrição",

@@ -1017,9 +1017,9 @@ class AvroIOBinaryDecoder
 
   protected function skip_long()
   {
-    $b = $this->next_byte();
-    while (0 != (ord($b) & 0x80))
-      $b = $this->next_byte();
+    $b = ord($this->next_byte());
+    while (0 != ($b & 0x80))
+      $b = ord($this->next_byte());
   }
 
   public function skip_float() { return $this->skip(4); }

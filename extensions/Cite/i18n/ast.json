@@ -2,16 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Esbardu",
-			"Xuacu"
+			"Xuacu",
+			"Fitoschido"
 		]
 	},
-	"apihelp-query+references-description": "Devolver una representación de datos de les referencies asociaes coles páxines indicaes.",
-	"apihelp-query+references-summary": "Devolver una representación de datos de les referencies asociaes coles páxines indicaes.",
-	"apihelp-query+references-example-1": "Referencies asociaes con <kbd>Albert Einstein</kbd>.",
-	"apierror-citestoragedisabled": "L'almacenamientu de referencies de la estensión Cite nun ta activáu.",
 	"cite-desc": "Añade les etiquetes <code>&lt;ref[ name=id]&gt;</code> y <code>&lt;references/&gt;</code> pa les cites",
 	"cite_error": "Error de cita: $1",
-	"cite_error_ref_invalid_dir": "La etiqueta <code>&lt;ref&gt;</code> nun ye válida; desconozse l'atributu de direición «$1». Tien De ser «ltr» o «rtl»",
+	"cite_error_ref_invalid_dir": "La etiqueta <code>&lt;ref&gt;</code> nun ye válida; desconozse l'atributu de direición «$1». Tien de ser «ltr» o «rtl»",
 	"cite_error_ref_numeric_key": "Etiqueta <code>&lt;ref&gt;</code> non válida; el nome nun pue ser un enteru simple, usa un títulu descriptivu",
 	"cite_error_ref_no_key": "La etiqueta d'apertura <code>&lt;ref&gt;</code> ta mal formada o tien un mal nome",
 	"cite_error_ref_too_many_keys": "Etiqueta <code>&lt;ref&gt;</code> non válida; nomes non válidos (p.ex. demasiaos)",
@@ -32,6 +29,7 @@
 	"cite-tracking-category-cite-error-desc": "Les páxines d'esta categoría tienen errores nel usu de les etiquetes de referencies.",
 	"cite_references_link_accessibility_label": "Saltar arriba",
 	"cite_references_link_many_accessibility_label": "Saltar a:",
+	"cite_references_link_accessibility_back_label": "Volver al principiu",
 	"cite_section_preview_references": "Vista previa de les referencies",
 	"cite_warning": "Alvertencia de cita: $1",
 	"cite_warning_sectionpreview_no_text": "La etiqueta <code>&lt;ref&gt;</code> con nome <code>$1</code> nun puede entevese porque ta definida fora de la sección actual o nun ta definida n'absoluto."

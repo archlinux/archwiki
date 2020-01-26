@@ -4,10 +4,6 @@
 			"McDutchie"
 		]
 	},
-	"apihelp-query+references-description": "Retornar un representation de datos del referentias associate al paginas indicate.",
-	"apihelp-query+references-summary": "Retornar un representation de datos del referentias associate al paginas indicate.",
-	"apihelp-query+references-example-1": "Referentias associate a <kbd>Albert Einstein</kbd>.",
-	"apierror-citestoragedisabled": "Le immagazinage de referentias del extension Cite non es activate.",
 	"cite-desc": "Adde etiquettas <code>&lt;ref[ name=id]&gt;</code> e <code>&lt;references/&gt;</code>, pro citationes",
 	"cite_error": "Error de citation: $1",
 	"cite_error_ref_numeric_key": "Etiquetta <code>&lt;ref&gt;</code> invalide;\nle nomine non pote esser un numero integre. Usa un titulo descriptive",

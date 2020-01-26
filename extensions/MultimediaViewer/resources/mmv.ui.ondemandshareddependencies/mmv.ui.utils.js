@@ -128,6 +128,7 @@
 	 * @return {Object} return.small
 	 * @return {Object} return.medium
 	 * @return {Object} return.large
+	 * @return {Object} return.xl
 	 * @return {Object} return.original
 	 */
 	RUP.getPossibleImageSizesForHtml = function ( width, height ) {
@@ -135,9 +136,10 @@
 			currentGuess, dimensions,
 			bucketWidth, bucketHeight,
 			buckets = {
-				small: { width: 220, height: 145 },
-				medium: { width: 640, height: 480 },
-				large: { width: 1200, height: 900 }
+				small: { width: 640, height: 480 },
+				medium: { width: 1280, height: 720 }, // HD ready = 720p
+				large: { width: 1920, height: 1080 }, // Full HD = 1080p
+				xl: { width: 3840, height: 2160 } // 4K = 2160p
 			},
 			sizes = {},
 			bucketNames = Object.keys( buckets ),

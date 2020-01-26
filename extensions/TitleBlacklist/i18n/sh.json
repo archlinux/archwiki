@@ -6,6 +6,5 @@
 		]
 	},
 	"right-tboverride": "Zaobilaženje spiska zabranjenih naslova",
-	"right-tboverride-account": "Zaobilaženje spiska zabranjenih korisničkih imena",
-	"visualeditor-saveerror-titleblacklist": "Pogreška pri snimanju stranice: Naslov ove stranice je na crnoj listi"
+	"right-tboverride-account": "Zaobilaženje spiska zabranjenih korisničkih imena"
 }

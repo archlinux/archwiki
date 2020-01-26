@@ -1,7 +1,1 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
-	<g fill="#aaa" stroke="none">
-		<rect width="2.55" height="12" x="8.725" y="4" ry=".963"/>
-		<rect height="2.55" width="12" y="8.725" x="4" ry=".963"/>
-	</g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><g opacity=".33"><rect width="2" height="12" x="9" y="4" ry="0"/><rect height="2" width="12" y="9" x="4" ry="0"/></g></svg>

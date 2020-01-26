@@ -29,7 +29,6 @@
 	"interwiki-cached": "Interwiki-data er lagret i cachen. Det er ikke muligt at ændre cachen.",
 	"interwiki_edit": "Redigér",
 	"interwiki_reasonfield": "Begrundelse:",
-	"interwiki_delquestion": "Sletter \"$1\"",
 	"interwiki_deleting": "Du er ved at slette præfikset \"$1\".",
 	"interwiki_deleted": "Præfikset \"$1\" blev fjernet fra interwikitabellen.",
 	"interwiki_delfailed": "Præfikset \"$1\" kunne ikke fjernes fra interwikitabellen.",

@@ -3,7 +3,8 @@
 		"authors": [
 			"Flixtey",
 			"Mybluberet",
-			"Gkbediako"
+			"Gkbediako",
+			"Amire80"
 		]
 	},
 	"vector-action-addsection": "Kɛ mlijaa yitso afata he",
@@ -12,7 +13,7 @@
 	"vector-action-protect": "Yibaamɔ",
 	"vector-view-create": "Bɔɔ",
 	"vector-view-edit": "Tsakemɔ",
-	"vector-view-history": "kwɛmɔ nibii ni eho",
+	"vector-view-history": "Kwɛmɔ nibii ni eho",
 	"vector-view-view": "Kanemɔ",
 	"vector-more-actions": "Pii"
 }

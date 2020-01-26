@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Mirin"
+		]
+	},
+	"apihelp-query+references-description": "Liveri datena prezento de referencoj asociitaj al la donitaj paĝoj.",
+	"apihelp-query+references-summary": "Liveri datena prezento de referencoj asociitaj al la donitaj paĝoj.",
+	"apihelp-query+references-example-1": "Referencoj asociitaj al <kbd>Albert Einstein</kbd>.",
+	"apierror-citestoragedisabled": "Konservado de referencoj de citado-kromprogramo ne estas ŝaltita."
+}

@@ -2,11 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Waldir",
-			"Quintino Lopes Castro Tavares"
+			"Quintino Lopes Castro Tavares",
+			"Waldyrious"
 		]
 	},
 	"vector-view-edit": "Muda",
-	"vector-view-history": "Konsulta istóriku",
+	"vector-view-history": "Odja istóriku",
 	"vector-view-view": "Lê",
+	"vector-view-viewsource": "Odja kódigu-fonti",
 	"vector-more-actions": "Más"
 }

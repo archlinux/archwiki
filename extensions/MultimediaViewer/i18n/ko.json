@@ -16,8 +16,6 @@
 		]
 	},
 	"multimediaviewer-desc": "섬네일을 전체 화면 인터페이스에서 더 큰 크기로 확장합니다.",
-	"multimediaviewer-pref": "미디어 뷰어",
-	"multimediaviewer-pref-desc": "이 새 도구로 멀티미디어를 보는 경험을 개선하세요. 이 도구는 섬네일이 있는 문서에서 그림을 더 크게 보여줍니다. 그림은 화면 위에 보기 편리한 전체 화면 인터페이스 안에 표시되며 전체 크기로 볼 수도 있습니다.",
 	"multimediaviewer-optin-pref": "<span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About 미디어 뷰어]</span> 사용",
 	"multimediaviewer-file-page": "해당 파일 문서로 가기",
 	"multimediaviewer-repository-local": "자세한 내용",

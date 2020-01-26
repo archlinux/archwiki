@@ -1,21 +1,11 @@
 <?php
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	exit;
-}
-
 use \MediaWiki\MediaWikiServices;
 use Wikimedia\Rdbms\Database;
 
 class SpamBlacklist extends BaseBlacklist {
 	const STASH_TTL = 180;
 	const STASH_AGE_DYING = 150;
-
-	/**
-	 * Changes to external links, for logging purposes
-	 * @var array[]
-	 */
-	private $urlChangeLog = [];
 
 	/**
 	 * Returns the code for the blacklist implementation
@@ -55,12 +45,6 @@ class SpamBlacklist extends BaseBlacklist {
 	public function filter( array $links, Title $title = null, $preventLog = false, $mode = 'check' ) {
 		$statsd = MediaWikiServices::getInstance()->getStatsdDataFactory();
 		$cache = ObjectCache::getLocalClusterInstance();
-
-		// If there are no new links, and we are logging,
-		// mark all of the current links as being removed.
-		if ( !$links && $this->isLoggingEnabled() ) {
-			$this->logUrlChanges( $this->getCurrentLinks( $title ), [], [] );
-		}
 
 		if ( !$links ) {
 			return false;
@@ -109,10 +93,6 @@ class SpamBlacklist extends BaseBlacklist {
 			wfDebugLog( 'SpamBlacklist', "Old URLs: " . implode( ', ', $oldLinks ) );
 			wfDebugLog( 'SpamBlacklist', "New URLs: " . implode( ', ', $newLinks ) );
 			wfDebugLog( 'SpamBlacklist', "Added URLs: " . implode( ', ', $addedLinks ) );
-
-			if ( !$preventLog ) {
-				$this->logUrlChanges( $oldLinks, $newLinks, $addedLinks );
-			}
 
 			$links = implode( "\n", $addedLinks );
 
@@ -176,92 +156,6 @@ class SpamBlacklist extends BaseBlacklist {
 		return $retVal;
 	}
 
-	public function isLoggingEnabled() {
-		global $wgSpamBlacklistEventLogging;
-		return $wgSpamBlacklistEventLogging &&
-			ExtensionRegistry::getInstance()->isLoaded( 'EventLogging' );
-	}
-
-	/**
-	 * Diff added/removed urls and generate events for them
-	 *
-	 * @param string[] $oldLinks
-	 * @param string[] $newLinks
-	 * @param string[] $addedLinks
-	 */
-	public function logUrlChanges( $oldLinks, $newLinks, $addedLinks ) {
-		if ( !$this->isLoggingEnabled() ) {
-			return;
-		}
-
-		$removedLinks = array_diff( $oldLinks, $newLinks );
-		foreach ( $addedLinks as $url ) {
-			$this->logUrlChange( $url, 'insert' );
-		}
-
-		foreach ( $removedLinks as $url ) {
-			$this->logUrlChange( $url, 'remove' );
-		}
-	}
-
-	/**
-	 * Actually push the url change events post-save
-	 *
-	 * @param User $user
-	 * @param Title $title
-	 * @param int $revId
-	 */
-	public function doLogging( User $user, Title $title, $revId ) {
-		if ( !$this->isLoggingEnabled() ) {
-			return;
-		}
-
-		$baseInfo = [
-			'revId' => $revId,
-			'pageId' => $title->getArticleID(),
-			'pageNamespace' => $title->getNamespace(),
-			'userId' => $user->getId(),
-			'userText' => $user->getName(),
-		];
-		$changes = $this->urlChangeLog;
-		// Empty the changes queue in case this function gets called more than once
-		$this->urlChangeLog = [];
-
-		DeferredUpdates::addCallableUpdate( function () use ( $changes, $baseInfo ) {
-			foreach ( $changes as $change ) {
-				EventLogging::logEvent(
-					'ExternalLinksChange',
-					15716074,
-					$baseInfo + $change
-				);
-			}
-		} );
-	}
-
-	/**
-	 * Queue log data about change for a url addition or removal
-	 *
-	 * @param string $url
-	 * @param string $action 'insert' or 'remove'
-	 */
-	private function logUrlChange( $url, $action ) {
-		$parsed = wfParseUrl( $url );
-		if ( !isset( $parsed['host'] ) ) {
-			wfDebugLog( 'SpamBlacklist', "Unable to parse $url" );
-			return;
-		}
-		$info = [
-			'action' => $action,
-			'protocol' => $parsed['scheme'],
-			'domain' => $parsed['host'],
-			'path' => $parsed['path'] ?? '',
-			'query' => $parsed['query'] ?? '',
-			'fragment' => $parsed['fragment'] ?? '',
-		];
-
-		$this->urlChangeLog[] = $info;
-	}
-
 	/**
 	 * Look up the links currently in the article, so we can
 	 * ignore them on a second run.
@@ -271,7 +165,7 @@ class SpamBlacklist extends BaseBlacklist {
 	 * @return array
 	 */
 	public function getCurrentLinks( Title $title ) {
-		$cache = ObjectCache::getMainWANInstance();
+		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
 		$fname = __METHOD__;
 		return $cache->getWithSetCallback(
 			// Key is warmed via warmCachesForFilter() from ApiStashEdit
@@ -313,6 +207,7 @@ class SpamBlacklist extends BaseBlacklist {
 	public function getRegexEnd( $batchSize ) {
 		return ')' . parent::getRegexEnd( $batchSize );
 	}
+
 	/**
 	 * Logs the filter hit to Special:Log if
 	 * $wgLogSpamBlacklistHits is enabled.

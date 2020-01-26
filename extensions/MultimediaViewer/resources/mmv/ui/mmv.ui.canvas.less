@@ -22,7 +22,6 @@
 	}
 
 	.error-box {
-		/* @embed */
 		background: url( img/error-media-icon.svg ) no-repeat 0 0;
 		background-size: 110px 110px;
 		position: absolute;
@@ -55,7 +54,7 @@
 	&.blurred {
 		filter: blur( 3px );
 		-webkit-filter: blur( 3px );
-		.opacity( 0.8 );
+		opacity: 0.8;
 	}
 
 	/* Whitelist file types that are potentially transparent.

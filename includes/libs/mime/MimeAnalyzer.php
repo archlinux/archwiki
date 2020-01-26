@@ -21,6 +21,7 @@
  */
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 /**
  * Implements functions related to MIME types such as detection and mapping to file extension
@@ -199,7 +200,7 @@ EOT;
 		$this->detectCallback = $params['detectCallback'] ?? null;
 		$this->guessCallback = $params['guessCallback'] ?? null;
 		$this->extCallback = $params['extCallback'] ?? null;
-		$this->logger = $params['logger'] ?? new \Psr\Log\NullLogger();
+		$this->logger = $params['logger'] ?? new NullLogger();
 
 		$this->loadFiles();
 	}
@@ -805,10 +806,10 @@ EOT;
 
 		// Check for ZIP variants (before getimagesize)
 		$eocdrPos = strpos( $tail, "PK\x05\x06" );
-		if ( $eocdrPos !== false ) {
+		if ( $eocdrPos !== false && $eocdrPos <= strlen( $tail ) - 22 ) {
 			$this->logger->info( __METHOD__ . ": ZIP signature present in $file\n" );
 			// Check if it really is a ZIP file, make sure the EOCDR is at the end (T40432)
-			$commentLength = unpack( "n", substr( $tail, $eocdrPos + 20 ) )[0];
+			$commentLength = unpack( "n", substr( $tail, $eocdrPos + 20 ) )[1];
 			if ( $eocdrPos + 22 + $commentLength !== strlen( $tail ) ) {
 				$this->logger->info( __METHOD__ . ": ZIP EOCDR not at end. Not a ZIP file." );
 			} else {
@@ -851,7 +852,7 @@ EOT;
 		$callback = $this->guessCallback;
 		if ( $callback ) {
 			$callback( $this, $head, $tail, $file, $mime /* by reference */ );
-		};
+		}
 
 		return $mime;
 	}
@@ -878,6 +879,14 @@ EOT;
 
 		$mime = 'application/zip';
 		$opendocTypes = [
+			# In OASIS Open Document Format v1.2, Database front end document
+			# has a recommended MIME type of:
+			# application/vnd.oasis.opendocument.base
+			# Despite the type registered at the IANA being 'database' which is
+			# supposed to be normative.
+			# T35515
+			'base',
+
 			'chart-template',
 			'chart',
 			'formula-template',
@@ -895,7 +904,10 @@ EOT;
 			'text-web',
 			'text' ];
 
-		// https://lists.oasis-open.org/archives/office/200505/msg00006.html
+		// The list of document types is available in OASIS Open Document
+		// Format version 1.2 under Appendix C. It is not normative though,
+		// supposedly types registered at the IANA should be.
+		// http://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part1.html
 		$types = '(?:' . implode( '|', $opendocTypes ) . ')';
 		$opendocRegex = "/^mimetype(application\/vnd\.oasis\.opendocument\.$types)/";
 
@@ -1077,7 +1089,7 @@ EOT;
 
 		// Special code for ogg - detect if it's video (theora),
 		// else label it as sound.
-		if ( $mime == 'application/ogg' && file_exists( $path ) ) {
+		if ( $mime == 'application/ogg' && is_string( $path ) && file_exists( $path ) ) {
 			// Read a chunk of the file
 			$f = fopen( $path, "rt" );
 			if ( !$f ) {

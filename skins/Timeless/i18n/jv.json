@@ -4,7 +4,6 @@
 			"NoiX180"
 		]
 	},
-	"timeless-loggedin": "Akun panjenengan",
 	"timeless-anonymous": "Anonim",
 	"timeless-loggedinas": "Mlebu log minangka '''$1'''",
 	"timeless-notloggedin": "Durung mlebu log",
@@ -16,7 +15,7 @@
 	"timeless-pageactions": "Piranti kaca",
 	"timeless-userpagetools": "Piranti panganggo",
 	"timeless-pagemisc": "Liyané",
-	"timeless-namespaces": "Mandala aran",
+	"timeless-namespaces": "Mandhala aran",
 	"timeless-pagetools": "Laku kaca",
 	"timeless-languages": "Basa"
 }

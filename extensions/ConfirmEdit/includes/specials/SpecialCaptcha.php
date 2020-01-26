@@ -14,6 +14,7 @@ class SpecialCaptcha extends UnlistedSpecialPage {
 			case "image":
 				if ( method_exists( $instance, 'showImage' ) ) {
 					// @todo: Do this in a more OOP way
+					/** @phan-suppress-next-line PhanUndeclaredMethod */
 					return $instance->showImage();
 				}
 			case "help":

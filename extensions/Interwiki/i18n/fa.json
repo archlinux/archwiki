@@ -38,7 +38,6 @@
 	"interwiki-cached": "اطلاعات ویکی داخلی ذخیره شده‌است. اصلاح ذخیره ممکن نیست.",
 	"interwiki_edit": "ویرایش",
 	"interwiki_reasonfield": "دلیل:",
-	"interwiki_delquestion": "حذف «$1»",
 	"interwiki_deleting": "شما در حال حذف کردن پیشوند «$1» هستید.",
 	"interwiki_deleted": "پیشوند «$1» از جدول میان‌ویکی حذف شد.",
 	"interwiki_delfailed": "پیشوند «$1» را نمی‌توان از جدول میان‌ویکی حذف کرد.",

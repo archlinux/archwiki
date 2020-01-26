@@ -13,8 +13,6 @@
 		]
 	},
 	"multimediaviewer-desc": "Επεκτείνετε τις μικρογραφίες σε μεγαλύτερο μέγεθος σε ένα περιβάλλον εργασίας πλήρους οθόνης.",
-	"multimediaviewer-pref": "Media Viewer",
-	"multimediaviewer-pref-desc": "Βελτιώστε την εμπειρία σας στην εμφάνιση πολυμέσων με αυτό το νέο εργαλείο. Εμφανίζει εικόνες σε μεγαλύτερο μέγεθος σε σελίδες που έχουν μικρογραφίες. Οι εικόνες εμφανίζονται σε μια καλύτερη πλήρους οθόνης διεπαφή επικάλυψης, και μπορούν επίσης να εμφανιστούν σε πλήρες μέγεθος.",
 	"multimediaviewer-optin-pref": "Ενεργοποίηση <span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About Media Viewer]</span>",
 	"multimediaviewer-file-page": "Μεταβείτε στην αντίστοιχη σελίδα του αρχείου",
 	"multimediaviewer-repository-local": "Περισσότερες λεπτομέρειες",

@@ -14,8 +14,8 @@ class SpamBlacklistTest extends MediaWikiTestCase {
 	/**
 	 * Spam blacklist regexes. Examples taken from:
 	 *
-	 * @see http://meta.wikimedia.org/wiki/Spam_blacklist
-	 * @see http://en.wikipedia.org/wiki/MediaWiki:Spam-blacklist
+	 * @see https://meta.wikimedia.org/wiki/Spam_blacklist
+	 * @see https://en.wikipedia.org/wiki/MediaWiki:Spam-blacklist
 	 *
 	 * via Flow extension
 	 *
@@ -26,7 +26,7 @@ class SpamBlacklistTest extends MediaWikiTestCase {
 	/**
 	 * Spam whitelist regexes. Examples taken from:
 	 *
-	 * @see http://en.wikipedia.org/wiki/MediaWiki:Spam-whitelist
+	 * @see https://en.wikipedia.org/wiki/MediaWiki:Spam-whitelist
 	 *
 	 * via Flow extension
 	 *

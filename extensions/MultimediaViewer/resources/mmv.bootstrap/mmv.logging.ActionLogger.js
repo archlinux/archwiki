@@ -35,7 +35,7 @@
 	 * Sampling factor key-value map.
 	 *
 	 * The map's keys are the action identifiers and the values are the sampling factor for each action type.
-	 * There is a "default" key defined providing a default sampling factor for actions that aren't explicitely
+	 * There is a "default" key defined providing a default sampling factor for actions that aren't explicitly
 	 * set in the map.
 	 * @property {Object.<string, number>}
 	 * @static
@@ -168,7 +168,7 @@
 	L.isInSample = function ( action ) {
 		var factor = this.getActionFactor( action );
 
-		if ( !$.isNumeric( factor ) || factor < 1 ) {
+		if ( typeof factor !== 'number' || factor < 1 ) {
 			return false;
 		}
 		return Math.floor( Math.random() * factor ) === 0;
@@ -184,7 +184,7 @@
 	 */
 	L.isEnabled = function ( action ) {
 		var factor = this.getActionFactor( action );
-		return $.isNumeric( factor ) && factor >= 1;
+		return typeof factor === 'number' && factor >= 1;
 	};
 
 	mw.mmv.logging.ActionLogger = ActionLogger;

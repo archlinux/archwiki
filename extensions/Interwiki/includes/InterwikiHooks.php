@@ -27,13 +27,23 @@ class InterwikiHooks {
 	}
 
 	public static function onInterwikiLoadPrefix( $prefix, &$iwData ) {
-		global $wgInterwikiCentralDB;
+		global $wgInterwikiCentralDB, $wgInterwikiCentralInterlanguageDB;
+
 		// docs/hooks.txt says: Return true without providing an interwiki to continue interwiki search.
-		if ( $wgInterwikiCentralDB === null || $wgInterwikiCentralDB === wfWikiID() ) {
+		$shouldSkipIWCheck = ( $wgInterwikiCentralDB === null || $wgInterwikiCentralDB === wfWikiID() );
+		$shouldSkipILCheck = (
+			$wgInterwikiCentralInterlanguageDB === null ||
+			$wgInterwikiCentralInterlanguageDB === wfWikiID()
+		);
+		// Bail out early if _neither_ $wgInterwiki*CentralDB global is set; if one
+		// or both are set, we gotta do some more complex checking first
+		if ( $shouldSkipIWCheck && $shouldSkipILCheck ) {
 			// No global set or this is global, nothing to add
 			return true;
 		}
-		if ( !Language::fetchLanguageName( $prefix ) ) {
+
+		$isInterlanguageLink = Language::fetchLanguageName( $prefix );
+		if ( !$isInterlanguageLink && !$shouldSkipIWCheck ) {
 			// Check if prefix exists locally and skip
 			$lookup = MediaWikiServices::getInstance()->getInterwikiLookup();
 			foreach ( $lookup->getAllPrefixes( null ) as $id => $localPrefixInfo ) {
@@ -55,8 +65,22 @@ class InterwikiHooks {
 			$iwData = (array)$res;
 			// At this point, we can safely return false because we know that we have something
 			return false;
+		} elseif ( $isInterlanguageLink && !$shouldSkipILCheck ) {
+			// Global interlanguage link? Whoo!
+			$dbr = wfGetDB( DB_REPLICA, [], $wgInterwikiCentralInterlanguageDB );
+			$res = $dbr->selectRow(
+				'interwiki',
+				'*',
+				[ 'iw_prefix' => $prefix ],
+				__METHOD__
+			);
+			if ( !$res ) {
+				return false;
+			}
+			// Excplicitly make this an array since it's expected to be one
+			$iwData = (array)$res;
+			// At this point, we can safely return false because we know that we have something
+			return false;
 		}
-		return true;
 	}
-
 }

@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Gombang"
+		]
+	},
+	"apihelp-query+references-description": "Kembalikan representasi data dari referensi yang terkait dengan halaman yang diberikan.",
+	"apihelp-query+references-summary": "Kembalikan representasi data dari referensi yang terkait dengan halaman yang diberikan.",
+	"apihelp-query+references-example-1": "Referensi yang dikaitkan dengan <kbd>Albert Einstein</kbd>.",
+	"apierror-citestoragedisabled": "Penyimpanan Ekstensi pengutipan referensi tidak diaktifkan."
+}

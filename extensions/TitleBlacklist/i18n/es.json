@@ -14,6 +14,7 @@
 			"Tiberius1701"
 		]
 	},
+	"action-tboverride-account": "ignorar la lista negra de nombres de usuario",
 	"action-titleblacklistlog": "ver el registro de la lista negra de títulos",
 	"log-name-titleblacklist": "Registro de la lista negra de títulos",
 	"log-description-titleblacklist": "Estos eventos registran las coincidencias con la lista negra de títulos.",
@@ -26,11 +27,10 @@
 	"titleblacklist-forbidden-upload": "Se ha bloqueado el nombre de archivo «$2».\nCoincide con la entrada de lista negra <code>$1</code>.",
 	"titleblacklist-forbidden-new-account": "Se prohibe crear el nombre de usuario «$2».\nCoincide con la siguiente entrada de la lista negra: <code>$1</code>",
 	"titleblacklist-invalid": "{{PLURAL:$1|La siguiente línea|Las siguientes líneas}} de la lista negra no {{PLURAL:$1|es válida|son válidas}};\npor favor corríge{{PLURAL:$1|la|las}} antes de grabar:",
-	"titleblacklist-override": "Ignorar la lista negra",
+	"titleblacklist-override": "Ignorar la lista negra si coincide",
 	"titleblacklist-override-help": "Los usuarios con suficientes privilegios pueden configurar esto para ignorar las comprobaciones de títulos en la lista negra.",
 	"titleblacklist-warning": "<strong>Advertencia: solo los administradores y los usuarios con el permiso <code>tboverride</code> pueden editar esta página porque esta aparece en la siguiente entrada de la lista negra de títulos:</strong><br /><code>$1</code>",
 	"right-tboverride": "Ignorar la lista negra de títulos o de nombres de usuario",
 	"right-tboverride-account": "Ignorar la lista negra de los nombres de usuario",
-	"right-titleblacklistlog": "Ver el registro de la lista negra de títulos",
-	"visualeditor-saveerror-titleblacklist": "Error al guardar la página: el título de esta página está en la lista negra"
+	"right-titleblacklistlog": "Ver el registro de la lista negra de títulos"
 }

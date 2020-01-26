@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Sureshkhole"
+		]
+	},
+	"apihelp-query+references-description": "दिलेल्या पानांच्या संदर्भांची सांख्यीकी दाखवा",
+	"apihelp-query+references-summary": "दिलेल्या पानांच्या संदर्भांची सांख्यीकी दाखवा",
+	"apihelp-query+references-example-1": "<kbd>अॅल्बर्ट आइन्स्टाइन</kbd> ला दिलेले संदर्भ",
+	"apierror-citestoragedisabled": "अवतरण जोडणी संदर्भ साठवून ठेवणे चालू केलेले नाही"
+}

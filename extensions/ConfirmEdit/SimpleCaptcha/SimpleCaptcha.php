@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Auth\AuthenticationRequest;
+use MediaWiki\MediaWikiServices;
 
 /**
  * Demo CAPTCHA (not for production usage) and base class for real CAPTCHAs
@@ -286,23 +287,13 @@ class SimpleCaptcha {
 		$cache = ObjectCache::getLocalClusterInstance();
 
 		if ( $this->triggersCaptcha( CaptchaTriggers::BAD_LOGIN ) ) {
-			$key = $this->badLoginKey();
-			$count = ObjectCache::getLocalClusterInstance()->get( $key );
-			if ( !$count ) {
-				$cache->add( $key, 0, $wgCaptchaBadLoginExpiration );
-			}
-
-			$cache->incr( $key );
+			$key = $this->badLoginKey( $cache );
+			$cache->incrWithInit( $key, $wgCaptchaBadLoginExpiration );
 		}
 
 		if ( $this->triggersCaptcha( CaptchaTriggers::BAD_LOGIN_PER_USER ) && $username ) {
-			$key = $this->badLoginPerUserKey( $username );
-			$count = $cache->get( $key );
-			if ( !$count ) {
-				$cache->add( $key, 0, $wgCaptchaBadLoginPerUserExpiration );
-			}
-
-			$cache->incr( $key );
+			$key = $this->badLoginPerUserKey( $username, $cache );
+			$cache->incrWithInit( $key, $wgCaptchaBadLoginPerUserExpiration );
 		}
 	}
 
@@ -313,7 +304,7 @@ class SimpleCaptcha {
 	public function resetBadLoginCounter( $username ) {
 		if ( $this->triggersCaptcha( CaptchaTriggers::BAD_LOGIN_PER_USER ) && $username ) {
 			$cache = ObjectCache::getLocalClusterInstance();
-			$cache->delete( $this->badLoginPerUserKey( $username ) );
+			$cache->delete( $this->badLoginPerUserKey( $username, $cache ) );
 		}
 	}
 
@@ -328,7 +319,7 @@ class SimpleCaptcha {
 
 		$cache = ObjectCache::getLocalClusterInstance();
 		return $this->triggersCaptcha( CaptchaTriggers::BAD_LOGIN )
-			&& (int)$cache->get( $this->badLoginKey() ) >= $wgCaptchaBadLoginAttempts;
+			&& (int)$cache->get( $this->badLoginKey( $cache ) ) >= $wgCaptchaBadLoginAttempts;
 	}
 
 	/**
@@ -345,8 +336,9 @@ class SimpleCaptcha {
 		if ( is_object( $u ) ) {
 			$u = $u->getName();
 		}
+		$badLoginPerUserKey = $this->badLoginPerUserKey( $u, $cache );
 		return $this->triggersCaptcha( CaptchaTriggers::BAD_LOGIN_PER_USER )
-			&& (int)$cache->get( $this->badLoginPerUserKey( $u ) ) >= $wgCaptchaBadLoginPerUserAttempts;
+			&& (int)$cache->get( $badLoginPerUserKey ) >= $wgCaptchaBadLoginPerUserAttempts;
 	}
 
 	/**
@@ -386,7 +378,7 @@ class SimpleCaptcha {
 	 * @return array whitelisted IP addresses or IP ranges, empty array if no whitelist
 	 */
 	private function getWikiIPWhitelist( Message $msg ) {
-		$cache = ObjectCache::getMainWANInstance();
+		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
 		$cacheKey = $cache->makeKey( 'confirmedit', 'ipwhitelist' );
 
 		$cachedWhitelist = $cache->get( $cacheKey );
@@ -436,22 +428,28 @@ class SimpleCaptcha {
 
 	/**
 	 * Internal cache key for badlogin checks.
+	 * @param BagOStuff $cache
 	 * @return string
 	 */
-	private function badLoginKey() {
+	private function badLoginKey( BagOStuff $cache ) {
 		global $wgRequest;
 		$ip = $wgRequest->getIP();
-		return wfGlobalCacheKey( 'captcha', 'badlogin', 'ip', $ip );
+
+		return $cache->makeGlobalKey( 'captcha', 'badlogin', 'ip', $ip );
 	}
 
 	/**
 	 * Cache key for badloginPerUser checks.
 	 * @param string $username
+	 * @param BagOStuff $cache
 	 * @return string
 	 */
-	private function badLoginPerUserKey( $username ) {
+	private function badLoginPerUserKey( $username, BagOStuff $cache ) {
 		$username = User::getCanonicalName( $username, 'usable' ) ?: $username;
-		return wfGlobalCacheKey( 'captcha', 'badlogin', 'user', md5( $username ) );
+
+		return $cache->makeGlobalKey(
+			'captcha', 'badlogin', 'user', md5( $username )
+		);
 	}
 
 	/**
@@ -686,8 +684,8 @@ class SimpleCaptcha {
 
 	/**
 	 * Build regex from whitelist
-	 * @param string $lines string from [[MediaWiki:Captcha-addurl-whitelist]]
-	 * @return array Regexes
+	 * @param string[] $lines string from [[MediaWiki:Captcha-addurl-whitelist]]
+	 * @return string[] Regexes
 	 * @private
 	 */
 	private function buildRegexes( $lines ) {
@@ -779,7 +777,7 @@ class SimpleCaptcha {
 	/**
 	 * Backend function for confirmEditMerged()
 	 * @param WikiPage $page
-	 * @param string $newtext
+	 * @param Content|string $newtext
 	 * @param string $section
 	 * @param IContextSource $context
 	 * @return bool false if the CAPTCHA is rejected, true otherwise
@@ -834,7 +832,7 @@ class SimpleCaptcha {
 			return true;
 		}
 		$page = $context->getWikiPage();
-		if ( !$this->doConfirmEdit( $page, $content, false, $context ) ) {
+		if ( !$this->doConfirmEdit( $page, $content, '', $context ) ) {
 			$status->value = EditPage::AS_HOOK_ERROR_EXPECTED;
 			$status->apiHookResult = [];
 			// give an error message for the user to know, what goes wrong here.

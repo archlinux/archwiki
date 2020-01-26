@@ -4,7 +4,8 @@
 			"Okras",
 			"Facenapalm",
 			"Vlad5250",
-			"Diralik"
+			"Diralik",
+			"Movses"
 		]
 	},
 	"renocaptcha-desc": "Модуль reCAPTCHA NoCAPTCHA для подтверждения правок",
@@ -15,5 +16,5 @@
 	"renocaptcha-createaccount-fail": "Похоже, вы не разгадали капчу.",
 	"renocaptcha-create": "В целях защиты от автоматического создания страниц просим вас решить следующую каптчу:",
 	"renocaptcha-noscript": "К сожалению, у вас отключён JavaScript, поэтому мы не можем автоматически определить, человек ли вы или нет. Пожалуйста, решите каптчу выше и скопируйте полученное в следующее поле:",
-	"renocaptcha-apihelp-param-g-recaptcha-response": "Поле от виджета ReCaptcha."
+	"renocaptcha-help": "Пожалуйста решите задание ReCaptcha NoCaptcha и верните ответное значение как captchaWord."
 }

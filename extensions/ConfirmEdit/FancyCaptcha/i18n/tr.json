@@ -17,7 +17,5 @@
 	"fancycaptcha-edit": "Bu sayfayı değiştirmek için, lütfen aşağıdaki kutuda görünen kelimeleri girin ([[Special:Captcha/help|daha fazla bilgi]]):",
 	"fancycaptcha-imgcaptcha-ph": "Resimde gördüğünüz karakterleri giriniz",
 	"fancycaptcha-sendemail": "Vikiyi otomatik spamlerden korumak için, aşağıdaki sözcükleri kutunun içine yazmanızı rica ediyoruz ([[Special:Captcha/help|ayrıntılı bilgi]]):",
-	"fancycaptcha-reload-text": "Yenile",
-	"apihelp-fancycaptchareload-description": "Yeni bir FancyCaptcha.",
-	"apihelp-fancycaptchareload-example-1": "Yeni bir FancyCaptcha olsun"
+	"fancycaptcha-reload-text": "Yenile"
 }

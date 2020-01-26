@@ -58,8 +58,8 @@ class ReplaceAll extends Maintenance {
 
 	public function __construct() {
 		parent::__construct();
-		$this->mDescription = "CLI utility to replace text wherever it is " .
-			"found in the wiki.";
+		$this->addDescription( "CLI utility to replace text wherever it is " .
+			"found in the wiki." );
 
 		$this->addArg( "target", "Target text to find.", false );
 		$this->addArg( "replace", "Text to replace.", false );

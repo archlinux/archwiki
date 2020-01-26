@@ -20,5 +20,6 @@
 	"codeeditor-gotoline-placeholder": "regel[:kolom]",
 	"codeeditor-gotoline-prompt": "Voer een regelnummer in",
 	"codeeditor-indent": "Inspringen",
-	"codeeditor-outdent": "Uitspringen"
+	"codeeditor-outdent": "Uitspringen",
+	"codeeditor-error-message": "CodeEditor vereist dat WikiEditor beschikbaar is."
 }

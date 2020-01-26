@@ -12,8 +12,8 @@
 	}
 
 	/* Move the panel to the bottom and display it as in-line lists */
-	div#mw-navigation {
-		div#mw-panel {
+	#mw-navigation {
+		#mw-panel {
 			display: table;
 			position: static;
 			table-layout: fixed;
@@ -33,7 +33,7 @@
 	}
 
 	/* Hide the logo and tabs */
-	div#p-logo {
+	#p-logo {
 		display: none;
 	}
 
@@ -49,7 +49,7 @@
 		}
 	}
 
-	div#p-personal {
+	#p-personal {
 		display: table;
 		position: relative;
 		width: 100%;
@@ -62,7 +62,7 @@
 		}
 	}
 
-	div#right-navigation {
+	#right-navigation {
 		position: absolute;
 		top: inherit;
 		right: 0;
@@ -70,7 +70,7 @@
 		float: none;
 	}
 
-	div#left-navigation {
+	#left-navigation {
 		position: absolute;
 		top: inherit;
 		margin: 0;
@@ -78,23 +78,23 @@
 		float: none;
 	}
 
-	div#p-namespaces,
-	div#p-views,
-	div#p-variants {
+	#p-namespaces,
+	#p-views,
+	#p-variants {
 		position: relative;
 		top: 2.5em;
 	}
 
-	div#p-namespaces {
+	#p-namespaces {
 		padding-left: 0;
 	}
 
-	div#p-cactions {
+	#p-cactions {
 		top: 2.5em;
 		float: right;
 	}
 
-	div#p-search {
+	#p-search {
 		float: none;
 		position: absolute;
 		right: 0;
@@ -102,7 +102,7 @@
 		margin: 0;
 	}
 
-	div#simpleSearch {
+	#simpleSearch {
 		margin: 0 3em;
 		width: 80vw;
 		padding: 0;
@@ -113,9 +113,13 @@
 		right: -1px;
 	}
 
-	div#content {
+	.mw-body {
 		/* Hide the 1px blue border on the left side */
 		border-left: 0;
+		margin-left: 0;
+	}
+
+	#mw-data-after-content {
 		margin-left: 0;
 	}
 }

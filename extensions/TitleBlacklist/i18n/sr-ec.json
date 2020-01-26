@@ -24,6 +24,5 @@
 	"titleblacklist-warning": "<strong>Упозорење: ову страницу могу само да уређују администратори и корисници са следећим правом <code>tboverride</code>, зато што се поклапа са уносом у црном списку:</strong><br /><code>$1</code>",
 	"right-tboverride": "заобилажење црног списка наслова или корисничких имена",
 	"right-tboverride-account": "заобилажење црног списка корисничких имена",
-	"right-titleblacklistlog": "прегледање црног списка наслова",
-	"visualeditor-saveerror-titleblacklist": "Грешка при чувању странице: Наслов ове странице се налази на црној листи"
+	"right-titleblacklistlog": "прегледање црног списка наслова"
 }

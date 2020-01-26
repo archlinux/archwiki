@@ -11,25 +11,18 @@ module.exports = function ( grunt ) {
 	grunt.loadNpmTasks( 'grunt-banana-checker' );
 	grunt.loadNpmTasks( 'grunt-contrib-watch' );
 	grunt.loadNpmTasks( 'grunt-eslint' );
-	grunt.loadNpmTasks( 'grunt-jsonlint' );
 	grunt.loadNpmTasks( 'grunt-stylelint' );
 
 	grunt.initConfig( {
 		eslint: {
 			options: {
 				reportUnusedDisableDirectives: true,
+				extensions: [ '.js', '.json' ],
 				cache: true
 			},
 			all: [
-				'*.js',
-				'modules/**/*.js'
-			]
-		},
-		jsonlint: {
-			all: [
-				'*.json',
-				'i18n/*.json',
-				'modules/**/*.json'
+				'**/*.{js,json}',
+				'!{vendor,node_modules}/**'
 			]
 		},
 		stylelint: {
@@ -44,13 +37,12 @@ module.exports = function ( grunt ) {
 		watch: {
 			files: [
 				'<%= eslint.all %>',
-				'<%= jsonlint.all %>',
 				'<%= stylelint.all %>'
 			],
 			tasks: 'test'
 		}
 	} );
 
-	grunt.registerTask( 'test', [ 'eslint', 'jsonlint', 'stylelint', 'banana' ] );
+	grunt.registerTask( 'test', [ 'eslint', 'stylelint', 'banana' ] );
 	grunt.registerTask( 'default', 'test' );
 };

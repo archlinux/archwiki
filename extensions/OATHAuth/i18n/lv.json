@@ -10,5 +10,9 @@
 	"oathauth-token": "Kods",
 	"right-oathauth-enable": "Iespējot divpakāpju autentifikāciju",
 	"action-oathauth-enable": "iespējot divpakāpju autentifikāciju",
-	"oathauth-auth-token-label": "Kods"
+	"oathauth-auth-token-label": "Kods",
+	"oathauth-auth-ui": "Lūdzu, ievadi verifikācijas kodu no autentifikācijas ierīces.",
+	"oathauth-ui-manage": "Pārvaldīt",
+	"oathauth-ui-available-modules": "Pieejamās metodes",
+	"oathauth-disable-method-warning-button-label": "Apstiprināt un turpināt"
 }

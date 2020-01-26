@@ -32,11 +32,6 @@ class HttpFetcher implements Fetcher {
 		$languages = \Language::fetchLanguageNames( null, 'mwfile' );
 
 		foreach ( array_keys( $languages ) as $code ) {
-			// Hack for core
-			if ( strpos( $pattern, 'Messages*.php' ) !== false ) {
-				$code = ucfirst( strtr( $code, '-', '_' ) );
-			}
-
 			$url = str_replace( '*', $code, $pattern );
 			$file = $this->fetchFile( $url );
 			if ( $file ) {

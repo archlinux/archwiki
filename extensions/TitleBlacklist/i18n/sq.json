@@ -15,6 +15,5 @@
 	"titleblacklist-invalid": "{{PLURAL:$1|Rreshti i mëposhtëm|Rreshtat e mëposhtëm}} në titullin e listës së zezë {{PLURAL:$1|është i pavlefshëm|janë të pavlefshëm}};\nju lutemi {{PLURAL:$1|korrigjojeni|korrigjojini}} përpara ruajtjes:",
 	"titleblacklist-override": "Shpërfillni listën e zezë",
 	"right-tboverride": "Refuzoni titullin e listës së zezë",
-	"right-tboverride-account": "Refuzoni emrin e përdoruesit të listës së zezë",
-	"visualeditor-saveerror-titleblacklist": "Gabim në ruajtje të faqes: Titulli i faqes është në listë të zezë"
+	"right-tboverride-account": "Refuzoni emrin e përdoruesit të listës së zezë"
 }

@@ -30,7 +30,7 @@
 		assert.ok( embed.embedSwitch, 'Snipped selection buttons created.' );
 		assert.ok( embed.embedSizeSwitchWikitext, 'Size selection menu for wikitext created.' );
 		assert.ok( embed.embedSizeSwitchHtml, 'Size selection menu for html created.' );
-		assert.strictEqual( embed.$currentMainEmbedText.length, 1, 'Size selection menu for html created.' );
+		assert.ok( embed.currentMainEmbedText, 'Current text area created.' );
 		assert.strictEqual( embed.isSizeMenuDefaultReset, false, 'Reset flag intialized correctly.' );
 		assert.ok( embed.defaultHtmlItem, 'Default item for html size selection intialized.' );
 		assert.ok( embed.defaultWikitextItem, 'Default item for wikitext size selection intialized.' );
@@ -279,13 +279,13 @@
 		embed.updateEmbedHtml( { url: 'x' }, width, height );
 		embed.updateEmbedWikitext( width );
 
-		assert.notStrictEqual( embed.embedTextHtml.getValue(), '', 'embedTextHtml is not empty.' );
-		assert.notStrictEqual( embed.embedTextWikitext.getValue(), '', 'embedTextWikitext is not empty.' );
+		assert.notStrictEqual( embed.embedTextHtml.textInput.getValue(), '', 'embedTextHtml is not empty.' );
+		assert.notStrictEqual( embed.embedTextWikitext.textInput.getValue(), '', 'embedTextWikitext is not empty.' );
 
 		embed.empty();
 
-		assert.strictEqual( embed.embedTextHtml.getValue(), '', 'embedTextHtml is empty.' );
-		assert.strictEqual( embed.embedTextWikitext.getValue(), '', 'embedTextWikitext is empty.' );
+		assert.strictEqual( embed.embedTextHtml.textInput.getValue(), '', 'embedTextHtml is empty.' );
+		assert.strictEqual( embed.embedTextWikitext.textInput.getValue(), '', 'embedTextWikitext is empty.' );
 		assert.strictEqual( embed.embedSizeSwitchHtml.getMenu().isVisible(), false, 'Html size menu should be hidden.' );
 		assert.strictEqual( embed.embedSizeSwitchWikitext.getMenu().isVisible(), false, 'Wikitext size menu should be hidden.' );
 	} );
@@ -305,9 +305,6 @@
 
 		embed.set( { width: width, height: height }, embedFileInfo );
 
-		embed.selectAllOnEvent = function () {
-			assert.ok( false, 'selectAllOnEvent should not have been called.' );
-		};
 		embed.handleTypeSwitch = function () {
 			assert.ok( false, 'handleTypeSwitch should not have been called.' );
 		};
@@ -316,18 +313,12 @@
 		};
 
 		// Triggering action events before attaching should do nothing
-		// use of focus() would run into jQuery bug #14740 and similar issues
-		embed.embedTextHtml.$element.find( 'textarea' ).triggerHandler( 'focus' );
-		embed.embedTextWikitext.$element.find( 'textarea' ).triggerHandler( 'focus' );
 		embed.embedSwitch.emit( 'select' );
 		embed.embedSizeSwitchHtml.getMenu().emit(
 			'choose', embed.embedSizeSwitchHtml.getMenu().findSelectedItem() );
 		embed.embedSizeSwitchWikitext.getMenu().emit(
 			'choose', embed.embedSizeSwitchWikitext.getMenu().findSelectedItem() );
 
-		embed.selectAllOnEvent = function () {
-			assert.ok( true, 'selectAllOnEvent was called.' );
-		};
 		embed.handleTypeSwitch = function () {
 			assert.ok( true, 'handleTypeSwitch was called.' );
 		};
@@ -338,8 +329,6 @@
 		embed.attach();
 
 		// Action events should be handled now
-		embed.embedTextHtml.$element.find( 'textarea' ).triggerHandler( 'focus' );
-		embed.embedTextWikitext.$element.find( 'textarea' ).triggerHandler( 'focus' );
 		embed.embedSwitch.emit( 'select' );
 		embed.embedSizeSwitchHtml.getMenu().emit(
 			'choose', embed.embedSizeSwitchHtml.getMenu().findSelectedItem() );
@@ -347,9 +336,6 @@
 			'choose', embed.embedSizeSwitchWikitext.getMenu().findSelectedItem() );
 
 		// Test the unattach part
-		embed.selectAllOnEvent = function () {
-			assert.ok( false, 'selectAllOnEvent should not have been called.' );
-		};
 		embed.handleTypeSwitch = function () {
 			assert.ok( false, 'handleTypeSwitch should not have been called.' );
 		};
@@ -360,8 +346,6 @@
 		embed.unattach();
 
 		// Triggering action events now that we are unattached should do nothing
-		embed.embedTextHtml.$element.find( 'textarea' ).triggerHandler( 'focus' );
-		embed.embedTextWikitext.$element.find( 'textarea' ).triggerHandler( 'focus' );
 		embed.embedSwitch.emit( 'select' );
 		embed.embedSizeSwitchHtml.getMenu().emit(
 			'choose', embed.embedSizeSwitchHtml.getMenu().findSelectedItem() );
@@ -403,10 +387,12 @@
 
 		embed = new mw.mmv.ui.reuse.Embed( $qf );
 
-		assert.strictEqual( embed.embedSizeSwitchWikitext.$element.hasClass( 'active' ), false, 'Wikitext widget should be hidden.' );
-		assert.strictEqual( embed.embedSizeSwitchHtml.$element.hasClass( 'active' ), true, 'HTML widget should be visible.' );
-		assert.strictEqual( embed.embedTextWikitext.$element.hasClass( 'active' ), false, 'Wikitext input should be hidden.' );
-		assert.strictEqual( embed.embedTextHtml.$element.hasClass( 'active' ), true, 'HTML input should be visible.' );
+		embed.attach();
+
+		assert.strictEqual( embed.embedSizeSwitchWikitextLayout.isVisible(), false, 'Wikitext widget should be hidden.' );
+		assert.strictEqual( embed.embedSizeSwitchHtmlLayout.isVisible(), true, 'HTML widget should be visible.' );
+		assert.strictEqual( embed.embedTextWikitext.isVisible(), false, 'Wikitext input should be hidden.' );
+		assert.strictEqual( embed.embedTextHtml.isVisible(), true, 'HTML input should be visible.' );
 
 		mw.user.isAnon = oldUserIsAnon;
 	} );

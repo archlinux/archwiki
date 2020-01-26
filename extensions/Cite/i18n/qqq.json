@@ -16,10 +16,6 @@
 			"Mar(c)"
 		]
 	},
-	"apihelp-query+references-description": "{{doc-apihelp-description|query+references}}",
-	"apihelp-query+references-summary": "{{doc-apihelp-summary|query+references}}",
-	"apihelp-query+references-example-1": "{{doc-apihelp-example|query+references}}",
-	"apierror-citestoragedisabled": "{{doc-apierror}}",
 	"cite-desc": "{{desc|name=Cite|url=https://www.mediawiki.org/wiki/Extension:Cite}}",
 	"cite_error": "Cite extension.\n\nUsed when there are errors in ref or references tags.\n\nParameters:\n* $1 - an error message",
 	"cite_error_ref_invalid_dir": "Cite extension. Error message shown when ref tag contain dir attribute with invalid value. $1 - invalid dir value",

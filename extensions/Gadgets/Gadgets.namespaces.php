@@ -142,6 +142,13 @@ $namespaceNames['fa'] = [
 	NS_GADGET_DEFINITION_TALK => 'بحث_توضیحات_ابزار',
 ];
 
+$namespaceNames['fi'] = [
+	NS_GADGET => 'Pienoisohjelma',
+	NS_GADGET_TALK => 'Keskustelu_pienoisohjelmasta',
+	NS_GADGET_DEFINITION => 'Pienoisohjelman_määritys',
+	NS_GADGET_DEFINITION_TALK => 'Keskustelu_pienoisohjelman_määrityksestä',
+];
+
 $namespaceNames['fr'] = [
 	NS_GADGET => 'Gadget',
 	NS_GADGET_TALK => 'Discussion_gadget',
@@ -233,6 +240,13 @@ $namespaceNames['or'] = [
 	NS_GADGET_DEFINITION_TALK => 'ଗ୍ୟାଜେଟ_ସଂଜ୍ଞା_ଆଲୋଚନା',
 ];
 
+$namespaceNames['pa'] = [
+	NS_GADGET => 'ਗੈਜਟ',
+	NS_GADGET_TALK => 'ਗੈਜਟ_ਗੱਲ-ਬਾਤ',
+	NS_GADGET_DEFINITION => 'ਗੈਜਟ_ਪਰਿਭਾਸ਼ਾ',
+	NS_GADGET_DEFINITION_TALK => 'ਗੈਜਟ_ਪਰਿਭਾਸ਼ਾ_ਗੱਲ-ਬਾਤ',
+];
+
 $namespaceNames['pl'] = [
 	NS_GADGET => 'Gadżet',
 	NS_GADGET_TALK => 'Dyskusja_gadżetu',
@@ -273,6 +287,13 @@ $namespaceNames['shn'] = [
 	NS_GADGET_TALK => 'ဢုပ်ႇၵုမ်_ၶိူင်ႈပိတ်းပွတ်း',
 	NS_GADGET_DEFINITION => 'ပိုတ်ႇတီႈပွင်ႇ_ၶိူင်ႈပိတ်းပွတ်း',
 	NS_GADGET_DEFINITION_TALK => 'ဢုပ်ႇၵုမ်_ပိုတ်ႇတီႈပွင်ႇ_ၶိူင်ႈပိတ်းပွတ်း',
+];
+
+$namespaceNames['sr'] = [
+	NS_GADGET => 'Справица',
+	NS_GADGET_TALK => 'Разговор_о_справици',
+	NS_GADGET_DEFINITION => 'Дефиниција_справице',
+	NS_GADGET_DEFINITION_TALK => 'Разговор_о_дефиницији_справице',
 ];
 
 $namespaceNames['ur'] = [

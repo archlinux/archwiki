@@ -25,6 +25,5 @@
 	"titleblacklist-override": "Ohita mustan listan merkinnät",
 	"right-tboverride": "Ohittaa sivunimien tai käyttäjänimien musta lista",
 	"right-tboverride-account": "Ohittaa käyttäjänimien musta lista",
-	"right-titleblacklistlog": "Tarkastella nimien mustan listan lokia",
-	"visualeditor-saveerror-titleblacklist": "Virhe tallennettaessa sivua: Tämän sivun otsikko on mustalla listalla"
+	"right-titleblacklistlog": "Tarkastella nimien mustan listan lokia"
 }

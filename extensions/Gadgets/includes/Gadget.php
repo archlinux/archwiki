@@ -251,7 +251,7 @@ class Gadget {
 
 	/**
 	 * Returns list of scripts that don't support ResourceLoader
-	 * @return Array
+	 * @return string[]
 	 */
 	public function getLegacyScripts() {
 		if ( $this->supportsResourceLoader() ) {
@@ -262,7 +262,7 @@ class Gadget {
 
 	/**
 	 * Returns names of resources this gadget depends on
-	 * @return Array
+	 * @return string[]
 	 */
 	public function getDependencies() {
 		return $this->dependencies;
@@ -275,7 +275,7 @@ class Gadget {
 	 * a (usually, hidden) styles-type module to be applied to the page. Dependencies
 	 * don't work for this use case as those would not be part of page rendering.
 	 *
-	 * @return Array
+	 * @return string[]
 	 */
 	public function getPeers() {
 		return $this->peers;
@@ -290,7 +290,7 @@ class Gadget {
 
 	/**
 	 * Returns array of permissions required by this gadget
-	 * @return Array
+	 * @return string[]
 	 */
 	public function getRequiredRights() {
 		return $this->requiredRights;
@@ -298,7 +298,7 @@ class Gadget {
 
 	/**
 	 * Returns array of skins where this gadget works
-	 * @return Array
+	 * @return string[]
 	 */
 	public function getRequiredSkins() {
 		return $this->requiredSkins;

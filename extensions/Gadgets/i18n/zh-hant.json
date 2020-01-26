@@ -33,7 +33,7 @@
 	"gadgetusage-activeusers": "活動使用者",
 	"gadgetusage-default": "預設",
 	"gadgets-title": "小工具",
-	"gadgets-pagetext": "以下列出使用者可自行在 [[Special:Preferences#mw-prefsection-gadgets|偏好設定頁面]] 開啟的特殊小工具，此清單在 [[MediaWiki:Gadgets-definition|定義]] 所定義。\n\n此頁面可讓方便您存取定義各小工具描述與程式碼的系統訊息頁面。",
+	"gadgets-pagetext": "以下列出使用者可自行在[[Special:Preferences#mw-prefsection-gadgets|偏好設定頁面]]開啟的特殊小工具，此清單在[[MediaWiki:Gadgets-definition|定義]]所定義。此頁面可讓方便您存取定義各小工具描述與程式碼的系統訊息頁面。",
 	"gadgets-uses": "使用",
 	"gadgets-required-rights": "需要以下{{PLURAL:$2|權限|權限}}：\n\n$1",
 	"gadgets-required-skins": "可用於{{PLURAL:$2|$1 外觀|下列外觀：$1}}。",

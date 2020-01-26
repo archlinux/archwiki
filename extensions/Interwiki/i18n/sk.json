@@ -25,7 +25,6 @@
 	"interwiki_error": "CHYBA: Tabuľka interwiki je prázdna alebo sa pokazilo niečo iné.",
 	"interwiki_edit": "Upraviť",
 	"interwiki_reasonfield": "Dôvod:",
-	"interwiki_delquestion": "Maže sa „$1“",
 	"interwiki_deleting": "Mažete predponu „$1“.",
 	"interwiki_deleted": "Predpona „$1“ bola úspešne odstránená z tabuľky interwiki.",
 	"interwiki_delfailed": "Predponu „$1“ nebola možné odstrániť z tabuľky interwiki.",

@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Arystanbek"
+		]
+	},
+	"apihelp-fancycaptchareload-description": "Yeni bir FancyCaptcha.",
+	"apihelp-fancycaptchareload-example-1": "Yeni bir FancyCaptcha olsun"
+}

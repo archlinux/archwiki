@@ -46,11 +46,9 @@ class ReleaseNotesTest extends MediaWikiTestCase {
 			"SECURITY",
 		];
 
-		$testCases = [];
 		foreach ( $rootFiles as $rootFile ) {
-			$testCases["$rootFile file"] = [ "$IP/$rootFile" ];
+			yield "$rootFile file" => [ "$IP/$rootFile" ];
 		}
-		return $testCases;
 	}
 
 	/**

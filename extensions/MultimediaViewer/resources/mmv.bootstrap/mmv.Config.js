@@ -48,7 +48,7 @@
 		this.mwUser = mwUser;
 
 		/**
-		 * API object, for dependency injction
+		 * API object, for dependency injection
 		 * @type {mw.Api}
 		 */
 		this.api = api;
@@ -213,7 +213,7 @@
 	};
 
 	/**
-	 * Called when status info is displayed. Future shouldShowStatusInfo() calls will retrurn false.
+	 * Called when status info is displayed. Future shouldShowStatusInfo() calls will return false.
 	 */
 	CP.disableStatusInfo = function () {
 		this.setInLocalStorage( 'mmv-showStatusInfo', '0' );

@@ -17,8 +17,5 @@
 	"fancycaptcha-edit": "यह पृष्ठ बदलने के लिये, नीचे दिखने वाले अक्षर टेक्स्ट बक्सेमें लिखें ([[Special:Captcha/help|अधिक जानकारी]]):",
 	"fancycaptcha-imgcaptcha-ph": "छवि में दिये पाठ को यहाँ लिखें",
 	"fancycaptcha-sendemail": "अपने आप होने वाले स्पैम से बचाने के लिए हम आपसे नीचे दिये गए शब्द को भरने के लिए बोल रहे हैं। ([[Special:Captcha/help|अधिक जानकारी]]):",
-	"fancycaptcha-reload-text": "रिफ़्रेश",
-	"apihelp-fancycaptchareload-description": "नया लुभावना-कैपचा प्राप्त करें।",
-	"apihelp-fancycaptchareload-summary": "नया लुभावना-कैपचा प्राप्त करें।",
-	"apihelp-fancycaptchareload-example-1": "नया लुभावना-कैपचा प्राप्त करें।"
+	"fancycaptcha-reload-text": "रिफ़्रेश"
 }

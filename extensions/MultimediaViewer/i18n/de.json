@@ -13,8 +13,6 @@
 		]
 	},
 	"multimediaviewer-desc": "Ermöglicht die Darstellung von Vorschaubildern in einer Vollbildschnittstelle",
-	"multimediaviewer-pref": "Medienbetrachter",
-	"multimediaviewer-pref-desc": "Dieses neue Werkzeug ändert die Ansicht von Multimediadateien. Es zeigt Bilder auf Seiten größer an, die Vorschaubilder haben. Die Bilder werden in einem den Artikel überlagernden Kasten angezeigt und können auch als Vollbild dargestellt werden.",
 	"multimediaviewer-optin-pref": "Den <span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About Medienbetrachter]</span> nutzen",
 	"multimediaviewer-file-page": "Gehe zur zugehörigen Dateiseite",
 	"multimediaviewer-repository-local": "Weitere Einzelheiten",

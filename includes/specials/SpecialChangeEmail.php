@@ -23,6 +23,7 @@
 
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Logger\LoggerFactory;
+use MediaWiki\MediaWikiServices;
 
 /**
  * Let users change their email address.
@@ -74,12 +75,11 @@ class SpecialChangeEmail extends FormSpecialPage {
 
 		// This could also let someone check the current email address, so
 		// require both permissions.
-		if ( !$this->getUser()->isAllowed( 'viewmyprivateinfo' ) ) {
+		if ( !MediaWikiServices::getInstance()
+				->getPermissionManager()
+				->userHasRight( $this->getUser(), 'viewmyprivateinfo' )
+		) {
 			throw new PermissionsError( 'viewmyprivateinfo' );
-		}
-
-		if ( $user->isBlockedFromEmailuser() ) {
-			throw new UserBlockedError( $user->getBlock() );
 		}
 
 		parent::checkExecutePermissions( $user );

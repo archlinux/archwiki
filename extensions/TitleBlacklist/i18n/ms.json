@@ -17,6 +17,5 @@
 	"titleblacklist-invalid": "{{PLURAL:$1|Baris|Baris-baris}} berikut adalah tidak sah. Sila betulkannya sebelum menyimpan:",
 	"titleblacklist-override": "Abaikan senarai hitam",
 	"right-tboverride": "Membatalkan senarai hitam tajuk atau nama pengguna",
-	"right-tboverride-account": "Mengatasi senarai hitam nama pengguna",
-	"visualeditor-saveerror-titleblacklist": "Ralat ketika menyimpan laman: Tajuk laman ini disenaraihitamkan"
+	"right-tboverride-account": "Mengatasi senarai hitam nama pengguna"
 }

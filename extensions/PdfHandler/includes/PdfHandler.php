@@ -1,4 +1,7 @@
 <?php
+
+use MediaWiki\MediaWikiServices;
+
 /**
  * Copyright © 2007 Martin Seidel (Xarax) <jodeldi@gmx.de>
  *
@@ -390,7 +393,7 @@ class PdfHandler extends ImageHandler {
 	}
 
 	protected function getDimensionInfo( File $file ) {
-		$cache = ObjectCache::getMainWANInstance();
+		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
 		return $cache->getWithSetCallback(
 			$cache->makeKey( 'file-pdf', 'dimensions', $file->getSha1() ),
 			$cache::TTL_INDEFINITE,

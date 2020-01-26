@@ -15,6 +15,5 @@
 	"titleblacklist-invalid": "Dës {{PLURAL:$1|Linn|Linnen}} op der schwaarzer Lëscht vun den {{PLURAL:$1|Titelen ass|Titele sinn}} net valabel;\nverbessert se virum späicheren:",
 	"titleblacklist-override": "Schwaarz Lëscht ignoréieren",
 	"right-tboverride": "D'schwaarz Lëscht vun den Titelen a Benotzernimm ignoréieren",
-	"right-tboverride-account": "Schwaarz Lëscht vun de Benotzernimm iwwergoen",
-	"visualeditor-saveerror-titleblacklist": "Feeler beim Späichere vun der Säit: Den Titel vun der Säit steet op eiser schwaarzer Lëscht"
+	"right-tboverride-account": "Schwaarz Lëscht vun de Benotzernimm iwwergoen"
 }

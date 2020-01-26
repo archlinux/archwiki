@@ -5,8 +5,12 @@
 			"L2212"
 		]
 	},
+	"categorytree": "Àrbore de sas categorias",
 	"categorytree-portlet": "Categorias",
+	"categorytree-legend": "Ammustra s'àrbore de sas categorias",
 	"categorytree-category": "Categoria:",
+	"categorytree-go": "Ammustra s'àrbore",
+	"categorytree-mode-label": "Modalidade:",
 	"categorytree-mode-all": "totu is pàginas",
 	"categorytree-expand": "ismànnia",
 	"categorytree-member-counts": "Tenet {{PLURAL:$1|1 sutacategoria|$1 sutacategorias}}, {{PLURAL:$2|1 pàgina|$2 pàginas}}, and {{PLURAL:$3|1 documentu|$3 documentos}}",

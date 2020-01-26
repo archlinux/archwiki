@@ -1,4 +1,5 @@
 <?php
+
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionRecord;
 
@@ -82,13 +83,10 @@ abstract class PageArchiveTestBase extends MediaWikiTestCase {
 
 		$this->tablesUsed += $this->getMcrTablesToReset();
 
-		$this->setMwGlobals( 'wgActorTableSchemaMigrationStage', SCHEMA_COMPAT_NEW );
-		$this->setMwGlobals( 'wgContentHandlerUseDB', $this->getContentHandlerUseDB() );
-		$this->setMwGlobals(
-			'wgMultiContentRevisionSchemaMigrationStage',
-			$this->getMcrMigrationStage()
-		);
-		$this->overrideMwServices();
+		$this->setMwGlobals( [
+			'wgContentHandlerUseDB' => $this->getContentHandlerUseDB(),
+			'wgMultiContentRevisionSchemaMigrationStage' => $this->getMcrMigrationStage(),
+		] );
 
 		// First create our dummy page
 		$page = Title::newFromText( 'PageArchiveTest_thePage' );
@@ -250,27 +248,6 @@ abstract class PageArchiveTestBase extends MediaWikiTestCase {
 		yield 'ar_text_id is null' => [ [ 'ar_text_id' => null ] ];
 		yield 'ar_text_id is zero' => [ [ 'ar_text_id' => 0 ] ];
 		yield 'ar_text_id is "0"' => [ [ 'ar_text_id' => '0' ] ];
-	}
-
-	/**
-	 * @dataProvider provideGetTextFromRowThrowsInvalidArgumentException
-	 * @covers PageArchive::getTextFromRow
-	 */
-	public function testGetTextFromRowThrowsInvalidArgumentException( array $row ) {
-		$this->hideDeprecated( PageArchive::class . '::getTextFromRow' );
-		$this->setExpectedException( InvalidArgumentException::class );
-
-		$this->archivedPage->getTextFromRow( (object)$row );
-	}
-
-	/**
-	 * @covers PageArchive::getLastRevisionText
-	 */
-	public function testGetLastRevisionText() {
-		$this->hideDeprecated( PageArchive::class . '::getLastRevisionText' );
-
-		$text = $this->archivedPage->getLastRevisionText();
-		$this->assertSame( 'Lorem Ipsum', $text );
 	}
 
 	/**

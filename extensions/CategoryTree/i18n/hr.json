@@ -38,8 +38,5 @@
 	"categorytree-no-pages": "Nema članaka ili potkategorija.",
 	"categorytree-not-found": "Kategorija <i>$1</i> nije pronađena",
 	"categorytree-error": "Problem s učitavanjem podataka.",
-	"categorytree-retry": "Pričekajte trenutak pa pokušajte opet.",
-	"apihelp-categorytree-description": "Interni modul za proširenje CategoryTree.",
-	"apihelp-categorytree-summary": "Interni modul za proširenje CategoryTree.",
-	"apihelp-categorytree-param-category": "Naziv u imenskom prostoru kategorija. Ako je prefiks naveden, bit će zanemaren."
+	"categorytree-retry": "Pričekajte trenutak pa pokušajte opet."
 }

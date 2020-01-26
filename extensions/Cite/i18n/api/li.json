@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Ooswesthoesbes"
+		]
+	},
+	"apihelp-query+references-description": "Gaef gegaevesrepresentatie van rifferensies trögk die waere verbónje mit de opgegaeve pagina's.",
+	"apihelp-query+references-summary": "Gaef gegaevesrepresentatie van rifferensies trögk die waere verbónje mit de opgegaeve pagina's.",
+	"apihelp-query+references-example-1": "Rifferensies verbónje mit <kbd>Albert Einstein</kbd>.",
+	"apierror-citestoragedisabled": "Oetbreijingsrifferensieopslaag van Citeer steit neet aan."
+}

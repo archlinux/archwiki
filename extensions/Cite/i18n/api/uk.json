@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Piramidion"
+		]
+	},
+	"apihelp-query+references-description": "Вивести репрезентацію даних посилань, пов'язаних із заданими сторінками.",
+	"apihelp-query+references-summary": "Вивести репрезентацію даних посилань, пов'язаних із заданими сторінками.",
+	"apihelp-query+references-example-1": "Посилання, пов'язані зі сторінкою <kbd>Albert Einstein</kbd>.",
+	"apierror-citestoragedisabled": "Зберігання посилань для розширення Cite не увімкнене."
+}

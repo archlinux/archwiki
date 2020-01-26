@@ -105,7 +105,7 @@ class SkinMonoBook extends SkinTemplate {
 				'styles' => [ 'resources/mobile-echo.less' => [
 					'media' => 'screen and (max-width: 550px)'
 				] ],
-				'dependencies' => [ 'ext.echo.badgeicons', 'mediawiki.util' ],
+				'dependencies' => [ 'oojs-ui.styles.icons-alerts', 'mediawiki.util' ],
 				'messages' => [ 'monobook-notifications-link', 'monobook-notifications-link-none' ]
 			] );
 		}

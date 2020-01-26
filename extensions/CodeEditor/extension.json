@@ -31,9 +31,6 @@
 			"i18n"
 		]
 	},
-	"config": {
-		"CodeEditorEnableCore": true
-	},
 	"DefaultUserOptions": {
 		"usecodeeditor": 1
 	},

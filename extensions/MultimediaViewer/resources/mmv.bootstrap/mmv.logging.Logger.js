@@ -82,7 +82,7 @@
 			}
 
 			try {
-				mw.loader.using( [ 'ext.eventLogging', 'schema.' + self.schema ], function () {
+				mw.loader.using( 'ext.eventLogging', function () {
 					self.setEventLog( mw.eventLog );
 					waitForEventLog.resolve();
 				} );
@@ -100,7 +100,7 @@
 	 * @return {boolean} True if this request needs to be sampled
 	 */
 	L.isInSample = function () {
-		if ( !$.isNumeric( this.samplingFactor ) || this.samplingFactor < 1 ) {
+		if ( typeof this.samplingFactor !== 'number' || this.samplingFactor < 1 ) {
 			return false;
 		}
 
@@ -115,7 +115,7 @@
 	 * @return {boolean} True if this logging is enabled
 	 */
 	L.isEnabled = function () {
-		return $.isNumeric( this.samplingFactor ) && this.samplingFactor >= 1;
+		return typeof this.samplingFactor === 'number' && this.samplingFactor >= 1;
 	};
 
 	/**
@@ -124,9 +124,14 @@
 	 * @return {boolean}
 	 */
 	L.schemaSupportsCountry = function () {
-		return this.eventLog && this.eventLog.schemas && // don't die if eventLog is a mock
-			this.schema in this.eventLog.schemas && // don't die if schema is not loaded
-			'country' in this.eventLog.schemas[ this.schema ].schema.properties;
+		return this.eventLog && ( { // don't die if eventLog is a mock
+			// EventLogging only downloads schemas in debug mode, can't check for country dynamically
+			MediaViewer: false,
+			MultimediaViewerDimensions: false,
+			MultimediaViewerNetworkPerformance: true,
+			MultimediaViewerAttribution: false,
+			MultimediaViewerDuration: true
+		}[ this.schema ] || false );
 	};
 
 	/**

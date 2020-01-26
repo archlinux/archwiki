@@ -1,6 +1,6 @@
 /* eslint-disable no-jquery/no-global-selector */
 $( function () {
-	var mobileCutoffWidth = 550,
+	var mobileMediaQuery = window.matchMedia( 'screen and (max-width: 550px)' ),
 		// Track if DOM has been set up for mobile fanciness yet
 		monobookMobileElements = false,
 		// Toggles and targets for popouts
@@ -21,7 +21,7 @@ $( function () {
 	// Set up DOM for mobile fanciness
 	// We don't automatically do this because MonoBook; most users will be on desktop
 	function setupMonoBookMobile() {
-		if ( !monobookMobileElements && $( window ).width() <= mobileCutoffWidth ) {
+		if ( !monobookMobileElements && mobileMediaQuery.matches ) {
 			// Duplicate nav
 			$( '#column-one' ).append(
 				$( '#sidebar' ).clone().find( '*' ).addBack().each( function () {
@@ -68,7 +68,7 @@ $( function () {
 
 				// Open menus
 				$( toggle ).on( 'click', function () {
-					if ( $( window ).width() <= mobileCutoffWidth ) {
+					if ( mobileMediaQuery.matches ) {
 						$( target ).addClass( 'mobile-menu-active' );
 						$( '.menus-cover' ).addClass( 'visible' );
 					}

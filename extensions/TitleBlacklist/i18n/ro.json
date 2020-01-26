@@ -3,7 +3,8 @@
 		"authors": [
 			"AdiJapan",
 			"Minisarm",
-			"Stelistcristi"
+			"Stelistcristi",
+			"Andrei Stroe"
 		]
 	},
 	"titleblacklist-desc": "Permite administratorilor să interzică crearea de pagini și de conturi de utilizator, folosind o [[MediaWiki:Titleblacklist|listă neagră]] și o [[MediaWiki:Titlewhitelist|listă albă]]",
@@ -14,8 +15,7 @@
 	"titleblacklist-forbidden-upload": "Numele de fișier „$2” este interzis.\nInterdicția a fost declanșată de următorul element din lista neagră: <code>$1</code>",
 	"titleblacklist-forbidden-new-account": "Nu se poate crea un cont de utilizator cu numele „$2”.\nInterdicția a fost declanșată de următorul element din lista neagră: <code>$1</code>",
 	"titleblacklist-invalid": "{{PLURAL:$1|Următoarea linie|Următoarele linii}} din lista neagră a titlurilor {{PLURAL:$1|este invalidă|sînt invalide}};\ncorectați{{PLURAL:$1|-o|-le}} înainte de a salva pagina.",
-	"titleblacklist-override": "Ignoră lista neagră",
+	"titleblacklist-override": "Ignoră lista neagră de titluri dacă se potrivește",
 	"right-tboverride": "Ignoră lista neagră cu titluri sau nume de utilizator",
-	"right-tboverride-account": "Suprascrie lista neagră a numelor de utilizator",
-	"visualeditor-saveerror-titleblacklist": "Eroare la salvarea paginii: titlu paginii se află pe lista neagră."
+	"right-tboverride-account": "Suprascrie lista neagră a numelor de utilizator"
 }

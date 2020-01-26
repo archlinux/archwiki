@@ -24,12 +24,12 @@ use Wikimedia\Assert\Assert;
 use MediaWiki\MediaWikiServices;
 
 /**
- * Handles purging appropriate CDN URLs given a title (or titles)
+ * Handles purging the appropriate CDN objects given a list of URLs or Title instances
  * @ingroup Cache
  */
 class CdnCacheUpdate implements DeferrableUpdate, MergeableUpdate {
 	/** @var string[] Collection of URLs to purge */
-	protected $urls = [];
+	private $urls = [];
 
 	/**
 	 * @param string[] $urlArr Collection of URLs to purge
@@ -39,8 +39,9 @@ class CdnCacheUpdate implements DeferrableUpdate, MergeableUpdate {
 	}
 
 	public function merge( MergeableUpdate $update ) {
-		/** @var CdnCacheUpdate $update */
+		/** @var self $update */
 		Assert::parameterType( __CLASS__, $update, '$update' );
+		'@phan-var self $update';
 
 		$this->urls = array_merge( $this->urls, $update->urls );
 	}
@@ -71,25 +72,22 @@ class CdnCacheUpdate implements DeferrableUpdate, MergeableUpdate {
 		self::purge( $this->urls );
 
 		if ( $wgCdnReboundPurgeDelay > 0 ) {
-			JobQueueGroup::singleton()->lazyPush( new CdnPurgeJob(
-				Title::makeTitle( NS_SPECIAL, 'Badtitle/' . __CLASS__ ),
-				[
-					'urls' => $this->urls,
-					'jobReleaseTimestamp' => time() + $wgCdnReboundPurgeDelay
-				]
-			) );
+			JobQueueGroup::singleton()->lazyPush( new CdnPurgeJob( [
+				'urls' => $this->urls,
+				'jobReleaseTimestamp' => time() + $wgCdnReboundPurgeDelay
+			] ) );
 		}
 	}
 
 	/**
-	 * Purges a list of CDN nodes defined in $wgSquidServers.
+	 * Purges a list of CDN nodes defined in $wgCdnServers.
 	 * $urlArr should contain the full URLs to purge as values
 	 * (example: $urlArr[] = 'http://my.host/something')
 	 *
 	 * @param string[] $urlArr List of full URLs to purge
 	 */
 	public static function purge( array $urlArr ) {
-		global $wgSquidServers, $wgHTCPRouting;
+		global $wgCdnServers, $wgHTCPRouting;
 
 		if ( !$urlArr ) {
 			return;
@@ -101,10 +99,9 @@ class CdnCacheUpdate implements DeferrableUpdate, MergeableUpdate {
 		wfDebugLog( 'squid', __METHOD__ . ': ' . implode( ' ', $urlArr ) );
 
 		// Reliably broadcast the purge to all edge nodes
-		$relayer = MediaWikiServices::getInstance()->getEventRelayerGroup()
-					->getRelayer( 'cdn-url-purges' );
 		$ts = microtime( true );
-		$relayer->notifyMulti(
+		$relayerGroup = MediaWikiServices::getInstance()->getEventRelayerGroup();
+		$relayerGroup->getRelayer( 'cdn-url-purges' )->notifyMulti(
 			'cdn-url-purges',
 			array_map(
 				function ( $url ) use ( $ts ) {
@@ -123,24 +120,24 @@ class CdnCacheUpdate implements DeferrableUpdate, MergeableUpdate {
 		}
 
 		// Do direct server purges if enabled (this does not scale very well)
-		if ( $wgSquidServers ) {
-			// Maximum number of parallel connections per squid
-			$maxSocketsPerSquid = 8;
+		if ( $wgCdnServers ) {
+			// Maximum number of parallel connections per CDN
+			$maxSocketsPerCdn = 8;
 			// Number of requests to send per socket
 			// 400 seems to be a good tradeoff, opening a socket takes a while
 			$urlsPerSocket = 400;
-			$socketsPerSquid = ceil( count( $urlArr ) / $urlsPerSocket );
-			if ( $socketsPerSquid > $maxSocketsPerSquid ) {
-				$socketsPerSquid = $maxSocketsPerSquid;
+			$socketsPerCdn = ceil( count( $urlArr ) / $urlsPerSocket );
+			if ( $socketsPerCdn > $maxSocketsPerCdn ) {
+				$socketsPerCdn = $maxSocketsPerCdn;
 			}
 
 			$pool = new SquidPurgeClientPool;
-			$chunks = array_chunk( $urlArr, ceil( count( $urlArr ) / $socketsPerSquid ) );
-			foreach ( $wgSquidServers as $server ) {
+			$chunks = array_chunk( $urlArr, ceil( count( $urlArr ) / $socketsPerCdn ) );
+			foreach ( $wgCdnServers as $server ) {
 				foreach ( $chunks as $chunk ) {
 					$client = new SquidPurgeClient( $server );
 					foreach ( $chunk as $url ) {
-						$client->queuePurge( $url );
+						$client->queuePurge( self::expand( $url ) );
 					}
 					$pool->addClient( $client );
 				}
@@ -257,7 +254,7 @@ class CdnCacheUpdate implements DeferrableUpdate, MergeableUpdate {
 	 * @param string $url
 	 * @return string
 	 */
-	public static function expand( $url ) {
+	private static function expand( $url ) {
 		return wfExpandUrl( $url, PROTO_INTERNAL );
 	}
 

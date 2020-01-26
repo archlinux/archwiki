@@ -4,8 +4,8 @@
 /* Only use icon if the menu item is not collapsed into the "More" dropdown
  * (in which case it is inside .vectorMenu instead of .vectorTabs). */
 .vectorTabs {
-	#ca-unwatch.icon a,
-	#ca-watch.icon a {
+	// `#ca-unwatch` & `#ca-watch` both carry `.mw-watchlink` as well.
+	.mw-watchlink.icon a {
 		margin: 0;
 		padding: 0;
 		display: block;
@@ -37,9 +37,10 @@
 		.background-image-svg( 'images/watch-icon-hl.svg', 'images/watch-icon-hl.png' );
 	}
 
-	#ca-unwatch.icon a.loading,
-	#ca-watch.icon a.loading {
-		.background-image-svg( 'images/watch-icon-loading.svg', 'images/watch-icon-loading.png' );
+	// Loading watchstar link class.
+	#ca-unwatch.icon .loading,
+	#ca-watch.icon .loading {
+		background-image: url( images/watch-icon-loading.svg );
 		.rotation( 700ms );
 		/* Suppress the hilarious rotating focus outline on Firefox */
 		outline: 0;
@@ -48,10 +49,5 @@
 		background-position: 50% 60%;
 		-webkit-transform-origin: 50% 57%;
 		transform-origin: 50% 57%;
-	}
-
-	#ca-unwatch.icon a span,
-	#ca-watch.icon a span {
-		display: none;
 	}
 }

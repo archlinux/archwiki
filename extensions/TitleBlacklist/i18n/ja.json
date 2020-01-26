@@ -14,7 +14,8 @@
 			"2nd-player",
 			"Otokoume",
 			"Yusuke1109",
-			"Takot"
+			"Takot",
+			"Omotecho"
 		]
 	},
 	"action-titleblacklistlog": "ページ名ブラックリストの記録の閲覧",
@@ -29,10 +30,9 @@
 	"titleblacklist-forbidden-upload": "「$2」という名前でのファイルのアップロードは禁止されています。\nこれは以下のブラックリスト項目に一致します: <code>$1</code>",
 	"titleblacklist-forbidden-new-account": "利用者名「$2」の作成は禁止されています。\nこれは以下のブラックリスト項目と一致します: <code>$1</code>",
 	"titleblacklist-invalid": "ページ名ブラックリスト内の以下の{{PLURAL:$1|行}}は無効{{PLURAL:$1|です}}。\n保存する前に{{PLURAL:$1|修正して}}ください:",
-	"titleblacklist-override": "ブラックリストを無視",
+	"titleblacklist-override": "照合した場合は題名のブラックリストを上書き",
 	"titleblacklist-warning": "<strong>警告: このページは下記のページ名ブラックリスト項目に一致しているため管理者と <code>tboverride</code> 権限のある利用者のみが編集できます:</strong><br /><code>$1</code>",
 	"right-tboverride": "ページ名/利用者名のブラックリストによる制限を受けない",
 	"right-tboverride-account": "利用者名ブラックリストを無視",
-	"right-titleblacklistlog": "ページ名ブラックリストの記録を閲覧",
-	"visualeditor-saveerror-titleblacklist": "ページの保存エラー: このページ名はブラックリストに載っているため使えません。"
+	"right-titleblacklistlog": "ページ名ブラックリストの記録を閲覧"
 }

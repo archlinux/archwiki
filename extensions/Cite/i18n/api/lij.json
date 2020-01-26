@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Giromin Cangiaxo"
+		]
+	},
+	"apihelp-query+references-description": "O restitoisce una rapresentaçion di dæti de referençe associæ co-e paggine indicæ.",
+	"apihelp-query+references-example-1": "Referençe associæ con <kbd>Albert Einstein</kbd>."
+}

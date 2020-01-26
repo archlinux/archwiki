@@ -98,9 +98,7 @@
 			dialog.dependenciesLoaded = true;
 			dialog.toggleDialog( e );
 		}, function ( error ) {
-			if ( window.console && window.console.error ) {
-				window.console.error( 'mw.loader.using error when trying to load dialog dependencies', error );
-			}
+			mw.log.error( 'mw.loader.using error when trying to load dialog dependencies', error );
 		} );
 
 		return false;

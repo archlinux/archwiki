@@ -22,7 +22,7 @@
 	"nuke-maxpages": "Максимален брой страници:",
 	"nuke-deleted": "Страницата '''$1''' е изтрита.",
 	"nuke-delete-more": "[[Special:Nuke|Изтриване на още страници]]",
-	"nuke-pattern": "Обща част (pattern) в заглавията:",
+	"nuke-pattern": "Заместващ символ за SQL LIKE (напр. %) за заглавието на страницата:",
 	"nuke-viewchanges": "преглед на промените",
 	"nuke-namespace": "Ограничение по именно пространство:",
 	"nuke-linkoncontribs": "масово изтриване",

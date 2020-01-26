@@ -26,10 +26,6 @@ use MediaWiki\MediaWikiServices;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\Database;
 
-/**
- * WARNING: MediaWiki core hardcodes this class name to check if the
- * Cite extension is installed. See T89151.
- */
 class Cite {
 
 	/**
@@ -931,9 +927,8 @@ class Cite {
 	 * @return string
 	 */
 	private function referencesFormatEntryNumericBacklinkLabel( $base, $offset, $max ) {
-		global $wgContLang;
 		$scope = strlen( $max );
-		$ret = $wgContLang->formatNum(
+		$ret = MediaWikiServices::getInstance()->getContentLanguage()->formatNum(
 			sprintf( "%s.%0{$scope}s", $base, $offset )
 		);
 		return $ret;
@@ -1043,7 +1038,7 @@ class Cite {
 	 * @return string
 	 */
 	private function linkRef( $group, $key, $count = null, $label = null, $subkey = '' ) {
-		global $wgContLang;
+		$contLang = MediaWikiServices::getInstance()->getContentLanguage();
 
 		if ( $label === null ) {
 			$label = ++$this->mGroupCnt[$group];
@@ -1060,7 +1055,7 @@ class Cite {
 					),
 					Sanitizer::safeEncodeAttribute(
 						$this->getLinkLabel( $label, $group,
-							( ( $group === self::DEFAULT_GROUP ) ? '' : "$group " ) . $wgContLang->formatNum( $label ) )
+							( ( $group === self::DEFAULT_GROUP ) ? '' : "$group " ) . $contLang->formatNum( $label ) )
 					)
 				)->inContentLanguage()->plain()
 			);
@@ -1073,11 +1068,11 @@ class Cite {
 	 * @return string
 	 */
 	private function normalizeKey( $key ) {
-		$key = Sanitizer::escapeIdForAttribute( $key );
-		$key = preg_replace( '/__+/', '_', $key );
-		$key = Sanitizer::safeEncodeAttribute( $key );
+		$ret = Sanitizer::escapeIdForAttribute( $key );
+		$ret = preg_replace( '/__+/', '_', $ret );
+		$ret = Sanitizer::safeEncodeAttribute( $ret );
 
-		return $key;
+		return $ret;
 	}
 
 	/**

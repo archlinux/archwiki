@@ -122,8 +122,8 @@
 		var matches,
 			logger = this,
 			stats = { type: type,
-				contentHost: window.location.host,
-				isHttps: window.location.protocol === 'https:',
+				contentHost: location.host,
+				isHttps: location.protocol === 'https:',
 				total: total },
 			connection = this.getNavigatorConnection();
 

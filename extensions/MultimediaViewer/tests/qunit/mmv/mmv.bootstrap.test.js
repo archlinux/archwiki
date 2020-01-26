@@ -78,23 +78,22 @@
 		// wait for if we want to see these tests through
 		mw.mmv.testHelpers.asyncMethod( bootstrap, 'loadViewer' );
 
-		bootstrap.setupEventHandlers();
-
 		// invalid hash, should not trigger MMV load
-		window.location.hash = 'Foo';
+		location.hash = 'Foo';
 
 		// actual hash we want to test for, should trigger MMV load
 		// use setTimeout to add new hash change to end of the call stack,
 		// ensuring that event handlers for our previous change can execute
 		// without us interfering with another immediate change
 		setTimeout( function () {
-			window.location.hash = hash;
+			location.hash = hash;
+			bootstrap.hash();
 		} );
 
 		return mw.mmv.testHelpers.waitForAsync().then( function () {
 			assert.strictEqual( callCount, 1, 'Viewer should be loaded once' );
 			bootstrap.cleanupEventHandlers();
-			window.location.hash = '';
+			location.hash = '';
 		} );
 	}
 
@@ -363,7 +362,7 @@
 	QUnit.test( 'Only load the viewer on a valid hash (modern browsers)', function ( assert ) {
 		var bootstrap;
 
-		window.location.hash = '';
+		location.hash = '';
 
 		bootstrap = createBootstrap();
 
@@ -373,7 +372,7 @@
 	QUnit.test( 'Only load the viewer on a valid hash (old browsers)', function ( assert ) {
 		var bootstrap;
 
-		window.location.hash = '';
+		location.hash = '';
 
 		bootstrap = createBootstrap();
 		bootstrap.browserHistory = undefined;
@@ -384,7 +383,7 @@
 	QUnit.test( 'Load the viewer on a legacy hash (modern browsers)', function ( assert ) {
 		var bootstrap;
 
-		window.location.hash = '';
+		location.hash = '';
 
 		bootstrap = createBootstrap();
 
@@ -394,7 +393,7 @@
 	QUnit.test( 'Load the viewer on a legacy hash (old browsers)', function ( assert ) {
 		var bootstrap;
 
-		window.location.hash = '';
+		location.hash = '';
 
 		bootstrap = createBootstrap();
 		bootstrap.browserHistory = undefined;
@@ -405,7 +404,7 @@
 	QUnit.test( 'Overlay is set up on hash change', function ( assert ) {
 		var bootstrap;
 
-		window.location.hash = '#/media/foo';
+		location.hash = '#/media/foo';
 
 		bootstrap = createBootstrap();
 		this.sandbox.stub( bootstrap, 'setupOverlay' );
@@ -418,7 +417,7 @@
 	QUnit.test( 'Overlay is not set up on an irrelevant hash change', function ( assert ) {
 		var bootstrap;
 
-		window.location.hash = '#foo';
+		location.hash = '#foo';
 
 		bootstrap = createBootstrap();
 		this.sandbox.stub( bootstrap, 'setupOverlay' );
@@ -428,58 +427,6 @@
 		bootstrap.hash();
 
 		assert.strictEqual( bootstrap.setupOverlay.called, false, 'Overlay is not set up' );
-	} );
-
-	QUnit.test( 'internalHashChange', function ( assert ) {
-		var bootstrap = createBootstrap(),
-			hash = '#/media/foo',
-			callCount = 0,
-			clock = this.sandbox.useFakeTimers();
-
-		window.location.hash = '';
-
-		bootstrap.loadViewer = function () {
-			callCount++;
-			return $.Deferred().reject();
-		};
-
-		bootstrap.setupEventHandlers();
-
-		bootstrap.internalHashChange( { hash: hash } );
-		clock.tick( 10 );
-
-		assert.strictEqual( callCount, 0, 'Viewer should not be loaded' );
-		assert.strictEqual( window.location.hash, hash, 'Window\'s hash has been updated correctly' );
-
-		bootstrap.cleanupEventHandlers();
-		window.location.hash = '';
-		clock.restore();
-	} );
-
-	QUnit.test( 'internalHashChange (legacy)', function ( assert ) {
-		var bootstrap = createBootstrap(),
-			hash = '#mediaviewer/foo',
-			callCount = 0,
-			clock = this.sandbox.useFakeTimers();
-
-		window.location.hash = '';
-
-		bootstrap.loadViewer = function () {
-			callCount++;
-			return $.Deferred().reject();
-		};
-
-		bootstrap.setupEventHandlers();
-
-		bootstrap.internalHashChange( { hash: hash } );
-		clock.tick( 10 );
-
-		assert.strictEqual( callCount, 0, 'Viewer should not be loaded' );
-		assert.strictEqual( window.location.hash, hash, 'Window\'s hash has been updated correctly' );
-
-		bootstrap.cleanupEventHandlers();
-		window.location.hash = '';
-		clock.restore();
 	} );
 
 	QUnit.test( 'Restoring article scroll position', function ( assert ) {
@@ -550,16 +497,13 @@
 		$container.addClass( 'metadata' );
 		assert.strictEqual( bootstrap.isAllowedThumb( $thumb ), false, 'Image in a metadata container is disallowed.' );
 
-		$container.prop( 'class', '' );
-		$container.addClass( 'noviewer' );
+		$container.removeClass().addClass( 'noviewer' );
 		assert.strictEqual( bootstrap.isAllowedThumb( $thumb ), false, 'Image in a noviewer container is disallowed.' );
 
-		$container.prop( 'class', '' );
-		$container.addClass( 'noarticletext' );
+		$container.removeClass().addClass( 'noarticletext' );
 		assert.strictEqual( bootstrap.isAllowedThumb( $thumb ), false, 'Image in an empty article is disallowed.' );
 
-		$container.prop( 'class', '' );
-		$thumb.addClass( 'noviewer' );
+		$container.removeClass().addClass( 'noviewer' );
 		assert.strictEqual( bootstrap.isAllowedThumb( $thumb ), false, 'Image with a noviewer class is disallowed.' );
 	} );
 

@@ -5,7 +5,8 @@
 			"ネイ",
 			"Yusuke1109",
 			"Ochaochaocha3",
-			"Suyama"
+			"Suyama",
+			"Omotecho"
 		]
 	},
 	"oathauth-desc": "ワンタイムパスワードに基づいた HMAC を使用する認証機能を提供する",
@@ -27,10 +28,15 @@
 	"oathauth-step3": "手順3: スクラッチコードを書き留めてください",
 	"oathauth-step4": "手順4: 検証",
 	"oathauth-entertoken": "検証のため、あなたの認証デバイスに表示されたコードを入力してください:",
+	"right-oathauth-disable-for-user": "利用者の二要素認証を無効化",
+	"action-oathauth-disable-for-user": "利用者の二要素認証の無効化",
+	"oathauth-enteruser": "利用者名:",
 	"right-oathauth-enable": "二要素認証を有効にする",
 	"action-oathauth-enable": "二要素認証の有効化",
 	"oathauth-auth-token-label": "トークン",
-	"oathauth-auth-ui": "あなたの認証デバイスに表示された検証コードを入力してください",
+	"oathauth-auth-ui": "あなたの認証デバイスに表示された検証コードを入力してください。",
 	"oathauth-login-failed": "検証が失敗しました。",
-	"action-oathauth-api-all": "OATH ステータスを確認"
+	"action-oathauth-api-all": "OATH ステータスを確認",
+	"oath-log-name": "二要素認証記録",
+	"oath-log-header": "これらのイベントは利用者の二要素認証の状態の変更を追跡します。"
 }

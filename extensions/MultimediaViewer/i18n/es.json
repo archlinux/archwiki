@@ -16,8 +16,6 @@
 		]
 	},
 	"multimediaviewer-desc": "Expande las miniaturas a un tamaño mayor en una vista de pantalla completa.",
-	"multimediaviewer-pref": "Visor multimedia",
-	"multimediaviewer-pref-desc": "Mejora tu experiencia de visualización multimedia con esta herramienta. Las imágenes se muestran en una vista a pantalla completa que incluye información relevante de las mismas.",
 	"multimediaviewer-optin-pref": "Activar el <span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About visor multimedia]</span>",
 	"multimediaviewer-file-page": "Ir a la página del archivo correspondiente",
 	"multimediaviewer-repository-local": "Más detalles",
@@ -75,6 +73,7 @@
 	"multimediaviewer-download-small-button-name": "Descargar tamaño pequeño",
 	"multimediaviewer-download-medium-button-name": "Descargar tamaño mediano",
 	"multimediaviewer-download-large-button-name": "Descargar tamaño grande",
+	"multimediaviewer-download-xl-button-name": "Descargar tamaño extragrande",
 	"multimediaviewer-link-to-page": "Enlace a la página de descripción del archivo",
 	"multimediaviewer-link-to-file": "Enlace al archivo original",
 	"multimediaviewer-share-explanation": "Copiar y compartir el enlace",

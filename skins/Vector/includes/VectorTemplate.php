@@ -475,9 +475,6 @@ class VectorTemplate extends BaseTemplate {
 			$item['class'] = rtrim( 'collapsible ' . $item['class'], ' ' );
 		}
 
-		// We don't use this, prevent it from popping up in HTML output
-		unset( $item['redundant'] );
-
 		return parent::makeListItem( $key, $item, $options );
 	}
 }

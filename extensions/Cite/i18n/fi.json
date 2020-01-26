@@ -14,7 +14,6 @@
 			"Valtlait"
 		]
 	},
-	"apihelp-query+references-example-1": "Sivuun <kbd>Albert Einstein</kbd> liittyvät viitteet.",
 	"cite-desc": "Tarjoaa <code>&lt;ref[ name=id]&gt;</code>- ja <code>&lt;references/&gt;</code>-elementit viittauksien tekemiseen.",
 	"cite_error": "Viittausvirhe: $1",
 	"cite_error_ref_numeric_key": "Kelpaamaton <code>&lt;ref&gt;</code>-elementti: nimi ei voi olla numero – käytä kuvaavampaa nimeä.",

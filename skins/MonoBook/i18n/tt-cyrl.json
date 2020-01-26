@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ильнар"
+			"Ильнар",
+			"Ерней"
 		]
 	},
 	"skinname-monobook": "Китап",
@@ -13,5 +14,5 @@
 	"monobook-more-actions": "Тагын",
 	"monobook-cactions-label": "Биттәге гамәлләр",
 	"monobook-notifications-link": "Хəбəрнамəләр ($1)",
-	"monobook-notifications-link-none": "Хəбəрнамəләр"
+	"monobook-notifications-link-none": "Белдермәләр"
 }

@@ -10,12 +10,13 @@
 			"Михајло Анђелковић",
 			"Сербијана",
 			"BadDog",
-			"Zoranzoki21"
+			"Zoranzoki21",
+			"Vlad5250"
 		]
 	},
 	"renameuser": "Преименуј корисника",
 	"renameuser-linkoncontribs": "преименуј {{GENDER:$1|корисника|корисницу}}",
-	"renameuser-linkoncontribs-text": "Преименујте овог {{GENDER:$1|корисника|корисницу}}",
+	"renameuser-linkoncontribs-text": "Преименујте {{GENDER:$1|овог корисника|ову корисницу}}",
 	"renameuser-desc": "Додаје [[Special:RenameUser|посебну страницу]] за преименовање корисника (потребно право ''renameuser'')",
 	"renameuserold": "Актуелно корисничко име:",
 	"renameusernew": "Ново корисничко име:",

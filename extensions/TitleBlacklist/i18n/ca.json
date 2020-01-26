@@ -21,6 +21,5 @@
 	"titleblacklist-invalid": "{{PLURAL:$1|La línia següent|Les línies següents}} de la llista negra no {{PLURAL:$1|és vàlida|són vàlides}}; heu de corregir-{{PLURAL:$1|la|les}} abans de guardar:",
 	"titleblacklist-override": "Ignora la llista negra",
 	"right-tboverride": "Sobreescriu el títol o el nom d'usuari de la llista negra",
-	"right-tboverride-account": "Ignorar la llista negra de noms d'usuari",
-	"visualeditor-saveerror-titleblacklist": "Error en desar la pàgina: Aquest títol de pàgina es troba en una llista negra"
+	"right-tboverride-account": "Ignorar la llista negra de noms d'usuari"
 }

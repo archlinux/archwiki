@@ -5,8 +5,6 @@
 		]
 	},
 	"multimediaviewer-desc": "Пашырае эскізы ў большы памер на ўвесь экран.",
-	"multimediaviewer-pref": "Праглядальнік медыяфайлаў",
-	"multimediaviewer-pref-desc": "Паляпшае прагляд мультымедыя-файлаў новым інструментам. На старонцы з эскізамі выяў ён пашырае эскізы ў вялікія выявы. Выявы паказваюцца ў больш прыгожым поўнаэкранным інтэрфейсе, а таксама могуць быць адкрыты ў арыгінальным памеры.",
 	"multimediaviewer-optin-pref": "Уключыць <span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About «Праглядальнік медыяфайлаў»]</span>",
 	"multimediaviewer-file-page": "Перайсці на старонку адпаведнага файла",
 	"multimediaviewer-repository-local": "Падрабязней",

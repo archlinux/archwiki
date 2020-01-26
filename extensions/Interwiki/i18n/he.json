@@ -32,13 +32,14 @@
 	"interwiki-cached": "מידע בינוויקי מוטמן. שינוי המטמון אינו אפשרי.",
 	"interwiki_edit": "עריכה",
 	"interwiki_reasonfield": "סיבה:",
-	"interwiki_delquestion": "מחיקת \"$1\"",
 	"interwiki_deleting": "{{GENDER:|אתה מוחק|את מוחקת}} את התחילית \"$1\".",
 	"interwiki_deleted": "התחילית \"$1\" הוסרה מטבלת הבינוויקי.",
 	"interwiki_delfailed": "לא היה אפשר להסיר את התחילית \"$1\" מטבלת הבינוויקי.",
 	"interwiki-logtext": "הצגת היומן",
 	"interwiki_addtext": "הוספת תחילית בינוויקי או שפה",
 	"interwiki-addtext-local": "הוספת תחילית בינוויקי מקומית או קידומת שפה",
+	"interwiki-addtext-nolang": "הוספת תחילת בינוויקי",
+	"interwiki-addtext-local-nolang": "הוספת תחילית בינוויקי מקומית",
 	"interwiki_addintro": "{{GENDER:|אתה מוסיף|את מוסיפה}} תחילית בינוויקי חדשה.\nיש לזכור שהיא לא יכולה לכלול רווחים ( ), נקודותיים (:), אמפרסנד (&) או הסימן שווה (=).",
 	"interwiki_addbutton": "הוספה",
 	"interwiki_added": "התחילית \"$1\" נוספה לטבלת הבינוויקי.",
@@ -48,6 +49,7 @@
 	"interwiki_edited": "התחילית \"$1\" שונתה בטבלת הבינוויקי.",
 	"interwiki_editerror": "לא ניתן לשנות את התחילית \"$1\" בטבלת הבינוויקי.\nייתכן שהיא אינה קיימת.",
 	"interwiki-badprefix": "תחילית הבינוויקי \"$1\" שצוינה מכילה תווים בלתי תקינים",
+	"interwiki-cannotaddlocallanguage": "התחילית \"$1\" מתאימה לקוד שפה ידוע. הוספת תחיליות בין־לשוניות מקומיות כבויה כשנעשה שימוש במסד נתונים בין־לשוני גלובלי.",
 	"interwiki-submit-empty": "התחילית והכתובת אינן יכולות להיות ריקות.",
 	"interwiki-submit-invalidurl": "הפרוטוקול של הכתובת הזאת אינו תקין.",
 	"log-name-interwiki": "יומן טבלת הבינוויקי",
@@ -63,5 +65,7 @@
 	"interwiki-local-description": "קידומות אלה קיימות באופן מקומי. כל כפילויות עם התצורה הגלובלית יעקפו את ההגדרה הגלובלית.",
 	"interwiki-links": "תחיליות בינוויקי",
 	"interwiki-language-links": "תחיליות בין־לשוניות",
-	"interwiki-language-description": "תחיליות אלה מתאימות לקודים של שפה מוגדרת, וישמשו ליצירת רשימת \"{{int:otherlanguages}}\" בעת הוספתן לדף."
+	"interwiki-language-description": "תחיליות אלה מתאימות לקודים של שפה מוגדרת, וישמשו ליצירת רשימת \"{{int:otherlanguages}}\" בעת הוספתן לדף.",
+	"interwiki-global-language-links": "תחילות בין־לשוניות גלובליות",
+	"interwiki-global-language-description": "התחיליות אלו מתאימות לקודי שפה מוגדרים, והם ישמשו ליצירת רשימת \"{{int:otherlanguages}}\" בעד הוספה לדף. היות שהם מגיעים מהגדרות גלובליות, אפשר לערוך אותם רק בוויקי המקורי. לא ניתן לדרוס הגדרות בין־לשוניות גלובליות באופן מקומי."
 }

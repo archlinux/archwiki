@@ -36,7 +36,7 @@ require_once "$IP/maintenance/Maintenance.php";
 class DeleteOldFancyCaptchas extends Maintenance {
 	public function __construct() {
 		parent::__construct();
-		$this->mDescription = "Deletes old fancy captchas from storage";
+		$this->addDescription( "Deletes old fancy captchas from storage" );
 		$this->addOption(
 			"date",
 			'Delete fancy captchas that were created before this date (e.g. 20170101000000)',
@@ -82,8 +82,9 @@ class DeleteOldFancyCaptchas extends Maintenance {
 		if ( $ret->isOK() ) {
 			$this->output( "$count old fancy captchas deleted.\n" );
 		} else {
+			$status = Status::wrap( $ret );
 			$this->output( "Deleting old captchas errored.\n" );
-			$this->output( implode( "\n", $ret->getErrors() ) );
+			$this->output( $status->getWikiText( false, false, 'en' ) );
 		}
 	}
 }

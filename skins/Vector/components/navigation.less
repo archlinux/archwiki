@@ -1,5 +1,5 @@
 @import 'mediawiki.mixins';
-@import 'personalMenu';
+@import 'personalNavigation';
 @import 'search';
 @import 'tabs';
 
@@ -17,11 +17,7 @@
 #mw-page-base {
 	height: 5em;
 	background-position: bottom left;
-	background-repeat: repeat-x;
-	/* This image is only a fallback (for IE 6-9), so we do not @embed it. */
-	background-image: url( images/page-fade.png );
-	.vertical-gradient( @body-background-color, @menu-background-color, 50%, 100% );
-	background-color: @body-background-color;
+	.vertical-gradient( @background-color-base, @background-color-secondary, 50%, 100% );
 }
 
 #mw-head-base {
@@ -72,53 +68,53 @@
 
 /* Panel */
 #mw-panel {
-	font-size: @menu-main-font-size;
 	position: absolute;
 	top: 0;
 	width: 10em;
 	left: 0;
+	font-size: @font-size-nav-main;
 
 	.portal {
 		margin: 0 0.6em 0 0.7em;
 		padding: 0.25em 0;
 		direction: ltr;
-		background-position: top left;
-		background-repeat: no-repeat;
 
 		h3 {
-			font-size: @menu-main-heading-font-size;
-			color: @menu-main-heading-color;
+			color: @color-nav-subtle;
 			font-weight: normal;
-			margin: 0.5em 0 0 (@menu-main-body-margin-left/@menu-main-heading-font-size);
+			margin: 0.5em 0 0 ( @margin-left-nav-main-body / @font-size-nav-main-heading );
 			padding: 0.25em 0;
 			cursor: default;
 			border: 0;
+			font-size: @font-size-nav-main-heading;
 		}
 
 		.body {
-			margin-left: @menu-main-body-margin-left;
+			margin-left: @margin-left-nav-main-body;
 			padding-top: 0;
-			.background-image( 'images/portal-break.png' );
+			background-image: url( images/portal-separator.png ); // Support: IE 8 & 9, Fx 3.6-15, Safari 5.1-6, Chrome 10-25
+			background-image: linear-gradient( to right, transparent 0, #c8ccd1 35%, #c8ccd1 70%, transparent 100% ); // Standard (Firefox 16+, IE 10+, Safari 6.1+, Chrome 26+)
 			background-repeat: no-repeat;
+			background-size: 100% @border-width-base;
 
 			ul {
 				list-style: none none;
 				margin: 0;
-				padding: @menu-main-body-padding;
+				padding-top: 0.3em;
 			}
 
 			li {
-				line-height: 1.125em;
 				margin: 0;
 				padding: 0.25em 0;
-				font-size: @menu-main-body-font-size;
+				font-size: @font-size-nav-main-body;
+				line-height: @line-height-nav;
 				word-wrap: break-word;
 
 				a {
-					color: @menu-main-body-link-color;
+					color: @color-link;
 
 					&:visited {
-						color: @menu-main-body-link-visited-color;
+						color: @color-link--visited;
 					}
 				}
 			}
@@ -136,7 +132,7 @@
 
 		.body {
 			background-image: none;
-			margin-left: @menu-main-body-margin-left;
+			margin-left: @margin-left-nav-main-body;
 		}
 	}
 }

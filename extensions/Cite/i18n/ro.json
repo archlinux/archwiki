@@ -9,9 +9,6 @@
 			"Strainu"
 		]
 	},
-	"apihelp-query+references-description": "Întoarce o reprezentare a referințelor asociate cu paginile date.",
-	"apihelp-query+references-summary": "Întoarce o reprezentare a referințelor asociate cu paginile date.",
-	"apihelp-query+references-example-1": "Referințe asociate cu <kbd>Albert Einstein</kbd>.",
 	"cite-desc": "Adaugă etichete <code>&lt;ref[ name=id]&gt;</code> și <code>&lt;references/&gt;</code>, pentru citări",
 	"cite_error": "Eroare la citare: $1",
 	"cite_error_ref_numeric_key": "Etichetă <code>&lt;ref&gt;</code> invalidă;\nnumele nu poate fi un număr. Folosește un titlu descriptiv",

@@ -12,7 +12,8 @@
 			"Schu",
 			"Shirayuki",
 			"青子守歌",
-			"Otokoume"
+			"Otokoume",
+			"Omotecho"
 		]
 	},
 	"nuke": "一括削除",
@@ -33,7 +34,7 @@
 	"nuke-deleted": "ページ  '''$1''' を削除しました。",
 	"nuke-not-deleted": "ページ [[:$1]] を削除'''できませんでした'''。",
 	"nuke-delete-more": "[[Special:Nuke|他のページも削除]]",
-	"nuke-pattern": "ページ名のパターン:",
+	"nuke-pattern": "ページ名のSQL LIKE パターン (例: %)：",
 	"nuke-nopages-global": "指定したページ名に一致する検索結果はありません。",
 	"nuke-viewchanges": "履歴を表示",
 	"nuke-namespace": "名前空間:",

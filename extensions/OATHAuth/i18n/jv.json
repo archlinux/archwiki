@@ -27,14 +27,5 @@
 	"oathauth-describe-provider": "Otèntifikasi rong faktor (OATH).",
 	"grant-group-authentication": "Ayahi tumindak otèntifikasi kanggo panjenengan dhéwé lan liyan",
 	"grant-oath": "Aksès informasi otèntifikasi rong faktor (OATH) kanggo panjenengan dhéwé lan liyan",
-	"action-oathauth-api-all": "priksa status OATH",
-	"apihelp-query+oath-description": "Priksa yèn otèntifikasi rong faktor (OATH) wis murub tumrap panganggo.",
-	"apihelp-query+oath-param-user": "Panganggo sing informasiné arep digolèki. Modhe gawan ya iku marang panganggo saiki.",
-	"apihelp-query+oath-example-1": "Golèk informasi ngenani panganggo saiki",
-	"apihelp-query+oath-example-2": "Golèk informasi ngenani panganggo <kbd>Conto</kbd>",
-	"apihelp-oathvalidate-description": "Validhasi token otèntifikasi rong faktor (OATH).",
-	"apihelp-oathvalidate-param-user": "Panganggo sing tokené arep divalidhasi. Modhe gawan ya iku marang panganggo saiki.",
-	"apihelp-oathvalidate-param-totp": "Token otèntifikasi rong faktor (OATH).",
-	"apihelp-oathvalidate-example-1": "Validhasi token kanggo panganggo saiki",
-	"apihelp-oathvalidate-example-2": "Validhasi token kanggo panganggo <kbd>Conto</kbd>"
+	"action-oathauth-api-all": "priksa status OATH"
 }

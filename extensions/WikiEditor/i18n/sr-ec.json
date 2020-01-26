@@ -140,6 +140,7 @@
 	"wikieditor-toolbar-tool-replace-success": "{{PLURAL:$1|Направљена $1 замена|Направљене $1 замене|Направљено $1 замена}}.",
 	"wikieditor-toolbar-tool-replace-emptysearch": "Нисте унели ништа за претрагу.",
 	"wikieditor-toolbar-tool-replace-invalidregex": "Регуларни израз који сте унели није важећи: $1",
+	"wikieditor-toolbar-tool-replace-word": "Поклапање са целом речи",
 	"wikieditor-toolbar-section-characters": "Посебни знакови",
 	"wikieditor-toolbar-section-help": "Помоћ",
 	"wikieditor-toolbar-help-heading-description": "Опис",

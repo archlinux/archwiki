@@ -7,6 +7,8 @@
  * @file
  */
 
+use MediaWiki\MediaWikiServices;
+
 /**
  * @ingroup Extensions
  */
@@ -15,10 +17,10 @@
  * Implements a title blacklist for MediaWiki
  */
 class TitleBlacklist {
-	/** @var array */
+	/** @var TitleBlacklistEntry[] */
 	private $mBlacklist = null;
 
-	/** @var array */
+	/** @var TitleBlacklistEntry[] */
 	private $mWhitelist = null;
 
 	/** @var TitleBlacklist */
@@ -61,7 +63,7 @@ class TitleBlacklist {
 	public function load() {
 		global $wgTitleBlacklistSources, $wgTitleBlacklistCaching;
 
-		$cache = ObjectCache::getMainWANInstance();
+		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
 		// Try to find something in the cache
 		$cachedBlacklist = $cache->get( $cache->makeKey( 'title_blacklist_entries' ) );
 		if ( is_array( $cachedBlacklist ) && count( $cachedBlacklist ) > 0
@@ -77,7 +79,7 @@ class TitleBlacklist {
 		foreach ( $sources as $sourceName => $source ) {
 			$this->mBlacklist = array_merge(
 				$this->mBlacklist,
-				$this->parseBlacklist( $this->getBlacklistText( $source ), $sourceName )
+				self::parseBlacklist( self::getBlacklistText( $source ), $sourceName )
 			);
 		}
 		$cache->set( $cache->makeKey( 'title_blacklist_entries' ),
@@ -92,7 +94,7 @@ class TitleBlacklist {
 	public function loadWhitelist() {
 		global $wgTitleBlacklistCaching;
 
-		$cache = ObjectCache::getMainWANInstance();
+		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
 		$cachedWhitelist = $cache->get( $cache->makeKey( 'title_whitelist_entries' ) );
 		if ( is_array( $cachedWhitelist ) && count( $cachedWhitelist ) > 0
 			&& ( $cachedWhitelist[0]->getFormatVersion() != self::VERSION )
@@ -100,7 +102,7 @@ class TitleBlacklist {
 			$this->mWhitelist = $cachedWhitelist;
 			return;
 		}
-		$this->mWhitelist = $this->parseBlacklist( wfMessage( 'titlewhitelist' )
+		$this->mWhitelist = self::parseBlacklist( wfMessage( 'titlewhitelist' )
 				->inContentLanguage()->text(), 'whitelist' );
 		$cache->set( $cache->makeKey( 'title_whitelist_entries' ),
 			$this->mWhitelist, $wgTitleBlacklistCaching['expiry'] );
@@ -155,15 +157,15 @@ class TitleBlacklist {
 	 *
 	 * @param string $list Text of a blacklist source
 	 * @param string $sourceName
-	 * @return array of TitleBlacklistEntry entries
+	 * @return TitleBlacklistEntry[]
 	 */
 	public static function parseBlacklist( $list, $sourceName ) {
 		$lines = preg_split( "/\r?\n/", $list );
 		$result = [];
 		foreach ( $lines as $line ) {
-			$line = TitleBlacklistEntry::newFromString( $line, $sourceName );
-			if ( $line ) {
-				$result[] = $line;
+			$entry = TitleBlacklistEntry::newFromString( $line, $sourceName );
+			if ( $entry ) {
+				$result[] = $entry;
 			}
 		}
 
@@ -269,7 +271,7 @@ class TitleBlacklist {
 	/**
 	 * Get the current whitelist
 	 *
-	 * @return Array of TitleBlacklistEntry items
+	 * @return TitleBlacklistEntry[]
 	 */
 	public function getWhitelist() {
 		if ( is_null( $this->mWhitelist ) ) {
@@ -307,7 +309,7 @@ class TitleBlacklist {
 	 * Invalidate the blacklist cache
 	 */
 	public function invalidate() {
-		$cache = ObjectCache::getMainWANInstance();
+		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
 		$cache->delete( $cache->makeKey( 'title_blacklist_entries' ) );
 	}
 
@@ -315,10 +317,10 @@ class TitleBlacklist {
 	 * Validate a new blacklist
 	 *
 	 * @suppress PhanParamSuspiciousOrder The preg_match() params are in the correct order
-	 * @param array $blacklist
-	 * @return Array of bad entries; empty array means blacklist is valid
+	 * @param TitleBlacklistEntry[] $blacklist
+	 * @return string[] List of invalid entries; empty array means blacklist is valid
 	 */
-	public function validate( $blacklist ) {
+	public function validate( array $blacklist ) {
 		$badEntries = [];
 		foreach ( $blacklist as $e ) {
 			Wikimedia\suppressWarnings();

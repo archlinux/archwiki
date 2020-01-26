@@ -15,6 +15,7 @@ use RemexHtml\TreeBuilder\Element;
  */
 class DOMSerializer implements AbstractSerializer {
 	private $formatter;
+	private $builder;
 
 	/**
 	 * @param DOMBuilder $builder

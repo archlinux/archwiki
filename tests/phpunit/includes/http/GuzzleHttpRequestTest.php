@@ -110,7 +110,7 @@ class GuzzleHttpRequestTest extends MediaWikiTestCase {
 		$s = $r->execute();
 		$errorMsg = $s->getErrorsByType( 'error' )[0]['message'];
 
-		$this->assertEquals( 0, $r->getStatus() );
+		$this->assertSame( 0, $r->getStatus() );
 		$this->assertEquals( 'http-invalid-url', $errorMsg );
 	}
 
@@ -122,7 +122,7 @@ class GuzzleHttpRequestTest extends MediaWikiTestCase {
 		$s = $r->execute();
 		$errorMsg = $s->getErrorsByType( 'error' )[0]['message'];
 
-		$this->assertEquals( 0, $r->getStatus() );
+		$this->assertSame( 0, $r->getStatus() );
 		$this->assertEquals( 'http-request-error', $errorMsg );
 	}
 
@@ -134,7 +134,7 @@ class GuzzleHttpRequestTest extends MediaWikiTestCase {
 		$s = $r->execute();
 		$errorMsg = $s->getErrorsByType( 'error' )[0]['message'];
 
-		$this->assertEquals( 0, $r->getStatus() );
+		$this->assertSame( 0, $r->getStatus() );
 		$this->assertEquals( 'http-timed-out', $errorMsg );
 	}
 

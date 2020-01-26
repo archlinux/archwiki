@@ -6,12 +6,11 @@
 			"Elisardojm",
 			"Macofe",
 			"Banjo",
-			"Navhy"
+			"Navhy",
+			"Iváns"
 		]
 	},
 	"multimediaviewer-desc": "Expande as miniaturas ata un tamaño maior dentro dunha interface a pantalla completa.",
-	"multimediaviewer-pref": "Visor de ficheiros multimedia",
-	"multimediaviewer-pref-desc": "Mellore a súa experiencia de visualización de ficheiros multimedia con esta nova ferramenta. Amosa as imaxes nun tamaño maior nas páxinas que teñen miniaturas. As imaxes amósanse nun visor a pantalla completa agradable e as imaxes tamén se poden ver a tamaño completo.",
 	"multimediaviewer-optin-pref": "Activar o <span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About visor de ficheiros multimedia]</span>",
 	"multimediaviewer-file-page": "Ir á páxina de ficheiro correspondente",
 	"multimediaviewer-repository-local": "Máis detalles",

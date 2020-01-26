@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Meno25"
+		]
+	},
+	"apihelp-query+references-description": "يرجع تمثيل لبيانات المراجع المرتبطة مع الصفحات المعطاة.",
+	"apihelp-query+references-summary": "يرجع تمثيل بيانات للمراجع المصاحبة للصفحات المعطاة.",
+	"apihelp-query+references-example-1": "المراجع المرتبطة ب<kbd>Albert Einstein</kbd>.",
+	"apierror-citestoragedisabled": "تخزين مراجع امتداد Cite غير مفعل."
+}

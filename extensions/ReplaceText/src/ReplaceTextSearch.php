@@ -18,7 +18,7 @@
  * @file
  */
 
-use Wikimedia\Rdbms\Database;
+use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
 
 class ReplaceTextSearch {
@@ -35,7 +35,7 @@ class ReplaceTextSearch {
 		$search, $namespaces, $category, $prefix, $use_regex = false
 	) {
 		$dbr = wfGetDB( DB_REPLICA );
-		$tables = [ 'page', 'revision', 'text' ];
+		$tables = [ 'page', 'revision', 'text', 'slots', 'content' ];
 		$vars = [ 'page_id', 'page_namespace', 'page_title', 'old_text' ];
 		if ( $use_regex ) {
 			$comparisonCond = self::regexCond( $dbr, 'old_text', $search );
@@ -47,7 +47,9 @@ class ReplaceTextSearch {
 			$comparisonCond,
 			'page_namespace' => $namespaces,
 			'rev_id = page_latest',
-			'rev_text_id = old_id'
+			'rev_id = slot_revision_id',
+			'slot_content_id = content_id',
+			'SUBSTRING(content_address, 4) = old_id'
 		];
 
 		self::categoryCondition( $category, $tables, $conds );
@@ -95,7 +97,7 @@ class ReplaceTextSearch {
 	}
 
 	/**
-	 * @param Database $dbr
+	 * @param IDatabase $dbr
 	 * @param string $column
 	 * @param string $regex
 	 * @return string query condition for regex

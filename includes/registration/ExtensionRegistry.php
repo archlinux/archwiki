@@ -1,6 +1,7 @@
 <?php
 
 use Composer\Semver\Semver;
+use Wikimedia\AtEase\AtEase;
 use Wikimedia\ScopedCallback;
 use MediaWiki\Shell\Shell;
 use MediaWiki\ShellDisabledError;
@@ -87,6 +88,13 @@ class ExtensionRegistry {
 	protected $testAttributes = [];
 
 	/**
+	 * Whether to check dev-requires
+	 *
+	 * @var bool
+	 */
+	protected $checkDev = false;
+
+	/**
 	 * @var ExtensionRegistry
 	 */
 	private static $instance;
@@ -104,6 +112,14 @@ class ExtensionRegistry {
 	}
 
 	/**
+	 * @since 1.34
+	 * @param bool $check
+	 */
+	public function setCheckDevRequires( $check ) {
+		$this->checkDev = $check;
+	}
+
+	/**
 	 * @param string $path Absolute path to the JSON file
 	 */
 	public function queue( $path ) {
@@ -111,15 +127,13 @@ class ExtensionRegistry {
 
 		$mtime = $wgExtensionInfoMTime;
 		if ( $mtime === false ) {
-			if ( file_exists( $path ) ) {
-				$mtime = filemtime( $path );
-			} else {
-				throw new Exception( "$path does not exist!" );
-			}
+			AtEase::suppressWarnings();
+			$mtime = filemtime( $path );
+			AtEase::restoreWarnings();
 			// @codeCoverageIgnoreStart
 			if ( $mtime === false ) {
 				$err = error_get_last();
-				throw new Exception( "Couldn't stat $path: {$err['message']}" );
+				throw new Exception( "Unable to open file $path: {$err['message']}" );
 				// @codeCoverageIgnoreEnd
 			}
 		}
@@ -131,7 +145,7 @@ class ExtensionRegistry {
 	 *  be loaded then).
 	 */
 	public function loadFromQueue() {
-		global $wgVersion, $wgDevelopmentWarnings;
+		global $wgVersion, $wgDevelopmentWarnings, $wgObjectCaches;
 		if ( !$this->queued ) {
 			return;
 		}
@@ -148,15 +162,15 @@ class ExtensionRegistry {
 			'registration' => self::CACHE_VERSION,
 			'mediawiki' => $wgVersion,
 			'abilities' => $this->getAbilities(),
+			'checkDev' => $this->checkDev,
 		];
 
 		// We use a try/catch because we don't want to fail here
 		// if $wgObjectCaches is not configured properly for APC setup
 		try {
-			// Don't use MediaWikiServices here to prevent instantiating it before extensions have
-			// been loaded
+			// Avoid MediaWikiServices to prevent instantiating it before extensions have loaded
 			$cacheId = ObjectCache::detectLocalServerCache();
-			$cache = ObjectCache::newFromId( $cacheId );
+			$cache = ObjectCache::newFromParams( $wgObjectCaches[$cacheId] );
 		} catch ( InvalidArgumentException $e ) {
 			$cache = new EmptyBagOStuff();
 		}
@@ -284,18 +298,15 @@ class ExtensionRegistry {
 			}
 
 			$dir = dirname( $path );
-			if ( isset( $info['AutoloadClasses'] ) ) {
-				$autoload = $this->processAutoLoader( $dir, $info['AutoloadClasses'] );
-				$GLOBALS['wgAutoloadClasses'] += $autoload;
-				$autoloadClasses += $autoload;
-			}
-			if ( isset( $info['AutoloadNamespaces'] ) ) {
-				$autoloadNamespaces += $this->processAutoLoader( $dir, $info['AutoloadNamespaces'] );
-				AutoLoader::$psr4Namespaces += $autoloadNamespaces;
-			}
+			self::exportAutoloadClassesAndNamespaces(
+				$dir,
+				$info,
+				$autoloadClasses,
+				$autoloadNamespaces
+			);
 
 			// get all requirements/dependencies for this extension
-			$requires = $processor->getRequirements( $info );
+			$requires = $processor->getRequirements( $info, $this->checkDev );
 
 			// validate the information needed and add the requirements
 			if ( is_array( $requires ) && $requires && isset( $info['name'] ) ) {
@@ -329,6 +340,28 @@ class ExtensionRegistry {
 		$data['autoloaderPaths'] = $autoloaderPaths;
 		$data['autoloaderNS'] = $autoloadNamespaces;
 		return $data;
+	}
+
+	/**
+	 * Export autoload classes and namespaces for a given directory and parsed JSON info file.
+	 *
+	 * @param string $dir
+	 * @param array $info
+	 * @param array &$autoloadClasses
+	 * @param array &$autoloadNamespaces
+	 */
+	public static function exportAutoloadClassesAndNamespaces(
+		$dir, $info, &$autoloadClasses = [], &$autoloadNamespaces = []
+	) {
+		if ( isset( $info['AutoloadClasses'] ) ) {
+			$autoload = self::processAutoLoader( $dir, $info['AutoloadClasses'] );
+			$GLOBALS['wgAutoloadClasses'] += $autoload;
+			$autoloadClasses += $autoload;
+		}
+		if ( isset( $info['AutoloadNamespaces'] ) ) {
+			$autoloadNamespaces += self::processAutoLoader( $dir, $info['AutoloadNamespaces'] );
+			AutoLoader::$psr4Namespaces += $autoloadNamespaces;
+		}
 	}
 
 	protected function exportExtractedData( array $info ) {
@@ -413,10 +446,12 @@ class ExtensionRegistry {
 	 *
 	 * If some extensions are already queued, this will load
 	 * those as well.
-	 *
+	 * TODO: Remove in MediaWiki 1.35
+	 * @deprecated since 1.34, use ExtensionRegistry->queue() instead
 	 * @param string $path Absolute path to the JSON file
 	 */
 	public function load( $path ) {
+		wfDeprecated( __METHOD__, '1.34' );
 		$this->loadFromQueue(); // First clear the queue
 		$this->queue( $path );
 		$this->loadFromQueue();
@@ -493,7 +528,7 @@ class ExtensionRegistry {
 	 * @param array $files
 	 * @return array
 	 */
-	protected function processAutoLoader( $dir, array $files ) {
+	protected static function processAutoLoader( $dir, array $files ) {
 		// Make paths absolute, relative to the JSON file
 		foreach ( $files as &$file ) {
 			$file = "$dir/$file";

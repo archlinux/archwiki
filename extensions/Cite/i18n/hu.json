@@ -8,10 +8,6 @@
 			"Nyuszika7H"
 		]
 	},
-	"apihelp-query+references-description": "A megadott lapokhoz kapcsolódó lábjegyzetek adatreprezentációjának lekérése.",
-	"apihelp-query+references-summary": "A megadott lapokhoz kapcsolódó lábjegyzetek adatreprezentációjának lekérése.",
-	"apihelp-query+references-example-1": "Az <kbd>Albert Einstein</kbd> szócikkhez kapcsolódó lábjegyzetek.",
-	"apierror-citestoragedisabled": "A Cite kiterjesztés lábjegyzettárolása nincs engedélyezve.",
 	"cite-desc": "Lehetővé teszi idézések létrehozását <code>&lt;ref[ name=id]&gt;</code> és <code>&lt;references/&gt;</code> tagek segítségével",
 	"cite_error": "Forráshivatkozás-hiba: $1",
 	"cite_error_ref_invalid_dir": "Érvénytelen <code>&lt;ref&gt;</code> címke; a(z) „$1” <var>dir</var> attribútum ismeretlen, értéke csak <samp>ltr</samp> vagy <samp>rtl</samp> lehet",

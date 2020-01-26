@@ -8,6 +8,8 @@
 		]
 	},
 	"wikieditor-toolbar": "Bewurkingsbalke",
+	"wikieditor-toolbar-preference": "De bewurkingsarkbalke ynskeakelje",
+	"wikieditor-toolbar-preference-help": "Dit wurdt bytiden de 'wikitekstbewurker 2010' neamd.",
 	"wikieditor-toolbar-tool-bold": "Fet",
 	"wikieditor-toolbar-tool-italic": "Kursyf",
 	"wikieditor-toolbar-tool-link-title": "Keppeling ynfoegje",
@@ -35,6 +37,7 @@
 	"wikieditor-toolbar-tool-heading-example": "Koptekst",
 	"wikieditor-toolbar-tool-ulist": "List sûnder nûmers",
 	"wikieditor-toolbar-tool-olist": "List mei nûmers",
+	"wikieditor-toolbar-tool-redirect-example": "Namme doelside",
 	"wikieditor-toolbar-tool-small": "Lyts",
 	"wikieditor-toolbar-group-insert": "Ynfoegje",
 	"wikieditor-toolbar-tool-table-title": "Tabel ynfoegje",

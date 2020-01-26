@@ -5,7 +5,8 @@
 			"Toliño",
 			"Xosé",
 			"Elisardojm",
-			"Navhy"
+			"Navhy",
+			"Iváns"
 		]
 	},
 	"categorytree": "Árbore de categorías",
@@ -35,10 +36,5 @@
 	"categorytree-no-pages": "non hai páxinas nin subcategorías",
 	"categorytree-not-found": "Non se atopou a categoría \"<i>$1</i>\"",
 	"categorytree-error": "Problema coa carga de datos.",
-	"categorytree-retry": "Agarde un momento e inténteo de novo.",
-	"apihelp-categorytree-description": "Módulo interno para a extensión CategoryTree.",
-	"apihelp-categorytree-summary": "Módulo interno para a extensión CategoryTree.",
-	"apihelp-categorytree-param-category": "Título no espazo de nomes das categorías; en caso de indicarse, o prefixo será ignorado.",
-	"apihelp-categorytree-param-options": "Opción para o construtor CategoryTree como un obxecto JSON. A opción <var>depth</var> vale <kbd>1</kbd> por defecto.",
-	"apierror-categorytree-invalidjson": "As opcións deben ser un obxecto JSON válido."
+	"categorytree-retry": "Agarde un momento e inténteo de novo."
 }

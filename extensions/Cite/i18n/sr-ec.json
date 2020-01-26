@@ -12,8 +12,6 @@
 			"BadDog"
 		]
 	},
-	"apihelp-query+references-example-1": "Референца је повезана с <kbd>Albert Einstein</kbd>.",
-	"apierror-citestoragedisabled": "Складиште за референце додатка Cite није омогућено.",
 	"cite-desc": "Додаје ознаке за цитирање <code>&lt;ref[ name=id]&gt;</code> и <code>&lt;references/&gt;</code>.",
 	"cite_error": "Грешка код цитирања: $1",
 	"cite_error_ref_numeric_key": "Невалидан таг <code>&lt;ref&gt;</code>;\nиме не може да буде једноставан цели број. Користите описни наслов.",

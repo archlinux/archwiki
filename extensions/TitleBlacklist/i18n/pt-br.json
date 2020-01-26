@@ -7,9 +7,12 @@
 			"Luckas",
 			"555",
 			"Felipe L. Ewald",
-			"TheGabrielZaum"
+			"TheGabrielZaum",
+			"Eduardo Addad de Oliveira"
 		]
 	},
+	"action-tboverride": "substituir a lista negra de título ou nome de usuário",
+	"action-tboverride-account": "contornar a lista negra de nomes de usuários",
 	"action-titleblacklistlog": "ver os registros da lista negra de título",
 	"log-name-titleblacklist": "Título do registro da lista negra",
 	"log-description-titleblacklist": "Esses eventos rastreiam hits no título da lista negra.",
@@ -22,11 +25,10 @@
 	"titleblacklist-forbidden-upload": "O arquivo nomeado como \"$2\" foi impedido de ser criado.\nEle se encaixa na seguinte entrada da lista negra: <code>$1</code>",
 	"titleblacklist-forbidden-new-account": "O nome de usuário \"$2\" foi banido de ser registrado.\nO nome corresponde na seguinte entrada da lista negra: <code>$1</code>",
 	"titleblacklist-invalid": "{{PLURAL:$1|A seguinte linha|As seguintes linhas}} da lista negra {{PLURAL:$1|é inválida|são inválidas}}. \n{{PLURAL:$1|Corrija-a|Corrija-as}} antes de salvar:",
-	"titleblacklist-override": "Ignorar a lista negra",
+	"titleblacklist-override": "Over-ride a lista negra do título, se corresponde",
 	"titleblacklist-override-help": "Usuários com privilégios suficientes podem configurar isso para ignorar as verificações da lista negra do título.",
 	"titleblacklist-warning": "<strong>Aviso: Esta página só pode ser editada por administradores e outros usuários com o direito <code>tboverride</code> porque corresponde ao seguinte título na lista negra:</strong><br /><code>$1</code>",
 	"right-tboverride": "Contornar a lista negra de títulos e nomes de usuário",
 	"right-tboverride-account": "Contornar a lista negra de nomes de usuários",
-	"right-titleblacklistlog": "Ver o registro da lista negra de títulos",
-	"visualeditor-saveerror-titleblacklist": "Erro ao salvar página: O título desta página está na lista negra"
+	"right-titleblacklistlog": "Ver o registro da lista negra de títulos"
 }

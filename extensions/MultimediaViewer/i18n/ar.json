@@ -9,12 +9,11 @@
 			"محمد أحمد عبد الفتاح",
 			"Maroen1990",
 			"ديفيد",
-			"Meno25"
+			"Meno25",
+			"Kassem7899"
 		]
 	},
 	"multimediaviewer-desc": "زيادة حجم الصور المصغرة في واجهة ملء الشاشة.",
-	"multimediaviewer-pref": "عارض الوسائط",
-	"multimediaviewer-pref-desc": "حسن تجربة مشاهدة الوسائط المتعددة بهذه الأداة الجديدة، حيث تعمل على عرض الصور بحجم أكبر على الصفحات التي تحتوي صورا مصغرة. وتظهر الصور في صندوق منبثق أجمل، ويمكن أيضا عرضها بالحجم الكامل.",
 	"multimediaviewer-optin-pref": "تمكين <span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About عارض الوسائط]</span>",
 	"multimediaviewer-file-page": "الذهاب إلى الصفحة التابعة للملف",
 	"multimediaviewer-repository-local": "مزيد من التفاصيل",
@@ -76,6 +75,7 @@
 	"multimediaviewer-download-small-button-name": "نزّل بحجم صغير",
 	"multimediaviewer-download-medium-button-name": "نزّل بحجم متوسط",
 	"multimediaviewer-download-large-button-name": "نزّل بحجم كبير",
+	"multimediaviewer-download-xl-button-name": "حمل بالحجم الكبير جداً",
 	"multimediaviewer-link-to-page": "وصلة لصفحة وصف الملف",
 	"multimediaviewer-link-to-file": "وصلة للملف الأصلي",
 	"multimediaviewer-share-explanation": "انسخ الرابط وانشره",
@@ -92,6 +92,7 @@
 	"multimediaviewer-embed-via": "المصدر: $1",
 	"multimediaviewer-default-embed-dimensions": "الحجم الافتراضي للصورة المصغرة",
 	"multimediaviewer-original-embed-dimensions": "الملف الأصلي $1",
+	"multimediaviewer-xl-embed-dimensions": "$1 كبير جداً",
 	"multimediaviewer-large-embed-dimensions": "كبير $1",
 	"multimediaviewer-medium-embed-dimensions": "متوسط $1",
 	"multimediaviewer-small-embed-dimensions": "صغير $1",

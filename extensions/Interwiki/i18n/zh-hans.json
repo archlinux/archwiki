@@ -20,7 +20,7 @@
 		]
 	},
 	"interwiki": "查看和编辑跨wiki数据",
-	"interwiki-title-norights": "查看跨wiki数据",
+	"interwiki-title-norights": "查看跨维基数据",
 	"interwiki-desc": "新增[[Special:Interwiki|特殊页面]]以查看和编辑跨wiki表",
 	"interwiki_intro": "这是跨wiki表的概览，它定义了链接到不同wiki甚至其他外部网站的前缀快捷方式。对于使用建议，请参见[//www.mediawiki.org/wiki/Extension:Interwiki MediaWiki.org上的手册]。",
 	"interwiki-legend-label": "图例",
@@ -44,7 +44,6 @@
 	"interwiki-cached": "跨维基数据是缓存的。缓存不能被修改。",
 	"interwiki_edit": "编辑",
 	"interwiki_reasonfield": "原因：",
-	"interwiki_delquestion": "正在删除“$1”",
 	"interwiki_deleting": "您正在删除前缀“$1”。",
 	"interwiki_deleted": "已从跨wiki表中删除前缀“$1”。",
 	"interwiki_delfailed": "无法从跨wiki表删除前缀“$1”。",

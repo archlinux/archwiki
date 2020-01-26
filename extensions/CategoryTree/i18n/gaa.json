@@ -1,10 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Mybluberet"
+			"Mybluberet",
+			"Amire80",
+			"Owula kpakpo"
 		]
 	},
-	"categorytree-expand": "Gblamɔ mli",
+	"categorytree-expand": "gbelemɔ mli",
 	"categorytree-num-categories": "$1 C",
 	"categorytree-num-pages": "$1 P",
 	"categorytree-num-files": "$1 F"

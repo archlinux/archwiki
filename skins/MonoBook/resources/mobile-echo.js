@@ -1,21 +1,27 @@
 /* eslint-disable no-jquery/no-global-selector */
 $( function () {
-	var mobileCutoffWidth = 550,
-		notificationIcons = $( '#pt-notifications-alert, #pt-notifications-notice' ),
+	var mobileMediaQuery = window.matchMedia( 'screen and (max-width: 550px)' ),
 		echoHacked = false,
 		echoHackActive = false,
 		notifications = $( '#pt-notifications-alert a' ).data( 'counter-num' ) + $( '#pt-notifications-notice a' ).data( 'counter-num' ),
 		notificationsString;
 
+	// When the icons are clicked for the first time, they are replaced with a JS interface,
+	// so don't cache this in a long-lived variable
+	function getNotificationIcons() {
+		return $( '#pt-notifications-alert, #pt-notifications-notice' );
+	}
+
 	// Move echo badges in/out of p-personal
 	function monoBookMobileMoveEchoIcons() {
-		if ( notificationIcons.length ) {
-			if ( !echoHackActive && $( window ).width() <= mobileCutoffWidth ) {
-				$( '#echo-hack-badges' ).append( notificationIcons );
+		var $notificationIcons = getNotificationIcons();
+		if ( $notificationIcons.length ) {
+			if ( !echoHackActive && mobileMediaQuery.matches ) {
+				$( '#echo-hack-badges' ).append( $notificationIcons );
 
 				echoHackActive = true;
-			} else if ( echoHackActive && $( window ).width() > mobileCutoffWidth ) {
-				$( notificationIcons ).insertBefore( '#pt-mytalk' );
+			} else if ( echoHackActive && !mobileMediaQuery.matches ) {
+				$( $notificationIcons ).insertBefore( '#pt-mytalk' );
 
 				echoHackActive = false;
 			}
@@ -23,8 +29,9 @@ $( function () {
 	}
 
 	function monoBookMobileEchoHack() {
-		if ( notificationIcons.length ) {
-			if ( !echoHacked && $( window ).width() <= mobileCutoffWidth ) {
+		var $notificationIcons = getNotificationIcons();
+		if ( $notificationIcons.length ) {
+			if ( !echoHacked && mobileMediaQuery.matches ) {
 				if ( notifications ) {
 					notificationsString = mw.msg( 'monobook-notifications-link', notifications );
 				} else {

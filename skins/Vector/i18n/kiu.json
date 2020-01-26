@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Mirzali",
-			"Kumkumuk"
+			"Kumkumuk",
+			"1917 Ekim Devrimi"
 		]
 	},
 	"vector-skin-desc": "Asayışo de newe be versiyonê MonoBookiyo modern ra û weşkerdışê ke şenê bıgureniyê",
@@ -17,5 +18,7 @@
 	"vector-view-history": "Tarixi bıvêne",
 	"vector-view-view": "Bıwane",
 	"vector-view-viewsource": "Çımey bıvêne",
+	"vector-jumptonavigation": "Xıl de be pusula",
+	"vector-jumptosearch": "Xıl de cıgeyrayışi",
 	"vector-more-actions": "Zêde"
 }
