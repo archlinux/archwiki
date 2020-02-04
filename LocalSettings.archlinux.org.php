@@ -283,14 +283,17 @@ $wgAutoConfirmAge = 86400*3; // three days
 $wgAutoConfirmCount = 20;
 
 # Enforce basic editing etiquette (FS#46190)
-# We set the defaults for "minordefault" (disabled) and "forceeditsummary"
-# (enabled) options and hide them from the user preferences dialog. Note that
-# hiding the user preferences with $wgHiddenPrefs results in everybody using
-# the defaults, regardless of the users' earlier preference.
+# We set the defaults for "minordefault" (disabled), "forceeditsummary"
+# (enabled) and "showrollbackconfirmation" (enabled) options and hide them
+# from the user preferences dialog. Note that hiding the user preferences with
+# $wgHiddenPrefs results in everybody using the defaults, regardless of the
+# users' earlier preference.
 $wgDefaultUserOptions["minordefault"] = 0;
 $wgDefaultUserOptions["forceeditsummary"] = 1;
+$wgDefaultUserOptions["showrollbackconfirmation"] = 1;
 $wgHiddenPrefs[] = "minordefault";
 $wgHiddenPrefs[] = "forceeditsummary";
+$wgHiddenPrefs[] = "showrollbackconfirmation";
 
 
 ##
