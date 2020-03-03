@@ -215,6 +215,7 @@ $wgGroupPermissions['translator'] = array();
 $wgGroupPermissions['archdev'] = array();
 $wgGroupPermissions['archtu'] = array();
 $wgGroupPermissions['archstaff'] = array();
+$wgGroupPermissions['administrator_fellow'] = array();
 
 
 ##
