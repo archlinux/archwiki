@@ -234,6 +234,7 @@ $wgGroupPermissions['*']['edit'] = false;
 
 # extra rights for sysop
 $wgGroupPermissions['sysop']['deleterevision']  = true;
+$wgGroupPermissions['sysop']['deletelogentry']  = true;
 if ( isset( $wgGroupPermissions['interface-admin'] ) ) {
     $wgGroupPermissions['sysop'] += $wgGroupPermissions['interface-admin'];
 }
@@ -377,6 +378,17 @@ $wgSpecialPageLockdown['Recentchangeslinked'] = [ 'user' ];
 $wgSpecialPageLockdown['Log'] = [ 'user' ];
 $wgSpecialPageLockdown['Diff'] = [ 'user' ];
 $wgActionLockdown['history'] = ['user'];
+
+
+# Renameuser extension
+wfLoadExtension( 'Renameuser' );
+$wgGroupPermissions['sysop']['renameuser'] = true;
+
+# UserMerge extension
+wfLoadExtension( 'UserMerge' );
+$wgGroupPermissions['sysop']['usermerge'] = true;
+# Allow merging users with "Anonymous" (user_id 0)
+$wgReservedUsernames[] = 'Anonymous';
 
 ##
 ## Temporary settings for maintenance

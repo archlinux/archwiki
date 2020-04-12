@@ -18,3 +18,7 @@
 	path = extensions/Lockdown
 	url = https://github.com/wikimedia/mediawiki-extensions-Lockdown.git
 	branch = REL1_34
+[submodule "extensions/UserMerge"]
+	path = extensions/UserMerge
+	url = https://github.com/wikimedia/mediawiki-extensions-UserMerge.git
+	branch = REL1_34
