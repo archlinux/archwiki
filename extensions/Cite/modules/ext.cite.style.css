@@ -64,7 +64,9 @@ span.mw-reflink-text {
 
 /* Style for linkbacks from <references> to <ref>s */
 ol.mw-references {
-	counter-reset: mw-ref-linkback;
+	/* Resetting *any* counter on an <ol> element messes the build-in numbering in Firefox up.
+	   Explicitely resetting the build-in "list-item" counter fixes this. */
+	counter-reset: mw-ref-linkback list-item;
 }
 
 ol.mw-references li {

@@ -85,6 +85,7 @@ class OATHManage extends SpecialPage {
 	 */
 	public function execute( $subPage ) {
 		$this->getOutput()->enableOOUI();
+		$this->getOutput()->disallowUserJs();
 		$this->setAction();
 		$this->setModule();
 

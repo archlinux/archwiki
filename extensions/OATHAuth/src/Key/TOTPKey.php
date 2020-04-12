@@ -109,7 +109,7 @@ class TOTPKey implements IAuthKey {
 			'period' => 30,
 			'algorithm' => 'SHA1',
 		];
-		$this->scratchTokens = $scratchTokens;
+		$this->scratchTokens = array_values( $scratchTokens );
 	}
 
 	/**
@@ -186,7 +186,7 @@ class TOTPKey implements IAuthKey {
 				for ( $i = 0; $i < $length; $i++ ) {
 					if ( $token === $this->scratchTokens[$i] ) {
 						// If there is a scratch token, remove it from the scratch token list
-						unset( $this->scratchTokens[$i] );
+						array_splice( $this->scratchTokens, $i, 1 );
 
 						$logger->info( 'OATHAuth user {user} used a scratch token from {clientip}', [
 							'user' => $user->getAccount(),
