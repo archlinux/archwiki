@@ -76,9 +76,6 @@ $wgGitRepositoryViewers['.+projects\.archlinux\.org/vhosts/wiki\.archlinux\.org\
 $wgJobRunRate = 0;
 $wgRunJobsAsync = 1;
 
-# Enable subpages in the main namespace (FS#39668)
-$wgNamespacesWithSubpages[NS_MAIN] = true;
-
 # Enable support for userscripts and user-stylesheets (FS#46699)
 $wgAllowUserJs = true;
 $wgAllowUserCss = true;
@@ -299,8 +296,16 @@ $wgHiddenPrefs[] = "showrollbackconfirmation";
 
 
 ##
-## Additional namespaces
+## Namespaces
 ##
+
+# Main
+# Enable subpages in the main namespace (FS#39668)
+$wgNamespacesWithSubpages[NS_MAIN] = true;
+
+# Template
+# Restrict editing to autoconfirmed users
+$wgNamespaceProtection[NS_TEMPLATE] = array( 'editsemiprotected' );
 
 # DeveloperWiki
 define("NS_DEVELOPERWIKI", 3000);
