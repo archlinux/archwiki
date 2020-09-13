@@ -22,3 +22,7 @@
 	path = extensions/UserMerge
 	url = https://github.com/wikimedia/mediawiki-extensions-UserMerge.git
 	branch = REL1_35
+[submodule "extensions/CodeMirror"]
+	path = extensions/CodeMirror
+	url = https://github.com/wikimedia/mediawiki-extensions-CodeMirror.git
+	branch = REL1_35
