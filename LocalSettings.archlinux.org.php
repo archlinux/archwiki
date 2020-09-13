@@ -395,6 +395,14 @@ $wgGroupPermissions['sysop']['usermerge'] = true;
 # Allow merging users with "Anonymous" (user_id 0)
 $wgReservedUsernames[] = 'Anonymous';
 
+# Improved interface for editing wikitext
+wfLoadExtension( 'WikiEditor' );
+
+# Syntax highlighting in WikiEditor
+wfLoadExtension( 'CodeMirror' );
+$wgDefaultUserOptions['usecodemirror'] = 1;
+
+
 ##
 ## Temporary settings for maintenance
 ##
