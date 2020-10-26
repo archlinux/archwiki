@@ -17,7 +17,6 @@ class ComboBoxInputWidget extends TextInputWidget {
 	 * @param array $config Configuration options
 	 *      - array[] $config['options'] Array of menu options in the format
 	 *          `[ 'data' => …, 'label' => … ]`
-	 * @param-taint $config escapes_html
 	 */
 	public function __construct( array $config = [] ) {
 		// ComboBoxInputWidget shouldn't support `multiline`

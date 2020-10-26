@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Lloffiwr",
-			"Ham II"
+			"Ham II",
+			"Lloffiwr"
 		]
 	},
 	"scribunto-lua-error": "Gwall Lua: $2.",

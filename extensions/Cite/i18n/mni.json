@@ -12,7 +12,7 @@
 	"cite_error_ref_no_input": "Invalid <code>&lt;ref&gt;</code> tag;\nrefs with no name must have content",
 	"cite_error_references_duplicate_key": "Invalid <code>&lt;ref&gt;</code> tag; name \"$1\" defined multiple times with different content",
 	"cite_error_references_invalid_parameters": "Invalid parameter in <code>&lt;references&gt;</code> tag",
-	"cite_error_references_no_backlink_label": "Ran out of custom backlink labels.\nDefine more in the <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki> message.",
+	"cite_error_references_no_backlink_label": "Ran out of custom backlink labels. Define more in the [[MediaWiki:Cite references link many format backlink labels]] message.!!FUZZY!!",
 	"cite_error_group_refs_without_references": "<code>&lt;ref&gt;</code> tags exist for a group named \"$1\", but no corresponding <code>&lt;references group=\"$1\"/&gt;</code> tag was found, or a closing <code>&lt;/ref&gt;</code> is missing",
 	"cite-tracking-category-cite-error": "ꯂꯧꯔꯛꯄꯝ ꯑꯔꯥꯟꯕꯁꯤꯡ ꯌꯥꯎꯕ ꯂꯃꯥꯏꯁꯤꯡ",
 	"cite-tracking-category-cite-error-desc": "ꯃꯁꯤꯒꯤ ꯃꯆꯥꯀꯥꯏꯕ ꯑꯁꯤꯗ ꯂꯩꯔꯤꯕ ꯂꯃꯥꯏꯁꯤꯡ ꯑꯁꯤ ꯂꯧꯔꯛꯄꯝꯁꯤꯡ ꯂꯥꯟꯅ ꯁꯤꯖꯤꯟꯅꯕ ꯁꯤꯡ ꯑꯗꯨꯅꯤ ꯫",

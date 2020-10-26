@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Macofe",
-			"Vitorvicentevalente",
+			"Athena in Wonderland",
 			"Hamilton Abreu",
+			"Macofe",
 			"MokaAkashiyaPT",
-			"Athena in Wonderland"
+			"Vitorvicentevalente"
 		]
 	},
 	"timeless-desc": "Um tema intemporal, desenhado com base no protótipo Winter de Brandon Harris e em vários estilos da Wikimedia Foundation",
@@ -26,5 +26,5 @@
 	"timeless-pagetools": "Ações de página",
 	"timeless-languages": "Línguas",
 	"timeless-projects": "Outros projetos",
-	"timeless.js": "/* Qualquer código JavaScript colocado aqui será carregado para os utilizadores do tema Timeless */"
+	"timeless.js": "/* Todo o código JavaScript colocado aqui será carregado para os utilizadores do tema Timeless */"
 }

@@ -3,8 +3,8 @@
 		"authors": [
 			"Misibacsi",
 			"TK-999",
-			"Tgr",
-			"Tacsipacsi"
+			"Tacsipacsi",
+			"Tgr"
 		]
 	},
 	"scribunto-desc": "Keretrendszer a parancsnyelvek MediaWiki-lapokba történő beágyazására",
@@ -16,7 +16,7 @@
 	"scribunto-doc-page-name": "Module:$1/doc",
 	"scribunto-doc-page-does-not-exist": "''A modult a [[$1]] lapon tudod dokumentálni''",
 	"scribunto-doc-page-header": "'''Ez a [[$1]] dokumentációs lapja'''",
-	"scribunto-console-intro": "* A modul kimenetei a „p” változóban érhetők el, beleértve a nem mentett módosításokat is.\n* Kezdjél egy sort „=” jellel, ha kifejezésként értelmezendő, vagy használd a print() parancsot.\n* Használd az mw.log() függvényt, hogy közvetlenül a konzolra küldjél üzenetet.",
+	"scribunto-console-intro": "* A modul kimenetei a „p” változóban érhetők el, beleértve a nem mentett módosításokat is.\n* Kezdjél egy sort „=” jellel, ha kifejezésként értelmezendő, vagy használd a print() parancsot. Táblákhoz használd az mw.logObject()-et.\n* Használd az mw.log() vagy mw.logObject() függvényt a modul kódjában, hogy közvetlenül a kódból küldjél a konzolra üzenetet.",
 	"scribunto-console-title": "Hibakereső konzol",
 	"scribunto-console-too-large": "A konzolmunkamenet túl nagy. Töröld a konzolelőzményeket a modul méretének csökkentéséhez.",
 	"scribunto-console-current-src": "konzol bemenet",

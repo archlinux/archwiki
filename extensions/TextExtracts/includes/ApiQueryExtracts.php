@@ -5,17 +5,15 @@ namespace TextExtracts;
 use ApiBase;
 use ApiMain;
 use ApiQueryBase;
-use BagOStuff;
+use ApiUsageException;
 use Config;
 use FauxRequest;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
-use MWTidy;
-
 use ParserOptions;
 use Title;
-use ApiUsageException;
 use User;
+use WANObjectCache;
 use WikiPage;
 
 /**
@@ -26,15 +24,19 @@ class ApiQueryExtracts extends ApiQueryBase {
 	/**
 	 * Bump when memcache needs clearing
 	 */
-	const CACHE_VERSION = 2;
+	private const CACHE_VERSION = 2;
 
-	const PREFIX = 'ex';
+	private const PREFIX = 'ex';
 
 	private $params;
 	/**
 	 * @var Config
 	 */
 	private $config;
+	/**
+	 * @var WANObjectCache
+	 */
+	private $cache;
 
 	// TODO: Allow extensions to hook into this to opt-in.
 	// This is partly for security reasons; see T107170.
@@ -47,10 +49,12 @@ class ApiQueryExtracts extends ApiQueryBase {
 	 * @param \ApiQuery $query API query module object
 	 * @param string $moduleName Name of this query module
 	 * @param Config $conf MediaWiki configuration
+	 * @param WANObjectCache $cache
 	 */
-	public function __construct( $query, $moduleName, Config $conf ) {
+	public function __construct( $query, $moduleName, Config $conf, WANObjectCache $cache ) {
 		parent::__construct( $query, $moduleName, self::PREFIX );
 		$this->config = $conf;
+		$this->cache = $cache;
 	}
 
 	/**
@@ -70,7 +74,7 @@ class ApiQueryExtracts extends ApiQueryBase {
 		$this->requireMaxOneParameter( $params, 'chars', 'sentences' );
 		$continue = 0;
 		$limit = intval( $params['limit'] );
-		if ( $limit > 1 && !$params['intro'] ) {
+		if ( $limit > 1 && !$params['intro'] && count( $titles ) > 1 ) {
 			$limit = 1;
 			$this->addWarning( [ 'apiwarn-textextracts-limit', $limit ] );
 		}
@@ -163,26 +167,27 @@ class ApiQueryExtracts extends ApiQueryBase {
 		return $text;
 	}
 
-	private function cacheKey( BagOStuff $cache, WikiPage $page, $introOnly ) {
+	private function cacheKey( WANObjectCache $cache, WikiPage $page, $introOnly ) {
 		return $cache->makeKey( 'textextracts', self::CACHE_VERSION,
 			$page->getId(), $page->getTouched(),
 			$page->getTitle()->getPageLanguage()->getPreferredVariant(),
-			$this->params['plaintext'], $introOnly
+			$this->params['plaintext'] ? 'plaintext' : 'html',
+			$introOnly ? 'intro' : 'full'
 		);
 	}
 
 	private function getFromCache( WikiPage $page, $introOnly ) {
-		global $wgMemc;
-
-		$key = $this->cacheKey( $wgMemc, $page, $introOnly );
-		return $wgMemc->get( $key );
+		$cache = $this->cache;
+		// @TODO: replace with getWithSetCallback()
+		$key = $this->cacheKey( $cache, $page, $introOnly );
+		return $cache->get( $key );
 	}
 
 	private function setCache( WikiPage $page, $text ) {
-		global $wgMemc;
-
-		$key = $this->cacheKey( $wgMemc, $page, $this->params['intro'] );
-		$wgMemc->set( $key, $text, $this->getConfig()->get( 'ParserCacheExpireTime' ) );
+		$cache = $this->cache;
+		// @TODO: replace with getWithSetCallback()
+		$key = $this->cacheKey( $cache, $page, $this->params['intro'] );
+		$cache->set( $key, $text, $this->getConfig()->get( 'ParserCacheExpireTime' ) );
 	}
 
 	private function getFirstSection( $text, $plainText ) {
@@ -276,7 +281,8 @@ class ApiQueryExtracts extends ApiQueryBase {
 	 */
 	public static function factory( $query, $name ) {
 		$config = MediaWikiServices::getInstance()->getConfigFactory()->makeConfig( 'textextracts' );
-		return new self( $query, $name, $config );
+		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
+		return new self( $query, $name, $config, $cache );
 	}
 
 	/**
@@ -297,10 +303,10 @@ class ApiQueryExtracts extends ApiQueryBase {
 	 * @return string
 	 */
 	private function truncate( $text ) {
-		if ( !$this->params['plaintext'] && MWTidy::isEnabled() ) {
-			$truncator = new TextTruncator( MWTidy::singleton() );
+		if ( !$this->params['plaintext'] ) {
+			$truncator = new TextTruncator( true );
 		} else {
-			$truncator = new TextTruncator();
+			$truncator = new TextTruncator( false );
 		}
 
 		if ( $this->params['chars'] ) {

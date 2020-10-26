@@ -384,4 +384,13 @@ return testframework.getTestProvider( {
 	  func = test.loadData.rawset,
 	  expect = { 'ugh', 'foo bar', 'foo bar' },
 	},
+
+	{ name = 'mw.addWarning',
+	  func = mw.addWarning, args = { 'warn' },
+	  expect = {},
+	},
+	{ name = 'mw.addWarning, bad type',
+	  func = mw.addWarning, args = { true },
+	  expect = "bad argument #1 to 'addWarning' (string expected)",
+	},
 } )

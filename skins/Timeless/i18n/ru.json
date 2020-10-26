@@ -1,11 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Okras",
-			"Redredsonia",
+			"Alexander Yukal",
 			"Edward Chernenko",
 			"Kareyac",
-			"Movses"
+			"Movses",
+			"Okras",
+			"Redredsonia"
 		]
 	},
 	"timeless-desc": "Тема оформления Timeless создана на основе прототипа Winter, созданного Брэндоном Харрисом, и различных стилей Фонда Викимедиа.",
@@ -26,5 +27,5 @@
 	"timeless-pagetools": "Действия на странице",
 	"timeless-languages": "Языки",
 	"timeless-projects": "Другие проекты",
-	"timeless.js": "/* Размещённый здесь код JavaScript будет загружаться пользователям, использующим тему оформления Timeless */"
+	"timeless.js": "/* Размещённый здесь JavaScript код будет загружаться для пользователей, использующих тему оформления Timeless */"
 }

@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Brazal.dang",
 			"Filipinayzd",
 			"Geopoet",
 			"ShimunUfesoj"
@@ -10,7 +11,7 @@
 	"categorytree-portlet": "Mga Kategoriya",
 	"categorytree-legend": "Ipatanaw an kahoy nin kategoriya",
 	"categorytree-desc": "Dinamikong dumanan an [[Special:CategoryTree|estruktura nin kategoriya]]",
-	"categorytree-header": "Ikaag an sarong pangaran nin kategoriya tanganing mahiling an kalamnan kaini bilang sarong estruktura nin kahoy. Tandai na ini minahagad nin abantidong JavaScript na punksyonalidad na bisto bilang AJAX. Kun ika igwa nin grabe kagurang na pangilyaw, o pinag-untok an JavaScript, ini dae maandar.",
+	"categorytree-header": "Ikaag an sarong pangaran nin kategoriya tanganing mahiling an kalamnan kaini bilang sarong estruktura nin kahoy. (Kaipuhan JavaScript).",
 	"categorytree-category": "Kategoriya",
 	"categorytree-go": "Ipatanaw an kahoy",
 	"categorytree-parents": "Kamagurangan",

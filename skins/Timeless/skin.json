@@ -19,13 +19,25 @@
 		]
 	},
 	"config": {
-		"TimelessBackdropImage": "cat.svg",
-		"TimelessLogo": null,
-		"TimelessWordmark": null
+		"TimelessBackdropImage": {
+			"value": "cat.svg",
+			"description": "Set it as you would $wgLogo to an appropriate background image. Recommendation is an svg set to 500-750px wide"
+		},
+		"TimelessLogo": {
+			"value": null,
+			"description": "Special logo rendering, allowing for custom logos for Timeless"
+		},
+		"TimelessWordmark": {
+			"value": null,
+			"description": "To use an image instead of the default Linux Libertine serif text for the header banner wordmark"
+		}
 	},
 	"ResourceModules": {
 		"skins.timeless": {
-			"targets": [ "desktop", "mobile" ],
+			"targets": [
+				"desktop",
+				"mobile"
+			],
 			"class": "TimelessVariablesModule",
 			"styles": {
 				"resources/libraries/normalise.css": {
@@ -60,16 +72,18 @@
 			"@NOTE": "Remember to also update variables.less if you change the width cutoffs here. screen-misc.less and mobile.js may also need updating."
 		},
 		"skins.timeless.js": {
-			"targets": [ "desktop" ],
+			"targets": [
+				"desktop"
+			],
 			"scripts": [
 				"resources/main.js"
-			],
-			"dependencies": [
-				"jquery.tabIndex"
 			]
 		},
 		"skins.timeless.mobile": {
-			"targets": [ "desktop", "mobile" ],
+			"targets": [
+				"desktop",
+				"mobile"
+			],
 			"scripts": [
 				"resources/mobile.js"
 			]
@@ -83,6 +97,7 @@
 		"timeless": {
 			"+oojs-ui-core.styles": "resources/ooui.less",
 			"+ext.echo.styles.badge": "resources/extensions/Echo.less",
+			"+ext.eventLogging.jsonSchema.styles": "resources/extensions/EventLogging.jsonSchema.less",
 			"+ext.visualEditor.core": "resources/extensions/VisualEditor.core.less",
 			"+ext.visualEditor.desktopArticleTarget.noscript": "resources/extensions/VisualEditor.article.less",
 			"+ext.CodeMirror.visualEditor.init": "resources/extensions/VisualEditor.CodeMirror.less",
@@ -97,5 +112,5 @@
 		"TimelessTemplate": "includes/TimelessTemplate.php",
 		"TimelessVariablesModule": "includes/TimelessVariablesModule.php"
 	},
-	"manifest_version": 1
+	"manifest_version": 2
 }

@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Chrumps",
-			"Railfail536",
-			"Rail"
+			"Rail",
+			"Railfail536"
 		]
 	},
 	"apihelp-query+oath-description": "Sprawdź czy weryfikacja dwuetapowa (OATH) jest włączona u użytkownika.",

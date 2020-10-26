@@ -1,15 +1,19 @@
 {
 	"@metadata": {
 		"authors": [
-			"Mormegil",
 			"Dvorapa",
+			"Matěj Suchánek",
+			"Mormegil",
 			"Patriccck"
 		]
 	},
 	"skinname-vector": "Vektor",
 	"vector-skin-desc": "Moderní verze vzhledu Kniha s novějším vzhledem a vylepšenou použitelností",
-	"vector.css": "/* Zde uvedené CSS bude ovlivňovat pouze vzhled „Vektor“ */",
-	"vector.js": "/* Zde uvedený JavaScript bude použit pouze pro uživatele vzhledu „Vektor“ */",
+	"prefs-vector-enable-vector-1-label": "Použít starý Vektor",
+	"prefs-vector-enable-vector-1-help": "V následujících letech budeme postupně aktualizovat vzhled Vektor. Starý Vektor vám umožní používat starou verzi Vektoru z prosince 2019. Více o aktualizacích se dozvíte na naší [[mw:Reading/Web/Desktop_Improvements|projektové stránce]].",
+	"vector-opt-out": "Přepnout na starý vzhled",
+	"vector.css": "/* Veškeré zde uvedené CSS bude načítáno uživatelům vzhledu „Vektor“ */",
+	"vector.js": "/* Veškerý zde uvedený JavaScript bude načítán uživatelům vzhledu „Vektor“ */",
 	"vector-action-addsection": "Přidat téma",
 	"vector-action-delete": "Smazat",
 	"vector-action-move": "Přesunout",

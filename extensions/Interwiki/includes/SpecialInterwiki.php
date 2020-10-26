@@ -60,8 +60,8 @@ class SpecialInterwiki extends SpecialPage {
 	/**
 	 * Returns boolean whether the user can modify the data.
 	 * @param OutputPage|bool $out If $wgOut object given, it adds the respective error message.
-	 * @throws PermissionsError|ReadOnlyError
 	 * @return bool
+	 * @throws PermissionsError|ReadOnlyError
 	 */
 	public function canModify( $out = false ) {
 		global $wgInterwikiCache;
@@ -79,8 +79,8 @@ class SpecialInterwiki extends SpecialPage {
 			}
 
 			return false;
-		} elseif ( wfReadOnly() ) {
-			throw new ReadOnlyError;
+		} else {
+			$this->checkReadOnly();
 		}
 
 		return true;
@@ -252,7 +252,13 @@ class SpecialInterwiki extends SpecialPage {
 			} else {
 				$this->getOutput()->addWikiMsg( 'interwiki_deleted', $prefix );
 				$log = new LogPage( 'interwiki' );
-				$log->addEntry( 'iw_delete', $selfTitle, $reason, [ $prefix ] );
+				$log->addEntry(
+					'iw_delete',
+					$selfTitle,
+					$reason,
+					[ $prefix ],
+					$this->getUser()
+				);
 				$lookup->invalidateCache( $prefix );
 			}
 			break;
@@ -296,7 +302,14 @@ class SpecialInterwiki extends SpecialPage {
 			} else {
 				$this->getOutput()->addWikiMsg( "interwiki_{$do}ed", $prefix );
 				$log = new LogPage( 'interwiki' );
-				$log->addEntry( 'iw_' . $do, $selfTitle, $reason, [ $prefix, $theurl, $trans, $local ] );
+				$log->addEntry(
+					'iw_' . $do,
+					$selfTitle,
+					$reason,
+					[ $prefix, $theurl, $trans, $local ],
+					$this->getUser()
+				);
+				// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 				$lookup->invalidateCache( $prefix );
 			}
 			break;
@@ -318,7 +331,7 @@ class SpecialInterwiki extends SpecialPage {
 		if ( $wgInterwikiCentralDB !== null && $wgInterwikiCentralDB !== wfWikiID() ) {
 			// Fetch list from global table
 			$dbrCentralDB = wfGetDB( DB_REPLICA, [], $wgInterwikiCentralDB );
-			$res = $dbrCentralDB->select( 'interwiki', '*', false, __METHOD__ );
+			$res = $dbrCentralDB->select( 'interwiki', '*', [], __METHOD__ );
 			$retval = [];
 			foreach ( $res as $row ) {
 				$row = (array)$row;
@@ -337,7 +350,7 @@ class SpecialInterwiki extends SpecialPage {
 		if ( $usingGlobalLanguages ) {
 			// Fetch list from global table
 			$dbrCentralLangDB = wfGetDB( DB_REPLICA, [], $wgInterwikiCentralInterlanguageDB );
-			$res = $dbrCentralLangDB->select( 'interwiki', '*', false, __METHOD__ );
+			$res = $dbrCentralLangDB->select( 'interwiki', '*', [], __METHOD__ );
 			$retval2 = [];
 			foreach ( $res as $row ) {
 				$row = (array)$row;
@@ -404,9 +417,7 @@ class SpecialInterwiki extends SpecialPage {
 
 		$this->getOutput()->addWikiMsg( 'interwiki-legend' );
 
-		if ( ( !is_array( $iwPrefixes ) || count( $iwPrefixes ) === 0 ) &&
-			( !is_array( $iwGlobalPrefixes ) || count( $iwGlobalPrefixes ) === 0 )
-		) {
+		if ( $iwPrefixes === [] && $iwGlobalPrefixes === [] ) {
 			// If the interwiki table(s) are empty, display an error message
 			$this->error( 'interwiki_error' );
 			return;
@@ -478,10 +489,10 @@ class SpecialInterwiki extends SpecialPage {
 		) . "\n";
 		$out .= Html::openElement( 'thead' ) .
 			Html::openElement( 'tr', [ 'class' => 'interwikitable-header' ] ) .
-			Html::element( 'th', null, $this->msg( 'interwiki_prefix' )->text() ) .
-			Html::element( 'th', null, $this->msg( 'interwiki_url' )->text() ) .
-			Html::element( 'th', null, $this->msg( 'interwiki_local' )->text() ) .
-			Html::element( 'th', null, $this->msg( 'interwiki_trans' )->text() ) .
+			Html::element( 'th', [], $this->msg( 'interwiki_prefix' )->text() ) .
+			Html::element( 'th', [], $this->msg( 'interwiki_url' )->text() ) .
+			Html::element( 'th', [], $this->msg( 'interwiki_local' )->text() ) .
+			Html::element( 'th', [], $this->msg( 'interwiki_trans' )->text() ) .
 			( $canModify ?
 				Html::element(
 					'th',

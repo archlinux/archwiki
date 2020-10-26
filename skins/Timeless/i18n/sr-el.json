@@ -18,9 +18,12 @@
 	"timeless-sitetools": "Viki alatke",
 	"timeless-pageactions": "Alatke za stranicu",
 	"timeless-userpagetools": "Alatke za korisničku stranicu",
+	"timeless-action-addsection": "Nova tema",
+	"timeless-view-view": "Čitaj",
 	"timeless-pagemisc": "Više",
 	"timeless-namespaces": "Imenski prostori",
 	"timeless-pagetools": "Radnje za stranicu",
 	"timeless-languages": "Jezici",
+	"timeless-projects": "Drugi projekti",
 	"timeless.js": "/* Javaskript postavljen ovde će se učitati za sve one koji koriste bezvremensku temu */"
 }

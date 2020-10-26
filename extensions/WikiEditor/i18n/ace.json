@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Si Gam Acèh",
-			"Rachmat04"
+			"Rachmat04",
+			"Si Gam Acèh"
 		]
 	},
 	"wikieditor-wikitext-tab": "TeksWiki",
@@ -44,12 +44,12 @@
 	"wikieditor-toolbar-tool-reference-cancel": "Pubateue",
 	"wikieditor-toolbar-tool-reference-title": "Pasoe nè",
 	"wikieditor-toolbar-tool-reference-insert": "Pasoe",
-	"wikieditor-toolbar-tool-reference-text": "Teunuléh nè",
+	"wikieditor-toolbar-tool-reference-text": "Tèks referensi",
 	"wikieditor-toolbar-section-advanced": "Lom",
 	"wikieditor-toolbar-tool-big": "Rayek",
-	"wikieditor-toolbar-tool-big-example": "Teunuléh rayek",
+	"wikieditor-toolbar-tool-big-example": "Haraih rayek",
 	"wikieditor-toolbar-tool-small": "Ubeut",
-	"wikieditor-toolbar-tool-small-example": "Teunuléh ubeut",
+	"wikieditor-toolbar-tool-small-example": "Haraih ubeut",
 	"wikieditor-toolbar-group-insert": "Pasoe",
 	"wikieditor-toolbar-section-characters": "Karakter kusuih",
 	"wikieditor-toolbar-section-help": "Beunantu"

@@ -121,7 +121,8 @@
 								$( '#wikieditor-toolbar-link-int-target' ).parent().addClass( 'status-' + status );
 							}
 							if ( status === 'invalid' ) {
-								$( '.ui-dialog:visible .ui-dialog-buttonpane button:first' )
+								// eslint-disable-next-line no-jquery/no-sizzle
+								$( '.ui-dialog:visible .ui-dialog-buttonpane button' ).first()
 									.prop( 'disabled', true )
 									.addClass( 'disabled' );
 								if ( reason ) {
@@ -132,7 +133,8 @@
 								}
 
 							} else {
-								$( '.ui-dialog:visible .ui-dialog-buttonpane button:first' )
+								// eslint-disable-next-line no-jquery/no-sizzle
+								$( '.ui-dialog:visible .ui-dialog-buttonpane button' ).first()
 									.prop( 'disabled', false )
 									.removeClass( 'disabled' );
 							}
@@ -227,10 +229,9 @@
 						} );
 						// Set labels of tabs based on rel values
 						$( this ).find( '[rel]' ).each( function () {
+							// eslint-disable-next-line mediawiki/msg-doc
 							$( this ).text( mw.msg( $( this ).attr( 'rel' ) ) );
 						} );
-						// Set tabindexes on form fields
-						$.wikiEditor.modules.dialogs.fn.setTabindexes( $( this ).find( 'input' ).not( '[tabindex]' ) );
 						$( '#wikieditor-toolbar-link-int-target' ).attr( 'placeholder',
 							mw.msg( 'wikieditor-toolbar-tool-link-int-target-tooltip' ) );
 						$( '#wikieditor-toolbar-link-int-text' ).attr( 'placeholder',
@@ -372,6 +373,7 @@
 								}
 								if ( $( '#wikieditor-toolbar-link-type-int' ).is( ':checked' ) ) {
 									// FIXME: Exactly how fragile is this?
+									// eslint-disable-next-line no-jquery/no-sizzle
 									if ( $( '#wikieditor-toolbar-link-int-target-status-invalid' ).is( ':visible' ) ) {
 										// Refuse to add links to invalid titles
 										// eslint-disable-next-line no-alert
@@ -403,7 +405,7 @@
 										buttons[ mw.msg( 'wikieditor-toolbar-tool-link-lookslikeinternal-ext' ) ] =
 											function () {
 												$( that ).data( 'ignoreLooksInternal', true );
-												$( that ).closest( '.ui-dialog' ).find( 'button:first' ).trigger( 'click' );
+												$( that ).closest( '.ui-dialog' ).find( 'button' ).first().trigger( 'click' );
 												$( that ).data( 'ignoreLooksInternal', false );
 												$( this ).dialog( 'close' );
 											};
@@ -519,10 +521,10 @@
 								// Execute the action associated with the first button
 								// when the user presses Enter
 								$( this ).closest( '.ui-dialog' ).on( 'keypress', function ( e ) {
-									var button;
+									var $button;
 									if ( ( e.keyCode || e.which ) === 13 ) {
-										button = $( this ).data( 'dialogaction' ) || $( this ).find( 'button:first' );
-										button.click();
+										$button = $( this ).data( 'dialogaction' ) || $( this ).find( 'button' ).first();
+										$button.trigger( 'click' );
 										e.preventDefault();
 									}
 								} );
@@ -554,9 +556,17 @@
 							.attr( 'size', defaultMsg.length );
 						$( this ).find( '[rel]' )
 							.text( function () {
+								// eslint-disable-next-line mediawiki/msg-doc
 								return mw.msg( $( this ).attr( 'rel' ) );
 							} )
 							.removeAttr( 'rel' );
+
+						// Preload modules of file upload dialog.
+						mw.loader.load( [
+							'mediawiki.ForeignStructuredUpload.BookletLayout',
+							'mediawiki.Upload.Dialog',
+							'oojs-ui-windows'
+						] );
 					},
 					dialog: {
 						resizable: false,
@@ -622,22 +632,28 @@
 								$( this ).dialog( 'close' );
 							},
 							'wikieditor-toolbar-tool-file-upload': function () {
-								var windowManager = new OO.ui.WindowManager(),
-									uploadDialog = new mw.Upload.Dialog( {
-										bookletClass: mw.ForeignStructuredUpload.BookletLayout
-									} );
-
 								$( this ).dialog( 'close' );
-								$( 'body' ).append( windowManager.$element );
-								windowManager.addWindows( [ uploadDialog ] );
-								windowManager.openWindow( uploadDialog );
+								mw.loader.using( [
+									'mediawiki.ForeignStructuredUpload.BookletLayout',
+									'mediawiki.Upload.Dialog',
+									'oojs-ui-windows'
+								] ).then( function () {
+									var windowManager = new OO.ui.WindowManager(),
+										uploadDialog = new mw.Upload.Dialog( {
+											bookletClass: mw.ForeignStructuredUpload.BookletLayout
+										} );
 
-								uploadDialog.uploadBooklet.on( 'fileSaved', function ( imageInfo ) {
-									uploadDialog.close();
-									windowManager.$element.remove();
+									windowManager.$element.appendTo( document.body );
+									windowManager.addWindows( [ uploadDialog ] );
+									windowManager.openWindow( uploadDialog );
 
-									$.wikiEditor.modules.dialogs.api.openDialog( this, 'insert-file' );
-									$( '#wikieditor-toolbar-file-target' ).val( imageInfo.canonicaltitle );
+									uploadDialog.uploadBooklet.on( 'fileSaved', function ( imageInfo ) {
+										uploadDialog.close();
+										windowManager.$element.remove();
+
+										$.wikiEditor.modules.dialogs.api.openDialog( this, 'insert-file' );
+										$( '#wikieditor-toolbar-file-target' ).val( imageInfo.canonicaltitle );
+									} );
 								} );
 							}
 						},
@@ -735,11 +751,11 @@
 								// Execute the action associated with the first button
 								// when the user presses Enter
 								$( this ).closest( '.ui-dialog' ).on( 'keypress', function ( e ) {
-									var button;
+									var $button;
 									if ( e.which === 13 ) {
-										button = $( this ).data( 'dialogaction' ) ||
-											$( this ).find( 'button:first' );
-										button.click();
+										$button = $( this ).data( 'dialogaction' ) ||
+											$( this ).find( 'button' ).first();
+										$button.trigger( 'click' );
 										e.preventDefault();
 									}
 								} );
@@ -759,14 +775,14 @@
 					htmlTemplate: 'dialogInsertTable.html',
 					init: function () {
 						$( this ).find( '[rel]' ).each( function () {
+							// eslint-disable-next-line mediawiki/msg-doc
 							$( this ).text( mw.msg( $( this ).attr( 'rel' ) ) );
 						} );
-						// Set tabindexes on form fields
-						$.wikiEditor.modules.dialogs.fn.setTabindexes( $( this ).find( 'input' ).not( '[tabindex]' ) );
 
 						$( '#wikieditor-toolbar-table-dimensions-rows' ).val( 3 );
 						$( '#wikieditor-toolbar-table-dimensions-columns' ).val( 3 );
 						$( '#wikieditor-toolbar-table-wikitable' ).on( 'click', function () {
+							// eslint-disable-next-line no-jquery/no-class-state
 							$( '.wikieditor-toolbar-table-preview' ).toggleClass( 'wikitable' );
 						} );
 
@@ -816,7 +832,7 @@
 						width: 590,
 						buttons: {
 							'wikieditor-toolbar-tool-table-insert': function () {
-								var headerText, normalText, table, r, c,
+								var captionText, headerText, normalText, table, r, c,
 									isHeader, delim, classes, classStr,
 									rowsVal = $( '#wikieditor-toolbar-table-dimensions-rows' ).val(),
 									colsVal = $( '#wikieditor-toolbar-table-dimensions-columns' ).val(),
@@ -834,14 +850,15 @@
 									return;
 								}
 								if ( ( rows * cols ) > 1000 ) {
-									// 1000 is in the English message. The parameter replacement is kept for BC.
 									// eslint-disable-next-line no-alert
-									alert( mw.msg( 'wikieditor-toolbar-tool-table-toomany', 1000 ) );
+									alert( mw.msg( 'wikieditor-toolbar-tool-table-toomany', mw.language.convertNumber( 1000 ) ) );
 									return;
 								}
+								captionText = mw.msg( 'wikieditor-toolbar-tool-table-example-caption' );
 								headerText = mw.msg( 'wikieditor-toolbar-tool-table-example-header' );
 								normalText = mw.msg( 'wikieditor-toolbar-tool-table-example' );
 								table = '';
+								table += '|+ ' + captionText + '\n';
 								for ( r = 0; r < rows + header; r++ ) {
 									table += '|-\n';
 									for ( c = 0; c < cols; c++ ) {
@@ -905,10 +922,10 @@
 								// Execute the action associated with the first button
 								// when the user presses Enter
 								$( this ).closest( '.ui-dialog' ).on( 'keypress', function ( e ) {
-									var button;
+									var $button;
 									if ( ( e.keyCode || e.which ) === 13 ) {
-										button = $( this ).data( 'dialogaction' ) || $( this ).find( 'button:first' );
-										button.click();
+										$button = $( this ).data( 'dialogaction' ) || $( this ).find( 'button' ).first();
+										$button.trigger( 'click' );
 										e.preventDefault();
 									}
 								} );
@@ -928,10 +945,9 @@
 					htmlTemplate: 'dialogReplace.html',
 					init: function () {
 						$( this ).find( '[rel]' ).each( function () {
+							// eslint-disable-next-line mediawiki/msg-doc
 							$( this ).text( mw.msg( $( this ).attr( 'rel' ) ) );
 						} );
-						// Set tabindexes on form fields
-						$.wikiEditor.modules.dialogs.fn.setTabindexes( $( this ).find( 'input' ).not( '[tabindex]' ) );
 
 						// TODO: Find a cleaner way to share this function
 						$( this ).data( 'replaceCallback', function ( mode ) {
@@ -1006,7 +1022,7 @@
 							} else if ( mode === 'replaceAll' ) {
 								$textarea.textSelection( 'setContents', text.replace( regex, replaceStr ) );
 								$( '#wikieditor-toolbar-replace-success' )
-									.text( mw.msg( 'wikieditor-toolbar-tool-replace-success', match.length ) )
+									.text( mw.msg( 'wikieditor-toolbar-tool-replace-success', mw.language.convertNumber( match.length ) ) )
 									.show();
 								$( this ).data( 'offset', 0 );
 							} else {
@@ -1093,7 +1109,7 @@
 							}
 						},
 						open: function () {
-							var dialog, context, textbox,
+							var $dialog, context, $textbox,
 								that = this;
 							$( this ).data( 'offset', 0 );
 							$( this ).data( 'matchIndex', 0 );
@@ -1105,10 +1121,10 @@
 								// Execute the action associated with the first button
 								// when the user presses Enter
 								$( this ).closest( '.ui-dialog' ).on( 'keypress', function ( e ) {
-									var button;
+									var $button;
 									if ( ( e.keyCode || e.which ) === 13 ) {
-										button = $( this ).data( 'dialogaction' ) || $( this ).find( 'button:first' );
-										button.click();
+										$button = $( this ).data( 'dialogaction' ) || $( this ).find( 'button' ).first();
+										$button.trigger( 'click' );
 										e.preventDefault();
 									}
 								} );
@@ -1118,18 +1134,18 @@
 									$( this ).closest( '.ui-dialog' ).data( 'dialogaction', this );
 								} );
 							}
-							dialog = $( this ).closest( '.ui-dialog' );
+							$dialog = $( this ).closest( '.ui-dialog' );
 							that = this;
 							context = $( this ).data( 'context' );
-							textbox = context.$textarea;
+							$textbox = context.$textarea;
 
-							$( textbox )
+							$textbox
 								.on( 'keypress.srdialog', function ( e ) {
-									var button;
+									var $button;
 									if ( e.which === 13 ) {
 										// Enter
-										button = dialog.data( 'dialogaction' ) || dialog.find( 'button:first' );
-										button.click();
+										$button = $dialog.data( 'dialogaction' ) || $dialog.find( 'button' ).first();
+										$button.trigger( 'click' );
 										e.preventDefault();
 									} else if ( e.which === 27 ) {
 										// Escape
@@ -1139,8 +1155,8 @@
 						},
 						close: function () {
 							var context = $( this ).data( 'context' ),
-								textbox = context.$textarea;
-							$( textbox ).off( 'keypress.srdialog' );
+								$textbox = context.$textarea;
+							$textbox.off( 'keypress.srdialog' );
 							$( this ).closest( '.ui-dialog' ).data( 'dialogaction', false );
 						}
 					}

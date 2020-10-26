@@ -2,14 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"Avjoska",
-			"Pikne",
-			"Cumbril"
+			"Cumbril",
+			"Pikne"
 		]
 	},
 	"interwiki": "Intervikiandmete vaatamine ja muutmine",
 	"interwiki-title-norights": "Intervikiandmete vaatamine",
 	"interwiki-desc": "Lisab [[Special:Interwiki|erilehekülje]] intervikitabeli vaatamiseks ja muutmiseks.",
-	"interwiki_intro": "See on intervikitabeli ülevaade, kus on määratud otseteede eesliited, millega saab hõlpsasti teistesse vikidesse ja muudesse välistesse võrgukohtadesse linkida. Soovitusliku kasutamise kohta loe [//www.mediawiki.org/wiki/Extension:Interwiki juhendit MediaWiki.org-is].",
+	"interwiki_intro": "See on intervikitabeli ülevaade, kus on määratud otseteede eesliited, millega saab hõlpsasti teistesse vikidesse ja muudesse välistesse võrgukohtadesse linkida. Soovitusliku kasutamise kohta loe [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Interwiki juhendit MediaWiki.org-is].",
 	"interwiki-legend-label": "Seletus",
 	"interwiki_prefix": "Eesliide",
 	"interwiki-prefix-label": "Eesliide:",
@@ -21,7 +21,7 @@
 	"interwiki_local_1_intro": "Seda interviki eesliidet kasutav HTTP-välispäring kohalikku vikisse suunatakse ümber interviki sihtaadressile (st töötab nagu link kohalikule leheküljele).",
 	"interwiki_trans": "Kasutamine mallina",
 	"interwiki-trans-label": "Kasutamine mallina",
-	"interwiki_trans_1_intro": "Kui kasutatakse süntaksit <code>{<nowiki />{eesliide:<em>lehekülje pealkiri</em>}}</code>, võimaldatakse välisviki malli või lehekülje kasutamist mallina, eeldusel, et nii toimimine on üldiselt lubatud ([//www.mediawiki.org/wiki/Manual:$wgEnableScaryTranscluding ScaryTranscluding]).",
+	"interwiki_trans_1_intro": "Kui kasutatakse süntaksit <code>{<nowiki />{eesliide:<em>lehekülje pealkiri</em>}}</code>, võimaldatakse välisviki malli või lehekülje kasutamist mallina, eeldusel, et nii toimimine on üldiselt lubatud ([https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:$wgEnableScaryTranscluding ScaryTranscluding]).",
 	"interwiki_trans_0_intro": "Süntakiga <code>{<nowiki />{eesliide:<em>lehekülje pealkiri</em>}}</code> ei lubata välisviki malli või lehekülge mallina kasutada, vaid pöördutakse kohalikus mallinimeruumis asuva lehekülje poole.",
 	"interwiki_1": "jah",
 	"interwiki_0": "ei",

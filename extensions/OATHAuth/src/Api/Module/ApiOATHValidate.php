@@ -18,13 +18,13 @@
 
 namespace MediaWiki\Extension\OATHAuth\Api\Module;
 
-use MediaWiki\Extension\OATHAuth\Module\TOTP;
-use MediaWiki\MediaWikiServices;
-use MediaWiki\Extension\OATHAuth\IModule;
 use ApiBase;
-use User;
 use ApiResult;
 use FormatJson;
+use MediaWiki\Extension\OATHAuth\IModule;
+use MediaWiki\Extension\OATHAuth\Module\TOTP;
+use MediaWiki\MediaWikiServices;
+use User;
 
 /**
  * Validate an OATH token.
@@ -92,10 +92,6 @@ class ApiOATHValidate extends ApiBase {
 		$this->getResult()->addValue( null, $this->getModuleName(), $result );
 	}
 
-	public function getCacheMode( $params ) {
-		return 'private';
-	}
-
 	public function isInternal() {
 		return true;
 	}
@@ -104,6 +100,9 @@ class ApiOATHValidate extends ApiBase {
 		return 'csrf';
 	}
 
+	/**
+	 * @return array
+	 */
 	public function getAllowedParams() {
 		return [
 			'user' => [
@@ -119,6 +118,9 @@ class ApiOATHValidate extends ApiBase {
 		];
 	}
 
+	/**
+	 * @return array
+	 */
 	protected function getExamplesMessages() {
 		return [
 			'action=oathvalidate&totp=123456&token=123ABC'

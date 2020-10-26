@@ -1,11 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Toliño",
 			"Banjo",
 			"Elisardojm",
-			"Navhy",
-			"Iváns"
+			"Iváns",
+			"Toliño"
 		]
 	},
 	"wikieditor": "Interface avanzada de edición de texto wiki",

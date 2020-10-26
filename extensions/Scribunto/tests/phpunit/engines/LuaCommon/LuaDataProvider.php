@@ -5,6 +5,10 @@ class Scribunto_LuaDataProvider implements Iterator {
 	protected $exports = null;
 	protected $key = 1;
 
+	/**
+	 * @param Scribunto_LuaEngine $engine
+	 * @param string $moduleName
+	 */
 	public function __construct( $engine, $moduleName ) {
 		$this->engine = $engine;
 		$this->key = 1;
@@ -45,6 +49,10 @@ class Scribunto_LuaDataProvider implements Iterator {
 		return $this->engine->getInterpreter()->callFunction( $this->exports['provide'], $this->key );
 	}
 
+	/**
+	 * @param string $key Test to run
+	 * @return mixed Test result
+	 */
 	public function run( $key ) {
 		list( $ret ) = $this->engine->getInterpreter()->callFunction( $this->exports['run'], $key );
 		return $ret;

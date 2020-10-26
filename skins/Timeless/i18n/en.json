@@ -22,6 +22,6 @@
 	"timeless-languages": "Languages",
 	"timeless-projects": "Other projects",
 	"timeless-sitetitle": "{{int:Sitetitle}}",
-	"timeless.css": "/* CSS placed here will affect users of the Timeless skin */",
-	"timeless.js": "/* Any JavaScript here will be loaded for users using the Timeless skin */"
+	"timeless.css": "/* All CSS here will be loaded for users of the Timeless skin */",
+	"timeless.js": "/* All JavaScript here will be loaded for users of the Timeless skin */"
 }

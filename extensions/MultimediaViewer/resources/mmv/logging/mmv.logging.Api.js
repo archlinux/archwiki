@@ -43,7 +43,7 @@
 	 * @override
 	 * @param {Object} parameters
 	 * @param {Object} [ajaxOptions]
-	 * @return {jQuery.Promise.<Object, jqXHR>} Done: API response data. Fail: Error code.
+	 * @return {jQuery.Promise} Done: API response data. Fail: Error code.
 	 */
 	Api.prototype.ajax = function ( parameters, ajaxOptions ) {
 		var start = ( new Date() ).getTime(),

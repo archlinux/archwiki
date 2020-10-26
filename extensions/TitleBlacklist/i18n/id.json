@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"IvanLanin",
-			"Rex",
-			"Kenrick95"
+			"Kenrick95",
+			"Rex"
 		]
 	},
 	"titleblacklist-desc": "Mengizinkan pencegahan pembuatan halaman dengan judul tertentu: [[MediaWiki:Titleblacklist]] dan [[MediaWiki:Titlewhitelist]]",

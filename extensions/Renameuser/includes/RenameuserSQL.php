@@ -10,7 +10,6 @@ class RenameuserSQL {
 	 * The old username
 	 *
 	 * @var string
-	 * @access private
 	 */
 	public $old;
 
@@ -18,7 +17,6 @@ class RenameuserSQL {
 	 * The new username
 	 *
 	 * @var string
-	 * @access private
 	 */
 	public $new;
 
@@ -26,7 +24,6 @@ class RenameuserSQL {
 	 * The user ID
 	 *
 	 * @var integer
-	 * @access private
 	 */
 	public $uid;
 
@@ -34,14 +31,13 @@ class RenameuserSQL {
 	 * The tables => fields to be updated
 	 *
 	 * @var array
-	 * @access private
 	 */
 	public $tables;
 
 	/**
 	 * tables => fields to be updated in a deferred job
 	 *
-	 * @var array
+	 * @var array[]
 	 */
 	public $tablesJob;
 
@@ -50,7 +46,6 @@ class RenameuserSQL {
 	 * the updates and the old username may have already been renamed in the user table.
 	 *
 	 * @var bool
-	 * @access private
 	 */
 	public $checkIfUserExists;
 
@@ -79,12 +74,12 @@ class RenameuserSQL {
 	 * Users with more than this number of edits will have their rename operation
 	 * deferred via the job queue.
 	 */
-	const CONTRIB_JOB = 500;
+	private const CONTRIB_JOB = 500;
 
 	// B/C constants for tablesJob field
-	const NAME_COL = 0;
-	const UID_COL  = 1;
-	const TIME_COL = 2;
+	public const NAME_COL = 0;
+	public const UID_COL  = 1;
+	public const TIME_COL = 2;
 
 	/**
 	 * Constructor
@@ -188,7 +183,7 @@ class RenameuserSQL {
 
 	/**
 	 * Do the rename operation
-	 * @return true
+	 * @return bool
 	 */
 	public function rename() {
 		global $wgUpdateRowsPerJob;
@@ -253,9 +248,11 @@ class RenameuserSQL {
 
 		$dbw->update( 'logging',
 			[ 'log_title' => $newTitle->getDBkey() ],
-			[ 'log_type' => $logTypesOnUser,
+			[
+				'log_type' => $logTypesOnUser,
 				'log_namespace' => NS_USER,
-				'log_title' => $oldTitle->getDBkey() ],
+				'log_title' => $oldTitle->getDBkey()
+			],
 			__METHOD__
 		);
 
@@ -302,7 +299,7 @@ class RenameuserSQL {
 			$jobParams['minTimestamp'] = '0';
 			$jobParams['maxTimestamp'] = '0';
 			$jobParams['count'] = 0;
-			// Unique column for slave lag avoidance
+			// Unique column for replica lag avoidance
 			if ( isset( $params['uniqueKey'] ) ) {
 				$jobParams['uniqueKey'] = $params['uniqueKey'];
 			}
@@ -377,7 +374,7 @@ class RenameuserSQL {
 			// Publish to RC
 			$logEntry->publish( $logid );
 			$dbw->endAtomic( $fname );
-		} );
+		}, $fname );
 
 		$this->debug( "Finished rename for {$this->old} to {$this->new}" );
 
@@ -386,7 +383,7 @@ class RenameuserSQL {
 
 	/**
 	 * @param string $name Current wiki local user name
-	 * @return integer Returns 0 if no row was found
+	 * @return int Returns 0 if no row was found
 	 */
 	private static function lockUserAndGetId( $name ) {
 		return (int)wfGetDB( DB_MASTER )->selectField(
@@ -405,9 +402,6 @@ class RenameuserSQL {
 	public static function actorMigrationWriteOld() {
 		global $wgActorTableSchemaMigrationStage;
 
-		if ( !is_callable( User::class, 'getActorId' ) ) {
-			return true;
-		}
 		if ( !isset( $wgActorTableSchemaMigrationStage ) ) {
 			return false;
 		}
@@ -427,9 +421,6 @@ class RenameuserSQL {
 	public static function actorMigrationWriteNew() {
 		global $wgActorTableSchemaMigrationStage;
 
-		if ( !is_callable( User::class, 'getActorId' ) ) {
-			return false;
-		}
 		if ( !isset( $wgActorTableSchemaMigrationStage ) ) {
 			return true;
 		}

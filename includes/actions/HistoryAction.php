@@ -22,8 +22,8 @@
  */
 
 use MediaWiki\MediaWikiServices;
-use Wikimedia\Rdbms\IResultWrapper;
 use Wikimedia\Rdbms\FakeResultWrapper;
+use Wikimedia\Rdbms\IResultWrapper;
 
 /**
  * This class handles printing the history page for an article. In order to
@@ -36,8 +36,8 @@ use Wikimedia\Rdbms\FakeResultWrapper;
  * @ingroup Actions
  */
 class HistoryAction extends FormlessAction {
-	const DIR_PREV = 0;
-	const DIR_NEXT = 1;
+	private const DIR_PREV = 0;
+	private const DIR_NEXT = 1;
 
 	/** @var array Array of message keys and strings */
 	public $message;
@@ -70,7 +70,7 @@ class HistoryAction extends FormlessAction {
 
 		$links = [];
 		// Allow extensions to add more links
-		Hooks::run( 'HistoryPageToolLinks', [ $this->getContext(), $linkRenderer, &$links ] );
+		$this->getHookRunner()->onHistoryPageToolLinks( $this->getContext(), $linkRenderer, $links );
 		if ( $links ) {
 			$subtitle .= ''
 				. $this->msg( 'word-separator' )->escaped()
@@ -79,13 +79,6 @@ class HistoryAction extends FormlessAction {
 					->escaped();
 		}
 		return Html::rawElement( 'div', [ 'class' => 'mw-history-subtitle' ], $subtitle );
-	}
-
-	/**
-	 * @return WikiPage|Article|ImagePage|CategoryPage|Page The Article object we are working on.
-	 */
-	public function getArticle() {
-		return $this->page;
 	}
 
 	/**
@@ -145,7 +138,7 @@ class HistoryAction extends FormlessAction {
 	 * Print the history page for an article.
 	 * @return string|null
 	 */
-	function onView() {
+	public function onView() {
 		$out = $this->getOutput();
 		$request = $this->getRequest();
 
@@ -158,7 +151,7 @@ class HistoryAction extends FormlessAction {
 		// markers to appear, is for the page to be edited, which updates page_touched/Last-Modified.
 		if (
 			!$this->hasUnseenRevisionMarkers() &&
-			$out->checkLastModified( $this->page->getTouched() )
+			$out->checkLastModified( $this->getWikiPage()->getTouched() )
 		) {
 			return null; // Client cache fresh and headers sent, nothing more to do.
 		}
@@ -203,7 +196,7 @@ class HistoryAction extends FormlessAction {
 		);
 
 		// Fail nicely if article doesn't exist.
-		if ( !$this->page->exists() ) {
+		if ( !$this->getWikiPage()->exists() ) {
 			global $wgSend404Code;
 			if ( $wgSend404Code ) {
 				$out->setStatusCode( 404 );
@@ -290,7 +283,10 @@ class HistoryAction extends FormlessAction {
 
 		$out->addHTML( $htmlForm->getHTML( false ) );
 
-		Hooks::run( 'PageHistoryBeforeList', [ &$this->page, $this->getContext() ] );
+		$this->getHookRunner()->onPageHistoryBeforeList(
+			$this->getArticle(),
+			$this->getContext()
+		);
 
 		// Create and output the list.
 		$dateComponents = explode( '-', $ts );
@@ -334,7 +330,7 @@ class HistoryAction extends FormlessAction {
 	 * @param int $direction Either self::DIR_PREV or self::DIR_NEXT
 	 * @return IResultWrapper
 	 */
-	function fetchRevisions( $limit, $offset, $direction ) {
+	private function fetchRevisions( $limit, $offset, $direction ) {
 		// Fail if article doesn't exist.
 		if ( !$this->getTitle()->exists() ) {
 			return new FakeResultWrapper( [] );
@@ -354,9 +350,9 @@ class HistoryAction extends FormlessAction {
 			$offsets = [];
 		}
 
-		$page_id = $this->page->getId();
+		$page_id = $this->getWikiPage()->getId();
 
-		$revQuery = Revision::getQueryInfo();
+		$revQuery = MediaWikiServices::getInstance()->getRevisionStore()->getQueryInfo();
 		return $dbr->select(
 			$revQuery['tables'],
 			$revQuery['fields'],
@@ -376,7 +372,7 @@ class HistoryAction extends FormlessAction {
 	 *
 	 * @param string $type Feed type
 	 */
-	function feed( $type ) {
+	private function feed( $type ) {
 		if ( !FeedUtils::checkFeedOutput( $type ) ) {
 			return;
 		}
@@ -413,7 +409,7 @@ class HistoryAction extends FormlessAction {
 		$feed->outFooter();
 	}
 
-	function feedEmpty() {
+	private function feedEmpty() {
 		return new FeedItem(
 			$this->msg( 'nohistory' )->inContentLanguage()->text(),
 			$this->msg( 'history-feed-empty' )->inContentLanguage()->parseAsBlock(),
@@ -432,7 +428,7 @@ class HistoryAction extends FormlessAction {
 	 * @param stdClass|array $row Database row
 	 * @return FeedItem
 	 */
-	function feedItem( $row ) {
+	private function feedItem( $row ) {
 		$revisionStore = MediaWikiServices::getInstance()->getRevisionStore();
 		$rev = $revisionStore->newRevisionFromRow( $row, 0, $this->getTitle() );
 		$prevRev = $revisionStore->getPreviousRevision( $rev );

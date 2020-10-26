@@ -23,9 +23,9 @@
 
 namespace Wikimedia\XMPReader;
 
+use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
-use Psr\Log\LoggerAwareInterface;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
@@ -44,8 +44,11 @@ use Wikimedia\Timestamp\ConvertibleTimestamp;
  * These validation functions can also be used to modify the data. See the gps and flash one's
  * for example.
  *
- * @see http://www.adobe.com/devnet/xmp/pdfs/XMPSpecificationPart1.pdf starting at pg 28
- * @see http://www.adobe.com/devnet/xmp/pdfs/XMPSpecificationPart2.pdf starting at pg 11
+ * @see https://www.adobe.com/devnet/xmp.html
+ * @see https://wwwimages2.adobe.com/content/dam/acom/en/devnet/xmp/pdfs/
+ *      XMP%20SDK%20Release%20cc-2016-08/XMPSpecificationPart1.pdf starting at pg 28
+ * @see https://wwwimages2.adobe.com/content/dam/acom/en/devnet/xmp/pdfs/
+ *      XMP%20SDK%20Release%20cc-2016-08/XMPSpecificationPart2.pdf starting at pg 11
  */
 class Validate implements LoggerAwareInterface {
 	use LoggerAwareTrait;
@@ -171,17 +174,47 @@ class Validate implements LoggerAwareInterface {
 
 		// check if its in a numeric range
 		$inRange = false;
-		if ( isset( $info['rangeLow'] )
-			&& isset( $info['rangeHigh'] )
-			&& is_numeric( $val )
-			&& ( intval( $val ) <= $info['rangeHigh'] )
-			&& ( intval( $val ) >= $info['rangeLow'] )
+		if ( is_numeric( $val )
+			&& isset( $info['rangeLow'], $info['rangeHigh'] )
+			&& ( (int)$val <= $info['rangeHigh'] ) && ( (int)$val >= $info['rangeLow'] )
 		) {
 			$inRange = true;
 		}
 
 		if ( !isset( $info['choices'][$val] ) && !$inRange ) {
 			$this->logger->info( __METHOD__ . " Expected closed choice, but got $val" );
+			$val = null;
+		}
+	}
+
+	/**
+	 * function to validate and modify real numbers, with ranges
+	 *
+	 * @param array $info Information about current property
+	 * @param mixed &$val Current value to validate
+	 * @param bool $standalone If this is a simple property or array
+	 */
+	public function validateReal( $info, &$val, $standalone ) {
+		if ( !$standalone ) {
+			// this only validates standalone properties, not arrays, etc
+			return;
+		}
+
+		$isReal = is_numeric( $val ) && (float)$val;
+		if ( !$isReal ) {
+			$this->logger->info( __METHOD__ . " Expected real, but got $val" );
+			$val = null;
+			return;
+		}
+
+		// check if its in a numeric range
+		if ( isset( $info['rangeLow'], $info['rangeHigh'] )
+			&& ( (float)$val > $info['rangeHigh'] || (float)$val < $info['rangeLow'] )
+		) {
+			$this->logger->info(
+			  __METHOD__
+			  . " Expected value within range of ${info['rangeLow']}-${info['rangeHigh']}, but got $val"
+			);
 			$val = null;
 		}
 	}
@@ -198,18 +231,18 @@ class Validate implements LoggerAwareInterface {
 			// this only validates flash structs, not individual properties
 			return;
 		}
-		if ( !( isset( $val['Fired'] )
-			&& isset( $val['Function'] )
-			&& isset( $val['Mode'] )
-			&& isset( $val['RedEyeMode'] )
-			&& isset( $val['Return'] )
-		) ) {
-			$this->logger->info( __METHOD__ . " Flash structure did not have all the required components" );
+		if ( !isset( $val['Fired'],
+			$val['Function'],
+			$val['Mode'],
+			$val['RedEyeMode'],
+			$val['Return'] )
+		) {
+			$this->logger->info( __METHOD__ . ' Flash structure did not have all the required components' );
 			$val = null;
 		} else {
 			$val = ( 0 | ( $val['Fired'] === 'True' )
-				| ( intval( $val['Return'] ) << 1 )
-				| ( intval( $val['Mode'] ) << 3 )
+				| ( (int)$val['Return'] << 1 )
+				| ( (int)$val['Mode'] << 3 )
 				| ( ( $val['Function'] === 'True' ) << 5 )
 				| ( ( $val['RedEyeMode'] === 'True' ) << 6 ) );
 		}
@@ -336,8 +369,8 @@ class Validate implements LoggerAwareInterface {
 		$unix = ConvertibleTimestamp::convert( TS_UNIX,
 			$res[1] . $res[2] . $res[3] . $res[4] . $res[5] . $res[6]
 		);
-		$offset = intval( substr( $res[7], 1, 2 ) ) * 60 * 60;
-		$offset += intval( substr( $res[7], 4, 2 ) ) * 60;
+		$offset = (int)substr( $res[7], 1, 2 ) * 60 * 60;
+		$offset += (int)substr( $res[7], 4, 2 ) * 60;
 		if ( substr( $res[7], 0, 1 ) === '-' ) {
 			$offset = -$offset;
 		}
@@ -371,9 +404,9 @@ class Validate implements LoggerAwareInterface {
 			'/(\d{1,3}),(\d{1,2}),(\d{1,2})([NWSE])/D',
 			$val, $m )
 		) {
-			$coord = intval( $m[1] );
-			$coord += intval( $m[2] ) * ( 1 / 60 );
-			$coord += intval( $m[3] ) * ( 1 / 3600 );
+			$coord = (int)$m[1];
+			$coord += (int)$m[2] * ( 1 / 60 );
+			$coord += (int)$m[3] * ( 1 / 3600 );
 			if ( $m[4] === 'S' || $m[4] === 'W' ) {
 				$coord = -$coord;
 			}
@@ -386,8 +419,8 @@ class Validate implements LoggerAwareInterface {
 			'/(\d{1,3}),(\d{1,2}(?:.\d*)?)([NWSE])/D',
 			$val, $m )
 		) {
-			$coord = intval( $m[1] );
-			$coord += floatval( $m[2] ) * ( 1 / 60 );
+			$coord = (int)$m[1];
+			$coord += (float)$m[2] * ( 1 / 60 );
 			if ( $m[3] === 'S' || $m[3] === 'W' ) {
 				$coord = -$coord;
 			}

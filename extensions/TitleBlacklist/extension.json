@@ -10,7 +10,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "antispam",
 	"requires": {
-		"MediaWiki": ">= 1.31.0"
+		"MediaWiki": ">= 1.35.0"
 	},
 	"GroupPermissions": {
 		"sysop": {
@@ -33,6 +33,12 @@
 		"titleblacklist/*": "LogFormatter"
 	},
 	"GrantPermissions": {
+		"createaccount": {
+			"tboverride-account": true
+		},
+		"editprotected": {
+			"tboverride": true
+		},
 		"viewrestrictedlogs": {
 			"titleblacklistlog": true
 		}

@@ -287,7 +287,7 @@ if __name__ == '__main__':
 		chunks = 1
 		threads = 1
 	else:
-		chunks = (count / threads)
+		chunks = (count // threads)
 
 	p = multiprocessing.Pool(threads);
 	data = []

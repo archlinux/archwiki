@@ -19,29 +19,29 @@
 
 namespace MediaWiki\Extension\OATHAuth\Special;
 
+use ConfigException;
+use Html;
+use HTMLForm;
 use MediaWiki\Extension\OATHAuth\HTMLForm\IManageForm;
 use MediaWiki\Extension\OATHAuth\IModule;
 use MediaWiki\Extension\OATHAuth\OATHAuth;
 use MediaWiki\Extension\OATHAuth\OATHUser;
 use MediaWiki\Extension\OATHAuth\OATHUserRepository;
 use MediaWiki\MediaWikiServices;
+use Message;
+use MWException;
 use OOUI\ButtonWidget;
 use OOUI\HorizontalLayout;
-use Message;
-use Html;
 use OOUI\HtmlSnippet;
-use OOUI\PanelLayout;
-use SpecialPage;
 use OOUI\LabelWidget;
-use HTMLForm;
-use ConfigException;
-use MWException;
+use OOUI\PanelLayout;
 use PermissionsError;
+use SpecialPage;
 use UserNotLoggedIn;
 
 class OATHManage extends SpecialPage {
-	const ACTION_ENABLE = 'enable';
-	const ACTION_DISABLE = 'disable';
+	public const ACTION_ENABLE = 'enable';
+	public const ACTION_DISABLE = 'disable';
 
 	/**
 	 * @var OATHAuth
@@ -333,6 +333,7 @@ class OATHManage extends SpecialPage {
 	/**
 	 * Actions enable and disable are generic and all modules must
 	 * implement them, while all other actions are module-specific
+	 * @return bool
 	 */
 	private function isGenericAction() {
 		return in_array( $this->action, [ static::ACTION_ENABLE, static::ACTION_DISABLE ] );
@@ -348,7 +349,7 @@ class OATHManage extends SpecialPage {
 	}
 
 	private function shouldShowDisableWarning() {
-		return (bool)$this->getRequest()->getVal( 'warn', false ) &&
+		return $this->getRequest()->getBool( 'warn' ) &&
 			$this->requestedModule instanceof IModule &&
 			$this->getEnabled() instanceof IModule;
 	}

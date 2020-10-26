@@ -1,12 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"Candalua"
+			"Candalua",
+			"Fierodelveneto"
 		]
 	},
 	"interwiki": "Varda e modìfega i dati interwiki",
 	"interwiki-title-norights": "Varda i dati interwiki",
 	"interwiki_intro": "Sta qua la xe na panoramica de la tabèla dei interwiki.",
+	"interwiki-legend-label": "Lejenda",
 	"interwiki_prefix": "Prefisso",
 	"interwiki-prefix-label": "Prefisso:",
 	"interwiki_local": "Avanti",

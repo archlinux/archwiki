@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"AdiJapan",
+			"Andrei Stroe",
 			"Minisarm",
-			"Stelistcristi",
-			"Andrei Stroe"
+			"Stelistcristi"
 		]
 	},
 	"titleblacklist-desc": "Permite administratorilor să interzică crearea de pagini și de conturi de utilizator, folosind o [[MediaWiki:Titleblacklist|listă neagră]] și o [[MediaWiki:Titlewhitelist|listă albă]]",

@@ -22,7 +22,7 @@
 	"gadgets-required-rights": "Masapul {{PLURAL:$2|ti sumaganad a karbengan|dagiti sumaganad a karbengan}}:\n\n$1",
 	"gadgets-required-skins": "Magun-od {{PLURAL:$2|iti $1 a kudil|kadagiti sumaganad a kudil: $1}}.",
 	"gadgets-default": "Napakabaelan para iti amin babaen ti kasisigud.",
-	"gadgets-legacy": "Saan a naikarga ti gadget. Pangngaasi nga iyakar iti ResourceLoader. ([https://www.mediawiki.org/wiki/ResourceLoader/Migration_guide_(users) Agadal pay ti adu])",
+	"gadgets-legacy": "Saan a naikarga ti gadget. Pangngaasi nga iyakar iti ResourceLoader. ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) Agadal pay ti adu])",
 	"gadgets-export": "Eksport",
 	"gadgets-export-title": "Eksport ti gadget",
 	"gadgets-not-found": "Saan a nabirukan ti gadget ti \"$1\".",

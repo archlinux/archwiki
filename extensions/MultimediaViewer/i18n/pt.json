@@ -1,13 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
+			"Athena in Wonderland",
 			"Fúlvio",
-			"Imperadeiro98",
-			"SandroHc",
-			"Vitorvicentevalente",
-			"Macofe",
 			"Hamilton Abreu",
-			"Athena in Wonderland"
+			"Imperadeiro98",
+			"Macofe",
+			"SandroHc",
+			"Vitorvicentevalente"
 		]
 	},
 	"multimediaviewer-desc": "Ampliar miniaturas para tamanho maior em ecrã cheio.",
@@ -64,7 +64,7 @@
 	"multimediaviewer-embed-tab": "Incorporar",
 	"multimediaviewer-download-link": "Descarregar este ficheiro",
 	"multimediaviewer-download-preview-link-title": "Visualizar no navegador",
-	"multimediaviewer-download-original-button-name": "Descarregar em tamanho original",
+	"multimediaviewer-download-original-button-name": "Descarregar o ficheiro original",
 	"multimediaviewer-download-small-button-name": "Descarregar em tamanho pequeno",
 	"multimediaviewer-download-medium-button-name": "Descarregar em tamanho médio",
 	"multimediaviewer-download-large-button-name": "Descarregar em tamanho grande",

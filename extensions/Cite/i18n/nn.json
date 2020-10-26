@@ -15,7 +15,7 @@
 	"cite_error_ref_no_input": "Ugyldig <code>&lt;ref&gt;</code>-merke; referansar utan namn må ha innhald",
 	"cite_error_references_duplicate_key": "Ugyldig <code>&lt;ref&gt;</code>-merke; namnet «$1» er definert fleire gonger med ulikt innhald",
 	"cite_error_references_invalid_parameters": "Ugyldig <code>&lt;references&gt;</code>-kode; ingen parametrar er tillat, bruk <code>&lt;references /&gt;</code>",
-	"cite_error_references_no_backlink_label": "Gjekk tom for eigendefinerte tilbakelenketekstar.\nDefiner fleire i meldinga <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>",
+	"cite_error_references_no_backlink_label": "Gjekk tom for eigendefinerte tilbakelenketekstar. Definer fleire i meldinga [[MediaWiki:Cite references link many format backlink labels]]",
 	"cite_error_references_no_text": "Ugyldig <code>&lt;ref&gt;</code>-merke; ingen tekst vart gjeven for referansen med namnet <code>$1</code>",
 	"cite_error_included_ref": "Avsluttande <code>&lt;/ref&gt;</code>-merke manglar for <code>&lt;ref&gt;</code>",
 	"cite_error_group_refs_without_references": "<code>&lt;ref&gt;</code>-merke finst for gruppenamnet «$1», men inkje samsvarande <code>&lt;references group=\"$1\"/&gt;</code>-merke vart funne",

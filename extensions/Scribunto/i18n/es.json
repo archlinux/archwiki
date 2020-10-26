@@ -2,17 +2,17 @@
 	"@metadata": {
 		"authors": [
 			"Armando-Martin",
-			"Jewbask",
-			"Maor X",
-			"Peter Bowman",
-			"Fitoschido",
-			"Vfrico",
-			"Macofe",
-			"Ryo567",
-			"Lemondoge",
 			"Dgstranz",
+			"Fitoschido",
+			"Jewbask",
+			"Lemondoge",
+			"Macofe",
+			"Maor X",
+			"MarcoAurelio",
 			"McDutchie",
-			"MarcoAurelio"
+			"Peter Bowman",
+			"Ryo567",
+			"Vfrico"
 		]
 	},
 	"scribunto-desc": "Marco para la incorporación de lenguajes de script en páginas de MediaWiki",

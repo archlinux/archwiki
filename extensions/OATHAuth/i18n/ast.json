@@ -1,11 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Xuacu",
-			"Fitoschido"
+			"Fitoschido",
+			"Xuacu"
 		]
 	},
 	"oathauth-desc": "Ufre soporte d'identificación utilizando contraseñes pa una sola vez basaes en HMAC",
+	"disableoathforuser": "Desactivar la identificación de dos factores del usuariu",
 	"specialpages-group-oath": "Identificación de dos factores",
 	"oathauth-account": "Nome de la cuenta:",
 	"oathauth-secret": "Clave secreta d'identificación en dos pasos:",
@@ -25,6 +26,15 @@
 	"oathauth-step3": "Pasu 3: Apunta los códigos",
 	"oathauth-step4": "Pasu 4: Comprobación",
 	"oathauth-entertoken": "Escribe'l códigu dende'l preséu d'identificación a comprobar:",
+	"oathauth-disable-for-user": "Desactivar la identificación de dos factores d'un usuariu",
+	"right-oathauth-disable-for-user": "Desactivar la identificación de dos factores d'un usuariu",
+	"action-oathauth-disable-for-user": "desactivar la identificación de dos factores d'un usuariu",
+	"right-oathauth-view-log": "Aportar al rexistru de cambeos de la identificación en dos pasos",
+	"action-oathauth-view-log": "aportar al rexistru de cambeos de la identificación en dos pasos",
+	"oathauth-disable-intro": "Un gran poder trai una gran responsabilidá",
+	"oathauth-enteruser": "Nome d'usuariu:",
+	"oathauth-enterdisablereason": "Motivu pa desactivar:",
+	"oathauth-user-not-does-not-have-oath-enabled": "L'usuariu nun tien activada la identificación en dos pasos, nun hai nada que desactivar.",
 	"right-oathauth-enable": "Activar la identificación de dos factores",
 	"action-oathauth-enable": "activar la identificación de dos factores",
 	"oathauth-auth-token-label": "Pase",
@@ -36,5 +46,24 @@
 	"grant-group-authentication": "Facer les aiciones d'autenticación propies y pa otros",
 	"grant-oath": "Acceder a la información d'autenticación en dos factores (OAuth) propies y pa otros",
 	"right-oathauth-api-all": "Consultar y validar la información OATH propia y d'otros",
-	"action-oathauth-api-all": "comprobar l'estatus OATH"
+	"action-oathauth-api-all": "comprobar l'estatus OATH",
+	"oathauth-user-not-found": "Nun s'alcontró nenguna cuenta d'usuariu con esi nome",
+	"oath-log-name": "Rexistru d'identificación de dos factores",
+	"oath-log-header": "Estos eventos rexistren los cambeos nel estáu de la identificación en dos pasos de les cuentes de los usuarios.",
+	"logentry-oath-disable-other": "$1 {{GENDER:$2|desactivó}} la identificación de dos factores de $3",
+	"oauthauth-ui-no-module": "Nengunu activáu",
+	"oathauth-module-invalid": "El módulu OATHAuth que rexistró l'usuariu ye inválidu.",
+	"oathauth-module-totp-label": "TOTP (pase d’un solu usu)",
+	"oathauth-ui-manage": "Alministrar",
+	"oathmanage": "Alministrar la identificación de dos factores",
+	"oathauth-ui-not-enabled-modules": "Cambiar a un métodu alternativu",
+	"oathauth-ui-enabled-module": "Métodu d'identificación activáu",
+	"oathauth-enable-generic": "Activar",
+	"oathauth-disable-generic": "Desactivar",
+	"oathauth-invalid-data-format": "El fornidor de datos ye inválidu pa crear una clave pal métodu d'identificación escoyíu",
+	"oathauth-invalid-key-type": "La clave configurada nel usuariu nun casa col tipu riquíu pal métodu d'identificación seleicionáu",
+	"oathauth-disable-page-title": "Desactivar $1",
+	"oathauth-enable-page-title": "Activar $1",
+	"oathauth-action-exclusive-to-2fa": "Esta aición solo puen facela usuarios que tengan activada la identificación en dos pasos.",
+	"oathauth-ui-available-modules": "Métodos disponibles"
 }

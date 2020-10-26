@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"WikiPhoenix",
-			"Lokal Profil",
 			"Fader",
-			"Jopparn"
+			"Jopparn",
+			"Lokal Profil",
+			"WikiPhoenix"
 		]
 	},
 	"skinname-timeless": "Timeless",
@@ -27,5 +27,5 @@
 	"timeless-languages": "Språk",
 	"timeless-projects": "Andra projekt",
 	"timeless.css": "/* CSS som skrivs här kommer att påverka alla användare av utseendet Timeless */",
-	"timeless.js": "/* JavaScript här kommer att laddas för dem som använder utseendet Timeless */"
+	"timeless.js": "/* All JavaScript här kommer att laddas för dem som använder utseendet Timeless */"
 }

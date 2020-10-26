@@ -26,7 +26,6 @@ class CheckboxInputWidget extends InputWidget {
 	 *          (default: false)
 	 *      - bool $config['indeterminate'] Whether the checkbox is in the indeterminate state.
 	 *          (default: false)
-	 * @param-taint $config escapes_html
 	 */
 	public function __construct( array $config = [] ) {
 		// Parent constructor

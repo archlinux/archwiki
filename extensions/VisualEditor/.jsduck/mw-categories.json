@@ -1,0 +1,79 @@
+[
+	{
+		"name": "VisualEditor (MediaWiki extension)",
+		"groups": [
+			{
+				"name": "Initialization",
+				"classes": [
+					"mw.libs.ve*",
+					"ve.init.mw*"
+				]
+			},
+			{
+				"name": "Switching",
+				"classes": [
+					"mw.libs.ve.SwitchConfirmDialog",
+					"mw.libs.ve.MWEditMode*Tool"
+				]
+			},
+			{
+				"name": "User Interface",
+				"classes": [
+					"ve.ui.MW*Page",
+					"ve.ui.MW*Window"
+				]
+			},
+			{
+				"name": "Data Model",
+				"classes": [
+					"ve.dm.MW*Surface",
+					"ve.dm.MW*SurfaceFragment"
+				]
+			},
+			{
+				"name": "ContentEditable",
+				"classes": [
+					"ve.ce.MW*Surface"
+				]
+			}
+		]
+	},
+	{
+		"name": "VisualEditor (core) unused parts",
+		"groups": [
+			{
+				"name": "Standalone",
+				"classes": [
+					"ve.init.sa*"
+				],
+				"name": "Visual Diffing",
+				"classes": [
+					"ve.DiffTreeNode",
+					"ve.DiffMatchPatch",
+					"ve.dm.VisualDiff",
+					"ve.ui.DiffDialog",
+					"ve.ui.DiffElement"
+				]
+			}
+		]
+	},
+	{
+		"name": "Upstream (MediaWiki)",
+		"groups": [
+			{
+				"name": "MediaWiki",
+				"classes": [
+					"mw.Api",
+					"mw.Title",
+					"mw.widgets.*Widget"
+				]
+			},
+			{
+				"name": "MobileFrontend",
+				"classes": [
+					"VisualEditorOverlay"
+				]
+			}
+		]
+	}
+]

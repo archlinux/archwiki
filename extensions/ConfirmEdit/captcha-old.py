@@ -270,7 +270,7 @@ if __name__ == '__main__':
 		chunks = 1
 		threads = 1
 	else:
-		chunks = int(count / threads)
+		chunks = (count // threads)
 
 	p = multiprocessing.Pool(threads);
 	data = []
@@ -279,4 +279,3 @@ if __name__ == '__main__':
 		data.append([chunks, words, blacklist, opts, font, fontsize])
 
 	p.map(run_in_thread, data)
-

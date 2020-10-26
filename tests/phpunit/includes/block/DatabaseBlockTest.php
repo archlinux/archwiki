@@ -2,9 +2,10 @@
 
 use MediaWiki\Block\BlockRestrictionStore;
 use MediaWiki\Block\DatabaseBlock;
-use MediaWiki\Block\Restriction\PageRestriction;
 use MediaWiki\Block\Restriction\NamespaceRestriction;
+use MediaWiki\Block\Restriction\PageRestriction;
 use MediaWiki\MediaWikiServices;
+use Wikimedia\IPUtils;
 
 /**
  * @group Database
@@ -160,7 +161,7 @@ class DatabaseBlockTest extends MediaWikiLangTestCase {
 		}
 	}
 
-	function provideNewFromTargetRangeBlocks() {
+	public function provideNewFromTargetRangeBlocks() {
 		return [
 			'Blocks to IPv4 ranges' => [
 				[ '0.0.0.0/20', '0.0.0.0/30', '0.0.0.0/25' ],
@@ -369,9 +370,9 @@ class DatabaseBlockTest extends MediaWikiLangTestCase {
 			$target = $insBlock['target'];
 
 			if ( $insBlock['type'] === DatabaseBlock::TYPE_IP ) {
-				$target = User::newFromName( IP::sanitizeIP( $target ), false )->getName();
+				$target = User::newFromName( IPUtils::sanitizeIP( $target ), false )->getName();
 			} elseif ( $insBlock['type'] === DatabaseBlock::TYPE_RANGE ) {
-				$target = IP::sanitizeRange( $target );
+				$target = IPUtils::sanitizeRange( $target );
 			}
 
 			$block = new DatabaseBlock();
@@ -434,7 +435,6 @@ class DatabaseBlockTest extends MediaWikiLangTestCase {
 	/**
 	 * @dataProvider providerXff
 	 * @covers ::getBlocksForIPList
-	 * @covers ::chooseBlock
 	 */
 	public function testBlocksOnXff( $xff, $exCount, $exResult ) {
 		$user = $this->getUserForBlocking();
@@ -442,11 +442,7 @@ class DatabaseBlockTest extends MediaWikiLangTestCase {
 
 		$list = array_map( 'trim', explode( ',', $xff ) );
 		$xffblocks = DatabaseBlock::getBlocksForIPList( $list, true );
-		$this->assertEquals( $exCount, count( $xffblocks ), 'Number of blocks for ' . $xff );
-		$block = DatabaseBlock::chooseBlock( $xffblocks, $list );
-		$this->assertEquals(
-			$exResult, $block->getReason(), 'Correct block type for XFF header ' . $xff
-		);
+		$this->assertCount( $exCount, $xffblocks, 'Number of blocks for ' . $xff );
 	}
 
 	/**

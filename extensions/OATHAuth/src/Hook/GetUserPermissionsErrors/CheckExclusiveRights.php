@@ -6,8 +6,8 @@ use ConfigException;
 use MediaWiki\Extension\OATHAuth\OATHAuth;
 use MediaWiki\Session\Session;
 use RequestContext;
-use User;
 use Title;
+use User;
 
 class CheckExclusiveRights {
 	/**

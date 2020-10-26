@@ -2,23 +2,31 @@
 	"@metadata": {
 		"authors": [
 			"Kening Aldgilles",
-			"SK-luuut",
-			"Robin0van0der0vliet",
+			"PiefPafPier",
 			"Robin van der Vliet",
-			"PiefPafPier"
+			"Robin0van0der0vliet",
+			"SK-luuut"
 		]
 	},
 	"skinname-vector": "Vektor",
+	"vector-skin-desc": "Moderne ferzje fan MonoBoek mei in fris oansjoch en protte noflike ferbetterings",
+	"prefs-vector-enable-vector-1-label": "De âlde bewende Vektor brûke",
+	"prefs-vector-enable-vector-1-help": "Yn 'e kommende pear jier geane wy de Vektor-foarmjouwing stadichoan bywurkje. Mei 'de âlde bewende Vektor' kinne jo it oansjoch fan de âlde ferzje fan Vektor (fan desimber 2019) behâlde. Gean nei ús [[mw:Reading/Web/Desktop_Improvements|projektside]] at jo mear witte wolle oer de oanpassings.",
+	"vector-opt-out": "Alde oansjoch weromsette",
+	"vector.css": "/* Al it CSS hjirre sil foar brûkers fan de Vector-foarmjouwing laden wurde */",
+	"vector.js": "/* Al it JavaScript hjirre sil foar brûkers fan de Vector-foarmjouwing laden wurde */",
 	"vector-action-addsection": "Nij mêd",
-	"vector-action-delete": "Fuortsmite",
+	"vector-action-delete": "Wiskje",
 	"vector-action-move": "Omneame",
-	"vector-action-protect": "Beskermje",
-	"vector-action-undelete": "Tebeksette",
-	"vector-action-unprotect": "Beskerming fuorthelje",
+	"vector-action-protect": "Skoattelje",
+	"vector-action-undelete": "Wer teplak sette",
+	"vector-action-unprotect": "Befeiliging wizigje",
 	"vector-view-create": "Oanmeitsje",
 	"vector-view-edit": "Bewurkje",
-	"vector-view-history": "Skiednis sjen litte",
+	"vector-view-history": "Skiednis besjen",
 	"vector-view-view": "Lêze",
-	"vector-view-viewsource": "Besjoch de boarne",
+	"vector-view-viewsource": "Boarne besjen",
+	"vector-jumptonavigation": "Springe nei navigaasje",
+	"vector-jumptosearch": "Springe nei sykjen",
 	"vector-more-actions": "Mear"
 }

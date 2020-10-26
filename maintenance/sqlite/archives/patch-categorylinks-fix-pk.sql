@@ -33,15 +33,16 @@ CREATE TABLE /*_*/categorylinks_tmp (
   cl_collation varbinary(32) NOT NULL default '',
 
   -- Stores whether cl_from is a category, file, or other page, so we can
-  -- paginate the three categories separately.  This never has to be updated
-  -- after the page is created, since none of these page types can be moved to
-  -- any other.
+  -- paginate the three categories separately.  This only has to be updated
+  -- when moving pages into or out of the category namespace, since file pages
+  -- cannot be moved to other namespaces, nor can non-files be moved into the
+  -- file namespace.
   cl_type ENUM('page', 'subcat', 'file') NOT NULL default 'page',
   PRIMARY KEY (cl_from,cl_to)
 ) /*$wgDBTableOptions*/;
 
-INSERT INTO /*_*/categorylinks_tmp
-	SELECT *
+INSERT INTO /*_*/categorylinks_tmp(cl_from, cl_to, cl_sortkey, cl_sortkey_prefix, cl_timestamp, cl_collation, cl_type)
+	SELECT cl_from, cl_to, cl_sortkey, cl_sortkey_prefix, cl_timestamp, cl_collation, cl_type
 		FROM /*_*/categorylinks;
 
 DROP TABLE /*_*/categorylinks;

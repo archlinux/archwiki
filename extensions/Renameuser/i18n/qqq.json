@@ -1,9 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
+			"Beta16",
 			"EugeneZelenko",
+			"Freddy2001",
 			"Jon Harald Søby",
 			"Meno25",
+			"Metalhead64",
 			"Nemo bis",
 			"Nike",
 			"SPQRobin",
@@ -11,10 +14,7 @@
 			"Siebrand",
 			"Tacsipacsi",
 			"The Evil IP address",
-			"Umherirrender",
-			"Freddy2001",
-			"Metalhead64",
-			"Beta16"
+			"Umherirrender"
 		]
 	},
 	"renameuser": "{{doc-special|RenameUser}}\n{{Identical|Rename user}}",

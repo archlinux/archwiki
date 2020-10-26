@@ -179,8 +179,8 @@ class ExprParser {
 	 * http://montcs.bloomu.edu/~bobmon/Information/RPN/infix2rpn.shtml
 	 * It's essentially the same as Dijkstra's shunting yard algorithm.
 	 * @param string $expr
-	 * @throws ExprError
 	 * @return string
+	 * @throws ExprError
 	 */
 	public function doExpression( $expr ) {
 		$operands = [];

@@ -29,6 +29,7 @@ class Scribunto_LuaUstringLibrary extends Scribunto_LuaLibraryBase {
 	 */
 	private $patternRegexCache = null;
 
+	/** @inheritDoc */
 	public function __construct( $engine ) {
 		if ( $this->stringLengthLimit === null ) {
 			global $wgMaxArticleSize;
@@ -82,6 +83,12 @@ class Scribunto_LuaUstringLibrary extends Scribunto_LuaLibraryBase {
 		] );
 	}
 
+	/**
+	 * Check a string first parameter
+	 * @param string $name Function name, for errors
+	 * @param mixed $s Value to check
+	 * @param bool $checkEncoding Whether to validate UTF-8 encoding.
+	 */
 	private function checkString( $name, $s, $checkEncoding = true ) {
 		if ( $this->getLuaType( $s ) == 'number' ) {
 			$s = (string)$s;
@@ -335,6 +342,11 @@ class Scribunto_LuaUstringLibrary extends Scribunto_LuaLibraryBase {
 		return [ mb_strtolower( $s, 'UTF-8' ) ];
 	}
 
+	/**
+	 * Check a pattern as the second argument
+	 * @param string $name Lua function name, for errors
+	 * @param mixed $pattern Lua pattern
+	 */
 	private function checkPattern( $name, $pattern ) {
 		if ( $this->getLuaType( $pattern ) == 'number' ) {
 			$pattern = (string)$pattern;
@@ -350,7 +362,17 @@ class Scribunto_LuaUstringLibrary extends Scribunto_LuaLibraryBase {
 		}
 	}
 
-	/* Convert a Lua pattern into a PCRE regex */
+	/**
+	 * Convert a Lua pattern into a PCRE regex
+	 * @param string $pattern Lua pattern to convert
+	 * @param string|false $anchor Regex fragment (`^` or `\G`) to use
+	 *  when anchoring the start of the regex, or false to disable start-anchoring.
+	 * @param string $name Lua function name, for errors
+	 * @return array [ string $re, array $capt, bool $anypos ]
+	 *  - $re: The regular expression
+	 *  - $capt: Definition of capturing groups, see addCapturesFromMatch()
+	 *  - $anypos: Whether any positional captures were encountered in the pattern.
+	 */
 	private function patternToRegex( $pattern, $anchor, $name ) {
 		$cacheKey = serialize( [ $pattern, $anchor ] );
 		if ( !$this->patternRegexCache->has( $cacheKey ) ) {
@@ -538,6 +560,15 @@ class Scribunto_LuaUstringLibrary extends Scribunto_LuaLibraryBase {
 		return $this->patternRegexCache->get( $cacheKey );
 	}
 
+	/**
+	 * Convert a Lua pattern bracketed character set to a PCRE regex fragment
+	 * @param string[] $pat Pattern being processed, split into individual characters.
+	 * @param int $i Offset of the start of the bracketed character set in $pat.
+	 * @param int $len Length of $pat.
+	 * @param array $brcharsets Mapping from Lua pattern percent escapes to
+	 *  regex-style character ranges.
+	 * @return array [ int $new_i, string $re_fragment ]
+	 */
 	private function bracketedCharSetToRegex( $pat, $i, $len, $brcharsets ) {
 		$ii = $i + 1;
 		$re = '[';
@@ -588,6 +619,15 @@ class Scribunto_LuaUstringLibrary extends Scribunto_LuaLibraryBase {
 		return [ $i, $re ];
 	}
 
+	/**
+	 * Append captured groups to a result array
+	 * @param array $arr Result array to append to.
+	 * @param string $s String matched against.
+	 * @param array $m Matches, from preg_match with PREG_OFFSET_CAPTURE.
+	 * @param array $capt Capture groups (in $m) to process, see patternToRegex()
+	 * @param bool $m0_if_no_captures Whether to append "$0" if $capt is empty.
+	 * @return array
+	 */
 	private function addCapturesFromMatch( $arr, $s, $m, $capt, $m0_if_no_captures ) {
 		if ( count( $capt ) ) {
 			foreach ( $capt as $n => $pos ) {
@@ -844,6 +884,7 @@ class Scribunto_LuaUstringLibrary extends Scribunto_LuaLibraryBase {
 
 		default:
 			$this->checkType( 'gsub', 3, $repl, 'function or table or string' );
+			throw new LogicException( 'checkType above should have failed' );
 		}
 
 		$skippedMatches = 0;

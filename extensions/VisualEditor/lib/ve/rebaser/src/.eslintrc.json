@@ -1,0 +1,15 @@
+{
+	"root": true,
+	"extends": [
+		"wikimedia/server",
+		"wikimedia/jsduck"
+	],
+	"globals": {
+		"ve": true,
+		"OO": false
+	},
+	"rules": {
+		"max-len": "off",
+		"no-var": "error"
+	}
+}

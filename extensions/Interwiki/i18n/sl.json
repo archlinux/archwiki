@@ -8,7 +8,7 @@
 	"interwiki": "Ogled in urejanje podatkov interwiki",
 	"interwiki-title-norights": "Ogled podatkov interwiki",
 	"interwiki-desc": "Doda [[Special:Interwiki|posebno stran]] za ogled in urejanje tabele interwiki",
-	"interwiki_intro": "To je pregled tabele interwiki, ki določa predponske bližnjice, ki se uporabljajo za povezovanje na različne wikije in druge zunanje strani. Za priporočljivo rabo si oglejte [//www.mediawiki.org/wiki/Extension:Interwiki priročnik na MediaWiki.org].",
+	"interwiki_intro": "To je pregled tabele interwiki, ki določa predponske bližnjice, ki se uporabljajo za povezovanje na različne wikije in druge zunanje strani. Za priporočljivo rabo si oglejte [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Interwiki priročnik na MediaWiki.org].",
 	"interwiki-legend-label": "Legenda",
 	"interwiki_prefix": "Predpona",
 	"interwiki-prefix-label": "Predpona:",

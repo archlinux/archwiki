@@ -1,18 +1,20 @@
 {
 	"@metadata": {
 		"authors": [
+			"A Chinese Wikipedian",
+			"Hanyanbo98",
 			"Hzy980512",
+			"LNDDYL",
 			"Liuxinyu970226",
+			"Tiger",
+			"VulpesVulpes825",
+			"WQL",
+			"WhitePhosphorus",
 			"Xiaomingyan",
 			"Yfdyh000",
-			"Hanyanbo98",
-			"WQL",
-			"A Chinese Wikipedian",
-			"科劳",
 			"佛壁灯",
-			"WhitePhosphorus",
-			"LNDDYL",
-			"VulpesVulpes825"
+			"科劳",
+			"铁桶"
 		]
 	},
 	"oathauth-desc": "提供使用基于HMAC的一次性密码的身份验证支持",
@@ -43,7 +45,7 @@
 	"action-oathauth-view-log": "查看禁用双因素验证日志",
 	"oathauth-disable-intro": "权力大，责任重大",
 	"oathauth-enteruser": "用户名：",
-	"oathauth-enterreason": "禁用的理由：",
+	"oathauth-enterdisablereason": "禁用的理由：",
 	"oathauth-user-not-does-not-have-oath-enabled": "用户没有启用双因素身份验证，因此无需禁用",
 	"right-oathauth-enable": "启用双因素验证",
 	"action-oathauth-enable": "启用双因素验证",
@@ -62,9 +64,9 @@
 	"oath-log-header": "通过事件记录，可追溯用户的双因素验证状态。",
 	"logentry-oath-disable-other": "$1{{GENDER:$2|禁用了}}$3的双因素验证",
 	"oauthauth-ui-no-module": "全部禁用",
-	"oathauth-module-totp-label": "两步认证",
+	"oathauth-module-totp-label": "TOTP（基于时间的一次性密码）",
 	"oathauth-ui-manage": "管理",
-	"oathmanage": "两步认证管理",
+	"oathmanage": "管理双因素验证",
 	"oathauth-ui-enabled-module": "已启用的认证方法",
 	"oathauth-enable-generic": "启用",
 	"oathauth-disable-generic": "禁用",
@@ -72,5 +74,10 @@
 	"oathauth-invalid-key-type": "用户设置的密钥与选定的认证类型不匹配",
 	"oathauth-disable-page-title": "禁用$1",
 	"oathauth-enable-page-title": "启用$1",
-	"oathauth-ui-available-modules": "可用方法"
+	"oathauth-ui-available-modules": "可用方法",
+	"oathauth-ui-general-help": "'''多因素验证'''（Multi-factor authentication，MFA）是一种计算机访问控制的方法，用户需要成功通过两种或更多的验证机制才能得到授权：知识（有且仅有该用户知道的信息）、所有物（有且仅有该用户拥有的物品）以及先天特征（有且仅有该用户具备的生物特征）的验证。[https://zh.wikipedia.org/wiki/%E5%A4%9A%E9%87%8D%E8%A6%81%E7%B4%A0%E9%A9%97%E8%AD%89 了解更多]",
+	"oathauth-totp-description": "基于时间的一次性密码算法（TOTP）时基于HMAC的一次性密码算法（HOTP）的扩充，它通过目前时间的唯一性来产生一次性密码。",
+	"oathauth-disable-method-warning-button-label": "确认并继续",
+	"oathauth-disable-method-warning": "如果您禁用了$1的两步验证方法，您将无法再次在登录时使用该方法进行两步验证，且所有与之相关的数据均会被清除",
+	"oathauth-totp-disable-warning": "您将无法再次使用和此账号关联的设备进行认证。所有与该账号关联的临时密码均会失效。"
 }

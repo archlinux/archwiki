@@ -2,9 +2,9 @@
 
 namespace MediaWiki\Extension\OATHAuth\HTMLForm;
 
+use Html;
 use MediaWiki\Extension\OATHAuth\Key\TOTPKey;
 use MediaWiki\Logger\LoggerFactory;
-use Html;
 use Status;
 
 class TOTPEnableForm extends OATHAuthOOUIHTMLForm implements IManageForm {
@@ -26,6 +26,9 @@ class TOTPEnableForm extends OATHAuthOOUIHTMLForm implements IManageForm {
 		$this->getOutput()->addWikiMsg( 'oathauth-validatedoath' );
 	}
 
+	/**
+	 * @return array
+	 */
 	protected function getDescriptors() {
 		$keyData = $this->getRequest()->getSessionData( 'oathauth_totp_key' ) ?? [];
 		$key = TOTPKey::newFromArray( $keyData );
@@ -81,7 +84,7 @@ class TOTPEnableForm extends OATHAuthOOUIHTMLForm implements IManageForm {
 			'scratchtokens' => [
 				'type' => 'info',
 				'default' =>
-					$this->msg( 'oathauth-scratchtokens' )
+					$this->msg( 'oathauth-scratchtokens' )->parse()
 					. $this->createResourceList( $this->getScratchTokensForDisplay( $key ) ),
 				'raw' => true,
 				'section' => 'step3',
@@ -100,7 +103,7 @@ class TOTPEnableForm extends OATHAuthOOUIHTMLForm implements IManageForm {
 	}
 
 	/**
-	 * @param $resources array
+	 * @param array $resources
 	 * @return string
 	 */
 	private function createResourceList( $resources ) {
@@ -117,7 +120,7 @@ class TOTPEnableForm extends OATHAuthOOUIHTMLForm implements IManageForm {
 	 * The characters of the token are split in groups of 4
 	 *
 	 * @param TOTPKey $key
-	 * @return String
+	 * @return string
 	 */
 	protected function getSecretForDisplay( TOTPKey $key ) {
 		return $this->tokenFormatterFunction( $key->getSecret() );

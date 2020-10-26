@@ -1,17 +1,17 @@
 {
 	"@metadata": {
 		"authors": [
+			"1917 Ekim Devrimi",
+			"Asmen",
 			"Erdemaslancan",
 			"Gorizon",
+			"Gırd",
+			"Kumkumuk",
+			"Macofe",
 			"Marmase",
 			"Mirzali",
-			"Xoser",
-			"Macofe",
-			"Kumkumuk",
-			"Asmen",
-			"Gırd",
-			"1917 Ekim Devrimi",
-			"Orbot707"
+			"Orbot707",
+			"Xoser"
 		]
 	},
 	"wikieditor": "Miyanriyê wikitekstio ke raverşiyayo",
@@ -54,7 +54,7 @@
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Gıreyê miyani",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "Gırêy teberi",
 	"wikieditor-toolbar-tool-link-empty": "Gırey to be thebay çıniyo.",
-	"wikieditor-toolbar-tool-file": "dosyaya  wedarteyi/weradaye",
+	"wikieditor-toolbar-tool-file": "Resımi û medya",
 	"wikieditor-toolbar-tool-file-example": "Nımune.jpg",
 	"wikieditor-toolbar-tool-file-title": "Dosya bıerz",
 	"wikieditor-toolbar-file-target": "Nameyê dosya:",
@@ -117,7 +117,7 @@
 	"wikieditor-toolbar-tool-table-preview": "Verqayt",
 	"wikieditor-toolbar-tool-table-insert": "têare ker",
 	"wikieditor-toolbar-tool-table-cancel": "Bıtexelne",
-	"wikieditor-toolbar-tool-table-toomany": "$1 hucrara ziyed tablo {{PLURAL:$1|eştış}} pê no mesaj mumkın niyo",
+	"wikieditor-toolbar-tool-table-toomany": "$1 {{PLURAL:$1|hucre|hucreyan}} ra zêde tablo definayışi rê ena dora irtibatiya mıkum niyo.",
 	"wikieditor-toolbar-tool-table-invalidnumber": "şıma pê yew amaro meqbul o satır u estun cı nêkewti",
 	"wikieditor-toolbar-tool-table-zero": "tablo ya ke tede satır u estun çinibo şıma nêşkeni têare bıkeri",
 	"wikieditor-toolbar-tool-replace": "bıgêr u bıvurn",

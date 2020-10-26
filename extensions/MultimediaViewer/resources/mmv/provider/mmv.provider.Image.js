@@ -35,6 +35,7 @@
 
 		/**
 		 * AJAX call cache.
+		 *
 		 * @property {Object.<string, jQuery.Promise>} cache
 		 * @protected
 		 */

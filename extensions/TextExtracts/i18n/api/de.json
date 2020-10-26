@@ -16,5 +16,5 @@
 	"apiwarn-textextracts-unsupportedmodel": "$1 hat das Inhaltsmodell $2, das nicht unterstützt wird. Es wird ein leerer Auszug zurückgegeben.",
 	"apiwarn-textextracts-title-in-file-namespace": "Es wurde ein Auszug für einen Titel im Dateinamensraum angefordert, jedoch wurde nichts zurückgegeben.",
 	"apiwarn-textextracts-sentences-and-html": "Der Parameter <var>$1sentences</var> könnte unerwartete Ergebnisse aufweisen, wenn er im HTML-Modus verwendet wird.",
-	"apiwarn-textextracts-malformed-html": "HTML könnte beschädigt und/oder unausgeglichen sein und Inline-Bilder weglassen. Verwendung auf eigene Gefahr. Bekannte Probleme sind unter https://www.mediawiki.org/wiki/Extension:TextExtracts#Caveats aufgelistet."
+	"apiwarn-textextracts-malformed-html": "HTML könnte beschädigt und/oder unausgeglichen sein und Inline-Bilder weglassen. Verwendung auf eigene Gefahr. Bekannte Probleme sind unter https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:TextExtracts#Caveats aufgelistet."
 }

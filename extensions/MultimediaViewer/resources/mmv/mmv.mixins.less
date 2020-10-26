@@ -20,7 +20,7 @@
 .fade-out-horizontal( @backgroundColor: white ) {
 	@invisible: fadeout( @backgroundColor, 100% );
 	background-image: -moz-linear-gradient( left, @invisible 0%, @backgroundColor 100% ); // FF3.6+
-	background-image: -webkit-gradient( linear, left top, right top, color-stop(0%, @invisible ), color-stop( 100%, @backgroundColor) ); // Chrome,Safari4+
+	background-image: -webkit-gradient( linear, left top, right top, color-stop( 0%, @invisible ), color-stop( 100%, @backgroundColor ) ); // Chrome,Safari4+
 	background-image: -webkit-linear-gradient( left, @invisible 0%, @backgroundColor 100% ); // Chrome10+,Safari5.1+
 	background-image: linear-gradient( to right, @invisible 0%, @backgroundColor 100% ); // W3C
 }

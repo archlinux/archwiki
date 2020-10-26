@@ -33,7 +33,7 @@
 	"action-oathauth-view-log": "akses ka log parubahan otentikasi duo-faktor",
 	"oathauth-disable-intro": "Jo kakuatan nan gadang, ado tangguang jawek nan gadang",
 	"oathauth-enteruser": "Namo pangguno:",
-	"oathauth-enterreason": "Alasan dinonaktipan:",
+	"oathauth-enterdisablereason": "Alasan dinonaktipan:",
 	"oathauth-user-not-does-not-have-oath-enabled": "Pengguno indak mangaktipan otentikasi duo-faktor, jadi indak ado nan dapek dibuek",
 	"right-oathauth-enable": "Aktipan otentikasi duo-faktor",
 	"action-oathauth-enable": "aktipan otentikasi duo-faktor",

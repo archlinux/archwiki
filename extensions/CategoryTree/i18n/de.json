@@ -2,21 +2,21 @@
 	"@metadata": {
 		"authors": [
 			"Daniel Kinzler, brightbyte.de",
+			"Hwboehm",
 			"Kghbln",
+			"MGChecker",
 			"Metalhead64",
 			"Purodha",
 			"Raimond Spekking",
 			"SVG",
-			"MGChecker",
-			"Umherirrender",
-			"Hwboehm",
-			"Sushi"
+			"Sushi",
+			"Umherirrender"
 		]
 	},
 	"categorytree": "Kategorienbaum",
 	"categorytree-portlet": "Kategorien",
 	"categorytree-legend": "Zeige Kategorienbaum",
-	"categorytree-desc": "Fügt dem Wiki eine [[Special:CategoryTree|Spezialseite]] hinzu, welche die dynamische Navigation durch die Kategorienstruktur ermöglicht",
+	"categorytree-desc": "Erweitert das Wiki um eine [[Special:CategoryTree|Spezialseite]] mit der man dynamisch durch die Kategorienstruktur navigieren kann",
 	"categorytree-header": "Gib den Namen einer Kategorie ein, um ihre Inhalte als Baumstruktur darzustellen. Erfordert JavaScript.",
 	"categorytree-category": "Kategorie:",
 	"categorytree-go": "Kategorienbaum anzeigen",

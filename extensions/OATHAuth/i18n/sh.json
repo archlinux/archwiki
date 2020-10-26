@@ -32,7 +32,7 @@
 	"action-oathauth-view-log": "pristup evidenciji promjena u dvočiniteljskoj potvrdi",
 	"oathauth-disable-intro": "Sa velikom moći dolazi velika odgovornost",
 	"oathauth-enteruser": "Korisničko ime:",
-	"oathauth-enterreason": "Razlog onemogućavanja:",
+	"oathauth-enterdisablereason": "Razlog onemogućavanja:",
 	"oathauth-user-not-does-not-have-oath-enabled": "Korisnik nema omogućenu dvočiniteljsku potvrdu. Prema tome, ništa se ne može onemogućiti",
 	"right-oathauth-enable": "Omogućivanje dvočiniteljske potvrde",
 	"action-oathauth-enable": "omogućivanje dvočiniteljske potvrde",

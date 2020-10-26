@@ -46,7 +46,7 @@ class TraceFormatter {
 			TreeBuilder::UNDER => 'under',
 			TreeBuilder::ROOT => 'under root'
 		];
-		return isset( $names[$prep] ) ? $names[$prep] : '???';
+		return $names[$prep] ?? '???';
 	}
 
 	public static function startDocument( $fns, $fn ) {

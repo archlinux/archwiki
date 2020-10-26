@@ -16,7 +16,7 @@ trait IconElement {
 	/**
 	 * Symbolic icon name.
 	 *
-	 * @var string
+	 * @var ?string
 	 */
 	protected $iconName = null;
 

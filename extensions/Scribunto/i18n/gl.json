@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Toliño",
-			"Elisardojm",
 			"Banjo",
-			"McDutchie"
+			"Elisardojm",
+			"McDutchie",
+			"Toliño"
 		]
 	},
 	"scribunto-desc": "Estrutura para incorporar linguaxes de script nas páxinas de MediaWiki",

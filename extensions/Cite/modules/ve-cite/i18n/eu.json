@@ -2,14 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"An13sa",
-			"Unai Fdz. de Betoño",
-			"Xabier Armendaritz",
-			"Subi",
-			"Sator",
+			"Asierog",
 			"Macofe",
 			"Mikel Ibaiba",
-			"Asierog",
-			"Theklan"
+			"Sator",
+			"Subi",
+			"Theklan",
+			"Unai Fdz. de Betoño",
+			"Xabier Armendaritz"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Liburua",
@@ -25,7 +25,11 @@
 	"cite-ve-changedesc-reflist-responsive-set": "Erreferentzia zerrenda zutabe moldagarrietan bistaratzeko aldatu da",
 	"cite-ve-changedesc-reflist-responsive-unset": "Erreferentzia zerrenda zutabe bakarrean bistaratzeko aldatu da",
 	"cite-ve-changedesc-reflist-item-id": "Erreferentzia indizea aldatu da",
+	"cite-ve-citationneeded-button": "Erreferentzia gehitu",
+	"cite-ve-citationneeded-description": "Lankide batek adierazi du adierazpen honek iturri baliagarri bat behar duela.",
+	"cite-ve-citationneeded-title": "Erreferentzia behar da",
 	"cite-ve-dialog-reference-editing-reused": "Erreferentzia hau {{PLURAL:$1|behin|2=birritan|$1 aldiz}} agertzen da orri honetan.",
+	"cite-ve-dialog-reference-editing-reused-long": "Erreferentzia hau {{PLURAL:$1|behin|2=birritan|$1 aldiz}} erabiltzen da orrialde honetan. Hemen egiten dituzun aldaketek berrerabiltzen ari diren guztietan aldatuko dira.",
 	"cite-ve-dialog-reference-options-group-label": "Talde hau erabili",
 	"cite-ve-dialog-reference-options-group-placeholder": "Erreferentzia orokorrak",
 	"cite-ve-dialog-reference-options-name-label": "Berrerabili izen honekin",

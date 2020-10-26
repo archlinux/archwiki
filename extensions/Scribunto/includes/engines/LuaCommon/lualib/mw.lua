@@ -5,7 +5,6 @@ local packageModuleFunc
 local php
 local allowEnvFuncs = false
 local logBuffer = ''
-local currentFrame
 local loadedData = {}
 local executeFunctionDepth = 0
 
@@ -453,9 +452,10 @@ end
 --
 -- @param chunk The module chunk
 -- @param name The name of the function to be returned. Nil or false causes the entire export table to be returned
+-- @param frame New frame to use; if nil, one will be created
 -- @return boolean Whether the requested value was able to be returned
 -- @return table|function|string The requested value, or if that was unable to be returned, the type of the value returned by the module
-function mw.executeModule( chunk, name )
+function mw.executeModule( chunk, name, frame )
 	local env = mw.clone( _G )
 	makePackageModule( env )
 
@@ -477,14 +477,14 @@ function mw.executeModule( chunk, name )
 	env.os.date = ttlDate
 	env.os.time = ttlTime
 
+	frame = frame or newFrame( 'current', 'parent' )
+	env.mw.getCurrentFrame = function ()
+		return frame
+	end
+
 	setfenv( chunk, env )
 
-	local oldFrame = currentFrame
-	if not currentFrame then
-		currentFrame = newFrame( 'current', 'parent' )
-	end
 	local res = chunk()
-	currentFrame = oldFrame
 
 	if not name then -- catch console whether it's evaluating its own code or a module's
 		return true, res
@@ -496,8 +496,16 @@ function mw.executeModule( chunk, name )
 end
 
 function mw.executeFunction( chunk )
-	local frame = newFrame( 'current', 'parent' )
-	local oldFrame = currentFrame
+	local getCurrentFrame = getfenv( chunk ).mw.getCurrentFrame
+	local frame
+	if getCurrentFrame then
+		-- Normal case
+		frame = getCurrentFrame()
+	else
+		-- If someone assigns a built-in method to the module's return table,
+		-- its env won't have mw.getCurrentFrame()
+		frame = newFrame( 'current', 'parent' )
+	end
 
 	if executeFunctionDepth == 0 then
 		-- math.random is defined as using C's rand(), and C's rand() uses 1 as
@@ -507,9 +515,7 @@ function mw.executeFunction( chunk )
 	end
 	executeFunctionDepth = executeFunctionDepth + 1
 
-	currentFrame = frame
 	local results = { chunk( frame ) }
-	currentFrame = oldFrame
 
 	local stringResults = {}
 	for i, result in ipairs( results ) do
@@ -633,13 +639,6 @@ function mw.getLogBuffer()
 	return logBuffer
 end
 
-function mw.getCurrentFrame()
-	if not currentFrame then
-		currentFrame = newFrame( 'current', 'parent' )
-	end
-	return currentFrame
-end
-
 function mw.isSubsting()
 	return php.isSubsting()
 end
@@ -750,19 +749,14 @@ function mw.loadData( module )
 		error( data, 2 )
 	end
 	if not data then
-		-- Don't allow accessing the current frame's info (bug 65687)
-		local oldFrame = currentFrame
-		currentFrame = newFrame( 'empty' )
-
 		-- The point of this is to load big data, so don't save it in package.loaded
 		-- where it will have to be copied for all future modules.
 		local l = package.loaded[module]
 		local _
 
-		_, data = mw.executeModule( function() return require( module ) end )
+		_, data = mw.executeModule( function() return require( module ) end, nil, newFrame( 'empty' ) )
 
 		package.loaded[module] = l
-		currentFrame = oldFrame
 
 		-- Validate data
 		local err

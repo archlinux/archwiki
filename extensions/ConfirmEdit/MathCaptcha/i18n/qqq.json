@@ -1,4 +1,8 @@
 {
-	"@metadata": [],
-	"mathcaptcha-desc": "{{Optional}}\n{{desc}}"
+	"@metadata": {
+		"authors": [
+			"Raymond"
+		]
+	},
+	"mathcaptcha-desc": "{{desc}}"
 }

@@ -14,8 +14,10 @@
 	"oathauth-step2": "Schrëtt 2: De QR-Code scannen",
 	"oathauth-step4": "Schrëtt 4: Verificatioun",
 	"oathauth-enteruser": "Benotzernumm:",
+	"oathauth-enterverifyreason": "Grond fir Nozekucken",
 	"grant-group-authentication": "Authentifikatiouns-Aktioune fir sech selwer a fir Anerer maachen",
 	"action-oathauth-api-all": "OATH-Status nokucken",
 	"oathauth-enable-generic": "Aschalten",
-	"oathauth-disable-generic": "Ausschalten"
+	"oathauth-disable-generic": "Ausschalten",
+	"oathauth-invalidrequest": "Net-valabel Ufro"
 }

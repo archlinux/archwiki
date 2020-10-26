@@ -30,5 +30,6 @@
 	"cite-ve-referenceslist-isempty-default": "Esas nula referi en ca pagino inkluzenda en ca listo.",
 	"cite-ve-referenceslist-missingref": "Ica refero definesas en shablono od altra produktita bloko, e nun povas redaktesar nur per fonto-maniero.",
 	"cite-ve-toolbar-group-label": "Citar",
-	"cite-ve-othergroup-item": "$1 refero"
+	"cite-ve-othergroup-item": "$1 refero",
+	"visualeditor-internal-list-diff-default-group-name-mwreference": "Referi"
 }

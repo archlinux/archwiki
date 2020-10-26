@@ -2,10 +2,10 @@
 
 namespace RemexHtml\Serializer;
 
-use RemexHtml\Tokenizer\Attribute;
-use RemexHtml\HTMLData;
 use RemexHtml\DOM\DOMFormatter;
 use RemexHtml\DOM\DOMUtils;
+use RemexHtml\HTMLData;
+use RemexHtml\Tokenizer\Attribute;
 
 /**
  * A Formatter which is used to format documents in (almost) the way they
@@ -64,11 +64,14 @@ class TestFormatter implements Formatter, DOMFormatter {
 		foreach ( $sortedAttrs as $attrName => $attr ) {
 			$localName = DOMUtils::uncoerceName( $attr->localName );
 			if ( $attr->namespaceURI === null
+				// @phan-suppress-next-line PhanUndeclaredProperty
 				|| isset( $attr->reallyNoNamespace )
 			) {
 				$prefix = '';
 			} elseif ( isset( self::$attrNamespaces[$attr->namespaceURI] ) ) {
 				$prefix = self::$attrNamespaces[$attr->namespaceURI] . ' ';
+			} else {
+				$prefix = '';
 			}
 			$ret .= "  $prefix$localName=\"{$attr->value}\"\n";
 		}
@@ -106,7 +109,7 @@ class TestFormatter implements Formatter, DOMFormatter {
 
 		switch ( $node->nodeType ) {
 		case XML_ELEMENT_NODE:
-			/** @var \DOMElement $node */
+			'@phan-var \DOMElement $node'; /** @var \DOMElement $node */
 			return $this->formatDOMElement( $node, $contents );
 
 		case XML_DOCUMENT_NODE:
@@ -115,15 +118,15 @@ class TestFormatter implements Formatter, DOMFormatter {
 
 		case XML_TEXT_NODE:
 		case XML_CDATA_SECTION_NODE:
-			/** @var \DOMCharacterData $node */
+			'@phan-var \DOMCharacterData $node'; /** @var \DOMCharacterData $node */
 			return $this->formatCharacters( $node->data );
 
 		case XML_COMMENT_NODE:
-			/** @var \DOMComment $node */
+			'@phan-var \DOMComment $node'; /** @var \DOMComment $node */
 			return $this->formatComment( $node->data );
 
 		case XML_DOCUMENT_TYPE_NODE:
-			/** @var \DOMDocumentType $node */
+			'@phan-var \DOMDocumentType $node'; /** @var \DOMDocumentType $node */
 			return $this->doctype( $node->name, $node->publicId, $node->systemId );
 
 		case XML_PI_NODE:

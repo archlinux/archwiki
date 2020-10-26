@@ -1,0 +1,13 @@
+{
+	"extends": [
+		"wikimedia/qunit",
+		"../../.eslintrc.json"
+	],
+	"globals": {
+		"sinon": "readonly"
+	},
+	"rules": {
+		"qunit/resolve-async": "off",
+		"no-jquery/no-parse-html-literal": "off"
+	}
+}

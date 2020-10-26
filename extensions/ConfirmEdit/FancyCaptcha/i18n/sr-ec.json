@@ -1,15 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
+			"BadDog",
+			"Milicevic01",
 			"Millosh",
+			"Obsuser",
 			"Rancher",
+			"Srdjan m",
 			"Жељко Тодоровић",
 			"Михајло Анђелковић",
-			"Milicevic01",
-			"Srdjan m",
-			"Сербијана",
-			"Obsuser",
-			"BadDog"
+			"Сербијана"
 		]
 	},
 	"fancycaptcha-desc": "Обогаћен стварач сликовног кода за потврду уређивања",

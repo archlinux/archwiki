@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Ерней",
 			"Ильнар"
 		]
 	},
@@ -17,5 +18,5 @@
 	"codeeditor-indent": "Чигенеш",
 	"codeeditor-outdent": "Сулга күчеш",
 	"codeeditor-error-title": "Бәйлелек хатасы",
-	"codeeditor-error-message": "CodeEditor өчен WikiEditor кушымтасын йөкләү кирәк."
+	"codeeditor-error-message": "CodeEditor өчен WikiEditor кушымтасын төяү кирәк."
 }

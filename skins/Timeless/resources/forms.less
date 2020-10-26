@@ -54,6 +54,26 @@ div.editOptions {
 	}
 }
 
+// Essentially revert T182320 (core change)
+// Custom font stacks below should fully address this issue regardless
+.mw-editfont-monospace,
+.mw-editfont-sans-serif,
+.mw-editfont-serif {
+	font-size: inherit;
+}
+
+.mw-editfont-monospace {
+	font-family: @fonts-mono;
+}
+
+.mw-editfont-sans-serif {
+	font-family: @fonts-sans;
+}
+
+.mw-editfont-serif {
+	font-family: @fonts-serif;
+}
+
 /* Extension:TemplateSandbox stuff */
 .mw-templatesandbox-page label {
 	padding: 0;

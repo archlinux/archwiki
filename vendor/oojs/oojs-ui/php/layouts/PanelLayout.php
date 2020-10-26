@@ -15,7 +15,6 @@ class PanelLayout extends Layout {
 	 *      - bool $config['framed'] Wrap in a frame to visually separate from outside content
 	 *          (default: false)
 	 *      - bool $config['preserveContent'] Preserve DOM content when infusing (default: true)
-	 * @param-taint $config escapes_htmlnoent
 	 */
 	public function __construct( array $config = [] ) {
 		// Config initialization

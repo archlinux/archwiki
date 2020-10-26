@@ -20,16 +20,17 @@ namespace MediaWiki\Extension\OATHAuth\Key;
  */
 
 use Base32\Base32;
-use jakobo\HOTP\HOTP;
-use MediaWiki\Extension\OATHAuth\OATHUser;
-use Psr\Log\LoggerInterface;
-use MediaWiki\Logger\LoggerFactory;
+use CentralIdLookup;
 use DomainException;
 use Exception;
-use MWException;
-use CentralIdLookup;
-use MediaWiki\MediaWikiServices;
+use jakobo\HOTP\HOTP;
 use MediaWiki\Extension\OATHAuth\IAuthKey;
+use MediaWiki\Extension\OATHAuth\OATHUser;
+use MediaWiki\Extension\OATHAuth\OATHUserRepository;
+use MediaWiki\Logger\LoggerFactory;
+use MediaWiki\MediaWikiServices;
+use MWException;
+use Psr\Log\LoggerInterface;
 
 /**
  * Class representing a two-factor key
@@ -43,13 +44,13 @@ class TOTPKey implements IAuthKey {
 	 * Represents that a token corresponds to the main secret
 	 * @see verify
 	 */
-	const MAIN_TOKEN = 1;
+	private const MAIN_TOKEN = 1;
 
 	/**
 	 * Represents that a token corresponds to a scratch token
 	 * @see verify
 	 */
-	const SCRATCH_TOKEN = -1;
+	private const SCRATCH_TOKEN = -1;
 
 	/** @var array Two factor binary secret */
 	private $secret;
@@ -195,6 +196,8 @@ class TOTPKey implements IAuthKey {
 
 						$auth = MediaWikiServices::getInstance()->getService( 'OATHAuth' );
 						$module = $auth->getModuleByKey( 'totp' );
+
+						/** @var OATHUserRepository $userRepo */
 						$userRepo = MediaWikiServices::getInstance()->getService( 'OATHUserRepository' );
 						$user->addKey( $this );
 						$user->setModule( $module );

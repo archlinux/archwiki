@@ -52,12 +52,19 @@ class ButtonWidget extends Widget {
 	protected $noFollow = true;
 
 	/**
+	 * Relationship attributes, such as the noFollow field above, or noopener for the hyperlink.
+	 *
+	 * @var string[]
+	 */
+	protected $rel = [];
+
+	/**
 	 * @param array $config Configuration options
 	 *      - bool $config['active'] Whether button should be shown as active (default: false)
 	 *      - string $config['href'] Hyperlink to visit when clicked
 	 *      - string $config['target'] Target to open hyperlink in
 	 *      - bool $config['noFollow'] Search engine traversal hint (default: true)
-	 * @param-taint $config escapes_html
+	 *      - string[] $config['rel'] Relationship attributes for the hyperlink
 	 */
 	public function __construct( array $config = [] ) {
 		// Parent constructor
@@ -88,7 +95,14 @@ class ButtonWidget extends Widget {
 		$this->setActive( $config['active'] ?? false );
 		$this->setHref( $config['href'] ?? null );
 		$this->setTarget( $config['target'] ?? null );
-		$this->setNoFollow( $config['noFollow'] ?? true );
+		$rel = [ 'nofollow' ];
+		if ( isset( $config['rel'] ) ) {
+			$rel = $config['rel'];
+		} elseif ( isset( $config[ 'noFollow' ] ) && $config[ 'noFollow' ] === false ) {
+			$rel = [];
+		}
+
+		$this->setRel( $rel );
 	}
 
 	/**
@@ -116,6 +130,15 @@ class ButtonWidget extends Widget {
 	 */
 	public function getNoFollow() {
 		return $this->noFollow;
+	}
+
+	/**
+	 * Get the relationship attribute of the hyperlink.
+	 *
+	 * @return string[] Relationship attributes that apply to the hyperlink
+	 */
+	public function getRel() {
+		return $this->rel;
 	}
 
 	/**
@@ -172,10 +195,39 @@ class ButtonWidget extends Widget {
 	 * @return $this
 	 */
 	public function setNoFollow( $noFollow ) {
-		$this->noFollow = is_bool( $noFollow ) ? $noFollow : true;
-
 		if ( $this->noFollow ) {
-			$this->button->setAttributes( [ 'rel' => 'nofollow' ] );
+			if ( !$noFollow ) {
+				$relationship = $this->rel;
+				$index = array_search( 'nofollow', $relationship );
+				unset( $relationship[$index] );
+
+				$this->setRel( $relationship );
+			}
+		} else {
+			if ( $noFollow ) {
+				$this->setRel( array_merge(
+					$this->rel,
+					[ 'nofollow' ]
+				) );
+			}
+		}
+
+		return $this;
+	}
+
+	/**
+	 * Set the relationship attribute of the hyperlink.
+	 *
+	 * @param string|string[] $rel Relationship attributes for the hyperlink
+	 * @return $this
+	 */
+	public function setRel( $rel ) {
+		$this->rel = is_array( $rel ) ? $rel : [ $rel ];
+		// For backwards compatibility
+		$this->noFollow = in_array( 'nofollow', $this->rel );
+
+		if ( $this->rel ) {
+			$this->button->setAttributes( [ 'rel' => implode( ' ', $this->rel ) ] );
 		} else {
 			$this->button->removeAttributes( [ 'rel' ] );
 		}
@@ -218,6 +270,9 @@ class ButtonWidget extends Widget {
 		}
 		if ( $this->noFollow !== true ) {
 			$config['noFollow'] = $this->noFollow;
+		}
+		if ( $this->rel !== [] ) {
+			$config['rel'] = $this->rel;
 		}
 		return parent::getConfig( $config );
 	}

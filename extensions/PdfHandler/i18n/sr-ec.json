@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Rancher",
-			"Михајло Анђелковић",
-			"Milicevic01",
 			"BadDog",
-			"Zoranzoki21"
+			"Milicevic01",
+			"Rancher",
+			"Zoranzoki21",
+			"Михајло Анђелковић"
 		]
 	},
 	"pdf-desc": "Руковалац за приказ PDF датотека у режиму за слике",

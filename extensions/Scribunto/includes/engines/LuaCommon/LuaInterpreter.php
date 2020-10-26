@@ -60,9 +60,3 @@ abstract class Scribunto_LuaInterpreter {
 	 */
 	abstract public function unpauseUsageTimer();
 }
-
-class Scribunto_LuaInterpreterNotFoundError extends MWException {
-}
-
-class Scribunto_LuaInterpreterBadVersionError extends MWException {
-}

@@ -10,7 +10,6 @@ namespace OOUI;
 class Layout extends Element {
 	/**
 	 * @param array $config Configuration options
-	 * @param-taint $config escapes_htmlnoent
 	 */
 	public function __construct( array $config = [] ) {
 		// Parent constructor

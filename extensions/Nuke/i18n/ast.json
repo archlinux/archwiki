@@ -23,7 +23,7 @@
 	"nuke-deleted": "La páxina '''$1''' se desanició.",
 	"nuke-not-deleted": "La páxina [[:$1]] '''nun se pudo''' desaniciar.",
 	"nuke-delete-more": "[[Special:Nuke|Desaniciar más páxines]]",
-	"nuke-pattern": "Patrón pal nome de páxina:",
+	"nuke-pattern": "Patrón LIKE de SQL (p. ex. %) pal nome de la páxina:",
 	"nuke-nopages-global": "Nun hai títulos de páxina que casen cola gueta.",
 	"nuke-viewchanges": "ver los cambios",
 	"nuke-namespace": "Llendar al espaciu de nomes:",

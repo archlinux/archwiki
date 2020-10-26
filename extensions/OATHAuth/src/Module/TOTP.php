@@ -3,17 +3,18 @@
 namespace MediaWiki\Extension\OATHAuth\Module;
 
 use MediaWiki\Auth\SecondaryAuthenticationProvider;
+use MediaWiki\Extension\OATHAuth\Auth\TOTPSecondaryAuthenticationProvider;
 use MediaWiki\Extension\OATHAuth\HTMLForm\IManageForm;
 use MediaWiki\Extension\OATHAuth\HTMLForm\TOTPDisableForm;
+use MediaWiki\Extension\OATHAuth\HTMLForm\TOTPEnableForm;
 use MediaWiki\Extension\OATHAuth\IAuthKey;
 use MediaWiki\Extension\OATHAuth\IModule;
 use MediaWiki\Extension\OATHAuth\Key\TOTPKey;
 use MediaWiki\Extension\OATHAuth\OATHUser;
 use MediaWiki\Extension\OATHAuth\OATHUserRepository;
 use MediaWiki\Extension\OATHAuth\Special\OATHManage;
+use Message;
 use MWException;
-use MediaWiki\Extension\OATHAuth\HTMLForm\TOTPEnableForm;
-use MediaWiki\Extension\OATHAuth\Auth\TOTPSecondaryAuthenticationProvider;
 
 class TOTP implements IModule {
 	public static function factory() {
@@ -28,6 +29,9 @@ class TOTP implements IModule {
 		return "totp";
 	}
 
+	/**
+	 * @return Message
+	 */
 	public function getDisplayName() {
 		return wfMessage( 'oathauth-module-totp-label' );
 	}

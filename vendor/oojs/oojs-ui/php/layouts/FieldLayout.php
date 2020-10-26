@@ -79,7 +79,6 @@ class FieldLayout extends Layout {
 	 *      - string|HtmlSnippet $config['help'] Explanatory text shown as a '?' icon, or inline.
 	 *      - bool $config['helpInline'] Whether or not the help should be inline,
 	 *          or shown when the "help" icon is clicked. (default: false)
-	 * @param-taint $config escapes_htmlnoent
 	 * @throws Exception An exception is thrown if no widget is specified
 	 */
 	public function __construct( $fieldWidget, array $config = [] ) {
@@ -128,6 +127,11 @@ class FieldLayout extends Layout {
 			if ( $this->helpText !== '' && $this->helpInline ) {
 				$this->help->setAttributes( [ 'for' => $this->fieldWidget->getInputId() ] );
 			}
+		} else {
+			// We can't use `label for` with non-form elements, use `aria-labelledby` instead
+			$id = Tag::generateElementId();
+			$this->label->setAttributes( [ 'id' => $id ] );
+			$this->fieldWidget->setLabelledBy( $id );
 		}
 		$this
 			->addClasses( [ 'oo-ui-fieldLayout' ] )

@@ -17,5 +17,5 @@
 	"apiwarn-textextracts-unsupportedmodel": "$1 含有內容模組 $2，這並不被支援，且會回傳空白匯出內容。",
 	"apiwarn-textextracts-title-in-file-namespace": "已請求匯出在檔案命名空間的標題，但未有內容回傳。",
 	"apiwarn-textextracts-sentences-and-html": "當使用 HTML 模式時，<var>$1sentences</var> 參數可能會產生預期外的結果。",
-	"apiwarn-textextracts-malformed-html": "HTML 可能不完整/或不穩定，並可能會忽略行內的圖片。使用時請自行承擔風險。已知問題則列在 https://www.mediawiki.org/wiki/Extension:TextExtracts#Caveats 裡。"
+	"apiwarn-textextracts-malformed-html": "HTML 可能不完整/或不穩定，並可能會忽略行內的圖片。使用時請自行承擔風險。已知問題則列在 https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:TextExtracts#Caveats 裡。"
 }

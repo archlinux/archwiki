@@ -1,15 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
+			"DerHexer",
+			"Envlh",
+			"Inkowik",
+			"Keegan",
 			"Kghbln",
 			"Metalhead64",
 			"Snatcher",
-			"Inkowik",
 			"Steinsplitter",
-			"Keegan",
-			"WhatamIdoing",
-			"DerHexer",
-			"Envlh"
+			"WhatamIdoing"
 		]
 	},
 	"multimediaviewer-desc": "Ermöglicht die Darstellung von Vorschaubildern in einer Vollbildschnittstelle",
@@ -72,6 +72,7 @@
 	"multimediaviewer-download-small-button-name": "In kleiner Größe herunterladen",
 	"multimediaviewer-download-medium-button-name": "In mittlerer Größe herunterladen",
 	"multimediaviewer-download-large-button-name": "In großer Größe herunterladen",
+	"multimediaviewer-download-xl-button-name": "In sehr großer Größe herunterladen",
 	"multimediaviewer-link-to-page": "Link zur Dateibeschreibungsseite",
 	"multimediaviewer-link-to-file": "Link zur Originaldatei",
 	"multimediaviewer-share-explanation": "Kopieren und den Link teilen",
@@ -88,6 +89,7 @@
 	"multimediaviewer-embed-via": "Über $1.",
 	"multimediaviewer-default-embed-dimensions": "Standardvorschaubildgröße",
 	"multimediaviewer-original-embed-dimensions": "Originaldatei $1",
+	"multimediaviewer-xl-embed-dimensions": "Extra groß $1",
 	"multimediaviewer-large-embed-dimensions": "Groß $1",
 	"multimediaviewer-medium-embed-dimensions": "Mittel $1",
 	"multimediaviewer-small-embed-dimensions": "Klein $1",
@@ -96,7 +98,7 @@
 	"multimediaviewer-commons-subtitle": "Das freie Medienarchiv",
 	"multimediaviewer-view-expanded": "Im Medienbetrachter öffnen",
 	"multimediaviewer-view-config": "Konfiguration",
-	"multimediaviewer-close-popup-text": "Dieses Werkzeug schließen (Esc)",
+	"multimediaviewer-close-popup-text": "Diese Ansicht schließen (Esc)",
 	"multimediaviewer-fullscreen-popup-text": "Vollbildansicht aktivieren",
 	"multimediaviewer-defullscreen-popup-text": "Vollbildansicht deaktivieren",
 	"multimediaviewer-next-image-alt-text": "Nächstes Bild anzeigen",

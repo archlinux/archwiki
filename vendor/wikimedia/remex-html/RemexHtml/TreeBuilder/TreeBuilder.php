@@ -25,14 +25,14 @@ class TreeBuilder {
 	use PropGuard;
 
 	// Quirks
-	const NO_QUIRKS = 0;
-	const LIMITED_QUIRKS = 1;
-	const QUIRKS = 2;
+	public const NO_QUIRKS = 0;
+	public const LIMITED_QUIRKS = 1;
+	public const QUIRKS = 2;
 
 	// Insertion placement
-	const BEFORE = 0;
-	const UNDER = 1;
-	const ROOT = 2;
+	public const BEFORE = 0;
+	public const UNDER = 1;
+	public const ROOT = 2;
 
 	// Configuration
 	public $isIframeSrcdoc;
@@ -322,7 +322,7 @@ class TreeBuilder {
 	 * @param int $sourceLength
 	 */
 	public function comment( $place, $text, $sourceStart, $sourceLength ) {
-		list( $prep, $ref ) = $place !== null ? $place : $this->appropriatePlace();
+		list( $prep, $ref ) = $place ?? $this->appropriatePlace();
 		$this->handler->comment( $prep, $ref, $text, $sourceStart, $sourceLength );
 	}
 
@@ -418,6 +418,8 @@ class TreeBuilder {
 		$foundIt = false;
 		while ( $entry->prevAFE ) {
 			$entry = $entry->prevAFE;
+			// $entry is known not to be null here (but phan doesn't know that)
+			'@phan-var Marker|Element $entry'; /** @var Marker|Element $entry */
 			if ( $entry instanceof Marker || $entry->stackIndex !== null ) {
 				$foundIt = true;
 				break;
@@ -430,6 +432,8 @@ class TreeBuilder {
 		// of open elements.
 		if ( $foundIt ) {
 			$entry = $entry->nextAFE;
+			// $entry is known not to be null here (but phan doesn't know that)
+			'@phan-var Marker|Element $entry'; /** @var Marker|Element $entry */
 		}
 		do {
 			$newElement = $this->insertForeign( HTMLData::NS_HTML, $entry->name,
@@ -725,7 +729,7 @@ class TreeBuilder {
 	/**
 	 * Generate implied end tags, optionally with an element to exclude.
 	 *
-	 * @param string|null $name The name to exclude
+	 * @param string|false $name The name to exclude
 	 * @param int $pos The source position
 	 */
 	public function generateImpliedEndTags( $name, $pos ) {
@@ -879,6 +883,7 @@ class TreeBuilder {
 		$this->headElement = null;
 		$this->formElement = null;
 		$this->tokenizer->setEnableCdataCallback( null );
+		// @phan-suppress-next-line PhanTypeMismatchProperty clearing ref
 		$this->tokenizer = null;
 	}
 }

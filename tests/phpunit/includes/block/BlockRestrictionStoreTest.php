@@ -19,13 +19,13 @@ class BlockRestrictionStoreTest extends \MediaWikiLangTestCase {
 	/** @var BlockRestrictionStore */
 	protected $blockRestrictionStore;
 
-	public function setUp() {
+	protected function setUp() : void {
 		parent::setUp();
 
 		$this->blockRestrictionStore = MediaWikiServices::getInstance()->getBlockRestrictionStore();
 	}
 
-	public function tearDown() {
+	protected function tearDown() : void {
 		parent::tearDown();
 		$this->resetTables();
 	}
@@ -63,7 +63,7 @@ class BlockRestrictionStoreTest extends \MediaWikiLangTestCase {
 	public function testWithNoRestrictions() {
 		$block = $this->insertBlock();
 		$restrictions = $this->blockRestrictionStore->loadByBlockId( $block->getId() );
-		$this->assertEmpty( $restrictions );
+		$this->assertSame( [], $restrictions );
 	}
 
 	/**
@@ -73,7 +73,7 @@ class BlockRestrictionStoreTest extends \MediaWikiLangTestCase {
 	 */
 	public function testWithEmptyParam() {
 		$restrictions = $this->blockRestrictionStore->loadByBlockId( [] );
-		$this->assertEmpty( $restrictions );
+		$this->assertSame( [], $restrictions );
 	}
 
 	/**
@@ -155,7 +155,7 @@ class BlockRestrictionStoreTest extends \MediaWikiLangTestCase {
 		$pageBar = $this->getExistingTestPage( 'Bar' );
 
 		$restrictions = [
-			new \stdClass(),
+			(object)[],
 			new PageRestriction( $block->getId(), $pageFoo->getId() ),
 			new PageRestriction( $block->getId(), $pageBar->getId() ),
 			new NamespaceRestriction( $block->getId(), NS_USER )
@@ -165,7 +165,7 @@ class BlockRestrictionStoreTest extends \MediaWikiLangTestCase {
 		$this->assertTrue( $result );
 
 		$restrictions = [
-			new \stdClass(),
+			(object)[],
 		];
 
 		$result = $this->blockRestrictionStore->insert( $restrictions );
@@ -193,7 +193,7 @@ class BlockRestrictionStoreTest extends \MediaWikiLangTestCase {
 			] );
 
 		$restrictions = [
-			new \stdClass(),
+			(object)[],
 			new PageRestriction( $block->getId(), $pageFoo->getId() ),
 			new PageRestriction( $block->getId(), $pageBar->getId() ),
 			new NamespaceRestriction( $block->getId(), NS_USER ),
@@ -221,12 +221,12 @@ class BlockRestrictionStoreTest extends \MediaWikiLangTestCase {
 		] );
 
 		$this->blockRestrictionStore->update( [
-			new \stdClass(),
+			(object)[],
 			new PageRestriction( $block->getId(), $pageBar->getId() ),
 			new NamespaceRestriction( $block->getId(), NS_USER ),
 		] );
 
-		$db = wfGetDb( DB_REPLICA );
+		$db = wfGetDB( DB_REPLICA );
 		$result = $db->select(
 			[ 'ipblocks_restrictions' ],
 			[ '*' ],
@@ -252,14 +252,14 @@ class BlockRestrictionStoreTest extends \MediaWikiLangTestCase {
 			new PageRestriction( $block->getId(), $page->getId() ),
 		] );
 
-		$db = wfGetDb( DB_REPLICA );
+		$db = wfGetDB( DB_REPLICA );
 		$result = $db->select(
 			[ 'ipblocks_restrictions' ],
 			[ '*' ],
 			[ 'ir_ipb_id' => $block->getId() ]
 		);
 
-		$this->assertEquals( 1, $result->numRows() );
+		$this->assertSame( 1, $result->numRows() );
 		$row = $result->fetchObject();
 		$this->assertEquals( $block->getId(), $row->ir_ipb_id );
 		$this->assertEquals( $page->getId(), $row->ir_value );
@@ -275,7 +275,7 @@ class BlockRestrictionStoreTest extends \MediaWikiLangTestCase {
 
 		$this->blockRestrictionStore->update( [] );
 
-		$db = wfGetDb( DB_REPLICA );
+		$db = wfGetDB( DB_REPLICA );
 		$result = $db->select(
 			[ 'ipblocks_restrictions' ],
 			[ '*' ],
@@ -301,14 +301,14 @@ class BlockRestrictionStoreTest extends \MediaWikiLangTestCase {
 			new PageRestriction( $block->getId(), $page->getId() ),
 		] );
 
-		$db = wfGetDb( DB_REPLICA );
+		$db = wfGetDB( DB_REPLICA );
 		$result = $db->select(
 			[ 'ipblocks_restrictions' ],
 			[ '*' ],
 			[ 'ir_ipb_id' => $block->getId() ]
 		);
 
-		$this->assertEquals( 1, $result->numRows() );
+		$this->assertSame( 1, $result->numRows() );
 		$row = $result->fetchObject();
 		$this->assertEquals( $block->getId(), $row->ir_ipb_id );
 		$this->assertEquals( $page->getId(), $row->ir_value );
@@ -382,7 +382,7 @@ class BlockRestrictionStoreTest extends \MediaWikiLangTestCase {
 
 		// Ensure that the restrictions on the autoblock have been updated.
 		$restrictions = $this->blockRestrictionStore->loadByBlockId( $autoblockId );
-		$this->assertCount( 0, $restrictions );
+		$this->assertSame( [], $restrictions );
 	}
 
 	/**
@@ -422,12 +422,12 @@ class BlockRestrictionStoreTest extends \MediaWikiLangTestCase {
 		$this->assertCount( 1, $restrictions );
 
 		$result = $this->blockRestrictionStore->delete(
-			array_merge( $restrictions, [ new \stdClass() ] )
+			array_merge( $restrictions, [ (object)[] ] )
 		);
 		$this->assertTrue( $result );
 
 		$restrictions = $this->blockRestrictionStore->loadByBlockId( $block->getId() );
-		$this->assertCount( 0, $restrictions );
+		$this->assertSame( [], $restrictions );
 	}
 
 	/**
@@ -447,7 +447,7 @@ class BlockRestrictionStoreTest extends \MediaWikiLangTestCase {
 		$this->assertNotFalse( $result );
 
 		$restrictions = $this->blockRestrictionStore->loadByBlockId( $block->getId() );
-		$this->assertCount( 0, $restrictions );
+		$this->assertSame( [], $restrictions );
 	}
 
 	/**
@@ -481,7 +481,7 @@ class BlockRestrictionStoreTest extends \MediaWikiLangTestCase {
 
 		// Ensure that the restrictions on the autoblock have been removed.
 		$restrictions = $this->blockRestrictionStore->loadByBlockId( $autoblockId );
-		$this->assertCount( 0, $restrictions );
+		$this->assertSame( [], $restrictions );
 	}
 
 	/**
@@ -500,11 +500,11 @@ class BlockRestrictionStoreTest extends \MediaWikiLangTestCase {
 		return [
 			[
 				[
-					new \stdClass(),
+					(object)[],
 					new PageRestriction( 1, 1 ),
 				],
 				[
-					new \stdClass(),
+					(object)[],
 					new PageRestriction( 1, 2 )
 				],
 				false,
@@ -563,7 +563,7 @@ class BlockRestrictionStoreTest extends \MediaWikiLangTestCase {
 	 */
 	public function testSetBlockId() {
 		$restrictions = [
-			new \stdClass(),
+			(object)[],
 			new PageRestriction( 1, 1 ),
 			new PageRestriction( 1, 2 ),
 			new NamespaceRestriction( 1, NS_USER ),

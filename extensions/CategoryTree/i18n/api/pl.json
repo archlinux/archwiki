@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Chrumps",
+			"Rail",
 			"Railfail536",
-			"Woytecr",
-			"Rail"
+			"Woytecr"
 		]
 	},
 	"apihelp-categorytree-description": "Wewnętrzny moduł rozszerzenia CategoryTree.",

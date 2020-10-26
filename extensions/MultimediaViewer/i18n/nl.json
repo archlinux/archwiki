@@ -2,17 +2,18 @@
 	"@metadata": {
 		"authors": [
 			"Arent",
+			"Macofe",
+			"Mainframe98",
+			"Mar(c)",
+			"Mathonius",
+			"Robin van der Vliet",
+			"Robin0van0der0vliet",
+			"Romaine",
 			"SPQRobin",
+			"Servien",
 			"Siebrand",
 			"Sjoerddebruin",
-			"Southparkfan",
-			"Romaine",
-			"Mathonius",
-			"Macofe",
-			"Robin0van0der0vliet",
-			"Robin van der Vliet",
-			"Mainframe98",
-			"Mar(c)"
+			"Southparkfan"
 		]
 	},
 	"multimediaviewer-desc": "Miniatuurafbeeldingen schermvullend weergeven.",
@@ -22,7 +23,7 @@
 	"multimediaviewer-datetime-created": "Aangemaakt: $1",
 	"multimediaviewer-datetime-uploaded": "Geüpload: $1",
 	"multimediaviewer-credit-fallback": "Auteursgegevens bekijken",
-	"multimediaviewer-multiple-authors": "{{PLURAL:$1|nog een auteur|nog $1 meer auteurs}}",
+	"multimediaviewer-multiple-authors": "{{PLURAL:$1|nog een auteur|nog $1 auteurs}}",
 	"multimediaviewer-multiple-authors-combine": "$1 en $2",
 	"multimediaviewer-metadata-error": "Kan afbeeldingsgegevens niet laden (fout: $1)",
 	"multimediaviewer-thumbnail-error": "Sorry, het bestand kan niet worden weergeven",

@@ -43,8 +43,8 @@
 	} );
 
 	QUnit.test( 'focus and blur', function ( assert ) {
-		var fakeWindow = $( '<div>' ),
-			viewLogger = new mw.mmv.logging.ViewLogger( { recordVirtualViewBeaconURI: function () {} }, fakeWindow, { log: function () {} } );
+		var $fakeWindow = $( '<div>' ),
+			viewLogger = new mw.mmv.logging.ViewLogger( { recordVirtualViewBeaconURI: function () {} }, $fakeWindow, { log: function () {} } );
 
 		this.clock.tick( 1 ); // This is just so that the timer ticks up in the fake timer environment
 
@@ -52,15 +52,15 @@
 
 		this.clock.tick( 5 );
 
-		fakeWindow.triggerHandler( 'blur' );
+		$fakeWindow.triggerHandler( 'blur' );
 
 		this.clock.tick( 2 );
 
-		fakeWindow.triggerHandler( 'focus' );
+		$fakeWindow.triggerHandler( 'focus' );
 
 		this.clock.tick( 3 );
 
-		fakeWindow.triggerHandler( 'blur' );
+		$fakeWindow.triggerHandler( 'blur' );
 
 		this.clock.tick( 4 );
 

@@ -53,12 +53,24 @@
 	},
 	"callback": "ConfirmEditHooks::onFancyCaptchaSetup",
 	"config": {
-		"CaptchaClass": "FancyCaptcha",
-		"CaptchaFileBackend": "",
-		"CaptchaDirectory": false,
-		"CaptchaDirectoryLevels": 0,
-		"CaptchaSecret": "CHANGE_THIS_SECRET!",
-		"CaptchaDeleteOnSolve": false
+		"CaptchaClass": {
+			"value": "FancyCaptcha"
+		},
+		"CaptchaFileBackend": {
+			"value": ""
+		},
+		"CaptchaDirectory": {
+			"value": false
+		},
+		"CaptchaDirectoryLevels": {
+			"value": 0
+		},
+		"CaptchaSecret": {
+			"value": "CHANGE_THIS_SECRET!"
+		},
+		"CaptchaDeleteOnSolve": {
+			"value": false
+		}
 	},
-	"manifest_version": 1
+	"manifest_version": 2
 }

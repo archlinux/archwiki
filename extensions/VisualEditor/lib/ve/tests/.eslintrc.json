@@ -1,0 +1,13 @@
+{
+	"extends": [
+		"../.eslintrc.json",
+		"wikimedia/qunit",
+		"wikimedia/language/es6"
+	],
+	"rules": {
+		"max-len": "off",
+		"no-var": "off",
+		"no-jquery/no-class-state": "off",
+		"no-jquery/no-parse-html-literal": "off"
+	}
+}

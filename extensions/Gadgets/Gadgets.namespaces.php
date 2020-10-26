@@ -296,6 +296,13 @@ $namespaceNames['sr'] = [
 	NS_GADGET_DEFINITION_TALK => 'Разговор_о_дефиницији_справице',
 ];
 
+$namespaceNames['ti'] = [
+	NS_GADGET => 'መሳርሕያ',
+	NS_GADGET_TALK => 'መሳርሕያ_ምይይጥ',
+	NS_GADGET_DEFINITION => 'መሳርሕያ_መብርሂ',
+	NS_GADGET_DEFINITION_TALK => 'መሳርሕያ_መብርሂ_ምይይጥ',
+];
+
 $namespaceNames['ur'] = [
 	NS_GADGET => 'آلہ',
 	NS_GADGET_TALK => 'تبادلۂ_خیال_آلہ',

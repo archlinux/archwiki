@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Harald Khan",
+			"Jon Harald Søby",
 			"Njardarlogar",
-			"Ranveig",
-			"Jon Harald Søby"
+			"Ranveig"
 		]
 	},
 	"fancycaptcha-addurl": "Endringa di inneheld nye utlenkjer.\nFor å hjelpa oss med å unngå automatisert spam, ver venleg og skriv inn orda som kjem til syne i boksen under ([[Special:Captcha/help|meir informasjon]]):",

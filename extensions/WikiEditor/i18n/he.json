@@ -2,12 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"Amire80",
+			"Guycn2",
+			"Meni181818",
 			"Rotemliss",
 			"YaronSh",
 			"Yonidebest",
-			"חיים",
-			"Guycn2",
-			"Meni181818"
+			"חיים"
 		]
 	},
 	"wikieditor": "ממשק מתקדם לעריכת טקסט ויקי",
@@ -50,7 +50,7 @@
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "קישור פנימי",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "קישור חיצוני",
 	"wikieditor-toolbar-tool-link-empty": "לא הזנת שום דבר לקשר אליו.",
-	"wikieditor-toolbar-tool-file": "קובץ מוטבע",
+	"wikieditor-toolbar-tool-file": "תמונות ומדיה",
 	"wikieditor-toolbar-tool-file-example": "דוגמה.jpg",
 	"wikieditor-toolbar-tool-file-title": "הוספת קובץ",
 	"wikieditor-toolbar-file-target": "שם הקובץ:",
@@ -103,6 +103,7 @@
 	"wikieditor-toolbar-tool-table-example-old": "-\n! כותרת 1\n! כותרת 2\n! כותרת 3\n|-\n| שורה 1, תא 1\n| שורה 1, תא 2\n| שורה 1, תא 3\n|-\n| שורה 2, תא 1\n| שורה 2, תא 2\n| שורה 2, תא 3",
 	"wikieditor-toolbar-tool-table-example-cell-text": "טקסט התא",
 	"wikieditor-toolbar-tool-table-example-header": "טקסט הכותרת",
+	"wikieditor-toolbar-tool-table-example-caption": "טקסט הכיתוב",
 	"wikieditor-toolbar-tool-table-title": "הוספת טבלה",
 	"wikieditor-toolbar-tool-table-dimensions-rows": "שורות",
 	"wikieditor-toolbar-tool-table-dimensions-columns": "עמודות",

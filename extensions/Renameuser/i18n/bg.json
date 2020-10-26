@@ -3,14 +3,15 @@
 		"authors": [
 			"Borislav",
 			"DCLXVI",
-			"Spiritia",
-			"Stanqo",
-			"Turin",
-			"Vodnokon4e",
-			"Termininja",
 			"ShockD",
+			"Spiritia",
+			"StanProg",
+			"Stanqo",
+			"Ted Masters",
+			"Termininja",
+			"Turin",
 			"Vlad5250",
-			"StanProg"
+			"Vodnokon4e"
 		]
 	},
 	"renameuser": "Преименуване на потребител",
@@ -30,7 +31,7 @@
 	"renameusererrordoesnotexist": "Потребителят „<nowiki>$1</nowiki>“ не съществува.",
 	"renameusererrorexists": "{{GENDER:$1|Потребителят}} „<nowiki>$1</nowiki>“ вече съществува.",
 	"renameusererrorinvalid": "Потребителското име „<nowiki>$1</nowiki>“ е невалидно.",
-	"renameuser-error-request": "Имаше проблем с приемането на заявката.\nВърнете се на предишната страница и опитайте отново!",
+	"renameuser-error-request": "Възникна проблем с приемането на заявката.\nВърнете се на предишната страница и опитайте отново!",
 	"renameuser-error-same-user": "Новото потребителско име е същото като старото.",
 	"renameusersuccess": "{{GENDER:$2|Потребителят}} „<nowiki>$1</nowiki>“ беше преименуван на „<nowiki>$2</nowiki>“",
 	"renameuser-page-exists": "Страницата $1 вече съществува и не може да бъде автоматично заместена.",

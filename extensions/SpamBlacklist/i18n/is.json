@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Snævar",
-			"MarcoAurelio"
+			"MarcoAurelio",
+			"Snævar"
 		]
 	},
 	"spam-blacklist": " # Ytri tenglar sem passa við þennan lista er ekki hægt að bæta við á síður.\n # Þessi bannlisti hefur aðeins áhrif á þennan wiki. \n # Einnig er til altækur bannlisti sem hefur áhrif á öll wiki verkefni Wikimedia. Hann er að finna á https://meta.wikimedia.org/wiki/Spam_blacklist\n # Leiðbeiningar eru á https://www.mediawiki.org/wiki/Extension:SpamBlacklist\n #<!-- ekki breyta þessari línu --> <pre>\n#\n# Málskipan listans er eftirfarandi:\n#   * Allar línur sem byrja á \"#\" eru athugasemdir\n#   * Allar síður sem eru ekki tómar eru reglulegar segðir sem verða aðeins bornar saman við vefsvæði tengilsins\n\n #</pre> <!-- ekki breyta þessari línu -->",

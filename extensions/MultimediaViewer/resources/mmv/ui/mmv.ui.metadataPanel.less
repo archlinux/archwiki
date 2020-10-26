@@ -1,5 +1,5 @@
-@import '../mmv.globals';
-@import '../mmv.mixins';
+@import '../mmv.variables.less';
+@import '../mmv.mixins.less';
 
 @panel-below-fold-background-color: #f8f9fa;
 
@@ -162,7 +162,6 @@
 	li {
 		list-style: none;
 		font-size: @littlefont;
-		color: #3f4040;
 
 		&.empty {
 			display: none;
@@ -249,7 +248,7 @@
 
 .mw-mmv-label {
 	background-color: #eaecf0;
-	color: #222;
+	color: @color-base;
 	margin-left: 6px;
 	margin-top: 1px;
 	border-radius: @border-radius;

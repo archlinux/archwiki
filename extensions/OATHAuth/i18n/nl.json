@@ -1,13 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
-			"SPQRobin",
-			"Siebrand",
-			"Romaine",
-			"Sjoerddebruin",
-			"Southparkfan",
 			"Kippenvlees1",
-			"Mainframe98"
+			"LongJohn nl",
+			"Mainframe98",
+			"Romaine",
+			"SPQRobin",
+			"Servien",
+			"Siebrand",
+			"Sjoerddebruin",
+			"Southparkfan"
 		]
 	},
 	"oathauth-desc": "Biedt ondersteuning voor authenticatie via op HMAC-gebaseerde eenmalige wachtwoorden",
@@ -36,7 +38,7 @@
 	"right-oathauth-view-log": "Toegang hebben tot het logboek met wijzigingen aan tweetrapsauthenticatie",
 	"action-oathauth-view-log": "toegang te hebben tot het logboek met wijzigingen aan tweetrapsauthenticatie",
 	"oathauth-enteruser": "Gebruikersnaam:",
-	"oathauth-enterreason": "Reden voor het uitschakelen:",
+	"oathauth-enterdisablereason": "Reden voor het uitschakelen:",
 	"oathauth-user-not-does-not-have-oath-enabled": "De gebruiker heeft geen tweetrapsauthenticatie ingesteld, er is niets om uit te schakelen",
 	"right-oathauth-enable": "Tweetrapsauthenticatie inschakelen",
 	"action-oathauth-enable": "tweetrapsauthenticatie in te schakelen",
@@ -49,6 +51,7 @@
 	"grant-group-authentication": "Authenticatie handelingen voor zichzelf en anderen kunnen uitvoeren",
 	"grant-oath": "Toegang tot tweetrapsauthenticatie (OATH) informatie van zichzelf en anderen",
 	"action-oathauth-api-all": "de OATH status te controleren",
+	"oathauth-user-not-found": "Er is geen gebruikersaccount met die naam",
 	"oath-log-name": "Tweetrapsauthenticatie logboek",
 	"oath-log-header": "Deze gebeurtenissen houden wijzigen bij aan de tweetrapsauthenticatiestatus van gebruikers.",
 	"logentry-oath-disable-other": "$1 {{GENDER:$2|schakelde}} de tweetrapsauthenticatie van $3 uit",
@@ -56,10 +59,15 @@
 	"oathauth-module-totp-label": "TOTP (eenmalig token)",
 	"oathauth-ui-manage": "Beheren",
 	"oathmanage": "Tweetrapsauthenticatie beheren",
+	"oathauth-ui-not-enabled-modules": "Omschakelen naar alternatieve methode",
 	"oathauth-ui-enabled-module": "Authenticatie methode inschakelen",
 	"oathauth-enable-generic": "Inschakelen",
 	"oathauth-disable-generic": "Uitschakelen",
 	"oathauth-disable-page-title": "$1 uitschakelen",
 	"oathauth-enable-page-title": "$1 inschakelen",
-	"oathauth-ui-available-modules": "Beschikbare methoden"
+	"oathauth-ui-available-modules": "Beschikbare methoden",
+	"oathauth-ui-general-help": "'''Multi-factor authentication''' ('''MFA''') is een authenticatiemethode waarbij een computergebruiker alleen toegang krijgt na het succesvol presenteren van twee of meer bewijsstukken (of factoren) in een authenticatiemechanisme: kennis (iets wat de gebruiker en alleen de gebruiker weet), bezit (iets dat de gebruiker alleen de gebruiker heeft), en inherent (iets wat de gebruiker en alleen de gebruiker is). [https://en.wikipedia.org/wiki/Multi-factor_authentication Lees meer]",
+	"oathauth-totp-description": "De Time-based One-Time Password algorithm (TOTP) is een extensie van het op HMAC gebaseerde eenmalige wachtwoord-algoritme (HOTP) dat een eenmalig wachtwoord genereert door in plaats daarvan het unieke van het de huidige tijdstip te gebruiken.",
+	"oathauth-disable-method-warning-button-label": "Bevestigen en doorgaan",
+	"oathauth-invalidrequest": "Ongeldige aanvraag"
 }

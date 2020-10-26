@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Saper",
-			"Rail"
+			"Rail",
+			"Saper"
 		]
 	},
 	"apihelp-query+pageimages-description": "Zwraca informacje na temat obrazów na stronie, takie jak miniatury lub wygląd zdjęć.",

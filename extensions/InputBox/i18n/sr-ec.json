@@ -1,11 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
+			"BadDog",
+			"Milicevic01",
 			"Millosh",
 			"Rancher",
-			"Михајло Анђелковић",
-			"Milicevic01",
-			"BadDog"
+			"Zoranzoki21",
+			"Михајло Анђелковић"
 		]
 	},
 	"inputbox-desc": "Омогућава укључивање унапред дефинисаних HTML образаца.",
@@ -14,6 +15,7 @@
 	"inputbox-tryexact": "Покушај да нађеш тачан упит",
 	"inputbox-searchfulltext": "Претражи цео текст",
 	"inputbox-createarticle": "Направи страницу",
+	"inputbox-movearticle": "Премештање странице",
 	"inputbox-postcomment": "Нови одељак",
 	"inputbox-postcommenttitle": "Нови одељак",
 	"inputbox-ns-main": "Главни"

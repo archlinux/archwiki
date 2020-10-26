@@ -6,6 +6,7 @@
 			"WikiPhoenix"
 		]
 	},
+	"renocaptcha-desc": "reCAPTCHA NoCAPTCHA-modul för Confirm Edit",
 	"renocaptcha-edit": "För att skydda wikin mot automatiserad redigeringsspam ber vi dig att lösa följande CAPTCHA:",
 	"renocaptcha-addurl": "Din redigering innehåller nya externa länkar. För att skydda wikin mot automatiserat spam ber vi dig att lösa följande CAPTCHA:",
 	"renocaptcha-badlogin": "För att skydda wikin mot automatiserat knäckande av lösenord, ber vi dig att lösa följande CAPTCHA:",

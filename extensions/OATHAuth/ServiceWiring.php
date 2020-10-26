@@ -1,8 +1,8 @@
 <?php
 
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Extension\OATHAuth\OATHAuth;
-use \MediaWiki\Extension\OATHAuth\OATHUserRepository;
+use MediaWiki\Extension\OATHAuth\OATHUserRepository;
+use MediaWiki\MediaWikiServices;
 
 return [
 	'OATHAuth' => function ( MediaWikiServices $services ) {

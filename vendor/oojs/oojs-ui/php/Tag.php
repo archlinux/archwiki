@@ -174,7 +174,7 @@ class Tag {
 	 * String items should never match by reference
 	 * so will not be removed.
 	 *
-	 * @param string|Tag|HtmlSnippet ...$content Content to reomve.
+	 * @param string|Tag|HtmlSnippet|array ...$content Content to remove.
 	 * @return $this
 	 */
 	public function removeContent( ...$content ) {
@@ -195,7 +195,7 @@ class Tag {
 	}
 
 	/**
-	 * Add content to the end.
+	 * Add content to the end. Strings will be HTML-escaped, use HtmlSnippet to prevent that.
 	 *
 	 * Accepts either variadic arguments (the $content argument can be repeated any number of times)
 	 * or an array of arguments.
@@ -209,13 +209,13 @@ class Tag {
 	 * Objects that are already in $this->content will be moved
 	 * to the end of the list, not duplicated.
 	 *
-	 * @param string|Tag|HtmlSnippet ...$content Content to append. Strings will be HTML-escaped
-	 *   for output, use a HtmlSnippet instance to prevent that.
+	 * @param string|Tag|HtmlSnippet|array $content Can be an array only if no $params are passed.
+	 * @param string|Tag|HtmlSnippet ...$params Content to append
 	 * @return $this
 	 */
-	public function appendContent( ...$content ) {
-		if ( is_array( $content[ 0 ] ) ) {
-			$content = $content[ 0 ];
+	public function appendContent( $content, ...$params ) {
+		if ( !is_array( $content ) ) {
+			$content = func_get_args();
 		}
 		$this->removeContent( $content );
 		$this->content = array_merge( $this->content, $content );

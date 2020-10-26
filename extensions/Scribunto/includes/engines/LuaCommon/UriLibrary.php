@@ -26,6 +26,13 @@ class Scribunto_LuaUriLibrary extends Scribunto_LuaLibraryBase {
 		) ];
 	}
 
+	/**
+	 * Get a URL (helper for handlers)
+	 * @param string $func Title class method to call
+	 * @param string $page Page title
+	 * @param array $query Query string
+	 * @return string[]|null[]
+	 */
 	private function getUrl( $func, $page, $query ) {
 		$title = Title::newFromText( $page );
 		if ( !$title ) {

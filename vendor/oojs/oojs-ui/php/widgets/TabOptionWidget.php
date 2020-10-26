@@ -6,9 +6,18 @@ class TabOptionWidget extends OptionWidget {
 
 	/**
 	 * @param array $config Configuration options
-	 * @param-taint $config escapes_html
+	 *      - string $config['href'] Hyperlink to add to TabOption. Mostly used in OOUI PHP.
 	 */
 	public function __construct( array $config = [] ) {
+		$this->href = $config['href'] ?? false;
+		if ( $this->href ) {
+			$link = new Tag( 'a' );
+			$link->setAttributes( [ 'href' => $config['href'] ] );
+			$config = array_merge( [
+				'labelElement' => $link
+			], $config );
+		}
+
 		// Parent constructor
 		parent::__construct( $config );
 
@@ -17,5 +26,12 @@ class TabOptionWidget extends OptionWidget {
 		$this->setAttributes( [
 			'role' => 'tab'
 		] );
+	}
+
+	public function getConfig( &$config ) {
+		if ( $this->href ) {
+			$config['href'] = $this->href;
+		}
+		return parent::getConfig( $config );
 	}
 }

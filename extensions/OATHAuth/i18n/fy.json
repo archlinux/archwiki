@@ -7,5 +7,7 @@
 	"oathauth-account": "Akkountnamme:",
 	"oathauth-enable": "Twafaktor-autentifikaasje ynskeakelje",
 	"oathauth-prefs-label": "Twafaktor-autentifikaasje:",
-	"right-oathauth-enable": "Twafaktor-autentifikaasje ynskeakelje"
+	"right-oathauth-enable": "Twafaktor-autentifikaasje ynskeakelje",
+	"oauthauth-ui-no-module": "Net ynskeakele",
+	"oathauth-ui-manage": "Beheare"
 }

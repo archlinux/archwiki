@@ -1,13 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
-			"Épine"
+			"Épine",
+			"ئارام بکر"
 		]
 	},
 	"specialpages-group-oath": "دڵنیاکەرەوەی جووت-فاکتەر",
 	"oathauth-account": "ناوی هەژمار",
 	"oathauth-secret": "کلیلی نهێنی دڵنیاکەرەوەی جووت-فاکتەر:",
 	"oathauth-enable": "کاراکردنی دڵنیاکەرەوەی جووت-فاکتەر",
+	"oathauth-token": "نیشانە",
 	"oathauth-disable": "لەکارخستنی دڵنیاکەرەوەی جووت-فاکتەر",
 	"oathauth-disabledoath": "دڵنیاکەرەوەی جووت-فاکتەر لەکارخرا",
 	"oathauth-prefs-label": "دڵنیاکەرەوەی جووت-فاکتەر",
@@ -20,7 +22,18 @@
 	"oathauth-entertoken": "کۆدی بەرنامەی دڵنیاکەرەوەکەت لێرە بنووسە بۆ دڵنیابوونەوە لە دروست کارکردنی:",
 	"oathauth-disable-for-user": "لەکارخستنی دڵنیاکەرەوەی جووت-فاکتەر بۆ بەکارهێنەرێک",
 	"oathauth-enteruser": "ناوی بەکارھێنەر:",
+	"oathauth-enterdisablereason": "ھۆکار بۆ ناچالاککردن:",
 	"right-oathauth-enable": "کاراکردنی دڵنیاکەرەوەی جووت-فاکتەر",
 	"action-oathauth-enable": "کاراکردنی دڵنیاکەرەوەی جووت-فاکتەر",
-	"oathauth-login-failed": "دڵنیابوونەوە شکستی هێنا."
+	"oathauth-auth-token-label": "نیشانە",
+	"oathauth-login-failed": "دڵنیابوونەوە شکستی هێنا.",
+	"oauthauth-ui-no-module": "ھیچ چالاک نەکراوە",
+	"oathauth-ui-manage": "بەڕێوەبردن",
+	"oathauth-enable-generic": "کاراکردن",
+	"oathauth-disable-generic": "ناچالاک بکە",
+	"oathauth-disable-page-title": "$1 ناچالاک بکە",
+	"oathauth-enable-page-title": "$1 چالاک بکە",
+	"oathauth-ui-available-modules": "ڕێگە بەردەستەکان",
+	"oathauth-disable-method-warning-button-label": "پشتڕاست بکەوە و بەردەوام بە",
+	"oathauth-invalidrequest": "داوای نادروست"
 }

@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Dvorapa",
 			"Mormegil",
-			"Tchoř",
-			"Dvorapa"
+			"Tchoř"
 		]
 	},
 	"fancycaptcha-desc": "Pokročilý generátor captcha pro rozšíření „Confirm Edit“",

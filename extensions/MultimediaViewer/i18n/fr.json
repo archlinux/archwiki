@@ -1,21 +1,22 @@
 {
 	"@metadata": {
 		"authors": [
+			"0x010C",
 			"Gomoko",
 			"Jean-Frédéric",
 			"Ltrlg",
-			"NemesisIII",
-			"Verdy p",
-			"Sherbrooke",
-			"Seb35",
 			"Macofe",
-			"Windes",
-			"0x010C",
+			"NemesisIII",
 			"Orikrin1998",
-			"Weft",
-			"Wladek92",
+			"Pols12",
+			"Seb35",
+			"Sherbrooke",
+			"Thibaut120094",
 			"Urhixidur",
-			"Thibaut120094"
+			"Verdy p",
+			"Weft",
+			"Windes",
+			"Wladek92"
 		]
 	},
 	"multimediaviewer-desc": "Agrandit les vignettes dans une interface en plein écran",
@@ -113,8 +114,8 @@
 	"multimediaviewer-credit-popup-text": "Auteur et source de l’information",
 	"multimediaviewer-title-popup-text-more": "Afficher la description complète",
 	"multimediaviewer-credit-popup-text-more": "Afficher au complet l’auteur et la source",
-	"multimediaviewer-download-attribution-cta-header": "Vous devez attribuer l’auteur",
-	"multimediaviewer-download-optional-attribution-cta-header": "Vous pouvez attribuer l'auteur",
+	"multimediaviewer-download-attribution-cta-header": "Vous devez mentionner l’auteur",
+	"multimediaviewer-download-optional-attribution-cta-header": "Vous pouvez mentionner l’auteur",
 	"multimediaviewer-download-attribution-cta": "Me montrer comment",
 	"multimediaviewer-download-attribution-copy": "Sélectionner et copier (si pris en charge) le texte d'attribution pour ce fichier",
 	"multimediaviewer-reuse-warning-deletion": "Ce fichier est considéré comme à détruire.",

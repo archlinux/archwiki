@@ -1,24 +1,24 @@
 {
 	"@metadata": {
 		"authors": [
+			"01miki10",
+			"Antsa",
 			"Beluga",
 			"Crt",
 			"Kulmalukko",
 			"Linnea",
+			"Macofe",
 			"Nedergard",
 			"Nike",
 			"Olli",
 			"Pxos",
+			"Pyscowicz",
 			"Silvonen",
 			"Str4nd",
 			"Stryn",
-			"VezonThunder",
-			"ZeiP",
 			"Syreeni",
-			"Macofe",
-			"01miki10",
-			"Pyscowicz",
-			"Antsa"
+			"VezonThunder",
+			"ZeiP"
 		]
 	},
 	"wikieditor": "Edistynyt wikitekstin muokkauskäyttöliittymä",
@@ -61,7 +61,7 @@
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Sisäinen linkki",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "Ulkoinen linkki",
 	"wikieditor-toolbar-tool-link-empty": "Et antanut mitään linkitettävää.",
-	"wikieditor-toolbar-tool-file": "Tallennettu tiedosto",
+	"wikieditor-toolbar-tool-file": "Kuvat ja media",
 	"wikieditor-toolbar-tool-file-example": "Esimerkki.jpg",
 	"wikieditor-toolbar-tool-file-title": "Lisää tiedosto",
 	"wikieditor-toolbar-file-target": "Tiedostonimi:",

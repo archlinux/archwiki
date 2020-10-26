@@ -2,13 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Carlosz22",
+			"Dgstranz",
 			"Fitoschido",
 			"Icvav",
+			"Macofe",
 			"Pertile",
 			"Sanbec",
-			"Sporeunai",
-			"Macofe",
-			"Dgstranz"
+			"Sporeunai"
 		]
 	},
 	"fancycaptcha-desc": "Generador de CAPTCHAs vistosos para la confirmación de ediciones",

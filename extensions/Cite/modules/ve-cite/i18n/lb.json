@@ -3,12 +3,12 @@
 		"authors": [
 			"Autokrator",
 			"Chorobek",
+			"McDutchie",
 			"Robby",
 			"Soued031",
 			"Tynchtyk Chorotegin",
 			"UV",
-			"Викиней",
-			"McDutchie"
+			"Викиней"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Buch",
@@ -28,7 +28,7 @@
 	"cite-ve-dialog-referenceslist-contextitem-description-general": "Lëscht vun allgemenge Referenzen",
 	"cite-ve-dialog-referenceslist-contextitem-description-named": "Lëscht vu Referenzen fir de Grupp \"$1\"",
 	"cite-ve-dialog-referenceslist-title": "Lëscht vun de Referenzen",
-	"cite-ve-dialogbutton-citation-educationpopup-text": "Verbessert Ären Inhalt duerch bäisetze vun de Quelle vun den Informatiounen. Dir kënnt aus Bicher, Zeitungen oder Internetsiten zitéieren.",
+	"cite-ve-dialogbutton-citation-educationpopup-text": "Verbessert Ären Inhalt duerch bäisetze vun de Quelle vun den Informatiounen. Dir kënnt aus Bicher, Zeitungen oder Internetsitten zitéieren.",
 	"cite-ve-dialogbutton-citation-educationpopup-title": "Citatiounen",
 	"cite-ve-dialogbutton-reference-full-label": "Basisformular",
 	"cite-ve-dialogbutton-reference-title": "Referenz",

@@ -1,14 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"Oona",
-			"Jefersonmoraes",
-			"Ptrke",
-			"TheEduGobi",
 			"Araceletorres",
-			"Macofe",
 			"Eduardo Addad de Oliveira",
-			"Felipe L. Ewald"
+			"Felipe L. Ewald",
+			"Jefersonmoraes",
+			"Macofe",
+			"Oona",
+			"Ptrke",
+			"TheEduGobi"
 		]
 	},
 	"multimediaviewer-desc": "Expandir miniaturas em tamanho maior numa interface em tela cheia.",

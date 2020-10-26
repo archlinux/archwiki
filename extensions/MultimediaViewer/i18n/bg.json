@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Mitzev",
 			"DCLXVI",
-			"Vodnokon4e",
+			"Mitzev",
+			"ShockD",
 			"StanProg",
-			"ShockD"
+			"Vodnokon4e"
 		]
 	},
 	"multimediaviewer-optin-pref": "Включване на <span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About Media Viewer]</span>",
@@ -26,6 +26,7 @@
 	"multimediaviewer-credit-popup-text-more": "Показване на цялостна информация за автора и източника",
 	"multimediaviewer-options-tooltip": "Включване или изключване на Media Viewer",
 	"multimediaviewer-options-dialog-header": "Изключване на Media Viewer?",
+	"multimediaviewer-options-learn-more": "Научете повече",
 	"multimediaviewer-option-submit-button": "Изключване на Media Viewer",
 	"multimediaviewer-option-cancel-button": "Отказ",
 	"multimediaviewer-disable-confirmation-header": "Вие изключихте Media Viewer",

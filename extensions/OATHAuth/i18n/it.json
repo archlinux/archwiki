@@ -10,6 +10,7 @@
 		]
 	},
 	"oathauth-desc": "Fornisce supporto per l'autenticazione utilizzando password a uso singolo basate su HMAC",
+	"verifyoathforuser": "Verifica stato autenticazione a due fattori",
 	"specialpages-group-oath": "Autenticazione a due fattori",
 	"oathauth-account": "Nome utenza:",
 	"oathauth-secret": "Chiave segreta per l'autenticazione a due fattori:",
@@ -29,8 +30,10 @@
 	"oathauth-step4": "Passo 4: verifica",
 	"oathauth-entertoken": "Inserisci un codice dal tuo dispositivo di autenticazione per verificare:",
 	"oathauth-disable-for-user": "Disabilita autenticazione a due fattori per un utente",
+	"oathauth-verify-for-user": "Controlla se un utente ha l'autenticazione a due fattori abilitata",
 	"right-oathauth-disable-for-user": "Disabilita l'autenticazione a due fattori per un utente",
 	"oathauth-enteruser": "Nome utente:",
+	"oathauth-enterverifyreason": "Motivo per controllare:",
 	"oathauth-user-not-does-not-have-oath-enabled": "L'utente non ha l'autenticazione a due fattori abilitata, quindi non c'è nulla da disabilitare",
 	"right-oathauth-enable": "Abilita autenticazione a due fattori",
 	"action-oathauth-enable": "abilitare l'autenticazione a due fattori",
@@ -41,6 +44,9 @@
 	"oathauth-login-failed": "Verifica non riuscita.",
 	"oathauth-describe-provider": "Autenticazione a due fattori (OATH).",
 	"grant-oath": "Accede a informazioni sull'autenticazione a due fattori (OATH) proprie e di altri",
+	"oath-log-name": "Autenticazione a due fattori",
+	"oath-log-header": "Questi eventi monitorano i cambiamenti di stato dell'autenticazione a due fattori.",
+	"logentry-oath-verify": "$1 {{GENDER:$2|ha controllato}} se $3 ha l'autenticazione a due fattori abilitata",
 	"oauthauth-ui-no-module": "Non attivato",
 	"oathauth-ui-manage": "Gestisci",
 	"oathmanage": "Gestisci autenticazione a due fattori",
@@ -50,5 +56,6 @@
 	"oathauth-disable-page-title": "Disattiva $1",
 	"oathauth-enable-page-title": "Attiva $1",
 	"oathauth-ui-available-modules": "Metodi disponibili",
-	"oathauth-disable-method-warning-button-label": "Conferma e continua"
+	"oathauth-disable-method-warning-button-label": "Conferma e continua",
+	"oathauth-invalidrequest": "Richiesta non valida"
 }

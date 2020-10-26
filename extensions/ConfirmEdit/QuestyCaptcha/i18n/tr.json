@@ -1,11 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
+			"BaRaN6161 TURK",
+			"Hedda",
 			"Joseph",
-			"Vito Genovese",
-			"Hedda"
+			"Vito Genovese"
 		]
 	},
+	"questycaptcha-desc": "Onayla Düzenleme için Questy CAPTCHA üreteci",
 	"questycaptcha-addurl": "Değişikliğiniz yeni dış bağlantı içeriyor.\nOtomatik reklama karşı korunmaya yardımcı olmak ve viki'yi otomatik spam düzenlemeye karşı korumak için aşağıda görünen soruyu yanıtlamanızı rica ederiz ([[Special:Captcha/help|daha fazla bilgi]]):",
 	"questycaptcha-badlogin": "Viki'yi otomatik şifre kırmaya karşı korumak için aşağıda görünen soruyu yanıtlamanızı rica ederiz ([[Special:Captcha/help|daha fazla bilgi]]):",
 	"questycaptcha-createaccount": "Viki'yi otomatik hesap oluşturmaya karşı korumak için aşağıda görünen soruyu yanıtlamanızı rica ediyoruz ([[Special:Captcha/help|daha fazla bilgi]]):",

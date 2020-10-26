@@ -1,13 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"Liuxinyu970226",
-			"Yfdyh000",
-			"Spring Roll Conan",
-			"LNDDYL",
-			"Cwlin0416",
 			"A2093064",
-			"Kly"
+			"Cwlin0416",
+			"Kly",
+			"LNDDYL",
+			"Liuxinyu970226",
+			"Spring Roll Conan",
+			"Xiplus",
+			"Yfdyh000"
 		]
 	},
 	"scribunto-desc": "用來內嵌腳本語言到 MediaWiki 頁面的框架",
@@ -28,7 +29,7 @@
 	"scribunto-console-cleared-session-lost": "因連線階段資料已遺失，主控台狀態已清除。",
 	"scribunto-common-error-category": "含有腳本錯誤的頁面",
 	"scribunto-common-error-category-desc": "處理此頁面的模組時發生錯誤。",
-	"scribunto-common-nosuchmodule": "指令碼錯誤：沒有 \"$2\" 這個模組。",
+	"scribunto-common-nosuchmodule": "指令碼錯誤：沒有「$2」這個模組。",
 	"scribunto-common-nofunction": "腳本錯誤：您必須指定要呼叫的函數。",
 	"scribunto-common-nosuchfunction": "腳本錯誤：函數 \"$2\" 不存在。",
 	"scribunto-common-notafunction": "腳本錯誤：\"$2\" 不是函數。",

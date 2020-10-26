@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"Aefgh39622",
+			"Ans",
 			"Horus",
 			"Nullzero",
-			"Taweetham",
-			"Ans",
-			"Aefgh39622"
+			"Taweetham"
 		]
 	},
 	"multimediaviewer-desc": "ขยายรูปขนาดย่อให้มีขนาดใหญ่ขึ้นในอินเทอร์เฟซเต็มหน้าจอ",
@@ -83,5 +83,13 @@
 	"multimediaviewer-title-popup-text": "คำอธิบาย",
 	"multimediaviewer-credit-popup-text": "ข้อมูลผู้สร้างและแหล่งที่มา",
 	"multimediaviewer-title-popup-text-more": "ดูคำอธิบายแบบเต็ม",
-	"multimediaviewer-credit-popup-text-more": "ดูข้อมูลผู้สร้างและแหล่งที่มาแบบเต็ม"
+	"multimediaviewer-credit-popup-text-more": "ดูข้อมูลผู้สร้างและแหล่งที่มาแบบเต็ม",
+	"multimediaviewer-download-attribution-cta": "แสดงวิธีให้ฉัน",
+	"multimediaviewer-options-tooltip": "เปิดหรือปิดใช้งานตัวแสดงสื่อ",
+	"multimediaviewer-options-dialog-header": "ปิดใช้งานตัวแสดงสื่อหรือไม่?",
+	"multimediaviewer-options-learn-more": "เรียนรู้เพิ่มเติม",
+	"multimediaviewer-option-submit-button": "ปิดใช้งานตัวแสดงสื่อ",
+	"multimediaviewer-option-cancel-button": "ยกเลิก",
+	"multimediaviewer-enable-dialog-header": "เปิดใช้งานตัวแสดงสื่อหรือไม่?",
+	"multimediaviewer-enable-submit-button": "เปิดใช้งานตัวแสดงสื่อ"
 }

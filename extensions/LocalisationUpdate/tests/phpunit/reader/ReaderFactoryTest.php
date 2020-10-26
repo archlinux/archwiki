@@ -7,8 +7,10 @@
 
 namespace LocalisationUpdate;
 
+use LocalisationUpdate\Reader\ReaderFactory;
+
 /**
- * @covers \LocalisationUpdate\ReaderFactory
+ * @covers \LocalisationUpdate\Reader\ReaderFactory
  */
 class ReaderFactoryTest extends \PHPUnit\Framework\TestCase {
 	/**
@@ -25,12 +27,12 @@ class ReaderFactoryTest extends \PHPUnit\Framework\TestCase {
 		return [
 			[
 				'languages/i18n/fi.json',
-				'LocalisationUpdate\JSONReader',
+				'LocalisationUpdate\Reader\JSONReader',
 				'core json file',
 			],
 			[
 				'extension/Translate/i18n/core/de.json',
-				'LocalisationUpdate\JSONReader',
+				'LocalisationUpdate\Reader\JSONReader',
 				'extension json file',
 			],
 		];

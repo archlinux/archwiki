@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\Extensions\ParserFunctions\ExprError;
 use MediaWiki\Extensions\ParserFunctions\ExprParser;
 
 /**
@@ -82,10 +83,10 @@ class ExpressionTest extends MediaWikiUnitTestCase {
 	/**
 	 * @dataProvider provideExpressionThrows
 	 * @param string $input
-	 * @expectedException \MediaWiki\Extensions\ParserFunctions\ExprError
 	 */
 	public function testExpressionThrows( $input ) {
 		$parser = new ExprParser();
+		$this->expectException( ExprError::class );
 		$parser->doExpression( $input );
 	}
 

@@ -30,12 +30,12 @@ class WrappedStringList {
 	/** @var string */
 	protected $sep;
 
-	/** @var WrappedString[] */
+	/** @var (string|WrappedString|WrappedStringList)[] */
 	protected $wraps;
 
 	/**
 	 * @param string $sep
-	 * @param array $wraps Array containing string, WrappedString or WrappedStringList
+	 * @param (string|WrappedString|WrappedStringList)[] $wraps
 	 */
 	public function __construct( $sep, array $wraps ) {
 		$this->sep = $sep;
@@ -43,7 +43,7 @@ class WrappedStringList {
 	}
 
 	/**
-	 * @param array $wraps
+	 * @param (string|WrappedString|WrappedStringList)[] $wraps
 	 * @return WrappedStringList Combined list
 	 */
 	protected function extend( array $wraps ) {
@@ -57,7 +57,7 @@ class WrappedStringList {
 	 *
 	 * Does not modify the given array or any of the objects in it.
 	 *
-	 * @param array $lists Array containing string, WrappedString or WrappedStringList
+	 * @param (string|WrappedString|WrappedStringList)[] $lists
 	 * @param string $outerSep Separator that the caller intends to use when joining the strings
 	 * @return string[] Compacted list to be treated as strings
 	 * (may contain WrappedString and WrappedStringList objects)
@@ -89,7 +89,7 @@ class WrappedStringList {
 	 * Join a several wrapped strings with a separator between each.
 	 *
 	 * @param string $sep
-	 * @param array $lists Array containing string, WrappedString or WrappedStringList
+	 * @param (string|WrappedString|WrappedStringList)[] $lists
 	 * @return string
 	 */
 	public static function join( $sep, array $lists ) {

@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Okras",
-			"Facenapalm",
-			"Vlad5250",
 			"Diralik",
-			"Movses"
+			"Facenapalm",
+			"Movses",
+			"Okras",
+			"Vlad5250"
 		]
 	},
 	"renocaptcha-desc": "Модуль reCAPTCHA NoCAPTCHA для подтверждения правок",

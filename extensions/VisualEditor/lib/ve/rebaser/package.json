@@ -1,0 +1,19 @@
+{
+	"name": "ve-rebaser",
+	"description": "Rebase server for VisualEditor",
+	"version": "0.0.1",
+	"dependencies": {
+		"ejs": "3.0",
+		"express": "4.17",
+		"mongodb": "3.5.2",
+		"oojs": "3.0",
+		"service-runner": "2.7.3",
+		"socket.io": "2.3"
+	},
+	"scripts": {
+		"start": "node src/server.js"
+	},
+	"repository": {
+		"type": "git"
+	}
+}

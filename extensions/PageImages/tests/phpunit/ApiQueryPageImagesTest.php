@@ -2,10 +2,8 @@
 
 namespace PageImages\Tests;
 
-require_once 'ApiQueryPageImagesProxyMock.php';
-
-use ApiQueryPageImages;
-use PageImages;
+use PageImages\ApiQueryPageImages;
+use PageImages\PageImages;
 use Title;
 use Wikimedia\Rdbms\FakeResultWrapper;
 use Wikimedia\TestingAccessWrapper;
@@ -53,7 +51,7 @@ class ApiQueryPageImagesTest extends \PHPUnit\Framework\TestCase {
 
 	public function testConstructor() {
 		$instance = $this->newInstance();
-		$this->assertInstanceOf( 'ApiQueryPageImages', $instance );
+		$this->assertInstanceOf( ApiQueryPageImages::class, $instance );
 	}
 
 	public function testGetCacheMode() {
@@ -64,7 +62,7 @@ class ApiQueryPageImagesTest extends \PHPUnit\Framework\TestCase {
 	public function testGetAllowedParams() {
 		$instance = $this->newInstance();
 		$params = $instance->getAllowedParams();
-		$this->assertInternalType( 'array', $params );
+		$this->assertIsArray( $params );
 		$this->assertNotEmpty( $params );
 		$this->assertContainsOnly( 'array', $params );
 		$this->assertArrayHasKey( 'limit', $params );
@@ -100,29 +98,29 @@ class ApiQueryPageImagesTest extends \PHPUnit\Framework\TestCase {
 	public function provideGetTitles() {
 		return [
 			[
-				[ Title::newFromText( 'Foo' ) ],
+				[ Title::makeTitle( NS_MAIN, 'Foo' ) ],
 				[],
-				[ Title::newFromText( 'Foo' ) ],
+				[ Title::makeTitle( NS_MAIN, 'Foo' ) ],
 			],
 			[
-				[ Title::newFromText( 'Foo' ) ],
+				[ Title::makeTitle( NS_MAIN, 'Foo' ) ],
 				[
 					NS_TALK => [
 						'Bar' => -1,
 					],
 				],
-				[ Title::newFromText( 'Foo' ) ],
+				[ Title::makeTitle( NS_MAIN, 'Foo' ) ],
 			],
 			[
-				[ Title::newFromText( 'Foo' ) ],
+				[ Title::makeTitle( NS_MAIN, 'Foo' ) ],
 				[
 					NS_FILE => [
 						'Bar' => -1,
 					],
 				],
 				[
-					0 => Title::newFromText( 'Foo' ),
-					-1 => Title::newFromText( 'Bar', NS_FILE ),
+					0 => Title::makeTitle( NS_MAIN, 'Foo' ),
+					-1 => Title::makeTitle( NS_FILE, 'Bar' ),
 				],
 			],
 		];
@@ -168,7 +166,7 @@ class ApiQueryPageImagesTest extends \PHPUnit\Framework\TestCase {
 		$this->assertTrue( $this->hasExpectedProperties( $queryResults, $originalRequested ) );
 
 		$license = isset( $requestParams['license'] ) ? $requestParams['license'] : 'free';
-		if ( $license == ApiQueryPageImages::PARAM_LICENSE_ANY ) {
+		if ( $license == PageImages::LICENSE_ANY ) {
 			$propName = [ PageImages::getPropName( true ), PageImages::getPropName( false ) ];
 		} else {
 			$propName = PageImages::getPropName( true );
@@ -278,22 +276,6 @@ class ApiQueryPageImagesTest extends \PHPUnit\Framework\TestCase {
 				],
 				2
 			],
-		];
-	}
-
-	/**
-	 * @dataProvider provideGetPropName
-	 * @param string $license
-	 * @param string $expected
-	 */
-	public function testGetPropName( $license, $expected ) {
-		$this->assertEquals( $expected, ApiQueryPageImagesProxyMock::getPropNames( $license ) );
-	}
-
-	public function provideGetPropName() {
-		return [
-			[ 'free', \PageImages::PROP_NAME_FREE ],
-			[ 'any', [ \PageImages::PROP_NAME_FREE, \PageImages::PROP_NAME ] ]
 		];
 	}
 

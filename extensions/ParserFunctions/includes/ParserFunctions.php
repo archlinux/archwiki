@@ -5,8 +5,8 @@ namespace MediaWiki\Extensions\ParserFunctions;
 use DateTime;
 use DateTimeZone;
 use Exception;
+use ILanguageConverter;
 use Language;
-use LinkCache;
 use MediaWiki\MediaWikiServices;
 use MWTimestamp;
 use Parser;
@@ -28,7 +28,7 @@ class ParserFunctions {
 	private static $mTimeChars = 0;
 
 	/** ~10 seconds */
-	const MAX_TIME_CHARS = 6000;
+	private const MAX_TIME_CHARS = 6000;
 
 	/**
 	 * Register ParserClearState hook.
@@ -248,7 +248,7 @@ class ParserFunctions {
 		# Check if the last item had no = sign, thus specifying the default case
 		if ( $lastItemHadNoEquals ) {
 			return $lastItem;
-		} elseif ( !is_null( $default ) ) {
+		} elseif ( $default !== null ) {
 			return trim( $frame->expand( $default ) );
 		} else {
 			return '';
@@ -340,7 +340,8 @@ class ParserFunctions {
 		Parser $parser, PPFrame $frame, $titletext = '', $then = '', $else = ''
 	) {
 		$title = Title::newFromText( $titletext );
-		$parser->getContentLanguage()->findVariantLink( $titletext, $title, true );
+		self::getLanguageConverter( $parser->getContentLanguage() )
+			->findVariantLink( $titletext, $title, true );
 		if ( $title ) {
 			if ( $title->getNamespace() === NS_MEDIA ) {
 				/* If namespace is specified as NS_MEDIA, then we want to
@@ -349,7 +350,7 @@ class ParserFunctions {
 				if ( !$parser->incrementExpensiveFunctionCount() ) {
 					return $else;
 				}
-				$file = wfFindFile( $title );
+				$file = MediaWikiServices::getInstance()->getRepoGroup()->findFile( $title );
 				if ( !$file ) {
 					return $else;
 				}
@@ -371,7 +372,7 @@ class ParserFunctions {
 				return $else;
 			} else {
 				$pdbk = $title->getPrefixedDBkey();
-				$lc = LinkCache::singleton();
+				$lc = MediaWikiServices::getInstance()->getLinkCache();
 				$id = $lc->getGoodLinkID( $pdbk );
 				if ( $id !== 0 ) {
 					$parser->mOutput->addLink( $title, $id );
@@ -910,7 +911,7 @@ class ParserFunctions {
 	 *
 	 * @param PPNode|string $obj Thing to expand
 	 * @param PPFrame $frame
-	 * @param string &$trimExpanded Expanded and trimmed version of PPNode,
+	 * @param string|null &$trimExpanded Expanded and trimmed version of PPNode,
 	 *   but with char refs intact
 	 * @return string The trimmed, expanded and entity reference decoded version of the PPNode
 	 */
@@ -918,5 +919,16 @@ class ParserFunctions {
 		$expanded = $frame->expand( $obj );
 		$trimExpanded = trim( $expanded );
 		return trim( Sanitizer::decodeCharReferences( $expanded ) );
+	}
+
+	/**
+	 * @since 1.35
+	 * @param Language $language
+	 * @return ILanguageConverter
+	 */
+	private static function getLanguageConverter( Language $language ) : ILanguageConverter {
+		return MediaWikiServices::getInstance()
+			->getLanguageConverterFactory()
+			->getLanguageConverter( $language );
 	}
 }

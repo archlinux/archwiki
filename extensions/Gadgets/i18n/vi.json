@@ -3,9 +3,9 @@
 		"authors": [
 			"Meno25",
 			"Minh Nguyen",
-			"Vinhtantran",
+			"Nguyên Lê",
 			"Prenn",
-			"Nguyên Lê"
+			"Vinhtantran"
 		]
 	},
 	"gadgets-desc": "Để các thành viên chọn những [[Special:Gadgets|tiện ích]] đặc chế bằng CSS và JavaScript trong [[Special:Preferences#mw-prefsection-gadgets|tùy chọn]]",
@@ -26,7 +26,7 @@
 	"gadgets-required-rights": "Cần {{PLURAL:$2|quyền|các quyền}} sau:\n\n$1",
 	"gadgets-required-skins": "Có sẵn trên {{PLURAL:$2|giao diện $1|các giao diện: $1}}.",
 	"gadgets-default": "Được kích hoạt cho tất cả mọi người theo mặc định.",
-	"gadgets-legacy": "Tiện ích không được tải. Xin vui lòng chuyển đổi tiện ích qua hệ thống ResourceLoader. ([https://www.mediawiki.org/wiki/ResourceLoader/Migration_guide_(users) Tìm hiểu thêm])",
+	"gadgets-legacy": "Tiện ích không được tải. Xin vui lòng chuyển đổi tiện ích qua hệ thống ResourceLoader. ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) Tìm hiểu thêm])",
 	"gadgets-export": "Xuất",
 	"gadgets-export-title": "Xuất tiện ích",
 	"gadgets-not-found": "Không tìm thấy tiện ích “$1”.",

@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"C.R.",
-			"Сербијана",
-			"Ruthven"
+			"Ruthven",
+			"Сербијана"
 		]
 	},
 	"gadgets-desc": "Lassa scegliere a l'utente 'e [[Special:Gadgets|Ppazzielle CSS e JavaScript]] personalizzate int' 'e [[Special:Preferences#mw-prefsection-gadgets|preferenze]] 'e lloro",
@@ -24,7 +24,7 @@
 	"gadgets-required-rights": "Addimanna {{PLURAL:$2|deritto|deritte}}:\n\n$1",
 	"gadgets-required-skins": "Disponibbele ncopp' 'a {{PLURAL:$2|$1 'o skin|'e skin ccà: $1}}.",
 	"gadgets-default": "Appicciato pe' tuttuquante predefinito.",
-	"gadgets-legacy": "'A pazziella nun sta carrecata. Pe piacere migrate a ResourceLoader. ([https://www.mediawiki.org/wiki/ResourceLoader/Migration_guide_(users) Liggite 'e cchiù])",
+	"gadgets-legacy": "'A pazziella nun sta carrecata. Pe piacere migrate a ResourceLoader. ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) Liggite 'e cchiù])",
 	"gadgets-export": "Aspurtà",
 	"gadgets-export-title": "Esporta 'e ppazzielle",
 	"gadgets-not-found": "Pazziella \"$1\" nun truvata.",

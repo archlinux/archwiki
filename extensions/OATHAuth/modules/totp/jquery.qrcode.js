@@ -65,7 +65,7 @@
 			qrcode.make();
 
 			// create table element
-			$table = $( '<table></table>' )
+			$table = $( '<table>' )
 				.css( 'width', options.width + 'px' )
 				.css( 'height', options.height + 'px' )
 				.css( 'border', '0' )
@@ -78,10 +78,10 @@
 
 			// draw in the table
 			for ( row = 0; row < qrcode.getModuleCount(); row++ ) {
-				$row = $( '<tr></tr>' ).css( 'height', tileH + 'px' ).appendTo( $table );
+				$row = $( '<tr>' ).css( 'height', tileH + 'px' ).appendTo( $table );
 
 				for ( col = 0; col < qrcode.getModuleCount(); col++ ) {
-					$( '<td></td>' )
+					$( '<td>' )
 						.css( 'width', tileW + 'px' )
 						.css( 'background-color', qrcode.isDark( row, col ) ? options.foreground : options.background )
 						.appendTo( $row );

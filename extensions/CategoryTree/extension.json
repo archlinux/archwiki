@@ -6,7 +6,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.33.0"
+		"MediaWiki": ">= 1.35.0"
 	},
 	"ConfigRegistry": {
 		"categorytree": "GlobalVarConfig::newInstance"
@@ -104,7 +104,8 @@
 		"CategoryTreeMaxDepth": {
 			"10": 1,
 			"20": 1,
-			"0": 2
+			"0": 2,
+			"_merge_strategy": "array_plus"
 		},
 		"CategoryTreeForceHeaders": false,
 		"CategoryTreeSidebarRoot": null,
@@ -116,7 +117,8 @@
 			"mode": null,
 			"hideprefix": null,
 			"showcount": false,
-			"namespaces": false
+			"namespaces": false,
+			"notranslations": false
 		},
 		"CategoryTreeCategoryPageMode": 0,
 		"CategoryTreeCategoryPageOptions": {

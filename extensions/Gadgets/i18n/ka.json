@@ -23,7 +23,7 @@
 	"gadgets-required-rights": "{{PLURAL:$2|საჭიროა უფლება|საჭიროა უფლება}}:\n\n$1",
 	"gadgets-required-skins": "ხელმისაწვდომია {{PLURAL:$2|გაფორმების თემისათვის $1|შემდეგი გაფორმების თემებისათვის: $1}}.",
 	"gadgets-default": "ჩართულია ყველასათვის ნაგულისხმევად.",
-	"gadgets-legacy": "გაჯეტი არ არის ჩატვირთული. გთხოვთ, გაასწორეთ ამ გაჯეტის კოდი, რათა იგი იყოს გამოძახებული ResourceLoader-ის დახმარებით\n([https://www.mediawiki.org/wiki/ResourceLoader/Migration_guide_(users) მეტის გაგება])",
+	"gadgets-legacy": "გაჯეტი არ არის ჩატვირთული. გთხოვთ, გაასწორეთ ამ გაჯეტის კოდი, რათა იგი იყოს გამოძახებული ResourceLoader-ის დახმარებით\n([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) მეტის გაგება])",
 	"gadgets-export": "ექსპორტი",
 	"gadgets-export-title": "გაჯეტის ექსპორტი",
 	"gadgets-not-found": "გაჯეტი \"$1\" ვერ მოიძებნა.",

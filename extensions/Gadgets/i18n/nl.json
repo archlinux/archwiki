@@ -2,14 +2,15 @@
 	"@metadata": {
 		"authors": [
 			"Annabel",
-			"SPQRobin",
-			"Siebrand",
-			"Esketti",
-			"Sjoerddebruin",
-			"Romaine",
 			"Edoderoo",
+			"Esketti",
 			"Mainframe98",
-			"Mar(c)"
+			"Mar(c)",
+			"Romaine",
+			"SPQRobin",
+			"Servien",
+			"Siebrand",
+			"Sjoerddebruin"
 		]
 	},
 	"gadgets-desc": "Laat gebruikers [[Special:Gadgets|CSS en JavaScripts]] activeren in hun [[Special:Preferences#mw-prefsection-gadgets|voorkeuren]]",
@@ -30,7 +31,7 @@
 	"gadgets-required-rights": "{{PLURAL:$2|Het volgende recht is|De volgende rechten zijn}} vereist:\n\n$1.",
 	"gadgets-required-skins": "Beschikbaar in de {{PLURAL:$2|vormgeving $1|volgende vormgevingen: $1}}.",
 	"gadgets-default": "Standaard ingeschakeld voor iedereen.",
-	"gadgets-legacy": "De uitbreiding is niet geladen. Pas het aan en gebruik ResourceLoader ([https://www.mediawiki.org/wiki/ResourceLoader/Migration_guide_(users) meer lezen]).",
+	"gadgets-legacy": "De uitbreiding is niet geladen. Pas het aan en gebruik ResourceLoader ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) meer lezen]).",
 	"gadgets-export": "Exporteren",
 	"gadgets-export-title": "Uitbreiding exporteren",
 	"gadgets-not-found": "Uitbreiding \"$1\" niet gevonden.",

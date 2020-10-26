@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"McDutchie",
-			"Macofe"
+			"Macofe",
+			"McDutchie"
 		]
 	},
 	"wikieditor": "Interfacie avantiate de modification de wikitexto",
@@ -44,7 +44,7 @@
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Ligamine interne",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "Ligamine externe",
 	"wikieditor-toolbar-tool-link-empty": "Tu ha entrate nihil a que ligar.",
-	"wikieditor-toolbar-tool-file": "File incastrate",
+	"wikieditor-toolbar-tool-file": "Imagines e multimedia",
 	"wikieditor-toolbar-tool-file-example": "Exemplo.jpg",
 	"wikieditor-toolbar-tool-file-title": "Inserer file",
 	"wikieditor-toolbar-file-target": "Nomine del file:",

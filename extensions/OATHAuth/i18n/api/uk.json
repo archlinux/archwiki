@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Piramidion",
+			"Base",
 			"Movses",
-			"Base"
+			"Piramidion"
 		]
 	},
 	"apihelp-query+oath-description": "Поставити позначку, щоб побачити, чи двофакторна автентифікація (OATH) увімкнена для користувача.",

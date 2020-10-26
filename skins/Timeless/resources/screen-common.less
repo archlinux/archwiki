@@ -32,7 +32,7 @@ body {
 	word-wrap: break-word;
 }
 
-#mw-footer-container {
+.mw-footer-container {
 	border-top: solid 1px @base20;
 	box-shadow: inset 0 7px 2px -4px rgba( 0, 0, 0, 0.1 );
 	color: @base100;
@@ -154,7 +154,7 @@ body {
 
 /* Footer */
 
-#mw-footer {
+.mw-footer {
 	padding-top: 0.5em;
 	padding-bottom: 1em;
 
@@ -192,7 +192,7 @@ body {
 	background: @base80;
 	border-bottom: solid 4px @green;
 
-	// Background image (default cat)
+	/* Background image (default cat) */
 	background-image: @backdrop-image;
 	background-repeat: no-repeat;
 	background-position: center 10em;
@@ -285,7 +285,7 @@ body {
 #ca-view {
 	.hidden();
 
-	// Let's give anyone who forcibly brings it back a creepy eyeball
+	/* Let's give anyone who forcibly brings it back a creepy eyeball */
 	a {
 		.ca-icon( 'images/eyeball-grey' );
 	}
@@ -353,7 +353,7 @@ a.mw-selflink {
 		margin-right: 1em;
 
 		&:first-of-type {
-			// make the icon part of the first link
+			/* make the icon part of the first link */
 			padding-left: 20px;
 			margin-left: -20px;
 		}
@@ -512,9 +512,10 @@ pre,
 		margin-bottom: 0;
 	}
 
-	// overflow:hidden on the header itself breaks tall scripts, but we need to hide
-	// overflow on the border itself in output for proper thumb handling. Too weird to
-	// change this everywhere, so we'll just do it for parser output for now.
+	/* overflow:hidden on the header itself breaks tall scripts, but we need to hide
+	 * overflow on the border itself in output for proper thumb handling. Too weird to
+	 * change this everywhere, so we'll just do it for parser output for now.
+	 */
 	.mw-parser-output {
 		h1,
 		h2 {
@@ -598,7 +599,7 @@ ul {
 .thumbcaption {
 	font-size: 95%;
 	padding: 0.5em 0 0;
-	// For the magnify link on empty captions
+	/* For the magnify link on empty captions */
 	min-height: 1em;
 }
 
@@ -666,16 +667,16 @@ ul#filetoc {
 	float: right;
 }
 
-// Remove brackets around the show/hide button of the TOC
-// The selectors have a higher specifity than in core
+/* Remove brackets around the show/hide button of the TOC
+The selectors have a higher specifity than in core */
 body :not( :checked ) > .toctogglespan:before,
 body :not( :checked ) > .toctogglespan:after {
 	content: '';
 }
 
 .toctogglelabel {
-	padding-left: 0; // Overwrite label { padding-left: 0.5em; } from forms.less
-	margin-left: 0.5em; // Create new distance to the TOC title without increasing the focus ring
+	padding-left: 0; /* Overwrite label { padding-left: 0.5em; } from forms.less */
+	margin-left: 0.5em; /* Create new distance to the TOC title without increasing the focus ring */
 }
 
 .toclevel-1 {
@@ -688,10 +689,10 @@ body :not( :checked ) > .toctogglespan:after {
 
 .skin-timeless .mw-body .oo-ui-tagMultiselectWidget-handle,
 .skin-timeless .mw-body .oo-ui-capsuleMultiselectWidget-handle {
-	margin: 0; // wat
+	margin: 0; /* wat */
 }
 
-.mw-body .mw-rcfilters-ui-changesListWrapperWidget .mw-changeslist-legend, // wat
+.mw-body .mw-rcfilters-ui-changesListWrapperWidget .mw-changeslist-legend, /* wat */
 .mw-changeslist-legend,
 .mw-body .mw-search-profile-tabs,
 .mw-body fieldset#mw-searchoptions,
@@ -720,11 +721,6 @@ body :not( :checked ) > .toctogglespan:after {
 	> tr > th,
 	> * > tr > th {
 		border-bottom-width: 2px;
-	}
-
-	> tr > td,
-	> * > tr > td {
-		background: @base90;
 	}
 }
 

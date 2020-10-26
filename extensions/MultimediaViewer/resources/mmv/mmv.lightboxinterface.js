@@ -253,6 +253,14 @@
 	LIP.unattach = function () {
 		mw.mmv.actionLogger.log( 'close' );
 
+		// We trigger this event on the document because unattach() can run
+		// when the interface is unattached
+		// We're calling this before cleaning up (below) the DOM, as that
+		// appears to have an impact on automatic scroll restoration (which
+		// might happen as a result of this being closed) in FF
+		$( document ).trigger( $.Event( 'mmv-close' ) )
+			.off( 'jq-fullscreen-change.lip' );
+
 		// Has to happen first so that the scroller can freeze with visible elements
 		this.panel.unattach();
 
@@ -283,11 +291,6 @@
 			next: [ 'emit', 'next' ],
 			prev: [ 'emit', 'prev' ]
 		} );
-
-		// We trigger this event on the document because unattach() can run
-		// when the interface is unattached
-		$( document ).trigger( $.Event( 'mmv-close' ) )
-			.off( 'jq-fullscreen-change.lip' );
 
 		this.attached = false;
 	};

@@ -2,12 +2,12 @@
 
 namespace MediaWiki\Extension\OATHAuth\Hook\LoadExtensionSchemaUpdates;
 
-use DatabaseUpdater;
-use MediaWiki\MediaWikiServices;
-use Wikimedia\Rdbms\IDatabase;
-use Wikimedia;
-use FormatJson;
 use ConfigException;
+use DatabaseUpdater;
+use FormatJson;
+use MediaWiki\MediaWikiServices;
+use Wikimedia;
+use Wikimedia\Rdbms\IDatabase;
 
 class UpdateTables {
 	/**
@@ -40,7 +40,8 @@ class UpdateTables {
 	}
 
 	protected function execute() {
-		switch ( $this->updater->getDB()->getType() ) {
+		$type = $this->updater->getDB()->getType();
+		switch ( $type ) {
 			case 'mysql':
 			case 'sqlite':
 				$this->updater->addExtensionTable( 'oathauth_users', "{$this->base}/sql/mysql/tables.sql" );
@@ -50,10 +51,11 @@ class UpdateTables {
 					'secret_reset',
 					"{$this->base}/sql/mysql/patch-remove_reset.sql"
 				);
+
 				$this->updater->addExtensionField(
 					'oathauth_users',
 					'module',
-					"{$this->base}/sql/mysql/patch-add_generic_fields.sql"
+					"{$this->base}/sql/{$type}/patch-add_generic_fields.sql"
 				);
 
 				$this->updater->addExtensionUpdate(
@@ -62,17 +64,13 @@ class UpdateTables {
 				$this->updater->dropExtensionField(
 					'oathauth_users',
 					'secret',
-					"{$this->base}/sql/mysql/patch-remove_module_specific_fields.sql"
+					"{$this->base}/sql/{$type}/patch-remove_module_specific_fields.sql"
 				);
 
 				$this->updater->addExtensionUpdate(
 					[ [ __CLASS__, 'schemaUpdateTOTPToMultipleKeys' ] ]
 				);
 
-				break;
-
-			case 'oracle':
-				$this->updater->addExtensionTable( 'oathauth_users', "{$this->base}/sql/oracle/tables.sql" );
 				break;
 
 			case 'postgres':
@@ -133,7 +131,7 @@ class UpdateTables {
 	 * @throws ConfigException
 	 */
 	public static function convertToGenericFields( IDatabase $db ) {
-		if ( !$db->fieldExists( 'oathauth_users', 'secret' ) ) {
+		if ( !$db->fieldExists( 'oathauth_users', 'secret', __METHOD__ ) ) {
 			return true;
 		}
 
@@ -188,7 +186,7 @@ class UpdateTables {
 	 * @throws ConfigException
 	 */
 	public static function switchTOTPToMultipleKeys( IDatabase $db ) {
-		if ( !$db->fieldExists( 'oathauth_users', 'data' ) ) {
+		if ( !$db->fieldExists( 'oathauth_users', 'data', __METHOD__ ) ) {
 			return true;
 		}
 
@@ -228,7 +226,7 @@ class UpdateTables {
 	 * @return bool
 	 */
 	public static function schemaUpdateOldUsers( IDatabase $db ) {
-		if ( !$db->fieldExists( 'oathauth_users', 'secret_reset' ) ) {
+		if ( !$db->fieldExists( 'oathauth_users', 'secret_reset', __METHOD__ ) ) {
 			return true;
 		}
 

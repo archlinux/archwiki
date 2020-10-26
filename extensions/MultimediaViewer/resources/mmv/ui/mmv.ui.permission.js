@@ -40,6 +40,7 @@
 
 		/**
 		 * Contains everything else.
+		 *
 		 * @property {jQuery}
 		 */
 		this.$box = $( '<div>' )
@@ -48,6 +49,7 @@
 
 		/**
 		 * Box title
+		 *
 		 * @property {jQuery}
 		 */
 		this.$title = $( '<h3>' )
@@ -58,6 +60,7 @@
 		 * Plain-text version of the author's message
 		 * This is just the text parsed out from the original markup, it might not make much sense
 		 * (e.g. if the original is a HTML table)
+		 *
 		 * @property {jQuery}
 		 */
 		this.$text = $( '<div>' )
@@ -71,6 +74,7 @@
 
 		/**
 		 * A helper element to fade off text
+		 *
 		 * @property {jQuery}
 		 */
 		this.$fader = $( '<div>' )
@@ -85,6 +89,7 @@
 		/**
 		 * Original (HTML) version of the author's message
 		 * This can be scary sometimes (huge tables, black text on dark purple background etc).
+		 *
 		 * @property {jQuery}
 		 */
 		this.$html = $( '<div>' )
@@ -93,6 +98,7 @@
 
 		/**
 		 * "Close" button (does not actually close the box, just makes it smaller).
+		 *
 		 * @property {jQuery}
 		 */
 		this.$close = $( '<button>' )
@@ -104,6 +110,7 @@
 
 		/**
 		 * Panel scroller from the metadata panel object.
+		 *
 		 * @property {mw.mmv.ui.MetadataPanelScroller}
 		 */
 		this.scroller = scroller;

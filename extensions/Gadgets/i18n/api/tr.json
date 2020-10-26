@@ -1,23 +1,26 @@
 {
 	"@metadata": {
 		"authors": [
-			"Arystanbek"
+			"Arystanbek",
+			"BaRaN6161 TURK"
 		]
 	},
-	"apihelp-query+gadgetcategories-description": "Döner gadget kategori listesi.",
-	"apihelp-query+gadgetcategories-param-prop": "Kategori bilgi almak için ne gadget:\n;adı:İç kategori adı.\n;konu başlığı:Kategori Başlığı.\n;üyeler:kategorideki araçların Sayısı.",
+	"apihelp-query+gadgetcategories-description": "Küçük araç kategorilerinin bir listesini döndürür.",
+	"apihelp-query+gadgetcategories-summary": "Küçük araç kategorilerinin bir listesini döndürür.",
+	"apihelp-query+gadgetcategories-param-prop": "Küçük aracı kategorisi bilgilerini alırsınız:\n;name:İç kategori adı.\n;title:Kategori başlığı.\n;members:Kategorideki küçük araçların sayısı.",
 	"apihelp-query+gadgetcategories-param-names": "Almak için kategorilerin adlarını.",
-	"apihelp-query+gadgetcategories-example-1": "Mevcut gadget kategori listesi",
-	"apihelp-query+gadgetcategories-example-2": "Kategoriler \"foo\" ve \"bar\"adlı hakkında tüm bilgi almak",
-	"apihelp-query+gadgets-description": "Döner araçlar bu wiki üzerinde bulundurmalıdır.",
-	"apihelp-query+gadgets-param-prop": "Bilgi almak için ne gadget:\n;ıd:İç gadget ID.\n;meta:gadget metadata.\n;tanım:Gadget açıklama HTML (Eğer gerçekten gerekirse yavaş, sadece kullanmak olabilir) dönüştü.",
+	"apihelp-query+gadgetcategories-example-1": "Mevcut küçük araç kategorilerinin bir listesini alın",
+	"apihelp-query+gadgetcategories-example-2": "Kategoriler \"foo\" ve \"bar\" adlı hakkında tüm bilgileri alın",
+	"apihelp-query+gadgets-description": "Döner araçlar bu viki üzerinde bulundurmalıdır.",
+	"apihelp-query+gadgets-summary": "Bu vikide kullanılan gadgetların listesini döndürür.",
+	"apihelp-query+gadgets-param-prop": "Küçük aracı bilgilerini alacaksınız:\n;id:İç küçük aracı kimliği.\n;meta:Küçük araç meta verisi.\n;desc:Küçük aracı açıklama HTML'si (yavaş olabilir, gerçekten gerekirse yalnızca kullanmak olabilir) dönüştü.",
 	"apihelp-query+gadgets-param-categories": "Almak için ne gelen araçlar.",
 	"apihelp-query+gadgets-param-ids": "Araçların kimliği almak için.",
-	"apihelp-query+gadgets-param-allowedonly": "Liste sadece araçlar geçerli kullanıcı için izin verdi.",
-	"apihelp-query+gadgets-param-enabledonly": "Liste sadece araçlar geçerli kullanıcı tarafından etkinleştirilebilir.",
-	"apihelp-query+gadgets-example-1": "Kendi açıklamaları ile birlikte araçların listesi",
-	"apihelp-query+gadgets-example-2": "Mümkün olan tüm özelliklere sahip araçların bir listesini almak",
-	"apihelp-query+gadgets-example-3": "Araçlar kategoriye ait bir liste olsun \"foo\"",
-	"apihelp-query+gadgets-example-4": "Araçlar hakkında bilgi \"\" ve \"bar\"foo al",
-	"apihelp-query+gadgets-example-5": "Araçlar geçerli kullanıcı tarafından etkin bir listesini almak"
+	"apihelp-query+gadgets-param-allowedonly": "Yalnızca geçerli kullanıcıya izin verilen küçük araçları listeleyin.",
+	"apihelp-query+gadgets-param-enabledonly": "Yalnızca geçerli kullanıcı tarafından etkinleştirilen gadgetları listeleyin.",
+	"apihelp-query+gadgets-example-1": "Açıklamalarıyla birlikte gadgetların bir listesini alın",
+	"apihelp-query+gadgets-example-2": "Olası tüm özelliklere sahip gadgetların bir listesini alın",
+	"apihelp-query+gadgets-example-3": "\"foo\" kategorisine ait aletlerin bir listesini alın",
+	"apihelp-query+gadgets-example-4": "\"foo\" ve \"bar\" gadgetları hakkında bilgi edinin",
+	"apihelp-query+gadgets-example-5": "Geçerli kullanıcı tarafından etkinleştirilen gadgetların listesini al"
 }

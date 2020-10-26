@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Sp5uhe",
-			"Matma Rex",
 			"Chrumps",
+			"Matma Rex",
+			"Rail",
 			"Railfail536",
-			"Rail"
+			"Sp5uhe"
 		]
 	},
 	"skinname-monobook": "Książka",
@@ -20,5 +20,5 @@
 	"monobook-cactions-label": "Działania na stronie",
 	"monobook-notifications-link": "Powiadomienia ($1)",
 	"monobook-notifications-link-none": "Powiadomienia",
-	"monobook-responsive-label": "Włącz responsywny design skórki Książka"
+	"monobook-responsive-label": "Włącz responsywną skórkę Książka"
 }

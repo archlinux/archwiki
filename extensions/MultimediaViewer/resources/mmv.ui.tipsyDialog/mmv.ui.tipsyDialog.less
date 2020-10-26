@@ -1,12 +1,11 @@
-@import '../mmv/mmv.globals';
-@import '../mmv/mmv.mixins';
+@import '../mmv/mmv.variables.less';
+@import '../mmv/mmv.mixins.less';
 
 .mw-mmv-tipsy-dialog {
 	@arrow-height: 8px;
 	@background-color: #eaecf0;
 	@border-color: #a2a9b1;
 	@padding: 20px; // must be larger than @arrow-height / sqrt(2), otherwise the arrow overlaps the text
-
 	padding-bottom: @arrow-height; // the actual arrow height is @arrow-height / sqrt(2)
 
 	.tipsy-inner {
@@ -18,8 +17,8 @@
 		color: #54595d;
 
 		.mw-mmv-tipsy-dialog-title {
+			color: @color-base;
 			margin-bottom: 1em;
-			color: #222;
 			font-size: 130%;
 		}
 	}

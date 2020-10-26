@@ -3,18 +3,21 @@
 		"authors": [
 			"Abanima",
 			"Calak",
+			"Khaled",
 			"Meno25",
 			"Mido",
 			"OsamaK",
 			"أحمد",
+			"ديفيد",
 			"زكريا",
-			"Khaled",
-			"علاء",
-			"ديفيد"
+			"علاء"
 		]
 	},
 	"skinname-vector": "فكتور",
 	"vector-skin-desc": "نسخة حديثة من مونوبوك بمظهر جديد وتحسينات لسهولة الاستخدام",
+	"prefs-vector-enable-vector-1-label": "استخدم Legacy Vector",
+	"prefs-vector-enable-vector-1-help": "على مدار السنوات القليلة القادمة، سنقوم بتحديث واجهة Vector بشكل تدريجي. سيسمح لك Legacy Vector بمشاهدة الإصدار القديم من Vector (اعتبارا من ديسمبر 2019). لمعرفة المزيد حول التحديثات، انتقل إلى [[mw:Reading/Web/Desktop_Improvements|صفحة المشروع]].",
+	"vector-opt-out": "التبديل إلى الشكل القديم",
 	"vector.css": "/* الأنماط المتراصة CSS المعروضة هنا ستؤثر على مستخدمي واجهة فكتور */",
 	"vector.js": "/* أي جافاسكريبت هنا سيتم تحميلها للمستخدمين الذين يستعملون واجهة فكتور */",
 	"vector-action-addsection": "أضف موضوعا",

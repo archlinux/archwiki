@@ -2,11 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Davidpar",
+			"Fitoschido",
 			"Jordi Roqué",
-			"SMP",
-			"Vriullop",
 			"Pere prlpz",
-			"Fitoschido"
+			"SMP",
+			"Vriullop"
 		]
 	},
 	"cite-desc": "Afegeix les etiquetes <code>&lt;ref[ name=id]&gt;</code> i <code>&lt;references/&gt;</code>, per a cites",
@@ -18,8 +18,8 @@
 	"cite_error_ref_no_input": "Etiqueta <code>&lt;ref&gt;</code> no vàlida; \nles referències sense nom han de tenir contingut",
 	"cite_error_references_duplicate_key": "Etiqueta <code>&lt;ref&gt;</code> no vàlida; el nom «$1» està definit diverses vegades amb contingut diferent.",
 	"cite_error_references_invalid_parameters": "L’etiqueta <code>&lt;references&gt;</code> conté un paràmetre no vàlid",
-	"cite_error_references_no_backlink_label": "Hi ha massa etiquetes personalitzades.\nSe'n poden definir més a <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>",
-	"cite_error_no_link_label_group": "No hi ha etiquetes vincle personalitzat per al grup \"$1\".\nDefineix més al missatge <nowiki>[[MediaWiki:$2]]</nowiki>.",
+	"cite_error_references_no_backlink_label": "Hi ha massa etiquetes personalitzades. Se'n poden definir més a [[MediaWiki:Cite references link many format backlink labels]]",
+	"cite_error_no_link_label_group": "No hi ha etiquetes vincle personalitzat per al grup \"$1\". Defineix més al missatge [[MediaWiki:$2]].",
 	"cite_error_references_no_text": "Etiqueta <code>&lt;ref&gt;</code> no vàlida;\nno s'ha proporcionat text per les refs amb l'etiqueta <code>$1</code>",
 	"cite_error_included_ref": "Es tanca el <code>&lt;/ref&gt;</code> que manca per una etiqueta <code>&lt;ref&gt;</code>",
 	"cite_error_group_refs_without_references": "Existeixen etiquetes <code>&lt;ref&gt;</code> pel grup «$1» però no l'etiqueta <code>&lt;references group=\"$1\"/&gt;</code> corresponent",

@@ -536,11 +536,11 @@
 									mw.message( 'wikieditor-toolbar-help-content-file-caption' ).text()
 								] },
 								result: { html: '<div class="thumbinner" style="width: 102px;">' +
-									'<a href="#" class="image">' +
+									'<a class="image">' +
 									'<img alt="" src="' + $.wikiEditor.imgPath + 'toolbar/example-image.png" width="100" height="50" class="thumbimage"/>' +
 									'</a>' +
 									'<div class="thumbcaption"><div class="magnify">' +
-									'<a title="' + mw.message( 'thumbnail-more' ).escaped() + '" class="internal" href="#"></a>' +
+									'<a title="' + mw.message( 'thumbnail-more' ).escaped() + '" class="internal"></a>' +
 									'</div>' + mw.message( 'wikieditor-toolbar-help-content-file-caption' ).escaped() + '</div>' +
 									'</div>'
 								}

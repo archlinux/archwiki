@@ -16,8 +16,12 @@
 		"QuestyCaptcha": "includes/QuestyCaptcha.php"
 	},
 	"config": {
-		"CaptchaClass": "QuestyCaptcha",
-		"CaptchaQuestions": []
+		"CaptchaClass": {
+			"value": "QuestyCaptcha"
+		},
+		"CaptchaQuestions": {
+			"value": []
+		}
 	},
-	"manifest_version": 1
+	"manifest_version": 2
 }

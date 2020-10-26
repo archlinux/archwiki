@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Aftab1995",
-			"Bellayet",
 			"Aftabuzzaman",
+			"Bellayet",
 			"Bodhisattwa",
 			"আফতাবুজ্জামান"
 		]
@@ -40,7 +40,7 @@
 	"scribunto-luastandalone-proc-error": "লুয়া ত্রুটি: প্রক্রিয়া তৈরি করা যাবে না।",
 	"scribunto-luastandalone-proc-error-msg": "লুয়া ত্রুটি: প্রক্রিয়া তৈরি করা যাবে না: $2",
 	"scribunto-luastandalone-decode-error": "লুয়া ত্রুটি: অভ্যন্তরীণ ত্রুটি: বার্তা ডিকোড করতে অক্ষম।",
-	"scribunto-luastandalone-exited": "লুয়া ত্রুটি: আভ্যন্তরীণ ত্রুটি: প্রস্থানের সময় দোভাষীর অবস্থা $2।",
+	"scribunto-luastandalone-exited": "লুয়া ত্রুটি: আভ্যন্তরীণ ত্রুটি: অবস্থা $2 সহ দোভাষী প্রস্থান করেছে।",
 	"scribunto-module-with-errors-category": "ত্রুটিসহ স্ক্রিবুন্তো মডিউল",
 	"scribunto-module-with-errors-category-desc": "মডিউলে একটি ত্রুটি আছে।",
 	"scribunto-limitreport-timeusage": "লুয়া সময় ব্যবহার",

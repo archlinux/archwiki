@@ -3,9 +3,9 @@
 		"authors": [
 			"Danmichaelo",
 			"Harald Khan",
+			"Jon Harald Søby",
 			"Laaknor",
-			"Njardarlogar",
-			"Jon Harald Søby"
+			"Njardarlogar"
 		]
 	},
 	"fancycaptcha-desc": "CAPTCHA-generator for «Confirm Edit»",

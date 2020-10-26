@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Araceletorres",
 			"!Silent",
-			"Felipe L. Ewald",
-			"Eduardo Addad de Oliveira"
+			"Araceletorres",
+			"Eduardo Addad de Oliveira",
+			"Felipe L. Ewald"
 		]
 	},
 	"textextracts-desc": "Fornece texto simples ou extratos de HTML limitados de conteúdo da página"

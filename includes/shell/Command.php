@@ -185,7 +185,7 @@ class Command {
 	 * @param string $method
 	 * @return $this
 	 */
-	public function profileMethod( $method ): Command {
+	public function profileMethod( string $method ): Command {
 		$this->method = $method;
 
 		return $this;
@@ -197,8 +197,8 @@ class Command {
 	 * @param string|null $inputString
 	 * @return $this
 	 */
-	public function input( $inputString ): Command {
-		$this->inputString = is_null( $inputString ) ? null : (string)$inputString;
+	public function input( ?string $inputString ): Command {
+		$this->inputString = $inputString;
 
 		return $this;
 	}
@@ -210,7 +210,7 @@ class Command {
 	 * @param bool $yesno
 	 * @return $this
 	 */
-	public function includeStderr( $yesno = true ): Command {
+	public function includeStderr( bool $yesno = true ): Command {
 		$this->doIncludeStderr = $yesno;
 
 		return $this;
@@ -222,7 +222,7 @@ class Command {
 	 * @param bool $yesno
 	 * @return $this
 	 */
-	public function logStderr( $yesno = true ): Command {
+	public function logStderr( bool $yesno = true ): Command {
 		$this->doLogStderr = $yesno;
 
 		return $this;
@@ -241,14 +241,29 @@ class Command {
 	}
 
 	/**
-	 * Set additional restrictions for this request
+	 * Set restrictions for this request, overwriting any previously set restrictions.
+	 *
+	 * Add the "no network" restriction:
+	 * @code
+	 * 	$command->restrict( Shell::RESTRICT_DEFAULT | Shell::NO_NETWORK );
+	 * @endcode
+	 *
+	 * Allow LocalSettings.php access:
+	 * @code
+	 * 	$command->restrict( Shell::RESTRICT_DEFAULT & ~Shell::NO_LOCALSETTINGS );
+	 * @endcode
+	 *
+	 * Disable all restrictions:
+	 * @code
+	 *  $command->restrict( Shell::RESTRICT_NONE );
+	 * @endcode
 	 *
 	 * @since 1.31
 	 * @param int $restrictions
 	 * @return $this
 	 */
-	public function restrict( $restrictions ): Command {
-		$this->restrictions |= $restrictions;
+	public function restrict( int $restrictions ): Command {
+		$this->restrictions = $restrictions;
 
 		return $this;
 	}
@@ -260,7 +275,7 @@ class Command {
 	 *
 	 * @return bool
 	 */
-	protected function hasRestriction( $restriction ) {
+	protected function hasRestriction( int $restriction ): bool {
 		return ( $this->restrictions & $restriction ) === $restriction;
 	}
 
@@ -286,7 +301,7 @@ class Command {
 	 * @param string $command Already-escaped command to run
 	 * @return array [ command, whether to use log pipe ]
 	 */
-	protected function buildFinalCommand( $command ) {
+	protected function buildFinalCommand( string $command ): array {
 		$envcmd = '';
 		foreach ( $this->env as $k => $v ) {
 			if ( wfIsWindows() ) {
@@ -333,6 +348,10 @@ class Command {
 			$cmd .= ' 2>&1';
 		}
 
+		if ( wfIsWindows() ) {
+			$cmd = 'cmd.exe /c "' . $cmd . '"';
+		}
+
 		return [ $cmd, $useLogPipe ];
 	}
 
@@ -345,7 +364,7 @@ class Command {
 	 * @throws ProcOpenError
 	 * @throws ShellDisabledError
 	 */
-	public function execute() {
+	public function execute(): Result {
 		$this->everExecuted = true;
 
 		$profileMethod = $this->method ?: wfGetCaller();
@@ -373,7 +392,16 @@ class Command {
 		}
 		$pipes = null;
 		$scoped = Profiler::instance()->scopedProfileIn( __FUNCTION__ . '-' . $profileMethod );
-		$proc = proc_open( $cmd, $desc, $pipes );
+		$proc = null;
+
+		if ( wfIsWindows() ) {
+			// Windows Shell bypassed, but command run is "cmd.exe /C "{$cmd}"
+			// This solves some shell parsing issues, see T207248
+			$proc = proc_open( $cmd, $desc, $pipes, null, null, [ 'bypass_shell' => true ] );
+		} else {
+			$proc = proc_open( $cmd, $desc, $pipes );
+		}
+
 		if ( !$proc ) {
 			$this->logger->error( "proc_open() failed: {command}", [ 'command' => $cmd ] );
 			throw new ProcOpenError();
@@ -427,16 +455,7 @@ class Command {
 				}
 			}
 
-			// clear get_last_error without actually raising an error
-			// from https://www.php.net/manual/en/function.error-get-last.php#113518
-			// TODO replace with error_clear_last after dropping HHVM
-			// @phan-suppress-next-line PhanTypeMismatchArgumentInternal
-			set_error_handler( function () {
-			}, 0 );
-			AtEase::suppressWarnings();
-			trigger_error( '' );
-			AtEase::restoreWarnings();
-			restore_error_handler();
+			error_clear_last();
 
 			$readPipes = array_filter( $pipes, function ( $fd ) use ( $desc ) {
 				return $desc[$fd][0] === 'pipe' && $desc[$fd][1] === 'r';
@@ -543,6 +562,7 @@ class Command {
 			$this->logger->warning( "$logMsg: {command}", [ 'command' => $cmd ] );
 		}
 
+		// @phan-suppress-next-line PhanImpossibleCondition
 		if ( $buffers[2] && $this->doLogStderr ) {
 			$this->logger->error( "Error running {command}: {error}", [
 				'command' => $cmd,
@@ -562,7 +582,7 @@ class Command {
 	 *
 	 * @return string
 	 */
-	public function __toString() {
+	public function __toString(): string {
 		return "#Command: {$this->command}";
 	}
 }

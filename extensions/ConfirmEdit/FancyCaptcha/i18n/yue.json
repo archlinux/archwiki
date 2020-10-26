@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Yueman",
-			"Ktchankt"
+			"Ktchankt",
+			"Yueman"
 		]
 	},
 	"fancycaptcha-addurl": "你嘅編輯包括咗新嘅出面連結。\n為咗防止自動化嘅濫貼，請響下面個盒度輸入下面嘅字 （[[Special:Captcha/help|更多資訊]]）：",

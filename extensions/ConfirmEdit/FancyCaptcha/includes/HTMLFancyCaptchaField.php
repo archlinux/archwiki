@@ -25,6 +25,9 @@ class HTMLFancyCaptchaField extends HTMLFormField {
 		$this->showCreateHelp = !empty( $params['showCreateHelp'] );
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public function getInputHTML( $value ) {
 		$out = $this->mParent->getOutput();
 
@@ -77,6 +80,9 @@ class HTMLFancyCaptchaField extends HTMLFormField {
 		return $html;
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public function getLabel() {
 		// slight abuse of what getLabel() should mean; $mLabel is used for the pre-label text
 		// as the actual label is always the same
@@ -84,6 +90,9 @@ class HTMLFancyCaptchaField extends HTMLFormField {
 			. $this->mParent->msg( 'fancycaptcha-captcha' )->text();
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public function getLabelHtml( $cellAttributes = [] ) {
 		$labelHtml = parent::getLabelHtml( $cellAttributes );
 		if ( $this->mLabel ) {

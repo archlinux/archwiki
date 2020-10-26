@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\MediaWikiServices;
+
 $IP = getenv( 'MW_INSTALL_PATH' );
 if ( $IP === false ) {
 	$IP = __DIR__ . '/../../..';
@@ -26,6 +28,8 @@ class CleanupArchiveUserText extends Maintenance {
 		}
 
 		$dbw = wfGetDB( DB_MASTER );
+		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
+
 		do {
 			$res = $dbw->select(
 				[ 'archive', 'user' ],
@@ -53,7 +57,7 @@ class CleanupArchiveUserText extends Maintenance {
 				);
 				$affected = $dbw->affectedRows();
 				$this->output( "$affected rows\n" );
-				wfWaitForSlaves();
+				$lbFactory->waitForReplication();
 			}
 		} while ( $results === 50 );
 	}
