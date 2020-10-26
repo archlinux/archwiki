@@ -29,31 +29,32 @@
 		"TextExtracts\\": "includes/"
 	},
 	"Hooks": {
-		"OpenSearchXml": [
-			"TextExtracts\\Hooks::onApiOpenSearchSuggest"
-		],
 		"ApiOpenSearchSuggest": [
 			"TextExtracts\\Hooks::onApiOpenSearchSuggest"
 		]
 	},
 	"config": {
-		"ExtractsRemoveClasses": [
-			"table",
-			"div",
-			"script",
-			"input",
-			"style",
-			"ul.gallery",
-			".mw-editsection",
-			"sup.reference",
-			"ol.references",
-			".error",
-			".nomobile",
-			".noprint",
-			".noexcerpt",
-			".sortkey"
-		],
-		"ExtractsExtendOpenSearchXml": false
+		"ExtractsRemoveClasses": {
+			"value": [
+				"table",
+				"div",
+				"script",
+				"input",
+				"style",
+				"ul.gallery",
+				".mw-editsection",
+				"sup.reference",
+				"ol.references",
+				".error",
+				".nomobile",
+				".noprint",
+				".noexcerpt",
+				".sortkey"
+			]
+		},
+		"ExtractsExtendOpenSearchXml": {
+			"value": false
+		}
 	},
-	"manifest_version": 1
+	"manifest_version": 2
 }

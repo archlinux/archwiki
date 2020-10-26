@@ -1,0 +1,10 @@
+{
+	"root": true,
+	"extends": [
+		"wikimedia/client",
+		"wikimedia/jsduck"
+	],
+	"rules": {
+		"max-len": 0
+	}
+}

@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Sasan700",
-			"Умар",
-			"Исмаил Садуев"
+			"Исмаил Садуев",
+			"Умар"
 		]
 	},
 	"wikieditor": "Викийоза тадаран шоьйра интерфейс",
@@ -106,7 +106,7 @@
 	"wikieditor-toolbar-tool-table-wikitable": "Кечйеш дозанашца",
 	"wikieditor-toolbar-tool-table-sortable": "Листалуш йе таблица",
 	"wikieditor-toolbar-tool-table-example": "Чоьнан йоза",
-	"wikieditor-toolbar-tool-table-preview": "Хьалха хьажар",
+	"wikieditor-toolbar-tool-table-preview": "Хьалххе хьажар",
 	"wikieditor-toolbar-tool-table-insert": "Чуйилла",
 	"wikieditor-toolbar-tool-table-cancel": "Цаоьшу",
 	"wikieditor-toolbar-tool-table-toomany": "Оцул $1 {{PLURAL:$1|чоьнаш}} я аьтту ца болу, таблицан чоьнашна бáрам $1 хоттало.",
@@ -118,7 +118,7 @@
 	"wikieditor-toolbar-tool-replace-replace": "Хийца оцуьнца:",
 	"wikieditor-toolbar-tool-replace-case": "Яздар тидаме оьцуш",
 	"wikieditor-toolbar-tool-replace-regex": "Хилийта могlа юх-юха лохуш долу дош",
-	"wikieditor-toolbar-tool-replace-button-findnext": "Караде тӀаьхьа-догӀург",
+	"wikieditor-toolbar-tool-replace-button-findnext": "Караде рогӀера",
 	"wikieditor-toolbar-tool-replace-button-replace": "Хийца",
 	"wikieditor-toolbar-tool-replace-button-replaceall": "Дерриге хийца",
 	"wikieditor-toolbar-tool-replace-close": "ДӀачӀагӀа",

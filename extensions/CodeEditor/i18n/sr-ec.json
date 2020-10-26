@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Obsuser",
-			"BadDog"
+			"BadDog",
+			"Obsuser"
 		]
 	},
 	"codeeditor-desc": "Уређивање са истакнутом синтаксом за JavaScript и CSS странице помоћу [https://ace.c9.io/ Ace уређивача]",

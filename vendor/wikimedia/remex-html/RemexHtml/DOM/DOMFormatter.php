@@ -12,7 +12,7 @@ interface DOMFormatter {
 	 * @param DOMNode $node The node to format
 	 * @return string
 	 */
-	function formatDOMNode( DOMNode $node );
+	public function formatDOMNode( DOMNode $node );
 
 	/**
 	 * Non-recursively format a DOMElement.
@@ -20,5 +20,5 @@ interface DOMFormatter {
 	 * @param DOMElement $element The element to format
 	 * @param string $contents The formatted contents of the element
 	 */
-	function formatDOMElement( DOMElement $element, $contents );
+	public function formatDOMElement( DOMElement $element, $contents );
 }

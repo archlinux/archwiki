@@ -5,14 +5,15 @@
 			"Fluff",
 			"Jopparn",
 			"Lejonel",
+			"Lokal Profil",
 			"M.M.S.",
+			"Mjälten",
 			"Najami",
 			"Per",
 			"Purodha",
 			"Sertion",
-			"WikiPhoenix",
-			"Lokal Profil",
-			"Skalman"
+			"Skalman",
+			"WikiPhoenix"
 		]
 	},
 	"interwiki": "Visa och redigera interwiki-data",
@@ -35,7 +36,7 @@
 	"interwiki_1": "ja",
 	"interwiki_0": "nej",
 	"interwiki_error": "FEL: Interwikitabellen är tom, eller så gick något fel.",
-	"interwiki-cached": "Interwikidatat cachas. Att ändra cache-minnet är inte möjligt.",
+	"interwiki-cached": "Interwikidata mellanlagras. Att ändra mellanlagret är inte möjligt.",
 	"interwiki_edit": "Redigera",
 	"interwiki_reasonfield": "Anledning:",
 	"interwiki_deleting": "Du håller på att ta bort prefixet \"$1\".",

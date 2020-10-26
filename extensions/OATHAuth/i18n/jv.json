@@ -1,7 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"NoiX180"
+			"Diki Ananta",
+			"NoiX180",
+			"Sumbukompor"
 		]
 	},
 	"specialpages-group-oath": "Otèntifikasi rong faktor",
@@ -14,7 +16,7 @@
 	"oathauth-disabledoath": "Patèni otèntifikasi rong faktor.",
 	"oathauth-prefs-label": "Otèntifikasi rong faktor:",
 	"oathauth-step1": "Lampah 1: Undhuh program otèntifikasi rong faktor",
-	"oathauth-step2alt": "Utawa isinen wadiné kanthi manual:",
+	"oathauth-step2alt": "Utawa isinen kunci sandiné kanthi manual:",
 	"oathauth-step3": "Lampah 3: Tulisen kodhe rèngrèngan",
 	"oathauth-step4": "Lampah 5: Vèrifikasi",
 	"oathauth-entertoken": "Isinen kodhe saka piranti otèntifikasi kanggo vèrifikasi:",

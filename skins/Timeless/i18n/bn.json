@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Aftabuzzaman",
 			"Bodhisattwa",
 			"আজিজ",
-			"Aftabuzzaman",
 			"আফতাবুজ্জামান"
 		]
 	},
@@ -23,5 +23,5 @@
 	"timeless-namespaces": "নামস্থানসমূহ",
 	"timeless-pagetools": "পৃষ্ঠার ক্রিয়া",
 	"timeless-languages": "ভাষাসমূহ",
-	"timeless.js": "/* এখানের যে কোন জাভাস্ক্রিপ্ট টাইমলেস আবরণ ব্যবহারকারীদের জন্য লোড হবে */"
+	"timeless.js": "/* এখানের সকল জাভাস্ক্রিপ্ট টাইমলেস আবরণের ব্যবহারকারীদের জন্য লোড হবে */"
 }

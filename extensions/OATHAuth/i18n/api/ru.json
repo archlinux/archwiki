@@ -5,8 +5,8 @@
 			"Alexandr Efremov",
 			"Kareyac",
 			"Mouse21",
-			"Vlad5250",
-			"Movses"
+			"Movses",
+			"Vlad5250"
 		]
 	},
 	"apihelp-query+oath-description": "Проверьте, включена ли двухфакторная аутентификация (OATH) для пользователя.",

@@ -1,12 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"Mimarik",
-			"Teslaton",
-			"Sudo77(new)",
-			"TomášPolonec",
 			"Kusavica",
-			"Luky001"
+			"Luky001",
+			"Mimarik",
+			"Sudo77(new)",
+			"Teslaton",
+			"TomášPolonec",
+			"Vlad5250"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Kniha",
@@ -22,7 +23,10 @@
 	"cite-ve-changedesc-reflist-responsive-set": "Zoznam referencií sa teraz zobrazuje v responzívnych stĺpcoch",
 	"cite-ve-changedesc-reflist-responsive-unset": "Zoznam referencií sa teraz zobrazuje len v jednom stĺpci",
 	"cite-ve-changedesc-reflist-item-id": "Číslo referencie zmenené",
-	"cite-ve-dialog-reference-editing-reused": "Tato referencia sa na tejto stránke používa $1 {{PLURAL:$1|krát}}.",
+	"cite-ve-citationneeded-button": "Pridať citáciu",
+	"cite-ve-citationneeded-title": "Bez citácie",
+	"cite-ve-dialog-reference-editing-reused": "Táto referencia sa na tejto stránke používa {{PLURAL:$1|raz|2=dvakrát|$1 krát}}.",
+	"cite-ve-dialog-reference-editing-reused-long": "Táto referencia sa na tejto stránke používa {{PLURAL:$1|raz|2=dvakrát|$1 krát}}. Zmeny vykonané tu sa prejavia na všetkých miestach, kde sa referencia používa.",
 	"cite-ve-dialog-reference-options-group-label": "Použiť túto skupinu",
 	"cite-ve-dialog-reference-options-group-placeholder": "Všeobecné referencie",
 	"cite-ve-dialog-reference-options-name-label": "Opakovane používať pod týmto názvom",

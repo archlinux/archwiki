@@ -51,6 +51,7 @@ class InterwikiHooks {
 					return true;
 				}
 			}
+			// @phan-suppress-next-line PhanTypeMismatchArgument global wrongly detected as null
 			$dbr = wfGetDB( DB_REPLICA, [], $wgInterwikiCentralDB );
 			$res = $dbr->selectRow(
 				'interwiki',
@@ -67,6 +68,7 @@ class InterwikiHooks {
 			return false;
 		} elseif ( $isInterlanguageLink && !$shouldSkipILCheck ) {
 			// Global interlanguage link? Whoo!
+			// @phan-suppress-next-line PhanTypeMismatchArgument global wrongly detected as null
 			$dbr = wfGetDB( DB_REPLICA, [], $wgInterwikiCentralInterlanguageDB );
 			$res = $dbr->selectRow(
 				'interwiki',

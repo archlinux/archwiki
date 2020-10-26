@@ -22,7 +22,6 @@ class NumberInputWidget extends TextInputWidget {
 	 *      - float $config['pageStep'] Delta when using the Page-up/Page-down keys.
 	 *          Defaults to 10 times `buttonStep`.
 	 *      - bool $config['showButtons'] Show increment and decrement buttons (default: true)
-	 * @param-taint $config escapes_html
 	 */
 	public function __construct( array $config = [] ) {
 		$config['type'] = 'number';

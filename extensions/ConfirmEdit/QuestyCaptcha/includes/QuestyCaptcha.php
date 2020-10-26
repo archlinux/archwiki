@@ -87,13 +87,14 @@ class QuestyCaptcha extends SimpleCaptcha {
 					'required',
 					'autocomplete' => 'off',
 					// tab in before the edit textarea
-					'tabindex' => $tabIndex ] ) .
-				"</p>\n" .
+					'tabindex' => $tabIndex ]
+				) . "</p>\n" .
 				Xml::element( 'input', [
 					'type'  => 'hidden',
 					'name'  => 'wpCaptchaId',
 					'id'    => 'wpCaptchaId',
-					'value' => $index ] )
+					'value' => $index ]
+				)
 		];
 	}
 

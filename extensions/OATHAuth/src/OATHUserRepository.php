@@ -18,17 +18,18 @@
 
 namespace MediaWiki\Extension\OATHAuth;
 
-use MediaWiki\Logger\LoggerFactory;
-use Psr\Log\LoggerInterface;
-use Wikimedia\Rdbms\ILoadBalancer;
-use Wikimedia\Rdbms\DBConnRef;
-use FormatJson;
-use CentralIdLookup;
-use MWException;
 use BagOStuff;
+use CentralIdLookup;
 use ConfigException;
-use User;
+use FormatJson;
+use MediaWiki\Logger\LoggerFactory;
+use MWException;
+use Psr\Log\LoggerInterface;
+use RequestContext;
 use stdClass;
+use User;
+use Wikimedia\Rdbms\DBConnRef;
+use Wikimedia\Rdbms\ILoadBalancer;
 
 class OATHUserRepository {
 	/** @var ILoadBalancer */
@@ -75,7 +76,7 @@ class OATHUserRepository {
 	public function findByUser( User $user ) {
 		$oathUser = $this->cache->get( $user->getName() );
 		if ( !$oathUser ) {
-			$oathUser = new OATHUser( $user, null );
+			$oathUser = new OATHUser( $user, [] );
 
 			$uid = CentralIdLookup::factory()->centralIdFromLocalUser( $user );
 			$res = $this->getDB( DB_REPLICA )->selectRow(
@@ -99,7 +100,7 @@ class OATHUserRepository {
 				}
 
 				$oathUser->setModule( $module );
-				$decodedData = FormatJson::decode( $res->data, 1 );
+				$decodedData = FormatJson::decode( $res->data, true );
 				if ( !isset( $decodedData['keys'] ) && $module->getName() === 'totp' ) {
 					// Legacy single-key setup
 					$key = $module->newKey( $decodedData );
@@ -119,17 +120,20 @@ class OATHUserRepository {
 
 	/**
 	 * @param OATHUser $user
-	 * @param string $clientInfo
+	 * @param string|null $clientInfo
 	 * @throws ConfigException
 	 * @throws MWException
 	 */
-	public function persist( OATHUser $user, $clientInfo ) {
+	public function persist( OATHUser $user, $clientInfo = null ) {
+		if ( !$clientInfo ) {
+			$clientInfo = RequestContext::getMain()->getRequest()->getIP();
+		}
 		$prevUser = $this->findByUser( $user->getUser() );
 		$data = $user->getModule()->getDataFromUser( $user );
 
 		$this->getDB( DB_MASTER )->replace(
 			'oathauth_users',
-			[ 'id' ],
+			'id',
 			[
 				'id' => CentralIdLookup::factory()->centralIdFromLocalUser( $user->getUser() ),
 				'module' => $user->getModule()->getName(),

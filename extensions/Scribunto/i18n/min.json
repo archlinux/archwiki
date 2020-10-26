@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Muhraz",
-			"Iwan Novirion"
+			"Iwan Novirion",
+			"Muhraz"
 		]
 	},
 	"scribunto-lua-error": "Karusakan Lua: $2."

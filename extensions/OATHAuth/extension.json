@@ -21,7 +21,9 @@
 		}
 	},
 	"AutoloadNamespaces": {
-		"MediaWiki\\Extension\\OATHAuth\\": "src/",
+		"MediaWiki\\Extension\\OATHAuth\\": "src/"
+	},
+	"TestAutoloadNamespaces": {
 		"MediaWiki\\Extension\\OATHAuth\\Tests\\": "tests/phpunit/"
 	},
 	"AuthManagerAutoConfig": {
@@ -39,21 +41,11 @@
 		"OATHAuthAlias": "OATHAuth.alias.php"
 	},
 	"Hooks": {
-		"AuthChangeFormFields": [
-			"\\MediaWiki\\Extension\\OATHAuth\\Hook\\AuthChangeFormFields\\TOTPExtendTokenField::callback"
-		],
-		"TwoFactorIsEnabled": [
-			"\\MediaWiki\\Extension\\OATHAuth\\Hook\\TwoFactorIsEnabled\\SetIsEnabled::callback"
-		],
-		"LoadExtensionSchemaUpdates": [
-			"\\MediaWiki\\Extension\\OATHAuth\\Hook\\LoadExtensionSchemaUpdates\\UpdateTables::callback"
-		],
-		"GetPreferences": [
-			"\\MediaWiki\\Extension\\OATHAuth\\Hook\\GetPreferences\\AuthModule::callback"
-		],
-		"getUserPermissionsErrors": [
-			"\\MediaWiki\\Extension\\OATHAuth\\Hook\\GetUserPermissionsErrors\\CheckExclusiveRights::callback"
-		]
+		"AuthChangeFormFields": "\\MediaWiki\\Extension\\OATHAuth\\Hook\\AuthChangeFormFields\\TOTPExtendTokenField::callback",
+		"TwoFactorIsEnabled": "\\MediaWiki\\Extension\\OATHAuth\\Hook\\TwoFactorIsEnabled\\SetIsEnabled::callback",
+		"LoadExtensionSchemaUpdates": "\\MediaWiki\\Extension\\OATHAuth\\Hook\\LoadExtensionSchemaUpdates\\UpdateTables::callback",
+		"GetPreferences": "\\MediaWiki\\Extension\\OATHAuth\\Hook\\GetPreferences\\AuthModule::callback",
+		"getUserPermissionsErrors": "\\MediaWiki\\Extension\\OATHAuth\\Hook\\GetUserPermissionsErrors\\CheckExclusiveRights::callback"
 	},
 	"MessagesDirs": {
 		"OATHAuth": [
@@ -98,22 +90,27 @@
 	},
 	"SpecialPages": {
 		"DisableOATHForUser": "\\MediaWiki\\Extension\\OATHAuth\\Special\\DisableOATHForUser",
+		"VerifyOATHForUser": "\\MediaWiki\\Extension\\OATHAuth\\Special\\VerifyOATHForUser",
 		"OATHManage": "\\MediaWiki\\Extension\\OATHAuth\\Special\\OATHManage"
 	},
 	"AvailableRights": [
 		"oathauth-enable",
 		"oathauth-api-all",
 		"oathauth-disable-for-user",
+		"oathauth-verify-user",
 		"oathauth-view-log"
 	],
 	"GroupPermissions": {
 		"*": {
-			"oathauth-enable": true,
 			"oathauth-disable-for-user": false,
 			"oathauth-view-log": false
 		},
+		"user": {
+			"oathauth-enable": true
+		},
 		"sysop": {
 			"oathauth-disable-for-user": true,
+			"oathauth-verify-user": true,
 			"oathauth-view-log": true
 		}
 	},
@@ -134,10 +131,8 @@
 	"RateLimits": {
 		"badoath": {
 			"&can-bypass": false,
-			"user": [
-				10,
-				60
-			]
+			"user": [ 10, 60 ],
+			"user-global": [ 10, 60 ]
 		}
 	},
 	"ReauthenticateTime":  {

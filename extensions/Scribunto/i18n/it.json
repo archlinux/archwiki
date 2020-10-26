@@ -2,13 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Beta16",
+			"Bultro",
 			"Codicorumus",
 			"F. Cosoleto",
-			"Raoli",
-			"Ontsed",
 			"Giuseppe Forte",
-			"Bultro",
-			"Lucas2"
+			"Lucas2",
+			"Ontsed",
+			"Raoli"
 		]
 	},
 	"scribunto-desc": "Framework per incorporare linguaggi di scripting in pagine MediaWiki",

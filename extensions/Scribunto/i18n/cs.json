@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Danny B.",
-			"Mormegil",
+			"Dvorapa",
 			"Matěj Suchánek",
-			"Dvorapa"
+			"Mormegil"
 		]
 	},
 	"scribunto-desc": "Framework pro vkládání skriptovacích jazyků do stránek MediaWiki",

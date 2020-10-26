@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Toliño",
+			"Banjo",
 			"Elisardojm",
-			"Banjo"
+			"Toliño"
 		]
 	},
 	"textextracts-desc": "Proporciona extractos de texto do contido da páxina sen formato ou con HTML limitado"

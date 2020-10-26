@@ -41,15 +41,16 @@ class CodeEditorHooks {
 	 * @throws ErrorPageError
 	 */
 	public static function editPageShowEditFormInitial( EditPage $editpage, OutputPage $output ) {
-		global $wgTitle;
-
+		$title = $editpage->getContextTitle();
 		$model = $editpage->contentModel;
 		$format = $editpage->contentFormat;
 
-		$lang = self::getPageLanguage( $wgTitle, $model, $format );
+		$lang = self::getPageLanguage( $title, $model, $format );
 		if ( $lang && $output->getUser()->getOption( 'usebetatoolbar' ) ) {
 			$output->addModules( 'ext.codeEditor' );
 			$output->addJsConfigVars( 'wgCodeEditorCurrentLanguage', $lang );
+			// Needed because ACE adds a blob: url web-worker.
+			$output->getCSP()->addScriptSrc( "blob:" );
 		} elseif ( !ExtensionRegistry::getInstance()->isLoaded( "WikiEditor" ) ) {
 			throw new ErrorPageError( "codeeditor-error-title", "codeeditor-error-message" );
 		}

@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Servien",
-			"Macofe"
+			"Macofe",
+			"Servien"
 		]
 	},
 	"wikieditor": "Evörderde tekstverwarker vöär wikitekste",
@@ -41,7 +41,7 @@
 	"wikieditor-toolbar-tool-link-int-target-status-loading": "Is an et kyken of disse syde al besteyt ...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Döärverwyssyde",
 	"wikieditor-toolbar-tool-link-int-invalid": "De upegeaven syde is ungeldig.",
-	"wikieditor-toolbar-tool-link-lookslikeinternal": "Et likt as of et webadres dat jy upgeaven hebbet een verwysing nå een andere wikisyde müt weasen.\nWil jy der een interne verwysing van maken?",
+	"wikieditor-toolbar-tool-link-lookslikeinternal": "Et likt as of et webadres dat jy upgeaven hebbet en verwysing nå en andere wikisyde müt weasen.\nWil jy der en interne verwysing van maken?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Interne verwysing",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "Üütgånde verwysing",
 	"wikieditor-toolbar-tool-link-empty": "Jy hebbet niks upgeaven üm nå te verwysen.",
@@ -57,10 +57,10 @@
 	"wikieditor-toolbar-file-format-none": "geen",
 	"wikieditor-toolbar-tool-file-insert": "Invogen",
 	"wikieditor-toolbar-tool-file-cancel": "Afbreaken",
-	"wikieditor-toolbar-tool-reference": "Referenty",
+	"wikieditor-toolbar-tool-reference": "Referensy",
 	"wikieditor-toolbar-tool-reference-example": "Plaats hyr tekste vöär de vootnoot",
 	"wikieditor-toolbar-tool-reference-cancel": "Afbreaken",
-	"wikieditor-toolbar-tool-reference-title": "Referenty invogen",
+	"wikieditor-toolbar-tool-reference-title": "Referensy invogen",
 	"wikieditor-toolbar-tool-reference-insert": "Invogen",
 	"wikieditor-toolbar-tool-reference-text": "Referentytekste",
 	"wikieditor-toolbar-tool-signature": "Underteykening en tydstempel",

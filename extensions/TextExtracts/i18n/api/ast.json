@@ -17,5 +17,5 @@
 	"apiwarn-textextracts-unsupportedmodel": "$1 tien el modelu de conteníu $2, que nun ye compatible; devolveráse un estractu vacíu.",
 	"apiwarn-textextracts-title-in-file-namespace": "Pidióse l'estractu d'un títulu del espaciu de nomes Ficheru, nun se devolvió nada.",
 	"apiwarn-textextracts-sentences-and-html": "El parámetru <var>$1sentences</var> puede tener resultaos inesperaos cuando s'usa en mou HTML.",
-	"apiwarn-textextracts-malformed-html": "El HTML puede tar mal escritu y/o nun tar equilibráu y puede omitir les imáxenes en llinia. Úsalu so la to responsabilidá. Los problemes conocíos recuéyense'n https://www.mediawiki.org/wiki/Extension:TextExtracts#Caveats."
+	"apiwarn-textextracts-malformed-html": "El HTML puede tar mal escritu y/o nun tar equilibráu y puede omitir les imáxenes en llinia. Úsalu so la to responsabilidá. Los problemes conocíos recuéyense'n https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:TextExtracts#Caveats."
 }

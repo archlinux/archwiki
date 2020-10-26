@@ -22,6 +22,7 @@ in a stylized way
 questions defined by the administrator(s)
 * ReCaptchaNoCaptcha - users have to solve different types of visually or
 audially tasks.
+* hCaptcha - users have to solve visual tasks
 
 ### License
 
@@ -93,8 +94,8 @@ $wgCaptchaTriggersOnNamespace = array();
  * 'CaptchaSessionStore' uses PHP's session storage, which is cookie-based
  * and may fail for anons with cookies disabled.
  *
- * 'CaptchaCacheStore' uses $wgMemc, which avoids the cookie dependency
- * but may be fragile depending on cache configuration.
+ * 'CaptchaCacheStore' uses MW's object cache (specifically, MediaWikiServices::getMainObjectStash),
+ * which avoids the cookie dependency, but may be fragile depending on the cache backend.
  */
 $wgCaptchaStorageClass = 'CaptchaSessionStore';
 

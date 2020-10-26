@@ -1,16 +1,16 @@
 {
 	"@metadata": {
 		"authors": [
+			"Danmichaelo",
+			"Jon Harald Søby",
 			"Laaknor",
 			"Nghtwlkr",
-			"Sjurhamre",
-			"Danmichaelo",
-			"Jon Harald Søby"
+			"Sjurhamre"
 		]
 	},
 	"gadgets-desc": "Lar brukere velge egendefinerte [[Special:Gadgets|CSS- og JavaScript-verktøy]] i [[Special:Preferences#mw-prefsection-gadgets|innstillingene sine]]",
 	"prefs-gadgets": "Tilleggsfunksjoner",
-	"gadgets-prefstext": "Nedenfor er en liste over tilleggsfunksjoner du kan slå på for kontoen din.\nDisse funksjonene er for det meste basert på JavaScript, så du må ha dette slått på i nettleseren din for at de skal fungere.\nMerk at funksjonene ikke vil ha noen innvirkning på denne innstillingssiden.\n\nMerk også at disse verktøyene ikke er del av MediaWiki-programvaren, og vanligvis utvikles og vedlikeholdes av brukere på den lokale wikien. Lokale administratorer kan redigere [[MediaWiki:Gadgets-definition|definisjonene]] og [[Special:Gadgets|beskrivelsene]] til tilgjengelige tilleggsfunksjoner. Antall brukere for hvert verktøy kan ses på [[Special:GadgetUsage|denne statistikksiden]].",
+	"gadgets-prefstext": "Nedenfor er en liste over tilleggsfunksjoner du kan slå på for kontoen din.\nDisse funksjonene er for det meste basert på JavaScript, så du må ha dette slått på i nettleseren din for at de skal fungere.\nMerk at funksjonene ikke vil ha noen innvirkning på denne innstillingssiden.\n\nMerk også at disse verktøyene ikke er del av MediaWiki-programvaren, og vanligvis utvikles og vedlikeholdes av brukere på den lokale wikien.\nLokale grensesnittadministratorer kan redigere [[MediaWiki:Gadgets-definition|definisjonene]] til tilgjengelige tilleggsfunksjoner, og lokale administratorer kan redigere [[Special:Gadgets|beskrivelsene]], hvor du kan se kildekodene til hver tilleggsfunksjon. Antall brukere for hvert verktøy kan ses på [[Special:GadgetUsage|denne statistikksiden]].",
 	"gadgets": "Tilleggsfunksjoner",
 	"gadgetusage": "Statistikk for bruk av tilleggsfunksjoner",
 	"gadgetusage-gadget": "Tilleggsfunksjon",
@@ -26,7 +26,7 @@
 	"gadgets-required-rights": "Krever følgende {{PLURAL:$2|rettighet|rettigheter}}:\n\n$1",
 	"gadgets-required-skins": "Tilgjengelig i {{PLURAL:$2|drakta $1|følgende drakter: $1}}.",
 	"gadgets-default": "Aktivert for alle som standard",
-	"gadgets-legacy": "Tilleggsfunksjonen ble ikke lastet. Vennligst gå over til å bruke ResourceLoader. ([https://www.mediawiki.org/wiki/ResourceLoader/Migration_guide_(users) Lær mer])",
+	"gadgets-legacy": "Tilleggsfunksjonen ble ikke lastet. Vennligst gå over til å bruke ResourceLoader. ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) Lær mer])",
 	"gadgets-export": "Eksporter",
 	"gadgets-export-title": "Tilleggsfunksjon eksport",
 	"gadgets-not-found": "Tilleggsfunksjon «$1» ikke funnet.",

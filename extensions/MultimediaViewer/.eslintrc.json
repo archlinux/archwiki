@@ -1,0 +1,15 @@
+{
+	"root": true,
+	"extends": [
+		"wikimedia/client",
+		"wikimedia/jquery",
+		"wikimedia/mediawiki",
+		"wikimedia/jsduck"
+	],
+	"rules": {
+		"max-len": "off",
+		"max-statements-per-line": "off",
+		"no-jquery/no-class-state": "off",
+		"no-jquery/no-support": "off"
+	}
+}

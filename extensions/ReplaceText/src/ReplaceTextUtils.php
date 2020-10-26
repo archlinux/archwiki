@@ -18,7 +18,7 @@
  * @file
  */
 
-use \MediaWiki\MediaWikiServices;
+use MediaWiki\MediaWikiServices;
 
 class ReplaceTextUtils {
 
@@ -32,7 +32,7 @@ class ReplaceTextUtils {
 		if ( method_exists( '\MediaWiki\MediaWikiServices', 'getLinkRenderer' ) ) {
 			$linkRenderer = MediaWikiServices::getInstance()->getLinkRenderer();
 			return $linkRenderer->makeLink( $title, $text );
-		};
+		}
 		$escText = htmlspecialchars( $text );
 		return Linker::link( $title, $escText );
 	}

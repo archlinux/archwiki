@@ -196,6 +196,9 @@
 	ODP.createConfirmationPane = function ( divClass, propName, msgs ) {
 		var dialog = this,
 			$div = $( '<div>' )
+				// The following classes are used here:
+				// * mw-mmv-enable-confirmation
+				// * mw-mmv-disable-confirmation
 				.addClass( divClass )
 				.appendTo( this.$dialog );
 
@@ -223,6 +226,9 @@
 	 */
 	ODP.createActionPane = function ( divClass, propName, smsg, msgs, enabled ) {
 		var $div = $( '<div>' )
+			// The following classes are used here:
+			// * mw-mmv-options-enable
+			// * mw-mmv-options-disable
 			.addClass( divClass )
 			.appendTo( this.$dialog );
 

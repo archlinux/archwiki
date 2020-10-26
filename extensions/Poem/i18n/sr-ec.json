@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Millosh",
-			"Nikola Smolenski",
 			"Acamicamacaraca",
-			"BadDog"
+			"BadDog",
+			"Millosh",
+			"Nikola Smolenski"
 		]
 	},
 	"poem-desc": "Додаје ознаку <code>&lt;poem&gt;</code> за обликовање песама"

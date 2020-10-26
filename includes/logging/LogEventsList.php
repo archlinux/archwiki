@@ -23,14 +23,15 @@
  * @file
  */
 
+use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MediaWikiServices;
 use Wikimedia\Rdbms\IDatabase;
 
 class LogEventsList extends ContextSource {
-	const NO_ACTION_LINK = 1;
-	const NO_EXTRA_USER_LINKS = 2;
-	const USE_CHECKBOXES = 4;
+	public const NO_ACTION_LINK = 1;
+	public const NO_EXTRA_USER_LINKS = 2;
+	public const USE_CHECKBOXES = 4;
 
 	public $flags;
 
@@ -55,6 +56,9 @@ class LogEventsList extends ContextSource {
 	 */
 	private $linkRenderer;
 
+	/** @var HookRunner */
+	private $hookRunner;
+
 	/**
 	 * The first two parameters used to be $skin and $out, but now only a context
 	 * is needed, that's why there's a second unused parameter.
@@ -78,6 +82,7 @@ class LogEventsList extends ContextSource {
 		if ( $linkRenderer instanceof LinkRenderer ) {
 			$this->linkRenderer = $linkRenderer;
 		}
+		$this->hookRunner = Hooks::runner();
 	}
 
 	/**
@@ -198,15 +203,10 @@ class LogEventsList extends ContextSource {
 	 * @return array Form descriptor
 	 */
 	private function getFiltersDesc( $filter ) {
-		$options = [];
+		$optionsMsg = [];
 		$default = [];
 		foreach ( $filter as $type => $val ) {
-			$message = $this->msg( "logeventslist-{$type}-log" );
-			// FIXME: Remove this check once T199657 is fully resolved.
-			if ( !$message->exists() ) {
-				$message = $this->msg( "log-show-hide-{$type}" )->params( $this->msg( 'show' )->text() );
-			}
-			$options[ $message->text() ] = $type;
+			$optionsMsg["logeventslist-{$type}-log"] = $type;
 
 			if ( $val === false ) {
 				$default[] = $type;
@@ -216,7 +216,7 @@ class LogEventsList extends ContextSource {
 			'class' => 'HTMLMultiSelectField',
 			'label-message' => 'logeventslist-more-filters',
 			'flatlist' => true,
-			'options' => $options,
+			'options-messages' => $optionsMsg,
 			'default' => $default,
 		];
 	}
@@ -312,7 +312,7 @@ class LogEventsList extends ContextSource {
 				// This could be an array or string. See T199495.
 				$input = ''; // Deprecated
 				$formDescriptor = [];
-				Hooks::run( 'LogEventsListGetExtraInputs', [ $types[0], $this, &$input, &$formDescriptor ] );
+				$this->hookRunner->onLogEventsListGetExtraInputs( $types[0], $this, $input, $formDescriptor );
 
 				return empty( $formDescriptor ) ? $input : $formDescriptor;
 			}
@@ -416,7 +416,7 @@ class LogEventsList extends ContextSource {
 		$ret = "$del $time $action $comment $revert $tagDisplay";
 
 		// Let extensions add data
-		Hooks::run( 'LogEventsListLineEnding', [ $this, &$ret, $entry, &$classes, &$attribs ] );
+		$this->hookRunner->onLogEventsListLineEnding( $this, $ret, $entry, $classes, $attribs );
 		$attribs = array_filter( $attribs,
 			[ Sanitizer::class, 'isReservedDataAttribute' ],
 			ARRAY_FILTER_USE_KEY
@@ -501,10 +501,13 @@ class LogEventsList extends ContextSource {
 	 * @param stdClass $row
 	 * @param string|array $type
 	 * @param string|array $action
-	 * @param string $right
+	 * @param string $right (deprecated since 1.35)
 	 * @return bool
 	 */
 	public static function typeAction( $row, $type, $action, $right = '' ) {
+		if ( $right !== '' ) {
+			wfDeprecated( __METHOD__ . ' with a right specified', '1.35' );
+		}
 		$match = is_array( $type ) ?
 			in_array( $row->log_type, $type ) : $row->log_type == $type;
 		if ( $match ) {
@@ -527,10 +530,15 @@ class LogEventsList extends ContextSource {
 	 *
 	 * @param stdClass $row
 	 * @param int $field
-	 * @param User|null $user User to check, or null to use $wgUser
+	 * @param User|null $user User to check, or null to use $wgUser (deprecated since 1.35)
 	 * @return bool
 	 */
 	public static function userCan( $row, $field, User $user = null ) {
+		if ( !$user ) {
+			wfDeprecated( __METHOD__ . ' without passing a $user parameter', '1.35' );
+			global $wgUser;
+			$user = $wgUser;
+		}
 		return self::userCanBitfield( $row->log_deleted, $field, $user ) &&
 			self::userCanViewLogType( $row->log_type, $user );
 	}
@@ -541,12 +549,13 @@ class LogEventsList extends ContextSource {
 	 *
 	 * @param int $bitfield Current field
 	 * @param int $field
-	 * @param User|null $user User to check, or null to use $wgUser
+	 * @param User|null $user User to check, or null to use $wgUser (deprecated since 1.35)
 	 * @return bool
 	 */
 	public static function userCanBitfield( $bitfield, $field, User $user = null ) {
 		if ( $bitfield & $field ) {
 			if ( $user === null ) {
+				wfDeprecated( __METHOD__ . ' without passing a $user parameter', '1.35' );
 				global $wgUser;
 				$user = $wgUser;
 			}
@@ -556,7 +565,7 @@ class LogEventsList extends ContextSource {
 				$permissions = [ 'deletedhistory' ];
 			}
 			$permissionlist = implode( ', ', $permissions );
-			wfDebug( "Checking for $permissionlist due to $field match on $bitfield\n" );
+			wfDebug( "Checking for $permissionlist due to $field match on $bitfield" );
 			return MediaWikiServices::getInstance()
 				->getPermissionManager()
 				->userHasAnyRight( $user, ...$permissions );
@@ -569,11 +578,12 @@ class LogEventsList extends ContextSource {
 	 * field of this log row, if it's marked as restricted log type.
 	 *
 	 * @param stdClass $type
-	 * @param User|null $user User to check, or null to use $wgUser
+	 * @param User|null $user User to check, or null to use $wgUser (deprecated since 1.35)
 	 * @return bool
 	 */
 	public static function userCanViewLogType( $type, User $user = null ) {
 		if ( $user === null ) {
+			wfDeprecated( __METHOD__ . ' without passing a $user parameter', '1.35' );
 			global $wgUser;
 			$user = $wgUser;
 		}
@@ -648,6 +658,7 @@ class LogEventsList extends ContextSource {
 		$extraUrlParams = $param['extraUrlParams'];
 
 		$useRequestParams = $param['useRequestParams'];
+		// @phan-suppress-next-line PhanRedundantCondition
 		if ( !is_array( $msgKey ) ) {
 			$msgKey = [ $msgKey ];
 		}
@@ -679,6 +690,7 @@ class LogEventsList extends ContextSource {
 			$pager->setOffset( $param['offset'] );
 		}
 
+		// @phan-suppress-next-line PhanSuspiciousValueComparison
 		if ( $lim > 0 ) {
 			$pager->mLimit = $lim;
 		}
@@ -694,11 +706,12 @@ class LogEventsList extends ContextSource {
 				$lang = $context->getLanguage()->getHtmlCode();
 
 				$s = Xml::openElement( 'div', [
-					'class' => "mw-warning-with-logexcerpt mw-content-$dir",
+					'class' => "warningbox mw-warning-with-logexcerpt mw-content-$dir",
 					'dir' => $dir,
 					'lang' => $lang,
 				] );
 
+				// @phan-suppress-next-line PhanSuspiciousValueComparison
 				if ( count( $msgKey ) == 1 ) {
 					$s .= $context->msg( $msgKey[0] )->parseAsBlock();
 				} else { // Process additional arguments
@@ -738,6 +751,7 @@ class LogEventsList extends ContextSource {
 				$urlParam['type'] = $types[0];
 			}
 
+			// @phan-suppress-next-line PhanSuspiciousValueComparison
 			if ( $extraUrlParams !== false ) {
 				$urlParam = array_merge( $urlParam, $extraUrlParams );
 			}
@@ -754,12 +768,13 @@ class LogEventsList extends ContextSource {
 			$s .= '</div>';
 		}
 
+		// @phan-suppress-next-line PhanSuspiciousValueComparison
 		if ( $wrap != '' ) { // Wrap message in html
 			$s = str_replace( '$1', $s, $wrap );
 		}
 
 		/* hook can return false, if we don't want the message to be emitted (Wikia BugId:7093) */
-		if ( Hooks::run( 'LogEventsListShowLogExtract', [ &$s, $types, $page, $user, $param ] ) ) {
+		if ( Hooks::runner()->onLogEventsListShowLogExtract( $s, $types, $page, $user, $param ) ) {
 			// $out can be either an OutputPage object or a String-by-reference
 			if ( $out instanceof OutputPage ) {
 				$out->addHTML( $s );
@@ -776,13 +791,18 @@ class LogEventsList extends ContextSource {
 	 *
 	 * @param IDatabase $db
 	 * @param string $audience Public/user
-	 * @param User|null $user User to check, or null to use $wgUser
+	 * @param User|null $user User to check, or null to use $wgUser (deprecated since 1.35)
 	 * @return string|bool String on success, false on failure.
 	 */
 	public static function getExcludeClause( $db, $audience = 'public', User $user = null ) {
 		global $wgLogRestrictions;
 
 		if ( $audience != 'public' && $user === null ) {
+			wfDeprecated(
+				__METHOD__ .
+				' using a non-public audience without passing a $user parameter',
+				'1.35'
+			);
 			global $wgUser;
 			$user = $wgUser;
 		}

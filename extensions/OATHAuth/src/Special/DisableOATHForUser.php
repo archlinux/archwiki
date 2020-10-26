@@ -2,19 +2,19 @@
 
 namespace MediaWiki\Extension\OATHAuth\Special;
 
-use MediaWiki\Extension\OATHAuth\OATHUserRepository;
-use MediaWiki\MediaWikiServices;
-use MediaWiki\Extension\OATHAuth\IModule;
-use MediaWiki\Logger\LoggerFactory;
+use ConfigException;
 use FormSpecialPage;
 use HTMLForm;
+use ManualLogEntry;
+use MediaWiki\Extension\OATHAuth\IModule;
+use MediaWiki\Extension\OATHAuth\OATHUserRepository;
+use MediaWiki\Logger\LoggerFactory;
+use MediaWiki\MediaWikiServices;
+use Message;
+use MWException;
 use User;
 use UserBlockedError;
 use UserNotLoggedIn;
-use ConfigException;
-use Message;
-use MWException;
-use ManualLogEntry;
 
 class DisableOATHForUser extends FormSpecialPage {
 	/** @var OATHUserRepository */
@@ -30,6 +30,9 @@ class DisableOATHForUser extends FormSpecialPage {
 		return true;
 	}
 
+	/**
+	 * @return string
+	 */
 	protected function getLoginSecurityLevel() {
 		return $this->getName();
 	}
@@ -41,8 +44,8 @@ class DisableOATHForUser extends FormSpecialPage {
 	 */
 	public function alterForm( HTMLForm $form ) {
 		$form->setMessagePrefix( 'oathauth' );
-		$form->setWrapperLegend( $this->msg( 'oathauth-disable-header' ) );
-		$form->setPreText( $this->msg( 'oathauth-disable-intro' ) );
+		$form->setWrapperLegendMsg( 'oathauth-disable-header' );
+		$form->setPreText( $this->msg( 'oathauth-disable-intro' )->parse() );
 		$form->getOutput()->setPageTitle( $this->msg( 'oathauth-disable-for-user' ) );
 	}
 
@@ -94,7 +97,7 @@ class DisableOATHForUser extends FormSpecialPage {
 			'reason' => [
 				'type' => 'text',
 				'default' => '',
-				'label-message' => 'oathauth-enterreason',
+				'label-message' => 'oathauth-enterdisablereason',
 				'name' => 'reason',
 				'required' => true,
 			],

@@ -154,8 +154,8 @@ ve.ce.MWReferencesListNode.prototype.onListNodeUpdate = function () {
  * Update the references list.
  */
 ve.ce.MWReferencesListNode.prototype.update = function () {
-	var i, j, iLen, jLen, index, firstNode, key, keyedNodes, modelNode, refPreview,
-		$li, $refSpan, $link, internalList, refGroup, listGroup, nodes,
+	var i, iLen, index, firstNode, key, keyedNodes, modelNode, refPreview,
+		$li, internalList, refGroup, listGroup, nodes,
 		model = this.getModel();
 
 	// Check the node hasn't been destroyed, as this method is debounced.
@@ -225,31 +225,8 @@ ve.ce.MWReferencesListNode.prototype.update = function () {
 				continue;
 			}
 
-			$li = $( '<li>' );
-
-			if ( keyedNodes.length > 1 ) {
-				$refSpan = $( '<span>' ).attr( 'rel', 'mw:referencedBy' );
-				for ( j = 0, jLen = keyedNodes.length; j < jLen; j++ ) {
-					$link = $( '<a>' ).append(
-						$( '<span>' ).addClass( 'mw-linkback-text' )
-							.text( ( j + 1 ) + ' ' )
-					);
-					if ( refGroup !== '' ) {
-						$link.attr( 'data-mw-group', refGroup );
-					}
-					$refSpan.append( $link );
-				}
-				$li.append( $refSpan );
-			} else {
-				$link = $( '<a>' ).attr( 'rel', 'mw:referencedBy' ).append(
-					$( '<span>' ).addClass( 'mw-linkback-text' )
-						.text( '↑ ' )
-				);
-				if ( refGroup !== '' ) {
-					$link.attr( 'data-mw-group', refGroup );
-				}
-				$li.append( $link );
-			}
+			$li = $( '<li>' )
+				.append( this.renderBacklinks( keyedNodes, refGroup ) );
 
 			// Generate reference HTML from first item in key
 			modelNode = internalList.getItemNode( firstNode.getAttribute( 'listIndex' ) );
@@ -286,6 +263,43 @@ ve.ce.MWReferencesListNode.prototype.updateClasses = function () {
 	this.$element
 		.toggleClass( 'mw-references-wrap', isResponsive )
 		.toggleClass( 'mw-references-columns', isResponsive && this.$reflist.children().length > 10 );
+};
+
+/**
+ * Build markers for backlinks
+ *
+ * @param {ve.dm.Node[]} keyedNodes A list of ref nodes linked to a reference list item
+ * @param {string} refGroup Reference group name
+ * @return {jQuery} Element containing backlinks
+ */
+ve.ce.MWReferencesListNode.prototype.renderBacklinks = function ( keyedNodes, refGroup ) {
+	var j, jLen, $link, $refSpan;
+
+	if ( keyedNodes.length > 1 ) {
+		// named reference with multiple usages
+		$refSpan = $( '<span>' ).attr( 'rel', 'mw:referencedBy' );
+		for ( j = 0, jLen = keyedNodes.length; j < jLen; j++ ) {
+			$link = $( '<a>' ).append(
+				$( '<span>' ).addClass( 'mw-linkback-text' )
+					.text( ( j + 1 ) + ' ' )
+			);
+			if ( refGroup !== '' ) {
+				$link.attr( 'data-mw-group', refGroup );
+			}
+			$refSpan.append( $link );
+		}
+		return $refSpan;
+	} else {
+		// solo reference
+		$link = $( '<a>' ).attr( 'rel', 'mw:referencedBy' ).append(
+			$( '<span>' ).addClass( 'mw-linkback-text' )
+				.text( '↑ ' )
+		);
+		if ( refGroup !== '' ) {
+			$link.attr( 'data-mw-group', refGroup );
+		}
+		return $link;
+	}
 };
 
 /* Registration */

@@ -1,8 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Kghbln",
 			"Metalhead64"
 		]
 	},
-	"mathcaptcha-desc": "MathCAPTCHA-Modul für Confirm Edit"
+	"mathcaptcha-desc": "Ergänzt die Erweiterung „ConfirmEdit“ um ein MathCAPTCHA-Modul"
 }

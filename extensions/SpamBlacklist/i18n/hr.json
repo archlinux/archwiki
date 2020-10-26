@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Dnik",
-			"Roberta F.",
-			"SpeedyGonsales",
 			"Bugoslav",
-			"MaGa"
+			"Dnik",
+			"MaGa",
+			"Roberta F.",
+			"SpeedyGonsales"
 		]
 	},
 	"spam-blacklist": " # Vanjske URLovi koji budu pronađeni pomoću ovog popisa nije moguće snimiti na stranicu wikija.\n # Ovaj popis utječe samo na ovaj wiki; provjerite globalnu \"crnu listu\".\n # Za dokumentaciju pogledajte https://www.mediawiki.org/wiki/Extension:SpamBlacklist\n #<!-- leave this line exactly as it is --> <pre>\n#\n# Rabi se sljedeća sintaksa:\n#   * Sve poslije \"#\" znaka do kraja linije je komentar\n#   * svaki redak koji nije prazan dio je regularnog izraza (''regex fragment'') koji odgovara imenu poslužitelja u URL-u\n\n #</pre> <!-- leave this line exactly as it is -->",

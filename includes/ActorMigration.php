@@ -25,7 +25,8 @@ use MediaWiki\User\UserIdentity;
 use Wikimedia\Rdbms\IDatabase;
 
 /**
- * This class handles the logic for the actor table migration.
+ * This class handles the logic for the actor table migration and should
+ * always be used in lieu of directly accessing database tables.
  *
  * This is not intended to be a long-term part of MediaWiki; it will be
  * deprecated and removed once actor migration is complete.
@@ -41,7 +42,7 @@ class ActorMigration {
 	 * Constant for extensions to feature-test whether $wgActorTableSchemaMigrationStage
 	 * (in MW <1.34) expects MIGRATION_* or SCHEMA_COMPAT_*
 	 */
-	const MIGRATION_STAGE_SCHEMA_COMPAT = 1;
+	public const MIGRATION_STAGE_SCHEMA_COMPAT = 1;
 
 	/**
 	 * Define fields that use temporary tables for transitional purposes
@@ -102,13 +103,16 @@ class ActorMigration {
 		'ipb_by' => [ 'ipb_by_text', 'ipb_by_actor' ],
 	];
 
-	/** @var array|null Cache for `self::getJoin()` */
-	private $joinCache = null;
+	/** @var array Cache for `self::getJoin()` */
+	private $joinCache = [];
 
 	/** @var int Combination of SCHEMA_COMPAT_* constants */
 	private $stage;
 
-	/** @private */
+	/**
+	 * @internal
+	 * @param int $stage
+	 */
 	public function __construct( $stage ) {
 		if ( ( $stage & SCHEMA_COMPAT_WRITE_BOTH ) === 0 ) {
 			throw new InvalidArgumentException( '$stage must include a write mode' );
@@ -236,6 +240,86 @@ class ActorMigration {
 	}
 
 	/**
+	 * Get actor ID from UserIdentity, if it exists
+	 *
+	 * @since 1.35.0
+	 *
+	 * @param IDatabase $db
+	 * @param UserIdentity $user
+	 * @return int|false
+	 */
+	public function getExistingActorId( IDatabase $db, UserIdentity $user ) {
+		$row = $db->selectRow(
+			'actor',
+			[ 'actor_id' ],
+			[ 'actor_name' => $user->getName() ],
+			__METHOD__
+		);
+		if ( $row === false ) {
+			return false;
+		}
+
+		return (int)$row->actor_id;
+	}
+
+	/**
+	 * Attempt to assign an actor ID to the given user.
+	 * If it is already assigned, return the existing ID.
+	 *
+	 * @since 1.35.0
+	 *
+	 * @param IDatabase $dbw
+	 * @param UserIdentity $user
+	 *
+	 * @return int The new actor ID
+	 */
+	public function getNewActorId( IDatabase $dbw, UserIdentity $user ) {
+		// TODO: inject
+		$userNameUtils = MediaWikiServices::getInstance()->getUserNameUtils();
+
+		$q = [
+			'actor_user' => $user->getId() ?: null,
+			'actor_name' => (string)$user->getName(),
+		];
+		if ( $q['actor_user'] === null && $userNameUtils->isUsable( $q['actor_name'] ) ) {
+			throw new CannotCreateActorException(
+				'Cannot create an actor for a usable name that is not an existing user: ' .
+				"user_id={$user->getId()} user_name=\"{$user->getName()}\""
+			);
+		}
+		if ( $q['actor_name'] === '' ) {
+			throw new CannotCreateActorException(
+				'Cannot create an actor for a user with no name: ' .
+				"user_id={$user->getId()} user_name=\"{$user->getName()}\""
+			);
+		}
+
+		$dbw->insert( 'actor', $q, __METHOD__, [ 'IGNORE' ] );
+
+		if ( $dbw->affectedRows() ) {
+			$actorId = (int)$dbw->insertId();
+		} else {
+			// Outdated cache?
+			// Use LOCK IN SHARE MODE to bypass any MySQL REPEATABLE-READ snapshot.
+			$actorId = (int)$dbw->selectField(
+				'actor',
+				'actor_id',
+				$q,
+				__METHOD__,
+				[ 'LOCK IN SHARE MODE' ]
+			);
+			if ( !$actorId ) {
+				throw new CannotCreateActorException(
+					"Failed to create actor ID for " .
+					"user_id={$user->getId()} user_name=\"{$user->getName()}\""
+				);
+			}
+		}
+
+		return $actorId;
+	}
+
+	/**
 	 * Get UPDATE fields for the actor
 	 *
 	 * @param IDatabase $dbw Database to use for creating an actor ID, if necessary
@@ -258,11 +342,14 @@ class ActorMigration {
 			$ret[$text] = $user->getName();
 		}
 		if ( $this->stage & SCHEMA_COMPAT_WRITE_NEW ) {
-			// We need to be able to assign an actor ID if none exists
-			if ( !$user instanceof User && !$user->getActorId() ) {
-				$user = User::newFromAnyId( $user->getId(), $user->getName(), null );
+			// NOTE: Don't use $user->getActorId(), since that may be for the wrong wiki (T260485)
+			// TODO: Make User object wiki-aware and let it handle all cases (T260933)
+			$existingActorId = $this->getExistingActorId( $dbw, $user );
+			if ( $existingActorId !== false ) {
+				$ret[$actor] = $existingActorId;
+			} else {
+				$ret[$actor] = $this->getNewActorId( $dbw, $user );
 			}
-			$ret[$actor] = $user->getActorId( $dbw );
 		}
 		return $ret;
 	}
@@ -316,7 +403,7 @@ class ActorMigration {
 					$dbw->upsert(
 						$t['table'],
 						[ $t['pk'] => $pk ] + $set,
-						[ $t['pk'] ],
+						[ [ $t['pk'] ] ],
 						$set,
 						$func
 					);
@@ -349,7 +436,9 @@ class ActorMigration {
 	 * @param IDatabase $db Database to use for quoting and list-making
 	 * @param string $key A key such as "rev_user" identifying the actor
 	 *  field being fetched.
-	 * @param UserIdentity|UserIdentity[] $users Users to test for
+	 * @param UserIdentity|UserIdentity[]|null|false $users Users to test for.
+	 *  Passing null, false, or the empty array will return 'conds' that never match,
+	 *  and an empty array for 'orconds'.
 	 * @param bool $useId If false, don't try to query by the user ID.
 	 *  Intended for use with rc_user since it has an index on
 	 *  (rc_user_text,rc_timestamp) but not (rc_user,rc_timestamp).
@@ -373,6 +462,14 @@ class ActorMigration {
 
 		if ( $users instanceof UserIdentity ) {
 			$users = [ $users ];
+		} elseif ( $users === null || $users === false ) {
+			// DWIM
+			$users = [];
+		} elseif ( !is_array( $users ) ) {
+			$what = is_object( $users ) ? get_class( $users ) : gettype( $users );
+			throw new InvalidArgumentException(
+				__METHOD__ . ": Value for \$users must be a UserIdentity or array, got $what"
+			);
 		}
 
 		// Get information about all the passed users

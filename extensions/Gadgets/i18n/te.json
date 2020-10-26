@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"Chaduvari",
 			"Kiranmayee",
 			"Mpradeep",
-			"Veeven",
-			"Chaduvari"
+			"Veeven"
 		]
 	},
 	"gadgets-desc": "వాడుకర్లను వారి [[Special:Preferences#mw-prefsection-gadgets|అభిరుచుల]]లో  ప్రత్యేక [[Special:Gadgets|CSS మరియు జావాస్క్రిప్ట్ గాడ్జెట్లను]] ఎంచుకోనిస్తుంది",

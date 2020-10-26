@@ -3,8 +3,8 @@
 		"authors": [
 			"Markos90",
 			"Melos",
-			"Santu",
 			"Pippinu",
+			"Santu",
 			"Sarvaturi"
 		]
 	},
@@ -15,8 +15,8 @@
 	"cite_error_ref_too_many_keys": "Etichetta <code>&lt;ref&gt;</code> nun bona;\nnoma nun vàlidi, p'es. nn'havi troppu assai",
 	"cite_error_ref_no_input": "Etichetta <code>&lt;ref&gt;</code> nun bona;\nli ref senza nomu hannu a aviri un cuntinutu",
 	"cite_error_references_invalid_parameters": "Etichetta <code>&lt;references&gt;</code> nun bona;\nnun vèninu accittati paràmitri.\nAdupirari <code>&lt;references /&gt;</code>",
-	"cite_error_references_no_backlink_label": "Fineru l'etichetti di rimannu p'arreri pirsunalizzati.\nDifinìrinni chiossai ntô missaggiu <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>.",
-	"cite_error_no_link_label_group": "Fineru l'etichetti pirsunalizzati pî liami dû gruppu «$1».\nDifinirinni chiossai ntô missaggiu <nowiki>[[MediaWiki:$2]]</nowiki>.",
+	"cite_error_references_no_backlink_label": "Fineru l'etichetti di rimannu p'arreri pirsunalizzati. Difinìrinni chiossai ntô missaggiu [[MediaWiki:Cite references link many format backlink labels]].",
+	"cite_error_no_link_label_group": "Fineru l'etichetti pirsunalizzati pî liami dû gruppu «$1». Difinirinni chiossai ntô missaggiu [[MediaWiki:$2]].",
 	"cite_error_references_no_text": "Etichetta <code>&lt;ref&gt;</code> nun bona;\nnun vinni furnutu nuddu testu pî ref cu nomu <code>$1</code>",
 	"cite_error_included_ref": "Ammanca l’etichetta <code>&lt;/ref&gt;</code> pi chiùdiri l'etichetta <code>&lt;ref&gt;</code>",
 	"cite_error_group_refs_without_references": "Ci sunnu etichetti <code>&lt;ref&gt;</code> pi nu gruppu chiamatu «$1», pirò nun c'è nudda etichetta <code>&lt;references group=\"$1\"/&gt;</code> currispunnenti, o puru ammanca n'etichetta <code>&lt;/ref&gt;</code> di chiusura",

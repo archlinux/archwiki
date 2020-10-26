@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Akhilan",
+			"Macofe",
 			"McDutchie",
-			"Praveenp",
-			"Macofe"
+			"Praveenp"
 		]
 	},
 	"wikieditor": "വിക്കിഎഴുത്തുകൾ തിരുത്തുവാനുള്ള നൂതന സമ്പർക്കമുഖം",
@@ -47,7 +47,7 @@
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "ആഭ്യന്തര കണ്ണി",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "പുറത്തേയ്ക്കുള്ള കണ്ണി",
 	"wikieditor-toolbar-tool-link-empty": "കണ്ണിവത്കരിക്കേണ്ട ഒന്നും താങ്കൾ നൽകിയിട്ടില്ല.",
-	"wikieditor-toolbar-tool-file": "പ്രമാണം ചേർക്കൽ",
+	"wikieditor-toolbar-tool-file": "ചിത്രങ്ങളും മീഡിയയും",
 	"wikieditor-toolbar-tool-file-example": "ഉദാഹരണം.jpg",
 	"wikieditor-toolbar-tool-file-title": "പ്രമാണം ഉൾപ്പെടുത്തുക",
 	"wikieditor-toolbar-file-target": "പ്രമാണത്തിന്റെ പേര്‌:",

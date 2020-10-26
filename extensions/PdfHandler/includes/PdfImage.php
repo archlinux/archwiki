@@ -189,7 +189,6 @@ class PdfImage {
 		foreach ( $lines as $line ) {
 			if ( $inMetadata ) {
 				// Handle XMP differently due to diffence in line break
-				// @phan-suppress-next-line PhanTypeInvalidDimOffset weird loop
 				$data['xmp'] .= "\n$line";
 				continue;
 			}

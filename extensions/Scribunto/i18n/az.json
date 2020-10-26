@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Wertuose",
 			"Serkanland",
-			"Toghrul Rahimli"
+			"Toghrul Rahimli",
+			"Wertuose"
 		]
 	},
 	"scribunto-doc-page-header": "''Bu, [[$1]] səhifəsinin sənədləşmə səhifəsidir.''",

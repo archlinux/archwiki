@@ -18,5 +18,5 @@
 	"apiwarn-textextracts-unsupportedmodel": "$1 має контентну модель $2, яка не підтримується; повертаємо порожній витяг.",
 	"apiwarn-textextracts-title-in-file-namespace": "Подано запит на витяг для назви з простору назв Файл; не отримано нічого.",
 	"apiwarn-textextracts-sentences-and-html": "Параметр <var>$1sentences</var> може видати неочікувані результаті, якщо його використати в режимі HTML.",
-	"apiwarn-textextracts-malformed-html": "Код HTML може бути неправильно сформованим та/або незбалансованим і може пропускати вбудовані зображення. Використовуйте на свій власний ризик. Відомі проблеми перелічено на сторінці https://www.mediawiki.org/wiki/Extension:TextExtracts#Caveats."
+	"apiwarn-textextracts-malformed-html": "Код HTML може бути неправильно сформованим та/або незбалансованим і може пропускати вбудовані зображення. Використовуйте на свій власний ризик. Відомі проблеми перелічено на сторінці https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:TextExtracts#Caveats."
 }

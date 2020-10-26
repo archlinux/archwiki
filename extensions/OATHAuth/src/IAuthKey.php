@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Extension\OATHAuth;
 
-use stdClass;
 use JsonSerializable;
+use stdClass;
 
 interface IAuthKey extends JsonSerializable {
 

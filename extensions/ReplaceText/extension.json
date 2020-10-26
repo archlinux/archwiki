@@ -78,6 +78,7 @@
 		]
 	},
 	"config": {
+		"ReplaceTextResultsLimit": 250,
 		"ReplaceTextUser": null
 	},
 	"manifest_version": 1

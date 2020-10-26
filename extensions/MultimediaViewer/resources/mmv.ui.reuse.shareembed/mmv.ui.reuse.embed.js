@@ -132,6 +132,10 @@
 			align: 'top',
 			multiline: true,
 			textInput: {
+				// The following classes are used here:
+				// * mw-editfont-monospace
+				// * mw-editfont-sans-serif
+				// * mw-editfont-serif
 				classes: [ 'mw-editfont-' + mw.user.options.get( 'editfont' ) ],
 				placeholder: mw.message( 'multimediaviewer-reuse-loading-placeholder' ).text(),
 				autosize: true,

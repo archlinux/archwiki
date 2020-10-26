@@ -11,7 +11,7 @@ use MediaWiki\MediaWikiServices;
  */
 class ExportTest extends MediaWikiLangTestCase {
 
-	protected function setUp() {
+	protected function setUp() : void {
 		parent::setUp();
 		$this->setMwGlobals( [
 			'wgCapitalLinks' => true,
@@ -37,20 +37,21 @@ class ExportTest extends MediaWikiLangTestCase {
 		$exporter->pageByTitle( $title );
 		$exporter->closeStream();
 
+		$oldDisable = libxml_disable_entity_loader( true );
+
 		// This throws error if invalid xml output
 		$xmlObject = simplexml_load_string( $sink );
+
+		libxml_disable_entity_loader( $oldDisable );
 
 		/**
 		 * Check namespaces match xml
 		 */
-		$xmlNamespaces = (array)$xmlObject->siteinfo->namespaces->namespace;
-		$xmlNamespaces = str_replace( ' ', '_', $xmlNamespaces );
-		unset( $xmlNamespaces[ '@attributes' ] );
-		foreach ( $xmlNamespaces as &$namespaceObject ) {
-			if ( is_object( $namespaceObject ) ) {
-				$namespaceObject = '';
-			}
+		foreach ( $xmlObject->siteinfo->namespaces->children() as $namespace ) {
+			// Get the text content of the SimpleXMLElement
+			$xmlNamespaces[] = (string)$namespace;
 		}
+		$xmlNamespaces = str_replace( ' ', '_', $xmlNamespaces );
 
 		$actualNamespaces = (array)MediaWikiServices::getInstance()->getContentLanguage()->
 			getNamespaces();

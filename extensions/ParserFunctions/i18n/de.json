@@ -1,15 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
+			"FriedhelmW",
 			"Kghbln",
 			"LWChris",
 			"Metalhead64",
+			"PerfektesChaos",
 			"Purodha",
 			"Raimond Spekking",
 			"Rentenirer",
-			"Rillke",
-			"FriedhelmW",
-			"PerfektesChaos"
+			"Rillke"
 		]
 	},
 	"pfunc_desc": "Erweitert den Parser um logische Funktionen",

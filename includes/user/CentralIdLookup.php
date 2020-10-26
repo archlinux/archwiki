@@ -26,11 +26,12 @@ use Wikimedia\ObjectFactory;
  * cluster-wide IDs.
  *
  * @since 1.27
+ * @stable to extend
  */
 abstract class CentralIdLookup implements IDBAccessObject {
 	// Audience options for accessors
-	const AUDIENCE_PUBLIC = 1;
-	const AUDIENCE_RAW = 2;
+	public const AUDIENCE_PUBLIC = 1;
+	public const AUDIENCE_RAW = 2;
 
 	/** @var CentralIdLookup[] */
 	private static $instances = [];
@@ -63,6 +64,36 @@ abstract class CentralIdLookup implements IDBAccessObject {
 		}
 
 		return self::$instances[$providerId];
+	}
+
+	/**
+	 * Returns a CentralIdLookup that is guaranteed to be non-local.
+	 * If no such guarantee can be made, returns null.
+	 *
+	 * If this function returns a non-null CentralIdLookup,
+	 * that lookup is expected to provide IDs that are shared with some set of other wikis.
+	 * However, you should still be cautious when using those IDs,
+	 * as they will not necessarily work with *all* other wikis,
+	 * and it can be hard to tell if another wiki is in the same set as this one or not.
+	 *
+	 * @since 1.35
+	 *
+	 * @return CentralIdLookup|null
+	 */
+	public static function factoryNonLocal(): ?self {
+		$centralIdLookup = self::factory();
+
+		if ( $centralIdLookup instanceof LocalIdLookup ) {
+			/*
+			 * A LocalIdLookup (which is the default) may actually be non-local,
+			 * if shared user tables are used.
+			 * However, we cannot know that here, so play it safe and refuse to return it.
+			 * See also T163277 and T170996.
+			 */
+			return null;
+		}
+
+		return $centralIdLookup;
 	}
 
 	/**
@@ -222,6 +253,7 @@ abstract class CentralIdLookup implements IDBAccessObject {
 	 * Given a central user ID, return a local User object
 	 * @note Unlike nameFromCentralId(), this does guarantee that the local
 	 *  user exists and is attached to the central account.
+	 * @stable to override
 	 * @param int $id Central user ID
 	 * @param int|User $audience One of the audience constants, or a specific user
 	 * @param int $flags IDBAccessObject read flags
@@ -244,6 +276,7 @@ abstract class CentralIdLookup implements IDBAccessObject {
 
 	/**
 	 * Given a local User object, return the central ID
+	 * @stable to override
 	 * @note Unlike centralIdFromName(), this does guarantee that the local
 	 *  user is attached to the central account.
 	 * @param User $user Local user

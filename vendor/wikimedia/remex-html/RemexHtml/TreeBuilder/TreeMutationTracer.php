@@ -69,6 +69,7 @@ class TreeMutationTracer implements TreeHandler {
 	 */
 	private function before() {
 		if ( $this->verbosity > 0 ) {
+			// @phan-suppress-next-line PhanUndeclaredMethod
 			$this->trace( "Before: " . $this->handler->dump() . "\n" );
 		}
 	}
@@ -78,54 +79,88 @@ class TreeMutationTracer implements TreeHandler {
 	 */
 	private function after() {
 		if ( $this->verbosity > 0 ) {
+			// @phan-suppress-next-line PhanUndeclaredMethod
 			$this->trace( "After:  " . $this->handler->dump() . "\n" );
 		}
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public function startDocument( $fns, $fn ) {
 		$this->handleSimple( __FUNCTION__, func_get_args() );
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public function endDocument( $pos ) {
 		$this->handleSimple( __FUNCTION__, func_get_args() );
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public function characters( $preposition, $refNode, $text, $start, $length,
 		$sourceStart, $sourceLength
 	) {
 		$this->handleMutation( __FUNCTION__, func_get_args() );
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public function insertElement( $preposition, $refNode, Element $element, $void,
 		$sourceStart, $sourceLength
 	) {
 		$this->handleMutation( __FUNCTION__, func_get_args() );
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public function endTag( Element $element, $sourceStart, $sourceLength ) {
 		$this->handleMutation( __FUNCTION__, func_get_args() );
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public function doctype( $name, $public, $system, $quirks, $sourceStart, $sourceLength ) {
 		$this->handleMutation( __FUNCTION__, func_get_args() );
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public function comment( $preposition, $refNode, $text, $sourceStart, $sourceLength ) {
 		$this->handleMutation( __FUNCTION__, func_get_args() );
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public function error( $text, $pos ) {
 		$this->handleSimple( __FUNCTION__, func_get_args() );
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public function mergeAttributes( Element $element, Attributes $attrs, $sourceStart ) {
 		$this->handleMutation( __FUNCTION__, func_get_args() );
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public function removeNode( Element $element, $sourceStart ) {
 		$this->handleMutation( __FUNCTION__, func_get_args() );
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public function reparentChildren( Element $element, Element $newParent, $sourceStart ) {
 		$this->handleMutation( __FUNCTION__, func_get_args() );
 	}

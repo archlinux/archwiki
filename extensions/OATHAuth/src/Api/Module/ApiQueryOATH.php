@@ -18,10 +18,11 @@
 
 namespace MediaWiki\Extension\OATHAuth\Api\Module;
 
-use MediaWiki\MediaWikiServices;
-use ApiQueryBase;
 use ApiBase;
+use ApiQuery;
+use ApiQueryBase;
 use ApiResult;
+use MediaWiki\MediaWikiServices;
 use User;
 
 /**
@@ -35,6 +36,10 @@ use User;
  * @ingroup Extensions
  */
 class ApiQueryOATH extends ApiQueryBase {
+	/**
+	 * @param ApiQuery $query
+	 * @param string $moduleName
+	 */
 	public function __construct( $query, $moduleName ) {
 		parent::__construct( $query, $moduleName, 'oath' );
 	}
@@ -81,6 +86,9 @@ class ApiQueryOATH extends ApiQueryBase {
 		return true;
 	}
 
+	/**
+	 * @return array
+	 */
 	public function getAllowedParams() {
 		return [
 			'user' => [
@@ -89,6 +97,9 @@ class ApiQueryOATH extends ApiQueryBase {
 		];
 	}
 
+	/**
+	 * @return array
+	 */
 	protected function getExamplesMessages() {
 		return [
 			'action=query&meta=oath'

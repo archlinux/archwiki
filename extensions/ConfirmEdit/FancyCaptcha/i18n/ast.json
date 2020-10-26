@@ -5,6 +5,7 @@
 			"Xuacu"
 		]
 	},
+	"fancycaptcha-desc": "Xenerador Fancy CAPTCHA pa Confirmar Edición",
 	"fancycaptcha-addurl": "La so edición incluye nuevos enllaces esternos. Pa protexer la wiki escontra'l spam automatizáu, pidimos-y qu'escriba nel caxellu les pallabres qu'apaecen embaxo ([[Special:Captcha/help|más información]]):",
 	"fancycaptcha-badlogin": "Pa protexer la wiki escontra'l descifráu automáticu de claves, pidimos-y qu'escriba nel caxellu les pallabres qu'apaecen embaxo ([[Special:Captcha/help|más información]]):",
 	"fancycaptcha-captcha": "Comprobación de seguridá",

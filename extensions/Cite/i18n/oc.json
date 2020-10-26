@@ -11,7 +11,7 @@
 	"cite_error_ref_too_many_keys": "Ampèl invalid ; claus invalidas, per exemple, tròp de claus especificadas o clau erronèa",
 	"cite_error_ref_no_input": "Ampèl invalid ; cap de dintrada pas especificada",
 	"cite_error_references_invalid_parameters": "Arguments invalids ; argument esperat",
-	"cite_error_references_no_backlink_label": "Execucion en defòra de las etiquetas personalizadas, definissetz mai dins lo messatge <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>",
+	"cite_error_references_no_backlink_label": "Execucion en defòra de las etiquetas personalizadas, definissetz mai dins lo messatge [[MediaWiki:Cite references link many format backlink labels]]",
 	"cite_error_references_no_text": "Balisa  <code>&lt;ref&gt;</code> incorrècta ;\n\npas de tèxte per las referéncias nomenadas <code>$1</code>.",
 	"cite_error_included_ref": "Clausura <code>&lt;/ref&gt;</code> omesa per la balisa <code>&lt;ref&gt;</code>",
 	"cite_error_group_refs_without_references": "De balisas <code>&lt;ref&gt;</code> existisson per un grop nomenat « $1 », mas cap de balisa <code>&lt;references group=\"$1\"/&gt;</code> correspondenta es pas estada trobada, o alara una valisa tampanta <code>&lt;/ref&gt;</code> manca.",

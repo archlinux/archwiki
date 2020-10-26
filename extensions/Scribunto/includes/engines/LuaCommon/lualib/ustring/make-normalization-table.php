@@ -11,6 +11,7 @@ $utfnormalDir = null;
 if ( count( $argv ) > 1 ) {
 	$utfnormalDir = rtrim( $argv[1], '/' );
 	if ( !is_dir( $utfnormalDir ) ) {
+		// @phan-suppress-next-line SecurityCheck-XSS
 		die( "The specified UtfNormal directory '$utfnormalDir' does not exist\n" );
 	}
 	if ( file_exists( "$utfnormalDir/Validator.php" ) ) {
@@ -47,24 +48,14 @@ if ( count( $argv ) > 1 ) {
 	}
 }
 
-//phpcs:disable MediaWiki.NamingConventions
-
-/**
- * This is a function solely exists so we can suppress errors
- *
- * @suppress SecurityCheck-XSS
- * @suppress SecurityCheck-OTHER
- */
-function loadDataFiles() {
-	global $utfnormalDir;
-	echo "Loading UtfNormal from $utfnormalDir...\n";
-	require_once "$utfnormalDir/Validator.php";
-	require_once "$utfnormalDir/UtfNormalData.inc";
-	require_once "$utfnormalDir/UtfNormalDataK.inc";
-}
-
-//phpcs:enable MediaWiki.NamingConventions
-loadDataFiles();
+// @phan-suppress-next-line SecurityCheck-XSS
+echo "Loading UtfNormal from $utfnormalDir...\n";
+// @phan-suppress-next-line SecurityCheck-OTHER
+require_once "$utfnormalDir/Validator.php";
+// @phan-suppress-next-line SecurityCheck-OTHER
+require_once "$utfnormalDir/UtfNormalData.inc";
+// @phan-suppress-next-line SecurityCheck-OTHER
+require_once "$utfnormalDir/UtfNormalDataK.inc";
 
 if ( !Validator::$utfCheckNFC ||
 	!Validator::$utfCombiningClass ||

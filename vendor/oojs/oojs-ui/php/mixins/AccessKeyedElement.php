@@ -16,7 +16,7 @@ trait AccessKeyedElement {
 	/**
 	 * Access key
 	 *
-	 * @var string
+	 * @var ?string
 	 */
 	protected $accessKey = null;
 

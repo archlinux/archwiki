@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Fabsouza1",
 			"Cainamarques",
-			"Felipe L. Ewald",
-			"Eduardo Addad de Oliveira"
+			"Eduardo Addad de Oliveira",
+			"Fabsouza1",
+			"Felipe L. Ewald"
 		]
 	},
 	"skinname-monobook": "MonoBook",

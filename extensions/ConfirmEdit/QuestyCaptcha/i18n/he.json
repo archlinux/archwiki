@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Guycn2",
 			"Rotemliss",
-			"YaronSh",
-			"Guycn2"
+			"YaronSh"
 		]
 	},
 	"questycaptcha-desc": "יצירת שאלות CAPTCHA עבור ההרחבה Confirm Edit",

@@ -1,14 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
+			"Hamilton Abreu",
+			"He7d3r",
 			"Helder.wiki",
 			"Imperadeiro98",
-			"SandroHc",
-			"Vitorvicentevalente",
-			"He7d3r",
 			"Luan",
-			"Hamilton Abreu",
-			"McDutchie"
+			"McDutchie",
+			"SandroHc",
+			"Vitorvicentevalente"
 		]
 	},
 	"scribunto-desc": "Fornece uma estrutura para incorporação de linguagens de comandos (''scripting'') em páginas do MediaWiki",

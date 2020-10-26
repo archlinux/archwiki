@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"BRUTE",
 			"David1010",
 			"ITshnik",
-			"Tokoko",
-			"BRUTE",
-			"MIKHEIL"
+			"MIKHEIL",
+			"Tokoko"
 		]
 	},
 	"fancycaptcha-addurl": "თქვენი ცვლილება შეიცავს ახალ გარე ბმულებს.\nვიკის ავტომატური სპამინგისგან თავდაცვის მიზნით, ჩვენ მოგიწოდებთ, შეიყვანოთ ქვემოთ მოცემული სიტყვები ყუთში ([[Special:Captcha/help|მეტი ინფორმაცია]]):",

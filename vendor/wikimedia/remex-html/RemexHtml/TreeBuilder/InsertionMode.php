@@ -8,8 +8,6 @@ use RemexHtml\Tokenizer\Attributes;
 abstract class InsertionMode {
 	use PropGuard;
 
-	const SELF_CLOSE_ERROR = 'unacknowledged self closing tag';
-
 	/** @var TreeBuilder */
 	protected $builder;
 

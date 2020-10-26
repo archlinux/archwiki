@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Asaifm",
-			"Meno25",
-			"OsamaK",
 			"Abanima",
-			"Maroen1990"
+			"Asaifm",
+			"Maroen1990",
+			"Meno25",
+			"OsamaK"
 		]
 	},
 	"spam-blacklist": " #<!-- leave this line exactly as it is --> <pre>\n# الوصلات الخارجية التي تطابق هذه القائمة سيتم منعها عند إضافتها لصفحة.\n# هذه القائمة تؤثر فقط على هذه الويكي؛ ارجع أيضا للقائمة السوداء العالمية.\n# للوثائق انظر https://www.mediawiki.org/wiki/Extension:SpamBlacklist\n#\n# الصيغة كالتالي:\n#   * كل شيء من علامة \"#\" إلى آخر السطر هو تعليق\n#   * كل سطر غير فارغ هو تعبير منتظم يوافق فقط المضيفين داخل الوصلات الخارجية\n\n #</pre> <!-- leave this line exactly as it is -->",

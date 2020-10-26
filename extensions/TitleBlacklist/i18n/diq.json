@@ -1,10 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"1917 Ekim Devrimi",
 			"Aspar",
 			"Erdemaslancan",
-			"Marmase",
 			"Kumkumuk",
+			"Marmase",
 			"Mirzali"
 		]
 	},
@@ -16,7 +17,7 @@
 	"titleblacklist-forbidden-upload": "vıraştışê sernameyê dosyaya\"$2\"i qedexe bı.\nmalumatê ey na listeyasiya de zêpê ya: <code>$1</code>",
 	"titleblacklist-forbidden-new-account": "vıraştışê nameyê karberê\"$2\" i qedexe bı.\nmalumatê ey na listeyasiya de zêpê ya: <code>$1</code>",
 	"titleblacklist-invalid": "Na  ğırab lista dı {{PLURAL:$1|en asatır|ené satıri}}  néravérené;\nVerdé qeyd kerdışi  timar keré:",
-	"titleblacklist-override": "Tenilisti mehesebne",
+	"titleblacklist-override": "Yenê pê se, serekê lista siyay mehesebne",
 	"right-tboverride": "Sernuşteyi ya zi lista nameyê karberiyê siyayi nêverde ke",
 	"right-tboverride-account": "Tenilisteya naman dê karberan mehesebnê"
 }

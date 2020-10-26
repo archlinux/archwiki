@@ -4,6 +4,7 @@
 			"Anakmalaysia",
 			"Aurora",
 			"Aviator",
+			"CyberTroopers",
 			"Kurniasan",
 			"Zulfadli51"
 		]
@@ -12,7 +13,7 @@
 	"categorytree-portlet": "Kategori",
 	"categorytree-legend": "Papar salasilah kategori",
 	"categorytree-desc": "Alat berdasarkan AJAX yang memaparkan [[Special:CategoryTree|struktur kategori]] bagi sesebuah wiki",
-	"categorytree-header": "Masukkan suatu nama kategori untuk melihat kandungannya dalam bentuk struktur salasilah.\nCiri ini memerlukan kefungsian JavaScript yang maju dikenali sebagai AJAX.\nJika anda menggunakan pelayar web yang sudah ketinggalan, atau mematikan JavaScript, ciri ini tidak akan menjadi.",
+	"categorytree-header": "Masukkan nama kategori untuk melihat kandungannya dalam bentuk struktur salasilah.\n(Memerlukan JavaScript.)",
 	"categorytree-category": "Kategori:",
 	"categorytree-go": "Tunjukkan salasilah",
 	"categorytree-parents": "Induk",

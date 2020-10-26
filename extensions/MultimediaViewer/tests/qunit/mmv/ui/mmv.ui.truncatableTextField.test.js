@@ -25,7 +25,7 @@
 	 * @param {number} height
 	 * @param {jQuery} $qf fixture element
 	 * @param {Object} sandbox sinon instance
-	 * @return {TruncatableTextField}
+	 * @return {mw.mmv.ui.TruncatableTextField}
 	 */
 	function getField( width, height, $qf, sandbox ) {
 		var $container = $( '<div>' ).appendTo( $qf ),

@@ -3,7 +3,7 @@
 // +----------------------------------------------------------------------+
 // | PHP Version 5 and 7                                                  |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 1997-2017 Jon Parise and Chuck Hagenbuch               |
+// | Copyright (c) 1997-2019 Jon Parise and Chuck Hagenbuch               |
 // | All rights reserved.                                                 |
 // |                                                                      |
 // | Redistribution and use in source and binary forms, with or without   |
@@ -208,6 +208,7 @@ class Net_SMTP
         /* These standard authentication methods are always available. */
         $this->setAuthMethod('LOGIN', array($this, 'authLogin'), false);
         $this->setAuthMethod('PLAIN', array($this, 'authPlain'), false);
+        $this->setAuthMethod('XOAUTH2', array($this, 'authXOAuth2'), false);
     }
 
     /**
@@ -960,6 +961,45 @@ class Net_SMTP
         /* 235: Authentication successful */
         if (PEAR::isError($error = $this->parseResponse(235))) {
             return $error;
+        }
+
+        return true;
+    }
+
+    /**
+     * Authenticates the user using the XOAUTH2 method.
+     *
+     * @param string $uid   The userid to authenticate as.
+     * @param string $token The access token to authenticate with.
+     * @param string $authz The optional authorization proxy identifier.
+     *
+     * @return mixed Returns a PEAR_Error with an error message on any
+     *               kind of failure, or true on success.
+     * @since 1.9.0
+     */
+    public function authXOAuth2($uid, $token, $authz, $conn)
+    {
+        $auth = base64_encode("user=$uid\1auth=$token\1\1");
+        if (PEAR::isError($error = $this->put('AUTH', 'XOAUTH2 ' . $auth))) {
+            return $error;
+        }
+
+        /* 235: Authentication successful or 334: Continue authentication */
+        if (PEAR::isError($error = $this->parseResponse([235, 334]))) {
+            return $error;
+        }
+
+        /* 334: Continue authentication request */
+        if ($this->code === 334) {
+            /* Send an empty line as response to 334 */
+            if (PEAR::isError($error = $this->put(''))) {
+                return $error;
+            }
+
+            /* Expect 235: Authentication successful */
+            if (PEAR::isError($error = $this->parseResponse(235))) {
+                return $error;
+            }
         }
 
         return true;

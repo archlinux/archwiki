@@ -1,10 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"Acamicamacaraca",
+			"BadDog",
 			"Milicevic01",
 			"Obsuser",
-			"Acamicamacaraca",
-			"BadDog"
+			"Zoranzoki21"
 		]
 	},
 	"skinname-timeless": "Безвременско",
@@ -19,9 +20,12 @@
 	"timeless-sitetools": "Вики алатке",
 	"timeless-pageactions": "Алатке за страницу",
 	"timeless-userpagetools": "Алатке за корисничку страницу",
+	"timeless-action-addsection": "Нова тема",
+	"timeless-view-view": "Читај",
 	"timeless-pagemisc": "Више",
 	"timeless-namespaces": "Именски простори",
 	"timeless-pagetools": "Радње за страницу",
 	"timeless-languages": "Језици",
-	"timeless.js": "/* Јаваскрипт постављен овде ће се учитати за све оне који користе безвременску тему */"
+	"timeless-projects": "Други пројекти",
+	"timeless.js": "/* JavaScript постављен на овој страници учитаће се свим корисницима безвременске теме */"
 }

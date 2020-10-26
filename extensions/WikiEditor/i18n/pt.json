@@ -1,22 +1,23 @@
 {
 	"@metadata": {
 		"authors": [
+			"Fúlvio",
 			"Giro720",
 			"Hamilton Abreu",
+			"He7d3r",
 			"Helder.wiki",
 			"João Sousa",
 			"Luckas",
 			"Luckas Blade",
 			"Malafaya",
+			"Mansil alfalb",
 			"MetalBrasil",
+			"Opraco",
 			"SandroHc",
 			"Vitorvicentevalente",
 			"Waldir",
-			"555",
-			"He7d3r",
-			"Opraco",
-			"Fúlvio",
-			"Waldyrious"
+			"Waldyrious",
+			555
 		]
 	},
 	"wikieditor": "Interface avançada de edição de texto wiki",
@@ -59,7 +60,7 @@
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Hiperligação interna",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "Hiperligação externa",
 	"wikieditor-toolbar-tool-link-empty": "Não introduziu o destino da hiperligação.",
-	"wikieditor-toolbar-tool-file": "Ficheiro incorporado",
+	"wikieditor-toolbar-tool-file": "Imagens e multimédia",
 	"wikieditor-toolbar-tool-file-example": "Exemplo.jpg",
 	"wikieditor-toolbar-tool-file-title": "Inserir ficheiro",
 	"wikieditor-toolbar-file-target": "Nome do ficheiro:",

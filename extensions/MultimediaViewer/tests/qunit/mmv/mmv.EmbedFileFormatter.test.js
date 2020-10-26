@@ -229,7 +229,7 @@
 			}
 		} );
 
-		assert.strictEqual( txt, 'By Author - Source, link', 'Sanity check' );
+		assert.strictEqual( txt, '(multimediaviewer-text-embed-credit-text-b: (multimediaviewer-credit: Author, Source), link)', 'Sanity check' );
 
 		txt = formatter.getCreditText( {
 			repoInfo: {
@@ -251,7 +251,7 @@
 			}
 		} );
 
-		assert.strictEqual( txt, 'By Author - Source, WTFPL v2, link', 'License message works' );
+		assert.strictEqual( txt, '(multimediaviewer-text-embed-credit-text-bl: (multimediaviewer-credit: Author, Source), WTFPL v2, link)', 'License message works' );
 	} );
 
 	QUnit.test( 'getCreditHtml():', function ( assert ) {
@@ -273,7 +273,11 @@
 			}
 		} );
 
-		assert.strictEqual( html, 'By Author - Source, <a href="some link">Link</a>', 'Sanity check' );
+		assert.strictEqual(
+			html,
+			'(multimediaviewer-html-embed-credit-text-b: (multimediaviewer-credit: Author, Source), <a href="some link">(multimediaviewer-html-embed-credit-link-text)</a>)',
+			'Sanity check'
+		);
 
 		html = formatter.getCreditHtml( {
 			repoInfo: {
@@ -296,6 +300,10 @@
 			}
 		} );
 
-		assert.strictEqual( html, 'By Author - Source, <a href="http://www.wtfpl.net/">WTFPL v2</a>, <a href="some link">Link</a>', 'Sanity check' );
+		assert.strictEqual(
+			html,
+			'(multimediaviewer-html-embed-credit-text-bl: (multimediaviewer-credit: Author, Source), <a href="http://www.wtfpl.net/">WTFPL v2</a>, <a href="some link">(multimediaviewer-html-embed-credit-link-text)</a>)',
+			'Sanity check'
+		);
 	} );
 }() );

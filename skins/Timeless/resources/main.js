@@ -4,11 +4,6 @@ $( function () {
 	var $dropdowns = $( '#personal, #p-variants-desktop, .sidebar-chunk' );
 
 	/**
-	 * Focus on search box when 'Tab' key is pressed once
-	 */
-	$( '#searchInput' ).attr( 'tabindex', $( document ).lastTabIndex() + 1 );
-
-	/**
 	 * Desktop menu click-toggling
 	 *
 	 * We're not even checking if it's desktop because the classes in play have no effect
@@ -27,6 +22,7 @@ $( function () {
 	 */
 	$dropdowns.on( 'click', function ( e ) {
 		// Check if it's already open so we don't open it again
+		// eslint-disable-next-line no-jquery/no-class-state
 		if ( $( this ).hasClass( 'dropdown-active' ) ) {
 			if ( $( e.target ).closest( $( 'h2, #p-variants-desktop h3' ) ).length > 0 ) {
 				// treat reclick on the header as a toggle

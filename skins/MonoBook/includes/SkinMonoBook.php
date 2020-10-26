@@ -61,17 +61,13 @@ class SkinMonoBook extends SkinTemplate {
 		}
 
 		$out->addModuleStyles( [
-			'mediawiki.skinning.interface',
 			'mediawiki.skinning.content.externallinks',
 			$styleModule
 		] );
 
-		// TODO: Migrate all of these (get RL support for conditional IE)
 		// Force desktop styles in IE 8-; no support for @media widths
+		// FIXME: Remove conditional comment dependency.
 		$out->addStyle( $this->stylename . '/resources/screen-desktop.css', 'screen', 'lt IE 9' );
-		// Miscellanious fixes
-		$out->addStyle( $this->stylename . '/resources/IE60Fixes.css', 'screen', 'IE 6' );
-		$out->addStyle( $this->stylename . '/resources/IE70Fixes.css', 'screen', 'IE 7' );
 	}
 
 	/**
@@ -79,13 +75,14 @@ class SkinMonoBook extends SkinTemplate {
 	 * @param array &$preferences
 	 */
 	public static function onGetPreferences( User $user, array &$preferences ) {
-		if ( $user->getOption( 'skin' ) === 'monobook' ) {
-			$preferences['monobook-responsive'] = [
-				'type' => 'toggle',
-				'label-message' => 'monobook-responsive-label',
-				'section' => 'rendering/skin',
-			];
-		}
+		$preferences['monobook-responsive'] = [
+			'type' => 'toggle',
+			'label-message' => 'monobook-responsive-label',
+			'section' => 'rendering/skin/skin-prefs',
+			// Only show this section when the Monobook skin is checked. The JavaScript client also uses
+			// this state to determine whether to show or hide the whole section.
+			'hide-if' => [ '!==', 'wpskin', 'monobook' ],
+		];
 	}
 
 	/**

@@ -2,12 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"Danny B.",
-			"Li-sung",
-			"Matěj Grabovský",
-			"Mormegil",
 			"Dvorapa",
 			"Ilimanaq29",
-			"Matěj Suchánek"
+			"Li-sung",
+			"Matěj Grabovský",
+			"Matěj Suchánek",
+			"Mormegil"
 		]
 	},
 	"captcha-edit": "Abyste mohli editovat tuto stránku, musíte vyřešit následující úkol níže a napsat výsledek do políčka ([[Special:Captcha/help|Co tohle znamená?]]):",

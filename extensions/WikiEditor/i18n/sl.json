@@ -3,8 +3,8 @@
 		"authors": [
 			"Dbc334",
 			"Eleassar",
-			"Yerpo",
-			"Janezdrilc"
+			"Janezdrilc",
+			"Yerpo"
 		]
 	},
 	"wikieditor": "Napredni vmesnik za urejanje wikibesedila",
@@ -46,7 +46,7 @@
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Notranja povezava",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "Zunanja povezava",
 	"wikieditor-toolbar-tool-link-empty": "Niste vnesli ničesar, na kar bi se lahko povezovalo.",
-	"wikieditor-toolbar-tool-file": "Vstavi datoteko",
+	"wikieditor-toolbar-tool-file": "Slike in predstavnost",
 	"wikieditor-toolbar-tool-file-example": "Zgled.jpg",
 	"wikieditor-toolbar-tool-file-title": "Vstavi datoteko",
 	"wikieditor-toolbar-file-target": "Ime datoteke:",

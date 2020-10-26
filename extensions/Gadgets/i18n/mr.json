@@ -25,7 +25,7 @@
 	"gadgets-required-rights": "खालील {{PLURAL:$2|अधिकार}} हवेच :\n\n$1",
 	"gadgets-required-skins": "{{PLURAL:$2|$1 skin|खालील देखाव्यांवर  : $1}} उपलब्ध आहेत",
 	"gadgets-default": "सर्वांसाठी अविचलरित्या उपलब्ध केले आहे.",
-	"gadgets-legacy": "उपकरण प्रभारीत झाले नाही.ResourceLoader ला स्थानांतरीत करा.([https://www.mediawiki.org/wiki/ResourceLoader/Migration_guide_(users) अधिक माहिती])",
+	"gadgets-legacy": "उपकरण प्रभारीत झाले नाही.ResourceLoader ला स्थानांतरीत करा.([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) अधिक माहिती])",
 	"gadgets-export": "निर्यात करा",
 	"gadgets-export-title": "उपकरण निर्यात",
 	"gadgets-not-found": "उपकरण \"$1\" सापडले नाही.",

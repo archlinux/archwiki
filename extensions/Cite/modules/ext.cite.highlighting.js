@@ -95,10 +95,9 @@
 		// We are going to use the ID in the code below, so better be sure one is there.
 		$content.find( '.reference[id] > a' ).on( 'click', function () {
 			var $backlink,
-				id = $( this ).parent().attr( 'id' ),
-				className = 'mw-cite-targeted-backlink';
+				id = $( this ).parent().attr( 'id' );
 
-			$content.find( '.' + className ).removeClass( className );
+			$content.find( '.mw-cite-targeted-backlink' ).removeClass( 'mw-cite-targeted-backlink' );
 
 			// Bail out if there is not at least a second backlink ("cite_references_link_many").
 			if ( !isReusedNamedReference( id, $content ) ) {
@@ -108,7 +107,7 @@
 			// The :not() skips the duplicate link created below. Relevant when double clicking.
 			$backlink = $content.find( '.references a[href="#' + $.escapeSelector( id ) + '"]:not(.mw-cite-up-arrow-backlink)' )
 				.first()
-				.addClass( className );
+				.addClass( 'mw-cite-targeted-backlink' );
 
 			if ( $backlink.length ) {
 				updateUpArrowLink( $backlink );

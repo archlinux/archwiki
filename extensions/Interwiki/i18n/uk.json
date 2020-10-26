@@ -7,19 +7,20 @@
 			"Base",
 			"Hypers",
 			"Microcell",
+			"Movses",
+			"Olion",
+			"Piramidion",
 			"Prima klasy4na",
+			"Vlad5250",
 			"VolodymyrF",
 			"Vox",
-			"Olion",
-			"Ата",
-			"Piramidion",
-			"Vlad5250"
+			"Ата"
 		]
 	},
 	"interwiki": "Перегляд і редагування даних інтервікі",
 	"interwiki-title-norights": "Переглянути дані інтервікі",
 	"interwiki-desc": "Додає [[Special:Interwiki|спеціальну сторінку]] для перегляду і редагування таблиці інтервікі",
-	"interwiki_intro": "Це огляд таблиці БД interwiki, в якій визначено префікси для коротких посилань на різні вікі та інші сторонні сайти. Рекомендації із застосування можна побачити в [//www.mediawiki.org/wiki/Extension:Interwiki документації на MediaWiki.org].",
+	"interwiki_intro": "Це огляд таблиці БД interwiki, в якій визначено префікси для коротких посилань на різні вікі та інші сторонні сайти. Рекомендації із застосування можна побачити в [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Interwiki документації на MediaWiki.org].",
 	"interwiki-legend-label": "Легенда",
 	"interwiki_prefix": "Префікс",
 	"interwiki-prefix-label": "Префікс:",
@@ -31,7 +32,7 @@
 	"interwiki_local_1_intro": "Зовнішні запити HTTP до локальної вікі з використанням цього interwiki-префіксу в URL-адресі буде перенаправлено на цільову URL-адресу interwiki (тобто оброблено так само, як посилання на локальні сторінки).",
 	"interwiki_trans": "Включення",
 	"interwiki-trans-label": "Включення",
-	"interwiki_trans_1_intro": "Якщо використано синтаксис вікітексту <code>{<nowiki />{prefix:<em>назва сторінки</em>}}</code>, дозволити включення шаблонів/сторінок з інших вікі, якщо інтервікі-включення взагалі дозволено в налаштуванні [//www.mediawiki.org/wiki/Manual:$wgEnableScaryTranscluding жахливі включення].",
+	"interwiki_trans_1_intro": "Якщо використано синтаксис вікітексту <code>{<nowiki />{prefix:<em>назва сторінки</em>}}</code>, дозволити включення шаблонів/сторінок з інших вікі, якщо інтервікі-включення взагалі дозволено в налаштуванні [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:$wgEnableScaryTranscluding жахливі включення].",
 	"interwiki_trans_0_intro": "Не дозволяти конструкції <code>{<nowiki />{prefix:<em>назва сторінки</em>}}</code> включення сторонніх шаблонів/сторінок, натомість шукається сторінка у просторі назв шаблонів.",
 	"interwiki_1": "так",
 	"interwiki_0": "ні",
@@ -64,7 +65,7 @@
 	"logentry-interwiki-iw_edit": "$1 {{GENDER:$2|змінив|змінила}} префікс «$4» ($5) (trans: $6; local: $7) в таблиці інтервікі",
 	"logentry-interwiki-iw_delete": "$1 {{GENDER:$2|вилучив|вилучила}} префікс «$4» з таблиці інтервікі",
 	"log-description-interwiki": "Це журнал змін [[Special:Interwiki|таблиці інтервікі]].",
-	"right-interwiki": "редагування даних інтервікі",
+	"right-interwiki": "Редагування даних інтервікі",
 	"action-interwiki": "зміну цього запису інтервікі",
 	"interwiki-global-links": "Глобальні префікси інтервікі",
 	"interwiki-global-description": "Ці префікси успадковано від глобальної конфігурації, і їх можна змінити лише на основній вікі.",
@@ -74,5 +75,5 @@
 	"interwiki-language-links": "Міжмовні префікси",
 	"interwiki-language-description": "Ці префікси збігаються з відомими кодами мов і використовуватимуться для створення списку «{{int:otherlanguages}}» при додаванні на сторінку.",
 	"interwiki-global-language-links": "Глобальні міжмовні префікси",
-	"interwiki-global-language-description": "Ці префікси співпадають з визначеними кодами мов і будуть використовуватися для створення списку «{{int:otherlanguages}}», коли додаються на сторінку. Оскільки вони успадковуються з глобальної конфігурації, їх можна редагувати лише на вихідній вікі. Глобальні міжмовні визначення не можна перезаписати локально."
+	"interwiki-global-language-description": "Ці префікси збігаються з визначеними кодами мов і будуть використовуватися для створення списку «{{int:otherlanguages}}», коли додаються на сторінку. Оскільки вони успадковуються з глобальної конфігурації, їх можна редагувати лише на вихідній вікі. Глобальні міжмовні визначення не можна перезаписати локально."
 }

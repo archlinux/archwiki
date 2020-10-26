@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Andriykopanytsia",
-			"Ата",
-			"Piramidion"
+			"Piramidion",
+			"Ата"
 		]
 	},
 	"textextracts-desc": "Забезпечує видобування звичайного текст або обмеженого HTML із вмісту сторінки"

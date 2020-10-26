@@ -101,6 +101,9 @@ abstract class OATHAuthOOUIHTMLForm extends OOUIHTMLForm implements IManageForm 
 		return LoggerFactory::getInstance( 'authentication' );
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	protected function wrapFieldSetSection( $legend, $section, $attributes, $isRoot ) {
 		// to get a user visible effect, wrap the fieldset into a framed panel layout
 		$layout = new PanelLayout( array_merge( [

@@ -10,13 +10,13 @@ interface Attributes extends \ArrayAccess, \IteratorAggregate {
 	 * Get the attributes as a key/value array
 	 * @return string[]
 	 */
-	function getValues();
+	public function getValues();
 
 	/**
 	 * Get the attributes as an array of Attribute objects
 	 * @return Attribute[]
 	 */
-	function getObjects();
+	public function getObjects();
 
 	/**
 	 * Get the number of attributes. This may include duplicates, and so may
@@ -27,7 +27,7 @@ interface Attributes extends \ArrayAccess, \IteratorAggregate {
 	 *
 	 * @return integer
 	 */
-	function count();
+	public function count();
 
 	/**
 	 * Add any attributes in the argument to $this, but if an attribute of the
@@ -35,5 +35,5 @@ interface Attributes extends \ArrayAccess, \IteratorAggregate {
 	 *
 	 * @param Attributes $other
 	 */
-	function merge( Attributes $other );
+	public function merge( Attributes $other );
 }

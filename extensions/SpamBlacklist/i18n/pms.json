@@ -3,10 +3,10 @@
 		"authors": [
 			"Borichèt",
 			"Bèrto 'd Sèra",
-			"Dragonòt",
-			"Zoranzoki21",
 			"DannyS712",
-			"Matma Rex"
+			"Dragonòt",
+			"Matma Rex",
+			"Zoranzoki21"
 		]
 	},
 	"spam-blacklist": "# J'adrësse esterne ch'as treuva ant sta lista-sì a vniran blocà se cheidun a jë gionta ansima a na pàgina. # Sta lista a l'ha valor mach an sta wiki-sì; ch'a-j fasa arferiment ëdcò a la lista nèira global. # Për dla documentassion ch'a varda https://www.mediawiki.org/wiki/Extension:SpamBlacklist #<!-- ch'a lassa sta riga-sì giusta 'me ch'a l'é --> <pre> # # La sintassi a l'é: # * Tut lòn ch'as anandia con na \"#\" fin a la fin dla riga as ten coma coment # * Qualsëssìa riga nen veuja a resta un tòch d'espression regolar ch'as paragon-a a ij nòm ëd servent andrinta a j'adrësse #</pre> <!-- ch'a lassa sta riga-sì giusta 'me ch'a l'é -->",

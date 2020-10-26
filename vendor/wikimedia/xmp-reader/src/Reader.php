@@ -28,6 +28,7 @@ use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use RuntimeException;
+use Wikimedia\AtEase\AtEase;
 use Wikimedia\ScopedCallback;
 use XMLReader;
 
@@ -91,10 +92,10 @@ class Reader implements LoggerAwareInterface {
 	/** @var int */
 	private $extendedXMPOffset = 0;
 
-	/** @var int Flag determining if the XMP is safe to parse **/
+	/** @var int Flag determining if the XMP is safe to parse */
 	private $parsable = 0;
 
-	/** @var string Buffer of XML to parse **/
+	/** @var string Buffer of XML to parse */
 	private $xmlParsableBuffer = '';
 
 	/**
@@ -343,9 +344,9 @@ class Reader implements LoggerAwareInterface {
 			}
 			if ( $this->charset !== 'UTF-8' ) {
 				// don't convert if already utf-8
-				\Wikimedia\suppressWarnings();
+				AtEase::suppressWarnings();
 				$content = iconv( $this->charset, 'UTF-8//IGNORE', $content );
-				\Wikimedia\restoreWarnings();
+				AtEase::restoreWarnings();
 			}
 
 			// Ensure the XMP block does not have an xml doctype declaration, which
@@ -548,10 +549,18 @@ class Reader implements LoggerAwareInterface {
 		$reader = new XMLReader();
 		$result = null;
 
+		// Pull in the arbitrary MAX_URI_LENGTH from libxml2...
+		$maxUriLength = 1024 * 1024;
+		$dataUri = 'data://text/plain,' . urlencode( $content );
+		if ( strlen( $dataUri ) > $maxUriLength ) {
+			// libxml2 won't parse this file as a data URI due to the length.
+			return false;
+		}
+
 		// For XMLReader to parse incomplete/invalid XML, it has to be open()'ed
 		// instead of using XML().
 		$reader->open(
-			'data://text/plain,' . urlencode( $content ),
+			$dataUri,
 			null,
 			LIBXML_NOERROR | LIBXML_NOWARNING | LIBXML_NONET
 		);
@@ -582,7 +591,7 @@ class Reader implements LoggerAwareInterface {
 		}
 		\Wikimedia\restoreWarnings();
 
-		if ( !is_null( $result ) ) {
+		if ( $result !== null ) {
 			return $result;
 		}
 
@@ -690,7 +699,7 @@ class Reader implements LoggerAwareInterface {
 			} elseif ( is_callable( $validate ) ) {
 				$val =& $this->results['xmp-' . $info['map_group']][$finalName];
 				call_user_func_array( $validate, [ $info, &$val, false ] );
-				if ( is_null( $val ) ) {
+				if ( $val === null ) {
 					// the idea being the validation function will unset the variable if
 					// its invalid.
 					$this->logger->info(
@@ -1403,7 +1412,7 @@ class Reader implements LoggerAwareInterface {
 				call_user_func_array( $validate, [ $info, &$val, true ] );
 				// the reasoning behind using &$val instead of using the return value
 				// is to be consistent between here and validating structures.
-				if ( is_null( $val ) ) {
+				if ( $val === null ) {
 					$this->logger->info(
 						__METHOD__ . " <$ns:$tag> failed validation.",
 						[ 'file' => $this->filename ]

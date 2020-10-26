@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\MediaWikiServices;
+
 class Scribunto_LuaMessageLibrary extends Scribunto_LuaLibraryBase {
 	public function register() {
 		$lib = [
@@ -11,8 +13,7 @@ class Scribunto_LuaMessageLibrary extends Scribunto_LuaLibraryBase {
 		if ( $this->getParser() ) {
 			$lang = $this->getParser()->getTargetLanguage();
 		} else {
-			global $wgContLang;
-			$lang = $wgContLang;
+			$lang = MediaWikiServices::getInstance()->getContentLanguage();
 		}
 
 		return $this->getEngine()->registerInterface( 'mw.message.lua', $lib, [
@@ -20,6 +21,17 @@ class Scribunto_LuaMessageLibrary extends Scribunto_LuaLibraryBase {
 		] );
 	}
 
+	/**
+	 * Create a Message
+	 * @param array $data
+	 *  - 'rawMessage': (string, optional) If set, create a RawMessage using this as `$text`
+	 *  - 'keys': (string|string[]) Message keys. Required unless 'rawMessage' is set.
+	 *  - 'lang': (Language|StubUserLang|string) Language for the Message.
+	 *  - 'useDB': (bool) "Use database" flag.
+	 *  - 'params': (array) Parameters for the Message. May be omitted if $setParams is false.
+	 * @param bool $setParams Whether to use $data['params']
+	 * @return Message
+	 */
 	private function makeMessage( $data, $setParams ) {
 		if ( isset( $data['rawMessage'] ) ) {
 			$msg = new RawMessage( $data['rawMessage'] );

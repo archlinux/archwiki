@@ -1,15 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
-			"Cheers!",
-			"Jdforrester",
-			"Minh Nguyen",
-			"Trần Nguyễn Minh Huy",
-			"Dinhxuanduyet",
-			"KhangND",
 			"Anh88",
+			"Cheers!",
+			"Dinhxuanduyet",
+			"Jdforrester",
+			"KhangND",
+			"Minh Nguyen",
+			"Nguyên Lê",
 			"Quenhitran",
-			"Nguyên Lê"
+			"Trần Nguyễn Minh Huy"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Sách",
@@ -25,7 +25,7 @@
 	"cite-ve-changedesc-reflist-responsive-set": "Xếp danh sách chú thích tham khảo thành nhiều cột",
 	"cite-ve-changedesc-reflist-responsive-unset": "Xếp lại danh sách chú thích tham khảo thành một cột",
 	"cite-ve-changedesc-reflist-item-id": "Đã thay đổi chỉ số chú thích tham khảo",
-	"cite-ve-dialog-reference-editing-reused": "Chú thích này được sử dụng $1 lần trên trang này.",
+	"cite-ve-dialog-reference-editing-reused": "Chú thích này được sử dụng {{PLURAL:$1|một lần|2=hai lần|$1 lần}} trên trang này.",
 	"cite-ve-dialog-reference-options-group-label": "Nhóm cước chú",
 	"cite-ve-dialog-reference-options-group-placeholder": "Tham khảo chung",
 	"cite-ve-dialog-reference-options-name-label": "ID để tái sử dụng cước chú",

@@ -36,6 +36,9 @@ class TOTPAuthenticationRequest extends AuthenticationRequest {
 		] + parent::describeCredentials();
 	}
 
+	/**
+	 * @return array
+	 */
 	public function getFieldInfo() {
 		return [
 			'OATHToken' => [

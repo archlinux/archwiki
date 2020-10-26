@@ -1,7 +1,8 @@
 /**
  * This plugin provides a way to build a wiki-text editing user interface around a textarea.
  *
- * @example To initialize without any modules:
+ * @example To initialize without any modules,
+ * overqualified `div#edittoolbar` to avoid MediaWiki's heading to id automatism:
  *     $( 'div#edittoolbar' ).wikiEditor();
  *
  * @example To initialize with one or more modules, or to add modules after it's already been initialized:
@@ -16,7 +17,8 @@
 		 * Array of language codes.
 		 */
 		fallbackChain = ( function () {
-			var isRTL = $( 'body' ).hasClass( 'rtl' ),
+			// eslint-disable-next-line no-jquery/no-class-state
+			var isRTL = $( document.body ).hasClass( 'rtl' ),
 				chain = mw.language.getFallbackLanguageChain();
 
 			// Do not fallback to 'en'
@@ -114,6 +116,7 @@
 				if ( Array.isArray( p ) && p.length >= 2 ) {
 					return mw.message.apply( mw.message, p ).text();
 				} else {
+					// eslint-disable-next-line mediawiki/msg-doc
 					return mw.message( p ).text();
 				}
 			} else {
@@ -151,6 +154,7 @@
 				if ( Array.isArray( p ) && p.length >= 2 ) {
 					return mw.message.apply( mw.message, p ).escaped();
 				} else {
+					// eslint-disable-next-line mediawiki/msg-doc
 					return mw.message( p ).escaped();
 				}
 			} else {
@@ -206,7 +210,7 @@
 					if ( src.substr( 0, 7 ) !== 'http://' && src.substr( 0, 8 ) !== 'https://' && src[ 0 ] !== '/' ) {
 						src = path + src;
 					}
-					return src + '?' + mw.loader.getVersion( 'jquery.wikiEditor' );
+					return src;
 				}
 			}
 			return icon;
@@ -234,6 +238,8 @@
 			context = {
 				// Reference to the textarea element which the wikiEditor is being built around
 				$textarea: $( this ),
+				// Reference to the focused element before the dialog opens, so it can be restored once it closes
+				$focusedElem: null,
 				// Container for any number of mutually exclusive views that are accessible by tabs
 				views: {},
 				// Container for any number of module-specific data - only including data for modules in use on this context
@@ -397,22 +403,27 @@
 							.attr( 'rel', 'wikiEditor-ui-view-' + options.name )
 							.addClass( context.view === options.name ? 'current' : null )
 							.append( $( '<a>' )
-								.attr( 'href', '#' )
+								.attr( 'tabindex', 0 )
 								.on( 'mousedown', function () {
 									// No dragging!
 									return false;
 								} )
-								.on( 'click', function ( event ) {
-									context.$ui.find( '.wikiEditor-ui-view' ).hide();
-									context.$ui.find( '.' + $( this ).parent().attr( 'rel' ) ).show();
-									context.$tabs.find( 'div' ).removeClass( 'current' );
-									$( this ).parent().addClass( 'current' );
-									$( this ).trigger( 'blur' );
-									if ( 'init' in options && typeof options.init === 'function' ) {
-										options.init( context );
+								.on( 'click keydown', function ( event ) {
+									if (
+										event.type === 'click' ||
+										event.type === 'keydown' && event.key === 'Enter'
+									) {
+										context.$ui.find( '.wikiEditor-ui-view' ).hide();
+										context.$ui.find( '.' + $( this ).parent().attr( 'rel' ) ).show();
+										context.$tabs.find( 'div' ).removeClass( 'current' );
+										$( this ).parent().addClass( 'current' );
+										$( this ).trigger( 'blur' );
+										if ( 'init' in options && typeof options.init === 'function' ) {
+											options.init( context );
+										}
+										event.preventDefault();
+										return false;
 									}
-									event.preventDefault();
-									return false;
 								} )
 								.text( $.wikiEditor.autoMsg( options, 'title' ) )
 							)
@@ -435,11 +446,9 @@
 				 * Save text selection
 				 */
 				saveSelection: function () {
+					context.$focusedElem = $( ':focus' );
 					context.$textarea.trigger( 'focus' );
-					context.savedSelection = {
-						selectionStart: context.$textarea[ 0 ].selectionStart,
-						selectionEnd: context.$textarea[ 0 ].selectionEnd
-					};
+					context.savedSelection = context.$textarea.textSelection( 'getCaretPosition', { startAndEnd: true } );
 				},
 
 				/**
@@ -448,8 +457,11 @@
 				restoreSelection: function () {
 					if ( context.savedSelection ) {
 						context.$textarea.trigger( 'focus' );
-						context.$textarea[ 0 ].setSelectionRange( context.savedSelection.selectionStart, context.savedSelection.selectionEnd );
+						context.$textarea.textSelection( 'setSelection', { start: context.savedSelection[ 0 ], end: context.savedSelection[ 1 ] } );
 						context.savedSelection = null;
+					}
+					if ( context.$focusedElem ) {
+						context.$focusedElem.trigger( 'focus' );
 					}
 				}
 			};

@@ -1,12 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
+			"Kghbln",
 			"Metalhead64",
 			"Raimond Spekking",
 			"Umherirrender"
 		]
 	},
-	"fancycaptcha-desc": "Fancy-CAPTCHA-Generator für die Erweiterung „Confirm Edit“",
+	"fancycaptcha-desc": "Ergänzt die Erweiterung „ConfirmEdit“ um ein Fancy-CAPTCHA-Modul",
 	"fancycaptcha-addurl": "Deine Bearbeitung enthält neue externe Links.\nZum Schutz des Wikis vor automatisiertem Spamming bitten wir dich, das folgende Wort in das Feld unten einzugeben. Klicke dann erneut auf „Seite speichern“ ([[Special:Captcha/help|Fragen oder Probleme?]]).",
 	"fancycaptcha-badlogin": "Zum Schutz des Wikis vor einer Kompromittierung deines Benutzerkontos bitten wir dich, das folgende Wort in das Feld unten einzugeben [[Special:Captcha/help|(Fragen oder Probleme?)]]:",
 	"fancycaptcha-captcha": "Sicherheitsprüfung",

@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"DeRudySoulStorm",
-			"Railfail536",
-			"Rail"
+			"Rail",
+			"Railfail536"
 		]
 	},
 	"textextracts-desc": "Wprowadza wyodrębnianie czystego tekstu, lub pewnych elementów HTML z zawartości strony"

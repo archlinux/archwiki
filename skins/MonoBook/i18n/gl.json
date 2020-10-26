@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Toliño",
-			"Xosé",
 			"Banjo",
-			"Elisardojm"
+			"Elisardojm",
+			"Toliño",
+			"Xosé"
 		]
 	},
 	"skinname-monobook": "MonoBook",

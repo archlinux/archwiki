@@ -50,7 +50,7 @@ class UpdateLexerList extends Maintenance {
 			->execute();
 
 		if ( $result->getExitCode() != 0 ) {
-			throw new \RuntimeException( $result->getStderr() );
+			$this->fatalError( 'Non-zero exit code: ' . $result->getStderr() );
 		}
 
 		$output = $result->getStdout();

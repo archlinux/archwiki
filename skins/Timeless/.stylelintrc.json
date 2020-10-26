@@ -1,0 +1,9 @@
+{
+	"extends": "stylelint-config-wikimedia",
+	"rules": {
+		"no-duplicate-selectors": null,
+		"selector-max-id": null,
+		"declaration-no-important": null,
+		"no-descending-specificity": null
+	}
+}

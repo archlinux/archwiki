@@ -12,9 +12,8 @@ module.exports = function ( grunt ) {
 		banana: conf.MessagesDirs,
 		eslint: {
 			options: {
-				reportUnusedDisableDirectives: true,
-				extensions: [ '.js', '.json' ],
-				cache: true
+				cache: true,
+				fix: grunt.option( 'fix' )
 			},
 			all: [
 				'**/*.{js,json}',
@@ -23,7 +22,7 @@ module.exports = function ( grunt ) {
 		},
 		stylelint: {
 			options: {
-				syntax: 'less'
+				fix: grunt.option( 'fix' )
 			},
 			src: 'resources/mmv/**/*.{css,less}'
 		},
@@ -65,6 +64,10 @@ module.exports = function ( grunt ) {
 		}
 	} );
 
-	grunt.registerTask( 'test', [ 'eslint', 'stylelint', 'svgmin', 'banana' ] );
-	grunt.registerTask( 'default', 'test' );
+	grunt.registerTask( 'lint', [ 'eslint', 'stylelint', 'banana' ] );
+	grunt.registerTask( 'minify', 'svgmin' );
+
+	grunt.registerTask( 'test', 'lint' );
+	grunt.registerTask( 'build', 'minify' );
+	grunt.registerTask( 'default', [ 'test', 'build' ] );
 };

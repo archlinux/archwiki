@@ -1,16 +1,17 @@
 {
 	"@metadata": {
 		"authors": [
+			"01miki10",
 			"Cimon Avaro",
 			"Crt",
+			"Jack Phoenix",
 			"Linnea",
 			"Nike",
 			"Olli",
 			"Pxos",
-			"01miki10",
-			"Zoranzoki21",
+			"Pyscowicz",
 			"Valtlait",
-			"Pyscowicz"
+			"Zoranzoki21"
 		]
 	},
 	"spam-blacklist": "  #<!-- leave this line exactly as it is --> <pre>\n # Tämän listan säännöillä voi estää ulkopuolisiin sivustoihin viittaavien osoitteiden lisäämisen.\n # Tämä lista koskee vain tätä wikiä. Tutustu myös järjestelmänlaajuiseen mustaan listaan.\n # Lisätietoja on osoitteessa https://www.mediawiki.org/wiki/Extension:SpamBlacklist\n #<!-- Älä koske tähän riviin lainkaan --> <pre>\n#\n# Syntaksi on seuraavanlainen:\n#   * Kaikki #-merkistä lähtien rivin loppuun asti on kommenttia.\n#   * Jokainen ei-tyhjä rivi on säännöllisen lausekkeen osa, joka tunnistaa vain osoitteissa olevat verkkotunnukset.\n\n #</pre> <!-- Älä koske tähän riviin lainkaan -->",
@@ -21,7 +22,7 @@
 	"spam-blacklisted-email-text": "Sähköpostisi on tällä hetkellä mustalla listalla, etkä voi lähettää sähköpostia muille käyttäjille.",
 	"spam-blacklisted-email-signup": "Annettu sähköpostiosoite on tällä hetkellä mustalla listalla.",
 	"spam-invalid-lines": "Listalla on {{PLURAL:$1|seuraava virheellinen säännöllinen lauseke, joka|seuraavat virheelliset säännölliset lausekkeet, jotka}} on korjattava ennen tallentamista:",
-	"spam-blacklist-desc": "Säännöllisiä lausekkeita (reg-ex) tukeva roskalinkkejä torjuva työkalu, jonka avulla internet-osoitteita (URL) sivuilla ja sähköpostiosoitteissa voidaan asettaa mustalle listalle. Tarkoitettu kirjautuneille käyttäjille.",
+	"spam-blacklist-desc": "Säännöllisiä lausekkeita (reg-ex) tukeva roskalinkkejä torjuva työkalu, jonka avulla internet-osoitteita (URL) sivuilla ja rekisteröityneiden käyttäjien sähköpostiosoitteissa voidaan asettaa mustalle listalle",
 	"log-name-spamblacklist": "Roskalinkkien torjuntalistan loki",
 	"log-description-spamblacklist": "Nämä tapahtumat ovat osumia roskalinkkien torjuntalistalla.",
 	"logentry-spamblacklist-hit": "$1 sai aikaan osuman roskalinkkien torjuntalistalla kohteessa $3 yrittäessään lisätä $4",

@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Auth\AuthManager;
+use MediaWiki\MediaWikiServices;
 
 /**
  * @group Database
@@ -12,7 +13,7 @@ class TitleBlacklistPreAuthenticationProviderTest extends MediaWikiTestCase {
 	 */
 	public function testGetAuthenticationRequests( $action, $username, $expectedReqs ) {
 		$provider = new TitleBlacklistPreAuthenticationProvider();
-		$provider->setManager( AuthManager::singleton() );
+		$provider->setManager( MediaWikiServices::getInstance()->getAuthManager() );
 		$reqs = $provider->getAuthenticationRequests( $action, [ 'username' => $username ] );
 		$this->assertEquals( $expectedReqs, $reqs );
 	}

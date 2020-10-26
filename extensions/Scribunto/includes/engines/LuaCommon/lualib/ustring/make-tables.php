@@ -127,6 +127,7 @@ foreach ( $pats as $k => $pp ) {
 			$check[] = sprintf( "pats[0x%02x][k]", ord( $p ) );
 		}
 	}
+	// @phan-suppress-next-line PhanImpossibleConditionInGlobalScope
 	if ( $ranges[$k] ) {
 		$body = "\tlocal c = tonumber( k ) or 0/0;\n";
 		$check = array_merge( $check, $ranges[$k] );

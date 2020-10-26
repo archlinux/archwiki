@@ -1,12 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
+			"Andrei Stroe",
 			"Firilacroco",
+			"ImGelu",
 			"Mihai",
 			"Minisarm",
-			"ImGelu",
-			"Strainu",
-			"Andrei Stroe"
+			"Strainu"
 		]
 	},
 	"fancycaptcha-addurl": "Modificarea dumneavoastră include legături externe noi.\nPentru a împiedica roboții de spam, vă rugăm să introduceți cuvintele care apar în căsuță ([[Special:Captcha/help|mai multe detalii]]):",

@@ -2,27 +2,26 @@
 
 namespace TextExtracts;
 
-use MediaWiki\Tidy\TidyDriverBase;
+use MWTidy;
 
 /**
  * This class needs to understand HTML as well as plain text. It tries to not break HTML tags, but
- * might break pairs of tags, leaving unclosed tags behind. A Tidy instance must be provided to fix
+ * might break pairs of tags, leaving unclosed tags behind. We can tidy the output to fix
  * this.
  *
  * @license GPL-2.0-or-later
  */
 class TextTruncator {
+	/**
+	 * @var bool Whether to tidy the output
+	 */
+	private $useTidy;
 
 	/**
-	 * @var TidyDriverBase|null
+	 * @param bool $useTidy
 	 */
-	private $tidyDriver;
-
-	/**
-	 * @param TidyDriverBase|null $tidy
-	 */
-	public function __construct( TidyDriverBase $tidy = null ) {
-		$this->tidyDriver = $tidy;
+	public function __construct( bool $useTidy ) {
+		$this->useTidy = $useTidy;
 	}
 
 	/**
@@ -99,9 +98,8 @@ class TextTruncator {
 	 * @return string
 	 */
 	private function tidy( $text ) {
-		if ( $this->tidyDriver ) {
-			// Fix possibly unclosed HTML tags.
-			$text = $this->tidyDriver->tidy( $text );
+		if ( $this->useTidy ) {
+			$text = MWTidy::tidy( $text );
 		}
 
 		return trim( $text );

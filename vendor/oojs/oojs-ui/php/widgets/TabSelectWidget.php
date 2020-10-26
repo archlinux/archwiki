@@ -11,7 +11,6 @@ class TabSelectWidget extends SelectWidget {
 	/**
 	 * @param array $config Configuration options
 	 *      - bool $config['framed'] Use framed tabs (default: true)
-	 * @param-taint $config escapes_html
 	 */
 	public function __construct( array $config = [] ) {
 		parent::__construct( $config );

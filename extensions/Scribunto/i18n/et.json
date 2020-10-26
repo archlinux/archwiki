@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Avjoska",
-			"Pikne",
-			"Cumbril"
+			"Cumbril",
+			"Pikne"
 		]
 	},
 	"scribunto-desc": "Raamistik, mis võimaldab põimida MediaWiki lehekülgedesse skriptikeeli.",

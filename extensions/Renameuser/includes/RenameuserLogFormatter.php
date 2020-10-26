@@ -5,6 +5,9 @@
  */
 class RenameuserLogFormatter extends LogFormatter {
 
+	/**
+	 * @inheritDoc
+	 */
 	protected function getMessageParameters() {
 		$params = parent::getMessageParameters();
 		/* Current format:
@@ -50,9 +53,8 @@ class RenameuserLogFormatter extends LogFormatter {
 	 * @param string $text
 	 * @param array $query
 	 * @return string
-	 * @suppress PhanParamReqAfterOpt
 	 */
-	protected function myPageLink( Title $title = null, $text, $query = [] ) {
+	protected function myPageLink( ?Title $title, $text, $query = [] ) {
 		if ( !$this->plaintext ) {
 			if ( !$title instanceof Title ) {
 				$link = htmlspecialchars( $text );

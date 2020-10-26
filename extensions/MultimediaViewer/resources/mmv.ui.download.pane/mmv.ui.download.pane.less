@@ -1,5 +1,6 @@
-@import 'mediawiki.ui/variables';
-@import '../mmv/mmv.mixins';
+@import 'mediawiki.ui/variables.less';
+@import '../mmv/mmv.variables.less';
+@import '../mmv/mmv.mixins.less';
 
 @pane-padding: 10px;
 @attribution-color: #f8f9fa;
@@ -114,7 +115,7 @@
 
 		&:hover {
 			background-color: @attribution-color-highlighted;
-			color: #222;
+			color: @color-base;
 		}
 
 		&-how {

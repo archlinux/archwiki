@@ -20,6 +20,11 @@ $magicWords['arz'] = [
 	'invoke' => [ 0, 'استدعا' ],
 ];
 
+/** Balinese (Basa Bali) */
+$magicWords['ban'] = [
+	'invoke' => [ 0, 'nunas' ],
+];
+
 /** Breton (Brezhoneg) */
 $magicWords['br'] = [
 	'invoke' => [ 0, 'galv' ],
@@ -88,6 +93,21 @@ $magicWords['mk'] = [
 /** Malayalam (മലയാളം) */
 $magicWords['ml'] = [
 	'invoke' => [ 0, 'ഉണർത്തുക' ],
+];
+
+/** Mon (ဘာသာ မန် ) */
+$magicWords['mnw'] = [
+	'invoke' => [ 0, 'စၞောန်ထ္ၜး' ],
+];
+
+/** Burmese (မြန်မာဘာသာ) */
+$magicWords['my'] = [
+	'invoke' => [ 0, 'ဖော်ပြ' ],
+];
+
+/** Norwegian Bokmål (Norsk bokmål) */
+$magicWords['nb'] = [
+	'invoke' => [ 0, 'kjør' ],
 ];
 
 /** Dutch (Nederlands) */

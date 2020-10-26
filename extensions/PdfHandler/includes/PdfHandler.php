@@ -196,6 +196,7 @@ class PdfHandler extends ImageHandler {
 			$wgPdfProcessor,
 			"-sDEVICE=jpeg",
 			"-sOutputFile=-",
+			"-sstdout=%stderr",
 			"-dFirstPage={$page}",
 			"-dLastPage={$page}",
 			"-dSAFER",

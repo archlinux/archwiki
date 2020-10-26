@@ -1,6 +1,6 @@
 <?php
 
-use \MediaWiki\MediaWikiServices;
+use MediaWiki\MediaWikiServices;
 use Wikimedia\Rdbms\Database;
 
 class SpamBlacklist extends BaseBlacklist {
@@ -31,7 +31,7 @@ class SpamBlacklist extends BaseBlacklist {
 
 	/**
 	 * @param string[] $links An array of links to check against the blacklist
-	 * @param Title|null $title The title of the page to which the filter shall be applied.
+	 * @param ?Title $title The title of the page to which the filter shall be applied.
 	 *               This is used to load the old links already on the page, so
 	 *               the filter is only applied to links that got added. If not given,
 	 *               the filter is applied to all $links.
@@ -39,15 +39,27 @@ class SpamBlacklist extends BaseBlacklist {
 	 *               the action is testing the links rather than attempting to save them
 	 *               (e.g. the API spamblacklist action)
 	 * @param string $mode Either 'check' or 'stash'
+	 * @param User|null $user Relevant user, only optional for backwards compatibility
 	 *
 	 * @return string[]|bool Matched text(s) if the edit should not be allowed; false otherwise
 	 */
-	public function filter( array $links, Title $title = null, $preventLog = false, $mode = 'check' ) {
+	public function filter(
+		array $links,
+		?Title $title,
+		$preventLog = false,
+		$mode = 'check',
+		User $user = null
+	) {
 		$statsd = MediaWikiServices::getInstance()->getStatsdDataFactory();
 		$cache = ObjectCache::getLocalClusterInstance();
 
 		if ( !$links ) {
 			return false;
+		}
+
+		if ( $user === null ) {
+			wfDebugLog( 'SpamBlacklist', 'filter called without user specified' );
+			$user = RequestContext::getMain()->getUser();
 		}
 
 		sort( $links );
@@ -122,15 +134,14 @@ class SpamBlacklist extends BaseBlacklist {
 				Wikimedia\restoreWarnings();
 				if ( $check ) {
 					wfDebugLog( 'SpamBlacklist', "Match!\n" );
-					global $wgRequest;
-					$ip = $wgRequest->getIP();
+					$ip = RequestContext::getMain()->getRequest()->getIP();
 					$fullUrls = [];
 					$fullLineRegex = substr( $regex, 0, strrpos( $regex, '/' ) ) . '.*/Sim';
 					preg_match_all( $fullLineRegex, $links, $fullUrls );
 					$imploded = implode( ' ', $fullUrls[0] );
 					wfDebugLog( 'SpamBlacklistHit', "$ip caught submitting spam: $imploded\n" );
-					if ( !$preventLog ) {
-						$this->logFilterHit( $title, $imploded ); // Log it
+					if ( !$preventLog && $title ) {
+						$this->logFilterHit( $user, $title, $imploded ); // Log it
 					}
 					if ( $retVal === false ) {
 						$retVal = [];
@@ -212,14 +223,15 @@ class SpamBlacklist extends BaseBlacklist {
 	 * Logs the filter hit to Special:Log if
 	 * $wgLogSpamBlacklistHits is enabled.
 	 *
+	 * @param User $user
 	 * @param Title $title
 	 * @param string $url URL that the user attempted to add
 	 */
-	public function logFilterHit( $title, $url ) {
-		global $wgUser, $wgLogSpamBlacklistHits;
+	public function logFilterHit( User $user, $title, $url ) {
+		global $wgLogSpamBlacklistHits;
 		if ( $wgLogSpamBlacklistHits ) {
 			$logEntry = new ManualLogEntry( 'spamblacklist', 'hit' );
-			$logEntry->setPerformer( $wgUser );
+			$logEntry->setPerformer( $user );
 			$logEntry->setTarget( $title );
 			$logEntry->setParameters( [
 				'4::url' => $url,

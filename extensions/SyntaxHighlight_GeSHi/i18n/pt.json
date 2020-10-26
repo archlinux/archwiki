@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Hamilton Abreu",
+			"He7d3r",
 			"Malafaya",
-			"Vitorvicentevalente",
-			"He7d3r"
+			"Vitorvicentevalente"
 		]
 	},
 	"syntaxhighlight-desc": "Permite o realce sintático de código-fonte, através do elemento <code>&lt;syntaxhighlight&gt;</code>, usando o [http://pygments.org/ realçador de sintaxe Pygments - Python]",

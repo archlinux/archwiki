@@ -46,7 +46,8 @@ class Info {
 	 * each containing an array of tags
 	 * each tag is an array of information about the
 	 * tag, including:
-	 *   * map_group - What group (used for precedence during conflicts).
+	 *   * map_group - What group (used for precedence during conflicts in
+	 *     accordance with http://www.metadataworkinggroup.org/pdf/mwg_guidance.pdf )
 	 *   * mode - What type of item (self::MODE_SIMPLE usually, see above for
 	 *     all values).
 	 *   * validate - Method to validate input. Could also post-process the
@@ -577,7 +578,7 @@ class Info {
 				'map_group' => 'exif',
 				'mode' => Reader::MODE_SIMPLE,
 			],
-			/**** Do not extract this property
+			/** Do not extract this property
 			 * It interferes with auto exif rotation.
 			 * 'Orientation'       => array(
 			 *    'map_group' => 'exif',
@@ -585,8 +586,8 @@ class Info {
 			 *    'validate'  => 'validateClosed',
 			 *    'choices'   => array( '1' => true, '2' => true, '3' => true, '4' => true, 5 => true,
 			 *            '6' => true, '7' => true, '8' => true ),
-			 *),
-			 ******/
+			 * ),
+			 */
 			'PhotometricInterpretation' => [
 				'map_group' => 'exif',
 				'mode' => Reader::MODE_SIMPLE,
@@ -651,7 +652,7 @@ class Info {
 				'validate' => 'validateClosed',
 				'choices' => [ '1' => true, '2' => true ],
 			],
-			/********
+			/**
 			 * Disable extracting this property (T33944)
 			 * Several files have a string instead of a Seq
 			 * for this property. Reader doesn't handle
@@ -1154,6 +1155,137 @@ class Info {
 			 * RegistryId
 			 */
 		],
+		'http://ns.google.com/photos/1.0/panorama/' => [
+			// https://developers.google.com/streetview/spherical-metadata
+			'UsePanoramaViewer' => [
+				'map_group' => 'general',
+				'mode' => Reader::MODE_SIMPLE,
+				'validate' => 'validateBoolean',
+			],
+			'CaptureSoftware' => [
+				'map_group' => 'general',
+				'mode' => Reader::MODE_SIMPLE,
+			],
+			'StitchingSoftware' => [
+				'map_group' => 'general',
+				'mode' => Reader::MODE_SIMPLE,
+			],
+			'ProjectionType' => [
+				'map_group' => 'general',
+				'mode' => Reader::MODE_SIMPLE,
+				'validate' => 'validateClosed',
+				'choices' => [
+					'equirectangular' => true,
+				]
+			],
+			'PoseHeadingDegrees' => [
+				'map_group' => 'general',
+				'mode' => Reader::MODE_SIMPLE,
+				'validate' => 'validateReal',
+				'rangeLow' => 0,
+				'rangeHigh' => 360,
+			],
+			'PosePitchDegrees' => [
+				'map_group' => 'general',
+				'mode' => Reader::MODE_SIMPLE,
+				'validate' => 'validateReal',
+				'rangeLow' => -90,
+				'rangeHigh' => 90,
+			],
+			'PoseRollDegrees' => [
+				'map_group' => 'general',
+				'mode' => Reader::MODE_SIMPLE,
+				'validate' => 'validateReal',
+				'rangeLow' => -180,
+				'rangeHigh' => 180,
+			],
+			'InitialViewHeadingDegrees' => [
+				'map_group' => 'general',
+				'mode' => Reader::MODE_SIMPLE,
+				'validate' => 'validateInteger',
+			],
+			'InitialViewRollDegrees' => [
+				'map_group' => 'general',
+				'mode' => Reader::MODE_SIMPLE,
+				'validate' => 'validateInteger',
+			],
+			'InitialViewRollDegrees' => [
+				'map_group' => 'general',
+				'mode' => Reader::MODE_SIMPLE,
+				'validate' => 'validateInteger',
+			],
+			'InitialHorizontalFOVDegrees' => [
+				'map_group' => 'general',
+				'mode' => Reader::MODE_SIMPLE,
+				'validate' => 'validateReal',
+				'rangeLow' => 0,
+				'rangeHigh' => 360,
+			],
+			'InitialVerticalFOVDegrees' => [
+				'map_group' => 'general',
+				'mode' => Reader::MODE_SIMPLE,
+				'validate' => 'validateReal',
+				'rangeLow' => 0,
+				'rangeHigh' => 360,
+			],
+			'FirstPhotoDate' => [
+				'map_group' => 'general',
+				'mode' => Reader::MODE_SIMPLE,
+				'validate' => 'validateDate',
+			],
+			'LastPhotoDate' => [
+				'map_group' => 'general',
+				'mode' => Reader::MODE_SIMPLE,
+				'validate' => 'validateDate',
+			],
+			'SourcePhotosCount' => [
+				'map_group' => 'general',
+				'mode' => Reader::MODE_SIMPLE,
+				'validate' => 'validateInteger',
+			],
+			'ExposureLockUsed' => [
+				'map_group' => 'general',
+				'mode' => Reader::MODE_SIMPLE,
+				'validate' => 'validateBoolean',
+			],
+			'CroppedAreaImageWidthPixels' => [
+				'map_group' => 'general',
+				'mode' => Reader::MODE_SIMPLE,
+				'validate' => 'validateInteger',
+			],
+			'CroppedAreaImageHeightPixels' => [
+				'map_group' => 'general',
+				'mode' => Reader::MODE_SIMPLE,
+				'validate' => 'validateInteger',
+			],
+			'FullPanoWidthPixels' => [
+				'map_group' => 'general',
+				'mode' => Reader::MODE_SIMPLE,
+				'validate' => 'validateInteger',
+			],
+			'FullPanoHeightPixels' => [
+				'map_group' => 'general',
+				'mode' => Reader::MODE_SIMPLE,
+				'validate' => 'validateInteger',
+			],
+			'CroppedAreaLeftPixels' => [
+				'map_group' => 'general',
+				'mode' => Reader::MODE_SIMPLE,
+				'validate' => 'validateInteger',
+			],
+			'CroppedAreaTopPixels' => [
+				'map_group' => 'general',
+				'mode' => Reader::MODE_SIMPLE,
+				'validate' => 'validateInteger',
+			],
+			'InitialCameraDolly' => [
+				'map_group' => 'general',
+				'mode' => Reader::MODE_SIMPLE,
+				'validate' => 'validateReal',
+				'rangeLow' => -1,
+				'rangeHigh' => 1,
+			],
+		]
 
 		/* Plus props we might want to consider:
 		 * (Note: some of these have unclear/incomplete definitions

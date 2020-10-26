@@ -2,9 +2,9 @@
 
 class Scribunto_LuaTextLibrary extends Scribunto_LuaLibraryBase {
 	// Matches Lua mw.text constants
-	const JSON_PRESERVE_KEYS = 1;
-	const JSON_TRY_FIXING = 2;
-	const JSON_PRETTY = 4;
+	private const JSON_PRESERVE_KEYS = 1;
+	private const JSON_TRY_FIXING = 2;
+	private const JSON_PRETTY = 4;
 
 	public function register() {
 		global $wgUrlProtocols;

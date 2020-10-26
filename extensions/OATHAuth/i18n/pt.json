@@ -1,10 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Vitorvicentevalente",
-			"Hamilton Abreu",
 			"Athena in Wonderland",
-			"Fitoschido"
+			"Fitoschido",
+			"Hamilton Abreu",
+			"Mansil",
+			"Vitorvicentevalente"
 		]
 	},
 	"oathauth-desc": "Fornece suporte à autenticação usando palavras-passe de uso único baseadas em códigos HMAC",
@@ -35,7 +36,7 @@
 	"action-oathauth-view-log": "aceder ao registo de alterações da autenticação de dois fatores",
 	"oathauth-disable-intro": "Grandes poderes acarretam grandes responsabilidades",
 	"oathauth-enteruser": "Nome de utilizador:",
-	"oathauth-enterreason": "Motivo para desativar:",
+	"oathauth-enterdisablereason": "Motivo para desativar:",
 	"oathauth-user-not-does-not-have-oath-enabled": "O utilizador não tem a autenticação de dois fatores ativada, por isso não há nada para desativar",
 	"right-oathauth-enable": "Ativar autenticação de dois fatores",
 	"action-oathauth-enable": "ativar autenticação de dois fatores",
@@ -65,5 +66,6 @@
 	"oathauth-disable-page-title": "Desativar $1",
 	"oathauth-enable-page-title": "Ativar $1",
 	"oathauth-action-exclusive-to-2fa": "Esta operação só pode ser executada por utilizadores que têm a autenticação de dois fatores ativada.",
-	"oathauth-ui-available-modules": "Métodos disponíveis"
+	"oathauth-ui-available-modules": "Métodos disponíveis",
+	"oathauth-disable-method-warning-button-label": "Confirmar e continuar"
 }

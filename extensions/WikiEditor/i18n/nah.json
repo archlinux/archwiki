@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ricardo gs",
-			"Teòtlalili",
+			"Akapochtli",
 			"Macofe",
+			"Ricardo gs",
 			"Taresi",
-			"Akapochtli"
+			"Teòtlalili"
 		]
 	},
 	"wikieditor": "Wel senka yankuik netzòwilìxtlâtli in tlenìk moyêyèktlàlia in wikitlâkuilòlmantli",
@@ -48,6 +48,7 @@
 	"wikieditor-toolbar-tool-link-empty": "Âmò tikîkuilôtika in tlèn kàmpa tlatzòwilòs.",
 	"wikieditor-toolbar-tool-file": "Tlatlatzèkòltìlèwálli",
 	"wikieditor-toolbar-tool-file-example": "Neixcuitilli.jpg",
+	"wikieditor-toolbar-file-target": "Tlahcuiloltocaitl",
 	"wikieditor-toolbar-tool-file-cancel": "Moxitiniz",
 	"wikieditor-toolbar-tool-reference": "Ànálòtl",
 	"wikieditor-toolbar-tool-reference-example": "Mà motlàli nikàn in tlakxỉpanáwatilòtl",

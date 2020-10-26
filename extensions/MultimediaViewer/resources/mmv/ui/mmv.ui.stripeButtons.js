@@ -37,6 +37,7 @@
 
 		/**
 		 * This holds the actual buttons.
+		 *
 		 * @property {Object.<string, jQuery>}
 		 */
 		this.buttons = {};
@@ -56,6 +57,7 @@
 	SBP.createButton = function ( cssClass ) {
 		var $button;
 
+		// eslint-disable-next-line mediawiki/class-doc
 		$button = $( '<a>' )
 			.addClass( 'mw-mmv-stripe-button empty ' + cssClass )
 			// elements are right-floated so we use prepend instead of append to keep the order

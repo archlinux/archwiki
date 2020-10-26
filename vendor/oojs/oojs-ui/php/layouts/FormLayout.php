@@ -18,7 +18,6 @@ class FormLayout extends Layout {
 	 *      - string $config['action'] HTML form `action` attribute
 	 *      - string $config['enctype'] HTML form `enctype` attribute
 	 *      - FieldsetLayout[] $config['items'] Items to add
-	 * @param-taint $config escapes_htmlnoent
 	 */
 	public function __construct( array $config = [] ) {
 		// Parent constructor

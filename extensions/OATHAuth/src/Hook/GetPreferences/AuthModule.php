@@ -4,10 +4,11 @@ namespace MediaWiki\Extension\OATHAuth\Hook\GetPreferences;
 
 use MediaWiki\Extension\OATHAuth\OATHUserRepository;
 use MediaWiki\MediaWikiServices;
+use OOUI\ButtonWidget;
 use OOUI\HorizontalLayout;
 use OOUI\LabelWidget;
-use OOUI\ButtonWidget;
 use SpecialPage;
+use User;
 
 class AuthModule {
 	/**
@@ -24,7 +25,7 @@ class AuthModule {
 	protected $preferences;
 
 	/**
-	 * @param \User $user
+	 * @param User $user
 	 * @param array &$preferences
 	 * @return bool
 	 */
@@ -34,6 +35,11 @@ class AuthModule {
 		return $handler->execute();
 	}
 
+	/**
+	 * @param OATHUserRepository $userRepo
+	 * @param User $user
+	 * @param array &$preferences
+	 */
 	protected function __construct( $userRepo, $user, &$preferences ) {
 		$this->userRepo = $userRepo;
 		$this->user = $user;

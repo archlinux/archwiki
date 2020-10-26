@@ -6,10 +6,10 @@
 	"license-name": "WTFPL",
 	"type": "api",
 	"requires": {
-		"MediaWiki": ">= 1.29.0"
+		"MediaWiki": ">= 1.35.0"
 	},
 	"APIPropModules": {
-		"pageimages": "ApiQueryPageImages"
+		"pageimages": "PageImages\\ApiQueryPageImages"
 	},
 	"MessagesDirs": {
 		"PageImages": [
@@ -17,29 +17,28 @@
 			"i18n/api"
 		]
 	},
-	"AutoloadClasses": {
-		"ApiQueryPageImages": "includes/ApiQueryPageImages.php",
-		"PageImages": "includes/PageImages.php",
-		"PageImages\\Hooks\\LinksUpdateHookHandler": "includes/LinksUpdateHookHandler.php",
-		"PageImages\\Hooks\\ParserFileProcessingHookHandlers": "includes/ParserFileProcessingHookHandlers.php",
-		"PageImages\\Job\\InitImageDataJob": "includes/Job/InitImageDataJob.php"
+	"AutoloadNamespaces": {
+		"PageImages\\": "includes/"
+	},
+	"TestAutoloadNamespaces": {
+		"PageImages\\Tests\\": "tests/phpunit/"
 	},
 	"Hooks": {
 		"AfterParserFetchFileAndTitle": "PageImages\\Hooks\\ParserFileProcessingHookHandlers::onAfterParserFetchFileAndTitle",
-		"ApiOpenSearchSuggest": "PageImages::onApiOpenSearchSuggest",
-		"BeforePageDisplay": "PageImages::onBeforePageDisplay",
-		"InfoAction": "PageImages::onInfoAction",
+		"ApiOpenSearchSuggest": "PageImages\\PageImages::onApiOpenSearchSuggest",
+		"BeforePageDisplay": "PageImages\\PageImages::onBeforePageDisplay",
+		"InfoAction": "PageImages\\PageImages::onInfoAction",
+		"SearchResultProvideThumbnail": "PageImages\\Hooks\\SearchResultProvideThumbnailHookHandler::onSearchResultProvideThumbnail",
 		"LinksUpdate": "PageImages\\Hooks\\LinksUpdateHookHandler::onLinksUpdate",
-		"OpenSearchXml": "PageImages::onApiOpenSearchSuggest",
 		"ParserMakeImageParams": "PageImages\\Hooks\\ParserFileProcessingHookHandlers::onParserMakeImageParams",
-		"SpecialMobileEditWatchlist::images": "PageImages::onSpecialMobileEditWatchlistImages"
+		"SpecialMobileEditWatchlist::images": "PageImages\\PageImages::onSpecialMobileEditWatchlistImages"
 	},
 	"JobClasses": {
 		"InitImageDataJob": "PageImages\\Job\\InitImageDataJob"
 	},
 	"config": {
 		"PageImagesScores": {
-			"@doc": "Images <120px are usually from maintenace or stub templates; >600px are panoramas, less suitable.",
+			"description": "Images <120px are usually from maintenace or stub templates; >600px are panoramas, less suitable.",
 			"value": {
 				"position": [
 					8,
@@ -87,12 +86,14 @@
 			]
 		},
 		"PageImagesLeadSectionOnly": {
-			"@doc": "Temporary feature flag - Whether page images should be restricted to those in section id 0.",
-			"@fixme": "Please remove a month after it has defaulted to true on the cluster (T152115)",
+			"description": [
+				"Temporary feature flag - Whether page images should be restricted to those in section id 0.",
+				"FIXME: Please remove a month after it has defaulted to true on the cluster (T152115)"
+			],
 			"value": true
 		},
 		"PageImagesAPIDefaultLicense": {
-			"@doc": "Get images with either a 'free' license or 'any' (including free and non-free) license by default, via 'pilicense' option, in pageprops query api. The value of this setting should be either 'free' or 'any'.",
+			"description": "Get images with either a 'free' license or 'any' (including free and non-free) license by default, via 'pilicense' option, in pageprops query api. The value of this setting should be either 'free' or 'any'.",
 			"value": "free"
 		}
 	},

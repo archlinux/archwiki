@@ -1,0 +1,19 @@
+{
+	"root": true,
+	"extends": [
+		"wikimedia/client",
+		"wikimedia/jquery",
+		"wikimedia/mediawiki"
+	],
+	"env": {
+		"commonjs": true
+	},
+	"globals": {
+		"OO": "readonly"
+	},
+	"rules": {
+		"max-len": "off",
+		"no-jquery/no-global-selector": "off",
+		"mediawiki/class-doc": "warn"
+	}
+}

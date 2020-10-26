@@ -1,5 +1,11 @@
 <?php
 
+namespace LocalisationUpdate;
+
+use FileDependency;
+use FormatJson;
+use LocalisationCache;
+
 /**
  * Class for localization update hooks and static methods.
  */

@@ -48,19 +48,19 @@ class CategoryTreeHooks {
 		global $wgCategoryTreeOmitNamespace;
 
 		if ( !isset( $wgCategoryTreeDefaultOptions['mode'] )
-			|| is_null( $wgCategoryTreeDefaultOptions['mode'] )
+			|| $wgCategoryTreeDefaultOptions['mode'] === null
 		) {
 			$wgCategoryTreeDefaultOptions['mode'] = $wgCategoryTreeDefaultMode;
 		}
 
 		if ( !isset( $wgCategoryTreeDefaultOptions['hideprefix'] )
-			|| is_null( $wgCategoryTreeDefaultOptions['hideprefix'] )
+			|| $wgCategoryTreeDefaultOptions['hideprefix'] === null
 		) {
 			$wgCategoryTreeDefaultOptions['hideprefix'] = $wgCategoryTreeOmitNamespace;
 		}
 
 		if ( !isset( $wgCategoryTreeCategoryPageOptions['mode'] )
-			|| is_null( $wgCategoryTreeCategoryPageOptions['mode'] )
+			|| $wgCategoryTreeCategoryPageOptions['mode'] === null
 		) {
 			$mode = $wgRequest->getVal( 'mode' );
 			$wgCategoryTreeCategoryPageOptions['mode'] = ( $mode )
@@ -266,6 +266,7 @@ class CategoryTreeHooks {
 	 * @suppress PhanUndeclaredProperty SpecialPage->categoryTreeCategories
 	 * @param SpecialPage $specialPage SpecialTrackingCategories object
 	 * @param array $trackingCategories [ 'msg' => Title, 'cats' => Title[] ]
+	 * @phan-param array<string,array{msg:Title,cats:Title[]}> $trackingCategories
 	 */
 	public static function onSpecialTrackingCategoriesPreprocess(
 		SpecialPage $specialPage, array $trackingCategories
