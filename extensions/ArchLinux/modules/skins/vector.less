@@ -15,6 +15,7 @@ div#mw-head {
 
 div#mw-panel {
   top: 65px;
+  margin-top: 1em;
 }
 
 #p-logo {
@@ -26,11 +27,11 @@ div#mw-panel {
 }
 
 /* fix vertical position of tabs */
-div.vectorTabs, div.vectorMenu {
+nav.vector-menu-tabs, nav.vector-menu {
   margin-top: -2 * @content-border-width;
 }
 
-div.vectorTabs {
+nav.vector-menu-tabs {
   padding-left: 0;
 
   /* remove background with color gradient */
@@ -52,8 +53,8 @@ div.vectorTabs {
     /* background of the selected tab should match the content */
     background-color: @content-background-color;
     /* remove background with the vertical separator */
-    span {
-        background: none;
+    a {
+        background: none !important;
     }
   }
 
