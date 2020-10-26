@@ -54,7 +54,7 @@ $wgStylePath        = "$wgScriptPath/skins";
 
 ## The relative URL path to the logo.
 ## Set to an empty string so no logo is loaded by default.
-$wgLogo             = "";
+$wgLogos = ["1x" => ""];
 
 ## For attaching licensing metadata to pages, and displaying an
 ## appropriate copyright notice / icon. GNU Free Documentation
