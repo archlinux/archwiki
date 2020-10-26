@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Chaduvari",
+			"Pavan santhosh.s",
 			"Ravichandra",
-			"Veeven",
-			"Pavan santhosh.s"
+			"Veeven"
 		]
 	},
 	"cite-desc": "ఉదహరింపులకు <code>&lt;ref[ name=id]&gt;</code>, <code>&lt;references/&gt;</code> టాగులను చేర్చుతుంది",
@@ -16,8 +16,8 @@
 	"cite_error_ref_no_input": "సరైన <code>&lt;ref&gt;</code> ట్యాగు కాదు; పేరు లేని ref లలో తప్పనిసరిగా విషయం ఉండాలి",
 	"cite_error_references_duplicate_key": "చెల్లని <code>&lt;ref&gt;</code> ట్యాగు; \"$1\" అనే పేరును విభిన్న కంటెంటుతో అనేక సార్లు నిర్వచించారు",
 	"cite_error_references_invalid_parameters": "<code>&lt;references&gt;</code> ట్యాగులో చెల్లని పరామితి ఉంది",
-	"cite_error_references_no_backlink_label": "మీ స్వంత బ్యాక్‌లింకు లేబుళ్ళు అయిపోయాయి. <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki> సందేశంలో మరిన్ని లేబుళ్ళను నిర్వచించుకోండి.",
-	"cite_error_no_link_label_group": "\"$1\"గుంపుకు కస్టమ్ లింకు లేబుళ్ళు అయిపోయాయి.\n<nowiki>[[MediaWiki:$2]]</nowiki> సందేశంలో ఇంకొన్నిటిని నిర్వచించండి.",
+	"cite_error_references_no_backlink_label": "మీ స్వంత బ్యాక్‌లింకు లేబుళ్ళు అయిపోయాయి. [[MediaWiki:Cite references link many format backlink labels]] సందేశంలో మరిన్ని లేబుళ్ళను నిర్వచించుకోండి.",
+	"cite_error_no_link_label_group": "\"$1\"గుంపుకు కస్టమ్ లింకు లేబుళ్ళు అయిపోయాయి. [[MediaWiki:$2]] సందేశంలో ఇంకొన్నిటిని నిర్వచించండి.",
 	"cite_error_references_no_text": "సరైన <code>&lt;ref&gt;</code> కాదు; <code>$1</code> అనే పేరుగల ref లకు పాఠ్యమేమీ ఇవ్వలేదు",
 	"cite_error_included_ref": "<code>&lt;ref&gt;</code> ట్యాగుకు, మూసే <code>&lt;/ref&gt;</code> లేదు.",
 	"cite_error_group_refs_without_references": "\"$1\" అనే గుంపుకు <code>&lt;ref&gt;</code> ట్యాగులున్నాయి, కానీ సంబంధిత <code>&lt;references group=\"$1\"/&gt;</code> ట్యాగేదీ కనబడలేదు. లేదా మూసే <code>&lt;/ref&gt;</code> లేదు",

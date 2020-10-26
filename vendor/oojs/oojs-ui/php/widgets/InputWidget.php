@@ -34,7 +34,6 @@ class InputWidget extends Widget {
 	 *      - string $config['value'] Input value (default: '')
 	 *      - string $config['dir'] The directionality of the input (ltr/rtl)
 	 *      - string $config['inputId'] The value of the input’s HTML `id` attribute.
-	 * @param-taint $config escapes_html
 	 */
 	public function __construct( array $config = [] ) {
 		// Parent constructor

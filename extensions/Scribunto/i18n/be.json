@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Mechanizatar",
 			"Wizardist",
-			"Чаховіч Уладзіслаў",
-			"Mechanizatar"
+			"Чаховіч Уладзіслаў"
 		]
 	},
 	"scribunto-desc": "Фрэймворк для выкарыстання скрыптавых моў на старонках MediaWiki",

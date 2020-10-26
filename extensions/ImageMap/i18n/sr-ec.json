@@ -1,12 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
+			"BadDog",
+			"Milicevic01",
 			"Millosh",
 			"Rancher",
 			"Sasa Stefanovic",
-			"Михајло Анђелковић",
-			"Milicevic01",
-			"BadDog"
+			"Михајло Анђелковић"
 		]
 	},
 	"imagemap_desc": "Омогућава мапе слика на клијентском рачунару на којима се може кликнути коришћењем ознаке <code>&lt;imagemap&gt;</code>",

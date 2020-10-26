@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Nullzero",
-			"Octahedron80",
-			"Horus",
 			"Aefgh39622",
-			"Ans"
+			"Ans",
+			"Horus",
+			"Nullzero",
+			"Octahedron80"
 		]
 	},
 	"scribunto-desc": "กรอบงานสำหรับฝังภาษาสคริปต์ลงในหน้าของมีเดียวิกิ",

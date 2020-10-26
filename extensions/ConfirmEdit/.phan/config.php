@@ -9,7 +9,6 @@ $cfg['directory_list'] = array_merge(
 		'MathCaptcha/',
 		'QuestyCaptcha/',
 		'ReCaptchaNoCaptcha/',
-		'ReCaptcha/',
 		'SimpleCaptcha/',
 		'../../extensions/Math',
 	]
@@ -18,7 +17,6 @@ $cfg['directory_list'] = array_merge(
 $cfg['exclude_analysis_directory_list'] = array_merge(
 	$cfg['exclude_analysis_directory_list'],
 	[
-		'ReCaptcha/includes/recaptchalib.php',
 		'../../extensions/Math',
 	]
 );

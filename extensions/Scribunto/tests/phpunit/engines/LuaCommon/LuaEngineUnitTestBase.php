@@ -11,7 +11,6 @@
  */
 abstract class Scribunto_LuaEngineUnitTestBase extends \PHPUnit\Framework\TestCase {
 	use MediaWikiCoversValidator;
-	use PHPUnit4And6Compat;
 	use Scribunto_LuaEngineTestHelper;
 
 	private static $staticEngineName = null;
@@ -35,7 +34,7 @@ abstract class Scribunto_LuaEngineUnitTestBase extends \PHPUnit\Framework\TestCa
 	 * Class to use for the data provider
 	 * @var string
 	 */
-	protected static $dataProviderClass = 'Scribunto_LuaDataProvider';
+	protected static $dataProviderClass = Scribunto_LuaDataProvider::class;
 
 	/**
 	 * Tests to skip. Associative array mapping test name to skip reason.
@@ -43,6 +42,12 @@ abstract class Scribunto_LuaEngineUnitTestBase extends \PHPUnit\Framework\TestCa
 	 */
 	protected $skipTests = [];
 
+	/**
+	 * @param string|null $name
+	 * @param array $data
+	 * @param string $dataName
+	 * @param string|null $engineName Engine to test with
+	 */
 	public function __construct(
 		$name = null, array $data = [], $dataName = '', $engineName = null
 	) {
@@ -53,11 +58,16 @@ abstract class Scribunto_LuaEngineUnitTestBase extends \PHPUnit\Framework\TestCa
 		parent::__construct( $name, $data, $dataName );
 	}
 
+	/**
+	 * Create a PHPUnit test suite to run the test against all engines
+	 * @param string $className Test class name
+	 * @return \PHPUnit\Framework\TestSuite
+	 */
 	public static function suite( $className ) {
 		return self::makeSuite( $className );
 	}
 
-	protected function tearDown() {
+	protected function tearDown() : void {
 		if ( $this->luaDataProvider ) {
 			$this->luaDataProvider->destroy();
 			$this->luaDataProvider = null;
@@ -69,7 +79,7 @@ abstract class Scribunto_LuaEngineUnitTestBase extends \PHPUnit\Framework\TestCa
 		parent::tearDown();
 	}
 
-	public function toString() {
+	public function toString(): string {
 		// When running tests written in Lua, return a nicer representation in
 		// the failure message.
 		if ( $this->luaTestName ) {
@@ -78,6 +88,10 @@ abstract class Scribunto_LuaEngineUnitTestBase extends \PHPUnit\Framework\TestCa
 		return $this->engineName . ': ' . parent::toString();
 	}
 
+	/**
+	 * Modules that should exist
+	 * @return string[] Mapping module names to files
+	 */
 	protected function getTestModules() {
 		return [
 			'TestFramework' => __DIR__ . '/TestFramework.lua',

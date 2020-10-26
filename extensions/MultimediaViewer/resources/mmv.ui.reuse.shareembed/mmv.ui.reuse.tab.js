@@ -31,6 +31,7 @@
 
 		/**
 		 * Container for the tab.
+		 *
 		 * @property {jQuery}
 		 */
 		this.$pane = $( '<div>' ).addClass( 'mw-mmv-reuse-pane' );

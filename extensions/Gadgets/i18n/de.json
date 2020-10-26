@@ -2,21 +2,21 @@
 	"@metadata": {
 		"authors": [
 			"Daniel Kinzler, brightbyte.de",
+			"FriedhelmW",
 			"Geitost",
 			"Kghbln",
+			"Lucas Werkmeister",
 			"Metalhead64",
 			"Raimond Spekking",
 			"The Evil IP address",
-			"Umherirrender",
-			"✓",
 			"Tiin",
-			"FriedhelmW",
-			"Lucas Werkmeister"
+			"Umherirrender",
+			"✓"
 		]
 	},
 	"gadgets-desc": "Ermöglicht es Benutzern, in ihren [[Special:Preferences#mw-prefsection-gadgets|persönlichen Einstellungen]] vordefinierte [[Special:Gadgets|CSS- und JavaScript-Helferlein]] zu aktivieren",
 	"prefs-gadgets": "Helferlein",
-	"gadgets-prefstext": "Dies ist eine Liste spezieller Helferlein, die jeder Benutzer aktivieren kann.\nDie Helferlein basieren zumeist auf JavaScript. Daher muss JavaScript im Browser aktiviert sein, damit sie funktionieren können.\nSie funktionieren allerdings nicht auf dieser Spezialseite mit den persönlichen Einstellungen.\n\nAußerdem ist zu beachten, dass diese Helferlein im Allgemeinen nicht Teil von MediaWiki sind, sondern meist von Benutzern lokaler Wikis entwickelt und gewartet werden.\nLokale Administratoren können die verfügbaren Helferlein bearbeiten. Dafür stehen die [[MediaWiki:Gadgets-definition|Definitionen]] und [[Special:Gadgets|Beschreibungen]] zur Verfügung. Die Anzahl der Benutzer für jedes Helferlein auf diesem Wiki ist in den [[Special:GadgetUsage|Nutzungsstatistiken von Helferlein]] gelistet.",
+	"gadgets-prefstext": "Dies ist eine Liste spezieller Helferlein, die jeder Benutzer aktivieren kann.\nDie Helferlein basieren zumeist auf JavaScript. Daher muss JavaScript im Browser aktiviert sein, damit sie funktionieren können.\nSie funktionieren allerdings nicht auf dieser Spezialseite mit den persönlichen Einstellungen.\n\nAußerdem ist zu beachten, dass diese Helferlein im Allgemeinen nicht Teil von MediaWiki sind, sondern meist von Benutzern lokaler Wikis entwickelt und gewartet werden.\nLokale Oberflächenadministratoren können die [[MediaWiki:Gadgets-definition|Definitionen]] der verfügbaren Helferlein bearbeiten und lokale Administratoren können die [[Special:Gadgets|Beschreibungen]] bearbeiten; dort ist der Quellcode jedes Helferleins sichtbar. Die Anzahl der Benutzer für jedes Helferlein auf diesem Wiki ist in den [[Special:GadgetUsage|Nutzungsstatistiken von Helferlein]] gelistet.",
 	"gadgets": "Helferlein",
 	"gadgetusage": "Statistik zur Nutzung der Helferlein",
 	"gadgetusage-gadget": "Helferlein",
@@ -32,7 +32,7 @@
 	"gadgets-required-rights": "Erfordert die {{PLURAL:$2|folgende Berechtigung|folgenden Berechtigungen}}:\n\n$1",
 	"gadgets-required-skins": "Verfügbar bei {{PLURAL:$2|der folgenden Benutzeroberfläche|den folgenden Benutzeroberflächen}}: $1.",
 	"gadgets-default": "Für alle standardmäßig aktiviert.",
-	"gadgets-legacy": "Das Helferlein ist nicht geladen. Bitte stelle auf den ResourceLoader um. ([https://www.mediawiki.org/wiki/ResourceLoader/Migration_guide_(users) Weitere Informationen])",
+	"gadgets-legacy": "Das Helferlein ist nicht geladen. Bitte stelle auf den ResourceLoader um. ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) Weitere Informationen])",
 	"gadgets-export": "Exportieren",
 	"gadgets-export-title": "Export der Helferlein",
 	"gadgets-not-found": "Helferlein „$1“ wurde nicht gefunden.",

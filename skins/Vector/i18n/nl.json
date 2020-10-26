@@ -2,16 +2,17 @@
 	"@metadata": {
 		"authors": [
 			"Calak",
+			"Mainframe98",
 			"Romaine",
 			"SPQRobin",
 			"Siebrand",
-			"Troefkaart",
 			"Sjoerddebruin",
-			"Mainframe98"
+			"Troefkaart"
 		]
 	},
 	"skinname-vector": "Vector",
 	"vector-skin-desc": "Moderne versie van MonoBook met een fris uiterlijk en verbeteringen op het gebied van gebruiksvriendelijkheid",
+	"vector-opt-out": "Naar oude vormgeving omschakelen",
 	"vector.css": "/* CSS die hier wordt geplaatst heeft alleen invloed op het uiterlijk Vector */",
 	"vector.js": "/* JavaScript die hier wordt geplaatst heeft alleen invloed op gebruikers die het uiterlijk Vector gebruiken */",
 	"vector-action-addsection": "Kopje toevoegen",

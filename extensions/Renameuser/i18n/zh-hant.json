@@ -1,22 +1,24 @@
 {
 	"@metadata": {
 		"authors": [
+			"A2093064",
+			"Alexsh",
+			"Cwlin0416",
+			"EagerLin",
 			"Gaoxuewei",
+			"Hello903hello",
 			"Horacewai2",
+			"Kly",
+			"LNDDYL",
 			"Liangent",
+			"Liflon",
+			"Liuxinyu970226",
 			"Mark85296341",
 			"Simon Shek",
 			"Waihorace",
+			"Winston Sung",
 			"Wrightbus",
-			"Cwlin0416",
-			"Liflon",
-			"LNDDYL",
-			"Liuxinyu970226",
-			"EagerLin",
-			"Alexsh",
-			"Hello903hello",
-			"Kly",
-			"A2093064"
+			"Xiplus"
 		]
 	},
 	"renameuser": "重新命名使用者",
@@ -42,7 +44,7 @@
 	"renameuser-page-exists": "頁面 $1 已經存在，無法自動覆寫。",
 	"renameuser-page-moved": "頁面 $1 已移動至 $2。",
 	"renameuser-page-unmoved": "頁面 $1 無法移動至 $2。",
-	"log-name-renameuser": "使用者重新命名日誌",
+	"log-name-renameuser": "使用者名稱變更日誌",
 	"log-description-renameuser": "此頁面為使用者名稱修改日誌。",
 	"logentry-renameuser-renameuser": "$1 {{GENDER:$2|重新命名}}使用者 $4（已編輯 {{PLURAL:$6|$6 次}}）為 {{GENDER:$7|$5}}",
 	"logentry-renameuser-renameuser-legacier": "$1 重新命名使用者 $4 為 {{GENDER:$7|$5}}",

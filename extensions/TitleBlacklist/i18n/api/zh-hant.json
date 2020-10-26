@@ -3,7 +3,8 @@
 		"authors": [
 			"A2093064",
 			"Cwlin0416",
-			"Waihorace"
+			"Waihorace",
+			"Xiplus"
 		]
 	},
 	"apihelp-titleblacklist-description": "檢驗一個頁面標題、檔案名稱或使用者名稱是否觸發標題黑名單。",

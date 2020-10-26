@@ -4,11 +4,11 @@
 			"Aleator",
 			"El libre",
 			"Jordi Roqué",
+			"Kippelboy",
 			"Papapep",
 			"Pitort",
 			"SMP",
-			"Vriullop",
-			"Kippelboy"
+			"Vriullop"
 		]
 	},
 	"titleblacklist-desc": "Permet als administradors restringir la creació de pàgines i comptes d'usuari mitjançant una [[MediaWiki:Titleblacklist|llista negra]] i una [[MediaWiki:Titlewhitelist|llista blanca]]",

@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Yekrats",
-			"Robin van der Vliet",
+			"Mirin",
 			"Psychoslave",
-			"YvesNevelsteen",
-			"Mirin"
+			"Robin van der Vliet",
+			"Yekrats",
+			"YvesNevelsteen"
 		]
 	},
 	"gadgets-desc": "Permesas al uzantoj elekti proprajn [[Special:Gadgets|CSS kaj JavaScript aldonaĵojn]] en ties [[Special:Preferences#mw-prefsection-gadgets|preferoj]].",

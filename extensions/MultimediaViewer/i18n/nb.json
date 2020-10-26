@@ -12,6 +12,7 @@
 	"multimediaviewer-repository-local": "Flere detaljer",
 	"multimediaviewer-datetime-created": "Opprettet: $1",
 	"multimediaviewer-datetime-uploaded": "Lastet opp: $1",
+	"multimediaviewer-credit": "$1 – $2",
 	"multimediaviewer-credit-fallback": "Vis info om opphavsperson",
 	"multimediaviewer-multiple-authors": "{{PLURAL:$1|én annen forfatter|$1 andre forfattere}}",
 	"multimediaviewer-multiple-authors-combine": "$1 og $2",

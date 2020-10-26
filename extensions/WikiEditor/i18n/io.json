@@ -1,11 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Malafaya",
+			"Joao Xavier",
 			"Lakaoso",
-			"Joao Xavier"
+			"Malafaya"
 		]
 	},
+	"wikieditor-toolbar-preference": "Habilitar utensilo-stango (editing toolbar)",
 	"wikieditor-toolbar-tool-italic": "Kursiva",
 	"wikieditor-toolbar-tool-italic-example": "Kursiva texto",
 	"wikieditor-toolbar-tool-ilink": "Interna ligilo",
@@ -24,8 +25,16 @@
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Ne-valida titulo",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Interna ligilo",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "Extera ligilo",
+	"wikieditor-toolbar-tool-file": "Imaji e 'media'",
 	"wikieditor-toolbar-tool-file-example": "Exemplo.jpg",
+	"wikieditor-toolbar-tool-file-title": "Inkluzar arkivo",
+	"wikieditor-toolbar-file-size": "Grandeso:",
+	"wikieditor-toolbar-file-float": "Aliniar:",
+	"wikieditor-toolbar-file-default": "(ordinara)",
+	"wikieditor-toolbar-file-format-none": "nulo",
 	"wikieditor-toolbar-tool-file-cancel": "Anular",
+	"wikieditor-toolbar-tool-file-upload": "Kargar",
+	"wikieditor-toolbar-tool-reference": "Refero",
 	"wikieditor-toolbar-tool-reference-cancel": "Anular",
 	"wikieditor-toolbar-tool-reference-title": "Inkluzar refero",
 	"wikieditor-toolbar-tool-reference-insert": "Adjuntar",

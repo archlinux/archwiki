@@ -29,6 +29,8 @@ class ActiveFormattingElements {
 	 * with zero members, and deleting a bucket containing one member. In the
 	 * worst case, iteration through the list is still O(1) in the document
 	 * size, since each bucket can have at most 3 members.
+	 *
+	 * @var array<int,array<string,Element|Marker>>
 	 */
 	private $noahTableStack = [ [] ];
 
@@ -41,6 +43,7 @@ class ActiveFormattingElements {
 			$next = $node->nextAFE;
 			$node->prevAFE = $node->nextAFE = $node->nextNoah = null;
 		}
+		// @phan-suppress-next-line PhanTypeMismatchProperty
 		$this->head = $this->tail = $this->noahTableStack = null;
 	}
 
@@ -169,7 +172,7 @@ class ActiveFormattingElements {
 	 * @param FormattingElement $elt
 	 */
 	public function remove( FormattingElement $elt ) {
-		/** @var Marker|Element $elt */
+		'@phan-var Marker|Element $elt'; /** @var Marker|Element $elt */
 		if ( $this->head !== $elt && !$elt->prevAFE ) {
 			throw new TreeBuilderError(
 				"Attempted to remove an element which is not in the AFE list" );
@@ -254,8 +257,8 @@ class ActiveFormattingElements {
 	 * @param FormattingElement $b
 	 */
 	public function replace( FormattingElement $a, FormattingElement $b ) {
-		/** @var Marker|Element $a */
-		/** @var Marker|Element $b */
+		'@phan-var Marker|Element $a'; /** @var Marker|Element $a */
+		'@phan-var Marker|Element $b'; /** @var Marker|Element $b */
 		if ( $this->head !== $a && !$a->prevAFE ) {
 			throw new TreeBuilderError(
 				"Attempted to replace an element which is not in the AFE list" );
@@ -289,13 +292,13 @@ class ActiveFormattingElements {
 
 	/**
 	 * Find $a in the list and insert $b after it.
-
+	 *
 	 * @param FormattingElement $a
 	 * @param FormattingElement $b
 	 */
 	public function insertAfter( FormattingElement $a, FormattingElement $b ) {
-		/** @var Marker|Element $a */
-		/** @var Marker|Element $b */
+		'@phan-var Marker|Element $a'; /** @var Marker|Element $a */
+		'@phan-var Marker|Element $b'; /** @var Marker|Element $b */
 		if ( $this->head !== $a && !$a->prevAFE ) {
 			throw new TreeBuilderError(
 				"Attempted to insert after an element which is not in the AFE list" );

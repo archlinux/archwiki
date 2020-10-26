@@ -3,7 +3,7 @@
 namespace PageImages\Tests;
 
 use ApiPageSet;
-use ApiQueryPageImages;
+use PageImages\ApiQueryPageImages;
 
 class ApiQueryPageImagesProxyMock extends ApiQueryPageImages {
 
@@ -20,10 +20,5 @@ class ApiQueryPageImagesProxyMock extends ApiQueryPageImages {
 	/** @inheritDoc */
 	public function getTitles() {
 		return parent::getTitles();
-	}
-
-	/** @inheritDoc */
-	public static function getPropNames( $license ) {
-		return parent::getPropNames( $license );
 	}
 }

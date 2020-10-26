@@ -1,14 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
+			"Hwangjy9",
+			"Jango",
 			"Klutzy",
 			"Kwj2772",
 			"Priviet",
-			"아라",
 			"SeoJeongHo",
-			"Hwangjy9",
 			"Ykhwong",
-			"Jango"
+			"아라"
 		]
 	},
 	"scribunto-desc": "미디어위키 문서에 스크립트 언어를 넣기 위한 프레임워크",

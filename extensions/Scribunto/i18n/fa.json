@@ -2,15 +2,16 @@
 	"@metadata": {
 		"authors": [
 			"Armin1392",
+			"Calak",
+			"Dalba",
+			"Ebraminio",
+			"FarsiNevis",
+			"Huji",
+			"Ladsgroup",
 			"Mjbmr",
 			"Reza1615",
 			"ZxxZxxZ",
-			"جواد",
-			"Ebraminio",
-			"Calak",
-			"Dalba",
-			"Ladsgroup",
-			"Huji"
+			"جواد"
 		]
 	},
 	"scribunto-desc": "چارچوبی برای تعبیه‌کردن زبان‌های اسکریپتی در صفحه‌های مدیاویکی",
@@ -32,7 +33,7 @@
 	"scribunto-common-error-category": "صفحه‌های دارای خطاهای اسکریپتی",
 	"scribunto-common-nosuchmodule": "خطای اسکریپتی: پودمان «$2» وجود ندارد.",
 	"scribunto-common-nofunction": "خطای اسکریپتی: باید تابعی را برای فراخوانی مشخص کنید.",
-	"scribunto-common-nosuchfunction": "خطای اسکریپتی: تابعی «$2» وجود ندارد.",
+	"scribunto-common-nosuchfunction": "خطای اسکریپتی: تابع «$2» وجود ندارد.",
 	"scribunto-common-notafunction": "خطای اسکریپت« «$2» یک تابع نیست.",
 	"scribunto-common-timeout": "زمان مجاز برای اجرای اسکریپت‌ها منقضی شده است.",
 	"scribunto-common-oom": "مقدار حافظهٔ استفاده شده برای اجرای اسکریپت از حد مجاز فراتر رفته است.",
@@ -44,7 +45,7 @@
 	"scribunto-lua-error-location": "خطای لوآ $1: $2.",
 	"scribunto-lua-error": "خطای لوآ: $2.",
 	"scribunto-lua-notarrayreturn": "خطای اسکریپتی: پودمان چیزی غیر از یک جدول برگرداند. (باید یک جدول برون‌ریزی برگرداند)",
-	"scribunto-luastandalone-proc-error": "خطای لوآ: نمی‌تواند فرآیند را ایجاد کند.",
+	"scribunto-luastandalone-proc-error": "خطای لوآ: نمی‌تواند فرایند را ایجاد کند.",
 	"scribunto-luastandalone-proc-error-msg": "خطای لوا: روند نتوانست ایجاد شود: $2",
 	"scribunto-luastandalone-proc-error-proc-open": "خطای لوآ: نتوانست روند را ایجاد کند: proc_open در دسترس نیست. دستور پیکربندی \"disable_functions\"پی‌اچ‌پی‌ را بررسی کنید.",
 	"scribunto-luastandalone-decode-error": "خطای لوآ: خطای داخلی: نمی‌تواند پیغام را کدبرداری کند.",

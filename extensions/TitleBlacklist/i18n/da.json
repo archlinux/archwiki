@@ -3,8 +3,8 @@
 		"authors": [
 			"HenrikKbh",
 			"Hylle",
-			"Sarrus",
-			"Saederup92"
+			"Saederup92",
+			"Sarrus"
 		]
 	},
 	"titleblacklist-desc": "Tillader administartorer at forhindre oprettelse af og brugerkonti gennem [[MediaWiki:Titleblacklist|blacklist]] og en [[MediaWiki:Titlewhitelist|whitelist]]",

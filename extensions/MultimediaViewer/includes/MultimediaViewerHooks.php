@@ -20,6 +20,7 @@
  * @author Mark Holmquist <mtraceur@member.fsf.org>
  * @copyright Copyright © 2013, Mark Holmquist
  */
+use MediaWiki\MediaWikiServices;
 
 class MultimediaViewerHooks {
 	/** Link to more information about this module */
@@ -74,7 +75,15 @@ class MultimediaViewerHooks {
 	 * @param OutputPage $out
 	 */
 	protected static function getModules( OutputPage $out ) {
-		$out->addModules( [ 'mmv.head', 'mmv.bootstrap.autostart' ] );
+		// The MobileFrontend extension provides its own implementation of MultimediaViewer.
+		// See https://phabricator.wikimedia.org/T65504 and subtasks for more details.
+		// To avoid loading MMV twice, we check the environment we are running in.
+		$isMobileFrontendView = ExtensionRegistry::getInstance()->isLoaded( 'MobileFrontend' ) &&
+			MediaWikiServices::getInstance()->getService( 'MobileFrontend.Context' )
+				->shouldDisplayMobileView();
+		if ( !$isMobileFrontendView ) {
+			$out->addModules( [ 'mmv.head', 'mmv.bootstrap.autostart' ] );
+		}
 	}
 
 	/**

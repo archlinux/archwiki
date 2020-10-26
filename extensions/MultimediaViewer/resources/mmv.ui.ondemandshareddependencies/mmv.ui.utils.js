@@ -44,6 +44,7 @@
 			items = [],
 			choices = {};
 
+		// eslint-disable-next-line mediawiki/class-doc
 		dropdown = new OO.ui.DropdownWidget( {
 			classes: classes
 		} );
@@ -202,7 +203,15 @@
 				).text()
 			) );
 
+		// The following messagse are used here:
 		return mw.message(
+			// The following messages are used here:
+			// * multimediaviewer-default-embed-dimensions
+			// * multimediaviewer-original-embed-dimensions
+			// * multimediaviewer-xl-embed-dimensions
+			// * multimediaviewer-large-embed-dimensions
+			// * multimediaviewer-medium-embed-dimensions
+			// * multimediaviewer-small-embed-dimensions
 			'multimediaviewer-' + sizeLabel + '-embed-dimensions',
 			dimensions
 		).text();

@@ -1,12 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Mormegil",
-			"Urbanecm",
 			"Dvorapa",
 			"Martin Urbanec",
 			"Matěj Suchánek",
-			"Patriccck"
+			"Mormegil",
+			"Patriccck",
+			"Urbanecm"
 		]
 	},
 	"oathauth-desc": "Poskytuje podporu pro ověření pomocí jednorázových hesel založených na HMAC",
@@ -38,7 +38,7 @@
 	"action-oathauth-view-log": "přistupovat ke knize změn dvoufaktorové autentizace",
 	"oathauth-disable-intro": "S velkou mocí přichází velká zodpovědnost",
 	"oathauth-enteruser": "Uživatelské jméno:",
-	"oathauth-enterreason": "Důvod pro vypnutí:",
+	"oathauth-enterdisablereason": "Důvod pro vypnutí:",
 	"oathauth-user-not-does-not-have-oath-enabled": "Uživatel neměl dvoufaktorovou autentizaci zapnutou, není tedy co vypínat",
 	"right-oathauth-enable": "Zapnutí dvoufaktorové autentizace",
 	"action-oathauth-enable": "zapnout dvoufaktorovou autentizaci",
@@ -57,6 +57,7 @@
 	"oath-log-header": "Tyto události zaznamenávají změny stavu dvoufaktorové autentizace uživatelů.",
 	"logentry-oath-disable-other": "$1 {{GENDER:$1|vypnul|vypnula}} dvoufaktorovou autentizaci {{GENDER:$2|uživatele|uživatelky}} $3.",
 	"oauthauth-ui-no-module": "Není zapnuto",
+	"oathauth-module-invalid": "Modul dvoufaktorového ověřování zaregistrovaný uživatelem je neplatný.",
 	"oathauth-module-totp-label": "TOTP (jednorázový token)",
 	"oathauth-ui-manage": "Spravovat",
 	"oathmanage": "Spravovat dvoufázové ověření",
@@ -71,5 +72,12 @@
 	"oathauth-action-exclusive-to-2fa": "Tuto akci mohou provádět pouze uživatelé se zapnutou dvoufaktorovou autentizací.",
 	"oathauth-ui-available-modules": "Dostupné metody",
 	"oathauth-ui-general-help": "'''Vícefaktorové ověření''' je ověřovací metoda, ve které je uživateli počítačového systému udělen přístup až poté, co autentizačnímu mechanismu úspěšně předloží dva či více důkazů (neboli ověření, faktorů): znalost (něco, co zná jen daný uživatel), vlastnictví (něco, co vlastní jen daný uživatel) a inherence (něco, čím je jen daný uživatel). [https://cs.wikipedia.org/wiki/Dvouf%C3%A1zov%C3%A9_ov%C4%9B%C5%99en%C3%AD Více informací]",
-	"oathauth-totp-description": "Algoritmus jednorázového hesla založeného na čase (TOTP) je rozšíření algoritmu jednorázového hesla založeného na HMAC (HOTP), které generuje jednorázová hesla, jejichž unikátnost je odvozena z aktuálního času."
+	"oathauth-totp-description": "Algoritmus jednorázového hesla založeného na čase (TOTP) je rozšíření algoritmu jednorázového hesla založeného na HMAC (HOTP), které generuje jednorázová hesla, jejichž unikátnost je odvozena z aktuálního času.",
+	"oathauth-disable-method-warning-header": "Potvrďte vypnutí ověřovací metody",
+	"oathauth-disable-method-warning-button-label": "Potvrdit a pokračovat",
+	"oathauth-disable-method-warning": "Pokud vypnete metodu dvoufaktorového ověřování „$1“, již ji nebudete moci použít pro přihlašování, a všechna data spojená s touto metodou ověřování budou smazána",
+	"oathauth-switch-method-warning-header": "Potvrďte přepnutí na jinou ověřovací metodu",
+	"oathauth-switch-method-warning": "Přepnutím na metodu dvoufaktorového ověřování „$2“ vypnete současně zapnutou metodu ($1), a všechna data spojená se současnou metodou dvoufaktorového ověřování budou smazána.",
+	"oathauth-totp-disable-warning": "Již nebudete moci použít ověřovací zařízení registrované na tento účet. Všechny provizorní kódy přiřazené k tomuto účtu budou neplatné.",
+	"oathauth-invalidrequest": "Neplatný požadavek"
 }

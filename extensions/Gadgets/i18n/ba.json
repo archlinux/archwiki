@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Рустам Нурыев",
-			"ҒатаУлла",
-			"Янмурза Баки",
 			"Лилиә",
-			"Ләйсән"
+			"Ләйсән",
+			"Рустам Нурыев",
+			"Янмурза Баки",
+			"ҒатаУлла"
 		]
 	},
 	"gadgets-desc": "Ҡатнашыусыларға үҙҙәренең [[Special:Preferences#mw-prefsection-gadgets|көйләүҙәр]]ендә теге йәки был [[Special:Gadgets|CSS- һәм JavaScript-гаджеттар]]ҙы һайларға мөмкинлек бирә.",
@@ -24,7 +24,7 @@
 	"gadgets-required-rights": "{{PLURAL:$2|1=Хоҡуҡ талап ителә|Хоҡуҡтар талап ителә}}:\n\n$1",
 	"gadgets-required-skins": "{{PLURAL:$2|1=биҙәү темаһында «$1»|киләһе биҙәү темаларында: $1}} инеү мөмкинлеге бар.",
 	"gadgets-default": "Барыһына ла һайланмайынса тоҡандырылған.",
-	"gadgets-legacy": "Гаджет тейәлмәгән.  ([https://www.mediawiki.org/wiki/ResourceLoader/Migration_guide_(ҡулланыусыларҙы) күберәк белеү өсөн]) ResourceLoader -гә күсергә һорайбыҙ.",
+	"gadgets-legacy": "Гаджет тейәлмәгән.  ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(ҡулланыусыларҙы) күберәк белеү өсөн]) ResourceLoader -гә күсергә һорайбыҙ.",
 	"gadgets-export": "Сығарырға",
 	"gadgets-export-title": "Гаджетты экспортлау",
 	"gadgets-not-found": "\"$1\" гаджеты табылманы.",

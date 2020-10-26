@@ -3,10 +3,10 @@
 		"authors": [
 			"Borislav",
 			"DCLXVI",
-			"Turin",
-			"Лорд Бъмбъри",
 			"StanProg",
-			"Ted Masters"
+			"Ted Masters",
+			"Turin",
+			"Лорд Бъмбъри"
 		]
 	},
 	"syntaxhighlight-desc": "Осигурява синтактично оцветяване на <code>&lt;syntaxhighlight&gt;</code> чрез [http://pygments.org/ Pygments]",

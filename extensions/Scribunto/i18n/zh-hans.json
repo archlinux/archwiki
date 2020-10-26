@@ -1,13 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
+			"Arthur2e5",
+			"Duolaimi",
 			"Liangent",
 			"Liuxinyu970226",
+			"SolidBlock",
 			"Xiaomingyan",
-			"Yfdyh000",
-			"Duolaimi",
-			"Arthur2e5",
-			"SolidBlock"
+			"Yfdyh000"
 		]
 	},
 	"scribunto-desc": "用于在MediaWiki页面中嵌入脚本语言的框架",

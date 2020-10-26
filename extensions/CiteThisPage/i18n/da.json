@@ -3,6 +3,7 @@
 		"authors": [
 			"Byrial",
 			"Christian List",
+			"Jhertel",
 			"Morten LJ",
 			"Peter Alberti",
 			"Weblars"
@@ -10,7 +11,7 @@
 	},
 	"citethispage": "Referér",
 	"citethispage-desc": "Tilføjer en [[Special:Cite|specialside til reference]] og en henvisning i værktøjsmenuen",
-	"citethispage-link": "Referér denne side",
+	"citethispage-link": "Referér til denne side",
 	"tooltip-citethispage": "Information om, hvordan man kan citere denne side",
 	"citethispage-change-submit": "Anvend som reference",
 	"citethispage-change-target": "Side:",

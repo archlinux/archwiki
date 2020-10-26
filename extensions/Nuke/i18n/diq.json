@@ -1,11 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
+			"1917 Ekim Devrimi",
 			"Aspar",
 			"Erdemaslancan",
-			"Mirzali",
+			"Gırd",
 			"Kumkumuk",
-			"Gırd"
+			"Mirzali"
 		]
 	},
 	"nuke": "pêropiya hewnakeno..",
@@ -13,7 +14,8 @@
 	"nuke-desc": "Hizmetlilere, sayfaları [[Special:Nuke|kitlesel silme]] yeteneği verir",
 	"nuke-nopages": "[[Special:Contributions/$1|{{GENDER:$1|$1}}]] ra vırnayışanê peyênan ra perrê newey çıniyê.",
 	"nuke-list": "Pelê ke cêr de yê hetê ıney ra [[Special:Contributions/$1|{{GENDER:$1|$1}}]]  yew tarixo nızdi de  vıraziyayi; mışore bıkerê u qey hewnakerdışi yew tuş bıtıknê.",
-	"nuke-defaultreason": "Peleyê ke [[Special:Contributions/$1|{{GENDER:$1|$1}}]] dekerdê de ena pêron hewadayış",
+	"nuke-defaultreason": "Pelê ke terefê [[Special:Contributions/$1|{{GENDER:$1|$1}}]] ra vıraziyayê iman wedardış",
+	"nuke-multiplepeople": "Vıraziyaye pelanê peyênan pêroyın piya esterıtış",
 	"nuke-tools": "No hacet mısade dano be esteriyayışê pelanê ke nêzdi de terefê yew karberi ya zi yew adresa IPyi ra ilawe biyê.\nSeba gırewtışê lista pelan ra êyê ke esteriyenê nameyê karberi ya zi adresa IPyi cı kewe, ya zi seba pêro karberan ra veng caverde.",
 	"nuke-submit-user": "Pelan liste ke",
 	"nuke-submit-delete": "Weçinayi esterne",

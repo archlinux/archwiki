@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ата",
-			"Piramidion"
+			"Piramidion",
+			"Ата"
 		]
 	},
 	"renocaptcha-desc": "Модуль reCAPTCHA NoCAPTCHA для Confirm Edit",

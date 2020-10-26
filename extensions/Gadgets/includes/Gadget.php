@@ -18,9 +18,9 @@ class Gadget {
 	/**
 	 * Increment this when changing class structure
 	 */
-	const GADGET_CLASS_VERSION = 9;
+	public const GADGET_CLASS_VERSION = 9;
 
-	const CACHE_TTL = 86400;
+	public const CACHE_TTL = 86400;
 
 	private $scripts = [],
 			$styles = [],

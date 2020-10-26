@@ -15,7 +15,7 @@
 ** Common styles across desktop and mobile
 */
 
-div#column-content {
+#column-content {
 	width: 100%;
 	margin: 0;
 	padding: 0;
@@ -40,11 +40,17 @@ div#column-content {
 
 /* Font size:
 ** We take advantage of keyword scaling- browsers won't go below 9px
+** See "Note 1" at https://www.w3.org/TR/CSS2/fonts.html#value-def-absolute-size
 ** More at http://www.w3.org/2003/07/30-font-size
 ** http://style.cleverchimp.com/font_size_intervals/altintervals.html
+** https://web.archive.org/web/20180201141931/http://style.cleverchimp.com/font_size_intervals/altintervals.html
+** This affects users whose browser font size setting is < 14.4px,
+** making #globalWrapper's font-size 11.43px at minimum.
+** Gadgets have their own monobook-specific css rule to set the font-size similar to #globalWrapper.
 */
 body {
-	font: x-small sans-serif;
+	font-family: sans-serif;
+	font-size: x-small; // Typical: 16px * 0.625 == 10px.
 	background: @background url( images/headbg.jpg ) 0 0 no-repeat;
 	// stylelint-disable value-list-comma-newline-after
 	/* @embed */
@@ -60,8 +66,8 @@ body {
 }
 
 /* scale back up to a sane default */
-div#globalWrapper {
-	font-size: 127%;
+#globalWrapper {
+	font-size: 127%; // Typical: x-small * 127% == 12.7px;
 	width: 100%;
 	margin: 0;
 	padding: 0;
@@ -93,7 +99,9 @@ pre,
 	line-height: 1.1em;
 }
 
-#firstHeading {
+.firstHeading {
+	margin-top: 0.4em;
+	margin-bottom: 0.1em;
 	padding-top: 0;
 	overflow: visible;
 }
@@ -107,8 +115,6 @@ pre,
 .mw-indicator {
 	display: -moz-inline-block;
 	display: inline-block;
-	zoom: 1;
-	*display: inline; /* stylelint-disable-line declaration-block-no-duplicate-properties */
 }
 
 .mw-jump-link:not( :focus ) {
@@ -219,7 +225,7 @@ li#pt-anonuserpage {
 /*
 ** footer
 */
-#footer {
+.mw-footer {
 	background-color: @content-background;
 	border-top: 1px solid @orange-border;
 	border-bottom: 1px solid @orange-border;

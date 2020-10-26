@@ -2,13 +2,14 @@
 
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Revision\SlotRecord;
 use Wikimedia\Rdbms\Database;
 
 /**
  * Gadgets repo powered by MediaWiki:Gadgets-definition
  */
 class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
-	const CACHE_VERSION = 2;
+	private const CACHE_VERSION = 2;
 
 	private $definitionCache;
 
@@ -82,7 +83,7 @@ class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
 		$value = $t1Cache->get( $key );
 		// Randomize logical APC expiry to avoid stampedes
 		// somewhere between 7.0 and 15.0 (seconds)
-		$cutoffAge = mt_rand( 7 * 1e6, 15 * 1e6 ) / 1e6;
+		$cutoffAge = mt_rand( 7000000, 15000000 ) / 1000000;
 		// Check if it passes a blind TTL check (avoids I/O)
 		if ( $value && ( microtime( true ) - $value['time'] ) < $cutoffAge ) {
 			$this->definitionCache = $value['gadgets']; // process cache
@@ -136,12 +137,17 @@ class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
 		if ( $forceNewText === null ) {
 			// T157210: avoid using wfMessage() to avoid staleness due to cache layering
 			$title = Title::makeTitle( NS_MEDIAWIKI, 'Gadgets-definition' );
-			$rev = Revision::newFromTitle( $title );
-			if ( !$rev || !$rev->getContent() || $rev->getContent()->isEmpty() ) {
+			$revRecord = MediaWikiServices::getInstance()
+				->getRevisionLookup()
+				->getRevisionByTitle( $title );
+			if ( !$revRecord
+				|| !$revRecord->getContent( SlotRecord::MAIN )
+				|| $revRecord->getContent( SlotRecord::MAIN )->isEmpty()
+			) {
 				return false; // don't cache
 			}
 
-			$g = $rev->getContent()->getNativeData();
+			$g = $revRecord->getContent( SlotRecord::MAIN )->getNativeData();
 		} else {
 			$g = $forceNewText;
 		}

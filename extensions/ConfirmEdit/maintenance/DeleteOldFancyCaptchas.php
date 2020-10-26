@@ -49,7 +49,7 @@ class DeleteOldFancyCaptchas extends Maintenance {
 	public function execute() {
 		$instance = ConfirmEditHooks::getInstance();
 		if ( !( $instance instanceof FancyCaptcha ) ) {
-			$this->error( "\$wgCaptchaClass is not FancyCaptcha.\n", 1 );
+			$this->fatalError( "\$wgCaptchaClass is not FancyCaptcha.\n", 1 );
 		}
 
 		$countAct = $instance->getCaptchaCount();
@@ -61,7 +61,7 @@ class DeleteOldFancyCaptchas extends Maintenance {
 		$filesToDelete = [];
 		$deleteDate = $this->getOption( 'date' );
 		foreach (
-			$backend->getFileList( [ 'dir' => $dir ] ) as $file
+			$backend->getFileList( [ 'dir' => $dir, 'adviseStat' => true ] ) as $file
 		) {
 			$fullPath = $dir . '/' . $file;
 			$timestamp = $backend->getFileTimestamp( [ 'src' => $fullPath ] );
@@ -76,6 +76,8 @@ class DeleteOldFancyCaptchas extends Maintenance {
 			$this->output( "No old fancy captchas to delete!\n" );
 			return;
 		}
+
+		$this->output( "$count old fancy captchas to be deleted.\n" );
 
 		$ret = $backend->doQuickOperations( $filesToDelete );
 

@@ -69,7 +69,7 @@
 			page_token: mw.user.getPageviewToken(),
 			session_token: mw.user.sessionId(),
 			editor_interface: 'wikitext',
-			platform: 'desktop', // FIXME
+			platform: 'desktop', // FIXME T249944
 			integration: 'page',
 			page_id: mw.config.get( 'wgArticleId' ),
 			page_title: mw.config.get( 'wgPageName' ),
@@ -105,11 +105,18 @@
 	} );
 
 	logEditFeature = sampledLogger( 'VisualEditorFeatureUse', function ( inSample, feature, action ) {
+		/* eslint-disable camelcase */
 		return {
 			feature: feature,
 			action: action,
-			editingSessionId: editingSessionId
+			editingSessionId: editingSessionId,
+			user_id: mw.user.getId(),
+			user_editcount: mw.config.get( 'wgUserEditCount', 0 ),
+			platform: 'desktop', // FIXME T249944
+			integration: 'page',
+			editor_interface: 'wikitext'
 		};
+		/* eslint-enable camelcase */
 	} );
 
 	function logAbort( switchingToVE, unmodified ) {

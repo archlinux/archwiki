@@ -3,8 +3,8 @@
 		"authors": [
 			"Basharh",
 			"Bishnu Saikia",
-			"Xuacu",
-			"McDutchie"
+			"McDutchie",
+			"Xuacu"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Llibru",
@@ -20,6 +20,9 @@
 	"cite-ve-changedesc-reflist-responsive-set": "La llista de referencies cambió p'apaecer en columnes reactives",
 	"cite-ve-changedesc-reflist-responsive-unset": "La llista de referencies cambió p'apaecer sólo nuna columna",
 	"cite-ve-changedesc-reflist-item-id": "Cambió l'índiz de la referencia",
+	"cite-ve-citationneeded-button": "Amestar una cita",
+	"cite-ve-citationneeded-description": "Un editor indicó qu'esta afirmación precisa citar dalguna fonte fiable.",
+	"cite-ve-citationneeded-title": "Precisa cita",
 	"cite-ve-dialog-reference-editing-reused": "Esta referencia ta utilizándose {{PLURAL:$1|una vegada|$1 vegaes}} nesta páxina.",
 	"cite-ve-dialog-reference-editing-reused-long": "Esta referencia ta utilizándose {{PLURAL:$1|una vegada|$1 vegaes}} nesta páxina. Los cambeos que se realicen equí van aplicase a tolos sitios onde se reutilice esta referencia.",
 	"cite-ve-dialog-reference-options-group-label": "Usar esti grupu",

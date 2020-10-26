@@ -2,20 +2,20 @@
 	"@metadata": {
 		"authors": [
 			"Base",
-			"Ignatus",
-			"Kalan",
-			"Okras",
-			"HarpyWar",
-			"Kaganer",
-			"Lemondoge",
-			"Kareyac",
-			"MaxBioHazard",
-			"Patrick Star",
-			"Jack who built the house",
-			"Ole Yves",
-			"Stjn",
 			"Force majeure",
-			"Movses"
+			"HarpyWar",
+			"Ignatus",
+			"Jack who built the house",
+			"Kaganer",
+			"Kalan",
+			"Kareyac",
+			"Lemondoge",
+			"MaxBioHazard",
+			"Movses",
+			"Okras",
+			"Ole Yves",
+			"Patrick Star",
+			"Stjn"
 		]
 	},
 	"scribunto-desc": "Средство для включения скриптовых языков на страницах MediaWiki",

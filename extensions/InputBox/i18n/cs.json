@@ -2,10 +2,10 @@
 	"@metadata": {
 		"authors": [
 			"Danny B.",
-			"Li-sung",
-			"Mormegil",
 			"Dvorapa",
-			"Matěj Suchánek"
+			"Li-sung",
+			"Matěj Suchánek",
+			"Mormegil"
 		]
 	},
 	"inputbox-desc": "Umožňuje vkládat určité HTML formuláře.",

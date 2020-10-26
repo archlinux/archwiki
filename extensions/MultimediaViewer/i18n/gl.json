@@ -1,13 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Toliño",
-			"Vivaelcelta",
-			"Elisardojm",
-			"Macofe",
 			"Banjo",
-			"Navhy",
-			"Iváns"
+			"Elisardojm",
+			"Iváns",
+			"Macofe",
+			"Toliño",
+			"Vivaelcelta"
 		]
 	},
 	"multimediaviewer-desc": "Expande as miniaturas ata un tamaño maior dentro dunha interface a pantalla completa.",

@@ -56,6 +56,9 @@
 		function makeTab( type ) {
 			return new OO.ui.MenuOptionWidget( {
 				data: type,
+				// The following messages are used here:
+				// * multimediaviewer-embed-tab
+				// * multimediaviewer-share-tab
 				label: mw.message( 'multimediaviewer-' + type + '-tab' ).text()
 			} );
 		}

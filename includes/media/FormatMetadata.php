@@ -24,6 +24,8 @@
  * @see http://exif.org/Exif2-2.PDF The Exif 2.2 specification
  * @file
  */
+
+use MediaWiki\HookContainer\ProtectedHookAccessorTrait;
 use MediaWiki\MediaWikiServices;
 use Wikimedia\Timestamp\TimestampException;
 
@@ -49,6 +51,8 @@ use Wikimedia\Timestamp\TimestampException;
  *   internal methods are private
  */
 class FormatMetadata extends ContextSource {
+	use ProtectedHookAccessorTrait;
+
 	/**
 	 * Only output a single language for multi-language fields
 	 * @var bool
@@ -98,7 +102,6 @@ class FormatMetadata extends ContextSource {
 	 *   Exif::getFilteredData() or BitmapMetadataHandler )
 	 * @return array
 	 * @since 1.23
-	 * @suppress PhanTypeArraySuspiciousNullable
 	 */
 	public function makeFormattedData( $tags ) {
 		$resolutionunit = !isset( $tags['ResolutionUnit'] ) || $tags['ResolutionUnit'] == 2 ? 2 : 3;
@@ -271,7 +274,12 @@ class FormatMetadata extends ContextSource {
 
 					// TODO: YCbCrCoefficients  #p27 (see annex E)
 					case 'ExifVersion':
-					case 'FlashpixVersion':
+					// PHP likes to be the odd one out with casing of FlashPixVersion;
+					// https://www.exif.org/Exif2-2.PDF#page=32 and
+					// https://www.digitalgalen.net/Documents/External/XMP/XMPSpecificationPart2.pdf#page=51
+					// both use FlashpixVersion. However, since at least 2002, PHP has used FlashPixVersion at
+					// https://github.com/php/php-src/blame/master/ext/exif/exif.c#L725
+					case 'FlashPixVersion':
 						$val = (int)$val / 100;
 						break;
 
@@ -797,7 +805,7 @@ class FormatMetadata extends ContextSource {
 						}
 						if ( is_numeric( $val ) ) {
 							$fNumber = 2 ** ( $val / 2 );
-							if ( $fNumber !== false ) {
+							if ( is_finite( $fNumber ) ) {
 								$val = $this->msg( 'exif-maxaperturevalue-value',
 									$this->formatNum( $val ),
 									$this->formatNum( $fNumber, 2 )
@@ -979,7 +987,9 @@ class FormatMetadata extends ContextSource {
 						break;
 
 					case 'LanguageCode':
-						$lang = Language::fetchLanguageName( strtolower( $val ), $this->getLanguage()->getCode() );
+						$lang = MediaWikiServices::getInstance()
+							->getLanguageNameUtils()
+							->getLanguageName( strtolower( $val ), $this->getLanguage()->getCode() );
 						$val = htmlspecialchars( $lang ?: $val );
 						break;
 
@@ -1049,12 +1059,10 @@ class FormatMetadata extends ContextSource {
 			unset( $vals['_type'] );
 		}
 
-		if ( !is_array( $vals ) ) {
-			return $vals; // do nothing if not an array;
-		} elseif ( count( $vals ) === 1 && $type !== 'lang' && isset( $vals[0] ) ) {
+		if ( count( $vals ) === 1 && $type !== 'lang' && isset( $vals[0] ) ) {
 			return $vals[0];
 		} elseif ( count( $vals ) === 0 ) {
-			wfDebug( __METHOD__ . " metadata array with 0 elements!\n" );
+			wfDebug( __METHOD__ . " metadata array with 0 elements!" );
 
 			return ""; // paranoia. This should never happen
 		} else {
@@ -1187,11 +1195,12 @@ class FormatMetadata extends ContextSource {
 		}
 
 		$lowLang = strtolower( $lang );
-		$langName = Language::fetchLanguageName( $lowLang );
+		$languageNameUtils = MediaWikiServices::getInstance()->getLanguageNameUtils();
+		$langName = $languageNameUtils->getLanguageName( $lowLang );
 		if ( $langName === '' ) {
 			// try just the base language name. (aka en-US -> en ).
 			$langPrefix = explode( '-', $lowLang, 2 )[0];
-			$langName = Language::fetchLanguageName( $langPrefix );
+			$langName = $languageNameUtils->getLanguageName( $langPrefix );
 			if ( $langName === '' ) {
 				// give up.
 				$langName = $lang;
@@ -1220,9 +1229,9 @@ class FormatMetadata extends ContextSource {
 	 * Convenience function for getFormattedData()
 	 *
 	 * @param string $tag The tag name to pass on
-	 * @param string $val The value of the tag
-	 * @param string $arg An argument to pass ($1)
-	 * @param string $arg2 A 2nd argument to pass ($2)
+	 * @param string|int $val The value of the tag
+	 * @param string|null $arg An argument to pass ($1)
+	 * @param string|null $arg2 A 2nd argument to pass ($2)
 	 * @return string The text content of "exif-$tag-$val" message in lower case
 	 */
 	private function exifMsg( $tag, $val, $arg = null, $arg2 = null ) {
@@ -1616,7 +1625,7 @@ class FormatMetadata extends ContextSource {
 		$cachedValue = $cache->get( $cacheKey );
 		if (
 			$cachedValue
-			&& Hooks::run( 'ValidateExtendedMetadataCache', [ $cachedValue['timestamp'], $file ] )
+			&& $this->getHookRunner()->onValidateExtendedMetadataCache( $cachedValue['timestamp'], $file )
 		) {
 			$extendedMetadata = $cachedValue['data'];
 		} else {
@@ -1700,13 +1709,13 @@ class FormatMetadata extends ContextSource {
 	protected function getExtendedMetadataFromHook( File $file, array $extendedMetadata,
 		&$maxCacheTime
 	) {
-		Hooks::run( 'GetExtendedMetadata', [
-			&$extendedMetadata,
+		$this->getHookRunner()->onGetExtendedMetadata(
+			$extendedMetadata,
 			$file,
 			$this->getContext(),
 			$this->singleLang,
-			&$maxCacheTime
-		] );
+			$maxCacheTime
+		);
 
 		$visible = array_flip( self::getVisibleFields() );
 		foreach ( $extendedMetadata as $key => $value ) {
@@ -1894,8 +1903,9 @@ class FormatMetadata extends ContextSource {
 	 * @since 1.23
 	 */
 	protected function getPriorityLanguages() {
-		$priorityLanguages =
-			Language::getFallbacksIncludingSiteLanguage( $this->getLanguage()->getCode() );
+		$priorityLanguages = MediaWikiServices::getInstance()
+			->getLanguageFallback()
+			->getAllIncludingSiteLanguage( $this->getLanguage()->getCode() );
 		$priorityLanguages = array_merge(
 			(array)$this->getLanguage()->getCode(),
 			$priorityLanguages[0],

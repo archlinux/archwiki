@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"AnB",
 			"Event",
-			"Nghtwlkr",
-			"Purodha",
 			"Jon Harald Søby",
-			"AnB"
+			"Nghtwlkr",
+			"Purodha"
 		]
 	},
 	"interwiki": "Vis og manipuler interwikidata",
@@ -37,6 +37,8 @@
 	"interwiki-logtext": "Vis logg",
 	"interwiki_addtext": "Legg til et interwiki- eller språkprefiks.",
 	"interwiki-addtext-local": "Legg til et lokalt interwiki- eller språkprefiks",
+	"interwiki-addtext-nolang": "Legg til et interwikiprefiks",
+	"interwiki-addtext-local-nolang": "Legg til et lokalt interwikiprefiks",
 	"interwiki_addintro": "Du legger til et nytt interwikiprefiks. Husk at det ikke kan inneholde mellomrom ( ), kolon (:), &-tegn eller likhetstegn (=).",
 	"interwiki_addbutton": "Legg til",
 	"interwiki_added": "Prefikset «$1» ble lagt til i interwikitabellen.",
@@ -46,6 +48,7 @@
 	"interwiki_edited": "Prefikset «$1» ble endret i interwikitabellen.",
 	"interwiki_editerror": "Prefikset «$1» kan ikke endres i interwikitabellen. Det finnes muligens ikke.",
 	"interwiki-badprefix": "Det oppgitte interwikiprefikset «$1» innholder ugyldige tegn",
+	"interwiki-cannotaddlocallanguage": "Prefikset «$1» matcher en kjent språkkode. Å legge til lokale prefiks for andre språk er slått av når man har en global språklenkedatabase.",
 	"interwiki-submit-empty": "Prefiksen og URL kan ikke være tomme.",
 	"interwiki-submit-invalidurl": "URL-protokollen er ugyldig.",
 	"log-name-interwiki": "Interwikitabellogg",
@@ -61,5 +64,7 @@
 	"interwiki-local-description": "Disse prefiksene eksisterer lokalt. Eventuelle duplikater av den globale konfigurasjonen vil overstyre den globale definisjonen.",
 	"interwiki-links": "Interwikiprefiks",
 	"interwiki-language-links": "Mellomspråklige prefiks",
-	"interwiki-language-description": "Disse prefiksene matcher definerte språkkoder, og vil brukes for å opprette «{{int:otherlanguages}}»-lister når de legges til på en side."
+	"interwiki-language-description": "Disse prefiksene matcher definerte språkkoder, og vil brukes for å opprette «{{int:otherlanguages}}»-lister når de legges til på en side.",
+	"interwiki-global-language-links": "Globale språkprefiks",
+	"interwiki-global-language-description": "Disse prefiksene matcher definerte språkkoder, og blir brukt for å lage lista «{{int:otherlanguages}}» når de legges til på en side. Siden de arves fra global konfigurasjon kan du kun redigeres på kildewikien. Globale språkdefinisjoner kan ikke overstyres lokalt."
 }

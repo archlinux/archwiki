@@ -1,12 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Toliño",
-			"Elisardojm",
 			"Banjo",
+			"Elisardojm",
+			"Iváns",
 			"McDutchie",
-			"Navhy",
-			"Iváns"
+			"Toliño"
 		]
 	},
 	"codeeditor-desc": "Edición de páxinas en JavaScript e CSS con realce sintáctico que emprega o [https://ace.c9.io/ editor Ace]",

@@ -1,15 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
+			"01miki10",
 			"Beluga",
 			"Crt",
+			"Nike",
+			"Pxos",
 			"Silvonen",
 			"Stryn",
-			"VezonThunder",
-			"Pxos",
-			"Nike",
-			"01miki10",
-			"Valtlait"
+			"Valtlait",
+			"VezonThunder"
 		]
 	},
 	"scribunto-desc": "Mahdollistaa komentosarjakielien käytön wikisivuilla",

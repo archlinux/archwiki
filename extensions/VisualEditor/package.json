@@ -1,0 +1,29 @@
+{
+	"name": "visualeditor",
+	"version": "0.0.0",
+	"private": true,
+	"description": "Build tools for the VisualEditor-MediaWiki extension.",
+	"scripts": {
+		"test": "grunt test",
+		"doc": "jsduck",
+		"postdoc": "grunt copy:jsduck",
+		"screenshots-all": "grunt screenshots-all"
+	},
+	"devDependencies": {
+		"eslint-config-wikimedia": "0.16.2",
+		"grunt": "1.1.0",
+		"grunt-banana-checker": "0.9.0",
+		"grunt-contrib-copy": "1.0.0",
+		"grunt-contrib-watch": "1.1.0",
+		"grunt-eslint": "23.0.0",
+		"grunt-image": "5.0.1",
+		"grunt-mocha-test": "0.13.3",
+		"grunt-stylelint": "0.15.0",
+		"grunt-tyops": "0.1.0",
+		"jimp": "0.13.0",
+		"mocha": "5.2.0",
+		"selenium-webdriver": "3.6.0",
+		"stringify-object": "3.2.2",
+		"stylelint-config-wikimedia": "0.10.1"
+	}
+}

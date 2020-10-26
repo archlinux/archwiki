@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"A2093064"
+			"A2093064",
+			"Xiplus"
 		]
 	},
 	"apihelp-spamblacklist-description": "驗證一個或多個URL是否觸發垃圾連結黑名單。",

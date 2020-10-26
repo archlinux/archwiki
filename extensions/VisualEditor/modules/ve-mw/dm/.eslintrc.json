@@ -1,0 +1,12 @@
+{
+	"env": {
+		"browser": false,
+		"shared-node-browser": true
+	},
+	"globals": {
+		"HTMLElement": "readonly",
+		"Node": "readonly",
+		"document": "readonly",
+		"$": "off"
+	}
+}

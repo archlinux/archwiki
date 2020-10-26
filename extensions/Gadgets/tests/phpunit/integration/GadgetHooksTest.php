@@ -11,7 +11,7 @@ class GadgetHooksTest extends MediaWikiIntegrationTestCase {
 	 */
 	protected $user;
 
-	public function setUp() {
+	public function setUp() : void {
 		global $wgGroupPermissions;
 
 		parent::setUp();
@@ -22,7 +22,7 @@ class GadgetHooksTest extends MediaWikiIntegrationTestCase {
 		$this->user = $this->getTestUser( [ 'unittesters' ] )->getUser();
 	}
 
-	public function tearDown() {
+	public function tearDown() : void {
 		GadgetRepo::setSingleton();
 		parent::tearDown();
 	}

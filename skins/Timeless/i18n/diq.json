@@ -1,11 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
+			"1917 Ekim Devrimi",
 			"Gorizon",
-			"Mirzali",
-			"Marmase",
 			"Kumkumuk",
-			"1917 Ekim Devrimi"
+			"Marmase",
+			"Mirzali",
+			"Orbot707"
 		]
 	},
 	"timeless-desc": "Tereftê Brandon Harris ra vıraziyayê ciltê Timeless prototipê zımıstani, u tayna ciltê Weqıfta Wikimedia.",
@@ -19,9 +20,12 @@
 	"timeless-sitetools": "Hacetê Wikiyi",
 	"timeless-pageactions": "Hacetê pele",
 	"timeless-userpagetools": "Hacetê perakarberi",
+	"timeless-action-addsection": "Mewzuyo newe",
+	"timeless-view-view": "Bıwane",
 	"timeless-pagemisc": "Zêde",
 	"timeless-namespaces": "Heruna nameyan",
 	"timeless-pagetools": "Hereketê pele",
 	"timeless-languages": "Zıwani",
+	"timeless-projects": "Proceyê bini",
 	"timeless.js": "/* Her JavaScript karber Timeless skin gurenayış de tiya de bar bo*/"
 }

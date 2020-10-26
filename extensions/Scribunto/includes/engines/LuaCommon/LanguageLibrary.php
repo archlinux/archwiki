@@ -9,8 +9,8 @@ class Scribunto_LuaLanguageLibrary extends Scribunto_LuaLibraryBase {
 
 	public function register() {
 		// Pre-populate the language cache
-		global $wgContLang;
-		$this->langCache[$wgContLang->getCode()] = $wgContLang;
+		$contLang = MediaWikiServices::getInstance()->getContentLanguage();
+		$this->langCache[$contLang->getCode()] = $contLang;
 		$this->maxLangCacheSize = $this->getEngine()->getOption( 'maxLangCacheSize' );
 
 		$statics = [
@@ -59,8 +59,7 @@ class Scribunto_LuaLanguageLibrary extends Scribunto_LuaLibraryBase {
 	 * @return string[]
 	 */
 	public function getContLangCode() {
-		global $wgContLang;
-		return [ $wgContLang->getCode() ];
+		return [ MediaWikiServices::getInstance()->getContentLanguage()->getCode() ];
 	}
 
 	/**
@@ -284,6 +283,7 @@ class Scribunto_LuaLanguageLibrary extends Scribunto_LuaLibraryBase {
 				}
 			}
 		}
+		// @phan-suppress-next-line PhanTypeMismatchArgumentNullable gender always not null
 		return [ $lang->gender( $gender, $forms ) ];
 	}
 

@@ -51,6 +51,7 @@ class ApiQueryTitleBlacklist extends ApiBase {
 		}
 
 		$blacklisted = TitleBlacklist::singleton()->userCannot(
+			// @phan-suppress-next-line PhanTypeMismatchArgumentNullable T240141
 			$title, $this->getUser(), $action, $override
 		);
 		if ( $blacklisted instanceof TitleBlacklistEntry ) {

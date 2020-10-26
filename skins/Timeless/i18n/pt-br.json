@@ -25,5 +25,5 @@
 	"timeless-languages": "Idiomas",
 	"timeless-projects": "Outros projetos",
 	"timeless.css": "/* CSS colocado aqui afetará os usuários da pele intemporal */",
-	"timeless.js": "/* Qualquer código JavaScript colocado aqui será carregado para os usuários do tema Timeless */"
+	"timeless.js": "/* Todo o JavaScript aqui será carregado para os usuários do tema Timeless */"
 }

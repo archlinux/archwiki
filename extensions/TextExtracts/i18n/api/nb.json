@@ -17,5 +17,5 @@
 	"apiwarn-textextracts-unsupportedmodel": "$1 har innholdsmodellen $2, som ikke støttes; returnerer en tom uthenting.",
 	"apiwarn-textextracts-title-in-file-namespace": "Utdrag for en tittel i filnavnerommet ble bedt om, ingen ble returnert.",
 	"apiwarn-textextracts-sentences-and-html": "Parameteren <var>$1sentences</var> kan ha uventede resultater om den brukes i HTML-modus.",
-	"apiwarn-textextracts-malformed-html": "HTML kan være misformet og/eller ubalansert, og kan utelate bilder. Bruk på egen risiko. Kjente problemer listes opp på https://www.mediawiki.org/wiki/Extension:TextExtracts#Caveats."
+	"apiwarn-textextracts-malformed-html": "HTML kan være misformet og/eller ubalansert, og kan utelate bilder. Bruk på egen risiko. Kjente problemer listes opp på https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:TextExtracts#Caveats."
 }

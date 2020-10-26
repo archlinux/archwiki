@@ -51,7 +51,6 @@
 	 */
 	L.schema = 'MultimediaViewerDuration';
 
-	// eslint-disable-next-line valid-jsdoc
 	/**
 	 * Saves the start of a duration
 	 *
@@ -80,7 +79,6 @@
 		return this;
 	};
 
-	// eslint-disable-next-line valid-jsdoc
 	/**
 	 * Saves the stop of a duration
 	 *
@@ -108,7 +106,6 @@
 		return this;
 	};
 
-	// eslint-disable-next-line valid-jsdoc
 	/**
 	 * Records the duration log event
 	 *

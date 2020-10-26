@@ -48,10 +48,11 @@ ve.dm.MWReferenceNode.static.allowedRdfaTypes = [ 'dc:references' ];
 
 ve.dm.MWReferenceNode.static.isContent = true;
 
-ve.dm.MWReferenceNode.static.blacklistedAnnotationTypes = [ 'link' ];
+ve.dm.MWReferenceNode.static.disallowedAnnotationTypes = [ 'link' ];
 
 /**
  * Regular expression for parsing the listKey attribute
+ *
  * @static
  * @property {RegExp}
  * @inheritable

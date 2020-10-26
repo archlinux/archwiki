@@ -54,6 +54,7 @@ ve.ui.MWReferenceGroupInputWidget.prototype.populateMenu = function ( internalLi
 						return new OO.ui.MenuOptionWidget( { data: groupName, label: groupName } );
 					}
 				}
+				return null;
 			}
 		).filter( function ( item ) {
 			return item;

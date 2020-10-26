@@ -4,12 +4,15 @@
  *
  * @ingroup Skins
  */
+
+use MediaWiki\MediaWikiServices;
+
 class TimelessTemplate extends BaseTemplate {
 
 	/** @var array */
 	protected $pileOfTools;
 
-	/** @var array */
+	/** @var (array|false)[] */
 	protected $sidebar;
 
 	/** @var array|null */
@@ -18,11 +21,18 @@ class TimelessTemplate extends BaseTemplate {
 	/** @var array|null */
 	protected $collectionPortlet;
 
+	/** @var array[] */
+	protected $languages;
+
+	/** @var string */
+	protected $afterLangPortlet;
+
 	/**
 	 * Outputs the entire contents of the page
 	 */
 	public function execute() {
-		$this->sidebar = $this->getSidebar();
+		$this->sidebar = $this->data['sidebar'];
+		$this->languages = $this->sidebar['LANGUAGES'];
 
 		// WikiBase sidebar thing
 		if ( isset( $this->sidebar['wikibase-otherprojects'] ) ) {
@@ -84,8 +94,9 @@ class TimelessTemplate extends BaseTemplate {
 			)
 		);
 
-		$html .= Html::rawElement( 'div', [ 'id' => 'mw-footer-container', 'class' => 'ts-container' ],
-			Html::rawElement( 'div', [ 'id' => 'mw-footer', 'class' => 'ts-inner' ],
+		$html .= Html::rawElement( 'div',
+			[ 'id' => 'mw-footer-container', 'class' => 'mw-footer-container ts-container' ],
+			Html::rawElement( 'div', [ 'id' => 'mw-footer', 'class' => 'mw-footer ts-inner' ],
 				$this->getFooter()
 			)
 		);
@@ -187,6 +198,7 @@ class TimelessTemplate extends BaseTemplate {
 	 * @param array $setOptions miscellaneous overrides, see below
 	 *
 	 * @return string html
+	 * @suppress PhanTypeMismatchArgumentNullable
 	 */
 	protected function getPortlet( $name, $content, $msg = null, $setOptions = [] ) {
 		// random stuff to override with any provided options
@@ -269,11 +281,16 @@ class TimelessTemplate extends BaseTemplate {
 			$bodyDivOptions['id'] = $options['body-id'];
 		}
 
+		$afterPortlet = $this->getAfterPortlet( $name );
+		if ( $name === 'lang' ) {
+			$this->afterLangPortlet = $afterPortlet;
+		}
+
 		$html = Html::rawElement( 'div', $divOptions,
 			Html::rawElement( 'h3', $labelOptions, $msgString ) .
 			Html::rawElement( 'div', $bodyDivOptions,
 				$contentText .
-				$this->getAfterPortlet( $name )
+				$afterPortlet
 			)
 		);
 
@@ -318,7 +335,7 @@ class TimelessTemplate extends BaseTemplate {
 		$html .= Html::rawElement(
 			'div',
 			[
-				'id' => Sanitizer::escapeId( $id ),
+				'id' => Sanitizer::escapeIdForAttribute( $id ),
 				'class' => array_merge( [ 'sidebar-chunk' ], $classes )
 			],
 			Html::rawElement( 'h2', [],
@@ -348,7 +365,7 @@ class TimelessTemplate extends BaseTemplate {
 		$html .= Html::openElement(
 			'div',
 			[
-				'id' => Sanitizer::escapeId( $id ),
+				'id' => Sanitizer::escapeIdForAttribute( $id ),
 				'class' => 'mw-portlet',
 				'role' => 'banner'
 			]
@@ -357,6 +374,7 @@ class TimelessTemplate extends BaseTemplate {
 			$wordmarkImage = $this->getLogoImage( $config->get( 'TimelessWordmark' ), true );
 
 			$titleClass = '';
+			$siteTitle = '';
 			if ( !$wordmarkImage ) {
 				if ( $language->hasVariants() ) {
 					$siteTitle = $language->convert( $this->getMsg( 'timeless-sitetitle' )->escaped() );
@@ -453,14 +471,13 @@ class TimelessTemplate extends BaseTemplate {
 		$this->sidebar['TOOLBOX'] = false;
 		// Forcibly removed to separate chunk
 		$this->sidebar['LANGUAGES'] = false;
-
 		foreach ( $this->sidebar as $name => $content ) {
 			if ( $content === false ) {
 				continue;
 			}
 			// Numeric strings gets an integer when set as key, cast back - T73639
 			$name = (string)$name;
-			$html .= $this->getPortlet( $name, $content['content'] );
+			$html .= $this->getPortlet( $name, $content );
 		}
 
 		$html = $this->getSidebarChunk( 'site-navigation', 'navigation', $html );
@@ -523,7 +540,7 @@ class TimelessTemplate extends BaseTemplate {
 		if ( isset( $this->collectionPortlet ) ) {
 			$pageTools .= $this->getPortlet(
 				'coll-print_export',
-				$this->collectionPortlet['content']
+				$this->collectionPortlet
 			);
 		}
 
@@ -709,7 +726,7 @@ class TimelessTemplate extends BaseTemplate {
 		}
 
 		// Tools that may be general or page-related (typically the toolbox)
-		$pileOfTools = $this->getToolbox();
+		$pileOfTools = $this->sidebar['TOOLBOX'];
 		if ( $namespace >= 0 ) {
 			$pileOfTools['pagelog'] = [
 				'text' => $this->getMsg( 'timeless-pagelog' )->text(),
@@ -726,7 +743,8 @@ class TimelessTemplate extends BaseTemplate {
 			'id' => 'ca-more',
 			'class' => 'dropdown-toggle'
 		];
-		if ( $this->data['language_urls'] !== false || $sortedPileOfTools['variants']
+		// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
+		if ( $this->sidebar['LANGUAGES'] !== false || $sortedPileOfTools['variants']
 			|| isset( $this->otherProjects ) ) {
 			$pileOfTools['languages'] = [
 				'text' => $this->getMsg( 'timeless-languages' )->escaped(),
@@ -804,7 +822,6 @@ class TimelessTemplate extends BaseTemplate {
 
 		// Extra sorting for Extension:ProofreadPage namespace items
 		$tabs = [
-			'proofreadPagePrevLink',
 			// This is the order we want them in...
 			'proofreadPageScanLink',
 			'proofreadPageIndexLink',
@@ -815,19 +832,8 @@ class TimelessTemplate extends BaseTemplate {
 				$toMove = $sortedPileOfTools['namespaces'][$tab];
 				unset( $sortedPileOfTools['namespaces'][$tab] );
 
-				// add a hover tooltip, mostly for the icons
-				$toMove['title'] = $toMove['text'];
-
-				if ( $tab === 'proofreadPagePrevLink' ) {
-					// prev at start
-					$sortedPileOfTools['namespaces'] = array_merge(
-						[ $tab => $toMove ],
-						$sortedPileOfTools['namespaces']
-					);
-				} else {
-					// move others to end
-					$sortedPileOfTools['namespaces'][$tab] = $toMove;
-				}
+				// move to end!
+				$sortedPileOfTools['namespaces'][$tab] = $toMove;
 			}
 		}
 
@@ -844,13 +850,13 @@ class TimelessTemplate extends BaseTemplate {
 	 */
 	protected function getCategories() {
 		$skin = $this->getSkin();
+		$catHeader = 'categories';
 		$catList = '';
 		$html = '';
 
 		$allCats = $skin->getOutput()->getCategoryLinks();
 		if ( !empty( $allCats ) ) {
 			if ( !empty( $allCats['normal'] ) ) {
-				$catHeader = 'categories';
 				$catList .= $this->getCatList(
 					$allCats['normal'],
 					'normal-catlinks',
@@ -948,7 +954,6 @@ class TimelessTemplate extends BaseTemplate {
 		$html = '';
 		$variants = '';
 		$otherprojects = '';
-		$languages = '';
 		$show = false;
 		$variantsOnly = false;
 
@@ -960,20 +965,23 @@ class TimelessTemplate extends BaseTemplate {
 			$show = true;
 			$variantsOnly = true;
 		}
-		if ( $this->data['language_urls'] !== false ) {
-			$languages = $this->getPortlet(
-				'lang',
-				$this->data['language_urls'] ?: [],
-				'otherlanguages'
-			);
+
+		$languages = $this->getPortlet( 'lang', $this->languages, 'otherlanguages' );
+
+		// Force rendering of this section if there are languages or when the 'lang'
+		// portlet has been modified by hook even if there are no language items.
+		if ( count( $this->languages ) || $this->afterLangPortlet !== '' ) {
 			$show = true;
 			$variantsOnly = false;
+		} else {
+			$languages = '';
 		}
+
 		// if using wikibase for 'in other projects'
 		if ( isset( $this->otherProjects ) ) {
 			$otherprojects = $this->getPortlet(
 				'wikibase-otherprojects',
-				$this->otherProjects['content']
+				$this->otherProjects
 			);
 			$show = true;
 			$variantsOnly = false;
@@ -1007,7 +1015,7 @@ class TimelessTemplate extends BaseTemplate {
 
 		// Generate $logoData from a file upload
 		if ( is_string( $logo ) ) {
-			$file = wfFindFile( $logo );
+			$file = MediaWikiServices::getInstance()->getRepoGroup()->findFile( $logo );
 
 			if ( !$file || !$file->canRender() ) {
 				// eeeeeh bail, scary
@@ -1034,7 +1042,7 @@ class TimelessTemplate extends BaseTemplate {
 
 				if ( $svg ) {
 					$logoData['1x'] = $file->createThumb( $logoData['width'] );
-					$logoData['1.5x'] = $file->createThumb( $logoData['width'] * 1.5 );
+					$logoData['1.5x'] = $file->createThumb( (int)( $logoData['width'] * 1.5 ) );
 					$logoData['2x'] = $file->createThumb( $logoData['width'] * $large );
 				} elseif ( $file->mustRender() ) {
 					$logoData['1x'] = $file->createThumb( $logoData['width'] );
@@ -1044,11 +1052,11 @@ class TimelessTemplate extends BaseTemplate {
 
 			} elseif ( $bound >= 230 && $bound <= 330 ) {
 				// It's a 2x image
-				$logoData['width'] = $width / 2;
-				$logoData['height'] = $height / 2;
+				$logoData['width'] = (int)( $width / 2 );
+				$logoData['height'] = (int)( $height / 2 );
 
 				$logoData['1x'] = $file->createThumb( $logoData['width'] );
-				$logoData['1.5x'] = $file->createThumb( $logoData['width'] * 1.5 );
+				$logoData['1.5x'] = $file->createThumb( (int)( $logoData['width'] * 1.5 ) );
 
 				if ( $svg || $file->mustRender() ) {
 					$logoData['2x'] = $file->createThumb( $logoData['width'] * 2 );
@@ -1064,7 +1072,7 @@ class TimelessTemplate extends BaseTemplate {
 
 				$logoData['1x'] = $file->createThumb( $logoData['width'] );
 				if ( $svg || $logoData['width'] * 1.5 <= $width ) {
-					$logoData['1.5x'] = $file->createThumb( $logoData['width'] * 1.5 );
+					$logoData['1.5x'] = $file->createThumb( (int)( $logoData['width'] * 1.5 ) );
 				}
 				if ( $svg || $logoData['width'] * 2 <= $width ) {
 					$logoData['2x'] = $file->createThumb( $logoData['width'] * $large );
@@ -1093,6 +1101,7 @@ class TimelessTemplate extends BaseTemplate {
 		} else {
 			// Okay, we really do want a 1x otherwise. If this throws an error or
 			// something because there's nothing here, GOOD.
+			// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
 			$attribs['src'] = $logoData['1x'];
 
 			// Throw the rest in a srcset

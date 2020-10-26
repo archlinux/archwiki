@@ -2,7 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"1AnuraagPandey",
-			"Ajeetsinghawadh"
+			"1PandeyAnurag",
+			"Ajeetsinghawadh",
+			"Ajeetsinghawadhi"
 		]
 	},
 	"captcha-edit": "यह पन्ना संपादित करने के लिये नीचे दिये हुए आसान सवाल को हल करके उत्तर दिए गए बॉक्स में लिखें ([[Special:Captcha/help|अधिक जानकारी]]):",
@@ -10,7 +12,7 @@
 	"captcha-desc": "आसानसे कॅपचा (captcha) का इस्तेमाल\nस्पैम और कुट शब्द-अनुमान से बचने के लिए कॅपचा (CAPTCHA) तकनीक प्रदान करता है",
 	"captcha-label": "कैप्चा",
 	"captcha-help": "कैप्चा का समाधान",
-	"captcha-info-help": "कैप्चा का विवरण",
+	"captcha-info-help": "कैप्चा कै बिबरण",
 	"captcha-id-label": "कैप्चा आईडी",
 	"captcha-id-help": "यह मान वापस अपरिवर्तित भेजा जाना चाहिए।",
 	"captcha-addurl": "आपके सम्पादन में नई बाहरी कड़ियाँ हैं।\nस्वचालित स्पॅम से बचाव में सहायता के लिये नीचे दिये हुए आसान गणित प्रश्न का उत्तर बक्से में लिखें ([[Special:Captcha/help|अधिक जानकारी]]):",

@@ -8,10 +8,10 @@ use Wikimedia\TestingAccessWrapper;
  * @covers \MediaWiki\Shell\Shell
  * @group Shell
  */
-class ShellTest extends MediaWikiTestCase {
+class ShellTest extends MediaWikiIntegrationTestCase {
 
 	public function testIsDisabled() {
-		$this->assertInternalType( 'bool', Shell::isDisabled() ); // sanity
+		$this->assertIsBool( Shell::isDisabled() ); // sanity
 	}
 
 	/**
@@ -21,7 +21,7 @@ class ShellTest extends MediaWikiTestCase {
 		if ( wfIsWindows() ) {
 			$this->markTestSkipped( 'This test requires a POSIX environment.' );
 		}
-		$this->assertSame( $expected, call_user_func_array( [ Shell::class, 'escape' ], $args ) );
+		$this->assertSame( $expected, Shell::escape( ...$args ) );
 	}
 
 	public function provideEscape() {
@@ -37,7 +37,8 @@ class ShellTest extends MediaWikiTestCase {
 	 * @covers \MediaWiki\Shell\Shell::makeScriptCommand
 	 * @dataProvider provideMakeScriptCommand
 	 *
-	 * @param string $expected
+	 * @param string $expected    expected in POSIX
+	 * @param string $expectedWin expected in Windows
 	 * @param string $script
 	 * @param string[] $parameters
 	 * @param string[] $options
@@ -45,6 +46,7 @@ class ShellTest extends MediaWikiTestCase {
 	 */
 	public function testMakeScriptCommand(
 		$expected,
+		$expectedWin,
 		$script,
 		$parameters,
 		$options = [],
@@ -61,10 +63,15 @@ class ShellTest extends MediaWikiTestCase {
 		$command->params( 'safe' )
 			->unsafeParams( 'unsafe' );
 
-		$this->assertType( Command::class, $command );
+		$this->assertInstanceOf( Command::class, $command );
 
 		$wrapper = TestingAccessWrapper::newFromObject( $command );
-		$this->assertEquals( $expected, $wrapper->command );
+
+		if ( wfIsWindows() ) {
+			$this->assertEquals( $expectedWin, $wrapper->command );
+		} else {
+			$this->assertEquals( $expected, $wrapper->command );
+		}
 		$this->assertSame( 0, $wrapper->restrictions & Shell::NO_LOCALSETTINGS );
 	}
 
@@ -74,11 +81,13 @@ class ShellTest extends MediaWikiTestCase {
 		return [
 			[
 				"'$wgPhpCli' 'maintenance/foobar.php' 'bar'\\''\"baz' 'safe' unsafe",
+				'"' . $wgPhpCli . '" "maintenance/foobar.php" "bar\'\\"baz" "safe" unsafe',
 				'maintenance/foobar.php',
 				[ 'bar\'"baz' ],
 			],
 			[
 				"'$wgPhpCli' 'changed.php' '--wiki=somewiki' 'bar'\\''\"baz' 'safe' unsafe",
+				'"' . $wgPhpCli . '" "changed.php" "--wiki=somewiki" "bar\'\\"baz" "safe" unsafe',
 				'maintenance/foobar.php',
 				[ 'bar\'"baz' ],
 				[],
@@ -89,12 +98,14 @@ class ShellTest extends MediaWikiTestCase {
 			],
 			[
 				"'/bin/perl' 'maintenance/foobar.php' 'bar'\\''\"baz' 'safe' unsafe",
+				'"/bin/perl" "maintenance/foobar.php" "bar\'\\"baz" "safe" unsafe',
 				'maintenance/foobar.php',
 				[ 'bar\'"baz' ],
 				[ 'php' => '/bin/perl' ],
 			],
 			[
 				"'$wgPhpCli' 'foobinize' 'maintenance/foobar.php' 'bar'\\''\"baz' 'safe' unsafe",
+				'"' . $wgPhpCli . '" "foobinize" "maintenance/foobar.php" "bar\'\\"baz" "safe" unsafe',
 				'maintenance/foobar.php',
 				[ 'bar\'"baz' ],
 				[ 'wrapper' => 'foobinize' ],

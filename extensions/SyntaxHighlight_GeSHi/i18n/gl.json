@@ -1,12 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Toliño",
-			"Xosé",
-			"Elisardojm",
 			"Banjo",
-			"Navhy",
-			"Iváns"
+			"Elisardojm",
+			"Iváns",
+			"Toliño",
+			"Xosé"
 		]
 	},
 	"syntaxhighlight-desc": "Proporciona unha sintaxe resaltada <code>&lt;syntaxhighlight&gt;</code> usando [http://pygments.org/ Pygments - Resaltador de sintaxe en Python]",

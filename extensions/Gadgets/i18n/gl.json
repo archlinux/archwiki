@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Alma",
-			"Toliño",
 			"Banjo",
-			"Elisardojm"
+			"Elisardojm",
+			"Toliño"
 		]
 	},
 	"gadgets-desc": "Deixa que os usuarios seleccionen [[Special:Gadgets|trebellos CSS e JavaScript]] nas súas [[Special:Preferences#mw-prefsection-gadgets|preferencias]]",
@@ -25,7 +25,7 @@
 	"gadgets-required-rights": "{{PLURAL:$2|Cómpre o seguinte dereito|Cómpren os seguintes dereitos}}:\n\n$1",
 	"gadgets-required-skins": "Dispoñible {{PLURAL:$2|na aparencia $1|nas seguintes aparencias: $1}}.",
 	"gadgets-default": "Activado para todos por defecto.",
-	"gadgets-legacy": "O trebello non está cargado. Por favor, migre a ResourceLoader. ([https://www.mediawiki.org/wiki/ResourceLoader/Migration_guide_(users) Máis información])",
+	"gadgets-legacy": "O trebello non está cargado. Por favor, migre a ResourceLoader. ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) Máis información])",
 	"gadgets-export": "Exportar",
 	"gadgets-export-title": "Exportación de trebellos",
 	"gadgets-not-found": "Non se atopou o trebello \"$1\".",

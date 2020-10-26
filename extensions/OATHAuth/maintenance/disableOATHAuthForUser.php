@@ -1,8 +1,8 @@
 <?php
 
-use MediaWiki\Session\SessionManager;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Extension\OATHAuth\IModule;
+use MediaWiki\MediaWikiServices;
+use MediaWiki\Session\SessionManager;
 
 if ( getenv( 'MW_INSTALL_PATH' ) ) {
 	$IP = getenv( 'MW_INSTALL_PATH' );

@@ -10,8 +10,7 @@ module.exports = function ( grunt ) {
 	grunt.initConfig( {
 		eslint: {
 			options: {
-				cache: true,
-				reportUnusedDisableDirectives: true
+				cache: true
 			},
 			all: '.'
 		},

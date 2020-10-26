@@ -24,35 +24,59 @@ class RelayTokenHandler implements TokenHandler {
 		$this->nextHandler = $nextHandler;
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public function startDocument( Tokenizer $tokenizer, $fragmentNamespace, $fragmentName ) {
 		$this->nextHandler->startDocument( $tokenizer, $fragmentNamespace, $fragmentName );
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public function endDocument( $pos ) {
 		$this->nextHandler->endDocument( $pos );
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public function error( $text, $pos ) {
 		$this->nextHandler->error( $text, $pos );
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public function characters( $text, $start, $length, $sourceStart, $sourceLength ) {
 		$this->nextHandler->characters( $text, $start, $length, $sourceStart, $sourceLength );
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public function startTag( $name, Attributes $attrs, $selfClose, $sourceStart, $sourceLength ) {
 		$this->nextHandler->startTag( $name, $attrs, $selfClose, $sourceLength, $sourceLength );
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public function endTag( $name, $sourceStart, $sourceLength ) {
 		$this->nextHandler->endTag( $name, $sourceStart, $sourceLength );
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public function doctype( $name, $public, $system, $quirks, $sourceStart, $sourceLength ) {
 		$this->nextHandler->doctype( $name, $public, $system, $quirks, $sourceStart,
 			$sourceLength );
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public function comment( $text, $sourceStart, $sourceLength ) {
 		$this->nextHandler->comment( $text, $sourceStart, $sourceLength );
 	}

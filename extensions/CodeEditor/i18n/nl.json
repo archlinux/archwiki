@@ -1,12 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"SPQRobin",
-			"Siebrand",
-			"Southparkfan",
 			"Esketti",
 			"Mainframe98",
-			"McDutchie"
+			"McDutchie",
+			"SPQRobin",
+			"Siebrand",
+			"Southparkfan"
 		]
 	},
 	"codeeditor-desc": "Syntaxis-gemarkeerd bewerken voor JavaScript- en CSS-pagina's met behulp van de [https://ace.c9.io/ Ace-tekstverwerker]",

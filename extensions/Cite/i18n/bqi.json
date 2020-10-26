@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Mogoeilor",
-			"Kikumoron"
+			"Kikumoron",
+			"Mogoeilor"
 		]
 	},
 	"cite_error": "خٱتا جاگٱ:$1",
@@ -11,7 +11,7 @@
 	"cite_error_ref_no_input": "سردیس <code><ref></code> نادیار؛ سرچشماْیٱل بی نوم ڤا میٛنوناْ داشداْ بوݩ.",
 	"cite_error_references_duplicate_key": "سردیس <code>&lt;ref&gt;</code> نادیار؛ نوم «$1» چٱن کرٱت ڤا میٛنوناْ جۊر ڤا جۊر موشقٱس ڤابیڌاْ.",
 	"cite_error_references_invalid_parameters": "پینیار نادیار میٛن سردیس <code><references></code> سردیس",
-	"cite_error_references_no_backlink_label": "سردیسٱل دیندا پاٛیڤٱند سٱفارشدی خلاس ڤابیڌن.\nچیات تازاْتر ناْ میٛن پاٛیغوم <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki> موشقٱس کونین.",
+	"cite_error_references_no_backlink_label": "سردیسٱل دیندا پاٛیڤٱند سٱفارشدی خلاس ڤابیڌن. چیات تازاْتر ناْ میٛن پاٛیغوم [[MediaWiki:Cite references link many format backlink labels]] موشقٱس کونین.",
 	"cite_error_included_ref": "سردیس خلاس کون <code>&lt;/ref&gt;</code> سی سردیس <code>&lt;ref&gt;</code> بیٛلا ڤابیڌاْ.",
 	"cite-tracking-category-cite-error": "بٱلگاْیٱلی کاْ سرچشماْسوݩ خٱتا داراْ",
 	"cite_references_link_accessibility_label": "رٱهڌن ڤارو",

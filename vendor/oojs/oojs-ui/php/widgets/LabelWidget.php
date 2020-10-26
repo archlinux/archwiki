@@ -24,7 +24,6 @@ class LabelWidget extends Widget {
 	/**
 	 * @param array $config Configuration options
 	 *      - InputWidget $config['input'] Input widget this label is for
-	 * @param-taint $config escapes_html
 	 */
 	public function __construct( array $config = [] ) {
 		// Parent constructor

@@ -28,7 +28,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "other",
 	"requires": {
-		"MediaWiki": ">= 1.33.0"
+		"MediaWiki": ">= 1.35.0"
 	},
 	"MessagesDirs": {
 		"MultimediaViewer": [
@@ -346,7 +346,6 @@
 				"mediawiki.ui.icon",
 				"mediawiki.Title",
 				"mediawiki.user",
-				"mediawiki.notify",
 				"mediawiki.storage",
 				"mmv.head",
 				"oojs",
@@ -443,57 +442,71 @@
 			"mmv.ui.tipsyDialog"
 		]
 	},
-	"EventLoggingSchemas": {
-		"MediaViewer": 10867062,
-		"MultimediaViewerNetworkPerformance": 15573630,
-		"MultimediaViewerDuration": 10427980,
-		"MultimediaViewerAttribution": 9758179,
-		"MultimediaViewerDimensions": 10014238
+	"attributes": {
+		"EventLogging": {
+			"Schemas": {
+				"MediaViewer": 10867062,
+				"MultimediaViewerNetworkPerformance": 15573630,
+				"MultimediaViewerDuration": 10427980,
+				"MultimediaViewerAttribution": 9758179,
+				"MultimediaViewerDimensions": 10014238
+			}
+		}
 	},
 	"Hooks": {
-		"UserGetDefaultOptions": [
-			"MultimediaViewerHooks::onUserGetDefaultOptions"
-		],
-		"GetPreferences": [
-			"MultimediaViewerHooks::onGetPreferences"
-		],
-		"BeforePageDisplay": [
-			"MultimediaViewerHooks::onBeforePageDisplay"
-		],
-		"CategoryPageView": [
-			"MultimediaViewerHooks::onCategoryPageView"
-		],
-		"ResourceLoaderGetConfigVars": [
-			"MultimediaViewerHooks::onResourceLoaderGetConfigVars"
-		],
-		"MakeGlobalVariablesScript": [
-			"MultimediaViewerHooks::onMakeGlobalVariablesScript"
-		],
-		"ThumbnailBeforeProduceHTML": [
-			"MultimediaViewerHooks::onThumbnailBeforeProduceHTML"
-		]
+		"UserGetDefaultOptions": "MultimediaViewerHooks::onUserGetDefaultOptions",
+		"GetPreferences": "MultimediaViewerHooks::onGetPreferences",
+		"BeforePageDisplay": "MultimediaViewerHooks::onBeforePageDisplay",
+		"CategoryPageView": "MultimediaViewerHooks::onCategoryPageView",
+		"ResourceLoaderGetConfigVars": "MultimediaViewerHooks::onResourceLoaderGetConfigVars",
+		"MakeGlobalVariablesScript": "MultimediaViewerHooks::onMakeGlobalVariablesScript",
+		"ThumbnailBeforeProduceHTML": "MultimediaViewerHooks::onThumbnailBeforeProduceHTML"
 	},
 	"config": {
 		"MediaViewerExtensions": {
-			"jpg": "default",
-			"jpeg": "default",
-			"gif": "default",
-			"svg": "default",
-			"png": "default",
-			"tiff": "default",
-			"tif": "default"
+			"value": {
+				"jpg": "default",
+				"jpeg": "default",
+				"gif": "default",
+				"svg": "default",
+				"png": "default",
+				"tiff": "default",
+				"tif": "default"
+			}
 		},
-		"MediaViewerNetworkPerformanceSamplingFactor": false,
-		"MediaViewerDurationLoggingSamplingFactor": false,
-		"MediaViewerDurationLoggingLoggedinSamplingFactor": false,
-		"MediaViewerAttributionLoggingSamplingFactor": false,
-		"MediaViewerDimensionLoggingSamplingFactor": false,
-		"MediaViewerActionLoggingSamplingFactorMap": false,
-		"MediaViewerUseThumbnailGuessing": false,
-		"MediaViewerEnableByDefault": true,
-		"MediaViewerEnableByDefaultForAnonymous": null,
-		"MediaViewerImageQueryParameter": false,
-		"MediaViewerRecordVirtualViewBeaconURI": false
+		"MediaViewerNetworkPerformanceSamplingFactor": {
+			"value": false
+		},
+		"MediaViewerDurationLoggingSamplingFactor": {
+			"value": false
+		},
+		"MediaViewerDurationLoggingLoggedinSamplingFactor": {
+			"value": false
+		},
+		"MediaViewerAttributionLoggingSamplingFactor": {
+			"value": false
+		},
+		"MediaViewerDimensionLoggingSamplingFactor": {
+			"value": false
+		},
+		"MediaViewerActionLoggingSamplingFactorMap": {
+			"value": false
+		},
+		"MediaViewerUseThumbnailGuessing": {
+			"value": false
+		},
+		"MediaViewerEnableByDefault": {
+			"value": true
+		},
+		"MediaViewerEnableByDefaultForAnonymous": {
+			"value": null
+		},
+		"MediaViewerImageQueryParameter": {
+			"value": false
+		},
+		"MediaViewerRecordVirtualViewBeaconURI": {
+			"value": false
+		}
 	},
-	"manifest_version": 1
+	"manifest_version": 2
 }

@@ -23,7 +23,7 @@
 	"gadgets-required-rights": "താഴെപ്പറയുന്ന {{PLURAL:$2|അവകാശം|അവകാശങ്ങൾ}} ആവശ്യമാണ്:\n\n$1",
 	"gadgets-required-skins": "ലഭ്യമായ {{PLURAL:$2|ദൃശ്യരൂപം: $1|ദൃശ്യരൂപങ്ങൾ: $1}}.",
 	"gadgets-default": "എല്ലാവർക്കും സ്വതേ പ്രവർത്തനസജ്ജമായിരിക്കും.",
-	"gadgets-legacy": "ഗാഡ്‌ജറ്റ് ഉപയോഗിക്കപ്പെടുന്നില്ല. ദയവായി റിസോഴ്സ്‌ലോഡറിലേക്ക് മാറുക.([https://www.mediawiki.org/wiki/ResourceLoader/Migration_guide_(users) കൂടുതൽ അറിയുക])",
+	"gadgets-legacy": "ഗാഡ്‌ജറ്റ് ഉപയോഗിക്കപ്പെടുന്നില്ല. ദയവായി റിസോഴ്സ്‌ലോഡറിലേക്ക് മാറുക.([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) കൂടുതൽ അറിയുക])",
 	"gadgets-export": "കയറ്റുമതി ചെയ്യുക",
 	"gadgets-export-title": "ഗാഡ്ജറ്റ് കയറ്റുമതി ചെയ്യുക",
 	"gadgets-not-found": "ഗാഡ്ജറ്റ് \"$1\" കണ്ടെത്താനായില്ല.",

@@ -1,14 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"Mormegil",
-			"Paxt",
-			"Rosnicka.kacka",
-			"Utar",
 			"Dominikmatus",
 			"Littledogboy",
 			"Macofe",
-			"Matěj Suchánek"
+			"Matěj Suchánek",
+			"Mormegil",
+			"Paxt",
+			"Rosnicka.kacka",
+			"Utar"
 		]
 	},
 	"multimediaviewer-desc": "Zvětší náhledy obrázků do celoobrazovkového rozhraní.",

@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"A2093064",
-			"Kly"
+			"Kly",
+			"Xiplus"
 		]
 	},
 	"renocaptcha-desc": "用於確認編輯的 reCAPTCHA NoCAPTCHA 模組",

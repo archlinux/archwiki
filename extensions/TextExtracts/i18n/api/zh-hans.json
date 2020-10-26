@@ -18,5 +18,5 @@
 	"apiwarn-textextracts-unsupportedmodel": "$1有内容模型$2，它不受支持；返回空白提取内容。",
 	"apiwarn-textextracts-title-in-file-namespace": "文件名字空间中曾请求提取标题，但没有返回内容。",
 	"apiwarn-textextracts-sentences-and-html": "当用在HTML模式时，<var>$1sentences</var>参数可能有意外结果。",
-	"apiwarn-textextracts-malformed-html": "HTML可能有缺陷和/或不稳定，并可能忽略行内图片。使用时请自行承担风险。已知问题在https://www.mediawiki.org/wiki/Extension:TextExtracts#Caveats列出。"
+	"apiwarn-textextracts-malformed-html": "HTML可能有缺陷和/或不稳定，并可能忽略行内图片。使用时请自行承担风险。已知问题在https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:TextExtracts#Caveats列出。"
 }

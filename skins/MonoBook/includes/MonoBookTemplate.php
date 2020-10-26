@@ -197,7 +197,9 @@ class MonoBookTemplate extends BaseTemplate {
 			'id' => 'ca-tools',
 			'title' => $this->getMsg( 'toolbox' )->text()
 		];
-		if ( $this->data['language_urls'] !== false ) {
+
+		$languages = $this->data['sidebar']['LANGUAGES'];
+		if ( $languages !== false ) {
 			$tabs['languages'] = [
 				'text' => $this->getMsg( 'otherlanguages' )->text(),
 				'href' => '#p-lang',
@@ -215,19 +217,16 @@ class MonoBookTemplate extends BaseTemplate {
 	 * Generate the full sidebar
 	 *
 	 * @return string html
+	 * @suppress PhanTypeMismatchArgument $content is an array
+	 * even though we are comparing it to boolean
 	 */
 	protected function getRenderedSidebar() {
 		$sidebar = $this->data['sidebar'];
 		$html = '';
+		$languagesHTML = '';
 
 		if ( !isset( $sidebar['SEARCH'] ) ) {
 			$sidebar['SEARCH'] = true;
-		}
-		if ( !isset( $sidebar['TOOLBOX'] ) ) {
-			$sidebar['TOOLBOX'] = true;
-		}
-		if ( !isset( $sidebar['LANGUAGES'] ) ) {
-			$sidebar['LANGUAGES'] = true;
 		}
 
 		foreach ( $sidebar as $boxName => $content ) {
@@ -241,9 +240,9 @@ class MonoBookTemplate extends BaseTemplate {
 			if ( $boxName == 'SEARCH' ) {
 				$html .= $this->getSearchBox();
 			} elseif ( $boxName == 'TOOLBOX' ) {
-				$html .= $this->getToolboxBox();
+				$html .= $this->getToolboxBox( $content );
 			} elseif ( $boxName == 'LANGUAGES' ) {
-				$html .= $this->getLanguageBox();
+				$languagesHTML = $this->getLanguageBox( $content );
 			} else {
 				$html .= $this->getBox(
 					$boxName,
@@ -254,7 +253,9 @@ class MonoBookTemplate extends BaseTemplate {
 			}
 		}
 
-		return $html;
+		// Output language portal last given it can be long
+		// on articles which support multiple languages (T254546)
+		return $html . $languagesHTML;
 	}
 
 	/**
@@ -300,19 +301,13 @@ class MonoBookTemplate extends BaseTemplate {
 	/**
 	 * Generate the toolbox, complete with all three old hooks
 	 *
+	 * @param array $toolboxItems
 	 * @return string html
 	 */
-	protected function getToolboxBox() {
+	protected function getToolboxBox( $toolboxItems ) {
 		$html = '';
-		$template = $this;
 
-		$html .= $this->getBox( 'tb', $this->getToolbox(), 'toolbox', [ 'hooks' => [
-			// Deprecated hooks
-			'MonoBookTemplateToolboxEnd' => [ &$template ],
-			'SkinTemplateToolboxEnd' => [ &$template, true ]
-		] ] );
-
-		$html .= $this->deprecatedHookHack( 'MonoBookAfterToolbox', [ $template ] );
+		$html .= $this->getBox( 'tb', $toolboxItems, 'toolbox' );
 
 		return $html;
 	}
@@ -320,13 +315,20 @@ class MonoBookTemplate extends BaseTemplate {
 	/**
 	 * Generate the languages box
 	 *
+	 * @param array $languages Interwiki language links
 	 * @return string html
 	 */
-	protected function getLanguageBox() {
+	protected function getLanguageBox( $languages ) {
 		$html = '';
+		$name = 'lang';
 
-		if ( $this->data['language_urls'] !== false ) {
-			$html .= $this->getBox( 'lang', $this->data['language_urls'], 'otherlanguages' );
+		if (
+			$languages !== [] ||
+			// Check getAfterPortlet to make sure the languages are shown
+			// when empty but something has been injected in the portal. (T252841)
+			$this->getAfterPortlet( $name )
+		) {
+			$html .= $this->getBox( $name, $languages, 'otherlanguages' );
 		}
 
 		return $html;
@@ -383,6 +385,7 @@ class MonoBookTemplate extends BaseTemplate {
 	 * @param array $setOptions random crap to rename/do/whatever
 	 *
 	 * @return string html
+	 * @suppress PhanTypeMismatchArgumentNullable Many false positives
 	 */
 	protected function getPortlet( $name, $content, $msg = null, $setOptions = [] ) {
 		// random stuff to override with any provided options
@@ -399,8 +402,6 @@ class MonoBookTemplate extends BaseTemplate {
 			'body-extra-classes' => '',
 			// wrapper for individual list items
 			'text-wrapper' => [ 'tag' => 'span' ],
-			// old toolbox hook support (use: [ 'SkinTemplateToolboxEnd' => [ &$skin, true ] ])
-			'hooks' => '',
 			// option to stick arbitrary stuff at the beginning of the ul
 			'list-prepend' => ''
 		], $setOptions );
@@ -444,13 +445,6 @@ class MonoBookTemplate extends BaseTemplate {
 					);
 				}
 			}
-			// Compatibility with extensions still using SkinTemplateToolboxEnd or similar
-			if ( is_array( $options['hooks'] ) ) {
-				foreach ( $options['hooks'] as $hook => $hookOptions ) {
-					$contentText .= $this->deprecatedHookHack( $hook, $hookOptions );
-				}
-			}
-
 			$contentText .= Html::closeElement( 'ul' );
 		} else {
 			$contentText = $content;
@@ -557,8 +551,10 @@ class MonoBookTemplate extends BaseTemplate {
 
 		$html = '';
 
+		// @phan-suppress-next-line PhanImpossibleCondition
 		if ( ( $options['loose'] && $this->data[$object] != '' ) ||
 			( !$options['loose'] && $this->data[$object] ) ) {
+			// @phan-suppress-previous-line PhanRedundantCondition
 			if ( $options['wrapper'] == 'none' ) {
 				$html .= $this->get( $object );
 			} else {
@@ -586,6 +582,7 @@ class MonoBookTemplate extends BaseTemplate {
 
 		$html .= Html::openElement( 'div', [
 			'id' => 'footer',
+			'class' => 'mw-footer',
 			'role' => 'contentinfo',
 			'lang' => $this->get( 'userlang' ),
 			'dir' => $this->get( 'dir' )

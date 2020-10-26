@@ -15,6 +15,9 @@ class TOTPDisableForm extends OATHAuthOOUIHTMLForm implements IManageForm {
 		$this->getOutput()->addWikiMsg( 'oathauth-disabledoath' );
 	}
 
+	/**
+	 * @return array
+	 */
 	protected function getDescriptors() {
 		return [
 			'token' => [

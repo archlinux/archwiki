@@ -33,6 +33,7 @@ class LazyAttributes implements Attributes {
 		if ( $this->attributes === null ) {
 			$func = $this->interpreter;
 			$this->attributes = $func( $this->data );
+			// @phan-suppress-next-line PhanTypeMismatchProperty
 			$this->interpreter = null;
 			$this->data = null;
 		}

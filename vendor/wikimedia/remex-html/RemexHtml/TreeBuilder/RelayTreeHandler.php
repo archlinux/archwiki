@@ -25,52 +25,87 @@ class RelayTreeHandler implements TreeHandler {
 		$this->nextHandler = $nextHandler;
 	}
 
-	function startDocument( $fragmentNamespace, $fragmentName ) {
+	/**
+	 * @inheritDoc
+	 */
+	public function startDocument( $fragmentNamespace, $fragmentName ) {
 		$this->nextHandler->startDocument( $fragmentNamespace, $fragmentName );
 	}
 
-	function endDocument( $pos ) {
+	/**
+	 * @inheritDoc
+	 */
+	public function endDocument( $pos ) {
 		$this->nextHandler->endDocument( $pos );
 	}
 
-	function characters( $preposition, $ref, $text, $start, $length, $sourceStart, $sourceLength ) {
+	/**
+	 * @inheritDoc
+	 */
+	public function characters(
+		$preposition, $ref, $text, $start, $length, $sourceStart, $sourceLength
+	) {
 		$this->nextHandler->characters( $preposition, $ref, $text, $start, $length,
 			$sourceStart, $sourceLength );
 	}
 
-	function insertElement( $preposition, $ref, Element $element, $void,
+	/**
+	 * @inheritDoc
+	 */
+	public function insertElement( $preposition, $ref, Element $element, $void,
 		$sourceStart, $sourceLength
 	) {
 		$this->nextHandler->insertElement( $preposition, $ref, $element, $void,
 		$sourceStart, $sourceLength );
 	}
 
-	function endTag( Element $element, $sourceStart, $sourceLength ) {
+	/**
+	 * @inheritDoc
+	 */
+	public function endTag( Element $element, $sourceStart, $sourceLength ) {
 		$this->nextHandler->endTag( $element, $sourceStart, $sourceLength );
 	}
 
-	function doctype( $name, $public, $system, $quirks, $sourceStart, $sourceLength ) {
+	/**
+	 * @inheritDoc
+	 */
+	public function doctype( $name, $public, $system, $quirks, $sourceStart, $sourceLength ) {
 		$this->nextHandler->doctype( $name, $public, $system, $quirks,
 			$sourceStart, $sourceLength );
 	}
 
-	function comment( $preposition, $ref, $text, $sourceStart, $sourceLength ) {
+	/**
+	 * @inheritDoc
+	 */
+	public function comment( $preposition, $ref, $text, $sourceStart, $sourceLength ) {
 		$this->nextHandler->comment( $preposition, $ref, $text, $sourceStart, $sourceLength );
 	}
 
-	function error( $text, $pos ) {
+	/**
+	 * @inheritDoc
+	 */
+	public function error( $text, $pos ) {
 		$this->nextHandler->error( $text, $pos );
 	}
 
-	function mergeAttributes( Element $element, Attributes $attrs, $sourceStart ) {
+	/**
+	 * @inheritDoc
+	 */
+	public function mergeAttributes( Element $element, Attributes $attrs, $sourceStart ) {
 		$this->nextHandler->mergeAttributes( $element, $attrs, $sourceStart );
 	}
 
-	function removeNode( Element $element, $sourceStart ) {
+	/**
+	 * @inheritDoc
+	 */
+	public function removeNode( Element $element, $sourceStart ) {
 		$this->nextHandler->removeNode( $element, $sourceStart );
 	}
 
-	function reparentChildren( Element $element, Element $newParent, $sourceStart ) {
+	/**
+	 * @inheritDoc
+	 */
+	public function reparentChildren( Element $element, Element $newParent, $sourceStart ) {
 		$this->nextHandler->reparentChildren( $element, $newParent, $sourceStart );
 	}
 }

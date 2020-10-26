@@ -5,11 +5,11 @@
 			"Badseed",
 			"Consta",
 			"Dead3y3",
+			"Geraki",
 			"Glavkos",
 			"Lou",
-			"ZaDiak",
-			"Geraki",
-			"Protnet"
+			"Protnet",
+			"ZaDiak"
 		]
 	},
 	"gadgets-desc": "Επιτρέπει στους χρήστες να επιλέξουν προσαρμοσμένες [[Special:Gadgets|μικροεφαρμογές CSS και JavaScript]] στις [[Special:Preferences#mw-prefsection-gadgets|προτιμήσεις]] τους",
@@ -30,7 +30,7 @@
 	"gadgets-required-rights": "Απαιτεί {{PLURAL:$2|το ακόλουθο δικαίωμα|τα ακόλουθα δικαιώματα}}:\n\n$1",
 	"gadgets-required-skins": "Διαθέσιμο {{PLURAL:$2|στο θέμα εμφάνισης $1|στα ακόλουθα θέματα εμφάνισης: $1}}.",
 	"gadgets-default": "Ενεργοποιημένο για όλους από προεπιλογή.",
-	"gadgets-legacy": "Η μικροεφαρμογή δεν φορτώθηκε. Παρακαλούμε αναβαθμίσετε σε περιβάλλον ResourceLoader. ([https://www.mediawiki.org/wiki/ResourceLoader/Migration_guide_(users) Μάθετε περισσότερα])",
+	"gadgets-legacy": "Η μικροεφαρμογή δεν φορτώθηκε. Παρακαλούμε αναβαθμίσετε σε περιβάλλον ResourceLoader. ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) Μάθετε περισσότερα])",
 	"gadgets-export": "Εξαγωγή",
 	"gadgets-export-title": "Εξαγωγή μικροεφαρμογής",
 	"gadgets-not-found": "Η μικροεφαρμογή «$1» δεν βρέθηκε.",

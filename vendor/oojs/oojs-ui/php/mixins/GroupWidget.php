@@ -11,6 +11,7 @@ trait GroupWidget {
 	use GroupElement;
 
 	public function setDisabled( $state ) {
+		// @phan-suppress-next-line PhanTraitParentReference
 		parent::setDisabled( $state );
 		$modifiedItems = [];
 		$items = $this->getItems();

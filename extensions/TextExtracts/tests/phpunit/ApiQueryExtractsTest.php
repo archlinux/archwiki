@@ -14,12 +14,13 @@ use Wikimedia\TestingAccessWrapper;
  */
 class ApiQueryExtractsTest extends \MediaWikiTestCase {
 	use MediaWikiCoversValidator;
-	use \PHPUnit4And6Compat;
 
 	private function newInstance() {
 		$config = new \HashConfig( [
 			'ParserCacheExpireTime' => \IExpiringStore::TTL_INDEFINITE,
 		] );
+
+		$cache = new \WANObjectCache( [ 'cache' => new \HashBagOStuff() ] );
 
 		$context = $this->createMock( \IContextSource::class );
 		$context->method( 'getConfig' )
@@ -35,12 +36,10 @@ class ApiQueryExtractsTest extends \MediaWikiTestCase {
 			->method( 'getMain' )
 			->willReturn( $main );
 
-		return new ApiQueryExtracts( $query, '', $config );
+		return new ApiQueryExtracts( $query, '', $config, $cache );
 	}
 
 	public function testMemCacheHelpers() {
-		$this->setMwGlobals( 'wgMemc', new \HashBagOStuff() );
-
 		$title = $this->createMock( \Title::class );
 		$title->method( 'getPageLanguage' )
 			->willReturn( $this->createMock( \Language::class ) );
@@ -53,8 +52,13 @@ class ApiQueryExtractsTest extends \MediaWikiTestCase {
 
 		/** @var ApiQueryExtracts $instance */
 		$instance = TestingAccessWrapper::newFromObject( $this->newInstance() );
+		// Default param values for this API module
+		$instance->params = [ 'intro' => false, 'plaintext' => false ];
+
 		$this->assertFalse( $instance->getFromCache( $page, false ), 'is not cached yet' );
+
 		$instance->setCache( $page, $text );
+		$instance->cache->clearProcessCache();
 		$this->assertSame( $text, $instance->getFromCache( $page, false ) );
 	}
 
@@ -62,12 +66,12 @@ class ApiQueryExtractsTest extends \MediaWikiTestCase {
 		/** @var ApiQueryExtracts $instance */
 		$instance = TestingAccessWrapper::newFromObject( $this->newInstance() );
 
-		$this->assertInternalType( 'string', $instance->getCacheMode( [] ) );
+		$this->assertIsString( $instance->getCacheMode( [] ) );
 		$this->assertNotEmpty( $instance->getExamplesMessages() );
-		$this->assertInternalType( 'string', $instance->getHelpUrls() );
+		$this->assertIsString( $instance->getHelpUrls() );
 
 		$params = $instance->getAllowedParams();
-		$this->assertInternalType( 'array', $params );
+		$this->assertIsArray( $params );
 
 		$this->assertSame( $params['chars'][\ApiBase::PARAM_MIN], 1 );
 		$this->assertSame( $params['chars'][\ApiBase::PARAM_MAX], 1200 );

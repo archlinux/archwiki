@@ -42,12 +42,14 @@
 		/**
 		 * Whether this user has ever opened the metadata panel.
 		 * Based on a localstorage flag; will be set to true if the client does not support localstorage.
+		 *
 		 * @type {boolean}
 		 */
 		this.hasOpenedMetadata = undefined;
 
 		/**
 		 * Whether we've already fired an animation for the metadata div in this lightbox session.
+		 *
 		 * @property {boolean}
 		 * @private
 		 */

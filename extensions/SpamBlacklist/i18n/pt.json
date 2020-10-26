@@ -1,13 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
+			"Fúlvio",
 			"Giro720",
 			"Hamilton Abreu",
+			"He7d3r",
 			"Helder.wiki",
 			"Malafaya",
-			"555",
-			"He7d3r",
-			"Fúlvio"
+			555
 		]
 	},
 	"spam-blacklist": " #<!-- mantenha esta linha exatamente como ela está --> <pre>\n# Os URL externos que estejam nesta lista serão bloqueados quando adicionados a uma página.\n# Esta lista só afeta esta wiki; veja também a lista negra global.\n# Consulte a documentação em https://www.mediawiki.org/wiki/Extension:SpamBlacklist\n#\n# A sintaxe é a seguinte:\n#  * Tudo o que estiver entre um \"#\" e o final da linha é um comentário\n#  * Todas as linhas que não estiverem em branco são um fragmento de expressão regular\n#    (regex) que só pode coincidir com os \"hosts\" nos URL\n\n #</pre> <!-- mantenha esta linha exatamente como ela está -->",

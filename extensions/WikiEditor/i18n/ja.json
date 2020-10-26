@@ -2,21 +2,22 @@
 	"@metadata": {
 		"authors": [
 			"2nd-player",
+			"Aefgh39622",
 			"Aotake",
 			"Fryed-peach",
 			"Hosiryuhosi",
+			"Linuxmetel",
+			"Macofe",
 			"Ohgi",
+			"Omotecho",
+			"Otokoume",
+			"Rxy",
 			"Schu",
 			"Shirayuki",
-			"Whym",
-			"青子守歌",
-			"Rxy",
-			"Macofe",
 			"Sujiniku",
-			"Otokoume",
+			"Whym",
 			"おはぐろ蜻蛉",
-			"Omotecho",
-			"Aefgh39622"
+			"青子守歌"
 		]
 	},
 	"wikieditor": "高度なウィキテキスト編集インターフェイス",
@@ -59,7 +60,7 @@
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "内部リンク",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "外部リンク",
 	"wikieditor-toolbar-tool-link-empty": "リンク先として何も入力していません。",
-	"wikieditor-toolbar-tool-file": "埋め込みファイル",
+	"wikieditor-toolbar-tool-file": "画像とメディア",
 	"wikieditor-toolbar-tool-file-example": "例.jpg",
 	"wikieditor-toolbar-tool-file-title": "ファイルの挿入",
 	"wikieditor-toolbar-file-target": "ファイル名:",

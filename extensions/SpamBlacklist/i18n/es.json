@@ -3,15 +3,15 @@
 		"authors": [
 			"Armando-Martin",
 			"Dferg",
+			"Dgstranz",
 			"Drini",
 			"Fitoschido",
+			"Lemondoge",
+			"Macofe",
 			"MarcoAurelio",
 			"Sanbec",
 			"Savh",
-			"Vivaelcelta",
-			"Macofe",
-			"Lemondoge",
-			"Dgstranz"
+			"Vivaelcelta"
 		]
 	},
 	"spam-blacklist": " #<!-- Deje esta línea exactamente como está --> <pre>\n# Los enlaces externos que coincidan con esta lista se bloquearán al añadirse a una página.\n# Esta lista afecta sólo a esta wiki. Consulta además la lista negra global. \n# Para documentación consulta: https://www.mediawiki.org/wiki/Extension:SpamBlacklist\n#\n# La sintaxis es:\n#  * Todo lo que aparezca desde un carácter \"#\" hasta el fin de la línea, es un comentario\n#  * Toda línea que no esté en blanco, es un fragmento de expresión regular que solo coincidirá con equipos dentro de URL\n\n #</pre> <!-- Deje esta línea exactamente como está -->",

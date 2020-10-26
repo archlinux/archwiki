@@ -17,7 +17,7 @@
 	"nuke-submit-user": "Кхочушде",
 	"nuke-submit-delete": "ДӀаяха хаьржнарш",
 	"right-nuke": "дуккха агӀонаш дӀаяхар",
-	"nuke-userorip": "Декъашхочун цӀе, IP-адрес (еса йита мега):",
+	"nuke-userorip": "Декъашхочун цӀе, IP-адрес (яьсса йита мега):",
 	"nuke-maxpages": "АгӀонийн максимум дукхалла:",
 	"nuke-editby": "Кхолийна {{GENDER:$1|декъашхочо}} [[Special:Contributions/$1|$1]]",
 	"nuke-deleted": "'''$1''' агӀо дӀаяьккхина.",

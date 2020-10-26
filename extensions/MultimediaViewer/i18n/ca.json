@@ -1,13 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
+			"F3RaN",
 			"Fitoschido",
-			"QuimGil",
-			"Vriullop",
-			"Ssola",
 			"Macofe",
 			"Pginer",
-			"F3RaN"
+			"QuimGil",
+			"Ssola",
+			"Vriullop"
 		]
 	},
 	"multimediaviewer-desc": "Amplia les miniatures en una interfície a pantalla completa.",

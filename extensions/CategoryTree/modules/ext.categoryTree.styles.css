@@ -28,13 +28,13 @@
 	margin-left: 0.25em;
 }
 
-#mw-panel div.portal div.body .CategoryTreeTag {
+#mw-panel .portal .body .CategoryTreeTag {
 	margin: 0;
 	font-size: 0.75em;
 	line-height: 1.125em;
 }
 
-#mw-panel div.portal div.body .CategoryTreeItem {
+#mw-panel .portal .body .CategoryTreeItem {
 	padding: 0.25em 0;
 }
 

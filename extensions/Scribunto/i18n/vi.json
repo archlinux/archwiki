@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Minh Nguyen",
-			"Max20091"
+			"Max20091",
+			"Minh Nguyen"
 		]
 	},
 	"scribunto-desc": "Khuôn khổ đế nhúng ngôn ngữ kịch bản vào các trang MediaWiki",

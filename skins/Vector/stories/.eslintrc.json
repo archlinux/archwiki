@@ -1,0 +1,13 @@
+{
+	"root": true,
+	"extends": [
+		"wikimedia",
+		"wikimedia/language/es6"
+	],
+	"env": {
+		"browser": true
+	},
+	"parserOptions": {
+		"sourceType": "module"
+	}
+}

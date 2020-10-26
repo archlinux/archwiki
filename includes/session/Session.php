@@ -45,7 +45,7 @@ use WebRequest;
  * @ingroup Session
  * @since 1.27
  */
-final class Session implements \Countable, \Iterator, \ArrayAccess {
+class Session implements \Countable, \Iterator, \ArrayAccess {
 	/** @var null|string[] Encryption algorithm to use */
 	private static $encryptionAlgorithm = null;
 
@@ -83,7 +83,7 @@ final class Session implements \Countable, \Iterator, \ArrayAccess {
 
 	/**
 	 * Returns the SessionId object
-	 * @private For internal use by WebRequest
+	 * @internal For internal use by WebRequest
 	 * @return SessionId
 	 */
 	public function getSessionId() {
@@ -209,7 +209,10 @@ final class Session implements \Countable, \Iterator, \ArrayAccess {
 	}
 
 	/**
-	 * Whether HTTPS should be forced
+	 * Get the expected value of the forceHTTPS cookie. This reflects whether
+	 * session cookies were sent with the Secure attribute. If $wgForceHTTPS
+	 * is true, the forceHTTPS cookie is not sent and this value is ignored.
+	 *
 	 * @return bool
 	 */
 	public function shouldForceHTTPS() {
@@ -217,7 +220,10 @@ final class Session implements \Countable, \Iterator, \ArrayAccess {
 	}
 
 	/**
-	 * Set whether HTTPS should be forced
+	 * Set the value of the forceHTTPS cookie. This reflects whether session
+	 * cookies were sent with the Secure attribute. If $wgForceHTTPS is true,
+	 * the forceHTTPS cookie is not sent, and this value is ignored.
+	 *
 	 * @param bool $force
 	 */
 	public function setForceHTTPS( $force ) {
@@ -242,7 +248,7 @@ final class Session implements \Countable, \Iterator, \ArrayAccess {
 
 	/**
 	 * Fetch provider metadata
-	 * @protected For use by SessionProvider subclasses only
+	 * @note For use by SessionProvider subclasses only
 	 * @return mixed
 	 */
 	public function getProviderMetadata() {

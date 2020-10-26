@@ -1,15 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
+			"Anoop rao",
 			"Ansumang",
+			"Jayprakash12345",
 			"Kaustubh",
+			"Prong$31",
+			"Sfic",
 			"Shubhamkanodia",
 			"Siddhartha Ghai",
-			"Sfic",
-			"Jayprakash12345",
-			"Anoop rao",
-			"संजीव कुमार",
-			"Prong$31"
+			"संजीव कुमार"
 		]
 	},
 	"cite-desc": "उद्धरणों के लिये <code>&lt;ref[ name=id]&gt;</code> और <code>&lt;references/&gt;</code> टैग जोड़ता है।",
@@ -21,8 +21,8 @@
 	"cite_error_ref_no_input": "अमान्य <code>&lt;ref&gt;</code> टैग;\nनाम रहित संदर्भों में जानकारी देना आवश्यक है",
 	"cite_error_references_duplicate_key": "<code>&lt;ref&gt;</code> अमान्य टैग है; \"$1\" नाम कई बार विभिन्न सामग्रियों में परिभाषित हो चुका है",
 	"cite_error_references_invalid_parameters": "<code>&lt;references&gt;</code> चिप्पि में अमान्य प्राचल",
-	"cite_error_references_no_backlink_label": "पृष्ठ पाठ की कड़ियाँ देने वाले विशिष्ट नाम खतम हो गये।\nअधिक नाम <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki> संदेश में जोड़ें।",
-	"cite_error_no_link_label_group": "\"$1\" संदर्भ समूह के लिये कड़ियों के विशिष्ट नाम कम पड़ गए।\n<nowiki>[[MediaWiki:$2]]</nowiki> सन्देश में और नाम परिभाषित करें।",
+	"cite_error_references_no_backlink_label": "पृष्ठ पाठ की कड़ियाँ देने वाले विशिष्ट नाम खतम हो गये।\nअधिक नाम [[MediaWiki:Cite references link many format backlink labels]] संदेश में जोड़ें।",
+	"cite_error_no_link_label_group": "\"$1\" संदर्भ समूह के लिये कड़ियों के विशिष्ट नाम कम पड़ गए।\n[[MediaWiki:$2]] सन्देश में और नाम परिभाषित करें।",
 	"cite_error_references_no_text": "अमान्य <code>&lt;ref&gt;</code> टैग;\n<code>$1</code> नामक संदर्भ की जानकारी नहीं है",
 	"cite_error_included_ref": "<code>&lt;ref&gt;</code> टैग के लिए समाप्ति <code>&lt;/ref&gt;</code> टैग नहीं मिला",
 	"cite_error_group_refs_without_references": "\"$1\" नामक सन्दर्भ-समूह के लिए <code>&lt;ref&gt;</code> टैग मौजूद हैं, परन्तु समूह के लिए कोई <code>&lt;references group=\"$1\"/&gt;</code> टैग नहीं मिला। यह भी संभव है कि कोई समाप्ति <code>&lt;/ref&gt;</code> टैग गायब है।",

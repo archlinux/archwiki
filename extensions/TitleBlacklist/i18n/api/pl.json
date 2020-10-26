@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Rail",
 			"Railfail536",
-			"Woytecr",
-			"Rail"
+			"Woytecr"
 		]
 	},
 	"apihelp-titleblacklist-description": "Sprawdź tytuł strony, pliku lub nazwy użytkownika pod kątem obecności na czarnej liście tytułów.",

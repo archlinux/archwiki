@@ -1,0 +1,6 @@
+{
+	"extends": "stylelint-config-wikimedia",
+	"rules": {
+		"declaration-no-important": null
+	}
+}

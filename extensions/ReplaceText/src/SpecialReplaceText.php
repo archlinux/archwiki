@@ -67,7 +67,7 @@ class SpecialReplaceText extends SpecialPage {
 		}
 
 		$this->setHeaders();
-		if ( !is_null( $out->getResourceLoader()->getModule( 'mediawiki.special' ) ) ) {
+		if ( $out->getResourceLoader()->getModule( 'mediawiki.special' ) !== null ) {
 			$out->addModuleStyles( 'mediawiki.special' );
 		}
 		$this->doSpecialReplaceText();
@@ -178,16 +178,16 @@ class SpecialReplaceText extends SpecialPage {
 			// If no results were found, check to see if a bad
 			// category name was entered.
 			if ( count( $titles_for_edit ) == 0 && count( $titles_for_move ) == 0 ) {
-				$bad_cat_name = false;
+				$category_title = null;
 
 				if ( !empty( $this->category ) ) {
 					$category_title = Title::makeTitleSafe( NS_CATEGORY, $this->category );
 					if ( !$category_title->exists() ) {
-						$bad_cat_name = true;
+						$category_title = null;
 					}
 				}
 
-				if ( $bad_cat_name ) {
+				if ( $category_title !== null ) {
 					$link = ReplaceTextUtils::link(
 						$category_title,
 						ucfirst( $this->category )
@@ -217,7 +217,7 @@ class SpecialReplaceText extends SpecialPage {
 				);
 			} else {
 				$warning_msg = $this->getAnyWarningMessageBeforeReplace( $titles_for_edit, $titles_for_move );
-				if ( !is_null( $warning_msg ) ) {
+				if ( $warning_msg !== null ) {
 					$out->addWikiTextAsContent(
 						"<div class=\"errorbox\">$warning_msg</div><br clear=\"both\" />"
 					);
@@ -272,10 +272,10 @@ class SpecialReplaceText extends SpecialPage {
 		foreach ( $request->getValues() as $key => $value ) {
 			if ( $value == '1' && $key !== 'replace' && $key !== 'use_regex' ) {
 				if ( strpos( $key, 'move-' ) !== false ) {
-					$title = Title::newFromID( substr( $key, 5 ) );
+					$title = Title::newFromID( (int)substr( $key, 5 ) );
 					$replacement_params['move_page'] = true;
 				} else {
-					$title = Title::newFromID( $key );
+					$title = Title::newFromID( (int)$key );
 				}
 				if ( $title !== null ) {
 					$jobs[] = new ReplaceTextJob( $title, $replacement_params );
@@ -429,7 +429,7 @@ class SpecialReplaceText extends SpecialPage {
 			Html::hidden( 'continue', 1 ) .
 			Html::hidden( 'token', $out->getUser()->getEditToken() )
 		);
-		if ( is_null( $warning_msg ) ) {
+		if ( $warning_msg === null ) {
 			$out->addWikiMsg( 'replacetext_docu' );
 		} else {
 			$out->wrapWikiMsg(
@@ -756,8 +756,10 @@ class SpecialReplaceText extends SpecialPage {
 				// Backwards compatibility code; remove once MW 1.30 is
 				// no longer supported.
 				$contextBefore =
+					// @phan-suppress-next-line PhanUndeclaredMethod
 					$wgLang->truncate( $contextBefore, - $cw, '...', false );
 				$contextAfter =
+					// @phan-suppress-next-line PhanUndeclaredMethod
 					$wgLang->truncate( $contextAfter, $cw, '...', false );
 			} else {
 				$contextBefore =
@@ -765,6 +767,7 @@ class SpecialReplaceText extends SpecialPage {
 				$contextAfter =
 					$wgLang->truncateForDatabase( $contextAfter, $cw, '...', false );
 			}
+			// @phan-suppress-next-line SecurityCheck-DoubleEscaped
 			$context .= $this->convertWhiteSpaceToHTML( $contextBefore );
 			$snippet = $this->convertWhiteSpaceToHTML( substr( $text, $index, $len ) );
 			if ( $use_regex ) {
@@ -775,6 +778,7 @@ class SpecialReplaceText extends SpecialPage {
 			}
 			$context .= preg_replace( $targetStr, '<span class="searchmatch">\0</span>', $snippet );
 
+			// @phan-suppress-next-line SecurityCheck-DoubleEscaped
 			$context .= $this->convertWhiteSpaceToHTML( $contextAfter );
 		}
 		return $context;

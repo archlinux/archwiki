@@ -17,9 +17,8 @@
  */
 class ApiQueryTitleBlacklistTest extends ApiTestCase {
 
-	public function setUp() {
+	public function setUp() : void {
 		parent::setUp();
-		$this->doLogin();
 
 		TitleBlacklist::destroySingleton();
 		$this->setMwGlobals( 'wgTitleBlacklistSources', [
@@ -30,7 +29,7 @@ class ApiQueryTitleBlacklistTest extends ApiTestCase {
 		] );
 	}
 
-	public function tearDown() {
+	public function tearDown() : void {
 		TitleBlacklist::destroySingleton();
 		parent::tearDown();
 	}

@@ -7,14 +7,14 @@
 			"IAlex",
 			"Jean-Frédéric",
 			"Louperivois",
+			"Niridya",
 			"Peter17",
 			"Seb35",
 			"Sherbrooke",
-			"Wyz",
-			"Zetud",
+			"Thibaut120094",
 			"Wladek92",
-			"Niridya",
-			"Thibaut120094"
+			"Wyz",
+			"Zetud"
 		]
 	},
 	"nuke": "Suppression en masse",
@@ -32,7 +32,7 @@
 	"nuke-userorip": "Nom d'utilisateur, adresse IP ou vide :",
 	"nuke-maxpages": "Nombre maximal de pages&nbsp;:",
 	"nuke-editby": "Créé par [[Special:Contributions/$1|{{GENDER:$1|$1}}]]",
-	"nuke-deleted": "La page '''$1''' a été effacée.",
+	"nuke-deleted": "La page '''$1''' a été supprimée.",
 	"nuke-not-deleted": "La page [[:$1]] '''ne peut pas''' être effacée.",
 	"nuke-delete-more": "[[Special:Nuke|Supprimer plus de pages]]",
 	"nuke-pattern": "Modèle au FORMAT SQL (par ex. %) pour le nom de page :",
@@ -41,5 +41,5 @@
 	"nuke-namespace": "Se limiter à l'espace de noms&nbsp;:",
 	"nuke-linkoncontribs": "suppression de masse",
 	"nuke-linkoncontribs-text": "Suppression de pages en masse pour lesquelles {{GENDER:$1|cet utilisateur|cette utilisatrice}} est l’unique auteur",
-	"nuke-confirm": "Vous allez supprimer {{PLURAL:$1|une page|$1 pages}}. Êtes-vous sûr de vouloir supprimer ?"
+	"nuke-confirm": "Vous allez supprimer {{PLURAL:$1|une page|$1 pages}}. Êtes-vous sûr de vouloir supprimer ?"
 }

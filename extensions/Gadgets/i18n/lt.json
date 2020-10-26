@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"Albertas",
 			"Eitvys200",
 			"Homo",
 			"Vpovilaitis",
-			"Albertas",
 			"Zygimantus"
 		]
 	},
@@ -26,7 +26,7 @@
 	"gadgets-required-rights": "{{PLURAL:$2|Reikalinga ši teisė|Reikalingos šios teisės}}:\n\n$1",
 	"gadgets-required-skins": "Prieinama {{PLURAL:$2|$1 stiliuje|šiuose stiliuose: $1}}.",
 	"gadgets-default": "Įgalinti visiems pagal nutylėjimą.",
-	"gadgets-legacy": "Priemonės nėra įkeltos. Prašome migruoti prie ResourceLoader. ([https://www.mediawiki.org/wiki/ResourceLoader/Migration_guide_(users) Sužinoti daugiau])",
+	"gadgets-legacy": "Priemonės nėra įkeltos. Prašome migruoti prie ResourceLoader. ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) Sužinoti daugiau])",
 	"gadgets-export": "Eksportas",
 	"gadgets-export-title": "Priemonių eksportas",
 	"gadgets-not-found": "Įtaisas \" $1 \" nerastas.",

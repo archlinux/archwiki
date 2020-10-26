@@ -17,5 +17,5 @@
 	"apiwarn-textextracts-unsupportedmodel": "يحتوي $1 على نموذج محتوى $2، وهو غير مدعوم; إرجاع مستخلص فارغ.",
 	"apiwarn-textextracts-title-in-file-namespace": "تم طلب استخراج عنوان في نطاق الملف، ولم يتم إرجاع أي شيء.",
 	"apiwarn-textextracts-sentences-and-html": "قد يحتوي الوسيط <var>$1sentences</var> على نتائج غير متوقعة عند استخدامها في وضع HTML.",
-	"apiwarn-textextracts-malformed-html": "قد يكون HTML غير صحيح و/أو غير متوازن وقد يحذف الصور المضمنة، استخدم على مسؤوليتك الخاصة. يتم سرد المشاكل المعروفة في https://www.mediawiki.org/wiki/Extension:TextExtracts#Caveats."
+	"apiwarn-textextracts-malformed-html": "قد يكون HTML غير صحيح و/أو غير متوازن وقد يحذف الصور المضمنة، استخدم على مسؤوليتك الخاصة. يتم سرد المشاكل المعروفة في https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:TextExtracts#Caveats."
 }

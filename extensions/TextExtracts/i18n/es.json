@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Dgstranz",
 			"Fitoschido",
-			"Macofe",
-			"Dgstranz"
+			"Macofe"
 		]
 	},
 	"textextracts-desc": "Proporciona extractos del contenido de una página en texto sencillo o HTML limitado"

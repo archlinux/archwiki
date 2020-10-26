@@ -2,10 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Alma",
-			"Toliño",
 			"Banjo",
-			"Navhy",
-			"Iváns"
+			"Iváns",
+			"Toliño"
 		]
 	},
 	"inputbox-desc": "Permitir a inclusión de formularios predefinidos de HTML",

@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Event",
-			"Nghtwlkr",
 			"Danmichaelo",
+			"Event",
+			"Jon Harald Søby",
 			"Kingu",
-			"Jon Harald Søby"
+			"Nghtwlkr"
 		]
 	},
 	"nuke": "Massesletting",
@@ -26,7 +26,7 @@
 	"nuke-deleted": "Siden '''$1''' har blitt slettet.",
 	"nuke-not-deleted": "Siden [[:$1]] '''kunne ikke''' slettes.",
 	"nuke-delete-more": "[[Special:Nuke|Slett flere sider]]",
-	"nuke-pattern": "Mønster for sidenavnet:",
+	"nuke-pattern": "SQL-LIKE-mønster (f.eks. %) for sidenavnet:",
 	"nuke-nopages-global": "Det er ingen sidetitler som matcher søket ditt.",
 	"nuke-viewchanges": "vis endringer",
 	"nuke-namespace": "Begrens til navnerom:",

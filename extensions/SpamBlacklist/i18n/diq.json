@@ -3,10 +3,10 @@
 		"authors": [
 			"Aspar",
 			"Erdemaslancan",
-			"Marmase",
-			"Olvörg",
 			"Kumkumuk",
+			"Marmase",
 			"Mirzali",
+			"Olvörg",
 			"Orbot707"
 		]
 	},
@@ -20,5 +20,8 @@
 	"spam-invalid-lines": "na qerelisteya spami {{PLURAL:$1|satır|satıran}}  {{PLURAL:$1|nemeqbulo|nemeqbuli}};",
 	"spam-blacklist-desc": "Regex-tabanın haleta anti-spami URL'ya perer u adresa e-posta qande  karberande qeydınan geriyayo",
 	"log-name-spamblacklist": "Qeydê siyaliste ya spami",
-	"log-description-spamblacklist": "Nê weqeyi isabetanê lista spamiya siyaye teqib kenê."
+	"log-description-spamblacklist": "Nê weqeyi isabetanê lista spamiya siyaye teqib kenê.",
+	"logentry-spamblacklist-hit": "{{GENDER:$2|$1}} sebebê yew spami ra  kerdo liste, terefê $3 ra $4 bıyo cı",
+	"right-spamblacklistlog": "Roceka lista xırabi bıvênên",
+	"action-spamblacklistlog": "roceka lista xırabi bıvênên"
 }

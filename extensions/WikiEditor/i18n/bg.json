@@ -2,16 +2,17 @@
 	"@metadata": {
 		"authors": [
 			"DCLXVI",
-			"McDutchie",
-			"Spiritia",
-			"Stanqo",
-			"Turin",
-			"Wizardist",
 			"Macofe",
+			"McDutchie",
+			"ShockD",
+			"Spiritia",
+			"StanProg",
+			"Stanqo",
+			"Ted Masters",
+			"Turin",
 			"V111P",
 			"Vodnokon4e",
-			"StanProg",
-			"ShockD"
+			"Wizardist"
 		]
 	},
 	"wikieditor": "Подобрен интерфейс за редактиране на уикитекст",
@@ -54,7 +55,7 @@
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Вътрешна препратка",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "Външна препратка",
 	"wikieditor-toolbar-tool-link-empty": "Не сте въвели адрес на препратката.",
-	"wikieditor-toolbar-tool-file": "Вграден файл",
+	"wikieditor-toolbar-tool-file": "Изображения и медия",
 	"wikieditor-toolbar-tool-file-example": "Пример.jpg",
 	"wikieditor-toolbar-tool-file-title": "Вмъкване на файл",
 	"wikieditor-toolbar-file-target": "Име на файл:",
@@ -118,7 +119,7 @@
 	"wikieditor-toolbar-tool-table-insert": "Вмъкване",
 	"wikieditor-toolbar-tool-table-cancel": "Отказ",
 	"wikieditor-toolbar-tool-table-example-text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut nec purus diam. Sed aliquam imperdiet nunc quis lacinia. Donec rutrum consectetur placerat. Sed volutpat neque non purus faucibus id ultricies enim euismod.",
-	"wikieditor-toolbar-tool-table-toomany": "През този диалогов режим не може да се вмъкне таблица с повече от $1 {{PLURAL:$1|клетка|клетки}}.",
+	"wikieditor-toolbar-tool-table-toomany": "Вмъкването на таблица с повече от $1 {{PLURAL:$1|клетка|клетки}} не е възможно чрез този диалогов прозорец.",
 	"wikieditor-toolbar-tool-table-invalidnumber": "Не сте въвели валидно число за броя редове или стълбове.",
 	"wikieditor-toolbar-tool-table-zero": "Не можете да вмъкнете таблица с нула редове или стълбове.",
 	"wikieditor-toolbar-tool-replace": "Търсене и замяна",

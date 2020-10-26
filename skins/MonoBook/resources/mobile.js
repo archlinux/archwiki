@@ -44,17 +44,17 @@ $( function () {
 					't-contributions'
 				];
 				newTabs.forEach( function ( item ) {
-					var a = $( '#' + item + ' a' );
+					var $a = $( '#' + item + ' a' );
 					// TODO check if we're on the page and add class=selected
 
-					if ( a.length ) {
+					if ( $a.length ) {
 						mw.util.addPortletLink(
 							'p-cactions-mobile',
-							a.attr( 'href' ),
-							a.text(),
-							a.parent().attr( 'id' ) + '-mobile',
-							a.attr( 'tooltip' ),
-							a.attr( 'accesskey' ),
+							$a.attr( 'href' ),
+							$a.text(),
+							$a.parent().attr( 'id' ) + '-mobile',
+							$a.attr( 'tooltip' ),
+							$a.attr( 'accesskey' ),
 							'#ca-more'
 						);
 					}

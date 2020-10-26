@@ -2,13 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Cainamarques",
+			"Eduardo Addad de Oliveira",
+			"Felipe L. Ewald",
+			"He7d3r",
 			"Helder.wiki",
 			"Jaideraf",
 			"Jefersonmoraes",
-			"He7d3r",
-			"Luan",
-			"Felipe L. Ewald",
-			"Eduardo Addad de Oliveira"
+			"Luan"
 		]
 	},
 	"scribunto-desc": "Estrutura para incorporar linguagens de script em páginas do MediaWiki",

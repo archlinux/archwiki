@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Fohanno",
+			"Fulup",
 			"Huñvreüs"
 		]
 	},
@@ -17,6 +18,7 @@
 	"oathauth-disable-for-user": "Diweradekaat an dilesadur div-elfenn evit un implijer",
 	"action-oathauth-disable-for-user": "diweradekaat an dilesadur div-elfenn evit un implijer",
 	"action-oathauth-view-log": "gwelout marilh ar c’hemmoù an dilesadur div-elfenn",
+	"oathauth-enterverifyreason": "Abeg evit gwiriañ :",
 	"oathauth-user-not-does-not-have-oath-enabled": "Implijer n’en deus ket gweredekaet an dilesadur div-elfenn, neuze netra da vezañ diweradekaet.",
 	"action-oathauth-enable": "gweradekaat an dilesadur div-elfenn",
 	"oathauth-auth-token-label": "Jetouer",

@@ -5,12 +5,10 @@
  * @license MIT
  */
 
-window.MWWIKITEXT_MOCK_API = true;
-
 QUnit.module( 've.ui.MWWikitextStringTransferHandler (Cite)', QUnit.newMwEnvironment( {
 	beforeEach: function () {
 		// Mock XHR for mw.Api()
-		this.server = window.MWWIKITEXT_MOCK_API ? this.sandbox.useFakeServer() : null;
+		this.server = this.sandbox.useFakeServer();
 		ve.test.utils.mwEnvironment.setup.call( this );
 	},
 	afterEach: ve.test.utils.mwEnvironment.teardown

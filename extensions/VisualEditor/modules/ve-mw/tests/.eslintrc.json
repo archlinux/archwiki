@@ -1,0 +1,15 @@
+{
+	"extends": [
+		"wikimedia/qunit",
+		"../../../.eslintrc.json"
+	],
+	"env": {
+		"es6": true
+	},
+	"globals": {
+		"sinon": false
+	},
+	"rules": {
+		"no-jquery/no-parse-html-literal": "off"
+	}
+}

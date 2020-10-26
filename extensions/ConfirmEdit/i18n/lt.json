@@ -1,15 +1,16 @@
 {
 	"@metadata": {
 		"authors": [
+			"Albertas",
 			"Eitvys200",
 			"Garas",
 			"Homo",
 			"Matasg",
-			"Albertas",
+			"Tomasdd",
 			"Zygimantus"
 		]
 	},
-	"captcha-edit": "Kad redaguotumėte šį straipsnį, apskaičiuokite šią paprastą sumą ir įveskite atsakymą į laukelį ([[Special:Captcha/help|daugiau informacijos]]):",
+	"captcha-edit": "Kad redaguotumėte šį straipsnį, išspręskite pateiktą užduotį ir įveskite atsakymą į laukelį ([[Special:Captcha/help|daugiau informacijos]]):",
 	"captcha-edit-fail": "Neteisingas arba nenurodytas patvirtinimo kodas.",
 	"captcha-desc": "Pateikia CAPTCHA metodikas, kaip apsisaugoti nuo brukalo ir slaptažodžių spėliojimo",
 	"captcha-label": "CAPTCHA",

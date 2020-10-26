@@ -1,18 +1,18 @@
 {
 	"@metadata": {
 		"authors": [
-			"Mark Holmquist <mtraceur@member.fsf.org>",
-			"Raymond",
-			"Shirayuki",
-			"Liuxinyu970226",
-			"Robby",
-			"Mormegil",
 			"Amire80",
-			"Tacsipacsi",
-			"Wladek92",
-			"Pikne",
 			"Jon Harald Søby",
-			"Matěj Suchánek"
+			"Liuxinyu970226",
+			"Mark Holmquist <mtraceur@member.fsf.org>",
+			"Matěj Suchánek",
+			"Mormegil",
+			"Pikne",
+			"Raymond",
+			"Robby",
+			"Shirayuki",
+			"Tacsipacsi",
+			"Wladek92"
 		]
 	},
 	"multimediaviewer-desc": "{{desc|name=Multimedia Viewer|url=https://www.mediawiki.org/wiki/Extension:MultimediaViewer}}",

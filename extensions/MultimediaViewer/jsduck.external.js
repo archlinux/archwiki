@@ -97,6 +97,6 @@
  */
 
 /**
- * @class jqXHR
+ * @class jQuery.jqXHR
  * An XMLHttpRequest object wrapped by jQuery
  */
