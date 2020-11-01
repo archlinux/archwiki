@@ -1,4 +1,6 @@
-FROM archlinux/base
+FROM php:7-fpm-alpine
 
-RUN pacman -Syu --noconfirm --needed php php-intl php-apcu php-gd imagemagick git sudo diffutils
-ADD etc/ /etc
+RUN apk add imagemagick git diffutils
+
+COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/bin/
+RUN install-php-extensions opcache apcu intl gd mysqli
