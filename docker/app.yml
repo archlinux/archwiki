@@ -1,0 +1,37 @@
+version: "3.8"
+
+services:
+  app:
+    build: php
+    working_dir: /app
+    environment:
+      - HOME=/tmp
+    user: "${UID}:${GID}"
+    userns_mode: host
+    volumes:
+      - ../:/app
+    tmpfs:
+      - /tmp
+    depends_on:
+      - mariadb
+
+  nginx:
+    image: nginx:stable-alpine
+    ports:
+      - "${PORT}:80"
+    volumes:
+      - ../:/app:ro
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    userns_mode: host
+    tmpfs:
+      - /tmp
+    depends_on:
+      - app
+
+  mariadb:
+    image: mariadb:10
+    environment:
+      - MYSQL_ROOT_PASSWORD=
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+    tmpfs:
+      - /tmp
