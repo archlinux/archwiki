@@ -6,12 +6,26 @@ use MediaWiki\MediaWikiServices;
 
 class Hooks
 {
-    public static function onBeforePageDisplay(\OutputPage &$out, \Skin &$skin)
+    public static function onBeforePageDisplay(\OutputPage &$outputPage, \Skin &$skin)
     {
-        $out->addModuleStyles('zzz.ext.archLinux.styles');
+        $outputPage->addModuleStyles('zzz.ext.archLinux.styles');
     }
 
-    public static function onSkinTemplateOutputPageBeforeExec(\SkinTemplate $skinTemplate, \QuickTemplate $tpl)
+    public static function onAfterFinalPageOutput(\OutputPage $outputPage)
+    {
+        // Insert the navigation right after the <body> element
+        $out = preg_replace(
+            '/(<body[^>]*>)/s',
+            '$1' . self::geArchNavBar(),
+            ob_get_clean()
+        );
+
+        ob_start();
+        echo $out;
+        return true;
+    }
+
+    private static function geArchNavBar(): string
     {
         $config = MediaWikiServices::getInstance()->getConfigFactory()->makeConfig('archlinux');
         $archNavBar = $config->get("ArchNavBar");
@@ -21,6 +35,6 @@ class Hooks
 
         ob_start();
         include __DIR__ . '/ArchNavBar.php';
-        $tpl->set('headelement', $tpl->get('headelement') . ob_get_clean());
+        return ob_get_clean();
     }
 }
