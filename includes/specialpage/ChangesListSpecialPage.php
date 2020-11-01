@@ -625,10 +625,9 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 
 		$this->considerActionsForDefaultSavedQuery( $subpage );
 
-		// Enable OOUI and module for the clock icon.
+		// Enable OOUI for the clock icon.
 		if ( $this->getConfig()->get( 'WatchlistExpiry' ) ) {
 			$this->getOutput()->enableOOUI();
-			$this->getOutput()->addModules( 'mediawiki.special.changeslist.watchlistexpiry' );
 		}
 
 		$opts = $this->getOptions();

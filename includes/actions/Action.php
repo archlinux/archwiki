@@ -79,7 +79,7 @@ abstract class Action implements MessageLocalizer {
 	 * @param array $overrides
 	 * @return bool|null|string|callable|Action
 	 */
-	private static function getClass(
+	final private static function getClass(
 		string $action,
 		array $overrides
 	) {

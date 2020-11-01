@@ -804,7 +804,7 @@ class WatchedItemStore implements WatchedItemStoreInterface, StatsdAwareInterfac
 			$target,
 			$this->getLatestNotificationTimestamp(
 				$row->wl_notificationtimestamp, $user, $target ),
-			wfTimestampOrNull( TS_ISO_8601, $row->we_expiry ?? null )
+			wfTimestampOrNull( TS_MW, $row->we_expiry ?? null )
 		);
 	}
 
@@ -938,6 +938,18 @@ class WatchedItemStore implements WatchedItemStoreInterface, StatsdAwareInterfac
 	}
 
 	/**
+	 * Returns a normalized expiry or the max expiry if the given expiry exceeds it.
+	 * @param string|null $expiry
+	 * @return false|string|null
+	 */
+	private function getNormalizedOrMaxExpiry( ?string $expiry ) {
+		if ( ExpiryDef::expiryExceedsMax( $expiry, $this->maxExpiryDuration ) ) {
+			return ExpiryDef::normalizeExpiry( $this->maxExpiryDuration );
+		}
+		return ExpiryDef::normalizeExpiry( $expiry );
+	}
+
+	/**
 	 * @since 1.27 Method added.
 	 * @since 1.35 Accepts $expiry parameter.
 	 * @param UserIdentity $user
@@ -957,12 +969,12 @@ class WatchedItemStore implements WatchedItemStoreInterface, StatsdAwareInterfac
 		} else {
 			// Create a new WatchedItem and add it to the process cache.
 			// In this case we don't need to re-fetch the expiry.
-			$expiry = ExpiryDef::normalizeUsingMaxExpiry( $expiry, $this->maxExpiryDuration, TS_ISO_8601 );
+			$expiry = $this->getNormalizedOrMaxExpiry( $expiry );
 			$item = new WatchedItem(
 				$user,
 				$target,
 				null,
-				$expiry
+				wfIsInfinity( $expiry ) ? null : $expiry
 			);
 			$this->cache( $item );
 		}
@@ -997,7 +1009,9 @@ class WatchedItemStore implements WatchedItemStoreInterface, StatsdAwareInterfac
 		if ( !$targets ) {
 			return true;
 		}
-		$expiry = ExpiryDef::normalizeUsingMaxExpiry( $expiry, $this->maxExpiryDuration, TS_ISO_8601 );
+
+		$expiry = $this->getNormalizedOrMaxExpiry( $expiry );
+
 		$rows = [];
 		foreach ( $targets as $target ) {
 			$rows[] = [

@@ -30,7 +30,7 @@ class GitHubFetcher extends HttpFetcher {
 		preg_match( $p, $pattern, $m );
 
 		$apiURL = "https://api.github.com/repos/{$m['org']}/{$m['repo']}/contents/{$m['path']}";
-		$json = \Http::get( $apiURL, $wgLocalisationUpdateHttpRequestOptions, __METHOD__ );
+		$json = \Http::get( $apiURL, $wgLocalisationUpdateHttpRequestOptions );
 		if ( !$json ) {
 			throw new \Exception( "Unable to get directory listing for {$m['org']}/{$m['repo']}" );
 		}

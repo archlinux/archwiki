@@ -69,8 +69,7 @@ class WatchAction extends FormAction {
 	}
 
 	public function onSubmit( $data ) {
-		$expiry = $this->getRequest()->getVal( 'wp' . $this->expiryFormFieldName );
-
+		$expiry = $this->getRequest()->getText( 'wp' . $this->expiryFormFieldName );
 		// Even though we're never unwatching here, use doWatchOrUnwatch() because it also checks for changed expiry.
 		return self::doWatchOrUnwatch( true, $this->getTitle(), $this->getUser(), $expiry );
 	}
@@ -133,9 +132,13 @@ class WatchAction extends FormAction {
 		if ( $watchedItem instanceof WatchedItem && $watchedItem->getExpiry() ) {
 			// If it's already being temporarily watched,
 			// add the existing expiry as the default option in the dropdown.
-			$default = $watchedItem->getExpiry( TS_ISO_8601 );
+			$expiry = MWTimestamp::getInstance( $watchedItem->getExpiry() );
 			$daysLeft = $watchedItem->getExpiryInDaysText( $msgLocalizer, true );
-			$expiryOptions = array_merge( [ $daysLeft => $default ], $expiryOptions );
+			$expiryOptions = array_merge(
+				[ $daysLeft => $expiry->getTimestamp( TS_ISO_8601 ) ],
+				$expiryOptions
+			);
+			$default = $expiry->getTimestamp( TS_ISO_8601 );
 		}
 		return [
 			'options' => $expiryOptions,
@@ -170,7 +173,7 @@ class WatchAction extends FormAction {
 		if ( $submittedExpiry ) {
 			// We can't use $this->watcheditem to get the expiry because it's not been saved at this
 			// point in the request and so its values are those from before saving.
-			$expiry = ExpiryDef::normalizeExpiry( $submittedExpiry, TS_ISO_8601 );
+			$expiry = ExpiryDef::normalizeExpiry( $submittedExpiry );
 
 			// If the expiry label isn't one of the predefined ones in the dropdown, calculate 'x days'.
 			$expiryDays = WatchedItem::calculateExpiryInDays( $expiry );
@@ -222,11 +225,9 @@ class WatchAction extends FormAction {
 		$changingWatchStatus = (bool)$oldWatchedItem !== $watch;
 		if ( $oldWatchedItem && $expiry !== null ) {
 			// If there's an old watched item, a non-null change to the expiry requires an UPDATE.
-			$oldWatchPeriod = $oldWatchedItem->getExpiry() === null
-				? 'infinity'
-				: $oldWatchedItem->getExpiry();
 			$changingWatchStatus = $changingWatchStatus ||
-				$oldWatchPeriod !== ExpiryDef::normalizeExpiry( $expiry, TS_MW );
+				ExpiryDef::normalizeExpiry( $oldWatchedItem->getExpiry() ) !==
+				ExpiryDef::normalizeExpiry( $expiry );
 		}
 
 		if ( $changingWatchStatus ) {
