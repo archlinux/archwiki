@@ -1,5 +1,0 @@
-{
-	"rules": {
-		"no-jquery/no-class-state": "off"
-	}
-}

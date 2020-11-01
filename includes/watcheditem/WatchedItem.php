@@ -21,8 +21,6 @@
 
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\User\UserIdentity;
-use Wikimedia\ParamValidator\TypeDef\ExpiryDef;
-use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
  * Representation of a pair of user and title for watchlist entries.
@@ -49,8 +47,7 @@ class WatchedItem {
 	private $notificationTimestamp;
 
 	/**
-	 * @var ConvertibleTimestamp|null value that determines when a watched item will expire.
-	 *  'null' means that there is no expiration.
+	 * @var string|null When to automatically unwatch the page
 	 */
 	private $expiry;
 
@@ -78,14 +75,7 @@ class WatchedItem {
 		$this->user = $user;
 		$this->linkTarget = $linkTarget;
 		$this->notificationTimestamp = $notificationTimestamp;
-
-		// Expiry will be saved in ConvertibleTimestamp
-		$this->expiry = ExpiryDef::normalizeExpiry( $expiry );
-
-		// If the normalization returned 'infinity' then set it as null since they are synonymous
-		if ( $this->expiry === 'infinity' ) {
-			$this->expiry = null;
-		}
+		$this->expiry = $expiry;
 	}
 
 	/**
@@ -138,14 +128,11 @@ class WatchedItem {
 	 * When the watched item will expire.
 	 *
 	 * @since 1.35
-	 * @param int|null $style Given timestamp format to style the ConvertibleTimestamp
-	 * @return string|null null or in a format acceptable to ConvertibleTimestamp (TS_* constants).
-	 *  Default is TS_MW format.
+	 *
+	 * @return string|null null or in a format acceptable to wfTimestamp().
 	 */
-	public function getExpiry( ?int $style = TS_MW ) {
-		return $this->expiry instanceof ConvertibleTimestamp
-			? $this->expiry->getTimestamp( $style )
-			: $this->expiry;
+	public function getExpiry(): ?string {
+		return $this->expiry;
 	}
 
 	/**
@@ -156,11 +143,12 @@ class WatchedItem {
 	 * @return bool
 	 */
 	public function isExpired(): bool {
-		$expiry = $this->getExpiry();
-		if ( $expiry === null ) {
+		if ( $this->getExpiry() === null ) {
 			return false;
 		}
-		return $expiry < ConvertibleTimestamp::now();
+
+		$unix = MWTimestamp::convert( TS_UNIX, $this->getExpiry() );
+		return $unix < wfTimestamp();
 	}
 
 	/**

@@ -211,13 +211,8 @@
 			// Preload the notification module for mw.notify
 			mw.loader.load( 'mediawiki.notification' );
 
-			// Preload watchlist expiry widget so it runs in parallel
-			// with the api call
-			if ( isWatchlistExpiryEnabled ) {
-				mw.loader.load( 'mediawiki.watchstar.widgets' );
-			}
-
 			api = new mw.Api();
+
 			api[ action ]( title )
 				.done( function ( watchResponse ) {
 					var message,
@@ -238,7 +233,7 @@
 							message = mwTitle.isTalkPage() ? 'addedwatchindefinitelytext-talk' : 'addedwatchindefinitelytext';
 						}
 
-						mw.loader.using( 'mediawiki.watchstar.widgets' ).then( function ( require ) {
+						mw.loader.using( 'mediawiki.watchstar.widgets' ).done( function ( require ) {
 							var WatchlistExpiryWidget = require( 'mediawiki.watchstar.widgets' );
 
 							if ( !watchlistPopup ) {

@@ -369,6 +369,7 @@ class ApiEditPage extends ApiBase {
 		}
 
 		$watch = $this->getWatchlistValue( $params['watchlist'], $titleObj, $user );
+		$watchlistExpiry = $params['watchlistexpiry'] ?? null;
 
 		// Deprecated parameters
 		if ( $params['watch'] ) {
@@ -378,10 +379,9 @@ class ApiEditPage extends ApiBase {
 		}
 
 		if ( $watch ) {
-			$requestArray['wpWatchthis'] = true;
-			$watchlistExpiry = $this->getExpiryFromParams( $params );
+			$requestArray['wpWatchthis'] = '';
 
-			if ( $watchlistExpiry ) {
+			if ( $this->watchlistExpiryEnabled && $watchlistExpiry ) {
 				$requestArray['wpWatchlistExpiry'] = $watchlistExpiry;
 			}
 		}
@@ -482,16 +482,10 @@ class ApiEditPage extends ApiBase {
 				}
 
 				if ( $watch ) {
-					$r['watched'] = true;
-					$watchedItemStore = MediaWikiServices::getInstance()->getWatchedItemStore();
-					$watchlistExpiry = $this->getWatchlistExpiry(
-						$watchedItemStore,
-						$titleObj,
-						$user
-					);
+					$r['watched'] = $status->isOK();
 
-					if ( $watchlistExpiry ) {
-						$r['watchlistexpiry'] = $watchlistExpiry;
+					if ( $this->watchlistExpiryEnabled ) {
+						$r['watchlistexpiry'] = ApiResult::formatExpiry( $watchlistExpiry );
 					}
 				}
 				break;

@@ -28,26 +28,18 @@
 		"LocalisationCacheRecacheFallback": "LocalisationUpdate\\LocalisationUpdate::onRecacheFallback"
 	},
 	"config": {
-		"LocalisationUpdateDirectory": {
-			"value": false
-		},
-		"LocalisationUpdateRepository": {
-			"value": "github"
-		},
+		"LocalisationUpdateDirectory": false,
+		"LocalisationUpdateRepository": "github",
 		"LocalisationUpdateRepositories": {
-			"value": {
-				"github": {
-					"mediawiki": "https://raw.github.com/wikimedia/mediawiki/master/%PATH%",
-					"extension": "https://raw.github.com/wikimedia/mediawiki-extensions-%NAME%/master/%PATH%",
-					"skin": "https://raw.github.com/wikimedia/mediawiki-skins-%NAME%/master/%PATH%"
-				}
+			"github": {
+				"mediawiki": "https://raw.github.com/wikimedia/mediawiki/master/%PATH%",
+				"extension": "https://raw.github.com/wikimedia/mediawiki-extensions-%NAME%/master/%PATH%",
+				"skin": "https://raw.github.com/wikimedia/mediawiki-skins-%NAME%/master/%PATH%"
 			}
 		},
 		"LocalisationUpdateHttpRequestOptions": {
-			"value": {
-				"followRedirects": true
-			}
+			"followRedirects": true
 		}
 	},
-	"manifest_version": 2
+	"manifest_version": 1
 }
