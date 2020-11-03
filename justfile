@@ -30,6 +30,9 @@ init: start
 		"admin"
 	{{PHP-RUN}} cat /app/cache/LocalSettings.php > ${LOCAL_SETTINGS}
 	echo -e "\$wgVectorResponsive = true;\nwfLoadExtension( 'ArchLinux' );" >> ${LOCAL_SETTINGS}
+	echo -e "\$wgArchHome = 'https://www.archlinux.org/';" >> ${LOCAL_SETTINGS}
+	echo -e "\$wgArchNavBar = ['Start' => '#', 'Wiki' => '/'];" >> ${LOCAL_SETTINGS}
+	echo -e "\$wgArchNavBarSelectedDefault = 'Wiki';" >> ${LOCAL_SETTINGS}
 
 start:
 	{{COMPOSE}} up -d
