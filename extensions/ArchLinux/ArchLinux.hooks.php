@@ -16,7 +16,7 @@ class Hooks
         // Insert the navigation right after the <body> element
         $out = preg_replace(
             '/(<body[^>]*>)/s',
-            '$1' . self::geArchNavBar(),
+            '$1' . self::geArchNavBar($outputPage->getTitle()),
             ob_get_clean()
         );
 
@@ -25,7 +25,7 @@ class Hooks
         return true;
     }
 
-    private static function geArchNavBar(): string
+    private static function geArchNavBar(string $title): string
     {
         $config = MediaWikiServices::getInstance()->getConfigFactory()->makeConfig('archlinux');
         $archNavBar = $config->get("ArchNavBar");
