@@ -1,5 +1,4 @@
 export PORT := '8081'
-export LOCAL_SETTINGS := 'LocalSettings.php'
 
 export UID := `id -u`
 export GID := `id -g`
@@ -15,7 +14,6 @@ default:
 
 # Installs MediaWiki and creates LocalSettings.php
 init: start
-	rm -f ${LOCAL_SETTINGS}
 	{{PHP-DB-RUN}} php maintenance/install.php \
 		--dbserver "mariadb" \
 		--dbuser "root" \
@@ -24,15 +22,20 @@ init: start
 		--dbname "archwiki" \
 		--scriptpath "" \
 		--pass "adminpassword" \
-		--confpath "/app/cache" \
 		--server "http://localhost:${PORT}" \
 		"ArchWiki" \
 		"admin"
-	{{PHP-RUN}} cat /app/cache/LocalSettings.php > ${LOCAL_SETTINGS}
-	echo -e "\$wgVectorResponsive = true;\nwfLoadExtension( 'ArchLinux' );" >> ${LOCAL_SETTINGS}
-	echo -e "\$wgArchHome = 'https://www.archlinux.org/';" >> ${LOCAL_SETTINGS}
-	echo -e "\$wgArchNavBar = ['Start' => '#', 'Wiki' => '/'];" >> ${LOCAL_SETTINGS}
-	echo -e "\$wgArchNavBarSelectedDefault = 'Wiki';" >> ${LOCAL_SETTINGS}
+	echo -e "\$wgVectorResponsive = true;\nwfLoadExtension( 'ArchLinux' );" >> LocalSettings.php
+	echo -e "\$wgArchHome = 'https://www.archlinux.org/';" >> LocalSettings.php
+	echo -e "\$wgArchNavBar = ['Start' => '#', 'Wiki' => '/'];" >> LocalSettings.php
+	echo -e "\$wgArchNavBarSelectedDefault = 'Wiki';" >> LocalSettings.php
+
+# Load a (gzipped) database backup for local testing
+import-db-dump file name='archwiki': start
+	{{MARIADB-RUN}} mysqladmin -uroot -hmariadb drop -f {{name}} || true
+	{{MARIADB-RUN}} mysqladmin -uroot -hmariadb create {{name}}
+	zcat {{file}} | {{MARIADB-RUN}} mysql -uroot -hmariadb {{name}}
+	{{PHP-RUN}} php maintenance/update.php --quick
 
 start:
 	{{COMPOSE}} up -d
