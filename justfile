@@ -14,6 +14,7 @@ default:
 
 # Installs MediaWiki and creates LocalSettings.php
 init: start
+	rm -f LocalSettings.php
 	{{PHP-DB-RUN}} php maintenance/install.php \
 		--dbserver "mariadb" \
 		--dbuser "root" \
