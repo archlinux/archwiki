@@ -1,4 +1,4 @@
-FROM php:7-fpm-alpine
+FROM php:8-fpm-alpine
 
 RUN apk add imagemagick git diffutils
 
