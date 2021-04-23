@@ -39,6 +39,7 @@
 			"parallel-lint . --exclude vendor --exclude node_modules",
 			"phpcs -p -s",
 			"minus-x check ."
-		]
+		],
+		"phan": "phan -d . --long-progress-bar"
 	}
 }

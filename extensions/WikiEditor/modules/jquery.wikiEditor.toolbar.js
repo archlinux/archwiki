@@ -442,7 +442,10 @@
 				var label = $.wikiEditor.autoMsg( page, 'label' );
 				return $( '<div>' )
 					.text( label )
-					.attr( 'rel', id )
+					.attr( {
+						rel: id,
+						role: 'option'
+					} )
 					.data( 'context', context )
 					.on( 'mousedown', function ( e ) {
 						// No dragging!
@@ -520,6 +523,7 @@
 							$characters
 								.html( html )
 								.children()
+								.attr( 'role', 'option' )
 								.on( 'mousedown', function ( e ) {
 									// No dragging!
 									e.preventDefault();
@@ -716,8 +720,27 @@
 						}
 						break;
 					case 'booklet':
-						$pages = $( '<div>' ).addClass( 'pages' );
-						$index = $( '<div>' ).addClass( 'index' );
+						$pages = $( '<div>' )
+							.addClass( 'pages' )
+							.attr( {
+								tabindex: '0',
+								role: 'listbox'
+							} )
+							.on( 'keydown', function ( event ) {
+								var $selected = $pages.children().filter( function () {
+									return $( this ).css( 'display' ) !== 'none';
+								} );
+								$.wikiEditor.modules.toolbar.fn.handleKeyDown( $selected.children().first(), event, $pages );
+							} );
+						$index = $( '<div>' )
+							.addClass( 'index' )
+							.attr( {
+								tabindex: '0',
+								role: 'listbox'
+							} )
+							.on( 'keydown', function ( event ) {
+								$.wikiEditor.modules.toolbar.fn.handleKeyDown( $index, event, $index );
+							} );
 						if ( 'pages' in section ) {
 							for ( page in section.pages ) {
 								$pages.append(
@@ -771,9 +794,47 @@
 					// Use hook for attaching new toolbar tools to avoid race conditions
 					mw.hook( 'wikiEditor.toolbarReady' ).fire( context.$textarea );
 				} );
+			},
+			handleKeyDown: function ( $element, event, $parent ) {
+				var $nextItem,
+					$currentItem = $element.find( '.wikiEditor-character-highlighted' ),
+					optionTop = $parent.find( '.wikiEditor-character-highlighted' ).offset().top,
+					selectTop = $parent.offset().top;
+				switch ( event.keyCode ) {
+					// Up arrow
+					case 38:
+						if ( $currentItem.length ) {
+							$currentItem.removeClass( 'wikiEditor-character-highlighted' );
+							$nextItem = $currentItem.prev();
+							$nextItem = $nextItem.length ? $nextItem : $currentItem;
+							$nextItem.addClass( 'wikiEditor-character-highlighted' );
+						} else {
+							$element.children().first().addClass( 'wikiEditor-character-highlighted' );
+						}
+						event.preventDefault();
+						event.stopPropagation();
+						break;
+					// Down arrow
+					case 40:
+						if ( $currentItem.length ) {
+							$currentItem.removeClass( 'wikiEditor-character-highlighted' );
+							$nextItem = $currentItem.next();
+							$nextItem = $nextItem.length ? $nextItem : $currentItem;
+							$nextItem.addClass( 'wikiEditor-character-highlighted' );
+						} else {
+							$element.children().first().addClass( 'wikiEditor-character-highlighted' );
+						}
+						event.preventDefault();
+						event.stopPropagation();
+						break;
+					// Enter
+					case 13:
+						$currentItem.trigger( 'click' );
+						break;
+				}
+				$parent.scrollTop( $parent.scrollTop() + ( optionTop - selectTop ) );
 			}
 		}
-
 	};
 
 	module.exports = toolbarModule;

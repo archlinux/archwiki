@@ -134,6 +134,7 @@ trait ApiParsoidTrait {
 			'Accept-Language' => self::getPageLanguage( $title )->getCode(),
 			'User-Agent' => 'VisualEditor-MediaWiki/' . MW_VERSION,
 			'Api-User-Agent' => 'VisualEditor-MediaWiki/' . MW_VERSION,
+			'Promise-Non-Write-API-Action' => 'true',
 		];
 		// $reqheaders take precedence over $defaultReqHeaders
 		$request['headers'] = $reqheaders + $defaultReqHeaders;

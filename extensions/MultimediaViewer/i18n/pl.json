@@ -118,5 +118,6 @@
 	"multimediaviewer-enable-confirmation-text": "Kiedy następnym razem klikniesz na miniaturkę na {{GRAMMAR:MS.lp|$1}}, wyświetli się Media Viewer.",
 	"multimediaviewer-enable-alert": "Media Viewer jest wyłączony",
 	"multimediaviewer-disable-info-title": "Wyłączyłeś Media Viewer",
-	"multimediaviewer-disable-info": "Wciąż możesz oglądać poszczególne pliki za pomocą Media Viewera"
+	"multimediaviewer-disable-info": "Wciąż możesz oglądać poszczególne pliki za pomocą Media Viewera",
+	"multimediaviewer-errorreport-privacywarning": "Szczegóły błędu są dołączane do zgłoszenia, które będzie publicznie widoczne. Jeśli nie czujesz się z tym komfortowo, możesz zmodyfikować swoje zgłoszenie i usunąć dane, których nie chcesz udostępniać."
 }

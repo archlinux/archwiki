@@ -259,25 +259,17 @@ class MonoBookTemplate extends BaseTemplate {
 	}
 
 	/**
-	 * Generate the search, using config options for buttons (?)
+	 * Generate the search button
 	 *
 	 * @return string html
 	 */
 	protected function getSearchBox() {
 		$html = '';
 
-		if ( $this->config->get( 'UseTwoButtonsSearchForm' ) ) {
-			$optionButtons = "\u{00A0} " . $this->makeSearchButton(
-				'fulltext',
-				[ 'id' => 'mw-searchButton', 'class' => 'searchButton' ]
-			);
-		} else {
-			$optionButtons = Html::rawElement( 'div', [],
-				Html::rawElement( 'a', [ 'href' => $this->get( 'searchaction' ), 'rel' => 'search' ],
-					$this->getMsg( 'powersearch-legend' )->escaped()
-				)
-			);
-		}
+		$optionButtons = "\u{00A0} " . $this->makeSearchButton(
+			'fulltext',
+			[ 'id' => 'mw-searchButton', 'class' => 'searchButton' ]
+		);
 		$searchInputId = 'searchInput';
 		$searchForm = Html::rawElement( 'form', [
 			'action' => $this->get( 'wgScript' ),

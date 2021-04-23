@@ -1,32 +1,32 @@
 [
     {
         "name": "christian-riesen/base32",
-        "version": "1.3.2",
-        "version_normalized": "1.3.2.0",
+        "version": "1.4.0",
+        "version_normalized": "1.4.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/ChristianRiesen/base32.git",
-            "reference": "80ff0e3b2124e61b4b39e2535709452f70bff367"
+            "reference": "5777d962c9f55385eefd078a1bf623ce04a4f6ca"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/ChristianRiesen/base32/zipball/80ff0e3b2124e61b4b39e2535709452f70bff367",
-            "reference": "80ff0e3b2124e61b4b39e2535709452f70bff367",
+            "url": "https://api.github.com/repos/ChristianRiesen/base32/zipball/5777d962c9f55385eefd078a1bf623ce04a4f6ca",
+            "reference": "5777d962c9f55385eefd078a1bf623ce04a4f6ca",
             "shasum": ""
         },
         "require": {
-            "php": ">=5.3"
+            "php": "^7.2 || ^8.0"
         },
         "require-dev": {
-            "php": ">=5.6",
-            "phpunit/phpunit": "^5.0",
-            "satooshi/php-coveralls": "^1.0"
+            "friendsofphp/php-cs-fixer": "^2.17",
+            "phpstan/phpstan": "^0.12",
+            "phpunit/phpunit": "^8.5.13 || ^9.5"
         },
-        "time": "2018-11-02T09:03:50+00:00",
+        "time": "2020-12-29T20:09:51+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "1.1.x-dev"
+                "dev-master": "1.x-dev"
             }
         },
         "installation-source": "dist",
@@ -378,27 +378,29 @@
     },
     {
         "name": "jakobo/hotp-php",
-        "version": "v1.0.1",
-        "version_normalized": "1.0.1.0",
+        "version": "v2.0.0",
+        "version_normalized": "2.0.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/Jakobo/hotp-php.git",
-            "reference": "d24e0d021710718cb9104ffb5c6ffb447fce65ab"
+            "reference": "ff2f13d1918001e54b3f49deb1d366bcfcc98437"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/Jakobo/hotp-php/zipball/d24e0d021710718cb9104ffb5c6ffb447fce65ab",
-            "reference": "d24e0d021710718cb9104ffb5c6ffb447fce65ab",
+            "url": "https://api.github.com/repos/Jakobo/hotp-php/zipball/ff2f13d1918001e54b3f49deb1d366bcfcc98437",
+            "reference": "ff2f13d1918001e54b3f49deb1d366bcfcc98437",
             "shasum": ""
         },
         "require": {
-            "php": "^5.3.3 || ^7.0"
+            "php": ">=7.2"
         },
         "require-dev": {
-            "jakub-onderka/php-console-highlighter": "0.3.2",
-            "jakub-onderka/php-parallel-lint": "1.0.0"
+            "ockcyp/covers-validator": "1.3.3",
+            "php-parallel-lint/php-console-highlighter": "0.5",
+            "php-parallel-lint/php-parallel-lint": "1.2.0",
+            "phpunit/phpunit": "^8.5.13||^9.5.0"
         },
-        "time": "2019-04-17T19:06:24+00:00",
+        "time": "2020-12-28T03:29:15+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -1569,41 +1571,41 @@
     },
     {
         "name": "wikimedia/composer-merge-plugin",
-        "version": "v1.4.1",
-        "version_normalized": "1.4.1.0",
+        "version": "v2.0.1",
+        "version_normalized": "2.0.1.0",
         "source": {
             "type": "git",
             "url": "https://github.com/wikimedia/composer-merge-plugin.git",
-            "reference": "81c6ac72a24a67383419c7eb9aa2b3437f2ab100"
+            "reference": "8ca2ed8ab97c8ebce6b39d9943e9909bb4f18912"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/wikimedia/composer-merge-plugin/zipball/81c6ac72a24a67383419c7eb9aa2b3437f2ab100",
-            "reference": "81c6ac72a24a67383419c7eb9aa2b3437f2ab100",
+            "url": "https://api.github.com/repos/wikimedia/composer-merge-plugin/zipball/8ca2ed8ab97c8ebce6b39d9943e9909bb4f18912",
+            "reference": "8ca2ed8ab97c8ebce6b39d9943e9909bb4f18912",
             "shasum": ""
         },
         "require": {
-            "composer-plugin-api": "^1.0",
-            "php": ">=5.3.2"
+            "composer-plugin-api": "^1.1||^2.0",
+            "php": ">=7.2.0"
         },
         "require-dev": {
-            "composer/composer": "~1.0.0",
-            "jakub-onderka/php-parallel-lint": "~0.8",
-            "phpunit/phpunit": "~4.8|~5.0",
-            "squizlabs/php_codesniffer": "~2.1.0"
+            "composer/composer": "^1.1||^2.0",
+            "php-parallel-lint/php-parallel-lint": "~1.1.0",
+            "phpunit/phpunit": "^8.5||^9.0",
+            "squizlabs/php_codesniffer": "~3.5.4"
         },
-        "time": "2017-04-25T02:31:25+00:00",
+        "time": "2021-02-24T05:28:06+00:00",
         "type": "composer-plugin",
         "extra": {
             "branch-alias": {
-                "dev-master": "1.3.x-dev"
+                "dev-master": "2.x-dev"
             },
-            "class": "Wikimedia\\Composer\\MergePlugin"
+            "class": "Wikimedia\\Composer\\Merge\\V2\\MergePlugin"
         },
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "Wikimedia\\Composer\\": "src/"
+                "Wikimedia\\Composer\\Merge\\V2\\": "src/"
             }
         },
         "notification-url": "https://packagist.org/downloads/",
@@ -1763,28 +1765,30 @@
     },
     {
         "name": "wikimedia/less.php",
-        "version": "v3.0.0",
-        "version_normalized": "3.0.0.0",
+        "version": "v3.1.0",
+        "version_normalized": "3.1.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/wikimedia/less.php.git",
-            "reference": "5e2a4fba9304915c4cbf98cc9cb665a5c365c351"
+            "reference": "a486d78b9bd16b72f237fc6093aa56d69ce8bd13"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/wikimedia/less.php/zipball/5e2a4fba9304915c4cbf98cc9cb665a5c365c351",
-            "reference": "5e2a4fba9304915c4cbf98cc9cb665a5c365c351",
+            "url": "https://api.github.com/repos/wikimedia/less.php/zipball/a486d78b9bd16b72f237fc6093aa56d69ce8bd13",
+            "reference": "a486d78b9bd16b72f237fc6093aa56d69ce8bd13",
             "shasum": ""
         },
         "require": {
             "php": ">=7.2.9"
         },
         "require-dev": {
-            "jakub-onderka/php-parallel-lint": "1.0.0",
+            "mediawiki/mediawiki-codesniffer": "34.0.0",
             "mediawiki/minus-x": "1.0.0",
+            "php-parallel-lint/php-console-highlighter": "0.5.0",
+            "php-parallel-lint/php-parallel-lint": "1.2.0",
             "phpunit/phpunit": "^8.5"
         },
-        "time": "2020-03-11T23:01:29+00:00",
+        "time": "2020-12-11T19:33:31+00:00",
         "bin": [
             "bin/lessc"
         ],
@@ -1876,21 +1880,21 @@
     },
     {
         "name": "wikimedia/parsoid",
-        "version": "v0.12.1",
-        "version_normalized": "0.12.1.0",
+        "version": "v0.12.2",
+        "version_normalized": "0.12.2.0",
         "source": {
             "type": "git",
             "url": "https://github.com/wikimedia/parsoid.git",
-            "reference": "6e7e27141400d820c6f62914ec461bf707a9afe7"
+            "reference": "15169a678f9f468ff6465035a32f28e8ec82003f"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/wikimedia/parsoid/zipball/6e7e27141400d820c6f62914ec461bf707a9afe7",
-            "reference": "6e7e27141400d820c6f62914ec461bf707a9afe7",
+            "url": "https://api.github.com/repos/wikimedia/parsoid/zipball/15169a678f9f468ff6465035a32f28e8ec82003f",
+            "reference": "15169a678f9f468ff6465035a32f28e8ec82003f",
             "shasum": ""
         },
         "require": {
-            "composer/semver": "^1.5.1|^2.0.0",
+            "composer/semver": "^1.5.1|^3.0.1",
             "ext-dom": "*",
             "ext-json": "*",
             "liuggio/statsd-php-client": "^1.0.18",
@@ -1926,7 +1930,7 @@
         "suggest": {
             "wikimedia/langconv": "Provides script conversion support"
         },
-        "time": "2020-12-17T00:18:28+00:00",
+        "time": "2021-04-07T20:34:37+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -2451,25 +2455,30 @@
     },
     {
         "name": "wikimedia/wikipeg",
-        "version": "2.0.4",
-        "version_normalized": "2.0.4.0",
+        "version": "2.0.5",
+        "version_normalized": "2.0.5.0",
         "source": {
             "type": "git",
             "url": "https://github.com/wikimedia/wikipeg.git",
-            "reference": "117ddc894cf44f7f8e149e94180b68a8a7c0904d"
+            "reference": "df47c20859c80923d08ce906c5c7412161ef052f"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/wikimedia/wikipeg/zipball/117ddc894cf44f7f8e149e94180b68a8a7c0904d",
-            "reference": "117ddc894cf44f7f8e149e94180b68a8a7c0904d",
+            "url": "https://api.github.com/repos/wikimedia/wikipeg/zipball/df47c20859c80923d08ce906c5c7412161ef052f",
+            "reference": "df47c20859c80923d08ce906c5c7412161ef052f",
             "shasum": ""
         },
         "require": {
             "ext-json": "*",
             "ext-mbstring": "*",
-            "php": "^7.2"
+            "php": ">=7.2"
         },
-        "time": "2020-02-13T19:00:24+00:00",
+        "require-dev": {
+            "mediawiki/minus-x": "1.1.0",
+            "php-parallel-lint/php-console-highlighter": "0.5.0",
+            "php-parallel-lint/php-parallel-lint": "1.2.0"
+        },
+        "time": "2020-12-17T21:12:05+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {

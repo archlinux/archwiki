@@ -43,7 +43,7 @@ mw.TemplateData.Dialog.static.actions = [
 		action: 'done',
 		label: mw.msg( 'templatedata-modal-button-done' ),
 		flags: [ 'primary', 'progressive' ],
-		modes: 'edit'
+		modes: [ 'edit', 'maps' ]
 	},
 	{
 		action: 'add',
@@ -66,7 +66,7 @@ mw.TemplateData.Dialog.static.actions = [
 		action: 'back',
 		label: mw.msg( 'templatedata-modal-button-back' ),
 		flags: [ 'safe', 'back' ],
-		modes: [ 'language', 'add' ]
+		modes: [ 'language', 'add', 'maps' ]
 	}
 ];
 
@@ -81,7 +81,7 @@ mw.TemplateData.Dialog.static.actions = [
  * @chainable
  */
 mw.TemplateData.Dialog.prototype.initialize = function () {
-	var templateParamsFieldset, addParamFieldlayout, languageActionFieldLayout, templateFormatFieldSet;
+	var templateParamsFieldset, addParamFieldlayout, languageActionFieldLayout, templateFormatFieldSet, mapsActionFieldLayout, templateMapsFieldSet;
 
 	// Parent method
 	mw.TemplateData.Dialog.super.prototype.initialize.call( this );
@@ -98,6 +98,7 @@ mw.TemplateData.Dialog.prototype.initialize = function () {
 	this.editParamPanel = new OO.ui.PanelLayout();
 	this.languagePanel = new OO.ui.PanelLayout();
 	this.addParamPanel = new OO.ui.PanelLayout();
+	this.editMapsPanel = new OO.ui.PanelLayout();
 
 	// Language panel
 	this.newLanguageSearch = new mw.TemplateData.LanguageSearchWidget();
@@ -115,6 +116,23 @@ mw.TemplateData.Dialog.prototype.initialize = function () {
 		{
 			align: 'top',
 			label: mw.msg( 'templatedata-modal-title-addparam' )
+		}
+	);
+
+	// Maps panel
+	this.templateMapsInput = new OO.ui.MultilineTextInputWidget( {
+		classes: [ 'mw-tempateData-template-maps-input' ],
+		autosize: true,
+		disabled: true,
+		rows: 5,
+		maxRows: 200,
+		placeholder: mw.msg( 'templatedata-modal-placeholder-mapinfo' )
+	} );
+	templateMapsFieldSet = new OO.ui.FieldsetLayout(
+		this.templateMapsInput,
+		{
+			align: 'top',
+			label: mw.msg( 'templatedata-modal-title-map' )
 		}
 	);
 
@@ -139,6 +157,18 @@ mw.TemplateData.Dialog.prototype.initialize = function () {
 	this.templateDescriptionFieldset = new OO.ui.FieldsetLayout( {
 		items: [ this.descriptionInput ]
 	} );
+	// Add Maps panel button
+	this.mapsPanelButton = new OO.ui.ButtonWidget( {
+		label: mw.msg( 'templatedata-modal-button-map' ),
+		classes: [ 'mw-tempateData-maps-panel-button' ]
+	} );
+	mapsActionFieldLayout = new OO.ui.ActionFieldLayout(
+		this.mapsPanelButton,
+		{
+			align: 'left',
+			label: mw.msg( 'templatedata-modal-button-map' )
+		}
+	);
 	this.paramListNoticeLabel = new OO.ui.LabelWidget();
 	this.paramListNoticeLabel.$element.hide();
 
@@ -197,6 +227,7 @@ mw.TemplateData.Dialog.prototype.initialize = function () {
 			this.paramListNoticeLabel.$element,
 			languageActionFieldLayout.$element,
 			this.templateDescriptionFieldset.$element,
+			mapsActionFieldLayout.$element,
 			templateFormatFieldSet.$element,
 			templateParamsFieldset.$element
 		);
@@ -219,11 +250,17 @@ mw.TemplateData.Dialog.prototype.initialize = function () {
 		.addClass( 'tdg-templateDataDialog-addParamPanel' )
 		.append( addParamFieldlayout.$element );
 
+	// Maps panel
+	this.editMapsPanel.$element
+		.addClass( 'tdg-templateDataDialog-editMapsPanel' )
+		.append( templateMapsFieldSet.$element );
+
 	this.panels.addItems( [
 		this.listParamsPanel,
 		this.editParamPanel,
 		this.languagePanel,
-		this.addParamPanel
+		this.addParamPanel,
+		this.editMapsPanel
 	] );
 	this.panels.setItem( this.listParamsPanel );
 	this.panels.$element.addClass( 'tdg-templateDataDialog-panels' );
@@ -244,6 +281,8 @@ mw.TemplateData.Dialog.prototype.initialize = function () {
 	this.descriptionInput.connect( this, { change: 'onDescriptionInputChange' } );
 	this.languagePanelButton.connect( this, { click: 'onLanguagePanelButton' } );
 	this.languageDropdownWidget.getMenu().connect( this, { select: 'onLanguageDropdownWidgetSelect' } );
+	this.mapsPanelButton.connect( this, { click: 'onMapsPanelButton' } );
+	this.templateMapsInput.connect( this, { change: 'onMapInfoChange' } );
 	this.paramSelect.connect( this, {
 		choose: 'onParamSelectChoose',
 		reorder: 'onParamSelectReorder'
@@ -264,6 +303,15 @@ mw.TemplateData.Dialog.prototype.initialize = function () {
  */
 mw.TemplateData.Dialog.prototype.onModelChangeDescription = function ( description ) {
 	this.descriptionInput.setValue( description );
+};
+
+/**
+ * Respond to model change of map info event
+ *
+ * @param {string} map New description
+ */
+mw.TemplateData.Dialog.prototype.onModelChangeMapInfo = function ( map ) {
+	this.templateMapsInput.setValue( map );
 };
 
 /**
@@ -350,6 +398,17 @@ mw.TemplateData.Dialog.prototype.onDescriptionInputChange = function ( value ) {
 };
 
 /**
+ * Respond to edit maps input change event
+ *
+ * @param {string} value map info value
+ */
+mw.TemplateData.Dialog.prototype.onMapInfoChange = function ( value ) {
+	if ( this.model.getMapInfo() !== value ) {
+		this.model.setMapInfo( value );
+	}
+};
+
+/**
  * Respond to add language button click
  */
 mw.TemplateData.Dialog.prototype.onLanguagePanelButton = function () {
@@ -410,6 +469,13 @@ mw.TemplateData.Dialog.prototype.onNewLanguageSearchResultsChoose = function ( i
 
 	// Go to the main panel
 	this.switchPanels( 'listParams' );
+};
+
+/**
+ * Respond to edit maps button click
+ */
+mw.TemplateData.Dialog.prototype.onMapsPanelButton = function () {
+	this.switchPanels( 'editMaps' );
 };
 
 /**
@@ -748,14 +814,14 @@ mw.TemplateData.Dialog.prototype.createParamDetails = function () {
 					typeItemArray.push( new OO.ui.MenuOptionWidget( {
 						data: paramProperties[ props ].children[ type ],
 
-						// Known messages, for grepping:
-						// templatedata-doc-param-type-boolean, templatedata-doc-param-type-content,
-						// templatedata-doc-param-type-date, templatedata-doc-param-type-line,
-						// templatedata-doc-param-type-number, templatedata-doc-param-type-string,
-						// templatedata-doc-param-type-unbalanced-wikitext, templatedata-doc-param-type-unknown,
-						// templatedata-doc-param-type-url, templatedata-doc-param-type-wiki-file-name,
-						// templatedata-doc-param-type-wiki-page-name, templatedata-doc-param-type-wiki-template-name,
-						// templatedata-doc-param-type-wiki-user-name
+						// The following messages are used here:
+						// * templatedata-doc-param-type-boolean, templatedata-doc-param-type-content,
+						// * templatedata-doc-param-type-date, templatedata-doc-param-type-line,
+						// * templatedata-doc-param-type-number, templatedata-doc-param-type-string,
+						// * templatedata-doc-param-type-unbalanced-wikitext, templatedata-doc-param-type-unknown,
+						// * templatedata-doc-param-type-url, templatedata-doc-param-type-wiki-file-name,
+						// * templatedata-doc-param-type-wiki-page-name, templatedata-doc-param-type-wiki-template-name,
+						// * templatedata-doc-param-type-wiki-user-name
 						label: mw.msg( 'templatedata-doc-param-type-' + paramProperties[ props ].children[ type ] )
 					} ) );
 				}
@@ -779,11 +845,45 @@ mw.TemplateData.Dialog.prototype.createParamDetails = function () {
 
 		this.propInputs[ props ] = propInput;
 
+		// The following classes are used here:
+		// * tdg-templateDataDialog-paramInput tdg-templateDataDialog-paramList-actions
+		// * tdg-templateDataDialog-paramInput tdg-templateDataDialog-paramList-aliases
+		// * tdg-templateDataDialog-paramInput tdg-templateDataDialog-paramList-autovalue
+		// * tdg-templateDataDialog-paramInput tdg-templateDataDialog-paramList-default
+		// * tdg-templateDataDialog-paramInput tdg-templateDataDialog-paramList-deprecated
+		// * tdg-templateDataDialog-paramInput tdg-templateDataDialog-paramList-deprecatedValue
+		// * tdg-templateDataDialog-paramInput tdg-templateDataDialog-paramList-description
+		// * tdg-templateDataDialog-paramInput tdg-templateDataDialog-paramList-example
+		// * tdg-templateDataDialog-paramInput tdg-templateDataDialog-paramList-importoption
+		// * tdg-templateDataDialog-paramInput tdg-templateDataDialog-paramList-importoption-subtitle
+		// * tdg-templateDataDialog-paramInput tdg-templateDataDialog-paramList-label
+		// * tdg-templateDataDialog-paramInput tdg-templateDataDialog-paramList-name
+		// * tdg-templateDataDialog-paramInput tdg-templateDataDialog-paramList-required
+		// * tdg-templateDataDialog-paramInput tdg-templateDataDialog-paramList-suggested
+		// * tdg-templateDataDialog-paramInput tdg-templateDataDialog-paramList-type
+		// * tdg-templateDataDialog-paramInput tdg-templateDataDialog-paramList-uneditablefield
 		propInput.$element
 			.addClass( 'tdg-templateDataDialog-paramInput tdg-templateDataDialog-paramList-' + props );
 
 		this.propFieldLayout[ props ] = new OO.ui.FieldLayout( propInput, {
 			align: 'left',
+			// The following messages are used here:
+			// * templatedata-modal-table-param-actions
+			// * templatedata-modal-table-param-aliases
+			// * templatedata-modal-table-param-autovalue
+			// * templatedata-modal-table-param-default
+			// * templatedata-modal-table-param-deprecated
+			// * templatedata-modal-table-param-deprecatedValue
+			// * templatedata-modal-table-param-description
+			// * templatedata-modal-table-param-example
+			// * templatedata-modal-table-param-importoption
+			// * templatedata-modal-table-param-importoption-subtitle
+			// * templatedata-modal-table-param-label
+			// * templatedata-modal-table-param-name
+			// * templatedata-modal-table-param-required
+			// * templatedata-modal-table-param-suggested
+			// * templatedata-modal-table-param-type
+			// * templatedata-modal-table-param-uneditablefield
 			label: mw.msg( 'templatedata-modal-table-param-' + props )
 		} );
 
@@ -815,6 +915,23 @@ mw.TemplateData.Dialog.prototype.updateParamDetailsLanguage = function ( lang ) 
 
 	for ( i = 0; i < languageProps.length; i++ ) {
 		prop = languageProps[ i ];
+		// The following messages are used here:
+		// * templatedata-modal-table-param-actions
+		// * templatedata-modal-table-param-aliases
+		// * templatedata-modal-table-param-autovalue
+		// * templatedata-modal-table-param-default
+		// * templatedata-modal-table-param-deprecated
+		// * templatedata-modal-table-param-deprecatedValue
+		// * templatedata-modal-table-param-description
+		// * templatedata-modal-table-param-example
+		// * templatedata-modal-table-param-importoption
+		// * templatedata-modal-table-param-importoption-subtitle
+		// * templatedata-modal-table-param-label
+		// * templatedata-modal-table-param-name
+		// * templatedata-modal-table-param-required
+		// * templatedata-modal-table-param-suggested
+		// * templatedata-modal-table-param-type
+		// * templatedata-modal-table-param-uneditablefield
 		label = mw.msg( 'templatedata-modal-table-param-' + prop, lang );
 		this.propFieldLayout[ prop ].setLabel( label );
 	}
@@ -931,6 +1048,7 @@ mw.TemplateData.Dialog.prototype.getSetupProcess = function ( data ) {
 			this.model.connect( this, {
 				'change-description': 'onModelChangeDescription',
 				'change-paramOrder': 'onModelChangeParamOrder',
+				'change-map': 'onModelChangeMapInfo',
 				'change-property': 'onModelChangeProperty',
 				change: 'onModelChange'
 			} );
@@ -993,6 +1111,9 @@ mw.TemplateData.Dialog.prototype.setupDetailsFromModel = function () {
 	// Set up description
 	this.descriptionInput.setValue( this.model.getTemplateDescription( this.language ) );
 
+	// set up maps
+	this.templateMapsInput.setValue( this.model.getMapInfo() );
+
 	// Set up format
 	format = this.model.getTemplateFormat();
 	if ( format === 'inline' || format === 'block' || format === null ) {
@@ -1031,6 +1152,7 @@ mw.TemplateData.Dialog.prototype.switchPanels = function ( panel ) {
 			this.editParamPanel.$element.hide();
 			this.addParamPanel.$element.hide();
 			this.languagePanel.$element.hide();
+			this.editMapsPanel.$element.hide();
 			break;
 		case 'editParam':
 			this.actions.setMode( 'edit' );
@@ -1042,6 +1164,7 @@ mw.TemplateData.Dialog.prototype.switchPanels = function ( panel ) {
 			this.languagePanel.$element.hide();
 			this.addParamPanel.$element.hide();
 			this.editParamPanel.$element.show();
+			this.editMapsPanel.$element.hide();
 			break;
 		case 'addParam':
 			this.actions.setMode( 'add' );
@@ -1051,6 +1174,18 @@ mw.TemplateData.Dialog.prototype.switchPanels = function ( panel ) {
 			this.editParamPanel.$element.hide();
 			this.languagePanel.$element.hide();
 			this.addParamPanel.$element.show();
+			this.editMapsPanel.$element.hide();
+			break;
+		case 'editMaps':
+			this.actions.setMode( 'maps' );
+			this.panels.setItem( this.editMapsPanel );
+			// Hide/show panels
+			this.listParamsPanel.$element.hide();
+			this.editParamPanel.$element.hide();
+			this.languagePanel.$element.hide();
+			this.addParamPanel.$element.hide();
+			this.editMapsPanel.$element.show();
+			this.templateMapsInput.adjustSize( true );
 			break;
 		case 'language':
 			this.actions.setMode( 'language' );
@@ -1061,6 +1196,7 @@ mw.TemplateData.Dialog.prototype.switchPanels = function ( panel ) {
 			this.addParamPanel.$element.hide();
 			this.languagePanel.$element.show();
 			this.newLanguageSearch.query.focus();
+			this.editMapsPanel.$element.hide();
 			break;
 	}
 };
@@ -1080,6 +1216,11 @@ mw.TemplateData.Dialog.prototype.getActionProcess = function ( action ) {
 	if ( action === 'add' ) {
 		return new OO.ui.Process( function () {
 			this.switchPanels( 'addParam' );
+		}, this );
+	}
+	if ( action === 'maps' ) {
+		return new OO.ui.Process( function () {
+			this.switchPanels( 'editMaps' );
 		}, this );
 	}
 	if ( action === 'delete' ) {

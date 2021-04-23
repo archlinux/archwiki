@@ -6,7 +6,7 @@
  * @package Less
  * @subpackage tree
  */
-class Less_Tree_Condition extends Less_Tree{
+class Less_Tree_Condition extends Less_Tree {
 
 	public $op;
 	public $lvalue;
@@ -15,24 +15,24 @@ class Less_Tree_Condition extends Less_Tree{
 	public $negate;
 	public $type = 'Condition';
 
-	public function __construct($op, $l, $r, $i = 0, $negate = false) {
-		$this->op = trim($op);
+	public function __construct( $op, $l, $r, $i = 0, $negate = false ) {
+		$this->op = trim( $op );
 		$this->lvalue = $l;
 		$this->rvalue = $r;
 		$this->index = $i;
 		$this->negate = $negate;
 	}
 
-	public function accept($visitor){
+	public function accept( $visitor ) {
 		$this->lvalue = $visitor->visitObj( $this->lvalue );
 		$this->rvalue = $visitor->visitObj( $this->rvalue );
 	}
 
-    public function compile($env) {
-		$a = $this->lvalue->compile($env);
-		$b = $this->rvalue->compile($env);
+	public function compile( $env ) {
+		$a = $this->lvalue->compile( $env );
+		$b = $this->rvalue->compile( $env );
 
-		switch( $this->op ){
+		switch ( $this->op ) {
 			case 'and':
 				$result = $a && $b;
 			break;
@@ -42,15 +42,15 @@ class Less_Tree_Condition extends Less_Tree{
 			break;
 
 			default:
-				if( Less_Parser::is_method($a, 'compare') ){
-					$result = $a->compare($b);
-				}elseif( Less_Parser::is_method($b, 'compare') ){
-					$result = $b->compare($a);
-				}else{
-					throw new Less_Exception_Compiler('Unable to perform comparison', null, $this->index);
+				if ( Less_Parser::is_method( $a, 'compare' ) ) {
+					$result = $a->compare( $b );
+				} elseif ( Less_Parser::is_method( $b, 'compare' ) ) {
+					$result = $b->compare( $a );
+				} else {
+					throw new Less_Exception_Compiler( 'Unable to perform comparison', null, $this->index );
 				}
 
-				switch ($result) {
+				switch ( $result ) {
 					case -1:
 					$result = $this->op === '<' || $this->op === '=<' || $this->op === '<=';
 					break;
@@ -67,6 +67,6 @@ class Less_Tree_Condition extends Less_Tree{
 		}
 
 		return $this->negate ? !$result : $result;
-    }
+	}
 
 }

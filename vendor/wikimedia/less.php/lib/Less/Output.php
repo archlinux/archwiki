@@ -6,7 +6,7 @@
  * @package Less
  * @subpackage output
  */
-class Less_Output{
+class Less_Output {
 
 	/**
 	 * Output holder
@@ -23,7 +23,7 @@ class Less_Output{
 	 * @param integer $index The index
 	 * @param mixed $mapLines
 	 */
-	public function add($chunk, $fileInfo = null, $index = 0, $mapLines = null){
+	public function add( $chunk, $fileInfo = null, $index = 0, $mapLines = null ) {
 		$this->strs[] = $chunk;
 	}
 
@@ -32,18 +32,17 @@ class Less_Output{
 	 *
 	 * @return boolean
 	 */
-	public function isEmpty(){
-		return count($this->strs) === 0;
+	public function isEmpty() {
+		return count( $this->strs ) === 0;
 	}
-
 
 	/**
 	 * Converts the output to string
 	 *
 	 * @return string
 	 */
-	public function toString(){
-		return implode('',$this->strs);
+	public function toString() {
+		return implode( '', $this->strs );
 	}
 
 }

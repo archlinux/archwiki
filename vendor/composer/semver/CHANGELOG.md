@@ -3,8 +3,6 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-<<<<<<< HEAD
-=======
 ### [1.7.2] 2020-12-03
 
   * Fixed: Allow installing on php 8
@@ -24,7 +22,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   * Added: support for constraints like `^2.x-dev` and `~2.x-dev`, not very useful but seen in the wild and failed to validate with 1.5.2
   * Fixed: invalid aliases will no longer throw, unless explicitly validated by Composer in the root package
 
->>>>>>> 42e119f0... Updating composer/semver (1.5.1 => 1.7.2)
 ### [1.5.2] 2020-09-08
 
   * Fixed: handling of some invalid -dev versions which were seen as valid

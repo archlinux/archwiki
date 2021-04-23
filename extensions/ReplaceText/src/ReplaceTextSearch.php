@@ -51,7 +51,7 @@ class ReplaceTextSearch {
 			'rev_id = page_latest',
 			'rev_id = slot_revision_id',
 			'slot_content_id = content_id',
-			'CAST(SUBSTRING(content_address, 4) AS INTEGER) = old_id'
+			'CAST(SUBSTRING(content_address, 4) AS SIGNED) = old_id'
 		];
 
 		self::categoryCondition( $category, $tables, $conds );

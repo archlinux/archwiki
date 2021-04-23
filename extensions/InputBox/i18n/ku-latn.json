@@ -1,6 +1,9 @@
 {
 	"@metadata": {
-		"authors": []
+		"authors": [
+			"Bikarhêner"
+		]
 	},
+	"inputbox-tryexact": "Lêhatinên herfiyen eynî biceribîne",
 	"inputbox-createarticle": "Gotarê biafirîne"
 }

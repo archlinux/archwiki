@@ -20,8 +20,9 @@
 		]
 	},
 	"Hooks": {
-		"SkinTemplateBuildNavUrlsNav_urlsAfterPermalink": "CiteThisPageHooks::onSkinTemplateBuildNavUrlsNav_urlsAfterPermalink",
-		"BaseTemplateToolbox": "CiteThisPageHooks::onBaseTemplateToolbox"
+		"SidebarBeforeOutput": [
+			"CiteThisPageHooks::onSidebarBeforeOutput"
+		]
 	},
 	"ResourceModules": {
 		"ext.citeThisPage": {

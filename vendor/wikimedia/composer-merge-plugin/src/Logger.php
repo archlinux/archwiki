@@ -8,7 +8,7 @@
  * license. See the LICENSE file for details.
  */
 
-namespace Wikimedia\Composer;
+namespace Wikimedia\Composer\Merge\V2;
 
 use Composer\IO\IOInterface;
 
@@ -87,7 +87,7 @@ class Logger
      *
      * @param string $message
      */
-    protected function log($message)
+    public function log($message)
     {
         if (method_exists($this->inputOutput, 'writeError')) {
             $this->inputOutput->writeError($message);

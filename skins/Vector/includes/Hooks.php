@@ -210,6 +210,10 @@ class Hooks {
 	 * @param string[] &$bodyAttrs
 	 */
 	public static function onOutputPageBodyAttributes( OutputPage $out, Skin $sk, &$bodyAttrs ) {
+		if ( !$sk instanceof SkinVector ) {
+			return;
+		}
+
 		$skinVersionLookup = new SkinVersionLookup(
 			$out->getRequest(), $sk->getUser(), self::getServiceConfig()
 		);

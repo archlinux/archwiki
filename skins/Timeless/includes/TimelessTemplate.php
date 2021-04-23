@@ -370,8 +370,17 @@ class TimelessTemplate extends BaseTemplate {
 				'role' => 'banner'
 			]
 		);
+		$logos = ResourceLoaderSkinModule::getAvailableLogos( $config );
 		if ( $part !== 'image' ) {
 			$wordmarkImage = $this->getLogoImage( $config->get( 'TimelessWordmark' ), true );
+			if ( !$wordmarkImage && isset( $logos['wordmark'] ) ) {
+				$wordmarkData = $logos['wordmark'];
+				$wordmarkImage = Html::element( 'img', [
+					'src' => $wordmarkData['src'],
+					'height' => $wordmarkData['height'] ?? null,
+					'width' => $wordmarkData['width'] ?? null,
+				] );
+			}
 
 			$titleClass = '';
 			$siteTitle = '';
@@ -399,6 +408,12 @@ class TimelessTemplate extends BaseTemplate {
 		}
 		if ( $part !== 'text' ) {
 			$logoImage = $this->getLogoImage( $config->get( 'TimelessLogo' ) );
+			if ( $logoImage === null && isset( $logos['icon'] ) ) {
+				$logoSrc = $logos['icon'];
+				$logoImage = Html::element( 'img', [
+					'src' => $logoSrc,
+				] );
+			}
 
 			$html .= Html::rawElement(
 				'a',

@@ -6,65 +6,63 @@
  * @package Less
  * @subpackage visitor
  */
-class Less_Visitor_joinSelector extends Less_Visitor{
+class Less_Visitor_joinSelector extends Less_Visitor {
 
 	public $contexts = array( array() );
 
 	/**
 	 * @param Less_Tree_Ruleset $root
 	 */
-	public function run( $root ){
-		return $this->visitObj($root);
+	public function run( $root ) {
+		return $this->visitObj( $root );
 	}
 
-    public function visitRule( $ruleNode, &$visitDeeper ){
+	public function visitRule( $ruleNode, &$visitDeeper ) {
 		$visitDeeper = false;
 	}
 
-    public function visitMixinDefinition( $mixinDefinitionNode, &$visitDeeper ){
+	public function visitMixinDefinition( $mixinDefinitionNode, &$visitDeeper ) {
 		$visitDeeper = false;
 	}
 
-    public function visitRuleset( $rulesetNode ){
-
+	public function visitRuleset( $rulesetNode ) {
 		$paths = array();
 
-		if( !$rulesetNode->root ){
+		if ( !$rulesetNode->root ) {
 			$selectors = array();
 
-			if( $rulesetNode->selectors && $rulesetNode->selectors ){
-				foreach($rulesetNode->selectors as $selector){
-					if( $selector->getIsOutput() ){
+			if ( $rulesetNode->selectors && $rulesetNode->selectors ) {
+				foreach ( $rulesetNode->selectors as $selector ) {
+					if ( $selector->getIsOutput() ) {
 						$selectors[] = $selector;
 					}
 				}
 			}
 
-			if( !$selectors ){
+			if ( !$selectors ) {
 				$rulesetNode->selectors = null;
 				$rulesetNode->rules = null;
-			}else{
-				$context = end($this->contexts); //$context = $this->contexts[ count($this->contexts) - 1];
-				$paths = $rulesetNode->joinSelectors( $context, $selectors);
+			} else {
+				$context = end( $this->contexts ); // $context = $this->contexts[ count($this->contexts) - 1];
+				$paths = $rulesetNode->joinSelectors( $context, $selectors );
 			}
 
 			$rulesetNode->paths = $paths;
 		}
 
-		$this->contexts[] = $paths; //different from less.js. Placed after joinSelectors() so that $this->contexts will get correct $paths
+		$this->contexts[] = $paths; // different from less.js. Placed after joinSelectors() so that $this->contexts will get correct $paths
 	}
 
-    public function visitRulesetOut(){
-		array_pop($this->contexts);
+	public function visitRulesetOut() {
+		array_pop( $this->contexts );
 	}
 
-    public function visitMedia($mediaNode) {
-		$context = end($this->contexts); //$context = $this->contexts[ count($this->contexts) - 1];
+	public function visitMedia( $mediaNode ) {
+		$context = end( $this->contexts ); // $context = $this->contexts[ count($this->contexts) - 1];
 
-		if( !count($context) || (is_object($context[0]) && $context[0]->multiMedia) ){
+		if ( !count( $context ) || ( is_object( $context[0] ) && $context[0]->multiMedia ) ) {
 			$mediaNode->rules[0]->root = true;
 		}
 	}
 
 }
-

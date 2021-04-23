@@ -15,7 +15,7 @@ return array(
     'Wikimedia\\Purtle\\' => array($vendorDir . '/wikimedia/purtle/src'),
     'Wikimedia\\PasswordBlacklist\\' => array($vendorDir . '/wikimedia/common-passwords/src/PasswordBlacklist'),
     'Wikimedia\\Parsoid\\' => array($vendorDir . '/wikimedia/parsoid/src'),
-    'Wikimedia\\Composer\\' => array($vendorDir . '/wikimedia/composer-merge-plugin/src'),
+    'Wikimedia\\Composer\\Merge\\V2\\' => array($vendorDir . '/wikimedia/composer-merge-plugin/src'),
     'Wikimedia\\CommonPasswords\\' => array($vendorDir . '/wikimedia/common-passwords/src/CommonPasswords'),
     'Wikimedia\\AtEase\\' => array($vendorDir . '/wikimedia/at-ease/src/Wikimedia/AtEase'),
     'Wikimedia\\Assert\\' => array($vendorDir . '/wikimedia/assert/src'),

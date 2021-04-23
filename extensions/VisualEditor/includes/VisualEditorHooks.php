@@ -481,9 +481,9 @@ class VisualEditorHooks {
 						'1',
 						[
 							$cond,
-							$tsField . ' < ' . $dbr->addQuotes(
+							$tsField . ' < ' . $dbr->addQuotes( $dbr->timestamp(
 								$config->get( 'VisualEditorSingleEditTabSwitchTime' )
-							)
+							) )
 						],
 						__METHOD__,
 						[ 'LIMIT' => 1 ],

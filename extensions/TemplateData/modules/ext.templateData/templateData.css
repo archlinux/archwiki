@@ -27,3 +27,11 @@
 .mw-templateData-doc-param-type {
 	white-space: nowrap;
 }
+
+.mw-tempateData-maps-panel-button {
+	margin-bottom: 0.5em;
+}
+
+.mw-tempateData-template-maps-input {
+	padding-bottom: 1em;
+}

@@ -42,7 +42,6 @@
 	},
 	"Hooks": {
 		"AuthChangeFormFields": "\\MediaWiki\\Extension\\OATHAuth\\Hook\\AuthChangeFormFields\\TOTPExtendTokenField::callback",
-		"TwoFactorIsEnabled": "\\MediaWiki\\Extension\\OATHAuth\\Hook\\TwoFactorIsEnabled\\SetIsEnabled::callback",
 		"LoadExtensionSchemaUpdates": "\\MediaWiki\\Extension\\OATHAuth\\Hook\\LoadExtensionSchemaUpdates\\UpdateTables::callback",
 		"GetPreferences": "\\MediaWiki\\Extension\\OATHAuth\\Hook\\GetPreferences\\AuthModule::callback",
 		"getUserPermissionsErrors": "\\MediaWiki\\Extension\\OATHAuth\\Hook\\GetUserPermissionsErrors\\CheckExclusiveRights::callback"

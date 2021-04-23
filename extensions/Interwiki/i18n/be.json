@@ -1,10 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
+			"Artsiom91",
 			"Тест",
 			"Чаховіч Уладзіслаў"
 		]
 	},
+	"interwiki-title-norights": "Прагляд звестак пра інтэрвікі",
 	"interwiki_reasonfield": "Прычына:",
 	"interwiki_addbutton": "Дадаць"
 }

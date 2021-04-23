@@ -18,7 +18,7 @@
 ve.ce.MWGalleryImageNode = function VeCeMWGalleryImageNode( model ) {
 	var attributes, galleryMwAttrs, mode, imagePadding,
 		outerDivWidth, imageHeight, innerDivHeight, innerDivMargin, innerDivWidth,
-		$thumbDiv, $innerDiv, $a, $img,
+		$thumbDiv, $innerDiv, $a, $img, resourceTitle,
 		defaults = mw.config.get( 'wgVisualEditorConfig' ).galleryOptions;
 
 	// Parent constructor
@@ -60,6 +60,8 @@ ve.ce.MWGalleryImageNode = function VeCeMWGalleryImageNode( model ) {
 		outerDivWidth = innerDivWidth + 4;
 	}
 
+	resourceTitle = mw.Title.newFromText( attributes.resource );
+
 	this.$element
 		.addClass( 'gallerybox' )
 		.css( 'width', outerDivWidth + 'px' );
@@ -79,7 +81,7 @@ ve.ce.MWGalleryImageNode = function VeCeMWGalleryImageNode( model ) {
 		.attr( 'width', attributes.width );
 	this.$filenameA = $( '<a>' )
 		.attr( 'href', '#' ) // Just to make it look like a link
-		.text( mw.Title.newFromText( attributes.resource ).getMainText() )
+		.text( resourceTitle ? resourceTitle.getMainText() : attributes.resource )
 		.toggleClass( 'oo-ui-element-hidden', galleryMwAttrs.showfilename !== 'yes' );
 
 	this.$element.prepend(

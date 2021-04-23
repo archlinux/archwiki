@@ -9,7 +9,7 @@
 .project
 .settings
 AdminSettings.php
-LocalSettings.php
+/LocalSettings.php
 StartProfiler.php
 cscope.files
 cscope.out

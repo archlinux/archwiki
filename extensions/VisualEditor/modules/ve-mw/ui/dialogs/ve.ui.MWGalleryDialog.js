@@ -400,7 +400,7 @@ ve.ui.MWGalleryDialog.prototype.initialize = function () {
 ve.ui.MWGalleryDialog.prototype.getSetupProcess = function ( data ) {
 	return ve.ui.MWGalleryDialog.super.prototype.getSetupProcess.call( this, data )
 		.next( function () {
-			var i, ilen, resource, imageTitles,
+			var i, ilen, resourceTitle, resource, imageTitles,
 				image, imageCaptionNode,
 				mode, widths, heights, perrow,
 				showFilename, classes, styles,
@@ -421,7 +421,11 @@ ve.ui.MWGalleryDialog.prototype.getSetupProcess = function ( data ) {
 
 				for ( i = 0, ilen = imageNodes.length; i < ilen; i++ ) {
 					image = imageNodes[ i ];
-					resource = mw.Title.newFromText( image.getAttribute( 'resource' ), namespaceIds.file ).getPrefixedText();
+					resourceTitle = mw.Title.newFromText( image.getAttribute( 'resource' ), namespaceIds.file );
+					if ( !resourceTitle ) {
+						continue;
+					}
+					resource = resourceTitle.getPrefixedText();
 					imageCaptionNode = image.getCaptionNode();
 					imageTitles.push( resource );
 					this.initialImageData.push( {

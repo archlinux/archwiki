@@ -18,13 +18,17 @@ Who wouldn't love a simple drop-in class for HMAC Based One Time Passwords? It's
 ```php
 use jakobo\HOTP\HOTP;
 
-$result = HOTP::generateByCounter( $key, $counter ); // event based
+// event based
+$result = HOTP::generateByCounter( $key, $counter );
 
-$result = HOTP::generateByTime( $key, $window ); // time based within a "window" of time
-$result = HOTP::generateByTimeWindow( $key, $window, $min, $max ); // same as generateByTime, but for $min windows before and $max windows after
+// time based within a "window" of time
+$result = HOTP::generateByTime( $key, $window );
+
+// same as generateByTime, but for $min windows before and $max windows after
+$result = HOTP::generateByTimeWindow( $key, $window, $min, $max );
 ```
 
-with $result, you can do all sorts of neat things...
+with `$result`, you can do all sorts of neat things...
 
 ```php
 $result->toString();
@@ -33,5 +37,6 @@ $result->toHex();
 
 $result->doDec();
 
-$result->toHotp( $length ); // how many digits in your OTP?
+// how many digits in your OTP?
+$result->toHotp( $length );
 ```
