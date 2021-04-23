@@ -22,3 +22,7 @@
 	path = extensions/UserMerge
 	url = https://github.com/wikimedia/mediawiki-extensions-UserMerge.git
 	branch = REL1_35
+[submodule "extensions/FlarumAuth"]
+	path = extensions/FlarumAuth
+	url = https://github.com/archlinux-de/mediawiki-extensions-FlarumAuth.git
+	branch = REL1_35
