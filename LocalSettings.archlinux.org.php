@@ -327,12 +327,13 @@ wfLoadExtension( 'Nuke' );
 
 # AbuseFilter extension
 wfLoadExtension( 'AbuseFilter' );
-$wgGroupPermissions['sysop']['abusefilter-modify'] = true;
-$wgGroupPermissions['*']['abusefilter-log-detail'] = true;
 $wgGroupPermissions['*']['abusefilter-view'] = true;
 $wgGroupPermissions['*']['abusefilter-log'] = true;
-$wgGroupPermissions['sysop']['abusefilter-private'] = true;
+$wgGroupPermissions['*']['abusefilter-log-detail'] = true;
+$wgGroupPermissions['sysop']['abusefilter-modify'] = true;
 $wgGroupPermissions['sysop']['abusefilter-modify-restricted'] = true;
+$wgGroupPermissions['sysop']['abusefilter-privatedetails'] = true;
+$wgGroupPermissions['sysop']['abusefilter-privatedetails-log'] = true;
 $wgGroupPermissions['sysop']['abusefilter-revert'] = true;
 
 # filter groups
