@@ -38,14 +38,14 @@ body {
         padding: 2px;
     }
 
-    pre {
+    pre:not([class*="CodeMirror"]) {
         border: @code-border-style;
         overflow: auto;
         word-break: break-all;
         white-space: pre-wrap !important;
     }
 
-    pre,
+    pre:not([class*="CodeMirror"]),
     code,
     tt {
         background-color: @code-background-color;
