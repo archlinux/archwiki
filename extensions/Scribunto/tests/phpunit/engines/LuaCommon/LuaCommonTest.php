@@ -10,8 +10,10 @@
  * @covers Scribunto_LuaSandboxInterpreter
  */
 class Scribunto_LuaCommonTest extends Scribunto_LuaEngineTestBase {
+	/** @inheritDoc */
 	protected static $moduleName = 'CommonTests';
 
+	/** @var string[] */
 	private static $allowedGlobals = [
 		// Functions
 		'assert',
@@ -438,7 +440,7 @@ class Scribunto_LuaCommonTest extends Scribunto_LuaEngineTestBase {
 		] + $args );
 		$this->assertSame(
 			'<pre style="margin-left: 1.6em">foo</pre>',
-			$parser->mStripState->unstripBoth( $ret['return'] ),
+			$parser->getStripState()->unstripBoth( $ret['return'] ),
 			'callParserFunction works for {{#tag:pre|foo|style=margin-left: 1.6em}}'
 		);
 
@@ -450,7 +452,7 @@ class Scribunto_LuaCommonTest extends Scribunto_LuaEngineTestBase {
 		] + $args );
 		$this->assertSame(
 			'<pre style="margin-left: 1.6em">foo</pre>',
-			$parser->mStripState->unstripBoth( $ret['return'] ),
+			$parser->getStripState()->unstripBoth( $ret['return'] ),
 			'extensionTag works for {{#tag:pre|foo|style=margin-left: 1.6em}}'
 		);
 
@@ -461,7 +463,7 @@ class Scribunto_LuaCommonTest extends Scribunto_LuaEngineTestBase {
 		] + $args );
 		$this->assertSame(
 			'<pre style="margin-left: 1.6em">foo</pre>',
-			$parser->mStripState->unstripBoth( $ret['return'] ),
+			$parser->getStripState()->unstripBoth( $ret['return'] ),
 			'extensionTag works for {{#tag:pre|foo|style=margin-left: 1.6em}}'
 		);
 
@@ -648,7 +650,7 @@ class Scribunto_LuaCommonTest extends Scribunto_LuaEngineTestBase {
 		$count = 0;
 		$wikitext = "{{#invoke:TestVolatileCaching|$func}}";
 		$text = $frame->expand( $pp->preprocessToObj( "$wikitext $wikitext" ) );
-		$text = $parser->mStripState->unstripBoth( $text );
+		$text = $parser->getStripState()->unstripBoth( $text );
 		$this->assertTrue( $frame->isVolatile(), "Frame is marked volatile" );
 		$this->assertEquals( '1 2', $text, "Volatile wikitext was not cached" );
 	}
@@ -677,7 +679,7 @@ class Scribunto_LuaCommonTest extends Scribunto_LuaEngineTestBase {
 
 		$frame = $pp->newFrame();
 		$text = $frame->expand( $pp->preprocessToObj( "{{#invoke:Bug65687|test|foo}}" ) );
-		$text = $parser->mStripState->unstripBoth( $text );
+		$text = $parser->getStripState()->unstripBoth( $text );
 		$this->assertEquals( 'ok', $text, 'mw.loadData allowed access to frame args' );
 	}
 
@@ -718,7 +720,7 @@ class Scribunto_LuaCommonTest extends Scribunto_LuaEngineTestBase {
 			$text = $frame->expand( $pp->preprocessToObj(
 				"{{#invoke:Bug67498-$how|test|foo}} -- {{#invoke:Bug67498-$how|test|bar}}"
 			) );
-			$text = $parser->mStripState->unstripBoth( $text );
+			$text = $parser->getStripState()->unstripBoth( $text );
 			$text = explode( ' -- ', $text );
 			$this->assertEquals( 'foo foo', $text[0],
 				"mw.getCurrentFrame() failed from a module loaded $how"
@@ -763,7 +765,7 @@ class Scribunto_LuaCommonTest extends Scribunto_LuaEngineTestBase {
 		$text = $frame->expand( $pp->preprocessToObj(
 			"{{#invoke:Outer|echo|oarg|{{#invoke:Inner|test|iarg}}}}"
 		) );
-		$text = $parser->mStripState->unstripBoth( $text );
+		$text = $parser->getStripState()->unstripBoth( $text );
 		$this->assertSame(
 			'(Outer: 1=oarg, 2=(Inner: mod_name=Module:Inner, mod_1=iarg, name=Module:Inner, 1=iarg))',
 			$text
@@ -825,7 +827,7 @@ class Scribunto_LuaCommonTest extends Scribunto_LuaEngineTestBase {
 
 		$frame = $pp->newFrame();
 		$text = $frame->expand( $pp->preprocessToObj( ">{{#invoke:T236092|foo}}<" ) );
-		$text = $parser->mStripState->unstripBoth( $text );
+		$text = $parser->getStripState()->unstripBoth( $text );
 		$this->assertSame( '>false<', $text );
 	}
 
@@ -847,7 +849,7 @@ class Scribunto_LuaCommonTest extends Scribunto_LuaEngineTestBase {
 
 		$frame = $pp->newFrame();
 		$text = $frame->expand( $pp->preprocessToObj( ">{{#invoke:TestAddWarning|foo}}<" ) );
-		$text = $parser->mStripState->unstripBoth( $text );
+		$text = $parser->getStripState()->unstripBoth( $text );
 		$this->assertSame( '>ok<', $text );
 		$this->assertSame( [ 'Don\'t panic!' ], $parser->getOutput()->getWarnings() );
 	}

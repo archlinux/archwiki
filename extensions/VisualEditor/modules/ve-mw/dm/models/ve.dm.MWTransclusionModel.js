@@ -305,7 +305,7 @@
 			titles: titles,
 			lang: mw.config.get( 'wgUserLanguage' ),
 			format: 'json',
-			doNotIgnoreMissingTitles: '1',
+			includeMissingTitles: '1',
 			redirects: '1'
 		} ).done( this.fetchRequestDone.bind( this, titles, specs ) );
 		xhr.always( this.fetchRequestAlways.bind( this, queue, xhr ) );

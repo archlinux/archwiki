@@ -6,19 +6,16 @@
 	margin-left: 1em;
 }
 
-.tdg-editscreen-error-msg {
-	display: block;
-	padding: 0.5em;
+.tdg-editscreen-edit-notice {
 	margin-top: 0.5em;
 }
 
-.tdg-templateDataDialog-panels .oo-ui-panelLayout {
-	padding: 1em;
+.tdg-templateDataDialog-panels .oo-ui-messageWidget p {
+	margin: 0;
 }
 
-.successbox,
-.errorbox {
-	padding: 0.5em 1em;
+.tdg-templateDataDialog-panels .oo-ui-messageWidget p + p {
+	margin-bottom: 0.5em;
 }
 
 .tdg-editscreen-input-error input,
@@ -80,15 +77,17 @@
 }
 
 .tdg-templateDataParamImportWidget {
+	display: block;
 	margin-top: 1em;
 }
 
 .tdg-templateDataParamImportWidget > .oo-ui-buttonElement-button {
+	display: block;
 	text-align: left;
 	font-weight: normal;
 }
 
-/* mw.TemplateData.LanguageSearchWidget */
+/* LanguageSearchWidget */
 
 .tdg-languageResultWidget-otherMatch {
 	float: right;

@@ -41,11 +41,12 @@ ve.dm.MWGalleryImageNode.static.matchFunction = function ( element ) {
 ve.dm.MWGalleryImageNode.static.parentNodeTypes = [ 'mwGallery' ];
 
 ve.dm.MWGalleryImageNode.static.toDataElement = function ( domElements, converter ) {
-	var li, img, captionNode, caption, filename, dataElement;
+	var li, img, captionNode, caption, filename, dataElement, figureInline;
 
 	// TODO: Improve handling of missing files. See 'isError' in MWBlockImageNode#toDataElement
 	li = domElements[ 0 ];
 	img = li.querySelector( 'img,audio,video,span[resource]' );
+	figureInline = img.parentNode.parentNode;
 
 	// Get caption (may be missing for mode="packed-hover" galleries)
 	captionNode = li.querySelector( '.gallerytext' );
@@ -72,12 +73,13 @@ ve.dm.MWGalleryImageNode.static.toDataElement = function ( domElements, converte
 	dataElement = {
 		type: this.name,
 		attributes: {
-			resource: mw.libs.ve.normalizeParsoidResourceName( img.getAttribute( 'resource' ) ),
+			resource: './' + mw.libs.ve.normalizeParsoidResourceName( img.getAttribute( 'resource' ) ),
 			altText: img.getAttribute( 'alt' ),
 			// 'src' for images, 'poster' for video/audio
 			src: img.getAttribute( 'src' ) || img.getAttribute( 'poster' ),
 			height: img.getAttribute( 'height' ),
-			width: img.getAttribute( 'width' )
+			width: img.getAttribute( 'width' ),
+			tagName: figureInline.nodeName.toLowerCase()
 		}
 	};
 
@@ -90,13 +92,13 @@ ve.dm.MWGalleryImageNode.static.toDomElements = function ( data, doc ) {
 	// ImageNode:
 	//   <li> li (gallerybox)
 	//     <div> thumbDiv
-	//       <figure-inline> innerDiv
+	//       <span> innerDiv
 	//         <a> a
 	//           <img> img
 	var model = data,
 		li = doc.createElement( 'li' ),
 		thumbDiv = doc.createElement( 'div' ),
-		innerDiv = doc.createElement( 'figure-inline' ),
+		innerDiv = doc.createElement( model.attributes.tagName || 'span' ),
 		a = doc.createElement( 'a' ),
 		img = doc.createElement( 'img' ),
 		alt = model.attributes.altText;

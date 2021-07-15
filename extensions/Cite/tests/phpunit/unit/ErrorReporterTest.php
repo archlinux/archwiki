@@ -10,16 +10,13 @@ use Parser;
 use ParserOptions;
 
 /**
- * @coversDefaultClass \Cite\ErrorReporter
+ * @covers \Cite\ErrorReporter
  *
  * @license GPL-2.0-or-later
  */
 class ErrorReporterTest extends \MediaWikiUnitTestCase {
 
 	/**
-	 * @covers ::__construct
-	 * @covers ::getInterfaceLanguageAndSplitCache
-	 * @covers ::plain
 	 * @dataProvider provideErrors
 	 */
 	public function testPlain(
@@ -35,9 +32,6 @@ class ErrorReporterTest extends \MediaWikiUnitTestCase {
 			$reporter->plain( $mockParser, $key, 'first param' ) );
 	}
 
-	/**
-	 * @covers ::halfParsed
-	 */
 	public function testHalfParsed() {
 		$language = $this->createLanguage();
 		$reporter = $this->createReporter( $language );
@@ -89,7 +83,7 @@ class ErrorReporterTest extends \MediaWikiUnitTestCase {
 		return new ErrorReporter( $mockMessageLocalizer );
 	}
 
-	public function createParser( Language $language, array $expectedCategories ) {
+	private function createParser( Language $language, array $expectedCategories ) : Parser {
 		$parserOptions = $this->createMock( ParserOptions::class );
 		$parserOptions->method( 'getUserLangObj' )->willReturn( $language );
 

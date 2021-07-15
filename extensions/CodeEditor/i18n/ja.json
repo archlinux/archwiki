@@ -7,6 +7,7 @@
 			"Schu",
 			"Shirayuki",
 			"Siglite3",
+			"Waki285",
 			"Yusuke1109"
 		]
 	},
@@ -22,5 +23,6 @@
 	"codeeditor-gotoline-prompt": "行番号を入力してください",
 	"codeeditor-indent": "インデント",
 	"codeeditor-outdent": "インデントを戻す",
+	"codeeditor-error-title": "依存関係が失敗しました",
 	"codeeditor-error-message": "CodeEditorはWikiEditorを読み込む必要があります。"
 }

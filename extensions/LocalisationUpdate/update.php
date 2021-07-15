@@ -31,8 +31,8 @@ class Update extends Maintenance {
 	public function execute() {
 		// Prevent the script from timing out
 		set_time_limit( 0 );
-		ini_set( "max_execution_time", 0 );
-		ini_set( 'memory_limit', -1 );
+		ini_set( 'max_execution_time', '0' );
+		ini_set( 'memory_limit', '-1' );
 
 		global $IP;
 		global $wgLocalisationUpdateRepositories;
@@ -40,7 +40,7 @@ class Update extends Maintenance {
 
 		$dir = LocalisationUpdate::getDirectory();
 		if ( !$dir ) {
-			$this->error( "No cache directory configured", true );
+			$this->fatalError( 'No cache directory configured' );
 			return;
 		}
 
@@ -54,7 +54,7 @@ class Update extends Maintenance {
 		$repoid = $this->getOption( 'repoid', $wgLocalisationUpdateRepository );
 		if ( !isset( $wgLocalisationUpdateRepositories[$repoid] ) ) {
 			$known = implode( ', ', array_keys( $wgLocalisationUpdateRepositories ) );
-			$this->error( "Unknown repoid $repoid; known: $known", true );
+			$this->fatalError( "Unknown repoid $repoid; known: $known" );
 			return;
 		}
 		$repos = $wgLocalisationUpdateRepositories[$repoid];
@@ -87,10 +87,16 @@ class Update extends Maintenance {
 		$this->output( "Saved $count new translations\n" );
 	}
 
+	/**
+	 * @param string $msg
+	 */
 	public function logInfo( $msg ) {
 		$this->output( $msg . "\n" );
 	}
 
+	/**
+	 * @param string $msg
+	 */
 	public function logError( $msg ) {
 		$this->error( $msg );
 	}

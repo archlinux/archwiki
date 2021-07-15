@@ -3,9 +3,13 @@
 use MediaWiki\MediaWikiServices;
 
 class Scribunto_LuaSiteLibrary extends Scribunto_LuaLibraryBase {
+	/** @var string|null */
 	private static $namespacesCacheLang = null;
+	/** @var array[]|null */
 	private static $namespacesCache = null;
+	/** @var array[] */
 	private static $interwikiMapCache = [];
+	/** @var int[][] */
 	private $pagesInCategoryCache = [];
 
 	public function register() {

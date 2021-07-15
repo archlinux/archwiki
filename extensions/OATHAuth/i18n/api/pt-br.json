@@ -2,12 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"Eduardo Addad de Oliveira",
+			"Eduardoaddad",
 			"Felipe L. Ewald"
 		]
 	},
 	"apihelp-query+oath-description": "Verifique se a autenticação de dois fatores (OATH) está habilitada para um usuário.",
 	"apihelp-query+oath-summary": "Verifique se a autenticação de dois fatores (OATH) está habilitada para um usuário.",
 	"apihelp-query+oath-param-user": "Usuário para o qual obter informações. Padrão para o usuário atual.",
+	"apihelp-query+oath-param-reason": "Motivo para consultar o status do OATH.",
 	"apihelp-query+oath-example-1": "Obtenha informações sobre o usuário atual",
 	"apihelp-query+oath-example-2": "Obter informações sobre o usuário <kbd>Exemplo</kbd>",
 	"apihelp-oathvalidate-description": "Valide um token de autenticação de dois fatos (OAUTH).",

@@ -27,6 +27,7 @@
 	"interwiki_prefix": "Préfixe",
 	"interwiki-prefix-label": "Préfixe :",
 	"interwiki_prefix_intro": "Préfixe interwiki à utiliser dans <code>[<nowiki />[préfixe:<em>nom de la page</em>]]</code> de la syntaxe wiki.",
+	"interwiki_url": "URL",
 	"interwiki-url-label": "URL :",
 	"interwiki_url_intro": "Modèle pour les URL. $1 sera remplacé par le <em>nom de la page</em> dans <code>[<nowiki />[prefix:<em>pagename</em>]]</code>.",
 	"interwiki_local": "Faire suivre",

@@ -18,6 +18,11 @@ $namespaceNames['ab'] = [
 	829 => 'Амодул_ахцәажәара',
 ];
 
+$namespaceNames['alt'] = [
+	828 => 'Модуль',
+	829 => 'Модульды_шӱӱжери',
+];
+
 $namespaceNames['an'] = [
 	828 => 'Módulo',
 	829 => 'Descusión_módulo',
@@ -490,6 +495,11 @@ $namespaceNames['skr-arab'] = [
 $namespaceNames['sl'] = [
 	828 => 'Modul',
 	829 => 'Pogovor_o_modulu',
+];
+
+$namespaceNames['smn'] = [
+	828 => 'Mooduul',
+	829 => 'Savâstâllâm_modulist',
 ];
 
 $namespaceNames['sq'] = [

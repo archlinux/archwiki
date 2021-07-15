@@ -21,7 +21,6 @@
 	"renameuserwarnings": "Upozorenja:",
 	"renameuserconfirm": "Da, preimenuj korisnika",
 	"renameusersubmit": "Pošalji",
-	"renameuser-submit-blocklog": "Dnevnik blokiranja za korisnika",
 	"renameusererrordoesnotexist": "Korisnik „<nowiki>$1</nowiki>“ ne postoji.",
 	"renameusererrorexists": "{{GENDER:$1|Korisnik}} „<nowiki>$1</nowiki>“ već postoji.",
 	"renameusererrorinvalid": "Pogrešno korisničko ime: „<nowiki>$1</nowiki>“",

@@ -126,6 +126,7 @@
 	"wikieditor-toolbar-tool-replace-success": "Gjorde $1 tekstbyte.",
 	"wikieditor-toolbar-tool-replace-emptysearch": "Du skreiv ikkje inn noko å søkja etter.",
 	"wikieditor-toolbar-tool-replace-invalidregex": "Regulæruttrykket du skreiv inn er ugyldig: $1",
+	"wikieditor-toolbar-tool-replace-word": "Søk berre etter heile ord",
 	"wikieditor-toolbar-section-characters": "Spesialteikn",
 	"wikieditor-toolbar-section-help": "Hjelp",
 	"wikieditor-toolbar-help-heading-description": "Skildring",

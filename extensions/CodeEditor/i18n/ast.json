@@ -1,13 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
+			"Fitoschido",
 			"Xuacu"
 		]
 	},
 	"codeeditor-desc": "Edición con resaltáu de sintaxis pa páxines JavaScript y CSS usando [https://ace.c9.io/ l'editor Ace]",
 	"codeeditor-next-annotation": "Dir a la siguiente anotación",
 	"codeeditor-toolbar-toggle": "Activar o desactivar l'editor de códigu",
-	"codeeditor-save-with-errors": "El documentu contien errores. ¿Tas seguru de que quies guardalu?",
+	"codeeditor-save-with-errors": "El documentu contién errores. ¿Tas seguru de que quies publicalu?",
 	"codeeditor-invisibleChars-toggle": "Conmutar caráuteres invisibles",
 	"codeeditor-lineWrapping-toggle": "Conmutar l'axuste de llinies",
 	"codeeditor-searchReplace-toggle": "Conmutar el cuadru de buscar y trocar",

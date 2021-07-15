@@ -3,13 +3,14 @@
 		"authors": [
 			"AlnashPiyash2",
 			"Kaganer",
+			"Kotwys",
 			"Wadorgurt"
 		]
 	},
-	"tooltip-ca-ve-edit": "Та бамез тупатъяно",
+	"tooltip-ca-ve-edit": "Та бамез тупатоно",
 	"visualeditor-ca-createlocaldescriptionsource": "Интыысь описанилэсь источниксэ ватсаны",
 	"visualeditor-ca-createsource": "Кылдытоно вики-текстэз сямен",
-	"visualeditor-ca-editsource": "Вики-текст тупатоно",
+	"visualeditor-ca-editsource": "Кодзэ тупатоно",
 	"visualeditor-ca-editsource-section": "вики-текстэз тупатыны",
 	"visualeditor-descriptionpagelink": "Project:VisualEditor",
 	"visualeditor-dialog-meta-languages-label": "Кылъёс",

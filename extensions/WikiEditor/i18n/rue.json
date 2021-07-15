@@ -2,10 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Gazeb",
-			"Macofe"
+			"Macofe",
+			"Tkalyn"
 		]
 	},
-	"wikieditor": "Росшыреный інтерфейс едітованя вікітексту",
+	"wikieditor": "Розшыреный інтерфейс едітованя вікітексту",
 	"wikieditor-desc": "Забезпечує росшырительный інтерфейс едітованя вікітексту з богато функціоналныма модулами",
 	"wikieditor-wikitext-tab": "Вікітекст",
 	"wikieditor-loading": "Награває ся",

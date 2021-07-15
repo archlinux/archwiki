@@ -57,8 +57,6 @@
 	},
 	"AutoloadClasses": {
 		"ConfirmEditHooks": "includes/ConfirmEditHooks.php",
-		"HTMLFancyCaptchaField": "FancyCaptcha/includes/HTMLFancyCaptchaField.php",
-		"HTMLReCaptchaNoCaptchaField": "ReCaptchaNoCaptcha/includes/HTMLReCaptchaNoCaptchaField.php",
 		"SimpleCaptcha": "SimpleCaptcha/SimpleCaptcha.php",
 		"CaptchaStore": "includes/store/CaptchaStore.php",
 		"CaptchaSessionStore": "includes/store/CaptchaSessionStore.php",
@@ -67,7 +65,11 @@
 		"CaptchaTriggers": "includes/CaptchaTriggers.php",
 		"SpecialCaptcha": "includes/specials/SpecialCaptcha.php",
 		"CaptchaPreAuthenticationProvider": "includes/auth/CaptchaPreAuthenticationProvider.php",
-		"CaptchaAuthenticationRequest": "includes/auth/CaptchaAuthenticationRequest.php",
+		"CaptchaAuthenticationRequest": "includes/auth/CaptchaAuthenticationRequest.php"
+	},
+	"TestAutoloadClasses": {
+		"HTMLFancyCaptchaField": "FancyCaptcha/includes/HTMLFancyCaptchaField.php",
+		"HTMLReCaptchaNoCaptchaField": "ReCaptchaNoCaptcha/includes/HTMLReCaptchaNoCaptchaField.php",
 		"ReCaptchaNoCaptchaAuthenticationRequest": "ReCaptchaNoCaptcha/includes/ReCaptchaNoCaptchaAuthenticationRequest.php"
 	},
 	"ResourceModules": {
@@ -97,18 +99,23 @@
 		"localBasePath": "resources",
 		"remoteExtPath": "ConfirmEdit/resources"
 	},
+	"HookHandlers": {
+		"ConfirmEditHooks": {
+			"class": "ConfirmEditHooks"
+		}
+	},
 	"Hooks": {
-		"EditPageBeforeEditButtons": "ConfirmEditHooks::confirmEditPage",
-		"EmailUserForm": "ConfirmEditHooks::injectEmailUser",
-		"EmailUser": "ConfirmEditHooks::confirmEmailUser",
-		"PageSaveComplete": "ConfirmEditHooks::onPageSaveComplete",
+		"EditPageBeforeEditButtons": "ConfirmEditHooks",
+		"EmailUserForm": "ConfirmEditHooks",
+		"EmailUser": "ConfirmEditHooks",
+		"PageSaveComplete": "ConfirmEditHooks",
+		"TitleReadWhitelist": "ConfirmEditHooks",
+		"AlternateEditPreview": "ConfirmEditHooks",
+		"ResourceLoaderRegisterModules": "ConfirmEditHooks",
 		"EditPage::showEditForm:fields": "ConfirmEditHooks::showEditFormFields",
 		"EditFilterMergedContent": "ConfirmEditHooks::confirmEditMerged",
 		"APIGetAllowedParams": "ConfirmEditHooks::onAPIGetAllowedParams",
-		"TitleReadWhitelist": "ConfirmEditHooks::onTitleReadWhitelist",
-		"AlternateEditPreview": "ConfirmEditHooks::onAlternateEditPreview",
-		"AuthChangeFormFields": "ConfirmEditHooks::onAuthChangeFormFields",
-		"ResourceLoaderRegisterModules": "ConfirmEditHooks::onResourceLoaderRegisterModules"
+		"AuthChangeFormFields": "ConfirmEditHooks::onAuthChangeFormFields"
 	},
 	"AuthManagerAutoConfig": {
 		"preauth": {

@@ -4,13 +4,14 @@
 			"Carla404",
 			"Dianakc",
 			"Eduardo.mps",
+			"Eduardoaddad",
 			"Felipe L. Ewald"
 		]
 	},
 	"imagemap_desc": "Permite mapas de imagem clicáveis no lado do cliente usando a marca <code>&lt;imagemap&gt;</code>",
 	"imagemap_no_image": "Erro: deve ser especificada uma imagem na primeira linha.",
 	"imagemap_invalid_image": "Erro: imagem inválida ou inexistente.",
-	"imagemap_bad_image": "Erro: a imagem está na lista negra para esta página.",
+	"imagemap_bad_image": "Erro: a imagem não está permitida para esta página.",
 	"imagemap_no_link": "Erro: não foi encontrada uma ligação válida ao final da linha $1.",
 	"imagemap_invalid_title": "Erro: título inválido no link da linha $1.",
 	"imagemap_missing_coord": "Erro: coordenadas insuficientes para formar uma figura na linha $1.",

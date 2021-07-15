@@ -32,34 +32,32 @@
 /**
  * @typedef {Object} SidebarData
  * @property {MenuDefinition} data-portals-languages
- * @property {MenuDefinition} data-portals-first
- * @property {MenuDefinition[]} array-portals-rest
- * @property {boolean} [has-logo] whether to show a logo or not.
+ * @property {MenuDefinition} data-portlets-first
+ * @property {MenuDefinition[]} array-portlets-rest
  */
 
 /**
  * @typedef {Object} SearchData
  * @property {string|null} msg-search
- * @property {string} [html-userlangattributes]
+ * @property {string} [html-user-language-attributes]
  * @property {string} form-action URL
  * @property {string|null} html-input
  * @property {string|null} page-title the title of the search page
  * @property {string|null} html-button-search-fallback
  * @property {string|null} html-button-search
+ * @property {string} [input-location] An identifier corresponding the position of the search
+ *  widget on the page, e.g. "header-navigation"
  */
 
 /**
  * @typedef {Object} MenuDefinition
  * @property {string} id
- * @property {string} label-id
  * @property {string} label
  * @property {string} html-items
+ * @property {string} [heading-class]
  * @property {string} [html-tooltip]
  * @property {string} [class] of menu
- * @property {string} list-classes of the unordered list element inside the menu
- * @property {string} [html-userlangattributes]
+ * @property {string} [html-user-language-attributes]
  * @property {boolean} [is-dropdown]
- * @property {string} [html-hook-vector-after-toolbox] Deprecated and used
- *  by the toolbox portal menu.
  * @property {string} [html-after-portal] Additional HTML specific to portal menus.
  */

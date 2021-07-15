@@ -1,8 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Awangba Mangang"
+			"Awangba Mangang",
+			"꯴꯰꯴"
 		]
 	},
-	"scribunto-lua-error": "Lua ꯑꯔꯥꯟꯕ: $2."
+	"scribunto-lua-error": "Lua ꯑꯔꯥꯟꯕ: $2 ꯫"
 }

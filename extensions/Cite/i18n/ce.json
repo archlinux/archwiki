@@ -12,7 +12,7 @@
 	"cite_error_ref_no_input": "Нийса йоцу тег <code>&lt;ref&gt;</code>;\nцӀе йоцу элементан чулацам хила беза.",
 	"cite_error_references_duplicate_key": "Нийса йоцу тег <code>&lt;ref&gt;</code>: «$1» цӀе, башха чулацамна маситтазза хӀотийна",
 	"cite_error_references_invalid_parameters": "Нийса йоцу тег <code>&lt;references&gt;</code>;\nпараметраш шорйина яц.\nЛелае <code>&lt;references /&gt;</code>",
-	"cite_error_references_no_backlink_label": "Символаш тоьаш яц юху ялочу гиперхьажоргашна. Системнан хаам [[MediaWiki:Cite references link many format backlink labels]] шорбан беза",
+	"cite_error_references_no_backlink_label": "Хьаьркаш тоьаш дац юху ялочу гиперхьажоргашна. Системнан хаам [[MediaWiki:Cite references link many format backlink labels]] шорбан беза",
 	"cite_error_no_link_label_group": "Тобан «$1» декъашхойн билгалонаш чекхъяьлла. Хаам [[MediaWiki:$2]] чохь билгалъе кхин тӀе ерш.",
 	"cite_error_references_no_text": "Тег <code>&lt;ref&gt;</code> нийса яц; тIетовжаран <code>$1</code> йоза яздина дац",
 	"cite_error_included_ref": "ДӀакъовлуш йолу тег яц <code>&lt;/ref&gt;</code>",

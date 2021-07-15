@@ -7,6 +7,19 @@
 		toolbarModule = require( './jquery.wikiEditor.toolbar.js' ),
 		configData = require( './data.json' );
 
+	function triggerButtonClick( element ) {
+		var $button,
+			// The dialog action should always be a DOMElement.
+			dialogAction = $( element ).data( 'dialogaction' );
+		$button = dialogAction ? $( dialogAction ) : $( element ).find( 'button' ).first();
+		// Since we're reading from data attribute, make sure we got an element before clicking.
+		// Note when closing a dialog this can be false leading to TypeError: $button.trigger is not a function
+		// (T261529)
+		if ( $button ) {
+			$button.trigger( 'click' );
+		}
+	}
+
 	module.exports = {
 
 		replaceIcons: function ( $textarea ) {
@@ -521,10 +534,8 @@
 								// Execute the action associated with the first button
 								// when the user presses Enter
 								$( this ).closest( '.ui-dialog' ).on( 'keypress', function ( e ) {
-									var $button;
 									if ( ( e.keyCode || e.which ) === 13 ) {
-										$button = $( this ).data( 'dialogaction' ) || $( this ).find( 'button' ).first();
-										$button.trigger( 'click' );
+										triggerButtonClick( this );
 										e.preventDefault();
 									}
 								} );
@@ -544,10 +555,13 @@
 					htmlTemplate: 'dialogInsertFile.html',
 					init: function () {
 						var magicWordsI18N = configData.magicWords,
-							defaultMsg = mw.msg( 'wikieditor-toolbar-file-default' );
+							defaultMsg = mw.msg( 'wikieditor-toolbar-file-default' ),
+							altHelpText = mw.msg( 'wikieditor-toolbar-file-alt-help' ),
+							altHelpLabel = mw.msg( 'wikieditor-toolbar-file-alt-help-label' );
+
 						$( this ).find( '[data-i18n-magic]' )
 							.text( function () {
-								return magicWordsI18N[ $( this ).attr( 'data-i18n-magic' ) ];
+								return magicWordsI18N[ $( this ).attr( 'data-i18n-magic' ) ][ 0 ];
 							} )
 							.removeAttr( 'data-i18n-magic' );
 						$( this ).find( '#wikieditor-toolbar-file-size' )
@@ -560,6 +574,14 @@
 								return mw.msg( $( this ).attr( 'rel' ) );
 							} )
 							.removeAttr( 'rel' );
+
+						// Expandable help message for 'alt text' field
+						$( this ).find( '.wikieditor-toolbar-file-alt-help' ).text( altHelpLabel );
+						$( '.wikieditor-toolbar-file-alt-help' ).on( 'click', function () {
+							$( this ).text( function ( i, text ) {
+								return text === altHelpLabel ? altHelpText : altHelpLabel;
+							} );
+						} );
 
 						// Preload modules of file upload dialog.
 						mw.loader.load( [
@@ -574,12 +596,13 @@
 						width: 590,
 						buttons: {
 							'wikieditor-toolbar-tool-file-insert': function () {
-								var fileName, caption, fileFloat, fileFormat, fileSize, whitespace,
-									fileTitle, options, fileUse,
+								var fileName, caption, fileAlt, fileFloat, fileFormat,
+									fileSize, whitespace, fileTitle, options, fileUse,
 									hasPxRgx = /.+px$/,
 									magicWordsI18N = configData.magicWords;
 								fileName = $( '#wikieditor-toolbar-file-target' ).val();
 								caption = $( '#wikieditor-toolbar-file-caption' ).val();
+								fileAlt = $( '#wikieditor-toolbar-file-alt' ).val();
 								fileFloat = $( '#wikieditor-toolbar-file-float' ).val();
 								fileFormat = $( '#wikieditor-toolbar-file-format' ).val();
 								fileSize = $( '#wikieditor-toolbar-file-size' ).val();
@@ -601,9 +624,13 @@
 								options = options.filter( function ( val ) {
 									return val.length && val !== 'default';
 								} );
+								if ( fileAlt.length ) {
+									options.push( magicWordsI18N.img_alt[ 0 ].replace( '$1', fileAlt ) );
+								}
 								if ( caption.length ) {
 									options.push( caption );
 								}
+
 								fileUse = options.length === 0 ? fileName : ( fileName + '|' + options.join( '|' ) );
 								$( this ).dialog( 'close' );
 								toolbarModule.fn.doAction(
@@ -623,10 +650,11 @@
 								// Restore form state
 								$( [ '#wikieditor-toolbar-file-target',
 									'#wikieditor-toolbar-file-caption',
+									'#wikieditor-toolbar-file-alt',
 									'#wikieditor-toolbar-file-size' ].join( ',' )
 								).val( '' );
 								$( '#wikieditor-toolbar-file-float' ).val( 'default' );
-								$( '#wikieditor-toolbar-file-format' ).val( magicWordsI18N.img_thumbnail );
+								$( '#wikieditor-toolbar-file-format' ).val( magicWordsI18N.img_thumbnail[ 0 ] );
 							},
 							'wikieditor-toolbar-tool-file-cancel': function () {
 								$( this ).dialog( 'close' );
@@ -665,15 +693,16 @@
 									post: '',
 									fileName: '',
 									caption: '',
+									fileAlt: '',
 									fileSize: '',
 									fileFloat: 'default',
-									fileFormat: magicWordsI18N.img_thumbnail
+									fileFormat: magicWordsI18N.img_thumbnail[ 0 ]
 								};
 
 							parseFileSyntax = function ( wikitext ) {
 								var escapedPipe = '\u0001',
 									result = {},
-									match, params, file, i, param;
+									match, params, file, i, param, paramOrig;
 								if ( wikitext.indexOf( escapedPipe ) !== -1 ) {
 									return false;
 								}
@@ -694,27 +723,30 @@
 								}
 								result.fileName = file.getMainText();
 								for ( i = 1; i < params.length; i++ ) {
-									param = params[ i ].toLowerCase();
-									if ( param === 'right' || param === magicWordsI18N.img_right ) {
-										result.fileFloat = magicWordsI18N.img_right;
-									} else if ( param === 'left' || param === magicWordsI18N.img_left ) {
-										result.fileFloat = magicWordsI18N.img_left;
-									} else if ( param === 'none' || param === magicWordsI18N.img_none ) {
-										result.fileFloat = magicWordsI18N.img_none;
-									} else if ( param === 'center' || param === 'centre' || param === magicWordsI18N.img_center ) {
-										result.fileFloat = magicWordsI18N.img_center;
-									} else if ( param === 'thumbnail' || param === 'thumb' || param === magicWordsI18N.img_thumbnail ) {
-										result.fileFormat = magicWordsI18N.img_thumbnail;
-									} else if ( param === 'framed' || param === 'enframed' || param === 'frame' || param === magicWordsI18N.img_framed ) {
-										result.fileFormat = magicWordsI18N.img_framed;
-									} else if ( param === 'frameless' || param === magicWordsI18N.img_frameless ) {
-										result.fileFormat = magicWordsI18N.img_frameless;
+									paramOrig = params[ i ];
+									param = paramOrig.toLowerCase();
+									if ( magicWordsI18N.img_right.indexOf( param ) !== -1 ) {
+										result.fileFloat = magicWordsI18N.img_right[ 0 ];
+									} else if ( magicWordsI18N.img_left.indexOf( param ) !== -1 ) {
+										result.fileFloat = magicWordsI18N.img_left[ 0 ];
+									} else if ( magicWordsI18N.img_none.indexOf( param ) !== -1 ) {
+										result.fileFloat = magicWordsI18N.img_none[ 0 ];
+									} else if ( magicWordsI18N.img_center.indexOf( param ) !== -1 ) {
+										result.fileFloat = magicWordsI18N.img_center[ 0 ];
+									} else if ( magicWordsI18N.img_thumbnail.indexOf( param ) !== -1 ) {
+										result.fileFormat = magicWordsI18N.img_thumbnail[ 0 ];
+									} else if ( magicWordsI18N.img_framed.indexOf( param ) !== -1 ) {
+										result.fileFormat = magicWordsI18N.img_framed[ 0 ];
+									} else if ( magicWordsI18N.img_frameless.indexOf( param ) !== -1 ) {
+										result.fileFormat = magicWordsI18N.img_frameless[ 0 ];
+									} else if ( magicWordsI18N.img_alt.indexOf( param.split( '=', 2 )[ 0 ] + '=$1' ) !== -1 ) {
+										result.fileAlt = paramOrig.split( '=', 2 )[ 1 ];
 									} else if ( /.+px$/.test( param ) ) {
 										result.fileSize = param.replace( /px$/, '' );
 									} else if ( param === '' ) {
 										continue;
 									} else if ( i === params.length - 1 ) { // Last param -> caption
-										result.caption = param.replace( new RegExp( mw.util.escapeRegExp( escapedPipe ), 'g' ), '|' );
+										result.caption = paramOrig.replace( new RegExp( mw.util.escapeRegExp( escapedPipe ), 'g' ), '|' );
 									} else { // Unknown param
 										return false;
 									}
@@ -739,6 +771,7 @@
 								.data( 'whitespace', [ fileData.pre, fileData.post ] );
 							$( '#wikieditor-toolbar-file-target' ).val( fileData.fileName );
 							$( '#wikieditor-toolbar-file-caption' ).val( fileData.caption );
+							$( '#wikieditor-toolbar-file-alt' ).val( fileData.fileAlt );
 							$( '#wikieditor-toolbar-file-float' ).val( fileData.fileFloat );
 							$( '#wikieditor-toolbar-file-format' ).val( fileData.fileFormat );
 							$( '#wikieditor-toolbar-file-size' ).val( fileData.fileSize );
@@ -751,11 +784,8 @@
 								// Execute the action associated with the first button
 								// when the user presses Enter
 								$( this ).closest( '.ui-dialog' ).on( 'keypress', function ( e ) {
-									var $button;
 									if ( e.which === 13 ) {
-										$button = $( this ).data( 'dialogaction' ) ||
-											$( this ).find( 'button' ).first();
-										$button.trigger( 'click' );
+										triggerButtonClick( this );
 										e.preventDefault();
 									}
 								} );
@@ -922,10 +952,8 @@
 								// Execute the action associated with the first button
 								// when the user presses Enter
 								$( this ).closest( '.ui-dialog' ).on( 'keypress', function ( e ) {
-									var $button;
 									if ( ( e.keyCode || e.which ) === 13 ) {
-										$button = $( this ).data( 'dialogaction' ) || $( this ).find( 'button' ).first();
-										$button.trigger( 'click' );
+										triggerButtonClick( this );
 										e.preventDefault();
 									}
 								} );
@@ -1121,10 +1149,8 @@
 								// Execute the action associated with the first button
 								// when the user presses Enter
 								$( this ).closest( '.ui-dialog' ).on( 'keypress', function ( e ) {
-									var $button;
 									if ( ( e.keyCode || e.which ) === 13 ) {
-										$button = $( this ).data( 'dialogaction' ) || $( this ).find( 'button' ).first();
-										$button.trigger( 'click' );
+										triggerButtonClick( this );
 										e.preventDefault();
 									}
 								} );
@@ -1141,11 +1167,9 @@
 
 							$textbox
 								.on( 'keypress.srdialog', function ( e ) {
-									var $button;
 									if ( e.which === 13 ) {
 										// Enter
-										$button = $dialog.data( 'dialogaction' ) || $dialog.find( 'button' ).first();
-										$button.trigger( 'click' );
+										triggerButtonClick( $dialog );
 										e.preventDefault();
 									} else if ( e.which === 27 ) {
 										// Escape

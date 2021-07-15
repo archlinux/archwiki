@@ -100,6 +100,7 @@
 	"wikieditor-toolbar-tool-table-example-old": "-\n! kop 1\n! kop 2\n! kop 3\n|-\n| rige 1, sel 1\n| rige 1, sel 2\n| rige 1, sel 3\n|-\n| rige 2, sel 1\n| rige 2, sel 2\n| rige 2, sel 3",
 	"wikieditor-toolbar-tool-table-example-cell-text": "Seltekst",
 	"wikieditor-toolbar-tool-table-example-header": "Koptekst",
+	"wikieditor-toolbar-tool-table-example-caption": "Tekst opskrift",
 	"wikieditor-toolbar-tool-table-title": "Tabel ynfoegje",
 	"wikieditor-toolbar-tool-table-dimensions-rows": "Rigen",
 	"wikieditor-toolbar-tool-table-dimensions-columns": "Kolommen",

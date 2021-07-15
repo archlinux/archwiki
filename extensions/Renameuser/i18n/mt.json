@@ -18,7 +18,6 @@
 	"renameuserwarnings": "Twissijiet:",
 	"renameuserconfirm": "Iva, semmi mill-ġdid dan l-utent",
 	"renameusersubmit": "Ibgħat",
-	"renameuser-submit-blocklog": "Uri r-reġistru tal-imblukkar għall-utent",
 	"renameusererrordoesnotexist": "L-utent \"<nowiki>$1</nowiki>\" ma jeżistix.",
 	"renameusererrorexists": "L-utent \"<nowiki>$1</nowiki>\" diġà jeżisti.",
 	"renameusererrorinvalid": "L-isem tal-utent \"<nowiki>$1</nowiki>\" hu invalidu.",

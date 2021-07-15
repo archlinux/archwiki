@@ -24,7 +24,7 @@ class ApiQueryTitleBlacklistTest extends ApiTestCase {
 		$this->setMwGlobals( 'wgTitleBlacklistSources', [
 			[
 				'type' => 'file',
-				'src'  => __DIR__ . '/testSource',
+				'src'  => __DIR__ . '/testSource.txt',
 			],
 		] );
 	}

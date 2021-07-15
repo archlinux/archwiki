@@ -6,8 +6,10 @@ use Wikimedia\ScopedCallback;
  * @covers Scribunto_LuaUstringLibrary
  */
 class Scribunto_LuaUstringLibraryTest extends Scribunto_LuaEngineUnitTestBase {
+	/** @inheritDoc */
 	protected static $moduleName = 'UstringLibraryTests';
 
+	/** @var UstringLibraryNormalizationTestProvider|null */
 	private $normalizationDataProvider = null;
 
 	protected function tearDown() : void {

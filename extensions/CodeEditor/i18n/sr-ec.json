@@ -2,13 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"BadDog",
+			"Kizule",
 			"Obsuser"
 		]
 	},
 	"codeeditor-desc": "Уређивање са истакнутом синтаксом за JavaScript и CSS странице помоћу [https://ace.c9.io/ Ace уређивача]",
 	"codeeditor-next-annotation": "Иди на следећу белешку",
 	"codeeditor-toolbar-toggle": "Уређивач кода",
-	"codeeditor-save-with-errors": "Документ садржи грешке. Желите ли заиста да га сачувате?",
+	"codeeditor-save-with-errors": "Документ садржи грешке. Желите ли заиста да га објавите?",
 	"codeeditor-invisibleChars-toggle": "Невидљиви знакови",
 	"codeeditor-lineWrapping-toggle": "Преламање редова",
 	"codeeditor-searchReplace-toggle": "Претражи и замени",

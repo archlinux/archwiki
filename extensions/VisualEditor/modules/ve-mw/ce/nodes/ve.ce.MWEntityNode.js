@@ -49,6 +49,17 @@ ve.ce.MWEntityNode.prototype.onUpdate = function () {
 		whitespaceHtmlChars = ve.visibleWhitespaceCharacters,
 		significantWhitespace = this.getModel().getParent().hasSignificantWhitespace();
 
+	if ( chr === '\u00a0' ) {
+		// &nbsp; non-breaking space
+		this.$element
+			.addClass( 've-ce-mwEntityNode-nbsp' )
+			.attr( 'title', mw.msg( 'visualeditor-tooltip-non-breaking-space' ) );
+	} else {
+		this.$element
+			.removeClass( 've-ce-mwEntityNode-nbsp' )
+			.removeAttr( 'title' );
+	}
+
 	if ( !significantWhitespace && Object.prototype.hasOwnProperty.call( whitespaceHtmlChars, chr ) ) {
 		chr = whitespaceHtmlChars[ chr ];
 	}

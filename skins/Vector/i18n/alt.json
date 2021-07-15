@@ -3,7 +3,8 @@
 		"authors": [
 			"Agilight",
 			"Altai uul",
-			"HalanTul"
+			"HalanTul",
+			"Батыр Комдошев"
 		]
 	},
 	"vector-action-addsection": "Тема кожор",
@@ -12,10 +13,10 @@
 	"vector-action-protect": "Корыыр",
 	"vector-action-undelete": "Орныктырар",
 	"vector-action-unprotect": "Корышты солыыр",
-	"vector-view-create": "Чаяалга",
+	"vector-view-create": "Јайалга",
 	"vector-view-edit": "Тӱзедери",
 	"vector-view-history": "Тӱӱкини кӧргӱзер",
 	"vector-view-view": "Кычырар",
 	"vector-view-viewsource": "Темдектерин кӧрӧр",
-	"vector-more-actions": "Ээчи"
+	"vector-more-actions": "Кӧптӧдӧ"
 }

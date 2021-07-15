@@ -28,4 +28,4 @@ Once you have downloaded the code, place the ''Nuke'' directory within your Medi
 'extensions' directory. Then add the following code to your [[Manual:LocalSettings.php|LocalSettings.php]] file:
 
 # Nuke
-require_once( "$IP/extensions/Nuke/Nuke.php" );
+wfLoadExtension( 'Nuke' );

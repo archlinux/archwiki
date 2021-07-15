@@ -3,16 +3,20 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Wt2Html\PP\Processors;
 
+use DOMDocumentFragment;
 use DOMElement;
+use DOMNode;
 use stdClass;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Config\Env;
+use Wikimedia\Parsoid\Core\Sanitizer;
 use Wikimedia\Parsoid\Html2Wt\WTSUtils;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
+use Wikimedia\Parsoid\Utils\PHPUtils;
+use Wikimedia\Parsoid\Utils\WTUtils;
 use Wikimedia\Parsoid\Wt2Html\PegTokenizer;
-use Wikimedia\Parsoid\Wt2Html\TT\Sanitizer;
 use Wikimedia\Parsoid\Wt2Html\Wt2HtmlDOMProcessor;
 
 class AddMediaInfo implements Wt2HtmlDOMProcessor {
@@ -42,6 +46,7 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 			$height = $info['thumbheight'];
 		}
 
+		// @phan-suppress-next-line PhanRedundantCondition
 		if ( !empty( $info['thumburl'] ) && !empty( $info['thumbwidth'] ) ) {
 			$width = $info['thumbwidth'];
 		}
@@ -88,7 +93,9 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 	 * @param int|float|null $length
 	 * @return int|float|null
 	 */
-	private static function parseTimeString( string $timeString, $length = null ) {
+	private static function parseTimeString(
+		string $timeString, $length = null
+	) {
 		$parts = explode( ':', $timeString );
 		$time = 0;
 		$countParts = count( $parts );
@@ -278,7 +285,7 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 	 * @param DOMElement $container
 	 * @param array $attrs
 	 * @param array $info
-	 * @param array|null $manualinfo
+	 * @param ?array $manualinfo
 	 * @param stdClass $dataMw
 	 * @return array
 	 */
@@ -322,7 +329,7 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 	 * @param DOMElement $container
 	 * @param array $attrs
 	 * @param array $info
-	 * @param array|null $manualinfo
+	 * @param ?array $manualinfo
 	 * @param stdClass $dataMw
 	 * @return array
 	 */
@@ -362,9 +369,6 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 		// Handle "responsive" images, i.e. srcset
 		if ( !empty( $info['responsiveUrls'] ) ) {
 			$candidates = [];
-			// Match Parsoid/JS ordering of these responsive urls
-			// FIXME: Parsoid's output here doesn't match core! T234932
-			krsort( $info['responsiveUrls'] );
 			foreach ( $info['responsiveUrls'] as $density => $url ) {
 				$candidates[] = $url . ' ' . $density . 'x';
 			}
@@ -398,7 +402,7 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 	/**
 	 * @param string $key
 	 * @param string $message
-	 * @param array|null $params
+	 * @param ?array $params
 	 * @return array
 	 */
 	private static function makeErr(
@@ -420,10 +424,16 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 	 */
 	public static function requestInfo( Env $env, string $key, array $dims ): array {
 		$err = null;
+		$start = PHPUtils::getStartHRTime();
 		$info = $env->getDataAccess()->getFileInfo(
 			$env->getPageConfig(),
 			[ $key => $dims ]
 		)[$key] ?? null;
+		if ( $env->profiling() ) {
+			$profile = $env->getCurrentProfile();
+			$profile->bumpMWTime( "Media", PHPUtils::getHRTimeDifferential( $start ), "api" );
+			$profile->bumpCount( "Media" );
+		}
 		if ( !$info ) {
 			$info = self::errorInfo( $env, $key, $dims );
 			$err = self::makeErr( 'apierror-filedoesnotexist', 'This image does not exist.' );
@@ -525,10 +535,11 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 	 * @param array $attrs
 	 * @param stdClass $dataMw
 	 * @param bool $isImage
+	 * @param int $page
 	 */
 	private static function handleLink(
 		Env $env, PegTokenizer $urlParser, DOMElement $container,
-		array $attrs, stdClass $dataMw, bool $isImage
+		array $attrs, stdClass $dataMw, bool $isImage, int $page
 	): void {
 		$doc = $container->ownerDocument;
 		$attr = WTSUtils::getAttrFromDataMw( $dataMw, 'link', true );
@@ -559,14 +570,20 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 					WTSUtils::getAttrFromDataMw( $dataMw, 'link', /* keep */false );
 				}
 			} else {
-				$anchor->setAttribute( 'href', $env->makeLink( $attrs['title'] ) );
+				$href = $env->makeLink( $attrs['title'] );
+				if ( $page > 0 ) {
+					$href .= "?page=$page";
+				}
+				$anchor->setAttribute( 'href', $href );
 			}
 		} else {
 			$anchor = $doc->createElement( 'span' );
 		}
 
 		if ( $anchor->nodeName === 'a' ) {
-			$href = Sanitizer::cleanUrl( $env, $anchor->getAttribute( 'href' ), 'external' );
+			$href = Sanitizer::cleanUrl(
+				$env->getSiteConfig(), $anchor->getAttribute( 'href' ), 'external'
+			);
 			$anchor->setAttribute( 'href', $href );
 		}
 
@@ -577,33 +594,42 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 	 * @inheritDoc
 	 */
 	public function run(
-		Env $env, DOMElement $root, array $options = [], bool $atTopLevel = false
+		Env $env, DOMNode $root, array $options = [], bool $atTopLevel = false
 	): void {
+		'@phan-var DOMElement|DOMDocumentFragment $root';  // @var DOMElement|DOMDocumentFragment $root
 		$urlParser = new PegTokenizer( $env );
-		$containers = DOMCompat::querySelectorAll( $root, 'figure,figure-inline' );
-
-		// Try to ensure `addMediaInfo` is idempotent based on finding the
-		// structure unaltered from the emitted tokens.  Note that we may hit
-		// false positivies in link-in-link scenarios but, in those cases, link
-		// content would already have been processed to dom in a subpipeline
-		// and would necessitate filtering here anyways.
-		$containers = array_filter(
-			$containers,
-			function ( $c ) {
-				return $c->firstChild && $c->firstChild->nodeName === 'a' &&
-					$c->firstChild->firstChild && $c->firstChild->firstChild->nodeName === 'span' &&
-					// The media element may remain a <span> if we hit an error
-					// below so use the annotation as another indicator of having
-					// already been processed.
-					!DOMUtils::hasTypeOf( $c, 'mw:Error' );
-			}
+		$containers = DOMCompat::querySelectorAll(
+			$root, '[typeof*="mw:Image"], [typeof*="mw:Video"], [typeof*="mw:Audio"]'
 		);
 
 		foreach ( $containers as $container ) {
+			// DOMFragmentWrappers assume the element name of their outermost
+			// content so, depending how the above query is written, we're
+			// protecting against getting a figure of the wrong type.  However,
+			// since we're currently using typeof, it shouldn't be a problem.
+			// Also note that info for the media nested in the fragment has
+			// already been added in their respective pipeline.
+			Assert::invariant(
+				!WTUtils::isDOMFragmentWrapper( $container ),
+				'Media info for fragment was already added'
+			);
+
 			$dataMw = DOMDataUtils::getDataMw( $container );
-			$span = $container->firstChild->firstChild;
-			/** @var DOMElement $span */
-			DOMUtils::assertElt( $span );
+
+			// We expect this structure to be predictable based on how it's
+			// emitted in the TT/WikiLinkHandler but treebuilding may have
+			// messed that up for us.
+			$anchor = $container->firstChild;
+			if ( !( $anchor instanceof DOMElement && $anchor->nodeName === 'a' ) ) {
+				$env->log( 'error', 'Unexpected structure when adding media info.' );
+				continue;
+			}
+			$span = $anchor->firstChild;
+			if ( !( $span instanceof DOMElement && $span->nodeName === 'span' ) ) {
+				$env->log( 'error', 'Unexpected structure when adding media info.' );
+				continue;
+			}
+
 			$attrs = [
 				'size' => [
 					'width' => (int)$span->getAttribute( 'data-width' ) ?: null,
@@ -625,7 +651,7 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 			}
 
 			$page = WTSUtils::getAttrFromDataMw( $dataMw, 'page', true );
-			if ( $page && $dims['width'] !== null ) {
+			if ( $page ) {
 				$dims['page'] = $page[1]->txt;
 			}
 
@@ -686,8 +712,9 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 			$rdfaType = $o['rdfaType'];
 			$elt = $o['elt'];
 
-			self::handleLink( $env, $urlParser, $container, $attrs, $dataMw, $isImage );
+			self::handleLink( $env, $urlParser, $container, $attrs, $dataMw, $isImage, (int)( $dims['page'] ?? 0 ) );
 
+			// Get the anchor again, it may have been replaced in the handlers
 			$anchor = $container->firstChild;
 			$anchor->appendChild( $elt );
 

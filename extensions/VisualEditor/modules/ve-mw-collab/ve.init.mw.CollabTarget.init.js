@@ -65,6 +65,11 @@
 				progressDeferred = ve.createDeferred();
 
 			target = ve.init.mw.targetFactory.create( 'collab', title, conf.rebaserUrl, { importTitle: importTitle } );
+			// If the target emits a 'close' event (via the toolbar back button on mobile) then go to the landing page.
+			target.once( 'close', function () {
+				// eslint-disable-next-line no-use-before-define
+				showForm( true );
+			} );
 
 			$( 'body' ).addClass( 've-activated ve-active' );
 
@@ -119,7 +124,11 @@
 							surfaceModel.selectFirstContentOffset();
 							// For new anon users, open the author list so they can set their name
 							if ( isNewAuthor && !username ) {
-								target.actionsToolbar.tools.authorList.onSelect();
+								// Something (an animation?) steals focus during load, so wait a bit
+								// before opening and focusing the authorList.
+								setTimeout( function () {
+									target.actionsToolbar.tools.authorList.onSelect();
+								}, 500 );
 							}
 						} );
 					} );
@@ -284,7 +293,7 @@
 		} );
 	}
 
-	function importTitle() {
+	function onImportSubmit() {
 		importInput.getValidity().then( function () {
 			var title = mw.Title.newFromText( importInput.getValue().trim() );
 
@@ -301,8 +310,8 @@
 		return !!mw.Title.newFromText( value );
 	} );
 	importInput.on( 'change', onImportChange );
-	importInput.on( 'enter', importTitle );
-	importButton.on( 'click', importTitle );
+	importInput.on( 'enter', onImportSubmit );
+	importButton.on( 'click', onImportSubmit );
 	onImportChange();
 
 	if ( pageTitle ) {

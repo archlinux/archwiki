@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Aranka",
 			"HanV",
 			"Konovalov",
 			"Mainframe98",
@@ -42,7 +43,7 @@
 	"scribunto-lua-in-main": "in het hoofdgedeelte",
 	"scribunto-lua-in-function-at": "in de functie op $1:$2",
 	"scribunto-lua-error-location": "Luafout $1: $2",
-	"scribunto-lua-error": "Luafout: $2",
+	"scribunto-lua-error": "Luafout: $2.",
 	"scribunto-lua-notarrayreturn": "Scriptfout: de module heeft de waarde $2 teruggegeven. Dit moet een exporttabel zijn.",
 	"scribunto-luastandalone-proc-error": "Luafout: het was niet mogelijk een proces te creëren.",
 	"scribunto-luastandalone-proc-error-msg": "Luafout: kan proces niet aanmaken: $2",

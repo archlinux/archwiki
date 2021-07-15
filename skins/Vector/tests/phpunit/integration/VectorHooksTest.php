@@ -4,9 +4,10 @@
  * @ingroup skins
  */
 
+use Vector\Constants;
+use Vector\FeatureManagement\FeatureManager;
 use Vector\Hooks;
-
-const SKIN_PREFS_SECTION = 'rendering/skin/skin-prefs';
+use Vector\HTMLForm\Fields\HTMLLegacySkinVersionField;
 
 /**
  * Integration tests for Vector Hooks.
@@ -14,7 +15,150 @@ const SKIN_PREFS_SECTION = 'rendering/skin/skin-prefs';
  * @group Vector
  * @coversDefaultClass \Vector\Hooks
  */
-class VectorHooksTest extends \MediaWikiTestCase {
+class VectorHooksTest extends MediaWikiIntegrationTestCase {
+
+	private const SKIN_PREFS_SECTION = 'rendering/skin/skin-prefs';
+
+	/**
+	 * @param bool $excludeMainPage
+	 * @param array $excludeNamespaces
+	 * @param array $include
+	 * @param array $querystring
+	 * @return array
+	 */
+	private static function makeMaxWidthConfig(
+		$excludeMainPage,
+		$excludeNamespaces = [],
+		$include = [],
+		$querystring = []
+	) {
+		return [
+			'exclude' => [
+				'mainpage' => $excludeMainPage,
+				'namespaces' => $excludeNamespaces,
+				'querystring' => $querystring,
+			],
+			'include' => $include
+		];
+	}
+
+	/**
+	 * @covers ::shouldDisableMaxWidth
+	 */
+	public function providerShouldDisableMaxWidth() {
+		$excludeTalkFooConfig = self::makeMaxWidthConfig(
+			false,
+			[ NS_TALK ],
+			[ 'Talk:Foo' ],
+			[]
+		);
+
+		return [
+			[
+				'No options, nothing disables max width',
+				[],
+				Title::makeTitle( NS_MAIN, 'Foo' ),
+				[],
+				false
+			],
+			[
+				'Main page disables max width if exclude.mainpage set',
+				self::makeMaxWidthConfig( true ),
+				Title::newMainPage(),
+				[],
+				true
+			],
+			[
+				'Namespaces can be excluded',
+				self::makeMaxWidthConfig( false, [ NS_CATEGORY ] ),
+				Title::makeTitle( NS_CATEGORY, 'Category' ),
+				[],
+				true
+			],
+			[
+				'Namespaces are included if not excluded',
+				self::makeMaxWidthConfig( false, [ NS_CATEGORY ] ),
+				Title::makeTitle( NS_SPECIAL, 'SpecialPages' ),
+				[],
+				false
+			],
+			[
+				'More than one namespace can be included',
+				self::makeMaxWidthConfig( false, [ NS_CATEGORY, NS_SPECIAL ] ),
+				Title::makeTitle( NS_SPECIAL, 'Specialpages' ),
+				[],
+				true
+			],
+			[
+				'Can be disabled on history page',
+				self::makeMaxWidthConfig(
+					false,
+					[
+						/* no namespaces excluded */
+					],
+					[
+						/* no includes */
+					],
+					[ 'action' => 'history' ]
+				),
+				Title::makeTitle( NS_MAIN, 'History page' ),
+				[ 'action' => 'history' ],
+				true
+			],
+			[
+				'Include can override exclusions',
+				self::makeMaxWidthConfig(
+					false,
+					[ NS_CATEGORY, NS_SPECIAL ],
+					[ 'Special:Specialpages' ],
+					[ 'action' => 'history' ]
+				),
+				Title::makeTitle( NS_SPECIAL, 'Specialpages' ),
+				[ 'action' => 'history' ],
+				false
+			],
+			[
+				'Max width can be disabled on talk pages',
+				$excludeTalkFooConfig,
+				Title::makeTitle( NS_TALK, 'A talk page' ),
+				[],
+				true
+			],
+			[
+				'includes can be used to override any page in a disabled namespace',
+				$excludeTalkFooConfig,
+				Title::makeTitle( NS_TALK, 'Foo' ),
+				[],
+				false
+			],
+			[
+				'Excludes/includes are based on root title so should apply to subpages',
+				$excludeTalkFooConfig,
+				Title::makeTitle( NS_TALK, 'Foo/subpage' ),
+				[],
+				false
+			]
+		];
+	}
+
+	/**
+	 * @covers ::shouldDisableMaxWidth
+	 * @dataProvider providerShouldDisableMaxWidth
+	 */
+	public function testShouldDisableMaxWidth(
+		$msg,
+		$options,
+		$title,
+		$requestValues,
+		$shouldDisableMaxWidth
+	) {
+		$this->assertSame(
+			$shouldDisableMaxWidth,
+			Hooks::shouldDisableMaxWidth( $options, $title, $requestValues ),
+			$msg
+		);
+	}
+
 	/**
 	 * @covers ::onGetPreferences
 	 */
@@ -26,20 +170,25 @@ class VectorHooksTest extends \MediaWikiTestCase {
 
 		$prefs = [];
 		Hooks::onGetPreferences( $this->getTestUser()->getUser(), $prefs );
-		$this->assertSame( $prefs, [], 'No preferences are added.' );
+		$this->assertSame( [], $prefs, 'No preferences are added.' );
+	}
+
+	private function setFeatureLatestSkinVersionIsEnabled( $isEnabled ) {
+		$featureManager = new FeatureManager();
+		$featureManager->registerSimpleRequirement( Constants::REQUIREMENT_LATEST_SKIN_VERSION, $isEnabled );
+		$featureManager->registerFeature( Constants::FEATURE_LATEST_SKIN, [
+			Constants::REQUIREMENT_LATEST_SKIN_VERSION
+		] );
+
+		$this->setService( Constants::SERVICE_FEATURE_MANAGER, $featureManager );
 	}
 
 	/**
 	 * @covers ::onGetPreferences
 	 */
 	public function testOnGetPreferencesShowPreferencesEnabledSkinSectionFoundLegacy() {
-		$config = new HashConfig( [
-			'VectorShowSkinPreferences' => true,
-			// '1' is Legacy.
-			'VectorDefaultSkinVersionForExistingAccounts' => '1',
-			'VectorDefaultSidebarVisibleForAuthorisedUser' => true
-		] );
-		$this->setService( 'Vector.Config', $config );
+		$isLegacy = true;
+		$this->setFeatureLatestSkinVersionIsEnabled( !$isLegacy );
 
 		$prefs = [
 			'foo' => [],
@@ -47,26 +196,25 @@ class VectorHooksTest extends \MediaWikiTestCase {
 			'bar' => []
 		];
 		Hooks::onGetPreferences( $this->getTestUser()->getUser(), $prefs );
-		$this->assertSame(
-			$prefs,
+		$this->assertEquals(
 			[
 				'foo' => [],
 				'skin' => [],
 				'VectorSkinVersion' => [
-					'type' => 'toggle',
+					'class' => HTMLLegacySkinVersionField::class,
 					'label-message' => 'prefs-vector-enable-vector-1-label',
 					'help-message' => 'prefs-vector-enable-vector-1-help',
-					'section' => SKIN_PREFS_SECTION,
-					// '1' is enabled which means Legacy.
-					'default' => '1',
-					'hide-if' => [ '!==', 'wpskin', 'vector' ]
+					'section' => self::SKIN_PREFS_SECTION,
+					'default' => $isLegacy,
+					'hide-if' => [ '!==', 'wpskin', Constants::SKIN_NAME ]
 				],
 				'VectorSidebarVisible' => [
 					'type' => 'api',
 					'default' => true
 				],
-				'bar' => []
+				'bar' => [],
 			],
+			$prefs,
 			'Preferences are inserted directly after skin.'
 		);
 	}
@@ -75,79 +223,33 @@ class VectorHooksTest extends \MediaWikiTestCase {
 	 * @covers ::onGetPreferences
 	 */
 	public function testOnGetPreferencesShowPreferencesEnabledSkinSectionMissingLegacy() {
-		$config = new HashConfig( [
-			'VectorShowSkinPreferences' => true,
-			// '1' is Legacy.
-			'VectorDefaultSkinVersionForExistingAccounts' => '1',
-			'VectorDefaultSidebarVisibleForAuthorisedUser' => true
-		] );
-		$this->setService( 'Vector.Config', $config );
+		$isLegacy = false;
+		$this->setFeatureLatestSkinVersionIsEnabled( !$isLegacy );
 
 		$prefs = [
 			'foo' => [],
 			'bar' => []
 		];
 		Hooks::onGetPreferences( $this->getTestUser()->getUser(), $prefs );
-		$this->assertSame(
-			$prefs,
+		$this->assertEquals(
 			[
 				'foo' => [],
 				'bar' => [],
 				'VectorSkinVersion' => [
-					'type' => 'toggle',
+					'class' => HTMLLegacySkinVersionField::class,
 					'label-message' => 'prefs-vector-enable-vector-1-label',
 					'help-message' => 'prefs-vector-enable-vector-1-help',
-					'section' => SKIN_PREFS_SECTION,
-					// '1' is enabled which means Legacy.
-					'default' => '1',
-					'hide-if' => [ '!==', 'wpskin', 'vector' ]
+					'section' => self::SKIN_PREFS_SECTION,
+					'default' => $isLegacy,
+					'hide-if' => [ '!==', 'wpskin', Constants::SKIN_NAME ]
 				],
 				'VectorSidebarVisible' => [
 					'type' => 'api',
 					'default' => true
 				],
 			],
+			$prefs,
 			'Preferences are appended.'
-		);
-	}
-
-	/**
-	 * @covers ::onGetPreferences
-	 */
-	public function testOnGetPreferencesShowPreferencesEnabledSkinSectionMissingLatest() {
-		$config = new HashConfig( [
-			'VectorShowSkinPreferences' => true,
-			// '2' is latest.
-			'VectorDefaultSkinVersionForExistingAccounts' => '2',
-			'VectorDefaultSidebarVisibleForAuthorisedUser' => true
-		] );
-		$this->setService( 'Vector.Config', $config );
-
-		$prefs = [
-			'foo' => [],
-			'bar' => [],
-		];
-		Hooks::onGetPreferences( $this->getTestUser()->getUser(), $prefs );
-		$this->assertSame(
-			$prefs,
-			[
-				'foo' => [],
-				'bar' => [],
-				'VectorSkinVersion' => [
-					'type' => 'toggle',
-					'label-message' => 'prefs-vector-enable-vector-1-label',
-					'help-message' => 'prefs-vector-enable-vector-1-help',
-					'section' => SKIN_PREFS_SECTION,
-					// '0' is disabled (which means latest).
-					'default' => '0',
-					'hide-if' => [ '!==', 'wpskin', 'vector' ]
-				],
-				'VectorSidebarVisible' => [
-					'type' => 'api',
-					'default' => true
-				],
-			],
-			'Legacy skin version is disabled.'
 		);
 	}
 
@@ -157,51 +259,10 @@ class VectorHooksTest extends \MediaWikiTestCase {
 	public function testOnPreferencesFormPreSaveVectorEnabledLegacyNewPreference() {
 		$formData = [
 			'skin' => 'vector',
-			// True is Legacy.
-			'VectorSkinVersion' => true,
+			'VectorSkinVersion' => Constants::SKIN_VERSION_LEGACY,
 		];
 		$form = $this->createMock( HTMLForm::class );
-		$user = $this->createMock( \User::class );
-		$user->expects( $this->once() )
-			->method( 'setOption' )
-			// '1' is Legacy.
-			->with( 'VectorSkinVersion', '1' );
-		$result = true;
-		$oldPreferences = [];
-
-		Hooks::onPreferencesFormPreSave( $formData, $form, $user, $result, $oldPreferences );
-	}
-
-	/**
-	 * @covers ::onPreferencesFormPreSave
-	 */
-	public function testOnPreferencesFormPreSaveVectorEnabledLatestNewPreference() {
-		$formData = [
-			'skin' => 'vector',
-			// False is latest.
-			'VectorSkinVersion' => false,
-		];
-		$form = $this->createMock( HTMLForm::class );
-		$user = $this->createMock( \User::class );
-		$user->expects( $this->once() )
-			->method( 'setOption' )
-			// '2' is latest.
-			->with( 'VectorSkinVersion', '2' );
-		$result = true;
-		$oldPreferences = [];
-
-		Hooks::onPreferencesFormPreSave( $formData, $form, $user, $result, $oldPreferences );
-	}
-
-	/**
-	 * @covers ::onPreferencesFormPreSave
-	 */
-	public function testOnPreferencesFormPreSaveVectorEnabledNoNewPreference() {
-		$formData = [
-			'skin' => 'vector',
-		];
-		$form = $this->createMock( HTMLForm::class );
-		$user = $this->createMock( \User::class );
+		$user = $this->createMock( User::class );
 		$user->expects( $this->never() )
 			->method( 'setOption' );
 		$result = true;
@@ -215,11 +276,10 @@ class VectorHooksTest extends \MediaWikiTestCase {
 	 */
 	public function testOnPreferencesFormPreSaveVectorDisabledNoOldPreference() {
 		$formData = [
-			// False is latest.
-			'VectorSkinVersion' => false,
+			'VectorSkinVersion' => Constants::SKIN_VERSION_LATEST,
 		];
 		$form = $this->createMock( HTMLForm::class );
-		$user = $this->createMock( \User::class );
+		$user = $this->createMock( User::class );
 		$user->expects( $this->never() )
 			->method( 'setOption' );
 		$result = true;
@@ -233,11 +293,10 @@ class VectorHooksTest extends \MediaWikiTestCase {
 	 */
 	public function testOnPreferencesFormPreSaveVectorDisabledOldPreference() {
 		$formData = [
-			// False is latest.
-			'VectorSkinVersion' => false,
+			'VectorSkinVersion' => Constants::SKIN_VERSION_LATEST,
 		];
 		$form = $this->createMock( HTMLForm::class );
-		$user = $this->createMock( \User::class );
+		$user = $this->createMock( User::class );
 		$user->expects( $this->once() )
 			->method( 'setOption' )
 			->with( 'VectorSkinVersion', 'old' );
@@ -254,16 +313,14 @@ class VectorHooksTest extends \MediaWikiTestCase {
 	 */
 	public function testOnLocalUserCreatedLegacy() {
 		$config = new HashConfig( [
-			// '1' is Legacy.
-			'VectorDefaultSkinVersionForNewAccounts' => '1',
+			'VectorDefaultSkinVersionForNewAccounts' => Constants::SKIN_VERSION_LEGACY,
 		] );
 		$this->setService( 'Vector.Config', $config );
 
-		$user = $this->createMock( \User::class );
+		$user = $this->createMock( User::class );
 		$user->expects( $this->once() )
-		->method( 'setOption' )
-			// '1' is Legacy.
-			->with( 'VectorSkinVersion', '1' );
+			->method( 'setOption' )
+			->with( 'VectorSkinVersion', Constants::SKIN_VERSION_LEGACY );
 		$isAutoCreated = false;
 		Hooks::onLocalUserCreated( $user, $isAutoCreated );
 	}
@@ -273,16 +330,14 @@ class VectorHooksTest extends \MediaWikiTestCase {
 	 */
 	public function testOnLocalUserCreatedLatest() {
 		$config = new HashConfig( [
-			// '2' is latest.
-			'VectorDefaultSkinVersionForNewAccounts' => '2',
+			'VectorDefaultSkinVersionForNewAccounts' => Constants::SKIN_VERSION_LATEST,
 		] );
 		$this->setService( 'Vector.Config', $config );
 
-		$user = $this->createMock( \User::class );
+		$user = $this->createMock( User::class );
 		$user->expects( $this->once() )
-		->method( 'setOption' )
-			// '2' is latest.
-			->with( 'VectorSkinVersion', '2' );
+			->method( 'setOption' )
+			->with( 'VectorSkinVersion', Constants::SKIN_VERSION_LATEST );
 		$isAutoCreated = false;
 		Hooks::onLocalUserCreated( $user, $isAutoCreated );
 	}
@@ -294,7 +349,8 @@ class VectorHooksTest extends \MediaWikiTestCase {
 		$this->setMwGlobals( [
 			'wgVectorUseIconWatch' => true
 		] );
-		$skin = new SkinVector();
+		$skin = new SkinVector( [ 'name' => 'vector' ] );
+		$skin->getContext()->setTitle( Title::newFromText( 'Foo' ) );
 		$contentNavWatch = [
 			'actions' => [
 				'watch' => [ 'class' => 'watch' ],

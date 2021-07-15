@@ -22,7 +22,6 @@ function getTestRunId(opts) {
 function _run(test) {
 	return rtTest.runTests(test.title, {
 		prefix: test.prefix,
-		rtTestMode: true,
 		parsoidURLOpts: parsoidURLOpts,
 		htmlDiffConfig: htmlDiffConfig
 	}, rtTest.xmlFormat).then(function(result) {

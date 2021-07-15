@@ -21,7 +21,6 @@
 	"renameuserwarnings": "Waarschuwingen:",
 	"renameuserconfirm": "Ja, de gebruiker hernoemen",
 	"renameusersubmit": "Opslaan",
-	"renameuser-submit-blocklog": "Blokkeerlogboek voor gebruiker weergeven",
 	"renameusererrordoesnotexist": "De gebruiker \"<nowiki>$1</nowiki>\" bestaat niet.",
 	"renameusererrorexists": "De {{GENDER:$1|gebruiker}} \"<nowiki>$1</nowiki>\" bestaat al.",
 	"renameusererrorinvalid": "De gebruikersnaam \"<nowiki>$1</nowiki>\" is ongeldig.",

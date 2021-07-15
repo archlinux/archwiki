@@ -94,7 +94,13 @@ ve.ui.SpecialCharacterDialog.prototype.getTeardownProcess = function ( data ) {
 ve.ui.SpecialCharacterDialog.prototype.getReadyProcess = function ( data ) {
 	return ve.ui.SpecialCharacterDialog.super.prototype.getReadyProcess.call( this, data )
 		.next( function () {
+			// The dialog automatically receives focus after opening, move it back to the surface.
+			// (Make sure an existing selection is preserved. Why does focus() reset the selection? 🤦)
+			var previousSelection = this.surface.getModel().getSelection();
 			this.surface.getView().focus();
+			if ( !previousSelection.isNull() ) {
+				this.surface.getModel().setSelection( previousSelection );
+			}
 		}, this );
 };
 
@@ -128,8 +134,9 @@ ve.ui.SpecialCharacterDialog.prototype.buildButtonList = function () {
 	for ( category in this.characters ) {
 		this.pages.push(
 			new ve.ui.SpecialCharacterPage( category, {
-				label: category,
-				characters: this.characters[ category ],
+				label: this.characters[ category ].label,
+				characters: this.characters[ category ].characters,
+				attributes: this.characters[ category ].attributes,
 				source: this.surface.getMode() === 'source'
 			} )
 		);
@@ -153,18 +160,41 @@ ve.ui.SpecialCharacterDialog.prototype.buildButtonList = function () {
  */
 ve.ui.SpecialCharacterDialog.prototype.onListClick = function ( e ) {
 	var character = $( e.target ).data( 'character' ),
-		fragment = this.surface.getModel().getFragment();
+		fragment = this.surface.getModel().getFragment(),
+		mode = this.surface.getMode();
+
+	function encode( text ) {
+		if ( mode === 'visual' && character.entities ) {
+			return ve.init.platform.decodeEntities( text );
+		} else {
+			return text;
+		}
+	}
 
 	if ( character ) {
 		if ( typeof character === 'string' || character.string ) {
-			fragment.insertContent( character.string || character, true ).collapseToEnd().select();
+			fragment.insertContent( encode( character.string || character ), true ).collapseToEnd().select();
 		} else if ( character.action.type === 'replace' ) {
-			fragment.insertContent( character.action.options.peri, true ).collapseToEnd().select();
+			fragment.insertContent( encode( character.action.options.peri ), true ).collapseToEnd().select();
 		} else if ( character.action.type === 'encapsulate' ) {
-			fragment.collapseToStart().insertContent( character.action.options.pre, true );
-			fragment.collapseToEnd().insertContent( character.action.options.post, true ).collapseToEnd().select();
+			fragment.collapseToStart().insertContent( encode( character.action.options.pre ), true );
+			fragment.collapseToEnd().insertContent( encode( character.action.options.post ), true ).collapseToEnd().select();
 		}
+
+		ve.track(
+			'activity.' + this.constructor.static.name,
+			{ action: 'insert-' + this.bookletLayout.currentPageName }
+		);
 	}
+};
+
+ve.ui.SpecialCharacterDialog.prototype.getBodyHeight = function () {
+	return 150;
+};
+
+ve.ui.SpecialCharacterDialog.prototype.getContentHeight = function () {
+	// Skip slow complicated measurements that always return 0 for this window
+	return this.getBodyHeight();
 };
 
 /* Registration */

@@ -20,7 +20,7 @@
 	"multimediaviewer-credit-fallback": "Žiūrėti informaciją apie autorių",
 	"multimediaviewer-multiple-authors": "{{PLURAL:$1|dar vienas autorius|dar $1 autoriai|dar $1 autorių}}",
 	"multimediaviewer-metadata-error": "Nepavyksta įkelti vaizdo duomenų (klaida: $1)",
-	"multimediaviewer-thumbnail-error": "Klaida: nepavyksta pakrauti miniatiūros duomenų. $1",
+	"multimediaviewer-thumbnail-error": "Atsiprašome, negalima parodyti failo",
 	"multimediaviewer-thumbnail-error-retry": "bandyti dar kartą",
 	"multimediaviewer-license-cc-by-1.0": "CC BY 1.0",
 	"multimediaviewer-license-cc-sa-1.0": "CC SA 1.0",

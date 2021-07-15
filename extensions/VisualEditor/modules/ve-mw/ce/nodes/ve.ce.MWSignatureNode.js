@@ -127,9 +127,9 @@ ve.ce.MWSignatureNode.prototype.generateContents = function () {
 		onlypst: true
 	} )
 		.done( function ( resp ) {
-			var wikitext = ve.getProp( resp, 'parse', 'text' );
-			if ( wikitext ) {
-				ve.init.target.parseWikitextFragment( wikitext, true, doc ).then( function ( response ) {
+			var wt = ve.getProp( resp, 'parse', 'text' );
+			if ( wt ) {
+				ve.init.target.parseWikitextFragment( wt, true, doc ).then( function ( response ) {
 					if ( ve.getProp( response, 'visualeditor', 'result' ) !== 'success' ) {
 						deferred.reject();
 						return;

@@ -26,23 +26,16 @@ class ResourceLoaderSyntaxHighlightVisualEditorModule extends ResourceLoaderFile
 	 */
 	public function getScript( ResourceLoaderContext $context ) {
 		$scripts = parent::getScript( $context );
-
-		return $scripts . Xml::encodeJsCall(
-			've.dm.MWSyntaxHighlightNode.static.addPygmentsLanguages', [
-				$this->getPygmentsLanguages()
-			],
-			ResourceLoader::inDebugMode()
-		) . Xml::encodeJsCall(
-			've.dm.MWSyntaxHighlightNode.static.addGeshiToPygmentsMap', [
-				SyntaxHighlightGeSHiCompat::getGeSHiToPygmentsMap()
-			],
-			ResourceLoader::inDebugMode()
-		) . Xml::encodeJsCall(
-			've.dm.MWSyntaxHighlightNode.static.addPygmentsToAceMap', [
-				SyntaxHighlightAce::getPygmentsToAceMap()
-			],
-			ResourceLoader::inDebugMode()
-		);
+		return $scripts
+			. 've.dm.MWSyntaxHighlightNode.static.addPygmentsLanguages('
+			. $context->encodeJson( $this->getPygmentsLanguages() )
+			. ');'
+			. 've.dm.MWSyntaxHighlightNode.static.addGeshiToPygmentsMap('
+			. $context->encodeJson( SyntaxHighlightGeSHiCompat::getGeSHiToPygmentsMap() )
+			. ');'
+			. 've.dm.MWSyntaxHighlightNode.static.addPygmentsToAceMap('
+			. $context->encodeJson( SyntaxHighlightAce::getPygmentsToAceMap() )
+			. ');';
 	}
 
 	/**

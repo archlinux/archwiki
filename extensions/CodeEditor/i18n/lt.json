@@ -2,11 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"Eitvys200",
-			"Manvydasz"
+			"Manvydasz",
+			"Tomasdd"
 		]
 	},
 	"codeeditor-next-annotation": "Eiti prie kitos anotacijos",
-	"codeeditor-save-with-errors": "Dokumente yra klaidų. Ar tikrai norite išsaugoti?",
+	"codeeditor-save-with-errors": "Dokumente yra klaidų. Ar tikrai norite paskelbti?",
 	"codeeditor-gotoline": "Eiti į eilutės numerį...",
 	"codeeditor-gotoline-placeholder": "eilutė[:stulpelis]",
 	"codeeditor-gotoline-prompt": "Įvesti eilutės numerį",

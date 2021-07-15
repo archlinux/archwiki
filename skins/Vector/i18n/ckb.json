@@ -3,10 +3,15 @@
 		"authors": [
 			"Asoxor",
 			"Calak",
-			"Sarchia"
+			"Sarchia",
+			"ئارام بکر"
 		]
 	},
 	"skinname-vector": "ڤێکتۆر",
+	"prefs-vector-enable-vector-1-label": "ڤێکتۆری سپاردە بەکاربێنە",
+	"prefs-vector-enable-vector-1-help": "لەماوەی چەند ساڵی داھاتوو، ھەوڵی نوێکردنەوەی پێستەی ڤێکتۆر دەدەین. ڤێکتۆری سپاردە ڕێگەت پێ دەدات کە وەشانە کۆنەکەی ڤێکتۆر (لە کانوونی یەکەمی ٢٠١٩) ببینیت. بۆ زیاتر زانیاری لەسەر نوێکردنەوەکان، بڕۆ بۆ [[mw:Reading/Web/Desktop_Improvements|پەڕەی پرۆژەکەمان]].",
+	"vector-opt-out": "بۆ دیمەنە کۆنەکە بیگۆڕە",
+	"vector-opt-out-tooltip": "ڕێکخستنەکانت بۆ گەڕانەوەی دیمەنە کۆنەکەی پێستەکە (ڤێکتۆری سپاردە) بگۆڕە",
 	"vector-action-addsection": "بابەت دابنێ",
 	"vector-action-delete": "سڕینەوە",
 	"vector-action-move": "گواستنەوە",

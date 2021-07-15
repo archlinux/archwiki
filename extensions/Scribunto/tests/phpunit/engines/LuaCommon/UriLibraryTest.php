@@ -1,6 +1,7 @@
 <?php
 
 class Scribunto_LuaUriLibraryTest extends Scribunto_LuaEngineTestBase {
+	/** @inheritDoc */
 	protected static $moduleName = 'UriLibraryTests';
 
 	protected function setUp() : void {

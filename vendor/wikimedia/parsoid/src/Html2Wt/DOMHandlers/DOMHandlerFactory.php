@@ -3,6 +3,7 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Html2Wt\DOMHandlers;
 
+use DOMDocumentFragment;
 use DOMElement;
 use DOMNode;
 use Wikimedia\Parsoid\Config\WikitextConstants;
@@ -48,6 +49,9 @@ class DOMHandlerFactory {
 				return new DTHandler();
 			case 'figure':
 				return new FigureHandler();
+			// TODO: Remove when 2.1.x content is deprecated, since we no
+			// longer emit inline media in figure-inline.  See the test,
+			// "Serialize simple image with figure-inline wrapper"
 			case 'figure-inline':
 				return new MediaHandler();
 			case 'hr':
@@ -109,10 +113,14 @@ class DOMHandlerFactory {
 
 	/**
 	 * Get a DOMHandler for an element node.
-	 * @param DOMNode|null $node
-	 * @return DOMHandler|null
+	 * @param ?DOMNode $node
+	 * @return DOMHandler
 	 */
-	public function getDOMHandler( ?DOMNode $node ): ?DOMHandler {
+	public function getDOMHandler( ?DOMNode $node ): DOMHandler {
+		if ( $node instanceof DOMDocumentFragment ) {
+			return new BodyHandler();
+		}
+
 		if ( !$node || !DOMUtils::isElt( $node ) ) {
 			return new DOMHandler();
 		}

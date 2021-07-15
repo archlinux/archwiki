@@ -147,11 +147,12 @@ class ScribuntoContent extends TextContent {
 		global $wgScribuntoUseGeSHi;
 		$language = $engine->getGeSHiLanguage();
 		if ( $wgScribuntoUseGeSHi && class_exists( SyntaxHighlight::class ) && $language ) {
-			$status = SyntaxHighlight::highlight( $text, $language );
+			$status = SyntaxHighlight::highlight( $text, $language, [ 'line' => true, 'linelinks' => 'L' ] );
 			if ( $status->isGood() ) {
 				// @todo replace addModuleStyles line with the appropriate call on
 				// SyntaxHighlight once one is created
 				$output->addModuleStyles( 'ext.pygments' );
+				$output->addModules( 'ext.pygments.linenumbers' );
 				$output->setText( $output->getRawText() . $status->getValue() );
 				return true;
 			}

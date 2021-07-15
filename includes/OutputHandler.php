@@ -30,10 +30,15 @@ class OutputHandler {
 	 * Standard output handler for use with ob_start.
 	 *
 	 * @param string $s Web response output
+	 * @param int $phase Flags indicating the reason for the call
 	 * @return string
 	 */
-	public static function handle( $s ) {
+	public static function handle( $s, $phase ) {
 		global $wgDisableOutputCompression, $wgMangleFlashPolicy;
+		if ( $phase | PHP_OUTPUT_HANDLER_CLEAN ) {
+			// Don't send headers if output is being discarded (T278579)
+			return $s;
+		}
 		if ( $wgMangleFlashPolicy ) {
 			$s = self::mangleFlashPolicy( $s );
 		}
@@ -59,7 +64,7 @@ class OutputHandler {
 	 * @return string
 	 */
 	private static function findUriExtension() {
-		/// @todo FIXME: this sort of dupes some code in WebRequest::getRequestUrl()
+		// @todo FIXME: this sort of dupes some code in WebRequest::getRequestUrl()
 		if ( isset( $_SERVER['REQUEST_URI'] ) ) {
 			// Strip the query string...
 			$path = explode( '?', $_SERVER['REQUEST_URI'], 2 )[0];

@@ -57,6 +57,7 @@ class UpdateLexerList extends Maintenance {
 		foreach ( explode( "\n", $output ) as $line ) {
 			if ( substr( $line, 0, 1 ) === '*' ) {
 				$newLexers = explode( ', ', trim( $line, "* :\n" ) );
+
 				// Skip internal, unnamed lexers
 				if ( $newLexers[0] !== '' ) {
 					$lexers = array_merge( $lexers, $newLexers );

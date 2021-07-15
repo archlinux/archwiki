@@ -102,6 +102,10 @@ ve.dm.example.removeOriginalDomElements = function ( data ) {
 	var i, len;
 	for ( i = 0, len = data.length; i < len; i++ ) {
 		if ( data[ i ].originalDomElementsHash !== undefined ) {
+			if ( Object.isFrozen( data[ i ] ) ) {
+				// Unfreeze, this data is just for testing
+				data[ i ] = ve.copy( data[ i ] );
+			}
 			delete data[ i ].originalDomElementsHash;
 		}
 	}
@@ -149,8 +153,8 @@ ve.dm.example.strong = { type: 'textStyle/bold', attributes: { nodeName: 'strong
 ve.dm.example.link = function ( href ) {
 	return { type: 'link', attributes: { href: href } };
 };
-ve.dm.example.language = function ( lang, dir ) {
-	return { type: 'meta/language', attributes: { lang: lang, dir: dir } };
+ve.dm.example.language = function ( lang, dir, nodeName ) {
+	return { type: 'meta/language', attributes: { nodeName: nodeName || 'span', lang: lang, dir: dir } };
 };
 ve.dm.example.boldWithStyle = ve.extendObject( {}, ve.dm.example.bold, { originalDomElements: $( '<b style="color:red;" />' ).toArray() } );
 
@@ -1545,7 +1549,7 @@ ve.dm.example.domToDataCases = {
 		body: '<p>' +
 			'<span lang="en">ten</span>' +
 			'<span lang="fr" dir="ltr">dix</span>' +
-			'<span lang="cy" dir="ltr">deg</span>' +
+			'<bdo lang="cy" dir="ltr">deg</bdo>' +
 			'<span dir="rtl">12</span>' +
 			'<span dir="RtL">34</span>' +
 		'</p>',
@@ -1557,9 +1561,9 @@ ve.dm.example.domToDataCases = {
 			[ 'd', [ ve.dm.example.language( 'fr', 'ltr' ) ] ],
 			[ 'i', [ ve.dm.example.language( 'fr', 'ltr' ) ] ],
 			[ 'x', [ ve.dm.example.language( 'fr', 'ltr' ) ] ],
-			[ 'd', [ ve.dm.example.language( 'cy', 'ltr' ) ] ],
-			[ 'e', [ ve.dm.example.language( 'cy', 'ltr' ) ] ],
-			[ 'g', [ ve.dm.example.language( 'cy', 'ltr' ) ] ],
+			[ 'd', [ ve.dm.example.language( 'cy', 'ltr', 'bdo' ) ] ],
+			[ 'e', [ ve.dm.example.language( 'cy', 'ltr', 'bdo' ) ] ],
+			[ 'g', [ ve.dm.example.language( 'cy', 'ltr', 'bdo' ) ] ],
 			[ '1', [ ve.dm.example.language( null, 'rtl' ) ] ],
 			[ '2', [ ve.dm.example.language( null, 'rtl' ) ] ],
 			[ '3', [ ve.dm.example.language( null, 'RtL' ) ] ],
@@ -1569,11 +1573,11 @@ ve.dm.example.domToDataCases = {
 			{ type: '/internalList' }
 		],
 		ceHtml: '<p class="ve-ce-branchNode ve-ce-contentBranchNode ve-ce-paragraphNode">' +
-			'<span class="ve-ce-annotation ve-ce-languageAnnotation ve-ce-bidi-isolate" lang="en" title="visualeditor-languageannotation-description,langname-en">ten</span>' +
-			'<span class="ve-ce-annotation ve-ce-languageAnnotation ve-ce-bidi-isolate" lang="fr" dir="ltr" title="visualeditor-languageannotation-description,langname-fr">dix</span>' +
-			'<span class="ve-ce-annotation ve-ce-languageAnnotation ve-ce-bidi-isolate" lang="cy" dir="ltr" title="visualeditor-languageannotation-description,langname-cy">deg</span>' +
-			'<span class="ve-ce-annotation ve-ce-languageAnnotation ve-ce-bidi-isolate" dir="rtl" title="visualeditor-languageannotation-description-with-dir,langname-,RTL">12</span>' +
-			'<span class="ve-ce-annotation ve-ce-languageAnnotation ve-ce-bidi-isolate" dir="RtL" title="visualeditor-languageannotation-description-with-dir,langname-,RTL">34</span>' +
+			'<span class="ve-ce-annotation ve-ce-textStyleAnnotation ve-ce-languageAnnotation ve-ce-bidi-isolate" lang="en" title="visualeditor-languageannotation-description,langname-en">ten</span>' +
+			'<span class="ve-ce-annotation ve-ce-textStyleAnnotation ve-ce-languageAnnotation ve-ce-bidi-isolate" lang="fr" dir="ltr" title="visualeditor-languageannotation-description,langname-fr">dix</span>' +
+			'<bdo class="ve-ce-annotation ve-ce-textStyleAnnotation ve-ce-languageAnnotation ve-ce-bidi-isolate" lang="cy" dir="ltr" title="visualeditor-languageannotation-description,langname-cy">deg</bdo>' +
+			'<span class="ve-ce-annotation ve-ce-textStyleAnnotation ve-ce-languageAnnotation ve-ce-bidi-isolate" dir="rtl" title="visualeditor-languageannotation-description-with-dir,langname-,RTL">12</span>' +
+			'<span class="ve-ce-annotation ve-ce-textStyleAnnotation ve-ce-languageAnnotation ve-ce-bidi-isolate" dir="RtL" title="visualeditor-languageannotation-description-with-dir,langname-,RTL">34</span>' +
 		'</p>'
 	},
 	'datetime annotation': {
@@ -1704,7 +1708,7 @@ ve.dm.example.domToDataCases = {
 		],
 		normalizedBody: '<p>foo</p><p>bar</p><h2>baz</h2><pre> \tquux</pre>',
 		clipboardBody: '<p> foo</p><p> \t \tbar</p><h2>  baz</h2><pre> \tquux</pre>',
-		previewBody: '<p> foo</p><p> ➞ ➞bar</p><h2>  baz</h2><pre> ➞quux</pre>'
+		previewBody: '<p> foo</p><p> ➞ ➞bar</p><h2>  baz</h2><pre> \tquux</pre>'
 	},
 	image: {
 		body: ve.dm.example.image.html,
@@ -2215,13 +2219,23 @@ ve.dm.example.domToDataCases = {
 		data: [
 			{ type: 'list', attributes: { style: 'bullet' } },
 			{ type: 'listItem' },
-			{ type: 'paragraph', internal: { generated: 'empty' } },
+			{ type: 'paragraph', internal: { generated: 'wrapper' } },
 			{ type: '/paragraph' },
 			{ type: '/listItem' },
 			{ type: '/list' },
 			{ type: 'internalList' },
 			{ type: '/internalList' }
-		]
+		],
+		// Inserting content doesn't result in a real <p> node
+		modify: function ( doc ) {
+			doc.commit( ve.dm.TransactionBuilder.static.newFromInsertion(
+				doc,
+				3,
+				'Foo'
+			) );
+		},
+		normalizedBody: '<ul><li>Foo</li></ul>',
+		fromDataBody: '<ul><li>Foo</li></ul>'
 	},
 	'empty document': {
 		body: '',
@@ -3542,7 +3556,7 @@ ve.dm.example.domToDataCases = {
 		data: [
 			{ type: 'list', attributes: { style: 'bullet' } },
 			{ type: 'listItem', internal: { whitespace: [ undefined, '\n\t' ] } },
-			{ type: 'paragraph', internal: { generated: 'empty', whitespace: [ '\n\t' ] } },
+			{ type: 'paragraph', internal: { generated: 'wrapper', whitespace: [ '\n\t' ] } },
 			{ type: '/paragraph' },
 			{ type: '/listItem' },
 			{ type: '/list' },

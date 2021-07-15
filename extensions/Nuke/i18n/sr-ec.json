@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"BadDog",
+			"Kizule",
 			"Milicevic01",
 			"Millosh",
 			"Obsuser",
@@ -32,6 +33,6 @@
 	"nuke-nopages-global": "Нема наслова страница који се поклапају са Вашом претрагом.",
 	"nuke-viewchanges": "прикажи измене",
 	"nuke-namespace": "Именски простор:",
-	"nuke-linkoncontribs": "масовно избриши",
+	"nuke-linkoncontribs": "масовно брисање",
 	"nuke-linkoncontribs-text": "Масовно избришите странице којима је {{GENDER:$1|овај корисник|ова корисница}} једини аутор"
 }

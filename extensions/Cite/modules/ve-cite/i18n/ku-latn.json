@@ -10,7 +10,7 @@
 	"visualeditor-cite-tool-name-book": "Pirtûk",
 	"visualeditor-cite-tool-name-news": "Nûçe",
 	"visualeditor-cite-tool-name-web": "Malper",
-	"cite-ve-dialog-reference-editing-reused": "Ev çavkanî di vê rûpelê de $1 {{PLURAL:$1|caran}} tê bikaranîn.",
+	"cite-ve-dialog-reference-editing-reused": "Ev çavkanî di vê rûpelê de {{PLURAL:$1|carekî|2=car|$1 caran}} tê bikaranîn.",
 	"cite-ve-dialog-reference-options-group-label": "Vê komê bi kar bîne",
 	"cite-ve-dialog-reference-options-group-placeholder": "Çavkaniyên giştî",
 	"cite-ve-dialog-reference-options-name-label": "Di bin vî navî de dîsa bi kar bîne",

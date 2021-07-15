@@ -5,7 +5,8 @@
 			"BaRaN6161 TURK",
 			"HakanIST",
 			"Hedda",
-			"McAang"
+			"McAang",
+			"MuratTheTurkish"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "Bu anahtarla önbelleğe alınmış serileştirme bulunamadı",
@@ -37,7 +38,7 @@
 	"apihelp-visualeditoredit-description": "MediaWiki için HTML5 bir sayfa (Parsoid servisi ile viki dönüştürülmüş) kaydedin.",
 	"apihelp-visualeditoredit-param-basetimestamp": "Kaydederken, düzenlendiği revizyon damgası için bu ayarlayın. Tespit etmek için kullanılan düzen çakışıyor.",
 	"apihelp-visualeditoredit-param-cachekey": "Bu tuş ile bir önceki serializeforcache bir isteğin sonucu kullanın. Geçersiz $1html.",
-	"apihelp-visualeditoredit-param-captchaid": "Captcha ID (captcha cevabı ile kaydederken)",
+	"apihelp-visualeditoredit-param-captchaid": "Captcha kimliği (captcha cevabı ile kaydederken)",
 	"apihelp-visualeditoredit-param-captchaword": "Captcha'ya cevap (captcha cevabı ile kaydederken)",
 	"apihelp-visualeditoredit-param-etag": "Gönderilecek ETag.",
 	"apihelp-visualeditoredit-param-html": "Parsoid göndermek için viki karşılığında HTML.",

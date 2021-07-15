@@ -3,11 +3,21 @@
 		"authors": [
 			"Alsandro",
 			"David1010",
-			"გიორგიმელა"
+			"გიორგიმელა",
+			"Გიო ოქრო",
+			"Იო ოქრო"
 		]
 	},
 	"skinname-vector": "ვექტორული",
-	"vector.css": "/* აქ ჩასმული CSS გამოყენებული იქნება ვექტორული გაფორმების თემაში */",
+	"vector-skin-desc": "მონობუკის ახალი ვერსია სრულად ახალი იერსახითა და მრავალი გამოყენებადი გაუმჯობესებებით",
+	"prefs-vector-enable-vector-1-label": "Legacy Vector-ის გამოყენება",
+	"prefs-vector-enable-vector-1-help": "მომდევნო რამდენიმე წელში ჩვენ თანდათან ვანახლებთ ვექტორულ გარეკანს. Legacy Vector ძველი იერსახის აღდგენის შესაძლებლობას მოგცემთ (2019 წლის დეკემბრის მდგომარეობით). განახლებებზე მეტის გასაგებად, ეწვიეთ [[mw:Reading/Web/Desktop_Improvements|პროექტის გვერდს]].",
+	"vector-opt-out": "ძველი იერსახის აღდგენა",
+	"vector-opt-out-tooltip": "შეცვალეთ თქვენი კონფიგურაცია, რათა დაუბრუნდეთ გვერდების ძველ იერსახეს",
+	"vector.css": "/* აქ მოცემული ყველა CSS ჩაიტვირთება მომხმარებელთა ვექტორული გარეკანისათვის */",
+	"vector.js": "/* აქ მოცემული ყველა JavaScript ჩაიტვირთება მომხმარებელთა ვექტორული გარეკანისათვის */",
+	"vector-action-toggle-sidebar": "გვერდითა პანელის გადართვა",
+	"vector-language-button-label": "{{PLURAL:$1|$1 ენა|$1 ენა}}",
 	"vector-action-addsection": "თემის ჩამატება",
 	"vector-action-delete": "წაშლა",
 	"vector-action-move": "გადატანა",
@@ -19,5 +29,9 @@
 	"vector-view-history": "ისტორია",
 	"vector-view-view": "შემოწმებული სტატია",
 	"vector-view-viewsource": "წყაროს ხილვა",
-	"vector-more-actions": "მეტი"
+	"vector-jumptonavigation": "ნავიგაციაზე გადასვლა",
+	"vector-jumptosearch": "ძიებაზე გადასვლა",
+	"vector-jumptocontent": "შინაარსზე გადასვლა",
+	"vector-more-actions": "მეტი",
+	"vector-search-loader": "იტვირთვება ძიების შეთავაზებები"
 }

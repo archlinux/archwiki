@@ -79,7 +79,7 @@ function createScreenshotEnvironment( test ) {
 		} );
 	}
 
-	function runScreenshotTest( name, lang, clientScript, padding ) {
+	function runScreenshotTest( lang, name, clientScript, padding, teardownScript ) {
 		if ( !clientSize ) {
 			// Setup failed, don't generated a broken screenshot
 			return;
@@ -96,6 +96,10 @@ function createScreenshotEnvironment( test ) {
 						return cropScreenshot( filename, imageBuffer, rect, padding );
 					} else {
 						fs.writeFile( filename, base64Image, 'base64' );
+					}
+				} ).then( function () {
+					if ( teardownScript ) {
+						return driver.executeAsyncScript( teardownScript );
 					}
 				} );
 			}, function ( e ) {

@@ -1,58 +1,42 @@
 <?php
 
-use PHPUnit\Framework\TestSuite;
+use MediaWiki\Interwiki\ClassicInterwikiLookup;
 
 /**
  * @covers Scribunto_LuaTitleLibrary
  * @group Database
  */
 class Scribunto_LuaTitleLibraryTest extends Scribunto_LuaEngineTestBase {
+	/** @inheritDoc */
 	protected static $moduleName = 'TitleLibraryTests';
 
 	/** @var Title|null */
 	private $testTitle = null;
 
+	/** @var int */
 	private $testPageId = null;
 
-	public static function suite( $className ) {
-		global $wgInterwikiCache;
-		if ( $wgInterwikiCache ) {
-			$suite = new TestSuite;
-			$suite->setName( $className );
-			$suite->addTest(
-				new Scribunto_LuaEngineTestSkip(
-					$className, 'Cannot run TitleLibrary tests when $wgInterwikiCache is set'
-				), [ 'Lua' ]
-			);
-			return $suite;
-		}
-
-		return parent::suite( $className );
-	}
-
 	protected function setUp() : void {
-		global $wgHooks;
-
 		$this->setTestTitle( null );
 		parent::setUp();
 
-		// Hook to inject our interwiki prefix
-		$this->hooks = $wgHooks;
-		$wgHooks['InterwikiLoadPrefix'][] = function ( $prefix, &$data ) {
-			if ( $prefix !== 'interwikiprefix' ) {
-				return true;
-			}
-
-			$data = [
-				'iw_prefix' => 'interwikiprefix',
-				'iw_url'    => '//test.wikipedia.org/wiki/$1',
-				'iw_api'    => 1,
-				'iw_wikiid' => 0,
-				'iw_local'  => 0,
-				'iw_trans'  => 0,
-			];
-			return false;
-		};
+		// Set up interwikis (via wgInterwikiCache) before creating any Titles
+		$this->setMwGlobals( [
+			'wgServer' => '//wiki.local',
+			'wgCanonicalServer' => 'http://wiki.local',
+			'wgUsePathInfo' => true,
+			'wgActionPaths' => [],
+			'wgScript' => '/w/index.php',
+			'wgScriptPath' => '/w',
+			'wgArticlePath' => '/wiki/$1',
+			'wgInterwikiCache' => ClassicInterwikiLookup::buildCdbHash( [
+				[
+					'iw_prefix' => 'interwikiprefix',
+					'iw_url'    => '//test.wikipedia.org/wiki/$1',
+					'iw_local'  => 0,
+				],
+			] ),
+		] );
 
 		// Page for getContent test
 		$page = WikiPage::factory( Title::newFromText( 'ScribuntoTestPage' ) );
@@ -123,22 +107,6 @@ class Scribunto_LuaTitleLibraryTest extends Scribunto_LuaEngineTestBase {
 		$interpreter->callFunction(
 			$interpreter->loadString( "mw.title.testPageId = $this->testPageId", 'fortest' )
 		);
-
-		$this->setMwGlobals( [
-			'wgServer' => '//wiki.local',
-			'wgCanonicalServer' => 'http://wiki.local',
-			'wgUsePathInfo' => true,
-			'wgActionPaths' => [],
-			'wgScript' => '/w/index.php',
-			'wgScriptPath' => '/w',
-			'wgArticlePath' => '/wiki/$1',
-		] );
-	}
-
-	protected function tearDown() : void {
-		global $wgHooks;
-		$wgHooks = $this->hooks;
-		parent::tearDown();
 	}
 
 	protected function getTestTitle() {
@@ -187,8 +155,6 @@ class Scribunto_LuaTitleLibraryTest extends Scribunto_LuaEngineTestBase {
 
 	/**
 	 * @dataProvider provideVaryPageId
-	 * @param string $code Code to create the mw.title
-	 * @param bool $flag Whether the flag gets set in the end
 	 */
 	public function testVaryPageId( $testTitle, $code, $flag ) {
 		$this->setTestTitle( $testTitle );

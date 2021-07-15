@@ -210,7 +210,8 @@ class LinkHandlerUtils {
 		// (This may get converted back to a WikiLink below, in the interwiki
 		// handling code.)
 		if ( $rtData->type === 'mw:WikiLink' &&
-			( preg_match( '#^(\w+:)?//#', $rtData->href ) || $rtData->origHref[0] === '/' )
+			( preg_match( '#^(\w+:)?//#', $rtData->href ) ||
+				substr( $rtData->origHref ?? '', 0, 1 ) === '/' )
 		) {
 			$rtData->type = 'mw:ExtLink';
 		}
@@ -287,7 +288,12 @@ class LinkHandlerUtils {
 			// Ensure we have a valid link target, otherwise falling back to extlink
 			// is preferable, since it won't serialize as a link.
 			(
-				$interWikiMatch[1] === '' || !self::escapeLinkTarget( $interWikiMatch[1], $state )->invalidLink
+				$interWikiMatch[1] === '' || !self::escapeLinkTarget(
+					// Append the prefix since we want to validate the target
+					// with respect to it being an interwiki.
+					$interWikiMatch[0] . ':' . $interWikiMatch[1],
+					$state
+				)->invalidLink
 			) &&
 			// ExtLinks should have content to convert.
 			(
@@ -771,10 +777,16 @@ class LinkHandlerUtils {
 			} else {
 				$pipedText = '';
 			}
+			if ( $isPiped ) {
+				$state->singleLineContext->disable();
+			}
 			$state->emitChunk( new WikiLinkText(
 				$linkData->prefix . '[[' . $linkTarget . $pipedText . ']]' . $linkData->tail,
 				$node, $siteConfig, $linkData->type
 			), $node );
+			if ( $isPiped ) {
+				$state->singleLineContext->pop();
+			}
 		}
 	}
 
@@ -974,10 +986,10 @@ class LinkHandlerUtils {
 	 *
 	 * All figures have a fixed structure:
 	 * ```
-	 * <figure or figure-inline typeof="mw:Image...">
+	 * <figure or span typeof="mw:Image...">
 	 *  <a or span><img ...><a or span>
 	 *  <figcaption>....</figcaption>
-	 * </figure or figure-inline>
+	 * </figure or span>
 	 * ```
 	 * Pull out this fixed structure, being as generous as possible with
 	 * possibly-broken HTML.
@@ -1035,9 +1047,10 @@ class LinkHandlerUtils {
 
 		// Maybe this is "missing" media, i.e. a redlink
 		$isMissing = false;
-		if ( !$elt && preg_match( '/^figure/', $outerElt->nodeName ) &&
-			$outerElt->firstChild && $outerElt->firstChild->nodeName === 'a' &&
-			$outerElt->firstChild->firstChild && $outerElt->firstChild->firstChild->nodeName === 'span'
+		if (
+			!$elt &&
+			( $outerElt->firstChild->nodeName ?? '' ) === 'a' &&
+			( $outerElt->firstChild->firstChild->nodeName ?? '' ) === 'span'
 		) {
 			$linkElt = $outerElt->firstChild;
 			$elt = $linkElt->firstChild;
@@ -1113,6 +1126,47 @@ class LinkHandlerUtils {
 			return $null;
 		};
 
+		// Identify a page # to use.
+		$page = null;
+		$pageFromHref = preg_match(
+			'#[?]page=(\d+)$#D',
+			( $linkElt ? $linkElt->getAttribute( 'href' ) : null ) ?? '',
+			$matches ) ? $matches[1] : null;
+		$pageFromDataMw = WTSUtils::getAttrFromDataMw( $outerDMW, 'page', true );
+		if ( $pageFromDataMw !== null ) {
+			// FIXME: if $pageFromHref is null but $pageFromDataMw is
+			// set, then we go ahead and serialize the page parameter
+			// as unmodified.  This helps transition old RESTBase
+			// content where the ?page suffix on the URL was missing,
+			// but eventually $restBaseMigrationHack should be left
+			// false always. (T259931)
+			$restBaseMigrationHack =
+				( $pageFromHref === null && $pageFromDataMw[1]->txt );
+
+			if (
+				trim( $pageFromDataMw[1]->txt ) === $pageFromHref ||
+				$restBaseMigrationHack
+			) {
+				$page = $state->serializer->getAttributeValueAsShadowInfo( $outerElt, 'page' );
+				if ( !$page ) {
+					$page = [
+						'value' => $pageFromDataMw[1]->txt,
+						'modified' => false,
+						'fromsrc' => false,
+						'fromDataMW' => true,
+					];
+				}
+			}
+		}
+		if ( !$page && $pageFromHref !== null ) {
+			$page = [
+				'value' => $pageFromHref,
+				'modified' => true,
+				'fromsrc' => false,
+				'fromDataMW' => false,
+			];
+		}
+
 		// Try to identify the local title to use for the link.
 		$link = null;
 
@@ -1132,7 +1186,9 @@ class LinkHandlerUtils {
 		} elseif ( $linkElt && $linkElt->hasAttribute( 'href' ) ) {
 			$link = $state->serializer->serializedImageAttrVal( $outerElt, $linkElt, 'href' );
 			if ( empty( $link['fromsrc'] ) ) {
-				if ( $linkElt->getAttribute( 'href' ) === $elt->getAttribute( 'resource' ) ) {
+				// strip page parameter if present on href
+				$strippedHref = preg_replace( '#[?]page=\d+$#D', '', $linkElt->getAttribute( 'href' ) ?? '' );
+				if ( $strippedHref === $elt->getAttribute( 'resource' ) ) {
 					// default link: same place as resource
 					$link = $resource;
 				}
@@ -1153,13 +1209,19 @@ class LinkHandlerUtils {
 
 		// Reconstruct the caption
 		if ( !$captionElt && is_string( $outerDMW->caption ?? null ) ) {
-			$captionElt = $outerElt->ownerDocument->createElement( 'div' );
-			ContentUtils::ppToDOM( $env, $outerDMW->caption, [ 'node' => $captionElt, 'markNew' => true ] );
-			// Needs a parent node in order for WTS to be happy:
-			// DocumentFragment to the rescue!
 			// IMPORTANT: Assign to a variable to prevent the fragment
 			// from getting GCed before we are done with it.
-			$fragment = $outerElt->ownerDocument->createDocumentFragment();
+			$fragment = ContentUtils::createAndLoadDocumentFragment(
+				$outerElt->ownerDocument, $outerDMW->caption,
+				[ 'markNew' => true ]
+			);
+			// FIXME: We should just be able to serialize the children of the
+			// fragment, however, we need some way of marking this as being
+			// inModifiedContent so that any bare text is assured to be escaped
+			$captionElt = $outerElt->ownerDocument->createElement( 'div' );
+			DOMDataUtils::getDataParsoid( $captionElt )->tmp->isNew = true;
+			DOMUtils::migrateChildren( $fragment, $captionElt );
+			// Needs a parent node in order for WTS to be happy
 			$fragment->appendChild( $captionElt );
 		}
 
@@ -1177,15 +1239,44 @@ class LinkHandlerUtils {
 
 		// Ok, start assembling options, beginning with link & alt & lang
 		// Other media don't have links in output.
-		$linkCond = $elt->nodeName === 'img' && ( !$link || $link['value'] !== $resource['value'] );
+		$linkCond = $elt->nodeName === 'img';
+		if ( $linkCond && $link ) {
+			// Check whether the link goes to the default place, in which
+			// case an explicit link tag isn't needed.
+			// The link may be external, or may include wikitext template markup,
+			// therefore check first that it parses to a title.
+			$linkTitle = $env->normalizedTitleKey(
+				Utils::decodeURIComponent( $link['value'] ), true
+			);
+			$resourceTitle = $env->normalizedTitleKey(
+				Utils::decodeURIComponent( $resource['value'] ), true
+			);
+			if (
+				$link['value'] === $resource['value'] ||
+				( $linkTitle !== null && $linkTitle === $resourceTitle )
+			) {
+				$linkCond = false; // No explicit link attribute needed
+			}
+		}
 
 		// "alt" for non-image is handle below
 		$altCond = $alt['value'] !== null && $elt->nodeName === 'img';
 
+		// This loop handles media options which *mostly* correspond 1-1 with
+		// HTML attributes.  `img_$name` is the name of the media option,
+		// and $value is the Parsoid "shadow info" for the attribute.
+		// $cond tells us whether we need to explicitly output this option;
+		// if it is false we are using an implicit default.
+		// `lang` and `alt` are fairly straightforward.  `link` and `page`
+		// are a little trickier, since we need to massage/fake the shadow
+		// info because they don't come *directly* from the attribute.
+		// link comes from the combination of a[href], img[src], and
+		// img[resource], etc; page comes from the query part of a[href] etc.
 		foreach ( [
 			[ 'name' => 'link', 'value' => $link, 'cond' => $linkCond ],
 			[ 'name' => 'alt', 'value' => $alt, 'cond' => $altCond ],
-			[ 'name' => 'lang', 'value' => $lang, 'cond' => $lang['value'] !== null ]
+			[ 'name' => 'page', 'value' => $page, 'cond' => isset( $page['value'] ) ],
+			[ 'name' => 'lang', 'value' => $lang, 'cond' => isset( $lang['value'] ) ]
 		] as $o ) {
 			if ( !$o['cond'] ) {
 				continue;
@@ -1213,7 +1304,9 @@ class LinkHandlerUtils {
 			}
 		}
 
-		// Handle class-signified options
+		// Now we handle media options which all come from space-separated
+		// values in a single HTML attribute, `class`.  (But note that there
+		// can also be "extra" classes added by `img_class` as well.)
 		$classes = DOMCompat::getClassList( $outerElt );
 		$extra = []; // 'extra' classes
 		$val = null;
@@ -1272,16 +1365,22 @@ class LinkHandlerUtils {
 			];
 		}
 
+		// Now we handle parameters which don't have a representation
+		// as HTML attributes; they are set only from the data-mw
+		// values.  (In theory they could perhaps be reverse engineered
+		// from the thumbnail URL, but that would be fragile and expose
+		// thumbnail implementation to the editor so we don't do that.)
 		$mwParams = [
 			[ 'prop' => 'thumb', 'ck' => 'manualthumb', 'alias' => 'img_manualthumb' ],
-			[ 'prop' => 'page', 'ck' => 'page', 'alias' => 'img_page' ],
 			// mw:Video specific
 			[ 'prop' => 'starttime', 'ck' => 'starttime', 'alias' => 'timedmedia_starttime' ],
 			[ 'prop' => 'endtime', 'ck' => 'endtime', 'alias' => 'timedmedia_endtime' ],
 			[ 'prop' => 'thumbtime', 'ck' => 'thumbtime', 'alias' => 'timedmedia_thumbtime' ]
 		];
 
-		// "alt" for images is handled above
+		// `img_link` and `img_alt` are only surfaced as HTML attributes
+		// for image media. For all other media we treat them as set only
+		// from data-mw.
 		if ( $elt->nodeName !== 'img' ) {
 			$mwParams = array_merge( $mwParams, [
 				[ 'prop' => 'link', 'ck' => 'link', 'alias' => 'img_link' ],
@@ -1298,7 +1397,9 @@ class LinkHandlerUtils {
 				}
 			}
 			if ( $v !== null ) {
-				$ak = $state->serializer->getAttributeValue( $outerElt, $o['ck'], $mwAliases[$o['alias']] );
+				$ak = $state->serializer->getAttributeValue(
+					$outerElt, $o['ck']
+				) ?? $mwAliases[$o['alias']];
 				$nopts[] = [
 					'ck' => $o['ck'],
 					'ak' => $ak,
@@ -1311,30 +1412,37 @@ class LinkHandlerUtils {
 			}
 		}
 
+		// These media options come from the HTML `typeof` attribute.
 		switch ( $format ) {
 			case 'Thumb':
 				$nopts[] = [
 					'ck' => 'thumbnail',
 					'ak' => $state->serializer->getAttributeValue(
-						$outerElt, 'thumbnail', $mwAliases['img_thumbnail']
-					),
+						$outerElt, 'thumbnail'
+					) ?? $mwAliases['img_thumbnail'],
 				];
 				break;
 			case 'Frame':
 				$nopts[] = [
 					'ck' => 'framed',
-					'ak' => $state->serializer->getAttributeValue( $outerElt, 'framed', $mwAliases['img_framed'] ),
+					'ak' => $state->serializer->getAttributeValue(
+						$outerElt, 'framed'
+					) ?? $mwAliases['img_framed'],
 				];
 				break;
 			case 'Frameless':
 				$nopts[] = [
 					'ck' => 'frameless',
 					'ak' => $state->serializer->getAttributeValue(
-						$outerElt, 'frameless', $mwAliases['img_frameless']
-					),
+						$outerElt, 'frameless'
+					) ?? $mwAliases['img_frameless'],
 				];
 				break;
 		}
+
+		// Now handle the size-related options.  This is complicated!
+		// We consider the `height`, `data-height`, `width`, and
+		// `data-width` attributes, as well as the `typeof` and the `class`.
 
 		// Get the user-specified height from wikitext
 		$wh = $state->serializer->serializedImageAttrVal(

@@ -37,14 +37,15 @@ class WaitConditionLoop {
 	private $timeout;
 	/** @var float Seconds */
 	private $lastWaitTime;
-	/** @var integer|null */
+	/** @var int|null */
 	private $rusageMode;
 
-	const CONDITION_REACHED = 1;
-	const CONDITION_CONTINUE = 0; // evaluates as falsey
-	const CONDITION_FAILED = -1;
-	const CONDITION_TIMED_OUT = -2;
-	const CONDITION_ABORTED = -3;
+	public const CONDITION_REACHED = 1;
+	// evaluates as falsey
+	public const CONDITION_CONTINUE = 0;
+	public const CONDITION_FAILED = -1;
+	public const CONDITION_TIMED_OUT = -2;
+	public const CONDITION_ABORTED = -3;
 
 	/**
 	 * @param callable $condition Callback that returns a WaitConditionLoop::CONDITION_ constant
@@ -56,18 +57,19 @@ class WaitConditionLoop {
 		$this->timeout = $timeout;
 		$this->busyCallbacks =& $busyCallbacks;
 
-		if ( defined( 'HHVM_VERSION' ) && PHP_OS === 'Linux' ) {
-			$this->rusageMode = 2; // RUSAGE_THREAD
-		} elseif ( function_exists( 'getrusage' ) ) {
-			$this->rusageMode = 0; // RUSAGE_SELF
+		// @codeCoverageIgnoreStart
+		if ( function_exists( 'getrusage' ) ) {
+			// RUSAGE_SELF
+			$this->rusageMode = 0;
 		}
+		// @codeCoverageIgnoreEnd
 	}
 
 	/**
 	 * Invoke the loop and continue until either:
 	 *   - a) The condition callback returns neither CONDITION_CONTINUE nor false
 	 *   - b) The timeout is reached
-	 * This a condition callback can return true (stop) or false (continue) for convenience.
+	 * Thus a condition callback can return true (stop) or false (continue) for convenience.
 	 * In such cases, the halting result of "true" will be converted to CONDITION_REACHED.
 	 *
 	 * If $timeout is 0, then only the condition callback will be called (no busy callbacks),
@@ -76,12 +78,14 @@ class WaitConditionLoop {
 	 * Exceptions in callbacks will be caught and the callback will be swapped with
 	 * one that simply rethrows that exception back to the caller when invoked.
 	 *
-	 * @return integer WaitConditionLoop::CONDITION_* constant
+	 * @return int WaitConditionLoop::CONDITION_* constant
 	 * @throws \Exception Any error from the condition callback
 	 */
 	public function invoke() {
-		$elapsed = 0.0; // seconds
-		$sleepUs = 0; // microseconds to sleep each time
+		// seconds
+		$elapsed = 0.0;
+		// microseconds to sleep each time
+		$sleepUs = 0;
 		$lastCheck = false;
 		$finalResult = self::CONDITION_TIMED_OUT;
 		do {
@@ -104,13 +108,15 @@ class WaitConditionLoop {
 				}
 				break;
 			} elseif ( $lastCheck ) {
-				break; // timeout reached
+				// timeout reached
+				break;
 			}
 			// Detect if condition callback seems to block or if justs burns CPU
-			$conditionUsesInterrupts = ( $real > 0.100 && $cpu <= $real * .03 );
+			$conditionUsesInterrupts = ( $real > 0.100 && $cpu <= $real * 0.03 );
 			if ( !$this->popAndRunBusyCallback() && !$conditionUsesInterrupts ) {
 				// 10 queries = 10(10+100)/2 ms = 550ms, 14 queries = 1050ms
-				$sleepUs = min( $sleepUs + 10 * 1e3, 1e6 ); // stop incrementing at ~1s
+				// stop incrementing at ~1s
+				$sleepUs = min( $sleepUs + 10 * 1e3, 1e6 );
 				$this->usleep( $sleepUs );
 			}
 			$checkEndTime = $this->getWallTime();
@@ -133,7 +139,8 @@ class WaitConditionLoop {
 	}
 
 	/**
-	 * @param integer $microseconds
+	 * @param int $microseconds
+	 * @codeCoverageIgnore
 	 */
 	protected function usleep( $microseconds ) {
 		usleep( $microseconds );
@@ -141,6 +148,7 @@ class WaitConditionLoop {
 
 	/**
 	 * @return float
+	 * @codeCoverageIgnore
 	 */
 	protected function getWallTime() {
 		return microtime( true );
@@ -148,10 +156,12 @@ class WaitConditionLoop {
 
 	/**
 	 * @return float Returns 0.0 if not supported (Windows on PHP < 7)
+	 * @codeCoverageIgnore
 	 */
 	protected function getCpuTime() {
 		if ( $this->rusageMode === null ) {
-			return microtime( true ); // assume worst case (all time is CPU)
+			// assume worst case (all time is CPU)
+			return microtime( true );
 		}
 
 		$ru = getrusage( $this->rusageMode );
@@ -179,7 +189,8 @@ class WaitConditionLoop {
 					throw $e;
 				};
 			}
-			unset( $this->busyCallbacks[$key] ); // consume
+			// consume
+			unset( $this->busyCallbacks[$key] );
 
 			return true;
 		}

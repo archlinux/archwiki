@@ -9,6 +9,13 @@ if ( !defined( 'NS_GADGET' ) ) {
 	define( 'NS_GADGET_DEFINITION_TALK', 2303 );
 }
 
+$namespaceNames['alt'] = [
+	NS_GADGET => 'Гаджет',
+	NS_GADGET_TALK => 'Гаджетти_шӱӱжери',
+	NS_GADGET_DEFINITION => 'Гаджетти_аайлары',
+	NS_GADGET_DEFINITION_TALK => 'Гаджеттиҥ_аайларын_шӱӱжери',
+];
+
 $namespaceNames['an'] = [
 	NS_GADGET => 'Accesorio',
 	NS_GADGET_TALK => 'Descusión_accesorio',
@@ -35,6 +42,13 @@ $namespaceNames['atj'] = [
 	NS_GADGET_TALK => 'Ka_ici_aimihitonaniwok_gadget',
 	NS_GADGET_DEFINITION => 'Tipatcitcikan_e_icinakok_gadget',
 	NS_GADGET_DEFINITION_TALK => 'Ka_ici_aimihitonaniwok_tipatcitcikan_gadget_otci',
+];
+
+$namespaceNames['av'] = [
+	NS_GADGET => 'Гаджет',
+	NS_GADGET_TALK => 'Гаджеталъул_бахӀс',
+	NS_GADGET_DEFINITION => 'Гаджеталъул_баян_чӀезаби',
+	NS_GADGET_DEFINITION_TALK => 'Гаджеталъул_баян_чӀезабиялъул_бахӀс',
 ];
 
 $namespaceNames['azb'] = [
@@ -261,6 +275,13 @@ $namespaceNames['pnb'] = [
 	NS_GADGET_DEFINITION_TALK => 'آلہ_تعریف_گل_بات',
 ];
 
+$namespaceNames['ro'] = [
+	NS_GADGET => 'Gadget',
+	NS_GADGET_TALK => 'Discuție_Gadget',
+	NS_GADGET_DEFINITION => 'Definiție_gadget',
+	NS_GADGET_DEFINITION_TALK => 'Discuție_Definiție_gadget',
+];
+
 $namespaceNames['ru'] = [
 	NS_GADGET => 'Гаджет',
 	NS_GADGET_TALK => 'Обсуждение_гаджета',
@@ -289,11 +310,18 @@ $namespaceNames['shn'] = [
 	NS_GADGET_DEFINITION_TALK => 'ဢုပ်ႇၵုမ်_ပိုတ်ႇတီႈပွင်ႇ_ၶိူင်ႈပိတ်းပွတ်း',
 ];
 
-$namespaceNames['sr'] = [
+$namespaceNames['sr-ec'] = [
 	NS_GADGET => 'Справица',
 	NS_GADGET_TALK => 'Разговор_о_справици',
 	NS_GADGET_DEFINITION => 'Дефиниција_справице',
 	NS_GADGET_DEFINITION_TALK => 'Разговор_о_дефиницији_справице',
+];
+
+$namespaceNames['sr-el'] = [
+	NS_GADGET => 'Spravica',
+	NS_GADGET_TALK => 'Razgovor_o_spravici',
+	NS_GADGET_DEFINITION => 'Definicija_spravice',
+	NS_GADGET_DEFINITION_TALK => 'Razgovor_o_definiciji_spravice',
 ];
 
 $namespaceNames['ti'] = [

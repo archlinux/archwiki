@@ -5,13 +5,14 @@
 			"Firilacroco",
 			"KlaudiuMihaila",
 			"Minisarm",
+			"NGC 54",
 			"Stelistcristi"
 		]
 	},
 	"interwiki": "Vizualizare și editare date interwiki",
 	"interwiki-title-norights": "Vizualizare date interwiki",
 	"interwiki-desc": "Adaugă o [[Special:Interwiki|pagină specială]] pentru vizualizarea și modificarea tabelului interwiki",
-	"interwiki_intro": "Aceasta este o imagine de ansamblu a tabelului interwiki, care definește scurtăturile de prefix utilizate pentru a face rapid o legătură cu wikiuri diferite și alte site-uri externe. Pentru utilizarea recomandată, vedeți [//www.mediawiki.org/wiki/Extension:Interwiki manualul de la MediaWiki.org].",
+	"interwiki_intro": "Aceasta este o imagine de ansamblu a tabelului interwiki, care definește scurtăturile de prefix utilizate pentru a face rapid o legătură cu wiki-uri diferite și alte site-uri externe. Pentru utilizarea recomandată, vă rugăm să vedeți [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Interwiki manualul de pe MediaWiki.org].",
 	"interwiki_prefix": "Prefix",
 	"interwiki-prefix-label": "Prefix:",
 	"interwiki_local": "Înainte",

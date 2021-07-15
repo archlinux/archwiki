@@ -6,6 +6,7 @@ use MediaWiki\MediaWikiServices;
  * @covers Scribunto_LuaLanguageLibrary
  */
 class Scribunto_LuaLanguageLibraryTest extends Scribunto_LuaEngineUnitTestBase {
+	/** @inheritDoc */
 	protected static $moduleName = 'LanguageLibraryTests';
 
 	public function __construct(

@@ -119,7 +119,7 @@ ve.ui.MWTemplatePlaceholderPage.prototype.focus = function () {
 };
 
 ve.ui.MWTemplatePlaceholderPage.prototype.onAddTemplate = function () {
-	var part, name,
+	var part, name, event, editCountBucket,
 		transclusion = this.placeholder.getTransclusion(),
 		menu = this.addTemplateInput.getLookupMenu();
 
@@ -131,6 +131,21 @@ ve.ui.MWTemplatePlaceholderPage.prototype.onAddTemplate = function () {
 		// Invalid titles return null, so abort here.
 		return;
 	}
+
+	// TODO tracking will only be implemented temporarily to answer questions on
+	// template usage for the Technical Wishes topic area see T258917
+	event = {
+		action: 'add-template',
+		// eslint-disable-next-line camelcase
+		template_names: [ name.getPrefixedText() ]
+	};
+	editCountBucket = mw.config.get( 'wgUserEditCountBucket' );
+	if ( editCountBucket !== null ) {
+		// eslint-disable-next-line camelcase
+		event.user_edit_count_bucket = editCountBucket;
+	}
+	mw.track( 'event.VisualEditorTemplateDialogUse', event );
+
 	part = ve.dm.MWTemplateModel.newFromName( transclusion, name );
 	transclusion.replacePart( this.placeholder, part );
 	this.addTemplateInput.pushPending();

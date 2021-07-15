@@ -47,11 +47,6 @@ class Cite {
 	/**
 	 * @var bool
 	 */
-	private $isPagePreview;
-
-	/**
-	 * @var bool
-	 */
 	private $isSectionPreview;
 
 	/**
@@ -99,7 +94,6 @@ class Cite {
 	 * @param Parser $parser
 	 */
 	public function __construct( Parser $parser ) {
-		$this->isPagePreview = $parser->getOptions()->getIsPreview();
 		$this->isSectionPreview = $parser->getOptions()->getIsSectionPreview();
 		$messageLocalizer = new ReferenceMessageLocalizer( $parser->getContentLanguage() );
 		$this->errorReporter = new ErrorReporter( $messageLocalizer );
@@ -339,8 +333,7 @@ class Cite {
 
 		if ( $this->inReferencesGroup !== null ) {
 			$groupRefs = $this->referenceStack->getGroupRefs( $group );
-			// In preview mode, it's possible to reach this with the ref *not* being known
-			if ( $text === null || !isset( $groupRefs[$name] ) ) {
+			if ( $text === null ) {
 				return '';
 			}
 

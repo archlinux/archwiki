@@ -14,7 +14,7 @@ class Widget extends Element {
 	/**
 	 * Disabled.
 	 *
-	 * @var boolean Widget is disabled
+	 * @var bool Widget is disabled
 	 */
 	protected $disabled = false;
 

@@ -29,6 +29,10 @@ class SpecialGadgets extends SpecialPage {
 		}
 	}
 
+	/**
+	 * @param string $gadgetName
+	 * @return string
+	 */
 	private function makeAnchor( $gadgetName ) {
 		return 'gadget-' . Sanitizer::escapeIdForAttribute( $gadgetName );
 	}
@@ -48,10 +52,12 @@ class SpecialGadgets extends SpecialPage {
 			return;
 		}
 
+		$services = MediaWikiServices::getInstance();
+
 		$output->disallowUserJs();
 		$lang = $this->getLanguage();
 		$langSuffix = "";
-		if ( !$lang->equals( MediaWikiServices::getInstance()->getContentLanguage() ) ) {
+		if ( !$lang->equals( $services->getContentLanguage() ) ) {
 			$langSuffix = "/" . $lang->getCode();
 		}
 
@@ -62,6 +68,7 @@ class SpecialGadgets extends SpecialPage {
 			: 'viewsource';
 
 		$linkRenderer = $this->getLinkRenderer();
+		$skinFactory = $services->getSkinFactory();
 		foreach ( $gadgets as $section => $entries ) {
 			if ( $section !== false && $section !== '' ) {
 				$t = Title::makeTitleSafe( NS_MEDIAWIKI, "Gadget-section-$section$langSuffix" );
@@ -183,7 +190,7 @@ class SpecialGadgets extends SpecialPage {
 				// $requiredSkins can be an array, or true (if all skins are supported)
 				if ( is_array( $requiredSkins ) ) {
 					$skins = [];
-					$validskins = Skin::getSkinNames();
+					$validskins = $skinFactory->getSkinNames();
 					foreach ( $requiredSkins as $skinid ) {
 						if ( isset( $validskins[$skinid] ) ) {
 							$skins[] = $this->msg( "skinname-$skinid" )->plain();
@@ -259,6 +266,9 @@ class SpecialGadgets extends SpecialPage {
 			->displayForm( false );
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	protected function getGroupName() {
 		return 'wiki';
 	}

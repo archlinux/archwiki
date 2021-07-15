@@ -4,6 +4,7 @@
 			".anaconda",
 			"Beta16",
 			"BrokenArrow",
+			"Daimona Eaytoy",
 			"Darth Kule",
 			"F. Cosoleto",
 			"Nemo bis"
@@ -27,7 +28,7 @@
 	"nuke-deleted": "La pagina '''$1''' è stata cancellata.",
 	"nuke-not-deleted": "La pagina [[:$1]] '''non può''' essere cancellata.",
 	"nuke-delete-more": "[[Special:Nuke|Cancella altre pagine]]",
-	"nuke-pattern": "Modello SQL LIKE (ad esempio %) per il nome della pagina:",
+	"nuke-pattern": "Pattern SQL LIKE (ad esempio %) per il nome della pagina:",
 	"nuke-nopages-global": "Non ci sono titoli di pagine che corrispondono alla tua ricerca.",
 	"nuke-viewchanges": "vedi modifiche",
 	"nuke-namespace": "Limita al namespace:",

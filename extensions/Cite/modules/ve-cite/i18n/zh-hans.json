@@ -40,7 +40,6 @@
 	"cite-ve-changedesc-reflist-group-to": "已将参考列表组从一般组更改为“$1”",
 	"cite-ve-changedesc-reflist-responsive-set": "参考列表已更改为在响应栏中显示",
 	"cite-ve-changedesc-reflist-responsive-unset": "参考列表已更改为只在一栏中显示",
-	"cite-ve-changedesc-reflist-item-id": "参考索引已更改",
 	"cite-ve-citationneeded-button": "添加引用",
 	"cite-ve-citationneeded-title": "需要引用",
 	"cite-ve-dialog-reference-editing-reused": "此引用在本页使用了$1{{PLURAL:$1|次}}。",

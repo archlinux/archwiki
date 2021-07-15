@@ -3,9 +3,11 @@
 		"authors": [
 			"Bagas Chrisara",
 			"Bennylin",
+			"Diki Ananta",
 			"IvanLanin",
 			"Iwan Novirion",
-			"Rex"
+			"Rex",
+			"Sumbukompor"
 		]
 	},
 	"nuke": "Penghapusan massal",
@@ -26,7 +28,7 @@
 	"nuke-deleted": "Halaman '''$1''' sudah dihapus.",
 	"nuke-not-deleted": "Halaman [[:$1]] '''tidak bisa''' dihapus.",
 	"nuke-delete-more": "[[Special:Nuke|Hapus lagi]]",
-	"nuke-pattern": "Pola untuk nama halaman:",
+	"nuke-pattern": "Pola SQL LIKE (mis. %) untuk nama halaman:",
 	"nuke-nopages-global": "Tidak ditemukan halaman baru yang cocok dengan pencarian Anda.",
 	"nuke-viewchanges": "lihat perubahan",
 	"nuke-namespace": "Batasan dari ruang nama:",

@@ -22,7 +22,6 @@
 	"renameuserwarnings": "Avertoj:",
 	"renameuserconfirm": "Jes, alinomu la uzanton",
 	"renameusersubmit": "Ek",
-	"renameuser-submit-blocklog": "Montri forbarprotokolon de la uzanto",
 	"renameusererrordoesnotexist": "La uzanto \"<nowiki>$1</nowiki>\" ne ekzistas",
 	"renameusererrorexists": "La {{GENDER:$1|uzanto}}  \"<nowiki>$1</nowiki>\" jam ekzistas",
 	"renameusererrorinvalid": "La uzantnomo \"<nowiki>$1</nowiki>\" estas nevalida",

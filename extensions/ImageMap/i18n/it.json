@@ -10,7 +10,7 @@
 	"imagemap_desc": "Consente di realizzare ''image map'' cliccabili lato client con il tag <code>&lt;imagemap&gt;</code>",
 	"imagemap_no_image": "Errore: si deve specificare un'immagine nella prima riga",
 	"imagemap_invalid_image": "Errore: l'immagine non è valida o non esiste",
-	"imagemap_bad_image": "Errore: l'immagine si trova nella blacklist per questa pagina",
+	"imagemap_bad_image": "Errore: l'immagine non è consentita per questa pagina.",
 	"imagemap_no_link": "Errore: non è stato trovato alcun collegamento valido alla fine della riga $1",
 	"imagemap_invalid_title": "Errore: titolo del collegamento non valido alla riga $1",
 	"imagemap_missing_coord": "Errore: non ci sono abbastanza coordinate per la forma specificata alla riga $1",

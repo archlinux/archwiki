@@ -22,7 +22,6 @@ ve.ui.MWSaveDialog = function VeUiMwSaveDialog( config ) {
 	ve.ui.MWSaveDialog.super.call( this, config );
 
 	// Properties
-	this.editSummaryByteLimit = mw.config.get( 'wgCommentByteLimit' );
 	this.editSummaryCodePointLimit = mw.config.get( 'wgCommentCodePointLimit' );
 	this.restoring = false;
 	this.messages = {};
@@ -197,7 +196,7 @@ ve.ui.MWSaveDialog.prototype.setDiffAndReview = function ( wikitextDiffPromise, 
 /**
  * Set preview content and show preview panel.
  *
- * @param {HTMLDocument|string} docOrMsg Document to preview, or error message
+ * @param {HTMLDocument|jQuery} docOrMsg Document to preview, or error message
  * @param {HTMLDocument} [baseDoc] Base document against which to normalise links, if document provided
  */
 ve.ui.MWSaveDialog.prototype.showPreview = function ( docOrMsg, baseDoc ) {
@@ -293,9 +292,9 @@ ve.ui.MWSaveDialog.prototype.showPreview = function ( docOrMsg, baseDoc ) {
 			// Run hooks so other things can alter the document
 			mw.hook( 'wikipage.content' ).fire( dialog.$previewViewer );
 		} );
-	} else {
+	} else if ( docOrMsg instanceof $ ) {
 		this.$previewViewer.empty().append(
-			$( '<em>' ).text( docOrMsg )
+			$( '<em>' ).append( docOrMsg )
 		);
 	}
 
@@ -413,9 +412,8 @@ ve.ui.MWSaveDialog.prototype.swapPanel = function ( panel, noFocus ) {
 				// Don't bother with an API request for an empty summary
 				this.$previewEditSummary.text( ve.msg( 'visualeditor-savedialog-review-nosummary' ) );
 			} else {
-				this.$previewEditSummary.parent()
-					.removeClass( 'oo-ui-element-hidden' )
-					.addClass( 'mw-ajax-loader' );
+				this.$previewEditSummary.parent().removeClass( 'oo-ui-element-hidden' );
+				this.$previewEditSummary.append( $.createSpinner() );
 				this.editSummaryXhr = ve.init.target.getContentApi().post( {
 					action: 'parse',
 					title: ve.init.target.getPageName(),
@@ -424,6 +422,7 @@ ve.ui.MWSaveDialog.prototype.swapPanel = function ( panel, noFocus ) {
 				} ).done( function ( result ) {
 					if ( result.parse.parsedsummary === '' ) {
 						dialog.$previewEditSummary.parent().addClass( 'oo-ui-element-hidden' );
+						dialog.$previewEditSummary.empty();
 					} else {
 						// Intentionally treated as HTML
 						dialog.$previewEditSummary.html( ve.msg( 'parentheses', result.parse.parsedsummary ) );
@@ -431,8 +430,8 @@ ve.ui.MWSaveDialog.prototype.swapPanel = function ( panel, noFocus ) {
 					}
 				} ).fail( function () {
 					dialog.$previewEditSummary.parent().addClass( 'oo-ui-element-hidden' );
+					dialog.$previewEditSummary.empty();
 				} ).always( function () {
-					dialog.$previewEditSummary.parent().removeClass( 'mw-ajax-loader' );
 					dialog.updateSize();
 				} );
 			}
@@ -468,45 +467,36 @@ ve.ui.MWSaveDialog.prototype.swapPanel = function ( panel, noFocus ) {
  * Show a message in the save dialog.
  *
  * @param {string} name Message's unique name
- * @param {string|jQuery|Array} message Message content (string of HTML, jQuery object or array of
- *  Node objects)
- * @param {Object} [options]
- * @param {boolean} [options.wrap="warning"] Whether to wrap the message in a paragraph and if
- *  so, how. One of "warning", "error" or false.
+ * @param {jQuery|string|Function|OO.ui.HtmlSnippet} label Message content. See OO.ui.mixin.LabelElement.
+ * @param {string} config MessageWidget config. Defaults to an inline warning.
+ * @return {jQuery.Promise} Promise which resolves when the message has been shown, rejects if no new message shown.
  */
-ve.ui.MWSaveDialog.prototype.showMessage = function ( name, message, options ) {
-	var $message;
+ve.ui.MWSaveDialog.prototype.showMessage = function ( name, label, config ) {
+	var messageWidget, promise;
 	if ( !this.messages[ name ] ) {
-		options = options || {};
-		if ( options.wrap === undefined ) {
-			options.wrap = 'warning';
-		}
-		$message = $( '<div>' ).addClass( 've-ui-mwSaveDialog-message' );
-		if ( options.wrap !== false ) {
-			$message.append( $( '<p>' ).append(
-				// The following messages are used here:
-				// * visualeditor-savedialog-label-error
-				// * visualeditor-savedialog-label-warning
-				$( '<strong>' ).text( mw.msg( 'visualeditor-savedialog-label-' + options.wrap ) ),
-				document.createTextNode( mw.msg( 'colon-separator' ) ),
-				message
-			) );
-		} else {
-			$message.append( message );
-		}
-		this.$saveMessages.append( $message.css( 'display', 'none' ) );
+		messageWidget = new OO.ui.MessageWidget( ve.extendObject( {
+			classes: [ 've-ui-mwSaveDialog-message' ],
+			label: label,
+			inline: true,
+			type: 'warning'
+		}, config ) );
+		this.$saveMessages.append( messageWidget.$element.css( 'display', 'none' ) );
 
 		// FIXME: Use CSS transitions
 		// eslint-disable-next-line no-jquery/no-slide
-		$message.slideDown( {
+		promise = messageWidget.$element.slideDown( {
 			duration: 250,
 			progress: this.updateSize.bind( this )
-		} );
+		} ).promise();
 
 		this.swapPanel( 'save' );
 
-		this.messages[ name ] = $message;
+		// Can be hidden later by #clearMessage
+		this.messages[ name ] = messageWidget.$element;
+
+		return promise;
 	}
+	return ve.createDeferred().reject().promise();
 };
 
 /**
@@ -515,9 +505,17 @@ ve.ui.MWSaveDialog.prototype.showMessage = function ( name, message, options ) {
  * @param {string} name Message's unique name
  */
 ve.ui.MWSaveDialog.prototype.clearMessage = function ( name ) {
-	if ( this.messages[ name ] ) {
-		this.messages[ name ].slideUp( {
+	var $message = this.messages[ name ],
+		dialog = this;
+	if ( $message ) {
+		// FIXME: Use CSS transitions
+		// eslint-disable-next-line no-jquery/no-slide
+		$message.slideUp( {
+			duration: 250,
 			progress: this.updateSize.bind( this )
+		} ).promise().then( function () {
+			$message.remove();
+			dialog.updateSize();
 		} );
 		delete this.messages[ name ];
 	}
@@ -593,12 +591,11 @@ ve.ui.MWSaveDialog.prototype.initialize = function () {
 		classes: [ 've-ui-mwSaveDialog-savePanel' ]
 	} );
 
-	// Byte counter in edit summary
+	// Character counter in edit summary
 	this.editSummaryCountLabel = new OO.ui.LabelWidget( {
 		classes: [ 've-ui-mwSaveDialog-editSummary-count' ],
 		label: '',
-		title: ve.msg( this.editSummaryCodePointLimit ?
-			'visualeditor-editsummary-characters-remaining' : 'visualeditor-editsummary-bytes-remaining' )
+		title: ve.msg( 'visualeditor-editsummary-characters-remaining' )
 	} );
 
 	// Save panel
@@ -608,44 +605,26 @@ ve.ui.MWSaveDialog.prototype.initialize = function () {
 	this.editSummaryInput = new ve.ui.MWEditSummaryWidget( {
 		$overlay: this.$overlay,
 		placeholder: ve.msg( 'visualeditor-editsummary' ),
-		classes: [ 've-ui-mwSaveDialog-summary' ],
-		inputFilter: function ( value ) {
-			// Prevent the user from inputting newlines (this kicks in on paste, etc.)
-			return value.replace( /\r?\n/g, ' ' );
-		}
+		classes: [ 've-ui-mwSaveDialog-summary' ]
 	} );
-	// Prevent the user from inputting newlines from keyboard
-	this.editSummaryInput.$input.on( 'keypress', function ( e ) {
-		if ( e.which === OO.ui.Keys.ENTER ) {
-			e.preventDefault();
-
-			dialog.showMessage(
-				'keyboard-shortcut-submit',
-				$( '<p>' ).msg(
-					'visualeditor-savedialog-keyboard-shortcut-submit',
-					new ve.ui.Trigger( ve.ui.commandHelpRegistry.lookup( 'dialogConfirm' ).shortcuts[ 0 ] ).getMessage()
-				),
-				{ wrap: false }
-			);
-		}
+	// Show a warning if the user presses Enter
+	this.editSummaryInput.on( 'enter', function () {
+		dialog.showMessage(
+			'keyboard-shortcut-submit',
+			ve.msg(
+				'visualeditor-savedialog-keyboard-shortcut-submit',
+				new ve.ui.Trigger( ve.ui.commandHelpRegistry.lookup( 'dialogConfirm' ).shortcuts[ 0 ] ).getMessage()
+			)
+		).then( function () {
+			// Restore focus after potential window resize
+			dialog.editSummaryInput.focus();
+		} );
 	} );
-	// Limit length, and display the remaining bytes/characters
-	if ( this.editSummaryCodePointLimit ) {
-		this.editSummaryInput.$input.codePointLimit( this.editSummaryCodePointLimit );
-	} else {
-		this.editSummaryInput.$input.byteLimit( this.editSummaryByteLimit );
-	}
+	// Limit length, and display the remaining characters
+	this.editSummaryInput.$input.codePointLimit( this.editSummaryCodePointLimit );
 	this.editSummaryInput.on( 'change', function () {
-		var remaining;
-		if ( dialog.editSummaryCodePointLimit ) {
-			remaining = dialog.editSummaryCodePointLimit - mwString.codePointLength( dialog.editSummaryInput.getValue() );
-		} else {
-			remaining = dialog.editSummaryByteLimit - mwString.byteLength( dialog.editSummaryInput.getValue() );
-		}
-		// TODO: This looks a bit weird, there is no unit in the UI, just
-		// numbers. Users likely assume characters but then it seems to count
-		// down quicker than expected if it's byteLimit. Facing users with the
-		// word "byte" is bad? (T42035)
+		var remaining = dialog.editSummaryCodePointLimit - mwString.codePointLength( dialog.editSummaryInput.getValue() );
+		// TODO: This looks a bit weird, there is no unit in the UI, just numbers.
 		dialog.changedEditSummary = true;
 		if ( remaining > 99 ) {
 			dialog.editSummaryCountLabel.setLabel( '' );
@@ -712,6 +691,7 @@ ve.ui.MWSaveDialog.prototype.initialize = function () {
 
 	// Preview panel
 	this.previewPanel = new OO.ui.PanelLayout( {
+		classes: [ 've-ui-mwSaveDialog-preview' ],
 		expanded: false,
 		padded: true
 	} );
@@ -719,7 +699,13 @@ ve.ui.MWSaveDialog.prototype.initialize = function () {
 	this.previewPanel.$element
 		// Make focusable for keyboard accessible scrolling
 		.prop( 'tabIndex', 0 )
-		.append( this.$previewViewer );
+		.append(
+			$( '<div>' ).addClass( 'mw-content-container' ).append(
+				$( '<div>' ).addClass( 'mw-body' ).append(
+					this.$previewViewer
+				)
+			)
+		);
 
 	// Conflict panel
 	this.conflictPanel = new OO.ui.PanelLayout( {
@@ -872,8 +858,8 @@ ve.ui.MWSaveDialog.prototype.getSetupProcess = function ( data ) {
 			this.setupCheckboxes( data.checkboxFields || [] );
 			this.checkboxesByName = data.checkboxesByName || {};
 
-			function trackCheckbox( name ) {
-				ve.track( 'activity.mwSave', { action: 'checkbox-' + name } );
+			function trackCheckbox( n ) {
+				ve.track( 'activity.mwSave', { action: 'checkbox-' + n } );
 			}
 			for ( name in this.checkboxesByName ) {
 				this.checkboxesByName[ name ].$element.off( '.mwSave' ).on( 'click.mwSave', trackCheckbox.bind( this, name ) );

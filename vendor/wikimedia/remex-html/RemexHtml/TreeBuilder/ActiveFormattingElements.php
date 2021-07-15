@@ -43,7 +43,7 @@ class ActiveFormattingElements {
 			$next = $node->nextAFE;
 			$node->prevAFE = $node->nextAFE = $node->nextNoah = null;
 		}
-		// @phan-suppress-next-line PhanTypeMismatchProperty
+		// @phan-suppress-next-line PhanTypeMismatchPropertyProbablyReal
 		$this->head = $this->tail = $this->noahTableStack = null;
 	}
 

@@ -7,13 +7,16 @@ use ApiMain;
 use ApiQueryBase;
 use ApiUsageException;
 use Config;
+use ConfigFactory;
 use FauxRequest;
+use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
 use ParserOptions;
 use Title;
 use User;
 use WANObjectCache;
+use Wikimedia\ParamValidator\ParamValidator;
 use WikiPage;
 
 /**
@@ -28,7 +31,11 @@ class ApiQueryExtracts extends ApiQueryBase {
 
 	private const PREFIX = 'ex';
 
+	/**
+	 * @var array
+	 */
 	private $params;
+
 	/**
 	 * @var Config
 	 */
@@ -37,30 +44,41 @@ class ApiQueryExtracts extends ApiQueryBase {
 	 * @var WANObjectCache
 	 */
 	private $cache;
+	/**
+	 * @var LanguageConverterFactory
+	 */
+	private $langConvFactory;
 
 	// TODO: Allow extensions to hook into this to opt-in.
 	// This is partly for security reasons; see T107170.
 	/**
-	 * @var array
+	 * @var string[]
 	 */
 	private $supportedContentModels = [ 'wikitext' ];
 
 	/**
 	 * @param \ApiQuery $query API query module object
 	 * @param string $moduleName Name of this query module
-	 * @param Config $conf MediaWiki configuration
+	 * @param ConfigFactory $configFactory
 	 * @param WANObjectCache $cache
+	 * @param LanguageConverterFactory $langConvFactory
 	 */
-	public function __construct( $query, $moduleName, Config $conf, WANObjectCache $cache ) {
+	public function __construct(
+		$query,
+		$moduleName,
+		ConfigFactory $configFactory,
+		WANObjectCache $cache,
+		LanguageConverterFactory $langConvFactory
+	) {
 		parent::__construct( $query, $moduleName, self::PREFIX );
-		$this->config = $conf;
+		$this->config = $configFactory->makeConfig( 'textextracts' );
 		$this->cache = $cache;
+		$this->langConvFactory = $langConvFactory;
 	}
 
 	/**
 	 * Evaluates the parameters, performs the requested extraction of text,
 	 * and sets up the result
-	 * @return null
 	 */
 	public function execute() {
 		$titles = $this->getPageSet()->getGoodTitles();
@@ -167,15 +185,27 @@ class ApiQueryExtracts extends ApiQueryBase {
 		return $text;
 	}
 
+	/**
+	 * @param WANObjectCache $cache
+	 * @param WikiPage $page
+	 * @param bool $introOnly
+	 * @return string
+	 */
 	private function cacheKey( WANObjectCache $cache, WikiPage $page, $introOnly ) {
+		$langConv = $this->langConvFactory->getLanguageConverter( $page->getTitle()->getPageLanguage() );
 		return $cache->makeKey( 'textextracts', self::CACHE_VERSION,
 			$page->getId(), $page->getTouched(),
-			$page->getTitle()->getPageLanguage()->getPreferredVariant(),
+			$langConv->getPreferredVariant(),
 			$this->params['plaintext'] ? 'plaintext' : 'html',
 			$introOnly ? 'intro' : 'full'
 		);
 	}
 
+	/**
+	 * @param WikiPage $page
+	 * @param bool $introOnly
+	 * @return string|false
+	 */
 	private function getFromCache( WikiPage $page, $introOnly ) {
 		$cache = $this->cache;
 		// @TODO: replace with getWithSetCallback()
@@ -183,6 +213,10 @@ class ApiQueryExtracts extends ApiQueryBase {
 		return $cache->get( $key );
 	}
 
+	/**
+	 * @param WikiPage $page
+	 * @param string $text
+	 */
 	private function setCache( WikiPage $page, $text ) {
 		$cache = $this->cache;
 		// @TODO: replace with getWithSetCallback()
@@ -190,6 +224,11 @@ class ApiQueryExtracts extends ApiQueryBase {
 		$cache->set( $key, $text, $this->getConfig()->get( 'ParserCacheExpireTime' ) );
 	}
 
+	/**
+	 * @param string $text
+	 * @param bool $plainText
+	 * @return string
+	 */
 	private function getFirstSection( $text, $plainText ) {
 		if ( $plainText ) {
 			$regexp = '/^(.*?)(?=' . ExtractFormatter::SECTION_MARKER_START . ')/s';
@@ -214,6 +253,7 @@ class ApiQueryExtracts extends ApiQueryBase {
 
 		// first try finding full page in parser cache
 		if ( $page->shouldCheckParserCache( $parserOptions, 0 ) ) {
+			// TODO inject ParserCache
 			$pout = MediaWikiServices::getInstance()->getParserCache()->get( $page, $parserOptions );
 			if ( $pout ) {
 				$text = $pout->getText( [ 'unwrap' => true ] );
@@ -275,17 +315,6 @@ class ApiQueryExtracts extends ApiQueryBase {
 	}
 
 	/**
-	 * @param \ApiQuery $query API query module
-	 * @param string $name Name of this query module
-	 * @return ApiQueryExtracts
-	 */
-	public static function factory( $query, $name ) {
-		$config = MediaWikiServices::getInstance()->getConfigFactory()->makeConfig( 'textextracts' );
-		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
-		return new self( $query, $name, $config, $cache );
-	}
-
-	/**
 	 * Converts page HTML into an extract
 	 * @param string $text
 	 * @return string
@@ -303,21 +332,24 @@ class ApiQueryExtracts extends ApiQueryBase {
 	 * @return string
 	 */
 	private function truncate( $text ) {
-		if ( !$this->params['plaintext'] ) {
-			$truncator = new TextTruncator( true );
-		} else {
-			$truncator = new TextTruncator( false );
-		}
+		$useTidy = !$this->params['plaintext'];
+		$truncator = new TextTruncator( $useTidy );
 
 		if ( $this->params['chars'] ) {
-			$text = $truncator->getFirstChars( $text, $this->params['chars'] ) .
-				$this->msg( 'ellipsis' )->text();
+			$truncatedText = $truncator->getFirstChars( $text, $this->params['chars'] );
+			if ( $truncatedText !== $text ) {
+				$text = $truncatedText . $this->msg( 'ellipsis' )->text();
+			}
 		} elseif ( $this->params['sentences'] ) {
 			$text = $truncator->getFirstSentences( $text, $this->params['sentences'] );
 		}
 		return $text;
 	}
 
+	/**
+	 * @param string $text
+	 * @return string
+	 */
 	private function doSections( $text ) {
 		$pattern = '/' .
 			ExtractFormatter::SECTION_MARKER_START . '(\d)' .
@@ -344,8 +376,7 @@ class ApiQueryExtracts extends ApiQueryBase {
 	}
 
 	/**
-	 * Return an array describing all possible parameters to this module
-	 * @return array
+	 * @inheritDoc
 	 */
 	public function getAllowedParams() {
 		return [
@@ -360,7 +391,7 @@ class ApiQueryExtracts extends ApiQueryBase {
 				ApiBase::PARAM_MAX => 10,
 			],
 			'limit' => [
-				ApiBase::PARAM_DFLT => 20,
+				ParamValidator::PARAM_DEFAULT => 20,
 				ApiBase::PARAM_TYPE => 'limit',
 				ApiBase::PARAM_MIN => 1,
 				ApiBase::PARAM_MAX => 20,
@@ -370,7 +401,7 @@ class ApiQueryExtracts extends ApiQueryBase {
 			'plaintext' => false,
 			'sectionformat' => [
 				ApiBase::PARAM_TYPE => [ 'plain', 'wiki', 'raw' ],
-				ApiBase::PARAM_DFLT => 'wiki',
+				ParamValidator::PARAM_DEFAULT => 'wiki',
 			],
 			'continue' => [
 				ApiBase::PARAM_TYPE => 'integer',
@@ -380,8 +411,7 @@ class ApiQueryExtracts extends ApiQueryBase {
 	}
 
 	/**
-	 * @see ApiBase::getExamplesMessages()
-	 * @return array
+	 * @inheritDoc
 	 */
 	protected function getExamplesMessages() {
 		return [
@@ -391,10 +421,10 @@ class ApiQueryExtracts extends ApiQueryBase {
 	}
 
 	/**
-	 * @see ApiBase::getHelpUrls()
-	 * @return string
+	 * @inheritDoc
 	 */
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:TextExtracts#API';
 	}
+
 }

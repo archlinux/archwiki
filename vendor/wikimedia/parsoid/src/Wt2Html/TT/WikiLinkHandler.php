@@ -15,6 +15,7 @@ use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Config\WikitextConstants;
 use Wikimedia\Parsoid\Core\DomSourceRange;
 use Wikimedia\Parsoid\Core\InternalException;
+use Wikimedia\Parsoid\Core\Sanitizer;
 use Wikimedia\Parsoid\Tokens\EndTagTk;
 use Wikimedia\Parsoid\Tokens\EOFTk;
 use Wikimedia\Parsoid\Tokens\KV;
@@ -23,7 +24,6 @@ use Wikimedia\Parsoid\Tokens\SourceRange;
 use Wikimedia\Parsoid\Tokens\TagTk;
 use Wikimedia\Parsoid\Tokens\Token;
 use Wikimedia\Parsoid\Utils\ContentUtils;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\PipelineUtils;
 use Wikimedia\Parsoid\Utils\TitleException;
@@ -294,8 +294,11 @@ class WikiLinkHandler extends TokenHandler {
 				$tsr = null;
 			}
 
-			$body = ContentUtils::ppToDOM( $env, $html );
-			$dft = PipelineUtils::tunnelDOMThroughTokens( $env, $token, $body, [
+			$domFragment = ContentUtils::createAndLoadDocumentFragment(
+				$env->topLevelDoc, $html
+			);
+			$dft = PipelineUtils::tunnelDOMThroughTokens(
+				$env, $token, $domFragment, [
 					'tsr' => $tsr,
 					'pipelineOpts' => [ 'inlineContext' => true ]
 				]
@@ -324,7 +327,7 @@ class WikiLinkHandler extends TokenHandler {
 		$hrefTokenStr = TokenUtils::tokensToString( $hrefKV->v );
 
 		// Don't allow internal links to pages containing PROTO:
-		// See Parser::replaceInternalLinks2()
+		// See Parser::handleInternalLinks2()
 		if ( $env->getSiteConfig()->hasValidProtocol( $hrefTokenStr ) ) {
 			$src = substr( $token->dataAttribs->tsr->substr(
 				$this->manager->getFrame()->getSrcText()
@@ -342,19 +345,13 @@ class WikiLinkHandler extends TokenHandler {
 
 		// Xmlish tags in title position are invalid.  Not according to the
 		// preprocessor ABNF but at later stages in the legacy parser,
-		// namely replaceInternalLinks.
-		if (
-			is_array( $hrefKV->v ) &&
-			TokenUtils::hasTypeOf( $token, 'mw:ExpandedAttrs' )
-		) {
-			$attribs = PHPUtils::jsonDecode( $token->getAttribute( 'data-mw' ), false )->attribs;
-			foreach ( $attribs as $a ) {
-				if ( $a[0]->txt === 'href' ) {
-					if ( preg_match( '/mw:(Nowiki|Extension)/', $a[1]->html ) ) {
-						return [ 'tokens' => self::bailTokens( $env, $token, false ) ];
-					}
-					break;
-				}
+		// namely handleInternalLinks.
+		if ( is_array( $hrefKV->v ) ) {
+			// Use the expanded attr instead of trying to unpackDOMFragments
+			// since the fragment will have been released when expanding to DOM
+			$expandedVal = $token->fetchExpandedAttrValue( 'href' );
+			if ( preg_match( '#mw:(Nowiki|Extension|DOMFragment/sealed)#', $expandedVal ?? '' ) ) {
+				return [ 'tokens' => self::bailTokens( $env, $token, false ) ];
 			}
 		}
 
@@ -450,12 +447,14 @@ class WikiLinkHandler extends TokenHandler {
 	 *
 	 * @param array $attrs
 	 * @param bool $getLinkText
-	 * @param string|null $rdfaType
-	 * @param array|null $linkAttrs
+	 * @param ?string $rdfaType
+	 * @param ?array $linkAttrs
 	 * @return array
 	 */
-	public static function buildLinkAttrs( array $attrs, bool $getLinkText,
-			?string $rdfaType, ?array $linkAttrs ): array {
+	public static function buildLinkAttrs(
+		array $attrs, bool $getLinkText, ?string $rdfaType,
+		?array $linkAttrs
+	): array {
 		$newAttrs = [];
 		$linkTextKVs = [];
 		$about = null;
@@ -510,6 +509,7 @@ class WikiLinkHandler extends TokenHandler {
 	 * @param stdClass $target
 	 * @param bool $buildDOMFragment
 	 * @return array
+	 * @throws InternalException
 	 */
 	private function addLinkAttributesAndGetContent(
 		Token $newTk, Token $token, stdClass $target, bool $buildDOMFragment = false
@@ -535,6 +535,8 @@ class WikiLinkHandler extends TokenHandler {
 			foreach ( $content as $i => $kv ) {
 				$toks = $kv->v;
 				// since this is already a link, strip autolinks from content
+				// FIXME: Maybe add a stop in the grammar so that autolinks
+				// aren't tokenized in link content to begin with?
 				if ( !is_array( $toks ) ) {
 					$toks = [ $toks ];
 				}
@@ -545,7 +547,35 @@ class WikiLinkHandler extends TokenHandler {
 				$n = count( $toks );
 				$newToks = [];
 				foreach ( $toks as $j => $t ) {
+					// Bail on media-syntax in wikilink-syntax scenarios,
+					// since the legacy parser explodes on [[, last one wins.
+					// Note that without this, anchors tags in media output
+					// will be stripped and we won't have the right structure
+					// when we get to the dom pass to add media info.
+					if (
+						$t instanceof TagTk &&
+						( $t->getName() === 'figure' || $t->getName() === 'span' ) &&
+						// Only testing for Image here since we haven't added
+						// media info yet
+						TokenUtils::matchTypeOf( $t, '#^mw:Image($|/)#D' ) !== null
+					) {
+						throw new InternalException( 'Media-in-link' );
+					}
+
 					if ( $t instanceof TagTk && $t->getName() === 'a' ) {
+						// Bail on wikilink-syntax in wiklink-syntax scenarios,
+						// since the legacy parser explodes on [[, last one wins
+						if (
+							preg_match(
+								'#^mw:WikiLink(/Interwiki)?$#D',
+								$t->getAttribute( 'rel' ) ?? ''
+							) &&
+							// ISBN links don't use wikilink-syntax but still
+							// get the same "rel", so should be ignored
+							( $t->dataAttribs->stx ?? '' ) !== 'magiclink'
+						) {
+							throw new InternalException( 'Link-in-link' );
+						}
 						if ( $j + 1 < $n && $toks[$j + 1] instanceof EndTagTk &&
 							$toks[$j + 1]->getName() === 'a'
 						) {
@@ -596,7 +626,9 @@ class WikiLinkHandler extends TokenHandler {
 				if ( preg_match( '#^((\.\./)+|/)(?!\.\./)(.*?[^/])/+$#D', $morecontent, $match ) ) {
 					$morecontent = $match[3];
 				} elseif ( preg_match( '#^\.\./#', $morecontent ) ) {
-					$morecontent = $env->resolveTitle( $morecontent );
+					// Subpages on interwiki / language links aren't valid,
+					// so $target->title should always be present here
+					$morecontent = $target->title->getPrefixedText();
 				}
 			}
 
@@ -624,7 +656,11 @@ class WikiLinkHandler extends TokenHandler {
 	 */
 	private function renderWikiLink( Token $token, stdClass $target ): array {
 		$newTk = new TagTk( 'a' );
-		$content = $this->addLinkAttributesAndGetContent( $newTk, $token, $target, true );
+		try {
+			$content = $this->addLinkAttributesAndGetContent( $newTk, $token, $target, true );
+		} catch ( InternalException $e ) {
+			return [ 'tokens' => self::bailTokens( $this->env, $token, false ) ];
+		}
 
 		$newTk->addNormalizedAttribute( 'href', $this->env->makeLink( $target->title ),
 			$target->hrefSrc );
@@ -647,20 +683,24 @@ class WikiLinkHandler extends TokenHandler {
 	 */
 	private function renderCategory( Token $token, stdClass $target ): array {
 		$newTk = new SelfclosingTagTk( 'link' );
-		$content = $this->addLinkAttributesAndGetContent( $newTk, $token, $target );
+		try {
+			$content = $this->addLinkAttributesAndGetContent( $newTk, $token, $target );
+		} catch ( InternalException $e ) {
+			return [ 'tokens' => self::bailTokens( $this->env, $token, false ) ];
+		}
 		$env = $this->manager->env;
 
 		// Change the rel to be mw:PageProp/Category
 		$newTk->getAttributeKV( 'rel' )->v = 'mw:PageProp/Category';
 
-		$strContent = TokenUtils::tokensToString( $content );
-		$saniContent = preg_replace( '/#/', '%23', Sanitizer::sanitizeTitleURI( $strContent, false ) );
 		$newTk->addNormalizedAttribute( 'href', $env->makeLink( $target->title ), $target->hrefSrc );
+
 		// Change the href to include the sort key, if any (but don't update the rt info)
-		if ( isset( $strContent ) && $strContent !== '' && $strContent !== $target->href ) {
+		$strContent = str_replace( "\n", '', TokenUtils::tokensToString( $content ) );
+		if ( $strContent !== '' && $strContent !== $target->href ) {
 			$hrefkv = $newTk->getAttributeKV( 'href' );
 			$hrefkv->v .= '#';
-			$hrefkv->v .= $saniContent;
+			$hrefkv->v .= preg_replace( '/#/', '%23', Sanitizer::sanitizeTitleURI( $strContent, false ) );
 		}
 
 		if ( count( $content ) !== 1 ) {
@@ -704,7 +744,11 @@ class WikiLinkHandler extends TokenHandler {
 		// The prefix is listed in the interwiki map
 
 		$newTk = new SelfclosingTagTk( 'link', [], $token->dataAttribs );
-		$this->addLinkAttributesAndGetContent( $newTk, $token, $target );
+		try {
+			$this->addLinkAttributesAndGetContent( $newTk, $token, $target );
+		} catch ( InternalException $e ) {
+			return [ 'tokens' => self::bailTokens( $this->env, $token, false ) ];
+		}
 
 		// add title attribute giving the presentation name of the
 		// "extra language link"
@@ -740,7 +784,11 @@ class WikiLinkHandler extends TokenHandler {
 
 		$tokens = [];
 		$newTk = new TagTk( 'a', [], $token->dataAttribs );
-		$content = $this->addLinkAttributesAndGetContent( $newTk, $token, $target, true );
+		try {
+			$content = $this->addLinkAttributesAndGetContent( $newTk, $token, $target, true );
+		} catch ( InternalException $e ) {
+			return [ 'tokens' => self::bailTokens( $this->env, $token, false ) ];
+		}
 
 		// We set an absolute link to the article in the other wiki/language
 		$isLocal = !empty( $target->interwiki['local'] );
@@ -786,7 +834,10 @@ class WikiLinkHandler extends TokenHandler {
 			$classes[] = 'mw-default-size';
 		}
 
-		if ( isset( $opts['border'] ) ) {
+		// Border isn't applicable to 'thumbnail' or 'framed' formats
+		// Using $isInline as a shorthand for that here (see above),
+		// but this isn't about being *inline* per se
+		if ( $isInline && isset( $opts['border'] ) ) {
 			$classes[] = 'mw-image-border';
 		}
 
@@ -996,6 +1047,15 @@ class WikiLinkHandler extends TokenHandler {
 				if ( TokenUtils::hasDOMFragmentType( $currentToken ) ) {
 					if ( self::isWikitextOpt( $env, $optInfo, $prefix, $resultStr ) ) {
 						$str = TokenUtils::tokensToString( [ $currentToken ], false, [
+								// These tokens haven't been expanded to DOM yet
+								// so unpacking them here is justifiable
+								// FIXME: It's a little convoluted to figure out
+								// that this is actually the case in the
+								// AttributeExpander, but it seems like only
+								// target/href ever gets expanded to DOM and
+								// the rest of the wikilink_content/options
+								// become mw:maybeContent that gets expanded
+								// below where $hasExpandableOpt is set.
 								'unpackDOMFragments' => true,
 								'env' => $env
 							]
@@ -1303,6 +1363,15 @@ class WikiLinkHandler extends TokenHandler {
 						];
 						// Only round-trip a valid size
 						$opts['size']['src'] = $oContent->vsrc ?? $optInfo['ak'];
+						// check for duplicated options
+						foreach ( $dataAttribs->optList as &$value ) {
+							if ( $value['ck'] === 'width' ) {
+								$value['ck'] = 'bogus'; // mark the previous definition as bogus, last one wins
+								break;
+							}
+						}
+					} else {
+						$opt['ck'] = 'bogus';
 					}
 				} else {
 					$opts[$optInfo['ck']] = [
@@ -1432,7 +1501,7 @@ class WikiLinkHandler extends TokenHandler {
 		$wrapperInfo = self::getWrapperInfo( $opts );
 
 		$isInline = $wrapperInfo['isInline'];
-		$containerName = $isInline ? 'figure-inline' : 'figure';
+		$containerName = $isInline ? 'span' : 'figure';
 
 		$classes = $wrapperInfo['classes'];
 		if ( !empty( $opts['class'] ) ) {
@@ -1511,7 +1580,8 @@ class WikiLinkHandler extends TokenHandler {
 				// Use parsed DOM given in `captionDOM`
 				// FIXME: Does this belong in `dataMw.attribs`?
 				$dataMw->caption = ContentUtils::ppToXML(
-					DOMCompat::getBody( $captionDOM ), [ 'innerXML' => true ] );
+					$captionDOM, [ 'innerXML' => true ]
+				);
 			}
 		} else {
 			// We always add a figcaption for blocks
@@ -1531,7 +1601,7 @@ class WikiLinkHandler extends TokenHandler {
 			$tokens[] = new EndTagTk( 'figcaption' );
 		}
 
-		if ( count( array_keys( get_object_vars( $dataMw ) ) ) ) {
+		if ( (array)$dataMw !== [] ) {
 			$container->addAttribute( 'data-mw', PHPUtils::jsonEncode( $dataMw ) );
 		}
 
@@ -1547,31 +1617,38 @@ class WikiLinkHandler extends TokenHandler {
 	 */
 	private function linkToMedia( Token $token, stdClass $target, array $errs, array $info ): array {
 		// Only pass in the url, since media links should not link to the thumburl
-		$imgHref = preg_replace( '#^https?://#', '//', $info['url'], 1 ); // Copied from getPath
+		$imgHref = $info['url']; // Copied from getPath
 		$imgHrefFileName = preg_replace( '#.*/#', '', $imgHref, 1 );
 
-		$link = new TagTk( 'a', [], Utils::clone( $token->dataAttribs ) );
-		$link->addAttribute( 'rel', 'mw:MediaLink' );
-		$link->addAttribute( 'href', $imgHref );
+		$link = new TagTk( 'a' );
+
+		try {
+			$content = $this->addLinkAttributesAndGetContent( $link, $token, $target );
+		} catch ( InternalException $e ) {
+			return [ 'tokens' => self::bailTokens( $this->env, $token, false ) ];
+		}
+
+		// Change the rel to be mw:MediaLink
+		$link->getAttributeKV( 'rel' )->v = 'mw:MediaLink';
+
+		$link->setAttribute( 'href', $imgHref );
+
 		// html2wt will use the resource rather than try to parse the href.
 		$link->addNormalizedAttribute(
 			'resource',
 			$this->env->makeLink( $target->title ),
 			$target->hrefSrc
 		);
+
 		// Normalize title according to how PHP parser does it currently
 		$link->setAttribute( 'title', preg_replace( '/_/', ' ', $imgHrefFileName ) );
-		unset( $link->dataAttribs->src ); // clear src string since we can serialize this
-
-		$type = $token->getAttribute( 'typeof' );
-		if ( $type ) {
-			$link->addSpaceSeparatedAttribute( 'typeof', $type );
-		}
 
 		if ( count( $errs ) > 0 ) {
 			// Set RDFa type to mw:Error so VE and other clients
 			// can use this to do client-specific action on these.
-			$link->addAttribute( 'typeof', 'mw:Error' );
+			if ( !TokenUtils::hasTypeOf( $link, 'mw:Error' ) ) {
+				$link->addSpaceSeparatedAttribute( 'typeof', 'mw:Error' );
+			}
 
 			// Update data-mw
 			$dataMwAttr = $token->getAttribute( 'data-mw' );
@@ -1580,13 +1657,11 @@ class WikiLinkHandler extends TokenHandler {
 				$errs = array_merge( $dataMw->errors, $errs );
 			}
 			$dataMw->errors = $errs;
-			$link->addAttribute( 'data-mw', PHPUtils::jsonEncode( $dataMw ) );
+			$link->setAttribute( 'data-mw', PHPUtils::jsonEncode( $dataMw ) );
 		}
 
-		$content = preg_replace( '/^:/', '',
-			TokenUtils::tokensToString( $token->getAttribute( 'href' ) ), 1 );
-		$content = $token->getAttribute( 'mw:maybeContent' ) ?? [ $content ];
 		$tokens = array_merge( [ $link ], $content, [ new EndTagTk( 'a' ) ] );
+
 		return [ 'tokens' => $tokens ];
 	}
 

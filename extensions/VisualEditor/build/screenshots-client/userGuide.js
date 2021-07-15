@@ -39,7 +39,7 @@ module.exports = {
 	citoidInspectorManual: function () {
 		var done = arguments[ arguments.length - 1 ],
 			surface = ve.init.target.surface;
-		ve.init.target.surface.context.inspectors.currentWindow.setModePanel( 'manual' );
+		surface.context.inspectors.currentWindow.setModePanel( 'manual' );
 		setTimeout( function () {
 			done(
 				seleniumUtils.getBoundingRect( [
@@ -52,7 +52,7 @@ module.exports = {
 	citoidInspectorReuse: function () {
 		var done = arguments[ arguments.length - 1 ],
 			surface = ve.init.target.surface;
-		ve.init.target.surface.context.inspectors.currentWindow.setModePanel( 'reuse' );
+		surface.context.inspectors.currentWindow.setModePanel( 'reuse' );
 		setTimeout( function () {
 			done(
 				seleniumUtils.getBoundingRect( [
@@ -61,6 +61,11 @@ module.exports = {
 				] )
 			);
 		} );
+	},
+	citoidInspectorTeardown: function () {
+		var done = arguments[ arguments.length - 1 ],
+			surface = ve.init.target.surface;
+		surface.context.inspectors.currentWindow.close().closed.then( done );
 	},
 	toolbarHeadings: function () {
 		seleniumUtils.runMenuTask( arguments[ arguments.length - 1 ], ve.init.target.toolbar.tools.paragraph );
@@ -100,6 +105,11 @@ module.exports = {
 	toolbarCategory: function () {
 		seleniumUtils.runMenuTask( arguments[ arguments.length - 1 ], ve.init.target.actionsToolbar.tools.categories, false, true );
 	},
+	toolbarTeardown: function () {
+		var done = arguments[ arguments.length - 1 ];
+		seleniumUtils.collapseToolbar();
+		done();
+	},
 	save: function () {
 		var done = arguments[ arguments.length - 1 ],
 			surface = ve.init.target.surface;
@@ -116,6 +126,11 @@ module.exports = {
 			} );
 		} );
 		ve.init.target.toolbarSaveButton.onSelect();
+	},
+	saveTeardown: function () {
+		var done = arguments[ arguments.length - 1 ],
+			surface = ve.init.target.surface;
+		surface.dialogs.currentWindow.close().closed.then( done );
 	},
 	specialCharacters: function () {
 		var done = arguments[ arguments.length - 1 ],
@@ -134,6 +149,11 @@ module.exports = {
 			} );
 		} );
 		ve.init.target.toolbar.tools.specialCharacter.onSelect();
+	},
+	specialCharactersTeardown: function () {
+		var done = arguments[ arguments.length - 1 ],
+			surface = ve.init.target.surface;
+		surface.getToolbarDialogs().currentWindow.close().closed.then( done );
 	},
 	formula: function () {
 		var done = arguments[ arguments.length - 1 ],
@@ -155,6 +175,11 @@ module.exports = {
 		} );
 		surface.executeCommand( 'mathDialog' );
 	},
+	formulaTeardown: function () {
+		var done = arguments[ arguments.length - 1 ],
+			surface = ve.init.target.surface;
+		surface.dialogs.currentWindow.close().closed.then( done );
+	},
 	referenceList: function () {
 		var done = arguments[ arguments.length - 1 ],
 			surface = ve.init.target.surface;
@@ -174,6 +199,15 @@ module.exports = {
 		// The first command inserts a reference list instantly, so run again to open the window
 		surface.executeCommand( 'referencesList' );
 	},
+	referenceListTeardown: function () {
+		var done = arguments[ arguments.length - 1 ],
+			surface = ve.init.target.surface;
+		surface.dialogs.currentWindow.close().closed.then( function () {
+			// Remove the reference list
+			surface.getModel().undo();
+			done();
+		} );
+	},
 	toolbarCite: function () {
 		var done = arguments[ arguments.length - 1 ];
 
@@ -186,6 +220,11 @@ module.exports = {
 				] )
 			);
 		}, 100 );
+	},
+	toolbarCiteTeardown: function () {
+		var done = arguments[ arguments.length - 1 ];
+		ve.init.target.toolbar.tools.citoid.$element.css( 'font-size', '' );
+		done();
 	},
 	linkSearchResults: function () {
 		var done = arguments[ arguments.length - 1 ],
@@ -213,5 +252,15 @@ module.exports = {
 			} );
 		} );
 		ve.init.target.surface.executeCommand( 'link' );
+	},
+	linkSearchResultsTeardown: function () {
+		var done = arguments[ arguments.length - 1 ],
+			surface = ve.init.target.surface;
+
+		surface.context.inspectors.currentWindow.close().closed.then( function () {
+			// Remove content
+			surface.getModel().undo();
+			done();
+		} );
 	}
 };

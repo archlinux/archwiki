@@ -1,9 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
+			"Herryz",
+			"Salomo Christian Hutajulu",
 			"Stephensuleeman"
 		]
 	},
+	"categorytree-expand": "parbalohan",
+	"categorytree-member-counts": "marisi {{PLURAL:$1|$1 sub-horong}}, {{PLURAL:$2|$2 alaman}}, dohot {{PLURAL:$3|$3 surat partadingan}}",
 	"categorytree-num-categories": "$1 C",
 	"categorytree-num-pages": "$1 P",
 	"categorytree-num-files": "$1 F",

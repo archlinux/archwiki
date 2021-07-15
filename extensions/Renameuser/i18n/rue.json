@@ -17,7 +17,6 @@
 	"renameuserwarnings": "Варованя:",
 	"renameuserconfirm": "Гей, переменовати хоснователя",
 	"renameusersubmit": "Выконати",
-	"renameuser-submit-blocklog": "Вказати книгу заблокованя того хоснователя",
 	"renameusererrordoesnotexist": "Хоснователь з іменом „<nowiki>$1</nowiki>“ не єствує",
 	"renameusererrorexists": "Хоснователь з іменом „<nowiki>$1</nowiki>“ уж єствує",
 	"renameusererrorinvalid": "Хоснователське імя „<nowiki>$1</nowiki>“ ся не дасть хосновати",

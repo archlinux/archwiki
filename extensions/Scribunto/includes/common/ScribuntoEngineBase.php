@@ -269,7 +269,6 @@ abstract class ScribuntoEngineBase {
 	 * Add limit report data to a ParserOutput object
 	 *
 	 * @param ParserOutput $output ParserOutput object in which to add limit data
-	 * @return null
 	 */
 	public function reportLimitData( ParserOutput $output ) {
 	}

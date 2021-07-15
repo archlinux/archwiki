@@ -43,13 +43,13 @@
 	padding: 0.1em 0.25em;
 	margin-left: 0.5em;
 	color: #54595d;
-	background-color: #eaecf0;
+	background-color: #fff;
 	border: 1px solid #c8ccd1;
 	border-radius: 2px;
 }
 
-.ve-ui-mwParameterResultWidget-name:first-child {
-	background-color: #fff;
+.ve-ui-mwParameterResultWidget-name.ve-ui-mwParameterResultWidget-alias {
+	background-color: #eaecf0;
 }
 
 .ve-ui-mwParameterResultWidget-description {

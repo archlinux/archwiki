@@ -13,12 +13,16 @@
 		]
 	},
 	"skinname-vector": "ভেক্টর",
-	"vector-skin-desc": "নতুন চেহারা মনোবুকের আধুনিক সংস্করণ এবং আরো অনেক ব্যবহারযোগ্যতার উন্নতি",
+	"vector-skin-desc": "নতুন চেহারায় মনোবুকের আধুনিক সংস্করণ এবং আরো অনেক ব্যবহারযোগ্যতার উন্নতি",
 	"prefs-vector-enable-vector-1-label": "উত্তরাধিকার ভেক্টর ব্যবহার করুন",
-	"vector-opt-out": "পুরানো চেহারাতে যান",
-	"vector.css": "/* এখানে স্থাপিত CSS ভেক্টর আবরণ ব্যবহারকারীদের প্রভাবিত করবে */",
-	"vector.js": "/* এখানের যে কোন জাভাস্ক্রিপ্ট ভেক্টর আবরণ ব্যবহারকারীদের জন্য লোড হবে */",
-	"vector-action-addsection": "বিষয় যোগ করুন",
+	"prefs-vector-enable-vector-1-help": "আগামী কয়েক বছর ধরে, আমরা ধীরে ধীরে ভেক্টর আবরণ হালনাগাদ করব। উত্তরাধিকার ভেক্টর আপনাকে ভেক্টরের পুরনো সংস্করণ দেখার অনুমতি দেবে (ডিসেম্বর ২০১৯ অনুযায়ী)। এই হালনাগাদ সম্পর্কে আরও জানতে, আমাদের [[mw:Reading/Web/Desktop_Improvements|প্রকল্প পাতায়]] যান।",
+	"vector-opt-out": "পুরনো চেহারাতে যান",
+	"vector-opt-out-tooltip": "আবরণটির পুরনো চেহারাতে ফিরে যেতে আপনার সেটিংস পরিবর্তন করুন (উত্তরাধিকার ভেক্টর)",
+	"vector.css": "/* এখানের সকল CSS ভেক্টর আবরণ ব্যবহারকারীদের জন্য লোড হবে */",
+	"vector.js": "/* এখানের সকল জাভাস্ক্রিপ্ট ভেক্টর আবরণ ব্যবহারকারীদের জন্য লোড হবে */",
+	"vector-action-toggle-sidebar": "পার্শ্বদণ্ড দেখান",
+	"vector-language-button-label": "{{PLURAL:$1|$1টি ভাষা}}",
+	"vector-action-addsection": "আলোচনা যোগ করুন",
 	"vector-action-delete": "অপসারণ",
 	"vector-action-move": "স্থানান্তর",
 	"vector-action-protect": "সুরক্ষা",
@@ -31,5 +35,7 @@
 	"vector-view-viewsource": "উৎস দেখুন",
 	"vector-jumptonavigation": "পরিভ্রমণে ঝাঁপ দিন",
 	"vector-jumptosearch": "অনুসন্ধানে ঝাঁপ দিন",
-	"vector-more-actions": "আরও"
+	"vector-jumptocontent": "বিষয়বস্তুতে ঝাঁপ দিন",
+	"vector-more-actions": "আরও",
+	"vector-search-loader": "অনুসন্ধানের পরামর্শ লোড করা হচ্ছে"
 }

@@ -23,7 +23,7 @@ class ButtonInputWidget extends InputWidget {
 	/**
 	 * Whether to use `<input>` rather than `<button>`.
 	 *
-	 * @var boolean
+	 * @var bool
 	 */
 	protected $useInputTag;
 

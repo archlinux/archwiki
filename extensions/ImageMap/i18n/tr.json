@@ -3,13 +3,14 @@
 		"authors": [
 			"BaRaN6161 TURK",
 			"Joseph",
-			"Karduelis"
+			"Karduelis",
+			"SaldırganSincap"
 		]
 	},
 	"imagemap_desc": "<code>&lt;imagemap&gt;</code> etiketini kullanarak, alıcı-tarafında tıklanabilir resim haritalarına izin verir",
 	"imagemap_no_image": "Hata: ilk satırda bir resim belirtmelisiniz.",
 	"imagemap_invalid_image": "Hata: resim geçersiz ya da mevcut değil.",
-	"imagemap_bad_image": "Hata: Resim bu sayfada kara listeye alındı.",
+	"imagemap_bad_image": "Hata: Bu sayfada resme izin verilmiyor.",
 	"imagemap_no_link": "Hata: $1 satırının sonunda geçerli bir bağlantı bulunamadı.",
 	"imagemap_invalid_title": "Hata: $1 satırındaki bağlantıda geçersiz başlık.",
 	"imagemap_missing_coord": "Hata: $1 satırındaki şekil için yeterli koordinat yok.",

@@ -2,12 +2,11 @@
 
 ## Living Standard
 
-<dl>
-  <dt>This version</dt>
-  <dd><a href="https://phabricator.wikimedia.org/diffusion/ETDA/browse/master/Specification.md">https://phabricator.wikimedia.org/diffusion/ETDA/browse/master/Specification.md</a></dd>
-  <dt>Editors</dt>
-  <dd>Timo Tijhof, Trevor Parscal, James D. Forrester, Marielle Volz, Moriel Schottlender, C.Scott Ananian, eranroz</dd>
-</dl>
+**This version**  
+https://phabricator.wikimedia.org/diffusion/ETDA/browse/master/Specification.md
+
+**Editors**  
+Timo Tijhof, Trevor Parscal, James D. Forrester, Marielle Volz, Moriel Schottlender, C.Scott Ananian, eranroz
 
 ***
 
@@ -363,7 +362,7 @@ Inline style with more spaces, must be at start of line: `\n{{_ | _ = _}}`
 
 ### 4.1 The "Unsigned" template
 
-<pre lang="json">
+```json
 {
 	"description": "Label unsigned comments in a conversation.",
 	"params": {
@@ -418,11 +417,11 @@ Inline style with more spaces, must be at start of line: `\n{{_ | _ = _}}`
 		}
 	}
 }
-</pre>
+```
 
 Example transclusions
-<pre>
+```
 {{unsigned|JohnDoe|2012-10-18}}
 
 {{unsigned|user=JohnDoe|year=2012|month=10|day=18|comment=blabla}}
-</pre>
+```

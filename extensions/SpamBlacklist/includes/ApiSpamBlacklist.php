@@ -31,7 +31,12 @@
 class ApiSpamBlacklist extends ApiBase {
 	public function execute() {
 		$params = $this->extractRequestParams();
-		$matches = BaseBlacklist::getInstance( 'spam' )->filter( $params['url'], null, true );
+		$matches = BaseBlacklist::getSpamBlacklist()->filter(
+			$params['url'],
+			null,
+			$this->getUser(),
+			true
+		);
 		$res = $this->getResult();
 
 		if ( $matches !== false ) {

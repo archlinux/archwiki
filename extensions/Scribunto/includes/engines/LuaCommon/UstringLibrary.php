@@ -5,21 +5,21 @@ use UtfNormal\Validator;
 class Scribunto_LuaUstringLibrary extends Scribunto_LuaLibraryBase {
 	/**
 	 * Limit on pattern lengths, in bytes not characters
-	 * @var integer
+	 * @var int
 	 */
 	private $patternLengthLimit = 10000;
 
 	/**
 	 * Limit on string lengths, in bytes not characters
 	 * If null, $wgMaxArticleSize * 1024 will be used
-	 * @var integer|null
+	 * @var int|null
 	 */
 	private $stringLengthLimit = null;
 
 	/**
 	 * PHP until 5.6.9 are buggy when the regex in preg_replace an
 	 * preg_match_all matches the empty string.
-	 * @var boolean
+	 * @var bool
 	 */
 	private $phpBug53823 = false;
 
@@ -372,12 +372,13 @@ class Scribunto_LuaUstringLibrary extends Scribunto_LuaLibraryBase {
 	 *  - $re: The regular expression
 	 *  - $capt: Definition of capturing groups, see addCapturesFromMatch()
 	 *  - $anypos: Whether any positional captures were encountered in the pattern.
+	 * @return-taint none
 	 */
 	private function patternToRegex( $pattern, $anchor, $name ) {
 		$cacheKey = serialize( [ $pattern, $anchor ] );
 		if ( !$this->patternRegexCache->has( $cacheKey ) ) {
 			$this->checkPattern( $name, $pattern );
-			$pat = preg_split( '//us', $pattern, null, PREG_SPLIT_NO_EMPTY );
+			$pat = preg_split( '//us', $pattern, -1, PREG_SPLIT_NO_EMPTY );
 
 			static $charsets = null, $brcharsets = null;
 			if ( $charsets === null ) {
@@ -865,6 +866,7 @@ class Scribunto_LuaUstringLibrary extends Scribunto_LuaLibraryBase {
 				$args = [];
 				if ( count( $capt ) ) {
 					foreach ( $capt as $i => $pos ) {
+						// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
 						$args[] = $m["m$i"];
 					}
 				} else {

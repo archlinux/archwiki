@@ -3,6 +3,7 @@
 		"authors": [
 			"Anakmalaysia",
 			"Jeluang Terluang",
+			"Tofeiku",
 			"Zulfadli51"
 		]
 	},
@@ -55,6 +56,7 @@
 	"templatedata-invalid-value": "Nilai tidak sah untuk sifat \"$1\".",
 	"templatedata-modal-button-add-language": "Tambah bahasa",
 	"templatedata-modal-button-addparam": "Tambah parameter",
+	"templatedata-modal-button-addmap": "Tambah peta baru",
 	"templatedata-modal-button-apply": "Terapkan",
 	"templatedata-modal-button-back": "Kembali",
 	"templatedata-modal-button-cancel": "Batalkan",
@@ -75,7 +77,9 @@
 	"templatedata-modal-format-placeholder": "Rentetan format parameter templat",
 	"templatedata-modal-json-error-replace": "Ganti",
 	"templatedata-modal-notice-import-numparams": "$1 parameter baru diimport:$2",
+	"templatedata-modal-placeholder-add-new-map-input": "Menambah peta baru...",
 	"templatedata-modal-placeholder-paramkey": "Nama parameter",
+	"templatedata-modal-placeholder-prompt-map-name": "Masukkan nama peta",
 	"templatedata-modal-search-input-placeholder": "Cari mengikut nama atau kod bahasa",
 	"templatedata-modal-table-param-actions": "Tindakan",
 	"templatedata-modal-table-param-aliases": "Alias (pisahkan dengan koma)",

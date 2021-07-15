@@ -119,7 +119,7 @@
 	"wikieditor-toolbar-tool-replace-button-findnext": "Volgende söken",
 	"wikieditor-toolbar-tool-replace-button-replace": "Vervangen",
 	"wikieditor-toolbar-tool-replace-button-replaceall": "Alles vervangen",
-	"wikieditor-toolbar-tool-replace-close": "Slüten",
+	"wikieditor-toolbar-tool-replace-close": "Sluten",
 	"wikieditor-toolbar-tool-replace-nomatch": "Juw söökupdracht hevt niks upeleaverd.",
 	"wikieditor-toolbar-tool-replace-success": "Der {{PLURAL:$1|is eyn vervanging|binnen $1 vervangingen}} edån.",
 	"wikieditor-toolbar-tool-replace-emptysearch": "Jy hebben geen söökterm upegeaven.",

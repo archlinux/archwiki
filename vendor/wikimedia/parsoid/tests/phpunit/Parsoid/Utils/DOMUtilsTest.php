@@ -1,6 +1,7 @@
 <?php
 namespace spec\Parsoid\Utils;
 
+use DOMDocument;
 use DOMElement;
 use PHPUnit\Framework\TestCase;
 use Wikimedia\Parsoid\Html2Wt\DOMDiff;
@@ -15,6 +16,9 @@ use Wikimedia\Parsoid\Utils\DOMUtils;
  * @coversDefaultClass \Wikimedia\Parsoid\Utils\DOMUtils
  */
 class DOMUtilsTest extends TestCase {
+
+	/** @var DOMDocument[] */
+	private $liveDocs = [];
 
 	/**
 	 * @covers ::isDiffMarker
@@ -208,13 +212,21 @@ class DOMUtilsTest extends TestCase {
 	 */
 	private function parseAndDiff( string $html1, string $html2 ): DOMElement {
 		$mockEnv = new MockEnv( [] );
-		$body1 = ContentUtils::ppToDOM( $mockEnv, $html1 );
-		$body2 = ContentUtils::ppToDOM( $mockEnv, $html2 );
+
+		$doc1 = ContentUtils::createAndLoadDocument( $html1 );
+		$doc2 = ContentUtils::createAndLoadDocument( $html2 );
+
+		$body1 = DOMCompat::getBody( $doc1 );
+		$body2 = DOMCompat::getBody( $doc2 );
 
 		$domDiff = new DOMDiff( $mockEnv );
 		$domDiff->diff( $body1, $body2 );
 
-		return $body2;
+		// Prevent GC from reclaiming doc2 once we exit this function.
+		// Necessary hack because we use PHPDOM which wraps libxml.
+		$this->liveDocs[] = $doc2;
+
+		return DOMCompat::getBody( $doc2 );
 	}
 
 	private function selectNode( DOMElement $body, string $selector ): DOMElement {

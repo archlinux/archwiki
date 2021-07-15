@@ -16,13 +16,15 @@ ve.ui.MWSaveTool = function VeUiMWSaveTool() {
 	// tour to attach a guider to the "Save page" button.
 	this.$link.addClass( 've-ui-toolbar-saveButton' );
 
-	if ( ve.msg( 'accesskey-save' ) !== '-' && ve.msg( 'accesskey-save' ) !== '' ) {
-		// FlaggedRevs tries to use this - it's useless on VE pages because all that stuff gets hidden, but it will still conflict so get rid of it
-		ve.init.target.$saveAccessKeyElements = $( '[accesskey="' + ve.msg( 'accesskey-save' ) + '"]' ).removeAttr( 'accesskey' );
-		this.$link.attr( 'accesskey', ve.msg( 'accesskey-save' ) );
-	}
+	if ( this.toolbar instanceof ve.ui.TargetToolbar ) {
+		if ( ve.msg( 'accesskey-save' ) !== '-' && ve.msg( 'accesskey-save' ) !== '' ) {
+			// FlaggedRevs tries to use this - it's useless on VE pages because all that stuff gets hidden, but it will still conflict so get rid of it
+			this.toolbar.target.$saveAccessKeyElements = $( '[accesskey="' + ve.msg( 'accesskey-save' ) + '"]' ).removeAttr( 'accesskey' );
+			this.$link.attr( 'accesskey', ve.msg( 'accesskey-save' ) );
+		}
 
-	this.setTitle( ve.init.target.getSaveButtonLabel( true ) );
+		this.setTitle( this.toolbar.target.getSaveButtonLabel( true ) );
+	}
 };
 
 /* Inheritance */
@@ -46,7 +48,8 @@ ve.ui.MWSaveTool.static.autoAddToGroup = false;
  */
 ve.ui.MWSaveTool.prototype.onUpdateState = function () {
 	var wasSaveable = !this.isDisabled(),
-		isSaveable = ve.init.target && ve.init.target.isSaveable();
+		isSaveable = this.toolbar instanceof ve.ui.TargetToolbar &&
+			this.toolbar.target.isSaveable();
 
 	// This could be a ve.ui.WindowTool that becomes active
 	// when the save dialog is open, but onUpdateState is

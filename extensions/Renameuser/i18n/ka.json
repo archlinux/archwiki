@@ -22,7 +22,6 @@
 	"renameuserwarnings": "გაფრთხილებები:",
 	"renameuserconfirm": "დიახ, მსურს სახელის გადარქმევა",
 	"renameusersubmit": "გაგზავნა",
-	"renameuser-submit-blocklog": "მომხმარებლის დაბლოკვის ჟურნალის ჩვენება",
 	"renameusererrordoesnotexist": "მომხმარებელი „<nowiki>$1</nowiki>“ არ არსებობს",
 	"renameusererrorexists": "მომხმარებელი \"<nowiki>$1</nowiki>\" უკვე არსებობს",
 	"renameusererrorinvalid": "მომხმარებლის სახელი „<nowiki>$1</nowiki>“ არასწორია",

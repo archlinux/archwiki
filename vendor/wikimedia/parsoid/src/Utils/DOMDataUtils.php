@@ -12,7 +12,6 @@ use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Core\DataParsoid;
 use Wikimedia\Parsoid\Core\DomSourceRange;
-use Wikimedia\Parsoid\Core\PageBundle;
 use Wikimedia\Parsoid\Tokens\SourceRange;
 
 /**
@@ -26,11 +25,34 @@ class DOMDataUtils {
 	 * @param DOMDocument $doc
 	 * @return DataBag
 	 */
-	public static function getBag( DOMDocument $doc ): DataBag {
+	private static function getBag( DOMDocument $doc ): DataBag {
 		// This is a dynamic property; it is not declared.
 		// All references go through here so we can suppress phan's complaint.
 		// @phan-suppress-next-line PhanUndeclaredProperty
 		return $doc->bag;
+	}
+
+	/**
+	 * @param DOMDocument $doc
+	 */
+	public static function prepareDoc( DOMDocument $doc ) {
+		// `bag` is a deliberate dynamic property; see DOMDataUtils::getBag()
+		// @phan-suppress-next-line PhanUndeclaredProperty dynamic property
+		$doc->bag = new DataBag();
+
+		// Cache the head and body.
+		DOMCompat::getHead( $doc );
+		DOMCompat::getBody( $doc );
+	}
+
+	/**
+	 * Stash $obj in $doc and return an id for later retrieval
+	 * @param DOMDocument $doc
+	 * @param stdClass $obj
+	 * @return int
+	 */
+	public static function stashObjectInDoc( DOMDocument $doc, stdClass $obj ): int {
+		return self::getBag( $doc )->stashObject( $obj );
 	}
 
 	/**
@@ -86,7 +108,7 @@ class DOMDataUtils {
 	 * @param stdClass $data data
 	 */
 	public static function setNodeData( DOMElement $node, stdClass $data ): void {
-		$docId = self::getBag( $node->ownerDocument )->stashObject( $data );
+		$docId = self::stashObjectInDoc( $node->ownerDocument, $data );
 		$node->setAttribute( self::DATA_OBJECT_ATTR_NAME, (string)$docId );
 	}
 
@@ -368,33 +390,6 @@ class DOMDataUtils {
 	}
 
 	/**
-	 * Applies the `data-*` attributes JSON structure to the document.
-	 * Leaves `id` attributes behind -- they are used by citation
-	 * code to extract `<ref>` body from the DOM.
-	 *
-	 * @param DOMDocument $doc doc
-	 * @param PageBundle $pb page bundle
-	 */
-	public static function applyPageBundle( DOMDocument $doc, PageBundle $pb ): void {
-		DOMUtils::visitDOM( DOMCompat::getBody( $doc ), function ( DOMNode $node ) use ( &$pb ): void {
-			if ( $node instanceof DOMElement ) {
-				$id = $node->getAttribute( 'id' ) ?? '';
-				if ( isset( $pb->parsoid['ids'][$id] ) ) {
-					self::setJSONAttribute( $node, 'data-parsoid', $pb->parsoid['ids'][$id] );
-				}
-				if ( isset( $pb->mw['ids'][$id] ) ) {
-					// Only apply if it isn't already set.  This means earlier
-					// applications of the pagebundle have higher precedence,
-					// inline data being the highest.
-					if ( !$node->hasAttribute( 'data-mw' ) ) {
-						self::setJSONAttribute( $node, 'data-mw', $pb->mw['ids'][$id] );
-					}
-				}
-			}
-		} );
-	}
-
-	/**
 	 * Walk DOM from node downward calling loadDataAttribs
 	 *
 	 * @param DOMNode $node node
@@ -411,10 +406,10 @@ class DOMDataUtils {
 	 *
 	 * @param stdClass $dp
 	 * @param array $options
-	 * @param DOMElement|null $node
+	 * @param ?DOMElement $node
 	 */
 	public static function massageLoadedDataParsoid(
-		stdClass $dp, array $options = [], DOMElement $node = null
+		stdClass $dp, array $options = [], ?DOMElement $node = null
 	): void {
 		if ( isset( $dp->sa ) ) {
 			$dp->sa = (array)$dp->sa;
@@ -427,16 +422,13 @@ class DOMDataUtils {
 		}
 		if ( isset( $dp->tsr ) ) {
 			// tsr is generally for tokens, not DOM trees.
-			/* @phan-suppress-next-line PhanTypeMismatchArgument */
 			$dp->tsr = SourceRange::fromArray( $dp->tsr );
 		}
 		if ( isset( $dp->extTagOffsets ) ) {
-			/* @phan-suppress-next-line PhanTypeMismatchArgument */
 			$dp->extTagOffsets = DomSourceRange::fromArray( $dp->extTagOffsets );
 		}
 		if ( isset( $dp->extLinkContentOffsets ) ) {
 			$dp->extLinkContentOffsets =
-				/* @phan-suppress-next-line PhanTypeMismatchArgument */
 				SourceRange::fromArray( $dp->extLinkContentOffsets );
 		}
 		if ( !empty( $options['markNew'] ) ) {
@@ -520,7 +512,7 @@ class DOMDataUtils {
 	 * PORT_FIXME This function needs an accurate description
 	 *
 	 * @param DOMNode $node node
-	 * @param ?array|null $options options
+	 * @param ?array $options options
 	 */
 	public static function storeDataAttribs( DOMNode $node, ?array $options = null ): void {
 		$options = $options ?? [];

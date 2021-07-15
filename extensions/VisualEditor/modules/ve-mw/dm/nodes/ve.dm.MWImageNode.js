@@ -72,10 +72,11 @@ ve.dm.MWImageNode.static.rdfaToTypes = ( function () {
  * @static
  * @param {string} mediaClass Media class, one of 'Image', 'Video' or 'Audio'
  * @param {string} frameType Frame type, one of 'none', 'frameless', 'thumb' or 'frame'
+ * @param {boolean} isError Whether the included media file is missing
  * @return {string} RDFa type
  */
-ve.dm.MWImageNode.static.getRdfa = function ( mediaClass, frameType ) {
-	return 'mw:' + mediaClass + {
+ve.dm.MWImageNode.static.getRdfa = function ( mediaClass, frameType, isError ) {
+	return ( isError ? 'mw:Error ' : '' ) + 'mw:' + mediaClass + {
 		none: '',
 		frameless: '/Frameless',
 		// Block image only:
@@ -429,5 +430,9 @@ ve.dm.MWImageNode.prototype.getMediaType = function () {
  * @return {string} RDFa type
  */
 ve.dm.MWImageNode.prototype.getRdfa = function () {
-	return this.constructor.static.getRdfa( this.getAttribute( 'mediaClass' ), this.getAttribute( 'type' ) );
+	return this.constructor.static.getRdfa(
+		this.getAttribute( 'mediaClass' ),
+		this.getAttribute( 'type' ),
+		this.getAttribute( 'isError' )
+	);
 };

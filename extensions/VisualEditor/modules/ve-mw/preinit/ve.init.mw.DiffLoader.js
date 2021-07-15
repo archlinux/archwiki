@@ -73,6 +73,11 @@
 					return parseDocumentModulePromise.then( function () {
 						return mw.libs.ve.diffLoader.getModelFromResponse( response, section );
 					} );
+				}, function () {
+					// Clear promise. Do not cache errors.
+					delete revCache[ cacheKey ];
+					// Let caller handle the error code
+					return $.Deferred().rejectWith( this, arguments );
 				} );
 
 			return revCache[ cacheKey ];

@@ -12,16 +12,20 @@
 			"MarcoAurelio",
 			"Miguel2706",
 			"Platonides",
+			"Rodney Araujo",
 			"Vivaelcelta"
 		]
 	},
 	"skinname-vector": "Vector",
 	"vector-skin-desc": "Versión moderna de MonoBook, con un aspecto actualizado y muchas mejoras de usabilidad",
 	"prefs-vector-enable-vector-1-label": "Utilizar versión heredada de Vector",
+	"prefs-vector-enable-vector-1-help": "Durante los próximos años, actualizaremos gradualmente la piel Vector. La versión heredada de Vector te permitirá ver la versión anterior de Vector (a diciembre de 2019). Para obtener más información sobre las actualizaciones, ve a nuestra [[mw:Reading/Web/Desktop_Improvements|página del proyecto]].",
 	"vector-opt-out": "Cambiar a la apariencia anterior",
 	"vector-opt-out-tooltip": "Cambie su configuración para volver al aspecto anterior de la máscara (Vector heredado)",
 	"vector.css": "/* El CSS colocado en esta página afectará a los usuarios que usen la apariencia \"Vector\" */",
 	"vector.js": "/* Cualquier código JavaScript escrito aquí se cargará para todos los usuarios que usen la apariencia Vector */",
+	"vector-action-toggle-sidebar": "Mostrar u ocultar la barra lateral",
+	"vector-language-button-label": "{{PLURAL:$1|$1 idioma|$1 idiomas}}",
 	"vector-action-addsection": "Sección nueva",
 	"vector-action-delete": "Borrar",
 	"vector-action-move": "Trasladar",
@@ -35,5 +39,7 @@
 	"vector-view-viewsource": "Ver código",
 	"vector-jumptonavigation": "Ir a la navegación",
 	"vector-jumptosearch": "Ir a la búsqueda",
-	"vector-more-actions": "Más"
+	"vector-jumptocontent": "Ir al contenido",
+	"vector-more-actions": "Más",
+	"vector-search-loader": "Cargando sugerencias de búsqueda"
 }

@@ -6,7 +6,7 @@
  */
 
 ( function () {
-	var name;
+	var n;
 
 	function fixTarget( target ) {
 		var i, iLen, toolGroup, label, group,
@@ -47,8 +47,8 @@
 		}
 	}
 
-	for ( name in ve.init.mw.targetFactory.registry ) {
-		fixTarget( ve.init.mw.targetFactory.lookup( name ) );
+	for ( n in ve.init.mw.targetFactory.registry ) {
+		fixTarget( ve.init.mw.targetFactory.lookup( n ) );
 	}
 
 	ve.init.mw.targetFactory.on( 'register', function ( name, target ) {

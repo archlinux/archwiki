@@ -15,6 +15,7 @@
 	"vector-opt-out": "Naar oude vormgeving omschakelen",
 	"vector.css": "/* CSS die hier wordt geplaatst heeft alleen invloed op het uiterlijk Vector */",
 	"vector.js": "/* JavaScript die hier wordt geplaatst heeft alleen invloed op gebruikers die het uiterlijk Vector gebruiken */",
+	"vector-language-button-label": "{{PLURAL:$1|$1 taal|$1 talen}}",
 	"vector-action-addsection": "Kopje toevoegen",
 	"vector-action-delete": "Verwijderen",
 	"vector-action-move": "Hernoemen",
@@ -28,5 +29,6 @@
 	"vector-view-viewsource": "Brontekst bekijken",
 	"vector-jumptonavigation": "Naar navigatie springen",
 	"vector-jumptosearch": "Naar zoeken springen",
+	"vector-jumptocontent": "Naar inhoud springen",
 	"vector-more-actions": "Meer"
 }

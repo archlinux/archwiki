@@ -1,13 +1,21 @@
 <?php
 
+namespace MediaWiki\Extension\PdfHandler;
+
+use Job;
+use JobQueueGroup;
+use Linker;
 use MediaWiki\MediaWikiServices;
+use Title;
+use UploadBase;
+use User;
 
 class CreatePdfThumbnailsJob extends Job {
 	/**
 	 * Flags for thumbnail jobs
 	 */
-	const BIG_THUMB = 1;
-	const SMALL_THUMB = 2;
+	private const BIG_THUMB = 1;
+	private const SMALL_THUMB = 2;
 
 	/**
 	 * Construct a thumbnail job
@@ -31,13 +39,17 @@ class CreatePdfThumbnailsJob extends Job {
 		if ( !isset( $this->params['page'] ) ) {
 			wfDebugLog( 'thumbnails', 'A page for thumbnails job of ' . $this->title->getText() .
 				' was not specified! That should never happen!' );
-			return true; // no page set? that should never happen
+			// no page set? that should never happen
+			return true;
 		}
 
+		// we just want a local file
 		$file = MediaWikiServices::getInstance()->getRepoGroup()->getLocalRepo()
-			->newFile( $this->title ); // we just want a local file
+			->newFile( $this->title );
+
 		if ( !$file ) {
-			return true; // Just silently fail, perhaps the file was already deleted, don't bother
+			// Just silently fail, perhaps the file was already deleted, don't bother
+			return true;
 		}
 
 		switch ( $this->params['jobtype'] ) {
@@ -45,7 +57,13 @@ class CreatePdfThumbnailsJob extends Job {
 				global $wgImageLimits;
 				// Ignore user preferences, do default thumbnails
 				// everything here shamelessy copied and reused from includes/ImagePage.php
-				$sizeSel = User::getDefaultOption( 'imagesize' );
+				if ( method_exists( '\MediaWiki\User\UserOptionsLookup', 'getDefaultOption' ) ) {
+					// MW 1.35+
+					$userOptionsLookup = MediaWikiServices::getInstance()->getUserOptionsLookup();
+					$sizeSel = $userOptionsLookup->getDefaultOption( 'imagesize' );
+				} else {
+					$sizeSel = User::getDefaultOption( 'imagesize' );
+				}
 
 				// The user offset might still be incorrect, specially if
 				// $wgImageLimits got changed (see bug #8858).
@@ -100,16 +118,18 @@ class CreatePdfThumbnailsJob extends Job {
 		if ( !$wgPdfCreateThumbnailsInJobQueue ) {
 			return true;
 		}
-		$magic = MediaWiki\MediaWikiServices::getInstance()->getMimeAnalyzer();
+		$magic = MediaWikiServices::getInstance()->getMimeAnalyzer();
 		if ( !$magic->isMatchingExtension( 'pdf', $mime ) ) {
-			return true; // not a PDF, abort
+			// not a PDF, abort
+			return true;
 		}
 
 		$title = $upload->getTitle();
 		$uploadFile = $upload->getLocalFile();
 		if ( $uploadFile === null ) {
 			wfDebugLog( 'thumbnails', '$uploadFile seems to be null, should never happen...' );
-			return true; // should never happen, but it's better to be secure
+			// should never happen, but it's better to be secure
+			return true;
 		}
 
 		$metadata = $uploadFile->getMetadata();

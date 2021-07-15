@@ -3,11 +3,12 @@
 		"authors": [
 			"Benojan",
 			"Poiuyt",
+			"Subarupan",
 			"飞舞回堂前"
 		]
 	},
 	"vector.css": "/* 放勒伊𡍲个CSS会影响用Vector皮肤个用户 */",
-	"vector-action-addsection": "加話題",
+	"vector-action-addsection": "加话题",
 	"vector-action-delete": "删除",
 	"vector-action-move": "移动",
 	"vector-action-protect": "保护",

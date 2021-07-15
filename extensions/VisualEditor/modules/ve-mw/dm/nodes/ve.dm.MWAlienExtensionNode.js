@@ -27,6 +27,9 @@ ve.dm.MWAlienExtensionNode.static.getMatchRdfaTypes = function () {
 	];
 };
 
+// Similar to transclusions, extension encapsulation nodes can be of various types
+ve.dm.MWAlienExtensionNode.static.allowedRdfaTypes = null;
+
 ve.dm.MWAlienExtensionNode.static.toDataElement = function ( domElements, converter ) {
 	// 'Parent' method
 	var element = ve.dm.MWExtensionNode.static.toDataElement.call( this, domElements, converter ),

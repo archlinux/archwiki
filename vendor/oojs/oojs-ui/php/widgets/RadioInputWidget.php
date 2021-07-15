@@ -6,6 +6,7 @@ namespace OOUI;
  * Radio input widget.
  */
 class RadioInputWidget extends InputWidget {
+	use RequiredElement;
 
 	/* Static Properties */
 
@@ -19,6 +20,11 @@ class RadioInputWidget extends InputWidget {
 	public function __construct( array $config = [] ) {
 		// Parent constructor
 		parent::__construct( $config );
+
+		// Traits
+		$this->initializeRequiredElement(
+			array_merge( [ 'indicatorElement' => null ], $config )
+		);
 
 		// Initialization
 		$this->addClasses( [ 'oo-ui-radioInputWidget' ] );

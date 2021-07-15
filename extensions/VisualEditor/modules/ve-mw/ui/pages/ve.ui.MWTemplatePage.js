@@ -50,8 +50,7 @@ ve.ui.MWTemplatePage = function VeUiMWTemplatePage( template, name, config ) {
 	this.addButton = new OO.ui.ButtonWidget( {
 		framed: false,
 		icon: 'parameter',
-		label: ve.msg( 'visualeditor-dialog-transclusion-add-param' ),
-		tabIndex: -1
+		label: ve.msg( 'visualeditor-dialog-transclusion-add-param' )
 	} )
 		.connect( this, { click: 'onAddButtonFocus' } );
 
@@ -92,6 +91,10 @@ ve.ui.MWTemplatePage = function VeUiMWTemplatePage( template, name, config ) {
 			ve.targetLinksToNewWindow( this.$description[ 0 ] );
 		}
 	}
+	this.$description.find( 'a[href]' )
+		.on( 'click', function () {
+			ve.track( 'activity.transclusion', { action: 'template-doc-link-click' } );
+		} );
 
 	this.infoFieldset.$element.append( this.$description );
 	this.$more

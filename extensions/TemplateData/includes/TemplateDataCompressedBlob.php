@@ -23,12 +23,9 @@ class TemplateDataCompressedBlob extends TemplateDataBlob {
 	protected $jsonDB = null;
 
 	/**
-	 * Parse the data, normalise it and validate it.
-	 *
-	 * See Specification.md for the expected format of the JSON object.
-	 * @return Status
+	 * @inheritDoc
 	 */
-	protected function parse() {
+	protected function parse() : Status {
 		$status = parent::parse();
 		if ( $status->isOK() ) {
 			$length = strlen( $this->getJSONForDatabase() );
@@ -42,7 +39,7 @@ class TemplateDataCompressedBlob extends TemplateDataBlob {
 	/**
 	 * @return string JSON (gzip compressed)
 	 */
-	public function getJSONForDatabase() {
+	public function getJSONForDatabase() : string {
 		if ( $this->jsonDB === null ) {
 			// Cache for repeat calls
 			$this->jsonDB = gzencode( $this->getJSON() );
@@ -55,8 +52,8 @@ class TemplateDataCompressedBlob extends TemplateDataBlob {
 	 *
 	 * @param stdClass|null $data Template data
 	 */
-	protected function __construct( $data = null ) {
-		$this->data = $data;
+	protected function __construct( $data ) {
+		parent::__construct( $data );
 		$this->jsonDB = null;
 	}
 }

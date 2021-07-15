@@ -32,13 +32,12 @@ use Title;
 use Xml;
 
 class ImageMap {
-	public static $id = 0;
 
-	const TOP_RIGHT = 0;
-	const BOTTOM_RIGHT = 1;
-	const BOTTOM_LEFT = 2;
-	const TOP_LEFT = 3;
-	const NONE = 4;
+	private const TOP_RIGHT = 0;
+	private const BOTTOM_RIGHT = 1;
+	private const BOTTOM_LEFT = 2;
+	private const TOP_LEFT = 3;
+	private const NONE = 4;
 
 	/**
 	 * @param Parser $parser
@@ -53,7 +52,7 @@ class ImageMap {
 	 * @param Parser $parser
 	 * @return string HTML (Image map, or error message)
 	 */
-	public static function render( $input, $params, $parser ) {
+	public static function render( $input, $params, Parser $parser ) {
 		global $wgUrlProtocols, $wgNoFollowLinks;
 		$config = ConfigFactory::getDefaultInstance()->makeConfig( 'main' );
 
@@ -66,7 +65,6 @@ class ImageMap {
 		$thumbWidth = 0;
 		$thumbHeight = 0;
 		$imageTitle = null;
-		$lineNum = 0;
 		$mapHTML = '';
 		$links = [];
 
@@ -79,12 +77,12 @@ class ImageMap {
 		$services = MediaWikiServices::getInstance();
 		$repoGroup = $services->getRepoGroup();
 		$badFileLookup = $services->getBadFileLookup();
-		foreach ( $lines as $line ) {
-			++$lineNum;
+		foreach ( $lines as $lineNum => $line ) {
+			$lineNum++;
 			$externLink = false;
 
 			$line = trim( $line );
-			if ( $line == '' || $line[0] == '#' ) {
+			if ( $line === '' || $line[0] === '#' ) {
 				continue;
 			}
 
@@ -94,12 +92,8 @@ class ImageMap {
 				// The first line should have an image specification on it
 				// Extract it and render the HTML
 				$bits = explode( '|', $line, 2 );
-				if ( count( $bits ) == 1 ) {
-					$image = $bits[0];
-					$options = '';
-				} else {
-					list( $image, $options ) = $bits;
-				}
+				$image = $bits[0];
+				$options = $bits[1] ?? '';
 				$imageTitle = Title::newFromText( $image );
 				if ( !$imageTitle || !$imageTitle->inNamespace( NS_FILE ) ) {
 					return self::error( 'imagemap_no_image' );
@@ -108,7 +102,7 @@ class ImageMap {
 					return self::error( 'imagemap_bad_image' );
 				}
 				// Parse the options so we can use links and the like in the caption
-				$parsedOptions = $parser->recursiveTagParse( $options );
+				$parsedOptions = $options === '' ? '' : $parser->recursiveTagParse( $options );
 				$imageHTML = $parser->makeImage( $imageTitle, $parsedOptions );
 				$parser->replaceLinkHolders( $imageHTML );
 				$imageHTML = $parser->getStripState()->unstripBoth( $imageHTML );
@@ -148,9 +142,9 @@ class ImageMap {
 
 			// Handle desc spec
 			$cmd = strtok( $line, " \t" );
-			if ( $cmd == 'desc' ) {
+			if ( $cmd === 'desc' ) {
 				$typesText = wfMessage( 'imagemap_desc_types' )->inContentLanguage()->text();
-				if ( $descTypesCanonical != $typesText ) {
+				if ( $descTypesCanonical !== $typesText ) {
 					// i18n desc types exists
 					$typesText = $descTypesCanonical . ', ' . $typesText;
 				}
@@ -159,7 +153,7 @@ class ImageMap {
 				$descType = array_search( $type, $types );
 				if ( $descType > 4 ) {
 					// A localized descType is used. Subtract 5 to reach the canonical desc type.
-					$descType = $descType - 5;
+					$descType -= 5;
 				}
 				// <0? In theory never, but paranoia...
 				if ( $descType === false || $descType < 0 ) {
@@ -246,26 +240,26 @@ class ImageMap {
 				if ( $wgNoFollowLinks ) {
 					$attribs['rel'] = 'nofollow';
 				}
-			} elseif ( $title->getFragment() != '' && $title->getPrefixedDBkey() == '' ) {
+			} elseif ( $title->getFragment() !== '' && $title->getPrefixedDBkey() === '' ) {
 				// XXX: kluge to handle [[#Fragment]] links, should really fix getLocalURL()
 				// in Title.php to return an empty string in this case
 				$attribs['href'] = $title->getFragmentForURL();
 			} else {
 				$attribs['href'] = $title->getLocalURL() . $title->getFragmentForURL();
 			}
-			if ( $shape != 'default' ) {
+			if ( $shape !== 'default' ) {
 				$attribs['shape'] = $shape;
 			}
 			if ( $coords ) {
 				$attribs['coords'] = implode( ',', $coords );
 			}
-			if ( $alt != '' ) {
-				if ( $shape != 'default' ) {
+			if ( $alt !== '' ) {
+				if ( $shape !== 'default' ) {
 					$attribs['alt'] = $alt;
 				}
 				$attribs['title'] = $alt;
 			}
-			if ( $shape == 'default' ) {
+			if ( $shape === 'default' ) {
 				$defaultLinkAttribs = $attribs;
 			} else {
 				// @phan-suppress-next-line SecurityCheck-DoubleEscaped
@@ -282,7 +276,7 @@ class ImageMap {
 			return self::error( 'imagemap_no_image' );
 		}
 
-		if ( $mapHTML == '' ) {
+		if ( $mapHTML === '' ) {
 			// no areas defined, default only. It's not a real imagemap, so we do not need some tags
 			$realmap = false;
 		}
@@ -317,7 +311,7 @@ class ImageMap {
 
 		// Add the map HTML to the div
 		// We used to add it before the div, but that made tidy unhappy
-		if ( $mapHTML != '' ) {
+		if ( $mapHTML !== '' ) {
 			$mapDoc = new DOMDocument();
 			$mapDoc->loadXML( $mapHTML );
 			$mapNode = $domDoc->importNode( $mapDoc->documentElement, true );
@@ -330,14 +324,14 @@ class ImageMap {
 		// Determine whether a "magnify" link is present
 		$xpath = new DOMXPath( $domDoc );
 		$magnify = $xpath->query( '//div[@class="magnify"]' );
-		if ( !$magnify->length && $descType != self::NONE ) {
+		if ( !$magnify->length && $descType !== self::NONE ) {
 			// Add image description link
-			if ( $descType == self::TOP_LEFT || $descType == self::BOTTOM_LEFT ) {
+			if ( $descType === self::TOP_LEFT || $descType === self::BOTTOM_LEFT ) {
 				$marginLeft = 0;
 			} else {
 				$marginLeft = $thumbWidth - 20;
 			}
-			if ( $descType == self::TOP_LEFT || $descType == self::TOP_RIGHT ) {
+			if ( $descType === self::TOP_LEFT || $descType === self::TOP_RIGHT ) {
 				$marginTop = -$thumbHeight;
 				// 1px hack for IE, to stop it poking out the top
 				$marginTop += 1;
@@ -378,9 +372,9 @@ class ImageMap {
 
 		// Register links
 		foreach ( $links as $title ) {
-			if ( $title->isExternal() || $title->getNamespace() == NS_SPECIAL ) {
+			if ( $title->isExternal() || $title->getNamespace() === NS_SPECIAL ) {
 				// Don't register special or interwiki links...
-			} elseif ( $title->getNamespace() == NS_MEDIA ) {
+			} elseif ( $title->getNamespace() === NS_MEDIA ) {
 				// Regular Media: links are recorded as image usages
 				$parser->getOutput()->addImage( $title->getDBkey() );
 			} else {

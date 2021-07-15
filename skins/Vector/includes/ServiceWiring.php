@@ -27,6 +27,7 @@ use Vector\Constants;
 use Vector\FeatureManagement\FeatureManager;
 use Vector\FeatureManagement\Requirements\DynamicConfigRequirement;
 use Vector\FeatureManagement\Requirements\LatestSkinVersionRequirement;
+use Vector\FeatureManagement\Requirements\WvuiSearchTreatmentRequirement;
 use Vector\SkinVersionLookup;
 
 return [
@@ -63,6 +64,43 @@ return [
 			[
 				Constants::REQUIREMENT_FULLY_INITIALISED,
 				Constants::REQUIREMENT_LATEST_SKIN_VERSION,
+			]
+		);
+
+		// Feature: Languages in sidebar
+		// ================================
+		$featureManager->registerRequirement(
+			new DynamicConfigRequirement(
+				$services->getMainConfig(),
+				Constants::CONFIG_KEY_LANGUAGE_IN_HEADER,
+				Constants::REQUIREMENT_LANGUAGE_IN_HEADER
+			)
+		);
+
+		$featureManager->registerFeature(
+			Constants::FEATURE_LANGUAGE_IN_HEADER,
+			[
+				Constants::REQUIREMENT_FULLY_INITIALISED,
+				Constants::REQUIREMENT_LATEST_SKIN_VERSION,
+				Constants::REQUIREMENT_LANGUAGE_IN_HEADER,
+			]
+		);
+
+		// Feature: Use Wvui Search
+		// ================================
+		$featureManager->registerRequirement(
+			new WvuiSearchTreatmentRequirement(
+				$services->getMainConfig(),
+				$context->getUser()
+			)
+		);
+
+		$featureManager->registerFeature(
+			Constants::FEATURE_USE_WVUI_SEARCH,
+			[
+				Constants::REQUIREMENT_FULLY_INITIALISED,
+				Constants::REQUIREMENT_LATEST_SKIN_VERSION,
+				Constants::REQUIREMENT_USE_WVUI_SEARCH
 			]
 		);
 

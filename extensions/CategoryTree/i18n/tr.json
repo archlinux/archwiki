@@ -7,6 +7,7 @@
 			"Karduelis",
 			"Khutuck",
 			"Mach",
+			"MuratTheTurkish",
 			"Runningfridgesrule",
 			"Stultiwikia",
 			"Superyetkin",
@@ -39,6 +40,6 @@
 	"categorytree-no-parent-categories": "üst kategori yok",
 	"categorytree-no-pages": "alt kategori veya madde yok",
 	"categorytree-not-found": "<i>\"$1\"</i> isimli kategori bulunamadı",
-	"categorytree-error": "Bilgi yüklenmesi ile bir problem var.",
+	"categorytree-error": "Veri yükleme sorunu.",
 	"categorytree-retry": "Lütfen kısa süre için bekleyin, sonra bir kere daha deneyin."
 }

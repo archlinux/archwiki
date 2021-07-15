@@ -118,8 +118,8 @@
 		teardownOverrides();
 
 		return {
-			setup: setupOverrides,
-			teardown: teardownOverrides
+			beforeEach: setupOverrides,
+			afterEach: teardownOverrides
 		};
 	}() );
 

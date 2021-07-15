@@ -45,6 +45,8 @@
 ve.ui.MWDefinedTransclusionContextItem = function VeUiMWDefinedTransclusionContextItem() {
 	// Parent constructor
 	ve.ui.MWDefinedTransclusionContextItem.super.apply( this, arguments );
+
+	this.tool = this.constructor.static.getMatchedTool( this.model );
 };
 
 /* Inheritance */
@@ -118,6 +120,29 @@ ve.ui.MWDefinedTransclusionContextItem.static.getMatchedTool = function ( model 
 	if ( resource ) {
 		title = mw.Title.newFromText( mw.libs.ve.normalizeParsoidResourceName( resource ) ).getPrefixedText();
 		return this.getToolsByTitle()[ title ] || null;
+	}
+	return null;
+};
+
+/**
+ * Get a template param using its canonical name
+ *
+ * @param {string} name Canonical parameter name
+ * @return {string|null} Param wikitext, null if not found
+ */
+ve.ui.MWDefinedTransclusionContextItem.prototype.getCanonicalParam = function ( name ) {
+	var aliases, i, value,
+		params = this.tool.params || {};
+
+	if ( Object.prototype.hasOwnProperty.call( params, name ) ) {
+		aliases = Array.isArray( params[ name ] ) ? params[ name ] : [ params[ name ] ];
+		// Find the first non-empty value from the alias list
+		for ( i = 0; i < aliases.length; i++ ) {
+			value = ve.getProp( this.model.getAttribute( 'mw' ), 'parts', 0, 'template', 'params', aliases[ i ], 'wt' );
+			if ( value ) {
+				return value;
+			}
+		}
 	}
 	return null;
 };

@@ -1,5 +1,9 @@
 <?php
 
+use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Storage\EditResult;
+use MediaWiki\User\UserIdentity;
+
 /**
  * Hooks for the spam blacklist extension
  */
@@ -38,7 +42,7 @@ class SpamBlacklistHooks {
 		}
 
 		$spamObj = BaseBlacklist::getSpamBlacklist();
-		$matches = $spamObj->filter( $links, $title );
+		$matches = $spamObj->filter( $links, $title, $user );
 
 		if ( $matches !== false ) {
 			$error = new ApiMessage(
@@ -58,11 +62,13 @@ class SpamBlacklistHooks {
 	public static function onParserOutputStashForEdit(
 		WikiPage $page,
 		Content $content,
-		ParserOutput $output
+		ParserOutput $output,
+		$summary,
+		User $user
 	) {
 		$links = array_keys( $output->getExternalLinks() );
 		$spamObj = BaseBlacklist::getSpamBlacklist();
-		$spamObj->warmCachesForFilter( $page->getTitle(), $links );
+		$spamObj->warmCachesForFilter( $page->getTitle(), $links, $user );
 	}
 
 	/**
@@ -139,35 +145,25 @@ class SpamBlacklistHooks {
 	}
 
 	/**
-	 * Hook function for PageContentSaveComplete
+	 * Hook function for PageSaveComplete
 	 * Clear local spam blacklist caches on page save.
 	 *
 	 * @param WikiPage $wikiPage
-	 * @param User $user
-	 * @param Content $content
+	 * @param UserIdentity $userIdentity
 	 * @param string $summary
-	 * @param bool $isMinor
-	 * @param bool $isWatch
-	 * @param string $section
 	 * @param int $flags
-	 * @param Revision|null $revision
-	 * @param Status $status
-	 * @param int $baseRevId
+	 * @param RevisionRecord $revisionRecord
+	 * @param EditResult $editResult
 	 *
 	 * @return bool
 	 */
 	public static function pageSaveContent(
 		WikiPage $wikiPage,
-		User $user,
-		Content $content,
-		$summary,
-		$isMinor,
-		$isWatch,
-		$section,
-		$flags,
-		$revision,
-		Status $status,
-		$baseRevId
+		UserIdentity $userIdentity,
+		string $summary,
+		int $flags,
+		RevisionRecord $revisionRecord,
+		EditResult $editResult
 	) {
 		if ( !BaseBlacklist::isLocalSource( $wikiPage->getTitle() ) ) {
 			return true;
@@ -217,7 +213,7 @@ class SpamBlacklistHooks {
 		}
 
 		$spamObj = BaseBlacklist::getSpamBlacklist();
-		$matches = $spamObj->filter( $links, $title );
+		$matches = $spamObj->filter( $links, $title, $user );
 
 		if ( $matches !== false ) {
 			$error = new ApiMessage(

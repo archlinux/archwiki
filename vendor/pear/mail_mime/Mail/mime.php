@@ -1382,8 +1382,11 @@ class Mail_mime
         case $attachments:
             $headers['Content-Type'] = 'multipart/mixed';
             break;
+        }
 
-        default:
+        // Note: This is outside of the above switch construct to workaround
+        // opcache bug: https://bugzilla.opensuse.org/show_bug.cgi?id=1166235
+        if (empty($headers)) {
             return $headers;
         }
 

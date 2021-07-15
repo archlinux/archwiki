@@ -8,7 +8,7 @@
 /**
  * MediaWiki template specification.
  *
- * See https://raw.github.com/wikimedia/mediawiki-extensions-TemplateData/master/spec.templatedata.json
+ * See https://github.com/wikimedia/mediawiki-extensions-TemplateData/blob/master/Specification.md
  * for the latest version of the TemplateData specification.
  *
  * @class

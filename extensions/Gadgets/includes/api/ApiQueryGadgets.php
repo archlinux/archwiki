@@ -162,6 +162,9 @@ class ApiQueryGadgets extends ApiQueryBase {
 		];
 	}
 
+	/**
+	 * @param array[] &$metadata
+	 */
 	private function setIndexedTagNameForMetadata( &$metadata ) {
 		static $tagNames = [
 			'rights' => 'right',

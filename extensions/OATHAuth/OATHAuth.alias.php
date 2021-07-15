@@ -29,6 +29,8 @@ $specialPageAliases['arz'] = [
 /** Czech (čeština) */
 $specialPageAliases['cs'] = [
 	'OATHManage' => [ 'Spravovat_dvoufaktorové_ověření', 'Dvoufaktorové_ověření' ],
+	'DisableOATHForUser' => [ 'Deaktivovat_uživateli_dvoufaktorové_ověření' ],
+	'VerifyOATHForUser' => [ 'Ověřit_dvoufaktorové_ověření' ],
 ];
 
 /** Spanish (Español) */

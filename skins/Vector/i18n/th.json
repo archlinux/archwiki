@@ -1,17 +1,25 @@
 {
 	"@metadata": {
 		"authors": [
+			"Aefgh39622",
 			"Ans",
 			"Geonuch",
 			"Horus",
 			"Octahedron80",
+			"Patsagorn Y.",
 			"Woraponboonkerd"
 		]
 	},
 	"skinname-vector": "เวกเตอร์",
 	"vector-skin-desc": "โมโนบุ๊กยุคใหม่กับมุมมองที่มีชีวิตชีวาและมีการปรับปรุงประสิทธิภาพการใช้งานจำนวนมาก",
+	"prefs-vector-enable-vector-1-label": "ใช้สกินเวกเตอร์แบบเก่า",
+	"prefs-vector-enable-vector-1-help": "ในอีกไม่กี่ปีข้างหน้า เราจะปรับปรุงสกินเวกเตอร์ ส่วนมุมมองดั้งเดิมนั้นยังสามารถให้คุณใช้งานได้อยู่ (รุ่น ณ เดือนธันวาคม พ.ศ. 2562) เรียนรู้เพิ่มเติมเกี่ยวกับการปรับปรุงนี้ได้ที่[[mw:Reading/Web/Desktop_Improvements|หน้าโครงการ]]",
+	"vector-opt-out": "สลับกลับมุมมองดั้งเดิม",
+	"vector-opt-out-tooltip": "เปลี่ยนแปลงการตั้งค่าเพื่อกลับไปยังมุมมองแบบเดิม (เวกเตอร์ดั้งเดิม)",
 	"vector.css": "/* สไตล์ชีตในหน้านี้จะส่งผลแก่ผู้ใช้ที่ใช้สกินเวกเตอร์ */",
 	"vector.js": "/* จาวาสคริปต์ใด ๆ ในหน้านี้จะถูกโหลดให้แก่ผู้ใช้ที่ใช้สกินเวกเตอร์ */",
+	"vector-action-toggle-sidebar": "เปิด/ปิดแถบข้าง",
+	"vector-language-button-label": "{{PLURAL:$1|$1 ภาษา}}",
 	"vector-action-addsection": "เพิ่มหัวข้อ",
 	"vector-action-delete": "ลบ",
 	"vector-action-move": "เปลี่ยนชื่อ",
@@ -25,5 +33,7 @@
 	"vector-view-viewsource": "ดูต้นฉบับ",
 	"vector-jumptonavigation": "ไปยังการนำทาง",
 	"vector-jumptosearch": "ไปยังการค้นหา",
-	"vector-more-actions": "เพิ่มเติม"
+	"vector-jumptocontent": "ข้ามไปเนื้อหา",
+	"vector-more-actions": "เพิ่มเติม",
+	"vector-search-loader": "กำลังโหลดคำแนะนำการค้นหา"
 }

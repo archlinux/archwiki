@@ -10,6 +10,8 @@
 	},
 	"skinname-vector": "Vektor",
 	"vector-skin-desc": "Nútímaútgáfa af MonoBook með fersku útliti og mörgum endurbótum á notagildi",
+	"prefs-vector-enable-vector-1-label": "Nota eldra Vector-skinn",
+	"prefs-vector-enable-vector-1-help": "Á næstu árum munum við smátt og smátt uppfæra Vector-skinnið. Eldra Vector-skinn mun gera þér kleift að sjá eldri útgáfu Vector (eins og hún var í desember 2019). Til að sjá meira um þessar uppfærslur, geturðu farið á [[mw:Reading/Web/Desktop_Improvements|verkefnissíðuna]].",
 	"vector.css": "/* Allt CSS sem sett er hér mun  hafa áhrif á alla notendur Vektor-skinnsins. */",
 	"vector.js": "/* Allt JavaScript sem sett er hér mun hafa áhrif á notendur Vektor-skinnsins. */",
 	"vector-action-addsection": "Bæta við umræðu",

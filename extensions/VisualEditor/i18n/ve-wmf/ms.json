@@ -4,13 +4,14 @@
 			"Amire80",
 			"Anakmalaysia",
 			"Aurora",
+			"CyberTroopers",
 			"Kurniasan",
 			"SNN95",
 			"아라"
 		]
 	},
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Suntingan visual]]",
-	"tag-visualeditor-description": "Disunting dengan menggunakan [[{{MediaWiki:visualeditor-descriptionpagelink}}|editor visual]]",
+	"tag-visualeditor-description": "Disunting dengan menggunakan [[{{MediaWiki:visualeditor-descriptionpagelink}}|suntingan visual]]",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Suntingan visual: Semak]]",
 	"tag-visualeditor-needcheck-description": "Suntingan dilakukan dengan menggunakan [[{{MediaWiki:visualeditor-descriptionpagelink}}|VisualEditor]] di mana sistem telah mengesan wikiteks yang mungkin mengalami perubahan yang tidak diingini.",
 	"tag-visualeditor-wikitext": "Suntingan sumber 2017",

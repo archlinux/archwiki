@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Robby"
+			"Robby",
+			"Soued031"
 		]
 	},
 	"apierror-visualeditor-difffailed": "Feeler beim Ënnerscheed",
@@ -12,7 +13,7 @@
 	"apihelp-visualeditor-param-page": "D'Säit op där Aktioune gemaach soll ginn.",
 	"apihelp-visualeditor-param-section": "Den Abschnitt un deem geschafft gi soll.",
 	"apihelp-visualeditoredit-description": "Eng HTML5-Säit als MediaWiki (duerch de Parsoid-Service a Wikitext ëmgewandelt) späicheren.",
-	"apihelp-visualeditoredit-param-captchaid": "Captcha ID (beim späichere mat enger Captcha-Äntwert).",
+	"apihelp-visualeditoredit-param-captchaid": "Captcha-ID (beim Späichere mat enger Captcha-Äntwert).",
 	"apihelp-visualeditoredit-param-captchaword": "Äntwert op de Captcha (beim Späichere vun enger Captcha-Äntwert).",
 	"apihelp-visualeditoredit-param-minor": "Markéierung fir kleng Ännerung.",
 	"apihelp-visualeditoredit-param-paction": "Aktioun fir ze maachen.",

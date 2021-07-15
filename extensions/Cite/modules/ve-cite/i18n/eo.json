@@ -2,9 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Happy5214",
+			"Javiero",
 			"KuboF",
 			"Kvardek du",
 			"Mirin",
+			"NMaia",
 			"Shirayuki",
 			"Yekrats"
 		]
@@ -21,7 +23,9 @@
 	"cite-ve-changedesc-reflist-group-to": "Referencolistaro ŝanĝiĝis de la ĝenerala grupo al \"$1\"",
 	"cite-ve-changedesc-reflist-responsive-set": "Referencolisto ŝanĝiĝis por prezentado en respondemaj kolumnoj",
 	"cite-ve-changedesc-reflist-responsive-unset": "Referencolisto ŝanĝiĝis por prezentado en ununura kolumno",
-	"cite-ve-changedesc-reflist-item-id": "Referenca indico ŝanĝiĝis",
+	"cite-ve-citationneeded-button": "Aldoni citaĵon",
+	"cite-ve-citationneeded-description": "Iu redaktisto indikis, ke ĉi tiu aserto bezonas citaĵon el fidinda fonto.",
+	"cite-ve-citationneeded-reason": "Kialo donita:",
 	"cite-ve-dialog-reference-editing-reused": "Ĉi tiu referenco estas uzata {{PLURAL:$1|unufoje|2=dufoje|$1 fojojn}} en tiu paĝo.",
 	"cite-ve-dialog-reference-editing-reused-long": "Ĉi tiu referenco estas uzata {{PLURAL:$1|unufoje|2=dufoje|$1 fojojn}} en tiu paĝo. Ŝanĝoj farotaj ĉi tie aplikiĝos ĉie kie ĉi tiu referenco estas uzata.",
 	"cite-ve-dialog-reference-options-group-label": "Uzi tiun ĉi grupon",

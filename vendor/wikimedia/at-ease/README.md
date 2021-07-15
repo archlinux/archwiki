@@ -25,17 +25,18 @@ to suppress the warnings and prevent PHP from being noisy.
 Usage
 -----
 
-    use Wikimedia\AtEase\AtEase;
+```php
+use Wikimedia\AtEase\AtEase;
 
-    // Suppress warnings in a block of code:
-    AtEase::suppressWarnings();
-    $content = file_get_contents( 'foobar.txt' );
-    AtEase::restoreWarnings();
+// Suppress warnings in a block of code:
+AtEase::suppressWarnings();
+$content = file_get_contents( 'foobar.txt' );
+AtEase::restoreWarnings();
 
 
-    // ..or in a callback function:
-    AtEase::quietCall( 'file_get_contents', 'foobar.txt' );
-
+// ..or in a callback function:
+AtEase::quietCall( 'file_get_contents', 'foobar.txt' );
+```
 
 Running tests
 -------------

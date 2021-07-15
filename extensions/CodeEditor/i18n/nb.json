@@ -10,7 +10,7 @@
 	"codeeditor-desc": "Syntaksfremhevet redigering av JavaScript og CSS-sider med bruk av [https://ace.c9.io/ Ace editor]",
 	"codeeditor-next-annotation": "Gå til neste annotering",
 	"codeeditor-toolbar-toggle": "Slå på/av kodeeditoren",
-	"codeeditor-save-with-errors": "Dette dokumentet inneholder feil. Er du sikker på at du vil lagre?",
+	"codeeditor-save-with-errors": "Dette dokumentet inneholder feil. Er du sikker på at du vil publisere?",
 	"codeeditor-invisibleChars-toggle": "Slå av/på usynlige tegn",
 	"codeeditor-lineWrapping-toggle": "Slå av/på linjebryting",
 	"codeeditor-searchReplace-toggle": "Slå av/på søk- og erstatt-vinduet",

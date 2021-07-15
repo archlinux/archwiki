@@ -22,8 +22,6 @@
  * @author Daniel Kinzler, brightbyte.de
  */
 
-use MediaWiki\MediaWikiServices;
-
 /**
  * Special page for the CategoryTree extension, an AJAX based gadget
  * to display the category structure of a wiki
@@ -31,13 +29,22 @@ use MediaWiki\MediaWikiServices;
 class CategoryTreePage extends SpecialPage {
 	public $target = '';
 
+	/** @var SearchEngineFactory */
+	private $searchEngineFactory;
+
 	/**
 	 * @var CategoryTree
 	 */
 	public $tree = null;
 
-	public function __construct() {
+	/**
+	 * @param SearchEngineFactory $searchEngineFactory
+	 */
+	public function __construct(
+		SearchEngineFactory $searchEngineFactory
+	) {
 		parent::__construct( 'CategoryTree' );
+		$this->searchEngineFactory = $searchEngineFactory;
 	}
 
 	/**
@@ -45,12 +52,10 @@ class CategoryTreePage extends SpecialPage {
 	 * @return mixed
 	 */
 	private function getOption( $name ) {
-		global $wgCategoryTreeDefaultOptions;
-
 		if ( $this->tree ) {
 			return $this->tree->getOption( $name );
 		} else {
-			return $wgCategoryTreeDefaultOptions[$name];
+			return $this->getConfig()->get( 'CategoryTreeDefaultOptions' )[$name];
 		}
 	}
 
@@ -59,8 +64,6 @@ class CategoryTreePage extends SpecialPage {
 	 * @param string|null $par Parameters passed to the page
 	 */
 	public function execute( $par ) {
-		global $wgCategoryTreeDefaultOptions, $wgCategoryTreeSpecialPageOptions;
-
 		$this->setHeaders();
 		$this->addHelpLink( 'Extension:CategoryTree' );
 		$request = $this->getRequest();
@@ -79,11 +82,14 @@ class CategoryTreePage extends SpecialPage {
 		$this->target = trim( $this->target );
 
 		$options = [];
+		$config = $this->getConfig();
 
 		# grab all known options from the request. Normalization is done by the CategoryTree class
-		foreach ( $wgCategoryTreeDefaultOptions as $option => $default ) {
-			if ( isset( $wgCategoryTreeSpecialPageOptions[$option] ) ) {
-				$default = $wgCategoryTreeSpecialPageOptions[$option];
+		$categoryTreeDefaultOptions = $config->get( 'CategoryTreeDefaultOptions' );
+		$categoryTreeSpecialPageOptions = $config->get( 'CategoryTreeSpecialPageOptions' );
+		foreach ( $categoryTreeDefaultOptions as $option => $default ) {
+			if ( isset( $categoryTreeSpecialPageOptions[$option] ) ) {
+				$default = $categoryTreeSpecialPageOptions[$option];
 			}
 
 			$options[$option] = $request->getVal( $option, $default );
@@ -200,7 +206,7 @@ class CategoryTreePage extends SpecialPage {
 			// No prefix suggestion outside of category namespace
 			return [];
 		}
-		$searchEngine = MediaWikiServices::getInstance()->newSearchEngine();
+		$searchEngine = $this->searchEngineFactory->create();
 		$searchEngine->setLimitOffset( $limit, $offset );
 		// Autocomplete subpage the same as a normal search, but just for categories
 		$searchEngine->setNamespaces( [ NS_CATEGORY ] );

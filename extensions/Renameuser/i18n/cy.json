@@ -17,7 +17,6 @@
 	"renameuserwarnings": "Rhybuddion:",
 	"renameuserconfirm": "Parhau gyda'r ail-enwi",
 	"renameusersubmit": "Anfon",
-	"renameuser-submit-blocklog": "Dangoser lòg rhwystro'r defnyddiwr",
 	"renameusererrordoesnotexist": "Nid yw'r defnyddiwr \"<nowiki>$1</nowiki>\" yn bodoli.",
 	"renameusererrorexists": "Mae'r defnyddiwr \"<nowiki>$1</nowiki>\" eisoes yn bodoli.",
 	"renameusererrorinvalid": "Mae'r enw defnyddiwr \"<nowiki>$1</nowiki>\" yn annilys",

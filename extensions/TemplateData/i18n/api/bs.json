@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Srdjan m"
+			"Srdjan m",
+			"Srđan"
 		]
 	},
 	"apihelp-templatedata-description": "Uvezi podatke koje je TemplateData proširenje sačuvalo.",

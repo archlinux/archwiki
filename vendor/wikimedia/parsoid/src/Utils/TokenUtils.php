@@ -11,7 +11,6 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Utils;
 
-use DOMNode;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Config\WikitextConstants as Consts;
@@ -41,35 +40,35 @@ class TokenUtils {
 	}
 
 	/**
-	 * Determine if a tag is block-level or not.
-	 *
-	 * `<video>` is removed from block tags, since it can be phrasing content.
-	 * This is necessary for it to render inline.
 	 * @param string $name
 	 * @return bool
 	 */
-	public static function isBlockTag( string $name ): bool {
-		return $name !== 'video' && isset( Consts::$HTML['HTML4BlockTags'][$name] );
+	public static function isWikitextBlockTag( string $name ): bool {
+		return isset( Consts::$wikitextBlockElems[$name] );
 	}
 
 	/**
-	 * In the PHP parser, these block tags open block-tag scope
+	 * In the legacy parser, these block tags open block-tag scope
 	 * See doBlockLevels in the PHP parser (includes/parser/Parser.php).
+	 *
 	 * @param string $name
 	 * @return bool
 	 */
 	public static function tagOpensBlockScope( string $name ): bool {
-		return isset( Consts::$BlockScopeOpenTags[$name] );
+		return isset( Consts::$blockElems[$name] ) ||
+			isset( Consts::$alwaysBlockElems[$name] );
 	}
 
 	/**
-	 * In the PHP parser, these block tags close block-tag scope
+	 * In the legacy parser, these block tags close block-tag scope
 	 * See doBlockLevels in the PHP parser (includes/parser/Parser.php).
+	 *
 	 * @param string $name
 	 * @return bool
 	 */
 	public static function tagClosesBlockScope( string $name ): bool {
-		return isset( Consts::$BlockScopeCloseTags[$name] );
+		return isset( Consts::$antiBlockElems[$name] ) ||
+			isset( Consts::$neverBlockElems[$name] );
 	}
 
 	/**
@@ -264,7 +263,7 @@ class TokenUtils {
 					$da = $t->dataAttribs;
 					$tsr = $da->tsr;
 					if ( $tsr ) {
-						if ( $offset !== false ) {
+						if ( $offset ) {
 							$da->tsr = $tsr->offset( $offset );
 						} else {
 							$da->tsr = null;
@@ -304,7 +303,7 @@ class TokenUtils {
 							}
 
 							// src offsets used to set mw:TemplateParams
-							if ( $offset === null ) {
+							if ( !$offset ) {
 								$a->srcOffsets = null;
 							} elseif ( $a->srcOffsets !== null ) {
 								$a->srcOffsets = $a->srcOffsets->offset( $offset );
@@ -470,6 +469,7 @@ class TokenUtils {
 			if ( $sr instanceof DomSourceRange ) {
 				// Adjust widths back from being character offsets
 				if ( $sr->openWidth !== null ) {
+					// @phan-suppress-next-line PhanPluginDuplicateExpressionAssignmentOperation; consistency
 					$sr->openWidth = $sr->openWidth - $sr->start;
 				}
 				if ( $sr->closeWidth !== null ) {
@@ -601,23 +601,27 @@ class TokenUtils {
 				// If strict, return accumulated string on encountering first non-text token
 				return [ $out, array_slice( $tokens, $i ) ];
 			} elseif (
+				// This option shouldn't be used if the tokens have been
+				// expanded to DOM
 				!empty( $opts['unpackDOMFragments'] ) &&
 				( $token instanceof TagTk || $token instanceof SelfclosingTagTk ) &&
 				self::hasDOMFragmentType( $token )
 			) {
 				// Handle dom fragments
-				$fragmentMap = $opts['env']->getDOMFragmentMap();
-				$nodes = $fragmentMap[$token->dataAttribs->html];
-				$out .= array_reduce( $nodes, function ( string $prev, DOMNode $next ) {
-						// FIXME: The correct thing to do would be to return
-						// `next.outerHTML` for the current scenarios where
-						// `unpackDOMFragments` is used (expanded attribute
-						// values and reparses thereof) but we'd need to remove
-						// the span wrapping and typeof annotation of extension
-						// content and nowikis.  Since we're primarily expecting
-						// to find <translate> and <nowiki> here, this will do.
-						return $prev . $next->textContent;
-				}, '' );
+				$domFragment = $opts['env']->getDOMFragment(
+					$token->dataAttribs->html
+				);
+				// Calling `env->removeDOMFragment()` here is case dependent
+				// but should be rare enough when permissible that it can be
+				// ignored.
+				// FIXME: The correct thing to do would be to return
+				// `$domFragment.innerHTML` for the current scenarios where
+				// `unpackDOMFragments` is used (expanded attribute
+				// values and reparses thereof) but we'd need to remove
+				// the span wrapping and typeof annotation of extension
+				// content and nowikis.  Since we're primarily expecting
+				// to find <translate> and <nowiki> here, this will do.
+				$out .= $domFragment->textContent;
 				if ( $token instanceof TagTk ) {
 					$i += 1; // Skip the EndTagTK
 					Assert::invariant(

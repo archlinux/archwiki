@@ -20,9 +20,9 @@
 	"spam-blacklisted-email-signup": "Die angegebene E-Mail-Adresse ist derzeit für das Senden von E-Mail-Nachrichten an andere Benutzer blockiert.",
 	"spam-invalid-lines": "Die {{PLURAL:$1|folgende Zeile|folgenden Zeilen}} in der Blockierliste {{PLURAL:$1|ist ein ungültiger regulärer Ausdruck|sind ungültige reguläre Ausdrücke}}. Sie {{PLURAL:$1|muss|müssen}} vor dem Speichern der Seite korrigiert werden:",
 	"spam-blacklist-desc": "Ergänzt ein auf reguläre Ausdrücke gestütztes Anti-Spam-Werkzeug zum Sperren von URLs und E-Mail-Adressen für das Einfügen durch registrierte Benutzer",
-	"log-name-spamblacklist": "Spam-Blacklist-Logbuch",
-	"log-description-spamblacklist": "Es folgt ein Logbuch von Spam-Blacklist-Treffern.",
-	"logentry-spamblacklist-hit": "{{GENDER:$2|$1}} verursachte einen Spam-Blacklist-Treffer auf „$3“ durch das versuchte Hinzufügen von $4.",
-	"right-spamblacklistlog": "Spam-Blacklist-Logbuch ansehen",
+	"log-name-spamblacklist": "Spam-Negativlisten-Logbuch",
+	"log-description-spamblacklist": "Das Logbuch von Treffern in der Spam-Negativliste.",
+	"logentry-spamblacklist-hit": "{{GENDER:$2|$1}} verursachte einen Treffer in der Spam-Negativliste auf „$3“ durch das versuchte Hinzufügen von $4.",
+	"right-spamblacklistlog": "Logbuch der Spam-Negativliste ansehen",
 	"action-spamblacklistlog": "dieses Logbuch einzusehen"
 }

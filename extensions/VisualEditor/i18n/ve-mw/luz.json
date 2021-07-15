@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Bluehamed",
 			"Shahriar.dehghani24",
 			"علی ساکی لرستانی"
 		]
@@ -15,12 +16,12 @@
 	"visualeditor-ca-createsource": "راس کردن سرچشمه",
 	"visualeditor-ca-editlocaldescriptionsource": "اصلاح سرچشمه توضیح محلی",
 	"visualeditor-ca-editsource": "ئیصلاح سأرچیشمە",
-	"visualeditor-ca-editsource-section": "ئیصلاح سأرچیشمە",
+	"visualeditor-ca-editsource-section": "چۊشخاٛی سٱرچاٛشمٱ",
 	"visualeditor-ca-ve-create": "ویژوال ادیتور",
 	"visualeditor-ca-ve-edit": "ویژوال ادیتور",
 	"visualeditor-ca-ve-edit-section": "ویژوال ادیتور",
 	"visualeditor-categories-tool": "دسه یل",
-	"visualeditor-descriptionpagelink": "Project:ڤیژوٙال ئیدیتۉر",
+	"visualeditor-descriptionpagelink": "Project:چۊشخاٛی دیڌاری",
 	"visualeditor-dialog-media-alttext-section": "متن جایگزین",
 	"visualeditor-dialog-media-change-image": "تغییر دائن عسک",
 	"visualeditor-dialog-media-choose-image": "استفاده کردن ای عسک",

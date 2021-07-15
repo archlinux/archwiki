@@ -17,7 +17,7 @@
 	"categorytree-mode-all": "all Sieden",
 	"categorytree-collapse": "nich ganz wiesen",
 	"categorytree-expand": "ganz wiesen",
-	"categorytree-member-counts": "bargt {{PLURAL:$1|ene Ünnerkategorie|$1 Ünnerkategorien}}, {{PLURAL:$2|ene Sied|$2 Sieden}} un {{PLURAL:$3|ene Datei|$3 Datein}}",
+	"categorytree-member-counts": "bargt {{PLURAL:$1|ene Ünnerkategorie|$1 Ünnerkategorien}}, {{PLURAL:$2|ene Siet|$2 Sieden}} un {{PLURAL:$3|ene Datei|$3 Datein}}",
 	"categorytree-load": "laden",
 	"categorytree-loading": "läädt",
 	"categorytree-nothing-found": "nix funnen",

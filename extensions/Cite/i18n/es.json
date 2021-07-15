@@ -27,7 +27,7 @@
 	},
 	"cite-desc": "Añade las etiquetas <code>&lt;ref&gt;</code> y <code>&lt;references&gt;</code> para citas.",
 	"cite_error": "Error en la cita: $1",
-	"cite_error_ref_invalid_dir": "La etiqueta <code>&lt;ref&gt;</code> no es válida; se desconoce el atributo de dirección «$1». Debe ser «ltr» o «rtl»",
+	"cite_error_ref_invalid_dir": "<code>dir=\"$1\"</code> no es válido; debe ser <code>ltr</code> o <code>rtl</code>",
 	"cite_error_ref_numeric_key": "Etiqueta <code>&lt;ref&gt;</code> no válida; el nombre no puede ser un número entero. Usa un título descriptivo",
 	"cite_error_ref_no_key": "La etiqueta de apertura <code>&lt;ref&gt;</code> es incorrecta o tiene el nombre mal",
 	"cite_error_ref_too_many_keys": "Etiqueta <code>&lt;ref&gt;</code> no válida; nombres no válidos, p. ej. demasiados",

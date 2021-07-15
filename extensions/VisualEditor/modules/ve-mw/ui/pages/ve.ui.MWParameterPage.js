@@ -166,8 +166,7 @@ ve.ui.MWParameterPage = function VeUiMWParameterPage( parameter, name, config ) 
 	this.addButton = new OO.ui.ButtonWidget( {
 		framed: false,
 		icon: 'parameter',
-		label: ve.msg( 'visualeditor-dialog-transclusion-add-param' ),
-		tabIndex: -1
+		label: ve.msg( 'visualeditor-dialog-transclusion-add-param' )
 	} )
 		.connect( this, { click: 'onAddButtonFocus' } );
 
@@ -249,7 +248,6 @@ ve.ui.MWParameterPage.prototype.createValueInput = function () {
 	delete valueInputConfig.validate;
 
 	// TODO:
-	// * wiki-file-name
 	// * date - T100206
 	// * number - T124850
 	// * unbalanced-wikitext/content - T106242
@@ -258,24 +256,38 @@ ve.ui.MWParameterPage.prototype.createValueInput = function () {
 		type === 'wiki-page-name' &&
 		( value === '' || mw.Title.newFromText( value ) )
 	) {
-		return new mw.widgets.TitleInputWidget( valueInputConfig, { api: ve.init.target.getContentApi() } );
+		return new mw.widgets.TitleInputWidget( $.extend( {
+			api: ve.init.target.getContentApi()
+		}, valueInputConfig ) );
+	} else if (
+		type === 'wiki-file-name' &&
+		( value === '' || mw.Title.newFromText( value ) )
+	) {
+		return new mw.widgets.TitleInputWidget( $.extend( {}, valueInputConfig, {
+			api: ve.init.target.getContentApi(),
+			namespace: 6,
+			showImages: true
+		} ) );
 	} else if (
 		type === 'wiki-user-name' &&
 		( value === '' || mw.Title.newFromText( value ) )
 	) {
-		valueInputConfig.validate = function ( value ) {
+		valueInputConfig.validate = function ( val ) {
 			// TODO: Check against wgMaxNameChars
 			// TODO: Check against unicode validation regex from MW core's User::isValidUserName
-			return !!mw.Title.newFromText( value );
+			return !!mw.Title.newFromText( val );
 		};
-		return new mw.widgets.UserInputWidget( valueInputConfig, { api: ve.init.target.getContentApi() } );
+		return new mw.widgets.UserInputWidget( $.extend( {
+			api: ve.init.target.getContentApi()
+		}, valueInputConfig ) );
 	} else if (
 		type === 'wiki-template-name' &&
 		( value === '' || mw.Title.newFromText( value ) )
 	) {
-		return new mw.widgets.TitleInputWidget( $.extend( {}, valueInputConfig, {
-			namespace: mw.config.get( 'wgNamespaceIds' ).template,
+		return new mw.widgets.TitleInputWidget( $.extend( {
 			api: ve.init.target.getContentApi()
+		}, valueInputConfig, {
+			namespace: mw.config.get( 'wgNamespaceIds' ).template
 		} ) );
 	} else if ( type === 'boolean' && ( value === '1' || value === '0' ) ) {
 		return new ve.ui.MWParameterCheckboxInputWidget( valueInputConfig );
@@ -316,6 +328,9 @@ ve.ui.MWParameterPage.prototype.isEmpty = function () {
 ve.ui.MWParameterPage.prototype.onValueInputChange = function () {
 	var value = this.valueInput.getValue();
 
+	if ( !this.edited ) {
+		ve.track( 'activity.transclusion', { action: 'edit-parameter-value' } );
+	}
 	this.edited = true;
 	this.parameter.setValue( value );
 

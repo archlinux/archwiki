@@ -96,6 +96,9 @@
 		<!-- visualEditor.supportCheck -->
 		<script src="../src/init/ve.init.SupportCheck.js"></script>
 
+		<!-- visualEditor.core.utils.client -->
+		<script src="../src/ve.utils.client.js"></script>
+
 		<!-- visualEditor.core.init -->
 		<script src="../src/init/ve.init.js"></script>
 		<script src="../src/init/ve.init.SafeStorage.js"></script>
@@ -108,9 +111,6 @@
 
 		<!-- visualEditor.sanitize -->
 		<script src="../src/ve.sanitize.js"></script>
-
-		<!-- visualEditor.core.utils.client -->
-		<script src="../src/ve.utils.client.js"></script>
 
 		<!-- visualEditor.core.root -->
 		<script src="../src/ve.Range.js"></script>
@@ -202,9 +202,9 @@
 		<script src="../src/dm/nodes/ve.dm.BlockImageNode.js"></script>
 		<script src="../src/dm/nodes/ve.dm.BlockImageCaptionNode.js"></script>
 		<script src="../src/dm/nodes/ve.dm.InlineImageNode.js"></script>
+		<script src="../src/dm/annotations/ve.dm.TextStyleAnnotation.js"></script>
 		<script src="../src/dm/annotations/ve.dm.LanguageAnnotation.js"></script>
 		<script src="../src/dm/annotations/ve.dm.LinkAnnotation.js"></script>
-		<script src="../src/dm/annotations/ve.dm.TextStyleAnnotation.js"></script>
 		<script src="../src/dm/annotations/ve.dm.AbbreviationAnnotation.js"></script>
 		<script src="../src/dm/annotations/ve.dm.BidiAnnotation.js"></script>
 		<script src="../src/dm/annotations/ve.dm.BigAnnotation.js"></script>
@@ -306,9 +306,9 @@
 		<script src="../src/ce/nodes/ve.ce.BlockImageCaptionNode.js"></script>
 		<script src="../src/ce/nodes/ve.ce.InlineImageNode.js"></script>
 		<script src="../src/ce/annotations/ve.ce.NailedAnnotation.js"></script>
+		<script src="../src/ce/annotations/ve.ce.TextStyleAnnotation.js"></script>
 		<script src="../src/ce/annotations/ve.ce.LanguageAnnotation.js"></script>
 		<script src="../src/ce/annotations/ve.ce.LinkAnnotation.js"></script>
-		<script src="../src/ce/annotations/ve.ce.TextStyleAnnotation.js"></script>
 		<script src="../src/ce/annotations/ve.ce.AbbreviationAnnotation.js"></script>
 		<script src="../src/ce/annotations/ve.ce.BidiAnnotation.js"></script>
 		<script src="../src/ce/annotations/ve.ce.BigAnnotation.js"></script>
@@ -511,6 +511,7 @@
 		<script src="../tests/ve.qunit.local.js"></script>
 		<script src="../tests/ve.test.utils.js"></script>
 		<script src="../tests/ve.test.js"></script>
+		<script src="../tests/ve.DiffMatchPatch.test.js"></script>
 		<script src="../tests/ve.EventSequencer.test.js"></script>
 		<script src="../tests/ve.Scheduler.test.js"></script>
 		<script src="../tests/ve.Range.test.js"></script>

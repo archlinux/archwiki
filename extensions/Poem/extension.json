@@ -9,6 +9,9 @@
 	"url": "https://www.mediawiki.org/wiki/Extension:Poem",
 	"descriptionmsg": "poem-desc",
 	"type": "parserhook",
+	"requires": {
+		"MediaWiki": ">= 1.29.0"
+	},
 	"MessagesDirs": {
 		"Poem": [
 			"i18n"
@@ -22,5 +25,5 @@
 	"AutoloadClasses": {
 		"Poem": "includes/Poem.php"
 	},
-	"manifest_version": 1
+	"manifest_version": 2
 }

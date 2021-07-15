@@ -1,5 +1,5 @@
 module.exports = function () {
-	var done = arguments[ arguments.length - 1 ];
+	var veDone = arguments[ arguments.length - 1 ];
 
 	window.seleniumUtils = {
 		getBoundingRect: function ( elements ) {
@@ -114,7 +114,7 @@ module.exports = function () {
 			target.actionsToolbar.tools.notices.getPopup().toggle( false );
 			// Wait for save button fade
 			setTimeout( function () {
-				done( { width: window.innerWidth, height: window.innerHeight } );
+				veDone( { width: window.innerWidth, height: window.innerHeight } );
 			}, 100 );
 		} );
 	} );

@@ -12,6 +12,7 @@ require_once __DIR__ . '/../LuaCommon/LuaInterpreterTest.php';
  * @covers Scribunto_LuaSandboxInterpreter
  */
 class Scribunto_LuaSandboxInterpreterTest extends Scribunto_LuaInterpreterTest {
+	/** @var array */
 	public $stdOpts = [
 		'memoryLimit' => 50000000,
 		'cpuLimit' => 30,

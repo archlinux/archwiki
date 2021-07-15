@@ -70,7 +70,7 @@ div.mw-notification-area {
 
 	// Because the overflow:hidden above messes up the alignment...
 	#personal h2:after {
-		height: 18px;
+		height: 22px;
 	}
 }
 
@@ -109,15 +109,15 @@ div.mw-notification-area {
 		font-family: @fonts-secondary;
 		font-weight: normal;
 		font-size: 1.25em;
-		.background-image-svg( 'images/user-grey.svg', 'images/user-grey.png' );
-		background-position: left 7px;
+		background-image: url( images/user-grey.svg );
+		background-position: left 9px;
 		background-repeat: no-repeat;
 
 		.dropdown-header();
 
 		span {
 			display: inline-block;
-			height: 1em;
+			line-height: normal;
 			word-wrap: break-word;
 		}
 	}
@@ -187,6 +187,14 @@ div.mw-notification-area {
 
 	&.timeless-logo {
 		background-image: none;
+
+		img {
+			// Let's not assume our users are sizing these to anything in particular
+			// 135px because that keeps things semi-consistent with logo parts of oldstyle logos
+			width: 135px;
+			height: auto;
+			margin: 0.75em 0 0.5em;
+		}
 	}
 }
 

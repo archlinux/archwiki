@@ -106,6 +106,7 @@ class SpecialCollabPad extends SpecialPage {
 					new OOUI\ButtonWidget( [
 						'classes' => [ 've-init-mw-collabTarget-importButton' ],
 						'label' => $this->msg( 'visualeditor-rebase-client-import' )->text(),
+						'flags' => [ 'progressive' ],
 						// Only enable once JS has loaded
 						'disabled' => true,
 						'infusable' => true

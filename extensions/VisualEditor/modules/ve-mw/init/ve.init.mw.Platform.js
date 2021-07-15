@@ -214,7 +214,7 @@ ve.init.mw.Platform.prototype.getLanguageCodes = function () {
 ve.init.mw.Platform.prototype.getLanguageName = function ( code ) {
 	var languageNames = mw.language.getData( mw.config.get( 'wgUserLanguage' ), 'languageNames' ) ||
 		$.uls.data.getAutonyms();
-	return languageNames[ code ] || '';
+	return languageNames[ code ] || code;
 };
 
 /**
@@ -251,8 +251,11 @@ ve.init.mw.Platform.prototype.fetchSpecialCharList = function () {
 		try {
 			other = JSON.parse( otherMsg );
 			if ( other ) {
-				characters[ otherGroupName ] = other;
-				other.attributes = { dir: mw.config.get( 'wgVisualEditorConfig' ).pageLanguageDir };
+				characters.other = {
+					label: otherGroupName,
+					characters: other,
+					attributes: { dir: mw.config.get( 'wgVisualEditorConfig' ).pageLanguageDir }
+				};
 			}
 		} catch ( err ) {
 			ve.log( 've.init.mw.Platform: Could not parse the Special Character list.' );
@@ -264,14 +267,19 @@ ve.init.mw.Platform.prototype.fetchSpecialCharList = function () {
 			groupObject = {}; // button label => character data to insert
 			// eslint-disable-next-line no-jquery/no-each-util
 			$.each( groupCharacters, function ( charKey, charVal ) {
+				var key, val;
 				// VE has a different format and it would be a pain to change it now
 				if ( typeof charVal === 'string' ) {
-					groupObject[ charVal ] = charVal;
+					key = charVal;
+					val = charVal;
 				} else if ( typeof charVal === 'object' && 0 in charVal && 1 in charVal ) {
-					groupObject[ charVal[ 0 ] ] = charVal[ 1 ];
+					key = charVal[ 0 ];
+					val = charVal[ 1 ];
 				} else {
-					groupObject[ charVal.label ] = charVal;
+					key = charVal.label;
+					val = charVal;
 				}
+				groupObject[ key ] = val;
 			} );
 			// The following messages are used here:
 			// * special-characters-group-arabic
@@ -295,10 +303,29 @@ ve.init.mw.Platform.prototype.fetchSpecialCharList = function () {
 			// * special-characters-group-tamil
 			// * special-characters-group-telugu
 			// * special-characters-group-thai
-			characters[ mw.msg( 'special-characters-group-' + groupName ) ] = groupObject;
-			groupObject.attributes = { dir: rtlGroups.indexOf( groupName ) !== -1 ? 'rtl' : 'ltr' };
+			characters[ groupName ] = {
+				label: mw.msg( 'special-characters-group-' + groupName ),
+				characters: groupObject,
+				attributes: { dir: rtlGroups.indexOf( groupName ) !== -1 ? 'rtl' : 'ltr' }
+			};
 		} );
 
 		return characters;
 	} );
+};
+
+/**
+ * @inheritdoc
+ */
+ve.init.mw.Platform.prototype.decodeEntities = function ( html ) {
+	var character = ve.safeDecodeEntities( html );
+	return [
+		{
+			type: 'mwEntity',
+			attributes: { character: character }
+		},
+		{
+			type: '/mwEntity'
+		}
+	];
 };

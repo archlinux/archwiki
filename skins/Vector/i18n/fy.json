@@ -13,8 +13,10 @@
 	"prefs-vector-enable-vector-1-label": "De âlde bewende Vektor brûke",
 	"prefs-vector-enable-vector-1-help": "Yn 'e kommende pear jier geane wy de Vektor-foarmjouwing stadichoan bywurkje. Mei 'de âlde bewende Vektor' kinne jo it oansjoch fan de âlde ferzje fan Vektor (fan desimber 2019) behâlde. Gean nei ús [[mw:Reading/Web/Desktop_Improvements|projektside]] at jo mear witte wolle oer de oanpassings.",
 	"vector-opt-out": "Alde oansjoch weromsette",
+	"vector-opt-out-tooltip": "Jo ynstellings wizigje en gean werom nei it âlde oansjoch fan 'e foarmjouwing (bewende Vektor)",
 	"vector.css": "/* Al it CSS hjirre sil foar brûkers fan de Vector-foarmjouwing laden wurde */",
 	"vector.js": "/* Al it JavaScript hjirre sil foar brûkers fan de Vector-foarmjouwing laden wurde */",
+	"vector-action-toggle-sidebar": "Sydbalke omklappe",
 	"vector-action-addsection": "Nij mêd",
 	"vector-action-delete": "Wiskje",
 	"vector-action-move": "Omneame",
@@ -28,5 +30,7 @@
 	"vector-view-viewsource": "Boarne besjen",
 	"vector-jumptonavigation": "Springe nei navigaasje",
 	"vector-jumptosearch": "Springe nei sykjen",
-	"vector-more-actions": "Mear"
+	"vector-jumptocontent": "Springe nei ynhâld",
+	"vector-more-actions": "Mear",
+	"vector-search-loader": "Laden fan syksuggestjes"
 }

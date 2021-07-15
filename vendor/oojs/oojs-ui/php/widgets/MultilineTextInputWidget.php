@@ -10,7 +10,7 @@ class MultilineTextInputWidget extends TextInputWidget {
 	/**
 	 * Allow multiple lines of text.
 	 *
-	 * @var boolean
+	 * @var bool
 	 */
 	protected $multiline = true;
 

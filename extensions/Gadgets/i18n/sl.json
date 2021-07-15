@@ -23,7 +23,7 @@
 	"gadgets-pagetext": "Spodaj je seznam posebnih vtičnikov (opredeljenih z [[MediaWiki:Gadgets-definition|definicijami]]), ki jih lahko uporabniki vključijo v svojih [[Special:Preferences#mw-prefsection-gadgets|nastavitvah]].\nTa pregled omogoča enostaven dostop do sistema za nastavljanje opisa in kode vsakega vtičnika posebej.",
 	"gadgets-uses": "Uporablja",
 	"gadgets-required-rights": "Zahteva {{PLURAL:$2|naslednjo pravico|naslednji pravici|naslednje pravice}}:\n\n$1",
-	"gadgets-required-skins": "Na voljo na {{PLURAL:$2|koži $1|naslednjih kožah: $1}}.",
+	"gadgets-required-skins": "Na voljo pri {{PLURAL:$2|preobleki $1|naslednjih preoblekah: $1}}.",
 	"gadgets-default": "Privzeto omogočeno za vsakogar.",
 	"gadgets-legacy": "Vtičnik ni naložen. Prosimo, preidi na ResourceLoader. ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) Poizvedi več])",
 	"gadgets-export": "Izvozi",

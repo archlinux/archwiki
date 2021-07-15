@@ -79,8 +79,7 @@ function init( window ) {
 		button = window.document.getElementById( SIDEBAR_BUTTON_ID );
 
 	initCheckboxHack( checkbox, button );
-
-	if ( mw.config.get( 'wgUserName' ) ) {
+	if ( mw.config.get( 'wgUserName' ) && !mw.config.get( 'wgVectorDisableSidebarPersistence' ) ) {
 		bindSidebarClickEvent( checkbox, button );
 	}
 }

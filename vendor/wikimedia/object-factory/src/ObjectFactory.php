@@ -42,7 +42,8 @@ use UnexpectedValueException;
  *     'args' => array,
  *     'closure_expansion' => bool, // default true
  *     'spec_is_arg' => bool, // default false
- *     'services' => string[], // default empty
+ *     'services' => (string|null)[], // default empty
+ *     'optional_services' => (string|null)[], // default empty
  *
  * The 'args' key, if provided, specifies arguments to pass to the constructor/callable.
  * Values in 'args' which are Closure instances will be expanded by invoking
@@ -56,7 +57,13 @@ use UnexpectedValueException;
  *
  * If 'services' is supplied and non-empty (and a service container is available),
  * the named services are requested from the PSR-11 service container and
- * prepended before 'args'.
+ * prepended before 'args'. `null` values in 'services' are passed to the constructor
+ * unchanged.
+ *
+ * Optional services declared via 'optional_services' are handled the same,
+ * except that if the service is not available from the service container
+ * `null` is passed as a parameter instead. Optional services are appended
+ * directly after the normal required services.
  *
  * If any extra arguments are passed in the options to getObjectFromSpec() or
  * createObject(), these are prepended before the 'services' and 'args'.
@@ -92,10 +99,51 @@ class ObjectFactory {
 	 * This calls getObjectFromSpec(), with the ContainerInterface that was
 	 * passed to the constructor passed as `$options['serviceContainer']`.
 	 *
-	 * @param array|string|callable $spec As for getObjectFromSpec()
-	 * @param array $options As for getObjectFromSpec(). Note the value for
-	 *  'serviceContainer' is forced, so specifying it here will be ignored.
+	 * @phan-template T
+	 * @codingStandardsIgnoreStart
+	 * @phan-param class-string<T>|callable(mixed ...$args):T|array{class?:class-string<T>,factory?:callable(mixed ...$args):T,args?:array,services?:array<string|null>,calls?:string[],closure_expansion?:bool,spec_is_arg?:bool} $spec
+	 * @phan-param array{allowClassName?:bool,allowCallable?:bool,specIsArg?:bool,extraArgs?:array,assertClass?:string} $options
+	 * @codingStandardsIgnoreEnd
+	 * @phan-return T|object
+	 *
+	 * @param array|string|callable $spec Specification array, or (when the respective
+	 *   $options flag is set) a class name or callable. Allowed fields (see class
+	 *   documentation for more details):
+	 *   - 'class': (string) Class of the object to create. If 'factory' is also specified,
+	 *     it will be used to validate the object.
+	 *   - 'factory': (callable) Factory method for creating the object.
+	 *   - 'args': (array) Arguments to pass to the constructor or the factory method.
+	 *   - 'services': (array of string/null) List of services to pass as arguments. Each
+	 *     name will be looked up in the container given to ObjectFactory in its constructor,
+	 *     and the results prepended to the argument list. Null values are passed unchanged.
+	 *   - 'optional_services': (array of string/null) Handled the same as services, but if
+	 *     the service is unavailable from the service container the parameter is set to 'null'
+	 *     instead of causing an error.
+	 *   - 'calls': (array) A list of calls to perform on the created object, for setter
+	 *     injection. Keys of the array are method names and values are argument lists
+	 *     (as arrays). These arguments are not affected by any of the other specification
+	 *     fields that manipulate constructor arguments.
+	 *   - 'closure_expansion': (bool, default true) Whether to expand (execute) closures
+	 *     in 'args'.
+	 *   - 'spec_is_arg': (bool, default false) When true, 'args' is ignored and the entire
+	 *     specification array is passed as an argument.
+	 *   One of 'class' and 'factory' is required.
+	 * @param array $options Allowed keys are
+	 *  - 'allowClassName': (bool) If set and truthy, $spec may be a string class name.
+	 *    In this case, it will be treated as if it were `[ 'class' => $spec ]`.
+	 *  - 'allowCallable': (bool) If set and truthy, $spec may be a callable. In this
+	 *    case, it will be treated as if it were `[ 'factory' => $spec ]`.
+	 *  - 'specIsArg': (bool) If set and truthy, default $spec['spec_is_arg'] = true
+	 *    if it is unset. This is mainly intended for backwards compatibility with existing
+	 *    code that uses a near-clone of ObjectFactory with those semantics.
+	 *  - 'extraArgs': (array) Extra arguments to pass to the constructor/callable. These
+	 *    will come before services and normal args.
+	 *  - 'assertClass': (string) Throw an UnexpectedValueException if the spec
+	 *    does not create an object of this class.
 	 * @return object
+	 * @throws InvalidArgumentException when object specification is not valid.
+	 * @throws UnexpectedValueException when the factory returns a non-object, or
+	 *  the object is not an instance of the specified class.
 	 */
 	public function createObject( $spec, array $options = [] ) {
 		$options['serviceContainer'] = $this->serviceContainer;
@@ -105,25 +153,21 @@ class ObjectFactory {
 	/**
 	 * Instantiate an object based on a specification array.
 	 *
-	 * @param array|string|callable $spec Specification array, or (optionally)
-	 *  a class name or callable.
-	 * @param array $options Allowed keys are
-	 *  - 'allowClassName': (bool) If set and truthy, $spec may be a string class name.
-	 *    In this case, it will be treated as if it were `[ 'class' => $spec ]`.
-	 *  - 'allowCallable': (bool) If set and truthy, $spec may be a callable. In this
-	 *    case, it will be treated as if it were `[ 'factory' => $spec ]`.
-	 *  - 'specIsArg': (bool) If set and truthy, default $spec['spec_is_arg'] = true
-	 *    if it is unset. This is mainly intended for backwards compatibility with existing
-	 *    code that uses a near-clone of ObjectFactory with those semantics.
-	 *  - 'extraArgs': (array) Extra arguments to pass to the constructor/callable.
-	 *  - 'assertClass': (string) Throw an UnexpectedValueException if the spec
-	 *    does not create an object of this class.
+	 * @phan-template T
+	 * @codingStandardsIgnoreStart
+	 * @phan-param class-string<T>|callable(mixed ...$args):T|array{class?:class-string<T>,factory?:callable(mixed ...$args):T,args?:array,services?:array<string|null>,calls?:string[],closure_expansion?:bool,spec_is_arg?:bool} $spec
+	 * @phan-param array{allowClassName?:bool,allowCallable?:bool,specIsArg?:bool,extraArgs?:array,assertClass?:string,serviceContainer?:ContainerInterface} $options
+	 * @codingStandardsIgnoreEnd
+	 * @phan-return T|object
+	 *
+	 * @param array|string|callable $spec As for createObject().
+	 * @param array $options As for createObject(). Additionally:
 	 *  - 'serviceContainer': (ContainerInterface) PSR-11 service container to use
 	 *    to handle 'services'.
 	 * @return object
 	 * @throws InvalidArgumentException when object specification is not valid.
-	 * @throws InvalidArgumentException when $spec['services'] is used without
-	 *  $options['serviceContainer'].
+	 * @throws InvalidArgumentException when $spec['services'] or $spec['optional_services']
+	 *  is used without $options['serviceContainer'] being set and implementing ContainerInterface.
 	 * @throws UnexpectedValueException when the factory returns a non-object, or
 	 *  the object is not an instance of the specified class.
 	 */
@@ -152,13 +196,29 @@ class ObjectFactory {
 		}
 
 		$services = [];
-		if ( !empty( $spec['services'] ) ) {
+		if ( !empty( $spec['services'] ) || !empty( $spec['optional_services'] ) ) {
 			$container = $options['serviceContainer'] ?? null;
 			if ( !$container instanceof ContainerInterface ) {
-				throw new InvalidArgumentException( '\'services\' cannot be used without a service container' );
+				throw new InvalidArgumentException(
+					'\'services\' and \'optional_services\' cannot be used without a service container'
+				);
 			}
-			foreach ( $spec['services'] as $service ) {
-				$services[] = $container->get( $service );
+
+			if ( !empty( $spec['services'] ) ) {
+				foreach ( $spec['services'] as $service ) {
+					$services[] = $service === null ? null : $container->get( $service );
+				}
+			}
+
+			if ( !empty( $spec['optional_services'] ) ) {
+				foreach ( $spec['optional_services'] as $service ) {
+					if ( $service !== null && $container->has( $service ) ) {
+						$services[] = $container->get( $service );
+					} else {
+						// Either $service was null, or the service was not available
+						$services[] = null;
+					}
+				}
 			}
 		}
 
@@ -256,27 +316,6 @@ class ObjectFactory {
 				return $value;
 			}
 		}, $list );
-	}
-
-	/**
-	 * Construct an instance of the given class using the given arguments.
-	 *
-	 * @deprecated Use PHP's splat operator, like `new $class( ...$args )`.
-	 * @param string $clazz Class name
-	 * @param array $args Constructor arguments
-	 * @return mixed Constructed instance
-	 */
-	public static function constructClassInstance( $clazz, $args ) {
-		trigger_error(
-			__METHOD__ . ' is deprecated, use `new $clazz( ...$args )` directly instead', E_USER_DEPRECATED
-		);
-
-		// $args should be a non-associative array; show nice error if that's not the case
-		if ( $args && array_keys( $args ) !== range( 0, count( $args ) - 1 ) ) {
-			throw new InvalidArgumentException( __METHOD__ . ': $args cannot be an associative array' );
-		}
-
-		return new $clazz( ...$args );
 	}
 
 }

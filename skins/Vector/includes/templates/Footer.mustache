@@ -9,20 +9,15 @@
 	@prop string id of list element
 	@prop footerItem[] array-items
 
-	string html-hook-vector-before-footer output of VectorBeforeFooter hook
-	string|null html-userlangattributes a string of attribute HTML
-	footerRow[] array-footer-rows iterable list of footer rows
+	string|null html-user-language-attributes a string of attribute HTML
+	footerRow data-info the info row
+	footerRow data-places the places row
+	footerRow data-icons the icons row
 }}
-{{{html-hook-vector-before-footer}}}
 {{! `role` is unnecessary but kept to support selectors in any gadgets or user styles and
 	to mitigate a VoiceOver bug. }}
-<footer id="footer" class="mw-footer" role="contentinfo" {{{html-userlangattributes}}}>
-	{{#array-footer-rows}}
-	<ul id="{{id}}" {{#className}}class="{{.}}"{{/className}}>
-		{{#array-items}}
-		<li id="{{id}}">{{{html}}}</li>
-		{{/array-items}}
-	</ul>
-	{{/array-footer-rows}}
-	<div style="clear: both;"></div>
+<footer id="footer" class="mw-footer" role="contentinfo" {{{html-user-language-attributes}}}>
+	{{#data-info}}{{>Footer__row}}{{/data-info}}
+	{{#data-places}}{{>Footer__row}}{{/data-places}}
+	{{#data-icons}}{{>Footer__row}}{{/data-icons}}
 </footer>

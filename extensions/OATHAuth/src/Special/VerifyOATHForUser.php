@@ -9,9 +9,8 @@ use ManualLogEntry;
 use MediaWiki\Extension\OATHAuth\IModule;
 use MediaWiki\Extension\OATHAuth\OATHUserRepository;
 use MediaWiki\Logger\LoggerFactory;
-use MediaWiki\MediaWikiServices;
+use MediaWiki\User\UserFactory;
 use MWException;
-use User;
 
 class VerifyOATHForUser extends FormSpecialPage {
 
@@ -21,15 +20,23 @@ class VerifyOATHForUser extends FormSpecialPage {
 	/** @var OATHUserRepository */
 	private $userRepo;
 
+	/** @var UserFactory */
+	private $userFactory;
+
 	/** @var string */
 	private $enabledStatus;
 
 	/** @var string */
 	private $targetUser;
 
-	public function __construct() {
+	/**
+	 * @param OATHUserRepository $userRepo
+	 * @param UserFactory $userFactory
+	 */
+	public function __construct( $userRepo, $userFactory ) {
 		parent::__construct( 'VerifyOATHForUser', 'oathauth-verify-user' );
-		$this->userRepo = MediaWikiServices::getInstance()->getService( 'OATHUserRepository' );
+		$this->userRepo = $userRepo;
+		$this->userFactory = $userFactory;
 	}
 
 	public function doesWrites() {
@@ -103,7 +110,7 @@ class VerifyOATHForUser extends FormSpecialPage {
 	 */
 	public function onSubmit( array $formData ) {
 		$this->targetUser = $formData['user'];
-		$user = User::newFromName( $this->targetUser );
+		$user = $this->userFactory->newFromName( $this->targetUser );
 		if ( !$user || $user->getId() === 0 ) {
 			return [ 'oathauth-user-not-found' ];
 		}

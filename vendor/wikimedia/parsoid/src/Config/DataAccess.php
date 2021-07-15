@@ -20,7 +20,8 @@ interface DataAccess {
 	 *  - missing: (bool) Whether the page is missing
 	 *  - known: (bool) Whether the special page is known
 	 *  - redirect: (bool) Whether the page is a redirect
-	 *  - disambiguation: (bool) Whether the page is a disambiguation page
+	 *  - linkclasses: (string[]) Extensible "link color" information; see
+	 *      ApiQueryInfo::getLinkClasses() in MediaWiki core
 	 */
 	public function getPageInfo( PageConfig $pageConfig, array $titles ): array;
 
@@ -72,13 +73,11 @@ interface DataAccess {
 	 * This replaces PHPParseRequest with onlypst = false, and Batcher.parse()
 	 *
 	 * @todo Parsoid should be able to do this itself.
-	 * @todo ParsoidBatchAPI also returns page properties, but they don't seem to be used in Parsoid?
 	 * @param PageConfig $pageConfig
 	 * @param string $wikitext
 	 * @return array
 	 *  - html: (string) Output HTML.
 	 *  - modules: (string[]) ResourceLoader module names
-	 *  - modulescripts: (string[]) ResourceLoader module names to load scripts-only
 	 *  - modulestyles: (string[]) ResourceLoader module names to load styles-only
 	 *  - categories: (array) [ Category name => sortkey ]
 	 */
@@ -90,20 +89,24 @@ interface DataAccess {
 	 * This replaces PreprocessorRequest and Batcher.preprocess()
 	 *
 	 * @todo Parsoid should be able to do this itself.
-	 * @todo ParsoidBatchAPI also returns page properties, but they don't seem to be used in Parsoid?
 	 * @param PageConfig $pageConfig
 	 * @param string $wikitext
 	 * @return array
 	 *  - wikitext: (string) Expanded wikitext
 	 *  - modules: (string[]) ResourceLoader module names
-	 *  - modulescripts: (string[]) ResourceLoader module names to load scripts-only
 	 *  - modulestyles: (string[]) ResourceLoader module names to load styles-only
 	 *  - categories: (array) [ Category name => sortkey ]
 	 */
 	public function preprocessWikitext( PageConfig $pageConfig, string $wikitext ): array;
 
 	/**
-	 * Fetch page content, e.g. for transclusion
+	 * Fetch latest revision of article/template content for transclusion.
+	 *
+	 * Technically, the ParserOptions might select a different
+	 * revision other than the latest via
+	 * ParserOptions::getTemplateCallback() (used for FlaggedRevisions,
+	 * etc), but the point is that template lookups are by title, not
+	 * revision id.
 	 *
 	 * This replaces TemplateRequest
 	 *
@@ -111,11 +114,10 @@ interface DataAccess {
 	 *   TemplateRequest.setPageSrcInfo() which is replaced by PageConfig.
 	 * @param PageConfig $pageConfig
 	 * @param string $title Title of the page to fetch
-	 * @param int $oldid Revision ID to fetch. Set 0 for the current revision
 	 * @return PageContent|null
 	 */
-	public function fetchPageContent(
-		PageConfig $pageConfig, string $title, int $oldid = 0
+	public function fetchTemplateSource(
+		PageConfig $pageConfig, string $title
 	): ?PageContent;
 
 	/**

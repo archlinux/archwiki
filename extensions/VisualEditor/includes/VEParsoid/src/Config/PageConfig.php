@@ -19,11 +19,13 @@
 
 namespace VEParsoid\Config;
 
+use Language;
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Revision\SlotRoleHandler;
-use Parser;
 use ParserOptions;
+use Revision;
 use Title;
 use Wikimedia\Parsoid\Config\PageConfig as IPageConfig;
 use Wikimedia\Parsoid\Config\PageContent as IPageContent;
@@ -38,9 +40,6 @@ use Wikimedia\Parsoid\Config\PageContent as IPageContent;
  */
 class PageConfig extends IPageConfig {
 
-	/** @var Parser */
-	private $parser;
-
 	/** @var ParserOptions */
 	private $parserOptions;
 
@@ -50,7 +49,7 @@ class PageConfig extends IPageConfig {
 	/** @var Title */
 	private $title;
 
-	/** @var RevisionRecord|null */
+	/** @var ?RevisionRecord */
 	private $revision;
 
 	/** @var string|null */
@@ -60,20 +59,19 @@ class PageConfig extends IPageConfig {
 	private $pagelanguageDir;
 
 	/**
-	 * @param Parser $parser
 	 * @param ParserOptions $parserOptions
 	 * @param SlotRoleHandler $slotRoleHandler
 	 * @param Title $title Title being parsed
-	 * @param RevisionRecord|null $revision
-	 * @param string|null $pagelanguage
-	 * @param string|null $pagelanguageDir
+	 * @param ?RevisionRecord $revision
+	 * @param ?string $pagelanguage
+	 * @param ?string $pagelanguageDir
 	 */
 	public function __construct(
-		Parser $parser, ParserOptions $parserOptions, SlotRoleHandler $slotRoleHandler,
-		Title $title, RevisionRecord $revision = null,
-		string $pagelanguage = null, string $pagelanguageDir = null
+		ParserOptions $parserOptions,
+		SlotRoleHandler $slotRoleHandler, Title $title,
+		?RevisionRecord $revision = null, ?string $pagelanguage = null,
+		?string $pagelanguageDir = null
 	) {
-		$this->parser = $parser;
 		$this->parserOptions = $parserOptions;
 		$this->slotRoleHandler = $slotRoleHandler;
 		$this->title = $title;
@@ -132,10 +130,22 @@ class PageConfig extends IPageConfig {
 			$this->title->getPageLanguage()->getCode();
 	}
 
+	/**
+	 * Helper function: get the Language object corresponding to
+	 * PageConfig::getPageLanguage()
+	 * @return Language
+	 */
+	private function getPageLanguageObject(): Language {
+		return $this->pagelanguage ?
+			MediaWikiServices::getInstance()->getLanguageFactory()
+				->getLanguage( $this->pagelanguage ) :
+			$this->title->getPageLanguage();
+	}
+
 	/** @inheritDoc */
 	public function getPageLanguageDir(): string {
 		return $this->pagelanguageDir ??
-			$this->title->getPageLanguage()->getDir();
+			$this->getPageLanguageObject()->getDir();
 	}
 
 	/**
@@ -146,23 +156,38 @@ class PageConfig extends IPageConfig {
 	}
 
 	/**
-	 * @return Parser
+	 * Use ParserOptions::getTemplateCallback() to fetch the correct
+	 * (usually latest) RevisionRecord for the given title.
+	 *
+	 * @param Title $title
+	 * @return ?RevisionRecord
 	 */
-	public function getParser(): Parser {
-		return $this->parser;
+	public function fetchRevisionRecordOfTemplate( Title $title ): ?RevisionRecord {
+		// See Parser::fetchTemplateAndTitle(), but stateless
+		// (Parsoid will track dependencies, etc, itself.)
+		// The callback defaults to Parser::statelessFetchTemplate()
+		$templateCb = $this->parserOptions->getTemplateCallback();
+		$stuff = call_user_func( $templateCb, $title, $this );
+		// Compatibility; the 'revision' property was deprecated in 1.35.
+		if ( isset( $stuff['revision-record'] ) ) {
+			$revRecord = $stuff['revision-record'];
+		} else {
+			// Triggers deprecation warnings via DeprecatablePropertyArray
+			$rev = $stuff['revision'] ?? null;
+			if ( $rev instanceof Revision ) {
+				$revRecord = $rev->getRevisionRecord();
+			} else {
+				$revRecord = null;
+			}
+		}
+		return $revRecord;
 	}
 
 	/**
 	 * @return ?RevisionRecord
 	 */
 	private function getRevision(): ?RevisionRecord {
-		if ( $this->revision === null ) {
-			$this->revision = call_user_func(
-				$this->parserOptions->getCurrentRevisionRecordCallback(),
-				$this->title, $this->parser
-			);
-		}
-		return $this->revision ?: null;
+		return $this->revision;
 	}
 
 	/** @inheritDoc */

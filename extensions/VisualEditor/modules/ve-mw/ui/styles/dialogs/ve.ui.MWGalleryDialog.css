@@ -11,6 +11,7 @@
 	background-position: 50% 50%;
 	border: 1px solid #c8ccd1;
 	cursor: pointer;
+	/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 	background-size: contain;
 	-webkit-transition: border 200ms cubic-bezier( 0.39, 0.575, 0.565, 1 ), box-shadow 200ms cubic-bezier( 0.39, 0.575, 0.565, 1 );
 	-moz-transition: border 200ms cubic-bezier( 0.39, 0.575, 0.565, 1 ), box-shadow 200ms cubic-bezier( 0.39, 0.575, 0.565, 1 );
@@ -47,6 +48,7 @@
 	height: 200px;
 	background-repeat: no-repeat;
 	background-position: 50% 50%;
+	/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 	background-size: contain;
 }
 
@@ -56,6 +58,7 @@
 }
 
 .ve-ui-mwGalleryDialog-menuLayout-mobile > .oo-ui-menuLayout-menu {
+	/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 	height: calc( 102px + 2em );
 	border-bottom: 1px solid #c8ccd1;
 }
@@ -66,6 +69,7 @@
 }
 
 .ve-ui-mwGalleryDialog-menuLayout-mobile > .oo-ui-menuLayout-content {
+	/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 	top: calc( 102px + 2em );
 }
 
@@ -90,6 +94,16 @@
 	box-shadow: 0 -1px 0 0 rgba( 0, 0, 0, 0.05 );
 	height: 5em;
 	border-top: 1px solid #eaecf0;
+}
+
+.ve-ui-mwGalleryDialog-imageListMenuLayout-desktop > .oo-ui-menuLayout-menu .oo-ui-panelLayout-padded {
+	/* Center the button vertically */
+	padding: 0 12px;
+	line-height: 5em;
+}
+
+.ve-ui-mwGalleryDialog-imageListMenuLayout-desktop > .oo-ui-menuLayout-menu .oo-ui-panelLayout-padded .oo-ui-buttonElement-button {
+	white-space: normal;
 }
 
 .ve-ui-mwGalleryDialog-imageListMenuLayout-mobile > .oo-ui-menuLayout-menu {

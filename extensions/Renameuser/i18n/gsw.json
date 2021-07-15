@@ -18,7 +18,6 @@
 	"renameuserwarnings": "Warnige:",
 	"renameuserconfirm": "Jo, Benutzer umnänne",
 	"renameusersubmit": "Umnänne",
-	"renameuser-submit-blocklog": "Benutzersperrlogbuech vo däm Benutzer aazeige",
 	"renameusererrordoesnotexist": "Dr Benutzername „<nowiki>$1</nowiki>“ git s nit.",
 	"renameusererrorexists": "Dr Benutzername „<nowiki>$1</nowiki>“ git s scho.",
 	"renameusererrorinvalid": "Dr Benutzername „<nowiki>$1</nowiki>“ isch uugiltig.",

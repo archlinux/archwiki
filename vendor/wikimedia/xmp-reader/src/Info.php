@@ -259,7 +259,8 @@ class Info {
 				'mode' => Reader::MODE_SIMPLE,
 				'validate' => 'validateDate',
 			],
-			'DateTimeDigitized' => [ /* xmp:CreateDate */
+			'DateTimeDigitized' => [
+				/* xmp:CreateDate */
 				'map_group' => 'exif',
 				'mode' => Reader::MODE_SIMPLE,
 				'validate' => 'validateDate',
@@ -292,6 +293,11 @@ class Info {
 				'validate' => 'validateClosed',
 				'choices' => [ '3' => true ]
 			],
+			// PHP likes to be the odd one out with casing of FlashPixVersion;
+			// https://www.exif.org/Exif2-2.PDF#page=32 and
+			// https://www.digitalgalen.net/Documents/External/XMP/XMPSpecificationPart2.pdf#page=51
+			// both use FlashpixVersion. However, since at least 2002, PHP has used FlashPixVersion at
+			// https://github.com/php/php-src/blame/master/ext/exif/exif.c#L725
 			'FlashpixVersion' => [
 				'map_group' => 'exif',
 				'mode' => Reader::MODE_SIMPLE,
@@ -551,12 +557,14 @@ class Info {
 				'map_group' => 'exif',
 				'mode' => Reader::MODE_LANG,
 			],
-			'DateTime' => [ /* proper prop is xmp:ModifyDate */
+			'DateTime' => [
+				/* proper prop is xmp:ModifyDate */
 				'map_group' => 'exif',
 				'mode' => Reader::MODE_SIMPLE,
 				'validate' => 'validateDate',
 			],
-			'ImageDescription' => [ /* proper one is dc:description */
+			'ImageDescription' => [
+				/* proper one is dc:description */
 				'map_group' => 'exif',
 				'mode' => Reader::MODE_LANG,
 			],
@@ -621,7 +629,8 @@ class Info {
 				'mode' => Reader::MODE_SIMPLE,
 				'validate' => 'validateInteger',
 			],
-			'Software' => [ /* see xmp:CreatorTool */
+			'Software' => [
+				/* see xmp:CreatorTool */
 				'map_group' => 'exif',
 				'mode' => Reader::MODE_SIMPLE,
 			],
@@ -708,7 +717,8 @@ class Info {
 			],
 			'creator' => [
 				'map_group' => 'general',
-				'map_name' => 'Artist', // map with exif Artist, iptc byline (2:80)
+				// map with exif Artist, iptc byline (2:80)
+				'map_name' => 'Artist',
 				'mode' => Reader::MODE_SEQ,
 			],
 			'date' => [
@@ -728,7 +738,8 @@ class Info {
 			],
 			'language' => [
 				'map_group' => 'general',
-				'map_name' => 'LanguageCode', /* mapped with iptc 2:135 */
+				/* mapped with iptc 2:135 */
+				'map_name' => 'LanguageCode',
 				'mode' => Reader::MODE_BAG,
 				'validate' => 'validateLangCode',
 			],
@@ -759,7 +770,8 @@ class Info {
 			],
 			'subject' => [
 				'map_group' => 'general',
-				'map_name' => 'Keywords', /* maps to iptc 2:25 */
+				/* maps to iptc 2:25 */
+				'map_name' => 'Keywords',
 				'mode' => Reader::MODE_BAG,
 			],
 			'type' => [
@@ -1020,42 +1032,50 @@ class Info {
 					'CiUrlWork' => true,
 				],
 			],
-			'CiAdrExtadr' => [ /* address */
+			'CiAdrExtadr' => [
+				/* address */
 				'map_group' => 'general',
 				'mode' => Reader::MODE_SIMPLE,
 				'structPart' => true,
 			],
-			'CiAdrCity' => [ /* city */
+			'CiAdrCity' => [
+				/* city */
 				'map_group' => 'general',
 				'mode' => Reader::MODE_SIMPLE,
 				'structPart' => true,
 			],
-			'CiAdrCtry' => [ /* country */
+			'CiAdrCtry' => [
+				/* country */
 				'map_group' => 'general',
 				'mode' => Reader::MODE_SIMPLE,
 				'structPart' => true,
 			],
-			'CiEmailWork' => [ /* email (possibly separated by ',') */
+			'CiEmailWork' => [
+				/* email (possibly separated by ',') */
 				'map_group' => 'general',
 				'mode' => Reader::MODE_SIMPLE,
 				'structPart' => true,
 			],
-			'CiTelWork' => [ /* telephone */
+			'CiTelWork' => [
+				/* telephone */
 				'map_group' => 'general',
 				'mode' => Reader::MODE_SIMPLE,
 				'structPart' => true,
 			],
-			'CiAdrPcode' => [ /* postal code */
+			'CiAdrPcode' => [
+				/* postal code */
 				'map_group' => 'general',
 				'mode' => Reader::MODE_SIMPLE,
 				'structPart' => true,
 			],
-			'CiAdrRegion' => [ /* province/state */
+			'CiAdrRegion' => [
+				/* province/state */
 				'map_group' => 'general',
 				'mode' => Reader::MODE_SIMPLE,
 				'structPart' => true,
 			],
-			'CiUrlWork' => [ /* url. Multiple may be separated by comma. */
+			'CiUrlWork' => [
+				/* url. Multiple may be separated by comma. */
 				'map_group' => 'general',
 				'mode' => Reader::MODE_SIMPLE,
 				'structPart' => true,
@@ -1096,7 +1116,8 @@ class Info {
 				'mode' => Reader::MODE_BAGSTRUCT,
 				'children' => [
 					'WorldRegion' => true,
-					'CountryCode' => true, /* iso code */
+					/* iso code */
+					'CountryCode' => true,
 					'CountryName' => true,
 					'ProvinceState' => true,
 					'City' => true,
@@ -1108,7 +1129,8 @@ class Info {
 				'mode' => Reader::MODE_BAGSTRUCT,
 				'children' => [
 					'WorldRegion' => true,
-					'CountryCode' => true, /* iso code */
+					/* iso code */
+					'CountryCode' => true,
 					'CountryName' => true,
 					'ProvinceState' => true,
 					'City' => true,

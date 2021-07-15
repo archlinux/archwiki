@@ -27,44 +27,44 @@ end
 
 return testframework.getTestProvider( {
 	{ name = 'exists (1)', func = test_exists,
-	  args = { 'mainpage' },
-	  expect = { true }
+		args = { 'mainpage' },
+		expect = { true }
 	},
 	{ name = 'exists (2)', func = test_exists,
-	  args = { 'i-dont-exist-evar' },
-	  expect = { false }
+		args = { 'i-dont-exist-evar' },
+		expect = { false }
 	},
 
 	{ name = 'inLanguage', func = test_language,
-	  expect = { 'Main Page', 'Заглавная страница', 'Заглавная страница' }
+		expect = { 'Main Page', 'Заглавная страница', 'Заглавная страница' }
 	},
 
 	{ name = 'plain param', func = test_params,
-	  args = { '($1 $2)', 'params', "'''foo'''", 123456 },
-	  expect = { "('''foo''' 123456)" }
+		args = { '($1 $2)', 'params', "'''foo'''", 123456 },
+		expect = { "('''foo''' 123456)" }
 	},
 	{ name = 'raw param', func = test_params,
-	  args = { '($1 $2)', 'rawParams', "'''foo'''", 123456 },
-	  expect = { "('''foo''' 123456)" }
+		args = { '($1 $2)', 'rawParams', "'''foo'''", 123456 },
+		expect = { "('''foo''' 123456)" }
 	},
 	{ name = 'num param', func = test_params,
-	  args = { '($1 $2)', 'numParams', "'''foo'''", 123456 },
-	  expect = { "('''foo''' 123,456)" }
+		args = { '($1 $2)', 'numParams', "-1.23", 123456 },
+		expect = { "(−1.23 123,456)" }
 	},
 	{ name = 'mixed params', func = test_params,
-	  args = { '($1 $2 $3)', 'params',
+		args = { '($1 $2 $3)', 'params',
 		"'''foo'''", mw.message.rawParam( "'''foo'''" ), mw.message.numParam( 123456 )
-	  },
-	  expect = { "('''foo''' '''foo''' 123,456)" }
+		},
+		expect = { "('''foo''' '''foo''' 123,456)" }
 	},
 
 	{ name = 'message as param', func = test_params,
-	  args = { '($1)', 'params', mw.message.newRawMessage( 'bar' ) },
-	  expect = { "(bar)" }
+		args = { '($1)', 'params', mw.message.newRawMessage( 'bar' ) },
+		expect = { "(bar)" }
 	},
 
 	{ name = 'different title', func = test_params,
-	  args = { '($1)', 'params', mw.message.newRawMessage( 'bar' ) },
-	  expect = { "(bar)" }
+		args = { '($1)', 'params', mw.message.newRawMessage( 'bar' ) },
+		expect = { "(bar)" }
 	},
 } )

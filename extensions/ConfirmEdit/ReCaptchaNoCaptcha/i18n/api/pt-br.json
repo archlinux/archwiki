@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Eduardo Addad de Oliveira"
+			"Eduardo Addad de Oliveira",
+			"Eduardoaddad"
 		]
 	},
 	"renocaptcha-apihelp-param-g-recaptcha-response": "Campo do <i>widget</i> ReCaptcha."

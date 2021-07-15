@@ -1,0 +1,78 @@
+// The use of mixins.buttons requires @font-size-base to be defined for this to work in Storybook
+@import '../../variables.less';
+@import 'mediawiki.mixins.less';
+
+// `.mw-body-header` class can be removed when language button is the default.
+// e.g. upon removal of SkinVector::isLanguagesInHeader
+.mw-body-header .mw-portlet-lang {
+	.mw-ui-icon:before {
+		margin-right: 8px;
+		// Put icon on correct standard normal state color.
+		opacity: 0.87;
+	}
+
+	.vector-menu-heading {
+		// Special treatment for language button, based on Vector font-size
+		font-size: @font-size-base;
+		// avoid sub pixel rendering
+		line-height: 1.493em;
+		// reset padding styles in MenuDropdown.less with right padding for arrow.
+		padding: 4px 30px 4px 8px;
+		// Prevent select of span text "X languages"
+		user-select: none;
+		// Remove opacity on language button (it applies to more menu because of label color).
+		opacity: 1;
+
+		&:after {
+			top: 0;
+		}
+	}
+
+	.vector-menu-content {
+		top: auto;
+		right: 0;
+		// align borders of open menu align with button
+		.box-sizing( border-box );
+		max-height: 65vh;
+		overflow: scroll;
+		border-top-width: 1px;
+
+		li a {
+			font-size: inherit;
+		}
+	}
+
+	.after-portlet {
+		// ensure there is a visual separation between the language links and additional links.
+		margin-top: 10px;
+	}
+}
+
+// Disable border-radius when dropdown menu open
+.client-nojs {
+	.mw-portlet-lang:hover .vector-menu-heading,
+	.vector-menu-checkbox:checked + .vector-menu-heading {
+		border-radius: 0;
+	}
+}
+
+// mw-body-header class can be removed when language button is the default.
+// e.g. upon removal of SkinVector::isLanguagesInHeader
+.client-js .mw-body-header {
+	// The `.mw-interlanguage-selector` is toggled off through js if the
+	// `ext.uls.interface` module is not being loaded.
+	.mw-interlanguage-selector {
+		// Remove the ULS language icon provided by ext.uls.compactlinks.less as we
+		// are already providing no-js users an icon.
+		background-image: none;
+	}
+
+	// When the ext.uls.interface module is loaded, we hide the fallback menu and
+	// checkbox.
+	.vector-menu--hide-dropdown {
+		.vector-menu-checkbox,
+		.vector-menu-content {
+			display: none;
+		}
+	}
+}

@@ -57,7 +57,7 @@ class DOMUtils {
 	 * Assert that this is a DOM element node.
 	 * This is primarily to help phan analyze variable types.
 	 * @phan-assert DOMElement $node
-	 * @param DOMNode|null $node
+	 * @param ?DOMNode $node
 	 * @return bool Always returns true
 	 */
 	public static function assertElt( ?DOMNode $node ): bool {
@@ -65,18 +65,9 @@ class DOMUtils {
 	}
 
 	/**
-	 * Check whether this is the <body> DOM element.
-	 * @param DOMNode|null $node
-	 * @return bool
-	 */
-	public static function isBody( ?DOMNode $node ): bool {
-		return DU::isBody( $node );
-	}
-
-	/**
 	 * Check whether this is a DOM element node.
 	 * @see http://dom.spec.whatwg.org/#dom-node-nodetype
-	 * @param DOMNode|null $node
+	 * @param ?DOMNode $node
 	 * @return bool
 	 */
 	public static function isElt( ?DOMNode $node ): bool {
@@ -86,7 +77,7 @@ class DOMUtils {
 	/**
 	 * Check whether this is a DOM text node.
 	 * @see http://dom.spec.whatwg.org/#dom-node-nodetype
-	 * @param DOMNode|null $node
+	 * @param ?DOMNode $node
 	 * @return bool
 	 */
 	public static function isText( ?DOMNode $node ): bool {
@@ -96,7 +87,7 @@ class DOMUtils {
 	/**
 	 * Check whether this is a DOM comment node.
 	 * @see http://dom.spec.whatwg.org/#dom-node-nodetype
-	 * @param DOMNode|null $node
+	 * @param ?DOMNode $node
 	 * @return bool
 	 */
 	public static function isComment( ?DOMNode $node ): bool {
@@ -107,10 +98,12 @@ class DOMUtils {
 	 * Check a node to see whether it's a diff marker.
 	 *
 	 * @param ?DOMNode $node
-	 * @param string|null $mark
+	 * @param ?string $mark
 	 * @return bool
 	 */
-	public static function isDiffMarker( ?DOMNode $node, string $mark = null ): bool {
+	public static function isDiffMarker(
+		?DOMNode $node, ?string $mark = null
+	): bool {
 		return DU::isDiffMarker( $node, $mark );
 	}
 
@@ -139,10 +132,10 @@ class DOMUtils {
 	 * If 'beforeNode' is null, the nodes are appended at the end.
 	 * @param DOMNode $from Source node. Children will be removed.
 	 * @param DOMNode $to Destination node. Children of $from will be added here
-	 * @param DOMNode|null $beforeNode Add the children before this node.
+	 * @param ?DOMNode $beforeNode Add the children before this node.
 	 */
 	public static function migrateChildren(
-		DOMNode $from, DOMNode $to, DOMNode $beforeNode = null
+		DOMNode $from, DOMNode $to, ?DOMNode $beforeNode = null
 	): void {
 		DU::migrateChildren( $from, $to, $beforeNode );
 	}
@@ -161,7 +154,7 @@ class DOMUtils {
 	 * Returns a media element nested in `node`
 	 *
 	 * @param DOMElement $node
-	 * @return DOMElement|null
+	 * @return ?DOMElement
 	 */
 	public static function selectMediaElt( DOMElement $node ): ?DOMElement {
 		return DU::selectMediaElt( $node );

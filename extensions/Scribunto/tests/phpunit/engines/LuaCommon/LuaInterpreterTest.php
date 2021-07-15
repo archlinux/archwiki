@@ -4,6 +4,7 @@ abstract class Scribunto_LuaInterpreterTest extends PHPUnit\Framework\TestCase {
 	use MediaWikiCoversValidator;
 
 	/**
+	 * @param array $opts
 	 * @return Scribunto_LuaInterpreter
 	 */
 	abstract protected function newInterpreter( $opts = [] );

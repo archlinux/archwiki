@@ -15,7 +15,7 @@
 	"apierror-visualeditor-badcachekey": "Nie znaleziono seryjnej pamięci podręcznej dla tego klucza",
 	"apierror-visualeditor-difffailed": "Porównywanie nie powiodło się",
 	"apierror-visualeditor-docserver-http-error": "Wystąpił błąd podczas kontaktowania się z serwerem Parsoid/RESTBase: $1",
-	"apierror-visualeditor-docserver-http": "Wystąpił błąd podczas kontaktowania się z serwerem Parsoid/RESTbase (HTTP $1)",
+	"apierror-visualeditor-docserver-http": "Wystąpił błąd podczas kontaktowania się z serwerem Parsoid/RESTBase (HTTP $1)",
 	"apierror-visualeditor-docserver-unconfigured": "VirtualRESTService dla serwera dokumentów nie jest zdefiniowany; zobacz https://www.mediawiki.org/wiki/Extension:VisualEditor",
 	"apierror-visualeditor-docserver": "Wystąpił błąd podczas kontaktowania się z serwerem Parsoid/RESTBase (brak odpowiedzi)",
 	"apierror-visualeditor-latestnotfound": "Nie można znaleźć najnowszej wersji dla tytułu",

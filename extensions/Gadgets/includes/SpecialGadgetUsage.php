@@ -50,7 +50,7 @@ class SpecialGadgetUsage extends QueryPage {
 	/**
 	 * Flag for holding the value of config variable SpecialGadgetUsageActiveUsers
 	 *
-	 * @var bool $activeUsers
+	 * @var bool
 	 */
 	public $activeUsers;
 
@@ -173,7 +173,7 @@ class SpecialGadgetUsage extends QueryPage {
 
 	/**
 	 * @param Skin $skin
-	 * @param object $result Result row
+	 * @param stdClass $result Result row
 	 * @return string|bool String of HTML
 	 */
 	public function formatResult( $skin, $result ) {
@@ -273,6 +273,9 @@ class SpecialGadgetUsage extends QueryPage {
 		}
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	protected function getGroupName() {
 		return 'wiki';
 	}

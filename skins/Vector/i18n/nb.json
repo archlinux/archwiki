@@ -9,8 +9,13 @@
 	},
 	"skinname-vector": "Vector",
 	"vector-skin-desc": "Moderne versjon av MonoBook med et friskt utseende og mange bruksforbedringer",
+	"prefs-vector-enable-vector-1-label": "Bruk klassisk Vector",
+	"prefs-vector-enable-vector-1-help": "I løpet av de neste årene vil vi gradvis oppdatere Vector-drakta. Klassisk Vector vil la deg vise den gamle versjonen av Vector (per desember 2019). For å lære mer om oppdateringene, gå til [[mw:Reading/Web/Desktop_Improvements|prosjektsiden vår]].",
+	"vector-opt-out": "Bytt til det klassiske utseendet",
+	"vector-opt-out-tooltip": "Endre innstillingene dine for å gå tilbake til draktas klassiske utseende (klassisk Vector)",
 	"vector.css": "/* CSS i denne fila vil gjelde alle som bruker drakta Vector */",
 	"vector.js": "/* Javascript i denne fila vil gjelde for brukere av drakta Vector */",
+	"vector-action-toggle-sidebar": "Vis/skjul sidefelt",
 	"vector-action-addsection": "Nytt emne",
 	"vector-action-delete": "Slett",
 	"vector-action-move": "Flytt",
@@ -24,5 +29,7 @@
 	"vector-view-viewsource": "Vis kilden",
 	"vector-jumptonavigation": "Hopp til navigering",
 	"vector-jumptosearch": "Hopp til søk",
-	"vector-more-actions": "Mer"
+	"vector-jumptocontent": "Hopp til innhold",
+	"vector-more-actions": "Mer",
+	"vector-search-loader": "Laster søkeforslag"
 }

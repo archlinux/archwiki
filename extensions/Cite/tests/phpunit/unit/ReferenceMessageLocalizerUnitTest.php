@@ -11,15 +11,15 @@ use Language;
 class ReferenceMessageLocalizerUnitTest extends \MediaWikiUnitTestCase {
 
 	/**
-	 * @covers ::formatNum
+	 * @covers ::localizeSeparators
 	 * @covers ::__construct
 	 */
-	public function testFormatNum() {
+	public function testLocalizeSeparators() {
 		$mockLanguage = $this->createMock( Language::class );
-		$mockLanguage->method( 'formatNum' )->willReturn( '10,0' );
+		$mockLanguage->method( 'separatorTransformTable' )->willReturn( [ '.' => ',', '0' => '' ] );
 		/** @var Language $mockLanguage */
 		$messageLocalizer = new ReferenceMessageLocalizer( $mockLanguage );
-		$this->assertSame( '10,0', $messageLocalizer->formatNum( '10.0' ) );
+		$this->assertSame( '10,0', $messageLocalizer->localizeSeparators( '10.0' ) );
 	}
 
 	/**

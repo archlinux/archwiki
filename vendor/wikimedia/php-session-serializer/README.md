@@ -14,7 +14,7 @@ It supports the `php`, `php_binary`, and `php_serialize` serialize handlers.
 Usage
 -----
 
-<pre lang="php">
+```php
 use Wikimedia\PhpSessionSerializer;
 
 // (optional) Send logs to a PSR-3 logger
@@ -28,7 +28,7 @@ $string = PhpSessionSerializer::encode( $array );
 
 // Decode session data
 $array = PhpSessionSerializer::decode( $string );
-</pre>
+```
 
 Running tests
 -------------

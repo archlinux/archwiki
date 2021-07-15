@@ -118,7 +118,6 @@
 	"visualeditor-editnotices-tool": "$1 {{PLURAL:$1|bhrath|bhrath|brathan|brath}}",
 	"visualeditor-editnotices-tooltip": "Brathan deasachaidh",
 	"visualeditor-editsummary": "Mìnich na dh'atharraich thu",
-	"visualeditor-editsummary-bytes-remaining": "Baidhtichean air am fàgail",
 	"visualeditor-formatdropdown-format-mw-heading1": "Tiotal na duilleige",
 	"visualeditor-formatdropdown-format-mw-heading2": "Ceann-sgrìobhadh",
 	"visualeditor-formatdropdown-format-mw-heading3": "Fo-cheann-sgrìobhadh 1",

@@ -59,7 +59,7 @@ class PHandler extends DOMHandler {
 		) {
 			return [ 'min' => 2, 'max' => 2 ];
 		} elseif ( self::treatAsPPTransition( $otherNode )
-			|| ( DOMUtils::isBlockNode( $otherNode )
+			|| ( DOMUtils::isWikitextBlockNode( $otherNode )
 				&& $otherNode->nodeName !== 'blockquote'
 				&& $node->parentNode === $otherNode )
 			// new p-node added after sol-transparent wikitext should always
@@ -67,7 +67,7 @@ class PHandler extends DOMHandler {
 			|| ( WTUtils::emitsSolTransparentSingleLineWT( $otherNode )
 				&& WTUtils::isNewElt( $node ) )
 		) {
-			if ( !DOMUtils::hasAncestorOfName( $otherNode, 'figcaption' ) ) {
+			if ( !DOMUtils::hasNameOrHasAncestorOfName( $otherNode, 'figcaption' ) ) {
 				return [ 'min' => 1, 'max' => 2 ];
 			} else {
 				return [ 'min' => 0, 'max' => 2 ];
@@ -95,14 +95,14 @@ class PHandler extends DOMHandler {
 			 && !$this->newWikitextLineMightHaveBlockNode( $otherNode )
 		) {
 			return [ 'min' => 2, 'max' => 2 ];
-		} elseif ( DOMUtils::isBody( $otherNode ) ) {
+		} elseif ( DOMUtils::atTheTop( $otherNode ) ) {
 			return [ 'min' => 0, 'max' => 2 ];
 		} elseif ( self::treatAsPPTransition( $otherNode )
-			|| ( DOMUtils::isBlockNode( $otherNode )
+			|| ( DOMUtils::isWikitextBlockNode( $otherNode )
 				&& $otherNode->nodeName !== 'blockquote'
 				&& $node->parentNode === $otherNode )
 		) {
-			if ( !DOMUtils::hasAncestorOfName( $otherNode, 'figcaption' ) ) {
+			if ( !DOMUtils::hasNameOrHasAncestorOfName( $otherNode, 'figcaption' ) ) {
 				return [ 'min' => 1, 'max' => 2 ];
 			} else {
 				return [ 'min' => 0, 'max' => 2 ];
@@ -119,7 +119,7 @@ class PHandler extends DOMHandler {
 	// DOM node that generated multiple wikitext lines.
 
 	/**
-	 * @param stdClass|null $line See SerializerState::$currLine
+	 * @param ?stdClass $line See SerializerState::$currLine
 	 * @param DOMNode $node
 	 * @param bool $skipNode
 	 * @return bool
@@ -217,8 +217,8 @@ class PHandler extends DOMHandler {
 		// * template wrapper
 		// * mw:Includes meta or a SOL-transparent link
 		return DOMUtils::isText( $node )
-			|| ( !DOMUtils::isBody( $node )
-				&& !DOMUtils::isBlockNode( $node )
+			|| ( !DOMUtils::atTheTop( $node )
+				&& !DOMUtils::isWikitextBlockNode( $node )
 				&& !WTUtils::isLiteralHTMLNode( $node )
 				&& !WTUtils::isEncapsulationWrapper( $node )
 				&& !WTUtils::isSolTransparentLink( $node )
@@ -228,7 +228,7 @@ class PHandler extends DOMHandler {
 	/**
 	 * Test if $node is a P-wrapped node or should be treated as one.
 	 *
-	 * @param DOMNode|null $node
+	 * @param ?DOMNode $node
 	 * @return bool
 	 */
 	public static function isPPTransition( ?DOMNode $node ): bool {

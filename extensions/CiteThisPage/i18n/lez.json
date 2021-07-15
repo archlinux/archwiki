@@ -1,10 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Migraghvi"
+			"Migraghvi",
+			"Soul Train"
 		]
 	},
 	"citethispage": "Цитата гъин",
+	"citethispage-link": "Чинин цитата гъун",
 	"citethispage-change-submit": "Цитата гъин",
 	"citethispage-change-target": "Ччин:"
 }

@@ -7,6 +7,7 @@
 			"Calak",
 			"Fitoschido",
 			"Paucabot",
+			"SMP",
 			"Ssola",
 			"Toniher",
 			"Townie",
@@ -15,6 +16,12 @@
 	},
 	"skinname-vector": "Vector",
 	"vector-skin-desc": "Versió moderna del MonoBook amb un nou aspesctes i moltes millores en la usabilitat",
+	"prefs-vector-enable-vector-1-label": "Usa la versió antiga de Vector",
+	"prefs-vector-enable-vector-1-help": "En els propers anys, s'anirà actualitzant gradualment l'aparença Vector. La versió antiga de Vector us permet deixar-la tal com està a desembre de 2019. Per a saber més sobre les actualitzacions, vegeu la [[mw:Reading/Web/Desktop_Improvements|pàgina del projecte]].",
+	"vector-opt-out": "Canvia a l'aspecte d'abans",
+	"vector-opt-out-tooltip": "Canvia la configuració a la versió antiga (legacy Vector)",
+	"vector-action-toggle-sidebar": "Mostra o oculta la barra lateral",
+	"vector-language-button-label": "{{PLURAL:$1|$1 llengua|$1 llengües}}",
 	"vector-action-addsection": "Afegeix un tema",
 	"vector-action-delete": "Esborra",
 	"vector-action-move": "Reanomena",
@@ -28,5 +35,7 @@
 	"vector-view-viewsource": "Mostra el codi",
 	"vector-jumptonavigation": "Salta a la navegació",
 	"vector-jumptosearch": "Salta a la cerca",
-	"vector-more-actions": "Més"
+	"vector-jumptocontent": "Vés al contingut",
+	"vector-more-actions": "Més",
+	"vector-search-loader": "Carregant els suggeriments de cerca"
 }

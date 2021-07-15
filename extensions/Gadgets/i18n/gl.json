@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Alma",
+			"ArenaL5",
 			"Banjo",
 			"Elisardojm",
 			"Toliño"
@@ -9,7 +10,7 @@
 	},
 	"gadgets-desc": "Deixa que os usuarios seleccionen [[Special:Gadgets|trebellos CSS e JavaScript]] nas súas [[Special:Preferences#mw-prefsection-gadgets|preferencias]]",
 	"prefs-gadgets": "Trebellos",
-	"gadgets-prefstext": "A continuación hai unha lista cos trebellos especiais que pode activar para a súa conta.\nA maioría destes trebellos están escritos en JavaScript, así que debe ter o JavaScript activado no seu navegador para que funcionen.\nTeña en conta que estes trebellos non funcionarán nesta páxina de preferencias.\n\nTeña tamén en conta que estes trebellos especiais non son parte do software de MediaWiki e que están creados e mantidos por usuarios no seu wiki local. Os administradores locais poden editar as [[MediaWiki:Gadgets-definition|definicións]] e as [[Special:Gadgets|descricións]] dos trebellos dispoñibles. O número de usuarios de cada trebello neste wiki está listado na [[Special:GadgetUsage|páxina de estatísticas de uso dos trebellos]].",
+	"gadgets-prefstext": "A continuación hai unha lista cos trebellos especiais que pode activar para a súa conta.\nA maioría destes trebellos están escritos en JavaScript, así que debe ter o JavaScript activado no seu navegador para que funcionen.\nTeña en conta que estes trebellos non funcionarán nesta páxina de preferencias.\n\nTeña tamén en conta que estes trebellos especiais non son parte do software de MediaWiki e que están creados e mantidos por usuarios no seu wiki local.\nOs administradores da interfaz local poden editar as [[MediaWiki:Gadgets-definition|definicións]] dos trebellos dispoñibles, e os administradores locais poden editar as súas [[Special:Gadgets|descricións]], onde podes ver o código fonte de cada trebello. O número de usuarios de cada trebello neste wiki está listado na [[Special:GadgetUsage|páxina de estatísticas de uso dos trebellos]].",
 	"gadgets": "Trebellos",
 	"gadgetusage": "Estatísticas de uso dos trebellos",
 	"gadgetusage-gadget": "Trebello",

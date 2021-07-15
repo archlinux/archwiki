@@ -5,10 +5,10 @@
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
-/* stylelint-disable unit-blacklist */
+/* stylelint-disable unit-disallowed-list */
 
 /* stylelint-disable-next-line selector-class-pattern */
-.ve-activated .vectorTabs .selected {
+.ve-activated .vector-menu-tabs .selected {
 	box-shadow: inset 0 -1px 0 #e1f1fc;
 }
 
@@ -26,6 +26,7 @@
 	but isn't affected by the parent element font-size, which may be defined in
 	`px` due to `.mw-editfont-monospace` and similar classes. (T222217)
 	*/
+
 	margin: 0 -1rem;
 }
 
@@ -50,7 +51,6 @@
 
 /* High-definition-specific styles (because Vector adds 1em to the leftNav if width is 982px+ */
 @media screen and ( min-width: 982px ) {
-	/* stylelint-disable selector-class-pattern */
 	.skin-vector-legacy .ve-init-mw-desktopArticleTarget .ve-init-mw-target-surface {
 		margin: 0 -1.5rem;
 	}

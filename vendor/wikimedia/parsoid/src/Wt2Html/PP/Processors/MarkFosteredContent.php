@@ -165,7 +165,7 @@ class MarkFosteredContent implements Wt2HtmlDOMProcessor {
 			$fosteredTransclusions = false;
 
 			if ( DOMUtils::hasNameAndTypeOf( $c, 'table', 'mw:FosterBox' ) ) {
-				$inPTag = DOMUtils::hasAncestorOfName( $c->parentNode, 'p' );
+				$inPTag = DOMUtils::hasNameOrHasAncestorOfName( $c->parentNode, 'p' );
 				$fosterContentHolder = self::getFosterContentHolder( $c->ownerDocument, $inPTag );
 
 				// mark as fostered until we hit the table
@@ -240,7 +240,7 @@ class MarkFosteredContent implements Wt2HtmlDOMProcessor {
 	 * @inheritDoc
 	 */
 	public function run(
-		Env $env, DOMElement $root, array $options = [], bool $atTopLevel = false
+		Env $env, DOMNode $root, array $options = [], bool $atTopLevel = false
 	): void {
 		self::processRecursively( $root, $env );
 	}

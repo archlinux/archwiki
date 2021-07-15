@@ -1,20 +1,25 @@
+var Dialog = require( './Dialog.js' ),
+	DataModule = require( 'ext.templateDataGenerator.data' ),
+	Model = DataModule.Model,
+	SourceHandler = DataModule.SourceHandler;
+
 /**
  * Template data edit ui target
  *
  * @class
  * @extends OO.ui.Element
- * @mixin OO.EventEmitter
+ * @mixes OO.EventEmitter
  *
  * @constructor
  * @param {jQuery} $textarea Editor textarea
  * @param {Object} config Configuration options
  */
-mw.TemplateData.Target = function mwTemplateDataTarget( $textarea, config ) {
+function Target( $textarea, config ) {
 	var $helpLink, relatedPage,
 		target = this;
 
 	// Parent constructor
-	mw.TemplateData.Target.super.call( this, config );
+	Target.super.call( this, config );
 
 	// Mixin constructor
 	OO.EventEmitter.call( this );
@@ -30,8 +35,8 @@ mw.TemplateData.Target = function mwTemplateDataTarget( $textarea, config ) {
 		label: mw.msg( 'templatedata-editbutton' )
 	} );
 
-	this.editNoticeLabel = new OO.ui.LabelWidget( {
-		classes: [ 'tdg-editscreen-error-msg' ]
+	this.editNoticeMessage = new OO.ui.MessageWidget( {
+		classes: [ 'tdg-editscreen-edit-notice' ]
 	} )
 		.toggle( false );
 
@@ -49,10 +54,10 @@ mw.TemplateData.Target = function mwTemplateDataTarget( $textarea, config ) {
 	OO.ui.getWindowManager().$element.before( this.windowManager.$element );
 
 	// Dialog
-	this.tdgDialog = new mw.TemplateData.Dialog( config );
+	this.tdgDialog = new Dialog( config );
 	this.windowManager.addWindows( [ this.tdgDialog ] );
 
-	this.sourceHandler = new mw.TemplateData.SourceHandler( {
+	this.sourceHandler = new SourceHandler( {
 		fullPageName: this.pageName,
 		parentPage: this.parentPage,
 		isPageSubLevel: this.isPageSubLevel
@@ -62,7 +67,7 @@ mw.TemplateData.Target = function mwTemplateDataTarget( $textarea, config ) {
 	relatedPage = this.isDocPage ? this.parentPage : this.pageName + '/' + this.docSubpage;
 	this.sourceHandler.getApi( relatedPage )
 		.then( function ( result ) {
-			var msg, matches, content,
+			var msg, content,
 				response = result.query.pages[ result.query.pageids[ 0 ] ];
 			// HACK: When checking whether a related page (parent for /doc page or
 			// vice versa) already has a templatedata string, we shouldn't
@@ -71,18 +76,19 @@ mw.TemplateData.Target = function mwTemplateDataTarget( $textarea, config ) {
 			// wrong information is presented.
 			if ( response.missing === undefined ) {
 				content = response.revisions[ 0 ][ '*' ];
-				matches = content.match( /<templatedata>/i );
 				// There's a templatedata string
-				if ( matches ) {
+				if ( content.match( /<templatedata>/i ) ) {
 					// HACK: Setting a link in the messages doesn't work. The bug report offers
 					// a somewhat hacky work around that includes setting a separate message
 					// to be parsed.
 					// https://phabricator.wikimedia.org/T49395#490610
 					msg = mw.message( 'templatedata-exists-on-related-page', relatedPage ).plain();
 					mw.messages.set( { 'templatedata-string-exists-hack-message': msg } );
-					msg = mw.message( 'templatedata-string-exists-hack-message' ).parse();
+					msg = new OO.ui.HtmlSnippet(
+						mw.message( 'templatedata-string-exists-hack-message' ).parse()
+					);
 
-					target.setNoticeMessage( msg, 'warning', true );
+					target.setEditNoticeMessage( msg, 'warning' );
 				}
 			}
 		} );
@@ -96,22 +102,22 @@ mw.TemplateData.Target = function mwTemplateDataTarget( $textarea, config ) {
 		.append(
 			this.editOpenDialogButton.$element,
 			$helpLink,
-			this.editNoticeLabel.$element
+			this.editNoticeMessage.$element
 		);
-};
+}
 
 /* Inheritance */
 
-OO.inheritClass( mw.TemplateData.Target, OO.ui.Element );
+OO.inheritClass( Target, OO.ui.Element );
 
-OO.mixinClass( mw.TemplateData.Target, OO.EventEmitter );
+OO.mixinClass( Target, OO.EventEmitter );
 
 /* Methods */
 
 /**
  * Destroy the target
  */
-mw.TemplateData.Target.prototype.destroy = function () {
+Target.prototype.destroy = function () {
 	this.windowManager.destroy();
 	this.$element.remove();
 };
@@ -120,50 +126,27 @@ mw.TemplateData.Target.prototype.destroy = function () {
  * Display error message in the edit window
  *
  * @method setNoticeMessage
- * @param {string} msg Message to display
- * @param {string} [type='error'] Message type 'notice' or 'warning' or 'error'
- * @param {boolean} [parseHTML] The message should be parsed
+ * @param {jQuery|string|OO.ui.HtmlSnippet|Function|null} label Message to display
+ * @param {string} type Message type 'notice', 'error', 'warning' or 'success'
  */
-mw.TemplateData.Target.prototype.setNoticeMessage = function ( msg, type, parseHTML ) {
-	var $msg;
-	type = type || 'error';
-	this.editNoticeLabel.$element
-		.toggleClass( 'errorbox', type === 'error' )
-		.toggleClass( 'warningbox', type === 'warning' );
-
-	if ( parseHTML ) {
-		// OOUI's label elements do not parse strings and display them
-		// as-is. If the message contains html that should be parsed,
-		// we have to transform it into a jQuery object
-		$msg = $( '<span>' ).append( $.parseHTML( msg ) );
-		this.editNoticeLabel.setLabel( $msg );
-	} else {
-		this.editNoticeLabel.setLabel( msg );
-	}
-	this.editNoticeLabel.toggle( true );
-};
-
-/**
- * Reset the error message in the edit window
- *
- * @method resetNoticeMessage
- */
-mw.TemplateData.Target.prototype.resetNoticeMessage = function () {
-	this.editNoticeLabel.setLabel( '' );
-	this.editNoticeLabel.toggle( false );
+Target.prototype.setEditNoticeMessage = function ( label, type ) {
+	this.editNoticeMessage.setLabel( label );
+	this.editNoticeMessage.setType( type );
+	this.editNoticeMessage.toggle( true );
 };
 
 /**
  * Open the templatedata edit dialog
  *
  * @method openEditDialog
- * @param {mw.TemplateData.Model} dataModel The data model
+ * @param {Model} dataModel The data model
  * associated with this edit dialog.
  */
-mw.TemplateData.Target.prototype.openEditDialog = function ( dataModel ) {
+Target.prototype.openEditDialog = function ( dataModel ) {
 	// Open the edit dialog
 	this.windowManager.openWindow( 'TemplateDataDialog', {
-		model: dataModel
+		model: dataModel,
+		editNoticeMessage: this.editNoticeMessage
 	} );
 };
 
@@ -172,11 +155,8 @@ mw.TemplateData.Target.prototype.openEditDialog = function ( dataModel ) {
  *
  * @method onEditOpenDialogButton
  */
-mw.TemplateData.Target.prototype.onEditOpenDialogButton = function () {
+Target.prototype.onEditOpenDialogButton = function () {
 	var target = this;
-
-	// Reset notice message
-	this.resetNoticeMessage();
 
 	this.originalWikitext = this.$textarea.textSelection( 'getContents' );
 
@@ -210,8 +190,8 @@ mw.TemplateData.Target.prototype.onEditOpenDialogButton = function () {
 					var model;
 					if ( data && data.action === 'accept' ) {
 						// Open the dialog with an empty model
-						model = mw.TemplateData.Model.static.newFromObject(
-							{ params: {} },
+						model = Model.static.newFromObject(
+							null,
 							target.sourceHandler.getTemplateSourceCodeParams()
 						);
 						target.openEditDialog( model );
@@ -228,7 +208,7 @@ mw.TemplateData.Target.prototype.onEditOpenDialogButton = function () {
  * @method replaceTemplateData
  * @param {Object} newTemplateData New templatedata
  */
-mw.TemplateData.Target.prototype.replaceTemplateData = function ( newTemplateData ) {
+Target.prototype.replaceTemplateData = function ( newTemplateData ) {
 	var matches, templateDataOutput,
 		templateDataJSON = JSON.stringify( newTemplateData, null, '\t' ),
 		templatedataPattern = /(<templatedata>\s*)([\s\S]*?)\s*<\/templatedata>/i;
@@ -268,7 +248,7 @@ mw.TemplateData.Target.prototype.replaceTemplateData = function ( newTemplateDat
  * @method onDialogApply
  * @param {Object} templateData New templatedata
  */
-mw.TemplateData.Target.prototype.onDialogApply = function ( templateData ) {
+Target.prototype.onDialogApply = function ( templateData ) {
 	var target = this;
 
 	if (
@@ -297,4 +277,16 @@ mw.TemplateData.Target.prototype.onDialogApply = function ( templateData ) {
 			}
 		} );
 	}
+
+	// TODO: Remove when not needed any more, see T267926
+	// eslint-disable-next-line no-jquery/no-global-selector
+	if ( !$( 'input[name="TemplateDataGeneratorUsed"]' ).length ) {
+		$( '<input>' ).attr( {
+			type: 'hidden',
+			value: 1,
+			name: 'TemplateDataGeneratorUsed'
+		} ).insertAfter( '#wpTextbox1' );
+	}
 };
+
+module.exports = Target;

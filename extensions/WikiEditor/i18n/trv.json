@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Akamycoco",
 			"Iyuqciyang"
 		]
 	},
@@ -11,6 +12,7 @@
 	"wikieditor-toolbar-tool-xlink": "lipax mggaluk ( saw peeniq qsahur http:// pnrjingan)",
 	"wikieditor-toolbar-tool-xlink-example": "http://www.example.com mggaluk pusu kari",
 	"wikieditor-toolbar-tool-link-cancel": "Pkungat",
+	"wikieditor-toolbar-tool-link-int-target-status-notexists": "ungat ruwahan patas",
 	"wikieditor-toolbar-tool-file": "numal pusu patas",
 	"wikieditor-toolbar-tool-file-cancel": "Pkungat",
 	"wikieditor-toolbar-tool-reference-cancel": "Pkungat",

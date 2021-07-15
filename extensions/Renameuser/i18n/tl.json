@@ -17,7 +17,6 @@
 	"renameuserwarnings": "Mga babala:",
 	"renameuserconfirm": "Oo, pangalanang muli ang tagagamit",
 	"renameusersubmit": "Ipasa",
-	"renameuser-submit-blocklog": "Ipakita ang talaan ng pagharang para sa tagagamit",
 	"renameusererrordoesnotexist": "Hindi pa umiiral ang tagagamit na \"<nowiki>$1</nowiki>\".",
 	"renameusererrorexists": "Umiiral na ang tagagamit na \"<nowiki>$1</nowiki>\".",
 	"renameusererrorinvalid": "Hindi tanggap ang pangalan ng tagagamit na \"<nowiki>$1</nowiki>\".",

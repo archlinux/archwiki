@@ -375,7 +375,7 @@ ve.ui.MWLinkAnnotationInspector.prototype.getTeardownProcess = function ( data )
 			this.isActive = false;
 		}, this )
 		.next( function () {
-			var annotations, data,
+			var annotations, linearData,
 				selection = fragment && fragment.getSelection();
 
 			// Handle conversion to magic link.
@@ -386,7 +386,7 @@ ve.ui.MWLinkAnnotationInspector.prototype.getTeardownProcess = function ( data )
 					.filter( function ( annotation ) {
 						return !/^link/.test( annotation.name );
 					} );
-				data = new ve.dm.ElementLinearData( annotations.store, [
+				linearData = new ve.dm.ElementLinearData( annotations.store, [
 					{
 						type: 'link/mwMagic',
 						attributes: {
@@ -397,8 +397,8 @@ ve.ui.MWLinkAnnotationInspector.prototype.getTeardownProcess = function ( data )
 						type: '/link/mwMagic'
 					}
 				] );
-				data.setAnnotationsAtOffset( 0, annotations );
-				fragment.insertContent( data.getData(), true );
+				linearData.setAnnotationsAtOffset( 0, annotations );
+				fragment.insertContent( linearData.getData(), true );
 			}
 
 			// Clear dialog state.

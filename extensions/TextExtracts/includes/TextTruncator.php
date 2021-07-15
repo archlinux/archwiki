@@ -88,9 +88,12 @@ class TextTruncator {
 		// This ungreedy pattern always matches, just might return an empty string
 		$pattern = '/^[\w\/]*>?/su';
 		preg_match( $pattern, mb_substr( $text, $requestedLength ), $m );
-		$text = mb_substr( $text, 0, $requestedLength ) . $m[0];
+		$truncatedText = mb_substr( $text, 0, $requestedLength ) . $m[0];
+		if ( $truncatedText === $text ) {
+			return $text;
+		}
 
-		return $this->tidy( $text );
+		return $this->tidy( $truncatedText );
 	}
 
 	/**

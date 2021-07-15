@@ -2,7 +2,7 @@
 /**
  * @author Tim Starling
  * @author Niklas Laxström
- * @license GPL-2.0+
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -13,7 +13,10 @@ namespace CLDRPluralRuleParser;
  * back to the caller if there is any validation error.
  */
 class Error extends \Exception {
-	function __construct( $message ) {
+	/**
+	 * @param string $message
+	 */
+	public function __construct( $message ) {
 		parent::__construct( 'CLDR plural rule error: ' . $message );
 	}
 }

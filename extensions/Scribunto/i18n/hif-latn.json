@@ -4,5 +4,5 @@
 			"Girmitya"
 		]
 	},
-	"scribunto-lua-error": "Lua error: $2."
+	"scribunto-lua-error": "Lua waala galti: $2."
 }

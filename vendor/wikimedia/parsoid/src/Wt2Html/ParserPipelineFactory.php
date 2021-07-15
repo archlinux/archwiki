@@ -21,7 +21,7 @@ use Wikimedia\Parsoid\Wt2Html\TT\OnlyInclude;
 use Wikimedia\Parsoid\Wt2Html\TT\ParagraphWrapper;
 use Wikimedia\Parsoid\Wt2Html\TT\PreHandler;
 use Wikimedia\Parsoid\Wt2Html\TT\QuoteTransformer;
-use Wikimedia\Parsoid\Wt2Html\TT\Sanitizer;
+use Wikimedia\Parsoid\Wt2Html\TT\SanitizerHandler;
 use Wikimedia\Parsoid\Wt2Html\TT\TemplateHandler;
 use Wikimedia\Parsoid\Wt2Html\TT\TokenStreamPatcher;
 use Wikimedia\Parsoid\Wt2Html\TT\WikiLinkHandler;
@@ -79,7 +79,7 @@ class ParserPipelineFactory {
 				BehaviorSwitchHandler::class,
 
 				ListHandler::class,
-				Sanitizer::class,
+				SanitizerHandler::class,
 				// Wrap tokens into paragraphs post-sanitization so that
 				// tags that converted to text by the sanitizer have a chance
 				// of getting wrapped into paragraphs.  The sanitizer does not
@@ -185,10 +185,6 @@ class ParserPipelineFactory {
 	 * @return array
 	 */
 	private function defaultOptions( array $options ): array {
-		if ( !$options ) {
-			$options = [];
-		}
-
 		foreach ( $options as $k => $v ) {
 			Assert::invariant(
 				in_array( $k, self::$supportedOptions, true ),
@@ -295,29 +291,58 @@ class ParserPipelineFactory {
 	 * @return DOMDocument
 	 */
 	public function parse( string $src ): DOMDocument {
-		return $this->getPipeline( 'text/x-mediawiki/full' )
-			->parseToplevelDoc( $src, [ 'chunky' => true ] );
+		$pipe = $this->getPipeline( 'text/x-mediawiki/full' );
+		$pipe->init( [
+			'toplevel' => true,
+			'frame' => $this->env->topFrame,
+		] );
+
+		// Disable the garbage collector in PHP 7.2 (T230861)
+		if ( gc_enabled() && version_compare( PHP_VERSION, '7.3.0', '<' ) ) {
+			$gcDisabled = true;
+			gc_collect_cycles();
+			gc_disable();
+		} else {
+			$gcDisabled = false;
+		}
+
+		$result = $pipe->parseChunkily( $src, [
+			'atTopLevel' => true,
+			// Top-level doc parsing always start in SOL state
+			'sol' => true,
+		] );
+
+		if ( $gcDisabled ) {
+			gc_enable();
+			// There's no point running gc_collect_cycles() here, since objects
+			// are not marked for collection while the GC is disabled. The root
+			// buffer will be empty.
+		}
+
+		return $result->ownerDocument;
 	}
 
 	/**
-	 * Get a subpipeline (not the top-level one) of a given type.
-	 * Subpipelines are cached as they are frequently created.
+	 * Get a pipeline of a given type.  Pipelines are cached as they are
+	 * frequently created.
 	 *
 	 * @param string $type
-	 * @param array $options
+	 * @param array $options These also determine the key under which the
+	 *   pipeline is cached for reuse.
 	 * @return ParserPipeline
 	 */
-	public function getPipeline( string $type, array $options = [] ): ParserPipeline {
+	public function getPipeline(
+		string $type, array $options = []
+	): ParserPipeline {
 		$options = $this->defaultOptions( $options );
 		$cacheKey = $this->getCacheKey( $type, $options );
+
 		if ( empty( $this->pipelineCache[$cacheKey] ) ) {
 			$this->pipelineCache[$cacheKey] = [];
 		}
 
-		$pipe = null;
 		if ( count( $this->pipelineCache[$cacheKey] ) ) {
 			$pipe = array_pop( $this->pipelineCache[$cacheKey] );
-			$pipe->resetState();
 		} else {
 			$pipe = $this->makePipeline( $type, $cacheKey, $options );
 		}

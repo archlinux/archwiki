@@ -19,7 +19,6 @@
 	"renameuserwarnings": "पूर्वसूचना :",
 	"renameuserconfirm": "आम्, सदस्यस्य पुनर्नाम दीयताम्",
 	"renameusersubmit": "उपस्थाप्यताम्",
-	"renameuser-submit-blocklog": "सदस्यस्य अवरोधवृत्तं दर्श्यताम्",
 	"renameusererrordoesnotexist": "सदस्यः \"<nowiki>$1</nowiki>\" न विद्यते ।",
 	"renameusererrorexists": "सदस्यः  \"<nowiki>$1</nowiki>\" पूर्वमेव विद्यते ।",
 	"renameusererrorinvalid": "सदस्यनाम \"<nowiki>$1</nowiki>\" दोषयुक्तं विद्यते ।",

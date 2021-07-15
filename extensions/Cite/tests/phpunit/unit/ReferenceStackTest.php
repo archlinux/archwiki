@@ -50,7 +50,7 @@ class ReferenceStackTest extends \MediaWikiUnitTestCase {
 				...$refs[$i]
 			);
 
-			$this->assertTrue( array_key_exists( $i, $expectedOutputs ),
+			$this->assertArrayHasKey( $i, $expectedOutputs,
 				'Bad test, not enough expected outputs in fixture.' );
 			$this->assertSame( $expectedOutputs[$i], $result );
 		}

@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Akamycoco",
 			"Lalotahes"
 		]
 	},
@@ -8,7 +9,7 @@
 	"categorytree-category": " ’a’apolen:",
 	"categorytree-mode-all": " saeboeh ye:myen",
 	"categorytree-expand": "pawSika:",
-	"categorytree-member-counts": "hani saeboeh  $1 ka ’a’apolan 、$2 ka ye:myen ki $3 ka tang’an",
+	"categorytree-member-counts": "hani saeboeh {{PLURAL:$1|1 subcategory|$1 subcategories}} ka ’a’apolan, {{PLURAL:$2|1 page|$2 pages}} ka ye:myen ki  {{PLURAL:$3|1 file|$3 files}} ka tang’an",
 	"categorytree-num-categories": "$1 ’a’apolen",
 	"categorytree-num-pages": "$1 ye:myen",
 	"categorytree-num-files": "$1 tang’an"

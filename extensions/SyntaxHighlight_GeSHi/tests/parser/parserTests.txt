@@ -73,7 +73,7 @@ SRC=&#106;&#97;&#118;&#97;&#115;&#99;&#114;&#105;&#112;&#116;&#58;&#97;&#108;&#1
 %253cscript%253ealert(document.cookie)%253c/script%253e
 </source>
 !! html
-<p><code class="mw-highlight" dir="ltr">&lt;script&gt;alert("pwnd")&lt;/script&gt; &lt;IMG SRC=`javascript:alert("RSnake says, 'XSS'")`&gt; &lt;IMG SRC=&amp;#106;&amp;#97;&amp;#118;&amp;#97;&amp;#115;&amp;#99;&amp;#114;&amp;#105;&amp;#112;&amp;#116;&amp;#58;&amp;#97;&amp;#108;&amp;#101;&amp;#114;&amp;#116;&amp;#40; &amp;#39;&amp;#88;&amp;#83;&amp;#83;&amp;#39;&amp;#41; \";alert('XSS');// &lt;/script&gt;&lt;script&gt;alert('XSS');&lt;/script&gt; %253cscript%253ealert(document.cookie)%253c/script%253e</code>
+<p><code class="mw-highlight mw-content-ltr" dir="ltr">&lt;script&gt;alert("pwnd")&lt;/script&gt; &lt;IMG SRC=`javascript:alert("RSnake says, 'XSS'")`&gt; &lt;IMG SRC=&amp;#106;&amp;#97;&amp;#118;&amp;#97;&amp;#115;&amp;#99;&amp;#114;&amp;#105;&amp;#112;&amp;#116;&amp;#58;&amp;#97;&amp;#108;&amp;#101;&amp;#114;&amp;#116;&amp;#40; &amp;#39;&amp;#88;&amp;#83;&amp;#83;&amp;#39;&amp;#41; \";alert('XSS');// &lt;/script&gt;&lt;script&gt;alert('XSS');&lt;/script&gt; %253cscript%253ealert(document.cookie)%253c/script%253e</code>
 </p>
 !! end
 
@@ -113,7 +113,7 @@ Custom attributes
 !! wikitext
 <source lang="javascript" id="foo" class="bar" dir="rtl" style="font-size: larger;">var a;</source>
 !! html
-<div id="foo" class="bar mw-highlight mw-highlight-lang-javascript mw-content-rtl" dir="rtl" style="font-size: larger;"><pre><span></span><span class="kd">var</span> <span class="nx">a</span><span class="p">;</span>
+<div id="foo" class="bar mw-highlight mw-highlight-lang-javascript mw-content-rtl" style="font-size: larger;" dir="rtl"><pre><span></span><span class="kd">var</span> <span class="nx">a</span><span class="p">;</span>
 </pre></div>
 !! end
 
@@ -122,7 +122,7 @@ Inline attribute (inline code)
 !! wikitext
 Text <source lang="javascript" inline>var a;</source>.
 !! html
-<p>Text <code class="mw-highlight mw-highlight-lang-javascript" dir="ltr"><span class="kd">var</span> <span class="nx">a</span><span class="p">;</span></code>.
+<p>Text <code class="mw-highlight mw-highlight-lang-javascript mw-content-ltr" dir="ltr"><span class="kd">var</span> <span class="nx">a</span><span class="p">;</span></code>.
 </p>
 !! end
 
@@ -131,7 +131,7 @@ Enclose none (inline code)
 !! wikitext
 Text <source lang="javascript" enclose="none">var a;</source>.
 !! html
-<p>Text <code class="mw-highlight mw-highlight-lang-javascript" dir="ltr"><span class="kd">var</span> <span class="nx">a</span><span class="p">;</span></code>.
+<p>Text <code class="mw-highlight mw-highlight-lang-javascript mw-content-ltr" dir="ltr"><span class="kd">var</span> <span class="nx">a</span><span class="p">;</span></code>.
 </p>
 !! end
 
@@ -140,7 +140,7 @@ Enclose with nowiki
 !! wikitext
 {{#tag:syntaxhighlight|<nowiki>foo</nowiki>|lang="text"|inline=none}}
 !! html
-<p><code class="mw-highlight mw-highlight-lang-text" dir="ltr">foo</code>
+<p><code class="mw-highlight mw-highlight-lang-text mw-content-ltr" dir="ltr">foo</code>
 </p>
 !! end
 

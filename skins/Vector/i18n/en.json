@@ -11,6 +11,7 @@
 	"vector.css": "/* All CSS here will be loaded for users of the Vector skin */",
 	"vector.js": "/* All JavaScript here will be loaded for users of the Vector skin */",
 	"vector-action-toggle-sidebar": "Toggle sidebar",
+	"vector-language-button-label": "{{PLURAL:$1|$1 language|$1 languages}}",
 	"vector-action-addsection": "Add topic",
 	"vector-action-delete": "Delete",
 	"vector-action-move": "Move",
@@ -24,5 +25,7 @@
 	"vector-view-viewsource": "View source",
 	"vector-jumptonavigation": "Jump to navigation",
 	"vector-jumptosearch": "Jump to search",
-	"vector-more-actions": "More"
+	"vector-jumptocontent": "Jump to content",
+	"vector-more-actions": "More",
+	"vector-search-loader": "Loading search suggestions"
 }

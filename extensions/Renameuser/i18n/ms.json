@@ -19,7 +19,6 @@
 	"renameuserwarnings": "Amaran:",
 	"renameuserconfirm": "Ya, tukar nama pengguna ini",
 	"renameusersubmit": "Hantar",
-	"renameuser-submit-blocklog": "Tunjukkan log sekatan pengguna",
 	"renameusererrordoesnotexist": "Pengguna \"<nowiki>$1</nowiki>\" tidak wujud.",
 	"renameusererrorexists": "Pengguna \"<nowiki>$1</nowiki>\" telah pun wujud.",
 	"renameusererrorinvalid": "Nama pengguna \"<nowiki>$1</nowiki>\" tidak sah.",

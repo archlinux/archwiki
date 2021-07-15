@@ -10,7 +10,9 @@
  * @see https://meta.wikimedia.org/wiki/Schema:ReferencePreviewsBaseline
  * @see https://meta.wikimedia.org/wiki/Schema:ReferencePreviewsCite
  */
-( function () {
+
+// EventLogging may not be installed
+mw.loader.using( 'ext.eventLogging' ).then( function () {
 	'use strict';
 
 	$( function () {
@@ -45,4 +47,4 @@
 
 		mw.track( loggingTopic, { action: 'pageview' } );
 	} );
-}() );
+} );

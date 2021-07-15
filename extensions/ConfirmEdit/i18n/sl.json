@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"BrokenArrow",
-			"Dbc334"
+			"Dbc334",
+			"Eleassar"
 		]
 	},
 	"captcha-edit": "Če želite urejati stran, prosimo rešite spodnjo nalogo in odgovor vpišite v polje ([[Special:Captcha/help|več informacij]]):",
@@ -19,7 +20,7 @@
 	"captcha-disabledinapi": "To dejanje zahteva preverjanje captcha, zato ga ni mogoče izvesti preko API.",
 	"captchahelp-title": "Pomoč za captcha",
 	"captchahelp-cookies-needed": "Če želite, da to deluje, boste morali v svojem brskalniku omogočiti piškotke.",
-	"captchahelp-text": "Spletne strani, ki omogočajo objavljanje širši javnosti, kot na primer ta wiki, pogosto zlorabljajo spamerji, ki za objavo svojih povezav na mnoge strani uporabljajo avtomatizirana orodja.\nČeprav je neželene povezave mogoče odstraniti, so precejšnja nadloga.\n\nVčasih, zlasti pri dodajanju novih spletnih povezav na stran, vam bo wiki morda prikazal sliko obarvanega ali popačenega besedila in zahteval vpis prikazanih besed.\nKer je to opravilo težko avtomatizirati, bo s tem večini ljudi objavljanje dovoljeno, spamerji in drugi robotski napadalci pa bodo ustavljeni.\n\nŽal lahko to povzroči nevšečnosti uporabnikom s slabim vidom in tistim, ki uporabljajo besedilne ali govorne brskalnike.\nGlasovna možnost trenutno še ni na razpolago.\nČe vam to nepričakovano preprečuje legitimno objavo, prosimo, da se obrnete na [[Special:ListAdmins|administratorje spletišča]].\n\nZa vrnitev v urejevalnik izberite gumb »nazaj« v vašem brskalniku.",
+	"captchahelp-text": "Spletne strani, ki omogočajo objavljanje širši javnosti, kot na primer ta viki, pogosto zlorabljajo smetilci, ki za objavo svojih povezav na številne strani uporabljajo avtomatizirana orodja.\nČeprav je neželene povezave mogoče odstraniti, so precejšnja nadloga.\n\nVčasih, zlasti pri dodajanju novih spletnih povezav na stran, vam bo viki morda prikazal sliko obarvanega ali popačenega besedila in zahteval vpis prikazanih besed.\nKer je to opravilo težko avtomatizirati, bo s tem večini ljudi objavljanje dovoljeno, smetilci in drugi robotski napadalci pa bodo ustavljeni.\n\nŽal lahko to povzroči nevšečnosti uporabnikom s slabim vidom in tistim, ki uporabljajo besedilne ali govorne brskalnike.\nGlasovna možnost trenutno še ni na voljo.\nČe vam to nepričakovano preprečuje legitimno objavo, prosimo, da se obrnete na [[Special:ListAdmins|administratorje spletega mesta]].\n\nZa vrnitev v urejevalnik v svojem brskalniku izberite gumb »nazaj«.",
 	"captcha-addurl-whitelist": " #<!-- pustite to vrstico takšno, kot je --> <pre>\n# Skladnja je sledeča:\n#   * Vse od znaka »#« do konca vrstice je pripomba\n#   * Vsaka neprazna vrstica je delec regularnega izraza, ki se bo ujemal samo z gostitelji v URL-jih\n #</pre> <!-- pustite to vrstico takšno, kot je -->",
 	"right-skipcaptcha": "Izvaja dejanja, ki sprožijo preverjanje CAPTCHA, brez da bi moral opraviti preverjanje CAPTCHA"
 }

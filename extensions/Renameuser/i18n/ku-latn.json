@@ -1,15 +1,17 @@
 {
 	"@metadata": {
 		"authors": [
+			"Balyozxane",
 			"Bikarhêner",
 			"George Animal",
 			"Ghybu",
-			"Gomada"
+			"Gomada",
+			"Guherto"
 		]
 	},
 	"renameuser": "Navê bikarhêner biguherîne",
-	"renameuser-linkoncontribs": "navê bikarhêner biguherîne",
-	"renameuser-linkoncontribs-text": "Navê vî bikarhênerî biguherîne",
+	"renameuser-linkoncontribs": "navê {{GENDER:$1|bikarhêner}} biguherîne",
+	"renameuser-linkoncontribs-text": "Navê v{{GENDER:$1|î|ê}} bikarhêner{{GENDER:$1|î|ê}} biguherîne",
 	"renameuserold": "Navê niha:",
 	"renameusernew": "Navê nû:",
 	"renameuserreason": "Sedem:",
@@ -18,13 +20,13 @@
 	"renameuserconfirm": "Erê, navê vî bikarhênerî biguherîne",
 	"renameusersubmit": "Nav biguherîne",
 	"renameusererrordoesnotexist": "Bikarhêner \"<nowiki>$1</nowiki>\" tune ye.",
-	"renameusererrorexists": "Bikarhêner \"<nowiki>$1</nowiki>\" berê heye.",
+	"renameusererrorexists": "{{GENDER:$1|Bikarhêner}} \"<nowiki>$1</nowiki>\"jixwe heye.",
 	"renameusererrorinvalid": "Navê \"<nowiki>$1</nowiki>\" ji bikarhêneran re nayê qebûlkirin.",
-	"renameusersuccess": "Navê bikarhênerê \"<nowiki>$1</nowiki>\" bû \"<nowiki>$2</nowiki>\"",
-	"renameuser-page-exists": "Rûpelê $1 berê heye û nikane otomatîk were guherandin.",
+	"renameusersuccess": "Navê {{GENDER:$2|bikarhênerî|bikarhênerê}} \"<nowiki>$1</nowiki>\" bû \"<nowiki>$2</nowiki>\"",
+	"renameuser-page-exists": "Rûpelê $1 berê heye û nikane otomatîk were guhartin.",
 	"renameuser-page-moved": "Navê $1 weke $2 hate guhertin.",
 	"renameuser-page-unmoved": "Rûpela $1 nikanî çûba ciha $2.",
-	"log-name-renameuser": "Guhertina navê bikarhêner",
-	"renameuser-move-log": "Otomatîk hate guherandin, ji ber ku \"[[User:$1|$1]]\" navê xwe guherand û niha bû \"[[User:$2|$2]]\"",
-	"right-renameuser": "Navê bikarhêneran biguherîne:"
+	"log-name-renameuser": "Guhartina navê bikarhêner",
+	"renameuser-move-log": "Otomatîk hate guhartin, ji ber ku {{GENDER:$2|bikarhêner}} \"[[User:$1|$1]]\" navê xwe guhart û kir \"[[User:$2|$2]]\"",
+	"right-renameuser": "Navê bikarhêneran biguherîne"
 }

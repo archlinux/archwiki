@@ -25,7 +25,6 @@
 	"cite-ve-changedesc-reflist-group-to": "Групата на списъка с източници е променена от обща група на „$1“",
 	"cite-ve-changedesc-reflist-responsive-set": "Списъкът на източниците е променен, за да се показва в адаптивни колони",
 	"cite-ve-changedesc-reflist-responsive-unset": "Списъкът на източниците е променен, за да се показва само в една колона",
-	"cite-ve-changedesc-reflist-item-id": "Индексът на източниците е променен",
 	"cite-ve-citationneeded-button": "Добавяне на цитат",
 	"cite-ve-citationneeded-description": "Редактор е посочил, че това твърдение има нужда от цитат от надежден източник.",
 	"cite-ve-citationneeded-title": "Нужен е цитат",

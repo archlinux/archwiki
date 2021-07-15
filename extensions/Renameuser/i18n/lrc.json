@@ -15,7 +15,6 @@
 	"renameuserwarnings": "زئناریا:",
 	"renameuserconfirm": "هری، کاریار نه د نو نوم بنه",
 	"renameusersubmit": "دئن",
-	"renameuser-submit-blocklog": "قلف پهرستنومه سی کارور نشو بیه",
 	"renameusererrordoesnotexist": "کاریار \"<nowiki>$1</nowiki>\" وجود ناره.",
 	"renameusererrorexists": "کاریار \"<nowiki>$1</nowiki>\" ایسه هئیش.",
 	"renameusererrorinvalid": "کاریار\"<nowiki>$1</nowiki>\" معتور نئ.",

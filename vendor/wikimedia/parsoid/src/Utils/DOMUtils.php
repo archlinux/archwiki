@@ -4,6 +4,7 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Utils;
 
 use DOMDocument;
+use DOMDocumentFragment;
 use DOMElement;
 use DOMNode;
 use RemexHtml\DOM\DOMBuilder;
@@ -13,6 +14,7 @@ use RemexHtml\TreeBuilder\TreeBuilder;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Config\WikitextConstants;
 use Wikimedia\Parsoid\Core\ClientError;
+use Wikimedia\Parsoid\Wt2Html\XMLSerializer;
 
 /**
  * DOM utilities for querying the DOM. This is largely independent of Parsoid
@@ -72,10 +74,10 @@ class DOMUtils {
 	 * If 'beforeNode' is null, the nodes are appended at the end.
 	 * @param DOMNode $from Source node. Children will be removed.
 	 * @param DOMNode $to Destination node. Children of $from will be added here
-	 * @param DOMNode|null $beforeNode Add the children before this node.
+	 * @param ?DOMNode $beforeNode Add the children before this node.
 	 */
 	public static function migrateChildren(
-		DOMNode $from, DOMNode $to, DOMNode $beforeNode = null
+		DOMNode $from, DOMNode $to, ?DOMNode $beforeNode = null
 	): void {
 		while ( $from->firstChild ) {
 			$to->insertBefore( $from->firstChild, $beforeNode );
@@ -89,10 +91,10 @@ class DOMUtils {
 	 * If 'beforeNode' is null, the nodes are appended at the end.
 	 * @param DOMNode $from
 	 * @param DOMNode $to
-	 * @param DOMNode|null $beforeNode
+	 * @param ?DOMNode $beforeNode
 	 */
 	public static function migrateChildrenBetweenDocs(
-		DOMNode $from, DOMNode $to, DOMNode $beforeNode = null
+		DOMNode $from, DOMNode $to, ?DOMNode $beforeNode = null
 	): void {
 		$n = $from->firstChild;
 		$destDoc = $to->ownerDocument;
@@ -105,7 +107,7 @@ class DOMUtils {
 	/**
 	 * Check whether this is a DOM element node.
 	 * @see http://dom.spec.whatwg.org/#dom-node-nodetype
-	 * @param DOMNode|null $node
+	 * @param ?DOMNode $node
 	 * @return bool
 	 */
 	public static function isElt( ?DOMNode $node ): bool {
@@ -119,7 +121,7 @@ class DOMUtils {
 	 * Assert that this is a DOM element node.
 	 * This is primarily to help phan analyze variable types.
 	 * @phan-assert DOMElement $node
-	 * @param DOMNode|null $node
+	 * @param ?DOMNode $node
 	 * @return bool Always returns true
 	 */
 	public static function assertElt( ?DOMNode $node ): bool {
@@ -132,7 +134,7 @@ class DOMUtils {
 	/**
 	 * Check whether this is a DOM text node.
 	 * @see http://dom.spec.whatwg.org/#dom-node-nodetype
-	 * @param DOMNode|null $node
+	 * @param ?DOMNode $node
 	 * @return bool
 	 */
 	public static function isText( ?DOMNode $node ): bool {
@@ -142,20 +144,11 @@ class DOMUtils {
 	/**
 	 * Check whether this is a DOM comment node.
 	 * @see http://dom.spec.whatwg.org/#dom-node-nodetype
-	 * @param DOMNode|null $node
+	 * @param ?DOMNode $node
 	 * @return bool
 	 */
 	public static function isComment( ?DOMNode $node ): bool {
 		return $node && $node->nodeType === XML_COMMENT_NODE;
-	}
-
-	/**
-	 * Determine whether this is a block-level DOM element.
-	 * @param DOMNode|null $node
-	 * @return bool
-	 */
-	public static function isBlockNode( ?DOMNode $node ): bool {
-		return $node && TokenUtils::isBlockTag( $node->nodeName );
 	}
 
 	/**
@@ -171,8 +164,16 @@ class DOMUtils {
 	}
 
 	/**
+	 * @param ?DOMNode $node
+	 * @return bool
+	 */
+	public static function isWikitextBlockNode( ?DOMNode $node ): bool {
+		return $node && TokenUtils::isWikitextBlockTag( $node->nodeName );
+	}
+
+	/**
 	 * Determine whether this is a formatting DOM element.
-	 * @param DOMNode|null $node
+	 * @param ?DOMNode $node
 	 * @return bool
 	 */
 	public static function isFormattingElt( ?DOMNode $node ): bool {
@@ -181,7 +182,7 @@ class DOMUtils {
 
 	/**
 	 * Determine whether this is a quote DOM element.
-	 * @param DOMNode|null $node
+	 * @param ?DOMNode $node
 	 * @return bool
 	 */
 	public static function isQuoteElt( ?DOMNode $node ): bool {
@@ -190,7 +191,7 @@ class DOMUtils {
 
 	/**
 	 * Determine whether this is the <body> DOM element.
-	 * @param DOMNode|null $node
+	 * @param ?DOMNode $node
 	 * @return bool
 	 */
 	public static function isBody( ?DOMNode $node ): bool {
@@ -199,7 +200,7 @@ class DOMUtils {
 
 	/**
 	 * Determine whether this is a removed DOM node but DOMNode object yet
-	 * @param DOMNode|null $node
+	 * @param ?DOMNode $node
 	 * @return bool
 	 */
 	public static function isRemoved( ?DOMNode $node ): bool {
@@ -240,12 +241,14 @@ class DOMUtils {
 	 * Doesn't include the ancestor in the returned path.
 	 *
 	 * @param DOMNode $node
-	 * @param DOMNode|null $ancestor
+	 * @param ?DOMNode $ancestor
 	 *   $ancestor should be an ancestor of $node.
 	 *   If null, we'll walk to the document root.
 	 * @return DOMNode[]
 	 */
-	public static function pathToAncestor( DOMNode $node, DOMNode $ancestor = null ): array {
+	public static function pathToAncestor(
+		DOMNode $node, ?DOMNode $ancestor = null
+	): array {
 		$path = [];
 		while ( $node && $node !== $ancestor ) {
 			$path[] = $node;
@@ -315,17 +318,29 @@ class DOMUtils {
 	}
 
 	/**
-	 * Check whether `node` has an ancestor named `name`.
+	 * Find an ancestor of $node with nodeName $name.
+	 *
+	 * @param DOMNode $node
+	 * @param string $name
+	 * @return ?DOMNode
+	 */
+	public static function findAncestorOfName( DOMNode $node, string $name ): ?DOMNode {
+		$node = $node->parentNode;
+		while ( $node && $node->nodeName !== $name ) {
+			$node = $node->parentNode;
+		}
+		return $node;
+	}
+
+	/**
+	 * Check whether $node has $name or has an ancestor named $name.
 	 *
 	 * @param DOMNode $node
 	 * @param string $name
 	 * @return bool
 	 */
-	public static function hasAncestorOfName( DOMNode $node, string $name ): bool {
-		while ( $node && $node->nodeName !== $name ) {
-			$node = $node->parentNode;
-		}
-		return $node !== null;
+	public static function hasNameOrHasAncestorOfName( DOMNode $node, string $name ): bool {
+		return $node->nodeName === $name || self::findAncestorOfName( $node, $name ) !== null;
 	}
 
 	/**
@@ -448,7 +463,7 @@ class DOMUtils {
 	/**
 	 * Check whether `node` is in a fosterable position.
 	 *
-	 * @param DOMNode|null $n
+	 * @param ?DOMNode $n
 	 * @return bool
 	 */
 	public static function isFosterablePosition( ?DOMNode $n ): bool {
@@ -456,9 +471,19 @@ class DOMUtils {
 	}
 
 	/**
+	 * Check whether `node` is a heading.
+	 *
+	 * @param ?DOMNode $n
+	 * @return bool
+	 */
+	public static function isHeading( ?DOMNode $n ): bool {
+		return $n && preg_match( '/^h[1-6]$/D', $n->nodeName );
+	}
+
+	/**
 	 * Check whether `node` is a list.
 	 *
-	 * @param DOMNode|null $n
+	 * @param ?DOMNode $n
 	 * @return bool
 	 */
 	public static function isList( ?DOMNode $n ): bool {
@@ -468,7 +493,7 @@ class DOMUtils {
 	/**
 	 * Check whether `node` is a list item.
 	 *
-	 * @param DOMNode|null $n
+	 * @param ?DOMNode $n
 	 * @return bool
 	 */
 	public static function isListItem( ?DOMNode $n ): bool {
@@ -478,7 +503,7 @@ class DOMUtils {
 	/**
 	 * Check whether `node` is a list or list item.
 	 *
-	 * @param DOMNode|null $n
+	 * @param ?DOMNode $n
 	 * @return bool
 	 */
 	public static function isListOrListItem( ?DOMNode $n ): bool {
@@ -488,7 +513,7 @@ class DOMUtils {
 	/**
 	 * Check whether `node` is nestee in a list item.
 	 *
-	 * @param DOMNode|null $n
+	 * @param ?DOMNode $n
 	 * @return bool
 	 */
 	public static function isNestedInListItem( ?DOMNode $n ): bool {
@@ -505,7 +530,7 @@ class DOMUtils {
 	/**
 	 * Check whether `node` is a nested list or a list item.
 	 *
-	 * @param DOMNode|null $n
+	 * @param ?DOMNode $n
 	 * @return bool
 	 */
 	public static function isNestedListOrListItem( ?DOMNode $n ): bool {
@@ -530,10 +555,12 @@ class DOMUtils {
 	 * Check a node to see whether it's a diff marker.
 	 *
 	 * @param ?DOMNode $node
-	 * @param string|null $mark
+	 * @param ?string $mark
 	 * @return bool
 	 */
-	public static function isDiffMarker( ?DOMNode $node, string $mark = null ): bool {
+	public static function isDiffMarker(
+		?DOMNode $node, ?string $mark = null
+	): bool {
 		if ( !$node ) {
 			return false;
 		}
@@ -570,7 +597,7 @@ class DOMUtils {
 	public static function hasBlockElementDescendant( DOMNode $node ): bool {
 		for ( $child = $node->firstChild; $child; $child = $child->nextSibling ) {
 			if ( self::isElt( $child ) &&
-				( self::isBlockNode( $child ) || // Is a block-level node
+				( self::isWikitextBlockNode( $child ) || // Is a block-level node
 				self::hasBlockElementDescendant( $child ) ) // or has a block-level child or grandchild or..
 			) {
 				return true;
@@ -582,7 +609,7 @@ class DOMUtils {
 	/**
 	 * Is a node representing inter-element whitespace?
 	 *
-	 * @param DOMNode|null $node
+	 * @param ?DOMNode $node
 	 * @return bool
 	 */
 	public static function isIEW( ?DOMNode $node ): bool {
@@ -593,7 +620,7 @@ class DOMUtils {
 	/**
 	 * Is a node a document fragment?
 	 *
-	 * @param DOMNode|null $node
+	 * @param ?DOMNode $node
 	 * @return bool
 	 */
 	public static function isDocumentFragment( ?DOMNode $node ): bool {
@@ -603,7 +630,7 @@ class DOMUtils {
 	/**
 	 * Is a node at the top?
 	 *
-	 * @param DOMNode|null $node
+	 * @param ?DOMNode $node
 	 * @return bool
 	 */
 	public static function atTheTop( ?DOMNode $node ): bool {
@@ -613,7 +640,7 @@ class DOMUtils {
 	/**
 	 * Is a node a content node?
 	 *
-	 * @param DOMNode|null $node
+	 * @param ?DOMNode $node
 	 * @return bool
 	 */
 	public static function isContentNode( ?DOMNode $node ): bool {
@@ -885,4 +912,55 @@ class DOMUtils {
 		}
 	}
 
+	/**
+	 * innerHTML and outerHTML are not defined on DocumentFragment.
+	 *
+	 * Defined similarly to DOMCompat::getInnerHTML()
+	 *
+	 * @param DOMDocumentFragment $frag
+	 * @return string
+	 */
+	public static function getFragmentInnerHTML(
+		DOMDocumentFragment $frag
+	): string {
+		return XMLSerializer::serialize(
+			$frag, [ 'innerXML' => true ]
+		)['html'];
+	}
+
+	/**
+	 * innerHTML and outerHTML are not defined on DocumentFragment.
+	 *
+	 * @param DOMDocumentFragment $frag
+	 * @param string $html
+	 */
+	public static function setFragmentInnerHTML(
+		DOMDocumentFragment $frag, string $html
+	) {
+		// FIXME: This should be an HTML5 template element
+		$body = $frag->ownerDocument->createElement( 'body' );
+		DOMCompat::setInnerHTML( $body, $html );
+		self::migrateChildren( $body, $frag );
+	}
+
+	/**
+	 * @param DOMDocument $doc
+	 * @param string $html
+	 * @return DOMDocumentFragment
+	 */
+	public static function parseHTMLToFragment(
+		DOMDocument $doc, string $html
+	): DOMDocumentFragment {
+		$frag = $doc->createDocumentFragment();
+		self::setFragmentInnerHTML( $frag, $html );
+		return $frag;
+	}
+
+	/**
+	 * @param DOMNode $node
+	 * @return bool
+	 */
+	public static function isRawTextElement( DOMNode $node ): bool {
+		return isset( WikitextConstants::$HTML['RawTextElements'][$node->nodeName] );
+	}
 }

@@ -1,5 +1,8 @@
 var collapsibleTabs = require( '../skins.vector.legacy.js/collapsibleTabs.js' ),
 	vector = require( '../skins.vector.legacy.js/vector.js' ),
+	languageButton = require( './languageButton.js' ),
+	initSearchLoader = require( './searchLoader.js' ).initSearchLoader,
+	dropdownMenus = require( './dropdownMenus.js' ),
 	sidebar = require( './sidebar.js' );
 
 /**
@@ -39,10 +42,34 @@ function enableCssAnimations( document ) {
  * @return {void}
  */
 function main( window ) {
+	var now = mw.now();
+	// This is the earliest time we can run JS for users (and bucket anonymous
+	// users for A/B tests).
+	// Where the browser supports it, for a 10% sample of users
+	// we record a value to give us a sense of the expected delay in running A/B tests or
+	// disabling JS features. This will inform us on various things including what to expect
+	// with regards to delay while running A/B tests to anonymous users.
+	// When EventLogging is not available this will reject.
+	// This code can be removed by the end of the Desktop improvements project.
+	// https://www.mediawiki.org/wiki/Desktop_improvements
+	mw.loader.using( 'ext.eventLogging' ).then( function () {
+		if (
+			mw.eventLog &&
+			mw.eventLog.eventInSample( 100 /* 1 in 100 */ ) &&
+			window.performance &&
+			window.performance.timing &&
+			window.performance.timing.navigationStart
+		) {
+			mw.track( 'timing.Vector.ready', now - window.performance.timing.navigationStart ); // milliseconds
+		}
+	} );
 	enableCssAnimations( window.document );
 	collapsibleTabs.init();
 	sidebar.init( window );
+	dropdownMenus();
 	$( vector.init );
+	initSearchLoader( document );
+	languageButton();
 }
 
 main( window );

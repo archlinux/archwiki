@@ -7,7 +7,9 @@
 			"Killarnee",
 			"Luke081515",
 			"Metalhead64",
-			"Sushi"
+			"MuratTheTurkish",
+			"Sushi",
+			"Umherirrender"
 		]
 	},
 	"oathauth-desc": "Ermöglicht die Authentifizierung mit HMAC-gestützten Einmalpasswörtern",
@@ -77,11 +79,11 @@
 	"oathauth-enable-page-title": "Aktiviere $1",
 	"oathauth-action-exclusive-to-2fa": "Diese Aktion kann nur von Benutzern durchgeführt werden, die eine Zwei-Faktor-Authentifizierung aktiviert haben.",
 	"oathauth-ui-available-modules": "Verfügbare Methoden",
-	"oathauth-ui-general-help": "\"Multi-Factor Authentication\" (\"MFA\") ist eine Authentifizierungsmethode, bei der einem Computerbenutzer der Zugriff erst gewährt wird, nachdem zwei oder mehr Beweise (oder Faktoren) für einen Authentifizierungsmechanismus erfolgreich vorgelegt wurden: Wissen (etwas, das der Benutzer und nur der Benutzer weiß), Besitz (etwas, das der Benutzer und nur der Benutzer hat) und Inhärenz (etwas, das der Benutzer und nur der Benutzer ist). [https://en.wikipedia.org/wiki/Multi-factor_authentication Weiterlesen]",
+	"oathauth-ui-general-help": "\"Multi-Factor Authentication\" (\"MFA\") ist eine Authentifizierungsmethode, bei der einem Computerbenutzer der Zugriff erst gewährt wird, nachdem zwei oder mehr Beweise (oder Faktoren) für einen Authentifizierungsmechanismus erfolgreich vorgelegt wurden: Wissen (etwas, das der Benutzer und nur der Benutzer weiß), Besitz (etwas, das der Benutzer und nur der Benutzer hat) und Inhärenz (etwas, das der Benutzer und nur der Benutzer ist). [https://de.wikipedia.org/wiki/Multi-Faktor-Authentisierung Weiterlesen]",
 	"oathauth-totp-description": "Der zeitbasierte Einmalpasswortalgorithmus (TOTP) ist eine Erweiterung des HMAC-basierten Einmalpasswortalgorithmus (HOTP), der ein Einmalpasswort generiert, indem die Eindeutigkeit der aktuellen Zeit verwendet wird.",
 	"oathauth-disable-method-warning-header": "Deaktivieren einer Authentifizierungsmethode bestätigen",
 	"oathauth-disable-method-warning-button-label": "Bestätigen und fortfahren",
-	"oathauth-disable-method-warning": "Wenn du die Zwei-Faktor-Authentifizierungsmethode \"$1\" deaktivierst, kannst du diese Methode beim Anmelden nicht mehr verwenden und alle mit dieser Authentifizierungsmethode verknüpften Daten werden gelöscht",
+	"oathauth-disable-method-warning": "Wenn du die Zwei-Faktor-Authentifizierungsmethode „$1“ deaktivierst, kannst du diese Methode beim Anmelden nicht mehr verwenden und alle mit dieser Authentifizierungsmethode verknüpften Daten werden gelöscht.",
 	"oathauth-switch-method-warning-header": "Auswahl einer anderen Authentifizierungsmethode bestätigen",
 	"oathauth-switch-method-warning": "Wenn du zur Zwei-Faktor-Authentifizierungsmethode $2 wechselst, wird die aktuelle Methode ($1) deaktiviert und alle Daten, die der aktuellen Authentifizierungsmethode zugeordnet sind, werden gelöscht",
 	"oathauth-totp-disable-warning": "Du kannst das mit diesem Konto registrierte Authentifizierungsgerät nicht mehr verwenden. Alle mit diesem Konto verknüpften geheimen Schlüssel werden ungültig.",

@@ -4,6 +4,7 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
 class Scribunto_LuaStandaloneInterpreter extends Scribunto_LuaInterpreter {
+	/** @var int */
 	protected static $nextInterpreterId = 0;
 
 	/**

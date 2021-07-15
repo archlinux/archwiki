@@ -3,6 +3,7 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Wt2Html\TT;
 
+use Wikimedia\Parsoid\Core\Sanitizer;
 use Wikimedia\Parsoid\Tokens\EndTagTk;
 use Wikimedia\Parsoid\Tokens\EOFTk;
 use Wikimedia\Parsoid\Tokens\KV;
@@ -145,7 +146,7 @@ class ExternalLinkHandler extends TokenHandler {
 					$builtTag,
 					// Make sure there are no IDN-ignored characters in the text so
 					// the user doesn't accidentally copy any.
-					Sanitizer::cleanUrl( $env, $href, '' ),   // mode could be 'wikilink'
+					Sanitizer::cleanUrl( $env->getSiteConfig(), $href, '' ),   // mode could be 'wikilink'
 					new EndTagTk(
 						'a',
 						[],

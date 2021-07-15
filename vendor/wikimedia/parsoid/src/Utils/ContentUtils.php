@@ -4,6 +4,7 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Utils;
 
 use DOMDocument;
+use DOMDocumentFragment;
 use DOMElement;
 use DOMNode;
 use Wikimedia\Assert\Assert;
@@ -41,40 +42,58 @@ class ContentUtils {
 	}
 
 	/**
-	 * .dataobject aware HTML parser, to be used in the DOM
-	 * post-processing phase.
+	 * XXX: Don't use this outside of testing.  It shouldn't be necessary
+	 * to create new documents when parsing or serializing.  A document lives
+	 * on the environment which can be used to create fragments.  The bag added
+	 * as a dynamic property to the PHP wrapper around the libxml doc
+	 * is at risk of being GC-ed.
 	 *
-	 * @param Env $env
 	 * @param string $html
-	 * @param array|null $options
-	 * @return DOMElement
+	 * @param bool $validateXMLNames
+	 * @return DOMDocument
 	 */
-	public static function ppToDOM( Env $env, string $html, array $options = [] ): DOMElement {
-		$options += [
-			'node' => null,
-			'reinsertFosterableContent' => null,
-		];
-		$node = $options['node'];
-		if ( $node === null ) {
-			$node = DOMCompat::getBody( $env->createDocument( $html ) );
-		} else {
-			DOMUtils::assertElt( $node );
-			DOMCompat::setInnerHTML( $node, $html );
-		}
+	public static function createDocument(
+		string $html = '', bool $validateXMLNames = false
+	): DOMDocument {
+		$doc = DOMUtils::parseHTML( $html, $validateXMLNames );
+		DOMDataUtils::prepareDoc( $doc );
+		return $doc;
+	}
 
-		if ( $options['reinsertFosterableContent'] ) {
-			DOMUtils::visitDOM( $node, function ( $n, ...$args ) use ( $env ) {
-				// untunnel fostered content
-				$meta = WTUtils::reinsertFosterableContent( $env, $n, true );
-				$n = $meta ?? $n;
+	/**
+	 * XXX: Don't use this outside of testing.  It shouldn't be necessary
+	 * to create new documents when parsing or serializing.  A document lives
+	 * on the environment which can be used to create fragments.  The bag added
+	 * as a dynamic property to the PHP wrapper around the libxml doc
+	 * is at risk of being GC-ed.
+	 *
+	 * @param string $html
+	 * @param array $options
+	 * @return DOMDocument
+	 */
+	public static function createAndLoadDocument(
+		string $html, array $options = []
+	): DOMDocument {
+		$doc = self::createDocument( $html );
+		DOMDataUtils::visitAndLoadDataAttribs(
+			DOMCompat::getBody( $doc ), $options
+		);
+		return $doc;
+	}
 
-				// load data attribs
-				DOMDataUtils::loadDataAttribs( $n, ...$args );
-			}, $options );
-		} else {
-			DOMDataUtils::visitAndLoadDataAttribs( $node, $options );
-		}
-		return $node;
+	/**
+	 * @param DOMDocument $doc
+	 * @param string $html
+	 * @param array $options
+	 * @return DOMDocumentFragment
+	 */
+	public static function createAndLoadDocumentFragment(
+		DOMDocument $doc, string $html, array $options = []
+	): DOMDocumentFragment {
+		$domFragment = $doc->createDocumentFragment();
+		DOMUtils::setFragmentInnerHTML( $domFragment, $html );
+		DOMDataUtils::visitAndLoadDataAttribs( $domFragment, $options );
+		return $domFragment;
 	}
 
 	/**
@@ -217,7 +236,11 @@ class ContentUtils {
 				DOMDataUtils::setJSONAttribute( $node, 'data-mw-variant', $dmwv );
 			}
 
-			if ( DOMUtils::matchTypeOf( $node, '#^mw:(ExpandedAttrs|Image|Extension)\b#D' ) ) {
+			if (
+				DOMUtils::matchTypeOf( $node, '#^mw:Extension/(.+?)$#D' ) ||
+				WTUtils::hasExpandedAttrsType( $node ) ||
+				WTUtils::isInlineMedia( $node )
+			) {
 				$dmw = DOMDataUtils::getDataMw( $node );
 				// Handle embedded HTML in template-affected attributes
 				if ( $dmw->attribs ?? null ) {
@@ -229,7 +252,7 @@ class ContentUtils {
 						}
 					}
 				}
-				// Handle embedded HTML in figure-inline captions
+				// Handle embedded HTML in inline media captions
 				if ( $dmw->caption ?? null ) {
 					$dmw->caption = $convertString( $dmw->caption );
 				}
@@ -240,19 +263,24 @@ class ContentUtils {
 				DOMDataUtils::setDataMw( $node, $dmw );
 			}
 
-			if ( DOMUtils::matchTypeOf( $node, '#^mw:DOMFragment(/|$)#D' ) ) {
+			// DOMFragments will have already been unpacked when DSR shifting is run
+			if ( DOMUtils::hasTypeOf( $node, 'mw:DOMFragment' ) ) {
+				PHPUtils::unreachable( "Shouldn't encounter these nodes here." );
+			}
+
+			// However, extensions can choose to handle sealed fragments whenever
+			// they want and so may be returned in subpipelines which could
+			// subsequently be shifted
+			if ( DOMUtils::matchTypeOf( $node, '#^mw:DOMFragment/sealed/\w+$#D' ) ) {
 				$dp = DOMDataUtils::getDataParsoid( $node );
 				if ( $dp->html ?? null ) {
-					$nodes = $env->getDOMFragment( $dp->html );
-					foreach ( $nodes as $n ) {
-						DOMPostOrder::traverse( $n, $convertNode );
-					}
+					$domFragment = $env->getDOMFragment( $dp->html );
+					DOMPostOrder::traverse( $domFragment, $convertNode );
 				}
 			}
 		};
 		$convertString = function ( string $str ) use ( $doc, $env, $convertNode ): string {
-			$parentNode = $doc->createElement( 'body' );
-			$node = self::ppToDOM( $env, $str, [ 'node' => $parentNode ] );
+			$node = self::createAndLoadDocumentFragment( $doc, $str );
 			DOMPostOrder::traverse( $node, $convertNode );
 			return self::ppToXML( $node, [ 'innerXML' => true ] );
 		};

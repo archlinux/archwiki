@@ -95,6 +95,24 @@ OO.initClass( ve.ce.FocusableNode );
  */
 ve.ce.FocusableNode.static.iconWhenInvisible = null;
 
+/**
+ * Command to execute when Enter is pressed while this node is focused, or when the node is double-clicked.
+ *
+ * @static
+ * @property {string|null}
+ * @inheritable
+ */
+ve.ce.FocusableNode.static.primaryCommandName = null;
+
+/**
+ * Command to execute when Delete or Backspace is pressed while this node is focused.
+ *
+ * @static
+ * @property {string|null}
+ * @inheritable
+ */
+ve.ce.FocusableNode.static.deleteCommandName = null;
+
 /* Static methods */
 
 /**
@@ -119,7 +137,7 @@ ve.ce.FocusableNode.static.getRectsForElement = function ( $element, relativeRec
 	}
 
 	function process( el ) {
-		var i, j, il, jl, contained, clientRects, overflow, $el;
+		var j, k, jl, kl, contained, clientRects, overflow, $el;
 
 		if ( el.classList.contains( 've-ce-noHighlight' ) ) {
 			return;
@@ -162,23 +180,23 @@ ve.ce.FocusableNode.static.getRectsForElement = function ( $element, relativeRec
 
 		clientRects = el.getClientRects();
 
-		for ( i = 0, il = clientRects.length; i < il; i++ ) {
+		for ( j = 0, jl = clientRects.length; j < jl; j++ ) {
 			contained = false;
-			for ( j = 0, jl = rects.length; j < jl; j++ ) {
+			for ( k = 0, kl = rects.length; k < kl; k++ ) {
 				// This rect is contained by an existing rect, discard
-				if ( contains( rects[ j ], clientRects[ i ] ) ) {
+				if ( contains( rects[ k ], clientRects[ j ] ) ) {
 					contained = true;
 					break;
 				}
 				// An existing rect is contained by this rect, discard the existing rect
-				if ( contains( clientRects[ i ], rects[ j ] ) ) {
-					rects.splice( j, 1 );
-					j--;
-					jl--;
+				if ( contains( clientRects[ j ], rects[ k ] ) ) {
+					rects.splice( k, 1 );
+					k--;
+					kl--;
 				}
 			}
 			if ( !contained ) {
-				rects.push( clientRects[ i ] );
+				rects.push( clientRects[ j ] );
 			}
 		}
 	}
@@ -462,17 +480,20 @@ ve.ce.FocusableNode.prototype.onFocusableMouseDown = function ( e ) {
 
 	// Wait for native selection to change before correcting
 	setTimeout( function () {
-		range = selection instanceof ve.dm.LinearSelection && selection.getRange();
-		surfaceModel.getLinearFragment(
-			e.shiftKey && range ?
-				ve.Range.static.newCoveringRange(
-					[ range, nodeRange ], range.from > nodeRange.from
-				) :
-				nodeRange
-		).select();
-		node.focusableSurface.updateActiveAnnotations();
-		// Ensure surface is active as native 'focus' event won't be fired
-		node.focusableSurface.activate();
+		// Check surface still exists after timeout
+		if ( node.focusableSurface ) {
+			range = selection instanceof ve.dm.LinearSelection && selection.getRange();
+			surfaceModel.getLinearFragment(
+				e.shiftKey && range ?
+					ve.Range.static.newCoveringRange(
+						[ range, nodeRange ], range.from > nodeRange.from
+					) :
+					nodeRange
+			).select();
+			node.focusableSurface.updateActiveAnnotations();
+			// Ensure surface is active as native 'focus' event won't be fired
+			node.focusableSurface.activate();
+		}
 	} );
 };
 

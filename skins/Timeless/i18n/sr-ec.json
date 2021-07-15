@@ -3,6 +3,7 @@
 		"authors": [
 			"Acamicamacaraca",
 			"BadDog",
+			"Kizule",
 			"Milicevic01",
 			"Obsuser",
 			"Zoranzoki21"
@@ -15,7 +16,7 @@
 	"timeless-notloggedin": "Нисте пријављени",
 	"timeless-userpage": "Страница {{GENDER:$1|корисника|кориснице}}",
 	"timeless-talkpage": "Разговор са {{GENDER:$1|корисником|корисницом}}",
-	"timeless-pagelog": "Евиденције странице",
+	"timeless-pagelog": "Дневници странице",
 	"timeless-more": "Више",
 	"timeless-sitetools": "Вики алатке",
 	"timeless-pageactions": "Алатке за страницу",

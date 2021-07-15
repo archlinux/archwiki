@@ -8,7 +8,7 @@
 	"codeeditor-desc": "Syntax-highlighted editing for JavaScript and CSS pages using [https://ace.c9.io/ Ace editor]",
 	"codeeditor-next-annotation": "Go to next annotation",
 	"codeeditor-toolbar-toggle": "Toggle code editor",
-	"codeeditor-save-with-errors": "The document contains errors. Are you sure you want to save?",
+	"codeeditor-save-with-errors": "The document contains errors. Are you sure you want to publish?",
 	"codeeditor-invisibleChars-toggle": "Toggle invisible characters",
 	"codeeditor-lineWrapping-toggle": "Toggle line wrapping",
 	"codeeditor-searchReplace-toggle": "Toggle search and replace dialog",

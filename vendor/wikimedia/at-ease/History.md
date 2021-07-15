@@ -1,5 +1,19 @@
 # Release History
 
+## v2.1.0
+
+### Changed
+
+* Dropped support for PHP 7.0/7.1 and HHVM
+* build: Updated several dev dependencies
+* src: Started using real variadic arguments
+* doc: Restore Doxygen welcome page
+* build: Dropped Travis testing
+
+### Fixed
+* src: AtEase::quietCall should restore error level in exception case
+* README: Fix markdown display of code
+
 ## v2.0.0
 
 ### Added

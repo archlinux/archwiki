@@ -1,13 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"McDutchie"
+			"McDutchie",
+			"Shirayuki"
 		]
 	},
 	"interwiki": "Vider e modificar datos interwiki",
 	"interwiki-title-norights": "Vider datos interwiki",
 	"interwiki-desc": "Adde un [[Special:Interwiki|pagina special]] pro vider e modificar le tabella interwiki",
-	"interwiki_intro": "Isto es un summario del tabella interwiki, le qual defini le prefixos accelerator usate pro ligar rapidemente a altere wikis e sitos externe. Pro apprender le uso recommendate, lege [https://www.mediawiki.org/Special:MyLanguage/wiki/Extension:Interwiki le manual sur MediaWiki.org].",
+	"interwiki_intro": "Isto es un summario del tabella interwiki, le qual defini le prefixos accelerator usate pro ligar rapidemente a altere wikis e sitos externe. Pro apprender le uso recommendate, lege [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Interwiki le manual sur MediaWiki.org].",
 	"interwiki_prefix": "Prefixo",
 	"interwiki-prefix-label": "Prefixo:",
 	"interwiki_prefix_intro": "Prefixo interwiki pro usar in le syntaxe de wikitexto <code>[<nowiki />[prefixo:<em>nomine de pagina</em>]]</code>.",

@@ -43,7 +43,7 @@ class Cleanup extends Maintenance {
 		$dryRun = $this->hasOption( 'dry-run' );
 
 		$dbr = wfGetDB( DB_REPLICA );
-		$maxID = (int)$dbr->selectField( 'page', 'MAX(page_id)' );
+		$maxID = (int)$dbr->selectField( 'page', 'MAX(page_id)', [], __METHOD__ );
 		$reportingInterval = 100;
 
 		$this->output( "Regexes are " . implode( ', ', array_map( 'count', $regexes ) ) . " bytes\n" );

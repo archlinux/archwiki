@@ -27,7 +27,7 @@
 	],
 	"support": {
 		"issues": "https://phabricator.wikimedia.org/",
-		"irc": "irc://irc.freenode.net/mediawiki",
+		"irc": "irc://irc.libera.chat/mediawiki",
 		"forum": "https://www.mediawiki.org/wiki/Extension_talk:LocalisationUpdate",
 		"wiki": "https://www.mediawiki.org/wiki/Extension:LocalisationUpdate"
 	},
@@ -35,9 +35,9 @@
 		"php": ">=7.1"
 	},
 	"require-dev": {
-		"mediawiki/mediawiki-codesniffer": "31.0.0",
-		"mediawiki/mediawiki-phan-config": "0.10.2",
-		"mediawiki/minus-x": "1.1.0",
+		"mediawiki/mediawiki-codesniffer": "35.0.0",
+		"mediawiki/mediawiki-phan-config": "0.10.6",
+		"mediawiki/minus-x": "1.1.1",
 		"php-parallel-lint/php-console-highlighter": "0.5.0",
 		"php-parallel-lint/php-parallel-lint": "1.2.0"
 	},
@@ -50,6 +50,7 @@
 			"parallel-lint . --exclude vendor --exclude node_modules",
 			"phpcs -p -s",
 			"minus-x check ."
-		]
+		],
+		"phan": "phan -d . --long-progress-bar"
 	}
 }

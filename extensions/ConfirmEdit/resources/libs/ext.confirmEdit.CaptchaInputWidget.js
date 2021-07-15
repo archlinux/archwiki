@@ -12,9 +12,7 @@ mw.libs.confirmEdit.CaptchaInputWidget = function MwWidgetsCaptchaInputWidget( c
 	config = config || {};
 
 	// Parent constructor
-	mw.libs.confirmEdit.CaptchaInputWidget.parent.call( this, $.extend( {
-		placeholder: mw.msg( 'fancycaptcha-imgcaptcha-ph' )
-	}, config ) );
+	mw.libs.confirmEdit.CaptchaInputWidget.parent.call( this, config );
 
 	// Properties
 	this.$captchaImg = null;
@@ -52,6 +50,7 @@ mw.libs.confirmEdit.CaptchaInputWidget.prototype.makeCaptchaInterface = function
 	if ( captchaData.url ) {
 		// FancyCaptcha
 		// Based on FancyCaptcha::getFormInformation() and ext.confirmEdit.fancyCaptcha.js
+		this.$input.attr( 'placeholder', mw.msg( 'fancycaptcha-imgcaptcha-ph' ) );
 		mw.loader.load( 'ext.confirmEdit.fancyCaptcha' );
 		$captchaDiv.addClass( 'fancycaptcha-captcha-container' );
 		$captchaParagraph.append( mw.message( 'fancycaptcha-edit' ).parseDom() );

@@ -4,7 +4,8 @@
 			"Asoxor",
 			"Calak",
 			"Muhammed taha",
-			"Épine"
+			"Épine",
+			"ئارام بکر"
 		]
 	},
 	"categorytree": "درەختی پۆل",
@@ -33,6 +34,6 @@
 	"categorytree-no-parent-categories": "پۆلی باوان نییە",
 	"categorytree-no-pages": "پەڕە و ژێر پۆل نییە",
 	"categorytree-not-found": "پۆلی <i>$1</i> نەدۆزرایەوە",
-	"categorytree-error": "کێشە لە بارکردنی داتا.",
+	"categorytree-error": "کێشە لە بارکردنی دراوە.",
 	"categorytree-retry": "تکایە دەمێک ڕاوەستە و دیسان تاقیبکەوە."
 }

@@ -30,7 +30,7 @@ use Vector\FeatureManagement\Requirement;
  *
  * @unstable
  *
- * @package FeatureManagement
+ * @package Vector\FeatureManagement\Requirements
  * @internal
  */
 class SimpleRequirement implements Requirement {

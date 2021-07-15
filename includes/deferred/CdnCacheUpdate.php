@@ -127,7 +127,7 @@ class CdnCacheUpdate implements DeferrableUpdate, MergeableUpdate {
 		$relayerGroup->getRelayer( 'cdn-url-purges' )->notifyMulti(
 			'cdn-url-purges',
 			array_map(
-				function ( $url ) use ( $ts ) {
+				static function ( $url ) use ( $ts ) {
 					return [
 						'url' => $url,
 						'timestamp' => $ts,
@@ -159,10 +159,11 @@ class CdnCacheUpdate implements DeferrableUpdate, MergeableUpdate {
 	 * @return int[] Map of (URL => rebound purge delay)
 	 */
 	private function resolveReboundDelayByUrl() {
+		$services = MediaWikiServices::getInstance();
 		/** @var Title $title */
 
-		// Avoid multiple queries for getCdnUrls() call
-		$lb = MediaWikiServices::getInstance()->getLinkBatchFactory()->newLinkBatch();
+		// Avoid multiple queries for HtmlCacheUpdater::getUrls() call
+		$lb = $services->getLinkBatchFactory()->newLinkBatch();
 		foreach ( $this->titleTuples as list( $title, $delay ) ) {
 			$lb->addObj( $title );
 		}
@@ -171,8 +172,9 @@ class CdnCacheUpdate implements DeferrableUpdate, MergeableUpdate {
 		$reboundDelayByUrl = [];
 
 		// Resolve the titles into CDN URLs
+		$htmlCacheUpdater = $services->getHtmlCacheUpdater();
 		foreach ( $this->titleTuples as list( $title, $delay ) ) {
-			foreach ( $title->getCdnUrls() as $url ) {
+			foreach ( $htmlCacheUpdater->getUrls( $title ) as $url ) {
 				// Use the highest rebound for duplicate URLs in order to handle the most lag
 				$reboundDelayByUrl[$url] = max( $reboundDelayByUrl[$url] ?? 0, $delay );
 			}

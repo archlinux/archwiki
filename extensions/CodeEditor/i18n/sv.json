@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Lokal Profil",
+			"Sabelöga",
 			"Skalman",
 			"WikiPhoenix"
 		]
@@ -9,7 +10,7 @@
 	"codeeditor-desc": "Redigering med syntaxfärgläggning för JavaScript- och CSS-sidor med [https://ace.c9.io/ Ace-redigeraren]",
 	"codeeditor-next-annotation": "Gå till nästa anteckning",
 	"codeeditor-toolbar-toggle": "Slå på/av kodredigeraren",
-	"codeeditor-save-with-errors": "Dokumentet innehåller fel. Är du säker på att du vill spara?",
+	"codeeditor-save-with-errors": "Dokumentet innehåller fel. Är du säker på att du vill publicera?",
 	"codeeditor-invisibleChars-toggle": "Slå på/av osynliga tecken",
 	"codeeditor-lineWrapping-toggle": "Slå på/av radbrytning",
 	"codeeditor-searchReplace-toggle": "Slå på/av sök- och ersättsdialogen",

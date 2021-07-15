@@ -5,16 +5,17 @@ namespace Wikimedia\Parsoid\Ext;
 
 use Closure;
 use DOMDocument;
+use DOMDocumentFragment;
 use DOMElement;
 use DOMNode;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Config\PageConfig;
 use Wikimedia\Parsoid\Config\SiteConfig;
 use Wikimedia\Parsoid\Core\DomSourceRange;
+use Wikimedia\Parsoid\Core\Sanitizer;
 use Wikimedia\Parsoid\Html2wt\SerializerState;
 use Wikimedia\Parsoid\Tokens\KV;
 use Wikimedia\Parsoid\Tokens\SourceRange;
-use Wikimedia\Parsoid\Tokens\Token;
 use Wikimedia\Parsoid\Utils\ContentUtils;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
@@ -26,7 +27,6 @@ use Wikimedia\Parsoid\Utils\Utils;
 use Wikimedia\Parsoid\Utils\WTUtils;
 use Wikimedia\Parsoid\Wt2Html\DOMPostProcessor;
 use Wikimedia\Parsoid\Wt2Html\Frame;
-use Wikimedia\Parsoid\Wt2Html\TT\Sanitizer;
 
 /**
  * Extensions are expected to use only these interfaces and strongly discouraged from
@@ -39,48 +39,101 @@ class ParsoidExtensionAPI {
 	/** @var Env */
 	private $env;
 
-	/** @var Frame */
+	/** @var ?Frame */
 	private $frame;
 
-	/** @var Token */
-	private $extToken;
+	/** @var ?ExtensionTag */
+	public $extTag;
 
 	/**
-	 * @var array TokenHandler options
+	 * @var ?array TokenHandler options
 	 */
 	private $wt2htmlOpts;
 
 	/**
-	 * @var array Serialiation options / state
+	 * @var ?array Serialiation options / state
 	 */
 	private $html2wtOpts;
 
 	/**
-	 * @var SerializerState
+	 * @var ?SerializerState
 	 */
 	private $serializerState;
 
 	/**
+	 * Errors collected while parsing.  This is used to indicate that, although
+	 * an extension is returning a dom fragment, errors were encountered while
+	 * generating it and should be marked up with the mw:Error typeof.
+	 *
+	 * @var array
+	 */
+	private $errors = [];
+
+	/**
 	 * @param Env $env
-	 * @param array|null $options
+	 * @param ?array $options
 	 *  - wt2html: used in wt->html direction
 	 *    - frame: (Frame)
-	 *    - extToken: (Token)
-	 *    - extTag: (string)
-	 *    - extTagOpts: (array)
-	 *    - inTemplate: (bool)
+	 *    - parseOpts: (array)
+	 *      - extTag: (string)
+	 *      - extTagOpts: (array)
+	 *      - inTemplate: (bool)
+	 *    - extTag: (ExtensionTag)
 	 *  - html2wt: used in html->wt direction
 	 *    - state: (SerializerState)
 	 */
 	public function __construct(
-		Env $env, array $options = null
+		Env $env, ?array $options = null
 	) {
 		$this->env = $env;
 		$this->wt2htmlOpts = $options['wt2html'] ?? null;
 		$this->html2wtOpts = $options['html2wt'] ?? null;
 		$this->serializerState = $this->html2wtOpts['state'] ?? null;
 		$this->frame = $this->wt2htmlOpts['frame'] ?? null;
-		$this->extToken = $this->wt2htmlOpts['extToken'] ?? null;
+		$this->extTag = $this->wt2htmlOpts['extTag'] ?? null;
+	}
+
+	/**
+	 * Collect errors while parsing.  If processing can't continue, an
+	 * ExtensionError should be thrown instead.
+	 *
+	 * $key and $params are basically the arguments to wfMessage, although they
+	 * will be stored in the data-mw of the encapsulation wrapper.
+	 *
+	 * See https://www.mediawiki.org/wiki/Specs/HTML#Error_handling
+	 *
+	 * The returned fragment can be inserted in the dom and will be populated
+	 * with the localized message.  See T266666
+	 *
+	 * @unstable
+	 * @param string $key
+	 * @param mixed ...$params
+	 * @return DOMDocumentFragment
+	 */
+	public function pushError( string $key, ...$params ): DOMDocumentFragment {
+		$err = [ 'key' => $key ];
+		if ( count( $params ) > 0 ) {
+			$err['params'] = $params;
+		}
+		$this->errors[] = $err;
+		return WTUtils::createLocalizationFragment( $this->getTopLevelDoc(), $err );
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getErrors(): array {
+		return $this->errors;
+	}
+
+	/**
+	 * Returns the main document we're parsing.  Extension content is parsed
+	 * to fragments of this document.
+	 *
+	 * @return DOMDocument
+	 */
+	public function getTopLevelDoc(): DOMDocument {
+		return $this->env->topLevelDoc;
 	}
 
 	/**
@@ -150,43 +203,7 @@ class ParsoidExtensionAPI {
 	 * @return bool
 	 */
 	public function inTemplate(): bool {
-		return $this->wt2htmlOpts['inTemplate'] ?? false;
-	}
-
-	/**
-	 * Return the name of the extension tag
-	 * @return string
-	 */
-	public function getExtensionName(): string {
-		return $this->extToken->getAttribute( 'name' );
-	}
-
-	/**
-	 * Return the source offsets for this extension tag usage
-	 * @return DomSourceRange|null
-	 */
-	public function getExtTagOffsets(): ?DomSourceRange {
-		return $this->extToken->dataAttribs->extTagOffsets ?? null;
-	}
-
-	/**
-	 * Return the full extension source
-	 * @return string|null
-	 */
-	public function getExtSource(): ?string {
-		if ( $this->extToken->hasAttribute( 'source' ) ) {
-			return $this->extToken->getAttribute( 'source' );
-		} else {
-			return null;
-		}
-	}
-
-	/**
-	 * Is this extension tag self-closed?
-	 * @return bool
-	 */
-	public function isSelfClosedExtTag(): bool {
-		return !empty( $this->extToken->dataAttribs->selfClose );
+		return $this->wt2htmlOpts['parseOpts']['inTemplate'] ?? false;
 	}
 
 	/**
@@ -196,7 +213,7 @@ class ParsoidExtensionAPI {
 	 * @return string|null
 	 */
 	public function parentExtTag(): ?string {
-		return $this->wt2htmlOpts['extTag'] ?? null;
+		return $this->wt2htmlOpts['parseOpts']['extTag'] ?? null;
 	}
 
 	/**
@@ -206,30 +223,23 @@ class ParsoidExtensionAPI {
 	 * @return array
 	 */
 	public function parentExtTagOpts(): array {
-		return $this->wt2htmlOpts['extTagOpts'] ?? [];
+		return $this->wt2htmlOpts['parseOpts']['extTagOpts'] ?? [];
 	}
 
 	/**
 	 * Get the content DOM corresponding to an id
 	 * @param string $contentId
-	 * @return DOMElement
+	 * @return DOMDocumentFragment
 	 */
-	public function getContentDOM( string $contentId ): DOMElement {
-		// FIXME: This [0] indexing is specific to <ref> fragments.
-		// Might need to be revisited if this assumption breaks for
-		// other extension tags.
-		$frag = $this->env->getDOMFragment( $contentId )[0];
-		DOMUtils::assertElt( $frag );
-		return $frag;
+	public function getContentDOM( string $contentId ): DOMDocumentFragment {
+		return $this->env->getDOMFragment( $contentId );
 	}
 
 	/**
-	 * Get the serialized HTML for the content DOM corresponding to an id
 	 * @param string $contentId
-	 * @return string
 	 */
-	public function getContentHTML( string $contentId ): string {
-		return $this->domToHtml( $this->getContentDOM( $contentId ), true );
+	public function clearContentDOM( string $contentId ) {
+		$this->env->removeDOMFragment( $contentId );
 	}
 
 	/**
@@ -244,12 +254,13 @@ class ParsoidExtensionAPI {
 	 *   - extTagOpts
 	 *   - context "inline", "block", etc. Currently, only "inline" is supported
 	 * @param bool $sol
-	 * @return DOMDocument
+	 * @return DOMDocumentFragment
 	 */
-	public function wikitextToDOM( string $wikitext, array $opts, bool $sol ): DOMDocument {
-		$doc = null;
+	public function wikitextToDOM(
+		string $wikitext, array $opts, bool $sol
+	): DOMDocumentFragment {
 		if ( $wikitext === '' ) {
-			$doc = $this->env->createDocument();
+			$domFragment = $this->getTopLevelDoc()->createDocumentFragment();
 		} else {
 			// Parse content to DOM and pass DOM-fragment token back to the main pipeline.
 			// The DOM will get unwrapped and integrated  when processing the top level document.
@@ -260,19 +271,22 @@ class ParsoidExtensionAPI {
 				$frame = $frame->newChild( $frame->getTitle(), [], $wikitext );
 				$srcOffsets = new SourceRange( 0, strlen( $wikitext ) );
 			}
-			$doc = PipelineUtils::processContentInPipeline( $this->env, $frame, $wikitext, [
-				// Full pipeline for processing content
-				'pipelineType' => 'text/x-mediawiki/full',
-				'pipelineOpts' => [
-					'expandTemplates' => true,
-					'extTag' => $parseOpts['extTag'],
-					'extTagOpts' => $parseOpts['extTagOpts'] ?? null,
-					'inTemplate' => $this->inTemplate(),
-					'inlineContext' => ( $parseOpts['context'] ?? '' ) === 'inline',
-				],
-				'srcOffsets' => $srcOffsets,
-				'sol' => $sol
-			] );
+			$domFragment = PipelineUtils::processContentInPipeline(
+				$this->env, $frame, $wikitext,
+				[
+					// Full pipeline for processing content
+					'pipelineType' => 'text/x-mediawiki/full',
+					'pipelineOpts' => [
+						'expandTemplates' => true,
+						'extTag' => $parseOpts['extTag'],
+						'extTagOpts' => $parseOpts['extTagOpts'] ?? null,
+						'inTemplate' => $this->inTemplate(),
+						'inlineContext' => ( $parseOpts['context'] ?? '' ) === 'inline',
+					],
+					'srcOffsets' => $srcOffsets,
+					'sol' => $sol,
+				]
+			);
 
 			if ( !empty( $opts['clearDSROffsets'] ) ) {
 				$dsrFn = function ( DOMSourceRange $dsr ) {
@@ -283,10 +297,10 @@ class ParsoidExtensionAPI {
 			}
 
 			if ( $dsrFn ) {
-				ContentUtils::shiftDSR( $this->env, DOMCompat::getBody( $doc ), $dsrFn );
+				ContentUtils::shiftDSR( $this->env, $domFragment, $dsrFn );
 			}
 		}
-		return $doc;
+		return $domFragment;
 	}
 
 	/**
@@ -305,12 +319,12 @@ class ParsoidExtensionAPI {
 	 *   - extTag
 	 *   - extTagOpts
 	 *   - context
-	 * @return DOMDocument
+	 * @return DOMDocumentFragment
 	 */
 	public function extTagToDOM(
 		array $extArgs, string $leadingWS, string $wikitext, array $opts
-	): DOMDocument {
-		$extTagOffsets = $this->extToken->dataAttribs->extTagOffsets;
+	): DOMDocumentFragment {
+		$extTagOffsets = $this->extTag->getOffsets();
 		if ( !isset( $opts['srcOffsets'] ) ) {
 			$opts['srcOffsets'] = new SourceRange(
 				$extTagOffsets->innerStart() + strlen( $leadingWS ),
@@ -318,27 +332,28 @@ class ParsoidExtensionAPI {
 			);
 		}
 
-		$doc = $this->wikitextToDOM( $wikitext, $opts, true /* sol */ );
+		$domFragment = $this->wikitextToDOM( $wikitext, $opts, true /* sol */ );
 
 		// Create a wrapper and migrate content into the wrapper
-		$wrapper = $doc->createElement( $opts['wrapperTag'] );
-		$body = DOMCompat::getBody( $doc );
-		DOMUtils::migrateChildren( $body, $wrapper );
-		$body->appendChild( $wrapper );
+		$wrapper = $domFragment->ownerDocument->createElement(
+			$opts['wrapperTag']
+		);
+		DOMUtils::migrateChildren( $domFragment, $wrapper );
+		$domFragment->appendChild( $wrapper );
 
 		// Sanitize args and set on the wrapper
-		$this->sanitizeArgs( $wrapper, $extArgs );
+		Sanitizer::applySanitizedArgs( $this->env->getSiteConfig(), $wrapper, $extArgs );
 
 		// Mark empty content DOMs
 		if ( $wikitext === '' ) {
 			DOMDataUtils::getDataParsoid( $wrapper )->empty = true;
 		}
 
-		if ( !empty( $this->extToken->dataAttribs->selfClose ) ) {
+		if ( !empty( $this->extTag->isSelfClosed() ) ) {
 			DOMDataUtils::getDataParsoid( $wrapper )->selfClose = true;
 		}
 
-		return $doc;
+		return $domFragment;
 	}
 
 	/**
@@ -348,9 +363,11 @@ class ParsoidExtensionAPI {
 	 * @param KV[] $extArgs
 	 * @param string $key should be lower-case
 	 * @param bool $context
-	 * @return ?DOMDocument
+	 * @return ?DOMDocumentFragment
 	 */
-	public function extArgToDOM( array $extArgs, string $key, string $context = "inline" ): ?DOMDocument {
+	public function extArgToDOM(
+		array $extArgs, string $key, string $context = "inline"
+	): ?DOMDocumentFragment {
 		$argKV = KV::lookupKV( $extArgs, strtolower( $key ) );
 		if ( $argKV === null || !$argKV->v ) {
 			return null;
@@ -372,7 +389,7 @@ class ParsoidExtensionAPI {
 			$argVal,
 			[
 				'parseOpts' => [
-					'extTag' => $this->getExtensionName(),
+					'extTag' => $this->extTag->getName(),
 					'context' => $context,
 				],
 				'srcOffsets' => $argKV->valueOffset(),
@@ -431,41 +448,6 @@ class ParsoidExtensionAPI {
 		$extArgs[] = new KV( $key, $value );
 	}
 
-	/**
-	 * @param DOMElement $elt
-	 * @param array $extArgs
-	 */
-	public function sanitizeArgs( DOMElement $elt, array $extArgs ): void {
-		Sanitizer::applySanitizedArgs( $this->env, $elt, $extArgs );
-	}
-
-	/**
-	 * Sanitize string to be used as a valid HTML id attribute
-	 * @param string $id
-	 * @return string
-	 */
-	public function sanitizeHTMLId( string $id ): string {
-		return Sanitizer::escapeIdForAttribute( $id );
-	}
-
-	/**
-	 * Sanitize string to be used as a CSS value
-	 * @param string $css
-	 * @return string
-	 */
-	public function sanitizeCss( string $css ): string {
-		return Sanitizer::checkCss( $css );
-	}
-
-	/**
-	 * Get the list of valid attributes useable for a HTML element
-	 * @param string $eltName
-	 * @return array
-	 */
-	public function getValidHTMLAttributes( string $eltName ): array {
-		return Sanitizer::attributeWhitelist( $eltName );
-	}
-
 	// TODO: Provide support for extensions to register lints
 	// from their customized lint handlers.
 
@@ -499,11 +481,12 @@ class ParsoidExtensionAPI {
 		// Expanded attributes
 		if ( DOMUtils::matchTypeOf( $elt, '/^mw:ExpandedAttrs$/' ) ) {
 			$dmw = DOMDataUtils::getDataMw( $elt );
-			if ( isset( $dmw->attribs ) && count( $dmw->attribs ) > 0 ) {
-				$attribs = &$dmw->attribs[0];
-				foreach ( $attribs as &$a ) {
-					if ( isset( $a->html ) ) {
-						$a->html = $proc( $a->html );
+			if ( $dmw->attribs ?? null ) {
+				foreach ( $dmw->attribs as &$a ) {
+					foreach ( $a as $kOrV ) {
+						if ( gettype( $kOrV ) !== 'string' && isset( $kOrV->html ) ) {
+							$kOrV->html = $proc( $kOrV->html );
+						}
 					}
 				}
 			}
@@ -545,40 +528,22 @@ class ParsoidExtensionAPI {
 	}
 
 	/**
-	 * Copy $from->childNodes to $to.
-	 * $from and $to belong to different documents.
+	 * Copy $from->childNodes to $to and clone the data attributes of $from
+	 * to $to.
 	 *
 	 * @param DOMElement $from
 	 * @param DOMElement $to
-	 * @param bool $transferDataAttribs Should data-mw & data-parsoid be copied over?
 	 */
-	public static function migrateChildrenBetweenDocs(
-		DOMElement $from, DOMElement $to, bool $transferDataAttribs = true
+	public static function migrateChildrenAndTransferWrapperDataAttribs(
+		DOMElement $from, DOMElement $to
 	): void {
-		// Migrate nodes
-		DOMUtils::migrateChildrenBetweenDocs( $from, $to );
-
-		// Ensure node data is available in $to's data bag as well
-		// FIXME: This will no longer be needed once DOM fragments
-		// are attached to the same source document instead of coming
-		// from different documents.
-		$fromDataBag = DOMDataUtils::getBag( $from->ownerDocument );
-		$toDataBag = DOMDataUtils::getBag( $to->ownerDocument );
-		DOMUtils::visitDOM( $to, function ( DOMNode $n ) use ( $fromDataBag, $toDataBag ) {
-			if ( $n instanceof DOMElement &&
-				$n->hasAttribute( DOMDataUtils::DATA_OBJECT_ATTR_NAME )
-			) {
-				$nId = $n->getAttribute( DOMDataUtils::DATA_OBJECT_ATTR_NAME );
-				$data = $fromDataBag->getObject( (int)$nId );
-				$newId = $toDataBag->stashObject( $data );
-				$n->setAttribute( DOMDataUtils::DATA_OBJECT_ATTR_NAME, (string)$newId );
-			}
-		} );
-
-		if ( $transferDataAttribs ) {
-			DOMDataUtils::setDataParsoid( $to, Utils::clone( DOMDataUtils::getDataParsoid( $from ) ) );
-			DOMDataUtils::setDataMw( $to, Utils::clone( DOMDataUtils::getDataMw( $from ) ) );
-		}
+		DOMUtils::migrateChildren( $from, $to );
+		DOMDataUtils::setDataParsoid(
+			$to, Utils::clone( DOMDataUtils::getDataParsoid( $from ) )
+		);
+		DOMDataUtils::setDataMw(
+			$to, Utils::clone( DOMDataUtils::getDataMw( $from ) )
+		);
 	}
 
 	/**
@@ -587,12 +552,12 @@ class ParsoidExtensionAPI {
 	 * to convert HTML to DOM that will be passed into Parsoid's code processing code.
 	 *
 	 * @param string $html
-	 * @return DOMDocument
+	 * @return DOMDocumentFragment
 	 */
-	public function htmlToDom( string $html ): DOMDocument {
-		$doc = $this->env->createDocument( $html );
-		DOMDataUtils::visitAndLoadDataAttribs( DOMCompat::getBody( $doc ) );
-		return $doc;
+	public function htmlToDom( string $html ): DOMDocumentFragment {
+		return ContentUtils::createAndLoadDocumentFragment(
+			$this->getTopLevelDoc(), $html
+		);
 	}
 
 	/**
@@ -600,7 +565,7 @@ class ParsoidExtensionAPI {
 	 * If $releaseDom is set to true, the DOM will be left in non-canonical form
 	 * and is not safe to use after this call. This is primarily a performance optimization.
 	 *
-	 * @param DOMElement $elt
+	 * @param DOMNode $node
 	 * @param bool $innerHTML if true, inner HTML of the element will be returned
 	 *    This flag defaults to false
 	 * @param bool $releaseDom if true, the DOM will not be in canonical form after this call
@@ -608,15 +573,14 @@ class ParsoidExtensionAPI {
 	 * @return string
 	 */
 	public function domToHtml(
-		DOMElement $elt, bool $innerHTML = false, bool $releaseDom = false
+		DOMNode $node, bool $innerHTML = false, bool $releaseDom = false
 	): string {
 		// FIXME: This is going to drop any diff markers but since
 		// the dom differ doesn't traverse into extension content (right now),
 		// none should exist anyways.
-		DOMDataUtils::visitAndStoreDataAttribs( $elt );
-		$html = ContentUtils::toXML( $elt, [ 'innerXML' => $innerHTML ] );
+		$html = ContentUtils::ppToXML( $node, [ 'innerXML' => $innerHTML ] );
 		if ( !$releaseDom ) {
-			DOMDataUtils::visitAndLoadDataAttribs( $elt );
+			DOMDataUtils::visitAndLoadDataAttribs( $node );
 		}
 		return $html;
 	}
@@ -629,16 +593,6 @@ class ParsoidExtensionAPI {
 	public const IN_LINK = 4;
 	public const IN_IMG_CAPTION = 8;
 	public const IN_OPTION = 16;
-
-	/**
-	 * FIXME: We should get rid of this and simply let RT tests fail on this or add
-	 * other test output normalizations to deal with it. But, this should be done
-	 * as a separate refactoring step to isolate its affects and reset the rt test baseline.
-	 * @return bool
-	 */
-	public function rtTestMode(): bool {
-		return $this->serializerState->rtTestMode;
-	}
 
 	/**
 	 * FIXME: This is a bit broken - shouldn't be needed ideally
@@ -675,6 +629,7 @@ class ParsoidExtensionAPI {
 	public function domToWikitext( array $opts, DOMElement $node, bool $releaseDom = false ) {
 		// FIXME: WTS expects the input DOM to be a <body> element!
 		// Till that is fixed, we have to go through this round-trip!
+		// TODO: Move $node children to a fragment and call `$serializer->domToWikitext`
 		return $this->htmlToWikitext( $opts, $this->domToHtml( $node, $releaseDom ) );
 	}
 
@@ -685,9 +640,9 @@ class ParsoidExtensionAPI {
 	 *  - extName: (string) Name of the extension whose body we are serializing
 	 *  - inPHPBlock: (bool) FIXME: This needs to be removed
 	 * @param string $html HTML for the extension's body
-	 * @return mixed // FIXME: Don't want to expose ConstrainedText object
+	 * @return string
 	 */
-	public function htmlToWikitext( array $opts, string $html ) {
+	public function htmlToWikitext( array $opts, string $html ): string {
 		// Type cast so phan has more information to ensure type safety
 		$state = $this->serializerState;
 		$opts['env'] = $this->env;
@@ -697,15 +652,10 @@ class ParsoidExtensionAPI {
 	/**
 	 * @param DOMElement $elt
 	 * @param int $context OR-ed bit flags specifying escaping / serialization context
-	 * @param bool $singleLine Should the output be in a single line?
-	 *   If so, all embedded newlines will be dropped. Ex: list content has this constraint.
 	 * @return string
 	 */
-	public function domChildrenToWikitext( DOMElement $elt, int $context, bool $singleLine ): string {
+	public function domChildrenToWikitext( DOMElement $elt, int $context ): string {
 		$state = $this->serializerState;
-		if ( $singleLine ) {
-			$state->singleLineContext->enforce();
-		}
 		if ( $context & self::IN_IMG_CAPTION ) {
 			if ( $context & self::IN_OPTION ) {
 				$escapeHandler = 'mediaOptionHandler'; // Escapes "|" as well
@@ -717,10 +667,6 @@ class ParsoidExtensionAPI {
 		} else {
 			throw new \RuntimeException( 'Not yet supported!' );
 		}
-		if ( $singleLine ) {
-			$state->singleLineContext->pop();
-		}
-
 		return $out;
 	}
 
@@ -784,7 +730,7 @@ class ParsoidExtensionAPI {
 	public function renderMedia(
 		string $titleStr, array $imageOpts, ?string &$error = null
 	): ?DOMElement {
-		$extTag = $this->getExtensionName();
+		$extTagName = $this->extTag->getName();
 
 		$title = $this->makeTitle(
 			$titleStr,
@@ -792,7 +738,7 @@ class ParsoidExtensionAPI {
 		);
 
 		if ( $title === null || !$title->getNamespace()->isFile() ) {
-			$error = "{$extTag}_no_image";
+			$error = "{$extTagName}_no_image";
 			return null;
 		}
 
@@ -832,11 +778,11 @@ class ParsoidExtensionAPI {
 			return $c . ( is_string( $p ) ? $p : $p[0] );
 		}, '' );
 
-		$doc = $this->wikitextToDOM(
+		$domFragment = $this->wikitextToDOM(
 			$imageWt,
 			[
 				'parseOpts' => [
-					'extTag' => $extTag,
+					'extTag' => $extTagName,
 					'context' => 'inline',
 				],
 				// Create new frame, because $pieces doesn't literally appear
@@ -846,10 +792,13 @@ class ParsoidExtensionAPI {
 				// for bits which aren't the caption or file, since they
 				// don't refer to actual source wikitext
 				'shiftDSRFn' => function ( DomSourceRange $dsr ) use ( $shiftOffset ) {
-					$start = $shiftOffset( $dsr->start );
-					$end = $shiftOffset( $dsr->end );
-					// If either offset is invalid, remove entire DSR
-					if ( $start === null || $end === null ) {
+					$start = $dsr->start === null ? null :
+						   $shiftOffset( $dsr->start );
+					$end = $dsr->end === null ? null :
+						 $shiftOffset( $dsr->end );
+					// If either offset is newly-invalid, remove entire DSR
+					if ( ( $dsr->start !== null && $start === null ) ||
+						 ( $dsr->end !== null && $end === null ) ) {
 						return null;
 					}
 					return new DomSourceRange(
@@ -860,14 +809,32 @@ class ParsoidExtensionAPI {
 			true  // sol
 		);
 
-		$body = DOMCompat::getBody( $doc );
-		$thumb = $body->firstChild;
-		if ( !preg_match( "/^figure(-inline)?$/", $thumb->nodeName ) ) {
-			$error = "{$extTag}_invalid_image";
+		$thumb = $domFragment->firstChild;
+		if ( !preg_match( "/^figure|span$/", $thumb->nodeName ) ) {
+			$error = "{$extTagName}_invalid_image";
 			return null;
 		}
 		DOMUtils::assertElt( $thumb );
 
+		// Detach the $thumb since the $domFragment is going out of scope
+		// See https://bugs.php.net/bug.php?id=39593
+		DOMCompat::remove( $thumb );
+
 		return $thumb;
 	}
+
+	/**
+	 * @param array $modules
+	 */
+	public function addModules( array $modules ) {
+		$this->env->addOutputProperty( 'modules', $modules );
+	}
+
+	/**
+	 * @param array $modulestyles
+	 */
+	public function addModuleStyles( array $modulestyles ) {
+		$this->env->addOutputProperty( 'modulestyles', $modulestyles );
+	}
+
 }

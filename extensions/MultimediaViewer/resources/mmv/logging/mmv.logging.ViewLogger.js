@@ -119,9 +119,14 @@
 		this.stopViewDuration();
 
 		if ( this.recordVirtualViewBeaconURI ) {
-			uri = new mw.Uri( this.recordVirtualViewBeaconURI );
-			uri.extend( { duration: this.viewDuration,
-				uri: this.url } );
+			try {
+				uri = new mw.Uri( this.recordVirtualViewBeaconURI );
+				uri.extend( { duration: this.viewDuration,
+					uri: this.url } );
+			} catch ( e ) {
+				// the URI is malformed. We cannot log it.
+				return;
+			}
 
 			try {
 				navigator.sendBeacon( uri.toString() );
@@ -148,7 +153,7 @@
 	VL.attach = function ( url ) {
 		var view = this;
 
-		this.url = url;
+		this.url = encodeURIComponent( url );
 		this.startViewDuration();
 
 		$( this.window )

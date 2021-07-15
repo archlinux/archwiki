@@ -67,16 +67,26 @@
 			"dependencies": [
 				"mediawiki.api"
 			],
-			"targets": [ "desktop", "mobile" ]
+			"targets": [
+				"desktop",
+				"mobile"
+			]
 		},
 		"ext.titleblacklist.visualEditor": {
 			"scripts": "ve-titleblacklist/ve.init.mw.TitleBlacklistSaveErrorHandler.js",
-			"targets": [ "desktop", "mobile" ]
+			"targets": [
+				"desktop",
+				"mobile"
+			]
 		}
 	},
-	"VisualEditorPluginModules": [
-		"ext.titleblacklist.visualEditor"
-	],
+	"attributes": {
+		"VisualEditor": {
+			"PluginModules": [
+				"ext.titleblacklist.visualEditor"
+			]
+		}
+	},
 	"ResourceFileModulePaths": {
 		"localBasePath": "modules",
 		"remoteExtPath": "TitleBlacklist/modules"
@@ -94,7 +104,7 @@
 		"EditFilter": [
 			"TitleBlacklistHooks::onValidateBlacklist"
 		],
-		"PageContentSaveComplete": [
+		"PageSaveComplete": [
 			"TitleBlacklistHooks::onClearBlacklist"
 		],
 		"ScribuntoExternalLibraries": [
@@ -102,15 +112,25 @@
 		]
 	},
 	"config": {
-		"TitleBlacklistSources": [],
-		"TitleBlacklistUsernameSources": "*",
-		"TitleBlacklistLogHits": false,
-		"TitleBlacklistCaching": {
-			"warningchance": 100,
-			"expiry": 900,
-			"warningexpiry": 600
+		"TitleBlacklistSources": {
+			"value": []
 		},
-		"TitleBlacklistBlockAutoAccountCreation": true
+		"TitleBlacklistUsernameSources": {
+			"value": "*"
+		},
+		"TitleBlacklistLogHits": {
+			"value": false
+		},
+		"TitleBlacklistCaching": {
+			"value": {
+				"warningchance": 100,
+				"expiry": 900,
+				"warningexpiry": 600
+			}
+		},
+		"TitleBlacklistBlockAutoAccountCreation": {
+			"value": true
+		}
 	},
 	"AuthManagerAutoConfig": {
 		"preauth": {
@@ -119,5 +139,5 @@
 			}
 		}
 	},
-	"manifest_version": 1
+	"manifest_version": 2
 }
