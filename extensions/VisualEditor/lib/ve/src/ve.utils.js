@@ -312,7 +312,10 @@ ve.extendObject = $.extend;
  * @private
  * @property {boolean}
  */
-ve.supportsIntl = !!( window.Intl && typeof Intl.Collator === 'function' );
+ve.supportsIntl = !!(
+	// eslint-disable-next-line compat/compat
+	window.Intl && typeof Intl.Collator === 'function'
+);
 
 /**
  * @private
@@ -379,21 +382,21 @@ ve.batchSplice = function ( arr, offset, remove, data ) {
 			splice = Array.prototype.splice;
 		} else {
 			// Standard Array.prototype.splice() function implemented using .slice() and .push().
-			splice = function ( offset, remove /* , data… */ ) {
-				var data, begin, removed, end;
+			splice = function ( off, rem /* , d */ ) {
+				var d, begin, remd, end;
 
-				data = Array.prototype.slice.call( arguments, 2 );
+				d = Array.prototype.slice.call( arguments, 2 );
 
-				begin = this.slice( 0, offset );
-				removed = this.slice( offset, offset + remove );
-				end = this.slice( offset + remove );
+				begin = this.slice( 0, off );
+				remd = this.slice( off, off + rem );
+				end = this.slice( off + rem );
 
 				this.length = 0;
 				ve.batchPush( this, begin );
-				ve.batchPush( this, data );
+				ve.batchPush( this, d );
 				ve.batchPush( this, end );
 
-				return removed;
+				return remd;
 			};
 		}
 	}
@@ -443,9 +446,9 @@ ve.sparseSplice = function ( arr, offset, remove, data ) {
 		data = data.slice();
 	}
 	// Remove content without adjusting length
-	arr.slice( offset, endOffset ).forEach( function ( item, i ) {
-		removed[ i ] = item;
-		delete arr[ offset + i ];
+	arr.slice( offset, endOffset ).forEach( function ( item, j ) {
+		removed[ j ] = item;
+		delete arr[ offset + j ];
 	} );
 	// Adjust length
 	if ( diff > 0 ) {
@@ -461,8 +464,8 @@ ve.sparseSplice = function ( arr, offset, remove, data ) {
 		arr.splice( offset, -diff );
 	}
 	// Insert new content
-	data.forEach( function ( item, i ) {
-		arr[ offset + i ] = item;
+	data.forEach( function ( item, j ) {
+		arr[ offset + j ] = item;
 	} );
 	// Set removed.length in case there are holes at the end
 	removed.length = remove;
@@ -721,16 +724,16 @@ ve.getDomAttributes = function ( element ) {
  *
  * @param {HTMLElement} element DOM element to apply attributes to
  * @param {Object} attributes Attributes to apply
- * @param {string[]} [whitelist] List of attributes to exclusively allow (all lowercase names)
+ * @param {string[]} [allowedAttributes] List of attributes to exclusively allow (all lowercase names)
  */
-ve.setDomAttributes = function ( element, attributes, whitelist ) {
+ve.setDomAttributes = function ( element, attributes, allowedAttributes ) {
 	var key;
 	// Duck-typing for attribute setting
 	if ( !element.setAttribute || !element.removeAttribute ) {
 		return;
 	}
 	for ( key in attributes ) {
-		if ( whitelist && whitelist.indexOf( key.toLowerCase() ) === -1 ) {
+		if ( allowedAttributes && allowedAttributes.indexOf( key.toLowerCase() ) === -1 ) {
 			continue;
 		}
 		if ( attributes[ key ] === undefined || attributes[ key ] === null ) {
@@ -1227,7 +1230,7 @@ ve.compareDocumentOrder = function ( node1, offset1, node2, offset2 ) {
  *
  * @param {Object} position Start position
  * @param {Node} position.node Start node
- * @param {Node} position.offset Start offset
+ * @param {number} position.offset Start offset
  * @param {number} direction +1 for forward, -1 for reverse
  * @param {Object} options
  * @param {Function|string} [options.noDescend] Selector or function: nodes to skip over

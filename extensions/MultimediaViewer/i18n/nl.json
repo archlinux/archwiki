@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Arent",
+			"Encycloon",
 			"Macofe",
 			"Mainframe98",
 			"Mar(c)",
@@ -33,7 +34,7 @@
 	"multimediaviewer-license-cc-pd": "Publiek domein",
 	"multimediaviewer-license-pd": "Publiek domein",
 	"multimediaviewer-license-default": "Licentie weergeven",
-	"multimediaviewer-permission-title": "Toesteminggegevens",
+	"multimediaviewer-permission-title": "Toestemmingsgegevens",
 	"multimediaviewer-permission-link": "voorwaarden bekijken",
 	"multimediaviewer-permission-link-hide": "voorwaarden verbergen",
 	"multimediaviewer-permission-viewmore": "Meer weergeven",

@@ -27,7 +27,7 @@ ve.ce.MWGalleryImageNode = function VeCeMWGalleryImageNode( model ) {
 	// DOM hierarchy for MWGalleryImageNode:
 	//   <li> this.$element (gallerybox)
 	//     <div> thumbDiv
-	//       <figure-inline> innerDiv
+	//       <span> innerDiv
 	//         <a> a
 	//           <img> img
 	//     <a> filenameA (galleryfilename)
@@ -60,7 +60,7 @@ ve.ce.MWGalleryImageNode = function VeCeMWGalleryImageNode( model ) {
 		outerDivWidth = innerDivWidth + 4;
 	}
 
-	resourceTitle = mw.Title.newFromText( attributes.resource );
+	resourceTitle = mw.Title.newFromText( mw.libs.ve.normalizeParsoidResourceName( attributes.resource ) );
 
 	this.$element
 		.addClass( 'gallerybox' )
@@ -69,7 +69,7 @@ ve.ce.MWGalleryImageNode = function VeCeMWGalleryImageNode( model ) {
 		.addClass( 'thumb' )
 		.css( 'width', innerDivWidth + 'px' )
 		.css( 'height', innerDivHeight + 'px' );
-	$innerDiv = $( '<figure-inline>' )
+	$innerDiv = $( '<span>' )
 		.css( 'margin', innerDivMargin );
 	$a = $( '<a>' )
 		.addClass( 'image' );

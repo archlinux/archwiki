@@ -7,7 +7,7 @@
  */
 class GadgetDefinitionValidator {
 	/**
-	 * Validation metadata.
+	 * @var array Validation metadata.
 	 * 'foo.bar.baz' => [ 'type check callback',
 	 *   'type name' [, 'member type check callback', 'member type name'] ]
 	 */

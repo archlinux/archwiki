@@ -127,7 +127,7 @@ class Serializer implements AbstractSerializer {
 				$this->result .= $this->serializeNode( $root, $child, false );
 			}
 		}
-		// @phan-suppress-next-line PhanTypeMismatchProperty
+		// @phan-suppress-next-line PhanTypeMismatchPropertyProbablyReal
 		$this->root = null;
 		$this->nodes = [];
 	}

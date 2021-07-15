@@ -5,7 +5,9 @@ namespace PageImages\Hooks;
 use File;
 use ImageGalleryBase;
 use MediaWiki\MediaWikiServices;
+use PageImages\PageImageCandidate;
 use Parser;
+use ParserOutput;
 use Title;
 
 /**
@@ -100,14 +102,25 @@ class ParserFileProcessingHookHandlers {
 			$myParams = [];
 		}
 
-		$myParams['filename'] = $file->getTitle()->getDBkey();
-		$myParams['fullwidth'] = $file->getWidth();
-		$myParams['fullheight'] = $file->getHeight();
+		$this->addPageImageCandidateToParserOutput(
+			PageImageCandidate::newFromFileAndParams( $file, $myParams ),
+			$parser->getOutput()
+		);
+	}
 
-		$out = $parser->getOutput();
-		$pageImages = $out->getExtensionData( 'pageImages' ) ?: [];
-		$pageImages[] = $myParams;
-		$out->setExtensionData( 'pageImages', $pageImages );
+	/**
+	 * Adds $image to $parserOutput extension data.
+	 *
+	 * @param PageImageCandidate $image
+	 * @param ParserOutput $parserOutput
+	 */
+	private function addPageImageCandidateToParserOutput(
+		PageImageCandidate $image,
+		ParserOutput $parserOutput
+	) {
+		$images = $parserOutput->getExtensionData( 'pageImages' ) ?: [];
+		$images[] = $image->jsonSerialize();
+		$parserOutput->setExtensionData( 'pageImages', $images );
 	}
 
 	/**

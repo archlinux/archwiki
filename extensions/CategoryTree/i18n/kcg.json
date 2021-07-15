@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Amire80",
+			"Kambai Akau"
+		]
+	},
+	"categorytree-expand": "ngaat",
+	"categorytree-member-counts": "Ji̱ byia̱ {{PLURAL:$1|a̱basa 1|a̱basi̱sa $1}}, {{PLURAL:$2|peji|pejí $2}}, ma̱ng {{PLURAL:$3|fail 1|a̱yaafail $3}}",
+	"categorytree-num-categories": "$1 C",
+	"categorytree-num-pages": "$1 P",
+	"categorytree-num-files": "$1 F"
+}

@@ -28,9 +28,6 @@ OO.inheritClass( ve.ui.MWCitationAction, ve.ui.Action );
 
 ve.ui.MWCitationAction.static.name = 'mwcite';
 
-/**
- * @inheritdoc
- */
 ve.ui.MWCitationAction.static.methods = [ 'open' ];
 
 /* Methods */

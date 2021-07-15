@@ -8,7 +8,7 @@
 	"descriptionmsg": "gadgets-desc",
 	"license-name": "GPL-2.0-or-later",
 	"requires": {
-		"MediaWiki": ">= 1.32.0"
+		"MediaWiki": ">= 1.35.0"
 	},
 	"type": "other",
 	"namespaces": [
@@ -83,6 +83,7 @@
 		"GadgetDefinitionDeletionUpdate": "includes/content/GadgetDefinitionDeletionUpdate.php"
 	},
 	"Hooks": {
+		"PageSaveComplete": "GadgetHooks::onPageSaveComplete",
 		"BeforePageDisplay": "GadgetHooks::beforePageDisplay",
 		"CodeEditorGetPageLanguage": "GadgetHooks::onCodeEditorGetPageLanguage",
 		"ContentHandlerDefaultModelFor": "GadgetHooks::onContentHandlerDefaultModelFor",
@@ -93,7 +94,6 @@
 		"wgQueryPages": "GadgetHooks::onwgQueryPages",
 		"DeleteUnknownPreferences": "GadgetHooks::onDeleteUnknownPreferences"
 	},
-	"callback": "GadgetHooks::onRegistration",
 	"config": {
 		"GadgetsRepoClass": {
 			"value": "MediaWikiGadgetsDefinitionRepo"

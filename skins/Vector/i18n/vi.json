@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Minh Nguyen",
+			"Prenn",
 			"Trần Nguyễn Minh Huy",
 			"Vinhtantran",
 			"Withoutaname"
@@ -27,7 +28,7 @@
 	"vector-view-history": "Xem lịch sử",
 	"vector-view-view": "Đọc",
 	"vector-view-viewsource": "Xem mã nguồn",
-	"vector-jumptonavigation": "Buớc tưới chuyển hướng",
+	"vector-jumptonavigation": "Bước tới điều hướng",
 	"vector-jumptosearch": "Bước tới tìm kiếm",
 	"vector-more-actions": "Khác"
 }

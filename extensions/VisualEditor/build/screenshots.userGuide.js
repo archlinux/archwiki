@@ -2,105 +2,61 @@
 
 const createScreenshotEnvironment = require( './screenshots.js' ).createScreenshotEnvironment,
 	test = require( 'selenium-webdriver/testing' ),
+	userGuide = require( './screenshots-client/userGuide.js' ),
 	runScreenshotTest = createScreenshotEnvironment( test );
 
 function runTests( lang ) {
 
+	const runLang = runScreenshotTest.bind( this, lang );
+
 	test.describe( 'Screenshots: ' + lang, function () {
 		this.lang = lang;
-		test.it( 'Toolbar & action tools', function () {
-			runScreenshotTest( 'VisualEditor_toolbar', lang,
-				require( './screenshots-client/userGuide.js' ).toolbar,
-				0
-			);
-			runScreenshotTest( 'VisualEditor_toolbar_actions', lang,
-				require( './screenshots-client/userGuide.js' ).toolbarActions,
-				0
-			);
-		} );
-		test.it( 'Citoid inspector', function () {
-			runScreenshotTest( 'VisualEditor_Citoid_Inspector', lang,
-				require( './screenshots-client/userGuide.js' ).citoidInspector
-			);
-			runScreenshotTest( 'VisualEditor_Citoid_Inspector_Manual', lang,
-				require( './screenshots-client/userGuide.js' ).citoidInspectorManual
-			);
-			runScreenshotTest( 'VisualEditor_Citoid_Inspector_Reuse', lang,
-				require( './screenshots-client/userGuide.js' ).citoidInspectorReuse
-			);
-		} );
-		test.it( 'Tool groups (headings/text style/indentation/insert/page settings)', function () {
-			runScreenshotTest( 'VisualEditor_Toolbar_Headings', lang,
-				require( './screenshots-client/userGuide.js' ).toolbarHeadings
-			);
-			runScreenshotTest( 'VisualEditor_Toolbar_Formatting', lang,
-				require( './screenshots-client/userGuide.js' ).toolbarFormatting
-			);
-			runScreenshotTest( 'VisualEditor_Toolbar_Lists_and_indentation', lang,
-				require( './screenshots-client/userGuide.js' ).toolbarLists
-			);
-			runScreenshotTest( 'VisualEditor_Insert_Menu', lang,
-				require( './screenshots-client/userGuide.js' ).toolbarInsert
-			);
-			runScreenshotTest( 'VisualEditor_Media_Insert_Menu', lang,
-				require( './screenshots-client/userGuide.js' ).toolbarMedia
-			);
-			runScreenshotTest( 'VisualEditor_Template_Insert_Menu', lang,
-				require( './screenshots-client/userGuide.js' ).toolbarTemplate
-			);
-			runScreenshotTest( 'VisualEditor_insert_table', lang,
-				require( './screenshots-client/userGuide.js' ).toolbarTable
-			);
-			runScreenshotTest( 'VisualEditor_Formula_Insert_Menu', lang,
-				require( './screenshots-client/userGuide.js' ).toolbarFormula
-			);
-			runScreenshotTest( 'VisualEditor_References_List_Insert_Menu', lang,
-				require( './screenshots-client/userGuide.js' ).toolbarReferences
-			);
-			runScreenshotTest( 'VisualEditor_More_Settings', lang,
-				require( './screenshots-client/userGuide.js' ).toolbarSettings
-			);
-			runScreenshotTest( 'VisualEditor_page_settings_item', lang,
-				require( './screenshots-client/userGuide.js' ).toolbarPageSettings
-			);
-			runScreenshotTest( 'VisualEditor_category_item', lang,
-				require( './screenshots-client/userGuide.js' ).toolbarCategory
-			);
-		} );
-		test.it( 'Save dialog', function () {
-			runScreenshotTest( 'VisualEditor_save_dialog', lang,
-				require( './screenshots-client/userGuide.js' ).save
-			);
-		} );
-		test.it( 'Special character inserter', function () {
-			runScreenshotTest( 'VisualEditor_Toolbar_SpecialCharacters', lang,
-				require( './screenshots-client/userGuide.js' ).specialCharacters
-			);
-		} );
-		test.it( 'Math dialog', function () {
-			runScreenshotTest( 'VisualEditor_formula', lang,
-				require( './screenshots-client/userGuide.js' ).formula
-			);
-		} );
-		test.it( 'Reference list dialog', function () {
-			runScreenshotTest( 'VisualEditor_references_list', lang,
-				require( './screenshots-client/userGuide.js' ).referenceList
-			);
-		} );
-		test.it( 'Cite button', function () {
-			runScreenshotTest( 'VisualEditor_citoid_Cite_button', lang,
-				require( './screenshots-client/userGuide.js' ).toolbarCite,
-				0
-			);
-		} );
-		test.it( 'Link inspector', function () {
-			runScreenshotTest( 'VisualEditor-link_tool-search_results', lang,
-				require( './screenshots-client/userGuide.js' ).linkSearchResults
-			);
+		test.it( 'Screenshots', function () {
+
+			// Toolbar & action tools
+			runLang( 'VisualEditor_toolbar', userGuide.toolbar, 0 );
+			runLang( 'VisualEditor_toolbar_actions', userGuide.toolbarActions, 0 );
+
+			// Citoid inspector
+			runLang( 'VisualEditor_Citoid_Inspector', userGuide.citoidInspector );
+			runLang( 'VisualEditor_Citoid_Inspector_Manual', userGuide.citoidInspectorManual );
+			runLang( 'VisualEditor_Citoid_Inspector_Reuse', userGuide.citoidInspectorReuse, undefined, userGuide.citoidInspectorTeardown );
+
+			// Tool groups (headings/text style/indentation/insert/page settings)
+			runLang( 'VisualEditor_Toolbar_Headings', userGuide.toolbarHeadings );
+			runLang( 'VisualEditor_Toolbar_Formatting', userGuide.toolbarFormatting );
+			runLang( 'VisualEditor_Toolbar_Lists_and_indentation', userGuide.toolbarLists );
+			runLang( 'VisualEditor_Insert_Menu', userGuide.toolbarInsert );
+			runLang( 'VisualEditor_Media_Insert_Menu', userGuide.toolbarMedia );
+			runLang( 'VisualEditor_Template_Insert_Menu', userGuide.toolbarTemplate );
+			runLang( 'VisualEditor_insert_table', userGuide.toolbarTable );
+			runLang( 'VisualEditor_Formula_Insert_Menu', userGuide.toolbarFormula );
+			runLang( 'VisualEditor_References_List_Insert_Menu', userGuide.toolbarReferences );
+			runLang( 'VisualEditor_More_Settings', userGuide.toolbarSettings );
+			runLang( 'VisualEditor_page_settings_item', userGuide.toolbarPageSettings );
+			runLang( 'VisualEditor_category_item', userGuide.toolbarCategory, undefined, userGuide.toolbarTeardown );
+
+			// Save dialog
+			runLang( 'VisualEditor_save_dialog', userGuide.save, undefined, userGuide.saveTeardown );
+
+			// Special character inserter
+			runLang( 'VisualEditor_Toolbar_SpecialCharacters', userGuide.specialCharacters, undefined, userGuide.specialCharactersTeardown );
+
+			// Math dialog
+			runLang( 'VisualEditor_formula', userGuide.formula, undefined, userGuide.formulaTeardown );
+
+			// Reference list dialog
+			runLang( 'VisualEditor_references_list', userGuide.referenceList, undefined, userGuide.referenceListTeardown );
+
+			// Cite button
+			runLang( 'VisualEditor_citoid_Cite_button', userGuide.toolbarCite, undefined, userGuide.toolbarCiteTeardown );
+
+			// Link inspector
+			runLang( 'VisualEditor-link_tool-search_results', userGuide.linkSearchResults, undefined, userGuide.linkSearchResultsTeardown );
 		} );
 	} );
 }
 
-for ( let i = 0, l = langs.length; i < l; i++ ) {
-	runTests( langs[ i ] );
-}
+langs.forEach( function ( lang ) {
+	runTests( lang );
+} );

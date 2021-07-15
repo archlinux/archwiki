@@ -84,6 +84,9 @@
 				};
 
 				diffElement.positionDescriptions();
+			}, function ( code, data ) {
+				mw.notify( new mw.Api().getErrorMessage( data ), { type: 'error' } );
+				reviewModeButtonSelect.selectItemByData( 'source' );
 			} );
 		}
 

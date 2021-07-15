@@ -44,22 +44,20 @@
 	},
 	"Hooks": {
 		"UploadVerifyFile": [
-			"CreatePdfThumbnailsJob::insertJobs"
+			"MediaWiki\\Extension\\PdfHandler\\CreatePdfThumbnailsJob::insertJobs"
 		],
 		"ResourceLoaderRegisterModules": [
-			"PdfHandler::registerWarningModule"
+			"MediaWiki\\Extension\\PdfHandler\\PdfHandler::registerWarningModule"
 		]
 	},
 	"JobClasses": {
-		"createPdfThumbnailsJob": "CreatePdfThumbnailsJob"
+		"createPdfThumbnailsJob": "MediaWiki\\Extension\\PdfHandler\\CreatePdfThumbnailsJob"
 	},
 	"MediaHandlers": {
-		"application/pdf": "PdfHandler"
+		"application/pdf": "MediaWiki\\Extension\\PdfHandler\\PdfHandler"
 	},
-	"AutoloadClasses": {
-		"PdfImage": "includes/PdfImage.php",
-		"PdfHandler": "includes/PdfHandler.php",
-		"CreatePdfThumbnailsJob": "includes/CreatePdfThumbnailsJob.php"
+	"AutoloadNamespaces": {
+		"MediaWiki\\Extension\\PdfHandler\\": "includes/"
 	},
 	"manifest_version": 2
 }

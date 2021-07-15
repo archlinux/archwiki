@@ -34,7 +34,9 @@ class AutodisableVisualEditorPref extends Maintenance {
 	 */
 	public function execute() {
 		$dbr = wfGetDB( DB_REPLICA );
-		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
+		$services = MediaWikiServices::getInstance();
+		$lbFactory = $services->getDBLoadBalancerFactory();
+		$userOptionsManager = $services->getUserOptionsManager();
 
 		$lastUserId = -1;
 		do {
@@ -62,7 +64,7 @@ class AutodisableVisualEditorPref extends Maintenance {
 			foreach ( $results as $userRow ) {
 				$user = User::newFromId( $userRow->user_id );
 				$user->load( User::READ_LATEST );
-				$user->setOption( 'visualeditor-autodisable', true );
+				$userOptionsManager->setOption( $user, 'visualeditor-autodisable', true );
 				$user->saveSettings();
 				$lastUserId = $userRow->user_id;
 			}

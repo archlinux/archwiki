@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Hakim1bal",
 			"Tifinaghes"
 		]
 	},
@@ -13,7 +14,7 @@
 	"categorytree-expand": "ⴰⴼⵔⴷⵉⵙ",
 	"categorytree-num-categories": "$1 C",
 	"categorytree-num-pages": "$1 ⵜ",
-	"categorytree-num-files": "$1 ⴼ",
+	"categorytree-num-files": "$1 F",
 	"categorytree-num-empty": "ⵓⵔ ⴷⵉⵙ ⴰⵎⵢⴰ",
 	"categorytree-nothing-found": "ⵓⵔ ⵉⵍⵍⴰ ⵓⵎⵢⴰ"
 }

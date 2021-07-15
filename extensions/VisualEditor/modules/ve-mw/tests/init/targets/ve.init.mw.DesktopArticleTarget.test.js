@@ -69,7 +69,7 @@ QUnit.test( 'init', function ( assert ) {
 							'<link rel="dc:isVersionOf" href="http://localhost/MediaWiki/core/index.php/Empty"/>' +
 							'<title>Empty</title>' +
 							'<base href="http://localhost/MediaWiki/core/index.php/"/>' +
-							'<link rel="stylesheet" href="//localhost/MediaWiki/core/load.php?modules=mediawiki.legacy.commonPrint%2Cshared%7Cmediawiki.skinning.content.parsoid%7Cmediawiki.skinning.interface%7Cskins.vector.styles%7Csite.styles%7Cext.cite.style%7Cext.cite.styles%7Cmediawiki.page.gallery.styles&amp;only=styles&amp;skin=vector"/><!--[if lt IE 9]><script src="//localhost/MediaWiki/core/load.php?modules=html5shiv&amp;only=scripts&amp;skin=vector&amp;sync=1"></script><script>html5.addElements(\'figure-inline\');</script><![endif]-->' +
+							'<link rel="stylesheet" href="//localhost/MediaWiki/core/load.php?modules=mediawiki.legacy.commonPrint%2Cshared%7Cmediawiki.skinning.content.parsoid%7Cmediawiki.skinning.interface%7Cskins.vector.styles%7Csite.styles%7Cext.cite.style%7Cext.cite.styles%7Cmediawiki.page.gallery.styles&amp;only=styles&amp;skin=vector"/>' +
 						'</head>' +
 						'<body id="mwAA" lang="he" class="mw-content-rtl sitedir-rtl rtl mw-body-content parsoid-body mediawiki mw-parser-output" dir="rtl">' +
 							'<section data-mw-section-id="0" id="mwAQ"></section>' +
@@ -167,21 +167,6 @@ QUnit.test( 'compatibility', function ( assert ) {
 				matches: [ 'supportedList' ]
 			},
 			{
-				msg: 'Iceweasel 9',
-				userAgent: 'Mozilla/5.0 (X11; Linux x86_64; rv:9.0.1) Gecko/20100101 Firefox/9.0.1 Iceweasel/9.0.1',
-				matches: []
-			},
-			{
-				msg: 'Iceweasel 10',
-				userAgent: 'Mozilla/5.0 (X11; Linux x86_64; rv:10.0) Gecko/20100101 Firefox/10.0 Iceweasel/10.0',
-				matches: [ 'supportedList' ]
-			},
-			{
-				msg: 'Iceweasel 15',
-				userAgent: 'Mozilla/5.0 (X11; Linux x86_64; rv:15.0) Gecko/20100101 Firefox/15.0.1 Iceweasel/15.0.1',
-				matches: [ 'supportedList' ]
-			},
-			{
 				msg: 'Safari 4',
 				userAgent: 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_3; en-us) AppleWebKit/531.21.11 (KHTML, like Gecko) Version/4.0.4 Safari/531.21.10',
 				matches: [ 'unsupportedList' ]
@@ -250,11 +235,6 @@ QUnit.test( 'compatibility', function ( assert ) {
 				msg: 'Opera 15.0',
 				userAgent: 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.52 Safari/537.36 OPR/15.0.1147.100',
 				matches: [ 'supportedList' ]
-			},
-			{
-				msg: 'BlackBerry',
-				userAgent: 'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.1.0.346 Mobile Safari/534.11+',
-				matches: []
 			},
 			{
 				msg: 'Amazon Silk desktop',

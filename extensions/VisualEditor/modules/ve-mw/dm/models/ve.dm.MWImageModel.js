@@ -553,7 +553,7 @@ ve.dm.MWImageModel.prototype.getUpdatedAttributes = function () {
 		borderImage: this.hasBorder()
 	};
 
-	if ( origAttrs.alt !== undefined || this.getAltText() !== '' ) {
+	if ( this.getAltText() || typeof origAttrs.alt === 'string' ) {
 		attrs.alt = this.getAltText();
 	}
 

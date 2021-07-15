@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Dbc334",
+			"Eleassar",
 			"Upwinxp"
 		]
 	},
@@ -18,7 +19,6 @@
 	"renameuserwarnings": "Opozorila:",
 	"renameuserconfirm": "Da, preimenuj uporabnika",
 	"renameusersubmit": "Potrdi",
-	"renameuser-submit-blocklog": "Pokaži dnevnik blokiranja uporabnika",
 	"renameusererrordoesnotexist": "Uporabnik »<nowiki>$1</nowiki>« ne obstaja.",
 	"renameusererrorexists": "{{GENDER:$1|Uporabnik|Uporabnica}} »<nowiki>$1</nowiki>« že obstaja.",
 	"renameusererrorinvalid": "Uporabniško ime »<nowiki>$1</nowiki>« ni veljavno.",
@@ -26,7 +26,7 @@
 	"renameuser-error-same-user": "Uporabnika ne morete preimenovati v isto stvar kot prej.",
 	"renameusersuccess": "{{GENDER:$2|Uporabnika|Uporabnico}} »<nowiki>$1</nowiki>« smo preimenovali v »<nowiki>$2</nowiki>«.",
 	"renameuser-page-exists": "Stran $1 že obstaja in je ni mogoče samodejno prepisati.",
-	"renameuser-page-moved": "Stran $1 je bila prestavljena na $2.",
+	"renameuser-page-moved": "Stran $1 je prestavljena na $2.",
 	"renameuser-page-unmoved": "Strani $1 ni mogoče prestaviti na $2.",
 	"log-name-renameuser": "Dnevnik preimenovanj uporabnikov",
 	"log-description-renameuser": "Prikazan je dnevnik sprememb uporabniških imen.",
@@ -35,5 +35,5 @@
 	"renameuser-move-log": "Samodejno prestavljanje strani pri preimenovanju {{GENDER:$1|uporabnika|uporabnice}} »[[User:$1|$1]]« v »[[User:$2|$2]]«",
 	"action-renameuser": "preimenovanje uporabnikov",
 	"right-renameuser": "Preimenovanje uporabnikov",
-	"renameuser-renamed-notice": "Ta uporabnik je bil preimenovan.\nDnevnik preimenovanja je naveden spodaj."
+	"renameuser-renamed-notice": "Ta uporabnik je preimenovan.\nDnevnik preimenovanja je naveden spodaj."
 }

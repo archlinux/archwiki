@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Borichèt",
 			"Bèrto 'd Sèra",
 			"Dragonòt"
 		]
@@ -9,7 +10,7 @@
 	"categorytree-portlet": "Categorìe",
 	"categorytree-legend": "Mosta l'erbo dle categorìe",
 	"categorytree-desc": "Nàviga dinamicament la [[Special:CategoryTree|strutura dle categorìe]]",
-	"categorytree-header": "Ch'a buta ël nòm ëd na categorìa për ës-ciairene ij contnù e la strutura. Ch'a ten-a present che përchè sòn a travaja a-i va na fonsion Javascript avansà ch'as ciama AJAX. Se un a l'ha un navigator vej ò pura a l'ha nen abilità Javascript sossì a travaja nen.",
+	"categorytree-header": "Ch'a buta ël nòm ëd na categorìa për ës-ciairene ij contnù com na strutura a erbo. (A-i é da manca ëd JavaScript).",
 	"categorytree-category": "Categorìa:",
 	"categorytree-go": "Deurbe l'erbo",
 	"categorytree-parents": "Cé",

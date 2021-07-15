@@ -21,6 +21,7 @@
  */
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Permissions\Authority;
 use MediaWiki\Revision\RevisionRecord;
 use Wikimedia\IPUtils;
 
@@ -356,7 +357,8 @@ class Linker {
 				global $wgThumbLimits, $wgThumbUpright;
 
 				if ( $widthOption === null || !isset( $wgThumbLimits[$widthOption] ) ) {
-					$widthOption = User::getDefaultOption( 'thumbsize' );
+					$userOptionsLookup = MediaWikiServices::getInstance()->getUserOptionsLookup();
+					$widthOption = $userOptionsLookup->getDefaultOption( 'thumbsize' );
 				}
 
 				// Reduce width for upright images when parameter 'upright' is used
@@ -685,6 +687,7 @@ class Linker {
 		if ( $label == '' ) {
 			$label = $title->getPrefixedText();
 		}
+		$html = htmlspecialchars( $label );
 		$repoGroup = MediaWikiServices::getInstance()->getRepoGroup();
 		$currentExists = $time
 			&& $repoGroup->findFile( $title ) !== false;
@@ -696,23 +699,21 @@ class Linker {
 				// We already know it's a redirect, so mark it accordingly
 				return self::link(
 					$title,
-					htmlspecialchars( $label ),
+					$html,
 					[ 'class' => 'mw-redirect' ],
 					wfCgiToArray( $query ),
 					[ 'known', 'noclasses' ]
 				);
 			}
-
-			return Html::element( 'a', [
+			return Html::rawElement( 'a', [
 					'href' => self::getUploadUrl( $title, $query ),
 					'class' => 'new',
 					'title' => $title->getPrefixedText()
-				], $label );
+				], $html );
 		}
-
 		return self::link(
 			$title,
-			htmlspecialchars( $label ),
+			$html,
 			[],
 			wfCgiToArray( $query ),
 			[ 'known', 'noclasses' ]
@@ -887,6 +888,9 @@ class Linker {
 
 	/**
 	 * Make user link (or user contributions for unregistered users)
+	 *
+	 * This method produces HTML that requires CSS styles in mediawiki.interface.helpers.styles.
+	 *
 	 * @param int $userId User id in database.
 	 * @param string $userName User name in database.
 	 * @param string|false $altUserName Text to display instead of the user name (optional)
@@ -979,13 +983,12 @@ class Linker {
 
 			$items[] = self::link( $contribsPage, wfMessage( 'contribslink' )->escaped(), $attribs );
 		}
-		$user = RequestContext::getMain()->getUser();
-		$userCanBlock = MediaWikiServices::getInstance()->getPermissionManager()
-			->userHasRight( $user, 'block' );
+		$userCanBlock = RequestContext::getMain()->getAuthority()->isAllowed( 'block' );
 		if ( $blockable && $userCanBlock ) {
 			$items[] = self::blockLink( $userId, $userText );
 		}
 
+		$user = RequestContext::getMain()->getUser();
 		if ( $addEmailLink && $user->canSendEmail() ) {
 			$items[] = self::emailLink( $userId, $userText );
 		}
@@ -1092,6 +1095,9 @@ class Linker {
 
 	/**
 	 * Generate a user link if the current user is allowed to view it
+	 *
+	 * This method produces HTML that requires CSS styles in mediawiki.interface.helpers.styles.
+	 *
 	 * @since 1.16.3
 	 * @param RevisionRecord|Revision $rev (RevisionRecord allowed since 1.35, Revision
 	 *    deprecated since 1.35)
@@ -1099,8 +1105,8 @@ class Linker {
 	 * @return string HTML fragment
 	 */
 	public static function revUserLink( $rev, $isPublic = false ) {
-		// TODO inject a user
-		$user = RequestContext::getMain()->getUser();
+		// TODO inject authority
+		$authority = RequestContext::getMain()->getAuthority();
 
 		if ( $rev instanceof Revision ) {
 			wfDeprecated( __METHOD__ . ' with a Revision object', '1.35' );
@@ -1111,12 +1117,8 @@ class Linker {
 
 		if ( $revRecord->isDeleted( RevisionRecord::DELETED_USER ) && $isPublic ) {
 			$link = wfMessage( 'rev-deleted-user' )->escaped();
-		} elseif ( RevisionRecord::userCanBitfield(
-			$revRecord->getVisibility(),
-			RevisionRecord::DELETED_USER,
-			$user
-		) ) {
-			$revUser = $revRecord->getUser( RevisionRecord::FOR_THIS_USER, $user );
+		} elseif ( $revRecord->userCan( RevisionRecord::DELETED_USER, $authority ) ) {
+			$revUser = $revRecord->getUser( RevisionRecord::FOR_THIS_USER, $authority );
 			$link = self::userLink(
 				$revUser ? $revUser->getId() : 0,
 				$revUser ? $revUser->getName() : ''
@@ -1132,6 +1134,9 @@ class Linker {
 
 	/**
 	 * Generate a user tool link cluster if the current user is allowed to view it
+	 *
+	 * This method produces HTML that requires CSS styles in mediawiki.interface.helpers.styles.
+	 *
 	 * @since 1.16.3
 	 * @param RevisionRecord|Revision $rev (RevisionRecord allowed since 1.35, Revision
 	 *    deprecated since 1.35)
@@ -1140,8 +1145,8 @@ class Linker {
 	 * @return string HTML
 	 */
 	public static function revUserTools( $rev, $isPublic = false, $useParentheses = true ) {
-		// TODO inject a user
-		$user = RequestContext::getMain()->getUser();
+		// TODO inject authority
+		$authority = RequestContext::getMain()->getAuthority();
 
 		if ( $rev instanceof Revision ) {
 			wfDeprecated( __METHOD__ . ' with a Revision object', '1.35' );
@@ -1150,14 +1155,10 @@ class Linker {
 			$revRecord = $rev;
 		}
 
-		if ( RevisionRecord::userCanBitfield(
-			$revRecord->getVisibility(),
-			RevisionRecord::DELETED_USER,
-			$user
-		) &&
+		if ( $revRecord->userCan( RevisionRecord::DELETED_USER, $authority ) &&
 			( !$revRecord->isDeleted( RevisionRecord::DELETED_USER ) || !$isPublic )
 		) {
-			$revUser = $revRecord->getUser( RevisionRecord::FOR_THIS_USER, $user );
+			$revUser = $revRecord->getUser( RevisionRecord::FOR_THIS_USER, $authority );
 			$userId = $revUser ? $revUser->getId() : 0;
 			$userText = $revUser ? $revUser->getName() : '';
 
@@ -1183,6 +1184,8 @@ class Linker {
 	 * and by the user contributions list. It is responsible for formatting edit
 	 * summaries. It escapes any HTML in the summary, but adds some CSS to format
 	 * auto-generated comments (from section editing) and formats [[wikilinks]].
+	 *
+	 * This method produces HTML that can require CSS styles in mediawiki.interface.helpers.styles.
 	 *
 	 * @author Erik Moeller <moeller@scireview.de>
 	 * @since 1.16.3. $wikiId added in 1.26
@@ -1242,7 +1245,7 @@ class Linker {
 			// zero-width assertions optional, so wrap them in a non-capturing
 			// group.
 			'!(?:(?<=(.)))?/\*\s*(.*?)\s*\*/(?:(?=(.)))?!',
-			function ( $match ) use ( $title, $local, $wikiId, &$append ) {
+			static function ( $match ) use ( $title, $local, $wikiId, &$append ) {
 				global $wgLang;
 
 				// Ensure all match positions are defined
@@ -1344,7 +1347,7 @@ class Linker {
 				\]\]
 				([^[]*) # 3. link trail (the text up until the next link)
 			/x',
-			function ( $match ) use ( $title, $local, $wikiId ) {
+			static function ( $match ) use ( $title, $local, $wikiId ) {
 				$services = MediaWikiServices::getInstance();
 
 				$medians = '(?:';
@@ -1594,6 +1597,8 @@ class Linker {
 	 * Wrap and format the given revision's comment block, if the current
 	 * user is allowed to view it.
 	 *
+	 * This method produces HTML that requires CSS styles in mediawiki.interface.helpers.styles.
+	 *
 	 * @since 1.16.3
 	 * @param RevisionRecord|Revision $rev (RevisionRecord allowed since 1.35, Revision
 	 *    deprecated since 1.35)
@@ -1605,8 +1610,8 @@ class Linker {
 	public static function revComment( $rev, $local = false, $isPublic = false,
 		$useParentheses = true
 	) {
-		// TODO inject a user
-		$user = RequestContext::getMain()->getUser();
+		// TODO inject authority
+		$authority = RequestContext::getMain()->getAuthority();
 
 		if ( $rev instanceof Revision ) {
 			wfDeprecated( __METHOD__ . ' with a Revision object', '1.35' );
@@ -1620,12 +1625,8 @@ class Linker {
 		}
 		if ( $revRecord->isDeleted( RevisionRecord::DELETED_COMMENT ) && $isPublic ) {
 			$block = " <span class=\"comment\">" . wfMessage( 'rev-deleted-comment' )->escaped() . "</span>";
-		} elseif ( RevisionRecord::userCanBitfield(
-			$revRecord->getVisibility(),
-			RevisionRecord::DELETED_COMMENT,
-			$user
-		) ) {
-			$comment = $revRecord->getComment( RevisionRecord::FOR_THIS_USER, $user );
+		} elseif ( $revRecord->userCan( RevisionRecord::DELETED_COMMENT, $authority ) ) {
+			$comment = $revRecord->getComment( RevisionRecord::FOR_THIS_USER, $authority );
 			$block = self::commentBlock(
 				$comment ? $comment->text : null,
 				$revRecord->getPageAsLinkTarget(),
@@ -1653,7 +1654,7 @@ class Linker {
 		} else {
 			$stxt = wfMessage( 'nbytes' )->numParams( $size )->escaped();
 		}
-		return "<span class=\"history-size mw-diff-bytes\">$stxt</span>";
+		return "<span class=\"history-size mw-diff-bytes\" data-mw-bytes=\"$size\">$stxt</span>";
 	}
 
 	/**
@@ -1882,11 +1883,20 @@ class Linker {
 
 		$inner = self::buildRollbackLink( $revRecord, $context, $editCount );
 
+		// Allow extensions to modify the rollback link.
+		// Abort further execution if the extension wants full control over the link.
+		if ( !Hooks::runner()->onLinkerGenerateRollbackLink(
+			$revRecord, $context, $options, $inner ) ) {
+			return $inner;
+		}
+
 		if ( !in_array( 'noBrackets', $options, true ) ) {
 			$inner = $context->msg( 'brackets' )->rawParams( $inner )->escaped();
 		}
 
-		if ( $context->getUser()->getBoolOption( 'showrollbackconfirmation' ) ) {
+		if ( MediaWikiServices::getInstance()->getUserOptionsLookup()
+			->getBoolOption( $context->getUser(), 'showrollbackconfirmation' )
+		) {
 			$stats = MediaWikiServices::getInstance()->getStatsdDataFactory();
 			$stats->increment( 'rollbackconfirmation.event.load' );
 			$context->getOutput()->addModules( 'mediawiki.misc-authed-curate' );
@@ -2186,13 +2196,13 @@ class Linker {
 	 * if possible, otherwise the timestamp-based ID which may break after
 	 * undeletion.
 	 *
-	 * @param User $user
+	 * @param Authority $performer
 	 * @param RevisionRecord|Revision $rev (RevisionRecord allowed since 1.35, Revision
 	 *    deprecated since 1.35)
 	 * @param LinkTarget $title
 	 * @return string HTML fragment
 	 */
-	public static function getRevDeleteLink( User $user, $rev, LinkTarget $title ) {
+	public static function getRevDeleteLink( Authority $performer, $rev, LinkTarget $title ) {
 		if ( $rev instanceof Revision ) {
 			wfDeprecated( __METHOD__ . ' with a Revision object', '1.35' );
 			$revRecord = $rev->getRevisionRecord();
@@ -2200,18 +2210,13 @@ class Linker {
 			$revRecord = $rev;
 		}
 
-		$permissionManager = MediaWikiServices::getInstance()->getPermissionManager();
-		$canHide = $permissionManager->userHasRight( $user, 'deleterevision' );
-		$canHideHistory = $permissionManager->userHasRight( $user, 'deletedhistory' );
+		$canHide = $performer->isAllowed( 'deleterevision' );
+		$canHideHistory = $performer->isAllowed( 'deletedhistory' );
 		if ( !$canHide && !( $revRecord->getVisibility() && $canHideHistory ) ) {
 			return '';
 		}
 
-		if ( !RevisionRecord::userCanBitfield(
-			$revRecord->getVisibility(),
-			RevisionRecord::DELETED_RESTRICTED,
-			$user
-		) ) {
+		if ( !$revRecord->userCan( RevisionRecord::DELETED_RESTRICTED, $performer ) ) {
 			return self::revDeleteLinkDisabled( $canHide ); // revision was hidden from sysops
 		}
 		$prefixedDbKey = MediaWikiServices::getInstance()->getTitleFormatter()->
@@ -2243,6 +2248,8 @@ class Linker {
 	/**
 	 * Creates a (show/hide) link for deleting revisions/log entries
 	 *
+	 * This method produces HTML that requires CSS styles in mediawiki.interface.helpers.styles.
+	 *
 	 * @param array $query Query parameters to be passed to link()
 	 * @param bool $restricted Set to true to use a "<strong>" instead of a "<span>"
 	 * @param bool $delete Set to true to use (show/hide) rather than (show)
@@ -2265,6 +2272,8 @@ class Linker {
 
 	/**
 	 * Creates a dead (show/hide) link for deleting revisions/log entries
+	 *
+	 * This method produces HTML that requires CSS styles in mediawiki.interface.helpers.styles.
 	 *
 	 * @since 1.16.3
 	 * @param bool $delete Set to true to use (show/hide) rather than (show)

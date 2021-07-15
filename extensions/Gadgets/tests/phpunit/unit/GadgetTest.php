@@ -60,7 +60,7 @@ class GadgetTest extends MediaWikiUnitTestCase {
 		$g = $this->create( '*foo [ResourceLoader]|foo.js|foo.css' );
 		$this->assertEquals( 'foo', $g->getName() );
 		$this->assertTrue( $g->supportsResourceLoader() );
-		$this->assertSame( 0, count( $g->getLegacyScripts() ) );
+		$this->assertCount( 0, $g->getLegacyScripts() );
 	}
 
 	/**

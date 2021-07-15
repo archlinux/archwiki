@@ -1,50 +1,55 @@
-/* eslint-disable quotes */
-
 /**
  * @external Indicator
  */
 
-import { htmluserlangattributes } from './utils';
+import { htmlUserLanguageAttributes } from './utils';
 import { placeholder } from './utils';
 
 import { PERSONAL_MENU_TEMPLATE_DATA, menuTemplate } from './Menu.stories.data';
 import { pageActionsData, namespaceTabsData } from './MenuTabs.stories.data';
 import { vectorMenuTemplate, moreData, variantsData } from './MenuDropdown.stories.data';
 import { searchBoxData, searchBoxTemplate } from './SearchBox.stories.data';
-import { SIDEBAR_DATA, SIDEBAR_TEMPLATE_PARTIALS,
+import { SIDEBAR_DATA, SIDEBAR_TEMPLATE_PARTIALS, OPT_OUT_DATA,
 	sidebarLegacyTemplate, sidebarTemplate } from './Sidebar.stories.data';
-import { FOOTER_TEMPLATE_DATA, footerTemplate } from './Footer.stories.data';
+import { FOOTER_TEMPLATE_DATA, FOOTER_TEMPLATE_PARTIALS,
+	footerTemplate } from './Footer.stories.data';
 import { logoTemplate } from './Logo.stories.data';
 
 export const NAVIGATION_TEMPLATE_DATA = {
-	loggedInWithVariantsAndOptOut: {
-		'data-personal-menu': PERSONAL_MENU_TEMPLATE_DATA.loggedInWithEcho,
-		'data-namespace-tabs': namespaceTabsData,
-		'data-page-actions': pageActionsData,
-		'data-variants': variantsData,
+	loggedInWithVariantsAndOptOut: Object.assign( {}, {
+		'data-portlets': {
+			'data-personal': PERSONAL_MENU_TEMPLATE_DATA.loggedInWithEcho,
+			'data-namespaces': namespaceTabsData,
+			'data-views': pageActionsData,
+			'data-variants': variantsData
+		},
 		'data-search-box': searchBoxData,
-		'data-sidebar': SIDEBAR_DATA.withPortalsAndOptOut,
-		'html-navigation-heading': 'Navigation menu',
+		'data-portlets-sidebar': SIDEBAR_DATA.withPortals,
+		'msg-navigation-heading': 'Navigation menu',
 		'html-logo-attributes': `class="mw-wiki-logo" href="/wiki/Main_Page" title="Visit the main page"`
-	},
+	}, OPT_OUT_DATA ),
 	loggedOutWithVariants: {
-		'data-personal-menu': PERSONAL_MENU_TEMPLATE_DATA.loggedOut,
-		'data-namespace-tabs': namespaceTabsData,
-		'data-page-actions': pageActionsData,
-		'data-variants': variantsData,
+		'data-portlets': {
+			'data-personal': PERSONAL_MENU_TEMPLATE_DATA.loggedOut,
+			'data-namespaces': namespaceTabsData,
+			'data-views': pageActionsData,
+			'data-variants': variantsData
+		},
 		'data-search-box': searchBoxData,
-		'data-sidebar': SIDEBAR_DATA.withPortals,
-		'html-navigation-heading': 'Navigation menu',
+		'data-portlets-sidebar': SIDEBAR_DATA.withPortals,
+		'msg-navigation-heading': 'Navigation menu',
 		'html-logo-attributes': `class="mw-wiki-logo" href="/wiki/Main_Page" title="Visit the main page"`
 	},
 	loggedInWithMoreActions: {
-		'data-personal-menu': PERSONAL_MENU_TEMPLATE_DATA.loggedInWithEcho,
-		'data-namespace-tabs': namespaceTabsData,
-		'data-page-actions': pageActionsData,
-		'data-page-actions-more': moreData,
+		'data-portlets': {
+			'data-personal': PERSONAL_MENU_TEMPLATE_DATA.loggedInWithEcho,
+			'data-namespaces': namespaceTabsData,
+			'data-views': pageActionsData,
+			'data-actions': moreData
+		},
 		'data-search-box': searchBoxData,
-		'data-sidebar': SIDEBAR_DATA.withPortals,
-		'html-navigation-heading': 'Navigation menu',
+		'data-portlets-sidebar': SIDEBAR_DATA.withPortals,
+		'msg-navigation-heading': 'Navigation menu',
 		'html-logo-attributes': `class="mw-wiki-logo" href="/wiki/Main_Page" title="Visit the main page"`
 	}
 };
@@ -57,7 +62,7 @@ export const TEMPLATE_PARTIALS = Object.assign( {}, SIDEBAR_TEMPLATE_PARTIALS, {
 	VectorMenu: vectorMenuTemplate,
 	Menu: menuTemplate,
 	Footer: footerTemplate
-} );
+}, FOOTER_TEMPLATE_PARTIALS );
 
 /**
  * @type {Indicator[]}
@@ -86,7 +91,7 @@ export const LEGACY_TEMPLATE_DATA = {
 	'html-title': 'Vector 2019',
 	'page-isarticle': true,
 	'msg-tagline': 'From Wikipedia, the free encyclopedia',
-	'html-userlangattributes': htmluserlangattributes,
+	'html-user-language-attributes': htmlUserLanguageAttributes,
 	'msg-vector-jumptonavigation': 'Jump to navigation',
 	'msg-vector-jumptosearch': 'Jump to search',
 
@@ -102,7 +107,6 @@ export const LEGACY_TEMPLATE_DATA = {
 	'html-categories': placeholder( 'Category links component from mediawiki core', 50 ),
 
 	// extension dependent..
-	'html-hook-vector-before-footer': placeholder( 'VectorBeforeFooter hook output', 100 ),
 	'html-after-content': placeholder( 'Extensions can add here e.g. Related Articles.', 100 ),
 	'array-indicators': DATA_INDICATORS,
 	'html-subtitle': placeholder( 'Extensions can configure subtitle', 20 )
@@ -112,7 +116,7 @@ export const MODERN_TEMPLATE_DATA = {
 	'html-title': 'Vector 2020',
 	'page-isarticle': true,
 	'msg-tagline': 'From Wikipedia, the free encyclopedia',
-	'html-userlangattributes': htmluserlangattributes,
+	'html-user-language-attributes': htmlUserLanguageAttributes,
 	'msg-vector-jumptonavigation': 'Jump to navigation',
 	'msg-vector-jumptosearch': 'Jump to search',
 

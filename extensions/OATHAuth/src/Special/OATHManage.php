@@ -27,7 +27,6 @@ use MediaWiki\Extension\OATHAuth\IModule;
 use MediaWiki\Extension\OATHAuth\OATHAuth;
 use MediaWiki\Extension\OATHAuth\OATHUser;
 use MediaWiki\Extension\OATHAuth\OATHUserRepository;
-use MediaWiki\MediaWikiServices;
 use Message;
 use MWException;
 use OOUI\ButtonWidget;
@@ -47,18 +46,22 @@ class OATHManage extends SpecialPage {
 	 * @var OATHAuth
 	 */
 	protected $auth;
+
 	/**
 	 * @var OATHUserRepository
 	 */
 	protected $userRepo;
+
 	/**
 	 * @var OATHUser
 	 */
 	protected $authUser;
+
 	/**
 	 * @var string
 	 */
 	protected $action;
+
 	/**
 	 * @var IModule
 	 */
@@ -67,15 +70,17 @@ class OATHManage extends SpecialPage {
 	/**
 	 * Initializes a page to manage available 2FA modules
 	 *
+	 * @param OATHUserRepository $userRepo
+	 * @param OATHAuth $auth
+	 *
 	 * @throws ConfigException
 	 * @throws MWException
 	 */
-	public function __construct() {
+	public function __construct( $userRepo, $auth ) {
 		parent::__construct( 'OATHManage', 'oathauth-enable' );
 
-		$services = MediaWikiServices::getInstance();
-		$this->auth = $services->getService( 'OATHAuth' );
-		$this->userRepo = $services->getService( 'OATHUserRepository' );
+		$this->userRepo = $userRepo;
+		$this->auth = $auth;
 		$this->authUser = $this->userRepo->findByUser( $this->getUser() );
 	}
 
@@ -95,9 +100,11 @@ class OATHManage extends SpecialPage {
 			// Performing an action on a requested module
 			$this->clearPage();
 			if ( $this->shouldShowDisableWarning() ) {
-				return $this->showDisableWarning();
+				$this->showDisableWarning();
+				return;
 			}
-			return $this->addModuleHTML( $this->requestedModule );
+			$this->addModuleHTML( $this->requestedModule );
+			return;
 		}
 
 		$this->addGeneralHelp();
@@ -153,17 +160,17 @@ class OATHManage extends SpecialPage {
 	}
 
 	private function addEnabledHTML() {
-		$this->addHeading( wfMessage( 'oathauth-ui-enabled-module' ) );
+		$this->addHeading( $this->msg( 'oathauth-ui-enabled-module' ) );
 		$this->addModuleHTML( $this->getEnabled() );
 	}
 
 	private function addAlternativesHTML() {
-		$this->addHeading( wfMessage( 'oathauth-ui-not-enabled-modules' ) );
+		$this->addHeading( $this->msg( 'oathauth-ui-not-enabled-modules' ) );
 		$this->addInactiveHTML();
 	}
 
 	private function nothingEnabled() {
-		$this->addHeading( wfMessage( 'oathauth-ui-available-modules' ) );
+		$this->addHeading( $this->msg( 'oathauth-ui-available-modules' ) );
 		$this->addInactiveHTML();
 	}
 
@@ -177,14 +184,15 @@ class OATHManage extends SpecialPage {
 	}
 
 	private function addGeneralHelp() {
-		$this->getOutput()->addHTML( wfMessage(
+		$this->getOutput()->addHTML( $this->msg(
 			'oathauth-ui-general-help'
 		)->parseAsBlock() );
 	}
 
 	private function addModuleHTML( IModule $module ) {
 		if ( $this->isModuleRequested( $module ) ) {
-			return $this->addCustomContent( $module );
+			$this->addCustomContent( $module );
+			return;
 		}
 
 		$panel = $this->getGenericContent( $module );
@@ -192,7 +200,7 @@ class OATHManage extends SpecialPage {
 			$this->addCustomContent( $module, $panel );
 		}
 
-		return $this->getOutput()->addHTML( (string)$panel );
+		$this->getOutput()->addHTML( (string)$panel );
 	}
 
 	/**
@@ -215,8 +223,8 @@ class OATHManage extends SpecialPage {
 		if ( $this->shouldShowGenericButtons() ) {
 			$button = new ButtonWidget( [
 				'label' => $this->isModuleEnabled( $module ) ?
-					wfMessage( 'oathauth-disable-generic' )->text() :
-					wfMessage( 'oathauth-enable-generic' )->text(),
+					$this->msg( 'oathauth-disable-generic' )->text() :
+					$this->msg( 'oathauth-enable-generic' )->text(),
 				'href' => $this->getOutput()->getTitle()->getLocalURL( [
 					'action' => $this->isModuleEnabled( $module ) ?
 						static::ACTION_DISABLE : static::ACTION_ENABLE,
@@ -267,12 +275,10 @@ class OATHManage extends SpecialPage {
 	}
 
 	private function isModuleRequested( IModule $module ) {
-		if ( $this->requestedModule instanceof IModule ) {
-			if ( $this->requestedModule->getName() === $module->getName() ) {
-				return true;
-			}
-		}
-		return false;
+		return (
+			$this->requestedModule instanceof IModule
+			&& $this->requestedModule->getName() === $module->getName()
+		);
 	}
 
 	private function isModuleEnabled( IModule $module ) {
@@ -301,10 +307,10 @@ class OATHManage extends SpecialPage {
 	}
 
 	/**
-	 * @param IManageForm &$form
+	 * @param IManageForm $form
 	 * @param IModule $module
 	 */
-	private function ensureRequiredFormFields( IManageForm &$form, IModule $module ) {
+	private function ensureRequiredFormFields( IManageForm $form, IModule $module ) {
 		if ( !$form->hasField( 'module' ) ) {
 			$form->addHiddenField( 'module', $module->getName() );
 		}
@@ -321,8 +327,8 @@ class OATHManage extends SpecialPage {
 		if ( $this->isGenericAction() ) {
 			$displayName = $this->requestedModule->getDisplayName();
 			$pageTitle = $this->isModuleEnabled( $this->requestedModule ) ?
-				wfMessage( 'oathauth-disable-page-title', $displayName )->text() :
-				wfMessage( 'oathauth-enable-page-title', $displayName )->text();
+				$this->msg( 'oathauth-disable-page-title', $displayName )->text() :
+				$this->msg( 'oathauth-enable-page-title', $displayName )->text();
 			$this->getOutput()->setPageTitle( $pageTitle );
 		}
 
@@ -361,15 +367,15 @@ class OATHManage extends SpecialPage {
 			'expanded' => false
 		] );
 		$headerMessage = $this->isSwitch() ?
-			wfMessage( 'oathauth-switch-method-warning-header' ) :
-			wfMessage( 'oathauth-disable-method-warning-header' );
+			$this->msg( 'oathauth-switch-method-warning-header' ) :
+			$this->msg( 'oathauth-disable-method-warning-header' );
 		$genericMessage = $this->isSwitch() ?
-			wfMessage(
+			$this->msg(
 				'oathauth-switch-method-warning',
 				$this->getEnabled()->getDisplayName(),
 				$this->requestedModule->getDisplayName()
 			) :
-			wfMessage( 'oathauth-disable-method-warning', $this->getEnabled()->getDisplayName() );
+			$this->msg( 'oathauth-disable-method-warning', $this->getEnabled()->getDisplayName() );
 
 		$panel->appendContent( new HtmlSnippet(
 			$genericMessage->parseAsBlock()
@@ -383,7 +389,7 @@ class OATHManage extends SpecialPage {
 		}
 
 		$button = new ButtonWidget( [
-			'label' => wfMessage( 'oathauth-disable-method-warning-button-label' )->plain(),
+			'label' => $this->msg( 'oathauth-disable-method-warning-button-label' )->plain(),
 			'href' => $this->getOutput()->getTitle()->getLocalURL( [
 				'action' => $this->action,
 				'module' => $this->requestedModule->getName()

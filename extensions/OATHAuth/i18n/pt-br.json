@@ -3,6 +3,7 @@
 		"authors": [
 			"Araceletorres",
 			"Eduardo Addad de Oliveira",
+			"Eduardoaddad",
 			"Felipe L. Ewald",
 			"Luk3",
 			"Tark"
@@ -80,7 +81,7 @@
 	"oathauth-totp-description": "O algoritmo de senha de uso único com base no tempo (TOTP) é uma extensão do algoritmo de senha de uso único com base no HMAC (HOTP), que gera uma senha de uso único, assumindo a exclusividade do horário atual.",
 	"oathauth-disable-method-warning-header": "Confirme a desativação de um método de autenticação",
 	"oathauth-disable-method-warning-button-label": "Confirme e continue",
-	"oathauth-disable-method-warning": "Se você desabilitar o método de autenticação de dois fatores $1, não poderá mais usá-lo ao entrar e todos os dados associados a esse método de autenticação serão excluídos",
+	"oathauth-disable-method-warning": "Se você desabilitar o método de autenticação de dois fatores $1, não poderá mais usá-lo ao entrar e todos os dados associados a esse método de autenticação serão excluídos.",
 	"oathauth-switch-method-warning-header": "Confirme a mudança para um método de autenticação diferente",
 	"oathauth-switch-method-warning": "Ao mudar para o método de autenticação de dois fatores $2, o método atual ($1) será desativado e todos os dados associados ao método de autenticação atual serão excluídos",
 	"oathauth-totp-disable-warning": "Você não poderá mais usar o dispositivo de autenticação registrado nesta conta. Todos os tokens de rascunho associados a esta conta serão invalidados.",

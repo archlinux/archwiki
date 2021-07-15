@@ -25,10 +25,7 @@ ve.ce.MWReferenceNode = function VeCeMWReferenceNode() {
 
 	// DOM changes
 	this.$link = $( '<a>' ).attr( 'href', '#' );
-	this.$element.addClass( 've-ce-mwReferenceNode mw-ref' ).append( this.$link )
-		// In case we have received a version with old-style Cite HTML, remove the
-		// old reference class
-		.removeClass( 'reference' );
+	this.$element.addClass( 've-ce-mwReferenceNode mw-ref reference' ).append( this.$link );
 	// Add a backwards-compatible text for browsers that don't support counters
 	this.$text = $( '<span>' ).addClass( 'mw-reflink-text' );
 	this.$link.append( this.$text );

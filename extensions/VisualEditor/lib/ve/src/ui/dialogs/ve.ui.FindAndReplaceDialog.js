@@ -228,6 +228,8 @@ ve.ui.FindAndReplaceDialog.prototype.getSetupProcess = function ( data ) {
 			ve.addPassiveEventListener( this.surface.getView().$window[ 0 ], 'scroll', this.onWindowScrollThrottled );
 
 			this.updateFragments();
+			this.clearRenderedResultsCache();
+			this.renderFragments();
 		}, this );
 };
 
@@ -412,8 +414,9 @@ ve.ui.FindAndReplaceDialog.prototype.updateFragments = function () {
 ve.ui.FindAndReplaceDialog.prototype.renderFragments = function () {
 	var i, selection, viewportRange, start, end;
 
-	// Check the surface isn't hidden, such as during deactivation
-	if ( !this.surface ) {
+	// The methods is called after a delay (renderFragmentsThrottled/onWindowScrollThrottled)
+	// Check the dialog hasn't been torn down, or that the surface view hasn't been destroyed
+	if ( !this.surface || !this.surface.getView().attachedRoot.isLive() ) {
 		return;
 	}
 
@@ -470,6 +473,11 @@ ve.ui.FindAndReplaceDialog.prototype.renderRangeOfFragments = function ( range )
 			this.$findResults.append( this.renderedResultsCache[ i ] );
 		} else {
 			rects = this.surface.getView().getSelection( this.fragments[ i ].getSelection() ).getSelectionRects();
+			// getSelectionRects can return null in edge cases, for example when the selection can't be found
+			// in the document. This method being debounced is a possible cause of that. (T259718)
+			if ( !rects ) {
+				return null;
+			}
 			$result = $( '<div>' ).addClass( 've-ui-findAndReplaceDialog-findResult' );
 			top = Infinity;
 			for ( j = 0, jlen = rects.length; j < jlen; j++ ) {
@@ -548,9 +556,9 @@ ve.ui.FindAndReplaceDialog.prototype.focus = function () {
 };
 
 /**
- * Find the first result on opening
+ * Find the selected text on opening
  */
-ve.ui.FindAndReplaceDialog.prototype.findFirst = function () {
+ve.ui.FindAndReplaceDialog.prototype.findSelected = function () {
 	var text,
 		fragment = this.surface.getModel().getFragment( null, true );
 
@@ -562,8 +570,6 @@ ve.ui.FindAndReplaceDialog.prototype.findFirst = function () {
 	text = fragment.getText();
 	if ( text && text !== this.findText.getValue() ) {
 		this.findText.setValue( text );
-	} else {
-		this.onFindChange();
 	}
 
 	this.focus();
@@ -670,7 +676,7 @@ ve.ui.FindAndReplaceDialog.prototype.replace = function ( index ) {
  * @inheritdoc
  */
 ve.ui.FindAndReplaceDialog.prototype.getActionProcess = function ( action ) {
-	if ( action === 'findFirst' || action === 'findNext' || action === 'findPrevious' ) {
+	if ( action === 'findSelected' || action === 'findNext' || action === 'findPrevious' ) {
 		return new OO.ui.Process( this[ action ], this );
 	}
 	return ve.ui.FindAndReplaceDialog.super.prototype.getActionProcess.call( this, action );

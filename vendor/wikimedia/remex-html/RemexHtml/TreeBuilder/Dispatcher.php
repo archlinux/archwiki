@@ -353,7 +353,7 @@ class Dispatcher implements TokenHandler {
 
 	/**
 	 * @inheritDoc
-	 * @suppress PhanTypeMismatchProperty Clears references to null
+	 * @suppress PhanTypeMismatchPropertyProbablyReal Clears references to null
 	 */
 	public function endDocument( $pos ) {
 		$this->handler->endDocument( $pos );

@@ -5,9 +5,34 @@ input {
 }
 
 // Because weird special cases that get broken by this usually aren't forms?
-form input {
-	margin: 0.5em 0;
-	padding: 0.34em;
+form {
+	// Special-case out the datetime widget
+	input:not( .mw-widgets-datetime-dateTimeInputWidget-editField ) {
+		margin: 0.5em 0;
+		padding: 0.35em;
+	}
+
+	// Special-case out also rather more normal multiselect
+	.oo-ui-tagMultiselectWidget-handle input {
+		margin: unset;
+		padding: unset;
+	}
+}
+
+.oo-ui-buttonElement-framed.oo-ui-labelElement > .oo-ui-buttonElement-button,
+.oo-ui-textInputWidget .oo-ui-inputWidget-input,
+.oo-ui-dropdownWidget-handle,
+button,
+textarea,
+select {
+	padding: 0.35em;
+	box-sizing: border-box;
+	height: unset;
+}
+
+.oo-ui-buttonElement-framed.oo-ui-labelElement > .oo-ui-buttonElement-button,
+button {
+	padding: 0.35em 1em;
 }
 
 .mw-input-with-label {
@@ -39,7 +64,6 @@ textarea {
 	resize: vertical;
 	box-sizing: border-box;
 	line-height: 1.3em;
-	border: solid 1px @base70;
 }
 
 div.editOptions {
@@ -54,8 +78,46 @@ div.editOptions {
 	}
 }
 
+form:not( .oo-ui-layout ) {
+	textarea,
+	input {
+		border: solid 1px @base70;
+		border-radius: 2px;
+	}
+
+	input[ type='file' ] {
+		border: unset;
+		border-radius: unset;
+	}
+
+	button,
+	input[ type='submit' ] {
+		border-radius: 2px;
+		padding: 0.35em 1em;
+		background-color: #36c;
+		font-weight: bold;
+		color: #fff;
+		border: solid 1px #36c;
+
+		&:hover,
+		&:active {
+			background-color: #47f;
+		}
+	}
+
+	fieldset {
+		border: 0;
+		margin: 1.5em 0 0;
+		padding: 0;
+
+		legend {
+			font-weight: bold;
+			font-size: 110%;
+		}
+	}
+}
+
 // Essentially revert T182320 (core change)
-// Custom font stacks below should fully address this issue regardless
 .mw-editfont-monospace,
 .mw-editfont-sans-serif,
 .mw-editfont-serif {

@@ -22,7 +22,7 @@ class DOMBuilder implements TreeHandler {
 	public $system;
 
 	/**
-	 * @var int $quirks The quirks mode. May be either TreeBuilder::NO_QUIRKS,
+	 * @var int The quirks mode. May be either TreeBuilder::NO_QUIRKS,
 	 *   TreeBuilder::LIMITED_QUIRKS or TreeBuilder::QUIRKS to indicate
 	 *   no-quirks mode, limited-quirks mode or quirks mode respectively.
 	 */
@@ -59,7 +59,7 @@ class DOMBuilder implements TreeHandler {
 	 *     nonstandard calls.
 	 */
 	public function __construct( $options = [] ) {
-		$options = $options + [
+		$options += [
 			'suppressHtmlNamespace' => false,
 			'suppressIdAttribute' => false,
 			'errorCallback' => null,
@@ -108,7 +108,7 @@ class DOMBuilder implements TreeHandler {
 	 * @param string|null $public
 	 * @param string|null $system
 	 * @return \DOMDocument
-	 * @suppress PhanTypeMismatchArgumentInternalProbablyReal
+	 * @suppress PhanTypeMismatchArgumentInternalReal
 	 *   Null args to DOMImplementation::createDocument
 	 */
 	protected function createDocument(
@@ -144,6 +144,7 @@ class DOMBuilder implements TreeHandler {
 			$parent = $refElement->userData;
 			$refNode = null;
 		}
+		// @phan-suppress-next-line PhanTypeMismatchArgumentInternal
 		$parent->insertBefore( $node, $refNode );
 	}
 
@@ -260,6 +261,7 @@ class DOMBuilder implements TreeHandler {
 			$prev->appendData( $data );
 		} else {
 			$node = $this->doc->createTextNode( $data );
+			// @phan-suppress-next-line PhanTypeMismatchArgumentNullableInternal
 			$parent->insertBefore( $node, $refNode );
 		}
 	}

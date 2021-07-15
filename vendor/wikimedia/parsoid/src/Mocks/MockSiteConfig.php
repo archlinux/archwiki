@@ -39,7 +39,7 @@ class MockSiteConfig extends SiteConfig {
 		'category_talk' => 15,
 	];
 
-	/** @var array<int, bool> */
+	/** @var array<int,bool> */
 	protected $namespacesWithSubpages = [];
 
 	/** @var array */
@@ -57,9 +57,6 @@ class MockSiteConfig extends SiteConfig {
 	public function __construct( array $opts ) {
 		parent::__construct();
 
-		if ( isset( $opts['rtTestMode'] ) ) {
-			$this->rtTestMode = !empty( $opts['rtTestMode'] );
-		}
 		if ( isset( $opts['linting'] ) ) {
 			$this->linterEnabled = $opts['linting'];
 		}
@@ -80,7 +77,7 @@ class MockSiteConfig extends SiteConfig {
 
 	/**
 	 * Set the log channel, for debuggings
-	 * @param LoggerInterface|null $logger
+	 * @param ?LoggerInterface $logger
 	 */
 	public function setLogger( ?LoggerInterface $logger ): void {
 		$this->logger = $logger;
@@ -335,7 +332,6 @@ class MockSiteConfig extends SiteConfig {
 			'hiero' => true,
 			'charinsert' => true,
 			'inputbox' => true,
-			'imagemap' => true,
 			'source' => true,
 			'syntaxhighlight' => true,
 			'section' => true,
@@ -381,7 +377,7 @@ class MockSiteConfig extends SiteConfig {
 
 	/**
 	 * Set the fake timestamp for testing
-	 * @param int|null $ts Unix timestamp
+	 * @param ?int $ts Unix timestamp
 	 */
 	public function setFakeTimestamp( ?int $ts ): void {
 		$this->fakeTimestamp = $ts;

@@ -78,6 +78,7 @@ class TimelessTemplate extends BaseTemplate {
 					$this->getSidebarChunk(
 						'site-tools',
 						'timeless-sitetools',
+						// @phan-suppress-next-line SecurityCheck-DoubleEscaped
 						$this->getPortlet(
 							'tb',
 							$this->pileOfTools['general'],
@@ -96,9 +97,7 @@ class TimelessTemplate extends BaseTemplate {
 
 		$html .= Html::rawElement( 'div',
 			[ 'id' => 'mw-footer-container', 'class' => 'mw-footer-container ts-container' ],
-			Html::rawElement( 'div', [ 'id' => 'mw-footer', 'class' => 'mw-footer ts-inner' ],
-				$this->getFooter()
-			)
+			$this->getFooterBlock( [ 'class' => [ 'mw-footer', 'ts-inner' ], 'id' => 'mw-footer' ] )
 		);
 
 		$html .= Html::closeElement( 'div' );
@@ -140,12 +139,14 @@ class TimelessTemplate extends BaseTemplate {
 			Html::rawElement( 'div', [ 'id' => 'bodyContentOuter' ],
 				Html::rawElement( 'div', [ 'id' => 'siteSub' ], $this->getMsg( 'tagline' )->parse() ) .
 				Html::rawElement( 'div', [ 'id' => 'mw-page-header-links' ],
+					// @phan-suppress-next-line SecurityCheck-DoubleEscaped
 					$this->getPortlet(
 						'namespaces',
 						$this->pileOfTools['namespaces'],
 						'timeless-namespaces',
 						[ 'extra-classes' => 'tools-inline' ]
 					) .
+					// @phan-suppress-next-line SecurityCheck-DoubleEscaped
 					$this->getPortlet(
 						'more',
 						$this->pileOfTools['more'],
@@ -153,6 +154,7 @@ class TimelessTemplate extends BaseTemplate {
 						[ 'extra-classes' => 'tools-inline' ]
 					) .
 					$this->getVariants() .
+					// @phan-suppress-next-line SecurityCheck-DoubleEscaped
 					$this->getPortlet(
 						'views',
 						$this->pileOfTools['page-primary'],
@@ -320,6 +322,114 @@ class TimelessTemplate extends BaseTemplate {
 	}
 
 	/**
+	 * Better renderer for getFooterIcons and getFooterLinks, based on Vector's HTML output
+	 * (as of 2016)
+	 *
+	 * @param array $setOptions Miscellaneous other options
+	 * * 'id' for footer id
+	 * * 'class' for footer class
+	 * * 'order' to determine whether icons or links appear first: 'iconsfirst' or links, though in
+	 *   practice we currently only check if it is or isn't 'iconsfirst'
+	 * * 'link-prefix' to set the prefix for all link and block ids; most skins use 'f' or 'footer',
+	 *   as in id='f-whatever' vs id='footer-whatever'
+	 * * 'link-style' to pass to getFooterLinks: "flat" to disable categorisation of links in a
+	 *   nested array
+	 *
+	 * @return string html
+	 */
+	protected function getFooterBlock( $setOptions = [] ) {
+		// Set options and fill in defaults
+		$options = $setOptions + [
+			'id' => 'footer',
+			'class' => 'mw-footer',
+			'order' => 'iconsfirst',
+			'link-prefix' => 'footer',
+			'link-style' => null
+		];
+
+		// phpcs:ignore Generic.Files.LineLength.TooLong
+		'@phan-var array{id:string,class:string,order:string,link-prefix:string,link-style:?string} $options';
+		$validFooterIcons = $this->get( 'footericons' );
+		$validFooterLinks = $this->getFooterLinks( $options['link-style'] );
+
+		$html = '';
+
+		$html .= Html::openElement( 'div', [
+			'id' => $options['id'],
+			'class' => $options['class'],
+			'role' => 'contentinfo',
+			'lang' => $this->get( 'userlang' ),
+			'dir' => $this->get( 'dir' )
+		] );
+
+		$iconsHTML = '';
+		if ( count( $validFooterIcons ) > 0 ) {
+			$iconsHTML .= Html::openElement( 'ul', [ 'id' => "{$options['link-prefix']}-icons" ] );
+			foreach ( $validFooterIcons as $blockName => $footerIcons ) {
+				$iconsHTML .= Html::openElement( 'li', [
+					'id' => Sanitizer::escapeIdForAttribute(
+						"{$options['link-prefix']}-{$blockName}ico"
+					),
+					'class' => 'footer-icons'
+				] );
+				foreach ( $footerIcons as $icon ) {
+					$iconsHTML .= $this->getSkin()->makeFooterIcon( $icon );
+				}
+				$iconsHTML .= Html::closeElement( 'li' );
+			}
+			$iconsHTML .= Html::closeElement( 'ul' );
+		}
+
+		$linksHTML = '';
+		if ( count( $validFooterLinks ) > 0 ) {
+			if ( $options['link-style'] === 'flat' ) {
+				$linksHTML .= Html::openElement( 'ul', [
+					'id' => "{$options['link-prefix']}-list",
+					'class' => 'footer-places'
+				] );
+				foreach ( $validFooterLinks as $link ) {
+					$linksHTML .= Html::rawElement(
+						'li',
+						[ 'id' => Sanitizer::escapeIdForAttribute( $link ) ],
+						$this->get( $link )
+					);
+				}
+				$linksHTML .= Html::closeElement( 'ul' );
+			} else {
+				$linksHTML .= Html::openElement( 'div', [ 'id' => "{$options['link-prefix']}-list" ] );
+				foreach ( $validFooterLinks as $category => $links ) {
+					$linksHTML .= Html::openElement( 'ul',
+						[ 'id' => Sanitizer::escapeIdForAttribute(
+							"{$options['link-prefix']}-{$category}"
+						) ]
+					);
+					foreach ( $links as $link ) {
+						$linksHTML .= Html::rawElement(
+							'li',
+							[ 'id' => Sanitizer::escapeIdForAttribute(
+								"{$options['link-prefix']}-{$category}-{$link}"
+							) ],
+							$this->get( $link )
+						);
+					}
+					$linksHTML .= Html::closeElement( 'ul' );
+				}
+				$linksHTML .= Html::closeElement( 'div' );
+			}
+		}
+
+		if ( $options['order'] === 'iconsfirst' ) {
+			$html .= $iconsHTML . $linksHTML;
+		} else {
+			$html .= $linksHTML . $iconsHTML;
+		}
+
+		$html .= $this->getClear() . Html::closeElement( 'div' );
+
+		return $html;
+	}
+
+	/**
 	 * Sidebar chunk containing one or more portlets
 	 *
 	 * @param string $id
@@ -359,7 +469,6 @@ class TimelessTemplate extends BaseTemplate {
 	 */
 	protected function getLogo( $id = 'p-logo', $part = 'both' ) {
 		$html = '';
-		$language = $this->getSkin()->getLanguage();
 		$config = $this->getSkin()->getContext()->getConfig();
 
 		$html .= Html::openElement(
@@ -385,8 +494,10 @@ class TimelessTemplate extends BaseTemplate {
 			$titleClass = '';
 			$siteTitle = '';
 			if ( !$wordmarkImage ) {
-				if ( $language->hasVariants() ) {
-					$siteTitle = $language->convert( $this->getMsg( 'timeless-sitetitle' )->escaped() );
+				$langConv = MediaWikiServices::getInstance()->getLanguageConverterFactory()
+					->getLanguageConverter( $this->getSkin()->getLanguage() );
+				if ( $langConv->hasVariants() ) {
+					$siteTitle = $langConv->convert( $this->getMsg( 'timeless-sitetitle' )->escaped() );
 				} else {
 					$siteTitle = $this->getMsg( 'timeless-sitetitle' )->escaped();
 				}
@@ -408,7 +519,7 @@ class TimelessTemplate extends BaseTemplate {
 		}
 		if ( $part !== 'text' ) {
 			$logoImage = $this->getLogoImage( $config->get( 'TimelessLogo' ) );
-			if ( $logoImage === null && isset( $logos['icon'] ) ) {
+			if ( $logoImage === false && isset( $logos['icon'] ) ) {
 				$logoSrc = $logos['icon'];
 				$logoImage = Html::element( 'img', [
 					'src' => $logoSrc,
@@ -537,16 +648,19 @@ class TimelessTemplate extends BaseTemplate {
 	 */
 	protected function getPageToolSidebar() {
 		$pageTools = '';
+		// @phan-suppress-next-line SecurityCheck-DoubleEscaped
 		$pageTools .= $this->getPortlet(
 			'cactions',
 			$this->pileOfTools['page-secondary'],
 			'timeless-pageactions'
 		);
+		// @phan-suppress-next-line SecurityCheck-DoubleEscaped
 		$pageTools .= $this->getPortlet(
 			'userpagetools',
 			$this->pileOfTools['user'],
 			'timeless-userpagetools'
 		);
+		// @phan-suppress-next-line SecurityCheck-DoubleEscaped
 		$pageTools .= $this->getPortlet(
 			'pagemisc',
 			$this->pileOfTools['page-tertiary'],
@@ -577,6 +691,11 @@ class TimelessTemplate extends BaseTemplate {
 		$html = '';
 		$extraTools = [];
 
+		// Remove anon placeholder
+		if ( isset( $personalTools['anonuserpage'] ) ) {
+			unset( $personalTools['anonuserpage'] );
+		}
+
 		// Remove Echo badges
 		if ( isset( $personalTools['notifications-alert'] ) ) {
 			$extraTools['notifications-alert'] = $personalTools['notifications-alert'];
@@ -597,7 +716,7 @@ class TimelessTemplate extends BaseTemplate {
 		}
 
 		// Labels
-		if ( $user->isLoggedIn() ) {
+		if ( $user->isRegistered() ) {
 			$dropdownHeader = $userName;
 			$headerMsg = [ 'timeless-loggedinas', $userName ];
 		} else {
@@ -759,7 +878,7 @@ class TimelessTemplate extends BaseTemplate {
 			'class' => 'dropdown-toggle'
 		];
 		// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
-		if ( $this->sidebar['LANGUAGES'] !== false || $sortedPileOfTools['variants']
+		if ( !empty( $this->sidebar['LANGUAGES'] ) || $sortedPileOfTools['variants']
 			|| isset( $this->otherProjects ) ) {
 			$pileOfTools['languages'] = [
 				'text' => $this->getMsg( 'timeless-languages' )->escaped(),
@@ -920,7 +1039,7 @@ class TimelessTemplate extends BaseTemplate {
 	protected function getCatList( $list, $id, $class, $message ) {
 		$html = Html::openElement( 'div', [ 'id' => "sidebar-{$id}", 'class' => $class ] );
 
-		$makeLinkItem = function ( $linkHtml ) {
+		$makeLinkItem = static function ( $linkHtml ) {
 			return Html::rawElement( 'li', [], $linkHtml );
 		};
 
@@ -931,6 +1050,7 @@ class TimelessTemplate extends BaseTemplate {
 			implode( '', $categoryItems )
 		);
 
+		// @phan-suppress-next-line SecurityCheck-DoubleEscaped
 		$html .= $this->getPortlet( $id, $categoriesHtml, $message );
 
 		$html .= Html::closeElement( 'div' );
@@ -949,6 +1069,7 @@ class TimelessTemplate extends BaseTemplate {
 		$html = '';
 
 		if ( $this->pileOfTools['variants'] ) {
+			// @phan-suppress-next-line SecurityCheck-DoubleEscaped
 			$html .= $this->getPortlet(
 				'variants-desktop',
 				$this->pileOfTools['variants'],
@@ -973,6 +1094,7 @@ class TimelessTemplate extends BaseTemplate {
 		$variantsOnly = false;
 
 		if ( $this->pileOfTools['variants'] ) {
+			// @phan-suppress-next-line SecurityCheck-DoubleEscaped
 			$variants = $this->getPortlet(
 				'variants',
 				$this->pileOfTools['variants']

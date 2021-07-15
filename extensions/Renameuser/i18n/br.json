@@ -21,7 +21,6 @@
 	"renameuserwarnings": "Diwallit :",
 	"renameuserconfirm": "Ya, adenvel an implijer",
 	"renameusersubmit": "Kas",
-	"renameuser-submit-blocklog": "Diskwel marilh stankañ an implijer",
 	"renameusererrordoesnotexist": "An implijer \"<nowiki>$1</nowiki>\" n'eus ket anezhañ",
 	"renameusererrorexists": "Krouet eo bet an anv {{GENDER:$1|implijer|implijerez|implijer}} \"<nowiki>$1</nowiki>\" dija",
 	"renameusererrorinvalid": "Faziek eo an anv implijer \"<nowiki>$1</nowiki>\"",

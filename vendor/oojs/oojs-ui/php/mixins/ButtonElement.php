@@ -15,7 +15,7 @@ trait ButtonElement {
 	/**
 	 * Button is framed.
 	 *
-	 * @var boolean
+	 * @var bool
 	 */
 	protected $framed = false;
 

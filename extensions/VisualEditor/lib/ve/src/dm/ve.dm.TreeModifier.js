@@ -122,6 +122,7 @@ ve.dm.TreeModifier.static.checkEqualData = function ( actual, expected ) {
 			name === 'changesSinceLoad' ||
 			name === 'originalDomElementsHash' ||
 			name === 'originalMw' ||
+			name === 'originalVariantInfo' ||
 			name === 'mw' ||
 			name === 'contentsUsed'
 		) {
@@ -146,7 +147,7 @@ ve.dm.TreeModifier.static.checkEqualData = function ( actual, expected ) {
  * @param {Object} treeOp The tree operation
  */
 ve.dm.TreeModifier.static.applyTreeOperation = function ( isReversed, document, treeOp ) {
-	var wantText, f, t, a, data, node, adjustment, nodeToInsert,
+	var isTextOp, f, t, a, data, movedNode, adjustment, nodeToInsert,
 		removedNodes = [],
 		addedNodes = [],
 		changedBranchNodes = [];
@@ -266,8 +267,8 @@ ve.dm.TreeModifier.static.applyTreeOperation = function ( isReversed, document, 
 	// (This is used when converting to/from HTML, to decide whether loaded metadata offsets
 	// need round tripping)
 	function markBranchNodeChanged( offset ) {
-		var item,
-			adjustment = isReversed ? -1 : 1,
+		var item, newItem,
+			adj = isReversed ? -1 : 1,
 			i = offset - 1;
 
 		while ( i >= 0 ) {
@@ -283,8 +284,10 @@ ve.dm.TreeModifier.static.applyTreeOperation = function ( isReversed, document, 
 			if ( item.internal && item.internal.changesSinceLoad !== undefined ) {
 				// Guard against marking the same node twice
 				if ( changedBranchNodes.indexOf( item ) === -1 ) {
-					changedBranchNodes.push( item );
-					item.internal.changesSinceLoad += adjustment;
+					newItem = ve.copy( item );
+					changedBranchNodes.push( newItem );
+					newItem.internal.changesSinceLoad += adj;
+					document.data.splice( i + 1, 1, ve.deepFreeze( newItem ) );
 				}
 			}
 			// This is a branch node boundary, so go no further
@@ -292,10 +295,8 @@ ve.dm.TreeModifier.static.applyTreeOperation = function ( isReversed, document, 
 		}
 	}
 
-	function spliceLinear( offset, remove, data ) {
-		var content;
-		data = data || [];
-		content = ve.batchSplice( document.data, offset, remove, data );
+	function spliceLinear( offset, remove, insert ) {
+		var content = ve.batchSplice( document.data, offset, remove, insert ? ve.deepFreeze( insert, true ) : [] );
 		markBranchNodeChanged( offset );
 		return content;
 	}
@@ -316,10 +317,10 @@ ve.dm.TreeModifier.static.applyTreeOperation = function ( isReversed, document, 
 		}
 	}
 
-	wantText = treeOp.type.slice( -4 ) === 'Text';
-	f = treeOp.from && prepareSplice( treeOp.from, treeOp.isContent, wantText );
-	t = treeOp.to && prepareSplice( treeOp.to, treeOp.isContent, wantText );
-	a = treeOp.at && prepareSplice( treeOp.at, treeOp.isContent, wantText );
+	isTextOp = treeOp.type.slice( -4 ) === 'Text';
+	f = treeOp.from && prepareSplice( treeOp.from, treeOp.isContent, isTextOp );
+	t = treeOp.to && prepareSplice( treeOp.to, treeOp.isContent, isTextOp );
+	a = treeOp.at && prepareSplice( treeOp.at, treeOp.isContent, isTextOp );
 
 	// Always adjust linear data before tree, to ensure consistency when node events
 	// are emitted.
@@ -343,10 +344,10 @@ ve.dm.TreeModifier.static.applyTreeOperation = function ( isReversed, document, 
 			data = spliceLinear( f.linearOffset, f.node.children[ f.offset ].getOuterLength() );
 			// No need to use local splice function as we know the node is going
 			// to be re-inserted immediately.
-			node = f.node.splice( f.offset, 1 )[ 0 ];
+			movedNode = f.node.splice( f.offset, 1 )[ 0 ];
 			adjustment = t.linearOffset > f.linearOffset ? data.length : 0;
 			spliceLinear( t.linearOffset - adjustment, 0, data );
-			t.node.splice( t.offset, 0, node );
+			t.node.splice( t.offset, 0, movedNode );
 			break;
 		case 'removeText':
 			data = spliceLinear( a.linearOffset, treeOp.data.length );
@@ -406,7 +407,7 @@ ve.dm.TreeModifier.prototype.setup = function ( document ) {
 	this.treeOps = [];
 	this.insertedNodes = [];
 	this.insertedPositions = [];
-	this.adjustmentTree = {};
+	this.adjustmentTree = { offsetsUsed: [] };
 };
 
 /**
@@ -519,8 +520,18 @@ ve.dm.TreeModifier.prototype.cursorsMatch = function () {
 	rawInserterPosition = this.getRawInserterPosition();
 	adjustedRemoverPosition = this.adjustRemoverPosition( rawRemoverPosition );
 	adjustedInserterPosition = this.adjustInserterPosition( rawInserterPosition );
-	return JSON.stringify( adjustedRemoverPosition ) ===
-		JSON.stringify( adjustedInserterPosition );
+
+	// Optimization: adjustedRemoverPosition and adjustedInserterPosition are very
+	// often arrays of length 1. This simple check is much faster than a full
+	// JSON.stringify comparison.
+	if (
+		adjustedRemoverPosition.length === 1 && adjustedInserterPosition.length === 1 &&
+		adjustedRemoverPosition[ 0 ] === adjustedInserterPosition[ 0 ]
+	) {
+		return true;
+	}
+
+	return JSON.stringify( adjustedRemoverPosition ) === JSON.stringify( adjustedInserterPosition );
 };
 
 /**
@@ -878,7 +889,8 @@ ve.dm.TreeModifier.prototype.findOrCreateAdjustmentNode = function ( position ) 
 	for ( i = 0, len = position.length; i < len; i++ ) {
 		offset = position[ i ];
 		if ( !adjustmentNode[ offset ] ) {
-			adjustmentNode[ offset ] = {};
+			adjustmentNode[ offset ] = { offsetsUsed: [] };
+			adjustmentNode.offsetsUsed.push( offset );
 		}
 		adjustmentNode = adjustmentNode[ offset ];
 	}
@@ -893,20 +905,17 @@ ve.dm.TreeModifier.prototype.findOrCreateAdjustmentNode = function ( position ) 
  * @param {boolean} deleteDescendants If true, delete all adjustments at paths descending from here
  */
 ve.dm.TreeModifier.prototype.modifyAdjustmentTree = function ( rawPosition, diff, deleteDescendants ) {
-	var i,
-		adjustmentNode = this.findOrCreateAdjustmentNode( rawPosition );
+	var adjustmentNode = this.findOrCreateAdjustmentNode( rawPosition );
 	if ( diff > 0 ) {
 		adjustmentNode.inserted = ( adjustmentNode.inserted || 0 ) + diff;
 	} else {
 		adjustmentNode.removed = ( adjustmentNode.removed || 0 ) - diff;
 	}
 	if ( deleteDescendants ) {
-		for ( i in adjustmentNode ) {
-			if ( i === 'inserted' || i === 'removed' ) {
-				continue;
-			}
+		adjustmentNode.offsetsUsed.forEach( function ( i ) {
 			delete adjustmentNode[ i ];
-		}
+		} );
+		adjustmentNode.offsetsUsed = [];
 	}
 };
 
@@ -946,7 +955,11 @@ ve.dm.TreeModifier.prototype.adjustRemoverPosition = function ( rawPosition ) {
  * @return {number[]} Adjusted pathAndOffset, with offsets inside a ContentBranchNode linearized, and including current position within nodes to be inserted, if any
  */
 ve.dm.TreeModifier.prototype.adjustInserterPosition = function ( rawPosition ) {
-	return this.getAdjustedPosition( rawPosition, true ).concat( this.insertedPositions );
+	// getAdjustedPosition returns a brand new array, so we can safely modify
+	// it with batchPush, which is much faster than concat (which creates a new array)
+	var positions = this.getAdjustedPosition( rawPosition, true );
+	ve.batchPush( positions, this.insertedPositions );
+	return positions;
 };
 
 /**
@@ -959,22 +972,31 @@ ve.dm.TreeModifier.prototype.adjustInserterPosition = function ( rawPosition ) {
  */
 ve.dm.TreeModifier.prototype.getRawPosition = function ( path, offset, node ) {
 	var i, numNodesBefore, linearizedOffset;
-	if ( node.parent instanceof ve.dm.ContentBranchNode ) {
+	// No need to check node.parent.hasChildren() below as node.parent
+	// is a parent so must have children.
+	if ( node.parent && node.parent.canContainContent() ) {
 		numNodesBefore = path[ path.length - 1 ];
 		linearizedOffset = offset;
 		for ( i = 0; i < numNodesBefore; i++ ) {
 			linearizedOffset += node.parent.children[ i ].getOuterLength();
 		}
-		return path.slice( 0, -1 ).concat( linearizedOffset );
-	} else if ( node instanceof ve.dm.ContentBranchNode ) {
+		path = path.slice( 0, -1 );
+	} else if ( node.canContainContent() && node.hasChildren() ) {
 		linearizedOffset = 0;
 		for ( i = 0; i < offset; i++ ) {
 			linearizedOffset += node.children[ i ].getOuterLength();
 		}
-		return path.concat( linearizedOffset );
 	} else {
-		return path.concat( offset );
+		linearizedOffset = offset;
 	}
+	if ( !path.length ) {
+		// Optimization, path is often empty
+		return [ linearizedOffset ];
+	}
+	path = path.slice();
+	// slice+push is faster than concat
+	path.push( linearizedOffset );
+	return path;
 };
 
 /**
@@ -985,18 +1007,41 @@ ve.dm.TreeModifier.prototype.getRawPosition = function ( path, offset, node ) {
  * @return {number[]} Adjusted pathAndOffset, with offsets inside a ContentBranchNode linearized
  */
 ve.dm.TreeModifier.prototype.getAdjustedPosition = function ( position, isInserter ) {
-	var i, iLen, j, jLen, positionI, childNode, inserted, removed,
+	var i, iLen, j, jLen, k, kLen, positionI, childNode, inserted, removed, offsetsUsed,
 		node = this.adjustmentTree;
 
 	position = position.slice();
 	// Adjust each offset in the path so inserted nodes are counted
 	for ( i = 0, iLen = position.length; i < iLen; i++ ) {
 		positionI = position[ i ];
-		for ( j = 0, jLen = positionI + 1; j < jLen; j++ ) {
-			childNode = node[ j ];
-			if ( !childNode ) {
+
+		// The loop below is equivalent to:
+		//
+		// for ( j = 0, jLen = positionI + 1; j < jLen; j++ ) {
+		//   childNode = node[ j ];
+		//   if ( !childNode ) {
+		//     continue;
+		//   }
+		//   ...
+		// }
+		//
+		// However as `node` is very sparse, it is slow to iterate over
+		// every position, so just iterate over the positions we have,
+		// then check the loop conditions later. (T261634)
+		// An offsetsUsed property is stored on every node instead of
+		// using a for..in loop as a for..in loop has to re-calculate
+		// the list of indexes to iterate over.
+
+		jLen = positionI + 1;
+		offsetsUsed = node.offsetsUsed;
+		for ( k = 0, kLen = offsetsUsed.length; k < kLen; k++ ) {
+			j = offsetsUsed[ k ];
+			if ( j >= jLen ) {
 				continue;
 			}
+
+			childNode = node[ j ];
+
 			inserted = childNode.inserted || 0;
 			removed = childNode.removed || 0;
 

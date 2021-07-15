@@ -9,7 +9,7 @@
 	},
 	"codeeditor-next-annotation": "Vés a la següent anotació",
 	"codeeditor-toolbar-toggle": "Activa o desactiva l'editor de codi",
-	"codeeditor-save-with-errors": "El document conté errors. Segur que el voleu desar?",
+	"codeeditor-save-with-errors": "El document conté errors. Segur que el voleu publicar?",
 	"codeeditor-invisibleChars-toggle": "Mostra o oculta els caràcters invisibles",
 	"codeeditor-lineWrapping-toggle": "Alterna l'ajustament de línies",
 	"codeeditor-searchReplace-toggle": "Mostra o oculta el diàleg de cerca i substitució",

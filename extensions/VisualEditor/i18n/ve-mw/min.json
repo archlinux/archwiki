@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"David Wadie Fisher-Freberg",
 			"Iwan Novirion",
 			"Jagwar",
 			"Matma Rex",
@@ -10,7 +11,7 @@
 	"collabpad-import-subtitle": "Diimpor dari $1",
 	"tooltip-ca-createsource": "Buek kode sumber laman ko",
 	"tooltip-ca-editsource": "Suntiang kode sumber laman ko",
-	"tooltip-ca-ve-edit": "Suntiang laman ko jo VisualEditor",
+	"tooltip-ca-ve-edit": "Suntiang laman ko",
 	"visualeditor-advancedsettings-tool": "Pangaturan lanjuik",
 	"visualeditor-autosave-modified-prompt-accept": "Lanjuik manyuntiang",
 	"visualeditor-autosave-modified-prompt-reject": "Mulai suntiangan baru",
@@ -270,7 +271,6 @@
 	"visualeditor-redirect-description": "Dialiahkan ka $1",
 	"visualeditor-savedialog-keyboard-shortcut-submit": "Takan $1 untuak manyimpan suntiangan.",
 	"visualeditor-savedialog-label-create": "Buek laman",
-	"visualeditor-savedialog-label-error": "Galat",
 	"visualeditor-savedialog-label-publish-short": "Simpan",
 	"visualeditor-savedialog-label-publish-short-start": "Simpan...",
 	"visualeditor-savedialog-label-report": "Laporkan masalah",
@@ -280,7 +280,6 @@
 	"visualeditor-savedialog-label-review-good": "Baliak ka formulir tasimpan",
 	"visualeditor-savedialog-label-save-short": "Simpan",
 	"visualeditor-savedialog-label-save-short-start": "Simpan...",
-	"visualeditor-savedialog-label-warning": "Paringatan",
 	"visualeditor-savedialog-review-nosummary": "Indak ado ikhtisar suntiangan",
 	"visualeditor-savedialog-review-visual": "Visual",
 	"visualeditor-savedialog-review-wikitext": "Teks wiki",

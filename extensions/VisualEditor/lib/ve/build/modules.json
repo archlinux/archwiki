@@ -164,7 +164,7 @@
 			"CLDRPluralRuleParser"
 		]
 	},
-	"CLDRPluralRuleParser" : {
+	"CLDRPluralRuleParser": {
 		"scripts": [
 			"lib/jquery.i18n/libs/CLDRPluralRuleParser/src/CLDRPluralRuleParser.js"
 		]
@@ -310,7 +310,8 @@
 			"src/init/ve.init.Target.js"
 		],
 		"dependencies": [
-			"visualEditor.supportCheck"
+			"visualEditor.supportCheck",
+			"visualEditor.core.utils.client"
 		]
 	},
 	"visualEditor.core.build": {
@@ -418,9 +419,9 @@
 			"src/dm/nodes/ve.dm.BlockImageNode.js",
 			"src/dm/nodes/ve.dm.BlockImageCaptionNode.js",
 			"src/dm/nodes/ve.dm.InlineImageNode.js",
+			"src/dm/annotations/ve.dm.TextStyleAnnotation.js",
 			"src/dm/annotations/ve.dm.LanguageAnnotation.js",
 			"src/dm/annotations/ve.dm.LinkAnnotation.js",
-			"src/dm/annotations/ve.dm.TextStyleAnnotation.js",
 			"src/dm/annotations/ve.dm.AbbreviationAnnotation.js",
 			"src/dm/annotations/ve.dm.BidiAnnotation.js",
 			"src/dm/annotations/ve.dm.BigAnnotation.js",
@@ -525,9 +526,9 @@
 			"src/ce/nodes/ve.ce.BlockImageCaptionNode.js",
 			"src/ce/nodes/ve.ce.InlineImageNode.js",
 			"src/ce/annotations/ve.ce.NailedAnnotation.js",
+			"src/ce/annotations/ve.ce.TextStyleAnnotation.js",
 			"src/ce/annotations/ve.ce.LanguageAnnotation.js",
 			"src/ce/annotations/ve.ce.LinkAnnotation.js",
-			"src/ce/annotations/ve.ce.TextStyleAnnotation.js",
 			"src/ce/annotations/ve.ce.AbbreviationAnnotation.js",
 			"src/ce/annotations/ve.ce.BidiAnnotation.js",
 			"src/ce/annotations/ve.ce.BigAnnotation.js",
@@ -818,6 +819,7 @@
 			"tests/ve.qunit.local.js",
 			"tests/ve.test.utils.js",
 			"tests/ve.test.js",
+			"tests/ve.DiffMatchPatch.test.js",
 			"tests/ve.EventSequencer.test.js",
 			"tests/ve.Scheduler.test.js",
 			"tests/ve.Range.test.js",
@@ -1139,6 +1141,11 @@
 		],
 		"styles": [
 			"demos/ve/demo.minimal.css"
+		]
+	},
+	"visualEditor.test.performance": {
+		"scripts": [
+			"demos/ve/performance.js"
 		]
 	},
 	"rebaser.build": {

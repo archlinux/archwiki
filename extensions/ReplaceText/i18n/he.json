@@ -28,7 +28,7 @@
 	"replacetext_formovedpages": "עבור דפים שיועברו:",
 	"replacetext_savemovedpages": "שמירת שמות הדפים הישנים כהפניות לשמות הדפים החדשים",
 	"replacetext_watchmovedpages": "מעקב אחר דפים אלה",
-	"replacetext_invertselections": "הפיכת הבחירות",
+	"replacetext_invertselections": "היפוך הבחירות",
 	"replacetext_replace": "החלפה",
 	"replacetext_success": "'$1' יוחלף ב־'$2' ב־{{PLURAL:$3|דף אחד|$3 דפים}}.",
 	"replacetext_noreplacement": "לא נמצאו דפים המכילים את המחרוזת '$1'.",

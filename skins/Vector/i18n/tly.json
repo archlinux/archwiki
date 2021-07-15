@@ -1,21 +1,22 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Ganbarzada",
 			"Patriot Kur",
 			"Гусейн"
 		]
 	},
-	"vector-action-addsection": "Мывзу зијод кардеј",
+	"vector-action-addsection": "Mıvzu ziyod karde",
 	"vector-action-delete": "Bısü",
-	"vector-action-move": "Номи дәгиш кардеј",
+	"vector-action-move": "Küç karde",
 	"vector-action-protect": "Mıdofiə karde",
 	"vector-action-undelete": "Бәрпо кардеј",
-	"vector-action-unprotect": "Мыдофијә дәгиш кардеј",
-	"vector-view-create": "Офәјеј",
+	"vector-action-unprotect": "Mıdofiyə dəqiş karde",
+	"vector-view-create": "Soxtey",
 	"vector-view-edit": "Dəqiş karde",
-	"vector-view-history": "Тarix",
+	"vector-view-history": "Tarixi diyəkə",
 	"vector-view-view": "Bahand",
-	"vector-view-viewsource": "Дијә кардеј",
-	"vector-more-actions": "Həniyən"
+	"vector-view-viewsource": "Səvon diyə karde",
+	"vector-more-actions": "Ve"
 }

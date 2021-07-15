@@ -69,10 +69,16 @@ abstract class BaseBlacklist {
 	/**
 	 * @param array $links
 	 * @param ?Title $title
+	 * @param User $user
 	 * @param bool $preventLog
 	 * @return mixed
 	 */
-	abstract public function filter( array $links, ?Title $title, $preventLog = false );
+	abstract public function filter(
+		array $links,
+		?Title $title,
+		User $user,
+		$preventLog = false
+	);
 
 	/**
 	 * Adds a blacklist class to the registry
@@ -136,6 +142,13 @@ abstract class BaseBlacklist {
 	}
 
 	/**
+	 * Clear instance cache. For use during testing.
+	 */
+	public static function clearInstanceCache() {
+		self::$instances = [];
+	}
+
+	/**
 	 * Returns the code for the blacklist implementation
 	 *
 	 * @return string
@@ -154,6 +167,9 @@ abstract class BaseBlacklist {
 		if ( $title->inNamespace( NS_MEDIAWIKI ) ) {
 			$sources = [];
 			foreach ( self::$blacklistTypes as $type => $class ) {
+				// For the built in types, this results in the use of:
+				// spam-blacklist, spam-whitelist
+				// email-blacklist, email-whitelist
 				$type = ucfirst( $type );
 				$sources[] = "$type-blacklist";
 				$sources[] = "$type-whitelist";
@@ -177,11 +193,9 @@ abstract class BaseBlacklist {
 		foreach ( $files as $fileName ) {
 			$matches = [];
 			if ( preg_match( '/^DB: (\w*) (.*)$/', $fileName, $matches ) ) {
-				if ( $wgDBname === $matches[1] ) {
-					if ( $matches[2] === $title->getPrefixedDbKey() ) {
-						// Local DB fetch of this page...
-						return true;
-					}
+				if ( $wgDBname === $matches[1] && $matches[2] === $title->getPrefixedDbKey() ) {
+					// Local DB fetch of this page...
+					return true;
 				}
 			} elseif ( preg_match( $thisHttpRegex, $fileName ) ) {
 				// Raw view of this page
@@ -233,15 +247,14 @@ abstract class BaseBlacklist {
 	 * @return array Regular expressions
 	 */
 	public function getLocalBlacklists() {
-		$that = $this;
 		$type = $this->getBlacklistType();
 		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
 
 		return $cache->getWithSetCallback(
 			$cache->makeKey( 'spamblacklist', $type, 'blacklist-regex' ),
 			$this->expiryTime,
-			function () use ( $that, $type ) {
-				return SpamRegexBatch::regexesFromMessage( "{$type}-blacklist", $that );
+			function () use ( $type ) {
+				return SpamRegexBatch::regexesFromMessage( "{$type}-blacklist", $this );
 			}
 		);
 	}
@@ -252,15 +265,14 @@ abstract class BaseBlacklist {
 	 * @return array Regular expressions
 	 */
 	public function getWhitelists() {
-		$that = $this;
 		$type = $this->getBlacklistType();
 		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
 
 		return $cache->getWithSetCallback(
 			$cache->makeKey( 'spamblacklist', $type, 'whitelist-regex' ),
 			$this->expiryTime,
-			function () use ( $that, $type ) {
-				return SpamRegexBatch::regexesFromMessage( "{$type}-whitelist", $that );
+			function () use ( $type ) {
+				return SpamRegexBatch::regexesFromMessage( "{$type}-whitelist", $this );
 			}
 		);
 	}
@@ -281,17 +293,15 @@ abstract class BaseBlacklist {
 		}
 
 		$miss = false;
-
-		$that = $this;
 		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
 		$regexes = $cache->getWithSetCallback(
 			// This used to be cached per-site, but that could be bad on a shared
 			// server where not all wikis have the same configuration.
 			$cache->makeKey( 'spamblacklist', $listType, 'shared-blacklist-regex' ),
 			$this->expiryTime,
-			function () use ( $that, &$miss ) {
+			function () use ( &$miss ) {
 				$miss = true;
-				return $that->buildSharedBlacklists();
+				return $this->buildSharedBlacklists();
 			}
 		);
 
@@ -428,8 +438,9 @@ abstract class BaseBlacklist {
 	/**
 	 * @param Title $title
 	 * @param string[] $entries
+	 * @param User $user
 	 */
-	public function warmCachesForFilter( Title $title, array $entries ) {
+	public function warmCachesForFilter( Title $title, array $entries, User $user ) {
 		// subclass this
 	}
 }

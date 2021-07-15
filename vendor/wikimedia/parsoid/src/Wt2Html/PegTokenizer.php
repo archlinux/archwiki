@@ -25,7 +25,6 @@ use Wikimedia\Parsoid\Utils\PHPUtils;
 use WikiPEG\SyntaxError;
 
 class PegTokenizer extends PipelineStage {
-	private $traceTime;
 	private $options;
 	private $offsets;
 
@@ -39,14 +38,14 @@ class PegTokenizer extends PipelineStage {
 	 * @param Env $env
 	 * @param array $options
 	 * @param string $stageId
-	 * @param PipelineStage|null $prevStage
+	 * @param ?PipelineStage $prevStage
 	 */
 	public function __construct(
-		Env $env, array $options = [], string $stageId = "", $prevStage = null
+		Env $env, array $options = [], string $stageId = "",
+		?PipelineStage $prevStage = null
 	) {
 		parent::__construct( $env, $prevStage );
 		$this->env = $env;
-		$this->traceTime = $env->hasTraceFlag( 'time' );
 		$this->options = $options;
 		$this->offsets = [];
 	}
@@ -81,11 +80,11 @@ class PegTokenizer extends PipelineStage {
 	 * PORT-FIXME: Update docs
 	 *
 	 * @param string $input FIXME
-	 * @param array|null $opts FIXME
+	 * @param ?array $opts FIXME
 	 * - sol: (bool) Whether input should be processed in start-of-line context.
 	 * @return array|bool FIXME
 	 */
-	public function process( $input, array $opts = null ) {
+	public function process( $input, ?array $opts = null ) {
 		Assert::invariant( is_string( $input ), "Input should be a string" );
 		PHPUtils::assertValidUTF8( $input ); // Transitional check for PHP port
 		return $this->tokenizeSync( $input, $opts ?? [] );
@@ -101,8 +100,9 @@ class PegTokenizer extends PipelineStage {
 	 * process().
 	 *
 	 * @param string $text
-	 * @param array|null $opts
+	 * @param ?array $opts
 	 *   - sol (bool) Whether text should be processed in start-of-line context.
+	 * @return Generator
 	 */
 	public function processChunkily( $text, ?array $opts ): Generator {
 		if ( !$this->grammar ) {
@@ -124,10 +124,6 @@ class PegTokenizer extends PipelineStage {
 			'startRule' => 'start_async',
 		];
 
-		$start = null;
-		if ( $this->traceTime ) {
-			$start = PHPUtils::getStartHRTime();
-		}
 		try {
 			// Wrap wikipeg's generator with our own generator
 			// to catch exceptions and track time usage.
@@ -137,11 +133,6 @@ class PegTokenizer extends PipelineStage {
 		} catch ( SyntaxError $e ) {
 			$this->lastError = $e;
 			throw $e;
-		}
-
-		if ( $this->traceTime ) {
-			$this->env->bumpTimeUse( 'PEG-async', PHPUtils::getHRTimeDifferential( $start ),
-				'PEG' );
 		}
 	}
 
@@ -166,18 +157,24 @@ class PegTokenizer extends PipelineStage {
 			'sol' => $args['sol'] ?? true, // defaults to true
 			'env' => $this->env
 		];
+
 		$start = null;
-		if ( $this->traceTime ) {
+		$profile = null;
+		if ( $this->env->profiling() ) {
+			$profile = $this->env->getCurrentProfile();
 			$start = PHPUtils::getStartHRTime();
 		}
+
 		try {
 			$toks = $this->grammar->parse( $text, $args );
 		} catch ( SyntaxError $e ) {
 			$this->lastError = $e;
 			return false;
 		}
-		if ( $this->traceTime ) {
-			$this->env->bumpTimeUse( 'PEG-sync', PHPUtils::getHRTimeDifferential( $start ), 'PEG' );
+
+		if ( $profile ) {
+			$profile->bumpTimeUse(
+				'PEG', PHPUtils::getHRTimeDifferential( $start ), 'PEG' );
 		}
 		return $toks;
 	}

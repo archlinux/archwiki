@@ -3,6 +3,7 @@
 		"authors": [
 			"Deryck Chan",
 			"Ktchankt",
+			"Moon0319",
 			"Shinjiman"
 		]
 	},
@@ -33,7 +34,7 @@
 	"templatedata-doc-param-type-unbalanced-wikitext": "唔對稱嘅維基字",
 	"templatedata-doc-param-type-unknown": "唔知",
 	"templatedata-doc-param-type-url": "網址",
-	"templatedata-doc-param-type-wiki-file-name": "檔案",
+	"templatedata-doc-param-type-wiki-file-name": "快勞",
 	"templatedata-doc-param-type-wiki-page-name": "版",
 	"templatedata-doc-param-type-wiki-template-name": "模",
 	"templatedata-doc-param-type-wiki-user-name": "用戶",
@@ -95,7 +96,7 @@
 	"templatedata-modal-title": "模版指引編輯器",
 	"templatedata-modal-title-addparam": "加參數",
 	"templatedata-modal-title-choose-language": "改語言",
-	"templatedata-modal-title-language": "語言",
+	"templatedata-modal-title-language": "話",
 	"templatedata-modal-title-paramorder": "參數次序",
 	"templatedata-modal-title-templatedesc": "模版描述 ($1)",
 	"templatedata-modal-title-templateformat": "鼓勵用邊個格式",

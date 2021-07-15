@@ -3,7 +3,7 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Html2Wt;
 
-use DOMDocument;
+use DOMDocumentFragment;
 use DOMElement;
 use DOMNode;
 use stdClass;
@@ -26,11 +26,13 @@ class DOMDiff {
 
 	// These attributes are ignored for equality purposes if they are added to a node.
 	private const IGNORE_ATTRIBUTES = [
-		// SSS: Don't ignore data-parsoid because in VE, sometimes wrappers get
-		// moved around without their content which occasionally leads to incorrect
-		// DSR being used by selser.  Hard to describe a reduced test case here.
-		// Discovered via: /mnt/bugs/2013-05-01T09:43:14.960Z-Reverse_innovation
-		// 'data-parsoid',
+		// Note that we are explicitly not ignoring data-parsoid even though clients
+		// would never modify data-parsoid because SelectiveSerializer is wrapping text
+		// nodes in spans and speculatively computes DSR offsets for these span tags
+		// which are accurate for original DOM and may be inaccurate for the edited DOM.
+		// By diffing data-parsoid which diffs the DSR as well, we ensure we mark such
+		// nodes as modified and prevent use of those speculatively computed incorrect
+		// DSR values.
 		'data-parsoid-diff',
 		'about',
 		DOMDataUtils::DATA_OBJECT_ATTR_NAME,
@@ -45,16 +47,6 @@ class DOMDiff {
 	 * @var array
 	 */
 	public $specializedAttribHandlers;
-
-	/**
-	 * @var DOMDocument
-	 */
-	private $domA;
-
-	/**
-	 * @var DOMDocument
-	 */
-	private $domB;
 
 	/**
 	 * @param DOMNode $node
@@ -87,6 +79,20 @@ class DOMDiff {
 			'data-parsoid' => function ( $nodeA, $dpA, $nodeB, $dpB ) {
 				return $dpA == $dpB;
 			},
+			// TODO(T254502): This is added temporarily for backwards
+			// compatibility and can be removed when versions up to 2.1.0
+			// are no longer stored
+			'typeof' => function ( $nodeA, $valA, $nodeB, $valB ) {
+				if ( $valA === $valB ) {
+					return true;
+				} elseif ( $valA === 'mw:DisplaySpace' ) {
+					return $valB === 'mw:DisplaySpace mw:Placeholder';
+				} elseif ( $valB === 'mw:DisplaySpace' ) {
+					return $valA === 'mw:DisplaySpace mw:Placeholder';
+				} else {
+					return false;
+				}
+			}
 		];
 	}
 
@@ -99,8 +105,10 @@ class DOMDiff {
 	 * @return array
 	 */
 	public function diff( DOMElement $nodeA, DOMElement $nodeB ): array {
-		$this->domA = $nodeA->ownerDocument;
-		$this->domB = $nodeB->ownerDocument;
+		Assert::invariant(
+			$nodeA->ownerDocument !== $nodeB->ownerDocument,
+			'Expected to be diff\'ing different documents.'
+		);
 
 		$this->debug( function () use( $nodeA, $nodeB ) {
 			return "ORIG:\n" .
@@ -137,7 +145,7 @@ class DOMDiff {
 	}
 
 	/**
-	 * According to MediaWiki_DOM_spec, `id` and `html` attributes are acceptable
+	 * According to [[mw:Specs/HTML]], `id` and `html` attributes are acceptable
 	 * formats in `data-mw.body` and in those contexts, they reference DOMs and
 	 * we are going to treat them as such.
 	 *
@@ -184,12 +192,15 @@ class DOMDiff {
 			} elseif ( gettype( $vA ) !== gettype( $vB ) ) {
 				return false;
 			} elseif ( $kA === 'id' && ( $options['inDmwBody'] ?? null ) ) {
-				// For <refs> in <references> the element id can refer to the
-				// global DOM, not the owner document DOM.
-				$htmlA = DOMCompat::getElementById( $nodeA->ownerDocument, $vA ) ?:
-					DOMCompat::getElementById( $this->domA, $vA );
-				$htmlB = DOMCompat::getElementById( $nodeB->ownerDocument, $vB ) ?:
-					DOMCompat::getElementById( $this->domB, $vB );
+				// So far, this is specified for Cite and relies on the "id"
+				// referring to an element in the top level dom, even though the
+				// <ref> itself may be in embedded content,
+				// https://www.mediawiki.org/wiki/Specs/HTML/Extensions/Cite#Ref_and_References
+				// FIXME: This doesn't work if the <references> section
+				// itself is in embedded content, since we aren't traversing
+				// in there.
+				$htmlA = DOMCompat::getElementById( $nodeA->ownerDocument, $vA );
+				$htmlB = DOMCompat::getElementById( $nodeB->ownerDocument, $vB );
 
 				if ( $htmlA && $htmlB && !$this->treeEquals( $htmlA, $htmlB, true ) ) {
 					return false;
@@ -218,13 +229,17 @@ class DOMDiff {
 					}
 				}
 			} elseif ( $kA === 'html' && ( $options['inDmwBody'] ?? null ) ) {
+				// It's important that the fragments are constructed from the
+				// correct node's ownerDocument so that the search by id above
+				// is looking in the right place
+				$fragmentA = ContentUtils::createAndLoadDocumentFragment(
+					$nodeA->ownerDocument, $vA, [ 'markNew' => true ]
+				);
+				$fragmentB = ContentUtils::createAndLoadDocumentFragment(
+					$nodeB->ownerDocument, $vB, [ 'markNew' => true ]
+				);
 				// For 'html' attributes, parse string and recursively compare DOM
-				if ( !$this->treeEquals(
-						ContentUtils::ppToDOM( $this->env, $vA, [ 'markNew' => true ] ),
-						ContentUtils::ppToDOM( $this->env, $vB, [ 'markNew' => true ] ),
-						true
-					)
-				) {
+				if ( !$this->treeEquals( $fragmentA, $fragmentB, true ) ) {
 					return false;
 				}
 			} elseif ( is_object( $vA ) || is_array( $vA ) ) {
@@ -271,21 +286,28 @@ class DOMDiff {
 		} elseif ( DOMUtils::isComment( $nodeA ) ) {
 			return WTUtils::decodeComment( $nodeA->nodeValue ) ===
 				WTUtils::decodeComment( $nodeB->nodeValue );
-		} elseif ( DOMUtils::isElt( $nodeA ) ) {
-			// Compare node name and attribute length
-			if ( $nodeA->nodeName !== $nodeB->nodeName
-				|| !$nodeA instanceof DOMElement || !$nodeB instanceof DOMElement
-				|| !DiffUtils::attribsEquals(
-					$nodeA,
-					$nodeB,
-					self::IGNORE_ATTRIBUTES,
-					$this->specializedAttribHandlers
-				)
-			) {
-				return false;
+		} elseif ( $nodeA instanceof DOMElement || $nodeA instanceof DOMDocumentFragment ) {
+			if ( $nodeA instanceof DOMDocumentFragment ) {
+				if ( !( $nodeB instanceof DOMDocumentFragment ) ) {
+					return false;
+				}
+			} else {  // $nodeA instanceof DOMElement
+				// Compare node name and attribute length
+				if (
+					!( $nodeB instanceof DOMElement ) ||
+					$nodeA->nodeName !== $nodeB->nodeName ||
+					!DiffUtils::attribsEquals(
+						$nodeA,
+						$nodeB,
+						self::IGNORE_ATTRIBUTES,
+						$this->specializedAttribHandlers
+					)
+				) {
+					return false;
+				}
 			}
 
-			// Passed all tests, element node itself is equal.
+			// Passed all tests, node itself is equal.
 			if ( $deep ) {
 				$childA = null;
 				$childB = null;
@@ -295,7 +317,6 @@ class DOMDiff {
 					$childA && $childB;
 					$childA = $childA->nextSibling, $childB = $childB->nextSibling
 				) {
-
 					/* don't look inside children yet, just look at # of children */
 				}
 
@@ -541,6 +562,13 @@ class DOMDiff {
 
 		if ( $mark === 'deleted' || $mark === 'inserted' ) {
 			$this->markNode( $node->parentNode, 'children-changed' );
+		}
+
+		// Clear out speculatively computed DSR values for data-mw-selser-wrapper nodes
+		// since they may be incorrect. This eliminates any inadvertent use of
+		// these incorrect values.
+		if ( $node instanceof DOMElement && $node->hasAttribute( 'data-mw-selser-wrapper' ) ) {
+			DOMDataUtils::getDataParsoid( $node )->dsr = null;
 		}
 	}
 

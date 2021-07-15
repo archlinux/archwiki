@@ -115,7 +115,7 @@ class SyntaxHighlightAce {
 		'Prolog'       => [ 'prolog' ],
 		'Properties'   => [ 'properties', 'jproperties' ],
 		'Protobuf'     => [ 'protobuf', 'proto' ],
-		'Python'       => [ 'python', 'py', 'sage', 'pyton3', 'py3' ],
+		'Python'       => [ 'python', 'py', 'sage', 'python3', 'py3' ],
 		'R'            => [],
 		'Razor'        => [],
 		'RDoc'         => [],

@@ -13,6 +13,7 @@
 	"interwiki-title-norights": "Vis interwikidata",
 	"interwiki-desc": "Tilføjer en [[Special:Interwiki|specialside]] til at få vist og redigere interwikitabellen",
 	"interwiki_intro": "Dette er en oversigt over interwikitabellen.",
+	"interwiki-legend-label": "Forklaring",
 	"interwiki_prefix": "Præfiks",
 	"interwiki-prefix-label": "Præfiks:",
 	"interwiki_prefix_intro": "Interwiki præfiks som skal anvendes i <code>[<nowiki />[præfiks:<em>sidenavn</em>]]</code> wikitekst syntaks.",

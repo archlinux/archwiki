@@ -47,7 +47,6 @@ TestUtils.encodeXml = function(string) {
  * @param {boolean} [options.parsoidOnly=false]
  * @param {boolean} [options.preserveIEW=false]
  * @param {boolean} [options.scrubWikitext=false]
- * @param {boolean} [options.rtTestMode=false]
  * @return {string}
  */
 TestUtils.normalizeOut = function(domBody, options) {
@@ -74,7 +73,6 @@ TestUtils.normalizeOut = function(domBody, options) {
 		var mockState = {
 			env,
 			selserMode: false,
-			rtTestMode: options.rtTestMode,
 		};
 		DOMDataUtils.visitAndLoadDataAttribs(domBody, { markNew: true });
 		domBody = (new DOMNormalizer(mockState).normalize(domBody));
@@ -86,8 +84,8 @@ TestUtils.normalizeOut = function(domBody, options) {
 	}
 
 	var stripTypeof = parsoidOnly ?
-		/(?:^|mw:DisplaySpace\s+)mw:Placeholder$/ :
-		/^mw:(?:(?:DisplaySpace\s+mw:)?Placeholder|Nowiki|Transclusion|Entity)$/;
+		/^mw:Placeholder$/ :
+		/^mw:(?:DisplaySpace|Placeholder|Nowiki|Transclusion|Entity)$/;
 	domBody = this.unwrapSpansAndNormalizeIEW(domBody, stripTypeof, parsoidOnly, preserveIEW);
 	var out = ContentUtils.toXML(domBody, { innerXML: true });
 	// NOTE that we use a slightly restricted regexp for "attribute"
@@ -102,9 +100,6 @@ TestUtils.normalizeOut = function(domBody, options) {
 
 	// Eliminate a source of indeterminacy from leaked strip markers
 	out = out.replace(/UNIQ-.*?-QINU/g, '');
-
-	// And from the imagemap extension - the id attribute is not always around, it appears!
-	out = out.replace(/<map name="ImageMap_[^"]*"( id="ImageMap_[^"]*")?( data-parsoid="[^"]*")?>/g, '<map>');
 
 	// Normalize COINS ids -- they aren't stable
 	out = out.replace(/\s?id=['"]coins_\d+['"]/ig, '');

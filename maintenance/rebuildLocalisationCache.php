@@ -56,6 +56,23 @@ class RebuildLocalisationCache extends Maintenance {
 			false,
 			true
 		);
+		$this->addOption(
+			'no-database',
+			'EXPERIMENTAL: Disable the database backend. Setting this option will result in an error ' .
+			'if you have extensions or use site configuration that need the database. This is an ' .
+			'experimental feature to allow offline building of the localisation cache. Known limitations:' .
+			"\n" .
+			'* Incompatible with LCStoreDB, which always requires a database. ' . "\n" .
+			'* The message purge may require a database. See --skip-message-purge.'
+		);
+		// T237148: The Gadget extension (bundled with MediaWiki by default) requires a database`
+		// connection to register its modules for MessageBlobStore.
+		$this->addOption(
+			'skip-message-purge',
+			'Skip purging of MessageBlobStore. The purge operation may require a database, depending ' .
+			'on the configuration and extensions on this wiki. If skipping the purge now, you need to ' .
+			'run purgeMessageBlobStore.php shortly after deployment.'
+		);
 	}
 
 	public function finalSetup() {
@@ -96,6 +113,7 @@ class RebuildLocalisationCache extends Maintenance {
 		if ( $this->hasOption( 'store-class' ) ) {
 			$conf['storeClass'] = $this->getOption( 'store-class' );
 		}
+
 		// XXX Copy-pasted from ServiceWiring.php. Do we need a factory for this one caller?
 		$services = MediaWikiServices::getInstance();
 		$lc = new LocalisationCacheBulkLoad(
@@ -106,9 +124,10 @@ class RebuildLocalisationCache extends Maintenance {
 			),
 			LocalisationCache::getStoreFromConf( $conf, $wgCacheDirectory ),
 			LoggerFactory::getInstance( 'localisation' ),
-			[ function () use ( $services ) {
-				MessageBlobStore::clearGlobalCacheEntry( $services->getMainWANObjectCache() );
-			} ],
+			$this->hasOption( 'skip-message-purge' ) ? [] :
+				[ static function () use ( $services ) {
+					MessageBlobStore::clearGlobalCacheEntry( $services->getMainWANObjectCache() );
+				} ],
 			$services->getLanguageNameUtils(),
 			$services->getHookContainer()
 		);
@@ -159,9 +178,18 @@ class RebuildLocalisationCache extends Maintenance {
 		foreach ( $pids as $pid ) {
 			$status = 0;
 			pcntl_waitpid( $pid, $status );
-			if ( pcntl_wexitstatus( $status ) ) {
-				// Pass a fatal error code through to the caller
-				$parentStatus = pcntl_wexitstatus( $status );
+
+			if ( pcntl_wifexited( $status ) ) {
+			$code = pcntl_wexitstatus( $status );
+				if ( $code ) {
+					$this->output( "Pid $pid exited with status $code !!\n" );
+				}
+				// Mush all child statuses into a single value in the parent.
+				$parentStatus |= $code;
+			} elseif ( pcntl_wifsignaled( $status ) ) {
+				$signum = pcntl_wtermsig( $status );
+				$this->output( "Pid $pid terminated by signal $signum !!\n" );
+				$parentStatus |= 1;
 			}
 		}
 
@@ -195,6 +223,15 @@ class RebuildLocalisationCache extends Maintenance {
 		}
 
 		return $numRebuilt;
+	}
+
+	/** @inheritDoc */
+	public function getDbType() {
+		if ( $this->hasOption( 'no-database' ) ) {
+			return Maintenance::DB_NONE;
+		}
+
+		return parent::getDbType();
 	}
 
 	/**

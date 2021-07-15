@@ -6,6 +6,8 @@
 			"Sumbukompor"
 		]
 	},
+	"skinname-timeless": "Langgeng",
+	"timeless-desc": "Sawiji ules tanpa wates wangenan kang dirancang adhedhasar purwarupa Winter déning Brandon Harris, lan gagrag-gagrag liya déning Yeyasan Wikimédhia",
 	"timeless-anonymous": "Anonim",
 	"timeless-loggedinas": "Mlebu log minangka '''$1'''",
 	"timeless-notloggedin": "Durung mlebu log",
@@ -16,8 +18,13 @@
 	"timeless-sitetools": "Piranti wiki",
 	"timeless-pageactions": "Piranti kaca",
 	"timeless-userpagetools": "Piranti kaca naraguna",
+	"timeless-action-addsection": "Rembugan anyar",
+	"timeless-view-view": "Waca",
 	"timeless-pagemisc": "Liyané",
 	"timeless-namespaces": "Mandhala aran",
 	"timeless-pagetools": "Laku kaca",
-	"timeless-languages": "Basa"
+	"timeless-languages": "Basa",
+	"timeless-projects": "Proyèk liya",
+	"timeless.css": "/* Kabèh CSS ing kéné bakal dimot kanggo naraguna ules Langgeng */",
+	"timeless.js": "/* Kabèh CSS ing kéné bakal dimot kanggo naraguna ules Langgeng */"
 }

@@ -6,7 +6,6 @@ use Generator;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Tokens\SourceRange;
 use Wikimedia\Parsoid\Utils\PHPUtils;
-use Wikimedia\Parsoid\Utils\Title;
 use Wikimedia\Parsoid\Utils\Utils;
 use Wikimedia\Parsoid\Wt2Html\TT\TokenHandler;
 
@@ -22,39 +21,37 @@ use Wikimedia\Parsoid\Wt2Html\TT\TokenHandler;
  */
 class TokenTransformManager extends PipelineStage {
 	/** @var array */
-	private $options = null;
+	private $options;
 
 	/** @var string */
 	private $traceType = "";
 
 	/** @var array */
-	private $traceState = null;
+	private $traceState;
 
 	/** @var TokenHandler[] */
 	private $transformers = [];
-
-	/** @var Frame */
-	private $frame;
 
 	/**
 	 * @param Env $env
 	 * @param array $options
 	 * @param string $stageId
-	 * @param PipelineStage|null $prevStage
+	 * @param ?PipelineStage $prevStage
 	 */
-	public function __construct( Env $env, array $options, string $stageId, $prevStage = null ) {
+	public function __construct(
+		Env $env, array $options, string $stageId,
+		?PipelineStage $prevStage = null
+	) {
 		parent::__construct( $env, $prevStage );
 		$this->options = $options;
 		$this->traceType = 'trace/ttm:' . preg_replace( '/TokenTransform/', '', $stageId );
 		$this->pipelineId = null;
-		$this->frame = $env->topFrame;
 
 		// Compute tracing state
 		$this->traceState = null;
 		if ( $env->hasTraceFlags() ) {
 			$this->traceState = [
 				'tokenTimes' => 0,
-				'traceTime' => $env->hasTraceFlag( 'time' ),
 				'tracer' => function ( $token, $transformer ) use ( $env ) {
 					$cname = Utils::stripNamespace( get_class( $transformer ) );
 					$cnameStr = $cname . str_repeat( ' ', 23 - strlen( $cname ) ) . "|";
@@ -62,7 +59,7 @@ class TokenTransformManager extends PipelineStage {
 						$this->traceType, $this->pipelineId, $cnameStr,
 						PHPUtils::jsonEncode( $token )
 					);
-				},
+				}
 			];
 		}
 	}
@@ -100,7 +97,12 @@ class TokenTransformManager extends PipelineStage {
 		}
 
 		$startTime = null;
-		if ( isset( $this->traceState['traceTime'] ) ) {
+		$profile = null;
+		if ( $this->traceState ) {
+			$profile = $this->traceState['profile'] =
+				$this->env->profiling() ? $this->env->getCurrentProfile() : null;
+		}
+		if ( $profile ) {
 			$startTime = PHPUtils::getStartHRTime();
 		}
 
@@ -117,8 +119,8 @@ class TokenTransformManager extends PipelineStage {
 			}
 		}
 
-		if ( isset( $this->traceState['traceTime'] ) ) {
-			$this->env->bumpTimeUse( 'SyncTTM',
+		if ( $profile ) {
+			$profile->bumpTimeUse( 'TTM',
 				( PHPUtils::getStartHRTime() - $startTime - $this->traceState['tokenTimes'] ),
 				'TTM' );
 		}
@@ -145,35 +147,13 @@ class TokenTransformManager extends PipelineStage {
 	}
 
 	/**
-	 * @inheritDoc
-	 */
-	public function setFrame(
-		?Frame $parentFrame, ?Title $title, array $args, string $srcText
-	): void {
-		// now actually set up the frame
-		if ( !$parentFrame ) {
-			$this->frame = $this->env->topFrame->newChild(
-				$title, $args, $srcText
-			);
-		} elseif ( !$title ) {
-			$this->frame = $parentFrame->newChild(
-				$parentFrame->getTitle(), $parentFrame->getArgs()->args, $srcText
-			);
-		} else {
-			$this->frame = $parentFrame->newChild(
-				$title, $args, $srcText
-			);
-		}
-	}
-
-	/**
 	 * Process a chunk of tokens.
 	 *
 	 * @param array $tokens Array of tokens to process
-	 * @param array|null $opts
+	 * @param ?array $opts
 	 * @return array Returns the array of processed tokens
 	 */
-	public function process( $tokens, array $opts = null ): array {
+	public function process( $tokens, ?array $opts = null ): array {
 		'@phan-var array $tokens'; // @var array $tokens
 		return $this->processChunk( $tokens );
 	}

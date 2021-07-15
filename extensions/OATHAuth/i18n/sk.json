@@ -38,7 +38,7 @@
 	"action-oathauth-enable": "zapnúť dvojfaktorovú autentifikáciu",
 	"oathauth-auth-token-label": "Kód",
 	"oathauth-auth-token-help": "Jednorazové heslo používané ako druhý faktor dvojfaktorovej autentifikácie.",
-	"oathauth-auth-ui": "Zadajte prosím overovací kód zo svojho autentifikačného zariadenia.",
+	"oathauth-auth-ui": "Zadajte, prosím, overovací kód zo svojho autentifikačného zariadenia.",
 	"oathauth-throttled": "Príliš veľa pokusov o overenie! Počkajte prosím $1.",
 	"oathauth-login-failed": "Overenie sa nepodarilo.",
 	"oathauth-describe-provider": "Dvojfaktorová autentifikácia (OATH).",

@@ -12,12 +12,13 @@
 			"TianyinLee",
 			"Zhuyifei1999",
 			"乌拉跨氪",
+			"列维劳德",
 			"沈澄心"
 		]
 	},
-	"cite-desc": "增加用于引用的<code>&lt;ref[ name=id]&gt;</code>和<code>&lt;references/&gt;</code>标签",
+	"cite-desc": "增加用于引用的<code>&lt;ref&gt;</code>和<code>&lt;references/&gt;</code>标签",
 	"cite_error": "引用错误：$1",
-	"cite_error_ref_invalid_dir": "无效的<code>&lt;ref&gt;</code>标签，dir参数“$1”未知。必须为ltr或rtl",
+	"cite_error_ref_invalid_dir": "无效的<code>dir=“$1”<code>，为<code>ltr</code>或<code>rtl</code>",
 	"cite_error_ref_numeric_key": "无效<code>&lt;ref&gt;</code>标签；name属性不能是单一的数字，请使用可辨识的标题",
 	"cite_error_ref_no_key": "打开的<code>&lt;ref&gt;</code>标签格式有误，或拥有一个错误的名称",
 	"cite_error_ref_too_many_keys": "无效<code>&lt;ref&gt;</code>标签；name属性非法，可能是内容过长",

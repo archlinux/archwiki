@@ -139,7 +139,6 @@ ve.init.mw.DesktopArticleTarget.static.compatibility = {
 	// containing an inequality (<,>,<=,>=) and a version number
 	supportedList: {
 		chrome: [ [ '>=', 19 ] ],
-		iceweasel: [ [ '>=', 10 ] ],
 		opera: [ [ '>=', 15 ] ],
 		// All versions not in unsupportedList are fully supported:
 		firefox: null,
@@ -265,13 +264,13 @@ ve.init.mw.DesktopArticleTarget.prototype.setupToolbar = function ( surface ) {
 		}
 
 		this.toolbarSetupDeferred.done( function () {
-			var surface = target.getSurface();
+			var newSurface = target.getSurface();
 			// Check the surface wasn't torn down while the toolbar was animating
-			if ( surface ) {
+			if ( newSurface ) {
 				ve.track( 'trace.initializeToolbar.enter', { mode: mode } );
 				target.getToolbar().initialize();
-				surface.getView().emit( 'position' );
-				surface.getContext().updateDimensions();
+				newSurface.getView().emit( 'position' );
+				newSurface.getContext().updateDimensions();
 				ve.track( 'trace.initializeToolbar.exit', { mode: mode } );
 				ve.track( 'trace.activate.exit', { mode: mode } );
 			}
@@ -455,6 +454,11 @@ ve.init.mw.DesktopArticleTarget.prototype.activate = function ( dataPromise ) {
 ve.init.mw.DesktopArticleTarget.prototype.afterActivate = function () {
 	var surfaceModel, range;
 	$( 'html' ).removeClass( 've-activating' ).addClass( 've-active' );
+
+	// Disable TemplateStyles in the original content
+	// (We do this here because toggling 've-active' class above hides it)
+	this.$editableContent.find( 'style[data-mw-deduplicate^="TemplateStyles:"]' ).prop( 'disabled', true );
+
 	if ( !this.editingTabDialog ) {
 		if ( this.sectionTitle ) {
 			this.sectionTitle.focus();
@@ -503,7 +507,6 @@ ve.init.mw.DesktopArticleTarget.prototype.setupNewSection = function ( surface )
 			this.sectionTitle = new OO.ui.TextInputWidget( {
 				$element: $( '<h2>' ),
 				classes: [ 've-ui-init-desktopArticleTarget-sectionTitle' ],
-				maxLength: 255,
 				placeholder: ve.msg( 'visualeditor-section-title-placeholder' ),
 				spellcheck: true
 			} );
@@ -556,7 +559,7 @@ ve.init.mw.DesktopArticleTarget.prototype.teardownNewSection = function ( surfac
  */
 ve.init.mw.DesktopArticleTarget.prototype.tryTeardown = function ( noPrompt, trackMechanism ) {
 	if ( this.deactivating || ( !this.active && !this.activating ) ) {
-		return;
+		return this.teardownPromise || ve.createDeferred().reject().promise();
 	}
 
 	// Just in case these weren't closed before
@@ -611,6 +614,10 @@ ve.init.mw.DesktopArticleTarget.prototype.teardown = function ( trackMechanism )
 	this.activatingDeferred.reject();
 	$( 'html' ).addClass( 've-deactivating' ).removeClass( 've-activated ve-active' );
 
+	// Restore TemplateStyles of the original content
+	// (We do this here because toggling 've-active' class above displays it)
+	this.$editableContent.find( 'style[data-mw-deduplicate^="TemplateStyles:"]' ).prop( 'disabled', false );
+
 	// User interface changes
 	this.restorePage();
 	this.restoreDocumentTitle();
@@ -653,9 +660,8 @@ ve.init.mw.DesktopArticleTarget.prototype.teardown = function ( trackMechanism )
 			$( 'html' ).removeClass( 've-deactivating' );
 
 			// Move original content back out of the target
-			target.$element.parent().append( target.$originalContent.children() )
-				// Restore TemplateStyles within it
-				.find( 'style[data-mw-deduplicate^="TemplateStyles:"]' ).prop( 'disabled', false );
+			target.$element.parent().append( target.$originalContent.children() );
+
 			$( '.ve-init-mw-desktopArticleTarget-uneditableContent' )
 				.removeClass( 've-init-mw-desktopArticleTarget-uneditableContent' );
 
@@ -712,7 +718,7 @@ ve.init.mw.DesktopArticleTarget.prototype.loadFail = function ( code, errorDetai
  * @inheritdoc
  */
 ve.init.mw.DesktopArticleTarget.prototype.surfaceReady = function () {
-	var redirectMetaItems,
+	var redirectMetaItems, metaList,
 		editNotices = this.getEditNotices(),
 		actionTools = this.actionsToolbar.tools,
 		surface = this.getSurface(),
@@ -734,12 +740,16 @@ ve.init.mw.DesktopArticleTarget.prototype.surfaceReady = function () {
 		} );
 	}
 
-	this.transformCategoryLinks( $( '#catlinks' ) );
+	metaList = this.getSurface().getModel().getMetaList();
 
-	surface.getModel().getMetaList().connect( this, {
+	metaList.connect( this, {
 		insert: 'onMetaItemInserted',
 		remove: 'onMetaItemRemoved'
 	} );
+	// Rebuild the category list from the page we got from the API. This makes
+	// it work regardless of whether we came here from activating on an
+	// existing page, or loading via an edit URL.
+	this.rebuildCategories( metaList.getItemsInGroup( 'mwCategory' ), true );
 
 	// Support: IE<=11
 	// IE requires us to defer before restoring the scroll position
@@ -841,7 +851,6 @@ ve.init.mw.DesktopArticleTarget.prototype.rebuildCategories = function ( categor
 		target.transformCategoryLinks( $catlinks );
 		mw.hook( 'wikipage.categories' ).fire( $catlinks );
 		$( '#catlinks' ).replaceWith( $catlinks );
-		ve.init.platform.linkCache.styleParsoidElements( $catlinks, target.doc );
 	} );
 };
 
@@ -1148,9 +1157,6 @@ ve.init.mw.DesktopArticleTarget.prototype.transformPage = function () {
 	// Exclude notification area to work around T143837
 	this.$originalContent.append( this.$element.siblings().not( '.mw-notification-area' ) );
 
-	// Disable TemplateStyles in originalContent
-	this.$originalContent.find( 'style[data-mw-deduplicate^="TemplateStyles:"]' ).prop( 'disabled', true );
-
 	this.$originalCategories = $( '#catlinks' ).clone( true );
 
 	// Mark every non-direct ancestor between editableContent and the container as uneditable
@@ -1299,13 +1305,16 @@ ve.init.mw.DesktopArticleTarget.prototype.restorePage = function () {
  * @param {Event} e Native event object
  */
 ve.init.mw.DesktopArticleTarget.prototype.onWindowPopState = function ( e ) {
-	var veaction;
+	var veaction, oldUri,
+		target = this;
 
 	if ( !this.verifyPopState( e.state ) ) {
 		// Ignore popstate events fired for states not created by us
 		// This also filters out the initial fire in Chrome (T59901).
 		return;
 	}
+
+	oldUri = this.currentUri;
 
 	this.currentUri = new mw.Uri( location.href );
 	veaction = this.currentUri.query.veaction;
@@ -1325,7 +1334,15 @@ ve.init.mw.DesktopArticleTarget.prototype.onWindowPopState = function ( e ) {
 	}
 	if ( this.active && veaction !== 'edit' && veaction !== 'editsource' ) {
 		this.actFromPopState = true;
-		this.tryTeardown( false, 'navigate-back' );
+		// "Undo" the pop-state, as the event is not cancellable
+		history.pushState( this.popState, document.title, oldUri );
+		this.currentUri = oldUri;
+		this.tryTeardown( false, 'navigate-back' ).then( function () {
+			// Teardown was successful, re-apply the undone state
+			history.back();
+		} ).always( function () {
+			target.actFromPopState = false;
+		} );
 	}
 };
 
@@ -1573,6 +1590,9 @@ ve.init.mw.DesktopArticleTarget.prototype.switchToFallbackWikitextEditor = funct
 			} );
 			if ( oldId && oldId !== mw.config.get( 'wgCurRevisionId' ) ) {
 				uri.extend( { oldid: oldId } );
+			}
+			if ( mw.libs.ve.isWelcomeDialogSuppressed() ) {
+				uri.extend( { vehidebetadialog: 1 } );
 			}
 			location.href = uri.toString();
 		} );

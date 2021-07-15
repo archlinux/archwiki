@@ -265,7 +265,7 @@ class ScribuntoHooks {
 			// Let TemplateStyles override Scribunto
 			return true;
 		}
-		if ( $title->getNamespace() == NS_MODULE && !Scribunto::isDocPage( $title ) ) {
+		if ( $title->getNamespace() === NS_MODULE && !Scribunto::isDocPage( $title ) ) {
 			$model = CONTENT_MODEL_SCRIBUNTO;
 			return true;
 		}

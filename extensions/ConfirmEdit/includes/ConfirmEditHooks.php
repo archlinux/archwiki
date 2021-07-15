@@ -6,7 +6,16 @@ use MediaWiki\Storage\EditResult;
 use MediaWiki\User\UserIdentity;
 use Wikimedia\IPUtils;
 
-class ConfirmEditHooks {
+class ConfirmEditHooks implements
+	\MediaWiki\Hook\AlternateEditPreviewHook,
+	\MediaWiki\Hook\EditPageBeforeEditButtonsHook,
+	\MediaWiki\Hook\EmailUserFormHook,
+	\MediaWiki\Hook\EmailUserHook,
+	\MediaWiki\Permissions\Hook\TitleReadWhitelistHook,
+	\MediaWiki\ResourceLoader\Hook\ResourceLoaderRegisterModulesHook,
+	\MediaWiki\Storage\Hook\PageSaveCompleteHook
+{
+
 	protected static $instanceCreated = false;
 
 	/**
@@ -43,25 +52,23 @@ class ConfirmEditHooks {
 	}
 
 	/**
-	 * PageSaveComplete hook handler.
-	 * Clear IP whitelist cache on page saves for [[MediaWiki:Captcha-ip-whitelist]].
+	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/PageSaveComplete
 	 *
 	 * @param WikiPage $wikiPage
-	 * @param UserIdentity $userIdentity
+	 * @param UserIdentity $user
 	 * @param string $summary
 	 * @param int $flags
 	 * @param RevisionRecord $revisionRecord
 	 * @param EditResult $editResult
-	 *
-	 * @return bool true
+	 * @return bool|void
 	 */
-	public static function onPageSaveComplete(
-		WikiPage $wikiPage,
-		UserIdentity $userIdentity,
-		string $summary,
-		int $flags,
-		RevisionRecord $revisionRecord,
-		EditResult $editResult
+	public function onPageSaveComplete(
+		$wikiPage,
+		$user,
+		$summary,
+		$flags,
+		$revisionRecord,
+		$editResult
 	) {
 		$title = $wikiPage->getTitle();
 		if ( $title->getText() === 'Captcha-ip-whitelist' && $title->getNamespace() === NS_MEDIAWIKI ) {
@@ -73,9 +80,14 @@ class ConfirmEditHooks {
 	}
 
 	/**
-	 * @param EditPage $editpage
+	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/EditPageBeforeEditButtons
+	 *
+	 * @param EditPage $editpage Current EditPage object
+	 * @param array &$buttons Array of edit buttons, "Save", "Preview", "Live", and "Diff"
+	 * @param string &$tabindex HTML tabindex of the last edit check/button
+	 * @return bool|void True or no return value to continue or false to abort
 	 */
-	public static function confirmEditPage( EditPage $editpage ) {
+	public function onEditPageBeforeEditButtons( $editpage, &$buttons, &$tabindex ) {
 		self::getInstance()->editShowCaptcha( $editpage );
 	}
 
@@ -88,22 +100,27 @@ class ConfirmEditHooks {
 	}
 
 	/**
-	 * @param HTMLForm $form
-	 * @return bool
+	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/EmailUserForm
+	 *
+	 * @param HTMLForm &$form HTMLForm object
+	 * @return bool|void True or no return value to continue or false to abort
 	 */
-	public static function injectEmailUser( $form ) {
+	public function onEmailUserForm( &$form ) {
 		return self::getInstance()->injectEmailUser( $form );
 	}
 
 	/**
-	 * @param MailAddress $from
-	 * @param MailAddress $to
-	 * @param string $subject
-	 * @param string $text
-	 * @param string &$error
-	 * @return bool
+	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/EmailUser
+	 *
+	 * @param MailAddress &$to MailAddress object of receiving user
+	 * @param MailAddress &$from MailAddress object of sending user
+	 * @param MailAddress &$subject subject of the mail
+	 * @param string &$text text of the mail
+	 * @param bool|Status|MessageSpecifier|array &$error Out-param for an error.
+	 *   Should be set to a Status object or boolean false.
+	 * @return bool|void True or no return value to continue or false to abort
 	 */
-	public static function confirmEmailUser( $from, $to, $subject, $text, &$error ) {
+	public function onEmailUser( &$to, &$from, &$subject, &$text, &$error ) {
 		return self::getInstance()->confirmEmailUser( $from, $to, $subject, $text, $error );
 	}
 
@@ -141,13 +158,14 @@ class ConfirmEditHooks {
 	}
 
 	/**
-	 * TitleReadWhitelist hook handler.
+	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/TitleReadWhitelist
 	 *
 	 * @param Title $title
 	 * @param User $user
 	 * @param bool &$whitelisted
+	 * @return bool|void
 	 */
-	public static function onTitleReadWhitelist( Title $title, User $user, &$whitelisted ) {
+	public function onTitleReadWhitelist( $title, $user, &$whitelisted ) {
 		$image = SpecialPage::getTitleFor( 'Captcha', 'image' );
 		$help = SpecialPage::getTitleFor( 'Captcha', 'help' );
 		if ( $title->equals( $image ) || $title->equals( $help ) ) {
@@ -168,36 +186,30 @@ class ConfirmEditHooks {
 	}
 
 	/**
-	 * AlternateEditPreview hook handler.
+	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/AlternateEditPreview
 	 *
-	 * Replaces the preview with a check of all lines for the [[MediaWiki:Captcha-ip-whitelist]]
-	 * interface message, if it validates as an IP address.
-	 *
-	 * @param EditPage $editor
-	 * @param Content $content
-	 * @param string &$html
-	 * @param ?ParserOutput $parserOutput
-	 * @return bool
+	 * @param EditPage $editPage
+	 * @param Content &$content
+	 * @param string &$previewHTML
+	 * @param ParserOutput &$parserOutput
+	 * @return bool|void
 	 */
-	public static function onAlternateEditPreview(
-		EditPage $editor,
-		Content $content,
-		&$html,
-		$parserOutput
+	public function onAlternateEditPreview( $editPage, &$content, &$previewHTML,
+		&$parserOutput
 	) {
-		$title = $editor->getTitle();
+		$title = $editPage->getTitle();
 		$exceptionTitle = Title::makeTitle( NS_MEDIAWIKI, 'Captcha-ip-whitelist' );
 
 		if ( !$title->equals( $exceptionTitle ) ) {
 			return true;
 		}
 
-		$ctx = $editor->getArticle()->getContext();
+		$ctx = $editPage->getArticle()->getContext();
 		$out = $ctx->getOutput();
 		$lang = $ctx->getLanguage();
 
 		$lines = explode( "\n", $content->getNativeData() );
-		$html .= Html::rawElement(
+		$previewHTML .= Html::rawElement(
 				'div',
 				[ 'class' => 'warningbox' ],
 				$ctx->msg( 'confirmedit-preview-description' )->parse()
@@ -224,8 +236,7 @@ class ConfirmEditHooks {
 				$validity = $ctx->msg( 'confirmedit-preview-invalid' )->escaped();
 				$css = 'notvalid';
 			}
-			// @phan-suppress-next-line SecurityCheck-DoubleEscaped
-			$html .= Html::openElement( 'tr' ) .
+			$previewHTML .= Html::openElement( 'tr' ) .
 				Html::element(
 					'td',
 					[],
@@ -248,18 +259,19 @@ class ConfirmEditHooks {
 				) .
 				Html::closeElement( 'tr' );
 		}
-		$html .= Html::closeElement( 'table' );
+		$previewHTML .= Html::closeElement( 'table' );
 		$out->addModuleStyles( 'ext.confirmEdit.editPreview.ipwhitelist.styles' );
 
 		return false;
 	}
 
 	/**
-	 * ResourceLoaderRegisterModules hook handler.
+	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/ResourceLoaderRegisterModules
 	 *
 	 * @param ResourceLoader $resourceLoader
+	 * @return void
 	 */
-	public static function onResourceLoaderRegisterModules( ResourceLoader $resourceLoader ) {
+	public function onResourceLoaderRegisterModules( ResourceLoader $resourceLoader ) : void {
 		$extensionRegistry = ExtensionRegistry::getInstance();
 		$messages = [];
 

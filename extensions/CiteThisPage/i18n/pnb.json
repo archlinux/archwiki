@@ -1,13 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
+			"Abbas dhothar",
 			"Khalid Mahmood"
 		]
 	},
 	"citethispage": "اتہ پتہ",
-	"citethispage-desc": "جوڑدا اے اک [[Special:Cite|اتہ پتہ]] خاص صفہ تے اوزار ڈبہ جوڑ۔",
-	"citethispage-link": "ایس صفے دا اتہ پتہ دیو",
-	"tooltip-citethispage": "ایس صفے دا کنج اتہ پتہ دیوو دی دس۔",
+	"citethispage-desc": "جوڑدا اے اک [[Special:Cite|اتہ پتہ]] خاص صفحہ تے اوزار ڈبہ جوڑ۔",
+	"citethispage-link": "ایس صفحے دا اتہ پتہ دیو",
+	"tooltip-citethispage": "اس صفحے دے حوالہ دے طریقہ دے بارے وچ معلومات",
 	"citethispage-change-submit": "اتہ پتہ",
-	"citethispage-change-target": "صفہ:"
+	"citethispage-change-target": "صفحہ:"
 }

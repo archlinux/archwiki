@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Edwingudfriend",
 			"Lloffiwr",
 			"Muddyb",
 			"Muddyb Blast Producer",
@@ -18,5 +19,6 @@
 	"vector-view-history": "Fungua historia",
 	"vector-view-view": "Soma",
 	"vector-view-viewsource": "Tazama msimbo",
+	"vector-jumptocontent": "Rukia yaliyomo",
 	"vector-more-actions": "Zaidi"
 }

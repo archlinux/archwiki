@@ -23,7 +23,7 @@
 
 		&:after {
 			content: '';
-			.background-image-svg( 'images/arrow-down.svg', 'images/arrow-down.png' );
+			background-image: url( images/arrow-down.svg );
 			background-position: 100% 50%;
 			background-repeat: no-repeat;
 			position: absolute;
@@ -46,14 +46,14 @@
 	}
 
 	// The menu itself.
-	.vector-menu-content-list {
+	.vector-menu-content {
 		background-color: @background-color-base;
 		list-style: none none;
 		// Match the width of the dropdown "heading" (the tab)
 		min-width: 100%;
 		position: absolute;
 		top: 2.5em;
-		left: -@border-width-base;
+		right: -@border-width-base;
 		margin: 0;
 		border: @border-width-base @border-style-base @border-color-base;
 		border-top-width: 0;
@@ -66,16 +66,14 @@
 		z-index: @z-index-menu;
 	}
 
-	&:hover .vector-menu-content-list {
+	.vector-menu-checkbox:checked ~ .vector-menu-content {
 		opacity: 1;
 		visibility: visible;
 	}
 
-	// This is in a separate block, so that browsers supporting :hover but not :checked still apply the rule above
-	// Support: IE8
-	.vector-menu-checkbox:checked ~ .vector-menu-content .vector-menu-content-list {
-		opacity: 1;
-		visibility: visible;
+	ul {
+		// display list style images introduced in typography.less.
+		list-style: none;
 	}
 
 	li {
@@ -115,12 +113,13 @@
 }
 
 // Tab Separators
-// `.vectorTabs`: Outer start border (left in LTR) of tab row.
-// `.vectorTabs a`: Border between tabs and outer end (right in LTR) border.
+// `.vector-menu-tabs`: Outer start border (left in LTR) of tab row.
+// `.vector-menu-tabs a`: Border between tabs and outer end (right in LTR) border.
 // `#mw-head .vector-menu-dropdown h3`: // Outer end (right in LTR) border of "Actions" menu.
 .vector-menu-tabs,
 .vector-menu-tabs a,
 #mw-head .vector-menu-dropdown h3 {
+	// Support: IE 9, which doesn't understand `linear-gradient`.
 	background-image: url( images/tab-separator.png );
 	background-image: linear-gradient( to bottom, rgba( 167, 215, 249, 0 ) 0, @border-color-content 100% );
 	background-repeat: no-repeat;
@@ -146,10 +145,6 @@
 	:not( :checked ) > & {
 		// When the browser supports :checked, display it
 		display: block;
-	}
-
-	&:checked + h3:after {
-		transform: scaleY( -1 );
 	}
 
 	&:focus + h3 {

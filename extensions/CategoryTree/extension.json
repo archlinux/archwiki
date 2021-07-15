@@ -15,7 +15,12 @@
 		"CategoryTreeHooks::initialize"
 	],
 	"SpecialPages": {
-		"CategoryTree": "CategoryTreePage"
+		"CategoryTree": {
+			"class": "CategoryTreePage",
+			"services": [
+				"SearchEngineFactory"
+			]
+		}
 	},
 	"APIModules": {
 		"categorytree": "ApiCategoryTree"

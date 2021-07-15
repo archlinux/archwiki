@@ -2,6 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"2nd-player",
+			"Bonfire12",
+			"Foomin10",
 			"Fryed-peach",
 			"Kkairri",
 			"Omotecho",
@@ -9,6 +11,7 @@
 			"Ridmevo",
 			"Shirayuki",
 			"Sujiniku",
+			"Tmv",
 			"Translatealcd",
 			"Yusuke1109"
 		]
@@ -40,7 +43,7 @@
 	"templatedata-doc-param-type-unknown": "不明",
 	"templatedata-doc-param-type-url": "URL",
 	"templatedata-doc-param-type-wiki-file-name": "ファイル",
-	"templatedata-doc-param-type-wiki-page-name": "ページ",
+	"templatedata-doc-param-type-wiki-page-name": "ページ名",
 	"templatedata-doc-param-type-wiki-template-name": "テンプレート",
 	"templatedata-doc-param-type-wiki-user-name": "利用者",
 	"templatedata-doc-params": "テンプレート引数",
@@ -64,6 +67,7 @@
 	"templatedata-modal-button-changelang": "言語を変更",
 	"templatedata-modal-button-delparam": "引数情報を除去",
 	"templatedata-modal-button-done": "完了",
+	"templatedata-modal-button-map": "地図を編集",
 	"templatedata-modal-button-importParams": "引数一覧を取り込む",
 	"templatedata-modal-button-restoreparam": "パラメーターを復元",
 	"templatedata-modal-button-saveparam": "保存",
@@ -78,6 +82,7 @@
 	"templatedata-modal-json-error-replace": "置換",
 	"templatedata-modal-notice-import-numparams": "$1 個の{{PLURAL:$1|引数}}が新たに取り込まれました: $2",
 	"templatedata-modal-placeholder-paramkey": "引数名",
+	"templatedata-modal-placeholder-mapinfo": "このテンプレートには地図がありません",
 	"templatedata-modal-search-input-placeholder": "言語名またはコードで検索",
 	"templatedata-modal-table-param-actions": "操作",
 	"templatedata-modal-table-param-aliases": "別名 (カンマ区切り)",

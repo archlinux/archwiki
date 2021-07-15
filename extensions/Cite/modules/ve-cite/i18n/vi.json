@@ -24,7 +24,6 @@
 	"cite-ve-changedesc-reflist-group-to": "Nhóm danh sách chú thích đổi từ nhóm chung thành “$1”",
 	"cite-ve-changedesc-reflist-responsive-set": "Xếp danh sách chú thích tham khảo thành nhiều cột",
 	"cite-ve-changedesc-reflist-responsive-unset": "Xếp lại danh sách chú thích tham khảo thành một cột",
-	"cite-ve-changedesc-reflist-item-id": "Đã thay đổi chỉ số chú thích tham khảo",
 	"cite-ve-dialog-reference-editing-reused": "Chú thích này được sử dụng {{PLURAL:$1|một lần|2=hai lần|$1 lần}} trên trang này.",
 	"cite-ve-dialog-reference-options-group-label": "Nhóm cước chú",
 	"cite-ve-dialog-reference-options-group-placeholder": "Tham khảo chung",

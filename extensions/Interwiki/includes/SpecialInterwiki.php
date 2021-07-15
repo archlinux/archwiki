@@ -1,6 +1,17 @@
 <?php
 
+namespace MediaWiki\Extension\Interwiki;
+
+use Html;
+use HTMLForm;
+use Language;
+use LogPage;
 use MediaWiki\MediaWikiServices;
+use OutputPage;
+use PermissionsError;
+use ReadOnlyError;
+use SpecialPage;
+use Status;
 
 /**
  * Implements Special:Interwiki
@@ -107,6 +118,7 @@ class SpecialInterwiki extends SpecialPage {
 						'type' => 'text',
 						'label-message' => 'interwiki-prefix-label',
 						'name' => 'prefix',
+						'autofocus' => true,
 					],
 
 					'local' => [
@@ -130,7 +142,6 @@ class SpecialInterwiki extends SpecialPage {
 						'maxlength' => 200,
 						'name' => 'wpInterwikiURL',
 						'size' => 60,
-						'tabindex' => 1,
 					],
 
 					'reason' => [
@@ -140,7 +151,6 @@ class SpecialInterwiki extends SpecialPage {
 						'maxlength' => 200,
 						'name' => 'wpInterwikiReason',
 						'size' => 60,
-						'tabindex' => 1,
 					],
 				];
 
@@ -482,8 +492,7 @@ class SpecialInterwiki extends SpecialPage {
 
 	protected function makeTable( $canModify, $iwPrefixes ) {
 		// Output the existing Interwiki prefixes table header
-		$out = '';
-		$out .= Html::openElement(
+		$out = Html::openElement(
 			'table',
 			[ 'class' => 'mw-interwikitable wikitable sortable body' ]
 		) . "\n";

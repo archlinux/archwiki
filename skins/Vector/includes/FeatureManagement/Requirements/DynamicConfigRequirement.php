@@ -61,7 +61,7 @@ use Vector\FeatureManagement\Requirement;
  *
  * @unstable
  *
- * @package FeatureManagement
+ * @package Vector\FeatureManagement\Requirements
  * @internal
  */
 final class DynamicConfigRequirement implements Requirement {

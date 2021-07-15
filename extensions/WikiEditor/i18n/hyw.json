@@ -3,7 +3,8 @@
 		"authors": [
 			"Azniv Stepanian",
 			"Kareyac",
-			"Դավիթ Սարոյան"
+			"Դավիթ Սարոյան",
+			"Շահէն"
 		]
 	},
 	"wikieditor-wikitext-tab": "Ուիքիգրութիւն",
@@ -38,6 +39,8 @@
 	"wikieditor-toolbar-tool-file-example": "Օրինակ.jpg",
 	"wikieditor-toolbar-tool-file-title": "Մուտքագրեցէ՛ք նիշքը",
 	"wikieditor-toolbar-file-target": "Նիշքի անունը․",
+	"wikieditor-toolbar-file-alt": "Ուրիշ տարբերակ՝",
+	"wikieditor-toolbar-file-alt-help-label": "(Օգնութիւն)",
 	"wikieditor-toolbar-file-size": "Չափ․",
 	"wikieditor-toolbar-file-default": "(լռելեան)",
 	"wikieditor-toolbar-file-format": "Ձեւաւորել",
@@ -51,7 +54,7 @@
 	"wikieditor-toolbar-tool-reference-insert": "Մուտքագրեցէ՛ք",
 	"wikieditor-toolbar-tool-reference-text": "Ծանօթագրութեան գրութիւնը",
 	"wikieditor-toolbar-tool-signature": "Ստորագրութիւն եւ ժամակնիք",
-	"wikieditor-toolbar-section-advanced": "Յառաջացած",
+	"wikieditor-toolbar-section-advanced": "Ընդլայնուած",
 	"wikieditor-toolbar-tool-heading": "Վերնագիր",
 	"wikieditor-toolbar-tool-heading-1": "1-ին մակարդակի",
 	"wikieditor-toolbar-tool-heading-2": "2-րդ մակարդակի",

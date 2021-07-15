@@ -52,7 +52,6 @@
 	"cite-ve-changedesc-reflist-group-to": "Groep van referentielijst gewijzigd van de algemene groep naar \"$1\"",
 	"cite-ve-changedesc-reflist-responsive-set": "Referentielijst gewijzigd naar responsive kolommen",
 	"cite-ve-changedesc-reflist-responsive-unset": "Referentielijst gewijzigd naar één kolom",
-	"cite-ve-changedesc-reflist-item-id": "Referentienummer gewijzigd",
 	"cite-ve-citationneeded-button": "Citaat toevoegen",
 	"cite-ve-dialog-reference-editing-reused": "Deze referentie wordt $1 {{PLURAL:$1|keer}} gebruikt op deze pagina.",
 	"cite-ve-dialog-reference-editing-reused-long": "Deze referentie wordt $1 {{PLURAL:$1|keer}} gebruikt op deze pagina. Wijzigingen die u hier maakt, zijn van toepassing op alle plaatsen waar deze referentie gebruikt wordt.",

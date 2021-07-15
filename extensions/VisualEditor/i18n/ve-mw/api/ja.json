@@ -3,6 +3,7 @@
 		"authors": [
 			"2nd-player",
 			"Delim",
+			"Foomin10",
 			"Fryed-peach",
 			"Los688",
 			"Shirayuki",
@@ -10,7 +11,7 @@
 			"Takot"
 		]
 	},
-	"apierror-visualeditor-docserver": "Parsoid/RESTbaseサーバと通信中エラーが発生しました",
+	"apierror-visualeditor-docserver": "Parsoid/RESTBaseサーバと通信中エラーが発生しました（応答なし）",
 	"apihelp-visualeditor-description": "ParsoidサービスからHTML5ページを返す",
 	"apihelp-visualeditor-param-basetimestamp": "保存する際に、編集した版のタイムスタンプとしてこれがセットされます。編集競合を検出するのに利用されます。",
 	"apihelp-visualeditor-param-cachekey": "serializeまたはdiffについては、このキーで以前に serializeforcache リクエストをした際の結果を使用する。$1html を上書きします。",

@@ -3,7 +3,7 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Ext\Nowiki;
 
-use DOMDocument;
+use DOMDocumentFragment;
 use DOMElement;
 use DOMText;
 use Wikimedia\Assert\Assert;
@@ -36,8 +36,9 @@ class Nowiki extends ExtensionTagHandler implements ExtensionModule {
 	/** @inheritDoc */
 	public function sourceToDom(
 		ParsoidExtensionAPI $extApi, string $txt, array $extArgs
-	): DOMDocument {
-		$doc = $extApi->htmlToDom( '' ); // Empty doc
+	): DOMDocumentFragment {
+		$domFragment = $extApi->htmlToDom( '' );
+		$doc = $domFragment->ownerDocument;
 		$span = $doc->createElement( 'span' );
 		DOMUtils::addTypeOf( $span, 'mw:Nowiki' );
 
@@ -62,9 +63,9 @@ class Nowiki extends ExtensionTagHandler implements ExtensionModule {
 			$span->appendChild( $doc->createTextNode( $t ) );
 		}
 
-		$span->normalize();
-		DOMCompat::getBody( $doc )->appendChild( $span );
-		return $doc;
+		DOMCompat::normalize( $span );
+		$domFragment->appendChild( $span );
+		return $domFragment;
 	}
 
 	/** @inheritDoc */
@@ -93,6 +94,16 @@ class Nowiki extends ExtensionTagHandler implements ExtensionModule {
 						// Edited content
 						$out = Utils::entityEncodeAll( $child->firstChild->nodeValue );
 					}
+				// DisplaySpace is added in a final post-processing pass so,
+				// even though it isn't emitted in the extension handler, we
+				// need to deal with the possibility of its presence
+				// FIXME(T254501): Should avoid the need for this
+				} elseif (
+					$child->nodeName === 'span' &&
+					DOMUtils::hasTypeOf( $child, 'mw:DisplaySpace' ) &&
+					DOMUtils::hasNChildren( $child, 1 )
+				) {
+					$out = ' ';
 				} else {
 					/* This is a hacky fallback for what is essentially
 					 * undefined behavior. No matter what we emit here,

@@ -31,7 +31,7 @@ class WTSUtils {
 	}
 
 	/**
-	 * @param DomSourceRange|null $dsr
+	 * @param ?DomSourceRange $dsr
 	 * @return bool
 	 */
 	public static function hasValidTagWidths( ?DomSourceRange $dsr ): bool {
@@ -172,22 +172,15 @@ class WTSUtils {
 	public static function emitStartTag(
 		string $src, DOMElement $node, SerializerState $state, bool $dontEmit = false
 	): bool {
-		if ( empty( $state->rtTestMode ) ||
-			empty( DOMDataUtils::getDataParsoid( $node )->autoInsertedStart )
-		) {
-			if ( !$dontEmit ) {
-				$state->emitChunk( $src, $node );
-			}
-			return true;
-		} else {
-			// drop content
-			return false;
+		if ( !$dontEmit ) {
+			$state->emitChunk( $src, $node );
 		}
+		return true;
 	}
 
 	/**
-	 * Emit the start tag source when not round-trip testing, or when the node is
-	 * not marked with autoInsertedStart.
+	 * Emit the end tag source when not round-trip testing, or when the node is
+	 * not marked with autoInsertedEnd.
 	 *
 	 * @param string $src
 	 * @param DOMElement $node
@@ -198,17 +191,10 @@ class WTSUtils {
 	public static function emitEndTag(
 		string $src, DOMElement $node, SerializerState $state, bool $dontEmit = false
 	): bool {
-		if ( empty( $state->rtTestMode ) ||
-			empty( DOMDataUtils::getDataParsoid( $node )->autoInsertedEnd )
-		) {
-			if ( !$dontEmit ) {
-				$state->emitChunk( $src, $node );
-			}
-			return true;
-		} else {
-			// drop content
-			return false;
+		if ( !$dontEmit ) {
+			$state->emitChunk( $src, $node );
 		}
+		return true;
 	}
 
 	/**
@@ -217,12 +203,14 @@ class WTSUtils {
 	 * transparent in rendering. (See emitsSolTransparentSingleLineWT for
 	 * which nodes.)
 	 *
-	 * @param DOMNode|null $origNode
+	 * @param ?DOMNode $origNode
 	 * @param bool $before
 	 * @return bool
 	 */
-	public static function nextToDeletedBlockNodeInWT( ?DOMNode $origNode, bool $before ): bool {
-		if ( !$origNode || DOMUtils::isBody( $origNode ) ) {
+	public static function nextToDeletedBlockNodeInWT(
+		?DOMNode $origNode, bool $before
+	): bool {
+		if ( !$origNode || DOMUtils::atTheTop( $origNode ) ) {
 			return false;
 		}
 
@@ -307,7 +295,7 @@ class WTSUtils {
 		$prev = null;
 
 		if ( WTUtils::isRedirectLink( $node ) ) {
-			return DOMUtils::isBody( $node->parentNode ) && !$node->previousSibling;
+			return DOMUtils::atTheTop( $node->parentNode ) && !$node->previousSibling;
 		} elseif ( $node->nodeName === 'th' || $node->nodeName === 'td' ) {
 			DOMUtils::assertElt( $node );
 			// The wikitext representation for them is dependent
@@ -342,29 +330,41 @@ class WTSUtils {
 			// we cannot simply reuse orig. wikitext for this <tr>.
 			return !DOMUtils::previousNonSepSibling( $node );
 		} elseif ( DOMUtils::isNestedListOrListItem( $node ) ) {
-			// If there are no previous siblings, bullets were assigned to
-			// containing elements in the ext.core.ListHandler. For example,
-			//
-			// *** a
-			//
-			// Will assign bullets as,
-			//
-			// <ul><li-*>
-			// <ul><li-*>
-			// <ul><li-*> a</li></ul>
-			// </li></ul>
-			// </li></ul>
-			//
-			// If we reuse the src for the inner li with the a, we'd be missing
-			// two bullets because the tag handler for lists in the serializer only
-			// emits start tag src when it hits a first child that isn't a list
-			// element. We need to walk up and get them.
-			$prev = $node->previousSibling;
-			if ( !$prev ) {
-				return false;
+			if ( DOMUtils::isList( $node ) ) {
+				// Lists never get bullets assigned to them. So, unless they
+				// start a fresh list ( => they have a previous sibling ),
+				// we cannot reuse source for nested lists.
+				if ( !$node->previousSibling ) {
+					return false;
+				}
+			} else {
+				// Consider this wikitext snippet and its output below:
+				//
+				//   ** a
+				//   *** b
+				//
+				//   <ul><li-*>
+				//   <ul><li-*> a              <-- cannot reuse source of this <li>
+				//   <ul><li-***> b</li></ul>  <-- can reuse source of this <li>
+				//   </li></ul>
+				//   </li></ul>
+				//
+				// If we reuse the src for the inner li with the a, we'd be missing
+				// one bullet because the tag handler for lists in the serializer only
+				// emits start tag src when it hits a first child that isn't a list
+				// element. We need to walk up and get the other bullet(s).
+				//
+				// The above logic can be condensed into this observation.
+				// Reusable nested <li> nodes will always have multiple bullets.
+				// Don't reuse source from any nested list
+				$dp = DOMDataUtils::getDataParsoid( $node );
+				if ( !isset( $dp->dsr ) || $dp->dsr->openWidth < 2 ) {
+					return false;
+				}
 			}
 
 			// If a previous sibling was modified, we can't reuse the start dsr.
+			$prev = $node->previousSibling;
 			while ( $prev ) {
 				if ( DOMUtils::isDiffMarker( $prev ) || DiffUtils::hasInsertedDiffMark( $prev, $env ) ) {
 					return false;

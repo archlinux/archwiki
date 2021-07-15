@@ -17,9 +17,7 @@ use Wikimedia\Parsoid\Wt2Html\TokenTransformManager;
 /**
  * Small utility class that encapsulates the common 'collect all tokens
  * starting from a token of type x until token of type y or (optionally) the
- * end-of-input'. Only supported for synchronous in-order transformation
- * stages (SyncTokenTransformManager), as async out-of-order expansions
- * would wreak havoc with this kind of collector.
+ * end-of-input'.
  */
 abstract class TokenCollector extends TokenHandler {
 	protected $onAnyEnabled;
@@ -99,16 +97,21 @@ abstract class TokenCollector extends TokenHandler {
 			$activeTokens = array_pop( $this->scopeStack );
 			$activeTokens[] = $token;
 
-			// clean up
-			if ( count( $this->scopeStack ) === 0 || $token instanceof EOFTk ) {
-				$this->onAnyEnabled = false;
-			}
-
 			if ( $token instanceof EndTagTk ) {
-				// Transformation can be either sync or async, but receives all collected
-				// tokens instead of a single token.
-				return $this->transformation( $activeTokens );
-				// XXX sync version: return tokens
+				// Transformation receives all collected tokens instead of a single token.
+				$res = $this->transformation( $activeTokens );
+
+				if ( count( $this->scopeStack ) === 0 ) {
+					$this->onAnyEnabled = false;
+					return $res;
+				} else {
+					// Merge tokens onto parent scope and return [].
+					// Only when we hit the bottom of the stack,
+					// we will return the collapsed token stream.
+					$topScope = array_pop( $this->scopeStack );
+					array_push( $this->scopeStack, array_merge( $topScope, $res['tokens'] ) );
+					return [ 'tokens' => [] ];
+				}
 			} else {
 				// EOF -- collapse stack!
 				$allToks = [];
@@ -129,6 +132,8 @@ abstract class TokenCollector extends TokenHandler {
 					}
 				}
 
+				$this->scopeStack = [];
+				$this->onAnyEnabled = false;
 				return $res;
 			}
 		} else {
@@ -162,13 +167,13 @@ abstract class TokenCollector extends TokenHandler {
 	 * @param string $tokenName
 	 * @param bool $isEnd
 	 * @param SourceRange $tsr
-	 * @param string|null $src
+	 * @param ?string $src
 	 * @return SelfclosingTagTk
 	 */
 	public static function buildMetaToken(
 		TokenTransformManager $manager, string $tokenName, bool $isEnd,
 		SourceRange $tsr, ?string $src
-	) : SelfclosingTagTk {
+	): SelfclosingTagTk {
 		if ( $isEnd ) {
 			$tokenName .= '/End';
 		}
@@ -186,12 +191,13 @@ abstract class TokenCollector extends TokenHandler {
 	 * @param TokenTransformManager $manager
 	 * @param string $tokenName
 	 * @param Token $startDelim
-	 * @param Token|null $endDelim
+	 * @param ?Token $endDelim
 	 * @return SelfclosingTagTk
 	 */
 	protected static function buildStrippedMetaToken(
-		TokenTransformManager $manager, string $tokenName, Token $startDelim, ?Token $endDelim
-	) : SelfclosingTagTk {
+		TokenTransformManager $manager, string $tokenName, Token $startDelim,
+		?Token $endDelim
+	): SelfclosingTagTk {
 		$da = $startDelim->dataAttribs;
 		$tsr0 = $da ? $da->tsr : null;
 		$t0 = $tsr0 ? $tsr0->start : null;

@@ -17,7 +17,6 @@
 	"renameuserwarnings": "ווארענונגען:",
 	"renameuserconfirm": "יאָ, ענדער דעם באַניצער־נאָמען",
 	"renameusersubmit": "אײַנגעבן",
-	"renameuser-submit-blocklog": "ווײַזן בלאקירן לאג פאר באניצער",
 	"renameusererrordoesnotexist": "דער באַניצער \"<nowiki>$1</nowiki>\" עקזיסטירט נישט.",
 	"renameusererrorexists": "דער {{GENDER:$1|באַניצער}} \"<nowiki>$1</nowiki>\" עקזיסטירט שוין.",
 	"renameusererrorinvalid": "דער באַניצער נאָמען  \"<nowiki>$1</nowiki>\" איז נישט גילטיק.",

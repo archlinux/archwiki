@@ -7,6 +7,7 @@
 			"Firilacroco",
 			"Macofe",
 			"Minisarm",
+			"NGC 54",
 			"Stelistcristi",
 			"Strainu",
 			"Wintereu"
@@ -51,7 +52,7 @@
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Legătură internă",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "Legătură externă",
 	"wikieditor-toolbar-tool-link-empty": "Nu ați introdus nimic către care să stabilesc o legătură.",
-	"wikieditor-toolbar-tool-file": "Fișier inserat",
+	"wikieditor-toolbar-tool-file": "Imagini și media",
 	"wikieditor-toolbar-tool-file-example": "Exemplu.jpg",
 	"wikieditor-toolbar-tool-file-title": "Inserare fișier",
 	"wikieditor-toolbar-file-target": "Numele fișierului:",

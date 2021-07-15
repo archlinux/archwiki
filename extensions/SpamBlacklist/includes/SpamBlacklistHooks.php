@@ -42,7 +42,7 @@ class SpamBlacklistHooks {
 		}
 
 		$spamObj = BaseBlacklist::getSpamBlacklist();
-		$matches = $spamObj->filter( $links, $title );
+		$matches = $spamObj->filter( $links, $title, $user );
 
 		if ( $matches !== false ) {
 			$error = new ApiMessage(
@@ -62,11 +62,13 @@ class SpamBlacklistHooks {
 	public static function onParserOutputStashForEdit(
 		WikiPage $page,
 		Content $content,
-		ParserOutput $output
+		ParserOutput $output,
+		$summary,
+		User $user
 	) {
 		$links = array_keys( $output->getExternalLinks() );
 		$spamObj = BaseBlacklist::getSpamBlacklist();
-		$spamObj->warmCachesForFilter( $page->getTitle(), $links );
+		$spamObj->warmCachesForFilter( $page->getTitle(), $links, $user );
 	}
 
 	/**
@@ -211,7 +213,7 @@ class SpamBlacklistHooks {
 		}
 
 		$spamObj = BaseBlacklist::getSpamBlacklist();
-		$matches = $spamObj->filter( $links, $title );
+		$matches = $spamObj->filter( $links, $title, $user );
 
 		if ( $matches !== false ) {
 			$error = new ApiMessage(

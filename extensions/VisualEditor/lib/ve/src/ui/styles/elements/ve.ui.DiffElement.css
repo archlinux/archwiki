@@ -9,8 +9,10 @@
 	position: relative;
 }
 
-.ve-ui-diffElement-hasMoves .ve-ui-diffElement-content {
-	margin-left: 15px;
+.ve-ui-diffElement:after {
+	content: '';
+	clear: both;
+	display: block;
 }
 
 .ve-ui-diffElement-hasDescriptions .ve-ui-diffElement-content {
@@ -55,6 +57,7 @@
 
 .ve-ui-changeDescriptionsSelectWidget > .oo-ui-optionWidget {
 	cursor: default;
+	font-size: 0.92857143em; /* 13/14px */
 }
 
 .ve-ui-changeDescriptionsSelectWidget > .oo-ui-optionWidget-highlighted {
@@ -74,19 +77,22 @@
 	color: #72777d;
 }
 
-.ve-ui-diffElement-attributeChange del,
-.ve-ui-diffElement-attributeChange ins {
-	text-decoration: none;
-}
-
 .ve-ui-diffElement-attributeChange del {
 	background-color: #f2c2bf;
 	box-shadow: 0 0 0 1px #f2c2bf;
+	text-decoration: line-through;
+}
+
+.ve-ui-diffElement-attributeChange del:hover {
+	background-color: #f2c2bf;
+	box-shadow: 0 0 0 1px #f2c2bf;
+	text-decoration: none;
 }
 
 .ve-ui-diffElement-attributeChange ins {
 	background-color: #c4ede4;
 	box-shadow: 0 0 0 1px #c4ede4;
+	text-decoration: none;
 }
 
 .ve-ui-diffElement-attributeChange.oo-ui-labelElement .oo-ui-labelElement-label {
@@ -112,11 +118,13 @@
 ins[ data-diff-action='insert' ],
 [ data-diff-action='insert' ] > ins,
 del[ data-diff-action='remove' ],
-[ data-diff-action='remove' ] > del {
+[ data-diff-action='remove' ] > del { /* stylelint-disable-line no-descending-specificity */
 	white-space: pre-wrap;
 }
 
 [ data-diff-action='insert' ],
+/* <code> tags often have a background color that needs overriding */
+[ data-diff-action='insert' ] > code,
 /* elements using display:table-caption need separate backgrounds */
 table[ data-diff-action='insert' ] > caption,
 figure[ data-diff-action='insert' ] > figcaption {
@@ -125,6 +133,8 @@ figure[ data-diff-action='insert' ] > figcaption {
 }
 
 [ data-diff-action='remove' ],
+/* <code> tags often have a background color that needs overriding */
+[ data-diff-action='remove' ] > code,
 /* elements using display:table-caption need separate backgrounds */
 table[ data-diff-action='remove' ] > caption,
 figure[ data-diff-action='remove' ] > figcaption {
@@ -138,12 +148,19 @@ figure[ data-diff-action='remove' ] > figcaption {
 	box-shadow: 0 0 0 1px #b6d4fb;
 }
 
+[ data-diff-action='insert' ] img,
+[ data-diff-action='remove' ] img,
+[ data-diff-action='change' ] img {
+	/* Make images slightly transparent so remove/insert/change colour can be seen */
+	opacity: 0.5;
+}
+
 [ data-diff-action='change-remove' ] {
 	display: none;
 }
 
 del[ data-diff-action='remove' ],
-[ data-diff-action='remove' ] > del {
+[ data-diff-action='remove' ] > del { /* stylelint-disable-line no-descending-specificity */
 	text-decoration: line-through;
 }
 
@@ -160,54 +177,45 @@ del[ data-diff-action='remove' ]:hover,
 	margin-left: 4px;
 }
 
-[ data-diff-action='none' ] {
+[ data-diff-action='none' ]:not( [ data-diff-move ] ) {
 	opacity: 0.4;
 	/* opacity increases stacking order, so reduce it again */
 	z-index: -1;
 	position: relative;
 }
 
-[ data-diff-move='up' ],
-[ data-diff-move='down' ] {
+[ data-diff-move ] {
+	background: #eaecf0; /* base80 */
+	outline: 5px solid #eaecf0;
+}
+
+.ve-ui-diffElement-moved-up,
+.ve-ui-diffElement-moved-down {
 	position: relative;
-	opacity: 1;
+	padding-left: 1em;
 }
 
-[ data-diff-move='up' ]:before,
-[ data-diff-move='down' ]:before {
+.ve-ui-diffElement-moved-up:before,
+.ve-ui-diffElement-moved-down:before {
 	position: absolute;
-	left: -15px;
-	content: ' ';
-	top: 50%;
-	margin-top: -3px;
-	width: 0;
-	height: 0;
-	border-left: 4px solid transparent;
-	border-right: 4px solid transparent;
-	background: #fff;
+	left: 0;
+	line-height: 1;
 }
 
-[ data-diff-move='down' ]:before {
-	border-top: 6px solid #36c;
+.ve-ui-diffElement-moved-down:before {
+	content: '↓';
 }
 
-[ data-diff-move='up' ]:before {
-	border-bottom: 6px solid #36c;
-}
-
-li [ data-diff-move='up' ]:before,
-li [ data-diff-move='down' ]:before {
-	left: -30px;
+.ve-ui-diffElement-moved-up:before {
+	content: '↑';
 }
 
 [ data-diff-action='insert' ]:empty:before,
 [ data-diff-action='remove' ]:empty:before,
-[ data-diff-move='up' ]:empty:before,
-[ data-diff-move='down' ]:empty:before,
+[ data-diff-move ]:empty:before,
 [ data-diff-action='insert' ] *:empty:before,
 [ data-diff-action='remove' ] *:empty:before,
-[ data-diff-move='up' ] *:empty:before,
-[ data-diff-move='down' ] *:empty:before {
+[ data-diff-move ] *:empty:before {
 	content: url( data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7 );
 }
 

@@ -13,9 +13,9 @@ use Composer\IO\NullIO;
 use Wikimedia\Parsoid\Core\ClientError;
 use Wikimedia\Parsoid\Core\PageBundle;
 use Wikimedia\Parsoid\Core\SelserData;
+use Wikimedia\Parsoid\ParserTests\TestUtils;
 use Wikimedia\Parsoid\Parsoid;
 use Wikimedia\Parsoid\Tools\ScriptUtils;
-use Wikimedia\Parsoid\Tools\TestUtils;
 use Wikimedia\Parsoid\Utils\ContentUtils;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
@@ -27,6 +27,7 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 
 	public function __construct() {
 		parent::__construct();
+		parent::addDefaultParams();
 		$this->addDescription(
 			"Omnibus script to convert between wikitext and HTML, and roundtrip wikitext or HTML. "
 			. "Supports a number of options pertaining to pointing at a specific wiki "
@@ -37,8 +38,14 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 		$this->addOption( 'html2wt', 'HTML -> Wikitext' );
 		$this->addOption( 'wt2wt', 'Wikitext -> Wikitext' );
 		$this->addOption( 'html2html', 'HTML -> HTML' );
-		$this->addOption( 'body_only',
-						 'Just return the body, without any normalizations as in --normalize' );
+		$this->addOption(
+			'body_only',
+			'Just return <body> innerHTML (defaults to true)',
+			false,
+			true
+		);
+		$this->setOptionDefault( 'body_only', true );
+		$this->addOption( 'profile', 'Proxy for --trace time' );
 		$this->addOption( 'selser',
 						 'Use the selective serializer to go from HTML to Wikitext.' );
 		$this->addOption(
@@ -101,10 +108,6 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 			'wrapSections',
 			// Override the default in Env since the wrappers are annoying in dev-mode
 			'Output <section> tags (default false)'
-		);
-		$this->addOption(
-			'rtTestMode',
-			'Test in rt test mode (changes some parse & serialization strategies)'
 		);
 		$this->addOption(
 			'linting',
@@ -308,7 +311,7 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 	/**
 	 * @param array $configOpts
 	 * @param array $parsoidOpts
-	 * @param string|null $wt
+	 * @param ?string $wt
 	 * @return string|PageBundle
 	 */
 	public function wt2Html(
@@ -334,7 +337,7 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 	 * @param array $configOpts
 	 * @param array $parsoidOpts
 	 * @param string $html
-	 * @param SelserData|null $selserData
+	 * @param ?SelserData $selserData
 	 * @return string
 	 */
 	public function html2Wt(
@@ -442,10 +445,10 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 				'#^(?:https?://)?([a-z.]+)/api/rest_v1/page/html/([^/?]+)#',
 				$this->getOption( 'restURL' ), $matches ) &&
 				 !preg_match(
-				'#^/w/rest\.php/([a-z.]+)/v3/transform/pagebundle/to/pagebundle/([^/?]+)#',
+				'#^(?:https?://[a-z.]+)?/w/rest\.php/([a-z.]+)/v3/transform/pagebundle/to/pagebundle/([^/?]+)#',
 				$this->getOption( 'restURL' ), $matches ) &&
 				 !preg_match(
-				'#^/w/rest.php/([a-z.]+)/v3/page/pagebundle/([^/?]+)(?:/([^/?]+))?#',
+				'#^(?:https?://[a-z.]+)?/w/rest.php/([a-z.]+)/v3/page/pagebundle/([^/?]+)(?:/([^/?]+))?#',
 				$this->getOption( 'restURL' ), $matches )
 			) {
 				# XXX we could extend this to process other URLs, but the
@@ -472,7 +475,6 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 		$configOpts = [
 			"standalone" => !$this->hasOption( 'integrated' ),
 			"apiEndpoint" => $apiURL,
-			"rtTestMode" => $this->hasOption( 'rtTestMode' ),
 			"addHTMLTemplateParameters" => $this->hasOption( 'addHTMLTemplateParameters' ),
 			"linting" => $this->hasOption( 'linting' ),
 			"mock" => $this->hasOption( 'mock' )
@@ -481,7 +483,7 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 			$configOpts['title'] = $this->getOption( 'pageName' );
 		}
 		if ( $this->hasOption( 'oldid' ) ) {
-			$configOpts['revid'] = $this->getOption( 'oldid' );
+			$configOpts['revid'] = (int)$this->getOption( 'oldid' );
 		}
 		if ( $this->hasOption( 'maxdepth' ) ) {
 			$configOpts['maxDepth'] = (int)$this->getOption( 'maxdepth' );
@@ -489,7 +491,7 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 
 		$parsoidOpts = [
 			"scrubWikitext" => $this->hasOption( 'scrubWikitext' ),
-			"body_only" => $this->hasOption( 'body_only' ),
+			"body_only" => ScriptUtils::booleanOption( $this->getOption( 'body_only' ) ),
 			"wrapSections" => $this->hasOption( 'wrapSections' ),
 			// This ensures we can run --linting and get lint output.
 			"logLinterData" => true,
@@ -510,6 +512,12 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 		}
 
 		ScriptUtils::setDebuggingFlags( $parsoidOpts, $this->getOptions() );
+		if ( $this->hasOption( 'profile' ) ) {
+			if ( !isset( $parsoidOpts['traceFlags'] ) ) {
+				$parsoidOpts['traceFlags'] = [];
+			}
+			$parsoidOpts['traceFlags']['time'] = true;
+		}
 
 		$startsAtHtml = $this->hasOption( 'html2wt' ) ||
 			$this->hasOption( 'html2html' ) ||
@@ -529,7 +537,7 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 					$pb['parsoid'] ?? null,
 					[ 'ids' => [] ]  // FIXME: ^999.0.0
 				);
-				DOMDataUtils::applyPageBundle( $doc, $pb );
+				PageBundle::apply( $doc, $pb );
 				$input = ContentUtils::toXML( $doc );
 			}
 
@@ -557,7 +565,7 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 					}
 					if ( isset( $pb ) ) {
 						$oldDoc = DOMUtils::parseHTML( $oldHTML );
-						DOMDataUtils::applyPageBundle( $oldDoc, $pb );
+						PageBundle::apply( $oldDoc, $pb );
 						$oldHTML = ContentUtils::toXML( $oldDoc );
 					}
 				}

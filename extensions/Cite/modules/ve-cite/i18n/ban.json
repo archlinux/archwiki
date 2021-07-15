@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"Chinamoonroll"
+		]
+	},
+	"visualeditor-cite-tool-name-book": "Pustaka",
+	"visualeditor-cite-tool-name-journal": "Jurnal",
+	"visualeditor-cite-tool-name-news": "Orti",
+	"visualeditor-cite-tool-name-web": "Situs wéb",
+	"cite-ve-dialog-reference-options-section": "Opsi",
+	"cite-ve-dialog-reference-useexisting-tool": "Anggén malih",
+	"cite-ve-dialogbutton-reference-tooltip": "Dasar"
+}

@@ -2,9 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Helix84",
+			"Jaroslav.micek",
 			"Sudo77(new)",
 			"Teslaton",
-			"Vlad5250"
+			"Vlad5250",
+			"Yardom78"
 		]
 	},
 	"categorytree": "Strom kategórií",
@@ -24,7 +26,7 @@
 	"categorytree-member-counts": "obsahuje {{PLURAL:$1|1 podkategóriu|$1 podkategórie|$1 podkategórií}}, {{PLURAL:$2|1 stránku|$2 stránky|$2 stránok}} a {{PLURAL:$3|1 súbor|$3 súbory|$3 súborov}}",
 	"categorytree-num-categories": "$1 K",
 	"categorytree-num-pages": "$1 S",
-	"categorytree-num-files": "$1 B",
+	"categorytree-num-files": "$1 S",
 	"categorytree-num-empty": "prázdna",
 	"categorytree-load": "načítať",
 	"categorytree-loading": "načítava sa",

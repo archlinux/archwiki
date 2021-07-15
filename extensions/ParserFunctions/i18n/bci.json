@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kjeanclaude"
+		]
+	},
+	"pfunc_expr_unrecognised_word": "Idjôlè sou sa to fouanlè: Bé si man ndè nga \"$1\".",
+	"pfunc_expr_unrecognised_punctuation": "Idjôlè sou sa to fouanlè: Bé si man klèlè nga \"$1\"."
+}

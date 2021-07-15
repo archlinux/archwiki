@@ -15,7 +15,7 @@ body {
 	background-color: @background-color-base;
 	color: @color-base;
 	direction: ltr;
-	padding: @padding-content;
+	padding: 1em;
 }
 
 #p-personal {
@@ -52,16 +52,24 @@ body {
 }
 
 .mw-indicators {
-	float: right;
 	z-index: @z-index-indicators;
 }
 
 .mw-body-content {
 	position: relative;
 	z-index: @z-index-base;
-	// Clearfix here for legacy reasons of floated children (gadgets?),
-	// to be revisited to clarify historic need and possibly remove.
+}
+
+// FIXME: Can be removed when the `content-parser-output` feature in `skins.vector.styles.legacy`
+// is enabled. The definition in core still needs work (see T279008).
+#bodyContent {
 	.mixin-clearfix();
+}
+
+// FIXME: Temporarily disable the core rule which applies to the wrong element.
+// The definition in core still needs work (see T279008).
+.mw-parser-output:after {
+	content: none;
 }
 
 /* Head */
@@ -108,11 +116,43 @@ body {
 	margin-top: 2.5em;
 }
 
+/* Search */
+#p-search {
+	float: left;
+	margin-right: 0.5em;
+	margin-left: 0.5em;
+
+	// FIXME: This selector requires knowledge of the internals of the search component
+	// and should not be used here.
+	form {
+		margin: 0.5em 0 0;
+	}
+}
+
+// Defined as `div`.
+// Provide extra element for gadgets due to `form` already carrying an `id`.
+// FIXME: This selector requires knowledge of the internals of the search component
+// and should not be used here.
+#simpleSearch {
+	min-width: 5em;
+	// Support: IE 8, Firefox 18-, Chrome 19-, Safari 5.1-, Opera 19-, Android 4.4.4-.
+	width: 13.2em;
+	// Support: Modern browsers, responsive width.
+	width: 20vw;
+	max-width: 20em;
+}
+
+/* Sidebar */
 #mw-panel {
 	position: absolute;
 	top: 0;
 	width: 10em;
 	left: 0;
+}
+
+// hide the heading of the first menu
+#p-logo + .mw-portlet h3 {
+	display: none;
 }
 
 .mw-footer {

@@ -5,8 +5,6 @@
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
-/* stylelint-disable selector-max-id */
-
 .ve-edit-source .mw-ui-icon,
 .ve-edit-visual .mw-ui-icon {
 	position: absolute;

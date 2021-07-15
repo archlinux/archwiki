@@ -50,9 +50,8 @@ class WikitextEscapeHandlers {
 	 */
 	private static function startsOnANewLine( DOMNode $node ): bool {
 		$name = $node->nodeName;
-		return isset( WikitextConstants::$BlockScopeOpenTags[$name] ) &&
-			!WTUtils::isLiteralHTMLNode( $node ) &&
-			$name !== 'blockquote';
+		return TokenUtils::tagOpensBlockScope( $name ) &&
+			!WTUtils::isLiteralHTMLNode( $node );
 	}
 
 	/**
@@ -74,7 +73,7 @@ class WikitextEscapeHandlers {
 
 		while ( $node ) {
 			if ( $node instanceof DOMElement ) {
-				if ( DOMUtils::isBlockNode( $node ) ) {
+				if ( DOMUtils::isWikitextBlockNode( $node ) ) {
 					return !self::startsOnANewLine( $node );
 				}
 				if ( $node->hasChildNodes() ) {
@@ -445,7 +444,7 @@ class WikitextEscapeHandlers {
 				} else {
 					while ( $node ) {
 						$node = DOMUtils::previousNonSepSibling( $node );
-						if ( WTUtils::isFirstEncapsulationWrapperNode( $node ) ) {
+						if ( $node && WTUtils::isFirstEncapsulationWrapperNode( $node ) ) {
 							// FIXME: This is not entirely correct.
 							// Assumes that extlink content doesn't have templates.
 							// Solution: Count # of non-nested templates encountered
@@ -588,7 +587,7 @@ class WikitextEscapeHandlers {
 				}
 
 				// ignore TSR marker metas
-				if ( $t->getName() === 'meta' && TokenUtils::hasTypeOf( $t, 'mw:TSRMarker' ) ) {
+				if ( TokenUtils::hasTypeOf( $t, 'mw:TSRMarker' ) ) {
 					continue;
 				}
 
@@ -652,7 +651,7 @@ class WikitextEscapeHandlers {
 				}
 
 				// </br>!
-				if ( 'br' === mb_strtolower( $t->getName() ) ) {
+				if ( mb_strtolower( $t->getName() ) === 'br' ) {
 					continue;
 				}
 
@@ -1264,6 +1263,10 @@ class WikitextEscapeHandlers {
 					break;
 				case 'SelfclosingTagTk':
 					$da = $t->dataAttribs;
+					if ( TokenUtils::hasTypeOf( $t, 'mw:TSRMarker' ) ) {
+						// Skip this marker tag
+						break;
+					}
 					if ( empty( $da->tsr ) ) {
 						$errors = [ 'Missing tsr for: ' . PHPUtils::jsonEncode( $t ) ];
 						$errors[] = 'Arg : ' . PHPUtils::jsonEncode( $arg );

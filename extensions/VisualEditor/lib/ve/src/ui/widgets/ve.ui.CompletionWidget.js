@@ -37,9 +37,20 @@ ve.ui.CompletionWidget = function VeUiCompletionWidget( surface, config ) {
 		$input: $doc,
 		width: 'auto'
 	} );
+	// This may be better semantically as a MenuSectionOptionWidget,
+	// but that causes all subsequent options to be indented.
+	this.header = new OO.ui.MenuOptionWidget( {
+		classes: [ 've-ui-completionWidget-header' ],
+		disabled: true
+	} );
 
 	// Events
-	this.menu.connect( this, { choose: 'onMenuChoose' } );
+	this.menu.connect( this, {
+		choose: 'onMenuChoose',
+		toggle: 'onMenuToggle'
+	} );
+
+	this.menu.$element.append( this.header.$element );
 
 	// Setup
 	this.$element.addClass( 've-ui-completionWidget' )
@@ -66,9 +77,11 @@ ve.ui.CompletionWidget.prototype.setup = function ( action ) {
 };
 
 ve.ui.CompletionWidget.prototype.teardown = function () {
+	this.tearingDown = true;
 	this.menu.toggle( false );
 	this.surfaceModel.disconnect( this );
 	this.action = undefined;
+	this.tearingDown = false;
 };
 
 ve.ui.CompletionWidget.prototype.update = function () {
@@ -91,13 +104,35 @@ ve.ui.CompletionWidget.prototype.update = function () {
 	}
 	this.$element.css( style );
 
-	this.action.getSuggestions( input ).then( function ( items ) {
-		this.menu.clearItems().addItems( items.map( this.action.getMenuItemForSuggestion.bind( this.action ) ) );
+	this.updateMenu( input );
+	this.action.getSuggestions( input ).then( function ( suggestions ) {
+		this.menu.clearItems().addItems( suggestions.map( this.action.getMenuItemForSuggestion.bind( this.action ) ) );
 		if ( this.menu.getItems().length ) {
 			this.menu.highlightItem( this.menu.getItems()[ 0 ] );
 		}
-		this.menu.toggle( true );
+		this.updateMenu( input, suggestions );
 	}.bind( this ) );
+};
+
+ve.ui.CompletionWidget.prototype.updateMenu = function ( input, suggestions ) {
+	// Update the header based on the input
+	var length,
+		label = this.action.getHeaderLabel( input, suggestions );
+	if ( label !== undefined ) {
+		this.header.setLabel( label );
+		this.header.toggle( label !== null );
+	}
+	// If there is a label or menu items, show the menu
+	if ( this.header.getLabel() !== null || this.menu.items.length ) {
+		// HACK: upstream won't show the menu unless there are items.
+		// Fix upstream by adding a 'forceShow' option to toggle.
+		length = this.menu.items.length;
+		this.menu.items.length = Math.max( length, 1 );
+		this.menu.toggle( true );
+		this.menu.items.length = length;
+	} else {
+		this.menu.toggle( false );
+	}
 };
 
 ve.ui.CompletionWidget.prototype.onMenuChoose = function ( item ) {
@@ -106,6 +141,13 @@ ve.ui.CompletionWidget.prototype.onMenuChoose = function ( item ) {
 	fragment.collapseToEnd().select();
 
 	this.teardown();
+};
+
+ve.ui.CompletionWidget.prototype.onMenuToggle = function ( visible ) {
+	if ( !visible && !this.tearingDown ) {
+		// Menu was hidden by the user (e.g. pressed ESC) - trigger a teardown
+		this.teardown();
+	}
 };
 
 ve.ui.CompletionWidget.prototype.onModelSelect = function () {

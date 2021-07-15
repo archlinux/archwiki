@@ -20,7 +20,6 @@
 	"renameuserwarnings": "Upozornenia:",
 	"renameuserconfirm": "Áno, premenovať používateľa",
 	"renameusersubmit": "Odoslať",
-	"renameuser-submit-blocklog": "Zobraziť záznam blokovaní používateľa",
 	"renameusererrordoesnotexist": "Používateľ „<nowiki>$1</nowiki>“  neexistuje",
 	"renameusererrorexists": "{{GENDER:$1|Používateľ|Používateľka}} „<nowiki>$1</nowiki>“ už existuje.",
 	"renameusererrorinvalid": "Používateľské meno „<nowiki>$1</nowiki>“ je neplatné",

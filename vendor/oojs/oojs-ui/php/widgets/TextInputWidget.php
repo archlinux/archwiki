@@ -9,6 +9,7 @@ class TextInputWidget extends InputWidget {
 	use IconElement;
 	use IndicatorElement;
 	use FlaggedElement;
+	use RequiredElement;
 
 	/* Properties */
 
@@ -22,16 +23,9 @@ class TextInputWidget extends InputWidget {
 	/**
 	 * Prevent changes.
 	 *
-	 * @var boolean
+	 * @var bool
 	 */
 	protected $readOnly = false;
-
-	/**
-	 * Mark as required.
-	 *
-	 * @var boolean
-	 */
-	protected $required = false;
 
 	/**
 	 * @param array $config Configuration options
@@ -45,11 +39,8 @@ class TextInputWidget extends InputWidget {
 	 *          For unfortunate historical reasons, this counts the number of UTF-16 code units rather
 	 *          than Unicode codepoints, which means that codepoints outside the Basic Multilingual
 	 *          Plane (e.g. many emojis) count as 2 characters each.
-	 *      - bool $config['required'] Mark the field as required.
-	 *          Implies `indicator: 'required'`. Note that `false` & setting `indicator: 'required'
-	 *          will result in no indicator shown. (default: false)
-	 *      - bool $config['autocomplete'] If the field should support autocomplete
-	 *          or not (default: true)
+	 *      - bool|string $config['autocomplete'] If the field should support autocomplete
+	 *          or not (default: true). Can also be an autocomplete type hint.
 	 *      - bool $config['spellcheck'] If the field should support spellcheck
 	 *          or not (default: browser-dependent)
 	 */
@@ -59,9 +50,10 @@ class TextInputWidget extends InputWidget {
 			'type' => 'text',
 			'readOnly' => false,
 			'autofocus' => false,
-			'required' => false,
-			'autocomplete' => true,
 		], $config );
+		if ( is_bool( $config['autocomplete'] ?? null ) ) {
+			$config['autocomplete'] = $config['autocomplete'] ? 'on' : 'off';
+		}
 
 		// Parent constructor
 		parent::__construct( $config );
@@ -75,6 +67,7 @@ class TextInputWidget extends InputWidget {
 		$this->initializeFlaggedElement(
 			array_merge( [ 'flagged' => $this ], $config )
 		);
+		$this->initializeRequiredElement( $config );
 
 		// Initialization
 		$this
@@ -85,7 +78,6 @@ class TextInputWidget extends InputWidget {
 			] )
 			->appendContent( $this->icon, $this->indicator );
 		$this->setReadOnly( $config['readOnly'] );
-		$this->setRequired( $config['required'] );
 		if ( isset( $config['placeholder'] ) ) {
 			$this->input->setAttributes( [ 'placeholder' => $config['placeholder'] ] );
 		}
@@ -95,8 +87,8 @@ class TextInputWidget extends InputWidget {
 		if ( $config['autofocus'] ) {
 			$this->input->setAttributes( [ 'autofocus' => 'autofocus' ] );
 		}
-		if ( !$config['autocomplete'] ) {
-			$this->input->setAttributes( [ 'autocomplete' => 'off' ] );
+		if ( isset( $config['autocomplete'] ) ) {
+			$this->input->setAttributes( [ 'autocomplete' => $config['autocomplete'] ] );
 		}
 		if ( isset( $config['spellcheck'] ) ) {
 			$this->input->setAttributes( [ 'spellcheck' => $config['spellcheck'] ? 'true' : 'false' ] );
@@ -125,37 +117,6 @@ class TextInputWidget extends InputWidget {
 			$this->input->setAttributes( [ 'readonly' => 'readonly' ] );
 		} else {
 			$this->input->removeAttributes( [ 'readonly' ] );
-		}
-		return $this;
-	}
-
-	/**
-	 * Check if the widget is required.
-	 *
-	 * @return bool
-	 */
-	public function isRequired() {
-		return $this->required;
-	}
-
-	/**
-	 * Set the required state of the widget.
-	 *
-	 * @param bool $state Make input required
-	 * @return $this
-	 */
-	public function setRequired( $state ) {
-		$this->required = (bool)$state;
-		if ( $this->required ) {
-			$this->input->setAttributes( [ 'required' => 'required', 'aria-required' => 'true' ] );
-			if ( $this->getIndicator() === null ) {
-				$this->setIndicator( 'required' );
-			}
-		} else {
-			$this->input->removeAttributes( [ 'required', 'aria-required' ] );
-			if ( $this->getIndicator() === 'required' ) {
-				$this->setIndicator( null );
-			}
 		}
 		return $this;
 	}
@@ -201,14 +162,9 @@ class TextInputWidget extends InputWidget {
 		if ( $autofocus !== null ) {
 			$config['autofocus'] = true;
 		}
-		$required = $this->input->getAttribute( 'required' );
-		$ariarequired = $this->input->getAttribute( 'aria-required' );
-		if ( ( $required !== null ) || ( $ariarequired !== null ) ) {
-			$config['required'] = true;
-		}
 		$autocomplete = $this->input->getAttribute( 'autocomplete' );
 		if ( $autocomplete !== null ) {
-			$config['autocomplete'] = false;
+			$config['autocomplete'] = $autocomplete;
 		}
 		return parent::getConfig( $config );
 	}

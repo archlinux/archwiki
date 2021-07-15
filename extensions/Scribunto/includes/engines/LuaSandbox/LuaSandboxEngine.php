@@ -1,7 +1,11 @@
 <?php
 
 class Scribunto_LuaSandboxEngine extends Scribunto_LuaEngine {
-	public $options, $loaded = false;
+	/** @var array */
+	public $options;
+	/** @var bool */
+	public $loaded = false;
+	/** @var array */
 	protected $lineCache = [];
 
 	/**
@@ -26,6 +30,7 @@ class Scribunto_LuaSandboxEngine extends Scribunto_LuaEngine {
 			// Special:Version fatal.
 			return;
 		} catch ( Scribunto_LuaInterpreterBadVersionError $e ) {
+			// @phan-suppress-previous-line PhanPluginDuplicateCatchStatementBody
 			// Same for if the extension is too old.
 			return;
 		}
@@ -102,7 +107,8 @@ class Scribunto_LuaSandboxEngine extends Scribunto_LuaEngine {
 						$name = $m[2] . ' ' . $name;
 					}
 				}
-				$lines[] = [ $name, sprintf( '%.0f', $time ), sprintf( '%.1f', $percent ) ];
+				$utf8Name = $this->fixTruncation( $name );
+				$lines[] = [ $utf8Name, sprintf( '%.0f', $time ), sprintf( '%.1f', $percent ) ];
 			} else {
 				$otherTime += $time;
 				$otherPercent += $percent;
@@ -116,6 +122,20 @@ class Scribunto_LuaSandboxEngine extends Scribunto_LuaEngine {
 		return $ret;
 	}
 
+	/**
+	 * Lua truncates symbols at 60 bytes, but this may create invalid UTF-8.
+	 *
+	 * MediaWiki has Language::normalize() but that's complex and seems like
+	 * overkill. A no-op iconv() with errors ignored does the job.
+	 *
+	 * @param string $s
+	 * @return string
+	 */
+	private function fixTruncation( $s ) {
+		$lang = Language::factory( 'en' );
+		return $lang->iconv( 'UTF-8', 'UTF-8', $s );
+	}
+
 	/** @inheritDoc */
 	public function reportLimitData( ParserOutput $output ) {
 		$data = $this->getLimitReportData();
@@ -127,7 +147,10 @@ class Scribunto_LuaSandboxEngine extends Scribunto_LuaEngine {
 		}
 	}
 
-	/** @inheritDoc */
+	/**
+	 * @inheritDoc
+	 * @suppress SecurityCheck-DoubleEscaped phan false positive
+	 */
 	public function formatLimitData( $key, &$value, &$report, $isHTML, $localize ) {
 		global $wgLang;
 		$lang = $localize ? $wgLang : Language::factory( 'en' );
@@ -137,15 +160,12 @@ class Scribunto_LuaSandboxEngine extends Scribunto_LuaEngine {
 					$report .= $this->formatHtmlLogs( $value, $localize );
 				}
 				return false;
-
-			case 'scribunto-limitreport-memusage':
-				$value = array_map( [ $lang, 'formatSize' ], $value );
-				break;
 		}
 
 		if ( $key !== 'scribunto-limitreport-profile' ) {
 			return true;
 		}
+		'@phan-var string[] $value';
 
 		$keyMsg = wfMessage( 'scribunto-limitreport-profile' );
 		$msMsg = wfMessage( 'scribunto-limitreport-profile-ms' );

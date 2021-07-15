@@ -25,6 +25,7 @@ ve.dm.Node = function VeDmNode( element ) {
 
 	// Properties
 	this.length = 0;
+	this.offset = null;
 	this.element = element;
 };
 
@@ -703,6 +704,10 @@ ve.dm.Node.prototype.getOffset = function () {
 		return 0;
 	}
 
+	if ( this.doc.isReadOnly() && this.offset !== null ) {
+		return this.offset;
+	}
+
 	// Find our index in the parent and add up lengths while we do so
 	siblings = this.parent.children;
 	offset = this.parent.getOffset() + ( this.parent === this.root ? 0 : 1 );
@@ -714,6 +719,11 @@ ve.dm.Node.prototype.getOffset = function () {
 	}
 	if ( i === len ) {
 		throw new Error( 'Node not found in parent\'s children array' );
+	}
+	if ( this.doc.isReadOnly() ) {
+		// Cache offset, only used in read-only mode (when the offset can't change)
+		// This cache is additionally cleared when leaving read-only mode in ve.dm.Document#setReadOnly
+		this.offset = offset;
 	}
 	return offset;
 };

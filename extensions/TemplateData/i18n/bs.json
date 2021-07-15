@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"DzWiki",
-			"Srdjan m"
+			"Srdjan m",
+			"Srđan"
 		]
 	},
 	"templatedata-desc": "Izvrši čuvanje podataka za parametre šablona (koristeći JSON)",

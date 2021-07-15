@@ -20,6 +20,7 @@
 namespace VEParsoid\Config;
 
 use MediaWiki\Linker\LinkTarget;
+use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionAccessException;
 use MediaWiki\Revision\RevisionRecord;
@@ -27,7 +28,6 @@ use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Revision\SlotRoleRegistry;
 use MediaWiki\User\UserIdentity;
-use Parser;
 use ParserOptions;
 use Title;
 use User;
@@ -44,50 +44,44 @@ class PageConfigFactory {
 	/** @var RevisionStore */
 	private $revisionStore;
 
-	/** @var Parser */
-	private $parser;
-
-	/** @var ParserOptions */
-	private $parserOptions;
-
 	/** @var SlotRoleRegistry */
 	private $slotRoleRegistry;
 
 	/**
 	 * @param RevisionStore $revisionStore
-	 * @param Parser $parser
-	 * @param ParserOptions $parserOptions
 	 * @param SlotRoleRegistry $slotRoleRegistry
 	 */
 	public function __construct(
-		RevisionStore $revisionStore, Parser $parser, ParserOptions $parserOptions,
+		RevisionStore $revisionStore,
 		SlotRoleRegistry $slotRoleRegistry
 	) {
-		$this->parser = $parser;
 		$this->revisionStore = $revisionStore;
-		$this->parserOptions = $parserOptions;
 		$this->slotRoleRegistry = $slotRoleRegistry;
 	}
 
 	/**
 	 * Create a new PageConfig.
+	 *
+	 * Note that Parsoid isn't supposed to use the user context by design; all
+	 * user-specific processing is expected to be introduced as a post-parse
+	 * transform.  The $user parameter is therefore usually null, especially
+	 * in background job parsing, although there are corner cases during
+	 * extension processing where a non-null $user could affect the output.
+	 *
 	 * @param LinkTarget $title The page represented by the PageConfig.
-	 * @param UserIdentity|null $user User who is doing rendering (for parsing options).
-	 * @param int|null $revisionId The revision of the page.
-	 * @param string|null $wikitextOverride Wikitext to use instead of the
+	 * @param ?UserIdentity $user User who is doing rendering (for parsing options).
+	 * @param ?int $revisionId The revision of the page.
+	 * @param ?string $wikitextOverride Wikitext to use instead of the
 	 *   contents of the specific $revision; used when $revision is null
 	 *   (a new page) or when we are parsing a stashed text.
-	 * @param string|null $pagelanguageOverride
-	 * @param array|null $parsoidSettings At present, only used in debugging.
+	 * @param ?string $pagelanguageOverride
+	 * @param ?array $parsoidSettings Used to enable the debug API if requested
 	 * @return PageConfig
 	 */
 	public function create(
-		LinkTarget $title,
-		UserIdentity $user = null,
-		int $revisionId = null,
-		string $wikitextOverride = null,
-		string $pagelanguageOverride = null,
-		array $parsoidSettings = null
+		LinkTarget $title, ?UserIdentity $user = null, ?int $revisionId = null,
+		?string $wikitextOverride = null, ?string $pagelanguageOverride = null,
+		?array $parsoidSettings = null
 	): PageConfig {
 		$title = Title::newFromLinkTarget( $title );
 
@@ -101,15 +95,50 @@ class PageConfigFactory {
 			] );
 		}
 
-		$revisionRecord = null;
-		if ( $revisionId !== null ) {
+		if ( $revisionId === null ) {
+			// Fetch the 'latest' revision for the given title.
+			// Note: This initial fetch of the page context revision is
+			// *not* using Parser::fetchCurrentRevisionRecordOfTitle()
+			// (which usually invokes Parser::statelessFetchRevisionRecord
+			// and from there RevisionStore::getKnownCurrentRevision)
+			// because we don't have a Parser object to give to that callback.
+			// We could create one if needed for greater compatibility.
+			$revisionRecord = $this->revisionStore->getKnownCurrentRevision(
+				$title
+			) ?: null;
+			// Note that $revisionRecord could still be null here if no
+			// page with that $title yet exists.
+		} else {
+			// Fetch the correct revision record by the supplied id.
+			// This accesses the replica DB and may (or may not) fail over to
+			// the primary DB if the revision isn't found.
 			$revisionRecord = $this->revisionStore->getRevisionById(
 				$revisionId
 			);
+			if ( $revisionRecord === null ) {
+				// This revision really ought to exist.  Check the primary DB.
+				// This *could* cause two requests to the primary DB if there
+				// were pending writes, but this codepath should be very rare.
+				// [T259855]
+				$revisionRecord = $this->revisionStore->getRevisionById(
+					$revisionId, RevisionStore::READ_LATEST
+				);
+				$success = ( $revisionRecord !== null );
+				LoggerFactory::getInstance( 'Parsoid' )->error(
+					"Retried revision fetch after failure: {$success}", [
+						'id' => $revisionId,
+						'title' => $title->getPrefixedText(),
+					]
+				);
+			}
+			if ( $revisionRecord === null ) {
+				throw new RevisionAccessException( "Can't find revision {$revisionId}" );
+			}
 		}
 
+		// If we have a revision record, check that we are allowed to see it.
 		if ( $revisionRecord != null
-			 && ( 0 != ( self::PAGE_UNAVAILABLE & $revisionRecord->getVisibility() ) ) ) {
+			&& ( ( self::PAGE_UNAVAILABLE & $revisionRecord->getVisibility() ) != 0 ) ) {
 			throw new RevisionAccessException( 'Not an available content version.' );
 		}
 
@@ -130,12 +159,19 @@ class PageConfigFactory {
 				)
 			);
 		}
-		$parserOptions = $user
+
+		$parserOptions =
+			$user
 			? ParserOptions::newFromUser( User::newFromIdentity( $user ) )
 			: ParserOptions::newCanonical( new User() );
+
+		// Turn off some options since Parsoid/JS currently doesn't
+		// do anything with this. As we proceed with closer integration,
+		// we can figure out if there is any value to these limit reports.
+		$parserOptions->setOption( 'enableLimitReport', false );
+
 		$slotRoleHandler = $this->slotRoleRegistry->getRoleHandler( SlotRecord::MAIN );
 		return new MWPageConfig(
-			$this->parser,
 			$parserOptions,
 			$slotRoleHandler,
 			$title,

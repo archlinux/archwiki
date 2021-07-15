@@ -1,11 +1,6 @@
 <?php
 declare( strict_types = 1 );
 
-/**
- * Serializes language variant markup, like `-{ ... }-`.
- * @module
- */
-
 namespace Wikimedia\Parsoid\Html2Wt;
 
 use DOMElement;
@@ -15,6 +10,9 @@ use Wikimedia\Parsoid\Html2Wt\ConstrainedText\LanguageVariantText;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\Utils;
 
+/**
+ * Serializes language variant markup, like `-{ ... }-`.
+ */
 class LanguageVariantHandler {
 	/**
 	 * @param array $a
@@ -38,8 +36,8 @@ class LanguageVariantHandler {
 	 * Helper function: serialize a DOM string
 	 * @param SerializerState $state
 	 * @param string|bool $t
-	 * @param array|null $opts
-	 * @return ConstrainedText\ConstrainedText|string
+	 * @param ?array $opts
+	 * @return string
 	 */
 	private static function ser( SerializerState $state, string $t, ?array $opts ) {
 		$options = array_merge( [
@@ -87,7 +85,7 @@ class LanguageVariantHandler {
 	 * @param array $flSp
 	 * @param array $flags
 	 * @param bool $noFilter
-	 * @param string|null $protectFunc
+	 * @param ?string $protectFunc
 	 * @return string
 	 */
 	private static function sortedFlags(

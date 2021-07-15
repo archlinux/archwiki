@@ -27,10 +27,12 @@
 		// Ensure whole page is focusable (T109508)
 		// Subtract toolbar height, margin-bottom and a little more
 		// to prevent scrolling.
+		/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 		min-height: ~'calc( 100vh - 5em )';
 
 		.ve-init-target-ios & {
 			// More spacing required on iOS to prevent scrolling.
+			/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 			min-height: ~'calc( 100vh - 10em )';
 		}
 	}

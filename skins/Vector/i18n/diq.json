@@ -22,12 +22,12 @@
 	"vector-opt-out": "Ravêr asayışê verêni",
 	"vector-opt-out-tooltip": "Kehan asayışê cildi şiyayışi rê eyaranê ho bıvurnê  (Vektoro kehan)",
 	"vector-action-toggle-sidebar": "Toggle sidebar",
-	"vector-action-addsection": "Mewzu dek",
+	"vector-action-addsection": "Mewzu ake",
 	"vector-action-delete": "Bestere",
 	"vector-action-move": "Bıkırışe",
 	"vector-action-protect": "Bışevekne",
 	"vector-action-undelete": "Meestere",
-	"vector-action-unprotect": "Sıtarnayışi bıvurne",
+	"vector-action-unprotect": "Şeveknayışi bıvurne",
 	"vector-view-create": "Vıraze",
 	"vector-view-edit": "Bıvurne",
 	"vector-view-history": "Verêni bıvêne",
@@ -35,5 +35,7 @@
 	"vector-view-viewsource": "Çımeyi bıvêne",
 	"vector-jumptonavigation": "Xıl de be pusula",
 	"vector-jumptosearch": "Xıl de cıgeyrayışi",
-	"vector-more-actions": "Zêde"
+	"vector-jumptocontent": "Ravêr zerreki",
+	"vector-more-actions": "Zêde",
+	"vector-search-loader": "Tewsiye cıgeyrayışi bar benê"
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * @author Niklas Laxström, Tim Starling
- * @license GPL-2.0+
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -29,7 +29,7 @@ class Operator extends Fragment {
 	 *
 	 * @var array
 	 */
-	private static $opTypes = array(
+	private static $opTypes = [
 		'or' => 'bbb',
 		'and' => 'bbb',
 		'is' => 'nnb',
@@ -41,27 +41,29 @@ class Operator extends Fragment {
 		'mod' => 'nnn',
 		',' => 'rrr',
 		'..' => 'nnr',
-	);
+	];
 
 	/**
-	 * Map converting from the abbrevation to the full form.
+	 * Map converting from the abbreviation to the full form.
 	 *
 	 * @var array
 	 */
-	private static $typeSpecMap = array(
+	private static $typeSpecMap = [
 		'b' => 'boolean',
 		'n' => 'number',
 		'r' => 'range',
-	);
+	];
 
 	/**
 	 * Map for converting the new operators introduced in Rev 33 to the old forms
+	 *
+	 * @var array
 	 */
-	private static $aliasMap = array(
+	private static $aliasMap = [
 		'%' => 'mod',
 		'!=' => 'not-in',
 		'=' => 'in'
-	);
+	];
 
 	/**
 	 * Initialize a new instance of a CLDRPluralRuleConverterOperator object
@@ -71,7 +73,7 @@ class Operator extends Fragment {
 	 * @param int $pos The length
 	 * @param int $length
 	 */
-	function __construct( Converter $parser, $name, $pos, $length ) {
+	public function __construct( Converter $parser, $name, $pos, $length ) {
 		parent::__construct( $parser, $pos, $length );
 		if ( isset( self::$aliasMap[$name] ) ) {
 			$name = self::$aliasMap[$name];

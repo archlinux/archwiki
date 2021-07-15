@@ -11,11 +11,13 @@ use MediaWiki\MediaWikiServices;
 class Scribunto_LuaEnvironmentComparisonTest extends PHPUnit\Framework\TestCase {
 	use MediaWikiCoversValidator;
 
+	/** @var array */
 	public $sandboxOpts = [
 		'memoryLimit' => 50000000,
 		'cpuLimit' => 30,
 		'allowEnvFuncs' => true,
 	];
+	/** @var array */
 	public $standaloneOpts = [
 		'errorFile' => null,
 		'luaPath' => null,
@@ -24,6 +26,7 @@ class Scribunto_LuaEnvironmentComparisonTest extends PHPUnit\Framework\TestCase 
 		'allowEnvFuncs' => true,
 	];
 
+	/** @var Scribunto_LuaEngine[] */
 	protected $engines = [];
 
 	private function makeEngine( $class, $opts ) {

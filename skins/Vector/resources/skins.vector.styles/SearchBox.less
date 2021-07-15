@@ -2,52 +2,33 @@
 @import 'mediawiki.ui/variables.less';
 @import '../../variables.less';
 
-/* Search */
-#p-search {
-	float: left;
-	margin-right: 0.5em;
-	margin-left: 0.5em;
-
-	h3 {
-		.mixin-screen-reader-text;
-	}
-
-	form {
-		margin: 0.5em 0 0;
-	}
+// Search portlet.
+#p-search h3 {
+	.mixin-screen-reader-text();
 }
 
 // Defined as `div`.
 // Provide extra element for gadgets due to `form` already carrying an `id`.
 #simpleSearch {
 	position: relative;
-	min-width: 5em;
-	// Support: IE 8, Firefox 18-, Chrome 19-, Safari 5.1-, Opera 19-, Android 4.4.4-.
-	width: 13.2em;
-	// Support: Modern browsers, responsive width.
-	width: 20vw;
-	max-width: 20em;
 	height: 100%;
-
-	// Styles for both the search input and the button.
-	input {
-		margin: 0;
-	}
 }
 
 // The search input.
 #searchInput {
-	// Support IE6-8: Fallback for browsers, which don't support `rgba()`.
-	background-color: @background-color-base;
 	background-color: rgba( 255, 255, 255, 0.5 );
 	color: @color-base--emphasized;
 	width: 100%;
+	// Reduce height slightly from standard to match legacy Vector tabs.
+	height: unit( 28 / @font-size-browser / @font-size-search-input, em ); // Equals `2.15384615em`.
 	.box-sizing( border-box );
 	border: @border-base;
 	border-radius: @border-radius-base;
 	// `padding-right` equals to `#searchbutton` width below.
-	padding: 0.4em @width-search-button 0.4em 0.4em;
-	.box-shadow( @boxShadowWidget );
+	padding: 5px @width-search-button 5px 0.4em;
+	box-shadow: @box-shadow-base;
+	// Match WVUI.
+	font-family: inherit;
 	font-size: @font-size-search-input;
 	direction: ltr;
 	.transition( ~'border-color 250ms, box-shadow 250ms' );
@@ -65,8 +46,8 @@
 	&:focus,
 	#simpleSearch:hover &:focus {
 		outline: 0;
-		border-color: @colorProgressive;
-		.box-shadow( @boxShadowProgressiveFocus );
+		border-color: @border-color-base--focus;
+		box-shadow: @box-shadow-base--focus;
 	}
 
 	.mixin-placeholder( {
@@ -82,8 +63,8 @@
 	}
 }
 
-// The buttons. They are displayed in the same position, and if both are
-// present the fulltext search one obscures the 'Go' one.
+// The search buttons. Fallback and search button are displayed in the same position,
+// and if both are present the fulltext search one obscures the 'Go' one.
 #searchButton,
 #mw-searchButton {
 	background-color: transparent;
@@ -92,12 +73,12 @@
 	bottom: @border-width-base;
 	// `@border-width-base * 2` is in regards to harmonize position start and end.
 	right: @border-width-base;
-	min-width: 24px;
+	min-width: @min-width-search-button;
 	width: @width-search-button;
 	border: 0;
 	padding: 0;
 	cursor: pointer;
-	// Equal `font-size` to search input for `padding` calculationo.
+	// Equal `font-size` to search input for `padding` calculation.
 	font-size: @font-size-search-input;
 	/* Opera 12 on RTL flips the text in a funny way without this. */
 	/* @noflip */
@@ -110,7 +91,6 @@
 }
 
 #searchButton {
-	.background-image-svg( 'images/search.svg', 'images/search.png' );
-	background-position: center center;
-	background-repeat: no-repeat;
+	background: no-repeat center/unit( 16 / @font-size-browser / @font-size-search-input, em ) url( images/search.svg );
+	opacity: 0.67;
 }

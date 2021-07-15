@@ -5,12 +5,9 @@
  */
 class EmailBlacklist extends BaseBlacklist {
 	/**
-	 * @param array $links
-	 * @param ?Title $title
-	 * @param bool $preventLog
-	 * @return mixed
+	 * @inheritDoc
 	 */
-	public function filter( array $links, ?Title $title, $preventLog = false ) {
+	public function filter( array $links, ?Title $title, User $user, $preventLog = false ) {
 		throw new LogicException( __CLASS__ . ' cannot be used to filter links.' );
 	}
 

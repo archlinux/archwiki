@@ -121,6 +121,9 @@ $wgCaptchaBadLoginExpiration = 5 * 60;
 /**
  * Allow users who have confirmed their email addresses to post
  * URL links without being harassed by the captcha.
+ *
+ * @deprecated since 1.36
+ * $wgGroupPermissions['emailconfirmed']['skipcaptcha'] = true; should be used instead.
  */
 $wgAllowConfirmedEmail = false;
 

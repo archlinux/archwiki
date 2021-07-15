@@ -4,6 +4,7 @@
  * @covers Scribunto_LuaSandboxEngine
  */
 class Scribunto_LuaSandboxTest extends Scribunto_LuaEngineUnitTestBase {
+	/** @inheritDoc */
 	protected static $moduleName = 'SandboxTests';
 
 	public static function suite( $className ) {

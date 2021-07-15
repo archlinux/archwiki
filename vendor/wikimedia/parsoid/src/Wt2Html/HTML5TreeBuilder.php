@@ -9,12 +9,11 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Wt2Html;
 
+use DOMDocument;
+use DOMNode;
 use Generator;
-use RemexHtml\DOM\DOMBuilder;
 use RemexHtml\Tokenizer\PlainAttributes;
-use RemexHtml\Tokenizer\Tokenizer;
 use RemexHtml\TreeBuilder\Dispatcher;
-use RemexHtml\TreeBuilder\TreeBuilder;
 use stdClass;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Config\Env;
@@ -26,10 +25,10 @@ use Wikimedia\Parsoid\Tokens\NlTk;
 use Wikimedia\Parsoid\Tokens\SelfclosingTagTk;
 use Wikimedia\Parsoid\Tokens\TagTk;
 use Wikimedia\Parsoid\Tokens\Token;
-use Wikimedia\Parsoid\Utils\DataBag;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMTraverser;
+use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\TokenUtils;
 use Wikimedia\Parsoid\Utils\Utils;
@@ -37,22 +36,17 @@ use Wikimedia\Parsoid\Utils\WTUtils;
 use Wikimedia\Parsoid\Wt2Html\PP\Handlers\PrepareDOM;
 
 class HTML5TreeBuilder extends PipelineStage {
-	private $traceTime;
-
 	/** @var int */
 	private $tagId;
 
 	/** @var bool */
 	private $inTransclusion;
 
-	/** @var DataBag */
-	private $bag;
-
 	/** @var int */
 	private $tableDepth;
 
-	/** @var DOMBuilder */
-	private $domBuilder;
+	/** @var DOMDocument */
+	private $doc;
 
 	/** @var Dispatcher */
 	private $dispatcher;
@@ -70,14 +64,13 @@ class HTML5TreeBuilder extends PipelineStage {
 	 * @param Env $env
 	 * @param array $options
 	 * @param string $stageId
-	 * @param PipelineStage|null $prevStage
+	 * @param ?PipelineStage $prevStage
 	 */
 	public function __construct(
-		Env $env, array $options = [], string $stageId = "", $prevStage = null
+		Env $env, array $options = [], string $stageId = "",
+		?PipelineStage $prevStage = null
 	) {
 		parent::__construct( $env, $prevStage );
-
-		$this->traceTime = $env->hasTraceFlag( 'time' );
 
 		// Reset variable state and set up the parser
 		$this->resetState( [] );
@@ -87,10 +80,11 @@ class HTML5TreeBuilder extends PipelineStage {
 	 * @inheritDoc
 	 */
 	public function resetState( array $options ): void {
+		parent::resetState( $options );
+
 		// Reset vars
 		$this->tagId = 1; // Assigned to start/self-closing tags
 		$this->inTransclusion = false;
-		$this->bag = new DataBag();
 
 		/* --------------------------------------------------------------------
 		 * Crude tracking of whether we are in a table
@@ -110,16 +104,10 @@ class HTML5TreeBuilder extends PipelineStage {
 		// We only need one for every run of strings and newline tokens.
 		$this->needTransclusionShadow = false;
 
-		$this->domBuilder = new DOMBuilder( [ 'suppressHtmlNamespace' => true ] );
-		$treeBuilder = new TreeBuilder( $this->domBuilder );
-		$this->dispatcher = new Dispatcher( $treeBuilder );
-
-		// PORT-FIXME: Necessary to setEnableCdataCallback
-		$tokenizer = new Tokenizer( $this->dispatcher, '', [ 'ignoreErrors' => true ] );
-
-		$this->dispatcher->startDocument( $tokenizer, null, null );
-		$this->dispatcher->doctype( 'html', '', '', false, 0, 0 );
-		$this->dispatcher->startTag( 'body', new PlainAttributes(), false, 0, 0 );
+		list(
+			$this->doc,
+			$this->dispatcher,
+		) = $this->env->fetchDocumentDispatcher( $this->atTopLevel );
 	}
 
 	/**
@@ -130,33 +118,45 @@ class HTML5TreeBuilder extends PipelineStage {
 	 */
 	public function processChunk( array $tokens ): void {
 		$s = null;
-		if ( $this->traceTime ) {
+		$profile = null;
+		if ( $this->env->profiling() ) {
+			$profile = $this->env->getCurrentProfile();
 			$s = PHPUtils::getStartHRTime();
 		}
 		$n = count( $tokens );
 		for ( $i = 0;  $i < $n;  $i++ ) {
 			$this->processToken( $tokens[$i] );
 		}
-		if ( $this->traceTime ) {
-			$this->env->bumpTimeUse( 'HTML5 TreeBuilder', PHPUtils::getHRTimeDifferential( $s ), 'HTML5' );
+		if ( $profile ) {
+			$profile->bumpTimeUse(
+				'HTML5 TreeBuilder', PHPUtils::getHRTimeDifferential( $s ), 'HTML5' );
 		}
 	}
 
 	/**
-	 * @inheritDoc
+	 * @return DOMNode
 	 */
-	public function finalizeDOM() {
+	public function finalizeDOM(): DOMNode {
 		// Check if the EOFTk actually made it all the way through, and flag the
 		// page where it did not!
 		if ( isset( $this->lastToken ) && !( $this->lastToken instanceof EOFTk ) ) {
-			$this->env->log( 'error', 'EOFTk was lost in page', $this->env->getPageConfig()->getTitle() );
+			$this->env->log(
+				'error', 'EOFTk was lost in page',
+				$this->env->getPageConfig()->getTitle()
+			);
 		}
 
-		$doc = $this->domBuilder->getFragment();
-		'@phan-var \DOMDocument $doc'; // @var \DOMDocument $doc
-
-		// Special case where we can't call `env.createDocument()`
-		$this->env->referenceDataObject( $doc, $this->bag );
+		if ( $this->atTopLevel ) {
+			$node = DOMCompat::getBody( $this->doc );
+		} else {
+			// This is similar to DOMCompat::setInnerHTML() in that we can
+			// consider it equivalent to the fragment parsing algorithm,
+			// https://html.spec.whatwg.org/#html-fragment-parsing-algorithm
+			$node = $this->env->topLevelDoc->createDocumentFragment();
+			DOMUtils::migrateChildrenBetweenDocs(
+				DOMCompat::getBody( $this->doc ), $node
+			);
+		}
 
 		// Preparing the DOM is considered one "unit" with treebuilding,
 		// so traversing is done here rather than during post-processing.
@@ -171,12 +171,9 @@ class HTML5TreeBuilder extends PipelineStage {
 		$t->addHandler( null, function ( ...$args ) use ( &$seenDataIds ) {
 			return PrepareDOM::handler( $seenDataIds, ...$args );
 		} );
-		$t->traverse( $this->env, DOMCompat::getBody( $doc ), [], false, null );
+		$t->traverse( $this->env, $node, [], $this->atTopLevel, null );
 
-		// PORT-FIXME: Are we reusing this?  Switch to `init()`
-		// $this->resetState([]);
-
-		return $doc;
+		return $node;
 	}
 
 	/**
@@ -217,7 +214,8 @@ class HTML5TreeBuilder extends PipelineStage {
 				}
 				return true;
 		} );
-		$docId = $this->bag->stashObject( (object)$data );
+		// Store in the top level doc since we'll be importing the nodes after treebuilding
+		$docId = DOMDataUtils::stashObjectInDoc( $this->env->topLevelDoc, (object)$data );
 		$attribs[] = new KV( DOMDataUtils::DATA_OBJECT_ATTR_NAME, (string)$docId );
 		return $attribs;
 	}
@@ -311,7 +309,7 @@ class HTML5TreeBuilder extends PipelineStage {
 					new KV( 'data-stag', "{$tName}:{$dataAttribs->tmp->tagId}" )
 				], Utils::clone( $dataAttribs ) );
 				$this->dispatcher->comment(
-					WTUtils::fosterCommentData( 'mw:shadow', $this->kvArrToFoster( $attrs ), false ),
+					WTUtils::fosterCommentData( 'mw:shadow', $this->kvArrToFoster( $attrs ) ),
 					0, 0
 				);
 			}
@@ -349,8 +347,7 @@ class HTML5TreeBuilder extends PipelineStage {
 					$this->dispatcher->comment(
 						WTUtils::fosterCommentData(
 							$token->getAttribute( 'typeof' ) ?? '',
-							$this->kvArrToFoster( $attribs ),
-							false
+							$this->kvArrToFoster( $attribs )
 						), 0, 0
 					);
 					$wasInserted = true;
@@ -384,7 +381,7 @@ class HTML5TreeBuilder extends PipelineStage {
 					]
 				);
 				$this->dispatcher->comment(
-					WTUtils::fosterCommentData( 'mw:shadow', $this->kvArrToFoster( $attrs ), false ),
+					WTUtils::fosterCommentData( 'mw:shadow', $this->kvArrToFoster( $attrs ) ),
 					0, 0
 				);
 			}

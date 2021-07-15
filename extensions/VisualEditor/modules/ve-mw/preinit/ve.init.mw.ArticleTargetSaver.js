@@ -53,10 +53,9 @@
 			var i, len;
 
 			function copyAttributes( from, to ) {
-				var i, len;
-				for ( i = 0, len = from.attributes.length; i < len; i++ ) {
-					to.setAttribute( from.attributes[ i ].name, from.attributes[ i ].value );
-				}
+				Array.prototype.forEach.call( from.attributes, function ( attr ) {
+					to.setAttribute( attr.name, attr.value );
+				} );
 			}
 
 			if ( oldDoc ) {
@@ -238,7 +237,7 @@
 			return request.then(
 				function ( response, jqxhr ) {
 					var eventData, fullEventName, error,
-						data = response[ action ];
+						responseData = response[ action ];
 
 					// Log data about the request if eventName was set
 					if ( options.track && options.eventName ) {
@@ -247,25 +246,25 @@
 							duration: options.now() - start
 						};
 						fullEventName = 'performance.system.' + options.eventName +
-							( data.cachekey ? '.withCacheKey' : '.withoutCacheKey' );
+							( responseData.cachekey ? '.withCacheKey' : '.withoutCacheKey' );
 						options.track( fullEventName, eventData );
 					}
 
-					if ( !data ) {
+					if ( !responseData ) {
 						error = {
 							code: 'invalidresponse',
 							html: mw.message( 'api-clientside-error-invalidresponse' ).parse()
 						};
-					} else if ( data.result !== 'success' ) {
+					} else if ( responseData.result !== 'success' ) {
 						// This should only happen when saving an edit and getting a captcha from ConfirmEdit
 						// extension (`data.result === 'error'`). It's a silly special case...
 						return $.Deferred().reject( 'no-error-no-success', response ).promise();
 					} else {
 						// paction specific errors
-						switch ( data.paction ) {
+						switch ( responseData.paction ) {
 							case 'save':
 							case 'serialize':
-								if ( typeof data.content !== 'string' ) {
+								if ( typeof responseData.content !== 'string' ) {
 									error = {
 										code: 'invalidcontent',
 										html: mw.message( 'api-clientside-error-invalidresponse' ).parse()
@@ -273,7 +272,7 @@
 								}
 								break;
 							case 'diff':
-								if ( typeof data.diff !== 'string' ) {
+								if ( typeof responseData.diff !== 'string' ) {
 									error = {
 										code: 'invalidcontent',
 										html: mw.message( 'api-clientside-error-invalidresponse' ).parse()
@@ -287,7 +286,7 @@
 						// Use the same format as API errors
 						return $.Deferred().reject( error.code, { errors: [ error ] } ).promise();
 					}
-					return data;
+					return responseData;
 				},
 				function ( code, response ) {
 					var eventData, fullEventName,

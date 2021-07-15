@@ -1,5 +1,3 @@
-/* eslint-disable quotes */
-
 /**
  * @param {string} msg
  * @param {number} [height=200]
@@ -11,6 +9,14 @@ const placeholder = ( msg, height ) => {
 		display: flex; background: #eee; align-items: center;justify-content: center;">${msg}</div>`;
 };
 
-const htmluserlangattributes = `dir="ltr" lang="en-GB"`;
+/**
+ * @param {string} html
+ * @return {string}
+ */
+const portletAfter = ( html ) => {
+	return `<div class="after-portlet after-portlet-tb">${html}</div>`;
+};
 
-export { placeholder, htmluserlangattributes };
+const htmlUserLanguageAttributes = `dir="ltr" lang="en-GB"`;
+
+export { placeholder, htmlUserLanguageAttributes, portletAfter };

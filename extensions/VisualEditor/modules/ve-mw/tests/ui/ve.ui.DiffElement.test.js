@@ -24,7 +24,7 @@ QUnit.test( 'Diffing', function ( assert ) {
 					'</div>',
 				expectedDescriptions: [
 					'<div>visualeditor-changedesc-mwtransclusion</div>' +
-					'<div><ul><li>visualeditor-changedesc-changed,1,<del>Hello, world!</del>,<ins>Hello, globe!</ins></li></ul></div>'
+					'<div><ul><li>visualeditor-changedesc-changed-diff,1,<span>Hello, <del>world</del><ins>globe</ins>!</span></li></ul></div>'
 				]
 			},
 			{
@@ -36,7 +36,7 @@ QUnit.test( 'Diffing', function ( assert ) {
 						ve.dm.mwExample.MWBlockImage.html
 							// FIXME: Use DOM modification instead of string replaces
 							.replace( 'width="1"', 'width="3"' )
-							.replace( 'href="Foo"', 'href="' + ve.resolveUrl( 'Foo', ve.dm.example.base ) + '"' )
+							.replace( 'href="./Foo"', 'href="' + ve.resolveUrl( './Foo', ve.dm.example.base ) + '"' )
 							.replace( 'foobar"', 'foobar" data-diff-action="structural-change" data-diff-id="0"' ) +
 					'</div>',
 				expectedDescriptions: [

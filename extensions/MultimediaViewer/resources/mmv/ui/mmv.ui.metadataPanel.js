@@ -679,7 +679,22 @@
 	MPP.createRestriction = function ( type ) {
 		var $label = $( '<span>' )
 			.addClass( 'mw-mmv-label mw-mmv-restriction-label' )
-			// Messages documented above
+			// Messages duplicated from above for linter
+			// * multimediaviewer-restriction-2257
+			// * multimediaviewer-restriction-aus-reserve
+			// * multimediaviewer-restriction-communist
+			// * multimediaviewer-restriction-costume
+			// * multimediaviewer-restriction-currency
+			// * multimediaviewer-restriction-design
+			// * multimediaviewer-restriction-fan-art
+			// * multimediaviewer-restriction-ihl
+			// * multimediaviewer-restriction-insignia
+			// * multimediaviewer-restriction-ita-mibac
+			// * multimediaviewer-restriction-nazi
+			// * multimediaviewer-restriction-personality
+			// * multimediaviewer-restriction-trademarked
+			// * multimediaviewer-restriction-default
+			// * multimediaviewer-restriction-default-and-others
 			.prop( 'title', mw.message( 'multimediaviewer-restriction-' + type ).text() )
 			.tipsy( {
 				delay: mw.config.get( 'wgMultimediaViewer' ).tooltipDelay,

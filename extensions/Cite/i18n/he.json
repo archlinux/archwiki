@@ -17,7 +17,7 @@
 	"cite_error_ref_too_many_keys": "תג <code>&lt;ref&gt;</code> לא תקין; שמות שגויים, למשל, רבים מדי",
 	"cite_error_ref_nested_extends": "הרחבת תגי <code>&lt;ref&gt;</code> לעומק של יותר מרמה אחת אסורה",
 	"cite_error_ref_no_input": "תג <code>&lt;ref&gt;</code> לא תקין; להערות שוליים ללא שם חייב להיות תוכן",
-	"cite_error_references_duplicate_key": "תג <code>&lt;ref&gt;</code> בלתי־תקין; השם \"$1\" הוגדר מספר פעמים עם תוכן שונה",
+	"cite_error_references_duplicate_key": "תג <code>&lt;ref&gt;</code> בלתי־תקין; השם \"$1\" הוגדר כמה פעמים עם תוכן שונה",
 	"cite_error_references_invalid_parameters": "פרמטר בלתי־תקין בתג <code>&lt;references&gt;</code>",
 	"cite_error_references_no_backlink_label": "אזלו תוויות הקישורים המותאמות אישית. נא להגדיר עוד תוויות בהודעת המערכת [[MediaWiki:Cite references link many format backlink labels]].",
 	"cite_error_no_link_label_group": "אזלו תוויות קישורים מותאמות אישית לקבוצה \"$1\". נא להגדיר עוד תוויות בהודעת המערכת [[MediaWiki:$2]].",

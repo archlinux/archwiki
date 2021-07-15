@@ -9,9 +9,9 @@ QUnit.module( 've.ui.FragmentInspector (MW)', QUnit.newMwEnvironment( {
 		// Mock XHR for mw.Api()
 		this.server = this.sandbox.useFakeServer();
 		this.server.respondImmediately = true;
-		ve.test.utils.mwEnvironment.setup.call( this );
+		ve.test.utils.mwEnvironment.beforeEach.call( this );
 	},
-	afterEach: ve.test.utils.mwEnvironment.teardown
+	afterEach: ve.test.utils.mwEnvironment.afterEach
 } ) );
 
 /* Tests */

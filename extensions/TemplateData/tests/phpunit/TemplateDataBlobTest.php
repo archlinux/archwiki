@@ -1,9 +1,12 @@
 <?php
 
+use Wikimedia\TestingAccessWrapper;
+
 /**
  * @group TemplateData
  * @group Database
- * @covers TemplateDataBlob
+ * @covers \TemplateDataBlob
+ * @covers \TemplateDataCompressedBlob
  */
 class TemplateDataBlobTest extends MediaWikiTestCase {
 
@@ -17,6 +20,9 @@ class TemplateDataBlobTest extends MediaWikiTestCase {
 	 * Helper method to generate a string that gzip can't compress.
 	 *
 	 * Output is consistent when given the same seed.
+	 * @param int $length
+	 * @param string $seed
+	 * @return string
 	 */
 	private static function generatePseudorandomString( $length, $seed ) {
 		// Compatibility with PHP7.1+; see T206287
@@ -599,6 +605,7 @@ class TemplateDataBlobTest extends MediaWikiTestCase {
 	 *
 	 * @param mixed $expected
 	 * @param mixed $actual
+	 * @param string|null $message
 	 */
 	protected function assertStrictJsonEquals( $expected, $actual, $message = null ) {
 		// Lazy recursive strict comparison: Serialise to JSON and compare that
@@ -705,6 +712,40 @@ class TemplateDataBlobTest extends MediaWikiTestCase {
 		} else {
 			$this->markTestSkipped( 'long compressed strings break on MySQL only' );
 		}
+	}
+
+	/**
+	 * @dataProvider provideInterfaceTexts
+	 */
+	public function testIsValidInterfaceText( $text, bool $expected ) {
+		/** @var TemplateDataBlob $parser */
+		$parser = TestingAccessWrapper::newFromObject(
+			TemplateDataBlob::newFromJSON( $this->db, '{}' )
+		);
+		$this->assertSame( $expected, $parser->isValidInterfaceText( $text ) );
+	}
+
+	public function provideInterfaceTexts() {
+		return [
+			// Invalid stuff
+			[ null, false ],
+			[ [], false ],
+			[ [ 'en' => 'example' ], false ],
+			[ (object)[], false ],
+			[ (object)[ null ], false ],
+			[ (object)[ 'en' => null ], false ],
+
+			[ 'example', true ],
+			[ (object)[ 'de' => 'Beispiel', 'en' => 'example' ], true ],
+
+			// Empty strings are allowed
+			[ '', true ],
+			[ (object)[ 'en' => '' ], true ],
+
+			// Language code can not be empty
+			[ (object)[ '' => 'example' ], false ],
+			[ (object)[ ' ' => 'example' ], false ],
+		];
 	}
 
 	/**
@@ -1253,6 +1294,19 @@ class TemplateDataBlobTest extends MediaWikiTestCase {
 				'{{{!}} class=""',
 				[]
 			],
+			'Params within comments and nowiki tags' => [
+				'Lorem <!-- {{{name}}} --> ipsum <nowiki  > {{{middlename}}}' .
+					'</nowiki> {{{surname}}}',
+				[ 'surname' => [] ]
+			],
+			'Param within comments and param name outside with comment' => [
+				'Lorem {{{name<!--comment-->}}} ipsum <!--{{{surname}}}-->',
+				[ 'name' => [] ]
+			],
+			'safesubst: hack with an unnamed parameter' => [
+				'{{ {{{|safesubst:}}}#invoke:…|{{{1}}}|{{{ 1 }}}}}',
+				[ '1' => [] ]
+			],
 		];
 	}
 
@@ -1285,14 +1339,14 @@ HTML
 	<thead><tr><th colspan="2">(templatedata-doc-param-name)</th><th>(templatedata-doc-param-desc)</th><th>(templatedata-doc-param-type)</th><th>(templatedata-doc-param-status)</th></tr></thead>
 	<tbody>
 		<tr>
-			<th>Foo</th>
+			<th>foo</th>
 			<td class="mw-templatedata-doc-param-name"><code>foo</code></td>
 			<td class="mw-templatedata-doc-muted"><p>(templatedata-doc-param-desc-empty)</p><dl></dl></td>
 			<td class="mw-templatedata-doc-param-type mw-templatedata-doc-muted">(templatedata-doc-param-type-unknown)</td>
 			<td>(templatedata-doc-param-status-optional)</td>
 		</tr>
 		<tr>
-			<th>Bar</th>
+			<th>bar</th>
 			<td class="mw-templatedata-doc-param-name"><code>bar</code></td>
 			<td class="mw-templatedata-doc-muted"><p>(templatedata-doc-param-desc-empty)</p><dl></dl></td>
 			<td class="mw-templatedata-doc-param-type mw-templatedata-doc-muted">(templatedata-doc-param-type-unknown)</td>

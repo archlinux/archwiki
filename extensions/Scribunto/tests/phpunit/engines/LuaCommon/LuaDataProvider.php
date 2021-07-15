@@ -1,8 +1,11 @@
 <?php
 
 class Scribunto_LuaDataProvider implements Iterator {
+	/** @var Scribunto_LuaEngine|null */
 	protected $engine = null;
+	/** @var mixed|null */
 	protected $exports = null;
+	/** @var int */
 	protected $key = 1;
 
 	/**

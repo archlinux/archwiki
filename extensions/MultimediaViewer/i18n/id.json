@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Ahdan",
+			"Daud I.F. Argana",
 			"William Surya Permana"
 		]
 	},
@@ -67,6 +68,7 @@
 	"multimediaviewer-download-small-button-name": "Unduh ukuran kecil",
 	"multimediaviewer-download-medium-button-name": "Unduh ukuran sedang",
 	"multimediaviewer-download-large-button-name": "Unduh ukuran besar",
+	"multimediaviewer-download-xl-button-name": "Unduh ukuran ekstra besar",
 	"multimediaviewer-link-to-page": "Pranala ke halaman keterangan berkas",
 	"multimediaviewer-link-to-file": "Pranala ke berkas asli",
 	"multimediaviewer-share-explanation": "Salin dan bagikan dengan bebas pranala",
@@ -85,6 +87,7 @@
 	"multimediaviewer-embed-via": "Lewat $1.",
 	"multimediaviewer-default-embed-dimensions": "Ukuran gambar mini baku",
 	"multimediaviewer-original-embed-dimensions": "Berkas asli $1",
+	"multimediaviewer-xl-embed-dimensions": "Ekstra besar $1",
 	"multimediaviewer-large-embed-dimensions": "Besar $1",
 	"multimediaviewer-medium-embed-dimensions": "Sedang $1",
 	"multimediaviewer-small-embed-dimensions": "Kecil $1",

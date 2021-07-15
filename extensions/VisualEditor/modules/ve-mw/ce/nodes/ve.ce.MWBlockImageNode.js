@@ -17,7 +17,7 @@
  * @param {Object} [config] Configuration options
  */
 ve.ce.MWBlockImageNode = function VeCeMWBlockImageNode() {
-	var type, isError, $image, $focusable;
+	var type, isError, $image, $missingImage, $focusable;
 
 	// Parent constructor
 	ve.ce.MWBlockImageNode.super.apply( this, arguments );
@@ -34,10 +34,11 @@ ve.ce.MWBlockImageNode = function VeCeMWBlockImageNode() {
 	// Build DOM:
 	if ( isError ) {
 		$image = $( [] );
+		$missingImage = $( '<span>' ).text( this.model.getFilename() );
 		this.$a = $( '<a>' )
 			.addClass( 'new' )
-			.text( this.model.getFilename() );
-		$focusable = this.$a;
+			.append( $missingImage );
+		$focusable = $missingImage;
 	} else {
 		$image = $( '<img>' )
 			.attr( 'src', this.getResolvedAttribute( 'src' ) );

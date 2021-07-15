@@ -165,17 +165,17 @@ class MessageTest extends MediaWikiLangTestCase {
 			'empty' => [
 				'key' => [],
 				'expected' => null,
-				'exception' => 'InvalidArgumentException',
+				'exception' => InvalidArgumentException::class,
 			],
 			'null' => [
 				'key' => null,
 				'expected' => null,
-				'exception' => 'InvalidArgumentException',
+				'exception' => InvalidArgumentException::class,
 			],
 			'bad type' => [
 				'key' => 123,
 				'expected' => null,
-				'exception' => 'InvalidArgumentException',
+				'exception' => InvalidArgumentException::class,
 			],
 		];
 	}
@@ -313,9 +313,15 @@ class MessageTest extends MediaWikiLangTestCase {
 	public function testToString( $key, $format, $expect, $expectImplicit ) {
 		$msg = new Message( $key );
 		$this->assertSame( $expect, $msg->$format() );
-		$this->assertSame( $expect, $msg->toString(), 'toString is unaffected by previous call' );
-		$this->assertSame( $expectImplicit, $msg->__toString() );
-		$this->assertSame( $expect, $msg->toString(), 'toString is unaffected by __toString' );
+
+		// This statefulness is deprecated (T146416)
+		$this->hideDeprecated( 'Message::toString with implicit format' );
+		$this->assertSame( $expect, $msg->toString(), 'toString is affected by format call' );
+
+		// This used to behave the same as toString() and was a security risk.
+		// It now has a stable return value that is always parsed/sanitized. (T146416)
+		$this->assertSame( $expectImplicit, $msg->__toString(), '__toString is not affected by format call' );
+		$this->assertSame( $expect, $msg->toString(), 'toString is not affected by __toString' );
 	}
 
 	public static function provideToString_raw() {
@@ -345,10 +351,14 @@ class MessageTest extends MediaWikiLangTestCase {
 			->getMock();
 		$msg->expects( $this->any() )->method( 'fetchMessage' )->willReturn( $message );
 		/** @var Message $msg */
+
 		$this->assertSame( $expect, $msg->$format() );
-		$this->assertSame( $expect, $msg->toString(), 'toString is unaffected by previous call' );
+
+		$this->hideDeprecated( 'Message::toString with implicit format' );
+		$this->assertSame( $expect, $msg->toString(), 'toString is affected by format call' );
+
 		$this->assertSame( $expectImplicit, $msg->__toString() );
-		$this->assertSame( $expect, $msg->toString(), 'toString is unaffected by __toString' );
+		$this->assertSame( $expect, $msg->toString(), 'toString is not naffected by __toString' );
 	}
 
 	/**
@@ -470,6 +480,7 @@ class MessageTest extends MediaWikiLangTestCase {
 	 * FIXME: This should not need database, but Language#formatExpiry does (T57912)
 	 * @covers Message::expiryParam
 	 * @covers Message::expiryParams
+	 * @covers Message::extractParam
 	 */
 	public function testExpiryParams() {
 		$lang = MediaWikiServices::getInstance()->getLanguageFactory()->getLanguage( 'en' );
@@ -480,6 +491,57 @@ class MessageTest extends MediaWikiLangTestCase {
 			$lang->formatExpiry( $ts ),
 			$msg->inLanguage( $lang )->expiryParams( $ts )->plain(),
 			'expiryParams is handled correctly'
+		);
+	}
+
+	/**
+	 * @covers Message::dateTimeParams
+	 * @covers Message::dateTimeParam
+	 * @covers Message::extractParam
+	 */
+	public function testDateTimeParams() {
+		$lang = MediaWikiServices::getInstance()->getLanguageFactory()->getLanguage( 'en' );
+		$msg = new RawMessage( '$1' );
+
+		$ts = wfTimestampNow();
+		$this->assertSame(
+			$lang->timeanddate( $ts ),
+			$msg->inLanguage( $lang )->dateTimeParams( $ts )->plain(),
+			'dateTime is handled correctly'
+		);
+	}
+
+	/**
+	 * @covers Message::dateParams
+	 * @covers Message::dateParam
+	 * @covers Message::extractParam
+	 */
+	public function testDateParams() {
+		$lang = MediaWikiServices::getInstance()->getLanguageFactory()->getLanguage( 'en' );
+		$msg = new RawMessage( '$1' );
+
+		$ts = wfTimestampNow();
+		$this->assertSame(
+			$lang->date( $ts ),
+			$msg->inLanguage( $lang )->dateParams( $ts )->plain(),
+			'date is handled correctly'
+		);
+	}
+
+	/**
+	 * @covers Message::timeParams
+	 * @covers Message::timeParam
+	 * @covers Message::extractParam
+	 */
+	public function testTimeParams() {
+		$lang = MediaWikiServices::getInstance()->getLanguageFactory()->getLanguage( 'en' );
+		$msg = new RawMessage( '$1' );
+
+		$ts = wfTimestampNow();
+		$this->assertSame(
+			$lang->time( $ts ),
+			$msg->inLanguage( $lang )->timeParams( $ts )->plain(),
+			'time is handled correctly'
 		);
 	}
 

@@ -17,6 +17,7 @@
 
 .ve-ui-mwSaveDialog-summary textarea {
 	height: 4em;
+	/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 	resize: vertical;
 }
 
@@ -39,7 +40,7 @@
 
 .ve-ui-mwSaveDialog-checkboxes {
 	margin-right: 3.25em; /* Hack to prevent overlap on edit summary count */
-	padding: 0.7em 0.7em 0 0.7em;
+	padding: 0.7857em 0.7857em 0 0.7857em;
 }
 
 .ve-ui-mwSaveDialog-checkboxes > .oo-ui-fieldLayout {
@@ -82,6 +83,10 @@
 	border-width: 1px 0;
 }
 
+.ve-ui-mwSaveDialog-messages > .oo-ui-messageWidget {
+	font-weight: normal;
+}
+
 .ve-ui-mwSaveDialog-messages:empty {
 	display: none;
 }
@@ -103,4 +108,10 @@
 
 .ve-ui-mwSaveDialog-visualDiffFeedback {
 	float: right;
+}
+
+.ve-ui-mwSaveDialog-preview .mw-body {
+	/* We use mw-body for realistic padding, but we don't need border/margin */
+	border: 0;
+	margin: 0;
 }

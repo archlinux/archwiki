@@ -1,0 +1,33 @@
+@import 'mediawiki.mixins.less';
+
+/**
+ * Print styles require Flexbox to be optimized for print.
+ * For browsers without Flexbox, the header will appear at the bottom of
+ * the page which is judged as acceptable.
+ * This deviates a little from the browser compability chart, with the understanding
+ * that printing accounts for a small percentage of our traffic and browsers which don't
+ * support Flexbox are an even smaller fragment.
+ */
+.mw-page-container-inner {
+	.flex-display();
+	flex-direction: column;
+	align-items: flex-start;
+}
+
+.mw-page-container-inner > * {
+	width: 100%;
+}
+
+#mw-sidebar-checkbox,
+.mw-header > *:not( .mw-logo ) {
+	display: none;
+}
+
+// Header
+.mw-header {
+	order: 1;
+}
+
+.mw-workspace-container {
+	order: 2;
+}

@@ -2,12 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"AnakngAraw",
+			"GinawaSaHapon",
 			"Jewel457",
 			"Jojit fb",
 			"Sky Harbor"
 		]
 	},
-	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Biswal na pagbabago]]",
+	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Pagbabagong biswal]]",
 	"tag-visualeditor-description": "Pagbabagong ginawa gamit ang [[{{MediaWiki:visualeditor-descriptionpagelink}}|VisualEditor]]",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|VisualEditor: Tiyakin]]",
 	"tag-visualeditor-needcheck-description": "Pagbabagong isinagawa gamit ang [[{{MediaWiki:visualeditor-descriptionpagelink}}|bisuwal na editor]] kung saan natagpuan ng sistema ang wikisintaksis na maaaring magdulot ng 'di-inatasang pagbabago.",

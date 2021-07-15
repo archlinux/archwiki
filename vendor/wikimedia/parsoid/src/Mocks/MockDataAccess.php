@@ -183,8 +183,8 @@ class MockDataAccess implements DataAccess {
 					'*' => "This is a mock disambiguation page with no more info!"
 				]
 			],
-			"pageprops" => [
-				"disambiguation" => "",
+			"linkclasses" => [
+				"mw-disambig",
 			]
 		],
 		"Special:Version" => [
@@ -272,9 +272,9 @@ class MockDataAccess implements DataAccess {
 	];
 
 	// configuration to match PHP parserTests
-	// although protocol-relative; see T235217 and
-	// If52d21b50cdbb466395ca64ac9877d992e19ce40
-	private const IMAGE_BASE_URL = '//example.com/images';
+	// Note that parserTests use a MockLocalRepo with
+	// url=>'http://example.com/images' although $wgServer="http://example.org"
+	private const IMAGE_BASE_URL = 'http://example.com/images';
 	private const IMAGE_DESC_URL = self::IMAGE_BASE_URL;
 	private const FILE_PROPS = [
 		'Foobar.jpg' => [
@@ -310,18 +310,28 @@ class MockDataAccess implements DataAccess {
 			'width' => 320,
 			'height' => 240,
 			'bits' => 0,
-			'duration' => 160.733333333333,
-			'mime' => 'application/ogg',
-			'mediatype' => 'VIDEO'
+			# duration comes from
+			# TimedMediaHandler/tests/phpunit/mocks/MockOggHandler::getLength()
+			'duration' => 4.3666666666667,
+			'mime' => 'video/ogg; codecs="theora"',
+			'mediatype' => 'VIDEO',
+			'thumbtimes' => [
+				'1.2' => 'seek%3D1.2',
+				'85' => 'seek%3D3.3666666666667', # hard limited by duration
+			],
 		],
 		'Audio.oga' => [
 			'size' => 12345,
 			'width' => 0,
 			'height' => 0,
 			'bits' => 0,
-			'duration' => 160.733333333333,
-			'mime' => 'application/ogg',
-			'mediatype' => 'AUDIO'
+			# duration comes from
+			# TimedMediaHandler/tests/phpunit/mocks/MockOggHandler::getLength()
+			'duration' => 0.99875,
+			'mime' => 'audio/ogg; codecs="vorbis"',
+			'mediatype' => 'AUDIO',
+			'title' => 'Original Ogg file (41 kbps)',
+			'shorttitle' => 'Ogg source',
 		]
 	];
 
@@ -354,7 +364,7 @@ class MockDataAccess implements DataAccess {
 				'missing' => $pageData === null,
 				'known' => $pageData !== null || ( $pageData['known'] ?? false ),
 				'redirect' => $pageData['redirect'] ?? false,
-				'disambiguation' => ( $pageData['pageprops']['disambiguation'] ?? false ) !== false,
+				'linkclasses' => $pageData['linkclasses'] ?? [],
 			];
 		}
 
@@ -366,7 +376,6 @@ class MockDataAccess implements DataAccess {
 		$ret = [];
 		foreach ( $files as $name => $dims ) {
 			// From mockAPI.js
-			$normPageName = self::PNAMES[$name] ?? $name;
 			$normFileName = self::FNAMES[$name] ?? $name;
 			$props = self::FILE_PROPS[$normFileName] ?? null;
 			if ( $props === null ) {
@@ -381,11 +390,8 @@ class MockDataAccess implements DataAccess {
 			$width = $props['width'] ?? 1941;
 			$turl = self::IMAGE_BASE_URL . '/thumb/' . $md5prefix . $normFileName;
 			$durl = self::IMAGE_DESC_URL . '/' . $normFileName;
-			if ( isset( $props['mediatype'] ) ) {
-				$mediatype = $props['mime'] === 'image/svg+xml' ? 'DRAWING' : 'BITMAP';
-			} else {
-				$mediatype = null;
-			}
+			$mediatype = $props['mediatype'] ??
+				( $props['mime'] === 'image/svg+xml' ? 'DRAWING' : 'BITMAP' );
 
 			$info = [
 				'size' => $props['size'] ?? 12345,
@@ -456,7 +462,15 @@ class MockDataAccess implements DataAccess {
 					}
 				}
 				if ( $urlWidth !== $width || $mediatype === 'AUDIO' || $mediatype === 'VIDEO' ) {
-					$turl .= '/' . $urlWidth . 'px-' . $normFileName;
+					$turl .= '/' . $urlWidth . 'px-';
+					if ( $mediatype === 'VIDEO' ) {
+						// Hack in a 'seek' option, if provided (T258767)
+						if ( isset( $txopts['thumbtime'] ) ) {
+							$turl .= $props['thumbtimes'][strval( $txopts['thumbtime'] )] ?? '';
+						}
+						$turl .= '-';
+					}
+					$turl .= $normFileName;
 					switch ( $mediatype ) {
 						case 'AUDIO':
 							// No thumbs are generated for audio
@@ -476,11 +490,28 @@ class MockDataAccess implements DataAccess {
 				$info['thumbheight'] = $txopts['height'];
 				$info['thumburl'] = $turl;
 			}
+			// Make this look like a TMH response
+			if ( isset( $props['title'] ) || isset( $props['shorttitle'] ) ) {
+				$info['derivatives'] = [
+					[
+						'src' => $info['url'],
+						'type' => $info['mime'],
+						'width' => strval( $info['width'] ),
+						'height' => strval( $info['height'] ),
+					]
+				];
+				if ( isset( $props['title'] ) ) {
+					$info['derivatives'][0]['title'] = $props['title'];
+				}
+				if ( isset( $props['shorttitle'] ) ) {
+					$info['derivatives'][0]['shorttitle'] = $props['shorttitle'];
+				}
+			}
 
 			$ret = array_merge( $ret, [ $normFileName => $info ] );
 		}
 
-	return $ret;
+		return $ret;
 	}
 
 	/** @inheritDoc */
@@ -516,7 +547,6 @@ class MockDataAccess implements DataAccess {
 		return [
 			'html' => $html,
 			'modules' => [],
-			'modulescripts' => [],
 			'modulestyles' => [],
 			'categories' => [],
 		];
@@ -527,7 +557,6 @@ class MockDataAccess implements DataAccess {
 		$revid = $pageConfig->getRevisionId();
 		$ret = [
 			'modules' => [],
-			'modulescripts' => [],
 			'modulestyles' => [],
 			'categories' => [],
 			'properties' => [],
@@ -550,12 +579,11 @@ class MockDataAccess implements DataAccess {
 	}
 
 	/** @inheritDoc */
-	public function fetchPageContent(
-		PageConfig $pageConfig, string $title, int $oldid = 0
+	public function fetchTemplateSource(
+		PageConfig $pageConfig, string $title
 	): ?PageContent {
 		$normTitle = $this->normTitle( $title );
 		$pageData = self::$PAGE_DATA[$normTitle] ?? null;
-		// FIXME: Ignoring revid / oldid checks
 		if ( $pageData ) {
 			$content = [];
 			foreach ( $pageData['slots'] as $role => $data ) {

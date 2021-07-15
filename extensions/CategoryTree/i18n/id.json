@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Bennylin",
+			"Daud I.F. Argana",
 			"Farras",
 			"IvanLanin",
 			"Iwan Novirion",
@@ -14,7 +15,7 @@
 	"categorytree-portlet": "Kategori",
 	"categorytree-legend": "Tampilkan pohon kategori",
 	"categorytree-desc": "Gadget berbasis AJAX untuk menampilkan [[Special:CategoryTree|struktur kategori]] suatu wiki",
-	"categorytree-header": "Masukkan suatu nama kategori untuk melihat isinya dalam bentuk pohon.\nHarap diperhatikan bahwa fitur ini memerlukan dukungan JavaScript tingkat lanjut yang dikenal sebagai AJAX.\nJika Anda menggunakan penjelajah web lama, atau mematikan fungsi JavaScript Anda, fitur ini tidak dapat dijalankan.",
+	"categorytree-header": "Masukkan nama kategori untuk melihat kontennya dalam bentuk struktur pohon.\n(Membutuhkan JavaScript.)",
 	"categorytree-category": "Kategori:",
 	"categorytree-go": "Tampilkan",
 	"categorytree-parents": "Atasan",

@@ -20,6 +20,7 @@ declare( strict_types = 1 );
 
 namespace MWParsoid\Rest\Handler;
 
+use MediaWiki\Rest\HttpException;
 use MediaWiki\Rest\Response;
 use MWParsoid\Rest\FormatHelper;
 use Wikimedia\ParamValidator\ParamValidator;
@@ -67,8 +68,9 @@ class TransformHandler extends ParsoidHandler {
 	/**
 	 * Transform content given in the request from or to wikitext.
 	 * @return Response
+	 * @throws HttpException
 	 */
-	public function execute() {
+	public function execute(): Response {
 		$request = $this->getRequest();
 		$from = $request->getPathParam( 'from' );
 		$format = $request->getPathParam( 'format' );
@@ -77,17 +79,15 @@ class TransformHandler extends ParsoidHandler {
 			!isset( FormatHelper::VALID_TRANSFORM[$from] ) ||
 			!in_array( $format, FormatHelper::VALID_TRANSFORM[$from], true )
 		) {
-			return $this->getResponseFactory()->createHttpError( 404, [
-				'message' => "Invalid transform: ${from}/to/${format}",
-			] );
+			throw new HttpException(
+				"Invalid transform: ${from}/to/${format}", 404
+			);
 		}
 
 		$attribs = &$this->getRequestAttributes();
 
-		if ( !$this->acceptable( $attribs ) ) {
-			return $this->getResponseFactory()->createHttpError( 406, [
-				'message' => 'Not acceptable',
-			] );
+		if ( !$this->acceptable( $attribs ) ) { // mutates $attribs
+			throw new HttpException( 'Not acceptable', 406 );
 		}
 
 		if ( $from === FormatHelper::FORMAT_WIKITEXT ) {
@@ -111,43 +111,28 @@ class TransformHandler extends ParsoidHandler {
 			}
 			// Abort if no wikitext or title.
 			if ( $wikitext === null && $attribs['titleMissing'] ) {
-				return $this->getResponseFactory()->createHttpError( 400, [
-					'message' => 'No title or wikitext was provided.',
-				] );
+				throw new HttpException(
+					'No title or wikitext was provided.', 400
+				);
 			}
-			$pageConfig = $this->createPageConfig(
-				$attribs['pageName'], (int)$attribs['oldid'], $wikitext,
-				$attribs['pagelanguage']
-			);
+			$pageConfig = $this->tryToCreatePageConfig( $attribs, $wikitext );
 			return $this->wt2html( $pageConfig, $attribs, $wikitext );
 		} elseif ( $format === FormatHelper::FORMAT_WIKITEXT ) {
 			$html = $attribs['opts']['html'] ?? null;
-			if ( $html === null ) {
-				return $this->getResponseFactory()->createHttpError( 400, [
-					'message' => 'No html was supplied.',
-				] );
-			}
 			// Accept html as a string or object{body,headers}
 			if ( is_array( $html ) ) {
 				$html = $html['body'];
 			}
-			$wikitext = $attribs['opts']['original']['wikitext']['body'] ?? null;
-			$pageConfig = $this->createPageConfig(
-				$attribs['pageName'], (int)$attribs['oldid'], $wikitext
-			);
-			$hasOldId = (bool)$attribs['oldid'];
-			if ( $hasOldId && $pageConfig->getRevisionContent() === null ) {
-				return $this->getResponseFactory()->createHttpError( 404, [
-					'message' => 'The specified revision does not exist.',
-				] );
+			if ( $html === null ) {
+				throw new HttpException(
+					'No html was supplied.', 400
+				);
 			}
+			$wikitext = $attribs['opts']['original']['wikitext']['body'] ?? null;
+			$pageConfig = $this->tryToCreatePageConfig( $attribs, $wikitext, true );
 			return $this->html2wt( $pageConfig, $attribs, $html );
 		} else {
-			$pageConfig = $this->createPageConfig(
-				$attribs['pageName'], (int)$attribs['oldid'], null,
-				$attribs['pagelanguage']
-			);
-			return $this->pb2pb( $pageConfig, $attribs );
+			return $this->pb2pb( $attribs );
 		}
 	}
 

@@ -510,23 +510,24 @@ ve.dm.ElementLinearData.prototype.setAnnotationHashesAtOffset = function ( offse
  * @param {Mixed} value Value to set, or undefined to unset
  */
 ve.dm.ElementLinearData.prototype.setAttributeAtOffset = function ( offset, key, value ) {
-	var item = this.getData( offset );
 	if ( !this.isElementData( offset ) ) {
 		return;
 	}
-	if ( value === undefined ) {
-		// Clear
-		if ( item.attributes ) {
-			delete item.attributes[ key ];
+	this.modifyData( offset, function ( item ) {
+		if ( value === undefined ) {
+			// Clear
+			if ( item.attributes ) {
+				delete item.attributes[ key ];
+			}
+		} else {
+			// Automatically initialize attributes object
+			if ( !item.attributes ) {
+				item.attributes = {};
+			}
+			// Set
+			item.attributes[ key ] = value;
 		}
-	} else {
-		// Automatically initialize attributes object
-		if ( !item.attributes ) {
-			item.attributes = {};
-		}
-		// Set
-		item.attributes[ key ] = value;
-	}
+	} );
 };
 
 /**
@@ -1148,7 +1149,10 @@ ve.dm.ElementLinearData.prototype.remapInternalListIndexes = function ( mapping,
 	for ( i = 0, ilen = this.data.length; i < ilen; i++ ) {
 		if ( this.isOpenElementData( i ) ) {
 			nodeClass = ve.dm.nodeFactory.lookup( this.getType( i ) );
-			nodeClass.static.remapInternalListIndexes( this.data[ i ], mapping, internalList );
+			// eslint-disable-next-line no-loop-func
+			this.modifyData( i, function ( item ) {
+				nodeClass.static.remapInternalListIndexes( item, mapping, internalList );
+			} );
 		}
 	}
 };
@@ -1177,19 +1181,38 @@ ve.dm.ElementLinearData.prototype.remapInternalListKeys = function ( internalLis
  * @param  {string} newHash New hash to replace it with
  */
 ve.dm.ElementLinearData.prototype.remapAnnotationHash = function ( oldHash, newHash ) {
-	var i, ilen, spliceAt;
+	var i, ilen, j, jlen, data;
+	function remap( annotations ) {
+		var spliceAt;
+		while ( ( spliceAt = annotations.indexOf( oldHash ) ) !== -1 ) {
+			if ( annotations.indexOf( newHash ) === -1 ) {
+				annotations.splice( spliceAt, 1, newHash );
+			} else {
+				annotations.splice( spliceAt, 1 );
+			}
+		}
+	}
 	for ( i = 0, ilen = this.data.length; i < ilen; i++ ) {
 		if ( this.data[ i ] === undefined || typeof this.data[ i ] === 'string' ) {
 			// Common case, cheap, avoid the isArray check
 			continue;
-		} else if ( Array.isArray( this.data[ i ] ) ) {
-			while ( ( spliceAt = this.data[ i ][ 1 ].indexOf( oldHash ) ) !== -1 ) {
-				if ( this.data[ i ][ 1 ].indexOf( newHash ) === -1 ) {
-					this.data[ i ][ 1 ].splice( spliceAt, 1, newHash );
-				} else {
-					this.data[ i ][ 1 ].splice( spliceAt, 1, newHash );
+		} else {
+			// eslint-disable-next-line no-loop-func
+			this.modifyData( i, function ( item ) {
+				if ( Array.isArray( item ) ) {
+					remap( item[ 1 ] );
+				} else if ( item.annotations !== undefined ) {
+					remap( item.annotations );
 				}
-			}
+				if ( ve.getProp( item, 'internal', 'metaItems' ) ) {
+					data = ve.getProp( item, 'internal', 'metaItems' );
+					for ( j = 0, jlen = data.length; j < jlen; j++ ) {
+						if ( data[ j ].annotations !== undefined ) {
+							remap( data[ j ].annotations );
+						}
+					}
+				}
+			} );
 		}
 	}
 };
@@ -1270,7 +1293,10 @@ ve.dm.ElementLinearData.prototype.sanitize = function ( rules ) {
 			// Apply type conversions
 			if ( rules.conversions && rules.conversions[ type ] ) {
 				type = rules.conversions[ type ];
-				this.getData( i ).type = ( !isOpen ? '/' : '' ) + type;
+				// eslint-disable-next-line no-loop-func
+				this.modifyData( i, function ( item ) {
+					item.type = ( !isOpen ? '/' : '' ) + type;
+				} );
 			}
 
 			// Convert content-containing non-paragraph nodes to paragraphs in plainText mode
@@ -1291,7 +1317,9 @@ ve.dm.ElementLinearData.prototype.sanitize = function ( rules ) {
 				len--;
 				// Make sure you haven't just unwrapped a wrapper paragraph
 				if ( isOpen ) {
-					ve.deleteProp( this.getData( i ), 'internal', 'generated' );
+					this.modifyData( i, function ( item ) {
+						ve.deleteProp( item, 'internal', 'generated' );
+					} );
 				}
 				// Move pointer back and continue
 				i--;
@@ -1328,7 +1356,9 @@ ve.dm.ElementLinearData.prototype.sanitize = function ( rules ) {
 			}
 
 			if ( !rules.preserveHtmlWhitespace ) {
-				ve.deleteProp( this.getData( i ), 'internal', 'whitespace' );
+				this.modifyData( i, function ( item ) {
+					ve.deleteProp( item, 'internal', 'whitespace' );
+				} );
 			}
 
 			if ( canContainContent && !isOpen && rules.singleLine ) {
@@ -1384,9 +1414,11 @@ ve.dm.ElementLinearData.prototype.sanitize = function ( rules ) {
 				if ( !( this.getCharacterData( i + 1 ) === ' ' || this.getCharacterData( i - 1 ) === ' ' ) ) {
 					// Replace with a space
 					if ( typeof this.getData( i ) === 'string' ) {
-						this.data[ i ] = ' ';
+						this.setData( i, ' ' );
 					} else {
-						this.data[ i ][ 0 ] = ' ';
+						this.modifyData( i, function ( item ) {
+							item[ 0 ] = ' ';
+						} );
 					}
 				}
 			}
@@ -1408,8 +1440,16 @@ ve.dm.ElementLinearData.prototype.sanitize = function ( rules ) {
 				nodeClass.static.sanitize( this.getData( i ), rules );
 			}
 			if ( rules.removeOriginalDomElements ) {
-				// Remove originalDomElements from nodes
-				delete this.getData( i ).originalDomElementsHash;
+				this.modifyData( i, function ( item ) {
+					// Remove originalDomElements from nodes
+					delete item.originalDomElementsHash;
+				} );
+			}
+			// Remove metadata if disallowed (moved metadata)
+			if ( !rules.allowMetadata ) {
+				this.modifyData( i, function ( item ) {
+					ve.deleteProp( item, 'internal', 'metaItems' );
+				} );
 			}
 		}
 	}

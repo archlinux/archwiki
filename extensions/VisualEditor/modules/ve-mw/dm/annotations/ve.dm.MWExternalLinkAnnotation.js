@@ -41,15 +41,21 @@ ve.dm.MWExternalLinkAnnotation.static.toDataElement = function ( domElements, co
 		type = domElement.getAttribute( 'rel' ) || domElement.getAttribute( 'typeof' ) || domElement.getAttribute( 'property' ) || '',
 		types = type.trim().split( /\s+/ );
 
-	// If the link doesn't have a known RDFa type, auto-convert it to the correct type (internal/external/span)
+	// If the link doesn't have a known RDFa type...
 	if ( types.indexOf( 'mw:ExtLink' ) === -1 && types.indexOf( 'mw:WikiLink/Interwiki' ) === -1 ) {
-		if ( domElement.hasAttribute( 'href' ) ) {
-			annotation = ve.ui.MWLinkAction.static.getLinkAnnotation( domElement.getAttribute( 'href' ), converter.getHtmlDocument() );
-			return annotation.element;
-		} else {
-			// Convert href-less links to a plain span, which will get stripped by sanitization
-			return ve.dm.SpanAnnotation.static.toDataElement.apply( ve.dm.SpanAnnotation.static, arguments );
+		// ...when pasting: auto-convert it to the correct type (internal/external/span)
+		if ( converter.isFromClipboard() ) {
+			if ( domElement.hasAttribute( 'href' ) ) {
+				annotation = ve.ui.MWLinkAction.static.getLinkAnnotation( domElement.getAttribute( 'href' ), converter.getHtmlDocument() );
+				return annotation.element;
+			} else {
+				// Convert href-less links to a plain span, which will get stripped by sanitization
+				return ve.dm.SpanAnnotation.static.toDataElement.apply( ve.dm.SpanAnnotation.static, arguments );
+			}
 		}
+		// ...otherwise (in Parsoid HTML): something is terribly wrong, alienate to avoid making
+		// unnecessary DOM changes in Parsoid output and causing dirty diffs (T267282)
+		return null;
 	}
 
 	// Parent method
@@ -74,7 +80,7 @@ ve.dm.MWExternalLinkAnnotation.static.toDomElements = function ( dataElement, do
 
 ve.dm.MWExternalLinkAnnotation.static.describeChange = function ( key, change ) {
 	if ( key === 'href' ) {
-		return ve.htmlMsg( 'visualeditor-changedesc-link-href', this.wrapText( 'del', change.from ), this.wrapText( 'ins', change.to ) );
+		return ve.dm.LinkAnnotation.static.describeChange( key, change );
 	}
 	return null;
 };

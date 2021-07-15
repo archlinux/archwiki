@@ -1,4 +1,7 @@
 <?php
+
+use MediaWiki\MediaWikiServices;
+
 /**
  * Hooks for TemplateData extension
  *
@@ -7,14 +10,25 @@
  */
 
 class TemplateDataHooks {
+
+	/**
+	 * @param EditPage $editPage
+	 * @param OutputPage $out
+	 */
+	public static function onEditPageShowEditFormFields( EditPage $editPage, OutputPage $out ) {
+		// TODO: Remove when not needed any more, see T267926
+		if ( $out->getRequest()->getBool( 'TemplateDataGeneratorUsed' ) ) {
+			// Recreate the dynamically created field after the user clicked "preview"
+			$out->addHTML( Html::hidden( 'TemplateDataGeneratorUsed', true ) );
+		}
+	}
+
 	/**
 	 * Register parser hooks
-	 * @param Parser &$parser
-	 * @return bool
+	 * @param Parser $parser
 	 */
-	public static function onParserFirstCallInit( &$parser ) {
-		$parser->setHook( 'templatedata', [ 'TemplateDataHooks', 'render' ] );
-		return true;
+	public static function onParserFirstCallInit( Parser $parser ) {
+		$parser->setHook( 'templatedata', [ __CLASS__, 'render' ] );
 	}
 
 	/**
@@ -56,6 +70,10 @@ class TemplateDataHooks {
 	public static function onPageContentSave( WikiPage &$page, &$user, &$content, &$summary, $minor,
 		$watchthis, $sectionanchor, &$flags, &$status
 	) {
+		if ( $page->getContentModel() !== CONTENT_MODEL_WIKITEXT ) {
+			return true;
+		}
+
 		// The PageContentSave hook provides raw $text, but not $parser because at this stage
 		// the page is not actually parsed yet. Which means we can't know whether self::render()
 		// got a valid tag or not. Looking at $text directly is not a solution either as
@@ -69,14 +87,60 @@ class TemplateDataHooks {
 		// Specify format the same way the API and EditPage do to avoid extra parsing
 		$format = $content->getContentHandler()->getDefaultFormat();
 		$editInfo = $page->prepareContentForEdit( $content, null, $user, $format );
+		$parserOutput = $editInfo->getOutput();
 
-		$templateDataStatus = $editInfo->output->getExtensionData( 'TemplateDataStatus' );
+		$templateDataStatus = self::getStatusFromParserOutput( $parserOutput );
 		if ( $templateDataStatus instanceof Status && !$templateDataStatus->isOK() ) {
 			// Abort edit, show error message from TemplateDataBlob::getStatus
 			$status->merge( $templateDataStatus );
 			return false;
 		}
+
+		// TODO: Remove when not needed any more, see T267926
+		self::logChangeEvent( $page, $parserOutput->getProperty( 'templatedata' ), $user );
+
 		return true;
+	}
+
+	/**
+	 * @param WikiPage $page
+	 * @param string|false $newPageProperty
+	 * @param User $user
+	 */
+	private static function logChangeEvent( WikiPage $page, $newPageProperty, User $user ) {
+		if ( !ExtensionRegistry::getInstance()->isLoaded( 'EventLogging' ) ) {
+			return;
+		}
+
+		$services = MediaWikiServices::getInstance();
+		$title = $page->getTitle();
+		$pageId = $page->getId();
+		$props = $services->getPageProps()->getProperties( $title, 'templatedata' );
+		// The JSON strings here are guaranteed to be normalized (and possibly compressed) the same
+		// way. No need to normalize them again for this comparison.
+		if ( $newPageProperty === ( $props[$pageId] ?? false ) ) {
+			return;
+		}
+
+		$generatorUsed = RequestContext::getMain()->getRequest()->getBool( 'TemplateDataGeneratorUsed' );
+		$revision = $page->getRevisionRecord();
+
+		// Note: We know that irrelevant changes (e.g. whitespace changes) aren't logged here
+		EventLogging::logEvent(
+			'TemplateDataEditor',
+			-1,
+			[
+				// Note: The "Done" button is disabled unless something changed, which means it's
+				// very likely (but not guaranteed) the generator was used to make the changes
+				'action' => $generatorUsed ? 'save-tag-edit-generator-used' : 'save-tag-edit-no-generator',
+				'page_id' => $pageId,
+				'page_namespace' => $title->getNamespace(),
+				'page_title' => $title->getText(),
+				'rev_id' => $revision ? $revision->getId() : 0,
+				'user_edit_count' => $user->getEditCount() ?? 0,
+				'user_id' => $user->getId(),
+			]
+		);
 	}
 
 	/**
@@ -84,7 +148,6 @@ class TemplateDataHooks {
 	 *
 	 * @param EditPage $editPage
 	 * @param OutputPage $output
-	 * @return bool
 	 */
 	public static function onEditPage( EditPage $editPage, OutputPage $output ) {
 		global $wgTemplateDataUseGUI;
@@ -93,14 +156,13 @@ class TemplateDataHooks {
 				$output->addModules( 'ext.templateDataGenerator.editTemplatePage' );
 			}
 		}
-		return true;
 	}
 
 	/**
 	 * Parser hook for <templatedata>.
 	 * If there is any JSON provided, render the template documentation on the page.
 	 *
-	 * @param string $input The content of the tag.
+	 * @param string|null $input The content of the tag.
 	 * @param array $args The attributes of the tag.
 	 * @param Parser $parser Parser instance available to render
 	 *  wikitext into html, or parser methods.
@@ -110,11 +172,11 @@ class TemplateDataHooks {
 	 * @return string HTML to insert in the page.
 	 */
 	public static function render( $input, $args, Parser $parser, $frame ) {
-		$ti = TemplateDataBlob::newFromJSON( wfGetDB( DB_REPLICA ), $input );
+		$ti = TemplateDataBlob::newFromJSON( wfGetDB( DB_REPLICA ), $input ?? '' );
 
 		$status = $ti->getStatus();
 		if ( !$status->isOK() ) {
-			$parser->getOutput()->setExtensionData( 'TemplateDataStatus', $status );
+			self::setStatusToParserOutput( $parser->getOutput(), $status );
 			return '<div class="errorbox">' . $status->getHTML() . '</div>';
 		}
 
@@ -214,6 +276,69 @@ class TemplateDataHooks {
 			}
 
 			$tplData[$tplTitle] = $tdb->getData();
+		}
+	}
+
+	/**
+	 * Write the status to ParserOutput object.
+	 * @param ParserOutput $parserOutput
+	 * @param Status $status
+	 */
+	public static function setStatusToParserOutput( ParserOutput $parserOutput, Status $status ) {
+		$parserOutput->setExtensionData( 'TemplateDataStatus',
+			self::jsonSerializeStatus( $status ) );
+	}
+
+	/**
+	 * @param ParserOutput $parserOutput
+	 * @return Status|null
+	 */
+	public static function getStatusFromParserOutput( ParserOutput $parserOutput ) {
+		$status = $parserOutput->getExtensionData( 'TemplateDataStatus' );
+		if ( is_array( $status ) ) {
+			return self::newStatusFromJson( $status );
+		}
+		return $status;
+	}
+
+	/**
+	 * @param array $status contains StatusValue ok and errors fields (does not serialize value)
+	 * @return Status
+	 */
+	public static function newStatusFromJson( array $status ) : Status {
+		if ( $status['ok'] ) {
+			return Status::newGood();
+		} else {
+			$statusObj = new Status();
+			$errors = $status['errors'];
+			foreach ( $errors as $error ) {
+				$statusObj->fatal( $error['message'], ...$error['params'] );
+			}
+			$warnings = $status['warnings'];
+			foreach ( $warnings as $warning ) {
+				$statusObj->warning( $warning['message'], ...$warning['params'] );
+			}
+			return $statusObj;
+		}
+	}
+
+	/**
+	 * @param Status $status
+	 * @return array contains StatusValue ok and errors fields (does not serialize value)
+	 */
+	public static function jsonSerializeStatus( Status $status ) : array {
+		if ( $status->isOK() ) {
+			return [
+				'ok' => true
+			];
+		} else {
+			list( $errorsOnlyStatus, $warningsOnlyStatus ) = $status->splitByErrorType();
+			// note that non-scalar values are not supported in errors or warnings
+			return [
+				'ok' => false,
+				'errors' => $errorsOnlyStatus->getErrors(),
+				'warnings' => $warningsOnlyStatus->getErrors()
+			];
 		}
 	}
 }

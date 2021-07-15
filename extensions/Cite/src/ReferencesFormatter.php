@@ -137,7 +137,7 @@ class ReferencesFormatter {
 			$parserInput .= $this->formatListItem( $parser, $key, $value, $isSectionPreview ) . "\n";
 		}
 		$parserInput .= $this->closeIndention( $indented );
-		return Html::rawElement( 'ol', [ 'class' => [ 'references' ] ], $parserInput );
+		return Html::rawElement( 'ol', [ 'class' => 'references' ], $parserInput );
 	}
 
 	/**
@@ -265,7 +265,7 @@ class ReferencesFormatter {
 		int $max
 	) : string {
 		return $this->messageLocalizer->localizeDigits( $base ) .
-			$this->messageLocalizer->formatNum( '.' ) .
+			$this->messageLocalizer->localizeSeparators( '.' ) .
 			$this->messageLocalizer->localizeDigits(
 				str_pad( (string)$offset, strlen( (string)$max ), '0', STR_PAD_LEFT )
 			);

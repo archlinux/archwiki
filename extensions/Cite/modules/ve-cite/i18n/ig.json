@@ -1,0 +1,17 @@
+{
+	"@metadata": {
+		"authors": [
+			"Uzoma Ozurumba"
+		]
+	},
+	"visualeditor-cite-tool-name-book": "Akwụkwọ",
+	"visualeditor-cite-tool-name-journal": "Akwụkwọ akụkọ",
+	"visualeditor-cite-tool-name-news": "Ozi",
+	"visualeditor-cite-tool-name-web": "weebụsaịtị",
+	"cite-ve-changedesc-ref-group-both": "Otu nrutuaka mgbanwere site na \"$1\" rue \"$2\"",
+	"cite-ve-changedesc-ref-group-from": "Otu nrutuaka gbanwere site na \"$1\" rue na otu izugbe",
+	"cite-ve-changedesc-ref-group-to": "Otu nrutuaka gbanwere site na otu izugbe rue \"$1\"",
+	"cite-ve-changedesc-reflist-group-both": "Otu ndeputa nrutuaka gbanwere site \"$1\" rue \"$2\"",
+	"cite-ve-changedesc-reflist-group-from": "Otu ndepụta nrutuaka gbanwere site \"$1\" rue na otu izugbe",
+	"cite-ve-changedesc-reflist-group-to": "Otu ndepụta nrutuaka gbanwere site na otu izugbe rue \"$1\""
+}

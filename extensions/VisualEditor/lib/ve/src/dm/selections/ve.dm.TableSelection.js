@@ -241,8 +241,8 @@ ve.dm.TableSelection.prototype.getTableSliceRanges = function ( doc ) {
 
 	// Arrays are non-overlapping so avoid duplication
 	// by indexing by range.start
-	function pushNode( node ) {
-		var range = node.getOuterRange();
+	function pushNode( n ) {
+		var range = n.getOuterRange();
 		ranges[ range.start ] = new ve.Range( range.start, range.start + 1 );
 		ranges[ range.end - 1 ] = new ve.Range( range.end - 1, range.end );
 	}
@@ -251,6 +251,9 @@ ve.dm.TableSelection.prototype.getTableSliceRanges = function ( doc ) {
 	// up to and including the TableNode
 	for ( i = this.startRow; i <= this.endRow; i++ ) {
 		node = matrix.getRowNode( i );
+		if ( !node ) {
+			continue;
+		}
 		pushNode( node );
 		while ( ( node = node.getParent() ) && node ) {
 			pushNode( node );
@@ -374,7 +377,7 @@ ve.dm.TableSelection.prototype.isSingleCell = function ( doc ) {
  * @return {boolean} The selection is mergeable or unmergeable
  */
 ve.dm.TableSelection.prototype.isMergeable = function ( doc ) {
-	var r, sectionNode, lastSectionNode, matrix;
+	var r, rowNode, sectionNode, lastSectionNode, matrix;
 
 	if ( !this.isEditable( doc ) ) {
 		return false;
@@ -388,7 +391,11 @@ ve.dm.TableSelection.prototype.isMergeable = function ( doc ) {
 
 	// Check all sections are the same
 	for ( r = this.endRow; r >= this.startRow; r-- ) {
-		sectionNode = matrix.getRowNode( r ).findParent( ve.dm.TableSectionNode );
+		rowNode = matrix.getRowNode( r );
+		if ( !rowNode ) {
+			continue;
+		}
+		sectionNode = rowNode.findParent( ve.dm.TableSectionNode );
 		if ( lastSectionNode && sectionNode !== lastSectionNode ) {
 			// Can't merge across sections
 			return false;

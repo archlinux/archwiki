@@ -93,11 +93,8 @@ class InputBoxHooks {
 			return true;
 		}
 
+		$title = $request->getText( 'prefix', '' ) . $request->getText( 'title', '' );
 		$params = $request->getValues();
-		$title = $params['prefix'];
-		if ( isset( $params['title'] ) ) {
-			$title .= $params['title'];
-		}
 		unset( $params['prefix'] );
 		$params['title'] = $title;
 

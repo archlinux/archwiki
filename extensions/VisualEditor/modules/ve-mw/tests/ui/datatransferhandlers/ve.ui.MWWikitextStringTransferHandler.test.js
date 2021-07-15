@@ -5,17 +5,17 @@
  */
 
 QUnit.module( 've.ui.MWWikitextStringTransferHandler', QUnit.newMwEnvironment( {
-	setup: function () {
+	beforeEach: function () {
 		// Mock XHR for mw.Api()
 		this.server = this.sandbox.useFakeServer();
 		// Random number, chosen by a fair dice roll.
 		// Used to make #mwt ID deterministic
 		this.randomStub = sinon.stub( Math, 'random' ).returns( 0.04 );
-		ve.test.utils.mwEnvironment.setup.call( this );
+		ve.test.utils.mwEnvironment.beforeEach.call( this );
 	},
-	teardown: function () {
+	afterEach: function () {
 		this.randomStub.restore();
-		ve.test.utils.mwEnvironment.teardown.call( this );
+		ve.test.utils.mwEnvironment.afterEach.call( this );
 	}
 } ) );
 
@@ -188,10 +188,10 @@ QUnit.test( 'convert', function ( assert ) {
 				annotations: [],
 				assertDom: true,
 				expectedData: [
-					{ type: 'mwHeading', attributes: { level: 2 }, internal: { changesSinceLoad: 0, metaItems: [] }, originalDomElements: $( '<h2>foo</h2>' ).toArray() },
+					{ type: 'mwHeading', attributes: { level: 2 }, internal: { changesSinceLoad: 0 }, originalDomElements: $( '<h2>foo</h2>' ).toArray() },
 					'f', 'o', 'o',
 					{ type: '/mwHeading' },
-					{ type: 'mwHeading', attributes: { level: 2 }, internal: { changesSinceLoad: 0, metaItems: [] }, originalDomElements: $( '<h2 id="mw-meaningful-id">bar</h2>' ).toArray() },
+					{ type: 'mwHeading', attributes: { level: 2 }, internal: { changesSinceLoad: 0 }, originalDomElements: $( '<h2 id="mw-meaningful-id">bar</h2>' ).toArray() },
 					'b', 'a', 'r',
 					{ type: '/mwHeading' },
 					{ type: 'internalList' },
@@ -206,7 +206,7 @@ QUnit.test( 'convert', function ( assert ) {
 				annotations: [],
 				assertDom: true,
 				expectedData: [
-					{ type: 'mwHeading', attributes: { level: 2 }, internal: { changesSinceLoad: 0, metaItems: [] }, originalDomElements: $( '<h2 id="Tudnivalók"> Tudnivalók </h2>' ).toArray() },
+					{ type: 'mwHeading', attributes: { level: 2 }, internal: { changesSinceLoad: 0 }, originalDomElements: $( '<h2 id="Tudnivalók"> Tudnivalók </h2>' ).toArray() },
 					'T', 'u', 'd', 'n', 'i', 'v', 'a', 'l', 'ó', 'k',
 					{ type: '/mwHeading' },
 					{ type: 'internalList' },

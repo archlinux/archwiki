@@ -4,21 +4,19 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Ext\Gallery;
 
 use DOMDocument;
+use DOMDocumentFragment;
 use DOMElement;
 
+use Wikimedia\Parsoid\Ext\DOMUtils;
 use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
 use Wikimedia\Parsoid\Ext\PHPUtils;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 
-/**
- * @class
- */
 class TraditionalMode extends Mode {
 	/**
 	 * Create a TraditionalMode singleton.
-	 * @param string|null $mode Only used by subclasses.
+	 * @param ?string $mode Only used by subclasses.
 	 */
-	protected function __construct( string $mode = null ) {
+	protected function __construct( ?string $mode = null ) {
 		parent::__construct( $mode ?? 'traditional' );
 		$this->scale = 1;
 		$this->padding = PHPUtils::arrayToObject( [ 'thumb' => 30, 'box' => 5, 'border' => 8 ] );
@@ -44,17 +42,19 @@ class TraditionalMode extends Mode {
 
 	/**
 	 * @param Opts $opts
-	 * @param DOMDocument $doc
+	 * @param DOMDocumentFragment $domFragment
 	 * @return DOMElement
 	 */
-	private function ul( Opts $opts, DOMDocument $doc ): DOMElement {
-		$ul = $doc->createElement( 'ul' );
+	private function ul(
+		Opts $opts, DOMDocumentFragment $domFragment
+	): DOMElement {
+		$ul = $domFragment->ownerDocument->createElement( 'ul' );
 		$cl = 'gallery mw-gallery-' . $this->mode;
 		$ul->setAttribute( 'class', $cl );
 		foreach ( $opts->attrs as $k => $v ) {
 			$this->appendAttr( $ul, $k, $v );
 		}
-		DOMCompat::getBody( $doc )->appendChild( $ul );
+		$domFragment->appendChild( $ul );
 		$this->perRow( $opts, $ul );
 		$this->setAdditionalOptions( $opts, $ul );
 		return $ul;
@@ -83,16 +83,16 @@ class TraditionalMode extends Mode {
 
 	/**
 	 * @param Opts $opts
-	 * @param DOMDocument $doc
 	 * @param DOMElement $ul
-	 * @param DOMElement $caption
+	 * @param DOMDocumentFragment $caption
 	 */
 	private function caption(
-		Opts $opts, DOMDocument $doc, DOMElement $ul, DOMElement $caption
+		Opts $opts, DOMElement $ul, DOMDocumentFragment $caption
 	) {
+		$doc = $ul->ownerDocument;
 		$li = $doc->createElement( 'li' );
 		$li->setAttribute( 'class', 'gallerycaption' );
-		ParsoidExtensionAPI::migrateChildrenBetweenDocs( $caption, $li );
+		DOMUtils::migrateChildren( $caption, $li );
 		$ul->appendChild( $doc->createTextNode( "\n" ) );
 		$ul->appendChild( $li );
 	}
@@ -160,29 +160,31 @@ class TraditionalMode extends Mode {
 	/**
 	 * @param DOMDocument $doc
 	 * @param DOMElement $box
-	 * @param DOMElement|null $gallerytext
+	 * @param ?DOMElement $gallerytext
 	 * @param float $width
 	 */
 	protected function galleryText(
-		DOMDocument $doc, DOMElement $box, ?DOMElement $gallerytext, float $width
+		DOMDocument $doc, DOMElement $box, ?DOMElement $gallerytext,
+		float $width
 	): void {
 		$div = $doc->createElement( 'div' );
 		$div->setAttribute( 'class', 'gallerytext' );
 		if ( $gallerytext ) {
-			ParsoidExtensionAPI::migrateChildrenBetweenDocs( $gallerytext, $div );
+			ParsoidExtensionAPI::migrateChildrenAndTransferWrapperDataAttribs(
+				$gallerytext, $div
+			);
 		}
 		$box->appendChild( $div );
 	}
 
 	/**
 	 * @param Opts $opts
-	 * @param DOMDocument $doc
 	 * @param DOMElement $ul
 	 * @param ParsedLine $o
 	 */
-	private function line(
-		Opts $opts, DOMDocument $doc, DOMElement $ul, ParsedLine $o
-	): void {
+	private function line( Opts $opts, DOMElement $ul, ParsedLine $o ): void {
+		$doc = $ul->ownerDocument;
+
 		$width = $this->scaleMedia( $opts, $o->thumb );
 		$height = $opts->imageHeight;
 
@@ -194,9 +196,11 @@ class TraditionalMode extends Mode {
 		$thumb->setAttribute( 'class', 'thumb' );
 		$thumb->setAttribute( 'style', $this->thumbStyle( $width, $height ) );
 
-		$wrapper = $doc->createElement( 'figure-inline' );
+		$wrapper = $doc->createElement( 'span' );
 		$wrapper->setAttribute( 'typeof', $o->rdfaType );
-		ParsoidExtensionAPI::migrateChildrenBetweenDocs( $o->thumb, $wrapper );
+		ParsoidExtensionAPI::migrateChildrenAndTransferWrapperDataAttribs(
+			$o->thumb, $wrapper
+		);
 		$thumb->appendChild( $wrapper );
 
 		$box->appendChild( $thumb );
@@ -207,17 +211,26 @@ class TraditionalMode extends Mode {
 
 	/** @inheritDoc */
 	public function render(
-		ParsoidExtensionAPI $extApi, Opts $opts, ?DOMElement $caption, array $lines
-	): DOMDocument {
-		$doc = $extApi->htmlToDom( '' ); // empty doc
-		$ul = $this->ul( $opts, $doc );
+		ParsoidExtensionAPI $extApi, Opts $opts, ?DOMDocumentFragment $caption,
+		array $lines
+	): DOMDocumentFragment {
+		$domFragment = $extApi->htmlToDom( '' );
+		$ul = $this->ul( $opts, $domFragment );
 		if ( $caption ) {
-			$this->caption( $opts, $doc, $ul, $caption );
+			$this->caption( $opts, $ul, $caption );
 		}
 		foreach ( $lines as $l ) {
-			$this->line( $opts, $doc, $ul, $l );
+			$this->line( $opts, $ul, $l );
 		}
-		$ul->appendChild( $doc->createTextNode( "\n" ) );
-		return $doc;
+		$ul->appendChild( $domFragment->ownerDocument->createTextNode( "\n" ) );
+		return $domFragment;
 	}
+
+	/**
+	 * @return array
+	 */
+	public function getModuleStyles(): array {
+		return [ 'mediawiki.page.gallery.styles' ];
+	}
+
 }

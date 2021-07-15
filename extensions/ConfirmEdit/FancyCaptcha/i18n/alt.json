@@ -1,6 +1,11 @@
 {
 	"@metadata": {
-		"authors": []
+		"authors": [
+			"Батыр Комдошев"
+		]
 	},
-	"fancycaptcha-imgcaptcha-ph": "Ӱстиндеги кӧрӱнген текстти кийдирер"
+	"fancycaptcha-captcha": "Корултаныҥ шиҥжӱзи",
+	"fancycaptcha-accountcreate": "Туружаачылардыҥ автоматикалык кожултазынаҥ корыырга, алдында рамкада сӧстӧрди бичип ийзин деп сурап турубыс ([[Special:Captcha/help|јартамалы]]):",
+	"fancycaptcha-imgcaptcha-ph": "Јуруктагы кӧрӱнген бичимелди бичигер",
+	"fancycaptcha-reload-text": "Јаҥыртар"
 }

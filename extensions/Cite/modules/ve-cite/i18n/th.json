@@ -17,7 +17,6 @@
 	"cite-ve-changedesc-reflist-group-both": "เปลี่ยนกลุ่มอ้างอิงจาก \"$1\" เป็น \"$2\"",
 	"cite-ve-changedesc-reflist-group-from": "เปลี่ยนกลุ่มอ้างอิงจาก \"$1\" เป็นกลุ่มทั่วไป",
 	"cite-ve-changedesc-reflist-group-to": "เปลี่ยนกลุ่มอ้างอิงจากกลุ่มทั่วไปเป็น \"$1\"",
-	"cite-ve-changedesc-reflist-item-id": "เปลี่ยนดัชนีอ้างอิง",
 	"cite-ve-citationneeded-button": "เพิ่มส่วนอ้างอิง",
 	"cite-ve-citationneeded-title": "ต้องการส่วนอ้างอิง",
 	"cite-ve-dialog-reference-editing-reused": "แหล่งอ้างอิงนี้ถูกใช้แล้ว $1 {{PLURAL:$1|ครั้ง}}บนหน้านี้",

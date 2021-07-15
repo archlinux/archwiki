@@ -1,6 +1,7 @@
 /* eslint-disable no-jquery/no-global-selector */
 $( function () {
 	var mobileMediaQuery = window.matchMedia( 'screen and (max-width: 550px)' ),
+		loadOptionalDependencies = require( './optional-enhancements.js' ),
 		// Track if DOM has been set up for mobile fanciness yet
 		monobookMobileElements = false,
 		// Toggles and targets for popouts
@@ -87,4 +88,5 @@ $( function () {
 
 	$( window ).on( 'resize', setupMonoBookMobile );
 	setupMonoBookMobile();
+	loadOptionalDependencies();
 } );

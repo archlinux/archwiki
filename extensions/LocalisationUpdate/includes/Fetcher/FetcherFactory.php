@@ -11,6 +11,10 @@ namespace LocalisationUpdate\Fetcher;
  * Constructs fetchers based on the repository urls.
  */
 class FetcherFactory {
+	/**
+	 * @param string $path
+	 * @return Fetcher
+	 */
 	public function getFetcher( $path ) {
 		if ( strpos( $path, 'https://raw.github.com/' ) === 0 ) {
 			return new GitHubFetcher();

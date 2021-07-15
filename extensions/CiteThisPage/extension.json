@@ -9,7 +9,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "specialpage",
 	"requires": {
-		"MediaWiki": ">= 1.30.0"
+		"MediaWiki": ">= 1.36.0"
 	},
 	"ExtensionMessagesFiles": {
 		"CiteThisPageAliases": "CiteThisPage.alias.php"
@@ -21,7 +21,7 @@
 	},
 	"Hooks": {
 		"SidebarBeforeOutput": [
-			"CiteThisPageHooks::onSidebarBeforeOutput"
+			"MediaWiki\\Extension\\CiteThisPage\\Hooks::onSidebarBeforeOutput"
 		]
 	},
 	"ResourceModules": {
@@ -34,11 +34,17 @@
 		"remoteExtPath": "CiteThisPage/modules"
 	},
 	"SpecialPages": {
-		"CiteThisPage": "SpecialCiteThisPage"
+		"CiteThisPage": {
+			"class": "MediaWiki\\Extension\\CiteThisPage\\SpecialCiteThisPage",
+			"services": [
+				"SearchEngineFactory",
+				"RevisionLookup",
+				"ParserFactory"
+			]
+		}
 	},
-	"AutoloadClasses": {
-		"SpecialCiteThisPage": "includes/SpecialCiteThisPage.php",
-		"CiteThisPageHooks": "includes/CiteThisPageHooks.php"
+	"AutoloadNamespaces": {
+		"MediaWiki\\Extension\\CiteThisPage\\": "includes/"
 	},
 	"config": {
 		"CiteThisPageAdditionalNamespaces": {

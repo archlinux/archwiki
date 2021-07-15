@@ -14,6 +14,12 @@ use LocalisationUpdate\Reader\ReaderFactory;
  * Executes the localisation update.
  */
 class Updater {
+
+	/**
+	 * @var Update
+	 */
+	private $logger;
+
 	/**
 	 * Whether the path is a pattern and thus we need to use appropriate
 	 * code for fetching directories.
@@ -89,13 +95,13 @@ class Updater {
 	 *
 	 * @param array $origin
 	 * @param array $remote
-	 * @param array $blacklist Array of message keys to ignore, keys as as array keys.
+	 * @param array $ignore Array of message keys to ignore, keys as as array keys.
 	 * @return array
 	 */
-	public function findChangedTranslations( $origin, $remote, $blacklist = [] ) {
+	public function findChangedTranslations( $origin, $remote, $ignore = [] ) {
 		$changed = [];
 		foreach ( $remote as $key => $value ) {
-			if ( isset( $blacklist[$key] ) ) {
+			if ( isset( $ignore[$key] ) ) {
 				continue;
 			}
 
@@ -126,6 +132,14 @@ class Updater {
 		return array_filter( $files );
 	}
 
+	/**
+	 * @param Finder $finder
+	 * @param ReaderFactory $readerFactory
+	 * @param FetcherFactory $fetcherFactory
+	 * @param array $repos
+	 * @param Update $logger
+	 * @return array
+	 */
 	public function execute(
 		Finder $finder,
 		ReaderFactory $readerFactory,

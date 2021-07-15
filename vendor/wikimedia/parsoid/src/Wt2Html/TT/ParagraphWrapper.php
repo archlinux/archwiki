@@ -3,6 +3,7 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Wt2Html\TT;
 
+use Wikimedia\Parsoid\Config\WikitextConstants as Consts;
 use Wikimedia\Parsoid\Tokens\CommentTk;
 use Wikimedia\Parsoid\Tokens\EndTagTk;
 use Wikimedia\Parsoid\Tokens\EOFTk;
@@ -56,18 +57,6 @@ class ParagraphWrapper extends TokenHandler {
 	/** @var array */
 	private $currLine;
 
-	/** @var array */
-	private static $wgBlockElems = null;
-
-	/** @var array */
-	private static $wgAntiBlockElems = null;
-
-	/** @var array */
-	private static $wgAlwaysSuppress = null;
-
-	/** @var array */
-	private static $wgNeverSuppress = null;
-
 	/**
 	 * Constructor for paragraph wrapper.
 	 * @param TokenTransformManager $manager manager enviroment
@@ -84,16 +73,6 @@ class ParagraphWrapper extends TokenHandler {
 		$this->nlWsTokens = [];
 		$this->newLineCount = 0;
 		$this->currLine = null;
-
-		// These are defined in the php parser's `BlockLevelPass`
-		if ( self::$wgBlockElems === null ) {
-			self::$wgBlockElems = PHPUtils::makeSet( [ 'table', 'h1', 'h2', 'h3', 'h4',
-			'h5', 'h6', 'pre', 'p', 'ul', 'ol', 'dl' ] );
-			self::$wgAntiBlockElems = PHPUtils::makeSet( [ 'td', 'th' ] );
-			self::$wgAlwaysSuppress = PHPUtils::makeSet( [ 'tr', 'caption', 'dt', 'dd', 'li' ] );
-			self::$wgNeverSuppress = PHPUtils::makeSet( [ 'center', 'blockquote', 'div', 'hr', 'figure' ] );
-		}
-
 		// Disable p-wrapper
 		$this->disabled = !empty( $this->options['inlineContext'] );
 		$this->reset();
@@ -154,16 +133,14 @@ class ParagraphWrapper extends TokenHandler {
 	 *
 	 */
 	private function resetCurrLine(): void {
-		if ( $this->currLine && ( $this->currLine['openMatch'] || $this->currLine['closeMatch'] ) ) {
-			$this->inBlockElem = !$this->currLine['closeMatch'];
+		if ( $this->currLine && $this->currLine['blockTagSeen'] ) {
+			$this->inBlockElem = $this->currLine['blockTagOpen'];
 		}
 		$this->currLine = [
 			'tokens' => [],
 			'hasWrappableTokens' => false,
-			// These flags, along with `inBlockElem` are concepts from the
-			// php parser's `BlockLevelPass`.
-			'openMatch' => false,
-			'closeMatch' => false
+			'blockTagSeen' => false,
+			'blockTagOpen' => false,
 		];
 	}
 
@@ -320,7 +297,7 @@ class ParagraphWrapper extends TokenHandler {
 				return PHPUtils::jsonEncode( $token );
 			} );
 		$l = $this->currLine;
-		if ( $this->currLine['openMatch'] || $this->currLine['closeMatch'] ) {
+		if ( $this->currLine['blockTagSeen'] ) {
 			$this->closeOpenPTag( $l['tokens'] );
 		} elseif ( !$this->inBlockElem && !$this->hasOpenPTag && $l['hasWrappableTokens'] ) {
 			$this->openPTag( $l['tokens'] );
@@ -395,7 +372,7 @@ class ParagraphWrapper extends TokenHandler {
 			}
 		}
 
-		if ( $this->currLine['openMatch'] || $this->currLine['closeMatch'] ) {
+		if ( $this->currLine['blockTagSeen'] ) {
 			$this->closeOpenPTag( $resToks );
 			if ( $newLineCount === 1 ) {
 				$resToks[] = $this->discardOneNlTk( $resToks );
@@ -433,10 +410,11 @@ class ParagraphWrapper extends TokenHandler {
 				// This will put us `inBlockElem`, so we need the extra `!inPre`
 				// condition below.  Presumably, we couldn't have entered
 				// `inBlockElem` while being `inPre`.  Alternatively, we could say
-				// that indent-pre is "never suppressing" and set the `closeMatch`
-				// flag.  The point of all this is that we want to close any open
-				// p-tags.
-				$this->currLine['openMatch'] = true;
+				// that indent-pre is "never suppressing" and set the `blockTagOpen`
+				// flag to false. The point of all this is that we want to close
+				// any open p-tags.
+				$this->currLine['blockTagSeen'] = true;
+				$this->currLine['blockTagOpen'] = true;
 				// skip ensures this doesn't hit the AnyHandler
 				return [ 'tokens' => $this->processBuffers( $token, true ), 'skipOnAny' => true ];
 			}
@@ -451,7 +429,8 @@ class ParagraphWrapper extends TokenHandler {
 				if ( $this->inPre ) {
 					$this->inPre = false;
 				}
-				$this->currLine['closeMatch'] = true;
+				$this->currLine['blockTagSeen'] = true;
+				$this->currLine['blockTagOpen'] = false;
 				$this->env->log( 'trace/p-wrap', $this->manager->pipelineId, '---->  ',
 					function () use( $token ) {
 						return PHPUtils::jsonEncode( $token );
@@ -512,15 +491,16 @@ class ParagraphWrapper extends TokenHandler {
 		} else {
 			if ( !is_string( $token ) ) {
 				$name = $token->getName();
-				if ( ( isset( self::$wgBlockElems[$name] ) && !$token instanceof EndTagTk ) ||
-					( isset( self::$wgAntiBlockElems[$name] ) && $token instanceof EndTagTk ) ||
-					isset( self::$wgAlwaysSuppress[$name] ) ) {
-					$this->currLine['openMatch'] = true;
-				}
-				if ( ( isset( self::$wgBlockElems[$name] ) && $token instanceof EndTagTk ) ||
-					( isset( self::$wgAntiBlockElems[$name] ) && !$token instanceof EndTagTk ) ||
-					isset( self::$wgNeverSuppress[$name] ) ) {
-					$this->currLine['closeMatch'] = true;
+				if ( isset( Consts::$wikitextBlockElems[$name] ) ) {
+					$this->currLine['blockTagSeen'] = true;
+					$this->currLine['blockTagOpen'] = true;
+					if (
+						( isset( Consts::$blockElems[$name] ) && $token instanceof EndTagTk ) ||
+						( isset( Consts::$antiBlockElems[$name] ) && !$token instanceof EndTagTk ) ||
+						isset( Consts::$neverBlockElems[$name] )
+					) {
+						$this->currLine['blockTagOpen'] = false;
+					}
 				}
 				if ( $name === 'blockquote' ) {
 					$this->inBlockquote = ( !$token instanceof EndTagTk );

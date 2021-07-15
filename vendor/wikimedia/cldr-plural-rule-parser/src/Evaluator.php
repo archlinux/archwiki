@@ -2,7 +2,7 @@
 /**
  * @author Tim Starling
  * @author Niklas Laxström
- * @license GPL-2.0+
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -50,7 +50,7 @@ class Evaluator {
 	 * Evaluate a compiled set of rules returned by compile(). Do not allow
 	 * the user to edit the compiled form, or else PHP errors may result.
 	 *
-	 * @param string $number The number to be evaluated against the rules, in English, or it
+	 * @param string|int $number The number to be evaluated against the rules, in English, or it
 	 *   may be a type convertible to string.
 	 * @param array $rules The associative array of plural rules in pluralform => rule format.
 	 * @return int The index of the plural form which passed the evaluation
@@ -59,37 +59,35 @@ class Evaluator {
 		// Calculate the values of the operand symbols
 		$number = strval( $number );
 		if ( !preg_match( '/^ -? ( ([0-9]+) (?: \. ([0-9]+) )? )$/x', $number, $m ) ) {
-			wfDebug( __METHOD__ . ": invalid number input, returning 'other'\n" );
-
 			return count( $rules );
 		}
 		if ( !isset( $m[3] ) ) {
-			$operandSymbols = array(
+			$operandSymbols = [
 				'n' => intval( $m[1] ),
 				'i' => intval( $m[1] ),
 				'v' => 0,
 				'w' => 0,
 				'f' => 0,
 				't' => 0
-			);
+			];
 		} else {
 			$absValStr = $m[1];
 			$intStr = $m[2];
 			$fracStr = $m[3];
-			$operandSymbols = array(
+			$operandSymbols = [
 				'n' => floatval( $absValStr ),
 				'i' => intval( $intStr ),
 				'v' => strlen( $fracStr ),
 				'w' => strlen( rtrim( $fracStr, '0' ) ),
 				'f' => intval( $fracStr ),
 				't' => intval( rtrim( $fracStr, '0' ) ),
-			);
+			];
 		}
 
 		// The compiled form is RPN, with tokens strictly delimited by
 		// spaces, so this is a simple RPN evaluator.
 		foreach ( $rules as $i => $rule ) {
-			$stack = array();
+			$stack = [];
 			$zero = ord( '0' );
 			$nine = ord( '9' );
 
@@ -125,7 +123,7 @@ class Evaluator {
 	 * @return mixed The operation result
 	 */
 	private static function doOperation( $token, $left, $right ) {
-		if ( in_array( $token, array( 'in', 'not-in', 'within', 'not-within' ) ) ) {
+		if ( in_array( $token, [ 'in', 'not-in', 'within', 'not-within' ] ) ) {
 			if ( !$right instanceof Range ) {
 				$right = new Range( $right );
 			}

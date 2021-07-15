@@ -109,7 +109,7 @@ final class SkinVersionLookup {
 			$this->user->getOption(
 				Constants::PREF_KEY_SKIN_VERSION,
 				$this->config->get(
-					$this->user->isLoggedIn()
+					$this->user->isRegistered()
 						? Constants::CONFIG_KEY_DEFAULT_SKIN_VERSION_FOR_EXISTING_ACCOUNTS
 						: Constants::CONFIG_KEY_DEFAULT_SKIN_VERSION
 				)

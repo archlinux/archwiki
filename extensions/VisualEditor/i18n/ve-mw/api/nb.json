@@ -50,6 +50,7 @@
 	"apihelp-visualeditoredit-param-sectiontitle": "Tittel for nytt avsnitt.",
 	"apihelp-visualeditoredit-param-starttimestamp": "Ved lagring, sett denne til tidsstempelet for når siden ble lastet. Brukes for å oppdage redigeringskonflikter.",
 	"apihelp-visualeditoredit-param-summary": "Redigeringsforklaring.",
+	"apihelp-visualeditoredit-param-tags": "Endringstagg som skal brukes på redigeringen.",
 	"apihelp-visualeditoredit-param-wikitext": "Wikiteksten det jobbes på.",
 	"apihelp-visualeditoredit-summary": "Lagre en HTML5-side til MediaWiki (konvertert til wikitekst med Parsoid-tjenesten)."
 }

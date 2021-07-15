@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Akamycoco",
 			"Iyuqciyang",
 			"Songyanzhi"
 		]
@@ -11,10 +12,14 @@
 	"visualeditor-ca-editsource": "Ida npatas sspgan ka smmalu patas",
 	"visualeditor-ca-editsource-section": "ida npatas sspgan ka smmalu patas",
 	"visualeditor-categories-tool": "keelgan",
+	"visualeditor-descriptionpagelink": "Project:VisualEditor",
 	"visualeditor-dialog-media-page-advanced": "Mtmay quri brah",
 	"visualeditor-dialog-media-search-tab-search": "miying",
 	"visualeditor-dialog-meta-categories-data-label": "keelgan",
 	"visualeditor-dialog-meta-categories-section": "keelgan",
+	"visualeditor-dialog-meta-settings-index-disable": "aji",
+	"visualeditor-dialog-meta-settings-index-force": "kiya",
+	"visualeditor-dialog-meta-settings-newsectioneditlink-force": "kiya",
 	"visualeditor-dialog-template-title": "ptasan",
 	"visualeditor-dialog-transclusion-title": "dmuuy",
 	"visualeditor-dialogbutton-template-tooltip": "ptasan",

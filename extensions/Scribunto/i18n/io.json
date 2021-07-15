@@ -14,5 +14,6 @@
 	"scribunto-lua-error": "Lua eroro: $2",
 	"scribunto-luastandalone-proc-error": "Lua eroro: Ne povas krear procedo.",
 	"scribunto-luastandalone-proc-error-msg": "Eroro 'Lua': Ne povas kreesar procedo: $2",
-	"scribunto-luastandalone-gone": "Lua eroro: Interna eroro: L'interpretanto ja finabis."
+	"scribunto-luastandalone-gone": "Lua eroro: Interna eroro: L'interpretanto ja finabis.",
+	"scribunto-limitreport-timeusage-value": "$1/$2 sekundi"
 }

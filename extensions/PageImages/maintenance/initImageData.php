@@ -33,7 +33,6 @@ class InitImageData extends Maintenance {
 
 	/**
 	 * Do the actual work of filling out page images
-	 * @return null
 	 */
 	public function execute() {
 		global $wgPageImagesNamespaces;

@@ -60,9 +60,9 @@ class ReplaceTextHooks {
 	 */
 	public static function replaceTextReminder( &$form, &$ot, &$nt ) {
 		$out = $form->getOutput();
-		$page = MediaWikiServices::getInstance()->getSpecialPageFactory()
-			->getPage( 'ReplaceText' );
-		$pageLink = ReplaceTextUtils::link( $page->getPageTitle() );
+		$services = MediaWikiServices::getInstance();
+		$page = $services->getSpecialPageFactory()->getPage( 'ReplaceText' );
+		$pageLink = $services->getLinkRenderer()->makeLink( $page->getPageTitle(), null );
 		$out->addHTML( $form->msg( 'replacetext_reminder' )
 			->rawParams( $pageLink )->inContentLanguage()->parseAsBlock() );
 	}

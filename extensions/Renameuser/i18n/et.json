@@ -21,7 +21,6 @@
 	"renameuserwarnings": "Hoiatused:",
 	"renameuserconfirm": "Jah, nimeta kasutaja ümber",
 	"renameusersubmit": "Muuda",
-	"renameuser-submit-blocklog": "Näita blokeerimislogi sissekandeid",
 	"renameusererrordoesnotexist": "Kasutajat \"<nowiki>$1</nowiki>\" ei ole olemas.",
 	"renameusererrorexists": "Kasutaja \"<nowiki>$1</nowiki>\" on juba olemas.",
 	"renameusererrorinvalid": "Kasutajanimi \"<nowiki>$1</nowiki>\" on vigane.",

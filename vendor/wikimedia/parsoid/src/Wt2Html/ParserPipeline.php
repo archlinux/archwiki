@@ -8,7 +8,6 @@ use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Tokens\SourceRange;
 use Wikimedia\Parsoid\Utils\PHPUtils;
-use Wikimedia\Parsoid\Utils\Title;
 
 /**
  * Wrap some stages into a pipeline.
@@ -30,8 +29,11 @@ class ParserPipeline {
 	/** @var Env */
 	private $env;
 
-	/** @var String */
+	/** @var string */
 	private $cacheKey;
+
+	/** @var Frame */
+	private $frame;
 
 	/**
 	 * @param string $type
@@ -107,10 +109,12 @@ class ParserPipeline {
 	}
 
 	/**
-	 * @inheritDoc
+	 * Set frame on this pipeline stage (stages decide if they need it or not)
+	 * @param Frame $frame frame
 	 */
-	public function setFrame( ?Frame $frame, ?Title $title, array $args, string $srcText ): void {
-		$this->applyToStage( 'setFrame', $frame, $title, $args, $srcText );
+	public function setFrame( Frame $frame ): void {
+		$this->frame = $frame;
+		$this->applyToStage( 'setFrame', $frame );
 	}
 
 	/**
@@ -126,6 +130,11 @@ class ParserPipeline {
 	 * @return array|DOMDocument
 	 */
 	public function parse( $input, array $opts ) {
+		$profile = $this->env->profiling() ? $this->env->pushNewProfile() : null;
+		if ( $profile !== null ) {
+			$profile->start();
+		}
+
 		$output = $input;
 		foreach ( $this->stages as $stage ) {
 			$output = $stage->process( $output, $opts );
@@ -135,6 +144,18 @@ class ParserPipeline {
 		}
 
 		$this->env->getPipelineFactory()->returnPipeline( $this );
+
+		if ( $profile !== null ) {
+			$this->env->popProfile();
+			$profile->end();
+
+			if ( isset( $opts['atTopLevel'] ) ) {
+				$body = $output;
+				$body->appendChild( $body->ownerDocument->createTextNode( "\n" ) );
+				$body->appendChild( $body->ownerDocument->createComment( $profile->print() ) );
+				$body->appendChild( $body->ownerDocument->createTextNode( "\n" ) );
+			}
+		}
 
 		return $output;
 	}
@@ -147,6 +168,11 @@ class ParserPipeline {
 	 * @return DOMDocument|array final DOM or array of token chnks
 	 */
 	public function parseChunkily( string $input, array $opts ) {
+		$profile = $this->env->profiling() ? $this->env->pushNewProfile() : null;
+		if ( $profile !== null ) {
+			$profile->start();
+		}
+
 		$ret = [];
 		$lastStage = PHPUtils::lastItem( $this->stages );
 		foreach ( $lastStage->processChunkily( $input, $opts ) as $output ) {
@@ -155,61 +181,55 @@ class ParserPipeline {
 
 		$this->env->getPipelineFactory()->returnPipeline( $this );
 
+		if ( $profile !== null ) {
+			$this->env->popProfile();
+			$profile->end();
+
+			if ( isset( $opts['atTopLevel'] ) ) {
+				Assert::invariant( $this->outputType === 'DOM', 'Expected top-level output to be DOM' );
+				$body = $ret[0];
+				$body->appendChild( $body->ownerDocument->createTextNode( "\n" ) );
+				$body->appendChild( $body->ownerDocument->createComment( $profile->print() ) );
+				$body->appendChild( $body->ownerDocument->createTextNode( "\n" ) );
+			}
+		}
+
 		// Return either the DOM or the array of chunks
 		return $this->outputType === "DOM" ? $ret[0] : $ret;
 	}
 
 	/**
-	 * Feed input to the first pipeline stage.
-	 * The input is expected to be the wikitext string for the doc.
-	 *
-	 * @param string $input
-	 * @param array|null $opts
-	 * @return DOMDocument
+	 * @param array $initialState Once the pipeline is retrieved / constructed
+	 *   it will be initialized with this state.
 	 */
-	public function parseToplevelDoc( string $input, array $opts = null ) {
-		Assert::invariant( $this->pipelineType === 'text/x-mediawiki/full',
-			'You cannot process top-level document from wikitext to DOM with a pipeline of type ' .
-			$this->pipelineType );
-
-		// Disable the garbage collector in PHP 7.2 (T230861)
-		if ( gc_enabled() && version_compare( PHP_VERSION, '7.3.0', '<' ) ) {
-			$gcDisabled = true;
-			gc_collect_cycles();
-			gc_disable();
-		} else {
-			$gcDisabled = false;
-		}
-
+	public function init( array $initialState = [] ) {
 		// Reset pipeline state once per top-level doc.
 		// This clears state from any per-doc global state
 		// maintained across all pipelines used by the document.
 		// (Ex: Cite state)
-		$this->resetState( [ 'toplevel' => true ] );
-		if ( empty( $this->env->startTime ) ) {
-			$this->env->startTime = PHPUtils::getStartHRTime();
-		}
-		$this->env->log( 'trace/time', 'Starting parse at ', $this->env->startTime );
+		$toplevel = $initialState['toplevel'];
+		$this->resetState( [ 'toplevel' => $toplevel ] );
 
-		if ( !$opts ) {
-			$opts = [];
+		// Set frame
+		$frame = $initialState['frame'];
+		if ( !$toplevel ) {
+			$tplArgs = $initialState['tplArgs'] ?? null;
+			$srcText = $initialState['srcText'] ?? null;
+			if ( isset( $tplArgs['title'] ) ) {
+				$title = $tplArgs['title'];
+				$args = $tplArgs['attribs'];
+			} else {
+				$title = $frame->getTitle();
+				$args = $frame->getArgs()->args;
+			}
+			$frame = $frame->newChild( $title, $args, $srcText );
 		}
+		$this->setFrame( $frame );
 
-		// Top-level doc parsing always start in SOL state
-		$opts['sol'] = true;
-
-		if ( !empty( $opts['chunky'] ) ) {
-			$result = $this->parseChunkily( $input, $opts );
-		} else {
-			$result = $this->parse( $input, $opts );
+		// Set source offsets for this pipeline's content
+		$srcOffsets = $initialState['srcOffsets'] ?? null;
+		if ( $srcOffsets ) {
+			$this->setSourceOffsets( $srcOffsets );
 		}
-
-		if ( $gcDisabled ) {
-			gc_enable();
-			// There's no point running gc_collect_cycles() here, since objects
-			// are not marked for collection while the GC is disabled. The root
-			// buffer will be empty.
-		}
-		return $result;
 	}
 }

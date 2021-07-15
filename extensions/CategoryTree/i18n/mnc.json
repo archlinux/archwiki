@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"ChoiChong",
+			"Chulsu463",
+			"Foavi33"
+		]
+	},
+	"categorytree-expand": "nerkimbi",
+	"categorytree-member-counts": "{{PLURAL:$1|fejergi duwalibun}}, {{PLURAL:$2|fiyelen}}, {{PLURAL:$3|dangse}} baktambi",
+	"categorytree-num-categories": "$1 hachilan",
+	"categorytree-num-pages": "$1 fiyelen",
+	"categorytree-num-files": "$1 fiyelen"
+}

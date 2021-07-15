@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"CERminator",
-			"Srdjan m"
+			"Srdjan m",
+			"Srđan"
 		]
 	},
 	"codeeditor-desc": "Uređivanje s istaknutom sintaksom za JavaScript i CSS stranice koristeći [https://ace.c9.io/ uređivač Ace]",

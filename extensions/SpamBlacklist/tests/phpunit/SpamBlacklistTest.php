@@ -63,19 +63,25 @@ class SpamBlacklistTest extends MediaWikiTestCase {
 	 * @dataProvider spamProvider
 	 */
 	public function testSpam( $links, $expected ) {
-		$returnValue = $this->spamFilter->filter( $links, Title::newMainPage() );
+		$returnValue = $this->spamFilter->filter(
+			$links,
+			Title::newMainPage(),
+			$this->createMock( User::class )
+		);
 		$this->assertEquals( $expected, $returnValue );
 	}
 
 	protected function setUp() : void {
 		parent::setUp();
 
-		// create spam filter
-		$this->spamFilter = new SpamBlacklist;
-
 		$this->setMwGlobals( 'wgBlacklistSettings', [
 			'files' => [],
 		] );
+
+		BaseBlacklist::clearInstanceCache();
+
+		// create spam filter
+		$this->spamFilter = new SpamBlacklist;
 
 		MediaWikiServices::getInstance()->getMessageCache()->enable();
 		$this->insertPage( 'MediaWiki:Spam-blacklist', implode( "\n", $this->blacklist ) );

@@ -1,0 +1,19 @@
+{
+	"@metadata": {
+		"authors": [
+			"Achiri Bitamsimli",
+			"Alhaj Darajaati",
+			"Dnshitobu",
+			"Masssly"
+		]
+	},
+	"vector-action-addsection": "Pahimi yaɣili",
+	"vector-action-delete": "Nyahama",
+	"vector-action-move": "Tirisibu",
+	"vector-action-protect": "Guma",
+	"vector-view-create": "Nnam",
+	"vector-view-edit": "Maliniŋ",
+	"vector-view-history": "Lihimi tarihi",
+	"vector-view-view": "Karimma",
+	"vector-more-actions": "Lihimi n pahi"
+}

@@ -4,14 +4,15 @@
 			"BaRaN6161 TURK",
 			"Erkan Yilmaz",
 			"Joseph",
-			"McAang"
+			"McAang",
+			"Vito Genovese"
 		]
 	},
 	"syntaxhighlight-desc": "[https://pygments.org/ Pygments - Python sözdizimi vurgulayıcısı] kullanarak <code>&lt;syntaxhighlight&gt;</code> öğesini vurgulayarak sözdizimi sağlar",
 	"syntaxhighlight-error-category": "Hataları vurgulayan sözdizimi olan sayfalar",
 	"syntaxhighlight-error-category-desc": "Sayfada yer alan kodu vurgulamaya çalışırken bir hata oluştu.",
 	"syntaxhighlight-enclose-category": "Kullanımdan kaldırılmış kapsama özellikleri kullanan sayfalar",
-	"syntaxhighlight-enclose-category-desc": "Sayfadaki sözdizimi vurgulama, kullanımdan kaldırılmış kapsama sözdizimi kullanıyor.",
+	"syntaxhighlight-enclose-category-desc": "Sayfadaki sözdizim vurgulama, kullanımdan kaldırılmış kapsama sözdizimi kullanıyor.",
 	"syntaxhighlight-source-category": "Kullanımdan kaldırılmış kaynak etiketleri kullanan sayfalar",
 	"syntaxhighlight-source-category-desc": "Sayfadaki sözdizimi vurgulama, kullanımdan kaldırılmış kaynak etiketleri kullanıyor.",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "Kod",

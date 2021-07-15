@@ -338,6 +338,7 @@ class TitleBlacklist {
 		foreach ( $blacklist as $e ) {
 			Wikimedia\suppressWarnings();
 			$regex = $e->getRegex();
+			// @phan-suppress-next-line SecurityCheck-ReDoS
 			if ( preg_match( "/{$regex}/u", '' ) === false ) {
 				$badEntries[] = $e->getRaw();
 			}

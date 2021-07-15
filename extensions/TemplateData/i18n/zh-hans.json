@@ -3,13 +3,16 @@
 		"authors": [
 			"Arthur2e5",
 			"Cwek",
+			"Func",
 			"Hzy980512",
 			"Liuxinyu970226",
 			"Mywood",
 			"Ninedyz",
 			"Shizhao",
+			"Shuiwater",
 			"Xiaomingyan",
-			"Yfdyh000"
+			"Yfdyh000",
+			"沈澄心"
 		]
 	},
 	"templatedata-desc": "实现模板参数的数据存储（使用JSON）",
@@ -40,7 +43,7 @@
 	"templatedata-doc-param-type-unknown": "未知",
 	"templatedata-doc-param-type-url": "URL",
 	"templatedata-doc-param-type-wiki-file-name": "文件",
-	"templatedata-doc-param-type-wiki-page-name": "页面",
+	"templatedata-doc-param-type-wiki-page-name": "页面名",
 	"templatedata-doc-param-type-wiki-template-name": "模板",
 	"templatedata-doc-param-type-wiki-user-name": "用户",
 	"templatedata-doc-params": "模板参数",
@@ -67,6 +70,7 @@
 	"templatedata-modal-button-changelang": "更改语言",
 	"templatedata-modal-button-delparam": "移除参数信息",
 	"templatedata-modal-button-done": "完成",
+	"templatedata-modal-button-map": "编辑地图",
 	"templatedata-modal-button-importParams": "导入参数",
 	"templatedata-modal-button-restoreparam": "恢复参数",
 	"templatedata-modal-button-saveparam": "保存",

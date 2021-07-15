@@ -141,8 +141,15 @@ local function ttlTime( t )
 	return os.time( t )
 end
 
+local function frameExists( frameId )
+        -- Optimization: don't call into PHP to check if frame 'empty' or 'current' exist: 'empty'
+        -- always exists, and 'current' will have been set up by the engine already before calling
+        -- into Lua code.
+	return frameId == 'empty' or frameId == 'current' or php.frameExists( frameId )
+end
+
 local function newFrame( frameId, ... )
-	if not php.frameExists( frameId ) then
+	if not frameExists( frameId ) then
 		return nil
 	end
 

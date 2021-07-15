@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Davidpar",
+			"Mguix",
 			"Qllach",
 			"SMP",
 			"Toniher",
@@ -9,7 +10,7 @@
 		]
 	},
 	"citethispage": "Citeu",
-	"citethispage-desc": "Afegeix un enllaç i una pàgina especial de [[Special:Cite|citació]]",
+	"citethispage-desc": "Afegeix una pàgina especial [[Special:CiteThisPage|citació]] i un enllaç a la capsa d'eines",
 	"citethispage-link": "Cita aquesta pàgina",
 	"tooltip-citethispage": "Informació sobre com citar aquesta pàgina",
 	"citethispage-change-submit": "Cita",

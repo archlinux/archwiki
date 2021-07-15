@@ -9,6 +9,7 @@
 	"apihelp-query+oath-description": "בדיקה האם האימות הדו־שלבי (OATH) מופעל עבור המשתמש הזה.",
 	"apihelp-query+oath-summary": "בדיקה האם אימות דו־שלבי (OATH) מופעל עבור משתמש.",
 	"apihelp-query+oath-param-user": "על איזה משתמש לקבל מידע. ברירת המחדל היא המשתמש הנוכחי.",
+	"apihelp-query+oath-param-reason": "סיבה לשאילתה על מצב OATH.",
 	"apihelp-query+oath-example-1": "קבלת מידע על המשתמש הנוכחי",
 	"apihelp-query+oath-example-2": "קבלת מידע על משתמש <kbd>Example</kbd>",
 	"apihelp-oathvalidate-description": "בדיקת תקינות של אסימון אימות דו־שלבי (OATH).",

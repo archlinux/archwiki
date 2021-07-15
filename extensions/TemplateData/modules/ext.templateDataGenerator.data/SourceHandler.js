@@ -1,3 +1,5 @@
+var Model = require( './Model.js' );
+
 /**
  * TemplateData Source Handler
  *
@@ -13,7 +15,7 @@
  * @cfg {string} [parentPage] The name of the parent page
  * @cfg {string} [isPageSubLevel] The page is sub-level of another template
  */
-mw.TemplateData.SourceHandler = function MWTemplateDataSourceHander( config ) {
+function SourceHandler( config ) {
 	config = config || {};
 
 	// Mixin constructors
@@ -27,11 +29,11 @@ mw.TemplateData.SourceHandler = function MWTemplateDataSourceHander( config ) {
 	this.setParentPage( config.parentPage );
 	this.setPageSubLevel( config.isPageSubLevel );
 	this.setFullPageName( config.fullPageName );
-};
+}
 
 /* Inheritance */
 
-OO.mixinClass( mw.TemplateData.SourceHandler, OO.EventEmitter );
+OO.mixinClass( SourceHandler, OO.EventEmitter );
 
 /**
  * Get information from the MediaWiki API
@@ -40,7 +42,7 @@ OO.mixinClass( mw.TemplateData.SourceHandler, OO.EventEmitter );
  * @param {boolean} [getTemplateData] Fetch the templatedata in the page.
  * @return {jQuery.Promise} API promise
  */
-mw.TemplateData.SourceHandler.prototype.getApi = function ( page, getTemplateData ) {
+SourceHandler.prototype.getApi = function ( page, getTemplateData ) {
 	var config,
 		type = getTemplateData ? 'templatedata' : 'query',
 		api = new mw.Api(),
@@ -70,17 +72,20 @@ mw.TemplateData.SourceHandler.prototype.getApi = function ( page, getTemplateDat
  * Go over the current wikitext and build a new model.
  *
  * @param {string} [wikitext] Source of the template.
- * @return {jQuery.Promise} Promise resolving into a new mw.TemplateData.Model
+ * @return {jQuery.Promise} Promise resolving into a new Model
  *  or is rejected if the model was impossible to create.
  */
-mw.TemplateData.SourceHandler.prototype.buildModel = function ( wikitext ) {
-	var tdObject;
+SourceHandler.prototype.buildModel = function ( wikitext ) {
+	var tdObject = null,
+		templateDataString = this.findModelInString( wikitext );
 
-	// Get the TemplateData and parse it
-	tdObject = this.parseModelFromString( wikitext );
-	if ( !tdObject ) {
-		// The json object is invalid. There's no need to continue.
-		return $.Deferred().reject();
+	if ( templateDataString !== null ) {
+		try {
+			tdObject = JSON.parse( templateDataString );
+		} catch ( err ) {
+			// The json object is invalid. There's no need to continue.
+			return $.Deferred().reject();
+		}
 	}
 
 	// Get parameters from source code
@@ -88,7 +93,7 @@ mw.TemplateData.SourceHandler.prototype.buildModel = function ( wikitext ) {
 	return this.getParametersFromTemplateSource( wikitext )
 		// This is always successful by definition
 		.then( function ( templateSourceCodeParams ) {
-			return mw.TemplateData.Model.static.newFromObject(
+			return Model.static.newFromObject(
 				tdObject,
 				templateSourceCodeParams
 			);
@@ -110,7 +115,7 @@ mw.TemplateData.SourceHandler.prototype.buildModel = function ( wikitext ) {
  * @param {string} [wikitext] Optional. Source of the template.
  * @return {jQuery.Promise} Promise resolving into template parameter array
  */
-mw.TemplateData.SourceHandler.prototype.getParametersFromTemplateSource = function ( wikitext ) {
+SourceHandler.prototype.getParametersFromTemplateSource = function ( wikitext ) {
 	var params = [],
 		sourceHandler = this;
 
@@ -162,17 +167,21 @@ mw.TemplateData.SourceHandler.prototype.getParametersFromTemplateSource = functi
  * @param {string} templateCode Source of the template.
  * @return {string[]} An array of parameters that appear in the template code
  */
-mw.TemplateData.SourceHandler.prototype.extractParametersFromTemplateCode = function ( templateCode ) {
+SourceHandler.prototype.extractParametersFromTemplateCode = function ( templateCode ) {
 	var matches, normalizedParamName,
 		paramNames = [],
 		normalizedParamNames = [],
 		// This regex matches the one in TemplateDataBlob.php
 		paramExtractor = /{{3,}([^#]*?)([<|]|}{3,})/mg;
 
+	// Strip everything in nowiki tags and HTML comments
+	templateCode = templateCode.replace( /<!--[\s\S]*?-->/g, '' )
+		.replace( /<nowiki\s*>[\s\S]*?<\/nowiki\s*>/g, '' );
+
 	while ( ( matches = paramExtractor.exec( templateCode ) ) !== null ) {
 		// This normalization process is repeated in PHP in TemplateDataBlob.php
-		normalizedParamName = matches[ 1 ].replace( /[-_ ]+/, ' ' ).toLowerCase();
-		if ( normalizedParamNames.indexOf( normalizedParamName ) !== -1 ) {
+		normalizedParamName = matches[ 1 ].replace( /[-_ ]+/, ' ' ).trim().toLowerCase();
+		if ( !normalizedParamName || normalizedParamNames.indexOf( normalizedParamName ) !== -1 ) {
 			continue;
 		}
 		if ( paramNames.indexOf( matches[ 1 ] ) === -1 ) {
@@ -185,32 +194,23 @@ mw.TemplateData.SourceHandler.prototype.extractParametersFromTemplateCode = func
 };
 
 /**
- * Look for a templatedata json string and convert it into
- * the object, if it exists.
+ * Look for a templatedata json string and return it, if it exists.
  *
  * @param {string} templateDataString Wikitext templatedata string
- * @return {Object|null} The parsed json string. Empty if no
- * templatedata string was found. Null if the json string
- * failed to parse.
+ * @return {string|null} The isolated json string. Empty if no
+ * templatedata string was found.
  */
-mw.TemplateData.SourceHandler.prototype.parseModelFromString = function ( templateDataString ) {
+SourceHandler.prototype.findModelInString = function ( templateDataString ) {
 	var parts;
 
 	parts = templateDataString.match(
 		/<templatedata>([\s\S]*?)<\/templatedata>/i
 	);
 
-	// Check if <templatedata> exists
 	if ( parts && parts[ 1 ] && parts[ 1 ].trim().length > 0 ) {
-		// Parse the json string
-		try {
-			return JSON.parse( parts[ 1 ].trim() );
-		} catch ( err ) {
-			return null;
-		}
+		return parts[ 1 ].trim();
 	} else {
-		// Return empty model
-		return { params: {} };
+		return null;
 	}
 };
 
@@ -219,7 +219,7 @@ mw.TemplateData.SourceHandler.prototype.parseModelFromString = function ( templa
  *
  * @param {boolean} isSubLevel Page is sublevel
  */
-mw.TemplateData.SourceHandler.prototype.setPageSubLevel = function ( isSubLevel ) {
+SourceHandler.prototype.setPageSubLevel = function ( isSubLevel ) {
 	this.subLevel = !!isSubLevel;
 };
 
@@ -228,7 +228,7 @@ mw.TemplateData.SourceHandler.prototype.setPageSubLevel = function ( isSubLevel 
  *
  * @return {boolean} Page is sublevel
  */
-mw.TemplateData.SourceHandler.prototype.isPageSubLevel = function () {
+SourceHandler.prototype.isPageSubLevel = function () {
 	return this.subLevel;
 };
 
@@ -237,7 +237,7 @@ mw.TemplateData.SourceHandler.prototype.isPageSubLevel = function () {
  *
  * @param {string} pageName Page name
  */
-mw.TemplateData.SourceHandler.prototype.setFullPageName = function ( pageName ) {
+SourceHandler.prototype.setFullPageName = function ( pageName ) {
 	this.fullPageName = pageName || '';
 };
 
@@ -246,7 +246,7 @@ mw.TemplateData.SourceHandler.prototype.setFullPageName = function ( pageName ) 
  *
  * @return {string} Page full name
  */
-mw.TemplateData.SourceHandler.prototype.getFullPageName = function () {
+SourceHandler.prototype.getFullPageName = function () {
 	return this.fullPageName;
 };
 
@@ -255,7 +255,7 @@ mw.TemplateData.SourceHandler.prototype.getFullPageName = function () {
  *
  * @param {string} parent Parent page
  */
-mw.TemplateData.SourceHandler.prototype.setParentPage = function ( parent ) {
+SourceHandler.prototype.setParentPage = function ( parent ) {
 	this.parentPage = parent || '';
 };
 
@@ -264,7 +264,7 @@ mw.TemplateData.SourceHandler.prototype.setParentPage = function ( parent ) {
  *
  * @return {string} Parent page
  */
-mw.TemplateData.SourceHandler.prototype.getParentPage = function () {
+SourceHandler.prototype.getParentPage = function () {
 	return this.parentPage;
 };
 
@@ -273,7 +273,7 @@ mw.TemplateData.SourceHandler.prototype.getParentPage = function () {
  *
  * @param {string[]} params Parameters from the template source code
  */
-mw.TemplateData.SourceHandler.prototype.setTemplateSourceCodeParams = function ( params ) {
+SourceHandler.prototype.setTemplateSourceCodeParams = function ( params ) {
 	this.templateSourceCodeParams = params;
 };
 
@@ -282,6 +282,8 @@ mw.TemplateData.SourceHandler.prototype.setTemplateSourceCodeParams = function (
  *
  * @return {string[]} Parameters from the template source code
  */
-mw.TemplateData.SourceHandler.prototype.getTemplateSourceCodeParams = function () {
+SourceHandler.prototype.getTemplateSourceCodeParams = function () {
 	return this.templateSourceCodeParams;
 };
+
+module.exports = SourceHandler;

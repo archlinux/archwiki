@@ -10,7 +10,7 @@
 	"codeeditor-desc": "Edición de páginas con resaltado de sintaxis para JavaScript y CSS, usando [https://ace.c9.io el editor Ace]",
 	"codeeditor-next-annotation": "Ir a la anotación siguiente",
 	"codeeditor-toolbar-toggle": "Activar o desactivar el editor de código",
-	"codeeditor-save-with-errors": "El documento contiene errores. ¿Confirmas que quieres guardarlo?",
+	"codeeditor-save-with-errors": "El documento contiene errores. ¿Confirmas que quieres publicarlo?",
 	"codeeditor-invisibleChars-toggle": "Mostrar u ocultar los caracteres invisibles",
 	"codeeditor-lineWrapping-toggle": "Activar o desactivar el ajuste de renglones",
 	"codeeditor-searchReplace-toggle": "Mostrar u ocultar el cuadro de buscar y reemplazar",

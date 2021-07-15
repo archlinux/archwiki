@@ -20,7 +20,6 @@
 	"renameuserwarnings": "Waarschuwinge:",
 	"renameuserconfirm": "Jao, hernaam gebroeker",
 	"renameusersubmit": "Herneum",
-	"renameuser-submit-blocklog": "Tuin bloklogbook veure gebroeker",
 	"renameusererrordoesnotexist": "De gebroeker \"<nowiki>$1</nowiki>\" besteit neet.",
 	"renameusererrorexists": "De gebroeker \"<nowiki>$1</nowiki>\" besteit al.",
 	"renameusererrorinvalid": "De gebroekersnaam \"<nowiki>$1</nowiki>\" is óngeljig.",

@@ -1,11 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"Irus"
+			"Irus",
+			"ObaTango"
 		]
 	},
+	"vector-action-addsection": "Añadí un tópiko",
+	"vector-view-create": "Krea",
 	"vector-view-edit": "Editá",
 	"vector-view-history": "Bista di e historia",
 	"vector-view-view": "Lesa",
-	"vector-more-actions": "Otro"
+	"vector-more-actions": "Mas"
 }

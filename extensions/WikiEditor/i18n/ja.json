@@ -15,6 +15,7 @@
 			"Schu",
 			"Shirayuki",
 			"Sujiniku",
+			"Tmv",
 			"Whym",
 			"おはぐろ蜻蛉",
 			"青子守歌"
@@ -123,7 +124,7 @@
 	"wikieditor-toolbar-tool-table-preview": "プレビュー",
 	"wikieditor-toolbar-tool-table-insert": "挿入",
 	"wikieditor-toolbar-tool-table-cancel": "中止",
-	"wikieditor-toolbar-tool-table-toomany": "このダイアログでは、$1個以上の {{PLURAL:$1|セル}}がある表は挿入できません。",
+	"wikieditor-toolbar-tool-table-toomany": "このダイアログでは $1個以上の {{PLURAL:$1|セル}}がある表は挿入できません。",
 	"wikieditor-toolbar-tool-table-invalidnumber": "入力した行数または列数が有効ではありません。",
 	"wikieditor-toolbar-tool-table-zero": "行数または列数が0の表は挿入できません。",
 	"wikieditor-toolbar-tool-replace": "検索と置換",

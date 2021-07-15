@@ -19,7 +19,6 @@
 	"renameuserwarnings": "Avertimenti:",
 	"renameuserconfirm": "Sì, renomena l'utente",
 	"renameusersubmit": "Invia",
-	"renameuser-submit-blocklog": "Mostra registro de i blochi pa'l utente",
 	"renameusererrordoesnotexist": "El nome utente \"<nowiki>$1</nowiki>\" no l'esiste",
 	"renameusererrorexists": "El nome utente \"<nowiki>$1</nowiki>\" l'esiste de zà",
 	"renameusererrorinvalid": "El nome utente \"<nowiki>$1</nowiki>\" no'l xe mìa valido.",

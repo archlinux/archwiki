@@ -9,6 +9,7 @@
 			"Glavkos",
 			"Kiriakos",
 			"MF-Warburg",
+			"NikosLikomitros",
 			"Nikosgranturismogt",
 			"Omnipaedista",
 			"ZaDiak"
@@ -27,7 +28,6 @@
 	"renameuserwarnings": "Προειδοποιήσεις:",
 	"renameuserconfirm": "Ναι, μετονομάστε τον χρήστη",
 	"renameusersubmit": "Καταχώριση",
-	"renameuser-submit-blocklog": "Εμφάνιση μητρώου φραγών του χρήστη",
 	"renameusererrordoesnotexist": "Ο χρήστης \"<nowiki>$1</nowiki>\" δεν υπάρχει",
 	"renameusererrorexists": "Ο {{GENDER:$1|χρήστης}} \"<nowiki>$1</nowiki>\" υπάρχει ήδη.",
 	"renameusererrorinvalid": "Το όνομα χρήστη \"<nowiki>$1</nowiki>\" είναι άκυρο.",

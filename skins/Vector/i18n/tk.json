@@ -11,8 +11,9 @@
 	"vector-action-undelete": "Öçürmäni yzyna al",
 	"vector-action-unprotect": "Goragy üýtget",
 	"vector-view-create": "Döret",
-	"vector-view-edit": "Üýtget",
+	"vector-view-edit": "Düzet",
 	"vector-view-history": "Taryhy gör",
 	"vector-view-view": "Oka",
-	"vector-view-viewsource": "Çeşmäni gör"
+	"vector-view-viewsource": "Çeşmäni gör",
+	"vector-more-actions": "Has köp"
 }

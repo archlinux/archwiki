@@ -34,7 +34,7 @@ ve.ui.CommandHelpDialog.static.title =
 ve.ui.CommandHelpDialog.static.actions = [
 	{
 		label: OO.ui.deferMsg( 'visualeditor-dialog-action-done' ),
-		flags: 'safe'
+		flags: [ 'safe', 'close' ]
 	}
 ];
 
@@ -135,7 +135,7 @@ ve.ui.CommandHelpDialog.prototype.initialize = function () {
 
 			$shortcut = $( '<dt>' );
 			for ( k = 0, kLen = triggerList.length; k < kLen; k++ ) {
-				$shortcut.append( $( '<kbd>' ).append(
+				$shortcut.append( $( '<kbd>' ).addClass( 've-ui-commandHelpDialog-shortcut' ).append(
 					triggerList[ k ].getMessage( true ).map( this.constructor.static.buildKeyNode )
 				).find( 'kbd + kbd' ).before( '+' ).end() );
 				hasShortcut = true;

@@ -25,14 +25,13 @@ class ReferenceMessageLocalizer implements MessageLocalizer {
 	}
 
 	/**
-	 * Transliterate numerals, add thousands separators and localize the decimal point.
-	 *
 	 * @param string $number
 	 *
 	 * @return string
 	 */
-	public function formatNum( string $number ) : string {
-		return $this->language->formatNum( $number );
+	public function localizeSeparators( string $number ) : string {
+		// Filter to make sure characters are never removed
+		return strtr( $number, array_filter( $this->language->separatorTransformTable() ?: [] ) );
 	}
 
 	/**

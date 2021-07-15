@@ -22,7 +22,6 @@
 	"cite-ve-changedesc-reflist-group-to": "Skupina zoznamu referencií zmenená zo všeobecnej na „$1“",
 	"cite-ve-changedesc-reflist-responsive-set": "Zoznam referencií sa teraz zobrazuje v responzívnych stĺpcoch",
 	"cite-ve-changedesc-reflist-responsive-unset": "Zoznam referencií sa teraz zobrazuje len v jednom stĺpci",
-	"cite-ve-changedesc-reflist-item-id": "Číslo referencie zmenené",
 	"cite-ve-citationneeded-button": "Pridať citáciu",
 	"cite-ve-citationneeded-title": "Bez citácie",
 	"cite-ve-dialog-reference-editing-reused": "Táto referencia sa na tejto stránke používa {{PLURAL:$1|raz|2=dvakrát|$1 krát}}.",

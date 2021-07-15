@@ -36,21 +36,33 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 };
 	*/
 
-	private static function next( DOMNode $el ): ?DOMNode {
+	/**
+	 * @param DOMNode $el
+	 * @return ?DOMNode
+	 */
+	private static function next( $el ) {
 		while ( ( $el = $el->nextSibling ) && $el->nodeType !== 1 ) {
 			// no op
 		}
 		return $el;
 	}
 
-	private static function prev( DOMNode $el ): ?DOMNode {
+	/**
+	 * @param DOMNode $el
+	 * @return ?DOMNode
+	 */
+	private static function prev( $el ) {
 		while ( ( $el = $el->previousSibling ) && $el->nodeType !== 1 ) {
 			// no op
 		}
 		return $el;
 	}
 
-	private static function child( DOMNode $el ): ?DOMNode {
+	/**
+	 * @param DOMNode $el
+	 * @return ?DOMNode
+	 */
+	private static function child( $el ) {
 		if ( $el = $el->firstChild ) {
 			while ( $el->nodeType !== 1 && ( $el = $el->nextSibling ) ) {
 				// no op
@@ -59,7 +71,11 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 		return $el;
 	}
 
-	private static function lastChild( DOMNode $el ): ?DOMNode {
+	/**
+	 * @param DOMNode $el
+	 * @return ?DOMNode
+	 */
+	private static function lastChild( $el ) {
 		if ( $el = $el->lastChild ) {
 			while ( $el->nodeType !== 1 && ( $el = $el->previousSibling ) ) {
 				// no op
@@ -68,16 +84,31 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 		return $el;
 	}
 
-	private static function parentIsElement( DOMNode $n ): bool {
-		if ( !$n->parentNode ) { return false;
-  }
-		$nodeType = $n->parentNode->nodeType;
+	/**
+	 * @param DOMNode $n
+	 * @return bool
+	 */
+	private static function parentIsElement( $n ): bool {
+		$parent = $n->parentNode;
+		if ( !$parent ) { return false;
+		}
 		// The root `html` element (node type 9) can be a first- or
-		// last-child, too.  But in PHP, if you load a document with
-		// DOMDocument::loadHTML, your root DOMDocument will have node
-		// type 13 (!) which is PHP's bespoke "XML_HTML_DOCUMENT_NODE"
-		// and Not A Real Thing.  But we'll recognize it anyway...
-		return $nodeType === 1 || $nodeType === 9 || $nodeType === 13;
+		// last-child, too.
+		return $parent->nodeType === 1 || self::nodeIsDocument( $parent );
+	}
+
+	/**
+	 * @param DOMNode $n
+	 * @return bool
+	 */
+	private static function nodeIsDocument( $n ): bool {
+		$nodeType = $n->nodeType;
+		return $nodeType === 9 /* Document */ ||
+			// In PHP, if you load a document with
+			// DOMDocument::loadHTML, your root DOMDocument will have node
+			// type 13 (!) which is PHP's bespoke "XML_HTML_DOCUMENT_NODE"
+			// and Not A Real Thing.  But we'll recognize it anyway...
+			$nodeType === 13; /* HTMLDocument */
 	}
 
 	private static function unichr( int $codepoint ): string {
@@ -95,12 +126,13 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 		self::initRules();
 		$ch = $str[ 0 ];
 		if ( $ch === '"' || $ch === "'" ) {
-			if ( substr( $str, - 1 ) === $ch ) {
+			if ( substr( $str, -1 ) === $ch ) {
 				$str = substr( $str, 1, -1 );
 			} else {
 				// bad string.
 				$str = substr( $str, 1 );
 			}
+			// @phan-suppress-next-line SecurityCheck-LikelyFalsePositive
 			return preg_replace_callback( self::$rules->str_escape, function ( array $matches ) {
 				$s = $matches[0];
 				if ( !preg_match( '/^\\\(?:([0-9A-Fa-f]+)|([\r\n\f]+))/', $s, $m ) ) {
@@ -112,6 +144,7 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 				$cp = intval( $m[ 1 ], 16 );
 				return self::unichr( $cp );
 			}, $str );
+			// @phan-suppress-next-line SecurityCheck-LikelyFalsePositive
 		} elseif ( preg_match( self::$rules->ident, $str ) ) {
 			return self::decodeid( $str );
 		} else {
@@ -121,6 +154,7 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 	}
 
 	private static function decodeid( string $str ): string {
+		// @phan-suppress-next-line SecurityCheck-LikelyFalsePositive
 		return preg_replace_callback( self::$rules->escape, function ( array $matches ) {
 			$s = $matches[0];
 			if ( !preg_match( '/^\\\([0-9A-Fa-f]+)/', $s, $m ) ) {
@@ -180,8 +214,8 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 	 * @return array A list of the elements with the given ID. When there are more
 	 *   than one, this method might return all of them or only the first one.
 	 */
-	public static function getElementsById( DOMNode $context, string $id ): array {
-		$doc = ( $context instanceof \DOMDocument ) ?
+	public static function getElementsById( $context, string $id ): array {
+		$doc = self::nodeIsDocument( $context ) ?
 			$context : $context->ownerDocument;
 		// PHP doesn't provide an DOMElement-scoped version of
 		// getElementById, so we can't call this directly on $context --
@@ -208,6 +242,13 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 			// shadowing a later-added element, so we can't return
 			// null here directly; fallback to a full search.
 		}
+		if ( !( $doc instanceof DOMDocument ) ) {
+			// The workaround below only works (and is only necessary!)
+			// when this is a PHP-provided \DOMDocument.  For 3rd-party
+			// DOM implementations, we don't have to go through this
+			// mess.
+			return [];
+		}
 		// Do an xpath search, which is still a full traversal of the tree
 		// (sigh) but 25% faster than traversing it wholly in PHP.
 		$xpath = new \DOMXPath( $doc );
@@ -224,7 +265,7 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 	 * @param string $tagName
 	 * @return DOMNodeList
 	 */
-	public static function getElementsByTagName( DOMNode $context, string $tagName ): DOMNodeList {
+	public static function getElementsByTagName( $context, string $tagName ) {
 		// This *should* just be a call to PHP's `getElementByTagName`
 		// function *BUT* PHP's implementation is 100x slower than using
 		// XPath to get the same results (!)
@@ -234,10 +275,12 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 		// the DOM spec says it should report uppercase)
 		$tagName = strtolower( $tagName );
 
-		if ( $context instanceof DOMDocument ) {
-			$doc = $context;
-		} else {
-			$doc = $context->ownerDocument;
+		$doc = self::nodeIsDocument( $context ) ?
+			$context : $context->ownerDocument;
+
+		if ( !( $doc instanceof DOMDocument ) ) {
+			// For third-party DOM implementations, just use native func.
+			return $context->getElementsByTagName( $tagName );
 		}
 		$xpath = new \DOMXPath( $doc );
 		$ns = $doc->documentElement->namespaceURI;
@@ -251,15 +294,23 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 		return $xpath->query( $query, $context );
 	}
 
-	private static function getElementsByClassName( DOMNode $context, string $className ): DOMNodeList {
+	/**
+	 * @param DOMNode $context
+	 * @param string $className
+	 * @return DOMNodeList
+	 */
+	private static function getElementsByClassName( $context, string $className ) {
 		// PHP doesn't have an implementation of this method; use XPath
 		// to quickly get results.  (It would be faster still if there was an
 		// actual index, but this will be about 25% faster than doing the
 		// tree traversal all in PHP.)
-		if ( $context instanceof DOMDocument ) {
-			$doc = $context;
-		} else {
-			$doc = $context->ownerDocument;
+		$doc = self::nodeIsDocument( $context ) ?
+			$context : $context->ownerDocument;
+
+		if ( !( $doc instanceof DOMDocument ) ) {
+			// For third-party DOM implementations, just use native func.
+			// @phan-suppress-next-line PhanUndeclaredMethod
+			return $context->getElementsByClassName( $className );
 		}
 		$xpath = new \DOMXPath( $doc );
 		$quotedClassName = self::xpathQuote( " $className " );
@@ -291,13 +342,19 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 		];
 	}
 
+	/**
+	 * @param string $param
+	 * @param callable(DOMNode,DOMNode):bool $test
+	 * @param bool $last
+	 * @return callable(DOMNode):bool
+	 */
 	private static function nth( string $param, callable $test, bool $last ): callable {
 		$param = self::parseNth( $param );
 		$group = $param->group;
 		$offset = $param->offset;
 		$find = ( !$last ) ? [ self::class, 'child' ] : [ self::class, 'lastChild' ];
 		$advance = ( !$last ) ? [ self::class, 'next' ] : [ self::class, 'prev' ];
-		return function ( DOMNode $el ) use ( $find, $test, $offset, $group, $advance ): bool {
+		return function ( $el ) use ( $find, $test, $offset, $group, $advance ): bool {
 			if ( !self::parentIsElement( $el ) ) {
 				return false;
 			}
@@ -311,9 +368,9 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 				}
 				if ( $rel === $el ) {
 					$pos -= $offset;
-					return ( $group && $pos ) ?
-						( $pos % $group ) === 0 && ( $pos < 0 === $group < 0 ) :
-						!$pos;
+					return ( $group && $pos )
+						? ( $pos % $group ) === 0 && ( ( $pos < 0 ) === ( $group < 0 ) )
+						: !$pos;
 				}
 				$rel = call_user_func( $advance, $rel );
 			}
@@ -355,27 +412,27 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 	}
 
 	private function initSelectors() {
-		$this->addSelector0( '*', function ( DOMNode $el ): bool {
+		$this->addSelector0( '*', function ( $el ): bool {
 			return true;
 		} );
 		$this->addSelector1( 'type', function ( string $type ): callable {
 			$type = strtolower( $type );
-			return function ( DOMNode $el ) use ( $type ): bool {
+			return function ( $el ) use ( $type ): bool {
 				return strtolower( $el->nodeName ) === $type;
 			};
 		} );
-		$this->addSelector0( ':first-child', function ( DOMNode $el ): bool {
+		$this->addSelector0( ':first-child', function ( $el ): bool {
 			return !self::prev( $el ) && self::parentIsElement( $el );
 		} );
-		$this->addSelector0( ':last-child', function ( DOMNode $el ): bool {
+		$this->addSelector0( ':last-child', function ( $el ): bool {
 			return !self::next( $el ) && self::parentIsElement( $el );
 		} );
-		$this->addSelector0( ':only-child', function ( DOMNode $el ): bool {
+		$this->addSelector0( ':only-child', function ( $el ): bool {
 			return !self::prev( $el ) && !self::next( $el )
 				&& self::parentIsElement( $el );
 		} );
 		$this->addSelector1( ':nth-child', function ( string $param, bool $last = false ): callable {
-			return self::nth( $param, function () {
+			return self::nth( $param, function ( $ignore1, $ignore2 ) {
 				return true;
 			}, $last );
 		} );
@@ -383,19 +440,19 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 		$this->addSelector1( ':nth-last-child', function ( string $param ): callable {
 			return $this->selectors1[ ':nth-child' ]( $param, true );
 		} );
-		$this->addSelector0( ':root', function ( DOMNode $el ): bool {
+		$this->addSelector0( ':root', function ( $el ): bool {
 			return $el->ownerDocument->documentElement === $el;
 		} );
-		$this->addSelector0( ':empty', function ( DOMNode $el ): bool {
+		$this->addSelector0( ':empty', function ( $el ): bool {
 			return !$el->firstChild;
 		} );
 		$this->addSelector1( ':not', function ( string $sel ) {
 			$test = self::compileGroup( $sel );
-			return function ( DOMNode $el ) use ( $test ): bool {
+			return function ( $el ) use ( $test ): bool {
 				return !call_user_func( $test, $el );
 			};
 		} );
-		$this->addSelector0( ':first-of-type', function ( DOMNode $el ): bool {
+		$this->addSelector0( ':first-of-type', function ( $el ): bool {
 			if ( !self::parentIsElement( $el ) ) {
 				return false;
 			}
@@ -407,7 +464,7 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 			}
 			return true;
 		} );
-		$this->addSelector0( ':last-of-type', function ( DOMNode $el ): bool {
+		$this->addSelector0( ':last-of-type', function ( $el ): bool {
 			if ( !self::parentIsElement( $el ) ) {
 				return false;
 			}
@@ -419,12 +476,12 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 			}
 			return true;
 		} );
-		$this->addSelector0( ':only-of-type', function ( DOMNode $el ): bool {
+		$this->addSelector0( ':only-of-type', function ( $el ): bool {
 			return $this->selectors0[ ':first-of-type' ]( $el ) &&
 				$this->selectors0[ ':last-of-type' ]( $el );
 		} );
 		$this->addSelector1( ':nth-of-type', function ( string $param, bool $last = false ): callable  {
-			return self::nth( $param, function ( DOMNode $rel, DOMNode $el ) {
+			return self::nth( $param, function ( $rel, $el ) {
 				return $rel->nodeName === $el->nodeName;
 			}, $last );
 		} );
@@ -432,32 +489,32 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 		$this->addSelector1( ':nth-last-of-type', function ( string $param ): callable {
 			return $this->selectors1[ ':nth-of-type' ]( $param, true );
 		} );
-		$this->addSelector0( ':checked', function ( DOMNode $el ): bool {
+		$this->addSelector0( ':checked', function ( $el ): bool {
 			'@phan-var DOMElement $el';
 			// XXX these properties don't exist in the PHP DOM
 			// return $el->checked || $el->selected;
 			return $el->hasAttribute( 'checked' ) || $el->hasAttribute( 'selected' );
 		} );
-		$this->addSelector0( ':indeterminate', function ( DOMNode $el ): bool {
+		$this->addSelector0( ':indeterminate', function ( $el ): bool {
 			return !$this->selectors0[ ':checked' ]( $el );
 		} );
-		$this->addSelector0( ':enabled', function ( DOMNode $el ): bool {
+		$this->addSelector0( ':enabled', function ( $el ): bool {
 			'@phan-var DOMElement $el';
 			// XXX these properties don't exist in the PHP DOM
 			// return !$el->disabled && $el->type !== 'hidden';
 			return !$el->hasAttribute( 'disabled' ) && $el->getAttribute( 'type' ) !== 'hidden';
 		} );
-		$this->addSelector0( ':disabled', function ( DOMNode $el ): bool {
+		$this->addSelector0( ':disabled', function ( $el ): bool {
 			'@phan-var DOMElement $el';
 			// XXX these properties don't exist in the PHP DOM
 			// return !!$el->disabled;
 			return $el->hasAttribute( 'disabled' );
 		} );
 		/*
-		$this->addSelector0( ':target', function ( DOMNode $el ) use ( &$window ) {
+		$this->addSelector0( ':target', function ( $el ) use ( &$window ) {
 			return $el->id === $window->location->hash->substring( 1 );
 		});
-		$this->addSelector0( ':focus', function ( DOMNode $el ) {
+		$this->addSelector0( ':focus', function ( $el ) {
 			return $el === $el->ownerDocument->activeElement;
 		});
 		*/
@@ -481,12 +538,12 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 			return $this->selectors1[ ':nth-match' ]( $param, true );
 		} );
 		/*
-		$this->addSelector0( ':links-here', function ( DOMNode $el ) use ( &$window ) {
+		$this->addSelector0( ':links-here', function ( $el ) use ( &$window ) {
 			return $el . '' === $window->location . '';
 		});
 		*/
 		$this->addSelector1( ':lang', function ( string $param ): callable {
-			return function ( DOMNode $el ) use ( $param ): bool {
+			return function ( $el ) use ( $param ): bool {
 				'@phan-var DOMElement $el';
 				while ( $el ) {
 					// PHP DOM doesn't have 'lang' property
@@ -500,7 +557,7 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 			};
 		} );
 		$this->addSelector1( ':dir', function ( string $param ): callable {
-			return function ( DOMNode $el ) use ( $param ): bool {
+			return function ( $el ) use ( $param ): bool {
 				'@phan-var DOMElement $el';
 				while ( $el ) {
 					$dir = $el->getAttribute( 'dir' );
@@ -512,24 +569,24 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 				return false;
 			};
 		} );
-		$this->addSelector0( ':scope', function ( DOMNode $el, $con = null ): bool {
+		$this->addSelector0( ':scope', function ( $el, $con = null ): bool {
 			$context = $con ?? $el->ownerDocument;
-			if ( $context->nodeType === 9 ) {
+			if ( self::nodeIsDocument( $context ) ) {
 				return $el === $context->documentElement;
 			}
 			return $el === $context;
 		} );
 		/*
-		$this->addSelector0( ':any-link', function ( DOMNode $el ):bool {
+		$this->addSelector0( ':any-link', function ( $el ):bool {
 			return gettype( $el->href ) === 'string';
 		});
-		$this->addSelector( ':local-link', function ( DOMNode $el ) use ( &$window ) {
+		$this->addSelector( ':local-link', function ( $el ) use ( &$window ) {
 			if ( $el->nodeName ) {
 				return $el->href && $el->host === $window->location->host;
 			}
 			// XXX this is really selector1 not selector0
 			$param = +$el + 1;
-			return function ( DOMNode $el ) use ( &$window, $param ) {
+			return function ( $el ) use ( &$window, $param ) {
 				if ( !$el->href ) { return;  }
 
 				$url = $window->location . '';
@@ -538,32 +595,32 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 				return self::truncateUrl( $url, $param ) === self::truncateUrl( $href, $param );
 			};
 		});
-		$this->addSelector0( ':default', function ( DOMNode $el ):bool {
+		$this->addSelector0( ':default', function ( $el ):bool {
 			return !!$el->defaultSelected;
 		});
-		$this->addSelector0( ':valid', function ( DOMNode $el ):bool {
+		$this->addSelector0( ':valid', function ( $el ):bool {
 			return $el->willValidate || ( $el->validity && $el->validity->valid );
 		});
 		*/
-		$this->addSelector0( ':invalid', function ( DOMNode $el ):bool {
+		$this->addSelector0( ':invalid', function ( $el ):bool {
 			return !$this->selectors0[ ':valid' ]( $el );
 		} );
 		/*
-		$this->addSelector0( ':in-range', function ( DOMNode $el ):bool {
+		$this->addSelector0( ':in-range', function ( $el ):bool {
 			return $el->value > $el->min && $el->value <= $el->max;
 		});
 		*/
-		$this->addSelector0( ':out-of-range', function ( DOMNode $el ): bool {
+		$this->addSelector0( ':out-of-range', function ( $el ): bool {
 			return !$this->selectors0[ ':in-range' ]( $el );
 		} );
-		$this->addSelector0( ':required', function ( DOMNode $el ): bool {
+		$this->addSelector0( ':required', function ( $el ): bool {
 			'@phan-var DOMElement $el';
 			return $el->hasAttribute( 'required' );
 		} );
-		$this->addSelector0( ':optional', function ( DOMNode $el ): bool {
+		$this->addSelector0( ':optional', function ( $el ): bool {
 			return !$this->selectors0[ ':required' ]( $el );
 		} );
-		$this->addSelector0( ':read-only', function ( DOMNode $el ): bool {
+		$this->addSelector0( ':read-only', function ( $el ): bool {
 			'@phan-var DOMElement $el';
 			if ( $el->hasAttribute( 'readOnly' ) ) {
 				return true;
@@ -576,48 +633,48 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 
 			return ( $name || $el->hasAttribute( 'disabled' ) ) && $attr == null;
 		} );
-		$this->addSelector0( ':read-write', function ( DOMNode $el ): bool {
+		$this->addSelector0( ':read-write', function ( $el ): bool {
 			return !$this->selectors0[ ':read-only' ]( $el );
 		} );
-		$this->addSelector0( ':hover', function ( DOMNode $el ): bool {
+		$this->addSelector0( ':hover', function ( $el ): bool {
 			throw new Error( ':hover is not supported.' );
 		} );
-		$this->addSelector0( ':active', function ( DOMNode $el ): bool {
+		$this->addSelector0( ':active', function ( $el ): bool {
 			throw new Error( ':active is not supported.' );
 		} );
-		$this->addSelector0( ':link', function ( DOMNode $el ): bool {
+		$this->addSelector0( ':link', function ( $el ): bool {
 			throw new Error( ':link is not supported.' );
 		} );
-		$this->addSelector0( ':visited', function ( DOMNode $el ): bool {
+		$this->addSelector0( ':visited', function ( $el ): bool {
 			throw new Error( ':visited is not supported.' );
 		} );
-		$this->addSelector0( ':column', function ( DOMNode $el ): bool {
+		$this->addSelector0( ':column', function ( $el ): bool {
 			throw new Error( ':column is not supported.' );
 		} );
-		$this->addSelector0( ':nth-column', function ( DOMNode $el ): bool {
+		$this->addSelector0( ':nth-column', function ( $el ): bool {
 			throw new Error( ':nth-column is not supported.' );
 		} );
-		$this->addSelector0( ':nth-last-column', function ( DOMNode $el ): bool {
+		$this->addSelector0( ':nth-last-column', function ( $el ): bool {
 			throw new Error( ':nth-last-column is not supported.' );
 		} );
-		$this->addSelector0( ':current', function ( DOMNode $el ): bool {
+		$this->addSelector0( ':current', function ( $el ): bool {
 			throw new Error( ':current is not supported.' );
 		} );
-		$this->addSelector0( ':past', function ( DOMNode $el ): bool {
+		$this->addSelector0( ':past', function ( $el ): bool {
 			throw new Error( ':past is not supported.' );
 		} );
-		$this->addSelector0( ':future', function ( DOMNode $el ): bool {
+		$this->addSelector0( ':future', function ( $el ): bool {
 			throw new Error( ':future is not supported.' );
 		} );
 		// Non-standard, for compatibility purposes.
 		$this->addSelector1( ':contains', function ( string $param ): callable {
-			return function ( DOMNode $el ) use ( $param ): bool {
+			return function ( $el ) use ( $param ): bool {
 				$text = $el->textContent;
 				return strpos( $text, $param ) !== false;
 			};
 		} );
 		$this->addSelector1( ':has', function ( string $param ): callable {
-			return function ( DOMNode $el ) use ( $param ): bool {
+			return function ( $el ) use ( $param ): bool {
 				'@phan-var DOMElement $el';
 				return count( self::find( $param, $el ) ) > 0;
 			};
@@ -630,7 +687,7 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 	/** @return callable(DOMNode):bool */
 	private function selectorsAttr( string $key, string $op, string $val, bool $i ): callable {
 		$op = $this->operators[ $op ];
-		return function ( DOMNode $el ) use ( $key, $i, $op, $val ): bool {
+		return function ( $el ) use ( $key, $i, $op, $val ): bool {
 			/* XXX: the below all assumes a more complete PHP DOM than we have
 			switch ( $key ) {
 			#case 'for':
@@ -692,7 +749,7 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 			if ( $attr == null ) {
 				return false;
 			}
-			$attr = $attr . '';
+			$attr .= '';
 			if ( $i ) {
 				$attr = strtolower( $attr );
 				$val = strtolower( $val );
@@ -787,7 +844,7 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 
 	private function initCombinators() {
 		$this->addCombinator( ' ', function ( callable $test ): callable {
-			return function ( DOMNode $el ) use ( $test ): ?DOMNode {
+			return function ( $el ) use ( $test ) {
 				while ( $el = $el->parentNode ) {
 					if ( call_user_func( $test, $el ) ) {
 						return $el;
@@ -797,7 +854,7 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 			};
 		} );
 		$this->addCombinator( '>', function ( callable $test ): callable {
-			return function ( DOMNode $el ) use ( $test ): ?DOMNode {
+			return function ( $el ) use ( $test ) {
 				if ( $el = $el->parentNode ) {
 					if ( call_user_func( $test, $el ) ) {
 						return $el;
@@ -807,7 +864,7 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 			};
 		} );
 		$this->addCombinator( '+', function ( callable $test ): callable {
-			return function ( DOMNode $el ) use ( $test ): ?DOMNode {
+			return function ( $el ) use ( $test ) {
 				if ( $el = self::prev( $el ) ) {
 					if ( call_user_func( $test, $el ) ) {
 						return $el;
@@ -817,7 +874,7 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 			};
 		} );
 		$this->addCombinator( '~', function ( callable $test ): callable {
-			return function ( DOMNode $el ) use ( $test ): ?DOMNode {
+			return function ( $el ) use ( $test ) {
 				while ( $el = self::prev( $el ) ) {
 					if ( call_user_func( $test, $el ) ) {
 						return $el;
@@ -827,7 +884,7 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 			};
 		} );
 		$this->addCombinator( 'noop', function ( callable $test ): callable {
-			return function ( DOMNode $el ) use ( $test ): ?DOMNode {
+			return function ( $el ) use ( $test ) {
 				if ( call_user_func( $test, $el ) ) {
 					return $el;
 				}
@@ -838,7 +895,7 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 
 	private static function makeRef( callable $test, string $name ): ZestFunc {
 		$node = null;
-		$ref = new ZestFunc( function ( DOMNode $el ) use ( &$node, &$ref ) : bool {
+		$ref = new ZestFunc( function ( $el ) use ( &$node, &$ref ) : bool {
 			$doc = $el->ownerDocument;
 			$nodes = self::getElementsByTagName( $doc, '*' );
 			$i = count( $nodes );
@@ -855,8 +912,8 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 			return false;
 		} );
 
-		$ref->combinator = function ( DOMNode $el ) use ( &$node, $name, $test ): ?DOMNode {
-			if ( !$node || !( $node instanceof DOMElement ) ) {
+		$ref->combinator = function ( $el ) use ( &$node, $name, $test ) {
+			if ( !$node || $node->nodeType !== 1 /* Element */ ) {
 				return null;
 			}
 
@@ -879,6 +936,7 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 	 * Grammar
 	 */
 
+	/** @var \stdClass */
 	private static $rules;
 
 	public static function initRules() {
@@ -928,10 +986,12 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 		$ref = null;
 
 		while ( $sel ) {
+			// @phan-suppress-next-line SecurityCheck-LikelyFalsePositive
 			if ( preg_match( self::$rules->qname, $sel, $cap ) ) {
 				$sel = substr( $sel, strlen( $cap[0] ) );
 				$qname = self::decodeid( $cap[ 1 ] );
 				$buff[] = $this->tokQname( $qname );
+				// @phan-suppress-next-line SecurityCheck-LikelyFalsePositive
 			} elseif ( preg_match( self::$rules->simple, $sel, $cap, PREG_UNMATCHED_AS_NULL ) ) {
 				$sel = substr( $sel, strlen( $cap[0] ) );
 				$qname = '*';
@@ -941,6 +1001,7 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 				throw new InvalidArgumentException( 'Invalid selector.' );
 			}
 
+			// @phan-suppress-next-line SecurityCheck-LikelyFalsePositive
 			while ( preg_match( self::$rules->simple, $sel, $cap, PREG_UNMATCHED_AS_NULL ) ) {
 				$sel = substr( $sel, strlen( $cap[0] ) );
 				$buff[] = $this->tok( $cap );
@@ -953,6 +1014,7 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 				$buff[] = $subject->simple;
 			}
 
+			// @phan-suppress-next-line SecurityCheck-LikelyFalsePositive
 			if ( preg_match( self::$rules->ref, $sel, $cap ) ) {
 				$sel = substr( $sel, strlen( $cap[0] ) );
 				$ref = self::makeRef( self::makeSimple( $buff ), self::decodeid( $cap[ 1 ] ) );
@@ -961,6 +1023,7 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 				continue;
 			}
 
+			// @phan-suppress-next-line SecurityCheck-LikelyFalsePositive
 			if ( preg_match( self::$rules->combinator, $sel, $cap, PREG_UNMATCHED_AS_NULL ) ) {
 				$sel = substr( $sel, strlen( $cap[0] ) );
 				$op = $cap[ 1 ] ?? $cap[ 2 ] ?? $cap[ 3 ];
@@ -1065,7 +1128,7 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 			return $func[ 0 ];
 		}
 
-		return function ( DOMNode $el ) use ( $l, $func ): bool {
+		return function ( $el ) use ( $l, $func ): bool {
 			for ( $i = 0;  $i < $l;  $i++ ) {
 				if ( !call_user_func( $func[ $i ], $el ) ) {
 					return false;
@@ -1078,11 +1141,11 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 	// Returns the element that all $func return
 	private static function makeTest( array $func ): ZestFunc {
 		if ( count( $func ) < 2 ) {
-			return new ZestFunc( function ( DOMNode $el ) use ( $func ): bool {
+			return new ZestFunc( function ( $el ) use ( $func ): bool {
 				return (bool)call_user_func( $func[ 0 ], $el );
 			} );
 		}
-		return new ZestFunc( function ( DOMNode $el ) use ( $func ): bool {
+		return new ZestFunc( function ( $el ) use ( $func ): bool {
 			$i = count( $func );
 			while ( $i-- ) {
 				if ( !( $el = call_user_func( $func[ $i ], $el ) ) ) {
@@ -1096,7 +1159,7 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 	private static function makeSubject(): ZestFunc {
 		$target = null;
 
-		$subject = new ZestFunc( function ( DOMNode $el ) use ( &$subject, &$target ): bool {
+		$subject = new ZestFunc( function ( $el ) use ( &$subject, &$target ): bool {
 			$node = $el->ownerDocument;
 			$scope = self::getElementsByTagName( $node, $subject->lname );
 			$i = count( $scope );
@@ -1112,7 +1175,7 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 			return false;
 		} );
 
-		$subject->simple = function ( DOMNode $el ): bool {
+		$subject->simple = function ( $el ): bool {
 			$target = $el;
 			return true;
 		};
@@ -1121,7 +1184,7 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 	}
 
 	/**
-	 * @return callable(DOMNode):bool
+	 * @return callable(DOMNode):bool|callable(DOMNode,DOMNode):bool
 	 */
 	private function compileGroup( string $sel ): callable {
 		$test = $this->compile( $sel );
@@ -1136,7 +1199,8 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 			return $test->func;
 		}
 
-		return function ( DOMNode $el ) use ( $tests ): bool {
+		// Optional "$ignore" parameter here lets this be passed to nth()
+		return function ( $el, $ignore = null ) use ( $tests ): bool {
 			for ( $i = 0, $l = count( $tests );  $i < $l;  $i++ ) {
 				if ( call_user_func( $tests[ $i ]->func, $el ) ) {
 					return true;
@@ -1152,11 +1216,14 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 
 	// $node should be a DOMDocument or a DOMElement
 
-	/** @param DOMDocument|DOMElement $node */
-	private function findInternal( string $sel, DOMNode $node ): array {
+	/**
+	 * @param string $sel
+	 * @param DOMDocument|DOMElement $node
+	 * @return DOMNode[]
+	 */
+	private function findInternal( string $sel, $node ): array {
 		$results = [];
 		$test = $this->compile( $sel );
-		// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 		$scope = self::getElementsByTagName( $node, $test->qname );
 		$i = 0;
 		$el = null;
@@ -1169,9 +1236,7 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 
 		if ( $test->sel ) {
 			while ( $test->sel ) {
-				// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 				$test = $this->compile( $test->sel );
-				// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 				$scope = self::getElementsByTagName( $node, $test->qname );
 				foreach ( $scope as $el ) {
 					if ( call_user_func( $test->func, $el ) && !in_array( $el, $results, true ) ) {
@@ -1189,9 +1254,9 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 	 * Find elements matching a CSS selector underneath $context.
 	 * @param string $sel The CSS selector string
 	 * @param DOMDocument|DOMElement $context The scope for the search
-	 * @return array Elements matching the CSS selector
+	 * @return DOMElement[] Elements matching the CSS selector
 	 */
-	public function find( string $sel, DOMNode $context ): array {
+	public function find( string $sel, $context ): array {
 		/* when context isn't a DocumentFragment and the selector is simple: */
 		if ( $context->nodeType !== 11 && strpos( $sel, ' ' ) === false ) {
 			// https://www.w3.org/TR/CSS21/syndata.html#value-def-identifier
@@ -1200,6 +1265,8 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 			if ( $sel[ 0 ] === '#' /*&& $context->rooted*/ && preg_match( '/^#[A-Za-z_](?:[-A-Za-z0-9_]|[^\0-\237])*$/Su', $sel ) ) {
 				// Note that the PHP implementation can't detect the case
 				// where there are multiple elements with the same ID. Alas.
+				// XXX define a "standard" backdoor for this for 3rd party
+				// DOM implementations?
 				/*
 				if ( $context->doc->_hasMultipleElementsWithId ) {
 					$id = $sel->substring( 1 );
@@ -1229,8 +1296,8 @@ $order = function ( $a, $b ) use ( &$compareDocumentPosition ) {
 	 * @param string $sel The CSS selector string
 	 * @return bool True iff the element matches the selector
 	 */
-	public function matches( DOMNode $el, string $sel ): bool {
-		$test = new ZestFunc( function ( DOMNode $el ):bool {
+	public function matches( $el, string $sel ): bool {
+		$test = new ZestFunc( function ( $el ):bool {
 			return true;
 		} );
 		$test->sel = $sel;

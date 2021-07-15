@@ -2,14 +2,14 @@ CLDRPluralRuleParser
 =============
 
 CLDRPluralRuleParser is a PHP library for parsing
-[http://cldr.unicode.org/index/cldr-spec/plural-rules](plural rules) specified in the
-[http://cldr.unicode.org/index](CLDR project).
+[plural rules](http://cldr.unicode.org/index/cldr-spec/plural-rules) specified in the
+[CLDR project](http://cldr.unicode.org/index).
 
 This library does not contain the rules from the CLDR project, you have to get them yourself.
 
 Here is how you use it:
 
-<pre lang="php">
+```php
 use CLDRPluralRuleParser\Evaluator;
 
 // Example for English
@@ -18,13 +18,13 @@ $forms = ['syntax error', 'syntax errors'];
 
 for ( $i = 0; $i < 3; $i++ ) {
 	$index = Evaluator::evaluate( $i, $rules );
-	echo "This code has $i {$forms[$i]}\n";
+	echo "This code has $i {$forms[$index]}\n";
 }
 
 // This code has 0 syntax errors
 // This code has 1 syntax error
 // This code has 2 syntax errors
-</pre>
+```
 
 License
 -------

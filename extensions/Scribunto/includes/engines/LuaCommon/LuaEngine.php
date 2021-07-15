@@ -30,6 +30,7 @@ abstract class Scribunto_LuaEngine extends ScribuntoEngineBase {
 		'ustring',
 	];
 
+	/** @var bool */
 	protected $loaded = false;
 
 	/**
@@ -46,7 +47,13 @@ abstract class Scribunto_LuaEngine extends ScribuntoEngineBase {
 	 * @var array
 	 */
 	protected $currentFrames = [];
+	/**
+	 * @var array|null
+	 */
 	protected $expandCache = [];
+	/**
+	 * @var array
+	 */
 	protected $availableLibraries = [];
 
 	private const MAX_EXPAND_CACHE_SIZE = 100;
@@ -64,9 +71,7 @@ abstract class Scribunto_LuaEngine extends ScribuntoEngineBase {
 		try {
 			Scribunto_LuaSandboxInterpreter::checkLuaSandboxVersion();
 			$engine = 'luasandbox';
-		} catch ( Scribunto_LuaInterpreterNotFoundError $e ) {
-			// pass
-		} catch ( Scribunto_LuaInterpreterBadVersionError $e ) {
+		} catch ( Scribunto_LuaInterpreterNotFoundError | Scribunto_LuaInterpreterBadVersionError $e ) {
 			// pass
 		}
 

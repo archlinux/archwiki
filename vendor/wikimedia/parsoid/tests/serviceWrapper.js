@@ -65,10 +65,9 @@ var runServices = function(options) {
 					serverPort: parsoidPort,
 					serverInterface: 'localhost',
 				}, options.parsoidOptions || {
-					useBatchAPI: true,
+					useBatchAPI: false,
 					loadWMF: true,
 					useSelser: true,
-					rtTestMode: true,
 				}),
 			};
 			if (ret.mockURL) {

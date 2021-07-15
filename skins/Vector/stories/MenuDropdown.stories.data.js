@@ -3,7 +3,7 @@
  */
 
 import vectorMenuTemplate from '!!raw-loader!../includes/templates/Menu.mustache';
-import { htmluserlangattributes } from './utils';
+import { htmlUserLanguageAttributes } from './utils';
 
 export { vectorMenuTemplate };
 
@@ -13,11 +13,9 @@ export { vectorMenuTemplate };
 export const moreData = {
 	'is-dropdown': true,
 	class: 'vector-menu-dropdown',
-	'list-classes': 'vector-menu-content-list',
 	label: 'More',
 	id: 'p-cactions',
-	'label-id': 'p-cactions-label',
-	'html-userlangattributes': htmluserlangattributes,
+	'html-user-language-attributes': htmlUserLanguageAttributes,
 	'html-items': `<li id="ca-delete">
 	<a href="/w/index.php?title=Main_Page&amp;action=delete"
 		title="Delete this page [⌃⌥d]" accesskey="d">Delete</a>
@@ -38,11 +36,9 @@ export const moreData = {
 export const variantsData = {
 	'is-dropdown': true,
 	class: 'vector-menu-dropdown',
-	'list-classes': 'vector-menu-content-list',
 	label: '新加坡简体',
 	id: 'p-variants',
-	'label-id': 'p-variants-label',
-	'html-userlangattributes': htmluserlangattributes,
+	'html-user-language-attributes': htmlUserLanguageAttributes,
 	'html-items': `<li id="ca-varlang-0">
 	<a href="/zh/%E4%B8%AD%E5%8D%8E%E4%BA%BA%E6%B0%91%E5%85%B1%E5%92%8C%E5%9B%BD"
 		hreflang="zh" lang="zh">不转换</a></li>

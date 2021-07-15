@@ -65,13 +65,16 @@ class AtEase {
 	 * Call the callback given by the first parameter, suppressing any warnings.
 	 *
 	 * @param callable $callback Function to call
+	 * @param mixed ...$args Optional arguments for the function call
 	 * @return mixed
 	 */
-	public static function quietCall( callable $callback /*, parameters... */ ) {
-		$args = array_slice( func_get_args(), 1 );
+	public static function quietCall( callable $callback, ...$args ) {
 		self::suppressWarnings();
-		$rv = call_user_func_array( $callback, $args );
-		self::restoreWarnings();
+		try {
+			$rv = $callback( ...$args );
+		} finally {
+			self::restoreWarnings();
+		}
 		return $rv;
 	}
 

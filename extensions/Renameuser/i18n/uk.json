@@ -26,7 +26,6 @@
 	"renameuserwarnings": "Попередження:",
 	"renameuserconfirm": "Так, перейменувати користувача",
 	"renameusersubmit": "Виконати",
-	"renameuser-submit-blocklog": "Показати журнал блокувань користувача",
 	"renameusererrordoesnotexist": "Користувач з іменем «<nowiki>$1</nowiki>» не зареєстрований.",
 	"renameusererrorexists": "{{GENDER:$1|Користувач|Користувачка}} з іменем «<nowiki>$1</nowiki>» вже існує.",
 	"renameusererrorinvalid": "Недопустиме ім'я користувача: <nowiki>$1</nowiki>.",

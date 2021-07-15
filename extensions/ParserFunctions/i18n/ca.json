@@ -2,13 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"Jordi Roqué",
+			"Mguix",
 			"Qllach",
 			"SMP",
 			"Vriullop"
 		]
 	},
 	"pfunc_desc": "Millora el processat amb funcions lògiques",
-	"pfunc_time_error": "Error: temps invàlid",
+	"pfunc_time_error": "Error: temps no vàlid",
 	"pfunc_time_too_long": "Error: massa crides #time",
 	"pfunc_time_too_big": "Error: #time només admet anys fins al 9999.",
 	"pfunc_time_too_small": "Error: #time només admet anys des de 0.",

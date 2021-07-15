@@ -6,27 +6,30 @@
 @media screen {
 	@import 'common/normalize.less';
 	@import 'layout.less';
-	@import 'layout-max-width.less';
 	@import 'common/typography.less';
 
 	// Components
-	@import 'Logo.less';
 	@import 'Indicators.less';
 	@import 'SiteNotice.less';
 	@import 'Menu.less';
-	@import 'SearchBox.less';
+	@import 'VueEnhancedSearchBox.less';
+	@import 'SearchBoxLoader.less';
 	@import 'MenuTabs.less';
 	@import 'TabWatchstarLink.less';
 	@import 'MenuDropdown.less';
 	@import 'MenuPortal.less';
+	@import 'LanguageButton.less';
 	@import 'Sidebar.less';
 	@import 'SidebarLogo.less';
 	@import 'Footer.less';
 }
 
-// Support: IE8
-// Media query hack required.
-@import 'TabWatchstarLink-ie8.less';
+@media all {
+	// Component styles that should apply in all modes.
+	@import 'Logo.less';
+}
 
-// Media: Print
-@import 'common/print.less';
+@media print {
+	@import 'common/print.less';
+	@import 'layout-print.less';
+}

@@ -111,6 +111,8 @@ class OptsProcessor {
 	 */
 	public function __construct() {
 		$this->addDefaultParams();
+		global $argv;
+		$this->self = $argv[0];
 	}
 
 	/**
@@ -152,7 +154,7 @@ class OptsProcessor {
 	 */
 	public function addOption(
 		string $name, string $description, bool $required = false,
-		bool $withArg = false, bool $shortName = false,
+		bool $withArg = false, $shortName = false,
 		bool $multiOccurrence = false
 	): void {
 		$this->params[$name] = [
@@ -184,10 +186,10 @@ class OptsProcessor {
 	 * this will return an array.
 	 *
 	 * @param string $name The name of the param
-	 * @param mixed|null $default Anything you want, default null
+	 * @param mixed $default Anything you want, default null
 	 * @return mixed
 	 */
-	public function getOption( string $name, $default = null ) {
+	public function getOption( $name, $default = null ) {
 		if ( $this->hasOption( $name ) ) {
 			return $this->options[$name];
 		} else {
@@ -241,7 +243,7 @@ class OptsProcessor {
 	/**
 	 * Get an argument.
 	 * @param int $argId The integer value (from zero) for the arg
-	 * @param mixed|null $default The default if it doesn't exist
+	 * @param mixed $default The default if it doesn't exist
 	 * @return mixed
 	 */
 	public function getArg( int $argId = 0, $default = null ) {
@@ -385,12 +387,12 @@ class OptsProcessor {
 	 * $options becomes an array with keys set to the option names
 	 * $args becomes a zero-based array containing the non-option arguments
 	 *
-	 * @param string|null $self The name of the script, if any
-	 * @param array|null $opts An array of options, in form of key=>value
-	 * @param array|null $args An array of command line arguments
+	 * @param ?string $self The name of the script, if any
+	 * @param ?array $opts An array of options, in form of key=>value
+	 * @param ?array $args An array of command line arguments
 	 */
 	public function loadParamsAndArgs(
-		string $self = null, array $opts = null, array $args = null
+		?string $self = null, ?array $opts = null, ?array $args = null
 	): void {
 		# If we were given opts or args, set those and return early
 		if ( $self ) {

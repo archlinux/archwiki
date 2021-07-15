@@ -20,6 +20,7 @@ use DOMNodeList;
 
 class Zest {
 
+	/** @var ZestInst */
 	private static $singleton = null;
 
 	private static function singleton() {
@@ -35,7 +36,7 @@ class Zest {
 	 * @param DOMDocument|DOMElement $context The scope for the search
 	 * @return array Elements matching the CSS selector
 	 */
-	public static function find( string $sel, DOMNode $context ): array {
+	public static function find( string $sel, $context ): array {
 		return self::singleton()->find( $sel, $context );
 	}
 
@@ -45,7 +46,7 @@ class Zest {
 	 * @param string $sel The CSS selector string
 	 * @return bool True iff the element matches the selector
 	 */
-	public static function matches( DOMNode $el, string $sel ): bool {
+	public static function matches( $el, string $sel ): bool {
 		return self::singleton()->matches( $el, $sel );
 	}
 
@@ -59,7 +60,7 @@ class Zest {
 	 * @return array A list of the elements with the given ID. When there are more
 	 *   than one, this method might return all of them or only the first one.
 	 */
-	public static function getElementsById( DOMNode $context, string $id ): array {
+	public static function getElementsById( $context, string $id ): array {
 		return ZestInst::getElementsById( $context, $id );
 	}
 
@@ -72,7 +73,7 @@ class Zest {
 	 * @param string $tagName
 	 * @return DOMNodeList
 	 */
-	public static function getElementsByTagName( DOMNode $context, string $tagName ): DOMNodeList {
+	public static function getElementsByTagName( $context, string $tagName ) {
 		return ZestInst::getElementsByTagName( $context, $tagName );
 	}
 

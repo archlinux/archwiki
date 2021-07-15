@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Trondtr"
+			"Trondtr",
+			"Yupik"
 		]
 	},
 	"vector-action-addsection": "Lasseet fáádá",
@@ -10,7 +11,7 @@
 	"vector-action-protect": "Suoijii",
 	"vector-view-create": "Räähti",
 	"vector-view-edit": "Mute",
-	"vector-view-history": "Čääiti historiá",
+	"vector-view-history": "Čääiti historjá",
 	"vector-view-view": "Luuvâ",
 	"vector-more-actions": "Eenâb"
 }

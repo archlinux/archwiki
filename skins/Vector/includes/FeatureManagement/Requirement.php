@@ -28,18 +28,20 @@ namespace Vector\FeatureManagement;
  *
  * @unstable
  *
- * @package FeatureManagement
+ * @package Vector\FeatureManagement
  * @internal
  */
 interface Requirement {
 
 	/**
 	 * Gets the name of the requirement.
+	 * @return string
 	 */
 	public function getName() : string;
 
 	/**
 	 * Gets whether the requirement is met.
+	 * @return bool
 	 */
 	public function isMet() : bool;
 }

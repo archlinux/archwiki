@@ -202,7 +202,7 @@ class UserRightsProxy {
 
 	/**
 	 * Replaces User::getUserGroups()
-	 * @return array
+	 * @return string[]
 	 */
 	public function getGroups() {
 		return array_keys( self::getGroupMemberships() );
@@ -211,7 +211,7 @@ class UserRightsProxy {
 	/**
 	 * Replaces User::getGroupMemberships()
 	 *
-	 * @return array
+	 * @return UserGroupMembership[]
 	 * @since 1.29
 	 */
 	public function getGroupMemberships() {
@@ -219,7 +219,7 @@ class UserRightsProxy {
 		// After all the relevant UserGroupMemberships methods are ported into UserGroupManager,
 		// the usages of this class will be changed into usages of the UserGroupManager,
 		// thus the need of this class and the need of this artificial UserIdentityValue will parish.
-		$user = new UserIdentityValue( $this->getId(), $this->getName(), 0 );
+		$user = new UserIdentityValue( $this->getId(), $this->getName() );
 		return $this->userGroupManager->getUserGroupMemberships( $user, IDBAccessObject::READ_LATEST );
 	}
 
@@ -234,7 +234,7 @@ class UserRightsProxy {
 		return $this->userGroupManager->addUserToGroup(
 			// TODO: Artificial UserIdentity just for passing the id and name.
 			// see comment in getGroupMemberships.
-			new UserIdentityValue( $this->getId(), $this->getName(), 0 ),
+			new UserIdentityValue( $this->getId(), $this->getName() ),
 			$group,
 			$expiry,
 			true
@@ -251,7 +251,7 @@ class UserRightsProxy {
 		return $this->userGroupManager->removeUserFromGroup(
 			// TODO: Artificial UserIdentity just for passing the id and name.
 			// see comment in getGroupMemberships.
-			new UserIdentityValue( $this->getId(), $this->getName(), 0 ),
+			new UserIdentityValue( $this->getId(), $this->getName() ),
 			$group
 		);
 	}
@@ -297,7 +297,7 @@ class UserRightsProxy {
 		$domainId = $this->db->getDomainID();
 		$userId = $this->id;
 		$this->db->onTransactionPreCommitOrIdle(
-			function () use ( $domainId, $userId ) {
+			static function () use ( $domainId, $userId ) {
 				User::purge( $domainId, $userId );
 			},
 			__METHOD__

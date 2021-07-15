@@ -4,16 +4,21 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Config;
 
 use DOMDocument;
-use DOMElement;
-use DOMNode;
+use DOMDocumentFragment;
+use RemexHtml\DOM\DOMBuilder;
+use RemexHtml\Tokenizer\PlainAttributes;
+use RemexHtml\Tokenizer\Tokenizer;
+use RemexHtml\TreeBuilder\Dispatcher;
+use RemexHtml\TreeBuilder\TreeBuilder;
+use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Core\ContentModelHandler;
 use Wikimedia\Parsoid\Core\ResourceLimitExceededException;
+use Wikimedia\Parsoid\Core\Sanitizer;
 use Wikimedia\Parsoid\Logger\ParsoidLogger;
 use Wikimedia\Parsoid\Parsoid;
 use Wikimedia\Parsoid\Tokens\Token;
-use Wikimedia\Parsoid\Utils\DataBag;
-use Wikimedia\Parsoid\Utils\DOMCompat;
-use Wikimedia\Parsoid\Utils\DOMUtils;
+use Wikimedia\Parsoid\Utils\DOMDataUtils;
+use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\Title;
 use Wikimedia\Parsoid\Utils\TitleException;
 use Wikimedia\Parsoid\Utils\TitleNamespace;
@@ -22,7 +27,6 @@ use Wikimedia\Parsoid\Utils\Utils;
 use Wikimedia\Parsoid\Wt2Html\Frame;
 use Wikimedia\Parsoid\Wt2Html\PageConfigFrame;
 use Wikimedia\Parsoid\Wt2Html\ParserPipelineFactory;
-use Wikimedia\Parsoid\Wt2Html\TT\Sanitizer;
 
 // phpcs:disable MediaWiki.Commenting.FunctionComment.MissingDocumentationPublic
 
@@ -82,8 +86,11 @@ class Env {
 	/** @phan-var array<string,int> */
 	private $html2wtUsage = [];
 
-	/** @var DOMDocument[] */
-	private $liveDocs = [];
+	/** @var bool */
+	private $profiling = false;
+
+	/** @var array<Profile> */
+	private $profileStack = [];
 
 	/** @var bool */
 	private $wrapSections = true;
@@ -99,7 +106,7 @@ class Env {
 
 	/**
 	 * Maps fragment id to the fragment forest (array of DOMNodes).
-	 * @var array<string,DOMNode[]>
+	 * @var array<string,DOMDocumentFragment>
 	 */
 	private $fragmentMap = [];
 
@@ -128,9 +135,6 @@ class Env {
 
 	/** @var ParsoidLogger */
 	private $parsoidLogger;
-
-	/** @var float */
-	public $startTime;
 
 	/** @var bool */
 	private $scrubWikitext = false;
@@ -180,9 +184,6 @@ class Env {
 	/** @var bool */
 	public $discardDataParsoid = false;
 
-	/** @var DOMNode */
-	private $origDOM;
-
 	/** @var DOMDocument */
 	private $domDiff;
 
@@ -224,10 +225,19 @@ class Env {
 	public $extensionCache = [];
 
 	/**
+	 * Prevent GC from collecting the PHP wrapper around the libxml doc
+	 * @var DOMDocument
+	 */
+	public $topLevelDoc;
+
+	/** @var Dispatcher */
+	private $dispatcher;
+
+	/**
 	 * @param SiteConfig $siteConfig
 	 * @param PageConfig $pageConfig
 	 * @param DataAccess $dataAccess
-	 * @param array|null $options
+	 * @param ?array $options
 	 *  - wrapSections: (bool) Whether `<section>` wrappers should be added.
 	 *  - pageBundle: (bool) Sets ids on nodes and stores data-* attributes in a JSON blob.
 	 *  - scrubWikitext: (bool) Indicates emit "clean" wikitext.
@@ -249,9 +259,12 @@ class Env {
 	 *      wikitext variant in wt2html mode, and in html2wt mode new
 	 *      or edited HTML will be left unconverted.
 	 *  - logLevels: (string[]) Levels to log
+	 *  - topLevelDoc: (DOMDocument) Set explicitly when serializing otherwise
+	 *      it gets initialized for parsing.
 	 */
 	public function __construct(
-		SiteConfig $siteConfig, PageConfig $pageConfig, DataAccess $dataAccess, array $options = null
+		SiteConfig $siteConfig, PageConfig $pageConfig, DataAccess $dataAccess,
+		?array $options = null
 	) {
 		$options = $options ?? [];
 		$this->siteConfig = $siteConfig;
@@ -293,6 +306,53 @@ class Env {
 			'dumpFlags' => $this->dumpFlags,
 			'traceFlags' => $this->traceFlags
 		] );
+		if ( $this->hasTraceFlag( 'time' ) || $this->hasTraceFlag( 'time/dompp' ) ) {
+			$this->profiling = true;
+		}
+		$this->setupTopLevelDoc( $options['topLevelDoc'] ?? null );
+	}
+
+	/**
+	 * Is profiling enabled?
+	 * @return bool
+	 */
+	public function profiling(): bool {
+		return $this->profiling;
+	}
+
+	/**
+	 * Get the profile at the top of the stack
+	 *
+	 * FIXME: This implicitly assumes sequential in-order processing
+	 * This wouldn't have worked in Parsoid/JS and may not work in the future
+	 * depending on how / if we restructure the pipeline for concurrency, etc.
+	 *
+	 * @return Profile
+	 */
+	public function getCurrentProfile(): Profile {
+		return PHPUtils::lastItem( $this->profileStack );
+	}
+
+	/**
+	 * New pipeline started. Push profile.
+	 * @return Profile
+	 */
+	public function pushNewProfile(): Profile {
+		$currProfile = count( $this->profileStack ) > 0 ? $this->getCurrentProfile() : null;
+		$profile = new Profile();
+		$this->profileStack[] = $profile;
+		if ( $currProfile !== null ) {
+			$currProfile->pushNestedProfile( $profile );
+		}
+		return $profile;
+	}
+
+	/**
+	 * Pipeline ended. Pop profile.
+	 * @return Profile
+	 */
+	public function popProfile(): Profile {
+		return array_pop( $this->profileStack );
 	}
 
 	/**
@@ -430,9 +490,6 @@ class Env {
 	 * Resolve strings that are page-fragments or subpage references with
 	 * respect to the current page name.
 	 *
-	 * TODO: Handle namespaces relative links like [[User:../../]] correctly, they
-	 * shouldn't be treated like links at all.
-	 *
 	 * @param string $str Page fragment or subpage reference. Not URL encoded.
 	 * @param bool $resolveOnly If true, only trim and add the current title to
 	 *  lone fragments. TODO: This parameter seems poorly named.
@@ -525,15 +582,6 @@ class Env {
 	}
 
 	/**
-	 * Normalize and resolve the page title
-	 * @deprecated Just use $this->getPageConfig()->getTitle() directly
-	 * @return string
-	 */
-	public function normalizeAndResolvePageTitle(): string {
-		return $this->getPageConfig()->getTitle();
-	}
-
-	/**
 	 * Create a Title object
 	 * @param string $text URL-decoded text
 	 * @param int|TitleNamespace $defaultNs
@@ -589,8 +637,8 @@ class Env {
 	 * @return string
 	 */
 	public function makeLink( Title $title ): string {
-		return Sanitizer::sanitizeTitleURI(
-			$this->getSiteConfig()->relativeLinkPrefix() . $this->titleToString( $title ),
+		return $this->getSiteConfig()->relativeLinkPrefix() . Sanitizer::sanitizeTitleURI(
+			$this->titleToString( $title ),
 			false
 		);
 	}
@@ -634,22 +682,6 @@ class Env {
 	}
 
 	/**
-	 * Store reference to original DOM (body)
-	 * @param DOMElement $domBody
-	 */
-	public function setOrigDOM( DOMElement $domBody ): void {
-		$this->origDOM = $domBody;
-	}
-
-	/**
-	 * Return reference to original DOM (body)
-	 * @return DOMElement
-	 */
-	public function getOrigDOM(): DOMElement {
-		return $this->origDOM;
-	}
-
-	/**
 	 * Store reference to DOM diff document
 	 * @param DOMDocument $doc
 	 */
@@ -674,34 +706,66 @@ class Env {
 	}
 
 	/**
-	 * FIXME: This function could be given a better name to reflect what it does.
+	 * When an environment is constructed, we initialize a document (and
+	 * dispatcher to it) to be used throughout the parse.
 	 *
-	 * @param DOMDocument $doc
-	 * @param DataBag|null $bag
+	 * @param ?DOMDocument $topLevelDoc
 	 */
-	public function referenceDataObject( DOMDocument $doc, ?DataBag $bag = null ): void {
-		// `bag` is a deliberate dynamic property; see DOMDataUtils::getBag()
-		// @phan-suppress-next-line PhanUndeclaredProperty dynamic property
-		$doc->bag = $bag ?? new DataBag();
-
-		// Prevent GC from collecting the PHP wrapper around the libxml doc
-		$this->liveDocs[] = $doc;
+	public function setupTopLevelDoc( ?DOMDocument $topLevelDoc = null ) {
+		if ( $topLevelDoc ) {
+			$this->topLevelDoc = $topLevelDoc;
+		} else {
+			list(
+				$this->topLevelDoc,
+				$this->dispatcher
+			) = $this->createDocumentDispatcher();
+		}
+		DOMDataUtils::prepareDoc( $this->topLevelDoc );
 	}
 
 	/**
-	 * @param string $html
-	 * @param bool $validateXMLNames
-	 * @return DOMDocument
+	 * @param bool $atTopLevel
+	 * @return array
 	 */
-	public function createDocument(
-		string $html = '', bool $validateXMLNames = false
-	): DOMDocument {
-		$doc = DOMUtils::parseHTML( $html, $validateXMLNames );
-		// Cache the head and body.
-		DOMCompat::getHead( $doc );
-		DOMCompat::getBody( $doc );
-		$this->referenceDataObject( $doc );
-		return $doc;
+	public function fetchDocumentDispatcher( bool $atTopLevel ): array {
+		if ( $atTopLevel ) {
+			return [ $this->topLevelDoc, $this->dispatcher ];
+		} else {
+			// Shouldn't need a bag since children are migrated to a fragment
+			// of the top level doc immediately after the tree is built and
+			// before data objects are loaded.
+			return $this->createDocumentDispatcher();
+		}
+	}
+
+	/**
+	 * Returns a document and dispatcher to it.
+	 *
+	 * The dispatcher tracks the insertion mode and relays token events to
+	 * specific handlers.
+	 *
+	 * Since we do our own tokenizing, the dispatcher is needed as our
+	 * entrypoint to tree building.
+	 *
+	 * @return array
+	 */
+	private function createDocumentDispatcher(): array {
+		// The options to DOMBuilder should be kept in sync with its other
+		// uses, so grep for it before changing
+		$domBuilder = new DOMBuilder( [ 'suppressHtmlNamespace' => true ] );
+		$dispatcher = new Dispatcher( new TreeBuilder( $domBuilder ) );
+
+		// PORT-FIXME: Necessary to setEnableCdataCallback
+		$tokenizer = new Tokenizer( $dispatcher, '', [ 'ignoreErrors' => true ] );
+
+		$dispatcher->startDocument( $tokenizer, null, null );
+		$dispatcher->doctype( 'html', '', '', false, 0, 0 );
+		$dispatcher->startTag( 'body', new PlainAttributes(), false, 0, 0 );
+
+		$doc = $domBuilder->getFragment();
+		'@phan-var DOMDocument $doc'; // @var DOMDocument $doc
+
+		return [ $doc, $dispatcher ];
 	}
 
 	/**
@@ -732,7 +796,7 @@ class Env {
 	 *
 	 * @todo Does this belong here, or on some equivalent to MediaWiki's ParserOutput?
 	 * @param string $switch Switch name
-	 * @param mixed|null $default Default value if the switch was never set
+	 * @param mixed $default Default value if the switch was never set
 	 * @return mixed State data that was previously passed to setBehaviorSwitch(), or $default
 	 */
 	public function getBehaviorSwitch( string $switch, $default = null ) {
@@ -740,7 +804,7 @@ class Env {
 	}
 
 	/**
-	 * @return array<string,DOMNode[]>
+	 * @return array<string,DOMDocumentFragment>
 	 */
 	public function getDOMFragmentMap(): array {
 		return $this->fragmentMap;
@@ -748,19 +812,32 @@ class Env {
 
 	/**
 	 * @param string $id Fragment id
-	 * @return DOMNode[]
+	 * @return DOMDocumentFragment
 	 */
-	public function getDOMFragment( string $id ): array {
+	public function getDOMFragment( string $id ): DOMDocumentFragment {
 		return $this->fragmentMap[$id];
 	}
 
 	/**
 	 * @param string $id Fragment id
-	 * @param DOMNode[] $forest DOM forest (contiguous array of DOM trees)
+	 * @param DOMDocumentFragment $forest DOM forest
 	 *   to store against the fragment id
 	 */
-	public function setDOMFragment( string $id, array $forest ): void {
+	public function setDOMFragment(
+		string $id, DOMDocumentFragment $forest
+	): void {
 		$this->fragmentMap[$id] = $forest;
+	}
+
+	/**
+	 * @param string $id
+	 */
+	public function removeDOMFragment( string $id ): void {
+		$domFragment = $this->fragmentMap[$id];
+		Assert::invariant(
+			!$domFragment->hasChildNodes(), 'Fragment should be empty.'
+		);
+		unset( $this->fragmentMap[$id] );
 	}
 
 	/**
@@ -823,28 +900,6 @@ class Env {
 	}
 
 	/**
-	 * Update a profile timer.
-	 *
-	 * @param string $resource
-	 * @param mixed $time
-	 * @param mixed $cat
-	 */
-	public function bumpTimeUse( string $resource, $time, $cat ): void {
-		// --trace ttm:* trip on this if we throw an exception
-		// throw new \BadMethodCallException( 'not yet ported' );
-	}
-
-	/**
-	 * Update a profile counter.
-	 *
-	 * @param string $resource
-	 * @param int $n The amount to increment the counter; defaults to 1.
-	 */
-	public function bumpCount( string $resource, int $n = 1 ): void {
-		throw new \BadMethodCallException( 'not yet ported' );
-	}
-
-	/**
 	 * Bump usage of some limited parser resource
 	 * (ex: tokens, # transclusions, # list items, etc.)
 	 *
@@ -892,7 +947,7 @@ class Env {
 	/**
 	 * Get an appropriate content handler, given a contentmodel.
 	 *
-	 * @param string|null &$contentmodel An optional content model which
+	 * @param ?string &$contentmodel An optional content model which
 	 *   will override whatever the source specifies.  It gets set to the
 	 *   handler which is used.
 	 * @return ContentModelHandler An appropriate content handler
@@ -932,7 +987,7 @@ class Env {
 	/**
 	 * The HTML content version of the input document (for html2wt and html2html conversions).
 	 * @see https://www.mediawiki.org/wiki/Parsoid/API#Content_Negotiation
-	 * @see https://www.mediawiki.org/wiki/Specs/HTML/2.1.0#Versioning
+	 * @see https://www.mediawiki.org/wiki/Specs/HTML#Versioning
 	 * @return string A semver version number
 	 */
 	public function getInputContentVersion(): string {
@@ -942,7 +997,7 @@ class Env {
 	/**
 	 * The HTML content version of the input document (for html2wt and html2html conversions).
 	 * @see https://www.mediawiki.org/wiki/Parsoid/API#Content_Negotiation
-	 * @see https://www.mediawiki.org/wiki/Specs/HTML/2.1.0#Versioning
+	 * @see https://www.mediawiki.org/wiki/Specs/HTML#Versioning
 	 * @return string A semver version number
 	 */
 	public function getOutputContentVersion(): string {

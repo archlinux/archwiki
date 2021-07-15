@@ -64,6 +64,6 @@ ve.dm.MWTransclusionContentModel.prototype.serialize = function () {
 /**
  * @inheritdoc
  */
-ve.dm.MWTransclusionPartModel.prototype.getWikitext = function () {
+ve.dm.MWTransclusionContentModel.prototype.getWikitext = function () {
 	return this.value;
 };

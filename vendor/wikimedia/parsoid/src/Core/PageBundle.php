@@ -4,7 +4,11 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Core;
 
 use Composer\Semver\Semver;
+use DOMDocument;
+use DOMElement;
+use DOMNode;
 use Wikimedia\Parsoid\Utils\ContentUtils;
+use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 
@@ -17,16 +21,16 @@ class PageBundle {
 	/** @var string */
 	public $html;
 
-	/** @var array|null */
+	/** @var ?array */
 	public $parsoid;
 
-	/** @var array|null */
+	/** @var ?array */
 	public $mw;
 
-	/** @var string|null */
+	/** @var ?string */
 	public $version;
 
-	/** @var array|null */
+	/** @var ?array */
 	public $headers;
 
 	/** @var string|null */
@@ -34,16 +38,16 @@ class PageBundle {
 
 	/**
 	 * @param string $html
-	 * @param array|null $parsoid
-	 * @param array|null $mw
-	 * @param string|null $version
-	 * @param array|null $headers
-	 * @param string|null $contentmodel
+	 * @param ?array $parsoid
+	 * @param ?array $mw
+	 * @param ?string $version
+	 * @param ?array $headers
+	 * @param ?string $contentmodel
 	 */
 	public function __construct(
-		string $html, array $parsoid = null, array $mw = null,
-		string $version = null, array $headers = null,
-		string $contentmodel = null
+		string $html, ?array $parsoid = null, ?array $mw = null,
+		?string $version = null, ?array $headers = null,
+		?string $contentmodel = null
 	) {
 		$this->html = $html;
 		$this->parsoid = $parsoid;
@@ -55,17 +59,19 @@ class PageBundle {
 
 	public function toHtml(): string {
 		$doc = DOMUtils::parseHTML( $this->html );
-		DOMDataUtils::applyPageBundle( $doc, $this );
+		self::apply( $doc, $this );
 		return ContentUtils::toXML( $doc );
 	}
 
 	/**
 	 * Check if this pagebundle is valid.
 	 * @param string $contentVersion Document content version to validate against.
-	 * @param string|null &$errorMessage Error message will be returned here.
+	 * @param ?string &$errorMessage Error message will be returned here.
 	 * @return bool
 	 */
-	public function validate( string $contentVersion, string &$errorMessage = null ) {
+	public function validate(
+		string $contentVersion, ?string &$errorMessage = null
+	) {
 		if ( !$this->parsoid || !isset( $this->parsoid['ids'] ) ) {
 			$errorMessage = 'Invalid data-parsoid was provided.';
 			return false;
@@ -112,6 +118,40 @@ class PageBundle {
 			];
 		}
 		return $responseData;
+	}
+
+	/**
+	 * Applies the `data-*` attributes JSON structure to the document.
+	 * Leaves `id` attributes behind -- they are used by citation code to
+	 * extract `<ref>` body from the DOM.
+	 *
+	 * @param DOMDocument $doc doc
+	 * @param PageBundle $pb page bundle
+	 */
+	public static function apply( DOMDocument $doc, PageBundle $pb ): void {
+		DOMUtils::visitDOM(
+			DOMCompat::getBody( $doc ),
+			function ( DOMNode $node ) use ( &$pb ): void {
+				if ( $node instanceof DOMElement ) {
+					$id = $node->getAttribute( 'id' ) ?? '';
+					if ( isset( $pb->parsoid['ids'][$id] ) ) {
+						DOMDataUtils::setJSONAttribute(
+							$node, 'data-parsoid', $pb->parsoid['ids'][$id]
+						);
+					}
+					if ( isset( $pb->mw['ids'][$id] ) ) {
+						// Only apply if it isn't already set.  This means
+						// earlier applications of the pagebundle have higher
+						// precedence, inline data being the highest.
+						if ( !$node->hasAttribute( 'data-mw' ) ) {
+							DOMDataUtils::setJSONAttribute(
+								$node, 'data-mw', $pb->mw['ids'][$id]
+							);
+						}
+					}
+				}
+			}
+		);
 	}
 
 }

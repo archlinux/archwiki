@@ -95,6 +95,56 @@ class LinkerTest extends MediaWikiLangTestCase {
 				'Anonymous with IPv4 and an alternative username'
 			],
 
+			# IP ranges
+			[
+				'<a href="/wiki/Special:Contributions/1.2.3.4/31" '
+					. 'class="mw-userlink mw-anonuserlink" '
+					. 'title="Special:Contributions/1.2.3.4/31"><bdi>1.2.3.4/31</bdi></a>',
+				0, '1.2.3.4/31', false,
+				'Anonymous with IPv4 range'
+			],
+			[
+				'<a href="/wiki/Special:Contributions/2001:db8::1/43" '
+					. 'class="mw-userlink mw-anonuserlink" '
+					. 'title="Special:Contributions/2001:db8::1/43"><bdi>2001:db8::1/43</bdi></a>',
+				0, '2001:db8::1/43', false,
+				'Anonymous with IPv6 range'
+			],
+
+			# External (imported) user, unknown prefix
+			[
+				'<span class="mw-userlink mw-extuserlink mw-anonuserlink"><bdi>acme&gt;Alice</bdi></span>',
+				0, "acme>Alice", false,
+				'User from acme wiki'
+			],
+
+			# Corrupt user names
+			[
+				"<span class=\"mw-userlink mw-anonuserlink\"><bdi>Foo\nBar</bdi></span>",
+				0, "Foo\nBar", false,
+				'User name with line break'
+			],
+			[
+				'<span class="mw-userlink mw-anonuserlink"><bdi>Barf_</bdi></span>',
+				0, "Barf_", false,
+				'User name with trailing underscore'
+			],
+			[
+				'<span class="mw-userlink mw-anonuserlink"><bdi>abcd</bdi></span>',
+				0, "abcd", false,
+				'Lower case user name'
+			],
+			[
+				'<span class="mw-userlink mw-anonuserlink"><bdi>For/Bar</bdi></span>',
+				0, "For/Bar", false,
+				'User name with slash'
+			],
+			[
+				'<span class="mw-userlink mw-anonuserlink"><bdi>For#Bar</bdi></span>',
+				0, "For#Bar", false,
+				'User name with hash'
+			],
+
 			# ## Regular user ##########################################
 			# TODO!
 		];
@@ -550,122 +600,6 @@ class LinkerTest extends MediaWikiLangTestCase {
 			],
 		];
 		// phpcs:enable
-	}
-
-	public static function provideLinkBeginHook() {
-		// phpcs:disable Generic.Files.LineLength
-		return [
-			// Modify $html
-			[
-				function ( $dummy, $title, &$html, &$attribs, &$query, &$options, &$ret ) {
-					$html = 'foobar';
-				},
-				'<a href="/wiki/Special:BlankPage" title="Special:BlankPage">foobar</a>'
-			],
-			// Modify $attribs
-			[
-				function ( $dummy, $title, &$html, &$attribs, &$query, &$options, &$ret ) {
-					$attribs['bar'] = 'baz';
-				},
-				'<a href="/wiki/Special:BlankPage" title="Special:BlankPage" bar="baz">Special:BlankPage</a>'
-			],
-			// Modify $query
-			[
-				function ( $dummy, $title, &$html, &$attribs, &$query, &$options, &$ret ) {
-					$query['bar'] = 'baz';
-				},
-				'<a href="/w/index.php?title=Special:BlankPage&amp;bar=baz" title="Special:BlankPage">Special:BlankPage</a>'
-			],
-			// Force HTTP $options
-			[
-				function ( $dummy, $title, &$html, &$attribs, &$query, &$options, &$ret ) {
-					$options = [ 'http' ];
-				},
-				'<a href="http://example.org/wiki/Special:BlankPage" title="Special:BlankPage">Special:BlankPage</a>'
-			],
-			// Force 'forcearticlepath' in $options
-			[
-				function ( $dummy, $title, &$html, &$attribs, &$query, &$options, &$ret ) {
-					$options = [ 'forcearticlepath' ];
-					$query['foo'] = 'bar';
-				},
-				'<a href="/wiki/Special:BlankPage?foo=bar" title="Special:BlankPage">Special:BlankPage</a>'
-			],
-			// Abort early
-			[
-				function ( $dummy, $title, &$html, &$attribs, &$query, &$options, &$ret ) {
-					$ret = 'foobar';
-					return false;
-				},
-				'foobar'
-			],
-		];
-		// phpcs:enable
-	}
-
-	/**
-	 * @covers MediaWiki\Linker\LinkRenderer::runLegacyBeginHook
-	 * @dataProvider provideLinkBeginHook
-	 */
-	public function testLinkBeginHook( $callback, $expected ) {
-		$this->hideDeprecated( 'LinkBegin hook (used in hook-LinkBegin-closure)' );
-		$this->setMwGlobals( [
-			'wgArticlePath' => '/wiki/$1',
-			'wgServer' => '//example.org',
-			'wgCanonicalServer' => 'http://example.org',
-			'wgScriptPath' => '/w',
-			'wgScript' => '/w/index.php',
-		] );
-
-		$this->setMwGlobals( 'wgHooks', [ 'LinkBegin' => [ $callback ] ] );
-		$title = SpecialPage::getTitleFor( 'Blankpage' );
-		$out = Linker::link( $title );
-		$this->assertEquals( $expected, $out );
-	}
-
-	public static function provideLinkEndHook() {
-		return [
-			// Override $html
-			[
-				function ( $dummy, $title, $options, &$html, &$attribs, &$ret ) {
-					$html = 'foobar';
-				},
-				'<a href="/wiki/Special:BlankPage" title="Special:BlankPage">foobar</a>'
-			],
-			// Modify $attribs
-			[
-				function ( $dummy, $title, $options, &$html, &$attribs, &$ret ) {
-					$attribs['bar'] = 'baz';
-				},
-				'<a href="/wiki/Special:BlankPage" title="Special:BlankPage" bar="baz">Special:BlankPage</a>'
-			],
-			// Fully override return value and abort hook
-			[
-				function ( $dummy, $title, $options, &$html, &$attribs, &$ret ) {
-					$ret = 'blahblahblah';
-					return false;
-				},
-				'blahblahblah'
-			],
-
-		];
-	}
-
-	/**
-	 * @covers MediaWiki\Linker\LinkRenderer::buildAElement
-	 * @dataProvider provideLinkEndHook
-	 */
-	public function testLinkEndHook( $callback, $expected ) {
-		$this->hideDeprecated( 'LinkEnd hook (used in hook-LinkEnd-closure)' );
-		$this->setMwGlobals( [
-			'wgArticlePath' => '/wiki/$1',
-		] );
-
-		$this->setMwGlobals( 'wgHooks', [ 'LinkEnd' => [ $callback ] ] );
-
-		$title = SpecialPage::getTitleFor( 'Blankpage' );
-		$out = Linker::link( $title );
-		$this->assertEquals( $expected, $out );
 	}
 
 	public static function provideTooltipAndAccesskeyAttribs() {

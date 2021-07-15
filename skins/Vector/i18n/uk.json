@@ -22,6 +22,7 @@
 	"vector-opt-out-tooltip": "Змінити ваші налаштування щоб повернутись до оформлення  Вектор",
 	"vector.css": "/* Розміщений тут CSS-код буде використаний в темі оформлення Векторне */",
 	"vector.js": "/* Розміщений тут код JavaScript буде завантажений для всіх користувачів, що використовують векторну тему оформлення */",
+	"vector-action-toggle-sidebar": "Перемкнути бічну панель",
 	"vector-action-addsection": "Додати тему",
 	"vector-action-delete": "Вилучити",
 	"vector-action-move": "Перейменувати",
@@ -35,5 +36,7 @@
 	"vector-view-viewsource": "Переглянути код",
 	"vector-jumptonavigation": "Перейти до навігації",
 	"vector-jumptosearch": "Перейти до пошуку",
-	"vector-more-actions": "Ще"
+	"vector-jumptocontent": "Перейти до вмісту",
+	"vector-more-actions": "Ще",
+	"vector-search-loader": "Завантажуються підказки пошуку"
 }

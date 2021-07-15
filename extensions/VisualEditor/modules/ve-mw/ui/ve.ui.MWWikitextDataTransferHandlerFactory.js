@@ -22,7 +22,7 @@ ve.ui.MWWikitextDataTransferHandlerFactory = function VeUiMwWikitextDataTransfer
 		this.register( ve.ui.dataTransferHandlerFactory.registry[ name ] );
 	}
 
-	ve.ui.dataTransferHandlerFactory.on( 'register', function ( name, data ) {
+	ve.ui.dataTransferHandlerFactory.on( 'register', function ( n, data ) {
 		factory.register( data );
 	} );
 };

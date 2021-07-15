@@ -3,6 +3,7 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Html2Wt;
 
+use DOMDocumentFragment;
 use DOMElement;
 use DOMNode;
 use Wikimedia\Assert\Assert;
@@ -56,7 +57,6 @@ class DOMNormalizer {
 	private $env;
 
 	private $inSelserMode;
-	private $inRtTestMode;
 	private $inInsertedContent;
 
 	/**
@@ -74,7 +74,6 @@ class DOMNormalizer {
 
 		$this->env = $state->getEnv();
 		$this->inSelserMode = $state->selserMode;
-		$this->inRtTestMode = $state->rtTestMode;
 		$this->inInsertedContent = false;
 	}
 
@@ -149,7 +148,7 @@ class DOMNormalizer {
 			if ( DiffUtils::hasInsertedDiffMark( $node, $this->env ) ) {
 				return true;
 			}
-			if ( DOMUtils::isBody( $node ) ) {
+			if ( DOMUtils::atTheTop( $node ) ) {
 				return false;
 			}
 			$node = $node->parentNode;
@@ -217,7 +216,7 @@ class DOMNormalizer {
 
 		// Walk up the subtree and add 'subtree-changed' markers
 		$node = $node->parentNode;
-		while ( DOMUtils::isElt( $node ) && !DOMUtils::isBody( $node ) ) {
+		while ( DOMUtils::isElt( $node ) && !DOMUtils::atTheTop( $node ) ) {
 			if ( DiffUtils::hasDiffMark( $node, $env, 'subtree-changed' ) ) {
 				return;
 			}
@@ -249,7 +248,7 @@ class DOMNormalizer {
 		$b->parentNode->removeChild( $b );
 
 		// Normalize the node to merge any adjacent text nodes
-		$a->normalize();
+		DOMCompat::normalize( $a );
 
 		// Update diff markers
 		if ( !DOMUtils::isRemoved( $sentinel ) ) {
@@ -353,17 +352,15 @@ class DOMNormalizer {
 	public function stripIfEmpty( DOMElement $node ): ?DOMNode {
 		$next = DOMUtils::nextNonDeletedSibling( $node );
 		$dp = DOMDataUtils::getDataParsoid( $node );
-		$strict = $this->inRtTestMode;
 		$autoInserted = isset( $dp->autoInsertedStart ) || isset( $dp->autoInsertedEnd );
 
-		// In rtTestMode, let's reduce noise by requiring the node to be fully
-		// empty (ie. exclude whitespace text) and not having auto-inserted tags.
-		$strippable = !( $this->inRtTestMode && $autoInserted ) &&
-			DOMUtils::nodeEssentiallyEmpty( $node, $strict ) &&
+		$strippable =
+			DOMUtils::nodeEssentiallyEmpty( $node, false ) &&
 			// Ex: "<a..>..</a><b></b>bar"
 			// From [[Foo]]<b/>bar usage found on some dewiki pages.
-			// FIXME: Should this always than just in rt-test mode
-			!( $this->inRtTestMode && ( $dp->stx ?? null ) === 'html' );
+			// FIXME: Should we enable this?
+			// @phan-suppress-next-line PhanImpossibleCondition
+			!( false /* used to be rt-test mode */ && ( $dp->stx ?? null ) === 'html' );
 
 		if ( $strippable ) {
 			// Update diff markers (before the deletion)
@@ -381,9 +378,8 @@ class DOMNormalizer {
 	public function moveTrailingSpacesOut( DOMNode $node ): void {
 		$next = DOMUtils::nextNonDeletedSibling( $node );
 		$last = DOMUtils::lastNonDeletedChild( $node );
-		// Conditional on rtTestMode to reduce the noise in testing.
 		$matches = null;
-		if ( !$this->inRtTestMode && DOMUtils::isText( $last ) &&
+		if ( DOMUtils::isText( $last ) &&
 			preg_match( '/\s+$/D', $last->nodeValue, $matches ) > 0
 		) {
 			$trailing = $matches[0];
@@ -478,7 +474,7 @@ class DOMNormalizer {
 	 * @return DOMNode|null
 	 */
 	public function moveFormatTagOutsideATag( DOMElement $node ): ?DOMNode {
-		if ( $this->inRtTestMode || $node->nodeName !== 'a' ) {
+		if ( $node->nodeName !== 'a' ) {
 			return $node;
 		}
 		$sibling = DOMUtils::nextNonDeletedSibling( $node );
@@ -588,7 +584,7 @@ class DOMNormalizer {
 		}
 
 		// Skip unmodified content
-		if ( $this->inSelserMode && !DOMUtils::isBody( $node ) &&
+		if ( $this->inSelserMode && !DOMUtils::atTheTop( $node ) &&
 			!$this->inInsertedContent && !DiffUtils::hasDiffMarkers( $node, $this->env ) &&
 			// If orig-src is not valid, this in effect becomes
 			// an edited node and needs normalizations applied to it.
@@ -851,10 +847,10 @@ class DOMNormalizer {
 	}
 
 	/**
-	 * @param DOMElement $body
-	 * @return DOMElement
+	 * @param DOMElement|DOMDocumentFragment $node
+	 * @return DOMNode
 	 */
-	public function normalize( DOMElement $body ): DOMElement {
-		return $this->processNode( $body, true );
+	public function normalize( DOMNode $node ): DOMNode {
+		return $this->processNode( $node, true );
 	}
 }

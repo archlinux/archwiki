@@ -5,7 +5,7 @@
 		]
 	},
 	"pfunc_desc": "Mèlyore lo parsor avouéc des fonccions logiques.",
-	"pfunc_time_error": "Fôta : temps pas justo",
+	"pfunc_time_error": "Fôta : temps envalido",
 	"pfunc_time_too_long": "Èrror : trop grant nombro d’apèls a #time",
 	"pfunc_rel2abs_invalid_depth": "Èrror : provondior envalida dens lo chemin « $1 » (at tâchiê d’arrevar a un nivél en-dessus du nuod racena)",
 	"pfunc_expr_stack_exhausted": "Èrror d’èxprèssion : pila èpouesiê",

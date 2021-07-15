@@ -27,7 +27,6 @@
 	"renameuserwarnings": "Предупреждения:",
 	"renameuserconfirm": "Да, преименуване на потребителя",
 	"renameusersubmit": "Изпълнение",
-	"renameuser-submit-blocklog": "Показване дневника на блокиранията за потребителя",
 	"renameusererrordoesnotexist": "Потребителят „<nowiki>$1</nowiki>“ не съществува.",
 	"renameusererrorexists": "{{GENDER:$1|Потребителят}} „<nowiki>$1</nowiki>“ вече съществува.",
 	"renameusererrorinvalid": "Потребителското име „<nowiki>$1</nowiki>“ е невалидно.",

@@ -1,0 +1,334 @@
+//
+// Default layout for Modern Vector.
+//
+
+body {
+	background-color: @background-color-secondary--modern;
+	color: @color-base;
+	// Vertical scrollbar always visible.
+	overflow-y: scroll;
+}
+
+.mw-body,
+.parsoid-body {
+	direction: ltr;
+	padding: @padding-content;
+}
+
+.mw-body {
+	border-top: @border-width-base @border-style-base @border-color-content;
+	/* Merge the border with tabs' one (in their background image) */
+	margin-top: -@border-width-base;
+	padding: @padding-content;
+
+	.firstHeading {
+		/* Change the default from mediawiki.skinning CSS to let indicators float into heading area */
+		overflow: visible;
+	}
+}
+
+.mw-header {
+	// A min-height is set to account for projects where no icon is set.
+	min-height: @height-logo-icon;
+	margin: @margin-top-header 0 @margin-bottom-header;
+	padding: @padding-vertical-header 0;
+	// Vertical centering of header elements (IE>=11), requires flex.
+	// Non-flex fallback for IE<=9: float rule on the child elements.
+	.flex-display();
+	flex-wrap: wrap;
+	// https://caniuse.com/#search=align-items
+	align-items: center;
+	// allow z-index to apply so search results overlay article
+	position: relative;
+	z-index: @z-index-header;
+}
+
+/* Searchbox */
+#p-search {
+	float: left;
+	margin: 0 0 0 @margin-horizontal-search;
+	flex-grow: 1;
+	z-index: @z-index-menu;
+	flex-basis: @min-width-search;
+
+	// #searchform is only a direct child of #p-search before wvui-loads. After
+	// wvui loads, `.wvui-typeahead-search` becomes the direct child and is the
+	// element where these styles should apply.
+	> #searchform,
+	.wvui-typeahead-search {
+		// Border-box sizing is used for a smooth transition from legacy to Vue
+		// search. The width of the container should stay the same before/after the
+		// transition.
+		.box-sizing( border-box );
+		margin-left: 0;
+		max-width: @max-width-search;
+	}
+}
+
+/* Main column */
+.mw-body,
+#mw-data-after-content,
+#left-navigation,
+.mw-footer {
+	margin-left: 0;
+}
+
+/* Content */
+.mw-indicators {
+	z-index: @z-index-indicators;
+}
+
+.mw-body-header {
+	.mixin-clearfix();
+
+	#p-lang-btn {
+		@height-lang-button: unit( 32 / @font-size-browser, em );
+		float: right;
+		.box-sizing( border-box );
+		height: @height-lang-button;
+		// should be vertically aligned.
+		margin-top: ( ( @font-size-heading-1 * @line-height-heading ) - @height-lang-button ) / 2;
+	}
+}
+
+.mw-body-content {
+	position: relative;
+	z-index: @z-index-base;
+}
+
+/* Hide, but keep accessible for screen-readers */
+#mw-navigation h2 {
+	position: absolute;
+	top: -9999px;
+}
+
+/* Navigation Containers */
+.mw-article-toolbar-container {
+	// Clear the floats on #left-navigation and #right-navigation.
+	.mixin-clearfix();
+	// We want to keep the max-width of the article-toolbar-container the
+	// same max-width as the article page's content container in order to
+	// prevent it from moving when going from an article page to a
+	// history/special page.
+	max-width: @max-width-content-container;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#left-navigation {
+	float: left;
+}
+
+#right-navigation {
+	float: right;
+}
+
+#p-personal {
+	flex-grow: 1;
+	flex-basis: @min-width-personal-tools;
+	margin-left: @margin-horizontal-search;
+	// Support IE9: This is reset in @support query below if Flexbox is available.
+	float: right;
+}
+
+#mw-sidebar-button {
+	float: left; // Browser: IE9 support - button as flex-child fallback.
+	margin-left: -@margin-horizontal-sidebar-button-icon;
+	margin-right: @margin-horizontal-sidebar-button-icon; // Accidentally the same.
+}
+
+#mw-panel {
+	background-image: linear-gradient( to bottom, @background-color-base 0%, @background-color-secondary--modern 10%, @background-color-secondary--modern 90%, @background-color-base 100% );
+	position: absolute;
+	// Sidebar is displaced from the workspace container so that the
+	// sidebar is flush with the edge of the screen at small widths.
+	left: -@padding-horizontal-page-container;
+	width: @width-grid-column-one;
+	.box-sizing( border-box );
+	// To avoid the white part of the gradient colliding with the sidebar links
+	// we apply top and bottom padding.
+	padding: 8px 0 40px @padding-left-sidebar;
+	z-index: @z-index-sidebar;
+}
+
+.parsoid-body {
+	padding: @padding-content;
+}
+
+#p-namespaces {
+	background-image: none;
+	padding-left: 0;
+}
+
+.mw-footer {
+	border-top: @border-base;
+	padding: 32px 0 0 0;
+}
+
+// Container logic.
+.mw-page-container {
+	// Set a min-width to make explicit we do not support anything below this threshold.
+	// For devices too small, they should be more useable with horizontal scrolling.
+	// e.g. Portrait on an iPad
+	min-width: @min-width-supported;
+	max-width: @max-width-page-container;
+	// Fill the viewport even if the content height is small. This also helps
+	// mitigate a long sidebar overflowing the page container (T257518).
+	min-height: 100%;
+	margin-left: auto;
+	margin-right: auto;
+	// Use non-zero padding to disable margin collapse.
+	// Be careful not to use overflow-y: scroll here (see T270146 and T271868)
+	padding: 0.05px ( @padding-horizontal-page-container / 2 );
+	background-color: @background-color-page-container;
+}
+
+.skin--responsive .mw-page-container {
+	min-width: auto;
+}
+
+// Used as a container for absolutely positioned elements.
+.mw-page-container-inner {
+	position: relative;
+}
+
+.mw-workspace-container {
+	max-width: @max-width-workspace-container;
+	margin-left: auto;
+	margin-right: auto;
+	// The sidebar is absolutely positioned relative to the
+	// mw-workspace-container.
+	position: relative;
+
+	&.mw-footer-container {
+		// T264679: There are elements (e.g. discussion tool popovers) in the main
+		// content container that we want to appear on top of the footer. We set the
+		// footer container to have static positioning instead of relative
+		// positioning (applied by .mw-workspace-container) to enable this.
+		position: static;
+	}
+}
+
+.mw-content-container {
+	max-width: @max-width-content-container;
+	margin-left: auto;
+	margin-right: auto;
+
+	// For container logic specific to special pages and history pages.
+	.skin-vector-disable-max-width & {
+		// Allow the max-width of content on history/special pages to be wider than
+		// the max-width of content on article pages.
+		max-width: none;
+	}
+}
+
+.mw-sidebar-container {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+}
+
+.mw-footer-container {
+	padding-top: 50px;
+	padding-bottom: 82px;
+}
+
+// We want it to appear like the sidebar is going into/coming out of
+// `.mw-page-container`, but we can't use `overflow: hidden` on
+// `.mw-page-container` because that will cut off the sidebar. Therefore, we
+// calculate the maximum distance from the start of `mw-page-container` to the
+// start of the sidebar.
+#mw-sidebar-checkbox:not( :checked ) ~ .mw-workspace-container .mw-sidebar {
+	.transform( translateX( -( @max-width-page-container - @max-width-workspace-container ) / 2 ) );
+}
+
+// Responsive overrides.
+@media ( min-width: @min-width-page-container--padded ) {
+	.mw-page-container {
+		border-left: 1px solid @border-color-sidebar;
+		border-right: 1px solid @border-color-sidebar;
+	}
+}
+
+// Adjusts the content when sidebar is open regardless of the viewport width.
+.mw-checkbox-hack-checkbox:checked ~ .mw-workspace-container .mw-content-container {
+	// For container logic specific to special pages and history pages.
+	.skin-vector-disable-max-width & {
+		margin-left: @margin-start-content;
+	}
+}
+
+@media ( max-width: @max-width-margin-start-content ) {
+	#p-search {
+		// Support: IE 8, Firefox 18-, Chrome 19-, Safari 5.1-, Opera 19-, Android 4.4.4-.
+		width: 13.2em;
+		// Support: Modern browsers, responsive width.
+		width: 20vw;
+		max-width: 100%;
+	}
+
+	// Adjusts the content and mw-article-toolbar-container.
+	.mw-checkbox-hack-checkbox:checked ~ .mw-workspace-container .mw-content-container,
+	.mw-checkbox-hack-checkbox:checked ~ .mw-workspace-container .mw-article-toolbar-container {
+		margin-left: @margin-start-content;
+	}
+
+	// Specificity needed to disable the default animations at lower resolutions.
+	.vector-animations-ready .mw-sidebar {
+		// Remove sidebar transition at smaller widths.
+		.transition( none );
+	}
+}
+
+@media ( min-width: ( @max-width-workspace-container + ( 2 * @padding-horizontal-page-container ) ) ) {
+	#mw-panel {
+		background: @background-color-page-container;
+		border-right: 1px solid @border-color-sidebar;
+	}
+}
+
+// At low resolutions the search must be pushed to the right of the screen
+// We use @width-comfortable to determine this threshold as we know it's not possible for
+// personal tools to be on the same line at this resolution.
+@media ( max-width: @width-comfortable ) {
+	// #searchform is only a direct child of #p-search before wvui-loads. After
+	// wvui loads, `.wvui-typeahead-search` becomes the direct child and is the
+	// element where these styles should apply.
+	#p-search > #searchform,
+	#p-search .wvui-typeahead-search {
+		margin-left: auto;
+	}
+}
+
+@media ( min-width: @width-breakpoint-tablet ) {
+	#p-search {
+		min-width: @min-width-search-tablet;
+	}
+
+	.mw-page-container {
+		padding-left: @padding-horizontal-page-container;
+		padding-right: @padding-horizontal-page-container;
+	}
+}
+
+/**
+ * Makes the sidebar full screen at lower resolutions.
+ */
+@media ( max-width: @width-breakpoint-tablet ) {
+	.mw-checkbox-hack-checkbox:checked ~ .mw-workspace-container {
+		#mw-panel {
+			width: 100%;
+			position: relative;
+			left: 0;
+		}
+
+		// !important as we always want to disable the margin-left on these elements
+		// Using !important is cleaner than having to rely on specificity involved :checked elements
+		.mw-content-container,
+		.mw-article-toolbar-container {
+			// stylelint-disable-next-line declaration-no-important
+			margin-left: 0 !important;
+		}
+	}
+}

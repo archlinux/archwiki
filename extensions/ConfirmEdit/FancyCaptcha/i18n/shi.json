@@ -1,8 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amara-Amaziɣ"
+			"Amara-Amaziɣ",
+			"Amire80",
+			"Ayour2002",
+			"Lhoussine AIT TAYFST"
 		]
 	},
-	"fancycaptcha-reload-text": "ⵙⵎⴰⵢⵏⵓ"
+	"fancycaptcha-captcha": "Ssided sselamt",
+	"fancycaptcha-accountcreate": "Afad ad tmmstnt awiki mgal timrna tawurmant n imiḍann, ar-k nssutur ad tskcmt iwaliwn llid ittbanen ɣ usfaylu ddaw-as ([[Special:Captcha/help|more info]]):",
+	"fancycaptcha-imgcaptcha-ph": "Skcm aḍṛiṣ nna tsmuqqult ɣ tawlaft",
+	"fancycaptcha-reload-text": "Smaynu"
 }

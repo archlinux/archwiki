@@ -1,9 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Dakrismeno"
+			"Dakrismeno",
+			"Salvemm el lombard"
 		]
 	},
-	"citethispage": "Cita una vus",
-	"citethispage-link": "Cita quela vus chì"
+	"citethispage": "Cita questa pagina",
+	"citethispage-link": "Cita 'sta pagina chì",
+	"tooltip-citethispage": "Informazzion sora come cità quella pagina chì"
 }

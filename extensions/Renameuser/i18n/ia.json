@@ -17,7 +17,6 @@
 	"renameuserwarnings": "Advertimentos:",
 	"renameuserconfirm": "Si, renomina le usator",
 	"renameusersubmit": "Submitter",
-	"renameuser-submit-blocklog": "Monstrar registro de blocadas pro le usator",
 	"renameusererrordoesnotexist": "Le usator \"<nowiki>$1</nowiki>\" non existe.",
 	"renameusererrorexists": "Le {{GENDER:$1|usator}} \"\"<nowiki>$1</nowiki>\"\" jam existe.",
 	"renameusererrorinvalid": "Le nomine de usator \"<nowiki>$1</nowiki>\" es invalide.",

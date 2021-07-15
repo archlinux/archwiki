@@ -153,22 +153,21 @@ ve.ce.GeneratedContentNode.prototype.getRenderedDomElements = function ( domElem
 			}
 			return node;
 		} );
+		// Render the computed values of some attributes
+		ve.resolveAttributes(
+			rendering,
+			domElements[ 0 ].ownerDocument,
+			ve.dm.Converter.static.computedAttributes
+		);
 	} else {
 		rendering = [ document.createElement( 'span' ) ];
 	}
-
-	// Render the computed values of some attributes
-	ve.resolveAttributes(
-		rendering,
-		domElements[ 0 ].ownerDocument,
-		ve.dm.Converter.static.computedAttributes
-	);
 
 	return rendering;
 };
 
 /**
- * Filter out elemements from the rendered content which we don't want to display in the CE.
+ * Filter out elements from the rendered content which we don't want to display in the CE.
  *
  * @param {Node[]} domElements Clones of the DOM elements from the store, already copied into the document
  * @return {Node[]} DOM elements to keep
@@ -218,6 +217,9 @@ ve.ce.GeneratedContentNode.prototype.render = function ( generatedContents, stag
 		this.model.emit( 'generatedContentsError', $newElements );
 	}
 
+	// Prevent tabbing to focusable elements inside the editable surface
+	this.preventTabbingInside();
+
 	// Update focusable and resizable elements if necessary
 	// TODO: Move these method definitions to their respective mixins.
 	if ( this.$focusable ) {
@@ -234,6 +236,31 @@ ve.ce.GeneratedContentNode.prototype.render = function ( generatedContents, stag
 	}
 
 	this.afterRender();
+};
+
+/**
+ * Prevent tabbing to focusable elements inside the editable surface, because it conflicts with
+ * allowing tabbing out of the surface. (The surface takes the focus back when it moves to an
+ * element inside it.)
+ *
+ * In the future, this might be implemented using the `inert` property, currently not supported by
+ * any browser: https://html.spec.whatwg.org/multipage/interaction.html#inert-subtrees
+ * https://caniuse.com/mdn-api_htmlelement_inert
+ *
+ * @private
+ */
+ve.ce.GeneratedContentNode.prototype.preventTabbingInside = function () {
+	// Like OO.ui.findFocusable(), but find *all* such nodes rather than the first one.
+	var
+		selector = 'input, select, textarea, button, object, a, area, [contenteditable], [tabindex]',
+		$focusableCandidates = this.$element.find( selector ).addBack( selector );
+
+	$focusableCandidates.each( function () {
+		var $this = $( this );
+		if ( OO.ui.isFocusableElement( $this ) ) {
+			$this.attr( 'tabindex', -1 );
+		}
+	} );
 };
 
 /**

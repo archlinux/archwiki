@@ -3,6 +3,7 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Html2Wt\DOMHandlers;
 
+use DOMDocumentFragment;
 use DOMElement;
 use DOMNode;
 use LogicException;
@@ -11,7 +12,6 @@ use Wikimedia\Parsoid\Html2Wt\WTSUtils;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
-use Wikimedia\Parsoid\Utils\Utils;
 use Wikimedia\Parsoid\Utils\WTUtils;
 
 /**
@@ -97,24 +97,24 @@ class DOMHandler {
 	/**
 	 * How many newlines should be emitted before the first child?
 	 *
-	 * @param DOMElement $node
+	 * @param DOMElement|DOMDocumentFragment $node
 	 * @param DOMNode $otherNode
 	 * @param SerializerState $state
 	 * @return array
 	 */
-	public function firstChild( DOMElement $node, DOMNode $otherNode, SerializerState $state ): array {
+	public function firstChild( DOMNode $node, DOMNode $otherNode, SerializerState $state ): array {
 		return [];
 	}
 
 	/**
 	 * How many newlines should be emitted after the last child?
 	 *
-	 * @param DOMElement $node
+	 * @param DOMElement|DOMDocumentFragment $node
 	 * @param DOMNode $otherNode
 	 * @param SerializerState $state
 	 * @return array
 	 */
-	public function lastChild( DOMElement $node, DOMNode $otherNode, SerializerState $state ): array {
+	public function lastChild( DOMNode $node, DOMNode $otherNode, SerializerState $state ): array {
 		return [];
 	}
 
@@ -137,7 +137,7 @@ class DOMHandler {
 	 * @return array An array in the form [ 'min' => <int>, 'max' => <int> ] or an empty array.
 	 */
 	protected function wtListEOL( DOMElement $node, DOMNode $otherNode ): array {
-		if ( !DOMUtils::isElt( $otherNode ) || DOMUtils::isBody( $otherNode ) ) {
+		if ( !DOMUtils::isElt( $otherNode ) || DOMUtils::atTheTop( $otherNode ) ) {
 			return [ 'min' => 0, 'max' => 2 ];
 		}
 		'@phan-var DOMElement $otherNode';/** @var DOMElement $otherNode */
@@ -168,8 +168,9 @@ class DOMHandler {
 			// last child in ul/ol (the list element is our parent), defer
 			// separator constraints to the list.
 			return [];
-		} elseif ( DOMUtils::isBlockNode( $node->parentNode )
-			&& DOMUtils::lastNonSepChild( $node->parentNode ) === $node
+		} elseif (
+			DOMUtils::isWikitextBlockNode( $node->parentNode ) &&
+			DOMUtils::lastNonSepChild( $node->parentNode ) === $node
 		) {
 			// A list in a block node (<div>, <td>, etc) doesn't need a trailing empty line
 			// if it is the last non-separator child (ex: <div>..</ul></div>)
@@ -206,10 +207,10 @@ class DOMHandler {
 		$space = $this->getLeadingSpace( $state, $node, ' ' );
 
 		$res = '';
-		while ( $node ) {
+		while ( !DOMUtils::atTheTop( $node ) ) {
 			$dp = DOMDataUtils::getDataParsoid( $node );
 			$stx = $dp->stx ?? null;
-			if ( $stx !== 'html' && isset( $listTypes[$node->nodeName] ) ) {
+			if ( ( $stx !== 'html' || isset( $dp->liHackSrc ) ) && isset( $listTypes[$node->nodeName] ) ) {
 				if ( $node->nodeName === 'li' ) {
 					$parentNode = $node->parentNode;
 					while ( $parentNode && !( isset( $parentTypes[$parentNode->nodeName] ) ) ) {
@@ -242,18 +243,18 @@ class DOMHandler {
 
 	/**
 	 * Helper: Newline constraint helper for table nodes
-	 * @param DOMElement $node
+	 * @param DOMNode $node
 	 * @param DOMNode $origNode
 	 * @return int
 	 */
-	protected function maxNLsInTable( DOMElement $node, DOMNode $origNode ): int {
+	protected function maxNLsInTable( DOMNode $node, DOMNode $origNode ): int {
 		return ( WTUtils::isNewElt( $node ) || WTUtils::isNewElt( $origNode ) ) ? 1 : 2;
 	}
 
 	/**
 	 * Private helper for serializing table nodes
 	 * @param string $symbol
-	 * @param string|null $endSymbol
+	 * @param ?string $endSymbol
 	 * @param SerializerState $state
 	 * @param DOMElement $node
 	 * @return string
@@ -275,7 +276,7 @@ class DOMHandler {
 	/**
 	 * Helper: Handles content serialization for table nodes
 	 * @param string $symbol
-	 * @param string|null $endSymbol
+	 * @param ?string $endSymbol
 	 * @param SerializerState $state
 	 * @param DOMElement $node
 	 * @param bool $wrapperUnmodified
@@ -330,23 +331,11 @@ class DOMHandler {
 		SerializerState $state, DOMElement $node, string $newEltDefault
 	): string {
 		$space = '';
-		$fc = DOMUtils::firstNonDeletedChild( $node );
 		if ( WTUtils::isNewElt( $node ) ) {
+			$fc = DOMUtils::firstNonDeletedChild( $node );
 			// PORT-FIXME are different \s semantics going to be a problem?
 			if ( $fc && ( !DOMUtils::isText( $fc ) || !preg_match( '/^\s/', $fc->nodeValue ) ) ) {
 				$space = $newEltDefault;
-			}
-		} elseif ( $state->useWhitespaceHeuristics && $state->selserMode
-			&& ( !$fc || !DOMUtils::isElt( $fc ) || WTUtils::isNewElt( $fc ) )
-		) {
-			$dsr = DOMDataUtils::getDataParsoid( $node )->dsr ?? null;
-			if ( Utils::isValidDSR( $dsr, true ) ) {
-				$offset = $dsr->innerStart();
-				$space = $offset < $dsr->innerEnd() ?
-					( $state->getOrigSrc( $offset, $offset + 1 ) ?? '' ) : '';
-				if ( !preg_match( '/[ \t]/', $space ) ) {
-					$space = '';
-				}
 			}
 		}
 		return $space;
@@ -366,26 +355,11 @@ class DOMHandler {
 		SerializerState $state, DOMElement $node, string $newEltDefault
 	): string {
 		$space = '';
-		$lc = DOMUtils::lastNonDeletedChild( $node );
 		if ( WTUtils::isNewElt( $node ) ) {
+			$lc = DOMUtils::lastNonDeletedChild( $node );
 			// PORT-FIXME are different \s semantics going to be a problem?
 			if ( $lc && ( !DOMUtils::isText( $lc ) || !preg_match( '/\s$/D', $lc->nodeValue ) ) ) {
 				$space = $newEltDefault;
-			}
-		} elseif ( $state->useWhitespaceHeuristics && $state->selserMode
-			&& ( !$lc || !DOMUtils::isElt( $lc ) || WTUtils::isNewElt( $lc ) )
-		) {
-			$dsr = DOMDataUtils::getDataParsoid( $node )->dsr ?? null;
-			if ( Utils::isValidDSR( $dsr, true ) ) {
-				$offset = $dsr->innerEnd() - 1;
-				// The > instead of >= is to deal with an edge case
-				// = = where that single space is captured by the
-				// getLeadingSpace case above
-				$space = $offset > $dsr->innerStart() ?
-					( $state->getOrigSrc( $offset, $offset + 1 ) ?? '' ) : '';
-				if ( !preg_match( '/[ \t]/', $space ) ) {
-					$space = '';
-				}
 			}
 		}
 		return $space;
@@ -421,7 +395,7 @@ class DOMHandler {
 		// FIXME: Should this also check for tabs and plain space
 		// chars interspersed with newlines?
 		if ( preg_match( '/^\n+$/D', $dp->src ?? '' ) ) {
-			$state->appendSep( $dp->src );
+			$state->appendSep( $dp->src, $node );
 		} else {
 			$state->serializer->emitWikitext( $dp->src, $node );
 		}

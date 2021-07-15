@@ -701,8 +701,7 @@ class CategoryTree {
 			}
 		}
 
-		$s .= Xml::closeElement( 'div' );
-		$s .= Xml::closeElement( 'div' );
+		$s .= Xml::closeElement( 'div' ) . Xml::closeElement( 'div' );
 
 		return $s;
 	}

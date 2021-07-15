@@ -8,9 +8,9 @@ use DOMElement;
 class SlideshowMode extends TraditionalMode {
 	/**
 	 * Create a SlideshowMode singleton.
-	 * @param string|null $mode Only used by subclasses.
+	 * @param ?string $mode Only used by subclasses.
 	 */
-	protected function __construct( string $mode = null ) {
+	protected function __construct( ?string $mode = null ) {
 		parent::__construct( $mode ?? 'slideshow' );
 	}
 
@@ -23,4 +23,12 @@ class SlideshowMode extends TraditionalMode {
 	protected function perRow( Opts $opts, DOMElement $ul ): void {
 		/* do nothing */
 	}
+
+	/**
+	 * @return array
+	 */
+	public function getModules(): array {
+		return [ 'mediawiki.page.gallery.slideshow' ];
+	}
+
 }

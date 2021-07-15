@@ -2,54 +2,84 @@
 
 namespace Vector;
 
-use ExtensionRegistry;
+use Config;
 use HTMLForm;
 use MediaWiki\MediaWikiServices;
 use OutputPage;
-use RequestContext;
+use ResourceLoaderContext;
 use Skin;
 use SkinTemplate;
 use SkinVector;
+use Title;
 use User;
+use Vector\HTMLForm\Fields\HTMLLegacySkinVersionField;
 
 /**
  * Presentation hook handlers for Vector skin.
  *
  * Hook handler method names should be in the form of:
  *	on<HookName>()
+ * @package Vector
+ * @internal
  */
 class Hooks {
 	/**
-	 * BeforePageDisplayMobile hook handler
-	 *
-	 * Make Legacy Vector responsive when $wgVectorResponsive = true
-	 *
-	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/BeforePageDisplay
-	 * @param OutputPage $out
-	 * @param SkinTemplate $sk
+	 * Passes config variables to Vector (modern) ResourceLoader module.
+	 * @param ResourceLoaderContext $context
+	 * @param Config $config
+	 * @return array
 	 */
-	public static function onBeforePageDisplay( OutputPage $out, $sk ) {
-		if ( !$sk instanceof SkinVector ) {
+	public static function getVectorResourceLoaderConfig(
+		ResourceLoaderContext $context,
+		Config $config
+	) {
+		return [
+			'wgVectorSearchHost' => $config->get( 'VectorSearchHost' ),
+		];
+	}
+
+	/**
+	 * Passes config variables to skins.vector.search ResourceLoader module.
+	 * @param ResourceLoaderContext $context
+	 * @param Config $config
+	 * @return array
+	 */
+	public static function getVectorWvuiSearchResourceLoaderConfig(
+		ResourceLoaderContext $context,
+		Config $config
+	) {
+		return $config->get( 'VectorWvuiSearchOptions' );
+	}
+
+	/**
+	 * SkinPageReadyConfig hook handler
+	 *
+	 * Replace searchModule provided by skin.
+	 *
+	 * @since 1.35
+	 * @param ResourceLoaderContext $context
+	 * @param mixed[] &$config Associative array of configurable options
+	 * @return void This hook must not abort, it must return no value
+	 */
+	public static function onSkinPageReadyConfig(
+		ResourceLoaderContext $context,
+		array &$config
+	) {
+		// It's better to exit before any additional check
+		if ( $context->getSkin() !== 'vector' ) {
 			return;
 		}
 
-		$skinVersionLookup = new SkinVersionLookup(
-			$out->getRequest(), $sk->getUser(), self::getServiceConfig()
-		);
-
-		$mobile = false;
-		if ( ExtensionRegistry::getInstance()->isLoaded( 'MobileFrontend' ) ) {
-
-			$mobFrontContext = MediaWikiServices::getInstance()->getService( 'MobileFrontend.Context' );
-			$mobile = $mobFrontContext->shouldDisplayMobileView();
-		}
-
-		if ( $skinVersionLookup->isLegacy()
-			&& ( $mobile || $sk->getConfig()->get( 'VectorResponsive' ) )
-		) {
-			$out->addMeta( 'viewport', 'width=device-width, initial-scale=1' );
-			$out->addModuleStyles( 'skins.vector.styles.responsive' );
-		}
+		// Tell the `mediawiki.page.ready` module not to wire up search.
+		// This allows us to use $wgVectorUseWvuiSearch to decide to load
+		// the historic jquery autocomplete search or the new Vue implementation.
+		// ResourceLoaderContext has no knowledge of legacy / modern Vector
+		// and from its point of view they are the same thing.
+		// Please see the modules `skins.vector.js` and `skins.vector.legacy.js`
+		// for the wire up of search.
+		// The related method self::getVectorResourceLoaderConfig handles which
+		// search to load.
+		$config['search'] = false;
 	}
 
 	/**
@@ -74,9 +104,11 @@ class Hooks {
 	 * @param array &$content_navigation
 	 */
 	public static function onSkinTemplateNavigation( $sk, &$content_navigation ) {
+		$title = $sk->getRelevantTitle();
 		if (
+			$sk->getConfig()->get( 'VectorUseIconWatch' ) &&
 			$sk->getSkinName() === 'vector' &&
-			$sk->getConfig()->get( 'VectorUseIconWatch' )
+			$title && $title->canExist()
 		) {
 			$key = null;
 			if ( isset( $content_navigation['actions']['watch'] ) ) {
@@ -108,14 +140,10 @@ class Hooks {
 			return;
 		}
 
-		$skinVersionLookup = new SkinVersionLookup(
-			RequestContext::getMain()->getRequest(), $user, self::getServiceConfig()
-		);
-
 		// Preferences to add.
 		$vectorPrefs = [
 			Constants::PREF_KEY_SKIN_VERSION => [
-				'type' => 'toggle',
+				'class' => HTMLLegacySkinVersionField::class,
 				// The checkbox title.
 				'label-message' => 'prefs-vector-enable-vector-1-label',
 				// Show a little informational snippet underneath the checkbox.
@@ -123,11 +151,10 @@ class Hooks {
 				// The tab location and title of the section to insert the checkbox. The bit after the slash
 				// indicates that a prefs-skin-prefs string will be provided.
 				'section' => 'rendering/skin/skin-prefs',
-				// Convert the preference string to a boolean presentation.
-				'default' => $skinVersionLookup->isLegacy() ? '1' : '0',
+				'default' => self::isSkinVersionLegacy(),
 				// Only show this section when the Vector skin is checked. The JavaScript client also uses
 				// this state to determine whether to show or hide the whole section.
-				'hide-if' => [ '!==', 'wpskin', Constants::SKIN_NAME ]
+				'hide-if' => [ '!==', 'wpskin', Constants::SKIN_NAME ],
 			],
 			Constants::PREF_KEY_SIDEBAR_VISIBLE => [
 				'type' => 'api',
@@ -168,23 +195,15 @@ class Hooks {
 		&$result,
 		$oldPreferences
 	) {
-		$preference = null;
 		$isVectorEnabled = ( $formData[ 'skin' ] ?? '' ) === Constants::SKIN_NAME;
-		if ( $isVectorEnabled && array_key_exists( Constants::PREF_KEY_SKIN_VERSION, $formData ) ) {
-			// A preference was set. However, Special:Preferences converts the result to a boolean when a
-			// version name string is wanted instead. Convert the boolean to a version string in case the
-			// preference display is changed to a list later (e.g., a "_new_ new Vector" / '3' or
-			// 'alpha').
-			$preference = $formData[ Constants::PREF_KEY_SKIN_VERSION ] ?
-				Constants::SKIN_VERSION_LEGACY :
-				Constants::SKIN_VERSION_LATEST;
-		} elseif ( array_key_exists( Constants::PREF_KEY_SKIN_VERSION, $oldPreferences ) ) {
+
+		if ( !$isVectorEnabled && array_key_exists( Constants::PREF_KEY_SKIN_VERSION, $oldPreferences ) ) {
 			// The setting was cleared. However, this is likely because a different skin was chosen and
 			// the skin version preference was hidden.
-			$preference = $oldPreferences[ Constants::PREF_KEY_SKIN_VERSION ];
-		}
-		if ( $preference !== null ) {
-			$user->setOption( Constants::PREF_KEY_SKIN_VERSION, $preference );
+			$user->setOption(
+				Constants::PREF_KEY_SKIN_VERSION,
+				$oldPreferences[ Constants::PREF_KEY_SKIN_VERSION ]
+			);
 		}
 	}
 
@@ -214,17 +233,131 @@ class Hooks {
 			return;
 		}
 
-		$skinVersionLookup = new SkinVersionLookup(
-			$out->getRequest(), $sk->getUser(), self::getServiceConfig()
-		);
-
-		if ( $skinVersionLookup->isLegacy() ) {
+		// As of 2020/08/13, this CSS class is referred to by the following deployed extensions:
+		//
+		// - VisualEditor
+		// - CodeMirror
+		// - WikimediaEvents
+		//
+		// See https://codesearch.wmcloud.org/deployed/?q=skin-vector-legacy for an up-to-date
+		// list.
+		if ( self::isSkinVersionLegacy() ) {
 			$bodyAttrs['class'] .= ' skin-vector-legacy';
+		}
+
+		// Determine the search widget treatment to send to the user
+		if ( VectorServices::getFeatureManager()->isFeatureEnabled( Constants::FEATURE_USE_WVUI_SEARCH ) ) {
+			$bodyAttrs['class'] .= ' skin-vector-search-vue';
+		}
+
+		$config = $sk->getConfig();
+		// Should we disable the max-width styling?
+		if ( !self::isSkinVersionLegacy() && $sk->getTitle() && self::shouldDisableMaxWidth(
+			$config->get( 'VectorMaxWidthOptions' ),
+			$sk->getTitle(),
+			$out->getRequest()->getValues()
+		) ) {
+			$bodyAttrs['class'] .= ' skin-vector-disable-max-width';
+		}
+	}
+
+	/**
+	 * Per the $options configuration (for use with $wgVectorMaxWidthOptions)
+	 * determine whether max-width should be disabled on the page.
+	 * For the main page: Check the value of $options['exclude']['mainpage']
+	 * For all other pages, the following will happen:
+	 * - the array $options['include'] of canonical page names will be checked
+	 *   against the current page. If a page has been listed there, function will return false
+	 *   (max-width will not be  disabled)
+	 * Max width is disabled if:
+	 *  1) The current namespace is listed in array $options['exclude']['namespaces']
+	 *  OR
+	 *  2) The query string matches one of the name and value pairs $exclusions['querystring'].
+	 *     Note the wildcard "*" for a value, will match all query string values for the given
+	 *     query string parameter.
+	 *
+	 * @internal only for use inside tests.
+	 * @param array $options
+	 * @param Title $title
+	 * @param array $requestValues
+	 * @return bool
+	 */
+	public static function shouldDisableMaxWidth( array $options, Title $title, array $requestValues ) {
+		$canonicalTitle = $title->getRootTitle();
+
+		$inclusions = $options['include'] ?? [];
+		$exclusions = $options['exclude'] ?? [];
+
+		if ( $title->isMainPage() ) {
+			// only one check to make
+			return $exclusions['mainpage'] ?? false;
+		} elseif ( $canonicalTitle->isSpecialPage() ) {
+			$canonicalTitle->fixSpecialName();
+		}
+
+		//
+		// Check the inclusions based on the canonical title
+		// The inclusions are checked first as these trump any exclusions.
+		//
+		// Now we have the canonical title and the inclusions link we look for any matches.
+		foreach ( $inclusions as $titleText ) {
+			$includedTitle = Title::newFromText( $titleText );
+
+			if ( $canonicalTitle->equals( $includedTitle ) ) {
+				return false;
+			}
+		}
+
+		//
+		// Check the exclusions
+		// If nothing matches the exclusions to determine what should happen
+		//
+		$excludeNamespaces = $exclusions['namespaces'] ?? [];
+		// Max width is disabled on certain namespaces
+		if ( $title->inNamespaces( $excludeNamespaces ) ) {
+			return true;
+		}
+		$excludeQueryString = $exclusions['querystring'] ?? [];
+
+		foreach ( $excludeQueryString as $param => $excludedParamValue ) {
+			$paramValue = $requestValues[$param] ?? false;
+			if ( $paramValue ) {
+				if ( $excludedParamValue === '*' ) {
+					// check wildcard
+					return true;
+				} elseif ( $paramValue === $excludedParamValue ) {
+					// Check if the excluded param value matches
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * NOTE: Please use ResourceLoaderGetConfigVars hook instead if possible
+	 * for adding config to the page.
+	 * Adds config variables to JS that depend on current page/request.
+	 *
+	 * Adds a config flag that can disable saving the VectorSidebarVisible
+	 * user preference when the sidebar menu icon is clicked.
+	 *
+	 * @param array &$vars Array of variables to be added into the output.
+	 * @param OutputPage $out OutputPage instance calling the hook
+	 */
+	public static function onMakeGlobalVariablesScript( &$vars, OutputPage $out ) {
+		if ( !$out->getSkin() instanceof SkinVector ) {
 			return;
 		}
 
-		if ( self::getConfig( Constants::CONFIG_KEY_LAYOUT_MAX_WIDTH ) ) {
-			$bodyAttrs['class'] .= ' skin-vector-max-width';
+		$user = $out->getUser();
+
+		if ( $user->isRegistered() && self::isSkinVersionLegacy() ) {
+			$vars[ 'wgVectorDisableSidebarPersistence' ] =
+				self::getConfig(
+					Constants::CONFIG_KEY_DISABLE_SIDEBAR_PERSISTENCE
+				);
 		}
 	}
 
@@ -244,5 +377,16 @@ class Hooks {
 	 */
 	private static function getServiceConfig() {
 		return MediaWikiServices::getInstance()->getService( Constants::SERVICE_CONFIG );
+	}
+
+	/**
+	 * Gets whether the current skin version is the legacy version.
+	 *
+	 * @see VectorServices::getFeatureManager
+	 *
+	 * @return bool
+	 */
+	private static function isSkinVersionLegacy(): bool {
+		return !VectorServices::getFeatureManager()->isFeatureEnabled( Constants::FEATURE_LATEST_SKIN );
 	}
 }

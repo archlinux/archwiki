@@ -48,7 +48,7 @@ ve.ui.MWParameterResultWidget.prototype.buildLabel = function () {
 			.addClass( 've-ui-mwParameterResultWidget-description' )
 			.text( this.data.description || '' );
 
-	if ( this.data.name ) {
+	if ( this.data.name && this.data.name !== this.data.label ) {
 		$names.append(
 			$( '<span>' )
 				.addClass( 've-ui-mwParameterResultWidget-name' )
@@ -56,9 +56,12 @@ ve.ui.MWParameterResultWidget.prototype.buildLabel = function () {
 		);
 	}
 	for ( i = 0, len = this.data.aliases.length; i < len; i++ ) {
+		if ( this.data.aliases[ i ] === this.data.label ) {
+			continue;
+		}
 		$names.append(
 			$( '<span>' )
-				.addClass( 've-ui-mwParameterResultWidget-name' )
+				.addClass( 've-ui-mwParameterResultWidget-name ve-ui-mwParameterResultWidget-alias' )
 				.text( this.data.aliases[ i ] )
 		);
 	}
