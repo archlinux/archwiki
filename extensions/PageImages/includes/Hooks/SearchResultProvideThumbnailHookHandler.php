@@ -68,10 +68,10 @@ class SearchResultProvideThumbnailHookHandler {
 	 * Returns thumbnails for given list
 	 *
 	 * @param array $titlesByPageId a key value array where key is pageId and value is Title
-	 * @param int $size size of thumbnal height and width in points
+	 * @param int $size size of thumbnail height and width in points
 	 * @return array of SearchResultThumbnail
 	 */
-	private function getTumbnails( array $titlesByPageId, int $size ): array {
+	private function getThumbnails( array $titlesByPageId, int $size ): array {
 		$pagesByPageId = array_filter( $titlesByPageId, function ( $title ) {
 			return !$title->inNamespace( NS_FILE );
 		} );
@@ -119,7 +119,7 @@ class SearchResultProvideThumbnailHookHandler {
 			return Title::makeTitle( $identity->getNamespace(), $identity->getDBkey() );
 		}, $pageIdentities );
 
-		$data = $this->getTumbnails( $pageIdTitles, self::THUMBNAIL_SIZE );
+		$data = $this->getThumbnails( $pageIdTitles, self::THUMBNAIL_SIZE );
 		foreach ( $data as $pageId => $thumbnail ) {
 			$results[ $pageId ] = $thumbnail;
 		}

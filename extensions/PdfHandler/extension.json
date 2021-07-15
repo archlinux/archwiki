@@ -12,14 +12,30 @@
 		"MediaWiki": ">= 1.34.0"
 	},
 	"config": {
-		"PdfOutputExtension": "jpg",
-		"PdfHandlerDpi": 150,
-		"PdfCreateThumbnailsInJobQueue": false,
-		"PdfPostProcessor": "/usr/bin/convert",
-		"PdfHandlerJpegQuality": 95,
-		"PdftoText": "/usr/bin/pdftotext",
-		"PdfProcessor": "/usr/bin/gs",
-		"PdfInfo": "/usr/bin/pdfinfo"
+		"PdfOutputExtension": {
+			"value": "jpg"
+		},
+		"PdfHandlerDpi": {
+			"value": 150
+		},
+		"PdfCreateThumbnailsInJobQueue": {
+			"value": false
+		},
+		"PdfPostProcessor": {
+			"value": "/usr/bin/convert"
+		},
+		"PdfHandlerJpegQuality": {
+			"value": 95
+		},
+		"PdftoText": {
+			"value": "/usr/bin/pdftotext"
+		},
+		"PdfProcessor": {
+			"value": "/usr/bin/gs"
+		},
+		"PdfInfo": {
+			"value": "/usr/bin/pdfinfo"
+		}
 	},
 	"MessagesDirs": {
 		"PdfHandler": [
@@ -45,5 +61,5 @@
 		"PdfHandler": "includes/PdfHandler.php",
 		"CreatePdfThumbnailsJob": "includes/CreatePdfThumbnailsJob.php"
 	},
-	"manifest_version": 1
+	"manifest_version": 2
 }

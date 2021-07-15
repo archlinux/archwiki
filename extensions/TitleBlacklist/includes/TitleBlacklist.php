@@ -26,7 +26,8 @@ class TitleBlacklist {
 	/** @var TitleBlacklist|null */
 	protected static $instance = null;
 
-	const VERSION = 3;	// Blacklist format
+	/** Blacklist format */
+	public const VERSION = 3;
 
 	/**
 	 * Get an instance of this class
@@ -304,9 +305,14 @@ class TitleBlacklist {
 		if ( !is_string( $result )
 			|| ( !$warn && !mt_rand( 0, $wgTitleBlacklistCaching['warningchance'] ) )
 		) {
-			$result = Http::get( $url );
+			$result = MediaWikiServices::getInstance()->getHttpRequestFactory()
+				->get( $url, [], __METHOD__ );
 			$cache->set( $warnkey, 1, $wgTitleBlacklistCaching['warningexpiry'] );
 			$cache->set( $key, $result, $wgTitleBlacklistCaching['expiry'] );
+			if ( !$result ) {
+				wfDebugLog( 'TitleBlacklist-cache', "Error loading title blacklist from $url\n" );
+				$result = '';
+			}
 		}
 
 		return $result;

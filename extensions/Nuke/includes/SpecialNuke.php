@@ -4,8 +4,12 @@ use MediaWiki\MediaWikiServices;
 
 class SpecialNuke extends SpecialPage {
 
+	/** @var NukeHookRunner */
+	private $hookRunner;
+
 	public function __construct() {
 		parent::__construct( 'Nuke', 'nuke' );
+		$this->hookRunner = new NukeHookRunner( $this->getHookContainer() );
 	}
 
 	public function doesWrites() {
@@ -309,7 +313,7 @@ class SpecialNuke extends SpecialPage {
 
 		// Allows other extensions to provide pages to be nuked that don't use
 		// the recentchanges table the way mediawiki-core does
-		Hooks::run( 'NukeGetNewPages', [ $username, $pattern, $namespace, $limit, &$pages ] );
+		$this->hookRunner->onNukeGetNewPages( $username, $pattern, $namespace, $limit, $pages );
 
 		// Re-enforcing the limit *after* the hook because other extensions
 		// may add and/or remove pages. We need to make sure we don't end up
@@ -338,7 +342,7 @@ class SpecialNuke extends SpecialPage {
 			$title = Title::newFromText( $page );
 
 			$deletionResult = false;
-			if ( !Hooks::run( 'NukeDeletePage', [ $title, $reason, &$deletionResult ] ) ) {
+			if ( !$this->hookRunner->onNukeDeletePage( $title, $reason, $deletionResult ) ) {
 				if ( $deletionResult ) {
 					$res[] = $this->msg( 'nuke-deleted', $title->getPrefixedText() )->parse();
 				} else {

@@ -6,8 +6,8 @@ class CreatePdfThumbnailsJob extends Job {
 	/**
 	 * Flags for thumbnail jobs
 	 */
-	const BIG_THUMB = 1;
-	const SMALL_THUMB = 2;
+	private const BIG_THUMB = 1;
+	private const SMALL_THUMB = 2;
 
 	/**
 	 * Construct a thumbnail job

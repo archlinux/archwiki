@@ -4,8 +4,8 @@ use MediaWiki\MediaWikiServices;
 use Wikimedia\Rdbms\Database;
 
 class SpamBlacklist extends BaseBlacklist {
-	const STASH_TTL = 180;
-	const STASH_AGE_DYING = 150;
+	private const STASH_TTL = 180;
+	private const STASH_AGE_DYING = 150;
 
 	/**
 	 * Returns the code for the blacklist implementation

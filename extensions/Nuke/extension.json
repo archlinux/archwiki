@@ -58,7 +58,10 @@
 	},
 	"AutoloadClasses": {
 		"SpecialNuke": "includes/SpecialNuke.php",
-		"NukeHooks": "includes/NukeHooks.php"
+		"NukeHooks": "includes/NukeHooks.php",
+		"NukeDeletePageHook": "includes/hook/NukeDeletePageHook.php",
+		"NukeGetNewPagesHook": "includes/hook/NukeGetNewPagesHook.php",
+		"NukeHookRunner": "includes/hook/NukeHookRunner.php"
 	},
-	"manifest_version": 1
+	"manifest_version": 2
 }

@@ -366,7 +366,8 @@ abstract class BaseBlacklist {
 
 		if ( !is_string( $httpText ) || ( !$warning && !mt_rand( 0, $this->warningChance ) ) ) {
 			wfDebugLog( 'SpamBlacklist', "Loading $listType blacklist from $fileName\n" );
-			$httpText = Http::get( $fileName );
+			$httpText = MediaWikiServices::getInstance()->getHttpRequestFactory()
+				->get( $fileName, [], __METHOD__ );
 			if ( $httpText === false ) {
 				wfDebugLog( 'SpamBlacklist', "Error loading $listType blacklist from $fileName\n" );
 			}
