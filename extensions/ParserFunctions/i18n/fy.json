@@ -4,7 +4,10 @@
 			"PiefPafPier"
 		]
 	},
-	"pfunc_expr_unrecognised_word": "Flater yn útdrukking: Net-werkend wurd \"$1\".",
-	"pfunc_expr_missing_operand": "Flater yn útdrukking: Untbrekkende ynfierwearde foar $1.",
-	"pfunc_expr_unrecognised_punctuation": "Flater yn útdrukking: Net-werkend lêsteken \"$1\"."
+	"pfunc_time_error": "Flater: Tiid ûnjildich.",
+	"pfunc_expr_unrecognised_word": "Flater yn 'e útdrukking: Wurd \"$1\" net werkend.",
+	"pfunc_expr_unexpected_operator": "Flater yn 'e útdrukking: Operator $1 net foarsjoen.",
+	"pfunc_expr_missing_operand": "Flater yn 'e útdrukking: Ynfierwearde foar $1 ûntbrekt.",
+	"pfunc_expr_unrecognised_punctuation": "Flater yn 'e útdrukking: Lêsteken \"$1\" net werkend.",
+	"pfunc_expr_division_by_zero": "Dieling troch nul."
 }

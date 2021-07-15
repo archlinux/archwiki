@@ -3,8 +3,11 @@
 use MediaWiki\MediaWikiServices;
 
 class Scribunto_LuaLanguageLibrary extends Scribunto_LuaLibraryBase {
+	/** @var Language[] */
 	public $langCache = [];
+	/** @var array */
 	public $timeCache = [];
+	/** @var int */
 	public $maxLangCacheSize;
 
 	public function register() {
@@ -261,12 +264,13 @@ class Scribunto_LuaLanguageLibrary extends Scribunto_LuaLibraryBase {
 		if ( $username === 'male' || $username === 'female' ) {
 			$gender = $username;
 		} else {
+			$userOptionsLookup = MediaWikiServices::getInstance()->getUserOptionsLookup();
 			// default
-			$gender = User::getDefaultOption( 'gender' );
+			$gender = $userOptionsLookup->getDefaultOption( 'gender' );
 
 			// Check for "User:" prefix
 			$title = Title::newFromText( $username );
-			if ( $title && $title->getNamespace() == NS_USER ) {
+			if ( $title && $title->getNamespace() === NS_USER ) {
 				$username = $title->getText();
 			}
 
@@ -283,7 +287,6 @@ class Scribunto_LuaLanguageLibrary extends Scribunto_LuaLibraryBase {
 				}
 			}
 		}
-		// @phan-suppress-next-line PhanTypeMismatchArgumentNullable gender always not null
 		return [ $lang->gender( $gender, $forms ) ];
 	}
 
@@ -297,6 +300,12 @@ class Scribunto_LuaLanguageLibrary extends Scribunto_LuaLibraryBase {
 	public function formatNum( $lang, $args ) {
 		$num = $args[0];
 		$this->checkType( 'formatNum', 1, $num, 'number' );
+		if ( is_infinite( $num ) ) {
+			throw new Scribunto_LuaError( "bad argument #1 to 'formatNum' (infinite)" );
+		}
+		if ( is_nan( $num ) ) {
+			throw new Scribunto_LuaError( "bad argument #1 to 'formatNum' (NaN)" );
+		}
 
 		$noCommafy = false;
 		if ( isset( $args[1] ) ) {
@@ -304,7 +313,11 @@ class Scribunto_LuaLanguageLibrary extends Scribunto_LuaLibraryBase {
 			$options = $args[1];
 			$noCommafy = !empty( $options['noCommafy'] );
 		}
-		return [ $lang->formatNum( $num, $noCommafy ) ];
+		if ( $noCommafy ) {
+			return [ $lang->formatNumNoSeparators( $num ) ];
+		} else {
+			return [ $lang->formatNum( $num ) ];
+		}
 	}
 
 	/**

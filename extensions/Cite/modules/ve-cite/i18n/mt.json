@@ -3,13 +3,14 @@
 		"authors": [
 			"CharlieTheCabbie",
 			"Chrisportelli",
-			"Leli Forte"
+			"Leli Forte",
+			"ToniSant"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Ktieb",
 	"visualeditor-cite-tool-name-journal": "Rivista",
 	"visualeditor-cite-tool-name-news": "Aħbarijiet",
-	"visualeditor-cite-tool-name-web": "Sit tal-web",
+	"visualeditor-cite-tool-name-web": "URL tal-web",
 	"cite-ve-dialog-reference-title": "Referenza",
 	"cite-ve-dialog-referenceslist-title": "Lista ta' referenzi"
 }

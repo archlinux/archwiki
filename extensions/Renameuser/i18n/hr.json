@@ -24,7 +24,6 @@
 	"renameuserwarnings": "Upozorenja:",
 	"renameuserconfirm": "Da, preimenuj suradnika",
 	"renameusersubmit": "Potvrdi",
-	"renameuser-submit-blocklog": "Prikaži suradnikovu ili suradničinu evidenciju blokiranja",
 	"renameusererrordoesnotexist": "Suradnik \"<nowiki>$1</nowiki>\" ne postoji (suradničko ime nije zauzeto).",
 	"renameusererrorexists": "Suradničko ime \"<nowiki>$1</nowiki>\" već postoji",
 	"renameusererrorinvalid": "Suradničko ime \"<nowiki>$1</nowiki>\" nije valjano",

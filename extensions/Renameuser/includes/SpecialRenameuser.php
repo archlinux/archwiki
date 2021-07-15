@@ -1,14 +1,61 @@
 <?php
 
-use MediaWiki\MediaWikiServices;
+use MediaWiki\HookContainer\HookContainer;
+use MediaWiki\Page\MovePageFactory;
+use MediaWiki\Permissions\PermissionManager;
+use MediaWiki\User\UserFactory;
+use MediaWiki\User\UserNamePrefixSearch;
+use MediaWiki\User\UserNameUtils;
 
 /**
  * Special page that allows authorised users to rename
  * user accounts
  */
 class SpecialRenameuser extends SpecialPage {
-	public function __construct() {
+	/** @var RenameuserHookRunner */
+	private $hookRunner;
+
+	/** @var Language */
+	private $contentLanguage;
+
+	/** @var MovePageFactory */
+	private $movePageFactory;
+
+	/** @var PermissionManager */
+	private $permissionManager;
+
+	/** @var TitleFactory */
+	private $titleFactory;
+
+	/** @var UserFactory */
+	private $userFactory;
+
+	/** @var UserNameUtils */
+	private $userNameUtils;
+
+	/** @var UserNamePrefixSearch */
+	private $userNamePrefixSearch;
+
+	public function __construct(
+		HookContainer $hookContainer,
+		Language $contentLanguage,
+		MovePageFactory $movePageFactory,
+		PermissionManager $permissionManager,
+		TitleFactory $titleFactory,
+		UserFactory $userFactory,
+		UserNamePrefixSearch $userNamePrefixSearch,
+		UserNameUtils $userNameUtils
+	) {
 		parent::__construct( 'Renameuser', 'renameuser' );
+
+		$this->hookRunner = new RenameuserHookRunner( $hookContainer );
+		$this->contentLanguage = $contentLanguage;
+		$this->movePageFactory = $movePageFactory;
+		$this->permissionManager = $permissionManager;
+		$this->titleFactory = $titleFactory;
+		$this->userFactory = $userFactory;
+		$this->userNamePrefixSearch = $userNamePrefixSearch;
+		$this->userNameUtils = $userNameUtils;
 	}
 
 	public function doesWrites() {
@@ -19,45 +66,42 @@ class SpecialRenameuser extends SpecialPage {
 	 * Show the special page
 	 *
 	 * @param mixed $par Parameter passed to the page
+	 *
 	 * @suppress SecurityCheck-XSS T211471
 	 * @throws PermissionsError
 	 * @throws ReadOnlyError
 	 * @throws UserBlockedError
 	 */
 	public function execute( $par ) {
-		global $wgCapitalLinks;
-		$contLang = MediaWikiServices::getInstance()->getContentLanguage();
-
 		$this->setHeaders();
 		$this->addHelpLink( 'Help:Renameuser' );
+
+		$this->checkPermissions();
+		$this->checkReadOnly();
+
+		$user = $this->getUser();
+
+		$block = $user->getBlock();
+		if ( $block ) {
+			throw new UserBlockedError( $block );
+		}
 
 		$out = $this->getOutput();
 		$out->addWikiMsg( 'renameuser-summary' );
 
-		$user = $this->getUser();
-		if ( !$user->isAllowed( 'renameuser' ) ) {
-			throw new PermissionsError( 'renameuser' );
-		}
-
-		$this->checkReadOnly();
-
-		if ( $user->isBlocked() ) {
-			throw new UserBlockedError( $this->getUser()->getBlock() );
-		}
-
 		$this->useTransactionalTimeLimit();
 
 		$request = $this->getRequest();
-		$showBlockLog = $request->getBool( 'submit-showBlockLog' );
+
 		$usernames = explode( '/', $par, 2 ); // this works as "/" is not valid in usernames
 		$oldnamePar = trim( str_replace( '_', ' ', $request->getText( 'oldusername', $usernames[0] ) ) );
-		$oldusername = Title::makeTitle( NS_USER, $oldnamePar );
+		$oldusername = $this->titleFactory->makeTitle( NS_USER, $oldnamePar );
 		$newnamePar = $usernames[1] ?? '';
 		$newnamePar = trim( str_replace( '_', ' ', $request->getText( 'newusername', $newnamePar ) ) );
 		// Force uppercase of newusername, otherwise wikis
 		// with wgCapitalLinks=false can create lc usernames
-		$newusername = Title::makeTitleSafe( NS_USER, $contLang->ucfirst( $newnamePar ) );
-		$oun = is_object( $oldusername ) ? $oldusername->getText() : '';
+		$newusername = $this->titleFactory->makeTitleSafe( NS_USER, $this->contentLanguage->ucfirst( $newnamePar ) );
+		$oun = $oldusername->getText();
 		$nun = is_object( $newusername ) ? $newusername->getText() : '';
 		$token = $user->getEditToken();
 		$reason = $request->getText( 'reason' );
@@ -67,7 +111,14 @@ class SpecialRenameuser extends SpecialPage {
 
 		$warnings = [];
 		if ( $oun && $nun && !$request->getCheck( 'confirmaction' ) ) {
-			Hooks::run( 'RenameUserWarning', [ $oun, $nun, &$warnings ] );
+			$oldU = $this->userFactory->newFromName( $oldusername->getText(), $this->userFactory::RIGOR_NONE );
+			if ( $oldU && $oldU->isBlocked() ) {
+				$warnings[] = [
+					'renameuser-warning-currentblock',
+					SpecialPage::getTitleFor( 'Log', 'block' )->getFullURL( [ 'page' => $oun ] )
+				];
+			}
+			$this->hookRunner->onRenameUserWarning( $oun, $nun, $warnings );
 		}
 
 		$out->addHTML(
@@ -109,7 +160,7 @@ class SpecialRenameuser extends SpecialPage {
 			'</td>
 			</tr>'
 		);
-		if ( $user->isAllowed( 'move' ) ) {
+		if ( $this->permissionManager->userHasRight( $user, 'move' ) ) {
 			$out->addHTML( "
 				<tr>
 					<td>&#160;
@@ -121,7 +172,7 @@ class SpecialRenameuser extends SpecialPage {
 				</tr>'
 			);
 
-			if ( $user->isAllowed( 'suppressredirect' ) ) {
+			if ( $this->permissionManager->userHasRight( $user, 'suppressredirect' ) ) {
 				$out->addHTML( "
 					<tr>
 						<td>&#160;
@@ -139,13 +190,12 @@ class SpecialRenameuser extends SpecialPage {
 				);
 			}
 		}
-		// @phan-suppress-next-line PhanImpossibleCondition May set by hook
 		if ( $warnings ) {
 			$warningsHtml = [];
 			foreach ( $warnings as $warning ) {
 				$warningsHtml[] = is_array( $warning ) ?
-					$this->msg( $warning[0] )->rawParams( array_slice( $warning, 1 ) )->escaped() :
-					$this->msg( $warning )->escaped();
+					$this->msg( $warning[0] )->params( array_slice( $warning, 1 ) )->parse() :
+					$this->msg( $warning )->parse();
 			}
 
 			$out->addHTML( "
@@ -188,14 +238,6 @@ class SpecialRenameuser extends SpecialPage {
 				]
 			) .
 			' ' .
-			Xml::submitButton(
-				$this->msg( 'renameuser-submit-blocklog' )->text(),
-				[
-					'name' => 'submit-showBlockLog',
-					'id' => 'submit-showBlockLog',
-					'tabindex' => '8'
-				]
-			) .
 			'</td>
 			</tr>' .
 			Xml::closeElement( 'table' ) .
@@ -203,13 +245,6 @@ class SpecialRenameuser extends SpecialPage {
 			Html::hidden( 'token', $token ) .
 			Xml::closeElement( 'form' ) . "\n"
 		);
-
-		// Show block log if requested
-		if ( $showBlockLog && is_object( $oldusername ) ) {
-			$this->showLogExtract( $oldusername, 'block', $out );
-
-			return;
-		}
 
 		if ( $request->getText( 'token' ) === '' ) {
 			# They probably haven't even submitted the form, so don't go further.
@@ -219,11 +254,6 @@ class SpecialRenameuser extends SpecialPage {
 			return;
 		} elseif ( !$request->wasPosted() || !$user->matchEditToken( $request->getVal( 'token' ) ) ) {
 			$out->wrapWikiMsg( "<div class=\"errorbox\">$1</div>", 'renameuser-error-request' );
-
-			return;
-		} elseif ( !is_object( $oldusername ) ) {
-			$out->wrapWikiMsg( "<div class=\"errorbox\">$1</div>",
-				[ 'renameusererrorinvalid', $request->getText( 'oldusername' ) ] );
 
 			return;
 		} elseif ( !is_object( $newusername ) ) {
@@ -238,8 +268,8 @@ class SpecialRenameuser extends SpecialPage {
 		}
 
 		// Suppress username validation of old username
-		$olduser = User::newFromName( $oldusername->getText(), false );
-		$newuser = User::newFromName( $newusername->getText(), 'creatable' );
+		$olduser = $this->userFactory->newFromName( $oldusername->getText(), $this->userFactory::RIGOR_NONE );
+		$newuser = $this->userFactory->newFromName( $newusername->getText(), $this->userFactory::RIGOR_CREATABLE );
 
 		// It won't be an object if for instance "|" is supplied as a value
 		if ( !is_object( $olduser ) ) {
@@ -248,7 +278,7 @@ class SpecialRenameuser extends SpecialPage {
 
 			return;
 		}
-		if ( !is_object( $newuser ) || !User::isCreatableName( $newuser->getName() ) ) {
+		if ( !is_object( $newuser ) || !$this->userNameUtils->isCreatable( $newuser->getName() ) ) {
 			$out->wrapWikiMsg( "<div class=\"errorbox\">$1</div>",
 				[ 'renameusererrorinvalid', $newusername->getText() ] );
 
@@ -257,19 +287,19 @@ class SpecialRenameuser extends SpecialPage {
 
 		// Check for the existence of lowercase oldusername in database.
 		// Until r19631 it was possible to rename a user to a name with first character as lowercase
-		if ( $oldusername->getText() !== $contLang->ucfirst( $oldusername->getText() ) ) {
+		if ( $oldusername->getText() !== $this->contentLanguage->ucfirst( $oldusername->getText() ) ) {
 			// oldusername was entered as lowercase -> check for existence in table 'user'
 			$dbr = wfGetDB( DB_REPLICA );
 			$uid = $dbr->selectField( 'user', 'user_id',
 				[ 'user_name' => $oldusername->getText() ],
 				__METHOD__ );
 			if ( $uid === false ) {
-				if ( !$wgCapitalLinks ) {
+				if ( !$this->getConfig()->get( 'CapitalLinks' ) ) {
 					$uid = 0; // We are on a lowercase wiki but lowercase username does not exists
 				} else {
 					// We are on a standard uppercase wiki, use normal
 					$uid = $olduser->idForName();
-					$oldusername = Title::makeTitleSafe( NS_USER, $olduser->getName() );
+					$oldusername = $this->titleFactory->makeTitleSafe( NS_USER, $olduser->getName() );
 				}
 			}
 		} else {
@@ -292,10 +322,7 @@ class SpecialRenameuser extends SpecialPage {
 		}
 
 		// Give other affected extensions a chance to validate or abort
-		if ( !Hooks::run(
-			'RenameUserAbort',
-			[ $uid, $oldusername->getText(), $newusername->getText() ]
-		) ) {
+		if ( !$this->hookRunner->onRenameUserAbort( $uid, $oldusername->getText(), $newusername->getText() ) ) {
 			return;
 		}
 
@@ -318,7 +345,8 @@ class SpecialRenameuser extends SpecialPage {
 		}
 
 		// Move any user pages
-		if ( $request->getCheck( 'movepages' ) && $user->isAllowed( 'move' ) ) {
+		if ( $request->getCheck( 'movepages' )
+			&& $this->permissionManager->userHasRight( $user, 'move' ) ) {
 			$dbr = wfGetDB( DB_REPLICA );
 
 			$pages = $dbr->select(
@@ -336,19 +364,26 @@ class SpecialRenameuser extends SpecialPage {
 
 			$suppressRedirect = false;
 
-			if ( $request->getCheck( 'suppressredirect' ) && $user->isAllowed( 'suppressredirect' ) ) {
+			if ( $request->getCheck( 'suppressredirect' )
+				&& $this->permissionManager->userHasRight( $user, 'suppressredirect' ) ) {
 				$suppressRedirect = true;
 			}
 
 			$output = '';
 			$linkRenderer = $this->getLinkRenderer();
-			$movePageFactory = MediaWikiServices::getInstance()->getMovePageFactory();
 			foreach ( $pages as $row ) {
-				$oldPage = Title::makeTitleSafe( $row->page_namespace, $row->page_title );
-				$newPage = Title::makeTitleSafe( $row->page_namespace,
-					preg_replace( '!^[^/]+!', $newusername->getDBkey(), $row->page_title ) );
+				$oldPage = $this->titleFactory->makeTitle( $row->page_namespace, $row->page_title );
 
-				$movePage = $movePageFactory->newMovePage( $oldPage, $newPage );
+				$newPageTitle = preg_replace( '!^[^/]+!', $newusername->getDBkey(), $row->page_title );
+				$newPage = $this->titleFactory->makeTitleSafe( $row->page_namespace, $newPageTitle );
+
+				if ( !$newPage ) {
+					throw new Exception(
+						"Encountered an invalid page title $newPageTitle in namespace $row->page_namespace"
+					);
+				}
+
+				$movePage = $this->movePageFactory->newMovePage( $oldPage, $newPage );
 				$validMoveStatus = $movePage->isValidMove();
 
 				# Do not autodelete or anything, title must not exist
@@ -419,13 +454,13 @@ class SpecialRenameuser extends SpecialPage {
 	 * @return string[] Matching subpages
 	 */
 	public function prefixSearchSubpages( $search, $limit, $offset ) {
-		$user = User::newFromName( $search );
+		$user = $this->userFactory->newFromName( $search );
 		if ( !$user ) {
 			// No prefix suggestion for invalid user
 			return [];
 		}
 		// Autocomplete subpage as user list - public to allow caching
-		return UserNamePrefixSearch::search( 'public', $search, $limit, $offset );
+		return $this->userNamePrefixSearch->search( 'public', $search, $limit, $offset );
 	}
 
 	protected function getGroupName() {

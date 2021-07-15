@@ -28,7 +28,7 @@
 
 	li {
 		// Tab fade background: Fade inside from light grey to white.
-		background-image: url( images/tab-normal-fade.png ); // Support: IE 8 & 9, Fx 3.6-15, Safari 5.1-6, Chrome 10-25
+		background-image: url( images/tab-normal-fade.png ); // Support: IE 9, Fx 3.6-15, Safari 5.1-6, Chrome 10-25
 		background-image: linear-gradient( to top, @border-color-content--tabs-inactive 0, #e8f2f8 1px, #fff 100% ); // Support: Standard (Firefox 16+, IE 10+, Safari 6.1+, Chrome 26+)
 		background-position: left bottom;
 		background-repeat: repeat-x;
@@ -65,8 +65,6 @@
 	}
 
 	.selected {
-		// Replace tab fade with flat color (matching top of would-be fade).
-		background-image: url( images/tab-current-fade.png );
 		// Overwrite above in browsers that support `rgba()`.
 		background: rgba( 255, 255, 255, 1 ); // stylelint-disable-line declaration-block-no-shorthand-property-overrides
 

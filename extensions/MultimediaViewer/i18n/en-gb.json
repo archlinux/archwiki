@@ -1,11 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
+			"Bjh21",
 			"Caliburn",
 			"Shirayuki"
 		]
 	},
 	"multimediaviewer-license-default": "View licence",
 	"multimediaviewer-permission-title": "Permission details",
-	"multimediaviewer-embed-license": "Licenced under $1."
+	"multimediaviewer-embed-license": "Licensed under $1.",
+	"multimediaviewer-reuse-warning-nonfree": "This file does not have a free licence."
 }

@@ -83,7 +83,7 @@ $specialPageAliases['bjn'] = [
 
 /** Bengali (বাংলা) */
 $specialPageAliases['bn'] = [
-	'CategoryTree' => [ 'বিষয়শ্রেণী_বৃক্ষ' ],
+	'CategoryTree' => [ 'বিষয়শ্রেণী_বৃক্ষ' ],
 ];
 
 /** Breton (brezhoneg) */

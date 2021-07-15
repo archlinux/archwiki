@@ -33,6 +33,9 @@ class GadgetDefinitionContentHandler extends JsonContentHandler {
 		return $title->inNamespace( NS_GADGET_DEFINITION );
 	}
 
+	/**
+	 * @return string
+	 */
 	protected function getContentClass() {
 		return 'GadgetDefinitionContent';
 	}

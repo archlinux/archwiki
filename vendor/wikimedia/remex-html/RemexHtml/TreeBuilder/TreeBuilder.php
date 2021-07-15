@@ -57,7 +57,9 @@ class TreeBuilder {
 	// State
 	public $isFragment = false;
 	public $fragmentContext;
+	/** @var Element|null */
 	public $headElement;
+	/** @var Element|null */
 	public $formElement;
 	public $framesetOK = true;
 	public $quirks = self::NO_QUIRKS;
@@ -128,7 +130,7 @@ class TreeBuilder {
 	public function __construct( TreeHandler $handler, $options = [] ) {
 		$this->handler = $handler;
 		$this->afe = new ActiveFormattingElements;
-		$options = $options + [
+		$options += [
 			'isIframeSrcdoc' => false,
 			'scriptingFlag' => true,
 			'ignoreErrors' => false,
@@ -883,7 +885,7 @@ class TreeBuilder {
 		$this->headElement = null;
 		$this->formElement = null;
 		$this->tokenizer->setEnableCdataCallback( null );
-		// @phan-suppress-next-line PhanTypeMismatchProperty clearing ref
+		// @phan-suppress-next-line PhanTypeMismatchPropertyProbablyReal clearing ref
 		$this->tokenizer = null;
 	}
 }

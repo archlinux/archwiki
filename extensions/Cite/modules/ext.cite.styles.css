@@ -10,6 +10,12 @@
 	-webkit-column-width: 30em;
 	-moz-column-width: 30em;
 	column-width: 30em;
+	margin-top: 0.3em;
+}
+
+/* Lines first column up nicely. */
+.mw-parser-output .mw-references-columns .references {
+	margin-top: 0;
 }
 
 /* Avoid elements from breaking between columns */

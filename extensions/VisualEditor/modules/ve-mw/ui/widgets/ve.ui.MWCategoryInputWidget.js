@@ -85,8 +85,7 @@ ve.ui.MWCategoryInputWidget.prototype.getLookupCacheDataFromResponse = function 
 		linkCacheUpdate = {},
 		query = data.query || {};
 
-	// eslint-disable-next-line no-jquery/no-each-util
-	$.each( query.pages || [], function ( pageId, categoryPage ) {
+	( query.pages || [] ).forEach( function ( categoryPage ) {
 		result.push( mw.Title.newFromText( categoryPage.title ).getMainText() );
 		linkCacheUpdate[ categoryPage.title ] = {
 			missing: Object.prototype.hasOwnProperty.call( categoryPage, 'missing' ),
@@ -97,8 +96,7 @@ ve.ui.MWCategoryInputWidget.prototype.getLookupCacheDataFromResponse = function 
 		};
 	} );
 
-	// eslint-disable-next-line no-jquery/no-each-util
-	$.each( query.redirects || [], function ( index, redirect ) {
+	( query.redirects || [] ).forEach( function ( redirect ) {
 		if ( !Object.prototype.hasOwnProperty.call( linkCacheUpdate, redirect.to ) ) {
 			linkCacheUpdate[ redirect.to ] = ve.init.platform.linkCache.getCached( redirect.to ) ||
 				{ missing: false, redirectFrom: [ redirect.from ] };
@@ -144,8 +142,7 @@ ve.ui.MWCategoryInputWidget.prototype.getLookupMenuOptionsFromData = function ( 
 		canonicalQueryValue = canonicalQueryValue.getMainText();
 	}
 
-	// eslint-disable-next-line no-jquery/no-each-util
-	$.each( data, function ( index, suggestedCategory ) {
+	data.forEach( function ( suggestedCategory ) {
 		var suggestedCategoryTitle = mw.Title.newFromText(
 				suggestedCategory,
 				mw.config.get( 'wgNamespaceIds' ).category
@@ -169,12 +166,11 @@ ve.ui.MWCategoryInputWidget.prototype.getLookupMenuOptionsFromData = function ( 
 	} );
 
 	// Existing categories
-	// eslint-disable-next-line no-jquery/no-each-util
-	$.each( existingCategories, function ( index, existingCategory ) {
+	existingCategories.forEach( function ( existingCategory, i ) {
 		if ( existingCategory === canonicalQueryValue ) {
 			exactMatch = true;
 		}
-		if ( index < existingCategories.length - 1 && existingCategory.lastIndexOf( canonicalQueryValue, 0 ) === 0 ) {
+		if ( i < existingCategories.length - 1 && existingCategory.lastIndexOf( canonicalQueryValue, 0 ) === 0 ) {
 			// Verify that item starts with category.value
 			existingCategoryItems.push( existingCategory );
 		}
@@ -189,8 +185,7 @@ ve.ui.MWCategoryInputWidget.prototype.getLookupMenuOptionsFromData = function ( 
 	ve.init.platform.linkCache.set( linkCacheUpdate );
 
 	// Add sections for non-empty groups. Each section consists of an id, a label and items
-	// eslint-disable-next-line no-jquery/no-each-util
-	$.each( [
+	[
 		{
 			id: 'newCategory',
 			label: ve.msg( 'visualeditor-dialog-meta-categories-input-newcategorylabel' ),
@@ -211,14 +206,13 @@ ve.ui.MWCategoryInputWidget.prototype.getLookupMenuOptionsFromData = function ( 
 			label: ve.msg( 'visualeditor-dialog-meta-categories-input-hiddencategorieslabel' ),
 			items: hiddenCategoryItems
 		}
-	], function ( index, sectionData ) {
+	].forEach( function ( sectionData ) {
 		if ( sectionData.items.length ) {
 			itemWidgets.push( new OO.ui.MenuSectionOptionWidget( {
 				data: sectionData.id,
 				label: sectionData.label
 			} ) );
-			// eslint-disable-next-line no-jquery/no-each-util
-			$.each( sectionData.items, function ( index, categoryItem ) {
+			sectionData.items.forEach( function ( categoryItem ) {
 				itemWidgets.push( widget.getCategoryWidgetFromName( categoryItem ) );
 			} );
 		}

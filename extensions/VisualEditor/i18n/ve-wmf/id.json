@@ -23,7 +23,7 @@
 	"tag-visualeditor-needcheck-description": "Penyuntingan yang menggunakan [[{{MediaWiki:visualeditor-descriptionpagelink}}|editor visual]] pada sistem yang mendeteksi adanya teks wiki mungkin mengalami perubahan yang tidak diinginkan.",
 	"tag-visualeditor-wikitext": "suntingan sumber",
 	"tag-visualeditor-wikitext-description": "Suntingan menggunakan penyunting teks wiki 2017",
-	"tag-visualeditor-switched": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Visual edit: Beralih]]",
+	"tag-visualeditor-switched": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|VisualEditor-alih]]",
 	"tag-visualeditor-switched-description": "Pengguna mulai menyunting dengan editor visual lalu mengubahnya menjadi editor teks wiki.",
 	"visualeditor-feedback-link": "Project:VisualEditor/Umpan balik",
 	"visualeditor-feedback-tool": "Tinggalkan umpan balik untuk peranti lunak ini",

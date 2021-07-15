@@ -16,6 +16,7 @@ use ResourceLoaderContext;
  */
 class CiteDataModule extends \ResourceLoaderModule {
 
+	/** @inheritDoc */
 	protected $targets = [ 'desktop', 'mobile' ];
 
 	/** @inheritDoc */
@@ -49,7 +50,7 @@ class CiteDataModule extends \ResourceLoaderModule {
 				[
 					'cite-tool-definition.json' => json_encode( $citationTools )
 				],
-				ResourceLoader::inDebugMode()
+				(bool)ResourceLoader::inDebugMode()
 			) . ');';
 	}
 

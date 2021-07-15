@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Hakim1bal",
 			"Moha",
 			"Mohamed Belarhzali",
 			"Tifinaghes",
@@ -13,10 +14,10 @@
 	"vector-action-move": "ⵙⵎⵓⵜⵜⵉ",
 	"vector-action-undelete": "ⵙⵙⵓⵖⴰⵍ ⵓⴽⵓⵙ",
 	"vector-action-unprotect": "ⴱⴷⴷⴻⵍ ⵜⴰⵙⵜⴰⵏⵜ",
-	"vector-view-create": "ⴰⵔⴰ",
-	"vector-view-edit": "ⴱⴷⴷⴻⵍ",
+	"vector-view-create": "Senflul",
+	"vector-view-edit": "Senfel",
 	"vector-view-history": "ⵥⵕ ⴰⵎⵣⵔⵓⵢ",
-	"vector-view-view": "ⵖⵔ",
+	"vector-view-view": "Γer",
 	"vector-view-viewsource": "ⵥⵕ ⴰⵖⴱⴰⵍⵓ",
 	"vector-more-actions": "Uggar"
 }

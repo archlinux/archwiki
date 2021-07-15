@@ -3,7 +3,7 @@
  */
 
 import searchBoxTemplate from '!!raw-loader!../includes/templates/SearchBox.mustache';
-import { htmluserlangattributes } from './utils';
+import { htmlUserLanguageAttributes } from './utils';
 
 export { searchBoxTemplate };
 
@@ -12,7 +12,7 @@ export { searchBoxTemplate };
  */
 export const searchBoxData = {
 	'form-action': '/w/index.php',
-	'html-userlangattributes': htmluserlangattributes,
+	'html-user-language-attributes': htmlUserLanguageAttributes,
 	'msg-search': 'Search',
 	'html-input': '<input type="search" name="search" placeholder="Search Wikipedia" title="Search Wikipedia [⌃⌥f]" accesskey="f" id="searchInput" autocomplete="off">',
 	'page-title': 'Special:Search',

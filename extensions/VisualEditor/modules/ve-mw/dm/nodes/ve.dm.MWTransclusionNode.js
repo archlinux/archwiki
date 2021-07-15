@@ -235,13 +235,13 @@ ve.dm.MWTransclusionNode.static.describeChanges = function ( attributeChanges ) 
 	// the same, so it doesn't have to consider whether the actual template
 	// involved has changed.
 
-	function getLabel( param ) {
+	function getLabel( par ) {
 		// If a parameter is an object with a wt key, we just want the value of that.
-		if ( param && param.wt !== undefined ) {
+		if ( par && par.wt !== undefined ) {
 			// Can be `''`, and we're okay with that
-			return param.wt;
+			return par.wt;
 		}
-		return param;
+		return par;
 	}
 
 	if ( attributeChanges.mw.from.parts.length === 1 && attributeChanges.mw.to.parts.length === 1 ) {

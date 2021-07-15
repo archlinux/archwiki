@@ -20,156 +20,153 @@ namespace MediaWiki\Extensions\ParserFunctions;
 
 use UtfNormal\Validator;
 
-// @codeCoverageIgnoreStart
-
-// Character classes
-define( 'EXPR_WHITE_CLASS', " \t\r\n" );
-define( 'EXPR_NUMBER_CLASS', '0123456789.' );
-
-// Token types
-define( 'EXPR_WHITE', 1 );
-define( 'EXPR_NUMBER', 2 );
-define( 'EXPR_NEGATIVE', 3 );
-define( 'EXPR_POSITIVE', 4 );
-define( 'EXPR_PLUS', 5 );
-define( 'EXPR_MINUS', 6 );
-define( 'EXPR_TIMES', 7 );
-define( 'EXPR_DIVIDE', 8 );
-define( 'EXPR_MOD', 9 );
-define( 'EXPR_OPEN', 10 );
-define( 'EXPR_CLOSE', 11 );
-define( 'EXPR_AND', 12 );
-define( 'EXPR_OR', 13 );
-define( 'EXPR_NOT', 14 );
-define( 'EXPR_EQUALITY', 15 );
-define( 'EXPR_LESS', 16 );
-define( 'EXPR_GREATER', 17 );
-define( 'EXPR_LESSEQ', 18 );
-define( 'EXPR_GREATEREQ', 19 );
-define( 'EXPR_NOTEQ', 20 );
-define( 'EXPR_ROUND', 21 );
-define( 'EXPR_EXPONENT', 22 );
-define( 'EXPR_SINE', 23 );
-define( 'EXPR_COSINE', 24 );
-define( 'EXPR_TANGENS', 25 );
-define( 'EXPR_ARCSINE', 26 );
-define( 'EXPR_ARCCOS', 27 );
-define( 'EXPR_ARCTAN', 28 );
-define( 'EXPR_EXP', 29 );
-define( 'EXPR_LN', 30 );
-define( 'EXPR_ABS', 31 );
-define( 'EXPR_FLOOR', 32 );
-define( 'EXPR_TRUNC', 33 );
-define( 'EXPR_CEIL', 34 );
-define( 'EXPR_POW', 35 );
-define( 'EXPR_PI', 36 );
-define( 'EXPR_FMOD', 37 );
-define( 'EXPR_SQRT', 38 );
-
-// @codeCoverageIgnoreEnd
-
 class ExprParser {
-	public $maxStackSize = 100;
 
-	public $precedence = [
-		EXPR_NEGATIVE => 10,
-		EXPR_POSITIVE => 10,
-		EXPR_EXPONENT => 10,
-		EXPR_SINE => 9,
-		EXPR_COSINE => 9,
-		EXPR_TANGENS => 9,
-		EXPR_ARCSINE => 9,
-		EXPR_ARCCOS => 9,
-		EXPR_ARCTAN => 9,
-		EXPR_EXP => 9,
-		EXPR_LN => 9,
-		EXPR_ABS => 9,
-		EXPR_FLOOR => 9,
-		EXPR_TRUNC => 9,
-		EXPR_CEIL => 9,
-		EXPR_NOT => 9,
-		EXPR_SQRT => 9,
-		EXPR_POW => 8,
-		EXPR_TIMES => 7,
-		EXPR_DIVIDE => 7,
-		EXPR_MOD => 7,
-		EXPR_FMOD => 7,
-		EXPR_PLUS => 6,
-		EXPR_MINUS => 6,
-		EXPR_ROUND => 5,
-		EXPR_EQUALITY => 4,
-		EXPR_LESS => 4,
-		EXPR_GREATER => 4,
-		EXPR_LESSEQ => 4,
-		EXPR_GREATEREQ => 4,
-		EXPR_NOTEQ => 4,
-		EXPR_AND => 3,
-		EXPR_OR => 2,
-		EXPR_PI => 0,
-		EXPR_OPEN => -1,
-		EXPR_CLOSE => -1,
+	// Character classes
+	private const EXPR_WHITE_CLASS = " \t\r\n";
+	private const EXPR_NUMBER_CLASS = '0123456789.';
+
+	// Token types
+	private const EXPR_WHITE = 1;
+	private const EXPR_NUMBER = 2;
+	private const EXPR_NEGATIVE = 3;
+	private const EXPR_POSITIVE = 4;
+	private const EXPR_PLUS = 5;
+	private const EXPR_MINUS = 6;
+	private const EXPR_TIMES = 7;
+	private const EXPR_DIVIDE = 8;
+	private const EXPR_MOD = 9;
+	private const EXPR_OPEN = 10;
+	private const EXPR_CLOSE = 11;
+	private const EXPR_AND = 12;
+	private const EXPR_OR = 13;
+	private const EXPR_NOT = 14;
+	private const EXPR_EQUALITY = 15;
+	private const EXPR_LESS = 16;
+	private const EXPR_GREATER = 17;
+	private const EXPR_LESSEQ = 18;
+	private const EXPR_GREATEREQ = 19;
+	private const EXPR_NOTEQ = 20;
+	private const EXPR_ROUND = 21;
+	private const EXPR_EXPONENT = 22;
+	private const EXPR_SINE = 23;
+	private const EXPR_COSINE = 24;
+	private const EXPR_TANGENS = 25;
+	private const EXPR_ARCSINE = 26;
+	private const EXPR_ARCCOS = 27;
+	private const EXPR_ARCTAN = 28;
+	private const EXPR_EXP = 29;
+	private const EXPR_LN = 30;
+	private const EXPR_ABS = 31;
+	private const EXPR_FLOOR = 32;
+	private const EXPR_TRUNC = 33;
+	private const EXPR_CEIL = 34;
+	private const EXPR_POW = 35;
+	private const EXPR_PI = 36;
+	private const EXPR_FMOD = 37;
+	private const EXPR_SQRT = 38;
+
+	private const MAX_STACK_SIZE = 100;
+
+	private const PRECEDENCE = [
+		self::EXPR_NEGATIVE => 10,
+		self::EXPR_POSITIVE => 10,
+		self::EXPR_EXPONENT => 10,
+		self::EXPR_SINE => 9,
+		self::EXPR_COSINE => 9,
+		self::EXPR_TANGENS => 9,
+		self::EXPR_ARCSINE => 9,
+		self::EXPR_ARCCOS => 9,
+		self::EXPR_ARCTAN => 9,
+		self::EXPR_EXP => 9,
+		self::EXPR_LN => 9,
+		self::EXPR_ABS => 9,
+		self::EXPR_FLOOR => 9,
+		self::EXPR_TRUNC => 9,
+		self::EXPR_CEIL => 9,
+		self::EXPR_NOT => 9,
+		self::EXPR_SQRT => 9,
+		self::EXPR_POW => 8,
+		self::EXPR_TIMES => 7,
+		self::EXPR_DIVIDE => 7,
+		self::EXPR_MOD => 7,
+		self::EXPR_FMOD => 7,
+		self::EXPR_PLUS => 6,
+		self::EXPR_MINUS => 6,
+		self::EXPR_ROUND => 5,
+		self::EXPR_EQUALITY => 4,
+		self::EXPR_LESS => 4,
+		self::EXPR_GREATER => 4,
+		self::EXPR_LESSEQ => 4,
+		self::EXPR_GREATEREQ => 4,
+		self::EXPR_NOTEQ => 4,
+		self::EXPR_AND => 3,
+		self::EXPR_OR => 2,
+		self::EXPR_PI => 0,
+		self::EXPR_OPEN => -1,
+		self::EXPR_CLOSE => -1,
 	];
 
-	public $names = [
-		EXPR_NEGATIVE => '-',
-		EXPR_POSITIVE => '+',
-		EXPR_NOT => 'not',
-		EXPR_TIMES => '*',
-		EXPR_DIVIDE => '/',
-		EXPR_MOD => 'mod',
-		EXPR_FMOD => 'fmod',
-		EXPR_PLUS => '+',
-		EXPR_MINUS => '-',
-		EXPR_ROUND => 'round',
-		EXPR_EQUALITY => '=',
-		EXPR_LESS => '<',
-		EXPR_GREATER => '>',
-		EXPR_LESSEQ => '<=',
-		EXPR_GREATEREQ => '>=',
-		EXPR_NOTEQ => '<>',
-		EXPR_AND => 'and',
-		EXPR_OR => 'or',
-		EXPR_EXPONENT => 'e',
-		EXPR_SINE => 'sin',
-		EXPR_COSINE => 'cos',
-		EXPR_TANGENS => 'tan',
-		EXPR_ARCSINE => 'asin',
-		EXPR_ARCCOS => 'acos',
-		EXPR_ARCTAN => 'atan',
-		EXPR_LN => 'ln',
-		EXPR_EXP => 'exp',
-		EXPR_ABS => 'abs',
-		EXPR_FLOOR => 'floor',
-		EXPR_TRUNC => 'trunc',
-		EXPR_CEIL => 'ceil',
-		EXPR_POW => '^',
-		EXPR_PI => 'pi',
-		EXPR_SQRT => 'sqrt',
+	private const NAMES = [
+		self::EXPR_NEGATIVE => '-',
+		self::EXPR_POSITIVE => '+',
+		self::EXPR_NOT => 'not',
+		self::EXPR_TIMES => '*',
+		self::EXPR_DIVIDE => '/',
+		self::EXPR_MOD => 'mod',
+		self::EXPR_FMOD => 'fmod',
+		self::EXPR_PLUS => '+',
+		self::EXPR_MINUS => '-',
+		self::EXPR_ROUND => 'round',
+		self::EXPR_EQUALITY => '=',
+		self::EXPR_LESS => '<',
+		self::EXPR_GREATER => '>',
+		self::EXPR_LESSEQ => '<=',
+		self::EXPR_GREATEREQ => '>=',
+		self::EXPR_NOTEQ => '<>',
+		self::EXPR_AND => 'and',
+		self::EXPR_OR => 'or',
+		self::EXPR_EXPONENT => 'e',
+		self::EXPR_SINE => 'sin',
+		self::EXPR_COSINE => 'cos',
+		self::EXPR_TANGENS => 'tan',
+		self::EXPR_ARCSINE => 'asin',
+		self::EXPR_ARCCOS => 'acos',
+		self::EXPR_ARCTAN => 'atan',
+		self::EXPR_LN => 'ln',
+		self::EXPR_EXP => 'exp',
+		self::EXPR_ABS => 'abs',
+		self::EXPR_FLOOR => 'floor',
+		self::EXPR_TRUNC => 'trunc',
+		self::EXPR_CEIL => 'ceil',
+		self::EXPR_POW => '^',
+		self::EXPR_PI => 'pi',
+		self::EXPR_SQRT => 'sqrt',
 	];
 
-	public $words = [
-		'mod' => EXPR_MOD,
-		'fmod' => EXPR_FMOD,
-		'and' => EXPR_AND,
-		'or' => EXPR_OR,
-		'not' => EXPR_NOT,
-		'round' => EXPR_ROUND,
-		'div' => EXPR_DIVIDE,
-		'e' => EXPR_EXPONENT,
-		'sin' => EXPR_SINE,
-		'cos' => EXPR_COSINE,
-		'tan' => EXPR_TANGENS,
-		'asin' => EXPR_ARCSINE,
-		'acos' => EXPR_ARCCOS,
-		'atan' => EXPR_ARCTAN,
-		'exp' => EXPR_EXP,
-		'ln' => EXPR_LN,
-		'abs' => EXPR_ABS,
-		'trunc' => EXPR_TRUNC,
-		'floor' => EXPR_FLOOR,
-		'ceil' => EXPR_CEIL,
-		'pi' => EXPR_PI,
-		'sqrt' => EXPR_SQRT,
+	private const WORDS = [
+		'mod' => self::EXPR_MOD,
+		'fmod' => self::EXPR_FMOD,
+		'and' => self::EXPR_AND,
+		'or' => self::EXPR_OR,
+		'not' => self::EXPR_NOT,
+		'round' => self::EXPR_ROUND,
+		'div' => self::EXPR_DIVIDE,
+		'e' => self::EXPR_EXPONENT,
+		'sin' => self::EXPR_SINE,
+		'cos' => self::EXPR_COSINE,
+		'tan' => self::EXPR_TANGENS,
+		'asin' => self::EXPR_ARCSINE,
+		'acos' => self::EXPR_ARCCOS,
+		'atan' => self::EXPR_ARCTAN,
+		'exp' => self::EXPR_EXP,
+		'ln' => self::EXPR_LN,
+		'abs' => self::EXPR_ABS,
+		'trunc' => self::EXPR_TRUNC,
+		'floor' => self::EXPR_FLOOR,
+		'ceil' => self::EXPR_CEIL,
+		'pi' => self::EXPR_PI,
+		'sqrt' => self::EXPR_SQRT,
 	];
 
 	/**
@@ -196,7 +193,7 @@ class ExprParser {
 		$name = '';
 
 		while ( $p < $end ) {
-			if ( count( $operands ) > $this->maxStackSize || count( $operators ) > $this->maxStackSize ) {
+			if ( count( $operands ) > self::MAX_STACK_SIZE || count( $operators ) > self::MAX_STACK_SIZE ) {
 				throw new ExprError( 'stack_exhausted' );
 			}
 			$char = $expr[$p];
@@ -209,19 +206,19 @@ class ExprParser {
 			// First the unlimited length classes
 
 			// @phan-suppress-next-line PhanParamSuspiciousOrder false positive
-			if ( false !== strpos( EXPR_WHITE_CLASS, $char ) ) {
+			if ( strpos( self::EXPR_WHITE_CLASS, $char ) !== false ) {
 				// Whitespace
-				$p += strspn( $expr, EXPR_WHITE_CLASS, $p );
+				$p += strspn( $expr, self::EXPR_WHITE_CLASS, $p );
 				continue;
 				// @phan-suppress-next-line PhanParamSuspiciousOrder false positive
-			} elseif ( false !== strpos( EXPR_NUMBER_CLASS, $char ) ) {
+			} elseif ( strpos( self::EXPR_NUMBER_CLASS, $char ) !== false ) {
 				// Number
 				if ( $expecting !== 'expression' ) {
 					throw new ExprError( 'unexpected_number' );
 				}
 
 				// Find the rest of it
-				$length = strspn( $expr, EXPR_NUMBER_CLASS, $p );
+				$length = strspn( $expr, self::EXPR_NUMBER_CLASS, $p );
 				// Convert it to float, silently removing double decimal points
 				$operands[] = (float)substr( $expr, $p, $length );
 				$p += $length;
@@ -239,20 +236,20 @@ class ExprParser {
 				$p += strlen( $word );
 
 				// Interpret the word
-				if ( !isset( $this->words[$word] ) ) {
+				if ( !isset( self::WORDS[$word] ) ) {
 					throw new ExprError( 'unrecognised_word', $word );
 				}
-				$op = $this->words[$word];
+				$op = self::WORDS[$word];
 				switch ( $op ) {
 					// constant
-					case EXPR_EXPONENT:
+					case self::EXPR_EXPONENT:
 						if ( $expecting !== 'expression' ) {
 							break;
 						}
 						$operands[] = exp( 1 );
 						$expecting = 'operator';
 						continue 2;
-					case EXPR_PI:
+					case self::EXPR_PI:
 						if ( $expecting !== 'expression' ) {
 							throw new ExprError( 'unexpected_number' );
 						}
@@ -260,20 +257,20 @@ class ExprParser {
 						$expecting = 'operator';
 						continue 2;
 					// Unary operator
-					case EXPR_NOT:
-					case EXPR_SINE:
-					case EXPR_COSINE:
-					case EXPR_TANGENS:
-					case EXPR_ARCSINE:
-					case EXPR_ARCCOS:
-					case EXPR_ARCTAN:
-					case EXPR_EXP:
-					case EXPR_LN:
-					case EXPR_ABS:
-					case EXPR_FLOOR:
-					case EXPR_TRUNC:
-					case EXPR_CEIL:
-					case EXPR_SQRT:
+					case self::EXPR_NOT:
+					case self::EXPR_SINE:
+					case self::EXPR_COSINE:
+					case self::EXPR_TANGENS:
+					case self::EXPR_ARCSINE:
+					case self::EXPR_ARCCOS:
+					case self::EXPR_ARCTAN:
+					case self::EXPR_EXP:
+					case self::EXPR_LN:
+					case self::EXPR_ABS:
+					case self::EXPR_FLOOR:
+					case self::EXPR_TRUNC:
+					case self::EXPR_CEIL:
+					case self::EXPR_SQRT:
 						if ( $expecting !== 'expression' ) {
 							throw new ExprError( 'unexpected_operator', $word );
 						}
@@ -284,58 +281,58 @@ class ExprParser {
 				$name = $word;
 			} elseif ( $char2 === '<=' ) {
 				$name = $char2;
-				$op = EXPR_LESSEQ;
+				$op = self::EXPR_LESSEQ;
 				$p += 2;
 			} elseif ( $char2 === '>=' ) {
 				$name = $char2;
-				$op = EXPR_GREATEREQ;
+				$op = self::EXPR_GREATEREQ;
 				$p += 2;
 			} elseif ( $char2 === '<>' || $char2 === '!=' ) {
 				$name = $char2;
-				$op = EXPR_NOTEQ;
+				$op = self::EXPR_NOTEQ;
 				$p += 2;
 			} elseif ( $char === '+' ) {
 				++$p;
 				if ( $expecting === 'expression' ) {
 					// Unary plus
-					$operators[] = EXPR_POSITIVE;
+					$operators[] = self::EXPR_POSITIVE;
 					continue;
 				} else {
 					// Binary plus
-					$op = EXPR_PLUS;
+					$op = self::EXPR_PLUS;
 				}
 			} elseif ( $char === '-' ) {
 				++$p;
 				if ( $expecting === 'expression' ) {
 					// Unary minus
-					$operators[] = EXPR_NEGATIVE;
+					$operators[] = self::EXPR_NEGATIVE;
 					continue;
 				} else {
 					// Binary minus
-					$op = EXPR_MINUS;
+					$op = self::EXPR_MINUS;
 				}
 			} elseif ( $char === '*' ) {
 				$name = $char;
-				$op = EXPR_TIMES;
+				$op = self::EXPR_TIMES;
 				++$p;
 			} elseif ( $char === '/' ) {
 				$name = $char;
-				$op = EXPR_DIVIDE;
+				$op = self::EXPR_DIVIDE;
 				++$p;
 			} elseif ( $char === '^' ) {
 				$name = $char;
-				$op = EXPR_POW;
+				$op = self::EXPR_POW;
 				++$p;
 			} elseif ( $char === '(' ) {
 				if ( $expecting === 'operator' ) {
 					throw new ExprError( 'unexpected_operator', '(' );
 				}
-				$operators[] = EXPR_OPEN;
+				$operators[] = self::EXPR_OPEN;
 				++$p;
 				continue;
 			} elseif ( $char === ')' ) {
 				$lastOp = end( $operators );
-				while ( $lastOp && $lastOp != EXPR_OPEN ) {
+				while ( $lastOp && $lastOp !== self::EXPR_OPEN ) {
 					$this->doOperation( $lastOp, $operands );
 					array_pop( $operators );
 					$lastOp = end( $operators );
@@ -350,15 +347,15 @@ class ExprParser {
 				continue;
 			} elseif ( $char === '=' ) {
 				$name = $char;
-				$op = EXPR_EQUALITY;
+				$op = self::EXPR_EQUALITY;
 				++$p;
 			} elseif ( $char === '<' ) {
 				$name = $char;
-				$op = EXPR_LESS;
+				$op = self::EXPR_LESS;
 				++$p;
 			} elseif ( $char === '>' ) {
 				$name = $char;
-				$op = EXPR_GREATER;
+				$op = self::EXPR_GREATER;
 				++$p;
 			} else {
 				$utfExpr = Validator::cleanUp( substr( $expr, $p ) );
@@ -372,7 +369,7 @@ class ExprParser {
 
 			// Shunting yard magic
 			$lastOp = end( $operators );
-			while ( $lastOp && $this->precedence[$op] <= $this->precedence[$lastOp] ) {
+			while ( $lastOp && self::PRECEDENCE[$op] <= self::PRECEDENCE[$lastOp] ) {
 				$this->doOperation( $lastOp, $operands );
 				array_pop( $operators );
 				$lastOp = end( $operators );
@@ -382,10 +379,9 @@ class ExprParser {
 		}
 
 		// Finish off the operator array
-		// @codingStandardsIgnoreStart
+		// phpcs:ignore MediaWiki.ControlStructures.AssignmentInControlStructures.AssignmentInControlStructures
 		while ( $op = array_pop( $operators ) ) {
-		// @codingStandardsIgnoreEnd
-			if ( $op == EXPR_OPEN ) {
+			if ( $op === self::EXPR_OPEN ) {
 				throw new ExprError( 'unclosed_bracket' );
 			}
 			$this->doOperation( $op, $operands );
@@ -401,275 +397,275 @@ class ExprParser {
 	 */
 	public function doOperation( $op, &$stack ) {
 		switch ( $op ) {
-			case EXPR_NEGATIVE:
+			case self::EXPR_NEGATIVE:
 				if ( count( $stack ) < 1 ) {
-					throw new ExprError( 'missing_operand', $this->names[$op] );
+					throw new ExprError( 'missing_operand', self::NAMES[$op] );
 				}
 				$arg = array_pop( $stack );
 				$stack[] = -$arg;
 				break;
-			case EXPR_POSITIVE:
+			case self::EXPR_POSITIVE:
 				if ( count( $stack ) < 1 ) {
-					throw new ExprError( 'missing_operand', $this->names[$op] );
+					throw new ExprError( 'missing_operand', self::NAMES[$op] );
 				}
 				break;
-			case EXPR_TIMES:
+			case self::EXPR_TIMES:
 				if ( count( $stack ) < 2 ) {
-					throw new ExprError( 'missing_operand', $this->names[$op] );
+					throw new ExprError( 'missing_operand', self::NAMES[$op] );
 				}
 				$right = array_pop( $stack );
 				$left = array_pop( $stack );
 				$stack[] = $left * $right;
 					break;
-			case EXPR_DIVIDE:
+			case self::EXPR_DIVIDE:
 				if ( count( $stack ) < 2 ) {
-					throw new ExprError( 'missing_operand', $this->names[$op] );
+					throw new ExprError( 'missing_operand', self::NAMES[$op] );
 				}
 				$right = array_pop( $stack );
 				$left = array_pop( $stack );
 				if ( !$right ) {
-					throw new ExprError( 'division_by_zero', $this->names[$op] );
+					throw new ExprError( 'division_by_zero', self::NAMES[$op] );
 				}
 				$stack[] = $left / $right;
 				break;
-			case EXPR_MOD:
+			case self::EXPR_MOD:
 				if ( count( $stack ) < 2 ) {
-					throw new ExprError( 'missing_operand', $this->names[$op] );
+					throw new ExprError( 'missing_operand', self::NAMES[$op] );
 				}
 				$right = (int)array_pop( $stack );
 				$left = (int)array_pop( $stack );
 				if ( !$right ) {
-					throw new ExprError( 'division_by_zero', $this->names[$op] );
+					throw new ExprError( 'division_by_zero', self::NAMES[$op] );
 				}
 				$stack[] = $left % $right;
 				break;
-			case EXPR_FMOD:
+			case self::EXPR_FMOD:
 				if ( count( $stack ) < 2 ) {
-					throw new ExprError( 'missing_operand', $this->names[$op] );
+					throw new ExprError( 'missing_operand', self::NAMES[$op] );
 				}
 				$right = (double)array_pop( $stack );
 				$left = (double)array_pop( $stack );
 				if ( !$right ) {
-					throw new ExprError( 'division_by_zero', $this->names[$op] );
+					throw new ExprError( 'division_by_zero', self::NAMES[$op] );
 				}
 				$stack[] = fmod( $left, $right );
 				break;
-			case EXPR_PLUS:
+			case self::EXPR_PLUS:
 				if ( count( $stack ) < 2 ) {
-					throw new ExprError( 'missing_operand', $this->names[$op] );
+					throw new ExprError( 'missing_operand', self::NAMES[$op] );
 				}
 				$right = array_pop( $stack );
 				$left = array_pop( $stack );
 				$stack[] = $left + $right;
 				break;
-			case EXPR_MINUS:
+			case self::EXPR_MINUS:
 				if ( count( $stack ) < 2 ) {
-					throw new ExprError( 'missing_operand', $this->names[$op] );
+					throw new ExprError( 'missing_operand', self::NAMES[$op] );
 				}
 				$right = array_pop( $stack );
 				$left = array_pop( $stack );
 				$stack[] = $left - $right;
 				break;
-			case EXPR_AND:
+			case self::EXPR_AND:
 				if ( count( $stack ) < 2 ) {
-					throw new ExprError( 'missing_operand', $this->names[$op] );
+					throw new ExprError( 'missing_operand', self::NAMES[$op] );
 				}
 				$right = array_pop( $stack );
 				$left = array_pop( $stack );
 				$stack[] = ( $left && $right ) ? 1 : 0;
 				break;
-			case EXPR_OR:
+			case self::EXPR_OR:
 				if ( count( $stack ) < 2 ) {
-					throw new ExprError( 'missing_operand', $this->names[$op] );
+					throw new ExprError( 'missing_operand', self::NAMES[$op] );
 				}
 				$right = array_pop( $stack );
 				$left = array_pop( $stack );
 				$stack[] = ( $left || $right ) ? 1 : 0;
 				break;
-			case EXPR_EQUALITY:
+			case self::EXPR_EQUALITY:
 				if ( count( $stack ) < 2 ) {
-					throw new ExprError( 'missing_operand', $this->names[$op] );
+					throw new ExprError( 'missing_operand', self::NAMES[$op] );
 				}
 				$right = array_pop( $stack );
 				$left = array_pop( $stack );
 				$stack[] = ( $left == $right ) ? 1 : 0;
 				break;
-			case EXPR_NOT:
+			case self::EXPR_NOT:
 				if ( count( $stack ) < 1 ) {
-					throw new ExprError( 'missing_operand', $this->names[$op] );
+					throw new ExprError( 'missing_operand', self::NAMES[$op] );
 				}
 				$arg = array_pop( $stack );
 				$stack[] = ( !$arg ) ? 1 : 0;
 				break;
-			case EXPR_ROUND:
+			case self::EXPR_ROUND:
 				if ( count( $stack ) < 2 ) {
-					throw new ExprError( 'missing_operand', $this->names[$op] );
+					throw new ExprError( 'missing_operand', self::NAMES[$op] );
 				}
 				$digits = (int)array_pop( $stack );
 				$value = array_pop( $stack );
 				$stack[] = round( $value, $digits );
 				break;
-			case EXPR_LESS:
+			case self::EXPR_LESS:
 				if ( count( $stack ) < 2 ) {
-					throw new ExprError( 'missing_operand', $this->names[$op] );
+					throw new ExprError( 'missing_operand', self::NAMES[$op] );
 				}
 				$right = array_pop( $stack );
 				$left = array_pop( $stack );
 				$stack[] = ( $left < $right ) ? 1 : 0;
 				break;
-			case EXPR_GREATER:
+			case self::EXPR_GREATER:
 				if ( count( $stack ) < 2 ) {
-					throw new ExprError( 'missing_operand', $this->names[$op] );
+					throw new ExprError( 'missing_operand', self::NAMES[$op] );
 				}
 				$right = array_pop( $stack );
 				$left = array_pop( $stack );
 				$stack[] = ( $left > $right ) ? 1 : 0;
 				break;
-			case EXPR_LESSEQ:
+			case self::EXPR_LESSEQ:
 				if ( count( $stack ) < 2 ) {
-					throw new ExprError( 'missing_operand', $this->names[$op] );
+					throw new ExprError( 'missing_operand', self::NAMES[$op] );
 				}
 				$right = array_pop( $stack );
 				$left = array_pop( $stack );
 				$stack[] = ( $left <= $right ) ? 1 : 0;
 				break;
-			case EXPR_GREATEREQ:
+			case self::EXPR_GREATEREQ:
 				if ( count( $stack ) < 2 ) {
-					throw new ExprError( 'missing_operand', $this->names[$op] );
+					throw new ExprError( 'missing_operand', self::NAMES[$op] );
 				}
 				$right = array_pop( $stack );
 				$left = array_pop( $stack );
 				$stack[] = ( $left >= $right ) ? 1 : 0;
 				break;
-			case EXPR_NOTEQ:
+			case self::EXPR_NOTEQ:
 				if ( count( $stack ) < 2 ) {
-					throw new ExprError( 'missing_operand', $this->names[$op] );
+					throw new ExprError( 'missing_operand', self::NAMES[$op] );
 				}
 				$right = array_pop( $stack );
 				$left = array_pop( $stack );
 				$stack[] = ( $left != $right ) ? 1 : 0;
 				break;
-			case EXPR_EXPONENT:
+			case self::EXPR_EXPONENT:
 				if ( count( $stack ) < 2 ) {
-					throw new ExprError( 'missing_operand', $this->names[$op] );
+					throw new ExprError( 'missing_operand', self::NAMES[$op] );
 				}
 				$right = array_pop( $stack );
 				$left = array_pop( $stack );
 				$stack[] = $left * pow( 10, $right );
 				break;
-			case EXPR_SINE:
+			case self::EXPR_SINE:
 				if ( count( $stack ) < 1 ) {
-					throw new ExprError( 'missing_operand', $this->names[$op] );
+					throw new ExprError( 'missing_operand', self::NAMES[$op] );
 				}
 				$arg = array_pop( $stack );
 				$stack[] = sin( $arg );
 				break;
-			case EXPR_COSINE:
+			case self::EXPR_COSINE:
 				if ( count( $stack ) < 1 ) {
-					throw new ExprError( 'missing_operand', $this->names[$op] );
+					throw new ExprError( 'missing_operand', self::NAMES[$op] );
 				}
 				$arg = array_pop( $stack );
 				$stack[] = cos( $arg );
 				break;
-			case EXPR_TANGENS:
+			case self::EXPR_TANGENS:
 				if ( count( $stack ) < 1 ) {
-					throw new ExprError( 'missing_operand', $this->names[$op] );
+					throw new ExprError( 'missing_operand', self::NAMES[$op] );
 				}
 				$arg = array_pop( $stack );
 				$stack[] = tan( $arg );
 				break;
-			case EXPR_ARCSINE:
+			case self::EXPR_ARCSINE:
 				if ( count( $stack ) < 1 ) {
-					throw new ExprError( 'missing_operand', $this->names[$op] );
+					throw new ExprError( 'missing_operand', self::NAMES[$op] );
 				}
 				$arg = array_pop( $stack );
 				if ( $arg < -1 || $arg > 1 ) {
-					throw new ExprError( 'invalid_argument', $this->names[$op] );
+					throw new ExprError( 'invalid_argument', self::NAMES[$op] );
 				}
 				$stack[] = asin( $arg );
 				break;
-			case EXPR_ARCCOS:
+			case self::EXPR_ARCCOS:
 				if ( count( $stack ) < 1 ) {
-					throw new ExprError( 'missing_operand', $this->names[$op] );
+					throw new ExprError( 'missing_operand', self::NAMES[$op] );
 				}
 				$arg = array_pop( $stack );
 				if ( $arg < -1 || $arg > 1 ) {
-					throw new ExprError( 'invalid_argument', $this->names[$op] );
+					throw new ExprError( 'invalid_argument', self::NAMES[$op] );
 				}
 				$stack[] = acos( $arg );
 				break;
-			case EXPR_ARCTAN:
+			case self::EXPR_ARCTAN:
 				if ( count( $stack ) < 1 ) {
-					throw new ExprError( 'missing_operand', $this->names[$op] );
+					throw new ExprError( 'missing_operand', self::NAMES[$op] );
 				}
 				$arg = array_pop( $stack );
 				$stack[] = atan( $arg );
 				break;
-			case EXPR_EXP:
+			case self::EXPR_EXP:
 				if ( count( $stack ) < 1 ) {
-					throw new ExprError( 'missing_operand', $this->names[$op] );
+					throw new ExprError( 'missing_operand', self::NAMES[$op] );
 				}
 				$arg = array_pop( $stack );
 				$stack[] = exp( $arg );
 				break;
-			case EXPR_LN:
+			case self::EXPR_LN:
 				if ( count( $stack ) < 1 ) {
-					throw new ExprError( 'missing_operand', $this->names[$op] );
+					throw new ExprError( 'missing_operand', self::NAMES[$op] );
 				}
 				$arg = array_pop( $stack );
 				if ( $arg <= 0 ) {
-					throw new ExprError( 'invalid_argument_ln', $this->names[$op] );
+					throw new ExprError( 'invalid_argument_ln', self::NAMES[$op] );
 				}
 				$stack[] = log( $arg );
 				break;
-			case EXPR_ABS:
+			case self::EXPR_ABS:
 				if ( count( $stack ) < 1 ) {
-					throw new ExprError( 'missing_operand', $this->names[$op] );
+					throw new ExprError( 'missing_operand', self::NAMES[$op] );
 				}
 				$arg = array_pop( $stack );
 				$stack[] = abs( $arg );
 				break;
-			case EXPR_FLOOR:
+			case self::EXPR_FLOOR:
 				if ( count( $stack ) < 1 ) {
-					throw new ExprError( 'missing_operand', $this->names[$op] );
+					throw new ExprError( 'missing_operand', self::NAMES[$op] );
 				}
 				$arg = array_pop( $stack );
 				$stack[] = floor( $arg );
 				break;
-			case EXPR_TRUNC:
+			case self::EXPR_TRUNC:
 				if ( count( $stack ) < 1 ) {
-					throw new ExprError( 'missing_operand', $this->names[$op] );
+					throw new ExprError( 'missing_operand', self::NAMES[$op] );
 				}
 				$arg = array_pop( $stack );
 				$stack[] = (int)$arg;
 				break;
-			case EXPR_CEIL:
+			case self::EXPR_CEIL:
 				if ( count( $stack ) < 1 ) {
-					throw new ExprError( 'missing_operand', $this->names[$op] );
+					throw new ExprError( 'missing_operand', self::NAMES[$op] );
 				}
 				$arg = array_pop( $stack );
 				$stack[] = ceil( $arg );
 				break;
-			case EXPR_POW:
+			case self::EXPR_POW:
 				if ( count( $stack ) < 2 ) {
-					throw new ExprError( 'missing_operand', $this->names[$op] );
+					throw new ExprError( 'missing_operand', self::NAMES[$op] );
 				}
 				$right = array_pop( $stack );
 				$left = array_pop( $stack );
 				$result = pow( $left, $right );
 				if ( $result === false ) {
-					throw new ExprError( 'division_by_zero', $this->names[$op] );
+					throw new ExprError( 'division_by_zero', self::NAMES[$op] );
 				}
 				$stack[] = $result;
 				break;
-			case EXPR_SQRT:
+			case self::EXPR_SQRT:
 				if ( count( $stack ) < 1 ) {
-					throw new ExprError( 'missing_operand', $this->names[$op] );
+					throw new ExprError( 'missing_operand', self::NAMES[$op] );
 				}
 				$arg = array_pop( $stack );
 				$result = sqrt( $arg );
 				if ( is_nan( $result ) ) {
-					throw new ExprError( 'not_a_number', $this->names[$op] );
+					throw new ExprError( 'not_a_number', self::NAMES[$op] );
 				}
 				$stack[] = $result;
 				break;

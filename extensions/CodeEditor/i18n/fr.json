@@ -3,24 +3,25 @@
 		"authors": [
 			"Gomoko",
 			"McDutchie",
+			"Pols12",
 			"Sherbrooke",
 			"Thibaut120094",
 			"Urhixidur",
 			"Wladek92"
 		]
 	},
-	"codeeditor-desc": "Coloration syntaxique dans les pages écrites en JavaScript et CSS en utilisant l’[https://ace.c9.io/ Éditeur ACE]",
-	"codeeditor-next-annotation": "Allez à la prochaine annotation",
+	"codeeditor-desc": "Coloration syntaxique lors de la modification de pages écrites en JavaScript et CSS, en utilisant l’[https://ace.c9.io/ éditeur ACE]",
+	"codeeditor-next-annotation": "Aller à la prochaine annotation",
 	"codeeditor-toolbar-toggle": "Activer/désactiver l’éditeur de code",
-	"codeeditor-save-with-errors": "Le document contient des erreurs. Êtes-vous sûr de vouloir l’enregistrer ?",
+	"codeeditor-save-with-errors": "Le document contient des erreurs. Êtes-vous sûr de vouloir le publier ?",
 	"codeeditor-invisibleChars-toggle": "Afficher/masquer les caractères invisibles",
 	"codeeditor-lineWrapping-toggle": "Activer/désactiver le repli de ligne",
-	"codeeditor-searchReplace-toggle": "Afficher/masquer l'outil de recherche et de remplacement",
+	"codeeditor-searchReplace-toggle": "Afficher/masquer l’outil de recherche et de remplacement",
 	"codeeditor-gotoline": "Aller à la ligne numéro...",
-	"codeeditor-gotoline-placeholder": "ligne[:column]",
+	"codeeditor-gotoline-placeholder": "ligne[:colonne]",
 	"codeeditor-gotoline-prompt": "Entrez un numéro de ligne",
 	"codeeditor-indent": "Indenter",
-	"codeeditor-outdent": "Remonter l'indentation",
+	"codeeditor-outdent": "Désindenter",
 	"codeeditor-error-title": "Échec de la dépendance",
 	"codeeditor-error-message": "CodeEditor a besoin de WikiEditor pour être chargé."
 }

@@ -21,7 +21,6 @@
 	"renameuserwarnings": "අවවාදයන්:",
 	"renameuserconfirm": "ඔව්, පරිශීලකයා යළි-නම්කරන්න",
 	"renameusersubmit": "යොමන්න",
-	"renameuser-submit-blocklog": "පරිශීලක සඳහා වාරණ ලඝු සටහන පෙන්වන්න",
 	"renameusererrordoesnotexist": "\"<nowiki>$1</nowiki>\" පරිශීලකයා නොපවතී.",
 	"renameusererrorexists": "\"<nowiki>$1</nowiki>\" පරිශීලකයා දැනටමත් පවතියි.",
 	"renameusererrorinvalid": "\"<nowiki>$1</nowiki>\" පරිශීලක නාමය අනීතිකයි.",

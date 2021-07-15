@@ -8,6 +8,10 @@
 		]
 	},
 	"vector-skin-desc": "તાજા દેખાવ અને વધુ ઉપયોગી સુધારાઓ સાથે મોનોબુકની આધુનિક આવૃત્તિ",
+	"prefs-vector-enable-vector-1-label": "જૂનું વેક્ટર વાપરો",
+	"vector-opt-out": "જૂના દેખાવ પર જાઓ",
+	"vector-opt-out-tooltip": "તમારી ગોઠવણીને જૂના દેખાવ પર લઇ જાઓ (જૂનું વેક્ટર)",
+	"vector-action-toggle-sidebar": "સાઇડબાર છુપાવો-બતાવો",
 	"vector-action-addsection": "નવો વિષય",
 	"vector-action-delete": "રદ કરો",
 	"vector-action-move": "ખસેડો",
@@ -19,5 +23,9 @@
 	"vector-view-history": "ઇતિહાસ જુઓ",
 	"vector-view-view": "વાંચો",
 	"vector-view-viewsource": "સ્રોત જુઓ",
-	"vector-more-actions": "વધુ"
+	"vector-jumptonavigation": "દિશાશોધન પર જાઓ",
+	"vector-jumptosearch": "શોધ પર જાઓ",
+	"vector-jumptocontent": "લખાણ પર જાઓ",
+	"vector-more-actions": "વધુ",
+	"vector-search-loader": "શોધ સૂચનો લાવો"
 }

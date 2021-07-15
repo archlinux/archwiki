@@ -17,10 +17,10 @@
 	"visualeditor-feedback-tool": "Povratne informacije",
 	"visualeditor-help-label": "Korisnički vodič",
 	"visualeditor-help-title": "Vodič za upotrebu uređivača",
-	"visualeditor-welcomedialog-action": "Počni sa uređivanjem",
-	"visualeditor-welcomedialog-content": "Svako može da uređuje, a svako poboljšanje pomaže.",
+	"visualeditor-welcomedialog-action": "Započni uređivanje",
+	"visualeditor-welcomedialog-content": "Ovde svako može da uređuje i poboljšava sadržaj.",
 	"visualeditor-welcomedialog-content-thanks": "Hvala vam što pomažete u širenju znanja!",
-	"visualeditor-welcomedialog-switch": "Prebaci na uređivanje izvora",
-	"visualeditor-welcomedialog-switch-ve": "Prebaci na vizuelni uređivač",
+	"visualeditor-welcomedialog-switch": "Prebaci me na uređivanje izvora",
+	"visualeditor-welcomedialog-switch-ve": "Prebaci me na vizuelni uređivač",
 	"visualeditor-welcomedialog-title": "{{GENDER:$1|Dobro došli}} na {{GRAMMAR:akuzativ|$2}}"
 }

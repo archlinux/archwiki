@@ -479,7 +479,8 @@ class CiteUnitTest extends \MediaWikiUnitTestCase {
 		array $initialRefs,
 		string $expectOutput,
 		array $expectedErrors,
-		array $expectedRefs
+		array $expectedRefs,
+		bool $isSectionPreview = false
 	) {
 		$mockParser = $this->createMock( Parser::class );
 		$mockParser->method( 'getStripState' )
@@ -504,7 +505,7 @@ class CiteUnitTest extends \MediaWikiUnitTestCase {
 		$mockFootnoteMarkFormatter = $this->createMock( FootnoteMarkFormatter::class );
 		$mockFootnoteMarkFormatter->method( 'linkRef' )->willReturn( '<foot />' );
 
-		$cite = $this->newCite();
+		$cite = $this->newCite( $isSectionPreview );
 		/** @var Cite $spy */
 		$spy = TestingAccessWrapper::newFromObject( $cite );
 		$spy->errorReporter = $mockErrorReporter;
@@ -522,9 +523,7 @@ class CiteUnitTest extends \MediaWikiUnitTestCase {
 		return [
 			'Whitespace text' => [
 				' ',
-				[
-					'name' => 'a',
-				],
+				[ 'name' => 'a' ],
 				null,
 				[],
 				'<foot />',
@@ -553,9 +552,7 @@ class CiteUnitTest extends \MediaWikiUnitTestCase {
 			],
 			'Fallback to references group' => [
 				'text',
-				[
-					'name' => 'a',
-				],
+				[ 'name' => 'a' ],
 				'foo',
 				[
 					'foo' => [
@@ -572,9 +569,7 @@ class CiteUnitTest extends \MediaWikiUnitTestCase {
 			],
 			'Successful ref' => [
 				'text',
-				[
-					'name' => 'a',
-				],
+				[ 'name' => 'a' ],
 				null,
 				[],
 				'<foot />',
@@ -606,9 +601,7 @@ class CiteUnitTest extends \MediaWikiUnitTestCase {
 			],
 			'Successful references ref' => [
 				'text',
-				[
-					'name' => 'a',
-				],
+				[ 'name' => 'a' ],
 				'',
 				[
 					'' => [
@@ -623,17 +616,27 @@ class CiteUnitTest extends \MediaWikiUnitTestCase {
 					],
 				]
 			],
+			'T245376: Preview a list-defined ref that was never used' => [
+				'text' => 'T245376',
+				'argv' => [ 'name' => 'a' ],
+				'inReferencesGroup' => '',
+				'initialRefs' => [],
+				'expectOutput' => '',
+				'expectedErrors' => [],
+				'expectedRefs' => [
+					'' => [
+						'a' => [ 'text' => 'T245376' ],
+					],
+				],
+				'isSectionPreview' => true,
+			],
 			'Mismatched text in references' => [
 				'text-2',
-				[
-					'name' => 'a',
-				],
+				[ 'name' => 'a' ],
 				'',
 				[
 					'' => [
-						'a' => [
-							'text' => 'text-1',
-						]
+						'a' => [ 'text' => 'text-1' ],
 					]
 				],
 				'',
@@ -702,10 +705,10 @@ class CiteUnitTest extends \MediaWikiUnitTestCase {
 		clone $cite;
 	}
 
-	private function newCite() : Cite {
+	private function newCite( bool $isSectionPreview = false ) : Cite {
 		$mockOptions = $this->createMock( ParserOptions::class );
 		$mockOptions->method( 'getIsPreview' )->willReturn( false );
-		$mockOptions->method( 'getIsSectionPreview' )->willReturn( false );
+		$mockOptions->method( 'getIsSectionPreview' )->willReturn( $isSectionPreview );
 		$mockOptions->method( 'getUserLangObj' )->willReturn(
 			$this->createMock( Language::class ) );
 		$mockParser = $this->createMock( Parser::class );

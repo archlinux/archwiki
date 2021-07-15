@@ -3,7 +3,8 @@
 		"authors": [
 			"Dibya Dutta",
 			"Gitartha.bordoloi",
-			"IKHazarika"
+			"IKHazarika",
+			"Simbu123"
 		]
 	},
 	"tooltip-ca-createsource": "এই পৃষ্ঠাৰ উৎস ক'ড সৃষ্টি কৰক",
@@ -155,7 +156,6 @@
 	"visualeditor-editnotices-tool": "$1 {{PLURAL:$1|জাননী}}",
 	"visualeditor-editnotices-tooltip": "জাননীসমূহ সম্পাদনা কৰক",
 	"visualeditor-editsummary": "আপুনি কৰা সালসলনিৰ বিৱৰণ দিয়ক",
-	"visualeditor-editsummary-bytes-remaining": "অৱশিষ্ট বাইটৰ সংখ্যা",
 	"visualeditor-educationpopup-dismiss": "বুজি পালোঁ",
 	"visualeditor-feedback-defaultmessage": "URL: $1",
 	"visualeditor-formatdropdown-format-mw-heading1": "পৃষ্ঠাৰ শিৰোনামা",
@@ -222,6 +222,7 @@
 	"visualeditor-preference-tabs-prefer-ve": "সম্ভৱ হ'লে মোক সদায়েই ভিজুৱেল এডিটৰ দেখুৱাব",
 	"visualeditor-preference-tabs-prefer-wt": "মোক সদায় উৎস সম্পাদক দেখুৱাব",
 	"visualeditor-preference-tabs-remember-last": "মোৰ শেষ সম্পাদক বিকল্প মনত ৰাখক",
+	"visualeditor-rebase-client-import-name": "পৃষ্ঠাৰ শিৰোনাম",
 	"visualeditor-recreate": "আপুনি সম্পাদনা আৰম্ভ কৰাৰ পাছত পৃষ্ঠাটো বিলোপ কৰা হৈছে। পুনৰ সৃষ্টি কৰিবলৈ \"$1\" টিপক।",
 	"visualeditor-redirect-description": "$1 লৈ পুনঃনিৰ্দেশিত",
 	"visualeditor-savedialog-error-badtoken": "ছেচনৰ ম্যাদ শেষ হোৱা বাবে আমি আপোনাৰ সম্পাদনাটো সাঁচি থ'ব নোৱাৰিলোঁ।",
@@ -229,7 +230,6 @@
 	"visualeditor-savedialog-identify-user": "আপুনি এতিয়া [[User:$1|$1]] ৰূপে প্ৰৱেশ কৰিছে। সম্পাদনাটো সাঁচিলে ইয়াক এই একাউণ্টৰ সৈতে যুক্ত কৰা হ'ব।",
 	"visualeditor-savedialog-keyboard-shortcut-submit": "সাঁচিবৰ বাবে আপুনি $1 টিপিব পাৰে।",
 	"visualeditor-savedialog-label-create": "পৃষ্ঠা সৃষ্টি কৰক",
-	"visualeditor-savedialog-label-error": "ত্ৰুটি",
 	"visualeditor-savedialog-label-publish-short": "প্ৰকাশ কৰক",
 	"visualeditor-savedialog-label-report": "সমস্যা জনাওক",
 	"visualeditor-savedialog-label-resolve-conflict": "দ্বন্দ্ব সমাধান কৰক",
@@ -237,7 +237,6 @@
 	"visualeditor-savedialog-label-review": "আপুনি কৰা সালসলনি পুনৰীক্ষণ কৰক",
 	"visualeditor-savedialog-label-review-good": "সংৰক্ষণ প্ৰপত্ৰলৈ ঘূৰি যাওক",
 	"visualeditor-savedialog-label-save-short": "সাঁচক",
-	"visualeditor-savedialog-label-warning": "সতৰ্কবাণী",
 	"visualeditor-savedialog-review-nosummary": "সম্পাদনা সাৰাংশ নাই",
 	"visualeditor-savedialog-review-visual": "ভিজুৱেল",
 	"visualeditor-savedialog-review-wikitext": "ৱিকিপাঠ্য",

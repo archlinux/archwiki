@@ -157,7 +157,8 @@ ve.ui.MWReferenceSearchWidget.prototype.buildIndex = function () {
 
 			refGroup = refModel.getGroup();
 			citation = ( refGroup && refGroup.length ? refGroup + ' ' : '' ) + n;
-			matches = refModel.getListKey().match( /^literal\/(.*)$/ );
+			// Use [\s\S]* instead of .* to catch esoteric whitespace (T263698)
+			matches = refModel.getListKey().match( /^literal\/([\s\S]*)$/ );
 			name = matches && matches[ 1 ] || '';
 			// Hide previously auto-generated reference names
 			if ( name.match( /^:[0-9]+$/ ) ) {

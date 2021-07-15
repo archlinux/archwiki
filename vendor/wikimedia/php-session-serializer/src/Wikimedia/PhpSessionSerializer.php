@@ -26,6 +26,7 @@
 namespace Wikimedia;
 
 use Psr\Log\LoggerInterface;
+use Wikimedia\AtEase\AtEase;
 
 /**
  * Provides for encoding and decoding session arrays to PHP's serialization
@@ -66,9 +67,9 @@ class PhpSessionSerializer {
 		];
 
 		// First, try php_serialize since that's the only one that doesn't suck in some way.
-		\Wikimedia\suppressWarnings();
+		AtEase::suppressWarnings();
 		ini_set( 'session.serialize_handler', 'php_serialize' );
-		\Wikimedia\restoreWarnings();
+		AtEase::restoreWarnings();
 		if ( ini_get( 'session.serialize_handler' ) === 'php_serialize' ) {
 			return 'php_serialize';
 		}
@@ -81,9 +82,9 @@ class PhpSessionSerializer {
 
 		// Last chance, see if any of our supported formats are accepted.
 		foreach ( $formats as $format ) {
-			\Wikimedia\suppressWarnings();
+			AtEase::suppressWarnings();
 			ini_set( 'session.serialize_handler', $format );
-			\Wikimedia\restoreWarnings();
+			AtEase::restoreWarnings();
 			if ( ini_get( 'session.serialize_handler' ) === $format ) {
 				return $format;
 			}

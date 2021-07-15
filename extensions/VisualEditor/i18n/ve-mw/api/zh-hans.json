@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Byfserag",
+			"Func",
 			"Liuxinyu970226",
 			"Yejianfei",
 			"科劳"
@@ -10,7 +11,7 @@
 	"apierror-visualeditor-badcachekey": "找不到带有该关键词的已缓存序列化内容",
 	"apierror-visualeditor-difffailed": "差异失败",
 	"apierror-visualeditor-docserver-unconfigured": "文档服务器的虚拟REST服务未定义；参见https://www.mediawiki.org/wiki/Extension:VisualEditor",
-	"apierror-visualeditor-docserver": "连接Parsoid/RESTbase服务器时出错",
+	"apierror-visualeditor-docserver": "连接 Parsoid/RESTBase 服务器时出错（无响应）",
 	"apierror-visualeditor-latestnotfound": "找不到标题的最近修订版本",
 	"apihelp-visualeditor-description": "从Parsoid服务返回页面的HTML5。",
 	"apihelp-visualeditor-param-basetimestamp": "在保存时，将此设置为编辑该修订版本时的时间戳。用于检测编辑冲突。",

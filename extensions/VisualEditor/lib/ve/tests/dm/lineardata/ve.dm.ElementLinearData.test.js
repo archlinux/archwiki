@@ -660,7 +660,7 @@ QUnit.test( 'isContentOffset', function ( assert ) {
 			{ msg: 'between characters', expected: true },
 			{ msg: 'end of content branch', expected: true },
 			{ msg: 'between content branches', expected: false },
-			{ msg: 'inside emtpy content branch', expected: true },
+			{ msg: 'inside empty content branch', expected: true },
 			{ msg: 'between content branches', expected: false },
 			{ msg: 'beginning of content branch, left of inline leaf', expected: true },
 			{ msg: 'inside content branch with non-text inline leaf', expected: false },
@@ -733,7 +733,7 @@ QUnit.test( 'isStructuralOffset', function ( assert ) {
 			{ msg: 'between characters', expected: [ false, false ] },
 			{ msg: 'end of content branch', expected: [ false, false ] },
 			{ msg: 'between content branches', expected: [ true, true ] },
-			{ msg: 'inside emtpy content branch', expected: [ false, false ] },
+			{ msg: 'inside empty content branch', expected: [ false, false ] },
 			{ msg: 'between content branches', expected: [ true, true ] },
 			{ msg: 'beginning of content branch, left of inline leaf', expected: [ false, false ] },
 			{ msg: 'inside content branch with non-text inline leaf', expected: [ false, false ] },
@@ -1610,6 +1610,68 @@ QUnit.test( 'sanitize', function ( assert ) {
 				msg: 'Annotations removed in plainText mode'
 			},
 			{
+				html: '<p><b>a<span rel="ve:Alien">b</span>c</b></p>',
+				data: [
+					{ type: 'paragraph' },
+					[ 'a', [ 'h49981eab0f8056ff' ] ],
+					{
+						type: 'alienInline',
+						annotations: [ 'h49981eab0f8056ff' ]
+					},
+					{ type: '/alienInline' },
+					[ 'c', [ 'h49981eab0f8056ff' ] ],
+					{ type: '/paragraph' },
+					{ type: 'internalList' },
+					{ type: '/internalList' }
+				],
+				rules: {
+					removeOriginalDomElements: true,
+					blacklist: {}
+				},
+				msg: 'Remapping annotations on content nodes'
+			},
+			{
+				html: '<p><b>a<i></i>c</b></p>',
+				data: [
+					{ type: 'paragraph' },
+					[ 'a', [ 'h49981eab0f8056ff' ] ],
+					[ 'c', [ 'h49981eab0f8056ff' ] ],
+					{ type: '/paragraph' },
+					{
+						type: 'removableAlienMeta',
+						internal: {
+							loadMetaParentHash: 'hd25d21d36fa98e7a',
+							loadMetaParentOffset: 1
+						},
+						annotations: [ 'h49981eab0f8056ff' ]
+					},
+					{ type: '/removableAlienMeta' },
+					{ type: 'internalList' },
+					{ type: '/internalList' }
+				],
+				rules: {
+					removeOriginalDomElements: true,
+					allowMetadata: true
+				},
+				msg: 'Remapping annotations on moved meta nodes'
+			},
+			{
+				html: '<p><b>a<i></i>c</b></p>',
+				data: [
+					{ type: 'paragraph' },
+					[ 'a', [ 'h49981eab0f8056ff' ] ],
+					[ 'c', [ 'h49981eab0f8056ff' ] ],
+					{ type: '/paragraph' },
+					{ type: 'internalList' },
+					{ type: '/internalList' }
+				],
+				rules: {
+					removeOriginalDomElements: true,
+					allowMetadata: false
+				},
+				msg: 'Removing moved meta nodes too when removing other metadata'
+			},
+			{
 				html: '<h1>Bar</h1><h2>Baz</h2><p>Quux</p>',
 				data: [
 					{ type: 'paragraph' },
@@ -1671,7 +1733,7 @@ QUnit.test( 'sanitize', function ( assert ) {
 				data: [
 					{ type: 'list', attributes: { style: 'bullet' } },
 					{ type: 'listItem' },
-					{ type: 'paragraph', internal: { generated: 'empty' } },
+					{ type: 'paragraph', internal: { generated: 'wrapper' } },
 					{ type: '/paragraph' },
 					{ type: '/listItem' },
 					{ type: '/list' },
@@ -1729,6 +1791,20 @@ QUnit.test( 'sanitize', function ( assert ) {
 				],
 				rules: { removeOriginalDomElements: true },
 				msg: 'Double annotation sanitized'
+			},
+			{
+				html: '<p><b>1<b>2</b>3</b></p>',
+				data: [
+					{ type: 'paragraph' },
+					[ '1', [ 'h49981eab0f8056ff' ] ],
+					[ '2', [ 'h49981eab0f8056ff' ] ],
+					[ '3', [ 'h49981eab0f8056ff' ] ],
+					{ type: '/paragraph' },
+					{ type: 'internalList' },
+					{ type: '/internalList' }
+				],
+				rules: { removeOriginalDomElements: true },
+				msg: 'Double annotation appears just once'
 			},
 			{
 				html: '<p>F<br>o</p><h1>B<br>a</h1><p>B<br></p>',

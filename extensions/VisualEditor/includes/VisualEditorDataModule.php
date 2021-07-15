@@ -32,13 +32,11 @@ class VisualEditorDataModule extends ResourceLoaderModule {
 			$plainMessages[ $msgKey ] = $msgObj->plain();
 		}
 
-		return 've.init.platform.addParsedMessages(' . FormatJson::encode(
-				$parsedMessages,
-				ResourceLoader::inDebugMode()
+		return 've.init.platform.addParsedMessages(' . $context->encodeJson(
+				$parsedMessages
 			) . ');' .
-			've.init.platform.addMessages(' . FormatJson::encode(
-				$plainMessages,
-				ResourceLoader::inDebugMode()
+			've.init.platform.addMessages(' . $context->encodeJson(
+				$plainMessages
 			) . ');';
 	}
 

@@ -97,9 +97,9 @@ QUnit.test( 'beforePaste/afterPaste', function ( assert ) {
 		{
 			documentHtml: '<p></p>',
 			rangeOrSelection: new ve.Range( 1 ),
-			pasteHtml: 'a<sup typeof="mw:Extension/ref" data-mw="{}" class="mw-ref" about="#mwt1" id="cite_ref-foo-0" rel="dc:references"><a href="./Article#cite_note-foo-0"><span class="mw-reflink-text ve-pasteProtect">[1]</span></a></sup>b',
+			pasteHtml: 'a<sup typeof="mw:Extension/ref" data-mw="{}" class="mw-ref reference" about="#mwt1" id="cite_ref-foo-0" rel="dc:references"><a href="./Article#cite_note-foo-0"><span class="mw-reflink-text ve-pasteProtect">[1]</span></a></sup>b',
 			expectedRangeOrSelection: new ve.Range( 5 ),
-			expectedHtml: '<p>a<sup typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;}" class="mw-ref"><a style="counter-reset: mw-Ref 1;"><span class="mw-reflink-text">[1]</span></a></sup>b</p>',
+			expectedHtml: '<p>a<sup typeof="mw:Extension/ref" data-mw="{&quot;name&quot;:&quot;ref&quot;}" class="mw-ref reference"><a style="counter-reset: mw-Ref 1;"><span class="mw-reflink-text">[1]</span></a></sup>b</p>',
 			msg: 'VE references not stripped'
 		}
 	];

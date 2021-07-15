@@ -74,7 +74,7 @@
 			page_id: mw.config.get( 'wgArticleId' ),
 			page_title: mw.config.get( 'wgPageName' ),
 			page_ns: mw.config.get( 'wgNamespaceNumber' ),
-			revision_id: mw.config.get( 'wgRevisionId' ),
+			revision_id: mw.config.get( 'wgRevisionId' ) || +$( 'input[name=parentRevId]' ).val() || 0,
 			user_id: mw.user.getId(),
 			user_editcount: mw.config.get( 'wgUserEditCount', 0 ),
 			mw_version: mw.config.get( 'wgVersion' )
@@ -82,6 +82,10 @@
 
 		if ( mw.user.isAnon() ) {
 			data.user_class = 'IP';
+		}
+
+		if ( mw.user.options.get( 'discussiontools-abtest' ) ) {
+			data.bucket = mw.user.options.get( 'discussiontools-abtest' );
 		}
 
 		// Schema's kind of a mess of special properties
@@ -106,7 +110,7 @@
 
 	logEditFeature = sampledLogger( 'VisualEditorFeatureUse', function ( inSample, feature, action ) {
 		/* eslint-disable camelcase */
-		return {
+		var data = {
 			feature: feature,
 			action: action,
 			editingSessionId: editingSessionId,
@@ -117,6 +121,10 @@
 			editor_interface: 'wikitext'
 		};
 		/* eslint-enable camelcase */
+		if ( mw.user.options.get( 'discussiontools-abtest' ) ) {
+			data.bucket = mw.user.options.get( 'discussiontools-abtest' );
+		}
+		return data;
 	} );
 
 	function logAbort( switchingToVE, unmodified ) {

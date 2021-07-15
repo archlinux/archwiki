@@ -24,8 +24,10 @@
 
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Permissions\Authority;
 use Wikimedia\AtEase\AtEase;
 use Wikimedia\IPUtils;
+use Wikimedia\NonSerializable\NonSerializableTrait;
 use Wikimedia\ScopedCallback;
 
 /**
@@ -36,6 +38,8 @@ use Wikimedia\ScopedCallback;
  *       down to not expose heavy weight objects.
  */
 class RequestContext implements IContextSource, MutableContext {
+	use NonSerializableTrait;
+
 	/**
 	 * @var WebRequest
 	 */
@@ -60,6 +64,11 @@ class RequestContext implements IContextSource, MutableContext {
 	 * @var User
 	 */
 	private $user;
+
+	/**
+	 * @var Authority
+	 */
+	private $authority;
 
 	/**
 	 * @var Language
@@ -241,7 +250,7 @@ class RequestContext implements IContextSource, MutableContext {
 			if ( $title === null ) {
 				throw new MWException( __METHOD__ . ' called without Title object set' );
 			}
-			$this->wikipage = WikiPage::factory( $title );
+			$this->wikipage = MediaWikiServices::getInstance()->getWikiPageFactory()->newFromTitle( $title );
 		}
 
 		return $this->wikipage;
@@ -270,6 +279,8 @@ class RequestContext implements IContextSource, MutableContext {
 	 */
 	public function setUser( User $user ) {
 		$this->user = $user;
+		// Keep authority consistent
+		$this->authority = $user;
 		// Invalidate cached user interface language
 		$this->lang = null;
 	}
@@ -283,6 +294,24 @@ class RequestContext implements IContextSource, MutableContext {
 		}
 
 		return $this->user;
+	}
+
+	public function setAuthority( Authority $authority ) {
+		$this->authority = $authority;
+		// Keep user consistent
+		$this->user = MediaWikiServices::getInstance()
+			->getUserFactory()
+			->newFromAuthority( $authority );
+		// Invalidate cached user interface language
+		$this->lang = null;
+	}
+
+	/**
+	 * @since 1.36
+	 * @return Authority
+	 */
+	public function getAuthority(): Authority {
+		return $this->authority ?: $this->getUser();
 	}
 
 	/**
@@ -330,19 +359,15 @@ class RequestContext implements IContextSource, MutableContext {
 	 * Get the Language object.
 	 * Initialization of user or request objects can depend on this.
 	 * @return Language
-	 * @throws Exception
+	 * @throws LogicException
 	 * @since 1.19
 	 */
 	public function getLanguage() {
 		if ( $this->languageRecursion === true ) {
-			trigger_error( "Recursion detected in " . __METHOD__, E_USER_WARNING );
-			$e = new Exception;
-			wfDebugLog( 'recursion-guard', "Recursion detected:\n" . $e->getTraceAsString() );
+			throw new LogicException( 'Recursion detected' );
+		}
 
-			$code = $this->getConfig()->get( 'LanguageCode' ) ?: 'en';
-			$this->lang = MediaWikiServices::getInstance()->getLanguageFactory()
-				->getLanguage( $code );
-		} elseif ( $this->lang === null ) {
+		if ( $this->lang === null ) {
 			$this->languageRecursion = true;
 
 			try {
@@ -452,7 +477,7 @@ class RequestContext implements IContextSource, MutableContext {
 	 *
 	 * @return RequestContext
 	 */
-	public static function getMain() {
+	public static function getMain() : RequestContext {
 		if ( self::$instance === null ) {
 			self::$instance = new self;
 		}
@@ -545,7 +570,7 @@ class RequestContext implements IContextSource, MutableContext {
 			$user = User::newFromName( $params['ip'], false );
 		}
 
-		$importSessionFunc = function ( User $user, array $params ) {
+		$importSessionFunc = static function ( User $user, array $params ) {
 			global $wgRequest, $wgUser;
 
 			$context = RequestContext::getMain();
@@ -598,7 +623,7 @@ class RequestContext implements IContextSource, MutableContext {
 
 		// Set callback to save and close the new session and reload the old one
 		return new ScopedCallback(
-			function () use ( $importSessionFunc, $oUser, $oParams, $oRequest ) {
+			static function () use ( $importSessionFunc, $oUser, $oParams, $oRequest ) {
 				global $wgRequest;
 				$importSessionFunc( $oUser, $oParams );
 				// Restore the exact previous Request object (instead of leaving FauxRequest)

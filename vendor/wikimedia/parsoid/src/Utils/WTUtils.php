@@ -4,6 +4,8 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Utils;
 
 use DOMComment;
+use DOMDocument;
+use DOMDocumentFragment;
 use DOMElement;
 use DOMNode;
 use stdClass;
@@ -14,7 +16,7 @@ use Wikimedia\Parsoid\Tokens\CommentTk;
 use Wikimedia\Parsoid\Wt2Html\Frame;
 
 /**
- * These utilites pertain to extracting / modifying wikitext information from the DOM.
+ * These utilites pertain to querying / extracting / modifying wikitext information from the DOM.
  */
 class WTUtils {
 	private const FIRST_ENCAP_REGEXP =
@@ -40,7 +42,7 @@ class WTUtils {
 
 	/**
 	 * Run a node through {@link #hasLiteralHTMLMarker}.
-	 * @param DOMNode|null $node
+	 * @param ?DOMNode $node
 	 * @return bool
 	 */
 	public static function isLiteralHTMLNode( ?DOMNode $node ): bool {
@@ -67,7 +69,8 @@ class WTUtils {
 	 * @return bool
 	 */
 	public static function isBlockNodeWithVisibleWT( DOMNode $node ): bool {
-		return DOMUtils::isBlockNode( $node ) && !self::isZeroWidthWikitextElt( $node );
+		return DOMUtils::isWikitextBlockNode( $node ) &&
+			!self::isZeroWidthWikitextElt( $node );
 	}
 
 	/**
@@ -76,10 +79,12 @@ class WTUtils {
 	 * anymore since mw:ExtLink is used for all the three link syntaxes.
 	 *
 	 * @param DOMElement $node
-	 * @param stdClass|null $dp
+	 * @param ?stdClass $dp
 	 * @return bool
 	 */
-	public static function usesWikiLinkSyntax( DOMElement $node, ?stdClass $dp ): bool {
+	public static function usesWikiLinkSyntax(
+		DOMElement $node, ?stdClass $dp
+	): bool {
 		// FIXME: Optimization from ComputeDSR to avoid refetching this property
 		// Is it worth the unnecessary code here?
 		if ( !$dp ) {
@@ -98,10 +103,12 @@ class WTUtils {
 	 * multiple link types
 	 *
 	 * @param DOMElement $node
-	 * @param stdClass|null $dp
+	 * @param ?stdClass $dp
 	 * @return bool
 	 */
-	public static function usesExtLinkSyntax( DOMElement $node, ?stdClass $dp ): bool {
+	public static function usesExtLinkSyntax(
+		DOMElement $node, ?stdClass $dp
+	): bool {
 		// FIXME: Optimization from ComputeDSR to avoid refetching this property
 		// Is it worth the unnecessary code here?
 		if ( !$dp ) {
@@ -120,10 +127,12 @@ class WTUtils {
 	 * multiple link types
 	 *
 	 * @param DOMElement $node
-	 * @param stdClass|null $dp
+	 * @param ?stdClass $dp
 	 * @return bool
 	 */
-	public static function usesURLLinkSyntax( DOMElement $node, stdClass $dp = null ): bool {
+	public static function usesURLLinkSyntax(
+		DOMElement $node, ?stdClass $dp = null
+	): bool {
 		// FIXME: Optimization from ComputeDSR to avoid refetching this property
 		// Is it worth the unnecessary code here?
 		if ( !$dp ) {
@@ -142,10 +151,12 @@ class WTUtils {
 	 * multiple link types
 	 *
 	 * @param DOMElement $node
-	 * @param stdClass|null $dp
+	 * @param ?stdClass $dp
 	 * @return bool
 	 */
-	public static function usesMagicLinkSyntax( DOMElement $node, stdClass $dp = null ): bool {
+	public static function usesMagicLinkSyntax(
+		DOMElement $node, ?stdClass $dp = null
+	): bool {
 		if ( !$dp ) {
 			$dp = DOMDataUtils::getDataParsoid( $node );
 		}
@@ -275,9 +286,8 @@ class WTUtils {
 	 * @return bool
 	 */
 	public static function isInlineMedia( DOMNode $node ): bool {
-		return DOMUtils::matchNameAndTypeOf(
-			$node, 'figure-inline', '#^mw:(Image|Video|Audio)($|/)#D'
-		) !== null;
+		return self::isGeneratedFigure( $node ) &&
+			$node->nodeName !== 'figure';  // span, figure-inline
 	}
 
 	/**
@@ -285,7 +295,7 @@ class WTUtils {
 	 * @return bool
 	 */
 	public static function isGeneratedFigure( DOMNode $node ): bool {
-		return DOMUtils::matchTypeOf( $node, '#^mw:(Image|Video|Audio)($|/)#' ) !== null;
+		return DOMUtils::matchTypeOf( $node, '#^mw:(Image|Video|Audio)($|/)#D' ) !== null;
 	}
 
 	/**
@@ -354,7 +364,7 @@ class WTUtils {
 	/**
 	 * Does $node represent a category link?
 	 *
-	 * @param DOMNode|null $node
+	 * @param ?DOMNode $node
 	 * @return bool
 	 */
 	public static function isCategoryLink( ?DOMNode $node ): bool {
@@ -543,6 +553,21 @@ class WTUtils {
 				return true;
 			}
 			$parentNode = $parentNode->parentNode;
+		}
+		return false;
+	}
+
+	/**
+	 * Is $node from encapsulated (template, extension, etc.) content?
+	 * @param DOMNode $node
+	 * @return bool
+	 */
+	public static function fromEncapsulatedContent( DOMNode $node ): bool {
+		while ( $node && !DOMUtils::atTheTop( $node ) ) {
+			if ( self::findFirstEncapsulationWrapperNode( $node ) !== null ) {
+				return true;
+			}
+			$node = $node->parentNode;
 		}
 		return false;
 	}
@@ -761,11 +786,10 @@ class WTUtils {
 	 *
 	 * @param string $typeOf
 	 * @param array $attrs
-	 * @param bool $encode
 	 * @return string
 	 */
-	public static function fosterCommentData( string $typeOf, array $attrs, bool $encode ): string {
-		$str = PHPUtils::jsonEncode( [
+	public static function fosterCommentData( string $typeOf, array $attrs ): string {
+		return PHPUtils::jsonEncode( [
 			// WARNING(T279451): The choice of "-type" as the key is because
 			// "-" will be encoded with self::encodeComment when comments come
 			// from source wikitext (see the grammar), so we can be sure when
@@ -773,30 +797,22 @@ class WTUtils {
 			'-type' => $typeOf,
 			'attrs' => $attrs
 		] );
-		if ( $encode ) {
-			$str = self::encodeComment( $str );
-		}
-		return $str;
 	}
 
 	/**
 	 * @param Env $env
 	 * @param DOMNode $node
-	 * @param bool $decode
-	 * @return DOMNode|null
+	 * @return ?DOMNode
 	 */
-	public static function reinsertFosterableContent( Env $env, DOMNode $node, bool $decode ):
-			?DOMNode {
+	public static function reinsertFosterableContent(
+		Env $env, DOMNode $node
+	): ?DOMNode {
 		if ( DOMUtils::isComment( $node ) && preg_match( '/^\{.+\}$/D', $node->nodeValue ) ) {
-			// XXX(T279451#6981267): Hardcode this for good measure, even
-			// though all production uses should already be passing in `false`
-			$decode = false;
 			// Convert serialized meta tags back from comments.
 			// We use this trick because comments won't be fostered,
 			// providing more accurate information about where tags are expected
 			// to be found.
-			// @phan-suppress-next-line PhanImpossibleCondition
-			$data = json_decode( $decode ? self::decodeComment( $node->nodeValue ) : $node->nodeValue );
+			$data = json_decode( $node->nodeValue );
 			if ( $data === null ) {
 				// not a valid json attribute, do nothing
 				return null;
@@ -826,9 +842,26 @@ class WTUtils {
 	 * @return ?ExtensionTagHandler
 	 */
 	public static function getNativeExt( Env $env, DOMNode $node ): ?ExtensionTagHandler {
-		$match = DOMUtils::matchTypeOf( $node, '/^mw:Extension\/(.+?)$/' );
+		$match = DOMUtils::matchTypeOf( $node, '#^mw:Extension/(.+?)$#D' );
 		$matchingTag = $match ? substr( $match, strlen( 'mw:Extension/' ) ) : null;
 		return $matchingTag ?
 			$env->getSiteConfig()->getExtTagImpl( $matchingTag ) : null;
+	}
+
+	/**
+	 * @param DOMDocument $doc
+	 * @param array $i18n With "key" and "params" for wfMessage
+	 * @return DOMDocumentFragment
+	 */
+	public static function createLocalizationFragment(
+		DOMDocument $doc, array $i18n
+	): DOMDocumentFragment {
+		$frag = $doc->createDocumentFragment();
+		$span = $doc->createElement( 'span' );
+		DOMUtils::addTypeOf( $span, 'mw:I18n' );
+		$dp = DOMDataUtils::getDataParsoid( $span );
+		$dp->tmp->i18n = $i18n;
+		$frag->appendChild( $span );
+		return $frag;
 	}
 }

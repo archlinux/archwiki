@@ -2,9 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Fagunkoyel Hansdah",
-			"Rocky 734"
+			"Rocky 734",
+			"ᱥᱟᱹᱜᱩᱱ ᱗"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "ᱯᱚᱛᱚᱵ",
+	"cite-ve-dialogbutton-reference-title": "ᱥᱟᱹᱠᱷᱭᱟᱹᱛ",
 	"cite-ve-toolbar-group-label": "ᱛᱩᱢᱟᱹᱞ"
 }

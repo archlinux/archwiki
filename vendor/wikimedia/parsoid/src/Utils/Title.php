@@ -17,7 +17,7 @@ class Title {
 	/** @var string */
 	private $dbkey;
 
-	/** @var string|null */
+	/** @var ?string */
 	private $fragment;
 
 	/** @var TitleNamespace */
@@ -27,9 +27,11 @@ class Title {
 	 * @param string $key Page DBkey (with underscores, not spaces)
 	 * @param int|TitleNamespace $ns
 	 * @param SiteConfig $siteConfig
-	 * @param string|null $fragment
+	 * @param ?string $fragment
 	 */
-	public function __construct( string $key, $ns, SiteConfig $siteConfig, ?string $fragment = null ) {
+	public function __construct(
+		string $key, $ns, SiteConfig $siteConfig, ?string $fragment = null
+	) {
 		$this->dbkey = $key;
 		if ( $ns instanceof TitleNamespace ) {
 			$this->namespaceId = $ns->getId();
@@ -91,12 +93,17 @@ class Title {
 		}
 
 		// phpcs:ignore MediaWiki.ControlStructures.AssignmentInControlStructures.AssignmentInControlStructures
-		if ( preg_match( '/^(.+?)_*:_*(.*)$/D', $title, $m ) && (
+		if ( ( $pmatch = preg_match( '/^(.+?)_*:_*(.*)$/D', $title, $m ) ) && (
 			( $nsId = $siteConfig->canonicalNamespaceId( $m[1] ) ) !== null ||
 			( $nsId = $siteConfig->namespaceId( $m[1] ) ) !== null
 		) ) {
 			$ns = $nsId;
 			$title = $m[2];
+		} elseif ( $pmatch && ( $siteConfig->interwikiMap()[$m[1]] ?? null ) ) {
+			// Zorg!  Core also removes the prefix for interwikis when doing
+			// the rest of validation on the title, so let's just ignore $m[1]
+			$title = $m[2];
+			$ns = $defaultNs;
 		} else {
 			$ns = $defaultNs;
 		}
@@ -177,6 +184,13 @@ class Title {
 			$ns === $siteConfig->canonicalNamespaceId( 'user_talk' )
 		) {
 			$title = IPUtils::sanitizeIP( $title );
+		}
+
+		// Any remaining initial :s are illegal.
+		if ( $title !== '' && $title[0] == ':' ) {
+			throw new TitleException(
+				'Leading colon title', 'title-invalid-leading-colon', $title
+			);
 		}
 
 		// This is not in core's splitTitleString but matches

@@ -68,7 +68,7 @@ ve.dm.MWBlockImageNode.static.classAttributes = {
 ve.dm.MWBlockImageNode.static.toDataElement = function ( domElements, converter ) {
 	var dataElement, newDimensions, attributes,
 		figure, imgWrapper, img, captionNode, caption,
-		classAttr, typeofAttrs, errorIndex, width, height, types,
+		classAttr, typeofAttrs, errorIndex, width, height, href, targetData, types,
 		mwDataJSON, mwData;
 
 	figure = domElements[ 0 ];
@@ -83,6 +83,16 @@ ve.dm.MWBlockImageNode.static.toDataElement = function ( domElements, converter 
 	width = img.getAttribute( 'width' );
 	height = img.getAttribute( 'height' );
 
+	href = imgWrapper.getAttribute( 'href' );
+	if ( href ) {
+		// Convert absolute URLs to relative if the href refers to a page on this wiki.
+		// Otherwise Parsoid generates |link= options for copy-pasted images (T193253).
+		targetData = mw.libs.ve.getTargetDataFromHref( href, converter.getTargetHtmlDocument() );
+		if ( targetData.isInternal ) {
+			href = './' + targetData.rawTitle;
+		}
+	}
+
 	if ( errorIndex !== -1 ) {
 		typeofAttrs.splice( errorIndex, 1 );
 	}
@@ -93,7 +103,7 @@ ve.dm.MWBlockImageNode.static.toDataElement = function ( domElements, converter 
 		mediaClass: types.mediaClass,
 		type: types.frameType,
 		src: img.getAttribute( 'src' ) || img.getAttribute( 'poster' ),
-		href: imgWrapper.getAttribute( 'href' ),
+		href: href,
 		resource: img.getAttribute( 'resource' ),
 		width: width !== null && width !== '' ? +width : null,
 		height: height !== null && height !== '' ? +height : null,
@@ -158,7 +168,7 @@ ve.dm.MWBlockImageNode.static.toDomElements = function ( data, doc, converter ) 
 		mediaClass = dataElement.attributes.mediaClass,
 		figure = doc.createElement( 'figure' ),
 		imgWrapper = doc.createElement( dataElement.attributes.href ? 'a' : 'span' ),
-		img = doc.createElement( this.typesToTags[ mediaClass ] ),
+		img = doc.createElement( dataElement.attributes.isError ? 'span' : this.typesToTags[ mediaClass ] ),
 		wrapper = doc.createElement( 'div' ),
 		classAttr = this.getClassAttrFromAttributes( dataElement.attributes ),
 		captionData = data.slice( 1, -1 );
@@ -192,12 +202,14 @@ ve.dm.MWBlockImageNode.static.toDomElements = function ( data, doc, converter ) 
 	}
 
 	srcAttr = this.typesToSrcAttrs[ mediaClass ];
-	if ( srcAttr ) {
+	if ( srcAttr && !dataElement.attributes.isError ) {
 		img.setAttribute( srcAttr, dataElement.attributes.src );
 	}
+	// TODO: This does not make sense for broken images (when img is a span node)
 	img.setAttribute( 'width', width );
 	img.setAttribute( 'height', height );
 	img.setAttribute( 'resource', dataElement.attributes.resource );
+	// TODO: This does not make sense for broken images (when img is a span node)
 	if ( typeof dataElement.attributes.alt === 'string' ) {
 		img.setAttribute( 'alt', dataElement.attributes.alt );
 	}

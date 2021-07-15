@@ -50,11 +50,11 @@ if ( count( $argv ) > 1 ) {
 
 // @phan-suppress-next-line SecurityCheck-XSS
 echo "Loading UtfNormal from $utfnormalDir...\n";
-// @phan-suppress-next-line SecurityCheck-OTHER
+// @phan-suppress-next-line SecurityCheck-PathTraversal
 require_once "$utfnormalDir/Validator.php";
-// @phan-suppress-next-line SecurityCheck-OTHER
+// @phan-suppress-next-line SecurityCheck-PathTraversal
 require_once "$utfnormalDir/UtfNormalData.inc";
-// @phan-suppress-next-line SecurityCheck-OTHER
+// @phan-suppress-next-line SecurityCheck-PathTraversal
 require_once "$utfnormalDir/UtfNormalDataK.inc";
 
 if ( !Validator::$utfCheckNFC ||
@@ -66,8 +66,12 @@ if ( !Validator::$utfCheckNFC ||
 	die( "UtfNormal data files did not contain needed data.\n" );
 }
 
-// @codingStandardsIgnoreLine MediaWiki.NamingConventions.PrefixedGlobalFunctions
-function uord( $c, $firstOnly ) {
+/**
+ * @param string $c
+ * @param bool $firstOnly
+ * @return array|string
+ */
+function uord( $c, $firstOnly ) { // phpcs:ignore MediaWiki.NamingConventions.PrefixedGlobalFunctions
 	$ret = unpack( 'N*', mb_convert_encoding( $c, 'UTF-32BE', 'UTF-8' ) );
 	return $firstOnly ? $ret[1] : $ret;
 }

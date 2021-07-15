@@ -19,7 +19,7 @@
  */
 ( function () {
 	var prefName, prefValue,
-		uri = new mw.Uri(),
+		uri,
 		namespaces = mw.config.get( 'wgNamespaceIds' ),
 		conf = mw.config.get( 'wgVisualEditorConfig' ),
 		pluginCallbacks = [],
@@ -27,8 +27,15 @@
 			// Add modules from $wgVisualEditorPluginModules
 			.concat( conf.pluginModules.filter( mw.loader.getState ) );
 
+	try {
+		uri = new mw.Uri();
+	} catch ( e ) {
+		// URI may not be parseable (T106244)
+		uri = false;
+	}
 	// Provide the new wikitext editor
 	if (
+		uri &&
 		conf.enableWikitext &&
 		(
 			mw.user.options.get( 'visualeditor-newwikitext' ) ||
@@ -91,6 +98,7 @@
 		 * @return {jQuery.Promise} Promise resolved when the loading process is complete
 		 */
 		loadModules: function ( mode ) {
+			mw.hook( 've.loadModules' ).fire( this.addPlugin.bind( this ) );
 			ve.track( 'trace.moduleLoad.enter', { mode: mode } );
 			return mw.loader.using( modules )
 				.then( function () {
@@ -188,6 +196,7 @@
 		 * @param {string} [options.targetName] Optional target name for tracking
 		 * @param {boolean} [options.modified] The page was been modified before loading (e.g. in source mode)
 		 * @param {string} [options.wikitext] Wikitext to convert to HTML. The original document is fetched if undefined.
+		 * @param {string} [options.editintro] Name of a page to use as edit intro message
 		 * @param {string} [options.preload] Name of a page to use as preloaded content if pageName is empty
 		 * @param {Array} [options.preloadparams] Parameters to substitute into preload if it's used
 		 * @return {jQuery.Promise} Abortable promise resolved with a JSON object
@@ -287,7 +296,7 @@
 				page: pageName,
 				badetag: options.badetag,
 				uselang: mw.config.get( 'wgUserLanguage' ),
-				editintro: uri.query.editintro,
+				editintro: options.editintro,
 				preload: options.preload,
 				preloadparams: options.preloadparams,
 				formatversion: 2
@@ -322,7 +331,7 @@
 				}
 			}
 			if ( !apiPromise ) {
-				apiPromise = apiXhr.then( function ( data, jqxhr ) {
+				apiPromise = apiXhr.then( function ( response, jqxhr ) {
 					ve.track( 'trace.apiLoad.exit', { mode: 'visual' } );
 					ve.track( 'mwtiming.performance.system.apiLoad', {
 						bytes: require( 'mediawiki.String' ).byteLength( jqxhr.responseText ),
@@ -331,11 +340,11 @@
 						targetName: options.targetName,
 						mode: 'visual'
 					} );
-					if ( data.visualeditor ) {
-						data.visualeditor.switched = switched;
-						data.visualeditor.fromEditedState = fromEditedState;
+					if ( response.visualeditor ) {
+						response.visualeditor.switched = switched;
+						response.visualeditor.fromEditedState = fromEditedState;
 					}
-					return data;
+					return response;
 				} );
 			}
 
@@ -394,7 +403,7 @@
 					} );
 				}
 				restbasePromise = restbaseXhr.then(
-					function ( data, status, jqxhr ) {
+					function ( response, status, jqxhr ) {
 						ve.track( 'trace.restbaseLoad.exit', { mode: 'visual' } );
 						ve.track( 'mwtiming.performance.system.restbaseLoad', {
 							bytes: require( 'mediawiki.String' ).byteLength( jqxhr.responseText ),
@@ -402,7 +411,7 @@
 							targetName: options.targetName,
 							mode: 'visual'
 						} );
-						return [ data, jqxhr.getResponseHeader( 'etag' ) ];
+						return [ response, jqxhr.getResponseHeader( 'etag' ) ];
 					},
 					function ( xhr, code, _ ) {
 						if ( xhr.status === 404 ) {
@@ -484,7 +493,7 @@
 				paction: 'wikitext',
 				page: pageName,
 				uselang: mw.config.get( 'wgUserLanguage' ),
-				editintro: uri.query.editintro,
+				editintro: options.editintro,
 				preload: options.preload,
 				preloadparams: options.preloadparams,
 				formatversion: 2

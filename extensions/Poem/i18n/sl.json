@@ -1,8 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Dbc334"
+			"Dbc334",
+			"Eleassar"
 		]
 	},
-	"poem-desc": "Doda etiketo <code>&lt;poem&gt;</code> za oblikovanje pesmi"
+	"poem-desc": "Doda značko <code>&lt;poem&gt;</code> za oblikovanje pesmi"
 }

@@ -1,5 +1,6 @@
 {
 	"name": "Vector",
+	"version": "1.0.0",
 	"author": [
 		"Trevor Parscal",
 		"Roan Kattouw",
@@ -11,10 +12,44 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "skin",
 	"requires": {
-		"MediaWiki": ">= 1.35.0"
+		"MediaWiki": ">= 1.36.0"
 	},
 	"ValidSkinNames": {
-		"vector": "Vector"
+		"vector": {
+			"class": "SkinVector",
+			"@args": "See SkinVector::__construct for more detail.",
+			"args": [
+				{
+					"name": "vector",
+					"scripts": [
+						"skins.vector.js"
+					],
+					"styles": [
+						"mediawiki.ui.button",
+						"skins.vector.styles",
+						"skins.vector.icons",
+						"mediawiki.ui.icon"
+					],
+					"messages": [
+						"otherlanguages",
+						"tooltip-p-logo",
+						"vector-opt-out-tooltip",
+						"vector-opt-out",
+						"navigation-heading",
+						"vector-action-toggle-sidebar",
+						"vector-jumptonavigation",
+						"vector-jumptosearch",
+						"vector-jumptocontent",
+						"sitesubtitle",
+						"sitetitle",
+						"tagline"
+					]
+				}
+			]
+		}
+	},
+	"SkinLessImportPaths": {
+		"vector": "resources/mediawiki.less"
 	},
 	"MessagesDirs": {
 		"Vector": [
@@ -22,8 +57,7 @@
 		]
 	},
 	"AutoloadClasses": {
-		"SkinVector": "includes/SkinVector.php",
-		"VectorTemplate": "includes/VectorTemplate.php"
+		"SkinVector": "includes/SkinVector.php"
 	},
 	"AutoloadNamespaces": {
 		"Vector\\": "includes/"
@@ -32,18 +66,47 @@
 		"vector": "GlobalVarConfig::newInstance"
 	},
 	"Hooks": {
-		"BeforePageDisplay": "Vector\\Hooks::onBeforePageDisplay",
+		"SkinPageReadyConfig": "Vector\\Hooks::onSkinPageReadyConfig",
 		"GetPreferences": "Vector\\Hooks::onGetPreferences",
 		"PreferencesFormPreSave": "Vector\\Hooks::onPreferencesFormPreSave",
-		"SkinTemplateNavigation": "Vector\\Hooks::onSkinTemplateNavigation",
+		"SkinTemplateNavigation::Universal": "Vector\\Hooks::onSkinTemplateNavigation",
 		"LocalUserCreated": "Vector\\Hooks::onLocalUserCreated",
-		"OutputPageBodyAttributes": "Vector\\Hooks::onOutputPageBodyAttributes"
+		"OutputPageBodyAttributes": "Vector\\Hooks::onOutputPageBodyAttributes",
+		"MakeGlobalVariablesScript": "Vector\\Hooks::onMakeGlobalVariablesScript"
 	},
 	"@note": "When modifying skins.vector.styles definition, make sure the installer still works",
 	"ResourceModules": {
+		"skins.vector.search": {
+			"dependencies": [
+				"mediawiki.Uri",
+				"wvui"
+			],
+			"packageFiles": [
+				"resources/skins.vector.search/skins.vector.search.js",
+				"resources/skins.vector.search/instrumentation.js",
+				"resources/skins.vector.search/App.vue",
+				{
+					"name": "resources/skins.vector.search/config.json",
+					"callback": "Vector\\Hooks::getVectorWvuiSearchResourceLoaderConfig"
+				}
+			],
+			"messages": [
+				"search",
+				"searchresults",
+				"searchsuggest-containing"
+			]
+		},
 		"skins.vector.styles.legacy": {
 			"class": "ResourceLoaderSkinModule",
-			"features": [ "normalize", "elements", "content", "interface", "logo", "legacy" ],
+			"features": {
+				"content-parser-output": true,
+				"normalize": true,
+				"elements": true,
+				"content": true,
+				"interface": true,
+				"logo": true,
+				"legacy": true
+			},
 			"targets": [
 				"desktop",
 				"mobile"
@@ -52,7 +115,14 @@
 		},
 		"skins.vector.styles": {
 			"class": "ResourceLoaderSkinModule",
-			"features": [ "normalize", "elements", "content", "interface", "legacy" ],
+			"features": {
+				"normalize": true,
+				"elements": true,
+				"content": true,
+				"interface": true,
+				"legacy": true,
+				"content-parser-output": true
+			},
 			"targets": [
 				"desktop",
 				"mobile"
@@ -60,36 +130,35 @@
 			"styles": [ "resources/skins.vector.styles/skin.less" ]
 		},
 		"skins.vector.icons": {
-			"class": "ResourceLoaderImageModule",
-			"selector": "{name}",
-			"images": {
-				"#mw-sidebar-button:before": {
-					"file": {
-						"ltr": "resources/skins.vector.icons/chevronHorizontal-ltr.svg",
-						"rtl": "resources/skins.vector.icons/chevronHorizontal-rtl.svg"
-					}
-				},
-				"#mw-sidebar-checkbox:not( :checked ) ~ .mw-header #mw-sidebar-button:before": "resources/skins.vector.icons/menu.svg"
-			}
-		},
-		"skins.vector.styles.responsive": {
-			"targets": [
-				"desktop",
-				"mobile"
-			],
-			"styles": [ "resources/skins.vector.styles.responsive.less" ]
+			"selectorWithVariant": ".mw-ui-icon-wikimedia-{name}-{variant}:before",
+			"selectorWithoutVariant": ".mw-ui-icon-wikimedia-{name}:before",
+			"useDataURI": false,
+			"defaultColor": "#000",
+			"class": "ResourceLoaderOOUIIconPackModule",
+			"variants": [],
+			"icons": [
+				"language"
+			]
 		},
 		"skins.vector.js": {
 			"packageFiles": [
 				"resources/skins.vector.js/skin.js",
+				{
+					"name": "resources/skins.vector.js/config.json",
+					"callback": "Vector\\Hooks::getVectorResourceLoaderConfig"
+				},
+				"resources/skins.vector.js/dropdownMenus.js",
 				"resources/skins.vector.js/sidebar.js",
 				"resources/skins.vector.legacy.js/collapsibleTabs.js",
-				"resources/skins.vector.legacy.js/vector.js"
+				"resources/skins.vector.legacy.js/vector.js",
+				"resources/skins.vector.js/languageButton.js",
+				"resources/skins.vector.js/searchLoader.js"
 			],
 			"dependencies": [
-				"mediawiki.util",
-				"mediawiki.page.ready"
-			]
+				"mediawiki.page.ready",
+				"mediawiki.util"
+			],
+			"messages": [ "vector-search-loader" ]
 		},
 		"skins.vector.legacy.js": {
 			"packageFiles": [
@@ -98,6 +167,7 @@
 				"resources/skins.vector.legacy.js/vector.js"
 			],
 			"dependencies": [
+				"mediawiki.page.ready",
 				"mediawiki.util"
 			]
 		}
@@ -108,6 +178,7 @@
 	},
 	"ResourceModuleSkinStyles": {
 		"vector": {
+			"+ext.uls.compactlinks": "skinStyles/ext.uls.compactlinks.less",
 			"jquery.tipsy": "skinStyles/jquery.tipsy.less",
 			"jquery.ui": [
 				"skinStyles/jquery.ui/jquery.ui.core.css",
@@ -129,15 +200,40 @@
 			"+mediawiki.notification": "skinStyles/mediawiki.notification.less",
 			"+oojs-ui-core.styles": "skinStyles/ooui.less",
 			"mediawiki.special": "skinStyles/mediawiki.special.less",
-			"+ext.relatedArticles.readMore": "skinStyles/ext.relatedArticles.readMore.less"
+			"+ext.relatedArticles.readMore": "skinStyles/ext.relatedArticles.readMore.less",
+			"+mediawiki.ui.icon": "skinStyles/mediawiki.ui.icon.less"
 		}
 	},
 	"config": {
+		"VectorSearchHost": {
+			"value": "",
+			"description": "Override default search API. Can be used with $wgDisableTextSearch and $wgSearchForwardUrl to mimic user experience on production."
+		},
 		"VectorUseIconWatch": {
 			"value": true
 		},
+		"VectorMaxWidthOptions": {
+			"value": {
+				"exclude": {
+					"mainpage": false,
+					"querystring": {
+						"action": "history",
+						"diff": "*"
+					},
+					"namespaces": [
+						-1,
+						14
+					]
+				},
+				"include": [
+					"Special:Preferences"
+				]
+			},
+			"description": "options for configuring where where max-width should and should not apply. More details can be found in Hooks::shouldDisableMaxWidth PHP documentation."
+		},
 		"VectorResponsive": {
-			"value": false
+			"value": false,
+			"description": "@var boolean When wgVectorDefaultSkinVersion is set to 2, turn Vector into a responsive skin by applying a view port and disabling the min-width"
 		},
 		"VectorShowSkinPreferences": {
 			"value": true,
@@ -155,15 +251,32 @@
 			"value": "1",
 			"description": "@var string:['2'|'1'] The version ('2' for latest, '1' for legacy) of the Vector skin to **set** for newly created user accounts. **The value is persisted as a user preference.** This configuration is not used for preexisting accounts (see VectorDefaultSkinVersionForExistingAccounts) and only ever executed once at new account creation time."
 		},
+		"VectorUseWvuiSearch": {
+			"value": false
+		},
+		"VectorSearchTreatmentABTest": {
+			"value": false,
+			"description": "@var boolean Enables or disables the search treatment A/B test. See https://phabricator.wikimedia.org/T261647 and associated tasks for additional detail."
+		},
+		"VectorWvuiSearchOptions": {
+			"value": {
+				"showThumbnail": true,
+				"showDescription": true
+			}
+		},
 		"VectorDefaultSidebarVisibleForAuthorisedUser": {
 			"value": true
 		},
 		"VectorDefaultSidebarVisibleForAnonymousUser": {
 			"value": false
 		},
-		"VectorLayoutMaxWidth": {
+		"VectorLanguageInHeader": {
 			"value": false,
-			"description": "@var boolean Enables the max-width layout for the latest version of Vector. This is intended to be a very short-lived feature flag whose sole purpose is to derisk the deployment of T246420. It should be removed (and made the default) as quickly as possible."
+			"description": "@var boolean Moves the language links from the sidebar into a menu beside the page title. Also moves the indicators to the line below, next to the tagline (siteSub)."
+		},
+		"VectorDisableSidebarPersistence": {
+			"value": false,
+			"description": "@var boolean Temporary feature flag that disables saving the sidebar expanded/collapsed state as a user-preference (triggered via clicking the main menu icon). This is intended as a temporary kill-switch in the event that the DB is overloaded with writes to the user_options table."
 		}
 	},
 	"ServiceWiringFiles": [

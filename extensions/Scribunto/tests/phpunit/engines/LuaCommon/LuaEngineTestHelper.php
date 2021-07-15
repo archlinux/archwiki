@@ -11,6 +11,7 @@ use PHPUnit\Util\Test;
  * Trait that helps LuaEngineTestBase and LuaEngineUnitTestBase
  */
 trait Scribunto_LuaEngineTestHelper {
+	/** @var array[] */
 	private static $engineConfigurations = [
 		'LuaSandbox' => [
 			'memoryLimit' => 50000000,

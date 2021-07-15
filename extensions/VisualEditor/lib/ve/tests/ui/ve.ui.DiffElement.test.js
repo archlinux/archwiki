@@ -27,6 +27,21 @@ QUnit.test( 'Diffing', function ( assert ) {
 					'</div>'
 			},
 			{
+				msg: 'Complex text change',
+				oldDoc: '<p>foo quux at bar</p>',
+				newDoc: '<p>foo, quux at the bar</p>',
+				expected:
+					'<div class="ve-ui-diffElement-doc-child-change">' +
+						'<p>' +
+							'foo' +
+							'<ins data-diff-action="insert">,</ins>' +
+							' quux at' +
+							'<ins data-diff-action="insert"> the</ins>' +
+							' bar' +
+						'</p>' +
+					'</div>'
+			},
+			{
 				msg: 'Forced time out',
 				forceTimeout: true,
 				oldDoc: '<p>foo bar baz</p>',
@@ -140,6 +155,141 @@ QUnit.test( 'Diffing', function ( assert ) {
 						'<p data-diff-action="insert"><ins>boo</ins></p>' +
 					'</div>' +
 					'<p data-diff-action="none">bar</p>' +
+					spacer
+			},
+			{
+				msg: 'Heading context always shown',
+				oldDoc: '<p>lead</p><h2>context</h2><p>foo</p><p>bar</p><p>baz</p>',
+				newDoc: '<p>lead</p><h2>context</h2><p>foo</p><p>bar</p><p>baq</p>',
+				expected:
+					spacer +
+					'<h2 data-diff-action="none">context</h2>' +
+					spacer +
+					'<p data-diff-action="none">bar</p>' +
+					'<div class="ve-ui-diffElement-doc-child-change">' +
+						'<p data-diff-action="remove"><del>baz</del></p>' +
+					'</div>' +
+					'<div class="ve-ui-diffElement-doc-child-change">' +
+						'<p data-diff-action="insert"><ins>baq</ins></p>' +
+					'</div>'
+			},
+			{
+				msg: 'Heading context shown with small inline change',
+				oldDoc: '<p>lead</p><h2>context</h2><p>foo</p><p>bar</p><p>baz quux whee</p>',
+				newDoc: '<p>lead</p><h2>context</h2><p>foo</p><p>bar</p><p>baz quux whee 123</p>',
+				expected:
+					spacer +
+					'<h2 data-diff-action="none">context</h2>' +
+					spacer +
+					'<p data-diff-action="none">bar</p>' +
+					'<div class="ve-ui-diffElement-doc-child-change">' +
+						'<p>baz quux whee<ins data-diff-action="insert"> 123</ins></p>' +
+					'</div>'
+			},
+			{
+				msg: 'No spacer above heading context when it is the 0th child',
+				oldDoc: '<h2>context</h2><p>foo</p><p>bar</p><p>baz</p>',
+				newDoc: '<h2>context</h2><p>foo</p><p>bar</p><p>baq</p>',
+				expected:
+					'<h2 data-diff-action="none">context</h2>' +
+					spacer +
+					'<p data-diff-action="none">bar</p>' +
+					'<div class="ve-ui-diffElement-doc-child-change">' +
+						'<p data-diff-action="remove"><del>baz</del></p>' +
+					'</div>' +
+					'<div class="ve-ui-diffElement-doc-child-change">' +
+						'<p data-diff-action="insert"><ins>baq</ins></p>' +
+					'</div>'
+			},
+			{
+				msg: 'No spacer below heading context when next child is already context',
+				oldDoc: '<h2>context</h2><p>foo</p><p>bar</p><p>baz</p>',
+				newDoc: '<h2>context</h2><p>foo</p><p>baq</p><p>baz</p>',
+				expected:
+					'<h2 data-diff-action="none">context</h2>' +
+					'<p data-diff-action="none">foo</p>' +
+					'<div class="ve-ui-diffElement-doc-child-change">' +
+						'<p data-diff-action="remove"><del>bar</del></p>' +
+					'</div>' +
+					'<div class="ve-ui-diffElement-doc-child-change">' +
+						'<p data-diff-action="insert"><ins>baq</ins></p>' +
+					'</div>' +
+					'<p data-diff-action="none">baz</p>'
+			},
+			{
+				msg: 'Second heading is context',
+				oldDoc: '<h2>first heading</h2><p>whee</p><h2>context</h2><p>foo</p><p>bar</p><p>baz</p>',
+				newDoc: '<h2>first heading</h2><p>whee</p><h2>context</h2><p>foo</p><p>bar</p><p>baq</p>',
+				expected:
+					spacer +
+					'<h2 data-diff-action="none">context</h2>' +
+					spacer +
+					'<p data-diff-action="none">bar</p>' +
+					'<div class="ve-ui-diffElement-doc-child-change">' +
+						'<p data-diff-action="remove"><del>baz</del></p>' +
+					'</div>' +
+					'<div class="ve-ui-diffElement-doc-child-change">' +
+						'<p data-diff-action="insert"><ins>baq</ins></p>' +
+					'</div>'
+			},
+			{
+				msg: 'Modification in first section',
+				oldDoc: '<h2>first heading</h2><p>whee</p><h2>context</h2><p>foo</p><p>bar</p><p>baz</p>',
+				newDoc: '<h2>first heading</h2><p>wheeb</p><h2>context</h2><p>foo</p><p>bar</p><p>baz</p>',
+				expected:
+					'<h2 data-diff-action="none">first heading</h2>' +
+					'<div class="ve-ui-diffElement-doc-child-change">' +
+						'<p data-diff-action="remove"><del>whee</del></p>' +
+					'</div>' +
+					'<div class="ve-ui-diffElement-doc-child-change">' +
+						'<p data-diff-action="insert"><ins>wheeb</ins></p>' +
+					'</div>' +
+					'<h2 data-diff-action="none">context</h2>' +
+					spacer
+			},
+			{
+				msg: 'Modification at start of second section',
+				oldDoc: '<h2>first heading</h2><p>whee</p><h2>context</h2><p>foo</p><p>bar</p><p>baz</p>',
+				newDoc: '<h2>first heading</h2><p>whee</p><h2>context</h2><p>foob</p><p>bar</p><p>baz</p>',
+				expected:
+					spacer +
+					'<h2 data-diff-action="none">context</h2>' +
+					'<div class="ve-ui-diffElement-doc-child-change">' +
+						'<p data-diff-action="remove"><del>foo</del></p>' +
+					'</div>' +
+					'<div class="ve-ui-diffElement-doc-child-change">' +
+						'<p data-diff-action="insert"><ins>foob</ins></p>' +
+					'</div>' +
+					'<p data-diff-action="none">bar</p>' +
+					spacer
+			},
+			{
+				msg: 'Modification in middle of second section',
+				oldDoc: '<h2>first heading</h2><p>whee</p><h2>context</h2><p>foo</p><p>bar</p><p>baz</p>',
+				newDoc: '<h2>first heading</h2><p>whee</p><h2>context</h2><p>foo</p><p>barb</p><p>baz</p>',
+				expected:
+					spacer +
+					'<h2 data-diff-action="none">context</h2>' +
+					'<p data-diff-action="none">foo</p>' +
+					'<div class="ve-ui-diffElement-doc-child-change">' +
+						'<p data-diff-action="remove"><del>bar</del></p>' +
+					'</div>' +
+					'<div class="ve-ui-diffElement-doc-child-change">' +
+						'<p data-diff-action="insert"><ins>barb</ins></p>' +
+					'</div>' +
+					'<p data-diff-action="none">baz</p>'
+			},
+			{
+				msg: 'No extra context shown when second heading modified',
+				oldDoc: '<h2>first heading</h2><p>whee</p><h2>context</h2><p>foo</p><p>bar</p><p>baz</p>',
+				newDoc: '<h2>first heading</h2><p>whee</p><h2>context!</h2><p>foo</p><p>bar</p><p>baz</p>',
+				expected:
+					spacer +
+					'<p data-diff-action="none">whee</p>' +
+					'<div class="ve-ui-diffElement-doc-child-change">' +
+						'<h2>context<ins data-diff-action="insert">!</del></h2>' +
+					'</div>' +
+					'<p data-diff-action="none">foo</p>' +
 					spacer
 			},
 			{
@@ -307,7 +457,7 @@ QUnit.test( 'Diffing', function ( assert ) {
 						'</p>' +
 					'</div>',
 				expectedDescriptions: [
-					'<div>visualeditor-changedesc-comment,<del>whee</del>,<ins>wibble</ins></div>'
+					'<div>visualeditor-changedesc-comment-diff,<span>w<del>he</del><ins>ibbl</ins>e</span></div>'
 				]
 			},
 			{
@@ -337,9 +487,11 @@ QUnit.test( 'Diffing', function ( assert ) {
 				oldDoc: '<p>foo</p><p>bar</p>',
 				newDoc: '<p>bar</p><p>foo</p>',
 				expected:
-					'<p data-diff-action="none" data-diff-move="up">bar</p>' +
+					'<p data-diff-action="none" data-diff-move="up" data-diff-id="0">bar</p>' +
 					'<p data-diff-action="none">foo</p>',
-				hasMoves: true
+				expectedDescriptions: [
+					'<div>visualeditor-diff-moved-up</div>'
+				]
 			},
 			{
 				msg: 'Paragraphs moved, with insert',
@@ -347,9 +499,11 @@ QUnit.test( 'Diffing', function ( assert ) {
 				newDoc: '<p>baz</p><p>bar</p><p>foo</p>',
 				expected:
 					'<div class="ve-ui-diffElement-doc-child-change"><p data-diff-action="insert"><ins>baz</ins></p></div>' +
-					'<p data-diff-action="none" data-diff-move="up">bar</p>' +
+					'<p data-diff-action="none" data-diff-move="up" data-diff-id="0">bar</p>' +
 					'<p data-diff-action="none">foo</p>',
-				hasMoves: true
+				expectedDescriptions: [
+					'<div>visualeditor-diff-moved-up</div>'
+				]
 			},
 			{
 				msg: 'Paragraphs moved, with remove',
@@ -357,9 +511,11 @@ QUnit.test( 'Diffing', function ( assert ) {
 				newDoc: '<p>bar</p><p>foo</p>',
 				expected:
 					'<div class="ve-ui-diffElement-doc-child-change"><p data-diff-action="remove"><del>baz</del></p></div>' +
-					'<p data-diff-action="none" data-diff-move="up">bar</p>' +
+					'<p data-diff-action="none" data-diff-move="up" data-diff-id="0">bar</p>' +
 					'<p data-diff-action="none">foo</p>',
-				hasMoves: true
+				expectedDescriptions: [
+					'<div>visualeditor-diff-moved-up</div>'
+				]
 			},
 			{
 				msg: 'Paragraphs moved and modified',
@@ -367,12 +523,14 @@ QUnit.test( 'Diffing', function ( assert ) {
 				newDoc: '<p>quux whee!</p><p>foo bar baz!</p>',
 				expected:
 					'<div class="ve-ui-diffElement-doc-child-change">' +
-						'<p data-diff-move="up">quux whee<ins data-diff-action="insert">!</ins></p>' +
+						'<p data-diff-move="up" data-diff-id="0">quux whee<ins data-diff-action="insert">!</ins></p>' +
 					'</div>' +
 					'<div class="ve-ui-diffElement-doc-child-change">' +
 						'<p>foo bar baz<ins data-diff-action="insert">!</ins></p>' +
 					'</div>',
-				hasMoves: true
+				expectedDescriptions: [
+					'<div>visualeditor-diff-moved-up</div>'
+				]
 			},
 			{
 				msg: 'Insert table column',
@@ -430,8 +588,11 @@ QUnit.test( 'Diffing', function ( assert ) {
 				newDoc: '<p>foo <b>bar</b> baz</p>',
 				expected:
 					'<div class="ve-ui-diffElement-doc-child-change">' +
-						'<p>foo <del data-diff-action="remove">bar</del><ins data-diff-action="insert"><b>bar</b></ins> baz</p>' +
-					'</div>'
+						'<p>foo <span data-diff-action="change-remove">bar</span><span data-diff-action="change-insert" data-diff-id="0"><b>bar</b></span> baz</p>' +
+					'</div>',
+				expectedDescriptions: [
+					'<div>visualeditor-changedesc-textstyle-added,visualeditor-annotationbutton-bold-tooltip</div>'
+				]
 			},
 			{
 				msg: 'Annotation removal',
@@ -439,8 +600,11 @@ QUnit.test( 'Diffing', function ( assert ) {
 				newDoc: '<p>foo bar baz</p>',
 				expected:
 					'<div class="ve-ui-diffElement-doc-child-change">' +
-						'<p>foo <del data-diff-action="remove"><b>bar</b></del><ins data-diff-action="insert">bar</ins> baz</p>' +
-					'</div>'
+						'<p>foo <span data-diff-action="change-remove"><b>bar</b></span><span data-diff-action="change-insert" data-diff-id="0">bar</span> baz</p>' +
+					'</div>',
+				expectedDescriptions: [
+					'<div>visualeditor-changedesc-textstyle-removed,visualeditor-annotationbutton-bold-tooltip</div>'
+				]
 			},
 			{
 				msg: 'Annotation attribute change',
@@ -451,7 +615,31 @@ QUnit.test( 'Diffing', function ( assert ) {
 						'<p>foo <span data-diff-action="change-remove"><a href="http://example.org/quuz">bar</a></span><span data-diff-action="change-insert" data-diff-id="0"><a href="http://example.org/whee">bar</a></span> baz</p>' +
 					'</div>',
 				expectedDescriptions: [
-					'<div>visualeditor-changedesc-link-href,<del>http://example.org/quuz</del>,<ins>http://example.org/whee</ins></div>'
+					'<div>visualeditor-changedesc-link-href-diff,<span>http://example.org/<del>quuz</del><ins>whee</ins></span></div>'
+				]
+			},
+			{
+				msg: 'Link insertion',
+				oldDoc: '<p>foo bar baz</p>',
+				newDoc: '<p>foo <a href="http://example.org/">bar</a> baz</p>',
+				expected:
+					'<div class="ve-ui-diffElement-doc-child-change">' +
+						'<p>foo <span data-diff-action="change-remove">bar</span><span data-diff-action="change-insert" data-diff-id="0"><a href="http://example.org/">bar</a></span> baz</p>' +
+					'</div>',
+				expectedDescriptions: [
+					'<div>visualeditor-changedesc-link-added,http://example.org/</div>'
+				]
+			},
+			{
+				msg: 'Link removal',
+				oldDoc: '<p>foo <a href="http://example.org/">bar</a> baz</p>',
+				newDoc: '<p>foo bar baz</p>',
+				expected:
+					'<div class="ve-ui-diffElement-doc-child-change">' +
+						'<p>foo <span data-diff-action="change-remove"><a href="http://example.org/">bar</a></span><span data-diff-action="change-insert" data-diff-id="0">bar</span> baz</p>' +
+					'</div>',
+				expectedDescriptions: [
+					'<div>visualeditor-changedesc-link-removed,http://example.org/</div>'
 				]
 			},
 			{
@@ -460,8 +648,11 @@ QUnit.test( 'Diffing', function ( assert ) {
 				newDoc: '<p><a href="http://example.org/">foo <b>bar</b> baz</a></p>',
 				expected:
 					'<div class="ve-ui-diffElement-doc-child-change">' +
-						'<p><a href="http://example.org/">foo <del data-diff-action="remove">bar</del><ins data-diff-action="insert"><b>bar</b></ins> baz</a></p>' +
-					'</div>'
+						'<p><a href="http://example.org/">foo <span data-diff-action="change-remove">bar</span><span data-diff-action="change-insert" data-diff-id="0"><b>bar</b></span> baz</a></p>' +
+					'</div>',
+				expectedDescriptions: [
+					'<div>visualeditor-changedesc-textstyle-added,visualeditor-annotationbutton-bold-tooltip</div>'
+				]
 			},
 			{
 				msg: 'Annotation insertion with text change',
@@ -553,12 +744,15 @@ QUnit.test( 'Diffing', function ( assert ) {
 				expected:
 					'<div class="ve-ui-diffElement-doc-child-change">' +
 						'<ul>' +
-							'<li><p data-diff-action="none" data-diff-move="up">baz</p></li>' +
+							'<li><p data-diff-action="none" data-diff-move="up" data-diff-id="0">baz</p></li>' +
 							'<li><p data-diff-action="none">foo</p></li>' +
 							'<li><p data-diff-action="none">bar</p></li>' +
 							'<li><p data-diff-action="none">quux</p></li>' +
 						'</ul>' +
-					'</div>'
+					'</div>',
+				expectedDescriptions: [
+					'<div>visualeditor-diff-moved-up</div>'
+				]
 			},
 			{
 				msg: 'List item move down',
@@ -570,9 +764,12 @@ QUnit.test( 'Diffing', function ( assert ) {
 							'<li><p data-diff-action="none">foo</p></li>' +
 							'<li><p data-diff-action="none">baz</p></li>' +
 							'<li><p data-diff-action="none">quux</p></li>' +
-							'<li><p data-diff-action="none" data-diff-move="down">bar</p></li>' +
+							'<li><p data-diff-action="none" data-diff-move="down" data-diff-id="0">bar</p></li>' +
 						'</ul>' +
-					'</div>'
+					'</div>',
+				expectedDescriptions: [
+					'<div>visualeditor-diff-moved-down</div>'
+				]
 			},
 			{
 				msg: 'List item move and change',
@@ -581,12 +778,15 @@ QUnit.test( 'Diffing', function ( assert ) {
 				expected:
 					'<div class="ve-ui-diffElement-doc-child-change">' +
 						'<ul>' +
-							'<li><p data-diff-move="up">baz <del data-diff-action="remove">baz</del><ins data-diff-action="insert">bat</ins></p></li>' +
+							'<li><p data-diff-move="up" data-diff-id="0">baz <del data-diff-action="remove">baz</del><ins data-diff-action="insert">bat</ins></p></li>' +
 							'<li><p data-diff-action="none">foo</p></li>' +
 							'<li><p data-diff-action="none">bar</p></li>' +
 							'<li><p data-diff-action="none">quux</p></li>' +
 						'</ul>' +
-					'</div>'
+					'</div>',
+				expectedDescriptions: [
+					'<div>visualeditor-diff-moved-up</div>'
+				]
 			},
 			{
 				msg: 'List item indentation',
@@ -704,6 +904,24 @@ QUnit.test( 'Diffing', function ( assert ) {
 				'</div>'
 			},
 			{
+				msg: 'Newlines and tabs are substituted in a paragraph',
+				oldDoc: '<p>Quux</p>',
+				newDoc: '<p>Quux</p><p>Foo\n\tBar</p>',
+				expected: '<p data-diff-action="none">Quux</p>' +
+					'<div class="ve-ui-diffElement-doc-child-change">' +
+						'<p data-diff-action="insert"><ins>Foo↵➞Bar</ins></p>' +
+					'</div>'
+			},
+			{
+				msg: 'Newlines and tabs not substitued in nodes with signficant whitespace',
+				oldDoc: '<p>Quux</p>',
+				newDoc: '<p>Quux</p><pre>Foo\n\tBar</pre>',
+				expected: '<p data-diff-action="none">Quux</p>' +
+					'<div class="ve-ui-diffElement-doc-child-change">' +
+						'<pre data-diff-action="insert"><ins>Foo\n\tBar</ins></pre>' +
+					'</div>'
+			},
+			{
 				msg: 'Metadata change inside paragraph (no diff)',
 				oldDoc: '<p>foo bar baz<meta foo="a"></p>',
 				newDoc: '<p>foo bar baz<meta foo="b"></p>',
@@ -773,39 +991,46 @@ QUnit.test( 'compareAttributes/describeChanges', function ( assert ) {
 				expected: [ 'visualeditor-changedesc-set,foo,<ins>!!</ins>' ]
 			},
 			{
-				msg: 'LinkAnnotation: Href change',
+				msg: 'LinkAnnotation: href change',
 				type: 'link',
 				before: { href: 'https://www.example.org/foo' },
 				after: { href: 'https://www.example.org/bar' },
-				expected: [ 'visualeditor-changedesc-link-href,<del>https://www.example.org/foo</del>,<ins>https://www.example.org/bar</ins>' ]
+				expected: [ 'visualeditor-changedesc-link-href-diff,<span>https://www.example.org/<del>foo</del><ins>bar</ins></span>' ]
 			},
 			{
-				msg: 'LinkAnnotation: Href fragment change',
+				msg: 'LinkAnnotation: href fragment change',
 				type: 'link',
 				before: { href: 'https://www.example.org/foo#bar' },
 				after: { href: 'https://www.example.org/foo#baz' },
-				expected: [ 'visualeditor-changedesc-link-href,<del>https://www.example.org/foo#bar</del>,<ins>https://www.example.org/foo#baz</ins>' ]
+				expected: [ 'visualeditor-changedesc-link-href-diff,<span>https://www.example.org/foo#ba<del>r</del><ins>z</ins></span>' ]
 			},
 			{
-				msg: 'LanguageAnnotation: Lang change',
+				msg: 'LinkAnnotation: Full href change',
+				type: 'link',
+				before: { href: 'foo' },
+				after: { href: 'bar' },
+				expected: [ 'visualeditor-changedesc-link-href,<del>foo</del>,<ins>bar</ins>' ]
+			},
+			{
+				msg: 'LanguageAnnotation: lang change',
 				type: 'meta/language',
-				before: { lang: 'en', dir: 'ltr' },
-				after: { lang: 'fr', dir: 'ltr' },
+				before: { nodeName: 'span', lang: 'en', dir: 'ltr' },
+				after: { nodeName: 'span', lang: 'fr', dir: 'ltr' },
 				expected: [ 'visualeditor-changedesc-language,<del>langname-en</del>,<ins>langname-fr</ins>' ]
 			},
 			{
-				msg: 'LanguageAnnotation: Dir change',
+				msg: 'LanguageAnnotation: dir change',
 				type: 'meta/language',
-				before: { lang: 'en', dir: 'ltr' },
-				after: { lang: 'en', dir: 'rtl' },
+				before: { nodeName: 'span', lang: 'en', dir: 'ltr' },
+				after: { nodeName: 'span', lang: 'en', dir: 'rtl' },
 				expected: [ 'visualeditor-changedesc-direction,<del>ltr</del>,<ins>rtl</ins>' ]
 			},
 			{
 				msg: 'LanguageAnnotation: Other attribute change (fallback)',
 				type: 'meta/language',
-				before: { lang: 'en', dir: 'ltr', foo: 'bar' },
-				after: { lang: 'en', dir: 'ltr', foo: 'baz' },
-				expected: [ 'visualeditor-changedesc-changed,foo,<del>bar</del>,<ins>baz</ins>' ]
+				before: { nodeName: 'span', lang: 'en', dir: 'ltr', foo: 'bar' },
+				after: { nodeName: 'span', lang: 'en', dir: 'ltr', foo: 'quux' },
+				expected: [ 'visualeditor-changedesc-changed,foo,<del>bar</del>,<ins>quux</ins>' ]
 			}
 		];
 

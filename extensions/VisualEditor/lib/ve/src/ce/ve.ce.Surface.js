@@ -212,6 +212,11 @@ ve.ce.Surface = function VeCeSurface( model, ui, config ) {
 	// Add 'notranslate' class to prevent Chrome's translate feature from
 	// completely messing up the CE DOM (T59124)
 	this.$element.addClass( 've-ce-surface notranslate' );
+	// Support: Edge
+	// Add translate="no" attribute to prevent Chromium Edge's translate feature from
+	// translating our editable surface, and leaving junk behind... (T267747)
+	// Some documentation out there says it respects class="notranslate", but it doesn't.
+	this.$element.attr( 'translate', 'no' );
 	this.$highlights.addClass( 've-ce-surface-highlights' );
 	this.$highlightsFocused.addClass( 've-ce-surface-highlights-focused' );
 	this.$highlightsBlurred.addClass( 've-ce-surface-highlights-blurred' );
@@ -560,7 +565,7 @@ ve.ce.Surface.prototype.isReadOnly = function () {
  * function will also reapply the selection, even if the surface is already focused.
  */
 ve.ce.Surface.prototype.focus = function () {
-	var node,
+	var nodeAndOffset,
 		surface = this,
 		selection = this.getSelection();
 
@@ -578,8 +583,15 @@ ve.ce.Surface.prototype.focus = function () {
 	if ( selection.isFocusedNode() ) {
 		this.$pasteTarget[ 0 ].focus();
 	} else if ( selection.isNativeCursor() ) {
-		node = this.getDocument().getNodeAndOffset( selection.getModel().getRange().start ).node;
-		$( node ).closest( '[contenteditable=true]' )[ 0 ].focus();
+		try {
+			nodeAndOffset = this.getDocument().getNodeAndOffset( selection.getModel().getRange().start );
+		} catch ( e ) {
+			// Unexplained failures causing log spam: T262487
+			nodeAndOffset = null;
+		}
+		if ( nodeAndOffset ) {
+			$( nodeAndOffset.node ).closest( '[contenteditable=true]' )[ 0 ].focus();
+		}
 	}
 
 	// If we are calling focus after replacing a node the selection may be gone
@@ -628,7 +640,7 @@ ve.ce.Surface.prototype.removeRangesAndBlur = function () {
 	this.nativeSelection.removeAllRanges();
 	// Support: IE<=11
 	// While switching between editor modes, there's sometimes no activeElement.
-	if ( this.getElementDocument().activeElement ) {
+	if ( this.getElementDocument().activeElement === this.$attachedRootNode[ 0 ] ) {
 		// Blurring the activeElement ensures the keyboard is hidden on iOS
 		this.getElementDocument().activeElement.blur();
 	}
@@ -655,15 +667,20 @@ ve.ce.Surface.prototype.onDocumentFocusInOut = function ( e ) {
  * Handle global focus change.
  */
 ve.ce.Surface.prototype.onFocusChange = function () {
-	var hasFocus = false;
-
-	hasFocus = OO.ui.contains(
-		[
+	var hasFocus,
+		surfaceNodes = [
 			this.$attachedRootNode[ 0 ],
 			this.$pasteTarget[ 0 ],
 			this.$highlights[ 0 ]
-		],
+		];
+
+	hasFocus = OO.ui.contains(
+		surfaceNodes,
 		this.nativeSelection.anchorNode,
+		true
+	) && OO.ui.contains(
+		surfaceNodes,
+		document.activeElement,
 		true
 	);
 
@@ -722,7 +739,7 @@ ve.ce.Surface.prototype.deactivate = function ( showAsActivated, noSelectionChan
 		this.surfaceObserver.disable();
 		this.deactivated = true;
 		this.previousActiveAnnotations = this.activeAnnotations;
-		this.checkDelayedSequences();
+		this.findAndExecuteDelayedSequences();
 		this.$element.addClass( 've-ce-surface-deactivated' );
 		// Remove ranges so the user can't accidentally type into the document,
 		// and so virtual keyboards are hidden.
@@ -1017,33 +1034,10 @@ ve.ce.Surface.prototype.onDocumentMouseDown = function ( e ) {
  * @param {ve.ce.Selection} selectionBefore Selection before the mouse event
  */
 ve.ce.Surface.prototype.afterDocumentMouseDown = function ( e, selectionBefore ) {
-	var scrollTop,
-		view = this;
-
 	// TODO: guard with incRenderLock?
 	this.surfaceObserver.pollOnce();
 	if ( e.shiftKey ) {
 		this.fixShiftClickSelect( selectionBefore );
-	}
-
-	function blockScroll() {
-		view.$window.scrollTop( scrollTop );
-	}
-
-	if ( OO.ui.isMobile() && $.client.profile().layout === 'gecko' ) {
-		// Support: Firefox Mobile
-		// Firefox scrolls back to the top of the page *every time*
-		// you tap on the CE document. This makes things slightly
-		// more usable by restoring your scroll offset every time
-		// the page scrolls for the next 1000ms.
-		// The page will still flicker every time the user touches
-		// to place the cursor, but this is better than completely
-		// losing your scroll offset. (T196839)
-		scrollTop = this.$window.scrollTop();
-		view.$window.on( 'scroll', blockScroll );
-		setTimeout( function () {
-			view.$window.off( 'scroll', blockScroll );
-		}, 1000 );
 	}
 };
 
@@ -1150,7 +1144,7 @@ ve.ce.Surface.prototype.onDocumentDragStart = function ( e ) {
  * @param {jQuery.Event} e Drag over event
  */
 ve.ce.Surface.prototype.onDocumentDragOver = function ( e ) {
-	var i, l, $target, $dropTarget, node, dropPosition, targetPosition, targetOffset, top, left,
+	var i, l, $target, $dropTarget, dropTargetNode, dropPosition, targetPosition, targetOffset, top, left,
 		nodeType, item, fakeItem,
 		dataTransferHandlerFactory = this.getSurface().dataTransferHandlerFactory,
 		isContent = true,
@@ -1221,16 +1215,16 @@ ve.ce.Surface.prototype.onDocumentDragOver = function ( e ) {
 		$target = $( e.target ).closest( '.ve-ce-branchNode, .ve-ce-leafNode' );
 		if ( $target.length ) {
 			// Find the nearest node which will accept this node type
-			node = getNearestDropTarget( $target.data( 'view' ) );
-			if ( node ) {
-				$dropTarget = node.$element;
+			dropTargetNode = getNearestDropTarget( $target.data( 'view' ) );
+			if ( dropTargetNode ) {
+				$dropTarget = dropTargetNode.$element;
 				dropPosition = e.originalEvent.pageY - $dropTarget.offset().top > $dropTarget.outerHeight() / 2 ? 'bottom' : 'top';
 			} else {
 				targetOffset = this.getOffsetFromEventCoords( e.originalEvent );
 				if ( targetOffset !== -1 ) {
-					node = getNearestDropTarget( this.getDocument().getBranchNodeFromOffset( targetOffset ) );
-					if ( node ) {
-						$dropTarget = node.$element;
+					dropTargetNode = getNearestDropTarget( this.getDocument().getBranchNodeFromOffset( targetOffset ) );
+					if ( dropTargetNode ) {
+						$dropTarget = dropTargetNode.$element;
 						dropPosition = 'top';
 					}
 				}
@@ -1424,7 +1418,7 @@ ve.ce.Surface.prototype.onDocumentKeyDown = function ( e ) {
 	} else {
 		trigger = new ve.ui.Trigger( e );
 		if ( trigger.isComplete() ) {
-			executed = this.surface.execute( trigger );
+			executed = this.surface.executeWithSource( trigger, false, 'trigger' );
 			if ( executed || this.isBlockedTrigger( trigger ) ) {
 				e.preventDefault();
 				e.stopPropagation();
@@ -1438,6 +1432,7 @@ ve.ce.Surface.prototype.onDocumentKeyDown = function ( e ) {
 			// Allowed keystrokes in readonly mode:
 			// Arrows, simple navigation
 			ve.ce.LinearArrowKeyDownHandler.static.keys.indexOf( e.keyCode ) !== -1 ||
+			e.keyCode === OO.ui.Keys.TAB ||
 			// Potential commands:
 			// Function keys...
 			( e.keyCode >= 112 && e.keyCode <= 123 ) ||
@@ -1475,13 +1470,22 @@ ve.ce.Surface.prototype.onDocumentKeyDown = function ( e ) {
  * @return {boolean} Trigger should preventDefault
  */
 ve.ce.Surface.prototype.isBlockedTrigger = function ( trigger ) {
-	var platformKey = ve.getSystemPlatform() === 'mac' ? 'mac' : 'pc',
-		blocked = {
-			mac: [ 'cmd+b', 'cmd+i', 'cmd+u', 'cmd+z', 'cmd+y', 'cmd+shift+z', 'tab', 'shift+tab', 'cmd+[', 'cmd+]' ],
-			pc: [ 'ctrl+b', 'ctrl+i', 'ctrl+u', 'ctrl+z', 'ctrl+y', 'ctrl+shift+z', 'tab', 'shift+tab' ]
+	var
+		triggerString = trigger.toString(),
+		platformKey = ve.getSystemPlatform() === 'mac' ? 'mac' : 'pc',
+		blockedIfRegisteredTriggers = [ 'tab', 'shift+tab' ],
+		blockedTriggers = {
+			mac: [ 'cmd+b', 'cmd+i', 'cmd+u', 'cmd+z', 'cmd+y', 'cmd+shift+z', 'cmd+[', 'cmd+]' ],
+			pc: [ 'ctrl+b', 'ctrl+i', 'ctrl+u', 'ctrl+z', 'ctrl+y', 'ctrl+shift+z' ]
 		};
 
-	return blocked[ platformKey ].indexOf( trigger.toString() ) !== -1;
+	// Special case: only block Tab/Shift+Tab if indentation commands are enabled on this surface,
+	// otherwise allow them to change focus
+	if ( blockedIfRegisteredTriggers.indexOf( triggerString ) !== -1 ) {
+		return !!this.surface.triggerListener.getCommandByTrigger( triggerString );
+	}
+
+	return blockedTriggers[ platformKey ].indexOf( triggerString ) !== -1;
 };
 
 /**
@@ -1564,16 +1568,16 @@ ve.ce.Surface.prototype.afterDocumentKeyDown = function ( e ) {
 	 * @private
 	 * @param {Node} node DOM node of cursor position
 	 * @param {number} offset Offset of cursor position
-	 * @param {number} direction Cursor motion direction (1=forward, -1=backward)
+	 * @param {number} dir Cursor motion direction (1=forward, -1=backward)
 	 * @return {ve.ce.Node|null} node, or null if not in a focusable node
 	 */
-	function getSurroundingFocusableNode( node, offset, direction ) {
+	function getSurroundingFocusableNode( node, offset, dir ) {
 		var focusNode;
 		if ( node.nodeType === Node.TEXT_NODE ) {
 			focusNode = node;
-		} else if ( direction > 0 && offset < node.childNodes.length ) {
+		} else if ( dir > 0 && offset < node.childNodes.length ) {
 			focusNode = node.childNodes[ offset ];
-		} else if ( direction < 0 && offset > 0 ) {
+		} else if ( dir < 0 && offset > 0 ) {
 			focusNode = node.childNodes[ offset - 1 ];
 		} else {
 			focusNode = node;
@@ -2313,7 +2317,7 @@ ve.ce.Surface.prototype.afterPaste = function () {
 		// If original selection was linear, switch to end of pasted text
 		if ( fragment.getSelection() instanceof ve.dm.LinearSelection ) {
 			targetFragment.collapseToEnd().select();
-			view.checkSequences( /* isPaste */ true );
+			view.findAndExecuteSequences( /* isPaste */ true );
 		}
 	} );
 };
@@ -2963,10 +2967,10 @@ ve.ce.Surface.prototype.handleDataTransfer = function ( dataTransfer, isPaste, t
 	// we want to text/html and text/plain to be at the end of the list, as
 	// they tend to show up as common fallbacks.
 	pushItemToBack = function ( array, type ) {
-		var i, l;
-		for ( i = 0, l = array.length; i < l; i++ ) {
-			if ( array[ i ].type === type ) {
-				return array.push( array.splice( i, 1 )[ 0 ] );
+		var j, jlen;
+		for ( j = 0, jlen = array.length; j < jlen; j++ ) {
+			if ( array[ j ].type === type ) {
+				return array.push( array.splice( j, 1 )[ 0 ] );
 			}
 		}
 	};
@@ -3072,8 +3076,30 @@ ve.ce.Surface.prototype.selectAll = function () {
  */
 ve.ce.Surface.prototype.onDocumentInput = function ( e ) {
 	// Synthetic events don't have the originalEvent property (T176104)
-	var inputType = e.originalEvent ? e.originalEvent.inputType : null,
+	var surface = this,
+		inputType = e.originalEvent ? e.originalEvent.inputType : null,
 		inputTypeCommands = this.constructor.static.inputTypeCommands;
+
+	// Special handling of NBSP insertions. T53045
+	// NBSPs are converted to normal spaces in ve.ce.TextState as they can be
+	// inserted by ContentEditable in unexpected places, or accidentally imported
+	// by copy-paste. Usually they are not intended, but if we detect an NBSP in
+	// an insertion event that means it was probably intentional, e.g. inserted
+	// by a specific keyboard shortcut, or IME sequence.
+	if (
+		this.getSelection().isNativeCursor() &&
+		( inputType === 'insertText' || inputType === 'insertCompositionText' ) &&
+		e.originalEvent.data === '\u00a0'
+	) {
+		// Wait for the insertion to happen
+		setTimeout( function () {
+			var fragment = surface.getModel().getFragment().adjustLinearSelection( -1 );
+			// Check a plain space was inserted and replace it with an NBSP.
+			if ( fragment.getText() === ' ' ) {
+				fragment.insertContent( ve.init.platform.decodeEntities( '&nbsp;' ) ).collapseToEnd().select();
+			}
+		} );
+	}
 
 	if (
 		inputType &&
@@ -3129,7 +3155,7 @@ ve.ce.Surface.prototype.onModelSelect = function () {
 	var focusedNode, blockSlug,
 		selection = this.getModel().getSelection();
 
-	setTimeout( this.checkDelayedSequences.bind( this ) );
+	setTimeout( this.findAndExecuteDelayedSequences.bind( this ) );
 
 	this.cursorDirectionality = null;
 	this.contentBranchNodeChanged = false;
@@ -3511,12 +3537,12 @@ ve.ce.Surface.prototype.handleObservedChanges = function ( oldState, newState ) 
 
 	if ( insertedText ) {
 		surface.afterRenderLock( function () {
-			surface.checkSequences();
+			surface.findAndExecuteSequences();
 			surface.maybeSetBreakpoint();
 		} );
 	} else if ( removedText ) {
 		surface.afterRenderLock( function () {
-			surface.checkSequences( false, true );
+			surface.findAndExecuteSequences( false, true );
 			surface.maybeSetBreakpoint();
 		} );
 	}
@@ -3642,44 +3668,52 @@ ve.ce.Surface.prototype.fixupCursorPosition = function ( direction, extend ) {
 };
 
 /**
- * Check the current surface offset for sequence matches
+ * Find sequence matches at the current surface offset
  *
  * @param {boolean} [isPaste] Whether this in the context of a paste
  * @param {boolean} [isDelete] Whether this is after content being deleted
  */
-ve.ce.Surface.prototype.checkSequences = function ( isPaste, isDelete ) {
-	var matchingSequences,
-		model = this.getModel(),
-		selection = this.getSelection();
+ve.ce.Surface.prototype.findMatchingSequences = function ( isPaste, isDelete ) {
+	var selection = this.getSelection();
 
 	if ( !selection.isNativeCursor() ) {
-		return;
+		return [];
 	}
 
-	matchingSequences = this.getSurface().sequenceRegistry.findMatching(
-		model.getDocument().data,
+	return this.getSurface().sequenceRegistry.findMatching(
+		this.getModel().getDocument().data,
 		selection.getModel().getCoveringRange().end,
 		isPaste,
 		isDelete
 	);
-
-	this.executeSequences( matchingSequences );
 };
+
+/**
+ * Find sequence matches at the current surface offset and execute them
+ *
+ * @param {boolean} [isPaste] Whether this in the context of a paste
+ * @param {boolean} [isDelete] Whether this is after content being deleted
+ */
+ve.ce.Surface.prototype.findAndExecuteSequences = function ( isPaste, isDelete ) {
+	this.executeSequences( this.findMatchingSequences( isPaste, isDelete ) );
+};
+
+// Deprecated alias
+ve.ce.Surface.prototype.checkSequences = ve.ce.Surface.prototype.findAndExecuteSequences;
 
 /**
  * Check if any of the previously delayed sequences no longer match with current offset,
  * and therefore should be executed.
  */
-ve.ce.Surface.prototype.checkDelayedSequences = function () {
+ve.ce.Surface.prototype.findAndExecuteDelayedSequences = function () {
 	var matchingSequences, matchingByName, i, matchingSeq,
 		sequences = [],
-		model = this.getModel(),
 		selection = this.getSelection();
 
 	if ( this.deactivated || !selection.isNativeCursor() ) {
 		matchingSequences = [];
 	} else {
-		matchingSequences = this.getSurface().sequenceRegistry.findMatching( model.getDocument().data, selection.getModel().getCoveringRange().end );
+		matchingSequences = this.findMatchingSequences();
 	}
 	matchingByName = {};
 	for ( i = 0; i < matchingSequences.length; i++ ) {
@@ -3702,6 +3736,9 @@ ve.ce.Surface.prototype.checkDelayedSequences = function () {
 
 	this.executeSequences( sequences );
 };
+
+// Deprecated alias
+ve.ce.Surface.prototype.checkDelayedSequences = ve.ce.Surface.prototype.findAndExecuteDelayedSequences;
 
 ve.ce.Surface.prototype.executeSequences = function ( sequences ) {
 	var i,
@@ -4085,20 +4122,27 @@ ve.ce.Surface.prototype.handleInsertion = function () {
  * Items with custom positioning may throw off results given by this method, so
  * it should only be treated as an approximation.
  *
- * @return {ve.Range} Range covering data visible in the viewport
+ * @return {ve.Range|null} Range covering data visible in the viewport, null if the surface is not attached
  */
 ve.ce.Surface.prototype.getViewportRange = function () {
-	var surface = this,
+	var top, bottom, documentRange,
+		surface = this,
 		documentModel = this.getModel().getDocument(),
 		data = documentModel.data,
 		dimensions = this.surface.getViewportDimensions(),
 		// We want a little padding when finding the range, because this is
 		// generally used for things like find/replace, where scrolling to see
 		// context is important.
-		padding = 50,
-		top = Math.max( 0, dimensions.top - padding ),
-		bottom = dimensions.bottom + ( padding * 2 ),
-		documentRange = this.getModel().getDocument().getDocumentRange();
+		padding = 50;
+
+	if ( !dimensions ) {
+		// Surface is not attached
+		return null;
+	}
+
+	top = Math.max( 0, dimensions.top - padding );
+	bottom = dimensions.bottom + ( padding * 2 );
+	documentRange = this.getModel().getDocument().getDocumentRange();
 
 	function highestIgnoreChildrenNode( childNode ) {
 		var ignoreChildrenNode = null;
@@ -4173,8 +4217,11 @@ ve.ce.Surface.prototype.showModelSelection = function ( force ) {
 
 	selection = this.getSelection();
 	if ( selection.getModel().isNull() ) {
-		if ( !this.nativeSelection.rangeCount ) {
-			// Native selection is already null
+		if (
+			!this.nativeSelection.focusNode ||
+			!this.$element[ 0 ].contains( this.nativeSelection.focusNode )
+		) {
+			// Native selection is already null, or outside the document
 			return false;
 		}
 		modelRange = null;
@@ -4289,7 +4336,8 @@ ve.ce.Surface.prototype.showSelectionState = function ( selection ) {
 		// Focusing already-focused elements scrolls the *top* of the element
 		// into view, meaning that in long text blocks refocusing the current
 		// element will jump the viewport around.
-	} else if ( !OO.ui.contains( $focusTarget.get( 0 ), this.getElementDocument().activeElement ) ) {
+		// Check $focusTarget is non-empty (T259531)
+	} else if ( $focusTarget.length && !OO.ui.contains( $focusTarget.get( 0 ), this.getElementDocument().activeElement ) ) {
 		// Note: contains *doesn't* include === here. This is desired, as the
 		// common case for getting here is when pressing backspace when the
 		// cursor is in the middle of a block of text (thus both are a <div>),
@@ -4417,16 +4465,27 @@ ve.ce.Surface.prototype.annotationsAtModelSelection = function ( filter, offset 
 		offset = this.getModel().getSelection().getCoveringRange().start;
 	}
 
+	// getNodeAndOffset can throw when offset is out of bounds (T262354)
+	// and other undiagnosed situations (T136780, T262487, T259154, T262303)
+
 	// TODO: For annotation boundaries we have to search one place left and right
 	// to find the text inside the annotation. This will give too many results for
 	// adjancent annotations, and will fail for one character annotations. (T221967)
 	if ( offset > documentRange.start ) {
-		nodeAndOffset = this.getDocument().getNodeAndOffset( offset - 1 );
+		try {
+			nodeAndOffset = this.getDocument().getNodeAndOffset( offset - 1 );
+		} catch ( e ) {
+			nodeAndOffset = null;
+		}
 		annotations = nodeAndOffset ? this.annotationsAtNode( nodeAndOffset.node, filter ) : [];
 	}
 
 	if ( offset < documentRange.end ) {
-		nodeAndOffset = this.getDocument().getNodeAndOffset( offset + 1 );
+		try {
+			nodeAndOffset = this.getDocument().getNodeAndOffset( offset + 1 );
+		} catch ( e ) {
+			nodeAndOffset = null;
+		}
 		annotations = OO.unique( annotations.concat( nodeAndOffset ? this.annotationsAtNode( nodeAndOffset.node, filter ) : [] ) );
 	}
 

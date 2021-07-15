@@ -27,7 +27,7 @@ at those levels, though, and IPSet would scale better than in_array if the
 array were much larger.
 
 For mixed-family CIDR sets, however, this code gives well over 100x speedup vs
-iterating `IP::isInRange()` over an array of CIDR specs.
+iterating `Wikimedia\IPUtils::isInRange()` over an array of CIDR specs.
 
 The basic implementation is two separate binary trees (IPv4 and IPv6) as nested
 php arrays with keys named 0 and 1.  The values false and true are terminal

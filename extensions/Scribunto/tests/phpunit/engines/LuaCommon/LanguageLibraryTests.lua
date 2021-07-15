@@ -92,344 +92,374 @@ end
 
 return testframework.getTestProvider( {
 	{ name = 'fetchLanguageName (en)', func = mw.language.fetchLanguageName,
-	  args = { 'en' },
-	  expect = { 'English' }
+		args = { 'en' },
+		expect = { 'English' }
 	},
 	{ name = 'fetchLanguageName (ru)', func = mw.language.fetchLanguageName,
-	  args = { 'ru' },
-	  expect = { 'русский' }
+		args = { 'ru' },
+		expect = { 'русский' }
 	},
 	{ name = 'fetchLanguageName (en,ru)', func = mw.language.fetchLanguageName,
-	  args = { 'en', 'ru' },
-	  expect = { 'английский' }
+		args = { 'en', 'ru' },
+		expect = { 'английский' }
 	},
 	{ name = 'fetchLanguageName (ru,en)', func = mw.language.fetchLanguageName,
-	  args = { 'ru', 'en' },
-	  expect = { 'Russian' }
+		args = { 'ru', 'en' },
+		expect = { 'Russian' }
 	},
 	{ name = 'fetchLanguageName ([[bogus]])', func = mw.language.fetchLanguageName,
-	  args = { '[[bogus]]' },
-	  expect = { '' }
+		args = { '[[bogus]]' },
+		expect = { '' }
 	},
 	{ name = 'fetchLanguageName (en,[[bogus]])', func = mw.language.fetchLanguageName,
-	  args = { 'en', '[[bogus]]' },
-	  expect = { 'English' }
+		args = { 'en', '[[bogus]]' },
+		expect = { 'English' }
 	},
 
 	{ name = 'fetchLanguageNames ()', func = test_fetchLanguageNames,
-	  args = {},
-	  expect = { { en = 'English', ru = 'русский' } }
+		args = {},
+		expect = { { en = 'English', ru = 'русский' } }
 	},
 	{ name = 'fetchLanguageNames (de)', func = test_fetchLanguageNames,
-	  args = { 'de' },
-	  expect = { { en = 'Englisch', ru = 'Russisch' } }
+		args = { 'de' },
+		expect = { { en = 'Englisch', ru = 'Russisch' } }
 	},
 	{ name = 'fetchLanguageNames ([[bogus]])', func = test_fetchLanguageNames,
-	  args = { '[[bogus]]' },
-	  expect = { { en = 'English', ru = 'Russian' } }
+		args = { '[[bogus]]' },
+		expect = { { en = 'English', ru = 'Russian' } }
 	},
 
 	{ name = 'getFallbacksFor', func = test_multi,
-	  args = { mw.language.getFallbacksFor, 'en', 'de', 'arz', '[[bogus]]' },
-	  expect = { {}, { 'en' }, { 'ar', 'en' }, {} }
+		args = { mw.language.getFallbacksFor, 'en', 'de', 'arz', '[[bogus]]' },
+		expect = { {}, { 'en' }, { 'ar', 'en' }, {} }
 	},
 
 	{ name = 'isKnownLanguageTag', func = test_multi,
-	  args = { mw.language.isKnownLanguageTag, 'en', 'not-a-real-code', 'extension code', '[[bogus]]' },
-	  expect = { true, false, false, false }
+		args = { mw.language.isKnownLanguageTag, 'en', 'not-a-real-code', 'extension code', '[[bogus]]' },
+		expect = { true, false, false, false }
 	},
 
 	{ name = 'isSupportedLanguage', func = test_multi,
-	  args = { mw.language.isSupportedLanguage, 'en', 'not-a-real-code', 'extension code', '[[bogus]]' },
-	  expect = { true, false, false, false }
+		args = { mw.language.isSupportedLanguage, 'en', 'not-a-real-code', 'extension code', '[[bogus]]' },
+		expect = { true, false, false, false }
 	},
 
 	{ name = 'isValidBuiltInCode', func = test_multi,
-	  args = { mw.language.isValidBuiltInCode, 'en', 'not-a-real-code', 'extension code', '[[bogus]]' },
-	  expect = { true, true, false, false }
+		args = { mw.language.isValidBuiltInCode, 'en', 'not-a-real-code', 'extension code', '[[bogus]]' },
+		expect = { true, true, false, false }
 	},
 
 	{ name = 'isValidCode', func = test_multi,
-	  args = { mw.language.isValidCode, 'en', 'not-a-real-code', 'extension code', '[[bogus]]' },
-	  expect = { true, true, true, false }
+		args = { mw.language.isValidCode, 'en', 'not-a-real-code', 'extension code', '[[bogus]]' },
+		expect = { true, true, true, false }
 	},
 
 	{ name = 'mw.language.new', func = test_multi, type = 'ToString',
-	  args = { mw.language.new, 'en', 'ru', '[[bogus]]' },
-	  expect = { 'table', 'table', 'table' }
+		args = { mw.language.new, 'en', 'ru', '[[bogus]]' },
+		expect = { 'table', 'table', 'table' }
 	},
 
 	{ name = 'lang:getCode', func = test_method,
-	  args = { 'getCode' },
-	  expect = {
-		  { 'en' },
-		  { 'kaa' },
-		  { 'fa' },
-		  { '[[bogus]]' },
-	  }
+		args = { 'getCode' },
+		expect = {
+			{ 'en' },
+			{ 'kaa' },
+			{ 'fa' },
+			{ '[[bogus]]' },
+		}
 	},
 
 	{ name = 'lang:getFallbackLanguages', func = test_method,
-	  args = { 'getFallbackLanguages' },
-	  expect = {
-		  { {} },
-		  { { 'kk-latn', 'kk-cyrl', 'en' } },
-		  { { 'en' } },
-		  { {} },
-	  }
+		args = { 'getFallbackLanguages' },
+		expect = {
+			{ {} },
+			{ { 'kk-latn', 'kk-cyrl', 'en' } },
+			{ { 'en' } },
+			{ {} },
+		}
 	},
 
 	{ name = 'lang:isRTL', func = test_method,
-	  args = { 'isRTL' },
-	  expect = {
-		  { false },
-		  { false },
-		  { true },
-		  "language code '[[bogus]]' is invalid",
-	  }
+		args = { 'isRTL' },
+		expect = {
+			{ false },
+			{ false },
+			{ true },
+			"language code '[[bogus]]' is invalid",
+		}
 	},
 
 	{ name = 'lang:lc', func = test_method,
-	  args = { 'lc', 'IX' },
-	  expect = {
-		  { 'ix' },
-		  { 'ix' }, -- Probably not actually right, but it's what LanguageKaa returns
-		  { 'ix' },
-		  "language code '[[bogus]]' is invalid",
-	  }
+		args = { 'lc', 'IX' },
+		expect = {
+			{ 'ix' },
+			{ 'ix' }, -- Probably not actually right, but it's what LanguageKaa returns
+			{ 'ix' },
+			"language code '[[bogus]]' is invalid",
+		}
 	},
 
 	{ name = 'lang:lcfirst', func = test_method,
-	  args = { 'lcfirst', 'IX' },
-	  expect = {
-		  { 'iX' },
-		  { 'ıX' },
-		  { 'iX' },
-		  "language code '[[bogus]]' is invalid",
-	  }
+		args = { 'lcfirst', 'IX' },
+		expect = {
+			{ 'iX' },
+			{ 'ıX' },
+			{ 'iX' },
+			"language code '[[bogus]]' is invalid",
+		}
 	},
 
 	{ name = 'lang:uc', func = test_method,
-	  args = { 'uc', 'ix' },
-	  expect = {
-		  { 'IX' },
-		  { 'IX' }, -- Probably not actually right, but it's what LanguageKaa returns
-		  { 'IX' },
-		  "language code '[[bogus]]' is invalid",
-	  }
+		args = { 'uc', 'ix' },
+		expect = {
+			{ 'IX' },
+			{ 'IX' }, -- Probably not actually right, but it's what LanguageKaa returns
+			{ 'IX' },
+			"language code '[[bogus]]' is invalid",
+		}
 	},
 
 	{ name = 'lang:ucfirst', func = test_method,
-	  args = { 'ucfirst', 'ix' },
-	  expect = {
-		  { 'Ix' },
-		  { 'İx' },
-		  { 'Ix' },
-		  "language code '[[bogus]]' is invalid",
-	  }
+		args = { 'ucfirst', 'ix' },
+		expect = {
+			{ 'Ix' },
+			{ 'İx' },
+			{ 'Ix' },
+			"language code '[[bogus]]' is invalid",
+		}
 	},
 
 	{ name = 'lang:caseFold', func = test_method,
-	  args = { 'caseFold', 'ix' },
-	  expect = {
-		  { 'IX' },
-		  { 'IX' }, -- Probably not actually right, but it's what LanguageKaa returns
-		  { 'IX' },
-		  "language code '[[bogus]]' is invalid",
-	  }
+		args = { 'caseFold', 'ix' },
+		expect = {
+			{ 'IX' },
+			{ 'IX' }, -- Probably not actually right, but it's what LanguageKaa returns
+			{ 'IX' },
+			"language code '[[bogus]]' is invalid",
+		}
 	},
 
 	{ name = 'lang:formatNum', func = test_method,
-	  args = { 'formatNum', 123456.78901 },
-	  expect = {
-		  { '123,456.78901' },
-		  { "123\194\160456,78901" },
-		  { '۱۲۳٬۴۵۶٫۷۸۹۰۱' },
-		  "language code '[[bogus]]' is invalid",
-	  }
+		args = { 'formatNum', 123456.78901 },
+		expect = {
+			{ '123,456.78901' },
+			{ "123\194\160456,78901" },
+			{ '۱۲۳٬۴۵۶٫۷۸۹۰۱' },
+			"language code '[[bogus]]' is invalid",
+		}
+	},
+
+	{ name = 'lang:formatNum (NaN)', func = test_method,
+		args = { 'formatNum', 0/0 },
+		expect = {
+			"bad argument #1 to 'formatNum' (NaN)",
+			"bad argument #1 to 'formatNum' (NaN)",
+			"bad argument #1 to 'formatNum' (NaN)",
+			"language code '[[bogus]]' is invalid",
+		}
+	},
+
+	{ name = 'lang:formatNum (Inf)', func = test_method,
+		args = { 'formatNum', 1/0 },
+		expect = {
+			"bad argument #1 to 'formatNum' (infinite)",
+			"bad argument #1 to 'formatNum' (infinite)",
+			"bad argument #1 to 'formatNum' (infinite)",
+			"language code '[[bogus]]' is invalid",
+		}
+	},
+
+	{ name = 'lang:formatNum (-Inf)', func = test_method,
+		args = { 'formatNum', -1/0 },
+		expect = {
+			"bad argument #1 to 'formatNum' (infinite)",
+			"bad argument #1 to 'formatNum' (infinite)",
+			"bad argument #1 to 'formatNum' (infinite)",
+			"language code '[[bogus]]' is invalid",
+		}
 	},
 
 	{ name = 'lang:formatDate', func = test_method,
-	  args = { 'formatDate', 'Y-F-d H:i:s', '20140305123456' },
-	  expect = {
-		  { '2014-March-05 12:34:56' },
-		  { '2014-Mart-05 12:34:56' },
-		  { '۲۰۱۴-مارس-۰۵ ۱۲:۳۴:۵۶' },
-		  "language code '[[bogus]]' is invalid",
-	  }
+		args = { 'formatDate', 'Y-F-d H:i:s', '20140305123456' },
+		expect = {
+			{ '2014-March-05 12:34:56' },
+			{ '2014-Mart-05 12:34:56' },
+			{ '۲۰۱۴-مارس-۰۵ ۱۲:۳۴:۵۶' },
+			"language code '[[bogus]]' is invalid",
+		}
 	},
 
 	{ name = 'lang:formatDuration', func = test_method,
-	  args = { 'formatDuration', 86461 },
-	  expect = {
-		  { "1 day, 1 minute and 1 second" },
-		  { "1 күн, 1 минут ha&#039;m 1 секунд" },
-		  { "۱ روز، ۱ دقیقه و ۱ ثانیه" },
-		  "language code '[[bogus]]' is invalid",
-	  }
+		args = { 'formatDuration', 86461 },
+		expect = {
+			{ "1 day, 1 minute and 1 second" },
+			{ "1 күн, 1 минут ha&#039;m 1 секунд" },
+			{ "۱ روز، ۱ دقیقه و ۱ ثانیه" },
+			"language code '[[bogus]]' is invalid",
+		}
 	},
 	{ name = 'lang:formatDuration (hours and minutes)', func = test_method,
-	  args = { 'formatDuration', 86461, { 'hours', 'minutes' } },
-	  expect = {
-		  { "24 hours and 1 minute" },
-		  { "24 сағат ha&#039;m 1 минут" },
-		  { "۲۴ ساعت و ۱ دقیقه" },
-		  "language code '[[bogus]]' is invalid",
-	  }
+		args = { 'formatDuration', 86461, { 'hours', 'minutes' } },
+		expect = {
+			{ "24 hours and 1 minute" },
+			{ "24 сағат ha&#039;m 1 минут" },
+			{ "۲۴ ساعت و ۱ دقیقه" },
+			"language code '[[bogus]]' is invalid",
+		}
 	},
 
 	{ name = 'lang:parseFormattedNumber', func = test_parseFormattedNumber,
-	  args = {},
-	  expect = {
-		  { 123456.78901 },
-		  { 123456.78901 },
-		  { 123456.78901 },
-		  "language code '[[bogus]]' is invalid",
-	  }
+		args = {},
+		expect = {
+			{ 123456.78901 },
+			{ 123456.78901 },
+			{ 123456.78901 },
+			"language code '[[bogus]]' is invalid",
+		}
 	},
 
 	{ name = 'lang:convertPlural (en)', func = test_plural,
-	  args = { 'en' },
-	  expect = { 'babbbbbbbbbbbbbbbbbbbbbbbbbbbb' }
+		args = { 'en' },
+		expect = { 'babbbbbbbbbbbbbbbbbbbbbbbbbbbb' }
 	},
 	{ name = 'lang:convertPlural (pl)', func = test_plural,
-	  args = { 'pl' },
-	  expect = { 'cabbbcccccccccccccccccbbbccccc' }
+		args = { 'pl' },
+		expect = { 'cabbbcccccccccccccccccbbbccccc' }
 	},
 	{ name = 'lang:convertPlural (bogus)', func = test_plural,
-	  args = { '[[bogus]]' },
-	  expect = "language code '[[bogus]]' is invalid",
+		args = { '[[bogus]]' },
+		expect = "language code '[[bogus]]' is invalid",
 	},
 
 	{ name = 'lang:convertGrammar (ru)', func = test_method_lang,
-	  args = { 'ru', 'convertGrammar', '**ия', 'genitive' },
-	  expect = { '**ии' }
+		args = { 'ru', 'convertGrammar', '**ия', 'genitive' },
+		expect = { '**ии' }
 	},
 	{ name = 'lang:convertGrammar (bogus)', func = test_method_lang,
-	  args = { '[[bogus]]', 'convertGrammar', '**ия', 'genitive' },
-	  expect = "language code '[[bogus]]' is invalid",
+		args = { '[[bogus]]', 'convertGrammar', '**ия', 'genitive' },
+		expect = "language code '[[bogus]]' is invalid",
 	},
 
 	{ name = 'lang:grammar (ru)', func = test_method_lang,
-	  args = { 'ru', 'grammar', 'genitive', '**ия' },
-	  expect = { '**ии' }
+		args = { 'ru', 'grammar', 'genitive', '**ия' },
+		expect = { '**ии' }
 	},
 	{ name = 'lang:grammar (bogus)', func = test_method_lang,
-	  args = { '[[bogus]]', 'grammar', 'genitive', '**ия' },
-	  expect = "language code '[[bogus]]' is invalid",
+		args = { '[[bogus]]', 'grammar', 'genitive', '**ия' },
+		expect = "language code '[[bogus]]' is invalid",
 	},
 
 	{ name = 'lang:gender (male)', func = test_method,
-	  args = { 'gender', 'male', 'masculine', 'feminine', 'neutral' },
-	  expect = {
-		  { 'masculine' },
-		  { 'masculine' },
-		  { 'masculine' },
-		  "language code '[[bogus]]' is invalid",
-	  }
+		args = { 'gender', 'male', 'masculine', 'feminine', 'neutral' },
+		expect = {
+			{ 'masculine' },
+			{ 'masculine' },
+			{ 'masculine' },
+			"language code '[[bogus]]' is invalid",
+		}
 	},
 	{ name = 'lang:gender (female)', func = test_method,
-	  args = { 'gender', 'female', 'masculine', 'feminine', 'neutral' },
-	  expect = {
-		  { 'feminine' },
-		  { 'feminine' },
-		  { 'feminine' },
-		  "language code '[[bogus]]' is invalid",
-	  }
+		args = { 'gender', 'female', 'masculine', 'feminine', 'neutral' },
+		expect = {
+			{ 'feminine' },
+			{ 'feminine' },
+			{ 'feminine' },
+			"language code '[[bogus]]' is invalid",
+		}
 	},
 	{ name = 'lang:gender (male, with sequence)', func = test_method,
-	  args = { 'gender', 'male', { 'masculine', 'feminine', 'neutral' } },
-	  expect = {
-		  { 'masculine' },
-		  { 'masculine' },
-		  { 'masculine' },
-		  "language code '[[bogus]]' is invalid",
-	  }
+		args = { 'gender', 'male', { 'masculine', 'feminine', 'neutral' } },
+		expect = {
+			{ 'masculine' },
+			{ 'masculine' },
+			{ 'masculine' },
+			"language code '[[bogus]]' is invalid",
+		}
 	},
 
 	{ name = 'lang:getArrow (forward)', func = test_method,
-	  args = { 'getArrow', 'forwards' },
-	  expect = {
-		  { "→" },
-		  { "→" },
-		  { "←" },
-		  "language code '[[bogus]]' is invalid",
-	  }
+		args = { 'getArrow', 'forwards' },
+		expect = {
+			{ "→" },
+			{ "→" },
+			{ "←" },
+			"language code '[[bogus]]' is invalid",
+		}
 	},
 	{ name = 'lang:getArrow (right)', func = test_method,
-	  args = { 'getArrow', 'right' },
-	  expect = {
-		  { "→" },
-		  { "→" },
-		  { "→" },
-		  { "→" },
-	  }
+		args = { 'getArrow', 'right' },
+		expect = {
+			{ "→" },
+			{ "→" },
+			{ "→" },
+			{ "→" },
+		}
 	},
 
 	{ name = 'lang:getDir', func = test_method,
-	  args = { 'getDir' },
-	  expect = {
-		  { "ltr" },
-		  { "ltr" },
-		  { "rtl" },
-		  "language code '[[bogus]]' is invalid",
-	  }
+		args = { 'getDir' },
+		expect = {
+			{ "ltr" },
+			{ "ltr" },
+			{ "rtl" },
+			"language code '[[bogus]]' is invalid",
+		}
 	},
 
 	{ name = 'lang:getDirMark', func = test_method,
-	  args = { 'getDirMark' },
-	  expect = {
-		  { "\226\128\142" },
-		  { "\226\128\142" },
-		  { "\226\128\143" },
-		  "language code '[[bogus]]' is invalid",
-	  }
+		args = { 'getDirMark' },
+		expect = {
+			{ "\226\128\142" },
+			{ "\226\128\142" },
+			{ "\226\128\143" },
+			"language code '[[bogus]]' is invalid",
+		}
 	},
 	{ name = 'lang:getDirMark opposite', func = test_method,
-	  args = { 'getDirMark', true },
-	  expect = {
-		  { "\226\128\143" },
-		  { "\226\128\143" },
-		  { "\226\128\142" },
-		  "language code '[[bogus]]' is invalid",
-	  }
+		args = { 'getDirMark', true },
+		expect = {
+			{ "\226\128\143" },
+			{ "\226\128\143" },
+			{ "\226\128\142" },
+			"language code '[[bogus]]' is invalid",
+		}
 	},
 
 	{ name = 'lang:getDirMarkEntity', func = test_method,
-	  args = { 'getDirMarkEntity' },
-	  expect = {
-		  { "&lrm;" },
-		  { "&lrm;" },
-		  { "&rlm;" },
-		  "language code '[[bogus]]' is invalid",
-	  }
+		args = { 'getDirMarkEntity' },
+		expect = {
+			{ "&lrm;" },
+			{ "&lrm;" },
+			{ "&rlm;" },
+			"language code '[[bogus]]' is invalid",
+		}
 	},
 	{ name = 'lang:getDirMarkEntity opposite', func = test_method,
-	  args = { 'getDirMarkEntity', true },
-	  expect = {
-		  { "&rlm;" },
-		  { "&rlm;" },
-		  { "&lrm;" },
-		  "language code '[[bogus]]' is invalid",
-	  }
+		args = { 'getDirMarkEntity', true },
+		expect = {
+			{ "&rlm;" },
+			{ "&rlm;" },
+			{ "&lrm;" },
+			"language code '[[bogus]]' is invalid",
+		}
 	},
 
 	{ name = 'lang:getDurationIntervals', func = test_method,
-	  args = { 'getDurationIntervals', 86461 },
-	  expect = {
-		  { { days = 1, minutes = 1, seconds = 1 } },
-		  { { days = 1, minutes = 1, seconds = 1 } },
-		  { { days = 1, minutes = 1, seconds = 1 } },
-		  "language code '[[bogus]]' is invalid",
-	  }
+		args = { 'getDurationIntervals', 86461 },
+		expect = {
+			{ { days = 1, minutes = 1, seconds = 1 } },
+			{ { days = 1, minutes = 1, seconds = 1 } },
+			{ { days = 1, minutes = 1, seconds = 1 } },
+			"language code '[[bogus]]' is invalid",
+		}
 	},
 	{ name = 'lang:getDurationIntervals (hours and minutes)', func = test_method,
-	  args = { 'getDurationIntervals', 86461, { 'hours', 'minutes' } },
-	  expect = {
-		  { { hours = 24, minutes = 1 } },
-		  { { hours = 24, minutes = 1 } },
-		  { { hours = 24, minutes = 1 } },
-		  "language code '[[bogus]]' is invalid",
-	  }
+		args = { 'getDurationIntervals', 86461, { 'hours', 'minutes' } },
+		expect = {
+			{ { hours = 24, minutes = 1 } },
+			{ { hours = 24, minutes = 1 } },
+			{ { hours = 24, minutes = 1 } },
+			"language code '[[bogus]]' is invalid",
+		}
 	},
 } )

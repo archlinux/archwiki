@@ -29,14 +29,37 @@ class HtmlFormatter {
 	 */
 	private $doc;
 
+	/**
+	 * @var string
+	 */
 	private $html;
+
+	/**
+	 * @var string[]
+	 */
 	private $itemsToRemove = [];
+
+	/**
+	 * @var string[]
+	 */
 	private $elementsToFlatten = [];
+
+	/**
+	 * Whether a libxml_disable_entity_loader() call is needed
+	 */
+	private const DISABLE_LOADER = LIBXML_VERSION < 20900;
+
+	/**
+	 * @var bool
+	 */
 	protected $removeMedia = false;
 
 	/**
-	 * Constructor
-	 *
+	 * @var bool
+	 */
+	protected $removeComments = false;
+
+	/**
 	 * @param string $html Text to process
 	 */
 	public function __construct( $html ) {
@@ -75,15 +98,27 @@ class HtmlFormatter {
 			$html = str_replace( ' <', '&#32;<', $html );
 
 			\libxml_use_internal_errors( true );
-			$loader = \libxml_disable_entity_loader();
+			if ( self::DISABLE_LOADER ) {
+				$loader = \libxml_disable_entity_loader();
+			}
 			$this->doc = new \DOMDocument();
 			$this->doc->strictErrorChecking = false;
 			$this->doc->loadHTML( $html );
-			\libxml_disable_entity_loader( $loader );
+			if ( self::DISABLE_LOADER ) {
+				\libxml_disable_entity_loader( $loader );
+			}
 			\libxml_use_internal_errors( false );
 			$this->doc->encoding = 'UTF-8';
 		}
 		return $this->doc;
+	}
+
+	/**
+	 * Sets whether comments should be removed from output
+	 * @param bool $flag Whether to remove or not
+	 */
+	public function setRemoveComments( $flag = true ) {
+		$this->removeComments = $flag;
 	}
 
 	/**
@@ -103,7 +138,7 @@ class HtmlFormatter {
 	 *   .<class>
 	 *   #<id>
 	 *
-	 * @param array|string $selectors Selector(s) of stuff to remove
+	 * @param string[]|string $selectors Selector(s) of stuff to remove
 	 */
 	public function remove( $selectors ) {
 		$this->itemsToRemove = array_merge( $this->itemsToRemove, (array)$selectors );
@@ -116,23 +151,24 @@ class HtmlFormatter {
 	 * Note this interface may fail in surprising unexpected ways due to usage of regexes,
 	 * so should not be relied on for HTML markup security measures.
 	 *
-	 * @param array|string $elements Name(s) of tag(s) to flatten
+	 * @param string[]|string $elements Name(s) of tag(s) to flatten
 	 */
 	public function flatten( $elements ) {
 		$this->elementsToFlatten = array_merge( $this->elementsToFlatten, (array)$elements );
 	}
 
 	/**
-	 * Instructs the formatter to flatten all tags
+	 * Instructs the formatter to flatten all tags, and remove comments
 	 */
 	public function flattenAllTags() {
 		$this->flatten( '[?!]?[a-z0-9]+' );
+		$this->setRemoveComments( true );
 	}
 
 	/**
 	 * Removes content we've chosen to remove.  The text of the removed elements can be
 	 * extracted with the getText method.
-	 * @return array Array of removed DOMElements
+	 * @return \DOMElement[] Array of removed DOMElements
 	 */
 	public function filterContent() {
 		$removals = $this->parseItemsToRemove();
@@ -180,7 +216,9 @@ class HtmlFormatter {
 		$domElemsToRemove = [];
 		$xpath = new \DOMXPath( $doc );
 		foreach ( $removals['CLASS'] as $classToRemove ) {
-			$elements = $xpath->query( '//*[contains(@class, "' . $classToRemove . '")]' );
+			// Use spaces to avoid matching for unrelated classnames (T231160)
+			// https://stackoverflow.com/a/1604480/319266
+			$elements = $xpath->query( '//*[contains(concat(" ", @class, " "), " ' . $classToRemove . ' ")]' );
 
 			/** @var $element \DOMElement */
 			foreach ( $elements as $element ) {
@@ -207,8 +245,8 @@ class HtmlFormatter {
 
 	/**
 	 * Removes a list of elelments from DOMDocument
-	 * @param array|\DOMNodeList $elements
-	 * @return array Array of removed elements
+	 * @param \DOMElement[]|\DOMNodeList $elements
+	 * @return \DOMElement[] Array of removed elements
 	 */
 	private function removeElements( $elements ) {
 		$list = $elements;
@@ -287,12 +325,15 @@ class HtmlFormatter {
 			$html = $this->html;
 		}
 		// Remove stuff added by wrapHTML()
-		$html = \preg_replace( '/<!--.*?-->|^.*?<body>|<\/body>.*$/s', '', $html );
+		$html = \preg_replace( '/^.*?<body>|<\/body>.*$/s', '', $html );
 		$html = $this->onHtmlReady( $html );
 
+		if ( $this->removeComments ) {
+			$html = \preg_replace( "/<!--.*?-->/s", '', $html );
+		}
 		if ( $this->elementsToFlatten ) {
 			$elements = \implode( '|', $this->elementsToFlatten );
-			$html = \preg_replace( "#</?($elements)\\b[^>]*>#is", '', $html );
+			$html = \preg_replace( "#</?(?:$elements)\\b[^>]*>#is", '', $html );
 		}
 
 		return $html;
@@ -310,13 +351,14 @@ class HtmlFormatter {
 	 * @throws \Exception
 	 */
 	protected function parseSelector( $selector, &$type, &$rawName ) {
-		if ( strpos( $selector, '.' ) === 0 ) {
+		$firstChar = substr( $selector, 0, 1 );
+		if ( $firstChar === '.' ) {
 			$type = 'CLASS';
 			$rawName = substr( $selector, 1 );
-		} elseif ( strpos( $selector, '#' ) === 0 ) {
+		} elseif ( $firstChar === '#' ) {
 			$type = 'ID';
 			$rawName = substr( $selector, 1 );
-		} elseif ( strpos( $selector, '.' ) !== 0 && strpos( $selector, '.' ) !== false ) {
+		} elseif ( strpos( $selector, '.' ) > 0 ) {
 			$type = 'TAG_CLASS';
 			$rawName = $selector;
 		} elseif ( strpos( $selector, '[' ) === false && strpos( $selector, ']' ) === false ) {

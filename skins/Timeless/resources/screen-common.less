@@ -11,6 +11,8 @@ body {
 body {
 	font-family: @fonts;
 	color: @text;
+	// Footer colour; results in a weird distracting dark scrollbar in firefox, but fuck firefox
+	// Setting it here avoids a jump to white after the footer, which is even more distracting
 	background: @base30;
 	font-size: @font-size;
 	line-height: 1.5;
@@ -38,11 +40,18 @@ body {
 	color: @base100;
 
 	a {
-		color: @blue-bright;
+		color: darken( @blue-bright, 3% );
 
-		&:hover,
+		&:hover {
+			color: darken( @blue-bright, 6% );
+		}
+
 		&:visited {
-			color: @base90;
+			color: darken( @blue-bright, 8% );
+
+			&:hover {
+				color: darken( @blue-bright, 12% );
+			}
 		}
 	}
 
@@ -114,7 +123,7 @@ body {
 	width: 2.5em;
 	height: 2.5em;
 	.icon;
-	.background-image-svg( 'images/search-ltr.svg', 'images/search-ltr.png' );
+	background-image: url( images/search-ltr.svg );
 	/* @noflip */
 	background-position: center 40%;
 	box-shadow: none;
@@ -168,15 +177,11 @@ body {
 	.footer-icons {
 		float: right;
 		margin: 0 0 0 1em;
-
-		li {
-			margin: 0 0 1em 0;
-		}
 	}
 
-	.footer-places li {
-		display: inline;
-		padding-right: 1em;
+	#footer-places li {
+		display: inline-block;
+		margin: 0 1em 0 0;
 	}
 
 	#lastmod,
@@ -228,6 +233,10 @@ body {
 
 	a {
 		.ca-icon( 'images/page-misc-grey' );
+
+		&:hover {
+			text-decoration: none;
+		}
 	}
 }
 
@@ -258,6 +267,11 @@ body {
 	.ca-icon-only();
 }
 
+#ca-unwatch.mw-watchlink-temp a {
+	.ca-icon( 'images/star-half-filled' );
+	.ca-icon-only();
+}
+
 #ca-edit a {
 	.ca-icon( 'images/pencil-grey' );
 }
@@ -282,13 +296,13 @@ body {
 	.ca-icon( 'images/brackets-grey' );
 }
 
+#ca-view a,
+#ca-view-foreign a {
+	.ca-icon( 'images/eyeball-grey' );
+}
+
 #ca-view {
 	.hidden();
-
-	/* Let's give anyone who forcibly brings it back a creepy eyeball */
-	a {
-		.ca-icon( 'images/eyeball-grey' );
-	}
 }
 
 .tools-inline li[ id^='ca-nstab-' ] a {
@@ -317,9 +331,17 @@ a {
 	text-decoration: none;
 	color: @link;
 
-	&:hover,
+	&:hover {
+		color: darken( @link, 10% );
+		text-decoration: underline;
+	}
+
 	&:visited {
 		color: @link-visited;
+
+		&:hover {
+			color: darken( @link-visited, 10% );
+		}
 	}
 }
 
@@ -327,9 +349,34 @@ a.new,
 .new a {
 	color: @link-red;
 
-	&:hover,
+	&:hover {
+		color: darken( @link-red, 10% );
+	}
+
 	&:visited {
 		color: @link-red-visited;
+
+		&:hover {
+			color: darken( @link-red-visited, 10% );
+		}
+	}
+}
+
+.mw-parser-output a.extiw,
+.mw-parser-output a.extiw:active,
+.mw-parser-output a.external {
+	color: @link-ext;
+
+	&:hover {
+		color: darken( @link-ext, 10% );
+	}
+
+	&:visited {
+		color: @link-ext-visited;
+
+		&:hover {
+			color: darken( @link-ext-visited, 10% );
+		}
 	}
 }
 
@@ -341,7 +388,7 @@ a.mw-selflink {
 
 .mw-editsection {
 	font-family: @fonts;
-	.background-image-svg( 'images/pencil-grey.svg', 'images/pencil-grey.png' );
+	background-image: url( images/pencil-grey.svg );
 	background-repeat: no-repeat;
 	background-position: left bottom;
 	padding-left: 20px;
@@ -364,17 +411,19 @@ a.mw-selflink {
 	display: none;
 }
 
-.visual-clear {
-	clear: both;
-}
-
 .mw-indicators {
 	float: right;
-	margin: 0.75em 0 0 1em;
+	margin-left: 1em;
+
+	img {
+		/* Line up to baseline; expected indicator icon size is 20px */
+		margin-top: -0.5em;
+	}
 }
 
 .mw-indicator {
 	display: inline-block;
+	margin: 0.65em 0 0 0.25em;
 }
 
 div.magnify a {
@@ -385,7 +434,7 @@ div.magnify a {
 	width: 20px;
 	height: 20px;
 	margin: 0 0 0.5em 0.5em;
-	.background-image-svg( 'images/magnify-ltr.svg', 'images/magnify-ltr.png' );
+	background-image: url( images/magnify-ltr.svg );
 }
 
 /* Subtitle area
@@ -411,8 +460,17 @@ code,
 tt,
 kbd,
 pre,
-samp {
+samp,
+.skin-timeless .monospace {
 	font-family: @fonts-mono;
+}
+
+.skin-timeless .serif {
+	font-family: @fonts-serif;
+}
+
+.skin-timeless .sans-serif {
+	font-family: @fonts-sans;
 }
 
 code,
@@ -533,6 +591,23 @@ pre,
 			border-bottom-width: 3px;
 		}
 	}
+
+	// Keep images from overflowing
+	a > img,
+	.floatnone > img {
+		height: auto !important;
+		max-width: 100% !important;
+	}
+}
+
+a > img,
+.floatnone > img {
+	// Hopefully these are only templates or something sane to begin with
+	// See: T269970
+	.mw-body .mw-parser-output table & {
+		height: unset !important;
+		max-width: unset !important;
+	}
 }
 
 #siteSub {
@@ -568,7 +643,8 @@ ul {
 }
 
 .center {
-	margin: auto;
+	margin-right: auto;
+	margin-left: auto;
 	text-align: center;
 }
 
@@ -616,6 +692,7 @@ ul {
 /* Tables of contents */
 ul#filetoc,
 .toc,
+.toccolours,
 .mw-warning {
 	display: table;
 	.box;
@@ -623,6 +700,7 @@ ul#filetoc,
 	margin-top: 1em;
 	margin-bottom: 1em;
 	min-width: 15em;
+	font-size: 100%;
 }
 
 .toc {
@@ -650,6 +728,7 @@ ul#filetoc {
 
 .mw-body .toctitle {
 	border-bottom: solid 2px @base70;
+	text-align: unset;
 
 	h2 {
 		font-size: 1em;
@@ -696,6 +775,7 @@ body :not( :checked ) > .toctogglespan:after {
 .mw-changeslist-legend,
 .mw-body .mw-search-profile-tabs,
 .mw-body fieldset#mw-searchoptions,
+.mw_metadata,
 .wikitable,
 .mw-datatable {
 	color: @text;
@@ -706,6 +786,7 @@ body :not( :checked ) > .toctogglespan:after {
 	padding: 0.5em;
 }
 
+.mw_metadata,
 .mw-datatable,
 .wikitable {
 	border-color: @base70;
@@ -717,19 +798,19 @@ body :not( :checked ) > .toctogglespan:after {
 		border: 1px solid @base70;
 		padding: 0.4em 0.5em;
 	}
-
-	> tr > th,
-	> * > tr > th {
-		border-bottom-width: 2px;
-	}
 }
 
 .mw-datatable th {
 	background: @blue-bright;
 }
 
+.mw_metadata th,
 .wikitable th {
 	background: @base80;
+}
+
+.mw_metadata {
+	border-bottom-width: 3px;
 }
 
 /* Color bars */

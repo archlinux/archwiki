@@ -3,7 +3,8 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Wt2Html\PP\Processors;
 
-use DOMElement;
+use DOMNode;
+use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Logger\LintLogger;
 use Wikimedia\Parsoid\Utils\ContentUtils;
@@ -23,8 +24,9 @@ class ConvertOffsets implements Wt2HtmlDOMProcessor {
 	 * @inheritDoc
 	 */
 	public function run(
-		Env $env, DOMElement $root, array $options = [], bool $atTopLevel = false
+		Env $env, DOMNode $root, array $options = [], bool $atTopLevel = false
 	): void {
+		Assert::invariant( $atTopLevel, 'This pass should only be run on the top-level' );
 		$doc = $root->ownerDocument;
 		$offsetType = $env->getRequestOffsetType();
 		ContentUtils::convertOffsets(

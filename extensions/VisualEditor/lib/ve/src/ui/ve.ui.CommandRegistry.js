@@ -43,11 +43,21 @@ ve.ui.CommandRegistry.prototype.register = function ( command ) {
 /**
  * Returns the primary command for for node.
  *
- * @param {ve.ce.Node} node Node to get command for
+ * @param {ve.ce.FocusableNode} node Node to get command for
  * @return {ve.ui.Command}
  */
 ve.ui.CommandRegistry.prototype.getCommandForNode = function ( node ) {
 	return this.lookup( node.constructor.static.primaryCommandName );
+};
+
+/**
+ * Returns the delete command for for node.
+ *
+ * @param {ve.ce.FocusableNode} node Node to get command for
+ * @return {ve.ui.Command}
+ */
+ve.ui.CommandRegistry.prototype.getDeleteCommandForNode = function ( node ) {
+	return this.lookup( node.constructor.static.deleteCommandName );
 };
 
 /**
@@ -174,7 +184,7 @@ ve.ui.commandRegistry.register(
 );
 ve.ui.commandRegistry.register(
 	new ve.ui.Command(
-		'findAndReplace', 'window', 'open', { args: [ 'findAndReplace', null, 'findFirst' ] }
+		'findAndReplace', 'window', 'open', { args: [ 'findAndReplace', null, 'findSelected' ] }
 	)
 );
 ve.ui.commandRegistry.register(

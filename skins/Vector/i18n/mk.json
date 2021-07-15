@@ -14,6 +14,7 @@
 	"vector.css": "/* Тука поставениот CSS се однесува на корисниците на рувото „Векторско“ */",
 	"vector.js": "/* Тука поставениот JavaScript  ќе им се вчитува на корисниците што го користат рувото „Векторско“ */",
 	"vector-action-toggle-sidebar": "Префрлање на страничник",
+	"vector-language-button-label": "{{PLURAL:$1|$1 јазик|$1 јазици}}",
 	"vector-action-addsection": "Додај тема",
 	"vector-action-delete": "Избриши",
 	"vector-action-move": "Премести",
@@ -27,5 +28,7 @@
 	"vector-view-viewsource": "Извор",
 	"vector-jumptonavigation": "Прејди на прегледникот",
 	"vector-jumptosearch": "Прејди на пребарувањето",
-	"vector-more-actions": "Повеќе"
+	"vector-jumptocontent": "Прејди на содржината",
+	"vector-more-actions": "Повеќе",
+	"vector-search-loader": "Вчитувам предлози за пребарувањето"
 }

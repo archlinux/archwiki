@@ -24,7 +24,7 @@ class ButtonWidget extends Widget {
 	/**
 	 * Whether button is active.
 	 *
-	 * @var boolean
+	 * @var bool
 	 */
 	protected $active = false;
 
@@ -47,7 +47,7 @@ class ButtonWidget extends Widget {
 	 *
 	 * True if search engines should avoid following this hyperlink.
 	 *
-	 * @var boolean
+	 * @var bool
 	 */
 	protected $noFollow = true;
 

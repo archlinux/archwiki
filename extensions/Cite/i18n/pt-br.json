@@ -5,6 +5,7 @@
 			"Dr03ramos",
 			"Eduardo Addad de Oliveira",
 			"Eduardo.mps",
+			"Eduardoaddad",
 			"Felipe L. Ewald",
 			"Giro720",
 			555
@@ -16,6 +17,7 @@
 	"cite_error_ref_numeric_key": "Marca <code>&lt;ref&gt;</code> inválida; \no nome não pode ser um número inteiro. Utilize um título descritivo",
 	"cite_error_ref_no_key": "A tag de abertura <code>&lt;ref&gt;</code> está mal formada ou tem um nome ruim",
 	"cite_error_ref_too_many_keys": "Marca <code>&lt;ref&gt;</code> inválida; \nnomes inválidos, por exemplo, muito extenso",
+	"cite_error_ref_nested_extends": "Não é permitido estender as etiquetas <code>&lt;ref&gt;</code> a mais do que um nível de profundidade",
 	"cite_error_ref_no_input": "Marca <code>&lt;ref&gt;</code> inválida; \nrefs sem nome devem possuir conteúdo",
 	"cite_error_references_duplicate_key": "Etiqueta inválida <code>&lt;ref&gt;</code>; Nome \"$1\" definido várias vezes com conteúdo diferente",
 	"cite_error_references_invalid_parameters": "Parâmetro inválido na marca <code>&lt;references&gt;</code>",

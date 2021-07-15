@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Amire80",
+			"RFScott"
+		]
+	},
+	"pfunc_expr_unrecognised_word": "Тасиаран: хэсэ-дэ отолиасини «$1»",
+	"pfunc_expr_missing_operand": "Тасиаран: $1 эм операнд абани",
+	"pfunc_expr_unrecognised_punctuation": "Тасиаран: \"$1\" пунктуация ачаси."
+}

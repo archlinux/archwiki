@@ -14,126 +14,126 @@ end
 -- Tests
 local tests = {
 	{ name = 'uri.encode', func = mw.uri.encode,
-	  args = { '__foo b\195\161r + baz__' },
-	  expect = { '__foo+b%C3%A1r+%2B+baz__' }
+		args = { '__foo b\195\161r + baz__' },
+		expect = { '__foo+b%C3%A1r+%2B+baz__' }
 	},
 	{ name = 'uri.encode QUERY', func = mw.uri.encode,
-	  args = { '__foo b\195\161r + /baz/__', 'QUERY' },
-	  expect = { '__foo+b%C3%A1r+%2B+%2Fbaz%2F__' }
+		args = { '__foo b\195\161r + /baz/__', 'QUERY' },
+		expect = { '__foo+b%C3%A1r+%2B+%2Fbaz%2F__' }
 	},
 	{ name = 'uri.encode PATH', func = mw.uri.encode,
-	  args = { '__foo b\195\161r + /baz/__', 'PATH' },
-	  expect = { '__foo%20b%C3%A1r%20%2B%20%2Fbaz%2F__' }
+		args = { '__foo b\195\161r + /baz/__', 'PATH' },
+		expect = { '__foo%20b%C3%A1r%20%2B%20%2Fbaz%2F__' }
 	},
 	{ name = 'uri.encode WIKI', func = mw.uri.encode,
-	  args = { '__foo b\195\161r + /baz/__', 'WIKI' },
-	  expect = { '__foo_b%C3%A1r_%2B_/baz/__' }
+		args = { '__foo b\195\161r + /baz/__', 'WIKI' },
+		expect = { '__foo_b%C3%A1r_%2B_/baz/__' }
 	},
 
 	{ name = 'uri.decode', func = mw.uri.decode,
-	  args = { '__foo+b%C3%A1r+%2B+baz__' },
-	  expect = { '__foo b\195\161r + baz__' }
+		args = { '__foo+b%C3%A1r+%2B+baz__' },
+		expect = { '__foo b\195\161r + baz__' }
 	},
 	{ name = 'uri.decode QUERY', func = mw.uri.decode,
-	  args = { '__foo+b%C3%A1r+%2B+baz__', 'QUERY' },
-	  expect = { '__foo b\195\161r + baz__' }
+		args = { '__foo+b%C3%A1r+%2B+baz__', 'QUERY' },
+		expect = { '__foo b\195\161r + baz__' }
 	},
 	{ name = 'uri.decode PATH', func = mw.uri.decode,
-	  args = { '__foo+b%C3%A1r+%2B+baz__', 'PATH' },
-	  expect = { '__foo+b\195\161r+++baz__' }
+		args = { '__foo+b%C3%A1r+%2B+baz__', 'PATH' },
+		expect = { '__foo+b\195\161r+++baz__' }
 	},
 	{ name = 'uri.decode WIKI', func = mw.uri.decode,
-	  args = { '__foo+b%C3%A1r+%2B+baz__', 'WIKI' },
-	  expect = { '  foo+b\195\161r+++baz  ' }
+		args = { '__foo+b%C3%A1r+%2B+baz__', 'WIKI' },
+		expect = { '  foo+b\195\161r+++baz  ' }
 	},
 
 	{ name = 'uri.anchorEncode', func = mw.uri.anchorEncode,
-	  args = { '__foo b\195\161r__' },
-	  expect = { 'foo_b.C3.A1r' }
+		args = { '__foo b\195\161r__' },
+		expect = { 'foo_b.C3.A1r' }
 	},
 
 	{ name = 'uri.new', func = test_new,
-	  args = { 'http://www.example.com/test?foo=1&bar&baz=1&baz=2#fragment' },
-	  expect = {
-		  {
-			  protocol = 'http',
-			  host = 'www.example.com',
-			  hostPort = 'www.example.com',
-			  authority = 'www.example.com',
-			  path = '/test',
-			  query = {
-				  foo = '1',
-				  bar = false,
-				  baz = { '1', '2' },
-			  },
-			  queryString = 'foo=1&bar&baz=1&baz=2',
-			  fragment = 'fragment',
-			  relativePath = '/test?foo=1&bar&baz=1&baz=2#fragment',
-		  },
-	  },
+		args = { 'http://www.example.com/test?foo=1&bar&baz=1&baz=2#fragment' },
+		expect = {
+			{
+				protocol = 'http',
+				host = 'www.example.com',
+				hostPort = 'www.example.com',
+				authority = 'www.example.com',
+				path = '/test',
+				query = {
+					foo = '1',
+					bar = false,
+					baz = { '1', '2' },
+				},
+				queryString = 'foo=1&bar&baz=1&baz=2',
+				fragment = 'fragment',
+				relativePath = '/test?foo=1&bar&baz=1&baz=2#fragment',
+			},
+		},
 	},
 
 	{ name = 'uri.new', func = mw.uri.new, type = 'ToString',
-	  args = { 'http://www.example.com/test?foo=1&bar&baz=1&baz=2#fragment' },
-	  expect = { 'http://www.example.com/test?foo=1&bar&baz=1&baz=2#fragment' },
+		args = { 'http://www.example.com/test?foo=1&bar&baz=1&baz=2#fragment' },
+		expect = { 'http://www.example.com/test?foo=1&bar&baz=1&baz=2#fragment' },
 	},
 
 	{ name = 'uri.localUrl( Example )', func = mw.uri.localUrl, type = 'ToString',
-	  args = { 'Example' },
-	  expect = { '/wiki/Example' },
+		args = { 'Example' },
+		expect = { '/wiki/Example' },
 	},
 	{ name = 'uri.localUrl( Example, string )', func = mw.uri.localUrl, type = 'ToString',
-	  args = { 'Example', 'action=edit' },
-	  expect = { '/w/index.php?title=Example&action=edit' },
+		args = { 'Example', 'action=edit' },
+		expect = { '/w/index.php?title=Example&action=edit' },
 	},
 	{ name = 'uri.localUrl( Example, table )', func = mw.uri.localUrl, type = 'ToString',
-	  args = { 'Example', { action = 'edit' } },
-	  expect = { '/w/index.php?title=Example&action=edit' },
+		args = { 'Example', { action = 'edit' } },
+		expect = { '/w/index.php?title=Example&action=edit' },
 	},
 
 	{ name = 'uri.fullUrl( Example )', func = mw.uri.fullUrl, type = 'ToString',
-	  args = { 'Example' },
-	  expect = { '//wiki.local/wiki/Example' },
+		args = { 'Example' },
+		expect = { '//wiki.local/wiki/Example' },
 	},
 	{ name = 'uri.fullUrl( Example, string )', func = mw.uri.fullUrl, type = 'ToString',
-	  args = { 'Example', 'action=edit' },
-	  expect = { '//wiki.local/w/index.php?title=Example&action=edit' },
+		args = { 'Example', 'action=edit' },
+		expect = { '//wiki.local/w/index.php?title=Example&action=edit' },
 	},
 	{ name = 'uri.fullUrl( Example, table )', func = mw.uri.fullUrl, type = 'ToString',
-	  args = { 'Example', { action = 'edit' } },
-	  expect = { '//wiki.local/w/index.php?title=Example&action=edit' },
+		args = { 'Example', { action = 'edit' } },
+		expect = { '//wiki.local/w/index.php?title=Example&action=edit' },
 	},
 
 	{ name = 'uri.canonicalUrl( Example )', func = mw.uri.canonicalUrl, type = 'ToString',
-	  args = { 'Example' },
-	  expect = { 'http://wiki.local/wiki/Example' },
+		args = { 'Example' },
+		expect = { 'http://wiki.local/wiki/Example' },
 	},
 	{ name = 'uri.canonicalUrl( Example, string )', func = mw.uri.canonicalUrl, type = 'ToString',
-	  args = { 'Example', 'action=edit' },
-	  expect = { 'http://wiki.local/w/index.php?title=Example&action=edit' },
+		args = { 'Example', 'action=edit' },
+		expect = { 'http://wiki.local/w/index.php?title=Example&action=edit' },
 	},
 	{ name = 'uri.canonicalUrl( Example, table )', func = mw.uri.canonicalUrl, type = 'ToString',
-	  args = { 'Example', { action = 'edit' } },
-	  expect = { 'http://wiki.local/w/index.php?title=Example&action=edit' },
+		args = { 'Example', { action = 'edit' } },
+		expect = { 'http://wiki.local/w/index.php?title=Example&action=edit' },
 	},
 
 	{ name = 'uri.new with empty query string', func = mw.uri.new, type = 'ToString',
-	  args = { 'http://wiki.local/w/index.php?' },
-	  expect = { 'http://wiki.local/w/index.php?' },
+		args = { 'http://wiki.local/w/index.php?' },
+		expect = { 'http://wiki.local/w/index.php?' },
 	},
 
 	{ name = 'uri.new with empty fragment', func = mw.uri.new, type = 'ToString',
-	  args = { 'http://wiki.local/w/index.php#' },
-	  expect = { 'http://wiki.local/w/index.php#' },
+		args = { 'http://wiki.local/w/index.php#' },
+		expect = { 'http://wiki.local/w/index.php#' },
 	},
 
 	{ name = 'uri.new with IPv6', func = mw.uri.new, type = 'ToString',
-	  args = { 'http://[2001:db8::]' },
-	  expect = { 'http://[2001:db8::]' },
+		args = { 'http://[2001:db8::]' },
+		expect = { 'http://[2001:db8::]' },
 	},
 	{ name = 'uri.new with IPv6 and port', func = mw.uri.new, type = 'ToString',
-	  args = { 'http://[2001:db8::]:80' },
-	  expect = { 'http://[2001:db8::]:80' },
+		args = { 'http://[2001:db8::]:80' },
+		expect = { 'http://[2001:db8::]:80' },
 	},
 }
 
@@ -175,8 +175,8 @@ while not bits[8] do
 
 	url = table.concat( url, '' )
 	tests[#tests+1] = { name = 'uri.new (' .. ct .. ')', func = mw.uri.new, type = 'ToString',
-	  args = { url },
-	  expect = { url },
+		args = { url },
+		expect = { url },
 	}
 	ct = ct + 1
 

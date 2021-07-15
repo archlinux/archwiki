@@ -61,6 +61,8 @@
 	"wikieditor-toolbar-tool-file-title": "파일 넣기",
 	"wikieditor-toolbar-file-target": "파일 이름:",
 	"wikieditor-toolbar-file-caption": "설명:",
+	"wikieditor-toolbar-file-alt": "대체 텍스트:",
+	"wikieditor-toolbar-file-alt-help-label": "(도움말 보기)",
 	"wikieditor-toolbar-file-size": "크기:",
 	"wikieditor-toolbar-file-float": "정렬:",
 	"wikieditor-toolbar-file-default": "(기본값)",

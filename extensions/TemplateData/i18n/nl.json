@@ -3,6 +3,7 @@
 		"authors": [
 			"Basvb",
 			"Dinosaur918",
+			"Dutchy45",
 			"HanV",
 			"Konovalov",
 			"Mainframe98",
@@ -71,6 +72,7 @@
 	"templatedata-modal-button-changelang": "Taal wijzigen",
 	"templatedata-modal-button-delparam": "Parameterinformatie verwijderen",
 	"templatedata-modal-button-done": "Afgerond",
+	"templatedata-modal-button-map": "Kaart bekijken",
 	"templatedata-modal-button-importParams": "Parameters importeren",
 	"templatedata-modal-button-restoreparam": "Parameter herstellen",
 	"templatedata-modal-button-saveparam": "Opslaan",

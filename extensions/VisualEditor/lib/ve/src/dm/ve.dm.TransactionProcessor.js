@@ -271,11 +271,11 @@ ve.dm.TransactionProcessor.modifiers.splice = function ( splices ) {
 	// We're about to do lots of things that can go wrong, so queue an undo function now
 	// that undoes all splices that we got to
 	this.queueUndoFunction( function () {
-		var i, s;
-		for ( i = splices.length - 1; i >= 0; i-- ) {
-			s = splices[ i ];
-			if ( s.removedData !== undefined ) {
-				data.batchSplice( s.offset, s.insert.length, s.removedData );
+		var i2, s2;
+		for ( i2 = splices.length - 1; i2 >= 0; i2-- ) {
+			s2 = splices[ i ];
+			if ( s2.removedData !== undefined ) {
+				data.batchSplice( s2.offset, s2.insert.length, s2.removedData );
 			}
 		}
 	} );
@@ -306,18 +306,21 @@ ve.dm.TransactionProcessor.modifiers.splice = function ( splices ) {
  * @param {Mixed} value New attribute value
  */
 ve.dm.TransactionProcessor.modifiers.setAttribute = function ( offset, key, value ) {
-	var item, oldValue, node,
+	var oldItem, oldValue, node,
 		data = this.document.data;
 	offset += this.adjustment;
 
-	item = data.getData( offset );
-	oldValue = item.attributes && item.attributes[ key ];
+	oldItem = data.getData( offset );
+	oldValue = oldItem.attributes && oldItem.attributes[ key ];
 	data.setAttributeAtOffset( offset, key, value );
 	this.queueUndoFunction( function () {
 		data.setAttributeAtOffset( offset, key, oldValue );
 	} );
 
 	node = this.document.getDocumentNode().getNodeFromOffset( offset + 1 );
+	// Update node element pointer
+	node.element = data.getData( offset );
+
 	this.queueEvent( node, 'attributeChange', key, oldValue, value );
 	this.queueEvent( node, 'update', this.isStaging );
 };

@@ -37,7 +37,7 @@ class FootnoteMarkFormatterTest extends \MediaWikiUnitTestCase {
 			}
 		);
 		$mockMessageLocalizer = $this->createMock( ReferenceMessageLocalizer::class );
-		$mockMessageLocalizer->method( 'formatNum' )->willReturnArgument( 0 );
+		$mockMessageLocalizer->method( 'localizeSeparators' )->willReturnArgument( 0 );
 		$mockMessageLocalizer->method( 'localizeDigits' )->willReturnArgument( 0 );
 		$mockMessageLocalizer->method( 'msg' )->willReturnCallback(
 			function ( ...$args ) use ( $group, $fooLabels ) {
@@ -143,12 +143,6 @@ class FootnoteMarkFormatterTest extends \MediaWikiUnitTestCase {
 	 * @covers ::getLinkLabel
 	 *
 	 * @dataProvider provideGetLinkLabel
-	 *
-	 * @param string|null $expectedLabel
-	 * @param int $offset
-	 * @param string $group
-	 * @param string $label
-	 * @param string|null $labelList
 	 */
 	public function testGetLinkLabel( $expectedLabel, $offset, $group, $labelList ) {
 		$mockMessageLocalizer = $this->createMock( ReferenceMessageLocalizer::class );

@@ -5,6 +5,7 @@ namespace Wikimedia\Parsoid;
 
 use Composer\Semver\Comparator;
 use Composer\Semver\Semver;
+use DOMDocument;
 use InvalidArgumentException;
 use LogicException;
 use Wikimedia\Parsoid\Config\DataAccess;
@@ -29,9 +30,9 @@ class Parsoid {
 	/**
 	 * Available HTML content versions.
 	 * @see https://www.mediawiki.org/wiki/Parsoid/API#Content_Negotiation
-	 * @see https://www.mediawiki.org/wiki/Specs/HTML/2.1.0#Versioning
+	 * @see https://www.mediawiki.org/wiki/Specs/HTML#Versioning
 	 */
-	public const AVAILABLE_VERSIONS = [ '2.1.0', '999.0.0' ];
+	public const AVAILABLE_VERSIONS = [ '2.2.0', '999.0.0' ];
 
 	private const DOWNGRADES = [
 		[ 'from' => '999.0.0', 'to' => '2.0.0', 'func' => 'downgrade999to2' ],
@@ -84,6 +85,15 @@ class Parsoid {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Determine if language conversion is enabled, aka if the optional
+	 * wikimedia/langconv library is installed.
+	 * @return bool True if the wikimedia/langconv library is available
+	 */
+	public static function supportsLanguageConversion(): bool {
+		return class_exists( '\Wikimedia\LangConv\ReplacementMachine' );
 	}
 
 	/**
@@ -175,11 +185,11 @@ class Parsoid {
 	 *   'debugFlags'           => (array) associative array with debug options
 	 *   'logLevels'            => (string[]) Levels to log
 	 * ]
-	 * @param array|null &$headers
+	 * @param ?array &$headers
 	 * @return PageBundle|string
 	 */
 	public function wikitext2html(
-		PageConfig $pageConfig, array $options = [], array &$headers = null
+		PageConfig $pageConfig, array $options = [], ?array &$headers = null
 	) {
 		[ $env, $doc, $contentmodel ] = $this->parseWikitext( $pageConfig, $options );
 		// FIXME: Does this belong in parseWikitext so that the other endpoint
@@ -226,10 +236,10 @@ class Parsoid {
 	}
 
 	/**
-	 * Serialize HTML to wikitext.
+	 * Serialize DOM to wikitext.
 	 *
 	 * @param PageConfig $pageConfig
-	 * @param string $html Data attributes are expected to have been applied
+	 * @param DOMDocument $doc Data attributes are expected to have been applied
 	 *   already.  Loading them will happen once the environment is created.
 	 * @param array $options [
 	 *   'scrubWikitext'       => (bool) Indicates emit "clean" wikitext.
@@ -245,12 +255,13 @@ class Parsoid {
 	 *   'dumpFlags'           => (array) associative array with dump options
 	 *   'debugFlags'          => (array) associative array with debug options
 	 *   'logLevels'           => (string[]) Levels to log
+	 *   'htmlSize'            => (int) Size of the HTML that generated $doc
 	 * ]
-	 * @param SelserData|null $selserData
+	 * @param ?SelserData $selserData
 	 * @return string
 	 */
-	public function html2wikitext(
-		PageConfig $pageConfig, string $html, array $options = [],
+	public function dom2wikitext(
+		PageConfig $pageConfig, DOMDocument $doc, array $options = [],
 		?SelserData $selserData = null
 	): string {
 		$envOptions = $this->setupCommonOptions( $options );
@@ -260,15 +271,31 @@ class Parsoid {
 		if ( isset( $options['scrubWikitext'] ) ) {
 			$envOptions['scrubWikitext'] = !empty( $options['scrubWikitext'] );
 		}
+		$envOptions['topLevelDoc'] = $doc;
 		$env = new Env(
 			$this->siteConfig, $pageConfig, $this->dataAccess, $envOptions
 		);
-		# Should perhaps be strlen instead (or cached!): T239841
-		$env->bumpHtml2WtResourceUse( 'htmlSize', mb_strlen( $html ) );
-		$doc = $env->createDocument( $html, true );
+		$env->bumpHtml2WtResourceUse( 'htmlSize', $options['htmlSize'] ?? 0 );
 		$contentmodel = $options['contentmodel'] ?? null;
 		$handler = $env->getContentHandler( $contentmodel );
-		return $handler->fromDOM( $env, $doc, $selserData );
+		return $handler->fromDOM( $env, $selserData );
+	}
+
+	/**
+	 * Serialize HTML to wikitext.  Convenience method for dom2wikitext.
+	 *
+	 * @param PageConfig $pageConfig
+	 * @param string $html
+	 * @param array $options
+	 * @param ?SelserData $selserData
+	 * @return string
+	 */
+	public function html2wikitext(
+		PageConfig $pageConfig, string $html, array $options = [],
+		?SelserData $selserData = null
+	): string {
+		$doc = DOMUtils::parseHTML( $html, true );
+		return $this->dom2wikitext( $pageConfig, $doc, $options, $selserData );
 	}
 
 	/**
@@ -282,78 +309,36 @@ class Parsoid {
 	 * @param PageConfig $pageConfig
 	 * @param string $update 'redlinks'|'variant'
 	 * @param PageBundle $pb
-	 * @param array|null $options
+	 * @param array $options
 	 * @return PageBundle
 	 */
 	public function pb2pb(
 		PageConfig $pageConfig, string $update, PageBundle $pb,
 		array $options = []
 	): PageBundle {
-		$newPB = $this->html2html(
-			$pageConfig, $update, $pb->toHtml(),
-			[ 'pageBundle' => true ] + $options
-			# headers are returned in the pagebundle; we don't need the
-			# $headers out-argument
-		);
-		// Prefer the passed in content model
-		$newPB->contentmodel = $pb->contentmodel ?? $newPB->contentmodel;
-		return $newPB;
-	}
-
-	/**
-	 * Update the supplied HTML based on the `$update` type.
-	 *
-	 *   'redlinks': Refreshes the classes of known, missing, etc. links.
-	 *   'variant': Converts the HTML based on the supplied variant.
-	 *
-	 * Note that these are DOM transforms, and not roundtrips through wikitext.
-	 *
-	 * @param PageConfig $pageConfig
-	 * @param string $update 'redlinks'|'variant'
-	 * @param string $html
-	 * @param array|null $options
-	 * @param array|null &$headers Output argument for HTTP headers
-	 *   which should be included in the response; when a PageBundle
-	 *   is returned this argument is unnecessary since the PageBundle
-	 *   contains the HTTP output headers.
-	 * @return string|PageBundle The ouput HTML string, with embedded
-	 *   attributes, unless $options['pageBundle'] is true, in which case
-	 *   a PageBundle is returned.
-	 */
-	public function html2html(
-		PageConfig $pageConfig, string $update, string $html,
-		array $options = [], array &$headers = null
-	) {
-		$envOptions = [];
-		if ( isset( $options['pageBundle'] ) ) {
-			$envOptions['pageBundle'] = !empty( $options['pageBundle'] );
-		}
+		$envOptions = [
+			'pageBundle' => true,
+			'topLevelDoc' => DOMUtils::parseHTML( $pb->toHtml(), true ),
+		];
 		$env = new Env(
 			$this->siteConfig, $pageConfig, $this->dataAccess, $envOptions
 		);
-		$doc = $env->createDocument( $html, true );
+		$doc = $env->topLevelDoc;
+		DOMDataUtils::visitAndLoadDataAttribs(
+			DOMCompat::getBody( $doc ), [ 'markNew' => true ]
+		);
 		ContentUtils::convertOffsets(
 			$env, $doc, $env->getRequestOffsetType(), 'byte'
 		);
 		if ( $update === 'redlinks' ) {
 			( new AddRedLinks() )->run( $env, DOMCompat::getBody( $doc ) );
 		} elseif ( $update === 'variant' ) {
-			DOMDataUtils::visitAndLoadDataAttribs(
-				DOMCompat::getBody( $doc ), [ 'markNew' => true ]
-			);
 			// Note that `maybeConvert` could still be a no-op, in case the
 			// __NOCONTENTCONVERT__ magic word is present, or the targetVariant
 			// is a base language code or otherwise invalid.
 			LanguageConverter::maybeConvert(
 				$env, $doc, $options['variant']['target'],
 				$options['variant']['source'] ?? null
-			);
-			DOMDataUtils::visitAndStoreDataAttribs(
-				DOMCompat::getBody( $doc ), [
-					'discardDataParsoid' => $env->discardDataParsoid,
-					'storeInPageBundle' => $env->pageBundle,
-					'env' => $env,
-				]
 			);
 			// Ensure there's a <head>
 			if ( !DOMCompat::getHead( $doc ) ) {
@@ -380,29 +365,30 @@ class Parsoid {
 		} else {
 			throw new LogicException( 'Unknown transformation.' );
 		}
-		( new ConvertOffsets() )->run( $env, DOMCompat::getBody( $doc ) );
-		$headers = DOMUtils::findHttpEquivHeaders( $doc );
-		// No need to `ContentUtils.extractDpAndSerialize`, it wasn't applied.
+		( new ConvertOffsets() )->run( $env, DOMCompat::getBody( $doc ), [], true );
+		DOMDataUtils::visitAndStoreDataAttribs(
+			DOMCompat::getBody( $doc ), [
+				'discardDataParsoid' => $env->discardDataParsoid,
+				'storeInPageBundle' => $env->pageBundle,
+				'env' => $env,
+			]
+		);
 		$body_only = !empty( $options['body_only'] );
 		$node = $body_only ? DOMCompat::getBody( $doc ) : $doc;
-		if ( $env->pageBundle ) {
-			DOMDataUtils::injectPageBundle( $doc, DOMDataUtils::getPageBundle( $doc ) );
-			$out = ContentUtils::extractDpAndSerialize( $node, [
-				'innerXML' => $body_only,
-			] );
-			return new PageBundle(
-				$out['html'],
-				get_object_vars( $out['pb']->parsoid ),
-				isset( $out['pb']->mw ) ? get_object_vars( $out['pb']->mw ) : null,
-				$env->getOutputContentVersion(),
-				$headers,
-				$pageConfig->getContentModel()
-			);
-		} else {
-			return ContentUtils::toXML( $node, [
-				'innerXML' => $body_only,
-			] );
-		}
+		DOMDataUtils::injectPageBundle( $doc, DOMDataUtils::getPageBundle( $doc ) );
+		$out = ContentUtils::extractDpAndSerialize( $node, [
+			'innerXML' => $body_only,
+		] );
+		return new PageBundle(
+			$out['html'],
+			get_object_vars( $out['pb']->parsoid ),
+			isset( $out['pb']->mw ) ? get_object_vars( $out['pb']->mw ) : null,
+			// Prefer the passed in version, since this was just a transformation
+			$pb->version ?? $env->getOutputContentVersion(),
+			DOMUtils::findHttpEquivHeaders( $doc ),
+			// Prefer the passed in content model
+			$pb->contentmodel ?? $pageConfig->getContentModel()
+		);
 	}
 
 	/**

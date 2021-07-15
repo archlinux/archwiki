@@ -15,6 +15,7 @@ use Wikimedia\TestingAccessWrapper;
  * @covers Scribunto_LuaStandaloneInterpreter
  */
 class Scribunto_LuaStandaloneInterpreterTest extends Scribunto_LuaInterpreterTest {
+	/** @var array */
 	public $stdOpts = [
 		'errorFile' => null,
 		'luaPath' => null,

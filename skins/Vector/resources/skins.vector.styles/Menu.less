@@ -1,22 +1,17 @@
 @import '../../variables.less';
 @import 'mediawiki.mixins.less';
 
-/* Hide empty portlets */
-// This class has special magical powers. It can be removed by
-// mw.util.addPortletLink
-// in core:resources/src/mediawiki.util/util.js
-// When I93fb6c96df9f238d1c0281cb66512b135ca2afc2 has been merged
-// and is deployed this line of CSS should be removed or replaced
-// with the class ".vector-menu-empty"
-// See T253912.
-.emptyPortlet {
-	display: none;
+/* Personal Menu */
+#p-personal .vector-menu-content-list {
+	display: flex;
+	flex-wrap: wrap;
+	flex-grow: 1;
+	justify-content: flex-end;
+	align-items: baseline;
 }
 
-/* Personal */
-.vector-menu,
-/* FIXME: Remove p-personal selector when cache has cleared. */
-#p-personal {
+/* Personal Menu */
+.mw-portlet {
 	// Hidden by default, but displayed by certain menus
 	// e.g. MenuPortal
 	h3 {
@@ -40,9 +35,7 @@
 /* Icon for registered user names & anonymous message */
 #pt-anonuserpage,
 #pt-userpage a {
-	// SVG support using a transparent gradient to guarantee cross-browser
-	// compatibility (browsers able to understand gradient syntax support also SVG)
-	.background-image-svg( 'images/user-avatar.svg', 'images/user-avatar.png' );
+	background-image: url( images/user-avatar.svg );
 	background-position: @background-position-nav-personal-icon;
 	background-repeat: no-repeat;
 	background-size: @background-size-nav-personal-icon @background-size-nav-personal-icon;

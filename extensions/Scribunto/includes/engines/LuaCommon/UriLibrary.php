@@ -40,7 +40,7 @@ class Scribunto_LuaUriLibrary extends Scribunto_LuaLibraryBase {
 		}
 		if ( $title ) {
 			# Convert NS_MEDIA -> NS_FILE
-			if ( $title->getNamespace() == NS_MEDIA ) {
+			if ( $title->getNamespace() === NS_MEDIA ) {
 				$title = Title::makeTitle( NS_FILE, $title->getDBkey() );
 			}
 			if ( $query !== null ) {

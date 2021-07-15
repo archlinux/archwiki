@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\CheckUser\Hooks;
 use MediaWiki\MediaWikiServices;
 use Wikimedia\Rdbms\Database;
 
@@ -35,31 +36,26 @@ class SpamBlacklist extends BaseBlacklist {
 	 *               This is used to load the old links already on the page, so
 	 *               the filter is only applied to links that got added. If not given,
 	 *               the filter is applied to all $links.
+	 * @param User $user Relevant user
 	 * @param bool $preventLog Whether to prevent logging of hits. Set to true when
 	 *               the action is testing the links rather than attempting to save them
 	 *               (e.g. the API spamblacklist action)
 	 * @param string $mode Either 'check' or 'stash'
-	 * @param User|null $user Relevant user, only optional for backwards compatibility
 	 *
 	 * @return string[]|bool Matched text(s) if the edit should not be allowed; false otherwise
 	 */
 	public function filter(
 		array $links,
 		?Title $title,
+		User $user,
 		$preventLog = false,
-		$mode = 'check',
-		User $user = null
+		$mode = 'check'
 	) {
 		$statsd = MediaWikiServices::getInstance()->getStatsdDataFactory();
 		$cache = ObjectCache::getLocalClusterInstance();
 
 		if ( !$links ) {
 			return false;
-		}
-
-		if ( $user === null ) {
-			wfDebugLog( 'SpamBlacklist', 'filter called without user specified' );
-			$user = RequestContext::getMain()->getUser();
 		}
 
 		sort( $links );
@@ -196,8 +192,14 @@ class SpamBlacklist extends BaseBlacklist {
 		);
 	}
 
-	public function warmCachesForFilter( Title $title, array $entries ) {
-		$this->filter( $entries, $title, true /* no logging */, 'stash' );
+	public function warmCachesForFilter( Title $title, array $entries, User $user ) {
+		$this->filter(
+			$entries,
+			$title,
+			$user,
+			true /* no logging */,
+			'stash'
+		);
 	}
 
 	/**
@@ -241,11 +243,9 @@ class SpamBlacklist extends BaseBlacklist {
 			if ( $log->isRestricted() ) {
 				// Make sure checkusers can see this action if the log is restricted
 				// (which is the default)
-				if ( ExtensionRegistry::getInstance()->isLoaded( 'CheckUser' )
-					&& class_exists( CheckUserHooks::class )
-				) {
+				if ( ExtensionRegistry::getInstance()->isLoaded( 'CheckUser' ) ) {
 					$rc = $logEntry->getRecentChange( $logid );
-					CheckUserHooks::updateCheckUserData( $rc );
+					Hooks::updateCheckUserData( $rc );
 				}
 			} else {
 				// If the log is unrestricted, publish normally to RC,

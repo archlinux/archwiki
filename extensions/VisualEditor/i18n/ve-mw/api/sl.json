@@ -21,7 +21,7 @@
 	"apihelp-visualeditor-summary": "Vrne HTML5 za stran iz storitve Parsoid.",
 	"apihelp-visualeditoredit-param-etag": "ETag za pošiljanje.",
 	"apihelp-visualeditoredit-param-html": "HTML za pošiljanje Parsoidu za pretvorbo v wikibesedilo.",
-	"apihelp-visualeditoredit-param-minor": "Označba za manjše urejanje.",
+	"apihelp-visualeditoredit-param-minor": "Oznaka za manjše urejanje.",
 	"apihelp-visualeditoredit-param-paction": "Dejanje za izvedbo.",
 	"apihelp-visualeditoredit-param-page": "Stran, na kateri bodo dejanja izvedena.",
 	"apihelp-visualeditoredit-param-sectiontitle": "Naslov novega razdelka.",

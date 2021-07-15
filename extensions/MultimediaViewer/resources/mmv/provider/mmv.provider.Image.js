@@ -61,9 +61,13 @@
 			uri;
 
 		if ( this.imageQueryParameter ) {
-			uri = new mw.Uri( url );
-			extraParam[ this.imageQueryParameter ] = null;
-			url = uri.extend( extraParam ).toString();
+			try {
+				uri = new mw.Uri( url );
+				extraParam[ this.imageQueryParameter ] = null;
+				url = uri.extend( extraParam ).toString();
+			} catch ( error ) {
+				return $.Deferred().reject( error.message );
+			}
 		}
 
 		if ( !this.cache[ cacheKey ] ) {

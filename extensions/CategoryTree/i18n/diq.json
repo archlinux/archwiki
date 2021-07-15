@@ -3,6 +3,7 @@
 		"authors": [
 			"1917 Ekim Devrimi",
 			"Erdemaslancan",
+			"Ghybu",
 			"Gırd",
 			"Kumkumuk",
 			"Marmase",
@@ -11,12 +12,12 @@
 			"Xoser"
 		]
 	},
-	"categorytree": "Dara Kategoriya",
+	"categorytree": "Dara kategoriyan",
 	"categorytree-portlet": "Kategoriy",
 	"categorytree-legend": "Dara kategori bımotné",
 	"categorytree-desc": "[[Special:CategoryTree|Babeta kategoriya]] dinamikey sera idare ke",
 	"categorytree-header": "Yew namey kategori bınuse kı zerrekê ey zey vıraştışê dare bıvêne. (Javaskript lazımo)",
-	"categorytree-category": "Kategori:",
+	"categorytree-category": "Kategoriye:",
 	"categorytree-go": "Darer bımocne",
 	"categorytree-parents": "Kategoriyê serêni",
 	"categorytree-mode-label": "Modê cı:",
@@ -29,7 +30,7 @@
 	"categorytree-num-categories": "$1 Kategoriy",
 	"categorytree-num-pages": "$1 Peli",
 	"categorytree-num-files": "$1 Dosya",
-	"categorytree-num-empty": "'''Venga'''",
+	"categorytree-num-empty": "venga",
 	"categorytree-load": "Bar ke",
 	"categorytree-loading": "bar beno...",
 	"categorytree-nothing-found": "maalesef netice çınyo",

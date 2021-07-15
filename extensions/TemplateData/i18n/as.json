@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Mohsin Ali",
+			"Simbu123"
+		]
+	},
+	"templatedata-modal-button-addmap": "নতুন মানচিত্ৰ যোগ কৰক",
+	"templatedata-modal-button-map": "মানচিত্ৰ সম্পাদনা কৰক",
+	"templatedata-modal-button-removemap": "মানচিত্ৰ আঁতৰাওক",
+	"templatedata-modal-placeholder-add-new-map-input": "নতুন মানচিত্ৰ যোগ কৰি থকা হৈছে...",
+	"templatedata-modal-placeholder-prompt-map-name": "মানচিত্ৰৰ নাম লিখক"
+}

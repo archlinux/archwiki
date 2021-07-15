@@ -34,12 +34,9 @@ ve.dm.CommentNode.static.isContent = true;
 ve.dm.CommentNode.static.preserveHtmlAttributes = false;
 
 ve.dm.CommentNode.static.toDataElement = function ( domElements, converter ) {
-	var textarea, text;
+	var text;
 	if ( domElements[ 0 ].nodeType === Node.COMMENT_NODE ) {
-		// Decode HTML entities, safely (no elements permitted inside textarea)
-		textarea = document.createElement( 'textarea' );
-		textarea.innerHTML = domElements[ 0 ].data;
-		text = textarea.textContent;
+		text = ve.safeDecodeEntities( domElements[ 0 ].data );
 	} else {
 		text = domElements[ 0 ].getAttribute( 'data-ve-comment' );
 	}
@@ -82,8 +79,14 @@ ve.dm.CommentNode.static.toDomElements = function ( dataElement, doc, converter 
 };
 
 ve.dm.CommentNode.static.describeChange = function ( key, change ) {
+	var diff;
 	if ( key === 'text' ) {
-		// TODO: Run comment changes through a linear differ.
-		return ve.htmlMsg( 'visualeditor-changedesc-comment', this.wrapText( 'del', change.from ), this.wrapText( 'ins', change.to ) );
+		diff = this.getAttributeDiff( change.from, change.to );
+		if ( diff ) {
+			// TODO: Use a word-break based diff for comment text
+			return ve.htmlMsg( 'visualeditor-changedesc-comment-diff', diff );
+		} else {
+			return ve.htmlMsg( 'visualeditor-changedesc-comment', this.wrapText( 'del', change.from ), this.wrapText( 'ins', change.to ) );
+		}
 	}
 };

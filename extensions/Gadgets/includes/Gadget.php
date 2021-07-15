@@ -22,21 +22,36 @@ class Gadget {
 
 	public const CACHE_TTL = 86400;
 
-	private $scripts = [],
-			$styles = [],
-			$dependencies = [],
-			$peers = [],
-			$messages = [],
-			$name,
-			$definition,
-			$resourceLoaded = false,
-			$requiredRights = [],
-			$requiredSkins = [],
-			$targets = [ 'desktop' ],
-			$onByDefault = false,
-			$hidden = false,
-			$type = '',
-			$category;
+	/** @var string[] */
+	private $scripts = [];
+	/** @var string[] */
+	private $styles = [];
+	/** @var string[] */
+	private $dependencies = [];
+	/** @var string[] */
+	private $peers = [];
+	/** @var string[] */
+	private $messages = [];
+	/** @var string|null */
+	private $name;
+	/** @var string|null */
+	private $definition;
+	/** @var bool */
+	private $resourceLoaded = false;
+	/** @var string[] */
+	private $requiredRights = [];
+	/** @var string[] */
+	private $requiredSkins = [];
+	/** @var string[] */
+	private $targets = [ 'desktop' ];
+	/** @var bool */
+	private $onByDefault = false;
+	/** @var bool */
+	private $hidden = false;
+	/** @var string */
+	private $type = '';
+	/** @var string|null */
+	private $category;
 
 	public function __construct( array $options ) {
 		foreach ( $options as $member => $option ) {
@@ -168,7 +183,10 @@ class Gadget {
 	 * @return bool
 	 */
 	public function isAllowed( User $user ) {
-		return $user->isAllowedAll( ...$this->requiredRights );
+		if ( count( $this->requiredRights ) ) {
+			return $user->isAllowedAll( ...$this->requiredRights );
+		}
+		return true;
 	}
 
 	/**

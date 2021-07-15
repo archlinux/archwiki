@@ -3,6 +3,7 @@
 		"authors": [
 			"Firilacroco",
 			"Fitoschido",
+			"NGC 54",
 			"Narlotep1",
 			"Stelistcristi",
 			"Strainu"
@@ -10,8 +11,14 @@
 	},
 	"specialpages-group-oath": "Autentificare pe două niveluri",
 	"oathauth-account": "Numele contului:",
+	"oathauth-enable": "Activează autentificarea cu doi factori",
 	"oathauth-token": "Jeton",
 	"oathauth-prefs-label": "Autentificare pe două niveluri:",
 	"oathauth-step4": "Pasul 4: Verificare",
-	"oathauth-auth-ui": "Va rugam introduceti codul de autentificare de pe dispozitivul dumneavoastra."
+	"right-oathauth-enable": "Activează autentificarea cu doi factori",
+	"action-oathauth-enable": "activează autentificarea cu doi factori",
+	"oathauth-auth-ui": "Va rugam introduceti codul de autentificare de pe dispozitivul dumneavoastra.",
+	"oauthauth-ui-no-module": "Niciuna activată",
+	"oathauth-ui-manage": "Administrare",
+	"oathmanage": "Administrare autentificare cu doi factori"
 }

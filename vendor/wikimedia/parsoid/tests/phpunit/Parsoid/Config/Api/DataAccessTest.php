@@ -35,22 +35,22 @@ class DataAccessTest extends \PHPUnit\Framework\TestCase {
 
 		$this->assertSame( [
 			'Foo' => [ 'pageId' => 1, 'revId' => 10, 'missing' => false,
-				'known' => true, 'redirect' => true, 'disambiguation' => false,
+				'known' => true, 'redirect' => true, 'linkclasses' => [],
 				'invalid' => false ],
 			'Bar_(disambiguation)' => [ 'pageId' => 2, 'revId' => 11, 'missing' => false,
-				'known' => true, 'redirect' => false, 'disambiguation' => true,
+				'known' => true, 'redirect' => false, 'linkclasses' => [ 'mw-disambig' ],
 				'invalid' => false ],
 			'Special:SpecialPages' => [ 'pageId' => null, 'revId' => null, 'missing' => false,
-				'known' => true, 'redirect' => false, 'disambiguation' => false,
+				'known' => true, 'redirect' => false, 'linkclasses' => [],
 				'invalid' => false ],
 			'ThisPageDoesNotExist' => [ 'pageId' => null, 'revId' => null, 'missing' => true,
-				'known' => false, 'redirect' => false, 'disambiguation' => false,
+				'known' => false, 'redirect' => false, 'linkclasses' => [],
 				'invalid' => false ],
 			'File:Example.svg' => [ 'pageId' => null, 'revId' => null,	'missing' => true,
-				'known' => true, 'redirect' => false, 'disambiguation' => false,
+				'known' => true, 'redirect' => false, 'linkclasses' => [],
 				'invalid' => false ],
 			':' => [ 'pageId' => null, 'revId' => null, 'missing' => false,
-					'known' => false, 'redirect' => false, 'disambiguation' => false,
+					'known' => false, 'redirect' => false, 'linkclasses' => [],
 					'invalid' => true ],
 		], $data );
 	}
@@ -106,7 +106,7 @@ class DataAccessTest extends \PHPUnit\Framework\TestCase {
 			'html' => "<p>Foobar.<sup class=\"noprint Inline-Template Template-Fact\" style=\"white-space:nowrap;\">&#91;<i><a href=\"/wiki/Wikipedia:Citation_needed\" title=\"Wikipedia:Citation needed\"><span title=\"This claim needs references to reliable sources.\">citation needed</span></a></i>&#93;</sup> {{subst:unsigned|Example}} ~~~~~\n</p>",
 			'modules' => [],
 			'modulestyles' => [],
-			'modulescripts' => [],
+			'jsconfigvars' => [],
 			'categories' => [
 				'All_articles_with_unsourced_statements' => '',
 				'Articles_with_unsourced_statements' => '',
@@ -128,7 +128,7 @@ class DataAccessTest extends \PHPUnit\Framework\TestCase {
 			'wikitext' => "Foobar.[[Category:All articles with unsourced statements]][[Category:Articles with unsourced statements ]]<sup class=\"noprint Inline-Template Template-Fact\" style=\"white-space:nowrap;\">&#91;<i>[[Wikipedia:Citation needed|<span title=\"This claim needs references to reliable sources.\">citation needed</span>]]</i>&#93;</sup> {{subst:unsigned|Example}} ~~~~~",
 			'modules' => [],
 			'modulestyles' => [],
-			'modulescripts' => [],
+			'jsconfigvars' => [],
 			'categories' => [],
 			'properties' => [],
 		], $ret );
@@ -139,10 +139,10 @@ class DataAccessTest extends \PHPUnit\Framework\TestCase {
 		);
 	}
 
-	public function testFetchPageContent() {
+	public function testFetchTemplateSource() {
 		$pageConfig = new MockPageConfig( [ 'title' => 'Foobar' ], null );
 		$da = $this->getDataAccess( 'pagecontent-cur' );
-		$c = $da->fetchPageContent( $pageConfig, 'Help:Sample page' );
+		$c = $da->fetchTemplateSource( $pageConfig, 'Help:Sample page' );
 		$this->assertInstanceOf( PageContent::class, $c );
 		$this->assertSame( [ 'main' ], $c->getRoles() );
 		$this->assertSame( 'wikitext', $c->getModel( 'main' ) );
@@ -154,19 +154,7 @@ class DataAccessTest extends \PHPUnit\Framework\TestCase {
 		);
 
 		// Test caching. Cache miss would make TestApiHelper throw.
-		$this->assertEquals( $c, $da->fetchPageContent( $pageConfig, 'Help:Sample page' ) );
-
-		$c = $this->getDataAccess( 'pagecontent-old' )
-			  ->fetchPageContent( $pageConfig, 'Help:Sample page', 776171508 );
-		$this->assertInstanceOf( PageContent::class, $c );
-		$this->assertSame( [ 'main' ], $c->getRoles() );
-		$this->assertSame( 'wikitext', $c->getModel( 'main' ) );
-		$this->assertSame( 'text/x-wiki', $c->getFormat( 'main' ) );
-		$this->assertSame(
-			// phpcs:ignore Generic.Files.LineLength.TooLong
-			"Our '''world''' is a planet where human beings have formed many societies.\n\nNobody knows whether there are intelligent beings on other worlds.\n\nThere are about one septillion (10<sup>24</sup>) worlds in the universe.\n\n<!-- All the contet here is public domain and has been copied from https://www.mediawiki.org/w/index.php?title=Help:Sample_page&oldid=2331983. Only add content here that has been previously been placed in the public domain as this page is used to generate screenshots -->",
-			$c->getContent( 'main' )
-		);
+		$this->assertEquals( $c, $da->fetchTemplateSource( $pageConfig, 'Help:Sample page' ) );
 	}
 
 	public function testFetchTemplateData() {

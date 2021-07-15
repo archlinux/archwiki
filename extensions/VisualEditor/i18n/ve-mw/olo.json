@@ -166,7 +166,6 @@
 	"visualeditor-savedialog-identify-anon": "Tahtotgo tallendua sivun kirjuttamattomannu käyttäjänny? Sinun IP-adressu kirjatah tämän sivun muutoshistourieh.",
 	"visualeditor-savedialog-identify-user": "Olet kirjutannuhes käyttäjänny [[User:$1|$1]]. Sinun kohendukset liitetäh täh tunnukseh, ku tallendanet kohenduksen.",
 	"visualeditor-savedialog-label-create": "Luaji sivu",
-	"visualeditor-savedialog-label-error": "Haireh",
 	"visualeditor-savedialog-label-report": "Kirjuta probliemas",
 	"visualeditor-savedialog-label-resolve-conflict": "Selvitä risturiidu",
 	"visualeditor-savedialog-label-resume-editing": "Jatka edituičendua",

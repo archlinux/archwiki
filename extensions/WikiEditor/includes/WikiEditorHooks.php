@@ -64,6 +64,10 @@ class WikiEditorHooks {
 			'mw_version' => MW_VERSION,
 		] + $data;
 
+		if ( $user->getOption( 'discussiontools-abtest' ) ) {
+			$data['bucket'] = $user->getOption( 'discussiontools-abtest' );
+		}
+
 		if ( $user->isAnon() ) {
 			$data['user_class'] = 'IP';
 		}
@@ -115,7 +119,14 @@ class WikiEditorHooks {
 					$data['init_mechanism'] = 'click';
 				}
 			} else {
-				$data['init_mechanism'] = 'url';
+				if (
+					$request->getVal( 'section' ) === 'new'
+					|| !$article->getPage()->exists()
+				) {
+					$data['init_mechanism'] = 'url-new';
+				} else {
+					$data['init_mechanism'] = 'url';
+				}
 			}
 
 			self::doEventLogging( 'init', $article, $data );
@@ -218,11 +229,12 @@ class WikiEditorHooks {
 
 	/**
 	 * Expose useful magic words which are used by the wikieditor toolbar
-	 * @return string[]
+	 * @return string[][]
 	 */
 	private static function getMagicWords() {
 		$requiredMagicWords = [
 			'redirect',
+			'img_alt',
 			'img_right',
 			'img_left',
 			'img_none',
@@ -234,7 +246,7 @@ class WikiEditorHooks {
 		$magicWords = [];
 		$factory = MediaWikiServices::getInstance()->getMagicWordFactory();
 		foreach ( $requiredMagicWords as $name ) {
-			$magicWords[$name] = $factory->get( $name )->getSynonym( 0 );
+			$magicWords[$name] = $factory->get( $name )->getSynonyms();
 		}
 		return $magicWords;
 	}
@@ -289,30 +301,41 @@ class WikiEditorHooks {
 				$action = 'saveSuccess';
 			} else {
 				$action = 'saveFailure';
-				$errors = $status->getErrorsArray();
 
-				if ( isset( $errors[0][0] ) ) {
-					$data['save_failure_message'] = $errors[0][0];
+				// Compare to ve.init.mw.ArticleTargetEvents.js in VisualEditor.
+				$typeMap = [
+					'badtoken' => 'userBadToken',
+					'assertanonfailed' => 'userNewUser',
+					'assertuserfailed' => 'userNewUser',
+					'assertnameduserfailed' => 'userNewUser',
+					'abusefilter-disallowed' => 'extensionAbuseFilter',
+					'abusefilter-warning' => 'extensionAbuseFilter',
+					'captcha' => 'extensionCaptcha',
+					'spamblacklist' => 'extensionSpamBlacklist',
+					'titleblacklist-forbidden' => 'extensionTitleBlacklist',
+					'pagedeleted' => 'editPageDeleted',
+					'editconflict' => 'editConflict'
+				];
+
+				$errors = $status->getErrorsArray();
+				// Replicate how the API generates error codes, in order to log data that is consistent with
+				// all other tools (which save changes via the API)
+				if ( isset( $errors[0] ) ) {
+					$code = ApiMessage::create( $errors[0] )->getApiCode();
+				} else {
+					$code = 'unknown';
 				}
 
 				$wikiPage = $editPage->getArticle()->getPage();
-				if ( $status->value === EditPage::AS_CONFLICT_DETECTED ) {
-					$data['save_failure_type'] = 'editConflict';
-				} elseif ( $status->value === EditPage::AS_ARTICLE_WAS_DELETED ) {
-					$data['save_failure_type'] = 'editPageDeleted';
-				} elseif ( isset( $errors[0][0] ) && $errors[0][0] === 'abusefilter-disallowed' ) {
-					$data['save_failure_type'] = 'extensionAbuseFilter';
-				} elseif ( isset( $wikiPage->ConfirmEdit_ActivateCaptcha ) ) {
+				if ( isset( $wikiPage->ConfirmEdit_ActivateCaptcha ) ) {
 					// TODO: :(
-					$data['save_failure_type'] = 'extensionCaptcha';
-				} elseif ( isset( $errors[0][0] ) && $errors[0][0] === 'spam-blacklisted-link' ) {
-					$data['save_failure_type'] = 'extensionSpamBlacklist';
-				} else {
-					// Catch everything else... We don't seem to get userBadToken or
-					// userNewUser through this hook.
-					$data['save_failure_type'] = 'responseUnknown';
+					$code = 'captcha';
 				}
+
+				$data['save_failure_message'] = $code;
+				$data['save_failure_type'] = $typeMap[ $code ] ?? 'responseUnknown';
 			}
+
 			self::doEventLogging( $action, $article, $data );
 		}
 	}

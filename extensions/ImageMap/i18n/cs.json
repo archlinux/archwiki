@@ -2,13 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"Li-sung",
+			"Matěj Suchánek",
 			"Mormegil"
 		]
 	},
 	"imagemap_desc": "Umožňuje vytvoření klikací mapy obrázku na straně klienta pomocí značky <code>&lt;imagemap&gt;</code>",
 	"imagemap_no_image": "Error: na první řádce musí být určen obrázek",
 	"imagemap_invalid_image": "Error: soubor není platný nebo neexistuje",
-	"imagemap_bad_image": "Chyba: obrázek se nachází na černé listině",
+	"imagemap_bad_image": "Chyba: Obrázek není na této stránce povolen.",
 	"imagemap_no_link": "Error: nebyl nalezen žádný platný odkaz na konci řádku $1",
 	"imagemap_invalid_title": "Error: neplatný název v odkazu na řádku $1",
 	"imagemap_missing_coord": "Error: chybějící souřadnice tvaru na řádku $1",

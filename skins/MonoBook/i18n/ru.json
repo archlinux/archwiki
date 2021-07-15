@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"AlexSm",
+			"Jack who built the house",
 			"Kaganer",
 			"Movses",
 			"Okras",
@@ -21,5 +22,5 @@
 	"monobook-cactions-label": "Действия на странице",
 	"monobook-notifications-link": "Уведомления ($1)",
 	"monobook-notifications-link-none": "Уведомления",
-	"monobook-responsive-label": "Включить оформление MonoBook"
+	"monobook-responsive-label": "Включить адаптивный дизайн MonoBook"
 }

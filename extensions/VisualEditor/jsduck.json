@@ -8,7 +8,7 @@
 	"--warnings-exit-nonzero": true,
 	"--builtin-classes": true,
 	"--external": "HTMLDocument,HTMLBodyElement,HTMLHtmlElement,Window,Node,Text,Set,Range,Selection,ClientRect,File,FileList,Blob,DataTransfer,DataTransferItem,KeyboardEvent,MouseEvent,Promise,Storage",
-	"--warnings": ["-nodoc(class,public)", "-global"],
+	"--warnings": [ "-nodoc(class,public)", "-global" ],
 	"--exclude": [
 		"lib/ve/rebaser/src/dm/"
 	],

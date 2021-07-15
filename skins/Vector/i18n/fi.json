@@ -19,6 +19,7 @@
 	"vector.css": "/* Tämä sivu sisältää Vektori-ulkoasua muuttavia tyylejä. */",
 	"vector.js": "/* Tämän sivun JavaScript-koodi liitetään Vektori-tyyliin */",
 	"vector-action-toggle-sidebar": "Näytä/piilota sivupalkki",
+	"vector-language-button-label": "{{PLURAL:$1|$1 kieli|$1 kieltä}}",
 	"vector-action-addsection": "Lisää aihe",
 	"vector-action-delete": "Poista",
 	"vector-action-move": "Siirrä",
@@ -32,5 +33,7 @@
 	"vector-view-viewsource": "Näytä lähdekoodi",
 	"vector-jumptonavigation": "Siirry navigaatioon",
 	"vector-jumptosearch": "Siirry hakuun",
-	"vector-more-actions": "Muut"
+	"vector-jumptocontent": "Siirry sisältöön",
+	"vector-more-actions": "Muut",
+	"vector-search-loader": "Ladataan hakuehdotuksia"
 }

@@ -66,48 +66,24 @@ class CiteIntegrationTest extends \MediaWikiIntegrationTestCase {
 	public function provideCheckRefsNoReferences() {
 		return [
 			'Default group' => [
-				[
-					'' => [
-						[
-							'name' => 'a',
-						]
-					]
-				],
+				[ '' => [ [ 'name' => 'a' ] ] ],
 				false,
 				"\n" . '<references />'
 			],
 			'Default group in preview' => [
-				[
-					'' => [
-						[
-							'name' => 'a',
-						]
-					]
-				],
+				[ '' => [ [ 'name' => 'a' ] ] ],
 				true,
 				"\n" . '<div class="mw-ext-cite-cite_section_preview_references">' .
 				'<h2 id="mw-ext-cite-cite_section_preview_references_header">' .
 				'(cite_section_preview_references)</h2>' . "\n" . '<references /></div>'
 			],
 			'Named group' => [
-				[
-					'foo' => [
-						[
-							'name' => 'a',
-						]
-					]
-				],
+				[ 'foo' => [ [ 'name' => 'a' ] ] ],
 				false,
 				"\n" . '<br />(cite_error_group_refs_without_references|foo)'
 			],
 			'Named group in preview' => [
-				[
-					'foo' => [
-						[
-							'name' => 'a',
-						]
-					]
-				],
+				[ 'foo' => [ [ 'name' => 'a' ] ] ],
 				true,
 				"\n" . '<div class="mw-ext-cite-cite_section_preview_references">' .
 				'<h2 id="mw-ext-cite-cite_section_preview_references_header">' .

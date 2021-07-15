@@ -2,7 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Eduardo Addad de Oliveira",
-			"Felipe L. Ewald"
+			"Eduardoaddad",
+			"Felipe L. Ewald",
+			"Jaideraf"
 		]
 	},
 	"skinname-timeless": "Timeless",
@@ -24,6 +26,6 @@
 	"timeless-pagetools": "Ações da página",
 	"timeless-languages": "Idiomas",
 	"timeless-projects": "Outros projetos",
-	"timeless.css": "/* CSS colocado aqui afetará os usuários da pele intemporal */",
+	"timeless.css": "/* Todo o CSS colocado aqui será carregado para os usuários do tema Timeless */",
 	"timeless.js": "/* Todo o JavaScript aqui será carregado para os usuários do tema Timeless */"
 }

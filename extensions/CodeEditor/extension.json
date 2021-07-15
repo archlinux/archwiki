@@ -80,14 +80,14 @@
 			},
 			"images": {
 				"gotoLine": {
-					"file": "../images/gotoLine.svg"
+					"file": "images/gotoLine.svg"
 				},
 				"pilcrow": {
-					"file": "../images/pilcrow.svg",
+					"file": "images/pilcrow.svg",
 					"variants": [ "progressive" ]
 				},
 				"wrapping": {
-					"file": "../images/wrapping.svg",
+					"file": "images/wrapping.svg",
 					"variants": [ "progressive" ]
 				}
 			}
@@ -102,6 +102,9 @@
 				"ace/mode-lua.js",
 				"ace/ext-language_tools.js",
 				"ace/ext-modelist.js"
+			],
+			"styles": [
+				"ace.less"
 			]
 		},
 		"ext.codeEditor.ace.modes": {

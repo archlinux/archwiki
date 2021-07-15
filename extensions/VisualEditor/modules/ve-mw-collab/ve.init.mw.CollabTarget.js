@@ -119,6 +119,13 @@ ve.init.mw.CollabTarget.prototype.restorePage = function () {
 };
 
 /**
+ * MWBackTool calls tryTeardown
+ */
+ve.init.mw.CollabTarget.prototype.tryTeardown = function () {
+	this.emit( 'close' );
+};
+
+/**
  * Get the title of the imported document, if there was one
  *
  * @return {mw.Title|null} Title of imported document
@@ -157,7 +164,7 @@ ve.ui.MWExportTool.static.group = 'export';
 ve.ui.MWExportTool.static.autoAddToCatchall = false;
 ve.ui.MWExportTool.static.flags = [ 'progressive', 'primary' ];
 ve.ui.MWExportTool.static.title =
-	OO.ui.deferMsg( 'visualeditor-rebase-client-export' );
+	OO.ui.deferMsg( 'visualeditor-rebase-client-export-start' );
 ve.ui.MWExportTool.static.commandName = 'mwExportWikitext';
 ve.ui.toolFactory.register( ve.ui.MWExportTool );
 

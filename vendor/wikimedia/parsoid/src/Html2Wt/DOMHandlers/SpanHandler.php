@@ -12,6 +12,7 @@ use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\Utils;
+use Wikimedia\Parsoid\Utils\WTUtils;
 
 class SpanHandler extends DOMHandler {
 
@@ -31,13 +32,10 @@ class SpanHandler extends DOMHandler {
 			if ( DOMUtils::hasTypeOf( $node, 'mw:Nowiki' ) ) {
 				$ext = $env->getSiteConfig()->getExtTagImpl( 'nowiki' );
 				$src = $ext->domToWikitext( $state->extApi, $node, $wrapperUnmodified );
+				$state->singleLineContext->disable();
 				$state->serializer->emitWikitext( $src, $node );
-			} elseif ( DOMUtils::matchTypeOf(
-				$node, '#^mw:(Image|Video|Audio)(/(Frame|Frameless|Thumb))?$#'
-			) ) {
-				// TODO: Remove when 1.5.0 content is deprecated,
-				// since we no longer emit media in spans.  See the test,
-				// "Serialize simple image with span wrapper"
+				$state->singleLineContext->pop();
+			} elseif ( WTUtils::isInlineMedia( $node ) ) {
 				$state->serializer->figureHandler( $node );
 			} elseif (
 				DOMUtils::hasTypeOf( $node, 'mw:Entity' ) &&
@@ -65,13 +63,15 @@ class SpanHandler extends DOMHandler {
 					( new FallbackHTMLHandler )->handle( $node, $state );
 				}
 			}
+		} elseif ( $node->hasAttribute( 'data-mw-selser-wrapper' ) ) {
+			$state->serializeChildren( $node );
 		} else {
 			$kvs = array_filter( WTSUtils::getAttributeKVArray( $node ), function ( KV $kv ) {
 				return !preg_match( '/^data-parsoid/', $kv->k )
 					&& ( $kv->k !== DOMDataUtils::DATA_OBJECT_ATTR_NAME )
 					&& !( $kv->k === 'id' && preg_match( '/^mw[\w-]{2,}$/D', $kv->v ) );
 			} );
-			if ( !$state->rtTestMode && !empty( $dp->misnested ) && ( $dp->stx ?? null ) !== 'html'
+			if ( !empty( $dp->misnested ) && ( $dp->stx ?? null ) !== 'html'
 				&& !count( $kvs )
 			) {
 				// Discard span wrappers added to flag misnested content.

@@ -5,10 +5,15 @@
 			"DzWiki",
 			"Edinwiki",
 			"KWiki",
-			"Srdjan m"
+			"Srdjan m",
+			"Srđan"
 		]
 	},
 	"vector-skin-desc": "Moderna verzija MonoKnjige s novijim izgledom i mnogim poboljšanjima u pogledu upotrebljivosti",
+	"prefs-vector-enable-vector-1-label": "Koristi stari Vector",
+	"prefs-vector-enable-vector-1-help": "Kroz narednih nekoliko godina postepeno ćemo ažurirati temu Vector. Stari Vector pružit će Vam mogućnost da koristite raniju verziju Vectora (zamrznutu u decembru 2019). Za detalje o ažuriranjima, posjetite našu [[mw:Reading/Web/Desktop_Improvements|projektnu stranicu]].",
+	"vector-opt-out": "Prebaci na stari izgled",
+	"vector-opt-out-tooltip": "Promijenite postavke da biste vratili stari izgled teme (stari Vector)",
 	"vector-action-addsection": "Dodaj temu",
 	"vector-action-delete": "Izbriši",
 	"vector-action-move": "Premjesti",

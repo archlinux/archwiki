@@ -28,18 +28,34 @@ class CiteParserHooksTest extends \MediaWikiUnitTestCase {
 				[ 'references', $this->isType( 'callable' ) ]
 			);
 
-		CiteParserHooks::onParserFirstCallInit( $parser );
+		$citeParserHooks = new CiteParserHooks();
+		$citeParserHooks->onParserFirstCallInit( $parser );
 	}
 
 	/**
-	 * @covers ::onParserClearStateOrCloned
+	 * @covers ::onParserClearState
+	 */
+	public function testOnParserClearState() {
+		$parser = $this->createMock( Parser::class );
+		$parser->extCite = $this->createMock( Cite::class );
+
+		$citeParserHooks = new CiteParserHooks();
+		/** @var Parser $parser */
+		$citeParserHooks->onParserClearState( $parser );
+
+		$this->assertFalse( isset( $parser->extCite ) );
+	}
+
+	/**
+	 * @covers ::onParserCloned
 	 */
 	public function testOnParserCloned() {
 		$parser = $this->createMock( Parser::class );
 		$parser->extCite = $this->createMock( Cite::class );
 
+		$citeParserHooks = new CiteParserHooks();
 		/** @var Parser $parser */
-		CiteParserHooks::onParserClearStateOrCloned( $parser );
+		$citeParserHooks->onParserCloned( $parser );
 
 		$this->assertFalse( isset( $parser->extCite ) );
 	}
@@ -64,7 +80,8 @@ class CiteParserHooksTest extends \MediaWikiUnitTestCase {
 		$parser->extCite = $cite;
 
 		$text = '';
-		CiteParserHooks::onParserAfterParse( $parser, $text, $this->createMock( StripState::class ) );
+		$citeParserHooks = new CiteParserHooks();
+		$citeParserHooks->onParserAfterParse( $parser, $text, $this->createMock( StripState::class ) );
 	}
 
 }

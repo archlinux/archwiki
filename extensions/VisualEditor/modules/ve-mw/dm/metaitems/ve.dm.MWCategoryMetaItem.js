@@ -36,7 +36,7 @@ ve.dm.MWCategoryMetaItem.static.toDataElement = function ( domElements ) {
 	var href = domElements[ 0 ].getAttribute( 'href' ),
 		data = mw.libs.ve.parseParsoidResourceName( href ),
 		rawTitleAndFragment = data.rawTitle.match( /^(.*?)(?:#(.*))?$/ ),
-		titleAndFragment = data.title.match( /^(.*?)(?:#(.*))?$/ );
+		titleAndFragment = data.title.match( /^(.*?)(?:#(.*))?\s*$/ );
 	return {
 		type: this.name,
 		attributes: {

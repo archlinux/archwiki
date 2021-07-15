@@ -17,7 +17,6 @@
 	"renameuserwarnings": "Dagiti ballaag:",
 	"renameuserconfirm": "Wen, inaganan manen ti agar-aramat",
 	"renameusersubmit": "Ited",
-	"renameuser-submit-blocklog": "Ipakita ti panakaserra a listaan para iti agar-aramat",
 	"renameusererrordoesnotexist": "Ti agar-aramat \"<nowiki>$1</nowiki>\" ket awan.",
 	"renameusererrorexists": "Ti {{GENDER:$1|agar-aramat}} \"<nowiki>$1</nowiki>\" ket addan.",
 	"renameusererrorinvalid": "Ti nagan ti agar-aramat \"<nowiki>$1</nowiki>\" ket imbalido.",

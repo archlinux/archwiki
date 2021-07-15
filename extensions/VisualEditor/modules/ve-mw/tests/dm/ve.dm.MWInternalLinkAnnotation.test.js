@@ -128,6 +128,7 @@ QUnit.test( 'toDataElement', function ( assert ) {
 	converter.store = doc.getStore();
 	converter.internalList = doc.getInternalList();
 	converter.contextStack = [];
+	converter.fromClipboard = true;
 
 	for ( i = 0, l = cases.length; i < l; i++ ) {
 		assert.deepEqual( ve.dm.MWInternalLinkAnnotation.static.toDataElement( [ cases[ i ].element ], converter ), cases[ i ].expected, cases[ i ].msg );

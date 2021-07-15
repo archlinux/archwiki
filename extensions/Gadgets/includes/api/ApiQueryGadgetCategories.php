@@ -46,6 +46,9 @@ class ApiQueryGadgetCategories extends ApiQueryBase {
 		$this->getList();
 	}
 
+	/**
+	 * @return void
+	 */
 	private function getList() {
 		$data = [];
 		$result = $this->getResult();

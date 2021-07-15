@@ -1,0 +1,10 @@
+// Override core's `.mw-ui-icon` which defaults to 24x24.
+// The Design Style Guide  and its icons are now set to 20x20.
+// FIXME: With core set to 20x20 this file should become obsolete, see T191021.
+@import '../variables.less';
+
+.mw-portlet-lang .mw-ui-icon:before {
+	background-size: unit( @size-icon / @font-size-base, em ) auto;
+	width: unit( @size-icon / @font-size-base, em );
+	height: unit( @size-icon / @font-size-base, em );
+}

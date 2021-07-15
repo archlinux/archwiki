@@ -1,13 +1,30 @@
 <?php
 
-class RenameuserHooks {
+use MediaWiki\Hook\ContributionsToolLinksHook;
+use MediaWiki\Hook\GetLogTypesOnUserHook;
+use MediaWiki\Page\Hook\ShowMissingArticleHook;
+use MediaWiki\Permissions\PermissionManager;
+
+class RenameuserHooks implements
+	ShowMissingArticleHook,
+	ContributionsToolLinksHook,
+	GetLogTypesOnUserHook
+{
+
+	/** @var PermissionManager */
+	private $permissionManager;
+
+	public function __construct( PermissionManager $permissionManager ) {
+		$this->permissionManager = $permissionManager;
+	}
+
 	/**
 	 * Show a log if the user has been renamed and point to the new username.
 	 * Don't show the log if the $oldUserName exists as a user.
 	 *
 	 * @param Article $article
 	 */
-	public static function onShowMissingArticle( Article $article ) {
+	public function onShowMissingArticle( $article ) {
 		$title = $article->getTitle();
 		$oldUser = User::newFromName( $title->getBaseText() );
 		if ( ( $title->getNamespace() === NS_USER || $title->getNamespace() === NS_USER_TALK ) &&
@@ -39,10 +56,10 @@ class RenameuserHooks {
 	 * @param array &$tools
 	 * @param SpecialPage $sp
 	 */
-	public static function onContributionsToolLinks(
+	public function onContributionsToolLinks(
 		$id, Title $nt, array &$tools, SpecialPage $sp
 	) {
-		if ( $id && $sp->getUser()->isAllowed( 'renameuser' ) ) {
+		if ( $id && $this->permissionManager->userHasRight( $sp->getUser(), 'renameuser' ) ) {
 			$tools['renameuser'] = $sp->getLinkRenderer()->makeKnownLink(
 				SpecialPage::getTitleFor( 'Renameuser' ),
 				$sp->msg( 'renameuser-linkoncontribs', $nt->getText() )->text(),
@@ -56,7 +73,7 @@ class RenameuserHooks {
 	 * So users can just type in a username for target and it'll work
 	 * @param array &$types
 	 */
-	public static function onGetLogTypesOnUser( array &$types ) {
+	public function onGetLogTypesOnUser( &$types ) {
 		$types[] = 'renameuser';
 	}
 }

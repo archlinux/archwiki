@@ -81,7 +81,9 @@ class ApiCategoryTree extends ApiBase {
 	 * @return string HTML
 	 */
 	private function getHTML( CategoryTree $ct, Title $title, $depth, Config $ctConfig ) {
-		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
+		$services = MediaWikiServices::getInstance();
+		$cache = $services->getMainWANObjectCache();
+		$langConv = $services->getLanguageConverterFactory()->getLanguageConverter();
 
 		return $cache->getWithSetCallback(
 			$cache->makeKey(
@@ -89,7 +91,7 @@ class ApiCategoryTree extends ApiBase {
 				md5( $title->getDBkey() ),
 				md5( $ct->getOptionsAsCacheKey( $depth ) ),
 				$this->getLanguage()->getCode(),
-				MediaWikiServices::getInstance()->getContentLanguage()->getExtraHashOptions(),
+				$langConv->getExtraHashOptions(),
 				$ctConfig->get( 'RenderHashAppend' )
 			),
 			$cache::TTL_DAY,

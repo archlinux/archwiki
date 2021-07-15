@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"ArenaL5",
 			"Banjo",
 			"Elisardojm",
 			"Toliño"
@@ -12,7 +13,7 @@
 	"oathauth-account": "Nome da conta:",
 	"oathauth-secret": "Clave secreta de autenticación de dous factoresː",
 	"oathauth-enable": "Activar a autenticación de dous factores",
-	"oathauth-scratchtokens": "A seguinte é unha lista de pases dun só uso. Estes pases unicamente se poden empregar unha vez, e son para casos de emerxencia. Escríbaos nun papel e gárdeos nun lugar seguro. Se perde o seu teléfono, estes pases son o único xeito de recuperar a súa conta. Esta é a única vez que poderá ver os pases.",
+	"oathauth-scratchtokens": "A seguinte é unha lista de pases dun só uso. Estes pases unicamente se poden empregar unha vez, e son para casos de emerxencia. Escríbaos nun papel e gárdeos nun lugar seguro. Se perde o seu teléfono, estes pases son o único xeito de recuperar a súa conta. '''Esta é a única vez que poderá ver os pases.'''",
 	"oathauth-token": "Pase",
 	"oathauth-disable": "Desactivar a autenticación de dous factores",
 	"oathauth-validatedoath": "Validáronse as credenciais de dous factores. Agora hase aplicar a autenticación de dous factores.",
@@ -21,7 +22,7 @@
 	"oathauth-disabledoath": "Desactivouse a autenticación de dous factores.",
 	"oathauth-prefs-label": "Autenticación de dous factores:",
 	"oathauth-step1": "Paso 1: descargue a un programa de autenticación en dous pasos",
-	"oathauth-step1-test": "Descargue un programa para a autentificación en dous pasos. Pode tratarse dunha aplicación móbil (como Google Authenticator) ou ben dunha aplicación de escritorio",
+	"oathauth-step1-test": "Descargue un programa para a autentificación en dous pasos. Pode tratarse dunha aplicación móbil (como Google Authenticator) ou ben dunha aplicación de escritorio.",
 	"oathauth-step2": "Paso 2: escanee o código QR",
 	"oathauth-step2alt": "Ou escriba o código secreto manualmente:",
 	"oathauth-step3": "Paso 3: escriba os códigos",
@@ -36,7 +37,7 @@
 	"action-oathauth-enable": "activar a autenticación de dous pasos",
 	"oathauth-auth-token-label": "Identificador",
 	"oathauth-auth-token-help": "O contrasinal único empregado como segundo factor da autenticación de dous pasos.",
-	"oathauth-auth-ui": "Por favor, introduzca o código de verificación do seu dispositivo de autenticación",
+	"oathauth-auth-ui": "Por favor, introduzca un código de verificación do seu dispositivo de autenticación.",
 	"oathauth-throttled": "Demasiados intentos de verificaciónǃ Por favor, espere $1.",
 	"oathauth-login-failed": "Fallou a verificación",
 	"oathauth-describe-provider": "Autenticación de dous factores (OATH).",

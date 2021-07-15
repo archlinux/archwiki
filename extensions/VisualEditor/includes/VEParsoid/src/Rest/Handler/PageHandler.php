@@ -20,8 +20,10 @@ declare( strict_types = 1 );
 
 namespace VEParsoid\Rest\Handler;
 
+// phpcs:disable MediaWiki.WhiteSpace.SpaceBeforeSingleLineComment.NewLineComment
+
+use MediaWiki\Rest\HttpException;
 use MediaWiki\Rest\Response;
-use MediaWiki\Revision\RevisionAccessException;
 use MediaWiki\Revision\SlotRecord;
 use VEParsoid\Rest\FormatHelper;
 use Wikimedia\ParamValidator\ParamValidator;
@@ -67,44 +69,22 @@ class PageHandler extends ParsoidHandler {
 		$format = $request->getPathParam( 'format' );
 
 		if ( !in_array( $format, FormatHelper::VALID_PAGE, true ) ) {
-			return $this->getResponseFactory()->createHttpError( 404, [
-				'message' => "Invalid page format: ${format}",
-			] );
+			throw new HttpException(
+				"Invalid page format: ${format}", 404
+			);
 		}
 
 		$attribs = $this->getRequestAttributes();
 
-		if ( !$this->acceptable( $attribs ) ) {
-			return $this->getResponseFactory()->createHttpError( 406, [
-				'message' => 'Not acceptable',
-			] );
-		}
-
-		$oldid = (int)$attribs['oldid'];
-
-		try {
-			$pageConfig = $this->createPageConfig(
-				$attribs['pageName'], $oldid
+		if ( !$this->acceptable( $attribs ) ) { // mutates $attribs
+			throw new HttpException(
+				'Not acceptable', 406
 			);
-		} catch ( RevisionAccessException $exception ) {
-			return $this->getResponseFactory()->createHttpError( 404, [
-				'message' => 'The specified revision is deleted or suppressed.',
-			] );
 		}
 
-		// T234549
-		if ( $pageConfig->getRevisionContent() === null ) {
-			return $this->getResponseFactory()->createHttpError( 404, [
-				'message' => 'The specified revision does not exist.',
-			] );
-		}
+		$pageConfig = $this->tryToCreatePageConfig( $attribs );
 
 		if ( $format === FormatHelper::FORMAT_WIKITEXT ) {
-			if ( !$oldid ) {
-				return $this->createRedirectToOldidResponse(
-					$pageConfig, $attribs
-				);
-			}
 			return $this->getPageContentResponse( $pageConfig, $attribs );
 		} else {
 			return $this->wt2html( $pageConfig, $attribs );
@@ -118,15 +98,16 @@ class PageHandler extends ParsoidHandler {
 	 * @param PageConfig $pageConfig
 	 * @param array $attribs Request attributes from getRequestAttributes()
 	 * @return Response
+	 * @throws HttpException
 	 */
 	protected function getPageContentResponse(
 		PageConfig $pageConfig, array $attribs
 	) {
 		$content = $pageConfig->getRevisionContent();
 		if ( !$content ) {
-			return $this->getResponseFactory()->createHttpError( 404, [
-				'message' => 'The specified revision does not exist.',
-			] );
+			throw new HttpException(
+				'The specified revision does not exist.', 404
+			);
 		}
 		$response = $this->getResponseFactory()->create();
 		$response->setStatus( 200 );

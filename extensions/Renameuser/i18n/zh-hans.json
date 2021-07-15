@@ -28,7 +28,6 @@
 	"renameuserwarnings": "警告：",
 	"renameuserconfirm": "是，更改用户名",
 	"renameusersubmit": "提交",
-	"renameuser-submit-blocklog": "显示用户的封禁日志",
 	"renameusererrordoesnotexist": "用户“<nowiki>$1</nowiki>”不存在。",
 	"renameusererrorexists": "{{GENDER:$1|用户}}“<nowiki>$1</nowiki>”已经存在。",
 	"renameusererrorinvalid": "用户名“<nowiki>$1</nowiki>”无效。",

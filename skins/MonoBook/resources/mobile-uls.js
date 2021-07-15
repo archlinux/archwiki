@@ -1,5 +1,5 @@
 /* eslint-disable no-jquery/no-global-selector */
-$( function () {
+mw.loader.using( [ 'ext.uls.interface' ] ).then( function () {
 	var mobileMediaQuery = window.matchMedia( 'screen and (max-width: 550px)' ),
 		$ULSTrigger = $( '#pt-uls' ),
 		ULSMoved = false;

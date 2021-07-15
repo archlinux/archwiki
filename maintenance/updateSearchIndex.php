@@ -123,7 +123,7 @@ class UpdateSearchIndex extends Maintenance {
 	 * @param int $pageId The page ID to update.
 	 * @return null|string
 	 */
-	public function updateSearchIndexForPage( int $pageId ) {
+	private function updateSearchIndexForPage( int $pageId ) {
 		// Get current revision
 		$rev = MediaWikiServices::getInstance()
 			->getRevisionLookup()

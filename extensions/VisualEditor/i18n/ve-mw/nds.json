@@ -2,11 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"Servien",
+			"Slomox",
 			"Zylbath"
 		]
 	},
-	"tooltip-ca-createsource": "Bornkood för düsse Sied opstellen",
-	"tooltip-ca-editsource": "Bornkoood vun düsse Sied ännern",
+	"tooltip-ca-createsource": "Bornkood för düsse Siet opstellen",
+	"tooltip-ca-editsource": "Bornkoood vun düsse Siet ännern",
 	"tooltip-ca-ve-edit": "Disse Siet ännern",
 	"visualeditor-beta-warning": "VisualEditor is een Beta-Verschoon. Dat mag Weekwoorfehlers geven un du warrst Delen vun de Sied nich ännern könen. Klick op \"{{int:visualeditor-ca-editsource}}\", üm in den Wikitextmodus to kamen. Daarbi gaht nich spiekerte Ännern verlustig.",
 	"visualeditor-browserwarning": "Du bruukst een Browser, de vun'n VisualEditor nich apentlich stütt warrt.",
@@ -33,8 +34,8 @@
 	"visualeditor-dialog-meta-categories-sortkey-label": "Düsse Sied sorteren as",
 	"visualeditor-dialog-meta-languages-code-label": "Spraak-Kood",
 	"visualeditor-dialog-meta-languages-label": "Spraken",
-	"visualeditor-dialog-meta-languages-link-label": "Verlenkte Sied",
-	"visualeditor-dialog-meta-languages-readonlynote": "Dit is een Liest vun de Sieden in anner Spraken, de op düsse Sied verlenkt sünd. Se köönt opstunns bloot in'n Borntextmodus or op Wikidata ännert warrn.",
+	"visualeditor-dialog-meta-languages-link-label": "Verlenkte Siet",
+	"visualeditor-dialog-meta-languages-readonlynote": "Dit is een Liest vun de Sieden in anner Spraken, de op düsse Siet verlenkt sünd. Se köönt opstunns blot in’n Borntextmodus oder op Wikidata ännert warrn.",
 	"visualeditor-dialog-meta-languages-section": "Spraken",
 	"visualeditor-dialog-meta-settings-label": "Siedeninstellen",
 	"visualeditor-dialog-transclusion-add-content": "Inhold tofögen",

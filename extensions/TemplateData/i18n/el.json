@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Geraki",
-			"Glavkos"
+			"Glavkos",
+			"Norhorn"
 		]
 	},
 	"templatedata-doc-desc-empty": "Χωρίς περιγραφή",
@@ -42,6 +43,7 @@
 	"templatedata-invalid-unknown": "Μη αναμενόμενη ιδιότητα «$1».",
 	"templatedata-modal-button-add-language": "Προσθήκη γλώσσας",
 	"templatedata-modal-button-addparam": "Προσθήκη παραμέτρου",
+	"templatedata-modal-button-addmap": "Προσθήκη νέου χάρτη",
 	"templatedata-modal-button-apply": "Εφαρμογή",
 	"templatedata-modal-button-back": "Επιστροφή",
 	"templatedata-modal-button-cancel": "Ακύρωση",
@@ -49,6 +51,7 @@
 	"templatedata-modal-button-delparam": "Απομάκρυνση πληροφοριών παραμέτρου",
 	"templatedata-modal-button-done": "Έγινε",
 	"templatedata-modal-button-importParams": "Εισαγωγή παραμέτρων",
+	"templatedata-modal-button-removemap": "Αφαίρεση χάρτη",
 	"templatedata-modal-button-restoreparam": "Επαναφορά παραμέτρου",
 	"templatedata-modal-button-saveparam": "Αποθήκευση",
 	"templatedata-modal-current-language": "Τρέχουσα γλώσσα: $1",
@@ -58,6 +61,7 @@
 	"templatedata-modal-format-null": "Αδιευκρίνιστο",
 	"templatedata-modal-json-error-replace": "Αντικατάσταση",
 	"templatedata-modal-placeholder-paramkey": "Όνομα παραμέτρου",
+	"templatedata-modal-placeholder-prompt-map-name": "Εισαγάγετε το όνομα του χάρτη",
 	"templatedata-modal-table-param-actions": "Ενέργειες",
 	"templatedata-modal-table-param-description": "Περιγραφή ($1)",
 	"templatedata-modal-table-param-example": "Παράδειγμα ($1)",

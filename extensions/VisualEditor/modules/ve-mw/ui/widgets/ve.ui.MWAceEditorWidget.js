@@ -350,7 +350,7 @@ ve.ui.MWAceEditorWidget.prototype.clearUndoStack = function () {
 ve.ui.MWAceEditorWidget.prototype.toggleLineNumbers = function ( visible ) {
 	var widget = this;
 	this.loadingPromise.done( function () {
-		widget.editor.renderer.setOption( 'showLineNumbers', visible );
+		widget.editor.setOption( 'showLineNumbers', visible );
 	} );
 	return this;
 };

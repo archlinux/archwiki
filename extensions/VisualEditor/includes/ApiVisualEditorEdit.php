@@ -10,13 +10,14 @@
 
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\User\UserIdentity;
+use Wikimedia\ParamValidator\ParamValidator;
 
 class ApiVisualEditorEdit extends ApiBase {
-
 	use ApiParsoidTrait;
 
-	const MAX_CACHE_RECENT = 2;
-	const MAX_CACHE_TTL = 900;
+	private const MAX_CACHE_RECENT = 2;
+	private const MAX_CACHE_TTL = 900;
 
 	/**
 	 * @inheritDoc
@@ -93,7 +94,7 @@ class ApiVisualEditorEdit extends ApiBase {
 		$apiParams = [
 			'action' => 'parse',
 			'oldid' => $newRevId,
-			'prop' => 'text|revid|categorieshtml|displaytitle|modules|jsconfigvars',
+			'prop' => 'text|revid|categorieshtml|displaytitle|subtitle|modules|jsconfigvars',
 		];
 		$api = new ApiMain(
 			new DerivativeRequest(
@@ -113,6 +114,7 @@ class ApiVisualEditorEdit extends ApiBase {
 		$content = $result['parse']['text']['*'] ?? false;
 		$categorieshtml = $result['parse']['categorieshtml']['*'] ?? false;
 		$displaytitle = $result['parse']['displaytitle'] ?? false;
+		$subtitle = $result['parse']['subtitle'] ?? false;
 		$modules = array_merge(
 			$result['parse']['modules'] ?? [],
 			$result['parse']['modulestyles'] ?? []
@@ -140,6 +142,7 @@ class ApiVisualEditorEdit extends ApiBase {
 			'content' => $content,
 			'categorieshtml' => $categorieshtml,
 			'displayTitleHtml' => $displaytitle,
+			'contentSub' => $subtitle,
 			'modules' => $modules,
 			'jsconfigvars' => $jsconfigvars
 		];
@@ -185,9 +188,9 @@ class ApiVisualEditorEdit extends ApiBase {
 		} else {
 			$html = $params['html'];
 		}
-		$wikitext = $this->postHTML(
-			$title, $html, $parserParams, $params['etag']
-		);
+		$wikitext = $this->transformHTML(
+			$title, $html, $parserParams['oldid'] ?? null, $params['etag'] ?? null
+		)['body'];
 		return $wikitext;
 	}
 
@@ -236,10 +239,10 @@ class ApiVisualEditorEdit extends ApiBase {
 
 	/**
 	 * @param BagOStuff $cache
-	 * @param User $user
+	 * @param UserIdentity $user
 	 * @param string $newKey
 	 */
-	private function pruneExcessStashedEntries( BagOStuff $cache, User $user, $newKey ) {
+	private function pruneExcessStashedEntries( BagOStuff $cache, UserIdentity $user, $newKey ) {
 		$key = $cache->makeKey( 'visualeditor-serialization-recent', $user->getName() );
 
 		$keyList = $cache->get( $key ) ?: [];
@@ -421,17 +424,6 @@ class ApiVisualEditorEdit extends ApiBase {
 					RequestContext::getMain()->setTitle( $originalTitle );
 				}
 
-				$context = new RequestContext;
-				$context->setTitle( $title );
-				$tempOut = new OutputPage( $context );
-				$tempOut->setArticleFlag( true );
-
-				$subpagestr = $this->getSkin()->subPageSubtitle( $tempOut );
-				if ( $subpagestr !== '' ) {
-					$subpagestr = '<span class="subpages">' . $subpagestr . '</span>';
-				}
-				$result['contentSub'] = $subpagestr . $this->getOutput()->getSubtitle();
-
 				$lang = $this->getLanguage();
 
 				if ( isset( $saveresult['edit']['newtimestamp'] ) ) {
@@ -463,8 +455,8 @@ class ApiVisualEditorEdit extends ApiBase {
 	public function getAllowedParams() {
 		return [
 			'paction' => [
-				ApiBase::PARAM_REQUIRED => true,
-				ApiBase::PARAM_TYPE => [
+				ParamValidator::PARAM_REQUIRED => true,
+				ParamValidator::PARAM_TYPE => [
 					'serialize',
 					'serializeforcache',
 					'diff',
@@ -472,14 +464,14 @@ class ApiVisualEditorEdit extends ApiBase {
 				],
 			],
 			'page' => [
-				ApiBase::PARAM_REQUIRED => true,
+				ParamValidator::PARAM_REQUIRED => true,
 			],
 			'token' => [
-				ApiBase::PARAM_REQUIRED => true,
+				ParamValidator::PARAM_REQUIRED => true,
 			],
 			'wikitext' => [
-				ApiBase::PARAM_TYPE => 'text',
-				ApiBase::PARAM_DFLT => null,
+				ParamValidator::PARAM_TYPE => 'text',
+				ParamValidator::PARAM_DEFAULT => null,
 			],
 			'section' => null,
 			'sectiontitle' => null,
@@ -489,8 +481,15 @@ class ApiVisualEditorEdit extends ApiBase {
 			'minor' => null,
 			'watchlist' => null,
 			'html' => [
-				ApiBase::PARAM_TYPE => 'text',
-				ApiBase::PARAM_DFLT => null,
+				// Use the 'raw' type to avoid Unicode NFC normalization.
+				// This makes the parameter binary safe, so that (a) if
+				// we use client-side compression it is not mangled, and/or
+				// (b) deprecated Unicode sequences explicitly encoded in
+				// wikitext (ie, &#x2001;) are not mangled.  Wikitext is
+				// in Unicode Normal Form C, but because of explicit entities
+				// the output HTML is not guaranteed to be.
+				ParamValidator::PARAM_TYPE => 'raw',
+				ParamValidator::PARAM_DEFAULT => null,
 			],
 			'etag' => null,
 			'summary' => null,
@@ -498,7 +497,7 @@ class ApiVisualEditorEdit extends ApiBase {
 			'captchaword' => null,
 			'cachekey' => null,
 			'tags' => [
-				ApiBase::PARAM_ISMULTI => true,
+				ParamValidator::PARAM_ISMULTI => true,
 			],
 		];
 	}
@@ -508,13 +507,6 @@ class ApiVisualEditorEdit extends ApiBase {
 	 */
 	public function needsToken() {
 		return 'csrf';
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function mustBePosted() {
-		return true;
 	}
 
 	/**

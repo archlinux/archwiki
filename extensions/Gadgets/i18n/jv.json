@@ -13,7 +13,7 @@
 	"prefs-gadgets": "Géjet",
 	"gadgets-prefstext": "Ing ngisor iki daftar gadget astaméwa sing bisa panjenangan aktifaké kanggo rékening panjenengan. Gadget-gadget iki sabagéyan gedhé adhedhasar JavaScript dadi panjenengan kudu ngaktifaké JavaScript ing panjlajah wèb panjenengan supaya bisa nglakokaké.\nMangga diwigatèkaké yèn gadget-gadget iki ora ndarbèni pangaruh marang kaca prèferènsi iki.\n\nUga mangga diwigatèkaké yèn gadget astaméwa iki dudu bagéyan saka piranti empuk MediaWiki lan biasané dikembangaké lan diopèni déning panganggo-panganggo ing wiki lokal panjenengan. Pangurus lokal bisa nyunting gadget sing kasedyakaké nganggo [[MediaWiki:Gadgets-definition|dhéfinisi]] lan [[Special:Gadgets|uraian]].",
 	"gadgets": "Géjet",
-	"gadgetusage": "Statistik panganggoné géjet",
+	"gadgetusage": "Setatistik panganggoné géjet",
 	"gadgetusage-gadget": "Géjet",
 	"gadgetusage-usercount": "Cacah sing nganggo",
 	"gadgetusage-noresults": "Ora ana géjeté.",

@@ -2,19 +2,31 @@
 	"@metadata": {
 		"authors": [
 			"Insübrich",
-			"Ninonino"
+			"Ninonino",
+			"Salvemm el lombard"
 		]
 	},
-	"vector-action-addsection": "Giunta argument",
+	"vector-skin-desc": "Version moderna del MonoBook cont un aspet rinovad e un mucc de migliorament de dovrablità",
+	"prefs-vector-enable-vector-1-label": "Drova el Vector Legacy",
+	"prefs-vector-enable-vector-1-help": "In di agn che vegnen sgionaremm meneman el tema Vector. Legacy Vector el te permetarà de visualizà la version passada de  Vector (che la risaliss al dicember 2019). Per savenn pussee sora i asgiornament, visita la nostra [[mw:Reading/Web/Desktop_Improvements|pagina de progett]].",
+	"vector-opt-out": "Torna a l'aspet vegg",
+	"vector-opt-out-tooltip": "Cambia i to impostazzion per tornà a la visualizzazion de la pell che la gh'era prima (legacy Vector)",
+	"vector-action-toggle-sidebar": "Ativa/desativa la sbarra de fianch",
+	"vector-language-button-label": "{{PLURAL:$1|$1 lengoa|$1 lengove}}",
+	"vector-action-addsection": "Sgionta un argoment",
 	"vector-action-delete": "Scancela",
 	"vector-action-move": "Sposta",
-	"vector-action-protect": "Prutegg",
-	"vector-action-undelete": "Recüpera",
-	"vector-action-unprotect": "Càmbia la protesiù",
+	"vector-action-protect": "Protensg",
+	"vector-action-undelete": "Recupera",
+	"vector-action-unprotect": "Cambia la protezzion",
 	"vector-view-create": "Crea",
-	"vector-view-edit": "Mudifega",
+	"vector-view-edit": "Modifega",
 	"vector-view-history": "Varda la storia",
-	"vector-view-view": "Legg",
-	"vector-view-viewsource": "Varda el codes",
-	"vector-more-actions": "Amò"
+	"vector-view-view": "Lensg",
+	"vector-view-viewsource": "Varda el codes sorgent",
+	"vector-jumptonavigation": "Salta a la navigazzion",
+	"vector-jumptosearch": "Và a cercà",
+	"vector-jumptocontent": "Và al contegnud",
+	"vector-more-actions": "Anmò",
+	"vector-search-loader": "Caregament di sugeriment de ricerca"
 }

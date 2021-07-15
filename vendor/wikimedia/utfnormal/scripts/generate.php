@@ -33,6 +33,10 @@ if ( PHP_SAPI != 'cli' ) {
 
 require_once dirname( __DIR__ ) . '/vendor/autoload.php';
 
+/**
+ * @param string $file
+ * @param string $url
+ */
 function download( $file, $url ) {
 	print "Downloading data from $url...\n";
 	$fp = fopen( $file, 'w+' );
@@ -43,6 +47,11 @@ function download( $file, $url ) {
 	fclose( $fp );
 }
 
+/**
+ * @param string $file
+ * @param string $url
+ * @return resource
+ */
 function getFilePointer( $file, $url ) {
 	if ( in_array( '--fetch', $_SERVER['argv'] ) ) {
 		download( $file, $url );
@@ -251,6 +260,10 @@ UtfNormal\Validator::\$utfCompatibilityDecomp = unserialize( '$serCompat' );
 	exit( -1 );
 }
 
+/**
+ * @param array $matches
+ * @return string
+ */
 function callbackCanonical( $matches ) {
 	// @codingStandardsIgnoreStart MediaWiki.NamingConventions.ValidGlobalName.wgPrefix
 	global $canonicalDecomp;
@@ -263,6 +276,10 @@ function callbackCanonical( $matches ) {
 	return $matches[1];
 }
 
+/**
+ * @param array $matches
+ * @return string
+ */
 function callbackCompat( $matches ) {
 	// @codingStandardsIgnoreStart MediaWiki.NamingConventions.ValidGlobalName.wgPrefix
 	global $compatibilityDecomp;

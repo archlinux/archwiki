@@ -21,7 +21,6 @@
 	"renameuserwarnings": "Папярэджаньні:",
 	"renameuserconfirm": "Так, перайменаваць удзельніка",
 	"renameusersubmit": "Перайменаваць",
-	"renameuser-submit-blocklog": "Паказаць журнал блякаваньняў удзельніка",
 	"renameusererrordoesnotexist": "Рахунак «<nowiki>$1</nowiki>» не існуе.",
 	"renameusererrorexists": "Рахунак {{GENDER:$1|удзельніка|удзельніцы}} «<nowiki>$1</nowiki>» ужо існуе.",
 	"renameusererrorinvalid": "Няслушнае імя ўдзельніка «<nowiki>$1</nowiki>».",

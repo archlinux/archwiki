@@ -11,7 +11,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "skin",
 	"requires": {
-		"MediaWiki": ">= 1.29.0"
+		"MediaWiki": ">= 1.36.0"
 	},
 	"ValidSkinNames": {
 		"monobook": "MonoBook"
@@ -22,9 +22,11 @@
 	"DefaultUserOptions": {
 		"monobook-responsive": true
 	},
+	"SkinLessImportPaths": {
+		"monobook": "resources/mediawiki.less"
+	},
 	"Hooks": {
-		"GetPreferences": "SkinMonoBook::onGetPreferences",
-		"ResourceLoaderRegisterModules": "SkinMonoBook::registerMobileExtensionStyles"
+		"GetPreferences": "SkinMonoBook::onGetPreferences"
 	},
 	"MessagesDirs": {
 		"MonoBook": [
@@ -34,33 +36,38 @@
 	"ResourceModules": {
 		"skins.monobook.styles": {
 			"class": "ResourceLoaderSkinModule",
-			"features": [
-				"normalize",
-				"elements",
-				"content",
-				"interface",
-				"logo",
-				"legacy"
-			],
+			"features": {
+				"normalize": true,
+				"elements": true,
+				"content": true,
+				"content-links": true,
+				"interface": true,
+				"logo": true,
+				"legacy": true
+			},
 			"styles": {
 				"resources/screen-common.less": {
 					"media": "screen"
 				},
-				"resources/screen-desktop.css": {
+				"resources/screen-desktop.less": {
 					"media": "screen"
+				},
+				"resources/print-common.less": {
+					"media": "print"
 				}
 			}
 		},
 		"skins.monobook.responsive": {
 			"class": "ResourceLoaderSkinModule",
-			"features": [
-				"normalize",
-				"elements",
-				"content",
-				"interface",
-				"legacy",
-				"logo"
-			],
+			"features": {
+				"normalize": true,
+				"elements": true,
+				"content": true,
+				"content-links": true,
+				"interface": true,
+				"legacy": true,
+				"logo": true
+			},
 			"targets": [
 				"desktop",
 				"mobile"
@@ -69,27 +76,52 @@
 				"resources/screen-common.less": {
 					"media": "screen"
 				},
-				"resources/screen-desktop.css": {
+				"resources/screen-desktop.less": {
 					"media": "screen and (min-width: 551px)"
 				},
 				"resources/screen-mobile.less": {
 					"media": "screen and (max-width: 550px)"
+				},
+				"resources/print-common.less": {
+					"media": "print"
 				}
 			}
 		},
+		"skins.monobook.mobile.uls": {
+			"targets": [ "desktop", "mobile" ],
+			"scripts": [ "resources/mobile-uls.js" ]
+		},
+		"skins.monobook.mobile.echohack": {
+			"targets": [ "desktop", "mobile" ],
+			"scripts": [ "resources/mobile-echo.js" ],
+			"styles": {
+				"resources/mobile-echo.less": {
+					"media": "screen and (max-width: 550px)"
+				}
+			},
+			"dependencies": [
+				"oojs-ui.styles.icons-alerts",
+				"mediawiki.util"
+			],
+			"messages": [
+				"monobook-notifications-link",
+				"monobook-notifications-link-none"
+			]
+		},
 		"skins.monobook.mobile": {
 			"class": "ResourceLoaderSkinModule",
-			"features": [
-				"normalize",
-				"elements",
-				"content",
-				"interface",
-				"logo",
-				"legacy"
-			],
+			"features": {
+				"normalize": true,
+				"elements": true,
+				"content": true,
+				"interface": true,
+				"logo": true,
+				"legacy": true
+			},
 			"targets": [ "desktop", "mobile" ],
-			"scripts": [
-				"resources/mobile.js"
+			"packageFiles": [
+				"resources/mobile.js",
+				"resources/optional-enhancements.js"
 			],
 			"styles": {
 				"resources/mobile.js.less": {

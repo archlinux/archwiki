@@ -11,12 +11,14 @@
 		]
 	},
 	"skinname-vector": "Векторско",
-	"vector-skin-desc": "Модерна верзија Монобука са свежим изгледом и много корисних побољшања",
-	"prefs-vector-enable-vector-1-label": "Користи стару векторску тему",
-	"prefs-vector-enable-vector-1-help": "Током неколико наредних година, постепено ћемо ажурирати векторску тему. Стара векторска тема омогућиће вам да користите ту стару верзију (од децембра 2019). Како бисте сазнали више о ажурирањима, идите на [[mw:Reading/Web/Desktop_Improvements|страницу пројекта]].",
-	"vector-opt-out-tooltip": "Промените подешавања да бисте се вратили старом изгледу теме (застарела векторска)",
+	"vector-skin-desc": "Савремена верзија Монобука са свежим изгледом и много корисних побољшања",
+	"prefs-vector-enable-vector-1-label": "Користи старију векторску тему",
+	"prefs-vector-enable-vector-1-help": "У наредном периоду постепено ћемо ажурирати векторску тему. Изаберите опцију изнад како бисте се вратили на старији изглед теме (децембар 2019). [[mw:Reading/Web/Desktop_Improvements|Детаљније о ажурирањима]]",
+	"vector-opt-out": "Старији изглед",
+	"vector-opt-out-tooltip": "Промените подешавања да бисте се вратили старом изгледу теме (старија векторска)",
 	"vector.css": "/* CSS постављен овде ће утицати на све кориснике векторске теме */",
 	"vector.js": "/* JavaScript постављен овде ће се учитати за све оне који користе векторску тему */",
+	"vector-action-toggle-sidebar": "Укључи/искључи бочну траку",
 	"vector-action-addsection": "Додај тему",
 	"vector-action-delete": "Избриши",
 	"vector-action-move": "Премести",
@@ -28,7 +30,7 @@
 	"vector-view-history": "Историја",
 	"vector-view-view": "Читај",
 	"vector-view-viewsource": "Извор",
-	"vector-jumptonavigation": "Иди на навигацију",
-	"vector-jumptosearch": "Иди на претрагу",
+	"vector-jumptonavigation": "Пређи на навигацију",
+	"vector-jumptosearch": "Пређи на претрагу",
 	"vector-more-actions": "Више"
 }

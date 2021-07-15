@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"MR973",
 			"Азат Хәлилов",
 			"Аҡҡашҡа",
 			"Лилиә",
@@ -50,6 +51,7 @@
 	"templatedata-invalid-value": "«$1»-ҙең сифаты өсөн яраҡһыҙ үҙенсәлек.",
 	"templatedata-modal-button-add-language": "Тел өҫтәргә.",
 	"templatedata-modal-button-addparam": "Параметр өҫтәргә.",
+	"templatedata-modal-button-addmap": "Яңы карта өҫтәү",
 	"templatedata-modal-button-apply": "Ҡулланырға.",
 	"templatedata-modal-button-back": "Артҡа",
 	"templatedata-modal-button-cancel": "Кире алырға",
@@ -57,6 +59,7 @@
 	"templatedata-modal-button-delparam": "Параметр тураһында мәғлүмәтте кире алырға",
 	"templatedata-modal-button-done": "Юҡ",
 	"templatedata-modal-button-importParams": "Параметрҙарҙы индерергә.",
+	"templatedata-modal-button-removemap": "Картаны юйығыҙ",
 	"templatedata-modal-button-restoreparam": "Параметрҙы яңыртырға",
 	"templatedata-modal-button-saveparam": "Һаҡларға",
 	"templatedata-modal-confirmcancel": "Һеҙ ысынлап та индергән үҙгәртеүҙәрҙе кире алырға уйланығыҙмы?",
@@ -66,7 +69,9 @@
 	"templatedata-modal-format-block": "Блок",
 	"templatedata-modal-format-inline": "Һыҙылған",
 	"templatedata-modal-json-error-replace": "Алмаштырырға",
+	"templatedata-modal-placeholder-add-new-map-input": "Яңы карта өҫтәү...",
 	"templatedata-modal-placeholder-paramkey": "Параметр исеме",
+	"templatedata-modal-placeholder-prompt-map-name": "Картаның исемен яҙығыҙ",
 	"templatedata-modal-search-input-placeholder": "Телдең атамһынан йәки уның кодынан эҙләргә.",
 	"templatedata-modal-table-param-actions": "Ваҡиғалар",
 	"templatedata-modal-table-param-aliases": "Ҡушаматтар (өтөр аша)",

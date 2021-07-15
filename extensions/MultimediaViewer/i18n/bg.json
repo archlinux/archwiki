@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"DCLXVI",
+			"Kareyac",
 			"Mitzev",
 			"ShockD",
 			"StanProg",
@@ -10,6 +11,7 @@
 	},
 	"multimediaviewer-optin-pref": "Включване на <span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About Media Viewer]</span>",
 	"multimediaviewer-datetime-created": "Създадено: $1",
+	"multimediaviewer-multiple-authors-combine": "$1 и $2",
 	"multimediaviewer-permission-title": "Данни за разрешението",
 	"multimediaviewer-permission-link": "преглед на условията",
 	"multimediaviewer-permission-viewmore": "Вижте още",
@@ -20,6 +22,7 @@
 	"multimediaviewer-optin-pending-mmv": "Включване на Media Viewer",
 	"multimediaviewer-optin-help": "Media Viewer ще се използва за показване на изображения.",
 	"multimediaviewer-share-tab": "Споделяне",
+	"multimediaviewer-embed-wt": "Уикитекст",
 	"multimediaviewer-view-expanded": "Отваряне в Media Viewer",
 	"multimediaviewer-title-popup-text": "Описание",
 	"multimediaviewer-title-popup-text-more": "Преглед на пълното описание",

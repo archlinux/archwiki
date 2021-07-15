@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"C.R."
+			"C.R.",
+			"Cryptex nap"
 		]
 	},
 	"pfunc_desc": "Migliora 'o parser ch' 'e funziune logiche",
@@ -17,7 +18,7 @@
 	"pfunc_expr_unexpected_operator": "Espressione 'n errore: Operatore $1 inaspettato",
 	"pfunc_expr_missing_operand": "Espressione 'n errore: Operatore zumpato pe' $1.",
 	"pfunc_expr_unexpected_closing_bracket": "Espressione in errore: parentesi nchiusa inaspettata",
-	"pfunc_expr_unrecognised_punctuation": "Espressione 'n errore: Carattere 'e punteggiatura \"$1\" scanusciuto",
+	"pfunc_expr_unrecognised_punctuation": "Probblema ’e l’espressione: Carattere ’e punteggiatura \"$1\" scanusciuto",
 	"pfunc_expr_unclosed_bracket": "Espressione in errore: Parentesi nun chiusa.",
 	"pfunc_expr_division_by_zero": "Divisione pe zero",
 	"pfunc_expr_invalid_argument": "Argomento invalido pe $1: < -1 o > 1",

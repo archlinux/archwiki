@@ -13,9 +13,9 @@ use Wikimedia\Parsoid\Ext\PHPUtils;
 class PackedMode extends TraditionalMode {
 	/**
 	 * Create a PackedMode singleton.
-	 * @param string|null $mode Only used by subclasses.
+	 * @param ?string $mode Only used by subclasses.
 	 */
-	protected function __construct( string $mode = null ) {
+	protected function __construct( ?string $mode = null ) {
 		parent::__construct( $mode ?? 'packed' );
 		$this->scale = 1.5;
 		$this->padding = PHPUtils::arrayToObject( [ 'thumb' => 0, 'box' => 2, 'border' => 8 ] );
@@ -65,11 +65,20 @@ class PackedMode extends TraditionalMode {
 		}
 		$div = $doc->createElement( 'div' );
 		$div->setAttribute( 'class', 'gallerytext' );
-		ParsoidExtensionAPI::migrateChildrenBetweenDocs( $gallerytext, $div );
+		ParsoidExtensionAPI::migrateChildrenAndTransferWrapperDataAttribs(
+			$gallerytext, $div
+		);
 		$wrapper = $doc->createElement( 'div' );
 		$wrapper->setAttribute( 'class', 'gallerytextwrapper' );
 		$wrapper->setAttribute( 'style', 'width: ' . ceil( $width - 20 ) . 'px;' );
 		$wrapper->appendChild( $div );
 		$box->appendChild( $wrapper );
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getModules(): array {
+		return [ 'mediawiki.page.gallery' ];
 	}
 }

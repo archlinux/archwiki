@@ -1,14 +1,18 @@
 {
 	"@metadata": {
 		"authors": [
+			"Bluehamed",
+			"Sahh",
 			"علی ساکی لرستانی"
 		]
 	},
-	"vector-action-addsection": "ئیضاف کیردأن مأطلأب",
-	"vector-action-move": "حرکت دائن",
-	"vector-view-create": "راس کیردأن",
-	"vector-view-edit": "ئیصلاح",
-	"vector-view-history": "دیئن ڤیرگار",
-	"vector-view-view": "هنن",
-	"vector-more-actions": "هأنی"
+	"vector-action-addsection": "اْزاف کاٛردٱن مۉزۊ",
+	"vector-action-delete": "هٱسف",
+	"vector-action-move": "جاڤٱجا کاٛردٱن",
+	"vector-action-protect": "مهافزٱت",
+	"vector-view-create": "ساختٱن",
+	"vector-view-edit": "چۊشخٱ",
+	"vector-view-history": "دیڌٱن تاریخچٱ",
+	"vector-view-view": "خوندٱن",
+	"vector-more-actions": "مٱئلیتٱر"
 }

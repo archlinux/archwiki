@@ -15,7 +15,6 @@ use Wikimedia\Parsoid\Tokens\SourceRange;
 use Wikimedia\Parsoid\Tokens\TagTk;
 use Wikimedia\Parsoid\Tokens\Token;
 use Wikimedia\Parsoid\Utils\ContentUtils;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\PHPUtils;
@@ -112,13 +111,14 @@ class TemplateHandler extends TokenHandler {
 	private function encapTokens(
 		array $state, array $tokens, array $extraDict = []
 	): array {
+		Assert::invariant(
+			$this->wrapTemplates, 'Encapsulating tokens when not wrapping!'
+		);
 		$toks = $this->getEncapsulationInfo( $state, $tokens );
 		$toks[] = $this->getEncapsulationInfoEndTag( $state );
-		if ( $this->wrapTemplates ) {
-			$argInfo = $this->getArgInfo( $state );
-			$argInfo['dict'] = array_merge( $argInfo['dict'], $extraDict );
-			$toks[0]->dataAttribs->tmp->tplarginfo = PHPUtils::jsonEncode( $argInfo );
-		}
+		$argInfo = $this->getArgInfo( $state );
+		$argInfo['dict'] = array_merge( $argInfo['dict'], $extraDict );
+		$toks[0]->dataAttribs->tmp->tplarginfo = PHPUtils::jsonEncode( $argInfo );
 		return $toks;
 	}
 
@@ -398,11 +398,13 @@ class TemplateHandler extends TokenHandler {
 	/**
 	 * Flatten
 	 * @param (Token|string)[] $tokens
-	 * @param string|null $prefix
+	 * @param ?string $prefix
 	 * @param Token|string|(Token|string)[] $t
 	 * @return array
 	 */
-	private function flattenAndAppendToks( array $tokens, ?string $prefix, $t ): array {
+	private function flattenAndAppendToks(
+		array $tokens, ?string $prefix, $t
+	): array {
 		if ( is_array( $t ) ) {
 			$len = count( $t );
 			if ( $len > 0 ) {
@@ -467,8 +469,10 @@ class TemplateHandler extends TokenHandler {
 
 		$tokens = array_merge( array_merge( [ '{{' ], $attribTokens ), [ '}}', new EOFTk() ] );
 
-		// Process exploded token in a new pipeline that
-		// converts the tokens to DOM.
+		// Process exploded token in a new pipeline that takes us through
+		// Stages 2-3.
+		// FIXME: Similar to processTemplateSource, we're returning tokens at
+		// the beginning of Stage 3 that have already been through this stage.
 		$toks = PipelineUtils::processContentInPipeline(
 			$this->env,
 			$this->manager->getFrame(),
@@ -487,49 +491,63 @@ class TemplateHandler extends TokenHandler {
 		TokenUtils::stripEOFTkfromTokens( $toks );
 
 		$hasTemplatedTarget = isset( $state['token']->dataAttribs->tmp->templatedAttribs );
-		if ( $hasTemplatedTarget && $this->wrapTemplates ) {
-			// Add encapsulation if we had a templated target
-			// FIXME: This is a deliberate wrapping of the entire
-			// "broken markup" where one or more templates are nested
-			// inside invalid transclusion markup. The proper way to do
-			// this would be to disentangle everything and identify
-			// transclusions and wrap them individually with meta tags
-			// and data-mw info. But, this is an edge case which can be
-			// more readily fixed by fixing the markup. The goal here is
-			// to ensure that the output renders properly and it roundtrips
-			// without dirty diffs rather then faithful DOMspec representation.
-			$toks = $this->encapTokens( $state, $toks );
+		if ( $hasTemplatedTarget ) {
+			// Since we have a templated target, attributes have gone through
+			// the attribute expander, which processes them to dom, meaning
+			// that any mw:DOMFragment will have been unpacked and unavailable
+			// if returned here.  If we encounter any, let's just do the easiest
+			// thing and return the source for the template.  But note that
+			// that will have the effect of converting any of the parsed
+			// constructs in the tokens above back to untokenized strings.
+			// FIXME: We can do something fancier, like for the href in
+			// WikiLinkHandler::bailTokens, but this is already considered
+			// an edge case not really worth supporting (see below)
+			foreach ( $attribTokens as $t ) {
+				if ( $t instanceof Token && TokenUtils::hasDOMFragmentType( $t ) ) {
+					$toks = [ $state['token']->dataAttribs->src ];
+					break;
+				}
+			}
+
+			if ( $this->wrapTemplates ) {
+				// Add encapsulation if we had a templated target
+				// FIXME: This is a deliberate wrapping of the entire
+				// "broken markup" where one or more templates are nested
+				// inside invalid transclusion markup. The proper way to do
+				// this would be to disentangle everything and identify
+				// transclusions and wrap them individually with meta tags
+				// and data-mw info. But, this is an edge case which can be
+				// more readily fixed by fixing the markup. The goal here is
+				// to ensure that the output renders properly and it roundtrips
+				// without dirty diffs rather then faithful DOMspec representation.
+				$toks = $this->encapTokens( $state, $toks );
+			}
 		}
 
 		return $toks;
 	}
 
 	/**
-	 * checkRes
+	 * Enforce template loops / loop depth limit constraints and emit
+	 * error message if constraints are violated.
 	 *
 	 * @param mixed $target
 	 * @param Title $title
 	 * @param bool $ignoreLoop
 	 * @return ?array
 	 */
-	private function checkRes(
-		$target, Title $title, bool $ignoreLoop
-	): ?array {
-		$checkRes = $this->manager->getFrame()->loopAndDepthCheck(
+	private function enforceTemplateConstraints( $target, Title $title, bool $ignoreLoop ): ?array {
+		$error = $this->manager->getFrame()->loopAndDepthCheck(
 			$title, $this->env->getSiteConfig()->getMaxTemplateDepth(),
 			$ignoreLoop
 		);
-		if ( $checkRes ) {
-			// Loop detected or depth limit exceeded, abort!
-			$res = [
-				new TagTk( 'span', [ new KV( 'class', 'error' ) ] ),
-				$checkRes,
-				new SelfclosingTagTk( 'wikilink', [ new KV( 'href', $target, null, '', '' ) ] ),
-				new EndTagTk( 'span' ),
-			];
-			return $res;
-		}
-		return null;
+
+		return $error ? [ // Loop detected or depth limit exceeded, abort!
+			new TagTk( 'span', [ new KV( 'class', 'error' ) ] ),
+			$error,
+			new SelfclosingTagTk( 'wikilink', [ new KV( 'href', $target, null, '', '' ) ] ),
+			new EndTagTk( 'span' ),
+		] : null;
 	}
 
 	/**
@@ -593,11 +611,10 @@ class TemplateHandler extends TokenHandler {
 			return $res;
 		}
 
-		// Loop detection needs to be enabled since we're doing our own template
-		// expansion
-		$checkRes = $this->checkRes( $target, $resolvedTgt['title'], false );
-		if ( is_array( $checkRes ) ) {
-			return $checkRes;
+		// Loop detection needs to be enabled since we're doing our own template expansion
+		$error = $this->enforceTemplateConstraints( $target, $resolvedTgt['title'], false );
+		if ( is_array( $error ) ) {
+			return $error;
 		}
 
 		// XXX: notes from brion's mediawiki.parser.environment
@@ -650,14 +667,19 @@ class TemplateHandler extends TokenHandler {
 			$env->log( 'dump/tplsrc', str_repeat( '-', 80 ) );
 		}
 
-		$this->env->log( 'debug', 'TemplateHandler.processTemplateSource',
+		$env->log( 'debug', 'TemplateHandler.processTemplateSource',
 			$tplArgs['name'], $tplArgs['attribs'] );
 
-		// Get a nested transformation pipeline for the input type. The input
-		// pipeline includes the tokenizer, synchronous stage-1 transforms for
-		// 'text/wiki' input and asynchronous stage-2 transforms).
+		// Get a nested transformation pipeline for the wikitext that takes
+		// us through Stages 1-3.
+		// FIXME: Note, however, that since template handling is itself in
+		// Stage 3, tokens returned here will be run through that stage again,
+		// except not necessarily with the same pipeline options we're setting
+		// below.  The overall effect is mostly harmless, in that the token
+		// types will have already been handled the first time through, but
+		// it does present chances for confusion, like in attribute expansion.
 		$toks = PipelineUtils::processContentInPipeline(
-			$this->env,
+			$env,
 			$this->manager->getFrame(),
 			$src,
 			[
@@ -764,7 +786,7 @@ class TemplateHandler extends TokenHandler {
 			$srcEnd -= count( $paramData['info']['spc'][3] );
 		}
 
-		$dom = PipelineUtils::processContentInPipeline(
+		$domFragment = PipelineUtils::processContentInPipeline(
 			$this->env, $this->manager->getFrame(),
 			$param->wt,
 			[
@@ -779,19 +801,20 @@ class TemplateHandler extends TokenHandler {
 				'sol' => true
 			]
 		);
-		$body = DOMCompat::getBody( $dom );
 		// FIXME: We're better off setting a pipeline option above
 		// to skip dsr computation to begin with.  Worth revisitting
 		// if / when `addHTMLTemplateParameters` is enabled.
 		// Remove DSR from children
-		DOMUtils::visitDOM( $body, function ( $node ) {
+		DOMUtils::visitDOM( $domFragment, function ( $node ) {
 			if ( !DOMUtils::isElt( $node ) ) {
 				return;
 			}
 			$dp = DOMDataUtils::getDataParsoid( $node );
 			$dp->dsr = null;
 		} );
-		$param->html = ContentUtils::ppToXML( $body, [ 'innerXML' => true ] );
+		$param->html = ContentUtils::ppToXML(
+			$domFragment, [ 'innerXML' => true ]
+		);
 	}
 
 	/**
@@ -1106,7 +1129,13 @@ class TemplateHandler extends TokenHandler {
 			}
 			return [ 'tokens' => $tokens ];
 		} else {
-			$pageContent = $env->getDataAccess()->fetchPageContent( $env->getPageConfig(), $templateName );
+			$start = PHPUtils::getStartHRTime();
+			$pageContent = $env->getDataAccess()->fetchTemplateSource( $env->getPageConfig(), $templateName );
+			if ( $env->profiling() ) {
+				$profile = $env->getCurrentProfile();
+				$profile->bumpMWTime( "TemplateFetch", PHPUtils::getHRTimeDifferential( $start ), "api" );
+				$profile->bumpCount( "TemplateFetch" );
+			}
 			if ( !$pageContent ) {
 				// Missing page!
 				// FIXME: This should be a redlink here!
@@ -1136,8 +1165,14 @@ class TemplateHandler extends TokenHandler {
 			];
 		} else {
 			$pageConfig = $env->getPageConfig();
+			$start = PHPUtils::getStartHRTime();
 			$ret = $env->getDataAccess()->preprocessWikitext( $pageConfig, $transclusion );
 			$wikitext = $this->manglePreprocessorResponse( $ret );
+			if ( $env->profiling() ) {
+				$profile = $env->getCurrentProfile();
+				$profile->bumpMWTime( "Template", PHPUtils::getHRTimeDifferential( $start ), "api" );
+				$profile->bumpCount( "Template" );
+			}
 			return [
 				'error' => false,
 				'src' => $wikitext
@@ -1158,8 +1193,8 @@ class TemplateHandler extends TokenHandler {
 		$env = $this->env;
 		$wikitext = $ret['wikitext'];
 
-		foreach ( [ 'modules', 'modulescripts', 'modulestyles' ] as $prop ) {
-			$env->addOutputProperty( $prop, $ret[$prop] );
+		foreach ( [ 'modules', 'modulestyles', 'jsconfigvars' ] as $prop ) {
+			$env->addOutputProperty( $prop, $ret[$prop] ?? [] );
 		}
 
 		// Add the categories which were added by parser functions directly
@@ -1252,11 +1287,11 @@ class TemplateHandler extends TokenHandler {
 	 * ```
 	 * @param bool $atTopLevel
 	 * @param Token $tplToken
-	 * @param array|null $resolvedTgt
-	 * @return Token[]|null
+	 * @param ?array $resolvedTgt
+	 * @return ?array
 	 */
 	public function processSpecialMagicWord(
-		bool $atTopLevel, Token $tplToken, array $resolvedTgt = null
+		bool $atTopLevel, Token $tplToken, ?array $resolvedTgt = null
 	): ?array {
 		$env = $this->env;
 
@@ -1264,7 +1299,8 @@ class TemplateHandler extends TokenHandler {
 		// because of the call from the TokenStreamPatcher.  Otherwise, ! is a
 		// variable like any other and can be dropped from this function.
 		// However, we keep both cases flowing through here for consistency.
-		if ( ( $resolvedTgt && $resolvedTgt['magicWordType'] === '!' ) ||
+		if (
+			( $resolvedTgt && $resolvedTgt['magicWordType'] === '!' ) ||
 			$tplToken->attribs[0]->k === '!'
 		) {
 			// If we're not at the top level, return a table cell. This will always
@@ -1280,11 +1316,14 @@ class TemplateHandler extends TokenHandler {
 				'wrappedObjectId' => $env->newObjectId()
 			];
 			$this->resolveTemplateTarget( $state, '!', $tplToken->attribs[0]->srcOffsets->key );
-			return $this->encapTokens( $state, [ '|' ] );
+			$toks = [ '|' ];
+			return $this->wrapTemplates ?
+				$this->encapTokens( $state, $toks ) : $toks;
 		}
 
 		if ( !$resolvedTgt || $resolvedTgt['magicWordType'] !== 'MASQ' ) {
 			// Nothing to do
+			// FIXME: This is going to result in a throw
 			return null;
 		}
 
@@ -1311,7 +1350,7 @@ class TemplateHandler extends TokenHandler {
 			$metaToken->addAttribute( 'about', $env->newAboutId() );
 			$metaToken->addSpaceSeparatedAttribute( 'typeof', 'mw:ExpandedAttrs' );
 
-			// See [[mw:Specs/HTML/1.4.0#Transclusion-affected_attributes]]
+			// See [[mw:Specs/HTML#Generated_attributes_of_HTML_tags]]
 			//
 			// For every attribute that has a templated name and/or value,
 			// AttributeExpander creates a 2-item array for that attribute.
@@ -1461,9 +1500,9 @@ class TemplateHandler extends TokenHandler {
 				// We still need to check for limit violations because of the
 				// higher precedence of extension tags, which can result in nested
 				// templates even while using the php preprocessor for expansion.
-				$checkRes = $this->checkRes( $templateName, $templateTitle, true );
-				if ( is_array( $checkRes ) ) {
-					return [ 'tokens' => $checkRes ];
+				$error = $this->enforceTemplateConstraints( $templateName, $templateTitle, true );
+				if ( is_array( $error ) ) {
+					return [ 'tokens' => $error ];
 				}
 
 				// Check if we have an expansion for this template in the cache already
@@ -1518,7 +1557,7 @@ class TemplateHandler extends TokenHandler {
 		$res = $this->fetchArg( $attribs[0]->k, $attribs[0]->srcOffsets->key );
 		$res = $this->lookupArg( $args, $attribs, $res );
 
-		if ( $this->options['expandTemplates'] ) {
+		if ( $this->wrapTemplates && $this->options['expandTemplates'] ) {
 			// This is a bare use of template arg syntax at the top level
 			// outside any template use context.  Wrap this use with RDF attrs.
 			// so that this chunk can be RT-ed en-masse.

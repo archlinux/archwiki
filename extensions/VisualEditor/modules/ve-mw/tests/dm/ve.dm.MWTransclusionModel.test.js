@@ -6,15 +6,15 @@
 
 ( function () {
 	QUnit.module( 've.dm.MWTransclusionModel', QUnit.newMwEnvironment( {
-		setup: function () {
+		beforeEach: function () {
 			// Mock XHR for mw.Api()
 			this.server = this.sandbox.useFakeServer();
 			this.server.respondImmediately = true;
 
-			ve.test.utils.mwEnvironment.setup.call( this );
+			ve.test.utils.mwEnvironment.beforeEach.call( this );
 		},
-		teardown: function () {
-			ve.test.utils.mwEnvironment.teardown.call( this );
+		afterEach: function () {
+			ve.test.utils.mwEnvironment.afterEach.call( this );
 		}
 	} ) );
 

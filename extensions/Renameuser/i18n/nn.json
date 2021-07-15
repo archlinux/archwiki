@@ -21,7 +21,6 @@
 	"renameuserwarnings": "Åtvaringar:",
 	"renameuserconfirm": "Ja, endra namn på brukaren",
 	"renameusersubmit": "Utfør",
-	"renameuser-submit-blocklog": "Sjå blokkeringslogg for brukaren",
 	"renameusererrordoesnotexist": "Brukaren «<nowiki>$1</nowiki>» finst ikkje.",
 	"renameusererrorexists": "Brukaren «<nowiki>$1</nowiki>» finst allereie.",
 	"renameusererrorinvalid": "Brukarnamnet «<nowiki>$1</nowiki>» er ikkje gyldig.",

@@ -5,13 +5,13 @@
 		]
 	},
 	"categorytree-portlet": "መደባት",
-	"categorytree-category": "መደብ፥",
-	"categorytree-mode-all": "ኩሉ ገጻት",
+	"categorytree-category": "መደብ፦",
+	"categorytree-mode-all": "ኩሎም ገጻት",
 	"categorytree-collapse": "ኣክብ",
 	"categorytree-expand": "ዘርግሕ",
 	"categorytree-num-categories": "$1 ም",
 	"categorytree-num-pages": "$1 ገ",
 	"categorytree-num-empty": "ባዶ",
-	"categorytree-load": "ጸዓነ",
+	"categorytree-load": "ጸዓን",
 	"categorytree-loading": "ይጽዕን ኣሎ..."
 }

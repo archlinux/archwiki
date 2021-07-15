@@ -2,13 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"McDutchie",
-			"Robby"
+			"Robby",
+			"Soued031"
 		]
 	},
 	"scribunto-line": "an der Linn $1",
-	"scribunto-parser-dialog-title": "Script-Feeler",
-	"scribunto-error-short": "Script-Feeler: $1",
-	"scribunto-error-long": "Script-Feeler:\n\n$1",
+	"scribunto-parser-dialog-title": "Skript-Feeler",
+	"scribunto-error-short": "Skript-Feeler: $1",
+	"scribunto-error-long": "Skript-Feeler:\n\n$1",
 	"scribunto-doc-page-name": "Module:$1/doc",
 	"scribunto-doc-page-does-not-exist": "''D'Dokumentatioun fir dëse Modul kann op [[$1]] ugeluecht ginn''",
 	"scribunto-doc-page-header": "'''Dëst ass d'Dokumentationsäit fir [[$1]]'''",

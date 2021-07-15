@@ -79,7 +79,7 @@ pre,
 	font-size: @font-size-base;
 	// Support IE 9-11, Trident cuts values 2 digits after decimal point.
 	// `calc` enables to set correct calculation in place again. See T102364.
-	font-size: calc( 1em ~'*' unit( @font-size-base ) );
+	font-size: @font-size-base--trident-hack;
 	line-height: @line-height-base;
 
 	h1 {
@@ -124,14 +124,28 @@ pre,
 	p {
 		margin: 0.5em 0;
 	}
+
+	blockquote {
+		border-left: @border-start-blockquote;
+		padding: @padding-blockquote;
+
+		// Ensure not to inherit whitespace mashing margins on child elements.
+		> :first-child {
+			margin-top: 0;
+		}
+
+		> :last-child {
+			margin-bottom: 0;
+		}
+	}
 }
 
 // External links
 .mw-parser-output {
 	.external {
+		background-image: url( images/external-link-ltr-icon.svg );
 		background-position: center right;
 		background-repeat: no-repeat;
-		.background-image-svg( 'images/external-link-ltr-icon.svg', 'images/external-link-ltr-icon.png' );
 		padding-right: 13px;
 	}
 }

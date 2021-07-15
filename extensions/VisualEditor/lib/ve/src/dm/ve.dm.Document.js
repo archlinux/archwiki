@@ -54,6 +54,7 @@ ve.dm.Document = function VeDmDocument( data, htmlDocument, parentDocument, inte
 	this.originalDocument = originalDocument || null;
 	this.nodesByType = {};
 	this.origInternalListLength = null;
+	this.readOnly = false;
 
 	// Sparse array
 	this.branchNodeFromOffsetCache = [];
@@ -324,6 +325,38 @@ ve.dm.Document.prototype.getLength = function () {
 };
 
 /**
+ * Set the read-only state of the document
+ *
+ * Actual locking of the model is done by the surface, but
+ * we pass through this flag so we can do some optimizations
+ * in read-only mode, such as caching node offsets.
+ *
+ * TODO: It might just be easier for Documents to know which
+ * Surface they belong to, although we should make sure that
+ * this doesn't violate the direction of data flow.
+ *
+ * @param {boolean} readOnly Mark document as read-only
+ */
+ve.dm.Document.prototype.setReadOnly = function ( readOnly ) {
+	this.readOnly = !!readOnly;
+	if ( !this.readOnly ) {
+		// Clear offset cache when leaving read-only mode
+		this.getDocumentNode().traverse( function ( node ) {
+			node.offset = null;
+		} );
+	}
+};
+
+/**
+ * Check if the document is read-only
+ *
+ * @return {boolean}
+ */
+ve.dm.Document.prototype.isReadOnly = function () {
+	return this.readOnly;
+};
+
+/**
  * Apply a transaction's effects on the content data.
  *
  * @param {ve.dm.Transaction} transaction Transaction to apply
@@ -491,9 +524,15 @@ ve.dm.Document.prototype.shallowCloneFromRange = function ( range ) {
 		linearData = this.data.sliceObject();
 		originalRange = balancedRange = this.getDocumentRange();
 	} else {
-		startNode = this.getBranchNodeFromOffset( range.start );
-		endNode = this.getBranchNodeFromOffset( range.end );
 		selection = this.selectNodes( range, 'siblings' );
+		first = selection[ 0 ];
+		last = selection[ selection.length - 1 ];
+		firstNode = first.node;
+		lastNode = last.node;
+
+		// Use first/lastNode if they are non-content branch nodes, otherwise use getBranchNodeFromOffset.
+		startNode = !firstNode.hasChildren() && !firstNode.isContent() ? firstNode : this.getBranchNodeFromOffset( range.start );
+		endNode = !lastNode.hasChildren() && !lastNode.isContent() ? lastNode : this.getBranchNodeFromOffset( range.end );
 
 		// Fix up selection to remove empty items in unwrapped nodes
 		// TODO: fix this is selectNodes
@@ -511,7 +550,7 @@ ve.dm.Document.prototype.shallowCloneFromRange = function ( range ) {
 			// Nothing selected
 			linearData = new ve.dm.ElementLinearData( this.getStore(), [
 				{ type: 'paragraph', internal: { generated: 'empty' } },
-				{ type: 'paragraph' }
+				{ type: '/paragraph' }
 			] );
 			originalRange = balancedRange = new ve.Range( 1 );
 		} else if ( startNode === endNode ) {
@@ -519,10 +558,6 @@ ve.dm.Document.prototype.shallowCloneFromRange = function ( range ) {
 			balancedNodes = selection;
 		} else {
 			// Selection is not balanced
-			first = selection[ 0 ];
-			last = selection[ selection.length - 1 ];
-			firstNode = first.node;
-			lastNode = last.node;
 			while ( !firstNode.isWrapped() ) {
 				firstNode = firstNode.getParent();
 			}
@@ -693,26 +728,25 @@ ve.dm.Document.prototype.cloneWithData = function ( data, copyInternalList, deta
  * @return {Array} Data, with load offset info removed (some items are referenced, others copied)
  */
 ve.dm.Document.prototype.getFullData = function ( range, mode ) {
-	var i, j, jLen, item, metaItems, metaItem, offset,
+	var i, j, jLen, item, metaItems, metaItem, offset, internal,
 		insertedMetaItems = [],
 		insertions = {},
 		iLen = range ? range.end : this.data.getLength(),
 		result = [];
 
-	function stripMetaLoadInfo( item ) {
-		if ( !item || !item.internal ) {
-			return item;
+	function stripMetaLoadInfo( element ) {
+		if ( !element || !element.internal ) {
+			return element;
 		}
-		item = ve.cloneObject( item );
-		item.internal = ve.cloneObject( item.internal );
-		delete item.internal.changesSinceLoad;
-		delete item.internal.metaItems;
-		delete item.internal.loadMetaParentHash;
-		delete item.internal.loadMetaParentOffset;
-		if ( Object.keys( item.internal ).length === 0 ) {
-			delete item.internal;
+		element = ve.copy( element );
+		delete element.internal.changesSinceLoad;
+		delete element.internal.metaItems;
+		delete element.internal.loadMetaParentHash;
+		delete element.internal.loadMetaParentOffset;
+		if ( Object.keys( element.internal ).length === 0 ) {
+			delete element.internal;
 		}
-		return item;
+		return element;
 	}
 
 	for ( i = range ? range.start : 0; i < iLen; i++ ) {
@@ -723,37 +757,47 @@ ve.dm.Document.prototype.getFullData = function ( range, mode ) {
 			(
 				mode === 'noMetadata' ||
 				mode === 'roundTrip' &&
-				insertedMetaItems.indexOf( item ) !== -1
+				insertedMetaItems.indexOf( item.originalDomElementsHash ) !== -1
 			)
 		) {
 			// Already inserted; skip this item and its matching close tag
 			i += 1;
 			continue;
 		}
-		if ( mode === 'roundTrip' && !ve.getProp( item, 'internal', 'changesSinceLoad' ) ) {
-			metaItems = ve.getProp( item, 'internal', 'metaItems' ) || [];
-			// No changes, so restore meta item offsets
-			for ( j = 0, jLen = metaItems.length; j < jLen; j++ ) {
-				metaItem = metaItems[ j ];
-				offset = i + metaItem.internal.loadMetaParentOffset;
-				if ( !insertions[ offset ] ) {
-					insertions[ offset ] = [];
-				}
-				delete metaItem.internal.loadBranchNodeHash;
-				delete metaItem.internal.loadBranchNodeOffset;
-				if ( Object.keys( metaItem.internal ).length === 0 ) {
-					delete metaItem.internal;
-				}
-				insertions[ offset ].push( metaItem );
-				insertedMetaItems.push( metaItem );
-			}
-		} else if ( mode === 'roundTrip' ) {
-			metaItems = ve.getProp( item, 'internal', 'metaItems' ) || [];
-			// Had changes, so remove removable meta items that are out of place now
-			for ( j = 0, jLen = metaItems.length; j < jLen; j++ ) {
-				metaItem = metaItems[ j ];
-				if ( ve.dm.nodeFactory.isRemovableMetaData( metaItem.type ) ) {
-					insertedMetaItems.push( metaItem );
+		if (
+			mode === 'roundTrip' &&
+			( internal = item.internal ) &&
+			( metaItems = internal.metaItems )
+		) {
+			if ( !internal.changesSinceLoad ) {
+				// eslint-disable-next-line no-loop-func, no-shadow
+				this.data.modifyData( i, function ( item ) {
+					// Re-fetch unfrozen metaItems.
+					metaItems = item.internal.metaItems;
+					// No changes, so restore meta item offsets
+					for ( j = 0, jLen = metaItems.length; j < jLen; j++ ) {
+						metaItem = metaItems[ j ];
+						offset = i + metaItem.internal.loadMetaParentOffset;
+						if ( !insertions[ offset ] ) {
+							insertions[ offset ] = [];
+						}
+
+						delete metaItem.internal.loadBranchNodeHash;
+						delete metaItem.internal.loadBranchNodeOffset;
+						if ( Object.keys( metaItem.internal ).length === 0 ) {
+							delete metaItem.internal;
+						}
+						insertions[ offset ].push( stripMetaLoadInfo( metaItem ) );
+						insertedMetaItems.push( metaItem.originalDomElementsHash );
+					}
+				} );
+			} else {
+				// Had changes, so remove removable meta items that are out of place now
+				for ( j = 0, jLen = metaItems.length; j < jLen; j++ ) {
+					metaItem = metaItems[ j ];
+					if ( ve.dm.nodeFactory.isRemovableMetaData( metaItem.type ) ) {
+						insertedMetaItems.push( metaItem.originalDomElementsHash );
+					}
 				}
 			}
 		}
@@ -761,7 +805,7 @@ ve.dm.Document.prototype.getFullData = function ( range, mode ) {
 		if ( mode === 'roundTrip' && insertions[ i ] ) {
 			for ( j = 0, jLen = insertions[ i ].length; j < jLen; j++ ) {
 				metaItem = insertions[ i ][ j ];
-				result.push( stripMetaLoadInfo( metaItem ) );
+				result.push( metaItem );
 				result.push( { type: '/' + metaItem.type } );
 			}
 		}
@@ -908,9 +952,9 @@ ve.dm.Document.prototype.getNearestFocusableNode = function ( offset, direction,
 	this.data.getRelativeOffset(
 		offset,
 		direction === 1 ? 0 : -1,
-		function ( index, limit ) {
+		function ( index, lim ) {
 			// Our result must be between offset and limit
-			if ( index >= Math.max( offset, limit ) || index < Math.min( offset, limit ) ) {
+			if ( index >= Math.max( offset, lim ) || index < Math.min( offset, lim ) ) {
 				return true;
 			}
 			if (
@@ -1351,21 +1395,21 @@ ve.dm.Document.prototype.fixupInsertion = function ( data, offset ) {
 	 * This function updates parentNode, parentType, closingStack, reopenElements, and closings.
 	 *
 	 * @private
-	 * @param {string} childType Current element type we're considering (for error reporting only)
+	 * @param {string} type Current element type we're considering (for error reporting only)
 	 */
-	function closeElement( childType ) {
-		var popped;
+	function closeElement( type ) {
+		var element;
 		// Close the parent and try one level up
 		closings.push( { type: '/' + parentType } );
 		if ( openingStack.length > 0 ) {
-			popped = openingStack.pop();
-			parentType = popped.type;
-			reopenElements.push( ve.copy( popped ) );
+			element = openingStack.pop();
+			parentType = element.type;
+			reopenElements.push( ve.copy( element ) );
 			// The opening was on openingStack, so we're closing a node that was opened
 			// within data. Don't track that on closingStack
 		} else {
 			if ( !parentNode.getParent() ) {
-				throw new Error( 'Cannot insert ' + childType + ' even after closing ' +
+				throw new Error( 'Cannot insert ' + type + ' even after closing ' +
 					'all containing nodes (at index ' + i + ')' );
 			}
 			// openingStack is empty, so we're closing a node that was already in the
@@ -1591,7 +1635,7 @@ ve.dm.Document.prototype.findText = function ( query, options ) {
 
 	if ( query instanceof RegExp ) {
 		// Avoid multi-line matching by only matching within content (text or content elements)
-		data.forEachRunOfContent( documentRange, function ( offset, line ) {
+		data.forEachRunOfContent( documentRange, function ( off, line ) {
 			query.lastIndex = 0;
 			while ( ( match = query.exec( line ) ) !== null ) {
 				matchText = match[ 0 ];
@@ -1616,8 +1660,8 @@ ve.dm.Document.prototype.findText = function ( query, options ) {
 				// 1/2: If we matched opening U+FFFC at the end, extend the match forwards by 1.
 				if (
 					matchText[ matchText.length - 1 ] === '\uFFFC' &&
-					data.isOpenElementData( offset + match.index + matchText.length - 1 ) &&
-					data.isCloseElementData( offset + match.index + matchText.length )
+					data.isOpenElementData( off + match.index + matchText.length - 1 ) &&
+					data.isCloseElementData( off + match.index + matchText.length )
 				) {
 					matchText += '\uFFFC';
 					query.lastIndex += 1;
@@ -1627,8 +1671,8 @@ ve.dm.Document.prototype.findText = function ( query, options ) {
 				// (We do not extend the match backwards to avoid overlapping matches.)
 				if (
 					matchText[ 0 ] === '\uFFFC' &&
-					data.isOpenElementData( offset + match.index - 1 ) &&
-					data.isCloseElementData( offset + match.index )
+					data.isOpenElementData( off + match.index - 1 ) &&
+					data.isCloseElementData( off + match.index )
 				) {
 					// Continue matching at the next character, rather than the end of this match.
 					query.lastIndex = match.index + 1;
@@ -1636,8 +1680,8 @@ ve.dm.Document.prototype.findText = function ( query, options ) {
 				}
 
 				ranges.push( new ve.Range(
-					offset + match.index,
-					offset + match.index + matchText.length
+					off + match.index,
+					off + match.index + matchText.length
 				) );
 				if ( !options.noOverlaps ) {
 					query.lastIndex = match.index + 1;

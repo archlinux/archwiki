@@ -2,13 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"Ashok modhvadia",
+			"CptViraj",
 			"KartikMistry",
 			"Sushant savla"
 		]
 	},
 	"renameuser": "સભ્યનામ બદલો",
-	"renameuser-linkoncontribs": "સભ્યનામ બદલો",
-	"renameuser-linkoncontribs-text": "આ સભ્યનું નામ બદલો",
+	"renameuser-linkoncontribs": "{{GENDER:$1|સભ્ય}}નું નામ બદલો",
+	"renameuser-linkoncontribs-text": "આ {{GENDER:$1|સભ્ય}}નું નામ બદલો",
 	"renameuser-desc": "સભ્યનું નામાંતરણ કરવા માટે [[Special:RenameUser|special page]] ઉમેરે છે (''renameuser'' હક્ક જરૂરી)",
 	"renameuserold": "હાલનું સભ્યનામ:",
 	"renameusernew": "નવું સભ્યનામ:",
@@ -19,7 +20,6 @@
 	"renameuserwarnings": "ચેતવણીઓ:",
 	"renameuserconfirm": "હા, સભ્યનું નામ બદલો",
 	"renameusersubmit": "જમા કરો",
-	"renameuser-submit-blocklog": "સભ્ય માટે પ્રતિબંધ લૉગ બતાવો",
 	"renameusererrordoesnotexist": "આ સભ્ય  \"<nowiki>$1</nowiki>\" મોજૂદ નથી.",
 	"renameusererrorexists": "આ સભ્ય  \"<nowiki>$1</nowiki>\" પહેલેથી હાજર છે.",
 	"renameusererrorinvalid": "સભ્યનામ \"<nowiki>$1</nowiki>\" અયોગ્ય છે.",

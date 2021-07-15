@@ -1,5 +1,0 @@
-Hooks provided by the MonoBook skin.
-
-'MonoBookAfterContent': Called after #content has been closed but right
-before #column-content is closed. You can use this to inject items (such as
-ads, for example) from an extension.

@@ -28,13 +28,11 @@
  * @link     https://www.mediawiki.org/wiki/Extension:Replace_Text
  *
  */
-// @codingStandardsIgnoreStart
 $IP = getenv( "MW_INSTALL_PATH" ) ?: __DIR__ . "/../../..";
 if ( !is_readable( "$IP/maintenance/Maintenance.php" ) ) {
 	die( "MW_INSTALL_PATH needs to be set to your MediaWiki installation.\n" );
 }
-require_once ( "$IP/maintenance/Maintenance.php" );
-// @codingStandardsIgnoreEnd
+require_once "$IP/maintenance/Maintenance.php";
 
 /**
  * Maintenance script that replaces text in pages
@@ -144,13 +142,11 @@ class ReplaceAll extends Maintenance {
 		$handle = fopen( $file, "r" );
 		if ( $handle === false ) {
 			throw new MWException( "Trouble opening file: $file\n" );
-			return false;
 		}
 
 		$this->defaultContinue = true;
-		// @codingStandardsIgnoreStart
+		// phpcs:ignore MediaWiki.ControlStructures.AssignmentInControlStructures.AssignmentInControlStructures
 		while ( ( $line = fgets( $handle ) ) !== false ) {
-		// @codingStandardsIgnoreEnd
 			$field = explode( "\t", substr( $line, 0, -1 ) );
 			if ( !isset( $field[1] ) ) {
 				continue;

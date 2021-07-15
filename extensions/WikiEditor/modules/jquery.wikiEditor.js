@@ -467,12 +467,12 @@
 			};
 
 			/**
-			* Base UI Construction
-			*
-			* The UI is built from several containers, the outer-most being a div classed as "wikiEditor-ui". These containers
-			* provide a certain amount of "free" layout, but in some situations procedural layout is needed, which is performed
-			* as a response to the "resize" event.
-			*/
+			 * Base UI Construction
+			 *
+			 * The UI is built from several containers, the outer-most being a div classed as "wikiEditor-ui". These containers
+			 * provide a certain amount of "free" layout, but in some situations procedural layout is needed, which is performed
+			 * as a response to the "resize" event.
+			 */
 
 			// Assemble a temporary div to place over the wikiEditor while it's being constructed
 			/* Disabling our loading div for now

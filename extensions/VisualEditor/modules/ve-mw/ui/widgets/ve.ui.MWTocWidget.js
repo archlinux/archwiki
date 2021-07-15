@@ -167,8 +167,8 @@ ve.ui.MWTocWidget.prototype.build = function () {
 		stack = [],
 		uri = new mw.Uri();
 
-	function getItemIndex( $list, n ) {
-		return $list.children( 'li' ).length + ( n === stack.length - 1 ? 1 : 0 );
+	function getItemIndex( $el, n ) {
+		return $el.children( 'li' ).length + ( n === stack.length - 1 ? 1 : 0 );
 	}
 
 	function linkClickHandler( /* heading */ ) {

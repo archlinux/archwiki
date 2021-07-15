@@ -10,6 +10,7 @@
 	"apihelp-query+pageimages-example-1": "{{doc-apihelp-example|query+pageimages}}",
 	"apihelp-query+pageimages-param-prop": "{{doc-apihelp-param|query+pageimages|prop}}",
 	"apihelp-query+pageimages-param-thumbsize": "{{doc-apihelp-param|query+pageimages|thumbsize}}",
+	"apihelp-query+pageimages-param-langcode": "{{doc-apihelp-param|query+pageimages|langcode}}",
 	"apihelp-query+pageimages-param-limit": "{{doc-apihelp-param|query+pageimages|limit}}",
 	"apihelp-query+pageimages-param-license": "{{doc-apihelp-param|query+pageimages|license}}",
 	"apihelp-query+pageimages-paramvalue-license-free": "{{doc-apihelp-paramvalue|query+pageimages|license|free}}",

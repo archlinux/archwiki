@@ -6,5 +6,7 @@
 	},
 	"syntaxhighlight-error-category": "Старонкі з памылкамі падсветкі сінтаксісу",
 	"syntaxhighlight-error-category-desc": "Пры спробе дадаць падсветку сінтаксісу на старонцы адбылася памылка",
+	"syntaxhighlight-source-category": "Старонкі, якія выкарыстоўваюць састарэлы тэг source",
+	"syntaxhighlight-source-category-desc": "Выдзяленне сінтаксісу на гэтай старонцы выкарыстоўвае састарэлыя тэгі зыходнага коду.",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Мова"
 }

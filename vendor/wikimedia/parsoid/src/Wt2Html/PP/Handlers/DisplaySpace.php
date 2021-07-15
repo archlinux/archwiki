@@ -8,10 +8,11 @@ use DOMElement;
 use DOMText;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Core\DomSourceRange;
+use Wikimedia\Parsoid\Core\Sanitizer;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
+use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\Utils;
 use Wikimedia\Parsoid\Utils\WTUtils;
-use Wikimedia\Parsoid\Wt2Html\TT\Sanitizer;
 
 /**
  * Apply french space armoring.
@@ -79,12 +80,8 @@ class DisplaySpace {
 
 		$span = $doc->createElement( 'span' );
 		$span->appendChild( $doc->createTextNode( "\u{00A0}" ) );
-		// FIXME(T254502): Do away with the mw:Placeholder and the associated
-		// data-parsoid.src
-		$span->setAttribute( 'typeof', 'mw:DisplaySpace mw:Placeholder' );
-		DOMDataUtils::setDataParsoid( $span, (object)[
-			'src' => ' ', 'dsr' => $dsr,
-		] );
+		$span->setAttribute( 'typeof', 'mw:DisplaySpace' );
+		DOMDataUtils::setDataParsoid( $span, (object)[ 'dsr' => $dsr ] );
 		$node->parentNode->insertBefore( $span, $post );
 	}
 
@@ -96,6 +93,9 @@ class DisplaySpace {
 	 * @return bool|DOMElement
 	 */
 	public static function leftHandler( DOMText $node, Env $env ) {
+		if ( DOMUtils::isRawTextElement( $node->parentNode ) ) {
+			return true;
+		}
 		$key = array_keys( array_slice( Sanitizer::FIXTAGS, 0, 1 ) )[0];
 		if ( preg_match( $key, $node->nodeValue, $matches, PREG_OFFSET_CAPTURE ) ) {
 			$offset = $matches[0][1];
@@ -113,6 +113,9 @@ class DisplaySpace {
 	 * @return bool|DOMElement
 	 */
 	public static function rightHandler( DOMText $node, Env $env ) {
+		if ( DOMUtils::isRawTextElement( $node->parentNode ) ) {
+			return true;
+		}
 		$key = array_keys( array_slice( Sanitizer::FIXTAGS, 1, 1 ) )[0];
 		if ( preg_match( $key, $node->nodeValue, $matches, PREG_OFFSET_CAPTURE ) ) {
 			$offset = $matches[1][1] + strlen( $matches[1][0] );

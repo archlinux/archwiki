@@ -19,13 +19,12 @@ var DOMUtils = require('../lib/utils/DOMUtils.js').DOMUtils;
 var DOMDataUtils = require('../lib/utils/DOMDataUtils.js').DOMDataUtils;
 var TestUtils = require('../tests/TestUtils.js').TestUtils;
 var WTUtils = require('../lib/utils/WTUtils.js').WTUtils;
-var apiUtils = require('../lib/api/apiUtils');
 var ParsoidConfig = require('../lib/config/ParsoidConfig.js').ParsoidConfig;
 var Diff = require('../lib/utils/Diff.js').Diff;
 var JSUtils = require('../lib/utils/jsutils.js').JSUtils;
 var MockEnv = require('../tests/MockEnv.js').MockEnv;
 
-var defaultContentVersion = '2.1.0';
+var defaultContentVersion = '2.2.0';
 
 function displayDiff(type, count) {
 	var pad = (10 - type.length);  // Be positive!
@@ -480,7 +479,7 @@ var checkIfSignificant = function(offsets, data) {
 		// the wt-diffs are purely syntactic.
 		//
 		// FIXME: abstract to ensure same opts are used for parsoidPost and normalizeOut
-		const normOpts = { parsoidOnly: true, scrubWikitext: true, rtTestMode: true };
+		const normOpts = { parsoidOnly: true, scrubWikitext: true };
 		const normalizedOld = TestUtils.normalizeOut(oldBody, normOpts);
 		const normalizedNew = TestUtils.normalizeOut(newBody, normOpts);
 		if (normalizedOld === normalizedNew) {
@@ -531,8 +530,8 @@ var checkIfSignificant = function(offsets, data) {
 				thisResult.wtDiff = formatDiff(oldWt, newWt, offset, 25);
 
 				// Don't clog the rt-test server db with humongous diffs
-				if (diff.length > 2000) {
-					diff = diff.substring(0, 2000) + "-- TRUNCATED TO 2000 chars --";
+				if (diff.length > 1000) {
+					diff = diff.substring(0, 1000) + "-- TRUNCATED TO 1000 chars --";
 				}
 				thisResult.htmlDiff = diff;
 			}
@@ -561,8 +560,6 @@ var parsoidPost = Promise.async(function *(profile, options) {
 		uri += 'pagebundle/to/wikitext/' + options.title;
 		if (options.oldid) {
 			uri += '/' + options.oldid;
-		} else {
-			uri += '/'; // T232556
 		}
 		httpOptions.body.scrub_wikitext = true;
 		// We want to encode the request but *not* decode the response.
@@ -572,10 +569,8 @@ var parsoidPost = Promise.async(function *(profile, options) {
 		uri += 'wikitext/to/pagebundle/' + options.title;
 		if (options.oldid) {
 			uri += '/' + options.oldid;
-		} else {
-			uri += '/'; // T232556
 		}
-		httpOptions.headers.Accept = apiUtils.pagebundleContentType(options.outputContentVersion);
+		httpOptions.headers.Accept = 'application/json; charset=utf-8; profile="https://www.mediawiki.org/wiki/Specs/pagebundle/' + options.outputContentVersion + '"';
 		// setting json here encodes the request *and* decodes the response.
 		httpOptions.json = true;
 	}
@@ -707,8 +702,6 @@ var runTests = Promise.async(function *(title, options, formatter) {
 	var uri2 = parsoidOptions.uri + 'page/wikitext/' + parsoidOptions.title;
 	if (options.oldid) {
 		uri2 += '/' + options.oldid;
-	} else {
-		uri2 += '/'; // T232556
 	}
 
 	var profile = { time: { total: 0, start: 0 }, size: {} };
@@ -908,7 +901,6 @@ if (require.main === module) {
 				parsoidOptions: {
 					loadWMF: true,
 					useSelser: true,
-					rtTestMode: true,
 				}
 			};
 			if (argv.apiURL) {

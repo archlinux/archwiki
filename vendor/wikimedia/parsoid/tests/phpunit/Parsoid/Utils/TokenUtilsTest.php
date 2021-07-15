@@ -34,7 +34,7 @@ class TokenUtilsTest extends \PHPUnit\Framework\TestCase {
 				'attribs' => [],
 			],
 			'getTokenType' => 'TagTk',
-			'isBlockTag' => true,
+			'tagClosesBlockScope' => true,
 		],
 		[
 			'name' => '<p>',
@@ -44,7 +44,6 @@ class TokenUtilsTest extends \PHPUnit\Framework\TestCase {
 				'attribs' => [],
 			],
 			'getTokenType' => 'TagTk',
-			'isBlockTag' => true,
 			'tagOpensBlockScope' => true,
 		],
 		[
@@ -55,7 +54,6 @@ class TokenUtilsTest extends \PHPUnit\Framework\TestCase {
 				'attribs' => [],
 			],
 			'getTokenType' => 'TagTk',
-			'isBlockTag' => true,
 			'tagClosesBlockScope' => true,
 			'isTableTag' => true,
 		],
@@ -83,7 +81,7 @@ class TokenUtilsTest extends \PHPUnit\Framework\TestCase {
 				],
 			],
 			'getTokenType' => 'TagTk',
-			'isBlockTag' => true,
+			'tagClosesBlockScope' => true,
 			'isHTMLTag' => true,
 		],
 		[
@@ -172,19 +170,6 @@ class TokenUtilsTest extends \PHPUnit\Framework\TestCase {
 		$this->assertEquals(
 			$testCase['getTokenType'] ?? 'unknown',
 			TokenUtils::getTokenType( $testCase['token'] )
-		);
-	}
-
-	/**
-	 * @covers ::isBlockTag
-	 * @dataProvider provideTokens
-	 */
-	public function testIsBlockTag( $testCase ) {
-		$token = $testCase['token'];
-		$this->assertEquals(
-			$testCase['isBlockTag'] ?? false,
-			is_string( $token ) ? false :
-			TokenUtils::isBlockTag( $token->getName() )
 		);
 	}
 

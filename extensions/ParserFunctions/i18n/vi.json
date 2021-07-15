@@ -20,7 +20,7 @@
 	"pfunc_expr_unexpected_closing_bracket": "Lỗi biểu thức: Dư dấu đóng ngoặc",
 	"pfunc_expr_unrecognised_punctuation": "Lỗi biểu thức: Dấu phân cách “$1” không rõ ràng",
 	"pfunc_expr_unclosed_bracket": "Lỗi biểu thức: Dấu ngoặc chưa được đóng",
-	"pfunc_expr_division_by_zero": "Chia cho zero",
+	"pfunc_expr_division_by_zero": "Chia cho số không",
 	"pfunc_expr_invalid_argument": "Tham số không hợp lệ cho $1: < −1 hay > 1",
 	"pfunc_expr_invalid_argument_ln": "Tham số không hợp lệ cho ln: ≤ 0",
 	"pfunc_expr_unknown_error": "Lỗi biểu thức: Lỗi không rõ nguyên nhân ($1)",

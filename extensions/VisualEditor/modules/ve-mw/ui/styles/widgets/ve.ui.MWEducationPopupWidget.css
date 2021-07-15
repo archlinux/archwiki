@@ -1,0 +1,41 @@
+/*!
+ * VisualEditor MediaWiki UserInterface education popup styles.
+ *
+ * @copyright 2011-2020 VisualEditor Team and others; see AUTHORS.txt
+ * @license The MIT License (MIT); see LICENSE.txt
+ */
+
+.ve-ui-educationPopup {
+	position: relative;
+}
+
+.ve-ui-educationPopup > .mw-pulsating-dot {
+	pointer-events: none;
+	position: absolute;
+	bottom: 0;
+	left: 50%;
+	z-index: 1;
+}
+
+.oo-ui-widget-disabled .mw-pulsating-dot {
+	/* Don't show while container is (e.g. surface loading) */
+	/* stylelint-disable-next-line declaration-no-important */
+	display: none !important;
+}
+
+.ve-ui-educationPopup-dismiss {
+	margin-top: 0.5em;
+}
+
+.ve-ui-educationPopup-header {
+	margin-bottom: 1em;
+}
+
+.ve-ui-educationPopup .oo-ui-popupWidget {
+	/* Appear above local dialogs, e.g. toolbar dialog */
+	z-index: 3;
+}
+
+.ve-ui-educationPopup .oo-ui-popupWidget-body {
+	padding: 1em;
+}

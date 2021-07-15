@@ -5,6 +5,8 @@
 			"Aftabuzzaman",
 			"Tauhid16",
 			"Wikitanvir",
+			"YahyA",
+			"Yahya",
 			"আজিজ",
 			"আফতাবুজ্জামান"
 		]
@@ -17,7 +19,7 @@
 	"interwiki_prefix": "উপসর্গ",
 	"interwiki-prefix-label": "উপসর্গ:",
 	"interwiki_local": "অগ্রবর্তী",
-	"interwiki-local-label": "অগ্রবর্তী:",
+	"interwiki-local-label": "সামনে",
 	"interwiki_1": "হ্যাঁ",
 	"interwiki_0": "না",
 	"interwiki_error": "ত্রুটি: আন্তঃউইকি তালিকাটি খালি, বা অন্য কিছু ভুল হয়েছে।",

@@ -62,7 +62,7 @@ class MultimediaViewerHooks {
 			$enableByDefaultForAnons = $wgMediaViewerEnableByDefaultForAnonymous;
 		}
 
-		if ( !$user->isLoggedIn() ) {
+		if ( !$user->isRegistered() ) {
 			return (bool)$enableByDefaultForAnons;
 		} else {
 			return (bool)$user->getOption( 'multimediaviewer-enable' );
@@ -179,7 +179,8 @@ class MultimediaViewerHooks {
 	 * @param OutputPage $out
 	 */
 	public static function onMakeGlobalVariablesScript( array &$vars, OutputPage $out ) {
-		$defaultUserOptions = User::getDefaultOptions();
+		$userOptionsLookup = MediaWikiServices::getInstance()->getUserOptionsLookup();
+		$defaultUserOptions = $userOptionsLookup->getDefaultOptions();
 
 		$user = $out->getUser();
 		$vars['wgMediaViewerOnClick'] = self::shouldHandleClicks( $user );

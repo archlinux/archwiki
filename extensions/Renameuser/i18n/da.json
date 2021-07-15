@@ -22,7 +22,6 @@
 	"renameuserwarnings": "Advarsler:",
 	"renameuserconfirm": "Ja, omdøb brugeren",
 	"renameusersubmit": "Omdøb",
-	"renameuser-submit-blocklog": "Vis blokeringslog for bruger",
 	"renameusererrordoesnotexist": "Brugeren \"<nowiki>$1</nowiki>\" findes ikke.",
 	"renameusererrorexists": "{{GENDER:$1|Brugeren}} \"<nowiki>$1</nowiki>\" findes allerede.",
 	"renameusererrorinvalid": "Brugernavnet \"<nowiki>$1</nowiki>\" er ugyldigt.",

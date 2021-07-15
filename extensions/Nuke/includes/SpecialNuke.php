@@ -1,6 +1,22 @@
 <?php
 
+namespace MediaWiki\Extension\Nuke;
+
+use ActorMigration;
+use FileDeleteForm;
+use Html;
+use HTMLForm;
+use ListToggle;
+use MediaWiki\Extension\Nuke\Hooks\NukeHookRunner;
 use MediaWiki\MediaWikiServices;
+use PermissionsError;
+use SpecialPage;
+use Title;
+use User;
+use UserBlockedError;
+use UserNamePrefixSearch;
+use WikiPage;
+use Xml;
 
 class SpecialNuke extends SpecialPage {
 
@@ -27,8 +43,14 @@ class SpecialNuke extends SpecialPage {
 		$this->addHelpLink( 'Help:Extension:Nuke' );
 
 		$currentUser = $this->getUser();
-		if ( $currentUser->isBlocked() ) {
-			$block = $currentUser->getBlock();
+		$block = $currentUser->getBlock();
+
+		// appliesToRight is presently a no-op, since there is no handling for `delete`,
+		// and so will return `null`. `true` will be returned if the block actively
+		// applies to `delete`, and both `null` and `true` should result in an error
+		if ( $block && ( $block->isSitewide() ||
+			( $block->appliesToRight( 'delete' ) !== false ) )
+		) {
 			throw new UserBlockedError( $block );
 		}
 
@@ -259,22 +281,13 @@ class SpecialNuke extends SpecialPage {
 
 		$where = [ "(rc_new = 1) OR (rc_log_type = 'upload' AND rc_log_action = 'upload')" ];
 
-		if ( class_exists( ActorMigration::class ) ) {
-			if ( $username === '' ) {
-				$actorQuery = ActorMigration::newMigration()->getJoin( 'rc_user' );
-				$what['rc_user_text'] = $actorQuery['fields']['rc_user_text'];
-			} else {
-				$actorQuery = ActorMigration::newMigration()
-					->getWhere( $dbr, 'rc_user', User::newFromName( $username, false ) );
-				$where[] = $actorQuery['conds'];
-			}
+		if ( $username === '' ) {
+			$actorQuery = ActorMigration::newMigration()->getJoin( 'rc_user' );
+			$what['rc_user_text'] = $actorQuery['fields']['rc_user_text'];
 		} else {
-			$actorQuery = [ 'tables' => [], 'joins' => [] ];
-			if ( $username === '' ) {
-				$what[] = 'rc_user_text';
-			} else {
-				$where['rc_user_text'] = $username;
-			}
+			$actorQuery = ActorMigration::newMigration()
+				->getWhere( $dbr, 'rc_user', User::newFromName( $username, false ) );
+			$where[] = $actorQuery['conds'];
 		}
 
 		if ( $namespace !== null ) {

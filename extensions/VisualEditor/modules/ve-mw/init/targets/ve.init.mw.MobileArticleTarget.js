@@ -129,6 +129,7 @@ ve.init.mw.MobileArticleTarget.prototype.clearSurfaces = function () {
  */
 ve.init.mw.MobileArticleTarget.prototype.onContainerScroll = function () {
 	var target = this,
+		animateToolbarIntoView,
 		// Editor may not have loaded yet, in which case `this.surface` is undefined
 		surfaceView = this.surface && this.surface.getView(),
 		isActiveWithKeyboard = surfaceView && surfaceView.isFocused() && !surfaceView.isDeactivated();
@@ -152,10 +153,16 @@ ve.init.mw.MobileArticleTarget.prototype.onContainerScroll = function () {
 	// browser paints, so the toolbar would lag behind in a very unseemly manner. Additionally,
 	// getBoundingClientRect returns incorrect values during scrolling, so make sure to calculate
 	// it only after the scrolling ends (https://openradar.appspot.com/radar?id=6668472289329152).
-	this.onContainerScrollTimer = setTimeout( function () {
+	this.onContainerScrollTimer = setTimeout( animateToolbarIntoView = function () {
 		var pos, viewportHeight, scrollX, scrollY, headerHeight, headerTranslateY,
 			$header = target.overlay.$el.find( '.overlay-header-container' ),
 			$overlaySurface = target.$overlaySurface;
+
+		if ( target.toolbarAnimating ) {
+			// We can't do this while the 'transform' transition is happening, because
+			// getBoundingClientRect() returns values that reflect that (and are negative).
+			return;
+		}
 
 		// Check if toolbar is offscreen. In a better world, this would reject all negative values
 		// (pos >= 0), but getBoundingClientRect often returns funny small fractional values after
@@ -176,13 +183,13 @@ ve.init.mw.MobileArticleTarget.prototype.onContainerScroll = function () {
 		scrollY = document.body.scrollTop || document.documentElement.scrollTop;
 		scrollX = document.body.scrollLeft || document.documentElement.scrollLeft;
 
+		// Prevent the scrolling we're about to do from triggering this event handler again.
+		target.toolbarAnimating = true;
+
 		// Scroll down and translate the surface by the same amount, otherwise the content at new
 		// scroll position visibly flashes.
 		$overlaySurface.css( 'transform', 'translateY( ' + viewportHeight + 'px )' );
 		window.scroll( scrollX, scrollY + viewportHeight );
-
-		// (Note that the scrolling we just did will naturally trigger another 'scroll' event,
-		// and run this handler again after 250ms. This is okay.)
 
 		// Prepate to animate toolbar sliding into view
 		$header.removeClass( 'toolbar-shown toolbar-shown-done' );
@@ -201,7 +208,13 @@ ve.init.mw.MobileArticleTarget.prototype.onContainerScroll = function () {
 			$header.addClass( 'toolbar-shown' ).css( 'transform', '' );
 			setTimeout( function () {
 				$header.addClass( 'toolbar-shown-done' );
-			}, 250 );
+				// Wait until the animation is done before allowing this event handler to trigger again
+				target.toolbarAnimating = false;
+				// Re-check after the animation is done, in case the user scrolls in the meantime.
+				animateToolbarIntoView();
+				// The animation takes 250ms but we need to wait longer for some reason…
+				// 'transitionend' event also doesn't seem to work reliably.
+			}, 300 );
 			// If the delays below are made any smaller, the weirdest graphical glitches happen,
 			// so don't mess with them
 		}, 50 );
@@ -344,7 +357,7 @@ ve.init.mw.MobileArticleTarget.prototype.loadFail = function ( code, errorDetail
 	// Parent method
 	ve.init.mw.MobileArticleTarget.super.prototype.loadFail.apply( this, arguments );
 
-	window.history.back();
+	this.overlay.onExitClick( $.Event() );
 	mw.notify( this.extractErrorMessages( errorDetails ) );
 };
 
@@ -415,7 +428,7 @@ ve.init.mw.MobileArticleTarget.prototype.saveFail = function ( doc, saveData, wa
  * @inheritdoc
  */
 ve.init.mw.MobileArticleTarget.prototype.tryTeardown = function () {
-	window.history.back();
+	this.overlay.onExitClick( $.Event() );
 };
 
 /**
@@ -517,45 +530,6 @@ ve.init.mw.MobileArticleTarget.prototype.done = function () {
 /* Registration */
 
 ve.init.mw.targetFactory.register( ve.init.mw.MobileArticleTarget );
-
-/**
- * Back tool
- */
-ve.ui.MWBackTool = function VeUiMwBackTool() {
-	// Parent constructor
-	ve.ui.MWBackTool.super.apply( this, arguments );
-};
-OO.inheritClass( ve.ui.MWBackTool, ve.ui.Tool );
-ve.ui.MWBackTool.static.name = 'back';
-ve.ui.MWBackTool.static.group = 'navigation';
-ve.ui.MWBackTool.static.icon = 'close';
-ve.ui.MWBackTool.static.title =
-	OO.ui.deferMsg( 'visualeditor-backbutton-tooltip' );
-ve.ui.MWBackTool.static.commandName = 'back';
-
-/** */
-ve.ui.MWBackTool.prototype.onUpdateState = function () {
-	// Parent method
-	ve.ui.MWBackTool.super.prototype.onUpdateState.apply( this, arguments );
-
-	this.setActive( false );
-	this.setDisabled( false );
-};
-
-ve.ui.toolFactory.register( ve.ui.MWBackTool );
-
-/**
- * Back command
- */
-ve.ui.MWBackCommand = function VeUiMWBackCommand() {
-	// Parent constructor
-	ve.ui.MWBackCommand.super.call( this, 'back' );
-};
-OO.inheritClass( ve.ui.MWBackCommand, ve.ui.Command );
-ve.ui.MWBackCommand.prototype.execute = function () {
-	ve.init.target.tryTeardown();
-};
-ve.ui.commandRegistry.register( new ve.ui.MWBackCommand() );
 
 /**
  * Mobile save tool

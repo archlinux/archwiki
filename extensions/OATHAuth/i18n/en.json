@@ -77,7 +77,7 @@
 	"oathauth-totp-description": "The Time-based One-Time Password algorithm (TOTP) is an extension of the HMAC-based One-time Password algorithm (HOTP) generating a one-time password by instead taking uniqueness from the current time.",
 	"oathauth-disable-method-warning-header": "Confirm disabling of an authentication method",
 	"oathauth-disable-method-warning-button-label": "Confirm and continue",
-	"oathauth-disable-method-warning": "If you disable $1 two-factor authentication method, you will no longer be able to use this method when logging in, and all the data associated with this authentication method will be deleted",
+	"oathauth-disable-method-warning": "If you disable $1 two-factor authentication method, you will no longer be able to use this method when logging in, and all the data associated with this authentication method will be deleted.",
 	"oathauth-switch-method-warning-header": "Confirm switching to a different authentication method",
 	"oathauth-switch-method-warning": "By switching to $2 two-factor authentication method, current method ($1) will be disabled, and all the data associated with the current authentication method will be deleted",
 	"oathauth-totp-disable-warning": "You will no longer be able to use the authentication device registered with this account. All scratch-tokens associated with this account will be invalidated.",

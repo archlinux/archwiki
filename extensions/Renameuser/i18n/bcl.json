@@ -19,7 +19,6 @@
 	"renameuserwarnings": "Mga Patanid:",
 	"renameuserconfirm": "Iyo, pangarani otro an paragamit",
 	"renameusersubmit": "Isumitir",
-	"renameuser-submit-blocklog": "Ipahiling an talaan kan kinubkob para sa paragamit",
 	"renameusererrordoesnotexist": "An parágamit \"<nowiki>$1</nowiki>\" mayò man",
 	"renameusererrorexists": "An {{GENDER:$1|parágamit}} \"<nowiki>$1</nowiki>\" yaon na.",
 	"renameusererrorinvalid": "An ngaran-paragamit \"<nowiki>$1</nowiki>\" sarong imbalido.",

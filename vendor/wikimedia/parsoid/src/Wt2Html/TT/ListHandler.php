@@ -37,6 +37,22 @@ class ListHandler extends TokenHandler {
 	];
 
 	/**
+	 * The HTML5 parsing spec says that when encountering a closing tag for a
+	 * certain set of open tags we should generate implied ends to list items,
+	 * https://html.spec.whatwg.org/multipage/parsing.html#parsing-main-inbody:generate-implied-end-tags-5
+	 *
+	 * So, in order to roundtrip accurately, we should follow suit.  However,
+	 * we choose an ostensible superset of those tags, our wikitext blocks, to
+	 * have this behaviour.  Hopefully the differences aren't relevant.
+	 *
+	 * @param string $tagName
+	 * @return bool
+	 */
+	private static function generateImpliedEndTags( string $tagName ): bool {
+		return TokenUtils::isWikitextBlockTag( $tagName );
+	}
+
+	/**
 	 * Class constructor
 	 *
 	 * @param TokenTransformManager $manager manager environment
@@ -97,6 +113,7 @@ class ListHandler extends TokenHandler {
 				$this->nestedTableCount++;
 			}
 
+			$this->env->log( 'trace/list', $this->manager->pipelineId, 'RET: ', $token );
 			return [ 'tokens' => [ $token ] ];
 		}
 
@@ -117,13 +134,19 @@ class ListHandler extends TokenHandler {
 				$ret = $this->closeLists( $token );
 				$this->currListFrame = array_pop( $this->listFrames );
 				return [ 'tokens' => $ret ];
-			} elseif ( TokenUtils::isBlockTag( $token->getName() ) ) {
+			} elseif ( self::generateImpliedEndTags( $token->getName() ) ) {
 				if ( $this->currListFrame->numOpenBlockTags === 0 ) {
 					// Unbalanced closing block tag in a list context ==> close all previous lists
 					return [ 'tokens' => $this->closeLists( $token ) ];
 				} else {
 					$this->currListFrame->numOpenBlockTags--;
-					return [ 'tokens' => [ $token ] ];
+					if ( $this->currListFrame->atEOL ) {
+						// Non-list item in newline context ==> close all previous lists
+						return [ 'tokens' => $this->closeLists( $token ) ];
+					} else {
+						$this->env->log( 'trace/list', $this->manager->pipelineId, 'RET: ', $token );
+						return [ 'tokens' => [ $token ] ];
+					}
 				}
 			}
 
@@ -143,8 +166,7 @@ class ListHandler extends TokenHandler {
 				return [ 'tokens' => [] ];
 			} else {
 				// Non-list item in newline context ==> close all previous lists
-				$tokens = $this->closeLists( $token );
-				return [ 'tokens' => $tokens ];
+				return [ 'tokens' => $this->closeLists( $token ) ];
 			}
 		}
 
@@ -162,13 +184,15 @@ class ListHandler extends TokenHandler {
 			if ( $token->getName() === 'table' ) {
 				$this->listFrames[] = $this->currListFrame;
 				$this->resetCurrListFrame();
-			} elseif ( TokenUtils::isBlockTag( $token->getName() ) ) {
+			} elseif ( self::generateImpliedEndTags( $token->getName() ) ) {
 				$this->currListFrame->numOpenBlockTags++;
 			}
+			$this->env->log( 'trace/list', $this->manager->pipelineId, 'RET: ', $token );
 			return [ 'tokens' => [ $token ] ];
 		}
 
 		// Nothing else left to do
+		$this->env->log( 'trace/list', $this->manager->pipelineId, 'RET: ', $token );
 		return [ 'tokens' => [ $token ] ];
 	}
 
@@ -217,7 +241,7 @@ class ListHandler extends TokenHandler {
 		$this->resetCurrListFrame();
 
 		$this->env->log( 'trace/list', $this->manager->pipelineId, '----closing all lists----' );
-		$this->env->log( 'trace/list', $this->manager->pipelineId, 'RET', $tokens );
+		$this->env->log( 'trace/list', $this->manager->pipelineId, 'RET: ', $tokens );
 
 		return $tokens;
 	}
@@ -238,6 +262,7 @@ class ListHandler extends TokenHandler {
 				if ( PHPUtils::lastItem( $bullets ) === ':'
 					&& $this->currListFrame->numOpenTags > 0
 				) {
+					$this->env->log( 'trace/list', $this->manager->pipelineId, 'RET: ', ':' );
 					return [ 'tokens' => [ ':' ] ];
 				}
 			} else {
@@ -249,6 +274,7 @@ class ListHandler extends TokenHandler {
 			return [ 'tokens' => $res, 'skipOnAny' => true ];
 		}
 
+		$this->env->log( 'trace/list', $this->manager->pipelineId, 'RET: ', $token );
 		return [ 'tokens' => [ $token ] ];
 	}
 

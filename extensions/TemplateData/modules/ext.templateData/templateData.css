@@ -28,10 +28,29 @@
 	white-space: nowrap;
 }
 
-.mw-tempateData-maps-panel-button {
+.mw-templateData-maps-panel-button {
 	margin-bottom: 0.5em;
 }
 
-.mw-tempateData-template-maps-input {
-	padding-bottom: 1em;
+.mw-templateData-template-map-list-menu-panel {
+	border-right: 1px solid #c8ccd1;
+}
+
+.mw-templateData-template-remove-map-button {
+	margin-bottom: 0.8em;
+}
+
+.mw-templateData-template-add-map-button-panel,
+.oo-ui-menuLayout.oo-ui-menuLayout-showMenu.oo-ui-menuLayout-top > .oo-ui-menuLayout-menu {
+	height: fit-content;
+	text-align: center;
+	box-shadow: 0 5px 16px -8px #0000001f;
+}
+
+.tdg-templateDataDialog-editMapsPanel .oo-ui-menuLayout > .oo-ui-menuLayout-content {
+	top: 4.3em;
+}
+
+.tdg-templateDataDialog-addingNewMap .oo-ui-menuLayout > .oo-ui-menuLayout-content {
+	top: 6.6em;
 }

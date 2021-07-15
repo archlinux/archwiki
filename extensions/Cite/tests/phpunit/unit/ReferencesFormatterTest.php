@@ -214,7 +214,7 @@ class ReferencesFormatterTest extends \MediaWikiUnitTestCase {
 		);
 
 		$mockMessageLocalizer = $this->createMock( ReferenceMessageLocalizer::class );
-		$mockMessageLocalizer->method( 'formatNum' )->willReturnArgument( 0 );
+		$mockMessageLocalizer->method( 'localizeSeparators' )->willReturnArgument( 0 );
 		$mockMessageLocalizer->method( 'localizeDigits' )->willReturnArgument( 0 );
 		$mockMessageLocalizer->method( 'msg' )->willReturnCallback(
 			function ( ...$args ) {
@@ -414,7 +414,7 @@ class ReferencesFormatterTest extends \MediaWikiUnitTestCase {
 		string $expectedLabel, int $base, int $offset, int $max
 	) {
 		$mockMessageLocalizer = $this->createMock( ReferenceMessageLocalizer::class );
-		$mockMessageLocalizer->method( 'formatNum' )->willReturnArgument( 0 );
+		$mockMessageLocalizer->method( 'localizeSeparators' )->willReturnArgument( 0 );
 		$mockMessageLocalizer->method( 'localizeDigits' )->willReturnArgument( 0 );
 
 		/** @var ReferenceMessageLocalizer $mockMessageLocalizer */

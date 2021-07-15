@@ -9,6 +9,7 @@ use DOMText;
 use stdClass;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Config\WikitextConstants;
+use Wikimedia\Parsoid\Core\DomSourceRange;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
@@ -22,18 +23,16 @@ class CleanUp {
 	 * @return bool|DOMElement
 	 */
 	public static function stripMarkerMetas( DOMElement $node, Env $env ) {
-		$rtTestMode = $env->getSiteConfig()->rtTestMode();
-
-		// Sometimes a non-tpl meta node might get the mw:Transclusion typeof
-		// element attached to it. So, check if the node has data-mw,
-		// in which case we also have to keep it.
 		if (
-			(
-				!$rtTestMode &&
-				DOMUtils::hasTypeOf( $node, 'mw:Placeholder/StrippedTag' )
-			) || (
-				DOMUtils::matchTypeOf( $node, '#^mw:(StartTag|EndTag|TSRMarker|Transclusion)(/|$)#' ) &&
-				!DOMDataUtils::validDataMw( $node )
+			// Sometimes a non-tpl meta node might get the mw:Transclusion typeof
+			// element attached to it. So, check if the node has data-mw,
+			// in which case we also have to keep it.
+			!DOMDataUtils::validDataMw( $node ) && (
+				(
+					DOMUtils::hasTypeOf( $node, 'mw:Placeholder/StrippedTag' ) &&
+					!DOMUtils::isNestedInListItem( $node )
+				) ||
+				DOMUtils::matchTypeOf( $node, '#^mw:(StartTag|EndTag|TSRMarker|Transclusion)(/|$)#' )
 			)
 		) {
 			$nextNode = $node->nextSibling;
@@ -50,11 +49,12 @@ class CleanUp {
 	 * @param Env $env
 	 * @param array $options
 	 * @param bool $atTopLevel
-	 * @param stdClass|null $tplInfo
+	 * @param ?stdClass $tplInfo
 	 * @return bool|DOMNode
 	 */
 	public static function handleEmptyElements(
-		DOMNode $node, Env $env, array $options, bool $atTopLevel = false, ?stdClass $tplInfo = null
+		DOMNode $node, Env $env, array $options, bool $atTopLevel = false,
+		?stdClass $tplInfo = null
 	) {
 		if ( !( $node instanceof DOMElement ) ||
 			!isset( WikitextConstants::$Output['FlaggedEmptyElts'][$node->nodeName] ) ||
@@ -110,35 +110,72 @@ class CleanUp {
 
 	/**
 	 * Whitespace in this function refers to [ \t] only
-	 * @param DOMNode $node
+	 * @param DOMElement $node
+	 * @param ?DomSourceRange $dsr
 	 */
-	private static function trimWhiteSpace( DOMNode $node ): void {
+	private static function trimWhiteSpace( DOMElement $node, ?DomSourceRange $dsr ): void {
 		// Trim leading ws (on the first line)
+		$trimmedLen = 0;
+		$updateDSR = true;
+		$skipped = false;
 		for ( $c = $node->firstChild; $c; $c = $next ) {
 			$next = $c->nextSibling;
 			if ( DOMUtils::isText( $c ) && preg_match( '/^[ \t]*$/D', $c->nodeValue ) ) {
 				$node->removeChild( $c );
+				$trimmedLen += strlen( $c->nodeValue );
+				$updateDSR = !$skipped;
 			} elseif ( !WTUtils::isRenderingTransparentNode( $c ) ) {
 				break;
+			} else {
+				// We are now skipping over a rendering transparent node
+				// and will trim additional whitespace => we cannot reliably
+				// maintain info about trimmed whitespace.
+				$skipped = true;
 			}
 		}
 
-		if ( DOMUtils::isText( $c ) ) {
-			$c->nodeValue = preg_replace( '/^[ \t]+/', '', $c->nodeValue, 1 );
+		if ( DOMUtils::isText( $c ) &&
+			preg_match( '/^([ \t]+)([\s\S]*)$/D', $c->nodeValue, $matches )
+		) {
+			$updateDSR = !$skipped;
+			$c->nodeValue = $matches[2];
+			$trimmedLen += strlen( $matches[1] );
+		}
+
+		if ( $dsr ) {
+			$dsr->leadingWS = $updateDSR ? $trimmedLen : -1;
 		}
 
 		// Trim trailing ws (on the last line)
+		$trimmedLen = 0;
+		$updateDSR = true;
+		$skipped = false;
 		for ( $c = $node->lastChild; $c; $c = $prev ) {
 			$prev = $c->previousSibling;
 			if ( DOMUtils::isText( $c ) && preg_match( '/^[ \t]*$/D', $c->nodeValue ) ) {
+				$trimmedLen += strlen( $c->nodeValue );
 				$node->removeChild( $c );
+				$updateDSR = !$skipped;
 			} elseif ( !WTUtils::isRenderingTransparentNode( $c ) ) {
 				break;
+			} else {
+				// We are now skipping over a rendering transparent node
+				// and will trim additional whitespace => we cannot reliably
+				// maintain info about trimmed whitespace.
+				$skipped = true;
 			}
 		}
 
-		if ( DOMUtils::isText( $c ) ) {
-			$c->nodeValue = preg_replace( '/[ \t]+$/D', '', $c->nodeValue, 1 );
+		if ( DOMUtils::isText( $c ) &&
+			preg_match( '/^([\s\S]*\S)([ \t]+)$/D', $c->nodeValue, $matches )
+		) {
+			$updateDSR = !$skipped;
+			$c->nodeValue = $matches[1];
+			$trimmedLen += strlen( $matches[2] );
+		}
+
+		if ( $dsr ) {
+			$dsr->trailingWS = $updateDSR ? $trimmedLen : -1;
 		}
 	}
 
@@ -149,7 +186,7 @@ class CleanUp {
 	 * @param DOMNode $node
 	 * @param Env $env
 	 * @param bool $atTopLevel
-	 * @param stdClass|null $tplInfo
+	 * @param ?stdClass $tplInfo
 	 * @return bool|DOMText
 	 */
 	public static function cleanupAndSaveDataParsoid(
@@ -241,7 +278,7 @@ class CleanUp {
 			if ( !WTUtils::hasLiteralHTMLMarker( $dp ) &&
 				isset( WikitextConstants::$WikitextTagsWithTrimmableWS[$node->nodeName] )
 			) {
-				self::trimWhiteSpace( $node );
+				self::trimWhiteSpace( $node, $dp->dsr ?? null );
 			}
 
 			$discardDataParsoid = $env->discardDataParsoid;

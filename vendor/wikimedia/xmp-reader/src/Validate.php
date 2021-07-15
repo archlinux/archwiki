@@ -175,7 +175,7 @@ class Validate implements LoggerAwareInterface {
 		// check if its in a numeric range
 		$inRange = false;
 		if ( is_numeric( $val )
-			&& isset( $info['rangeLow'], $info['rangeHigh'] )
+			&& isset( $info['rangeLow'] ) && isset( $info['rangeHigh'] )
 			&& ( (int)$val <= $info['rangeHigh'] ) && ( (int)$val >= $info['rangeLow'] )
 		) {
 			$inRange = true;
@@ -208,7 +208,7 @@ class Validate implements LoggerAwareInterface {
 		}
 
 		// check if its in a numeric range
-		if ( isset( $info['rangeLow'], $info['rangeHigh'] )
+		if ( isset( $info['rangeLow'] ) && isset( $info['rangeHigh'] )
 			&& ( (float)$val > $info['rangeHigh'] || (float)$val < $info['rangeLow'] )
 		) {
 			$this->logger->info(
@@ -231,11 +231,11 @@ class Validate implements LoggerAwareInterface {
 			// this only validates flash structs, not individual properties
 			return;
 		}
-		if ( !isset( $val['Fired'],
-			$val['Function'],
-			$val['Mode'],
-			$val['RedEyeMode'],
-			$val['Return'] )
+		if ( !isset( $val['Fired'] ) ||
+			!isset( $val['Function'] ) ||
+			!isset( $val['Mode'] ) ||
+			!isset( $val['RedEyeMode'] ) ||
+			!isset( $val['Return'] )
 		) {
 			$this->logger->info( __METHOD__ . ' Flash structure did not have all the required components' );
 			$val = null;
@@ -330,7 +330,8 @@ class Validate implements LoggerAwareInterface {
 			return;
 		}
 
-		if ( !isset( $res[4] ) ) { // hour
+		// hour
+		if ( !isset( $res[4] ) ) {
 			// just have the year month day (if that)
 			$val = $res[1];
 			if ( isset( $res[2] ) ) {

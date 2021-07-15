@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"ArenaL5",
 			"Banjo",
 			"Breogan2008",
 			"Elisardojm",
@@ -36,7 +37,7 @@
 	"templatedata-doc-param-type-unknown": "Descoñecido",
 	"templatedata-doc-param-type-url": "URL",
 	"templatedata-doc-param-type-wiki-file-name": "Ficheiro",
-	"templatedata-doc-param-type-wiki-page-name": "Páxina",
+	"templatedata-doc-param-type-wiki-page-name": "Nome da páxina",
 	"templatedata-doc-param-type-wiki-template-name": "Modelo",
 	"templatedata-doc-param-type-wiki-user-name": "Usuario",
 	"templatedata-doc-params": "Parámetros do modelo",

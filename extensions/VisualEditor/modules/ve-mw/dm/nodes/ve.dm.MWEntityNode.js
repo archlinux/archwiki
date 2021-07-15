@@ -33,6 +33,8 @@ ve.dm.MWEntityNode.static.matchTagNames = [ 'span' ];
 
 ve.dm.MWEntityNode.static.matchRdfaTypes = [ 'mw:Entity', 'mw:DisplaySpace' ];
 
+// mw:Placeholder was removed from mw:DisplaySpace (T254502) but this
+// code should stick around until the RESTBase cache turns over.
 ve.dm.MWEntityNode.static.allowedRdfaTypes = [ 'mw:Placeholder' ];
 
 ve.dm.MWEntityNode.static.toDataElement = function ( domElements ) {
@@ -52,7 +54,7 @@ ve.dm.MWEntityNode.static.toDomElements = function ( dataElement, doc ) {
 	var domElement = doc.createElement( 'span' ),
 		textNode = doc.createTextNode( dataElement.attributes.character );
 	domElement.setAttribute( 'typeof',
-		dataElement.attributes.displaySpace ? 'mw:DisplaySpace mw:Placeholder' : 'mw:Entity' );
+		dataElement.attributes.displaySpace ? 'mw:DisplaySpace' : 'mw:Entity' );
 	domElement.appendChild( textNode );
 	return [ domElement ];
 };

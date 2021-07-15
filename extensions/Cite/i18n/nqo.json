@@ -4,5 +4,9 @@
 			"Lancine.kounfantoh.fofana"
 		]
 	},
-	"cite_error": "ߝߎ߬ߕߎ߲߬ߕߌ ߞߏߝߐ߫: $1"
+	"cite_error": "ߝߎ߬ߕߎ߲߬ߕߌ ߞߏߝߐ߫: $1",
+	"cite_references_link_accessibility_label": "ߌ ߕߐ߬ߡߐ߲߬ ߛߊ߲ߝߍ߬",
+	"cite_references_link_many_accessibility_label": "ߌ ߔߊ߲߫ ߛߊ߲ߝߍ߬ ߞߊ߬ ߛߋ߫:",
+	"cite_references_link_accessibility_back_label": "ߌ ߜߊ߲߫ ߞߵߌ ߞߐߛߊ߬ߦߌ߫ ߘߎ߰ߟߊ߫",
+	"cite_warning": "ߟߊߞߏߝߐߟߌ ߝߎ߬ߕߎ߲߬ߕߌ: $1"
 }

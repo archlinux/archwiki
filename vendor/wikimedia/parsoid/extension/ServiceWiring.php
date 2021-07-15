@@ -17,9 +17,10 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+use MediaWiki\Config\ServiceOptions;
 use MediaWiki\MediaWikiServices;
 use MWParsoid\Config\DataAccess as MWDataAccess;
-use MWParsoid\Config\PageConfigFactory;
+use MWParsoid\Config\PageConfigFactory as MWPageConfigFactory;
 use MWParsoid\Config\SiteConfig as MWSiteConfig;
 use Wikimedia\Parsoid\Config\Api\DataAccess as ApiDataAccess;
 use Wikimedia\Parsoid\Config\Api\SiteConfig as ApiSiteConfig;
@@ -29,16 +30,34 @@ use Wikimedia\Parsoid\Config\SiteConfig;
 return [
 
 	'ParsoidSiteConfig' => function ( MediaWikiServices $services ): SiteConfig {
-		$parsoidSettings = $services->getMainConfig()->get( 'ParsoidSettings' );
+		$mainConfig = $services->getMainConfig();
+		$parsoidSettings = $mainConfig->get( 'ParsoidSettings' );
 		if ( !empty( $parsoidSettings['debugApi'] ) ) {
 			return ApiSiteConfig::fromSettings( $parsoidSettings );
 		}
-		return new MWSiteConfig();
+		return new MWSiteConfig(
+			new ServiceOptions( MWSiteConfig::CONSTRUCTOR_OPTIONS, $mainConfig ),
+			$parsoidSettings,
+			$services->getContentLanguage(),
+			$services->getStatsdDataFactory(),
+			$services->getMagicWordFactory(),
+			$services->getNamespaceInfo(),
+			$services->getSpecialPageFactory(),
+			$services->getInterwikiLookup(),
+			$services->getUserOptionsLookup(),
+			$services->getLanguageFactory(),
+			$services->getLanguageConverterFactory(),
+			$services->getLanguageNameUtils(),
+			// These arguments are temporary and will be removed once
+			// better solutions are found.
+			$services->getParser(), // T268776
+			$mainConfig // T268777
+		);
 	},
 
-	'ParsoidPageConfigFactory' => function ( MediaWikiServices $services ): PageConfigFactory {
-		return new PageConfigFactory( $services->getRevisionStore(), $services->getParser(),
-			$services->get( '_ParsoidParserOptions' ), $services->getSlotRoleRegistry() );
+	'ParsoidPageConfigFactory' => function ( MediaWikiServices $services ): MWPageConfigFactory {
+		return new MWPageConfigFactory( $services->getRevisionStore(),
+			$services->getSlotRoleRegistry() );
 	},
 
 	'ParsoidDataAccess' => function ( MediaWikiServices $services ): DataAccess {
@@ -46,20 +65,11 @@ return [
 		if ( !empty( $parsoidSettings['debugApi'] ) ) {
 			return ApiDataAccess::fromSettings( $parsoidSettings );
 		}
-		return new MWDataAccess( $services->getRevisionStore(), $services->getParser(),
-			$services->get( '_ParsoidParserOptions' ) );
+		return new MWDataAccess(
+			$services->getRepoGroup(),
+			$services->getBadFileLookup(),
+			$services->getHookContainer(),
+			$services->getParserFactory() // *legacy* parser factory
+		);
 	},
-
-	'_ParsoidParserOptions' => function ( MediaWikiServices $services ): ParserOptions {
-		global $wgUser;
-
-		// Pass a dummy user: Parsoid's parses don't use the user context right now
-		// and all user state is expected to be introduced as a post-parse transformation
-		// It is unclear if wikitext supports this model. But, given that Parsoid/JS
-		// operated in this fashion, for now, Parsoid/PHP will as well with the caveat below.
-		// ParserOptions used to default to $wgUser if we passed in null here (and new User()
-		// if $wgUser was null as it would be in most background job parsing contexts).
-		return ParserOptions::newCanonical( $wgUser ?? new User() );
-	},
-
 ];

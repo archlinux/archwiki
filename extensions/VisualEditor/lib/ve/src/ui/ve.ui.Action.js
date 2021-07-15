@@ -14,10 +14,12 @@
  *
  * @constructor
  * @param {ve.ui.Surface} surface Surface to act on
+ * @param {string} [source] Label for the source of the action, for tracking
  */
-ve.ui.Action = function VeUiAction( surface ) {
+ve.ui.Action = function VeUiAction( surface, source ) {
 	// Properties
 	this.surface = surface;
+	this.source = source;
 };
 
 /* Inheritance */
@@ -29,8 +31,8 @@ OO.initClass( ve.ui.Action );
 /**
  * List of allowed methods for the action.
  *
- * To avoid use of methods not intended to be executed via surface.execute(), the methods must be
- * whitelisted here. This information is checked by ve.ui.Surface before executing an action.
+ * To avoid use of methods not intended to be executed via surface.execute(), the allowed methods
+ * must be listed here. This information is checked by ve.ui.Surface before executing an action.
  *
  * If a method returns a value, it will be cast to boolean and be used to determine if the action
  * was canceled. Not returning anything, or returning undefined will be treated the same as

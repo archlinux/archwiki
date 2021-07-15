@@ -1,12 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"Luuva"
+			"A-lú-mih",
+			"Luuva",
+			"進也"
 		]
 	},
 	"visualeditor": "VisualEditor",
 	"visualeditor-aliencontextitem-title": "Hāng-bo̍k",
-	"visualeditor-aliennode-tooltip": "Sit-lé, pún goân-sò͘ hiān-sî taⁿ ē-tàng ùi goân-sú-bé bô͘-sek lāi siu-kái.",
+	"visualeditor-aliennode-tooltip": "Sit-lé, pún goân-sò͘ hiān-sî taⁿ ē-tàng ùi goân-sí-bé bô͘-sek lāi siu-kái.",
 	"visualeditor-align-widget-center": "Tiong-ng",
 	"visualeditor-align-widget-left": "Tò-pêng",
 	"visualeditor-align-widget-right": "Chiàⁿ-pêng",
@@ -31,6 +33,7 @@
 	"visualeditor-content-select-all": "Thong sóaⁿ",
 	"visualeditor-contextitemwidget-label-remove": "Thâi-tiāu",
 	"visualeditor-contextitemwidget-label-secondary": "Pian-chi̍p",
+	"visualeditor-debugbar-close": "關",
 	"visualeditor-dialog-action-apply": "Èng-iōng kái-piàn",
 	"visualeditor-dialog-action-cancel": "Chhú-siau",
 	"visualeditor-dialog-action-done": "Goân-sêng",

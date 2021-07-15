@@ -50,9 +50,11 @@ abstract class Token implements \JsonSerializable {
 	 *    The more complex form (where the key is a non-string) are found when
 	 *    KV objects are constructed in the tokenizer.
 	 * @param string|Token|Token[] $value
-	 * @param KVSourceRange|null $srcOffsets
+	 * @param ?KVSourceRange $srcOffsets
 	 */
-	public function addAttribute( string $name, $value, ?KVSourceRange $srcOffsets = null ): void {
+	public function addAttribute(
+		string $name, $value, ?KVSourceRange $srcOffsets = null
+	): void {
 		$this->attribs[] = new KV( $name, $value, $srcOffsets );
 	}
 
@@ -378,4 +380,25 @@ abstract class Token implements \JsonSerializable {
 
 		return $token;
 	}
+
+	/**
+	 * @param string $key
+	 * @return ?string
+	 */
+	public function fetchExpandedAttrValue( string $key ): ?string {
+		if ( preg_match(
+			'/mw:ExpandedAttrs/', $this->getAttribute( 'typeof' ) ?? ''
+		) ) {
+			$attribs = PHPUtils::jsonDecode(
+				$this->getAttribute( 'data-mw' ), false
+			)->attribs;
+			foreach ( $attribs as $attr ) {
+				if ( $attr[0]->txt === $key ) {
+					return $attr[1]->html;
+				}
+			}
+		}
+		return null;
+	}
+
 }

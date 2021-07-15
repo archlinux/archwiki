@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Sator",
-			"Subi"
+			"Subi",
+			"Xabier Armendaritz"
 		]
 	},
 	"multimediaviewer-repository-local": "Xehetasun gehiago",
@@ -20,7 +21,7 @@
 	"multimediaviewer-help-mmv": "Laguntza",
 	"multimediaviewer-reuse-loading-placeholder": "Kargatzen...",
 	"multimediaviewer-download-preview-link-title": "Nabigatzailean ikusi",
-	"multimediaviewer-html-embed-credit-link-text": "Lotura",
+	"multimediaviewer-html-embed-credit-link-text": "Esteka",
 	"multimediaviewer-view-expanded": "Media Viewerren ireki",
 	"multimediaviewer-download-attribution-cta": "Erakuts iezadazu nola",
 	"multimediaviewer-options-learn-more": "Gehiago ikasi",

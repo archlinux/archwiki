@@ -73,10 +73,6 @@ class SiteConfig extends ISiteConfig {
 
 		$this->api = $api;
 
-		if ( isset( $opts['rtTestMode'] ) ) {
-			$this->rtTestMode = !empty( $opts['rtTestMode'] );
-		}
-
 		if ( isset( $opts['linting'] ) ) {
 			$this->linterEnabled = !empty( $opts['linting'] );
 		}
@@ -310,7 +306,7 @@ class SiteConfig extends ISiteConfig {
 
 	/**
 	 * Set the log channel, for debugging
-	 * @param LoggerInterface|null $logger
+	 * @param ?LoggerInterface $logger
 	 */
 	public function setLogger( ?LoggerInterface $logger ): void {
 		$this->logger = $logger;

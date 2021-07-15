@@ -8,7 +8,7 @@ QUnit.module( 've.ui.DiffElement (Cite)' );
 
 QUnit.test( 'Diffing', function ( assert ) {
 	var i, len,
-		// spacer = '<div class="ve-ui-diffElement-spacer">⋮</div>',
+		spacer = '<div class="ve-ui-diffElement-spacer">⋮</div>',
 		ref = function ( text, num ) {
 			var dataMw = {
 				name: 'ref',
@@ -16,7 +16,7 @@ QUnit.test( 'Diffing', function ( assert ) {
 				// attrs doesn't get set in preview mode
 			};
 
-			return '<sup typeof="mw:Extension/ref" data-mw="' + JSON.stringify( dataMw ).replace( /"/g, '&quot;' ) + '" class="mw-ref">' +
+			return '<sup typeof="mw:Extension/ref" data-mw="' + JSON.stringify( dataMw ).replace( /"/g, '&quot;' ) + '" class="mw-ref reference">' +
 						'<a style="counter-reset: mw-Ref ' + num + ';"><span class="mw-reflink-text">[' + num + ']</span></a>' +
 					'</sup>';
 		},
@@ -32,20 +32,9 @@ QUnit.test( 'Diffing', function ( assert ) {
 					'<h2>Notes</h2>' +
 					'<div typeof="mw:Extension/references" data-mw="{&quot;name&quot;:&quot;references&quot;}"></div>',
 				expected:
-					'<div class="ve-ui-diffElement-doc-child-change">' +
-						'<p>' +
-							ref( 'Foo', '1' ) +
-							'<span data-diff-action="change-remove">' +
-								ref( 'Bar', '2' ) +
-							'</span>' +
-							'<span data-diff-action="change-insert">' +
-								ref( 'Bar ish', '2' ) +
-							'</span>' +
-							ref( 'Baz', '3' ) +
-						'</p>' +
-					'</div>' +
+					spacer +
 					'<h2 data-diff-action="none">Notes</h2>' +
-					'<div class="ve-ui-diffElement-doc-child-change" data-diff-move="null">' +
+					'<div class="ve-ui-diffElement-doc-child-change">' +
 						'<ol start="1">' +
 							'<li><p data-diff-action="none">Foo</p></li>' +
 						'</ol>' +

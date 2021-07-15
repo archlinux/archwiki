@@ -3,13 +3,13 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Ext\Pre;
 
-use DOMDocument;
+use DOMDocumentFragment;
+use Wikimedia\Parsoid\Core\Sanitizer;
 use Wikimedia\Parsoid\Ext\DOMDataUtils;
 use Wikimedia\Parsoid\Ext\ExtensionModule;
 use Wikimedia\Parsoid\Ext\ExtensionTagHandler;
 use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
 use Wikimedia\Parsoid\Ext\Utils;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 
 /**
  * The `<pre>` extension tag shadows the html pre tag, but has different
@@ -33,11 +33,12 @@ class Pre extends ExtensionTagHandler implements ExtensionModule {
 	/** @inheritDoc */
 	public function sourceToDom(
 		ParsoidExtensionAPI $extApi, string $txt, array $extArgs
-	): DOMDocument {
-		$doc = $extApi->htmlToDom( '' ); // Empty doc
+	): DOMDocumentFragment {
+		$domFragment = $extApi->htmlToDom( '' );
+		$doc = $domFragment->ownerDocument;
 		$pre = $doc->createElement( 'pre' );
 
-		$extApi->sanitizeArgs( $pre, $extArgs );
+		Sanitizer::applySanitizedArgs( $extApi->getSiteConfig(), $pre, $extArgs );
 		DOMDataUtils::getDataParsoid( $pre )->stx = 'html';
 
 		// Support nowikis in pre.  Do this before stripping newlines, see test,
@@ -55,9 +56,9 @@ class Pre extends ExtensionTagHandler implements ExtensionModule {
 		$txt = Utils::decodeWtEntities( $txt );
 
 		$pre->appendChild( $doc->createTextNode( $txt ) );
-		DOMCompat::getBody( $doc )->appendChild( $pre );
+		$domFragment->appendChild( $pre );
 
-		return $doc;
+		return $domFragment;
 	}
 
 }

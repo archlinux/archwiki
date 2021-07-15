@@ -21,7 +21,6 @@
 	"renameuserwarnings": "Pélik:",
 	"renameuserconfirm": "Ya, ganti jeneng naraguna kasebut",
 	"renameusersubmit": "Kirim",
-	"renameuser-submit-blocklog": "Tuduhaké log blokir kanggo naraguna",
 	"renameusererrordoesnotexist": "Naraguna \"<nowiki>$1</nowiki>\" ora ana.",
 	"renameusererrorexists": "{{GENDER:$1|Naraguna}} \"<nowiki>$1</nowiki>\" wis ana.",
 	"renameusererrorinvalid": "Jeneng naraguna \"<nowiki>$1</nowiki>\" ora absah",

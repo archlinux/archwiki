@@ -41,8 +41,6 @@ ve.ui.MWSignatureContextItem.static.label =
 
 ve.ui.MWSignatureContextItem.static.modelClasses = [ ve.dm.MWSignatureNode ];
 
-ve.ui.MWSignatureContextItem.static.commandName = 'mwSignature';
-
 /* Methods */
 
 /**

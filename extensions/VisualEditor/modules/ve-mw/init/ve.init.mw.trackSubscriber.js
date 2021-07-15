@@ -151,7 +151,7 @@
 			page_title: mw.config.get( 'wgPageName' ),
 			page_ns: mw.config.get( 'wgNamespaceNumber' ),
 			// eslint-disable-next-line no-jquery/no-global-selector
-			revision_id: mw.config.get( 'wgRevisionId' ) || $( 'input[name=parentRevId]' ).val(),
+			revision_id: mw.config.get( 'wgRevisionId' ) || +$( 'input[name=parentRevId]' ).val() || 0,
 			editing_session_id: editingSessionId,
 			page_token: mw.user.getPageviewToken(),
 			session_token: mw.user.sessionId(),
@@ -194,6 +194,10 @@
 			timing[ action ] = timeStamp;
 		}
 
+		if ( mw.user.options.get( 'discussiontools-abtest' ) ) {
+			event.bucket = mw.user.options.get( 'discussiontools-abtest' );
+		}
+
 		if ( trackdebug ) {
 			log( topic, duration + 'ms', event );
 		} else {
@@ -220,7 +224,7 @@
 		var feature = topic.split( '.' )[ 1 ],
 			event;
 
-		if ( !inSample() && !trackdebug ) {
+		if ( !inSample() && !mw.config.get( 'wgWMESchemaEditAttemptStepOversample' ) && !trackdebug ) {
 			return;
 		}
 
@@ -241,6 +245,7 @@
 			feature: feature,
 			action: data.action,
 			editingSessionId: editingSessionId,
+			is_oversample: !inSample(),
 			user_id: mw.user.getId(),
 			user_editcount: mw.config.get( 'wgUserEditCount', 0 ),
 			editor_interface: ve.getProp( ve, 'init', 'target', 'surface', 'mode' ) === 'source' ? 'wikitext-2017' : 'visualeditor',
@@ -248,6 +253,10 @@
 			platform: ve.getProp( ve, 'init', 'target', 'constructor', 'static', 'platformType' ) || 'other'
 		};
 		/* eslint-enable camelcase */
+
+		if ( mw.user.options.get( 'discussiontools-abtest' ) ) {
+			event.bucket = mw.user.options.get( 'discussiontools-abtest' );
+		}
 
 		if ( trackdebug ) {
 			log( topic, event );

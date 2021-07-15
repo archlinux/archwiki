@@ -13,9 +13,13 @@ abstract class Scribunto_LuaEngineUnitTestBase extends \PHPUnit\Framework\TestCa
 	use MediaWikiCoversValidator;
 	use Scribunto_LuaEngineTestHelper;
 
+	/** @var string|null */
 	private static $staticEngineName = null;
+	/** @var string|null */
 	private $engineName = null;
+	/** @var Scribunto_LuaEngine|null */
 	private $engine = null;
+	/** @var Scribunto_LuaDataProvider|null */
 	private $luaDataProvider = null;
 
 	/**

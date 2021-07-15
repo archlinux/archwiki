@@ -11,6 +11,7 @@
 			"MarcoAurelio",
 			"Matiia",
 			"McDutchie",
+			"MuratTheTurkish",
 			"PoLuX124"
 		]
 	},
@@ -65,7 +66,7 @@
 	"oath-log-header": "Estos eventos registran los cambios en el estado de la autenticación en dos pasos en las cuentas de los usuarios.",
 	"logentry-oath-disable-other": "$1 {{GENDER:$2|deshabilitó}} la autenticación en dos pasos de $3",
 	"logentry-oath-verify": "$1 {{GENDER:$2|verificó}} si $3 tenía activada la autenticación en dos pasos",
-	"oauthauth-ui-no-module": "No se activó ninguno",
+	"oauthauth-ui-no-module": "No se activó ninguna",
 	"oathauth-module-invalid": "El módulo de OATHAuth registrado por el usuario no es válido.",
 	"oathauth-module-totp-label": "TOTP (autenticador de uso único)",
 	"oathauth-ui-manage": "Gestionar",
@@ -79,7 +80,7 @@
 	"oathauth-enable-page-title": "Habilitar $1",
 	"oathauth-action-exclusive-to-2fa": "Esta acción solo puede ser realizada por usuarios que tengan activada la autenticación en dos pasos.",
 	"oathauth-ui-available-modules": "Métodos disponibles",
-	"oathauth-ui-general-help": "La '''autenticación  de múltiples factores''' ('''AMF''') es un método de autenticación por el que a un usuario se le concede acceso al sistema solo después de que presente con éxito dos o más pruebas (o factores) a un mecanismo de autenticación: conocimiento (algo que solo el usuario conoce), posesión (algo que solo el usuario tiene), e inherencia (algo que solo el usuario es). [https://es.wikipedia.org/wiki/Autenticaci%C3%B3n_de_m%C3%BAltiples_factores Más información]",
+	"oathauth-ui-general-help": "La '''autenticación  de múltiples factores''' ('''AMF''') es un método de autenticación por el que a un usuario se le concede acceso al sistema solo después de que presente con éxito dos o más pruebas (o factores) a un mecanismo de autenticación: conocimiento (algo que solo el usuario conoce), posesión (algo que solo el usuario tiene), e inherencia (algo que solo el usuario es). [https://es.wikipedia.org/wiki/Autenticación_de_múltiples_factores Más información]",
 	"oathauth-totp-description": "El algoritmo de contraseña de un solo uso basada en tiempo (TOTP) es una extensión del algoritmo de contraseña de un solo uso basada en HMAC (HOTP), que genera una contraseña de un solo uso al tomar la unicidad del tiempo actual.",
 	"oathauth-disable-method-warning-header": "Confirmar la desactivación de un método de autenticación",
 	"oathauth-disable-method-warning-button-label": "Confirma y continúa",

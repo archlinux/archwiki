@@ -155,10 +155,6 @@ class CaptchaTest extends MediaWikiTestCase {
 	}
 
 	/**
-	 * @param $allowUserConfirmEmail
-	 * @param $userIsMailConfirmed
-	 * @param $expected
-	 * @throws ConfigException
 	 * @dataProvider provideCanSkipCaptchaMailconfirmed
 	 */
 	public function testCanSkipCaptchaMailconfirmed( $allowUserConfirmEmail,
@@ -184,10 +180,6 @@ class CaptchaTest extends MediaWikiTestCase {
 	}
 
 	/**
-	 * @param $requestIP
-	 * @param $IPWhitelist
-	 * @param $expected
-	 * @throws ConfigException
 	 * @dataProvider provideCanSkipCaptchaIPWhitelisted
 	 */
 	public function testCanSkipCaptchaIPWhitelisted( $requestIP, $IPWhitelist, $expected ) {

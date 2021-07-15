@@ -18,6 +18,7 @@
 			"青子守歌"
 		]
 	},
+	"action-tboverride-account": "利用者名ブラックリストの無視",
 	"action-titleblacklistlog": "ページ名ブラックリストの記録の閲覧",
 	"log-name-titleblacklist": "ページ名ブラックリストの記録",
 	"log-description-titleblacklist": "これらのイベントはページ名ブラックリストとの一致を追跡します。",

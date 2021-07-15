@@ -94,7 +94,7 @@ class ScriptUtils {
 				'',
 				'    Available passes (in the order they run):',
 				'',
-				'      dpload, fostered, tb-fixups, Normalize, pwrap, ',
+				'      fostered, tb-fixups, Normalize, pwrap, ',
 				'      migrate-metas, pres, migrate-nls, dsr, tplwrap, ',
 				'      dom-unpack, pp:EXT (replace EXT with extension: Cite, Poem, etc)',
 				'      sections, heading-ids, lang-converter, Linter, ',
@@ -106,7 +106,7 @@ class ScriptUtils {
 				"  * wt2html:limits    : dumps used resources (along with configured limits)\n",
 				"--debug dumps state at these different stages\n",
 				'Examples:',
-				'$ php parse.php --dump dom:pre-dpload,dom:pre-dsr,dom:pre-tplwrap < foo',
+				'$ php parse.php --dump dom:pre-dsr,dom:pre-tplwrap < foo',
 				'$ php parse.php --trace html --dump dom:pre-tplwrap < foo',
 				"\n"
 			]
@@ -218,7 +218,6 @@ class ScriptUtils {
 			'fetchTemplates',
 			'fetchImageInfo',
 			'expandExtensions',
-			'rtTestMode',
 			'addHTMLTemplateParameters'
 		];
 
@@ -371,11 +370,6 @@ class ScriptUtils {
 			'apiURL' => [
 				'description' => 'http path to remote API, e.g. http://en.wikipedia.org/w/api.php',
 				'default' => null
-			],
-			'rtTestMode' => [
-				'description' => 'Test in rt test mode (changes some parse & serialization strategies)',
-				'boolean' => true,
-				'default' => false
 			],
 			// handled by `setColorFlags`
 			'color' => [

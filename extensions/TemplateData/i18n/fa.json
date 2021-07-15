@@ -13,6 +13,7 @@
 			"Huji",
 			"Ladsgroup",
 			"Reza1615",
+			"Saadat",
 			"Sunfyre"
 		]
 	},
@@ -44,7 +45,7 @@
 	"templatedata-doc-param-type-unknown": "ناشناخته",
 	"templatedata-doc-param-type-url": "نشانی اینترنتی",
 	"templatedata-doc-param-type-wiki-file-name": "پرونده",
-	"templatedata-doc-param-type-wiki-page-name": "صفحه",
+	"templatedata-doc-param-type-wiki-page-name": "نام صفحه",
 	"templatedata-doc-param-type-wiki-template-name": "الگو",
 	"templatedata-doc-param-type-wiki-user-name": "کاربر",
 	"templatedata-doc-params": "پارامترهای الگو",

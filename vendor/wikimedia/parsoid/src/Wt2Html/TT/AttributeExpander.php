@@ -385,6 +385,8 @@ class AttributeExpander extends TokenHandler {
 						// Trim whitespace to ensure tokenizer isn't tripped up
 						// by the presence of unnecessary whitespace.
 						$kStr = trim( TokenUtils::tokensToString( $expandedK, false, [
+							// These tokens haven't been expanded to DOM yet
+							// so unpacking them here is justifiable
 							'unpackDOMFragments' => true,
 							'env' => $env
 						] ) );
@@ -419,7 +421,9 @@ class AttributeExpander extends TokenHandler {
 							// that string is setting attributes for [id, title, style], not just id.
 							//
 							// That requires the ability for the data-mw.attribs[i].txt to be an array.
-							// However, the spec at [[mw:Parsoid/MediaWiki_DOM_spec]] says:
+							// However, the spec at [[mw:Specs/HTML#Generated_attributes_of_HTML_tags]]
+							// says:
+							//
 							//    "This spec also assumes that a template can only
 							//     generate one attribute rather than multiple attributes."
 							//
@@ -628,18 +632,35 @@ class AttributeExpander extends TokenHandler {
 	 * @return array
 	 */
 	public function onAny( $token ): array {
-		if ( ( $token instanceof TagTk || $token instanceof SelfclosingTagTk ) &&
-			// Do not process dom-fragment tokens: a separate handler deals with them.
-			count( $token->attribs ) &&
-			$token->getName() !== 'mw:dom-fragment-token' && (
-				$token->getName() !== 'meta' ||
-				!preg_match( '/mw:(TSRMarker|Placeholder|Transclusion|Param|Includes)/',
-					$token->getAttribute( 'typeof' ) ?? '' )
-			)
+		if (
+			!( $token instanceof TagTk || $token instanceof SelfclosingTagTk ) ||
+			!count( $token->attribs )
 		) {
-			return $this->processComplexAttributes( $token );
-		} else {
 			return [ 'tokens' => [ $token ] ];
 		}
+
+		$name = $token->getName();
+		$typeOf = $token->getAttribute( 'typeof' ) ?? '';
+
+		if (
+			// Do not process dom-fragment tokens: a separate handler deals with them.
+			$name === 'mw:dom-fragment-token' ||
+			// Parsoid generated metas don't need expansion
+			(
+				$name === 'meta' &&
+				preg_match( '/mw:(TSRMarker|Placeholder|Transclusion|Param|Includes)/', $typeOf )
+			) ||
+			// FIXME: The TemplateHandler::processTemplateSource() parses to the
+			// end of "TokenTransform2", meaning the tokens it returns have already
+			// been through attribute expansion.  However, those tokens are reinserted
+			// in the stream at the beginning of "TokenTransform2" (since template
+			// handling is the first step of that phase) and pass through here
+			// again.  So, ignore anything that might have already been expanded.
+			preg_match( '/mw:ExpandedAttrs/', $typeOf )
+		) {
+			return [ 'tokens' => [ $token ] ];
+		}
+
+		return $this->processComplexAttributes( $token );
 	}
 }

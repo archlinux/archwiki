@@ -11,6 +11,7 @@ use IDBAccessObject;
 use LinksUpdate;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Storage\SlotRecord;
+use PageImages\PageImageCandidate;
 use PageImages\PageImages;
 use RuntimeException;
 use Title;
@@ -41,24 +42,14 @@ class LinksUpdateHookHandler {
 	 * for scoring algorithm.
 	 * @param LinksUpdate $linksUpdate LinksUpdate object used to determine what page
 	 * to get page images for
-	 * @return array[]|null $image Associative array describing an image
+	 * @return PageImageCandidate[] $image Associative array describing an image
 	 */
-	public function getPageImageCandidates( LinksUpdate $linksUpdate ) {
+	public function getPageImageCandidates( LinksUpdate $linksUpdate ) : array {
 		global $wgPageImagesLeadSectionOnly;
 		$po = false;
 
 		if ( $wgPageImagesLeadSectionOnly ) {
-			$revRecord = null;
-
-			if ( method_exists( $linksUpdate, 'getRevisionRecord' ) ) {
-				// MW 1.35+
-				$revRecord = $linksUpdate->getRevisionRecord();
-			} else {
-				$rev = $linksUpdate->getRevision();
-				if ( $rev ) {
-					$revRecord = $rev->getRevisionRecord();
-				}
-			}
+			$revRecord = $linksUpdate->getRevisionRecord();
 
 			if ( $revRecord === null ) {
 				// Use READ_LATEST (T221763)
@@ -83,7 +74,12 @@ class LinksUpdateHookHandler {
 			$po = $linksUpdate->getParserOutput();
 		}
 
-		return $po ? $po->getExtensionData( 'pageImages' ) : [];
+		if ( $po && $po->getExtensionData( 'pageImages' ) ) {
+			return array_map( function ( $candidateData ) {
+				return PageImageCandidate::newFromArray( $candidateData );
+			}, $po->getExtensionData( 'pageImages' ) );
+		}
+		return [];
 	}
 
 	/**
@@ -92,7 +88,7 @@ class LinksUpdateHookHandler {
 	public function doLinksUpdate( LinksUpdate $linksUpdate ) {
 		$images = $this->getPageImageCandidates( $linksUpdate );
 
-		if ( $images === null ) {
+		if ( !count( $images ) ) {
 			return;
 		}
 
@@ -100,7 +96,7 @@ class LinksUpdateHookHandler {
 		$counter = 0;
 
 		foreach ( $images as $image ) {
-			$fileName = $image['filename'];
+			$fileName = $image->getFileName();
 
 			if ( !isset( $scores[$fileName] ) ) {
 				$scores[$fileName] = -1;
@@ -109,13 +105,13 @@ class LinksUpdateHookHandler {
 			$scores[$fileName] = max( $scores[$fileName], $this->getScore( $image, $counter++ ) );
 		}
 
-		$image = false;
+		$imageName = false;
 		$free_image = false;
 
 		foreach ( $scores as $name => $score ) {
 			if ( $score > 0 ) {
-				if ( !$image || $score > $scores[$image] ) {
-					$image = $name;
+				if ( !$imageName || $score > $scores[$imageName] ) {
+					$imageName = $name;
 				}
 				if ( ( !$free_image || $score > $scores[$free_image] ) && $this->isImageFree( $name ) ) {
 					$free_image = $name;
@@ -128,8 +124,8 @@ class LinksUpdateHookHandler {
 		}
 
 		// Only store the image if it's not free. Free image (if any) has already been stored above.
-		if ( $image && $image !== $free_image ) {
-			$linksUpdate->mProperties[PageImages::getPropName( false )] = $image;
+		if ( $imageName && $imageName !== $free_image ) {
+			$linksUpdate->mProperties[PageImages::getPropName( false )] = $imageName;
 		}
 	}
 
@@ -137,20 +133,20 @@ class LinksUpdateHookHandler {
 	 * Returns score for image, the more the better, if it is less than zero,
 	 * the image shouldn't be used for anything
 	 *
-	 * @param array $image Associative array describing an image
+	 * @param PageImageCandidate $image Associative array describing an image
 	 * @param int $position Image order on page
 	 *
 	 * @return float
 	 */
-	protected function getScore( array $image, $position ) {
+	protected function getScore( PageImageCandidate $image, $position ) {
 		global $wgPageImagesScores;
 
-		if ( isset( $image['handler'] ) ) {
+		if ( $image->getHandlerWidth() ) {
 			// Standalone image
-			$score = $this->scoreFromTable( $image['handler']['width'], $wgPageImagesScores['width'] );
+			$score = $this->scoreFromTable( $image->getHandlerWidth(), $wgPageImagesScores['width'] );
 		} else {
 			// From gallery
-			$score = $this->scoreFromTable( $image['fullwidth'], $wgPageImagesScores['galleryImageWidth'] );
+			$score = $this->scoreFromTable( $image->getFullWidth(), $wgPageImagesScores['galleryImageWidth'] );
 		}
 
 		if ( isset( $wgPageImagesScores['position'][$position] ) ) {
@@ -161,7 +157,7 @@ class LinksUpdateHookHandler {
 		$score += $this->scoreFromTable( $ratio, $wgPageImagesScores['ratio'] );
 
 		$blacklist = $this->getBlacklist();
-		if ( isset( $blacklist[$image['filename']] ) ) {
+		if ( isset( $blacklist[$image->getFileName()] ) ) {
 			$score = -1000;
 		}
 
@@ -234,13 +230,13 @@ class LinksUpdateHookHandler {
 	/**
 	 * Returns width/height ratio of an image as displayed or 0 is not available
 	 *
-	 * @param array $image Array representing the image to get the aspect ratio from
+	 * @param PageImageCandidate $image Array representing the image to get the aspect ratio from
 	 *
 	 * @return float|int
 	 */
-	protected function getRatio( array $image ) {
-		$width = $image['fullwidth'];
-		$height = $image['fullheight'];
+	protected function getRatio( PageImageCandidate $image ) {
+		$width = $image->getFullWidth();
+		$height = $image->getFullHeight();
 
 		if ( !$width || !$height ) {
 			return 0;

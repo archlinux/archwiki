@@ -3,7 +3,7 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Ext\Gallery;
 
-use DOMDocument;
+use DOMDocumentFragment;
 use DOMElement;
 use stdClass;
 use Wikimedia\Parsoid\Ext\DOMDataUtils;
@@ -39,7 +39,6 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 					'handler' => self::class,
 				]
 			],
-			'styles' => [ 'mediawiki.page.gallery.styles' ]
 		];
 	}
 
@@ -47,16 +46,12 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 	 * Parse the gallery caption.
 	 * @param ParsoidExtensionAPI $extApi
 	 * @param array $extArgs
-	 * @return DOMElement|null
+	 * @return ?DOMDocumentFragment
 	 */
-	private function pCaption( ParsoidExtensionAPI $extApi, array $extArgs ): ?DOMElement {
-		$doc = $extApi->extArgToDOM( $extArgs, 'caption' );
-		if ( !$doc ) {
-			return null;
-		}
-
-		$body = DOMCompat::getBody( $doc );
-		return $body;
+	private function pCaption(
+		ParsoidExtensionAPI $extApi, array $extArgs
+	): ?DOMDocumentFragment {
+		return $extApi->extArgToDOM( $extArgs, 'caption' );
 	}
 
 	/**
@@ -98,9 +93,6 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 
 		$doc = $thumb->ownerDocument;
 		$rdfaType = $thumb->getAttribute( 'typeof' );
-
-		// Detach from document
-		DOMCompat::remove( $thumb );
 
 		// Detach figcaption as well
 		$figcaption = DOMCompat::querySelector( $thumb, 'figcaption' );
@@ -148,11 +140,11 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 	/** @inheritDoc */
 	public function sourceToDom(
 		ParsoidExtensionAPI $extApi, string $content, array $args
-	): DOMDocument {
+	): DOMDocumentFragment {
 		$attrs = $extApi->extArgsToArray( $args );
 		$opts = new Opts( $extApi, $attrs );
 
-		$offset = $extApi->getExtTagOffsets()->innerStart();
+		$offset = $extApi->extTag->getOffsets()->innerStart();
 
 		// Prepare the lines for processing
 		$lines = explode( "\n", $content );
@@ -175,8 +167,9 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 		} );
 
 		$mode = Mode::byName( $opts->mode );
-		$doc = $mode->render( $extApi, $opts, $caption, $lines );
-		return $doc;
+		$extApi->addModules( $mode->getModules() );
+		$extApi->addModuleStyles( $mode->getModuleStyles() );
+		return $mode->render( $extApi, $opts, $caption, $lines );
 	}
 
 	/**
@@ -243,12 +236,14 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 					if ( $showfilename ) {
 						DOMCompat::remove( $showfilename ); // Destructive to the DOM!
 					}
-					$caption = $extApi->domChildrenToWikitext( $gallerytext,
-						$extApi::IN_IMG_CAPTION,
-						true /* singleLine */
+					$caption = $extApi->domChildrenToWikitext(
+						$gallerytext, $extApi::IN_IMG_CAPTION
 					);
 					// Drop empty captions
 					if ( !preg_match( '/^\s*$/D', $caption ) ) {
+						// Ensure that this only takes one line since gallery
+						// tag content is split by line
+						$caption = preg_replace( '/\n/', ' ', $caption );
 						$content .= '|' . $caption;
 					}
 				}
@@ -280,14 +275,13 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 			// `caption` from data-mw.
 			!is_string( $dataMw->attrs->caption ?? null )
 		) {
-			$dataMw->attrs->caption = $extApi->domChildrenToWikitext( $galcaption,
-				$extApi::IN_IMG_CAPTION | $extApi::IN_OPTION,
-				false /* singleLine */
+			$dataMw->attrs->caption = $extApi->domChildrenToWikitext(
+				$galcaption, $extApi::IN_IMG_CAPTION | $extApi::IN_OPTION
 			);
 		}
 		$startTagSrc = $extApi->extStartTagToWikitext( $node );
 
-		if ( !$dataMw->body ) {
+		if ( !isset( $dataMw->body ) ) {
 			return $startTagSrc; // We self-closed this already.
 		} else {
 			// FIXME: VE should signal to use the HTML by removing the

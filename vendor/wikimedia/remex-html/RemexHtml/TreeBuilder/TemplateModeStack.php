@@ -11,7 +11,7 @@ class TemplateModeStack {
 	/**
 	 * The insertion mode at the top of the stack. This is public for
 	 * performance reasons but should be treated as read-only.
-	 * @var integer|null
+	 * @var int|null
 	 */
 	public $current;
 

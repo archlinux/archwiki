@@ -33,18 +33,6 @@ class XMLSerializer {
 		'keygen' => true
 	];
 
-	/** HTML5 elements with raw (unescaped) content */
-	private static $hasRawContent = [
-		'style' => true,
-		'script' => true,
-		'xmp' => true,
-		'iframe' => true,
-		'noembed' => true,
-		'noframes' => true,
-		'plaintext' => true,
-		'noscript' => true
-	];
-
 	/**
 	 * Elements that strip leading newlines
 	 * http://www.whatwg.org/specs/web-apps/current-work/multipage/the-end.html#html-fragment-serialization-algorithm
@@ -65,7 +53,7 @@ class XMLSerializer {
 	];
 
 	/**
-	 * HTML entity encoder helper. Replaces calls to the entities npm module.
+	 * HTML entity encoder helper.
 	 * Only supports the few entities we'll actually need: <&'"
 	 * @param string $raw Input string
 	 * @param string $encodeChars String with the characters that should be encoded
@@ -89,33 +77,6 @@ class XMLSerializer {
 	 */
 	private static function serializeToString( DOMNode $node, array $options, callable $accum ): void {
 		$child = null;
-		if ( !empty( $options['tunnelFosteredContent'] ) &&
-			isset( WikitextConstants::$HTML['FosterablePosition'][$node->nodeName] )
-		) {
-			// Tunnel fosterable metas as comments.
-			// This is analogous to what is done when treebuilding.
-			$ownerDoc = $node->ownerDocument;
-			$allowedTags = WikitextConstants::$HTML['TableContentModels'][$node->nodeName];
-			$child = $node->firstChild;
-			while ( $child ) {
-				$next = $child->nextSibling;
-				if ( DOMUtils::isText( $child ) ) {
-					Assert::invariant( DOMUtils::isIEW( $child ), 'Only expecting whitespace!' );
-				} elseif (
-					$child instanceof DOMElement &&
-					!in_array( $child->nodeName, $allowedTags, true )
-				) {
-					Assert::invariant( $child->nodeName === 'meta', 'Only fosterable metas expected!' );
-					$as = [];
-					foreach ( DOMCompat::attributes( $child ) as $attr ) {
-						$as[] = [ $attr->name, $attr->value ];
-					}
-					$comment = WTUtils::fosterCommentData( $child->getAttribute( 'typeof' ), $as, true );
-					$node->replaceChild( $ownerDoc->createComment( $comment ), $child );
-				}
-				$child = $next;
-			}
-		}
 		switch ( $node->nodeType ) {
 			case XML_ELEMENT_NODE:
 				DOMUtils::assertElt( $node );
@@ -145,7 +106,7 @@ class XMLSerializer {
 				) ) {
 					$accum( '>', $node, 'start' );
 					// if is cdata child node
-					if ( isset( self::$hasRawContent[$nodeName] ) ) {
+					if ( DOMUtils::isRawTextElement( $node ) ) {
 						// TODO: perform context-sensitive escaping?
 						// Currently this content is not normally part of our DOM, so
 						// no problem. If it was, we'd probably have to do some
@@ -222,14 +183,14 @@ class XMLSerializer {
 	 *   - uid: the ID of the element
 	 * @param string $bit A piece of the HTML string
 	 * @param DOMNode $node The DOM node $bit is a part of
-	 * @param string|null $flag 'start' when receiving the final part of the opening tag
+	 * @param ?string $flag 'start' when receiving the final part of the opening tag
 	 *   of an element, 'end' when receiving the final part of the closing tag of an element
 	 *   or the final part of a self-closing element.
 	 */
 	private static function accumOffsets(
 		array &$out, string $bit, DOMNode $node, ?string $flag = null
 	): void {
-		if ( DOMUtils::isBody( $node ) ) {
+		if ( DOMUtils::atTheTop( $node ) ) {
 			$out['html'] .= $bit;
 			if ( $flag === 'start' ) {
 				$out['start'] = strlen( $out['html'] );
@@ -237,8 +198,9 @@ class XMLSerializer {
 				$out['start'] = null;
 				$out['uid'] = null;
 			}
-		} elseif ( !( $node instanceof DOMElement ) || $out['start'] === null
-			|| !DOMUtils::isBody( $node->parentNode )
+		} elseif (
+			!( $node instanceof DOMElement ) || $out['start'] === null ||
+			!DOMUtils::atTheTop( $node->parentNode )
 		) {
 			// In case you're wondering, out.start may never be set if body
 			// isn't a child of the node passed to serializeToString, or if it

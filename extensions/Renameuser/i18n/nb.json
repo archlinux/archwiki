@@ -20,7 +20,6 @@
 	"renameuserwarnings": "Advarsler:",
 	"renameuserconfirm": "Ja, døp om brukeren",
 	"renameusersubmit": "Utfør",
-	"renameuser-submit-blocklog": "Vis blokkeringslogg for bruker",
 	"renameusererrordoesnotexist": "Brukeren «<nowiki>$1</nowiki>» finnes ikke.",
 	"renameusererrorexists": "{{GENDER:$1|Brukeren}} «<nowiki>$1</nowiki>» finnes allerede.",
 	"renameusererrorinvalid": "Brukernavnet «<nowiki>$1</nowiki>» er ugyldig.",

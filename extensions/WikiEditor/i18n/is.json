@@ -12,6 +12,8 @@
 	"wikieditor-loading": "Hleður...",
 	"wikieditor-toolbar": "Breytingarstika",
 	"wikieditor-toolbar-desc": "Breytingarstika með auknu notagildi",
+	"wikieditor-toolbar-preference": "Virkja breytingastikuna",
+	"wikieditor-toolbar-preference-help": "Þetta hefur stundum verið kallað '2010 wikitext editor'.",
 	"wikieditor-toolbar-loading": "Hleð...",
 	"wikieditor-toolbar-tool-bold": "Feitletrað",
 	"wikieditor-toolbar-tool-bold-example": "Feitletraður texti",

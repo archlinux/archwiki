@@ -32,14 +32,14 @@
 			$( '<input>' ).attr( 'type', 'button' )
 				.attr( 'id', 'mw-search-toggleall' )
 				.prop( 'value', mw.msg( 'powersearch-toggleall' ) )
-				.click( function () {
+				.on( 'click', function () {
 					$checkboxes.prop( 'checked', true );
 				} )
 		).append(
 			$( '<input>' ).attr( 'type', 'button' )
 				.attr( 'id', 'mw-search-togglenone' )
 				.prop( 'value', mw.msg( 'powersearch-togglenone' ) )
-				.click( function () {
+				.on( 'click', function () {
 					$checkboxes.prop( 'checked', false );
 				} )
 		);

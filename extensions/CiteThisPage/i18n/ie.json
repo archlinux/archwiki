@@ -2,9 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Malafaya",
+			"Mithridates",
 			"Stavanger7"
 		]
 	},
 	"citethispage-link": "Citar ti págine",
+	"tooltip-citethispage": "Information pri qualmen citar ti págine",
 	"citethispage-change-target": "Págine:"
 }

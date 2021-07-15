@@ -6,6 +6,7 @@
 			"Eminn",
 			"Interfase",
 			"Jduranboger",
+			"Toghrul Rahimli",
 			"Wertuose"
 		]
 	},
@@ -17,7 +18,9 @@
 	"cite-ve-dialog-reference-options-group-placeholder": "Ümumi istinadlar",
 	"cite-ve-dialog-reference-options-name-label": "Təkrar olaraq bu ad altında istifadə et",
 	"cite-ve-dialog-reference-options-section": "Nizamlamalar",
+	"cite-ve-dialog-reference-placeholder": "Əlavə etmək istədiyiniz mənbəni qeyd edin və ya istinad şablonu daxil edin.",
 	"cite-ve-dialog-reference-title": "İstinadlar",
+	"cite-ve-dialog-reference-useexisting-tool": "Təkrar istifadə",
 	"cite-ve-dialog-referenceslist-title": "İstinadlar siyahısı",
 	"cite-ve-dialogbutton-reference-tooltip": "Əsas",
 	"cite-ve-dialogbutton-referenceslist-tooltip": "İstinad siyahısı"

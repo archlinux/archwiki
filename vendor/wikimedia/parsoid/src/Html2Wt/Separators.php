@@ -4,6 +4,8 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Html2Wt;
 
+use DOMComment;
+use DOMDocumentFragment;
 use DOMElement;
 use DOMNode;
 use Wikimedia\Assert\Assert;
@@ -15,6 +17,7 @@ use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\PHPUtils;
+use Wikimedia\Parsoid\Utils\TokenUtils;
 use Wikimedia\Parsoid\Utils\Utils;
 use Wikimedia\Parsoid\Utils\WTUtils;
 
@@ -74,7 +77,7 @@ class Separators {
 	 * @param DOMNode $n
 	 * @return string|null
 	 */
-	private static function precedingSeparatorTxt( DOMNode $n ): ?string {
+	private static function precedingSeparatorTextLen( DOMNode $n ): ?int {
 		// Given the CSS white-space property and specifically,
 		// "pre" and "pre-line" values for this property, it seems that any
 		// sane HTML editor would have to preserve IEW in HTML documents
@@ -82,23 +85,21 @@ class Separators {
 		// IEW drastically would be when the user explicitly requests it
 		// (Ex: pretty-printing of raw source code).
 		//
-		// For now, we are going to exploit this.  This information is
+		// For now, we are going to exploit this. This information is
 		// only used to extrapolate DSR values and extract a separator
-		// string from source, and is only used locally.  In addition,
+		// string from source, and is only used locally. In addition,
 		// the extracted text is verified for being a valid separator.
 		//
 		// So, at worst, this can create a local dirty diff around separators
 		// and at best, it gets us a clean diff.
 
-		$buf = '';
+		$len = 0;
 		$orig = $n;
 		while ( $n ) {
 			if ( DOMUtils::isIEW( $n ) ) {
-				$buf .= $n->nodeValue;
-			} elseif ( DOMUtils::isComment( $n ) ) {
-				$buf .= '<!--';
-				$buf .= $n->nodeValue;
-				$buf .= '-->';
+				$len += strlen( $n->nodeValue );
+			} elseif ( $n instanceof DOMComment ) {
+				$len += WTUtils::decodedCommentLength( $n );
 			} elseif ( $n !== $orig ) { // dont return if input node!
 				return null;
 			}
@@ -106,7 +107,7 @@ class Separators {
 			$n = $n->previousSibling;
 		}
 
-		return $buf;
+		return $len;
 	}
 
 	/**
@@ -115,17 +116,16 @@ class Separators {
 	 * Collects, checks and integrates separator newline requirements to a simple
 	 * min, max structure.
 	 *
-	 * @param SerializerState $state
 	 * @param DOMNode $nodeA
 	 * @param array $aCons
 	 * @param DOMNode $nodeB
 	 * @param array $bCons
 	 * @return array
 	 */
-	private static function getSepNlConstraints(
-		SerializerState $state, DOMNode $nodeA, array $aCons, DOMNode $nodeB, array $bCons
+	private function getSepNlConstraints(
+		DOMNode $nodeA, array $aCons, DOMNode $nodeB, array $bCons
 	): array {
-		$env = $state->getEnv();
+		$env = $this->state->getEnv();
 
 		$nlConstraints = [
 			'min' => $aCons['min'] ?? null,
@@ -184,14 +184,11 @@ class Separators {
 	 * Create a separator given a (potentially empty) separator text and newline
 	 * constraints.
 	 *
-	 * @param SerializerState $state
 	 * @param string $sep
 	 * @param array $nlConstraints
 	 * @return string
 	 */
-	private static function makeSeparator(
-		SerializerState $state, string $sep, array $nlConstraints
-	): string {
+	private function makeSeparator( string $sep, array $nlConstraints ): string {
 		$origSep = $sep;
 
 		// Split on comment/ws-only lines, consuming subsequent newlines since
@@ -206,7 +203,7 @@ class Separators {
 		$sepNlCount = preg_match_all( '/\n/', implode( preg_split( $splitRe, $sep ) ) );
 		$minNls = $nlConstraints['min'] ?? 0;
 
-		if ( $state->atStartOfOutput && $minNls > 0 ) {
+		if ( $this->state->atStartOfOutput && $minNls > 0 ) {
 			// Skip first newline as we are in start-of-line context
 			$minNls--;
 		}
@@ -286,7 +283,7 @@ class Separators {
 			$sep = implode( $newBits );
 		}
 
-		$state->getEnv()->log(
+		$this->state->getEnv()->log(
 			'debug/wts/sep',
 			'make-new   |',
 			function () use ( $nlConstraints, $sepNlCount, $minNls, $sep, $origSep ) {
@@ -369,28 +366,25 @@ class Separators {
 	): void {
 		$state = $this->state;
 
-		// Non-element DOM nodes will have a null dom handler
 		if ( $nodeB->parentNode === $nodeA ) {
 			// parent-child separator, nodeA parent of nodeB
-			'@phan-var \DOMElement $nodeA'; // @var \DOMElement $nodeA
+			'@phan-var DOMElement|DOMDocumentFragment $nodeA'; // @var DOMElement|DOMDocumentFragment $nodeA
 			$sepType = 'parent-child';
 			$aCons = $sepHandlerA->firstChild( $nodeA, $nodeB, $state );
 			$bCons = $nodeB instanceof DOMElement ? $sepHandlerB->before( $nodeB, $nodeA, $state ) : [];
-			$nlConstraints = self::getSepNlConstraints( $state, $nodeA, $aCons, $nodeB, $bCons );
 		} elseif ( $nodeA->parentNode === $nodeB ) {
 			// parent-child separator, nodeB parent of nodeA
-			'@phan-var \DOMElement $nodeB'; // @var \DOMElement $nodeA
+			'@phan-var DOMElement|DOMDocumentFragment $nodeB'; // @var DOMElement|DOMDocumentFragment $nodeA
 			$sepType = 'child-parent';
 			$aCons = $nodeA instanceof DOMElement ? $sepHandlerA->after( $nodeA, $nodeB, $state ) : [];
 			$bCons = $sepHandlerB->lastChild( $nodeB, $nodeA, $state );
-			$nlConstraints = self::getSepNlConstraints( $state, $nodeA, $aCons, $nodeB, $bCons );
 		} else {
 			// sibling separator
 			$sepType = 'sibling';
 			$aCons = $nodeA instanceof DOMElement ? $sepHandlerA->after( $nodeA, $nodeB, $state ) : [];
 			$bCons = $nodeB instanceof DOMElement ? $sepHandlerB->before( $nodeB, $nodeA, $state ) : [];
-			$nlConstraints = self::getSepNlConstraints( $state, $nodeA, $aCons, $nodeB, $bCons );
 		}
+		$nlConstraints = $this->getSepNlConstraints( $nodeA, $aCons, $nodeB, $bCons );
 
 		if ( !empty( $state->sep->constraints ) ) {
 			// Merge the constraints
@@ -434,14 +428,14 @@ class Separators {
 	}
 
 	/**
-	 * @param SerializerState $state
 	 * @param string $sep
 	 * @param array $nlConstraints
 	 * @return string
 	 */
 	private function makeSepIndentPreSafe(
-		SerializerState $state, string $sep, array $nlConstraints
+		string $sep, array $nlConstraints
 	): string {
+		$state = $this->state;
 		$constraintInfo = $nlConstraints['constraintInfo'] ?? [];
 		$sepType = $constraintInfo['sepType'] ?? null;
 		$nodeA = $constraintInfo['nodeA'] ?? null;
@@ -508,38 +502,37 @@ class Separators {
 
 			// Check whether nodeB is nested inside an element that suppresses
 			// indent-pres.
-			//
-			// 1. Walk up past zero-wikitext width nodes in the ancestor chain
-			// of 'nodeB' till we establish indent-pre safety.
-			// If nodeB uses HTML syntax, obviously it is not zero width!
-			//
-			// 2. Check if the ancestor is a weak/strong indent-pre suppressing tag.
-			// - Weak indent-pre suppressing tags only suppress indent-pres
-			// within immediate children.
-			// - Strong indent-pre suppressing tags suppress indent-pres
-			// in entire DOM subtree rooted at that node.
-
-			if ( $nodeB && !DOMUtils::atTheTop( $nodeB ) ) {
+			if ( $nodeB && !$isIndentPreSafe && !DOMUtils::atTheTop( $nodeB ) ) {
 				$parentB = $nodeB->parentNode; // could be nodeA
 				while ( WTUtils::isZeroWidthWikitextElt( $parentB ) ) {
 					$parentB = $parentB->parentNode;
 				}
 
-				if ( isset( WikitextConstants::$WeakIndentPreSuppressingTags[$parentB->nodeName] ) ) {
-					$isIndentPreSafe = true;
-				} else {
-					while ( !DOMUtils::atTheTop( $parentB ) ) {
-						if ( isset( WikitextConstants::$StrongIndentPreSuppressingTags[$parentB->nodeName] ) &&
-								( $parentB->nodeName !== 'p' || WTUtils::isLiteralHTMLNode( $parentB ) ) ) {
-							$isIndentPreSafe = true;
-						}
-						$parentB = $parentB->parentNode;
+				// The token stream paragraph wrapper (and legacy doBlockLevels)
+				// tracks this separately with $inBlockquote
+				$isIndentPreSafe = DOMUtils::hasNameOrHasAncestorOfName(
+					$parentB, 'blockquote'
+				);
+
+				// First scope wins
+				while ( !$isIndentPreSafe && !DOMUtils::atTheTop( $parentB ) ) {
+					if (
+						TokenUtils::tagOpensBlockScope( $parentB->nodeName ) &&
+						// Only html p-tag is indent pre suppressing
+						( $parentB->nodeName !== 'p' || WTUtils::isLiteralHTMLNode( $parentB ) )
+					) {
+						$isIndentPreSafe = true;
+						break;
+					} elseif ( TokenUtils::tagClosesBlockScope( $parentB->nodeName ) ) {
+						break;
 					}
+					$parentB = $parentB->parentNode;
 				}
 			}
 
 			$stripLeadingSpace = ( !empty( $constraintInfo['onSOL'] ) || $forceSOL ) &&
-				$nodeB && isset( WikitextConstants::$SolSpaceSensitiveTags[$nodeB->nodeName] );
+				$nodeB && !WTUtils::isLiteralHTMLNode( $nodeB ) &&
+				isset( WikitextConstants::$HTMLTagsRequiringSOLContext[$nodeB->nodeName] );
 			if ( !$isIndentPreSafe || $stripLeadingSpace ) {
 				// Wrap non-nl ws from last line, but preserve comments.
 				// This avoids triggering indent-pres.
@@ -597,6 +590,164 @@ class Separators {
 	}
 
 	/**
+	 * $node is embedded inside a parent node that has its leading/trailing whitespace trimmed
+	 * in the wt->html direction. In this method, we attempt to recover leading trimmed whitespace
+	 * using DSR information on $node.
+	 *
+	 * In some cases, $node might have an additional "data-mw-selser-wrapper" span
+	 * that is added by SelSer - look past those wrappers.
+	 *
+	 * The recovery is attempted in two different ways:
+	 * 1. If we have additional DSR fields about leading/trailing WS
+	 *    (represented by $state->haveTrimmedWsDSR), that info is used.
+	 * 2. If not, we simply inspect source at $dsr->innerStart and if it
+	 *    happens to be whitespace, we use that.
+	 *
+	 * @param DOMNode $node
+	 * @return ?string
+	 */
+	private function fetchLeadingTrimmedSpace( DOMNode $node ): ?string {
+		$origNode = $node;
+		$parentNode = $node->parentNode;
+
+		// Skip past the artificial span wrapper
+		if ( $parentNode instanceof DOMElement && $parentNode->hasAttribute( 'data-mw-selser-wrapper' ) ) {
+			$node = $parentNode;
+			$parentNode = $parentNode->parentNode;
+		}
+
+		// Leading trimmed whitespace only makes sense for first child.
+		// Ignore comments (which are part of separators) + deletion markers.
+		if ( DOMUtils::previousNonSepSibling( $node ) ) {
+			return null;
+		}
+
+		'@phan-var DOMElement|DOMDocumentFragment $parentNode'; // @var DOMElement|DOMDocumentFragment $parentNode
+		if ( isset( WikitextConstants::$WikitextTagsWithTrimmableWS[$parentNode->nodeName] ) &&
+			( DOMUtils::isElt( $origNode ) || !preg_match( '/^[ \t]/', $origNode->nodeValue ) )
+		) {
+			// FIXME: Is this complexity worth some minor dirty diff on this test?
+			// ParserTest: "3. List embedded in a formatting tag in a misnested way"
+			// I've not added an equivalent check in the trailing whitespace case.
+			if ( $origNode instanceof DOMElement &&
+				isset( DOMDataUtils::getDataParsoid( $origNode )->autoInsertedStart ) &&
+				preg_match( '/^[ \t]/', $origNode->firstChild->textContent ?? '' )
+			) {
+				return null;
+			}
+
+			$state = $this->state;
+			$dsr = DOMDataUtils::getDataParsoid( $parentNode )->dsr ?? null;
+			if ( Utils::isValidDSR( $dsr, true ) ) {
+				if ( $state->haveTrimmedWsDSR && (
+					$dsr->leadingWS > 0 || ( $dsr->leadingWS === 0 && $dsr->trailingWS > 0 )
+				) ) {
+					$sep = $state->getOrigSrc( $dsr->innerStart(), $dsr->innerStart() + $dsr->leadingWS ) ?? '';
+					return preg_match( '/^[ \t]*$/', $sep ) ? $sep : null;
+				} else {
+					$offset = $dsr->innerStart();
+					if ( $offset < $dsr->innerEnd() ) {
+						$sep = $state->getOrigSrc( $offset, $offset + 1 ) ?? '';
+						return preg_match( '/[ \t]/', $sep ) ? $sep : null;
+					}
+				}
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * $node is embedded inside a parent node that has its leading/trailing whitespace trimmed
+	 * in the wt->html direction. In this method, we attempt to recover trailing trimmed whitespace
+	 * using DSR information on $node.
+	 *
+	 * In some cases, $node might have an additional "data-mw-selser-wrapper" span
+	 * that is added by SelSer - look past those wrappers.
+	 *
+	 * The recovery is attempted in two different ways:
+	 * 1. If we have additional DSR fields about leading/trailing WS
+	 *    (represented by $state->haveTrimmedWsDSR), that info is used.
+	 * 2. If not, we simply inspect source at $dsr->innerEnd and if it
+	 *    happens to be whitespace, we use that.
+	 *
+	 * @param DOMNode $node
+	 * @return ?string
+	 */
+	private function fetchTrailingTrimmedSpace( DOMNode $node ): ?string {
+		$origNode = $node;
+		$parentNode = $node->parentNode;
+
+		// Skip past the artificial span wrapper
+		if ( $parentNode instanceof DOMElement && $parentNode->hasAttribute( 'data-mw-selser-wrapper' ) ) {
+			$node = $parentNode;
+			$parentNode = $parentNode->parentNode;
+		}
+
+		// Trailing trimmed whitespace only makes sense for last child.
+		// Ignore comments (which are part of separators) + deletion markers.
+		if ( DOMUtils::nextNonSepSibling( $node ) ) {
+			return null;
+		}
+
+		$sep = null;
+		'@phan-var DOMElement|DOMDocumentFragment $parentNode'; // @var DOMElement|DOMDocumentFragment $parentNode
+		if ( isset( WikitextConstants::$WikitextTagsWithTrimmableWS[$parentNode->nodeName] ) &&
+			( DOMUtils::isElt( $origNode ) || !preg_match( '/[ \t]$/', $origNode->nodeValue ) )
+		) {
+			$state = $this->state;
+			$dsr = DOMDataUtils::getDataParsoid( $parentNode )->dsr ?? null;
+			if ( Utils::isValidDSR( $dsr, true ) ) {
+				if ( $state->haveTrimmedWsDSR && (
+					$dsr->trailingWS > 0 || ( $dsr->trailingWS === 0 && $dsr->leadingWS > 0 )
+				) ) {
+					$sep = $state->getOrigSrc( $dsr->innerEnd() - $dsr->trailingWS, $dsr->innerEnd() ) ?? '';
+					if ( !preg_match( '/^[ \t]*$/', $sep ) ) {
+						$sep = null;
+					}
+				} else {
+					$offset = $dsr->innerEnd() - 1;
+					// The > instead of >= is to deal with an edge case
+					// = = where that single space is captured by the
+					// getLeadingSpace case above
+					if ( $offset > $dsr->innerStart() ) {
+						$sep = $state->getOrigSrc( $offset, $offset + 1 ) ?? '';
+						if ( !preg_match( '/[ \t]/', $sep ) ) {
+							$sep = null;
+						}
+					}
+				}
+			}
+		}
+
+		return $sep;
+	}
+
+	/**
+	 * Emit a separator based on the collected (and merged) constraints
+	 * and existing separator text. Called when new output is triggered.
+	 * @param DOMNode $node
+	 * @param bool $leading
+	 *   if true, trimmed leading whitespace is emitted
+	 *   if false, trimmed railing whitespace is emitted
+	 * @return string|null
+	 */
+	public function recoverTrimmedWhitespace( DOMNode $node, bool $leading ): ?string {
+		// Deal with scenarios where leading / trailing whitespace were trimmed.
+		// We now need to figure out if we need to add any leading / trailing WS back.
+		if ( $this->state->useWhitespaceHeuristics && $this->state->selserMode ) {
+			if ( $leading ) {
+				return $this->fetchLeadingTrimmedSpace( $node );
+			} else {
+				$lastChild = DOMUtils::lastNonDeletedChild( $node );
+				return $lastChild ? $this->fetchTrailingTrimmedSpace( $lastChild ) : null;
+			}
+		}
+
+		return null;
+	}
+
+	/**
 	 * Emit a separator based on the collected (and merged) constraints
 	 * and existing separator text. Called when new output is triggered.
 	 * @param DOMNode $node
@@ -605,47 +756,51 @@ class Separators {
 	 */
 	public function buildSep( DOMNode $node ): ?string {
 		$state = $this->state;
+		$sepType = $state->sep->constraints['constraintInfo']['sepType'] ?? null;
+		$sep = null;
 		$origNode = $node;
 		$prevNode = $state->sep->lastSourceNode;
-		$sep = null;
 		$dsrA = null;
 		$dsrB = null;
 
 		/* ----------------------------------------------------------------------
-		 * Assuming we have access to the original source, we can use it only if:
-		 * - If we are in selser mode AND
-		 *   . this node is not part of a subtree that has been marked 'modified'
-		 *     (massively edited, either in actuality or because DOMDiff is not smart enough).
-		 *   . neither node is adjacent to a deleted block node
-		 *     (see the extensive comment in SSP.emitChunk in wts.SerializerState.js)
+		 * Assuming we have access to the original source, we can use DSR offsets
+		 * to extract separators from source only if:
+		 * - we are in selser mode AND
+		 * - this node is not part of a newly inserted subtree (marked 'modified')
+		 *   for which DSR isn't available
+		 * - neither node is adjacent to a deleted block node
+		 *   (see the long comment in SerializerState::emitChunk in the middle)
 		 *
 		 * In other scenarios, DSR values on "adjacent" nodes in the edited DOM
 		 * may not reflect deleted content between them.
 		 * ---------------------------------------------------------------------- */
-		$again = ( $node === $prevNode );
-		$origSepUsable = !$again && $state->selserMode && !$state->inModifiedContent &&
+		$origSepNeeded = $node !== $prevNode && $state->selserMode;
+		$origSepNeededAndUsable =
+			$origSepNeeded && !$state->inModifiedContent &&
 			!WTSUtils::nextToDeletedBlockNodeInWT( $prevNode, true ) &&
 			!WTSUtils::nextToDeletedBlockNodeInWT( $node, false ) &&
 			WTSUtils::origSrcValidInEditedContext( $state->getEnv(), $prevNode ) &&
 			WTSUtils::origSrcValidInEditedContext( $state->getEnv(), $node );
 
-		if ( $origSepUsable ) {
-			if ( !DOMUtils::isElt( $prevNode ) ) {
-				// Check if this is the last child of a zero-width element, and use
-				// that for dsr purposes instead. Typical case: text in p.
-				if ( !$prevNode->nextSibling && $prevNode->parentNode && $prevNode->parentNode !== $node &&
-					( DOMDataUtils::getDataParsoid( $prevNode->parentNode )->dsr ?? null ) &&
+		if ( $origSepNeededAndUsable ) {
+			if ( $prevNode instanceof DOMElement ) {
+				$dsrA = self::handleAutoInserted( $prevNode );
+			} elseif ( !( $prevNode instanceof DOMDocumentFragment ) ) {
+				// Check if $prevNode is the last child of a zero-width element,
+				// and use that for dsr purposes instead. Typical case: text in p.
+				if (
+					!$prevNode->nextSibling &&
+					$prevNode->parentNode !== $node &&
+					$prevNode->parentNode instanceof DOMElement &&
 					( DOMDataUtils::getDataParsoid( $prevNode->parentNode )->dsr->closeWidth ?? null ) === 0
 				) {
 					$dsrA = self::handleAutoInserted( $prevNode->parentNode );
-				} elseif ( $prevNode->previousSibling &&
+				} elseif (
+					// Can we extrapolate DSR from $prevNode->previousSibling?
+					// Yes, if $prevNode->parentNode didn't have its children edited.
 					$prevNode->previousSibling instanceof DOMElement &&
-					// FIXME: Not sure why we need this check because data-parsoid
-					// is loaded on all nodes. mw:Diffmarker maybe? But, if so, why?
-					// Should be fixed.
-					!empty( DOMDataUtils::getDataParsoid( $prevNode->previousSibling )->dsr ) &&
-					// Don't extrapolate if the string was potentially changed
-					!DiffUtils::directChildrenChanged( $node->parentNode, $this->env )
+					!DiffUtils::directChildrenChanged( $prevNode->parentNode, $this->env )
 				) {
 					$endDsr = DOMDataUtils::getDataParsoid( $prevNode->previousSibling )->dsr->end ?? null;
 					$correction = null;
@@ -664,42 +819,14 @@ class Separators {
 						);
 					}
 				}
-			} else {
-				$dsrA = self::handleAutoInserted( $prevNode );
 			}
 
 			if ( !$dsrA ) {
 				// nothing to do -- no reason to compute dsrB if dsrA is null
-			} elseif ( !DOMUtils::isElt( $node ) ) {
-				// If this is the child of a zero-width element
-				// and is only preceded by separator elements, we
-				// can use the parent for dsr after correcting the dsr
-				// with the separator run length.
-				//
-				// 1. text in p.
-				// 2. ws-only child of a node with auto-inserted start tag
-				// Ex: "<span> <s>x</span> </s>" --> <span> <s>x</s*></span><s*> </s>
-				// 3. ws-only children of a node with auto-inserted start tag
-				// Ex: "{|\n|-\n <!--foo--> \n|}"
-				$parentNode = $node->parentNode;
-				/** @var DOMElement $parentNode */
-				DOMUtils::assertElt( $parentNode );
-
-				$npDP = DOMDataUtils::getDataParsoid( $parentNode );
-				if ( $parentNode !== $prevNode && isset( $npDP->dsr ) && $npDP->dsr->openWidth === 0 ) {
-					$sepTxt = self::precedingSeparatorTxt( $node );
-					if ( $sepTxt !== null ) {
-						$dsrB = $npDP->dsr;
-						if ( is_int( $dsrB->start ) && strlen( $sepTxt ) > 0 ) {
-							$dsrB = clone $dsrB;
-							$dsrB->start += strlen( $sepTxt );
-						}
-					}
-				}
-			} else {
+			} elseif ( $node instanceof DOMElement ) {
+				// $node is parent of $prevNode
 				if ( $prevNode->parentNode === $node ) {
-					/** @var DOMElement $node */
-					DOMUtils::assertElt( $node );
+					'@phan-var DOMElement|DOMDocumentFragment $node'; // @var DOMElement|DOMDocumentFragment $node
 					// FIXME: Maybe we shouldn't set dsr in the dsr pass if both aren't valid?
 					//
 					// When we are in the lastChild sep scenario and the parent doesn't have
@@ -708,8 +835,11 @@ class Separators {
 					//
 					// This fix is needed to handle trailing newlines in this wikitext:
 					// [[File:foo.jpg|thumb|300px|foo\n{{1x|A}}\n{{1x|B}}\n{{1x|C}}\n\n]]
-					while ( !$node->nextSibling && !DOMUtils::atTheTop( $node ) &&
-						( empty( DOMDataUtils::getDataParsoid( $node )->dsr ) ||
+					while (
+						!$node->nextSibling &&
+						!DOMUtils::atTheTop( $node ) &&
+						(
+							empty( DOMDataUtils::getDataParsoid( $node )->dsr ) ||
 							DOMDataUtils::getDataParsoid( $node )->dsr->start === null ||
 							DOMDataUtils::getDataParsoid( $node )->dsr->end === null
 						)
@@ -718,9 +848,36 @@ class Separators {
 					}
 				}
 
-				// The top node could be a document fragment, which is not
-				// an element, and so getDataParsoid will return `null`.
+				// The top node could be a document fragment
 				$dsrB = $node instanceof DOMElement ? self::handleAutoInserted( $node ) : null;
+			} elseif ( !( $node instanceof DOMDocumentFragment ) ) {
+				// $node is text/comment. Can we extrapolate DSR from $node->parentNode?
+				// Yes, if this is the child of a zero-width element and
+				// is only preceded by separator elements.
+				//
+				// 1. text in p.
+				// 2. ws-only child of a node with auto-inserted start tag
+				//    Ex: "<span> <s>x</span> </s>" --> <span> <s>x</s*></span><s*> </s>
+				// 3. ws-only children of a node with auto-inserted start tag
+				//    Ex: "{|\n|-\n <!--foo--> \n|}"
+				$nodeParent = $node->parentNode;
+				// phpcs:ignore Generic.Files.LineLength.TooLong
+				'@phan-var DOMElement|DOMDocumentFragment $nodeParent'; // @var DOMElement|DOMDocumentFragment $nodeParent
+
+				if (
+					$nodeParent !== $prevNode &&
+					$nodeParent instanceof DOMElement &&
+					( DOMDataUtils::getDataParsoid( $nodeParent )->dsr->openWidth ?? null ) === 0
+				) {
+					$sepLen = self::precedingSeparatorTextLen( $node );
+					if ( $sepLen !== null ) {
+						$dsrB = DOMDataUtils::getDataParsoid( $nodeParent )->dsr;
+						if ( is_int( $dsrB->start ) && $sepLen > 0 ) {
+							$dsrB = clone $dsrB;
+							$dsrB->start += $sepLen;
+						}
+					}
+				}
 			}
 
 			// FIXME: Maybe we shouldn't set dsr in the dsr pass if both aren't valid?
@@ -751,6 +908,92 @@ class Separators {
 				} else {
 					$this->env->log( 'info/html2wt', 'dsr backwards: should not happen!' );
 				}
+
+				// Reset if $sep is invalid
+				if ( $sep && !WTSUtils::isValidSep( $sep ) ) {
+					$sep = null;
+				}
+			}
+		} elseif ( $origSepNeeded && !DiffUtils::hasDiffMarkers( $prevNode, $this->env ) ) {
+			// Given the following conditions:
+			// - $prevNode has no diff markers. (checked above)
+			// - $prevNode's next non-sep sibling ($next) was inserted.
+			// - $next is an ancestor of $node.
+			// - all of those ancestor nodes from $node->$next have zero-width
+			//   wikitext (otherwise, the separator isn't usable)
+			// Try to extract a separator from original source that existed
+			// between $prevNode and its original next sibling or its parent
+			// (if $prevNode was the last non-sep child).
+			//
+			// This minimizes dirty-diffs to that separator text from
+			// the insertion of $next after $prevNode.
+			$next = DOMUtils::nextNonSepSibling( $prevNode );
+			$origSepUsable = $next && DiffUtils::hasInsertedDiffMark( $next, $this->env );
+
+			// Check that $next is an ancestor of $node and all nodes
+			// on that path have zero-width wikitext
+			if ( $origSepUsable && $node !== $next ) {
+				$n = $node->parentNode;
+				while ( $n && $next !== $n ) {
+					if ( !WTUtils::isZeroWidthWikitextElt( $n ) ) {
+						$origSepUsable = false;
+						break;
+					}
+					$n = $n->parentNode;
+				}
+				$origSepUsable = $origSepUsable && $n !== null;
+			}
+
+			// Extract separator from original source if possible
+			if ( $origSepUsable ) {
+				$origNext = DOMUtils::nextNonSepSibling( $next );
+				if ( !$origNext ) { // $prevNode was last non-sep child of its parent
+					// We could work harder for text/comments and extrapolate, but skipping that here
+					// FIXME: If we had a generic DSR extrapolation utility, that would be useful
+					$o1 = $prevNode instanceof DOMElement ?
+						DOMDataUtils::getDataParsoid( $prevNode )->dsr->end ?? null : null;
+					if ( $o1 !== null ) {
+						$dsr2 = DOMDataUtils::getDataParsoid( $prevNode->parentNode )->dsr ?? null;
+						$o2 = $dsr2 ? $dsr2->innerEnd() : null;
+						$sep = $o2 !== null ? $state->getOrigSrc( $o1, $o2 ) : null;
+					}
+				} elseif ( !DiffUtils::hasDiffMarkers( $origNext, $this->env ) ) {
+					// We could work harder for text/comments and extrapolate, but skipping that here
+					// FIXME: If we had a generic DSR extrapolation utility, that would be useful
+					$o1 = $prevNode instanceof DOMElement ?
+						DOMDataUtils::getDataParsoid( $prevNode )->dsr->end ?? null : null;
+					if ( $o1 !== null ) {
+						$o2 = $origNext instanceof DOMElement ?
+							DOMDataUtils::getDataParsoid( $origNext )->dsr->start ?? null : null;
+						$sep = $o2 !== null ? $state->getOrigSrc( $o1, $o2 ) : null;
+					}
+				}
+
+				if ( $sep !== null ) {
+					// Since this is an inserted node, we might have to augment this
+					// with newline constraints and so, we just set this recovered sep
+					// to the buffered sep in state->sep->src
+					$state->sep->src = $sep;
+					$sep = null;
+				}
+			}
+		}
+
+		// If all efforts failed, use special-purpose heuristics to recover
+		// trimmed leading / trailing whitespace from lists, headings, table-cells
+		if ( $sep === null ) {
+			if ( $sepType === 'parent-child' ) {
+				$sep = $this->recoverTrimmedWhitespace( $node, true );
+				if ( $sep !== null ) {
+					$state->sep->src = $sep . $state->sep->src;
+				}
+			} elseif ( $sepType === 'child-parent' ) {
+				$sep = $this->recoverTrimmedWhitespace( $node, false );
+				if ( $sep !== null ) {
+					$state->sep->src .= $sep;
+				}
+			} else {
+				$sep = null;
 			}
 		}
 
@@ -764,25 +1007,21 @@ class Separators {
 			}
 		);
 
-		// 1. Verify that the separator is really one (has to be whitespace and comments)
-		// 2. If the separator is being emitted before a node that emits sol-transparent WT,
+		// If the separator is being emitted before a node that emits sol-transparent WT,
 		// go through makeSeparator to verify indent-pre constraints are met.
 		$sepConstraints = $state->sep->constraints ?? [ 'max' => 0 ];
-		if ( $sep === null ||
-			!WTSUtils::isValidSep( $sep ) ||
-			( $state->sep->src && $state->sep->src !== $sep )
-		) {
+		if ( $sep === null || ( $state->sep->src && $state->sep->src !== $sep ) ) {
 			if ( !empty( $state->sep->constraints ) || !empty( $state->sep->src ) ) {
 				// TODO: set modified flag if start or end node (but not both) are
 				// modified / new so that the selser can use the separator
-				$sep = self::makeSeparator( $state, $state->sep->src ?? '', $sepConstraints );
+				$sep = $this->makeSeparator( $state->sep->src ?? '', $sepConstraints );
 			} else {
 				$sep = null;
 			}
 		}
 
 		if ( $sep !== null ) {
-			$sep = self::makeSepIndentPreSafe( $state, $sep, $sepConstraints );
+			$sep = self::makeSepIndentPreSafe( $sep, $sepConstraints );
 		}
 		return $sep;
 	}

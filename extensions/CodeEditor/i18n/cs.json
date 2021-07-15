@@ -3,13 +3,14 @@
 		"authors": [
 			"Matěj Suchánek",
 			"Mormegil",
-			"Patriccck"
+			"Patriccck",
+			"Patrik L."
 		]
 	},
 	"codeeditor-desc": "Editace stránek s JavaScriptem a CSS se zvýrazňováním syntaxe prostřednictvím [https://ace.c9.io/ editoru Ace]",
 	"codeeditor-next-annotation": "Přejít k další anotaci",
 	"codeeditor-toolbar-toggle": "Přepnout editor kódu",
-	"codeeditor-save-with-errors": "Tento dokument obsahuje chyby. Určitě ho chcete uložit?",
+	"codeeditor-save-with-errors": "Tento dokument obsahuje chyby. Určitě ho chcete zveřejnit?",
 	"codeeditor-invisibleChars-toggle": "Přepnout neviditelné znaky",
 	"codeeditor-lineWrapping-toggle": "Přepnout zalamování řádků",
 	"codeeditor-searchReplace-toggle": "Přepnout okno pro hledání a náhrady",

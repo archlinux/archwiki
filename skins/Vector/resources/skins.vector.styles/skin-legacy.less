@@ -15,16 +15,13 @@
 	@import 'SearchBox.less';
 	@import 'MenuTabs.less';
 	@import 'TabWatchstarLink.less';
-	@import 'MenuDropdown.less';
+	@import 'legacy/MenuDropdown.less';
 	@import 'MenuPortal.less';
 	@import 'legacy/Sidebar.less';
 	@import 'SidebarLogo.less';
 	@import 'Footer.less';
 }
 
-// Support: IE8
-// Media query hack required.
-@import 'TabWatchstarLink-ie8.less';
-
-// Media: Print
-@import 'common/print.less';
+@media print {
+	@import 'common/print.less';
+}

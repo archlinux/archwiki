@@ -23,7 +23,7 @@ class PHPUtils {
 		$str = '';
 		do {
 			$str = chr( $n & 0xff ) . $str;
-			$n = $n >> 8;
+			$n >>= 8;
 		} while ( $n > 0 );
 		return rtrim( strtr( base64_encode( $str ), '+/', '-_' ), '=' );
 	}
@@ -164,7 +164,7 @@ class PHPUtils {
 	 * @param string $s The (sub)string to check
 	 * @param int $start The starting offset (in bytes). If negative, the
 	 *  offset is counted from the end of the string.
-	 * @param int|null $length (optional) The maximum length of the returned
+	 * @param ?int $length (optional) The maximum length of the returned
 	 *  string. If negative, the end position is counted from the end of
 	 *  the string.
 	 * @param bool $checkEntireString Whether to do a slower verification
@@ -247,12 +247,7 @@ class PHPUtils {
 	 */
 	public static function assertValidUTF8( string $s ): void {
 		// Slow complete O(N) check for UTF-8 validity
-		$r = preg_match( "/^(?:
-			[\\x00-\\x7F] |
-			[\\xC0-\\xDF][\\x80-\\xBF] |
-			[\\xE0-\\xEF][\\x80-\\xBF]{2} |
-			[\\xF0-\\xF7][\\x80-\\xBF]{3}
-		)*+$/xSD", $s );
+		$r = preg_match( '//u', $s );
 		Assert::invariant(
 			$r === 1,
 			'Bad UTF-8 (full string verification)'
@@ -269,12 +264,14 @@ class PHPUtils {
 	 * `(?!foo)` will break the regular expression.
 	 *
 	 * @param string $re The regular expression to strip
-	 * @param string|null $newDelimiter Optional delimiter which will be
+	 * @param ?string $newDelimiter Optional delimiter which will be
 	 *   used when recomposing this stripped regular expression into a
 	 *   new regular expression.
 	 * @return string The regular expression without delimiters or flags
 	 */
-	public static function reStrip( string $re, ?string $newDelimiter = null ): string {
+	public static function reStrip(
+		string $re, ?string $newDelimiter = null
+	): string {
 		static $delimiterPairs = [
 			'(' => ')',
 			'[' => ']',

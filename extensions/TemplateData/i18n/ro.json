@@ -3,6 +3,7 @@
 		"authors": [
 			"ImGelu",
 			"Minisarm",
+			"NGC 54",
 			"XXN"
 		]
 	},
@@ -29,7 +30,7 @@
 	"templatedata-doc-param-type-string": "Șir",
 	"templatedata-doc-param-type-unbalanced-wikitext": "Text wiki neechilibrat",
 	"templatedata-doc-param-type-wiki-file-name": "Fișier",
-	"templatedata-doc-param-type-wiki-page-name": "Pagină",
+	"templatedata-doc-param-type-wiki-page-name": "Numele paginii",
 	"templatedata-doc-param-type-wiki-user-name": "Utilizator",
 	"templatedata-doc-params": "Parametrii formatului",
 	"templatedata-editbutton": "Gestionează TemplateData",
@@ -47,6 +48,7 @@
 	"templatedata-invalid-value": "Valoare incorectă pentru proprietatea „$1”.",
 	"templatedata-modal-button-add-language": "Adaugă limbă",
 	"templatedata-modal-button-addparam": "Adaugă parametru",
+	"templatedata-modal-button-addmap": "Adaugă o hartă nouă",
 	"templatedata-modal-button-apply": "Aplică",
 	"templatedata-modal-button-back": "Înapoi",
 	"templatedata-modal-button-cancel": "Revocare",
@@ -54,6 +56,7 @@
 	"templatedata-modal-button-delparam": "Șterge informația parametrului",
 	"templatedata-modal-button-done": "Gata",
 	"templatedata-modal-button-importParams": "Importă parametri",
+	"templatedata-modal-button-removemap": "Elimină harta",
 	"templatedata-modal-button-restoreparam": "Restaurează parametrul",
 	"templatedata-modal-button-saveparam": "Salvare",
 	"templatedata-modal-current-language": "Limba curentă: $1",
@@ -61,7 +64,9 @@
 	"templatedata-modal-errormsg-import-noparams": "Niciun parametru nou descoperit în timpul importării.",
 	"templatedata-modal-json-error-replace": "Înlocuiește",
 	"templatedata-modal-notice-import-numparams": "$1 {{PLURAL:$1|parametru nou a|parametri noi au|de parametri noi au}} fost {{PLURAL:$1|importat|importați}}: $2",
+	"templatedata-modal-placeholder-add-new-map-input": "Se adaugă o hartă nouă...",
 	"templatedata-modal-placeholder-paramkey": "Numele parametrului",
+	"templatedata-modal-placeholder-prompt-map-name": "Introduce numele hărții",
 	"templatedata-modal-search-input-placeholder": "Căutare după numele sau codul limbii",
 	"templatedata-modal-table-param-actions": "Acțiuni",
 	"templatedata-modal-table-param-aliases": "Aliasuri (separate prin virgulă)",

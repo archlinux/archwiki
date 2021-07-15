@@ -3,6 +3,8 @@
 namespace Wikimedia\Parsoid\Html2Wt;
 
 use Closure;
+use DOMDocument;
+use DOMDocumentFragment;
 use DOMElement;
 use DOMNode;
 use Exception;
@@ -105,13 +107,9 @@ class WikitextSerializer {
 	/** @var SerializerState */
 	private $state;
 
-	/** @var Separators */
-	private $separators;
-
 	/**
 	 * @var array
 	 *   - env: (Env)
-	 *   - rtTestMode: (boolean)
 	 *   - logType: (string)
 	 */
 	private $options;
@@ -122,18 +120,15 @@ class WikitextSerializer {
 	/**
 	 * @param array $options List of options for serialization:
 	 *   - env: (Env) (required)
-	 *   - rtTestMode: (boolean)
 	 *   - logType: (string)
 	 */
 	public function __construct( $options ) {
 		$this->env = $options['env'];
 		$this->options = array_merge( $options, [
-			'rtTestMode' => $this->env->getSiteConfig()->rtTestMode(),
 			'logType' => 'trace/wts',
 		] );
 		$this->logType = $this->options['logType'];
 		$this->state = new SerializerState( $this, $this->options );
-		$this->separators = new Separators( $this->env, $this->state );
 		$this->wteHandlers = new WikitextEscapeHandlers( $this->options );
 	}
 
@@ -152,10 +147,10 @@ class WikitextSerializer {
 	 *
 	 * All figures have a fixed structure:
 	 * ```
-	 * <figure or figure-inline typeof="mw:Image...">
+	 * <figure or span typeof="mw:Image...">
 	 *  <a or span><img ...><a or span>
 	 *  <figcaption>....</figcaption>
-	 * </figure or figure-inline>
+	 * </figure or span>
 	 * ```
 	 * Pull out this fixed structure, being as generous as possible with
 	 * possibly-broken HTML.
@@ -178,30 +173,6 @@ class WikitextSerializer {
 	}
 
 	/**
-	 * Figure out separator constraints and merge them with existing constraints
-	 * in state so that they can be emitted when the next content emits source.
-	 * @param DOMNode $nodeA
-	 * @param DOMHandler $handlerA
-	 * @param DOMNode $nodeB
-	 * @param DOMHandler $handlerB
-	 */
-	public function updateSeparatorConstraints(
-		DOMNode $nodeA, DOMHandler $handlerA, DOMNode $nodeB, DOMHandler $handlerB
-	): void {
-		$this->separators->updateSeparatorConstraints( $nodeA, $handlerA, $nodeB, $handlerB );
-	}
-
-	/**
-	 * Emit a separator based on the collected (and merged) constraints
-	 * and existing separator text. Called when new output is triggered.
-	 * @param DOMNode $node
-	 * @return string|null
-	 */
-	public function buildSep( DOMNode $node ): ?string {
-		return $this->separators->buildSep( $node );
-	}
-
-	/**
 	 * Escape wikitext-like strings in '$text' so that $text renders as a plain string
 	 * when rendered as HTML. The escaping is done based on the context in which $text
 	 * is present (ex: start-of-line, in a link, etc.)
@@ -219,23 +190,27 @@ class WikitextSerializer {
 
 	/**
 	 * @param array $opts
-	 * @param DOMElement $elt
-	 * @return ConstrainedText|string
+	 * @param DOMDocumentFragment $node
+	 * @return string
 	 */
-	public function domToWikitext( array $opts, DOMElement $elt ) {
+	public function domToWikitext(
+		array $opts, DOMDocumentFragment $node
+	): string {
 		$opts['logType'] = $this->logType;
 		$serializer = new WikitextSerializer( $opts );
-		return $serializer->serializeDOM( $elt );
+		return $serializer->serializeDOM( $node );
 	}
 
 	/**
 	 * @param array $opts
 	 * @param string $html
-	 * @return ConstrainedText|string
+	 * @return string
 	 */
-	public function htmlToWikitext( array $opts, string $html ) {
-		$body = ContentUtils::ppToDOM( $this->env, $html, [ 'markNew' => true ] );
-		return $this->domToWikitext( $opts, $body );
+	public function htmlToWikitext( array $opts, string $html ): string {
+		$domFragment = ContentUtils::createAndLoadDocumentFragment(
+			$this->env->topLevelDoc, $html, [ 'markNew' => true ]
+		);
+		return $this->domToWikitext( $opts, $domFragment );
 	}
 
 	/**
@@ -262,10 +237,9 @@ class WikitextSerializer {
 	/**
 	 * @param DOMElement $node
 	 * @param string $key Attribute name.
-	 * @param mixed $value Fallback value to use if the attibute is not present.
-	 * @return ConstrainedText|string
+	 * @return ?string The wikitext value, or null if the attribute is not present.
 	 */
-	public function getAttributeValue( DOMElement $node, string $key, $value ) {
+	public function getAttributeValue( DOMElement $node, string $key ): ?string {
 		$tplAttrs = DOMDataUtils::getDataMw( $node )->attribs ?? [];
 		foreach ( $tplAttrs as $attr ) {
 			// If this attribute's value is generated content,
@@ -289,7 +263,7 @@ class WikitextSerializer {
 				], $attr[1]->html );
 			}
 		}
-		return $value;
+		return null;
 	}
 
 	/**
@@ -299,7 +273,7 @@ class WikitextSerializer {
 	 *   with an extra 'fromDataMW' flag.
 	 */
 	public function getAttributeValueAsShadowInfo( DOMElement $node, string $key ): ?array {
-		$v = $this->getAttributeValue( $node, $key, null );
+		$v = $this->getAttributeValue( $node, $key );
 		if ( $v === null ) {
 			return $v;
 		}
@@ -504,7 +478,7 @@ class WikitextSerializer {
 				// Pass in kv.k, not k since k can potentially
 				// be original wikitext source for 'k' rather than
 				// the string value of the key.
-				$vv = $this->getAttributeValue( $node, $kv->k, $v );
+				$vv = $this->getAttributeValue( $node, $kv->k ) ?? $v;
 				// Remove encapsulation from protected attributes
 				// in pegTokenizer.pegjs:generic_newline_attribute
 				$kk = preg_replace( '/^data-x-/i', '', $kk, 1 );
@@ -608,7 +582,7 @@ class WikitextSerializer {
 	 * Generates a template parameter sort function that tries to preserve existing ordering
 	 * but also to follow the order prescribed by the templatedata.
 	 * @param array $dpArgInfo
-	 * @param array|null $tplData
+	 * @param ?array $tplData
 	 * @param array $dataMwKeys
 	 * @return Closure
 	 * PORT-FIXME: there's probably a better way to do this
@@ -779,8 +753,6 @@ class WikitextSerializer {
 			return $buf . $formatEnd;
 		}
 
-		$env = $this->env;
-
 		// Per-parameter info from data-parsoid for pre-existing parameters
 		$dp = DOMDataUtils::getDataParsoid( $node );
 		$dpArgInfo = isset( $part->i ) ? ( $dp->pi[$part->i] ?? [] ) : [];
@@ -807,7 +779,7 @@ class WikitextSerializer {
 			if ( property_exists( $param, 'wt' ) ) {
 				$value = $param->wt;
 			} else {
-				$value = $this->htmlToWikitext( [ 'env' => $env ], $param->html );
+				$value = $this->htmlToWikitext( [ 'env' => $this->env ], $param->html );
 			}
 
 			Assert::invariant( is_string( $value ), "For param: $key, wt property should be a string '
@@ -968,8 +940,7 @@ class WikitextSerializer {
 	public function serializeFromParts(
 		SerializerState $state, DOMElement $node, array $srcParts
 	): string {
-		$env = $this->env;
-		$useTplData = WTUtils::isNewElt( $node ) || DiffUtils::hasDiffMarkers( $node, $env );
+		$useTplData = WTUtils::isNewElt( $node ) || DiffUtils::hasDiffMarkers( $node, $this->env );
 		$buf = '';
 		foreach ( $srcParts as $i => $part ) {
 			$prevPart = $srcParts[$i - 1] ?? null;
@@ -1001,11 +972,11 @@ class WikitextSerializer {
 			if ( $isTpl && $useTplData && !$this->env->noDataAccess() ) {
 				$title = preg_replace( '#^\./#', '', $tplHref, 1 );
 				try {
-					$tplData = $this->env->getDataAccess()->fetchTemplateData( $env->getPageConfig(), $title );
+					$tplData = $this->env->getDataAccess()->fetchTemplateData( $this->env->getPageConfig(), $title );
 				} catch ( Exception $err ) {
 					// Log the error, and use default serialization mode.
 					// Better to misformat a transclusion than to lose an edit.
-					$env->log( 'error/html2wt/tpldata', $err );
+					$this->env->log( 'error/html2wt/tpldata', $err );
 				}
 			}
 			// If the template doesn't exist, or does but has no TemplateData, ignore it
@@ -1062,7 +1033,7 @@ class WikitextSerializer {
 		} elseif ( is_string( $dataMw->body->extsrc ?? null ) ) {
 			$src .= $dataMw->body->extsrc;
 		} else {
-			$state->getEnv()->log( 'error/html2wt/ext', 'Extension src unavailable for: '
+			$this->env->log( 'error/html2wt/ext', 'Extension src unavailable for: '
 				. DOMCompat::getOuterHTML( $node ) );
 		}
 		return $src . '</' . $dataMw->name . '>';
@@ -1084,7 +1055,7 @@ class WikitextSerializer {
 		if ( !$state->inIndentPre ) {
 			// Strip leading newlines and other whitespace
 			if ( preg_match( self::$separatorREs['sepPrefixWithNlsRE'], $res, $match ) ) {
-				$state->appendSep( $match[0] );
+				$state->appendSep( $match[0], $node );
 				$res = substr( $res, strlen( $match[0] ) );
 			}
 		}
@@ -1105,7 +1076,7 @@ class WikitextSerializer {
 		// Move trailing newlines into the next separator
 		if ( $newSepMatch ) {
 			if ( !$state->sep->src ) {
-				$state->appendSep( $newSepMatch[0] );
+				$state->appendSep( $newSepMatch[0], $node );
 			} else {
 				/* SSS FIXME: what are we doing with the stripped NLs?? */
 			}
@@ -1175,7 +1146,7 @@ class WikitextSerializer {
 
 		if ( $state->selserMode
 			&& !$state->inModifiedContent
-			&& WTSUtils::origSrcValidInEditedContext( $state->getEnv(), $node )
+			&& WTSUtils::origSrcValidInEditedContext( $this->env, $node )
 			&& Utils::isValidDSR( $dp->dsr ?? null )
 			&& ( $dp->dsr->end > $dp->dsr->start
 				// FIXME: <p><br/></p>
@@ -1221,10 +1192,16 @@ class WikitextSerializer {
 				} );
 
 				// When reusing source, we should only suppress serializing
-				// to a single line for the cases we've allowed in
-				// normal serialization.
+				// to a single line for the cases we've allowed in normal serialization.
+				// <a> tags might look surprising here, but, here is the rationale.
+				// If some link syntax (wikilink, extlink, etc.) accepted a newline
+				// originally, we can safely let it through here. There is no need to have
+				// specific checks for wikilnks / extlinks / ... etc. The only concern is
+				// if the surrounding context in which this link-syntax is embedded also
+				// breaks the link syntax. There is no such syntax right now.
 				$suppressSLC = WTUtils::isFirstEncapsulationWrapperNode( $node )
-					|| in_array( $node->nodeName, [ 'dl', 'ul', 'ol' ], true )
+					|| DOMUtils::hasTypeOf( $node, 'mw:Nowiki' )
+					|| in_array( $node->nodeName, [ 'dl', 'ul', 'ol', 'a' ], true )
 					|| ( $node->nodeName === 'table'
 						&& $node->parentNode->nodeName === 'dd'
 						&& DOMUtils::previousNonSepSibling( $node ) === null );
@@ -1239,7 +1216,7 @@ class WikitextSerializer {
 				if ( $suppressSLC ) {
 					$state->singleLineContext->disable();
 				}
-				foreach ( ConstrainedText::fromSelSer( $out, $node, $dp, $state->getEnv() ) as $ct ) {
+				foreach ( ConstrainedText::fromSelSer( $out, $node, $dp, $this->env ) as $ct ) {
 					$state->emitChunk( $ct, $ct->node );
 				}
 				if ( $suppressSLC ) {
@@ -1294,7 +1271,7 @@ class WikitextSerializer {
 	 * Internal worker. Recursively serialize a DOM subtree.
 	 * @private
 	 * @param DOMNode $node
-	 * @return DOMNode|null
+	 * @return ?DOMNode
 	 */
 	public function serializeNode( DOMNode $node ): ?DOMNode {
 		$domHandler = $method = null;
@@ -1325,15 +1302,10 @@ class WikitextSerializer {
 					// `state.sep.lastSourceNode` is cleared here so that removed
 					// separators between otherwise unmodified nodes don't get
 					// restored.
-					// `state.sep.lastSourceNode` is cleared here so that removed
-					// separators between otherwise unmodified nodes don't get
-					// restored.
 					$state->updateSep( $node );
 					return $node->nextSibling;
 				}
 				$domHandler = $domHandlerFactory->getDOMHandler( $node );
-				Assert::invariant( $domHandler !== null, 'No dom handler found for '
-					. DOMCompat::getOuterHTML( $node ) );
 				$method = [ $this, 'serializeDOMNode' ];
 				break;
 			case XML_TEXT_NODE:
@@ -1346,13 +1318,13 @@ class WikitextSerializer {
 					// but that does not seem useful
 					&& preg_match( self::$separatorREs['pureSepRE'], $text )
 				) {
-					$state->appendSep( $text );
+					$state->appendSep( $text, $node );
 					return $node->nextSibling;
 				}
 				if ( $state->selserMode ) {
 					$prev = $node->previousSibling;
 					if ( !$state->inModifiedContent && (
-						( !$prev && DOMUtils::isBody( $node->parentNode ) ) ||
+						( !$prev && DOMUtils::atTheTop( $node->parentNode ) ) ||
 						( $prev && !DOMUtils::isDiffMarker( $prev ) )
 					) ) {
 						$state->currNodeUnmodified = true;
@@ -1366,7 +1338,7 @@ class WikitextSerializer {
 				break;
 			case XML_COMMENT_NODE:
 				// Merge this into separators
-				$state->appendSep( WTSUtils::commentWT( $node->nodeValue ) );
+				$state->appendSep( WTSUtils::commentWT( $node->nodeValue ), $node );
 				return $node->nextSibling;
 			default:
 				// PORT-FIXME the JS code used node.outerHTML here; probably a bug?
@@ -1374,7 +1346,7 @@ class WikitextSerializer {
 		}
 
 		$prev = DOMUtils::previousNonSepSibling( $node ) ?: $node->parentNode;
-		$this->updateSeparatorConstraints(
+		$state->separators->updateSeparatorConstraints(
 			$prev, $domHandlerFactory->getDOMHandler( $prev ),
 			$node, $domHandler
 		);
@@ -1382,7 +1354,7 @@ class WikitextSerializer {
 		$nextNode = call_user_func( $method, $node, $domHandler );
 
 		$next = DOMUtils::nextNonSepSibling( $node ) ?: $node->parentNode;
-		$this->updateSeparatorConstraints(
+		$state->separators->updateSeparatorConstraints(
 			$node, $domHandler,
 			$next, $domHandlerFactory->getDOMHandler( $next )
 		);
@@ -1419,12 +1391,11 @@ class WikitextSerializer {
 	}
 
 	private function stripUnnecessaryIndentPreNowikis(): void {
-		$env = $this->env;
 		// FIXME: The solTransparentWikitextRegexp includes redirects, which really
 		// only belong at the SOF and should be unique. See the "New redirect" test.
 		// PORT-FIXME do the different whitespace semantics matter?
 		$noWikiRegexp = '@^'
-			. PHPUtils::reStrip( $env->getSiteConfig()->solTransparentWikitextNoWsRegexp(), '@' )
+			. PHPUtils::reStrip( $this->env->getSiteConfig()->solTransparentWikitextNoWsRegexp(), '@' )
 			. '((?i:<nowiki>\s+</nowiki>))([^\n]*(?:\n|$))' . '@Dm';
 		$pieces = preg_split( $noWikiRegexp, $this->state->out, -1, PREG_SPLIT_DELIM_CAPTURE );
 		$out = $pieces[0];
@@ -1436,7 +1407,7 @@ class WikitextSerializer {
 			preg_match_all( '/<[^!][^<>]*>/', $rest, $htmlTags );
 
 			// Not required if just sol transparent wt.
-			$reqd = !preg_match( $env->getSiteConfig()->solTransparentWikitextRegexp(), $rest );
+			$reqd = !preg_match( $this->env->getSiteConfig()->solTransparentWikitextRegexp(), $rest );
 
 			if ( $reqd ) {
 				foreach ( $htmlTags[0] as $j => $rawTagName ) {
@@ -1450,7 +1421,7 @@ class WikitextSerializer {
 						// conservatively bail and leave the nowiki as is.
 						$reqd = true;
 						break;
-					} elseif ( TokenUtils::isBlockTag( $tagName ) ) {
+					} elseif ( TokenUtils::isWikitextBlockTag( $tagName ) ) {
 						// FIXME: Extension tags shadowing html5 tags might not
 						// have block semantics.
 						// Block tags on a line suppress nowikis
@@ -1462,9 +1433,9 @@ class WikitextSerializer {
 			// PORT-FIXME do the different whitespace semantics matter?
 			if ( !$reqd ) {
 				$nowiki = preg_replace( '#^<nowiki>(\s+)</nowiki>#', '$1', $nowiki, 1 );
-			} elseif ( $env->shouldScrubWikitext() ) {
+			} elseif ( $this->env->shouldScrubWikitext() ) {
 				$solTransparentWikitextNoWsRegexpFragment = PHPUtils::reStrip(
-					$env->getSiteConfig()->solTransparentWikitextNoWsRegexp(), '/' );
+					$this->env->getSiteConfig()->solTransparentWikitextNoWsRegexp(), '/' );
 				$wsReplacementRE = '/^(' . $solTransparentWikitextNoWsRegexpFragment . ')?\s+/';
 				// Replace all leading whitespace
 				do {
@@ -1617,25 +1588,21 @@ class WikitextSerializer {
 	}
 
 	/**
-	 * Serialize an HTML DOM document.
-	 * WARNING: You probably want to use {@link FromHTML::serializeDOM} instead.
-	 * @param DOMElement $body
-	 * @param bool|null $selserMode
-	 * @return ConstrainedText|string
+	 * Serialize an HTML DOM.
+	 *
+	 * WARNING: You probably want to use WikitextContentModelHandler::fromDOM instead.
+	 *
+	 * @param DOMDocument|DOMDocumentFragment $node
+	 * @param bool $selserMode
+	 * @return string
 	 */
-	public function serializeDOM( DOMElement $body, bool $selserMode = false ) {
-		Assert::invariant( DOMUtils::isBody( $body ), 'Expected a body node.' );
-		// `editedDoc` is simply body's ownerDocument.  However, since we make
-		// recursive calls to WikitextSerializer.prototype.serializeDOM with elements from dom fragments
-		// from data-mw, we need this to be set prior to the initial call.
-		// It's mainly required for correct serialization of citations in some
-		// scenarios (Ex: <ref> nested in <references>).
-		Assert::invariant( $this->env->getPageConfig()->editedDoc !== null, 'Should be set.' );
+	public function serializeDOM(
+		DOMNode $node, bool $selserMode = false
+	): string {
+		Assert::parameterType( 'DOMDocument|DOMDocumentFragment', $node, '$node' );
 
-		if ( !$selserMode ) {
-			// Strip <section> tags
-			// Selser mode will have done that already before running dom-diff
-			ContentUtils::stripSectionTagsAndFallbackIds( $body );
+		if ( $node instanceof DOMDocument ) {
+			$node = DOMCompat::getBody( $node );
 		}
 
 		$this->logType = $selserMode ? 'trace/selser' : 'trace/wts';
@@ -1644,14 +1611,14 @@ class WikitextSerializer {
 		$state->initMode( $selserMode );
 
 		$domNormalizer = new DOMNormalizer( $state );
-		$domNormalizer->normalize( $body );
+		$domNormalizer->normalize( $node );
 
 		if ( $this->env->hasDumpFlag( 'dom:post-normal' ) ) {
 			$options = [ 'storeDiffMark' => true, 'env' => $this->env ];
-			ContentUtils::dumpDOM( $body, 'DOM: post-normal', $options );
+			ContentUtils::dumpDOM( $node, 'DOM: post-normal', $options );
 		}
 
-		$state->kickOffSerialize( $body );
+		$state->kickOffSerialize( $node );
 
 		if ( $state->hasIndentPreNowikis ) {
 			// FIXME: Perhaps this can be done on a per-line basis
@@ -1676,10 +1643,20 @@ class WikitextSerializer {
 				// Don't strip |param = <nowiki/> since that pattern is used
 				// in transclusions and where the trailing <nowiki /> is a valid
 				// template arg. So, use a conservative regexp to detect that usage.
-				$line = preg_replace( '#^([^=]*?)(?:<nowiki\s*/>\s*)+$#D', '$1', $line, 1 );
+				$replaced_line = preg_replace( '#^([^=]*?)(?:<nowiki\s*/>\s*)+$#D', '$1', $line, 1 );
 
-				$line = $this->stripUnnecessaryHeadingNowikis( $line );
-				return $line;
+				// Try to determine what happened in T277800
+				if ( $replaced_line === null ) {
+					if ( version_compare( PHP_VERSION, '8.0.0', '>' ) ) {
+						$error_msg = preg_last_error_msg();
+					} else {
+						$error_msg = "preg_last_error: " . preg_last_error();
+					}
+					$this->env->log( 'error', $error_msg, $line );
+					throw new \Error( "Failed to strip trailing nowikis." );
+				}
+
+				return $this->stripUnnecessaryHeadingNowikis( $replaced_line );
 			}, explode( "\n", $state->out ) ) );
 		}
 

@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"BadDog",
 			"Milicevic01",
 			"Obsuser",
 			"Сербијана"
@@ -10,7 +11,7 @@
 	"scribunto-parser-dialog-title": "Грешка у скрипти",
 	"scribunto-error-short": "Грешка у скрипти: $1",
 	"scribunto-doc-page-name": "Module:$1/док",
-	"scribunto-doc-page-does-not-exist": "''Документација за овај модул се може направити на [[$1]]''",
+	"scribunto-doc-page-does-not-exist": "''Документацију овог модула можете да направите на страници [[$1]]''",
 	"scribunto-doc-page-header": "'''Ово је документациона подстраница за [[$1]]'''",
 	"scribunto-console-clear": "Очисти",
 	"scribunto-common-error-category": "Странице са грешкама у скрипти",

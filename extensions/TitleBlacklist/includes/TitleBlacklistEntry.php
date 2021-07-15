@@ -130,6 +130,7 @@ class TitleBlacklistEntry {
 		}
 
 		Wikimedia\suppressWarnings();
+		// @phan-suppress-next-line SecurityCheck-ReDoS
 		$match = preg_match(
 			"/^(?:{$this->mRegex})$/us" . ( isset( $this->mParams['casesensitive'] ) ? '' : 'i' ),
 			$title
@@ -233,6 +234,7 @@ class TitleBlacklistEntry {
 		}
 		// Return result
 		if ( $regex ) {
+			// @phan-suppress-next-line SecurityCheck-ReDoS
 			return new TitleBlacklistEntry( $regex, $options, $raw, $source );
 		} else {
 			return null;

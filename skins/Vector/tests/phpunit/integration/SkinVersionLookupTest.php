@@ -39,7 +39,7 @@ class SkinVersionLookupTest extends \MediaWikiTestCase {
 
 		$user = $this->createMock( \User::class );
 		$user
-			->method( 'isLoggedIn' )
+			->method( 'isRegistered' )
 			->willReturn( false );
 		$user
 			->method( 'getOption' )
@@ -78,7 +78,7 @@ class SkinVersionLookupTest extends \MediaWikiTestCase {
 
 		$user = $this->createMock( \User::class );
 		$user
-			->method( 'isLoggedIn' )
+			->method( 'isRegistered' )
 			->willReturn( false );
 		$user
 			->method( 'getOption' )
@@ -108,7 +108,7 @@ class SkinVersionLookupTest extends \MediaWikiTestCase {
 	 * @covers ::getVersion
 	 * @covers ::isLegacy
 	 */
-	public function testConfigLoggedIn() {
+	public function testConfigRegistered() {
 		$request = $this->getMockBuilder( \WebRequest::class )->getMock();
 		$request
 			->method( 'getVal' )
@@ -117,7 +117,7 @@ class SkinVersionLookupTest extends \MediaWikiTestCase {
 
 		$user = $this->createMock( \User::class );
 		$user
-			->method( 'isLoggedIn' )
+			->method( 'isRegistered' )
 			->willReturn( true );
 		$user
 			->method( 'getOption' )
@@ -156,7 +156,7 @@ class SkinVersionLookupTest extends \MediaWikiTestCase {
 
 		$user = $this->createMock( \User::class );
 		$user
-			->method( 'isLoggedIn' )
+			->method( 'isRegistered' )
 			->willReturn( false );
 		$user
 			->method( 'getOption' )

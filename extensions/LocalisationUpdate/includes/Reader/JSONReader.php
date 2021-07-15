@@ -11,9 +11,14 @@ namespace LocalisationUpdate\Reader;
  * Reads MediaWiki JSON i18n files.
  */
 class JSONReader implements Reader {
-	/// @var string Language tag
+	/**
+	 * @var string|null Language tag
+	 */
 	protected $code;
 
+	/**
+	 * @param string|null $code Language tag
+	 */
 	public function __construct( $code = null ) {
 		$this->code = $code;
 	}
@@ -21,7 +26,7 @@ class JSONReader implements Reader {
 	/**
 	 * @param string $contents
 	 *
-	 * @return array
+	 * @return string[][]
 	 */
 	public function parse( $contents ) {
 		$messages = \FormatJson::decode( $contents, true );

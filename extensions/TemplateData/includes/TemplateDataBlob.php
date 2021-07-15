@@ -14,27 +14,73 @@ use MediaWiki\MediaWikiServices;
  */
 class TemplateDataBlob {
 	/**
+	 * Predefined formats for TemplateData to check against
+	 */
+	private const FORMATS = [
+		'block' => "{{_\n| _ = _\n}}",
+		'inline' => '{{_|_=_}}',
+	];
+
+	private const VALID_ROOT_KEYS = [
+		'description',
+		'params',
+		'paramOrder',
+		'sets',
+		'maps',
+		'format',
+	];
+
+	private const VALID_PARAM_KEYS = [
+		'label',
+		'required',
+		'suggested',
+		'description',
+		'example',
+		'deprecated',
+		'aliases',
+		'autovalue',
+		'default',
+		'inherits',
+		'type',
+	];
+
+	private const VALID_TYPES = [
+		'content',
+		'line',
+		'number',
+		'boolean',
+		'string',
+		'date',
+		'unbalanced-wikitext',
+		'unknown',
+		'url',
+		'wiki-page-name',
+		'wiki-user-name',
+		'wiki-file-name',
+		'wiki-template-name',
+	];
+
+	private const DEPRECATED_TYPES_MAP = [
+		'string/line' => 'line',
+		'string/wiki-page-name' => 'wiki-page-name',
+		'string/wiki-user-name' => 'wiki-user-name',
+		'string/wiki-file-name' => 'wiki-file-name',
+	];
+
+	/**
 	 * @var stdClass
 	 */
-	protected $data;
+	private $data;
 
 	/**
 	 * @var string|null In-object cache for getJSON()
 	 */
-	protected $json = null;
+	private $json = null;
 
 	/**
-	 * @var Status Cache of TemplateDataBlob::parse
+	 * @var Status
 	 */
-	protected $status;
-
-	/**
-	 * @var string[] Predefined formats for TemplateData to check against
-	 */
-	protected static $formats = [
-		'block' => "{{_\n| _ = _\n}}",
-		'inline' => '{{_|_=_}}',
-	];
+	private $status;
 
 	/**
 	 * Parse and validate passed JSON and create a blob handling
@@ -43,10 +89,9 @@ class TemplateDataBlob {
 	 *
 	 * @param IDatabase $db
 	 * @param string $json
-	 * @return TemplateDataBlob|TemplateDataCompressedBlob
-	 * @throws Exception
+	 * @return TemplateDataBlob
 	 */
-	public static function newFromJSON( $db, $json ) {
+	public static function newFromJSON( IDatabase $db, string $json ) : TemplateDataBlob {
 		if ( $db->getType() === 'mysql' ) {
 			$tdb = new TemplateDataCompressedBlob( json_decode( $json ) );
 		} else {
@@ -63,12 +108,13 @@ class TemplateDataBlob {
 			// If data is invalid, replace with the minimal valid blob.
 			// This is to make sure that, if something forgets to check the status first,
 			// we don't end up with invalid data in the database.
-			$tdb->data = new stdClass();
-			$tdb->data->description = null;
-			$tdb->data->params = new stdClass();
-			$tdb->data->format = null;
-			$tdb->data->sets = [];
-			$tdb->data->maps = new stdClass();
+			$tdb->data = (object)[
+				'description' => null,
+				'params' => (object)[],
+				'format' => null,
+				'sets' => [],
+				'maps' => (object)[],
+			];
 		}
 		$tdb->status = $status;
 		return $tdb;
@@ -80,9 +126,9 @@ class TemplateDataBlob {
 	 *
 	 * @param IDatabase $db
 	 * @param string $json
-	 * @return TemplateDataBlob or TemplateDataCompressedBlob
+	 * @return TemplateDataBlob
 	 */
-	public static function newFromDatabase( $db, $json ) {
+	public static function newFromDatabase( IDatabase $db, string $json ) : TemplateDataBlob {
 		// Handle GZIP compression. \037\213 is the header for GZIP files.
 		if ( substr( $json, 0, 2 ) === "\037\213" ) {
 			$json = gzdecode( $json );
@@ -96,54 +142,8 @@ class TemplateDataBlob {
 	 * See Specification.md for the expected format of the JSON object.
 	 * @return Status
 	 */
-	protected function parse() {
+	protected function parse() : Status {
 		$data = $this->data;
-
-		static $rootKeys = [
-			'description',
-			'params',
-			'paramOrder',
-			'sets',
-			'maps',
-			'format',
-		];
-
-		static $paramKeys = [
-			'label',
-			'required',
-			'suggested',
-			'description',
-			'example',
-			'deprecated',
-			'aliases',
-			'autovalue',
-			'default',
-			'inherits',
-			'type',
-		];
-
-		static $types = [
-			'content',
-			'line',
-			'number',
-			'boolean',
-			'string',
-			'date',
-			'unbalanced-wikitext',
-			'unknown',
-			'url',
-			'wiki-page-name',
-			'wiki-user-name',
-			'wiki-file-name',
-			'wiki-template-name',
-		];
-
-		static $typeCompatMap = [
-			'string/line' => 'line',
-			'string/wiki-page-name' => 'wiki-page-name',
-			'string/wiki-user-name' => 'wiki-user-name',
-			'string/wiki-file-name' => 'wiki-file-name',
-		];
 
 		if ( $data === null ) {
 			return Status::newFatal( 'templatedata-invalid-parse' );
@@ -154,25 +154,25 @@ class TemplateDataBlob {
 		}
 
 		foreach ( $data as $key => $value ) {
-			if ( !in_array( $key, $rootKeys ) ) {
+			if ( !in_array( $key, self::VALID_ROOT_KEYS ) ) {
 				return Status::newFatal( 'templatedata-invalid-unknown', $key );
 			}
 		}
 
 		// Root.description
 		if ( isset( $data->description ) ) {
-			if ( !is_object( $data->description ) && !is_string( $data->description ) ) {
+			if ( !$this->isValidInterfaceText( $data->description ) ) {
 				return Status::newFatal( 'templatedata-invalid-type', 'description', 'string|object' );
 			}
-			$data->description = self::normaliseInterfaceText( $data->description );
+			$data->description = $this->normaliseInterfaceText( $data->description );
 		} else {
 			$data->description = null;
 		}
 
 		// Root.format
-		if ( isset( $data->format ) && $data->format !== null ) {
+		if ( isset( $data->format ) ) {
 			// @phan-suppress-next-line PhanTypeMismatchDimFetchNullable isset makes this non-null
-			$f = self::$formats[$data->format] ?? $data->format;
+			$f = self::FORMATS[$data->format] ?? $data->format;
 			if (
 				!is_string( $f ) ||
 				!preg_match( '/^\n?\{\{ *_+\n? *\|\n? *_+ *= *_+\n? *\}\}\n?$/', $f )
@@ -211,7 +211,7 @@ class TemplateDataBlob {
 			}
 
 			foreach ( $paramObj as $key => $value ) {
-				if ( !in_array( $key, $paramKeys ) ) {
+				if ( !in_array( $key, self::VALID_PARAM_KEYS ) ) {
 					return Status::newFatal(
 						'templatedata-invalid-unknown',
 						"params.{$paramName}.{$key}"
@@ -221,15 +221,14 @@ class TemplateDataBlob {
 
 			// Param.label
 			if ( isset( $paramObj->label ) ) {
-				if ( !is_object( $paramObj->label ) && !is_string( $paramObj->label ) ) {
-					// TODO: Also validate that the keys are valid lang codes and the values strings.
+				if ( !$this->isValidInterfaceText( $paramObj->label ) ) {
 					return Status::newFatal(
 						'templatedata-invalid-type',
 						"params.{$paramName}.label",
 						'string|object'
 					);
 				}
-				$paramObj->label = self::normaliseInterfaceText( $paramObj->label );
+				$paramObj->label = $this->normaliseInterfaceText( $paramObj->label );
 			} else {
 				$paramObj->label = null;
 			}
@@ -262,30 +261,28 @@ class TemplateDataBlob {
 
 			// Param.description
 			if ( isset( $paramObj->description ) ) {
-				if ( !is_object( $paramObj->description ) && !is_string( $paramObj->description ) ) {
-					// TODO: Also validate that the keys are valid lang codes and the values strings.
+				if ( !$this->isValidInterfaceText( $paramObj->description ) ) {
 					return Status::newFatal(
 						'templatedata-invalid-type',
 						"params.{$paramName}.description",
 						'string|object'
 					);
 				}
-				$paramObj->description = self::normaliseInterfaceText( $paramObj->description );
+				$paramObj->description = $this->normaliseInterfaceText( $paramObj->description );
 			} else {
 				$paramObj->description = null;
 			}
 
 			// Param.example
 			if ( isset( $paramObj->example ) ) {
-				if ( !is_object( $paramObj->example ) && !is_string( $paramObj->example ) ) {
-					// TODO: Also validate that the keys are valid lang codes and the values strings.
+				if ( !$this->isValidInterfaceText( $paramObj->example ) ) {
 					return Status::newFatal(
 						'templatedata-invalid-type',
 						"params.{$paramName}.example",
 						'string|object'
 					);
 				}
-				$paramObj->example = self::normaliseInterfaceText( $paramObj->example );
+				$paramObj->example = $this->normaliseInterfaceText( $paramObj->example );
 			} else {
 				$paramObj->example = null;
 			}
@@ -333,15 +330,14 @@ class TemplateDataBlob {
 
 			// Param.default
 			if ( isset( $paramObj->default ) ) {
-				if ( !is_object( $paramObj->default ) && !is_string( $paramObj->default ) ) {
-					// TODO: Also validate that the keys are valid lang codes and the values strings.
+				if ( !$this->isValidInterfaceText( $paramObj->default ) ) {
 					return Status::newFatal(
 						'templatedata-invalid-type',
 						"params.{$paramName}.default",
 						'string|object'
 					);
 				}
-				$paramObj->default = self::normaliseInterfaceText( $paramObj->default );
+				$paramObj->default = $this->normaliseInterfaceText( $paramObj->default );
 			} else {
 				$paramObj->default = null;
 			}
@@ -357,11 +353,11 @@ class TemplateDataBlob {
 				}
 
 				// Map deprecated types to newer versions
-				if ( isset( $typeCompatMap[ $paramObj->type ] ) ) {
-					$paramObj->type = $typeCompatMap[ $paramObj->type ];
+				if ( isset( self::DEPRECATED_TYPES_MAP[ $paramObj->type ] ) ) {
+					$paramObj->type = self::DEPRECATED_TYPES_MAP[ $paramObj->type ];
 				}
 
-				if ( !in_array( $paramObj->type, $types ) ) {
+				if ( !in_array( $paramObj->type, self::VALID_TYPES ) ) {
 					return Status::newFatal(
 						'templatedata-invalid-value',
 						'params.' . $paramName . '.type'
@@ -386,7 +382,7 @@ class TemplateDataBlob {
 				}
 				$parentParamObj = $data->params->{ $paramObj->inherits };
 				foreach ( $parentParamObj as $key => $value ) {
-					if ( !in_array( $key, $paramKeys ) ) {
+					if ( !in_array( $key, self::VALID_PARAM_KEYS ) ) {
 						return Status::newFatal( 'templatedata-invalid-unknown', $key );
 					}
 					if ( !isset( $unnormalizedParams->$paramName->$key ) ) {
@@ -451,8 +447,7 @@ class TemplateDataBlob {
 				);
 			}
 
-			if ( !is_object( $setObj->label ) && !is_string( $setObj->label ) ) {
-				// TODO: Also validate that the keys are valid lang codes and the values strings.
+			if ( !$this->isValidInterfaceText( $setObj->label ) ) {
 				return Status::newFatal(
 					'templatedata-invalid-type',
 					"sets.{$setNr}.label",
@@ -460,7 +455,7 @@ class TemplateDataBlob {
 				);
 			}
 
-			$setObj->label = self::normaliseInterfaceText( $setObj->label );
+			$setObj->label = $this->normaliseInterfaceText( $setObj->label );
 
 			if ( !isset( $setObj->params ) ) {
 				return Status::newFatal( 'templatedata-invalid-missing', "sets.{$setNr}.params", 'array' );
@@ -487,7 +482,7 @@ class TemplateDataBlob {
 				return Status::newFatal( 'templatedata-invalid-type', 'maps', 'object' );
 			}
 		} else {
-			$data->maps = new stdClass();
+			$data->maps = (object)[];
 		}
 
 		foreach ( $data->maps as $consumerId => $map ) {
@@ -555,16 +550,38 @@ class TemplateDataBlob {
 	}
 
 	/**
+	 * @param mixed $text
+	 * @return bool
+	 */
+	private function isValidInterfaceText( $text ) : bool {
+		if ( $text instanceof stdClass ) {
+			$isEmpty = true;
+			// An (array) cast would return private/protected properties as well
+			foreach ( get_object_vars( $text ) as $languageCode => $string ) {
+				// TODO: Do we need to validate if these are known interface language codes?
+				if ( !is_string( $languageCode ) ||
+					ltrim( $languageCode ) === '' ||
+					!is_string( $string )
+				) {
+					return false;
+				}
+				$isEmpty = false;
+			}
+			return !$isEmpty;
+		}
+
+		return is_string( $text );
+	}
+
+	/**
 	 * Normalise a InterfaceText field in the TemplateData blob.
 	 * @param stdClass|string $text
-	 * @return stdClass|string
+	 * @return stdClass
 	 */
-	protected static function normaliseInterfaceText( $text ) {
+	private function normaliseInterfaceText( $text ) {
 		if ( is_string( $text ) ) {
 			$contLang = MediaWikiServices::getInstance()->getContentLanguage();
-			$ret = new stdClass();
-			$ret->{ $contLang->getCode() } = $text;
-			return $ret;
+			return (object)[ $contLang->getCode() => $text ];
 		}
 		return $text;
 	}
@@ -580,12 +597,13 @@ class TemplateDataBlob {
 	 * @return null|string Text value from the InterfaceText object or null if no suitable
 	 *  match was found
 	 */
-	protected static function getInterfaceTextInLanguage( stdClass $text, $langCode ) {
+	protected static function getInterfaceTextInLanguage( stdClass $text, string $langCode ) : ?string {
 		if ( isset( $text->$langCode ) ) {
 			return $text->$langCode;
 		}
 
-		list( $userlangs, $sitelangs ) = Language::getFallbacksIncludingSiteLanguage( $langCode );
+		list( $userlangs, $sitelangs ) = MediaWikiServices::getInstance()->getLanguageFallback()
+			->getAllIncludingSiteLanguage( $langCode );
 
 		foreach ( $userlangs as $lang ) {
 			if ( isset( $text->$lang ) ) {
@@ -608,12 +626,12 @@ class TemplateDataBlob {
 	/**
 	 * @return Status
 	 */
-	public function getStatus() {
+	public function getStatus() : Status {
 		return $this->status;
 	}
 
 	/**
-	 * @return object
+	 * @return stdClass
 	 */
 	public function getData() {
 		// Return deep clone so callers can't modify data. Needed for getDataInLanguage().
@@ -626,9 +644,9 @@ class TemplateDataBlob {
 	 * appropriate language.
 	 *
 	 * @param string $langCode Preferred language
-	 * @return object
+	 * @return stdClass
 	 */
-	public function getDataInLanguage( $langCode ) {
+	public function getDataInLanguage( string $langCode ) {
 		$data = $this->getData();
 
 		// Root.description
@@ -679,7 +697,7 @@ class TemplateDataBlob {
 	/**
 	 * @return string JSON
 	 */
-	public function getJSON() {
+	public function getJSON() : string {
 		if ( $this->json === null ) {
 			// Cache for repeat calls
 			$this->json = json_encode( $this->data );
@@ -690,25 +708,29 @@ class TemplateDataBlob {
 	/**
 	 * @return string JSON
 	 */
-	public function getJSONForDatabase() {
+	public function getJSONForDatabase() : string {
 		return $this->getJSON();
 	}
 
-	public function getHtml( Language $lang ) {
+	/**
+	 * @param Language $lang
+	 *
+	 * @return string
+	 */
+	public function getHtml( Language $lang ) : string {
 		$data = $this->getDataInLanguage( $lang->getCode() );
 		$icon = 'settings';
 		if ( $data->format === null ) {
 			$formatMsg = null;
-		} elseif ( isset( self::$formats[$data->format] ) ) {
+		} elseif ( isset( self::FORMATS[$data->format] ) ) {
 			$formatMsg = $data->format;
+			'@phan-var string $formatMsg';
 			$icon = 'template-format-' . $formatMsg;
 		} else {
 			$formatMsg = 'custom';
 		}
 		$sorting = count( (array)$data->params ) > 1 ? " sortable" : "";
-		$html =
-			Html::openElement( 'div', [ 'class' => 'mw-templatedata-doc-wrap' ] )
-			. Html::element(
+		$html = Html::element(
 				'p',
 				[
 					'class' => [
@@ -785,8 +807,6 @@ class TemplateDataBlob {
 		$paramNames = $data->paramOrder ?? array_keys( (array)$data->params );
 		foreach ( $paramNames as $paramName ) {
 			$paramObj = $data->params->$paramName;
-			$description = '';
-			$default = '';
 
 			$aliases = '';
 			if ( count( $paramObj->aliases ) ) {
@@ -812,7 +832,7 @@ class TemplateDataBlob {
 
 			$html .= '<tr>'
 			// Label
-			. Html::element( 'th', [], $paramObj->label ?? $lang->ucfirst( $paramName ) )
+			. Html::element( 'th', [], $paramObj->label ?? $paramName )
 			// Parameters and aliases
 			. Html::rawElement( 'td', [ 'class' => 'mw-templatedata-doc-param-name' ],
 				Html::element( 'code', [], $paramName ) . $aliases
@@ -877,10 +897,9 @@ class TemplateDataBlob {
 			)
 			. '</tr>';
 		}
-		$html .= '</tbody></table>'
-			. Html::closeElement( 'div' );
+		$html .= '</tbody></table>';
 
-		return $html;
+		return Html::rawElement( 'div', [ 'class' => 'mw-templatedata-doc-wrap' ], $html );
 	}
 
 	/**
@@ -888,7 +907,11 @@ class TemplateDataBlob {
 	 * @param string $wikitext The text to extract parameters from.
 	 * @return string[] Parameter info in the same format as the templatedata 'params' key.
 	 */
-	public static function getRawParams( $wikitext ) {
+	public static function getRawParams( string $wikitext ) : array {
+		// Ignore wikitext within nowiki tags and comments
+		$wikitext = preg_replace( '/<!--.*?-->/s', '', $wikitext );
+		$wikitext = preg_replace( '/<nowiki\s*>.*?<\/nowiki\s*>/s', '', $wikitext );
+
 		// This regex matches the one in ext.TemplateDataGenerator.sourceHandler.js
 		preg_match_all( '/{{3,}([^#]*?)([<|]|}{3,})/m', $wikitext, $rawParams );
 		$params = [];
@@ -896,19 +919,22 @@ class TemplateDataBlob {
 		if ( isset( $rawParams[1] ) ) {
 			foreach ( $rawParams[1] as $rawParam ) {
 				// This normalization process is repeated in JS in ext.TemplateDataGenerator.sourceHandler.js
-				$normalizedParam = preg_replace( '/[-_ ]+/', ' ', strtolower( $rawParam ) );
-				if ( in_array( $normalizedParam, $normalizedParams ) ) {
+				$normalizedParam = strtolower( trim( preg_replace( '/[-_ ]+/', ' ', $rawParam ) ) );
+				if ( !$normalizedParam || in_array( $normalizedParam, $normalizedParams ) ) {
 					// This or a similarly-named parameter has already been found.
 					continue;
 				}
 				$normalizedParams[] = $normalizedParam;
-				$params[ $rawParam ] = [];
+				$params[ trim( $rawParam ) ] = [];
 			}
 		}
 		return $params;
 	}
 
-	private function __construct( $data = null ) {
+	/**
+	 * @param stdClass $data
+	 */
+	protected function __construct( $data ) {
 		$this->data = $data;
 	}
 

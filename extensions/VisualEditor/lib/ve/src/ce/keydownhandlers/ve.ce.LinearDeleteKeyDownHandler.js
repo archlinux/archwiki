@@ -43,13 +43,15 @@ ve.ce.LinearDeleteKeyDownHandler.static.supportedSelections = [ 'linear' ];
  * In these cases, it will perform the content removal itself.
  */
 ve.ce.LinearDeleteKeyDownHandler.static.execute = function ( surface, e ) {
-	var docLength, startNode, position, skipNode, pairNode, linkNode, range,
+	var docLength, startNode, position, skipNode, pairNode, linkNode, range, command,
 		documentModelSelectedNodes, i, node, nodeRange, nodeOuterRange, matrix, col, row,
 		direction = e.keyCode === OO.ui.Keys.DELETE ? 1 : -1,
 		unit = ( e.altKey === true || e.ctrlKey === true ) ? 'word' : 'character',
 		offset = 0,
 		rangeToRemove = surface.getModel().getSelection().getRange(),
 		documentModel = surface.getModel().getDocument(),
+		focusedNode = surface.getFocusedNode(),
+		uiSurface = surface.getSurface(),
 		data = documentModel.data;
 
 	if ( surface.isReadOnly() ) {
@@ -63,10 +65,26 @@ ve.ce.LinearDeleteKeyDownHandler.static.execute = function ( surface, e ) {
 		return false;
 	}
 
+	if ( focusedNode ) {
+		command = uiSurface.commandRegistry.getDeleteCommandForNode( focusedNode );
+		if ( command ) {
+			command.execute( uiSurface );
+			e.preventDefault();
+			return true;
+		}
+	}
+
 	// Use native behaviour then poll if collapsed, unless we are adjacent to some hard tag
 	// (or CTRL is down, in which case we can't reliably predict whether the native behaviour
 	// would delete far enough to remove some element)
 	if ( rangeToRemove.isCollapsed() && !e.ctrlKey ) {
+		if ( surface.nativeSelection.focusNode === null ) {
+			// Unexplained failures causing log spam: T262303
+			// How can it be null when this method should only be called for linear selections?
+			e.preventDefault();
+			return true;
+		}
+
 		position = ve.adjacentDomPosition(
 			{
 				node: surface.nativeSelection.focusNode,
@@ -271,6 +289,8 @@ ve.ce.LinearDeleteKeyDownHandler.static.execute = function ( surface, e ) {
 	// TODO: is any of this necessary?
 	surface.focus();
 	surface.surfaceObserver.clear();
+	// Check delete sequences
+	surface.findAndExecuteSequences( false, true );
 	e.preventDefault();
 	return true;
 };

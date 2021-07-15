@@ -33,7 +33,7 @@ use Wikimedia\Assert\Assert;
  *
  * @unstable
  *
- * @package FeatureManagement
+ * @package Vector\FeatureManagement
  * @internal
  */
 final class FeatureManager {

@@ -65,47 +65,6 @@ class WrapTemplates implements Wt2HtmlDOMProcessor {
 	];
 
 	/**
-	 * @param stdClass $range
-	 * @param bool|null $startsWithText
-	 * @return bool
-	 */
-	private static function expandRangeToAvoidSpanWrapping(
-		stdClass $range, ?bool $startsWithText = null
-	): bool {
-		// SSS FIXME: Later on, if safe, we could consider expanding the
-		// range unconditionally rather than only if a span is required.
-
-		$mightAddSpan = $startsWithText;
-		if ( $startsWithText === null ) {
-			$n = $range->start;
-			if ( WTUtils::isTplMarkerMeta( $n ) ) {
-				$n = $n->nextSibling;
-			}
-			$mightAddSpan = DOMUtils::isText( $n );
-		}
-
-		$expandable = false;
-		if ( $mightAddSpan ) {
-			// See if we can expand the range to the parent node.
-			// Eliminates useless spanning of wikitext of the form: {{1x|foo}}
-			// where the the entire template content is contained in a paragraph.
-			$contentParent = $range->start->parentNode;
-			$expandable = $contentParent->nodeName === 'p' &&
-				!WTUtils::isLiteralHTMLNode( $contentParent ) &&
-				$contentParent->firstChild === $range->startElem &&
-				$contentParent->lastChild === $range->endElem &&
-				$contentParent === $range->end->parentNode;
-
-			if ( $expandable ) {
-				$range->start = $contentParent;
-				$range->end = $contentParent;
-			}
-		}
-
-		return $expandable;
-	}
-
-	/**
 	 * @param DOMElement $target
 	 * @param DOMElement $source
 	 */
@@ -203,12 +162,10 @@ class WrapTemplates implements Wt2HtmlDOMProcessor {
 			$i = array_search( $parentNode, $startAncestors, true );
 			if ( $i === 0 ) {
 				// widen the scope to include the full subtree
-				$range->root = $startElem;
 				$range->start = $startElem->firstChild;
 				$range->end = $startElem->lastChild;
 				break;
 			} elseif ( $i > 0 ) {
-				$range->root = $parentNode;
 				$range->start = $startAncestors[$i - 1];
 				$range->end = $elem;
 				break;
@@ -217,71 +174,78 @@ class WrapTemplates implements Wt2HtmlDOMProcessor {
 			$parentNode = $elem->parentNode;
 		}
 
-		// Detect empty content in unfosterable positions and
-		// wrap them in spans.
-		if ( $startElem->nodeName === 'meta' &&
-			$startElem->nextSibling === $endElem &&
-			!DOMUtils::isFosterablePosition( $startElem )
-		) {
-			$emptySpan = $doc->createElement( 'span' );
-			$startElem->parentNode->insertBefore( $emptySpan, $endElem );
-		}
+		$startsInFosterablePosn = DOMUtils::isFosterablePosition( $range->start );
+		$next = $range->start->nextSibling;
+
+		// Detect empty content and handle them!
+		if ( WTUtils::isTplMarkerMeta( $range->start ) && $next === $endElem ) {
+			Assert::invariant( $range->start === $startElem,
+				"Expected startElem to be same as range.start" );
+			if ( $startsInFosterablePosn ) {
+				// Expand range!
+				$range->start = $range->end = $range->start->parentNode;
+				$startsInFosterablePosn = false;
+			} else {
+				$emptySpan = $doc->createElement( 'span' );
+				$range->start->parentNode->insertBefore( $emptySpan, $endElem );
+			}
 
 		// Handle unwrappable content in fosterable positions
 		// and expand template range, if required.
-		if ( DOMUtils::isFosterablePosition( $range->start ) &&
+		// NOTE: Template marker meta tags are translated from comments
+		// *after* the DOM has been built which is why they can show up in
+		// fosterable positions in the DOM.
+		} elseif ( $startsInFosterablePosn &&
 			( !DOMUtils::isElt( $range->start ) ||
-				// NOTE: These template marker meta tags are translated from comments
-				// *after* the DOM has been built which is why they can show up in
-				// fosterable positions in the DOM.
-				( WTUtils::isTplMarkerMeta( $range->start ) &&
-					WTUtils::isTplMarkerMeta( $range->start->nextSibling ) ) ||
-				( WTUtils::isTplMarkerMeta( $range->start ) &&
-					!DOMUtils::isElt( $range->start->nextSibling ) )
+				WTUtils::isTplMarkerMeta( $range->start ) &&
+				( !DOMUtils::isElt( $next ) || WTUtils::isTplMarkerMeta( $next ) )
 			)
 		) {
 			$rangeStartParent = $range->start->parentNode;
 
-			// 1. If we are in a table in a foster-element position, then all non-element
+			// If we are in a table in a foster-element position, then all non-element
 			// nodes will be white-space and comments. Skip over all of them and find
-			// the first table content node
+			// the first table content node.
+			$noWS = true;
+			$nodesToMigrate = [];
 			$newStart = $range->start;
-			while ( $newStart && !$newStart instanceof DOMElement ) {
-				$newStart = $newStart->nextSibling;
+			$n = DOMUtils::isElt( $range->start ) ? $next : $range->start;
+			while ( !$n instanceof DOMElement ) {
+				if ( $n instanceof DOMText ) {
+					$noWS = false;
+				}
+				$nodesToMigrate[] = $n;
+				$n = $n->nextSibling;
+				$newStart = $n;
 			}
 
-			// 2. Push leading comments and whitespace into the element node
-			// as long as it is a tr/tbody -- pushing whitespace into the
-			// other (th/td/caption) can change display semantics.
-			if ( $newStart && isset( self::MAP_TBODY_TR[$newStart->nodeName] ) ) {
+			// As long as $newStart is a tr/tbody or we don't have whitespace
+			// migrate $nodesToMigrate into $newStart. Pushing whitespace into
+			// th/td/caption can change display semantics.
+			if ( $newStart && ( $noWS || isset( self::MAP_TBODY_TR[$newStart->nodeName] ) ) ) {
 				/**
 				 * The point of the above loop is to ensure we're working
-				 * with a DOMElement if there is an $newStart.
+				 * with a DOMElement if there is a $newStart.
 				 *
 				 * @var DOMElement $newStart
 				 */
 				'@phan-var DOMElement $newStart';
 				$insertPosition = $newStart->firstChild;
-				$n = $range->start;
-				while ( $n !== $newStart ) {
-					$next = $n->nextSibling;
+				foreach ( $nodesToMigrate as $n ) {
 					$newStart->insertBefore( $n, $insertPosition );
-					$n = $next;
 				}
 				$range->start = $newStart;
 				// Update dsr to point to original start
 				self::updateDSRForFirstTplNode( $range->start, $startElem );
 			} else {
-				$range->start = $rangeStartParent;
-				$range->end = $rangeStartParent;
+				// If not, we are forced to expand the template range.
+				$range->start = $range->end = $rangeStartParent;
 			}
 		}
 
-		// Ensure range.start is an element node since we want to
+		// Ensure range->start is an element node since we want to
 		// add/update the data-parsoid attribute to it.
-		if ( !DOMUtils::isElt( $range->start ) &&
-			!self::expandRangeToAvoidSpanWrapping( $range, true )
-		) {
+		if ( !DOMUtils::isElt( $range->start ) ) {
 			$span = $doc->createElement( 'span' );
 			$range->start->parentNode->insertBefore( $span, $range->start );
 			$span->appendChild( $range->start );
@@ -368,8 +332,8 @@ class WrapTemplates implements Wt2HtmlDOMProcessor {
 
 	/**
 	 * @param array $nestingInfo
-	 * @param string|null $startId
-	 * @return string|null
+	 * @param ?string $startId
+	 * @return ?string
 	 */
 	private static function findToplevelEnclosingRange(
 		array $nestingInfo, ?string $startId
@@ -773,6 +737,75 @@ class WrapTemplates implements Wt2HtmlDOMProcessor {
 	}
 
 	/**
+	 * Encapsulation requires adding about attributes on the top-level
+	 * nodes of the range. This requires them to all be DOMElements.
+	 *
+	 * @param DOMDocument $doc
+	 * @param stdClass $range
+	 */
+	private static function ensureDOMElementsInRange( DOMDocument $doc, stdClass $range ): void {
+		$n = $range->start;
+		$e = $range->end;
+		$about = $range->startElem->getAttribute( 'about' );
+		while ( $n ) {
+			$next = $n->nextSibling;
+			if ( !DOMUtils::isElt( $n ) ) {
+				// Don't add span-wrappers in fosterable positions
+				//
+				// NOTE: there cannot be any non-IEW text in fosterable position
+				// since the HTML tree builder would already have fostered it out.
+				if ( !DOMUtils::isFosterablePosition( $n ) ) {
+					$span = $doc->createElement( 'span' );
+					$span->setAttribute( 'about', $about );
+					$n->parentNode->replaceChild( $span, $n );
+					$span->appendChild( $n );
+					$n = $span;
+				}
+			} else {
+				$n->setAttribute( 'about', $about );
+			}
+
+			if ( $n === $e ) {
+				break;
+			}
+
+			$n = $next;
+		}
+	}
+
+	/**
+	 * Find the first element to be encapsulated.
+	 * Skip past marker metas and non-elements (which will all be IEW
+	 * in fosterable positions in a table).
+	 *
+	 * @param stdClass $range
+	 * @return DOMElement
+	 */
+	private static function findEncapTarget( stdClass $range ): DOMElement {
+		$encapTgt = $range->start;
+		'@phan-var \DOMNode $encapTgt';
+
+		// Skip template-marker meta-tags.
+		while ( WTUtils::isTplMarkerMeta( $encapTgt ) ||
+			!( $encapTgt instanceof DOMElement )
+		) {
+			// Detect unwrappable template and bail out early.
+			if ( $encapTgt === $range->end ||
+				( !( $encapTgt instanceof DOMElement ) &&
+					!DOMUtils::isFosterablePosition( $encapTgt )
+				)
+			) {
+				throw new Error( 'Cannot encapsulate transclusion. Start=' .
+					DOMCompat::getOuterHTML( $range->startElem ) );
+			}
+			$encapTgt = $encapTgt->nextSibling;
+		}
+
+		'@phan-var \DOMElement $encapTgt';
+		return $encapTgt;
+	}
+
+	/**
 	 * @param DOMDocument $doc
 	 * @param Frame $frame
 	 * @param array $tplRanges
@@ -807,9 +840,9 @@ class WrapTemplates implements Wt2HtmlDOMProcessor {
 			// Here, #mwt1 leaves a table open and the end meta from #mwt2 is
 			// fostered, since it gets closed into the div.  The range for #mwt1
 			// is the entire table, which thankfully contains #mwt2, so we still
-			// have the expected entire neseting.  Any tricks to extend the range
-			// of #mwt2 beyond the table so that we have an overlapping range will
-			// ineviatbly result in the end meta not being fostered, and we avoid
+			// have the expected entire nesting.  Any tricks to extend the range
+			// of #mwt2 beyond the table (so that we have an overlapping range) will
+			// inevitably result in the end meta not being fostered, and we avoid
 			// this situation altogether.
 			//
 			// The very edgy case is as follows,
@@ -829,75 +862,24 @@ class WrapTemplates implements Wt2HtmlDOMProcessor {
 				);
 			}
 
-			self::expandRangeToAvoidSpanWrapping( $range );
-
-			$n = $range->start;
-			$e = $range->end;
-			$startElem = $range->startElem;
-			$about = $startElem->getAttribute( 'about' );
-
-			while ( $n ) {
-				$next = $n->nextSibling;
-				if ( !DOMUtils::isElt( $n ) ) {
-					// Don't add span-wrappers in fosterable positions
-					//
-					// NOTE: there cannot be any non-IEW text in fosterable position
-					// since the HTML tree builder would already have fostered it out.
-					if ( !DOMUtils::isFosterablePosition( $n ) ) {
-						$span = $doc->createElement( 'span' );
-						$span->setAttribute( 'about', $about );
-						$n->parentNode->replaceChild( $span, $n );
-						$span->appendChild( $n );
-						$n = $span;
-					}
-				} else {
-					$n->setAttribute( 'about', $about );
-				}
-
-				if ( $n === $e ) {
-					break;
-				}
-
-				$n = $next;
-			}
+			self::ensureDOMElementsInRange( $doc, $range );
 
 			// Encap. info for the range
 			$encapInfo = (object)[
 				'valid' => false,
-				'target' => $range->start,
+				'target' => null,
 				'tplArray' => $tplArrays[$range->id],
 				'datamw' => null,
 				'dp' => null
 			];
 
-			$encapTgt = $encapInfo->target;
-			'@phan-var \DOMNode $encapTgt';
-
-			// Skip template-marker meta-tags.
-			// Also, skip past comments/text nodes found in fosterable positions
-			// which wouldn't have been span-wrapped in the while-loop above.
-			while ( WTUtils::isTplMarkerMeta( $encapTgt ) ||
-				!( $encapTgt instanceof DOMElement )
-			) {
-				// Detect unwrappable template and bail out early.
-				if ( $encapTgt === $range->end ||
-					( !( $encapTgt instanceof DOMElement ) &&
-						!DOMUtils::isFosterablePosition( $encapTgt )
-					)
-				) {
-					throw new Error( 'Cannot encapsulate transclusion. Start=' .
-						DOMCompat::getOuterHTML( $startElem ) );
-				}
-				$encapTgt = $encapTgt->nextSibling;
-			}
-
-			'@phan-var \DOMElement $encapTgt';
-			$encapInfo->target = $encapTgt;
+			$encapTgt = $encapInfo->target = self::findEncapTarget( $range );
 			$encapInfo->dp = DOMDataUtils::getDataParsoid( $encapTgt );
 
 			// Update type-of (always even if tpl-encap below will fail).
 			// This ensures that VE will still "edit-protect" this template
 			// and not allow its content to be edited directly.
+			$startElem = $range->startElem;
 			if ( $startElem !== $encapTgt ) {
 				$t1 = $startElem->getAttribute( 'typeof' );
 				$t2 = $encapTgt->getAttribute( 'typeof' );
@@ -1016,16 +998,7 @@ class WrapTemplates implements Wt2HtmlDOMProcessor {
 
 				// Set up dsr->start, dsr->end, and data-mw on the target node
 				$encapInfo->datamw = (object)[ 'parts' => $tplArray ];
-				if ( WTUtils::isGeneratedFigure( $encapTgt ) ) {
-					// Preserve attributes for media since those will be used
-					// when adding info, which only happens after this pass.
-					// FIXME: There's a question here about whether we should
-					// be doing this unconditionally, which is T214241
-					$oldMw = DOMDataUtils::getDataMw( $encapTgt );
-					if ( isset( $oldMw->attribs ) ) {
-						$encapInfo->datamw->attribs = $oldMw->attribs;
-					}
-				}
+				// FIXME: This is going to clobber any data-mw on $encapTgt, see T214241
 				DOMDataUtils::setDataMw( $encapTgt, $encapInfo->datamw );
 				$encapInfo->dp->pi = $paramInfoArrays;
 
@@ -1207,7 +1180,8 @@ class WrapTemplates implements Wt2HtmlDOMProcessor {
 								$tbl = $tbl->nextSibling;
 							}
 
-							$dp = DOMDataUtils::getDataParsoid( $sm->parentNode );
+							$dp = !DOMUtils::atTheTop( $sm->parentNode ) ?
+								DOMDataUtils::getDataParsoid( $sm->parentNode ) : null;
 							if ( $tbl && $tbl->nodeName === 'table' && !empty( $dp->fostered ) ) {
 								'@phan-var DOMElement $tbl';  /** @var DOMElement $tbl */
 								$tblDP = DOMDataUtils::getDataParsoid( $tbl );
@@ -1260,7 +1234,7 @@ class WrapTemplates implements Wt2HtmlDOMProcessor {
 	 * @inheritDoc
 	 */
 	public function run(
-		Env $env, DOMElement $root, array $options = [], bool $atTopLevel = false
+		Env $env, DOMNode $root, array $options = [], bool $atTopLevel = false
 	): void {
 		self::wrapTemplatesInTree( $root->ownerDocument, $options['frame'], $root );
 	}

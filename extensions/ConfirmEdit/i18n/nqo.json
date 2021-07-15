@@ -1,8 +1,21 @@
 {
 	"@metadata": {
 		"authors": [
+			"Lancine.kounfantoh.fofana",
 			"Lanciné.kounfantoh.fofana"
 		]
 	},
-	"captcha-label": "ߛߏ߰ߙߏ߬ߛߊ߯ߙߊ"
+	"captcha-label": "ߛߏ߰ߙߏ߬ߛߊ߯ߙߊ",
+	"captcha-createaccount-fail": "ߛߏ߰ߙߏ߬ߛߊ߯ߙߊ ߓߍ߲߬ߓߊߟߌ ߥߟߊ߫ ߢߌ߬ߣߊ߬ ߞߍߣߴߊ߬ ߞߐ߫.",
+	"captcha-create": "ߖߐ߲߬ߛߊ߫ ߞߊ߬ ߞߐߜߍ ߛߌ߲ߘߌ߫߸ ߘߎ߰ߟߊ߬ߘߐ߫ ߘߊߞߎ߲ ߢߌ߲߬ ߠߎ߬ ߢߊߓߐ߫ ߡߎߣߎ߲߬ ߖߊ߰ߣߌ߲߫ ߞߊ߬ ߣߊ߬ ߕߏ߫ ߖߋ߬ߓߌ ߟߊߘߏ߲߬ ߠߊ߫ ߞߏ߲߬ߘߏ ([[Special:Captcha/help|more info]]) ߘߐ߫:",
+	"captcha-sendemail-fail": "ߛߏ߰ߙߏ߬ߛߊ߯ߙߊ ߓߍ߲߬ߓߊߟߌ ߥߟߊ߫ ߢߌ߬ߣߊ߬ ߞߍߣߴߊ߬ ߞߐ߫.",
+	"captcha-disabledinapi": "ߟߌ߬ߤߟߊ ߣߌ߲߬ ߡߊ߬ߞߏ ߦߋ߫ CAPTCHA ߟߊ߫߸ ߏ߬ ߘߐ߫ ߊ߬ ߕߍߣߊ߬ ߛߐ߲߬ ߠߊ߫ ߟߊߢߊ߬ ߟߊ߫ API ߘߐ߫.",
+	"captcha-error": "CAPTCHA ߝߛߍ߬ߝߛߍ߬ߟߌ ߓߘߊ߫ ߗߌߙߏ߲߫ ߞߣߐߘߐ߫ ߝߎߕߎ߲ߕߌ ߘߏ߫ ߞߏߛߐ߲߬: $1",
+	"captchahelp-title": "ߛߏ߰ߙߏ߬ߛߊ߯ߙߊ ߘߍ߬ߡߍ߲߬ߠߌ߲",
+	"captchahelp-cookies-needed": "ߌ ߞߊߞߊ߲߫ ߦߋ߫ ߞߊ߬ ߞߏߞߌߦߋ ߟߊߞߎߣߎ߲߫ ߌ ߟߊ߫ ߛߏ߲߯ߓߊߟߊ߲ ߠߊ߫ ߛߴߌ ߘߌ߫ ߓߊ߯ߙߊ߫.",
+	"confirmedit-preview-line": "ߛߌ߬ߕߊߙߌ ߝߙߍߕߍ",
+	"confirmedit-preview-content": "ߞߣߐߘߐ",
+	"confirmedit-preview-validity": "ߛߕߊ",
+	"confirmedit-preview-valid": "ߓߍ߲߬ߣߍ߲",
+	"confirmedit-preview-invalid": "ߓߍ߲߬ߓߊߟߌ"
 }

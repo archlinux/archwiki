@@ -144,7 +144,7 @@ ve.ui.MWLinkAction.prototype.open = function () {
 	} else if ( selectedNode instanceof ve.dm.MWMagicLinkNode ) {
 		windowName = 'linkMagicNode';
 	}
-	this.surface.execute( 'window', 'open', windowName );
+	this.surface.executeWithSource( 'window', 'open', this.source, windowName );
 	return true;
 };
 

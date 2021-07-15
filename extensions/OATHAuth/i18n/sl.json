@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Dbc334",
+			"Eleassar",
 			"Janezdrilc"
 		]
 	},
@@ -39,7 +40,7 @@
 	"action-oathauth-enable": "vključi dvostopenjsko preverjanje pristnosti",
 	"oathauth-auth-token-label": "Žeton",
 	"oathauth-auth-token-help": "Geslo za enkratno uporabo, ki služi kot druga stopnja dvostopenjskega preverjanja pristnosti.",
-	"oathauth-auth-ui": "Vnesi kodo za potrditev iz svoje naprave za preverjanje pristnosti.",
+	"oathauth-auth-ui": "Iz svoje naprave prepišite kodo za potrditev identitete.",
 	"oathauth-throttled": "Preveč poskusov potrditve! Počakaj $1.",
 	"oathauth-login-failed": "Potrditev je spodletela.",
 	"oathauth-describe-provider": "Dvostopenjsko preverjanje pristnosti (OATH).",

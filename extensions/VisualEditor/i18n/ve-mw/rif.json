@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amara-Amaziɣ"
+			"Amara-Amaziɣ",
+			"Syphax Amaynu"
 		]
 	},
-	"tooltip-ca-ve-edit": "ⵙⵏⴼⵍ ⵜⴰⵙⵏⴰ ⴰ"
+	"tooltip-ca-ve-edit": "ⵙⵏⴼⵍ ⵜⴰⵙⵏⴰ ⴰ",
+	"visualeditor-ca-editsource-section": "Snfi tala"
 }

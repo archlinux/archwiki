@@ -96,7 +96,7 @@ class GenerateFancyCaptchas extends Maintenance {
 			$captchaScript = 'captcha-old.py';
 		}
 
-		$cmd = sprintf( "python %s --key %s --output %s --count %s --dirs %s",
+		$cmd = sprintf( "python3 %s --key %s --output %s --count %s --dirs %s",
 			wfEscapeShellArg( dirname( __DIR__ ) . '/' . $captchaScript ),
 			wfEscapeShellArg( $wgCaptchaSecret ),
 			wfEscapeShellArg( $tmpDir ),

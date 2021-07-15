@@ -19,6 +19,9 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
+namespace MediaWiki\Extension\PdfHandler;
+
+use BitmapMetadataHandler;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Shell\Shell;
 use UtfNormal\Validator;
@@ -125,8 +128,10 @@ class PdfImage {
 			// https://bugs.freedesktop.org/show_bug.cgi?id=96801
 			$cmdMeta = [
 				$wgPdfInfo,
-				'-enc', 'UTF-8', # Report metadata as UTF-8 text...
-				'-meta',         # Report XMP metadata
+				# Report metadata as UTF-8 text...
+				'-enc', 'UTF-8',
+				# Report XMP metadata
+				'-meta',
 				$this->mFilename,
 			];
 			$resultMeta = Shell::command( $cmdMeta )
@@ -134,8 +139,10 @@ class PdfImage {
 
 			$cmdPages = [
 				$wgPdfInfo,
-				'-enc', 'UTF-8', # Report metadata as UTF-8 text...
-				'-l', '9999999', # Report page sizes for all pages
+				# Report metadata as UTF-8 text...
+				'-enc', 'UTF-8',
+				# Report page sizes for all pages
+				'-l', '9999999',
 				$this->mFilename,
 			];
 			$resultPages = Shell::command( $cmdPages )
@@ -279,11 +286,6 @@ class PdfImage {
 					$items['pdf-Version'] = $val;
 					break;
 				case 'Encrypted':
-					// @todo: The value isn't i18n-ised. The appropriate
-					// place to do that is in FormatMetadata.php
-					// should add a hook a there.
-					// For reference, if encrypted this fields value looks like:
-					// "yes (print:yes copy:no change:no addNotes:no)"
 					$items['pdf-Encrypted'] = $val;
 					break;
 				// Note 'pages' and 'Pages' are different keys (!)

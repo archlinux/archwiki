@@ -90,4 +90,8 @@
 			</arguments>
 		</listener>
 	</listeners>
+	<extensions>
+		<extension class="MediaWikiLoggerPHPUnitExtension" />
+		<extension class="MediaWikiHooksPHPUnitExtension" />
+	</extensions>
 </phpunit>

@@ -23,7 +23,6 @@
 	"renameuserwarnings": "التحذيرات:",
 	"renameuserconfirm": "نعم، أعد تسمية المستخدم",
 	"renameusersubmit": "إرسال",
-	"renameuser-submit-blocklog": "أظهر سجل المنع الخاص بالمستخدم",
 	"renameusererrordoesnotexist": "لا يوجد مستخدم بالاسم \"<nowiki>$1</nowiki>\"",
 	"renameusererrorexists": "{{GENDER:$1|المستخدم}} \"<nowiki>$1</nowiki>\" موجود بالفعل",
 	"renameusererrorinvalid": "اسم المستخدم \"<nowiki>$1</nowiki>\" غير صحيح",
