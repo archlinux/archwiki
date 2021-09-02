@@ -26,7 +26,7 @@ init: start
 		--server "http://localhost:${PORT}" \
 		"ArchWiki" \
 		"admin"
-	echo -e "\$wgVectorResponsive = true;\nwfLoadExtension( 'ArchLinux' );" >> LocalSettings.php
+	echo -e "\$wgVectorResponsive = true;\n\$wgVectorDefaultSkinVersion = '2';\nwfLoadExtension( 'ArchLinux' );" >> LocalSettings.php
 	echo -e "\$wgArchHome = 'https://www.archlinux.org/';" >> LocalSettings.php
 	echo -e "\$wgArchNavBar = ['Start' => '#', 'Wiki' => '/'];" >> LocalSettings.php
 	echo -e "\$wgArchNavBarSelectedDefault = 'Wiki';" >> LocalSettings.php

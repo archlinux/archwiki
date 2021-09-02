@@ -1,6 +1,11 @@
 @import '../arch_definitions';
 @import 'mediawiki.ui/variables';
 
+#p-logo,
+.mw-logo {
+  display: none;
+}
+
 .mw-body {
   & h1,
   &-content h1,
@@ -9,73 +14,88 @@
   }
 }
 
-div#mw-head,
-.mw-header {
-  top: 65px;
-}
-
-div#mw-panel {
-  top: 65px;
-  margin-top: 1em;
-}
-
-#p-logo,
-.mw-logo {
-  display: none;
-}
-
-#mw-page-base {
-  background: none;
-}
-
-/* fix vertical position of tabs */
-nav.vector-menu-tabs, nav.vector-menu {
-  margin-top: -2 * @content-border-width;
-}
-
 nav.vector-menu-tabs {
   padding-left: 0;
 
-  /* remove background with color gradient */
+  // remove background with color gradient
   ul, ul li {
     background: none;
   }
 
-  /* invisible border to align well with the selected tab */
-  ul li {
-    border: @content-border-width;
-  }
-
   li.selected {
-    /* border around the tab matches content, at the bottom we override the
-     * content border with the background color
-     */
+    // border around the tab matches content, at the bottom we override the
+    // content border with the background color
     border: @content-border-style;
     border-bottom-color: @content-background-color;
-    /* background of the selected tab should match the content */
+    // background of the selected tab should match the content
     background-color: @content-background-color;
-    /* remove background with the vertical separator */
+
+    // remove background with the vertical separator
     a {
-        background: none !important;
+      background: none !important;
     }
   }
 
-  /* Let the left border of the selected tab overlap with the vertical bar
-   * coming from the background image of the previous tab.
-   */
-  li:not(:first-child).selected {
-    margin-left: -2 * @content-border-width;
+  // invisible border to align well with the selected tab
+  ul li {
+    border: @content-border-width;
   }
 }
 
-@media screen and ( max-width: @width-breakpoint-tablet ) {
-  /* fix position of personal navigation bar */
-  div#p-personal {
-    top: unset;
+// New Vector; see https://www.mediawiki.org/wiki/Skin:Vector#wgVectorResponsive
+body.skin-vector.skin--responsive {
+  nav.vector-menu-tabs {
+    li.selected {
+      margin-top: -@content-border-width;
+      border-bottom: none;
+    }
   }
 
-  /* remove useless blank space at the bottom */
+  // Let the left border of the selected tab overlap with the vertical bar
+  // coming from the background image of the previous tab.
+  li:not(:first-child).selected {
+    margin-left: -1 * @content-border-width;
+  }
+}
+
+// Legacy Vector
+body.skin-vector-legacy {
+  div#mw-head,
+  .mw-header {
+    top: 65px;
+  }
+
   div#mw-panel {
-    padding-top: 0;
+    top: 65px;
+    margin-top: 1em;
+  }
+
+  #mw-page-base {
+    background: none;
+  }
+
+  // fix vertical position of tabs
+  nav.vector-menu-tabs, nav.vector-menu {
+    margin-top: -2 * @content-border-width;
+  }
+
+  nav.vector-menu-tabs {
+    // Let the left border of the selected tab overlap with the vertical bar
+    // coming from the background image of the previous tab.
+    li:not(:first-child).selected {
+      margin-left: -2 * @content-border-width;
+    }
+  }
+
+  @media screen and ( max-width: @width-breakpoint-tablet ) {
+    // fix position of personal navigation bar
+    div#p-personal {
+      top: unset;
+    }
+
+    // remove useless blank space at the bottom
+    div#mw-panel {
+      padding-top: 0;
+    }
   }
 }
