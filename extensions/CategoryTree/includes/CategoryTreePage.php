@@ -124,7 +124,11 @@ class CategoryTreePage extends SpecialPage {
 
 				$output->addHTML( Xml::closeElement( 'div' ) );
 
-				$output->addHTML( Xml::openElement( 'div', [ 'class' => 'CategoryTreeResult' ] ) );
+				$output->addHTML( Xml::openElement( 'div', [
+					'class' => 'CategoryTreeResult CategoryTreeTag',
+					'data-ct-mode' => $this->tree->getOption( 'mode' ),
+					'data-ct-options' => $this->tree->getOptionsAsJsStructure(),
+				] ) );
 				$output->addHTML( $this->tree->renderNode( $title, 1 ) );
 				$output->addHTML( Xml::closeElement( 'div' ) );
 			} else {

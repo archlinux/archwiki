@@ -41,6 +41,17 @@ class ReplaceTextJob extends Job {
 	 * @return bool success
 	 */
 	function run() {
+		// T279090
+		$current_user = User::newFromId( $this->params['user_id'] );
+		$permissionManager = MediaWikiServices::getInstance()->getPermissionManager();
+		if ( !$permissionManager->userCan(
+			'replacetext', $current_user, $this->title
+		) ) {
+			$this->error = 'replacetext: permission no longer valid';
+			// T279090#6978214
+			return true;
+		}
+
 		if ( isset( $this->params['session'] ) ) {
 			$callback = RequestContext::importScopedSession( $this->params['session'] );
 			$this->addTeardownCallback( function () use ( &$callback ) {
@@ -54,7 +65,6 @@ class ReplaceTextJob extends Job {
 		}
 
 		if ( array_key_exists( 'move_page', $this->params ) ) {
-			$current_user = User::newFromId( $this->params['user_id'] );
 			$new_title = ReplaceTextSearch::getReplacedTitle(
 				$this->title,
 				$this->params['target_str'],

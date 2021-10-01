@@ -96,7 +96,7 @@ class TOTPEnableForm extends OATHAuthOOUIHTMLForm implements IManageForm {
 				'name' => 'token',
 				'section' => 'step4',
 				'dir' => 'ltr',
-				'autocomplete' => false,
+				'autocomplete' => 'one-time-code',
 				'spellcheck' => false,
 			]
 		];

@@ -83,13 +83,13 @@
 	font-style: italic;
 }
 
-.CategoryTreeResult {
-	margin-top: 1.5ex;
-}
-
 .CategoryTreeTag {
 	margin-top: 0.5ex;
 	margin-bottom: 0.5ex;
+}
+
+.CategoryTreeResult {
+	margin-top: 1.5ex;
 }
 
 .CategoryTreeNotice {

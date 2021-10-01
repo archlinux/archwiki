@@ -53,7 +53,7 @@ final class Cli {
 	}
 
 	/** Perform the specified command. */
-	public function run() : void {
+	public function run(): void {
 		try {
 			switch ( $this->command ) {
 			case 'css':
@@ -77,17 +77,17 @@ final class Cli {
 		}
 	}
 
-	private function runCss( string $file = null ) : void {
+	private function runCss( string $file = null ): void {
 		$data = $file === null ? stream_get_contents( $this->in ) : file_get_contents( $file );
 		$this->output( CSSMin::minify( $data ) );
 	}
 
-	private function runJs( string $file = null ) : void {
+	private function runJs( string $file = null ): void {
 		$data = $file === null ? stream_get_contents( $this->in ) : file_get_contents( $file );
 		$this->output( JavaScriptMinifier::minify( $data ) );
 	}
 
-	private function help() : void {
+	private function help(): void {
 		$this->output( <<<TEXT
 usage: {$this->self} <command>
 
@@ -100,18 +100,18 @@ TEXT
 		);
 	}
 
-	private function error( string $text ) : void {
+	private function error( string $text ): void {
 		$this->exitCode = 1;
 		$this->output( "\n{$this->self} error: $text\n\n------\n" );
 		$this->help();
 	}
 
-	private function output( string $text ) : void {
+	private function output( string $text ): void {
 		fwrite( $this->out, $text . "\n" );
 	}
 
 	/** @return int */
-	public function getExitCode() : int {
+	public function getExitCode(): int {
 		return $this->exitCode;
 	}
 }

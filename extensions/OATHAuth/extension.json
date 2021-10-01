@@ -85,11 +85,19 @@
 				"totp/jquery.qrcode.js",
 				"totp/qrcode.js",
 				"totp/ext.oath.showqrcode.js"
+			],
+			"targets": [
+				"desktop",
+				"mobile"
 			]
 		},
 		"ext.oath.totp.showqrcode.styles": {
 			"styles": [
 				"totp/ext.oath.showqrcode.styles.css"
+			],
+			"targets": [
+				"desktop",
+				"mobile"
 			]
 		}
 	},

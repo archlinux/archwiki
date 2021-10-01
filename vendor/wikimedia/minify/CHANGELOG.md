@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.4 (2021-07-28)
+
+Fixed:
+
+* JavaScriptMinifer: Recognize `...` as a single token. (Roan Kattouw) [T287526](https://phabricator.wikimedia.org/T287526)
+
 ## 2.2.3 (2021-06-07)
 
 Fixed:

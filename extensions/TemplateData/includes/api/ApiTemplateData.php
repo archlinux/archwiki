@@ -104,7 +104,7 @@ class ApiTemplateData extends ApiBase {
 					'pp_propname' => 'templatedata'
 				],
 				__METHOD__,
-				[ 'ORDER BY', 'pp_page' ]
+				[ 'ORDER BY' => 'pp_page' ]
 			);
 
 			foreach ( $res as $row ) {

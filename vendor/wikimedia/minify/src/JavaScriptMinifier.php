@@ -114,6 +114,12 @@ class JavaScriptMinifier {
 	// Sanity limit to avoid excessive memory usage
 	private const STACK_LIMIT = 1000;
 
+	// Length of the longest token in $tokenTypes made of punctuation characters,
+	// as defined in $opChars. Update this if you add longer tokens to $tokenTypes.
+	//
+	// Currently the longest punctuation token is `>>>=`, which is 4 characters.
+	private const LONGEST_PUNCTUATION_TOKEN = 4;
+
 	/**
 	 * @var int $maxLineLength
 	 *
@@ -1317,7 +1323,7 @@ class JavaScriptMinifier {
 			if ( $ch === "'" || $ch === '"' ) {
 				// Search to the end of the string literal, skipping over backslash escapes
 				$search = $ch . '\\';
-				do{
+				do {
 					// Speculatively add 2 to the end so that if we see a backslash,
 					// the next iteration will start 2 characters further (one for the
 					// backslash, one for the escaped character).
@@ -1383,7 +1389,7 @@ class JavaScriptMinifier {
 				for ( ; ; ) {
 					// Search until we find "/" (end of regexp), "\" (backslash escapes),
 					// or "[" (start of character classes).
-					do{
+					do {
 						// Speculatively add 2 to ensure next iteration skips
 						// over backslash and escaped character.
 						// We'll correct this outside the loop.
@@ -1404,7 +1410,7 @@ class JavaScriptMinifier {
 					}
 					// (Implicit else), we must've found the start of a char class,
 					// skip until we find "]" (end of char class), or "\" (backslash escape)
-					do{
+					do {
 						// Speculatively add 2 for backslash escape.
 						// We'll substract one outside the loop.
 						$end += strcspn( $s, ']\\', $end ) + 2;
@@ -1478,11 +1484,14 @@ class JavaScriptMinifier {
 				}
 			} elseif ( isset( self::$opChars[$ch] ) ) {
 				// Punctuation character. Search for the longest matching operator.
-				while (
-					$end < $length
-					&& isset( self::$tokenTypes[substr( $s, $pos, $end - $pos + 1 )] )
-				) {
-					$end++;
+				for ( $tokenLength = self::LONGEST_PUNCTUATION_TOKEN; $tokenLength > 1; $tokenLength-- ) {
+					if (
+						$pos + $tokenLength <= $length &&
+						isset( self::$tokenTypes[ substr( $s, $pos, $tokenLength ) ] )
+					) {
+						$end = $pos + $tokenLength;
+						break;
+					}
 				}
 			} else {
 				// Identifier or reserved word. Search for the end by excluding whitespace and

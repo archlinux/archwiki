@@ -27,7 +27,7 @@ class TOTPDisableForm extends OATHAuthOOUIHTMLForm implements IManageForm {
 				'required' => true,
 				'autofocus' => true,
 				'dir' => 'ltr',
-				'autocomplete' => false,
+				'autocomplete' => 'one-time-code',
 				'spellcheck' => false,
 			]
 		];

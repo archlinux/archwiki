@@ -214,9 +214,9 @@ ve.ui.MWSaveDialog.prototype.showPreview = function ( docOrMsg, baseDoc ) {
 				modules = modules.concat( mw.libs.ve.expandModuleNames( uri.query.modules ) );
 			}
 		} );
-		// Remove skin-specific modules (T187075)
+		// Remove skin-specific modules (T187075 / T185284)
 		modules = modules.filter( function ( module ) {
-			return module.indexOf( 'skins.' ) !== 0;
+			return ( module.match( /^(skins|mediawiki\.skinning)\./ ) === null );
 		} );
 		mw.loader.using( modules );
 		body = docOrMsg.body;

@@ -396,7 +396,7 @@ class CSSMin {
 	 * @param string $url
 	 * @return string
 	 */
-	private static function resolveUrl( string $base, string $url ) : string {
+	private static function resolveUrl( string $base, string $url ): string {
 		// Net_URL2::resolve() doesn't allow for resolving against server-less URLs.
 		// We need this as for MediaWiki/ResourceLoader, the remote base path may either
 		// be separate (e.g. a separate domain), or simply local (like "/w"). In the

@@ -255,10 +255,16 @@ class UpdateTables {
 		foreach ( $res as $row ) {
 			$data = FormatJson::decode( $row->data, true );
 
+			$updated = false;
 			foreach ( $data['keys'] as &$k ) {
 				if ( is_string( $k['scratch_tokens'] ) ) {
 					$k['scratch_tokens'] = explode( ',', $k['scratch_tokens'] );
+					$updated = true;
 				}
+			}
+
+			if ( !$updated ) {
+				continue;
 			}
 
 			$db->update(
